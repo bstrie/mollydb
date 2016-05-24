@@ -23,7 +23,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9 current\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-08-02 06:42+0000\n"
 "PO-Revision-Date: 2014-08-14 22:47+0400\n"
 "Last-Translator: Dmitriy Olshevskiy <olshevskiy87@bk.ru>\n"
@@ -290,8 +290,8 @@ msgstr ""
 
 #: pg_config.c:459
 #, c-format
-msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
-msgstr "Об ошибках сообщайте по адресу <pgsql-bugs@mollydb.org>.\n"
+msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
+msgstr "Об ошибках сообщайте по адресу <mdb-bugs@mollydb.org>.\n"
 
 #: pg_config.c:465
 #, c-format

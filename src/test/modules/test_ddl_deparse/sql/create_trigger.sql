@@ -2,9 +2,9 @@
 --- CREATE_TRIGGER
 ---
 
-CREATE FUNCTION plpgsql_function_trigger_1()
+CREATE FUNCTION plmdb_function_trigger_1()
   RETURNS TRIGGER
-  LANGUAGE plpgsql
+  LANGUAGE plmdb
 AS $$
 BEGIN
   RETURN NEW;
@@ -15,4 +15,4 @@ CREATE TRIGGER trigger_1
   BEFORE INSERT OR UPDATE
   ON datatype_table
   FOR EACH ROW
-  EXECUTE PROCEDURE plpgsql_function_trigger_1();
+  EXECUTE PROCEDURE plmdb_function_trigger_1();

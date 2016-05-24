@@ -70,9 +70,9 @@ ALWAYS_SUBDIRS += xml2
 endif
 
 ifeq ($(with_selinux),yes)
-SUBDIRS += sepgsql
+SUBDIRS += semdb
 else
-ALWAYS_SUBDIRS += sepgsql
+ALWAYS_SUBDIRS += semdb
 endif
 
 ifeq ($(with_perl),yes)

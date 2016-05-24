@@ -11,7 +11,7 @@
    This chapter provides general information about writing trigger functions.
    Trigger functions can be written in most of the available procedural
    languages, including
-   <application>PL/pgSQL</application> (<xref linkend="plpgsql">),
+   <application>PL/pgSQL</application> (<xref linkend="plmdb">),
    <application>PL/Tcl</application> (<xref linkend="pltcl">),
    <application>PL/Perl</application> (<xref linkend="plperl">), and
    <application>PL/Python</application> (<xref linkend="plpython">).

@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.5\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-02-13 23:10+0000\n"
 "PO-Revision-Date: 2016-02-14 01:05+0200\n"
 "Last-Translator: grzegorz <begina.felicysym@wp.eu>\n"
@@ -218,8 +218,8 @@ msgstr "nie udało się określić kodowania dla zestawu znaków \"%s\""
 #: ../port/chklocale.c:260 ../port/chklocale.c:389
 #: postmaster/postmaster.c:4857
 #, c-format
-msgid "Please report this to <pgsql-bugs@mollydb.org>."
-msgstr "Proszę zgłosić to na adres <pgsql-bugs@mollydb.org>."
+msgid "Please report this to <mdb-bugs@mollydb.org>."
+msgstr "Proszę zgłosić to na adres <mdb-bugs@mollydb.org>."
 
 #: ../port/chklocale.c:381 ../port/chklocale.c:387
 #, c-format
@@ -11652,14 +11652,14 @@ msgid ""
 "configuration settings and how to set them on the command line or in\n"
 "the configuration file.\n"
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
 "Proszę zapoznać się z dokumentacją by uzyskać pełną listę ustawień\n"
 "konfiguracyjnych czasu wykonania i jak ustawić je w linii poleceń\n"
 "lub pliku konfiguracyjnym.\n"
 "\n"
-"Błędy proszę przesyłać na adres <pgsql-bugs@mollydb.org>.\n"
+"Błędy proszę przesyłać na adres <mdb-bugs@mollydb.org>.\n"
 
 #: main/main.c:369
 #, c-format

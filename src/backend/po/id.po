@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-03-15 18:13+0000\n"
 "PO-Revision-Date: 2015-11-12 15:44-0300\n"
 "Last-Translator: \n"
@@ -39,8 +39,8 @@ msgstr "tidak dapat menentukan encoding untuk lokal « %s » : codesetnya adalah
 
 #: ../port/chklocale.c:360
 #, c-format
-msgid "Please report this to <pgsql-bugs@mollydb.org>."
-msgstr "Tolong laporkan ke <pgsql-bugs@mollydb.org>."
+msgid "Please report this to <mdb-bugs@mollydb.org>."
+msgstr "Tolong laporkan ke <mdb-bugs@mollydb.org>."
 
 #: ../port/dirmod.c:217
 #, c-format
@@ -10101,14 +10101,14 @@ msgid ""
 "configuration settings and how to set them on the command line or in\n"
 "the configuration file.\n"
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
 "Silahkan baca dokumentasi untuk daftar lengkap dari pengaturan \n"
 "konfigurasi run-time dan bagaimana mengatur pada command line \n"
 "atau dalam file konfigurasi.\n"
 "\n"
-"Laporkan bugs kepada <pgsql-bugs@mollydb.org>.\n"
+"Laporkan bugs kepada <mdb-bugs@mollydb.org>.\n"
 
 #: main/main.c:348
 #, c-format

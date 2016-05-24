@@ -69,7 +69,7 @@ DO [ LANGUAGE <replaceable class="PARAMETER">lang_name</replaceable> ] <replacea
     <listitem>
      <para>
       The name of the procedural language the code is written in.
-      If omitted, the default is <literal>plpgsql</>.
+      If omitted, the default is <literal>plmdb</>.
      </para>
     </listitem>
    </varlistentry>
@@ -82,7 +82,7 @@ DO [ LANGUAGE <replaceable class="PARAMETER">lang_name</replaceable> ] <replacea
   <para>
    The procedural language to be used must already have been installed
    into the current database by means of <command>CREATE LANGUAGE</>.
-   <literal>plpgsql</> is installed by default, but other languages are not.
+   <literal>plmdb</> is installed by default, but other languages are not.
   </para>
 
   <para>

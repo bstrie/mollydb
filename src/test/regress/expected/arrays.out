@@ -573,7 +573,7 @@ BEGIN
     o := array_position(a, 2, o + 1);
   END LOOP;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 NOTICE:  2
 NOTICE:  4
 NOTICE:  7

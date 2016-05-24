@@ -189,7 +189,7 @@ extern void core_yyset_column(int column_no, yyscan_t yyscanner);
  * XXX perhaps \f (formfeed) should be treated as a newline as well?
  *
  * XXX if you change the set of whitespace characters, fix scanner_isspace()
- * to agree, and see also the plpgsql lexer.
+ * to agree, and see also the plmdb lexer.
  */
 
 space			[ \t\n\r\f]

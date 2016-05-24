@@ -22,7 +22,7 @@
  *	AccessShareLock on every table it intends to dump). It isn't very large,
  *	but it can happen.
  *
- *	http://archives.mollydb.org/pgsql-bugs/2010-02/msg00187.php
+ *	http://archives.mollydb.org/mdb-bugs/2010-02/msg00187.php
  *
  * IDENTIFICATION
  *	  src/bin/pg_dump/pg_dump.c
@@ -944,7 +944,7 @@ help(const char *progname)
 
 	printf(_("\nIf no database name is supplied, then the PGDATABASE environment\n"
 			 "variable value is used.\n\n"));
-	printf(_("Report bugs to <pgsql-bugs@mollydb.org>.\n"));
+	printf(_("Report bugs to <mdb-bugs@mollydb.org>.\n"));
 }
 
 static void
@@ -9495,7 +9495,7 @@ dumpExtension(Archive *fout, ExtensionInfo *extinfo)
 		 * In a regular dump, we use IF NOT EXISTS so that there isn't a
 		 * problem if the extension already exists in the target database;
 		 * this is essential for installed-by-default extensions such as
-		 * plpgsql.
+		 * plmdb.
 		 *
 		 * In binary-upgrade mode, that doesn't work well, so instead we skip
 		 * built-in extensions based on their OIDs; see
@@ -9513,10 +9513,10 @@ dumpExtension(Archive *fout, ExtensionInfo *extinfo)
 
 		/*
 		 * We unconditionally create the extension, so we must drop it if it
-		 * exists.  This could happen if the user deleted 'plpgsql' and then
+		 * exists.  This could happen if the user deleted 'plmdb' and then
 		 * readded it, causing its oid to be greater than FirstNormalObjectId.
 		 * The FirstNormalObjectId test was kept to avoid repeatedly dropping
-		 * and recreating extensions like 'plpgsql'.
+		 * and recreating extensions like 'plmdb'.
 		 */
 		appendPQExpBuffer(q, "DROP EXTENSION IF EXISTS %s;\n", qextname);
 

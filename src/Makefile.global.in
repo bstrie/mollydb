@@ -84,7 +84,7 @@ configure_args = @configure_args@
 #
 # These are set by the equivalent --xxxdir configure options.  We
 # append "mollydb" to some of them, if the string does not already
-# contain "pgsql" or "mollydb", in order to avoid directory clutter.
+# contain "mdb" or "mollydb", in order to avoid directory clutter.
 #
 # In a PGXS build, we cannot use the values inserted into Makefile.global
 # by configure, since the installation tree may have been relocated.
@@ -102,14 +102,14 @@ datarootdir := @datarootdir@
 bindir := @bindir@
 
 datadir := @datadir@
-ifeq "$(findstring pgsql, $(datadir))" ""
+ifeq "$(findstring mdb, $(datadir))" ""
 ifeq "$(findstring mollydb, $(datadir))" ""
 override datadir := $(datadir)/mollydb
 endif
 endif
 
 sysconfdir := @sysconfdir@
-ifeq "$(findstring pgsql, $(sysconfdir))" ""
+ifeq "$(findstring mdb, $(sysconfdir))" ""
 ifeq "$(findstring mollydb, $(sysconfdir))" ""
 override sysconfdir := $(sysconfdir)/mollydb
 endif
@@ -118,7 +118,7 @@ endif
 libdir := @libdir@
 
 pkglibdir = $(libdir)
-ifeq "$(findstring pgsql, $(pkglibdir))" ""
+ifeq "$(findstring mdb, $(pkglibdir))" ""
 ifeq "$(findstring mollydb, $(pkglibdir))" ""
 override pkglibdir := $(pkglibdir)/mollydb
 endif
@@ -127,7 +127,7 @@ endif
 includedir := @includedir@
 
 pkgincludedir = $(includedir)
-ifeq "$(findstring pgsql, $(pkgincludedir))" ""
+ifeq "$(findstring mdb, $(pkgincludedir))" ""
 ifeq "$(findstring mollydb, $(pkgincludedir))" ""
 override pkgincludedir := $(pkgincludedir)/mollydb
 endif
@@ -136,7 +136,7 @@ endif
 mandir := @mandir@
 
 docdir := @docdir@
-ifeq "$(findstring pgsql, $(docdir))" ""
+ifeq "$(findstring mdb, $(docdir))" ""
 ifeq "$(findstring mollydb, $(docdir))" ""
 override docdir := $(docdir)/mollydb
 endif

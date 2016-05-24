@@ -1,4 +1,4 @@
-# Brazilian Portuguese message translation file for plpgsql
+# Brazilian Portuguese message translation file for plmdb
 # Copyright (C) 2010 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 # Euler Taveira de Oliveira <euler@timbira.com>, 2010-2015.
@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.5\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-09-17 22:32-0300\n"
 "PO-Revision-Date: 2010-07-08 17:13-0300\n"
 "Last-Translator: Euler Taveira de Oliveira <euler@timbira.com>\n"
@@ -177,7 +177,7 @@ msgstr "função PL/pgSQL %s linha %d %s"
 msgid "PL/pgSQL function %s %s"
 msgstr "função PL/pgSQL %s %s"
 
-#. translator: last %s is a plpgsql statement type name
+#. translator: last %s is a plmdb statement type name
 #: pl_exec.c:1012
 #, c-format
 msgid "PL/pgSQL function %s line %d at %s"

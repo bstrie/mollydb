@@ -2184,7 +2184,7 @@ LOG:  database system is ready to accept read only connections
    </para>
 
    <para>
-    The <productname>Nagios</> plugin <productname>check_pgsql</> will
+    The <productname>Nagios</> plugin <productname>check_mdb</> will
     work, because the simple information it checks for exists.
     The <productname>check_mollydb</> monitoring script will also work,
     though some reported values could give different or confusing results.

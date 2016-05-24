@@ -1,5 +1,5 @@
 #
-# Translation of plpgsql to Italian
+# Translation of plmdb to Italian
 # MollyDB Project
 #
 # Associazione Culturale ITPUG - Italian MollyDB Users Group
@@ -17,8 +17,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: plpgsql (MollyDB) 9.6\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Project-Id-Version: plmdb (MollyDB) 9.6\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:07+0000\n"
 "PO-Revision-Date: 2016-04-17 20:58+0100\n"
 "Last-Translator: Daniele Varrazzo <daniele.varrazzo@gmail.com>\n"
@@ -186,7 +186,7 @@ msgstr "funzione PL/pgSQL %s riga %d %s"
 msgid "PL/pgSQL function %s %s"
 msgstr "funzione PL/pgSQL %s %s"
 
-#. translator: last %s is a plpgsql statement type name
+#. translator: last %s is a plmdb statement type name
 #: pl_exec.c:973
 #, c-format
 msgid "PL/pgSQL function %s line %d at %s"

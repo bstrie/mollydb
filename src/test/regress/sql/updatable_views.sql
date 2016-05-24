@@ -295,7 +295,7 @@ BEGIN
   END IF;
 END;
 $$
-LANGUAGE plpgsql;
+LANGUAGE plmdb;
 
 CREATE TRIGGER rw_view1_ins_trig INSTEAD OF INSERT ON rw_view1
   FOR EACH ROW EXECUTE PROCEDURE rw_view1_trig_fn();
@@ -496,7 +496,7 @@ BEGIN
   RETURN NULL;
 END;
 $$
-LANGUAGE plpgsql;
+LANGUAGE plmdb;
 
 CREATE TRIGGER rw_view1_ins_trig AFTER INSERT ON base_tbl
   FOR EACH ROW EXECUTE PROCEDURE rw_view1_trig_fn();
@@ -769,7 +769,7 @@ BEGIN
   RETURN NEW;
 END;
 $$
-LANGUAGE plpgsql;
+LANGUAGE plmdb;
 
 CREATE TRIGGER base_tbl_trig BEFORE INSERT OR UPDATE ON base_tbl
   FOR EACH ROW EXECUTE PROCEDURE base_tbl_trig_fn();
@@ -805,7 +805,7 @@ BEGIN
   END IF;
 END;
 $$
-LANGUAGE plpgsql;
+LANGUAGE plmdb;
 
 CREATE TRIGGER rw_view1_trig
   INSTEAD OF INSERT OR UPDATE OR DELETE ON rw_view1
@@ -872,7 +872,7 @@ BEGIN
   RETURN true;
 END;
 $$
-LANGUAGE plpgsql COST 0.000001;
+LANGUAGE plmdb COST 0.000001;
 
 CREATE OR REPLACE FUNCTION leakproof(anyelement)
 RETURNS boolean AS
@@ -881,7 +881,7 @@ BEGIN
   RETURN true;
 END;
 $$
-LANGUAGE plpgsql STRICT IMMUTABLE LEAKPROOF;
+LANGUAGE plmdb STRICT IMMUTABLE LEAKPROOF;
 
 SELECT * FROM rw_view1 WHERE snoop(person);
 UPDATE rw_view1 SET person=person WHERE snoop(person);

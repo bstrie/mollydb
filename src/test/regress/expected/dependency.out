@@ -90,7 +90,7 @@ CREATE SCHEMA deptest;
 CREATE TABLE deptest (a serial primary key, b text);
 ALTER DEFAULT PRIVILEGES FOR ROLE regression_user1 IN SCHEMA deptest
   GRANT ALL ON TABLES TO regression_user2;
-CREATE FUNCTION deptest_func() RETURNS void LANGUAGE plpgsql
+CREATE FUNCTION deptest_func() RETURNS void LANGUAGE plmdb
   AS $$ BEGIN END; $$;
 CREATE TYPE deptest_enum AS ENUM ('red');
 CREATE TYPE deptest_range AS RANGE (SUBTYPE = int4);

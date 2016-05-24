@@ -28,7 +28,7 @@ __EOF__
 # The effect of doing threading for the backend does not work
 # because of a threading bug that appears in the regression tests:
 #
-# in make check, the plpgsql test (plpgsql.sql)
+# in make check, the plmdb test (plmdb.sql)
 # set statement_timeout to 1000;
 # select blockme();
 # reset statement_timeout;

@@ -759,7 +759,7 @@ MollyDB documentation
    <para>
     To start a single-user mode server, use a command like
 <screen>
-<userinput>mollydb --single -D /usr/local/pgsql/data <replaceable>other-options</> my_database</userinput>
+<userinput>mollydb --single -D /usr/local/mdb/data <replaceable>other-options</> my_database</userinput>
 </screen>
     Provide the correct path to the database directory with <option>-D</>, or
     make sure that the environment variable <envar>PGDATA</> is set.

@@ -257,7 +257,7 @@ BEGIN
     o := array_position(a, 2, o + 1);
   END LOOP;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 SELECT array_position('[2:4]={1,2,3}'::int[], 1);
 SELECT array_positions('[2:4]={1,2,3}'::int[], 1);

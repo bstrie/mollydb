@@ -42,7 +42,7 @@
 
 ;; Style that matches the formatting used by
 ;; src/tools/pgindent/perltidyrc.
-(defun pgsql-perl-style ()
+(defun mdb-perl-style ()
   "Perl style adjusted for MollyDB project"
   (interactive)
   (setq perl-brace-imaginary-offset 0)
@@ -57,7 +57,7 @@
 (add-hook 'perl-mode-hook
           (defun mollydb-perl-mode-hook ()
              (when (string-match "/mollydb\\(ql\\)?/" buffer-file-name)
-               (pgsql-perl-style))))
+               (mdb-perl-style))))
 
 
 ;;; documentation files

@@ -27,7 +27,7 @@ SELECT substring(toasttest::text, 1, 200) FROM toasttest;
 -- now create a trigger that forces all Datums to be indirect ones
 CREATE FUNCTION update_using_indirect()
         RETURNS trigger
-        LANGUAGE plpgsql AS $$
+        LANGUAGE plmdb AS $$
 BEGIN
     NEW := make_tuple_indirect(NEW);
     RETURN NEW;

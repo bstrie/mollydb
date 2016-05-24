@@ -147,7 +147,7 @@ test: indirect_toast
 test: equivclass
 test: plancache
 test: limit
-test: plpgsql
+test: plmdb
 test: copy2
 test: temp
 test: domain

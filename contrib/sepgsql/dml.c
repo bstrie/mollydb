@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/dml.c
+ * contrib/semdb/dml.c
  *
  * Routines to handle DML permission checks
  *
@@ -26,7 +26,7 @@
 #include "utils/lsyscache.h"
 #include "utils/syscache.h"
 
-#include "sepgsql.h"
+#include "semdb.h"
 
 /*
  * fixup_whole_row_references
@@ -162,7 +162,7 @@ check_relation_privileges(Oid relOid,
 	 * system catalogs using DMLs - clients cannot reference/modify toast
 	 * relations using DMLs
 	 */
-	if (sepgsql_getenforce() > 0)
+	if (semdb_getenforce() > 0)
 	{
 		Oid			relnamespace = get_rel_namespace(relOid);
 
@@ -190,7 +190,7 @@ check_relation_privileges(Oid relOid,
 	switch (relkind)
 	{
 		case RELKIND_RELATION:
-			result = sepgsql_avc_check_perms(&object,
+			result = semdb_avc_check_perms(&object,
 											 SEPG_CLASS_DB_TABLE,
 											 required,
 											 audit_name,
@@ -201,7 +201,7 @@ check_relation_privileges(Oid relOid,
 			Assert((required & ~SEPG_DB_TABLE__SELECT) == 0);
 
 			if (required & SEPG_DB_TABLE__SELECT)
-				result = sepgsql_avc_check_perms(&object,
+				result = semdb_avc_check_perms(&object,
 												 SEPG_CLASS_DB_SEQUENCE,
 												 SEPG_DB_SEQUENCE__GET_VALUE,
 												 audit_name,
@@ -209,7 +209,7 @@ check_relation_privileges(Oid relOid,
 			break;
 
 		case RELKIND_VIEW:
-			result = sepgsql_avc_check_perms(&object,
+			result = semdb_avc_check_perms(&object,
 											 SEPG_CLASS_DB_VIEW,
 											 SEPG_DB_VIEW__EXPAND,
 											 audit_name,
@@ -264,7 +264,7 @@ check_relation_privileges(Oid relOid,
 		object.objectSubId = attnum;
 		audit_name = getObjectDescription(&object);
 
-		result = sepgsql_avc_check_perms(&object,
+		result = semdb_avc_check_perms(&object,
 										 SEPG_CLASS_DB_COLUMN,
 										 column_perms,
 										 audit_name,
@@ -278,12 +278,12 @@ check_relation_privileges(Oid relOid,
 }
 
 /*
- * sepgsql_dml_privileges
+ * semdb_dml_privileges
  *
  * Entrypoint of the DML permission checks
  */
 bool
-sepgsql_dml_privileges(List *rangeTabls, bool abort_on_violation)
+semdb_dml_privileges(List *rangeTabls, bool abort_on_violation)
 {
 	ListCell   *lr;
 

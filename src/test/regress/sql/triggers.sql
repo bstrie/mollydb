@@ -218,7 +218,7 @@ COPY main_table (a,b) FROM stdin;
 80	15
 \.
 
-CREATE FUNCTION trigger_func() RETURNS trigger LANGUAGE plpgsql AS '
+CREATE FUNCTION trigger_func() RETURNS trigger LANGUAGE plmdb AS '
 BEGIN
 	RAISE NOTICE ''trigger_func(%) called: action = %, when = %, level = %'', TG_ARGV[0], TG_OP, TG_WHEN, TG_LEVEL;
 	RETURN NULL;
@@ -328,7 +328,7 @@ BEGIN
     TG_ARGV[0], TG_OP, OLD, NEW;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 CREATE TRIGGER some_trig_before BEFORE UPDATE ON some_t FOR EACH ROW
   EXECUTE PROCEDURE dummy_update_func('before');
 CREATE TRIGGER some_trig_aftera AFTER UPDATE ON some_t FOR EACH ROW
@@ -383,7 +383,7 @@ create function trigtest() returns trigger as $$
 begin
 	raise notice '% % % %', TG_RELNAME, TG_OP, TG_WHEN, TG_LEVEL;
 	return new;
-end;$$ language plpgsql;
+end;$$ language plmdb;
 
 create trigger trigtest_b_row_tg before insert or update or delete on trigtest
 for each row execute procedure trigtest();
@@ -422,7 +422,7 @@ CREATE TABLE trigger_test (
 );
 
 CREATE OR REPLACE FUNCTION trigger_data()  RETURNS trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plmdb AS $$
 
 declare
 
@@ -433,7 +433,7 @@ begin
 
 	relid := TG_relid::regclass;
 
-	-- plpgsql can't discover its trigger data in a hash like perl and python
+	-- plmdb can't discover its trigger data in a hash like perl and python
 	-- can, or by a sort of reflection like tcl can,
 	-- so we have to hard code the names.
 	raise NOTICE 'TG_NAME: %', TG_name;
@@ -494,7 +494,7 @@ DROP TABLE trigger_test;
 CREATE TABLE trigger_test (f1 int, f2 text, f3 text);
 
 -- this is the obvious (and wrong...) way to compare rows
-CREATE FUNCTION mytrigger() RETURNS trigger LANGUAGE plpgsql as $$
+CREATE FUNCTION mytrigger() RETURNS trigger LANGUAGE plmdb as $$
 begin
 	if row(old.*) = row(new.*) then
 		raise notice 'row % not changed', new.f1;
@@ -517,7 +517,7 @@ UPDATE trigger_test SET f3 = NULL;
 UPDATE trigger_test SET f3 = NULL;
 
 -- the right way when considering nulls is
-CREATE OR REPLACE FUNCTION mytrigger() RETURNS trigger LANGUAGE plpgsql as $$
+CREATE OR REPLACE FUNCTION mytrigger() RETURNS trigger LANGUAGE plmdb as $$
 begin
 	if row(old.*) is distinct from row(new.*) then
 		raise notice 'row % changed', new.f1;
@@ -537,7 +537,7 @@ DROP FUNCTION mytrigger();
 
 -- Test snapshot management in serializable transactions involving triggers
 -- per bug report in 6bc73d4c0910042358k3d1adff3qa36f8df75198ecea@mail.gmail.com
-CREATE FUNCTION serializable_update_trig() RETURNS trigger LANGUAGE plpgsql AS
+CREATE FUNCTION serializable_update_trig() RETURNS trigger LANGUAGE plmdb AS
 $$
 declare
 	rec record;
@@ -622,7 +622,7 @@ CREATE VIEW main_view AS SELECT a, b FROM main_table;
 
 -- VIEW trigger function
 CREATE OR REPLACE FUNCTION view_trigger() RETURNS trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plmdb AS $$
 declare
     argstr text := '';
 begin
@@ -800,7 +800,7 @@ CREATE VIEW city_view AS
     FROM city_table ci
     LEFT JOIN country_table co ON co.country_id = ci.country_id;
 
-CREATE FUNCTION city_insert() RETURNS trigger LANGUAGE plpgsql AS $$
+CREATE FUNCTION city_insert() RETURNS trigger LANGUAGE plmdb AS $$
 declare
     ctry_id int;
 begin
@@ -830,7 +830,7 @@ $$;
 CREATE TRIGGER city_insert_trig INSTEAD OF INSERT ON city_view
 FOR EACH ROW EXECUTE PROCEDURE city_insert();
 
-CREATE FUNCTION city_delete() RETURNS trigger LANGUAGE plpgsql AS $$
+CREATE FUNCTION city_delete() RETURNS trigger LANGUAGE plmdb AS $$
 begin
     DELETE FROM city_table WHERE city_id = OLD.city_id;
     if NOT FOUND then RETURN NULL; end if;
@@ -841,7 +841,7 @@ $$;
 CREATE TRIGGER city_delete_trig INSTEAD OF DELETE ON city_view
 FOR EACH ROW EXECUTE PROCEDURE city_delete();
 
-CREATE FUNCTION city_update() RETURNS trigger LANGUAGE plpgsql AS $$
+CREATE FUNCTION city_update() RETURNS trigger LANGUAGE plmdb AS $$
 declare
     ctry_id int;
 begin
@@ -902,7 +902,7 @@ CREATE VIEW european_city_view AS
     SELECT * FROM city_view WHERE continent = 'Europe';
 SELECT count(*) FROM european_city_view;
 
-CREATE FUNCTION no_op_trig_fn() RETURNS trigger LANGUAGE plpgsql
+CREATE FUNCTION no_op_trig_fn() RETURNS trigger LANGUAGE plmdb
 AS 'begin RETURN NULL; end';
 
 CREATE TRIGGER no_op_trig INSTEAD OF INSERT OR UPDATE OR DELETE
@@ -972,7 +972,7 @@ create table depth_b (id int not null primary key);
 create table depth_c (id int not null primary key);
 
 create function depth_a_tf() returns trigger
-  language plpgsql as $$
+  language plmdb as $$
 begin
   raise notice '%: depth = %', tg_name, pg_trigger_depth();
   insert into depth_b values (new.id);
@@ -984,7 +984,7 @@ create trigger depth_a_tr before insert on depth_a
   for each row execute procedure depth_a_tf();
 
 create function depth_b_tf() returns trigger
-  language plpgsql as $$
+  language plmdb as $$
 begin
   raise notice '%: depth = %', tg_name, pg_trigger_depth();
   begin
@@ -1004,7 +1004,7 @@ create trigger depth_b_tr before insert on depth_b
   for each row execute procedure depth_b_tf();
 
 create function depth_c_tf() returns trigger
-  language plpgsql as $$
+  language plmdb as $$
 begin
   raise notice '%: depth = %', tg_name, pg_trigger_depth();
   if new.id = 1 then
@@ -1046,7 +1046,7 @@ create temp table child (
     val1 text);
 
 create function parent_upd_func()
-  returns trigger language plpgsql as
+  returns trigger language plmdb as
 $$
 begin
   if old.val1 <> new.val1 then
@@ -1060,7 +1060,7 @@ create trigger parent_upd_trig before update on parent
   for each row execute procedure parent_upd_func();
 
 create function parent_del_func()
-  returns trigger language plpgsql as
+  returns trigger language plmdb as
 $$
 begin
   delete from child where aid = old.aid;
@@ -1071,7 +1071,7 @@ create trigger parent_del_trig before delete on parent
   for each row execute procedure parent_del_func();
 
 create function child_ins_func()
-  returns trigger language plpgsql as
+  returns trigger language plmdb as
 $$
 begin
   update parent set bcnt = bcnt + 1 where aid = new.aid;
@@ -1082,7 +1082,7 @@ create trigger child_ins_trig after insert on child
   for each row execute procedure child_ins_func();
 
 create function child_del_func()
-  returns trigger language plpgsql as
+  returns trigger language plmdb as
 $$
 begin
   update parent set bcnt = bcnt - 1 where aid = old.aid;
@@ -1105,7 +1105,7 @@ select * from parent; select * from child;
 -- replace the trigger function with one that restarts the deletion after
 -- having modified a child
 create or replace function parent_del_func()
-  returns trigger language plpgsql as
+  returns trigger language plmdb as
 $$
 begin
   delete from child where aid = old.aid;
@@ -1138,7 +1138,7 @@ create temp table self_ref_trigger (
 );
 
 create function self_ref_trigger_ins_func()
-  returns trigger language plpgsql as
+  returns trigger language plmdb as
 $$
 begin
   if new.parent is not null then
@@ -1152,7 +1152,7 @@ create trigger self_ref_trigger_ins_trig before insert on self_ref_trigger
   for each row execute procedure self_ref_trigger_ins_func();
 
 create function self_ref_trigger_del_func()
-  returns trigger language plpgsql as
+  returns trigger language plmdb as
 $$
 begin
   if old.parent is not null then
@@ -1190,7 +1190,7 @@ drop function self_ref_trigger_del_func();
 create table upsert (key int4 primary key, color text);
 
 create function upsert_before_func()
-  returns trigger language plpgsql as
+  returns trigger language plmdb as
 $$
 begin
   if (TG_OP = 'UPDATE') then
@@ -1211,7 +1211,7 @@ create trigger upsert_before_trig before insert or update on upsert
   for each row execute procedure upsert_before_func();
 
 create function upsert_after_func()
-  returns trigger language plpgsql as
+  returns trigger language plmdb as
 $$
 begin
   if (TG_OP = 'UPDATE') then

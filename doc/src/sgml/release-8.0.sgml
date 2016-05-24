@@ -492,7 +492,7 @@
 
     <listitem>
      <para>
-      Fix plpgsql failure in one case where a composite column is set to NULL
+      Fix plmdb failure in one case where a composite column is set to NULL
       (Tom)
      </para>
     </listitem>
@@ -1008,9 +1008,9 @@
 
     <listitem>
      <para>
-      Make all documentation reference <literal>pgsql-bugs</> and/or
-      <literal>pgsql-hackers</> as appropriate, instead of the
-      now-decommissioned <literal>pgsql-ports</> and <literal>pgsql-patches</>
+      Make all documentation reference <literal>mdb-bugs</> and/or
+      <literal>mdb-hackers</> as appropriate, instead of the
+      now-decommissioned <literal>mdb-ports</> and <literal>mdb-patches</>
       mailing lists (Tom)
      </para>
     </listitem>
@@ -2918,13 +2918,13 @@ will appear in 8.1.
 </para></listitem>
 <listitem><para>Planner adjustments to improve behavior on freshly-created
 tables (Tom)</para></listitem>
-<listitem><para>Allow plpgsql to assign to an element of an array that is
+<listitem><para>Allow plmdb to assign to an element of an array that is
 initially <literal>NULL</> (Tom)</para>
 <para>
 Formerly the array would remain <literal>NULL</>, but now it becomes a
 single-element array.  The main SQL engine was changed to handle
 <command>UPDATE</> of a null array value this way in 8.0, but the similar
-case in plpgsql was overlooked.
+case in plmdb was overlooked.
 </para>
 </listitem>
 <listitem><para>Convert <literal>\r\n</> and <literal>\r</> to <literal>\n</>
@@ -3048,7 +3048,7 @@ permission on a function.</para></listitem>
 contrib/intagg</para></listitem>
 <listitem><para>Add needed STRICT marking to some contrib functions (Kris
 Jurka)</para></listitem>
-<listitem><para>Avoid buffer overrun when plpgsql cursor declaration has too
+<listitem><para>Avoid buffer overrun when plmdb cursor declaration has too
 many parameters (Neil)</para></listitem>
 <listitem><para>Make <command>ALTER TABLE ADD COLUMN</> enforce domain
 constraints in all cases</para></listitem>

@@ -68,7 +68,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
     BEGIN\
 	INSERT INTO Log VALUES(TG_NAME, TG_WHEN);\
 	RETURN NEW;\
-    END; $test$ language plpgsql", ECPGt_EOIT, ECPGt_EORT);
+    END; $test$ language plmdb", ECPGt_EOIT, ECPGt_EORT);
 #line 26 "func.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();

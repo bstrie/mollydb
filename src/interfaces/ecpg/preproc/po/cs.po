@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ecpg-cs (MollyDB 9.3)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2012-09-18 16:40+0000\n"
 "PO-Revision-Date: 2012-09-19 01:01+0200\n"
 "Last-Translator: Tomas Vondra <tv@fuzzy.cz>\n"
@@ -175,10 +175,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Chyby hlaste na adresu <pgsql-bugs@mollydb.org>.\n"
+"Chyby hlaste na adresu <mdb-bugs@mollydb.org>.\n"
 
 #: ecpg.c:182 ecpg.c:333 ecpg.c:343
 #, c-format
@@ -308,10 +308,10 @@ msgstr "syntaktická chyba v příkazu EXEC SQL INCLUDE"
 #: pgc.l:1218
 #, c-format
 msgid ""
-"internal error: unreachable state; please report this to <pgsql-"
+"internal error: unreachable state; please report this to <mdb-"
 "bugs@mollydb.org>"
 msgstr ""
-"interní chyba: nedosažitelný stav; oznamte toto prosím na <pgsql-"
+"interní chyba: nedosažitelný stav; oznamte toto prosím na <mdb-"
 "bugs@mollydb.org>"
 
 #: pgc.l:1343

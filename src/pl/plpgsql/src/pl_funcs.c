@@ -8,12 +8,12 @@
  *
  *
  * IDENTIFICATION
- *	  src/pl/plpgsql/src/pl_funcs.c
+ *	  src/pl/plmdb/src/pl_funcs.c
  *
  *-------------------------------------------------------------------------
  */
 
-#include "plpgsql.h"
+#include "plmdb.h"
 
 #include "utils/memutils.h"
 
@@ -23,7 +23,7 @@
  *
  * The namespace structure actually forms a tree, of which only one linear
  * list or "chain" (from the youngest item to the root) is accessible from
- * any one plpgsql statement.  During initial parsing of a function, ns_top
+ * any one plmdb statement.  During initial parsing of a function, ns_top
  * points to the youngest item accessible from the block currently being
  * parsed.  We store the entire tree, however, since at runtime we will need
  * to access the chain that's relevant to any one statement.
@@ -36,35 +36,35 @@ static PLpgSQL_nsitem *ns_top = NULL;
 
 
 /* ----------
- * plpgsql_ns_init			Initialize namespace processing for a new function
+ * plmdb_ns_init			Initialize namespace processing for a new function
  * ----------
  */
 void
-plpgsql_ns_init(void)
+plmdb_ns_init(void)
 {
 	ns_top = NULL;
 }
 
 
 /* ----------
- * plpgsql_ns_push			Create a new namespace level
+ * plmdb_ns_push			Create a new namespace level
  * ----------
  */
 void
-plpgsql_ns_push(const char *label, enum PLpgSQL_label_types label_type)
+plmdb_ns_push(const char *label, enum PLpgSQL_label_types label_type)
 {
 	if (label == NULL)
 		label = "";
-	plpgsql_ns_additem(PLPGSQL_NSTYPE_LABEL, (int) label_type, label);
+	plmdb_ns_additem(PLPGSQL_NSTYPE_LABEL, (int) label_type, label);
 }
 
 
 /* ----------
- * plpgsql_ns_pop			Pop entries back to (and including) the last label
+ * plmdb_ns_pop			Pop entries back to (and including) the last label
  * ----------
  */
 void
-plpgsql_ns_pop(void)
+plmdb_ns_pop(void)
 {
 	Assert(ns_top != NULL);
 	while (ns_top->itemtype != PLPGSQL_NSTYPE_LABEL)
@@ -74,22 +74,22 @@ plpgsql_ns_pop(void)
 
 
 /* ----------
- * plpgsql_ns_top			Fetch the current namespace chain end
+ * plmdb_ns_top			Fetch the current namespace chain end
  * ----------
  */
 PLpgSQL_nsitem *
-plpgsql_ns_top(void)
+plmdb_ns_top(void)
 {
 	return ns_top;
 }
 
 
 /* ----------
- * plpgsql_ns_additem		Add an item to the current namespace chain
+ * plmdb_ns_additem		Add an item to the current namespace chain
  * ----------
  */
 void
-plpgsql_ns_additem(int itemtype, int itemno, const char *name)
+plmdb_ns_additem(int itemtype, int itemno, const char *name)
 {
 	PLpgSQL_nsitem *nse;
 
@@ -107,7 +107,7 @@ plpgsql_ns_additem(int itemtype, int itemno, const char *name)
 
 
 /* ----------
- * plpgsql_ns_lookup		Lookup an identifier in the given namespace chain
+ * plmdb_ns_lookup		Lookup an identifier in the given namespace chain
  *
  * Note that this only searches for variables, not labels.
  *
@@ -127,7 +127,7 @@ plpgsql_ns_additem(int itemtype, int itemno, const char *name)
  * ----------
  */
 PLpgSQL_nsitem *
-plpgsql_ns_lookup(PLpgSQL_nsitem *ns_cur, bool localmode,
+plmdb_ns_lookup(PLpgSQL_nsitem *ns_cur, bool localmode,
 				  const char *name1, const char *name2, const char *name3,
 				  int *names_used)
 {
@@ -188,11 +188,11 @@ plpgsql_ns_lookup(PLpgSQL_nsitem *ns_cur, bool localmode,
 
 
 /* ----------
- * plpgsql_ns_lookup_label		Lookup a label in the given namespace chain
+ * plmdb_ns_lookup_label		Lookup a label in the given namespace chain
  * ----------
  */
 PLpgSQL_nsitem *
-plpgsql_ns_lookup_label(PLpgSQL_nsitem *ns_cur, const char *name)
+plmdb_ns_lookup_label(PLpgSQL_nsitem *ns_cur, const char *name)
 {
 	while (ns_cur != NULL)
 	{
@@ -207,11 +207,11 @@ plpgsql_ns_lookup_label(PLpgSQL_nsitem *ns_cur, const char *name)
 
 
 /* ----------
- * plpgsql_ns_find_nearest_loop		Find innermost loop label in namespace chain
+ * plmdb_ns_find_nearest_loop		Find innermost loop label in namespace chain
  * ----------
  */
 PLpgSQL_nsitem *
-plpgsql_ns_find_nearest_loop(PLpgSQL_nsitem *ns_cur)
+plmdb_ns_find_nearest_loop(PLpgSQL_nsitem *ns_cur)
 {
 	while (ns_cur != NULL)
 	{
@@ -229,7 +229,7 @@ plpgsql_ns_find_nearest_loop(PLpgSQL_nsitem *ns_cur)
  * Statement type as a string, for use in error messages etc.
  */
 const char *
-plpgsql_stmt_typename(PLpgSQL_stmt *stmt)
+plmdb_stmt_typename(PLpgSQL_stmt *stmt)
 {
 	switch ((enum PLpgSQL_stmt_types) stmt->cmd_type)
 	{
@@ -291,7 +291,7 @@ plpgsql_stmt_typename(PLpgSQL_stmt *stmt)
  * GET DIAGNOSTICS item name as a string, for use in error messages etc.
  */
 const char *
-plpgsql_getdiag_kindname(int kind)
+plmdb_getdiag_kindname(int kind)
 {
 	switch (kind)
 	{
@@ -690,7 +690,7 @@ free_expr(PLpgSQL_expr *expr)
 }
 
 void
-plpgsql_free_function_memory(PLpgSQL_function *func)
+plmdb_free_function_memory(PLpgSQL_function *func)
 {
 	int			i;
 
@@ -1526,7 +1526,7 @@ dump_getdiag(PLpgSQL_stmt_getdiag *stmt)
 			printf(", ");
 
 		printf("{var %d} = %s", diag_item->target,
-			   plpgsql_getdiag_kindname(diag_item->kind));
+			   plmdb_getdiag_kindname(diag_item->kind));
 	}
 	printf("\n");
 }
@@ -1538,7 +1538,7 @@ dump_expr(PLpgSQL_expr *expr)
 }
 
 void
-plpgsql_dumptree(PLpgSQL_function *func)
+plmdb_dumptree(PLpgSQL_function *func)
 {
 	int			i;
 	PLpgSQL_datum *d;

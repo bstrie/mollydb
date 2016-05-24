@@ -9,11 +9,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pg_ctl (MollyDB 9.6)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:14+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
 "Last-Translator: Carlos Chapi <carlos.chapi@2ndquadrant.com>\n"
-"Language-Team: PgSQL Español <pgsql-es-ayuda@mollydb.org>\n"
+"Language-Team: PgSQL Español <mdb-es-ayuda@mollydb.org>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -780,10 +780,10 @@ msgstr "  demand     iniciar el servicio en demanda\n"
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Reporte errores a <pgsql-bugs@mollydb.org>.\n"
+"Reporte errores a <mdb-bugs@mollydb.org>.\n"
 
 #: pg_ctl.c:1998
 #, c-format

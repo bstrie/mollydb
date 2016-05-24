@@ -3043,7 +3043,7 @@ BEGIN
     RETURN NULL;
 END;
 $$
-LANGUAGE plpgsql;
+LANGUAGE plmdb;
 </programlisting>
 
         After creating the function, we create a trigger which
@@ -3085,7 +3085,7 @@ BEGIN
     RETURN NULL;
 END;
 $$
-LANGUAGE plpgsql;
+LANGUAGE plmdb;
 </programlisting>
 
         The trigger definition is the same as before.

@@ -30,7 +30,7 @@
 
 (define draft-mode              #f)
 
-(define pgsql-docs-list "pgsql-docs@mollydb.org")
+(define mdb-docs-list "mdb-docs@mollydb.org")
 
 ;; Don't show manpage volume numbers
 (define %refentry-xref-manvolnum% #f)
@@ -184,7 +184,7 @@
 (define %generate-legalnotice-link% #t)
 (define %html-ext%              ".html")
 (define %root-filename%         "index")
-(define %link-mailto-url%       (string-append "mailto:" pgsql-docs-list))
+(define %link-mailto-url%       (string-append "mailto:" mdb-docs-list))
 (define %use-id-as-filename%    #t)
 (define website-stylesheet      #f)
 (define %stylesheet%            (if website-stylesheet "http://www.mollydb.org/media/css/docs.css" "stylesheet.css"))
@@ -449,13 +449,13 @@
 (define %refentry-keep%         #f)
 
 ;; Disabled because of TeX problems
-;; (http://archives.mollydb.org/pgsql-docs/2007-12/msg00056.php)
+;; (http://archives.mollydb.org/mdb-docs/2007-12/msg00056.php)
 (define ($generate-book-lot-list$) '())
 
 ;; Indentation of verbatim environments.  (This should really be done
 ;; with start-indent in DSSSL.)
 ;; Use of indentation in this area exposes a bug in openjade,
-;; http://archives.mollydb.org/pgsql-docs/2006-12/msg00064.php
+;; http://archives.mollydb.org/mdb-docs/2006-12/msg00064.php
 ;; (define %indent-programlisting-lines% "    ")
 ;; (define %indent-screen-lines% "    ")
 ;; (define %indent-synopsis-lines% "    ")

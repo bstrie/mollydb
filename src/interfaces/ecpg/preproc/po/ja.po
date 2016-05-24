@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.0 beta 3\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 09:56+0900\n"
 "PO-Revision-Date: 2010-07-21 18:37+0900\n"
 "Last-Translator: HOTTA Michihide <hotta@net-newbie.com>\n"
@@ -169,10 +169,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"不具合は<pgsql-bugs@mollydb.org>に報告してください。\n"
+"不具合は<mdb-bugs@mollydb.org>に報告してください。\n"
 
 #: ecpg.c:182 ecpg.c:333 ecpg.c:343
 #, c-format
@@ -301,8 +301,8 @@ msgstr "EXEC SQL INCLUDEコマンドにおいて構文エラーがあります"
 
 #: pgc.l:1218
 #, c-format
-msgid "internal error: unreachable state; please report this to <pgsql-bugs@mollydb.org>"
-msgstr "内部エラー: 到達しないはずの状態です。<pgsql-bugs@mollydb.org>まで報告してください"
+msgid "internal error: unreachable state; please report this to <mdb-bugs@mollydb.org>"
+msgstr "内部エラー: 到達しないはずの状態です。<mdb-bugs@mollydb.org>まで報告してください"
 
 #: pgc.l:1343
 #, c-format

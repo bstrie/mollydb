@@ -548,7 +548,7 @@
 #define MEMSET_LOOP_LIMIT 1024
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "pgsql-bugs@mollydb.org"
+#define PACKAGE_BUGREPORT "mdb-bugs@mollydb.org"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "MollyDB"

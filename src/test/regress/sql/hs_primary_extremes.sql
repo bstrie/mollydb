@@ -9,7 +9,7 @@ create table hs_extreme (col1 integer);
 
 CREATE OR REPLACE FUNCTION hs_subxids (n integer)
 RETURNS void
-LANGUAGE plpgsql
+LANGUAGE plmdb
 AS $$
     BEGIN
       IF n <= 0 THEN RETURN; END IF;
@@ -30,7 +30,7 @@ set client_min_messages = 'warning';
 
 CREATE OR REPLACE FUNCTION hs_locks_create (n integer)
 RETURNS void
-LANGUAGE plpgsql
+LANGUAGE plmdb
 AS $$
     BEGIN
       IF n <= 0 THEN
@@ -45,7 +45,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION hs_locks_drop (n integer)
 RETURNS void
-LANGUAGE plpgsql
+LANGUAGE plmdb
 AS $$
     BEGIN
       IF n <= 0 THEN

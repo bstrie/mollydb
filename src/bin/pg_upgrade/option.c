@@ -326,7 +326,7 @@ or\n"), old_cluster.port, new_cluster.port, os_info.user);
   C:\\> set PGBINNEW=newCluster/bin\n\
   C:\\> pg_upgrade\n"));
 #endif
-	printf(_("\nReport bugs to <pgsql-bugs@mollydb.org>.\n"));
+	printf(_("\nReport bugs to <mdb-bugs@mollydb.org>.\n"));
 }
 
 

@@ -23,7 +23,7 @@ int main() {
 	INSERT INTO Log VALUES(TG_NAME, TG_WHEN);
 	RETURN NEW;
     END; $test$
-    LANGUAGE plpgsql;
+    LANGUAGE plmdb;
 
   EXEC SQL CREATE TRIGGER My_Table_Check_Trigger
     BEFORE INSERT

@@ -134,7 +134,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_room_au after update
     on Room for each row execute procedure tg_room_au();
@@ -149,7 +149,7 @@ begin
     delete from WSlot where roomno = old.roomno;
     return old;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_room_ad after delete
     on Room for each row execute procedure tg_room_ad();
@@ -166,7 +166,7 @@ begin
     end if;
     return new;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create trigger tg_wslot_biu before insert or update
     on WSlot for each row execute procedure tg_wslot_biu();
@@ -183,7 +183,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_pfield_au after update
     on PField for each row execute procedure tg_pfield_au();
@@ -198,7 +198,7 @@ begin
     delete from PSlot where pfname = old.name;
     return old;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_pfield_ad after delete
     on PField for each row execute procedure tg_pfield_ad();
@@ -219,7 +219,7 @@ begin
     end if;
     return ps;
 end;
-$proc$ language plpgsql;
+$proc$ language plmdb;
 
 create trigger tg_pslot_biu before insert or update
     on PSlot for each row execute procedure tg_pslot_biu();
@@ -236,7 +236,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_system_au after update
     on System for each row execute procedure tg_system_au();
@@ -264,7 +264,7 @@ begin
     new.slotname := sname;
     return new;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create trigger tg_iface_biu before insert or update
     on IFace for each row execute procedure tg_iface_biu();
@@ -295,7 +295,7 @@ begin
 	return old;
     end if;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_hub_a after insert or update or delete
     on Hub for each row execute procedure tg_hub_a();
@@ -322,7 +322,7 @@ begin
     end loop;
     return 0;
 end
-' language plpgsql;
+' language plmdb;
 
 -- Test comments
 COMMENT ON FUNCTION tg_hub_adjustslots_wrong(bpchar, integer, integer) IS 'function with args';
@@ -361,7 +361,7 @@ begin
     new.slotname := sname;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_hslot_biu before insert or update
     on HSlot for each row execute procedure tg_hslot_biu();
@@ -384,7 +384,7 @@ begin
     end if;
     raise exception ''no manual manipulation of HSlot'';
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_hslot_bd before delete
     on HSlot for each row execute procedure tg_hslot_bd();
@@ -401,7 +401,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_chkslotname before insert
     on PSlot for each row execute procedure tg_chkslotname('PS');
@@ -430,7 +430,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_chkslotlink before insert or update
     on PSlot for each row execute procedure tg_chkslotlink();
@@ -459,7 +459,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_chkbacklink before insert or update
     on PSlot for each row execute procedure tg_chkbacklink();
@@ -494,7 +494,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_pslot_bu before update
     on PSlot for each row execute procedure tg_pslot_bu();
@@ -523,7 +523,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_wslot_bu before update
     on WSlot for each row execute procedure tg_Wslot_bu();
@@ -552,7 +552,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_pline_bu before update
     on PLine for each row execute procedure tg_pline_bu();
@@ -581,7 +581,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_iface_bu before update
     on IFace for each row execute procedure tg_iface_bu();
@@ -610,7 +610,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_hslot_bu before update
     on HSlot for each row execute procedure tg_hslot_bu();
@@ -637,7 +637,7 @@ begin
     end if;
     return new;
 end;
-' language plpgsql;
+' language plmdb;
 
 create trigger tg_phone_bu before update
     on PHone for each row execute procedure tg_phone_bu();
@@ -679,7 +679,7 @@ begin
 	return old;
     end if;
 end;
-' language plpgsql;
+' language plmdb;
 
 
 create trigger tg_backlink_a after insert or update or delete
@@ -745,7 +745,7 @@ begin
     end if;
     raise exception ''illegal backlink beginning with %'', mytype;
 end;
-' language plpgsql;
+' language plmdb;
 
 
 -- ************************************************************
@@ -792,7 +792,7 @@ begin
 	return 0;
     end if;
 end
-' language plpgsql;
+' language plmdb;
 
 
 -- ************************************************************
@@ -831,7 +831,7 @@ begin
 	return old;
     end if;
 end;
-' language plpgsql;
+' language plmdb;
 
 
 create trigger tg_slotlink_a after insert or update or delete
@@ -933,7 +933,7 @@ begin
     end if;
     raise exception ''illegal slotlink beginning with %'', mytype;
 end;
-' language plpgsql;
+' language plmdb;
 
 
 -- ************************************************************
@@ -1000,7 +1000,7 @@ begin
 	return 0;
     end if;
 end;
-' language plpgsql;
+' language plmdb;
 
 
 -- ************************************************************
@@ -1045,7 +1045,7 @@ begin
     end if;
     return rec.backlink;
 end;
-' language plpgsql;
+' language plmdb;
 
 
 -- ************************************************************
@@ -1081,7 +1081,7 @@ begin
     end if;
     return psrec.slotlink;
 end;
-' language plpgsql;
+' language plmdb;
 
 
 -- ************************************************************
@@ -1131,7 +1131,7 @@ begin
     end if;
     return rec.slotlink;
 end;
-' language plpgsql;
+' language plmdb;
 
 
 
@@ -1435,7 +1435,7 @@ BEGIN
         rslt = CAST($1 AS TEXT) || '','' || recursion_test($1 - 1, $2);
     END IF;
     RETURN rslt;
-END;' LANGUAGE plpgsql;
+END;' LANGUAGE plmdb;
 
 SELECT recursion_test(4,3);
 
@@ -1478,7 +1478,7 @@ create function test_found()
     insert into found_test_tbl values (6);
   end if;
   return true;
-  end;' language plpgsql;
+  end;' language plmdb;
 
 select test_found();
 select * from found_test_tbl;
@@ -1495,7 +1495,7 @@ BEGIN
 		RETURN NEXT rec;
 	END LOOP;
 	RETURN;
-END;' language plpgsql;
+END;' language plmdb;
 
 select * from test_table_func_rec();
 
@@ -1507,7 +1507,7 @@ BEGIN
 		RETURN NEXT row;
 	END LOOP;
 	RETURN;
-END;' language plpgsql;
+END;' language plmdb;
 
 select * from test_table_func_row();
 
@@ -1519,7 +1519,7 @@ BEGIN
 		RETURN NEXT i + 1;
 	END LOOP;
 	RETURN;
-END;' language plpgsql;
+END;' language plmdb;
 
 select * from test_ret_set_scalar(1,10);
 
@@ -1537,7 +1537,7 @@ BEGIN
 		RETURN NEXT retval;
 	END IF;
 	RETURN;
-END;' language plpgsql;
+END;' language plmdb;
 
 SELECT * FROM test_ret_set_rec_dyn(1500) AS (a int, b int, c int);
 SELECT * FROM test_ret_set_rec_dyn(5) AS (a int, b numeric, c text);
@@ -1553,7 +1553,7 @@ BEGIN
 		SELECT INTO retval 50, 5::numeric, ''xxx''::text;
 		RETURN retval;
 	END IF;
-END;' language plpgsql;
+END;' language plmdb;
 
 SELECT * FROM test_ret_rec_dyn(1500) AS (a int, b int, c int);
 SELECT * FROM test_ret_rec_dyn(5) AS (a int, b numeric, c text);
@@ -1567,13 +1567,13 @@ SELECT * FROM test_ret_rec_dyn(5) AS (a int, b numeric, c text);
 create function f1(in i int, out j int) returns int as $$
 begin
   return i+1;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 create function f1(in i int, out j int) as $$
 begin
   j := i+1;
   return;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select f1(42);
 select * from f1(42);
@@ -1581,7 +1581,7 @@ select * from f1(42);
 create or replace function f1(inout i int) as $$
 begin
   i := i+1;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select f1(42);
 select * from f1(42);
@@ -1595,7 +1595,7 @@ begin
   j := i+2;
   return next;
   return;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select * from f1(42);
 
@@ -1606,7 +1606,7 @@ begin
   j := i;
   j := j+1;
   k := 'foo';
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select f1(42);
 select * from f1(42);
@@ -1621,7 +1621,7 @@ begin
   j := j+1;
   k := 'foot';
   return next;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select * from f1(42);
 
@@ -1632,7 +1632,7 @@ begin
   j := i;
   k := array[j,j];
   return;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select * from duplic(42);
 select * from duplic('foo'::text);
@@ -1656,7 +1656,7 @@ BEGIN
 	ELSE
 		RETURN FALSE;
 	END IF;
-END;' language plpgsql;
+END;' language plmdb;
 
 create function perform_test_func() returns void as '
 BEGIN
@@ -1677,7 +1677,7 @@ BEGIN
 	END IF;
 
 	RETURN;
-END;' language plpgsql;
+END;' language plmdb;
 
 SELECT perform_test_func();
 SELECT * FROM perform_test;
@@ -1710,7 +1710,7 @@ begin
 			x := -2;
 	end;
 	return x;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select trap_zero_divide(50);
 select trap_zero_divide(0);
@@ -1736,7 +1736,7 @@ begin
 			x := -2;
 	end;
 	return x;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select trap_matching_test(50);
 select trap_matching_test(0);
@@ -1760,7 +1760,7 @@ begin
   end;
   insert into foo values(x);
   return x;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select subxact_rollback_semantics();
 select * from foo;
@@ -1781,7 +1781,7 @@ begin
   -- Abort transaction to abandon the statement_timeout setting.  Otherwise,
   -- the next top-level statement would be vulnerable to the timeout.
   raise exception 'end of function';
-end$$ language plpgsql;
+end$$ language plmdb;
 
 begin;
 set statement_timeout to 2000;
@@ -1802,7 +1802,7 @@ begin
       x := x || '9012';
   end;
   return x;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select test_variable_storage();
 
@@ -1828,7 +1828,7 @@ begin
 			return 0;
 	end;
 	return 1;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 create function trap_foreign_key_2() returns int as $$
 begin
@@ -1840,7 +1840,7 @@ begin
 			return 0;
 	end;
 	return 1;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select trap_foreign_key(1);
 select trap_foreign_key(2);	-- detects FK violation
@@ -1869,7 +1869,7 @@ begin
   select into x id from users where login = a_login;
   if found then return x; end if;
   return 0;
-end$$ language plpgsql stable;
+end$$ language plmdb stable;
 
 insert into users values('user1');
 
@@ -1889,7 +1889,7 @@ begin
     RETURN -2;  -- error code for insertion failure
   END IF;
   RETURN my_id_user;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select sp_add_user('user1');
 select sp_add_user('user2');
@@ -1915,14 +1915,14 @@ begin
     open rc for select a from rc_test;
     return rc;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 create function refcursor_test1(refcursor) returns refcursor as $$
 begin
     perform return_refcursor($1);
     return $1;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 begin;
 
@@ -1951,7 +1951,7 @@ begin
         return false;
     end if;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select refcursor_test2(20000, 20000) as "Should be false",
        refcursor_test2(20, 20) as "Should be true";
@@ -1973,7 +1973,7 @@ begin
         return false;
     end if;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select namedparmcursor_test1(20000, 20000) as "Should be false",
        namedparmcursor_test1(20, 20) as "Should be true";
@@ -1993,7 +1993,7 @@ begin
         return false;
     end if;
 end
-$$ language plpgsql;
+$$ language plmdb;
 select namedparmcursor_test2(20, 20);
 
 -- mixing named and positional: param2 is given twice, once in named notation
@@ -2004,7 +2004,7 @@ declare
 begin
     open c1(param2 := 20, 21);
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 -- mixing named and positional: same as previous test, but param1 is duplicated
 create function namedparmcursor_test4() returns void as $$
@@ -2013,7 +2013,7 @@ declare
 begin
     open c1(20, param1 := 21);
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 -- duplicate named parameter, should throw an error at parse time
 create function namedparmcursor_test5() returns void as $$
@@ -2023,7 +2023,7 @@ declare
 begin
   open c1 (p2 := 77, p2 := 42);
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 -- not enough parameters, should throw an error at parse time
 create function namedparmcursor_test6() returns void as $$
@@ -2033,7 +2033,7 @@ declare
 begin
   open c1 (p2 := 77);
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 -- division by zero runtime error, the context given in the error message
 -- should be sensible
@@ -2043,7 +2043,7 @@ declare
     select * from tenk1 where thousand = p1 and tenthous = p2;
 begin
   open c1 (p2 := 77, p1 := 42/0);
-end $$ language plpgsql;
+end $$ language plmdb;
 select namedparmcursor_test7();
 
 -- check that line comments work correctly within the argument list (there
@@ -2061,10 +2061,10 @@ begin
   , 42);
   fetch c1 into n;
   return n;
-end $$ language plpgsql;
+end $$ language plmdb;
 select namedparmcursor_test8();
 
--- cursor parameter name can match plpgsql variable or unreserved keyword
+-- cursor parameter name can match plmdb variable or unreserved keyword
 create function namedparmcursor_test9(p1 int) returns int4 as $$
 declare
   c1 cursor (p1 int, p2 int, debug int) for
@@ -2076,7 +2076,7 @@ begin
   open c1 (p1 := p1, p2 := p2, debug := 2);
   fetch c1 into n;
   return n;
-end $$ language plpgsql;
+end $$ language plmdb;
 select namedparmcursor_test9(6);
 
 --
@@ -2087,21 +2087,21 @@ begin
     raise notice 'This message has too many parameters!', $1;
     return $1;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create function raise_test2(int) returns int as $$
 begin
     raise notice 'This message has too few parameters: %, %, %', $1, $1;
     return $1;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create function raise_test3(int) returns int as $$
 begin
     raise notice 'This message has no parameters (despite having %% signs in it)!';
     return $1;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test3(1);
 
@@ -2126,7 +2126,7 @@ EXCEPTION
    WHEN OTHERS THEN
        raise notice 'WRONG - exception % caught in outer block', sqlerrm;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 SELECT reraise_test();
 
@@ -2141,7 +2141,7 @@ begin
     Johnny Yuma;
     a := 10;
     return a;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 create function bad_sql2() returns int as $$
 declare r record;
@@ -2150,25 +2150,25 @@ begin
         raise notice 'in loop';
     end loop;
     return 5;
-end;$$ language plpgsql;
+end;$$ language plmdb;
 
 -- a RETURN expression is mandatory, except for void-returning
 -- functions, where it is not allowed
 create function missing_return_expr() returns int as $$
 begin
     return ;
-end;$$ language plpgsql;
+end;$$ language plmdb;
 
 create function void_return_expr() returns void as $$
 begin
     return 5;
-end;$$ language plpgsql;
+end;$$ language plmdb;
 
 -- VOID functions are allowed to omit RETURN
 create function void_return_expr() returns void as $$
 begin
     perform 2+2;
-end;$$ language plpgsql;
+end;$$ language plmdb;
 
 select void_return_expr();
 
@@ -2176,7 +2176,7 @@ select void_return_expr();
 create function missing_return_expr() returns int as $$
 begin
     perform 2+2;
-end;$$ language plpgsql;
+end;$$ language plmdb;
 
 select missing_return_expr();
 
@@ -2208,7 +2208,7 @@ begin
     raise notice '% % %', i, j, k;
     execute 'select 1,2' into _v;
     return _v;
-end; $$ language plpgsql;
+end; $$ language plmdb;
 
 select execute_into_test('eifoo');
 
@@ -2222,7 +2222,7 @@ drop type eitype cascade;
 create function excpt_test1() returns void as $$
 begin
     raise notice '% %', sqlstate, sqlerrm;
-end; $$ language plpgsql;
+end; $$ language plmdb;
 -- should fail: SQLSTATE and SQLERRM are only in defined EXCEPTION
 -- blocks
 select excpt_test1();
@@ -2234,7 +2234,7 @@ begin
             raise notice '% %', sqlstate, sqlerrm;
         end;
     end;
-end; $$ language plpgsql;
+end; $$ language plmdb;
 -- should fail
 select excpt_test2();
 
@@ -2256,14 +2256,14 @@ begin
 	    end;
 	    raise notice '% %', sqlstate, sqlerrm;
     end;
-end; $$ language plpgsql;
+end; $$ language plmdb;
 select excpt_test3();
 
 create function excpt_test4() returns text as $$
 begin
 	begin perform 1/0;
 	exception when others then return sqlerrm; end;
-end; $$ language plpgsql;
+end; $$ language plmdb;
 select excpt_test4();
 
 drop function excpt_test1();
@@ -2280,7 +2280,7 @@ declare
 begin
     i := 2;
     raise notice '%; %; %; %; %; %', a, a[i], c, (select c || 'abc'), row(10,'aaa',NULL,30), NULL;
-end;$$ language plpgsql;
+end;$$ language plmdb;
 
 select raise_exprs();
 drop function raise_exprs();
@@ -2368,7 +2368,7 @@ begin
     raise notice '%', _r.v;
     continue;
   end loop;
-end; $$ language plpgsql;
+end; $$ language plmdb;
 
 select continue_test1();
 
@@ -2382,7 +2382,7 @@ begin
         continue;
     end;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- should fail: unlabeled EXIT is only legal inside a loop
 create function exit_error1() returns void as $$
@@ -2391,7 +2391,7 @@ begin
         exit;
     end;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- should fail: no such label
 create function continue_error2() returns void as $$
@@ -2402,7 +2402,7 @@ begin
         end loop;
     end;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- should fail: no such label
 create function exit_error2() returns void as $$
@@ -2413,7 +2413,7 @@ begin
         end loop;
     end;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- should fail: CONTINUE can't reference the label of a named block
 create function continue_error3() returns void as $$
@@ -2425,7 +2425,7 @@ begin
         end loop;
     end;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- On the other hand, EXIT *can* reference the label of a named block
 create function exit_block1() returns void as $$
@@ -2438,7 +2438,7 @@ begin
         end loop;
     end;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select exit_block1();
 drop function exit_block1();
@@ -2456,7 +2456,7 @@ begin
     exit flbl2;
   end loop;
 end blbl;
-$$ language plpgsql;
+$$ language plmdb;
 
 select end_label1();
 drop function end_label1();
@@ -2468,7 +2468,7 @@ begin
     exit;
   end loop flbl1;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- should fail: end label does not match start label
 create function end_label3() returns void as $$
@@ -2479,7 +2479,7 @@ begin
     exit;
   end loop outer_label;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- should fail: end label on a block without a start label
 create function end_label4() returns void as $$
@@ -2489,7 +2489,7 @@ begin
     exit;
   end loop outer_label;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- using list of scalars in fori and fore stmts
 create function for_vect() returns void as $proc$
@@ -2516,11 +2516,11 @@ begin
     raise notice '% % %', a, b, c;
   end loop;
 end;
-$proc$ language plpgsql;
+$proc$ language plmdb;
 
 select for_vect();
 
--- regression test: verify that multiple uses of same plpgsql datum within
+-- regression test: verify that multiple uses of same plmdb datum within
 -- a SQL command all get mapped to the same $n parameter.  The return value
 -- of the SELECT is not important, we only care that it doesn't fail with
 -- a complaint about an ungrouped column reference.
@@ -2531,7 +2531,7 @@ declare
 begin
   select into x,y unique1/p1, unique1/$1 from tenk1 group by unique1/p1;
   return x = y;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select multi_datum_use(42);
 
@@ -2551,7 +2551,7 @@ begin
   -- should work
   insert into foo values(5,6) returning * into x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2561,7 +2561,7 @@ begin
   -- should fail due to implicit strict
   insert into foo values(7,8),(9,10) returning * into x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2571,7 +2571,7 @@ begin
   -- should work
   execute 'insert into foo values(5,6) returning *' into x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2581,7 +2581,7 @@ begin
   -- this should work since EXECUTE isn't as picky
   execute 'insert into foo values(7,8),(9,10) returning *' into x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2593,7 +2593,7 @@ begin
   -- should work
   select * from foo where f1 = 3 into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2603,7 +2603,7 @@ begin
   -- should fail, no rows
   select * from foo where f1 = 0 into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2613,7 +2613,7 @@ begin
   -- should fail, too many rows
   select * from foo where f1 > 3 into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2623,7 +2623,7 @@ begin
   -- should work
   execute 'select * from foo where f1 = 3' into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2633,7 +2633,7 @@ begin
   -- should fail, no rows
   execute 'select * from foo where f1 = 0' into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2643,7 +2643,7 @@ begin
   -- should fail, too many rows
   execute 'select * from foo where f1 > 3' into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2651,7 +2651,7 @@ drop function footest();
 
 -- test printing parameters after failure due to STRICT
 
-set plpgsql.print_strict_params to true;
+set plmdb.print_strict_params to true;
 
 create or replace function footest() returns void as $$
 declare
@@ -2662,7 +2662,7 @@ begin
   -- no rows
   select * from foo where f1 = p1 and f1::text = p3 into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2675,7 +2675,7 @@ begin
   -- too many rows
   select * from foo where f1 > p1 or f1::text = p3  into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2685,7 +2685,7 @@ begin
   -- too many rows, no params
   select * from foo where f1 > 3 into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2695,7 +2695,7 @@ begin
   -- no rows
   execute 'select * from foo where f1 = $1 or f1::text = $2' using 0, 'foo' into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2705,7 +2705,7 @@ begin
   -- too many rows
   execute 'select * from foo where f1 > $1' using 1 into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2715,7 +2715,7 @@ begin
   -- too many rows, no parameters
   execute 'select * from foo where f1 > 3' into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
@@ -2730,11 +2730,11 @@ begin
   -- too many rows
   select * from foo where f1 > p1 or f1::text = p3  into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
-reset plpgsql.print_strict_params;
+reset plmdb.print_strict_params;
 
 create or replace function footest() returns void as $$
 -- override the global
@@ -2747,19 +2747,19 @@ begin
   -- too many rows
   select * from foo where f1 > p1 or f1::text = p3  into strict x;
   raise notice 'x.f1 = %, x.f2 = %', x.f1, x.f2;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select footest();
 
 -- test warnings and errors
-set plpgsql.extra_warnings to 'all';
-set plpgsql.extra_warnings to 'none';
-set plpgsql.extra_errors to 'all';
-set plpgsql.extra_errors to 'none';
+set plmdb.extra_warnings to 'all';
+set plmdb.extra_warnings to 'none';
+set plmdb.extra_errors to 'all';
+set plmdb.extra_errors to 'none';
 
 -- test warnings when shadowing a variable
 
-set plpgsql.extra_warnings to 'shadowed_variables';
+set plmdb.extra_warnings to 'shadowed_variables';
 
 -- simple shadowing of input and output parameters
 create or replace function shadowtest(in1 int)
@@ -2769,10 +2769,10 @@ in1 int;
 out1 int;
 begin
 end
-$$ language plpgsql;
+$$ language plmdb;
 select shadowtest(1);
 
-set plpgsql.extra_warnings to 'shadowed_variables';
+set plmdb.extra_warnings to 'shadowed_variables';
 select shadowtest(1);
 create or replace function shadowtest(in1 int)
 	returns table (out1 int) as $$
@@ -2781,7 +2781,7 @@ in1 int;
 out1 int;
 begin
 end
-$$ language plpgsql;
+$$ language plmdb;
 select shadowtest(1);
 drop function shadowtest(int);
 
@@ -2795,7 +2795,7 @@ begin
 	f1 int;
 	begin
 	end;
-end$$ language plpgsql;
+end$$ language plmdb;
 drop function shadowtest();
 
 -- several levels of shadowing
@@ -2808,7 +2808,7 @@ begin
 	in1 int;
 	begin
 	end;
-end$$ language plpgsql;
+end$$ language plmdb;
 drop function shadowtest(int);
 
 -- shadowing in cursor definitions
@@ -2818,25 +2818,25 @@ declare
 f1 int;
 c1 cursor (f1 int) for select 1;
 begin
-end$$ language plpgsql;
+end$$ language plmdb;
 drop function shadowtest();
 
 -- test errors when shadowing a variable
 
-set plpgsql.extra_errors to 'shadowed_variables';
+set plmdb.extra_errors to 'shadowed_variables';
 
 create or replace function shadowtest(f1 int)
 	returns boolean as $$
-declare f1 int; begin return 1; end $$ language plpgsql;
+declare f1 int; begin return 1; end $$ language plmdb;
 
 select shadowtest(1);
 
-reset plpgsql.extra_errors;
-reset plpgsql.extra_warnings;
+reset plmdb.extra_errors;
+reset plmdb.extra_warnings;
 
 create or replace function shadowtest(f1 int)
 	returns boolean as $$
-declare f1 int; begin return 1; end $$ language plpgsql;
+declare f1 int; begin return 1; end $$ language plmdb;
 
 select shadowtest(1);
 
@@ -2855,7 +2855,7 @@ begin
   end loop;
   close c;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from sc_test();
 
@@ -2872,7 +2872,7 @@ begin
   end loop;
   close c;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from sc_test();  -- fails because of NO SCROLL specification
 
@@ -2889,7 +2889,7 @@ begin
   end loop;
   close c;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from sc_test();
 
@@ -2906,7 +2906,7 @@ begin
   end loop;
   close c;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from sc_test();
 
@@ -2924,7 +2924,7 @@ begin
   end loop;
   close c;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from sc_test();
 
@@ -2946,7 +2946,7 @@ begin
   end loop;
   close c;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from sc_test();
 
@@ -2963,7 +2963,7 @@ begin
   end if;
   close c;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from sc_test();
 
@@ -2986,7 +2986,7 @@ begin
     raise notice 'innerblock.param1 = %', innerblock.param1;
   end;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select pl_qual_names(42);
 
@@ -3001,7 +3001,7 @@ begin
     return query select x + 1, x * 10 from generate_series(0, 10) s (x);
     return next;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from ret_query1();
 
@@ -3012,7 +3012,7 @@ begin
     return query select md5(s.x::text), s.x, s.x > 0
                  from generate_series(-8, lim) s (x) where s.x % 2 = 0;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from ret_query2(8);
 
@@ -3026,7 +3026,7 @@ begin
   execute 'select $2 + $2*3 + length($1)' into i using $2,$1;
   return i;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select exc_using(5, 'foobar');
 
@@ -3046,7 +3046,7 @@ begin
   close c;
   return;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select exc_using(5);
 
@@ -3088,7 +3088,7 @@ begin
   raise notice 'after loop, c2 = %', c2;
   return;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select forc01();
 
@@ -3106,7 +3106,7 @@ begin
     update forc_test set i = i * 100, j = r.j * 2 where current of c;
   end loop;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select forc01();
 
@@ -3126,7 +3126,7 @@ begin
     update forc_test set i = i * 100, j = r.j * 2 where current of c;
   end loop;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select forc01();
 
@@ -3144,7 +3144,7 @@ begin
     raise notice '%', r.i;
   end loop;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- test RETURN QUERY EXECUTE
 
@@ -3154,7 +3154,7 @@ begin
   return query execute 'select * from (values(10),(20)) f';
   return query execute 'select * from (values($1),($2)) f' using 40,50;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from return_dquery();
 
@@ -3171,7 +3171,7 @@ begin
   return query select * from tabwithcols;
   return query execute 'select * from tabwithcols';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from returnqueryf();
 
@@ -3204,7 +3204,7 @@ begin
   v := (1, 'hello');
   return v;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select compos();
 
@@ -3216,7 +3216,7 @@ begin
   v := (1, 'hello'::varchar);
   return v;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select compos();
 
@@ -3225,7 +3225,7 @@ create or replace function compos() returns compostype as $$
 begin
   return (1, 'hello'::varchar);
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select compos();
 
@@ -3234,7 +3234,7 @@ create or replace function compos() returns compostype as $$
 begin
   return (1, 'hello');
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select compos();
 
@@ -3243,7 +3243,7 @@ create or replace function compos() returns compostype as $$
 begin
   return (1, 'hello')::compostype;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select compos();
 
@@ -3257,7 +3257,7 @@ begin
   v := (1, 'hello');
   return v;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select composrec();
 
@@ -3266,7 +3266,7 @@ create or replace function composrec() returns record as $$
 begin
   return (1, 'hello');
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select composrec();
 
@@ -3282,7 +3282,7 @@ begin
   return next null::compostype;
   return next (2, 'goodbye')::compostype;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from compos();
 
@@ -3293,7 +3293,7 @@ create or replace function compos() returns compostype as $$
 begin
   return 1 + 1;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select compos();
 
@@ -3303,7 +3303,7 @@ declare x int := 42;
 begin
   return x;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from compos();
 
@@ -3317,7 +3317,7 @@ begin
   v := (1, 'hello');
   return v;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select compos();
 
@@ -3326,7 +3326,7 @@ create or replace function compos() returns int as $$
 begin
   return (1, 'hello')::compostype;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select compos();
 
@@ -3344,7 +3344,7 @@ begin
   raise '% % %', 1, 2, 3
      using errcode = 'division_by_zero', detail = 'some detail info';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3360,7 +3360,7 @@ begin
       raise notice 'SQLSTATE: % SQLERRM: %', sqlstate, sqlerrm;
       raise;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3373,7 +3373,7 @@ begin
       raise notice 'SQLSTATE: % SQLERRM: %', sqlstate, sqlerrm;
       raise;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3387,7 +3387,7 @@ begin
       raise notice 'SQLSTATE: % SQLERRM: %', sqlstate, sqlerrm;
       raise;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3399,7 +3399,7 @@ begin
       raise notice 'SQLSTATE: % SQLERRM: %', sqlstate, sqlerrm;
       raise;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3407,7 +3407,7 @@ create or replace function raise_test() returns void as $$
 begin
   raise division_by_zero;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3415,7 +3415,7 @@ create or replace function raise_test() returns void as $$
 begin
   raise sqlstate '1234F';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3423,7 +3423,7 @@ create or replace function raise_test() returns void as $$
 begin
   raise division_by_zero using message = 'custom' || ' message';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3431,7 +3431,7 @@ create or replace function raise_test() returns void as $$
 begin
   raise using message = 'custom' || ' message', errcode = '22012';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3440,7 +3440,7 @@ create or replace function raise_test() returns void as $$
 begin
   raise notice 'some message' using message = 'custom' || ' message', errcode = '22012';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3449,7 +3449,7 @@ create or replace function raise_test() returns void as $$
 begin
   raise division_by_zero using message = 'custom' || ' message', errcode = '22012';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3458,7 +3458,7 @@ create or replace function raise_test() returns void as $$
 begin
   raise;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3468,7 +3468,7 @@ declare v int := 0;
 begin
   return 10 / v;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create or replace function raise_test() returns void as $$
 begin
@@ -3476,7 +3476,7 @@ begin
      using detail = 'some detail of custom exception',
            hint = 'some hint related to custom exception';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create function stacked_diagnostics_test() returns void as $$
 declare _sqlstate text;
@@ -3492,7 +3492,7 @@ exception when others then
   raise notice 'sqlstate: %, message: %, context: [%]',
     _sqlstate, _message, replace(_context, E'\n', ' <- ');
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select stacked_diagnostics_test();
 
@@ -3509,7 +3509,7 @@ exception when others then
         _hint = pg_exception_hint;
   raise notice 'message: %, detail: %, hint: %', _message, _detail, _hint;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select stacked_diagnostics_test();
 
@@ -3525,7 +3525,7 @@ begin
         _hint = pg_exception_hint;
   raise notice 'message: %, detail: %, hint: %', _message, _detail, _hint;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select stacked_diagnostics_test();
 
@@ -3542,7 +3542,7 @@ exception
     raise notice using message = sqlstate;
     raise sqlstate '22012' using message = 'substitute message';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select raise_test();
 
@@ -3574,7 +3574,7 @@ exception when others then
   raise notice 'column %, constraint %, type %, table %, schema %',
     _column_name, _constraint_name, _datatype_name, _table_name, _schema_name;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select stacked_diagnostics_test();
 
@@ -3599,7 +3599,7 @@ begin
       return 'eleven, twelve';
   end case;
 end;
-$$ language plpgsql immutable;
+$$ language plmdb immutable;
 
 select case_test(1);
 select case_test(2);
@@ -3619,7 +3619,7 @@ exception
   when case_not_found then
     raise notice 'caught case_not_found % %', SQLSTATE, SQLERRM;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select catch();
 
@@ -3636,7 +3636,7 @@ begin
       return 'other';
   end case;
 end;
-$$ language plpgsql immutable;
+$$ language plmdb immutable;
 
 select case_test(1);
 select case_test(2);
@@ -3654,7 +3654,7 @@ begin
   for i in array_lower($1,1)..array_upper($1,1) loop
     raise notice '%', $1[i];
   end loop; end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select vari(1,2,3,4,5);
 select vari(3,4,5);
@@ -3672,7 +3672,7 @@ begin
   end loop;
   return aux;
 end;
-$$ language plpgsql immutable strict;
+$$ language plmdb immutable strict;
 
 select pleast(10,1,2,3,-16);
 select pleast(10.2,2.2,-1.1);
@@ -3686,7 +3686,7 @@ begin
   raise notice 'non-variadic function called';
   return $1;
 end;
-$$ language plpgsql immutable strict;
+$$ language plmdb immutable strict;
 
 select pleast(10);
 
@@ -3699,7 +3699,7 @@ create function tftest(int) returns table(a int, b int) as $$
 begin
   return query select $1, $1+i from generate_series(1,5) g(i);
 end;
-$$ language plpgsql immutable strict;
+$$ language plmdb immutable strict;
 
 select * from tftest(10);
 
@@ -3710,7 +3710,7 @@ begin
   a := a1 * 10; b := a1 * 10 + 1;
   return next;
 end;
-$$ language plpgsql immutable strict;
+$$ language plmdb immutable strict;
 
 select * from tftest(10);
 
@@ -3733,7 +3733,7 @@ begin
   get diagnostics rc = row_count;
   raise notice '% %', found, rc;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from rttest();
 
@@ -3753,7 +3753,7 @@ BEGIN
   END;
   RETURN 1;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE FUNCTION leaker_2(fail BOOL, OUT error_code INTEGER, OUT new_id INTEGER)
   RETURNS RECORD AS $$
@@ -3765,7 +3765,7 @@ BEGIN
   new_id := 1;
   RETURN;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 SELECT * FROM leaker_1(false);
 SELECT * FROM leaker_1(true);
@@ -3789,7 +3789,7 @@ BEGIN
   arr[(SELECT i)][(SELECT i+1)] := (SELECT lr);
   RETURN arr;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 SELECT nonsimple_expr_test();
 
@@ -3807,7 +3807,7 @@ begin
   end;
   return i;
 end;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 SELECT nonsimple_expr_test();
 
@@ -3816,7 +3816,7 @@ DROP FUNCTION nonsimple_expr_test();
 --
 -- Test cases involving recursion and error recovery in simple expressions
 -- (bugs in all versions before October 2010).  The problems are most
--- easily exposed by mutual recursion between plpgsql and sql functions.
+-- easily exposed by mutual recursion between plmdb and sql functions.
 --
 
 create function recurse(float8) returns float8 as
@@ -3828,7 +3828,7 @@ begin
     return $1;
   end if;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- "limit" is to prevent this from being inlined
 create function sql_recurse(float8) returns float8 as
@@ -3839,7 +3839,7 @@ select recurse(10);
 create function error1(text) returns text language sql as
 $$ SELECT relname::text FROM pg_class c WHERE c.oid = $1::regclass $$;
 
-create function error2(p_name_table text) returns text language plpgsql as $$
+create function error2(p_name_table text) returns text language plmdb as $$
 begin
   return error1(p_name_table);
 end$$;
@@ -3866,7 +3866,7 @@ create cast (integer as date) with function sql_to_date(integer) as assignment;
 create function cast_invoker(integer) returns date as $$
 begin
   return $1;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select cast_invoker(20150717);
 select cast_invoker(20150718);  -- second call crashed in pre-release 9.5
@@ -3896,7 +3896,7 @@ end;
 
 -- Test for consistent reporting of error context
 
-create function fail() returns int language plpgsql as $$
+create function fail() returns int language plmdb as $$
 begin
   return 1/0;
 end
@@ -3916,7 +3916,7 @@ begin
   raise notice 'foo\\bar\041baz';
   return 'foo\\bar\041baz';
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select strtest();
 
@@ -3925,7 +3925,7 @@ begin
   raise notice E'foo\\bar\041baz';
   return E'foo\\bar\041baz';
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select strtest();
 
@@ -3936,7 +3936,7 @@ begin
   raise notice 'foo\\bar\041baz\';
   return 'foo\\bar\041baz\';
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select strtest();
 
@@ -3945,7 +3945,7 @@ begin
   raise notice E'foo\\bar\041baz';
   return E'foo\\bar\041baz';
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select strtest();
 
@@ -3963,7 +3963,7 @@ BEGIN
 END$$;
 
 -- these are to check syntax error reporting
-DO LANGUAGE plpgsql $$begin return 1; end$$;
+DO LANGUAGE plmdb $$begin return 1; end$$;
 
 DO $$
 DECLARE r record;
@@ -4006,15 +4006,15 @@ begin
     return x * 100 + y;
   end;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select scope_test();
 
 drop function scope_test();
 
--- Check handling of conflicts between plpgsql vars and table columns.
+-- Check handling of conflicts between plmdb vars and table columns.
 
-set plpgsql.variable_conflict = error;
+set plmdb.variable_conflict = error;
 
 create function conflict_test() returns setof int8_tbl as $$
 declare r record;
@@ -4024,7 +4024,7 @@ begin
     return next r;
   end loop;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from conflict_test();
 
@@ -4037,7 +4037,7 @@ begin
     return next r;
   end loop;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from conflict_test();
 
@@ -4050,7 +4050,7 @@ begin
     return next r;
   end loop;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select * from conflict_test();
 
@@ -4065,7 +4065,7 @@ begin
   forward := forward * 2;
   return forward;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select unreserved_test();
 
@@ -4076,7 +4076,7 @@ begin
   return := return + 1;
   return return;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select unreserved_test();
 
@@ -4095,7 +4095,7 @@ begin
     raise notice '%', x;
   end loop;
   end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select foreach_test(ARRAY[1,2,3,4]);
 select foreach_test(ARRAY[[1,2],[3,4]]);
@@ -4109,7 +4109,7 @@ begin
     raise notice '%', x;
   end loop;
   end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- should fail
 select foreach_test(ARRAY[1,2,3,4]);
@@ -4124,7 +4124,7 @@ begin
     raise notice '%', x;
   end loop;
   end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select foreach_test(ARRAY[1,2,3,4]);
 select foreach_test(ARRAY[[1,2],[3,4]]);
@@ -4139,7 +4139,7 @@ begin
     raise notice '%', x;
   end loop;
   end;
-$$ language plpgsql;
+$$ language plmdb;
 
 -- should fail
 select foreach_test(ARRAY[1,2,3,4]);
@@ -4159,7 +4159,7 @@ begin
     raise notice '%', r;
   end loop;
   end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select foreach_test(ARRAY[(10,20),(40,69),(35,78)]::xy_tuple[]);
 select foreach_test(ARRAY[[(10,20),(40,69)],[(35,78),(88,76)]]::xy_tuple[]);
@@ -4173,7 +4173,7 @@ begin
     raise notice 'x = %, y = %', x, y;
   end loop;
   end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select foreach_test(ARRAY[(10,20),(40,69),(35,78)]::xy_tuple[]);
 select foreach_test(ARRAY[[(10,20),(40,69)],[(35,78),(88,76)]]::xy_tuple[]);
@@ -4188,7 +4188,7 @@ begin
     raise notice '%', x;
   end loop;
   end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select foreach_test(ARRAY[(10,20),(40,69),(35,78)]::xy_tuple[]);
 select foreach_test(ARRAY[[(10,20),(40,69)],[(35,78),(88,76)]]::xy_tuple[]);
@@ -4202,7 +4202,7 @@ drop type xy_tuple;
 
 create temp table rtype (id int, ar text[]);
 
-create function arrayassign1() returns text[] language plpgsql as $$
+create function arrayassign1() returns text[] language plmdb as $$
 declare
  r record;
 begin
@@ -4221,7 +4221,7 @@ select '{1,2}'::orderedarray;
 select '{2,1}'::orderedarray;  -- fail
 
 create function testoa(x1 int, x2 int, x3 int) returns orderedarray
-language plpgsql as $$
+language plmdb as $$
 declare res orderedarray;
 begin
   res := array[x1, x2];
@@ -4250,7 +4250,7 @@ begin
   raise notice 'lets make sure we didnt break anything';
   return 2 * $1;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create or replace function outer_func(int)
 returns int as $$
@@ -4262,7 +4262,7 @@ begin
   raise notice 'inner_func() done';
   return myresult;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create or replace function outer_outer_func(int)
 returns int as $$
@@ -4274,7 +4274,7 @@ begin
   raise notice 'outer_func() done';
   return myresult;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select outer_outer_func(10);
 -- repeated call should to work
@@ -4305,7 +4305,7 @@ begin
   raise notice 'lets make sure we didnt break anything';
   return 2 * $1;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create or replace function outer_func(int)
 returns int as $$
@@ -4317,7 +4317,7 @@ begin
   raise notice 'inner_func() done';
   return myresult;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 create or replace function outer_outer_func(int)
 returns int as $$
@@ -4329,7 +4329,7 @@ begin
   raise notice 'outer_func() done';
   return myresult;
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 select outer_outer_func(10);
 -- repeated call should to work
@@ -4362,13 +4362,13 @@ end;
 $$;
 
 -- check controlling GUC
-set plpgsql.check_asserts = off;
+set plmdb.check_asserts = off;
 do $$
 begin
   assert 1=0;  -- won't be tested
 end;
 $$;
-reset plpgsql.check_asserts;
+reset plmdb.check_asserts;
 
 -- test custom message
 do $$

@@ -1189,7 +1189,7 @@
 
     <listitem>
      <para>
-      Fix I/O-conversion-related memory leaks in plpgsql
+      Fix I/O-conversion-related memory leaks in plmdb
       (Andres Freund, Jan Urbanski, Tom Lane)
      </para>
 
@@ -3274,7 +3274,7 @@
 
      <para>
       This corrects a problem introduced in the previous minor release.
-      One case that failed is when a plpgsql function returning set is
+      One case that failed is when a plmdb function returning set is
       called within another function's exception handler.
      </para>
     </listitem>
@@ -3356,7 +3356,7 @@
 
     <listitem>
      <para>
-      Fix plpgsql failure in one case where a composite column is set to NULL
+      Fix plmdb failure in one case where a composite column is set to NULL
       (Tom)
      </para>
     </listitem>
@@ -4567,9 +4567,9 @@
 
     <listitem>
      <para>
-      Make all documentation reference <literal>pgsql-bugs</> and/or
-      <literal>pgsql-hackers</> as appropriate, instead of the
-      now-decommissioned <literal>pgsql-ports</> and <literal>pgsql-patches</>
+      Make all documentation reference <literal>mdb-bugs</> and/or
+      <literal>mdb-hackers</> as appropriate, instead of the
+      now-decommissioned <literal>mdb-ports</> and <literal>mdb-patches</>
       mailing lists (Tom)
      </para>
     </listitem>
@@ -6822,7 +6822,7 @@ current_date &lt; 2017-11-17
        enables spreading the I/O load across multiple tablespaces. A random
        tablespace is chosen each time a temporary object is created.
        Temporary files are no longer stored in per-database
-       <filename>pgsql_tmp/</filename> directories but in per-tablespace
+       <filename>mdb_tmp/</filename> directories but in per-tablespace
        directories.
       </para>
      </listitem>

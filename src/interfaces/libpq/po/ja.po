@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.1 beta 2\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 12:53+0900\n"
 "PO-Revision-Date: 2014-08-16 16:38+0900\n"
 "Last-Translator: HOTTA Michihide <hotta@net-newbie.com>\n"

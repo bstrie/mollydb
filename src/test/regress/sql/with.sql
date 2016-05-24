@@ -889,7 +889,7 @@ begin
   raise notice 'y_trigger: a = %', new.a;
   return new;
 end;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE TRIGGER y_trig BEFORE INSERT ON y FOR EACH ROW
     EXECUTE PROCEDURE y_trigger();
@@ -930,7 +930,7 @@ begin
   raise notice 'y_trigger';
   return null;
 end;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE TRIGGER y_trig AFTER INSERT ON y FOR EACH STATEMENT
     EXECUTE PROCEDURE y_trigger();

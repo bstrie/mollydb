@@ -1303,7 +1303,7 @@ transformAExprBetween(ParseState *pstate, A_Expr *a)
 	 * Ideally we would not use hard-wired operators here but instead use
 	 * opclasses.  However, mixed data types and other issues make this
 	 * difficult:
-	 * http://archives.mollydb.org/pgsql-hackers/2008-08/msg01142.php
+	 * http://archives.mollydb.org/mdb-hackers/2008-08/msg01142.php
 	 */
 	switch (a->kind)
 	{
@@ -2392,7 +2392,7 @@ transformCurrentOfExpr(ParseState *pstate, CurrentOfExpr *cexpr)
 	/*
 	 * Check to see if the cursor name matches a parameter of type REFCURSOR.
 	 * If so, replace the raw name reference with a parameter reference. (This
-	 * is a hack for the convenience of plpgsql.)
+	 * is a hack for the convenience of plmdb.)
 	 */
 	if (cexpr->cursor_name != NULL)		/* in case already transformed */
 	{

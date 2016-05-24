@@ -7301,14 +7301,14 @@ Branch: REL9_4_STABLE [c2b06ab17] 2015-01-30 22:45:58 -0500
     </itemizedlist>
 
     <sect4>
-     <title><link linkend="plpgsql">PL/pgSQL</link> Server-Side Language</title>
+     <title><link linkend="plmdb">PL/pgSQL</link> Server-Side Language</title>
 
      <itemizedlist>
 
       <listitem>
        <para>
         Add ability to retrieve the current PL/PgSQL call stack
-        using <link linkend="plpgsql-get-diagnostics-context"><command>GET
+        using <link linkend="plmdb-get-diagnostics-context"><command>GET
         DIAGNOSTICS</></link>
         (Pavel Stehule, Stephen Frost)
        </para>
@@ -7317,7 +7317,7 @@ Branch: REL9_4_STABLE [c2b06ab17] 2015-01-30 22:45:58 -0500
       <listitem>
        <para>
         Add option <link
-        linkend="plpgsql-statements-sql-onerow"><option>print_strict_params</></link>
+        linkend="plmdb-statements-sql-onerow"><option>print_strict_params</></link>
         to display the parameters passed to a query that violated a
         <literal>STRICT</> constraint (Marko Tiikkaja)
        </para>
@@ -7326,8 +7326,8 @@ Branch: REL9_4_STABLE [c2b06ab17] 2015-01-30 22:45:58 -0500
       <listitem>
        <para>
         Add variables <link
-        linkend="plpgsql-extra-checks"><varname>plpgsql.extra_warnings</></link>
-        and <varname>plpgsql.extra_errors</> to enable additional PL/pgSQL
+        linkend="plmdb-extra-checks"><varname>plmdb.extra_warnings</></link>
+        and <varname>plmdb.extra_errors</> to enable additional PL/pgSQL
         warnings and errors (Marko Tiikkaja, Petr Jelinek)
        </para>
 

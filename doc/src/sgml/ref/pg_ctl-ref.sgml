@@ -637,7 +637,7 @@ MollyDB documentation
 <prompt>$</prompt> <userinput>pg_ctl status</userinput>
 <computeroutput>
 pg_ctl: server is running (PID: 13718)
-/usr/local/pgsql/bin/mollydb "-D" "/usr/local/pgsql/data" "-p" "5433" "-B" "128"
+/usr/local/mdb/bin/mollydb "-D" "/usr/local/mdb/data" "-p" "5433" "-B" "128"
 </computeroutput>
 </screen>
     This is the command line that would be invoked in restart mode.

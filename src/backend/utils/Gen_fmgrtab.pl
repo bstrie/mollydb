@@ -206,7 +206,7 @@ Usage: perl -I [directory of Catalog.pm] Gen_fmgrtab.pl [path to pg_proc.h]
 
 Gen_fmgrtab.pl generates fmgroids.h and fmgrtab.c from pg_proc.h
 
-Report bugs to <pgsql-bugs\@mollydb.org>.
+Report bugs to <mdb-bugs\@mollydb.org>.
 EOM
 }
 

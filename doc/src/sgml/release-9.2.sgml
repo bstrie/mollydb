@@ -1361,7 +1361,7 @@ Branch: REL9_2_STABLE [e90a629e1] 2015-09-22 14:58:38 -0700
 
     <listitem>
      <para>
-      Fix <filename>contrib/sepgsql</>'s handling of <command>SELECT INTO</>
+      Fix <filename>contrib/semdb</>'s handling of <command>SELECT INTO</>
       statements (Kohei KaiGai)
      </para>
     </listitem>
@@ -8940,7 +8940,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
     <title>Server-Side Languages</title>
 
     <sect4>
-     <title><link linkend="plpgsql">PL/pgSQL</link> Server-Side Language</title>
+     <title><link linkend="plmdb">PL/pgSQL</link> Server-Side Language</title>
 
      <itemizedlist>
 
@@ -9523,7 +9523,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
 
       <listitem>
        <para>
-        Install <filename>plpgsql.h</> into <filename>include/server</> during installation
+        Install <filename>plmdb.h</> into <filename>include/server</> during installation
         (Heikki Linnakangas)
        </para>
       </listitem>
@@ -9861,7 +9861,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
     </sect4>
 
     <sect4>
-     <title><link linkend="sepgsql">sepgsql</link></title>
+     <title><link linkend="semdb">semdb</link></title>
 
      <itemizedlist>
       <listitem>
@@ -9878,27 +9878,27 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
 
       <listitem>
        <para>
-        Allow sepgsql to honor database labels (KaiGai Kohei)
+        Allow semdb to honor database labels (KaiGai Kohei)
        </para>
       </listitem>
 
       <listitem>
        <para>
-        Perform sepgsql permission checks during the creation of various
+        Perform semdb permission checks during the creation of various
         objects (KaiGai Kohei)
        </para>
       </listitem>
 
       <listitem>
        <para>
-        Add <function>sepgsql_setcon()</> and related functions to control
-        the sepgsql security domain (KaiGai Kohei)
+        Add <function>semdb_setcon()</> and related functions to control
+        the semdb security domain (KaiGai Kohei)
        </para>
       </listitem>
 
       <listitem>
        <para>
-        Add a user space access cache to sepgsql to improve performance
+        Add a user space access cache to semdb to improve performance
         (KaiGai Kohei)
        </para>
       </listitem>

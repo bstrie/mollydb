@@ -985,7 +985,7 @@ omicron         bryanh                  guest1
     of the key file is specified by the <xref
     linkend="guc-krb-server-keyfile"> configuration
     parameter. The default is
-    <filename>/usr/local/pgsql/etc/krb5.keytab</> (or whatever
+    <filename>/usr/local/mdb/etc/krb5.keytab</> (or whatever
     directory was specified as <varname>sysconfdir</> at build time).
     For security reasons, it is recommended to use a separate keytab
     just for the <productname>MollyDB</productname> server rather

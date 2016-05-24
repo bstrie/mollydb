@@ -8,7 +8,7 @@
 -- Therefore we only add them if we detect that they aren't already there and
 -- dependent on the extension.
 
-DO LANGUAGE plpgsql
+DO LANGUAGE plmdb
 
 $$
 

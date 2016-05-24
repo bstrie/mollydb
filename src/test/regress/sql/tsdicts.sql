@@ -170,7 +170,7 @@ ALTER TEXT SEARCH CONFIGURATION synonym_tst ALTER MAPPING FOR
 	asciiword, hword_asciipart, asciihword
 	WITH synonym, english_stem;
 
-SELECT to_tsvector('synonym_tst', 'MollyDBql is often called as mollydb or pgsql and pronounced as postgre');
+SELECT to_tsvector('synonym_tst', 'MollyDBql is often called as mollydb or mdb and pronounced as postgre');
 SELECT to_tsvector('synonym_tst', 'Most common mistake is to write Gogle instead of Google');
 SELECT to_tsvector('synonym_tst', 'Indexes or indices - Which is right plural form of index?');
 SELECT to_tsquery('synonym_tst', 'Index & indices');

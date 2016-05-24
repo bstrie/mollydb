@@ -222,7 +222,7 @@ CREATE FUNCTION echo_me(anyenum) RETURNS text AS $$
 BEGIN
 RETURN $1::text || 'omg';
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 SELECT echo_me('red'::rainbow);
 --
 -- Concrete function should override generic one
@@ -231,7 +231,7 @@ CREATE FUNCTION echo_me(rainbow) RETURNS text AS $$
 BEGIN
 RETURN $1::text || 'wtf';
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 SELECT echo_me('red'::rainbow);
 --
 -- If we drop the original generic one, we don't have to qualify the type

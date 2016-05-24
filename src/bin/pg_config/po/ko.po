@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 8.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2010-09-09 16:34+0000\n"
 "PO-Revision-Date: 2013-09-05 22:34-0400\n"
 "Last-Translator: EnterpriseDB translation team <dev-escalations@enterprisedb.com>\n"
@@ -203,8 +203,8 @@ msgstr ""
 
 #: pg_config.c:441
 #, c-format
-msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
-msgstr "오류보고: <pgsql-bugs@mollydb.org>.\n"
+msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
+msgstr "오류보고: <mdb-bugs@mollydb.org>.\n"
 
 #: pg_config.c:447
 #, c-format

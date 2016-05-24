@@ -339,7 +339,7 @@ sub contribcheck
 		next if ($module eq "hstore_plperl" && !defined($config->{perl}));
 		next if ($module eq "hstore_plpython" && !defined($config->{python}));
 		next if ($module eq "ltree_plpython"  && !defined($config->{python}));
-		next if ($module eq "sepgsql");
+		next if ($module eq "semdb");
 
 		subdircheck("$topdir/contrib", $module);
 		my $status = $? >> 8;

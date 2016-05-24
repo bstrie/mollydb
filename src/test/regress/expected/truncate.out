@@ -293,7 +293,7 @@ begin
       (TG_OP, TG_LEVEL, TG_WHEN, TG_ARGV[0], tg_table_name, c);
     return null;
 end;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 -- basic before trigger
 INSERT INTO trunc_trigger_test VALUES(1, 'foo', 'bar'), (2, 'baz', 'quux');
 CREATE TRIGGER t

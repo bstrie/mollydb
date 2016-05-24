@@ -99,7 +99,7 @@ sub emit_qsort_boilerplate
  * Software--Practice and Experience 23 (1993) 1249-1265.
  *
  * We have modified their original by adding a check for already-sorted input,
- * which seems to be a win per discussions on pgsql-hackers around 2006-03-21.
+ * which seems to be a win per discussions on mdb-hackers around 2006-03-21.
  *
  * Also, we recurse on the smaller partition and iterate on the larger one,
  * which ensures we cannot recurse more than log(N) levels (since the

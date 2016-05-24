@@ -61,7 +61,7 @@ elsif ($buildwhat)
 }
 else
 {
-	system("msbuild pgsql.sln /verbosity:normal /p:Configuration=$bconf");
+	system("msbuild mdb.sln /verbosity:normal /p:Configuration=$bconf");
 }
 
 # report status

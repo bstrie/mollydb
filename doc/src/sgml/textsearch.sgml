@@ -1808,7 +1808,7 @@ begin
      setweight(to_tsvector('pg_catalog.english', coalesce(new.body,'')), 'D');
   return new;
 end
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
     ON messages FOR EACH ROW EXECUTE PROCEDURE messages_trigger();
@@ -2134,17 +2134,17 @@ SELECT alias, description, token FROM ts_debug('http://example.com/stuff/index.h
       <itemizedlist  spacing="compact" mark="bullet">
        <listitem>
         <para>
-         http://www.pgsql.ru/db/mw/index.html
+         http://www.mdb.ru/db/mw/index.html
         </para>
        </listitem>
        <listitem>
         <para>
-         http://www.pgsql.ru/db/mw/
+         http://www.mdb.ru/db/mw/
         </para>
        </listitem>
        <listitem>
         <para>
-         http://www.pgsql.ru/db/../db/mw/index.html
+         http://www.mdb.ru/db/../db/mw/index.html
         </para>
        </listitem>
       </itemizedlist>
@@ -2467,9 +2467,9 @@ SELECT * FROM ts_debug('english', 'Paris');
     For example, suppose we have these entries in
     <filename>$SHAREDIR/tsearch_data/synonym_sample.syn</>:
 <programlisting>
-mollydb        pgsql
-mollydb      pgsql
-postgre pgsql
+mollydb        mdb
+mollydb      mdb
+postgre mdb
 gogle   googl
 indices index*
 </programlisting>
@@ -3027,7 +3027,7 @@ CREATE TEXT SEARCH CONFIGURATION public.pg ( COPY = pg_catalog.english );
 
 <programlisting>
 mollydb    pg
-pgsql       pg
+mdb       pg
 mollydb  pg
 </programlisting>
 

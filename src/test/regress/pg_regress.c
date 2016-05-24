@@ -497,7 +497,7 @@ convert_sourcefiles_in(char *source_subdir, char *dest_dir, char *dest_subdir, c
 	 *
 	 * XXX it would be better if pg_regress.c had nothing at all to do with
 	 * testtablespace, and this were handled by a .BAT file or similar on
-	 * Windows.  See pgsql-hackers discussion of 2008-01-18.
+	 * Windows.  See mdb-hackers discussion of 2008-01-18.
 	 */
 	if (directory_exists(testtablespace))
 		if (!rmtree(testtablespace, true))
@@ -1988,7 +1988,7 @@ help(void)
 	printf(_("The exit status is 0 if all tests passed, 1 if some tests failed, and 2\n"));
 	printf(_("if the tests could not be run for some reason.\n"));
 	printf(_("\n"));
-	printf(_("Report bugs to <pgsql-bugs@mollydb.org>.\n"));
+	printf(_("Report bugs to <mdb-bugs@mollydb.org>.\n"));
 }
 
 int

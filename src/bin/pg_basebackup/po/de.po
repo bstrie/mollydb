@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.6\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-12 20:14+0000\n"
 "PO-Revision-Date: 2016-04-12 20:49-0400\n"
 "Last-Translator: Peter Eisentraut <peter_e@gmx.net>\n"
@@ -251,10 +251,10 @@ msgstr "  -W, --password         nach Passwort fragen (sollte automatisch gesche
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Berichten Sie Fehler an <pgsql-bugs@mollydb.org>.\n"
+"Berichten Sie Fehler an <mdb-bugs@mollydb.org>.\n"
 
 #: pg_basebackup.c:311
 #, c-format

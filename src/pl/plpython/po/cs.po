@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: plpython-cs (MollyDB 9.3)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2012-09-18 16:39+0000\n"
 "PO-Revision-Date: 2012-09-19 01:51+0200\n"
 "Last-Translator: Tomas Vondra <tv@fuzzy.cz>\n"

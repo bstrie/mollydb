@@ -883,7 +883,7 @@ extern Datum text_format(PG_FUNCTION_ARGS);
 extern Datum text_format_nv(PG_FUNCTION_ARGS);
 
 /* version.c */
-extern Datum pgsql_version(PG_FUNCTION_ARGS);
+extern Datum mdb_version(PG_FUNCTION_ARGS);
 
 /* xid.c */
 extern Datum xidin(PG_FUNCTION_ARGS);

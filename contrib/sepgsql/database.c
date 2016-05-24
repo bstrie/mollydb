@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/database.c
+ * contrib/semdb/database.c
  *
  * Routines corresponding to database objects
  *
@@ -22,16 +22,16 @@
 #include "utils/builtins.h"
 #include "utils/fmgroids.h"
 #include "utils/tqual.h"
-#include "sepgsql.h"
+#include "semdb.h"
 
 /*
- * sepgsql_database_post_create
+ * semdb_database_post_create
  *
  * This routine assigns a default security label on a newly defined
  * database, and check permission needed for its creation.
  */
 void
-sepgsql_database_post_create(Oid databaseId, const char *dtemplate)
+semdb_database_post_create(Oid databaseId, const char *dtemplate)
 {
 	Relation	rel;
 	ScanKeyData skey;
@@ -55,7 +55,7 @@ sepgsql_database_post_create(Oid databaseId, const char *dtemplate)
 	object.objectId = get_database_oid(dtemplate, false);
 	object.objectSubId = 0;
 
-	tcontext = sepgsql_get_label(object.classId,
+	tcontext = semdb_get_label(object.classId,
 								 object.objectId,
 								 object.objectSubId);
 
@@ -64,7 +64,7 @@ sepgsql_database_post_create(Oid databaseId, const char *dtemplate)
 	 */
 	initStringInfo(&audit_name);
 	appendStringInfo(&audit_name, "%s", quote_identifier(dtemplate));
-	sepgsql_avc_check_perms_label(tcontext,
+	semdb_avc_check_perms_label(tcontext,
 								  SEPG_CLASS_DB_DATABASE,
 								  SEPG_DB_DATABASE__GETATTR,
 								  audit_name.data,
@@ -92,7 +92,7 @@ sepgsql_database_post_create(Oid databaseId, const char *dtemplate)
 
 	datForm = (Form_pg_database) GETSTRUCT(tuple);
 
-	ncontext = sepgsql_compute_create(sepgsql_get_client_label(),
+	ncontext = semdb_compute_create(semdb_get_client_label(),
 									  tcontext,
 									  SEPG_CLASS_DB_DATABASE,
 									  NameStr(datForm->datname));
@@ -103,7 +103,7 @@ sepgsql_database_post_create(Oid databaseId, const char *dtemplate)
 	resetStringInfo(&audit_name);
 	appendStringInfo(&audit_name, "%s",
 					 quote_identifier(NameStr(datForm->datname)));
-	sepgsql_avc_check_perms_label(ncontext,
+	semdb_avc_check_perms_label(ncontext,
 								  SEPG_CLASS_DB_DATABASE,
 								  SEPG_DB_DATABASE__CREATE,
 								  audit_name.data,
@@ -126,12 +126,12 @@ sepgsql_database_post_create(Oid databaseId, const char *dtemplate)
 }
 
 /*
- * sepgsql_database_drop
+ * semdb_database_drop
  *
  * It checks privileges to drop the supplied database
  */
 void
-sepgsql_database_drop(Oid databaseId)
+semdb_database_drop(Oid databaseId)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -144,7 +144,7 @@ sepgsql_database_drop(Oid databaseId)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_DATABASE,
 							SEPG_DB_DATABASE__DROP,
 							audit_name,
@@ -153,12 +153,12 @@ sepgsql_database_drop(Oid databaseId)
 }
 
 /*
- * sepgsql_database_post_alter
+ * semdb_database_post_alter
  *
  * It checks privileges to alter the supplied database
  */
 void
-sepgsql_database_setattr(Oid databaseId)
+semdb_database_setattr(Oid databaseId)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -171,7 +171,7 @@ sepgsql_database_setattr(Oid databaseId)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_DATABASE,
 							SEPG_DB_DATABASE__SETATTR,
 							audit_name,
@@ -180,12 +180,12 @@ sepgsql_database_setattr(Oid databaseId)
 }
 
 /*
- * sepgsql_database_relabel
+ * semdb_database_relabel
  *
  * It checks privileges to relabel the supplied database with the `seclabel'
  */
 void
-sepgsql_database_relabel(Oid databaseId, const char *seclabel)
+semdb_database_relabel(Oid databaseId, const char *seclabel)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -198,7 +198,7 @@ sepgsql_database_relabel(Oid databaseId, const char *seclabel)
 	/*
 	 * check db_database:{setattr relabelfrom} permission
 	 */
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_DATABASE,
 							SEPG_DB_DATABASE__SETATTR |
 							SEPG_DB_DATABASE__RELABELFROM,
@@ -208,7 +208,7 @@ sepgsql_database_relabel(Oid databaseId, const char *seclabel)
 	/*
 	 * check db_database:{relabelto} permission
 	 */
-	sepgsql_avc_check_perms_label(seclabel,
+	semdb_avc_check_perms_label(seclabel,
 								  SEPG_CLASS_DB_DATABASE,
 								  SEPG_DB_DATABASE__RELABELTO,
 								  audit_name,

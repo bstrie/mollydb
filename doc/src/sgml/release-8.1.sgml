@@ -693,7 +693,7 @@
 
      <para>
       This corrects a problem introduced in the previous minor release.
-      One case that failed is when a plpgsql function returning set is
+      One case that failed is when a plmdb function returning set is
       called within another function's exception handler.
      </para>
     </listitem>
@@ -732,7 +732,7 @@
 
     <listitem>
      <para>
-      Fix plpgsql failure in one case where a composite column is set to NULL
+      Fix plmdb failure in one case where a composite column is set to NULL
       (Tom)
      </para>
     </listitem>
@@ -1351,9 +1351,9 @@
 
     <listitem>
      <para>
-      Make all documentation reference <literal>pgsql-bugs</> and/or
-      <literal>pgsql-hackers</> as appropriate, instead of the
-      now-decommissioned <literal>pgsql-ports</> and <literal>pgsql-patches</>
+      Make all documentation reference <literal>mdb-bugs</> and/or
+      <literal>mdb-hackers</> as appropriate, instead of the
+      now-decommissioned <literal>mdb-ports</> and <literal>mdb-patches</>
       mailing lists (Tom)
      </para>
     </listitem>
@@ -2959,7 +2959,7 @@ MIN/MAX optimization (Tom)</para></listitem>
 <para>Outer joins could sometimes emit multiple copies of unmatched rows.
 </para></listitem>
 
-<listitem><para>Fix crash from using and modifying a plpgsql function in the
+<listitem><para>Fix crash from using and modifying a plmdb function in the
 same transaction</para></listitem>
 
 <listitem><para>Fix WAL replay for case where a B-Tree index has been
@@ -5211,7 +5211,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Add Chinese FAQ (laser@pgsqldb.com)
+       Add Chinese FAQ (laser@mdbdb.com)
       </para>
      </listitem>
 

@@ -1,5 +1,5 @@
-# translation of plpgsql.po to fr_fr
-# french message translation file for plpgsql
+# translation of plmdb.po to fr_fr
+# french message translation file for plmdb
 #
 # Use these quotes: « %s »
 # Guillaume Lelarge <guillaume@lelarge.info>, 2009.
@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.6\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-09 08:37+0000\n"
 "PO-Revision-Date: 2016-05-09 10:53+0200\n"
 "Last-Translator: Guillaume Lelarge <guillaume@lelarge.info>\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: pl_comp.c:432 pl_handler.c:448
 #, c-format
 msgid "PL/pgSQL functions cannot accept type %s"
-msgstr "les fonctions PL/pgsql ne peuvent pas accepter le type %s"
+msgstr "les fonctions PL/mdb ne peuvent pas accepter le type %s"
 
 #: pl_comp.c:513
 #, c-format
@@ -39,7 +39,7 @@ msgstr "les fonctions triggers peuvent seulement être appelées par des triggers"
 #: pl_comp.c:547 pl_handler.c:433
 #, c-format
 msgid "PL/pgSQL functions cannot return type %s"
-msgstr "les fonctions PL/pgsql ne peuvent pas renvoyer le type %s"
+msgstr "les fonctions PL/mdb ne peuvent pas renvoyer le type %s"
 
 #: pl_comp.c:588
 #, c-format
@@ -61,7 +61,7 @@ msgstr "les fonctions triggers sur événement ne peuvent pas avoir des arguments 
 #: pl_comp.c:944
 #, c-format
 msgid "compilation of PL/pgSQL function \"%s\" near line %d"
-msgstr "compilation de la fonction PL/pgsql « %s » près de la ligne %d"
+msgstr "compilation de la fonction PL/mdb « %s » près de la ligne %d"
 
 #: pl_comp.c:967
 #, c-format
@@ -77,7 +77,7 @@ msgstr "la référence à la colonne « %s » est ambigu"
 #, c-format
 msgid "It could refer to either a PL/pgSQL variable or a table column."
 msgstr ""
-"Cela pourrait faire référence à une variable PL/pgsql ou à la colonne d'une\n"
+"Cela pourrait faire référence à une variable PL/mdb ou à la colonne d'une\n"
 "table."
 
 #: pl_comp.c:1259 pl_comp.c:1287 pl_exec.c:4395 pl_exec.c:4744 pl_exec.c:4829
@@ -178,7 +178,7 @@ msgstr ""
 #: pl_exec.c:954
 #, c-format
 msgid "PL/pgSQL function %s line %d %s"
-msgstr "fonction PL/pgsql %s, ligne %d, %s"
+msgstr "fonction PL/mdb %s, ligne %d, %s"
 
 #. translator: last %s is a phrase such as "while storing call
 #. arguments into local variables"
@@ -186,18 +186,18 @@ msgstr "fonction PL/pgsql %s, ligne %d, %s"
 #: pl_exec.c:965
 #, c-format
 msgid "PL/pgSQL function %s %s"
-msgstr "fonction PL/pgsql %s, %s"
+msgstr "fonction PL/mdb %s, %s"
 
-#. translator: last %s is a plpgsql statement type name
+#. translator: last %s is a plmdb statement type name
 #: pl_exec.c:973
 #, c-format
 msgid "PL/pgSQL function %s line %d at %s"
-msgstr "fonction PL/pgsql %s, ligne %d à %s"
+msgstr "fonction PL/mdb %s, ligne %d à %s"
 
 #: pl_exec.c:979
 #, c-format
 msgid "PL/pgSQL function %s"
-msgstr "fonction PL/pgsql %s"
+msgstr "fonction PL/mdb %s"
 
 #: pl_exec.c:1089
 msgid "during statement block local variable initialization"
@@ -373,12 +373,12 @@ msgstr "échec de l'assertion"
 #: pl_exec.c:3418 pl_exec.c:3562 pl_exec.c:3751
 #, c-format
 msgid "cannot COPY to/from client in PL/pgSQL"
-msgstr "ne peut pas utiliser COPY TO/FROM dans PL/pgsql"
+msgstr "ne peut pas utiliser COPY TO/FROM dans PL/mdb"
 
 #: pl_exec.c:3422 pl_exec.c:3566 pl_exec.c:3755
 #, c-format
 msgid "cannot begin/end transactions in PL/pgSQL"
-msgstr "ne peut pas utiliser les instructions BEGIN/END de transactions dans PL/pgsql"
+msgstr "ne peut pas utiliser les instructions BEGIN/END de transactions dans PL/mdb"
 
 #: pl_exec.c:3423 pl_exec.c:3567 pl_exec.c:3756
 #, c-format
@@ -817,7 +817,7 @@ msgstr "trop peu de paramètres pour RAISE"
 
 #: pl_handler.c:149
 msgid "Sets handling of conflicts between PL/pgSQL variable names and table column names."
-msgstr "Configure la gestion des conflits entre les noms de variables PL/pgsql et les noms des colonnes des tables."
+msgstr "Configure la gestion des conflits entre les noms de variables PL/mdb et les noms des colonnes des tables."
 
 #: pl_handler.c:158
 msgid "Print information about parameters in the DETAIL part of the error messages generated on INTO ... STRICT failures."
@@ -920,10 +920,10 @@ msgstr "%s sur ou près de « %s »"
 #~ "suivant INTO."
 
 #~ msgid "SQL statement in PL/PgSQL function \"%s\" near line %d"
-#~ msgstr "instruction SQL dans la fonction PL/pgsql « %s » près de la ligne %d"
+#~ msgstr "instruction SQL dans la fonction PL/mdb « %s » près de la ligne %d"
 
 #~ msgid "string literal in PL/PgSQL function \"%s\" near line %d"
-#~ msgstr "chaîne littérale dans la fonction PL/pgsql « %s » près de la ligne %d"
+#~ msgstr "chaîne littérale dans la fonction PL/mdb « %s » près de la ligne %d"
 
 #~ msgid "expected \")\""
 #~ msgstr "« ) » attendu"

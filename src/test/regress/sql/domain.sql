@@ -351,14 +351,14 @@ execute s1(10);
 execute s1(0); -- should fail
 execute s1(NULL); -- should fail
 
--- Check that domain constraints on plpgsql function parameters, results,
+-- Check that domain constraints on plmdb function parameters, results,
 -- and local variables are enforced correctly.
 
 create function doubledecrement(p1 pos_int) returns pos_int as $$
 declare v pos_int;
 begin
     return p1;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select doubledecrement(3); -- fail because of implicit null assignment
 
@@ -366,7 +366,7 @@ create or replace function doubledecrement(p1 pos_int) returns pos_int as $$
 declare v pos_int := 0;
 begin
     return p1;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select doubledecrement(3); -- fail at initialization assignment
 
@@ -375,7 +375,7 @@ declare v pos_int := 1;
 begin
     v := p1 - 1;
     return v - 1;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select doubledecrement(null); -- fail before call
 select doubledecrement(0); -- fail before call
@@ -415,7 +415,7 @@ drop type ddtest1;
 drop domain posint cascade;
 
 --
--- Check enforcement of domain-related typmod in plpgsql (bug #5717)
+-- Check enforcement of domain-related typmod in plmdb (bug #5717)
 --
 
 create or replace function array_elem_check(numeric) returns numeric as $$
@@ -424,7 +424,7 @@ declare
 begin
   x[1] := $1;
   return x[1];
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select array_elem_check(121.00);
 select array_elem_check(1.23456);
@@ -437,7 +437,7 @@ declare
 begin
   x[1] := $1;
   return x[1];
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select array_elem_check(121.00);
 select array_elem_check(1.23456);
@@ -450,7 +450,7 @@ declare
 begin
   x[1] := $1;
   return x[1];
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select array_elem_check(121.00);
 select array_elem_check(1.23456);
@@ -480,7 +480,7 @@ declare
 begin
   x[2] := $1;
   return x[2];
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select array_elem_check(3);
 select array_elem_check(-1);
@@ -488,7 +488,7 @@ select array_elem_check(-1);
 drop function array_elem_check(int);
 
 --
--- Check enforcement of changing constraints in plpgsql
+-- Check enforcement of changing constraints in plmdb
 --
 
 create domain di as int;
@@ -499,7 +499,7 @@ begin
   d := $1;
   return d;
 end
-$$ language plpgsql immutable;
+$$ language plmdb immutable;
 
 select dom_check(0);
 

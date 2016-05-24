@@ -5494,7 +5494,7 @@ EXEC SQL INCLUDE "<replaceable>filename</replaceable>";
     <itemizedlist>
      <listitem><simpara>current directory</simpara></listitem>
      <listitem><simpara><filename>/usr/local/include</filename></simpara></listitem>
-     <listitem><simpara>MollyDB include directory, defined at build time (e.g., <filename>/usr/local/pgsql/include</filename>)</simpara></listitem>
+     <listitem><simpara>MollyDB include directory, defined at build time (e.g., <filename>/usr/local/mdb/include</filename>)</simpara></listitem>
      <listitem><simpara><filename>/usr/include</filename></simpara></listitem>
     </itemizedlist>
 
@@ -5691,7 +5691,7 @@ cc -c prog1.c
    <productname>MollyDB</> installation, so if you installed
    <productname>MollyDB</> in a location that is not searched by
    default, you have to add an option such as
-   <literal>-I/usr/local/pgsql/include</literal> to the compilation
+   <literal>-I/usr/local/mdb/include</literal> to the compilation
    command line.
   </para>
 
@@ -5702,7 +5702,7 @@ cc -c prog1.c
 cc -o myprog prog1.o prog2.o ... -lecpg
 </programlisting>
    Again, you might have to add an option like
-   <literal>-L/usr/local/pgsql/lib</literal> to that command line.
+   <literal>-L/usr/local/mdb/lib</literal> to that command line.
   </para>
 
   <para>

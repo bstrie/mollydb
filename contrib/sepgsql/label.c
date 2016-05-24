@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/label.c
+ * contrib/semdb/label.c
  *
  * Routines to support SELinux labels (security context)
  *
@@ -35,7 +35,7 @@
 #include "utils/rel.h"
 #include "utils/tqual.h"
 
-#include "sepgsql.h"
+#include "semdb.h"
 
 #include <selinux/label.h>
 
@@ -51,18 +51,18 @@ static fmgr_hook_type next_fmgr_hook = NULL;
  *
  * security label of the database client.  Initially the client security label
  * is equal to client_label_peer, and can be changed by one or more calls to
- * sepgsql_setcon(), and also be temporarily overridden during execution of a
+ * semdb_setcon(), and also be temporarily overridden during execution of a
  * trusted-procedure.
  *
- * sepgsql_setcon() is a transaction-aware operation; a (sub-)transaction
+ * semdb_setcon() is a transaction-aware operation; a (sub-)transaction
  * rollback should also rollback the current client security label.  Therefore
  * we use the list client_label_pending of pending_label to keep track of which
  * labels were set during the (sub-)transactions.
  */
 static char *client_label_peer = NULL;	/* set by getpeercon(3) */
 static List *client_label_pending = NIL;		/* pending list being set by
-												 * sepgsql_setcon() */
-static char *client_label_committed = NULL;		/* set by sepgsql_setcon(),
+												 * semdb_setcon() */
+static char *client_label_committed = NULL;		/* set by semdb_setcon(),
 												 * and already committed */
 static char *client_label_func = NULL;	/* set by trusted procedure */
 
@@ -73,20 +73,20 @@ typedef struct
 }	pending_label;
 
 /*
- * sepgsql_get_client_label
+ * semdb_get_client_label
  *
  * Returns the current security label of the client.  All code should use this
  * routine to get the current label, instead of referring to the client_label_*
  * variables above.
  */
 char *
-sepgsql_get_client_label(void)
+semdb_get_client_label(void)
 {
 	/* trusted procedure client label override */
 	if (client_label_func)
 		return client_label_func;
 
-	/* uncommitted sepgsql_setcon() value */
+	/* uncommitted semdb_setcon() value */
 	if (client_label_pending)
 	{
 		pending_label *plabel = llast(client_label_pending);
@@ -95,7 +95,7 @@ sepgsql_get_client_label(void)
 			return plabel->label;
 	}
 	else if (client_label_committed)
-		return client_label_committed;	/* set by sepgsql_setcon() committed */
+		return client_label_committed;	/* set by semdb_setcon() committed */
 
 	/* default label */
 	Assert(client_label_peer != NULL);
@@ -103,7 +103,7 @@ sepgsql_get_client_label(void)
 }
 
 /*
- * sepgsql_set_client_label
+ * semdb_set_client_label
  *
  * This routine tries to switch the current security label of the client, and
  * checks related permissions.  The supplied new label shall be added to the
@@ -111,7 +111,7 @@ sepgsql_get_client_label(void)
  * transaction-awareness.
  */
 static void
-sepgsql_set_client_label(const char *new_label)
+semdb_set_client_label(const char *new_label)
 {
 	const char *tcontext;
 	MemoryContext oldcxt;
@@ -131,13 +131,13 @@ sepgsql_set_client_label(const char *new_label)
 	}
 
 	/* Check process:{setcurrent} permission. */
-	sepgsql_avc_check_perms_label(sepgsql_get_client_label(),
+	semdb_avc_check_perms_label(semdb_get_client_label(),
 								  SEPG_CLASS_PROCESS,
 								  SEPG_PROCESS__SETCURRENT,
 								  NULL,
 								  true);
 	/* Check process:{dyntransition} permission. */
-	sepgsql_avc_check_perms_label(tcontext,
+	semdb_avc_check_perms_label(tcontext,
 								  SEPG_CLASS_PROCESS,
 								  SEPG_PROCESS__DYNTRANSITION,
 								  NULL,
@@ -159,13 +159,13 @@ sepgsql_set_client_label(const char *new_label)
 }
 
 /*
- * sepgsql_xact_callback
+ * semdb_xact_callback
  *
  * A callback routine of transaction commit/abort/prepare.  Commit or abort
  * changes in the client_label_pending list.
  */
 static void
-sepgsql_xact_callback(XactEvent event, void *arg)
+semdb_xact_callback(XactEvent event, void *arg)
 {
 	if (event == XACT_EVENT_COMMIT)
 	{
@@ -198,13 +198,13 @@ sepgsql_xact_callback(XactEvent event, void *arg)
 }
 
 /*
- * sepgsql_subxact_callback
+ * semdb_subxact_callback
  *
  * A callback routine of sub-transaction start/abort/commit.  Releases all
  * security labels that are set within the sub-transaction that is aborted.
  */
 static void
-sepgsql_subxact_callback(SubXactEvent event, SubTransactionId mySubid,
+semdb_subxact_callback(SubXactEvent event, SubTransactionId mySubid,
 						 SubTransactionId parentSubid, void *arg)
 {
 	ListCell   *cell;
@@ -230,14 +230,14 @@ sepgsql_subxact_callback(SubXactEvent event, SubTransactionId mySubid,
 }
 
 /*
- * sepgsql_client_auth
+ * semdb_client_auth
  *
  * Entrypoint of the client authentication hook.
  * It switches the client label according to getpeercon(), and the current
  * performing mode according to the GUC setting.
  */
 static void
-sepgsql_client_auth(Port *port, int status)
+semdb_client_auth(Port *port, int status)
 {
 	if (next_client_auth_hook)
 		(*next_client_auth_hook) (port, status);
@@ -261,21 +261,21 @@ sepgsql_client_auth(Port *port, int status)
 	 * Switch the current performing mode from INTERNAL to either DEFAULT or
 	 * PERMISSIVE.
 	 */
-	if (sepgsql_get_permissive())
-		sepgsql_set_mode(SEPGSQL_MODE_PERMISSIVE);
+	if (semdb_get_permissive())
+		semdb_set_mode(SEPGSQL_MODE_PERMISSIVE);
 	else
-		sepgsql_set_mode(SEPGSQL_MODE_DEFAULT);
+		semdb_set_mode(SEPGSQL_MODE_DEFAULT);
 }
 
 /*
- * sepgsql_needs_fmgr_hook
+ * semdb_needs_fmgr_hook
  *
  * It informs the core whether the supplied function is trusted procedure,
- * or not. If true, sepgsql_fmgr_hook shall be invoked at start, end, and
+ * or not. If true, semdb_fmgr_hook shall be invoked at start, end, and
  * abort time of function invocation.
  */
 static bool
-sepgsql_needs_fmgr_hook(Oid functionId)
+semdb_needs_fmgr_hook(Oid functionId)
 {
 	ObjectAddress object;
 
@@ -289,7 +289,7 @@ sepgsql_needs_fmgr_hook(Oid functionId)
 	 * functions as trusted-procedure, if the security policy has a rule that
 	 * switches security label of the client on execution.
 	 */
-	if (sepgsql_avc_trusted_proc(functionId) != NULL)
+	if (semdb_avc_trusted_proc(functionId) != NULL)
 		return true;
 
 	/*
@@ -301,7 +301,7 @@ sepgsql_needs_fmgr_hook(Oid functionId)
 	object.classId = ProcedureRelationId;
 	object.objectId = functionId;
 	object.objectSubId = 0;
-	if (!sepgsql_avc_check_perms(&object,
+	if (!semdb_avc_check_perms(&object,
 								 SEPG_CLASS_DB_PROCEDURE,
 								 SEPG_DB_PROCEDURE__EXECUTE |
 								 SEPG_DB_PROCEDURE__ENTRYPOINT,
@@ -312,13 +312,13 @@ sepgsql_needs_fmgr_hook(Oid functionId)
 }
 
 /*
- * sepgsql_fmgr_hook
+ * semdb_fmgr_hook
  *
  * It switches security label of the client on execution of trusted
  * procedures.
  */
 static void
-sepgsql_fmgr_hook(FmgrHookEventType event,
+semdb_fmgr_hook(FmgrHookEventType event,
 				  FmgrInfo *flinfo, Datum *private)
 {
 	struct
@@ -339,7 +339,7 @@ sepgsql_fmgr_hook(FmgrHookEventType event,
 				oldcxt = MemoryContextSwitchTo(flinfo->fn_mcxt);
 				stack = palloc(sizeof(*stack));
 				stack->old_label = NULL;
-				stack->new_label = sepgsql_avc_trusted_proc(flinfo->fn_oid);
+				stack->new_label = semdb_avc_trusted_proc(flinfo->fn_oid);
 				stack->next_private = 0;
 
 				MemoryContextSwitchTo(oldcxt);
@@ -361,13 +361,13 @@ sepgsql_fmgr_hook(FmgrHookEventType event,
 					object.classId = ProcedureRelationId;
 					object.objectId = flinfo->fn_oid;
 					object.objectSubId = 0;
-					sepgsql_avc_check_perms(&object,
+					semdb_avc_check_perms(&object,
 											SEPG_CLASS_DB_PROCEDURE,
 											SEPG_DB_PROCEDURE__ENTRYPOINT,
 											getObjectDescription(&object),
 											true);
 
-					sepgsql_avc_check_perms_label(stack->new_label,
+					semdb_avc_check_perms_label(stack->new_label,
 												  SEPG_CLASS_PROCESS,
 												  SEPG_PROCESS__TRANSITION,
 												  NULL, true);
@@ -405,23 +405,23 @@ sepgsql_fmgr_hook(FmgrHookEventType event,
 }
 
 /*
- * sepgsql_init_client_label
+ * semdb_init_client_label
  *
  * Initializes the client security label and sets up related hooks for client
  * label management.
  */
 void
-sepgsql_init_client_label(void)
+semdb_init_client_label(void)
 {
 	/*
 	 * Set up dummy client label.
 	 *
 	 * XXX - note that MollyDB launches background worker process like
-	 * autovacuum without authentication steps. So, we initialize sepgsql_mode
+	 * autovacuum without authentication steps. So, we initialize semdb_mode
 	 * with SEPGSQL_MODE_INTERNAL, and client_label with the security context
 	 * of server process. Later, it also launches background of user session.
 	 * In this case, the process is always hooked on post-authentication, and
-	 * we can initialize the sepgsql_mode and client_label correctly.
+	 * we can initialize the semdb_mode and client_label correctly.
 	 */
 	if (getcon_raw(&client_label_peer) < 0)
 		ereport(ERROR,
@@ -430,29 +430,29 @@ sepgsql_init_client_label(void)
 
 	/* Client authentication hook */
 	next_client_auth_hook = ClientAuthentication_hook;
-	ClientAuthentication_hook = sepgsql_client_auth;
+	ClientAuthentication_hook = semdb_client_auth;
 
 	/* Trusted procedure hooks */
 	next_needs_fmgr_hook = needs_fmgr_hook;
-	needs_fmgr_hook = sepgsql_needs_fmgr_hook;
+	needs_fmgr_hook = semdb_needs_fmgr_hook;
 
 	next_fmgr_hook = fmgr_hook;
-	fmgr_hook = sepgsql_fmgr_hook;
+	fmgr_hook = semdb_fmgr_hook;
 
 	/* Transaction/Sub-transaction callbacks */
-	RegisterXactCallback(sepgsql_xact_callback, NULL);
-	RegisterSubXactCallback(sepgsql_subxact_callback, NULL);
+	RegisterXactCallback(semdb_xact_callback, NULL);
+	RegisterSubXactCallback(semdb_subxact_callback, NULL);
 }
 
 /*
- * sepgsql_get_label
+ * semdb_get_label
  *
  * It returns a security context of the specified database object.
  * If unlabeled or incorrectly labeled, the system "unlabeled" label
  * shall be returned.
  */
 char *
-sepgsql_get_label(Oid classId, Oid objectId, int32 subId)
+semdb_get_label(Oid classId, Oid objectId, int32 subId)
 {
 	ObjectAddress object;
 	char	   *label;
@@ -487,12 +487,12 @@ sepgsql_get_label(Oid classId, Oid objectId, int32 subId)
 }
 
 /*
- * sepgsql_object_relabel
+ * semdb_object_relabel
  *
  * An entrypoint of SECURITY LABEL statement
  */
 void
-sepgsql_object_relabel(const ObjectAddress *object, const char *seclabel)
+semdb_object_relabel(const ObjectAddress *object, const char *seclabel)
 {
 	/*
 	 * validate format of the supplied security label, if it is security
@@ -510,63 +510,63 @@ sepgsql_object_relabel(const ObjectAddress *object, const char *seclabel)
 	switch (object->classId)
 	{
 		case DatabaseRelationId:
-			sepgsql_database_relabel(object->objectId, seclabel);
+			semdb_database_relabel(object->objectId, seclabel);
 			break;
 
 		case NamespaceRelationId:
-			sepgsql_schema_relabel(object->objectId, seclabel);
+			semdb_schema_relabel(object->objectId, seclabel);
 			break;
 
 		case RelationRelationId:
 			if (object->objectSubId == 0)
-				sepgsql_relation_relabel(object->objectId,
+				semdb_relation_relabel(object->objectId,
 										 seclabel);
 			else
-				sepgsql_attribute_relabel(object->objectId,
+				semdb_attribute_relabel(object->objectId,
 										  object->objectSubId,
 										  seclabel);
 			break;
 
 		case ProcedureRelationId:
-			sepgsql_proc_relabel(object->objectId, seclabel);
+			semdb_proc_relabel(object->objectId, seclabel);
 			break;
 
 		default:
 			ereport(ERROR,
 					(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-					 errmsg("sepgsql provider does not support labels on %s",
+					 errmsg("semdb provider does not support labels on %s",
 							getObjectTypeDescription(object))));
 			break;
 	}
 }
 
 /*
- * TEXT sepgsql_getcon(VOID)
+ * TEXT semdb_getcon(VOID)
  *
  * It returns the security label of the client.
  */
-PG_FUNCTION_INFO_V1(sepgsql_getcon);
+PG_FUNCTION_INFO_V1(semdb_getcon);
 Datum
-sepgsql_getcon(PG_FUNCTION_ARGS)
+semdb_getcon(PG_FUNCTION_ARGS)
 {
 	char	   *client_label;
 
-	if (!sepgsql_is_enabled())
+	if (!semdb_is_enabled())
 		PG_RETURN_NULL();
 
-	client_label = sepgsql_get_client_label();
+	client_label = semdb_get_client_label();
 
 	PG_RETURN_TEXT_P(cstring_to_text(client_label));
 }
 
 /*
- * BOOL sepgsql_setcon(TEXT)
+ * BOOL semdb_setcon(TEXT)
  *
  * It switches the security label of the client.
  */
-PG_FUNCTION_INFO_V1(sepgsql_setcon);
+PG_FUNCTION_INFO_V1(semdb_setcon);
 Datum
-sepgsql_setcon(PG_FUNCTION_ARGS)
+semdb_setcon(PG_FUNCTION_ARGS)
 {
 	const char *new_label;
 
@@ -575,29 +575,29 @@ sepgsql_setcon(PG_FUNCTION_ARGS)
 	else
 		new_label = TextDatumGetCString(PG_GETARG_DATUM(0));
 
-	sepgsql_set_client_label(new_label);
+	semdb_set_client_label(new_label);
 
 	PG_RETURN_BOOL(true);
 }
 
 /*
- * TEXT sepgsql_mcstrans_in(TEXT)
+ * TEXT semdb_mcstrans_in(TEXT)
  *
  * It translate the given qualified MLS/MCS range into raw format
  * when mcstrans daemon is working.
  */
-PG_FUNCTION_INFO_V1(sepgsql_mcstrans_in);
+PG_FUNCTION_INFO_V1(semdb_mcstrans_in);
 Datum
-sepgsql_mcstrans_in(PG_FUNCTION_ARGS)
+semdb_mcstrans_in(PG_FUNCTION_ARGS)
 {
 	text	   *label = PG_GETARG_TEXT_P(0);
 	char	   *raw_label;
 	char	   *result;
 
-	if (!sepgsql_is_enabled())
+	if (!semdb_is_enabled())
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
-				 errmsg("sepgsql is not enabled")));
+				 errmsg("semdb is not enabled")));
 
 	if (selinux_trans_to_raw_context(text_to_cstring(label),
 									 &raw_label) < 0)
@@ -621,23 +621,23 @@ sepgsql_mcstrans_in(PG_FUNCTION_ARGS)
 }
 
 /*
- * TEXT sepgsql_mcstrans_out(TEXT)
+ * TEXT semdb_mcstrans_out(TEXT)
  *
  * It translate the given raw MLS/MCS range into qualified format
  * when mcstrans daemon is working.
  */
-PG_FUNCTION_INFO_V1(sepgsql_mcstrans_out);
+PG_FUNCTION_INFO_V1(semdb_mcstrans_out);
 Datum
-sepgsql_mcstrans_out(PG_FUNCTION_ARGS)
+semdb_mcstrans_out(PG_FUNCTION_ARGS)
 {
 	text	   *label = PG_GETARG_TEXT_P(0);
 	char	   *qual_label;
 	char	   *result;
 
-	if (!sepgsql_is_enabled())
+	if (!semdb_is_enabled())
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
-				 errmsg("sepgsql is not currently enabled")));
+				 errmsg("semdb is not currently enabled")));
 
 	if (selinux_raw_to_trans_context(text_to_cstring(label),
 									 &qual_label) < 0)
@@ -708,7 +708,7 @@ quote_object_name(const char *src1, const char *src2,
 /*
  * exec_object_restorecon
  *
- * This routine is a helper called by sepgsql_restorecon; it set up
+ * This routine is a helper called by semdb_restorecon; it set up
  * initial security labels of database objects within the supplied
  * catalog OID.
  */
@@ -854,7 +854,7 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 				 * Check SELinux permission to relabel the fetched object,
 				 * then do the actual relabeling.
 				 */
-				sepgsql_object_relabel(&object, context);
+				semdb_object_relabel(&object, context);
 
 				SetSecurityLabel(&object, SEPGSQL_LABEL_TAG, context);
 			}
@@ -883,19 +883,19 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 }
 
 /*
- * BOOL sepgsql_restorecon(TEXT specfile)
+ * BOOL semdb_restorecon(TEXT specfile)
  *
  * This function tries to assign initial security labels on all the object
  * within the current database, according to the system setting.
- * It is typically invoked by sepgsql-install script just after initdb, to
+ * It is typically invoked by semdb-install script just after initdb, to
  * assign initial security labels.
  *
  * If @specfile is not NULL, it uses explicitly specified specfile, instead
  * of the system default.
  */
-PG_FUNCTION_INFO_V1(sepgsql_restorecon);
+PG_FUNCTION_INFO_V1(semdb_restorecon);
 Datum
-sepgsql_restorecon(PG_FUNCTION_ARGS)
+semdb_restorecon(PG_FUNCTION_ARGS)
 {
 	struct selabel_handle *sehnd;
 	struct selinux_opt seopts;
@@ -903,10 +903,10 @@ sepgsql_restorecon(PG_FUNCTION_ARGS)
 	/*
 	 * SELinux has to be enabled on the running platform.
 	 */
-	if (!sepgsql_is_enabled())
+	if (!semdb_is_enabled())
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
-				 errmsg("sepgsql is not currently enabled")));
+				 errmsg("semdb is not currently enabled")));
 
 	/*
 	 * Check DAC permission. Only superuser can set up initial security

@@ -7284,7 +7284,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
     <listitem>
      <para>
-      Fix I/O-conversion-related memory leaks in plpgsql
+      Fix I/O-conversion-related memory leaks in plmdb
       (Andres Freund, Jan Urbanski, Tom Lane)
      </para>
 
@@ -8074,7 +8074,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
     <listitem>
      <para>
-      Remove <filename>contrib/sepgsql</> tests from the regular regression
+      Remove <filename>contrib/semdb</> tests from the regular regression
       test mechanism (Tom Lane)
      </para>
 
@@ -8317,7 +8317,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
      <para>
       Add a <link linkend="SQL-SECURITY-LABEL"><command>SECURITY
       LABEL</></link> command and support for
-      <link linkend="sepgsql"><acronym>SELinux</> permissions control</link>
+      <link linkend="semdb"><acronym>SELinux</> permissions control</link>
      </para>
     </listitem>
 
@@ -8532,7 +8532,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
    </sect3>
 
    <sect3>
-    <title><link linkend="plpgsql">PL/pgSQL</link> Server-Side Language</title>
+    <title><link linkend="plmdb">PL/pgSQL</link> Server-Side Language</title>
 
     <itemizedlist>
 
@@ -10135,13 +10135,13 @@ SELECT * FROM places ORDER BY location <-> point '(101,456)' LIMIT 10;
     <title>Server-Side Languages</title>
 
     <sect4>
-     <title><link linkend="plpgsql">PL/pgSQL</link> Server-Side Language</title>
+     <title><link linkend="plmdb">PL/pgSQL</link> Server-Side Language</title>
 
      <itemizedlist>
 
       <listitem>
        <para>
-        Add <link linkend="plpgsql-foreach-array"><command>FOREACH IN
+        Add <link linkend="plmdb-foreach-array"><command>FOREACH IN
         ARRAY</></link> to PL/pgSQL
         (Pavel Stehule)
        </para>
@@ -10972,7 +10972,7 @@ SELECT * FROM places ORDER BY location <-> point '(101,456)' LIMIT 10;
 
       <listitem>
        <para>
-        Add <link linkend="sepgsql"><filename>contrib/sepgsql</></link>
+        Add <link linkend="semdb"><filename>contrib/semdb</></link>
         to interface permission checks with <acronym>SELinux</> (KaiGai Kohei)
        </para>
 

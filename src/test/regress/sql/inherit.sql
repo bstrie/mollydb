@@ -160,7 +160,7 @@ create table c1 () inherits (p1);
 drop table p1 cascade;
 
 -- Tests for casting between the rowtypes of parent and child
--- tables. See the pgsql-hackers thread beginning Dec. 4/04
+-- tables. See the mdb-hackers thread beginning Dec. 4/04
 create table base (i integer);
 create table derived () inherits (base);
 insert into derived (i) values (0);

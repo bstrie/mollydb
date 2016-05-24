@@ -455,7 +455,7 @@ begin
     end loop;
 end;
 $$
-language plpgsql;
+language plmdb;
 
 create view tt14v as select t.* from tt14f() t;
 

@@ -497,7 +497,7 @@ CREATE FUNCTION dummy_trigger() RETURNS TRIGGER AS $$
   BEGIN
     RETURN NULL;
   END
-$$ language plpgsql;
+$$ language plmdb;
 
 CREATE TRIGGER trigtest_before_stmt BEFORE INSERT OR UPDATE OR DELETE
 ON foreign_schema.foreign_table_1

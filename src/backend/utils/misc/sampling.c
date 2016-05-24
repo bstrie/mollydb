@@ -24,7 +24,7 @@
  * BlockSampler_Init -- prepare for random sampling of blocknumbers
  *
  * BlockSampler provides algorithm for block level sampling of a relation
- * as discussed on pgsql-hackers 2004-04-02 (subject "Large DB")
+ * as discussed on mdb-hackers 2004-04-02 (subject "Large DB")
  * It selects a random sample of samplesize blocks out of
  * the nblocks blocks in the table. If the table has less than
  * samplesize blocks, all blocks are selected.

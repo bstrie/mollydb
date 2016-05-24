@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.0 beta 3\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 12:35+0900\n"
 "PO-Revision-Date: 2013-08-18 17:27+0900\n"
 "Last-Translator: HOTTA Michihide <hotta@net-newbie.com>\n"
@@ -204,10 +204,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"不具合は<pgsql-bugs@mollydb.org>まで報告してください。\n"
+"不具合は<mdb-bugs@mollydb.org>まで報告してください。\n"
 
 #: common.c:44
 #, c-format

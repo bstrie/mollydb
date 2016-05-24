@@ -33,8 +33,8 @@ lib*.pc
 /config.cache
 /config.log
 /config.status
-/pgsql.sln
-/pgsql.sln.cache
+/mdb.sln
+/mdb.sln.cache
 /Debug/
 /Release/
 /tmp_install/

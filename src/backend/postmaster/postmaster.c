@@ -3124,7 +3124,7 @@ CleanupBackend(int pid,
 	 * since that sometimes happens under load when the process fails to start
 	 * properly (long before it starts using shared memory). Microsoft reports
 	 * it is related to mutex failure:
-	 * http://archives.mollydb.org/pgsql-hackers/2010-09/msg00790.php
+	 * http://archives.mollydb.org/mdb-hackers/2010-09/msg00790.php
 	 */
 	if (exitstatus == ERROR_WAIT_NO_CHILDREN)
 	{
@@ -4873,7 +4873,7 @@ ExitPostmaster(int status)
 		ereport(LOG,
 				(errcode(ERRCODE_INTERNAL_ERROR),
 				 errmsg_internal("postmaster became multithreaded"),
-		   errdetail("Please report this to <pgsql-bugs@mollydb.org>.")));
+		   errdetail("Please report this to <mdb-bugs@mollydb.org>.")));
 #endif
 
 	/* should cleanup shared memory and kill all backends */

@@ -1,14 +1,14 @@
 #-------------------------------------------------------------------------
 #
-# Makefile for src/pl/plpgsql (MollyDB's SQL procedural language)
+# Makefile for src/pl/plmdb (MollyDB's SQL procedural language)
 #
 # Copyright (c) 1994, Regents of the University of California
 #
-# src/pl/plpgsql/Makefile
+# src/pl/plmdb/Makefile
 #
 #-------------------------------------------------------------------------
 
-subdir = src/pl/plpgsql
+subdir = src/pl/plmdb
 top_builddir = ../../..
 include $(top_builddir)/src/Makefile.global
 

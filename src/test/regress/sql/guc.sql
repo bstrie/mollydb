@@ -220,7 +220,7 @@ begin
   set local work_mem = '2MB';
   return current_setting('work_mem');
 end $$
-language plpgsql
+language plmdb
 set work_mem = '1MB';
 
 select myfunc(0), current_setting('work_mem');
@@ -237,7 +237,7 @@ begin
   set work_mem = '2MB';
   return current_setting('work_mem');
 end $$
-language plpgsql
+language plmdb
 set work_mem = '1MB';
 
 select myfunc(0), current_setting('work_mem');
@@ -251,7 +251,7 @@ begin
   perform 1/$1;
   return current_setting('work_mem');
 end $$
-language plpgsql
+language plmdb
 set work_mem = '1MB';
 
 select myfunc(0);

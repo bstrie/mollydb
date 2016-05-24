@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/proc.c
+ * contrib/semdb/proc.c
  *
  * Routines corresponding to procedure objects
  *
@@ -27,16 +27,16 @@
 #include "utils/syscache.h"
 #include "utils/tqual.h"
 
-#include "sepgsql.h"
+#include "semdb.h"
 
 /*
- * sepgsql_proc_post_create
+ * semdb_proc_post_create
  *
  * This routine assigns a default security label on a newly defined
  * procedure.
  */
 void
-sepgsql_proc_post_create(Oid functionId)
+semdb_proc_post_create(Oid functionId)
 {
 	Relation	rel;
 	ScanKeyData skey;
@@ -78,7 +78,7 @@ sepgsql_proc_post_create(Oid functionId)
 	object.classId = NamespaceRelationId;
 	object.objectId = proForm->pronamespace;
 	object.objectSubId = 0;
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_SCHEMA,
 							SEPG_DB_SCHEMA__ADD_NAME,
 							getObjectIdentity(&object),
@@ -93,10 +93,10 @@ sepgsql_proc_post_create(Oid functionId)
 	 * Compute a default security label when we create a new procedure object
 	 * under the specified namespace.
 	 */
-	scontext = sepgsql_get_client_label();
-	tcontext = sepgsql_get_label(NamespaceRelationId,
+	scontext = semdb_get_client_label();
+	tcontext = semdb_get_label(NamespaceRelationId,
 								 proForm->pronamespace, 0);
-	ncontext = sepgsql_compute_create(scontext, tcontext,
+	ncontext = semdb_compute_create(scontext, tcontext,
 									  SEPG_CLASS_DB_PROCEDURE,
 									  NameStr(proForm->proname));
 
@@ -123,7 +123,7 @@ sepgsql_proc_post_create(Oid functionId)
 	if (proForm->proleakproof)
 		required |= SEPG_DB_PROCEDURE__INSTALL;
 
-	sepgsql_avc_check_perms_label(ncontext,
+	semdb_avc_check_perms_label(ncontext,
 								  SEPG_CLASS_DB_PROCEDURE,
 								  required,
 								  audit_name.data,
@@ -149,12 +149,12 @@ sepgsql_proc_post_create(Oid functionId)
 }
 
 /*
- * sepgsql_proc_drop
+ * semdb_proc_drop
  *
  * It checks privileges to drop the supplied function.
  */
 void
-sepgsql_proc_drop(Oid functionId)
+semdb_proc_drop(Oid functionId)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -167,7 +167,7 @@ sepgsql_proc_drop(Oid functionId)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_SCHEMA,
 							SEPG_DB_SCHEMA__REMOVE_NAME,
 							audit_name,
@@ -182,7 +182,7 @@ sepgsql_proc_drop(Oid functionId)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_PROCEDURE,
 							SEPG_DB_PROCEDURE__DROP,
 							audit_name,
@@ -191,13 +191,13 @@ sepgsql_proc_drop(Oid functionId)
 }
 
 /*
- * sepgsql_proc_relabel
+ * semdb_proc_relabel
  *
  * It checks privileges to relabel the supplied function
  * by the `seclabel'.
  */
 void
-sepgsql_proc_relabel(Oid functionId, const char *seclabel)
+semdb_proc_relabel(Oid functionId, const char *seclabel)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -210,7 +210,7 @@ sepgsql_proc_relabel(Oid functionId, const char *seclabel)
 	/*
 	 * check db_procedure:{setattr relabelfrom} permission
 	 */
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_PROCEDURE,
 							SEPG_DB_PROCEDURE__SETATTR |
 							SEPG_DB_PROCEDURE__RELABELFROM,
@@ -220,7 +220,7 @@ sepgsql_proc_relabel(Oid functionId, const char *seclabel)
 	/*
 	 * check db_procedure:{relabelto} permission
 	 */
-	sepgsql_avc_check_perms_label(seclabel,
+	semdb_avc_check_perms_label(seclabel,
 								  SEPG_CLASS_DB_PROCEDURE,
 								  SEPG_DB_PROCEDURE__RELABELTO,
 								  audit_name,
@@ -229,12 +229,12 @@ sepgsql_proc_relabel(Oid functionId, const char *seclabel)
 }
 
 /*
- * sepgsql_proc_setattr
+ * semdb_proc_setattr
  *
  * It checks privileges to alter the supplied function.
  */
 void
-sepgsql_proc_setattr(Oid functionId)
+semdb_proc_setattr(Oid functionId)
 {
 	Relation	rel;
 	ScanKeyData skey;
@@ -277,11 +277,11 @@ sepgsql_proc_setattr(Oid functionId)
 	 */
 	if (newform->pronamespace != oldform->pronamespace)
 	{
-		sepgsql_schema_remove_name(oldform->pronamespace);
-		sepgsql_schema_add_name(oldform->pronamespace);
+		semdb_schema_remove_name(oldform->pronamespace);
+		semdb_schema_add_name(oldform->pronamespace);
 	}
 	if (strcmp(NameStr(newform->proname), NameStr(oldform->proname)) != 0)
-		sepgsql_schema_rename(oldform->pronamespace);
+		semdb_schema_rename(oldform->pronamespace);
 
 	/*
 	 * check db_procedure:{setattr (install)} permission
@@ -295,7 +295,7 @@ sepgsql_proc_setattr(Oid functionId)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_PROCEDURE,
 							required,
 							audit_name,
@@ -309,12 +309,12 @@ sepgsql_proc_setattr(Oid functionId)
 }
 
 /*
- * sepgsql_proc_execute
+ * semdb_proc_execute
  *
  * It checks privileges to execute the supplied function
  */
 void
-sepgsql_proc_execute(Oid functionId)
+semdb_proc_execute(Oid functionId)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -326,7 +326,7 @@ sepgsql_proc_execute(Oid functionId)
 	object.objectId = functionId;
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_PROCEDURE,
 							SEPG_DB_PROCEDURE__EXECUTE,
 							audit_name,

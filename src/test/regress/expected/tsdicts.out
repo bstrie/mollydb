@@ -391,7 +391,7 @@ CREATE TEXT SEARCH DICTIONARY synonym (
 SELECT ts_lexize('synonym', 'PoStGrEs');
  ts_lexize 
 -----------
- {pgsql}
+ {mdb}
 (1 row)
 
 SELECT ts_lexize('synonym', 'Gogle');
@@ -530,10 +530,10 @@ CREATE TEXT SEARCH CONFIGURATION synonym_tst (
 ALTER TEXT SEARCH CONFIGURATION synonym_tst ALTER MAPPING FOR
 	asciiword, hword_asciipart, asciihword
 	WITH synonym, english_stem;
-SELECT to_tsvector('synonym_tst', 'MollyDBql is often called as mollydb or pgsql and pronounced as postgre');
+SELECT to_tsvector('synonym_tst', 'MollyDBql is often called as mollydb or mdb and pronounced as postgre');
                     to_tsvector                    
 ---------------------------------------------------
- 'call':4 'often':3 'pgsql':1,6,8,12 'pronounc':10
+ 'call':4 'often':3 'mdb':1,6,8,12 'pronounc':10
 (1 row)
 
 SELECT to_tsvector('synonym_tst', 'Most common mistake is to write Gogle instead of Google');
@@ -565,7 +565,7 @@ ALTER TEXT SEARCH CONFIGURATION thesaurus_tst ALTER MAPPING FOR
 SELECT to_tsvector('thesaurus_tst', 'one mollydb one two one two three one');
            to_tsvector            
 ----------------------------------
- '1':1,5 '12':3 '123':4 'pgsql':2
+ '1':1,5 '12':3 '123':4 'mdb':2
 (1 row)
 
 SELECT to_tsvector('thesaurus_tst', 'Supernovae star is very new star and usually called supernovae (abbrevation SN)');

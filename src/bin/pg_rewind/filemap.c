@@ -87,7 +87,7 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 		type = FILE_TYPE_DIRECTORY;
 
 	/*
-	 * Skip temporary files, .../pgsql_tmp/... and .../pgsql_tmp.* in source.
+	 * Skip temporary files, .../mdb_tmp/... and .../mdb_tmp.* in source.
 	 * This has the effect that all temporary files in the destination will be
 	 * removed.
 	 */

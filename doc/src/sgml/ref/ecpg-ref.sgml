@@ -115,7 +115,7 @@ MollyDB documentation
        <filename>/usr/local/include</filename>, the
        <productname>MollyDB</productname> include directory which
        is defined at compile time (default:
-       <filename>/usr/local/pgsql/include</filename>), and
+       <filename>/usr/local/mdb/include</filename>), and
        <filename>/usr/include</filename>, in that order.
       </para>
      </listitem>
@@ -225,13 +225,13 @@ MollyDB documentation
    be able to find the <application>ECPG</> header files in the
    <productname>MollyDB</> include directory.  Therefore, you might
    have to use the <option>-I</> option when invoking the compiler
-   (e.g., <literal>-I/usr/local/pgsql/include</literal>).
+   (e.g., <literal>-I/usr/local/mdb/include</literal>).
   </para>
 
   <para>
    Programs using C code with embedded SQL have to be linked against
    the <filename>libecpg</filename> library, for example using the
-   linker options <literal>-L/usr/local/pgsql/lib -lecpg</literal>.
+   linker options <literal>-L/usr/local/mdb/lib -lecpg</literal>.
   </para>
 
   <para>
@@ -251,8 +251,8 @@ MollyDB documentation
    program using the following sequence of commands:
 <programlisting>
 ecpg prog1.pgc
-cc -I/usr/local/pgsql/include -c prog1.c
-cc -o prog1 prog1.o -L/usr/local/pgsql/lib -lecpg
+cc -I/usr/local/mdb/include -c prog1.c
+cc -o prog1 prog1.o -L/usr/local/mdb/lib -lecpg
 </programlisting></para>
  </refsect1>
 

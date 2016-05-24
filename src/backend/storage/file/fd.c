@@ -2611,7 +2611,7 @@ RemovePgTempFiles(void)
 	FreeDir(spc_dir);
 
 	/*
-	 * In EXEC_BACKEND case there is a pgsql_tmp directory at the top level of
+	 * In EXEC_BACKEND case there is a mdb_tmp directory at the top level of
 	 * DataDir as well.
 	 */
 #ifdef EXEC_BACKEND
@@ -2619,7 +2619,7 @@ RemovePgTempFiles(void)
 #endif
 }
 
-/* Process one pgsql_tmp directory for RemovePgTempFiles */
+/* Process one mdb_tmp directory for RemovePgTempFiles */
 static void
 RemovePgTempFilesInDir(const char *tmpdirname)
 {

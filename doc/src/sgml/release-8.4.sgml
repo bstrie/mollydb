@@ -2898,7 +2898,7 @@
 
     <listitem>
      <para>
-      Fix I/O-conversion-related memory leaks in plpgsql
+      Fix I/O-conversion-related memory leaks in plmdb
       (Andres Freund, Jan Urbanski, Tom Lane)
      </para>
 
@@ -3489,7 +3489,7 @@
     <listitem>
      <para>
       Fix incorrect memory accounting (leading to possible memory bloat) in
-      tuplestores supporting holdable cursors and plpgsql's <literal>RETURN
+      tuplestores supporting holdable cursors and plmdb's <literal>RETURN
       NEXT</> command (Tom Lane)
      </para>
     </listitem>
@@ -3687,7 +3687,7 @@
 
     <listitem>
      <para>
-      Weaken plpgsql's check for typmod matching in record values (Tom Lane)
+      Weaken plmdb's check for typmod matching in record values (Tom Lane)
      </para>
 
      <para>
@@ -5260,7 +5260,7 @@
 
     <listitem>
      <para>
-      Fix pl/pgsql's <literal>CASE</> statement to not fail when the
+      Fix pl/mdb's <literal>CASE</> statement to not fail when the
       case expression is a query that returns no rows (Tom)
      </para>
     </listitem>
@@ -5584,7 +5584,7 @@
 
      <para>
       This corrects a problem introduced in the previous minor release.
-      One case that failed is when a plpgsql function returning set is
+      One case that failed is when a plmdb function returning set is
       called within another function's exception handler.
      </para>
     </listitem>
@@ -5731,7 +5731,7 @@
 
     <listitem>
      <para>
-      Fix plpgsql failure in one case where a composite column is set to NULL
+      Fix plmdb failure in one case where a composite column is set to NULL
       (Tom)
      </para>
     </listitem>

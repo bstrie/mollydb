@@ -1219,7 +1219,7 @@ LWLockAcquire(LWLock *lock, LWLockMode mode)
 	 * in the presence of contention.  The efficiency of being able to do that
 	 * outweighs the inefficiency of sometimes wasting a process dispatch
 	 * cycle because the lock is not free when a released waiter finally gets
-	 * to run.  See pgsql-hackers archives for 29-Dec-01.
+	 * to run.  See mdb-hackers archives for 29-Dec-01.
 	 */
 	for (;;)
 	{

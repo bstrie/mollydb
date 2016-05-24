@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: libpq (MollyDB 9.1)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-08-15 18:38+0000\n"
 "PO-Revision-Date: 2015-09-20 00:04-0400\n"
 "Last-Translator: grzegorz <begina.felicysym@wp.eu>\n"

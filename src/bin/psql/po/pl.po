@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: psql (MollyDB 9.1)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-01-05 23:12+0000\n"
 "PO-Revision-Date: 2016-01-06 09:03+0200\n"
 "Last-Translator: grzegorz <begina.felicysym@wp.eu>\n"
@@ -2039,8 +2039,8 @@ msgstr ""
 
 #: help.c:143
 #, c-format
-msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
-msgstr "Błędy proszę przesyłać na adres <pgsql-bugs@mollydb.org>.\n"
+msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
+msgstr "Błędy proszę przesyłać na adres <mdb-bugs@mollydb.org>.\n"
 
 #: help.c:166
 #, c-format

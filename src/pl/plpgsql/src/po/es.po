@@ -1,4 +1,4 @@
-# Spanish message translation file for plpgsql
+# Spanish message translation file for plmdb
 #
 # Copyright (C) 2008-2012 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
@@ -10,12 +10,12 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: plpgsql (MollyDB 9.6)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Project-Id-Version: plmdb (MollyDB 9.6)\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:07+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
 "Last-Translator: Carlos Chapi <carloswaldo@babelruins.org>\n"
-"Language-Team: PgSQL-es-Ayuda <pgsql-es-ayuda@mollydb.org>\n"
+"Language-Team: PgSQL-es-Ayuda <mdb-es-ayuda@mollydb.org>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -177,7 +177,7 @@ msgstr "función PL/pgSQL %s en la línea %d %s"
 msgid "PL/pgSQL function %s %s"
 msgstr "función PL/pgSQL %s %s"
 
-#. translator: last %s is a plpgsql statement type name
+#. translator: last %s is a plmdb statement type name
 #: pl_exec.c:973
 #, c-format
 msgid "PL/pgSQL function %s line %d at %s"

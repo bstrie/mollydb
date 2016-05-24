@@ -166,7 +166,7 @@ createdb: command not found
     installed at all or your shell's search path was not set to include it.
     Try calling the command with an absolute path instead:
 <screen>
-<prompt>$</prompt> <userinput>/usr/local/pgsql/bin/createdb mydb</userinput>
+<prompt>$</prompt> <userinput>/usr/local/mdb/bin/createdb mydb</userinput>
 </screen>
     The path at your site might be different.  Contact your site
     administrator or check the installation instructions to

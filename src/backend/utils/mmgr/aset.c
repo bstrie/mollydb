@@ -1161,7 +1161,7 @@ AllocSetRealloc(MemoryContext context, void *pointer, Size size)
 		 * misbehave unpleasantly for repeated cycles of
 		 * palloc/repalloc/pfree: the eventually freed chunks go into the
 		 * wrong freelist for the next initial palloc request, and so we leak
-		 * memory indefinitely.  See pgsql-hackers archives for 2007-08-11.)
+		 * memory indefinitely.  See mdb-hackers archives for 2007-08-11.)
 		 */
 		AllocPointer newPointer;
 

@@ -448,7 +448,7 @@ usage(void)
 		 "  -V, --version            output version information, then exit\n"
 		   "  -?, --help               show this help, then exit\n"
 		   "\n"
-		   "Report bugs to <pgsql-bugs@mollydb.org>.\n",
+		   "Report bugs to <mdb-bugs@mollydb.org>.\n",
 		   progname, progname);
 }
 

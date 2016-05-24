@@ -53,7 +53,7 @@ $AWK -F'[ .]' '\
 	{
 		printf "\
 --\n\
--- This is created by pgsql/src/tools/findoidjoins/make_oidjoins_check\n\
+-- This is created by mdb/src/tools/findoidjoins/make_oidjoins_check\n\
 --\n";
 	}
 	$5 == "=>" \

@@ -22,17 +22,17 @@
 # and pid files under /var/run as well as reacting to network
 # settings, so you should treat this with care.
 
-# Original author:  Ryan Kirkpatrick <pgsql@rkirkpat.net>
+# Original author:  Ryan Kirkpatrick <mdb@rkirkpat.net>
 
 # contrib/start-scripts/linux
 
 ## EDIT FROM HERE
 
 # Installation prefix
-prefix=/usr/local/pgsql
+prefix=/usr/local/mdb
 
 # Data directory
-PGDATA="/usr/local/pgsql/data"
+PGDATA="/usr/local/mdb/data"
 
 # Who to run the postmaster as, usually "mollydb".  (NOT "root")
 PGUSER=mollydb

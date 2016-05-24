@@ -802,9 +802,9 @@
 
     <listitem>
      <para>
-      Make all documentation reference <literal>pgsql-bugs</> and/or
-      <literal>pgsql-hackers</> as appropriate, instead of the
-      now-decommissioned <literal>pgsql-ports</> and <literal>pgsql-patches</>
+      Make all documentation reference <literal>mdb-bugs</> and/or
+      <literal>mdb-hackers</> as appropriate, instead of the
+      now-decommissioned <literal>mdb-ports</> and <literal>mdb-patches</>
       mailing lists (Tom)
      </para>
     </listitem>
@@ -2193,7 +2193,7 @@ not vacuuming the system catalogs often enough &mdash; it was not being
 told about catalog deletions caused by temporary table removal during
 backend exit.
 </para></listitem>
-<listitem><para>Additional buffer overrun checks in plpgsql
+<listitem><para>Additional buffer overrun checks in plmdb
 (Neil)</para></listitem>
 <listitem><para>Fix pg_dump to dump trigger names containing <literal>%</>
 correctly (Neil)</para></listitem>
@@ -2266,7 +2266,7 @@ permission on a function.</para></listitem>
 contrib/intagg</para></listitem>
 <listitem><para>Add needed STRICT marking to some contrib functions (Kris
 Jurka)</para></listitem>
-<listitem><para>Avoid buffer overrun when plpgsql cursor declaration has too
+<listitem><para>Avoid buffer overrun when plmdb cursor declaration has too
 many parameters (Neil)</para></listitem>
 <listitem><para>Fix planning error for FULL and RIGHT outer joins</para>
 <para>
@@ -2680,7 +2680,7 @@ inconveniences associated with the <literal>i/I</> problem.</para></listitem>
     <application>psql</application>, after installing the new release:
 <programlisting>
 DROP SCHEMA information_schema CASCADE;
-\i /usr/local/pgsql/share/information_schema.sql
+\i /usr/local/mdb/share/information_schema.sql
 </programlisting>
     Substitute your installation path in the second command.
    </para>

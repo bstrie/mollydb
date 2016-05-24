@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: mollydb (MollyDB 9.0)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:42+0000\n"
 "PO-Revision-Date: 2016-01-03 23:27-0500\n"
 "Last-Translator: Yuwei Peng <ywpeng@whu.edu.cn>\n"
@@ -219,8 +219,8 @@ msgstr "无法确定字符集的编码\"%s\""
 #: ../port/chklocale.c:260 ../port/chklocale.c:389
 #: postmaster/postmaster.c:4855
 #, c-format
-msgid "Please report this to <pgsql-bugs@mollydb.org>."
-msgstr "请向 <pgsql-bugs@mollydb.org>发送报告."
+msgid "Please report this to <mdb-bugs@mollydb.org>."
+msgstr "请向 <mdb-bugs@mollydb.org>发送报告."
 
 #: ../port/chklocale.c:381 ../port/chklocale.c:387
 #, c-format
@@ -12216,13 +12216,13 @@ msgid ""
 "configuration settings and how to set them on the command line or in\n"
 "the configuration file.\n"
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
 "请阅读文档获取运行时配置设置的完整列表\n"
 "以及如何在命令行或者在配置文件里设置它们的详细信息.\n"
 "\n"
-"请向 <pgsql-bugs@mollydb.org> 报告臭虫.\n"
+"请向 <mdb-bugs@mollydb.org> 报告臭虫.\n"
 
 #: main/main.c:369
 #, c-format

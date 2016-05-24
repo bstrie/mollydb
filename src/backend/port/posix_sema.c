@@ -68,7 +68,7 @@ PosixSemaphoreCreate(void)
 	{
 		semKey = nextSemKey++;
 
-		snprintf(semname, sizeof(semname), "/pgsql-%d", semKey);
+		snprintf(semname, sizeof(semname), "/mdb-%d", semKey);
 
 		mySem = sem_open(semname, O_CREAT | O_EXCL,
 						 (mode_t) IPCProtection, (unsigned) 1);

@@ -55,7 +55,7 @@ $$;
 
 select just_die();
 
-create or replace function die_caller() returns int language plpgsql as $$
+create or replace function die_caller() returns int language plmdb as $$
 BEGIN
   BEGIN
     PERFORM just_die();

@@ -10,13 +10,13 @@ CREATE FUNCTION fn_x_before () RETURNS TRIGGER AS '
 		NEW.e := ''before trigger fired''::text;
 		return NEW;
 	END;
-' LANGUAGE plpgsql;
+' LANGUAGE plmdb;
 CREATE FUNCTION fn_x_after () RETURNS TRIGGER AS '
   BEGIN
 		UPDATE x set e=''after trigger fired'' where c=''stuff'';
 		return NULL;
 	END;
-' LANGUAGE plpgsql;
+' LANGUAGE plmdb;
 CREATE TRIGGER trg_x_after AFTER INSERT ON x
 FOR EACH ROW EXECUTE PROCEDURE fn_x_after();
 CREATE TRIGGER trg_x_before BEFORE INSERT ON x
@@ -357,7 +357,7 @@ EXCEPTION
   WHEN OTHERS THEN
 	INSERT INTO vistest VALUES ('subxact failure');
 END;
-$$ language plpgsql;
+$$ language plmdb;
 BEGIN;
 INSERT INTO vistest VALUES ('z');
 SELECT truncate_in_subxact();
@@ -435,7 +435,7 @@ create function check_con_function(check_con_tbl) returns bool as $$
 begin
   raise notice 'input = %', row_to_json($1);
   return $1.f1 > 0;
-end $$ language plpgsql immutable;
+end $$ language plmdb immutable;
 alter table check_con_tbl add check (check_con_function(check_con_tbl.*));
 \d+ check_con_tbl
                     Table "public.check_con_tbl"

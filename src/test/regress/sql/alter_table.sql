@@ -301,7 +301,7 @@ DELETE FROM tmp6 WHERE b > 20;
 ALTER TABLE tmp3 VALIDATE CONSTRAINT b_le_20;	-- succeeds
 
 -- An already validated constraint must not be revalidated
-CREATE FUNCTION boo(int) RETURNS int IMMUTABLE STRICT LANGUAGE plpgsql AS $$ BEGIN RAISE NOTICE 'boo: %', $1; RETURN $1; END; $$;
+CREATE FUNCTION boo(int) RETURNS int IMMUTABLE STRICT LANGUAGE plmdb AS $$ BEGIN RAISE NOTICE 'boo: %', $1; RETURN $1; END; $$;
 INSERT INTO tmp7 VALUES (8, 18);
 ALTER TABLE tmp7 ADD CONSTRAINT identity CHECK (b = boo(b));
 ALTER TABLE tmp3 ADD CONSTRAINT IDENTITY check (b = boo(b)) NOT VALID;

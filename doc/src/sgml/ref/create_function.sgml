@@ -256,7 +256,7 @@ CREATE [ OR REPLACE ] FUNCTION
        The name of the language that the function is implemented in.
        It can be <literal>sql</literal>, <literal>c</literal>,
        <literal>internal</literal>, or the name of a user-defined
-       procedural language, e.g. <literal>plpgsql</literal>.  Enclosing the
+       procedural language, e.g. <literal>plmdb</literal>.  Enclosing the
        name in single quotes is deprecated and requires matching case.
       </para>
      </listitem>
@@ -697,7 +697,7 @@ CREATE OR REPLACE FUNCTION increment(i integer) RETURNS integer AS $$
         BEGIN
                 RETURN i + 1;
         END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
   </para>
 
@@ -770,7 +770,7 @@ BEGIN
 
         RETURN passed;
 END;
-$$  LANGUAGE plpgsql
+$$  LANGUAGE plmdb
     SECURITY DEFINER
     -- Set a secure search_path: trusted schema(s), then 'pg_temp'.
     SET search_path = admin, pg_temp;

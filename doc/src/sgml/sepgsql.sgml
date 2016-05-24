@@ -1,14 +1,14 @@
-<!-- doc/src/sgml/sepgsql.sgml -->
+<!-- doc/src/sgml/semdb.sgml -->
 
-<sect1 id="sepgsql" xreflabel="sepgsql">
- <title>sepgsql</title>
+<sect1 id="semdb" xreflabel="semdb">
+ <title>semdb</title>
 
- <indexterm zone="sepgsql">
-  <primary>sepgsql</primary>
+ <indexterm zone="semdb">
+  <primary>semdb</primary>
  </indexterm>
 
  <para>
-  <filename>sepgsql</> is a loadable module that supports label-based
+  <filename>semdb</> is a loadable module that supports label-based
   mandatory access control (MAC) based on <productname>SELinux</> security
   policy.
  </para>
@@ -17,11 +17,11 @@
    <para>
      The current implementation has significant limitations, and does not
      enforce mandatory access control for all actions.  See
-     <xref linkend="sepgsql-limitations">.
+     <xref linkend="semdb-limitations">.
    </para>
  </warning>
 
- <sect2 id="sepgsql-overview">
+ <sect2 id="semdb-overview">
   <title>Overview</title>
 
   <para>
@@ -39,7 +39,7 @@
   <para>
    <productname>SELinux</productname> access control decisions are made using
    security labels, which are represented by strings such as
-   <literal>system_u:object_r:sepgsql_table_t:s0</>.  Each access control
+   <literal>system_u:object_r:semdb_table_t:s0</>.  Each access control
    decision involves two labels: the label of the subject attempting to
    perform the action, and the label of the object on which the operation is
    to be performed.  Since these labels can be applied to any sort of object,
@@ -56,11 +56,11 @@
   </para>
 
  </sect2>
- <sect2 id="sepgsql-installation">
+ <sect2 id="semdb-installation">
   <title>Installation</title>
 
   <para>
-    <filename>sepgsql</> can only be used on <productname>Linux</productname>
+    <filename>semdb</> can only be used on <productname>Linux</productname>
     2.6.28 or higher with <productname>SELinux</productname> enabled.
     It is not available on any other platform.  You will also need
     <productname>libselinux</> 2.1.10 or higher and
@@ -92,18 +92,18 @@ Policy from config file:        targeted
   </para>
 
   <para>
-   To use this module, you must include <literal>sepgsql</>
+   To use this module, you must include <literal>semdb</>
    in the <xref linkend="guc-shared-preload-libraries"> parameter in
    <filename>mollydb.conf</>.  The module will not function correctly
    if loaded in any other manner.  Once the module is loaded, you
-   should execute <filename>sepgsql.sql</filename> in each database.
+   should execute <filename>semdb.sql</filename> in each database.
    This will install functions needed for security label management, and
    assign initial security labels.
   </para>
 
   <para>
    Here is an example showing how to initialize a fresh database cluster
-   with <filename>sepgsql</> functions and security labels installed.
+   with <filename>semdb</> functions and security labels installed.
    Adjust the paths shown as appropriate for your installation:
   </para>
 
@@ -114,10 +114,10 @@ $ vi $PGDATA/mollydb.conf
   change
     #shared_preload_libraries = ''                # (change requires restart)
   to
-    shared_preload_libraries = 'sepgsql'          # (change requires restart)
+    shared_preload_libraries = 'semdb'          # (change requires restart)
 $ for DBNAME in template0 template1 mollydb; do
     mollydb --single -F -c exit_on_error=true $DBNAME \
-      &lt;/usr/local/pgsql/share/contrib/sepgsql.sql &gt;/dev/null
+      &lt;/usr/local/mdb/share/contrib/semdb.sql &gt;/dev/null
   done
 </screen>
 
@@ -126,12 +126,12 @@ $ for DBNAME in template0 template1 mollydb; do
    depending on the particular versions you have of
    <productname>libselinux</> and <productname>selinux-policy</>:
 <screen>
-/etc/selinux/targeted/contexts/sepgsql_contexts:  line 33 has invalid object type db_blobs
-/etc/selinux/targeted/contexts/sepgsql_contexts:  line 36 has invalid object type db_language
-/etc/selinux/targeted/contexts/sepgsql_contexts:  line 37 has invalid object type db_language
-/etc/selinux/targeted/contexts/sepgsql_contexts:  line 38 has invalid object type db_language
-/etc/selinux/targeted/contexts/sepgsql_contexts:  line 39 has invalid object type db_language
-/etc/selinux/targeted/contexts/sepgsql_contexts:  line 40 has invalid object type db_language
+/etc/selinux/targeted/contexts/semdb_contexts:  line 33 has invalid object type db_blobs
+/etc/selinux/targeted/contexts/semdb_contexts:  line 36 has invalid object type db_language
+/etc/selinux/targeted/contexts/semdb_contexts:  line 37 has invalid object type db_language
+/etc/selinux/targeted/contexts/semdb_contexts:  line 38 has invalid object type db_language
+/etc/selinux/targeted/contexts/semdb_contexts:  line 39 has invalid object type db_language
+/etc/selinux/targeted/contexts/semdb_contexts:  line 40 has invalid object type db_language
 </screen>
    These messages are harmless and should be ignored.
   </para>
@@ -142,17 +142,17 @@ $ for DBNAME in template0 template1 mollydb; do
   </para>
  </sect2>
 
- <sect2 id="sepgsql-regression">
+ <sect2 id="semdb-regression">
   <title>Regression Tests</title>
 
   <para>
    Due to the nature of <productname>SELinux</productname>, running the
-   regression tests for <filename>sepgsql</> requires several extra
+   regression tests for <filename>semdb</> requires several extra
    configuration steps, some of which must be done as root.
    The regression tests will not be run by an ordinary
    <literal>make check</> or <literal>make installcheck</> command; you must
    set up the configuration and then invoke the test script manually.
-   The tests must be run in the <filename>contrib/sepgsql</> directory
+   The tests must be run in the <filename>contrib/semdb</> directory
    of a configured MollyDB build tree.  Although they require a build tree,
    the tests are designed to be executed against an installed server,
    that is they are comparable to <literal>make installcheck</> not
@@ -160,49 +160,49 @@ $ for DBNAME in template0 template1 mollydb; do
   </para>
 
   <para>
-   First, set up <filename>sepgsql</filename> in a working database
-   according to the instructions in <xref linkend="sepgsql-installation">.
+   First, set up <filename>semdb</filename> in a working database
+   according to the instructions in <xref linkend="semdb-installation">.
    Note that the current operating system user must be able to connect to the
    database as superuser without password authentication.
   </para>
 
   <para>
    Second, build and install the policy package for the regression test.
-   The <filename>sepgsql-regtest</> policy is a special purpose policy package
+   The <filename>semdb-regtest</> policy is a special purpose policy package
    which provides a set of rules to be allowed during the regression tests.
    It should be built from the policy source file
-   <filename>sepgsql-regtest.te</>, which is done using
+   <filename>semdb-regtest.te</>, which is done using
    <command>make</command> with a Makefile supplied by SELinux.
    You will need to locate the appropriate
    Makefile on your system; the path shown below is only an example.
    Once built, install this policy package using the
    <command>semodule</> command, which loads supplied policy packages
    into the kernel.  If the package is correctly installed,
-   <literal><command>semodule</> -l</> should list <literal>sepgsql-regtest</literal> as an
+   <literal><command>semodule</> -l</> should list <literal>semdb-regtest</literal> as an
    available policy package:
   </para>
 
 <screen>
-$ cd .../contrib/sepgsql
+$ cd .../contrib/semdb
 $ make -f /usr/share/selinux/devel/Makefile
-$ sudo semodule -u sepgsql-regtest.pp
-$ sudo semodule -l | grep sepgsql
-sepgsql-regtest 1.07
+$ sudo semodule -u semdb-regtest.pp
+$ sudo semodule -l | grep semdb
+semdb-regtest 1.07
 </screen>
 
   <para>
-   Third, turn on <literal>sepgsql_regression_test_mode</>.
-   For security reasons, the rules in <filename>sepgsql-regtest</>
+   Third, turn on <literal>semdb_regression_test_mode</>.
+   For security reasons, the rules in <filename>semdb-regtest</>
    are not enabled by default;
-   the <literal>sepgsql_regression_test_mode</literal> parameter enables
+   the <literal>semdb_regression_test_mode</literal> parameter enables
    the rules needed to launch the regression tests.
    It can be turned on using the <command>setsebool</> command:
   </para>
 
 <screen>
-$ sudo setsebool sepgsql_regression_test_mode on
-$ getsebool sepgsql_regression_test_mode
-sepgsql_regression_test_mode --> on
+$ sudo setsebool semdb_regression_test_mode on
+$ getsebool semdb_regression_test_mode
+semdb_regression_test_mode --> on
 </screen>
 
   <para>
@@ -215,7 +215,7 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 </screen>
 
   <para>
-   See <xref linkend="sepgsql-resources"> for details on adjusting your
+   See <xref linkend="semdb-resources"> for details on adjusting your
    working domain, if necessary.
   </para>
 
@@ -223,48 +223,48 @@ unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
    Finally, run the regression test script:
   </para>
 <screen>
-$ ./test_sepgsql
+$ ./test_semdb
 </screen>
 
   <para>
    This script will attempt to verify that you have done all the configuration
    steps correctly, and then it will run the regression tests for the
-   <filename>sepgsql</> module.
+   <filename>semdb</> module.
   </para>
 
   <para>
    After completing the tests, it's recommended you disable
-   the <literal>sepgsql_regression_test_mode</literal> parameter:
+   the <literal>semdb_regression_test_mode</literal> parameter:
   </para>
 
 <screen>
-$ sudo setsebool sepgsql_regression_test_mode off
+$ sudo setsebool semdb_regression_test_mode off
 </screen>
 
   <para>
-   You might prefer to remove the <filename>sepgsql-regtest</> policy
+   You might prefer to remove the <filename>semdb-regtest</> policy
    entirely:
   </para>
 
 <screen>
-$ sudo semodule -r sepgsql-regtest
+$ sudo semodule -r semdb-regtest
 </screen>
  </sect2>
 
- <sect2 id="sepgsql-parameters">
+ <sect2 id="semdb-parameters">
   <title>GUC Parameters</title>
 
   <variablelist>
-   <varlistentry id="guc-sepgsql-permissive" xreflabel="sepgsql.permissive">
+   <varlistentry id="guc-semdb-permissive" xreflabel="semdb.permissive">
     <term>
-     <varname>sepgsql.permissive</> (<type>boolean</type>)
+     <varname>semdb.permissive</> (<type>boolean</type>)
      <indexterm>
-      <primary><varname>sepgsql.permissive</> configuration parameter</primary>
+      <primary><varname>semdb.permissive</> configuration parameter</primary>
      </indexterm>
     </term>
     <listitem>
      <para>
-      This parameter enables <filename>sepgsql</> to function
+      This parameter enables <filename>semdb</> to function
       in permissive mode, regardless of the system setting.
       The default is off.
       This parameter can only be set in the <filename>mollydb.conf</>
@@ -272,18 +272,18 @@ $ sudo semodule -r sepgsql-regtest
      </para>
 
      <para>
-      When this parameter is on, <filename>sepgsql</> functions
+      When this parameter is on, <filename>semdb</> functions
       in permissive mode, even if SELinux in general is working in enforcing
       mode.  This parameter is primarily useful for testing purposes.
      </para>
     </listitem>
 
    </varlistentry>
-   <varlistentry id="guc-sepgsql-debug-audit" xreflabel="sepgsql.debug_audit">
+   <varlistentry id="guc-semdb-debug-audit" xreflabel="semdb.debug_audit">
     <term>
-     <varname>sepgsql.debug_audit</> (<type>boolean</>)
+     <varname>semdb.debug_audit</> (<type>boolean</>)
      <indexterm>
-      <primary><varname>sepgsql.debug_audit</> configuration parameter</>
+      <primary><varname>semdb.debug_audit</> configuration parameter</>
      </indexterm>
     </term>
     <listitem>
@@ -310,7 +310,7 @@ $ sudo semodule -r sepgsql-regtest
   </variablelist>
  </sect2>
 
- <sect2 id="sepgsql-features">
+ <sect2 id="semdb-features">
   <title>Features</title>
   <sect3>
    <title>Controlled Object Classes</title>
@@ -325,9 +325,9 @@ $ sudo semodule -r sepgsql-regtest
    </para>
 
    <para>
-    Currently, <filename>sepgsql</filename> allows security labels to be
+    Currently, <filename>semdb</filename> allows security labels to be
     assigned to schemas, tables, columns, sequences, views, and functions.
-    When <filename>sepgsql</filename> is in use, security labels are
+    When <filename>semdb</filename> is in use, security labels are
     automatically assigned to supported database objects at creation time.
     This label is called a default security label, and is decided according
     to the system security policy, which takes as input the creator's label,
@@ -425,7 +425,7 @@ UPDATE t1 SET x = 2, y = md5sum(y) WHERE z = 100;
     The default database privilege system allows database superusers to
     modify system catalogs using DML commands, and reference or modify
     toast tables.  These operations are prohibited when
-    <filename>sepgsql</> is enabled.
+    <filename>semdb</> is enabled.
    </para>
   </sect3>
 
@@ -541,7 +541,7 @@ mollydb=# CREATE TABLE customer (
            );
 CREATE TABLE
 mollydb=# SECURITY LABEL ON COLUMN customer.credit
-               IS 'system_u:object_r:sepgsql_secret_table_t:s0';
+               IS 'system_u:object_r:semdb_secret_table_t:s0';
 SECURITY LABEL
 mollydb=# CREATE FUNCTION show_credit(int) RETURNS text
              AS 'SELECT regexp_replace(credit, ''-[0-9]+$'', ''-xxxx'', ''g'')
@@ -549,7 +549,7 @@ mollydb=# CREATE FUNCTION show_credit(int) RETURNS text
            LANGUAGE sql;
 CREATE FUNCTION
 mollydb=# SECURITY LABEL ON FUNCTION show_credit(int)
-               IS 'system_u:object_r:sepgsql_trusted_proc_exec_t:s0';
+               IS 'system_u:object_r:semdb_trusted_proc_exec_t:s0';
 SECURITY LABEL
 </screen>
 
@@ -595,19 +595,19 @@ mollydb=# SELECT cid, cname, show_credit(cid) FROM customer;
     the original one. For example:
    </para>
 <screen>
-regression=# select sepgsql_getcon();
-                    sepgsql_getcon
+regression=# select semdb_getcon();
+                    semdb_getcon
 -------------------------------------------------------
  unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 (1 row)
 
-regression=# SELECT sepgsql_setcon('unconfined_u:unconfined_r:unconfined_t:s0-s0:c1.c4');
- sepgsql_setcon 
+regression=# SELECT semdb_setcon('unconfined_u:unconfined_r:unconfined_t:s0-s0:c1.c4');
+ semdb_setcon 
 ----------------
  t
 (1 row)
 
-regression=# SELECT sepgsql_setcon('unconfined_u:unconfined_r:unconfined_t:s0-s0:c1.c1023');
+regression=# SELECT semdb_setcon('unconfined_u:unconfined_r:unconfined_t:s0-s0:c1.c1023');
 ERROR:  SELinux: security policy violation
 </screen>
    <para>
@@ -621,13 +621,13 @@ ERROR:  SELinux: security policy violation
     of connection pooling software.
     Even if your connection pooling software is not allowed to run most
     of SQL commands, you can allow it to switch the security label
-    of the client using the <literal>sepgsql_setcon()</literal> function
+    of the client using the <literal>semdb_setcon()</literal> function
     from within a trusted procedure; that should take some
     credential to authorize the request to switch the client label.
     After that, this session will have the privileges of the target user,
     rather than the connection pooler.
     The connection pooler can later revert the security label change by
-    again using <literal>sepgsql_setcon()</literal> with
+    again using <literal>semdb_setcon()</literal> with
     <literal>NULL</literal> argument, again invoked from within a trusted
     procedure with appropriate permissions checks.
     The point here is that only the trusted procedure actually has permission
@@ -648,24 +648,24 @@ ERROR:  SELinux: security policy violation
   </sect3>
 </sect2>
 
- <sect2 id="sepgsql-functions">
-  <title>Sepgsql Functions</title>
+ <sect2 id="semdb-functions">
+  <title>Semdb Functions</title>
   <para>
-   <xref linkend="sepgsql-functions-table"> shows the available functions.
+   <xref linkend="semdb-functions-table"> shows the available functions.
   </para>
 
-  <table id="sepgsql-functions-table">
-   <title>Sepgsql Functions</title>
+  <table id="semdb-functions-table">
+   <title>Semdb Functions</title>
    <tgroup cols="2">
     <tbody>
      <row>
-      <entry><literal>sepgsql_getcon() returns text</literal></entry>
+      <entry><literal>semdb_getcon() returns text</literal></entry>
       <entry>
        Returns the client domain, the current security label of the client.
       </entry>
      </row>
      <row>
-      <entry><literal>sepgsql_setcon(text) returns bool</literal></entry>
+      <entry><literal>semdb_setcon(text) returns bool</literal></entry>
       <entry>
        Switches the client domain of the current session to the new domain,
        if allowed by the security policy.
@@ -674,19 +674,19 @@ ERROR:  SELinux: security policy violation
       </entry>
      </row>
      <row>
-      <entry><literal>sepgsql_mcstrans_in(text) returns text</literal></entry>
+      <entry><literal>semdb_mcstrans_in(text) returns text</literal></entry>
       <entry>Translates the given qualifies MLS/MCS range into raw format if
       the mcstrans daemon is running.
       </entry>
      </row>
      <row>
-      <entry><literal>sepgsql_mcstrans_out(text) returns text</literal></entry>
+      <entry><literal>semdb_mcstrans_out(text) returns text</literal></entry>
       <entry>Translates the given raw MCS/MCS range into qualified format if
       the mcstrans daemon is running.
       </entry>
      </row>
      <row>
-      <entry><literal>sepgsql_restorecon(text) returns bool</literal></entry>
+      <entry><literal>semdb_restorecon(text) returns bool</literal></entry>
       <entry>
        Sets up initial security labels for all objects within the
        current database. The argument may be NULL, or the name of a specfile
@@ -698,7 +698,7 @@ ERROR:  SELinux: security policy violation
   </table>
  </sect2>
 
- <sect2 id="sepgsql-limitations">
+ <sect2 id="semdb-limitations">
   <title>Limitations</title>
 
   <variablelist>
@@ -727,7 +727,7 @@ ERROR:  SELinux: security policy violation
     <listitem>
      <para>
       <productname>MollyDB</> supports row-level access, but
-      <filename>sepgsql</filename> does not.
+      <filename>semdb</filename> does not.
      </para>
     </listitem>
    </varlistentry>
@@ -736,7 +736,7 @@ ERROR:  SELinux: security policy violation
     <term>Covert channels</term>
     <listitem>
      <para>
-      <filename>sepgsql</> does not try to hide the existence of
+      <filename>semdb</> does not try to hide the existence of
       a certain object, even if the user is not allowed to reference it.
       For example, we can infer the existence of an invisible object as
       a result of primary key conflicts, foreign key violations, and so on,
@@ -749,7 +749,7 @@ ERROR:  SELinux: security policy violation
   </variablelist>
  </sect2>
 
- <sect2 id="sepgsql-resources">
+ <sect2 id="semdb-resources">
   <title>External Resources</title>
   <variablelist>
    <varlistentry>
@@ -784,7 +784,7 @@ ERROR:  SELinux: security policy violation
   </variablelist>
  </sect2>
 
- <sect2 id="sepgsql-author">
+ <sect2 id="semdb-author">
   <title>Author</title>
   <para>
    KaiGai Kohei <email>kaigai@ak.jp.nec.com</email>

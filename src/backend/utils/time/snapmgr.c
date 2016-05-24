@@ -1072,7 +1072,7 @@ ExportSnapshot(Snapshot snapshot)
 	 * useful to export a snapshot that will disappear immediately afterwards.
 	 * However, we haven't got enough information to do that, since we don't
 	 * know if we're at top level or not.  For example, we could be inside a
-	 * plpgsql function that is going to fire off other transactions via
+	 * plmdb function that is going to fire off other transactions via
 	 * dblink.  Rather than disallow perfectly legitimate usages, don't make a
 	 * check.
 	 *
@@ -1445,7 +1445,7 @@ ImportSnapshot(const char *idstr)
 	 * restriction could be removed if the source transaction were to mark its
 	 * xmin as being globally applicable.  But that would require some
 	 * additional syntax, since that has to be known when the snapshot is
-	 * initially taken.  (See pgsql-hackers discussion of 2011-10-21.)
+	 * initially taken.  (See mdb-hackers discussion of 2011-10-21.)
 	 */
 	if (src_dbid != MyDatabaseId)
 		ereport(ERROR,

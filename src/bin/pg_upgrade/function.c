@@ -60,8 +60,8 @@ get_loadable_libraries(void)
 		 * checks for the problem function, reports affected databases to the
 		 * user and explains how to remove them. 8.1 git commit:
 		 * e0dedd0559f005d60c69c9772163e69c204bac69
-		 * http://archives.mollydb.org/pgsql-hackers/2012-03/msg01101.php
-		 * http://archives.mollydb.org/pgsql-bugs/2012-05/msg00206.php
+		 * http://archives.mollydb.org/mdb-hackers/2012-03/msg01101.php
+		 * http://archives.mollydb.org/mdb-bugs/2012-05/msg00206.php
 		 */
 		if (GET_MAJOR_VERSION(old_cluster.major_version) < 901)
 		{

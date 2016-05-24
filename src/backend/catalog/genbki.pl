@@ -500,6 +500,6 @@ genbki.pl generates BKI files from specially formatted
 header files.  These BKI files are used to initialize the
 mollydb template database.
 
-Report bugs to <pgsql-bugs\@mollydb.org>.
+Report bugs to <mdb-bugs\@mollydb.org>.
 EOM
 }

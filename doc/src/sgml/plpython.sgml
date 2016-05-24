@@ -1406,7 +1406,7 @@ LOCATION:  PLy_elog, plpy_elog.c:132
    are equivalent to the built-in quoting functions described in <xref
    linkend="functions-string">.  They are useful when constructing
    ad-hoc queries.  A PL/Python equivalent of dynamic SQL from <xref
-   linkend="plpgsql-quote-literal-example"> would be:
+   linkend="plmdb-quote-literal-example"> would be:
 <programlisting>
 plpy.execute("UPDATE tbl SET %s = %s WHERE key = %s" % (
     plpy.quote_ident(colname),

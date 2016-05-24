@@ -45,7 +45,7 @@ to test your system however, you can do so as follows:
 
 3) Run thread_test.exe. You should see output like:
 
-    dpage@PC30:/cvs/pgsql/src/tools/thread$ ./thread_test
+    dpage@PC30:/cvs/mdb/src/tools/thread$ ./thread_test
     Your GetLastError() is thread-safe.
     Your system uses strerror() which is thread-safe.
     getpwuid_r()/getpwuid() are not applicable to Win32 platforms.

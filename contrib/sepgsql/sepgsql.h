@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/sepgsql.h
+ * contrib/semdb/semdb.h
  *
  * Definitions corresponding to SE-MollyDB
  *
@@ -214,35 +214,35 @@
 /*
  * hooks.c
  */
-extern bool sepgsql_get_permissive(void);
-extern bool sepgsql_get_debug_audit(void);
+extern bool semdb_get_permissive(void);
+extern bool semdb_get_debug_audit(void);
 
 /*
  * selinux.c
  */
-extern bool sepgsql_is_enabled(void);
-extern int	sepgsql_get_mode(void);
-extern int	sepgsql_set_mode(int new_mode);
-extern bool sepgsql_getenforce(void);
+extern bool semdb_is_enabled(void);
+extern int	semdb_get_mode(void);
+extern int	semdb_set_mode(int new_mode);
+extern bool semdb_getenforce(void);
 
-extern void sepgsql_audit_log(bool denied,
+extern void semdb_audit_log(bool denied,
 				  const char *scontext,
 				  const char *tcontext,
 				  uint16 tclass,
 				  uint32 audited,
 				  const char *audit_name);
 
-extern void sepgsql_compute_avd(const char *scontext,
+extern void semdb_compute_avd(const char *scontext,
 					const char *tcontext,
 					uint16 tclass,
 					struct av_decision * avd);
 
-extern char *sepgsql_compute_create(const char *scontext,
+extern char *semdb_compute_create(const char *scontext,
 					   const char *tcontext,
 					   uint16 tclass,
 					   const char *objname);
 
-extern bool sepgsql_check_perms(const char *scontext,
+extern bool semdb_check_perms(const char *scontext,
 					const char *tcontext,
 					uint16 tclass,
 					uint32 required,
@@ -253,81 +253,81 @@ extern bool sepgsql_check_perms(const char *scontext,
  * uavc.c
  */
 #define SEPGSQL_AVC_NOAUDIT			((void *)(-1))
-extern bool sepgsql_avc_check_perms_label(const char *tcontext,
+extern bool semdb_avc_check_perms_label(const char *tcontext,
 							  uint16 tclass,
 							  uint32 required,
 							  const char *audit_name,
 							  bool abort_on_violation);
-extern bool sepgsql_avc_check_perms(const ObjectAddress *tobject,
+extern bool semdb_avc_check_perms(const ObjectAddress *tobject,
 						uint16 tclass,
 						uint32 required,
 						const char *audit_name,
 						bool abort_on_violation);
-extern char *sepgsql_avc_trusted_proc(Oid functionId);
-extern void sepgsql_avc_init(void);
+extern char *semdb_avc_trusted_proc(Oid functionId);
+extern void semdb_avc_init(void);
 
 /*
  * label.c
  */
-extern char *sepgsql_get_client_label(void);
-extern void sepgsql_init_client_label(void);
-extern char *sepgsql_get_label(Oid relOid, Oid objOid, int32 subId);
+extern char *semdb_get_client_label(void);
+extern void semdb_init_client_label(void);
+extern char *semdb_get_label(Oid relOid, Oid objOid, int32 subId);
 
-extern void sepgsql_object_relabel(const ObjectAddress *object,
+extern void semdb_object_relabel(const ObjectAddress *object,
 					   const char *seclabel);
 
-extern Datum sepgsql_getcon(PG_FUNCTION_ARGS);
-extern Datum sepgsql_setcon(PG_FUNCTION_ARGS);
-extern Datum sepgsql_mcstrans_in(PG_FUNCTION_ARGS);
-extern Datum sepgsql_mcstrans_out(PG_FUNCTION_ARGS);
-extern Datum sepgsql_restorecon(PG_FUNCTION_ARGS);
+extern Datum semdb_getcon(PG_FUNCTION_ARGS);
+extern Datum semdb_setcon(PG_FUNCTION_ARGS);
+extern Datum semdb_mcstrans_in(PG_FUNCTION_ARGS);
+extern Datum semdb_mcstrans_out(PG_FUNCTION_ARGS);
+extern Datum semdb_restorecon(PG_FUNCTION_ARGS);
 
 /*
  * dml.c
  */
-extern bool sepgsql_dml_privileges(List *rangeTabls, bool abort_on_violation);
+extern bool semdb_dml_privileges(List *rangeTabls, bool abort_on_violation);
 
 /*
  * database.c
  */
-extern void sepgsql_database_post_create(Oid databaseId,
+extern void semdb_database_post_create(Oid databaseId,
 							 const char *dtemplate);
-extern void sepgsql_database_drop(Oid databaseId);
-extern void sepgsql_database_relabel(Oid databaseId, const char *seclabel);
-extern void sepgsql_database_setattr(Oid databaseId);
+extern void semdb_database_drop(Oid databaseId);
+extern void semdb_database_relabel(Oid databaseId, const char *seclabel);
+extern void semdb_database_setattr(Oid databaseId);
 
 /*
  * schema.c
  */
-extern void sepgsql_schema_post_create(Oid namespaceId);
-extern void sepgsql_schema_drop(Oid namespaceId);
-extern void sepgsql_schema_relabel(Oid namespaceId, const char *seclabel);
-extern void sepgsql_schema_setattr(Oid namespaceId);
-extern bool sepgsql_schema_search(Oid namespaceId, bool abort_on_violation);
-extern void sepgsql_schema_add_name(Oid namespaceId);
-extern void sepgsql_schema_remove_name(Oid namespaceId);
-extern void sepgsql_schema_rename(Oid namespaceId);
+extern void semdb_schema_post_create(Oid namespaceId);
+extern void semdb_schema_drop(Oid namespaceId);
+extern void semdb_schema_relabel(Oid namespaceId, const char *seclabel);
+extern void semdb_schema_setattr(Oid namespaceId);
+extern bool semdb_schema_search(Oid namespaceId, bool abort_on_violation);
+extern void semdb_schema_add_name(Oid namespaceId);
+extern void semdb_schema_remove_name(Oid namespaceId);
+extern void semdb_schema_rename(Oid namespaceId);
 
 /*
  * relation.c
  */
-extern void sepgsql_attribute_post_create(Oid relOid, AttrNumber attnum);
-extern void sepgsql_attribute_drop(Oid relOid, AttrNumber attnum);
-extern void sepgsql_attribute_relabel(Oid relOid, AttrNumber attnum,
+extern void semdb_attribute_post_create(Oid relOid, AttrNumber attnum);
+extern void semdb_attribute_drop(Oid relOid, AttrNumber attnum);
+extern void semdb_attribute_relabel(Oid relOid, AttrNumber attnum,
 						  const char *seclabel);
-extern void sepgsql_attribute_setattr(Oid relOid, AttrNumber attnum);
-extern void sepgsql_relation_post_create(Oid relOid);
-extern void sepgsql_relation_drop(Oid relOid);
-extern void sepgsql_relation_relabel(Oid relOid, const char *seclabel);
-extern void sepgsql_relation_setattr(Oid relOid);
+extern void semdb_attribute_setattr(Oid relOid, AttrNumber attnum);
+extern void semdb_relation_post_create(Oid relOid);
+extern void semdb_relation_drop(Oid relOid);
+extern void semdb_relation_relabel(Oid relOid, const char *seclabel);
+extern void semdb_relation_setattr(Oid relOid);
 
 /*
  * proc.c
  */
-extern void sepgsql_proc_post_create(Oid functionId);
-extern void sepgsql_proc_drop(Oid functionId);
-extern void sepgsql_proc_relabel(Oid functionId, const char *seclabel);
-extern void sepgsql_proc_setattr(Oid functionId);
-extern void sepgsql_proc_execute(Oid functionId);
+extern void semdb_proc_post_create(Oid functionId);
+extern void semdb_proc_drop(Oid functionId);
+extern void semdb_proc_relabel(Oid functionId, const char *seclabel);
+extern void semdb_proc_setattr(Oid functionId);
+extern void semdb_proc_execute(Oid functionId);
 
 #endif   /* SEPGSQL_H */

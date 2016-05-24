@@ -1,4 +1,4 @@
-/* -*-pgsql-c-*- */
+/* -*-mdb-c-*- */
 /*
  * Scanner for the configuration file
  *

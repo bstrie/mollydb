@@ -183,8 +183,8 @@ msgstr ""
 
 #: pg_config.c:437
 #, c-format
-msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
-msgstr "Rapporter feil til <pgsql-bugs@mollydb.org>.\n"
+msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
+msgstr "Rapporter feil til <mdb-bugs@mollydb.org>.\n"
 
 #: pg_config.c:443
 #, c-format

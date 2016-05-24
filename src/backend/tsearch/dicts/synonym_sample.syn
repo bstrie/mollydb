@@ -1,5 +1,5 @@
-mollydb	pgsql
-mollydb	pgsql
-postgre	pgsql
+mollydb	mdb
+mollydb	mdb
+postgre	mdb
 gogle	googl
 indices	index*

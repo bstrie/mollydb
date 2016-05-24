@@ -483,13 +483,13 @@ execute s1(0); -- should fail
 ERROR:  value for domain pos_int violates check constraint "pos_int_check"
 execute s1(NULL); -- should fail
 ERROR:  domain pos_int does not allow null values
--- Check that domain constraints on plpgsql function parameters, results,
+-- Check that domain constraints on plmdb function parameters, results,
 -- and local variables are enforced correctly.
 create function doubledecrement(p1 pos_int) returns pos_int as $$
 declare v pos_int;
 begin
     return p1;
-end$$ language plpgsql;
+end$$ language plmdb;
 select doubledecrement(3); -- fail because of implicit null assignment
 ERROR:  domain pos_int does not allow null values
 CONTEXT:  PL/pgSQL function doubledecrement(pos_int) line 3 during statement block local variable initialization
@@ -497,7 +497,7 @@ create or replace function doubledecrement(p1 pos_int) returns pos_int as $$
 declare v pos_int := 0;
 begin
     return p1;
-end$$ language plpgsql;
+end$$ language plmdb;
 select doubledecrement(3); -- fail at initialization assignment
 ERROR:  value for domain pos_int violates check constraint "pos_int_check"
 CONTEXT:  PL/pgSQL function doubledecrement(pos_int) line 3 during statement block local variable initialization
@@ -506,7 +506,7 @@ declare v pos_int := 1;
 begin
     v := p1 - 1;
     return v - 1;
-end$$ language plpgsql;
+end$$ language plmdb;
 select doubledecrement(null); -- fail before call
 ERROR:  domain pos_int does not allow null values
 select doubledecrement(0); -- fail before call
@@ -553,7 +553,7 @@ drop type ddtest1;
 drop domain posint cascade;
 NOTICE:  drop cascades to type posint2
 --
--- Check enforcement of domain-related typmod in plpgsql (bug #5717)
+-- Check enforcement of domain-related typmod in plmdb (bug #5717)
 --
 create or replace function array_elem_check(numeric) returns numeric as $$
 declare
@@ -561,7 +561,7 @@ declare
 begin
   x[1] := $1;
   return x[1];
-end$$ language plpgsql;
+end$$ language plmdb;
 select array_elem_check(121.00);
 ERROR:  numeric field overflow
 DETAIL:  A field with precision 4, scale 2 must round to an absolute value less than 10^2.
@@ -579,7 +579,7 @@ declare
 begin
   x[1] := $1;
   return x[1];
-end$$ language plpgsql;
+end$$ language plmdb;
 select array_elem_check(121.00);
 ERROR:  numeric field overflow
 DETAIL:  A field with precision 4, scale 2 must round to an absolute value less than 10^2.
@@ -597,7 +597,7 @@ declare
 begin
   x[1] := $1;
   return x[1];
-end$$ language plpgsql;
+end$$ language plmdb;
 select array_elem_check(121.00);
 ERROR:  numeric field overflow
 DETAIL:  A field with precision 4, scale 2 must round to an absolute value less than 10^2.
@@ -640,7 +640,7 @@ declare
 begin
   x[2] := $1;
   return x[2];
-end$$ language plpgsql;
+end$$ language plmdb;
 select array_elem_check(3);
  array_elem_check 
 ------------------
@@ -652,7 +652,7 @@ ERROR:  value for domain orderedpair violates check constraint "orderedpair_chec
 CONTEXT:  PL/pgSQL function array_elem_check(integer) line 5 at assignment
 drop function array_elem_check(int);
 --
--- Check enforcement of changing constraints in plpgsql
+-- Check enforcement of changing constraints in plmdb
 --
 create domain di as int;
 create function dom_check(int) returns di as $$
@@ -661,7 +661,7 @@ begin
   d := $1;
   return d;
 end
-$$ language plpgsql immutable;
+$$ language plmdb immutable;
 select dom_check(0);
  dom_check 
 -----------

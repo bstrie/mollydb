@@ -72,7 +72,7 @@
 <!ENTITY xtypes     SYSTEM "xtypes.sgml">
 <!ENTITY plperl     SYSTEM "plperl.sgml">
 <!ENTITY plpython   SYSTEM "plpython.sgml">
-<!ENTITY plsql      SYSTEM "plpgsql.sgml">
+<!ENTITY plsql      SYSTEM "plmdb.sgml">
 <!ENTITY pltcl      SYSTEM "pltcl.sgml">
 
 <!-- reference pages -->
@@ -142,7 +142,7 @@
 <!ENTITY mollydb-fdw    SYSTEM "mollydb-fdw.sgml">
 <!ENTITY seg             SYSTEM "seg.sgml">
 <!ENTITY contrib-spi     SYSTEM "contrib-spi.sgml">
-<!ENTITY sepgsql         SYSTEM "sepgsql.sgml">
+<!ENTITY semdb         SYSTEM "semdb.sgml">
 <!ENTITY sslinfo         SYSTEM "sslinfo.sgml">
 <!ENTITY tablefunc       SYSTEM "tablefunc.sgml">
 <!ENTITY tcn             SYSTEM "tcn.sgml">

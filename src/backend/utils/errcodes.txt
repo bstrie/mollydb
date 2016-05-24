@@ -12,7 +12,7 @@
 #   src/include/utils/errcodes.h
 #      macros defining errcode constants to be used in the rest of the source
 #
-#   src/pl/plpgsql/src/plerrcodes.h
+#   src/pl/plmdb/src/plerrcodes.h
 #      a list of PL/pgSQL condition names and their SQLSTATE codes
 #
 #   src/pl/tcl/pltclerrcodes.h
@@ -461,7 +461,7 @@ HV00N    E    ERRCODE_FDW_UNABLE_TO_ESTABLISH_CONNECTION                     fdw
 Section: Class P0 - PL/pgSQL Error
 
 # (MollyDB-specific error class)
-P0000    E    ERRCODE_PLPGSQL_ERROR                                          plpgsql_error
+P0000    E    ERRCODE_PLPGSQL_ERROR                                          plmdb_error
 P0001    E    ERRCODE_RAISE_EXCEPTION                                        raise_exception
 P0002    E    ERRCODE_NO_DATA_FOUND                                          no_data_found
 P0003    E    ERRCODE_TOO_MANY_ROWS                                          too_many_rows

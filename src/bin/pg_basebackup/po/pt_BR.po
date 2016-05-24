@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.5\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-09-17 22:32-0300\n"
 "PO-Revision-Date: 2011-08-20 23:33-0300\n"
 "Last-Translator: Euler Taveira de Oliveira <euler@timbira.com>\n"
@@ -242,10 +242,10 @@ msgstr "  -W, --password         pergunta senha (pode ocorrer automaticamente)\n
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Relate erros a <pgsql-bugs@mollydb.org>.\n"
+"Relate erros a <mdb-bugs@mollydb.org>.\n"
 
 #: pg_basebackup.c:310
 #, c-format

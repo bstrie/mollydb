@@ -72,7 +72,7 @@ usage(const char *progname)
 	printf(_("      --debug                    write a lot of debug messages\n"));
 	printf(_("  -V, --version                  output version information, then exit\n"));
 	printf(_("  -?, --help                     show this help, then exit\n"));
-	printf(_("\nReport bugs to <pgsql-bugs@mollydb.org>.\n"));
+	printf(_("\nReport bugs to <mdb-bugs@mollydb.org>.\n"));
 }
 
 

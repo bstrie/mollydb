@@ -2617,7 +2617,7 @@ pg_wchar_tbl
 pgp_armor_headers_state
 pgpid_t
 pgsocket
-pgsql_thing_t
+mdb_thing_t
 pgssEntry
 pgssHashKey
 pgssJumbleState
@@ -2638,9 +2638,9 @@ plperl_proc_key
 plperl_proc_ptr
 plperl_query_desc
 plperl_query_entry
-plpgsql_CastHashEntry
-plpgsql_CastHashKey
-plpgsql_HashEnt
+plmdb_CastHashEntry
+plmdb_CastHashKey
+plmdb_HashEnt
 pltcl_interp_desc
 pltcl_proc_desc
 pltcl_proc_key

@@ -27,7 +27,7 @@
   <para>
    There are currently four procedural languages available in the
    standard <productname>MollyDB</productname> distribution:
-   <application>PL/pgSQL</application> (<xref linkend="plpgsql">),
+   <application>PL/pgSQL</application> (<xref linkend="plmdb">),
    <application>PL/Tcl</application> (<xref linkend="pltcl">),
    <application>PL/Perl</application> (<xref linkend="plperl">), and
    <application>PL/Python</application> (<xref linkend="plpython">).

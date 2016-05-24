@@ -1076,7 +1076,7 @@ COMMIT;
 <programlisting>
 CREATE OR REPLACE FUNCTION no_rewrite()
  RETURNS event_trigger
- LANGUAGE plpgsql AS
+ LANGUAGE plmdb AS
 $$
 ---
 --- Implement local Table Rewriting policy:

@@ -147,7 +147,7 @@ sub Install
 			$target . '/share/tsearch_data/');
 
 		my $pl_extension_files = [];
-		my @pldirs             = ('src/pl/plpgsql/src');
+		my @pldirs             = ('src/pl/plmdb/src');
 		push @pldirs, "src/pl/plperl"   if $config->{perl};
 		push @pldirs, "src/pl/plpython" if $config->{python};
 		push @pldirs, "src/pl/tcl"      if $config->{tcl};
@@ -219,7 +219,7 @@ sub CopySolutionOutput
 	my $rem =
 	  qr{Project\("\{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942\}"\) = "([^"]+)"};
 
-	my $sln = read_file("pgsql.sln") || croak "Could not open pgsql.sln\n";
+	my $sln = read_file("mdb.sln") || croak "Could not open mdb.sln\n";
 
 	my $vcproj = 'vcproj';
 	if ($sln =~
@@ -451,7 +451,7 @@ sub CopyContribFiles
 			next if ($d eq "hstore_plperl"   && !defined($config->{perl}));
 			next if ($d eq "hstore_plpython" && !defined($config->{python}));
 			next if ($d eq "ltree_plpython"  && !defined($config->{python}));
-			next if ($d eq "sepgsql");
+			next if ($d eq "semdb");
 
 			CopySubdirFiles($subdir, $d, $config, $target);
 		}
@@ -621,7 +621,7 @@ sub CopyIncludeFiles
 	CopyFiles(
 		'PL/pgSQL header',
 		$target . '/include/server/',
-		'src/pl/plpgsql/src/', 'plpgsql.h');
+		'src/pl/plmdb/src/', 'plmdb.h');
 
 	# some xcopy progs don't like mixed slash style paths
 	(my $ctarget = $target) =~ s!/!\\!g;

@@ -1,7 +1,7 @@
 CREATE EXTENSION test_ddl_deparse;
 
 CREATE OR REPLACE FUNCTION test_ddl_deparse()
-  RETURNS event_trigger LANGUAGE plpgsql AS
+  RETURNS event_trigger LANGUAGE plmdb AS
 $$
 DECLARE
 	r record;

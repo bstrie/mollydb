@@ -17,7 +17,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ecpglib (MollyDB) 9.3\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-03-15 22:10+0000\n"
 "PO-Revision-Date: 2012-10-30 13:08+0100\n"
 "Last-Translator: Daniele Varrazzo <daniele.varrazzo@gmail.com>\n"

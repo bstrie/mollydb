@@ -1,19 +1,19 @@
 #-------------------------------------------------------------------------
 #
-# Makefile for the pl/pgsql procedural language
+# Makefile for the pl/mdb procedural language
 #
-# src/pl/plpgsql/src/Makefile
+# src/pl/plmdb/src/Makefile
 #
 #-------------------------------------------------------------------------
 
-subdir = src/pl/plpgsql/src
+subdir = src/pl/plmdb/src
 top_builddir = ../../../..
 include $(top_builddir)/src/Makefile.global
 
 PGFILEDESC = "PL/pgSQL - procedural language"
 
 # Shared library parameters
-NAME= plpgsql
+NAME= plmdb
 
 override CPPFLAGS := -I. -I$(srcdir) $(CPPFLAGS)
 SHLIB_LINK = $(filter -lintl, $(LIBS))
@@ -22,7 +22,7 @@ rpath =
 OBJS = pl_gram.o pl_handler.o pl_comp.o pl_exec.o \
 	pl_funcs.o pl_scanner.o $(WIN32RES)
 
-DATA = plpgsql.control plpgsql--1.0.sql plpgsql--unpackaged--1.0.sql
+DATA = plmdb.control plmdb--1.0.sql plmdb--unpackaged--1.0.sql
 
 all: all-lib
 
@@ -41,21 +41,21 @@ uninstall: uninstall-lib uninstall-data uninstall-headers
 install-data: installdirs
 	$(INSTALL_DATA) $(addprefix $(srcdir)/, $(DATA)) '$(DESTDIR)$(datadir)/extension/'
 
-# The plpgsql.h header file is needed by instrumentation plugins
+# The plmdb.h header file is needed by instrumentation plugins
 install-headers: installdirs
-	$(INSTALL_DATA) '$(srcdir)/plpgsql.h' '$(DESTDIR)$(includedir_server)'
+	$(INSTALL_DATA) '$(srcdir)/plmdb.h' '$(DESTDIR)$(includedir_server)'
 
 uninstall-data:
 	rm -f $(addprefix '$(DESTDIR)$(datadir)/extension'/, $(notdir $(DATA)))
 
 uninstall-headers:
-	rm -f '$(DESTDIR)$(includedir_server)/plpgsql.h'
+	rm -f '$(DESTDIR)$(includedir_server)/plmdb.h'
 
 .PHONY: install-data install-headers uninstall-data uninstall-headers
 
 
 # Force these dependencies to be known even without dependency info built:
-pl_gram.o pl_handler.o pl_comp.o pl_exec.o pl_funcs.o pl_scanner.o: plpgsql.h pl_gram.h plerrcodes.h
+pl_gram.o pl_handler.o pl_comp.o pl_exec.o pl_funcs.o pl_scanner.o: plmdb.h pl_gram.h plerrcodes.h
 
 # See notes in src/backend/parser/Makefile about the following two rules
 pl_gram.h: pl_gram.c ;

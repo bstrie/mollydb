@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pg_dump (MollyDB 9.0)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:44+0000\n"
 "PO-Revision-Date: 2015-12-01 20:26+0800\n"
 "Last-Translator: Yuwei Peng <ywpeng@whu.edu.cn>\n"
@@ -1772,8 +1772,8 @@ msgstr ""
 
 #: pg_dump.c:924 pg_dumpall.c:593 pg_restore.c:486
 #, c-format
-msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
-msgstr "报告错误至 <pgsql-bugs@mollydb.org>.\n"
+msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
+msgstr "报告错误至 <mdb-bugs@mollydb.org>.\n"
 
 #: pg_dump.c:943
 #, c-format

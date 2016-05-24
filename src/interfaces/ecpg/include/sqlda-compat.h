@@ -1,5 +1,5 @@
 /*
- * pgsql/src/interfaces/ecpg/include/sqlda-infx-compat.h
+ * mdb/src/interfaces/ecpg/include/sqlda-infx-compat.h
  */
 
 #ifndef ECPG_SQLDA_COMPAT_H

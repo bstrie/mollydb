@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ecpg (MollyDB 9.0)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-22 21:07+0000\n"
 "PO-Revision-Date: 2014-11-24 15:21+0800\n"
 "Last-Translator: Xiong He <iihero@qq.com>\n"
@@ -172,10 +172,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"错误报告至 <pgsql-bugs@mollydb.org>.\n"
+"错误报告至 <mdb-bugs@mollydb.org>.\n"
 
 #: ecpg.c:143
 #, c-format
@@ -317,9 +317,9 @@ msgstr "在EXEC SQL INCLUDE命令中出现语法错误"
 #: pgc.l:1237
 #, c-format
 msgid ""
-"internal error: unreachable state; please report this to <pgsql-"
+"internal error: unreachable state; please report this to <mdb-"
 "bugs@mollydb.org>"
-msgstr "内部错误：不可到达的状态；请向<pgsql-bugs@mollydb.org>发送报告"
+msgstr "内部错误：不可到达的状态；请向<mdb-bugs@mollydb.org>发送报告"
 
 #: pgc.l:1362
 #, c-format

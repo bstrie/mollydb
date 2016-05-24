@@ -1,5 +1,5 @@
 /*
- * pgp-pgsql.c
+ * pgp-mdb.c
  *		MollyDB wrappers for pgp.
  *
  * Copyright (c) 2005 Marko Kreen
@@ -26,7 +26,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * contrib/pgcrypto/pgp-pgsql.c
+ * contrib/pgcrypto/pgp-mdb.c
  */
 
 #include "mollydb.h"

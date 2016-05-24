@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: psql (MollyDB 9.0)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:43+0000\n"
 "PO-Revision-Date: 2016-01-03 23:26-0500\n"
 "Last-Translator: Yuwei Peng <ywpeng@whu.edu.cn>\n"
@@ -2461,8 +2461,8 @@ msgstr ""
 
 #: help.c:143
 #, c-format
-msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
-msgstr "臭虫报告至 <pgsql-bugs@mollydb.org>.\n"
+msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
+msgstr "臭虫报告至 <mdb-bugs@mollydb.org>.\n"
 
 # help.c:174
 #: help.c:166
@@ -3633,7 +3633,7 @@ msgid ""
 msgstr ""
 "键入： \\copyright 显示发行条款\n"
 "       \\h 显示 SQL 命令的说明\n"
-"       \\? 显示 pgsql 命令的说明\n"
+"       \\? 显示 mdb 命令的说明\n"
 "       \\g 或者以分号(;)结尾以执行查询\n"
 "       \\q 退出\n"
 

@@ -1,5 +1,5 @@
 --
--- This is created by pgsql/src/tools/findoidjoins/make_oidjoins_check
+-- This is created by mdb/src/tools/findoidjoins/make_oidjoins_check
 --
 SELECT	ctid, aggfnoid
 FROM	pg_catalog.pg_aggregate fk

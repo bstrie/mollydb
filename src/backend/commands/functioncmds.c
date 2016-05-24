@@ -2109,7 +2109,7 @@ ExecuteDoStmt(DoStmt *stmt)
 	if (language_item)
 		language = strVal(language_item->arg);
 	else
-		language = "plpgsql";
+		language = "plmdb";
 
 	/* Look up the language and validate permissions */
 	languageTuple = SearchSysCache1(LANGNAME, PointerGetDatum(language));

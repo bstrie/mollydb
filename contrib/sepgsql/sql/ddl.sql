@@ -4,25 +4,25 @@
 
 -- clean-up in case a prior regression run failed
 SET client_min_messages TO 'warning';
-DROP DATABASE IF EXISTS regtest_sepgsql_test_database;
-DROP USER IF EXISTS regtest_sepgsql_test_user;
+DROP DATABASE IF EXISTS regtest_semdb_test_database;
+DROP USER IF EXISTS regtest_semdb_test_user;
 RESET client_min_messages;
 
 -- confirm required permissions using audit messages
--- @SECURITY-CONTEXT=unconfined_u:unconfined_r:sepgsql_regtest_superuser_t:s0
-SET sepgsql.debug_audit = true;
+-- @SECURITY-CONTEXT=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0
+SET semdb.debug_audit = true;
 SET client_min_messages = LOG;
 
 --
 -- CREATE Permission checks
 --
-CREATE DATABASE regtest_sepgsql_test_database;
+CREATE DATABASE regtest_semdb_test_database;
 
-CREATE USER regtest_sepgsql_test_user;
+CREATE USER regtest_semdb_test_user;
 
 CREATE SCHEMA regtest_schema;
 
-GRANT ALL ON SCHEMA regtest_schema TO regtest_sepgsql_test_user;
+GRANT ALL ON SCHEMA regtest_schema TO regtest_semdb_test_user;
 
 SET search_path = regtest_schema, public;
 
@@ -44,7 +44,7 @@ CREATE SEQUENCE regtest_seq;
 
 CREATE TYPE regtest_comptype AS (a int, b text);
 
-CREATE FUNCTION regtest_func(text,int[]) RETURNS bool LANGUAGE plpgsql
+CREATE FUNCTION regtest_func(text,int[]) RETURNS bool LANGUAGE plmdb
 	   AS 'BEGIN RAISE NOTICE ''regtest_func => %'', $1; RETURN true; END';
 
 CREATE AGGREGATE regtest_agg (
@@ -52,7 +52,7 @@ CREATE AGGREGATE regtest_agg (
 );
 
 -- CREATE objects owned by others
-SET SESSION AUTHORIZATION regtest_sepgsql_test_user;
+SET SESSION AUTHORIZATION regtest_semdb_test_user;
 
 SET search_path = regtest_schema, public;
 
@@ -60,7 +60,7 @@ CREATE TABLE regtest_table_3 (x int, y serial);
 
 CREATE VIEW regtest_view_2 AS SELECT * FROM regtest_table_3 WHERE x < y;
 
-CREATE FUNCTION regtest_func_2(int) RETURNS bool LANGUAGE plpgsql
+CREATE FUNCTION regtest_func_2(int) RETURNS bool LANGUAGE plmdb
            AS 'BEGIN RETURN $1 * $1 < 100; END';
 
 RESET SESSION AUTHORIZATION;
@@ -92,8 +92,8 @@ ALTER TABLE regtest_table_2 SET WITHOUT OIDS;
 
 DROP TABLE regtest_table;
 
-DROP OWNED BY regtest_sepgsql_test_user;
+DROP OWNED BY regtest_semdb_test_user;
 
-DROP DATABASE regtest_sepgsql_test_database;
-DROP USER regtest_sepgsql_test_user;
+DROP DATABASE regtest_semdb_test_database;
+DROP USER regtest_semdb_test_user;
 DROP SCHEMA IF EXISTS regtest_schema CASCADE;

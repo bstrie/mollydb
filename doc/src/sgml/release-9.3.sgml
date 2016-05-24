@@ -9285,7 +9285,7 @@ ALTER EXTENSION hstore UPDATE;
     <title>Server-Side Languages</title>
 
     <sect4>
-     <title><link linkend="plpgsql">PL/pgSQL</link> Server-Side Language</title>
+     <title><link linkend="plmdb">PL/pgSQL</link> Server-Side Language</title>
 
      <itemizedlist>
 
@@ -9304,7 +9304,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Allow PL/pgSQL to access <link
-        linkend="plpgsql-exception-diagnostics">constraint violation
+        linkend="plmdb-exception-diagnostics">constraint violation
         details</link> as separate fields (Pavel Stehule)
        </para>
       </listitem>
@@ -9318,7 +9318,7 @@ ALTER EXTENSION hstore UPDATE;
        <para>
         A <command>COPY</> executed in a PL/pgSQL function now updates the
         value retrieved by <link
-        linkend="plpgsql-statements-diagnostics"><command>GET DIAGNOSTICS
+        linkend="plmdb-statements-diagnostics"><command>GET DIAGNOSTICS
         x = ROW_COUNT</></link>.
        </para>
       </listitem>

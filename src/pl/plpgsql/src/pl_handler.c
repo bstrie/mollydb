@@ -8,12 +8,12 @@
  *
  *
  * IDENTIFICATION
- *	  src/pl/plpgsql/src/pl_handler.c
+ *	  src/pl/plmdb/src/pl_handler.c
  *
  *-------------------------------------------------------------------------
  */
 
-#include "plpgsql.h"
+#include "plmdb.h"
 
 #include "access/htup_details.h"
 #include "catalog/pg_proc.h"
@@ -26,9 +26,9 @@
 #include "utils/syscache.h"
 
 
-static bool plpgsql_extra_checks_check_hook(char **newvalue, void **extra, GucSource source);
-static void plpgsql_extra_warnings_assign_hook(const char *newvalue, void *extra);
-static void plpgsql_extra_errors_assign_hook(const char *newvalue, void *extra);
+static bool plmdb_extra_checks_check_hook(char **newvalue, void **extra, GucSource source);
+static void plmdb_extra_warnings_assign_hook(const char *newvalue, void *extra);
+static void plmdb_extra_errors_assign_hook(const char *newvalue, void *extra);
 
 PG_MODULE_MAGIC;
 
@@ -40,23 +40,23 @@ static const struct config_enum_entry variable_conflict_options[] = {
 	{NULL, 0, false}
 };
 
-int			plpgsql_variable_conflict = PLPGSQL_RESOLVE_ERROR;
+int			plmdb_variable_conflict = PLPGSQL_RESOLVE_ERROR;
 
-bool		plpgsql_print_strict_params = false;
+bool		plmdb_print_strict_params = false;
 
-bool		plpgsql_check_asserts = true;
+bool		plmdb_check_asserts = true;
 
-char	   *plpgsql_extra_warnings_string = NULL;
-char	   *plpgsql_extra_errors_string = NULL;
-int			plpgsql_extra_warnings;
-int			plpgsql_extra_errors;
+char	   *plmdb_extra_warnings_string = NULL;
+char	   *plmdb_extra_errors_string = NULL;
+int			plmdb_extra_warnings;
+int			plmdb_extra_errors;
 
 /* Hook for plugins */
-PLpgSQL_plugin **plpgsql_plugin_ptr = NULL;
+PLpgSQL_plugin **plmdb_plugin_ptr = NULL;
 
 
 static bool
-plpgsql_extra_checks_check_hook(char **newvalue, void **extra, GucSource source)
+plmdb_extra_checks_check_hook(char **newvalue, void **extra, GucSource source)
 {
 	char	   *rawstring;
 	List	   *elemlist;
@@ -117,15 +117,15 @@ plpgsql_extra_checks_check_hook(char **newvalue, void **extra, GucSource source)
 }
 
 static void
-plpgsql_extra_warnings_assign_hook(const char *newvalue, void *extra)
+plmdb_extra_warnings_assign_hook(const char *newvalue, void *extra)
 {
-	plpgsql_extra_warnings = *((int *) extra);
+	plmdb_extra_warnings = *((int *) extra);
 }
 
 static void
-plpgsql_extra_errors_assign_hook(const char *newvalue, void *extra)
+plmdb_extra_errors_assign_hook(const char *newvalue, void *extra)
 {
-	plpgsql_extra_errors = *((int *) extra);
+	plmdb_extra_errors = *((int *) extra);
 }
 
 
@@ -145,74 +145,74 @@ _PG_init(void)
 
 	pg_bindtextdomain(TEXTDOMAIN);
 
-	DefineCustomEnumVariable("plpgsql.variable_conflict",
+	DefineCustomEnumVariable("plmdb.variable_conflict",
 							 gettext_noop("Sets handling of conflicts between PL/pgSQL variable names and table column names."),
 							 NULL,
-							 &plpgsql_variable_conflict,
+							 &plmdb_variable_conflict,
 							 PLPGSQL_RESOLVE_ERROR,
 							 variable_conflict_options,
 							 PGC_SUSET, 0,
 							 NULL, NULL, NULL);
 
-	DefineCustomBoolVariable("plpgsql.print_strict_params",
+	DefineCustomBoolVariable("plmdb.print_strict_params",
 							 gettext_noop("Print information about parameters in the DETAIL part of the error messages generated on INTO ... STRICT failures."),
 							 NULL,
-							 &plpgsql_print_strict_params,
+							 &plmdb_print_strict_params,
 							 false,
 							 PGC_USERSET, 0,
 							 NULL, NULL, NULL);
 
-	DefineCustomBoolVariable("plpgsql.check_asserts",
+	DefineCustomBoolVariable("plmdb.check_asserts",
 				  gettext_noop("Perform checks given in ASSERT statements."),
 							 NULL,
-							 &plpgsql_check_asserts,
+							 &plmdb_check_asserts,
 							 true,
 							 PGC_USERSET, 0,
 							 NULL, NULL, NULL);
 
-	DefineCustomStringVariable("plpgsql.extra_warnings",
+	DefineCustomStringVariable("plmdb.extra_warnings",
 							   gettext_noop("List of programming constructs that should produce a warning."),
 							   NULL,
-							   &plpgsql_extra_warnings_string,
+							   &plmdb_extra_warnings_string,
 							   "none",
 							   PGC_USERSET, GUC_LIST_INPUT,
-							   plpgsql_extra_checks_check_hook,
-							   plpgsql_extra_warnings_assign_hook,
+							   plmdb_extra_checks_check_hook,
+							   plmdb_extra_warnings_assign_hook,
 							   NULL);
 
-	DefineCustomStringVariable("plpgsql.extra_errors",
+	DefineCustomStringVariable("plmdb.extra_errors",
 							   gettext_noop("List of programming constructs that should produce an error."),
 							   NULL,
-							   &plpgsql_extra_errors_string,
+							   &plmdb_extra_errors_string,
 							   "none",
 							   PGC_USERSET, GUC_LIST_INPUT,
-							   plpgsql_extra_checks_check_hook,
-							   plpgsql_extra_errors_assign_hook,
+							   plmdb_extra_checks_check_hook,
+							   plmdb_extra_errors_assign_hook,
 							   NULL);
 
-	EmitWarningsOnPlaceholders("plpgsql");
+	EmitWarningsOnPlaceholders("plmdb");
 
-	plpgsql_HashTableInit();
-	RegisterXactCallback(plpgsql_xact_cb, NULL);
-	RegisterSubXactCallback(plpgsql_subxact_cb, NULL);
+	plmdb_HashTableInit();
+	RegisterXactCallback(plmdb_xact_cb, NULL);
+	RegisterSubXactCallback(plmdb_subxact_cb, NULL);
 
 	/* Set up a rendezvous point with optional instrumentation plugin */
-	plpgsql_plugin_ptr = (PLpgSQL_plugin **) find_rendezvous_variable("PLpgSQL_plugin");
+	plmdb_plugin_ptr = (PLpgSQL_plugin **) find_rendezvous_variable("PLpgSQL_plugin");
 
 	inited = true;
 }
 
 /* ----------
- * plpgsql_call_handler
+ * plmdb_call_handler
  *
  * The MollyDB function manager and trigger manager
  * call this function for execution of PL/pgSQL procedures.
  * ----------
  */
-PG_FUNCTION_INFO_V1(plpgsql_call_handler);
+PG_FUNCTION_INFO_V1(plmdb_call_handler);
 
 Datum
-plpgsql_call_handler(PG_FUNCTION_ARGS)
+plmdb_call_handler(PG_FUNCTION_ARGS)
 {
 	PLpgSQL_function *func;
 	PLpgSQL_execstate *save_cur_estate;
@@ -226,7 +226,7 @@ plpgsql_call_handler(PG_FUNCTION_ARGS)
 		elog(ERROR, "SPI_connect failed: %s", SPI_result_code_string(rc));
 
 	/* Find or compile the function */
-	func = plpgsql_compile(fcinfo, false);
+	func = plmdb_compile(fcinfo, false);
 
 	/* Must save and restore prior value of cur_estate */
 	save_cur_estate = func->cur_estate;
@@ -241,16 +241,16 @@ plpgsql_call_handler(PG_FUNCTION_ARGS)
 		 * subhandler
 		 */
 		if (CALLED_AS_TRIGGER(fcinfo))
-			retval = PointerGetDatum(plpgsql_exec_trigger(func,
+			retval = PointerGetDatum(plmdb_exec_trigger(func,
 										   (TriggerData *) fcinfo->context));
 		else if (CALLED_AS_EVENT_TRIGGER(fcinfo))
 		{
-			plpgsql_exec_event_trigger(func,
+			plmdb_exec_event_trigger(func,
 									   (EventTriggerData *) fcinfo->context);
 			retval = (Datum) 0;
 		}
 		else
-			retval = plpgsql_exec_function(func, fcinfo, NULL);
+			retval = plmdb_exec_function(func, fcinfo, NULL);
 	}
 	PG_CATCH();
 	{
@@ -275,15 +275,15 @@ plpgsql_call_handler(PG_FUNCTION_ARGS)
 }
 
 /* ----------
- * plpgsql_inline_handler
+ * plmdb_inline_handler
  *
  * Called by MollyDB to execute an anonymous code block
  * ----------
  */
-PG_FUNCTION_INFO_V1(plpgsql_inline_handler);
+PG_FUNCTION_INFO_V1(plmdb_inline_handler);
 
 Datum
-plpgsql_inline_handler(PG_FUNCTION_ARGS)
+plmdb_inline_handler(PG_FUNCTION_ARGS)
 {
 	InlineCodeBlock *codeblock = (InlineCodeBlock *) DatumGetPointer(PG_GETARG_DATUM(0));
 	PLpgSQL_function *func;
@@ -302,14 +302,14 @@ plpgsql_inline_handler(PG_FUNCTION_ARGS)
 		elog(ERROR, "SPI_connect failed: %s", SPI_result_code_string(rc));
 
 	/* Compile the anonymous code block */
-	func = plpgsql_compile_inline(codeblock->source_text);
+	func = plmdb_compile_inline(codeblock->source_text);
 
 	/* Mark the function as busy, just pro forma */
 	func->use_count++;
 
 	/*
 	 * Set up a fake fcinfo with just enough info to satisfy
-	 * plpgsql_exec_function().  In particular note that this sets things up
+	 * plmdb_exec_function().  In particular note that this sets things up
 	 * with no arguments passed.
 	 */
 	MemSet(&fake_fcinfo, 0, sizeof(fake_fcinfo));
@@ -324,14 +324,14 @@ plpgsql_inline_handler(PG_FUNCTION_ARGS)
 	/* And run the function */
 	PG_TRY();
 	{
-		retval = plpgsql_exec_function(func, &fake_fcinfo, simple_eval_estate);
+		retval = plmdb_exec_function(func, &fake_fcinfo, simple_eval_estate);
 	}
 	PG_CATCH();
 	{
 		/*
 		 * We need to clean up what would otherwise be long-lived resources
 		 * accumulated by the failed DO block, principally cached plans for
-		 * statements (which can be flushed with plpgsql_free_function_memory)
+		 * statements (which can be flushed with plmdb_free_function_memory)
 		 * and execution trees for simple expressions, which are in the
 		 * private EState.
 		 *
@@ -339,10 +339,10 @@ plpgsql_inline_handler(PG_FUNCTION_ARGS)
 		 * simple_econtext_stack entries pointing into it, which we can do by
 		 * invoking the subxact callback.  (It will be called again later if
 		 * some outer control level does a subtransaction abort, but no harm
-		 * is done.)  We cheat a bit knowing that plpgsql_subxact_cb does not
+		 * is done.)  We cheat a bit knowing that plmdb_subxact_cb does not
 		 * pay attention to its parentSubid argument.
 		 */
-		plpgsql_subxact_cb(SUBXACT_EVENT_ABORT_SUB,
+		plmdb_subxact_cb(SUBXACT_EVENT_ABORT_SUB,
 						   GetCurrentSubTransactionId(),
 						   0, NULL);
 
@@ -354,7 +354,7 @@ plpgsql_inline_handler(PG_FUNCTION_ARGS)
 		Assert(func->use_count == 0);
 
 		/* ... so we can free subsidiary storage */
-		plpgsql_free_function_memory(func);
+		plmdb_free_function_memory(func);
 
 		/* And propagate the error */
 		PG_RE_THROW();
@@ -369,7 +369,7 @@ plpgsql_inline_handler(PG_FUNCTION_ARGS)
 	Assert(func->use_count == 0);
 
 	/* ... so we can free subsidiary storage */
-	plpgsql_free_function_memory(func);
+	plmdb_free_function_memory(func);
 
 	/*
 	 * Disconnect from SPI manager
@@ -381,16 +381,16 @@ plpgsql_inline_handler(PG_FUNCTION_ARGS)
 }
 
 /* ----------
- * plpgsql_validator
+ * plmdb_validator
  *
  * This function attempts to validate a PL/pgSQL function at
  * CREATE FUNCTION time.
  * ----------
  */
-PG_FUNCTION_INFO_V1(plpgsql_validator);
+PG_FUNCTION_INFO_V1(plmdb_validator);
 
 Datum
-plpgsql_validator(PG_FUNCTION_ARGS)
+plmdb_validator(PG_FUNCTION_ARGS)
 {
 	Oid			funcoid = PG_GETARG_OID(0);
 	HeapTuple	tuple;
@@ -467,7 +467,7 @@ plpgsql_validator(PG_FUNCTION_ARGS)
 
 		/*
 		 * Set up a fake fcinfo with just enough info to satisfy
-		 * plpgsql_compile().
+		 * plmdb_compile().
 		 */
 		MemSet(&fake_fcinfo, 0, sizeof(fake_fcinfo));
 		MemSet(&flinfo, 0, sizeof(flinfo));
@@ -488,7 +488,7 @@ plpgsql_validator(PG_FUNCTION_ARGS)
 		}
 
 		/* Test-compile the function */
-		plpgsql_compile(&fake_fcinfo, true);
+		plmdb_compile(&fake_fcinfo, true);
 
 		/*
 		 * Disconnect from SPI manager

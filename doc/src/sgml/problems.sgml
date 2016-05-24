@@ -296,7 +296,7 @@
 
   <para>
    In general, send bug reports to the bug report mailing list at
-   <email>pgsql-bugs@mollydb.org</email>.
+   <email>mdb-bugs@mollydb.org</email>.
    You are requested to use a descriptive subject for your email
    message, perhaps parts of the error message.
   </para>
@@ -306,20 +306,20 @@
    at the project's
    <ulink url="http://www.mollydb.org/">web site</ulink>.
    Entering a bug report this way causes it to be mailed to the
-   <email>pgsql-bugs@mollydb.org</email> mailing list.
+   <email>mdb-bugs@mollydb.org</email> mailing list.
   </para>
 
   <para>
    If your bug report has security implications and you'd prefer that it
    not become immediately visible in public archives, don't send it to
-   <literal>pgsql-bugs</literal>.  Security issues can be
+   <literal>mdb-bugs</literal>.  Security issues can be
    reported privately to <email>security@mollydb.org</email>.
   </para>
 
   <para>
    Do not send bug reports to any of the user mailing lists, such as
-   <email>pgsql-sql@mollydb.org</email> or
-   <email>pgsql-general@mollydb.org</email>.
+   <email>mdb-sql@mollydb.org</email> or
+   <email>mdb-general@mollydb.org</email>.
    These mailing lists are for answering
    user questions, and their subscribers normally do not wish to receive
    bug reports. More importantly, they are unlikely to fix them.
@@ -327,24 +327,24 @@
 
   <para>
    Also, please do <emphasis>not</emphasis> send reports to
-   the developers' mailing list <email>pgsql-hackers@mollydb.org</email>.
+   the developers' mailing list <email>mdb-hackers@mollydb.org</email>.
    This list is for discussing the
    development of <productname>MollyDB</productname>, and it would be nice
    if we could keep the bug reports separate. We might choose to take up a
-   discussion about your bug report on <literal>pgsql-hackers</literal>,
+   discussion about your bug report on <literal>mdb-hackers</literal>,
    if the problem needs more review.
   </para>
 
   <para>
    If you have a problem with the documentation, the best place to report it
-   is the documentation mailing list <email>pgsql-docs@mollydb.org</email>.
+   is the documentation mailing list <email>mdb-docs@mollydb.org</email>.
    Please be specific about what part of the documentation you are unhappy
    with.
   </para>
 
   <para>
    If your bug is a portability problem on a non-supported platform,
-   send mail to <email>pgsql-hackers@mollydb.org</email>,
+   send mail to <email>mdb-hackers@mollydb.org</email>,
    so we (and you) can work on
    porting <productname>MollyDB</productname> to your platform.
   </para>

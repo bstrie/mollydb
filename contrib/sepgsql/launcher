@@ -21,7 +21,7 @@ fi
 # Read SQL from stdin
 #
 TEMP=`mktemp`
-CONTEXT="unconfined_u:unconfined_r:sepgsql_regtest_superuser_t:s0-s0:c0.c255"
+CONTEXT="unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0-s0:c0.c255"
 
 while IFS='\\n' read LINE
 do
@@ -35,7 +35,7 @@ do
             truncate -s0 $TEMP
         fi
         CONTEXT=`echo "$LINE" | sed 's/^-- @SECURITY-CONTEXT=//g'`
-        LINE="SELECT sepgsql_getcon();	-- confirm client privilege"
+        LINE="SELECT semdb_getcon();	-- confirm client privilege"
     fi
     echo "$LINE" >> $TEMP
 done

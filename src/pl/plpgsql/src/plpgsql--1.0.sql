@@ -1,4 +1,4 @@
-/* src/pl/plpgsql/src/plpgsql--1.0.sql */
+/* src/pl/plmdb/src/plmdb--1.0.sql */
 
 /*
  * Currently, all the interesting stuff is done by CREATE LANGUAGE.
@@ -6,6 +6,6 @@
  * knowledge into this script.
  */
 
-CREATE PROCEDURAL LANGUAGE plpgsql;
+CREATE PROCEDURAL LANGUAGE plmdb;
 
-COMMENT ON PROCEDURAL LANGUAGE plpgsql IS 'PL/pgSQL procedural language';
+COMMENT ON PROCEDURAL LANGUAGE plmdb IS 'PL/pgSQL procedural language';

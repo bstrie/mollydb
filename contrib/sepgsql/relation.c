@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/relation.c
+ * contrib/semdb/relation.c
  *
  * Routines corresponding to relation/attribute objects
  *
@@ -29,12 +29,12 @@
 #include "utils/syscache.h"
 #include "utils/tqual.h"
 
-#include "sepgsql.h"
+#include "semdb.h"
 
-static void sepgsql_index_modify(Oid indexOid);
+static void semdb_index_modify(Oid indexOid);
 
 /*
- * sepgsql_attribute_post_create
+ * semdb_attribute_post_create
  *
  * This routine assigns a default security label on a newly defined
  * column, using ALTER TABLE ... ADD COLUMN.
@@ -42,7 +42,7 @@ static void sepgsql_index_modify(Oid indexOid);
  * although it also defines columns in addition to table.
  */
 void
-sepgsql_attribute_post_create(Oid relOid, AttrNumber attnum)
+semdb_attribute_post_create(Oid relOid, AttrNumber attnum)
 {
 	Relation	rel;
 	ScanKeyData skey[2];
@@ -87,9 +87,9 @@ sepgsql_attribute_post_create(Oid relOid, AttrNumber attnum)
 
 	attForm = (Form_pg_attribute) GETSTRUCT(tuple);
 
-	scontext = sepgsql_get_client_label();
-	tcontext = sepgsql_get_label(RelationRelationId, relOid, 0);
-	ncontext = sepgsql_compute_create(scontext, tcontext,
+	scontext = semdb_get_client_label();
+	tcontext = semdb_get_label(RelationRelationId, relOid, 0);
+	ncontext = semdb_compute_create(scontext, tcontext,
 									  SEPG_CLASS_DB_COLUMN,
 									  NameStr(attForm->attname));
 
@@ -104,7 +104,7 @@ sepgsql_attribute_post_create(Oid relOid, AttrNumber attnum)
 	appendStringInfo(&audit_name, "%s.%s",
 					 getObjectIdentity(&object),
 					 quote_identifier(NameStr(attForm->attname)));
-	sepgsql_avc_check_perms_label(ncontext,
+	semdb_avc_check_perms_label(ncontext,
 								  SEPG_CLASS_DB_COLUMN,
 								  SEPG_DB_COLUMN__CREATE,
 								  audit_name.data,
@@ -126,12 +126,12 @@ sepgsql_attribute_post_create(Oid relOid, AttrNumber attnum)
 }
 
 /*
- * sepgsql_attribute_drop
+ * semdb_attribute_drop
  *
  * It checks privileges to drop the supplied column.
  */
 void
-sepgsql_attribute_drop(Oid relOid, AttrNumber attnum)
+semdb_attribute_drop(Oid relOid, AttrNumber attnum)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -147,7 +147,7 @@ sepgsql_attribute_drop(Oid relOid, AttrNumber attnum)
 	object.objectSubId = attnum;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_COLUMN,
 							SEPG_DB_COLUMN__DROP,
 							audit_name,
@@ -156,13 +156,13 @@ sepgsql_attribute_drop(Oid relOid, AttrNumber attnum)
 }
 
 /*
- * sepgsql_attribute_relabel
+ * semdb_attribute_relabel
  *
  * It checks privileges to relabel the supplied column
  * by the `seclabel'.
  */
 void
-sepgsql_attribute_relabel(Oid relOid, AttrNumber attnum,
+semdb_attribute_relabel(Oid relOid, AttrNumber attnum,
 						  const char *seclabel)
 {
 	ObjectAddress object;
@@ -181,7 +181,7 @@ sepgsql_attribute_relabel(Oid relOid, AttrNumber attnum,
 	/*
 	 * check db_column:{setattr relabelfrom} permission
 	 */
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_COLUMN,
 							SEPG_DB_COLUMN__SETATTR |
 							SEPG_DB_COLUMN__RELABELFROM,
@@ -191,7 +191,7 @@ sepgsql_attribute_relabel(Oid relOid, AttrNumber attnum,
 	/*
 	 * check db_column:{relabelto} permission
 	 */
-	sepgsql_avc_check_perms_label(seclabel,
+	semdb_avc_check_perms_label(seclabel,
 								  SEPG_CLASS_DB_COLUMN,
 								  SEPG_DB_PROCEDURE__RELABELTO,
 								  audit_name,
@@ -200,12 +200,12 @@ sepgsql_attribute_relabel(Oid relOid, AttrNumber attnum,
 }
 
 /*
- * sepgsql_attribute_setattr
+ * semdb_attribute_setattr
  *
  * It checks privileges to alter the supplied column.
  */
 void
-sepgsql_attribute_setattr(Oid relOid, AttrNumber attnum)
+semdb_attribute_setattr(Oid relOid, AttrNumber attnum)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -221,7 +221,7 @@ sepgsql_attribute_setattr(Oid relOid, AttrNumber attnum)
 	object.objectSubId = attnum;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_COLUMN,
 							SEPG_DB_COLUMN__SETATTR,
 							audit_name,
@@ -230,12 +230,12 @@ sepgsql_attribute_setattr(Oid relOid, AttrNumber attnum)
 }
 
 /*
- * sepgsql_relation_post_create
+ * semdb_relation_post_create
  *
  * The post creation hook of relation/attribute
  */
 void
-sepgsql_relation_post_create(Oid relOid)
+semdb_relation_post_create(Oid relOid)
 {
 	Relation	rel;
 	ScanKeyData skey;
@@ -282,7 +282,7 @@ sepgsql_relation_post_create(Oid relOid)
 	object.classId = NamespaceRelationId;
 	object.objectId = classForm->relnamespace;
 	object.objectSubId = 0;
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_SCHEMA,
 							SEPG_DB_SCHEMA__ADD_NAME,
 							getObjectIdentity(&object),
@@ -301,7 +301,7 @@ sepgsql_relation_post_create(Oid relOid)
 			break;
 		case RELKIND_INDEX:
 			/* deal with indexes specially; no need for tclass */
-			sepgsql_index_modify(relOid);
+			semdb_index_modify(relOid);
 			goto out;
 		default:
 			/* ignore other relkinds */
@@ -312,10 +312,10 @@ sepgsql_relation_post_create(Oid relOid)
 	 * Compute a default security label when we create a new relation object
 	 * under the specified namespace.
 	 */
-	scontext = sepgsql_get_client_label();
-	tcontext = sepgsql_get_label(NamespaceRelationId,
+	scontext = semdb_get_client_label();
+	tcontext = semdb_get_label(NamespaceRelationId,
 								 classForm->relnamespace, 0);
-	rcontext = sepgsql_compute_create(scontext, tcontext, tclass,
+	rcontext = semdb_compute_create(scontext, tcontext, tclass,
 									  NameStr(classForm->relname));
 
 	/*
@@ -326,7 +326,7 @@ sepgsql_relation_post_create(Oid relOid)
 	appendStringInfo(&audit_name, "%s.%s",
 					 quote_identifier(nsp_name),
 					 quote_identifier(NameStr(classForm->relname)));
-	sepgsql_avc_check_perms_label(rcontext,
+	semdb_avc_check_perms_label(rcontext,
 								  tclass,
 								  SEPG_DB_DATABASE__CREATE,
 								  audit_name.data,
@@ -372,7 +372,7 @@ sepgsql_relation_post_create(Oid relOid)
 							 quote_identifier(NameStr(classForm->relname)),
 							 quote_identifier(NameStr(attForm->attname)));
 
-			ccontext = sepgsql_compute_create(scontext,
+			ccontext = semdb_compute_create(scontext,
 											  rcontext,
 											  SEPG_CLASS_DB_COLUMN,
 											  NameStr(attForm->attname));
@@ -380,7 +380,7 @@ sepgsql_relation_post_create(Oid relOid)
 			/*
 			 * check db_column:{create} permission
 			 */
-			sepgsql_avc_check_perms_label(ccontext,
+			semdb_avc_check_perms_label(ccontext,
 										  SEPG_CLASS_DB_COLUMN,
 										  SEPG_DB_COLUMN__CREATE,
 										  audit_name.data,
@@ -404,12 +404,12 @@ out:
 }
 
 /*
- * sepgsql_relation_drop
+ * semdb_relation_drop
  *
  * It checks privileges to drop the supplied relation.
  */
 void
-sepgsql_relation_drop(Oid relOid)
+semdb_relation_drop(Oid relOid)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -447,7 +447,7 @@ sepgsql_relation_drop(Oid relOid)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_SCHEMA,
 							SEPG_DB_SCHEMA__REMOVE_NAME,
 							audit_name,
@@ -457,7 +457,7 @@ sepgsql_relation_drop(Oid relOid)
 	/* deal with indexes specially */
 	if (relkind == RELKIND_INDEX)
 	{
-		sepgsql_index_modify(relOid);
+		semdb_index_modify(relOid);
 		return;
 	}
 
@@ -469,7 +469,7 @@ sepgsql_relation_drop(Oid relOid)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							tclass,
 							SEPG_DB_TABLE__DROP,
 							audit_name,
@@ -500,7 +500,7 @@ sepgsql_relation_drop(Oid relOid)
 			object.objectSubId = attForm->attnum;
 			audit_name = getObjectIdentity(&object);
 
-			sepgsql_avc_check_perms(&object,
+			semdb_avc_check_perms(&object,
 									SEPG_CLASS_DB_COLUMN,
 									SEPG_DB_COLUMN__DROP,
 									audit_name,
@@ -512,12 +512,12 @@ sepgsql_relation_drop(Oid relOid)
 }
 
 /*
- * sepgsql_relation_relabel
+ * semdb_relation_relabel
  *
  * It checks privileges to relabel the supplied relation by the `seclabel'.
  */
 void
-sepgsql_relation_relabel(Oid relOid, const char *seclabel)
+semdb_relation_relabel(Oid relOid, const char *seclabel)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -545,7 +545,7 @@ sepgsql_relation_relabel(Oid relOid, const char *seclabel)
 	/*
 	 * check db_xxx:{setattr relabelfrom} permission
 	 */
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							tclass,
 							SEPG_DB_TABLE__SETATTR |
 							SEPG_DB_TABLE__RELABELFROM,
@@ -555,7 +555,7 @@ sepgsql_relation_relabel(Oid relOid, const char *seclabel)
 	/*
 	 * check db_xxx:{relabelto} permission
 	 */
-	sepgsql_avc_check_perms_label(seclabel,
+	semdb_avc_check_perms_label(seclabel,
 								  tclass,
 								  SEPG_DB_TABLE__RELABELTO,
 								  audit_name,
@@ -564,12 +564,12 @@ sepgsql_relation_relabel(Oid relOid, const char *seclabel)
 }
 
 /*
- * sepgsql_relation_setattr
+ * semdb_relation_setattr
  *
  * It checks privileges to set attribute of the supplied relation
  */
 void
-sepgsql_relation_setattr(Oid relOid)
+semdb_relation_setattr(Oid relOid)
 {
 	Relation	rel;
 	ScanKeyData skey;
@@ -595,7 +595,7 @@ sepgsql_relation_setattr(Oid relOid)
 			break;
 		case RELKIND_INDEX:
 			/* deal with indexes specially */
-			sepgsql_index_modify(relOid);
+			semdb_index_modify(relOid);
 			return;
 		default:
 			/* other relkinds don't need additional work */
@@ -633,11 +633,11 @@ sepgsql_relation_setattr(Oid relOid)
 	 */
 	if (newform->relnamespace != oldform->relnamespace)
 	{
-		sepgsql_schema_remove_name(oldform->relnamespace);
-		sepgsql_schema_add_name(newform->relnamespace);
+		semdb_schema_remove_name(oldform->relnamespace);
+		semdb_schema_add_name(newform->relnamespace);
 	}
 	if (strcmp(NameStr(newform->relname), NameStr(oldform->relname)) != 0)
-		sepgsql_schema_rename(oldform->relnamespace);
+		semdb_schema_rename(oldform->relnamespace);
 
 	/*
 	 * XXX - In the future version, db_tuple:{use} of system catalog entry
@@ -652,7 +652,7 @@ sepgsql_relation_setattr(Oid relOid)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							tclass,
 							SEPG_DB_TABLE__SETATTR,
 							audit_name,
@@ -665,16 +665,16 @@ sepgsql_relation_setattr(Oid relOid)
 }
 
 /*
- * sepgsql_relation_setattr_extra
+ * semdb_relation_setattr_extra
  *
  * It checks permission of the relation being referenced by extra attributes,
- * such as pg_index entries. Like core MollyDB, sepgsql also does not deal
+ * such as pg_index entries. Like core MollyDB, semdb also does not deal
  * with such entries as individual "objects", thus, modification of these
  * entries shall be considered as setting an attribute of the underlying
  * relation.
  */
 static void
-sepgsql_relation_setattr_extra(Relation catalog,
+semdb_relation_setattr_extra(Relation catalog,
 							   Oid catindex_id,
 							   Oid extra_oid,
 							   AttrNumber anum_relation_id,
@@ -701,13 +701,13 @@ sepgsql_relation_setattr_extra(Relation catalog,
 						 RelationGetDescr(catalog), &isnull);
 	Assert(!isnull);
 
-	sepgsql_relation_setattr(DatumGetObjectId(datum));
+	semdb_relation_setattr(DatumGetObjectId(datum));
 
 	systable_endscan(sscan);
 }
 
 /*
- * sepgsql_index_modify
+ * semdb_index_modify
  *		Handle index create, update, drop
  *
  * Unlike other relation kinds, indexes do not have their own security labels,
@@ -715,12 +715,12 @@ sepgsql_relation_setattr_extra(Relation catalog,
  * owning tables; so check 'setattr' permissions on the table.
  */
 static void
-sepgsql_index_modify(Oid indexOid)
+semdb_index_modify(Oid indexOid)
 {
 	Relation	catalog = heap_open(IndexRelationId, AccessShareLock);
 
 	/* check db_table:{setattr} permission of the table being indexed */
-	sepgsql_relation_setattr_extra(catalog,
+	semdb_relation_setattr_extra(catalog,
 								   IndexRelidIndexId,
 								   indexOid,
 								   Anum_pg_index_indrelid,

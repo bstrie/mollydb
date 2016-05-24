@@ -8,11 +8,11 @@ create function test_event_trigger() returns event_trigger as $$
 BEGIN
     RAISE NOTICE 'test_event_trigger: % %', tg_event, tg_tag;
 END
-$$ language plpgsql;
+$$ language plmdb;
 
 -- should fail, event triggers cannot have declared arguments
 create function test_event_trigger_arg(name text)
-returns event_trigger as $$ BEGIN RETURN 1; END $$ language plpgsql;
+returns event_trigger as $$ BEGIN RETURN 1; END $$ language plmdb;
 
 -- should fail, SQL functions cannot be event triggers
 create function test_event_trigger_sql() returns event_trigger as $$
@@ -155,7 +155,7 @@ CREATE TABLE schema_two.table_two(a int);
 CREATE TABLE schema_two.table_three(a int, b text);
 CREATE TABLE audit_tbls.schema_two_table_three(the_value text);
 
-CREATE OR REPLACE FUNCTION schema_two.add(int, int) RETURNS int LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION schema_two.add(int, int) RETURNS int LANGUAGE plmdb
   CALLED ON NULL INPUT
   AS $$ BEGIN RETURN coalesce($1,0) + coalesce($2,0); END; $$;
 CREATE AGGREGATE schema_two.newton
@@ -180,7 +180,7 @@ CREATE TABLE dropped_objects (
 -- This tests errors raised within event triggers; the one in audit_tbls
 -- uses 2nd-level recursive invocation via test_evtrig_dropped_objects().
 CREATE OR REPLACE FUNCTION undroppable() RETURNS event_trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plmdb AS $$
 DECLARE
 	obj record;
 BEGIN
@@ -203,7 +203,7 @@ CREATE EVENT TRIGGER undroppable ON sql_drop
 	EXECUTE PROCEDURE undroppable();
 
 CREATE OR REPLACE FUNCTION test_evtrig_dropped_objects() RETURNS event_trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plmdb AS $$
 DECLARE
     obj record;
 BEGIN
@@ -245,7 +245,7 @@ DROP EVENT TRIGGER undroppable;
 
 CREATE OR REPLACE FUNCTION event_trigger_report_dropped()
  RETURNS event_trigger
- LANGUAGE plpgsql
+ LANGUAGE plmdb
 AS $$
 DECLARE r record;
 BEGIN
@@ -280,7 +280,7 @@ select pg_event_trigger_table_rewrite_oid();
 
 -- test Table Rewrite Event Trigger
 CREATE OR REPLACE FUNCTION test_evtrig_no_rewrite() RETURNS event_trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plmdb AS $$
 BEGIN
   RAISE EXCEPTION 'rewrites not allowed';
 END;
@@ -297,7 +297,7 @@ alter table rewriteme add column baz int default 0;
 
 -- test with more than one reason to rewrite a single table
 CREATE OR REPLACE FUNCTION test_evtrig_no_rewrite() RETURNS event_trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plmdb AS $$
 BEGIN
   RAISE NOTICE 'Table ''%'' is being rewritten (reason = %)',
                pg_event_trigger_table_rewrite_oid()::regclass,
@@ -316,7 +316,7 @@ alter table rewriteme alter column foo type numeric(12,4);
 -- typed tables are rewritten when their type changes.  Don't emit table
 -- name, because firing order is not stable.
 CREATE OR REPLACE FUNCTION test_evtrig_no_rewrite() RETURNS event_trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plmdb AS $$
 BEGIN
   RAISE NOTICE 'Table is being rewritten (reason = %)',
                pg_event_trigger_table_rewrite_reason();
@@ -345,21 +345,21 @@ RETURNS event_trigger AS $$
 BEGIN
 RAISE NOTICE '% - ddl_command_start', tg_tag;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE OR REPLACE FUNCTION end_command()
 RETURNS event_trigger AS $$
 BEGIN
 RAISE NOTICE '% - ddl_command_end', tg_tag;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE OR REPLACE FUNCTION drop_sql_command()
 RETURNS event_trigger AS $$
 BEGIN
 RAISE NOTICE '% - sql_drop', tg_tag;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE EVENT TRIGGER start_rls_command ON ddl_command_start
     WHEN TAG IN ('CREATE POLICY', 'ALTER POLICY', 'DROP POLICY') EXECUTE PROCEDURE start_command();

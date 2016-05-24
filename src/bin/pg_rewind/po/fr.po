@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pg_rewind (MollyDB) 9.6\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-08 21:14+0000\n"
 "PO-Revision-Date: 2016-05-09 10:30+0200\n"
 "Last-Translator: Guillaume Lelarge <guillaume@lelarge.info>\n"
@@ -491,10 +491,10 @@ msgstr "  -?, --help                     affiche cette aide, puis quitte\n"
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Rapporter les bogues à <pgsql-bugs@mollydb.org>.\n"
+"Rapporter les bogues à <mdb-bugs@mollydb.org>.\n"
 
 #: pg_rewind.c:130 pg_rewind.c:161 pg_rewind.c:168 pg_rewind.c:176
 #, c-format

@@ -145,8 +145,8 @@ SELECT srvname FROM pg_foreign_server WHERE srvname like 'alt_fserv%';
 --
 -- Procedural Language
 --
-CREATE LANGUAGE alt_lang1 HANDLER plpgsql_call_handler;
-CREATE LANGUAGE alt_lang2 HANDLER plpgsql_call_handler;
+CREATE LANGUAGE alt_lang1 HANDLER plmdb_call_handler;
+CREATE LANGUAGE alt_lang2 HANDLER plmdb_call_handler;
 
 ALTER LANGUAGE alt_lang1 OWNER TO regtest_alter_user1;  -- OK
 ALTER LANGUAGE alt_lang2 OWNER TO regtest_alter_user2;  -- OK

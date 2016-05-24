@@ -6751,7 +6751,7 @@ SET XML OPTION { DOCUMENT | CONTENT };
       <productname>MollyDB</productname> procedural language libraries can
       be preloaded in this way, typically by using the
       syntax <literal>'$libdir/plXXX'</literal> where
-      <literal>XXX</literal> is <literal>pgsql</>, <literal>perl</>,
+      <literal>XXX</literal> is <literal>mdb</>, <literal>perl</>,
       <literal>tcl</>, or <literal>python</>.
      </para>
 
@@ -7743,7 +7743,7 @@ dynamic_library_path = 'C:\tools\mollydb;H:\my_project\lib;$libdir'
     <para>
      Custom options have two-part names: an extension name, then a dot, then
      the parameter name proper, much like qualified names in SQL.  An example
-     is <literal>plpgsql.variable_conflict</>.
+     is <literal>plmdb.variable_conflict</>.
     </para>
 
     <para>

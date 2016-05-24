@@ -128,7 +128,7 @@ CREATE EVENT TRIGGER <replaceable class="PARAMETER">name</replaceable>
 <programlisting>
 CREATE OR REPLACE FUNCTION abort_any_command()
   RETURNS event_trigger
- LANGUAGE plpgsql
+ LANGUAGE plmdb
   AS $$
 BEGIN
   RAISE EXCEPTION 'command % is disabled', tg_tag;

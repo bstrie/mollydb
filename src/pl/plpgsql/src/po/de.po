@@ -1,4 +1,4 @@
-# German message translation file for plpgsql
+# German message translation file for plmdb
 # Copyright (C) 2009 - 2015 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 # Peter Eisentraut <peter_e@gmx.net>, 2009 - 2015.
@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.5\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-28 16:07+0000\n"
 "PO-Revision-Date: 2016-04-29 13:20-0400\n"
 "Last-Translator: Peter Eisentraut <peter_e@gmx.net>\n"
@@ -174,7 +174,7 @@ msgstr "PL/pgSQL-Funktion %s Zeile %d %s"
 msgid "PL/pgSQL function %s %s"
 msgstr "PL/pgSQL-Funktion %s %s"
 
-#. translator: last %s is a plpgsql statement type name
+#. translator: last %s is a plmdb statement type name
 #: pl_exec.c:973
 #, c-format
 msgid "PL/pgSQL function %s line %d at %s"

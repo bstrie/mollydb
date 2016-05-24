@@ -808,7 +808,7 @@ the fix corrects the sort order of column values.
 This error only occurred when the
 <literal>--enable-integer-datetimes</> configuration switch had been used.
 </para></listitem>
-<listitem><para>Additional buffer overrun checks in plpgsql
+<listitem><para>Additional buffer overrun checks in plmdb
 (Neil)</para></listitem>
 <listitem><para>Fix pg_dump to dump trigger names containing <literal>%</>
 correctly (Neil)</para></listitem>
@@ -865,7 +865,7 @@ permission on a function.</para></listitem>
 contrib/intagg</para></listitem>
 <listitem><para>Add needed STRICT marking to some contrib functions (Kris
 Jurka)</para></listitem>
-<listitem><para>Avoid buffer overrun when plpgsql cursor declaration has too
+<listitem><para>Avoid buffer overrun when plmdb cursor declaration has too
 many parameters (Neil)</para></listitem>
 <listitem><para>Fix planning error for FULL and RIGHT outer joins</para>
 <para>
@@ -1023,7 +1023,7 @@ This bug prevented proper restoration from archive files exceeding 4 GB.
 <listitem><para>Make contrib/dblink not assume that local and remote type OIDs
 match (Joe)</para></listitem>
 <listitem><para>Quote connectby()'s start_with argument properly (Joe)</para></listitem>
-<listitem><para>Don't crash when a rowtype argument to a plpgsql function is
+<listitem><para>Don't crash when a rowtype argument to a plmdb function is
 NULL</para></listitem>
 <listitem><para>Avoid generating invalid character encoding sequences in
 corner cases when planning LIKE operations</para></listitem>
@@ -1223,7 +1223,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para><application>pg_dumpall</application> failed with groups having no members (Nick Eskelinen)</para></listitem>
 <listitem><para><application>pg_dumpall</application> failed to recognize --globals-only switch</para></listitem>
 <listitem><para>pg_restore failed to restore blobs if -X disable-triggers is specified</para></listitem>
-<listitem><para>Repair intrafunction memory leak in plpgsql</para></listitem>
+<listitem><para>Repair intrafunction memory leak in plmdb</para></listitem>
 <listitem><para>pltcl's <command>elog</command> command dumped core if given wrong parameters (Ian Harding)</para></listitem>
 <listitem><para>plpython used wrong value of <envar>atttypmod</envar> (Brad McLean)</para></listitem>
 <listitem><para>Fix improper quoting of boolean values in Python interface (D'Arcy)</para></listitem>
@@ -1276,12 +1276,12 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Make plpython's spi_execute command handle nulls properly (Andrew Bosma)</para></listitem>
 <listitem><para>Adjust plpython error reporting so that its regression test passes again</para></listitem>
 <listitem><para>Work with bison 1.875</para></listitem>
-<listitem><para>Handle mixed-case names properly in plpgsql's %type (Neil)</para></listitem>
+<listitem><para>Handle mixed-case names properly in plmdb's %type (Neil)</para></listitem>
 <listitem><para>Fix core dump in pltcl when executing a query rewritten by a rule</para></listitem>
 <listitem><para>Repair array subscript overruns (per report from Yichen Xie)</para></listitem>
 <listitem><para>Reduce MAX_TIME_PRECISION from 13 to 10 in floating-point case</para></listitem>
 <listitem><para>Correctly case-fold variable names in per-database and per-user settings</para></listitem>
-<listitem><para>Fix coredump in plpgsql's RETURN NEXT when SELECT into record returns no rows</para></listitem>
+<listitem><para>Fix coredump in plmdb's RETURN NEXT when SELECT into record returns no rows</para></listitem>
 <listitem><para>Fix outdated use of pg_type.typprtlen in python client interface</para></listitem>
 <listitem><para>Correctly handle fractional seconds in timestamps in JDBC driver</para></listitem>
 <listitem><para>Improve performance of getImportedKeys() in JDBC</para></listitem>
@@ -2022,7 +2022,7 @@ There are no known cases of it having caused more than an Assert failure.
 </para></listitem>
 <listitem><para>Fix <function>EXTRACT(EPOCH)</> for
 <type>TIME WITH TIME ZONE</> values</para></listitem>
-<listitem><para>Additional buffer overrun checks in plpgsql
+<listitem><para>Additional buffer overrun checks in plmdb
 (Neil)</para></listitem>
 <listitem><para>Fix pg_dump to dump index names and trigger names containing
 <literal>%</> correctly (Neil)</para></listitem>
@@ -2068,7 +2068,7 @@ shared library (this includes at least Windows and ELF-based Unixen),
 Thanks to NGS Software for reporting this.</para></listitem>
 <listitem><para>Add needed STRICT marking to some contrib functions (Kris
 Jurka)</para></listitem>
-<listitem><para>Avoid buffer overrun when plpgsql cursor declaration has too
+<listitem><para>Avoid buffer overrun when plmdb cursor declaration has too
 many parameters (Neil)</para></listitem>
 <listitem><para>Fix planning error for FULL and RIGHT outer joins</para>
 <para>
@@ -3453,7 +3453,7 @@ Added documentation to tarball.
 <programlisting>
 Fix many CLUSTER failures (Tom)
 Allow ALTER TABLE RENAME works on indexes (Tom)
-Fix plpgsql to handle datetime-&gt;timestamp and timespan-&gt;interval (Bruce)
+Fix plmdb to handle datetime-&gt;timestamp and timespan-&gt;interval (Bruce)
 New configure --with-setproctitle switch to use setproctitle() (Marc, Bruce)
 Fix the off by one errors in ResultSet from 6.5.3, and more.
 jdbc ResultSet fixes (Joseph Shraibman)
@@ -3926,7 +3926,7 @@ Enable Windows compilation of libpq
 Alpha spinlock fix from Uncle George <email>gatgul@voicenet.com</email>
 Overhaul of optimizer data structures (Tom)
 Fix to cygipc library (Yutaka Tanida)
-Allow pgsql to work on newer Cygwin snapshots (Dan)
+Allow mdb to work on newer Cygwin snapshots (Dan)
 New catalog version number (Tom)
 Add Linux ARM
 Rename heap_replace to heap_update
@@ -3937,7 +3937,7 @@ Included all yacc and lex files into the distribution (Peter E.)
 Remove lextest, no longer needed (Peter E)
 Fix for libpq and psql on Windows (Magnus)
 Internally change datetime and timespan into timestamp and interval (Thomas)
-Fix for plpgsql on BSD/OS
+Fix for plmdb on BSD/OS
 Add SQL_ASCII test case to the regression test (Tatsuo)
 configure --with-mb now deprecated (Tatsuo)
 NT fixes
@@ -4080,7 +4080,7 @@ New expression subtree code(Tom)
 Avoid disk writes for read-only transactions(Vadim)
 Fix for removal of temp tables if last transaction was aborted(Bruce)
 Fix to prevent too large row from being created(Bruce)
-plpgsql fixes
+plmdb fixes
 Allow port numbers 32k - 64k(Bruce)
 Add ^ precedence(Bruce)
 Rename sort files called pg_temp to pg_sorttemp(Bruce)
@@ -4341,7 +4341,7 @@ Fix for lo_import crash(Tatsuo)
 Adjust handling of data type names to suppress double quotes(Thomas)
 Use type coercion for matching columns and DEFAULT(Thomas)
 Fix deadlock so it only checks once after one second of sleep(Bruce)
-Fixes for aggregates and PL/pgsql(Hiroshi)
+Fixes for aggregates and PL/mdb(Hiroshi)
 Fix for subquery crash(Vadim)
 Fix for libpq function PQfnumber and case-insensitive names(Bahman Rafatjoo)
 Fix for large object write-in-middle, no extra block, memory consumption(Tatsuo)
@@ -4490,7 +4490,7 @@ NT dynamic loading now works(Daniel Horak)
 Add ARM32 support(Andrew McMurry)
 Better support for HP-UX 11 and UnixWare
 Improve file handling to be more uniform, prevent file descriptor leak(Tom)
-New install commands for plpgsql(Jan)
+New install commands for plmdb(Jan)
 </programlisting>
    </para>
   </sect2>
@@ -5163,10 +5163,10 @@ Better identify tcl and tk libs and includes(Bruce)
   </para>
   <para>
    For performance reasons, time travel is gone, but can be implemented
-   using triggers (see <filename>pgsql/contrib/spi/README</filename>).  Please check out the new
+   using triggers (see <filename>mdb/contrib/spi/README</filename>).  Please check out the new
    \d command for types, operators, etc.  Also, views have their own
    privileges now, not based on the underlying tables, so privileges on
-   them have to be set separately.  Check <filename>/pgsql/interfaces</filename> for some new
+   them have to be set separately.  Check <filename>/mdb/interfaces</filename> for some new
    ways to talk to <productname>MollyDB</productname>.
   </para>
   <para>

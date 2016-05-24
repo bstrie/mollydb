@@ -102,7 +102,7 @@ help(void)
 	printf(_("  --version             show the MollyDB version\n"));
 	printf(_("  -?, --help            show this help, then exit\n"));
 	printf(_("\nWith no arguments, all known items are shown.\n\n"));
-	printf(_("Report bugs to <pgsql-bugs@mollydb.org>.\n"));
+	printf(_("Report bugs to <mdb-bugs@mollydb.org>.\n"));
 }
 
 static void

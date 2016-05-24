@@ -8,12 +8,12 @@
  *
  *
  * IDENTIFICATION
- *	  src/pl/plpgsql/src/pl_comp.c
+ *	  src/pl/plmdb/src/pl_comp.c
  *
  *-------------------------------------------------------------------------
  */
 
-#include "plpgsql.h"
+#include "plmdb.h"
 
 #include <ctype.h>
 
@@ -37,33 +37,33 @@
  * Our own local and global variables
  * ----------
  */
-PLpgSQL_stmt_block *plpgsql_parse_result;
+PLpgSQL_stmt_block *plmdb_parse_result;
 
 static int	datums_alloc;
-int			plpgsql_nDatums;
-PLpgSQL_datum **plpgsql_Datums;
+int			plmdb_nDatums;
+PLpgSQL_datum **plmdb_Datums;
 static int	datums_last;
 
-char	   *plpgsql_error_funcname;
-bool		plpgsql_DumpExecTree = false;
-bool		plpgsql_check_syntax = false;
+char	   *plmdb_error_funcname;
+bool		plmdb_DumpExecTree = false;
+bool		plmdb_check_syntax = false;
 
-PLpgSQL_function *plpgsql_curr_compile;
+PLpgSQL_function *plmdb_curr_compile;
 
 /* A context appropriate for short-term allocs during compilation */
-MemoryContext plpgsql_compile_tmp_cxt;
+MemoryContext plmdb_compile_tmp_cxt;
 
 /* ----------
  * Hash table for compiled functions
  * ----------
  */
-static HTAB *plpgsql_HashTable = NULL;
+static HTAB *plmdb_HashTable = NULL;
 
-typedef struct plpgsql_hashent
+typedef struct plmdb_hashent
 {
 	PLpgSQL_func_hashkey key;
 	PLpgSQL_function *function;
-} plpgsql_HashEnt;
+} plmdb_HashEnt;
 
 #define FUNCS_PER_USER		128 /* initial table size */
 
@@ -92,36 +92,36 @@ static PLpgSQL_function *do_compile(FunctionCallInfo fcinfo,
 		   PLpgSQL_function *function,
 		   PLpgSQL_func_hashkey *hashkey,
 		   bool forValidator);
-static void plpgsql_compile_error_callback(void *arg);
+static void plmdb_compile_error_callback(void *arg);
 static void add_parameter_name(int itemtype, int itemno, const char *name);
 static void add_dummy_return(PLpgSQL_function *function);
-static Node *plpgsql_pre_column_ref(ParseState *pstate, ColumnRef *cref);
-static Node *plpgsql_post_column_ref(ParseState *pstate, ColumnRef *cref, Node *var);
-static Node *plpgsql_param_ref(ParseState *pstate, ParamRef *pref);
+static Node *plmdb_pre_column_ref(ParseState *pstate, ColumnRef *cref);
+static Node *plmdb_post_column_ref(ParseState *pstate, ColumnRef *cref, Node *var);
+static Node *plmdb_param_ref(ParseState *pstate, ParamRef *pref);
 static Node *resolve_column_ref(ParseState *pstate, PLpgSQL_expr *expr,
 				   ColumnRef *cref, bool error_if_no_field);
 static Node *make_datum_param(PLpgSQL_expr *expr, int dno, int location);
 static PLpgSQL_row *build_row_from_class(Oid classOid);
 static PLpgSQL_row *build_row_from_vars(PLpgSQL_variable **vars, int numvars);
 static PLpgSQL_type *build_datatype(HeapTuple typeTup, int32 typmod, Oid collation);
-static void plpgsql_start_datums(void);
-static void plpgsql_finish_datums(PLpgSQL_function *function);
+static void plmdb_start_datums(void);
+static void plmdb_finish_datums(PLpgSQL_function *function);
 static void compute_function_hashkey(FunctionCallInfo fcinfo,
 						 Form_pg_proc procStruct,
 						 PLpgSQL_func_hashkey *hashkey,
 						 bool forValidator);
-static void plpgsql_resolve_polymorphic_argtypes(int numargs,
+static void plmdb_resolve_polymorphic_argtypes(int numargs,
 									 Oid *argtypes, char *argmodes,
 									 Node *call_expr, bool forValidator,
 									 const char *proname);
-static PLpgSQL_function *plpgsql_HashTableLookup(PLpgSQL_func_hashkey *func_key);
-static void plpgsql_HashTableInsert(PLpgSQL_function *function,
+static PLpgSQL_function *plmdb_HashTableLookup(PLpgSQL_func_hashkey *func_key);
+static void plmdb_HashTableInsert(PLpgSQL_function *function,
 						PLpgSQL_func_hashkey *func_key);
-static void plpgsql_HashTableDelete(PLpgSQL_function *function);
+static void plmdb_HashTableDelete(PLpgSQL_function *function);
 static void delete_function(PLpgSQL_function *func);
 
 /* ----------
- * plpgsql_compile		Make an execution tree for a PL/pgSQL function.
+ * plmdb_compile		Make an execution tree for a PL/pgSQL function.
  *
  * If forValidator is true, we're only compiling for validation purposes,
  * and so some checks are skipped.
@@ -131,7 +131,7 @@ static void delete_function(PLpgSQL_function *func);
  * ----------
  */
 PLpgSQL_function *
-plpgsql_compile(FunctionCallInfo fcinfo, bool forValidator)
+plmdb_compile(FunctionCallInfo fcinfo, bool forValidator)
 {
 	Oid			funcOid = fcinfo->flinfo->fn_oid;
 	HeapTuple	procTup;
@@ -163,7 +163,7 @@ recheck:
 		hashkey_valid = true;
 
 		/* And do the lookup */
-		function = plpgsql_HashTableLookup(&hashkey);
+		function = plmdb_HashTableLookup(&hashkey);
 	}
 
 	if (function)
@@ -237,7 +237,7 @@ recheck:
 }
 
 /*
- * This is the slow part of plpgsql_compile().
+ * This is the slow part of plmdb_compile().
  *
  * The passed-in "function" pointer is either NULL or an already-allocated
  * function struct to overwrite.
@@ -253,10 +253,10 @@ recheck:
  * careful about pfree'ing their allocations, it is also wise to
  * switch into a short-term context before calling into the
  * backend. An appropriate context for performing short-term
- * allocations is the plpgsql_compile_tmp_cxt.
+ * allocations is the plmdb_compile_tmp_cxt.
  *
  * NB: this code is not re-entrant.  We assume that nothing we do here could
- * result in the invocation of another plpgsql function.
+ * result in the invocation of another plmdb function.
  */
 static PLpgSQL_function *
 do_compile(FunctionCallInfo fcinfo,
@@ -299,14 +299,14 @@ do_compile(FunctionCallInfo fcinfo,
 	if (isnull)
 		elog(ERROR, "null prosrc");
 	proc_source = TextDatumGetCString(prosrcdatum);
-	plpgsql_scanner_init(proc_source);
+	plmdb_scanner_init(proc_source);
 
-	plpgsql_error_funcname = pstrdup(NameStr(procStruct->proname));
+	plmdb_error_funcname = pstrdup(NameStr(procStruct->proname));
 
 	/*
 	 * Setup error traceback support for ereport()
 	 */
-	plerrcontext.callback = plpgsql_compile_error_callback;
+	plerrcontext.callback = plmdb_compile_error_callback;
 	plerrcontext.arg = forValidator ? proc_source : NULL;
 	plerrcontext.previous = error_context_stack;
 	error_context_stack = &plerrcontext;
@@ -316,7 +316,7 @@ do_compile(FunctionCallInfo fcinfo,
 	 * this when actually compiling functions for execution, for performance
 	 * reasons.
 	 */
-	plpgsql_check_syntax = forValidator;
+	plmdb_check_syntax = forValidator;
 
 	/*
 	 * Create the new function struct, if not done already.  The function
@@ -332,7 +332,7 @@ do_compile(FunctionCallInfo fcinfo,
 		/* re-using a previously existing struct, so clear it out */
 		memset(function, 0, sizeof(PLpgSQL_function));
 	}
-	plpgsql_curr_compile = function;
+	plmdb_curr_compile = function;
 
 	/*
 	 * All the permanent output of compilation (e.g. parse tree) is kept in a
@@ -343,7 +343,7 @@ do_compile(FunctionCallInfo fcinfo,
 									 ALLOCSET_DEFAULT_MINSIZE,
 									 ALLOCSET_DEFAULT_INITSIZE,
 									 ALLOCSET_DEFAULT_MAXSIZE);
-	plpgsql_compile_tmp_cxt = MemoryContextSwitchTo(func_cxt);
+	plmdb_compile_tmp_cxt = MemoryContextSwitchTo(func_cxt);
 
 	function->fn_signature = format_procedure(fcinfo->flinfo->fn_oid);
 	function->fn_oid = fcinfo->flinfo->fn_oid;
@@ -352,11 +352,11 @@ do_compile(FunctionCallInfo fcinfo,
 	function->fn_input_collation = fcinfo->fncollation;
 	function->fn_cxt = func_cxt;
 	function->out_param_varno = -1;		/* set up for no OUT param */
-	function->resolve_option = plpgsql_variable_conflict;
-	function->print_strict_params = plpgsql_print_strict_params;
+	function->resolve_option = plmdb_variable_conflict;
+	function->print_strict_params = plmdb_print_strict_params;
 	/* only promote extra warnings and errors at CREATE FUNCTION time */
-	function->extra_warnings = forValidator ? plpgsql_extra_warnings : 0;
-	function->extra_errors = forValidator ? plpgsql_extra_errors : 0;
+	function->extra_warnings = forValidator ? plmdb_extra_warnings : 0;
+	function->extra_errors = forValidator ? plmdb_extra_errors : 0;
 
 	if (is_dml_trigger)
 		function->fn_is_trigger = PLPGSQL_DML_TRIGGER;
@@ -370,10 +370,10 @@ do_compile(FunctionCallInfo fcinfo,
 	 * outermost namespace contains function parameters and other special
 	 * variables (such as FOUND), and is named after the function itself.
 	 */
-	plpgsql_ns_init();
-	plpgsql_ns_push(NameStr(procStruct->proname), PLPGSQL_LABEL_BLOCK);
-	plpgsql_DumpExecTree = false;
-	plpgsql_start_datums();
+	plmdb_ns_init();
+	plmdb_ns_push(NameStr(procStruct->proname), PLPGSQL_LABEL_BLOCK);
+	plmdb_DumpExecTree = false;
+	plmdb_start_datums();
 
 	switch (function->fn_is_trigger)
 	{
@@ -387,15 +387,15 @@ do_compile(FunctionCallInfo fcinfo,
 			 * argument types.  In validation mode we won't be able to, so we
 			 * arbitrarily assume we are dealing with integers.
 			 */
-			MemoryContextSwitchTo(plpgsql_compile_tmp_cxt);
+			MemoryContextSwitchTo(plmdb_compile_tmp_cxt);
 
 			numargs = get_func_arg_info(procTup,
 										&argtypes, &argnames, &argmodes);
 
-			plpgsql_resolve_polymorphic_argtypes(numargs, argtypes, argmodes,
+			plmdb_resolve_polymorphic_argtypes(numargs, argtypes, argmodes,
 												 fcinfo->flinfo->fn_expr,
 												 forValidator,
-												 plpgsql_error_funcname);
+												 plmdb_error_funcname);
 
 			in_arg_varnos = (int *) palloc(numargs * sizeof(int));
 			out_arg_variables = (PLpgSQL_variable **) palloc(numargs * sizeof(PLpgSQL_variable *));
@@ -418,7 +418,7 @@ do_compile(FunctionCallInfo fcinfo,
 				snprintf(buf, sizeof(buf), "$%d", i + 1);
 
 				/* Create datatype info */
-				argdtype = plpgsql_build_datatype(argtypeid,
+				argdtype = plmdb_build_datatype(argtypeid,
 												  -1,
 											   function->fn_input_collation);
 
@@ -433,7 +433,7 @@ do_compile(FunctionCallInfo fcinfo,
 								  format_type_be(argtypeid))));
 
 				/* Build variable and add to datum list */
-				argvariable = plpgsql_build_variable(buf, 0,
+				argvariable = plmdb_build_variable(buf, 0,
 													 argdtype, false);
 
 				if (argvariable->dtype == PLPGSQL_DTYPE_VAR)
@@ -477,7 +477,7 @@ do_compile(FunctionCallInfo fcinfo,
 				PLpgSQL_row *row = build_row_from_vars(out_arg_variables,
 													   num_out_args);
 
-				plpgsql_adddatum((PLpgSQL_datum *) row);
+				plmdb_adddatum((PLpgSQL_datum *) row);
 				function->out_param_varno = row->dno;
 			}
 
@@ -512,7 +512,7 @@ do_compile(FunctionCallInfo fcinfo,
 								(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 							 errmsg("could not determine actual return type "
 									"for polymorphic function \"%s\"",
-									plpgsql_error_funcname)));
+									plmdb_error_funcname)));
 				}
 			}
 
@@ -564,7 +564,7 @@ do_compile(FunctionCallInfo fcinfo,
 				if (IsPolymorphicType(procStruct->prorettype) &&
 					num_out_args == 0)
 				{
-					(void) plpgsql_build_variable("$0", 0,
+					(void) plmdb_build_variable("$0", 0,
 												  build_datatype(typeTup,
 																 -1,
 											   function->fn_input_collation),
@@ -589,88 +589,88 @@ do_compile(FunctionCallInfo fcinfo,
 						 errhint("The arguments of the trigger can be accessed through TG_NARGS and TG_ARGV instead.")));
 
 			/* Add the record for referencing NEW */
-			rec = plpgsql_build_record("new", 0, true);
+			rec = plmdb_build_record("new", 0, true);
 			function->new_varno = rec->dno;
 
 			/* Add the record for referencing OLD */
-			rec = plpgsql_build_record("old", 0, true);
+			rec = plmdb_build_record("old", 0, true);
 			function->old_varno = rec->dno;
 
 			/* Add the variable tg_name */
-			var = plpgsql_build_variable("tg_name", 0,
-										 plpgsql_build_datatype(NAMEOID,
+			var = plmdb_build_variable("tg_name", 0,
+										 plmdb_build_datatype(NAMEOID,
 																-1,
 																InvalidOid),
 										 true);
 			function->tg_name_varno = var->dno;
 
 			/* Add the variable tg_when */
-			var = plpgsql_build_variable("tg_when", 0,
-										 plpgsql_build_datatype(TEXTOID,
+			var = plmdb_build_variable("tg_when", 0,
+										 plmdb_build_datatype(TEXTOID,
 																-1,
 											   function->fn_input_collation),
 										 true);
 			function->tg_when_varno = var->dno;
 
 			/* Add the variable tg_level */
-			var = plpgsql_build_variable("tg_level", 0,
-										 plpgsql_build_datatype(TEXTOID,
+			var = plmdb_build_variable("tg_level", 0,
+										 plmdb_build_datatype(TEXTOID,
 																-1,
 											   function->fn_input_collation),
 										 true);
 			function->tg_level_varno = var->dno;
 
 			/* Add the variable tg_op */
-			var = plpgsql_build_variable("tg_op", 0,
-										 plpgsql_build_datatype(TEXTOID,
+			var = plmdb_build_variable("tg_op", 0,
+										 plmdb_build_datatype(TEXTOID,
 																-1,
 											   function->fn_input_collation),
 										 true);
 			function->tg_op_varno = var->dno;
 
 			/* Add the variable tg_relid */
-			var = plpgsql_build_variable("tg_relid", 0,
-										 plpgsql_build_datatype(OIDOID,
+			var = plmdb_build_variable("tg_relid", 0,
+										 plmdb_build_datatype(OIDOID,
 																-1,
 																InvalidOid),
 										 true);
 			function->tg_relid_varno = var->dno;
 
 			/* Add the variable tg_relname */
-			var = plpgsql_build_variable("tg_relname", 0,
-										 plpgsql_build_datatype(NAMEOID,
+			var = plmdb_build_variable("tg_relname", 0,
+										 plmdb_build_datatype(NAMEOID,
 																-1,
 																InvalidOid),
 										 true);
 			function->tg_relname_varno = var->dno;
 
 			/* tg_table_name is now preferred to tg_relname */
-			var = plpgsql_build_variable("tg_table_name", 0,
-										 plpgsql_build_datatype(NAMEOID,
+			var = plmdb_build_variable("tg_table_name", 0,
+										 plmdb_build_datatype(NAMEOID,
 																-1,
 																InvalidOid),
 										 true);
 			function->tg_table_name_varno = var->dno;
 
 			/* add the variable tg_table_schema */
-			var = plpgsql_build_variable("tg_table_schema", 0,
-										 plpgsql_build_datatype(NAMEOID,
+			var = plmdb_build_variable("tg_table_schema", 0,
+										 plmdb_build_datatype(NAMEOID,
 																-1,
 																InvalidOid),
 										 true);
 			function->tg_table_schema_varno = var->dno;
 
 			/* Add the variable tg_nargs */
-			var = plpgsql_build_variable("tg_nargs", 0,
-										 plpgsql_build_datatype(INT4OID,
+			var = plmdb_build_variable("tg_nargs", 0,
+										 plmdb_build_datatype(INT4OID,
 																-1,
 																InvalidOid),
 										 true);
 			function->tg_nargs_varno = var->dno;
 
 			/* Add the variable tg_argv */
-			var = plpgsql_build_variable("tg_argv", 0,
-										 plpgsql_build_datatype(TEXTARRAYOID,
+			var = plmdb_build_variable("tg_argv", 0,
+										 plmdb_build_datatype(TEXTARRAYOID,
 																-1,
 											   function->fn_input_collation),
 										 true);
@@ -691,16 +691,16 @@ do_compile(FunctionCallInfo fcinfo,
 						 errmsg("event trigger functions cannot have declared arguments")));
 
 			/* Add the variable tg_event */
-			var = plpgsql_build_variable("tg_event", 0,
-										 plpgsql_build_datatype(TEXTOID,
+			var = plmdb_build_variable("tg_event", 0,
+										 plmdb_build_datatype(TEXTOID,
 																-1,
 											   function->fn_input_collation),
 										 true);
 			function->tg_event_varno = var->dno;
 
 			/* Add the variable tg_tag */
-			var = plpgsql_build_variable("tg_tag", 0,
-										 plpgsql_build_datatype(TEXTOID,
+			var = plmdb_build_variable("tg_tag", 0,
+										 plmdb_build_datatype(TEXTOID,
 																-1,
 											   function->fn_input_collation),
 										 true);
@@ -720,8 +720,8 @@ do_compile(FunctionCallInfo fcinfo,
 	/*
 	 * Create the magic FOUND variable.
 	 */
-	var = plpgsql_build_variable("found", 0,
-								 plpgsql_build_datatype(BOOLOID,
+	var = plmdb_build_variable("found", 0,
+								 plmdb_build_datatype(BOOLOID,
 														-1,
 														InvalidOid),
 								 true);
@@ -730,12 +730,12 @@ do_compile(FunctionCallInfo fcinfo,
 	/*
 	 * Now parse the function's text
 	 */
-	parse_rc = plpgsql_yyparse();
+	parse_rc = plmdb_yyparse();
 	if (parse_rc != 0)
-		elog(ERROR, "plpgsql parser returned %d", parse_rc);
-	function->action = plpgsql_parse_result;
+		elog(ERROR, "plmdb parser returned %d", parse_rc);
+	function->action = plmdb_parse_result;
 
-	plpgsql_scanner_finish();
+	plmdb_scanner_finish();
 	pfree(proc_source);
 
 	/*
@@ -755,32 +755,32 @@ do_compile(FunctionCallInfo fcinfo,
 	for (i = 0; i < function->fn_nargs; i++)
 		function->fn_argvarnos[i] = in_arg_varnos[i];
 
-	plpgsql_finish_datums(function);
+	plmdb_finish_datums(function);
 
 	/* Debug dump for completed functions */
-	if (plpgsql_DumpExecTree)
-		plpgsql_dumptree(function);
+	if (plmdb_DumpExecTree)
+		plmdb_dumptree(function);
 
 	/*
 	 * add it to the hash table
 	 */
-	plpgsql_HashTableInsert(function, hashkey);
+	plmdb_HashTableInsert(function, hashkey);
 
 	/*
 	 * Pop the error context stack
 	 */
 	error_context_stack = plerrcontext.previous;
-	plpgsql_error_funcname = NULL;
+	plmdb_error_funcname = NULL;
 
-	plpgsql_check_syntax = false;
+	plmdb_check_syntax = false;
 
-	MemoryContextSwitchTo(plpgsql_compile_tmp_cxt);
-	plpgsql_compile_tmp_cxt = NULL;
+	MemoryContextSwitchTo(plmdb_compile_tmp_cxt);
+	plmdb_compile_tmp_cxt = NULL;
 	return function;
 }
 
 /* ----------
- * plpgsql_compile_inline	Make an execution tree for an anonymous code block.
+ * plmdb_compile_inline	Make an execution tree for an anonymous code block.
  *
  * Note: this is generally parallel to do_compile(); is it worth trying to
  * merge the two?
@@ -790,7 +790,7 @@ do_compile(FunctionCallInfo fcinfo,
  * ----------
  */
 PLpgSQL_function *
-plpgsql_compile_inline(char *proc_source)
+plmdb_compile_inline(char *proc_source)
 {
 	char	   *func_name = "inline_code_block";
 	PLpgSQL_function *function;
@@ -804,25 +804,25 @@ plpgsql_compile_inline(char *proc_source)
 	 * cannot be invoked recursively, so there's no need to save and restore
 	 * the static variables used here.
 	 */
-	plpgsql_scanner_init(proc_source);
+	plmdb_scanner_init(proc_source);
 
-	plpgsql_error_funcname = func_name;
+	plmdb_error_funcname = func_name;
 
 	/*
 	 * Setup error traceback support for ereport()
 	 */
-	plerrcontext.callback = plpgsql_compile_error_callback;
+	plerrcontext.callback = plmdb_compile_error_callback;
 	plerrcontext.arg = proc_source;
 	plerrcontext.previous = error_context_stack;
 	error_context_stack = &plerrcontext;
 
 	/* Do extra syntax checking if check_function_bodies is on */
-	plpgsql_check_syntax = check_function_bodies;
+	plmdb_check_syntax = check_function_bodies;
 
 	/* Function struct does not live past current statement */
 	function = (PLpgSQL_function *) palloc0(sizeof(PLpgSQL_function));
 
-	plpgsql_curr_compile = function;
+	plmdb_curr_compile = function;
 
 	/*
 	 * All the rest of the compile-time storage (e.g. parse tree) is kept in
@@ -833,15 +833,15 @@ plpgsql_compile_inline(char *proc_source)
 									 ALLOCSET_DEFAULT_MINSIZE,
 									 ALLOCSET_DEFAULT_INITSIZE,
 									 ALLOCSET_DEFAULT_MAXSIZE);
-	plpgsql_compile_tmp_cxt = MemoryContextSwitchTo(func_cxt);
+	plmdb_compile_tmp_cxt = MemoryContextSwitchTo(func_cxt);
 
 	function->fn_signature = pstrdup(func_name);
 	function->fn_is_trigger = PLPGSQL_NOT_TRIGGER;
 	function->fn_input_collation = InvalidOid;
 	function->fn_cxt = func_cxt;
 	function->out_param_varno = -1;		/* set up for no OUT param */
-	function->resolve_option = plpgsql_variable_conflict;
-	function->print_strict_params = plpgsql_print_strict_params;
+	function->resolve_option = plmdb_variable_conflict;
+	function->print_strict_params = plmdb_print_strict_params;
 
 	/*
 	 * don't do extra validation for inline code as we don't want to add spam
@@ -850,10 +850,10 @@ plpgsql_compile_inline(char *proc_source)
 	function->extra_warnings = 0;
 	function->extra_errors = 0;
 
-	plpgsql_ns_init();
-	plpgsql_ns_push(func_name, PLPGSQL_LABEL_BLOCK);
-	plpgsql_DumpExecTree = false;
-	plpgsql_start_datums();
+	plmdb_ns_init();
+	plmdb_ns_push(func_name, PLPGSQL_LABEL_BLOCK);
+	plmdb_DumpExecTree = false;
+	plmdb_start_datums();
 
 	/* Set up as though in a function returning VOID */
 	function->fn_rettype = VOIDOID;
@@ -872,8 +872,8 @@ plpgsql_compile_inline(char *proc_source)
 	/*
 	 * Create the magic FOUND variable.
 	 */
-	var = plpgsql_build_variable("found", 0,
-								 plpgsql_build_datatype(BOOLOID,
+	var = plmdb_build_variable("found", 0,
+								 plmdb_build_datatype(BOOLOID,
 														-1,
 														InvalidOid),
 								 true);
@@ -882,12 +882,12 @@ plpgsql_compile_inline(char *proc_source)
 	/*
 	 * Now parse the function's text
 	 */
-	parse_rc = plpgsql_yyparse();
+	parse_rc = plmdb_yyparse();
 	if (parse_rc != 0)
-		elog(ERROR, "plpgsql parser returned %d", parse_rc);
-	function->action = plpgsql_parse_result;
+		elog(ERROR, "plmdb parser returned %d", parse_rc);
+	function->action = plmdb_parse_result;
 
-	plpgsql_scanner_finish();
+	plmdb_scanner_finish();
 
 	/*
 	 * If it returns VOID (always true at the moment), we allow control to
@@ -901,18 +901,18 @@ plpgsql_compile_inline(char *proc_source)
 	 */
 	function->fn_nargs = 0;
 
-	plpgsql_finish_datums(function);
+	plmdb_finish_datums(function);
 
 	/*
 	 * Pop the error context stack
 	 */
 	error_context_stack = plerrcontext.previous;
-	plpgsql_error_funcname = NULL;
+	plmdb_error_funcname = NULL;
 
-	plpgsql_check_syntax = false;
+	plmdb_check_syntax = false;
 
-	MemoryContextSwitchTo(plpgsql_compile_tmp_cxt);
-	plpgsql_compile_tmp_cxt = NULL;
+	MemoryContextSwitchTo(plmdb_compile_tmp_cxt);
+	plmdb_compile_tmp_cxt = NULL;
 	return function;
 }
 
@@ -923,7 +923,7 @@ plpgsql_compile_inline(char *proc_source)
  * source text is passed as an argument.
  */
 static void
-plpgsql_compile_error_callback(void *arg)
+plmdb_compile_error_callback(void *arg)
 {
 	if (arg)
 	{
@@ -940,9 +940,9 @@ plpgsql_compile_error_callback(void *arg)
 		 */
 	}
 
-	if (plpgsql_error_funcname)
+	if (plmdb_error_funcname)
 		errcontext("compilation of PL/pgSQL function \"%s\" near line %d",
-				   plpgsql_error_funcname, plpgsql_latest_lineno());
+				   plmdb_error_funcname, plmdb_latest_lineno());
 }
 
 
@@ -956,10 +956,10 @@ add_parameter_name(int itemtype, int itemno, const char *name)
 	 * Before adding the name, check for duplicates.  We need this even though
 	 * functioncmds.c has a similar check, because that code explicitly
 	 * doesn't complain about conflicting IN and OUT parameter names.  In
-	 * plpgsql, such names are in the same namespace, so there is no way to
+	 * plmdb, such names are in the same namespace, so there is no way to
 	 * disambiguate.
 	 */
-	if (plpgsql_ns_lookup(plpgsql_ns_top(), true,
+	if (plmdb_ns_lookup(plmdb_ns_top(), true,
 						  name, NULL, NULL,
 						  NULL) != NULL)
 		ereport(ERROR,
@@ -968,7 +968,7 @@ add_parameter_name(int itemtype, int itemno, const char *name)
 						name)));
 
 	/* OK, add the name */
-	plpgsql_ns_additem(itemtype, itemno, name);
+	plmdb_ns_additem(itemtype, itemno, name);
 }
 
 /*
@@ -1008,28 +1008,28 @@ add_dummy_return(PLpgSQL_function *function)
 
 
 /*
- * plpgsql_parser_setup		set up parser hooks for dynamic parameters
+ * plmdb_parser_setup		set up parser hooks for dynamic parameters
  *
  * Note: this routine, and the hook functions it prepares for, are logically
- * part of plpgsql parsing.  But they actually run during function execution,
+ * part of plmdb parsing.  But they actually run during function execution,
  * when we are ready to evaluate a SQL query or expression that has not
  * previously been parsed and planned.
  */
 void
-plpgsql_parser_setup(struct ParseState *pstate, PLpgSQL_expr *expr)
+plmdb_parser_setup(struct ParseState *pstate, PLpgSQL_expr *expr)
 {
-	pstate->p_pre_columnref_hook = plpgsql_pre_column_ref;
-	pstate->p_post_columnref_hook = plpgsql_post_column_ref;
-	pstate->p_paramref_hook = plpgsql_param_ref;
+	pstate->p_pre_columnref_hook = plmdb_pre_column_ref;
+	pstate->p_post_columnref_hook = plmdb_post_column_ref;
+	pstate->p_paramref_hook = plmdb_param_ref;
 	/* no need to use p_coerce_param_hook */
 	pstate->p_ref_hook_state = (void *) expr;
 }
 
 /*
- * plpgsql_pre_column_ref		parser callback before parsing a ColumnRef
+ * plmdb_pre_column_ref		parser callback before parsing a ColumnRef
  */
 static Node *
-plpgsql_pre_column_ref(ParseState *pstate, ColumnRef *cref)
+plmdb_pre_column_ref(ParseState *pstate, ColumnRef *cref)
 {
 	PLpgSQL_expr *expr = (PLpgSQL_expr *) pstate->p_ref_hook_state;
 
@@ -1040,10 +1040,10 @@ plpgsql_pre_column_ref(ParseState *pstate, ColumnRef *cref)
 }
 
 /*
- * plpgsql_post_column_ref		parser callback after parsing a ColumnRef
+ * plmdb_post_column_ref		parser callback after parsing a ColumnRef
  */
 static Node *
-plpgsql_post_column_ref(ParseState *pstate, ColumnRef *cref, Node *var)
+plmdb_post_column_ref(ParseState *pstate, ColumnRef *cref, Node *var)
 {
 	PLpgSQL_expr *expr = (PLpgSQL_expr *) pstate->p_ref_hook_state;
 	Node	   *myvar;
@@ -1084,10 +1084,10 @@ plpgsql_post_column_ref(ParseState *pstate, ColumnRef *cref, Node *var)
 }
 
 /*
- * plpgsql_param_ref		parser callback for ParamRefs ($n symbols)
+ * plmdb_param_ref		parser callback for ParamRefs ($n symbols)
  */
 static Node *
-plpgsql_param_ref(ParseState *pstate, ParamRef *pref)
+plmdb_param_ref(ParseState *pstate, ParamRef *pref)
 {
 	PLpgSQL_expr *expr = (PLpgSQL_expr *) pstate->p_ref_hook_state;
 	char		pname[32];
@@ -1095,18 +1095,18 @@ plpgsql_param_ref(ParseState *pstate, ParamRef *pref)
 
 	snprintf(pname, sizeof(pname), "$%d", pref->number);
 
-	nse = plpgsql_ns_lookup(expr->ns, false,
+	nse = plmdb_ns_lookup(expr->ns, false,
 							pname, NULL, NULL,
 							NULL);
 
 	if (nse == NULL)
-		return NULL;			/* name not known to plpgsql */
+		return NULL;			/* name not known to plmdb */
 
 	return make_datum_param(expr, nse->itemno, pref->location);
 }
 
 /*
- * resolve_column_ref		attempt to resolve a ColumnRef as a plpgsql var
+ * resolve_column_ref		attempt to resolve a ColumnRef as a plmdb var
  *
  * Returns the translated node structure, or NULL if name not found
  *
@@ -1213,12 +1213,12 @@ resolve_column_ref(ParseState *pstate, PLpgSQL_expr *expr,
 			return NULL;
 	}
 
-	nse = plpgsql_ns_lookup(expr->ns, false,
+	nse = plmdb_ns_lookup(expr->ns, false,
 							name1, name2, name3,
 							&nnames);
 
 	if (nse == NULL)
-		return NULL;			/* name not known to plpgsql */
+		return NULL;			/* name not known to plmdb */
 
 	switch (nse->itemtype)
 	{
@@ -1291,15 +1291,15 @@ resolve_column_ref(ParseState *pstate, PLpgSQL_expr *expr,
 			}
 			break;
 		default:
-			elog(ERROR, "unrecognized plpgsql itemtype: %d", nse->itemtype);
+			elog(ERROR, "unrecognized plmdb itemtype: %d", nse->itemtype);
 	}
 
-	/* Name format doesn't match the plpgsql variable type */
+	/* Name format doesn't match the plmdb variable type */
 	return NULL;
 }
 
 /*
- * Helper for columnref parsing: build a Param referencing a plpgsql datum,
+ * Helper for columnref parsing: build a Param referencing a plmdb datum,
  * and make sure that that datum is listed in the expression's paramnos.
  */
 static Node *
@@ -1325,7 +1325,7 @@ make_datum_param(PLpgSQL_expr *expr, int dno, int location)
 	param = makeNode(Param);
 	param->paramkind = PARAM_EXTERN;
 	param->paramid = dno + 1;
-	plpgsql_exec_get_datum_type_info(estate,
+	plmdb_exec_get_datum_type_info(estate,
 							 datum,
 							 &param->paramtype,
 							 &param->paramtypmod,
@@ -1337,7 +1337,7 @@ make_datum_param(PLpgSQL_expr *expr, int dno, int location)
 
 
 /* ----------
- * plpgsql_parse_word		The scanner calls this to postparse
+ * plmdb_parse_word		The scanner calls this to postparse
  *				any single word that is not a reserved keyword.
  *
  * word1 is the downcased/dequoted identifier; it must be palloc'd in the
@@ -1353,7 +1353,7 @@ make_datum_param(PLpgSQL_expr *expr, int dno, int location)
  * ----------
  */
 bool
-plpgsql_parse_word(char *word1, const char *yytxt,
+plmdb_parse_word(char *word1, const char *yytxt,
 				   PLwdatum *wdatum, PLword *word)
 {
 	PLpgSQL_nsitem *ns;
@@ -1363,12 +1363,12 @@ plpgsql_parse_word(char *word1, const char *yytxt,
 	 * no need to do anything either --- lookup will happen when the
 	 * expression is compiled.
 	 */
-	if (plpgsql_IdentifierLookup == IDENTIFIER_LOOKUP_NORMAL)
+	if (plmdb_IdentifierLookup == IDENTIFIER_LOOKUP_NORMAL)
 	{
 		/*
 		 * Do a lookup in the current namespace stack
 		 */
-		ns = plpgsql_ns_lookup(plpgsql_ns_top(), false,
+		ns = plmdb_ns_lookup(plmdb_ns_top(), false,
 							   word1, NULL, NULL,
 							   NULL);
 
@@ -1379,15 +1379,15 @@ plpgsql_parse_word(char *word1, const char *yytxt,
 				case PLPGSQL_NSTYPE_VAR:
 				case PLPGSQL_NSTYPE_ROW:
 				case PLPGSQL_NSTYPE_REC:
-					wdatum->datum = plpgsql_Datums[ns->itemno];
+					wdatum->datum = plmdb_Datums[ns->itemno];
 					wdatum->ident = word1;
 					wdatum->quoted = (yytxt[0] == '"');
 					wdatum->idents = NIL;
 					return true;
 
 				default:
-					/* plpgsql_ns_lookup should never return anything else */
-					elog(ERROR, "unrecognized plpgsql itemtype: %d",
+					/* plmdb_ns_lookup should never return anything else */
+					elog(ERROR, "unrecognized plmdb itemtype: %d",
 						 ns->itemtype);
 			}
 		}
@@ -1404,12 +1404,12 @@ plpgsql_parse_word(char *word1, const char *yytxt,
 
 
 /* ----------
- * plpgsql_parse_dblword		Same lookup for two words
+ * plmdb_parse_dblword		Same lookup for two words
  *					separated by a dot.
  * ----------
  */
 bool
-plpgsql_parse_dblword(char *word1, char *word2,
+plmdb_parse_dblword(char *word1, char *word2,
 					  PLwdatum *wdatum, PLcword *cword)
 {
 	PLpgSQL_nsitem *ns;
@@ -1424,12 +1424,12 @@ plpgsql_parse_dblword(char *word1, char *word2,
 	 * really only need to make sure that RECFIELD datums are created when
 	 * needed.
 	 */
-	if (plpgsql_IdentifierLookup != IDENTIFIER_LOOKUP_DECLARE)
+	if (plmdb_IdentifierLookup != IDENTIFIER_LOOKUP_DECLARE)
 	{
 		/*
 		 * Do a lookup in the current namespace stack
 		 */
-		ns = plpgsql_ns_lookup(plpgsql_ns_top(), false,
+		ns = plmdb_ns_lookup(plmdb_ns_top(), false,
 							   word1, word2, NULL,
 							   &nnames);
 		if (ns != NULL)
@@ -1438,7 +1438,7 @@ plpgsql_parse_dblword(char *word1, char *word2,
 			{
 				case PLPGSQL_NSTYPE_VAR:
 					/* Block-qualified reference to scalar variable. */
-					wdatum->datum = plpgsql_Datums[ns->itemno];
+					wdatum->datum = plmdb_Datums[ns->itemno];
 					wdatum->ident = NULL;
 					wdatum->quoted = false;		/* not used */
 					wdatum->idents = idents;
@@ -1460,14 +1460,14 @@ plpgsql_parse_dblword(char *word1, char *word2,
 						new->fieldname = pstrdup(word2);
 						new->recparentno = ns->itemno;
 
-						plpgsql_adddatum((PLpgSQL_datum *) new);
+						plmdb_adddatum((PLpgSQL_datum *) new);
 
 						wdatum->datum = (PLpgSQL_datum *) new;
 					}
 					else
 					{
 						/* Block-qualified reference to record variable. */
-						wdatum->datum = plpgsql_Datums[ns->itemno];
+						wdatum->datum = plmdb_Datums[ns->itemno];
 					}
 					wdatum->ident = NULL;
 					wdatum->quoted = false;		/* not used */
@@ -1485,13 +1485,13 @@ plpgsql_parse_dblword(char *word1, char *word2,
 						PLpgSQL_row *row;
 						int			i;
 
-						row = (PLpgSQL_row *) (plpgsql_Datums[ns->itemno]);
+						row = (PLpgSQL_row *) (plmdb_Datums[ns->itemno]);
 						for (i = 0; i < row->nfields; i++)
 						{
 							if (row->fieldnames[i] &&
 								strcmp(row->fieldnames[i], word2) == 0)
 							{
-								wdatum->datum = plpgsql_Datums[row->varnos[i]];
+								wdatum->datum = plmdb_Datums[row->varnos[i]];
 								wdatum->ident = NULL;
 								wdatum->quoted = false; /* not used */
 								wdatum->idents = idents;
@@ -1503,7 +1503,7 @@ plpgsql_parse_dblword(char *word1, char *word2,
 					else
 					{
 						/* Block-qualified reference to row variable. */
-						wdatum->datum = plpgsql_Datums[ns->itemno];
+						wdatum->datum = plmdb_Datums[ns->itemno];
 						wdatum->ident = NULL;
 						wdatum->quoted = false; /* not used */
 						wdatum->idents = idents;
@@ -1524,12 +1524,12 @@ plpgsql_parse_dblword(char *word1, char *word2,
 
 
 /* ----------
- * plpgsql_parse_tripword		Same lookup for three words
+ * plmdb_parse_tripword		Same lookup for three words
  *					separated by dots.
  * ----------
  */
 bool
-plpgsql_parse_tripword(char *word1, char *word2, char *word3,
+plmdb_parse_tripword(char *word1, char *word2, char *word3,
 					   PLwdatum *wdatum, PLcword *cword)
 {
 	PLpgSQL_nsitem *ns;
@@ -1545,13 +1545,13 @@ plpgsql_parse_tripword(char *word1, char *word2, char *word3,
 	 * really only need to make sure that RECFIELD datums are created when
 	 * needed.
 	 */
-	if (plpgsql_IdentifierLookup != IDENTIFIER_LOOKUP_DECLARE)
+	if (plmdb_IdentifierLookup != IDENTIFIER_LOOKUP_DECLARE)
 	{
 		/*
 		 * Do a lookup in the current namespace stack. Must find a qualified
 		 * reference, else ignore.
 		 */
-		ns = plpgsql_ns_lookup(plpgsql_ns_top(), false,
+		ns = plmdb_ns_lookup(plmdb_ns_top(), false,
 							   word1, word2, word3,
 							   &nnames);
 		if (ns != NULL && nnames == 2)
@@ -1571,7 +1571,7 @@ plpgsql_parse_tripword(char *word1, char *word2, char *word3,
 						new->fieldname = pstrdup(word3);
 						new->recparentno = ns->itemno;
 
-						plpgsql_adddatum((PLpgSQL_datum *) new);
+						plmdb_adddatum((PLpgSQL_datum *) new);
 
 						wdatum->datum = (PLpgSQL_datum *) new;
 						wdatum->ident = NULL;
@@ -1589,13 +1589,13 @@ plpgsql_parse_tripword(char *word1, char *word2, char *word3,
 						PLpgSQL_row *row;
 						int			i;
 
-						row = (PLpgSQL_row *) (plpgsql_Datums[ns->itemno]);
+						row = (PLpgSQL_row *) (plmdb_Datums[ns->itemno]);
 						for (i = 0; i < row->nfields; i++)
 						{
 							if (row->fieldnames[i] &&
 								strcmp(row->fieldnames[i], word3) == 0)
 							{
-								wdatum->datum = plpgsql_Datums[row->varnos[i]];
+								wdatum->datum = plmdb_Datums[row->varnos[i]];
 								wdatum->ident = NULL;
 								wdatum->quoted = false; /* not used */
 								wdatum->idents = idents;
@@ -1619,14 +1619,14 @@ plpgsql_parse_tripword(char *word1, char *word2, char *word3,
 
 
 /* ----------
- * plpgsql_parse_wordtype	The scanner found word%TYPE. word can be
+ * plmdb_parse_wordtype	The scanner found word%TYPE. word can be
  *				a variable name or a basetype.
  *
  * Returns datatype struct, or NULL if no match found for word.
  * ----------
  */
 PLpgSQL_type *
-plpgsql_parse_wordtype(char *ident)
+plmdb_parse_wordtype(char *ident)
 {
 	PLpgSQL_type *dtype;
 	PLpgSQL_nsitem *nse;
@@ -1635,7 +1635,7 @@ plpgsql_parse_wordtype(char *ident)
 	/*
 	 * Do a lookup in the current namespace stack
 	 */
-	nse = plpgsql_ns_lookup(plpgsql_ns_top(), false,
+	nse = plmdb_ns_lookup(plmdb_ns_top(), false,
 							ident, NULL, NULL,
 							NULL);
 
@@ -1644,7 +1644,7 @@ plpgsql_parse_wordtype(char *ident)
 		switch (nse->itemtype)
 		{
 			case PLPGSQL_NSTYPE_VAR:
-				return ((PLpgSQL_var *) (plpgsql_Datums[nse->itemno]))->datatype;
+				return ((PLpgSQL_var *) (plmdb_Datums[nse->itemno]))->datatype;
 
 				/* XXX perhaps allow REC/ROW here? */
 
@@ -1670,7 +1670,7 @@ plpgsql_parse_wordtype(char *ident)
 		}
 
 		dtype = build_datatype(typeTup, -1,
-							   plpgsql_curr_compile->fn_input_collation);
+							   plmdb_curr_compile->fn_input_collation);
 
 		ReleaseSysCache(typeTup);
 		return dtype;
@@ -1685,11 +1685,11 @@ plpgsql_parse_wordtype(char *ident)
 
 
 /* ----------
- * plpgsql_parse_cwordtype		Same lookup for compositeword%TYPE
+ * plmdb_parse_cwordtype		Same lookup for compositeword%TYPE
  * ----------
  */
 PLpgSQL_type *
-plpgsql_parse_cwordtype(List *idents)
+plmdb_parse_cwordtype(List *idents)
 {
 	PLpgSQL_type *dtype = NULL;
 	PLpgSQL_nsitem *nse;
@@ -1703,7 +1703,7 @@ plpgsql_parse_cwordtype(List *idents)
 	MemoryContext oldCxt;
 
 	/* Avoid memory leaks in the long-term function context */
-	oldCxt = MemoryContextSwitchTo(plpgsql_compile_tmp_cxt);
+	oldCxt = MemoryContextSwitchTo(plmdb_compile_tmp_cxt);
 
 	if (list_length(idents) == 2)
 	{
@@ -1712,7 +1712,7 @@ plpgsql_parse_cwordtype(List *idents)
 		 * number of names matched, because we will only consider scalar
 		 * variables.
 		 */
-		nse = plpgsql_ns_lookup(plpgsql_ns_top(), false,
+		nse = plmdb_ns_lookup(plmdb_ns_top(), false,
 								strVal(linitial(idents)),
 								strVal(lsecond(idents)),
 								NULL,
@@ -1720,7 +1720,7 @@ plpgsql_parse_cwordtype(List *idents)
 
 		if (nse != NULL && nse->itemtype == PLPGSQL_NSTYPE_VAR)
 		{
-			dtype = ((PLpgSQL_var *) (plpgsql_Datums[nse->itemno]))->datatype;
+			dtype = ((PLpgSQL_var *) (plmdb_Datums[nse->itemno]))->datatype;
 			goto done;
 		}
 
@@ -1786,7 +1786,7 @@ plpgsql_parse_cwordtype(List *idents)
 	dtype = build_datatype(typetup,
 						   attrStruct->atttypmod,
 						   attrStruct->attcollation);
-	MemoryContextSwitchTo(plpgsql_compile_tmp_cxt);
+	MemoryContextSwitchTo(plmdb_compile_tmp_cxt);
 
 done:
 	if (HeapTupleIsValid(classtup))
@@ -1801,12 +1801,12 @@ done:
 }
 
 /* ----------
- * plpgsql_parse_wordrowtype		Scanner found word%ROWTYPE.
+ * plmdb_parse_wordrowtype		Scanner found word%ROWTYPE.
  *					So word must be a table name.
  * ----------
  */
 PLpgSQL_type *
-plpgsql_parse_wordrowtype(char *ident)
+plmdb_parse_wordrowtype(char *ident)
 {
 	Oid			classOid;
 
@@ -1818,16 +1818,16 @@ plpgsql_parse_wordrowtype(char *ident)
 				 errmsg("relation \"%s\" does not exist", ident)));
 
 	/* Build and return the row type struct */
-	return plpgsql_build_datatype(get_rel_type_id(classOid), -1, InvalidOid);
+	return plmdb_build_datatype(get_rel_type_id(classOid), -1, InvalidOid);
 }
 
 /* ----------
- * plpgsql_parse_cwordrowtype		Scanner found compositeword%ROWTYPE.
+ * plmdb_parse_cwordrowtype		Scanner found compositeword%ROWTYPE.
  *			So word must be a namespace qualified table name.
  * ----------
  */
 PLpgSQL_type *
-plpgsql_parse_cwordrowtype(List *idents)
+plmdb_parse_cwordrowtype(List *idents)
 {
 	Oid			classOid;
 	RangeVar   *relvar;
@@ -1837,7 +1837,7 @@ plpgsql_parse_cwordrowtype(List *idents)
 		return NULL;
 
 	/* Avoid memory leaks in long-term function context */
-	oldCxt = MemoryContextSwitchTo(plpgsql_compile_tmp_cxt);
+	oldCxt = MemoryContextSwitchTo(plmdb_compile_tmp_cxt);
 
 	/* Look up relation name.  Can't lock it - we might not have privileges. */
 	relvar = makeRangeVar(strVal(linitial(idents)),
@@ -1848,11 +1848,11 @@ plpgsql_parse_cwordrowtype(List *idents)
 	MemoryContextSwitchTo(oldCxt);
 
 	/* Build and return the row type struct */
-	return plpgsql_build_datatype(get_rel_type_id(classOid), -1, InvalidOid);
+	return plmdb_build_datatype(get_rel_type_id(classOid), -1, InvalidOid);
 }
 
 /*
- * plpgsql_build_variable - build a datum-array entry of a given
+ * plmdb_build_variable - build a datum-array entry of a given
  * datatype
  *
  * The returned struct may be a PLpgSQL_var, PLpgSQL_row, or
@@ -1861,7 +1861,7 @@ plpgsql_parse_cwordrowtype(List *idents)
  * array, and optionally to the current namespace.
  */
 PLpgSQL_variable *
-plpgsql_build_variable(const char *refname, int lineno, PLpgSQL_type *dtype,
+plmdb_build_variable(const char *refname, int lineno, PLpgSQL_type *dtype,
 					   bool add2namespace)
 {
 	PLpgSQL_variable *result;
@@ -1885,9 +1885,9 @@ plpgsql_build_variable(const char *refname, int lineno, PLpgSQL_type *dtype,
 				var->isnull = true;
 				var->freeval = false;
 
-				plpgsql_adddatum((PLpgSQL_datum *) var);
+				plmdb_adddatum((PLpgSQL_datum *) var);
 				if (add2namespace)
-					plpgsql_ns_additem(PLPGSQL_NSTYPE_VAR,
+					plmdb_ns_additem(PLPGSQL_NSTYPE_VAR,
 									   var->dno,
 									   refname);
 				result = (PLpgSQL_variable *) var;
@@ -1904,9 +1904,9 @@ plpgsql_build_variable(const char *refname, int lineno, PLpgSQL_type *dtype,
 				row->refname = pstrdup(refname);
 				row->lineno = lineno;
 
-				plpgsql_adddatum((PLpgSQL_datum *) row);
+				plmdb_adddatum((PLpgSQL_datum *) row);
 				if (add2namespace)
-					plpgsql_ns_additem(PLPGSQL_NSTYPE_ROW,
+					plmdb_ns_additem(PLPGSQL_NSTYPE_ROW,
 									   row->dno,
 									   refname);
 				result = (PLpgSQL_variable *) row;
@@ -1917,7 +1917,7 @@ plpgsql_build_variable(const char *refname, int lineno, PLpgSQL_type *dtype,
 				/* "record" type -- build a record variable */
 				PLpgSQL_rec *rec;
 
-				rec = plpgsql_build_record(refname, lineno, add2namespace);
+				rec = plmdb_build_record(refname, lineno, add2namespace);
 				result = (PLpgSQL_variable *) rec;
 				break;
 			}
@@ -1941,7 +1941,7 @@ plpgsql_build_variable(const char *refname, int lineno, PLpgSQL_type *dtype,
  * Build empty named record variable, and optionally add it to namespace
  */
 PLpgSQL_rec *
-plpgsql_build_record(const char *refname, int lineno, bool add2namespace)
+plmdb_build_record(const char *refname, int lineno, bool add2namespace)
 {
 	PLpgSQL_rec *rec;
 
@@ -1953,9 +1953,9 @@ plpgsql_build_record(const char *refname, int lineno, bool add2namespace)
 	rec->tupdesc = NULL;
 	rec->freetup = false;
 	rec->freetupdesc = false;
-	plpgsql_adddatum((PLpgSQL_datum *) rec);
+	plmdb_adddatum((PLpgSQL_datum *) rec);
 	if (add2namespace)
-		plpgsql_ns_additem(PLPGSQL_NSTYPE_REC, rec->dno, rec->refname);
+		plmdb_ns_additem(PLPGSQL_NSTYPE_REC, rec->dno, rec->refname);
 
 	return rec;
 }
@@ -2032,8 +2032,8 @@ build_row_from_class(Oid classOid)
 			 * the variables due to entering a block at execution time. Thus
 			 * we ignore this information for now.
 			 */
-			var = plpgsql_build_variable(refname, 0,
-								 plpgsql_build_datatype(attrStruct->atttypid,
+			var = plmdb_build_variable(refname, 0,
+								 plmdb_build_datatype(attrStruct->atttypid,
 														attrStruct->atttypmod,
 												   attrStruct->attcollation),
 										 false);
@@ -2116,14 +2116,14 @@ build_row_from_vars(PLpgSQL_variable **vars, int numvars)
 }
 
 /*
- * plpgsql_build_datatype
+ * plmdb_build_datatype
  *		Build PLpgSQL_type struct given type OID, typmod, and collation.
  *
  * If collation is not InvalidOid then it overrides the type's default
  * collation.  But collation is ignored if the datatype is non-collatable.
  */
 PLpgSQL_type *
-plpgsql_build_datatype(Oid typeOid, int32 typmod, Oid collation)
+plmdb_build_datatype(Oid typeOid, int32 typmod, Oid collation)
 {
 	HeapTuple	typeTup;
 	PLpgSQL_type *typ;
@@ -2210,14 +2210,14 @@ build_datatype(HeapTuple typeTup, int32 typmod, Oid collation)
 }
 
 /*
- *	plpgsql_recognize_err_condition
+ *	plmdb_recognize_err_condition
  *		Check condition name and translate it to SQLSTATE.
  *
  * Note: there are some cases where the same condition name has multiple
  * entries in the table.  We arbitrarily return the first match.
  */
 int
-plpgsql_recognize_err_condition(const char *condname, bool allow_sqlstate)
+plmdb_recognize_err_condition(const char *condname, bool allow_sqlstate)
 {
 	int			i;
 
@@ -2246,14 +2246,14 @@ plpgsql_recognize_err_condition(const char *condname, bool allow_sqlstate)
 }
 
 /*
- * plpgsql_parse_err_condition
+ * plmdb_parse_err_condition
  *		Generate PLpgSQL_condition entry(s) for an exception condition name
  *
  * This has to be able to return a list because there are some duplicate
  * names in the table of error code names.
  */
 PLpgSQL_condition *
-plpgsql_parse_err_condition(char *condname)
+plmdb_parse_err_condition(char *condname)
 {
 	int			i;
 	PLpgSQL_condition *new;
@@ -2300,57 +2300,57 @@ plpgsql_parse_err_condition(char *condname)
 }
 
 /* ----------
- * plpgsql_start_datums			Initialize datum list at compile startup.
+ * plmdb_start_datums			Initialize datum list at compile startup.
  * ----------
  */
 static void
-plpgsql_start_datums(void)
+plmdb_start_datums(void)
 {
 	datums_alloc = 128;
-	plpgsql_nDatums = 0;
+	plmdb_nDatums = 0;
 	/* This is short-lived, so needn't allocate in function's cxt */
-	plpgsql_Datums = MemoryContextAlloc(plpgsql_compile_tmp_cxt,
+	plmdb_Datums = MemoryContextAlloc(plmdb_compile_tmp_cxt,
 									 sizeof(PLpgSQL_datum *) * datums_alloc);
-	/* datums_last tracks what's been seen by plpgsql_add_initdatums() */
+	/* datums_last tracks what's been seen by plmdb_add_initdatums() */
 	datums_last = 0;
 }
 
 /* ----------
- * plpgsql_adddatum			Add a variable, record or row
+ * plmdb_adddatum			Add a variable, record or row
  *					to the compiler's datum list.
  * ----------
  */
 void
-plpgsql_adddatum(PLpgSQL_datum *new)
+plmdb_adddatum(PLpgSQL_datum *new)
 {
-	if (plpgsql_nDatums == datums_alloc)
+	if (plmdb_nDatums == datums_alloc)
 	{
 		datums_alloc *= 2;
-		plpgsql_Datums = repalloc(plpgsql_Datums, sizeof(PLpgSQL_datum *) * datums_alloc);
+		plmdb_Datums = repalloc(plmdb_Datums, sizeof(PLpgSQL_datum *) * datums_alloc);
 	}
 
-	new->dno = plpgsql_nDatums;
-	plpgsql_Datums[plpgsql_nDatums++] = new;
+	new->dno = plmdb_nDatums;
+	plmdb_Datums[plmdb_nDatums++] = new;
 }
 
 /* ----------
- * plpgsql_finish_datums	Copy completed datum info into function struct.
+ * plmdb_finish_datums	Copy completed datum info into function struct.
  *
  * This is also responsible for building resettable_datums, a bitmapset
  * of the dnos of all ROW, REC, and RECFIELD datums in the function.
  * ----------
  */
 static void
-plpgsql_finish_datums(PLpgSQL_function *function)
+plmdb_finish_datums(PLpgSQL_function *function)
 {
 	Bitmapset  *resettable_datums = NULL;
 	int			i;
 
-	function->ndatums = plpgsql_nDatums;
-	function->datums = palloc(sizeof(PLpgSQL_datum *) * plpgsql_nDatums);
-	for (i = 0; i < plpgsql_nDatums; i++)
+	function->ndatums = plmdb_nDatums;
+	function->datums = palloc(sizeof(PLpgSQL_datum *) * plmdb_nDatums);
+	for (i = 0; i < plmdb_nDatums; i++)
 	{
-		function->datums[i] = plpgsql_Datums[i];
+		function->datums[i] = plmdb_Datums[i];
 		switch (function->datums[i]->dtype)
 		{
 			case PLPGSQL_DTYPE_ROW:
@@ -2368,7 +2368,7 @@ plpgsql_finish_datums(PLpgSQL_function *function)
 
 
 /* ----------
- * plpgsql_add_initdatums		Make an array of the datum numbers of
+ * plmdb_add_initdatums		Make an array of the datum numbers of
  *					all the simple VAR datums created since the last call
  *					to this function.
  *
@@ -2382,14 +2382,14 @@ plpgsql_finish_datums(PLpgSQL_function *function)
  * ----------
  */
 int
-plpgsql_add_initdatums(int **varnos)
+plmdb_add_initdatums(int **varnos)
 {
 	int			i;
 	int			n = 0;
 
-	for (i = datums_last; i < plpgsql_nDatums; i++)
+	for (i = datums_last; i < plmdb_nDatums; i++)
 	{
-		switch (plpgsql_Datums[i]->dtype)
+		switch (plmdb_Datums[i]->dtype)
 		{
 			case PLPGSQL_DTYPE_VAR:
 				n++;
@@ -2407,12 +2407,12 @@ plpgsql_add_initdatums(int **varnos)
 			*varnos = (int *) palloc(sizeof(int) * n);
 
 			n = 0;
-			for (i = datums_last; i < plpgsql_nDatums; i++)
+			for (i = datums_last; i < plmdb_nDatums; i++)
 			{
-				switch (plpgsql_Datums[i]->dtype)
+				switch (plmdb_Datums[i]->dtype)
 				{
 					case PLPGSQL_DTYPE_VAR:
-						(*varnos)[n++] = plpgsql_Datums[i]->dno;
+						(*varnos)[n++] = plmdb_Datums[i]->dno;
 
 					default:
 						break;
@@ -2423,7 +2423,7 @@ plpgsql_add_initdatums(int **varnos)
 			*varnos = NULL;
 	}
 
-	datums_last = plpgsql_nDatums;
+	datums_last = plmdb_nDatums;
 	return n;
 }
 
@@ -2470,7 +2470,7 @@ compute_function_hashkey(FunctionCallInfo fcinfo,
 			   procStruct->pronargs * sizeof(Oid));
 
 		/* resolve any polymorphic argument types */
-		plpgsql_resolve_polymorphic_argtypes(procStruct->pronargs,
+		plmdb_resolve_polymorphic_argtypes(procStruct->pronargs,
 											 hashkey->argtypes,
 											 NULL,
 											 fcinfo->flinfo->fn_expr,
@@ -2486,7 +2486,7 @@ compute_function_hashkey(FunctionCallInfo fcinfo,
  * the error if we can't resolve the types.
  */
 static void
-plpgsql_resolve_polymorphic_argtypes(int numargs,
+plmdb_resolve_polymorphic_argtypes(int numargs,
 									 Oid *argtypes, char *argmodes,
 									 Node *call_expr, bool forValidator,
 									 const char *proname)
@@ -2547,37 +2547,37 @@ static void
 delete_function(PLpgSQL_function *func)
 {
 	/* remove function from hash table (might be done already) */
-	plpgsql_HashTableDelete(func);
+	plmdb_HashTableDelete(func);
 
 	/* release the function's storage if safe and not done already */
 	if (func->use_count == 0)
-		plpgsql_free_function_memory(func);
+		plmdb_free_function_memory(func);
 }
 
-/* exported so we can call it from plpgsql_init() */
+/* exported so we can call it from plmdb_init() */
 void
-plpgsql_HashTableInit(void)
+plmdb_HashTableInit(void)
 {
 	HASHCTL		ctl;
 
 	/* don't allow double-initialization */
-	Assert(plpgsql_HashTable == NULL);
+	Assert(plmdb_HashTable == NULL);
 
 	memset(&ctl, 0, sizeof(ctl));
 	ctl.keysize = sizeof(PLpgSQL_func_hashkey);
-	ctl.entrysize = sizeof(plpgsql_HashEnt);
-	plpgsql_HashTable = hash_create("PLpgSQL function cache",
+	ctl.entrysize = sizeof(plmdb_HashEnt);
+	plmdb_HashTable = hash_create("PLpgSQL function cache",
 									FUNCS_PER_USER,
 									&ctl,
 									HASH_ELEM | HASH_BLOBS);
 }
 
 static PLpgSQL_function *
-plpgsql_HashTableLookup(PLpgSQL_func_hashkey *func_key)
+plmdb_HashTableLookup(PLpgSQL_func_hashkey *func_key)
 {
-	plpgsql_HashEnt *hentry;
+	plmdb_HashEnt *hentry;
 
-	hentry = (plpgsql_HashEnt *) hash_search(plpgsql_HashTable,
+	hentry = (plmdb_HashEnt *) hash_search(plmdb_HashTable,
 											 (void *) func_key,
 											 HASH_FIND,
 											 NULL);
@@ -2588,13 +2588,13 @@ plpgsql_HashTableLookup(PLpgSQL_func_hashkey *func_key)
 }
 
 static void
-plpgsql_HashTableInsert(PLpgSQL_function *function,
+plmdb_HashTableInsert(PLpgSQL_function *function,
 						PLpgSQL_func_hashkey *func_key)
 {
-	plpgsql_HashEnt *hentry;
+	plmdb_HashEnt *hentry;
 	bool		found;
 
-	hentry = (plpgsql_HashEnt *) hash_search(plpgsql_HashTable,
+	hentry = (plmdb_HashEnt *) hash_search(plmdb_HashTable,
 											 (void *) func_key,
 											 HASH_ENTER,
 											 &found);
@@ -2607,15 +2607,15 @@ plpgsql_HashTableInsert(PLpgSQL_function *function,
 }
 
 static void
-plpgsql_HashTableDelete(PLpgSQL_function *function)
+plmdb_HashTableDelete(PLpgSQL_function *function)
 {
-	plpgsql_HashEnt *hentry;
+	plmdb_HashEnt *hentry;
 
 	/* do nothing if not in table */
 	if (function->fn_hashkey == NULL)
 		return;
 
-	hentry = (plpgsql_HashEnt *) hash_search(plpgsql_HashTable,
+	hentry = (plmdb_HashEnt *) hash_search(plmdb_HashTable,
 											 (void *) function->fn_hashkey,
 											 HASH_REMOVE,
 											 NULL);

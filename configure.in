@@ -17,7 +17,7 @@ dnl Read the Autoconf manual for details.
 dnl
 m4_pattern_forbid(^PGAC_)dnl to catch undefined macros
 
-AC_INIT([MollyDB], [9.6beta1], [pgsql-bugs@mollydb.org])
+AC_INIT([MollyDB], [9.6beta1], [mdb-bugs@mollydb.org])
 
 m4_if(m4_defn([m4_PACKAGE_VERSION]), [2.69], [], [m4_fatal([Autoconf version 2.69 is required.
 Untested combinations of 'autoconf' and MollyDB versions are not
@@ -26,7 +26,7 @@ your responsibility whether the result works or not.])])
 AC_COPYRIGHT([Copyright (c) 1996-2016, MollyDB Global Development Group])
 AC_CONFIG_SRCDIR([src/backend/access/common/heaptuple.c])
 AC_CONFIG_AUX_DIR(config)
-AC_PREFIX_DEFAULT(/usr/local/pgsql)
+AC_PREFIX_DEFAULT(/usr/local/mdb)
 AC_SUBST(configure_args, [$ac_configure_args])
 
 [PG_MAJORVERSION=`expr "$PACKAGE_VERSION" : '\([0-9][0-9]*\.[0-9][0-9]*\)'`]
@@ -81,7 +81,7 @@ MollyDB has apparently not been ported to your platform yet.
 To try a manual configuration, look into the src/template directory
 for a similar platform and use the '--with-template=' option.
 
-Please also contact <pgsql-bugs@mollydb.org> to see about
+Please also contact <mdb-bugs@mollydb.org> to see about
 rectifying this.  Include the above 'checking host system type...'
 line.
 *******************************************************************
@@ -1159,7 +1159,7 @@ fi
 AC_SUBST(LDAP_LIBS_FE)
 AC_SUBST(LDAP_LIBS_BE)
 
-# for contrib/sepgsql
+# for contrib/semdb
 if test "$with_selinux" = yes; then
   AC_CHECK_LIB(selinux, security_compute_create_name, [],
                [AC_MSG_ERROR([library 'libselinux', version 2.1.10 or newer, is required for SELinux support])])

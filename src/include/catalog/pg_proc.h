@@ -233,7 +233,7 @@ DESCR("length");
 DATA(insert OID = 1258 (  textcat		   PGNSP PGUID 12 1 0 0 0 f f f f t f i s 2 0 25 "25 25" _null_ _null_ _null_ _null_ _null_ textcat _null_ _null_ _null_ ));
 
 DATA(insert OID =  84 (  boolne			   PGNSP PGUID 12 1 0 0 0 f f f t t f i s 2 0 16 "16 16" _null_ _null_ _null_ _null_ _null_ boolne _null_ _null_ _null_ ));
-DATA(insert OID =  89 (  version		   PGNSP PGUID 12 1 0 0 0 f f f f t f s s 0 0 25 "" _null_ _null_ _null_ _null_ _null_ pgsql_version _null_ _null_ _null_ ));
+DATA(insert OID =  89 (  version		   PGNSP PGUID 12 1 0 0 0 f f f f t f s s 0 0 25 "" _null_ _null_ _null_ _null_ _null_ mdb_version _null_ _null_ _null_ ));
 DESCR("MollyDB version string");
 
 DATA(insert OID = 86  (  pg_ddl_command_in		PGNSP PGUID 12 1 0 0 0 f f f f t f i s 1 0 32 "2275" _null_ _null_ _null_ _null_ _null_ pg_ddl_command_in _null_ _null_ _null_ ));

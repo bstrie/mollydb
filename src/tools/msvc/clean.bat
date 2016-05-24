@@ -12,10 +12,10 @@ if exist release rd /s /q release
 for %%f in (*.vcproj) do del %%f
 for %%f in (*.vcxproj) do del %%f
 for %%f in (*.vcxproj.user) do del %%f
-if exist pgsql.sln del /q pgsql.sln
-if exist pgsql.sln.cache del /q pgsql.sln.cache
-if exist pgsql.sdf del /q pgsql.sdf
-if exist pgsql.suo del /q /a:H pgsql.suo
+if exist mdb.sln del /q mdb.sln
+if exist mdb.sln.cache del /q mdb.sln.cache
+if exist mdb.sdf del /q mdb.sdf
+if exist mdb.suo del /q /a:H mdb.suo
 del /s /q src\bin\win32ver.rc 2> NUL
 del /s /q src\interfaces\win32ver.rc 2> NUL
 if exist src\backend\win32ver.rc del /q src\backend\win32ver.rc
@@ -23,7 +23,7 @@ if exist src\backend\replication\libpqwalreceiver\win32ver.rc del /q src\backend
 if exist src\backend\snowball\win32ver.rc del /q src\backend\snowball\win32ver.rc
 if exist src\interfaces\ecpg\test\win32ver.rc del /q src\interfaces\ecpg\test\win32ver.rc
 if exist src\pl\plperl\win32ver.rc del /q src\pl\plperl\win32ver.rc
-if exist src\pl\plpgsql\src\win32ver.rc del /q src\pl\plpgsql\src\win32ver.rc
+if exist src\pl\plmdb\src\win32ver.rc del /q src\pl\plmdb\src\win32ver.rc
 if exist src\pl\plpython\win32ver.rc del /q src\pl\plpython\win32ver.rc
 if exist src\pl\tcl\win32ver.rc del /q src\pl\tcl\win32ver.rc
 if exist src\test\isolation\win32ver.rc del /q src\test\isolation\win32ver.rc
@@ -72,8 +72,8 @@ if %DIST%==1 if exist src\interfaces\ecpg\preproc\preproc.h del /q src\interface
 if exist src\port\pg_config_paths.h del /q src\port\pg_config_paths.h
 
 if exist src\pl\plperl\spi.c del /q src\pl\plperl\spi.c
-if %DIST%==1 if exist src\pl\plpgsql\src\pl_gram.c del /q src\pl\plpgsql\src\pl_gram.c
-if %DIST%==1 if exist src\pl\plpgsql\src\pl_gram.h del /q src\pl\plpgsql\src\pl_gram.h
+if %DIST%==1 if exist src\pl\plmdb\src\pl_gram.c del /q src\pl\plmdb\src\pl_gram.c
+if %DIST%==1 if exist src\pl\plmdb\src\pl_gram.h del /q src\pl\plmdb\src\pl_gram.h
 
 if %DIST%==1 if exist src\fe_utils\psqlscan.c del /q src\fe_utils\psqlscan.c
 if %DIST%==1 if exist src\bin\psql\psqlscanslash.c del /q src\bin\psql\psqlscanslash.c

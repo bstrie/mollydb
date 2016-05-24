@@ -385,7 +385,7 @@ $ENV{CONFIG}="Debug";
 <userinput>perl mkvcbuild.pl</userinput>
 </screen>
    from the command prompt, and then open the generated
-   <filename>pgsql.sln</filename> (in the root directory of the source tree)
+   <filename>mdb.sln</filename> (in the root directory of the source tree)
    in Visual Studio.
   </para>
  </sect2>

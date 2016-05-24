@@ -76,8 +76,8 @@ on the copy using GNU indent, and do a diff -r. You will see what I
 mean. GNU indent does some things better, but mangles too.  For details,
 see:
 
-	http://archives.mollydb.org/pgsql-hackers/2003-10/msg00374.php
-	http://archives.mollydb.org/pgsql-hackers/2011-04/msg01436.php
+	http://archives.mollydb.org/mdb-hackers/2003-10/msg00374.php
+	http://archives.mollydb.org/mdb-hackers/2011-04/msg01436.php
 
 ---------------------------------------------------------------------------
 
@@ -104,10 +104,10 @@ To use pgindent:
 
 1) Build the source tree with _debug_ symbols and all possible configure options
 
-2) Install to /usr/local/pgsql
+2) Install to /usr/local/mdb
 
 3) Install all contrib modules
 
 4) Save a list of typedefs by running:
 
-	src/tools/find_typedef /usr/local/pgsql/bin /usr/local/pgsql/lib > /tmp/pgtypedefs
+	src/tools/find_typedef /usr/local/mdb/bin /usr/local/mdb/lib > /tmp/pgtypedefs

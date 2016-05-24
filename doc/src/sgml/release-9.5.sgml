@@ -3646,7 +3646,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
      </itemizedlist>
 
      <sect4>
-      <title><link linkend="plpgsql">PL/pgSQL</link> Server-Side Language</title>
+      <title><link linkend="plmdb">PL/pgSQL</link> Server-Side Language</title>
 
       <itemizedlist>
 
@@ -3655,20 +3655,20 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
 2015-05-14 [1dc5ebc] Tom Lane: Support "expanded" objects, particularly arrays..
 2015-02-16 [e983c4d] Tom Lane: Rationalize the APIs of array element/slice acc..
 2015-02-18 [56a79a8] Tom Lane: Split array_push into separate array_append and..
-2015-02-16 [9e3ad1a] Tom Lane: Use fast path in plpgsql's RETURN/RETURN NEXT i..
+2015-02-16 [9e3ad1a] Tom Lane: Use fast path in plmdb's RETURN/RETURN NEXT i..
 -->
       <para>
-       Improve <link linkend="plpgsql"><application>PL/pgSQL</></> array
+       Improve <link linkend="plmdb"><application>PL/pgSQL</></> array
        performance (Tom Lane)
       </para>
      </listitem>
 
      <listitem>
 <!--
-2015-03-25 [a4847fc] Tom Lane: Add an ASSERT statement in plpgsql.
+2015-03-25 [a4847fc] Tom Lane: Add an ASSERT statement in plmdb.
 -->
       <para>
-       Add an <link linkend="plpgsql-statements-assert"><command>ASSERT</></>
+       Add an <link linkend="plmdb-statements-assert"><command>ASSERT</></>
        statement in <application>PL/pgSQL</> (Pavel Stehule)
       </para>
      </listitem>
@@ -3678,7 +3678,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
 2014-11-25 [bb1b8f6] Tom Lane: De-reserve most statement-introducing keywords ..
 -->
       <para>
-       Allow more <link linkend="plpgsql"><application>PL/pgSQL</></>
+       Allow more <link linkend="plmdb"><application>PL/pgSQL</></>
        keywords to be used as identifiers (Tom Lane)
       </para>
      </listitem>

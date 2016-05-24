@@ -341,12 +341,12 @@ s{PG_VERSION_STR "[^"]+"}{__STRINGIFY(x) #x\n#define __STRINGIFY2(z) __STRINGIFY
 	}
 
 	if (IsNewer(
-			'src/pl/plpgsql/src/plerrcodes.h',
+			'src/pl/plmdb/src/plerrcodes.h',
 			'src/backend/utils/errcodes.txt'))
 	{
 		print "Generating plerrcodes.h...\n";
 		system(
-'perl src/pl/plpgsql/src/generate-plerrcodes.pl src/backend/utils/errcodes.txt > src/pl/plpgsql/src/plerrcodes.h'
+'perl src/pl/plmdb/src/generate-plerrcodes.pl src/backend/utils/errcodes.txt > src/pl/plmdb/src/plerrcodes.h'
 		);
 	}
 
@@ -572,7 +572,7 @@ sub Save
 		}
 	}
 
-	open(SLN, ">pgsql.sln") || croak "Could not write to pgsql.sln\n";
+	open(SLN, ">mdb.sln") || croak "Could not write to mdb.sln\n";
 	print SLN <<EOF;
 Microsoft Visual Studio Solution File, Format Version $self->{solutionFileVersion}
 # $self->{visualStudioName}

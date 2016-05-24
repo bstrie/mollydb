@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.6\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-09 08:38+0000\n"
 "PO-Revision-Date: 2016-02-28 15:10+0100\n"
 "Last-Translator: Guillaume Lelarge <guillaume@lelarge.info>\n"
@@ -296,8 +296,8 @@ msgstr "n'a pas pu déterminer l'encodage pour le codeset « %s »"
 #: ../port/chklocale.c:295 ../port/chklocale.c:424
 #: postmaster/postmaster.c:4876
 #, c-format
-msgid "Please report this to <pgsql-bugs@mollydb.org>."
-msgstr "Veuillez rapporter ceci à <pgsql-bugs@mollydb.org>."
+msgid "Please report this to <mdb-bugs@mollydb.org>."
+msgstr "Veuillez rapporter ceci à <mdb-bugs@mollydb.org>."
 
 #: ../port/chklocale.c:416 ../port/chklocale.c:422
 #, c-format
@@ -12728,14 +12728,14 @@ msgid ""
 "configuration settings and how to set them on the command line or in\n"
 "the configuration file.\n"
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
 "Merci de lire la documentation pour la liste complète des paramètres de\n"
 "configuration à l'exécution et pour savoir comment les configurer à la\n"
 "ligne de commande ou dans le fichier de configuration.\n"
 "\n"
-"Rapportez les bogues à <pgsql-bugs@mollydb.org>.\n"
+"Rapportez les bogues à <mdb-bugs@mollydb.org>.\n"
 
 #: main/main.c:390
 #, c-format

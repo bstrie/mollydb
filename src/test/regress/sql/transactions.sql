@@ -298,8 +298,8 @@ update xacttest set a = max_xacttest() + 10 where a > 0;
 select * from xacttest;
 rollback;
 
--- Now the same test with plpgsql (since it depends on SPI which is different)
-create or replace function max_xacttest() returns smallint language plpgsql as
+-- Now the same test with plmdb (since it depends on SPI which is different)
+create or replace function max_xacttest() returns smallint language plmdb as
 'begin return max(a) from xacttest; end' stable;
 
 begin;
@@ -307,7 +307,7 @@ update xacttest set a = max_xacttest() + 10 where a > 0;
 select * from xacttest;
 rollback;
 
-create or replace function max_xacttest() returns smallint language plpgsql as
+create or replace function max_xacttest() returns smallint language plmdb as
 'begin return max(a) from xacttest; end' volatile;
 
 begin;
@@ -342,7 +342,7 @@ begin
   return 1::float8/$1;
 exception
   when division_by_zero then return 0;
-end$$ language plpgsql volatile;
+end$$ language plmdb volatile;
 
 create table revalidate_bug (c float8 unique);
 insert into revalidate_bug values (1);
@@ -390,11 +390,11 @@ abort;
 
 -- Test for proper cleanup after a failure in a cursor portal
 -- that was created in an outer subtransaction
-CREATE FUNCTION invert(x float8) RETURNS float8 LANGUAGE plpgsql AS
+CREATE FUNCTION invert(x float8) RETURNS float8 LANGUAGE plmdb AS
 $$ begin return 1/x; end $$;
 
 CREATE FUNCTION create_temp_tab() RETURNS text
-LANGUAGE plpgsql AS $$
+LANGUAGE plmdb AS $$
 BEGIN
   CREATE TEMP TABLE new_table (f1 float8);
   -- case of interest is that we fail while holding an open

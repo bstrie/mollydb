@@ -213,14 +213,14 @@
 
     <para>
      If your installation directory is not version-specific, e.g.
-     <filename>/usr/local/pgsql</>, it is necessary to move the current MollyDB install
+     <filename>/usr/local/mdb</>, it is necessary to move the current MollyDB install
      directory so it does not interfere with the new <productname>MollyDB</> installation.
      Once the current <productname>MollyDB</> server is shut down, it is safe to rename the
      MollyDB installation directory; assuming the old directory is
-     <filename>/usr/local/pgsql</>, you can do:
+     <filename>/usr/local/mdb</>, you can do:
 
 <programlisting>
-mv /usr/local/pgsql /usr/local/pgsql.old
+mv /usr/local/mdb /usr/local/mdb.old
 </programlisting>
      to rename the directory.
     </para>
@@ -249,7 +249,7 @@ mv /usr/local/pgsql /usr/local/pgsql.old
      location, use the <literal>prefix</literal> variable:
 
 <programlisting>
-make prefix=/usr/local/pgsql.new install
+make prefix=/usr/local/mdb.new install
 </programlisting></para>
    </step>
 

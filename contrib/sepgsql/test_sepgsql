@@ -1,20 +1,20 @@
 #!/bin/sh
 #
-# Run the sepgsql regression tests, after making a lot of environmental checks
+# Run the semdb regression tests, after making a lot of environmental checks
 # to try to ensure that the SELinux environment is set up appropriately and
 # the database is configured correctly.
 #
 # Note that this must be run against an installed MollyDB database.
 # There's no equivalent of "make check", and that wouldn't be terribly useful
-# since much of the value is in checking that you installed sepgsql into
+# since much of the value is in checking that you installed semdb into
 # your database correctly.
 #
-# This must be run in the contrib/sepgsql directory of a MollyDB build tree.
+# This must be run in the contrib/semdb directory of a MollyDB build tree.
 #
 
 PG_BINDIR=`pg_config --bindir`
 
-# we must move to contrib/sepgsql directory to run pg_regress correctly
+# we must move to contrib/semdb directory to run pg_regress correctly
 cd `dirname $0`
 
 echo
@@ -107,8 +107,8 @@ else
     exit 1
 fi
 
-# 'sepgsql-regtest' policy module must be loaded
-echo -n "checking for sepgsql-regtest policy ... "
+# 'semdb-regtest' policy module must be loaded
+echo -n "checking for semdb-regtest policy ... "
 SELINUX_MNT=`LANG=C sestatus | grep '^SELinuxfs mount:' | awk '{print $3}'`
 if [ "$SELINUX_MNT" = "" ]; then
     echo "failed"
@@ -120,31 +120,31 @@ if [ "$SELINUX_MNT" = "" ]; then
     echo ""
     exit 1
 fi
-if [ ! -e "${SELINUX_MNT}/booleans/sepgsql_regression_test_mode" ]; then
+if [ ! -e "${SELINUX_MNT}/booleans/semdb_regression_test_mode" ]; then
     echo "failed"
     echo ""
-    echo "The 'sepgsql-regtest' policy module appears not to be installed."
+    echo "The 'semdb-regtest' policy module appears not to be installed."
     echo "Without this policy installed, the regression tests will fail."
     echo "You can install this module using the following commands:"
     echo ""
     echo "  \$ make -f /usr/share/selinux/devel/Makefile"
-    echo "  \$ sudo semodule -u sepgsql-regtest.pp"
+    echo "  \$ sudo semodule -u semdb-regtest.pp"
     echo ""
     echo "To confirm that the policy package is installed, use this command:"
     echo ""
-    echo "  \$ sudo semodule -l | grep sepgsql"
+    echo "  \$ sudo semodule -l | grep semdb"
     echo ""
     exit 1
 fi
 echo "ok"
 
-# Verify that sepgsql_regression_test_mode is active.
+# Verify that semdb_regression_test_mode is active.
 echo -n "checking whether policy is enabled  ... "
-POLICY_STATUS=`getsebool sepgsql_regression_test_mode | awk '{print $3}'`
+POLICY_STATUS=`getsebool semdb_regression_test_mode | awk '{print $3}'`
 echo ${POLICY_STATUS:-failed}
 if [ "${POLICY_STATUS}" != on ]; then
     echo ""
-    echo "The SELinux boolean 'sepgsql_regression_test_mode' must be"
+    echo "The SELinux boolean 'semdb_regression_test_mode' must be"
     echo "turned on in order to enable the rules necessary to run the"
     echo "regression tests."
     echo ""
@@ -156,7 +156,7 @@ if [ "${POLICY_STATUS}" != on ]; then
     else
         echo "You can turn on this variable using the following commands:"
         echo ""
-        echo "  \$ sudo setsebool sepgsql_regression_test_mode on"
+        echo "  \$ sudo setsebool semdb_regression_test_mode on"
         echo ""
         echo "For security reasons, it is suggested that you turn off this"
         echo "variable when regression testing is complete and the associated"
@@ -165,11 +165,11 @@ if [ "${POLICY_STATUS}" != on ]; then
     echo ""
     exit 1
 fi
-POLICY_STATUS=`getsebool sepgsql_enable_users_ddl | awk '{print $3}'`
+POLICY_STATUS=`getsebool semdb_enable_users_ddl | awk '{print $3}'`
 echo ${POLICY_STATUS:-failed}
 if [ "${POLICY_STATUS}" != on ]; then
     echo ""
-    echo "The SELinux boolean 'sepgsql_enable_users_ddl' must be"
+    echo "The SELinux boolean 'semdb_enable_users_ddl' must be"
     echo "turned on in order to enable the rules necessary to run"
     echo "the regression tests."
     echo ""
@@ -181,7 +181,7 @@ if [ "${POLICY_STATUS}" != on ]; then
     else
         echo "You can turn on this variable using the following commands:"
         echo ""
-        echo "  \$ sudo setsebool sepgsql_enable_users_ddl on"
+        echo "  \$ sudo setsebool semdb_enable_users_ddl on"
         echo ""
         echo "For security reasons, it is suggested that you turn off this"
         echo "variable when regression testing is complete, unless you"
@@ -202,12 +202,12 @@ if [ ! -e "${CMD_PSQL}" ]; then
     echo
     exit 1
 fi
-runcon -t sepgsql_regtest_user_t "${CMD_PSQL}" --help >& /dev/null
+runcon -t semdb_regtest_user_t "${CMD_PSQL}" --help >& /dev/null
 if [ $? -ne 0 ]; then
     echo "failed"
     echo
     echo "${CMD_PSQL} must be executable from the"
-    echo "sepgsql_regtest_user_t domain. That domain has restricted privileges"
+    echo "semdb_regtest_user_t domain. That domain has restricted privileges"
     echo "compared to unconfined_t, so the problem may be the psql file's"
     echo "SELinux label. Try"
     echo
@@ -232,8 +232,8 @@ fi
 echo "ok"
 
 # loadable module must be installed and not configured to permissive mode
-echo -n "checking sepgsql installation       ... "
-VAL="`${CMD_PSQL} -X -t -c 'SHOW sepgsql.permissive' template1 2>/dev/null`"
+echo -n "checking semdb installation       ... "
+VAL="`${CMD_PSQL} -X -t -c 'SHOW semdb.permissive' template1 2>/dev/null`"
 RETVAL="$?"
 if [ $RETVAL -eq 2 ]; then
     echo "failed"
@@ -245,17 +245,17 @@ if [ $RETVAL -eq 2 ]; then
 elif [ $RETVAL -ne 0 ]; then
     echo "failed"
     echo ""
-    echo "The sepgsql module does not appear to be loaded.  Please verify"
+    echo "The semdb module does not appear to be loaded.  Please verify"
     echo "that the 'shared_preload_libraries' setting in mollydb.conf"
-    echo "includes 'sepgsql', and then restart the server."
+    echo "includes 'semdb', and then restart the server."
     echo ""
-    echo "See Installation section of the contrib/sepgsql documentation."
+    echo "See Installation section of the contrib/semdb documentation."
     echo ""
     exit 1
 elif ! echo "$VAL" | grep -q 'off$'; then
     echo "failed"
     echo ""
-    echo "The parameter 'sepgsql.permissive' is set to 'on'.  It must be"
+    echo "The parameter 'semdb.permissive' is set to 'on'.  It must be"
     echo "turned off before running the regression tests."
     echo ""
     exit 1
@@ -270,11 +270,11 @@ NUM=`${CMD_PSQL} -XAt -c 'SELECT count(*) FROM pg_catalog.pg_seclabel' template1
 if [ -z "${NUM}" ]; then
     echo "failed"
     echo ""
-    echo "In order to test sepgsql, initial labels must be assigned within"
+    echo "In order to test semdb, initial labels must be assigned within"
     echo "the 'template1' database.  These labels will be copied into the"
     echo "regression test database."
     echo ""
-    echo "See Installation section of the contrib/sepgsql documentation."
+    echo "See Installation section of the contrib/semdb documentation."
     echo ""
     exit 1
 fi
@@ -285,7 +285,7 @@ echo "found ${NUM}"
 #
 
 echo
-echo "============== running sepgsql regression tests       =============="
+echo "============== running semdb regression tests       =============="
 
 make REGRESS="label dml ddl alter misc" REGRESS_OPTS="--launcher ./launcher" installcheck
 

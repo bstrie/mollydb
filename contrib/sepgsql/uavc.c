@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/uavc.c
+ * contrib/semdb/uavc.c
  *
  * Implementation of userspace access vector cache; that enables to cache
  * access control decisions recently used, and reduce number of kernel
@@ -19,7 +19,7 @@
 #include "utils/guc.h"
 #include "utils/memutils.h"
 
-#include "sepgsql.h"
+#include "semdb.h"
 
 /*
  * avc_cache
@@ -65,7 +65,7 @@ static char *avc_unlabeled;		/* system 'unlabeled' label */
  * Hash function
  */
 static uint32
-sepgsql_avc_hash(const char *scontext, const char *tcontext, uint16 tclass)
+semdb_avc_hash(const char *scontext, const char *tcontext, uint16 tclass)
 {
 	return hash_any((const unsigned char *) scontext, strlen(scontext))
 		^ hash_any((const unsigned char *) tcontext, strlen(tcontext))
@@ -76,7 +76,7 @@ sepgsql_avc_hash(const char *scontext, const char *tcontext, uint16 tclass)
  * Reset all the avc caches
  */
 static void
-sepgsql_avc_reset(void)
+semdb_avc_reset(void)
 {
 	MemoryContextReset(avc_mem_cxt);
 
@@ -90,7 +90,7 @@ sepgsql_avc_reset(void)
  * Reclaim caches recently unreferenced
  */
 static void
-sepgsql_avc_reclaim(void)
+semdb_avc_reclaim(void)
 {
 	ListCell   *cell;
 	ListCell   *next;
@@ -132,7 +132,7 @@ sepgsql_avc_reclaim(void)
 
 /* -------------------------------------------------------------------------
  *
- * sepgsql_avc_check_valid
+ * semdb_avc_check_valid
  *
  * This function checks whether the cached entries are still valid.  If
  * the security policy has been reloaded (or any other events that requires
@@ -145,21 +145,21 @@ sepgsql_avc_reclaim(void)
  * event.  In practice, looping even once should be very rare.  Callers should
  * do something like this:
  *
- *	 sepgsql_avc_check_valid();
+ *	 semdb_avc_check_valid();
  *	 do {
  *			 :
  *		 <reference to uavc>
  *			 :
- *	 } while (!sepgsql_avc_check_valid())
+ *	 } while (!semdb_avc_check_valid())
  *
  * -------------------------------------------------------------------------
  */
 static bool
-sepgsql_avc_check_valid(void)
+semdb_avc_check_valid(void)
 {
 	if (selinux_status_updated() > 0)
 	{
-		sepgsql_avc_reset();
+		semdb_avc_reset();
 
 		return false;
 	}
@@ -167,13 +167,13 @@ sepgsql_avc_check_valid(void)
 }
 
 /*
- * sepgsql_avc_unlabeled
+ * semdb_avc_unlabeled
  *
  * Returns an alternative label to be applied when no label or an invalid
  * label would otherwise be assigned.
  */
 static char *
-sepgsql_avc_unlabeled(void)
+semdb_avc_unlabeled(void)
 {
 	if (!avc_unlabeled)
 	{
@@ -200,13 +200,13 @@ sepgsql_avc_unlabeled(void)
 }
 
 /*
- * sepgsql_avc_compute
+ * semdb_avc_compute
  *
  * A fallback path, when cache mishit. It asks SELinux its access control
  * decision for the supplied pair of security context and object class.
  */
 static avc_cache *
-sepgsql_avc_compute(const char *scontext, const char *tcontext, uint16 tclass)
+semdb_avc_compute(const char *scontext, const char *tcontext, uint16 tclass)
 {
 	char	   *ucontext = NULL;
 	char	   *ncontext = NULL;
@@ -216,7 +216,7 @@ sepgsql_avc_compute(const char *scontext, const char *tcontext, uint16 tclass)
 	int			index;
 	struct av_decision avd;
 
-	hash = sepgsql_avc_hash(scontext, tcontext, tclass);
+	hash = semdb_avc_hash(scontext, tcontext, tclass);
 	index = hash % AVC_NUM_SLOTS;
 
 	/*
@@ -226,15 +226,15 @@ sepgsql_avc_compute(const char *scontext, const char *tcontext, uint16 tclass)
 	 * whether the supplied security context was valid, or not.
 	 */
 	if (security_check_context_raw((security_context_t) tcontext) != 0)
-		ucontext = sepgsql_avc_unlabeled();
+		ucontext = semdb_avc_unlabeled();
 
 	/*
 	 * Ask SELinux its access control decision
 	 */
 	if (!ucontext)
-		sepgsql_compute_avd(scontext, tcontext, tclass, &avd);
+		semdb_compute_avd(scontext, tcontext, tclass, &avd);
 	else
-		sepgsql_compute_avd(scontext, ucontext, tclass, &avd);
+		semdb_compute_avd(scontext, ucontext, tclass, &avd);
 
 	/*
 	 * It also caches a security label to be switched when a client labeled as
@@ -243,16 +243,16 @@ sepgsql_avc_compute(const char *scontext, const char *tcontext, uint16 tclass)
 	 * shall be computed uniquely on a pair of 'scontext' and 'tcontext',
 	 * thus, it is reasonable to cache the new label on avc, and enables to
 	 * reduce unnecessary system calls. It shall be referenced at
-	 * sepgsql_needs_fmgr_hook to check whether the supplied function is a
+	 * semdb_needs_fmgr_hook to check whether the supplied function is a
 	 * trusted procedure, or not.
 	 */
 	if (tclass == SEPG_CLASS_DB_PROCEDURE)
 	{
 		if (!ucontext)
-			ncontext = sepgsql_compute_create(scontext, tcontext,
+			ncontext = semdb_compute_create(scontext, tcontext,
 											  SEPG_CLASS_PROCESS, NULL);
 		else
-			ncontext = sepgsql_compute_create(scontext, ucontext,
+			ncontext = semdb_compute_create(scontext, ucontext,
 											  SEPG_CLASS_PROCESS, NULL);
 		if (strcmp(scontext, ncontext) == 0)
 		{
@@ -287,7 +287,7 @@ sepgsql_avc_compute(const char *scontext, const char *tcontext, uint16 tclass)
 	avc_num_caches++;
 
 	if (avc_num_caches > avc_threshold)
-		sepgsql_avc_reclaim();
+		semdb_avc_reclaim();
 
 	avc_slots[index] = lcons(cache, avc_slots[index]);
 
@@ -297,20 +297,20 @@ sepgsql_avc_compute(const char *scontext, const char *tcontext, uint16 tclass)
 }
 
 /*
- * sepgsql_avc_lookup
+ * semdb_avc_lookup
  *
  * Look up a cache entry that matches the supplied security contexts and
  * object class.  If not found, create a new cache entry.
  */
 static avc_cache *
-sepgsql_avc_lookup(const char *scontext, const char *tcontext, uint16 tclass)
+semdb_avc_lookup(const char *scontext, const char *tcontext, uint16 tclass)
 {
 	avc_cache  *cache;
 	ListCell   *cell;
 	uint32		hash;
 	int			index;
 
-	hash = sepgsql_avc_hash(scontext, tcontext, tclass);
+	hash = semdb_avc_hash(scontext, tcontext, tclass);
 	index = hash % AVC_NUM_SLOTS;
 
 	foreach(cell, avc_slots[index])
@@ -327,11 +327,11 @@ sepgsql_avc_lookup(const char *scontext, const char *tcontext, uint16 tclass)
 		}
 	}
 	/* not found, so insert a new cache */
-	return sepgsql_avc_compute(scontext, tcontext, tclass);
+	return semdb_avc_compute(scontext, tcontext, tclass);
 }
 
 /*
- * sepgsql_avc_check_perms(_label)
+ * semdb_avc_check_perms(_label)
  *
  * It returns 'true', if the security policy suggested to allow the required
  * permissions. Otherwise, it returns 'false' or raises an error according
@@ -343,38 +343,38 @@ sepgsql_avc_lookup(const char *scontext, const char *tcontext, uint16 tclass)
  * was supplied, it means to skip all the audit messages.
  */
 bool
-sepgsql_avc_check_perms_label(const char *tcontext,
+semdb_avc_check_perms_label(const char *tcontext,
 							  uint16 tclass, uint32 required,
 							  const char *audit_name,
 							  bool abort_on_violation)
 {
-	char	   *scontext = sepgsql_get_client_label();
+	char	   *scontext = semdb_get_client_label();
 	avc_cache  *cache;
 	uint32		denied;
 	uint32		audited;
 	bool		result;
 
-	sepgsql_avc_check_valid();
+	semdb_avc_check_valid();
 	do
 	{
 		result = true;
 
 		/*
 		 * If the target object is unlabeled, we perform the check using the
-		 * label supplied by sepgsql_avc_unlabeled().
+		 * label supplied by semdb_avc_unlabeled().
 		 */
 		if (tcontext)
-			cache = sepgsql_avc_lookup(scontext, tcontext, tclass);
+			cache = semdb_avc_lookup(scontext, tcontext, tclass);
 		else
-			cache = sepgsql_avc_lookup(scontext,
-									   sepgsql_avc_unlabeled(), tclass);
+			cache = semdb_avc_lookup(scontext,
+									   semdb_avc_unlabeled(), tclass);
 
 		denied = required & ~cache->allowed;
 
 		/*
 		 * Compute permissions to be audited
 		 */
-		if (sepgsql_get_debug_audit())
+		if (semdb_get_debug_audit())
 			audited = (denied ? (denied & ~0) : (required & ~0));
 		else
 			audited = denied ? (denied & cache->auditdeny)
@@ -389,28 +389,28 @@ sepgsql_avc_check_perms_label(const char *tcontext,
 			 * purpose of permissive mode/domain is to collect a violation log
 			 * that will make it possible to fix up the security policy.
 			 */
-			if (!sepgsql_getenforce() || cache->permissive)
+			if (!semdb_getenforce() || cache->permissive)
 				cache->allowed |= required;
 			else
 				result = false;
 		}
-	} while (!sepgsql_avc_check_valid());
+	} while (!semdb_avc_check_valid());
 
 	/*
 	 * In the case when we have something auditable actions here,
-	 * sepgsql_audit_log shall be called with text representation of security
+	 * semdb_audit_log shall be called with text representation of security
 	 * labels for both of subject and object. It records this access
 	 * violation, so DBA will be able to find out unexpected security problems
 	 * later.
 	 */
 	if (audited != 0 &&
 		audit_name != SEPGSQL_AVC_NOAUDIT &&
-		sepgsql_get_mode() != SEPGSQL_MODE_INTERNAL)
+		semdb_get_mode() != SEPGSQL_MODE_INTERNAL)
 	{
-		sepgsql_audit_log(denied != 0,
+		semdb_audit_log(denied != 0,
 						  cache->scontext,
 						  cache->tcontext_is_valid ?
-						  cache->tcontext : sepgsql_avc_unlabeled(),
+						  cache->tcontext : semdb_avc_unlabeled(),
 						  cache->tclass,
 						  audited,
 						  audit_name);
@@ -425,7 +425,7 @@ sepgsql_avc_check_perms_label(const char *tcontext,
 }
 
 bool
-sepgsql_avc_check_perms(const ObjectAddress *tobject,
+semdb_avc_check_perms(const ObjectAddress *tobject,
 						uint16 tclass, uint32 required,
 						const char *audit_name,
 						bool abort_on_violation)
@@ -433,7 +433,7 @@ sepgsql_avc_check_perms(const ObjectAddress *tobject,
 	char	   *tcontext = GetSecurityLabel(tobject, SEPGSQL_LABEL_TAG);
 	bool		rc;
 
-	rc = sepgsql_avc_check_perms_label(tcontext,
+	rc = semdb_avc_check_perms_label(tcontext,
 									   tclass, required,
 									   audit_name, abort_on_violation);
 	if (tcontext)
@@ -443,16 +443,16 @@ sepgsql_avc_check_perms(const ObjectAddress *tobject,
 }
 
 /*
- * sepgsql_avc_trusted_proc
+ * semdb_avc_trusted_proc
  *
  * If the supplied function OID is configured as a trusted procedure, this
  * function will return a security label to be used during the execution of
  * that function.  Otherwise, it returns NULL.
  */
 char *
-sepgsql_avc_trusted_proc(Oid functionId)
+semdb_avc_trusted_proc(Oid functionId)
 {
-	char	   *scontext = sepgsql_get_client_label();
+	char	   *scontext = semdb_get_client_label();
 	char	   *tcontext;
 	ObjectAddress tobject;
 	avc_cache  *cache;
@@ -462,38 +462,38 @@ sepgsql_avc_trusted_proc(Oid functionId)
 	tobject.objectSubId = 0;
 	tcontext = GetSecurityLabel(&tobject, SEPGSQL_LABEL_TAG);
 
-	sepgsql_avc_check_valid();
+	semdb_avc_check_valid();
 	do
 	{
 		if (tcontext)
-			cache = sepgsql_avc_lookup(scontext, tcontext,
+			cache = semdb_avc_lookup(scontext, tcontext,
 									   SEPG_CLASS_DB_PROCEDURE);
 		else
-			cache = sepgsql_avc_lookup(scontext, sepgsql_avc_unlabeled(),
+			cache = semdb_avc_lookup(scontext, semdb_avc_unlabeled(),
 									   SEPG_CLASS_DB_PROCEDURE);
-	} while (!sepgsql_avc_check_valid());
+	} while (!semdb_avc_check_valid());
 
 	return cache->ncontext;
 }
 
 /*
- * sepgsql_avc_exit
+ * semdb_avc_exit
  *
  * Clean up userspace AVC on process exit.
  */
 static void
-sepgsql_avc_exit(int code, Datum arg)
+semdb_avc_exit(int code, Datum arg)
 {
 	selinux_status_close();
 }
 
 /*
- * sepgsql_avc_init
+ * semdb_avc_init
  *
  * Initialize the userspace AVC.  This should be called from _PG_init.
  */
 void
-sepgsql_avc_init(void)
+semdb_avc_init(void)
 {
 	int			rc;
 
@@ -527,5 +527,5 @@ sepgsql_avc_init(void)
 				(errmsg("SELinux: kernel status page uses fallback mode")));
 
 	/* Arrange to close selinux status page on process exit. */
-	on_proc_exit(sepgsql_avc_exit, 0);
+	on_proc_exit(semdb_avc_exit, 0);
 }

@@ -648,7 +648,7 @@ begin
 
 	return null;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 create function avg_finalfn(state avg_state) returns int4 as
 $$
@@ -659,7 +659,7 @@ begin
 		return state.total / state.count;
 	end if;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 create function sum_finalfn(state avg_state) returns int4 as
 $$
@@ -670,7 +670,7 @@ begin
 		return state.total;
 	end if;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 create aggregate my_avg(int4)
 (
@@ -756,7 +756,7 @@ begin
 
 	return null;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 create function halfsum_finalfn(state int4) returns int4 as
 $$
@@ -767,7 +767,7 @@ begin
 		return state / 2;
 	end if;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 create aggregate my_sum(int4)
 (

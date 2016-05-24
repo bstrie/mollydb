@@ -8,12 +8,12 @@
  *
  *
  * IDENTIFICATION
- *	  src/pl/plpgsql/src/pl_exec.c
+ *	  src/pl/plmdb/src/pl_exec.c
  *
  *-------------------------------------------------------------------------
  */
 
-#include "plpgsql.h"
+#include "plmdb.h"
 
 #include <ctype.h>
 
@@ -52,7 +52,7 @@ typedef struct
 } PreparedParamsData;
 
 /*
- * All plpgsql function executions within a single transaction share the same
+ * All plmdb function executions within a single transaction share the same
  * executor EState for evaluating "simple" expressions.  Each function call
  * creates its own "eval_econtext" ExprContext within this estate for
  * per-evaluation workspace.  eval_econtext is freed at normal function exit,
@@ -74,7 +74,7 @@ typedef struct
  * state trees are effectively leaked till end of transaction, and that can
  * add up if the user keeps on submitting DO blocks.  Therefore, each DO block
  * has its own simple-expression EState, which is cleaned up at exit from
- * plpgsql_inline_handler().  DO blocks still use the simple_econtext_stack,
+ * plmdb_inline_handler().  DO blocks still use the simple_econtext_stack,
  * though, so that subxact abort cleanup does the right thing.
  */
 typedef struct SimpleEcontextStackEntry
@@ -108,17 +108,17 @@ typedef struct					/* lookup key for cast info */
 	Oid			dsttype;		/* destination type for cast */
 	int32		srctypmod;		/* source typmod for cast */
 	int32		dsttypmod;		/* destination typmod for cast */
-} plpgsql_CastHashKey;
+} plmdb_CastHashKey;
 
 typedef struct					/* cast_hash table entry */
 {
-	plpgsql_CastHashKey key;	/* hash key --- MUST BE FIRST */
+	plmdb_CastHashKey key;	/* hash key --- MUST BE FIRST */
 	Expr	   *cast_expr;		/* cast expression, or NULL if no-op cast */
 	/* The ExprState tree is valid only when cast_lxid matches current LXID */
 	ExprState  *cast_exprstate; /* expression's eval tree */
 	bool		cast_in_use;	/* true while we're executing eval tree */
 	LocalTransactionId cast_lxid;
-} plpgsql_CastHashEntry;
+} plmdb_CastHashEntry;
 
 static MemoryContext shared_cast_context = NULL;
 static HTAB *shared_cast_hash = NULL;
@@ -126,8 +126,8 @@ static HTAB *shared_cast_hash = NULL;
 /************************************************************
  * Local function forward declarations
  ************************************************************/
-static void plpgsql_exec_error_callback(void *arg);
-static PLpgSQL_datum *copy_plpgsql_datum(PLpgSQL_datum *datum);
+static void plmdb_exec_error_callback(void *arg);
+static PLpgSQL_datum *copy_plmdb_datum(PLpgSQL_datum *datum);
 
 static int exec_stmt_block(PLpgSQL_execstate *estate,
 				PLpgSQL_stmt_block *block);
@@ -182,7 +182,7 @@ static int exec_stmt_dynexecute(PLpgSQL_execstate *estate,
 static int exec_stmt_dynfors(PLpgSQL_execstate *estate,
 				  PLpgSQL_stmt_dynfors *stmt);
 
-static void plpgsql_estate_setup(PLpgSQL_execstate *estate,
+static void plmdb_estate_setup(PLpgSQL_execstate *estate,
 					 PLpgSQL_function *func,
 					 ReturnSetInfo *rsi,
 					 EState *simple_eval_estate);
@@ -238,7 +238,7 @@ static ParamListInfo setup_param_list(PLpgSQL_execstate *estate,
 				 PLpgSQL_expr *expr);
 static ParamListInfo setup_unshared_param_list(PLpgSQL_execstate *estate,
 						  PLpgSQL_expr *expr);
-static void plpgsql_param_fetch(ParamListInfo params, int paramid);
+static void plmdb_param_fetch(ParamListInfo params, int paramid);
 static void exec_move_row(PLpgSQL_execstate *estate,
 			  PLpgSQL_rec *rec,
 			  PLpgSQL_row *row,
@@ -258,13 +258,13 @@ static Datum exec_cast_value(PLpgSQL_execstate *estate,
 				Datum value, bool *isnull,
 				Oid valtype, int32 valtypmod,
 				Oid reqtype, int32 reqtypmod);
-static plpgsql_CastHashEntry *get_cast_hashentry(PLpgSQL_execstate *estate,
+static plmdb_CastHashEntry *get_cast_hashentry(PLpgSQL_execstate *estate,
 				   Oid srctype, int32 srctypmod,
 				   Oid dsttype, int32 dsttypmod);
 static void exec_init_tuple_store(PLpgSQL_execstate *estate);
 static void exec_set_found(PLpgSQL_execstate *estate, bool state);
-static void plpgsql_create_econtext(PLpgSQL_execstate *estate);
-static void plpgsql_destroy_econtext(PLpgSQL_execstate *estate);
+static void plmdb_create_econtext(PLpgSQL_execstate *estate);
+static void plmdb_destroy_econtext(PLpgSQL_execstate *estate);
 static void assign_simple_var(PLpgSQL_execstate *estate, PLpgSQL_var *var,
 				  Datum newvalue, bool isnull, bool freeable);
 static void assign_text_var(PLpgSQL_execstate *estate, PLpgSQL_var *var,
@@ -283,7 +283,7 @@ static char *format_preparedparamsdata(PLpgSQL_execstate *estate,
 
 
 /* ----------
- * plpgsql_exec_function	Called by the call handler for
+ * plmdb_exec_function	Called by the call handler for
  *				function execution.
  *
  * This is also used to execute inline code blocks (DO blocks).  The only
@@ -292,11 +292,11 @@ static char *format_preparedparamsdata(PLpgSQL_execstate *estate,
  * the caller.  For regular functions, pass NULL, which implies using
  * shared_simple_eval_estate.  (When using a private simple_eval_estate,
  * we must also use a private cast hashtable, but that's taken care of
- * within plpgsql_estate_setup.)
+ * within plmdb_estate_setup.)
  * ----------
  */
 Datum
-plpgsql_exec_function(PLpgSQL_function *func, FunctionCallInfo fcinfo,
+plmdb_exec_function(PLpgSQL_function *func, FunctionCallInfo fcinfo,
 					  EState *simple_eval_estate)
 {
 	PLpgSQL_execstate estate;
@@ -307,13 +307,13 @@ plpgsql_exec_function(PLpgSQL_function *func, FunctionCallInfo fcinfo,
 	/*
 	 * Setup the execution state
 	 */
-	plpgsql_estate_setup(&estate, func, (ReturnSetInfo *) fcinfo->resultinfo,
+	plmdb_estate_setup(&estate, func, (ReturnSetInfo *) fcinfo->resultinfo,
 						 simple_eval_estate);
 
 	/*
 	 * Setup error traceback support for ereport()
 	 */
-	plerrcontext.callback = plpgsql_exec_error_callback;
+	plerrcontext.callback = plmdb_exec_error_callback;
 	plerrcontext.arg = &estate;
 	plerrcontext.previous = error_context_stack;
 	error_context_stack = &plerrcontext;
@@ -323,7 +323,7 @@ plpgsql_exec_function(PLpgSQL_function *func, FunctionCallInfo fcinfo,
 	 */
 	estate.err_text = gettext_noop("during initialization of execution state");
 	for (i = 0; i < estate.ndatums; i++)
-		estate.datums[i] = copy_plpgsql_datum(func->datums[i]);
+		estate.datums[i] = copy_plmdb_datum(func->datums[i]);
 
 	/*
 	 * Store the actual call argument values into the appropriate variables
@@ -423,8 +423,8 @@ plpgsql_exec_function(PLpgSQL_function *func, FunctionCallInfo fcinfo,
 	/*
 	 * Let the instrumentation plugin peek at this function
 	 */
-	if (*plpgsql_plugin_ptr && (*plpgsql_plugin_ptr)->func_beg)
-		((*plpgsql_plugin_ptr)->func_beg) (&estate, func);
+	if (*plmdb_plugin_ptr && (*plmdb_plugin_ptr)->func_beg)
+		((*plmdb_plugin_ptr)->func_beg) (&estate, func);
 
 	/*
 	 * Now call the toplevel block of statements
@@ -556,11 +556,11 @@ plpgsql_exec_function(PLpgSQL_function *func, FunctionCallInfo fcinfo,
 	/*
 	 * Let the instrumentation plugin peek at this function
 	 */
-	if (*plpgsql_plugin_ptr && (*plpgsql_plugin_ptr)->func_end)
-		((*plpgsql_plugin_ptr)->func_end) (&estate, func);
+	if (*plmdb_plugin_ptr && (*plmdb_plugin_ptr)->func_end)
+		((*plmdb_plugin_ptr)->func_end) (&estate, func);
 
 	/* Clean up any leftover temporary memory */
-	plpgsql_destroy_econtext(&estate);
+	plmdb_destroy_econtext(&estate);
 	exec_eval_cleanup(&estate);
 
 	/*
@@ -576,12 +576,12 @@ plpgsql_exec_function(PLpgSQL_function *func, FunctionCallInfo fcinfo,
 
 
 /* ----------
- * plpgsql_exec_trigger		Called by the call handler for
+ * plmdb_exec_trigger		Called by the call handler for
  *				trigger execution.
  * ----------
  */
 HeapTuple
-plpgsql_exec_trigger(PLpgSQL_function *func,
+plmdb_exec_trigger(PLpgSQL_function *func,
 					 TriggerData *trigdata)
 {
 	PLpgSQL_execstate estate;
@@ -596,12 +596,12 @@ plpgsql_exec_trigger(PLpgSQL_function *func,
 	/*
 	 * Setup the execution state
 	 */
-	plpgsql_estate_setup(&estate, func, NULL, NULL);
+	plmdb_estate_setup(&estate, func, NULL, NULL);
 
 	/*
 	 * Setup error traceback support for ereport()
 	 */
-	plerrcontext.callback = plpgsql_exec_error_callback;
+	plerrcontext.callback = plmdb_exec_error_callback;
 	plerrcontext.arg = &estate;
 	plerrcontext.previous = error_context_stack;
 	error_context_stack = &plerrcontext;
@@ -611,7 +611,7 @@ plpgsql_exec_trigger(PLpgSQL_function *func,
 	 */
 	estate.err_text = gettext_noop("during initialization of execution state");
 	for (i = 0; i < estate.ndatums; i++)
-		estate.datums[i] = copy_plpgsql_datum(func->datums[i]);
+		estate.datums[i] = copy_plmdb_datum(func->datums[i]);
 
 	/*
 	 * Put the OLD and NEW tuples into record variables
@@ -767,8 +767,8 @@ plpgsql_exec_trigger(PLpgSQL_function *func,
 	/*
 	 * Let the instrumentation plugin peek at this function
 	 */
-	if (*plpgsql_plugin_ptr && (*plpgsql_plugin_ptr)->func_beg)
-		((*plpgsql_plugin_ptr)->func_beg) (&estate, func);
+	if (*plmdb_plugin_ptr && (*plmdb_plugin_ptr)->func_beg)
+		((*plmdb_plugin_ptr)->func_beg) (&estate, func);
 
 	/*
 	 * Now call the toplevel block of statements
@@ -826,11 +826,11 @@ plpgsql_exec_trigger(PLpgSQL_function *func,
 	/*
 	 * Let the instrumentation plugin peek at this function
 	 */
-	if (*plpgsql_plugin_ptr && (*plpgsql_plugin_ptr)->func_end)
-		((*plpgsql_plugin_ptr)->func_end) (&estate, func);
+	if (*plmdb_plugin_ptr && (*plmdb_plugin_ptr)->func_end)
+		((*plmdb_plugin_ptr)->func_end) (&estate, func);
 
 	/* Clean up any leftover temporary memory */
-	plpgsql_destroy_econtext(&estate);
+	plmdb_destroy_econtext(&estate);
 	exec_eval_cleanup(&estate);
 
 	/*
@@ -845,7 +845,7 @@ plpgsql_exec_trigger(PLpgSQL_function *func,
 }
 
 void
-plpgsql_exec_event_trigger(PLpgSQL_function *func, EventTriggerData *trigdata)
+plmdb_exec_event_trigger(PLpgSQL_function *func, EventTriggerData *trigdata)
 {
 	PLpgSQL_execstate estate;
 	ErrorContextCallback plerrcontext;
@@ -856,12 +856,12 @@ plpgsql_exec_event_trigger(PLpgSQL_function *func, EventTriggerData *trigdata)
 	/*
 	 * Setup the execution state
 	 */
-	plpgsql_estate_setup(&estate, func, NULL, NULL);
+	plmdb_estate_setup(&estate, func, NULL, NULL);
 
 	/*
 	 * Setup error traceback support for ereport()
 	 */
-	plerrcontext.callback = plpgsql_exec_error_callback;
+	plerrcontext.callback = plmdb_exec_error_callback;
 	plerrcontext.arg = &estate;
 	plerrcontext.previous = error_context_stack;
 	error_context_stack = &plerrcontext;
@@ -871,7 +871,7 @@ plpgsql_exec_event_trigger(PLpgSQL_function *func, EventTriggerData *trigdata)
 	 */
 	estate.err_text = gettext_noop("during initialization of execution state");
 	for (i = 0; i < estate.ndatums; i++)
-		estate.datums[i] = copy_plpgsql_datum(func->datums[i]);
+		estate.datums[i] = copy_plmdb_datum(func->datums[i]);
 
 	/*
 	 * Assign the special tg_ variables
@@ -885,8 +885,8 @@ plpgsql_exec_event_trigger(PLpgSQL_function *func, EventTriggerData *trigdata)
 	/*
 	 * Let the instrumentation plugin peek at this function
 	 */
-	if (*plpgsql_plugin_ptr && (*plpgsql_plugin_ptr)->func_beg)
-		((*plpgsql_plugin_ptr)->func_beg) (&estate, func);
+	if (*plmdb_plugin_ptr && (*plmdb_plugin_ptr)->func_beg)
+		((*plmdb_plugin_ptr)->func_beg) (&estate, func);
 
 	/*
 	 * Now call the toplevel block of statements
@@ -909,11 +909,11 @@ plpgsql_exec_event_trigger(PLpgSQL_function *func, EventTriggerData *trigdata)
 	/*
 	 * Let the instrumentation plugin peek at this function
 	 */
-	if (*plpgsql_plugin_ptr && (*plpgsql_plugin_ptr)->func_end)
-		((*plpgsql_plugin_ptr)->func_end) (&estate, func);
+	if (*plmdb_plugin_ptr && (*plmdb_plugin_ptr)->func_end)
+		((*plmdb_plugin_ptr)->func_end) (&estate, func);
 
 	/* Clean up any leftover temporary memory */
-	plpgsql_destroy_econtext(&estate);
+	plmdb_destroy_econtext(&estate);
 	exec_eval_cleanup(&estate);
 
 	/*
@@ -928,7 +928,7 @@ plpgsql_exec_event_trigger(PLpgSQL_function *func, EventTriggerData *trigdata)
  * error context callback to let us supply a call-stack traceback
  */
 static void
-plpgsql_exec_error_callback(void *arg)
+plmdb_exec_error_callback(void *arg)
 {
 	PLpgSQL_execstate *estate = (PLpgSQL_execstate *) arg;
 
@@ -969,11 +969,11 @@ plpgsql_exec_error_callback(void *arg)
 	}
 	else if (estate->err_stmt != NULL)
 	{
-		/* translator: last %s is a plpgsql statement type name */
+		/* translator: last %s is a plmdb statement type name */
 		errcontext("PL/pgSQL function %s line %d at %s",
 				   estate->func->fn_signature,
 				   estate->err_stmt->lineno,
-				   plpgsql_stmt_typename(estate->err_stmt));
+				   plmdb_stmt_typename(estate->err_stmt));
 	}
 	else
 		errcontext("PL/pgSQL function %s",
@@ -986,7 +986,7 @@ plpgsql_exec_error_callback(void *arg)
  * ----------
  */
 static PLpgSQL_datum *
-copy_plpgsql_datum(PLpgSQL_datum *datum)
+copy_plmdb_datum(PLpgSQL_datum *datum)
 {
 	PLpgSQL_datum *result;
 
@@ -1189,7 +1189,7 @@ exec_stmt_block(PLpgSQL_execstate *estate, PLpgSQL_stmt_block *block)
 			 * the outer econtext then ExprContext shutdown callbacks will be
 			 * called at the wrong times.
 			 */
-			plpgsql_create_econtext(estate);
+			plmdb_create_econtext(estate);
 
 			estate->err_text = NULL;
 
@@ -1420,8 +1420,8 @@ exec_stmt(PLpgSQL_execstate *estate, PLpgSQL_stmt *stmt)
 	estate->err_stmt = stmt;
 
 	/* Let the plugin know that we are about to execute this statement */
-	if (*plpgsql_plugin_ptr && (*plpgsql_plugin_ptr)->stmt_beg)
-		((*plpgsql_plugin_ptr)->stmt_beg) (estate, stmt);
+	if (*plmdb_plugin_ptr && (*plmdb_plugin_ptr)->stmt_beg)
+		((*plmdb_plugin_ptr)->stmt_beg) (estate, stmt);
 
 	CHECK_FOR_INTERRUPTS();
 
@@ -1529,8 +1529,8 @@ exec_stmt(PLpgSQL_execstate *estate, PLpgSQL_stmt *stmt)
 	}
 
 	/* Let the plugin know that we have finished executing this statement */
-	if (*plpgsql_plugin_ptr && (*plpgsql_plugin_ptr)->stmt_end)
-		((*plpgsql_plugin_ptr)->stmt_end) (estate, stmt);
+	if (*plmdb_plugin_ptr && (*plmdb_plugin_ptr)->stmt_end)
+		((*plmdb_plugin_ptr)->stmt_end) (estate, stmt);
 
 	estate->err_stmt = save_estmt;
 
@@ -1742,7 +1742,7 @@ exec_stmt_case(PLpgSQL_execstate *estate, PLpgSQL_stmt_case *stmt)
 		 */
 		if (t_var->datatype->typoid != t_typoid ||
 			t_var->datatype->atttypmod != t_typmod)
-			t_var->datatype = plpgsql_build_datatype(t_typoid,
+			t_var->datatype = plmdb_build_datatype(t_typoid,
 													 t_typmod,
 										   estate->func->fn_input_collation);
 
@@ -2315,7 +2315,7 @@ exec_stmt_foreach_a(PLpgSQL_execstate *estate, PLpgSQL_stmt_foreach_a *stmt)
 		loop_var_elem_type = InvalidOid;
 	}
 	else
-		loop_var_elem_type = get_element_type(plpgsql_exec_get_datum_type(estate,
+		loop_var_elem_type = get_element_type(plmdb_exec_get_datum_type(estate,
 																  loop_var));
 
 	/*
@@ -3001,7 +3001,7 @@ exec_stmt_raise(PLpgSQL_execstate *estate, PLpgSQL_stmt_raise *stmt)
 
 	if (stmt->condname)
 	{
-		err_code = plpgsql_recognize_err_condition(stmt->condname, true);
+		err_code = plmdb_recognize_err_condition(stmt->condname, true);
 		condname = pstrdup(stmt->condname);
 	}
 
@@ -3095,7 +3095,7 @@ exec_stmt_raise(PLpgSQL_execstate *estate, PLpgSQL_stmt_raise *stmt)
 							(errcode(ERRCODE_SYNTAX_ERROR),
 							 errmsg("RAISE option already specified: %s",
 									"ERRCODE")));
-				err_code = plpgsql_recognize_err_condition(extval, true);
+				err_code = plmdb_recognize_err_condition(extval, true);
 				condname = pstrdup(extval);
 				break;
 			case PLPGSQL_RAISEOPTION_MESSAGE:
@@ -3197,7 +3197,7 @@ exec_stmt_assert(PLpgSQL_execstate *estate, PLpgSQL_stmt_assert *stmt)
 	bool		isnull;
 
 	/* do nothing when asserts are not enabled */
-	if (!plpgsql_check_asserts)
+	if (!plmdb_check_asserts)
 		return PLPGSQL_RC_OK;
 
 	value = exec_eval_boolean(estate, stmt->cond, &isnull);
@@ -3234,14 +3234,14 @@ exec_stmt_assert(PLpgSQL_execstate *estate, PLpgSQL_stmt_assert *stmt)
  * ----------
  */
 static void
-plpgsql_estate_setup(PLpgSQL_execstate *estate,
+plmdb_estate_setup(PLpgSQL_execstate *estate,
 					 PLpgSQL_function *func,
 					 ReturnSetInfo *rsi,
 					 EState *simple_eval_estate)
 {
 	HASHCTL		ctl;
 
-	/* this link will be restored at exit from plpgsql_call_handler */
+	/* this link will be restored at exit from plmdb_call_handler */
 	func->cur_estate = estate;
 
 	estate->func = func;
@@ -3282,9 +3282,9 @@ plpgsql_estate_setup(PLpgSQL_execstate *estate,
 	estate->paramLI = (ParamListInfo)
 		palloc0(offsetof(ParamListInfoData, params) +
 				estate->ndatums * sizeof(ParamExternData));
-	estate->paramLI->paramFetch = plpgsql_param_fetch;
+	estate->paramLI->paramFetch = plmdb_param_fetch;
 	estate->paramLI->paramFetchArg = (void *) estate;
-	estate->paramLI->parserSetup = (ParserSetupHook) plpgsql_parser_setup;
+	estate->paramLI->parserSetup = (ParserSetupHook) plmdb_parser_setup;
 	estate->paramLI->parserSetupArg = NULL;		/* filled during use */
 	estate->paramLI->numParams = estate->ndatums;
 	estate->paramLI->paramMask = NULL;
@@ -3296,8 +3296,8 @@ plpgsql_estate_setup(PLpgSQL_execstate *estate,
 		estate->simple_eval_estate = simple_eval_estate;
 		/* Private cast hash just lives in function's main context */
 		memset(&ctl, 0, sizeof(ctl));
-		ctl.keysize = sizeof(plpgsql_CastHashKey);
-		ctl.entrysize = sizeof(plpgsql_CastHashEntry);
+		ctl.keysize = sizeof(plmdb_CastHashKey);
+		ctl.entrysize = sizeof(plmdb_CastHashEntry);
 		ctl.hcxt = CurrentMemoryContext;
 		estate->cast_hash = hash_create("PLpgSQL private cast cache",
 										16,		/* start small and extend */
@@ -3317,8 +3317,8 @@ plpgsql_estate_setup(PLpgSQL_execstate *estate,
 												   ALLOCSET_DEFAULT_INITSIZE,
 												   ALLOCSET_DEFAULT_MAXSIZE);
 			memset(&ctl, 0, sizeof(ctl));
-			ctl.keysize = sizeof(plpgsql_CastHashKey);
-			ctl.entrysize = sizeof(plpgsql_CastHashEntry);
+			ctl.keysize = sizeof(plmdb_CastHashKey);
+			ctl.entrysize = sizeof(plmdb_CastHashEntry);
 			ctl.hcxt = shared_cast_context;
 			shared_cast_hash = hash_create("PLpgSQL cast cache",
 										   16,	/* start small and extend */
@@ -3342,7 +3342,7 @@ plpgsql_estate_setup(PLpgSQL_execstate *estate,
 	/*
 	 * Create an EState and ExprContext for evaluation of simple expressions.
 	 */
-	plpgsql_create_econtext(estate);
+	plmdb_create_econtext(estate);
 
 	/*
 	 * Let the plugin see this function before we initialize any local
@@ -3350,13 +3350,13 @@ plpgsql_estate_setup(PLpgSQL_execstate *estate,
 	 * pointers so it can call back into PL/pgSQL for doing things like
 	 * variable assignments and stack traces
 	 */
-	if (*plpgsql_plugin_ptr)
+	if (*plmdb_plugin_ptr)
 	{
-		(*plpgsql_plugin_ptr)->error_callback = plpgsql_exec_error_callback;
-		(*plpgsql_plugin_ptr)->assign_expr = exec_assign_expr;
+		(*plmdb_plugin_ptr)->error_callback = plmdb_exec_error_callback;
+		(*plmdb_plugin_ptr)->assign_expr = exec_assign_expr;
 
-		if ((*plpgsql_plugin_ptr)->func_setup)
-			((*plpgsql_plugin_ptr)->func_setup) (estate, func);
+		if ((*plmdb_plugin_ptr)->func_setup)
+			((*plmdb_plugin_ptr)->func_setup) (estate, func);
 	}
 }
 
@@ -3404,7 +3404,7 @@ exec_prepare_plan(PLpgSQL_execstate *estate,
 	 * Generate and save the plan
 	 */
 	plan = SPI_prepare_params(expr->query,
-							  (ParserSetupHook) plpgsql_parser_setup,
+							  (ParserSetupHook) plmdb_parser_setup,
 							  (void *) expr,
 							  cursorOptions);
 	if (plan == NULL)
@@ -3733,9 +3733,9 @@ exec_stmt_dynexecute(PLpgSQL_execstate *estate,
 
 			/*
 			 * We want to disallow SELECT INTO for now, because its behavior
-			 * is not consistent with SELECT INTO in a normal plpgsql context.
+			 * is not consistent with SELECT INTO in a normal plmdb context.
 			 * (We need to reimplement EXECUTE to parse the string as a
-			 * plpgsql command, not just feed it to SPI_execute.)  This is not
+			 * plmdb command, not just feed it to SPI_execute.)  This is not
 			 * a functional limitation because CREATE TABLE AS is allowed.
 			 */
 			ereport(ERROR,
@@ -4758,7 +4758,7 @@ exec_eval_datum(PLpgSQL_execstate *estate,
 }
 
 /*
- * plpgsql_exec_get_datum_type				Get datatype of a PLpgSQL_datum
+ * plmdb_exec_get_datum_type				Get datatype of a PLpgSQL_datum
  *
  * This is the same logic as in exec_eval_datum, except that it can handle
  * some cases where exec_eval_datum has to fail; specifically, we may have
@@ -4766,7 +4766,7 @@ exec_eval_datum(PLpgSQL_execstate *estate,
  * happen only for a trigger's NEW/OLD records.)
  */
 Oid
-plpgsql_exec_get_datum_type(PLpgSQL_execstate *estate,
+plmdb_exec_get_datum_type(PLpgSQL_execstate *estate,
 					PLpgSQL_datum *datum)
 {
 	Oid			typeid;
@@ -4842,13 +4842,13 @@ plpgsql_exec_get_datum_type(PLpgSQL_execstate *estate,
 }
 
 /*
- * plpgsql_exec_get_datum_type_info			Get datatype etc of a PLpgSQL_datum
+ * plmdb_exec_get_datum_type_info			Get datatype etc of a PLpgSQL_datum
  *
- * An extended version of plpgsql_exec_get_datum_type, which also retrieves the
+ * An extended version of plmdb_exec_get_datum_type, which also retrieves the
  * typmod and collation of the datum.
  */
 void
-plpgsql_exec_get_datum_type_info(PLpgSQL_execstate *estate,
+plmdb_exec_get_datum_type_info(PLpgSQL_execstate *estate,
 						 PLpgSQL_datum *datum,
 						 Oid *typeid, int32 *typmod, Oid *collation)
 {
@@ -5502,9 +5502,9 @@ exec_eval_simple_expr(PLpgSQL_execstate *estate,
  * necessarily survive to the next SPI operation.  And for a third thing, ROW
  * and RECFIELD datums' values depend on other datums, and we don't have a
  * cheap way to track that.  Therefore, param slots for non-VAR datum types
- * are always reset here and then filled on-demand by plpgsql_param_fetch().
+ * are always reset here and then filled on-demand by plmdb_param_fetch().
  * We can save a few cycles by not bothering with the reset loop unless at
- * least one such param has actually been filled by plpgsql_param_fetch().
+ * least one such param has actually been filled by plmdb_param_fetch().
  */
 static ParamListInfo
 setup_param_list(PLpgSQL_execstate *estate, PLpgSQL_expr *expr)
@@ -5628,16 +5628,16 @@ setup_unshared_param_list(PLpgSQL_execstate *estate, PLpgSQL_expr *expr)
 		paramLI = (ParamListInfo)
 			palloc0(offsetof(ParamListInfoData, params) +
 					estate->ndatums * sizeof(ParamExternData));
-		paramLI->paramFetch = plpgsql_param_fetch;
+		paramLI->paramFetch = plmdb_param_fetch;
 		paramLI->paramFetchArg = (void *) estate;
-		paramLI->parserSetup = (ParserSetupHook) plpgsql_parser_setup;
+		paramLI->parserSetup = (ParserSetupHook) plmdb_parser_setup;
 		paramLI->parserSetupArg = (void *) expr;
 		paramLI->numParams = estate->ndatums;
 		paramLI->paramMask = NULL;
 
 		/*
 		 * Instantiate values for "safe" parameters of the expression.  We
-		 * could skip this and leave them to be filled by plpgsql_param_fetch;
+		 * could skip this and leave them to be filled by plmdb_param_fetch;
 		 * but then the values would not be available for query planning,
 		 * since the planner doesn't call the paramFetch hook.
 		 */
@@ -5683,10 +5683,10 @@ setup_unshared_param_list(PLpgSQL_execstate *estate, PLpgSQL_expr *expr)
 }
 
 /*
- * plpgsql_param_fetch		paramFetch callback for dynamic parameter fetch
+ * plmdb_param_fetch		paramFetch callback for dynamic parameter fetch
  */
 static void
-plpgsql_param_fetch(ParamListInfo params, int paramid)
+plmdb_param_fetch(ParamListInfo params, int paramid)
 {
 	int			dno;
 	PLpgSQL_execstate *estate;
@@ -6094,7 +6094,7 @@ exec_cast_value(PLpgSQL_execstate *estate,
 	if (valtype != reqtype ||
 		(valtypmod != reqtypmod && reqtypmod != -1))
 	{
-		plpgsql_CastHashEntry *cast_entry;
+		plmdb_CastHashEntry *cast_entry;
 
 		cast_entry = get_cast_hashentry(estate,
 										valtype, valtypmod,
@@ -6126,20 +6126,20 @@ exec_cast_value(PLpgSQL_execstate *estate,
 /* ----------
  * get_cast_hashentry			Look up how to perform a type cast
  *
- * Returns a plpgsql_CastHashEntry if an expression has to be evaluated,
+ * Returns a plmdb_CastHashEntry if an expression has to be evaluated,
  * or NULL if the cast is a mere no-op relabeling.  If there's work to be
  * done, the cast_exprstate field contains an expression evaluation tree
  * based on a CaseTestExpr input, and the cast_in_use field should be set
  * TRUE while executing it.
  * ----------
  */
-static plpgsql_CastHashEntry *
+static plmdb_CastHashEntry *
 get_cast_hashentry(PLpgSQL_execstate *estate,
 				   Oid srctype, int32 srctypmod,
 				   Oid dsttype, int32 dsttypmod)
 {
-	plpgsql_CastHashKey cast_key;
-	plpgsql_CastHashEntry *cast_entry;
+	plmdb_CastHashKey cast_key;
+	plmdb_CastHashEntry *cast_entry;
 	bool		found;
 	LocalTransactionId curlxid;
 	MemoryContext oldcontext;
@@ -6149,7 +6149,7 @@ get_cast_hashentry(PLpgSQL_execstate *estate,
 	cast_key.dsttype = dsttype;
 	cast_key.srctypmod = srctypmod;
 	cast_key.dsttypmod = dsttypmod;
-	cast_entry = (plpgsql_CastHashEntry *) hash_search(estate->cast_hash,
+	cast_entry = (plmdb_CastHashEntry *) hash_search(estate->cast_hash,
 													   (void *) &cast_key,
 													   HASH_FIND, NULL);
 
@@ -6177,7 +6177,7 @@ get_cast_hashentry(PLpgSQL_execstate *estate,
 
 		/*
 		 * Apply coercion.  We use ASSIGNMENT coercion because that's the
-		 * closest match to plpgsql's historical behavior; in particular,
+		 * closest match to plmdb's historical behavior; in particular,
 		 * EXPLICIT coercion would allow silent truncation to a destination
 		 * varchar/bpchar's length, which we do not want.
 		 *
@@ -6198,7 +6198,7 @@ get_cast_hashentry(PLpgSQL_execstate *estate,
 
 		/*
 		 * If there's no cast path according to the parser, fall back to using
-		 * an I/O coercion; this is semantically dubious but matches plpgsql's
+		 * an I/O coercion; this is semantically dubious but matches plmdb's
 		 * historical behavior.  We would need something of the sort for
 		 * UNKNOWN literals in any case.
 		 */
@@ -6242,7 +6242,7 @@ get_cast_hashentry(PLpgSQL_execstate *estate,
 		MemoryContextSwitchTo(oldcontext);
 
 		/* Now we can fill in a hashtable entry. */
-		cast_entry = (plpgsql_CastHashEntry *) hash_search(estate->cast_hash,
+		cast_entry = (plmdb_CastHashEntry *) hash_search(estate->cast_hash,
 														   (void *) &cast_key,
 														 HASH_ENTER, &found);
 		Assert(!found);			/* wasn't there a moment ago */
@@ -6263,7 +6263,7 @@ get_cast_hashentry(PLpgSQL_execstate *estate,
 	 * avoid potential problems with recursive cast expressions and failed
 	 * executions.  (We will leak some memory intra-transaction if that
 	 * happens a lot, but we don't expect it to.)  It's okay to update the
-	 * hash table with the new tree because all plpgsql functions within a
+	 * hash table with the new tree because all plmdb functions within a
 	 * given transaction share the same simple_eval_estate.  (Well, regular
 	 * functions do; DO blocks have private simple_eval_estates, and private
 	 * cast hash tables to go with them.)
@@ -6829,14 +6829,14 @@ exec_set_found(PLpgSQL_execstate *estate, bool state)
 }
 
 /*
- * plpgsql_create_econtext --- create an eval_econtext for the current function
+ * plmdb_create_econtext --- create an eval_econtext for the current function
  *
  * We may need to create a new shared_simple_eval_estate too, if there's not
  * one already for the current transaction.  The EState will be cleaned up at
  * transaction end.
  */
 static void
-plpgsql_create_econtext(PLpgSQL_execstate *estate)
+plmdb_create_econtext(PLpgSQL_execstate *estate)
 {
 	SimpleEcontextStackEntry *entry;
 
@@ -6846,7 +6846,7 @@ plpgsql_create_econtext(PLpgSQL_execstate *estate)
 	 * TopTransactionContext so it will have the right lifespan.
 	 *
 	 * Note that this path is never taken when executing a DO block; the
-	 * required EState was already made by plpgsql_inline_handler.
+	 * required EState was already made by plmdb_inline_handler.
 	 */
 	if (estate->simple_eval_estate == NULL)
 	{
@@ -6880,13 +6880,13 @@ plpgsql_create_econtext(PLpgSQL_execstate *estate)
 }
 
 /*
- * plpgsql_destroy_econtext --- destroy function's econtext
+ * plmdb_destroy_econtext --- destroy function's econtext
  *
  * We check that it matches the top stack entry, and destroy the stack
  * entry along with the context.
  */
 static void
-plpgsql_destroy_econtext(PLpgSQL_execstate *estate)
+plmdb_destroy_econtext(PLpgSQL_execstate *estate)
 {
 	SimpleEcontextStackEntry *next;
 
@@ -6902,13 +6902,13 @@ plpgsql_destroy_econtext(PLpgSQL_execstate *estate)
 }
 
 /*
- * plpgsql_xact_cb --- post-transaction-commit-or-abort cleanup
+ * plmdb_xact_cb --- post-transaction-commit-or-abort cleanup
  *
  * If a simple-expression EState was created in the current transaction,
  * it has to be cleaned up.
  */
 void
-plpgsql_xact_cb(XactEvent event, void *arg)
+plmdb_xact_cb(XactEvent event, void *arg)
 {
 	/*
 	 * If we are doing a clean transaction shutdown, free the EState (so that
@@ -6933,14 +6933,14 @@ plpgsql_xact_cb(XactEvent event, void *arg)
 }
 
 /*
- * plpgsql_subxact_cb --- post-subtransaction-commit-or-abort cleanup
+ * plmdb_subxact_cb --- post-subtransaction-commit-or-abort cleanup
  *
  * Make sure any simple-expression econtexts created in the current
  * subtransaction get cleaned up.  We have to do this explicitly because
  * no other code knows which econtexts belong to which level of subxact.
  */
 void
-plpgsql_subxact_cb(SubXactEvent event, SubTransactionId mySubid,
+plmdb_subxact_cb(SubXactEvent event, SubTransactionId mySubid,
 				   SubTransactionId parentSubid, void *arg)
 {
 	if (event == SUBXACT_EVENT_COMMIT_SUB || event == SUBXACT_EVENT_ABORT_SUB)
@@ -7056,7 +7056,7 @@ exec_eval_using_params(PLpgSQL_execstate *estate, List *params)
 				ppd->freevals[i] = true;
 			}
 		}
-		/* pass-by-ref non null values must be copied into plpgsql context */
+		/* pass-by-ref non null values must be copied into plmdb context */
 		else if (!isnull)
 		{
 			int16		typLen;

@@ -12,7 +12,7 @@ SELECT * FROM test_extdep_commands;
   SET search_path TO test_ext
   CREATE TABLE a (a1 int)
  
-  CREATE FUNCTION b() RETURNS TRIGGER LANGUAGE plpgsql AS               +
+  CREATE FUNCTION b() RETURNS TRIGGER LANGUAGE plmdb AS               +
     $$ BEGIN NEW.a1 := NEW.a1 + 42; RETURN NEW; END; $$
   ALTER FUNCTION b() DEPENDS ON EXTENSION test_ext5
  
@@ -34,7 +34,7 @@ SELECT * FROM test_extdep_commands \gexec
  SET search_path TO test_ext
  CREATE TABLE a (a1 int)
 
- CREATE FUNCTION b() RETURNS TRIGGER LANGUAGE plpgsql AS
+ CREATE FUNCTION b() RETURNS TRIGGER LANGUAGE plmdb AS
    $$ BEGIN NEW.a1 := NEW.a1 + 42; RETURN NEW; END; $$
  ALTER FUNCTION b() DEPENDS ON EXTENSION test_ext5
 
@@ -81,7 +81,7 @@ SELECT * FROM test_extdep_commands \gexec
  SET search_path TO test_ext
  CREATE TABLE a (a1 int)
 
- CREATE FUNCTION b() RETURNS TRIGGER LANGUAGE plpgsql AS
+ CREATE FUNCTION b() RETURNS TRIGGER LANGUAGE plmdb AS
    $$ BEGIN NEW.a1 := NEW.a1 + 42; RETURN NEW; END; $$
  ALTER FUNCTION b() DEPENDS ON EXTENSION test_ext5
 
@@ -119,7 +119,7 @@ SELECT * FROM test_extdep_commands \gexec
  SET search_path TO test_ext
  CREATE TABLE a (a1 int)
 
- CREATE FUNCTION b() RETURNS TRIGGER LANGUAGE plpgsql AS
+ CREATE FUNCTION b() RETURNS TRIGGER LANGUAGE plmdb AS
    $$ BEGIN NEW.a1 := NEW.a1 + 42; RETURN NEW; END; $$
  ALTER FUNCTION b() DEPENDS ON EXTENSION test_ext5
 

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pg_basebackup (MollyDB) 9.6\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:14+0000\n"
 "PO-Revision-Date: 2016-04-17 20:43+0100\n"
 "Last-Translator: Daniele Varrazzo <daniele.varrazzo@gmail.com>\n"
@@ -253,10 +253,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Puoi segnalare eventuali bug a <pgsql-bugs@mollydb.org>.\n"
+"Puoi segnalare eventuali bug a <mdb-bugs@mollydb.org>.\n"
 
 #: pg_basebackup.c:311
 #, c-format

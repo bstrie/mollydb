@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * plpgsql.h		- Definitions for the PL/pgSQL
+ * plmdb.h		- Definitions for the PL/pgSQL
  *			  procedural language
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -8,7 +8,7 @@
  *
  *
  * IDENTIFICATION
- *	  src/pl/plpgsql/src/plpgsql.h
+ *	  src/pl/plmdb/src/plmdb.h
  *
  *-------------------------------------------------------------------------
  */
@@ -29,7 +29,7 @@
 
 /* define our text domain for translations */
 #undef TEXTDOMAIN
-#define TEXTDOMAIN PG_TEXTDOMAIN("plpgsql")
+#define TEXTDOMAIN PG_TEXTDOMAIN("plmdb")
 
 #undef _
 #define _(x) dgettext(TEXTDOMAIN, x)
@@ -167,14 +167,14 @@ enum
 };
 
 /* --------
- * Behavioral modes for plpgsql variable resolution
+ * Behavioral modes for plmdb variable resolution
  * --------
  */
 typedef enum
 {
 	PLPGSQL_RESOLVE_ERROR,		/* throw error if ambiguous */
-	PLPGSQL_RESOLVE_VARIABLE,	/* prefer plpgsql var to table column */
-	PLPGSQL_RESOLVE_COLUMN		/* prefer table column to plpgsql var */
+	PLPGSQL_RESOLVE_VARIABLE,	/* prefer plmdb var to table column */
+	PLPGSQL_RESOLVE_COLUMN		/* prefer table column to plmdb var */
 } PLpgSQL_resolve_option;
 
 
@@ -859,7 +859,7 @@ typedef struct PLpgSQL_execstate
  *
  * Also, immediately before any call to func_setup, PL/pgSQL fills in the
  * error_callback and assign_expr fields with pointers to its own
- * plpgsql_exec_error_callback and exec_assign_expr functions.  This is
+ * plmdb_exec_error_callback and exec_assign_expr functions.  This is
  * a somewhat ad-hoc expedient to simplify life for debugger plugins.
  */
 
@@ -911,36 +911,36 @@ typedef enum
 	IDENTIFIER_LOOKUP_EXPR		/* In SQL expression --- special case */
 } IdentifierLookup;
 
-extern IdentifierLookup plpgsql_IdentifierLookup;
+extern IdentifierLookup plmdb_IdentifierLookup;
 
-extern int	plpgsql_variable_conflict;
+extern int	plmdb_variable_conflict;
 
-extern bool plpgsql_print_strict_params;
+extern bool plmdb_print_strict_params;
 
-extern bool plpgsql_check_asserts;
+extern bool plmdb_check_asserts;
 
 /* extra compile-time checks */
 #define PLPGSQL_XCHECK_NONE			0
 #define PLPGSQL_XCHECK_SHADOWVAR	1
 #define PLPGSQL_XCHECK_ALL			((int) ~0)
 
-extern int	plpgsql_extra_warnings;
-extern int	plpgsql_extra_errors;
+extern int	plmdb_extra_warnings;
+extern int	plmdb_extra_errors;
 
-extern bool plpgsql_check_syntax;
-extern bool plpgsql_DumpExecTree;
+extern bool plmdb_check_syntax;
+extern bool plmdb_DumpExecTree;
 
-extern PLpgSQL_stmt_block *plpgsql_parse_result;
+extern PLpgSQL_stmt_block *plmdb_parse_result;
 
-extern int	plpgsql_nDatums;
-extern PLpgSQL_datum **plpgsql_Datums;
+extern int	plmdb_nDatums;
+extern PLpgSQL_datum **plmdb_Datums;
 
-extern char *plpgsql_error_funcname;
+extern char *plmdb_error_funcname;
 
-extern PLpgSQL_function *plpgsql_curr_compile;
-extern MemoryContext plpgsql_compile_tmp_cxt;
+extern PLpgSQL_function *plmdb_curr_compile;
+extern MemoryContext plmdb_compile_tmp_cxt;
 
-extern PLpgSQL_plugin **plpgsql_plugin_ptr;
+extern PLpgSQL_plugin **plmdb_plugin_ptr;
 
 /**********************************************************************
  * Function declarations
@@ -950,34 +950,34 @@ extern PLpgSQL_plugin **plpgsql_plugin_ptr;
  * Functions in pl_comp.c
  * ----------
  */
-extern PLpgSQL_function *plpgsql_compile(FunctionCallInfo fcinfo,
+extern PLpgSQL_function *plmdb_compile(FunctionCallInfo fcinfo,
 				bool forValidator);
-extern PLpgSQL_function *plpgsql_compile_inline(char *proc_source);
-extern void plpgsql_parser_setup(struct ParseState *pstate,
+extern PLpgSQL_function *plmdb_compile_inline(char *proc_source);
+extern void plmdb_parser_setup(struct ParseState *pstate,
 					 PLpgSQL_expr *expr);
-extern bool plpgsql_parse_word(char *word1, const char *yytxt,
+extern bool plmdb_parse_word(char *word1, const char *yytxt,
 				   PLwdatum *wdatum, PLword *word);
-extern bool plpgsql_parse_dblword(char *word1, char *word2,
+extern bool plmdb_parse_dblword(char *word1, char *word2,
 					  PLwdatum *wdatum, PLcword *cword);
-extern bool plpgsql_parse_tripword(char *word1, char *word2, char *word3,
+extern bool plmdb_parse_tripword(char *word1, char *word2, char *word3,
 					   PLwdatum *wdatum, PLcword *cword);
-extern PLpgSQL_type *plpgsql_parse_wordtype(char *ident);
-extern PLpgSQL_type *plpgsql_parse_cwordtype(List *idents);
-extern PLpgSQL_type *plpgsql_parse_wordrowtype(char *ident);
-extern PLpgSQL_type *plpgsql_parse_cwordrowtype(List *idents);
-extern PLpgSQL_type *plpgsql_build_datatype(Oid typeOid, int32 typmod,
+extern PLpgSQL_type *plmdb_parse_wordtype(char *ident);
+extern PLpgSQL_type *plmdb_parse_cwordtype(List *idents);
+extern PLpgSQL_type *plmdb_parse_wordrowtype(char *ident);
+extern PLpgSQL_type *plmdb_parse_cwordrowtype(List *idents);
+extern PLpgSQL_type *plmdb_build_datatype(Oid typeOid, int32 typmod,
 					   Oid collation);
-extern PLpgSQL_variable *plpgsql_build_variable(const char *refname, int lineno,
+extern PLpgSQL_variable *plmdb_build_variable(const char *refname, int lineno,
 					   PLpgSQL_type *dtype,
 					   bool add2namespace);
-extern PLpgSQL_rec *plpgsql_build_record(const char *refname, int lineno,
+extern PLpgSQL_rec *plmdb_build_record(const char *refname, int lineno,
 					 bool add2namespace);
-extern int plpgsql_recognize_err_condition(const char *condname,
+extern int plmdb_recognize_err_condition(const char *condname,
 								bool allow_sqlstate);
-extern PLpgSQL_condition *plpgsql_parse_err_condition(char *condname);
-extern void plpgsql_adddatum(PLpgSQL_datum *new);
-extern int	plpgsql_add_initdatums(int **varnos);
-extern void plpgsql_HashTableInit(void);
+extern PLpgSQL_condition *plmdb_parse_err_condition(char *condname);
+extern void plmdb_adddatum(PLpgSQL_datum *new);
+extern int	plmdb_add_initdatums(int **varnos);
+extern void plmdb_HashTableInit(void);
 
 /* ----------
  * Functions in pl_handler.c
@@ -989,19 +989,19 @@ extern void _PG_init(void);
  * Functions in pl_exec.c
  * ----------
  */
-extern Datum plpgsql_exec_function(PLpgSQL_function *func,
+extern Datum plmdb_exec_function(PLpgSQL_function *func,
 					  FunctionCallInfo fcinfo,
 					  EState *simple_eval_estate);
-extern HeapTuple plpgsql_exec_trigger(PLpgSQL_function *func,
+extern HeapTuple plmdb_exec_trigger(PLpgSQL_function *func,
 					 TriggerData *trigdata);
-extern void plpgsql_exec_event_trigger(PLpgSQL_function *func,
+extern void plmdb_exec_event_trigger(PLpgSQL_function *func,
 						   EventTriggerData *trigdata);
-extern void plpgsql_xact_cb(XactEvent event, void *arg);
-extern void plpgsql_subxact_cb(SubXactEvent event, SubTransactionId mySubid,
+extern void plmdb_xact_cb(XactEvent event, void *arg);
+extern void plmdb_subxact_cb(SubXactEvent event, SubTransactionId mySubid,
 				   SubTransactionId parentSubid, void *arg);
-extern Oid plpgsql_exec_get_datum_type(PLpgSQL_execstate *estate,
+extern Oid plmdb_exec_get_datum_type(PLpgSQL_execstate *estate,
 					PLpgSQL_datum *datum);
-extern void plpgsql_exec_get_datum_type_info(PLpgSQL_execstate *estate,
+extern void plmdb_exec_get_datum_type_info(PLpgSQL_execstate *estate,
 						 PLpgSQL_datum *datum,
 						 Oid *typeid, int32 *typmod, Oid *collation);
 
@@ -1009,52 +1009,52 @@ extern void plpgsql_exec_get_datum_type_info(PLpgSQL_execstate *estate,
  * Functions for namespace handling in pl_funcs.c
  * ----------
  */
-extern void plpgsql_ns_init(void);
-extern void plpgsql_ns_push(const char *label,
+extern void plmdb_ns_init(void);
+extern void plmdb_ns_push(const char *label,
 				enum PLpgSQL_label_types label_type);
-extern void plpgsql_ns_pop(void);
-extern PLpgSQL_nsitem *plpgsql_ns_top(void);
-extern void plpgsql_ns_additem(int itemtype, int itemno, const char *name);
-extern PLpgSQL_nsitem *plpgsql_ns_lookup(PLpgSQL_nsitem *ns_cur, bool localmode,
+extern void plmdb_ns_pop(void);
+extern PLpgSQL_nsitem *plmdb_ns_top(void);
+extern void plmdb_ns_additem(int itemtype, int itemno, const char *name);
+extern PLpgSQL_nsitem *plmdb_ns_lookup(PLpgSQL_nsitem *ns_cur, bool localmode,
 				  const char *name1, const char *name2,
 				  const char *name3, int *names_used);
-extern PLpgSQL_nsitem *plpgsql_ns_lookup_label(PLpgSQL_nsitem *ns_cur,
+extern PLpgSQL_nsitem *plmdb_ns_lookup_label(PLpgSQL_nsitem *ns_cur,
 						const char *name);
-extern PLpgSQL_nsitem *plpgsql_ns_find_nearest_loop(PLpgSQL_nsitem *ns_cur);
+extern PLpgSQL_nsitem *plmdb_ns_find_nearest_loop(PLpgSQL_nsitem *ns_cur);
 
 /* ----------
  * Other functions in pl_funcs.c
  * ----------
  */
-extern const char *plpgsql_stmt_typename(PLpgSQL_stmt *stmt);
-extern const char *plpgsql_getdiag_kindname(int kind);
-extern void plpgsql_free_function_memory(PLpgSQL_function *func);
-extern void plpgsql_dumptree(PLpgSQL_function *func);
+extern const char *plmdb_stmt_typename(PLpgSQL_stmt *stmt);
+extern const char *plmdb_getdiag_kindname(int kind);
+extern void plmdb_free_function_memory(PLpgSQL_function *func);
+extern void plmdb_dumptree(PLpgSQL_function *func);
 
 /* ----------
  * Scanner functions in pl_scanner.c
  * ----------
  */
-extern int	plpgsql_base_yylex(void);
-extern int	plpgsql_yylex(void);
-extern void plpgsql_push_back_token(int token);
-extern bool plpgsql_token_is_unreserved_keyword(int token);
-extern void plpgsql_append_source_text(StringInfo buf,
+extern int	plmdb_base_yylex(void);
+extern int	plmdb_yylex(void);
+extern void plmdb_push_back_token(int token);
+extern bool plmdb_token_is_unreserved_keyword(int token);
+extern void plmdb_append_source_text(StringInfo buf,
 						   int startlocation, int endlocation);
-extern int	plpgsql_peek(void);
-extern void plpgsql_peek2(int *tok1_p, int *tok2_p, int *tok1_loc,
+extern int	plmdb_peek(void);
+extern void plmdb_peek2(int *tok1_p, int *tok2_p, int *tok1_loc,
 			  int *tok2_loc);
-extern int	plpgsql_scanner_errposition(int location);
-extern void plpgsql_yyerror(const char *message) pg_attribute_noreturn();
-extern int	plpgsql_location_to_lineno(int location);
-extern int	plpgsql_latest_lineno(void);
-extern void plpgsql_scanner_init(const char *str);
-extern void plpgsql_scanner_finish(void);
+extern int	plmdb_scanner_errposition(int location);
+extern void plmdb_yyerror(const char *message) pg_attribute_noreturn();
+extern int	plmdb_location_to_lineno(int location);
+extern int	plmdb_latest_lineno(void);
+extern void plmdb_scanner_init(const char *str);
+extern void plmdb_scanner_finish(void);
 
 /* ----------
  * Externs in gram.y
  * ----------
  */
-extern int	plpgsql_yyparse(void);
+extern int	plmdb_yyparse(void);
 
 #endif   /* PLPGSQL_H */

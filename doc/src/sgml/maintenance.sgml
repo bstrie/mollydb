@@ -915,7 +915,7 @@ analyze threshold = analyze base threshold + analyze scale factor * number of tu
    pipe command, for example:
 
 <programlisting>
-pg_ctl start | rotatelogs /var/log/pgsql_log 86400
+pg_ctl start | rotatelogs /var/log/mdb_log 86400
 </programlisting>
   </para>
 

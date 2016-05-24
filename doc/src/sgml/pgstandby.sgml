@@ -193,7 +193,7 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
         It is recommended that you use a structured file name to
         avoid confusion as to which server is being triggered
         when multiple servers exist on the same system; for example
-        <filename>/tmp/pgsql.trigger.5432</>.
+        <filename>/tmp/mdb.trigger.5432</>.
        </para>
       </listitem>
      </varlistentry>
@@ -271,9 +271,9 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
 <programlisting>
 archive_command = 'cp %p .../archive/%f'
 
-restore_command = 'pg_standby -d -s 2 -t /tmp/pgsql.trigger.5442 .../archive %f %p %r 2>>standby.log'
+restore_command = 'pg_standby -d -s 2 -t /tmp/mdb.trigger.5442 .../archive %f %p %r 2>>standby.log'
 
-recovery_end_command = 'rm -f /tmp/pgsql.trigger.5442'
+recovery_end_command = 'rm -f /tmp/mdb.trigger.5442'
 </programlisting>
    where the archive directory is physically located on the standby server,
    so that the <varname>archive_command</> is accessing it across NFS,
@@ -293,7 +293,7 @@ recovery_end_command = 'rm -f /tmp/pgsql.trigger.5442'
    <listitem>
     <para>
      stop waiting only when a trigger file called
-     <filename>/tmp/pgsql.trigger.5442</> appears,
+     <filename>/tmp/mdb.trigger.5442</> appears,
      and perform failover according to its content
     </para>
    </listitem>
@@ -315,9 +315,9 @@ recovery_end_command = 'rm -f /tmp/pgsql.trigger.5442'
 <programlisting>
 archive_command = 'copy %p ...\\archive\\%f'
 
-restore_command = 'pg_standby -d -s 5 -t C:\pgsql.trigger.5442 ...\archive %f %p %r 2>>standby.log'
+restore_command = 'pg_standby -d -s 5 -t C:\mdb.trigger.5442 ...\archive %f %p %r 2>>standby.log'
 
-recovery_end_command = 'del C:\pgsql.trigger.5442'
+recovery_end_command = 'del C:\mdb.trigger.5442'
 </programlisting>
    Note that backslashes need to be doubled in the
    <varname>archive_command</>, but <emphasis>not</emphasis> in the
@@ -342,7 +342,7 @@ recovery_end_command = 'del C:\pgsql.trigger.5442'
    <listitem>
     <para>
      stop waiting only when a trigger file called
-     <filename>C:\pgsql.trigger.5442</> appears,
+     <filename>C:\mdb.trigger.5442</> appears,
      and perform failover according to its content
     </para>
    </listitem>

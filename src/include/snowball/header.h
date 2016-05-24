@@ -36,7 +36,7 @@
 #include "snowball/libstemmer/header.h" /* pgrminclude ignore */
 
 /*
- * Redefine standard memory allocation interface to pgsql's one.
+ * Redefine standard memory allocation interface to mdb's one.
  * This allows us to control where the Snowball code allocates stuff.
  */
 #ifdef malloc

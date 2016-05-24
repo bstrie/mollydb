@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.1 beta 2\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 13:05+0900\n"
 "PO-Revision-Date: 2014-08-16 16:41+0900\n"
 "Last-Translator: HOTTA Michihide <hotta@net-newbie.com>\n"
@@ -23,8 +23,8 @@ msgstr "コードセット\"%s\"用の符号化方式を決定できません"
 
 #: ../port/chklocale.c:259 ../port/chklocale.c:388
 #, c-format
-msgid "Please report this to <pgsql-bugs@mollydb.org>."
-msgstr "これを<pgsql-bugs@mollydb.org>まで報告してください。"
+msgid "Please report this to <mdb-bugs@mollydb.org>."
+msgstr "これを<mdb-bugs@mollydb.org>まで報告してください。"
 
 #: ../port/chklocale.c:380 ../port/chklocale.c:386
 #, c-format
@@ -10547,13 +10547,13 @@ msgid ""
 "configuration settings and how to set them on the command line or in\n"
 "the configuration file.\n"
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
 "実効時設定パラメータの全一覧とコマンドラインや設定ファイルにおける\n"
 "設定方法についてはドキュメントを参照してください。\n"
 "\n"
-"不具合は<pgsql-bugs@mollydb.org>まで報告してください\n"
+"不具合は<mdb-bugs@mollydb.org>まで報告してください\n"
 
 #: main/main.c:342
 #, c-format

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: libpq-tr\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2011-08-30 22:43+0000\n"
 "PO-Revision-Date: 2011-08-31 13:21+0200\n"
 "Last-Translator: Devrim GÜNDÜZ <devrim@gunduz.org>\n"
@@ -14,8 +14,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.9.1\n"
-"X-Poedit-Basepath: /home/ntufar/pg/pgsql/src/interfaces/libpq\n"
-"X-Poedit-SearchPath-0: /home/ntufar/pg/pgsql/src/interfaces/libpq\n"
+"X-Poedit-Basepath: /home/ntufar/pg/mdb/src/interfaces/libpq\n"
+"X-Poedit-SearchPath-0: /home/ntufar/pg/mdb/src/interfaces/libpq\n"
 
 #: fe-auth.c:210
 #: fe-auth.c:429

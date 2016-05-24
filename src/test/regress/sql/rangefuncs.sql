@@ -172,8 +172,8 @@ CREATE VIEW vw_getfoo AS
 SELECT * FROM vw_getfoo;
 DROP VIEW vw_getfoo;
 
--- plpgsql, proretset = f, prorettype = b
-CREATE FUNCTION getfoo8(int) RETURNS int AS 'DECLARE fooint int; BEGIN SELECT fooid into fooint FROM foo WHERE fooid = $1; RETURN fooint; END;' LANGUAGE plpgsql;
+-- plmdb, proretset = f, prorettype = b
+CREATE FUNCTION getfoo8(int) RETURNS int AS 'DECLARE fooint int; BEGIN SELECT fooid into fooint FROM foo WHERE fooid = $1; RETURN fooint; END;' LANGUAGE plmdb;
 SELECT * FROM getfoo8(1) AS t1;
 SELECT * FROM getfoo8(1) WITH ORDINALITY AS t1(v,o);
 CREATE VIEW vw_getfoo AS SELECT * FROM getfoo8(1);
@@ -183,8 +183,8 @@ CREATE VIEW vw_getfoo AS SELECT * FROM getfoo8(1) WITH ORDINALITY AS t1(v,o);
 SELECT * FROM vw_getfoo;
 DROP VIEW vw_getfoo;
 
--- plpgsql, proretset = f, prorettype = c
-CREATE FUNCTION getfoo9(int) RETURNS foo AS 'DECLARE footup foo%ROWTYPE; BEGIN SELECT * into footup FROM foo WHERE fooid = $1; RETURN footup; END;' LANGUAGE plpgsql;
+-- plmdb, proretset = f, prorettype = c
+CREATE FUNCTION getfoo9(int) RETURNS foo AS 'DECLARE footup foo%ROWTYPE; BEGIN SELECT * into footup FROM foo WHERE fooid = $1; RETURN footup; END;' LANGUAGE plmdb;
 SELECT * FROM getfoo9(1) AS t1;
 SELECT * FROM getfoo9(1) WITH ORDINALITY AS t1(a,b,c,o);
 CREATE VIEW vw_getfoo AS SELECT * FROM getfoo9(1);
@@ -235,8 +235,8 @@ CREATE TEMPORARY SEQUENCE foo_rescan_seq2;
 CREATE TYPE foo_rescan_t AS (i integer, s bigint);
 
 CREATE FUNCTION foo_sql(int,int) RETURNS setof foo_rescan_t AS 'SELECT i, nextval(''foo_rescan_seq1'') FROM generate_series($1,$2) i;' LANGUAGE SQL;
--- plpgsql functions use materialize mode
-CREATE FUNCTION foo_mat(int,int) RETURNS setof foo_rescan_t AS 'begin for i in $1..$2 loop return next (i, nextval(''foo_rescan_seq2'')); end loop; end;' LANGUAGE plpgsql;
+-- plmdb functions use materialize mode
+CREATE FUNCTION foo_mat(int,int) RETURNS setof foo_rescan_t AS 'begin for i in $1..$2 loop return next (i, nextval(''foo_rescan_seq2'')); end loop; end;' LANGUAGE plmdb;
 
 --invokes ExecReScanFunctionScan - all these cases should materialize the function only once
 -- LEFT JOIN on a condition that the planner can't prove to be true is used to ensure the function
@@ -459,7 +459,7 @@ create function noticetrigger() returns trigger as $$
 begin
   raise notice 'noticetrigger % %', new.f1, new.data;
   return null;
-end $$ language plpgsql;
+end $$ language plmdb;
 create trigger tnoticetrigger after insert on tt for each row
 execute procedure noticetrigger();
 

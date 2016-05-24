@@ -577,7 +577,7 @@ static const struct
 {
 	const char *stdname;		/* Windows name of standard timezone */
 	const char *dstname;		/* Windows name of daylight timezone */
-	const char *pgtzname;		/* Name of pgsql timezone to map to */
+	const char *pgtzname;		/* Name of mdb timezone to map to */
 }	win32_tzmap[] =
 
 {

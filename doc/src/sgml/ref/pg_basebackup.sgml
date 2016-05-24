@@ -633,9 +633,9 @@ MollyDB documentation
   <para>
    To create a base backup of the server at <literal>mydbserver</literal>
    and store it in the local directory
-   <filename>/usr/local/pgsql/data</filename>:
+   <filename>/usr/local/mdb/data</filename>:
 <screen>
-<prompt>$</prompt> <userinput>pg_basebackup -h mydbserver -D /usr/local/pgsql/data</userinput>
+<prompt>$</prompt> <userinput>pg_basebackup -h mydbserver -D /usr/local/mdb/data</userinput>
 </screen>
   </para>
 

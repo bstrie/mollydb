@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-17 21:12+0000\n"
 "PO-Revision-Date: 2014-11-19 23:46+0100\n"
 "Last-Translator: Mats Erik Andersson <bsd@gisladisker.se>\n"
@@ -71,8 +71,8 @@ msgstr ""
 
 #: pg_controldata.c:42
 #, c-format
-msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
-msgstr "Rapportera fel till <pgsql-bugs@mollydb.org>.\n"
+msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
+msgstr "Rapportera fel till <mdb-bugs@mollydb.org>.\n"
 
 #: pg_controldata.c:52
 msgid "starting up"

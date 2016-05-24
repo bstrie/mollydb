@@ -29,7 +29,7 @@ CREATE TYPE addr_nsp.genenum AS ENUM ('one', 'two');
 CREATE FOREIGN TABLE addr_nsp.genftable (a int) SERVER addr_fserv;
 CREATE AGGREGATE addr_nsp.genaggr(int4) (sfunc = int4pl, stype = int4);
 CREATE DOMAIN addr_nsp.gendomain AS int4 CONSTRAINT domconstr CHECK (value > 0);
-CREATE FUNCTION addr_nsp.trig() RETURNS TRIGGER LANGUAGE plpgsql AS $$ BEGIN END; $$;
+CREATE FUNCTION addr_nsp.trig() RETURNS TRIGGER LANGUAGE plmdb AS $$ BEGIN END; $$;
 CREATE TRIGGER t BEFORE INSERT ON addr_nsp.gentable FOR EACH ROW EXECUTE PROCEDURE addr_nsp.trig();
 CREATE POLICY genpol ON addr_nsp.gentable;
 CREATE SERVER "integer" FOREIGN DATA WRAPPER addr_fdw;
@@ -143,7 +143,7 @@ WITH objects (type, name, args) AS (VALUES
 				('domain constraint', '{addr_nsp.gendomain}', '{domconstr}'),
 				('conversion', '{pg_catalog, ascii_to_mic}', '{}'),
 				('default value', '{addr_nsp, gentable, b}', '{}'),
-				('language', '{plpgsql}', '{}'),
+				('language', '{plmdb}', '{}'),
 				-- large object
 				('operator', '{+}', '{int4, int4}'),
 				('operator class', '{btree, int4_ops}', '{}'),

@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.2\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-08-02 06:37+0000\n"
 "PO-Revision-Date: 2014-08-14 22:40+0400\n"
 "Last-Translator: Dmitriy Olshevskiy <olshevskiy87@bk.ru>\n"
@@ -176,10 +176,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Об ошибках сообщайте по адресу <pgsql-bugs@mollydb.org>.\n"
+"Об ошибках сообщайте по адресу <mdb-bugs@mollydb.org>.\n"
 
 #: ecpg.c:143
 #, c-format
@@ -320,10 +320,10 @@ msgstr "ошибка синтаксиса в команде EXEC SQL INCLUDE"
 #: pgc.l:1237
 #, c-format
 msgid ""
-"internal error: unreachable state; please report this to <pgsql-"
+"internal error: unreachable state; please report this to <mdb-"
 "bugs@mollydb.org>"
 msgstr ""
-"внутренняя ошибка: недостижимое состояние; пожалуйста, сообщите в <pgsql-"
+"внутренняя ошибка: недостижимое состояние; пожалуйста, сообщите в <mdb-"
 "bugs@mollydb.org>"
 
 #: pgc.l:1362

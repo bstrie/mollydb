@@ -144,7 +144,7 @@ usage(unsigned short int pager)
 	fprintf(output, _("\nFor more information, type \"\\?\" (for internal commands) or \"\\help\" (for SQL\n"
 					  "commands) from within psql, or consult the psql section in the MollyDB\n"
 					  "documentation.\n\n"));
-	fprintf(output, _("Report bugs to <pgsql-bugs@mollydb.org>.\n"));
+	fprintf(output, _("Report bugs to <mdb-bugs@mollydb.org>.\n"));
 
 	ClosePager(output);
 }

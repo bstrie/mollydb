@@ -300,7 +300,7 @@ WHERE x > 3;
 -- Test proper handling of parameterized appendrel paths when the
 -- potential join qual is expensive
 create function expensivefunc(int) returns int
-language plpgsql immutable strict cost 10000
+language plmdb immutable strict cost 10000
 as $$begin return $1; end$$;
 
 create temp table t3 as select generate_series(-1000,1000) as x;

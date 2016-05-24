@@ -8,7 +8,7 @@
 # to look up such parameters.  A sample configuration for mollydb is
 # included in this file.  Lines beginning with '#' are comments.
 #
-# Copy this to your sysconf directory (typically /usr/local/pgsql/etc) and
+# Copy this to your sysconf directory (typically /usr/local/mdb/etc) and
 # rename it pg_service.conf.
 #
 #

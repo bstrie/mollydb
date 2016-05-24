@@ -1195,7 +1195,7 @@ typedef struct SetToDefault
  *
  * The referenced cursor can be represented either as a hardwired string
  * or as a reference to a run-time parameter of type REFCURSOR.  The latter
- * case is for the convenience of plpgsql.
+ * case is for the convenience of plmdb.
  */
 typedef struct CurrentOfExpr
 {

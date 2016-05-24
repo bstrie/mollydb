@@ -15,7 +15,7 @@ SELECT * FROM toyemp WHERE name = 'sharon';
 CREATE ROLE regress_alice;
 
 CREATE FUNCTION f_leak (text)
-       RETURNS bool LANGUAGE 'plpgsql' COST 0.0000001
+       RETURNS bool LANGUAGE 'plmdb' COST 0.0000001
        AS 'BEGIN RAISE NOTICE ''f_leak => %'', $1; RETURN true; END';
 
 CREATE TABLE customer (

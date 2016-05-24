@@ -870,13 +870,13 @@ typedef struct
 	const char *query;			/* simple query, or NULL */
 	const SchemaQuery *squery;	/* schema query, or NULL */
 	const bits32 flags;			/* visibility flags, see below */
-} pgsql_thing_t;
+} mdb_thing_t;
 
 #define THING_NO_CREATE		(1 << 0)	/* should not show up after CREATE */
 #define THING_NO_DROP		(1 << 1)	/* should not show up after DROP */
 #define THING_NO_SHOW		(THING_NO_CREATE | THING_NO_DROP)
 
-static const pgsql_thing_t words_after_create[] = {
+static const mdb_thing_t words_after_create[] = {
 	{"ACCESS METHOD", NULL, NULL},
 	{"AGGREGATE", NULL, &Query_for_list_of_aggregates},
 	{"CAST", NULL, NULL},		/* Casts have complex structures for names, so

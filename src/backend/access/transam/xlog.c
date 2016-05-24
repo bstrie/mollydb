@@ -8990,7 +8990,7 @@ XLogPutNextOid(Oid nextOid)
 	 * might after restart re-generate the same OID and find that it conflicts
 	 * with the leftover file or directory.  But since for safety's sake we
 	 * always loop until finding a nonconflicting filename, this poses no real
-	 * problem in practice. See pgsql-hackers discussion 27-Sep-2006.
+	 * problem in practice. See mdb-hackers discussion 27-Sep-2006.
 	 */
 }
 

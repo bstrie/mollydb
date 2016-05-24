@@ -369,9 +369,9 @@ MollyDB documentation
   <para>
    To stream the transaction log from the server at
    <literal>mydbserver</literal> and store it in the local directory
-   <filename>/usr/local/pgsql/archive</filename>:
+   <filename>/usr/local/mdb/archive</filename>:
 <screen>
-<prompt>$</prompt> <userinput>pg_receivexlog -h mydbserver -D /usr/local/pgsql/archive</userinput>
+<prompt>$</prompt> <userinput>pg_receivexlog -h mydbserver -D /usr/local/mdb/archive</userinput>
 </screen></para>
  </refsect1>
 

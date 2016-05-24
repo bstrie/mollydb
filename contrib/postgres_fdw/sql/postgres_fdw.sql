@@ -296,7 +296,7 @@ CREATE FUNCTION mollydb_fdw_abs(int) RETURNS int AS $$
 BEGIN
 RETURN abs($1);
 END
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plmdb IMMUTABLE;
 CREATE OPERATOR === (
     LEFTARG = int,
     RIGHTARG = int,
@@ -590,7 +590,7 @@ SELECT ctid, * FROM ft1 t1 LIMIT 1;
 SELECT ctid, * FROM ft1 t1 LIMIT 1;
 
 -- ===================================================================
--- used in pl/pgsql function
+-- used in pl/mdb function
 -- ===================================================================
 CREATE OR REPLACE FUNCTION f_test(p_c1 int) RETURNS int AS $$
 DECLARE
@@ -600,7 +600,7 @@ BEGIN
     PERFORM c1 FROM ft1 WHERE c1 = p_c1 AND p_c1 = v_c1 LIMIT 1;
     RETURN v_c1;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 SELECT f_test(100);
 DROP FUNCTION f_test(int);
 
@@ -695,7 +695,7 @@ BEGIN
     NEW.c3 = NEW.c3 || '_trig_update';
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 CREATE TRIGGER t1_br_insert BEFORE INSERT OR UPDATE
     ON "S 1"."T 1" FOR EACH ROW EXECUTE PROCEDURE "S 1".F_BRTRIG();
 
@@ -804,7 +804,7 @@ select * from rem1;
 -- ===================================================================
 
 -- Trigger functions "borrowed" from triggers regress test.
-CREATE FUNCTION trigger_func() RETURNS trigger LANGUAGE plpgsql AS $$
+CREATE FUNCTION trigger_func() RETURNS trigger LANGUAGE plmdb AS $$
 BEGIN
 	RAISE NOTICE 'trigger_func(%) called: action = %, when = %, level = %',
 		TG_ARGV[0], TG_OP, TG_WHEN, TG_LEVEL;
@@ -817,7 +817,7 @@ CREATE TRIGGER trig_stmt_after AFTER DELETE OR INSERT OR UPDATE ON rem1
 	FOR EACH STATEMENT EXECUTE PROCEDURE trigger_func();
 
 CREATE OR REPLACE FUNCTION trigger_data()  RETURNS trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plmdb AS $$
 
 declare
 	oldnew text[];
@@ -930,7 +930,7 @@ CREATE FUNCTION trig_row_before_insupdate() RETURNS TRIGGER AS $$
     NEW.f2 := NEW.f2 || ' triggered !';
     RETURN NEW;
   END
-$$ language plpgsql;
+$$ language plmdb;
 
 CREATE TRIGGER trig_row_before_insupd
 BEFORE INSERT OR UPDATE ON rem1
@@ -975,7 +975,7 @@ CREATE FUNCTION trig_null() RETURNS TRIGGER AS $$
   BEGIN
     RETURN NULL;
   END
-$$ language plpgsql;
+$$ language plmdb;
 
 CREATE TRIGGER trig_null
 BEFORE INSERT OR UPDATE OR DELETE ON rem1

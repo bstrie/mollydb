@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.0 beta 3\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 13:02+0900\n"
 "PO-Revision-Date: 2013-08-18 13:04+0900\n"
 "Last-Translator: HOTTA Michihde <hotta@net-newbie.com>\n"
@@ -169,7 +169,7 @@ msgstr "PL/pgSQL関数%sの%d行目で%s"
 msgid "PL/pgSQL function %s %s"
 msgstr "PL/pgSQL関数%sで%s"
 
-#. translator: last %s is a plpgsql statement type name
+#. translator: last %s is a plmdb statement type name
 #: pl_exec.c:912
 #, c-format
 msgid "PL/pgSQL function %s line %d at %s"

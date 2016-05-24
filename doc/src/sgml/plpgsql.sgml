@@ -1,13 +1,13 @@
-<!-- doc/src/sgml/plpgsql.sgml -->
+<!-- doc/src/sgml/plmdb.sgml -->
 
-<chapter id="plpgsql">
+<chapter id="plmdb">
   <title><application>PL/pgSQL</application> - <acronym>SQL</acronym> Procedural Language</title>
 
- <indexterm zone="plpgsql">
+ <indexterm zone="plmdb">
   <primary>PL/pgSQL</primary>
  </indexterm>
 
- <sect1 id="plpgsql-overview">
+ <sect1 id="plmdb-overview">
   <title>Overview</title>
 
  <para>
@@ -65,7 +65,7 @@
     administrators could choose to remove it.
    </para>
 
-  <sect2 id="plpgsql-advantages">
+  <sect2 id="plmdb-advantages">
    <title>Advantages of Using <application>PL/pgSQL</application></title>
 
     <para>
@@ -114,7 +114,7 @@
     </para>
   </sect2>
 
-  <sect2 id="plpgsql-args-results">
+  <sect2 id="plmdb-args-results">
    <title>Supported Argument and Result Data Types</title>
 
     <para>
@@ -142,7 +142,7 @@
      <type>anyenum</>, and <type>anyrange</type>.  The actual
      data types handled by a polymorphic function can vary from call to
      call, as discussed in <xref linkend="extend-types-polymorphic">.
-     An example is shown in <xref linkend="plpgsql-declaration-parameters">.
+     An example is shown in <xref linkend="plmdb-declaration-parameters">.
     </para>
 
     <para>
@@ -170,13 +170,13 @@
 
     <para>
      Specific examples appear in
-     <xref linkend="plpgsql-declaration-parameters"> and
-     <xref linkend="plpgsql-statements-returning">.
+     <xref linkend="plmdb-declaration-parameters"> and
+     <xref linkend="plmdb-statements-returning">.
     </para>
   </sect2>
  </sect1>
 
- <sect1 id="plpgsql-structure">
+ <sect1 id="plmdb-structure">
   <title>Structure of <application>PL/pgSQL</application></title>
 
   <para>
@@ -261,7 +261,7 @@ BEGIN
 
     RETURN quantity;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
     </para>
 
@@ -271,7 +271,7 @@ $$ LANGUAGE plpgsql;
       of any <application>PL/pgSQL</> function.  This block provides the
       declarations of the function's parameters (if any), as well as some
       special variables such as <literal>FOUND</literal> (see
-      <xref linkend="plpgsql-statements-diagnostics">).  The outer block is
+      <xref linkend="plmdb-statements-diagnostics">).  The outer block is
       labeled with the function's name, meaning that parameters and special
       variables can be qualified with the function's name.
      </para>
@@ -290,11 +290,11 @@ $$ LANGUAGE plpgsql;
      However, a block containing an <literal>EXCEPTION</> clause effectively
      forms a subtransaction that can be rolled back without affecting the
      outer transaction.  For more about that see <xref
-     linkend="plpgsql-error-trapping">.
+     linkend="plmdb-error-trapping">.
     </para>
   </sect1>
 
-  <sect1 id="plpgsql-declarations">
+  <sect1 id="plmdb-declarations">
     <title>Declarations</title>
 
     <para>
@@ -338,7 +338,7 @@ arow RECORD;
       assigned to after initialization, so that its value will remain constant
       for the duration of the block.
       The <literal>COLLATE</> option specifies a collation to use for the
-      variable (see <xref linkend="plpgsql-declaration-collation">).
+      variable (see <xref linkend="plmdb-declaration-collation">).
       If <literal>NOT NULL</>
       is specified, an assignment of a null value results in a run-time
       error. All variables declared as <literal>NOT NULL</>
@@ -365,7 +365,7 @@ user_id CONSTANT integer := 10;
 </programlisting>
      </para>
 
-    <sect2 id="plpgsql-declaration-parameters">
+    <sect2 id="plmdb-declaration-parameters">
      <title>Declaring Function Parameters</title>
 
      <para>
@@ -386,7 +386,7 @@ CREATE FUNCTION sales_tax(subtotal real) RETURNS real AS $$
 BEGIN
     RETURN subtotal * 0.06;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
       The other way is to explicitly declare an alias, using the
       declaration syntax
@@ -403,7 +403,7 @@ DECLARE
 BEGIN
     RETURN subtotal * 0.06;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
      </para>
 
@@ -427,14 +427,14 @@ DECLARE
 BEGIN
     -- some computations using v_string and index here
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 
 CREATE FUNCTION concat_selected_fields(in_t sometablename) RETURNS text AS $$
 BEGIN
     RETURN in_t.f1 || in_t.f3 || in_t.f5 || in_t.f7;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
      </para>
 
@@ -453,7 +453,7 @@ CREATE FUNCTION sales_tax(subtotal real, OUT tax real) AS $$
 BEGIN
     tax := subtotal * 0.06;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
 
       Notice that we omitted <literal>RETURNS real</> &mdash; we could have
@@ -470,7 +470,7 @@ BEGIN
     sum := x + y;
     prod := x * y;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
 
       As discussed in <xref linkend="xfunc-output-parameters">, this
@@ -490,7 +490,7 @@ BEGIN
     RETURN QUERY SELECT s.quantity, s.quantity * s.price FROM sales AS s
                  WHERE s.itemno = p_itemno;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
 
       This is exactly equivalent to declaring one or more <literal>OUT</>
@@ -507,7 +507,7 @@ $$ LANGUAGE plpgsql;
       as deduced from the actual input types (see <xref
       linkend="extend-types-polymorphic">).
       This allows the function to access its actual return type
-      as shown in <xref linkend="plpgsql-declaration-type">.
+      as shown in <xref linkend="plmdb-declaration-type">.
       <literal>$0</literal> is initialized to null and can be modified by
       the function, so it can be used to hold the return value if desired,
       though that is not required.  <literal>$0</literal> can also be
@@ -523,7 +523,7 @@ BEGIN
     result := v1 + v2 + v3;
     RETURN result;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
      </para>
 
@@ -540,12 +540,12 @@ AS $$
 BEGIN
     sum := v1 + v2 + v3;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
      </para>
     </sect2>
 
-  <sect2 id="plpgsql-declaration-alias">
+  <sect2 id="plmdb-declaration-alias">
    <title><literal>ALIAS</></title>
 
 <synopsis>
@@ -577,7 +577,7 @@ DECLARE
    </para>
    </sect2>
 
-  <sect2 id="plpgsql-declaration-type">
+  <sect2 id="plmdb-declaration-type">
    <title>Copying Types</title>
 
 <synopsis>
@@ -615,7 +615,7 @@ user_id users.user_id%TYPE;
 
   </sect2>
 
-    <sect2 id="plpgsql-declaration-rowtypes">
+    <sect2 id="plmdb-declaration-rowtypes">
      <title>Row Types</title>
 
 <synopsis>
@@ -673,14 +673,14 @@ BEGIN
     SELECT * INTO t2_row FROM table2 WHERE ... ;
     RETURN t_row.f1 || t2_row.f3 || t_row.f5 || t2_row.f7;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 SELECT merge_fields(t.*) FROM table1 t WHERE ... ;
 </programlisting>
    </para>
   </sect2>
 
-  <sect2 id="plpgsql-declaration-records">
+  <sect2 id="plmdb-declaration-records">
    <title>Record Types</title>
 
 <synopsis>
@@ -710,7 +710,7 @@ SELECT merge_fields(t.*) FROM table1 t WHERE ... ;
    </para>
   </sect2>
 
-  <sect2 id="plpgsql-declaration-collation">
+  <sect2 id="plmdb-declaration-collation">
    <title>Collation of <application>PL/pgSQL</application> Variables</title>
 
    <indexterm>
@@ -734,7 +734,7 @@ CREATE FUNCTION less_than(a text, b text) RETURNS boolean AS $$
 BEGIN
     RETURN a &lt; b;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 SELECT less_than(text_field_1, text_field_2) FROM table1;
 SELECT less_than(text_field_1, text_field_2 COLLATE "C") FROM table1;
@@ -758,7 +758,7 @@ DECLARE
 BEGIN
     RETURN local_a &lt; local_b;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
    </para>
 
@@ -794,7 +794,7 @@ CREATE FUNCTION less_than_c(a text, b text) RETURNS boolean AS $$
 BEGIN
     RETURN a &lt; b COLLATE "C";
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
 
     This overrides the collations associated with the table columns,
@@ -804,7 +804,7 @@ $$ LANGUAGE plpgsql;
   </sect2>
   </sect1>
 
-  <sect1 id="plpgsql-expressions">
+  <sect1 id="plmdb-expressions">
   <title>Expressions</title>
 
     <para>
@@ -823,7 +823,7 @@ SELECT <replaceable>expression</replaceable>
      to the main SQL engine.  While forming the <command>SELECT</> command,
      any occurrences of <application>PL/pgSQL</application> variable names
      are replaced by parameters, as discussed in detail in
-     <xref linkend="plpgsql-var-subst">.
+     <xref linkend="plmdb-var-subst">.
      This allows the query plan for the <command>SELECT</command> to
      be prepared just once and then reused for subsequent
      evaluations with different values of the variables.  Thus, what
@@ -843,11 +843,11 @@ PREPARE <replaceable>statement_name</>(integer, integer) AS SELECT $1 &lt; $2;
      parameter values.  Normally these details are
      not important to a <application>PL/pgSQL</application> user, but
      they are useful to know when trying to diagnose a problem.
-     More information appears in <xref linkend="plpgsql-plan-caching">.
+     More information appears in <xref linkend="plmdb-plan-caching">.
     </para>
   </sect1>
 
-  <sect1 id="plpgsql-statements">
+  <sect1 id="plmdb-statements">
   <title>Basic Statements</title>
 
    <para>
@@ -856,11 +856,11 @@ PREPARE <replaceable>statement_name</>(integer, integer) AS SELECT $1 &lt; $2;
     <application>PL/pgSQL</application>.
     Anything not recognized as one of these statement types is presumed
     to be an SQL command and is sent to the main database engine to execute,
-    as described in <xref linkend="plpgsql-statements-sql-noresult">
-    and <xref linkend="plpgsql-statements-sql-onerow">.
+    as described in <xref linkend="plmdb-statements-sql-noresult">
+    and <xref linkend="plmdb-statements-sql-onerow">.
    </para>
 
-   <sect2 id="plpgsql-statements-assignment">
+   <sect2 id="plmdb-statements-assignment">
     <title>Assignment</title>
 
     <para>
@@ -900,7 +900,7 @@ my_record.user_id := 20;
     </para>
    </sect2>
 
-   <sect2 id="plpgsql-statements-sql-noresult">
+   <sect2 id="plmdb-statements-sql-noresult">
     <title>Executing a Command With No Result</title>
 
     <para>
@@ -915,14 +915,14 @@ my_record.user_id := 20;
      in the command text is treated as a parameter, and then the
      current value of the variable is provided as the parameter value
      at run time.  This is exactly like the processing described earlier
-     for expressions; for details see <xref linkend="plpgsql-var-subst">.
+     for expressions; for details see <xref linkend="plmdb-var-subst">.
     </para>
 
     <para>
      When executing a SQL command in this way,
      <application>PL/pgSQL</application> may cache and re-use the execution
      plan for the command, as discussed in
-     <xref linkend="plpgsql-plan-caching">.
+     <xref linkend="plmdb-plan-caching">.
     </para>
 
     <para>
@@ -948,7 +948,7 @@ PERFORM <replaceable>query</replaceable>;
      and the plan is cached in the same way.  Also, the special variable
      <literal>FOUND</literal> is set to true if the query produced at
      least one row, or false if it produced no rows (see
-     <xref linkend="plpgsql-statements-diagnostics">).
+     <xref linkend="plmdb-statements-diagnostics">).
     </para>
 
     <note>
@@ -971,15 +971,15 @@ PERFORM create_mv('cs_session_page_requests_mv', my_query);
     </para>
    </sect2>
 
-   <sect2 id="plpgsql-statements-sql-onerow">
+   <sect2 id="plmdb-statements-sql-onerow">
     <title>Executing a Query with a Single-row Result</title>
 
-    <indexterm zone="plpgsql-statements-sql-onerow">
+    <indexterm zone="plmdb-statements-sql-onerow">
      <primary>SELECT INTO</primary>
      <secondary>in PL/pgSQL</secondary>
     </indexterm>
 
-    <indexterm zone="plpgsql-statements-sql-onerow">
+    <indexterm zone="plmdb-statements-sql-onerow">
      <primary>RETURNING INTO</primary>
      <secondary>in PL/pgSQL</secondary>
     </indexterm>
@@ -1049,7 +1049,7 @@ DELETE ... RETURNING <replaceable>expressions</replaceable> INTO <optional>STRIC
      well-defined unless you've used <literal>ORDER BY</>.)  Any result rows
      after the first row are discarded.
      You can check the special <literal>FOUND</literal> variable (see
-     <xref linkend="plpgsql-statements-diagnostics">) to
+     <xref linkend="plmdb-statements-diagnostics">) to
      determine whether a row was returned:
 
 <programlisting>
@@ -1096,7 +1096,7 @@ END;
      passed to the query.
      You can change the <literal>print_strict_params</>
      setting for all functions by setting
-     <varname>plpgsql.print_strict_params</>, though only subsequent
+     <varname>plmdb.print_strict_params</>, though only subsequent
      function compilations will be affected.  You can also enable it
      on a per-function basis by using a compiler option, for example:
 <programlisting>
@@ -1110,7 +1110,7 @@ BEGIN
         FROM users WHERE users.username = get_userid.username;
     RETURN userid;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
      On failure, this function might produce an error message such as
 <programlisting>
@@ -1129,12 +1129,12 @@ CONTEXT:  PL/pgSQL function get_userid(text) line 6 at SQL statement
 
     <para>
      To handle cases where you need to process multiple result rows
-     from a SQL query, see <xref linkend="plpgsql-records-iterating">.
+     from a SQL query, see <xref linkend="plmdb-records-iterating">.
     </para>
 
    </sect2>
 
-   <sect2 id="plpgsql-statements-executing-dyn">
+   <sect2 id="plmdb-statements-executing-dyn">
     <title>Executing Dynamic Commands</title>
 
     <para>
@@ -1143,7 +1143,7 @@ CONTEXT:  PL/pgSQL function get_userid(text) line 6 at SQL statement
      that will involve different tables or different data types each
      time they are executed.  <application>PL/pgSQL</application>'s
      normal attempts to cache plans for commands (as discussed in
-     <xref linkend="plpgsql-plan-caching">) will not work in such
+     <xref linkend="plmdb-plan-caching">) will not work in such
      scenarios.  To handle this sort of problem, the
      <command>EXECUTE</command> statement is provided:
 
@@ -1273,7 +1273,7 @@ EXECUTE format('SELECT count(*) FROM %I '
     </para>
    </note>
 
-   <example id="plpgsql-quote-literal-example">
+   <example id="plmdb-quote-literal-example">
    <title>Quoting Values In Dynamic Queries</title>
 
     <indexterm>
@@ -1301,7 +1301,7 @@ EXECUTE format('SELECT count(*) FROM %I '
      of single quotes.  The recommended method for quoting fixed text in your
      function body is dollar quoting.  (If you have legacy code that does
      not use dollar quoting, please refer to the
-     overview in <xref linkend="plpgsql-quote-tips">, which can save you
+     overview in <xref linkend="plmdb-quote-tips">, which can save you
      some effort when translating said code to a more reasonable scheme.)
     </para>
 
@@ -1424,12 +1424,12 @@ EXECUTE format('UPDATE tbl SET %I = $1 WHERE key = $2', colname)
     <para>
      A much larger example of a dynamic command and
      <command>EXECUTE</command> can be seen in <xref
-     linkend="plpgsql-porting-ex2">, which builds and executes a
+     linkend="plmdb-porting-ex2">, which builds and executes a
      <command>CREATE FUNCTION</> command to define a new function.
     </para>
    </sect2>
 
-   <sect2 id="plpgsql-statements-diagnostics">
+   <sect2 id="plmdb-statements-diagnostics">
     <title>Obtaining the Result Status</title>
 
     <para>
@@ -1541,7 +1541,7 @@ GET DIAGNOSTICS integer_var = ROW_COUNT;
 
    </sect2>
 
-   <sect2 id="plpgsql-statements-null">
+   <sect2 id="plmdb-statements-null">
     <title>Doing Nothing At All</title>
 
     <para>
@@ -1588,7 +1588,7 @@ END;
    </sect2>
   </sect1>
 
-  <sect1 id="plpgsql-control-structures">
+  <sect1 id="plmdb-control-structures">
    <title>Control Structures</title>
 
    <para>
@@ -1599,7 +1599,7 @@ END;
     flexible and powerful way.
    </para>
 
-   <sect2 id="plpgsql-statements-returning">
+   <sect2 id="plmdb-statements-returning">
     <title>Returning From a Function</title>
 
     <para>
@@ -1761,7 +1761,7 @@ BEGIN
     RETURN;
 END
 $BODY$
-LANGUAGE plpgsql;
+LANGUAGE plmdb;
 
 SELECT * FROM get_all_foo();
 </programlisting>
@@ -1789,7 +1789,7 @@ BEGIN
     RETURN;
  END
 $BODY$
-LANGUAGE plpgsql;
+LANGUAGE plmdb;
 
 -- Returns available flights or raises exception if there are no
 -- available flights.
@@ -1819,7 +1819,7 @@ SELECT * FROM get_available_flightid(CURRENT_DATE);
     </sect3>
    </sect2>
 
-   <sect2 id="plpgsql-conditionals">
+   <sect2 id="plmdb-conditionals">
     <title>Conditionals</title>
 
     <para>
@@ -2088,10 +2088,10 @@ END CASE;
      </sect3>
    </sect2>
 
-   <sect2 id="plpgsql-control-structures-loops">
+   <sect2 id="plmdb-control-structures-loops">
     <title>Simple Loops</title>
 
-    <indexterm zone="plpgsql-control-structures-loops">
+    <indexterm zone="plmdb-control-structures-loops">
      <primary>loop</primary>
      <secondary>in PL/pgSQL</secondary>
     </indexterm>
@@ -2281,7 +2281,7 @@ END LOOP;
        </para>
      </sect3>
 
-     <sect3 id="plpgsql-integer-for">
+     <sect3 id="plmdb-integer-for">
       <title><literal>FOR</> (Integer Variant)</title>
 
 <synopsis>
@@ -2338,7 +2338,7 @@ END LOOP;
      </sect3>
    </sect2>
 
-   <sect2 id="plpgsql-records-iterating">
+   <sect2 id="plmdb-records-iterating">
     <title>Looping Through Query Results</title>
 
     <para>
@@ -2375,7 +2375,7 @@ BEGIN
     RAISE NOTICE 'Done refreshing materialized views.';
     RETURN 1;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
 
      If the loop is terminated by an <literal>EXIT</> statement, the last
@@ -2394,8 +2394,8 @@ $$ LANGUAGE plpgsql;
     <para>
      <application>PL/pgSQL</> variables are substituted into the query text,
      and the query plan is cached for possible re-use, as discussed in
-     detail in <xref linkend="plpgsql-var-subst"> and
-     <xref linkend="plpgsql-plan-caching">.
+     detail in <xref linkend="plmdb-var-subst"> and
+     <xref linkend="plmdb-plan-caching">.
     </para>
 
     <para>
@@ -2419,11 +2419,11 @@ END LOOP <optional> <replaceable>label</replaceable> </optional>;
     <para>
      Another way to specify the query whose results should be iterated
      through is to declare it as a cursor.  This is described in
-     <xref linkend="plpgsql-cursor-for-loop">.
+     <xref linkend="plmdb-cursor-for-loop">.
     </para>
    </sect2>
 
-   <sect2 id="plpgsql-foreach-array">
+   <sect2 id="plmdb-foreach-array">
     <title>Looping Through Arrays</title>
 
     <para>
@@ -2464,7 +2464,7 @@ BEGIN
   END LOOP;
   RETURN s;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
 
      The elements are visited in storage order, regardless of the number of
@@ -2495,7 +2495,7 @@ BEGIN
     RAISE NOTICE 'row = %', x;
   END LOOP;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 SELECT scan_rows(ARRAY[[1,2,3],[4,5,6],[7,8,9],[10,11,12]]);
 
@@ -2507,7 +2507,7 @@ NOTICE:  row = {10,11,12}
     </para>
    </sect2>
 
-   <sect2 id="plpgsql-error-trapping">
+   <sect2 id="plmdb-error-trapping">
     <title>Trapping Errors</title>
 
     <indexterm>
@@ -2618,7 +2618,7 @@ END;
      </para>
     </tip>
 
-    <example id="plpgsql-upsert-example">
+    <example id="plmdb-upsert-example">
     <title>Exceptions with <command>UPDATE</>/<command>INSERT</></title>
     <para>
 
@@ -2653,7 +2653,7 @@ BEGIN
     END LOOP;
 END;
 $$
-LANGUAGE plpgsql;
+LANGUAGE plmdb;
 
 SELECT merge_db(1, 'david');
 SELECT merge_db(1, 'dennis');
@@ -2670,7 +2670,7 @@ SELECT merge_db(1, 'dennis');
     </para>
     </example>
 
-   <sect3 id="plpgsql-exception-diagnostics">
+   <sect3 id="plmdb-exception-diagnostics">
     <title>Obtaining Information About an Error</title>
 
     <para>
@@ -2701,10 +2701,10 @@ GET STACKED DIAGNOSTICS <replaceable>variable</replaceable> { = | := } <replacea
      Each <replaceable>item</replaceable> is a key word identifying a status
      value to be assigned to the specified variable (which should be
      of the right data type to receive it).  The currently available
-     status items are shown in <xref linkend="plpgsql-exception-diagnostics-values">.
+     status items are shown in <xref linkend="plmdb-exception-diagnostics-values">.
     </para>
 
-     <table id="plpgsql-exception-diagnostics-values">
+     <table id="plmdb-exception-diagnostics-values">
       <title>Error Diagnostics Values</title>
       <tgroup cols="3">
        <thead>
@@ -2794,7 +2794,7 @@ END;
    </sect3>
   </sect2>
 
-  <sect2 id="plpgsql-get-diagnostics-context">
+  <sect2 id="plmdb-get-diagnostics-context">
    <title>Obtaining Current Execution Information</title>
 
    <para>
@@ -2822,7 +2822,7 @@ CREATE OR REPLACE FUNCTION outer_func() RETURNS integer AS $$
 BEGIN
   RETURN inner_func();
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE OR REPLACE FUNCTION inner_func() RETURNS integer AS $$
 DECLARE
@@ -2832,7 +2832,7 @@ BEGIN
   RAISE NOTICE E'--- Call Stack ---\n%', stack;
   RETURN 1;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 SELECT outer_func();
 
@@ -2850,10 +2850,10 @@ CONTEXT:  PL/pgSQL function outer_func() line 3 at RETURN
   </sect2>
   </sect1>
 
-  <sect1 id="plpgsql-cursors">
+  <sect1 id="plmdb-cursors">
    <title>Cursors</title>
 
-   <indexterm zone="plpgsql-cursors">
+   <indexterm zone="plmdb-cursors">
     <primary>cursor</primary>
     <secondary>in PL/pgSQL</secondary>
    </indexterm>
@@ -2871,7 +2871,7 @@ CONTEXT:  PL/pgSQL function outer_func() line 3 at RETURN
     large row sets from functions.
    </para>
 
-   <sect2 id="plpgsql-cursor-declarations">
+   <sect2 id="plmdb-cursor-declarations">
     <title>Declaring Cursor Variables</title>
 
     <para>
@@ -2916,7 +2916,7 @@ DECLARE
     </para>
    </sect2>
 
-   <sect2 id="plpgsql-cursor-opening">
+   <sect2 id="plmdb-cursor-opening">
     <title>Opening Cursors</title>
 
     <para>
@@ -2931,7 +2931,7 @@ DECLARE
      <para>
       Bound cursor variables can also be used without explicitly opening the cursor,
       via the <command>FOR</> statement described in
-      <xref linkend="plpgsql-cursor-for-loop">.
+      <xref linkend="plmdb-cursor-for-loop">.
      </para>
     </note>
 
@@ -2984,7 +2984,7 @@ OPEN <replaceable>unbound_cursorvar</replaceable> <optional> <optional> NO </opt
           <type>refcursor</> variable).  The query is specified as a string
           expression, in the same way as in the <command>EXECUTE</command>
           command.  As usual, this gives flexibility so the query plan can vary
-          from one run to the next (see <xref linkend="plpgsql-plan-caching">),
+          from one run to the next (see <xref linkend="plmdb-plan-caching">),
           and it also means that variable substitution is not done on the
           command string. As with <command>EXECUTE</command>, parameter values
           can be inserted into the dynamic command via
@@ -3006,7 +3006,7 @@ OPEN curs1 FOR EXECUTE format('SELECT * FROM %I WHERE col1 = $1',tabname) USING 
        </para>
      </sect3>
 
-    <sect3 id="plpgsql-open-bound-cursor">
+    <sect3 id="plmdb-open-bound-cursor">
      <title>Opening a Bound Cursor</title>
 
 <synopsis>
@@ -3070,7 +3070,7 @@ BEGIN
      </sect3>
    </sect2>
 
-   <sect2 id="plpgsql-cursor-using">
+   <sect2 id="plmdb-cursor-using">
     <title>Using Cursors</title>
 
     <para>
@@ -3291,7 +3291,7 @@ BEGIN
     OPEN $1 FOR SELECT col FROM test;
     RETURN $1;
 END;
-' LANGUAGE plpgsql;
+' LANGUAGE plmdb;
 
 BEGIN;
 SELECT reffunc('funccursor');
@@ -3311,7 +3311,7 @@ BEGIN
     OPEN ref FOR SELECT col FROM test;
     RETURN ref;
 END;
-' LANGUAGE plpgsql;
+' LANGUAGE plmdb;
 
 -- need to be in a transaction to use cursors.
 BEGIN;
@@ -3339,7 +3339,7 @@ BEGIN
     OPEN $2 FOR SELECT * FROM table_2;
     RETURN NEXT $2;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 -- need to be in a transaction to use cursors.
 BEGIN;
@@ -3354,7 +3354,7 @@ COMMIT;
      </sect3>
    </sect2>
 
-   <sect2 id="plpgsql-cursor-for-loop">
+   <sect2 id="plmdb-cursor-for-loop">
     <title>Looping Through a Cursor's Result</title>
 
     <para>
@@ -3375,7 +3375,7 @@ END LOOP <optional> <replaceable>label</replaceable> </optional>;
      expressions must appear if and only if the cursor was declared to take
      arguments.  These values will be substituted in the query, in just
      the same way as during an <command>OPEN</> (see <xref
-     linkend="plpgsql-open-bound-cursor">).
+     linkend="plmdb-open-bound-cursor">).
    </para>
 
    <para>
@@ -3389,10 +3389,10 @@ END LOOP <optional> <replaceable>label</replaceable> </optional>;
 
   </sect1>
 
-  <sect1 id="plpgsql-errors-and-messages">
+  <sect1 id="plmdb-errors-and-messages">
    <title>Errors and Messages</title>
 
-  <sect2 id="plpgsql-statements-raise">
+  <sect2 id="plmdb-statements-raise">
    <title>Reporting Errors and Messages</title>
 
    <indexterm>
@@ -3591,7 +3591,7 @@ RAISE unique_violation USING MESSAGE = 'Duplicate user ID: ' || user_id;
 
   </sect2>
 
-  <sect2 id="plpgsql-statements-assert">
+  <sect2 id="plmdb-statements-assert">
    <title>Checking Assertions</title>
 
    <indexterm>
@@ -3605,7 +3605,7 @@ RAISE unique_violation USING MESSAGE = 'Duplicate user ID: ' || user_id;
    </indexterm>
 
    <indexterm>
-    <primary><varname>plpgsql.check_asserts</> configuration parameter</primary>
+    <primary><varname>plmdb.check_asserts</> configuration parameter</primary>
    </indexterm>
 
    <para>
@@ -3637,7 +3637,7 @@ ASSERT <replaceable class="parameter">condition</replaceable> <optional> , <repl
 
    <para>
     Testing of assertions can be enabled or disabled via the configuration
-    parameter <literal>plpgsql.check_asserts</>, which takes a Boolean
+    parameter <literal>plmdb.check_asserts</>, which takes a Boolean
     value; the default is <literal>on</>.  If this parameter
     is <literal>off</> then <command>ASSERT</> statements do nothing.
    </para>
@@ -3652,15 +3652,15 @@ ASSERT <replaceable class="parameter">condition</replaceable> <optional> , <repl
 
  </sect1>
 
- <sect1 id="plpgsql-trigger">
+ <sect1 id="plmdb-trigger">
   <title>Trigger Procedures</title>
 
-  <indexterm zone="plpgsql-trigger">
+  <indexterm zone="plmdb-trigger">
    <primary>trigger</primary>
    <secondary>in PL/pgSQL</secondary>
   </indexterm>
 
-  <sect2 id="plpgsql-dml-trigger">
+  <sect2 id="plmdb-dml-trigger">
    <title>Triggers on Data Changes</title>
 
    <para>
@@ -3872,11 +3872,11 @@ ASSERT <replaceable class="parameter">condition</replaceable> <optional> , <repl
    </para>
 
    <para>
-    <xref linkend="plpgsql-trigger-example"> shows an example of a
+    <xref linkend="plmdb-trigger-example"> shows an example of a
     trigger procedure in <application>PL/pgSQL</application>.
    </para>
 
-   <example id="plpgsql-trigger-example">
+   <example id="plmdb-trigger-example">
     <title>A <application>PL/pgSQL</application> Trigger Procedure</title>
 
     <para>
@@ -3914,7 +3914,7 @@ CREATE FUNCTION emp_stamp() RETURNS trigger AS $emp_stamp$
         NEW.last_user := current_user;
         RETURN NEW;
     END;
-$emp_stamp$ LANGUAGE plpgsql;
+$emp_stamp$ LANGUAGE plmdb;
 
 CREATE TRIGGER emp_stamp BEFORE INSERT OR UPDATE ON emp
     FOR EACH ROW EXECUTE PROCEDURE emp_stamp();
@@ -3925,11 +3925,11 @@ CREATE TRIGGER emp_stamp BEFORE INSERT OR UPDATE ON emp
     Another way to log changes to a table involves creating a new table that
     holds a row for each insert, update, or delete that occurs. This approach
     can be thought of as auditing changes to a table.
-    <xref linkend="plpgsql-trigger-audit-example"> shows an example of an
+    <xref linkend="plmdb-trigger-audit-example"> shows an example of an
     audit trigger procedure in <application>PL/pgSQL</application>.
    </para>
 
-   <example id="plpgsql-trigger-audit-example">
+   <example id="plmdb-trigger-audit-example">
     <title>A <application>PL/pgSQL</application> Trigger Procedure For Auditing</title>
 
     <para>
@@ -3971,7 +3971,7 @@ CREATE OR REPLACE FUNCTION process_emp_audit() RETURNS TRIGGER AS $emp_audit$
         END IF;
         RETURN NULL; -- result is ignored since this is an AFTER trigger
     END;
-$emp_audit$ LANGUAGE plpgsql;
+$emp_audit$ LANGUAGE plmdb;
 
 CREATE TRIGGER emp_audit
 AFTER INSERT OR UPDATE OR DELETE ON emp
@@ -3985,11 +3985,11 @@ AFTER INSERT OR UPDATE OR DELETE ON emp
     approach still records the full audit trail of changes to the table,
     but also presents a simplified view of the audit trail, showing just
     the last modified timestamp derived from the audit trail for each entry.
-    <xref linkend="plpgsql-view-trigger-audit-example"> shows an example
+    <xref linkend="plmdb-view-trigger-audit-example"> shows an example
     of an audit trigger on a view in <application>PL/pgSQL</application>.
    </para>
 
-   <example id="plpgsql-view-trigger-audit-example">
+   <example id="plmdb-view-trigger-audit-example">
     <title>A <application>PL/pgSQL</application> View Trigger Procedure For Auditing</title>
 
     <para>
@@ -4050,7 +4050,7 @@ CREATE OR REPLACE FUNCTION update_emp_view() RETURNS TRIGGER AS $$
             RETURN NEW;
         END IF;
     END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE TRIGGER emp_audit
 INSTEAD OF INSERT OR UPDATE OR DELETE ON emp_view
@@ -4065,13 +4065,13 @@ INSTEAD OF INSERT OR UPDATE OR DELETE ON emp_view
     times.
     This technique is commonly used in Data Warehousing, where the tables
     of measured or observed data (called fact tables) might be extremely large.
-    <xref linkend="plpgsql-trigger-summary-example"> shows an example of a
+    <xref linkend="plmdb-trigger-summary-example"> shows an example of a
     trigger procedure in <application>PL/pgSQL</application> that maintains
     a summary table for a fact table in a data warehouse.
    </para>
 
 
-   <example id="plpgsql-trigger-summary-example">
+   <example id="plmdb-trigger-summary-example">
     <title>A <application>PL/pgSQL</application> Trigger Procedure For Maintaining A Summary Table</title>
 
     <para>
@@ -4195,7 +4195,7 @@ AS $maint_sales_summary_bytime$
         RETURN NULL;
 
     END;
-$maint_sales_summary_bytime$ LANGUAGE plpgsql;
+$maint_sales_summary_bytime$ LANGUAGE plmdb;
 
 CREATE TRIGGER maint_sales_summary_bytime
 AFTER INSERT OR UPDATE OR DELETE ON sales_fact
@@ -4214,7 +4214,7 @@ SELECT * FROM sales_summary_bytime;
    </example>
 </sect2>
 
-  <sect2 id="plpgsql-event-trigger">
+  <sect2 id="plmdb-event-trigger">
    <title>Triggers on Events</title>
 
    <para>
@@ -4253,11 +4253,11 @@ SELECT * FROM sales_summary_bytime;
   </para>
 
    <para>
-    <xref linkend="plpgsql-event-trigger-example"> shows an example of a
+    <xref linkend="plmdb-event-trigger-example"> shows an example of a
     event trigger procedure in <application>PL/pgSQL</application>.
    </para>
 
-   <example id="plpgsql-event-trigger-example">
+   <example id="plmdb-event-trigger-example">
     <title>A <application>PL/pgSQL</application> Event Trigger Procedure</title>
 
     <para>
@@ -4270,7 +4270,7 @@ CREATE OR REPLACE FUNCTION snitch() RETURNS event_trigger AS $$
 BEGIN
     RAISE NOTICE 'snitch: % %', tg_event, tg_tag;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE EVENT TRIGGER snitch ON ddl_command_start EXECUTE PROCEDURE snitch();
 </programlisting>
@@ -4279,7 +4279,7 @@ CREATE EVENT TRIGGER snitch ON ddl_command_start EXECUTE PROCEDURE snitch();
 
   </sect1>
 
-  <sect1 id="plpgsql-implementation">
+  <sect1 id="plmdb-implementation">
    <title><application>PL/pgSQL</> Under the Hood</title>
 
    <para>
@@ -4287,7 +4287,7 @@ CREATE EVENT TRIGGER snitch ON ddl_command_start EXECUTE PROCEDURE snitch();
     frequently important for <application>PL/pgSQL</> users to know.
    </para>
 
-  <sect2 id="plpgsql-var-subst">
+  <sect2 id="plmdb-var-subst">
    <title>Variable Substitution</title>
 
    <para>
@@ -4352,7 +4352,7 @@ INSERT INTO dest (col) SELECT foo + bar FROM src;
     In the above example, <literal>src.foo</> would be an unambiguous reference
     to the table column.  To create an unambiguous reference to a variable,
     declare it in a labeled block and use the block's label
-    (see <xref linkend="plpgsql-structure">).  For example,
+    (see <xref linkend="plmdb-structure">).  For example,
 <programlisting>
 &lt;&lt;block&gt;&gt;
 DECLARE
@@ -4379,12 +4379,12 @@ BEGIN
    </para>
 
    <indexterm>
-     <primary><varname>plpgsql.variable_conflict</> configuration parameter</primary>
+     <primary><varname>plmdb.variable_conflict</> configuration parameter</primary>
    </indexterm>
 
    <para>
     To change this behavior on a system-wide basis, set the configuration
-    parameter <literal>plpgsql.variable_conflict</> to one of
+    parameter <literal>plmdb.variable_conflict</> to one of
     <literal>error</>, <literal>use_variable</>, or
     <literal>use_column</> (where <literal>error</> is the factory default).
     This parameter affects subsequent compilations
@@ -4405,7 +4405,7 @@ BEGIN
 #variable_conflict use_column
 </programlisting>
     These commands affect only the function they are written in, and override
-    the setting of <literal>plpgsql.variable_conflict</>.  An example is
+    the setting of <literal>plmdb.variable_conflict</>.  An example is
 <programlisting>
 CREATE FUNCTION stamp_user(id int, comment text) RETURNS void AS $$
     #variable_conflict use_variable
@@ -4415,7 +4415,7 @@ CREATE FUNCTION stamp_user(id int, comment text) RETURNS void AS $$
         UPDATE users SET last_modified = curtime, comment = comment
           WHERE users.id = id;
     END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
     In the <literal>UPDATE</> command, <literal>curtime</>, <literal>comment</>,
     and <literal>id</> will refer to the function's variable and parameters
@@ -4436,7 +4436,7 @@ CREATE FUNCTION stamp_user(id int, comment text) RETURNS void AS $$
         UPDATE users SET last_modified = fn.curtime, comment = stamp_user.comment
           WHERE users.id = stamp_user.id;
     END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
    </para>
 
@@ -4445,7 +4445,7 @@ $$ LANGUAGE plpgsql;
     to <command>EXECUTE</> or one of its variants.  If you need to
     insert a varying value into such a command, do so as part of
     constructing the string value, or use <literal>USING</>, as illustrated in
-    <xref linkend="plpgsql-statements-executing-dyn">.
+    <xref linkend="plmdb-statements-executing-dyn">.
    </para>
 
    <para>
@@ -4459,7 +4459,7 @@ $$ LANGUAGE plpgsql;
 
   </sect2>
 
-  <sect2 id="plpgsql-plan-caching">
+  <sect2 id="plmdb-plan-caching">
    <title>Plan Caching</title>
 
    <para>
@@ -4561,7 +4561,7 @@ CREATE FUNCTION logfunc1(logtxt text) RETURNS void AS $$
     BEGIN
         INSERT INTO logtable VALUES (logtxt, 'now');
     END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
 
      and:
@@ -4574,7 +4574,7 @@ CREATE FUNCTION logfunc2(logtxt text) RETURNS void AS $$
         curtime := 'now';
         INSERT INTO logtable VALUES (logtxt, curtime);
     END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
     </para>
 
@@ -4614,7 +4614,7 @@ $$ LANGUAGE plpgsql;
 
   </sect1>
 
- <sect1 id="plpgsql-development-tips">
+ <sect1 id="plmdb-development-tips">
   <title>Tips for Developing in <application>PL/pgSQL</application></title>
 
    <para>
@@ -4629,7 +4629,7 @@ $$ LANGUAGE plpgsql;
 <programlisting>
 CREATE OR REPLACE FUNCTION testfunc(integer) RETURNS integer AS $$
           ....
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
    </para>
 
@@ -4651,7 +4651,7 @@ $$ LANGUAGE plpgsql;
     making it easier to recreate and debug functions.
    </para>
 
-  <sect2 id="plpgsql-quote-tips">
+  <sect2 id="plmdb-quote-tips">
    <title>Handling of Quotation Marks</title>
 
    <para>
@@ -4674,7 +4674,7 @@ $$ LANGUAGE plpgsql;
 <programlisting>
 CREATE OR REPLACE FUNCTION testfunc(integer) RETURNS integer AS $PROC$
           ....
-$PROC$ LANGUAGE plpgsql;
+$PROC$ LANGUAGE plmdb;
 </programlisting>
     Within this, you might use quote marks for simple literal strings in
     SQL commands and <literal>$$</> to delimit fragments of SQL commands
@@ -4697,7 +4697,7 @@ $PROC$ LANGUAGE plpgsql;
 <programlisting>
 CREATE FUNCTION foo() RETURNS integer AS '
           ....
-' LANGUAGE plpgsql;
+' LANGUAGE plmdb;
 </programlisting>
       Anywhere within a single-quoted function body, quote marks
       <emphasis>must</> appear in pairs.
@@ -4777,7 +4777,7 @@ a_output := a_output || $$ AND name LIKE 'foobar'$$
       accounts for 8 quotation marks) and this is adjacent to the end of that
       string constant (2 more).  You will probably only need that if
       you are writing a function that generates other functions, as in
-      <xref linkend="plpgsql-porting-ex2">.
+      <xref linkend="plmdb-porting-ex2">.
       For example:
 <programlisting>
 a_output := a_output || '' if v_'' ||
@@ -4807,7 +4807,7 @@ a_output := a_output || $$ if v_$$ || referrer_keys.kind || $$ like '$$
   </variablelist>
 
   </sect2>
-  <sect2 id="plpgsql-extra-checks">
+  <sect2 id="plmdb-extra-checks">
    <title>Additional Compile-time Checks</title>
 
    <para>
@@ -4822,8 +4822,8 @@ a_output := a_output || $$ if v_$$ || referrer_keys.kind || $$ like '$$
 
  <para>
   These additional checks are enabled through the configuration variables
-  <varname>plpgsql.extra_warnings</> for warnings and
-  <varname>plpgsql.extra_errors</> for errors. Both can be set either to
+  <varname>plmdb.extra_warnings</> for warnings and
+  <varname>plmdb.extra_errors</> for errors. Both can be set either to
   a comma-separated list of checks, <literal>"none"</> or <literal>"all"</>.
   The default is <literal>"none"</>. Currently the list of available checks
   includes only one:
@@ -4838,10 +4838,10 @@ a_output := a_output || $$ if v_$$ || referrer_keys.kind || $$ like '$$
    </varlistentry>
   </variablelist>
 
-  The following example shows the effect of <varname>plpgsql.extra_warnings</>
+  The following example shows the effect of <varname>plmdb.extra_warnings</>
   set to <varname>shadowed_variables</>:
 <programlisting>
-SET plpgsql.extra_warnings TO 'shadowed_variables';
+SET plmdb.extra_warnings TO 'shadowed_variables';
 
 CREATE FUNCTION foo(f1 int) RETURNS int AS $$
 DECLARE
@@ -4849,7 +4849,7 @@ f1 int;
 BEGIN
 RETURN f1;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 WARNING:  variable "f1" shadows a previously defined variable
 LINE 3: f1 int;
         ^
@@ -4861,15 +4861,15 @@ CREATE FUNCTION
 
   <!-- **** Porting from Oracle PL/SQL **** -->
 
- <sect1 id="plpgsql-porting">
+ <sect1 id="plmdb-porting">
   <title>Porting from <productname>Oracle</productname> PL/SQL</title>
 
-  <indexterm zone="plpgsql-porting">
+  <indexterm zone="plmdb-porting">
    <primary>Oracle</primary>
    <secondary>porting from PL/SQL to PL/pgSQL</secondary>
   </indexterm>
 
-  <indexterm zone="plpgsql-porting">
+  <indexterm zone="plmdb-porting">
    <primary>PL/SQL (Oracle)</primary>
    <secondary>porting to PL/pgSQL</secondary>
   </indexterm>
@@ -4897,9 +4897,9 @@ CREATE FUNCTION
        table or a reference to a variable of the function,
        <application>PL/SQL</> treats it as a column name.  This corresponds
        to <application>PL/pgSQL</>'s
-       <literal>plpgsql.variable_conflict</> = <literal>use_column</>
+       <literal>plmdb.variable_conflict</> = <literal>use_column</>
        behavior, which is not the default,
-       as explained in <xref linkend="plpgsql-var-subst">.
+       as explained in <xref linkend="plmdb-var-subst">.
        It's often best to avoid such ambiguities in the first place,
        but if you have to port a large amount of code that depends on
        this behavior, setting <literal>variable_conflict</> may be the
@@ -4912,7 +4912,7 @@ CREATE FUNCTION
        In <productname>MollyDB</> the function body must be written as
        a string literal.  Therefore you need to use dollar quoting or escape
        single quotes in the function body. (See <xref
-       linkend="plpgsql-quote-tips">.)
+       linkend="plmdb-quote-tips">.)
       </para>
      </listitem>
 
@@ -4950,7 +4950,7 @@ CREATE FUNCTION
        from the first number to the second, requiring the loop bounds
        to be swapped when porting.  This incompatibility is unfortunate
        but is unlikely to be changed. (See <xref
-       linkend="plpgsql-integer-for">.)
+       linkend="plmdb-integer-for">.)
       </para>
      </listitem>
 
@@ -4978,11 +4978,11 @@ CREATE FUNCTION
    <title>Porting Examples</title>
 
    <para>
-    <xref linkend="pgsql-porting-ex1"> shows how to port a simple
+    <xref linkend="mdb-porting-ex1"> shows how to port a simple
     function from <application>PL/SQL</> to <application>PL/pgSQL</>.
    </para>
 
-   <example id="pgsql-porting-ex1">
+   <example id="mdb-porting-ex1">
     <title>Porting a Simple Function from <application>PL/SQL</> to <application>PL/pgSQL</></title>
 
     <para>
@@ -5061,18 +5061,18 @@ BEGIN
     END IF;
     RETURN v_name || '/' || v_version;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
     </para>
    </example>
 
    <para>
-    <xref linkend="plpgsql-porting-ex2"> shows how to port a
+    <xref linkend="plmdb-porting-ex2"> shows how to port a
     function that creates another function and how to handle the
     ensuing quoting problems.
    </para>
 
-   <example id="plpgsql-porting-ex2">
+   <example id="plmdb-porting-ex2">
     <title>Porting a Function that Creates Another Function from <application>PL/SQL</> to <application>PL/pgSQL</></title>
 
     <para>
@@ -5140,11 +5140,11 @@ BEGIN
                                                         v_url varchar)
         RETURNS varchar AS '
       || quote_literal(func_body)
-      || ' LANGUAGE plpgsql;' ;
+      || ' LANGUAGE plmdb;' ;
 
     EXECUTE func_cmd;
 END;
-$func$ LANGUAGE plpgsql;
+$func$ LANGUAGE plmdb;
 </programlisting>
      Notice how the body of the function is built separately and passed
      through <literal>quote_literal</> to double any quote marks in it.  This
@@ -5162,18 +5162,18 @@ $func$ LANGUAGE plpgsql;
    </example>
 
    <para>
-    <xref linkend="plpgsql-porting-ex3"> shows how to port a function
+    <xref linkend="plmdb-porting-ex3"> shows how to port a function
     with <literal>OUT</> parameters and string manipulation.
     <productname>MollyDB</> does not have a built-in
     <function>instr</function> function, but you can create one
     using a combination of other
-    functions. In <xref linkend="plpgsql-porting-appendix"> there is a
+    functions. In <xref linkend="plmdb-porting-appendix"> there is a
     <application>PL/pgSQL</application> implementation of
     <function>instr</function> that you can use to make your porting
     easier.
    </para>
 
-   <example id="plpgsql-porting-ex3">
+   <example id="plmdb-porting-ex3">
     <title>Porting a Procedure With String Manipulation and
     <literal>OUT</> Parameters from <application>PL/SQL</> to
     <application>PL/pgSQL</></title>
@@ -5265,7 +5265,7 @@ BEGIN
     v_path := substr(v_url, a_pos2, a_pos1 - a_pos2);
     v_query := substr(v_url, a_pos1 + 1);
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
 
      This function could be used like this:
@@ -5276,11 +5276,11 @@ SELECT * FROM cs_parse_url('http://foobar.com/query.cgi?baz');
    </example>
 
    <para>
-    <xref linkend="plpgsql-porting-ex4"> shows how to port a procedure
+    <xref linkend="plmdb-porting-ex4"> shows how to port a procedure
     that uses numerous features that are specific to Oracle.
    </para>
 
-   <example id="plpgsql-porting-ex4">
+   <example id="plmdb-porting-ex4">
     <title>Porting a Procedure from <application>PL/SQL</> to <application>PL/pgSQL</></title>
 
     <para>
@@ -5289,14 +5289,14 @@ SELECT * FROM cs_parse_url('http://foobar.com/query.cgi?baz');
 <programlisting>
 CREATE OR REPLACE PROCEDURE cs_create_job(v_job_id IN INTEGER) IS
     a_running_job_count INTEGER;
-    PRAGMA AUTONOMOUS_TRANSACTION;<co id="co.plpgsql-porting-pragma">
+    PRAGMA AUTONOMOUS_TRANSACTION;<co id="co.plmdb-porting-pragma">
 BEGIN
-    LOCK TABLE cs_jobs IN EXCLUSIVE MODE;<co id="co.plpgsql-porting-locktable">
+    LOCK TABLE cs_jobs IN EXCLUSIVE MODE;<co id="co.plmdb-porting-locktable">
 
     SELECT count(*) INTO a_running_job_count FROM cs_jobs WHERE end_stamp IS NULL;
 
     IF a_running_job_count &gt; 0 THEN
-        COMMIT; -- free lock<co id="co.plpgsql-porting-commit">
+        COMMIT; -- free lock<co id="co.plmdb-porting-commit">
         raise_application_error(-20000,
                  'Unable to create a new job: a job is currently running.');
     END IF;
@@ -5322,13 +5322,13 @@ show errors
     particular is interesting because it can teach us some things:
 
     <calloutlist>
-     <callout arearefs="co.plpgsql-porting-pragma">
+     <callout arearefs="co.plmdb-porting-pragma">
       <para>
        There is no <literal>PRAGMA</literal> statement in <productname>MollyDB</>.
       </para>
      </callout>
 
-     <callout arearefs="co.plpgsql-porting-locktable">
+     <callout arearefs="co.plmdb-porting-locktable">
       <para>
        If you do a <command>LOCK TABLE</command> in <application>PL/pgSQL</>,
        the lock will not be released until the calling transaction is
@@ -5336,7 +5336,7 @@ show errors
       </para>
      </callout>
 
-     <callout arearefs="co.plpgsql-porting-commit">
+     <callout arearefs="co.plmdb-porting-commit">
       <para>
        You cannot issue <command>COMMIT</> in a
        <application>PL/pgSQL</application> function.  The function is
@@ -5363,7 +5363,7 @@ BEGIN
     SELECT count(*) INTO a_running_job_count FROM cs_jobs WHERE end_stamp IS NULL;
 
     IF a_running_job_count &gt; 0 THEN
-        RAISE EXCEPTION 'Unable to create a new job: a job is currently running';<co id="co.plpgsql-porting-raise">
+        RAISE EXCEPTION 'Unable to create a new job: a job is currently running';<co id="co.plmdb-porting-raise">
     END IF;
 
     DELETE FROM cs_active_job;
@@ -5372,15 +5372,15 @@ BEGIN
     BEGIN
         INSERT INTO cs_jobs (job_id, start_stamp) VALUES (v_job_id, now());
     EXCEPTION
-        WHEN unique_violation THEN <co id="co.plpgsql-porting-exception">
+        WHEN unique_violation THEN <co id="co.plmdb-porting-exception">
             -- don't worry if it already exists
     END;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 </programlisting>
 
     <calloutlist>
-     <callout arearefs="co.plpgsql-porting-raise">
+     <callout arearefs="co.plmdb-porting-raise">
       <para>
        The syntax of <literal>RAISE</> is considerably different from
        Oracle's statement, although the basic case <literal>RAISE</>
@@ -5388,7 +5388,7 @@ $$ LANGUAGE plpgsql;
        similarly.
       </para>
      </callout>
-     <callout arearefs="co.plpgsql-porting-exception">
+     <callout arearefs="co.plmdb-porting-exception">
       <para>
        The exception names supported by <application>PL/pgSQL</> are
        different from Oracle's.  The set of built-in exception names
@@ -5408,7 +5408,7 @@ $$ LANGUAGE plpgsql;
    </example>
   </sect2>
 
-  <sect2 id="plpgsql-porting-other">
+  <sect2 id="plmdb-porting-other">
    <title>Other Things to Watch For</title>
 
    <para>
@@ -5417,7 +5417,7 @@ $$ LANGUAGE plpgsql;
     <productname>MollyDB</productname>.
    </para>
 
-   <sect3 id="plpgsql-porting-exceptions">
+   <sect3 id="plmdb-porting-exceptions">
     <title>Implicit Rollback after Exceptions</title>
 
     <para>
@@ -5458,13 +5458,13 @@ END;
      <application>PL/SQL</> version, but you have to remember to use
      <function>quote_literal</function> and
      <function>quote_ident</function> as described in <xref
-     linkend="plpgsql-statements-executing-dyn">.  Constructs of the
+     linkend="plmdb-statements-executing-dyn">.  Constructs of the
      type <literal>EXECUTE 'SELECT * FROM $1';</literal> will not work
      reliably unless you use these functions.
     </para>
    </sect3>
 
-   <sect3 id="plpgsql-porting-optimization">
+   <sect3 id="plmdb-porting-optimization">
     <title>Optimizing <application>PL/pgSQL</application> Functions</title>
 
     <para>
@@ -5485,13 +5485,13 @@ END;
 <programlisting>
 CREATE FUNCTION foo(...) RETURNS integer AS $$
 ...
-$$ LANGUAGE plpgsql STRICT IMMUTABLE;
+$$ LANGUAGE plmdb STRICT IMMUTABLE;
 </programlisting>
     </para>
    </sect3>
   </sect2>
 
-  <sect2 id="plpgsql-porting-appendix">
+  <sect2 id="plmdb-porting-appendix">
    <title>Appendix</title>
 
    <para>
@@ -5521,7 +5521,7 @@ BEGIN
     pos:= instr($1, $2, 1);
     RETURN pos;
 END;
-$$ LANGUAGE plpgsql STRICT IMMUTABLE;
+$$ LANGUAGE plmdb STRICT IMMUTABLE;
 
 
 CREATE FUNCTION instr(string varchar, string_to_search varchar, beg_index integer)
@@ -5563,7 +5563,7 @@ BEGIN
         RETURN 0;
     END IF;
 END;
-$$ LANGUAGE plpgsql STRICT IMMUTABLE;
+$$ LANGUAGE plmdb STRICT IMMUTABLE;
 
 
 CREATE FUNCTION instr(string varchar, string_to_search varchar,
@@ -5624,7 +5624,7 @@ BEGIN
         RETURN 0;
     END IF;
 END;
-$$ LANGUAGE plpgsql STRICT IMMUTABLE;
+$$ LANGUAGE plmdb STRICT IMMUTABLE;
 </programlisting>
   </sect2>
 

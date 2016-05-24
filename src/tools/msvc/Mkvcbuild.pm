@@ -42,7 +42,7 @@ my $contrib_extrasource = {
 	'seg'  => [ 'contrib/seg/segscan.l',   'contrib/seg/segparse.y' ], };
 my @contrib_excludes = (
 	'commit_ts',       'hstore_plperl',    'hstore_plpython', 'intagg',
-	'ltree_plpython',  'pgcrypto',         'sepgsql',         'brin',
+	'ltree_plpython',  'pgcrypto',         'semdb',         'brin',
 	'test_extensions', 'test_pg_dump', 'snapshot_too_old');
 
 # Set of variables for frontend modules
@@ -182,10 +182,10 @@ sub mkvcbuild
 	$snowball->AddIncludeDir('src/include/snowball');
 	$snowball->AddReference($mollydb);
 
-	my $plpgsql =
-	  $solution->AddProject('plpgsql', 'dll', 'PLs', 'src/pl/plpgsql/src');
-	$plpgsql->AddFiles('src/pl/plpgsql/src', 'pl_gram.y');
-	$plpgsql->AddReference($mollydb);
+	my $plmdb =
+	  $solution->AddProject('plmdb', 'dll', 'PLs', 'src/pl/plmdb/src');
+	$plmdb->AddFiles('src/pl/plmdb/src', 'pl_gram.y');
+	$plmdb->AddReference($mollydb);
 
 	if ($solution->{options}->{tcl})
 	{
@@ -428,7 +428,7 @@ sub mkvcbuild
 		'pgp-info.c',       'pgp-mpi.c',
 		'pgp-pubdec.c',     'pgp-pubenc.c',
 		'pgp-pubkey.c',     'pgp-s2k.c',
-		'pgp-pgsql.c');
+		'pgp-mdb.c');
 	if ($solution->{options}->{openssl})
 	{
 		$pgcrypto->AddFiles('contrib/pgcrypto', 'openssl.c',

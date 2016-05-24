@@ -89,7 +89,7 @@ SELECT objtype, objname, provider, label FROM pg_seclabels
 CREATE FUNCTION event_trigger_test()
 RETURNS event_trigger AS $$
   BEGIN RAISE NOTICE 'event %: %', TG_EVENT, TG_TAG; END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 CREATE EVENT TRIGGER always_start ON ddl_command_start
 EXECUTE PROCEDURE event_trigger_test();
 CREATE EVENT TRIGGER always_end ON ddl_command_end

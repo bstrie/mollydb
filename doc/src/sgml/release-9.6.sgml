@@ -719,7 +719,7 @@
 
       <listitem>
 <!--
-2015-07-05 [6c82d8d1f] Further reduce overhead for passing plpgsql variables to
+2015-07-05 [6c82d8d1f] Further reduce overhead for passing plmdb variables to
 -->
        <para>
         Speed up expression evaluation in <application>PL/pgSQL</> by keeping
@@ -2017,7 +2017,7 @@ XXX this is pending backpatch, may need to remove
 2015-08-21 [fcdfce682] Detect mismatched CONTINUE and EXIT statements at plpgsq
 -->
        <para>
-        In <link linkend="plpgsql">PL/pgSQL</link>,
+        In <link linkend="plmdb">PL/pgSQL</link>,
         detect mismatched <command>CONTINUE</> and <command>EXIT</> statements
         while compiling PL/pgSQL functions, rather than at execution
         (Jim Nasby)

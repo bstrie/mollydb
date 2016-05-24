@@ -68,13 +68,13 @@ begin
 	drop table t1;
 	return total;
 end
-$$ language plpgsql;
+$$ language plmdb;
 
 select cache_test(1);
 select cache_test(2);
 select cache_test(3);
 
--- Check invalidation of plpgsql "simple expression"
+-- Check invalidation of plmdb "simple expression"
 
 create temp view v1 as
   select 2+2 as f1;
@@ -82,7 +82,7 @@ create temp view v1 as
 create function cache_test_2() returns int as $$
 begin
 	return f1 from v1;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select cache_test_2();
 
@@ -152,7 +152,7 @@ begin
   for r in select * from vv loop
     raise notice '%', r;
   end loop;
-end$$ language plpgsql;
+end$$ language plmdb;
 
 select cachebug();
 select cachebug();

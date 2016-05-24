@@ -36,13 +36,13 @@ make
 su
 make install
 adduser mollydb
-mkdir /usr/local/pgsql/data
-chown mollydb /usr/local/pgsql/data
+mkdir /usr/local/mdb/data
+chown mollydb /usr/local/mdb/data
 su - mollydb
-/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
-/usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data &gt;logfile 2&gt;&amp;1 &amp;
-/usr/local/pgsql/bin/createdb test
-/usr/local/pgsql/bin/psql test
+/usr/local/mdb/bin/initdb -D /usr/local/mdb/data
+/usr/local/mdb/bin/mollydb -D /usr/local/mdb/data &gt;logfile 2&gt;&amp;1 &amp;
+/usr/local/mdb/bin/createdb test
+/usr/local/mdb/bin/psql test
 </synopsis>
    The long version is the rest of this
    <![%standalone-include;[document.]]>
@@ -408,7 +408,7 @@ su - mollydb
     The default configuration will build the server and utilities, as
     well as all client applications and interfaces that require only a
     C compiler. All files will be installed under
-    <filename>/usr/local/pgsql</> by default.
+    <filename>/usr/local/mdb</> by default.
    </para>
 
    <para>
@@ -422,7 +422,7 @@ su - mollydb
        <listitem>
         <para>
          Install all files under the directory <replaceable>PREFIX</>
-         instead of <filename>/usr/local/pgsql</filename>. The actual
+         instead of <filename>/usr/local/mdb</filename>. The actual
          files will be installed into various subdirectories; no files
          will ever be installed directly into the
          <replaceable>PREFIX</> directory.
@@ -468,7 +468,7 @@ su - mollydb
         <para>
          Specifies the directory for executable programs. The default
          is <filename><replaceable>EXEC-PREFIX</>/bin</>, which
-         normally means <filename>/usr/local/pgsql/bin</>.
+         normally means <filename>/usr/local/mdb/bin</>.
         </para>
        </listitem>
       </varlistentry>
@@ -587,7 +587,7 @@ su - mollydb
        <varname>sysconfdir</varname>, and <varname>docdir</varname>,
        unless the fully expanded directory name already contains the
        string <quote><literal>mollydb</></quote> or
-       <quote><literal>pgsql</></quote>. For example, if you choose
+       <quote><literal>mdb</></quote>. For example, if you choose
        <filename>/usr/local</filename> as prefix, the documentation will
        be installed in <filename>/usr/local/doc/mollydb</filename>,
        but if the prefix is <filename>/opt/mollydb</filename>, then it
@@ -1692,14 +1692,14 @@ MollyDB, contrib and HTML documentation successfully made. Ready to install.
     environment variable <envar>LD_LIBRARY_PATH</> like so: In Bourne
     shells (<command>sh</>, <command>ksh</>, <command>bash</>, <command>zsh</>):
 <programlisting>
-LD_LIBRARY_PATH=/usr/local/pgsql/lib
+LD_LIBRARY_PATH=/usr/local/mdb/lib
 export LD_LIBRARY_PATH
 </programlisting>
     or in <command>csh</> or <command>tcsh</>:
 <programlisting>
-setenv LD_LIBRARY_PATH /usr/local/pgsql/lib
+setenv LD_LIBRARY_PATH /usr/local/mdb/lib
 </programlisting>
-    Replace <literal>/usr/local/pgsql/lib</> with whatever you set
+    Replace <literal>/usr/local/mdb/lib</> with whatever you set
     <option><literal>--libdir</></> to in <xref linkend="configure">.
     You should put these commands into a shell start-up file such as
     <filename>/etc/profile</> or <filename>~/.bash_profile</>.  Some
@@ -1739,7 +1739,7 @@ libpq.so.2.1: cannot open shared object file: No such file or directory
     If you are on <systemitem class="osname">Linux</> and you have root
     access, you can run:
 <programlisting>
-/sbin/ldconfig /usr/local/pgsql/lib
+/sbin/ldconfig /usr/local/mdb/lib
 </programlisting>
     (or equivalent directory) after installation to enable the
     run-time linker to find the shared libraries faster.  Refer to the
@@ -1748,7 +1748,7 @@ libpq.so.2.1: cannot open shared object file: No such file or directory
     class="osname">NetBSD</>, and <systemitem
     class="osname">OpenBSD</> the command is:
 <programlisting>
-/sbin/ldconfig -m /usr/local/pgsql/lib
+/sbin/ldconfig -m /usr/local/mdb/lib
 </programlisting>
     instead.  Other systems are not known to have an equivalent
     command.
@@ -1763,9 +1763,9 @@ libpq.so.2.1: cannot open shared object file: No such file or directory
    </indexterm>
 
    <para>
-    If you installed into <filename>/usr/local/pgsql</> or some other
+    If you installed into <filename>/usr/local/mdb</> or some other
     location that is not searched for programs by default, you should
-    add <filename>/usr/local/pgsql/bin</> (or whatever you set
+    add <filename>/usr/local/mdb/bin</> (or whatever you set
     <option><literal>--bindir</></> to in <xref linkend="configure">)
     into your <envar>PATH</>.  Strictly speaking, this is not
     necessary, but it will make the use of <productname>MollyDB</>
@@ -1777,12 +1777,12 @@ libpq.so.2.1: cannot open shared object file: No such file or directory
     <filename>~/.bash_profile</> (or <filename>/etc/profile</>, if you
     want it to affect all users):
 <programlisting>
-PATH=/usr/local/pgsql/bin:$PATH
+PATH=/usr/local/mdb/bin:$PATH
 export PATH
 </programlisting>
     If you are using <command>csh</> or <command>tcsh</>, then use this command:
 <programlisting>
-set path = ( /usr/local/pgsql/bin $path )
+set path = ( /usr/local/mdb/bin $path )
 </programlisting>
    </para>
 
@@ -1795,7 +1795,7 @@ set path = ( /usr/local/pgsql/bin $path )
     shell start-up file unless you installed into a location that is
     searched by default:
 <programlisting>
-MANPATH=/usr/local/pgsql/share/man:$MANPATH
+MANPATH=/usr/local/mdb/share/man:$MANPATH
 export MANPATH
 </programlisting>
    </para>
@@ -1845,10 +1845,10 @@ export MANPATH
      <productname>MollyDB</> server account. It will not work as
      root.
 <screen>
-root# <userinput>mkdir /usr/local/pgsql/data</>
-root# <userinput>chown mollydb /usr/local/pgsql/data</>
+root# <userinput>mkdir /usr/local/mdb/data</>
+root# <userinput>chown mollydb /usr/local/mdb/data</>
 root# <userinput>su - mollydb</>
-mollydb$ <userinput>/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</>
+mollydb$ <userinput>/usr/local/mdb/bin/initdb -D /usr/local/mdb/data</>
 </screen>
     </para>
 
@@ -1877,12 +1877,12 @@ mollydb$ <userinput>/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</>
      start up the database server. Do so now. The command should look
      something like:
 <programlisting>
-/usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data
+/usr/local/mdb/bin/mollydb -D /usr/local/mdb/data
 </programlisting>
      This will start the server in the foreground. To put the server
      in the background use something like:
 <programlisting>
-nohup /usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data \
+nohup /usr/local/mdb/bin/mollydb -D /usr/local/mdb/data \
     &lt;/dev/null &gt;&gt;server.log 2&gt;&amp;1 &lt;/dev/null &amp;
 </programlisting>
     </para>
@@ -1890,7 +1890,7 @@ nohup /usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data \
     <para>
      To stop a server running in the background you can type:
 <programlisting>
-kill `cat /usr/local/pgsql/data/postmaster.pid`
+kill `cat /usr/local/mdb/data/postmaster.pid`
 </programlisting>
     </para>
    </step>
@@ -1923,7 +1923,7 @@ kill `cat /usr/local/pgsql/data/postmaster.pid`
       comprehensive documentation set, which you should read sometime.
       After installation, the documentation can be accessed by
       pointing your browser to
-      <filename>/usr/local/pgsql/doc/html/index.html</>, unless you
+      <filename>/usr/local/mdb/doc/html/index.html</>, unless you
       changed the installation directories.
      </para>
 
@@ -2015,9 +2015,9 @@ kill `cat /usr/local/pgsql/data/postmaster.pid`
   <para>
    If you have installation problems on a platform that is known
    to be supported according to recent build farm results, please report
-   it to <email>pgsql-bugs@mollydb.org</email>.  If you are interested
+   it to <email>mdb-bugs@mollydb.org</email>.  If you are interested
    in porting <productname>MollyDB</> to a new platform,
-   <email>pgsql-hackers@mollydb.org</email> is the appropriate place
+   <email>mdb-hackers@mollydb.org</email> is the appropriate place
    to discuss that.
   </para>
  </sect1>
@@ -2232,13 +2232,13 @@ hosts=local4,bind4
      For example, running as the owner of the MollyDB installation:
 <screen>
 -bash-3.00$ createlang plperl template1
-createlang: language installation failed: ERROR:  could not load library "/opt/dbs/pgsql748/lib/plperl.so": A memory address is not in the address space for the process.
+createlang: language installation failed: ERROR:  could not load library "/opt/dbs/mdb748/lib/plperl.so": A memory address is not in the address space for the process.
 </screen>
     Running as a non-owner in the group possessing the MollyDB
     installation:
 <screen>
 -bash-3.00$ createlang plperl template1
-createlang: language installation failed: ERROR:  could not load library "/opt/dbs/pgsql748/lib/plperl.so": Bad address
+createlang: language installation failed: ERROR:  could not load library "/opt/dbs/mdb748/lib/plperl.so": Bad address
 </screen>
      Another example is out of memory errors in the MollyDB server
      logs, with every memory allocation near or greater than 256 MB
@@ -2553,7 +2553,7 @@ PHSS_30849  s700_800 u2comp/be/plugin library Patch
 
    <para>
     The default install target location
-    is <filename>/usr/local/pgsql</filename>, which you might want to
+    is <filename>/usr/local/mdb</filename>, which you might want to
     change to something under <filename>/opt</filename>.  If so, use
     the
     <option>--prefix</option> switch to <command>configure</command>.
@@ -2740,13 +2740,13 @@ PHSS_30849  s700_800 u2comp/be/plugin library Patch
 
     <para>
      By default, the MollyDB man pages are installed into
-     <filename>/usr/local/pgsql/share/man</filename>.  By default, UnixWare
+     <filename>/usr/local/mdb/share/man</filename>.  By default, UnixWare
      does not look there for man pages.  To be able to read them you
      need to modify the
      <varname>MANPATH</varname> variable
      in <filename>/etc/default/man</filename>, for example:
 <programlisting>
-MANPATH=/usr/lib/scohelp/%L/man:/usr/dt/man:/usr/man:/usr/share/man:scohelp:/usr/local/man:/usr/local/pgsql/share/man
+MANPATH=/usr/lib/scohelp/%L/man:/usr/dt/man:/usr/man:/usr/share/man:scohelp:/usr/local/man:/usr/local/mdb/share/man
 </programlisting>
     </para>
 

@@ -192,7 +192,7 @@ SECURITY LABEL [ FOR <replaceable class="PARAMETER">provider</replaceable> ] ON
    be changed.
 
 <programlisting>
-SECURITY LABEL FOR selinux ON TABLE mytable IS 'system_u:object_r:sepgsql_table_t:s0';
+SECURITY LABEL FOR selinux ON TABLE mytable IS 'system_u:object_r:semdb_table_t:s0';
 </programlisting></para>
  </refsect1>
 
@@ -206,7 +206,7 @@ SECURITY LABEL FOR selinux ON TABLE mytable IS 'system_u:object_r:sepgsql_table_
  <refsect1>
   <title>See Also</title>
   <simplelist type="inline">
-   <member><xref linkend="sepgsql"></member>
+   <member><xref linkend="semdb"></member>
    <member><filename>src/test/modules/dummy_seclabel</filename></member>
   </simplelist>
  </refsect1>

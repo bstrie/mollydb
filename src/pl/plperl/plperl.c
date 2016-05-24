@@ -429,7 +429,7 @@ _PG_init(void)
 	 * could nonetheless use SET plperl.on_plperl_init='...' to influence the
 	 * behaviour of any existing plperl function that they can execute (which
 	 * might be SECURITY DEFINER, leading to a privilege escalation).  See
-	 * http://archives.mollydb.org/pgsql-hackers/2010-02/msg00281.php and
+	 * http://archives.mollydb.org/mdb-hackers/2010-02/msg00281.php and
 	 * the overall thread.
 	 *
 	 * Note that because plperl.use_strict is USERSET, a nefarious user could
@@ -519,7 +519,7 @@ plperl_fini(int code, Datum arg)
 	 * Indicate that perl is terminating. Disables use of spi_* functions when
 	 * running END/DESTROY code. See check_spi_usage_allowed(). Could be
 	 * enabled in future, with care, using a transaction
-	 * http://archives.mollydb.org/pgsql-hackers/2010-01/msg02743.php
+	 * http://archives.mollydb.org/mdb-hackers/2010-01/msg02743.php
 	 */
 	plperl_ending = true;
 
@@ -654,7 +654,7 @@ select_perl_context(bool trusted)
 	 * database interaction during initialization is problematic. Including,
 	 * but not limited to, security definer issues. So we only enable access
 	 * to the database AFTER on_*_init code has run. See
-	 * http://archives.mollydb.org/pgsql-hackers/2010-01/msg02669.php
+	 * http://archives.mollydb.org/mdb-hackers/2010-01/msg02669.php
 	 */
 	newXS("MollyDB::InServer::SPI::bootstrap",
 		  boot_MollyDB__InServer__SPI, __FILE__);

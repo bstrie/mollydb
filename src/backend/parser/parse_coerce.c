@@ -328,7 +328,7 @@ coerce_type(ParseState *pstate, Node *node,
 		 * want any instability in the input function is that comparison of
 		 * Const nodes relies on bytewise comparison of the datums, so if the
 		 * input function leaves garbage then subexpressions that should be
-		 * identical may not get recognized as such.  See pgsql-hackers
+		 * identical may not get recognized as such.  See mdb-hackers
 		 * discussion of 2008-04-04.
 		 */
 		if (!con->constisnull && !newcon->constbyval)

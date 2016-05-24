@@ -1,15 +1,15 @@
-# Korean message translation file for plpgsql
+# Korean message translation file for plmdb
 # Copyright (C) 2010 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 # Ioseph Kim <ioseph@uri.sarang.net>
 msgid ""
 msgstr ""
-"Project-Id-Version: plpgsql (MollyDB 9.5)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Project-Id-Version: plmdb (MollyDB 9.5)\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-27 23:56+0900\n"
 "PO-Revision-Date: 2015-12-28 00:36+0900\n"
 "Last-Translator: Ioseph Kim <ioseph@uri.sarang.net>\n"
-"Language-Team: Korean <pgsql-kr@mollydb.kr>\n"
+"Language-Team: Korean <mdb-kr@mollydb.kr>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -176,7 +176,7 @@ msgstr "PL/pgSQL 함수 \"%s\" 의 %d번째 줄 %s"
 msgid "PL/pgSQL function %s %s"
 msgstr "PL/pgSQL 함수 %s %s"
 
-#. translator: last %s is a plpgsql statement type name
+#. translator: last %s is a plmdb statement type name
 #: pl_exec.c:1012
 #, c-format
 msgid "PL/pgSQL function %s line %d at %s"

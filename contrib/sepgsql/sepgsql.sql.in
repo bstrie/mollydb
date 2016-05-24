@@ -1,5 +1,5 @@
 --
--- contrib/sepgsql/sepgsql.sql
+-- contrib/semdb/semdb.sql
 --
 -- [Step to install]
 --
@@ -22,16 +22,16 @@
 --      $ for DBNAME in template0 template1 mollydb;     \
 --        do                                              \
 --          mollydb --single -F -c exit_on_error=true -D $PGDATA $DBNAME \
---            < /path/to/script/sepgsql.sql > /dev/null   \
+--            < /path/to/script/semdb.sql > /dev/null   \
 --        done
 --
 -- 4. Start postmaster,
 --    if you initialized the database in single-user mode.
 --
 LOAD 'MODULE_PATHNAME';
-CREATE OR REPLACE FUNCTION pg_catalog.sepgsql_getcon() RETURNS text AS 'MODULE_PATHNAME', 'sepgsql_getcon' LANGUAGE C;
-CREATE OR REPLACE FUNCTION pg_catalog.sepgsql_setcon(text) RETURNS bool AS 'MODULE_PATHNAME', 'sepgsql_setcon' LANGUAGE C;
-CREATE OR REPLACE FUNCTION pg_catalog.sepgsql_mcstrans_in(text) RETURNS text AS 'MODULE_PATHNAME', 'sepgsql_mcstrans_in' LANGUAGE C STRICT;
-CREATE OR REPLACE FUNCTION pg_catalog.sepgsql_mcstrans_out(text) RETURNS text AS 'MODULE_PATHNAME', 'sepgsql_mcstrans_out' LANGUAGE C STRICT;
-CREATE OR REPLACE FUNCTION pg_catalog.sepgsql_restorecon(text) RETURNS bool AS 'MODULE_PATHNAME', 'sepgsql_restorecon' LANGUAGE C;
-SELECT sepgsql_restorecon(NULL);
+CREATE OR REPLACE FUNCTION pg_catalog.semdb_getcon() RETURNS text AS 'MODULE_PATHNAME', 'semdb_getcon' LANGUAGE C;
+CREATE OR REPLACE FUNCTION pg_catalog.semdb_setcon(text) RETURNS bool AS 'MODULE_PATHNAME', 'semdb_setcon' LANGUAGE C;
+CREATE OR REPLACE FUNCTION pg_catalog.semdb_mcstrans_in(text) RETURNS text AS 'MODULE_PATHNAME', 'semdb_mcstrans_in' LANGUAGE C STRICT;
+CREATE OR REPLACE FUNCTION pg_catalog.semdb_mcstrans_out(text) RETURNS text AS 'MODULE_PATHNAME', 'semdb_mcstrans_out' LANGUAGE C STRICT;
+CREATE OR REPLACE FUNCTION pg_catalog.semdb_restorecon(text) RETURNS bool AS 'MODULE_PATHNAME', 'semdb_restorecon' LANGUAGE C;
+SELECT semdb_restorecon(NULL);

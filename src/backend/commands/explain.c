@@ -216,7 +216,7 @@ ExplainQuery(ExplainStmt *stmt, const char *queryString,
 	 *
 	 * Because the rewriter and planner tend to scribble on the input, we make
 	 * a preliminary copy of the source querytree.  This prevents problems in
-	 * the case that the EXPLAIN is in a portal or plpgsql function and is
+	 * the case that the EXPLAIN is in a portal or plmdb function and is
 	 * executed repeatedly.  (See also the same hack in DECLARE CURSOR and
 	 * PREPARE.)  XXX FIXME someday.
 	 */

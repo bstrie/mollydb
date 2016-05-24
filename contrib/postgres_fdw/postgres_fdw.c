@@ -3048,7 +3048,7 @@ prepare_foreign_modify(PgFdwModifyState *fmstate)
 	PGresult   *res;
 
 	/* Construct name we'll use for the prepared statement. */
-	snprintf(prep_name, sizeof(prep_name), "pgsql_fdw_prep_%u",
+	snprintf(prep_name, sizeof(prep_name), "mdb_fdw_prep_%u",
 			 GetPrepStmtNumber(fmstate->conn));
 	p_name = pstrdup(prep_name);
 

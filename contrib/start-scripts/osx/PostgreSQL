@@ -39,10 +39,10 @@
 ################################################################################
 
 # Installation prefix
-prefix="/usr/local/pgsql"
+prefix="/usr/local/mdb"
 
 # Data directory
-PGDATA="/usr/local/pgsql/data"
+PGDATA="/usr/local/mdb/data"
 
 # Who to run the postmaster as, usually "mollydb".  (NOT "root")
 PGUSER="mollydb"

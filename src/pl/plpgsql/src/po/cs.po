@@ -1,12 +1,12 @@
-# Czech message translation file for plpgsql
+# Czech message translation file for plmdb
 # Copyright (C) 2012 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 #
 # Tomáš Vondra <tv@fuzzy.cz>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: plpgsql-cs (MollyDB 9.3)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Project-Id-Version: plmdb-cs (MollyDB 9.3)\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-03-17 18:40+0000\n"
 "PO-Revision-Date: 2013-03-17 22:17+0100\n"
 "Last-Translator: Tomas Vondra <tv@fuzzy.cz>\n"
@@ -192,7 +192,7 @@ msgstr "PL/pgSQL funkce %s řádek %d %s"
 msgid "PL/pgSQL function %s %s"
 msgstr "PL/pgSQL funkce %s %s"
 
-#. translator: last %s is a plpgsql statement type name
+#. translator: last %s is a plmdb statement type name
 #: pl_exec.c:912
 #, c-format
 msgid "PL/pgSQL function %s line %d at %s"

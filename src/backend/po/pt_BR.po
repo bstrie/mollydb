@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MollyDB 9.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
+"Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-12-09 12:26-0300\n"
 "PO-Revision-Date: 2010-05-11 08:53-0300\n"
 "Last-Translator: Euler Taveira de Oliveira <euler@timbira.com>\n"
@@ -178,8 +178,8 @@ msgstr "não pôde determinar codificação para conjunto de códigos \"%s\""
 
 #: ../port/chklocale.c:260 ../port/chklocale.c:389
 #, c-format
-msgid "Please report this to <pgsql-bugs@mollydb.org>."
-msgstr "Por favor relate isto a <pgsql-bugs@mollydb.org>."
+msgid "Please report this to <mdb-bugs@mollydb.org>."
+msgstr "Por favor relate isto a <mdb-bugs@mollydb.org>."
 
 #: ../port/chklocale.c:381 ../port/chklocale.c:387
 #, c-format
@@ -10779,14 +10779,14 @@ msgid ""
 "configuration settings and how to set them on the command line or in\n"
 "the configuration file.\n"
 "\n"
-"Report bugs to <pgsql-bugs@mollydb.org>.\n"
+"Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
 "Por favor leia a documentação para verificar a lista completa de parâmetros\n"
 "de configuração em tempo de execução e como definí-los pela linha de comando\n"
 "ou no arquivo de configuração.\n"
 "\n"
-"Relate erros a <pgsql-bugs@mollydb.org>.\n"
+"Relate erros a <mdb-bugs@mollydb.org>.\n"
 
 #: main/main.c:379
 #, c-format

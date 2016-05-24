@@ -70,15 +70,15 @@
    directory</firstterm> or <firstterm>data area</firstterm>. It is
    completely up to you where you choose to store your data.  There is no
    default, although locations such as
-   <filename>/usr/local/pgsql/data</filename> or
-   <filename>/var/lib/pgsql/data</filename> are popular. To initialize a
+   <filename>/usr/local/mdb/data</filename> or
+   <filename>/var/lib/mdb/data</filename> are popular. To initialize a
    database cluster, use the command <xref
    linkend="app-initdb">,<indexterm><primary>initdb</></> which is
    installed with <productname>MollyDB</productname>. The desired
    file system location of your database cluster is indicated by the
    <option>-D</option> option, for example:
 <screen>
-<prompt>$</> <userinput>initdb -D /usr/local/pgsql/data</userinput>
+<prompt>$</> <userinput>initdb -D /usr/local/mdb/data</userinput>
 </screen>
    Note that you must execute this command while logged into the
    <productname>MollyDB</productname> user account, which is
@@ -98,7 +98,7 @@
    the <xref linkend="app-pg-ctl">
    program<indexterm><primary>pg_ctl</></> like so:
 <screen>
-<prompt>$</> <userinput>pg_ctl -D /usr/local/pgsql/data initdb</userinput>
+<prompt>$</> <userinput>pg_ctl -D /usr/local/mdb/data initdb</userinput>
 </screen>
    This may be more intuitive if you are
    using <command>pg_ctl</command> for starting and stopping the
@@ -119,10 +119,10 @@
    grandparent directory isn't writable.  So the process might look
    like this:
 <screen>
-root# <userinput>mkdir /usr/local/pgsql</userinput>
-root# <userinput>chown mollydb /usr/local/pgsql</userinput>
+root# <userinput>mkdir /usr/local/mdb</userinput>
+root# <userinput>chown mollydb /usr/local/mdb</userinput>
 root# <userinput>su mollydb</userinput>
-mollydb$ <userinput>initdb -D /usr/local/pgsql/data</userinput>
+mollydb$ <userinput>initdb -D /usr/local/mdb/data</userinput>
 </screen>
   </para>
 
@@ -257,7 +257,7 @@ mollydb$ <userinput>initdb -D /usr/local/pgsql/data</userinput>
    <option>-D</option> option. Thus, the simplest way to start the
    server is:
 <screen>
-$ <userinput>mollydb -D /usr/local/pgsql/data</userinput>
+$ <userinput>mollydb -D /usr/local/mdb/data</userinput>
 </screen>
    which will leave the server running in the foreground. This must be
    done while logged into the <productname>MollyDB</productname> user
@@ -270,7 +270,7 @@ $ <userinput>mollydb -D /usr/local/pgsql/data</userinput>
    Normally it is better to start <command>mollydb</command> in the
    background.  For this, use the usual Unix shell syntax:
 <screen>
-$ <userinput>mollydb -D /usr/local/pgsql/data &gt;logfile 2&gt;&amp;1 &amp;</userinput>
+$ <userinput>mollydb -D /usr/local/mdb/data &gt;logfile 2&gt;&amp;1 &amp;</userinput>
 </screen>
    It is important to store the server's <systemitem>stdout</> and
    <systemitem>stderr</> output somewhere, as shown above. It will help
@@ -324,7 +324,7 @@ pg_ctl start -l logfile
    probably should form your commands using
    <literal>su mollydb -c '...'</literal>.  For example:
 <programlisting>
-su mollydb -c 'pg_ctl start -D /usr/local/pgsql/data -l serverlog'
+su mollydb -c 'pg_ctl start -D /usr/local/mdb/data -l serverlog'
 </programlisting>
   </para>
 
@@ -349,8 +349,8 @@ su mollydb -c 'pg_ctl start -D /usr/local/pgsql/data -l serverlog'
       to the file <filename>/etc/rc.local</filename>:
       <indexterm><primary>OpenBSD</><secondary>start script</secondary></>
 <programlisting>
-if [ -x /usr/local/pgsql/bin/pg_ctl -a -x /usr/local/pgsql/bin/mollydb ]; then
-    su -l mollydb -c '/usr/local/pgsql/bin/pg_ctl start -s -l /var/mollydb/log -D /usr/local/pgsql/data'
+if [ -x /usr/local/mdb/bin/pg_ctl -a -x /usr/local/mdb/bin/mollydb ]; then
+    su -l mollydb -c '/usr/local/mdb/bin/pg_ctl start -s -l /var/mollydb/log -D /usr/local/mdb/data'
     echo -n ' mollydb'
 fi
 </programlisting>
@@ -362,7 +362,7 @@ fi
       On <productname>Linux</productname> systems either add
       <indexterm><primary>Linux</><secondary>start script</secondary></>
 <programlisting>
-/usr/local/pgsql/bin/pg_ctl start -l logfile -D /usr/local/pgsql/data
+/usr/local/mdb/bin/pg_ctl start -l logfile -D /usr/local/mdb/data
 </programlisting>
       to <filename>/etc/rc.d/rc.local</filename>
       or <filename>/etc/rc.local</filename> or look at the file
@@ -382,7 +382,7 @@ Documentation=man:mollydb(1)
 [Service]
 Type=notify
 User=mollydb
-ExecStart=/usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data
+ExecStart=/usr/local/mdb/bin/mollydb -D /usr/local/mdb/data
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=mixed
 KillSignal=SIGINT
@@ -423,7 +423,7 @@ WantedBy=multi-user.target
       the following line:
       <indexterm><primary>Solaris</><secondary>start script</secondary></>
 <programlisting>
-su - mollydb -c "/usr/local/pgsql/bin/pg_ctl start -l logfile -D /usr/local/pgsql/data"
+su - mollydb -c "/usr/local/mdb/bin/pg_ctl start -l logfile -D /usr/local/mdb/data"
 </programlisting>
       Then, create a symbolic link to it in <filename>/etc/rc3.d</> as
       <filename>S99mollydb</>.
@@ -1548,7 +1548,7 @@ $ <userinput>sysctl -w vm.nr_hugepages=3170</userinput>
    <filename>postmaster.pid</filename> in the data directory. For
    example, to do a fast shutdown:
 <screen>
-$ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput>
+$ <userinput>kill -INT `head -1 /usr/local/mdb/data/postmaster.pid`</userinput>
 </screen>
   </para>
 
@@ -1711,8 +1711,8 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
 
    <para>
     These instructions assume that your existing installation is under the
-    <filename>/usr/local/pgsql</> directory, and that the data area is in
-    <filename>/usr/local/pgsql/data</>.  Substitute your paths
+    <filename>/usr/local/mdb</> directory, and that the data area is in
+    <filename>/usr/local/mdb/data</>.  Substitute your paths
     appropriately.
    </para>
 
@@ -1722,7 +1722,7 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
       If making a backup, make sure that your database is not being updated.
       This does not affect the integrity of the backup, but the changed
       data would of course not be included. If necessary, edit the
-      permissions in the file <filename>/usr/local/pgsql/data/pg_hba.conf</>
+      permissions in the file <filename>/usr/local/mdb/data/pg_hba.conf</>
       (or equivalent) to disallow access from everyone except you.
       See <xref linkend="client-authentication"> for additional information on
       access control.
@@ -1783,7 +1783,7 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
       in mind the directory might consume significant disk space.  To rename
       the directory, use a command like this:
 <screen>
-<userinput>mv /usr/local/pgsql /usr/local/pgsql.old</>
+<userinput>mv /usr/local/mdb /usr/local/mdb.old</>
 </screen>
      (Be sure to move the directory as a single unit so relative paths
      remain unchanged.)
@@ -1804,7 +1804,7 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
       execute these commands while logged in to the special database user
       account (which you already have if you are upgrading).
 <programlisting>
-<userinput>/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</>
+<userinput>/usr/local/mdb/bin/initdb -D /usr/local/mdb/data</>
 </programlisting>
      </para>
     </step>
@@ -1821,7 +1821,7 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
       Start the database server, again using the special database user
       account:
 <programlisting>
-<userinput>/usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data</>
+<userinput>/usr/local/mdb/bin/mollydb -D /usr/local/mdb/data</>
 </programlisting>
      </para>
     </step>
@@ -1830,7 +1830,7 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
      <para>
       Finally, restore your data from backup with:
 <screen>
-<userinput>/usr/local/pgsql/bin/psql -d mollydb -f <replaceable>outputfile</></userinput>
+<userinput>/usr/local/mdb/bin/psql -d mollydb -f <replaceable>outputfile</></userinput>
 </screen>
       using the <emphasis>new</> <application>psql</>.
      </para>
@@ -2444,7 +2444,7 @@ ssh -L 63333:db.foo.com:5432 joe@shell.foo.com
    <application>event log</> library with the operating system,
    issue this command:
 <screen>
-<userinput>regsvr32 <replaceable>pgsql_library_directory</>/pgevent.dll</>
+<userinput>regsvr32 <replaceable>mdb_library_directory</>/pgevent.dll</>
 </screen>
    This creates registry entries used by the event viewer, under the default
    event source named <literal>MollyDB</literal>.
@@ -2455,7 +2455,7 @@ ssh -L 63333:db.foo.com:5432 joe@shell.foo.com
    <xref linkend="guc-event-source">), use the <literal>/n</literal>
    and <literal>/i</literal> options:
 <screen>
-<userinput>regsvr32 /n /i:<replaceable>event_source_name</> <replaceable>pgsql_library_directory</>/pgevent.dll</>
+<userinput>regsvr32 /n /i:<replaceable>event_source_name</> <replaceable>mdb_library_directory</>/pgevent.dll</>
 </screen>
   </para>
 
@@ -2463,7 +2463,7 @@ ssh -L 63333:db.foo.com:5432 joe@shell.foo.com
    To unregister the <application>event log</> library from
    the operating system, issue this command:
 <screen>
-<userinput>regsvr32 /u [/i:<replaceable>event_source_name</>] <replaceable>pgsql_library_directory</>/pgevent.dll</>
+<userinput>regsvr32 /u [/i:<replaceable>event_source_name</>] <replaceable>mdb_library_directory</>/pgevent.dll</>
 </screen>
   </para>
 

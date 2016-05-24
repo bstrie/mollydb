@@ -646,8 +646,8 @@ my %tests = (
 			only_dump_test_table => 1,
 		},
 	},
-	'COMMENT ON EXTENSION plpgsql' => {
-		regexp => qr/^COMMENT ON EXTENSION plpgsql IS .*;/m,
+	'COMMENT ON EXTENSION plmdb' => {
+		regexp => qr/^COMMENT ON EXTENSION plmdb IS .*;/m,
 		like => {
 			clean => 1,
 			clean_if_exists => 1,
@@ -1019,9 +1019,9 @@ my %tests = (
 			test_schema_plus_blobs => 1,
 		},
 	},
-	'CREATE EXTENSION ... plpgsql' => {
+	'CREATE EXTENSION ... plmdb' => {
 		regexp => qr/^
-			\QCREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;\E
+			\QCREATE EXTENSION IF NOT EXISTS plmdb WITH SCHEMA pg_catalog;\E
 			/xm,
 		like => {
 			clean => 1,
@@ -1121,14 +1121,14 @@ my %tests = (
 	'CREATE FUNCTION dump_test.pltestlang_call_handler' => {
 		create_order => 17,
 		create_sql => 'CREATE FUNCTION dump_test.pltestlang_call_handler()
-					   RETURNS LANGUAGE_HANDLER AS \'$libdir/plpgsql\',
-					   \'plpgsql_call_handler\' LANGUAGE C;',
+					   RETURNS LANGUAGE_HANDLER AS \'$libdir/plmdb\',
+					   \'plmdb_call_handler\' LANGUAGE C;',
 		regexp => qr/^
 			\QCREATE FUNCTION pltestlang_call_handler() \E
 			\QRETURNS language_handler\E
 			\n\s+\QLANGUAGE c\E
 			\n\s+AS\ \'\$
-			\Qlibdir\/plpgsql', 'plpgsql_call_handler';\E
+			\Qlibdir\/plmdb', 'plmdb_call_handler';\E
 			/xm,
 		like => {
 			binary_upgrade => 1,
@@ -1155,11 +1155,11 @@ my %tests = (
 	'CREATE FUNCTION dump_test.trigger_func' => {
 		create_order => 30,
 		create_sql => 'CREATE FUNCTION dump_test.trigger_func()
-					   RETURNS trigger LANGUAGE plpgsql
+					   RETURNS trigger LANGUAGE plmdb
 					   AS $$ BEGIN RETURN NULL; END;$$;',
 		regexp => qr/^
 			\QCREATE FUNCTION trigger_func() RETURNS trigger\E
-			\n\s+\QLANGUAGE plpgsql\E
+			\n\s+\QLANGUAGE plmdb\E
 			\n\s+AS\ \$\$
 			\Q BEGIN RETURN NULL; END;\E
 			\$\$;/xm,
@@ -1188,11 +1188,11 @@ my %tests = (
 	'CREATE FUNCTION dump_test.event_trigger_func' => {
 		create_order => 32,
 		create_sql => 'CREATE FUNCTION dump_test.event_trigger_func()
-					   RETURNS event_trigger LANGUAGE plpgsql
+					   RETURNS event_trigger LANGUAGE plmdb
 					   AS $$ BEGIN RETURN; END;$$;',
 		regexp => qr/^
 			\QCREATE FUNCTION event_trigger_func() RETURNS event_trigger\E
-			\n\s+\QLANGUAGE plpgsql\E
+			\n\s+\QLANGUAGE plmdb\E
 			\n\s+AS\ \$\$
 			\Q BEGIN RETURN; END;\E
 			\$\$;/xm,
@@ -2150,8 +2150,8 @@ my %tests = (
 			section_data => 1,
 		},
 	},
-	'DROP EXTENSION plpgsql' => {
-		regexp => qr/^DROP EXTENSION plpgsql;/m,
+	'DROP EXTENSION plmdb' => {
+		regexp => qr/^DROP EXTENSION plmdb;/m,
 		like => {
 			clean => 1,
 		},
@@ -2231,8 +2231,8 @@ my %tests = (
 			clean_if_exists => 1,
 		},
 	},
-	'DROP EXTENSION IF EXISTS plpgsql' => {
-		regexp => qr/^DROP EXTENSION IF EXISTS plpgsql;/m,
+	'DROP EXTENSION IF EXISTS plmdb' => {
+		regexp => qr/^DROP EXTENSION IF EXISTS plmdb;/m,
 		like => {
 			clean_if_exists => 1,
 		},
@@ -2709,10 +2709,10 @@ my %tests = (
 			test_schema_plus_blobs => 1,
 		},
 	},
-	'REVOKE USAGE ON LANGUAGE plpgsql FROM public' => {
+	'REVOKE USAGE ON LANGUAGE plmdb FROM public' => {
 		create_order => 16,
-		create_sql => 'REVOKE USAGE ON LANGUAGE plpgsql FROM public;',
-		regexp => qr/^REVOKE ALL ON LANGUAGE plpgsql FROM PUBLIC;/m,
+		create_sql => 'REVOKE USAGE ON LANGUAGE plmdb FROM public;',
+		regexp => qr/^REVOKE ALL ON LANGUAGE plmdb FROM PUBLIC;/m,
 		like => {
 			binary_upgrade => 1,
 			clean => 1,

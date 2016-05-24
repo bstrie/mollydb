@@ -40,7 +40,7 @@ ALL_PO_FILES = $(addprefix po/, $(addsuffix .po, $(AVAIL_LANGUAGES)))
 MO_FILES = $(addprefix po/, $(addsuffix .mo, $(LANGUAGES)))
 
 ifdef XGETTEXT
-XGETTEXT += -ctranslator --copyright-holder='MollyDB Global Development Group' --msgid-bugs-address=pgsql-bugs@mollydb.org --no-wrap --sort-by-file --package-name='$(CATALOG_NAME) (MollyDB)' --package-version='$(MAJORVERSION)'
+XGETTEXT += -ctranslator --copyright-holder='MollyDB Global Development Group' --msgid-bugs-address=mdb-bugs@mollydb.org --no-wrap --sort-by-file --package-name='$(CATALOG_NAME) (MollyDB)' --package-version='$(MAJORVERSION)'
 endif
 
 ifdef MSGMERGE

@@ -264,7 +264,7 @@ static void setup_dictionary(FILE *cmdfd);
 static void setup_privileges(FILE *cmdfd);
 static void set_info_version(void);
 static void setup_schema(FILE *cmdfd);
-static void load_plpgsql(FILE *cmdfd);
+static void load_plmdb(FILE *cmdfd);
 static void vacuum_db(FILE *cmdfd);
 static void make_template0(FILE *cmdfd);
 static void make_mollydb(FILE *cmdfd);
@@ -2226,12 +2226,12 @@ setup_schema(FILE *cmdfd)
 }
 
 /*
- * load PL/pgsql server-side language
+ * load PL/mdb server-side language
  */
 static void
-load_plpgsql(FILE *cmdfd)
+load_plmdb(FILE *cmdfd)
 {
-	PG_CMD_PUTS("CREATE EXTENSION plpgsql;\n\n");
+	PG_CMD_PUTS("CREATE EXTENSION plmdb;\n\n");
 }
 
 /*
@@ -2690,7 +2690,7 @@ usage(const char *progname)
 	printf(_("  -?, --help                show this help, then exit\n"));
 	printf(_("\nIf the data directory is not specified, the environment variable PGDATA\n"
 			 "is used.\n"));
-	printf(_("\nReport bugs to <pgsql-bugs@mollydb.org>.\n"));
+	printf(_("\nReport bugs to <mdb-bugs@mollydb.org>.\n"));
 }
 
 static void
@@ -3320,7 +3320,7 @@ initialize_data_directory(void)
 
 	setup_schema(cmdfd);
 
-	load_plpgsql(cmdfd);
+	load_plmdb(cmdfd);
 
 	vacuum_db(cmdfd);
 

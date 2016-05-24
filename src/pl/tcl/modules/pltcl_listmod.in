@@ -8,7 +8,7 @@ exec @TCLSH@ "$0" "$@"
 # Code still has to be documented
 #
 
-#load /usr/local/pgsql/lib/libpgtcl.so
+#load /usr/local/mdb/lib/libpgtcl.so
 package require Pgtcl
 
 

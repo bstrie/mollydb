@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/schema.c
+ * contrib/semdb/schema.c
  *
  * Routines corresponding to schema objects
  *
@@ -26,16 +26,16 @@
 #include "utils/lsyscache.h"
 #include "utils/tqual.h"
 
-#include "sepgsql.h"
+#include "semdb.h"
 
 /*
- * sepgsql_schema_post_create
+ * semdb_schema_post_create
  *
  * This routine assigns a default security label on a newly defined
  * schema.
  */
 void
-sepgsql_schema_post_create(Oid namespaceId)
+semdb_schema_post_create(Oid namespaceId)
 {
 	Relation	rel;
 	ScanKeyData skey;
@@ -76,8 +76,8 @@ sepgsql_schema_post_create(Oid namespaceId)
 	else if (strncmp(nsp_name, "pg_toast_temp_", 14) == 0)
 		nsp_name = "pg_toast_temp";
 
-	tcontext = sepgsql_get_label(DatabaseRelationId, MyDatabaseId, 0);
-	ncontext = sepgsql_compute_create(sepgsql_get_client_label(),
+	tcontext = semdb_get_label(DatabaseRelationId, MyDatabaseId, 0);
+	ncontext = semdb_compute_create(semdb_get_client_label(),
 									  tcontext,
 									  SEPG_CLASS_DB_SCHEMA,
 									  nsp_name);
@@ -87,7 +87,7 @@ sepgsql_schema_post_create(Oid namespaceId)
 	 */
 	initStringInfo(&audit_name);
 	appendStringInfo(&audit_name, "%s", quote_identifier(nsp_name));
-	sepgsql_avc_check_perms_label(ncontext,
+	semdb_avc_check_perms_label(ncontext,
 								  SEPG_CLASS_DB_SCHEMA,
 								  SEPG_DB_SCHEMA__CREATE,
 								  audit_name.data,
@@ -108,12 +108,12 @@ sepgsql_schema_post_create(Oid namespaceId)
 }
 
 /*
- * sepgsql_schema_drop
+ * semdb_schema_drop
  *
  * It checks privileges to drop the supplied schema object.
  */
 void
-sepgsql_schema_drop(Oid namespaceId)
+semdb_schema_drop(Oid namespaceId)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -126,7 +126,7 @@ sepgsql_schema_drop(Oid namespaceId)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_SCHEMA,
 							SEPG_DB_SCHEMA__DROP,
 							audit_name,
@@ -135,13 +135,13 @@ sepgsql_schema_drop(Oid namespaceId)
 }
 
 /*
- * sepgsql_schema_relabel
+ * semdb_schema_relabel
  *
  * It checks privileges to relabel the supplied schema
  * by the `seclabel'.
  */
 void
-sepgsql_schema_relabel(Oid namespaceId, const char *seclabel)
+semdb_schema_relabel(Oid namespaceId, const char *seclabel)
 {
 	ObjectAddress object;
 	char	   *audit_name;
@@ -154,7 +154,7 @@ sepgsql_schema_relabel(Oid namespaceId, const char *seclabel)
 	/*
 	 * check db_schema:{setattr relabelfrom} permission
 	 */
-	sepgsql_avc_check_perms(&object,
+	semdb_avc_check_perms(&object,
 							SEPG_CLASS_DB_SCHEMA,
 							SEPG_DB_SCHEMA__SETATTR |
 							SEPG_DB_SCHEMA__RELABELFROM,
@@ -164,7 +164,7 @@ sepgsql_schema_relabel(Oid namespaceId, const char *seclabel)
 	/*
 	 * check db_schema:{relabelto} permission
 	 */
-	sepgsql_avc_check_perms_label(seclabel,
+	semdb_avc_check_perms_label(seclabel,
 								  SEPG_CLASS_DB_SCHEMA,
 								  SEPG_DB_SCHEMA__RELABELTO,
 								  audit_name,
@@ -173,7 +173,7 @@ sepgsql_schema_relabel(Oid namespaceId, const char *seclabel)
 }
 
 /*
- * sepgsql_schema_check_perms
+ * semdb_schema_check_perms
  *
  * utility routine to check db_schema:{xxx} permissions
  */
@@ -189,7 +189,7 @@ check_schema_perms(Oid namespaceId, uint32 required, bool abort_on_violation)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 
-	result = sepgsql_avc_check_perms(&object,
+	result = semdb_avc_check_perms(&object,
 									 SEPG_CLASS_DB_SCHEMA,
 									 required,
 									 audit_name,
@@ -201,14 +201,14 @@ check_schema_perms(Oid namespaceId, uint32 required, bool abort_on_violation)
 
 /* db_schema:{setattr} permission */
 void
-sepgsql_schema_setattr(Oid namespaceId)
+semdb_schema_setattr(Oid namespaceId)
 {
 	check_schema_perms(namespaceId, SEPG_DB_SCHEMA__SETATTR, true);
 }
 
 /* db_schema:{search} permission */
 bool
-sepgsql_schema_search(Oid namespaceId, bool abort_on_violation)
+semdb_schema_search(Oid namespaceId, bool abort_on_violation)
 {
 	return check_schema_perms(namespaceId,
 							  SEPG_DB_SCHEMA__SEARCH,
@@ -216,19 +216,19 @@ sepgsql_schema_search(Oid namespaceId, bool abort_on_violation)
 }
 
 void
-sepgsql_schema_add_name(Oid namespaceId)
+semdb_schema_add_name(Oid namespaceId)
 {
 	check_schema_perms(namespaceId, SEPG_DB_SCHEMA__ADD_NAME, true);
 }
 
 void
-sepgsql_schema_remove_name(Oid namespaceId)
+semdb_schema_remove_name(Oid namespaceId)
 {
 	check_schema_perms(namespaceId, SEPG_DB_SCHEMA__REMOVE_NAME, true);
 }
 
 void
-sepgsql_schema_rename(Oid namespaceId)
+semdb_schema_rename(Oid namespaceId)
 {
 	check_schema_perms(namespaceId,
 					   SEPG_DB_SCHEMA__ADD_NAME |

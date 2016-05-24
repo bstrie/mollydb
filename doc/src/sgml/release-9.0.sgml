@@ -5369,7 +5369,7 @@
 
     <listitem>
      <para>
-      Fix I/O-conversion-related memory leaks in plpgsql
+      Fix I/O-conversion-related memory leaks in plmdb
       (Andres Freund, Jan Urbanski, Tom Lane)
      </para>
 
@@ -6138,7 +6138,7 @@
     <listitem>
      <para>
       Fix incorrect memory accounting (leading to possible memory bloat) in
-      tuplestores supporting holdable cursors and plpgsql's <literal>RETURN
+      tuplestores supporting holdable cursors and plmdb's <literal>RETURN
       NEXT</> command (Tom Lane)
      </para>
     </listitem>
@@ -6398,7 +6398,7 @@
 
     <listitem>
      <para>
-      Weaken plpgsql's check for typmod matching in record values (Tom Lane)
+      Weaken plmdb's check for typmod matching in record values (Tom Lane)
      </para>
 
      <para>
@@ -7757,7 +7757,7 @@
       The <link linkend="SQL-DO"><command>DO</></link> statement supports
       ad-hoc or <quote>anonymous</> code blocks.
       Functions can now be called using named parameters.
-      <link linkend="plpgsql">PL/pgSQL</link> is now installed by default, and
+      <link linkend="plmdb">PL/pgSQL</link> is now installed by default, and
       <link linkend="plperl">PL/Perl</link> and <link
       linkend="plpython">PL/Python</link> have been enhanced in several ways,
       including support for Python3.
@@ -8100,7 +8100,7 @@
       situations.  Although it's recommended that functions encountering this
       type of error be modified to remove the conflict, the old behavior can
       be restored if necessary via the configuration parameter <link
-      linkend="plpgsql-var-subst"><varname>plpgsql.variable_conflict</></link>,
+      linkend="plmdb-var-subst"><varname>plmdb.variable_conflict</></link>,
       or via the per-function option <literal>#variable_conflict</>.
      </para>
     </listitem>
@@ -8165,7 +8165,7 @@
 
      <para>
       Instead of <literal>RENAME</>, use <link
-      linkend="plpgsql-declaration-alias"><literal>ALIAS</></link>,
+      linkend="plmdb-declaration-alias"><literal>ALIAS</></link>,
       which can now create an alias for any variable, not only dollar sign
       parameter names (such as <literal>$1</>) as before.
      </para>
@@ -9649,7 +9649,7 @@
     </itemizedlist>
 
     <sect4>
-    <title><link linkend="plpgsql">PL/pgSQL</link> Server-Side
+    <title><link linkend="plmdb">PL/pgSQL</link> Server-Side
     Language</title>
 
     <itemizedlist>
@@ -9677,7 +9677,7 @@
        The default behavior is now to throw an error when there is a conflict,
        so as to avoid surprising behaviors.  This can be modified, via the
        configuration parameter <link
-       linkend="plpgsql-var-subst"><varname>plpgsql.variable_conflict</></link>
+       linkend="plmdb-var-subst"><varname>plmdb.variable_conflict</></link>
        or the per-function option <literal>#variable_conflict</>, to allow
        either the variable or the query-supplied column to be used.  In any
        case PL/pgSQL will no longer attempt to substitute variables in places

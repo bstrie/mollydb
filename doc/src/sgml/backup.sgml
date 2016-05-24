@@ -350,7 +350,7 @@ pg_dump -j <replaceable class="parameter">num</replaceable> -F d -f <replaceable
    for doing file system backups; for example:
 
 <programlisting>
-tar -cf backup.tar /usr/local/pgsql/data
+tar -cf backup.tar /usr/local/mdb/data
 </programlisting>
   </para>
 
@@ -1053,7 +1053,7 @@ SELECT pg_stop_backup();
 
    <para>
     Be certain that your backup includes all of the files under
-    the database cluster directory (e.g., <filename>/usr/local/pgsql/data</>).
+    the database cluster directory (e.g., <filename>/usr/local/mdb/data</>).
     If you are using tablespaces that do not reside underneath this directory,
     be careful to include them as well (and be sure that your backup
     archives symbolic links as links, otherwise the restore will corrupt
@@ -1409,10 +1409,10 @@ restore_command = 'cp /mnt/server/archivedir/%f %p'
       <literal>on</>, and set up an <varname>archive_command</> that performs
       archiving only when a <emphasis>switch file</> exists.  For example:
 <programlisting>
-archive_command = 'test ! -f /var/lib/pgsql/backup_in_progress || (test ! -f /var/lib/pgsql/archive/%f &amp;&amp; cp %p /var/lib/pgsql/archive/%f)'
+archive_command = 'test ! -f /var/lib/mdb/backup_in_progress || (test ! -f /var/lib/mdb/archive/%f &amp;&amp; cp %p /var/lib/mdb/archive/%f)'
 </programlisting>
       This command will perform archiving when
-      <filename>/var/lib/pgsql/backup_in_progress</> exists, and otherwise
+      <filename>/var/lib/mdb/backup_in_progress</> exists, and otherwise
       silently return zero exit status (allowing <productname>MollyDB</>
       to recycle the unwanted WAL file).
      </para>
@@ -1421,14 +1421,14 @@ archive_command = 'test ! -f /var/lib/pgsql/backup_in_progress || (test ! -f /va
       With this preparation, a backup can be taken using a script like the
       following:
 <programlisting>
-touch /var/lib/pgsql/backup_in_progress
+touch /var/lib/mdb/backup_in_progress
 psql -c "select pg_start_backup('hot_backup');"
-tar -cf /var/lib/pgsql/backup.tar /var/lib/pgsql/data/
+tar -cf /var/lib/mdb/backup.tar /var/lib/mdb/data/
 psql -c "select pg_stop_backup();"
-rm /var/lib/pgsql/backup_in_progress
-tar -rf /var/lib/pgsql/backup.tar /var/lib/pgsql/archive/
+rm /var/lib/mdb/backup_in_progress
+tar -rf /var/lib/mdb/backup.tar /var/lib/mdb/archive/
 </programlisting>
-      The switch file <filename>/var/lib/pgsql/backup_in_progress</> is
+      The switch file <filename>/var/lib/mdb/backup_in_progress</> is
       created first, enabling archiving of completed WAL files to occur.
       After the backup the switch file is removed. Archived WAL files are
       then added to the backup so that both base backup and all required
@@ -1445,7 +1445,7 @@ tar -rf /var/lib/pgsql/backup.tar /var/lib/pgsql/archive/
       If archive storage size is a concern, you can use
       <application>gzip</application> to compress the archive files:
 <programlisting>
-archive_command = 'gzip &lt; %p &gt; /var/lib/pgsql/archive/%f'
+archive_command = 'gzip &lt; %p &gt; /var/lib/mdb/archive/%f'
 </programlisting>
       You will then need to use <application>gunzip</> during recovery:
 <programlisting>

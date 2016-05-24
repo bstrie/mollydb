@@ -2,7 +2,7 @@
 -- Regression Test for Misc Permission Checks
 --
 
-LOAD '$libdir/sepgsql';		-- failed
+LOAD '$libdir/semdb';		-- failed
 
 --
 -- Permissions to execute functions
@@ -10,7 +10,7 @@ LOAD '$libdir/sepgsql';		-- failed
 CREATE TABLE t1 (x int, y text);
 INSERT INTO t1 (SELECT x, md5(x::text) FROM generate_series(1,100) x);
 
-SET sepgsql.debug_audit = on;
+SET semdb.debug_audit = on;
 SET client_min_messages = log;
 
 -- regular function and operators
@@ -22,7 +22,7 @@ SELECT MIN(x), AVG(x) FROM t1;
 -- window function
 SELECT row_number() OVER (order by x), * FROM t1 WHERE y like '%86%';
 
-RESET sepgsql.debug_audit;
+RESET semdb.debug_audit;
 RESET client_min_messages;
 --
 -- Cleanup

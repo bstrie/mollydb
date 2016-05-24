@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/hooks.c
+ * contrib/semdb/hooks.c
  *
  * Entrypoints of the hooks in MollyDB, and dispatches the callbacks.
  *
@@ -23,7 +23,7 @@
 #include "tcop/utility.h"
 #include "utils/guc.h"
 
-#include "sepgsql.h"
+#include "semdb.h"
 
 PG_MODULE_MAGIC;
 
@@ -51,40 +51,40 @@ typedef struct
 	 * command. Elsewhere (including the case of default) NULL.
 	 */
 	const char *createdb_dtemplate;
-}	sepgsql_context_info_t;
+}	semdb_context_info_t;
 
-static sepgsql_context_info_t sepgsql_context_info;
+static semdb_context_info_t semdb_context_info;
 
 /*
- * GUC: sepgsql.permissive = (on|off)
+ * GUC: semdb.permissive = (on|off)
  */
-static bool sepgsql_permissive;
+static bool semdb_permissive;
 
 bool
-sepgsql_get_permissive(void)
+semdb_get_permissive(void)
 {
-	return sepgsql_permissive;
+	return semdb_permissive;
 }
 
 /*
- * GUC: sepgsql.debug_audit = (on|off)
+ * GUC: semdb.debug_audit = (on|off)
  */
-static bool sepgsql_debug_audit;
+static bool semdb_debug_audit;
 
 bool
-sepgsql_get_debug_audit(void)
+semdb_get_debug_audit(void)
 {
-	return sepgsql_debug_audit;
+	return semdb_debug_audit;
 }
 
 /*
- * sepgsql_object_access
+ * semdb_object_access
  *
  * Entrypoint of the object_access_hook. This routine performs as
  * a dispatcher of invocation based on access type and object classes.
  */
 static void
-sepgsql_object_access(ObjectAccessType access,
+semdb_object_access(ObjectAccessType access,
 					  Oid classId,
 					  Oid objectId,
 					  int subId,
@@ -106,13 +106,13 @@ sepgsql_object_access(ObjectAccessType access,
 				{
 					case DatabaseRelationId:
 						Assert(!is_internal);
-						sepgsql_database_post_create(objectId,
-									sepgsql_context_info.createdb_dtemplate);
+						semdb_database_post_create(objectId,
+									semdb_context_info.createdb_dtemplate);
 						break;
 
 					case NamespaceRelationId:
 						Assert(!is_internal);
-						sepgsql_schema_post_create(objectId);
+						semdb_schema_post_create(objectId);
 						break;
 
 					case RelationRelationId:
@@ -130,15 +130,15 @@ sepgsql_object_access(ObjectAccessType access,
 							if (is_internal)
 								break;
 
-							sepgsql_relation_post_create(objectId);
+							semdb_relation_post_create(objectId);
 						}
 						else
-							sepgsql_attribute_post_create(objectId, subId);
+							semdb_attribute_post_create(objectId, subId);
 						break;
 
 					case ProcedureRelationId:
 						Assert(!is_internal);
-						sepgsql_proc_post_create(objectId);
+						semdb_proc_post_create(objectId);
 						break;
 
 					default:
@@ -163,22 +163,22 @@ sepgsql_object_access(ObjectAccessType access,
 				switch (classId)
 				{
 					case DatabaseRelationId:
-						sepgsql_database_drop(objectId);
+						semdb_database_drop(objectId);
 						break;
 
 					case NamespaceRelationId:
-						sepgsql_schema_drop(objectId);
+						semdb_schema_drop(objectId);
 						break;
 
 					case RelationRelationId:
 						if (subId == 0)
-							sepgsql_relation_drop(objectId);
+							semdb_relation_drop(objectId);
 						else
-							sepgsql_attribute_drop(objectId, subId);
+							semdb_attribute_drop(objectId, subId);
 						break;
 
 					case ProcedureRelationId:
-						sepgsql_proc_drop(objectId);
+						semdb_proc_drop(objectId);
 						break;
 
 					default:
@@ -197,12 +197,12 @@ sepgsql_object_access(ObjectAccessType access,
 				{
 					case DatabaseRelationId:
 						Assert(!is_internal);
-						sepgsql_database_setattr(objectId);
+						semdb_database_setattr(objectId);
 						break;
 
 					case NamespaceRelationId:
 						Assert(!is_internal);
-						sepgsql_schema_setattr(objectId);
+						semdb_schema_setattr(objectId);
 						break;
 
 					case RelationRelationId:
@@ -218,15 +218,15 @@ sepgsql_object_access(ObjectAccessType access,
 							if (is_internal)
 								break;
 
-							sepgsql_relation_setattr(objectId);
+							semdb_relation_setattr(objectId);
 						}
 						else
-							sepgsql_attribute_setattr(objectId, subId);
+							semdb_attribute_setattr(objectId, subId);
 						break;
 
 					case ProcedureRelationId:
 						Assert(!is_internal);
-						sepgsql_proc_setattr(objectId);
+						semdb_proc_setattr(objectId);
 						break;
 
 					default:
@@ -250,7 +250,7 @@ sepgsql_object_access(ObjectAccessType access,
 				Assert(classId == NamespaceRelationId);
 				Assert(ns_arg->result);
 				ns_arg->result
-					= sepgsql_schema_search(objectId,
+					= semdb_schema_search(objectId,
 											ns_arg->ereport_on_violation);
 			}
 			break;
@@ -258,7 +258,7 @@ sepgsql_object_access(ObjectAccessType access,
 		case OAT_FUNCTION_EXECUTE:
 			{
 				Assert(classId == ProcedureRelationId);
-				sepgsql_proc_execute(objectId);
+				semdb_proc_execute(objectId);
 			}
 			break;
 
@@ -269,12 +269,12 @@ sepgsql_object_access(ObjectAccessType access,
 }
 
 /*
- * sepgsql_exec_check_perms
+ * semdb_exec_check_perms
  *
  * Entrypoint of DML permissions
  */
 static bool
-sepgsql_exec_check_perms(List *rangeTabls, bool abort)
+semdb_exec_check_perms(List *rangeTabls, bool abort)
 {
 	/*
 	 * If security provider is stacking and one of them replied 'false' at
@@ -284,27 +284,27 @@ sepgsql_exec_check_perms(List *rangeTabls, bool abort)
 		!(*next_exec_check_perms_hook) (rangeTabls, abort))
 		return false;
 
-	if (!sepgsql_dml_privileges(rangeTabls, abort))
+	if (!semdb_dml_privileges(rangeTabls, abort))
 		return false;
 
 	return true;
 }
 
 /*
- * sepgsql_utility_command
+ * semdb_utility_command
  *
  * It tries to rough-grained control on utility commands; some of them can
  * break whole of the things if nefarious user would use.
  */
 static void
-sepgsql_utility_command(Node *parsetree,
+semdb_utility_command(Node *parsetree,
 						const char *queryString,
 						ProcessUtilityContext context,
 						ParamListInfo params,
 						DestReceiver *dest,
 						char *completionTag)
 {
-	sepgsql_context_info_t saved_context_info = sepgsql_context_info;
+	semdb_context_info_t saved_context_info = semdb_context_info;
 	ListCell   *cell;
 
 	PG_TRY();
@@ -314,7 +314,7 @@ sepgsql_utility_command(Node *parsetree,
 		 * current contextual information to determine whether we should apply
 		 * permission checks here, or not.
 		 */
-		sepgsql_context_info.cmdtype = nodeTag(parsetree);
+		semdb_context_info.cmdtype = nodeTag(parsetree);
 
 		switch (nodeTag(parsetree))
 		{
@@ -330,7 +330,7 @@ sepgsql_utility_command(Node *parsetree,
 
 					if (strcmp(defel->defname, "template") == 0)
 					{
-						sepgsql_context_info.createdb_dtemplate
+						semdb_context_info.createdb_dtemplate
 							= strVal(defel->arg);
 						break;
 					}
@@ -343,7 +343,7 @@ sepgsql_utility_command(Node *parsetree,
 				 * We reject LOAD command across the board on enforcing mode,
 				 * because a binary module can arbitrarily override hooks.
 				 */
-				if (sepgsql_getenforce())
+				if (semdb_getenforce())
 				{
 					ereport(ERROR,
 							(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
@@ -372,11 +372,11 @@ sepgsql_utility_command(Node *parsetree,
 	}
 	PG_CATCH();
 	{
-		sepgsql_context_info = saved_context_info;
+		semdb_context_info = saved_context_info;
 		PG_RE_THROW();
 	}
 	PG_END_TRY();
-	sepgsql_context_info = saved_context_info;
+	semdb_context_info = saved_context_info;
 }
 
 /*
@@ -392,7 +392,7 @@ _PG_init(void)
 	if (IsUnderPostmaster)
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
-			 errmsg("sepgsql must be loaded via shared_preload_libraries")));
+			 errmsg("semdb must be loaded via shared_preload_libraries")));
 
 	/*
 	 * Check availability of SELinux on the platform. If disabled, we cannot
@@ -401,20 +401,20 @@ _PG_init(void)
 	 */
 	if (is_selinux_enabled() < 1)
 	{
-		sepgsql_set_mode(SEPGSQL_MODE_DISABLED);
+		semdb_set_mode(SEPGSQL_MODE_DISABLED);
 		return;
 	}
 
 	/*
-	 * sepgsql.permissive = (on|off)
+	 * semdb.permissive = (on|off)
 	 *
 	 * This variable controls performing mode of SE-MollyDB on user's
 	 * session.
 	 */
-	DefineCustomBoolVariable("sepgsql.permissive",
+	DefineCustomBoolVariable("semdb.permissive",
 							 "Turn on/off permissive mode in SE-MollyDB",
 							 NULL,
-							 &sepgsql_permissive,
+							 &semdb_permissive,
 							 false,
 							 PGC_SIGHUP,
 							 GUC_NOT_IN_SAMPLE,
@@ -423,16 +423,16 @@ _PG_init(void)
 							 NULL);
 
 	/*
-	 * sepgsql.debug_audit = (on|off)
+	 * semdb.debug_audit = (on|off)
 	 *
 	 * This variable allows users to turn on/off audit logs on access control
 	 * decisions, independent from auditallow/auditdeny setting in the
 	 * security policy. We intend to use this option for debugging purpose.
 	 */
-	DefineCustomBoolVariable("sepgsql.debug_audit",
+	DefineCustomBoolVariable("semdb.debug_audit",
 							 "Turn on/off debug audit messages",
 							 NULL,
-							 &sepgsql_debug_audit,
+							 &semdb_debug_audit,
 							 false,
 							 PGC_USERSET,
 							 GUC_NOT_IN_SAMPLE,
@@ -441,27 +441,27 @@ _PG_init(void)
 							 NULL);
 
 	/* Initialize userspace access vector cache */
-	sepgsql_avc_init();
+	semdb_avc_init();
 
 	/* Initialize security label of the client and related stuff */
-	sepgsql_init_client_label();
+	semdb_init_client_label();
 
 	/* Security label provider hook */
 	register_label_provider(SEPGSQL_LABEL_TAG,
-							sepgsql_object_relabel);
+							semdb_object_relabel);
 
 	/* Object access hook */
 	next_object_access_hook = object_access_hook;
-	object_access_hook = sepgsql_object_access;
+	object_access_hook = semdb_object_access;
 
 	/* DML permission check */
 	next_exec_check_perms_hook = ExecutorCheckPerms_hook;
-	ExecutorCheckPerms_hook = sepgsql_exec_check_perms;
+	ExecutorCheckPerms_hook = semdb_exec_check_perms;
 
 	/* ProcessUtility hook */
 	next_ProcessUtility_hook = ProcessUtility_hook;
-	ProcessUtility_hook = sepgsql_utility_command;
+	ProcessUtility_hook = semdb_utility_command;
 
 	/* init contextual info */
-	memset(&sepgsql_context_info, 0, sizeof(sepgsql_context_info));
+	memset(&semdb_context_info, 0, sizeof(semdb_context_info));
 }

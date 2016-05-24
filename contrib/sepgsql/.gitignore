@@ -1,7 +1,7 @@
-/sepgsql.sql
-/sepgsql-regtest.fc
-/sepgsql-regtest.if
-/sepgsql-regtest.pp
+/semdb.sql
+/semdb-regtest.fc
+/semdb-regtest.if
+/semdb-regtest.pp
 /tmp
 # Generated subdirectories
 /results/

@@ -13,13 +13,13 @@ my $node = get_new_node('main');
 $node->init;
 $node->start;
 
-$node->command_fails([ 'createlang', 'plpgsql' ],
+$node->command_fails([ 'createlang', 'plmdb' ],
 	'fails if language already exists');
 
-$node->safe_psql('mollydb', 'DROP EXTENSION plpgsql');
+$node->safe_psql('mollydb', 'DROP EXTENSION plmdb');
 $node->issues_sql_like(
-	[ 'createlang', 'plpgsql' ],
-	qr/statement: CREATE EXTENSION "plpgsql"/,
+	[ 'createlang', 'plmdb' ],
+	qr/statement: CREATE EXTENSION "plmdb"/,
 	'SQL CREATE EXTENSION run');
 
-$node->command_like([ 'createlang', '--list' ], qr/plpgsql/, 'list output');
+$node->command_like([ 'createlang', '--list' ], qr/plmdb/, 'list output');

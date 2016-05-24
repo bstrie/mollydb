@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------------
  *
- * contrib/sepgsql/selinux.c
+ * contrib/semdb/selinux.c
  *
  * Interactions between userspace and selinux in kernelspace,
  * using libselinux api.
@@ -13,7 +13,7 @@
 
 #include "lib/stringinfo.h"
 
-#include "sepgsql.h"
+#include "semdb.h"
 
 /*
  * selinux_catalog
@@ -597,57 +597,57 @@ static struct
 };
 
 /*
- * sepgsql_mode
+ * semdb_mode
  *
  * SEPGSQL_MODE_DISABLED: Disabled on runtime
  * SEPGSQL_MODE_DEFAULT: Same as system settings
  * SEPGSQL_MODE_PERMISSIVE: Always permissive mode
  * SEPGSQL_MODE_INTERNAL: Same as permissive, except for no audit logs
  */
-static int	sepgsql_mode = SEPGSQL_MODE_INTERNAL;
+static int	semdb_mode = SEPGSQL_MODE_INTERNAL;
 
 /*
- * sepgsql_is_enabled
+ * semdb_is_enabled
  */
 bool
-sepgsql_is_enabled(void)
+semdb_is_enabled(void)
 {
-	return (sepgsql_mode != SEPGSQL_MODE_DISABLED ? true : false);
+	return (semdb_mode != SEPGSQL_MODE_DISABLED ? true : false);
 }
 
 /*
- * sepgsql_get_mode
+ * semdb_get_mode
  */
 int
-sepgsql_get_mode(void)
+semdb_get_mode(void)
 {
-	return sepgsql_mode;
+	return semdb_mode;
 }
 
 /*
- * sepgsql_set_mode
+ * semdb_set_mode
  */
 int
-sepgsql_set_mode(int new_mode)
+semdb_set_mode(int new_mode)
 {
-	int			old_mode = sepgsql_mode;
+	int			old_mode = semdb_mode;
 
-	sepgsql_mode = new_mode;
+	semdb_mode = new_mode;
 
 	return old_mode;
 }
 
 /*
- * sepgsql_getenforce
+ * semdb_getenforce
  *
  * It returns whether the current working mode tries to enforce access
- * control decision, or not. It shall be enforced when sepgsql_mode is
+ * control decision, or not. It shall be enforced when semdb_mode is
  * SEPGSQL_MODE_DEFAULT and system is running in enforcing mode.
  */
 bool
-sepgsql_getenforce(void)
+semdb_getenforce(void)
 {
-	if (sepgsql_mode == SEPGSQL_MODE_DEFAULT &&
+	if (semdb_mode == SEPGSQL_MODE_DEFAULT &&
 		selinux_status_getenforce() > 0)
 		return true;
 
@@ -655,12 +655,12 @@ sepgsql_getenforce(void)
 }
 
 /*
- * sepgsql_audit_log
+ * semdb_audit_log
  *
  * It generates a security audit record. In the default, it writes out
  * audit records into standard PG's logfile. It also allows to set up
  * external audit log receiver, such as auditd in Linux, using the
- * sepgsql_audit_hook.
+ * semdb_audit_hook.
  *
  * SELinux can control what should be audited and should not using
  * "auditdeny" and "auditallow" rules in the security policy. In the
@@ -674,7 +674,7 @@ sepgsql_getenforce(void)
  * defines several security functionalities for audit features.
  */
 void
-sepgsql_audit_log(bool denied,
+semdb_audit_log(bool denied,
 				  const char *scontext,
 				  const char *tcontext,
 				  uint16 tclass,
@@ -716,7 +716,7 @@ sepgsql_audit_log(bool denied,
 }
 
 /*
- * sepgsql_compute_avd
+ * semdb_compute_avd
  *
  * It actually asks SELinux what permissions are allowed on a pair of
  * the security contexts and object class. It also returns what permissions
@@ -729,7 +729,7 @@ sepgsql_audit_log(bool denied,
  * to suggest a set of allowed actions in this object class.
  */
 void
-sepgsql_compute_avd(const char *scontext,
+semdb_compute_avd(const char *scontext,
 					const char *tcontext,
 					uint16 tclass,
 					struct av_decision * avd)
@@ -813,14 +813,14 @@ sepgsql_compute_avd(const char *scontext,
 }
 
 /*
- * sepgsql_compute_create
+ * semdb_compute_create
  *
  * It returns a default security context to be assigned on a new database
  * object. SELinux compute it based on a combination of client, upper object
  * which owns the new object and object class.
  *
  * For example, when a client (staff_u:staff_r:staff_t:s0) tries to create
- * a new table within a schema (system_u:object_r:sepgsql_schema_t:s0),
+ * a new table within a schema (system_u:object_r:semdb_schema_t:s0),
  * SELinux looks-up its security policy. If it has a special rule on the
  * combination of these security contexts and object class (db_table),
  * it returns the security context suggested by the special rule.
@@ -834,7 +834,7 @@ sepgsql_compute_avd(const char *scontext,
  * tclass: class code (SEPG_CLASS_*) of the new object in creation
  */
 char *
-sepgsql_compute_create(const char *scontext,
+semdb_compute_create(const char *scontext,
 					   const char *tcontext,
 					   uint16 tclass,
 					   const char *objname)
@@ -885,7 +885,7 @@ sepgsql_compute_create(const char *scontext,
 }
 
 /*
- * sepgsql_check_perms
+ * semdb_check_perms
  *
  * It makes access control decision without userspace caching mechanism.
  * If SELinux denied the required accesses on the pair of security labels,
@@ -899,7 +899,7 @@ sepgsql_compute_create(const char *scontext,
  * abort_on_violation: true, if error shall be raised on access violation
  */
 bool
-sepgsql_check_perms(const char *scontext,
+semdb_check_perms(const char *scontext,
 					const char *tcontext,
 					uint16 tclass,
 					uint32 required,
@@ -911,18 +911,18 @@ sepgsql_check_perms(const char *scontext,
 	uint32		audited;
 	bool		result = true;
 
-	sepgsql_compute_avd(scontext, tcontext, tclass, &avd);
+	semdb_compute_avd(scontext, tcontext, tclass, &avd);
 
 	denied = required & ~avd.allowed;
 
-	if (sepgsql_get_debug_audit())
+	if (semdb_get_debug_audit())
 		audited = (denied ? denied : required);
 	else
 		audited = (denied ? (denied & avd.auditdeny)
 				   : (required & avd.auditallow));
 
 	if (denied &&
-		sepgsql_getenforce() > 0 &&
+		semdb_getenforce() > 0 &&
 		(avd.flags & SELINUX_AVD_FLAGS_PERMISSIVE) == 0)
 		result = false;
 
@@ -930,9 +930,9 @@ sepgsql_check_perms(const char *scontext,
 	 * It records a security audit for the request, if needed. But, when
 	 * SE-PgSQL performs 'internal' mode, it needs to keep silent.
 	 */
-	if (audited && sepgsql_mode != SEPGSQL_MODE_INTERNAL)
+	if (audited && semdb_mode != SEPGSQL_MODE_INTERNAL)
 	{
-		sepgsql_audit_log(denied,
+		semdb_audit_log(denied,
 						  scontext,
 						  tcontext,
 						  tclass,

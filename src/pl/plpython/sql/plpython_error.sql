@@ -219,13 +219,13 @@ CREATE OR REPLACE FUNCTION sql_error() RETURNS void AS $$
 begin
   select 1/0;
 end
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE OR REPLACE FUNCTION python_from_sql_error() RETURNS void AS $$
 begin
   select python_traceback();
 end
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 CREATE OR REPLACE FUNCTION sql_from_python_error() RETURNS void AS $$
 plpy.execute("select sql_error()")
@@ -273,7 +273,7 @@ begin
     end;
     return 'not reached';
 end;
-$$ language plpgsql;
+$$ language plmdb;
 
 SELECT catch_python_unique_violation();
 
@@ -311,7 +311,7 @@ BEGIN
 EXCEPTION WHEN division_by_zero THEN
 	-- NOOP
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;
 
 /* setting a custom sqlstate should be handled
  */
@@ -327,4 +327,4 @@ BEGIN
 EXCEPTION WHEN SQLSTATE 'SILLY' THEN
 	-- NOOP
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plmdb;

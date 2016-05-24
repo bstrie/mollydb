@@ -1387,7 +1387,7 @@ BeginCopy(bool is_from,
 		 *
 		 * Because the parser and planner tend to scribble on their input, we
 		 * make a preliminary copy of the source querytree.  This prevents
-		 * problems in the case that the COPY is in a portal or plpgsql
+		 * problems in the case that the COPY is in a portal or plmdb
 		 * function and is executed repeatedly.  (See also the same hack in
 		 * DECLARE CURSOR and PREPARE.)  XXX FIXME someday.
 		 */

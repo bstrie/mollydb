@@ -1902,10 +1902,10 @@ CheckPAMAuth(Port *port, char *user, char *password)
 
 	/* Optionally, one can set the service name in pg_hba.conf */
 	if (port->hba->pamservice && port->hba->pamservice[0] != '\0')
-		retval = pam_start(port->hba->pamservice, "pgsql@",
+		retval = pam_start(port->hba->pamservice, "mdb@",
 						   &pam_passw_conv, &pamh);
 	else
-		retval = pam_start(PGSQL_PAM_SERVICE, "pgsql@",
+		retval = pam_start(PGSQL_PAM_SERVICE, "mdb@",
 						   &pam_passw_conv, &pamh);
 
 	if (retval != PAM_SUCCESS)
