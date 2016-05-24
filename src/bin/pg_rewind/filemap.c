@@ -91,9 +91,9 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 	 * This has the effect that all temporary files in the destination will be
 	 * removed.
 	 */
-	if (strstr(path, "/" PG_TEMP_FILE_PREFIX) != NULL)
+	if (strstr(path, "/" MDB_TEMP_FILE_PREFIX) != NULL)
 		return;
-	if (strstr(path, "/" PG_TEMP_FILES_DIR "/") != NULL)
+	if (strstr(path, "/" MDB_TEMP_FILES_DIR "/") != NULL)
 		return;
 
 	/*
@@ -167,10 +167,10 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 				 * non-data file that we have no special processing for. Copy
 				 * it in toto.
 				 *
-				 * An exception: PG_VERSIONs should be identical, but avoid
+				 * An exception: MDB_VERSIONs should be identical, but avoid
 				 * overwriting it for paranoia.
 				 */
-				if (mdb_str_endswith(path, "PG_VERSION"))
+				if (mdb_str_endswith(path, "MDB_VERSION"))
 				{
 					action = FILE_ACTION_NONE;
 					oldsize = statbuf.st_size;
@@ -531,7 +531,7 @@ print_filemap(void)
 		if (entry->action != FILE_ACTION_NONE ||
 			entry->pagemap.bitmapsize > 0)
 		{
-			mdb_log(PG_DEBUG,
+			mdb_log(MDB_DEBUG,
 			/*------
 			   translator: first %s is a file path, second is a keyword such as COPY */
 				   "%s (%s)\n", entry->path,
@@ -570,7 +570,7 @@ isRelDataFile(const char *path)
 	 * base/<db oid>/
 	 *		regular relations, default tablespace
 	 *
-	 * mdb_tblspc/<tblspc oid>/PG_9.4_201403261/
+	 * mdb_tblspc/<tblspc oid>/MDB_9.4_201403261/
 	 *		within a non-default tablespace (the name of the directory
 	 *		depends on version)
 	 *
@@ -604,7 +604,7 @@ isRelDataFile(const char *path)
 		}
 		else
 		{
-			nmatch = sscanf(path, "mdb_tblspc/%u/PG_%20s/%u/%u.%u",
+			nmatch = sscanf(path, "mdb_tblspc/%u/MDB_%20s/%u/%u.%u",
 						  &rnode.spcNode, buf, &rnode.dbNode, &rnode.relNode,
 							&segNo);
 			if (nmatch == 4 || nmatch == 5)

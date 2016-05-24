@@ -1502,7 +1502,7 @@ SearchCatCacheList(CatCache *cache,
 	 * existing cache entry if possible, else build a new one.
 	 *
 	 * We have to bump the member refcounts temporarily to ensure they won't
-	 * get dropped from the cache while loading other members. We use a PG_TRY
+	 * get dropped from the cache while loading other members. We use a MDB_TRY
 	 * block to ensure we can undo those refcounts if we get an error before
 	 * we finish constructing the CatCList.
 	 */
@@ -1510,7 +1510,7 @@ SearchCatCacheList(CatCache *cache,
 
 	ctlist = NIL;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		Relation	relation;
 		SysScanDesc scandesc;
@@ -1600,13 +1600,13 @@ SearchCatCacheList(CatCache *cache,
 		/*
 		 * We are now past the last thing that could trigger an elog before we
 		 * have finished building the CatCList and remembering it in the
-		 * resource owner.  So it's OK to fall out of the PG_TRY, and indeed
+		 * resource owner.  So it's OK to fall out of the MDB_TRY, and indeed
 		 * we'd better do so before we start marking the members as belonging
 		 * to the list.
 		 */
 
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		foreach(ctlist_item, ctlist)
 		{
@@ -1623,9 +1623,9 @@ SearchCatCacheList(CatCache *cache,
 				CatCacheRemoveCTup(cache, ct);
 		}
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	cl->cl_magic = CL_MAGIC;
 	cl->my_cache = cache;

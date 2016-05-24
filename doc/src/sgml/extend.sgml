@@ -935,8 +935,8 @@ relocatable = true
 EXTENSION = pair
 DATA = pair--1.0.sql
 
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 </programlisting>
 
@@ -993,8 +993,8 @@ EXTENSION = isbn_issn
 DATA = isbn_issn--1.0.sql
 DOCS = README.isbn_issn
 
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 </programlisting>
     The last three lines should always be the same.  Earlier in the
@@ -1154,7 +1154,7 @@ include $(PGXS)
      </varlistentry>
 
      <varlistentry>
-      <term><varname>PG_CPPFLAGS</varname></term>
+      <term><varname>MDB_CPPFLAGS</varname></term>
       <listitem>
        <para>
         will be added to <varname>CPPFLAGS</varname>
@@ -1163,7 +1163,7 @@ include $(PGXS)
      </varlistentry>
 
      <varlistentry>
-      <term><varname>PG_LIBS</varname></term>
+      <term><varname>MDB_LIBS</varname></term>
       <listitem>
        <para>
         will be added to <varname>PROGRAM</varname> link line
@@ -1181,7 +1181,7 @@ include $(PGXS)
      </varlistentry>
 
      <varlistentry>
-      <term><varname>PG_CONFIG</varname></term>
+      <term><varname>MDB_CONFIG</varname></term>
       <listitem>
        <para>
         path to <application>mdb_config</> program for the
@@ -1203,7 +1203,7 @@ include $(PGXS)
     <productname>MollyDB</productname> installation that
     corresponds to the first <command>mdb_config</command> program
     found in your <varname>PATH</>.  You can use a different installation by
-    setting <varname>PG_CONFIG</varname> to point to its
+    setting <varname>MDB_CONFIG</varname> to point to its
     <command>mdb_config</command> program, either within the makefile
     or on the <literal>make</literal> command line.
    </para>

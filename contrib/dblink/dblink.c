@@ -61,7 +61,7 @@
 
 #include "dblink.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 typedef struct remoteConn
 {
@@ -183,7 +183,7 @@ typedef struct remoteConnHashEnt
 
 #define DBLINK_GET_CONN \
 	do { \
-			char *conname_or_str = text_to_cstring(PG_GETARG_TEXT_PP(0)); \
+			char *conname_or_str = text_to_cstring(MDB_GETARG_TEXT_PP(0)); \
 			rconn = getConnectionByName(conname_or_str); \
 			if (rconn) \
 			{ \
@@ -217,7 +217,7 @@ typedef struct remoteConnHashEnt
 
 #define DBLINK_GET_NAMED_CONN \
 	do { \
-			conname = text_to_cstring(PG_GETARG_TEXT_PP(0)); \
+			conname = text_to_cstring(MDB_GETARG_TEXT_PP(0)); \
 			rconn = getConnectionByName(conname); \
 			if (rconn) \
 				conn = rconn->conn; \
@@ -239,9 +239,9 @@ typedef struct remoteConnHashEnt
 /*
  * Create a persistent connection to another database
  */
-PG_FUNCTION_INFO_V1(dblink_connect);
+MDB_FUNCTION_INFO_V1(dblink_connect);
 Datum
-dblink_connect(PG_FUNCTION_ARGS)
+dblink_connect(MDB_FUNCTION_ARGS)
 {
 	char	   *conname_or_str = NULL;
 	char	   *connstr = NULL;
@@ -252,13 +252,13 @@ dblink_connect(PG_FUNCTION_ARGS)
 
 	DBLINK_INIT;
 
-	if (PG_NARGS() == 2)
+	if (MDB_NARGS() == 2)
 	{
-		conname_or_str = text_to_cstring(PG_GETARG_TEXT_PP(1));
-		connname = text_to_cstring(PG_GETARG_TEXT_PP(0));
+		conname_or_str = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+		connname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	}
-	else if (PG_NARGS() == 1)
-		conname_or_str = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	else if (MDB_NARGS() == 1)
+		conname_or_str = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 
 	if (connname)
 		rconn = (remoteConn *) MemoryContextAlloc(TopMemoryContext,
@@ -301,15 +301,15 @@ dblink_connect(PG_FUNCTION_ARGS)
 	else
 		pconn->conn = conn;
 
-	PG_RETURN_TEXT_P(cstring_to_text("OK"));
+	MDB_RETURN_TEXT_P(cstring_to_text("OK"));
 }
 
 /*
  * Clear a persistent connection to another database
  */
-PG_FUNCTION_INFO_V1(dblink_disconnect);
+MDB_FUNCTION_INFO_V1(dblink_disconnect);
 Datum
-dblink_disconnect(PG_FUNCTION_ARGS)
+dblink_disconnect(MDB_FUNCTION_ARGS)
 {
 	char	   *conname = NULL;
 	remoteConn *rconn = NULL;
@@ -317,9 +317,9 @@ dblink_disconnect(PG_FUNCTION_ARGS)
 
 	DBLINK_INIT;
 
-	if (PG_NARGS() == 1)
+	if (MDB_NARGS() == 1)
 	{
-		conname = text_to_cstring(PG_GETARG_TEXT_PP(0));
+		conname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 		rconn = getConnectionByName(conname);
 		if (rconn)
 			conn = rconn->conn;
@@ -339,15 +339,15 @@ dblink_disconnect(PG_FUNCTION_ARGS)
 	else
 		pconn->conn = NULL;
 
-	PG_RETURN_TEXT_P(cstring_to_text("OK"));
+	MDB_RETURN_TEXT_P(cstring_to_text("OK"));
 }
 
 /*
  * opens a cursor using a persistent connection
  */
-PG_FUNCTION_INFO_V1(dblink_open);
+MDB_FUNCTION_INFO_V1(dblink_open);
 Datum
-dblink_open(PG_FUNCTION_ARGS)
+dblink_open(MDB_FUNCTION_ARGS)
 {
 	char	   *msg;
 	PGresult   *res = NULL;
@@ -362,38 +362,38 @@ dblink_open(PG_FUNCTION_ARGS)
 	DBLINK_INIT;
 	initStringInfo(&buf);
 
-	if (PG_NARGS() == 2)
+	if (MDB_NARGS() == 2)
 	{
 		/* text,text */
-		curname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-		sql = text_to_cstring(PG_GETARG_TEXT_PP(1));
+		curname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+		sql = text_to_cstring(MDB_GETARG_TEXT_PP(1));
 		rconn = pconn;
 	}
-	else if (PG_NARGS() == 3)
+	else if (MDB_NARGS() == 3)
 	{
 		/* might be text,text,text or text,text,bool */
 		if (get_fn_expr_argtype(fcinfo->flinfo, 2) == BOOLOID)
 		{
-			curname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-			sql = text_to_cstring(PG_GETARG_TEXT_PP(1));
-			fail = PG_GETARG_BOOL(2);
+			curname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+			sql = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+			fail = MDB_GETARG_BOOL(2);
 			rconn = pconn;
 		}
 		else
 		{
-			conname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-			curname = text_to_cstring(PG_GETARG_TEXT_PP(1));
-			sql = text_to_cstring(PG_GETARG_TEXT_PP(2));
+			conname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+			curname = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+			sql = text_to_cstring(MDB_GETARG_TEXT_PP(2));
 			rconn = getConnectionByName(conname);
 		}
 	}
-	else if (PG_NARGS() == 4)
+	else if (MDB_NARGS() == 4)
 	{
 		/* text,text,text,bool */
-		conname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-		curname = text_to_cstring(PG_GETARG_TEXT_PP(1));
-		sql = text_to_cstring(PG_GETARG_TEXT_PP(2));
-		fail = PG_GETARG_BOOL(3);
+		conname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+		curname = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+		sql = text_to_cstring(MDB_GETARG_TEXT_PP(2));
+		fail = MDB_GETARG_BOOL(3);
 		rconn = getConnectionByName(conname);
 	}
 
@@ -428,19 +428,19 @@ dblink_open(PG_FUNCTION_ARGS)
 	if (!res || PQresultStatus(res) != PGRES_COMMAND_OK)
 	{
 		dblink_res_error(conname, res, "could not open cursor", fail);
-		PG_RETURN_TEXT_P(cstring_to_text("ERROR"));
+		MDB_RETURN_TEXT_P(cstring_to_text("ERROR"));
 	}
 
 	PQclear(res);
-	PG_RETURN_TEXT_P(cstring_to_text("OK"));
+	MDB_RETURN_TEXT_P(cstring_to_text("OK"));
 }
 
 /*
  * closes a cursor
  */
-PG_FUNCTION_INFO_V1(dblink_close);
+MDB_FUNCTION_INFO_V1(dblink_close);
 Datum
-dblink_close(PG_FUNCTION_ARGS)
+dblink_close(MDB_FUNCTION_ARGS)
 {
 	PGconn	   *conn = NULL;
 	PGresult   *res = NULL;
@@ -454,34 +454,34 @@ dblink_close(PG_FUNCTION_ARGS)
 	DBLINK_INIT;
 	initStringInfo(&buf);
 
-	if (PG_NARGS() == 1)
+	if (MDB_NARGS() == 1)
 	{
 		/* text */
-		curname = text_to_cstring(PG_GETARG_TEXT_PP(0));
+		curname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 		rconn = pconn;
 	}
-	else if (PG_NARGS() == 2)
+	else if (MDB_NARGS() == 2)
 	{
 		/* might be text,text or text,bool */
 		if (get_fn_expr_argtype(fcinfo->flinfo, 1) == BOOLOID)
 		{
-			curname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-			fail = PG_GETARG_BOOL(1);
+			curname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+			fail = MDB_GETARG_BOOL(1);
 			rconn = pconn;
 		}
 		else
 		{
-			conname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-			curname = text_to_cstring(PG_GETARG_TEXT_PP(1));
+			conname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+			curname = text_to_cstring(MDB_GETARG_TEXT_PP(1));
 			rconn = getConnectionByName(conname);
 		}
 	}
-	if (PG_NARGS() == 3)
+	if (MDB_NARGS() == 3)
 	{
 		/* text,text,bool */
-		conname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-		curname = text_to_cstring(PG_GETARG_TEXT_PP(1));
-		fail = PG_GETARG_BOOL(2);
+		conname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+		curname = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+		fail = MDB_GETARG_BOOL(2);
 		rconn = getConnectionByName(conname);
 	}
 
@@ -497,7 +497,7 @@ dblink_close(PG_FUNCTION_ARGS)
 	if (!res || PQresultStatus(res) != PGRES_COMMAND_OK)
 	{
 		dblink_res_error(conname, res, "could not close cursor", fail);
-		PG_RETURN_TEXT_P(cstring_to_text("ERROR"));
+		MDB_RETURN_TEXT_P(cstring_to_text("ERROR"));
 	}
 
 	PQclear(res);
@@ -519,15 +519,15 @@ dblink_close(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text("OK"));
+	MDB_RETURN_TEXT_P(cstring_to_text("OK"));
 }
 
 /*
  * Fetch results from an open cursor
  */
-PG_FUNCTION_INFO_V1(dblink_fetch);
+MDB_FUNCTION_INFO_V1(dblink_fetch);
 Datum
-dblink_fetch(PG_FUNCTION_ARGS)
+dblink_fetch(MDB_FUNCTION_ARGS)
 {
 	PGresult   *res = NULL;
 	char	   *conname = NULL;
@@ -542,44 +542,44 @@ dblink_fetch(PG_FUNCTION_ARGS)
 
 	DBLINK_INIT;
 
-	if (PG_NARGS() == 4)
+	if (MDB_NARGS() == 4)
 	{
 		/* text,text,int,bool */
-		conname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-		curname = text_to_cstring(PG_GETARG_TEXT_PP(1));
-		howmany = PG_GETARG_INT32(2);
-		fail = PG_GETARG_BOOL(3);
+		conname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+		curname = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+		howmany = MDB_GETARG_INT32(2);
+		fail = MDB_GETARG_BOOL(3);
 
 		rconn = getConnectionByName(conname);
 		if (rconn)
 			conn = rconn->conn;
 	}
-	else if (PG_NARGS() == 3)
+	else if (MDB_NARGS() == 3)
 	{
 		/* text,text,int or text,int,bool */
 		if (get_fn_expr_argtype(fcinfo->flinfo, 2) == BOOLOID)
 		{
-			curname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-			howmany = PG_GETARG_INT32(1);
-			fail = PG_GETARG_BOOL(2);
+			curname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+			howmany = MDB_GETARG_INT32(1);
+			fail = MDB_GETARG_BOOL(2);
 			conn = pconn->conn;
 		}
 		else
 		{
-			conname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-			curname = text_to_cstring(PG_GETARG_TEXT_PP(1));
-			howmany = PG_GETARG_INT32(2);
+			conname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+			curname = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+			howmany = MDB_GETARG_INT32(2);
 
 			rconn = getConnectionByName(conname);
 			if (rconn)
 				conn = rconn->conn;
 		}
 	}
-	else if (PG_NARGS() == 2)
+	else if (MDB_NARGS() == 2)
 	{
 		/* text,int */
-		curname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-		howmany = PG_GETARG_INT32(1);
+		curname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+		howmany = MDB_GETARG_INT32(1);
 		conn = pconn->conn;
 	}
 
@@ -618,16 +618,16 @@ dblink_fetch(PG_FUNCTION_ARGS)
 /*
  * Note: this is the new preferred version of dblink
  */
-PG_FUNCTION_INFO_V1(dblink_record);
+MDB_FUNCTION_INFO_V1(dblink_record);
 Datum
-dblink_record(PG_FUNCTION_ARGS)
+dblink_record(MDB_FUNCTION_ARGS)
 {
 	return dblink_record_internal(fcinfo, false);
 }
 
-PG_FUNCTION_INFO_V1(dblink_send_query);
+MDB_FUNCTION_INFO_V1(dblink_send_query);
 Datum
-dblink_send_query(PG_FUNCTION_ARGS)
+dblink_send_query(MDB_FUNCTION_ARGS)
 {
 	char	   *conname = NULL;
 	PGconn	   *conn = NULL;
@@ -635,10 +635,10 @@ dblink_send_query(PG_FUNCTION_ARGS)
 	remoteConn *rconn = NULL;
 	int			retval;
 
-	if (PG_NARGS() == 2)
+	if (MDB_NARGS() == 2)
 	{
 		DBLINK_GET_NAMED_CONN;
-		sql = text_to_cstring(PG_GETARG_TEXT_PP(1));
+		sql = text_to_cstring(MDB_GETARG_TEXT_PP(1));
 	}
 	else
 		/* shouldn't happen */
@@ -649,12 +649,12 @@ dblink_send_query(PG_FUNCTION_ARGS)
 	if (retval != 1)
 		elog(NOTICE, "could not send query: %s", PQerrorMessage(conn));
 
-	PG_RETURN_INT32(retval);
+	MDB_RETURN_INT32(retval);
 }
 
-PG_FUNCTION_INFO_V1(dblink_get_result);
+MDB_FUNCTION_INFO_V1(dblink_get_result);
 Datum
-dblink_get_result(PG_FUNCTION_ARGS)
+dblink_get_result(MDB_FUNCTION_ARGS)
 {
 	return dblink_record_internal(fcinfo, true);
 }
@@ -669,7 +669,7 @@ dblink_record_internal(FunctionCallInfo fcinfo, bool is_async)
 
 	DBLINK_INIT;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		char	   *msg;
 		char	   *connstr = NULL;
@@ -680,33 +680,33 @@ dblink_record_internal(FunctionCallInfo fcinfo, bool is_async)
 
 		if (!is_async)
 		{
-			if (PG_NARGS() == 3)
+			if (MDB_NARGS() == 3)
 			{
 				/* text,text,bool */
 				DBLINK_GET_CONN;
-				sql = text_to_cstring(PG_GETARG_TEXT_PP(1));
-				fail = PG_GETARG_BOOL(2);
+				sql = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+				fail = MDB_GETARG_BOOL(2);
 			}
-			else if (PG_NARGS() == 2)
+			else if (MDB_NARGS() == 2)
 			{
 				/* text,text or text,bool */
 				if (get_fn_expr_argtype(fcinfo->flinfo, 1) == BOOLOID)
 				{
 					conn = pconn->conn;
-					sql = text_to_cstring(PG_GETARG_TEXT_PP(0));
-					fail = PG_GETARG_BOOL(1);
+					sql = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+					fail = MDB_GETARG_BOOL(1);
 				}
 				else
 				{
 					DBLINK_GET_CONN;
-					sql = text_to_cstring(PG_GETARG_TEXT_PP(1));
+					sql = text_to_cstring(MDB_GETARG_TEXT_PP(1));
 				}
 			}
-			else if (PG_NARGS() == 1)
+			else if (MDB_NARGS() == 1)
 			{
 				/* text */
 				conn = pconn->conn;
-				sql = text_to_cstring(PG_GETARG_TEXT_PP(0));
+				sql = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 			}
 			else
 				/* shouldn't happen */
@@ -715,13 +715,13 @@ dblink_record_internal(FunctionCallInfo fcinfo, bool is_async)
 		else	/* is_async */
 		{
 			/* get async result */
-			if (PG_NARGS() == 2)
+			if (MDB_NARGS() == 2)
 			{
 				/* text,bool */
 				DBLINK_GET_NAMED_CONN;
-				fail = PG_GETARG_BOOL(1);
+				fail = MDB_GETARG_BOOL(1);
 			}
-			else if (PG_NARGS() == 1)
+			else if (MDB_NARGS() == 1)
 			{
 				/* text */
 				DBLINK_GET_NAMED_CONN;
@@ -761,14 +761,14 @@ dblink_record_internal(FunctionCallInfo fcinfo, bool is_async)
 			}
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* if needed, close the connection to the database */
 		if (freeconn)
 			PQfinish(conn);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/* if needed, close the connection to the database */
 	if (freeconn)
@@ -819,7 +819,7 @@ materializeResult(FunctionCallInfo fcinfo, PGconn *conn, PGresult *res)
 	/* prepTuplestoreResult must have been called previously */
 	Assert(rsinfo->returnMode == SFRM_Materialize);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		TupleDesc	tupdesc;
 		bool		is_sql_cmd;
@@ -940,13 +940,13 @@ materializeResult(FunctionCallInfo fcinfo, PGconn *conn, PGresult *res)
 
 		PQclear(res);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* be sure to release the libpq result */
 		PQclear(res);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 /*
@@ -975,7 +975,7 @@ materializeQueryResult(FunctionCallInfo fcinfo,
 	memset((void *) &sinfo, 0, sizeof(sinfo));
 	sinfo.fcinfo = fcinfo;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/* Create short-lived memory context for data conversions */
 		sinfo.tmpcontext = AllocSetContextCreate(CurrentMemoryContext,
@@ -1059,7 +1059,7 @@ materializeQueryResult(FunctionCallInfo fcinfo,
 		PQclear(sinfo.cur_res);
 		sinfo.cur_res = NULL;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* be sure to release any libpq result we collected */
 		PQclear(res);
@@ -1068,9 +1068,9 @@ materializeQueryResult(FunctionCallInfo fcinfo,
 		/* and clear out any pending data in libpq */
 		while ((res = PQgetResult(conn)) != NULL)
 			PQclear(res);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 /*
@@ -1255,9 +1255,9 @@ storeRow(volatile storeInfo *sinfo, PGresult *res, bool first)
  * Returns an array of all connection names.
  * Takes no params
  */
-PG_FUNCTION_INFO_V1(dblink_get_connections);
+MDB_FUNCTION_INFO_V1(dblink_get_connections);
 Datum
-dblink_get_connections(PG_FUNCTION_ARGS)
+dblink_get_connections(MDB_FUNCTION_ARGS)
 {
 	HASH_SEQ_STATUS status;
 	remoteConnHashEnt *hentry;
@@ -1276,10 +1276,10 @@ dblink_get_connections(PG_FUNCTION_ARGS)
 	}
 
 	if (astate)
-		PG_RETURN_ARRAYTYPE_P(makeArrayResult(astate,
+		MDB_RETURN_ARRAYTYPE_P(makeArrayResult(astate,
 											  CurrentMemoryContext));
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
@@ -1290,9 +1290,9 @@ dblink_get_connections(PG_FUNCTION_ARGS)
  *	text connection_name - name of the connection to check
  *
  */
-PG_FUNCTION_INFO_V1(dblink_is_busy);
+MDB_FUNCTION_INFO_V1(dblink_is_busy);
 Datum
-dblink_is_busy(PG_FUNCTION_ARGS)
+dblink_is_busy(MDB_FUNCTION_ARGS)
 {
 	char	   *conname = NULL;
 	PGconn	   *conn = NULL;
@@ -1302,7 +1302,7 @@ dblink_is_busy(PG_FUNCTION_ARGS)
 	DBLINK_GET_NAMED_CONN;
 
 	PQconsumeInput(conn);
-	PG_RETURN_INT32(PQisBusy(conn));
+	MDB_RETURN_INT32(PQisBusy(conn));
 }
 
 /*
@@ -1316,9 +1316,9 @@ dblink_is_busy(PG_FUNCTION_ARGS)
  *	text connection_name - name of the connection to check
  *
  */
-PG_FUNCTION_INFO_V1(dblink_cancel_query);
+MDB_FUNCTION_INFO_V1(dblink_cancel_query);
 Datum
-dblink_cancel_query(PG_FUNCTION_ARGS)
+dblink_cancel_query(MDB_FUNCTION_ARGS)
 {
 	int			res = 0;
 	char	   *conname = NULL;
@@ -1335,9 +1335,9 @@ dblink_cancel_query(PG_FUNCTION_ARGS)
 	PQfreeCancel(cancel);
 
 	if (res == 1)
-		PG_RETURN_TEXT_P(cstring_to_text("OK"));
+		MDB_RETURN_TEXT_P(cstring_to_text("OK"));
 	else
-		PG_RETURN_TEXT_P(cstring_to_text(errbuf));
+		MDB_RETURN_TEXT_P(cstring_to_text(errbuf));
 }
 
 
@@ -1351,9 +1351,9 @@ dblink_cancel_query(PG_FUNCTION_ARGS)
  *	text connection_name - name of the connection to check
  *
  */
-PG_FUNCTION_INFO_V1(dblink_error_message);
+MDB_FUNCTION_INFO_V1(dblink_error_message);
 Datum
-dblink_error_message(PG_FUNCTION_ARGS)
+dblink_error_message(MDB_FUNCTION_ARGS)
 {
 	char	   *msg;
 	char	   *conname = NULL;
@@ -1365,17 +1365,17 @@ dblink_error_message(PG_FUNCTION_ARGS)
 
 	msg = PQerrorMessage(conn);
 	if (msg == NULL || msg[0] == '\0')
-		PG_RETURN_TEXT_P(cstring_to_text("OK"));
+		MDB_RETURN_TEXT_P(cstring_to_text("OK"));
 	else
-		PG_RETURN_TEXT_P(cstring_to_text(msg));
+		MDB_RETURN_TEXT_P(cstring_to_text(msg));
 }
 
 /*
  * Execute an SQL non-SELECT command
  */
-PG_FUNCTION_INFO_V1(dblink_exec);
+MDB_FUNCTION_INFO_V1(dblink_exec);
 Datum
-dblink_exec(PG_FUNCTION_ARGS)
+dblink_exec(MDB_FUNCTION_ARGS)
 {
 	text	   *volatile sql_cmd_status = NULL;
 	PGconn	   *volatile conn = NULL;
@@ -1383,7 +1383,7 @@ dblink_exec(PG_FUNCTION_ARGS)
 
 	DBLINK_INIT;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		char	   *msg;
 		PGresult   *res = NULL;
@@ -1393,33 +1393,33 @@ dblink_exec(PG_FUNCTION_ARGS)
 		remoteConn *rconn = NULL;
 		bool		fail = true;	/* default to backward compatible behavior */
 
-		if (PG_NARGS() == 3)
+		if (MDB_NARGS() == 3)
 		{
 			/* must be text,text,bool */
 			DBLINK_GET_CONN;
-			sql = text_to_cstring(PG_GETARG_TEXT_PP(1));
-			fail = PG_GETARG_BOOL(2);
+			sql = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+			fail = MDB_GETARG_BOOL(2);
 		}
-		else if (PG_NARGS() == 2)
+		else if (MDB_NARGS() == 2)
 		{
 			/* might be text,text or text,bool */
 			if (get_fn_expr_argtype(fcinfo->flinfo, 1) == BOOLOID)
 			{
 				conn = pconn->conn;
-				sql = text_to_cstring(PG_GETARG_TEXT_PP(0));
-				fail = PG_GETARG_BOOL(1);
+				sql = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+				fail = MDB_GETARG_BOOL(1);
 			}
 			else
 			{
 				DBLINK_GET_CONN;
-				sql = text_to_cstring(PG_GETARG_TEXT_PP(1));
+				sql = text_to_cstring(MDB_GETARG_TEXT_PP(1));
 			}
 		}
-		else if (PG_NARGS() == 1)
+		else if (MDB_NARGS() == 1)
 		{
 			/* must be single text argument */
 			conn = pconn->conn;
-			sql = text_to_cstring(PG_GETARG_TEXT_PP(0));
+			sql = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 		}
 		else
 			/* shouldn't happen */
@@ -1458,20 +1458,20 @@ dblink_exec(PG_FUNCTION_ARGS)
 				   errmsg("statement returning results not allowed")));
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* if needed, close the connection to the database */
 		if (freeconn)
 			PQfinish(conn);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/* if needed, close the connection to the database */
 	if (freeconn)
 		PQfinish(conn);
 
-	PG_RETURN_TEXT_P(sql_cmd_status);
+	MDB_RETURN_TEXT_P(sql_cmd_status);
 }
 
 
@@ -1481,9 +1481,9 @@ dblink_exec(PG_FUNCTION_ARGS)
  * Return list of primary key fields for the supplied relation,
  * or NULL if none exists.
  */
-PG_FUNCTION_INFO_V1(dblink_get_pkey);
+MDB_FUNCTION_INFO_V1(dblink_get_pkey);
 Datum
-dblink_get_pkey(PG_FUNCTION_ARGS)
+dblink_get_pkey(MDB_FUNCTION_ARGS)
 {
 	int16		numatts;
 	char	  **results;
@@ -1508,7 +1508,7 @@ dblink_get_pkey(PG_FUNCTION_ARGS)
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		/* open target relation */
-		rel = get_rel_from_relname(PG_GETARG_TEXT_P(0), AccessShareLock, ACL_SELECT);
+		rel = get_rel_from_relname(MDB_GETARG_TEXT_P(0), AccessShareLock, ACL_SELECT);
 
 		/* get the array of attnums */
 		results = get_pkey_attnames(rel, &numatts);
@@ -1605,15 +1605,15 @@ dblink_get_pkey(PG_FUNCTION_ARGS)
  * to build the string for execution remotely. These are substituted
  * for their counterparts in src_pkattvals_arry
  */
-PG_FUNCTION_INFO_V1(dblink_build_sql_insert);
+MDB_FUNCTION_INFO_V1(dblink_build_sql_insert);
 Datum
-dblink_build_sql_insert(PG_FUNCTION_ARGS)
+dblink_build_sql_insert(MDB_FUNCTION_ARGS)
 {
-	text	   *relname_text = PG_GETARG_TEXT_P(0);
-	int2vector *pkattnums_arg = (int2vector *) PG_GETARG_POINTER(1);
-	int32		pknumatts_arg = PG_GETARG_INT32(2);
-	ArrayType  *src_pkattvals_arry = PG_GETARG_ARRAYTYPE_P(3);
-	ArrayType  *tgt_pkattvals_arry = PG_GETARG_ARRAYTYPE_P(4);
+	text	   *relname_text = MDB_GETARG_TEXT_P(0);
+	int2vector *pkattnums_arg = (int2vector *) MDB_GETARG_POINTER(1);
+	int32		pknumatts_arg = MDB_GETARG_INT32(2);
+	ArrayType  *src_pkattvals_arry = MDB_GETARG_ARRAYTYPE_P(3);
+	ArrayType  *tgt_pkattvals_arry = MDB_GETARG_ARRAYTYPE_P(4);
 	Relation	rel;
 	int		   *pkattnums;
 	int			pknumatts;
@@ -1677,7 +1677,7 @@ dblink_build_sql_insert(PG_FUNCTION_ARGS)
 	/*
 	 * And send it
 	 */
-	PG_RETURN_TEXT_P(cstring_to_text(sql));
+	MDB_RETURN_TEXT_P(cstring_to_text(sql));
 }
 
 
@@ -1696,14 +1696,14 @@ dblink_build_sql_insert(PG_FUNCTION_ARGS)
  * <tgt_pkattvals_arry> - text array of key values which will be used
  * to build the string for execution remotely.
  */
-PG_FUNCTION_INFO_V1(dblink_build_sql_delete);
+MDB_FUNCTION_INFO_V1(dblink_build_sql_delete);
 Datum
-dblink_build_sql_delete(PG_FUNCTION_ARGS)
+dblink_build_sql_delete(MDB_FUNCTION_ARGS)
 {
-	text	   *relname_text = PG_GETARG_TEXT_P(0);
-	int2vector *pkattnums_arg = (int2vector *) PG_GETARG_POINTER(1);
-	int32		pknumatts_arg = PG_GETARG_INT32(2);
-	ArrayType  *tgt_pkattvals_arry = PG_GETARG_ARRAYTYPE_P(3);
+	text	   *relname_text = MDB_GETARG_TEXT_P(0);
+	int2vector *pkattnums_arg = (int2vector *) MDB_GETARG_POINTER(1);
+	int32		pknumatts_arg = MDB_GETARG_INT32(2);
+	ArrayType  *tgt_pkattvals_arry = MDB_GETARG_ARRAYTYPE_P(3);
 	Relation	rel;
 	int		   *pkattnums;
 	int			pknumatts;
@@ -1750,7 +1750,7 @@ dblink_build_sql_delete(PG_FUNCTION_ARGS)
 	/*
 	 * And send it
 	 */
-	PG_RETURN_TEXT_P(cstring_to_text(sql));
+	MDB_RETURN_TEXT_P(cstring_to_text(sql));
 }
 
 
@@ -1773,15 +1773,15 @@ dblink_build_sql_delete(PG_FUNCTION_ARGS)
  * to build the string for execution remotely. These are substituted
  * for their counterparts in src_pkattvals_arry
  */
-PG_FUNCTION_INFO_V1(dblink_build_sql_update);
+MDB_FUNCTION_INFO_V1(dblink_build_sql_update);
 Datum
-dblink_build_sql_update(PG_FUNCTION_ARGS)
+dblink_build_sql_update(MDB_FUNCTION_ARGS)
 {
-	text	   *relname_text = PG_GETARG_TEXT_P(0);
-	int2vector *pkattnums_arg = (int2vector *) PG_GETARG_POINTER(1);
-	int32		pknumatts_arg = PG_GETARG_INT32(2);
-	ArrayType  *src_pkattvals_arry = PG_GETARG_ARRAYTYPE_P(3);
-	ArrayType  *tgt_pkattvals_arry = PG_GETARG_ARRAYTYPE_P(4);
+	text	   *relname_text = MDB_GETARG_TEXT_P(0);
+	int2vector *pkattnums_arg = (int2vector *) MDB_GETARG_POINTER(1);
+	int32		pknumatts_arg = MDB_GETARG_INT32(2);
+	ArrayType  *src_pkattvals_arry = MDB_GETARG_ARRAYTYPE_P(3);
+	ArrayType  *tgt_pkattvals_arry = MDB_GETARG_ARRAYTYPE_P(4);
 	Relation	rel;
 	int		   *pkattnums;
 	int			pknumatts;
@@ -1845,7 +1845,7 @@ dblink_build_sql_update(PG_FUNCTION_ARGS)
 	/*
 	 * And send it
 	 */
-	PG_RETURN_TEXT_P(cstring_to_text(sql));
+	MDB_RETURN_TEXT_P(cstring_to_text(sql));
 }
 
 /*
@@ -1854,12 +1854,12 @@ dblink_build_sql_update(PG_FUNCTION_ARGS)
  * to allow its use in (among other things)
  * rewrite rules
  */
-PG_FUNCTION_INFO_V1(dblink_current_query);
+MDB_FUNCTION_INFO_V1(dblink_current_query);
 Datum
-dblink_current_query(PG_FUNCTION_ARGS)
+dblink_current_query(MDB_FUNCTION_ARGS)
 {
 	/* This is now just an alias for the built-in function current_query() */
-	PG_RETURN_DATUM(current_query(fcinfo));
+	MDB_RETURN_DATUM(current_query(fcinfo));
 }
 
 /*
@@ -1872,9 +1872,9 @@ dblink_current_query(PG_FUNCTION_ARGS)
  */
 #define DBLINK_NOTIFY_COLS		3
 
-PG_FUNCTION_INFO_V1(dblink_get_notify);
+MDB_FUNCTION_INFO_V1(dblink_get_notify);
 Datum
-dblink_get_notify(PG_FUNCTION_ARGS)
+dblink_get_notify(MDB_FUNCTION_ARGS)
 {
 	char	   *conname = NULL;
 	PGconn	   *conn = NULL;
@@ -1889,7 +1889,7 @@ dblink_get_notify(PG_FUNCTION_ARGS)
 	prepTuplestoreResult(fcinfo);
 
 	DBLINK_INIT;
-	if (PG_NARGS() == 1)
+	if (MDB_NARGS() == 1)
 		DBLINK_GET_NAMED_CONN;
 	else
 		conn = pconn->conn;
@@ -1952,12 +1952,12 @@ dblink_get_notify(PG_FUNCTION_ARGS)
  * We just check the names of options here, so semantic errors in options,
  * such as invalid numeric format, will be detected at the attempt to connect.
  */
-PG_FUNCTION_INFO_V1(dblink_fdw_validator);
+MDB_FUNCTION_INFO_V1(dblink_fdw_validator);
 Datum
-dblink_fdw_validator(PG_FUNCTION_ARGS)
+dblink_fdw_validator(MDB_FUNCTION_ARGS)
 {
-	List	   *options_list = untransformRelOptions(PG_GETARG_DATUM(0));
-	Oid			context = PG_GETARG_OID(1);
+	List	   *options_list = untransformRelOptions(MDB_GETARG_DATUM(0));
+	Oid			context = MDB_GETARG_OID(1);
 	ListCell   *cell;
 
 	static const PQconninfoOption *options = NULL;
@@ -2010,7 +2010,7 @@ dblink_fdw_validator(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
@@ -2667,11 +2667,11 @@ static void
 dblink_res_error(const char *conname, PGresult *res, const char *dblink_context_msg, bool fail)
 {
 	int			level;
-	char	   *mdb_diag_sqlstate = PQresultErrorField(res, PG_DIAG_SQLSTATE);
-	char	   *mdb_diag_message_primary = PQresultErrorField(res, PG_DIAG_MESSAGE_PRIMARY);
-	char	   *mdb_diag_message_detail = PQresultErrorField(res, PG_DIAG_MESSAGE_DETAIL);
-	char	   *mdb_diag_message_hint = PQresultErrorField(res, PG_DIAG_MESSAGE_HINT);
-	char	   *mdb_diag_context = PQresultErrorField(res, PG_DIAG_CONTEXT);
+	char	   *mdb_diag_sqlstate = PQresultErrorField(res, MDB_DIAG_SQLSTATE);
+	char	   *mdb_diag_message_primary = PQresultErrorField(res, MDB_DIAG_MESSAGE_PRIMARY);
+	char	   *mdb_diag_message_detail = PQresultErrorField(res, MDB_DIAG_MESSAGE_DETAIL);
+	char	   *mdb_diag_message_hint = PQresultErrorField(res, MDB_DIAG_MESSAGE_HINT);
+	char	   *mdb_diag_context = PQresultErrorField(res, MDB_DIAG_CONTEXT);
 	int			sqlstate;
 	char	   *message_primary;
 	char	   *message_detail;

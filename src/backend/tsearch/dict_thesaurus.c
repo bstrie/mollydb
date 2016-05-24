@@ -601,9 +601,9 @@ compileTheSubstitute(DictThesaurus *d)
 }
 
 Datum
-thesaurus_init(PG_FUNCTION_ARGS)
+thesaurus_init(MDB_FUNCTION_ARGS)
 {
-	List	   *dictoptions = (List *) PG_GETARG_POINTER(0);
+	List	   *dictoptions = (List *) MDB_GETARG_POINTER(0);
 	DictThesaurus *d;
 	char	   *subdictname = NULL;
 	bool		fileloaded = false;
@@ -656,7 +656,7 @@ thesaurus_init(PG_FUNCTION_ARGS)
 	compileTheLexeme(d);
 	compileTheSubstitute(d);
 
-	PG_RETURN_POINTER(d);
+	MDB_RETURN_POINTER(d);
 }
 
 static LexemeInfo *
@@ -791,21 +791,21 @@ checkMatch(DictThesaurus *d, LexemeInfo *info, uint16 curpos, bool *moreres)
 }
 
 Datum
-thesaurus_lexize(PG_FUNCTION_ARGS)
+thesaurus_lexize(MDB_FUNCTION_ARGS)
 {
-	DictThesaurus *d = (DictThesaurus *) PG_GETARG_POINTER(0);
-	DictSubState *dstate = (DictSubState *) PG_GETARG_POINTER(3);
+	DictThesaurus *d = (DictThesaurus *) MDB_GETARG_POINTER(0);
+	DictSubState *dstate = (DictSubState *) MDB_GETARG_POINTER(3);
 	TSLexeme   *res = NULL;
 	LexemeInfo *stored,
 			   *info = NULL;
 	uint16		curpos = 0;
 	bool		moreres = false;
 
-	if (PG_NARGS() != 4 || dstate == NULL)
+	if (MDB_NARGS() != 4 || dstate == NULL)
 		elog(ERROR, "forbidden call of thesaurus or nested call");
 
 	if (dstate->isend)
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 	stored = (LexemeInfo *) dstate->private_state;
 
 	if (stored)
@@ -816,8 +816,8 @@ thesaurus_lexize(PG_FUNCTION_ARGS)
 
 	res = (TSLexeme *) DatumGetPointer(FunctionCall4(&(d->subdict->lexize),
 									   PointerGetDatum(d->subdict->dictData),
-													 PG_GETARG_DATUM(1),
-													 PG_GETARG_DATUM(2),
+													 MDB_GETARG_DATUM(1),
+													 MDB_GETARG_DATUM(2),
 													 PointerGetDatum(NULL)));
 
 	if (res && res->lexeme)
@@ -870,16 +870,16 @@ thesaurus_lexize(PG_FUNCTION_ARGS)
 	if (!info)
 	{
 		dstate->getnext = false;
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 	}
 
 	if ((res = checkMatch(d, info, curpos, &moreres)) != NULL)
 	{
 		dstate->getnext = moreres;
-		PG_RETURN_POINTER(res);
+		MDB_RETURN_POINTER(res);
 	}
 
 	dstate->getnext = true;
 
-	PG_RETURN_POINTER(NULL);
+	MDB_RETURN_POINTER(NULL);
 }

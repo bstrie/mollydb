@@ -26,10 +26,10 @@
 
 
 #line 1 "sqlda.h"
-#ifndef ECPG_SQLDA_H
-#define ECPG_SQLDA_H
+#ifndef ECMDB_SQLDA_H
+#define ECMDB_SQLDA_H
 
-#ifdef _ECPG_INFORMIX_H
+#ifdef _ECMDB_INFORMIX_H
 
 #include "sqlda-compat.h"
 typedef struct sqlvar_compat sqlvar_t;
@@ -43,14 +43,14 @@ typedef struct sqlda_struct sqlda_t;
 
 #endif
 
-#endif   /* ECPG_SQLDA_H */
+#endif   /* ECMDB_SQLDA_H */
 
 #line 7 "sqlda.pgc"
 
 
 #line 1 "sqltypes.h"
-#ifndef ECPG_SQLTYPES_H
-#define ECPG_SQLTYPES_H
+#ifndef ECMDB_SQLTYPES_H
+#define ECMDB_SQLTYPES_H
 
 #include <limits.h>
 
@@ -105,7 +105,7 @@ typedef struct sqlda_struct sqlda_t;
 #define SQLSERIAL8	ECPGt_long
 #endif
 
-#endif   /* ndef ECPG_SQLTYPES_H */
+#endif   /* ndef ECMDB_SQLTYPES_H */
 
 #line 8 "sqlda.pgc"
 
@@ -236,7 +236,7 @@ if (sqlca.sqlcode < 0) exit (1);}
 
 
 	strcpy(msg, "declare");
-	ECPG_informix_reset_sqlca(); /* declare mycur1 cursor for $1 */
+	ECMDB_informix_reset_sqlca(); /* declare mycur1 cursor for $1 */
 #line 98 "sqlda.pgc"
 
 
@@ -263,7 +263,7 @@ if (sqlca.sqlcode < 0) exit (1);}
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
 #line 109 "sqlda.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) break;
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) break;
 #line 109 "sqlda.pgc"
 
 if (sqlca.sqlcode < 0) exit (1);}
@@ -311,7 +311,7 @@ if (sqlca.sqlcode < 0) exit (1);}
 
 
 	strcpy(msg, "declare");
-	ECPG_informix_reset_sqlca(); /* declare mycur2 cursor for $1 */
+	ECMDB_informix_reset_sqlca(); /* declare mycur2 cursor for $1 */
 #line 135 "sqlda.pgc"
 
 
@@ -338,7 +338,7 @@ if (sqlca.sqlcode < 0) exit (1);}
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
 #line 146 "sqlda.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) break;
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) break;
 #line 146 "sqlda.pgc"
 
 if (sqlca.sqlcode < 0) exit (1);}

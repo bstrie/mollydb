@@ -544,11 +544,11 @@ AssignTransactionId(TransactionState s)
 		log_unknown_top = true;
 
 	/*
-	 * Generate a new Xid and record it in PG_PROC and mdb_subtrans.
+	 * Generate a new Xid and record it in MDB_PROC and mdb_subtrans.
 	 *
 	 * NB: we must make the subtrans entry BEFORE the Xid appears anywhere in
-	 * shared storage other than PG_PROC; because if there's no room for it in
-	 * PG_PROC, the subtrans entry is needed to ensure that other backends see
+	 * shared storage other than MDB_PROC; because if there's no room for it in
+	 * MDB_PROC, the subtrans entry is needed to ensure that other backends see
 	 * the Xid as "running".  See GetNewTransactionId.
 	 */
 	s->transactionId = GetNewTransactionId(isSubXact);
@@ -571,18 +571,18 @@ AssignTransactionId(TransactionState s)
 	 * ResourceOwner.
 	 */
 	currentOwner = CurrentResourceOwner;
-	PG_TRY();
+	MDB_TRY();
 	{
 		CurrentResourceOwner = s->curTransactionOwner;
 		XactLockTableInsert(s->transactionId);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Ensure CurrentResourceOwner is restored on error */
 		CurrentResourceOwner = currentOwner;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	CurrentResourceOwner = currentOwner;
 
 	/*
@@ -2496,7 +2496,7 @@ AbortTransaction(void)
 	 * handler.  We do this fairly early in the sequence so that the timeout
 	 * infrastructure will be functional if needed while aborting.
 	 */
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/*
 	 * check the current transaction state
@@ -4588,7 +4588,7 @@ AbortSubTransaction(void)
 	 * handler.  We do this fairly early in the sequence so that the timeout
 	 * infrastructure will be functional if needed while aborting.
 	 */
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/*
 	 * check the current transaction state

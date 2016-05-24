@@ -18,69 +18,69 @@
 #include "lib/stringinfo.h"
 
 /* functions in json.c */
-extern Datum json_in(PG_FUNCTION_ARGS);
-extern Datum json_out(PG_FUNCTION_ARGS);
-extern Datum json_recv(PG_FUNCTION_ARGS);
-extern Datum json_send(PG_FUNCTION_ARGS);
-extern Datum array_to_json(PG_FUNCTION_ARGS);
-extern Datum array_to_json_pretty(PG_FUNCTION_ARGS);
-extern Datum row_to_json(PG_FUNCTION_ARGS);
-extern Datum row_to_json_pretty(PG_FUNCTION_ARGS);
-extern Datum to_json(PG_FUNCTION_ARGS);
+extern Datum json_in(MDB_FUNCTION_ARGS);
+extern Datum json_out(MDB_FUNCTION_ARGS);
+extern Datum json_recv(MDB_FUNCTION_ARGS);
+extern Datum json_send(MDB_FUNCTION_ARGS);
+extern Datum array_to_json(MDB_FUNCTION_ARGS);
+extern Datum array_to_json_pretty(MDB_FUNCTION_ARGS);
+extern Datum row_to_json(MDB_FUNCTION_ARGS);
+extern Datum row_to_json_pretty(MDB_FUNCTION_ARGS);
+extern Datum to_json(MDB_FUNCTION_ARGS);
 
-extern Datum json_agg_transfn(PG_FUNCTION_ARGS);
-extern Datum json_agg_finalfn(PG_FUNCTION_ARGS);
+extern Datum json_agg_transfn(MDB_FUNCTION_ARGS);
+extern Datum json_agg_finalfn(MDB_FUNCTION_ARGS);
 
-extern Datum json_object_agg_finalfn(PG_FUNCTION_ARGS);
-extern Datum json_object_agg_transfn(PG_FUNCTION_ARGS);
+extern Datum json_object_agg_finalfn(MDB_FUNCTION_ARGS);
+extern Datum json_object_agg_transfn(MDB_FUNCTION_ARGS);
 
-extern Datum json_build_object(PG_FUNCTION_ARGS);
-extern Datum json_build_object_noargs(PG_FUNCTION_ARGS);
-extern Datum json_build_array(PG_FUNCTION_ARGS);
-extern Datum json_build_array_noargs(PG_FUNCTION_ARGS);
+extern Datum json_build_object(MDB_FUNCTION_ARGS);
+extern Datum json_build_object_noargs(MDB_FUNCTION_ARGS);
+extern Datum json_build_array(MDB_FUNCTION_ARGS);
+extern Datum json_build_array_noargs(MDB_FUNCTION_ARGS);
 
-extern Datum json_object(PG_FUNCTION_ARGS);
-extern Datum json_object_two_arg(PG_FUNCTION_ARGS);
+extern Datum json_object(MDB_FUNCTION_ARGS);
+extern Datum json_object_two_arg(MDB_FUNCTION_ARGS);
 
 extern void escape_json(StringInfo buf, const char *str);
 
-extern Datum json_typeof(PG_FUNCTION_ARGS);
+extern Datum json_typeof(MDB_FUNCTION_ARGS);
 
 /* functions in jsonfuncs.c */
-extern Datum json_object_field(PG_FUNCTION_ARGS);
-extern Datum json_object_field_text(PG_FUNCTION_ARGS);
-extern Datum json_array_element(PG_FUNCTION_ARGS);
-extern Datum json_array_element_text(PG_FUNCTION_ARGS);
-extern Datum json_extract_path(PG_FUNCTION_ARGS);
-extern Datum json_extract_path_text(PG_FUNCTION_ARGS);
-extern Datum json_object_keys(PG_FUNCTION_ARGS);
-extern Datum json_array_length(PG_FUNCTION_ARGS);
-extern Datum json_each(PG_FUNCTION_ARGS);
-extern Datum json_each_text(PG_FUNCTION_ARGS);
-extern Datum json_array_elements(PG_FUNCTION_ARGS);
-extern Datum json_array_elements_text(PG_FUNCTION_ARGS);
-extern Datum json_populate_record(PG_FUNCTION_ARGS);
-extern Datum json_populate_recordset(PG_FUNCTION_ARGS);
-extern Datum json_to_record(PG_FUNCTION_ARGS);
-extern Datum json_to_recordset(PG_FUNCTION_ARGS);
-extern Datum json_strip_nulls(PG_FUNCTION_ARGS);
+extern Datum json_object_field(MDB_FUNCTION_ARGS);
+extern Datum json_object_field_text(MDB_FUNCTION_ARGS);
+extern Datum json_array_element(MDB_FUNCTION_ARGS);
+extern Datum json_array_element_text(MDB_FUNCTION_ARGS);
+extern Datum json_extract_path(MDB_FUNCTION_ARGS);
+extern Datum json_extract_path_text(MDB_FUNCTION_ARGS);
+extern Datum json_object_keys(MDB_FUNCTION_ARGS);
+extern Datum json_array_length(MDB_FUNCTION_ARGS);
+extern Datum json_each(MDB_FUNCTION_ARGS);
+extern Datum json_each_text(MDB_FUNCTION_ARGS);
+extern Datum json_array_elements(MDB_FUNCTION_ARGS);
+extern Datum json_array_elements_text(MDB_FUNCTION_ARGS);
+extern Datum json_populate_record(MDB_FUNCTION_ARGS);
+extern Datum json_populate_recordset(MDB_FUNCTION_ARGS);
+extern Datum json_to_record(MDB_FUNCTION_ARGS);
+extern Datum json_to_recordset(MDB_FUNCTION_ARGS);
+extern Datum json_strip_nulls(MDB_FUNCTION_ARGS);
 
-extern Datum jsonb_object_field(PG_FUNCTION_ARGS);
-extern Datum jsonb_object_field_text(PG_FUNCTION_ARGS);
-extern Datum jsonb_array_element(PG_FUNCTION_ARGS);
-extern Datum jsonb_array_element_text(PG_FUNCTION_ARGS);
-extern Datum jsonb_extract_path(PG_FUNCTION_ARGS);
-extern Datum jsonb_extract_path_text(PG_FUNCTION_ARGS);
-extern Datum jsonb_object_keys(PG_FUNCTION_ARGS);
-extern Datum jsonb_array_length(PG_FUNCTION_ARGS);
-extern Datum jsonb_each(PG_FUNCTION_ARGS);
-extern Datum jsonb_each_text(PG_FUNCTION_ARGS);
-extern Datum jsonb_array_elements_text(PG_FUNCTION_ARGS);
-extern Datum jsonb_array_elements(PG_FUNCTION_ARGS);
-extern Datum jsonb_populate_record(PG_FUNCTION_ARGS);
-extern Datum jsonb_populate_recordset(PG_FUNCTION_ARGS);
-extern Datum jsonb_to_record(PG_FUNCTION_ARGS);
-extern Datum jsonb_to_recordset(PG_FUNCTION_ARGS);
-extern Datum jsonb_strip_nulls(PG_FUNCTION_ARGS);
+extern Datum jsonb_object_field(MDB_FUNCTION_ARGS);
+extern Datum jsonb_object_field_text(MDB_FUNCTION_ARGS);
+extern Datum jsonb_array_element(MDB_FUNCTION_ARGS);
+extern Datum jsonb_array_element_text(MDB_FUNCTION_ARGS);
+extern Datum jsonb_extract_path(MDB_FUNCTION_ARGS);
+extern Datum jsonb_extract_path_text(MDB_FUNCTION_ARGS);
+extern Datum jsonb_object_keys(MDB_FUNCTION_ARGS);
+extern Datum jsonb_array_length(MDB_FUNCTION_ARGS);
+extern Datum jsonb_each(MDB_FUNCTION_ARGS);
+extern Datum jsonb_each_text(MDB_FUNCTION_ARGS);
+extern Datum jsonb_array_elements_text(MDB_FUNCTION_ARGS);
+extern Datum jsonb_array_elements(MDB_FUNCTION_ARGS);
+extern Datum jsonb_populate_record(MDB_FUNCTION_ARGS);
+extern Datum jsonb_populate_recordset(MDB_FUNCTION_ARGS);
+extern Datum jsonb_to_record(MDB_FUNCTION_ARGS);
+extern Datum jsonb_to_recordset(MDB_FUNCTION_ARGS);
+extern Datum jsonb_strip_nulls(MDB_FUNCTION_ARGS);
 
 #endif   /* JSON_H */

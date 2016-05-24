@@ -39,9 +39,9 @@ static void compute_range_stats(VacAttrStats *stats,
  * range_typanalyze -- typanalyze function for range columns
  */
 Datum
-range_typanalyze(PG_FUNCTION_ARGS)
+range_typanalyze(MDB_FUNCTION_ARGS)
 {
-	VacAttrStats *stats = (VacAttrStats *) PG_GETARG_POINTER(0);
+	VacAttrStats *stats = (VacAttrStats *) MDB_GETARG_POINTER(0);
 	TypeCacheEntry *typcache;
 	Form_mdb_attribute attr = stats->attr;
 
@@ -56,7 +56,7 @@ range_typanalyze(PG_FUNCTION_ARGS)
 	/* same as in std_typanalyze */
 	stats->minrows = 300 * attr->attstattarget;
 
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 /*

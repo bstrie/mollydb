@@ -55,7 +55,7 @@ libpqConnect(const char *connstr)
 		mdb_fatal("could not connect to server: %s",
 				 PQerrorMessage(conn));
 
-	mdb_log(PG_PROGRESS, "connected to server\n");
+	mdb_log(MDB_PROGRESS, "connected to server\n");
 
 	/*
 	 * Check that the server is not in hot standby mode. There is no
@@ -225,7 +225,7 @@ receiveFileChunks(const char *sql)
 	if (PQsendQueryParams(conn, sql, 0, NULL, NULL, NULL, NULL, 1) != 1)
 		mdb_fatal("could not send query: %s", PQerrorMessage(conn));
 
-	mdb_log(PG_DEBUG, "getting file chunks\n");
+	mdb_log(MDB_DEBUG, "getting file chunks\n");
 
 	if (PQsetSingleRowMode(conn) != 1)
 		mdb_fatal("could not set libpq connection to single row mode\n");
@@ -299,7 +299,7 @@ receiveFileChunks(const char *sql)
 		 */
 		if (PQgetisnull(res, 0, 2))
 		{
-			mdb_log(PG_DEBUG,
+			mdb_log(MDB_DEBUG,
 			  "received null value for chunk for file \"%s\", file has been deleted\n",
 				   filename);
 			mdb_free(filename);
@@ -307,7 +307,7 @@ receiveFileChunks(const char *sql)
 			continue;
 		}
 
-		mdb_log(PG_DEBUG, "received chunk for file \"%s\", offset %d, size %d\n",
+		mdb_log(MDB_DEBUG, "received chunk for file \"%s\", offset %d, size %d\n",
 			   filename, chunkoff, chunksize);
 
 		open_target_file(filename, false);
@@ -352,7 +352,7 @@ libpqGetFile(const char *filename, size_t *filesize)
 
 	PQclear(res);
 
-	mdb_log(PG_DEBUG, "fetched file \"%s\", length %d\n", filename, len);
+	mdb_log(MDB_DEBUG, "fetched file \"%s\", length %d\n", filename, len);
 
 	if (filesize)
 		*filesize = len;

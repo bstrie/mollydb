@@ -29,7 +29,7 @@
 
 /* define our text domain for translations */
 #undef TEXTDOMAIN
-#define TEXTDOMAIN PG_TEXTDOMAIN("plmdb")
+#define TEXTDOMAIN MDB_TEXTDOMAIN("plmdb")
 
 #undef _
 #define _(x) dgettext(TEXTDOMAIN, x)
@@ -837,9 +837,9 @@ typedef struct PLpgSQL_execstate
  * To instrument PL/pgSQL, a plugin library must access the rendezvous
  * variable "PLpgSQL_plugin" and set it to point to a PLpgSQL_plugin struct.
  * Typically the struct could just be static data in the plugin library.
- * We expect that a plugin would do this at library load time (_PG_init()).
+ * We expect that a plugin would do this at library load time (_MDB_init()).
  * It must also be careful to set the rendezvous variable back to NULL
- * if it is unloaded (_PG_fini()).
+ * if it is unloaded (_MDB_fini()).
  *
  * This structure is basically a collection of function pointers --- at
  * various interesting points in pl_exec.c, we call these functions
@@ -983,7 +983,7 @@ extern void plmdb_HashTableInit(void);
  * Functions in pl_handler.c
  * ----------
  */
-extern void _PG_init(void);
+extern void _MDB_init(void);
 
 /* ----------
  * Functions in pl_exec.c

@@ -15,7 +15,7 @@
 #include "utils/timestamp.h"
 #include "utils/varbit.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 typedef struct QueryInfo
 {
@@ -31,16 +31,16 @@ typedef struct QueryInfo
 static Datum
 gin_btree_extract_value(FunctionCallInfo fcinfo, bool is_varlena)
 {
-	Datum		datum = PG_GETARG_DATUM(0);
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
+	Datum		datum = MDB_GETARG_DATUM(0);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
 	Datum	   *entries = (Datum *) palloc(sizeof(Datum));
 
 	if (is_varlena)
-		datum = PointerGetDatum(PG_DETOAST_DATUM(datum));
+		datum = PointerGetDatum(MDB_DETOAST_DATUM(datum));
 	entries[0] = datum;
 	*nentries = 1;
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
 /*
@@ -57,11 +57,11 @@ gin_btree_extract_query(FunctionCallInfo fcinfo,
 						Datum (*leftmostvalue) (void),
 						Datum (*typecmp) (FunctionCallInfo))
 {
-	Datum		datum = PG_GETARG_DATUM(0);
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
-	StrategyNumber strategy = PG_GETARG_UINT16(2);
-	bool	  **partialmatch = (bool **) PG_GETARG_POINTER(3);
-	Pointer   **extra_data = (Pointer **) PG_GETARG_POINTER(4);
+	Datum		datum = MDB_GETARG_DATUM(0);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
+	StrategyNumber strategy = MDB_GETARG_UINT16(2);
+	bool	  **partialmatch = (bool **) MDB_GETARG_POINTER(3);
+	Pointer   **extra_data = (Pointer **) MDB_GETARG_POINTER(4);
 	Datum	   *entries = (Datum *) palloc(sizeof(Datum));
 	QueryInfo  *data = (QueryInfo *) palloc(sizeof(QueryInfo));
 	bool	   *ptr_partialmatch;
@@ -70,7 +70,7 @@ gin_btree_extract_query(FunctionCallInfo fcinfo,
 	ptr_partialmatch = *partialmatch = (bool *) palloc(sizeof(bool));
 	*ptr_partialmatch = false;
 	if (is_varlena)
-		datum = PointerGetDatum(PG_DETOAST_DATUM(datum));
+		datum = PointerGetDatum(MDB_DETOAST_DATUM(datum));
 	data->strategy = strategy;
 	data->datum = datum;
 	data->is_varlena = is_varlena;
@@ -95,7 +95,7 @@ gin_btree_extract_query(FunctionCallInfo fcinfo,
 			elog(ERROR, "unrecognized strategy number: %d", strategy);
 	}
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
 /*
@@ -106,15 +106,15 @@ gin_btree_extract_query(FunctionCallInfo fcinfo,
 static Datum
 gin_btree_compare_prefix(FunctionCallInfo fcinfo)
 {
-	Datum		a = PG_GETARG_DATUM(0);
-	Datum		b = PG_GETARG_DATUM(1);
-	QueryInfo  *data = (QueryInfo *) PG_GETARG_POINTER(3);
+	Datum		a = MDB_GETARG_DATUM(0);
+	Datum		b = MDB_GETARG_DATUM(1);
+	QueryInfo  *data = (QueryInfo *) MDB_GETARG_POINTER(3);
 	int32		res,
 				cmp;
 
 	cmp = DatumGetInt32(DirectFunctionCall2Coll(
 												data->typecmp,
-												PG_GET_COLLATION(),
+												MDB_GET_COLLATION(),
 								   (data->strategy == BTLessStrategyNumber ||
 								 data->strategy == BTLessEqualStrategyNumber)
 												? data->datum : a,
@@ -165,38 +165,38 @@ gin_btree_compare_prefix(FunctionCallInfo fcinfo)
 			res = 0;
 	}
 
-	PG_RETURN_INT32(res);
+	MDB_RETURN_INT32(res);
 }
 
-PG_FUNCTION_INFO_V1(gin_btree_consistent);
+MDB_FUNCTION_INFO_V1(gin_btree_consistent);
 Datum
-gin_btree_consistent(PG_FUNCTION_ARGS)
+gin_btree_consistent(MDB_FUNCTION_ARGS)
 {
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(5);
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(5);
 
 	*recheck = false;
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 /*** GIN_SUPPORT macro defines the datatype specific functions ***/
 
 #define GIN_SUPPORT(type, is_varlena, leftmostvalue, typecmp)				\
-PG_FUNCTION_INFO_V1(gin_extract_value_##type);								\
+MDB_FUNCTION_INFO_V1(gin_extract_value_##type);								\
 Datum																		\
-gin_extract_value_##type(PG_FUNCTION_ARGS)									\
+gin_extract_value_##type(MDB_FUNCTION_ARGS)									\
 {																			\
 	return gin_btree_extract_value(fcinfo, is_varlena);						\
 }	\
-PG_FUNCTION_INFO_V1(gin_extract_query_##type);								\
+MDB_FUNCTION_INFO_V1(gin_extract_query_##type);								\
 Datum																		\
-gin_extract_query_##type(PG_FUNCTION_ARGS)									\
+gin_extract_query_##type(MDB_FUNCTION_ARGS)									\
 {																			\
 	return gin_btree_extract_query(fcinfo,									\
 								   is_varlena, leftmostvalue, typecmp);		\
 }	\
-PG_FUNCTION_INFO_V1(gin_compare_prefix_##type);								\
+MDB_FUNCTION_INFO_V1(gin_compare_prefix_##type);								\
 Datum																		\
-gin_compare_prefix_##type(PG_FUNCTION_ARGS)									\
+gin_compare_prefix_##type(MDB_FUNCTION_ARGS)									\
 {																			\
 	return gin_btree_compare_prefix(fcinfo);								\
 }
@@ -388,13 +388,13 @@ GIN_SUPPORT(varbit, true, leftmostvalue_varbit, bitcmp)
 
 #define NUMERIC_IS_LEFTMOST(x)	((x) == NULL)
 
-PG_FUNCTION_INFO_V1(gin_numeric_cmp);
+MDB_FUNCTION_INFO_V1(gin_numeric_cmp);
 
 Datum
-gin_numeric_cmp(PG_FUNCTION_ARGS)
+gin_numeric_cmp(MDB_FUNCTION_ARGS)
 {
-	Numeric		a = (Numeric) PG_GETARG_POINTER(0);
-	Numeric		b = (Numeric) PG_GETARG_POINTER(1);
+	Numeric		a = (Numeric) MDB_GETARG_POINTER(0);
+	Numeric		b = (Numeric) MDB_GETARG_POINTER(1);
 	int			res = 0;
 
 	if (NUMERIC_IS_LEFTMOST(a))
@@ -412,7 +412,7 @@ gin_numeric_cmp(PG_FUNCTION_ARGS)
 												NumericGetDatum(b)));
 	}
 
-	PG_RETURN_INT32(res);
+	MDB_RETURN_INT32(res);
 }
 
 static Datum

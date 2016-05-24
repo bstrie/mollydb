@@ -715,7 +715,7 @@ create_plain_partial_paths(PlannerInfo *root, RelOptInfo *rel)
 		{
 			parallel_degree++;
 			parallel_threshold *= 3;
-			if (parallel_threshold >= PG_INT32_MAX / 3)
+			if (parallel_threshold >= MDB_INT32_MAX / 3)
 				break;
 		}
 	}

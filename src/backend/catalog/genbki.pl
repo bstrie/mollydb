@@ -88,8 +88,8 @@ open SHDESCR, '>', $shdescrfile . $tmpext
 # file's dependencies by src/backend/catalog/Makefile.
 my $BOOTSTRAP_SUPERUSERID =
   find_defined_symbol('mdb_authid.h', 'BOOTSTRAP_SUPERUSERID');
-my $PG_CATALOG_NAMESPACE =
-  find_defined_symbol('mdb_namespace.h', 'PG_CATALOG_NAMESPACE');
+my $MDB_CATALOG_NAMESPACE =
+  find_defined_symbol('mdb_namespace.h', 'MDB_CATALOG_NAMESPACE');
 
 # Read all the input header files into internal data structures
 my $catalogs = Catalog::Catalogs(@input_files);
@@ -162,7 +162,7 @@ foreach my $catname (@{ $catalogs->{names} })
 
 			# substitute constant values we acquired above
 			$row->{bki_values} =~ s/\bPGUID\b/$BOOTSTRAP_SUPERUSERID/g;
-			$row->{bki_values} =~ s/\bPGNSP\b/$PG_CATALOG_NAMESPACE/g;
+			$row->{bki_values} =~ s/\bPGNSP\b/$MDB_CATALOG_NAMESPACE/g;
 
 			# Save mdb_type info for mdb_attribute processing below
 			if ($catname eq 'mdb_type')
@@ -306,8 +306,8 @@ print SCHEMAPG <<EOM;
  *
  *-------------------------------------------------------------------------
  */
-#ifndef SCHEMAPG_H
-#define SCHEMAPG_H
+#ifndef SCHEMAMDB_H
+#define SCHEMAMDB_H
 EOM
 
 # Emit schemapg declarations
@@ -319,7 +319,7 @@ foreach my $table_name (@tables_needing_macros)
 }
 
 # Closing boilerplate for schemapg.h
-print SCHEMAPG "\n#endif /* SCHEMAPG_H */\n";
+print SCHEMAPG "\n#endif /* SCHEMAMDB_H */\n";
 
 # We're done emitting data
 close BKI;

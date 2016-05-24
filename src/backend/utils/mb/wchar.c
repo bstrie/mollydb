@@ -1727,48 +1727,48 @@ mdb_eucjp_increment(unsigned char *charptr, int length)
  *-------------------------------------------------------------------
  */
 const mdb_wchar_tbl mdb_wchar_table[] = {
-	{mdb_ascii2wchar_with_len, mdb_wchar2single_with_len, mdb_ascii_mblen, mdb_ascii_dsplen, mdb_ascii_verifier, 1}, /* PG_SQL_ASCII */
-	{mdb_eucjp2wchar_with_len, mdb_wchar2euc_with_len, mdb_eucjp_mblen, mdb_eucjp_dsplen, mdb_eucjp_verifier, 3},	/* PG_EUC_JP */
-	{mdb_euccn2wchar_with_len, mdb_wchar2euc_with_len, mdb_euccn_mblen, mdb_euccn_dsplen, mdb_euccn_verifier, 2},	/* PG_EUC_CN */
-	{mdb_euckr2wchar_with_len, mdb_wchar2euc_with_len, mdb_euckr_mblen, mdb_euckr_dsplen, mdb_euckr_verifier, 3},	/* PG_EUC_KR */
-	{mdb_euctw2wchar_with_len, mdb_wchar2euc_with_len, mdb_euctw_mblen, mdb_euctw_dsplen, mdb_euctw_verifier, 4},	/* PG_EUC_TW */
-	{mdb_eucjp2wchar_with_len, mdb_wchar2euc_with_len, mdb_eucjp_mblen, mdb_eucjp_dsplen, mdb_eucjp_verifier, 3},	/* PG_EUC_JIS_2004 */
-	{mdb_utf2wchar_with_len, mdb_wchar2utf_with_len, mdb_utf_mblen, mdb_utf_dsplen, mdb_utf8_verifier, 4},	/* PG_UTF8 */
-	{mdb_mule2wchar_with_len, mdb_wchar2mule_with_len, mdb_mule_mblen, mdb_mule_dsplen, mdb_mule_verifier, 4},		/* PG_MULE_INTERNAL */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN1 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN2 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN3 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN4 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN5 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN6 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN7 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN8 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN9 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_LATIN10 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN1256 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN1258 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN866 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN874 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_KOI8R */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN1251 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN1252 */
+	{mdb_ascii2wchar_with_len, mdb_wchar2single_with_len, mdb_ascii_mblen, mdb_ascii_dsplen, mdb_ascii_verifier, 1}, /* MDB_SQL_ASCII */
+	{mdb_eucjp2wchar_with_len, mdb_wchar2euc_with_len, mdb_eucjp_mblen, mdb_eucjp_dsplen, mdb_eucjp_verifier, 3},	/* MDB_EUC_JP */
+	{mdb_euccn2wchar_with_len, mdb_wchar2euc_with_len, mdb_euccn_mblen, mdb_euccn_dsplen, mdb_euccn_verifier, 2},	/* MDB_EUC_CN */
+	{mdb_euckr2wchar_with_len, mdb_wchar2euc_with_len, mdb_euckr_mblen, mdb_euckr_dsplen, mdb_euckr_verifier, 3},	/* MDB_EUC_KR */
+	{mdb_euctw2wchar_with_len, mdb_wchar2euc_with_len, mdb_euctw_mblen, mdb_euctw_dsplen, mdb_euctw_verifier, 4},	/* MDB_EUC_TW */
+	{mdb_eucjp2wchar_with_len, mdb_wchar2euc_with_len, mdb_eucjp_mblen, mdb_eucjp_dsplen, mdb_eucjp_verifier, 3},	/* MDB_EUC_JIS_2004 */
+	{mdb_utf2wchar_with_len, mdb_wchar2utf_with_len, mdb_utf_mblen, mdb_utf_dsplen, mdb_utf8_verifier, 4},	/* MDB_UTF8 */
+	{mdb_mule2wchar_with_len, mdb_wchar2mule_with_len, mdb_mule_mblen, mdb_mule_dsplen, mdb_mule_verifier, 4},		/* MDB_MULE_INTERNAL */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN1 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN2 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN3 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN4 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN5 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN6 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN7 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN8 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN9 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_LATIN10 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN1256 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN1258 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN866 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN874 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_KOI8R */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN1251 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN1252 */
 	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* ISO-8859-5 */
 	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* ISO-8859-6 */
 	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* ISO-8859-7 */
 	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* ISO-8859-8 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN1250 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN1253 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN1254 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN1255 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_WIN1257 */
-	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* PG_KOI8U */
-	{0, 0, mdb_sjis_mblen, mdb_sjis_dsplen, mdb_sjis_verifier, 2}, /* PG_SJIS */
-	{0, 0, mdb_big5_mblen, mdb_big5_dsplen, mdb_big5_verifier, 2}, /* PG_BIG5 */
-	{0, 0, mdb_gbk_mblen, mdb_gbk_dsplen, mdb_gbk_verifier, 2},	/* PG_GBK */
-	{0, 0, mdb_uhc_mblen, mdb_uhc_dsplen, mdb_uhc_verifier, 2},	/* PG_UHC */
-	{0, 0, mdb_gb18030_mblen, mdb_gb18030_dsplen, mdb_gb18030_verifier, 4},		/* PG_GB18030 */
-	{0, 0, mdb_johab_mblen, mdb_johab_dsplen, mdb_johab_verifier, 3},		/* PG_JOHAB */
-	{0, 0, mdb_sjis_mblen, mdb_sjis_dsplen, mdb_sjis_verifier, 2}	/* PG_SHIFT_JIS_2004 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN1250 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN1253 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN1254 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN1255 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_WIN1257 */
+	{mdb_latin12wchar_with_len, mdb_wchar2single_with_len, mdb_latin1_mblen, mdb_latin1_dsplen, mdb_latin1_verifier, 1},		/* MDB_KOI8U */
+	{0, 0, mdb_sjis_mblen, mdb_sjis_dsplen, mdb_sjis_verifier, 2}, /* MDB_SJIS */
+	{0, 0, mdb_big5_mblen, mdb_big5_dsplen, mdb_big5_verifier, 2}, /* MDB_BIG5 */
+	{0, 0, mdb_gbk_mblen, mdb_gbk_dsplen, mdb_gbk_verifier, 2},	/* MDB_GBK */
+	{0, 0, mdb_uhc_mblen, mdb_uhc_dsplen, mdb_uhc_verifier, 2},	/* MDB_UHC */
+	{0, 0, mdb_gb18030_mblen, mdb_gb18030_dsplen, mdb_gb18030_verifier, 4},		/* MDB_GB18030 */
+	{0, 0, mdb_johab_mblen, mdb_johab_dsplen, mdb_johab_verifier, 3},		/* MDB_JOHAB */
+	{0, 0, mdb_sjis_mblen, mdb_sjis_dsplen, mdb_sjis_verifier, 2}	/* MDB_SHIFT_JIS_2004 */
 };
 
 /* returns the byte length of a word for mule internal code */
@@ -1784,9 +1784,9 @@ mdb_mic_mblen(const unsigned char *mbstr)
 int
 mdb_encoding_mblen(int encoding, const char *mbstr)
 {
-	return (PG_VALID_ENCODING(encoding) ?
+	return (MDB_VALID_ENCODING(encoding) ?
 		((*mdb_wchar_table[encoding].mblen) ((const unsigned char *) mbstr)) :
-	((*mdb_wchar_table[PG_SQL_ASCII].mblen) ((const unsigned char *) mbstr)));
+	((*mdb_wchar_table[MDB_SQL_ASCII].mblen) ((const unsigned char *) mbstr)));
 }
 
 /*
@@ -1795,9 +1795,9 @@ mdb_encoding_mblen(int encoding, const char *mbstr)
 int
 mdb_encoding_dsplen(int encoding, const char *mbstr)
 {
-	return (PG_VALID_ENCODING(encoding) ?
+	return (MDB_VALID_ENCODING(encoding) ?
 	   ((*mdb_wchar_table[encoding].dsplen) ((const unsigned char *) mbstr)) :
-	((*mdb_wchar_table[PG_SQL_ASCII].dsplen) ((const unsigned char *) mbstr)));
+	((*mdb_wchar_table[MDB_SQL_ASCII].dsplen) ((const unsigned char *) mbstr)));
 }
 
 /*
@@ -1808,9 +1808,9 @@ mdb_encoding_dsplen(int encoding, const char *mbstr)
 int
 mdb_encoding_verifymb(int encoding, const char *mbstr, int len)
 {
-	return (PG_VALID_ENCODING(encoding) ?
+	return (MDB_VALID_ENCODING(encoding) ?
 			((*mdb_wchar_table[encoding].mbverify) ((const unsigned char *) mbstr, len)) :
-			((*mdb_wchar_table[PG_SQL_ASCII].mbverify) ((const unsigned char *) mbstr, len)));
+			((*mdb_wchar_table[MDB_SQL_ASCII].mbverify) ((const unsigned char *) mbstr, len)));
 }
 
 /*
@@ -1819,7 +1819,7 @@ mdb_encoding_verifymb(int encoding, const char *mbstr, int len)
 int
 mdb_encoding_max_length(int encoding)
 {
-	Assert(PG_VALID_ENCODING(encoding));
+	Assert(MDB_VALID_ENCODING(encoding));
 
 	return mdb_wchar_table[encoding].maxmblen;
 }
@@ -1847,10 +1847,10 @@ mdb_database_encoding_character_incrementer(void)
 	 */
 	switch (GetDatabaseEncoding())
 	{
-		case PG_UTF8:
+		case MDB_UTF8:
 			return mdb_utf8_increment;
 
-		case PG_EUC_JP:
+		case MDB_EUC_JP:
 			return mdb_eucjp_increment;
 
 		default:
@@ -1896,7 +1896,7 @@ mdb_verify_mbstr_len(int encoding, const char *mbstr, int len, bool noError)
 	mbverifier	mbverify;
 	int			mb_len;
 
-	Assert(PG_VALID_ENCODING(encoding));
+	Assert(MDB_VALID_ENCODING(encoding));
 
 	/*
 	 * In single-byte encodings, we need only reject nulls (\0).
@@ -1969,13 +1969,13 @@ check_encoding_conversion_args(int src_encoding,
 							   int expected_src_encoding,
 							   int expected_dest_encoding)
 {
-	if (!PG_VALID_ENCODING(src_encoding))
+	if (!MDB_VALID_ENCODING(src_encoding))
 		elog(ERROR, "invalid source encoding ID: %d", src_encoding);
 	if (src_encoding != expected_src_encoding && expected_src_encoding >= 0)
 		elog(ERROR, "expected source encoding \"%s\", but got \"%s\"",
 			 mdb_enc2name_tbl[expected_src_encoding].name,
 			 mdb_enc2name_tbl[src_encoding].name);
-	if (!PG_VALID_ENCODING(dest_encoding))
+	if (!MDB_VALID_ENCODING(dest_encoding))
 		elog(ERROR, "invalid destination encoding ID: %d", dest_encoding);
 	if (dest_encoding != expected_dest_encoding && expected_dest_encoding >= 0)
 		elog(ERROR, "expected destination encoding \"%s\", but got \"%s\"",

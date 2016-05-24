@@ -128,7 +128,7 @@ main(int argc, char *argv[])
 
 	progname = get_progname(argv[0]);
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pgscripts"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("pgscripts"));
 
 	handle_help_version_opts(argc, argv, "vacuumdb", help);
 
@@ -810,7 +810,7 @@ GetQueryResult(PGconn *conn, const char *dbname, const char *progname)
 		 */
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
-			char	   *sqlState = PQresultErrorField(result, PG_DIAG_SQLSTATE);
+			char	   *sqlState = PQresultErrorField(result, MDB_DIAG_SQLSTATE);
 
 			fprintf(stderr, _("%s: vacuuming of database \"%s\" failed: %s"),
 					progname, dbname, PQerrorMessage(conn));

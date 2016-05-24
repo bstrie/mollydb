@@ -82,7 +82,7 @@ fork_process(void)
 		 * environment variables, which can be set by the same startup script
 		 * that did the original adjustment.
 		 */
-		oomfilename = getenv("PG_OOM_ADJUST_FILE");
+		oomfilename = getenv("MDB_OOM_ADJUST_FILE");
 
 		if (oomfilename != NULL)
 		{
@@ -95,7 +95,7 @@ fork_process(void)
 			/* We ignore all errors */
 			if (fd >= 0)
 			{
-				const char *oomvalue = getenv("PG_OOM_ADJUST_VALUE");
+				const char *oomvalue = getenv("MDB_OOM_ADJUST_VALUE");
 				int			rc;
 
 				if (oomvalue == NULL)	/* supply a useful default */

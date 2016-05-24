@@ -539,7 +539,7 @@ mdb_password_sendauth(PGconn *conn, const char *password, AuthRequest areq)
 			return STATUS_ERROR;
 	}
 	/* Packet has a message type as of protocol 3.0 */
-	if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 		ret = pqPacketSend(conn, 'p', pwd_to_send, strlen(pwd_to_send) + 1);
 	else
 		ret = pqPacketSend(conn, 0, pwd_to_send, strlen(pwd_to_send) + 1);

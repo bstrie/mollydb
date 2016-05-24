@@ -366,7 +366,7 @@ SocketBackend(StringInfo inBuf)
 	{
 		case 'Q':				/* simple query */
 			doing_extended_query_message = false;
-			if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+			if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 			{
 				/* old style without length word; convert */
 				if (pq_getstring(inBuf))
@@ -394,7 +394,7 @@ SocketBackend(StringInfo inBuf)
 
 		case 'F':				/* fastpath function call */
 			doing_extended_query_message = false;
-			if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+			if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 			{
 				if (GetOldFunctionMessage(inBuf))
 				{
@@ -432,7 +432,7 @@ SocketBackend(StringInfo inBuf)
 		case 'P':				/* parse */
 			doing_extended_query_message = true;
 			/* these are only legal in protocol 3 */
-			if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+			if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 				ereport(FATAL,
 						(errcode(ERRCODE_PROTOCOL_VIOLATION),
 						 errmsg("invalid frontend message type %d", qtype)));
@@ -444,7 +444,7 @@ SocketBackend(StringInfo inBuf)
 			/* mark not-extended, so that a new error doesn't begin skip */
 			doing_extended_query_message = false;
 			/* only legal in protocol 3 */
-			if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+			if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 				ereport(FATAL,
 						(errcode(ERRCODE_PROTOCOL_VIOLATION),
 						 errmsg("invalid frontend message type %d", qtype)));
@@ -455,7 +455,7 @@ SocketBackend(StringInfo inBuf)
 		case 'f':				/* copy fail */
 			doing_extended_query_message = false;
 			/* these are only legal in protocol 3 */
-			if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+			if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 				ereport(FATAL,
 						(errcode(ERRCODE_PROTOCOL_VIOLATION),
 						 errmsg("invalid frontend message type %d", qtype)));
@@ -479,7 +479,7 @@ SocketBackend(StringInfo inBuf)
 	 * after the type code; we can read the message contents independently of
 	 * the type.
 	 */
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
 	{
 		if (pq_getmessage(inBuf, 0))
 			return EOF;			/* suitable message already logged */
@@ -2570,7 +2570,7 @@ void
 quickdie(SIGNAL_ARGS)
 {
 	sigaddset(&BlockSig, SIGQUIT);		/* prevent nested calls */
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	/*
 	 * Prevent interrupts while exiting; though we just blocked signals that
@@ -3663,7 +3663,7 @@ MollyDBMain(int argc, char *argv[],
 		sigdelset(&BlockSig, SIGQUIT);
 	}
 
-	PG_SETMASK(&BlockSig);		/* block everything except SIGQUIT */
+	MDB_SETMASK(&BlockSig);		/* block everything except SIGQUIT */
 
 	if (!IsUnderPostmaster)
 	{
@@ -3703,7 +3703,7 @@ MollyDBMain(int argc, char *argv[],
 #endif
 
 	/* We need to allow SIGINT, etc during the initial transaction */
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/*
 	 * General initialization.
@@ -3756,7 +3756,7 @@ MollyDBMain(int argc, char *argv[],
 	 * Send this backend's cancellation info to the frontend.
 	 */
 	if (whereToSendOutput == DestRemote &&
-		PG_PROTOCOL_MAJOR(FrontendProtocol) >= 2)
+		MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 2)
 	{
 		StringInfoData buf;
 
@@ -3769,7 +3769,7 @@ MollyDBMain(int argc, char *argv[],
 
 	/* Welcome banner for standalone case */
 	if (whereToSendOutput == DestDebug)
-		printf("\nMollyDB stand-alone backend %s\n", PG_VERSION);
+		printf("\nMollyDB stand-alone backend %s\n", MDB_VERSION);
 
 	/*
 	 * Create the memory context we will use in the main loop.
@@ -3796,8 +3796,8 @@ MollyDBMain(int argc, char *argv[],
 	 * current transaction and start a new one.
 	 *
 	 * You might wonder why this isn't coded as an infinite loop around a
-	 * PG_TRY construct.  The reason is that this is the bottom of the
-	 * exception stack, and so with PG_TRY there would be no exception handler
+	 * MDB_TRY construct.  The reason is that this is the bottom of the
+	 * exception stack, and so with MDB_TRY there would be no exception handler
 	 * in force at all during the CATCH part.  By leaving the outermost setjmp
 	 * always active, we have at least some chance of recovering from an error
 	 * during error recovery.  (If we get into an infinite loop thereby, it
@@ -3821,7 +3821,7 @@ MollyDBMain(int argc, char *argv[],
 		 * error recovery, such as adjusting the FE/BE protocol status.
 		 */
 
-		/* Since not using PG_TRY, must reset error stack by hand */
+		/* Since not using MDB_TRY, must reset error stack by hand */
 		error_context_stack = NULL;
 
 		/* Prevent interrupts while cleaning up */
@@ -3910,7 +3910,7 @@ MollyDBMain(int argc, char *argv[],
 	}
 
 	/* We can now handle ereport(ERROR) */
-	PG_exception_stack = &local_sigjmp_buf;
+	MDB_exception_stack = &local_sigjmp_buf;
 
 	if (!ignore_till_sync)
 		send_ready_for_query = true;	/* initially, or after error */

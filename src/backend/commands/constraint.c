@@ -35,7 +35,7 @@
  * check triggered by a SET CONSTRAINTS command.
  */
 Datum
-unique_key_recheck(PG_FUNCTION_ARGS)
+unique_key_recheck(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	const char *funcname = "unique_key_recheck";

@@ -4332,7 +4332,7 @@ ExecEvalArrayCoerceExpr(ArrayCoerceExprState *astate,
 		ArrayType  *array = DatumGetArrayTypePCopy(result);
 
 		ARR_ELEMTYPE(array) = astate->resultelemtype;
-		PG_RETURN_ARRAYTYPE_P(array);
+		MDB_RETURN_ARRAYTYPE_P(array);
 	}
 
 	/* Initialize function cache if first time through */

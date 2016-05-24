@@ -564,7 +564,7 @@ dsm_impl_sysv(dsm_op op, dsm_handle handle, Size request_size,
 	}
 
 	/* Map it. */
-	address = shmat(ident, NULL, PG_SHMAT_FLAGS);
+	address = shmat(ident, NULL, MDB_SHMAT_FLAGS);
 	if (address == (void *) -1)
 	{
 		int			save_errno;
@@ -797,7 +797,7 @@ dsm_impl_mmap(dsm_op op, dsm_handle handle, Size request_size,
 	int			fd;
 	char	   *address;
 
-	snprintf(name, 64, PG_DYNSHMEM_DIR "/" PG_DYNSHMEM_MMAP_FILE_PREFIX "%u",
+	snprintf(name, 64, MDB_DYNSHMEM_DIR "/" MDB_DYNSHMEM_MMAP_FILE_PREFIX "%u",
 			 handle);
 
 	/* Handle teardown cases. */

@@ -89,9 +89,9 @@ GetIndexAmRoutineByAmId(Oid amoid)
  * Ask appropriate access method to validate the specified opclass.
  */
 Datum
-amvalidate(PG_FUNCTION_ARGS)
+amvalidate(MDB_FUNCTION_ARGS)
 {
-	Oid			opclassoid = PG_GETARG_OID(0);
+	Oid			opclassoid = MDB_GETARG_OID(0);
 	bool		result;
 	HeapTuple	classtup;
 	Form_mdb_opclass classform;
@@ -117,5 +117,5 @@ amvalidate(PG_FUNCTION_ARGS)
 
 	pfree(amroutine);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }

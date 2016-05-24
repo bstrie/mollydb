@@ -687,7 +687,7 @@ ExplainExecuteQuery(ExecuteStmt *execstmt, IntoClause *into, ExplainState *es,
  * returns a set of (name, statement, prepare_time, param_types, from_sql).
  */
 Datum
-mdb_prepared_statement(PG_FUNCTION_ARGS)
+mdb_prepared_statement(MDB_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;

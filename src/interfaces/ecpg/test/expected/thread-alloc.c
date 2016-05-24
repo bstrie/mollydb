@@ -89,7 +89,7 @@ struct sqlca_t
 
 struct sqlca_t *ECPGget_sqlca(void);
 
-#ifndef POSTGRES_ECPG_INTERNAL
+#ifndef POSTGRES_ECMDB_INTERNAL
 #define sqlca (*ECPGget_sqlca())
 #endif
 
@@ -166,7 +166,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
 #line 51 "alloc.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) sqlprint();
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) sqlprint();
 #line 51 "alloc.pgc"
 
 if (sqlca.sqlcode < 0) sqlprint();}

@@ -503,10 +503,10 @@ LoadOutputPlugin(OutputPluginCallbacks *callbacks, char *plugin)
 	LogicalOutputPluginInit plugin_init;
 
 	plugin_init = (LogicalOutputPluginInit)
-		load_external_function(plugin, "_PG_output_plugin_init", false, NULL);
+		load_external_function(plugin, "_MDB_output_plugin_init", false, NULL);
 
 	if (plugin_init == NULL)
-		elog(ERROR, "output plugins have to declare the _PG_output_plugin_init symbol");
+		elog(ERROR, "output plugins have to declare the _MDB_output_plugin_init symbol");
 
 	/* ask the output plugin to fill the callback struct */
 	plugin_init(callbacks);

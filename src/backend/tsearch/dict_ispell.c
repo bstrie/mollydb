@@ -26,9 +26,9 @@ typedef struct
 } DictISpell;
 
 Datum
-dispell_init(PG_FUNCTION_ARGS)
+dispell_init(MDB_FUNCTION_ARGS)
 {
-	List	   *dictoptions = (List *) PG_GETARG_POINTER(0);
+	List	   *dictoptions = (List *) MDB_GETARG_POINTER(0);
 	DictISpell *d;
 	bool		affloaded = false,
 				dictloaded = false,
@@ -103,28 +103,28 @@ dispell_init(PG_FUNCTION_ARGS)
 
 	NIFinishBuild(&(d->obj));
 
-	PG_RETURN_POINTER(d);
+	MDB_RETURN_POINTER(d);
 }
 
 Datum
-dispell_lexize(PG_FUNCTION_ARGS)
+dispell_lexize(MDB_FUNCTION_ARGS)
 {
-	DictISpell *d = (DictISpell *) PG_GETARG_POINTER(0);
-	char	   *in = (char *) PG_GETARG_POINTER(1);
-	int32		len = PG_GETARG_INT32(2);
+	DictISpell *d = (DictISpell *) MDB_GETARG_POINTER(0);
+	char	   *in = (char *) MDB_GETARG_POINTER(1);
+	int32		len = MDB_GETARG_INT32(2);
 	char	   *txt;
 	TSLexeme   *res;
 	TSLexeme   *ptr,
 			   *cptr;
 
 	if (len <= 0)
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 
 	txt = lowerstr_with_len(in, len);
 	res = NINormalizeWord(&(d->obj), txt);
 
 	if (res == NULL)
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 
 	cptr = res;
 	for (ptr = cptr; ptr->lexeme; ptr++)
@@ -143,5 +143,5 @@ dispell_lexize(PG_FUNCTION_ARGS)
 	}
 	cptr->lexeme = NULL;
 
-	PG_RETURN_POINTER(res);
+	MDB_RETURN_POINTER(res);
 }

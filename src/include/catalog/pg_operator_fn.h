@@ -11,8 +11,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_OPERATOR_FN_H
-#define PG_OPERATOR_FN_H
+#ifndef MDB_OPERATOR_FN_H
+#define MDB_OPERATOR_FN_H
 
 #include "catalog/objectaddress.h"
 #include "nodes/mdb_list.h"
@@ -33,4 +33,4 @@ extern ObjectAddress makeOperatorDependencies(HeapTuple tuple, bool isUpdate);
 
 extern void OperatorUpd(Oid baseId, Oid commId, Oid negId, bool isDelete);
 
-#endif   /* PG_OPERATOR_FN_H */
+#endif   /* MDB_OPERATOR_FN_H */

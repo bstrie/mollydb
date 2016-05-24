@@ -247,12 +247,12 @@ scalararraysel_containment(PlannerInfo *root,
  * arraycontsel -- restriction selectivity for array @>, &&, <@ operators
  */
 Datum
-arraycontsel(PG_FUNCTION_ARGS)
+arraycontsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
 	VariableStatData vardata;
 	Node	   *other;
 	bool		varonleft;
@@ -265,7 +265,7 @@ arraycontsel(PG_FUNCTION_ARGS)
 	 */
 	if (!get_restriction_variable(root, args, varRelid,
 								  &vardata, &other, &varonleft))
-		PG_RETURN_FLOAT8(DEFAULT_SEL(operator));
+		MDB_RETURN_FLOAT8(DEFAULT_SEL(operator));
 
 	/*
 	 * Can't do anything useful if the something is not a constant, either.
@@ -273,7 +273,7 @@ arraycontsel(PG_FUNCTION_ARGS)
 	if (!IsA(other, Const))
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(DEFAULT_SEL(operator));
+		MDB_RETURN_FLOAT8(DEFAULT_SEL(operator));
 	}
 
 	/*
@@ -283,7 +283,7 @@ arraycontsel(PG_FUNCTION_ARGS)
 	if (((Const *) other)->constisnull)
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 	}
 
 	/*
@@ -320,19 +320,19 @@ arraycontsel(PG_FUNCTION_ARGS)
 
 	CLAMP_PROBABILITY(selec);
 
-	PG_RETURN_FLOAT8((float8) selec);
+	MDB_RETURN_FLOAT8((float8) selec);
 }
 
 /*
  * arraycontjoinsel -- join selectivity for array @>, &&, <@ operators
  */
 Datum
-arraycontjoinsel(PG_FUNCTION_ARGS)
+arraycontjoinsel(MDB_FUNCTION_ARGS)
 {
 	/* For the moment this is just a stub */
-	Oid			operator = PG_GETARG_OID(1);
+	Oid			operator = MDB_GETARG_OID(1);
 
-	PG_RETURN_FLOAT8(DEFAULT_SEL(operator));
+	MDB_RETURN_FLOAT8(DEFAULT_SEL(operator));
 }
 
 /*

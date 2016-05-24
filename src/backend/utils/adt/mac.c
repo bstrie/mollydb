@@ -27,9 +27,9 @@
  */
 
 Datum
-macaddr_in(PG_FUNCTION_ARGS)
+macaddr_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	macaddr    *result;
 	int			a,
 				b,
@@ -83,7 +83,7 @@ macaddr_in(PG_FUNCTION_ARGS)
 	result->e = e;
 	result->f = f;
 
-	PG_RETURN_MACADDR_P(result);
+	MDB_RETURN_MACADDR_P(result);
 }
 
 /*
@@ -91,9 +91,9 @@ macaddr_in(PG_FUNCTION_ARGS)
  */
 
 Datum
-macaddr_out(PG_FUNCTION_ARGS)
+macaddr_out(MDB_FUNCTION_ARGS)
 {
-	macaddr    *addr = PG_GETARG_MACADDR_P(0);
+	macaddr    *addr = MDB_GETARG_MACADDR_P(0);
 	char	   *result;
 
 	result = (char *) palloc(32);
@@ -101,7 +101,7 @@ macaddr_out(PG_FUNCTION_ARGS)
 	snprintf(result, 32, "%02x:%02x:%02x:%02x:%02x:%02x",
 			 addr->a, addr->b, addr->c, addr->d, addr->e, addr->f);
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
@@ -110,9 +110,9 @@ macaddr_out(PG_FUNCTION_ARGS)
  * The external representation is just the six bytes, MSB first.
  */
 Datum
-macaddr_recv(PG_FUNCTION_ARGS)
+macaddr_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	macaddr    *addr;
 
 	addr = (macaddr *) palloc(sizeof(macaddr));
@@ -124,16 +124,16 @@ macaddr_recv(PG_FUNCTION_ARGS)
 	addr->e = pq_getmsgbyte(buf);
 	addr->f = pq_getmsgbyte(buf);
 
-	PG_RETURN_MACADDR_P(addr);
+	MDB_RETURN_MACADDR_P(addr);
 }
 
 /*
  *		macaddr_send			- converts macaddr to binary format
  */
 Datum
-macaddr_send(PG_FUNCTION_ARGS)
+macaddr_send(MDB_FUNCTION_ARGS)
 {
-	macaddr    *addr = PG_GETARG_MACADDR_P(0);
+	macaddr    *addr = MDB_GETARG_MACADDR_P(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
@@ -143,7 +143,7 @@ macaddr_send(PG_FUNCTION_ARGS)
 	pq_sendbyte(&buf, addr->d);
 	pq_sendbyte(&buf, addr->e);
 	pq_sendbyte(&buf, addr->f);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -167,12 +167,12 @@ macaddr_cmp_internal(macaddr *a1, macaddr *a2)
 }
 
 Datum
-macaddr_cmp(PG_FUNCTION_ARGS)
+macaddr_cmp(MDB_FUNCTION_ARGS)
 {
-	macaddr    *a1 = PG_GETARG_MACADDR_P(0);
-	macaddr    *a2 = PG_GETARG_MACADDR_P(1);
+	macaddr    *a1 = MDB_GETARG_MACADDR_P(0);
+	macaddr    *a2 = MDB_GETARG_MACADDR_P(1);
 
-	PG_RETURN_INT32(macaddr_cmp_internal(a1, a2));
+	MDB_RETURN_INT32(macaddr_cmp_internal(a1, a2));
 }
 
 /*
@@ -180,66 +180,66 @@ macaddr_cmp(PG_FUNCTION_ARGS)
  */
 
 Datum
-macaddr_lt(PG_FUNCTION_ARGS)
+macaddr_lt(MDB_FUNCTION_ARGS)
 {
-	macaddr    *a1 = PG_GETARG_MACADDR_P(0);
-	macaddr    *a2 = PG_GETARG_MACADDR_P(1);
+	macaddr    *a1 = MDB_GETARG_MACADDR_P(0);
+	macaddr    *a2 = MDB_GETARG_MACADDR_P(1);
 
-	PG_RETURN_BOOL(macaddr_cmp_internal(a1, a2) < 0);
+	MDB_RETURN_BOOL(macaddr_cmp_internal(a1, a2) < 0);
 }
 
 Datum
-macaddr_le(PG_FUNCTION_ARGS)
+macaddr_le(MDB_FUNCTION_ARGS)
 {
-	macaddr    *a1 = PG_GETARG_MACADDR_P(0);
-	macaddr    *a2 = PG_GETARG_MACADDR_P(1);
+	macaddr    *a1 = MDB_GETARG_MACADDR_P(0);
+	macaddr    *a2 = MDB_GETARG_MACADDR_P(1);
 
-	PG_RETURN_BOOL(macaddr_cmp_internal(a1, a2) <= 0);
+	MDB_RETURN_BOOL(macaddr_cmp_internal(a1, a2) <= 0);
 }
 
 Datum
-macaddr_eq(PG_FUNCTION_ARGS)
+macaddr_eq(MDB_FUNCTION_ARGS)
 {
-	macaddr    *a1 = PG_GETARG_MACADDR_P(0);
-	macaddr    *a2 = PG_GETARG_MACADDR_P(1);
+	macaddr    *a1 = MDB_GETARG_MACADDR_P(0);
+	macaddr    *a2 = MDB_GETARG_MACADDR_P(1);
 
-	PG_RETURN_BOOL(macaddr_cmp_internal(a1, a2) == 0);
+	MDB_RETURN_BOOL(macaddr_cmp_internal(a1, a2) == 0);
 }
 
 Datum
-macaddr_ge(PG_FUNCTION_ARGS)
+macaddr_ge(MDB_FUNCTION_ARGS)
 {
-	macaddr    *a1 = PG_GETARG_MACADDR_P(0);
-	macaddr    *a2 = PG_GETARG_MACADDR_P(1);
+	macaddr    *a1 = MDB_GETARG_MACADDR_P(0);
+	macaddr    *a2 = MDB_GETARG_MACADDR_P(1);
 
-	PG_RETURN_BOOL(macaddr_cmp_internal(a1, a2) >= 0);
+	MDB_RETURN_BOOL(macaddr_cmp_internal(a1, a2) >= 0);
 }
 
 Datum
-macaddr_gt(PG_FUNCTION_ARGS)
+macaddr_gt(MDB_FUNCTION_ARGS)
 {
-	macaddr    *a1 = PG_GETARG_MACADDR_P(0);
-	macaddr    *a2 = PG_GETARG_MACADDR_P(1);
+	macaddr    *a1 = MDB_GETARG_MACADDR_P(0);
+	macaddr    *a2 = MDB_GETARG_MACADDR_P(1);
 
-	PG_RETURN_BOOL(macaddr_cmp_internal(a1, a2) > 0);
+	MDB_RETURN_BOOL(macaddr_cmp_internal(a1, a2) > 0);
 }
 
 Datum
-macaddr_ne(PG_FUNCTION_ARGS)
+macaddr_ne(MDB_FUNCTION_ARGS)
 {
-	macaddr    *a1 = PG_GETARG_MACADDR_P(0);
-	macaddr    *a2 = PG_GETARG_MACADDR_P(1);
+	macaddr    *a1 = MDB_GETARG_MACADDR_P(0);
+	macaddr    *a2 = MDB_GETARG_MACADDR_P(1);
 
-	PG_RETURN_BOOL(macaddr_cmp_internal(a1, a2) != 0);
+	MDB_RETURN_BOOL(macaddr_cmp_internal(a1, a2) != 0);
 }
 
 /*
  * Support function for hash indexes on macaddr.
  */
 Datum
-hashmacaddr(PG_FUNCTION_ARGS)
+hashmacaddr(MDB_FUNCTION_ARGS)
 {
-	macaddr    *key = PG_GETARG_MACADDR_P(0);
+	macaddr    *key = MDB_GETARG_MACADDR_P(0);
 
 	return hash_any((unsigned char *) key, sizeof(macaddr));
 }
@@ -248,9 +248,9 @@ hashmacaddr(PG_FUNCTION_ARGS)
  * Arithmetic functions: bitwise NOT, AND, OR.
  */
 Datum
-macaddr_not(PG_FUNCTION_ARGS)
+macaddr_not(MDB_FUNCTION_ARGS)
 {
-	macaddr    *addr = PG_GETARG_MACADDR_P(0);
+	macaddr    *addr = MDB_GETARG_MACADDR_P(0);
 	macaddr    *result;
 
 	result = (macaddr *) palloc(sizeof(macaddr));
@@ -260,14 +260,14 @@ macaddr_not(PG_FUNCTION_ARGS)
 	result->d = ~addr->d;
 	result->e = ~addr->e;
 	result->f = ~addr->f;
-	PG_RETURN_MACADDR_P(result);
+	MDB_RETURN_MACADDR_P(result);
 }
 
 Datum
-macaddr_and(PG_FUNCTION_ARGS)
+macaddr_and(MDB_FUNCTION_ARGS)
 {
-	macaddr    *addr1 = PG_GETARG_MACADDR_P(0);
-	macaddr    *addr2 = PG_GETARG_MACADDR_P(1);
+	macaddr    *addr1 = MDB_GETARG_MACADDR_P(0);
+	macaddr    *addr2 = MDB_GETARG_MACADDR_P(1);
 	macaddr    *result;
 
 	result = (macaddr *) palloc(sizeof(macaddr));
@@ -277,14 +277,14 @@ macaddr_and(PG_FUNCTION_ARGS)
 	result->d = addr1->d & addr2->d;
 	result->e = addr1->e & addr2->e;
 	result->f = addr1->f & addr2->f;
-	PG_RETURN_MACADDR_P(result);
+	MDB_RETURN_MACADDR_P(result);
 }
 
 Datum
-macaddr_or(PG_FUNCTION_ARGS)
+macaddr_or(MDB_FUNCTION_ARGS)
 {
-	macaddr    *addr1 = PG_GETARG_MACADDR_P(0);
-	macaddr    *addr2 = PG_GETARG_MACADDR_P(1);
+	macaddr    *addr1 = MDB_GETARG_MACADDR_P(0);
+	macaddr    *addr2 = MDB_GETARG_MACADDR_P(1);
 	macaddr    *result;
 
 	result = (macaddr *) palloc(sizeof(macaddr));
@@ -294,7 +294,7 @@ macaddr_or(PG_FUNCTION_ARGS)
 	result->d = addr1->d | addr2->d;
 	result->e = addr1->e | addr2->e;
 	result->f = addr1->f | addr2->f;
-	PG_RETURN_MACADDR_P(result);
+	MDB_RETURN_MACADDR_P(result);
 }
 
 /*
@@ -302,9 +302,9 @@ macaddr_or(PG_FUNCTION_ARGS)
  *	From suggestion by Alex Pilosov <alex@pilosoft.com>
  */
 Datum
-macaddr_trunc(PG_FUNCTION_ARGS)
+macaddr_trunc(MDB_FUNCTION_ARGS)
 {
-	macaddr    *addr = PG_GETARG_MACADDR_P(0);
+	macaddr    *addr = MDB_GETARG_MACADDR_P(0);
 	macaddr    *result;
 
 	result = (macaddr *) palloc(sizeof(macaddr));
@@ -316,5 +316,5 @@ macaddr_trunc(PG_FUNCTION_ARGS)
 	result->e = 0;
 	result->f = 0;
 
-	PG_RETURN_MACADDR_P(result);
+	MDB_RETURN_MACADDR_P(result);
 }

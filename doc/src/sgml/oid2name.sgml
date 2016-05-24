@@ -294,7 +294,7 @@ All tablespaces:
 
 $ # what databases have objects in tablespace "fastdisk"?
 $ ls -d 155151/*
-155151/17228/  155151/PG_VERSION
+155151/17228/  155151/MDB_VERSION
 
 $ # Oh, what was database 17228 again?
 $ oid2name

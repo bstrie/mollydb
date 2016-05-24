@@ -1,6 +1,6 @@
 /* src/interfaces/ecpg/ecpglib/prepare.c */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 
 #include <ctype.h>
@@ -172,7 +172,7 @@ ECPGprepare(int lineno, const char *connection_name, const bool questionmarks, c
 
 	/* check if we already have prepared this statement */
 	this = ecmdb_find_prepared_statement(name, con, &prev);
-	if (this && !deallocate_one(lineno, ECPG_COMPAT_PGSQL, con, prev, this))
+	if (this && !deallocate_one(lineno, ECMDB_COMPAT_PGSQL, con, prev, this))
 		return false;
 
 	return prepare_common(lineno, con, name, variable);
@@ -231,7 +231,7 @@ deallocate_one(int lineno, enum COMPAT_MODE c, struct connection * con, struct p
 	 */
 	if (!r && !INFORMIX_MODE(c))
 	{
-		ecmdb_raise(lineno, ECPG_INVALID_STMT, ECPG_SQLSTATE_INVALID_SQL_STATEMENT_NAME, this->name);
+		ecmdb_raise(lineno, ECMDB_INVALID_STMT, ECMDB_SQLSTATE_INVALID_SQL_STATEMENT_NAME, this->name);
 		return false;
 	}
 
@@ -268,7 +268,7 @@ ECPGdeallocate(int lineno, int c, const char *connection_name, const char *name)
 	/* prepared statement is not found */
 	if (INFORMIX_MODE(c))
 		return true;
-	ecmdb_raise(lineno, ECPG_INVALID_STMT, ECPG_SQLSTATE_INVALID_SQL_STATEMENT_NAME, name);
+	ecmdb_raise(lineno, ECMDB_INVALID_STMT, ECMDB_SQLSTATE_INVALID_SQL_STATEMENT_NAME, name);
 	return false;
 }
 

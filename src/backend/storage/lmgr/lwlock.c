@@ -662,7 +662,7 @@ LWLockRegisterTranche(int tranche_id, LWLockTranche *tranche)
  *		Request that extra LWLocks be allocated during postmaster
  *		startup.
  *
- * This is only useful for extensions if called from the _PG_init hook
+ * This is only useful for extensions if called from the _MDB_init hook
  * of a library that is loaded into the postmaster via
  * shared_preload_libraries.  Once shared memory has been allocated, calls
  * will be ignored.  (We could raise an error, but it seems better to make
@@ -905,7 +905,7 @@ LWLockWaitListLock(LWLock *lock)
 static void
 LWLockWaitListUnlock(LWLock *lock)
 {
-	uint32 old_state PG_USED_FOR_ASSERTS_ONLY;
+	uint32 old_state MDB_USED_FOR_ASSERTS_ONLY;
 
 	old_state = mdb_atomic_fetch_and_u32(&lock->state, ~LW_FLAG_LOCKED);
 
@@ -1148,7 +1148,7 @@ LWLockDequeueSelf(LWLock *lock)
 #ifdef LOCK_DEBUG
 	{
 		/* not waiting anymore */
-		uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
+		uint32 nwaiters MDB_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
 
 		Assert(nwaiters < MAX_BACKENDS);
 	}
@@ -1298,7 +1298,7 @@ LWLockAcquire(LWLock *lock, LWLockMode mode)
 #ifdef LOCK_DEBUG
 		{
 			/* not waiting anymore */
-			uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
+			uint32 nwaiters MDB_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
 
 			Assert(nwaiters < MAX_BACKENDS);
 		}
@@ -1456,7 +1456,7 @@ LWLockAcquireOrWait(LWLock *lock, LWLockMode mode)
 #ifdef LOCK_DEBUG
 			{
 				/* not waiting anymore */
-				uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
+				uint32 nwaiters MDB_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
 
 				Assert(nwaiters < MAX_BACKENDS);
 			}
@@ -1674,7 +1674,7 @@ LWLockWaitForVar(LWLock *lock, uint64 *valptr, uint64 oldval, uint64 *newval)
 #ifdef LOCK_DEBUG
 		{
 			/* not waiting anymore */
-			uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
+			uint32 nwaiters MDB_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
 
 			Assert(nwaiters < MAX_BACKENDS);
 		}

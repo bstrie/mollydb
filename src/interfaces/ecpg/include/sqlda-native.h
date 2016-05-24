@@ -2,8 +2,8 @@
  * src/interfaces/ecpg/include/sqlda-native.h
  */
 
-#ifndef ECPG_SQLDA_NATIVE_H
-#define ECPG_SQLDA_NATIVE_H
+#ifndef ECMDB_SQLDA_NATIVE_H
+#define ECMDB_SQLDA_NATIVE_H
 
 /*
  * Maximum length for identifiers (e.g. table names, column names,
@@ -40,4 +40,4 @@ struct sqlda_struct
 	struct sqlvar_struct sqlvar[1];
 };
 
-#endif   /* ECPG_SQLDA_NATIVE_H */
+#endif   /* ECMDB_SQLDA_NATIVE_H */

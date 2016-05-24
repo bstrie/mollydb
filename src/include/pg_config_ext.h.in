@@ -4,4 +4,4 @@
  */
 
 /* Define to the name of a signed 64-bit integer type. */
-#undef PG_INT64_TYPE
+#undef MDB_INT64_TYPE

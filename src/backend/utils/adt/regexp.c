@@ -36,8 +36,8 @@
 #include "utils/array.h"
 #include "utils/builtins.h"
 
-#define PG_GETARG_TEXT_PP_IF_EXISTS(_n) \
-	(PG_NARGS() > (_n) ? PG_GETARG_TEXT_PP(_n) : NULL)
+#define MDB_GETARG_TEXT_PP_IF_EXISTS(_n) \
+	(MDB_NARGS() > (_n) ? MDB_GETARG_TEXT_PP(_n) : NULL)
 
 
 /* all the options of interest for regex functions */
@@ -433,58 +433,58 @@ parse_re_flags(mdb_re_flags *flags, text *opts)
  */
 
 Datum
-nameregexeq(PG_FUNCTION_ARGS)
+nameregexeq(MDB_FUNCTION_ARGS)
 {
-	Name		n = PG_GETARG_NAME(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
+	Name		n = MDB_GETARG_NAME(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_BOOL(RE_compile_and_execute(p,
+	MDB_RETURN_BOOL(RE_compile_and_execute(p,
 										  NameStr(*n),
 										  strlen(NameStr(*n)),
 										  REG_ADVANCED,
-										  PG_GET_COLLATION(),
+										  MDB_GET_COLLATION(),
 										  0, NULL));
 }
 
 Datum
-nameregexne(PG_FUNCTION_ARGS)
+nameregexne(MDB_FUNCTION_ARGS)
 {
-	Name		n = PG_GETARG_NAME(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
+	Name		n = MDB_GETARG_NAME(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_BOOL(!RE_compile_and_execute(p,
+	MDB_RETURN_BOOL(!RE_compile_and_execute(p,
 										   NameStr(*n),
 										   strlen(NameStr(*n)),
 										   REG_ADVANCED,
-										   PG_GET_COLLATION(),
+										   MDB_GET_COLLATION(),
 										   0, NULL));
 }
 
 Datum
-textregexeq(PG_FUNCTION_ARGS)
+textregexeq(MDB_FUNCTION_ARGS)
 {
-	text	   *s = PG_GETARG_TEXT_PP(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
+	text	   *s = MDB_GETARG_TEXT_PP(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_BOOL(RE_compile_and_execute(p,
+	MDB_RETURN_BOOL(RE_compile_and_execute(p,
 										  VARDATA_ANY(s),
 										  VARSIZE_ANY_EXHDR(s),
 										  REG_ADVANCED,
-										  PG_GET_COLLATION(),
+										  MDB_GET_COLLATION(),
 										  0, NULL));
 }
 
 Datum
-textregexne(PG_FUNCTION_ARGS)
+textregexne(MDB_FUNCTION_ARGS)
 {
-	text	   *s = PG_GETARG_TEXT_PP(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
+	text	   *s = MDB_GETARG_TEXT_PP(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_BOOL(!RE_compile_and_execute(p,
+	MDB_RETURN_BOOL(!RE_compile_and_execute(p,
 										   VARDATA_ANY(s),
 										   VARSIZE_ANY_EXHDR(s),
 										   REG_ADVANCED,
-										   PG_GET_COLLATION(),
+										   MDB_GET_COLLATION(),
 										   0, NULL));
 }
 
@@ -496,58 +496,58 @@ textregexne(PG_FUNCTION_ARGS)
 
 
 Datum
-nameicregexeq(PG_FUNCTION_ARGS)
+nameicregexeq(MDB_FUNCTION_ARGS)
 {
-	Name		n = PG_GETARG_NAME(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
+	Name		n = MDB_GETARG_NAME(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_BOOL(RE_compile_and_execute(p,
+	MDB_RETURN_BOOL(RE_compile_and_execute(p,
 										  NameStr(*n),
 										  strlen(NameStr(*n)),
 										  REG_ADVANCED | REG_ICASE,
-										  PG_GET_COLLATION(),
+										  MDB_GET_COLLATION(),
 										  0, NULL));
 }
 
 Datum
-nameicregexne(PG_FUNCTION_ARGS)
+nameicregexne(MDB_FUNCTION_ARGS)
 {
-	Name		n = PG_GETARG_NAME(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
+	Name		n = MDB_GETARG_NAME(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_BOOL(!RE_compile_and_execute(p,
+	MDB_RETURN_BOOL(!RE_compile_and_execute(p,
 										   NameStr(*n),
 										   strlen(NameStr(*n)),
 										   REG_ADVANCED | REG_ICASE,
-										   PG_GET_COLLATION(),
+										   MDB_GET_COLLATION(),
 										   0, NULL));
 }
 
 Datum
-texticregexeq(PG_FUNCTION_ARGS)
+texticregexeq(MDB_FUNCTION_ARGS)
 {
-	text	   *s = PG_GETARG_TEXT_PP(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
+	text	   *s = MDB_GETARG_TEXT_PP(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_BOOL(RE_compile_and_execute(p,
+	MDB_RETURN_BOOL(RE_compile_and_execute(p,
 										  VARDATA_ANY(s),
 										  VARSIZE_ANY_EXHDR(s),
 										  REG_ADVANCED | REG_ICASE,
-										  PG_GET_COLLATION(),
+										  MDB_GET_COLLATION(),
 										  0, NULL));
 }
 
 Datum
-texticregexne(PG_FUNCTION_ARGS)
+texticregexne(MDB_FUNCTION_ARGS)
 {
-	text	   *s = PG_GETARG_TEXT_PP(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
+	text	   *s = MDB_GETARG_TEXT_PP(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_BOOL(!RE_compile_and_execute(p,
+	MDB_RETURN_BOOL(!RE_compile_and_execute(p,
 										   VARDATA_ANY(s),
 										   VARSIZE_ANY_EXHDR(s),
 										   REG_ADVANCED | REG_ICASE,
-										   PG_GET_COLLATION(),
+										   MDB_GET_COLLATION(),
 										   0, NULL));
 }
 
@@ -557,17 +557,17 @@ texticregexne(PG_FUNCTION_ARGS)
  *		Return a substring matched by a regular expression.
  */
 Datum
-textregexsubstr(PG_FUNCTION_ARGS)
+textregexsubstr(MDB_FUNCTION_ARGS)
 {
-	text	   *s = PG_GETARG_TEXT_PP(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
+	text	   *s = MDB_GETARG_TEXT_PP(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
 	regex_t    *re;
 	regmatch_t	pmatch[2];
 	int			so,
 				eo;
 
 	/* Compile RE */
-	re = RE_compile_and_cache(p, REG_ADVANCED, PG_GET_COLLATION());
+	re = RE_compile_and_cache(p, REG_ADVANCED, MDB_GET_COLLATION());
 
 	/*
 	 * We pass two regmatch_t structs to get info about the overall match and
@@ -578,7 +578,7 @@ textregexsubstr(PG_FUNCTION_ARGS)
 	if (!RE_execute(re,
 					VARDATA_ANY(s), VARSIZE_ANY_EXHDR(s),
 					2, pmatch))
-		PG_RETURN_NULL();		/* definitely no match */
+		MDB_RETURN_NULL();		/* definitely no match */
 
 	if (re->re_nsub > 0)
 	{
@@ -600,7 +600,7 @@ textregexsubstr(PG_FUNCTION_ARGS)
 	 * is not redundant.
 	 */
 	if (so < 0 || eo < 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	return DirectFunctionCall3(text_substr,
 							   PointerGetDatum(s),
@@ -616,16 +616,16 @@ textregexsubstr(PG_FUNCTION_ARGS)
  * sensitive match, replace the first instance only.
  */
 Datum
-textregexreplace_noopt(PG_FUNCTION_ARGS)
+textregexreplace_noopt(MDB_FUNCTION_ARGS)
 {
-	text	   *s = PG_GETARG_TEXT_PP(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
-	text	   *r = PG_GETARG_TEXT_PP(2);
+	text	   *s = MDB_GETARG_TEXT_PP(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
+	text	   *r = MDB_GETARG_TEXT_PP(2);
 	regex_t    *re;
 
-	re = RE_compile_and_cache(p, REG_ADVANCED, PG_GET_COLLATION());
+	re = RE_compile_and_cache(p, REG_ADVANCED, MDB_GET_COLLATION());
 
-	PG_RETURN_TEXT_P(replace_text_regexp(s, (void *) re, r, false));
+	MDB_RETURN_TEXT_P(replace_text_regexp(s, (void *) re, r, false));
 }
 
 /*
@@ -633,20 +633,20 @@ textregexreplace_noopt(PG_FUNCTION_ARGS)
  *		Return a string matched by a regular expression, with replacement.
  */
 Datum
-textregexreplace(PG_FUNCTION_ARGS)
+textregexreplace(MDB_FUNCTION_ARGS)
 {
-	text	   *s = PG_GETARG_TEXT_PP(0);
-	text	   *p = PG_GETARG_TEXT_PP(1);
-	text	   *r = PG_GETARG_TEXT_PP(2);
-	text	   *opt = PG_GETARG_TEXT_PP(3);
+	text	   *s = MDB_GETARG_TEXT_PP(0);
+	text	   *p = MDB_GETARG_TEXT_PP(1);
+	text	   *r = MDB_GETARG_TEXT_PP(2);
+	text	   *opt = MDB_GETARG_TEXT_PP(3);
 	regex_t    *re;
 	mdb_re_flags flags;
 
 	parse_re_flags(&flags, opt);
 
-	re = RE_compile_and_cache(p, flags.cflags, PG_GET_COLLATION());
+	re = RE_compile_and_cache(p, flags.cflags, MDB_GET_COLLATION());
 
-	PG_RETURN_TEXT_P(replace_text_regexp(s, (void *) re, r, flags.glob));
+	MDB_RETURN_TEXT_P(replace_text_regexp(s, (void *) re, r, flags.glob));
 }
 
 /*
@@ -655,7 +655,7 @@ textregexreplace(PG_FUNCTION_ARGS)
  * our regexp engine.
  */
 Datum
-similar_escape(PG_FUNCTION_ARGS)
+similar_escape(MDB_FUNCTION_ARGS)
 {
 	text	   *pat_text;
 	text	   *esc_text;
@@ -670,12 +670,12 @@ similar_escape(PG_FUNCTION_ARGS)
 	int			nquotes = 0;
 
 	/* This function is not strict, so must test explicitly */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
-	pat_text = PG_GETARG_TEXT_PP(0);
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
+	pat_text = MDB_GETARG_TEXT_PP(0);
 	p = VARDATA_ANY(pat_text);
 	plen = VARSIZE_ANY_EXHDR(pat_text);
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 	{
 		/* No ESCAPE clause provided; default to backslash as escape */
 		e = "\\";
@@ -683,7 +683,7 @@ similar_escape(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		esc_text = PG_GETARG_TEXT_PP(1);
+		esc_text = MDB_GETARG_TEXT_PP(1);
 		e = VARDATA_ANY(esc_text);
 		elen = VARSIZE_ANY_EXHDR(esc_text);
 		if (elen == 0)
@@ -837,7 +837,7 @@ similar_escape(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(result, r - ((char *) result));
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /*
@@ -845,24 +845,24 @@ similar_escape(PG_FUNCTION_ARGS)
  *		Return a table of matches of a pattern within a string.
  */
 Datum
-regexp_matches(PG_FUNCTION_ARGS)
+regexp_matches(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	regexp_matches_ctx *matchctx;
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		text	   *pattern = PG_GETARG_TEXT_PP(1);
-		text	   *flags = PG_GETARG_TEXT_PP_IF_EXISTS(2);
+		text	   *pattern = MDB_GETARG_TEXT_PP(1);
+		text	   *flags = MDB_GETARG_TEXT_PP_IF_EXISTS(2);
 		MemoryContext oldcontext;
 
 		funcctx = SRF_FIRSTCALL_INIT();
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		/* be sure to copy the input string into the multi-call ctx */
-		matchctx = setup_regexp_matches(PG_GETARG_TEXT_P_COPY(0), pattern,
+		matchctx = setup_regexp_matches(MDB_GETARG_TEXT_P_COPY(0), pattern,
 										flags,
-										PG_GET_COLLATION(),
+										MDB_GET_COLLATION(),
 										false, true, false);
 
 		/* Pre-create workspace that build_regexp_matches_result needs */
@@ -893,7 +893,7 @@ regexp_matches(PG_FUNCTION_ARGS)
 
 /* This is separate to keep the opr_sanity regression test from complaining */
 Datum
-regexp_matches_no_flags(PG_FUNCTION_ARGS)
+regexp_matches_no_flags(MDB_FUNCTION_ARGS)
 {
 	return regexp_matches(fcinfo);
 }
@@ -1105,24 +1105,24 @@ build_regexp_matches_result(regexp_matches_ctx *matchctx)
  *		split-out substrings as a table.
  */
 Datum
-regexp_split_to_table(PG_FUNCTION_ARGS)
+regexp_split_to_table(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	regexp_matches_ctx *splitctx;
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		text	   *pattern = PG_GETARG_TEXT_PP(1);
-		text	   *flags = PG_GETARG_TEXT_PP_IF_EXISTS(2);
+		text	   *pattern = MDB_GETARG_TEXT_PP(1);
+		text	   *flags = MDB_GETARG_TEXT_PP_IF_EXISTS(2);
 		MemoryContext oldcontext;
 
 		funcctx = SRF_FIRSTCALL_INIT();
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		/* be sure to copy the input string into the multi-call ctx */
-		splitctx = setup_regexp_matches(PG_GETARG_TEXT_P_COPY(0), pattern,
+		splitctx = setup_regexp_matches(MDB_GETARG_TEXT_P_COPY(0), pattern,
 										flags,
-										PG_GET_COLLATION(),
+										MDB_GET_COLLATION(),
 										true, false, true);
 
 		MemoryContextSwitchTo(oldcontext);
@@ -1148,7 +1148,7 @@ regexp_split_to_table(PG_FUNCTION_ARGS)
 
 /* This is separate to keep the opr_sanity regression test from complaining */
 Datum
-regexp_split_to_table_no_flags(PG_FUNCTION_ARGS)
+regexp_split_to_table_no_flags(MDB_FUNCTION_ARGS)
 {
 	return regexp_split_to_table(fcinfo);
 }
@@ -1159,15 +1159,15 @@ regexp_split_to_table_no_flags(PG_FUNCTION_ARGS)
  *		split-out substrings as an array.
  */
 Datum
-regexp_split_to_array(PG_FUNCTION_ARGS)
+regexp_split_to_array(MDB_FUNCTION_ARGS)
 {
 	ArrayBuildState *astate = NULL;
 	regexp_matches_ctx *splitctx;
 
-	splitctx = setup_regexp_matches(PG_GETARG_TEXT_PP(0),
-									PG_GETARG_TEXT_PP(1),
-									PG_GETARG_TEXT_PP_IF_EXISTS(2),
-									PG_GET_COLLATION(),
+	splitctx = setup_regexp_matches(MDB_GETARG_TEXT_PP(0),
+									MDB_GETARG_TEXT_PP(1),
+									MDB_GETARG_TEXT_PP_IF_EXISTS(2),
+									MDB_GET_COLLATION(),
 									true, false, true);
 
 	while (splitctx->next_match <= splitctx->nmatches)
@@ -1186,12 +1186,12 @@ regexp_split_to_array(PG_FUNCTION_ARGS)
 	 * memory context anyway.
 	 */
 
-	PG_RETURN_ARRAYTYPE_P(makeArrayResult(astate, CurrentMemoryContext));
+	MDB_RETURN_ARRAYTYPE_P(makeArrayResult(astate, CurrentMemoryContext));
 }
 
 /* This is separate to keep the opr_sanity regression test from complaining */
 Datum
-regexp_split_to_array_no_flags(PG_FUNCTION_ARGS)
+regexp_split_to_array_no_flags(MDB_FUNCTION_ARGS)
 {
 	return regexp_split_to_array(fcinfo);
 }

@@ -139,21 +139,21 @@ check_enable_rls(Oid relid, Oid checkAsUser, bool noError)
  * RLS_NONE_ENV and RLS_NONE are the same for this purpose.
  */
 Datum
-row_security_active(PG_FUNCTION_ARGS)
+row_security_active(MDB_FUNCTION_ARGS)
 {
 	/* By OID */
-	Oid			tableoid = PG_GETARG_OID(0);
+	Oid			tableoid = MDB_GETARG_OID(0);
 	int			rls_status;
 
 	rls_status = check_enable_rls(tableoid, InvalidOid, true);
-	PG_RETURN_BOOL(rls_status == RLS_ENABLED);
+	MDB_RETURN_BOOL(rls_status == RLS_ENABLED);
 }
 
 Datum
-row_security_active_name(PG_FUNCTION_ARGS)
+row_security_active_name(MDB_FUNCTION_ARGS)
 {
 	/* By qualified name */
-	text	   *tablename = PG_GETARG_TEXT_P(0);
+	text	   *tablename = MDB_GETARG_TEXT_P(0);
 	RangeVar   *tablerel;
 	Oid			tableoid;
 	int			rls_status;
@@ -163,5 +163,5 @@ row_security_active_name(PG_FUNCTION_ARGS)
 	tableoid = RangeVarGetRelid(tablerel, NoLock, false);
 
 	rls_status = check_enable_rls(tableoid, InvalidOid, true);
-	PG_RETURN_BOOL(rls_status == RLS_ENABLED);
+	MDB_RETURN_BOOL(rls_status == RLS_ENABLED);
 }

@@ -2,7 +2,7 @@
 
 MODULE_big = dblink
 OBJS	= dblink.o $(WIN32RES)
-PG_CPPFLAGS = -I$(libpq_srcdir)
+MDB_CPPFLAGS = -I$(libpq_srcdir)
 SHLIB_LINK = $(libpq)
 
 EXTENSION = dblink
@@ -14,8 +14,8 @@ REGRESS_OPTS = --dlpath=$(top_builddir)/src/test/regress
 EXTRA_CLEAN = sql/paths.sql expected/paths.out
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 SHLIB_PREREQS = submake-libpq

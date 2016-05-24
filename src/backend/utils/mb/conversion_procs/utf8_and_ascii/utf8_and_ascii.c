@@ -15,10 +15,10 @@
 #include "fmgr.h"
 #include "mb/mdb_wchar.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(ascii_to_utf8);
-PG_FUNCTION_INFO_V1(utf8_to_ascii);
+MDB_FUNCTION_INFO_V1(ascii_to_utf8);
+MDB_FUNCTION_INFO_V1(utf8_to_ascii);
 
 /* ----------
  * conv_proc(
@@ -32,31 +32,31 @@ PG_FUNCTION_INFO_V1(utf8_to_ascii);
  */
 
 Datum
-ascii_to_utf8(PG_FUNCTION_ARGS)
+ascii_to_utf8(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_SQL_ASCII, PG_UTF8);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_SQL_ASCII, MDB_UTF8);
 
 	/* this looks wrong, but basically we're just rejecting high-bit-set */
 	mdb_ascii2mic(src, dest, len);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-utf8_to_ascii(PG_FUNCTION_ARGS)
+utf8_to_ascii(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_UTF8, PG_SQL_ASCII);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_UTF8, MDB_SQL_ASCII);
 
 	/* this looks wrong, but basically we're just rejecting high-bit-set */
 	mdb_mic2ascii(src, dest, len);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

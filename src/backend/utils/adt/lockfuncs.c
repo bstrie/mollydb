@@ -50,7 +50,7 @@ typedef struct
 	int			currIdx;		/* current PROCLOCK index */
 	PredicateLockData *predLockData;	/* state data for pred locks */
 	int			predLockIdx;	/* current index for pred lock */
-} PG_Lock_Status;
+} MDB_Lock_Status;
 
 /* Number of columns in mdb_locks output */
 #define NUM_LOCK_STATUS_COLUMNS		15
@@ -79,10 +79,10 @@ VXIDGetDatum(BackendId bid, LocalTransactionId lxid)
  * mdb_lock_status - produce a view with one row per held or awaited lock mode
  */
 Datum
-mdb_lock_status(PG_FUNCTION_ARGS)
+mdb_lock_status(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
-	PG_Lock_Status *mystatus;
+	MDB_Lock_Status *mystatus;
 	LockData   *lockData;
 	PredicateLockData *predLockData;
 
@@ -139,7 +139,7 @@ mdb_lock_status(PG_FUNCTION_ARGS)
 		 * Collect all the locking information that we will format and send
 		 * out as a result set.
 		 */
-		mystatus = (PG_Lock_Status *) palloc(sizeof(PG_Lock_Status));
+		mystatus = (MDB_Lock_Status *) palloc(sizeof(MDB_Lock_Status));
 		funcctx->user_fctx = (void *) mystatus;
 
 		mystatus->lockData = GetLockStatusData();
@@ -151,7 +151,7 @@ mdb_lock_status(PG_FUNCTION_ARGS)
 	}
 
 	funcctx = SRF_PERCALL_SETUP();
-	mystatus = (PG_Lock_Status *) funcctx->user_fctx;
+	mystatus = (MDB_Lock_Status *) funcctx->user_fctx;
 	lockData = mystatus->lockData;
 
 	while (mystatus->currIdx < lockData->nelements)
@@ -415,9 +415,9 @@ mdb_lock_status(PG_FUNCTION_ARGS)
  * We need not consider predicate locks here, since those don't block anything.
  */
 Datum
-mdb_blocking_pids(PG_FUNCTION_ARGS)
+mdb_blocking_pids(MDB_FUNCTION_ARGS)
 {
-	int			blocked_pid = PG_GETARG_INT32(0);
+	int			blocked_pid = MDB_GETARG_INT32(0);
 	Datum	   *arrayelems;
 	int			narrayelems;
 	BlockedProcsData *lockData; /* state data from lmgr */
@@ -511,7 +511,7 @@ mdb_blocking_pids(PG_FUNCTION_ARGS)
 	Assert(narrayelems <= lockData->nlocks);
 
 	/* Construct array, using hardwired knowledge about int4 type */
-	PG_RETURN_ARRAYTYPE_P(construct_array(arrayelems, narrayelems,
+	MDB_RETURN_ARRAYTYPE_P(construct_array(arrayelems, narrayelems,
 										  INT4OID,
 										  sizeof(int32), true, 'i'));
 }
@@ -549,9 +549,9 @@ PreventAdvisoryLocksInParallelMode(void)
  * mdb_advisory_lock(int8) - acquire exclusive lock on an int8 key
  */
 Datum
-mdb_advisory_lock_int8(PG_FUNCTION_ARGS)
+mdb_advisory_lock_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 
 	PreventAdvisoryLocksInParallelMode();
@@ -559,7 +559,7 @@ mdb_advisory_lock_int8(PG_FUNCTION_ARGS)
 
 	(void) LockAcquire(&tag, ExclusiveLock, true, false);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -567,9 +567,9 @@ mdb_advisory_lock_int8(PG_FUNCTION_ARGS)
  * exclusive lock on an int8 key
  */
 Datum
-mdb_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
+mdb_advisory_xact_lock_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 
 	PreventAdvisoryLocksInParallelMode();
@@ -577,16 +577,16 @@ mdb_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
 
 	(void) LockAcquire(&tag, ExclusiveLock, false, false);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * mdb_advisory_lock_shared(int8) - acquire share lock on an int8 key
  */
 Datum
-mdb_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
+mdb_advisory_lock_shared_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 
 	PreventAdvisoryLocksInParallelMode();
@@ -594,7 +594,7 @@ mdb_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
 
 	(void) LockAcquire(&tag, ShareLock, true, false);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -602,9 +602,9 @@ mdb_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
  * share lock on an int8 key
  */
 Datum
-mdb_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
+mdb_advisory_xact_lock_shared_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 
 	PreventAdvisoryLocksInParallelMode();
@@ -612,7 +612,7 @@ mdb_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
 
 	(void) LockAcquire(&tag, ShareLock, false, false);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -621,9 +621,9 @@ mdb_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock not available
  */
 Datum
-mdb_try_advisory_lock_int8(PG_FUNCTION_ARGS)
+mdb_try_advisory_lock_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 	LockAcquireResult res;
 
@@ -632,7 +632,7 @@ mdb_try_advisory_lock_int8(PG_FUNCTION_ARGS)
 
 	res = LockAcquire(&tag, ExclusiveLock, true, true);
 
-	PG_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
+	MDB_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
 }
 
 /*
@@ -642,9 +642,9 @@ mdb_try_advisory_lock_int8(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock not available
  */
 Datum
-mdb_try_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
+mdb_try_advisory_xact_lock_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 	LockAcquireResult res;
 
@@ -653,7 +653,7 @@ mdb_try_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
 
 	res = LockAcquire(&tag, ExclusiveLock, false, true);
 
-	PG_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
+	MDB_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
 }
 
 /*
@@ -662,9 +662,9 @@ mdb_try_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock not available
  */
 Datum
-mdb_try_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
+mdb_try_advisory_lock_shared_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 	LockAcquireResult res;
 
@@ -673,7 +673,7 @@ mdb_try_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
 
 	res = LockAcquire(&tag, ShareLock, true, true);
 
-	PG_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
+	MDB_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
 }
 
 /*
@@ -683,9 +683,9 @@ mdb_try_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock not available
  */
 Datum
-mdb_try_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
+mdb_try_advisory_xact_lock_shared_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 	LockAcquireResult res;
 
@@ -694,7 +694,7 @@ mdb_try_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
 
 	res = LockAcquire(&tag, ShareLock, false, true);
 
-	PG_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
+	MDB_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
 }
 
 /*
@@ -703,9 +703,9 @@ mdb_try_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock was not held
 */
 Datum
-mdb_advisory_unlock_int8(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 	bool		res;
 
@@ -714,7 +714,7 @@ mdb_advisory_unlock_int8(PG_FUNCTION_ARGS)
 
 	res = LockRelease(&tag, ExclusiveLock, true);
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 /*
@@ -723,9 +723,9 @@ mdb_advisory_unlock_int8(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock was not held
  */
 Datum
-mdb_advisory_unlock_shared_int8(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_shared_int8(MDB_FUNCTION_ARGS)
 {
-	int64		key = PG_GETARG_INT64(0);
+	int64		key = MDB_GETARG_INT64(0);
 	LOCKTAG		tag;
 	bool		res;
 
@@ -734,17 +734,17 @@ mdb_advisory_unlock_shared_int8(PG_FUNCTION_ARGS)
 
 	res = LockRelease(&tag, ShareLock, true);
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 /*
  * mdb_advisory_lock(int4, int4) - acquire exclusive lock on 2 int4 keys
  */
 Datum
-mdb_advisory_lock_int4(PG_FUNCTION_ARGS)
+mdb_advisory_lock_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 
 	PreventAdvisoryLocksInParallelMode();
@@ -752,7 +752,7 @@ mdb_advisory_lock_int4(PG_FUNCTION_ARGS)
 
 	(void) LockAcquire(&tag, ExclusiveLock, true, false);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -760,10 +760,10 @@ mdb_advisory_lock_int4(PG_FUNCTION_ARGS)
  * exclusive lock on 2 int4 keys
  */
 Datum
-mdb_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
+mdb_advisory_xact_lock_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 
 	PreventAdvisoryLocksInParallelMode();
@@ -771,17 +771,17 @@ mdb_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
 
 	(void) LockAcquire(&tag, ExclusiveLock, false, false);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * mdb_advisory_lock_shared(int4, int4) - acquire share lock on 2 int4 keys
  */
 Datum
-mdb_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
+mdb_advisory_lock_shared_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 
 	PreventAdvisoryLocksInParallelMode();
@@ -789,7 +789,7 @@ mdb_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
 
 	(void) LockAcquire(&tag, ShareLock, true, false);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -797,10 +797,10 @@ mdb_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
  * share lock on 2 int4 keys
  */
 Datum
-mdb_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
+mdb_advisory_xact_lock_shared_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 
 	PreventAdvisoryLocksInParallelMode();
@@ -808,7 +808,7 @@ mdb_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
 
 	(void) LockAcquire(&tag, ShareLock, false, false);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -817,10 +817,10 @@ mdb_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock not available
  */
 Datum
-mdb_try_advisory_lock_int4(PG_FUNCTION_ARGS)
+mdb_try_advisory_lock_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 	LockAcquireResult res;
 
@@ -829,7 +829,7 @@ mdb_try_advisory_lock_int4(PG_FUNCTION_ARGS)
 
 	res = LockAcquire(&tag, ExclusiveLock, true, true);
 
-	PG_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
+	MDB_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
 }
 
 /*
@@ -839,10 +839,10 @@ mdb_try_advisory_lock_int4(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock not available
  */
 Datum
-mdb_try_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
+mdb_try_advisory_xact_lock_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 	LockAcquireResult res;
 
@@ -851,7 +851,7 @@ mdb_try_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
 
 	res = LockAcquire(&tag, ExclusiveLock, false, true);
 
-	PG_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
+	MDB_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
 }
 
 /*
@@ -860,10 +860,10 @@ mdb_try_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock not available
  */
 Datum
-mdb_try_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
+mdb_try_advisory_lock_shared_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 	LockAcquireResult res;
 
@@ -872,7 +872,7 @@ mdb_try_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
 
 	res = LockAcquire(&tag, ShareLock, true, true);
 
-	PG_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
+	MDB_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
 }
 
 /*
@@ -882,10 +882,10 @@ mdb_try_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock not available
  */
 Datum
-mdb_try_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
+mdb_try_advisory_xact_lock_shared_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 	LockAcquireResult res;
 
@@ -894,7 +894,7 @@ mdb_try_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
 
 	res = LockAcquire(&tag, ShareLock, false, true);
 
-	PG_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
+	MDB_RETURN_BOOL(res != LOCKACQUIRE_NOT_AVAIL);
 }
 
 /*
@@ -903,10 +903,10 @@ mdb_try_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock was not held
 */
 Datum
-mdb_advisory_unlock_int4(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 	bool		res;
 
@@ -915,7 +915,7 @@ mdb_advisory_unlock_int4(PG_FUNCTION_ARGS)
 
 	res = LockRelease(&tag, ExclusiveLock, true);
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 /*
@@ -924,10 +924,10 @@ mdb_advisory_unlock_int4(PG_FUNCTION_ARGS)
  * Returns true if successful, false if lock was not held
  */
 Datum
-mdb_advisory_unlock_shared_int4(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_shared_int4(MDB_FUNCTION_ARGS)
 {
-	int32		key1 = PG_GETARG_INT32(0);
-	int32		key2 = PG_GETARG_INT32(1);
+	int32		key1 = MDB_GETARG_INT32(0);
+	int32		key2 = MDB_GETARG_INT32(1);
 	LOCKTAG		tag;
 	bool		res;
 
@@ -936,16 +936,16 @@ mdb_advisory_unlock_shared_int4(PG_FUNCTION_ARGS)
 
 	res = LockRelease(&tag, ShareLock, true);
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 /*
  * mdb_advisory_unlock_all() - release all advisory locks
  */
 Datum
-mdb_advisory_unlock_all(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_all(MDB_FUNCTION_ARGS)
 {
 	LockReleaseSession(USER_LOCKMETHOD);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

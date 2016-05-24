@@ -16,8 +16,8 @@
  *-------------------------------------------------------------------------
  */
 
-#ifndef PG_DUMP_PARALLEL_H
-#define PG_DUMP_PARALLEL_H
+#ifndef MDB_DUMP_PARALLEL_H
+#define MDB_DUMP_PARALLEL_H
 
 #include "mdb_backup_archiver.h"
 
@@ -84,4 +84,4 @@ extern void ParallelBackupEnd(ArchiveHandle *AH, ParallelState *pstate);
 
 extern void checkAborting(ArchiveHandle *AH);
 
-#endif   /* PG_DUMP_PARALLEL_H */
+#endif   /* MDB_DUMP_PARALLEL_H */

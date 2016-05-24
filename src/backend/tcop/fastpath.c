@@ -137,7 +137,7 @@ GetOldFunctionMessage(StringInfo buf)
 static void
 SendFunctionResult(Datum retval, bool isnull, Oid rettype, int16 format)
 {
-	bool		newstyle = (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3);
+	bool		newstyle = (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3);
 	StringInfoData buf;
 
 	pq_beginmessage(&buf, 'V');
@@ -300,7 +300,7 @@ HandleFunctionRequest(StringInfo msgBuf)
 	/*
 	 * Begin parsing the buffer contents.
 	 */
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 		(void) pq_getmsgstring(msgBuf); /* dummy string */
 
 	fid = (Oid) pq_getmsgint(msgBuf, 4);		/* function oid */
@@ -346,7 +346,7 @@ HandleFunctionRequest(StringInfo msgBuf)
 	 */
 	InitFunctionCallInfoData(fcinfo, &fip->flinfo, 0, InvalidOid, NULL, NULL);
 
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
 		rformat = parse_fcall_arguments(msgBuf, fip, &fcinfo);
 	else
 		rformat = parse_fcall_arguments_20(msgBuf, fip, &fcinfo);

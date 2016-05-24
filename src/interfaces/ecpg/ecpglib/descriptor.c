@@ -3,7 +3,7 @@
  * src/interfaces/ecpg/ecpglib/descriptor.c
  */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 #include "mdb_type.h"
 
@@ -95,8 +95,8 @@ ECPGget_desc_header(int lineno, const char *desc_name, int *count)
 
 	if (sqlca == NULL)
 	{
-		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
-				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(lineno, ECMDB_OUT_OF_MEMORY,
+				   ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 
@@ -149,7 +149,7 @@ get_int_item(int lineno, void *var, enum ECPGttype vartype, int value)
 			*(double *) var = (double) value;
 			break;
 		default:
-			ecmdb_raise(lineno, ECPG_VAR_NOT_NUMERIC, ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
+			ecmdb_raise(lineno, ECMDB_VAR_NOT_NUMERIC, ECMDB_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
 			return (false);
 	}
 
@@ -194,7 +194,7 @@ set_int_item(int lineno, int *target, const void *var, enum ECPGttype vartype)
 			*target = *(const double *) var;
 			break;
 		default:
-			ecmdb_raise(lineno, ECPG_VAR_NOT_NUMERIC, ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
+			ecmdb_raise(lineno, ECMDB_VAR_NOT_NUMERIC, ECMDB_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
 			return (false);
 	}
 
@@ -227,7 +227,7 @@ get_char_item(int lineno, void *var, enum ECPGttype vartype, char *value, int va
 			}
 			break;
 		default:
-			ecmdb_raise(lineno, ECPG_VAR_NOT_CHAR, ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
+			ecmdb_raise(lineno, ECMDB_VAR_NOT_CHAR, ECMDB_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
 			return (false);
 	}
 
@@ -237,7 +237,7 @@ get_char_item(int lineno, void *var, enum ECPGttype vartype, char *value, int va
 #define RETURN_IF_NO_DATA	if (ntuples < 1) \
 				{ \
 					va_end(args); \
-					ecmdb_raise(lineno, ECPG_NOT_FOUND, ECPG_SQLSTATE_NO_DATA, NULL); \
+					ecmdb_raise(lineno, ECMDB_NOT_FOUND, ECMDB_SQLSTATE_NO_DATA, NULL); \
 					return (false); \
 				}
 
@@ -254,8 +254,8 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 
 	if (sqlca == NULL)
 	{
-		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
-				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(lineno, ECMDB_OUT_OF_MEMORY,
+				   ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 
@@ -272,7 +272,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 
 	if (index < 1 || index > PQnfields(ECPGresult))
 	{
-		ecmdb_raise(lineno, ECPG_INVALID_DESCRIPTOR_INDEX, ECPG_SQLSTATE_INVALID_DESCRIPTOR_INDEX, NULL);
+		ecmdb_raise(lineno, ECMDB_INVALID_DESCRIPTOR_INDEX, ECMDB_SQLSTATE_INVALID_DESCRIPTOR_INDEX, NULL);
 		va_end(args);
 		return (false);
 	}
@@ -439,7 +439,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 				{
 					ecmdb_log("ECPGget_desc on line %d: incorrect number of matches; %d don't fit into array of %ld\n",
 							 lineno, ntuples, arrsize);
-					ecmdb_raise(lineno, ECPG_TOO_MANY_MATCHES, ECPG_SQLSTATE_CARDINALITY_VIOLATION, NULL);
+					ecmdb_raise(lineno, ECMDB_TOO_MANY_MATCHES, ECMDB_SQLSTATE_CARDINALITY_VIOLATION, NULL);
 					va_end(args);
 					return false;
 				}
@@ -471,7 +471,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 
 			default:
 				snprintf(type_str, sizeof(type_str), "%d", type);
-				ecmdb_raise(lineno, ECPG_UNKNOWN_DESCRIPTOR_ITEM, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, type_str);
+				ecmdb_raise(lineno, ECMDB_UNKNOWN_DESCRIPTOR_ITEM, ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR, type_str);
 				va_end(args);
 				return (false);
 		}
@@ -515,7 +515,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 		{
 			ecmdb_log("ECPGget_desc on line %d: incorrect number of matches (indicator); %d don't fit into array of %ld\n",
 					 lineno, ntuples, data_var.ind_arrsize);
-			ecmdb_raise(lineno, ECPG_TOO_MANY_MATCHES, ECPG_SQLSTATE_CARDINALITY_VIOLATION, NULL);
+			ecmdb_raise(lineno, ECMDB_TOO_MANY_MATCHES, ECMDB_SQLSTATE_CARDINALITY_VIOLATION, NULL);
 			va_end(args);
 			return false;
 		}
@@ -674,7 +674,7 @@ ECPGset_desc(int lineno, const char *desc_name, int index,...)
 					char		type_str[20];
 
 					snprintf(type_str, sizeof(type_str), "%d", itemtype);
-					ecmdb_raise(lineno, ECPG_UNKNOWN_DESCRIPTOR_ITEM, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, type_str);
+					ecmdb_raise(lineno, ECMDB_UNKNOWN_DESCRIPTOR_ITEM, ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR, type_str);
 					ecmdb_free(var);
 					va_end(args);
 					return false;
@@ -717,8 +717,8 @@ ECPGdeallocate_desc(int line, const char *name)
 
 	if (sqlca == NULL)
 	{
-		ecmdb_raise(line, ECPG_OUT_OF_MEMORY,
-				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(line, ECMDB_OUT_OF_MEMORY,
+				   ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 
@@ -735,7 +735,7 @@ ECPGdeallocate_desc(int line, const char *name)
 			return true;
 		}
 	}
-	ecmdb_raise(line, ECPG_UNKNOWN_DESCRIPTOR, ECPG_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME, name);
+	ecmdb_raise(line, ECMDB_UNKNOWN_DESCRIPTOR, ECMDB_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME, name);
 	return false;
 }
 
@@ -763,8 +763,8 @@ ECPGallocate_desc(int line, const char *name)
 
 	if (sqlca == NULL)
 	{
-		ecmdb_raise(line, ECPG_OUT_OF_MEMORY,
-				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(line, ECMDB_OUT_OF_MEMORY,
+				   ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 
@@ -786,7 +786,7 @@ ECPGallocate_desc(int line, const char *name)
 	{
 		ecmdb_free(new->name);
 		ecmdb_free(new);
-		ecmdb_raise(line, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(line, ECMDB_OUT_OF_MEMORY, ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 	strcpy(new->name, name);
@@ -806,7 +806,7 @@ ecmdb_find_desc(int line, const char *name)
 			return desc;
 	}
 
-	ecmdb_raise(line, ECPG_UNKNOWN_DESCRIPTOR, ECPG_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME, name);
+	ecmdb_raise(line, ECMDB_UNKNOWN_DESCRIPTOR, ECMDB_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME, name);
 	return NULL;				/* not found */
 }
 
@@ -822,21 +822,21 @@ ECPGdescribe(int line, int compat, bool input, const char *connection_name, cons
 	/* DESCRIBE INPUT is not yet supported */
 	if (input)
 	{
-		ecmdb_raise(line, ECPG_UNSUPPORTED, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, "DESCRIBE INPUT");
+		ecmdb_raise(line, ECMDB_UNSUPPORTED, ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR, "DESCRIBE INPUT");
 		return ret;
 	}
 
 	con = ecmdb_get_connection(connection_name);
 	if (!con)
 	{
-		ecmdb_raise(line, ECPG_NO_CONN, ECPG_SQLSTATE_CONNECTION_DOES_NOT_EXIST,
+		ecmdb_raise(line, ECMDB_NO_CONN, ECMDB_SQLSTATE_CONNECTION_DOES_NOT_EXIST,
 				   connection_name ? connection_name : ecmdb_gettext("NULL"));
 		return ret;
 	}
 	prep = ecmdb_find_prepared_statement(stmt_name, con, NULL);
 	if (!prep)
 	{
-		ecmdb_raise(line, ECPG_INVALID_STMT, ECPG_SQLSTATE_INVALID_SQL_STATEMENT_NAME, stmt_name);
+		ecmdb_raise(line, ECMDB_INVALID_STMT, ECMDB_SQLSTATE_INVALID_SQL_STATEMENT_NAME, stmt_name);
 		return ret;
 	}
 

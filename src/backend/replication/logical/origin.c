@@ -266,7 +266,7 @@ replorigin_create(char *roname)
 
 	rel = heap_open(ReplicationOriginRelationId, ExclusiveLock);
 
-	for (roident = InvalidOid + 1; roident < PG_UINT16_MAX; roident++)
+	for (roident = InvalidOid + 1; roident < MDB_UINT16_MAX; roident++)
 	{
 		bool		nulls[Natts_mdb_replication_origin];
 		Datum		values[Natts_mdb_replication_origin];
@@ -534,7 +534,7 @@ CheckPointReplicationOrigin(void)
 	 * CheckpointLock.
 	 */
 	tmpfd = OpenTransientFile((char *) tmppath,
-							  O_CREAT | O_EXCL | O_WRONLY | PG_BINARY,
+							  O_CREAT | O_EXCL | O_WRONLY | MDB_BINARY,
 							  S_IRUSR | S_IWUSR);
 	if (tmpfd < 0)
 		ereport(PANIC,
@@ -644,7 +644,7 @@ StartupReplicationOrigin(void)
 
 	elog(DEBUG2, "starting up replication origin progress state");
 
-	fd = OpenTransientFile((char *) path, O_RDONLY | PG_BINARY, 0);
+	fd = OpenTransientFile((char *) path, O_RDONLY | MDB_BINARY, 0);
 
 	/*
 	 * might have had max_replication_slots == 0 last run, or we just brought
@@ -1143,33 +1143,33 @@ replorigin_session_get_progress(bool flush)
  * oid.
  */
 Datum
-mdb_replication_origin_create(PG_FUNCTION_ARGS)
+mdb_replication_origin_create(MDB_FUNCTION_ARGS)
 {
 	char	   *name;
 	RepOriginId roident;
 
 	replorigin_check_prerequisites(false, false);
 
-	name = text_to_cstring((text *) DatumGetPointer(PG_GETARG_DATUM(0)));
+	name = text_to_cstring((text *) DatumGetPointer(MDB_GETARG_DATUM(0)));
 	roident = replorigin_create(name);
 
 	pfree(name);
 
-	PG_RETURN_OID(roident);
+	MDB_RETURN_OID(roident);
 }
 
 /*
  * Drop replication origin.
  */
 Datum
-mdb_replication_origin_drop(PG_FUNCTION_ARGS)
+mdb_replication_origin_drop(MDB_FUNCTION_ARGS)
 {
 	char	   *name;
 	RepOriginId roident;
 
 	replorigin_check_prerequisites(false, false);
 
-	name = text_to_cstring((text *) DatumGetPointer(PG_GETARG_DATUM(0)));
+	name = text_to_cstring((text *) DatumGetPointer(MDB_GETARG_DATUM(0)));
 
 	roident = replorigin_by_name(name, false);
 	Assert(OidIsValid(roident));
@@ -1178,42 +1178,42 @@ mdb_replication_origin_drop(PG_FUNCTION_ARGS)
 
 	pfree(name);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * Return oid of a replication origin.
  */
 Datum
-mdb_replication_origin_oid(PG_FUNCTION_ARGS)
+mdb_replication_origin_oid(MDB_FUNCTION_ARGS)
 {
 	char	   *name;
 	RepOriginId roident;
 
 	replorigin_check_prerequisites(false, false);
 
-	name = text_to_cstring((text *) DatumGetPointer(PG_GETARG_DATUM(0)));
+	name = text_to_cstring((text *) DatumGetPointer(MDB_GETARG_DATUM(0)));
 	roident = replorigin_by_name(name, true);
 
 	pfree(name);
 
 	if (OidIsValid(roident))
-		PG_RETURN_OID(roident);
-	PG_RETURN_NULL();
+		MDB_RETURN_OID(roident);
+	MDB_RETURN_NULL();
 }
 
 /*
  * Setup a replication origin for this session.
  */
 Datum
-mdb_replication_origin_session_setup(PG_FUNCTION_ARGS)
+mdb_replication_origin_session_setup(MDB_FUNCTION_ARGS)
 {
 	char	   *name;
 	RepOriginId origin;
 
 	replorigin_check_prerequisites(true, false);
 
-	name = text_to_cstring((text *) DatumGetPointer(PG_GETARG_DATUM(0)));
+	name = text_to_cstring((text *) DatumGetPointer(MDB_GETARG_DATUM(0)));
 	origin = replorigin_by_name(name, false);
 	replorigin_session_setup(origin);
 
@@ -1221,14 +1221,14 @@ mdb_replication_origin_session_setup(PG_FUNCTION_ARGS)
 
 	pfree(name);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * Reset previously setup origin in this session
  */
 Datum
-mdb_replication_origin_session_reset(PG_FUNCTION_ARGS)
+mdb_replication_origin_session_reset(MDB_FUNCTION_ARGS)
 {
 	replorigin_check_prerequisites(true, false);
 
@@ -1238,18 +1238,18 @@ mdb_replication_origin_session_reset(PG_FUNCTION_ARGS)
 	replorigin_session_origin_lsn = InvalidXLogRecPtr;
 	replorigin_session_origin_timestamp = 0;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * Has a replication origin been setup for this session.
  */
 Datum
-mdb_replication_origin_session_is_setup(PG_FUNCTION_ARGS)
+mdb_replication_origin_session_is_setup(MDB_FUNCTION_ARGS)
 {
 	replorigin_check_prerequisites(false, false);
 
-	PG_RETURN_BOOL(replorigin_session_origin != InvalidRepOriginId);
+	MDB_RETURN_BOOL(replorigin_session_origin != InvalidRepOriginId);
 }
 
 
@@ -1261,10 +1261,10 @@ mdb_replication_origin_session_is_setup(PG_FUNCTION_ARGS)
  * commits are used when replaying replicated transactions.
  */
 Datum
-mdb_replication_origin_session_progress(PG_FUNCTION_ARGS)
+mdb_replication_origin_session_progress(MDB_FUNCTION_ARGS)
 {
 	XLogRecPtr	remote_lsn = InvalidXLogRecPtr;
-	bool		flush = PG_GETARG_BOOL(0);
+	bool		flush = MDB_GETARG_BOOL(0);
 
 	replorigin_check_prerequisites(true, false);
 
@@ -1276,15 +1276,15 @@ mdb_replication_origin_session_progress(PG_FUNCTION_ARGS)
 	remote_lsn = replorigin_session_get_progress(flush);
 
 	if (remote_lsn == InvalidXLogRecPtr)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_LSN(remote_lsn);
+	MDB_RETURN_LSN(remote_lsn);
 }
 
 Datum
-mdb_replication_origin_xact_setup(PG_FUNCTION_ARGS)
+mdb_replication_origin_xact_setup(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	location = PG_GETARG_LSN(0);
+	XLogRecPtr	location = MDB_GETARG_LSN(0);
 
 	replorigin_check_prerequisites(true, false);
 
@@ -1294,28 +1294,28 @@ mdb_replication_origin_xact_setup(PG_FUNCTION_ARGS)
 				 errmsg("no replication origin is configured")));
 
 	replorigin_session_origin_lsn = location;
-	replorigin_session_origin_timestamp = PG_GETARG_TIMESTAMPTZ(1);
+	replorigin_session_origin_timestamp = MDB_GETARG_TIMESTAMPTZ(1);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-mdb_replication_origin_xact_reset(PG_FUNCTION_ARGS)
+mdb_replication_origin_xact_reset(MDB_FUNCTION_ARGS)
 {
 	replorigin_check_prerequisites(true, false);
 
 	replorigin_session_origin_lsn = InvalidXLogRecPtr;
 	replorigin_session_origin_timestamp = 0;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
 Datum
-mdb_replication_origin_advance(PG_FUNCTION_ARGS)
+mdb_replication_origin_advance(MDB_FUNCTION_ARGS)
 {
-	text	   *name = PG_GETARG_TEXT_P(0);
-	XLogRecPtr	remote_commit = PG_GETARG_LSN(1);
+	text	   *name = MDB_GETARG_TEXT_P(0);
+	XLogRecPtr	remote_commit = MDB_GETARG_LSN(1);
 	RepOriginId node;
 
 	replorigin_check_prerequisites(true, false);
@@ -1335,7 +1335,7 @@ mdb_replication_origin_advance(PG_FUNCTION_ARGS)
 
 	UnlockRelationOid(ReplicationOriginRelationId, RowExclusiveLock);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
@@ -1347,7 +1347,7 @@ mdb_replication_origin_advance(PG_FUNCTION_ARGS)
  * commits are used when replaying replicated transactions.
  */
 Datum
-mdb_replication_origin_progress(PG_FUNCTION_ARGS)
+mdb_replication_origin_progress(MDB_FUNCTION_ARGS)
 {
 	char	   *name;
 	bool		flush;
@@ -1356,8 +1356,8 @@ mdb_replication_origin_progress(PG_FUNCTION_ARGS)
 
 	replorigin_check_prerequisites(true, true);
 
-	name = text_to_cstring((text *) DatumGetPointer(PG_GETARG_DATUM(0)));
-	flush = PG_GETARG_BOOL(1);
+	name = text_to_cstring((text *) DatumGetPointer(MDB_GETARG_DATUM(0)));
+	flush = MDB_GETARG_BOOL(1);
 
 	roident = replorigin_by_name(name, false);
 	Assert(OidIsValid(roident));
@@ -1365,14 +1365,14 @@ mdb_replication_origin_progress(PG_FUNCTION_ARGS)
 	remote_lsn = replorigin_get_progress(roident, flush);
 
 	if (remote_lsn == InvalidXLogRecPtr)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_LSN(remote_lsn);
+	MDB_RETURN_LSN(remote_lsn);
 }
 
 
 Datum
-mdb_show_replication_origin_status(PG_FUNCTION_ARGS)
+mdb_show_replication_origin_status(MDB_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;

@@ -267,7 +267,7 @@ sub mkvcbuild
 	$ecpg->AddDefine('MAJOR_VERSION=4');
 	$ecpg->AddDefine('MINOR_VERSION=12');
 	$ecpg->AddDefine('PATCHLEVEL=0');
-	$ecpg->AddDefine('ECPG_COMPILE');
+	$ecpg->AddDefine('ECMDB_COMPILE');
 	$ecpg->AddReference($libpgcommon, $libpgport);
 
 	my $pgregress_ecpg =

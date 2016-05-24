@@ -545,19 +545,19 @@ createTrgmNFA(text *text_re, Oid collation,
 
 	/*
 	 * Since the regexp library allocates its internal data structures with
-	 * malloc, we need to use a PG_TRY block to ensure that mdb_regfree() gets
+	 * malloc, we need to use a MDB_TRY block to ensure that mdb_regfree() gets
 	 * done even if there's an error.
 	 */
-	PG_TRY();
+	MDB_TRY();
 	{
 		trg = createTrgmNFAInternal(&regex, graph, rcontext);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		mdb_regfree(&regex);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	mdb_regfree(&regex);
 

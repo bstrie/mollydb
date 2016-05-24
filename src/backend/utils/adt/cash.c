@@ -94,9 +94,9 @@ num_word(Cash value)
  *
  */
 Datum
-cash_in(PG_FUNCTION_ARGS)
+cash_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	Cash		result;
 	Cash		value = 0;
 	Cash		dec = 0;
@@ -253,7 +253,7 @@ cash_in(PG_FUNCTION_ARGS)
 	printf("cashin- result is " INT64_FORMAT "\n", result);
 #endif
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -262,9 +262,9 @@ cash_in(PG_FUNCTION_ARGS)
  * the lc_monetary locale's formatting.
  */
 Datum
-cash_out(PG_FUNCTION_ARGS)
+cash_out(MDB_FUNCTION_ARGS)
 {
-	Cash		value = PG_GETARG_CASH(0);
+	Cash		value = MDB_GETARG_CASH(0);
 	char	   *result;
 	char		buf[128];
 	char	   *bufptr;
@@ -458,32 +458,32 @@ cash_out(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		cash_recv			- converts external binary format to cash
  */
 Datum
-cash_recv(PG_FUNCTION_ARGS)
+cash_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_CASH((Cash) pq_getmsgint64(buf));
+	MDB_RETURN_CASH((Cash) pq_getmsgint64(buf));
 }
 
 /*
  *		cash_send			- converts cash to binary format
  */
 Datum
-cash_send(PG_FUNCTION_ARGS)
+cash_send(MDB_FUNCTION_ARGS)
 {
-	Cash		arg1 = PG_GETARG_CASH(0);
+	Cash		arg1 = MDB_GETARG_CASH(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint64(&buf, arg1);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
@@ -491,71 +491,71 @@ cash_send(PG_FUNCTION_ARGS)
  */
 
 Datum
-cash_eq(PG_FUNCTION_ARGS)
+cash_eq(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 
-	PG_RETURN_BOOL(c1 == c2);
+	MDB_RETURN_BOOL(c1 == c2);
 }
 
 Datum
-cash_ne(PG_FUNCTION_ARGS)
+cash_ne(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 
-	PG_RETURN_BOOL(c1 != c2);
+	MDB_RETURN_BOOL(c1 != c2);
 }
 
 Datum
-cash_lt(PG_FUNCTION_ARGS)
+cash_lt(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 
-	PG_RETURN_BOOL(c1 < c2);
+	MDB_RETURN_BOOL(c1 < c2);
 }
 
 Datum
-cash_le(PG_FUNCTION_ARGS)
+cash_le(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 
-	PG_RETURN_BOOL(c1 <= c2);
+	MDB_RETURN_BOOL(c1 <= c2);
 }
 
 Datum
-cash_gt(PG_FUNCTION_ARGS)
+cash_gt(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 
-	PG_RETURN_BOOL(c1 > c2);
+	MDB_RETURN_BOOL(c1 > c2);
 }
 
 Datum
-cash_ge(PG_FUNCTION_ARGS)
+cash_ge(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 
-	PG_RETURN_BOOL(c1 >= c2);
+	MDB_RETURN_BOOL(c1 >= c2);
 }
 
 Datum
-cash_cmp(PG_FUNCTION_ARGS)
+cash_cmp(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 
 	if (c1 > c2)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (c1 == c2)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 
@@ -563,15 +563,15 @@ cash_cmp(PG_FUNCTION_ARGS)
  * Add two cash values.
  */
 Datum
-cash_pl(PG_FUNCTION_ARGS)
+cash_pl(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 	Cash		result;
 
 	result = c1 + c2;
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -579,15 +579,15 @@ cash_pl(PG_FUNCTION_ARGS)
  * Subtract two cash values.
  */
 Datum
-cash_mi(PG_FUNCTION_ARGS)
+cash_mi(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 	Cash		result;
 
 	result = c1 - c2;
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -595,10 +595,10 @@ cash_mi(PG_FUNCTION_ARGS)
  * Divide cash by cash, returning float8.
  */
 Datum
-cash_div_cash(PG_FUNCTION_ARGS)
+cash_div_cash(MDB_FUNCTION_ARGS)
 {
-	Cash		dividend = PG_GETARG_CASH(0);
-	Cash		divisor = PG_GETARG_CASH(1);
+	Cash		dividend = MDB_GETARG_CASH(0);
+	Cash		divisor = MDB_GETARG_CASH(1);
 	float8		quotient;
 
 	if (divisor == 0)
@@ -607,7 +607,7 @@ cash_div_cash(PG_FUNCTION_ARGS)
 				 errmsg("division by zero")));
 
 	quotient = (float8) dividend / (float8) divisor;
-	PG_RETURN_FLOAT8(quotient);
+	MDB_RETURN_FLOAT8(quotient);
 }
 
 
@@ -615,14 +615,14 @@ cash_div_cash(PG_FUNCTION_ARGS)
  * Multiply cash by float8.
  */
 Datum
-cash_mul_flt8(PG_FUNCTION_ARGS)
+cash_mul_flt8(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	float8		f = PG_GETARG_FLOAT8(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	float8		f = MDB_GETARG_FLOAT8(1);
 	Cash		result;
 
 	result = c * f;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -630,14 +630,14 @@ cash_mul_flt8(PG_FUNCTION_ARGS)
  * Multiply float8 by cash.
  */
 Datum
-flt8_mul_cash(PG_FUNCTION_ARGS)
+flt8_mul_cash(MDB_FUNCTION_ARGS)
 {
-	float8		f = PG_GETARG_FLOAT8(0);
-	Cash		c = PG_GETARG_CASH(1);
+	float8		f = MDB_GETARG_FLOAT8(0);
+	Cash		c = MDB_GETARG_CASH(1);
 	Cash		result;
 
 	result = f * c;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -645,10 +645,10 @@ flt8_mul_cash(PG_FUNCTION_ARGS)
  * Divide cash by float8.
  */
 Datum
-cash_div_flt8(PG_FUNCTION_ARGS)
+cash_div_flt8(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	float8		f = PG_GETARG_FLOAT8(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	float8		f = MDB_GETARG_FLOAT8(1);
 	Cash		result;
 
 	if (f == 0.0)
@@ -657,7 +657,7 @@ cash_div_flt8(PG_FUNCTION_ARGS)
 				 errmsg("division by zero")));
 
 	result = rint(c / f);
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -665,14 +665,14 @@ cash_div_flt8(PG_FUNCTION_ARGS)
  * Multiply cash by float4.
  */
 Datum
-cash_mul_flt4(PG_FUNCTION_ARGS)
+cash_mul_flt4(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	float4		f = PG_GETARG_FLOAT4(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	float4		f = MDB_GETARG_FLOAT4(1);
 	Cash		result;
 
 	result = c * f;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -680,14 +680,14 @@ cash_mul_flt4(PG_FUNCTION_ARGS)
  * Multiply float4 by cash.
  */
 Datum
-flt4_mul_cash(PG_FUNCTION_ARGS)
+flt4_mul_cash(MDB_FUNCTION_ARGS)
 {
-	float4		f = PG_GETARG_FLOAT4(0);
-	Cash		c = PG_GETARG_CASH(1);
+	float4		f = MDB_GETARG_FLOAT4(0);
+	Cash		c = MDB_GETARG_CASH(1);
 	Cash		result;
 
 	result = f * c;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -696,10 +696,10 @@ flt4_mul_cash(PG_FUNCTION_ARGS)
  *
  */
 Datum
-cash_div_flt4(PG_FUNCTION_ARGS)
+cash_div_flt4(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	float4		f = PG_GETARG_FLOAT4(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	float4		f = MDB_GETARG_FLOAT4(1);
 	Cash		result;
 
 	if (f == 0.0)
@@ -708,7 +708,7 @@ cash_div_flt4(PG_FUNCTION_ARGS)
 				 errmsg("division by zero")));
 
 	result = rint(c / f);
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -716,14 +716,14 @@ cash_div_flt4(PG_FUNCTION_ARGS)
  * Multiply cash by int8.
  */
 Datum
-cash_mul_int8(PG_FUNCTION_ARGS)
+cash_mul_int8(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	int64		i = PG_GETARG_INT64(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	int64		i = MDB_GETARG_INT64(1);
 	Cash		result;
 
 	result = c * i;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -731,24 +731,24 @@ cash_mul_int8(PG_FUNCTION_ARGS)
  * Multiply int8 by cash.
  */
 Datum
-int8_mul_cash(PG_FUNCTION_ARGS)
+int8_mul_cash(MDB_FUNCTION_ARGS)
 {
-	int64		i = PG_GETARG_INT64(0);
-	Cash		c = PG_GETARG_CASH(1);
+	int64		i = MDB_GETARG_INT64(0);
+	Cash		c = MDB_GETARG_CASH(1);
 	Cash		result;
 
 	result = i * c;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 /* cash_div_int8()
  * Divide cash by 8-byte integer.
  */
 Datum
-cash_div_int8(PG_FUNCTION_ARGS)
+cash_div_int8(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	int64		i = PG_GETARG_INT64(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	int64		i = MDB_GETARG_INT64(1);
 	Cash		result;
 
 	if (i == 0)
@@ -758,7 +758,7 @@ cash_div_int8(PG_FUNCTION_ARGS)
 
 	result = rint(c / i);
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -766,14 +766,14 @@ cash_div_int8(PG_FUNCTION_ARGS)
  * Multiply cash by int4.
  */
 Datum
-cash_mul_int4(PG_FUNCTION_ARGS)
+cash_mul_int4(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	int32		i = PG_GETARG_INT32(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	int32		i = MDB_GETARG_INT32(1);
 	Cash		result;
 
 	result = c * i;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -781,14 +781,14 @@ cash_mul_int4(PG_FUNCTION_ARGS)
  * Multiply int4 by cash.
  */
 Datum
-int4_mul_cash(PG_FUNCTION_ARGS)
+int4_mul_cash(MDB_FUNCTION_ARGS)
 {
-	int32		i = PG_GETARG_INT32(0);
-	Cash		c = PG_GETARG_CASH(1);
+	int32		i = MDB_GETARG_INT32(0);
+	Cash		c = MDB_GETARG_CASH(1);
 	Cash		result;
 
 	result = i * c;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -797,10 +797,10 @@ int4_mul_cash(PG_FUNCTION_ARGS)
  *
  */
 Datum
-cash_div_int4(PG_FUNCTION_ARGS)
+cash_div_int4(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	int32		i = PG_GETARG_INT32(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	int32		i = MDB_GETARG_INT32(1);
 	Cash		result;
 
 	if (i == 0)
@@ -810,7 +810,7 @@ cash_div_int4(PG_FUNCTION_ARGS)
 
 	result = rint(c / i);
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 
@@ -818,28 +818,28 @@ cash_div_int4(PG_FUNCTION_ARGS)
  * Multiply cash by int2.
  */
 Datum
-cash_mul_int2(PG_FUNCTION_ARGS)
+cash_mul_int2(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	int16		s = PG_GETARG_INT16(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	int16		s = MDB_GETARG_INT16(1);
 	Cash		result;
 
 	result = c * s;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 /* int2_mul_cash()
  * Multiply int2 by cash.
  */
 Datum
-int2_mul_cash(PG_FUNCTION_ARGS)
+int2_mul_cash(MDB_FUNCTION_ARGS)
 {
-	int16		s = PG_GETARG_INT16(0);
-	Cash		c = PG_GETARG_CASH(1);
+	int16		s = MDB_GETARG_INT16(0);
+	Cash		c = MDB_GETARG_CASH(1);
 	Cash		result;
 
 	result = s * c;
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 /* cash_div_int2()
@@ -847,10 +847,10 @@ int2_mul_cash(PG_FUNCTION_ARGS)
  *
  */
 Datum
-cash_div_int2(PG_FUNCTION_ARGS)
+cash_div_int2(MDB_FUNCTION_ARGS)
 {
-	Cash		c = PG_GETARG_CASH(0);
-	int16		s = PG_GETARG_INT16(1);
+	Cash		c = MDB_GETARG_CASH(0);
+	int16		s = MDB_GETARG_INT16(1);
 	Cash		result;
 
 	if (s == 0)
@@ -859,37 +859,37 @@ cash_div_int2(PG_FUNCTION_ARGS)
 				 errmsg("division by zero")));
 
 	result = rint(c / s);
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 /* cashlarger()
  * Return larger of two cash values.
  */
 Datum
-cashlarger(PG_FUNCTION_ARGS)
+cashlarger(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 	Cash		result;
 
 	result = (c1 > c2) ? c1 : c2;
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 /* cashsmaller()
  * Return smaller of two cash values.
  */
 Datum
-cashsmaller(PG_FUNCTION_ARGS)
+cashsmaller(MDB_FUNCTION_ARGS)
 {
-	Cash		c1 = PG_GETARG_CASH(0);
-	Cash		c2 = PG_GETARG_CASH(1);
+	Cash		c1 = MDB_GETARG_CASH(0);
+	Cash		c2 = MDB_GETARG_CASH(1);
 	Cash		result;
 
 	result = (c1 < c2) ? c1 : c2;
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 /* cash_words()
@@ -897,9 +897,9 @@ cashsmaller(PG_FUNCTION_ARGS)
  * Obviously way North American centric - sorry
  */
 Datum
-cash_words(PG_FUNCTION_ARGS)
+cash_words(MDB_FUNCTION_ARGS)
 {
-	Cash		value = PG_GETARG_CASH(0);
+	Cash		value = MDB_GETARG_CASH(0);
 	uint64		val;
 	char		buf[256];
 	char	   *p = buf;
@@ -976,7 +976,7 @@ cash_words(PG_FUNCTION_ARGS)
 	buf[0] = mdb_toupper((unsigned char) buf[0]);
 
 	/* return as text datum */
-	PG_RETURN_TEXT_P(cstring_to_text(buf));
+	MDB_RETURN_TEXT_P(cstring_to_text(buf));
 }
 
 
@@ -984,9 +984,9 @@ cash_words(PG_FUNCTION_ARGS)
  * Convert cash to numeric.
  */
 Datum
-cash_numeric(PG_FUNCTION_ARGS)
+cash_numeric(MDB_FUNCTION_ARGS)
 {
-	Cash		money = PG_GETARG_CASH(0);
+	Cash		money = MDB_GETARG_CASH(0);
 	Numeric		result;
 	int			fpoint;
 	int64		scale;
@@ -1016,16 +1016,16 @@ cash_numeric(PG_FUNCTION_ARGS)
 												 quotient,
 												 Int32GetDatum(fpoint)));
 
-	PG_RETURN_NUMERIC(result);
+	MDB_RETURN_NUMERIC(result);
 }
 
 /* numeric_cash()
  * Convert numeric to cash.
  */
 Datum
-numeric_cash(PG_FUNCTION_ARGS)
+numeric_cash(MDB_FUNCTION_ARGS)
 {
-	Datum		amount = PG_GETARG_DATUM(0);
+	Datum		amount = MDB_GETARG_DATUM(0);
 	Cash		result;
 	int			fpoint;
 	int64		scale;
@@ -1050,16 +1050,16 @@ numeric_cash(PG_FUNCTION_ARGS)
 	/* note that numeric_int8 will round to nearest integer for us */
 	result = DatumGetInt64(DirectFunctionCall1(numeric_int8, amount));
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 /* int4_cash()
  * Convert int4 (int) to cash
  */
 Datum
-int4_cash(PG_FUNCTION_ARGS)
+int4_cash(MDB_FUNCTION_ARGS)
 {
-	int32		amount = PG_GETARG_INT32(0);
+	int32		amount = MDB_GETARG_INT32(0);
 	Cash		result;
 	int			fpoint;
 	int64		scale;
@@ -1080,16 +1080,16 @@ int4_cash(PG_FUNCTION_ARGS)
 	result = DatumGetInt64(DirectFunctionCall2(int8mul, Int64GetDatum(amount),
 											   Int64GetDatum(scale)));
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }
 
 /* int8_cash()
  * Convert int8 (bigint) to cash
  */
 Datum
-int8_cash(PG_FUNCTION_ARGS)
+int8_cash(MDB_FUNCTION_ARGS)
 {
-	int64		amount = PG_GETARG_INT64(0);
+	int64		amount = MDB_GETARG_INT64(0);
 	Cash		result;
 	int			fpoint;
 	int64		scale;
@@ -1110,5 +1110,5 @@ int8_cash(PG_FUNCTION_ARGS)
 	result = DatumGetInt64(DirectFunctionCall2(int8mul, Int64GetDatum(amount),
 											   Int64GetDatum(scale)));
 
-	PG_RETURN_CASH(result);
+	MDB_RETURN_CASH(result);
 }

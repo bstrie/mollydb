@@ -7,8 +7,8 @@
  * src/include/replication/origin.h
  *-------------------------------------------------------------------------
  */
-#ifndef PG_ORIGIN_H
-#define PG_ORIGIN_H
+#ifndef MDB_ORIGIN_H
+#define MDB_ORIGIN_H
 
 #include "fmgr.h"
 #include "access/xlog.h"
@@ -32,7 +32,7 @@ typedef struct xl_replorigin_drop
 #define XLOG_REPLORIGIN_DROP		0x10
 
 #define InvalidRepOriginId 0
-#define DoNotReplicateId PG_UINT16_MAX
+#define DoNotReplicateId MDB_UINT16_MAX
 
 extern PGDLLIMPORT RepOriginId replorigin_session_origin;
 extern PGDLLIMPORT XLogRecPtr replorigin_session_origin_lsn;
@@ -72,17 +72,17 @@ extern Size ReplicationOriginShmemSize(void);
 extern void ReplicationOriginShmemInit(void);
 
 /* SQL callable functions */
-extern Datum mdb_replication_origin_create(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_drop(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_oid(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_session_setup(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_session_reset(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_session_is_setup(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_session_progress(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_xact_setup(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_xact_reset(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_advance(PG_FUNCTION_ARGS);
-extern Datum mdb_replication_origin_progress(PG_FUNCTION_ARGS);
-extern Datum mdb_show_replication_origin_status(PG_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_create(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_drop(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_oid(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_session_setup(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_session_reset(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_session_is_setup(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_session_progress(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_xact_setup(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_xact_reset(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_advance(MDB_FUNCTION_ARGS);
+extern Datum mdb_replication_origin_progress(MDB_FUNCTION_ARGS);
+extern Datum mdb_show_replication_origin_status(MDB_FUNCTION_ARGS);
 
-#endif   /* PG_ORIGIN_H */
+#endif   /* MDB_ORIGIN_H */

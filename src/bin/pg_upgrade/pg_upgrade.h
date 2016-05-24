@@ -125,7 +125,7 @@ extern char *output_files[];
  * large object chunk size added to mdb_controldata,
  * commit 5f93c37805e7485488480916b4585e098d3cc883
  */
-#define LARGE_OBJECT_SIZE_PG_CONTROL_VER 942
+#define LARGE_OBJECT_SIZE_MDB_CONTROL_VER 942
 
 /*
  * change in JSONB format during 9.4 beta
@@ -243,11 +243,11 @@ typedef enum
  */
 typedef enum
 {
-	PG_VERBOSE,
-	PG_STATUS,
-	PG_REPORT,
-	PG_WARNING,
-	PG_FATAL
+	MDB_VERBOSE,
+	MDB_STATUS,
+	MDB_REPORT,
+	MDB_WARNING,
+	MDB_FATAL
 } eLogType;
 
 
@@ -271,8 +271,8 @@ typedef struct
 								 * -o */
 	char	   *sockdir;		/* directory for Unix Domain socket, if any */
 	unsigned short port;		/* port number where postmaster is waiting */
-	uint32		major_version;	/* PG_VERSION of cluster */
-	char		major_version_str[64];	/* string PG_VERSION of cluster */
+	uint32		major_version;	/* MDB_VERSION of cluster */
+	char		major_version_str[64];	/* string MDB_VERSION of cluster */
 	uint32		bin_version;	/* version returned from mdb_ctl */
 	const char *tablespace_suffix;		/* directory specification */
 } ClusterInfo;

@@ -156,7 +156,7 @@ extern PGDLLIMPORT walrcv_disconnect_type walrcv_disconnect;
 
 /* prototypes for functions in walreceiver.c */
 extern void WalReceiverMain(void) mdb_attribute_noreturn();
-extern Datum mdb_stat_get_wal_receiver(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_wal_receiver(MDB_FUNCTION_ARGS);
 
 /* prototypes for functions in walreceiverfuncs.c */
 extern Size WalRcvShmemSize(void);

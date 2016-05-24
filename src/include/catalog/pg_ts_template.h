@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TS_TEMPLATE_H
-#define PG_TS_TEMPLATE_H
+#ifndef MDB_TS_TEMPLATE_H
+#define MDB_TS_TEMPLATE_H
 
 #include "catalog/genbki.h"
 
@@ -64,4 +64,4 @@ DESCR("ispell dictionary");
 DATA(insert OID = 3742 ( "thesaurus" PGNSP thesaurus_init thesaurus_lexize ));
 DESCR("thesaurus dictionary: phrase by phrase substitution");
 
-#endif   /* PG_TS_TEMPLATE_H */
+#endif   /* MDB_TS_TEMPLATE_H */

@@ -19,7 +19,7 @@
 #include "miscadmin.h"
 #include "utils/builtins.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 static Datum X509_NAME_field_to_text(X509_NAME *name, text *fieldName);
 static Datum X509_NAME_to_text(X509_NAME *name);
@@ -39,37 +39,37 @@ typedef struct
  * Function has no arguments.  Returns bool.  True if current session
  * is SSL session and false if it is local or non-ssl session.
  */
-PG_FUNCTION_INFO_V1(ssl_is_used);
+MDB_FUNCTION_INFO_V1(ssl_is_used);
 Datum
-ssl_is_used(PG_FUNCTION_ARGS)
+ssl_is_used(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(MyProcPort->ssl_in_use);
+	MDB_RETURN_BOOL(MyProcPort->ssl_in_use);
 }
 
 
 /*
  * Returns SSL version currently in use.
  */
-PG_FUNCTION_INFO_V1(ssl_version);
+MDB_FUNCTION_INFO_V1(ssl_version);
 Datum
-ssl_version(PG_FUNCTION_ARGS)
+ssl_version(MDB_FUNCTION_ARGS)
 {
 	if (MyProcPort->ssl == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_TEXT_P(cstring_to_text(SSL_get_version(MyProcPort->ssl)));
+		MDB_RETURN_NULL();
+	MDB_RETURN_TEXT_P(cstring_to_text(SSL_get_version(MyProcPort->ssl)));
 }
 
 
 /*
  * Returns SSL cipher currently in use.
  */
-PG_FUNCTION_INFO_V1(ssl_cipher);
+MDB_FUNCTION_INFO_V1(ssl_cipher);
 Datum
-ssl_cipher(PG_FUNCTION_ARGS)
+ssl_cipher(MDB_FUNCTION_ARGS)
 {
 	if (MyProcPort->ssl == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_TEXT_P(cstring_to_text(SSL_get_cipher(MyProcPort->ssl)));
+		MDB_RETURN_NULL();
+	MDB_RETURN_TEXT_P(cstring_to_text(SSL_get_cipher(MyProcPort->ssl)));
 }
 
 
@@ -79,11 +79,11 @@ ssl_cipher(PG_FUNCTION_ARGS)
  * Function has no arguments.  Returns bool.  True if current session
  * is SSL session and client certificate is verified, otherwise false.
  */
-PG_FUNCTION_INFO_V1(ssl_client_cert_present);
+MDB_FUNCTION_INFO_V1(ssl_client_cert_present);
 Datum
-ssl_client_cert_present(PG_FUNCTION_ARGS)
+ssl_client_cert_present(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(MyProcPort->peer != NULL);
+	MDB_RETURN_BOOL(MyProcPort->peer != NULL);
 }
 
 
@@ -95,9 +95,9 @@ ssl_client_cert_present(PG_FUNCTION_ARGS)
  * number as numeric or null if current session doesn't use SSL or if
  * SSL connection is established without sending client certificate.
  */
-PG_FUNCTION_INFO_V1(ssl_client_serial);
+MDB_FUNCTION_INFO_V1(ssl_client_serial);
 Datum
-ssl_client_serial(PG_FUNCTION_ARGS)
+ssl_client_serial(MDB_FUNCTION_ARGS)
 {
 	Datum		result;
 	Port	   *port = MyProcPort;
@@ -107,7 +107,7 @@ ssl_client_serial(PG_FUNCTION_ARGS)
 	char	   *decimal;
 
 	if (!peer)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	serial = X509_get_serialNumber(peer);
 	b = ASN1_INTEGER_to_BN(serial, NULL);
 	decimal = BN_bn2dec(b);
@@ -158,14 +158,14 @@ ASN1_STRING_to_text(ASN1_STRING *str)
 	nullterm = '\0';
 	BIO_write(membuf, &nullterm, 1);
 	size = BIO_get_mem_data(membuf, &sp);
-	dp = mdb_any_to_server(sp, size - 1, PG_UTF8);
+	dp = mdb_any_to_server(sp, size - 1, MDB_UTF8);
 	result = cstring_to_text(dp);
 	if (dp != sp)
 		pfree(dp);
 	if (BIO_free(membuf) != 1)
 		elog(ERROR, "could not free OpenSSL BIO structure");
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 
@@ -221,20 +221,20 @@ X509_NAME_field_to_text(X509_NAME *name, text *fieldName)
  * OpenSSL.  Returns null if no client certificate is present, or if
  * there is no field with such name in the certificate.
  */
-PG_FUNCTION_INFO_V1(ssl_client_dn_field);
+MDB_FUNCTION_INFO_V1(ssl_client_dn_field);
 Datum
-ssl_client_dn_field(PG_FUNCTION_ARGS)
+ssl_client_dn_field(MDB_FUNCTION_ARGS)
 {
-	text	   *fieldname = PG_GETARG_TEXT_P(0);
+	text	   *fieldname = MDB_GETARG_TEXT_P(0);
 	Datum		result;
 
 	if (!(MyProcPort->peer))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	result = X509_NAME_field_to_text(X509_get_subject_name(MyProcPort->peer), fieldname);
 
 	if (!result)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
 		return result;
 }
@@ -256,20 +256,20 @@ ssl_client_dn_field(PG_FUNCTION_ARGS)
  * OpenSSL.  Returns null if no client certificate is present, or if
  * there is no field with such name in the certificate.
  */
-PG_FUNCTION_INFO_V1(ssl_issuer_field);
+MDB_FUNCTION_INFO_V1(ssl_issuer_field);
 Datum
-ssl_issuer_field(PG_FUNCTION_ARGS)
+ssl_issuer_field(MDB_FUNCTION_ARGS)
 {
-	text	   *fieldname = PG_GETARG_TEXT_P(0);
+	text	   *fieldname = MDB_GETARG_TEXT_P(0);
 	Datum		result;
 
 	if (!(MyProcPort->peer))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	result = X509_NAME_field_to_text(X509_get_issuer_name(MyProcPort->peer), fieldname);
 
 	if (!result)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
 		return result;
 }
@@ -334,14 +334,14 @@ X509_NAME_to_text(X509_NAME *name)
 	nullterm = '\0';
 	BIO_write(membuf, &nullterm, 1);
 	size = BIO_get_mem_data(membuf, &sp);
-	dp = mdb_any_to_server(sp, size - 1, PG_UTF8);
+	dp = mdb_any_to_server(sp, size - 1, MDB_UTF8);
 	result = cstring_to_text(dp);
 	if (dp != sp)
 		pfree(dp);
 	if (BIO_free(membuf) != 1)
 		elog(ERROR, "could not free OpenSSL BIO structure");
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 
@@ -354,12 +354,12 @@ X509_NAME_to_text(X509_NAME *name)
  *
  * Returns text datum.
  */
-PG_FUNCTION_INFO_V1(ssl_client_dn);
+MDB_FUNCTION_INFO_V1(ssl_client_dn);
 Datum
-ssl_client_dn(PG_FUNCTION_ARGS)
+ssl_client_dn(MDB_FUNCTION_ARGS)
 {
 	if (!(MyProcPort->peer))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	return X509_NAME_to_text(X509_get_subject_name(MyProcPort->peer));
 }
 
@@ -373,12 +373,12 @@ ssl_client_dn(PG_FUNCTION_ARGS)
  *
  * Returns text datum.
  */
-PG_FUNCTION_INFO_V1(ssl_issuer_dn);
+MDB_FUNCTION_INFO_V1(ssl_issuer_dn);
 Datum
-ssl_issuer_dn(PG_FUNCTION_ARGS)
+ssl_issuer_dn(MDB_FUNCTION_ARGS)
 {
 	if (!(MyProcPort->peer))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	return X509_NAME_to_text(X509_get_issuer_name(MyProcPort->peer));
 }
 
@@ -391,9 +391,9 @@ ssl_issuer_dn(PG_FUNCTION_ARGS)
  * - value of the extension.
  * - critical status of the extension.
  */
-PG_FUNCTION_INFO_V1(ssl_extension_info);
+MDB_FUNCTION_INFO_V1(ssl_extension_info);
 Datum
-ssl_extension_info(PG_FUNCTION_ARGS)
+ssl_extension_info(MDB_FUNCTION_ARGS)
 {
 	X509	   *cert = MyProcPort->peer;
 	FuncCallContext *funcctx;

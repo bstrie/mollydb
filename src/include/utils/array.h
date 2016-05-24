@@ -239,20 +239,20 @@ typedef struct ArrayMapState
 typedef struct ArrayIteratorData *ArrayIterator;
 
 /* fmgr macros for regular varlena array objects */
-#define DatumGetArrayTypeP(X)		  ((ArrayType *) PG_DETOAST_DATUM(X))
-#define DatumGetArrayTypePCopy(X)	  ((ArrayType *) PG_DETOAST_DATUM_COPY(X))
-#define PG_GETARG_ARRAYTYPE_P(n)	  DatumGetArrayTypeP(PG_GETARG_DATUM(n))
-#define PG_GETARG_ARRAYTYPE_P_COPY(n) DatumGetArrayTypePCopy(PG_GETARG_DATUM(n))
-#define PG_RETURN_ARRAYTYPE_P(x)	  PG_RETURN_POINTER(x)
+#define DatumGetArrayTypeP(X)		  ((ArrayType *) MDB_DETOAST_DATUM(X))
+#define DatumGetArrayTypePCopy(X)	  ((ArrayType *) MDB_DETOAST_DATUM_COPY(X))
+#define MDB_GETARG_ARRAYTYPE_P(n)	  DatumGetArrayTypeP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_ARRAYTYPE_P_COPY(n) DatumGetArrayTypePCopy(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_ARRAYTYPE_P(x)	  MDB_RETURN_POINTER(x)
 
 /* fmgr macros for expanded array objects */
-#define PG_GETARG_EXPANDED_ARRAY(n)  DatumGetExpandedArray(PG_GETARG_DATUM(n))
-#define PG_GETARG_EXPANDED_ARRAYX(n, metacache) \
-	DatumGetExpandedArrayX(PG_GETARG_DATUM(n), metacache)
-#define PG_RETURN_EXPANDED_ARRAY(x)  PG_RETURN_DATUM(EOHPGetRWDatum(&(x)->hdr))
+#define MDB_GETARG_EXPANDED_ARRAY(n)  DatumGetExpandedArray(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_EXPANDED_ARRAYX(n, metacache) \
+	DatumGetExpandedArrayX(MDB_GETARG_DATUM(n), metacache)
+#define MDB_RETURN_EXPANDED_ARRAY(x)  MDB_RETURN_DATUM(EOHPGetRWDatum(&(x)->hdr))
 
 /* fmgr macros for AnyArrayType (ie, get either varlena or expanded form) */
-#define PG_GETARG_ANY_ARRAY(n)	DatumGetAnyArray(PG_GETARG_DATUM(n))
+#define MDB_GETARG_ANY_ARRAY(n)	DatumGetAnyArray(MDB_GETARG_DATUM(n))
 
 /*
  * Access macros for varlena array header fields.
@@ -328,37 +328,37 @@ extern bool Array_nulls;
 /*
  * prototypes for functions defined in arrayfuncs.c
  */
-extern Datum array_in(PG_FUNCTION_ARGS);
-extern Datum array_out(PG_FUNCTION_ARGS);
-extern Datum array_recv(PG_FUNCTION_ARGS);
-extern Datum array_send(PG_FUNCTION_ARGS);
-extern Datum array_eq(PG_FUNCTION_ARGS);
-extern Datum array_ne(PG_FUNCTION_ARGS);
-extern Datum array_lt(PG_FUNCTION_ARGS);
-extern Datum array_gt(PG_FUNCTION_ARGS);
-extern Datum array_le(PG_FUNCTION_ARGS);
-extern Datum array_ge(PG_FUNCTION_ARGS);
-extern Datum btarraycmp(PG_FUNCTION_ARGS);
-extern Datum hash_array(PG_FUNCTION_ARGS);
-extern Datum arrayoverlap(PG_FUNCTION_ARGS);
-extern Datum arraycontains(PG_FUNCTION_ARGS);
-extern Datum arraycontained(PG_FUNCTION_ARGS);
-extern Datum array_ndims(PG_FUNCTION_ARGS);
-extern Datum array_dims(PG_FUNCTION_ARGS);
-extern Datum array_lower(PG_FUNCTION_ARGS);
-extern Datum array_upper(PG_FUNCTION_ARGS);
-extern Datum array_length(PG_FUNCTION_ARGS);
-extern Datum array_cardinality(PG_FUNCTION_ARGS);
-extern Datum array_larger(PG_FUNCTION_ARGS);
-extern Datum array_smaller(PG_FUNCTION_ARGS);
-extern Datum generate_subscripts(PG_FUNCTION_ARGS);
-extern Datum generate_subscripts_nodir(PG_FUNCTION_ARGS);
-extern Datum array_fill(PG_FUNCTION_ARGS);
-extern Datum array_fill_with_lower_bounds(PG_FUNCTION_ARGS);
-extern Datum array_unnest(PG_FUNCTION_ARGS);
-extern Datum array_remove(PG_FUNCTION_ARGS);
-extern Datum array_replace(PG_FUNCTION_ARGS);
-extern Datum width_bucket_array(PG_FUNCTION_ARGS);
+extern Datum array_in(MDB_FUNCTION_ARGS);
+extern Datum array_out(MDB_FUNCTION_ARGS);
+extern Datum array_recv(MDB_FUNCTION_ARGS);
+extern Datum array_send(MDB_FUNCTION_ARGS);
+extern Datum array_eq(MDB_FUNCTION_ARGS);
+extern Datum array_ne(MDB_FUNCTION_ARGS);
+extern Datum array_lt(MDB_FUNCTION_ARGS);
+extern Datum array_gt(MDB_FUNCTION_ARGS);
+extern Datum array_le(MDB_FUNCTION_ARGS);
+extern Datum array_ge(MDB_FUNCTION_ARGS);
+extern Datum btarraycmp(MDB_FUNCTION_ARGS);
+extern Datum hash_array(MDB_FUNCTION_ARGS);
+extern Datum arrayoverlap(MDB_FUNCTION_ARGS);
+extern Datum arraycontains(MDB_FUNCTION_ARGS);
+extern Datum arraycontained(MDB_FUNCTION_ARGS);
+extern Datum array_ndims(MDB_FUNCTION_ARGS);
+extern Datum array_dims(MDB_FUNCTION_ARGS);
+extern Datum array_lower(MDB_FUNCTION_ARGS);
+extern Datum array_upper(MDB_FUNCTION_ARGS);
+extern Datum array_length(MDB_FUNCTION_ARGS);
+extern Datum array_cardinality(MDB_FUNCTION_ARGS);
+extern Datum array_larger(MDB_FUNCTION_ARGS);
+extern Datum array_smaller(MDB_FUNCTION_ARGS);
+extern Datum generate_subscripts(MDB_FUNCTION_ARGS);
+extern Datum generate_subscripts_nodir(MDB_FUNCTION_ARGS);
+extern Datum array_fill(MDB_FUNCTION_ARGS);
+extern Datum array_fill_with_lower_bounds(MDB_FUNCTION_ARGS);
+extern Datum array_unnest(MDB_FUNCTION_ARGS);
+extern Datum array_remove(MDB_FUNCTION_ARGS);
+extern Datum array_replace(MDB_FUNCTION_ARGS);
+extern Datum width_bucket_array(MDB_FUNCTION_ARGS);
 
 extern void CopyArrayEls(ArrayType *array,
 			 Datum *values,
@@ -478,9 +478,9 @@ extern void deconstruct_expanded_array(ExpandedArrayHeader *eah);
 /*
  * prototypes for functions defined in array_userfuncs.c
  */
-extern Datum array_append(PG_FUNCTION_ARGS);
-extern Datum array_prepend(PG_FUNCTION_ARGS);
-extern Datum array_cat(PG_FUNCTION_ARGS);
+extern Datum array_append(MDB_FUNCTION_ARGS);
+extern Datum array_prepend(MDB_FUNCTION_ARGS);
+extern Datum array_cat(MDB_FUNCTION_ARGS);
 
 extern ArrayType *create_singleton_array(FunctionCallInfo fcinfo,
 					   Oid element_type,
@@ -488,18 +488,18 @@ extern ArrayType *create_singleton_array(FunctionCallInfo fcinfo,
 					   bool isNull,
 					   int ndims);
 
-extern Datum array_agg_transfn(PG_FUNCTION_ARGS);
-extern Datum array_agg_finalfn(PG_FUNCTION_ARGS);
-extern Datum array_agg_array_transfn(PG_FUNCTION_ARGS);
-extern Datum array_agg_array_finalfn(PG_FUNCTION_ARGS);
+extern Datum array_agg_transfn(MDB_FUNCTION_ARGS);
+extern Datum array_agg_finalfn(MDB_FUNCTION_ARGS);
+extern Datum array_agg_array_transfn(MDB_FUNCTION_ARGS);
+extern Datum array_agg_array_finalfn(MDB_FUNCTION_ARGS);
 
-extern Datum array_position(PG_FUNCTION_ARGS);
-extern Datum array_position_start(PG_FUNCTION_ARGS);
-extern Datum array_positions(PG_FUNCTION_ARGS);
+extern Datum array_position(MDB_FUNCTION_ARGS);
+extern Datum array_position_start(MDB_FUNCTION_ARGS);
+extern Datum array_positions(MDB_FUNCTION_ARGS);
 
 /*
  * prototypes for functions defined in array_typanalyze.c
  */
-extern Datum array_typanalyze(PG_FUNCTION_ARGS);
+extern Datum array_typanalyze(MDB_FUNCTION_ARGS);
 
 #endif   /* ARRAY_H */

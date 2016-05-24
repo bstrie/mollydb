@@ -88,7 +88,7 @@ static void set_errdata_field(MemoryContextData *cxt, char **ptr, const char *st
 /* Global variables */
 ErrorContextCallback *error_context_stack = NULL;
 
-sigjmp_buf *PG_exception_stack = NULL;
+sigjmp_buf *MDB_exception_stack = NULL;
 
 extern bool redirection_done;
 
@@ -118,8 +118,8 @@ bool		syslog_split_messages = true;
  * at 1024 bytes, so this value leaves 124 bytes for those prefixes.  (Most
  * other syslog implementations seem to have limits of 2KB or so.)
  */
-#ifndef PG_SYSLOG_LIMIT
-#define PG_SYSLOG_LIMIT 900
+#ifndef MDB_SYSLOG_LIMIT
+#define MDB_SYSLOG_LIMIT 900
 #endif
 
 static bool openlog_done = false;
@@ -265,7 +265,7 @@ errstart(int elevel, const char *filename, int lineno,
 		 */
 		if (elevel == ERROR)
 		{
-			if (PG_exception_stack == NULL ||
+			if (MDB_exception_stack == NULL ||
 				ExitOnAnyError ||
 				proc_exit_inprogress)
 				elevel = FATAL;
@@ -379,7 +379,7 @@ errstart(int elevel, const char *filename, int lineno,
 	edata->lineno = lineno;
 	edata->funcname = funcname;
 	/* the default text domain is the backend's */
-	edata->domain = domain ? domain : PG_TEXTDOMAIN("mollydb");
+	edata->domain = domain ? domain : MDB_TEXTDOMAIN("mollydb");
 	/* initialize context_domain the same way (see set_errcontext_domain()) */
 	edata->context_domain = edata->domain;
 	/* Select default errcode based on elevel */
@@ -464,7 +464,7 @@ errfinish(int dummy,...)
 		 */
 
 		recursion_depth--;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
 
 	/*
@@ -523,7 +523,7 @@ errfinish(int dummy,...)
 		 * If we just reported a startup failure, the client will disconnect
 		 * on receiving it, so don't send any more to the client.
 		 */
-		if (PG_exception_stack == NULL && whereToSendOutput == DestRemote)
+		if (MDB_exception_stack == NULL && whereToSendOutput == DestRemote)
 			whereToSendOutput = DestNone;
 
 		/*
@@ -1053,7 +1053,7 @@ set_errcontext_domain(const char *domain)
 	CHECK_STACK_DEPTH();
 
 	/* the default text domain is the backend's */
-	edata->context_domain = domain ? domain : PG_TEXTDOMAIN("mollydb");
+	edata->context_domain = domain ? domain : MDB_TEXTDOMAIN("mollydb");
 
 	return 0;					/* return value does not matter */
 }
@@ -1179,7 +1179,7 @@ internalerrquery(const char *query)
 
 /*
  * err_generic_string -- used to set individual ErrorData string fields
- * identified by PG_DIAG_xxx codes.
+ * identified by MDB_DIAG_xxx codes.
  *
  * This intentionally only supports fields that don't use localized strings,
  * so that there are no translation considerations.
@@ -1197,19 +1197,19 @@ err_generic_string(int field, const char *str)
 
 	switch (field)
 	{
-		case PG_DIAG_SCHEMA_NAME:
+		case MDB_DIAG_SCHEMA_NAME:
 			set_errdata_field(edata->assoc_context, &edata->schema_name, str);
 			break;
-		case PG_DIAG_TABLE_NAME:
+		case MDB_DIAG_TABLE_NAME:
 			set_errdata_field(edata->assoc_context, &edata->table_name, str);
 			break;
-		case PG_DIAG_COLUMN_NAME:
+		case MDB_DIAG_COLUMN_NAME:
 			set_errdata_field(edata->assoc_context, &edata->column_name, str);
 			break;
-		case PG_DIAG_DATATYPE_NAME:
+		case MDB_DIAG_DATATYPE_NAME:
 			set_errdata_field(edata->assoc_context, &edata->datatype_name, str);
 			break;
-		case PG_DIAG_CONSTRAINT_NAME:
+		case MDB_DIAG_CONSTRAINT_NAME:
 			set_errdata_field(edata->assoc_context, &edata->constraint_name, str);
 			break;
 		default:
@@ -1420,7 +1420,7 @@ format_elog_string(const char *fmt,...)
 	edata = &errdata;
 	MemSet(edata, 0, sizeof(ErrorData));
 	/* the default text domain is the backend's */
-	edata->domain = save_format_domain ? save_format_domain : PG_TEXTDOMAIN("mollydb");
+	edata->domain = save_format_domain ? save_format_domain : MDB_TEXTDOMAIN("mollydb");
 	/* set the errno to be used to interpret %m */
 	edata->saved_errno = save_format_errnumber;
 
@@ -1654,7 +1654,7 @@ ThrowErrorData(ErrorData *edata)
  *
  * A handler can do CopyErrorData/FlushErrorState to get out of the error
  * subsystem, then do some processing, and finally ReThrowError to re-throw
- * the original error.  This is slower than just PG_RE_THROW() but should
+ * the original error.  This is slower than just MDB_RE_THROW() but should
  * be used if the "some processing" is likely to incur another error.
  */
 void
@@ -1710,22 +1710,22 @@ ReThrowError(ErrorData *edata)
 	newedata->assoc_context = ErrorContext;
 
 	recursion_depth--;
-	PG_RE_THROW();
+	MDB_RE_THROW();
 }
 
 /*
- * mdb_re_throw --- out-of-line implementation of PG_RE_THROW() macro
+ * mdb_re_throw --- out-of-line implementation of MDB_RE_THROW() macro
  */
 void
 mdb_re_throw(void)
 {
 	/* If possible, throw the error to the next outer setjmp handler */
-	if (PG_exception_stack != NULL)
-		siglongjmp(*PG_exception_stack, 1);
+	if (MDB_exception_stack != NULL)
+		siglongjmp(*MDB_exception_stack, 1);
 	else
 	{
 		/*
-		 * If we get here, elog(ERROR) was thrown inside a PG_TRY block, which
+		 * If we get here, elog(ERROR) was thrown inside a MDB_TRY block, which
 		 * we have now exited only to discover that there is no outer setjmp
 		 * handler to pass the error to.  Had the error been thrown outside
 		 * the block to begin with, we'd have promoted the error to FATAL, so
@@ -1967,13 +1967,13 @@ write_syslog(int level, const char *line)
 	 */
 	len = strlen(line);
 	nlpos = strchr(line, '\n');
-	if (syslog_split_messages && (len > PG_SYSLOG_LIMIT || nlpos != NULL))
+	if (syslog_split_messages && (len > MDB_SYSLOG_LIMIT || nlpos != NULL))
 	{
 		int			chunk_nr = 0;
 
 		while (len > 0)
 		{
-			char		buf[PG_SYSLOG_LIMIT + 1];
+			char		buf[MDB_SYSLOG_LIMIT + 1];
 			int			buflen;
 			int			i;
 
@@ -1992,7 +1992,7 @@ write_syslog(int level, const char *line)
 				buflen = nlpos - line;
 			else
 				buflen = len;
-			buflen = Min(buflen, PG_SYSLOG_LIMIT);
+			buflen = Min(buflen, MDB_SYSLOG_LIMIT);
 			memcpy(buf, line, buflen);
 			buf[buflen] = '\0';
 
@@ -3141,14 +3141,14 @@ send_message_to_frontend(ErrorData *edata)
 	/* 'N' (Notice) is for nonfatal conditions, 'E' is for errors */
 	pq_beginmessage(&msgbuf, (edata->elevel < ERROR) ? 'N' : 'E');
 
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
 	{
 		/* New style with separate fields */
 		char		tbuf[12];
 		int			ssval;
 		int			i;
 
-		pq_sendbyte(&msgbuf, PG_DIAG_SEVERITY);
+		pq_sendbyte(&msgbuf, MDB_DIAG_SEVERITY);
 		err_sendstring(&msgbuf, error_severity(edata->elevel));
 
 		/* unpack MAKE_SQLSTATE code */
@@ -3160,11 +3160,11 @@ send_message_to_frontend(ErrorData *edata)
 		}
 		tbuf[i] = '\0';
 
-		pq_sendbyte(&msgbuf, PG_DIAG_SQLSTATE);
+		pq_sendbyte(&msgbuf, MDB_DIAG_SQLSTATE);
 		err_sendstring(&msgbuf, tbuf);
 
 		/* M field is required per protocol, so always send something */
-		pq_sendbyte(&msgbuf, PG_DIAG_MESSAGE_PRIMARY);
+		pq_sendbyte(&msgbuf, MDB_DIAG_MESSAGE_PRIMARY);
 		if (edata->message)
 			err_sendstring(&msgbuf, edata->message);
 		else
@@ -3172,7 +3172,7 @@ send_message_to_frontend(ErrorData *edata)
 
 		if (edata->detail)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_MESSAGE_DETAIL);
+			pq_sendbyte(&msgbuf, MDB_DIAG_MESSAGE_DETAIL);
 			err_sendstring(&msgbuf, edata->detail);
 		}
 
@@ -3180,82 +3180,82 @@ send_message_to_frontend(ErrorData *edata)
 
 		if (edata->hint)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_MESSAGE_HINT);
+			pq_sendbyte(&msgbuf, MDB_DIAG_MESSAGE_HINT);
 			err_sendstring(&msgbuf, edata->hint);
 		}
 
 		if (edata->context)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_CONTEXT);
+			pq_sendbyte(&msgbuf, MDB_DIAG_CONTEXT);
 			err_sendstring(&msgbuf, edata->context);
 		}
 
 		if (edata->schema_name)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_SCHEMA_NAME);
+			pq_sendbyte(&msgbuf, MDB_DIAG_SCHEMA_NAME);
 			err_sendstring(&msgbuf, edata->schema_name);
 		}
 
 		if (edata->table_name)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_TABLE_NAME);
+			pq_sendbyte(&msgbuf, MDB_DIAG_TABLE_NAME);
 			err_sendstring(&msgbuf, edata->table_name);
 		}
 
 		if (edata->column_name)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_COLUMN_NAME);
+			pq_sendbyte(&msgbuf, MDB_DIAG_COLUMN_NAME);
 			err_sendstring(&msgbuf, edata->column_name);
 		}
 
 		if (edata->datatype_name)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_DATATYPE_NAME);
+			pq_sendbyte(&msgbuf, MDB_DIAG_DATATYPE_NAME);
 			err_sendstring(&msgbuf, edata->datatype_name);
 		}
 
 		if (edata->constraint_name)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_CONSTRAINT_NAME);
+			pq_sendbyte(&msgbuf, MDB_DIAG_CONSTRAINT_NAME);
 			err_sendstring(&msgbuf, edata->constraint_name);
 		}
 
 		if (edata->cursorpos > 0)
 		{
 			snprintf(tbuf, sizeof(tbuf), "%d", edata->cursorpos);
-			pq_sendbyte(&msgbuf, PG_DIAG_STATEMENT_POSITION);
+			pq_sendbyte(&msgbuf, MDB_DIAG_STATEMENT_POSITION);
 			err_sendstring(&msgbuf, tbuf);
 		}
 
 		if (edata->internalpos > 0)
 		{
 			snprintf(tbuf, sizeof(tbuf), "%d", edata->internalpos);
-			pq_sendbyte(&msgbuf, PG_DIAG_INTERNAL_POSITION);
+			pq_sendbyte(&msgbuf, MDB_DIAG_INTERNAL_POSITION);
 			err_sendstring(&msgbuf, tbuf);
 		}
 
 		if (edata->internalquery)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_INTERNAL_QUERY);
+			pq_sendbyte(&msgbuf, MDB_DIAG_INTERNAL_QUERY);
 			err_sendstring(&msgbuf, edata->internalquery);
 		}
 
 		if (edata->filename)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_SOURCE_FILE);
+			pq_sendbyte(&msgbuf, MDB_DIAG_SOURCE_FILE);
 			err_sendstring(&msgbuf, edata->filename);
 		}
 
 		if (edata->lineno > 0)
 		{
 			snprintf(tbuf, sizeof(tbuf), "%d", edata->lineno);
-			pq_sendbyte(&msgbuf, PG_DIAG_SOURCE_LINE);
+			pq_sendbyte(&msgbuf, MDB_DIAG_SOURCE_LINE);
 			err_sendstring(&msgbuf, tbuf);
 		}
 
 		if (edata->funcname)
 		{
-			pq_sendbyte(&msgbuf, PG_DIAG_SOURCE_FUNCTION);
+			pq_sendbyte(&msgbuf, MDB_DIAG_SOURCE_FUNCTION);
 			err_sendstring(&msgbuf, edata->funcname);
 		}
 

@@ -2994,7 +2994,7 @@ free_attstatsslot(Oid atttype,
 		pfree(numbers);
 }
 
-/*				---------- PG_NAMESPACE CACHE ----------				 */
+/*				---------- MDB_NAMESPACE CACHE ----------				 */
 
 /*
  * get_namespace_name
@@ -3035,7 +3035,7 @@ get_namespace_name_or_temp(Oid nspid)
 		return get_namespace_name(nspid);
 }
 
-/*				---------- PG_RANGE CACHE ----------				 */
+/*				---------- MDB_RANGE CACHE ----------				 */
 
 /*
  * get_range_subtype

@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_ENUM_H
-#define PG_ENUM_H
+#ifndef MDB_ENUM_H
+#define MDB_ENUM_H
 
 #include "catalog/genbki.h"
 #include "nodes/mdb_list.h"
@@ -68,4 +68,4 @@ extern void AddEnumLabel(Oid enumTypeOid, const char *newVal,
 			 const char *neighbor, bool newValIsAfter,
 			 bool skipIfExists);
 
-#endif   /* PG_ENUM_H */
+#endif   /* MDB_ENUM_H */

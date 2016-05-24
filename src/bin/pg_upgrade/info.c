@@ -129,7 +129,7 @@ gen_db_file_maps(DbInfo *old_db, DbInfo *new_db,
 			 (GET_MAJOR_VERSION(old_cluster.major_version) >= 900 ||
 			  strcmp(old_rel->nspname, "mdb_toast") != 0)))
 		{
-			mdb_log(PG_WARNING, "Relation names for OID %u in database \"%s\" do not match: "
+			mdb_log(MDB_WARNING, "Relation names for OID %u in database \"%s\" do not match: "
 				   "old name \"%s.%s\", new name \"%s.%s\"\n",
 				   old_rel->reloid, old_db->db_name,
 				   old_rel->nspname, old_rel->relname,
@@ -272,10 +272,10 @@ report_unmatched_relation(const RelInfo *rel, const DbInfo *db, bool is_new_db)
 	}
 
 	if (is_new_db)
-		mdb_log(PG_WARNING, "No match found in old cluster for new relation with OID %u in database \"%s\": %s\n",
+		mdb_log(MDB_WARNING, "No match found in old cluster for new relation with OID %u in database \"%s\": %s\n",
 			   reloid, db->db_name, reldesc);
 	else
-		mdb_log(PG_WARNING, "No match found in new cluster for old relation with OID %u in database \"%s\": %s\n",
+		mdb_log(MDB_WARNING, "No match found in new cluster for old relation with OID %u in database \"%s\": %s\n",
 			   reloid, db->db_name, reldesc);
 }
 
@@ -287,15 +287,15 @@ print_maps(FileNameMap *maps, int n_maps, const char *db_name)
 	{
 		int			mapnum;
 
-		mdb_log(PG_VERBOSE, "mappings for database \"%s\":\n", db_name);
+		mdb_log(MDB_VERBOSE, "mappings for database \"%s\":\n", db_name);
 
 		for (mapnum = 0; mapnum < n_maps; mapnum++)
-			mdb_log(PG_VERBOSE, "%s.%s: %u to %u\n",
+			mdb_log(MDB_VERBOSE, "%s.%s: %u to %u\n",
 				   maps[mapnum].nspname, maps[mapnum].relname,
 				   maps[mapnum].old_relfilenode,
 				   maps[mapnum].new_relfilenode);
 
-		mdb_log(PG_VERBOSE, "\n\n");
+		mdb_log(MDB_VERBOSE, "\n\n");
 	}
 }
 
@@ -319,7 +319,7 @@ get_db_and_rel_infos(ClusterInfo *cluster)
 	for (dbnum = 0; dbnum < cluster->dbarr.ndbs; dbnum++)
 		get_rel_infos(cluster, &cluster->dbarr.dbs[dbnum]);
 
-	mdb_log(PG_VERBOSE, "\n%s databases:\n", CLUSTER_NAME(cluster));
+	mdb_log(MDB_VERBOSE, "\n%s databases:\n", CLUSTER_NAME(cluster));
 	if (log_opts.verbose)
 		print_db_infos(&cluster->dbarr);
 }
@@ -627,9 +627,9 @@ print_db_infos(DbInfoArr *db_arr)
 
 	for (dbnum = 0; dbnum < db_arr->ndbs; dbnum++)
 	{
-		mdb_log(PG_VERBOSE, "Database: %s\n", db_arr->dbs[dbnum].db_name);
+		mdb_log(MDB_VERBOSE, "Database: %s\n", db_arr->dbs[dbnum].db_name);
 		print_rel_infos(&db_arr->dbs[dbnum].rel_arr);
-		mdb_log(PG_VERBOSE, "\n\n");
+		mdb_log(MDB_VERBOSE, "\n\n");
 	}
 }
 
@@ -640,7 +640,7 @@ print_rel_infos(RelInfoArr *rel_arr)
 	int			relnum;
 
 	for (relnum = 0; relnum < rel_arr->nrels; relnum++)
-		mdb_log(PG_VERBOSE, "relname: %s.%s: reloid: %u reltblspace: %s\n",
+		mdb_log(MDB_VERBOSE, "relname: %s.%s: reloid: %u reltblspace: %s\n",
 			   rel_arr->rels[relnum].nspname,
 			   rel_arr->rels[relnum].relname,
 			   rel_arr->rels[relnum].reloid,

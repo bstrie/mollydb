@@ -41,7 +41,7 @@
 #include "px-crypt.h"
 #include "pgcrypto.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* private stuff */
 
@@ -49,10 +49,10 @@ typedef int (*PFN) (const char *name, void **res);
 static void *find_provider(text *name, PFN pf, char *desc, int silent);
 
 /* SQL function: hash(bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(mdb_digest);
+MDB_FUNCTION_INFO_V1(mdb_digest);
 
 Datum
-mdb_digest(PG_FUNCTION_ARGS)
+mdb_digest(MDB_FUNCTION_ARGS)
 {
 	bytea	   *arg;
 	text	   *name;
@@ -61,7 +61,7 @@ mdb_digest(PG_FUNCTION_ARGS)
 	PX_MD	   *md;
 	bytea	   *res;
 
-	name = PG_GETARG_TEXT_P(1);
+	name = MDB_GETARG_TEXT_P(1);
 
 	/* will give error if fails */
 	md = find_provider(name, (PFN) px_find_digest, "Digest", 0);
@@ -71,24 +71,24 @@ mdb_digest(PG_FUNCTION_ARGS)
 	res = (text *) palloc(hlen + VARHDRSZ);
 	SET_VARSIZE(res, hlen + VARHDRSZ);
 
-	arg = PG_GETARG_BYTEA_P(0);
+	arg = MDB_GETARG_BYTEA_P(0);
 	len = VARSIZE(arg) - VARHDRSZ;
 
 	px_md_update(md, (uint8 *) VARDATA(arg), len);
 	px_md_finish(md, (uint8 *) VARDATA(res));
 	px_md_free(md);
 
-	PG_FREE_IF_COPY(arg, 0);
-	PG_FREE_IF_COPY(name, 1);
+	MDB_FREE_IF_COPY(arg, 0);
+	MDB_FREE_IF_COPY(name, 1);
 
-	PG_RETURN_BYTEA_P(res);
+	MDB_RETURN_BYTEA_P(res);
 }
 
 /* SQL function: hmac(data:bytea, key:bytea, type:text) returns bytea */
-PG_FUNCTION_INFO_V1(mdb_hmac);
+MDB_FUNCTION_INFO_V1(mdb_hmac);
 
 Datum
-mdb_hmac(PG_FUNCTION_ARGS)
+mdb_hmac(MDB_FUNCTION_ARGS)
 {
 	bytea	   *arg;
 	bytea	   *key;
@@ -99,7 +99,7 @@ mdb_hmac(PG_FUNCTION_ARGS)
 	PX_HMAC    *h;
 	bytea	   *res;
 
-	name = PG_GETARG_TEXT_P(2);
+	name = MDB_GETARG_TEXT_P(2);
 
 	/* will give error if fails */
 	h = find_provider(name, (PFN) px_find_hmac, "HMAC", 0);
@@ -109,8 +109,8 @@ mdb_hmac(PG_FUNCTION_ARGS)
 	res = (text *) palloc(hlen + VARHDRSZ);
 	SET_VARSIZE(res, hlen + VARHDRSZ);
 
-	arg = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
+	arg = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
 	len = VARSIZE(arg) - VARHDRSZ;
 	klen = VARSIZE(key) - VARHDRSZ;
 
@@ -119,21 +119,21 @@ mdb_hmac(PG_FUNCTION_ARGS)
 	px_hmac_finish(h, (uint8 *) VARDATA(res));
 	px_hmac_free(h);
 
-	PG_FREE_IF_COPY(arg, 0);
-	PG_FREE_IF_COPY(key, 1);
-	PG_FREE_IF_COPY(name, 2);
+	MDB_FREE_IF_COPY(arg, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	MDB_FREE_IF_COPY(name, 2);
 
-	PG_RETURN_BYTEA_P(res);
+	MDB_RETURN_BYTEA_P(res);
 }
 
 
 /* SQL function: mdb_gen_salt(text) returns text */
-PG_FUNCTION_INFO_V1(mdb_gen_salt);
+MDB_FUNCTION_INFO_V1(mdb_gen_salt);
 
 Datum
-mdb_gen_salt(PG_FUNCTION_ARGS)
+mdb_gen_salt(MDB_FUNCTION_ARGS)
 {
-	text	   *arg0 = PG_GETARG_TEXT_PP(0);
+	text	   *arg0 = MDB_GETARG_TEXT_PP(0);
 	int			len;
 	char		buf[PX_MAX_SALT_LEN + 1];
 
@@ -144,19 +144,19 @@ mdb_gen_salt(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("gen_salt: %s", px_strerror(len))));
 
-	PG_FREE_IF_COPY(arg0, 0);
+	MDB_FREE_IF_COPY(arg0, 0);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(buf, len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(buf, len));
 }
 
 /* SQL function: mdb_gen_salt(text, int4) returns text */
-PG_FUNCTION_INFO_V1(mdb_gen_salt_rounds);
+MDB_FUNCTION_INFO_V1(mdb_gen_salt_rounds);
 
 Datum
-mdb_gen_salt_rounds(PG_FUNCTION_ARGS)
+mdb_gen_salt_rounds(MDB_FUNCTION_ARGS)
 {
-	text	   *arg0 = PG_GETARG_TEXT_PP(0);
-	int			rounds = PG_GETARG_INT32(1);
+	text	   *arg0 = MDB_GETARG_TEXT_PP(0);
+	int			rounds = MDB_GETARG_INT32(1);
 	int			len;
 	char		buf[PX_MAX_SALT_LEN + 1];
 
@@ -167,19 +167,19 @@ mdb_gen_salt_rounds(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("gen_salt: %s", px_strerror(len))));
 
-	PG_FREE_IF_COPY(arg0, 0);
+	MDB_FREE_IF_COPY(arg0, 0);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(buf, len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(buf, len));
 }
 
 /* SQL function: mdb_crypt(psw:text, salt:text) returns text */
-PG_FUNCTION_INFO_V1(mdb_crypt);
+MDB_FUNCTION_INFO_V1(mdb_crypt);
 
 Datum
-mdb_crypt(PG_FUNCTION_ARGS)
+mdb_crypt(MDB_FUNCTION_ARGS)
 {
-	text	   *arg0 = PG_GETARG_TEXT_PP(0);
-	text	   *arg1 = PG_GETARG_TEXT_PP(1);
+	text	   *arg0 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(1);
 	char	   *buf0,
 			   *buf1,
 			   *cres,
@@ -205,17 +205,17 @@ mdb_crypt(PG_FUNCTION_ARGS)
 
 	pfree(resbuf);
 
-	PG_FREE_IF_COPY(arg0, 0);
-	PG_FREE_IF_COPY(arg1, 1);
+	MDB_FREE_IF_COPY(arg0, 0);
+	MDB_FREE_IF_COPY(arg1, 1);
 
-	PG_RETURN_TEXT_P(res);
+	MDB_RETURN_TEXT_P(res);
 }
 
 /* SQL function: mdb_encrypt(bytea, bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(mdb_encrypt);
+MDB_FUNCTION_INFO_V1(mdb_encrypt);
 
 Datum
-mdb_encrypt(PG_FUNCTION_ARGS)
+mdb_encrypt(MDB_FUNCTION_ARGS)
 {
 	int			err;
 	bytea	   *data,
@@ -227,11 +227,11 @@ mdb_encrypt(PG_FUNCTION_ARGS)
 				klen,
 				rlen;
 
-	type = PG_GETARG_TEXT_P(2);
+	type = MDB_GETARG_TEXT_P(2);
 	c = find_provider(type, (PFN) px_find_combo, "Cipher", 0);
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
 	dlen = VARSIZE(data) - VARHDRSZ;
 	klen = VARSIZE(key) - VARHDRSZ;
 
@@ -244,9 +244,9 @@ mdb_encrypt(PG_FUNCTION_ARGS)
 							   (uint8 *) VARDATA(res), &rlen);
 	px_combo_free(c);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	PG_FREE_IF_COPY(type, 2);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	MDB_FREE_IF_COPY(type, 2);
 
 	if (err)
 	{
@@ -257,14 +257,14 @@ mdb_encrypt(PG_FUNCTION_ARGS)
 	}
 
 	SET_VARSIZE(res, VARHDRSZ + rlen);
-	PG_RETURN_BYTEA_P(res);
+	MDB_RETURN_BYTEA_P(res);
 }
 
 /* SQL function: mdb_decrypt(bytea, bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(mdb_decrypt);
+MDB_FUNCTION_INFO_V1(mdb_decrypt);
 
 Datum
-mdb_decrypt(PG_FUNCTION_ARGS)
+mdb_decrypt(MDB_FUNCTION_ARGS)
 {
 	int			err;
 	bytea	   *data,
@@ -276,11 +276,11 @@ mdb_decrypt(PG_FUNCTION_ARGS)
 				klen,
 				rlen;
 
-	type = PG_GETARG_TEXT_P(2);
+	type = MDB_GETARG_TEXT_P(2);
 	c = find_provider(type, (PFN) px_find_combo, "Cipher", 0);
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
 	dlen = VARSIZE(data) - VARHDRSZ;
 	klen = VARSIZE(key) - VARHDRSZ;
 
@@ -301,18 +301,18 @@ mdb_decrypt(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(res, VARHDRSZ + rlen);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	PG_FREE_IF_COPY(type, 2);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	MDB_FREE_IF_COPY(type, 2);
 
-	PG_RETURN_BYTEA_P(res);
+	MDB_RETURN_BYTEA_P(res);
 }
 
 /* SQL function: mdb_encrypt_iv(bytea, bytea, bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(mdb_encrypt_iv);
+MDB_FUNCTION_INFO_V1(mdb_encrypt_iv);
 
 Datum
-mdb_encrypt_iv(PG_FUNCTION_ARGS)
+mdb_encrypt_iv(MDB_FUNCTION_ARGS)
 {
 	int			err;
 	bytea	   *data,
@@ -326,12 +326,12 @@ mdb_encrypt_iv(PG_FUNCTION_ARGS)
 				ivlen,
 				rlen;
 
-	type = PG_GETARG_TEXT_P(3);
+	type = MDB_GETARG_TEXT_P(3);
 	c = find_provider(type, (PFN) px_find_combo, "Cipher", 0);
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	iv = PG_GETARG_BYTEA_P(2);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	iv = MDB_GETARG_BYTEA_P(2);
 	dlen = VARSIZE(data) - VARHDRSZ;
 	klen = VARSIZE(key) - VARHDRSZ;
 	ivlen = VARSIZE(iv) - VARHDRSZ;
@@ -354,19 +354,19 @@ mdb_encrypt_iv(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(res, VARHDRSZ + rlen);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	PG_FREE_IF_COPY(iv, 2);
-	PG_FREE_IF_COPY(type, 3);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	MDB_FREE_IF_COPY(iv, 2);
+	MDB_FREE_IF_COPY(type, 3);
 
-	PG_RETURN_BYTEA_P(res);
+	MDB_RETURN_BYTEA_P(res);
 }
 
 /* SQL function: mdb_decrypt_iv(bytea, bytea, bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(mdb_decrypt_iv);
+MDB_FUNCTION_INFO_V1(mdb_decrypt_iv);
 
 Datum
-mdb_decrypt_iv(PG_FUNCTION_ARGS)
+mdb_decrypt_iv(MDB_FUNCTION_ARGS)
 {
 	int			err;
 	bytea	   *data,
@@ -380,12 +380,12 @@ mdb_decrypt_iv(PG_FUNCTION_ARGS)
 				rlen,
 				ivlen;
 
-	type = PG_GETARG_TEXT_P(3);
+	type = MDB_GETARG_TEXT_P(3);
 	c = find_provider(type, (PFN) px_find_combo, "Cipher", 0);
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	iv = PG_GETARG_BYTEA_P(2);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	iv = MDB_GETARG_BYTEA_P(2);
 	dlen = VARSIZE(data) - VARHDRSZ;
 	klen = VARSIZE(key) - VARHDRSZ;
 	ivlen = VARSIZE(iv) - VARHDRSZ;
@@ -408,22 +408,22 @@ mdb_decrypt_iv(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(res, VARHDRSZ + rlen);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	PG_FREE_IF_COPY(iv, 2);
-	PG_FREE_IF_COPY(type, 3);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	MDB_FREE_IF_COPY(iv, 2);
+	MDB_FREE_IF_COPY(type, 3);
 
-	PG_RETURN_BYTEA_P(res);
+	MDB_RETURN_BYTEA_P(res);
 }
 
 /* SQL function: mdb_random_bytes(int4) returns bytea */
-PG_FUNCTION_INFO_V1(mdb_random_bytes);
+MDB_FUNCTION_INFO_V1(mdb_random_bytes);
 
 Datum
-mdb_random_bytes(PG_FUNCTION_ARGS)
+mdb_random_bytes(MDB_FUNCTION_ARGS)
 {
 	int			err;
-	int			len = PG_GETARG_INT32(0);
+	int			len = MDB_GETARG_INT32(0);
 	bytea	   *res;
 
 	if (len < 1 || len > 1024)
@@ -441,14 +441,14 @@ mdb_random_bytes(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_EXTERNAL_ROUTINE_INVOCATION_EXCEPTION),
 				 errmsg("Random generator error: %s", px_strerror(err))));
 
-	PG_RETURN_BYTEA_P(res);
+	MDB_RETURN_BYTEA_P(res);
 }
 
 /* SQL function: gen_random_uuid() returns uuid */
-PG_FUNCTION_INFO_V1(mdb_random_uuid);
+MDB_FUNCTION_INFO_V1(mdb_random_uuid);
 
 Datum
-mdb_random_uuid(PG_FUNCTION_ARGS)
+mdb_random_uuid(MDB_FUNCTION_ARGS)
 {
 	uint8	   *buf = (uint8 *) palloc(UUID_LEN);
 	int			err;
@@ -467,7 +467,7 @@ mdb_random_uuid(PG_FUNCTION_ARGS)
 	buf[6] = (buf[6] & 0x0f) | 0x40;	/* "version" field */
 	buf[8] = (buf[8] & 0x3f) | 0x80;	/* "variant" field */
 
-	PG_RETURN_UUID_P((mdb_uuid_t *) buf);
+	MDB_RETURN_UUID_P((mdb_uuid_t *) buf);
 }
 
 static void *

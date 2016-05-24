@@ -324,7 +324,7 @@ readfile(const char *path)
 	 * snapshot, but in practice, for a small file, it's close enough for the
 	 * current use.
 	 */
-	fd = open(path, O_RDONLY | PG_BINARY, 0);
+	fd = open(path, O_RDONLY | MDB_BINARY, 0);
 	if (fd < 0)
 		return NULL;
 	if (fstat(fd, &statbuf) < 0)
@@ -840,7 +840,7 @@ do_init(void)
 	char		cmd[MAXPGPATH];
 
 	if (exec_path == NULL)
-		exec_path = find_other_exec_or_die(argv0, "initdb", "initdb (MollyDB) " PG_VERSION "\n");
+		exec_path = find_other_exec_or_die(argv0, "initdb", "initdb (MollyDB) " MDB_VERSION "\n");
 
 	if (pgdata_opt == NULL)
 		pgdata_opt = "";
@@ -884,7 +884,7 @@ do_start(void)
 		pgdata_opt = "";
 
 	if (exec_path == NULL)
-		exec_path = find_other_exec_or_die(argv0, "mollydb", PG_BACKEND_VERSIONSTR);
+		exec_path = find_other_exec_or_die(argv0, "mollydb", MDB_BACKEND_VERSIONSTR);
 
 #if defined(HAVE_GETRLIMIT) && defined(RLIMIT_CORE)
 	if (allow_core_files)
@@ -900,7 +900,7 @@ do_start(void)
 	{
 		static char env_var[32];
 
-		snprintf(env_var, sizeof(env_var), "PG_GRANDPARENT_PID=%d",
+		snprintf(env_var, sizeof(env_var), "MDB_GRANDPARENT_PID=%d",
 				 (int) getppid());
 		putenv(env_var);
 	}
@@ -1384,7 +1384,7 @@ pgwin32_CommandLine(bool registration)
 	}
 	else
 	{
-		ret = find_other_exec(argv0, "mollydb", PG_BACKEND_VERSIONSTR,
+		ret = find_other_exec(argv0, "mollydb", MDB_BACKEND_VERSIONSTR,
 							  cmdPath);
 		if (ret != 0)
 		{
@@ -2074,8 +2074,8 @@ adjust_data_dir(void)
 		return;
 	fclose(fd);
 
-	/* If PG_VERSION exists, it can't be a config-only dir */
-	snprintf(filename, sizeof(filename), "%s/PG_VERSION", mdb_config);
+	/* If MDB_VERSION exists, it can't be a config-only dir */
+	snprintf(filename, sizeof(filename), "%s/MDB_VERSION", mdb_config);
 	if ((fd = fopen(filename, "r")) != NULL)
 	{
 		fclose(fd);
@@ -2086,7 +2086,7 @@ adjust_data_dir(void)
 
 	/* we use a private my_exec_path to avoid interfering with later uses */
 	if (exec_path == NULL)
-		my_exec_path = find_other_exec_or_die(argv0, "mollydb", PG_BACKEND_VERSIONSTR);
+		my_exec_path = find_other_exec_or_die(argv0, "mollydb", MDB_BACKEND_VERSIONSTR);
 	else
 		my_exec_path = mdb_strdup(exec_path);
 
@@ -2140,7 +2140,7 @@ main(int argc, char **argv)
 #endif
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_ctl"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mdb_ctl"));
 	start_time = time(NULL);
 
 	/*
@@ -2161,7 +2161,7 @@ main(int argc, char **argv)
 		}
 		else if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("mdb_ctl (MollyDB) " PG_VERSION);
+			puts("mdb_ctl (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}
@@ -2398,7 +2398,7 @@ main(int argc, char **argv)
 	if (mdb_data)
 	{
 		snprintf(postopts_file, MAXPGPATH, "%s/postmaster.opts", mdb_data);
-		snprintf(version_file, MAXPGPATH, "%s/PG_VERSION", mdb_data);
+		snprintf(version_file, MAXPGPATH, "%s/MDB_VERSION", mdb_data);
 		snprintf(pid_file, MAXPGPATH, "%s/postmaster.pid", mdb_data);
 		snprintf(backup_file, MAXPGPATH, "%s/backup_label", mdb_data);
 		snprintf(recovery_file, MAXPGPATH, "%s/recovery.conf", mdb_data);

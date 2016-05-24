@@ -1176,7 +1176,7 @@ ExportSnapshot(Snapshot snapshot)
 	 * (ImportSnapshot won't allow it because of its valid-characters check).
 	 */
 	XactExportFilePath(pathtmp, topXid, list_length(exportedSnapshots), ".tmp");
-	if (!(f = AllocateFile(pathtmp, PG_BINARY_W)))
+	if (!(f = AllocateFile(pathtmp, MDB_BINARY_W)))
 		ereport(ERROR,
 				(errcode_for_file_access(),
 				 errmsg("could not create file \"%s\": %m", pathtmp)));
@@ -1219,12 +1219,12 @@ ExportSnapshot(Snapshot snapshot)
  *		SQL-callable wrapper for ExportSnapshot.
  */
 Datum
-mdb_export_snapshot(PG_FUNCTION_ARGS)
+mdb_export_snapshot(MDB_FUNCTION_ARGS)
 {
 	char	   *snapshotName;
 
 	snapshotName = ExportSnapshot(GetActiveSnapshot());
-	PG_RETURN_TEXT_P(cstring_to_text(snapshotName));
+	MDB_RETURN_TEXT_P(cstring_to_text(snapshotName));
 }
 
 
@@ -1338,7 +1338,7 @@ ImportSnapshot(const char *idstr)
 	/* OK, read the file */
 	snprintf(path, MAXPGPATH, SNAPSHOT_EXPORT_DIR "/%s", idstr);
 
-	f = AllocateFile(path, PG_BINARY_R);
+	f = AllocateFile(path, MDB_BINARY_R);
 	if (!f)
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),

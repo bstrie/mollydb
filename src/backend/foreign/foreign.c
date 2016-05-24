@@ -28,8 +28,8 @@
 #include "utils/syscache.h"
 
 
-extern Datum mdb_options_to_table(PG_FUNCTION_ARGS);
-extern Datum mollydb_fdw_validator(PG_FUNCTION_ARGS);
+extern Datum mdb_options_to_table(MDB_FUNCTION_ARGS);
+extern Datum mollydb_fdw_validator(MDB_FUNCTION_ARGS);
 
 static HeapTuple find_user_mapping(Oid userid, Oid serverid, bool missing_ok);
 
@@ -645,9 +645,9 @@ deflist_to_tuplestore(ReturnSetInfo *rsinfo, List *options)
  * schema and mdb_dump.
  */
 Datum
-mdb_options_to_table(PG_FUNCTION_ARGS)
+mdb_options_to_table(MDB_FUNCTION_ARGS)
 {
-	Datum		array = PG_GETARG_DATUM(0);
+	Datum		array = MDB_GETARG_DATUM(0);
 
 	deflist_to_tuplestore((ReturnSetInfo *) fcinfo->resultinfo,
 						  untransformRelOptions(array));
@@ -719,10 +719,10 @@ is_conninfo_option(const char *option, Oid context)
  * Inquire of libpq itself, instead.
  */
 Datum
-mollydb_fdw_validator(PG_FUNCTION_ARGS)
+mollydb_fdw_validator(MDB_FUNCTION_ARGS)
 {
-	List	   *options_list = untransformRelOptions(PG_GETARG_DATUM(0));
-	Oid			catalog = PG_GETARG_OID(1);
+	List	   *options_list = untransformRelOptions(MDB_GETARG_DATUM(0));
+	Oid			catalog = MDB_GETARG_OID(1);
 
 	ListCell   *cell;
 
@@ -751,11 +751,11 @@ mollydb_fdw_validator(PG_FUNCTION_ARGS)
 					 errhint("Valid options in this context are: %s",
 							 buf.data)));
 
-			PG_RETURN_BOOL(false);
+			MDB_RETURN_BOOL(false);
 		}
 	}
 
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 

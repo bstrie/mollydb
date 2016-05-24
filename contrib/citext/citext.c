@@ -8,8 +8,8 @@
 #include "utils/builtins.h"
 #include "utils/formatting.h"
 
-#ifdef PG_MODULE_MAGIC
-PG_MODULE_MAGIC;
+#ifdef MDB_MODULE_MAGIC
+MDB_MODULE_MAGIC;
 #endif
 
 /*
@@ -65,29 +65,29 @@ citextcmp(text *left, text *right, Oid collid)
  *		==================
  */
 
-PG_FUNCTION_INFO_V1(citext_cmp);
+MDB_FUNCTION_INFO_V1(citext_cmp);
 
 Datum
-citext_cmp(PG_FUNCTION_ARGS)
+citext_cmp(MDB_FUNCTION_ARGS)
 {
-	text	   *left = PG_GETARG_TEXT_PP(0);
-	text	   *right = PG_GETARG_TEXT_PP(1);
+	text	   *left = MDB_GETARG_TEXT_PP(0);
+	text	   *right = MDB_GETARG_TEXT_PP(1);
 	int32		result;
 
-	result = citextcmp(left, right, PG_GET_COLLATION());
+	result = citextcmp(left, right, MDB_GET_COLLATION());
 
-	PG_FREE_IF_COPY(left, 0);
-	PG_FREE_IF_COPY(right, 1);
+	MDB_FREE_IF_COPY(left, 0);
+	MDB_FREE_IF_COPY(right, 1);
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
-PG_FUNCTION_INFO_V1(citext_hash);
+MDB_FUNCTION_INFO_V1(citext_hash);
 
 Datum
-citext_hash(PG_FUNCTION_ARGS)
+citext_hash(MDB_FUNCTION_ARGS)
 {
-	text	   *txt = PG_GETARG_TEXT_PP(0);
+	text	   *txt = MDB_GETARG_TEXT_PP(0);
 	char	   *str;
 	Datum		result;
 
@@ -96,9 +96,9 @@ citext_hash(PG_FUNCTION_ARGS)
 	pfree(str);
 
 	/* Avoid leaking memory for toasted inputs */
-	PG_FREE_IF_COPY(txt, 0);
+	MDB_FREE_IF_COPY(txt, 0);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*
@@ -107,13 +107,13 @@ citext_hash(PG_FUNCTION_ARGS)
  *		==================
  */
 
-PG_FUNCTION_INFO_V1(citext_eq);
+MDB_FUNCTION_INFO_V1(citext_eq);
 
 Datum
-citext_eq(PG_FUNCTION_ARGS)
+citext_eq(MDB_FUNCTION_ARGS)
 {
-	text	   *left = PG_GETARG_TEXT_PP(0);
-	text	   *right = PG_GETARG_TEXT_PP(1);
+	text	   *left = MDB_GETARG_TEXT_PP(0);
+	text	   *right = MDB_GETARG_TEXT_PP(1);
 	char	   *lcstr,
 			   *rcstr;
 	bool		result;
@@ -131,19 +131,19 @@ citext_eq(PG_FUNCTION_ARGS)
 
 	pfree(lcstr);
 	pfree(rcstr);
-	PG_FREE_IF_COPY(left, 0);
-	PG_FREE_IF_COPY(right, 1);
+	MDB_FREE_IF_COPY(left, 0);
+	MDB_FREE_IF_COPY(right, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
-PG_FUNCTION_INFO_V1(citext_ne);
+MDB_FUNCTION_INFO_V1(citext_ne);
 
 Datum
-citext_ne(PG_FUNCTION_ARGS)
+citext_ne(MDB_FUNCTION_ARGS)
 {
-	text	   *left = PG_GETARG_TEXT_PP(0);
-	text	   *right = PG_GETARG_TEXT_PP(1);
+	text	   *left = MDB_GETARG_TEXT_PP(0);
+	text	   *right = MDB_GETARG_TEXT_PP(1);
 	char	   *lcstr,
 			   *rcstr;
 	bool		result;
@@ -161,78 +161,78 @@ citext_ne(PG_FUNCTION_ARGS)
 
 	pfree(lcstr);
 	pfree(rcstr);
-	PG_FREE_IF_COPY(left, 0);
-	PG_FREE_IF_COPY(right, 1);
+	MDB_FREE_IF_COPY(left, 0);
+	MDB_FREE_IF_COPY(right, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
-PG_FUNCTION_INFO_V1(citext_lt);
+MDB_FUNCTION_INFO_V1(citext_lt);
 
 Datum
-citext_lt(PG_FUNCTION_ARGS)
+citext_lt(MDB_FUNCTION_ARGS)
 {
-	text	   *left = PG_GETARG_TEXT_PP(0);
-	text	   *right = PG_GETARG_TEXT_PP(1);
+	text	   *left = MDB_GETARG_TEXT_PP(0);
+	text	   *right = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = citextcmp(left, right, PG_GET_COLLATION()) < 0;
+	result = citextcmp(left, right, MDB_GET_COLLATION()) < 0;
 
-	PG_FREE_IF_COPY(left, 0);
-	PG_FREE_IF_COPY(right, 1);
+	MDB_FREE_IF_COPY(left, 0);
+	MDB_FREE_IF_COPY(right, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
-PG_FUNCTION_INFO_V1(citext_le);
+MDB_FUNCTION_INFO_V1(citext_le);
 
 Datum
-citext_le(PG_FUNCTION_ARGS)
+citext_le(MDB_FUNCTION_ARGS)
 {
-	text	   *left = PG_GETARG_TEXT_PP(0);
-	text	   *right = PG_GETARG_TEXT_PP(1);
+	text	   *left = MDB_GETARG_TEXT_PP(0);
+	text	   *right = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = citextcmp(left, right, PG_GET_COLLATION()) <= 0;
+	result = citextcmp(left, right, MDB_GET_COLLATION()) <= 0;
 
-	PG_FREE_IF_COPY(left, 0);
-	PG_FREE_IF_COPY(right, 1);
+	MDB_FREE_IF_COPY(left, 0);
+	MDB_FREE_IF_COPY(right, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
-PG_FUNCTION_INFO_V1(citext_gt);
+MDB_FUNCTION_INFO_V1(citext_gt);
 
 Datum
-citext_gt(PG_FUNCTION_ARGS)
+citext_gt(MDB_FUNCTION_ARGS)
 {
-	text	   *left = PG_GETARG_TEXT_PP(0);
-	text	   *right = PG_GETARG_TEXT_PP(1);
+	text	   *left = MDB_GETARG_TEXT_PP(0);
+	text	   *right = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = citextcmp(left, right, PG_GET_COLLATION()) > 0;
+	result = citextcmp(left, right, MDB_GET_COLLATION()) > 0;
 
-	PG_FREE_IF_COPY(left, 0);
-	PG_FREE_IF_COPY(right, 1);
+	MDB_FREE_IF_COPY(left, 0);
+	MDB_FREE_IF_COPY(right, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
-PG_FUNCTION_INFO_V1(citext_ge);
+MDB_FUNCTION_INFO_V1(citext_ge);
 
 Datum
-citext_ge(PG_FUNCTION_ARGS)
+citext_ge(MDB_FUNCTION_ARGS)
 {
-	text	   *left = PG_GETARG_TEXT_PP(0);
-	text	   *right = PG_GETARG_TEXT_PP(1);
+	text	   *left = MDB_GETARG_TEXT_PP(0);
+	text	   *right = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = citextcmp(left, right, PG_GET_COLLATION()) >= 0;
+	result = citextcmp(left, right, MDB_GET_COLLATION()) >= 0;
 
-	PG_FREE_IF_COPY(left, 0);
-	PG_FREE_IF_COPY(right, 1);
+	MDB_FREE_IF_COPY(left, 0);
+	MDB_FREE_IF_COPY(right, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*
@@ -241,28 +241,28 @@ citext_ge(PG_FUNCTION_ARGS)
  *		===================
  */
 
-PG_FUNCTION_INFO_V1(citext_smaller);
+MDB_FUNCTION_INFO_V1(citext_smaller);
 
 Datum
-citext_smaller(PG_FUNCTION_ARGS)
+citext_smaller(MDB_FUNCTION_ARGS)
 {
-	text	   *left = PG_GETARG_TEXT_PP(0);
-	text	   *right = PG_GETARG_TEXT_PP(1);
+	text	   *left = MDB_GETARG_TEXT_PP(0);
+	text	   *right = MDB_GETARG_TEXT_PP(1);
 	text	   *result;
 
-	result = citextcmp(left, right, PG_GET_COLLATION()) < 0 ? left : right;
-	PG_RETURN_TEXT_P(result);
+	result = citextcmp(left, right, MDB_GET_COLLATION()) < 0 ? left : right;
+	MDB_RETURN_TEXT_P(result);
 }
 
-PG_FUNCTION_INFO_V1(citext_larger);
+MDB_FUNCTION_INFO_V1(citext_larger);
 
 Datum
-citext_larger(PG_FUNCTION_ARGS)
+citext_larger(MDB_FUNCTION_ARGS)
 {
-	text	   *left = PG_GETARG_TEXT_PP(0);
-	text	   *right = PG_GETARG_TEXT_PP(1);
+	text	   *left = MDB_GETARG_TEXT_PP(0);
+	text	   *right = MDB_GETARG_TEXT_PP(1);
 	text	   *result;
 
-	result = citextcmp(left, right, PG_GET_COLLATION()) > 0 ? left : right;
-	PG_RETURN_TEXT_P(result);
+	result = citextcmp(left, right, MDB_GET_COLLATION()) > 0 ? left : right;
+	MDB_RETURN_TEXT_P(result);
 }

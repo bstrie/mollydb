@@ -120,7 +120,7 @@ CreateProceduralLanguage(CreatePLangStmt *stmt)
 		else
 		{
 			tmpAddr = ProcedureCreate(pltemplate->tmplhandler,
-									  PG_CATALOG_NAMESPACE,
+									  MDB_CATALOG_NAMESPACE,
 									  false,	/* replace */
 									  false,	/* returnsSet */
 									  LANGUAGE_HANDLEROID,
@@ -160,7 +160,7 @@ CreateProceduralLanguage(CreatePLangStmt *stmt)
 			if (!OidIsValid(inlineOid))
 			{
 				tmpAddr = ProcedureCreate(pltemplate->tmplinline,
-										  PG_CATALOG_NAMESPACE,
+										  MDB_CATALOG_NAMESPACE,
 										  false,		/* replace */
 										  false,		/* returnsSet */
 										  VOIDOID,
@@ -203,7 +203,7 @@ CreateProceduralLanguage(CreatePLangStmt *stmt)
 			if (!OidIsValid(valOid))
 			{
 				tmpAddr = ProcedureCreate(pltemplate->tmplvalidator,
-										  PG_CATALOG_NAMESPACE,
+										  MDB_CATALOG_NAMESPACE,
 										  false,		/* replace */
 										  false,		/* returnsSet */
 										  VOIDOID,

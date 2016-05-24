@@ -11,10 +11,10 @@
 #include "utils/memutils.h"
 #include "crc32.h"
 
-PG_FUNCTION_INFO_V1(ltree_in);
-PG_FUNCTION_INFO_V1(ltree_out);
-PG_FUNCTION_INFO_V1(lquery_in);
-PG_FUNCTION_INFO_V1(lquery_out);
+MDB_FUNCTION_INFO_V1(ltree_in);
+MDB_FUNCTION_INFO_V1(ltree_out);
+MDB_FUNCTION_INFO_V1(lquery_in);
+MDB_FUNCTION_INFO_V1(lquery_out);
 
 
 #define UNCHAR ereport(ERROR, \
@@ -35,9 +35,9 @@ typedef struct
 #define LTPRS_WAITDELIM 1
 
 Datum
-ltree_in(PG_FUNCTION_ARGS)
+ltree_in(MDB_FUNCTION_ARGS)
 {
-	char	   *buf = (char *) PG_GETARG_POINTER(0);
+	char	   *buf = (char *) MDB_GETARG_POINTER(0);
 	char	   *ptr;
 	nodeitem   *list,
 			   *lptr;
@@ -143,13 +143,13 @@ ltree_in(PG_FUNCTION_ARGS)
 	}
 
 	pfree(list);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-ltree_out(PG_FUNCTION_ARGS)
+ltree_out(MDB_FUNCTION_ARGS)
 {
-	ltree	   *in = PG_GETARG_LTREE(0);
+	ltree	   *in = MDB_GETARG_LTREE(0);
 	char	   *buf,
 			   *ptr;
 	int			i;
@@ -170,9 +170,9 @@ ltree_out(PG_FUNCTION_ARGS)
 	}
 
 	*ptr = '\0';
-	PG_FREE_IF_COPY(in, 0);
+	MDB_FREE_IF_COPY(in, 0);
 
-	PG_RETURN_POINTER(buf);
+	MDB_RETURN_POINTER(buf);
 }
 
 #define LQPRS_WAITLEVEL 0
@@ -191,9 +191,9 @@ ltree_out(PG_FUNCTION_ARGS)
 #define NEXTLEV(x) ( (lquery_level*)( ((char*)(x)) + ITEMSIZE) )
 
 Datum
-lquery_in(PG_FUNCTION_ARGS)
+lquery_in(MDB_FUNCTION_ARGS)
 {
-	char	   *buf = (char *) PG_GETARG_POINTER(0);
+	char	   *buf = (char *) MDB_GETARG_POINTER(0);
 	char	   *ptr;
 	int			num = 0,
 				totallen = 0,
@@ -515,13 +515,13 @@ lquery_in(PG_FUNCTION_ARGS)
 	}
 
 	pfree(tmpql);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-lquery_out(PG_FUNCTION_ARGS)
+lquery_out(MDB_FUNCTION_ARGS)
 {
-	lquery	   *in = PG_GETARG_LQUERY(0);
+	lquery	   *in = MDB_GETARG_LQUERY(0);
 	char	   *buf,
 			   *ptr;
 	int			i,
@@ -614,7 +614,7 @@ lquery_out(PG_FUNCTION_ARGS)
 	}
 
 	*ptr = '\0';
-	PG_FREE_IF_COPY(in, 0);
+	MDB_FREE_IF_COPY(in, 0);
 
-	PG_RETURN_POINTER(buf);
+	MDB_RETURN_POINTER(buf);
 }

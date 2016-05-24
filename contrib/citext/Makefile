@@ -9,8 +9,8 @@ PGFILEDESC = "citext - case-insensitive character string data type"
 REGRESS = citext
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/citext

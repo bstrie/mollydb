@@ -153,7 +153,7 @@ handle_args(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("mdb_test_fsync (MollyDB) " PG_VERSION);
+			puts("mdb_test_fsync (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}
@@ -190,7 +190,7 @@ handle_args(int argc, char *argv[])
 	}
 
 	printf("%d seconds per test\n", secs_per_test);
-#if PG_O_DIRECT != 0
+#if MDB_O_DIRECT != 0
 	printf("O_DIRECT supported on this platform for open_datasync and open_sync.\n");
 #else
 	printf("Direct I/O is not supported on this platform.\n");
@@ -251,7 +251,7 @@ test_sync(int writes_per_op)
 	fflush(stdout);
 
 #ifdef OPEN_DATASYNC_FLAG
-	if ((tmpfile = open(filename, O_RDWR | O_DSYNC | PG_O_DIRECT, 0)) == -1)
+	if ((tmpfile = open(filename, O_RDWR | O_DSYNC | MDB_O_DIRECT, 0)) == -1)
 	{
 		printf(NA_FORMAT, "n/a*\n");
 		fs_warning = true;
@@ -354,7 +354,7 @@ test_sync(int writes_per_op)
 	fflush(stdout);
 
 #ifdef OPEN_SYNC_FLAG
-	if ((tmpfile = open(filename, O_RDWR | OPEN_SYNC_FLAG | PG_O_DIRECT, 0)) == -1)
+	if ((tmpfile = open(filename, O_RDWR | OPEN_SYNC_FLAG | MDB_O_DIRECT, 0)) == -1)
 	{
 		printf(NA_FORMAT, "n/a*\n");
 		fs_warning = true;
@@ -421,7 +421,7 @@ test_open_sync(const char *msg, int writes_size)
 	fflush(stdout);
 
 #ifdef OPEN_SYNC_FLAG
-	if ((tmpfile = open(filename, O_RDWR | OPEN_SYNC_FLAG | PG_O_DIRECT, 0)) == -1)
+	if ((tmpfile = open(filename, O_RDWR | OPEN_SYNC_FLAG | MDB_O_DIRECT, 0)) == -1)
 		printf(NA_FORMAT, "n/a*\n");
 	else
 	{

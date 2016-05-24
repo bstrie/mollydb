@@ -110,14 +110,14 @@ typedef struct GistInetKey
  * The GiST query consistency check
  */
 Datum
-inet_gist_consistent(PG_FUNCTION_ARGS)
+inet_gist_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *ent = (GISTENTRY *) PG_GETARG_POINTER(0);
-	inet	   *query = PG_GETARG_INET_PP(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *ent = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	inet	   *query = MDB_GETARG_INET_PP(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	GistInetKey *key = DatumGetInetKeyP(ent->key);
 	int			minbits,
 				order;
@@ -134,7 +134,7 @@ inet_gist_consistent(PG_FUNCTION_ARGS)
 	if (gk_ip_family(key) == 0)
 	{
 		Assert(!GIST_LEAF(ent));
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 	}
 
 	/*
@@ -149,20 +149,20 @@ inet_gist_consistent(PG_FUNCTION_ARGS)
 			case INETSTRAT_LT:
 			case INETSTRAT_LE:
 				if (gk_ip_family(key) < ip_family(query))
-					PG_RETURN_BOOL(true);
+					MDB_RETURN_BOOL(true);
 				break;
 
 			case INETSTRAT_GE:
 			case INETSTRAT_GT:
 				if (gk_ip_family(key) > ip_family(query))
-					PG_RETURN_BOOL(true);
+					MDB_RETURN_BOOL(true);
 				break;
 
 			case INETSTRAT_NE:
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 		}
 		/* For all other cases, we can be sure there is no match */
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 
 	/*
@@ -177,23 +177,23 @@ inet_gist_consistent(PG_FUNCTION_ARGS)
 	{
 		case INETSTRAT_SUB:
 			if (GIST_LEAF(ent) && gk_ip_minbits(key) <= ip_bits(query))
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			break;
 
 		case INETSTRAT_SUBEQ:
 			if (GIST_LEAF(ent) && gk_ip_minbits(key) < ip_bits(query))
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			break;
 
 		case INETSTRAT_SUPEQ:
 		case INETSTRAT_EQ:
 			if (gk_ip_minbits(key) > ip_bits(query))
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			break;
 
 		case INETSTRAT_SUP:
 			if (gk_ip_minbits(key) >= ip_bits(query))
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			break;
 	}
 
@@ -221,34 +221,34 @@ inet_gist_consistent(PG_FUNCTION_ARGS)
 		case INETSTRAT_OVERLAPS:
 		case INETSTRAT_SUPEQ:
 		case INETSTRAT_SUP:
-			PG_RETURN_BOOL(order == 0);
+			MDB_RETURN_BOOL(order == 0);
 
 		case INETSTRAT_LT:
 		case INETSTRAT_LE:
 			if (order > 0)
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			if (order < 0 || !GIST_LEAF(ent))
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 			break;
 
 		case INETSTRAT_EQ:
 			if (order != 0)
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			if (!GIST_LEAF(ent))
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 			break;
 
 		case INETSTRAT_GE:
 		case INETSTRAT_GT:
 			if (order < 0)
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			if (order > 0 || !GIST_LEAF(ent))
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 			break;
 
 		case INETSTRAT_NE:
 			if (order != 0 || !GIST_LEAF(ent))
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 			break;
 	}
 
@@ -270,27 +270,27 @@ inet_gist_consistent(PG_FUNCTION_ARGS)
 		case INETSTRAT_LT:
 		case INETSTRAT_LE:
 			if (gk_ip_minbits(key) < ip_bits(query))
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 			if (gk_ip_minbits(key) > ip_bits(query))
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			break;
 
 		case INETSTRAT_EQ:
 			if (gk_ip_minbits(key) != ip_bits(query))
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			break;
 
 		case INETSTRAT_GE:
 		case INETSTRAT_GT:
 			if (gk_ip_minbits(key) > ip_bits(query))
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 			if (gk_ip_minbits(key) < ip_bits(query))
-				PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(false);
 			break;
 
 		case INETSTRAT_NE:
 			if (gk_ip_minbits(key) != ip_bits(query))
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 			break;
 	}
 
@@ -304,26 +304,26 @@ inet_gist_consistent(PG_FUNCTION_ARGS)
 	switch (strategy)
 	{
 		case INETSTRAT_LT:
-			PG_RETURN_BOOL(order < 0);
+			MDB_RETURN_BOOL(order < 0);
 
 		case INETSTRAT_LE:
-			PG_RETURN_BOOL(order <= 0);
+			MDB_RETURN_BOOL(order <= 0);
 
 		case INETSTRAT_EQ:
-			PG_RETURN_BOOL(order == 0);
+			MDB_RETURN_BOOL(order == 0);
 
 		case INETSTRAT_GE:
-			PG_RETURN_BOOL(order >= 0);
+			MDB_RETURN_BOOL(order >= 0);
 
 		case INETSTRAT_GT:
-			PG_RETURN_BOOL(order > 0);
+			MDB_RETURN_BOOL(order > 0);
 
 		case INETSTRAT_NE:
-			PG_RETURN_BOOL(order != 0);
+			MDB_RETURN_BOOL(order != 0);
 	}
 
 	elog(ERROR, "unknown strategy for inet GiST");
-	PG_RETURN_BOOL(false);		/* keep compiler quiet */
+	MDB_RETURN_BOOL(false);		/* keep compiler quiet */
 }
 
 /*
@@ -500,9 +500,9 @@ build_inet_union_key(int family, int minbits, int commonbits,
  * See comments at head of file for the definition of the union.
  */
 Datum
-inet_gist_union(PG_FUNCTION_ARGS)
+inet_gist_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *ent = entryvec->vector;
 	int			minfamily,
 				maxfamily,
@@ -528,7 +528,7 @@ inet_gist_union(PG_FUNCTION_ARGS)
 	/* Construct the union value. */
 	result = build_inet_union_key(minfamily, minbits, commonbits, addr);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
@@ -537,9 +537,9 @@ inet_gist_union(PG_FUNCTION_ARGS)
  * Convert an inet value to GistInetKey.
  */
 Datum
-inet_gist_compress(PG_FUNCTION_ARGS)
+inet_gist_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval;
 
 	if (entry->leafkey)
@@ -571,7 +571,7 @@ inet_gist_compress(PG_FUNCTION_ARGS)
 	}
 	else
 		retval = entry;
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 /*
@@ -580,11 +580,11 @@ inet_gist_compress(PG_FUNCTION_ARGS)
  * do not do anything --- we just use the stored GistInetKey as-is.
  */
 Datum
-inet_gist_decompress(PG_FUNCTION_ARGS)
+inet_gist_decompress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 /*
@@ -593,9 +593,9 @@ inet_gist_decompress(PG_FUNCTION_ARGS)
  * Reconstruct the original inet datum from a GistInetKey.
  */
 Datum
-inet_gist_fetch(PG_FUNCTION_ARGS)
+inet_gist_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GistInetKey *key = DatumGetInetKeyP(entry->key);
 	GISTENTRY  *retval;
 	inet	   *dst;
@@ -611,7 +611,7 @@ inet_gist_fetch(PG_FUNCTION_ARGS)
 	gistentryinit(*retval, InetPGetDatum(dst), entry->rel, entry->page,
 				  entry->offset, FALSE);
 
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 /*
@@ -623,11 +623,11 @@ inet_gist_fetch(PG_FUNCTION_ARGS)
  * new number of common address bits.
  */
 Datum
-inet_gist_penalty(PG_FUNCTION_ARGS)
+inet_gist_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *origent = (GISTENTRY *) PG_GETARG_POINTER(0);
-	GISTENTRY  *newent = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *penalty = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *origent = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	GISTENTRY  *newent = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *penalty = (float *) MDB_GETARG_POINTER(2);
 	GistInetKey *orig = DatumGetInetKeyP(origent->key),
 			   *new = DatumGetInetKeyP(newent->key);
 	int			commonbits;
@@ -650,7 +650,7 @@ inet_gist_penalty(PG_FUNCTION_ARGS)
 	else
 		*penalty = 4;
 
-	PG_RETURN_POINTER(penalty);
+	MDB_RETURN_POINTER(penalty);
 }
 
 /*
@@ -666,10 +666,10 @@ inet_gist_penalty(PG_FUNCTION_ARGS)
  * 50-50.
  */
 Datum
-inet_gist_picksplit(PG_FUNCTION_ARGS)
+inet_gist_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *splitvec = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *splitvec = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	GISTENTRY  *ent = entryvec->vector;
 	int			minfamily,
 				maxfamily,
@@ -793,18 +793,18 @@ inet_gist_picksplit(PG_FUNCTION_ARGS)
 	right_union = build_inet_union_key(minfamily, minbits, commonbits, addr);
 	splitvec->spl_rdatum = PointerGetDatum(right_union);
 
-	PG_RETURN_POINTER(splitvec);
+	MDB_RETURN_POINTER(splitvec);
 }
 
 /*
  * The GiST equality function
  */
 Datum
-inet_gist_same(PG_FUNCTION_ARGS)
+inet_gist_same(MDB_FUNCTION_ARGS)
 {
-	GistInetKey *left = DatumGetInetKeyP(PG_GETARG_DATUM(0));
-	GistInetKey *right = DatumGetInetKeyP(PG_GETARG_DATUM(1));
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	GistInetKey *left = DatumGetInetKeyP(MDB_GETARG_DATUM(0));
+	GistInetKey *right = DatumGetInetKeyP(MDB_GETARG_DATUM(1));
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	*result = (gk_ip_family(left) == gk_ip_family(right) &&
 			   gk_ip_minbits(left) == gk_ip_minbits(right) &&
@@ -812,5 +812,5 @@ inet_gist_same(PG_FUNCTION_ARGS)
 			   memcmp(gk_ip_addr(left), gk_ip_addr(right),
 					  gk_ip_addrsize(left)) == 0);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }

@@ -83,14 +83,14 @@ typedef struct
  */
 #define TEXTBUFLEN		1024
 
-#define DatumGetUnknownP(X)			((unknown *) PG_DETOAST_DATUM(X))
-#define DatumGetUnknownPCopy(X)		((unknown *) PG_DETOAST_DATUM_COPY(X))
-#define PG_GETARG_UNKNOWN_P(n)		DatumGetUnknownP(PG_GETARG_DATUM(n))
-#define PG_GETARG_UNKNOWN_P_COPY(n) DatumGetUnknownPCopy(PG_GETARG_DATUM(n))
-#define PG_RETURN_UNKNOWN_P(x)		PG_RETURN_POINTER(x)
+#define DatumGetUnknownP(X)			((unknown *) MDB_DETOAST_DATUM(X))
+#define DatumGetUnknownPCopy(X)		((unknown *) MDB_DETOAST_DATUM_COPY(X))
+#define MDB_GETARG_UNKNOWN_P(n)		DatumGetUnknownP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_UNKNOWN_P_COPY(n) DatumGetUnknownPCopy(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_UNKNOWN_P(x)		MDB_RETURN_POINTER(x)
 
-#define DatumGetVarStringP(X)		((VarString *) PG_DETOAST_DATUM(X))
-#define DatumGetVarStringPP(X)		((VarString *) PG_DETOAST_DATUM_PACKED(X))
+#define DatumGetVarStringP(X)		((VarString *) MDB_DETOAST_DATUM(X))
+#define DatumGetVarStringPP(X)		((VarString *) MDB_DETOAST_DATUM_PACKED(X))
 
 static int	varstrfastcmp_c(Datum x, Datum y, SortSupport ssup);
 static int	bpcharfastcmp_c(Datum x, Datum y, SortSupport ssup);
@@ -117,7 +117,7 @@ static bytea *bytea_substring(Datum str,
 				bool length_not_specified);
 static bytea *bytea_overlay(bytea *t1, bytea *t2, int sp, int sl);
 static void appendStringInfoText(StringInfo str, const text *t);
-static Datum text_to_array_internal(PG_FUNCTION_ARGS);
+static Datum text_to_array_internal(MDB_FUNCTION_ARGS);
 static text *array_to_text_internal(FunctionCallInfo fcinfo, ArrayType *v,
 					   const char *fldsep, const char *null_string);
 static StringInfo makeStringAggState(FunctionCallInfo fcinfo);
@@ -253,9 +253,9 @@ text_to_cstring_buffer(const text *src, char *dst, size_t dst_len)
  *				The error checking of input is minimal.
  */
 Datum
-byteain(PG_FUNCTION_ARGS)
+byteain(MDB_FUNCTION_ARGS)
 {
-	char	   *inputText = PG_GETARG_CSTRING(0);
+	char	   *inputText = MDB_GETARG_CSTRING(0);
 	char	   *tp;
 	char	   *rp;
 	int			bc;
@@ -271,7 +271,7 @@ byteain(PG_FUNCTION_ARGS)
 		bc = hex_decode(inputText + 2, len - 2, VARDATA(result));
 		SET_VARSIZE(result, bc + VARHDRSZ);		/* actual length */
 
-		PG_RETURN_BYTEA_P(result);
+		MDB_RETURN_BYTEA_P(result);
 	}
 
 	/* Else, it's the traditional escaped style */
@@ -339,7 +339,7 @@ byteain(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_BYTEA_P(result);
+	MDB_RETURN_BYTEA_P(result);
 }
 
 /*
@@ -349,9 +349,9 @@ byteain(PG_FUNCTION_ARGS)
  *		printed as '\nnn' (octal) and '\' as '\\'.
  */
 Datum
-byteaout(PG_FUNCTION_ARGS)
+byteaout(MDB_FUNCTION_ARGS)
 {
-	bytea	   *vlena = PG_GETARG_BYTEA_PP(0);
+	bytea	   *vlena = MDB_GETARG_BYTEA_PP(0);
 	char	   *result;
 	char	   *rp;
 
@@ -414,16 +414,16 @@ byteaout(PG_FUNCTION_ARGS)
 		rp = result = NULL;		/* keep compiler quiet */
 	}
 	*rp = '\0';
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		bytearecv			- converts external binary format to bytea
  */
 Datum
-bytearecv(PG_FUNCTION_ARGS)
+bytearecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	bytea	   *result;
 	int			nbytes;
 
@@ -431,7 +431,7 @@ bytearecv(PG_FUNCTION_ARGS)
 	result = (bytea *) palloc(nbytes + VARHDRSZ);
 	SET_VARSIZE(result, nbytes + VARHDRSZ);
 	pq_copymsgbytes(buf, VARDATA(result), nbytes);
-	PG_RETURN_BYTEA_P(result);
+	MDB_RETURN_BYTEA_P(result);
 }
 
 /*
@@ -440,31 +440,31 @@ bytearecv(PG_FUNCTION_ARGS)
  * This is a special case: just copy the input...
  */
 Datum
-byteasend(PG_FUNCTION_ARGS)
+byteasend(MDB_FUNCTION_ARGS)
 {
-	bytea	   *vlena = PG_GETARG_BYTEA_P_COPY(0);
+	bytea	   *vlena = MDB_GETARG_BYTEA_P_COPY(0);
 
-	PG_RETURN_BYTEA_P(vlena);
+	MDB_RETURN_BYTEA_P(vlena);
 }
 
 Datum
-bytea_string_agg_transfn(PG_FUNCTION_ARGS)
+bytea_string_agg_transfn(MDB_FUNCTION_ARGS)
 {
 	StringInfo	state;
 
-	state = PG_ARGISNULL(0) ? NULL : (StringInfo) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (StringInfo) MDB_GETARG_POINTER(0);
 
 	/* Append the value unless null. */
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
-		bytea	   *value = PG_GETARG_BYTEA_PP(1);
+		bytea	   *value = MDB_GETARG_BYTEA_PP(1);
 
 		/* On the first time through, we ignore the delimiter. */
 		if (state == NULL)
 			state = makeStringAggState(fcinfo);
-		else if (!PG_ARGISNULL(2))
+		else if (!MDB_ARGISNULL(2))
 		{
-			bytea	   *delim = PG_GETARG_BYTEA_PP(2);
+			bytea	   *delim = MDB_GETARG_BYTEA_PP(2);
 
 			appendBinaryStringInfo(state, VARDATA_ANY(delim), VARSIZE_ANY_EXHDR(delim));
 		}
@@ -476,18 +476,18 @@ bytea_string_agg_transfn(PG_FUNCTION_ARGS)
 	 * The transition type for string_agg() is declared to be "internal",
 	 * which is a pass-by-value type the same size as a pointer.
 	 */
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-bytea_string_agg_finalfn(PG_FUNCTION_ARGS)
+bytea_string_agg_finalfn(MDB_FUNCTION_ARGS)
 {
 	StringInfo	state;
 
 	/* cannot be called directly because of internal-type argument */
 	Assert(AggCheckCallContext(fcinfo, NULL));
 
-	state = PG_ARGISNULL(0) ? NULL : (StringInfo) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (StringInfo) MDB_GETARG_POINTER(0);
 
 	if (state != NULL)
 	{
@@ -496,41 +496,41 @@ bytea_string_agg_finalfn(PG_FUNCTION_ARGS)
 		result = (bytea *) palloc(state->len + VARHDRSZ);
 		SET_VARSIZE(result, state->len + VARHDRSZ);
 		memcpy(VARDATA(result), state->data, state->len);
-		PG_RETURN_BYTEA_P(result);
+		MDB_RETURN_BYTEA_P(result);
 	}
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
  *		textin			- converts "..." to internal representation
  */
 Datum
-textin(PG_FUNCTION_ARGS)
+textin(MDB_FUNCTION_ARGS)
 {
-	char	   *inputText = PG_GETARG_CSTRING(0);
+	char	   *inputText = MDB_GETARG_CSTRING(0);
 
-	PG_RETURN_TEXT_P(cstring_to_text(inputText));
+	MDB_RETURN_TEXT_P(cstring_to_text(inputText));
 }
 
 /*
  *		textout			- converts internal representation to "..."
  */
 Datum
-textout(PG_FUNCTION_ARGS)
+textout(MDB_FUNCTION_ARGS)
 {
-	Datum		txt = PG_GETARG_DATUM(0);
+	Datum		txt = MDB_GETARG_DATUM(0);
 
-	PG_RETURN_CSTRING(TextDatumGetCString(txt));
+	MDB_RETURN_CSTRING(TextDatumGetCString(txt));
 }
 
 /*
  *		textrecv			- converts external binary format to text
  */
 Datum
-textrecv(PG_FUNCTION_ARGS)
+textrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	text	   *result;
 	char	   *str;
 	int			nbytes;
@@ -539,21 +539,21 @@ textrecv(PG_FUNCTION_ARGS)
 
 	result = cstring_to_text_with_len(str, nbytes);
 	pfree(str);
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /*
  *		textsend			- converts text to binary format
  */
 Datum
-textsend(PG_FUNCTION_ARGS)
+textsend(MDB_FUNCTION_ARGS)
 {
-	text	   *t = PG_GETARG_TEXT_PP(0);
+	text	   *t = MDB_GETARG_TEXT_PP(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendtext(&buf, VARDATA_ANY(t), VARSIZE_ANY_EXHDR(t));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -561,54 +561,54 @@ textsend(PG_FUNCTION_ARGS)
  *		unknownin			- converts "..." to internal representation
  */
 Datum
-unknownin(PG_FUNCTION_ARGS)
+unknownin(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 
 	/* representation is same as cstring */
-	PG_RETURN_CSTRING(pstrdup(str));
+	MDB_RETURN_CSTRING(pstrdup(str));
 }
 
 /*
  *		unknownout			- converts internal representation to "..."
  */
 Datum
-unknownout(PG_FUNCTION_ARGS)
+unknownout(MDB_FUNCTION_ARGS)
 {
 	/* representation is same as cstring */
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 
-	PG_RETURN_CSTRING(pstrdup(str));
+	MDB_RETURN_CSTRING(pstrdup(str));
 }
 
 /*
  *		unknownrecv			- converts external binary format to unknown
  */
 Datum
-unknownrecv(PG_FUNCTION_ARGS)
+unknownrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	char	   *str;
 	int			nbytes;
 
 	str = pq_getmsgtext(buf, buf->len - buf->cursor, &nbytes);
 	/* representation is same as cstring */
-	PG_RETURN_CSTRING(str);
+	MDB_RETURN_CSTRING(str);
 }
 
 /*
  *		unknownsend			- converts unknown to binary format
  */
 Datum
-unknownsend(PG_FUNCTION_ARGS)
+unknownsend(MDB_FUNCTION_ARGS)
 {
 	/* representation is same as cstring */
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendtext(&buf, str, strlen(str));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -620,12 +620,12 @@ unknownsend(PG_FUNCTION_ARGS)
  *	   (which is less than the VARSIZE of the text*)
  */
 Datum
-textlen(PG_FUNCTION_ARGS)
+textlen(MDB_FUNCTION_ARGS)
 {
-	Datum		str = PG_GETARG_DATUM(0);
+	Datum		str = MDB_GETARG_DATUM(0);
 
 	/* try to avoid decompressing argument */
-	PG_RETURN_INT32(text_length(str));
+	MDB_RETURN_INT32(text_length(str));
 }
 
 /*
@@ -642,12 +642,12 @@ text_length(Datum str)
 {
 	/* fastpath when max encoding length is one */
 	if (mdb_database_encoding_max_length() == 1)
-		PG_RETURN_INT32(toast_raw_datum_size(str) - VARHDRSZ);
+		MDB_RETURN_INT32(toast_raw_datum_size(str) - VARHDRSZ);
 	else
 	{
 		text	   *t = DatumGetTextPP(str);
 
-		PG_RETURN_INT32(mdb_mbstrlen_with_len(VARDATA_ANY(t),
+		MDB_RETURN_INT32(mdb_mbstrlen_with_len(VARDATA_ANY(t),
 											 VARSIZE_ANY_EXHDR(t)));
 	}
 }
@@ -658,12 +658,12 @@ text_length(Datum str)
  *	   (which is less than the VARSIZE of the text*)
  */
 Datum
-textoctetlen(PG_FUNCTION_ARGS)
+textoctetlen(MDB_FUNCTION_ARGS)
 {
-	Datum		str = PG_GETARG_DATUM(0);
+	Datum		str = MDB_GETARG_DATUM(0);
 
 	/* We need not detoast the input at all */
-	PG_RETURN_INT32(toast_raw_datum_size(str) - VARHDRSZ);
+	MDB_RETURN_INT32(toast_raw_datum_size(str) - VARHDRSZ);
 }
 
 /*
@@ -677,12 +677,12 @@ textoctetlen(PG_FUNCTION_ARGS)
  * XXX - thomas 1997-07-10
  */
 Datum
-textcat(PG_FUNCTION_ARGS)
+textcat(MDB_FUNCTION_ARGS)
 {
-	text	   *t1 = PG_GETARG_TEXT_PP(0);
-	text	   *t2 = PG_GETARG_TEXT_PP(1);
+	text	   *t1 = MDB_GETARG_TEXT_PP(0);
+	text	   *t2 = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_TEXT_P(text_catenate(t1, t2));
+	MDB_RETURN_TEXT_P(text_catenate(t1, t2));
 }
 
 /*
@@ -779,11 +779,11 @@ charlen_to_bytelen(const char *p, int n)
  * - Joe Conway 2002-08-10
  */
 Datum
-text_substr(PG_FUNCTION_ARGS)
+text_substr(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_TEXT_P(text_substring(PG_GETARG_DATUM(0),
-									PG_GETARG_INT32(1),
-									PG_GETARG_INT32(2),
+	MDB_RETURN_TEXT_P(text_substring(MDB_GETARG_DATUM(0),
+									MDB_GETARG_INT32(1),
+									MDB_GETARG_INT32(2),
 									false));
 }
 
@@ -793,10 +793,10 @@ text_substr(PG_FUNCTION_ARGS)
  *	  one function accepting a different number of args.
  */
 Datum
-text_substr_no_len(PG_FUNCTION_ARGS)
+text_substr_no_len(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_TEXT_P(text_substring(PG_GETARG_DATUM(0),
-									PG_GETARG_INT32(1),
+	MDB_RETURN_TEXT_P(text_substring(MDB_GETARG_DATUM(0),
+									MDB_GETARG_INT32(1),
 									-1, true));
 }
 
@@ -854,7 +854,7 @@ text_substring(Datum str, int32 start, int32 length, bool length_not_specified)
 
 		/*
 		 * If the start position is past the end of the string, SQL99 says to
-		 * return a zero-length string -- PG_GETARG_TEXT_P_SLICE() will do
+		 * return a zero-length string -- MDB_GETARG_TEXT_P_SLICE() will do
 		 * that for us. Convert to zero-based starting position
 		 */
 		return DatumGetTextPSlice(str, S1 - 1, L1);
@@ -1009,26 +1009,26 @@ text_substring(Datum str, int32 start, int32 length, bool length_not_specified)
  * This code is a direct implementation of what the standard says.
  */
 Datum
-textoverlay(PG_FUNCTION_ARGS)
+textoverlay(MDB_FUNCTION_ARGS)
 {
-	text	   *t1 = PG_GETARG_TEXT_PP(0);
-	text	   *t2 = PG_GETARG_TEXT_PP(1);
-	int			sp = PG_GETARG_INT32(2);		/* substring start position */
-	int			sl = PG_GETARG_INT32(3);		/* substring length */
+	text	   *t1 = MDB_GETARG_TEXT_PP(0);
+	text	   *t2 = MDB_GETARG_TEXT_PP(1);
+	int			sp = MDB_GETARG_INT32(2);		/* substring start position */
+	int			sl = MDB_GETARG_INT32(3);		/* substring length */
 
-	PG_RETURN_TEXT_P(text_overlay(t1, t2, sp, sl));
+	MDB_RETURN_TEXT_P(text_overlay(t1, t2, sp, sl));
 }
 
 Datum
-textoverlay_no_len(PG_FUNCTION_ARGS)
+textoverlay_no_len(MDB_FUNCTION_ARGS)
 {
-	text	   *t1 = PG_GETARG_TEXT_PP(0);
-	text	   *t2 = PG_GETARG_TEXT_PP(1);
-	int			sp = PG_GETARG_INT32(2);		/* substring start position */
+	text	   *t1 = MDB_GETARG_TEXT_PP(0);
+	text	   *t2 = MDB_GETARG_TEXT_PP(1);
+	int			sp = MDB_GETARG_INT32(2);		/* substring start position */
 	int			sl;
 
 	sl = text_length(PointerGetDatum(t2));		/* defaults to length(t2) */
-	PG_RETURN_TEXT_P(text_overlay(t1, t2, sp, sl));
+	MDB_RETURN_TEXT_P(text_overlay(t1, t2, sp, sl));
 }
 
 static text *
@@ -1070,12 +1070,12 @@ text_overlay(text *t1, text *t2, int sp, int sl)
  * - thomas 1997-07-27
  */
 Datum
-textpos(PG_FUNCTION_ARGS)
+textpos(MDB_FUNCTION_ARGS)
 {
-	text	   *str = PG_GETARG_TEXT_PP(0);
-	text	   *search_str = PG_GETARG_TEXT_PP(1);
+	text	   *str = MDB_GETARG_TEXT_PP(0);
+	text	   *search_str = MDB_GETARG_TEXT_PP(1);
 
-	PG_RETURN_INT32((int32) text_position(str, search_str));
+	MDB_RETURN_INT32((int32) text_position(str, search_str));
 }
 
 /*
@@ -1439,7 +1439,7 @@ varstr_cmp(char *arg1, int len1, char *arg2, int len2, Oid collid)
 
 #ifdef WIN32
 		/* Win32 does not have UTF-8, so we need to map to UTF-16 */
-		if (GetDatabaseEncoding() == PG_UTF8)
+		if (GetDatabaseEncoding() == MDB_UTF8)
 		{
 			int			a1len;
 			int			a2len;
@@ -1596,10 +1596,10 @@ text_cmp(text *arg1, text *arg2, Oid collid)
  */
 
 Datum
-texteq(PG_FUNCTION_ARGS)
+texteq(MDB_FUNCTION_ARGS)
 {
-	Datum		arg1 = PG_GETARG_DATUM(0);
-	Datum		arg2 = PG_GETARG_DATUM(1);
+	Datum		arg1 = MDB_GETARG_DATUM(0);
+	Datum		arg2 = MDB_GETARG_DATUM(1);
 	bool		result;
 	Size		len1,
 				len2;
@@ -1623,18 +1623,18 @@ texteq(PG_FUNCTION_ARGS)
 		result = (memcmp(VARDATA_ANY(targ1), VARDATA_ANY(targ2),
 						 len1 - VARHDRSZ) == 0);
 
-		PG_FREE_IF_COPY(targ1, 0);
-		PG_FREE_IF_COPY(targ2, 1);
+		MDB_FREE_IF_COPY(targ1, 0);
+		MDB_FREE_IF_COPY(targ2, 1);
 	}
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-textne(PG_FUNCTION_ARGS)
+textne(MDB_FUNCTION_ARGS)
 {
-	Datum		arg1 = PG_GETARG_DATUM(0);
-	Datum		arg2 = PG_GETARG_DATUM(1);
+	Datum		arg1 = MDB_GETARG_DATUM(0);
+	Datum		arg2 = MDB_GETARG_DATUM(1);
 	bool		result;
 	Size		len1,
 				len2;
@@ -1652,92 +1652,92 @@ textne(PG_FUNCTION_ARGS)
 		result = (memcmp(VARDATA_ANY(targ1), VARDATA_ANY(targ2),
 						 len1 - VARHDRSZ) != 0);
 
-		PG_FREE_IF_COPY(targ1, 0);
-		PG_FREE_IF_COPY(targ2, 1);
+		MDB_FREE_IF_COPY(targ1, 0);
+		MDB_FREE_IF_COPY(targ2, 1);
 	}
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-text_lt(PG_FUNCTION_ARGS)
+text_lt(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = (text_cmp(arg1, arg2, PG_GET_COLLATION()) < 0);
+	result = (text_cmp(arg1, arg2, MDB_GET_COLLATION()) < 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-text_le(PG_FUNCTION_ARGS)
+text_le(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = (text_cmp(arg1, arg2, PG_GET_COLLATION()) <= 0);
+	result = (text_cmp(arg1, arg2, MDB_GET_COLLATION()) <= 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-text_gt(PG_FUNCTION_ARGS)
+text_gt(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = (text_cmp(arg1, arg2, PG_GET_COLLATION()) > 0);
+	result = (text_cmp(arg1, arg2, MDB_GET_COLLATION()) > 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-text_ge(PG_FUNCTION_ARGS)
+text_ge(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = (text_cmp(arg1, arg2, PG_GET_COLLATION()) >= 0);
+	result = (text_cmp(arg1, arg2, MDB_GET_COLLATION()) >= 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-bttextcmp(PG_FUNCTION_ARGS)
+bttextcmp(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	int32		result;
 
-	result = text_cmp(arg1, arg2, PG_GET_COLLATION());
+	result = text_cmp(arg1, arg2, MDB_GET_COLLATION());
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-bttextsortsupport(PG_FUNCTION_ARGS)
+bttextsortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 	Oid			collid = ssup->ssup_collation;
 	MemoryContext oldcontext;
 
@@ -1748,7 +1748,7 @@ bttextsortsupport(PG_FUNCTION_ARGS)
 
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -1800,7 +1800,7 @@ varstr_sortsupport(SortSupport ssup, Oid collid, bool bpchar)
 		collate_c = true;
 	}
 #ifdef WIN32
-	else if (GetDatabaseEncoding() == PG_UTF8)
+	else if (GetDatabaseEncoding() == MDB_UTF8)
 		return;
 #endif
 	else
@@ -2271,12 +2271,12 @@ varstr_abbrev_convert(Datum original, SortSupport ssup)
 	 *
 	 * First, Hash key proper, or a significant fraction of it.  Mix in length
 	 * in order to compensate for cases where differences are past
-	 * PG_CACHE_LINE_SIZE bytes, so as to limit the overhead of hashing.
+	 * MDB_CACHE_LINE_SIZE bytes, so as to limit the overhead of hashing.
 	 */
 	hash = DatumGetUInt32(hash_any((unsigned char *) authoritative_data,
-								   Min(len, PG_CACHE_LINE_SIZE)));
+								   Min(len, MDB_CACHE_LINE_SIZE)));
 
-	if (len > PG_CACHE_LINE_SIZE)
+	if (len > MDB_CACHE_LINE_SIZE)
 		hash ^= DatumGetUInt32(hash_uint32((uint32) len));
 
 	addHyperLogLog(&sss->full_card, hash);
@@ -2438,27 +2438,27 @@ varstr_abbrev_abort(int memtupcount, SortSupport ssup)
 }
 
 Datum
-text_larger(PG_FUNCTION_ARGS)
+text_larger(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	text	   *result;
 
-	result = ((text_cmp(arg1, arg2, PG_GET_COLLATION()) > 0) ? arg1 : arg2);
+	result = ((text_cmp(arg1, arg2, MDB_GET_COLLATION()) > 0) ? arg1 : arg2);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 Datum
-text_smaller(PG_FUNCTION_ARGS)
+text_smaller(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	text	   *result;
 
-	result = ((text_cmp(arg1, arg2, PG_GET_COLLATION()) < 0) ? arg1 : arg2);
+	result = ((text_cmp(arg1, arg2, MDB_GET_COLLATION()) < 0) ? arg1 : arg2);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 
@@ -2493,89 +2493,89 @@ internal_text_pattern_compare(text *arg1, text *arg2)
 
 
 Datum
-text_pattern_lt(PG_FUNCTION_ARGS)
+text_pattern_lt(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	int			result;
 
 	result = internal_text_pattern_compare(arg1, arg2);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result < 0);
+	MDB_RETURN_BOOL(result < 0);
 }
 
 
 Datum
-text_pattern_le(PG_FUNCTION_ARGS)
+text_pattern_le(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	int			result;
 
 	result = internal_text_pattern_compare(arg1, arg2);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result <= 0);
+	MDB_RETURN_BOOL(result <= 0);
 }
 
 
 Datum
-text_pattern_ge(PG_FUNCTION_ARGS)
+text_pattern_ge(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	int			result;
 
 	result = internal_text_pattern_compare(arg1, arg2);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result >= 0);
+	MDB_RETURN_BOOL(result >= 0);
 }
 
 
 Datum
-text_pattern_gt(PG_FUNCTION_ARGS)
+text_pattern_gt(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	int			result;
 
 	result = internal_text_pattern_compare(arg1, arg2);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result > 0);
+	MDB_RETURN_BOOL(result > 0);
 }
 
 
 Datum
-bttext_pattern_cmp(PG_FUNCTION_ARGS)
+bttext_pattern_cmp(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	int			result;
 
 	result = internal_text_pattern_compare(arg1, arg2);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 
 Datum
-bttext_pattern_sortsupport(PG_FUNCTION_ARGS)
+bttext_pattern_sortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 	MemoryContext oldcontext;
 
 	oldcontext = MemoryContextSwitchTo(ssup->ssup_cxt);
@@ -2585,7 +2585,7 @@ bttext_pattern_sortsupport(PG_FUNCTION_ARGS)
 
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
@@ -2596,12 +2596,12 @@ bttext_pattern_sortsupport(PG_FUNCTION_ARGS)
  *-------------------------------------------------------------
  */
 Datum
-byteaoctetlen(PG_FUNCTION_ARGS)
+byteaoctetlen(MDB_FUNCTION_ARGS)
 {
-	Datum		str = PG_GETARG_DATUM(0);
+	Datum		str = MDB_GETARG_DATUM(0);
 
 	/* We need not detoast the input at all */
-	PG_RETURN_INT32(toast_raw_datum_size(str) - VARHDRSZ);
+	MDB_RETURN_INT32(toast_raw_datum_size(str) - VARHDRSZ);
 }
 
 /*
@@ -2612,12 +2612,12 @@ byteaoctetlen(PG_FUNCTION_ARGS)
  * Cloned from textcat and modified as required.
  */
 Datum
-byteacat(PG_FUNCTION_ARGS)
+byteacat(MDB_FUNCTION_ARGS)
 {
-	bytea	   *t1 = PG_GETARG_BYTEA_PP(0);
-	bytea	   *t2 = PG_GETARG_BYTEA_PP(1);
+	bytea	   *t1 = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *t2 = MDB_GETARG_BYTEA_PP(1);
 
-	PG_RETURN_BYTEA_P(bytea_catenate(t1, t2));
+	MDB_RETURN_BYTEA_P(bytea_catenate(t1, t2));
 }
 
 /*
@@ -2660,7 +2660,7 @@ bytea_catenate(bytea *t1, bytea *t2)
 	return result;
 }
 
-#define PG_STR_GET_BYTEA(str_) \
+#define MDB_STR_GET_BYTEA(str_) \
 	DatumGetByteaP(DirectFunctionCall1(byteain, CStringGetDatum(str_)))
 
 /*
@@ -2679,11 +2679,11 @@ bytea_catenate(bytea *t1, bytea *t2)
  * (length) is provided, the length to the end of the string is assumed.
  */
 Datum
-bytea_substr(PG_FUNCTION_ARGS)
+bytea_substr(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BYTEA_P(bytea_substring(PG_GETARG_DATUM(0),
-									  PG_GETARG_INT32(1),
-									  PG_GETARG_INT32(2),
+	MDB_RETURN_BYTEA_P(bytea_substring(MDB_GETARG_DATUM(0),
+									  MDB_GETARG_INT32(1),
+									  MDB_GETARG_INT32(2),
 									  false));
 }
 
@@ -2693,10 +2693,10 @@ bytea_substr(PG_FUNCTION_ARGS)
  *	  one function accepting a different number of args.
  */
 Datum
-bytea_substr_no_len(PG_FUNCTION_ARGS)
+bytea_substr_no_len(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BYTEA_P(bytea_substring(PG_GETARG_DATUM(0),
-									  PG_GETARG_INT32(1),
+	MDB_RETURN_BYTEA_P(bytea_substring(MDB_GETARG_DATUM(0),
+									  MDB_GETARG_INT32(1),
 									  -1,
 									  true));
 }
@@ -2740,7 +2740,7 @@ bytea_substring(Datum str,
 		 * string.
 		 */
 		if (E < 1)
-			return PG_STR_GET_BYTEA("");
+			return MDB_STR_GET_BYTEA("");
 
 		L1 = E - S1;
 	}
@@ -2761,26 +2761,26 @@ bytea_substring(Datum str,
  * This code is a direct implementation of what the standard says.
  */
 Datum
-byteaoverlay(PG_FUNCTION_ARGS)
+byteaoverlay(MDB_FUNCTION_ARGS)
 {
-	bytea	   *t1 = PG_GETARG_BYTEA_PP(0);
-	bytea	   *t2 = PG_GETARG_BYTEA_PP(1);
-	int			sp = PG_GETARG_INT32(2);		/* substring start position */
-	int			sl = PG_GETARG_INT32(3);		/* substring length */
+	bytea	   *t1 = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *t2 = MDB_GETARG_BYTEA_PP(1);
+	int			sp = MDB_GETARG_INT32(2);		/* substring start position */
+	int			sl = MDB_GETARG_INT32(3);		/* substring length */
 
-	PG_RETURN_BYTEA_P(bytea_overlay(t1, t2, sp, sl));
+	MDB_RETURN_BYTEA_P(bytea_overlay(t1, t2, sp, sl));
 }
 
 Datum
-byteaoverlay_no_len(PG_FUNCTION_ARGS)
+byteaoverlay_no_len(MDB_FUNCTION_ARGS)
 {
-	bytea	   *t1 = PG_GETARG_BYTEA_PP(0);
-	bytea	   *t2 = PG_GETARG_BYTEA_PP(1);
-	int			sp = PG_GETARG_INT32(2);		/* substring start position */
+	bytea	   *t1 = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *t2 = MDB_GETARG_BYTEA_PP(1);
+	int			sp = MDB_GETARG_INT32(2);		/* substring start position */
 	int			sl;
 
 	sl = VARSIZE_ANY_EXHDR(t2); /* defaults to length(t2) */
-	PG_RETURN_BYTEA_P(bytea_overlay(t1, t2, sp, sl));
+	MDB_RETURN_BYTEA_P(bytea_overlay(t1, t2, sp, sl));
 }
 
 static bytea *
@@ -2821,10 +2821,10 @@ bytea_overlay(bytea *t1, bytea *t2, int sp, int sl)
  * Cloned from textpos and modified as required.
  */
 Datum
-byteapos(PG_FUNCTION_ARGS)
+byteapos(MDB_FUNCTION_ARGS)
 {
-	bytea	   *t1 = PG_GETARG_BYTEA_PP(0);
-	bytea	   *t2 = PG_GETARG_BYTEA_PP(1);
+	bytea	   *t1 = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *t2 = MDB_GETARG_BYTEA_PP(1);
 	int			pos;
 	int			px,
 				p;
@@ -2837,7 +2837,7 @@ byteapos(PG_FUNCTION_ARGS)
 	len2 = VARSIZE_ANY_EXHDR(t2);
 
 	if (len2 <= 0)
-		PG_RETURN_INT32(1);		/* result for empty pattern */
+		MDB_RETURN_INT32(1);		/* result for empty pattern */
 
 	p1 = VARDATA_ANY(t1);
 	p2 = VARDATA_ANY(t2);
@@ -2854,7 +2854,7 @@ byteapos(PG_FUNCTION_ARGS)
 		p1++;
 	};
 
-	PG_RETURN_INT32(pos);
+	MDB_RETURN_INT32(pos);
 }
 
 /*-------------------------------------------------------------
@@ -2865,10 +2865,10 @@ byteapos(PG_FUNCTION_ARGS)
  *-------------------------------------------------------------
  */
 Datum
-byteaGetByte(PG_FUNCTION_ARGS)
+byteaGetByte(MDB_FUNCTION_ARGS)
 {
-	bytea	   *v = PG_GETARG_BYTEA_PP(0);
-	int32		n = PG_GETARG_INT32(1);
+	bytea	   *v = MDB_GETARG_BYTEA_PP(0);
+	int32		n = MDB_GETARG_INT32(1);
 	int			len;
 	int			byte;
 
@@ -2882,7 +2882,7 @@ byteaGetByte(PG_FUNCTION_ARGS)
 
 	byte = ((unsigned char *) VARDATA_ANY(v))[n];
 
-	PG_RETURN_INT32(byte);
+	MDB_RETURN_INT32(byte);
 }
 
 /*-------------------------------------------------------------
@@ -2894,10 +2894,10 @@ byteaGetByte(PG_FUNCTION_ARGS)
  *-------------------------------------------------------------
  */
 Datum
-byteaGetBit(PG_FUNCTION_ARGS)
+byteaGetBit(MDB_FUNCTION_ARGS)
 {
-	bytea	   *v = PG_GETARG_BYTEA_PP(0);
-	int32		n = PG_GETARG_INT32(1);
+	bytea	   *v = MDB_GETARG_BYTEA_PP(0);
+	int32		n = MDB_GETARG_INT32(1);
 	int			byteNo,
 				bitNo;
 	int			len;
@@ -2917,9 +2917,9 @@ byteaGetBit(PG_FUNCTION_ARGS)
 	byte = ((unsigned char *) VARDATA_ANY(v))[byteNo];
 
 	if (byte & (1 << bitNo))
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 }
 
 /*-------------------------------------------------------------
@@ -2931,11 +2931,11 @@ byteaGetBit(PG_FUNCTION_ARGS)
  *-------------------------------------------------------------
  */
 Datum
-byteaSetByte(PG_FUNCTION_ARGS)
+byteaSetByte(MDB_FUNCTION_ARGS)
 {
-	bytea	   *v = PG_GETARG_BYTEA_P(0);
-	int32		n = PG_GETARG_INT32(1);
-	int32		newByte = PG_GETARG_INT32(2);
+	bytea	   *v = MDB_GETARG_BYTEA_P(0);
+	int32		n = MDB_GETARG_INT32(1);
+	int32		newByte = MDB_GETARG_INT32(2);
 	int			len;
 	bytea	   *res;
 
@@ -2958,7 +2958,7 @@ byteaSetByte(PG_FUNCTION_ARGS)
 	 */
 	((unsigned char *) VARDATA(res))[n] = newByte;
 
-	PG_RETURN_BYTEA_P(res);
+	MDB_RETURN_BYTEA_P(res);
 }
 
 /*-------------------------------------------------------------
@@ -2970,11 +2970,11 @@ byteaSetByte(PG_FUNCTION_ARGS)
  *-------------------------------------------------------------
  */
 Datum
-byteaSetBit(PG_FUNCTION_ARGS)
+byteaSetBit(MDB_FUNCTION_ARGS)
 {
-	bytea	   *v = PG_GETARG_BYTEA_P(0);
-	int32		n = PG_GETARG_INT32(1);
-	int32		newBit = PG_GETARG_INT32(2);
+	bytea	   *v = MDB_GETARG_BYTEA_P(0);
+	int32		n = MDB_GETARG_INT32(1);
+	int32		newBit = MDB_GETARG_INT32(2);
 	bytea	   *res;
 	int			len;
 	int			oldByte,
@@ -3019,7 +3019,7 @@ byteaSetBit(PG_FUNCTION_ARGS)
 
 	((unsigned char *) VARDATA(res))[byteNo] = newByte;
 
-	PG_RETURN_BYTEA_P(res);
+	MDB_RETURN_BYTEA_P(res);
 }
 
 
@@ -3027,9 +3027,9 @@ byteaSetBit(PG_FUNCTION_ARGS)
  * Converts a text type to a Name type.
  */
 Datum
-text_name(PG_FUNCTION_ARGS)
+text_name(MDB_FUNCTION_ARGS)
 {
-	text	   *s = PG_GETARG_TEXT_PP(0);
+	text	   *s = MDB_GETARG_TEXT_PP(0);
 	Name		result;
 	int			len;
 
@@ -3043,18 +3043,18 @@ text_name(PG_FUNCTION_ARGS)
 	result = (Name) palloc0(NAMEDATALEN);
 	memcpy(NameStr(*result), VARDATA_ANY(s), len);
 
-	PG_RETURN_NAME(result);
+	MDB_RETURN_NAME(result);
 }
 
 /* name_text()
  * Converts a Name type to a text type.
  */
 Datum
-name_text(PG_FUNCTION_ARGS)
+name_text(MDB_FUNCTION_ARGS)
 {
-	Name		s = PG_GETARG_NAME(0);
+	Name		s = MDB_GETARG_NAME(0);
 
-	PG_RETURN_TEXT_P(cstring_to_text(NameStr(*s)));
+	MDB_RETURN_TEXT_P(cstring_to_text(NameStr(*s)));
 }
 
 
@@ -3348,10 +3348,10 @@ SplitDirectoriesString(char *rawstring, char separator,
  *****************************************************************************/
 
 Datum
-byteaeq(PG_FUNCTION_ARGS)
+byteaeq(MDB_FUNCTION_ARGS)
 {
-	Datum		arg1 = PG_GETARG_DATUM(0);
-	Datum		arg2 = PG_GETARG_DATUM(1);
+	Datum		arg1 = MDB_GETARG_DATUM(0);
+	Datum		arg2 = MDB_GETARG_DATUM(1);
 	bool		result;
 	Size		len1,
 				len2;
@@ -3372,18 +3372,18 @@ byteaeq(PG_FUNCTION_ARGS)
 		result = (memcmp(VARDATA_ANY(barg1), VARDATA_ANY(barg2),
 						 len1 - VARHDRSZ) == 0);
 
-		PG_FREE_IF_COPY(barg1, 0);
-		PG_FREE_IF_COPY(barg2, 1);
+		MDB_FREE_IF_COPY(barg1, 0);
+		MDB_FREE_IF_COPY(barg2, 1);
 	}
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-byteane(PG_FUNCTION_ARGS)
+byteane(MDB_FUNCTION_ARGS)
 {
-	Datum		arg1 = PG_GETARG_DATUM(0);
-	Datum		arg2 = PG_GETARG_DATUM(1);
+	Datum		arg1 = MDB_GETARG_DATUM(0);
+	Datum		arg2 = MDB_GETARG_DATUM(1);
 	bool		result;
 	Size		len1,
 				len2;
@@ -3404,18 +3404,18 @@ byteane(PG_FUNCTION_ARGS)
 		result = (memcmp(VARDATA_ANY(barg1), VARDATA_ANY(barg2),
 						 len1 - VARHDRSZ) != 0);
 
-		PG_FREE_IF_COPY(barg1, 0);
-		PG_FREE_IF_COPY(barg2, 1);
+		MDB_FREE_IF_COPY(barg1, 0);
+		MDB_FREE_IF_COPY(barg2, 1);
 	}
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-bytealt(PG_FUNCTION_ARGS)
+bytealt(MDB_FUNCTION_ARGS)
 {
-	bytea	   *arg1 = PG_GETARG_BYTEA_PP(0);
-	bytea	   *arg2 = PG_GETARG_BYTEA_PP(1);
+	bytea	   *arg1 = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *arg2 = MDB_GETARG_BYTEA_PP(1);
 	int			len1,
 				len2;
 	int			cmp;
@@ -3425,17 +3425,17 @@ bytealt(PG_FUNCTION_ARGS)
 
 	cmp = memcmp(VARDATA_ANY(arg1), VARDATA_ANY(arg2), Min(len1, len2));
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL((cmp < 0) || ((cmp == 0) && (len1 < len2)));
+	MDB_RETURN_BOOL((cmp < 0) || ((cmp == 0) && (len1 < len2)));
 }
 
 Datum
-byteale(PG_FUNCTION_ARGS)
+byteale(MDB_FUNCTION_ARGS)
 {
-	bytea	   *arg1 = PG_GETARG_BYTEA_PP(0);
-	bytea	   *arg2 = PG_GETARG_BYTEA_PP(1);
+	bytea	   *arg1 = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *arg2 = MDB_GETARG_BYTEA_PP(1);
 	int			len1,
 				len2;
 	int			cmp;
@@ -3445,17 +3445,17 @@ byteale(PG_FUNCTION_ARGS)
 
 	cmp = memcmp(VARDATA_ANY(arg1), VARDATA_ANY(arg2), Min(len1, len2));
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL((cmp < 0) || ((cmp == 0) && (len1 <= len2)));
+	MDB_RETURN_BOOL((cmp < 0) || ((cmp == 0) && (len1 <= len2)));
 }
 
 Datum
-byteagt(PG_FUNCTION_ARGS)
+byteagt(MDB_FUNCTION_ARGS)
 {
-	bytea	   *arg1 = PG_GETARG_BYTEA_PP(0);
-	bytea	   *arg2 = PG_GETARG_BYTEA_PP(1);
+	bytea	   *arg1 = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *arg2 = MDB_GETARG_BYTEA_PP(1);
 	int			len1,
 				len2;
 	int			cmp;
@@ -3465,17 +3465,17 @@ byteagt(PG_FUNCTION_ARGS)
 
 	cmp = memcmp(VARDATA_ANY(arg1), VARDATA_ANY(arg2), Min(len1, len2));
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL((cmp > 0) || ((cmp == 0) && (len1 > len2)));
+	MDB_RETURN_BOOL((cmp > 0) || ((cmp == 0) && (len1 > len2)));
 }
 
 Datum
-byteage(PG_FUNCTION_ARGS)
+byteage(MDB_FUNCTION_ARGS)
 {
-	bytea	   *arg1 = PG_GETARG_BYTEA_PP(0);
-	bytea	   *arg2 = PG_GETARG_BYTEA_PP(1);
+	bytea	   *arg1 = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *arg2 = MDB_GETARG_BYTEA_PP(1);
 	int			len1,
 				len2;
 	int			cmp;
@@ -3485,17 +3485,17 @@ byteage(PG_FUNCTION_ARGS)
 
 	cmp = memcmp(VARDATA_ANY(arg1), VARDATA_ANY(arg2), Min(len1, len2));
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL((cmp > 0) || ((cmp == 0) && (len1 >= len2)));
+	MDB_RETURN_BOOL((cmp > 0) || ((cmp == 0) && (len1 >= len2)));
 }
 
 Datum
-byteacmp(PG_FUNCTION_ARGS)
+byteacmp(MDB_FUNCTION_ARGS)
 {
-	bytea	   *arg1 = PG_GETARG_BYTEA_PP(0);
-	bytea	   *arg2 = PG_GETARG_BYTEA_PP(1);
+	bytea	   *arg1 = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *arg2 = MDB_GETARG_BYTEA_PP(1);
 	int			len1,
 				len2;
 	int			cmp;
@@ -3507,16 +3507,16 @@ byteacmp(PG_FUNCTION_ARGS)
 	if ((cmp == 0) && (len1 != len2))
 		cmp = (len1 < len2) ? -1 : 1;
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_INT32(cmp);
+	MDB_RETURN_INT32(cmp);
 }
 
 Datum
-bytea_sortsupport(PG_FUNCTION_ARGS)
+bytea_sortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 	MemoryContext oldcontext;
 
 	oldcontext = MemoryContextSwitchTo(ssup->ssup_cxt);
@@ -3526,7 +3526,7 @@ bytea_sortsupport(PG_FUNCTION_ARGS)
 
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -3550,11 +3550,11 @@ appendStringInfoText(StringInfo str, const text *t)
  * otherwise returns 'new_str'
  */
 Datum
-replace_text(PG_FUNCTION_ARGS)
+replace_text(MDB_FUNCTION_ARGS)
 {
-	text	   *src_text = PG_GETARG_TEXT_PP(0);
-	text	   *from_sub_text = PG_GETARG_TEXT_PP(1);
-	text	   *to_sub_text = PG_GETARG_TEXT_PP(2);
+	text	   *src_text = MDB_GETARG_TEXT_PP(0);
+	text	   *from_sub_text = MDB_GETARG_TEXT_PP(1);
+	text	   *to_sub_text = MDB_GETARG_TEXT_PP(2);
 	int			src_text_len;
 	int			from_sub_text_len;
 	TextPositionState state;
@@ -3578,7 +3578,7 @@ replace_text(PG_FUNCTION_ARGS)
 	if (src_text_len < 1 || from_sub_text_len < 1)
 	{
 		text_position_cleanup(&state);
-		PG_RETURN_TEXT_P(src_text);
+		MDB_RETURN_TEXT_P(src_text);
 	}
 
 	start_posn = 1;
@@ -3588,7 +3588,7 @@ replace_text(PG_FUNCTION_ARGS)
 	if (curr_posn == 0)
 	{
 		text_position_cleanup(&state);
-		PG_RETURN_TEXT_P(src_text);
+		MDB_RETURN_TEXT_P(src_text);
 	}
 
 	/* start_ptr points to the start_posn'th character of src_text */
@@ -3624,7 +3624,7 @@ replace_text(PG_FUNCTION_ARGS)
 	ret_text = cstring_to_text_with_len(str.data, str.len);
 	pfree(str.data);
 
-	PG_RETURN_TEXT_P(ret_text);
+	MDB_RETURN_TEXT_P(ret_text);
 }
 
 /*
@@ -3906,11 +3906,11 @@ replace_text_regexp(text *src_text, void *regexp,
  * based on provided field separator
  */
 Datum
-split_text(PG_FUNCTION_ARGS)
+split_text(MDB_FUNCTION_ARGS)
 {
-	text	   *inputstring = PG_GETARG_TEXT_PP(0);
-	text	   *fldsep = PG_GETARG_TEXT_PP(1);
-	int			fldnum = PG_GETARG_INT32(2);
+	text	   *inputstring = MDB_GETARG_TEXT_PP(0);
+	text	   *fldsep = MDB_GETARG_TEXT_PP(1);
+	int			fldnum = MDB_GETARG_INT32(2);
 	int			inputstring_len;
 	int			fldsep_len;
 	TextPositionState state;
@@ -3937,7 +3937,7 @@ split_text(PG_FUNCTION_ARGS)
 	if (inputstring_len < 1)
 	{
 		text_position_cleanup(&state);
-		PG_RETURN_TEXT_P(cstring_to_text(""));
+		MDB_RETURN_TEXT_P(cstring_to_text(""));
 	}
 
 	/* empty field separator */
@@ -3946,9 +3946,9 @@ split_text(PG_FUNCTION_ARGS)
 		text_position_cleanup(&state);
 		/* if first field, return input string, else empty string */
 		if (fldnum == 1)
-			PG_RETURN_TEXT_P(inputstring);
+			MDB_RETURN_TEXT_P(inputstring);
 		else
-			PG_RETURN_TEXT_P(cstring_to_text(""));
+			MDB_RETURN_TEXT_P(cstring_to_text(""));
 	}
 
 	/* identify bounds of first field */
@@ -3961,9 +3961,9 @@ split_text(PG_FUNCTION_ARGS)
 		text_position_cleanup(&state);
 		/* if field 1 requested, return input string, else empty string */
 		if (fldnum == 1)
-			PG_RETURN_TEXT_P(inputstring);
+			MDB_RETURN_TEXT_P(inputstring);
 		else
-			PG_RETURN_TEXT_P(cstring_to_text(""));
+			MDB_RETURN_TEXT_P(cstring_to_text(""));
 	}
 
 	while (end_posn > 0 && --fldnum > 0)
@@ -3996,7 +3996,7 @@ split_text(PG_FUNCTION_ARGS)
 									 false);
 	}
 
-	PG_RETURN_TEXT_P(result_text);
+	MDB_RETURN_TEXT_P(result_text);
 }
 
 /*
@@ -4016,7 +4016,7 @@ text_isequal(text *txt1, text *txt2)
  * based on provided field separator
  */
 Datum
-text_to_array(PG_FUNCTION_ARGS)
+text_to_array(MDB_FUNCTION_ARGS)
 {
 	return text_to_array_internal(fcinfo);
 }
@@ -4030,7 +4030,7 @@ text_to_array(PG_FUNCTION_ARGS)
  * complaining about different argument sets for the same internal function.
  */
 Datum
-text_to_array_null(PG_FUNCTION_ARGS)
+text_to_array_null(MDB_FUNCTION_ARGS)
 {
 	return text_to_array_internal(fcinfo);
 }
@@ -4041,7 +4041,7 @@ text_to_array_null(PG_FUNCTION_ARGS)
  * These are not strict so we have to test for null inputs explicitly.
  */
 static Datum
-text_to_array_internal(PG_FUNCTION_ARGS)
+text_to_array_internal(MDB_FUNCTION_ARGS)
 {
 	text	   *inputstring;
 	text	   *fldsep;
@@ -4054,20 +4054,20 @@ text_to_array_internal(PG_FUNCTION_ARGS)
 	ArrayBuildState *astate = NULL;
 
 	/* when input string is NULL, then result is NULL too */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	inputstring = PG_GETARG_TEXT_PP(0);
+	inputstring = MDB_GETARG_TEXT_PP(0);
 
 	/* fldsep can be NULL */
-	if (!PG_ARGISNULL(1))
-		fldsep = PG_GETARG_TEXT_PP(1);
+	if (!MDB_ARGISNULL(1))
+		fldsep = MDB_GETARG_TEXT_PP(1);
 	else
 		fldsep = NULL;
 
 	/* null_string can be NULL or omitted */
-	if (PG_NARGS() > 2 && !PG_ARGISNULL(2))
-		null_string = PG_GETARG_TEXT_PP(2);
+	if (MDB_NARGS() > 2 && !MDB_ARGISNULL(2))
+		null_string = MDB_GETARG_TEXT_PP(2);
 	else
 		null_string = NULL;
 
@@ -4097,7 +4097,7 @@ text_to_array_internal(PG_FUNCTION_ARGS)
 		if (inputstring_len < 1)
 		{
 			text_position_cleanup(&state);
-			PG_RETURN_ARRAYTYPE_P(construct_empty_array(TEXTOID));
+			MDB_RETURN_ARRAYTYPE_P(construct_empty_array(TEXTOID));
 		}
 
 		/*
@@ -4109,7 +4109,7 @@ text_to_array_internal(PG_FUNCTION_ARGS)
 			text_position_cleanup(&state);
 			/* single element can be a NULL too */
 			is_null = null_string ? text_isequal(inputstring, null_string) : false;
-			PG_RETURN_ARRAYTYPE_P(create_singleton_array(fcinfo, TEXTOID,
+			MDB_RETURN_ARRAYTYPE_P(create_singleton_array(fcinfo, TEXTOID,
 												PointerGetDatum(inputstring),
 														 is_null, 1));
 		}
@@ -4170,7 +4170,7 @@ text_to_array_internal(PG_FUNCTION_ARGS)
 
 		/* return empty array for empty input string */
 		if (inputstring_len < 1)
-			PG_RETURN_ARRAYTYPE_P(construct_empty_array(TEXTOID));
+			MDB_RETURN_ARRAYTYPE_P(construct_empty_array(TEXTOID));
 
 		start_ptr = VARDATA_ANY(inputstring);
 
@@ -4198,7 +4198,7 @@ text_to_array_internal(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_ARRAYTYPE_P(makeArrayResult(astate,
+	MDB_RETURN_ARRAYTYPE_P(makeArrayResult(astate,
 										  CurrentMemoryContext));
 }
 
@@ -4208,12 +4208,12 @@ text_to_array_internal(PG_FUNCTION_ARGS)
  * using provided field separator
  */
 Datum
-array_to_text(PG_FUNCTION_ARGS)
+array_to_text(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *v = PG_GETARG_ARRAYTYPE_P(0);
-	char	   *fldsep = text_to_cstring(PG_GETARG_TEXT_PP(1));
+	ArrayType  *v = MDB_GETARG_ARRAYTYPE_P(0);
+	char	   *fldsep = text_to_cstring(MDB_GETARG_TEXT_PP(1));
 
-	PG_RETURN_TEXT_P(array_to_text_internal(fcinfo, v, fldsep, NULL));
+	MDB_RETURN_TEXT_P(array_to_text_internal(fcinfo, v, fldsep, NULL));
 }
 
 /*
@@ -4224,26 +4224,26 @@ array_to_text(PG_FUNCTION_ARGS)
  * This version is not strict so we have to test for null inputs explicitly.
  */
 Datum
-array_to_text_null(PG_FUNCTION_ARGS)
+array_to_text_null(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *v;
 	char	   *fldsep;
 	char	   *null_string;
 
 	/* returns NULL when first or second parameter is NULL */
-	if (PG_ARGISNULL(0) || PG_ARGISNULL(1))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0) || MDB_ARGISNULL(1))
+		MDB_RETURN_NULL();
 
-	v = PG_GETARG_ARRAYTYPE_P(0);
-	fldsep = text_to_cstring(PG_GETARG_TEXT_PP(1));
+	v = MDB_GETARG_ARRAYTYPE_P(0);
+	fldsep = text_to_cstring(MDB_GETARG_TEXT_PP(1));
 
 	/* NULL null string is passed through as a null pointer */
-	if (!PG_ARGISNULL(2))
-		null_string = text_to_cstring(PG_GETARG_TEXT_PP(2));
+	if (!MDB_ARGISNULL(2))
+		null_string = text_to_cstring(MDB_GETARG_TEXT_PP(2));
 	else
 		null_string = NULL;
 
-	PG_RETURN_TEXT_P(array_to_text_internal(fcinfo, v, fldsep, null_string));
+	MDB_RETURN_TEXT_P(array_to_text_internal(fcinfo, v, fldsep, null_string));
 }
 
 /*
@@ -4373,9 +4373,9 @@ array_to_text_internal(FunctionCallInfo fcinfo, ArrayType *v,
  * the number.
  */
 Datum
-to_hex32(PG_FUNCTION_ARGS)
+to_hex32(MDB_FUNCTION_ARGS)
 {
-	uint32		value = (uint32) PG_GETARG_INT32(0);
+	uint32		value = (uint32) MDB_GETARG_INT32(0);
 	char	   *ptr;
 	const char *digits = "0123456789abcdef";
 	char		buf[32];		/* bigger than needed, but reasonable */
@@ -4389,7 +4389,7 @@ to_hex32(PG_FUNCTION_ARGS)
 		value /= HEXBASE;
 	} while (ptr > buf && value);
 
-	PG_RETURN_TEXT_P(cstring_to_text(ptr));
+	MDB_RETURN_TEXT_P(cstring_to_text(ptr));
 }
 
 /*
@@ -4397,9 +4397,9 @@ to_hex32(PG_FUNCTION_ARGS)
  * the number.
  */
 Datum
-to_hex64(PG_FUNCTION_ARGS)
+to_hex64(MDB_FUNCTION_ARGS)
 {
-	uint64		value = (uint64) PG_GETARG_INT64(0);
+	uint64		value = (uint64) MDB_GETARG_INT64(0);
 	char	   *ptr;
 	const char *digits = "0123456789abcdef";
 	char		buf[32];		/* bigger than needed, but reasonable */
@@ -4413,7 +4413,7 @@ to_hex64(PG_FUNCTION_ARGS)
 		value /= HEXBASE;
 	} while (ptr > buf && value);
 
-	PG_RETURN_TEXT_P(cstring_to_text(ptr));
+	MDB_RETURN_TEXT_P(cstring_to_text(ptr));
 }
 
 /*
@@ -4424,9 +4424,9 @@ to_hex64(PG_FUNCTION_ARGS)
 #define MD5_HASH_LEN  32
 
 Datum
-md5_text(PG_FUNCTION_ARGS)
+md5_text(MDB_FUNCTION_ARGS)
 {
-	text	   *in_text = PG_GETARG_TEXT_PP(0);
+	text	   *in_text = MDB_GETARG_TEXT_PP(0);
 	size_t		len;
 	char		hexsum[MD5_HASH_LEN + 1];
 
@@ -4440,7 +4440,7 @@ md5_text(PG_FUNCTION_ARGS)
 				 errmsg("out of memory")));
 
 	/* convert to text and return it */
-	PG_RETURN_TEXT_P(cstring_to_text(hexsum));
+	MDB_RETURN_TEXT_P(cstring_to_text(hexsum));
 }
 
 /*
@@ -4448,9 +4448,9 @@ md5_text(PG_FUNCTION_ARGS)
  * 16-byte md5 digest is represented in 32 hex characters.
  */
 Datum
-md5_bytea(PG_FUNCTION_ARGS)
+md5_bytea(MDB_FUNCTION_ARGS)
 {
-	bytea	   *in = PG_GETARG_BYTEA_PP(0);
+	bytea	   *in = MDB_GETARG_BYTEA_PP(0);
 	size_t		len;
 	char		hexsum[MD5_HASH_LEN + 1];
 
@@ -4460,7 +4460,7 @@ md5_bytea(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_OUT_OF_MEMORY),
 				 errmsg("out of memory")));
 
-	PG_RETURN_TEXT_P(cstring_to_text(hexsum));
+	MDB_RETURN_TEXT_P(cstring_to_text(hexsum));
 }
 
 /*
@@ -4469,9 +4469,9 @@ md5_bytea(PG_FUNCTION_ARGS)
  * Works on any data type
  */
 Datum
-mdb_column_size(PG_FUNCTION_ARGS)
+mdb_column_size(MDB_FUNCTION_ARGS)
 {
-	Datum		value = PG_GETARG_DATUM(0);
+	Datum		value = MDB_GETARG_DATUM(0);
 	int32		result;
 	int			typlen;
 
@@ -4508,7 +4508,7 @@ mdb_column_size(PG_FUNCTION_ARGS)
 		result = typlen;
 	}
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /*
@@ -4547,45 +4547,45 @@ makeStringAggState(FunctionCallInfo fcinfo)
 }
 
 Datum
-string_agg_transfn(PG_FUNCTION_ARGS)
+string_agg_transfn(MDB_FUNCTION_ARGS)
 {
 	StringInfo	state;
 
-	state = PG_ARGISNULL(0) ? NULL : (StringInfo) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (StringInfo) MDB_GETARG_POINTER(0);
 
 	/* Append the value unless null. */
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 		/* On the first time through, we ignore the delimiter. */
 		if (state == NULL)
 			state = makeStringAggState(fcinfo);
-		else if (!PG_ARGISNULL(2))
-			appendStringInfoText(state, PG_GETARG_TEXT_PP(2));	/* delimiter */
+		else if (!MDB_ARGISNULL(2))
+			appendStringInfoText(state, MDB_GETARG_TEXT_PP(2));	/* delimiter */
 
-		appendStringInfoText(state, PG_GETARG_TEXT_PP(1));		/* value */
+		appendStringInfoText(state, MDB_GETARG_TEXT_PP(1));		/* value */
 	}
 
 	/*
 	 * The transition type for string_agg() is declared to be "internal",
 	 * which is a pass-by-value type the same size as a pointer.
 	 */
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-string_agg_finalfn(PG_FUNCTION_ARGS)
+string_agg_finalfn(MDB_FUNCTION_ARGS)
 {
 	StringInfo	state;
 
 	/* cannot be called directly because of internal-type argument */
 	Assert(AggCheckCallContext(fcinfo, NULL));
 
-	state = PG_ARGISNULL(0) ? NULL : (StringInfo) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (StringInfo) MDB_GETARG_POINTER(0);
 
 	if (state != NULL)
-		PG_RETURN_TEXT_P(cstring_to_text_with_len(state->data, state->len));
+		MDB_RETURN_TEXT_P(cstring_to_text_with_len(state->data, state->len));
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
@@ -4614,10 +4614,10 @@ concat_internal(const char *sepstr, int argidx,
 		ArrayType  *arr;
 
 		/* Should have just the one argument */
-		Assert(argidx == PG_NARGS() - 1);
+		Assert(argidx == MDB_NARGS() - 1);
 
 		/* concat(VARIADIC NULL) is defined as NULL */
-		if (PG_ARGISNULL(argidx))
+		if (MDB_ARGISNULL(argidx))
 			return NULL;
 
 		/*
@@ -4630,7 +4630,7 @@ concat_internal(const char *sepstr, int argidx,
 		Assert(OidIsValid(get_base_element_type(get_fn_expr_argtype(fcinfo->flinfo, argidx))));
 
 		/* OK, safe to fetch the array value */
-		arr = PG_GETARG_ARRAYTYPE_P(argidx);
+		arr = MDB_GETARG_ARRAYTYPE_P(argidx);
 
 		/*
 		 * And serialize the array.  We tell array_to_text to ignore null
@@ -4642,11 +4642,11 @@ concat_internal(const char *sepstr, int argidx,
 	/* Normal case without explicit VARIADIC marker */
 	initStringInfo(&str);
 
-	for (i = argidx; i < PG_NARGS(); i++)
+	for (i = argidx; i < MDB_NARGS(); i++)
 	{
-		if (!PG_ARGISNULL(i))
+		if (!MDB_ARGISNULL(i))
 		{
-			Datum		value = PG_GETARG_DATUM(i);
+			Datum		value = MDB_GETARG_DATUM(i);
 			Oid			valtype;
 			Oid			typOutput;
 			bool		typIsVarlena;
@@ -4677,14 +4677,14 @@ concat_internal(const char *sepstr, int argidx,
  * Concatenate all arguments. NULL arguments are ignored.
  */
 Datum
-text_concat(PG_FUNCTION_ARGS)
+text_concat(MDB_FUNCTION_ARGS)
 {
 	text	   *result;
 
 	result = concat_internal("", 0, fcinfo);
 	if (result == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_TEXT_P(result);
+		MDB_RETURN_NULL();
+	MDB_RETURN_TEXT_P(result);
 }
 
 /*
@@ -4692,20 +4692,20 @@ text_concat(PG_FUNCTION_ARGS)
  * parameter is used as the separator. NULL arguments are ignored.
  */
 Datum
-text_concat_ws(PG_FUNCTION_ARGS)
+text_concat_ws(MDB_FUNCTION_ARGS)
 {
 	char	   *sep;
 	text	   *result;
 
 	/* return NULL when separator is NULL */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
-	sep = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
+	sep = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 
 	result = concat_internal(sep, 1, fcinfo);
 	if (result == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_TEXT_P(result);
+		MDB_RETURN_NULL();
+	MDB_RETURN_TEXT_P(result);
 }
 
 /*
@@ -4713,19 +4713,19 @@ text_concat_ws(PG_FUNCTION_ARGS)
  * return all but last |n| characters.
  */
 Datum
-text_left(PG_FUNCTION_ARGS)
+text_left(MDB_FUNCTION_ARGS)
 {
-	text	   *str = PG_GETARG_TEXT_PP(0);
+	text	   *str = MDB_GETARG_TEXT_PP(0);
 	const char *p = VARDATA_ANY(str);
 	int			len = VARSIZE_ANY_EXHDR(str);
-	int			n = PG_GETARG_INT32(1);
+	int			n = MDB_GETARG_INT32(1);
 	int			rlen;
 
 	if (n < 0)
 		n = mdb_mbstrlen_with_len(p, len) + n;
 	rlen = mdb_mbcharcliplen(p, len, n);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(p, rlen));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(p, rlen));
 }
 
 /*
@@ -4733,12 +4733,12 @@ text_left(PG_FUNCTION_ARGS)
  * return all but first |n| characters.
  */
 Datum
-text_right(PG_FUNCTION_ARGS)
+text_right(MDB_FUNCTION_ARGS)
 {
-	text	   *str = PG_GETARG_TEXT_PP(0);
+	text	   *str = MDB_GETARG_TEXT_PP(0);
 	const char *p = VARDATA_ANY(str);
 	int			len = VARSIZE_ANY_EXHDR(str);
-	int			n = PG_GETARG_INT32(1);
+	int			n = MDB_GETARG_INT32(1);
 	int			off;
 
 	if (n < 0)
@@ -4747,16 +4747,16 @@ text_right(PG_FUNCTION_ARGS)
 		n = mdb_mbstrlen_with_len(p, len) - n;
 	off = mdb_mbcharcliplen(p, len, n);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(p + off, len - off));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(p + off, len - off));
 }
 
 /*
  * Return reversed string
  */
 Datum
-text_reverse(PG_FUNCTION_ARGS)
+text_reverse(MDB_FUNCTION_ARGS)
 {
-	text	   *str = PG_GETARG_TEXT_PP(0);
+	text	   *str = MDB_GETARG_TEXT_PP(0);
 	const char *p = VARDATA_ANY(str);
 	int			len = VARSIZE_ANY_EXHDR(str);
 	const char *endp = p + len;
@@ -4787,7 +4787,7 @@ text_reverse(PG_FUNCTION_ARGS)
 			*(--dst) = *p++;
 	}
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 
@@ -4809,7 +4809,7 @@ text_reverse(PG_FUNCTION_ARGS)
  * Returns a formatted string
  */
 Datum
-text_format(PG_FUNCTION_ARGS)
+text_format(MDB_FUNCTION_ARGS)
 {
 	text	   *fmt;
 	StringInfoData str;
@@ -4829,8 +4829,8 @@ text_format(PG_FUNCTION_ARGS)
 	FmgrInfo	typoutputinfo_width;
 
 	/* When format string is null, immediately return null */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
 	/* If argument is marked VARIADIC, expand array into elements */
 	if (get_fn_expr_variadic(fcinfo->flinfo))
@@ -4842,10 +4842,10 @@ text_format(PG_FUNCTION_ARGS)
 		int			nitems;
 
 		/* Should have just the one argument */
-		Assert(PG_NARGS() == 2);
+		Assert(MDB_NARGS() == 2);
 
 		/* If argument is NULL, we treat it as zero-length array */
-		if (PG_ARGISNULL(1))
+		if (MDB_ARGISNULL(1))
 			nitems = 0;
 		else
 		{
@@ -4859,7 +4859,7 @@ text_format(PG_FUNCTION_ARGS)
 			Assert(OidIsValid(get_base_element_type(get_fn_expr_argtype(fcinfo->flinfo, 1))));
 
 			/* OK, safe to fetch the array value */
-			arr = PG_GETARG_ARRAYTYPE_P(1);
+			arr = MDB_GETARG_ARRAYTYPE_P(1);
 
 			/* Get info about array element type */
 			element_type = ARR_ELEMTYPE(arr);
@@ -4877,12 +4877,12 @@ text_format(PG_FUNCTION_ARGS)
 	else
 	{
 		/* Non-variadic case, we'll process the arguments individually */
-		nargs = PG_NARGS();
+		nargs = MDB_NARGS();
 		funcvariadic = false;
 	}
 
 	/* Setup for main loop. */
-	fmt = PG_GETARG_TEXT_PP(0);
+	fmt = MDB_GETARG_TEXT_PP(0);
 	start_ptr = VARDATA_ANY(fmt);
 	end_ptr = start_ptr + VARSIZE_ANY_EXHDR(fmt);
 	initStringInfo(&str);
@@ -4952,8 +4952,8 @@ text_format(PG_FUNCTION_ARGS)
 			/* Get the value and type of the selected argument */
 			if (!funcvariadic)
 			{
-				value = PG_GETARG_DATUM(arg);
-				isNull = PG_ARGISNULL(arg);
+				value = MDB_GETARG_DATUM(arg);
+				isNull = MDB_ARGISNULL(arg);
 				typid = get_fn_expr_argtype(fcinfo->flinfo, arg);
 			}
 			else
@@ -5009,8 +5009,8 @@ text_format(PG_FUNCTION_ARGS)
 		/* Get the value and type of the selected argument */
 		if (!funcvariadic)
 		{
-			value = PG_GETARG_DATUM(arg);
-			isNull = PG_ARGISNULL(arg);
+			value = MDB_GETARG_DATUM(arg);
+			isNull = MDB_ARGISNULL(arg);
 			typid = get_fn_expr_argtype(fcinfo->flinfo, arg);
 		}
 		else
@@ -5072,7 +5072,7 @@ text_format(PG_FUNCTION_ARGS)
 	result = cstring_to_text_with_len(str.data, str.len);
 	pfree(str.data);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /*
@@ -5313,7 +5313,7 @@ text_format_append_string(StringInfo buf, const char *str,
  * function take the same number of arguments.
  */
 Datum
-text_format_nv(PG_FUNCTION_ARGS)
+text_format_nv(MDB_FUNCTION_ARGS)
 {
 	return text_format(fcinfo);
 }

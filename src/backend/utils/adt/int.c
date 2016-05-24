@@ -58,49 +58,49 @@ typedef struct
  *		int2in			- converts "num" to short
  */
 Datum
-int2in(PG_FUNCTION_ARGS)
+int2in(MDB_FUNCTION_ARGS)
 {
-	char	   *num = PG_GETARG_CSTRING(0);
+	char	   *num = MDB_GETARG_CSTRING(0);
 
-	PG_RETURN_INT16(mdb_atoi(num, sizeof(int16), '\0'));
+	MDB_RETURN_INT16(mdb_atoi(num, sizeof(int16), '\0'));
 }
 
 /*
  *		int2out			- converts short to "num"
  */
 Datum
-int2out(PG_FUNCTION_ARGS)
+int2out(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
+	int16		arg1 = MDB_GETARG_INT16(0);
 	char	   *result = (char *) palloc(7);	/* sign, 5 digits, '\0' */
 
 	mdb_itoa(arg1, result);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		int2recv			- converts external binary format to int2
  */
 Datum
-int2recv(PG_FUNCTION_ARGS)
+int2recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_INT16((int16) pq_getmsgint(buf, sizeof(int16)));
+	MDB_RETURN_INT16((int16) pq_getmsgint(buf, sizeof(int16)));
 }
 
 /*
  *		int2send			- converts int2 to binary format
  */
 Datum
-int2send(PG_FUNCTION_ARGS)
+int2send(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
+	int16		arg1 = MDB_GETARG_INT16(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint(&buf, arg1, sizeof(int16));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
@@ -136,9 +136,9 @@ buildint2vector(const int16 *int2s, int n)
  *		int2vectorin			- converts "num num ..." to internal form
  */
 Datum
-int2vectorin(PG_FUNCTION_ARGS)
+int2vectorin(MDB_FUNCTION_ARGS)
 {
-	char	   *intString = PG_GETARG_CSTRING(0);
+	char	   *intString = MDB_GETARG_CSTRING(0);
 	int2vector *result;
 	int			n;
 
@@ -168,16 +168,16 @@ int2vectorin(PG_FUNCTION_ARGS)
 	result->dim1 = n;
 	result->lbound1 = 0;
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
  *		int2vectorout		- converts internal form to "num num ..."
  */
 Datum
-int2vectorout(PG_FUNCTION_ARGS)
+int2vectorout(MDB_FUNCTION_ARGS)
 {
-	int2vector *int2Array = (int2vector *) PG_GETARG_POINTER(0);
+	int2vector *int2Array = (int2vector *) MDB_GETARG_POINTER(0);
 	int			num,
 				nnums = int2Array->dim1;
 	char	   *rp;
@@ -194,16 +194,16 @@ int2vectorout(PG_FUNCTION_ARGS)
 			;
 	}
 	*rp = '\0';
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		int2vectorrecv			- converts external binary format to int2vector
  */
 Datum
-int2vectorrecv(PG_FUNCTION_ARGS)
+int2vectorrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	FunctionCallInfoData locfcinfo;
 	int2vector *result;
 
@@ -242,14 +242,14 @@ int2vectorrecv(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("oidvector has too many elements")));
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
  *		int2vectorsend			- converts int2vector to binary format
  */
 Datum
-int2vectorsend(PG_FUNCTION_ARGS)
+int2vectorsend(MDB_FUNCTION_ARGS)
 {
 	return array_send(fcinfo);
 }
@@ -259,14 +259,14 @@ int2vectorsend(PG_FUNCTION_ARGS)
  * but we need int2vectoreq for catcache indexing.
  */
 Datum
-int2vectoreq(PG_FUNCTION_ARGS)
+int2vectoreq(MDB_FUNCTION_ARGS)
 {
-	int2vector *a = (int2vector *) PG_GETARG_POINTER(0);
-	int2vector *b = (int2vector *) PG_GETARG_POINTER(1);
+	int2vector *a = (int2vector *) MDB_GETARG_POINTER(0);
+	int2vector *b = (int2vector *) MDB_GETARG_POINTER(1);
 
 	if (a->dim1 != b->dim1)
-		PG_RETURN_BOOL(false);
-	PG_RETURN_BOOL(memcmp(a->values, b->values, a->dim1 * sizeof(int16)) == 0);
+		MDB_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(memcmp(a->values, b->values, a->dim1 * sizeof(int16)) == 0);
 }
 
 
@@ -278,49 +278,49 @@ int2vectoreq(PG_FUNCTION_ARGS)
  *		int4in			- converts "num" to int4
  */
 Datum
-int4in(PG_FUNCTION_ARGS)
+int4in(MDB_FUNCTION_ARGS)
 {
-	char	   *num = PG_GETARG_CSTRING(0);
+	char	   *num = MDB_GETARG_CSTRING(0);
 
-	PG_RETURN_INT32(mdb_atoi(num, sizeof(int32), '\0'));
+	MDB_RETURN_INT32(mdb_atoi(num, sizeof(int32), '\0'));
 }
 
 /*
  *		int4out			- converts int4 to "num"
  */
 Datum
-int4out(PG_FUNCTION_ARGS)
+int4out(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
+	int32		arg1 = MDB_GETARG_INT32(0);
 	char	   *result = (char *) palloc(12);	/* sign, 10 digits, '\0' */
 
 	mdb_ltoa(arg1, result);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		int4recv			- converts external binary format to int4
  */
 Datum
-int4recv(PG_FUNCTION_ARGS)
+int4recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_INT32((int32) pq_getmsgint(buf, sizeof(int32)));
+	MDB_RETURN_INT32((int32) pq_getmsgint(buf, sizeof(int32)));
 }
 
 /*
  *		int4send			- converts int4 to binary format
  */
 Datum
-int4send(PG_FUNCTION_ARGS)
+int4send(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
+	int32		arg1 = MDB_GETARG_INT32(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint(&buf, arg1, sizeof(int32));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -331,44 +331,44 @@ int4send(PG_FUNCTION_ARGS)
  */
 
 Datum
-i2toi4(PG_FUNCTION_ARGS)
+i2toi4(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
+	int16		arg1 = MDB_GETARG_INT16(0);
 
-	PG_RETURN_INT32((int32) arg1);
+	MDB_RETURN_INT32((int32) arg1);
 }
 
 Datum
-i4toi2(PG_FUNCTION_ARGS)
+i4toi2(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
+	int32		arg1 = MDB_GETARG_INT32(0);
 
 	if (arg1 < SHRT_MIN || arg1 > SHRT_MAX)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
 
-	PG_RETURN_INT16((int16) arg1);
+	MDB_RETURN_INT16((int16) arg1);
 }
 
 /* Cast int4 -> bool */
 Datum
-int4_bool(PG_FUNCTION_ARGS)
+int4_bool(MDB_FUNCTION_ARGS)
 {
-	if (PG_GETARG_INT32(0) == 0)
-		PG_RETURN_BOOL(false);
+	if (MDB_GETARG_INT32(0) == 0)
+		MDB_RETURN_BOOL(false);
 	else
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 }
 
 /* Cast bool -> int4 */
 Datum
-bool_int4(PG_FUNCTION_ARGS)
+bool_int4(MDB_FUNCTION_ARGS)
 {
-	if (PG_GETARG_BOOL(0) == false)
-		PG_RETURN_INT32(0);
+	if (MDB_GETARG_BOOL(0) == false)
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 }
 
 /*
@@ -387,219 +387,219 @@ bool_int4(PG_FUNCTION_ARGS)
  */
 
 Datum
-int4eq(PG_FUNCTION_ARGS)
+int4eq(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 == arg2);
+	MDB_RETURN_BOOL(arg1 == arg2);
 }
 
 Datum
-int4ne(PG_FUNCTION_ARGS)
+int4ne(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 != arg2);
+	MDB_RETURN_BOOL(arg1 != arg2);
 }
 
 Datum
-int4lt(PG_FUNCTION_ARGS)
+int4lt(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 < arg2);
+	MDB_RETURN_BOOL(arg1 < arg2);
 }
 
 Datum
-int4le(PG_FUNCTION_ARGS)
+int4le(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 <= arg2);
+	MDB_RETURN_BOOL(arg1 <= arg2);
 }
 
 Datum
-int4gt(PG_FUNCTION_ARGS)
+int4gt(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 > arg2);
+	MDB_RETURN_BOOL(arg1 > arg2);
 }
 
 Datum
-int4ge(PG_FUNCTION_ARGS)
+int4ge(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 >= arg2);
+	MDB_RETURN_BOOL(arg1 >= arg2);
 }
 
 Datum
-int2eq(PG_FUNCTION_ARGS)
+int2eq(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 == arg2);
+	MDB_RETURN_BOOL(arg1 == arg2);
 }
 
 Datum
-int2ne(PG_FUNCTION_ARGS)
+int2ne(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 != arg2);
+	MDB_RETURN_BOOL(arg1 != arg2);
 }
 
 Datum
-int2lt(PG_FUNCTION_ARGS)
+int2lt(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 < arg2);
+	MDB_RETURN_BOOL(arg1 < arg2);
 }
 
 Datum
-int2le(PG_FUNCTION_ARGS)
+int2le(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 <= arg2);
+	MDB_RETURN_BOOL(arg1 <= arg2);
 }
 
 Datum
-int2gt(PG_FUNCTION_ARGS)
+int2gt(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 > arg2);
+	MDB_RETURN_BOOL(arg1 > arg2);
 }
 
 Datum
-int2ge(PG_FUNCTION_ARGS)
+int2ge(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 >= arg2);
+	MDB_RETURN_BOOL(arg1 >= arg2);
 }
 
 Datum
-int24eq(PG_FUNCTION_ARGS)
+int24eq(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 == arg2);
+	MDB_RETURN_BOOL(arg1 == arg2);
 }
 
 Datum
-int24ne(PG_FUNCTION_ARGS)
+int24ne(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 != arg2);
+	MDB_RETURN_BOOL(arg1 != arg2);
 }
 
 Datum
-int24lt(PG_FUNCTION_ARGS)
+int24lt(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 < arg2);
+	MDB_RETURN_BOOL(arg1 < arg2);
 }
 
 Datum
-int24le(PG_FUNCTION_ARGS)
+int24le(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 <= arg2);
+	MDB_RETURN_BOOL(arg1 <= arg2);
 }
 
 Datum
-int24gt(PG_FUNCTION_ARGS)
+int24gt(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 > arg2);
+	MDB_RETURN_BOOL(arg1 > arg2);
 }
 
 Datum
-int24ge(PG_FUNCTION_ARGS)
+int24ge(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_BOOL(arg1 >= arg2);
+	MDB_RETURN_BOOL(arg1 >= arg2);
 }
 
 Datum
-int42eq(PG_FUNCTION_ARGS)
+int42eq(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 == arg2);
+	MDB_RETURN_BOOL(arg1 == arg2);
 }
 
 Datum
-int42ne(PG_FUNCTION_ARGS)
+int42ne(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 != arg2);
+	MDB_RETURN_BOOL(arg1 != arg2);
 }
 
 Datum
-int42lt(PG_FUNCTION_ARGS)
+int42lt(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 < arg2);
+	MDB_RETURN_BOOL(arg1 < arg2);
 }
 
 Datum
-int42le(PG_FUNCTION_ARGS)
+int42le(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 <= arg2);
+	MDB_RETURN_BOOL(arg1 <= arg2);
 }
 
 Datum
-int42gt(PG_FUNCTION_ARGS)
+int42gt(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 > arg2);
+	MDB_RETURN_BOOL(arg1 > arg2);
 }
 
 Datum
-int42ge(PG_FUNCTION_ARGS)
+int42ge(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(arg1 >= arg2);
+	MDB_RETURN_BOOL(arg1 >= arg2);
 }
 
 /*
@@ -610,9 +610,9 @@ int42ge(PG_FUNCTION_ARGS)
  */
 
 Datum
-int4um(PG_FUNCTION_ARGS)
+int4um(MDB_FUNCTION_ARGS)
 {
-	int32		arg = PG_GETARG_INT32(0);
+	int32		arg = MDB_GETARG_INT32(0);
 	int32		result;
 
 	result = -arg;
@@ -621,22 +621,22 @@ int4um(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int4up(PG_FUNCTION_ARGS)
+int4up(MDB_FUNCTION_ARGS)
 {
-	int32		arg = PG_GETARG_INT32(0);
+	int32		arg = MDB_GETARG_INT32(0);
 
-	PG_RETURN_INT32(arg);
+	MDB_RETURN_INT32(arg);
 }
 
 Datum
-int4pl(PG_FUNCTION_ARGS)
+int4pl(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 	int32		result;
 
 	result = arg1 + arg2;
@@ -650,14 +650,14 @@ int4pl(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int4mi(PG_FUNCTION_ARGS)
+int4mi(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 	int32		result;
 
 	result = arg1 - arg2;
@@ -671,14 +671,14 @@ int4mi(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int4mul(PG_FUNCTION_ARGS)
+int4mul(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 	int32		result;
 
 	result = arg1 * arg2;
@@ -702,14 +702,14 @@ int4mul(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int4div(PG_FUNCTION_ARGS)
+int4div(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 	int32		result;
 
 	if (arg2 == 0)
@@ -718,7 +718,7 @@ int4div(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DIVISION_BY_ZERO),
 				 errmsg("division by zero")));
 		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	/*
@@ -735,20 +735,20 @@ int4div(PG_FUNCTION_ARGS)
 			ereport(ERROR,
 					(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 					 errmsg("integer out of range")));
-		PG_RETURN_INT32(result);
+		MDB_RETURN_INT32(result);
 	}
 
 	/* No overflow is possible */
 
 	result = arg1 / arg2;
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int4inc(PG_FUNCTION_ARGS)
+int4inc(MDB_FUNCTION_ARGS)
 {
-	int32		arg = PG_GETARG_INT32(0);
+	int32		arg = MDB_GETARG_INT32(0);
 	int32		result;
 
 	result = arg + 1;
@@ -758,13 +758,13 @@ int4inc(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int2um(PG_FUNCTION_ARGS)
+int2um(MDB_FUNCTION_ARGS)
 {
-	int16		arg = PG_GETARG_INT16(0);
+	int16		arg = MDB_GETARG_INT16(0);
 	int16		result;
 
 	result = -arg;
@@ -773,22 +773,22 @@ int2um(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
-	PG_RETURN_INT16(result);
+	MDB_RETURN_INT16(result);
 }
 
 Datum
-int2up(PG_FUNCTION_ARGS)
+int2up(MDB_FUNCTION_ARGS)
 {
-	int16		arg = PG_GETARG_INT16(0);
+	int16		arg = MDB_GETARG_INT16(0);
 
-	PG_RETURN_INT16(arg);
+	MDB_RETURN_INT16(arg);
 }
 
 Datum
-int2pl(PG_FUNCTION_ARGS)
+int2pl(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 	int16		result;
 
 	result = arg1 + arg2;
@@ -802,14 +802,14 @@ int2pl(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
-	PG_RETURN_INT16(result);
+	MDB_RETURN_INT16(result);
 }
 
 Datum
-int2mi(PG_FUNCTION_ARGS)
+int2mi(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 	int16		result;
 
 	result = arg1 - arg2;
@@ -823,14 +823,14 @@ int2mi(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
-	PG_RETURN_INT16(result);
+	MDB_RETURN_INT16(result);
 }
 
 Datum
-int2mul(PG_FUNCTION_ARGS)
+int2mul(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 	int32		result32;
 
 	/*
@@ -844,14 +844,14 @@ int2mul(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
 
-	PG_RETURN_INT16((int16) result32);
+	MDB_RETURN_INT16((int16) result32);
 }
 
 Datum
-int2div(PG_FUNCTION_ARGS)
+int2div(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 	int16		result;
 
 	if (arg2 == 0)
@@ -860,7 +860,7 @@ int2div(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DIVISION_BY_ZERO),
 				 errmsg("division by zero")));
 		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	/*
@@ -877,21 +877,21 @@ int2div(PG_FUNCTION_ARGS)
 			ereport(ERROR,
 					(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 					 errmsg("smallint out of range")));
-		PG_RETURN_INT16(result);
+		MDB_RETURN_INT16(result);
 	}
 
 	/* No overflow is possible */
 
 	result = arg1 / arg2;
 
-	PG_RETURN_INT16(result);
+	MDB_RETURN_INT16(result);
 }
 
 Datum
-int24pl(PG_FUNCTION_ARGS)
+int24pl(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 	int32		result;
 
 	result = arg1 + arg2;
@@ -905,14 +905,14 @@ int24pl(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int24mi(PG_FUNCTION_ARGS)
+int24mi(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 	int32		result;
 
 	result = arg1 - arg2;
@@ -926,14 +926,14 @@ int24mi(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int24mul(PG_FUNCTION_ARGS)
+int24mul(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 	int32		result;
 
 	result = arg1 * arg2;
@@ -953,14 +953,14 @@ int24mul(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int24div(PG_FUNCTION_ARGS)
+int24div(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
 	if (arg2 == 0)
 	{
@@ -968,18 +968,18 @@ int24div(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DIVISION_BY_ZERO),
 				 errmsg("division by zero")));
 		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	/* No overflow is possible */
-	PG_RETURN_INT32((int32) arg1 / arg2);
+	MDB_RETURN_INT32((int32) arg1 / arg2);
 }
 
 Datum
-int42pl(PG_FUNCTION_ARGS)
+int42pl(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 	int32		result;
 
 	result = arg1 + arg2;
@@ -993,14 +993,14 @@ int42pl(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int42mi(PG_FUNCTION_ARGS)
+int42mi(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 	int32		result;
 
 	result = arg1 - arg2;
@@ -1014,14 +1014,14 @@ int42mi(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int42mul(PG_FUNCTION_ARGS)
+int42mul(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 	int32		result;
 
 	result = arg1 * arg2;
@@ -1041,14 +1041,14 @@ int42mul(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int42div(PG_FUNCTION_ARGS)
+int42div(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 	int32		result;
 
 	if (arg2 == 0)
@@ -1057,7 +1057,7 @@ int42div(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DIVISION_BY_ZERO),
 				 errmsg("division by zero")));
 		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	/*
@@ -1074,21 +1074,21 @@ int42div(PG_FUNCTION_ARGS)
 			ereport(ERROR,
 					(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 					 errmsg("integer out of range")));
-		PG_RETURN_INT32(result);
+		MDB_RETURN_INT32(result);
 	}
 
 	/* No overflow is possible */
 
 	result = arg1 / arg2;
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int4mod(PG_FUNCTION_ARGS)
+int4mod(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
 	if (arg2 == 0)
 	{
@@ -1096,7 +1096,7 @@ int4mod(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DIVISION_BY_ZERO),
 				 errmsg("division by zero")));
 		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	/*
@@ -1105,18 +1105,18 @@ int4mod(PG_FUNCTION_ARGS)
 	 * namely zero.
 	 */
 	if (arg2 == -1)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 
 	/* No overflow is possible */
 
-	PG_RETURN_INT32(arg1 % arg2);
+	MDB_RETURN_INT32(arg1 % arg2);
 }
 
 Datum
-int2mod(PG_FUNCTION_ARGS)
+int2mod(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
 	if (arg2 == 0)
 	{
@@ -1124,7 +1124,7 @@ int2mod(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DIVISION_BY_ZERO),
 				 errmsg("division by zero")));
 		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	/*
@@ -1134,11 +1134,11 @@ int2mod(PG_FUNCTION_ARGS)
 	 * int16, but we might as well have the test for safety.)
 	 */
 	if (arg2 == -1)
-		PG_RETURN_INT16(0);
+		MDB_RETURN_INT16(0);
 
 	/* No overflow is possible */
 
-	PG_RETURN_INT16(arg1 % arg2);
+	MDB_RETURN_INT16(arg1 % arg2);
 }
 
 
@@ -1146,9 +1146,9 @@ int2mod(PG_FUNCTION_ARGS)
  * Absolute value
  */
 Datum
-int4abs(PG_FUNCTION_ARGS)
+int4abs(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
+	int32		arg1 = MDB_GETARG_INT32(0);
 	int32		result;
 
 	result = (arg1 < 0) ? -arg1 : arg1;
@@ -1157,13 +1157,13 @@ int4abs(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-int2abs(PG_FUNCTION_ARGS)
+int2abs(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
+	int16		arg1 = MDB_GETARG_INT16(0);
 	int16		result;
 
 	result = (arg1 < 0) ? -arg1 : arg1;
@@ -1172,43 +1172,43 @@ int2abs(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
-	PG_RETURN_INT16(result);
+	MDB_RETURN_INT16(result);
 }
 
 Datum
-int2larger(PG_FUNCTION_ARGS)
+int2larger(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_INT16((arg1 > arg2) ? arg1 : arg2);
+	MDB_RETURN_INT16((arg1 > arg2) ? arg1 : arg2);
 }
 
 Datum
-int2smaller(PG_FUNCTION_ARGS)
+int2smaller(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_INT16((arg1 < arg2) ? arg1 : arg2);
+	MDB_RETURN_INT16((arg1 < arg2) ? arg1 : arg2);
 }
 
 Datum
-int4larger(PG_FUNCTION_ARGS)
+int4larger(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_INT32((arg1 > arg2) ? arg1 : arg2);
+	MDB_RETURN_INT32((arg1 > arg2) ? arg1 : arg2);
 }
 
 Datum
-int4smaller(PG_FUNCTION_ARGS)
+int4smaller(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_INT32((arg1 < arg2) ? arg1 : arg2);
+	MDB_RETURN_INT32((arg1 < arg2) ? arg1 : arg2);
 }
 
 /*
@@ -1223,123 +1223,123 @@ int4smaller(PG_FUNCTION_ARGS)
  */
 
 Datum
-int4and(PG_FUNCTION_ARGS)
+int4and(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_INT32(arg1 & arg2);
+	MDB_RETURN_INT32(arg1 & arg2);
 }
 
 Datum
-int4or(PG_FUNCTION_ARGS)
+int4or(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_INT32(arg1 | arg2);
+	MDB_RETURN_INT32(arg1 | arg2);
 }
 
 Datum
-int4xor(PG_FUNCTION_ARGS)
+int4xor(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_INT32(arg1 ^ arg2);
+	MDB_RETURN_INT32(arg1 ^ arg2);
 }
 
 Datum
-int4shl(PG_FUNCTION_ARGS)
+int4shl(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_INT32(arg1 << arg2);
+	MDB_RETURN_INT32(arg1 << arg2);
 }
 
 Datum
-int4shr(PG_FUNCTION_ARGS)
+int4shr(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int32		arg1 = MDB_GETARG_INT32(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_INT32(arg1 >> arg2);
+	MDB_RETURN_INT32(arg1 >> arg2);
 }
 
 Datum
-int4not(PG_FUNCTION_ARGS)
+int4not(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
+	int32		arg1 = MDB_GETARG_INT32(0);
 
-	PG_RETURN_INT32(~arg1);
+	MDB_RETURN_INT32(~arg1);
 }
 
 Datum
-int2and(PG_FUNCTION_ARGS)
+int2and(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_INT16(arg1 & arg2);
+	MDB_RETURN_INT16(arg1 & arg2);
 }
 
 Datum
-int2or(PG_FUNCTION_ARGS)
+int2or(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_INT16(arg1 | arg2);
+	MDB_RETURN_INT16(arg1 | arg2);
 }
 
 Datum
-int2xor(PG_FUNCTION_ARGS)
+int2xor(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int16		arg2 = PG_GETARG_INT16(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int16		arg2 = MDB_GETARG_INT16(1);
 
-	PG_RETURN_INT16(arg1 ^ arg2);
+	MDB_RETURN_INT16(arg1 ^ arg2);
 }
 
 Datum
-int2not(PG_FUNCTION_ARGS)
+int2not(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
+	int16		arg1 = MDB_GETARG_INT16(0);
 
-	PG_RETURN_INT16(~arg1);
+	MDB_RETURN_INT16(~arg1);
 }
 
 
 Datum
-int2shl(PG_FUNCTION_ARGS)
+int2shl(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_INT16(arg1 << arg2);
+	MDB_RETURN_INT16(arg1 << arg2);
 }
 
 Datum
-int2shr(PG_FUNCTION_ARGS)
+int2shr(MDB_FUNCTION_ARGS)
 {
-	int16		arg1 = PG_GETARG_INT16(0);
-	int32		arg2 = PG_GETARG_INT32(1);
+	int16		arg1 = MDB_GETARG_INT16(0);
+	int32		arg2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_INT16(arg1 >> arg2);
+	MDB_RETURN_INT16(arg1 >> arg2);
 }
 
 /*
  * non-persistent numeric series generator
  */
 Datum
-generate_series_int4(PG_FUNCTION_ARGS)
+generate_series_int4(MDB_FUNCTION_ARGS)
 {
 	return generate_series_step_int4(fcinfo);
 }
 
 Datum
-generate_series_step_int4(PG_FUNCTION_ARGS)
+generate_series_step_int4(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	generate_series_fctx *fctx;
@@ -1349,13 +1349,13 @@ generate_series_step_int4(PG_FUNCTION_ARGS)
 	/* stuff done only on the first call of the function */
 	if (SRF_IS_FIRSTCALL())
 	{
-		int32		start = PG_GETARG_INT32(0);
-		int32		finish = PG_GETARG_INT32(1);
+		int32		start = MDB_GETARG_INT32(0);
+		int32		finish = MDB_GETARG_INT32(1);
 		int32		step = 1;
 
 		/* see if we were given an explicit step size */
-		if (PG_NARGS() == 3)
-			step = PG_GETARG_INT32(2);
+		if (MDB_NARGS() == 3)
+			step = MDB_GETARG_INT32(2);
 		if (step == 0)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),

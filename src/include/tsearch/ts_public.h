@@ -10,8 +10,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef _PG_TS_PUBLIC_H_
-#define _PG_TS_PUBLIC_H_
+#ifndef _MDB_TS_PUBLIC_H_
+#define _MDB_TS_PUBLIC_H_
 
 #include "tsearch/ts_type.h"
 
@@ -129,4 +129,4 @@ typedef struct
 								 * getnext == true */
 } DictSubState;
 
-#endif   /* _PG_TS_PUBLIC_H_ */
+#endif   /* _MDB_TS_PUBLIC_H_ */

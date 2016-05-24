@@ -273,7 +273,7 @@ vacuum(int options, RangeVar *relation, Oid relid, VacuumParams *params,
 	}
 
 	/* Turn vacuum cost accounting on or off */
-	PG_TRY();
+	MDB_TRY();
 	{
 		ListCell   *cur;
 
@@ -321,13 +321,13 @@ vacuum(int options, RangeVar *relation, Oid relid, VacuumParams *params,
 			}
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		in_vacuum = false;
 		VacuumCostActive = false;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	in_vacuum = false;
 	VacuumCostActive = false;
@@ -1278,7 +1278,7 @@ vacuum_rel(Oid relid, RangeVar *relation, int options, VacuumParams *params)
 			ereport(WARNING,
 				  (errmsg("skipping \"%s\" --- only superuser can vacuum it",
 						  RelationGetRelationName(onerel))));
-		else if (onerel->rd_rel->relnamespace == PG_CATALOG_NAMESPACE)
+		else if (onerel->rd_rel->relnamespace == MDB_CATALOG_NAMESPACE)
 			ereport(WARNING,
 					(errmsg("skipping \"%s\" --- only superuser or database owner can vacuum it",
 							RelationGetRelationName(onerel))));

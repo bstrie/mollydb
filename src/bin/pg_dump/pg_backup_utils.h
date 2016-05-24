@@ -12,8 +12,8 @@
  *-------------------------------------------------------------------------
  */
 
-#ifndef PG_BACKUP_UTILS_H
-#define PG_BACKUP_UTILS_H
+#ifndef MDB_BACKUP_UTILS_H
+#define MDB_BACKUP_UTILS_H
 
 typedef enum					/* bits returned by set_dump_section */
 {
@@ -35,4 +35,4 @@ extern void exit_nicely(int code) mdb_attribute_noreturn();
 
 extern void exit_horribly(const char *modulename, const char *fmt,...) mdb_attribute_printf(2, 3) mdb_attribute_noreturn();
 
-#endif   /* PG_BACKUP_UTILS_H */
+#endif   /* MDB_BACKUP_UTILS_H */

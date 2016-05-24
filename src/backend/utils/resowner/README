@@ -82,5 +82,5 @@ to relax this restriction given additional bookkeeping effort, but at present
 there seems no need.
 
 Code that transiently changes CurrentResourceOwner should generally use a
-PG_TRY construct to ensure that the previous value of CurrentResourceOwner
+MDB_TRY construct to ensure that the previous value of CurrentResourceOwner
 is restored if control is lost during an error exit.

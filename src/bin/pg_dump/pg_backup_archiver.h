@@ -21,8 +21,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef __PG_BACKUP_ARCHIVE__
-#define __PG_BACKUP_ARCHIVE__
+#ifndef __MDB_BACKUP_ARCHIVE__
+#define __MDB_BACKUP_ARCHIVE__
 
 
 #include <time.h>

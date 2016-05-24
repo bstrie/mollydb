@@ -298,8 +298,8 @@ check_hard_link(void)
 	char		existing_file[MAXPGPATH];
 	char		new_link_file[MAXPGPATH];
 
-	snprintf(existing_file, sizeof(existing_file), "%s/PG_VERSION", old_cluster.pgdata);
-	snprintf(new_link_file, sizeof(new_link_file), "%s/PG_VERSION.linktest", new_cluster.pgdata);
+	snprintf(existing_file, sizeof(existing_file), "%s/MDB_VERSION", old_cluster.pgdata);
+	snprintf(new_link_file, sizeof(new_link_file), "%s/MDB_VERSION.linktest", new_cluster.pgdata);
 	unlink(new_link_file);		/* might fail */
 
 	if (mdb_link_file(existing_file, new_link_file) == -1)

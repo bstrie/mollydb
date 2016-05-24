@@ -20,16 +20,16 @@
 #include "utils/builtins.h"
 
 
-Datum		binary_upgrade_set_next_mdb_type_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_array_mdb_type_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_toast_mdb_type_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_heap_mdb_class_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_index_mdb_class_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_toast_mdb_class_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_mdb_enum_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_mdb_authid_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_create_empty_extension(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_record_init_privs(PG_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_mdb_type_oid(MDB_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_array_mdb_type_oid(MDB_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_toast_mdb_type_oid(MDB_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_heap_mdb_class_oid(MDB_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_index_mdb_class_oid(MDB_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_toast_mdb_class_oid(MDB_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_mdb_enum_oid(MDB_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_mdb_authid_oid(MDB_FUNCTION_ARGS);
+Datum		binary_upgrade_create_empty_extension(MDB_FUNCTION_ARGS);
+Datum		binary_upgrade_set_record_init_privs(MDB_FUNCTION_ARGS);
 
 
 #define CHECK_IS_BINARY_UPGRADE									\
@@ -41,94 +41,94 @@ do {															\
 } while (0)
 
 Datum
-binary_upgrade_set_next_mdb_type_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_mdb_type_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			typoid = PG_GETARG_OID(0);
+	Oid			typoid = MDB_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
 	binary_upgrade_next_mdb_type_oid = typoid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_array_mdb_type_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_array_mdb_type_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			typoid = PG_GETARG_OID(0);
+	Oid			typoid = MDB_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
 	binary_upgrade_next_array_mdb_type_oid = typoid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_toast_mdb_type_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_toast_mdb_type_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			typoid = PG_GETARG_OID(0);
+	Oid			typoid = MDB_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
 	binary_upgrade_next_toast_mdb_type_oid = typoid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_heap_mdb_class_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_heap_mdb_class_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			reloid = PG_GETARG_OID(0);
+	Oid			reloid = MDB_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
 	binary_upgrade_next_heap_mdb_class_oid = reloid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_index_mdb_class_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_index_mdb_class_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			reloid = PG_GETARG_OID(0);
+	Oid			reloid = MDB_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
 	binary_upgrade_next_index_mdb_class_oid = reloid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_toast_mdb_class_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_toast_mdb_class_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			reloid = PG_GETARG_OID(0);
+	Oid			reloid = MDB_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
 	binary_upgrade_next_toast_mdb_class_oid = reloid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_mdb_enum_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_mdb_enum_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			enumoid = PG_GETARG_OID(0);
+	Oid			enumoid = MDB_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
 	binary_upgrade_next_mdb_enum_oid = enumoid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_mdb_authid_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_mdb_authid_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			authoid = PG_GETARG_OID(0);
+	Oid			authoid = MDB_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
 	binary_upgrade_next_mdb_authid_oid = authoid;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_create_empty_extension(PG_FUNCTION_ARGS)
+binary_upgrade_create_empty_extension(MDB_FUNCTION_ARGS)
 {
 	text	   *extName;
 	text	   *schemaName;
@@ -141,31 +141,31 @@ binary_upgrade_create_empty_extension(PG_FUNCTION_ARGS)
 	CHECK_IS_BINARY_UPGRADE;
 
 	/* We must check these things before dereferencing the arguments */
-	if (PG_ARGISNULL(0) ||
-		PG_ARGISNULL(1) ||
-		PG_ARGISNULL(2) ||
-		PG_ARGISNULL(3))
+	if (MDB_ARGISNULL(0) ||
+		MDB_ARGISNULL(1) ||
+		MDB_ARGISNULL(2) ||
+		MDB_ARGISNULL(3))
 		elog(ERROR, "null argument to binary_upgrade_create_empty_extension is not allowed");
 
-	extName = PG_GETARG_TEXT_PP(0);
-	schemaName = PG_GETARG_TEXT_PP(1);
-	relocatable = PG_GETARG_BOOL(2);
-	extVersion = PG_GETARG_TEXT_PP(3);
+	extName = MDB_GETARG_TEXT_PP(0);
+	schemaName = MDB_GETARG_TEXT_PP(1);
+	relocatable = MDB_GETARG_BOOL(2);
+	extVersion = MDB_GETARG_TEXT_PP(3);
 
-	if (PG_ARGISNULL(4))
+	if (MDB_ARGISNULL(4))
 		extConfig = PointerGetDatum(NULL);
 	else
-		extConfig = PG_GETARG_DATUM(4);
+		extConfig = MDB_GETARG_DATUM(4);
 
-	if (PG_ARGISNULL(5))
+	if (MDB_ARGISNULL(5))
 		extCondition = PointerGetDatum(NULL);
 	else
-		extCondition = PG_GETARG_DATUM(5);
+		extCondition = MDB_GETARG_DATUM(5);
 
 	requiredExtensions = NIL;
-	if (!PG_ARGISNULL(6))
+	if (!MDB_ARGISNULL(6))
 	{
-		ArrayType  *textArray = PG_GETARG_ARRAYTYPE_P(6);
+		ArrayType  *textArray = MDB_GETARG_ARRAYTYPE_P(6);
 		Datum	   *textDatums;
 		int			ndatums;
 		int			i;
@@ -192,16 +192,16 @@ binary_upgrade_create_empty_extension(PG_FUNCTION_ARGS)
 						 extCondition,
 						 requiredExtensions);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_record_init_privs(PG_FUNCTION_ARGS)
+binary_upgrade_set_record_init_privs(MDB_FUNCTION_ARGS)
 {
-	bool		record_init_privs = PG_GETARG_BOOL(0);
+	bool		record_init_privs = MDB_GETARG_BOOL(0);
 
 	CHECK_IS_BINARY_UPGRADE;
 	binary_upgrade_record_init_privs = record_init_privs;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

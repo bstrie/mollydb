@@ -62,7 +62,7 @@ struct XidCache
  * An invalid pgprocno.  Must be larger than the maximum number of PGPROC
  * structures we could possibly have.  See comments for MAX_BACKENDS.
  */
-#define INVALID_PGPROCNO		PG_INT32_MAX
+#define INVALID_PGPROCNO		MDB_INT32_MAX
 
 /*
  * Each backend has a PGPROC struct in shared memory.  There is also a list of

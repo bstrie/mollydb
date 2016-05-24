@@ -400,7 +400,7 @@ mdb_atomic_sub_fetch_u32(volatile mdb_atomic_uint32 *ptr, int32 sub_)
  * documentation.
  * ----
  */
-#ifdef PG_HAVE_ATOMIC_U64_SUPPORT
+#ifdef MDB_HAVE_ATOMIC_U64_SUPPORT
 
 static inline void
 mdb_atomic_init_u64(volatile mdb_atomic_uint64 *ptr, uint64 val)
@@ -452,7 +452,7 @@ static inline uint64
 mdb_atomic_fetch_sub_u64(volatile mdb_atomic_uint64 *ptr, int64 sub_)
 {
 	AssertPointerAlignment(ptr, 8);
-	Assert(sub_ != PG_INT64_MIN);
+	Assert(sub_ != MDB_INT64_MIN);
 	return mdb_atomic_fetch_sub_u64_impl(ptr, sub_);
 }
 
@@ -481,11 +481,11 @@ static inline uint64
 mdb_atomic_sub_fetch_u64(volatile mdb_atomic_uint64 *ptr, int64 sub_)
 {
 	AssertPointerAlignment(ptr, 8);
-	Assert(sub_ != PG_INT64_MIN);
+	Assert(sub_ != MDB_INT64_MIN);
 	return mdb_atomic_sub_fetch_u64_impl(ptr, sub_);
 }
 
-#endif   /* PG_HAVE_64_BIT_ATOMICS */
+#endif   /* MDB_HAVE_64_BIT_ATOMICS */
 
 #undef INSIDE_ATOMICS_H
 

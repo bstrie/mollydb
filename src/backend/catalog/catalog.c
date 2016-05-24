@@ -160,7 +160,7 @@ IsToastClass(Form_mdb_class reltuple)
 bool
 IsSystemNamespace(Oid namespaceId)
 {
-	return namespaceId == PG_CATALOG_NAMESPACE;
+	return namespaceId == MDB_CATALOG_NAMESPACE;
 }
 
 /*
@@ -174,7 +174,7 @@ IsSystemNamespace(Oid namespaceId)
 bool
 IsToastNamespace(Oid namespaceId)
 {
-	return (namespaceId == PG_TOAST_NAMESPACE) ||
+	return (namespaceId == MDB_TOAST_NAMESPACE) ||
 		isTempToastNamespace(namespaceId);
 }
 
@@ -424,7 +424,7 @@ GetNewRelFileNode(Oid reltablespace, Relation mdb_class, char relpersistence)
 
 		/* Check for existing file of same name */
 		rpath = relpath(rnode, MAIN_FORKNUM);
-		fd = BasicOpenFile(rpath, O_RDONLY | PG_BINARY, 0);
+		fd = BasicOpenFile(rpath, O_RDONLY | MDB_BINARY, 0);
 
 		if (fd >= 0)
 		{

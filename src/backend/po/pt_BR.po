@@ -1223,8 +1223,8 @@ msgstr "arquivos do banco de dados são incompatíveis com o servidor"
 
 #: access/transam/xlog.c:4454
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x), but the server was compiled with PG_CONTROL_VERSION %d (0x%08x)."
-msgstr "O agrupamento de banco de dados foi inicializado com PG_CONTROL_VERSION %d (0x%08x), mas o servidor foi compilado com PG_CONTROL_VERSION %d (0x%08x)."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d (0x%08x), but the server was compiled with MDB_CONTROL_VERSION %d (0x%08x)."
+msgstr "O agrupamento de banco de dados foi inicializado com MDB_CONTROL_VERSION %d (0x%08x), mas o servidor foi compilado com MDB_CONTROL_VERSION %d (0x%08x)."
 
 #: access/transam/xlog.c:4458
 #, c-format
@@ -1233,8 +1233,8 @@ msgstr "Isto pode ser um problema com ordenação dos bits. Parece que você pre
 
 #: access/transam/xlog.c:4463
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d, but the server was compiled with PG_CONTROL_VERSION %d."
-msgstr "O agrupamento de banco de dados foi inicializado com PG_CONTROL_VERSION %d, mas o servidor foi compilado com PG_CONTROL_VERSION %d."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d, but the server was compiled with MDB_CONTROL_VERSION %d."
+msgstr "O agrupamento de banco de dados foi inicializado com MDB_CONTROL_VERSION %d, mas o servidor foi compilado com MDB_CONTROL_VERSION %d."
 
 #: access/transam/xlog.c:4466 access/transam/xlog.c:4490
 #: access/transam/xlog.c:4497 access/transam/xlog.c:4502
@@ -18720,8 +18720,8 @@ msgstr "biblioteca \"%s\" é incompatível: bloco mágico ausente"
 
 #: utils/fmgr/dfmgr.c:276
 #, c-format
-msgid "Extension libraries are required to use the PG_MODULE_MAGIC macro."
-msgstr "Bibliotecas de extensões são obrigadas a utilizar o macro PG_MODULE_MAGIC."
+msgid "Extension libraries are required to use the MDB_MODULE_MAGIC macro."
+msgstr "Bibliotecas de extensões são obrigadas a utilizar o macro MDB_MODULE_MAGIC."
 
 #: utils/fmgr/dfmgr.c:312
 #, c-format

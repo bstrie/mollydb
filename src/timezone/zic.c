@@ -21,8 +21,8 @@
 #define ZIC_VERSION '3'
 
 typedef int64 zic_t;
-#define ZIC_MIN PG_INT64_MIN
-#define ZIC_MAX PG_INT64_MAX
+#define ZIC_MIN MDB_INT64_MIN
+#define ZIC_MAX MDB_INT64_MAX
 
 #ifndef ZIC_MAX_ABBR_LEN_WO_WARN
 #define ZIC_MAX_ABBR_LEN_WO_WARN	  6
@@ -533,7 +533,7 @@ main(int argc, char *argv[])
 	for (i = 1; i < argc; ++i)
 		if (strcmp(argv[i], "--version") == 0)
 		{
-			printf("zic %s\n", PG_VERSION);
+			printf("zic %s\n", MDB_VERSION);
 			close_file(stdout, NULL);
 			return EXIT_SUCCESS;
 		}
@@ -1180,7 +1180,7 @@ gethms(char const * string, char const * errstring, bool signable)
 		return 0;
 	}
 	/* Some compilers warn that this test is unsatisfiable for 32-bit ints */
-#if INT_MAX > PG_INT32_MAX
+#if INT_MAX > MDB_INT32_MAX
 	if (ZIC_MAX / SECSPERHOUR < hh)
 	{
 		error(_("time overflow"));
@@ -1850,7 +1850,7 @@ writezone(const char *const name, const char *const string, char version)
 	/*
 	 * Output an INT32_MIN "transition" if appropriate; see below.
 	 */
-	if (timei32 > 0 && ats[timei32] > PG_INT32_MIN)
+	if (timei32 > 0 && ats[timei32] > MDB_INT32_MIN)
 	{
 		--timei32;
 		++timecnt32;
@@ -2049,8 +2049,8 @@ writezone(const char *const name, const char *const string, char version)
 				/*
 				 * Output an INT32_MIN "transition" if appropriate; see above.
 				 */
-				puttzcode(((ats[i] < PG_INT32_MIN) ?
-						   PG_INT32_MIN : ats[i]), fp);
+				puttzcode(((ats[i] < MDB_INT32_MIN) ?
+						   MDB_INT32_MIN : ats[i]), fp);
 			else
 			{
 				puttzcode64(ats[i], fp);

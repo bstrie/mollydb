@@ -12,7 +12,7 @@
 # This must be run in the contrib/semdb directory of a MollyDB build tree.
 #
 
-PG_BINDIR=`mdb_config --bindir`
+MDB_BINDIR=`mdb_config --bindir`
 
 # we must move to contrib/semdb directory to run mdb_regress correctly
 cd `dirname $0`
@@ -193,7 +193,7 @@ fi
 
 # 'psql' command must be executable from test domain
 echo -n "checking whether we can run psql    ... "
-CMD_PSQL="${PG_BINDIR}/psql"
+CMD_PSQL="${MDB_BINDIR}/psql"
 if [ ! -e "${CMD_PSQL}" ]; then
     echo "not found"
     echo
@@ -214,13 +214,13 @@ if [ $? -ne 0 ]; then
     PSQL_T=`matchpathcon -n "${CMD_PSQL}" | sed 's/:/ /g' | awk '{print $3}'`
     if [ "${PSQL_T}" = "user_home_t" ]; then
         # Installation appears to be in /home directory
-        echo "  \$ sudo restorecon -R ${PG_BINDIR}"
+        echo "  \$ sudo restorecon -R ${MDB_BINDIR}"
         echo
         echo "Or, using chcon"
         echo
         echo "  \$ sudo chcon -t user_home_t ${CMD_PSQL}"
     else
-        echo "  \$ sudo restorecon -R ${PG_BINDIR}"
+        echo "  \$ sudo restorecon -R ${MDB_BINDIR}"
         echo
         echo "Or, using chcon"
         echo

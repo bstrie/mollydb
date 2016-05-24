@@ -70,11 +70,11 @@ typedef struct RecordCompareData
  * record_in		- input routine for any composite type.
  */
 Datum
-record_in(PG_FUNCTION_ARGS)
+record_in(MDB_FUNCTION_ARGS)
 {
-	char	   *string = PG_GETARG_CSTRING(0);
-	Oid			tupType = PG_GETARG_OID(1);
-	int32		tupTypmod = PG_GETARG_INT32(2);
+	char	   *string = MDB_GETARG_CSTRING(0);
+	Oid			tupType = MDB_GETARG_OID(1);
+	int32		tupTypmod = MDB_GETARG_INT32(2);
 	HeapTupleHeader result;
 	TupleDesc	tupdesc;
 	HeapTuple	tuple;
@@ -290,16 +290,16 @@ record_in(PG_FUNCTION_ARGS)
 	pfree(nulls);
 	ReleaseTupleDesc(tupdesc);
 
-	PG_RETURN_HEAPTUPLEHEADER(result);
+	MDB_RETURN_HEAPTUPLEHEADER(result);
 }
 
 /*
  * record_out		- output routine for any composite type.
  */
 Datum
-record_out(PG_FUNCTION_ARGS)
+record_out(MDB_FUNCTION_ARGS)
 {
-	HeapTupleHeader rec = PG_GETARG_HEAPTUPLEHEADER(0);
+	HeapTupleHeader rec = MDB_GETARG_HEAPTUPLEHEADER(0);
 	Oid			tupType;
 	int32		tupTypmod;
 	TupleDesc	tupdesc;
@@ -440,18 +440,18 @@ record_out(PG_FUNCTION_ARGS)
 	pfree(nulls);
 	ReleaseTupleDesc(tupdesc);
 
-	PG_RETURN_CSTRING(buf.data);
+	MDB_RETURN_CSTRING(buf.data);
 }
 
 /*
  * record_recv		- binary input routine for any composite type.
  */
 Datum
-record_recv(PG_FUNCTION_ARGS)
+record_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
-	Oid			tupType = PG_GETARG_OID(1);
-	int32		tupTypmod = PG_GETARG_INT32(2);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
+	Oid			tupType = MDB_GETARG_OID(1);
+	int32		tupTypmod = MDB_GETARG_INT32(2);
 	HeapTupleHeader result;
 	TupleDesc	tupdesc;
 	HeapTuple	tuple;
@@ -635,16 +635,16 @@ record_recv(PG_FUNCTION_ARGS)
 	pfree(nulls);
 	ReleaseTupleDesc(tupdesc);
 
-	PG_RETURN_HEAPTUPLEHEADER(result);
+	MDB_RETURN_HEAPTUPLEHEADER(result);
 }
 
 /*
  * record_send		- binary output routine for any composite type.
  */
 Datum
-record_send(PG_FUNCTION_ARGS)
+record_send(MDB_FUNCTION_ARGS)
 {
-	HeapTupleHeader rec = PG_GETARG_HEAPTUPLEHEADER(0);
+	HeapTupleHeader rec = MDB_GETARG_HEAPTUPLEHEADER(0);
 	Oid			tupType;
 	int32		tupTypmod;
 	TupleDesc	tupdesc;
@@ -761,7 +761,7 @@ record_send(PG_FUNCTION_ARGS)
 	pfree(nulls);
 	ReleaseTupleDesc(tupdesc);
 
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -779,8 +779,8 @@ record_send(PG_FUNCTION_ARGS)
 static int
 record_cmp(FunctionCallInfo fcinfo)
 {
-	HeapTupleHeader record1 = PG_GETARG_HEAPTUPLEHEADER(0);
-	HeapTupleHeader record2 = PG_GETARG_HEAPTUPLEHEADER(1);
+	HeapTupleHeader record1 = MDB_GETARG_HEAPTUPLEHEADER(0);
+	HeapTupleHeader record2 = MDB_GETARG_HEAPTUPLEHEADER(1);
 	int			result = 0;
 	Oid			tupType1;
 	Oid			tupType2;
@@ -999,8 +999,8 @@ record_cmp(FunctionCallInfo fcinfo)
 	ReleaseTupleDesc(tupdesc2);
 
 	/* Avoid leaking memory when handed toasted input. */
-	PG_FREE_IF_COPY(record1, 0);
-	PG_FREE_IF_COPY(record2, 1);
+	MDB_FREE_IF_COPY(record1, 0);
+	MDB_FREE_IF_COPY(record2, 1);
 
 	return result;
 }
@@ -1015,10 +1015,10 @@ record_cmp(FunctionCallInfo fcinfo)
  * datatypes that don't have a total ordering (and hence no btree support).
  */
 Datum
-record_eq(PG_FUNCTION_ARGS)
+record_eq(MDB_FUNCTION_ARGS)
 {
-	HeapTupleHeader record1 = PG_GETARG_HEAPTUPLEHEADER(0);
-	HeapTupleHeader record2 = PG_GETARG_HEAPTUPLEHEADER(1);
+	HeapTupleHeader record1 = MDB_GETARG_HEAPTUPLEHEADER(0);
+	HeapTupleHeader record2 = MDB_GETARG_HEAPTUPLEHEADER(1);
 	bool		result = true;
 	Oid			tupType1;
 	Oid			tupType2;
@@ -1221,46 +1221,46 @@ record_eq(PG_FUNCTION_ARGS)
 	ReleaseTupleDesc(tupdesc2);
 
 	/* Avoid leaking memory when handed toasted input. */
-	PG_FREE_IF_COPY(record1, 0);
-	PG_FREE_IF_COPY(record2, 1);
+	MDB_FREE_IF_COPY(record1, 0);
+	MDB_FREE_IF_COPY(record2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-record_ne(PG_FUNCTION_ARGS)
+record_ne(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(!DatumGetBool(record_eq(fcinfo)));
+	MDB_RETURN_BOOL(!DatumGetBool(record_eq(fcinfo)));
 }
 
 Datum
-record_lt(PG_FUNCTION_ARGS)
+record_lt(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(record_cmp(fcinfo) < 0);
+	MDB_RETURN_BOOL(record_cmp(fcinfo) < 0);
 }
 
 Datum
-record_gt(PG_FUNCTION_ARGS)
+record_gt(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(record_cmp(fcinfo) > 0);
+	MDB_RETURN_BOOL(record_cmp(fcinfo) > 0);
 }
 
 Datum
-record_le(PG_FUNCTION_ARGS)
+record_le(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(record_cmp(fcinfo) <= 0);
+	MDB_RETURN_BOOL(record_cmp(fcinfo) <= 0);
 }
 
 Datum
-record_ge(PG_FUNCTION_ARGS)
+record_ge(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(record_cmp(fcinfo) >= 0);
+	MDB_RETURN_BOOL(record_cmp(fcinfo) >= 0);
 }
 
 Datum
-btrecordcmp(PG_FUNCTION_ARGS)
+btrecordcmp(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT32(record_cmp(fcinfo));
+	MDB_RETURN_INT32(record_cmp(fcinfo));
 }
 
 
@@ -1278,8 +1278,8 @@ btrecordcmp(PG_FUNCTION_ARGS)
 static int
 record_image_cmp(FunctionCallInfo fcinfo)
 {
-	HeapTupleHeader record1 = PG_GETARG_HEAPTUPLEHEADER(0);
-	HeapTupleHeader record2 = PG_GETARG_HEAPTUPLEHEADER(1);
+	HeapTupleHeader record1 = MDB_GETARG_HEAPTUPLEHEADER(0);
+	HeapTupleHeader record2 = MDB_GETARG_HEAPTUPLEHEADER(1);
 	int			result = 0;
 	Oid			tupType1;
 	Oid			tupType2;
@@ -1435,8 +1435,8 @@ record_image_cmp(FunctionCallInfo fcinfo)
 
 				len1 = toast_raw_datum_size(values1[i1]);
 				len2 = toast_raw_datum_size(values2[i2]);
-				arg1val = PG_DETOAST_DATUM_PACKED(values1[i1]);
-				arg2val = PG_DETOAST_DATUM_PACKED(values2[i2]);
+				arg1val = MDB_DETOAST_DATUM_PACKED(values1[i1]);
+				arg2val = MDB_DETOAST_DATUM_PACKED(values2[i2]);
 
 				cmpresult = memcmp(VARDATA_ANY(arg1val),
 								   VARDATA_ANY(arg2val),
@@ -1537,8 +1537,8 @@ record_image_cmp(FunctionCallInfo fcinfo)
 	ReleaseTupleDesc(tupdesc2);
 
 	/* Avoid leaking memory when handed toasted input. */
-	PG_FREE_IF_COPY(record1, 0);
-	PG_FREE_IF_COPY(record2, 1);
+	MDB_FREE_IF_COPY(record1, 0);
+	MDB_FREE_IF_COPY(record2, 1);
 
 	return result;
 }
@@ -1553,10 +1553,10 @@ record_image_cmp(FunctionCallInfo fcinfo)
  * de-toasting for unequal lengths this way.
  */
 Datum
-record_image_eq(PG_FUNCTION_ARGS)
+record_image_eq(MDB_FUNCTION_ARGS)
 {
-	HeapTupleHeader record1 = PG_GETARG_HEAPTUPLEHEADER(0);
-	HeapTupleHeader record2 = PG_GETARG_HEAPTUPLEHEADER(1);
+	HeapTupleHeader record1 = MDB_GETARG_HEAPTUPLEHEADER(0);
+	HeapTupleHeader record2 = MDB_GETARG_HEAPTUPLEHEADER(1);
 	bool		result = true;
 	Oid			tupType1;
 	Oid			tupType2;
@@ -1702,8 +1702,8 @@ record_image_eq(PG_FUNCTION_ARGS)
 					struct varlena *arg1val;
 					struct varlena *arg2val;
 
-					arg1val = PG_DETOAST_DATUM_PACKED(values1[i1]);
-					arg2val = PG_DETOAST_DATUM_PACKED(values2[i2]);
+					arg1val = MDB_DETOAST_DATUM_PACKED(values1[i1]);
+					arg2val = MDB_DETOAST_DATUM_PACKED(values2[i2]);
 
 					result = (memcmp(VARDATA_ANY(arg1val),
 									 VARDATA_ANY(arg2val),
@@ -1777,44 +1777,44 @@ record_image_eq(PG_FUNCTION_ARGS)
 	ReleaseTupleDesc(tupdesc2);
 
 	/* Avoid leaking memory when handed toasted input. */
-	PG_FREE_IF_COPY(record1, 0);
-	PG_FREE_IF_COPY(record2, 1);
+	MDB_FREE_IF_COPY(record1, 0);
+	MDB_FREE_IF_COPY(record2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-record_image_ne(PG_FUNCTION_ARGS)
+record_image_ne(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(!DatumGetBool(record_image_eq(fcinfo)));
+	MDB_RETURN_BOOL(!DatumGetBool(record_image_eq(fcinfo)));
 }
 
 Datum
-record_image_lt(PG_FUNCTION_ARGS)
+record_image_lt(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(record_image_cmp(fcinfo) < 0);
+	MDB_RETURN_BOOL(record_image_cmp(fcinfo) < 0);
 }
 
 Datum
-record_image_gt(PG_FUNCTION_ARGS)
+record_image_gt(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(record_image_cmp(fcinfo) > 0);
+	MDB_RETURN_BOOL(record_image_cmp(fcinfo) > 0);
 }
 
 Datum
-record_image_le(PG_FUNCTION_ARGS)
+record_image_le(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(record_image_cmp(fcinfo) <= 0);
+	MDB_RETURN_BOOL(record_image_cmp(fcinfo) <= 0);
 }
 
 Datum
-record_image_ge(PG_FUNCTION_ARGS)
+record_image_ge(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(record_image_cmp(fcinfo) >= 0);
+	MDB_RETURN_BOOL(record_image_cmp(fcinfo) >= 0);
 }
 
 Datum
-btrecordimagecmp(PG_FUNCTION_ARGS)
+btrecordimagecmp(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT32(record_image_cmp(fcinfo));
+	MDB_RETURN_INT32(record_image_cmp(fcinfo));
 }

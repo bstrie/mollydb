@@ -560,26 +560,26 @@
 #define PACKAGE_VERSION "9.6beta1"
 
 /* Define to the name of a signed 128-bit integer type. */
-#undef PG_INT128_TYPE
+#undef MDB_INT128_TYPE
 
 /* Define to the name of a signed 64-bit integer type. */
-#define PG_INT64_TYPE long long int
+#define MDB_INT64_TYPE long long int
 
 /* MollyDB version as a string */
-#define PG_VERSION "9.6beta1"
+#define MDB_VERSION "9.6beta1"
 
 /* MollyDB version as a number */
-#define PG_VERSION_NUM 90600
+#define MDB_VERSION_NUM 90600
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "mollydb"
 
 /* Define to the name of the default MollyDB service principal in Kerberos.
    (--with-krb-srvnam=NAME) */
-#define PG_KRB_SRVNAM "mollydb"
+#define MDB_KRB_SRVNAM "mollydb"
 
 /* A string containing the version number, platform, and C compiler */
-#define PG_VERSION_STR "Uninitialized version string (win32)"
+#define MDB_VERSION_STR "Uninitialized version string (win32)"
 
 /* The size of `long', as computed by sizeof. */
 #define SIZEOF_LONG 4

@@ -30,112 +30,112 @@
 #define UINT32_ACCESS_ONCE(var)      ((uint32)(*((volatile uint32 *)&(var))))
 
 /* bogus ... these externs should be in a header file */
-extern Datum mdb_stat_get_numscans(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_tuples_returned(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_tuples_fetched(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_tuples_inserted(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_tuples_updated(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_tuples_deleted(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_tuples_hot_updated(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_live_tuples(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_dead_tuples(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_mod_since_analyze(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_blocks_fetched(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_blocks_hit(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_last_vacuum_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_last_autovacuum_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_last_analyze_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_last_autoanalyze_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_vacuum_count(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_autovacuum_count(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_analyze_count(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_autoanalyze_count(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_numscans(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_tuples_returned(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_tuples_fetched(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_tuples_inserted(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_tuples_updated(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_tuples_deleted(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_tuples_hot_updated(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_live_tuples(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_dead_tuples(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_mod_since_analyze(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_blocks_fetched(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_blocks_hit(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_last_vacuum_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_last_autovacuum_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_last_analyze_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_last_autoanalyze_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_vacuum_count(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_autovacuum_count(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_analyze_count(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_autoanalyze_count(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_stat_get_function_calls(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_function_total_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_function_self_time(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_function_calls(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_function_total_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_function_self_time(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_stat_get_backend_idset(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_activity(PG_FUNCTION_ARGS);
-extern Datum mdb_backend_pid(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_pid(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_dbid(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_userid(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_activity(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_wait_event_type(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_wait_event(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_activity_start(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_xact_start(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_start(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_client_addr(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_backend_client_port(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_progress_info(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_idset(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_activity(MDB_FUNCTION_ARGS);
+extern Datum mdb_backend_pid(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_pid(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_dbid(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_userid(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_activity(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_wait_event_type(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_wait_event(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_activity_start(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_xact_start(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_start(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_client_addr(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_backend_client_port(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_progress_info(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_stat_get_db_numbackends(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_xact_commit(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_xact_rollback(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_blocks_fetched(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_blocks_hit(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_tuples_returned(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_tuples_fetched(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_tuples_inserted(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_tuples_updated(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_tuples_deleted(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_conflict_tablespace(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_conflict_lock(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_conflict_snapshot(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_conflict_bufferpin(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_conflict_startup_deadlock(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_conflict_all(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_deadlocks(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_stat_reset_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_temp_files(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_temp_bytes(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_blk_read_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_db_blk_write_time(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_numbackends(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_xact_commit(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_xact_rollback(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_blocks_fetched(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_blocks_hit(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_tuples_returned(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_tuples_fetched(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_tuples_inserted(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_tuples_updated(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_tuples_deleted(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_conflict_tablespace(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_conflict_lock(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_conflict_snapshot(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_conflict_bufferpin(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_conflict_startup_deadlock(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_conflict_all(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_deadlocks(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_stat_reset_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_temp_files(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_temp_bytes(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_blk_read_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_db_blk_write_time(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_stat_get_archiver(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_archiver(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_stat_get_bgwriter_timed_checkpoints(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_bgwriter_requested_checkpoints(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_checkpoint_write_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_checkpoint_sync_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_bgwriter_buf_written_checkpoints(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_bgwriter_buf_written_clean(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_bgwriter_maxwritten_clean(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_bgwriter_stat_reset_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_buf_written_backend(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_buf_fsync_backend(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_buf_alloc(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_bgwriter_timed_checkpoints(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_bgwriter_requested_checkpoints(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_checkpoint_write_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_checkpoint_sync_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_bgwriter_buf_written_checkpoints(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_bgwriter_buf_written_clean(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_bgwriter_maxwritten_clean(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_bgwriter_stat_reset_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_buf_written_backend(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_buf_fsync_backend(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_buf_alloc(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_stat_get_xact_numscans(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_tuples_returned(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_tuples_fetched(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_tuples_inserted(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_tuples_updated(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_tuples_deleted(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_tuples_hot_updated(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_blocks_fetched(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_blocks_hit(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_numscans(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_tuples_returned(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_tuples_fetched(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_tuples_inserted(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_tuples_updated(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_tuples_deleted(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_tuples_hot_updated(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_blocks_fetched(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_blocks_hit(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_stat_get_xact_function_calls(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_function_total_time(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_get_xact_function_self_time(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_function_calls(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_function_total_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_get_xact_function_self_time(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_stat_get_snapshot_timestamp(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_clear_snapshot(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_reset(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_reset_shared(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_reset_single_table_counters(PG_FUNCTION_ARGS);
-extern Datum mdb_stat_reset_single_function_counters(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_get_snapshot_timestamp(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_clear_snapshot(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_reset(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_reset_shared(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_reset_single_table_counters(MDB_FUNCTION_ARGS);
+extern Datum mdb_stat_reset_single_function_counters(MDB_FUNCTION_ARGS);
 
 /* Global bgwriter statistics, from bgwriter.c */
 extern PgStat_MsgBgWriter bgwriterStats;
 
 Datum
-mdb_stat_get_numscans(PG_FUNCTION_ARGS)
+mdb_stat_get_numscans(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -144,14 +144,14 @@ mdb_stat_get_numscans(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->numscans);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_tuples_returned(PG_FUNCTION_ARGS)
+mdb_stat_get_tuples_returned(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -160,14 +160,14 @@ mdb_stat_get_tuples_returned(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->tuples_returned);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_tuples_fetched(PG_FUNCTION_ARGS)
+mdb_stat_get_tuples_fetched(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -176,14 +176,14 @@ mdb_stat_get_tuples_fetched(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->tuples_fetched);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_tuples_inserted(PG_FUNCTION_ARGS)
+mdb_stat_get_tuples_inserted(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -192,14 +192,14 @@ mdb_stat_get_tuples_inserted(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->tuples_inserted);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_tuples_updated(PG_FUNCTION_ARGS)
+mdb_stat_get_tuples_updated(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -208,14 +208,14 @@ mdb_stat_get_tuples_updated(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->tuples_updated);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_tuples_deleted(PG_FUNCTION_ARGS)
+mdb_stat_get_tuples_deleted(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -224,14 +224,14 @@ mdb_stat_get_tuples_deleted(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->tuples_deleted);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_tuples_hot_updated(PG_FUNCTION_ARGS)
+mdb_stat_get_tuples_hot_updated(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -240,14 +240,14 @@ mdb_stat_get_tuples_hot_updated(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->tuples_hot_updated);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_live_tuples(PG_FUNCTION_ARGS)
+mdb_stat_get_live_tuples(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -256,14 +256,14 @@ mdb_stat_get_live_tuples(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->n_live_tuples);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_dead_tuples(PG_FUNCTION_ARGS)
+mdb_stat_get_dead_tuples(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -272,14 +272,14 @@ mdb_stat_get_dead_tuples(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->n_dead_tuples);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_mod_since_analyze(PG_FUNCTION_ARGS)
+mdb_stat_get_mod_since_analyze(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -288,14 +288,14 @@ mdb_stat_get_mod_since_analyze(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->changes_since_analyze);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_blocks_fetched(PG_FUNCTION_ARGS)
+mdb_stat_get_blocks_fetched(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -304,14 +304,14 @@ mdb_stat_get_blocks_fetched(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->blocks_fetched);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_blocks_hit(PG_FUNCTION_ARGS)
+mdb_stat_get_blocks_hit(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -320,13 +320,13 @@ mdb_stat_get_blocks_hit(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->blocks_hit);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_last_vacuum_time(PG_FUNCTION_ARGS)
+mdb_stat_get_last_vacuum_time(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	TimestampTz result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -336,15 +336,15 @@ mdb_stat_get_last_vacuum_time(PG_FUNCTION_ARGS)
 		result = tabentry->vacuum_timestamp;
 
 	if (result == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_TIMESTAMPTZ(result);
+		MDB_RETURN_TIMESTAMPTZ(result);
 }
 
 Datum
-mdb_stat_get_last_autovacuum_time(PG_FUNCTION_ARGS)
+mdb_stat_get_last_autovacuum_time(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	TimestampTz result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -354,15 +354,15 @@ mdb_stat_get_last_autovacuum_time(PG_FUNCTION_ARGS)
 		result = tabentry->autovac_vacuum_timestamp;
 
 	if (result == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_TIMESTAMPTZ(result);
+		MDB_RETURN_TIMESTAMPTZ(result);
 }
 
 Datum
-mdb_stat_get_last_analyze_time(PG_FUNCTION_ARGS)
+mdb_stat_get_last_analyze_time(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	TimestampTz result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -372,15 +372,15 @@ mdb_stat_get_last_analyze_time(PG_FUNCTION_ARGS)
 		result = tabentry->analyze_timestamp;
 
 	if (result == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_TIMESTAMPTZ(result);
+		MDB_RETURN_TIMESTAMPTZ(result);
 }
 
 Datum
-mdb_stat_get_last_autoanalyze_time(PG_FUNCTION_ARGS)
+mdb_stat_get_last_autoanalyze_time(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	TimestampTz result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -390,15 +390,15 @@ mdb_stat_get_last_autoanalyze_time(PG_FUNCTION_ARGS)
 		result = tabentry->autovac_analyze_timestamp;
 
 	if (result == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_TIMESTAMPTZ(result);
+		MDB_RETURN_TIMESTAMPTZ(result);
 }
 
 Datum
-mdb_stat_get_vacuum_count(PG_FUNCTION_ARGS)
+mdb_stat_get_vacuum_count(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -407,13 +407,13 @@ mdb_stat_get_vacuum_count(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->vacuum_count);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_autovacuum_count(PG_FUNCTION_ARGS)
+mdb_stat_get_autovacuum_count(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -422,13 +422,13 @@ mdb_stat_get_autovacuum_count(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->autovac_vacuum_count);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_analyze_count(PG_FUNCTION_ARGS)
+mdb_stat_get_analyze_count(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -437,13 +437,13 @@ mdb_stat_get_analyze_count(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->analyze_count);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_autoanalyze_count(PG_FUNCTION_ARGS)
+mdb_stat_get_autoanalyze_count(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatTabEntry *tabentry;
 
@@ -452,46 +452,46 @@ mdb_stat_get_autoanalyze_count(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->autovac_analyze_count);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_function_calls(PG_FUNCTION_ARGS)
+mdb_stat_get_function_calls(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	PgStat_StatFuncEntry *funcentry;
 
 	if ((funcentry = pgstat_fetch_stat_funcentry(funcid)) == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_INT64(funcentry->f_numcalls);
+		MDB_RETURN_NULL();
+	MDB_RETURN_INT64(funcentry->f_numcalls);
 }
 
 Datum
-mdb_stat_get_function_total_time(PG_FUNCTION_ARGS)
+mdb_stat_get_function_total_time(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	PgStat_StatFuncEntry *funcentry;
 
 	if ((funcentry = pgstat_fetch_stat_funcentry(funcid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	/* convert counter from microsec to millisec for display */
-	PG_RETURN_FLOAT8(((double) funcentry->f_total_time) / 1000.0);
+	MDB_RETURN_FLOAT8(((double) funcentry->f_total_time) / 1000.0);
 }
 
 Datum
-mdb_stat_get_function_self_time(PG_FUNCTION_ARGS)
+mdb_stat_get_function_self_time(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	PgStat_StatFuncEntry *funcentry;
 
 	if ((funcentry = pgstat_fetch_stat_funcentry(funcid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	/* convert counter from microsec to millisec for display */
-	PG_RETURN_FLOAT8(((double) funcentry->f_self_time) / 1000.0);
+	MDB_RETURN_FLOAT8(((double) funcentry->f_self_time) / 1000.0);
 }
 
 Datum
-mdb_stat_get_backend_idset(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_idset(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	int		   *fctx;
@@ -534,12 +534,12 @@ mdb_stat_get_backend_idset(PG_FUNCTION_ARGS)
  * Returns command progress information for the named command.
  */
 Datum
-mdb_stat_get_progress_info(PG_FUNCTION_ARGS)
+mdb_stat_get_progress_info(MDB_FUNCTION_ARGS)
 {
-#define PG_STAT_GET_PROGRESS_COLS	PGSTAT_NUM_PROGRESS_PARAM + 3
+#define MDB_STAT_GET_PROGRESS_COLS	PGSTAT_NUM_PROGRESS_PARAM + 3
 	int			num_backends = pgstat_fetch_stat_numbackends();
 	int			curr_backend;
-	char	   *cmd = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *cmd = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	ProgressCommandType	cmdtype;
 	TupleDesc	tupdesc;
 	Tuplestorestate *tupstore;
@@ -584,8 +584,8 @@ mdb_stat_get_progress_info(PG_FUNCTION_ARGS)
 	{
 		LocalPgBackendStatus   *local_beentry;
 		PgBackendStatus		   *beentry;
-		Datum		values[PG_STAT_GET_PROGRESS_COLS];
-		bool		nulls[PG_STAT_GET_PROGRESS_COLS];
+		Datum		values[MDB_STAT_GET_PROGRESS_COLS];
+		bool		nulls[MDB_STAT_GET_PROGRESS_COLS];
 		int			i;
 
 		MemSet(values, 0, sizeof(values));
@@ -636,12 +636,12 @@ mdb_stat_get_progress_info(PG_FUNCTION_ARGS)
  * Returns activity of PG backends.
  */
 Datum
-mdb_stat_get_activity(PG_FUNCTION_ARGS)
+mdb_stat_get_activity(MDB_FUNCTION_ARGS)
 {
-#define PG_STAT_GET_ACTIVITY_COLS	23
+#define MDB_STAT_GET_ACTIVITY_COLS	23
 	int			num_backends = pgstat_fetch_stat_numbackends();
 	int			curr_backend;
-	int			pid = PG_ARGISNULL(0) ? -1 : PG_GETARG_INT32(0);
+	int			pid = MDB_ARGISNULL(0) ? -1 : MDB_GETARG_INT32(0);
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
 	Tuplestorestate *tupstore;
@@ -677,8 +677,8 @@ mdb_stat_get_activity(PG_FUNCTION_ARGS)
 	for (curr_backend = 1; curr_backend <= num_backends; curr_backend++)
 	{
 		/* for each row */
-		Datum		values[PG_STAT_GET_ACTIVITY_COLS];
-		bool		nulls[PG_STAT_GET_ACTIVITY_COLS];
+		Datum		values[MDB_STAT_GET_ACTIVITY_COLS];
+		bool		nulls[MDB_STAT_GET_ACTIVITY_COLS];
 		LocalPgBackendStatus *local_beentry;
 		PgBackendStatus *beentry;
 		PGPROC	   *proc;
@@ -929,55 +929,55 @@ mdb_stat_get_activity(PG_FUNCTION_ARGS)
 
 
 Datum
-mdb_backend_pid(PG_FUNCTION_ARGS)
+mdb_backend_pid(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT32(MyProcPid);
+	MDB_RETURN_INT32(MyProcPid);
 }
 
 
 Datum
-mdb_stat_get_backend_pid(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_pid(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	PgBackendStatus *beentry;
 
 	if ((beentry = pgstat_fetch_stat_beentry(beid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT32(beentry->st_procpid);
+	MDB_RETURN_INT32(beentry->st_procpid);
 }
 
 
 Datum
-mdb_stat_get_backend_dbid(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_dbid(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	PgBackendStatus *beentry;
 
 	if ((beentry = pgstat_fetch_stat_beentry(beid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_OID(beentry->st_databaseid);
+	MDB_RETURN_OID(beentry->st_databaseid);
 }
 
 
 Datum
-mdb_stat_get_backend_userid(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_userid(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	PgBackendStatus *beentry;
 
 	if ((beentry = pgstat_fetch_stat_beentry(beid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_OID(beentry->st_userid);
+	MDB_RETURN_OID(beentry->st_userid);
 }
 
 
 Datum
-mdb_stat_get_backend_activity(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_activity(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	PgBackendStatus *beentry;
 	const char *activity;
 
@@ -990,13 +990,13 @@ mdb_stat_get_backend_activity(PG_FUNCTION_ARGS)
 	else
 		activity = beentry->st_activity;
 
-	PG_RETURN_TEXT_P(cstring_to_text(activity));
+	MDB_RETURN_TEXT_P(cstring_to_text(activity));
 }
 
 Datum
-mdb_stat_get_backend_wait_event_type(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_wait_event_type(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	PgBackendStatus *beentry;
 	PGPROC	   *proc;
 	const char *wait_event_type = NULL;
@@ -1009,15 +1009,15 @@ mdb_stat_get_backend_wait_event_type(PG_FUNCTION_ARGS)
 		wait_event_type = pgstat_get_wait_event_type(proc->wait_event_info);
 
 	if (!wait_event_type)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TEXT_P(cstring_to_text(wait_event_type));
+	MDB_RETURN_TEXT_P(cstring_to_text(wait_event_type));
 }
 
 Datum
-mdb_stat_get_backend_wait_event(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_wait_event(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	PgBackendStatus *beentry;
 	PGPROC	   *proc;
 	const char *wait_event = NULL;
@@ -1030,24 +1030,24 @@ mdb_stat_get_backend_wait_event(PG_FUNCTION_ARGS)
 		wait_event = pgstat_get_wait_event(proc->wait_event_info);
 
 	if (!wait_event)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TEXT_P(cstring_to_text(wait_event));
+	MDB_RETURN_TEXT_P(cstring_to_text(wait_event));
 }
 
 
 Datum
-mdb_stat_get_backend_activity_start(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_activity_start(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	TimestampTz result;
 	PgBackendStatus *beentry;
 
 	if ((beentry = pgstat_fetch_stat_beentry(beid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (!has_privs_of_role(GetUserId(), beentry->st_userid))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	result = beentry->st_activity_start_timestamp;
 
@@ -1056,76 +1056,76 @@ mdb_stat_get_backend_activity_start(PG_FUNCTION_ARGS)
 	 * user hasn't enabled query-level stats collection.
 	 */
 	if (result == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TIMESTAMPTZ(result);
+	MDB_RETURN_TIMESTAMPTZ(result);
 }
 
 
 Datum
-mdb_stat_get_backend_xact_start(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_xact_start(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	TimestampTz result;
 	PgBackendStatus *beentry;
 
 	if ((beentry = pgstat_fetch_stat_beentry(beid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (!has_privs_of_role(GetUserId(), beentry->st_userid))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	result = beentry->st_xact_start_timestamp;
 
 	if (result == 0)			/* not in a transaction */
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TIMESTAMPTZ(result);
+	MDB_RETURN_TIMESTAMPTZ(result);
 }
 
 
 Datum
-mdb_stat_get_backend_start(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_start(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	TimestampTz result;
 	PgBackendStatus *beentry;
 
 	if ((beentry = pgstat_fetch_stat_beentry(beid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (!has_privs_of_role(GetUserId(), beentry->st_userid))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	result = beentry->st_proc_start_timestamp;
 
 	if (result == 0)			/* probably can't happen? */
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TIMESTAMPTZ(result);
+	MDB_RETURN_TIMESTAMPTZ(result);
 }
 
 
 Datum
-mdb_stat_get_backend_client_addr(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_client_addr(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	PgBackendStatus *beentry;
 	SockAddr	zero_clientaddr;
 	char		remote_host[NI_MAXHOST];
 	int			ret;
 
 	if ((beentry = pgstat_fetch_stat_beentry(beid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (!has_privs_of_role(GetUserId(), beentry->st_userid))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* A zeroed client addr means we don't know */
 	memset(&zero_clientaddr, 0, sizeof(zero_clientaddr));
 	if (memcmp(&(beentry->st_clientaddr), &zero_clientaddr,
 			   sizeof(zero_clientaddr)) == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	switch (beentry->st_clientaddr.addr.ss_family)
 	{
@@ -1135,7 +1135,7 @@ mdb_stat_get_backend_client_addr(PG_FUNCTION_ARGS)
 #endif
 			break;
 		default:
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 	}
 
 	remote_host[0] = '\0';
@@ -1145,34 +1145,34 @@ mdb_stat_get_backend_client_addr(PG_FUNCTION_ARGS)
 							 NULL, 0,
 							 NI_NUMERICHOST | NI_NUMERICSERV);
 	if (ret != 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	clean_ipv6_addr(beentry->st_clientaddr.addr.ss_family, remote_host);
 
-	PG_RETURN_INET_P(DirectFunctionCall1(inet_in,
+	MDB_RETURN_INET_P(DirectFunctionCall1(inet_in,
 										 CStringGetDatum(remote_host)));
 }
 
 Datum
-mdb_stat_get_backend_client_port(PG_FUNCTION_ARGS)
+mdb_stat_get_backend_client_port(MDB_FUNCTION_ARGS)
 {
-	int32		beid = PG_GETARG_INT32(0);
+	int32		beid = MDB_GETARG_INT32(0);
 	PgBackendStatus *beentry;
 	SockAddr	zero_clientaddr;
 	char		remote_port[NI_MAXSERV];
 	int			ret;
 
 	if ((beentry = pgstat_fetch_stat_beentry(beid)) == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (!has_privs_of_role(GetUserId(), beentry->st_userid))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* A zeroed client addr means we don't know */
 	memset(&zero_clientaddr, 0, sizeof(zero_clientaddr));
 	if (memcmp(&(beentry->st_clientaddr), &zero_clientaddr,
 			   sizeof(zero_clientaddr)) == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	switch (beentry->st_clientaddr.addr.ss_family)
 	{
@@ -1182,9 +1182,9 @@ mdb_stat_get_backend_client_port(PG_FUNCTION_ARGS)
 #endif
 			break;
 		case AF_UNIX:
-			PG_RETURN_INT32(-1);
+			MDB_RETURN_INT32(-1);
 		default:
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 	}
 
 	remote_port[0] = '\0';
@@ -1194,17 +1194,17 @@ mdb_stat_get_backend_client_port(PG_FUNCTION_ARGS)
 							 remote_port, sizeof(remote_port),
 							 NI_NUMERICHOST | NI_NUMERICSERV);
 	if (ret != 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(DirectFunctionCall1(int4in,
+	MDB_RETURN_DATUM(DirectFunctionCall1(int4in,
 										CStringGetDatum(remote_port)));
 }
 
 
 Datum
-mdb_stat_get_db_numbackends(PG_FUNCTION_ARGS)
+mdb_stat_get_db_numbackends(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int32		result;
 	int			tot_backends = pgstat_fetch_stat_numbackends();
 	int			beid;
@@ -1218,14 +1218,14 @@ mdb_stat_get_db_numbackends(PG_FUNCTION_ARGS)
 			result++;
 	}
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 
 Datum
-mdb_stat_get_db_xact_commit(PG_FUNCTION_ARGS)
+mdb_stat_get_db_xact_commit(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1234,14 +1234,14 @@ mdb_stat_get_db_xact_commit(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_xact_commit);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_db_xact_rollback(PG_FUNCTION_ARGS)
+mdb_stat_get_db_xact_rollback(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1250,14 +1250,14 @@ mdb_stat_get_db_xact_rollback(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_xact_rollback);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_db_blocks_fetched(PG_FUNCTION_ARGS)
+mdb_stat_get_db_blocks_fetched(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1266,14 +1266,14 @@ mdb_stat_get_db_blocks_fetched(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_blocks_fetched);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_db_blocks_hit(PG_FUNCTION_ARGS)
+mdb_stat_get_db_blocks_hit(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1282,14 +1282,14 @@ mdb_stat_get_db_blocks_hit(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_blocks_hit);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_db_tuples_returned(PG_FUNCTION_ARGS)
+mdb_stat_get_db_tuples_returned(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1298,14 +1298,14 @@ mdb_stat_get_db_tuples_returned(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_tuples_returned);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_db_tuples_fetched(PG_FUNCTION_ARGS)
+mdb_stat_get_db_tuples_fetched(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1314,14 +1314,14 @@ mdb_stat_get_db_tuples_fetched(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_tuples_fetched);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_db_tuples_inserted(PG_FUNCTION_ARGS)
+mdb_stat_get_db_tuples_inserted(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1330,14 +1330,14 @@ mdb_stat_get_db_tuples_inserted(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_tuples_inserted);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_db_tuples_updated(PG_FUNCTION_ARGS)
+mdb_stat_get_db_tuples_updated(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1346,14 +1346,14 @@ mdb_stat_get_db_tuples_updated(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_tuples_updated);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_db_tuples_deleted(PG_FUNCTION_ARGS)
+mdb_stat_get_db_tuples_deleted(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1362,13 +1362,13 @@ mdb_stat_get_db_tuples_deleted(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_tuples_deleted);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_db_stat_reset_time(PG_FUNCTION_ARGS)
+mdb_stat_get_db_stat_reset_time(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	TimestampTz result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1378,15 +1378,15 @@ mdb_stat_get_db_stat_reset_time(PG_FUNCTION_ARGS)
 		result = dbentry->stat_reset_timestamp;
 
 	if (result == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_TIMESTAMPTZ(result);
+		MDB_RETURN_TIMESTAMPTZ(result);
 }
 
 Datum
-mdb_stat_get_db_temp_files(PG_FUNCTION_ARGS)
+mdb_stat_get_db_temp_files(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1395,14 +1395,14 @@ mdb_stat_get_db_temp_files(PG_FUNCTION_ARGS)
 	else
 		result = dbentry->n_temp_files;
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-mdb_stat_get_db_temp_bytes(PG_FUNCTION_ARGS)
+mdb_stat_get_db_temp_bytes(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1411,13 +1411,13 @@ mdb_stat_get_db_temp_bytes(PG_FUNCTION_ARGS)
 	else
 		result = dbentry->n_temp_bytes;
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_db_conflict_tablespace(PG_FUNCTION_ARGS)
+mdb_stat_get_db_conflict_tablespace(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1426,13 +1426,13 @@ mdb_stat_get_db_conflict_tablespace(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_conflict_tablespace);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_db_conflict_lock(PG_FUNCTION_ARGS)
+mdb_stat_get_db_conflict_lock(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1441,13 +1441,13 @@ mdb_stat_get_db_conflict_lock(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_conflict_lock);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_db_conflict_snapshot(PG_FUNCTION_ARGS)
+mdb_stat_get_db_conflict_snapshot(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1456,13 +1456,13 @@ mdb_stat_get_db_conflict_snapshot(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_conflict_snapshot);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_db_conflict_bufferpin(PG_FUNCTION_ARGS)
+mdb_stat_get_db_conflict_bufferpin(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1471,13 +1471,13 @@ mdb_stat_get_db_conflict_bufferpin(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_conflict_bufferpin);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_db_conflict_startup_deadlock(PG_FUNCTION_ARGS)
+mdb_stat_get_db_conflict_startup_deadlock(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1486,13 +1486,13 @@ mdb_stat_get_db_conflict_startup_deadlock(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_conflict_startup_deadlock);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_db_conflict_all(PG_FUNCTION_ARGS)
+mdb_stat_get_db_conflict_all(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1506,13 +1506,13 @@ mdb_stat_get_db_conflict_all(PG_FUNCTION_ARGS)
 						  dbentry->n_conflict_bufferpin +
 						  dbentry->n_conflict_startup_deadlock);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_db_deadlocks(PG_FUNCTION_ARGS)
+mdb_stat_get_db_deadlocks(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1521,13 +1521,13 @@ mdb_stat_get_db_deadlocks(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (dbentry->n_deadlocks);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_db_blk_read_time(PG_FUNCTION_ARGS)
+mdb_stat_get_db_blk_read_time(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	double		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1537,13 +1537,13 @@ mdb_stat_get_db_blk_read_time(PG_FUNCTION_ARGS)
 	else
 		result = ((double) dbentry->n_block_read_time) / 1000.0;
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-mdb_stat_get_db_blk_write_time(PG_FUNCTION_ARGS)
+mdb_stat_get_db_blk_write_time(MDB_FUNCTION_ARGS)
 {
-	Oid			dbid = PG_GETARG_OID(0);
+	Oid			dbid = MDB_GETARG_OID(0);
 	double		result;
 	PgStat_StatDBEntry *dbentry;
 
@@ -1553,81 +1553,81 @@ mdb_stat_get_db_blk_write_time(PG_FUNCTION_ARGS)
 	else
 		result = ((double) dbentry->n_block_write_time) / 1000.0;
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-mdb_stat_get_bgwriter_timed_checkpoints(PG_FUNCTION_ARGS)
+mdb_stat_get_bgwriter_timed_checkpoints(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT64(pgstat_fetch_global()->timed_checkpoints);
+	MDB_RETURN_INT64(pgstat_fetch_global()->timed_checkpoints);
 }
 
 Datum
-mdb_stat_get_bgwriter_requested_checkpoints(PG_FUNCTION_ARGS)
+mdb_stat_get_bgwriter_requested_checkpoints(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT64(pgstat_fetch_global()->requested_checkpoints);
+	MDB_RETURN_INT64(pgstat_fetch_global()->requested_checkpoints);
 }
 
 Datum
-mdb_stat_get_bgwriter_buf_written_checkpoints(PG_FUNCTION_ARGS)
+mdb_stat_get_bgwriter_buf_written_checkpoints(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT64(pgstat_fetch_global()->buf_written_checkpoints);
+	MDB_RETURN_INT64(pgstat_fetch_global()->buf_written_checkpoints);
 }
 
 Datum
-mdb_stat_get_bgwriter_buf_written_clean(PG_FUNCTION_ARGS)
+mdb_stat_get_bgwriter_buf_written_clean(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT64(pgstat_fetch_global()->buf_written_clean);
+	MDB_RETURN_INT64(pgstat_fetch_global()->buf_written_clean);
 }
 
 Datum
-mdb_stat_get_bgwriter_maxwritten_clean(PG_FUNCTION_ARGS)
+mdb_stat_get_bgwriter_maxwritten_clean(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT64(pgstat_fetch_global()->maxwritten_clean);
+	MDB_RETURN_INT64(pgstat_fetch_global()->maxwritten_clean);
 }
 
 Datum
-mdb_stat_get_checkpoint_write_time(PG_FUNCTION_ARGS)
-{
-	/* time is already in msec, just convert to double for presentation */
-	PG_RETURN_FLOAT8((double) pgstat_fetch_global()->checkpoint_write_time);
-}
-
-Datum
-mdb_stat_get_checkpoint_sync_time(PG_FUNCTION_ARGS)
+mdb_stat_get_checkpoint_write_time(MDB_FUNCTION_ARGS)
 {
 	/* time is already in msec, just convert to double for presentation */
-	PG_RETURN_FLOAT8((double) pgstat_fetch_global()->checkpoint_sync_time);
+	MDB_RETURN_FLOAT8((double) pgstat_fetch_global()->checkpoint_write_time);
 }
 
 Datum
-mdb_stat_get_bgwriter_stat_reset_time(PG_FUNCTION_ARGS)
+mdb_stat_get_checkpoint_sync_time(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_TIMESTAMPTZ(pgstat_fetch_global()->stat_reset_timestamp);
+	/* time is already in msec, just convert to double for presentation */
+	MDB_RETURN_FLOAT8((double) pgstat_fetch_global()->checkpoint_sync_time);
 }
 
 Datum
-mdb_stat_get_buf_written_backend(PG_FUNCTION_ARGS)
+mdb_stat_get_bgwriter_stat_reset_time(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT64(pgstat_fetch_global()->buf_written_backend);
+	MDB_RETURN_TIMESTAMPTZ(pgstat_fetch_global()->stat_reset_timestamp);
 }
 
 Datum
-mdb_stat_get_buf_fsync_backend(PG_FUNCTION_ARGS)
+mdb_stat_get_buf_written_backend(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT64(pgstat_fetch_global()->buf_fsync_backend);
+	MDB_RETURN_INT64(pgstat_fetch_global()->buf_written_backend);
 }
 
 Datum
-mdb_stat_get_buf_alloc(PG_FUNCTION_ARGS)
+mdb_stat_get_buf_fsync_backend(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT64(pgstat_fetch_global()->buf_alloc);
+	MDB_RETURN_INT64(pgstat_fetch_global()->buf_fsync_backend);
 }
 
 Datum
-mdb_stat_get_xact_numscans(PG_FUNCTION_ARGS)
+mdb_stat_get_buf_alloc(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	MDB_RETURN_INT64(pgstat_fetch_global()->buf_alloc);
+}
+
+Datum
+mdb_stat_get_xact_numscans(MDB_FUNCTION_ARGS)
+{
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_TableStatus *tabentry;
 
@@ -1636,13 +1636,13 @@ mdb_stat_get_xact_numscans(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->t_counts.t_numscans);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_xact_tuples_returned(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_tuples_returned(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_TableStatus *tabentry;
 
@@ -1651,13 +1651,13 @@ mdb_stat_get_xact_tuples_returned(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->t_counts.t_tuples_returned);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_xact_tuples_fetched(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_tuples_fetched(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_TableStatus *tabentry;
 
@@ -1666,13 +1666,13 @@ mdb_stat_get_xact_tuples_fetched(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->t_counts.t_tuples_fetched);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_xact_tuples_inserted(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_tuples_inserted(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_TableStatus *tabentry;
 	PgStat_TableXactStatus *trans;
@@ -1687,13 +1687,13 @@ mdb_stat_get_xact_tuples_inserted(PG_FUNCTION_ARGS)
 			result += trans->tuples_inserted;
 	}
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_xact_tuples_updated(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_tuples_updated(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_TableStatus *tabentry;
 	PgStat_TableXactStatus *trans;
@@ -1708,13 +1708,13 @@ mdb_stat_get_xact_tuples_updated(PG_FUNCTION_ARGS)
 			result += trans->tuples_updated;
 	}
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_xact_tuples_deleted(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_tuples_deleted(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_TableStatus *tabentry;
 	PgStat_TableXactStatus *trans;
@@ -1729,13 +1729,13 @@ mdb_stat_get_xact_tuples_deleted(PG_FUNCTION_ARGS)
 			result += trans->tuples_deleted;
 	}
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_xact_tuples_hot_updated(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_tuples_hot_updated(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_TableStatus *tabentry;
 
@@ -1744,13 +1744,13 @@ mdb_stat_get_xact_tuples_hot_updated(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->t_counts.t_tuples_hot_updated);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_xact_blocks_fetched(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_blocks_fetched(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_TableStatus *tabentry;
 
@@ -1759,13 +1759,13 @@ mdb_stat_get_xact_blocks_fetched(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->t_counts.t_blocks_fetched);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_xact_blocks_hit(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_blocks_hit(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	PgStat_TableStatus *tabentry;
 
@@ -1774,103 +1774,103 @@ mdb_stat_get_xact_blocks_hit(PG_FUNCTION_ARGS)
 	else
 		result = (int64) (tabentry->t_counts.t_blocks_hit);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-mdb_stat_get_xact_function_calls(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_function_calls(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	PgStat_BackendFunctionEntry *funcentry;
 
 	if ((funcentry = find_funcstat_entry(funcid)) == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_INT64(funcentry->f_counts.f_numcalls);
+		MDB_RETURN_NULL();
+	MDB_RETURN_INT64(funcentry->f_counts.f_numcalls);
 }
 
 Datum
-mdb_stat_get_xact_function_total_time(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_function_total_time(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	PgStat_BackendFunctionEntry *funcentry;
 
 	if ((funcentry = find_funcstat_entry(funcid)) == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_FLOAT8(INSTR_TIME_GET_MILLISEC(funcentry->f_counts.f_total_time));
+		MDB_RETURN_NULL();
+	MDB_RETURN_FLOAT8(INSTR_TIME_GET_MILLISEC(funcentry->f_counts.f_total_time));
 }
 
 Datum
-mdb_stat_get_xact_function_self_time(PG_FUNCTION_ARGS)
+mdb_stat_get_xact_function_self_time(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	PgStat_BackendFunctionEntry *funcentry;
 
 	if ((funcentry = find_funcstat_entry(funcid)) == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_FLOAT8(INSTR_TIME_GET_MILLISEC(funcentry->f_counts.f_self_time));
+		MDB_RETURN_NULL();
+	MDB_RETURN_FLOAT8(INSTR_TIME_GET_MILLISEC(funcentry->f_counts.f_self_time));
 }
 
 
 /* Get the timestamp of the current statistics snapshot */
 Datum
-mdb_stat_get_snapshot_timestamp(PG_FUNCTION_ARGS)
+mdb_stat_get_snapshot_timestamp(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_TIMESTAMPTZ(pgstat_fetch_global()->stats_timestamp);
+	MDB_RETURN_TIMESTAMPTZ(pgstat_fetch_global()->stats_timestamp);
 }
 
 /* Discard the active statistics snapshot */
 Datum
-mdb_stat_clear_snapshot(PG_FUNCTION_ARGS)
+mdb_stat_clear_snapshot(MDB_FUNCTION_ARGS)
 {
 	pgstat_clear_snapshot();
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
 /* Reset all counters for the current database */
 Datum
-mdb_stat_reset(PG_FUNCTION_ARGS)
+mdb_stat_reset(MDB_FUNCTION_ARGS)
 {
 	pgstat_reset_counters();
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* Reset some shared cluster-wide counters */
 Datum
-mdb_stat_reset_shared(PG_FUNCTION_ARGS)
+mdb_stat_reset_shared(MDB_FUNCTION_ARGS)
 {
-	char	   *target = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *target = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 
 	pgstat_reset_shared_counters(target);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* Reset a single counter in the current database */
 Datum
-mdb_stat_reset_single_table_counters(PG_FUNCTION_ARGS)
+mdb_stat_reset_single_table_counters(MDB_FUNCTION_ARGS)
 {
-	Oid			taboid = PG_GETARG_OID(0);
+	Oid			taboid = MDB_GETARG_OID(0);
 
 	pgstat_reset_single_counter(taboid, RESET_TABLE);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-mdb_stat_reset_single_function_counters(PG_FUNCTION_ARGS)
+mdb_stat_reset_single_function_counters(MDB_FUNCTION_ARGS)
 {
-	Oid			funcoid = PG_GETARG_OID(0);
+	Oid			funcoid = MDB_GETARG_OID(0);
 
 	pgstat_reset_single_counter(funcoid, RESET_FUNCTION);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-mdb_stat_get_archiver(PG_FUNCTION_ARGS)
+mdb_stat_get_archiver(MDB_FUNCTION_ARGS)
 {
 	TupleDesc	tupdesc;
 	Datum		values[7];
@@ -1932,6 +1932,6 @@ mdb_stat_get_archiver(PG_FUNCTION_ARGS)
 		values[6] = TimestampTzGetDatum(archiver_stats->stat_reset_timestamp);
 
 	/* Returns the record as Datum */
-	PG_RETURN_DATUM(HeapTupleGetDatum(
+	MDB_RETURN_DATUM(HeapTupleGetDatum(
 								   heap_form_tuple(tupdesc, values, nulls)));
 }

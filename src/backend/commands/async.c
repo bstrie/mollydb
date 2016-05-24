@@ -506,27 +506,27 @@ AsyncShmemInit(void)
  *	  SQL function to send a notification event
  */
 Datum
-mdb_notify(PG_FUNCTION_ARGS)
+mdb_notify(MDB_FUNCTION_ARGS)
 {
 	const char *channel;
 	const char *payload;
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		channel = "";
 	else
-		channel = text_to_cstring(PG_GETARG_TEXT_PP(0));
+		channel = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 		payload = "";
 	else
-		payload = text_to_cstring(PG_GETARG_TEXT_PP(1));
+		payload = text_to_cstring(MDB_GETARG_TEXT_PP(1));
 
 	/* For NOTIFY as a statement, this is checked in ProcessUtility */
 	PreventCommandDuringRecovery("NOTIFY");
 
 	Async_Notify(channel, payload);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
@@ -687,7 +687,7 @@ Async_UnlistenAll(void)
  * change within a transaction.
  */
 Datum
-mdb_listening_channels(PG_FUNCTION_ARGS)
+mdb_listening_channels(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	ListCell  **lcp;
@@ -1411,7 +1411,7 @@ asyncQueueAddEntries(ListCell *nextNotify)
  * occupied.
  */
 Datum
-mdb_notification_queue_usage(PG_FUNCTION_ARGS)
+mdb_notification_queue_usage(MDB_FUNCTION_ARGS)
 {
 	double		usage;
 
@@ -1419,7 +1419,7 @@ mdb_notification_queue_usage(PG_FUNCTION_ARGS)
 	usage = asyncQueueUsage();
 	LWLockRelease(AsyncQueueLock);
 
-	PG_RETURN_FLOAT8(usage);
+	MDB_RETURN_FLOAT8(usage);
 }
 
 /*
@@ -1797,14 +1797,14 @@ asyncQueueReadAllNotifications(void)
 	 * It is possible that we fail while trying to send a message to our
 	 * frontend (for example, because of encoding conversion failure).
 	 * If that happens it is critical that we not try to send the same
-	 * message over and over again.  Therefore, we place a PG_TRY block
+	 * message over and over again.  Therefore, we place a MDB_TRY block
 	 * here that will forcibly advance our backend position before we lose
 	 * control to an error.  (We could alternatively retake AsyncQueueLock
 	 * and move the position before handling each individual message, but
 	 * that seems like too much lock traffic.)
 	 *----------
 	 */
-	PG_TRY();
+	MDB_TRY();
 	{
 		bool		reachedStop;
 
@@ -1860,7 +1860,7 @@ asyncQueueReadAllNotifications(void)
 													   page_buffer.buf);
 		} while (!reachedStop);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Update shared state */
 		LWLockAcquire(AsyncQueueLock, LW_SHARED);
@@ -1872,9 +1872,9 @@ asyncQueueReadAllNotifications(void)
 		if (advanceTail)
 			asyncQueueAdvanceTail();
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/* Update shared state */
 	LWLockAcquire(AsyncQueueLock, LW_SHARED);
@@ -2086,7 +2086,7 @@ NotifyMyFrontEnd(const char *channel, const char *payload, int32 srcPid)
 		pq_beginmessage(&buf, 'A');
 		pq_sendint(&buf, srcPid, sizeof(int32));
 		pq_sendstring(&buf, channel);
-		if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
+		if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
 			pq_sendstring(&buf, payload);
 		pq_endmessage(&buf);
 

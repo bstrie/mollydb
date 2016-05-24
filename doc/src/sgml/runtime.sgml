@@ -1373,16 +1373,16 @@ echo -1000 > /proc/self/oom_score_adj
     do this, you should also set these environment variables in the startup
     script before invoking the postmaster:
 <programlisting>
-export PG_OOM_ADJUST_FILE=/proc/self/oom_score_adj
-export PG_OOM_ADJUST_VALUE=0
+export MDB_OOM_ADJUST_FILE=/proc/self/oom_score_adj
+export MDB_OOM_ADJUST_VALUE=0
 </programlisting>
     These settings will cause postmaster child processes to run with the
     normal OOM score adjustment of zero, so that the OOM killer can still
     target them at need.  You could use some other value for
-    <envar>PG_OOM_ADJUST_VALUE</> if you want the child processes to run
-    with some other OOM score adjustment.  (<envar>PG_OOM_ADJUST_VALUE</>
+    <envar>MDB_OOM_ADJUST_VALUE</> if you want the child processes to run
+    with some other OOM score adjustment.  (<envar>MDB_OOM_ADJUST_VALUE</>
     can also be omitted, in which case it defaults to zero.)  If you do not
-    set <envar>PG_OOM_ADJUST_FILE</>, the child processes will run with the
+    set <envar>MDB_OOM_ADJUST_FILE</>, the child processes will run with the
     same OOM score adjustment as the postmaster, which is unwise since the
     whole point is to ensure that the postmaster has a preferential setting.
    </para>

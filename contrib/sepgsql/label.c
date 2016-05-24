@@ -132,14 +132,14 @@ semdb_set_client_label(const char *new_label)
 
 	/* Check process:{setcurrent} permission. */
 	semdb_avc_check_perms_label(semdb_get_client_label(),
-								  SEPG_CLASS_PROCESS,
-								  SEPG_PROCESS__SETCURRENT,
+								  SEMDB_CLASS_PROCESS,
+								  SEMDB_PROCESS__SETCURRENT,
 								  NULL,
 								  true);
 	/* Check process:{dyntransition} permission. */
 	semdb_avc_check_perms_label(tcontext,
-								  SEPG_CLASS_PROCESS,
-								  SEPG_PROCESS__DYNTRANSITION,
+								  SEMDB_CLASS_PROCESS,
+								  SEMDB_PROCESS__DYNTRANSITION,
 								  NULL,
 								  true);
 
@@ -302,9 +302,9 @@ semdb_needs_fmgr_hook(Oid functionId)
 	object.objectId = functionId;
 	object.objectSubId = 0;
 	if (!semdb_avc_check_perms(&object,
-								 SEPG_CLASS_DB_PROCEDURE,
-								 SEPG_DB_PROCEDURE__EXECUTE |
-								 SEPG_DB_PROCEDURE__ENTRYPOINT,
+								 SEMDB_CLASS_DB_PROCEDURE,
+								 SEMDB_DB_PROCEDURE__EXECUTE |
+								 SEMDB_DB_PROCEDURE__ENTRYPOINT,
 								 SEPGSQL_AVC_NOAUDIT, false))
 		return true;
 
@@ -362,14 +362,14 @@ semdb_fmgr_hook(FmgrHookEventType event,
 					object.objectId = flinfo->fn_oid;
 					object.objectSubId = 0;
 					semdb_avc_check_perms(&object,
-											SEPG_CLASS_DB_PROCEDURE,
-											SEPG_DB_PROCEDURE__ENTRYPOINT,
+											SEMDB_CLASS_DB_PROCEDURE,
+											SEMDB_DB_PROCEDURE__ENTRYPOINT,
 											getObjectDescription(&object),
 											true);
 
 					semdb_avc_check_perms_label(stack->new_label,
-												  SEPG_CLASS_PROCESS,
-												  SEPG_PROCESS__TRANSITION,
+												  SEMDB_CLASS_PROCESS,
+												  SEMDB_PROCESS__TRANSITION,
 												  NULL, true);
 				}
 				*private = PointerGetDatum(stack);
@@ -470,16 +470,16 @@ semdb_get_label(Oid classId, Oid objectId, int32 subId)
 			ereport(ERROR,
 					(errcode(ERRCODE_INTERNAL_ERROR),
 			   errmsg("SELinux: failed to get initial security label: %m")));
-		PG_TRY();
+		MDB_TRY();
 		{
 			label = pstrdup(unlabeled);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			freecon(unlabeled);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 
 		freecon(unlabeled);
 	}
@@ -545,18 +545,18 @@ semdb_object_relabel(const ObjectAddress *object, const char *seclabel)
  *
  * It returns the security label of the client.
  */
-PG_FUNCTION_INFO_V1(semdb_getcon);
+MDB_FUNCTION_INFO_V1(semdb_getcon);
 Datum
-semdb_getcon(PG_FUNCTION_ARGS)
+semdb_getcon(MDB_FUNCTION_ARGS)
 {
 	char	   *client_label;
 
 	if (!semdb_is_enabled())
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	client_label = semdb_get_client_label();
 
-	PG_RETURN_TEXT_P(cstring_to_text(client_label));
+	MDB_RETURN_TEXT_P(cstring_to_text(client_label));
 }
 
 /*
@@ -564,20 +564,20 @@ semdb_getcon(PG_FUNCTION_ARGS)
  *
  * It switches the security label of the client.
  */
-PG_FUNCTION_INFO_V1(semdb_setcon);
+MDB_FUNCTION_INFO_V1(semdb_setcon);
 Datum
-semdb_setcon(PG_FUNCTION_ARGS)
+semdb_setcon(MDB_FUNCTION_ARGS)
 {
 	const char *new_label;
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		new_label = NULL;
 	else
-		new_label = TextDatumGetCString(PG_GETARG_DATUM(0));
+		new_label = TextDatumGetCString(MDB_GETARG_DATUM(0));
 
 	semdb_set_client_label(new_label);
 
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 /*
@@ -586,11 +586,11 @@ semdb_setcon(PG_FUNCTION_ARGS)
  * It translate the given qualified MLS/MCS range into raw format
  * when mcstrans daemon is working.
  */
-PG_FUNCTION_INFO_V1(semdb_mcstrans_in);
+MDB_FUNCTION_INFO_V1(semdb_mcstrans_in);
 Datum
-semdb_mcstrans_in(PG_FUNCTION_ARGS)
+semdb_mcstrans_in(MDB_FUNCTION_ARGS)
 {
-	text	   *label = PG_GETARG_TEXT_P(0);
+	text	   *label = MDB_GETARG_TEXT_P(0);
 	char	   *raw_label;
 	char	   *result;
 
@@ -605,19 +605,19 @@ semdb_mcstrans_in(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INTERNAL_ERROR),
 				 errmsg("SELinux: could not translate security label: %m")));
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		result = pstrdup(raw_label);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		freecon(raw_label);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	freecon(raw_label);
 
-	PG_RETURN_TEXT_P(cstring_to_text(result));
+	MDB_RETURN_TEXT_P(cstring_to_text(result));
 }
 
 /*
@@ -626,11 +626,11 @@ semdb_mcstrans_in(PG_FUNCTION_ARGS)
  * It translate the given raw MLS/MCS range into qualified format
  * when mcstrans daemon is working.
  */
-PG_FUNCTION_INFO_V1(semdb_mcstrans_out);
+MDB_FUNCTION_INFO_V1(semdb_mcstrans_out);
 Datum
-semdb_mcstrans_out(PG_FUNCTION_ARGS)
+semdb_mcstrans_out(MDB_FUNCTION_ARGS)
 {
-	text	   *label = PG_GETARG_TEXT_P(0);
+	text	   *label = MDB_GETARG_TEXT_P(0);
 	char	   *qual_label;
 	char	   *result;
 
@@ -645,19 +645,19 @@ semdb_mcstrans_out(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INTERNAL_ERROR),
 				 errmsg("SELinux: could not translate security label: %m")));
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		result = pstrdup(qual_label);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		freecon(qual_label);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	freecon(qual_label);
 
-	PG_RETURN_TEXT_P(cstring_to_text(result));
+	MDB_RETURN_TEXT_P(cstring_to_text(result));
 }
 
 /*
@@ -848,7 +848,7 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 
 		if (selabel_lookup_raw(sehnd, &context, objname, objtype) == 0)
 		{
-			PG_TRY();
+			MDB_TRY();
 			{
 				/*
 				 * Check SELinux permission to relabel the fetched object,
@@ -858,12 +858,12 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 
 				SetSecurityLabel(&object, SEPGSQL_LABEL_TAG, context);
 			}
-			PG_CATCH();
+			MDB_CATCH();
 			{
 				freecon(context);
-				PG_RE_THROW();
+				MDB_RE_THROW();
 			}
-			PG_END_TRY();
+			MDB_END_TRY();
 			freecon(context);
 		}
 		else if (errno == ENOENT)
@@ -893,9 +893,9 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
  * If @specfile is not NULL, it uses explicitly specified specfile, instead
  * of the system default.
  */
-PG_FUNCTION_INFO_V1(semdb_restorecon);
+MDB_FUNCTION_INFO_V1(semdb_restorecon);
 Datum
-semdb_restorecon(PG_FUNCTION_ARGS)
+semdb_restorecon(MDB_FUNCTION_ARGS)
 {
 	struct selabel_handle *sehnd;
 	struct selinux_opt seopts;
@@ -921,7 +921,7 @@ semdb_restorecon(PG_FUNCTION_ARGS)
 	 * Open selabel_lookup(3) stuff. It provides a set of mapping between an
 	 * initial security label and object class/name due to the system setting.
 	 */
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		seopts.type = SELABEL_OPT_UNUSED;
 		seopts.value = NULL;
@@ -929,14 +929,14 @@ semdb_restorecon(PG_FUNCTION_ARGS)
 	else
 	{
 		seopts.type = SELABEL_OPT_PATH;
-		seopts.value = TextDatumGetCString(PG_GETARG_DATUM(0));
+		seopts.value = TextDatumGetCString(MDB_GETARG_DATUM(0));
 	}
 	sehnd = selabel_open(SELABEL_CTX_DB, &seopts, 1);
 	if (!sehnd)
 		ereport(ERROR,
 				(errcode(ERRCODE_INTERNAL_ERROR),
 			   errmsg("SELinux: failed to initialize labeling handle: %m")));
-	PG_TRY();
+	MDB_TRY();
 	{
 		exec_object_restorecon(sehnd, DatabaseRelationId);
 		exec_object_restorecon(sehnd, NamespaceRelationId);
@@ -944,14 +944,14 @@ semdb_restorecon(PG_FUNCTION_ARGS)
 		exec_object_restorecon(sehnd, AttributeRelationId);
 		exec_object_restorecon(sehnd, ProcedureRelationId);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		selabel_close(sehnd);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	selabel_close(sehnd);
 
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }

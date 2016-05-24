@@ -91,7 +91,7 @@ enum ECPGdtype
 #define IS_SIMPLE_TYPE(type) (((type) >= ECPGt_char && (type) <= ECPGt_interval) || ((type) == ECPGt_string))
 
 /* we also have to handle different statement types */
-enum ECPG_statement_type
+enum ECMDB_statement_type
 {
 	ECPGst_normal,
 	ECPGst_execute,

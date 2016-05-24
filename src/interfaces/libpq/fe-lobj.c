@@ -700,7 +700,7 @@ lo_import_internal(PGconn *conn, const char *filename, Oid oid)
 	/*
 	 * open the file to be read in
 	 */
-	fd = open(filename, O_RDONLY | PG_BINARY, 0666);
+	fd = open(filename, O_RDONLY | MDB_BINARY, 0666);
 	if (fd < 0)
 	{							/* error */
 		printfPQExpBuffer(&conn->errorMessage,
@@ -805,7 +805,7 @@ lo_export(PGconn *conn, Oid lobjId, const char *filename)
 	/*
 	 * create the file to be written to
 	 */
-	fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC | PG_BINARY, 0666);
+	fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC | MDB_BINARY, 0666);
 	if (fd < 0)
 	{
 		/* We must do lo_close before setting the errorMessage */

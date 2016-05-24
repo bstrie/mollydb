@@ -44,11 +44,11 @@
 #include "utils/rangetypes.h"
 
 /* SP-GiST API functions */
-Datum		smdb_range_quad_config(PG_FUNCTION_ARGS);
-Datum		smdb_range_quad_choose(PG_FUNCTION_ARGS);
-Datum		smdb_range_quad_picksplit(PG_FUNCTION_ARGS);
-Datum		smdb_range_quad_inner_consistent(PG_FUNCTION_ARGS);
-Datum		smdb_range_quad_leaf_consistent(PG_FUNCTION_ARGS);
+Datum		smdb_range_quad_config(MDB_FUNCTION_ARGS);
+Datum		smdb_range_quad_choose(MDB_FUNCTION_ARGS);
+Datum		smdb_range_quad_picksplit(MDB_FUNCTION_ARGS);
+Datum		smdb_range_quad_inner_consistent(MDB_FUNCTION_ARGS);
+Datum		smdb_range_quad_leaf_consistent(MDB_FUNCTION_ARGS);
 
 static int16 getQuadrant(TypeCacheEntry *typcache, RangeType *centroid,
 			RangeType *tst);
@@ -64,16 +64,16 @@ static int adjacent_cmp_bounds(TypeCacheEntry *typcache, RangeBound *arg,
  * SP-GiST 'config' interface function.
  */
 Datum
-smdb_range_quad_config(PG_FUNCTION_ARGS)
+smdb_range_quad_config(MDB_FUNCTION_ARGS)
 {
-	/* spgConfigIn *cfgin = (spgConfigIn *) PG_GETARG_POINTER(0); */
-	spgConfigOut *cfg = (spgConfigOut *) PG_GETARG_POINTER(1);
+	/* spgConfigIn *cfgin = (spgConfigIn *) MDB_GETARG_POINTER(0); */
+	spgConfigOut *cfg = (spgConfigOut *) MDB_GETARG_POINTER(1);
 
 	cfg->prefixType = ANYRANGEOID;
 	cfg->labelType = VOIDOID;	/* we don't need node labels */
 	cfg->canReturnData = true;
 	cfg->longValuesOK = false;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*----------
@@ -135,10 +135,10 @@ getQuadrant(TypeCacheEntry *typcache, RangeType *centroid, RangeType *tst)
  * Choose SP-GiST function: choose path for addition of new range.
  */
 Datum
-smdb_range_quad_choose(PG_FUNCTION_ARGS)
+smdb_range_quad_choose(MDB_FUNCTION_ARGS)
 {
-	spgChooseIn *in = (spgChooseIn *) PG_GETARG_POINTER(0);
-	spgChooseOut *out = (spgChooseOut *) PG_GETARG_POINTER(1);
+	spgChooseIn *in = (spgChooseIn *) MDB_GETARG_POINTER(0);
+	spgChooseOut *out = (spgChooseOut *) MDB_GETARG_POINTER(1);
 	RangeType  *inRange = DatumGetRangeType(in->datum),
 			   *centroid;
 	int16		quadrant;
@@ -150,7 +150,7 @@ smdb_range_quad_choose(PG_FUNCTION_ARGS)
 		/* nodeN will be set by core */
 		out->result.matchNode.levelAdd = 0;
 		out->result.matchNode.restDatum = RangeTypeGetDatum(inRange);
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 	}
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(inRange));
@@ -169,7 +169,7 @@ smdb_range_quad_choose(PG_FUNCTION_ARGS)
 			out->result.matchNode.nodeN = 1;
 		out->result.matchNode.levelAdd = 1;
 		out->result.matchNode.restDatum = RangeTypeGetDatum(inRange);
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 	}
 
 	centroid = DatumGetRangeType(in->prefixDatum);
@@ -183,7 +183,7 @@ smdb_range_quad_choose(PG_FUNCTION_ARGS)
 	out->result.matchNode.levelAdd = 1;
 	out->result.matchNode.restDatum = RangeTypeGetDatum(inRange);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -204,10 +204,10 @@ bound_cmp(const void *a, const void *b, void *arg)
  * range and distribute ranges according to quadrants.
  */
 Datum
-smdb_range_quad_picksplit(PG_FUNCTION_ARGS)
+smdb_range_quad_picksplit(MDB_FUNCTION_ARGS)
 {
-	spgPickSplitIn *in = (spgPickSplitIn *) PG_GETARG_POINTER(0);
-	spgPickSplitOut *out = (spgPickSplitOut *) PG_GETARG_POINTER(1);
+	spgPickSplitIn *in = (spgPickSplitIn *) MDB_GETARG_POINTER(0);
+	spgPickSplitOut *out = (spgPickSplitOut *) MDB_GETARG_POINTER(1);
 	int			i;
 	int			j;
 	int			nonEmptyCount;
@@ -261,7 +261,7 @@ smdb_range_quad_picksplit(PG_FUNCTION_ARGS)
 			out->leafTupleDatums[i] = RangeTypeGetDatum(range);
 			out->mapTuplesToNodes[i] = 0;
 		}
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 	}
 
 	/* Sort range bounds in order to find medians */
@@ -296,7 +296,7 @@ smdb_range_quad_picksplit(PG_FUNCTION_ARGS)
 		out->mapTuplesToNodes[i] = quadrant - 1;
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -304,10 +304,10 @@ smdb_range_quad_picksplit(PG_FUNCTION_ARGS)
  * consistent with given set of queries.
  */
 Datum
-smdb_range_quad_inner_consistent(PG_FUNCTION_ARGS)
+smdb_range_quad_inner_consistent(MDB_FUNCTION_ARGS)
 {
-	spgInnerConsistentIn *in = (spgInnerConsistentIn *) PG_GETARG_POINTER(0);
-	spgInnerConsistentOut *out = (spgInnerConsistentOut *) PG_GETARG_POINTER(1);
+	spgInnerConsistentIn *in = (spgInnerConsistentIn *) MDB_GETARG_POINTER(0);
+	spgInnerConsistentOut *out = (spgInnerConsistentOut *) MDB_GETARG_POINTER(1);
 	int			which;
 	int			i;
 	MemoryContext oldCtx;
@@ -326,7 +326,7 @@ smdb_range_quad_inner_consistent(PG_FUNCTION_ARGS)
 		out->nodeNumbers = (int *) palloc(sizeof(int) * in->nNodes);
 		for (i = 0; i < in->nNodes; i++)
 			out->nodeNumbers[i] = i;
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 	}
 
 	if (!in->hasPrefix)
@@ -775,7 +775,7 @@ smdb_range_quad_inner_consistent(PG_FUNCTION_ARGS)
 
 	MemoryContextSwitchTo(oldCtx);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -923,10 +923,10 @@ adjacent_inner_consistent(TypeCacheEntry *typcache, RangeBound *arg,
  * using corresponding function.
  */
 Datum
-smdb_range_quad_leaf_consistent(PG_FUNCTION_ARGS)
+smdb_range_quad_leaf_consistent(MDB_FUNCTION_ARGS)
 {
-	spgLeafConsistentIn *in = (spgLeafConsistentIn *) PG_GETARG_POINTER(0);
-	spgLeafConsistentOut *out = (spgLeafConsistentOut *) PG_GETARG_POINTER(1);
+	spgLeafConsistentIn *in = (spgLeafConsistentIn *) MDB_GETARG_POINTER(0);
+	spgLeafConsistentOut *out = (spgLeafConsistentOut *) MDB_GETARG_POINTER(1);
 	RangeType  *leafRange = DatumGetRangeType(in->leafDatum);
 	TypeCacheEntry *typcache;
 	bool		res;
@@ -1003,5 +1003,5 @@ smdb_range_quad_leaf_consistent(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }

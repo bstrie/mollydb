@@ -2,8 +2,8 @@
  * mdb/src/interfaces/ecpg/include/sqlda-infx-compat.h
  */
 
-#ifndef ECPG_SQLDA_COMPAT_H
-#define ECPG_SQLDA_COMPAT_H
+#ifndef ECMDB_SQLDA_COMPAT_H
+#define ECMDB_SQLDA_COMPAT_H
 
 struct sqlvar_compat
 {
@@ -44,4 +44,4 @@ struct sqlda_compat
 	void	   *reserved;		/* reserved for future use */
 };
 
-#endif   /* ECPG_SQLDA_COMPAT_H */
+#endif   /* ECMDB_SQLDA_COMPAT_H */

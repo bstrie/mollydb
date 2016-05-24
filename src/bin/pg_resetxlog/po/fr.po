@@ -461,10 +461,10 @@ msgstr "newestCommitTsXid:                    %u\n"
 
 #: mdb_resetxlog.c:827
 #, c-format
-msgid "%s: internal error -- sizeof(ControlFileData) is too large ... fix PG_CONTROL_SIZE\n"
+msgid "%s: internal error -- sizeof(ControlFileData) is too large ... fix MDB_CONTROL_SIZE\n"
 msgstr ""
 "%s : erreur interne -- sizeof(ControlFileData) est trop important...\n"
-"corrigez PG_CONTROL_SIZE\n"
+"corrigez MDB_CONTROL_SIZE\n"
 
 #: mdb_resetxlog.c:842
 #, c-format

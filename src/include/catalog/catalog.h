@@ -23,7 +23,7 @@
 #include "utils/relcache.h"
 
 #define OIDCHARS		10		/* max chars printed by %u */
-#define TABLESPACE_VERSION_DIRECTORY	"PG_" PG_MAJORVERSION "_" \
+#define TABLESPACE_VERSION_DIRECTORY	"MDB_" MDB_MAJORVERSION "_" \
 									CppAsString2(CATALOG_VERSION_NO)
 
 

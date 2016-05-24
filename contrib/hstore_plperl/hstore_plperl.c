@@ -5,15 +5,15 @@
 #include "plperl_helpers.h"
 #include "hstore.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 
-PG_FUNCTION_INFO_V1(hstore_to_plperl);
+MDB_FUNCTION_INFO_V1(hstore_to_plperl);
 
 Datum
-hstore_to_plperl(PG_FUNCTION_ARGS)
+hstore_to_plperl(MDB_FUNCTION_ARGS)
 {
-	HStore	   *in = PG_GETARG_HS(0);
+	HStore	   *in = MDB_GETARG_HS(0);
 	int			i;
 	int			count = HS_COUNT(in);
 	char	   *base = STRPTR(in);
@@ -40,10 +40,10 @@ hstore_to_plperl(PG_FUNCTION_ARGS)
 }
 
 
-PG_FUNCTION_INFO_V1(plperl_to_hstore);
+MDB_FUNCTION_INFO_V1(plperl_to_hstore);
 
 Datum
-plperl_to_hstore(PG_FUNCTION_ARGS)
+plperl_to_hstore(MDB_FUNCTION_ARGS)
 {
 	HV		   *hv;
 	HE		   *he;
@@ -53,7 +53,7 @@ plperl_to_hstore(PG_FUNCTION_ARGS)
 	HStore	   *out;
 	Pairs	   *pairs;
 
-	hv = (HV *) SvRV((SV *) PG_GETARG_POINTER(0));
+	hv = (HV *) SvRV((SV *) MDB_GETARG_POINTER(0));
 
 	pcount = hv_iterinit(hv);
 
@@ -87,5 +87,5 @@ plperl_to_hstore(PG_FUNCTION_ARGS)
 
 	pcount = hstoreUniquePairs(pairs, pcount, &buflen);
 	out = hstorePairs(pairs, pcount, buflen);
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }

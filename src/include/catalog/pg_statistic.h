@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_STATISTIC_H
-#define PG_STATISTIC_H
+#ifndef MDB_STATISTIC_H
+#define MDB_STATISTIC_H
 
 #include "catalog/genbki.h"
 
@@ -290,4 +290,4 @@ typedef FormData_mdb_statistic *Form_mdb_statistic;
  */
 #define STATISTIC_KIND_BOUNDS_HISTOGRAM  7
 
-#endif   /* PG_STATISTIC_H */
+#endif   /* MDB_STATISTIC_H */

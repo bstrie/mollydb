@@ -396,7 +396,7 @@ sub init
 	mkdir $self->archive_dir;
 
 	TestLib::system_or_bail('initdb', '-D', $pgdata, '-A', 'trust', '-N');
-	TestLib::system_or_bail($ENV{PG_REGRESS}, '--config-auth', $pgdata);
+	TestLib::system_or_bail($ENV{MDB_REGRESS}, '--config-auth', $pgdata);
 
 	open my $conf, ">>$pgdata/mollydb.conf";
 	print $conf "\n# Added by MollyDBNode.pm\n";

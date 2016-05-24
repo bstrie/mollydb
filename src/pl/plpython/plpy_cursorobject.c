@@ -126,7 +126,7 @@ PLy_cursor_query(const char *query)
 
 	PLy_spi_subtransaction_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		PLyExecutionContext *exec_ctx = PLy_current_execution_context();
 		SPIPlanPtr	plan;
@@ -151,12 +151,12 @@ PLy_cursor_query(const char *query)
 
 		PLy_spi_subtransaction_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		PLy_spi_subtransaction_abort(oldcontext, oldowner);
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	Assert(cursor->portalname != NULL);
 	return (PyObject *) cursor;
@@ -220,7 +220,7 @@ PLy_cursor_plan(PyObject *ob, PyObject *args)
 
 	PLy_spi_subtransaction_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		PLyExecutionContext *exec_ctx = PLy_current_execution_context();
 		Portal		portal;
@@ -239,19 +239,19 @@ PLy_cursor_plan(PyObject *ob, PyObject *args)
 			elem = PySequence_GetItem(args, j);
 			if (elem != Py_None)
 			{
-				PG_TRY();
+				MDB_TRY();
 				{
 					plan->values[j] =
 						plan->args[j].out.d.func(&(plan->args[j].out.d),
 												 -1,
 												 elem);
 				}
-				PG_CATCH();
+				MDB_CATCH();
 				{
 					Py_DECREF(elem);
-					PG_RE_THROW();
+					MDB_RE_THROW();
 				}
-				PG_END_TRY();
+				MDB_END_TRY();
 
 				Py_DECREF(elem);
 				nulls[j] = ' ';
@@ -278,7 +278,7 @@ PLy_cursor_plan(PyObject *ob, PyObject *args)
 
 		PLy_spi_subtransaction_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		int			k;
 
@@ -298,7 +298,7 @@ PLy_cursor_plan(PyObject *ob, PyObject *args)
 		PLy_spi_subtransaction_abort(oldcontext, oldowner);
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	for (i = 0; i < nargs; i++)
 	{
@@ -368,7 +368,7 @@ PLy_cursor_iternext(PyObject *self)
 
 	PLy_spi_subtransaction_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		SPI_cursor_fetch(portal, true, 1);
 		if (SPI_processed == 0)
@@ -389,12 +389,12 @@ PLy_cursor_iternext(PyObject *self)
 
 		PLy_spi_subtransaction_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		PLy_spi_subtransaction_abort(oldcontext, oldowner);
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return ret;
 }
@@ -437,7 +437,7 @@ PLy_cursor_fetch(PyObject *self, PyObject *args)
 
 	PLy_spi_subtransaction_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		SPI_cursor_fetch(portal, true, count);
 
@@ -483,12 +483,12 @@ PLy_cursor_fetch(PyObject *self, PyObject *args)
 
 		PLy_spi_subtransaction_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		PLy_spi_subtransaction_abort(oldcontext, oldowner);
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return (PyObject *) ret;
 }

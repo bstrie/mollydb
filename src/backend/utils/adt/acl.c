@@ -561,9 +561,9 @@ check_acl(const Acl *acl)
  *		the new AclItem
  */
 Datum
-aclitemin(PG_FUNCTION_ARGS)
+aclitemin(MDB_FUNCTION_ARGS)
 {
-	const char *s = PG_GETARG_CSTRING(0);
+	const char *s = MDB_GETARG_CSTRING(0);
 	AclItem    *aip;
 
 	aip = (AclItem *) palloc(sizeof(AclItem));
@@ -575,7 +575,7 @@ aclitemin(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
 			   errmsg("extra garbage at the end of the ACL specification")));
 
-	PG_RETURN_ACLITEM_P(aip);
+	MDB_RETURN_ACLITEM_P(aip);
 }
 
 /*
@@ -587,9 +587,9 @@ aclitemin(PG_FUNCTION_ARGS)
  *		the new string
  */
 Datum
-aclitemout(PG_FUNCTION_ARGS)
+aclitemout(MDB_FUNCTION_ARGS)
 {
-	AclItem    *aip = PG_GETARG_ACLITEM_P(0);
+	AclItem    *aip = MDB_GETARG_ACLITEM_P(0);
 	char	   *p;
 	char	   *out;
 	HeapTuple	htup;
@@ -645,7 +645,7 @@ aclitemout(PG_FUNCTION_ARGS)
 		sprintf(p, "%u", aip->ai_grantor);
 	}
 
-	PG_RETURN_CSTRING(out);
+	MDB_RETURN_CSTRING(out);
 }
 
 /*
@@ -689,16 +689,16 @@ aclitemComparator(const void *arg1, const void *arg2)
  * aclitem equality operator
  */
 Datum
-aclitem_eq(PG_FUNCTION_ARGS)
+aclitem_eq(MDB_FUNCTION_ARGS)
 {
-	AclItem    *a1 = PG_GETARG_ACLITEM_P(0);
-	AclItem    *a2 = PG_GETARG_ACLITEM_P(1);
+	AclItem    *a1 = MDB_GETARG_ACLITEM_P(0);
+	AclItem    *a2 = MDB_GETARG_ACLITEM_P(1);
 	bool		result;
 
 	result = a1->ai_privs == a2->ai_privs &&
 		a1->ai_grantee == a2->ai_grantee &&
 		a1->ai_grantor == a2->ai_grantor;
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*
@@ -709,12 +709,12 @@ aclitem_eq(PG_FUNCTION_ARGS)
  * with the typcache mechanism we must have a hash or btree opclass.
  */
 Datum
-hash_aclitem(PG_FUNCTION_ARGS)
+hash_aclitem(MDB_FUNCTION_ARGS)
 {
-	AclItem    *a = PG_GETARG_ACLITEM_P(0);
+	AclItem    *a = MDB_GETARG_ACLITEM_P(0);
 
 	/* not very bright, but avoids any issue of padding in struct */
-	PG_RETURN_UINT32((uint32) (a->ai_privs + a->ai_grantee + a->ai_grantor));
+	MDB_RETURN_UINT32((uint32) (a->ai_privs + a->ai_grantee + a->ai_grantor));
 }
 
 
@@ -842,10 +842,10 @@ acldefault(GrantObjectType objtype, Oid ownerId)
  * documented for general use.
  */
 Datum
-acldefault_sql(PG_FUNCTION_ARGS)
+acldefault_sql(MDB_FUNCTION_ARGS)
 {
-	char		objtypec = PG_GETARG_CHAR(0);
-	Oid			owner = PG_GETARG_OID(1);
+	char		objtypec = MDB_GETARG_CHAR(0);
+	Oid			owner = MDB_GETARG_OID(1);
 	GrantObjectType objtype = 0;
 
 	switch (objtypec)
@@ -890,7 +890,7 @@ acldefault_sql(PG_FUNCTION_ARGS)
 			elog(ERROR, "unrecognized objtype abbreviation: %c", objtypec);
 	}
 
-	PG_RETURN_ACL_P(acldefault(objtype, owner));
+	MDB_RETURN_ACL_P(acldefault(objtype, owner));
 }
 
 
@@ -1530,30 +1530,30 @@ oidComparator(const void *arg1, const void *arg2)
  * aclinsert (exported function)
  */
 Datum
-aclinsert(PG_FUNCTION_ARGS)
+aclinsert(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("aclinsert is no longer supported")));
 
-	PG_RETURN_NULL();			/* keep compiler quiet */
+	MDB_RETURN_NULL();			/* keep compiler quiet */
 }
 
 Datum
-aclremove(PG_FUNCTION_ARGS)
+aclremove(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("aclremove is no longer supported")));
 
-	PG_RETURN_NULL();			/* keep compiler quiet */
+	MDB_RETURN_NULL();			/* keep compiler quiet */
 }
 
 Datum
-aclcontains(PG_FUNCTION_ARGS)
+aclcontains(MDB_FUNCTION_ARGS)
 {
-	Acl		   *acl = PG_GETARG_ACL_P(0);
-	AclItem    *aip = PG_GETARG_ACLITEM_P(1);
+	Acl		   *acl = MDB_GETARG_ACL_P(0);
+	AclItem    *aip = MDB_GETARG_ACLITEM_P(1);
 	AclItem    *aidat;
 	int			i,
 				num;
@@ -1566,18 +1566,18 @@ aclcontains(PG_FUNCTION_ARGS)
 		if (aip->ai_grantee == aidat[i].ai_grantee &&
 			aip->ai_grantor == aidat[i].ai_grantor &&
 			(ACLITEM_GET_RIGHTS(*aip) & ACLITEM_GET_RIGHTS(aidat[i])) == ACLITEM_GET_RIGHTS(*aip))
-			PG_RETURN_BOOL(true);
+			MDB_RETURN_BOOL(true);
 	}
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 Datum
-makeaclitem(PG_FUNCTION_ARGS)
+makeaclitem(MDB_FUNCTION_ARGS)
 {
-	Oid			grantee = PG_GETARG_OID(0);
-	Oid			grantor = PG_GETARG_OID(1);
-	text	   *privtext = PG_GETARG_TEXT_P(2);
-	bool		goption = PG_GETARG_BOOL(3);
+	Oid			grantee = MDB_GETARG_OID(0);
+	Oid			grantor = MDB_GETARG_OID(1);
+	text	   *privtext = MDB_GETARG_TEXT_P(2);
+	bool		goption = MDB_GETARG_BOOL(3);
 	AclItem    *result;
 	AclMode		priv;
 
@@ -1591,7 +1591,7 @@ makeaclitem(PG_FUNCTION_ARGS)
 	ACLITEM_SET_PRIVS_GOPTIONS(*result, priv,
 							   (goption ? priv : ACL_NO_RIGHTS));
 
-	PG_RETURN_ACLITEM_P(result);
+	MDB_RETURN_ACLITEM_P(result);
 }
 
 static AclMode
@@ -1743,9 +1743,9 @@ convert_aclright_to_string(int aclright)
  *----------
  */
 Datum
-aclexplode(PG_FUNCTION_ARGS)
+aclexplode(MDB_FUNCTION_ARGS)
 {
-	Acl		   *acl = PG_GETARG_ACL_P(0);
+	Acl		   *acl = MDB_GETARG_ACL_P(0);
 	FuncCallContext *funcctx;
 	int		   *idx;
 	AclItem    *aidat;
@@ -1849,11 +1849,11 @@ aclexplode(PG_FUNCTION_ARGS)
  *		name username, text tablename, and text priv name.
  */
 Datum
-has_table_privilege_name_name(PG_FUNCTION_ARGS)
+has_table_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		rolename = PG_GETARG_NAME(0);
-	text	   *tablename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		rolename = MDB_GETARG_NAME(0);
+	text	   *tablename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			tableoid;
 	AclMode		mode;
@@ -1865,7 +1865,7 @@ has_table_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -1875,10 +1875,10 @@ has_table_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_table_privilege_name(PG_FUNCTION_ARGS)
+has_table_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *tablename = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *tablename = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			tableoid;
 	AclMode		mode;
@@ -1890,7 +1890,7 @@ has_table_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -1899,11 +1899,11 @@ has_table_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, table oid, and text priv name.
  */
 Datum
-has_table_privilege_name_id(PG_FUNCTION_ARGS)
+has_table_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			tableoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			tableoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -1912,11 +1912,11 @@ has_table_privilege_name_id(PG_FUNCTION_ARGS)
 	mode = convert_table_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -1926,10 +1926,10 @@ has_table_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_table_privilege_id(PG_FUNCTION_ARGS)
+has_table_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			tableoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			tableoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -1938,11 +1938,11 @@ has_table_privilege_id(PG_FUNCTION_ARGS)
 	mode = convert_table_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -1951,11 +1951,11 @@ has_table_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text tablename, and text priv name.
  */
 Datum
-has_table_privilege_id_name(PG_FUNCTION_ARGS)
+has_table_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *tablename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *tablename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			tableoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -1965,7 +1965,7 @@ has_table_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -1974,22 +1974,22 @@ has_table_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, table oid, and text priv name.
  */
 Datum
-has_table_privilege_id_id(PG_FUNCTION_ARGS)
+has_table_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			tableoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			tableoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
 	mode = convert_table_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2057,11 +2057,11 @@ convert_table_priv_string(text *priv_type_text)
  *		name username, text sequencename, and text priv name.
  */
 Datum
-has_sequence_privilege_name_name(PG_FUNCTION_ARGS)
+has_sequence_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		rolename = PG_GETARG_NAME(0);
-	text	   *sequencename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		rolename = MDB_GETARG_NAME(0);
+	text	   *sequencename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			sequenceoid;
 	AclMode		mode;
@@ -2078,7 +2078,7 @@ has_sequence_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2088,10 +2088,10 @@ has_sequence_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_sequence_privilege_name(PG_FUNCTION_ARGS)
+has_sequence_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *sequencename = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *sequencename = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			sequenceoid;
 	AclMode		mode;
@@ -2108,7 +2108,7 @@ has_sequence_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2117,11 +2117,11 @@ has_sequence_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, sequence oid, and text priv name.
  */
 Datum
-has_sequence_privilege_name_id(PG_FUNCTION_ARGS)
+has_sequence_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			sequenceoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			sequenceoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -2131,7 +2131,7 @@ has_sequence_privilege_name_id(PG_FUNCTION_ARGS)
 	mode = convert_sequence_priv_string(priv_type_text);
 	relkind = get_rel_relkind(sequenceoid);
 	if (relkind == '\0')
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else if (relkind != RELKIND_SEQUENCE)
 		ereport(ERROR,
 				(errcode(ERRCODE_WRONG_OBJECT_TYPE),
@@ -2140,7 +2140,7 @@ has_sequence_privilege_name_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2150,10 +2150,10 @@ has_sequence_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_sequence_privilege_id(PG_FUNCTION_ARGS)
+has_sequence_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			sequenceoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			sequenceoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -2163,7 +2163,7 @@ has_sequence_privilege_id(PG_FUNCTION_ARGS)
 	mode = convert_sequence_priv_string(priv_type_text);
 	relkind = get_rel_relkind(sequenceoid);
 	if (relkind == '\0')
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else if (relkind != RELKIND_SEQUENCE)
 		ereport(ERROR,
 				(errcode(ERRCODE_WRONG_OBJECT_TYPE),
@@ -2172,7 +2172,7 @@ has_sequence_privilege_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2181,11 +2181,11 @@ has_sequence_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text sequencename, and text priv name.
  */
 Datum
-has_sequence_privilege_id_name(PG_FUNCTION_ARGS)
+has_sequence_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *sequencename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *sequencename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			sequenceoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -2200,7 +2200,7 @@ has_sequence_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2209,11 +2209,11 @@ has_sequence_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, sequence oid, and text priv name.
  */
 Datum
-has_sequence_privilege_id_id(PG_FUNCTION_ARGS)
+has_sequence_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			sequenceoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			sequenceoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 	char		relkind;
@@ -2221,7 +2221,7 @@ has_sequence_privilege_id_id(PG_FUNCTION_ARGS)
 	mode = convert_sequence_priv_string(priv_type_text);
 	relkind = get_rel_relkind(sequenceoid);
 	if (relkind == '\0')
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else if (relkind != RELKIND_SEQUENCE)
 		ereport(ERROR,
 				(errcode(ERRCODE_WRONG_OBJECT_TYPE),
@@ -2230,7 +2230,7 @@ has_sequence_privilege_id_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2268,11 +2268,11 @@ convert_sequence_priv_string(text *priv_type_text)
  *		name username, text tablename, and text priv name.
  */
 Datum
-has_any_column_privilege_name_name(PG_FUNCTION_ARGS)
+has_any_column_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		rolename = PG_GETARG_NAME(0);
-	text	   *tablename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		rolename = MDB_GETARG_NAME(0);
+	text	   *tablename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			tableoid;
 	AclMode		mode;
@@ -2288,7 +2288,7 @@ has_any_column_privilege_name_name(PG_FUNCTION_ARGS)
 		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2298,10 +2298,10 @@ has_any_column_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_any_column_privilege_name(PG_FUNCTION_ARGS)
+has_any_column_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *tablename = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *tablename = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			tableoid;
 	AclMode		mode;
@@ -2317,7 +2317,7 @@ has_any_column_privilege_name(PG_FUNCTION_ARGS)
 		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2326,11 +2326,11 @@ has_any_column_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, table oid, and text priv name.
  */
 Datum
-has_any_column_privilege_name_id(PG_FUNCTION_ARGS)
+has_any_column_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			tableoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			tableoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -2339,7 +2339,7 @@ has_any_column_privilege_name_id(PG_FUNCTION_ARGS)
 	mode = convert_column_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* First check at table level, then examine each column if needed */
 	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
@@ -2347,7 +2347,7 @@ has_any_column_privilege_name_id(PG_FUNCTION_ARGS)
 		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2357,10 +2357,10 @@ has_any_column_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_any_column_privilege_id(PG_FUNCTION_ARGS)
+has_any_column_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			tableoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			tableoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -2369,7 +2369,7 @@ has_any_column_privilege_id(PG_FUNCTION_ARGS)
 	mode = convert_column_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* First check at table level, then examine each column if needed */
 	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
@@ -2377,7 +2377,7 @@ has_any_column_privilege_id(PG_FUNCTION_ARGS)
 		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2386,11 +2386,11 @@ has_any_column_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text tablename, and text priv name.
  */
 Datum
-has_any_column_privilege_id_name(PG_FUNCTION_ARGS)
+has_any_column_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *tablename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *tablename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			tableoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -2404,7 +2404,7 @@ has_any_column_privilege_id_name(PG_FUNCTION_ARGS)
 		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2413,18 +2413,18 @@ has_any_column_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, table oid, and text priv name.
  */
 Datum
-has_any_column_privilege_id_id(PG_FUNCTION_ARGS)
+has_any_column_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			tableoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			tableoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
 	mode = convert_column_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* First check at table level, then examine each column if needed */
 	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
@@ -2432,7 +2432,7 @@ has_any_column_privilege_id_id(PG_FUNCTION_ARGS)
 		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 
@@ -2508,12 +2508,12 @@ column_privilege_check(Oid tableoid, AttrNumber attnum,
  *		name username, text tablename, text colname, and text priv name.
  */
 Datum
-has_column_privilege_name_name_name(PG_FUNCTION_ARGS)
+has_column_privilege_name_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		rolename = PG_GETARG_NAME(0);
-	text	   *tablename = PG_GETARG_TEXT_P(1);
-	text	   *column = PG_GETARG_TEXT_P(2);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(3);
+	Name		rolename = MDB_GETARG_NAME(0);
+	text	   *tablename = MDB_GETARG_TEXT_P(1);
+	text	   *column = MDB_GETARG_TEXT_P(2);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(3);
 	Oid			roleid;
 	Oid			tableoid;
 	AttrNumber	colattnum;
@@ -2527,8 +2527,8 @@ has_column_privilege_name_name_name(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2537,12 +2537,12 @@ has_column_privilege_name_name_name(PG_FUNCTION_ARGS)
  *		name username, text tablename, int attnum, and text priv name.
  */
 Datum
-has_column_privilege_name_name_attnum(PG_FUNCTION_ARGS)
+has_column_privilege_name_name_attnum(MDB_FUNCTION_ARGS)
 {
-	Name		rolename = PG_GETARG_NAME(0);
-	text	   *tablename = PG_GETARG_TEXT_P(1);
-	AttrNumber	colattnum = PG_GETARG_INT16(2);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(3);
+	Name		rolename = MDB_GETARG_NAME(0);
+	text	   *tablename = MDB_GETARG_TEXT_P(1);
+	AttrNumber	colattnum = MDB_GETARG_INT16(2);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(3);
 	Oid			roleid;
 	Oid			tableoid;
 	AclMode		mode;
@@ -2554,8 +2554,8 @@ has_column_privilege_name_name_attnum(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2564,12 +2564,12 @@ has_column_privilege_name_name_attnum(PG_FUNCTION_ARGS)
  *		name username, table oid, text colname, and text priv name.
  */
 Datum
-has_column_privilege_name_id_name(PG_FUNCTION_ARGS)
+has_column_privilege_name_id_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			tableoid = PG_GETARG_OID(1);
-	text	   *column = PG_GETARG_TEXT_P(2);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(3);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			tableoid = MDB_GETARG_OID(1);
+	text	   *column = MDB_GETARG_TEXT_P(2);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(3);
 	Oid			roleid;
 	AttrNumber	colattnum;
 	AclMode		mode;
@@ -2581,8 +2581,8 @@ has_column_privilege_name_id_name(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2591,12 +2591,12 @@ has_column_privilege_name_id_name(PG_FUNCTION_ARGS)
  *		name username, table oid, int attnum, and text priv name.
  */
 Datum
-has_column_privilege_name_id_attnum(PG_FUNCTION_ARGS)
+has_column_privilege_name_id_attnum(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			tableoid = PG_GETARG_OID(1);
-	AttrNumber	colattnum = PG_GETARG_INT16(2);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(3);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			tableoid = MDB_GETARG_OID(1);
+	AttrNumber	colattnum = MDB_GETARG_INT16(2);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(3);
 	Oid			roleid;
 	AclMode		mode;
 	int			privresult;
@@ -2606,8 +2606,8 @@ has_column_privilege_name_id_attnum(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2616,12 +2616,12 @@ has_column_privilege_name_id_attnum(PG_FUNCTION_ARGS)
  *		oid roleid, text tablename, text colname, and text priv name.
  */
 Datum
-has_column_privilege_id_name_name(PG_FUNCTION_ARGS)
+has_column_privilege_id_name_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *tablename = PG_GETARG_TEXT_P(1);
-	text	   *column = PG_GETARG_TEXT_P(2);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(3);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *tablename = MDB_GETARG_TEXT_P(1);
+	text	   *column = MDB_GETARG_TEXT_P(2);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(3);
 	Oid			tableoid;
 	AttrNumber	colattnum;
 	AclMode		mode;
@@ -2633,8 +2633,8 @@ has_column_privilege_id_name_name(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2643,12 +2643,12 @@ has_column_privilege_id_name_name(PG_FUNCTION_ARGS)
  *		oid roleid, text tablename, int attnum, and text priv name.
  */
 Datum
-has_column_privilege_id_name_attnum(PG_FUNCTION_ARGS)
+has_column_privilege_id_name_attnum(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *tablename = PG_GETARG_TEXT_P(1);
-	AttrNumber	colattnum = PG_GETARG_INT16(2);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(3);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *tablename = MDB_GETARG_TEXT_P(1);
+	AttrNumber	colattnum = MDB_GETARG_INT16(2);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(3);
 	Oid			tableoid;
 	AclMode		mode;
 	int			privresult;
@@ -2658,8 +2658,8 @@ has_column_privilege_id_name_attnum(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2668,12 +2668,12 @@ has_column_privilege_id_name_attnum(PG_FUNCTION_ARGS)
  *		oid roleid, table oid, text colname, and text priv name.
  */
 Datum
-has_column_privilege_id_id_name(PG_FUNCTION_ARGS)
+has_column_privilege_id_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			tableoid = PG_GETARG_OID(1);
-	text	   *column = PG_GETARG_TEXT_P(2);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(3);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			tableoid = MDB_GETARG_OID(1);
+	text	   *column = MDB_GETARG_TEXT_P(2);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(3);
 	AttrNumber	colattnum;
 	AclMode		mode;
 	int			privresult;
@@ -2683,8 +2683,8 @@ has_column_privilege_id_id_name(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2693,12 +2693,12 @@ has_column_privilege_id_id_name(PG_FUNCTION_ARGS)
  *		oid roleid, table oid, int attnum, and text priv name.
  */
 Datum
-has_column_privilege_id_id_attnum(PG_FUNCTION_ARGS)
+has_column_privilege_id_id_attnum(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			tableoid = PG_GETARG_OID(1);
-	AttrNumber	colattnum = PG_GETARG_INT16(2);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(3);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			tableoid = MDB_GETARG_OID(1);
+	AttrNumber	colattnum = MDB_GETARG_INT16(2);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(3);
 	AclMode		mode;
 	int			privresult;
 
@@ -2706,8 +2706,8 @@ has_column_privilege_id_id_attnum(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2717,11 +2717,11 @@ has_column_privilege_id_id_attnum(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_column_privilege_name_name(PG_FUNCTION_ARGS)
+has_column_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	text	   *tablename = PG_GETARG_TEXT_P(0);
-	text	   *column = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	text	   *tablename = MDB_GETARG_TEXT_P(0);
+	text	   *column = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			tableoid;
 	AttrNumber	colattnum;
@@ -2735,8 +2735,8 @@ has_column_privilege_name_name(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2746,11 +2746,11 @@ has_column_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_column_privilege_name_attnum(PG_FUNCTION_ARGS)
+has_column_privilege_name_attnum(MDB_FUNCTION_ARGS)
 {
-	text	   *tablename = PG_GETARG_TEXT_P(0);
-	AttrNumber	colattnum = PG_GETARG_INT16(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	text	   *tablename = MDB_GETARG_TEXT_P(0);
+	AttrNumber	colattnum = MDB_GETARG_INT16(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			tableoid;
 	AclMode		mode;
@@ -2762,8 +2762,8 @@ has_column_privilege_name_attnum(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2773,11 +2773,11 @@ has_column_privilege_name_attnum(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_column_privilege_id_name(PG_FUNCTION_ARGS)
+has_column_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			tableoid = PG_GETARG_OID(0);
-	text	   *column = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			tableoid = MDB_GETARG_OID(0);
+	text	   *column = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AttrNumber	colattnum;
 	AclMode		mode;
@@ -2789,8 +2789,8 @@ has_column_privilege_id_name(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2800,11 +2800,11 @@ has_column_privilege_id_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_column_privilege_id_attnum(PG_FUNCTION_ARGS)
+has_column_privilege_id_attnum(MDB_FUNCTION_ARGS)
 {
-	Oid			tableoid = PG_GETARG_OID(0);
-	AttrNumber	colattnum = PG_GETARG_INT16(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			tableoid = MDB_GETARG_OID(0);
+	AttrNumber	colattnum = MDB_GETARG_INT16(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	int			privresult;
@@ -2814,8 +2814,8 @@ has_column_privilege_id_attnum(PG_FUNCTION_ARGS)
 
 	privresult = column_privilege_check(tableoid, colattnum, roleid, mode);
 	if (privresult < 0)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(privresult);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(privresult);
 }
 
 /*
@@ -2882,11 +2882,11 @@ convert_column_priv_string(text *priv_type_text)
  *		name username, text databasename, and text priv name.
  */
 Datum
-has_database_privilege_name_name(PG_FUNCTION_ARGS)
+has_database_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	text	   *databasename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	text	   *databasename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			databaseoid;
 	AclMode		mode;
@@ -2898,7 +2898,7 @@ has_database_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2908,10 +2908,10 @@ has_database_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_database_privilege_name(PG_FUNCTION_ARGS)
+has_database_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *databasename = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *databasename = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			databaseoid;
 	AclMode		mode;
@@ -2923,7 +2923,7 @@ has_database_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2932,11 +2932,11 @@ has_database_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, database oid, and text priv name.
  */
 Datum
-has_database_privilege_name_id(PG_FUNCTION_ARGS)
+has_database_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			databaseoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			databaseoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -2945,11 +2945,11 @@ has_database_privilege_name_id(PG_FUNCTION_ARGS)
 	mode = convert_database_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(DATABASEOID, ObjectIdGetDatum(databaseoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2959,10 +2959,10 @@ has_database_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_database_privilege_id(PG_FUNCTION_ARGS)
+has_database_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			databaseoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			databaseoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -2971,11 +2971,11 @@ has_database_privilege_id(PG_FUNCTION_ARGS)
 	mode = convert_database_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(DATABASEOID, ObjectIdGetDatum(databaseoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -2984,11 +2984,11 @@ has_database_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text databasename, and text priv name.
  */
 Datum
-has_database_privilege_id_name(PG_FUNCTION_ARGS)
+has_database_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *databasename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *databasename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			databaseoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -2998,7 +2998,7 @@ has_database_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3007,22 +3007,22 @@ has_database_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, database oid, and text priv name.
  */
 Datum
-has_database_privilege_id_id(PG_FUNCTION_ARGS)
+has_database_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			databaseoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			databaseoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
 	mode = convert_database_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(DATABASEOID, ObjectIdGetDatum(databaseoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3080,11 +3080,11 @@ convert_database_priv_string(text *priv_type_text)
  *		name username, text fdwname, and text priv name.
  */
 Datum
-has_foreign_data_wrapper_privilege_name_name(PG_FUNCTION_ARGS)
+has_foreign_data_wrapper_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	text	   *fdwname = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	text	   *fdwname = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			fdwid;
 	AclMode		mode;
@@ -3096,7 +3096,7 @@ has_foreign_data_wrapper_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3106,10 +3106,10 @@ has_foreign_data_wrapper_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_foreign_data_wrapper_privilege_name(PG_FUNCTION_ARGS)
+has_foreign_data_wrapper_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *fdwname = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *fdwname = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			fdwid;
 	AclMode		mode;
@@ -3121,7 +3121,7 @@ has_foreign_data_wrapper_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3130,11 +3130,11 @@ has_foreign_data_wrapper_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, foreign-data wrapper oid, and text priv name.
  */
 Datum
-has_foreign_data_wrapper_privilege_name_id(PG_FUNCTION_ARGS)
+has_foreign_data_wrapper_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			fdwid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			fdwid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3144,7 +3144,7 @@ has_foreign_data_wrapper_privilege_name_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3154,10 +3154,10 @@ has_foreign_data_wrapper_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_foreign_data_wrapper_privilege_id(PG_FUNCTION_ARGS)
+has_foreign_data_wrapper_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			fdwid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			fdwid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3167,7 +3167,7 @@ has_foreign_data_wrapper_privilege_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3176,11 +3176,11 @@ has_foreign_data_wrapper_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text fdwname, and text priv name.
  */
 Datum
-has_foreign_data_wrapper_privilege_id_name(PG_FUNCTION_ARGS)
+has_foreign_data_wrapper_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *fdwname = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *fdwname = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			fdwid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3190,7 +3190,7 @@ has_foreign_data_wrapper_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3199,11 +3199,11 @@ has_foreign_data_wrapper_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, fdw oid, and text priv name.
  */
 Datum
-has_foreign_data_wrapper_privilege_id_id(PG_FUNCTION_ARGS)
+has_foreign_data_wrapper_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			fdwid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			fdwid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
@@ -3211,7 +3211,7 @@ has_foreign_data_wrapper_privilege_id_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3262,11 +3262,11 @@ convert_foreign_data_wrapper_priv_string(text *priv_type_text)
  *		name username, text functionname, and text priv name.
  */
 Datum
-has_function_privilege_name_name(PG_FUNCTION_ARGS)
+has_function_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	text	   *functionname = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	text	   *functionname = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			functionoid;
 	AclMode		mode;
@@ -3278,7 +3278,7 @@ has_function_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3288,10 +3288,10 @@ has_function_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_function_privilege_name(PG_FUNCTION_ARGS)
+has_function_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *functionname = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *functionname = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			functionoid;
 	AclMode		mode;
@@ -3303,7 +3303,7 @@ has_function_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3312,11 +3312,11 @@ has_function_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, function oid, and text priv name.
  */
 Datum
-has_function_privilege_name_id(PG_FUNCTION_ARGS)
+has_function_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			functionoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			functionoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3325,11 +3325,11 @@ has_function_privilege_name_id(PG_FUNCTION_ARGS)
 	mode = convert_function_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(PROCOID, ObjectIdGetDatum(functionoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3339,10 +3339,10 @@ has_function_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_function_privilege_id(PG_FUNCTION_ARGS)
+has_function_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			functionoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			functionoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3351,11 +3351,11 @@ has_function_privilege_id(PG_FUNCTION_ARGS)
 	mode = convert_function_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(PROCOID, ObjectIdGetDatum(functionoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3364,11 +3364,11 @@ has_function_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text functionname, and text priv name.
  */
 Datum
-has_function_privilege_id_name(PG_FUNCTION_ARGS)
+has_function_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *functionname = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *functionname = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			functionoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3378,7 +3378,7 @@ has_function_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3387,22 +3387,22 @@ has_function_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, function oid, and text priv name.
  */
 Datum
-has_function_privilege_id_id(PG_FUNCTION_ARGS)
+has_function_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			functionoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			functionoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
 	mode = convert_function_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(PROCOID, ObjectIdGetDatum(functionoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3462,11 +3462,11 @@ convert_function_priv_string(text *priv_type_text)
  *		name username, text languagename, and text priv name.
  */
 Datum
-has_language_privilege_name_name(PG_FUNCTION_ARGS)
+has_language_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	text	   *languagename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	text	   *languagename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			languageoid;
 	AclMode		mode;
@@ -3478,7 +3478,7 @@ has_language_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3488,10 +3488,10 @@ has_language_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_language_privilege_name(PG_FUNCTION_ARGS)
+has_language_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *languagename = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *languagename = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			languageoid;
 	AclMode		mode;
@@ -3503,7 +3503,7 @@ has_language_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3512,11 +3512,11 @@ has_language_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, language oid, and text priv name.
  */
 Datum
-has_language_privilege_name_id(PG_FUNCTION_ARGS)
+has_language_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			languageoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			languageoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3525,11 +3525,11 @@ has_language_privilege_name_id(PG_FUNCTION_ARGS)
 	mode = convert_language_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(LANGOID, ObjectIdGetDatum(languageoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3539,10 +3539,10 @@ has_language_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_language_privilege_id(PG_FUNCTION_ARGS)
+has_language_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			languageoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			languageoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3551,11 +3551,11 @@ has_language_privilege_id(PG_FUNCTION_ARGS)
 	mode = convert_language_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(LANGOID, ObjectIdGetDatum(languageoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3564,11 +3564,11 @@ has_language_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text languagename, and text priv name.
  */
 Datum
-has_language_privilege_id_name(PG_FUNCTION_ARGS)
+has_language_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *languagename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *languagename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			languageoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3578,7 +3578,7 @@ has_language_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3587,22 +3587,22 @@ has_language_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, language oid, and text priv name.
  */
 Datum
-has_language_privilege_id_id(PG_FUNCTION_ARGS)
+has_language_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			languageoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			languageoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
 	mode = convert_language_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(LANGOID, ObjectIdGetDatum(languageoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3653,11 +3653,11 @@ convert_language_priv_string(text *priv_type_text)
  *		name username, text schemaname, and text priv name.
  */
 Datum
-has_schema_privilege_name_name(PG_FUNCTION_ARGS)
+has_schema_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	text	   *schemaname = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	text	   *schemaname = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			schemaoid;
 	AclMode		mode;
@@ -3669,7 +3669,7 @@ has_schema_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3679,10 +3679,10 @@ has_schema_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_schema_privilege_name(PG_FUNCTION_ARGS)
+has_schema_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *schemaname = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *schemaname = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			schemaoid;
 	AclMode		mode;
@@ -3694,7 +3694,7 @@ has_schema_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3703,11 +3703,11 @@ has_schema_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, schema oid, and text priv name.
  */
 Datum
-has_schema_privilege_name_id(PG_FUNCTION_ARGS)
+has_schema_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			schemaoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			schemaoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3716,11 +3716,11 @@ has_schema_privilege_name_id(PG_FUNCTION_ARGS)
 	mode = convert_schema_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(NAMESPACEOID, ObjectIdGetDatum(schemaoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3730,10 +3730,10 @@ has_schema_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_schema_privilege_id(PG_FUNCTION_ARGS)
+has_schema_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			schemaoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			schemaoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3742,11 +3742,11 @@ has_schema_privilege_id(PG_FUNCTION_ARGS)
 	mode = convert_schema_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(NAMESPACEOID, ObjectIdGetDatum(schemaoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3755,11 +3755,11 @@ has_schema_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text schemaname, and text priv name.
  */
 Datum
-has_schema_privilege_id_name(PG_FUNCTION_ARGS)
+has_schema_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *schemaname = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *schemaname = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			schemaoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3769,7 +3769,7 @@ has_schema_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3778,22 +3778,22 @@ has_schema_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, schema oid, and text priv name.
  */
 Datum
-has_schema_privilege_id_id(PG_FUNCTION_ARGS)
+has_schema_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			schemaoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			schemaoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
 	mode = convert_schema_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(NAMESPACEOID, ObjectIdGetDatum(schemaoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3846,11 +3846,11 @@ convert_schema_priv_string(text *priv_type_text)
  *		name username, text servername, and text priv name.
  */
 Datum
-has_server_privilege_name_name(PG_FUNCTION_ARGS)
+has_server_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	text	   *servername = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	text	   *servername = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			serverid;
 	AclMode		mode;
@@ -3862,7 +3862,7 @@ has_server_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3872,10 +3872,10 @@ has_server_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_server_privilege_name(PG_FUNCTION_ARGS)
+has_server_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *servername = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *servername = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			serverid;
 	AclMode		mode;
@@ -3887,7 +3887,7 @@ has_server_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3896,11 +3896,11 @@ has_server_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, foreign server oid, and text priv name.
  */
 Datum
-has_server_privilege_name_id(PG_FUNCTION_ARGS)
+has_server_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			serverid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			serverid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3910,7 +3910,7 @@ has_server_privilege_name_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3920,10 +3920,10 @@ has_server_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_server_privilege_id(PG_FUNCTION_ARGS)
+has_server_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			serverid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			serverid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3933,7 +3933,7 @@ has_server_privilege_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3942,11 +3942,11 @@ has_server_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text servername, and text priv name.
  */
 Datum
-has_server_privilege_id_name(PG_FUNCTION_ARGS)
+has_server_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *servername = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *servername = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			serverid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -3956,7 +3956,7 @@ has_server_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -3965,11 +3965,11 @@ has_server_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, server oid, and text priv name.
  */
 Datum
-has_server_privilege_id_id(PG_FUNCTION_ARGS)
+has_server_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			serverid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			serverid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
@@ -3977,7 +3977,7 @@ has_server_privilege_id_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4028,11 +4028,11 @@ convert_server_priv_string(text *priv_type_text)
  *		name username, text tablespacename, and text priv name.
  */
 Datum
-has_tablespace_privilege_name_name(PG_FUNCTION_ARGS)
+has_tablespace_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	text	   *tablespacename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	text	   *tablespacename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			tablespaceoid;
 	AclMode		mode;
@@ -4044,7 +4044,7 @@ has_tablespace_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4054,10 +4054,10 @@ has_tablespace_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_tablespace_privilege_name(PG_FUNCTION_ARGS)
+has_tablespace_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *tablespacename = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *tablespacename = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			tablespaceoid;
 	AclMode		mode;
@@ -4069,7 +4069,7 @@ has_tablespace_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4078,11 +4078,11 @@ has_tablespace_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, tablespace oid, and text priv name.
  */
 Datum
-has_tablespace_privilege_name_id(PG_FUNCTION_ARGS)
+has_tablespace_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			tablespaceoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			tablespaceoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -4092,7 +4092,7 @@ has_tablespace_privilege_name_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4102,10 +4102,10 @@ has_tablespace_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_tablespace_privilege_id(PG_FUNCTION_ARGS)
+has_tablespace_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			tablespaceoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			tablespaceoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -4115,7 +4115,7 @@ has_tablespace_privilege_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4124,11 +4124,11 @@ has_tablespace_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text tablespacename, and text priv name.
  */
 Datum
-has_tablespace_privilege_id_name(PG_FUNCTION_ARGS)
+has_tablespace_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *tablespacename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *tablespacename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			tablespaceoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -4138,7 +4138,7 @@ has_tablespace_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4147,11 +4147,11 @@ has_tablespace_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, tablespace oid, and text priv name.
  */
 Datum
-has_tablespace_privilege_id_id(PG_FUNCTION_ARGS)
+has_tablespace_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			tablespaceoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			tablespaceoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
@@ -4159,7 +4159,7 @@ has_tablespace_privilege_id_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4209,11 +4209,11 @@ convert_tablespace_priv_string(text *priv_type_text)
  *		name username, text typename, and text priv name.
  */
 Datum
-has_type_privilege_name_name(PG_FUNCTION_ARGS)
+has_type_privilege_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	text	   *typename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	text	   *typename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			typeoid;
 	AclMode		mode;
@@ -4225,7 +4225,7 @@ has_type_privilege_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4235,10 +4235,10 @@ has_type_privilege_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_type_privilege_name(PG_FUNCTION_ARGS)
+has_type_privilege_name(MDB_FUNCTION_ARGS)
 {
-	text	   *typename = PG_GETARG_TEXT_P(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	text	   *typename = MDB_GETARG_TEXT_P(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			typeoid;
 	AclMode		mode;
@@ -4250,7 +4250,7 @@ has_type_privilege_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4259,11 +4259,11 @@ has_type_privilege_name(PG_FUNCTION_ARGS)
  *		name usename, type oid, and text priv name.
  */
 Datum
-has_type_privilege_name_id(PG_FUNCTION_ARGS)
+has_type_privilege_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			typeoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			typeoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -4272,11 +4272,11 @@ has_type_privilege_name_id(PG_FUNCTION_ARGS)
 	mode = convert_type_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(TYPEOID, ObjectIdGetDatum(typeoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4286,10 +4286,10 @@ has_type_privilege_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-has_type_privilege_id(PG_FUNCTION_ARGS)
+has_type_privilege_id(MDB_FUNCTION_ARGS)
 {
-	Oid			typeoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			typeoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -4298,11 +4298,11 @@ has_type_privilege_id(PG_FUNCTION_ARGS)
 	mode = convert_type_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(TYPEOID, ObjectIdGetDatum(typeoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4311,11 +4311,11 @@ has_type_privilege_id(PG_FUNCTION_ARGS)
  *		roleid, text typename, and text priv name.
  */
 Datum
-has_type_privilege_id_name(PG_FUNCTION_ARGS)
+has_type_privilege_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	text	   *typename = PG_GETARG_TEXT_P(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	text	   *typename = MDB_GETARG_TEXT_P(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			typeoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -4325,7 +4325,7 @@ has_type_privilege_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4334,22 +4334,22 @@ has_type_privilege_id_name(PG_FUNCTION_ARGS)
  *		roleid, type oid, and text priv name.
  */
 Datum
-has_type_privilege_id_id(PG_FUNCTION_ARGS)
+has_type_privilege_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			typeoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			typeoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
 	mode = convert_type_priv_string(priv_type_text);
 
 	if (!SearchSysCacheExists1(TYPEOID, ObjectIdGetDatum(typeoid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4409,11 +4409,11 @@ convert_type_priv_string(text *priv_type_text)
  *		name username, name rolename, and text priv name.
  */
 Datum
-mdb_has_role_name_name(PG_FUNCTION_ARGS)
+mdb_has_role_name_name(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Name		rolename = PG_GETARG_NAME(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Name		rolename = MDB_GETARG_NAME(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	Oid			roleoid;
 	AclMode		mode;
@@ -4425,7 +4425,7 @@ mdb_has_role_name_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4435,10 +4435,10 @@ mdb_has_role_name_name(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-mdb_has_role_name(PG_FUNCTION_ARGS)
+mdb_has_role_name(MDB_FUNCTION_ARGS)
 {
-	Name		rolename = PG_GETARG_NAME(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Name		rolename = MDB_GETARG_NAME(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	Oid			roleoid;
 	AclMode		mode;
@@ -4450,7 +4450,7 @@ mdb_has_role_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4459,11 +4459,11 @@ mdb_has_role_name(PG_FUNCTION_ARGS)
  *		name usename, role oid, and text priv name.
  */
 Datum
-mdb_has_role_name_id(PG_FUNCTION_ARGS)
+mdb_has_role_name_id(MDB_FUNCTION_ARGS)
 {
-	Name		username = PG_GETARG_NAME(0);
-	Oid			roleoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Name		username = MDB_GETARG_NAME(0);
+	Oid			roleoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -4473,7 +4473,7 @@ mdb_has_role_name_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4483,10 +4483,10 @@ mdb_has_role_name_id(PG_FUNCTION_ARGS)
  *		current_user is assumed
  */
 Datum
-mdb_has_role_id(PG_FUNCTION_ARGS)
+mdb_has_role_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleoid = PG_GETARG_OID(0);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
+	Oid			roleoid = MDB_GETARG_OID(0);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(1);
 	Oid			roleid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -4496,7 +4496,7 @@ mdb_has_role_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4505,11 +4505,11 @@ mdb_has_role_id(PG_FUNCTION_ARGS)
  *		roleid, name rolename, and text priv name.
  */
 Datum
-mdb_has_role_id_name(PG_FUNCTION_ARGS)
+mdb_has_role_id_name(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Name		rolename = PG_GETARG_NAME(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Name		rolename = MDB_GETARG_NAME(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	Oid			roleoid;
 	AclMode		mode;
 	AclResult	aclresult;
@@ -4519,7 +4519,7 @@ mdb_has_role_id_name(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
@@ -4528,11 +4528,11 @@ mdb_has_role_id_name(PG_FUNCTION_ARGS)
  *		roleid, role oid, and text priv name.
  */
 Datum
-mdb_has_role_id_id(PG_FUNCTION_ARGS)
+mdb_has_role_id_id(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
-	Oid			roleoid = PG_GETARG_OID(1);
-	text	   *priv_type_text = PG_GETARG_TEXT_P(2);
+	Oid			roleid = MDB_GETARG_OID(0);
+	Oid			roleoid = MDB_GETARG_OID(1);
+	text	   *priv_type_text = MDB_GETARG_TEXT_P(2);
 	AclMode		mode;
 	AclResult	aclresult;
 
@@ -4540,7 +4540,7 @@ mdb_has_role_id_id(PG_FUNCTION_ARGS)
 
 	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
-	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
+	MDB_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*

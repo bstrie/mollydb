@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_DB_ROLE_SETTING_H
-#define PG_DB_ROLE_SETTING_H
+#ifndef MDB_DB_ROLE_SETTING_H
+#define MDB_DB_ROLE_SETTING_H
 
 #include "utils/guc.h"
 #include "utils/relcache.h"
@@ -66,4 +66,4 @@ extern void DropSetting(Oid databaseid, Oid roleid);
 extern void ApplySetting(Snapshot snapshot, Oid databaseid, Oid roleid,
 			 Relation relsetting, GucSource source);
 
-#endif   /* PG_DB_ROLE_SETTING_H */
+#endif   /* MDB_DB_ROLE_SETTING_H */

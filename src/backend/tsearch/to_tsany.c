@@ -26,9 +26,9 @@ typedef struct MorphOpaque
 
 
 Datum
-get_current_ts_config(PG_FUNCTION_ARGS)
+get_current_ts_config(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_OID(getTSCurrentConfig(true));
+	MDB_RETURN_OID(getTSCurrentConfig(true));
 }
 
 /*
@@ -213,10 +213,10 @@ make_tsvector(ParsedText *prs)
 }
 
 Datum
-to_tsvector_byid(PG_FUNCTION_ARGS)
+to_tsvector_byid(MDB_FUNCTION_ARGS)
 {
-	Oid			cfgId = PG_GETARG_OID(0);
-	text	   *in = PG_GETARG_TEXT_P(1);
+	Oid			cfgId = MDB_GETARG_OID(0);
+	text	   *in = MDB_GETARG_TEXT_P(1);
 	ParsedText	prs;
 	TSVector	out;
 
@@ -229,7 +229,7 @@ to_tsvector_byid(PG_FUNCTION_ARGS)
 	prs.words = (ParsedWord *) palloc(sizeof(ParsedWord) * prs.lenwords);
 
 	parsetext(cfgId, &prs, VARDATA(in), VARSIZE(in) - VARHDRSZ);
-	PG_FREE_IF_COPY(in, 1);
+	MDB_FREE_IF_COPY(in, 1);
 
 	if (prs.curwords)
 		out = make_tsvector(&prs);
@@ -241,17 +241,17 @@ to_tsvector_byid(PG_FUNCTION_ARGS)
 		out->size = 0;
 	}
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 Datum
-to_tsvector(PG_FUNCTION_ARGS)
+to_tsvector(MDB_FUNCTION_ARGS)
 {
-	text	   *in = PG_GETARG_TEXT_P(0);
+	text	   *in = MDB_GETARG_TEXT_P(0);
 	Oid			cfgId;
 
 	cfgId = getTSCurrentConfig(true);
-	PG_RETURN_DATUM(DirectFunctionCall2(to_tsvector_byid,
+	MDB_RETURN_DATUM(DirectFunctionCall2(to_tsvector_byid,
 										ObjectIdGetDatum(cfgId),
 										PointerGetDatum(in)));
 }
@@ -360,13 +360,13 @@ pushval_morph(Datum opaque, TSQueryParserState state, char *strval, int lenval, 
 }
 
 Datum
-to_tsquery_byid(PG_FUNCTION_ARGS)
+to_tsquery_byid(MDB_FUNCTION_ARGS)
 {
-	text		   *in = PG_GETARG_TEXT_P(1);
+	text		   *in = MDB_GETARG_TEXT_P(1);
 	TSQuery			query;
 	MorphOpaque		data;
 
-	data.cfg_id = PG_GETARG_OID(0);
+	data.cfg_id = MDB_GETARG_OID(0);
 	data.qoperator = OP_AND;
 
 	query = parse_tsquery(text_to_cstring(in),
@@ -374,29 +374,29 @@ to_tsquery_byid(PG_FUNCTION_ARGS)
 						  PointerGetDatum(&data),
 						  false);
 
-	PG_RETURN_TSQUERY(query);
+	MDB_RETURN_TSQUERY(query);
 }
 
 Datum
-to_tsquery(PG_FUNCTION_ARGS)
+to_tsquery(MDB_FUNCTION_ARGS)
 {
-	text	   *in = PG_GETARG_TEXT_P(0);
+	text	   *in = MDB_GETARG_TEXT_P(0);
 	Oid			cfgId;
 
 	cfgId = getTSCurrentConfig(true);
-	PG_RETURN_DATUM(DirectFunctionCall2(to_tsquery_byid,
+	MDB_RETURN_DATUM(DirectFunctionCall2(to_tsquery_byid,
 										ObjectIdGetDatum(cfgId),
 										PointerGetDatum(in)));
 }
 
 Datum
-plainto_tsquery_byid(PG_FUNCTION_ARGS)
+plainto_tsquery_byid(MDB_FUNCTION_ARGS)
 {
-	text		   *in = PG_GETARG_TEXT_P(1);
+	text		   *in = MDB_GETARG_TEXT_P(1);
 	TSQuery			query;
 	MorphOpaque		data;
 
-	data.cfg_id = PG_GETARG_OID(0);
+	data.cfg_id = MDB_GETARG_OID(0);
 	data.qoperator = OP_AND;
 
 	query = parse_tsquery(text_to_cstring(in),
@@ -404,30 +404,30 @@ plainto_tsquery_byid(PG_FUNCTION_ARGS)
 						  PointerGetDatum(&data),
 						  true);
 
-	PG_RETURN_POINTER(query);
+	MDB_RETURN_POINTER(query);
 }
 
 Datum
-plainto_tsquery(PG_FUNCTION_ARGS)
+plainto_tsquery(MDB_FUNCTION_ARGS)
 {
-	text	   *in = PG_GETARG_TEXT_P(0);
+	text	   *in = MDB_GETARG_TEXT_P(0);
 	Oid			cfgId;
 
 	cfgId = getTSCurrentConfig(true);
-	PG_RETURN_DATUM(DirectFunctionCall2(plainto_tsquery_byid,
+	MDB_RETURN_DATUM(DirectFunctionCall2(plainto_tsquery_byid,
 										ObjectIdGetDatum(cfgId),
 										PointerGetDatum(in)));
 }
 
 
 Datum
-phraseto_tsquery_byid(PG_FUNCTION_ARGS)
+phraseto_tsquery_byid(MDB_FUNCTION_ARGS)
 {
-	text		   *in = PG_GETARG_TEXT_P(1);
+	text		   *in = MDB_GETARG_TEXT_P(1);
 	TSQuery			query;
 	MorphOpaque		data;
 
-	data.cfg_id = PG_GETARG_OID(0);
+	data.cfg_id = MDB_GETARG_OID(0);
 	data.qoperator = OP_PHRASE;
 
 	query = parse_tsquery(text_to_cstring(in),
@@ -435,17 +435,17 @@ phraseto_tsquery_byid(PG_FUNCTION_ARGS)
 						  PointerGetDatum(&data),
 						  true);
 
-	PG_RETURN_TSQUERY(query);
+	MDB_RETURN_TSQUERY(query);
 }
 
 Datum
-phraseto_tsquery(PG_FUNCTION_ARGS)
+phraseto_tsquery(MDB_FUNCTION_ARGS)
 {
-	text	   *in = PG_GETARG_TEXT_P(0);
+	text	   *in = MDB_GETARG_TEXT_P(0);
 	Oid			cfgId;
 
 	cfgId = getTSCurrentConfig(true);
-	PG_RETURN_DATUM(DirectFunctionCall2(phraseto_tsquery_byid,
+	MDB_RETURN_DATUM(DirectFunctionCall2(phraseto_tsquery_byid,
 										ObjectIdGetDatum(cfgId),
 										PointerGetDatum(in)));
 }

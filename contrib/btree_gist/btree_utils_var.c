@@ -28,15 +28,15 @@ typedef struct
 } gbt_vsrt_arg;
 
 
-PG_FUNCTION_INFO_V1(gbt_var_decompress);
-PG_FUNCTION_INFO_V1(gbt_var_fetch);
+MDB_FUNCTION_INFO_V1(gbt_var_decompress);
+MDB_FUNCTION_INFO_V1(gbt_var_fetch);
 
 
 Datum
-gbt_var_decompress(PG_FUNCTION_ARGS)
+gbt_var_decompress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	GBT_VARKEY *key = (GBT_VARKEY *) DatumGetPointer(PG_DETOAST_DATUM(entry->key));
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	GBT_VARKEY *key = (GBT_VARKEY *) DatumGetPointer(MDB_DETOAST_DATUM(entry->key));
 
 	if (key != (GBT_VARKEY *) DatumGetPointer(entry->key))
 	{
@@ -46,10 +46,10 @@ gbt_var_decompress(PG_FUNCTION_ARGS)
 					  entry->rel, entry->page,
 					  entry->offset, FALSE);
 
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
 
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 /* Returns a better readable representation of variable key ( sets pointer ) */
@@ -285,7 +285,7 @@ gbt_var_compress(GISTENTRY *entry, const gbtree_vinfo *tinfo)
 
 	if (entry->leafkey)
 	{
-		struct varlena *leaf = PG_DETOAST_DATUM(entry->key);
+		struct varlena *leaf = MDB_DETOAST_DATUM(entry->key);
 		GBT_VARKEY *r;
 
 		r = gbt_var_key_from_datum(leaf);
@@ -303,10 +303,10 @@ gbt_var_compress(GISTENTRY *entry, const gbtree_vinfo *tinfo)
 
 
 Datum
-gbt_var_fetch(PG_FUNCTION_ARGS)
+gbt_var_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	GBT_VARKEY *key = (GBT_VARKEY *) DatumGetPointer(PG_DETOAST_DATUM(entry->key));
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	GBT_VARKEY *key = (GBT_VARKEY *) DatumGetPointer(MDB_DETOAST_DATUM(entry->key));
 	GBT_VARKEY_R r = gbt_var_key_readable(key);
 	GISTENTRY  *retval;
 
@@ -315,7 +315,7 @@ gbt_var_fetch(PG_FUNCTION_ARGS)
 				  entry->rel, entry->page,
 				  entry->offset, TRUE);
 
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 

@@ -1,32 +1,32 @@
 --
--- PG_LSN
+-- MDB_LSN
 --
-CREATE TABLE PG_LSN_TBL (f1 mdb_lsn);
+CREATE TABLE MDB_LSN_TBL (f1 mdb_lsn);
 -- Largest and smallest input
-INSERT INTO PG_LSN_TBL VALUES ('0/0');
-INSERT INTO PG_LSN_TBL VALUES ('FFFFFFFF/FFFFFFFF');
+INSERT INTO MDB_LSN_TBL VALUES ('0/0');
+INSERT INTO MDB_LSN_TBL VALUES ('FFFFFFFF/FFFFFFFF');
 -- Incorrect input
-INSERT INTO PG_LSN_TBL VALUES ('G/0');
+INSERT INTO MDB_LSN_TBL VALUES ('G/0');
 ERROR:  invalid input syntax for type mdb_lsn: "G/0"
-LINE 1: INSERT INTO PG_LSN_TBL VALUES ('G/0');
+LINE 1: INSERT INTO MDB_LSN_TBL VALUES ('G/0');
                                        ^
-INSERT INTO PG_LSN_TBL VALUES ('-1/0');
+INSERT INTO MDB_LSN_TBL VALUES ('-1/0');
 ERROR:  invalid input syntax for type mdb_lsn: "-1/0"
-LINE 1: INSERT INTO PG_LSN_TBL VALUES ('-1/0');
+LINE 1: INSERT INTO MDB_LSN_TBL VALUES ('-1/0');
                                        ^
-INSERT INTO PG_LSN_TBL VALUES (' 0/12345678');
+INSERT INTO MDB_LSN_TBL VALUES (' 0/12345678');
 ERROR:  invalid input syntax for type mdb_lsn: " 0/12345678"
-LINE 1: INSERT INTO PG_LSN_TBL VALUES (' 0/12345678');
+LINE 1: INSERT INTO MDB_LSN_TBL VALUES (' 0/12345678');
                                        ^
-INSERT INTO PG_LSN_TBL VALUES ('ABCD/');
+INSERT INTO MDB_LSN_TBL VALUES ('ABCD/');
 ERROR:  invalid input syntax for type mdb_lsn: "ABCD/"
-LINE 1: INSERT INTO PG_LSN_TBL VALUES ('ABCD/');
+LINE 1: INSERT INTO MDB_LSN_TBL VALUES ('ABCD/');
                                        ^
-INSERT INTO PG_LSN_TBL VALUES ('/ABCD');
+INSERT INTO MDB_LSN_TBL VALUES ('/ABCD');
 ERROR:  invalid input syntax for type mdb_lsn: "/ABCD"
-LINE 1: INSERT INTO PG_LSN_TBL VALUES ('/ABCD');
+LINE 1: INSERT INTO MDB_LSN_TBL VALUES ('/ABCD');
                                        ^
-DROP TABLE PG_LSN_TBL;
+DROP TABLE MDB_LSN_TBL;
 -- Operators
 SELECT '0/16AE7F8' = '0/16AE7F8'::mdb_lsn;
  ?column? 

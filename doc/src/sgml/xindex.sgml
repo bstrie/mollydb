@@ -757,15 +757,15 @@ complex_abs_cmp_internal(Complex *a, Complex *b)
    Now the less-than function looks like:
 
 <programlisting><![CDATA[
-PG_FUNCTION_INFO_V1(complex_abs_lt);
+MDB_FUNCTION_INFO_V1(complex_abs_lt);
 
 Datum
-complex_abs_lt(PG_FUNCTION_ARGS)
+complex_abs_lt(MDB_FUNCTION_ARGS)
 {
-    Complex    *a = (Complex *) PG_GETARG_POINTER(0);
-    Complex    *b = (Complex *) PG_GETARG_POINTER(1);
+    Complex    *a = (Complex *) MDB_GETARG_POINTER(0);
+    Complex    *b = (Complex *) MDB_GETARG_POINTER(1);
 
-    PG_RETURN_BOOL(complex_abs_cmp_internal(a, b) < 0);
+    MDB_RETURN_BOOL(complex_abs_cmp_internal(a, b) < 0);
 }
 ]]>
 </programlisting>

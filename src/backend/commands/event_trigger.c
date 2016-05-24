@@ -900,7 +900,7 @@ EventTriggerSQLDrop(Node *parsetree)
 
 	/*
 	 * Make sure mdb_event_trigger_dropped_objects only works when running
-	 * these triggers.  Use PG_TRY to ensure in_sql_drop is reset even when
+	 * these triggers.  Use MDB_TRY to ensure in_sql_drop is reset even when
 	 * one trigger fails.  (This is perhaps not necessary, as the currentState
 	 * variable will be removed shortly by our caller, but it seems better to
 	 * play safe.)
@@ -908,16 +908,16 @@ EventTriggerSQLDrop(Node *parsetree)
 	currentEventTriggerState->in_sql_drop = true;
 
 	/* Run the triggers. */
-	PG_TRY();
+	MDB_TRY();
 	{
 		EventTriggerInvoke(runlist, &trigdata);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		currentEventTriggerState->in_sql_drop = false;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	currentEventTriggerState->in_sql_drop = false;
 
 	/* Cleanup. */
@@ -964,7 +964,7 @@ EventTriggerTableRewrite(Node *parsetree, Oid tableOid, int reason)
 
 	/*
 	 * Make sure mdb_event_trigger_table_rewrite_oid only works when running
-	 * these triggers. Use PG_TRY to ensure table_rewrite_oid is reset even
+	 * these triggers. Use MDB_TRY to ensure table_rewrite_oid is reset even
 	 * when one trigger fails. (This is perhaps not necessary, as the
 	 * currentState variable will be removed shortly by our caller, but it
 	 * seems better to play safe.)
@@ -973,17 +973,17 @@ EventTriggerTableRewrite(Node *parsetree, Oid tableOid, int reason)
 	currentEventTriggerState->table_rewrite_reason = reason;
 
 	/* Run the triggers. */
-	PG_TRY();
+	MDB_TRY();
 	{
 		EventTriggerInvoke(runlist, &trigdata);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		currentEventTriggerState->table_rewrite_oid = InvalidOid;
 		currentEventTriggerState->table_rewrite_reason = 0;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	currentEventTriggerState->table_rewrite_oid = InvalidOid;
 	currentEventTriggerState->table_rewrite_reason = 0;
@@ -1208,7 +1208,7 @@ EventTriggerSupportsGrantObjectType(GrantObjectType objtype)
  * Prepare event trigger state for a new complete query to run, if necessary;
  * returns whether this was done.  If it was, EventTriggerEndCompleteQuery must
  * be called when the query is done, regardless of whether it succeeds or fails
- * -- so use of a PG_TRY block is mandatory.
+ * -- so use of a MDB_TRY block is mandatory.
  */
 bool
 EventTriggerBeginCompleteQuery(void)
@@ -1252,7 +1252,7 @@ EventTriggerBeginCompleteQuery(void)
  * Note: it's an error to call this routine if EventTriggerBeginCompleteQuery
  * returned false previously.
  *
- * Note: this might be called in the PG_CATCH block of a failing transaction,
+ * Note: this might be called in the MDB_CATCH block of a failing transaction,
  * so be wary of running anything unnecessary.  (In particular, it's probably
  * unwise to try to allocate memory.)
  */
@@ -1423,7 +1423,7 @@ EventTriggerSQLDropAddObject(const ObjectAddress *object, bool original, bool no
  * Event Trigger.
  */
 Datum
-mdb_event_trigger_dropped_objects(PG_FUNCTION_ARGS)
+mdb_event_trigger_dropped_objects(MDB_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -1550,7 +1550,7 @@ mdb_event_trigger_dropped_objects(PG_FUNCTION_ARGS)
  * function run by the Event Trigger.
  */
 Datum
-mdb_event_trigger_table_rewrite_oid(PG_FUNCTION_ARGS)
+mdb_event_trigger_table_rewrite_oid(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * Protect this function from being called out of context
@@ -1562,7 +1562,7 @@ mdb_event_trigger_table_rewrite_oid(PG_FUNCTION_ARGS)
 				 errmsg("%s can only be called in a table_rewrite event trigger function",
 						"mdb_event_trigger_table_rewrite_oid()")));
 
-	PG_RETURN_OID(currentEventTriggerState->table_rewrite_oid);
+	MDB_RETURN_OID(currentEventTriggerState->table_rewrite_oid);
 }
 
 /*
@@ -1571,7 +1571,7 @@ mdb_event_trigger_table_rewrite_oid(PG_FUNCTION_ARGS)
  * Make the rewrite reason available to the user.
  */
 Datum
-mdb_event_trigger_table_rewrite_reason(PG_FUNCTION_ARGS)
+mdb_event_trigger_table_rewrite_reason(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * Protect this function from being called out of context
@@ -1583,7 +1583,7 @@ mdb_event_trigger_table_rewrite_reason(PG_FUNCTION_ARGS)
 				 errmsg("%s can only be called in a table_rewrite event trigger function",
 						"mdb_event_trigger_table_rewrite_reason()")));
 
-	PG_RETURN_INT32(currentEventTriggerState->table_rewrite_reason);
+	MDB_RETURN_INT32(currentEventTriggerState->table_rewrite_reason);
 }
 
 /*-------------------------------------------------------------------------
@@ -1975,7 +1975,7 @@ EventTriggerCollectAlterDefPrivs(AlterDefaultPrivilegesStmt *stmt)
  * being run.
  */
 Datum
-mdb_event_trigger_ddl_commands(PG_FUNCTION_ARGS)
+mdb_event_trigger_ddl_commands(MDB_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -2187,7 +2187,7 @@ mdb_event_trigger_ddl_commands(PG_FUNCTION_ARGS)
 	/* clean up and return the tuplestore */
 	tuplestore_donestoring(tupstore);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*

@@ -36,8 +36,8 @@
 
 #define DatumGetItemPointer(X)	 ((ItemPointer) DatumGetPointer(X))
 #define ItemPointerGetDatum(X)	 PointerGetDatum(X)
-#define PG_GETARG_ITEMPOINTER(n) DatumGetItemPointer(PG_GETARG_DATUM(n))
-#define PG_RETURN_ITEMPOINTER(x) return ItemPointerGetDatum(x)
+#define MDB_GETARG_ITEMPOINTER(n) DatumGetItemPointer(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_ITEMPOINTER(x) return ItemPointerGetDatum(x)
 
 #define LDELIM			'('
 #define RDELIM			')'
@@ -49,9 +49,9 @@
  * ----------------------------------------------------------------
  */
 Datum
-tidin(PG_FUNCTION_ARGS)
+tidin(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	char	   *p,
 			   *coord[NTIDARGS];
 	int			i;
@@ -93,7 +93,7 @@ tidin(PG_FUNCTION_ARGS)
 
 	ItemPointerSet(result, blockNumber, offsetNumber);
 
-	PG_RETURN_ITEMPOINTER(result);
+	MDB_RETURN_ITEMPOINTER(result);
 }
 
 /* ----------------------------------------------------------------
@@ -101,9 +101,9 @@ tidin(PG_FUNCTION_ARGS)
  * ----------------------------------------------------------------
  */
 Datum
-tidout(PG_FUNCTION_ARGS)
+tidout(MDB_FUNCTION_ARGS)
 {
-	ItemPointer itemPtr = PG_GETARG_ITEMPOINTER(0);
+	ItemPointer itemPtr = MDB_GETARG_ITEMPOINTER(0);
 	BlockNumber blockNumber;
 	OffsetNumber offsetNumber;
 	char		buf[32];
@@ -114,16 +114,16 @@ tidout(PG_FUNCTION_ARGS)
 	/* Perhaps someday we should output this as a record. */
 	snprintf(buf, sizeof(buf), "(%u,%u)", blockNumber, offsetNumber);
 
-	PG_RETURN_CSTRING(pstrdup(buf));
+	MDB_RETURN_CSTRING(pstrdup(buf));
 }
 
 /*
  *		tidrecv			- converts external binary format to tid
  */
 Datum
-tidrecv(PG_FUNCTION_ARGS)
+tidrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	ItemPointer result;
 	BlockNumber blockNumber;
 	OffsetNumber offsetNumber;
@@ -135,16 +135,16 @@ tidrecv(PG_FUNCTION_ARGS)
 
 	ItemPointerSet(result, blockNumber, offsetNumber);
 
-	PG_RETURN_ITEMPOINTER(result);
+	MDB_RETURN_ITEMPOINTER(result);
 }
 
 /*
  *		tidsend			- converts tid to binary format
  */
 Datum
-tidsend(PG_FUNCTION_ARGS)
+tidsend(MDB_FUNCTION_ARGS)
 {
-	ItemPointer itemPtr = PG_GETARG_ITEMPOINTER(0);
+	ItemPointer itemPtr = MDB_GETARG_ITEMPOINTER(0);
 	BlockId		blockId;
 	BlockNumber blockNumber;
 	OffsetNumber offsetNumber;
@@ -157,7 +157,7 @@ tidsend(PG_FUNCTION_ARGS)
 	pq_begintypsend(&buf);
 	pq_sendint(&buf, blockNumber, sizeof(blockNumber));
 	pq_sendint(&buf, offsetNumber, sizeof(offsetNumber));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*****************************************************************************
@@ -165,84 +165,84 @@ tidsend(PG_FUNCTION_ARGS)
  *****************************************************************************/
 
 Datum
-tideq(PG_FUNCTION_ARGS)
+tideq(MDB_FUNCTION_ARGS)
 {
-	ItemPointer arg1 = PG_GETARG_ITEMPOINTER(0);
-	ItemPointer arg2 = PG_GETARG_ITEMPOINTER(1);
+	ItemPointer arg1 = MDB_GETARG_ITEMPOINTER(0);
+	ItemPointer arg2 = MDB_GETARG_ITEMPOINTER(1);
 
-	PG_RETURN_BOOL(ItemPointerCompare(arg1, arg2) == 0);
+	MDB_RETURN_BOOL(ItemPointerCompare(arg1, arg2) == 0);
 }
 
 Datum
-tidne(PG_FUNCTION_ARGS)
+tidne(MDB_FUNCTION_ARGS)
 {
-	ItemPointer arg1 = PG_GETARG_ITEMPOINTER(0);
-	ItemPointer arg2 = PG_GETARG_ITEMPOINTER(1);
+	ItemPointer arg1 = MDB_GETARG_ITEMPOINTER(0);
+	ItemPointer arg2 = MDB_GETARG_ITEMPOINTER(1);
 
-	PG_RETURN_BOOL(ItemPointerCompare(arg1, arg2) != 0);
+	MDB_RETURN_BOOL(ItemPointerCompare(arg1, arg2) != 0);
 }
 
 Datum
-tidlt(PG_FUNCTION_ARGS)
+tidlt(MDB_FUNCTION_ARGS)
 {
-	ItemPointer arg1 = PG_GETARG_ITEMPOINTER(0);
-	ItemPointer arg2 = PG_GETARG_ITEMPOINTER(1);
+	ItemPointer arg1 = MDB_GETARG_ITEMPOINTER(0);
+	ItemPointer arg2 = MDB_GETARG_ITEMPOINTER(1);
 
-	PG_RETURN_BOOL(ItemPointerCompare(arg1, arg2) < 0);
+	MDB_RETURN_BOOL(ItemPointerCompare(arg1, arg2) < 0);
 }
 
 Datum
-tidle(PG_FUNCTION_ARGS)
+tidle(MDB_FUNCTION_ARGS)
 {
-	ItemPointer arg1 = PG_GETARG_ITEMPOINTER(0);
-	ItemPointer arg2 = PG_GETARG_ITEMPOINTER(1);
+	ItemPointer arg1 = MDB_GETARG_ITEMPOINTER(0);
+	ItemPointer arg2 = MDB_GETARG_ITEMPOINTER(1);
 
-	PG_RETURN_BOOL(ItemPointerCompare(arg1, arg2) <= 0);
+	MDB_RETURN_BOOL(ItemPointerCompare(arg1, arg2) <= 0);
 }
 
 Datum
-tidgt(PG_FUNCTION_ARGS)
+tidgt(MDB_FUNCTION_ARGS)
 {
-	ItemPointer arg1 = PG_GETARG_ITEMPOINTER(0);
-	ItemPointer arg2 = PG_GETARG_ITEMPOINTER(1);
+	ItemPointer arg1 = MDB_GETARG_ITEMPOINTER(0);
+	ItemPointer arg2 = MDB_GETARG_ITEMPOINTER(1);
 
-	PG_RETURN_BOOL(ItemPointerCompare(arg1, arg2) > 0);
+	MDB_RETURN_BOOL(ItemPointerCompare(arg1, arg2) > 0);
 }
 
 Datum
-tidge(PG_FUNCTION_ARGS)
+tidge(MDB_FUNCTION_ARGS)
 {
-	ItemPointer arg1 = PG_GETARG_ITEMPOINTER(0);
-	ItemPointer arg2 = PG_GETARG_ITEMPOINTER(1);
+	ItemPointer arg1 = MDB_GETARG_ITEMPOINTER(0);
+	ItemPointer arg2 = MDB_GETARG_ITEMPOINTER(1);
 
-	PG_RETURN_BOOL(ItemPointerCompare(arg1, arg2) >= 0);
+	MDB_RETURN_BOOL(ItemPointerCompare(arg1, arg2) >= 0);
 }
 
 Datum
-bttidcmp(PG_FUNCTION_ARGS)
+bttidcmp(MDB_FUNCTION_ARGS)
 {
-	ItemPointer arg1 = PG_GETARG_ITEMPOINTER(0);
-	ItemPointer arg2 = PG_GETARG_ITEMPOINTER(1);
+	ItemPointer arg1 = MDB_GETARG_ITEMPOINTER(0);
+	ItemPointer arg2 = MDB_GETARG_ITEMPOINTER(1);
 
-	PG_RETURN_INT32(ItemPointerCompare(arg1, arg2));
+	MDB_RETURN_INT32(ItemPointerCompare(arg1, arg2));
 }
 
 Datum
-tidlarger(PG_FUNCTION_ARGS)
+tidlarger(MDB_FUNCTION_ARGS)
 {
-	ItemPointer arg1 = PG_GETARG_ITEMPOINTER(0);
-	ItemPointer arg2 = PG_GETARG_ITEMPOINTER(1);
+	ItemPointer arg1 = MDB_GETARG_ITEMPOINTER(0);
+	ItemPointer arg2 = MDB_GETARG_ITEMPOINTER(1);
 
-	PG_RETURN_ITEMPOINTER(ItemPointerCompare(arg1, arg2) >= 0 ? arg1 : arg2);
+	MDB_RETURN_ITEMPOINTER(ItemPointerCompare(arg1, arg2) >= 0 ? arg1 : arg2);
 }
 
 Datum
-tidsmaller(PG_FUNCTION_ARGS)
+tidsmaller(MDB_FUNCTION_ARGS)
 {
-	ItemPointer arg1 = PG_GETARG_ITEMPOINTER(0);
-	ItemPointer arg2 = PG_GETARG_ITEMPOINTER(1);
+	ItemPointer arg1 = MDB_GETARG_ITEMPOINTER(0);
+	ItemPointer arg2 = MDB_GETARG_ITEMPOINTER(1);
 
-	PG_RETURN_ITEMPOINTER(ItemPointerCompare(arg1, arg2) <= 0 ? arg1 : arg2);
+	MDB_RETURN_ITEMPOINTER(ItemPointerCompare(arg1, arg2) <= 0 ? arg1 : arg2);
 }
 
 
@@ -326,10 +326,10 @@ currtid_for_view(Relation viewrel, ItemPointer tid)
 }
 
 Datum
-currtid_byreloid(PG_FUNCTION_ARGS)
+currtid_byreloid(MDB_FUNCTION_ARGS)
 {
-	Oid			reloid = PG_GETARG_OID(0);
-	ItemPointer tid = PG_GETARG_ITEMPOINTER(1);
+	Oid			reloid = MDB_GETARG_OID(0);
+	ItemPointer tid = MDB_GETARG_ITEMPOINTER(1);
 	ItemPointer result;
 	Relation	rel;
 	AclResult	aclresult;
@@ -339,7 +339,7 @@ currtid_byreloid(PG_FUNCTION_ARGS)
 	if (!reloid)
 	{
 		*result = Current_last_tid;
-		PG_RETURN_ITEMPOINTER(result);
+		MDB_RETURN_ITEMPOINTER(result);
 	}
 
 	rel = heap_open(reloid, AccessShareLock);
@@ -361,14 +361,14 @@ currtid_byreloid(PG_FUNCTION_ARGS)
 
 	heap_close(rel, AccessShareLock);
 
-	PG_RETURN_ITEMPOINTER(result);
+	MDB_RETURN_ITEMPOINTER(result);
 }
 
 Datum
-currtid_byrelname(PG_FUNCTION_ARGS)
+currtid_byrelname(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
-	ItemPointer tid = PG_GETARG_ITEMPOINTER(1);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
+	ItemPointer tid = MDB_GETARG_ITEMPOINTER(1);
 	ItemPointer result;
 	RangeVar   *relrv;
 	Relation	rel;
@@ -396,5 +396,5 @@ currtid_byrelname(PG_FUNCTION_ARGS)
 
 	heap_close(rel, AccessShareLock);
 
-	PG_RETURN_ITEMPOINTER(result);
+	MDB_RETURN_ITEMPOINTER(result);
 }

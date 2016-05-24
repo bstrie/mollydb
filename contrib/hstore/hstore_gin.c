@@ -21,7 +21,7 @@
 #define VALFLAG		'V'
 #define NULLFLAG	'N'
 
-PG_FUNCTION_INFO_V1(gin_extract_hstore);
+MDB_FUNCTION_INFO_V1(gin_extract_hstore);
 
 /* Build an indexable text value */
 static text *
@@ -41,10 +41,10 @@ makeitem(char *str, int len, char flag)
 }
 
 Datum
-gin_extract_hstore(PG_FUNCTION_ARGS)
+gin_extract_hstore(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
+	HStore	   *hs = MDB_GETARG_HS(0);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
 	Datum	   *entries = NULL;
 	HEntry	   *hsent = ARRPTR(hs);
 	char	   *ptr = STRPTR(hs);
@@ -73,17 +73,17 @@ gin_extract_hstore(PG_FUNCTION_ARGS)
 		entries[2 * i + 1] = PointerGetDatum(item);
 	}
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
-PG_FUNCTION_INFO_V1(gin_extract_hstore_query);
+MDB_FUNCTION_INFO_V1(gin_extract_hstore_query);
 
 Datum
-gin_extract_hstore_query(PG_FUNCTION_ARGS)
+gin_extract_hstore_query(MDB_FUNCTION_ARGS)
 {
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
-	StrategyNumber strategy = PG_GETARG_UINT16(2);
-	int32	   *searchMode = (int32 *) PG_GETARG_POINTER(6);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
+	StrategyNumber strategy = MDB_GETARG_UINT16(2);
+	int32	   *searchMode = (int32 *) MDB_GETARG_POINTER(6);
 	Datum	   *entries;
 
 	if (strategy == HStoreContainsStrategyNumber)
@@ -91,7 +91,7 @@ gin_extract_hstore_query(PG_FUNCTION_ARGS)
 		/* Query is an hstore, so just apply gin_extract_hstore... */
 		entries = (Datum *)
 			DatumGetPointer(DirectFunctionCall2(gin_extract_hstore,
-												PG_GETARG_DATUM(0),
+												MDB_GETARG_DATUM(0),
 												PointerGetDatum(nentries)));
 		/* ... except that "contains {}" requires a full index scan */
 		if (entries == NULL)
@@ -99,7 +99,7 @@ gin_extract_hstore_query(PG_FUNCTION_ARGS)
 	}
 	else if (strategy == HStoreExistsStrategyNumber)
 	{
-		text	   *query = PG_GETARG_TEXT_PP(0);
+		text	   *query = MDB_GETARG_TEXT_PP(0);
 		text	   *item;
 
 		*nentries = 1;
@@ -110,7 +110,7 @@ gin_extract_hstore_query(PG_FUNCTION_ARGS)
 	else if (strategy == HStoreExistsAnyStrategyNumber ||
 			 strategy == HStoreExistsAllStrategyNumber)
 	{
-		ArrayType  *query = PG_GETARG_ARRAYTYPE_P(0);
+		ArrayType  *query = MDB_GETARG_ARRAYTYPE_P(0);
 		Datum	   *key_datums;
 		bool	   *key_nulls;
 		int			key_count;
@@ -144,22 +144,22 @@ gin_extract_hstore_query(PG_FUNCTION_ARGS)
 		entries = NULL;			/* keep compiler quiet */
 	}
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
-PG_FUNCTION_INFO_V1(gin_consistent_hstore);
+MDB_FUNCTION_INFO_V1(gin_consistent_hstore);
 
 Datum
-gin_consistent_hstore(PG_FUNCTION_ARGS)
+gin_consistent_hstore(MDB_FUNCTION_ARGS)
 {
-	bool	   *check = (bool *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
+	bool	   *check = (bool *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
 
-	/* HStore	   *query = PG_GETARG_HS(2); */
-	int32		nkeys = PG_GETARG_INT32(3);
+	/* HStore	   *query = MDB_GETARG_HS(2); */
+	int32		nkeys = MDB_GETARG_INT32(3);
 
-	/* Pointer	   *extra_data = (Pointer *) PG_GETARG_POINTER(4); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(5);
+	/* Pointer	   *extra_data = (Pointer *) MDB_GETARG_POINTER(4); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(5);
 	bool		res = true;
 	int32		i;
 
@@ -208,5 +208,5 @@ gin_consistent_hstore(PG_FUNCTION_ARGS)
 	else
 		elog(ERROR, "unrecognized strategy number: %d", strategy);
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }

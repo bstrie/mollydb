@@ -37,53 +37,53 @@ typedef enum
 
 typedef enum
 {
-	PG_XML_STRICTNESS_LEGACY,	/* ignore errors unless function result
+	MDB_XML_STRICTNESS_LEGACY,	/* ignore errors unless function result
 								 * indicates error condition */
-	PG_XML_STRICTNESS_WELLFORMED,		/* ignore non-parser messages */
-	PG_XML_STRICTNESS_ALL		/* report all notices/warnings/errors */
+	MDB_XML_STRICTNESS_WELLFORMED,		/* ignore non-parser messages */
+	MDB_XML_STRICTNESS_ALL		/* report all notices/warnings/errors */
 } PgXmlStrictness;
 
 /* struct PgXmlErrorContext is private to xml.c */
 typedef struct PgXmlErrorContext PgXmlErrorContext;
 
-#define DatumGetXmlP(X)		((xmltype *) PG_DETOAST_DATUM(X))
+#define DatumGetXmlP(X)		((xmltype *) MDB_DETOAST_DATUM(X))
 #define XmlPGetDatum(X)		PointerGetDatum(X)
 
-#define PG_GETARG_XML_P(n)	DatumGetXmlP(PG_GETARG_DATUM(n))
-#define PG_RETURN_XML_P(x)	PG_RETURN_POINTER(x)
+#define MDB_GETARG_XML_P(n)	DatumGetXmlP(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_XML_P(x)	MDB_RETURN_POINTER(x)
 
-extern Datum xml_in(PG_FUNCTION_ARGS);
-extern Datum xml_out(PG_FUNCTION_ARGS);
-extern Datum xml_recv(PG_FUNCTION_ARGS);
-extern Datum xml_send(PG_FUNCTION_ARGS);
-extern Datum xmlcomment(PG_FUNCTION_ARGS);
-extern Datum xmlconcat2(PG_FUNCTION_ARGS);
-extern Datum texttoxml(PG_FUNCTION_ARGS);
-extern Datum xmltotext(PG_FUNCTION_ARGS);
-extern Datum xmlvalidate(PG_FUNCTION_ARGS);
-extern Datum xpath(PG_FUNCTION_ARGS);
-extern Datum xpath_exists(PG_FUNCTION_ARGS);
-extern Datum xmlexists(PG_FUNCTION_ARGS);
-extern Datum xml_is_well_formed(PG_FUNCTION_ARGS);
-extern Datum xml_is_well_formed_document(PG_FUNCTION_ARGS);
-extern Datum xml_is_well_formed_content(PG_FUNCTION_ARGS);
+extern Datum xml_in(MDB_FUNCTION_ARGS);
+extern Datum xml_out(MDB_FUNCTION_ARGS);
+extern Datum xml_recv(MDB_FUNCTION_ARGS);
+extern Datum xml_send(MDB_FUNCTION_ARGS);
+extern Datum xmlcomment(MDB_FUNCTION_ARGS);
+extern Datum xmlconcat2(MDB_FUNCTION_ARGS);
+extern Datum texttoxml(MDB_FUNCTION_ARGS);
+extern Datum xmltotext(MDB_FUNCTION_ARGS);
+extern Datum xmlvalidate(MDB_FUNCTION_ARGS);
+extern Datum xpath(MDB_FUNCTION_ARGS);
+extern Datum xpath_exists(MDB_FUNCTION_ARGS);
+extern Datum xmlexists(MDB_FUNCTION_ARGS);
+extern Datum xml_is_well_formed(MDB_FUNCTION_ARGS);
+extern Datum xml_is_well_formed_document(MDB_FUNCTION_ARGS);
+extern Datum xml_is_well_formed_content(MDB_FUNCTION_ARGS);
 
-extern Datum table_to_xml(PG_FUNCTION_ARGS);
-extern Datum query_to_xml(PG_FUNCTION_ARGS);
-extern Datum cursor_to_xml(PG_FUNCTION_ARGS);
-extern Datum table_to_xmlschema(PG_FUNCTION_ARGS);
-extern Datum query_to_xmlschema(PG_FUNCTION_ARGS);
-extern Datum cursor_to_xmlschema(PG_FUNCTION_ARGS);
-extern Datum table_to_xml_and_xmlschema(PG_FUNCTION_ARGS);
-extern Datum query_to_xml_and_xmlschema(PG_FUNCTION_ARGS);
+extern Datum table_to_xml(MDB_FUNCTION_ARGS);
+extern Datum query_to_xml(MDB_FUNCTION_ARGS);
+extern Datum cursor_to_xml(MDB_FUNCTION_ARGS);
+extern Datum table_to_xmlschema(MDB_FUNCTION_ARGS);
+extern Datum query_to_xmlschema(MDB_FUNCTION_ARGS);
+extern Datum cursor_to_xmlschema(MDB_FUNCTION_ARGS);
+extern Datum table_to_xml_and_xmlschema(MDB_FUNCTION_ARGS);
+extern Datum query_to_xml_and_xmlschema(MDB_FUNCTION_ARGS);
 
-extern Datum schema_to_xml(PG_FUNCTION_ARGS);
-extern Datum schema_to_xmlschema(PG_FUNCTION_ARGS);
-extern Datum schema_to_xml_and_xmlschema(PG_FUNCTION_ARGS);
+extern Datum schema_to_xml(MDB_FUNCTION_ARGS);
+extern Datum schema_to_xmlschema(MDB_FUNCTION_ARGS);
+extern Datum schema_to_xml_and_xmlschema(MDB_FUNCTION_ARGS);
 
-extern Datum database_to_xml(PG_FUNCTION_ARGS);
-extern Datum database_to_xmlschema(PG_FUNCTION_ARGS);
-extern Datum database_to_xml_and_xmlschema(PG_FUNCTION_ARGS);
+extern Datum database_to_xml(MDB_FUNCTION_ARGS);
+extern Datum database_to_xmlschema(MDB_FUNCTION_ARGS);
+extern Datum database_to_xml_and_xmlschema(MDB_FUNCTION_ARGS);
 
 extern void mdb_xml_init_library(void);
 extern PgXmlErrorContext *mdb_xml_init(PgXmlStrictness strictness);

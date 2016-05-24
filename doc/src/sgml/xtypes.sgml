@@ -73,12 +73,12 @@ typedef struct Complex {
   input function.  For instance:
 
 <programlisting><![CDATA[
-PG_FUNCTION_INFO_V1(complex_in);
+MDB_FUNCTION_INFO_V1(complex_in);
 
 Datum
-complex_in(PG_FUNCTION_ARGS)
+complex_in(MDB_FUNCTION_ARGS)
 {
-    char       *str = PG_GETARG_CSTRING(0);
+    char       *str = MDB_GETARG_CSTRING(0);
     double      x,
                 y;
     Complex    *result;
@@ -92,7 +92,7 @@ complex_in(PG_FUNCTION_ARGS)
     result = (Complex *) palloc(sizeof(Complex));
     result->x = x;
     result->y = y;
-    PG_RETURN_POINTER(result);
+    MDB_RETURN_POINTER(result);
 }
 ]]>
 </programlisting>
@@ -100,16 +100,16 @@ complex_in(PG_FUNCTION_ARGS)
   The output function can simply be:
 
 <programlisting><![CDATA[
-PG_FUNCTION_INFO_V1(complex_out);
+MDB_FUNCTION_INFO_V1(complex_out);
 
 Datum
-complex_out(PG_FUNCTION_ARGS)
+complex_out(MDB_FUNCTION_ARGS)
 {
-    Complex    *complex = (Complex *) PG_GETARG_POINTER(0);
+    Complex    *complex = (Complex *) MDB_GETARG_POINTER(0);
     char       *result;
 
     result = psprintf("(%g,%g)", complex->x, complex->y);
-    PG_RETURN_CSTRING(result);
+    MDB_RETURN_CSTRING(result);
 }
 ]]>
 </programlisting>
@@ -133,32 +133,32 @@ complex_out(PG_FUNCTION_ARGS)
   for type <type>float8</>:
 
 <programlisting><![CDATA[
-PG_FUNCTION_INFO_V1(complex_recv);
+MDB_FUNCTION_INFO_V1(complex_recv);
 
 Datum
-complex_recv(PG_FUNCTION_ARGS)
+complex_recv(MDB_FUNCTION_ARGS)
 {
-    StringInfo  buf = (StringInfo) PG_GETARG_POINTER(0);
+    StringInfo  buf = (StringInfo) MDB_GETARG_POINTER(0);
     Complex    *result;
 
     result = (Complex *) palloc(sizeof(Complex));
     result->x = pq_getmsgfloat8(buf);
     result->y = pq_getmsgfloat8(buf);
-    PG_RETURN_POINTER(result);
+    MDB_RETURN_POINTER(result);
 }
 
-PG_FUNCTION_INFO_V1(complex_send);
+MDB_FUNCTION_INFO_V1(complex_send);
 
 Datum
-complex_send(PG_FUNCTION_ARGS)
+complex_send(MDB_FUNCTION_ARGS)
 {
-    Complex    *complex = (Complex *) PG_GETARG_POINTER(0);
+    Complex    *complex = (Complex *) MDB_GETARG_POINTER(0);
     StringInfoData buf;
 
     pq_begintypsend(&buf);
     pq_sendfloat8(&buf, complex->x);
     pq_sendfloat8(&buf, complex->y);
-    PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+    MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 ]]>
 </programlisting>
@@ -268,7 +268,7 @@ CREATE TYPE complex (
  <para>
   To support <acronym>TOAST</> storage, the C functions operating on the data
   type must always be careful to unpack any toasted values they are handed
-  by using <function>PG_DETOAST_DATUM</>.  (This detail is customarily hidden
+  by using <function>MDB_DETOAST_DATUM</>.  (This detail is customarily hidden
   by defining type-specific <function>GETARG_DATATYPE_P</function> macros.)
   Then, when running the <command>CREATE TYPE</command> command, specify the
   internal length as <literal>variable</> and select some appropriate storage
@@ -278,14 +278,14 @@ CREATE TYPE complex (
  <para>
   If data alignment is unimportant (either just for a specific function or
   because the data type specifies byte alignment anyway) then it's possible
-  to avoid some of the overhead of <function>PG_DETOAST_DATUM</>. You can use
-  <function>PG_DETOAST_DATUM_PACKED</> instead (customarily hidden by
+  to avoid some of the overhead of <function>MDB_DETOAST_DATUM</>. You can use
+  <function>MDB_DETOAST_DATUM_PACKED</> instead (customarily hidden by
   defining a <function>GETARG_DATATYPE_PP</> macro) and using the macros
   <function>VARSIZE_ANY_EXHDR</> and <function>VARDATA_ANY</> to access
   a potentially-packed datum.
   Again, the data returned by these macros is not aligned even if the data
   type definition specifies an alignment. If the alignment is important you
-  must go through the regular <function>PG_DETOAST_DATUM</> interface.
+  must go through the regular <function>MDB_DETOAST_DATUM</> interface.
  </para>
 
  <note>
@@ -322,7 +322,7 @@ CREATE TYPE complex (
   the data type can accept either representation, possibly by converting
   one into the other immediately upon receipt.  This does not require fixing
   all existing functions for the data type at once, because the standard
-  <function>PG_DETOAST_DATUM</> macro is defined to convert expanded inputs
+  <function>MDB_DETOAST_DATUM</> macro is defined to convert expanded inputs
   into regular flat format.  Therefore, existing functions that work with
   the flat varlena format will continue to work, though slightly
   inefficiently, with expanded inputs; they need not be converted until and

@@ -28,18 +28,18 @@ typedef struct MinmaxOpaque
 	FmgrInfo	strategy_procinfos[BTMaxStrategyNumber];
 } MinmaxOpaque;
 
-Datum		brin_minmax_opcinfo(PG_FUNCTION_ARGS);
-Datum		brin_minmax_add_value(PG_FUNCTION_ARGS);
-Datum		brin_minmax_consistent(PG_FUNCTION_ARGS);
-Datum		brin_minmax_union(PG_FUNCTION_ARGS);
+Datum		brin_minmax_opcinfo(MDB_FUNCTION_ARGS);
+Datum		brin_minmax_add_value(MDB_FUNCTION_ARGS);
+Datum		brin_minmax_consistent(MDB_FUNCTION_ARGS);
+Datum		brin_minmax_union(MDB_FUNCTION_ARGS);
 static FmgrInfo *minmax_get_strategy_procinfo(BrinDesc *bdesc, uint16 attno,
 							 Oid subtype, uint16 strategynum);
 
 
 Datum
-brin_minmax_opcinfo(PG_FUNCTION_ARGS)
+brin_minmax_opcinfo(MDB_FUNCTION_ARGS)
 {
-	Oid			typoid = PG_GETARG_OID(0);
+	Oid			typoid = MDB_GETARG_OID(0);
 	BrinOpcInfo *result;
 
 	/*
@@ -55,7 +55,7 @@ brin_minmax_opcinfo(PG_FUNCTION_ARGS)
 	result->oi_typcache[0] = result->oi_typcache[1] =
 		lookup_type_cache(typoid, 0);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
@@ -66,13 +66,13 @@ brin_minmax_opcinfo(PG_FUNCTION_ARGS)
  * return false and do not modify in this case.
  */
 Datum
-brin_minmax_add_value(PG_FUNCTION_ARGS)
+brin_minmax_add_value(MDB_FUNCTION_ARGS)
 {
-	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
-	BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
-	Datum		newval = PG_GETARG_DATUM(2);
-	bool		isnull = PG_GETARG_DATUM(3);
-	Oid			colloid = PG_GET_COLLATION();
+	BrinDesc   *bdesc = (BrinDesc *) MDB_GETARG_POINTER(0);
+	BrinValues *column = (BrinValues *) MDB_GETARG_POINTER(1);
+	Datum		newval = MDB_GETARG_DATUM(2);
+	bool		isnull = MDB_GETARG_DATUM(3);
+	Oid			colloid = MDB_GET_COLLATION();
 	FmgrInfo   *cmpFn;
 	Datum		compar;
 	bool		updated = false;
@@ -86,10 +86,10 @@ brin_minmax_add_value(PG_FUNCTION_ARGS)
 	if (isnull)
 	{
 		if (column->bv_hasnulls)
-			PG_RETURN_BOOL(false);
+			MDB_RETURN_BOOL(false);
 
 		column->bv_hasnulls = true;
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 	}
 
 	attno = column->bv_attno;
@@ -104,7 +104,7 @@ brin_minmax_add_value(PG_FUNCTION_ARGS)
 		column->bv_values[0] = datumCopy(newval, attr->attbyval, attr->attlen);
 		column->bv_values[1] = datumCopy(newval, attr->attbyval, attr->attlen);
 		column->bv_allnulls = false;
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 	}
 
 	/*
@@ -137,7 +137,7 @@ brin_minmax_add_value(PG_FUNCTION_ARGS)
 		updated = true;
 	}
 
-	PG_RETURN_BOOL(updated);
+	MDB_RETURN_BOOL(updated);
 }
 
 /*
@@ -146,12 +146,12 @@ brin_minmax_add_value(PG_FUNCTION_ARGS)
  * values.  Return true if so, false otherwise.
  */
 Datum
-brin_minmax_consistent(PG_FUNCTION_ARGS)
+brin_minmax_consistent(MDB_FUNCTION_ARGS)
 {
-	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
-	BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
-	ScanKey		key = (ScanKey) PG_GETARG_POINTER(2);
-	Oid			colloid = PG_GET_COLLATION(),
+	BrinDesc   *bdesc = (BrinDesc *) MDB_GETARG_POINTER(0);
+	BrinValues *column = (BrinValues *) MDB_GETARG_POINTER(1);
+	ScanKey		key = (ScanKey) MDB_GETARG_POINTER(2);
+	Oid			colloid = MDB_GET_COLLATION(),
 				subtype;
 	AttrNumber	attno;
 	Datum		value;
@@ -166,8 +166,8 @@ brin_minmax_consistent(PG_FUNCTION_ARGS)
 		if (key->sk_flags & SK_SEARCHNULL)
 		{
 			if (column->bv_allnulls || column->bv_hasnulls)
-				PG_RETURN_BOOL(true);
-			PG_RETURN_BOOL(false);
+				MDB_RETURN_BOOL(true);
+			MDB_RETURN_BOOL(false);
 		}
 
 		/*
@@ -175,18 +175,18 @@ brin_minmax_consistent(PG_FUNCTION_ARGS)
 		 * only nulls.
 		 */
 		if (key->sk_flags & SK_SEARCHNOTNULL)
-			PG_RETURN_BOOL(!column->bv_allnulls);
+			MDB_RETURN_BOOL(!column->bv_allnulls);
 
 		/*
 		 * Neither IS NULL nor IS NOT NULL was used; assume all indexable
 		 * operators are strict and return false.
 		 */
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 
 	/* if the range is all empty, it cannot possibly be consistent */
 	if (column->bv_allnulls)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	attno = key->sk_attno;
 	subtype = key->sk_subtype;
@@ -233,7 +233,7 @@ brin_minmax_consistent(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_DATUM(matches);
+	MDB_RETURN_DATUM(matches);
 }
 
 /*
@@ -241,12 +241,12 @@ brin_minmax_consistent(PG_FUNCTION_ARGS)
  * values contained in both.  The second one is untouched.
  */
 Datum
-brin_minmax_union(PG_FUNCTION_ARGS)
+brin_minmax_union(MDB_FUNCTION_ARGS)
 {
-	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
-	BrinValues *col_a = (BrinValues *) PG_GETARG_POINTER(1);
-	BrinValues *col_b = (BrinValues *) PG_GETARG_POINTER(2);
-	Oid			colloid = PG_GET_COLLATION();
+	BrinDesc   *bdesc = (BrinDesc *) MDB_GETARG_POINTER(0);
+	BrinValues *col_a = (BrinValues *) MDB_GETARG_POINTER(1);
+	BrinValues *col_b = (BrinValues *) MDB_GETARG_POINTER(2);
+	Oid			colloid = MDB_GET_COLLATION();
 	AttrNumber	attno;
 	Form_mdb_attribute attr;
 	FmgrInfo   *finfo;
@@ -260,7 +260,7 @@ brin_minmax_union(PG_FUNCTION_ARGS)
 
 	/* If there are no values in B, there's nothing left to do */
 	if (col_b->bv_allnulls)
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 
 	attno = col_a->bv_attno;
 	attr = bdesc->bd_tupdesc->attrs[attno - 1];
@@ -278,7 +278,7 @@ brin_minmax_union(PG_FUNCTION_ARGS)
 										attr->attbyval, attr->attlen);
 		col_a->bv_values[1] = datumCopy(col_b->bv_values[1],
 										attr->attbyval, attr->attlen);
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 	}
 
 	/* Adjust minimum, if B's min is less than A's min */
@@ -307,7 +307,7 @@ brin_minmax_union(PG_FUNCTION_ARGS)
 										attr->attbyval, attr->attlen);
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*

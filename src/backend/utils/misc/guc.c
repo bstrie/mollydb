@@ -84,8 +84,8 @@
 #include "utils/tzparser.h"
 #include "utils/xml.h"
 
-#ifndef PG_KRB_SRVTAB
-#define PG_KRB_SRVTAB ""
+#ifndef MDB_KRB_SRVTAB
+#define MDB_KRB_SRVTAB ""
 #endif
 
 #define CONFIG_FILENAME "mollydb.conf"
@@ -2765,7 +2765,7 @@ static struct config_int ConfigureNamesInt[] =
 			GUC_NOT_IN_SAMPLE | GUC_DISALLOW_IN_FILE
 		},
 		&server_version_num,
-		PG_VERSION_NUM, PG_VERSION_NUM, PG_VERSION_NUM,
+		MDB_VERSION_NUM, MDB_VERSION_NUM, MDB_VERSION_NUM,
 		NULL, NULL, NULL
 	},
 
@@ -3072,7 +3072,7 @@ static struct config_string ConfigureNamesString[] =
 			GUC_SUPERUSER_ONLY
 		},
 		&mdb_krb_server_keyfile,
-		PG_KRB_SRVTAB,
+		MDB_KRB_SRVTAB,
 		NULL, NULL, NULL
 	},
 
@@ -3214,7 +3214,7 @@ static struct config_string ConfigureNamesString[] =
 			GUC_REPORT | GUC_NOT_IN_SAMPLE | GUC_DISALLOW_IN_FILE
 		},
 		&server_version_string,
-		PG_VERSION,
+		MDB_VERSION,
 		NULL, NULL, NULL
 	},
 
@@ -3472,7 +3472,7 @@ static struct config_string ConfigureNamesString[] =
 			GUC_SUPERUSER_ONLY
 		},
 		&pgstat_temp_directory,
-		PG_STAT_TMP_DIR,
+		MDB_STAT_TMP_DIR,
 		check_canonical_path, assign_pgstat_temp_directory, NULL
 	},
 
@@ -4651,7 +4651,7 @@ SelectConfigFiles(const char *userDoption, const char *progname)
 	/*
 	 * Read the configuration file for the first time.  This time only the
 	 * data_directory parameter is picked up to determine the data directory,
-	 * so that we can read the PG_AUTOCONF_FILENAME file next time.
+	 * so that we can read the MDB_AUTOCONF_FILENAME file next time.
 	 */
 	ProcessConfigFile(PGC_POSTMASTER);
 
@@ -4688,7 +4688,7 @@ SelectConfigFiles(const char *userDoption, const char *progname)
 
 	/*
 	 * Now read the config file a second time, allowing any settings in the
-	 * PG_AUTOCONF_FILENAME file to take effect.  (This is pretty ugly, but
+	 * MDB_AUTOCONF_FILENAME file to take effect.  (This is pretty ugly, but
 	 * since we have to determine the DataDir before we can find the autoconf
 	 * file, the alternatives seem worse.)
 	 */
@@ -5264,7 +5264,7 @@ BeginReportingGUCOptions(void)
 	 * 3.0 or later.
 	 */
 	if (whereToSendOutput != DestRemote ||
-		PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+		MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 		return;
 
 	reporting_enabled = true;
@@ -6951,14 +6951,14 @@ replace_auto_config_value(ConfigVariable **head_p, ConfigVariable **tail_p,
 /*
  * Execute ALTER SYSTEM statement.
  *
- * Read the old PG_AUTOCONF_FILENAME file, merge in the new variable value,
+ * Read the old MDB_AUTOCONF_FILENAME file, merge in the new variable value,
  * and write out an updated file.  If the command is ALTER SYSTEM RESET ALL,
  * we can skip reading the old file and just write an empty file.
  *
  * An LWLock is used to serialize updates of the configuration file.
  *
  * In case of an error, we leave the original automatic
- * configuration file (PG_AUTOCONF_FILENAME) intact.
+ * configuration file (MDB_AUTOCONF_FILENAME) intact.
  */
 void
 AlterSystemSetConfigFile(AlterSystemStmt *altersysstmt)
@@ -7020,7 +7020,7 @@ AlterSystemSetConfigFile(AlterSystemStmt *altersysstmt)
 
 		/*
 		 * Don't allow parameters that can't be set in configuration files to
-		 * be set in PG_AUTOCONF_FILENAME file.
+		 * be set in MDB_AUTOCONF_FILENAME file.
 		 */
 		if ((record->context == PGC_INTERNAL) ||
 			(record->flags & GUC_DISALLOW_IN_FILE) ||
@@ -7065,17 +7065,17 @@ AlterSystemSetConfigFile(AlterSystemStmt *altersysstmt)
 	}
 
 	/*
-	 * PG_AUTOCONF_FILENAME and its corresponding temporary file are always in
+	 * MDB_AUTOCONF_FILENAME and its corresponding temporary file are always in
 	 * the data directory, so we can reference them by simple relative paths.
 	 */
 	snprintf(AutoConfFileName, sizeof(AutoConfFileName), "%s",
-			 PG_AUTOCONF_FILENAME);
+			 MDB_AUTOCONF_FILENAME);
 	snprintf(AutoConfTmpFileName, sizeof(AutoConfTmpFileName), "%s.%s",
 			 AutoConfFileName,
 			 "tmp");
 
 	/*
-	 * Only one backend is allowed to operate on PG_AUTOCONF_FILENAME at a
+	 * Only one backend is allowed to operate on MDB_AUTOCONF_FILENAME at a
 	 * time.  Use AutoFileLock to ensure that.  We must hold the lock while
 	 * reading the old file contents.
 	 */
@@ -7091,7 +7091,7 @@ AlterSystemSetConfigFile(AlterSystemStmt *altersysstmt)
 
 		if (stat(AutoConfFileName, &st) == 0)
 		{
-			/* open old file PG_AUTOCONF_FILENAME */
+			/* open old file MDB_AUTOCONF_FILENAME */
 			FILE	   *infile;
 
 			infile = AllocateFile(AutoConfFileName, "r");
@@ -7138,7 +7138,7 @@ AlterSystemSetConfigFile(AlterSystemStmt *altersysstmt)
 	 * Use a TRY block to clean up the file if we fail.  Since we need a TRY
 	 * block anyway, OK to use BasicOpenFile rather than OpenTransientFile.
 	 */
-	PG_TRY();
+	MDB_TRY();
 	{
 		/* Write and sync the new contents to the temporary file */
 		write_auto_conf_file(Tmpfd, AutoConfTmpFileName, head);
@@ -7154,7 +7154,7 @@ AlterSystemSetConfigFile(AlterSystemStmt *altersysstmt)
 		 */
 		durable_rename(AutoConfTmpFileName, AutoConfFileName, ERROR);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Close file first, else unlink might fail on some platforms */
 		if (Tmpfd >= 0)
@@ -7163,9 +7163,9 @@ AlterSystemSetConfigFile(AlterSystemStmt *altersysstmt)
 		/* Unlink, but ignore any error */
 		(void) unlink(AutoConfTmpFileName);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	FreeConfigVariables(head);
 
@@ -7338,35 +7338,35 @@ SetPGVariable(const char *name, List *args, bool is_local)
  * SET command wrapped as a SQL callable function.
  */
 Datum
-set_config_by_name(PG_FUNCTION_ARGS)
+set_config_by_name(MDB_FUNCTION_ARGS)
 {
 	char	   *name;
 	char	   *value;
 	char	   *new_value;
 	bool		is_local;
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		ereport(ERROR,
 				(errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED),
 				 errmsg("SET requires parameter name")));
 
 	/* Get the GUC variable name */
-	name = TextDatumGetCString(PG_GETARG_DATUM(0));
+	name = TextDatumGetCString(MDB_GETARG_DATUM(0));
 
 	/* Get the desired value or set to NULL for a reset request */
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 		value = NULL;
 	else
-		value = TextDatumGetCString(PG_GETARG_DATUM(1));
+		value = TextDatumGetCString(MDB_GETARG_DATUM(1));
 
 	/*
 	 * Get the desired state of is_local. Default to false if provided value
 	 * is NULL
 	 */
-	if (PG_ARGISNULL(2))
+	if (MDB_ARGISNULL(2))
 		is_local = false;
 	else
-		is_local = PG_GETARG_BOOL(2);
+		is_local = MDB_GETARG_BOOL(2);
 
 	/* Note SET DEFAULT (argstring == NULL) is equivalent to RESET */
 	(void) set_config_option(name,
@@ -7380,7 +7380,7 @@ set_config_by_name(PG_FUNCTION_ARGS)
 	new_value = GetConfigOptionByName(name, NULL, false);
 
 	/* Convert return string to text */
-	PG_RETURN_TEXT_P(cstring_to_text(new_value));
+	MDB_RETURN_TEXT_P(cstring_to_text(new_value));
 }
 
 
@@ -8230,16 +8230,16 @@ GetNumConfigOptions(void)
  * a function.
  */
 Datum
-show_config_by_name(PG_FUNCTION_ARGS)
+show_config_by_name(MDB_FUNCTION_ARGS)
 {
-	char	   *varname = TextDatumGetCString(PG_GETARG_DATUM(0));
+	char	   *varname = TextDatumGetCString(MDB_GETARG_DATUM(0));
 	char	   *varval;
 
 	/* Get the value */
 	varval = GetConfigOptionByName(varname, NULL, false);
 
 	/* Convert to text */
-	PG_RETURN_TEXT_P(cstring_to_text(varval));
+	MDB_RETURN_TEXT_P(cstring_to_text(varval));
 }
 
 /*
@@ -8248,10 +8248,10 @@ show_config_by_name(PG_FUNCTION_ARGS)
  * if missing_ok is TRUE.
  */
 Datum
-show_config_by_name_missing_ok(PG_FUNCTION_ARGS)
+show_config_by_name_missing_ok(MDB_FUNCTION_ARGS)
 {
-	char	   *varname = TextDatumGetCString(PG_GETARG_DATUM(0));
-	bool		missing_ok = PG_GETARG_BOOL(1);
+	char	   *varname = TextDatumGetCString(MDB_GETARG_DATUM(0));
+	bool		missing_ok = MDB_GETARG_BOOL(1);
 	char	   *varval;
 
 	/* Get the value */
@@ -8259,20 +8259,20 @@ show_config_by_name_missing_ok(PG_FUNCTION_ARGS)
 
 	/* return NULL if no such variable */
 	if (varval == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Convert to text */
-	PG_RETURN_TEXT_P(cstring_to_text(varval));
+	MDB_RETURN_TEXT_P(cstring_to_text(varval));
 }
 
 /*
  * show_all_settings - equiv to SHOW ALL command but implemented as
  * a Table Function.
  */
-#define NUM_PG_SETTINGS_ATTS	17
+#define NUM_MDB_SETTINGS_ATTS	17
 
 Datum
-show_all_settings(PG_FUNCTION_ARGS)
+show_all_settings(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	TupleDesc	tupdesc;
@@ -8293,10 +8293,10 @@ show_all_settings(PG_FUNCTION_ARGS)
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		/*
-		 * need a tuple descriptor representing NUM_PG_SETTINGS_ATTS columns
+		 * need a tuple descriptor representing NUM_MDB_SETTINGS_ATTS columns
 		 * of the appropriate types
 		 */
-		tupdesc = CreateTemplateTupleDesc(NUM_PG_SETTINGS_ATTS, false);
+		tupdesc = CreateTemplateTupleDesc(NUM_MDB_SETTINGS_ATTS, false);
 		TupleDescInitEntry(tupdesc, (AttrNumber) 1, "name",
 						   TEXTOID, -1, 0);
 		TupleDescInitEntry(tupdesc, (AttrNumber) 2, "setting",
@@ -8354,7 +8354,7 @@ show_all_settings(PG_FUNCTION_ARGS)
 
 	if (call_cntr < max_calls)	/* do when there is more left to send */
 	{
-		char	   *values[NUM_PG_SETTINGS_ATTS];
+		char	   *values[NUM_MDB_SETTINGS_ATTS];
 		bool		noshow;
 		HeapTuple	tuple;
 		Datum		result;
@@ -8406,9 +8406,9 @@ show_all_settings(PG_FUNCTION_ARGS)
  * built on top of it.
  */
 Datum
-show_all_file_settings(PG_FUNCTION_ARGS)
+show_all_file_settings(MDB_FUNCTION_ARGS)
 {
-#define NUM_PG_FILE_SETTINGS_ATTS 7
+#define NUM_MDB_FILE_SETTINGS_ATTS 7
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
 	Tuplestorestate *tupstore;
@@ -8436,7 +8436,7 @@ show_all_file_settings(PG_FUNCTION_ARGS)
 	oldcontext = MemoryContextSwitchTo(per_query_ctx);
 
 	/* Build a tuple descriptor for our result type */
-	tupdesc = CreateTemplateTupleDesc(NUM_PG_FILE_SETTINGS_ATTS, false);
+	tupdesc = CreateTemplateTupleDesc(NUM_MDB_FILE_SETTINGS_ATTS, false);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "sourcefile",
 					   TEXTOID, -1, 0);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 2, "sourceline",
@@ -8464,8 +8464,8 @@ show_all_file_settings(PG_FUNCTION_ARGS)
 	/* Process the results and create a tuplestore */
 	for (seqno = 1; conf != NULL; conf = conf->next, seqno++)
 	{
-		Datum		values[NUM_PG_FILE_SETTINGS_ATTS];
-		bool		nulls[NUM_PG_FILE_SETTINGS_ATTS];
+		Datum		values[NUM_MDB_FILE_SETTINGS_ATTS];
+		bool		nulls[NUM_MDB_FILE_SETTINGS_ATTS];
 
 		memset(values, 0, sizeof(values));
 		memset(nulls, 0, sizeof(nulls));

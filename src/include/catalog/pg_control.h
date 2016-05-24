@@ -12,8 +12,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_CONTROL_H
-#define PG_CONTROL_H
+#ifndef MDB_CONTROL_H
+#define MDB_CONTROL_H
 
 #include "access/xlogdefs.h"
 #include "pgtime.h"				/* for mdb_time_t */
@@ -21,12 +21,12 @@
 
 
 /* Version identifier for this mdb_control format */
-#define PG_CONTROL_VERSION	942
+#define MDB_CONTROL_VERSION	942
 
 /*
  * Body of CheckPoint XLOG records.  This is declared here because we keep
  * a copy of the latest one in mdb_control for possible disaster recovery.
- * Changing this struct requires a PG_CONTROL_VERSION bump.
+ * Changing this struct requires a MDB_CONTROL_VERSION bump.
  */
 typedef struct CheckPoint
 {
@@ -77,7 +77,7 @@ typedef struct CheckPoint
 
 /*
  * System status indicator.  Note this is stored in mdb_control; if you change
- * it, you must bump PG_CONTROL_VERSION
+ * it, you must bump MDB_CONTROL_VERSION
  */
 typedef enum DBState
 {
@@ -119,7 +119,7 @@ typedef struct ControlFileData
 	 * example, WAL logs contain per-page magic numbers that can serve as
 	 * version cues for the WAL log.
 	 */
-	uint32		mdb_control_version;		/* PG_CONTROL_VERSION */
+	uint32		mdb_control_version;		/* MDB_CONTROL_VERSION */
 	uint32		catalog_version_no;		/* see catversion.h */
 
 	/*
@@ -236,6 +236,6 @@ typedef struct ControlFileData
  * changes, so that ReadControlFile will deliver a suitable wrong-version
  * message instead of a read error if it's looking at an incompatible file.
  */
-#define PG_CONTROL_SIZE		8192
+#define MDB_CONTROL_SIZE		8192
 
-#endif   /* PG_CONTROL_H */
+#endif   /* MDB_CONTROL_H */

@@ -44,15 +44,15 @@ PGLOG="$PGDATA/serverlog"
 # OOM killer (which will tend to preferentially kill the postmaster because
 # of the way it accounts for shared memory).  To do that, uncomment these
 # three lines:
-#PG_OOM_ADJUST_FILE=/proc/self/oom_score_adj
-#PG_MASTER_OOM_SCORE_ADJ=-1000
-#PG_CHILD_OOM_SCORE_ADJ=0
+#MDB_OOM_ADJUST_FILE=/proc/self/oom_score_adj
+#MDB_MASTER_OOM_SCORE_ADJ=-1000
+#MDB_CHILD_OOM_SCORE_ADJ=0
 # Older Linux kernels may not have /proc/self/oom_score_adj, but instead
 # /proc/self/oom_adj, which works similarly except for having a different
 # range of scores.  For such a system, uncomment these three lines instead:
-#PG_OOM_ADJUST_FILE=/proc/self/oom_adj
-#PG_MASTER_OOM_SCORE_ADJ=-17
-#PG_CHILD_OOM_SCORE_ADJ=0
+#MDB_OOM_ADJUST_FILE=/proc/self/oom_adj
+#MDB_MASTER_OOM_SCORE_ADJ=-17
+#MDB_CHILD_OOM_SCORE_ADJ=0
 
 ## STOP EDITING HERE
 
@@ -81,9 +81,9 @@ test -x $DAEMON ||
 
 # If we want to tell child processes to adjust their OOM scores, set up the
 # necessary environment variables.  Can't just export them through the "su".
-if [ -e "$PG_OOM_ADJUST_FILE" -a -n "$PG_CHILD_OOM_SCORE_ADJ" ]
+if [ -e "$MDB_OOM_ADJUST_FILE" -a -n "$MDB_CHILD_OOM_SCORE_ADJ" ]
 then
-	DAEMON_ENV="PG_OOM_ADJUST_FILE=$PG_OOM_ADJUST_FILE PG_OOM_ADJUST_VALUE=$PG_CHILD_OOM_SCORE_ADJ"
+	DAEMON_ENV="MDB_OOM_ADJUST_FILE=$MDB_OOM_ADJUST_FILE MDB_OOM_ADJUST_VALUE=$MDB_CHILD_OOM_SCORE_ADJ"
 fi
 
 
@@ -91,7 +91,7 @@ fi
 case $1 in
   start)
 	echo -n "Starting MollyDB: "
-	test -e "$PG_OOM_ADJUST_FILE" && echo "$PG_MASTER_OOM_SCORE_ADJ" > "$PG_OOM_ADJUST_FILE"
+	test -e "$MDB_OOM_ADJUST_FILE" && echo "$MDB_MASTER_OOM_SCORE_ADJ" > "$MDB_OOM_ADJUST_FILE"
 	su - $PGUSER -c "$DAEMON_ENV $DAEMON -D '$PGDATA' &" >>$PGLOG 2>&1
 	echo "ok"
 	;;
@@ -103,7 +103,7 @@ case $1 in
   restart)
 	echo -n "Restarting MollyDB: "
 	su - $PGUSER -c "$PGCTL stop -D '$PGDATA' -s -m fast -w"
-	test -e "$PG_OOM_ADJUST_FILE" && echo "$PG_MASTER_OOM_SCORE_ADJ" > "$PG_OOM_ADJUST_FILE"
+	test -e "$MDB_OOM_ADJUST_FILE" && echo "$MDB_MASTER_OOM_SCORE_ADJ" > "$MDB_OOM_ADJUST_FILE"
 	su - $PGUSER -c "$DAEMON_ENV $DAEMON -D '$PGDATA' &" >>$PGLOG 2>&1
 	echo "ok"
 	;;

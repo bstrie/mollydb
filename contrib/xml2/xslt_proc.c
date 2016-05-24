@@ -42,15 +42,15 @@ static const char **parse_params(text *paramstr);
 #endif   /* USE_LIBXSLT */
 
 
-PG_FUNCTION_INFO_V1(xslt_process);
+MDB_FUNCTION_INFO_V1(xslt_process);
 
 Datum
-xslt_process(PG_FUNCTION_ARGS)
+xslt_process(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXSLT
 
-	text	   *doct = PG_GETARG_TEXT_P(0);
-	text	   *ssheet = PG_GETARG_TEXT_P(1);
+	text	   *doct = MDB_GETARG_TEXT_P(0);
+	text	   *ssheet = MDB_GETARG_TEXT_P(1);
 	text	   *result;
 	text	   *paramstr;
 	const char **params;
@@ -66,7 +66,7 @@ xslt_process(PG_FUNCTION_ARGS)
 
 	if (fcinfo->nargs == 3)
 	{
-		paramstr = PG_GETARG_TEXT_P(2);
+		paramstr = MDB_GETARG_TEXT_P(2);
 		params = parse_params(paramstr);
 	}
 	else
@@ -77,9 +77,9 @@ xslt_process(PG_FUNCTION_ARGS)
 	}
 
 	/* Setup parser */
-	xmlerrcxt = pgxml_parser_init(PG_XML_STRICTNESS_LEGACY);
+	xmlerrcxt = pgxml_parser_init(MDB_XML_STRICTNESS_LEGACY);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		xmlDocPtr	ssdoc;
 		bool		xslt_sec_prefs_error;
@@ -144,7 +144,7 @@ xslt_process(PG_FUNCTION_ARGS)
 
 		resstat = xsltSaveResultToString(&resstr, &reslen, restree, stylesheet);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (restree != NULL)
 			xmlFreeDoc(restree);
@@ -160,9 +160,9 @@ xslt_process(PG_FUNCTION_ARGS)
 
 		mdb_xml_done(xmlerrcxt, true);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	xmlFreeDoc(restree);
 	xsltFreeTransformContext(xslt_ctxt);
@@ -175,20 +175,20 @@ xslt_process(PG_FUNCTION_ARGS)
 
 	/* XXX this is pretty dubious, really ought to throw error instead */
 	if (resstat < 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	result = cstring_to_text_with_len((char *) resstr, reslen);
 
 	if (resstr)
 		xmlFree(resstr);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 #else							/* !USE_LIBXSLT */
 
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("xslt_process() is not available without libxslt")));
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 #endif   /* USE_LIBXSLT */
 }
 

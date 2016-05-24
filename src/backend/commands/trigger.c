@@ -1904,16 +1904,16 @@ ExecCallTriggerFunc(TriggerData *trigdata,
 	pgstat_init_function_usage(&fcinfo, &fcusage);
 
 	MyTriggerDepth++;
-	PG_TRY();
+	MDB_TRY();
 	{
 		result = FunctionCallInvoke(&fcinfo);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		MyTriggerDepth--;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	MyTriggerDepth--;
 
 	pgstat_end_function_usage(&fcusage, true);
@@ -3242,17 +3242,17 @@ GetCurrentFDWTuplestore(void)
 		 */
 		oldcxt = MemoryContextSwitchTo(TopTransactionContext);
 		saveResourceOwner = CurrentResourceOwner;
-		PG_TRY();
+		MDB_TRY();
 		{
 			CurrentResourceOwner = TopTransactionResourceOwner;
 			ret = tuplestore_begin_heap(false, false, work_mem);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			CurrentResourceOwner = saveResourceOwner;
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 		CurrentResourceOwner = saveResourceOwner;
 		MemoryContextSwitchTo(oldcxt);
 
@@ -5017,7 +5017,7 @@ AfterTriggerSaveEvent(EState *estate, ResultRelInfo *relinfo,
 }
 
 Datum
-mdb_trigger_depth(PG_FUNCTION_ARGS)
+mdb_trigger_depth(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT32(MyTriggerDepth);
+	MDB_RETURN_INT32(MyTriggerDepth);
 }

@@ -284,7 +284,7 @@ static void make_row_from_rec_and_jsonb(Jsonb *element,
  * be so huge that it has major memory implications.
  */
 Datum
-jsonb_object_keys(PG_FUNCTION_ARGS)
+jsonb_object_keys(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	OkeysState *state;
@@ -293,7 +293,7 @@ jsonb_object_keys(PG_FUNCTION_ARGS)
 	if (SRF_IS_FIRSTCALL())
 	{
 		MemoryContext oldcontext;
-		Jsonb	   *jb = PG_GETARG_JSONB(0);
+		Jsonb	   *jb = MDB_GETARG_JSONB(0);
 		bool		skipNested = false;
 		JsonbIterator *it;
 		JsonbValue	v;
@@ -362,7 +362,7 @@ jsonb_object_keys(PG_FUNCTION_ARGS)
 
 
 Datum
-json_object_keys(PG_FUNCTION_ARGS)
+json_object_keys(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	OkeysState *state;
@@ -370,7 +370,7 @@ json_object_keys(PG_FUNCTION_ARGS)
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		text	   *json = PG_GETARG_TEXT_P(0);
+		text	   *json = MDB_GETARG_TEXT_P(0);
 		JsonLexContext *lex = makeJsonLexContext(json, true);
 		JsonSemAction *sem;
 		MemoryContext oldcontext;
@@ -479,66 +479,66 @@ okeys_scalar(void *state, char *token, JsonTokenType tokentype)
 
 
 Datum
-json_object_field(PG_FUNCTION_ARGS)
+json_object_field(MDB_FUNCTION_ARGS)
 {
-	text	   *json = PG_GETARG_TEXT_P(0);
-	text	   *fname = PG_GETARG_TEXT_PP(1);
+	text	   *json = MDB_GETARG_TEXT_P(0);
+	text	   *fname = MDB_GETARG_TEXT_PP(1);
 	char	   *fnamestr = text_to_cstring(fname);
 	text	   *result;
 
 	result = get_worker(json, &fnamestr, NULL, 1, false);
 
 	if (result != NULL)
-		PG_RETURN_TEXT_P(result);
+		MDB_RETURN_TEXT_P(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 Datum
-jsonb_object_field(PG_FUNCTION_ARGS)
+jsonb_object_field(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
-	text	   *key = PG_GETARG_TEXT_PP(1);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
+	text	   *key = MDB_GETARG_TEXT_PP(1);
 	JsonbValue *v;
 
 	if (!JB_ROOT_IS_OBJECT(jb))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	v = findJsonbValueFromContainerLen(&jb->root, JB_FOBJECT,
 									   VARDATA_ANY(key),
 									   VARSIZE_ANY_EXHDR(key));
 
 	if (v != NULL)
-		PG_RETURN_JSONB(JsonbValueToJsonb(v));
+		MDB_RETURN_JSONB(JsonbValueToJsonb(v));
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 Datum
-json_object_field_text(PG_FUNCTION_ARGS)
+json_object_field_text(MDB_FUNCTION_ARGS)
 {
-	text	   *json = PG_GETARG_TEXT_P(0);
-	text	   *fname = PG_GETARG_TEXT_PP(1);
+	text	   *json = MDB_GETARG_TEXT_P(0);
+	text	   *fname = MDB_GETARG_TEXT_PP(1);
 	char	   *fnamestr = text_to_cstring(fname);
 	text	   *result;
 
 	result = get_worker(json, &fnamestr, NULL, 1, true);
 
 	if (result != NULL)
-		PG_RETURN_TEXT_P(result);
+		MDB_RETURN_TEXT_P(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 Datum
-jsonb_object_field_text(PG_FUNCTION_ARGS)
+jsonb_object_field_text(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
-	text	   *key = PG_GETARG_TEXT_PP(1);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
+	text	   *key = MDB_GETARG_TEXT_PP(1);
 	JsonbValue *v;
 
 	if (!JB_ROOT_IS_OBJECT(jb))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	v = findJsonbValueFromContainerLen(&jb->root, JB_FOBJECT,
 									   VARDATA_ANY(key),
@@ -575,36 +575,36 @@ jsonb_object_field_text(PG_FUNCTION_ARGS)
 		}
 
 		if (result)
-			PG_RETURN_TEXT_P(result);
+			MDB_RETURN_TEXT_P(result);
 	}
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 Datum
-json_array_element(PG_FUNCTION_ARGS)
+json_array_element(MDB_FUNCTION_ARGS)
 {
-	text	   *json = PG_GETARG_TEXT_P(0);
-	int			element = PG_GETARG_INT32(1);
+	text	   *json = MDB_GETARG_TEXT_P(0);
+	int			element = MDB_GETARG_INT32(1);
 	text	   *result;
 
 	result = get_worker(json, NULL, &element, 1, false);
 
 	if (result != NULL)
-		PG_RETURN_TEXT_P(result);
+		MDB_RETURN_TEXT_P(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 Datum
-jsonb_array_element(PG_FUNCTION_ARGS)
+jsonb_array_element(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
-	int			element = PG_GETARG_INT32(1);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
+	int			element = MDB_GETARG_INT32(1);
 	JsonbValue *v;
 
 	if (!JB_ROOT_IS_ARRAY(jb))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Handle negative subscript */
 	if (element < 0)
@@ -612,42 +612,42 @@ jsonb_array_element(PG_FUNCTION_ARGS)
 		uint32	nelements = JB_ROOT_COUNT(jb);
 
 		if (-element > nelements)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		else
 			element += nelements;
 	}
 
 	v = getIthJsonbValueFromContainer(&jb->root, element);
 	if (v != NULL)
-		PG_RETURN_JSONB(JsonbValueToJsonb(v));
+		MDB_RETURN_JSONB(JsonbValueToJsonb(v));
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 Datum
-json_array_element_text(PG_FUNCTION_ARGS)
+json_array_element_text(MDB_FUNCTION_ARGS)
 {
-	text	   *json = PG_GETARG_TEXT_P(0);
-	int			element = PG_GETARG_INT32(1);
+	text	   *json = MDB_GETARG_TEXT_P(0);
+	int			element = MDB_GETARG_INT32(1);
 	text	   *result;
 
 	result = get_worker(json, NULL, &element, 1, true);
 
 	if (result != NULL)
-		PG_RETURN_TEXT_P(result);
+		MDB_RETURN_TEXT_P(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 Datum
-jsonb_array_element_text(PG_FUNCTION_ARGS)
+jsonb_array_element_text(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
-	int			element = PG_GETARG_INT32(1);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
+	int			element = MDB_GETARG_INT32(1);
 	JsonbValue *v;
 
 	if (!JB_ROOT_IS_ARRAY(jb))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Handle negative subscript */
 	if (element < 0)
@@ -655,7 +655,7 @@ jsonb_array_element_text(PG_FUNCTION_ARGS)
 		uint32	nelements = JB_ROOT_COUNT(jb);
 
 		if (-element > nelements)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		else
 			element += nelements;
 	}
@@ -692,20 +692,20 @@ jsonb_array_element_text(PG_FUNCTION_ARGS)
 		}
 
 		if (result)
-			PG_RETURN_TEXT_P(result);
+			MDB_RETURN_TEXT_P(result);
 	}
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 Datum
-json_extract_path(PG_FUNCTION_ARGS)
+json_extract_path(MDB_FUNCTION_ARGS)
 {
 	return get_path_all(fcinfo, false);
 }
 
 Datum
-json_extract_path_text(PG_FUNCTION_ARGS)
+json_extract_path_text(MDB_FUNCTION_ARGS)
 {
 	return get_path_all(fcinfo, true);
 }
@@ -716,8 +716,8 @@ json_extract_path_text(PG_FUNCTION_ARGS)
 static Datum
 get_path_all(FunctionCallInfo fcinfo, bool as_text)
 {
-	text	   *json = PG_GETARG_TEXT_P(0);
-	ArrayType  *path = PG_GETARG_ARRAYTYPE_P(1);
+	text	   *json = MDB_GETARG_TEXT_P(0);
+	ArrayType  *path = MDB_GETARG_ARRAYTYPE_P(1);
 	text	   *result;
 	Datum	   *pathtext;
 	bool	   *pathnulls;
@@ -734,7 +734,7 @@ get_path_all(FunctionCallInfo fcinfo, bool as_text)
 	 * regardless of the contents of the rest of the array.)
 	 */
 	if (array_contains_nulls(path))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	deconstruct_array(path, TEXTOID, -1, false, 'i',
 					  &pathtext, &pathnulls, &npath);
@@ -771,9 +771,9 @@ get_path_all(FunctionCallInfo fcinfo, bool as_text)
 	result = get_worker(json, tpath, ipath, npath, as_text);
 
 	if (result != NULL)
-		PG_RETURN_TEXT_P(result);
+		MDB_RETURN_TEXT_P(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
@@ -1155,13 +1155,13 @@ get_scalar(void *state, char *token, JsonTokenType tokentype)
 }
 
 Datum
-jsonb_extract_path(PG_FUNCTION_ARGS)
+jsonb_extract_path(MDB_FUNCTION_ARGS)
 {
 	return get_jsonb_path_all(fcinfo, false);
 }
 
 Datum
-jsonb_extract_path_text(PG_FUNCTION_ARGS)
+jsonb_extract_path_text(MDB_FUNCTION_ARGS)
 {
 	return get_jsonb_path_all(fcinfo, true);
 }
@@ -1169,8 +1169,8 @@ jsonb_extract_path_text(PG_FUNCTION_ARGS)
 static Datum
 get_jsonb_path_all(FunctionCallInfo fcinfo, bool as_text)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
-	ArrayType  *path = PG_GETARG_ARRAYTYPE_P(1);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
+	ArrayType  *path = MDB_GETARG_ARRAYTYPE_P(1);
 	Jsonb	   *res;
 	Datum	   *pathtext;
 	bool	   *pathnulls;
@@ -1190,7 +1190,7 @@ get_jsonb_path_all(FunctionCallInfo fcinfo, bool as_text)
 	 * regardless of the contents of the rest of the array.)
 	 */
 	if (array_contains_nulls(path))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	deconstruct_array(path, TEXTOID, -1, false, 'i',
 					  &pathtext, &pathnulls, &npath);
@@ -1222,14 +1222,14 @@ get_jsonb_path_all(FunctionCallInfo fcinfo, bool as_text)
 	{
 		if (as_text)
 		{
-			PG_RETURN_TEXT_P(cstring_to_text(JsonbToCString(NULL,
+			MDB_RETURN_TEXT_P(cstring_to_text(JsonbToCString(NULL,
 															container,
 															VARSIZE(jb))));
 		}
 		else
 		{
 			/* not text mode - just hand back the jsonb */
-			PG_RETURN_JSONB(jb);
+			MDB_RETURN_JSONB(jb);
 		}
 	}
 
@@ -1253,7 +1253,7 @@ get_jsonb_path_all(FunctionCallInfo fcinfo, bool as_text)
 			lindex = strtol(indextext, &endptr, 10);
 			if (endptr == indextext || *endptr != '\0' || errno != 0 ||
 				lindex > INT_MAX || lindex < INT_MIN)
-				PG_RETURN_NULL();
+				MDB_RETURN_NULL();
 
 			if (lindex >= 0)
 			{
@@ -1271,7 +1271,7 @@ get_jsonb_path_all(FunctionCallInfo fcinfo, bool as_text)
 				nelements = container->header & JB_CMASK;
 
 				if (-lindex > nelements)
-					PG_RETURN_NULL();
+					MDB_RETURN_NULL();
 				else
 					index = nelements + lindex;
 			}
@@ -1281,11 +1281,11 @@ get_jsonb_path_all(FunctionCallInfo fcinfo, bool as_text)
 		else
 		{
 			/* scalar, extraction yields a null */
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		}
 
 		if (jbvp == NULL)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		else if (i == npath - 1)
 			break;
 
@@ -1310,24 +1310,24 @@ get_jsonb_path_all(FunctionCallInfo fcinfo, bool as_text)
 	{
 		/* special-case outputs for string and null values */
 		if (jbvp->type == jbvString)
-			PG_RETURN_TEXT_P(cstring_to_text_with_len(jbvp->val.string.val,
+			MDB_RETURN_TEXT_P(cstring_to_text_with_len(jbvp->val.string.val,
 													  jbvp->val.string.len));
 		if (jbvp->type == jbvNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 	}
 
 	res = JsonbValueToJsonb(jbvp);
 
 	if (as_text)
 	{
-		PG_RETURN_TEXT_P(cstring_to_text(JsonbToCString(NULL,
+		MDB_RETURN_TEXT_P(cstring_to_text(JsonbToCString(NULL,
 														&res->root,
 														VARSIZE(res))));
 	}
 	else
 	{
 		/* not text mode - just hand back the jsonb */
-		PG_RETURN_JSONB(res);
+		MDB_RETURN_JSONB(res);
 	}
 }
 
@@ -1335,9 +1335,9 @@ get_jsonb_path_all(FunctionCallInfo fcinfo, bool as_text)
  * SQL function json_array_length(json) -> int
  */
 Datum
-json_array_length(PG_FUNCTION_ARGS)
+json_array_length(MDB_FUNCTION_ARGS)
 {
-	text	   *json = PG_GETARG_TEXT_P(0);
+	text	   *json = MDB_GETARG_TEXT_P(0);
 	AlenState  *state;
 	JsonLexContext *lex;
 	JsonSemAction *sem;
@@ -1359,13 +1359,13 @@ json_array_length(PG_FUNCTION_ARGS)
 
 	mdb_parse_json(lex, sem);
 
-	PG_RETURN_INT32(state->count);
+	MDB_RETURN_INT32(state->count);
 }
 
 Datum
-jsonb_array_length(PG_FUNCTION_ARGS)
+jsonb_array_length(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
 
 	if (JB_ROOT_IS_SCALAR(jb))
 		ereport(ERROR,
@@ -1376,7 +1376,7 @@ jsonb_array_length(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("cannot get array length of a non-array")));
 
-	PG_RETURN_INT32(JB_ROOT_COUNT(jb));
+	MDB_RETURN_INT32(JB_ROOT_COUNT(jb));
 }
 
 /*
@@ -1429,25 +1429,25 @@ alen_array_element_start(void *state, bool isnull)
  * that is cleared out after each tuple is built.
  */
 Datum
-json_each(PG_FUNCTION_ARGS)
+json_each(MDB_FUNCTION_ARGS)
 {
 	return each_worker(fcinfo, false);
 }
 
 Datum
-jsonb_each(PG_FUNCTION_ARGS)
+jsonb_each(MDB_FUNCTION_ARGS)
 {
 	return each_worker_jsonb(fcinfo, "jsonb_each", false);
 }
 
 Datum
-json_each_text(PG_FUNCTION_ARGS)
+json_each_text(MDB_FUNCTION_ARGS)
 {
 	return each_worker(fcinfo, true);
 }
 
 Datum
-jsonb_each_text(PG_FUNCTION_ARGS)
+jsonb_each_text(MDB_FUNCTION_ARGS)
 {
 	return each_worker_jsonb(fcinfo, "jsonb_each_text", true);
 }
@@ -1455,7 +1455,7 @@ jsonb_each_text(PG_FUNCTION_ARGS)
 static Datum
 each_worker_jsonb(FunctionCallInfo fcinfo, const char *funcname, bool as_text)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
 	ReturnSetInfo *rsi;
 	Tuplestorestate *tuple_store;
 	TupleDesc	tupdesc;
@@ -1586,14 +1586,14 @@ each_worker_jsonb(FunctionCallInfo fcinfo, const char *funcname, bool as_text)
 	rsi->setResult = tuple_store;
 	rsi->setDesc = ret_tdesc;
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 
 static Datum
 each_worker(FunctionCallInfo fcinfo, bool as_text)
 {
-	text	   *json = PG_GETARG_TEXT_P(0);
+	text	   *json = MDB_GETARG_TEXT_P(0);
 	JsonLexContext *lex;
 	JsonSemAction *sem;
 	ReturnSetInfo *rsi;
@@ -1652,7 +1652,7 @@ each_worker(FunctionCallInfo fcinfo, bool as_text)
 	rsi->setResult = state->tuple_store;
 	rsi->setDesc = state->ret_tdesc;
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 
@@ -1759,13 +1759,13 @@ each_scalar(void *state, char *token, JsonTokenType tokentype)
  */
 
 Datum
-jsonb_array_elements(PG_FUNCTION_ARGS)
+jsonb_array_elements(MDB_FUNCTION_ARGS)
 {
 	return elements_worker_jsonb(fcinfo, "jsonb_array_elements", false);
 }
 
 Datum
-jsonb_array_elements_text(PG_FUNCTION_ARGS)
+jsonb_array_elements_text(MDB_FUNCTION_ARGS)
 {
 	return elements_worker_jsonb(fcinfo, "jsonb_array_elements_text", true);
 }
@@ -1774,7 +1774,7 @@ static Datum
 elements_worker_jsonb(FunctionCallInfo fcinfo, const char *funcname,
 					  bool as_text)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
 	ReturnSetInfo *rsi;
 	Tuplestorestate *tuple_store;
 	TupleDesc	tupdesc;
@@ -1893,17 +1893,17 @@ elements_worker_jsonb(FunctionCallInfo fcinfo, const char *funcname,
 	rsi->setResult = tuple_store;
 	rsi->setDesc = ret_tdesc;
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 Datum
-json_array_elements(PG_FUNCTION_ARGS)
+json_array_elements(MDB_FUNCTION_ARGS)
 {
 	return elements_worker(fcinfo, "json_array_elements", false);
 }
 
 Datum
-json_array_elements_text(PG_FUNCTION_ARGS)
+json_array_elements_text(MDB_FUNCTION_ARGS)
 {
 	return elements_worker(fcinfo, "json_array_elements_text", true);
 }
@@ -1911,7 +1911,7 @@ json_array_elements_text(PG_FUNCTION_ARGS)
 static Datum
 elements_worker(FunctionCallInfo fcinfo, const char *funcname, bool as_text)
 {
-	text	   *json = PG_GETARG_TEXT_P(0);
+	text	   *json = MDB_GETARG_TEXT_P(0);
 
 	/* elements only needs escaped strings when as_text */
 	JsonLexContext *lex = makeJsonLexContext(json, as_text);
@@ -1973,7 +1973,7 @@ elements_worker(FunctionCallInfo fcinfo, const char *funcname, bool as_text)
 	rsi->setResult = state->tuple_store;
 	rsi->setDesc = state->ret_tdesc;
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 static void
@@ -2083,25 +2083,25 @@ elements_scalar(void *state, char *token, JsonTokenType tokentype)
  * we fetch the values direct from the object.
  */
 Datum
-jsonb_populate_record(PG_FUNCTION_ARGS)
+jsonb_populate_record(MDB_FUNCTION_ARGS)
 {
 	return populate_record_worker(fcinfo, "jsonb_populate_record", true);
 }
 
 Datum
-jsonb_to_record(PG_FUNCTION_ARGS)
+jsonb_to_record(MDB_FUNCTION_ARGS)
 {
 	return populate_record_worker(fcinfo, "jsonb_to_record", false);
 }
 
 Datum
-json_populate_record(PG_FUNCTION_ARGS)
+json_populate_record(MDB_FUNCTION_ARGS)
 {
 	return populate_record_worker(fcinfo, "json_populate_record", true);
 }
 
 Datum
-json_to_record(PG_FUNCTION_ARGS)
+json_to_record(MDB_FUNCTION_ARGS)
 {
 	return populate_record_worker(fcinfo, "json_to_record", false);
 }
@@ -2139,10 +2139,10 @@ populate_record_worker(FunctionCallInfo fcinfo, const char *funcname,
 					 errmsg("first argument of %s must be a row type",
 							funcname)));
 
-		if (PG_ARGISNULL(0))
+		if (MDB_ARGISNULL(0))
 		{
-			if (PG_ARGISNULL(1))
-				PG_RETURN_NULL();
+			if (MDB_ARGISNULL(1))
+				MDB_RETURN_NULL();
 
 			/*
 			 * have no tuple to look at, so the only source of type info is
@@ -2154,10 +2154,10 @@ populate_record_worker(FunctionCallInfo fcinfo, const char *funcname,
 		}
 		else
 		{
-			rec = PG_GETARG_HEAPTUPLEHEADER(0);
+			rec = MDB_GETARG_HEAPTUPLEHEADER(0);
 
-			if (PG_ARGISNULL(1))
-				PG_RETURN_POINTER(rec);
+			if (MDB_ARGISNULL(1))
+				MDB_RETURN_POINTER(rec);
 
 			/* Extract type info from the tuple itself */
 			tupType = HeapTupleHeaderGetTypeId(rec);
@@ -2169,8 +2169,8 @@ populate_record_worker(FunctionCallInfo fcinfo, const char *funcname,
 	else
 	{
 		/* json{b}_to_record case */
-		if (PG_ARGISNULL(0))
-			PG_RETURN_NULL();
+		if (MDB_ARGISNULL(0))
+			MDB_RETURN_NULL();
 
 		if (get_call_result_type(fcinfo, NULL, &tupdesc) != TYPEFUNC_COMPOSITE)
 			ereport(ERROR,
@@ -2184,7 +2184,7 @@ populate_record_worker(FunctionCallInfo fcinfo, const char *funcname,
 	if (jtype == JSONOID)
 	{
 		/* just get the text */
-		json = PG_GETARG_TEXT_P(json_arg_num);
+		json = MDB_GETARG_TEXT_P(json_arg_num);
 
 		json_hash = get_json_object_as_hash(json, funcname);
 
@@ -2197,18 +2197,18 @@ populate_record_worker(FunctionCallInfo fcinfo, const char *funcname,
 		{
 			hash_destroy(json_hash);
 			ReleaseTupleDesc(tupdesc);
-			PG_RETURN_POINTER(rec);
+			MDB_RETURN_POINTER(rec);
 		}
 	}
 	else
 	{
-		jb = PG_GETARG_JSONB(json_arg_num);
+		jb = MDB_GETARG_JSONB(json_arg_num);
 
 		/* same logic as for json */
 		if (JB_ROOT_COUNT(jb) == 0 && rec)
 		{
 			ReleaseTupleDesc(tupdesc);
-			PG_RETURN_POINTER(rec);
+			MDB_RETURN_POINTER(rec);
 		}
 	}
 
@@ -2372,7 +2372,7 @@ populate_record_worker(FunctionCallInfo fcinfo, const char *funcname,
 	if (json_hash)
 		hash_destroy(json_hash);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(rettuple));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(rettuple));
 }
 
 /*
@@ -2521,25 +2521,25 @@ hash_scalar(void *state, char *token, JsonTokenType tokentype)
  * per object in the array.
  */
 Datum
-jsonb_populate_recordset(PG_FUNCTION_ARGS)
+jsonb_populate_recordset(MDB_FUNCTION_ARGS)
 {
 	return populate_recordset_worker(fcinfo, "jsonb_populate_recordset", true);
 }
 
 Datum
-jsonb_to_recordset(PG_FUNCTION_ARGS)
+jsonb_to_recordset(MDB_FUNCTION_ARGS)
 {
 	return populate_recordset_worker(fcinfo, "jsonb_to_recordset", false);
 }
 
 Datum
-json_populate_recordset(PG_FUNCTION_ARGS)
+json_populate_recordset(MDB_FUNCTION_ARGS)
 {
 	return populate_recordset_worker(fcinfo, "json_populate_recordset", true);
 }
 
 Datum
-json_to_recordset(PG_FUNCTION_ARGS)
+json_to_recordset(MDB_FUNCTION_ARGS)
 {
 	return populate_recordset_worker(fcinfo, "json_to_recordset", false);
 }
@@ -2716,13 +2716,13 @@ populate_recordset_worker(FunctionCallInfo fcinfo, const char *funcname,
 						"that cannot accept type record")));
 
 	/* if the json is null send back an empty set */
-	if (PG_ARGISNULL(json_arg_num))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(json_arg_num))
+		MDB_RETURN_NULL();
 
-	if (!have_record_arg || PG_ARGISNULL(0))
+	if (!have_record_arg || MDB_ARGISNULL(0))
 		rec = NULL;
 	else
-		rec = PG_GETARG_HEAPTUPLEHEADER(0);
+		rec = MDB_GETARG_HEAPTUPLEHEADER(0);
 
 	tupType = tupdesc->tdtypeid;
 	tupTypmod = tupdesc->tdtypmod;
@@ -2774,7 +2774,7 @@ populate_recordset_worker(FunctionCallInfo fcinfo, const char *funcname,
 
 	if (jtype == JSONOID)
 	{
-		text	   *json = PG_GETARG_TEXT_P(json_arg_num);
+		text	   *json = MDB_GETARG_TEXT_P(json_arg_num);
 		JsonLexContext *lex;
 		JsonSemAction *sem;
 
@@ -2797,7 +2797,7 @@ populate_recordset_worker(FunctionCallInfo fcinfo, const char *funcname,
 	}
 	else
 	{
-		Jsonb	   *jb = PG_GETARG_JSONB(json_arg_num);
+		Jsonb	   *jb = MDB_GETARG_JSONB(json_arg_num);
 		JsonbIterator *it;
 		JsonbValue	v;
 		bool		skipNested = false;
@@ -2834,7 +2834,7 @@ populate_recordset_worker(FunctionCallInfo fcinfo, const char *funcname,
 	rsi->setResult = state->tuple_store;
 	rsi->setDesc = state->ret_tdesc;
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 static void
@@ -3198,9 +3198,9 @@ sn_scalar(void *state, char *token, JsonTokenType tokentype)
  * SQL function json_strip_nulls(json) -> json
  */
 Datum
-json_strip_nulls(PG_FUNCTION_ARGS)
+json_strip_nulls(MDB_FUNCTION_ARGS)
 {
-	text	   *json = PG_GETARG_TEXT_P(0);
+	text	   *json = MDB_GETARG_TEXT_P(0);
 	StripnullState *state;
 	JsonLexContext *lex;
 	JsonSemAction *sem;
@@ -3224,7 +3224,7 @@ json_strip_nulls(PG_FUNCTION_ARGS)
 
 	mdb_parse_json(lex, sem);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(state->strval->data,
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(state->strval->data,
 											  state->strval->len));
 
 }
@@ -3233,9 +3233,9 @@ json_strip_nulls(PG_FUNCTION_ARGS)
  * SQL function jsonb_strip_nulls(jsonb) -> jsonb
  */
 Datum
-jsonb_strip_nulls(PG_FUNCTION_ARGS)
+jsonb_strip_nulls(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
 	JsonbIterator *it;
 	JsonbParseState *parseState = NULL;
 	JsonbValue *res = NULL;
@@ -3245,7 +3245,7 @@ jsonb_strip_nulls(PG_FUNCTION_ARGS)
 	bool		last_was_key = false;
 
 	if (JB_ROOT_IS_SCALAR(jb))
-		PG_RETURN_POINTER(jb);
+		MDB_RETURN_POINTER(jb);
 
 	it = JsonbIteratorInit(&jb->root);
 
@@ -3282,7 +3282,7 @@ jsonb_strip_nulls(PG_FUNCTION_ARGS)
 
 	Assert(res != NULL);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(res));
 }
 
 /*
@@ -3342,14 +3342,14 @@ addJsonbToParseState(JsonbParseState **jbps, Jsonb *jb)
  * Pretty-printed text for the jsonb
  */
 Datum
-jsonb_pretty(PG_FUNCTION_ARGS)
+jsonb_pretty(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
 	StringInfo	str = makeStringInfo();
 
 	JsonbToCStringIndent(str, &jb->root, VARSIZE(jb));
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(str->data, str->len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(str->data, str->len));
 }
 
 /*
@@ -3358,10 +3358,10 @@ jsonb_pretty(PG_FUNCTION_ARGS)
  * function for || operator
  */
 Datum
-jsonb_concat(PG_FUNCTION_ARGS)
+jsonb_concat(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb1 = PG_GETARG_JSONB(0);
-	Jsonb	   *jb2 = PG_GETARG_JSONB(1);
+	Jsonb	   *jb1 = MDB_GETARG_JSONB(0);
+	Jsonb	   *jb2 = MDB_GETARG_JSONB(1);
 	JsonbParseState *state = NULL;
 	JsonbValue *res;
 	JsonbIterator *it1,
@@ -3376,9 +3376,9 @@ jsonb_concat(PG_FUNCTION_ARGS)
 	if (JB_ROOT_IS_OBJECT(jb1) == JB_ROOT_IS_OBJECT(jb2))
 	{
 		if (JB_ROOT_COUNT(jb1) == 0 && !JB_ROOT_IS_SCALAR(jb2))
-			PG_RETURN_JSONB(jb2);
+			MDB_RETURN_JSONB(jb2);
 		else if (JB_ROOT_COUNT(jb2) == 0 && !JB_ROOT_IS_SCALAR(jb1))
-			PG_RETURN_JSONB(jb1);
+			MDB_RETURN_JSONB(jb1);
 	}
 
 	it1 = JsonbIteratorInit(&jb1->root);
@@ -3388,7 +3388,7 @@ jsonb_concat(PG_FUNCTION_ARGS)
 
 	Assert(res != NULL);
 
-	PG_RETURN_JSONB(JsonbValueToJsonb(res));
+	MDB_RETURN_JSONB(JsonbValueToJsonb(res));
 }
 
 
@@ -3399,10 +3399,10 @@ jsonb_concat(PG_FUNCTION_ARGS)
  * removed.
  */
 Datum
-jsonb_delete(PG_FUNCTION_ARGS)
+jsonb_delete(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *in = PG_GETARG_JSONB(0);
-	text	   *key = PG_GETARG_TEXT_PP(1);
+	Jsonb	   *in = MDB_GETARG_JSONB(0);
+	text	   *key = MDB_GETARG_TEXT_PP(1);
 	char	   *keyptr = VARDATA_ANY(key);
 	int			keylen = VARSIZE_ANY_EXHDR(key);
 	JsonbParseState *state = NULL;
@@ -3418,7 +3418,7 @@ jsonb_delete(PG_FUNCTION_ARGS)
 				 errmsg("cannot delete from scalar")));
 
 	if (JB_ROOT_COUNT(in) == 0)
-		PG_RETURN_JSONB(in);
+		MDB_RETURN_JSONB(in);
 
 	it = JsonbIteratorInit(&in->root);
 
@@ -3442,7 +3442,7 @@ jsonb_delete(PG_FUNCTION_ARGS)
 
 	Assert(res != NULL);
 
-	PG_RETURN_JSONB(JsonbValueToJsonb(res));
+	MDB_RETURN_JSONB(JsonbValueToJsonb(res));
 }
 
 /*
@@ -3453,10 +3453,10 @@ jsonb_delete(PG_FUNCTION_ARGS)
  * end of the items.
  */
 Datum
-jsonb_delete_idx(PG_FUNCTION_ARGS)
+jsonb_delete_idx(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *in = PG_GETARG_JSONB(0);
-	int			idx = PG_GETARG_INT32(1);
+	Jsonb	   *in = MDB_GETARG_JSONB(0);
+	int			idx = MDB_GETARG_INT32(1);
 	JsonbParseState *state = NULL;
 	JsonbIterator *it;
 	uint32		i = 0,
@@ -3476,7 +3476,7 @@ jsonb_delete_idx(PG_FUNCTION_ARGS)
 				 errmsg("cannot delete from object using integer index")));
 
 	if (JB_ROOT_COUNT(in) == 0)
-		PG_RETURN_JSONB(in);
+		MDB_RETURN_JSONB(in);
 
 	it = JsonbIteratorInit(&in->root);
 
@@ -3493,7 +3493,7 @@ jsonb_delete_idx(PG_FUNCTION_ARGS)
 	}
 
 	if (idx >= n)
-		PG_RETURN_JSONB(in);
+		MDB_RETURN_JSONB(in);
 
 	pushJsonbValue(&state, r, NULL);
 
@@ -3510,7 +3510,7 @@ jsonb_delete_idx(PG_FUNCTION_ARGS)
 
 	Assert(res != NULL);
 
-	PG_RETURN_JSONB(JsonbValueToJsonb(res));
+	MDB_RETURN_JSONB(JsonbValueToJsonb(res));
 }
 
 /*
@@ -3518,12 +3518,12 @@ jsonb_delete_idx(PG_FUNCTION_ARGS)
  *
  */
 Datum
-jsonb_set(PG_FUNCTION_ARGS)
+jsonb_set(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *in = PG_GETARG_JSONB(0);
-	ArrayType  *path = PG_GETARG_ARRAYTYPE_P(1);
-	Jsonb	   *newval = PG_GETARG_JSONB(2);
-	bool		create = PG_GETARG_BOOL(3);
+	Jsonb	   *in = MDB_GETARG_JSONB(0);
+	ArrayType  *path = MDB_GETARG_ARRAYTYPE_P(1);
+	Jsonb	   *newval = MDB_GETARG_JSONB(2);
+	bool		create = MDB_GETARG_BOOL(3);
 	JsonbValue *res = NULL;
 	Datum	   *path_elems;
 	bool	   *path_nulls;
@@ -3542,13 +3542,13 @@ jsonb_set(PG_FUNCTION_ARGS)
 				 errmsg("cannot set path in scalar")));
 
 	if (JB_ROOT_COUNT(in) == 0 && !create)
-		PG_RETURN_JSONB(in);
+		MDB_RETURN_JSONB(in);
 
 	deconstruct_array(path, TEXTOID, -1, false, 'i',
 					  &path_elems, &path_nulls, &path_len);
 
 	if (path_len == 0)
-		PG_RETURN_JSONB(in);
+		MDB_RETURN_JSONB(in);
 
 	it = JsonbIteratorInit(&in->root);
 
@@ -3557,7 +3557,7 @@ jsonb_set(PG_FUNCTION_ARGS)
 
 	Assert(res != NULL);
 
-	PG_RETURN_JSONB(JsonbValueToJsonb(res));
+	MDB_RETURN_JSONB(JsonbValueToJsonb(res));
 }
 
 
@@ -3565,10 +3565,10 @@ jsonb_set(PG_FUNCTION_ARGS)
  * SQL function jsonb_delete(jsonb, text[])
  */
 Datum
-jsonb_delete_path(PG_FUNCTION_ARGS)
+jsonb_delete_path(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *in = PG_GETARG_JSONB(0);
-	ArrayType  *path = PG_GETARG_ARRAYTYPE_P(1);
+	Jsonb	   *in = MDB_GETARG_JSONB(0);
+	ArrayType  *path = MDB_GETARG_ARRAYTYPE_P(1);
 	JsonbValue *res = NULL;
 	Datum	   *path_elems;
 	bool	   *path_nulls;
@@ -3587,13 +3587,13 @@ jsonb_delete_path(PG_FUNCTION_ARGS)
 				 errmsg("cannot delete path in scalar")));
 
 	if (JB_ROOT_COUNT(in) == 0)
-		PG_RETURN_JSONB(in);
+		MDB_RETURN_JSONB(in);
 
 	deconstruct_array(path, TEXTOID, -1, false, 'i',
 					  &path_elems, &path_nulls, &path_len);
 
 	if (path_len == 0)
-		PG_RETURN_JSONB(in);
+		MDB_RETURN_JSONB(in);
 
 	it = JsonbIteratorInit(&in->root);
 
@@ -3602,7 +3602,7 @@ jsonb_delete_path(PG_FUNCTION_ARGS)
 
 	Assert(res != NULL);
 
-	PG_RETURN_JSONB(JsonbValueToJsonb(res));
+	MDB_RETURN_JSONB(JsonbValueToJsonb(res));
 }
 
 /*
@@ -3610,12 +3610,12 @@ jsonb_delete_path(PG_FUNCTION_ARGS)
  *
  */
 Datum
-jsonb_insert(PG_FUNCTION_ARGS)
+jsonb_insert(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *in = PG_GETARG_JSONB(0);
-	ArrayType  *path = PG_GETARG_ARRAYTYPE_P(1);
-	Jsonb	   *newval = PG_GETARG_JSONB(2);
-	bool		after = PG_GETARG_BOOL(3);
+	Jsonb	   *in = MDB_GETARG_JSONB(0);
+	ArrayType  *path = MDB_GETARG_ARRAYTYPE_P(1);
+	Jsonb	   *newval = MDB_GETARG_JSONB(2);
+	bool		after = MDB_GETARG_BOOL(3);
 	JsonbValue *res = NULL;
 	Datum	   *path_elems;
 	bool	   *path_nulls;
@@ -3637,7 +3637,7 @@ jsonb_insert(PG_FUNCTION_ARGS)
 					  &path_elems, &path_nulls, &path_len);
 
 	if (path_len == 0)
-		PG_RETURN_JSONB(in);
+		MDB_RETURN_JSONB(in);
 
 	it = JsonbIteratorInit(&in->root);
 
@@ -3646,7 +3646,7 @@ jsonb_insert(PG_FUNCTION_ARGS)
 
 	Assert(res != NULL);
 
-	PG_RETURN_JSONB(JsonbValueToJsonb(res));
+	MDB_RETURN_JSONB(JsonbValueToJsonb(res));
 }
 
 /*

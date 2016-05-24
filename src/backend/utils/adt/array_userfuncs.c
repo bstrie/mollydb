@@ -52,9 +52,9 @@ fetch_array_arg_replace_nulls(FunctionCallInfo fcinfo, int argno)
 	}
 
 	/* Now collect the array value */
-	if (!PG_ARGISNULL(argno))
+	if (!MDB_ARGISNULL(argno))
 	{
-		eah = PG_GETARG_EXPANDED_ARRAYX(argno, my_extra);
+		eah = MDB_GETARG_EXPANDED_ARRAYX(argno, my_extra);
 	}
 	else
 	{
@@ -85,7 +85,7 @@ fetch_array_arg_replace_nulls(FunctionCallInfo fcinfo, int argno)
  *----------------------------------------------------------------------------
  */
 Datum
-array_append(PG_FUNCTION_ARGS)
+array_append(MDB_FUNCTION_ARGS)
 {
 	ExpandedArrayHeader *eah;
 	Datum		newelem;
@@ -97,11 +97,11 @@ array_append(PG_FUNCTION_ARGS)
 	ArrayMetaState *my_extra;
 
 	eah = fetch_array_arg_replace_nulls(fcinfo, 0);
-	isNull = PG_ARGISNULL(1);
+	isNull = MDB_ARGISNULL(1);
 	if (isNull)
 		newelem = (Datum) 0;
 	else
-		newelem = PG_GETARG_DATUM(1);
+		newelem = MDB_GETARG_DATUM(1);
 
 	if (eah->ndims == 1)
 	{
@@ -133,7 +133,7 @@ array_append(PG_FUNCTION_ARGS)
 							   1, &indx, newelem, isNull,
 			   -1, my_extra->typlen, my_extra->typbyval, my_extra->typalign);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*-----------------------------------------------------------------------------
@@ -142,7 +142,7 @@ array_append(PG_FUNCTION_ARGS)
  *----------------------------------------------------------------------------
  */
 Datum
-array_prepend(PG_FUNCTION_ARGS)
+array_prepend(MDB_FUNCTION_ARGS)
 {
 	ExpandedArrayHeader *eah;
 	Datum		newelem;
@@ -153,11 +153,11 @@ array_prepend(PG_FUNCTION_ARGS)
 	int			lb0;
 	ArrayMetaState *my_extra;
 
-	isNull = PG_ARGISNULL(0);
+	isNull = MDB_ARGISNULL(0);
 	if (isNull)
 		newelem = (Datum) 0;
 	else
-		newelem = PG_GETARG_DATUM(0);
+		newelem = MDB_GETARG_DATUM(0);
 	eah = fetch_array_arg_replace_nulls(fcinfo, 1);
 
 	if (eah->ndims == 1)
@@ -198,7 +198,7 @@ array_prepend(PG_FUNCTION_ARGS)
 		eah->lbound[0] = lb0;
 	}
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*-----------------------------------------------------------------------------
@@ -208,7 +208,7 @@ array_prepend(PG_FUNCTION_ARGS)
  *----------------------------------------------------------------------------
  */
 Datum
-array_cat(PG_FUNCTION_ARGS)
+array_cat(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *v1,
 			   *v2;
@@ -240,21 +240,21 @@ array_cat(PG_FUNCTION_ARGS)
 	int32		dataoffset;
 
 	/* Concatenating a null array is a no-op, just return the other input */
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
-		if (PG_ARGISNULL(1))
-			PG_RETURN_NULL();
-		result = PG_GETARG_ARRAYTYPE_P(1);
-		PG_RETURN_ARRAYTYPE_P(result);
+		if (MDB_ARGISNULL(1))
+			MDB_RETURN_NULL();
+		result = MDB_GETARG_ARRAYTYPE_P(1);
+		MDB_RETURN_ARRAYTYPE_P(result);
 	}
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 	{
-		result = PG_GETARG_ARRAYTYPE_P(0);
-		PG_RETURN_ARRAYTYPE_P(result);
+		result = MDB_GETARG_ARRAYTYPE_P(0);
+		MDB_RETURN_ARRAYTYPE_P(result);
 	}
 
-	v1 = PG_GETARG_ARRAYTYPE_P(0);
-	v2 = PG_GETARG_ARRAYTYPE_P(1);
+	v1 = MDB_GETARG_ARRAYTYPE_P(0);
+	v2 = MDB_GETARG_ARRAYTYPE_P(1);
 
 	element_type1 = ARR_ELEMTYPE(v1);
 	element_type2 = ARR_ELEMTYPE(v2);
@@ -291,10 +291,10 @@ array_cat(PG_FUNCTION_ARGS)
 	 * if both are empty, return the first one
 	 */
 	if (ndims1 == 0 && ndims2 > 0)
-		PG_RETURN_ARRAYTYPE_P(v2);
+		MDB_RETURN_ARRAYTYPE_P(v2);
 
 	if (ndims2 == 0)
-		PG_RETURN_ARRAYTYPE_P(v1);
+		MDB_RETURN_ARRAYTYPE_P(v1);
 
 	/* the rest fall under rule 3, 4, or 5 */
 	if (ndims1 != ndims2 &&
@@ -438,7 +438,7 @@ array_cat(PG_FUNCTION_ARGS)
 						  nitems2);
 	}
 
-	PG_RETURN_ARRAYTYPE_P(result);
+	MDB_RETURN_ARRAYTYPE_P(result);
 }
 
 
@@ -516,7 +516,7 @@ create_singleton_array(FunctionCallInfo fcinfo,
  * ARRAY_AGG(anynonarray) aggregate function
  */
 Datum
-array_agg_transfn(PG_FUNCTION_ARGS)
+array_agg_transfn(MDB_FUNCTION_ARGS)
 {
 	Oid			arg1_typeid = get_fn_expr_argtype(fcinfo->flinfo, 1);
 	MemoryContext aggcontext;
@@ -540,16 +540,16 @@ array_agg_transfn(PG_FUNCTION_ARGS)
 		elog(ERROR, "array_agg_transfn called in non-aggregate context");
 	}
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		state = initArrayResult(arg1_typeid, aggcontext, false);
 	else
-		state = (ArrayBuildState *) PG_GETARG_POINTER(0);
+		state = (ArrayBuildState *) MDB_GETARG_POINTER(0);
 
-	elem = PG_ARGISNULL(1) ? (Datum) 0 : PG_GETARG_DATUM(1);
+	elem = MDB_ARGISNULL(1) ? (Datum) 0 : MDB_GETARG_DATUM(1);
 
 	state = accumArrayResult(state,
 							 elem,
-							 PG_ARGISNULL(1),
+							 MDB_ARGISNULL(1),
 							 arg1_typeid,
 							 aggcontext);
 
@@ -558,11 +558,11 @@ array_agg_transfn(PG_FUNCTION_ARGS)
 	 * is a pass-by-value type the same size as a pointer.  So we can safely
 	 * pass the ArrayBuildState pointer through nodeAgg.c's machinations.
 	 */
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-array_agg_finalfn(PG_FUNCTION_ARGS)
+array_agg_finalfn(MDB_FUNCTION_ARGS)
 {
 	Datum		result;
 	ArrayBuildState *state;
@@ -572,10 +572,10 @@ array_agg_finalfn(PG_FUNCTION_ARGS)
 	/* cannot be called directly because of internal-type argument */
 	Assert(AggCheckCallContext(fcinfo, NULL));
 
-	state = PG_ARGISNULL(0) ? NULL : (ArrayBuildState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (ArrayBuildState *) MDB_GETARG_POINTER(0);
 
 	if (state == NULL)
-		PG_RETURN_NULL();		/* returns null iff no input values */
+		MDB_RETURN_NULL();		/* returns null iff no input values */
 
 	dims[0] = state->nelems;
 	lbs[0] = 1;
@@ -590,14 +590,14 @@ array_agg_finalfn(PG_FUNCTION_ARGS)
 							   CurrentMemoryContext,
 							   false);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*
  * ARRAY_AGG(anyarray) aggregate function
  */
 Datum
-array_agg_array_transfn(PG_FUNCTION_ARGS)
+array_agg_array_transfn(MDB_FUNCTION_ARGS)
 {
 	Oid			arg1_typeid = get_fn_expr_argtype(fcinfo->flinfo, 1);
 	MemoryContext aggcontext;
@@ -621,14 +621,14 @@ array_agg_array_transfn(PG_FUNCTION_ARGS)
 	}
 
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		state = initArrayResultArr(arg1_typeid, InvalidOid, aggcontext, false);
 	else
-		state = (ArrayBuildStateArr *) PG_GETARG_POINTER(0);
+		state = (ArrayBuildStateArr *) MDB_GETARG_POINTER(0);
 
 	state = accumArrayResultArr(state,
-								PG_GETARG_DATUM(1),
-								PG_ARGISNULL(1),
+								MDB_GETARG_DATUM(1),
+								MDB_ARGISNULL(1),
 								arg1_typeid,
 								aggcontext);
 
@@ -637,11 +637,11 @@ array_agg_array_transfn(PG_FUNCTION_ARGS)
 	 * is a pass-by-value type the same size as a pointer.  So we can safely
 	 * pass the ArrayBuildStateArr pointer through nodeAgg.c's machinations.
 	 */
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-array_agg_array_finalfn(PG_FUNCTION_ARGS)
+array_agg_array_finalfn(MDB_FUNCTION_ARGS)
 {
 	Datum		result;
 	ArrayBuildStateArr *state;
@@ -649,10 +649,10 @@ array_agg_array_finalfn(PG_FUNCTION_ARGS)
 	/* cannot be called directly because of internal-type argument */
 	Assert(AggCheckCallContext(fcinfo, NULL));
 
-	state = PG_ARGISNULL(0) ? NULL : (ArrayBuildStateArr *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (ArrayBuildStateArr *) MDB_GETARG_POINTER(0);
 
 	if (state == NULL)
-		PG_RETURN_NULL();		/* returns null iff no input values */
+		MDB_RETURN_NULL();		/* returns null iff no input values */
 
 	/*
 	 * Make the result.  We cannot release the ArrayBuildStateArr because
@@ -662,7 +662,7 @@ array_agg_array_finalfn(PG_FUNCTION_ARGS)
 	 */
 	result = makeArrayResultArr(state, CurrentMemoryContext, false);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*-----------------------------------------------------------------------------
@@ -674,13 +674,13 @@ array_agg_array_finalfn(PG_FUNCTION_ARGS)
  *-----------------------------------------------------------------------------
  */
 Datum
-array_position(PG_FUNCTION_ARGS)
+array_position(MDB_FUNCTION_ARGS)
 {
 	return array_position_common(fcinfo);
 }
 
 Datum
-array_position_start(PG_FUNCTION_ARGS)
+array_position_start(MDB_FUNCTION_ARGS)
 {
 	return array_position_common(fcinfo);
 }
@@ -696,7 +696,7 @@ static Datum
 array_position_common(FunctionCallInfo fcinfo)
 {
 	ArrayType  *array;
-	Oid			collation = PG_GET_COLLATION();
+	Oid			collation = MDB_GET_COLLATION();
 	Oid			element_type;
 	Datum		searched_element,
 				value;
@@ -709,10 +709,10 @@ array_position_common(FunctionCallInfo fcinfo)
 	bool		null_search;
 	ArrayIterator array_iterator;
 
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	array = PG_GETARG_ARRAYTYPE_P(0);
+	array = MDB_GETARG_ARRAYTYPE_P(0);
 	element_type = ARR_ELEMTYPE(array);
 
 	/*
@@ -724,31 +724,31 @@ array_position_common(FunctionCallInfo fcinfo)
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("searching for elements in multidimensional arrays is not supported")));
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 	{
 		/* fast return when the array doesn't have nulls */
 		if (!array_contains_nulls(array))
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		searched_element = (Datum) 0;
 		null_search = true;
 	}
 	else
 	{
-		searched_element = PG_GETARG_DATUM(1);
+		searched_element = MDB_GETARG_DATUM(1);
 		null_search = false;
 	}
 
 	position = (ARR_LBOUND(array))[0] - 1;
 
 	/* figure out where to start */
-	if (PG_NARGS() == 3)
+	if (MDB_NARGS() == 3)
 	{
-		if (PG_ARGISNULL(2))
+		if (MDB_ARGISNULL(2))
 			ereport(ERROR,
 					(errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED),
 					 errmsg("initial position must not be null")));
 
-		position_min = PG_GETARG_INT32(2);
+		position_min = MDB_GETARG_INT32(2);
 	}
 	else
 		position_min = (ARR_LBOUND(array))[0];
@@ -823,12 +823,12 @@ array_position_common(FunctionCallInfo fcinfo)
 	array_free_iterator(array_iterator);
 
 	/* Avoid leaking memory when handed toasted input */
-	PG_FREE_IF_COPY(array, 0);
+	MDB_FREE_IF_COPY(array, 0);
 
 	if (!found)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT32(position);
+	MDB_RETURN_INT32(position);
 }
 
 /*-----------------------------------------------------------------------------
@@ -843,10 +843,10 @@ array_position_common(FunctionCallInfo fcinfo)
  *-----------------------------------------------------------------------------
  */
 Datum
-array_positions(PG_FUNCTION_ARGS)
+array_positions(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *array;
-	Oid			collation = PG_GET_COLLATION();
+	Oid			collation = MDB_GET_COLLATION();
 	Oid			element_type;
 	Datum		searched_element,
 				value;
@@ -858,10 +858,10 @@ array_positions(PG_FUNCTION_ARGS)
 	ArrayIterator array_iterator;
 	ArrayBuildState *astate = NULL;
 
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	array = PG_GETARG_ARRAYTYPE_P(0);
+	array = MDB_GETARG_ARRAYTYPE_P(0);
 	element_type = ARR_ELEMTYPE(array);
 
 	position = (ARR_LBOUND(array))[0] - 1;
@@ -877,17 +877,17 @@ array_positions(PG_FUNCTION_ARGS)
 
 	astate = initArrayResult(INT4OID, CurrentMemoryContext, false);
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 	{
 		/* fast return when the array doesn't have nulls */
 		if (!array_contains_nulls(array))
-			PG_RETURN_DATUM(makeArrayResult(astate, CurrentMemoryContext));
+			MDB_RETURN_DATUM(makeArrayResult(astate, CurrentMemoryContext));
 		searched_element = (Datum) 0;
 		null_search = true;
 	}
 	else
 	{
-		searched_element = PG_GETARG_DATUM(1);
+		searched_element = MDB_GETARG_DATUM(1);
 		null_search = false;
 	}
 
@@ -958,7 +958,7 @@ array_positions(PG_FUNCTION_ARGS)
 	array_free_iterator(array_iterator);
 
 	/* Avoid leaking memory when handed toasted input */
-	PG_FREE_IF_COPY(array, 0);
+	MDB_FREE_IF_COPY(array, 0);
 
-	PG_RETURN_DATUM(makeArrayResult(astate, CurrentMemoryContext));
+	MDB_RETURN_DATUM(makeArrayResult(astate, CurrentMemoryContext));
 }

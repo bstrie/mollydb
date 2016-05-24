@@ -9,8 +9,8 @@
  *-----------------------------------------------------------------------
  */
 
-#ifndef _PG_LOCALE_
-#define _PG_LOCALE_
+#ifndef _MDB_LOCALE_
+#define _MDB_LOCALE_
 
 #include <locale.h>
 #if defined(LOCALE_T_IN_XLOCALE) || defined(WCSTOMBS_L_IN_XLOCALE)
@@ -81,4 +81,4 @@ extern size_t char2wchar(wchar_t *to, size_t tolen,
 		   const char *from, size_t fromlen, mdb_locale_t locale);
 #endif
 
-#endif   /* _PG_LOCALE_ */
+#endif   /* _MDB_LOCALE_ */

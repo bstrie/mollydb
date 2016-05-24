@@ -23,6 +23,6 @@ extern void ExecReScanAgg(AggState *node);
 
 extern Size hash_agg_entry_size(int numAggs);
 
-extern Datum aggregate_dummy(PG_FUNCTION_ARGS);
+extern Datum aggregate_dummy(MDB_FUNCTION_ARGS);
 
 #endif   /* NODEAGG_H */

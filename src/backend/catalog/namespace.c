@@ -199,20 +199,20 @@ static bool MatchNamedCall(HeapTuple proctup, int nargs, List *argnames,
 			   int **argnumbers);
 
 /* These don't really need to appear in any header file */
-Datum		mdb_table_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_type_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_function_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_operator_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_opclass_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_opfamily_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_collation_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_conversion_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_ts_parser_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_ts_dict_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_ts_template_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_ts_config_is_visible(PG_FUNCTION_ARGS);
-Datum		mdb_my_temp_schema(PG_FUNCTION_ARGS);
-Datum		mdb_is_other_temp_schema(PG_FUNCTION_ARGS);
+Datum		mdb_table_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_type_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_function_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_operator_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_opclass_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_opfamily_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_collation_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_conversion_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_ts_parser_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_ts_dict_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_ts_template_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_ts_config_is_visible(MDB_FUNCTION_ARGS);
+Datum		mdb_my_temp_schema(MDB_FUNCTION_ARGS);
+Datum		mdb_is_other_temp_schema(MDB_FUNCTION_ARGS);
 
 
 /*
@@ -713,7 +713,7 @@ RelationIsVisible(Oid relid)
 	 * list_member_oid() for them.
 	 */
 	relnamespace = relform->relnamespace;
-	if (relnamespace != PG_CATALOG_NAMESPACE &&
+	if (relnamespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, relnamespace))
 		visible = false;
 	else
@@ -808,7 +808,7 @@ TypeIsVisible(Oid typid)
 	 * list_member_oid() for them.
 	 */
 	typnamespace = typform->typnamespace;
-	if (typnamespace != PG_CATALOG_NAMESPACE &&
+	if (typnamespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, typnamespace))
 		visible = false;
 	else
@@ -1405,7 +1405,7 @@ FunctionIsVisible(Oid funcid)
 	 * list_member_oid() for them.
 	 */
 	pronamespace = procform->pronamespace;
-	if (pronamespace != PG_CATALOG_NAMESPACE &&
+	if (pronamespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, pronamespace))
 		visible = false;
 	else
@@ -1738,7 +1738,7 @@ OperatorIsVisible(Oid oprid)
 	 * list_member_oid() for them.
 	 */
 	oprnamespace = oprform->oprnamespace;
-	if (oprnamespace != PG_CATALOG_NAMESPACE &&
+	if (oprnamespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, oprnamespace))
 		visible = false;
 	else
@@ -1824,7 +1824,7 @@ OpclassIsVisible(Oid opcid)
 	 * list_member_oid() for them.
 	 */
 	opcnamespace = opcform->opcnamespace;
-	if (opcnamespace != PG_CATALOG_NAMESPACE &&
+	if (opcnamespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, opcnamespace))
 		visible = false;
 	else
@@ -1907,7 +1907,7 @@ OpfamilyIsVisible(Oid opfid)
 	 * list_member_oid() for them.
 	 */
 	opfnamespace = opfform->opfnamespace;
-	if (opfnamespace != PG_CATALOG_NAMESPACE &&
+	if (opfnamespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, opfnamespace))
 		visible = false;
 	else
@@ -1997,7 +1997,7 @@ CollationIsVisible(Oid collid)
 	 * list_member_oid() for them.
 	 */
 	collnamespace = collform->collnamespace;
-	if (collnamespace != PG_CATALOG_NAMESPACE &&
+	if (collnamespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, collnamespace))
 		visible = false;
 	else
@@ -2079,7 +2079,7 @@ ConversionIsVisible(Oid conid)
 	 * list_member_oid() for them.
 	 */
 	connamespace = conform->connamespace;
-	if (connamespace != PG_CATALOG_NAMESPACE &&
+	if (connamespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, connamespace))
 		visible = false;
 	else
@@ -2184,7 +2184,7 @@ TSParserIsVisible(Oid prsId)
 	 * list_member_oid() for them.
 	 */
 	namespace = form->prsnamespace;
-	if (namespace != PG_CATALOG_NAMESPACE &&
+	if (namespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, namespace))
 		visible = false;
 	else
@@ -2311,7 +2311,7 @@ TSDictionaryIsVisible(Oid dictId)
 	 * list_member_oid() for them.
 	 */
 	namespace = form->dictnamespace;
-	if (namespace != PG_CATALOG_NAMESPACE &&
+	if (namespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, namespace))
 		visible = false;
 	else
@@ -2437,7 +2437,7 @@ TSTemplateIsVisible(Oid tmplId)
 	 * list_member_oid() for them.
 	 */
 	namespace = form->tmplnamespace;
-	if (namespace != PG_CATALOG_NAMESPACE &&
+	if (namespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, namespace))
 		visible = false;
 	else
@@ -2564,7 +2564,7 @@ TSConfigIsVisible(Oid cfgid)
 	 * list_member_oid() for them.
 	 */
 	namespace = form->cfgnamespace;
-	if (namespace != PG_CATALOG_NAMESPACE &&
+	if (namespace != MDB_CATALOG_NAMESPACE &&
 		!list_member_oid(activeSearchPath, namespace))
 		visible = false;
 	else
@@ -2783,7 +2783,7 @@ CheckSetNamespace(Oid oldNspOid, Oid nspOid)
 			errmsg("cannot move objects into or out of temporary schemas")));
 
 	/* same for TOAST schema */
-	if (nspOid == PG_TOAST_NAMESPACE || oldNspOid == PG_TOAST_NAMESPACE)
+	if (nspOid == MDB_TOAST_NAMESPACE || oldNspOid == MDB_TOAST_NAMESPACE)
 		ereport(ERROR,
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("cannot move objects into or out of TOAST schema")));
@@ -3100,7 +3100,7 @@ GetOverrideSearchPath(MemoryContext context)
 			result->addTemp = true;
 		else
 		{
-			Assert(linitial_oid(schemas) == PG_CATALOG_NAMESPACE);
+			Assert(linitial_oid(schemas) == MDB_CATALOG_NAMESPACE);
 			result->addCatalog = true;
 		}
 		schemas = list_delete_first(schemas);
@@ -3155,7 +3155,7 @@ OverrideSearchPathMatchesCurrent(OverrideSearchPath *path)
 	/* If path->addCatalog, next item should be mdb_catalog. */
 	if (path->addCatalog)
 	{
-		if (lc && lfirst_oid(lc) == PG_CATALOG_NAMESPACE)
+		if (lc && lfirst_oid(lc) == MDB_CATALOG_NAMESPACE)
 			lc = lnext(lc);
 		else
 			return false;
@@ -3223,7 +3223,7 @@ PushOverrideSearchPath(OverrideSearchPath *newpath)
 	 * permissions for these.
 	 */
 	if (newpath->addCatalog)
-		oidlist = lcons_oid(PG_CATALOG_NAMESPACE, oidlist);
+		oidlist = lcons_oid(MDB_CATALOG_NAMESPACE, oidlist);
 
 	if (newpath->addTemp && OidIsValid(myTempNamespace))
 		oidlist = lcons_oid(myTempNamespace, oidlist);
@@ -3555,8 +3555,8 @@ recomputeNamespacePath(void)
 	 * the front, not the back; also notice that we do not check USAGE
 	 * permissions for these.
 	 */
-	if (!list_member_oid(oidlist, PG_CATALOG_NAMESPACE))
-		oidlist = lcons_oid(PG_CATALOG_NAMESPACE, oidlist);
+	if (!list_member_oid(oidlist, MDB_CATALOG_NAMESPACE))
+		oidlist = lcons_oid(MDB_CATALOG_NAMESPACE, oidlist);
 
 	if (OidIsValid(myTempNamespace) &&
 		!list_member_oid(oidlist, myTempNamespace))
@@ -3933,9 +3933,9 @@ InitializeSearchPath(void)
 		MemoryContext oldcxt;
 
 		oldcxt = MemoryContextSwitchTo(TopMemoryContext);
-		baseSearchPath = list_make1_oid(PG_CATALOG_NAMESPACE);
+		baseSearchPath = list_make1_oid(MDB_CATALOG_NAMESPACE);
 		MemoryContextSwitchTo(oldcxt);
-		baseCreationNamespace = PG_CATALOG_NAMESPACE;
+		baseCreationNamespace = MDB_CATALOG_NAMESPACE;
 		baseTempCreationPending = false;
 		baseSearchPathValid = true;
 		namespaceUser = GetUserId();
@@ -4057,147 +4057,147 @@ fetch_search_path_array(Oid *sarray, int sarray_len)
  */
 
 Datum
-mdb_table_is_visible(PG_FUNCTION_ARGS)
+mdb_table_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(RelationIsVisible(oid));
+	MDB_RETURN_BOOL(RelationIsVisible(oid));
 }
 
 Datum
-mdb_type_is_visible(PG_FUNCTION_ARGS)
+mdb_type_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(TYPEOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(TypeIsVisible(oid));
+	MDB_RETURN_BOOL(TypeIsVisible(oid));
 }
 
 Datum
-mdb_function_is_visible(PG_FUNCTION_ARGS)
+mdb_function_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(PROCOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(FunctionIsVisible(oid));
+	MDB_RETURN_BOOL(FunctionIsVisible(oid));
 }
 
 Datum
-mdb_operator_is_visible(PG_FUNCTION_ARGS)
+mdb_operator_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(OPEROID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(OperatorIsVisible(oid));
+	MDB_RETURN_BOOL(OperatorIsVisible(oid));
 }
 
 Datum
-mdb_opclass_is_visible(PG_FUNCTION_ARGS)
+mdb_opclass_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(CLAOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(OpclassIsVisible(oid));
+	MDB_RETURN_BOOL(OpclassIsVisible(oid));
 }
 
 Datum
-mdb_opfamily_is_visible(PG_FUNCTION_ARGS)
+mdb_opfamily_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(OPFAMILYOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(OpfamilyIsVisible(oid));
+	MDB_RETURN_BOOL(OpfamilyIsVisible(oid));
 }
 
 Datum
-mdb_collation_is_visible(PG_FUNCTION_ARGS)
+mdb_collation_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(COLLOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(CollationIsVisible(oid));
+	MDB_RETURN_BOOL(CollationIsVisible(oid));
 }
 
 Datum
-mdb_conversion_is_visible(PG_FUNCTION_ARGS)
+mdb_conversion_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(CONVOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(ConversionIsVisible(oid));
+	MDB_RETURN_BOOL(ConversionIsVisible(oid));
 }
 
 Datum
-mdb_ts_parser_is_visible(PG_FUNCTION_ARGS)
+mdb_ts_parser_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(TSPARSEROID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(TSParserIsVisible(oid));
+	MDB_RETURN_BOOL(TSParserIsVisible(oid));
 }
 
 Datum
-mdb_ts_dict_is_visible(PG_FUNCTION_ARGS)
+mdb_ts_dict_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(TSDICTOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(TSDictionaryIsVisible(oid));
+	MDB_RETURN_BOOL(TSDictionaryIsVisible(oid));
 }
 
 Datum
-mdb_ts_template_is_visible(PG_FUNCTION_ARGS)
+mdb_ts_template_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(TSTEMPLATEOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(TSTemplateIsVisible(oid));
+	MDB_RETURN_BOOL(TSTemplateIsVisible(oid));
 }
 
 Datum
-mdb_ts_config_is_visible(PG_FUNCTION_ARGS)
+mdb_ts_config_is_visible(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists1(TSCONFIGOID, ObjectIdGetDatum(oid)))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_BOOL(TSConfigIsVisible(oid));
+	MDB_RETURN_BOOL(TSConfigIsVisible(oid));
 }
 
 Datum
-mdb_my_temp_schema(PG_FUNCTION_ARGS)
+mdb_my_temp_schema(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_OID(myTempNamespace);
+	MDB_RETURN_OID(myTempNamespace);
 }
 
 Datum
-mdb_is_other_temp_schema(PG_FUNCTION_ARGS)
+mdb_is_other_temp_schema(MDB_FUNCTION_ARGS)
 {
-	Oid			oid = PG_GETARG_OID(0);
+	Oid			oid = MDB_GETARG_OID(0);
 
-	PG_RETURN_BOOL(isOtherTempNamespace(oid));
+	MDB_RETURN_BOOL(isOtherTempNamespace(oid));
 }

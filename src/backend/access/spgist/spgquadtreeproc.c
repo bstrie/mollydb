@@ -23,16 +23,16 @@
 
 
 Datum
-smdb_quad_config(PG_FUNCTION_ARGS)
+smdb_quad_config(MDB_FUNCTION_ARGS)
 {
-	/* spgConfigIn *cfgin = (spgConfigIn *) PG_GETARG_POINTER(0); */
-	spgConfigOut *cfg = (spgConfigOut *) PG_GETARG_POINTER(1);
+	/* spgConfigIn *cfgin = (spgConfigIn *) MDB_GETARG_POINTER(0); */
+	spgConfigOut *cfg = (spgConfigOut *) MDB_GETARG_POINTER(1);
 
 	cfg->prefixType = POINTOID;
 	cfg->labelType = VOIDOID;	/* we don't need node labels */
 	cfg->canReturnData = true;
 	cfg->longValuesOK = false;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 #define SPTEST(f, x, y) \
@@ -79,10 +79,10 @@ getQuadrant(Point *centroid, Point *tst)
 
 
 Datum
-smdb_quad_choose(PG_FUNCTION_ARGS)
+smdb_quad_choose(MDB_FUNCTION_ARGS)
 {
-	spgChooseIn *in = (spgChooseIn *) PG_GETARG_POINTER(0);
-	spgChooseOut *out = (spgChooseOut *) PG_GETARG_POINTER(1);
+	spgChooseIn *in = (spgChooseIn *) MDB_GETARG_POINTER(0);
+	spgChooseOut *out = (spgChooseOut *) MDB_GETARG_POINTER(1);
 	Point	   *inPoint = DatumGetPointP(in->datum),
 			   *centroid;
 
@@ -92,7 +92,7 @@ smdb_quad_choose(PG_FUNCTION_ARGS)
 		/* nodeN will be set by core */
 		out->result.matchNode.levelAdd = 0;
 		out->result.matchNode.restDatum = PointPGetDatum(inPoint);
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 	}
 
 	Assert(in->hasPrefix);
@@ -105,7 +105,7 @@ smdb_quad_choose(PG_FUNCTION_ARGS)
 	out->result.matchNode.levelAdd = 0;
 	out->result.matchNode.restDatum = PointPGetDatum(inPoint);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 #ifdef USE_MEDIAN
@@ -133,10 +133,10 @@ y_cmp(const void *a, const void *b, void *arg)
 #endif
 
 Datum
-smdb_quad_picksplit(PG_FUNCTION_ARGS)
+smdb_quad_picksplit(MDB_FUNCTION_ARGS)
 {
-	spgPickSplitIn *in = (spgPickSplitIn *) PG_GETARG_POINTER(0);
-	spgPickSplitOut *out = (spgPickSplitOut *) PG_GETARG_POINTER(1);
+	spgPickSplitIn *in = (spgPickSplitIn *) MDB_GETARG_POINTER(0);
+	spgPickSplitOut *out = (spgPickSplitOut *) MDB_GETARG_POINTER(1);
 	int			i;
 	Point	   *centroid;
 
@@ -186,15 +186,15 @@ smdb_quad_picksplit(PG_FUNCTION_ARGS)
 		out->mapTuplesToNodes[i] = quadrant;
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
 Datum
-smdb_quad_inner_consistent(PG_FUNCTION_ARGS)
+smdb_quad_inner_consistent(MDB_FUNCTION_ARGS)
 {
-	spgInnerConsistentIn *in = (spgInnerConsistentIn *) PG_GETARG_POINTER(0);
-	spgInnerConsistentOut *out = (spgInnerConsistentOut *) PG_GETARG_POINTER(1);
+	spgInnerConsistentIn *in = (spgInnerConsistentIn *) MDB_GETARG_POINTER(0);
+	spgInnerConsistentOut *out = (spgInnerConsistentOut *) MDB_GETARG_POINTER(1);
 	Point	   *centroid;
 	int			which;
 	int			i;
@@ -209,7 +209,7 @@ smdb_quad_inner_consistent(PG_FUNCTION_ARGS)
 		out->nodeNumbers = (int *) palloc(sizeof(int) * in->nNodes);
 		for (i = 0; i < in->nNodes; i++)
 			out->nodeNumbers[i] = i;
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 	}
 
 	Assert(in->nNodes == 4);
@@ -295,15 +295,15 @@ smdb_quad_inner_consistent(PG_FUNCTION_ARGS)
 			out->nodeNumbers[out->nNodes++] = i - 1;
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
 Datum
-smdb_quad_leaf_consistent(PG_FUNCTION_ARGS)
+smdb_quad_leaf_consistent(MDB_FUNCTION_ARGS)
 {
-	spgLeafConsistentIn *in = (spgLeafConsistentIn *) PG_GETARG_POINTER(0);
-	spgLeafConsistentOut *out = (spgLeafConsistentOut *) PG_GETARG_POINTER(1);
+	spgLeafConsistentIn *in = (spgLeafConsistentIn *) MDB_GETARG_POINTER(0);
+	spgLeafConsistentOut *out = (spgLeafConsistentOut *) MDB_GETARG_POINTER(1);
 	Point	   *datum = DatumGetPointP(in->leafDatum);
 	bool		res;
 	int			i;
@@ -356,5 +356,5 @@ smdb_quad_leaf_consistent(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }

@@ -56,31 +56,31 @@ rt_box_union(BOX *n, BOX *a, BOX *b)
  * corresponding to strategy in the mdb_amop table.
  */
 Datum
-gist_box_consistent(PG_FUNCTION_ARGS)
+gist_box_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	BOX		   *query = PG_GETARG_BOX_P(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	BOX		   *query = MDB_GETARG_BOX_P(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 
 	/* All cases served by this function are exact */
 	*recheck = false;
 
 	if (DatumGetBoxP(entry->key) == NULL || query == NULL)
-		PG_RETURN_BOOL(FALSE);
+		MDB_RETURN_BOOL(FALSE);
 
 	/*
 	 * if entry is not leaf, use rtree_internal_consistent, else use
 	 * gist_box_leaf_consistent
 	 */
 	if (GIST_LEAF(entry))
-		PG_RETURN_BOOL(gist_box_leaf_consistent(DatumGetBoxP(entry->key),
+		MDB_RETURN_BOOL(gist_box_leaf_consistent(DatumGetBoxP(entry->key),
 												query,
 												strategy));
 	else
-		PG_RETURN_BOOL(rtree_internal_consistent(DatumGetBoxP(entry->key),
+		MDB_RETURN_BOOL(rtree_internal_consistent(DatumGetBoxP(entry->key),
 												 query,
 												 strategy));
 }
@@ -104,10 +104,10 @@ adjustBox(BOX *b, BOX *addon)
  * returns the minimal bounding box that encloses all the entries in entryvec
  */
 Datum
-gist_box_union(PG_FUNCTION_ARGS)
+gist_box_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	int		   *sizep = (int *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	int		   *sizep = (int *) MDB_GETARG_POINTER(1);
 	int			numranges,
 				i;
 	BOX		   *cur,
@@ -125,7 +125,7 @@ gist_box_union(PG_FUNCTION_ARGS)
 	}
 	*sizep = sizeof(BOX);
 
-	PG_RETURN_POINTER(pageunion);
+	MDB_RETURN_POINTER(pageunion);
 }
 
 /*
@@ -134,9 +134,9 @@ gist_box_union(PG_FUNCTION_ARGS)
  * do not do anything.
  */
 Datum
-gist_box_compress(PG_FUNCTION_ARGS)
+gist_box_compress(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(PG_GETARG_POINTER(0));
+	MDB_RETURN_POINTER(MDB_GETARG_POINTER(0));
 }
 
 /*
@@ -146,9 +146,9 @@ gist_box_compress(PG_FUNCTION_ARGS)
  * do not do anything --- we just use the stored box as is.
  */
 Datum
-gist_box_decompress(PG_FUNCTION_ARGS)
+gist_box_decompress(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(PG_GETARG_POINTER(0));
+	MDB_RETURN_POINTER(MDB_GETARG_POINTER(0));
 }
 
 /*
@@ -156,9 +156,9 @@ gist_box_decompress(PG_FUNCTION_ARGS)
  * do not do anything --- we just return the stored box as is.
  */
 Datum
-gist_box_fetch(PG_FUNCTION_ARGS)
+gist_box_fetch(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(PG_GETARG_POINTER(0));
+	MDB_RETURN_POINTER(MDB_GETARG_POINTER(0));
 }
 
 /*
@@ -167,18 +167,18 @@ gist_box_fetch(PG_FUNCTION_ARGS)
  * As in the R-tree paper, we use change in area as our penalty metric
  */
 Datum
-gist_box_penalty(PG_FUNCTION_ARGS)
+gist_box_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *origentry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	GISTENTRY  *newentry = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *origentry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	GISTENTRY  *newentry = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 	BOX		   *origbox = DatumGetBoxP(origentry->key);
 	BOX		   *newbox = DatumGetBoxP(newentry->key);
 	BOX			unionbox;
 
 	rt_box_union(&unionbox, origbox, newbox);
 	*result = (float) (size_box(&unionbox) - size_box(origbox));
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
@@ -496,10 +496,10 @@ common_entry_cmp(const void *i1, const void *i2)
  * --------------------------------------------------------------------------
  */
 Datum
-gist_box_picksplit(PG_FUNCTION_ARGS)
+gist_box_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber i,
 				maxoff;
 	ConsiderSplitContext context;
@@ -680,7 +680,7 @@ gist_box_picksplit(PG_FUNCTION_ARGS)
 	if (context.first)
 	{
 		fallbackSplit(entryvec, v);
-		PG_RETURN_POINTER(v);
+		MDB_RETURN_POINTER(v);
 	}
 
 	/*
@@ -835,7 +835,7 @@ gist_box_picksplit(PG_FUNCTION_ARGS)
 
 	v->spl_ldatum = PointerGetDatum(leftBox);
 	v->spl_rdatum = PointerGetDatum(rightBox);
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 /*
@@ -849,18 +849,18 @@ gist_box_picksplit(PG_FUNCTION_ARGS)
  * equivalent to box_same().
  */
 Datum
-gist_box_same(PG_FUNCTION_ARGS)
+gist_box_same(MDB_FUNCTION_ARGS)
 {
-	BOX		   *b1 = PG_GETARG_BOX_P(0);
-	BOX		   *b2 = PG_GETARG_BOX_P(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	BOX		   *b1 = MDB_GETARG_BOX_P(0);
+	BOX		   *b2 = MDB_GETARG_BOX_P(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	if (b1 && b2)
 		*result = (b1->low.x == b2->low.x && b1->low.y == b2->low.y &&
 				   b1->high.x == b2->high.x && b1->high.y == b2->high.y);
 	else
 		*result = (b1 == NULL && b2 == NULL);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
@@ -1042,9 +1042,9 @@ rtree_internal_consistent(BOX *key, BOX *query, StrategyNumber strategy)
  * GiST compress for polygons: represent a polygon by its bounding box
  */
 Datum
-gist_poly_compress(PG_FUNCTION_ARGS)
+gist_poly_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval;
 
 	if (entry->leafkey)
@@ -1062,28 +1062,28 @@ gist_poly_compress(PG_FUNCTION_ARGS)
 	}
 	else
 		retval = entry;
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 /*
  * The GiST Consistent method for polygons
  */
 Datum
-gist_poly_consistent(PG_FUNCTION_ARGS)
+gist_poly_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	POLYGON    *query = PG_GETARG_POLYGON_P(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	POLYGON    *query = MDB_GETARG_POLYGON_P(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	bool		result;
 
 	/* All cases served by this function are inexact */
 	*recheck = true;
 
 	if (DatumGetBoxP(entry->key) == NULL || query == NULL)
-		PG_RETURN_BOOL(FALSE);
+		MDB_RETURN_BOOL(FALSE);
 
 	/*
 	 * Since the operators require recheck anyway, we can just use
@@ -1094,9 +1094,9 @@ gist_poly_consistent(PG_FUNCTION_ARGS)
 									   &(query->boundbox), strategy);
 
 	/* Avoid memory leak if supplied poly is toasted */
-	PG_FREE_IF_COPY(query, 1);
+	MDB_FREE_IF_COPY(query, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /**************************************************
@@ -1107,9 +1107,9 @@ gist_poly_consistent(PG_FUNCTION_ARGS)
  * GiST compress for circles: represent a circle by its bounding box
  */
 Datum
-gist_circle_compress(PG_FUNCTION_ARGS)
+gist_circle_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval;
 
 	if (entry->leafkey)
@@ -1130,21 +1130,21 @@ gist_circle_compress(PG_FUNCTION_ARGS)
 	}
 	else
 		retval = entry;
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 /*
  * The GiST Consistent method for circles
  */
 Datum
-gist_circle_consistent(PG_FUNCTION_ARGS)
+gist_circle_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	CIRCLE	   *query = PG_GETARG_CIRCLE_P(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	CIRCLE	   *query = MDB_GETARG_CIRCLE_P(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	BOX			bbox;
 	bool		result;
 
@@ -1152,7 +1152,7 @@ gist_circle_consistent(PG_FUNCTION_ARGS)
 	*recheck = true;
 
 	if (DatumGetBoxP(entry->key) == NULL || query == NULL)
-		PG_RETURN_BOOL(FALSE);
+		MDB_RETURN_BOOL(FALSE);
 
 	/*
 	 * Since the operators require recheck anyway, we can just use
@@ -1167,7 +1167,7 @@ gist_circle_consistent(PG_FUNCTION_ARGS)
 	result = rtree_internal_consistent(DatumGetBoxP(entry->key),
 									   &bbox, strategy);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /**************************************************
@@ -1175,9 +1175,9 @@ gist_circle_consistent(PG_FUNCTION_ARGS)
  **************************************************/
 
 Datum
-gist_point_compress(PG_FUNCTION_ARGS)
+gist_point_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
 	if (entry->leafkey)			/* Point, actually */
 	{
@@ -1190,10 +1190,10 @@ gist_point_compress(PG_FUNCTION_ARGS)
 		gistentryinit(*retval, BoxPGetDatum(box),
 					  entry->rel, entry->page, entry->offset, FALSE);
 
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
 
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 /*
@@ -1203,9 +1203,9 @@ gist_point_compress(PG_FUNCTION_ARGS)
  * gistentry.
  */
 Datum
-gist_point_fetch(PG_FUNCTION_ARGS)
+gist_point_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	BOX		   *in = DatumGetBoxP(entry->key);
 	Point	   *r;
 	GISTENTRY  *retval;
@@ -1219,7 +1219,7 @@ gist_point_fetch(PG_FUNCTION_ARGS)
 				  entry->rel, entry->page,
 				  entry->offset, FALSE);
 
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 
@@ -1344,11 +1344,11 @@ gist_point_consistent_internal(StrategyNumber strategy,
 #define CircleStrategyNumberGroup	3
 
 Datum
-gist_point_consistent(PG_FUNCTION_ARGS)
+gist_point_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	bool		result;
 	StrategyNumber strategyGroup = strategy / GeoStrategyNumberOffset;
 
@@ -1358,7 +1358,7 @@ gist_point_consistent(PG_FUNCTION_ARGS)
 			result = gist_point_consistent_internal(strategy % GeoStrategyNumberOffset,
 													GIST_LEAF(entry),
 													DatumGetBoxP(entry->key),
-													PG_GETARG_POINT_P(1));
+													MDB_GETARG_POINT_P(1));
 			*recheck = false;
 			break;
 		case BoxStrategyNumberGroup:
@@ -1378,7 +1378,7 @@ gist_point_consistent(PG_FUNCTION_ARGS)
 				BOX		   *query,
 						   *key;
 
-				query = PG_GETARG_BOX_P(1);
+				query = MDB_GETARG_BOX_P(1);
 				key = DatumGetBoxP(entry->key);
 
 				result = (key->high.x >= query->low.x &&
@@ -1390,7 +1390,7 @@ gist_point_consistent(PG_FUNCTION_ARGS)
 			break;
 		case PolygonStrategyNumberGroup:
 			{
-				POLYGON    *query = PG_GETARG_POLYGON_P(1);
+				POLYGON    *query = MDB_GETARG_POLYGON_P(1);
 
 				result = DatumGetBool(DirectFunctionCall5(
 														gist_poly_consistent,
@@ -1419,7 +1419,7 @@ gist_point_consistent(PG_FUNCTION_ARGS)
 			break;
 		case CircleStrategyNumberGroup:
 			{
-				CIRCLE	   *query = PG_GETARG_CIRCLE_P(1);
+				CIRCLE	   *query = MDB_GETARG_CIRCLE_P(1);
 
 				result = DatumGetBool(DirectFunctionCall5(
 													  gist_circle_consistent,
@@ -1452,14 +1452,14 @@ gist_point_consistent(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-gist_point_distance(PG_FUNCTION_ARGS)
+gist_point_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 	double		distance;
 	StrategyNumber strategyGroup = strategy / GeoStrategyNumberOffset;
 
@@ -1468,7 +1468,7 @@ gist_point_distance(PG_FUNCTION_ARGS)
 		case PointStrategyNumberGroup:
 			distance = computeDistance(GIST_LEAF(entry),
 									   DatumGetBoxP(entry->key),
-									   PG_GETARG_POINT_P(1));
+									   MDB_GETARG_POINT_P(1));
 			break;
 		default:
 			elog(ERROR, "unrecognized strategy number: %d", strategy);
@@ -1476,7 +1476,7 @@ gist_point_distance(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_FLOAT8(distance);
+	MDB_RETURN_FLOAT8(distance);
 }
 
 /*
@@ -1515,33 +1515,33 @@ gist_bbox_distance(GISTENTRY *entry, Datum query,
 }
 
 Datum
-gist_circle_distance(PG_FUNCTION_ARGS)
+gist_circle_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	Datum		query = PG_GETARG_DATUM(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	Datum		query = MDB_GETARG_DATUM(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	double		distance;
 
 	distance = gist_bbox_distance(entry, query, strategy, recheck);
 
-	PG_RETURN_FLOAT8(distance);
+	MDB_RETURN_FLOAT8(distance);
 }
 
 Datum
-gist_poly_distance(PG_FUNCTION_ARGS)
+gist_poly_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	Datum		query = PG_GETARG_DATUM(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	Datum		query = MDB_GETARG_DATUM(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	double		distance;
 
 	distance = gist_bbox_distance(entry, query, strategy, recheck);
 
-	PG_RETURN_FLOAT8(distance);
+	MDB_RETURN_FLOAT8(distance);
 }

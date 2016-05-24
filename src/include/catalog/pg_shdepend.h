@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_SHDEPEND_H
-#define PG_SHDEPEND_H
+#ifndef MDB_SHDEPEND_H
+#define MDB_SHDEPEND_H
 
 #include "catalog/genbki.h"
 
@@ -87,4 +87,4 @@ typedef FormData_mdb_shdepend *Form_mdb_shdepend;
  * are explicitly stored in mdb_shdepend.
  */
 
-#endif   /* PG_SHDEPEND_H */
+#endif   /* MDB_SHDEPEND_H */

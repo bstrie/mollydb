@@ -48,12 +48,12 @@ _check_database_version(ArchiveHandle *AH)
 	if (!AH->archiveRemoteVersion)
 		AH->archiveRemoteVersion = AH->public.remoteVersionStr;
 
-	if (remoteversion != PG_VERSION_NUM
+	if (remoteversion != MDB_VERSION_NUM
 		&& (remoteversion < AH->public.minRemoteVersion ||
 			remoteversion > AH->public.maxRemoteVersion))
 	{
 		write_msg(NULL, "server version: %s; %s version: %s\n",
-				  remoteversion_str, progname, PG_VERSION);
+				  remoteversion_str, progname, MDB_VERSION);
 		exit_horribly(NULL, "aborting because of server version mismatch\n");
 	}
 }

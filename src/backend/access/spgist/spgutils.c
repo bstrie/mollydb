@@ -31,7 +31,7 @@
  * and callbacks.
  */
 Datum
-spghandler(PG_FUNCTION_ARGS)
+spghandler(MDB_FUNCTION_ARGS)
 {
 	IndexAmRoutine *amroutine = makeNode(IndexAmRoutine);
 
@@ -67,7 +67,7 @@ spghandler(PG_FUNCTION_ARGS)
 	amroutine->ammarkpos = NULL;
 	amroutine->amrestrpos = NULL;
 
-	PG_RETURN_POINTER(amroutine);
+	MDB_RETURN_POINTER(amroutine);
 }
 
 /* Fill in a SpGistTypeDesc struct with info about the specified data type */

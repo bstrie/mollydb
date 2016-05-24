@@ -124,7 +124,7 @@ read_binary_file(const char *filename, int64 seek_offset, int64 bytes_to_read,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("requested length too large")));
 
-	if ((file = AllocateFile(filename, PG_BINARY_R)) == NULL)
+	if ((file = AllocateFile(filename, MDB_BINARY_R)) == NULL)
 	{
 		if (missing_ok && errno == ENOENT)
 			return NULL;
@@ -185,9 +185,9 @@ read_text_file(const char *filename, int64 seek_offset, int64 bytes_to_read,
  * Read a section of a file, returning it as text
  */
 Datum
-mdb_read_file(PG_FUNCTION_ARGS)
+mdb_read_file(MDB_FUNCTION_ARGS)
 {
-	text	   *filename_t = PG_GETARG_TEXT_P(0);
+	text	   *filename_t = MDB_GETARG_TEXT_P(0);
 	int64		seek_offset = 0;
 	int64		bytes_to_read = -1;
 	bool		missing_ok = false;
@@ -200,35 +200,35 @@ mdb_read_file(PG_FUNCTION_ARGS)
 				 (errmsg("must be superuser to read files"))));
 
 	/* handle optional arguments */
-	if (PG_NARGS() >= 3)
+	if (MDB_NARGS() >= 3)
 	{
-		seek_offset = PG_GETARG_INT64(1);
-		bytes_to_read = PG_GETARG_INT64(2);
+		seek_offset = MDB_GETARG_INT64(1);
+		bytes_to_read = MDB_GETARG_INT64(2);
 
 		if (bytes_to_read < 0)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 					 errmsg("requested length cannot be negative")));
 	}
-	if (PG_NARGS() >= 4)
-		missing_ok = PG_GETARG_BOOL(3);
+	if (MDB_NARGS() >= 4)
+		missing_ok = MDB_GETARG_BOOL(3);
 
 	filename = convert_and_check_filename(filename_t);
 
 	result = read_text_file(filename, seek_offset, bytes_to_read, missing_ok);
 	if (result)
-		PG_RETURN_TEXT_P(result);
+		MDB_RETURN_TEXT_P(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
  * Read a section of a file, returning it as bytea
  */
 Datum
-mdb_read_binary_file(PG_FUNCTION_ARGS)
+mdb_read_binary_file(MDB_FUNCTION_ARGS)
 {
-	text	   *filename_t = PG_GETARG_TEXT_P(0);
+	text	   *filename_t = MDB_GETARG_TEXT_P(0);
 	int64		seek_offset = 0;
 	int64		bytes_to_read = -1;
 	bool		missing_ok = false;
@@ -241,27 +241,27 @@ mdb_read_binary_file(PG_FUNCTION_ARGS)
 				 (errmsg("must be superuser to read files"))));
 
 	/* handle optional arguments */
-	if (PG_NARGS() >= 3)
+	if (MDB_NARGS() >= 3)
 	{
-		seek_offset = PG_GETARG_INT64(1);
-		bytes_to_read = PG_GETARG_INT64(2);
+		seek_offset = MDB_GETARG_INT64(1);
+		bytes_to_read = MDB_GETARG_INT64(2);
 
 		if (bytes_to_read < 0)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 					 errmsg("requested length cannot be negative")));
 	}
-	if (PG_NARGS() >= 4)
-		missing_ok = PG_GETARG_BOOL(3);
+	if (MDB_NARGS() >= 4)
+		missing_ok = MDB_GETARG_BOOL(3);
 
 	filename = convert_and_check_filename(filename_t);
 
 	result = read_binary_file(filename, seek_offset,
 							  bytes_to_read, missing_ok);
 	if (result)
-		PG_RETURN_BYTEA_P(result);
+		MDB_RETURN_BYTEA_P(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 
@@ -274,25 +274,25 @@ mdb_read_binary_file(PG_FUNCTION_ARGS)
  * the same number of arguments.
  */
 Datum
-mdb_read_file_off_len(PG_FUNCTION_ARGS)
+mdb_read_file_off_len(MDB_FUNCTION_ARGS)
 {
 	return mdb_read_file(fcinfo);
 }
 
 Datum
-mdb_read_file_all(PG_FUNCTION_ARGS)
+mdb_read_file_all(MDB_FUNCTION_ARGS)
 {
 	return mdb_read_file(fcinfo);
 }
 
 Datum
-mdb_read_binary_file_off_len(PG_FUNCTION_ARGS)
+mdb_read_binary_file_off_len(MDB_FUNCTION_ARGS)
 {
 	return mdb_read_binary_file(fcinfo);
 }
 
 Datum
-mdb_read_binary_file_all(PG_FUNCTION_ARGS)
+mdb_read_binary_file_all(MDB_FUNCTION_ARGS)
 {
 	return mdb_read_binary_file(fcinfo);
 }
@@ -301,9 +301,9 @@ mdb_read_binary_file_all(PG_FUNCTION_ARGS)
  * stat a file
  */
 Datum
-mdb_stat_file(PG_FUNCTION_ARGS)
+mdb_stat_file(MDB_FUNCTION_ARGS)
 {
-	text	   *filename_t = PG_GETARG_TEXT_P(0);
+	text	   *filename_t = MDB_GETARG_TEXT_P(0);
 	char	   *filename;
 	struct stat fst;
 	Datum		values[6];
@@ -318,15 +318,15 @@ mdb_stat_file(PG_FUNCTION_ARGS)
 				 (errmsg("must be superuser to get file information"))));
 
 	/* check the optional argument */
-	if (PG_NARGS() == 2)
-		missing_ok = PG_GETARG_BOOL(1);
+	if (MDB_NARGS() == 2)
+		missing_ok = MDB_GETARG_BOOL(1);
 
 	filename = convert_and_check_filename(filename_t);
 
 	if (stat(filename, &fst) < 0)
 	{
 		if (missing_ok && errno == ENOENT)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		else
 			ereport(ERROR,
 					(errcode_for_file_access(),
@@ -371,7 +371,7 @@ mdb_stat_file(PG_FUNCTION_ARGS)
 
 	pfree(filename);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(tuple));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(tuple));
 }
 
 /*
@@ -382,7 +382,7 @@ mdb_stat_file(PG_FUNCTION_ARGS)
  * function take the same number of arguments
  */
 Datum
-mdb_stat_file_1arg(PG_FUNCTION_ARGS)
+mdb_stat_file_1arg(MDB_FUNCTION_ARGS)
 {
 	return mdb_stat_file(fcinfo);
 }
@@ -391,7 +391,7 @@ mdb_stat_file_1arg(PG_FUNCTION_ARGS)
  * List a directory (returns the filenames only)
  */
 Datum
-mdb_ls_dir(PG_FUNCTION_ARGS)
+mdb_ls_dir(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	struct dirent *de;
@@ -409,19 +409,19 @@ mdb_ls_dir(PG_FUNCTION_ARGS)
 		bool		include_dot_dirs = false;
 
 		/* check the optional arguments */
-		if (PG_NARGS() == 3)
+		if (MDB_NARGS() == 3)
 		{
-			if (!PG_ARGISNULL(1))
-				missing_ok = PG_GETARG_BOOL(1);
-			if (!PG_ARGISNULL(2))
-				include_dot_dirs = PG_GETARG_BOOL(2);
+			if (!MDB_ARGISNULL(1))
+				missing_ok = MDB_GETARG_BOOL(1);
+			if (!MDB_ARGISNULL(2))
+				include_dot_dirs = MDB_GETARG_BOOL(2);
 		}
 
 		funcctx = SRF_FIRSTCALL_INIT();
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		fctx = palloc(sizeof(directory_fctx));
-		fctx->location = convert_and_check_filename(PG_GETARG_TEXT_P(0));
+		fctx->location = convert_and_check_filename(MDB_GETARG_TEXT_P(0));
 
 		fctx->include_dot_dirs = include_dot_dirs;
 		fctx->dirdesc = AllocateDir(fctx->location);
@@ -469,7 +469,7 @@ mdb_ls_dir(PG_FUNCTION_ARGS)
  * function take the same number of arguments.
  */
 Datum
-mdb_ls_dir_1arg(PG_FUNCTION_ARGS)
+mdb_ls_dir_1arg(MDB_FUNCTION_ARGS)
 {
 	return mdb_ls_dir(fcinfo);
 }

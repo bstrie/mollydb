@@ -118,7 +118,7 @@ PLy_elog(int elevel, const char *fmt,...)
 			primary = xmsg;
 	}
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		ereport(elevel,
 				(errcode(sqlerrcode ? sqlerrcode : ERRCODE_EXTERNAL_ROUTINE_EXCEPTION),
@@ -128,18 +128,18 @@ PLy_elog(int elevel, const char *fmt,...)
 				 (hint) ? errhint("%s", hint) : 0,
 				 (query) ? internalerrquery(query) : 0,
 				 (position) ? internalerrposition(position) : 0,
-				 (schema_name) ? err_generic_string(PG_DIAG_SCHEMA_NAME,
+				 (schema_name) ? err_generic_string(MDB_DIAG_SCHEMA_NAME,
 													schema_name) : 0,
-				 (table_name) ? err_generic_string(PG_DIAG_TABLE_NAME,
+				 (table_name) ? err_generic_string(MDB_DIAG_TABLE_NAME,
 												   table_name) : 0,
-				 (column_name) ? err_generic_string(PG_DIAG_COLUMN_NAME,
+				 (column_name) ? err_generic_string(MDB_DIAG_COLUMN_NAME,
 													column_name) : 0,
-				 (datatype_name) ? err_generic_string(PG_DIAG_DATATYPE_NAME,
+				 (datatype_name) ? err_generic_string(MDB_DIAG_DATATYPE_NAME,
 													  datatype_name) : 0,
-				 (constraint_name) ? err_generic_string(PG_DIAG_CONSTRAINT_NAME,
+				 (constraint_name) ? err_generic_string(MDB_DIAG_CONSTRAINT_NAME,
 														constraint_name) : 0));
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (fmt)
 			pfree(emsg.data);
@@ -150,9 +150,9 @@ PLy_elog(int elevel, const char *fmt,...)
 		Py_XDECREF(exc);
 		Py_XDECREF(val);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (fmt)
 		pfree(emsg.data);
@@ -253,7 +253,7 @@ PLy_traceback(PyObject *e, PyObject *v, PyObject *tb,
 		PyObject   *volatile lineno = NULL;
 		PyObject   *volatile filename = NULL;
 
-		PG_TRY();
+		MDB_TRY();
 		{
 			/*
 			 * Ancient versions of Python (circa 2.3) contain a bug whereby
@@ -281,16 +281,16 @@ PLy_traceback(PyObject *e, PyObject *v, PyObject *tb,
 			if (filename == NULL)
 				elog(ERROR, "could not get file name from Python code object");
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			Py_XDECREF(frame);
 			Py_XDECREF(code);
 			Py_XDECREF(name);
 			Py_XDECREF(lineno);
 			Py_XDECREF(filename);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 
 		/* The first frame always points at <module>, skip it. */
 		if (*tb_depth > 0)

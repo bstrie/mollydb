@@ -7,8 +7,8 @@
  * src/include/replication/message.h
  *-------------------------------------------------------------------------
  */
-#ifndef PG_LOGICAL_MESSAGE_H
-#define PG_LOGICAL_MESSAGE_H
+#ifndef MDB_LOGICAL_MESSAGE_H
+#define MDB_LOGICAL_MESSAGE_H
 
 #include "access/xlog.h"
 #include "access/xlogdefs.h"
@@ -39,4 +39,4 @@ void		logicalmsg_redo(XLogReaderState *record);
 void		logicalmsg_desc(StringInfo buf, XLogReaderState *record);
 const char *logicalmsg_identify(uint8 info);
 
-#endif   /* PG_LOGICAL_MESSAGE_H */
+#endif   /* MDB_LOGICAL_MESSAGE_H */

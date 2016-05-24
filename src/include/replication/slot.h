@@ -182,9 +182,9 @@ extern void CheckPointReplicationSlots(void);
 extern void CheckSlotRequirements(void);
 
 /* SQL callable functions */
-extern Datum mdb_create_physical_replication_slot(PG_FUNCTION_ARGS);
-extern Datum mdb_create_logical_replication_slot(PG_FUNCTION_ARGS);
-extern Datum mdb_drop_replication_slot(PG_FUNCTION_ARGS);
-extern Datum mdb_get_replication_slots(PG_FUNCTION_ARGS);
+extern Datum mdb_create_physical_replication_slot(MDB_FUNCTION_ARGS);
+extern Datum mdb_create_logical_replication_slot(MDB_FUNCTION_ARGS);
+extern Datum mdb_drop_replication_slot(MDB_FUNCTION_ARGS);
+extern Datum mdb_get_replication_slots(MDB_FUNCTION_ARGS);
 
 #endif   /* SLOT_H */

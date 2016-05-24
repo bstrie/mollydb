@@ -222,13 +222,13 @@ BEGIN
                             _constraint => 'constraint text');
   EXCEPTION WHEN SQLSTATE 'XX555' THEN
     GET STACKED DIAGNOSTICS __message = MESSAGE_TEXT,
-                            __detail = PG_EXCEPTION_DETAIL,
-                            __hint = PG_EXCEPTION_HINT,
+                            __detail = MDB_EXCEPTION_DETAIL,
+                            __hint = MDB_EXCEPTION_HINT,
                             __sqlstate = RETURNED_SQLSTATE,
                             __schema_name = SCHEMA_NAME,
                             __table_name = TABLE_NAME,
                             __column_name = COLUMN_NAME,
-                            __datatype = PG_DATATYPE_NAME,
+                            __datatype = MDB_DATATYPE_NAME,
                             __constraint = CONSTRAINT_NAME;
     RAISE NOTICE 'handled exception'
        USING DETAIL = format('message:(%s), detail:(%s), hint: (%s), sqlstate: (%s), '

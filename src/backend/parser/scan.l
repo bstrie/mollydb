@@ -634,7 +634,7 @@ other			.
 					{
 						if (yyextra->backslash_quote == BACKSLASH_QUOTE_OFF ||
 							(yyextra->backslash_quote == BACKSLASH_QUOTE_SAFE_ENCODING &&
-							 PG_ENCODING_IS_CLIENT_ONLY(mdb_get_client_encoding())))
+							 MDB_ENCODING_IS_CLIENT_ONLY(mdb_get_client_encoding())))
 							ereport(ERROR,
 									(errcode(ERRCODE_NONSTANDARD_USE_OF_ESCAPE_CHARACTER),
 									 errmsg("unsafe use of \\' in a string literal"),
@@ -1243,7 +1243,7 @@ hexval(unsigned char c)
 static void
 check_unicode_value(mdb_wchar c, char *loc, core_yyscan_t yyscanner)
 {
-	if (GetDatabaseEncoding() == PG_UTF8)
+	if (GetDatabaseEncoding() == MDB_UTF8)
 		return;
 
 	if (c > 0x7F)
@@ -1280,7 +1280,7 @@ addunicode(mdb_wchar c, core_yyscan_t yyscanner)
 		yyerror("invalid Unicode escape value");
 	if (c > 0x7F)
 	{
-		if (GetDatabaseEncoding() != PG_UTF8)
+		if (GetDatabaseEncoding() != MDB_UTF8)
 			yyerror("Unicode escape values cannot be used for code point values above 007F when the server encoding is not UTF8");
 		yyextra->saw_non_ascii = true;
 	}

@@ -15,10 +15,10 @@
 #include "fmgr.h"
 #include "mb/mdb_wchar.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(iso8859_1_to_utf8);
-PG_FUNCTION_INFO_V1(utf8_to_iso8859_1);
+MDB_FUNCTION_INFO_V1(iso8859_1_to_utf8);
+MDB_FUNCTION_INFO_V1(utf8_to_iso8859_1);
 
 /* ----------
  * conv_proc(
@@ -32,20 +32,20 @@ PG_FUNCTION_INFO_V1(utf8_to_iso8859_1);
  */
 
 Datum
-iso8859_1_to_utf8(PG_FUNCTION_ARGS)
+iso8859_1_to_utf8(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 	unsigned short c;
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_LATIN1, PG_UTF8);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_LATIN1, MDB_UTF8);
 
 	while (len > 0)
 	{
 		c = *src;
 		if (c == 0)
-			report_invalid_encoding(PG_LATIN1, (const char *) src, len);
+			report_invalid_encoding(MDB_LATIN1, (const char *) src, len);
 		if (!IS_HIGHBIT_SET(c))
 			*dest++ = c;
 		else
@@ -58,25 +58,25 @@ iso8859_1_to_utf8(PG_FUNCTION_ARGS)
 	}
 	*dest = '\0';
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-utf8_to_iso8859_1(PG_FUNCTION_ARGS)
+utf8_to_iso8859_1(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 	unsigned short c,
 				c1;
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_UTF8, PG_LATIN1);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_UTF8, MDB_LATIN1);
 
 	while (len > 0)
 	{
 		c = *src;
 		if (c == 0)
-			report_invalid_encoding(PG_UTF8, (const char *) src, len);
+			report_invalid_encoding(MDB_UTF8, (const char *) src, len);
 		/* fast path for ASCII-subset characters */
 		if (!IS_HIGHBIT_SET(c))
 		{
@@ -89,9 +89,9 @@ utf8_to_iso8859_1(PG_FUNCTION_ARGS)
 			int			l = mdb_utf_mblen(src);
 
 			if (l > len || !mdb_utf8_islegal(src, l))
-				report_invalid_encoding(PG_UTF8, (const char *) src, len);
+				report_invalid_encoding(MDB_UTF8, (const char *) src, len);
 			if (l != 2)
-				report_untranslatable_char(PG_UTF8, PG_LATIN1,
+				report_untranslatable_char(MDB_UTF8, MDB_LATIN1,
 										   (const char *) src, len);
 			c1 = src[1] & 0x3f;
 			c = ((c & 0x1f) << 6) | c1;
@@ -102,11 +102,11 @@ utf8_to_iso8859_1(PG_FUNCTION_ARGS)
 				len -= 2;
 			}
 			else
-				report_untranslatable_char(PG_UTF8, PG_LATIN1,
+				report_untranslatable_char(MDB_UTF8, MDB_LATIN1,
 										   (const char *) src, len);
 		}
 	}
 	*dest = '\0';
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

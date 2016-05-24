@@ -57,7 +57,7 @@ static bool addin_request_allowed = true;
  *		Request that extra shmem space be allocated for use by
  *		a loadable module.
  *
- * This is only useful if called from the _PG_init hook of a library that
+ * This is only useful if called from the _MDB_init hook of a library that
  * is loaded into the postmaster via shared_preload_libraries.  Once
  * shared memory has been allocated, calls will be ignored.  (We could
  * raise an error, but it seems better to make it a no-op, so that

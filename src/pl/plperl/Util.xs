@@ -39,13 +39,13 @@ do_util_elog(int level, SV *msg)
 	MemoryContext oldcontext = CurrentMemoryContext;
 	char	   * volatile cmsg = NULL;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		cmsg = sv2cstr(msg);
 		elog(level, "%s", cmsg);
 		pfree(cmsg);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *edata;
 
@@ -60,7 +60,7 @@ do_util_elog(int level, SV *msg)
 		/* Punt the error to Perl */
 		croak_cstr(edata->message);
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 static text *

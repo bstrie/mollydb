@@ -86,7 +86,7 @@
  *
  * For both oprrest and oprjoin functions, the operator's input collation OID
  * (if any) is passed using the standard fmgr mechanism, so that the estimator
- * function can fetch it with PG_GET_COLLATION().  Note, however, that all
+ * function can fetch it with MDB_GET_COLLATION().  Note, however, that all
  * statistics in mdb_statistic are currently built using the database's default
  * collation.  Thus, in most cases where we are looking at statistics, we
  * should ignore the actual operator collation and use DEFAULT_COLLATION_OID.
@@ -216,12 +216,12 @@ static List *add_predicate_to_quals(IndexOptInfo *index, List *indexQuals);
  * keep in mind that the left and right datatypes may differ.
  */
 Datum
-eqsel(PG_FUNCTION_ARGS)
+eqsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
 	VariableStatData vardata;
 	Node	   *other;
 	bool		varonleft;
@@ -233,7 +233,7 @@ eqsel(PG_FUNCTION_ARGS)
 	 */
 	if (!get_restriction_variable(root, args, varRelid,
 								  &vardata, &other, &varonleft))
-		PG_RETURN_FLOAT8(DEFAULT_EQ_SEL);
+		MDB_RETURN_FLOAT8(DEFAULT_EQ_SEL);
 
 	/*
 	 * We can do a lot better if the something is a constant.  (Note: the
@@ -251,7 +251,7 @@ eqsel(PG_FUNCTION_ARGS)
 
 	ReleaseVariableStats(vardata);
 
-	PG_RETURN_FLOAT8((float8) selec);
+	MDB_RETURN_FLOAT8((float8) selec);
 }
 
 /*
@@ -483,12 +483,12 @@ var_eq_non_const(VariableStatData *vardata, Oid operator,
  * for eqsel().
  */
 Datum
-neqsel(PG_FUNCTION_ARGS)
+neqsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
 	Oid			eqop;
 	float8		result;
 
@@ -511,7 +511,7 @@ neqsel(PG_FUNCTION_ARGS)
 		result = DEFAULT_EQ_SEL;
 	}
 	result = 1.0 - result;
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
@@ -959,12 +959,12 @@ ineq_histogram_selectivity(PlannerInfo *root,
  *		scalarltsel		- Selectivity of "<" (also "<=") for scalars.
  */
 Datum
-scalarltsel(PG_FUNCTION_ARGS)
+scalarltsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
 	VariableStatData vardata;
 	Node	   *other;
 	bool		varonleft;
@@ -979,7 +979,7 @@ scalarltsel(PG_FUNCTION_ARGS)
 	 */
 	if (!get_restriction_variable(root, args, varRelid,
 								  &vardata, &other, &varonleft))
-		PG_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
+		MDB_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
 
 	/*
 	 * Can't do anything useful if the something is not a constant, either.
@@ -987,7 +987,7 @@ scalarltsel(PG_FUNCTION_ARGS)
 	if (!IsA(other, Const))
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
+		MDB_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
 	}
 
 	/*
@@ -997,7 +997,7 @@ scalarltsel(PG_FUNCTION_ARGS)
 	if (((Const *) other)->constisnull)
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 	}
 	constval = ((Const *) other)->constvalue;
 	consttype = ((Const *) other)->consttype;
@@ -1018,7 +1018,7 @@ scalarltsel(PG_FUNCTION_ARGS)
 		{
 			/* Use default selectivity (should we raise an error instead?) */
 			ReleaseVariableStats(vardata);
-			PG_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
+			MDB_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
 		}
 		isgt = true;
 	}
@@ -1027,19 +1027,19 @@ scalarltsel(PG_FUNCTION_ARGS)
 
 	ReleaseVariableStats(vardata);
 
-	PG_RETURN_FLOAT8((float8) selec);
+	MDB_RETURN_FLOAT8((float8) selec);
 }
 
 /*
  *		scalargtsel		- Selectivity of ">" (also ">=") for integers.
  */
 Datum
-scalargtsel(PG_FUNCTION_ARGS)
+scalargtsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
 	VariableStatData vardata;
 	Node	   *other;
 	bool		varonleft;
@@ -1054,7 +1054,7 @@ scalargtsel(PG_FUNCTION_ARGS)
 	 */
 	if (!get_restriction_variable(root, args, varRelid,
 								  &vardata, &other, &varonleft))
-		PG_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
+		MDB_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
 
 	/*
 	 * Can't do anything useful if the something is not a constant, either.
@@ -1062,7 +1062,7 @@ scalargtsel(PG_FUNCTION_ARGS)
 	if (!IsA(other, Const))
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
+		MDB_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
 	}
 
 	/*
@@ -1072,7 +1072,7 @@ scalargtsel(PG_FUNCTION_ARGS)
 	if (((Const *) other)->constisnull)
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 	}
 	constval = ((Const *) other)->constvalue;
 	consttype = ((Const *) other)->consttype;
@@ -1093,7 +1093,7 @@ scalargtsel(PG_FUNCTION_ARGS)
 		{
 			/* Use default selectivity (should we raise an error instead?) */
 			ReleaseVariableStats(vardata);
-			PG_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
+			MDB_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
 		}
 		isgt = false;
 	}
@@ -1102,20 +1102,20 @@ scalargtsel(PG_FUNCTION_ARGS)
 
 	ReleaseVariableStats(vardata);
 
-	PG_RETURN_FLOAT8((float8) selec);
+	MDB_RETURN_FLOAT8((float8) selec);
 }
 
 /*
  * patternsel			- Generic code for pattern-match selectivity.
  */
 static double
-patternsel(PG_FUNCTION_ARGS, Pattern_Type ptype, bool negate)
+patternsel(MDB_FUNCTION_ARGS, Pattern_Type ptype, bool negate)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
-	Oid			collation = PG_GET_COLLATION();
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
+	Oid			collation = MDB_GET_COLLATION();
 	VariableStatData vardata;
 	Node	   *other;
 	bool		varonleft;
@@ -1374,72 +1374,72 @@ patternsel(PG_FUNCTION_ARGS, Pattern_Type ptype, bool negate)
  *		regexeqsel		- Selectivity of regular-expression pattern match.
  */
 Datum
-regexeqsel(PG_FUNCTION_ARGS)
+regexeqsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Regex, false));
+	MDB_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Regex, false));
 }
 
 /*
  *		icregexeqsel	- Selectivity of case-insensitive regex match.
  */
 Datum
-icregexeqsel(PG_FUNCTION_ARGS)
+icregexeqsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Regex_IC, false));
+	MDB_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Regex_IC, false));
 }
 
 /*
  *		likesel			- Selectivity of LIKE pattern match.
  */
 Datum
-likesel(PG_FUNCTION_ARGS)
+likesel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Like, false));
+	MDB_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Like, false));
 }
 
 /*
  *		iclikesel			- Selectivity of ILIKE pattern match.
  */
 Datum
-iclikesel(PG_FUNCTION_ARGS)
+iclikesel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Like_IC, false));
+	MDB_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Like_IC, false));
 }
 
 /*
  *		regexnesel		- Selectivity of regular-expression pattern non-match.
  */
 Datum
-regexnesel(PG_FUNCTION_ARGS)
+regexnesel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Regex, true));
+	MDB_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Regex, true));
 }
 
 /*
  *		icregexnesel	- Selectivity of case-insensitive regex non-match.
  */
 Datum
-icregexnesel(PG_FUNCTION_ARGS)
+icregexnesel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Regex_IC, true));
+	MDB_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Regex_IC, true));
 }
 
 /*
  *		nlikesel		- Selectivity of LIKE pattern non-match.
  */
 Datum
-nlikesel(PG_FUNCTION_ARGS)
+nlikesel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Like, true));
+	MDB_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Like, true));
 }
 
 /*
  *		icnlikesel		- Selectivity of ILIKE pattern non-match.
  */
 Datum
-icnlikesel(PG_FUNCTION_ARGS)
+icnlikesel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Like_IC, true));
+	MDB_RETURN_FLOAT8(patternsel(fcinfo, Pattern_Type_Like_IC, true));
 }
 
 /*
@@ -2179,16 +2179,16 @@ rowcomparesel(PlannerInfo *root,
  *		eqjoinsel		- Join selectivity of "="
  */
 Datum
-eqjoinsel(PG_FUNCTION_ARGS)
+eqjoinsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
 
 #ifdef NOT_USED
-	JoinType	jointype = (JoinType) PG_GETARG_INT16(3);
+	JoinType	jointype = (JoinType) MDB_GETARG_INT16(3);
 #endif
-	SpecialJoinInfo *sjinfo = (SpecialJoinInfo *) PG_GETARG_POINTER(4);
+	SpecialJoinInfo *sjinfo = (SpecialJoinInfo *) MDB_GETARG_POINTER(4);
 	double		selec;
 	VariableStatData vardata1;
 	VariableStatData vardata2;
@@ -2237,7 +2237,7 @@ eqjoinsel(PG_FUNCTION_ARGS)
 
 	CLAMP_PROBABILITY(selec);
 
-	PG_RETURN_FLOAT8((float8) selec);
+	MDB_RETURN_FLOAT8((float8) selec);
 }
 
 /*
@@ -2675,13 +2675,13 @@ eqjoinsel_semi(Oid operator,
  *		neqjoinsel		- Join selectivity of "!="
  */
 Datum
-neqjoinsel(PG_FUNCTION_ARGS)
+neqjoinsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	JoinType	jointype = (JoinType) PG_GETARG_INT16(3);
-	SpecialJoinInfo *sjinfo = (SpecialJoinInfo *) PG_GETARG_POINTER(4);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	JoinType	jointype = (JoinType) MDB_GETARG_INT16(3);
+	SpecialJoinInfo *sjinfo = (SpecialJoinInfo *) MDB_GETARG_POINTER(4);
 	Oid			eqop;
 	float8		result;
 
@@ -2705,32 +2705,32 @@ neqjoinsel(PG_FUNCTION_ARGS)
 		result = DEFAULT_EQ_SEL;
 	}
 	result = 1.0 - result;
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
  *		scalarltjoinsel - Join selectivity of "<" and "<=" for scalars
  */
 Datum
-scalarltjoinsel(PG_FUNCTION_ARGS)
+scalarltjoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
+	MDB_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
 }
 
 /*
  *		scalargtjoinsel - Join selectivity of ">" and ">=" for scalars
  */
 Datum
-scalargtjoinsel(PG_FUNCTION_ARGS)
+scalargtjoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
+	MDB_RETURN_FLOAT8(DEFAULT_INEQ_SEL);
 }
 
 /*
  * patternjoinsel		- Generic code for pattern-match join selectivity.
  */
 static double
-patternjoinsel(PG_FUNCTION_ARGS, Pattern_Type ptype, bool negate)
+patternjoinsel(MDB_FUNCTION_ARGS, Pattern_Type ptype, bool negate)
 {
 	/* For the moment we just punt. */
 	return negate ? (1.0 - DEFAULT_MATCH_SEL) : DEFAULT_MATCH_SEL;
@@ -2740,72 +2740,72 @@ patternjoinsel(PG_FUNCTION_ARGS, Pattern_Type ptype, bool negate)
  *		regexeqjoinsel	- Join selectivity of regular-expression pattern match.
  */
 Datum
-regexeqjoinsel(PG_FUNCTION_ARGS)
+regexeqjoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Regex, false));
+	MDB_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Regex, false));
 }
 
 /*
  *		icregexeqjoinsel	- Join selectivity of case-insensitive regex match.
  */
 Datum
-icregexeqjoinsel(PG_FUNCTION_ARGS)
+icregexeqjoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Regex_IC, false));
+	MDB_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Regex_IC, false));
 }
 
 /*
  *		likejoinsel			- Join selectivity of LIKE pattern match.
  */
 Datum
-likejoinsel(PG_FUNCTION_ARGS)
+likejoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Like, false));
+	MDB_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Like, false));
 }
 
 /*
  *		iclikejoinsel			- Join selectivity of ILIKE pattern match.
  */
 Datum
-iclikejoinsel(PG_FUNCTION_ARGS)
+iclikejoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Like_IC, false));
+	MDB_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Like_IC, false));
 }
 
 /*
  *		regexnejoinsel	- Join selectivity of regex non-match.
  */
 Datum
-regexnejoinsel(PG_FUNCTION_ARGS)
+regexnejoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Regex, true));
+	MDB_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Regex, true));
 }
 
 /*
  *		icregexnejoinsel	- Join selectivity of case-insensitive regex non-match.
  */
 Datum
-icregexnejoinsel(PG_FUNCTION_ARGS)
+icregexnejoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Regex_IC, true));
+	MDB_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Regex_IC, true));
 }
 
 /*
  *		nlikejoinsel		- Join selectivity of LIKE pattern non-match.
  */
 Datum
-nlikejoinsel(PG_FUNCTION_ARGS)
+nlikejoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Like, true));
+	MDB_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Like, true));
 }
 
 /*
  *		icnlikejoinsel		- Join selectivity of ILIKE pattern non-match.
  */
 Datum
-icnlikejoinsel(PG_FUNCTION_ARGS)
+icnlikejoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Like_IC, true));
+	MDB_RETURN_FLOAT8(patternjoinsel(fcinfo, Pattern_Type_Like_IC, true));
 }
 
 /*
@@ -4028,7 +4028,7 @@ convert_string_datum(Datum value, Oid typid)
 	{
 		char	   *xfrmstr;
 		size_t		xfrmlen;
-		size_t xfrmlen2 PG_USED_FOR_ASSERTS_ONLY;
+		size_t xfrmlen2 MDB_USED_FOR_ASSERTS_ONLY;
 
 		/*
 		 * XXX: We could guess at a suitable output buffer size and only call

@@ -44,15 +44,15 @@
 #include "utils/memutils.h"
 #include "utils/resowner_private.h"
 
-#define PG_DYNSHMEM_CONTROL_MAGIC		0x9a503d32
+#define MDB_DYNSHMEM_CONTROL_MAGIC		0x9a503d32
 
 /*
  * There's no point in getting too cheap here, because the minimum allocation
  * is one OS page, which is probably at least 4KB and could easily be as high
  * as 64KB.  Each currently sizeof(dsm_control_item), currently 8 bytes.
  */
-#define PG_DYNSHMEM_FIXED_SLOTS			64
-#define PG_DYNSHMEM_SLOTS_PER_BACKEND	2
+#define MDB_DYNSHMEM_FIXED_SLOTS			64
+#define MDB_DYNSHMEM_SLOTS_PER_BACKEND	2
 
 #define INVALID_CONTROL_SLOT		((uint32) -1)
 
@@ -163,8 +163,8 @@ dsm_postmaster_startup(PGShmemHeader *shim)
 		dsm_cleanup_for_mmap();
 
 	/* Determine size for new control segment. */
-	maxitems = PG_DYNSHMEM_FIXED_SLOTS
-		+ PG_DYNSHMEM_SLOTS_PER_BACKEND * MaxBackends;
+	maxitems = MDB_DYNSHMEM_FIXED_SLOTS
+		+ MDB_DYNSHMEM_SLOTS_PER_BACKEND * MaxBackends;
 	elog(DEBUG2, "dynamic shared memory system will support %u segments",
 		 maxitems);
 	segsize = dsm_control_bytes_needed(maxitems);
@@ -195,7 +195,7 @@ dsm_postmaster_startup(PGShmemHeader *shim)
 	shim->dsm_control = dsm_control_handle;
 
 	/* Initialize control segment. */
-	dsm_control->magic = PG_DYNSHMEM_CONTROL_MAGIC;
+	dsm_control->magic = MDB_DYNSHMEM_CONTROL_MAGIC;
 	dsm_control->nitems = 0;
 	dsm_control->maxitems = maxitems;
 }
@@ -294,21 +294,21 @@ dsm_cleanup_for_mmap(void)
 	struct dirent *dent;
 
 	/* Open the directory; can't use AllocateDir in postmaster. */
-	if ((dir = AllocateDir(PG_DYNSHMEM_DIR)) == NULL)
+	if ((dir = AllocateDir(MDB_DYNSHMEM_DIR)) == NULL)
 		ereport(ERROR,
 				(errcode_for_file_access(),
 				 errmsg("could not open directory \"%s\": %m",
-						PG_DYNSHMEM_DIR)));
+						MDB_DYNSHMEM_DIR)));
 
 	/* Scan for something with a name of the correct format. */
-	while ((dent = ReadDir(dir, PG_DYNSHMEM_DIR)) != NULL)
+	while ((dent = ReadDir(dir, MDB_DYNSHMEM_DIR)) != NULL)
 	{
-		if (strncmp(dent->d_name, PG_DYNSHMEM_MMAP_FILE_PREFIX,
-					strlen(PG_DYNSHMEM_MMAP_FILE_PREFIX)) == 0)
+		if (strncmp(dent->d_name, MDB_DYNSHMEM_MMAP_FILE_PREFIX,
+					strlen(MDB_DYNSHMEM_MMAP_FILE_PREFIX)) == 0)
 		{
 			char		buf[MAXPGPATH];
 
-			snprintf(buf, MAXPGPATH, PG_DYNSHMEM_DIR "/%s", dent->d_name);
+			snprintf(buf, MAXPGPATH, MDB_DYNSHMEM_DIR "/%s", dent->d_name);
 
 			elog(DEBUG2, "removing file \"%s\"", buf);
 
@@ -1023,7 +1023,7 @@ dsm_control_segment_sane(dsm_control_header *control, Size mapped_size)
 {
 	if (mapped_size < offsetof(dsm_control_header, item))
 		return false;			/* Mapped size too short to read header. */
-	if (control->magic != PG_DYNSHMEM_CONTROL_MAGIC)
+	if (control->magic != MDB_DYNSHMEM_CONTROL_MAGIC)
 		return false;			/* Magic number doesn't match. */
 	if (dsm_control_bytes_needed(control->maxitems) > mapped_size)
 		return false;			/* Max item count won't fit in map. */

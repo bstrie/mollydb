@@ -31,25 +31,25 @@
 
 /* Note: this is used for both "char" and boolean datatypes */
 Datum
-hashchar(PG_FUNCTION_ARGS)
+hashchar(MDB_FUNCTION_ARGS)
 {
-	return hash_uint32((int32) PG_GETARG_CHAR(0));
+	return hash_uint32((int32) MDB_GETARG_CHAR(0));
 }
 
 Datum
-hashint2(PG_FUNCTION_ARGS)
+hashint2(MDB_FUNCTION_ARGS)
 {
-	return hash_uint32((int32) PG_GETARG_INT16(0));
+	return hash_uint32((int32) MDB_GETARG_INT16(0));
 }
 
 Datum
-hashint4(PG_FUNCTION_ARGS)
+hashint4(MDB_FUNCTION_ARGS)
 {
-	return hash_uint32(PG_GETARG_INT32(0));
+	return hash_uint32(MDB_GETARG_INT32(0));
 }
 
 Datum
-hashint8(PG_FUNCTION_ARGS)
+hashint8(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * The idea here is to produce a hash value compatible with the values
@@ -59,7 +59,7 @@ hashint8(PG_FUNCTION_ARGS)
 	 * value if the sign is positive, or the complement of the high half when
 	 * the sign is negative.
 	 */
-	int64		val = PG_GETARG_INT64(0);
+	int64		val = MDB_GETARG_INT64(0);
 	uint32		lohalf = (uint32) val;
 	uint32		hihalf = (uint32) (val >> 32);
 
@@ -69,21 +69,21 @@ hashint8(PG_FUNCTION_ARGS)
 }
 
 Datum
-hashoid(PG_FUNCTION_ARGS)
+hashoid(MDB_FUNCTION_ARGS)
 {
-	return hash_uint32((uint32) PG_GETARG_OID(0));
+	return hash_uint32((uint32) MDB_GETARG_OID(0));
 }
 
 Datum
-hashenum(PG_FUNCTION_ARGS)
+hashenum(MDB_FUNCTION_ARGS)
 {
-	return hash_uint32((uint32) PG_GETARG_OID(0));
+	return hash_uint32((uint32) MDB_GETARG_OID(0));
 }
 
 Datum
-hashfloat4(PG_FUNCTION_ARGS)
+hashfloat4(MDB_FUNCTION_ARGS)
 {
-	float4		key = PG_GETARG_FLOAT4(0);
+	float4		key = MDB_GETARG_FLOAT4(0);
 	float8		key8;
 
 	/*
@@ -92,7 +92,7 @@ hashfloat4(PG_FUNCTION_ARGS)
 	 * hash value, which is most reliably done this way:
 	 */
 	if (key == (float4) 0)
-		PG_RETURN_UINT32(0);
+		MDB_RETURN_UINT32(0);
 
 	/*
 	 * To support cross-type hashing of float8 and float4, we want to return
@@ -107,9 +107,9 @@ hashfloat4(PG_FUNCTION_ARGS)
 }
 
 Datum
-hashfloat8(PG_FUNCTION_ARGS)
+hashfloat8(MDB_FUNCTION_ARGS)
 {
-	float8		key = PG_GETARG_FLOAT8(0);
+	float8		key = MDB_GETARG_FLOAT8(0);
 
 	/*
 	 * On IEEE-float machines, minus zero and zero have different bit patterns
@@ -117,31 +117,31 @@ hashfloat8(PG_FUNCTION_ARGS)
 	 * hash value, which is most reliably done this way:
 	 */
 	if (key == (float8) 0)
-		PG_RETURN_UINT32(0);
+		MDB_RETURN_UINT32(0);
 
 	return hash_any((unsigned char *) &key, sizeof(key));
 }
 
 Datum
-hashoidvector(PG_FUNCTION_ARGS)
+hashoidvector(MDB_FUNCTION_ARGS)
 {
-	oidvector  *key = (oidvector *) PG_GETARG_POINTER(0);
+	oidvector  *key = (oidvector *) MDB_GETARG_POINTER(0);
 
 	return hash_any((unsigned char *) key->values, key->dim1 * sizeof(Oid));
 }
 
 Datum
-hashint2vector(PG_FUNCTION_ARGS)
+hashint2vector(MDB_FUNCTION_ARGS)
 {
-	int2vector *key = (int2vector *) PG_GETARG_POINTER(0);
+	int2vector *key = (int2vector *) MDB_GETARG_POINTER(0);
 
 	return hash_any((unsigned char *) key->values, key->dim1 * sizeof(int16));
 }
 
 Datum
-hashname(PG_FUNCTION_ARGS)
+hashname(MDB_FUNCTION_ARGS)
 {
-	char	   *key = NameStr(*PG_GETARG_NAME(0));
+	char	   *key = NameStr(*MDB_GETARG_NAME(0));
 	int			keylen = strlen(key);
 
 	Assert(keylen < NAMEDATALEN);		/* else it's not truncated correctly */
@@ -150,9 +150,9 @@ hashname(PG_FUNCTION_ARGS)
 }
 
 Datum
-hashtext(PG_FUNCTION_ARGS)
+hashtext(MDB_FUNCTION_ARGS)
 {
-	text	   *key = PG_GETARG_TEXT_PP(0);
+	text	   *key = MDB_GETARG_TEXT_PP(0);
 	Datum		result;
 
 	/*
@@ -164,7 +164,7 @@ hashtext(PG_FUNCTION_ARGS)
 					  VARSIZE_ANY_EXHDR(key));
 
 	/* Avoid leaking memory for toasted inputs */
-	PG_FREE_IF_COPY(key, 0);
+	MDB_FREE_IF_COPY(key, 0);
 
 	return result;
 }
@@ -174,16 +174,16 @@ hashtext(PG_FUNCTION_ARGS)
  * no non-significant bits, ie, distinct bitpatterns never compare as equal.
  */
 Datum
-hashvarlena(PG_FUNCTION_ARGS)
+hashvarlena(MDB_FUNCTION_ARGS)
 {
-	struct varlena *key = PG_GETARG_VARLENA_PP(0);
+	struct varlena *key = MDB_GETARG_VARLENA_PP(0);
 	Datum		result;
 
 	result = hash_any((unsigned char *) VARDATA_ANY(key),
 					  VARSIZE_ANY_EXHDR(key));
 
 	/* Avoid leaking memory for toasted inputs */
-	PG_FREE_IF_COPY(key, 0);
+	MDB_FREE_IF_COPY(key, 0);
 
 	return result;
 }

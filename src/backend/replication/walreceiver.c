@@ -297,7 +297,7 @@ WalReceiverMain(void)
 	CurrentResourceOwner = ResourceOwnerCreate(NULL, "Wal Receiver");
 
 	/* Unblock signals (they were blocked when the postmaster forked us) */
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/* Establish the connection to the primary for XLOG streaming */
 	EnableWalRcvImmediateExit();
@@ -806,7 +806,7 @@ WalRcvShutdownHandler(SIGNAL_ARGS)
 static void
 WalRcvQuickDieHandler(SIGNAL_ARGS)
 {
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	/*
 	 * We DO NOT want to run proc_exit() callbacks -- we're here because
@@ -1306,12 +1306,12 @@ WalRcvGetStateString(WalRcvState state)
  * received from the WAL sender of another server.
  */
 Datum
-mdb_stat_get_wal_receiver(PG_FUNCTION_ARGS)
+mdb_stat_get_wal_receiver(MDB_FUNCTION_ARGS)
 {
-#define PG_STAT_GET_WAL_RECEIVER_COLS	11
+#define MDB_STAT_GET_WAL_RECEIVER_COLS	11
 	TupleDesc	tupdesc;
-	Datum		values[PG_STAT_GET_WAL_RECEIVER_COLS];
-	bool		nulls[PG_STAT_GET_WAL_RECEIVER_COLS];
+	Datum		values[MDB_STAT_GET_WAL_RECEIVER_COLS];
+	bool		nulls[MDB_STAT_GET_WAL_RECEIVER_COLS];
 	WalRcvData *walrcv = WalRcv;
 	WalRcvState state;
 	XLogRecPtr	receive_start_lsn;
@@ -1326,14 +1326,14 @@ mdb_stat_get_wal_receiver(PG_FUNCTION_ARGS)
 
 	/* No WAL receiver, just return a tuple with NULL values */
 	if (walrcv->pid == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Initialise values and NULL flags arrays */
 	MemSet(values, 0, sizeof(values));
 	MemSet(nulls, 0, sizeof(nulls));
 
 	/* Initialise attributes information in the tuple descriptor */
-	tupdesc = CreateTemplateTupleDesc(PG_STAT_GET_WAL_RECEIVER_COLS, false);
+	tupdesc = CreateTemplateTupleDesc(MDB_STAT_GET_WAL_RECEIVER_COLS, false);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "pid",
 					   INT4OID, -1, 0);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 2, "status",
@@ -1382,7 +1382,7 @@ mdb_stat_get_wal_receiver(PG_FUNCTION_ARGS)
 		 * Only superusers can see details. Other users only get the pid
 		 * value to know whether it is a WAL receiver, but no details.
 		 */
-		MemSet(&nulls[1], true, PG_STAT_GET_WAL_RECEIVER_COLS - 1);
+		MemSet(&nulls[1], true, MDB_STAT_GET_WAL_RECEIVER_COLS - 1);
 	}
 	else
 	{
@@ -1421,6 +1421,6 @@ mdb_stat_get_wal_receiver(PG_FUNCTION_ARGS)
 	}
 
 	/* Returns the record as Datum */
-	PG_RETURN_DATUM(HeapTupleGetDatum(
+	MDB_RETURN_DATUM(HeapTupleGetDatum(
 						  heap_form_tuple(tupdesc, values, nulls)));
 }

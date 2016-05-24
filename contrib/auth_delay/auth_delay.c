@@ -16,9 +16,9 @@
 #include "utils/guc.h"
 #include "utils/timestamp.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-void		_PG_init(void);
+void		_MDB_init(void);
 
 /* GUC Variables */
 static int	auth_delay_milliseconds;
@@ -51,7 +51,7 @@ auth_delay_checks(Port *port, int status)
  * Module Load Callback
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/* Define custom GUC variables */
 	DefineCustomIntVariable("auth_delay.milliseconds",

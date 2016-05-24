@@ -1047,7 +1047,7 @@ AtSubCleanup_Portals(SubTransactionId mySubid)
 
 /* Find all available cursors */
 Datum
-mdb_cursor(PG_FUNCTION_ARGS)
+mdb_cursor(MDB_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;

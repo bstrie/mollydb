@@ -1529,11 +1529,11 @@ msgstr "数据库文件和服务器不兼容"
 #: access/transam/xlog.c:4272
 #, c-format
 msgid ""
-"The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x), "
-"but the server was compiled with PG_CONTROL_VERSION %d (0x%08x)."
+"The database cluster was initialized with MDB_CONTROL_VERSION %d (0x%08x), "
+"but the server was compiled with MDB_CONTROL_VERSION %d (0x%08x)."
 msgstr ""
-"数据库集群是以 PG_CONTROL_VERSION %d (0x%08x)初始化的, 但是 服务器是以 "
-"PG_CONTROL_VERSION %d (0x%08x)编译的."
+"数据库集群是以 MDB_CONTROL_VERSION %d (0x%08x)初始化的, 但是 服务器是以 "
+"MDB_CONTROL_VERSION %d (0x%08x)编译的."
 
 #: access/transam/xlog.c:4276
 #, c-format
@@ -1545,11 +1545,11 @@ msgstr "这是一个字节顺序不匹配的问题.您需要运行initdb."
 #: access/transam/xlog.c:4281
 #, c-format
 msgid ""
-"The database cluster was initialized with PG_CONTROL_VERSION %d, but the "
-"server was compiled with PG_CONTROL_VERSION %d."
+"The database cluster was initialized with MDB_CONTROL_VERSION %d, but the "
+"server was compiled with MDB_CONTROL_VERSION %d."
 msgstr ""
-"数据库集群是以 PG_CONTROL_VERSION %d 初始化的, 但是 服务器是以 "
-"PG_CONTROL_VERSION %d 编译的."
+"数据库集群是以 MDB_CONTROL_VERSION %d 初始化的, 但是 服务器是以 "
+"MDB_CONTROL_VERSION %d 编译的."
 
 #: access/transam/xlog.c:4284 access/transam/xlog.c:4308
 #: access/transam/xlog.c:4315 access/transam/xlog.c:4320
@@ -21182,8 +21182,8 @@ msgstr "库\"%s\"不兼容：丢失魔法块"
 
 #: utils/fmgr/dfmgr.c:272
 #, c-format
-msgid "Extension libraries are required to use the PG_MODULE_MAGIC macro."
-msgstr "需要扩展库来使用宏PG_MODULE_MAGIC。"
+msgid "Extension libraries are required to use the MDB_MODULE_MAGIC macro."
+msgstr "需要扩展库来使用宏MDB_MODULE_MAGIC。"
 
 #: utils/fmgr/dfmgr.c:308
 #, c-format

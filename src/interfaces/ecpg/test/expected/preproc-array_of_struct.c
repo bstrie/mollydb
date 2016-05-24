@@ -143,7 +143,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
     { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "insert into customers values ( 'John Doe' , '12345' )", ECPGt_EOIT, ECPGt_EORT);
 #line 53 "array_of_struct.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) sqlprint();
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) sqlprint();
 #line 53 "array_of_struct.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();
@@ -155,7 +155,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
     { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "insert into customers values ( 'Jane Doe' , '67890' )", ECPGt_EOIT, ECPGt_EORT);
 #line 54 "array_of_struct.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) sqlprint();
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) sqlprint();
 #line 54 "array_of_struct.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();
@@ -172,7 +172,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_short,&(inds->phone_ind),(long)1,(long)10,sizeof( struct ind ), ECPGt_EORT);
 #line 56 "array_of_struct.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) sqlprint();
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) sqlprint();
 #line 56 "array_of_struct.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();
@@ -195,7 +195,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_short,&(inds->phone_ind),(long)1,(long)10,sizeof( struct ind ), ECPGt_EORT);
 #line 64 "array_of_struct.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) sqlprint();
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) sqlprint();
 #line 64 "array_of_struct.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();
@@ -218,7 +218,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_short,&(inds->phone_ind),(long)1,(long)10,sizeof( struct ind ), ECPGt_EORT);
 #line 72 "array_of_struct.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) sqlprint();
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) sqlprint();
 #line 72 "array_of_struct.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();
@@ -241,7 +241,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_short,&(inds[0].phone_ind),(long)1,(long)1,sizeof( struct ind ), ECPGt_EORT);
 #line 80 "array_of_struct.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) sqlprint();
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) sqlprint();
 #line 80 "array_of_struct.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();
@@ -259,7 +259,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
 #line 85 "array_of_struct.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) sqlprint();
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) sqlprint();
 #line 85 "array_of_struct.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();

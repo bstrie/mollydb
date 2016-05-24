@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TABLESPACE_H
-#define PG_TABLESPACE_H
+#ifndef MDB_TABLESPACE_H
+#define MDB_TABLESPACE_H
 
 #include "catalog/genbki.h"
 
@@ -63,4 +63,4 @@ DATA(insert OID = 1664 ( mdb_global	PGUID _null_ _null_ ));
 #define DEFAULTTABLESPACE_OID 1663
 #define GLOBALTABLESPACE_OID 1664
 
-#endif   /* PG_TABLESPACE_H */
+#endif   /* MDB_TABLESPACE_H */

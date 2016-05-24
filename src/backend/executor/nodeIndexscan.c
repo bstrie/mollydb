@@ -600,7 +600,7 @@ ExecIndexEvalRuntimeKeys(ExprContext *econtext,
 		else
 		{
 			if (runtimeKeys[j].key_toastable)
-				scanvalue = PointerGetDatum(PG_DETOAST_DATUM(scanvalue));
+				scanvalue = PointerGetDatum(MDB_DETOAST_DATUM(scanvalue));
 			scan_key->sk_argument = scanvalue;
 			scan_key->sk_flags &= ~SK_ISNULL;
 		}

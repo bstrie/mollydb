@@ -40,16 +40,16 @@ static struct
 
 {
 	{
-		"process", SEPG_CLASS_PROCESS,
+		"process", SEMDB_CLASS_PROCESS,
 		{
 			{
-				"transition", SEPG_PROCESS__TRANSITION
+				"transition", SEMDB_PROCESS__TRANSITION
 			},
 			{
-				"dyntransition", SEPG_PROCESS__DYNTRANSITION
+				"dyntransition", SEMDB_PROCESS__DYNTRANSITION
 			},
 			{
-				"setcurrent", SEPG_PROCESS__SETCURRENT
+				"setcurrent", SEMDB_PROCESS__SETCURRENT
 			},
 			{
 				NULL, 0UL
@@ -57,28 +57,28 @@ static struct
 		}
 	},
 	{
-		"file", SEPG_CLASS_FILE,
+		"file", SEMDB_CLASS_FILE,
 		{
 			{
-				"read", SEPG_FILE__READ
+				"read", SEMDB_FILE__READ
 			},
 			{
-				"write", SEPG_FILE__WRITE
+				"write", SEMDB_FILE__WRITE
 			},
 			{
-				"create", SEPG_FILE__CREATE
+				"create", SEMDB_FILE__CREATE
 			},
 			{
-				"getattr", SEPG_FILE__GETATTR
+				"getattr", SEMDB_FILE__GETATTR
 			},
 			{
-				"unlink", SEPG_FILE__UNLINK
+				"unlink", SEMDB_FILE__UNLINK
 			},
 			{
-				"rename", SEPG_FILE__RENAME
+				"rename", SEMDB_FILE__RENAME
 			},
 			{
-				"append", SEPG_FILE__APPEND
+				"append", SEMDB_FILE__APPEND
 			},
 			{
 				NULL, 0UL
@@ -86,40 +86,40 @@ static struct
 		}
 	},
 	{
-		"dir", SEPG_CLASS_DIR,
+		"dir", SEMDB_CLASS_DIR,
 		{
 			{
-				"read", SEPG_DIR__READ
+				"read", SEMDB_DIR__READ
 			},
 			{
-				"write", SEPG_DIR__WRITE
+				"write", SEMDB_DIR__WRITE
 			},
 			{
-				"create", SEPG_DIR__CREATE
+				"create", SEMDB_DIR__CREATE
 			},
 			{
-				"getattr", SEPG_DIR__GETATTR
+				"getattr", SEMDB_DIR__GETATTR
 			},
 			{
-				"unlink", SEPG_DIR__UNLINK
+				"unlink", SEMDB_DIR__UNLINK
 			},
 			{
-				"rename", SEPG_DIR__RENAME
+				"rename", SEMDB_DIR__RENAME
 			},
 			{
-				"search", SEPG_DIR__SEARCH
+				"search", SEMDB_DIR__SEARCH
 			},
 			{
-				"add_name", SEPG_DIR__ADD_NAME
+				"add_name", SEMDB_DIR__ADD_NAME
 			},
 			{
-				"remove_name", SEPG_DIR__REMOVE_NAME
+				"remove_name", SEMDB_DIR__REMOVE_NAME
 			},
 			{
-				"rmdir", SEPG_DIR__RMDIR
+				"rmdir", SEMDB_DIR__RMDIR
 			},
 			{
-				"reparent", SEPG_DIR__REPARENT
+				"reparent", SEMDB_DIR__REPARENT
 			},
 			{
 				NULL, 0UL
@@ -127,25 +127,25 @@ static struct
 		}
 	},
 	{
-		"lnk_file", SEPG_CLASS_LNK_FILE,
+		"lnk_file", SEMDB_CLASS_LNK_FILE,
 		{
 			{
-				"read", SEPG_LNK_FILE__READ
+				"read", SEMDB_LNK_FILE__READ
 			},
 			{
-				"write", SEPG_LNK_FILE__WRITE
+				"write", SEMDB_LNK_FILE__WRITE
 			},
 			{
-				"create", SEPG_LNK_FILE__CREATE
+				"create", SEMDB_LNK_FILE__CREATE
 			},
 			{
-				"getattr", SEPG_LNK_FILE__GETATTR
+				"getattr", SEMDB_LNK_FILE__GETATTR
 			},
 			{
-				"unlink", SEPG_LNK_FILE__UNLINK
+				"unlink", SEMDB_LNK_FILE__UNLINK
 			},
 			{
-				"rename", SEPG_LNK_FILE__RENAME
+				"rename", SEMDB_LNK_FILE__RENAME
 			},
 			{
 				NULL, 0UL
@@ -153,25 +153,25 @@ static struct
 		}
 	},
 	{
-		"chr_file", SEPG_CLASS_CHR_FILE,
+		"chr_file", SEMDB_CLASS_CHR_FILE,
 		{
 			{
-				"read", SEPG_CHR_FILE__READ
+				"read", SEMDB_CHR_FILE__READ
 			},
 			{
-				"write", SEPG_CHR_FILE__WRITE
+				"write", SEMDB_CHR_FILE__WRITE
 			},
 			{
-				"create", SEPG_CHR_FILE__CREATE
+				"create", SEMDB_CHR_FILE__CREATE
 			},
 			{
-				"getattr", SEPG_CHR_FILE__GETATTR
+				"getattr", SEMDB_CHR_FILE__GETATTR
 			},
 			{
-				"unlink", SEPG_CHR_FILE__UNLINK
+				"unlink", SEMDB_CHR_FILE__UNLINK
 			},
 			{
-				"rename", SEPG_CHR_FILE__RENAME
+				"rename", SEMDB_CHR_FILE__RENAME
 			},
 			{
 				NULL, 0UL
@@ -179,25 +179,25 @@ static struct
 		}
 	},
 	{
-		"blk_file", SEPG_CLASS_BLK_FILE,
+		"blk_file", SEMDB_CLASS_BLK_FILE,
 		{
 			{
-				"read", SEPG_BLK_FILE__READ
+				"read", SEMDB_BLK_FILE__READ
 			},
 			{
-				"write", SEPG_BLK_FILE__WRITE
+				"write", SEMDB_BLK_FILE__WRITE
 			},
 			{
-				"create", SEPG_BLK_FILE__CREATE
+				"create", SEMDB_BLK_FILE__CREATE
 			},
 			{
-				"getattr", SEPG_BLK_FILE__GETATTR
+				"getattr", SEMDB_BLK_FILE__GETATTR
 			},
 			{
-				"unlink", SEPG_BLK_FILE__UNLINK
+				"unlink", SEMDB_BLK_FILE__UNLINK
 			},
 			{
-				"rename", SEPG_BLK_FILE__RENAME
+				"rename", SEMDB_BLK_FILE__RENAME
 			},
 			{
 				NULL, 0UL
@@ -205,25 +205,25 @@ static struct
 		}
 	},
 	{
-		"sock_file", SEPG_CLASS_SOCK_FILE,
+		"sock_file", SEMDB_CLASS_SOCK_FILE,
 		{
 			{
-				"read", SEPG_SOCK_FILE__READ
+				"read", SEMDB_SOCK_FILE__READ
 			},
 			{
-				"write", SEPG_SOCK_FILE__WRITE
+				"write", SEMDB_SOCK_FILE__WRITE
 			},
 			{
-				"create", SEPG_SOCK_FILE__CREATE
+				"create", SEMDB_SOCK_FILE__CREATE
 			},
 			{
-				"getattr", SEPG_SOCK_FILE__GETATTR
+				"getattr", SEMDB_SOCK_FILE__GETATTR
 			},
 			{
-				"unlink", SEPG_SOCK_FILE__UNLINK
+				"unlink", SEMDB_SOCK_FILE__UNLINK
 			},
 			{
-				"rename", SEPG_SOCK_FILE__RENAME
+				"rename", SEMDB_SOCK_FILE__RENAME
 			},
 			{
 				NULL, 0UL
@@ -231,25 +231,25 @@ static struct
 		}
 	},
 	{
-		"fifo_file", SEPG_CLASS_FIFO_FILE,
+		"fifo_file", SEMDB_CLASS_FIFO_FILE,
 		{
 			{
-				"read", SEPG_FIFO_FILE__READ
+				"read", SEMDB_FIFO_FILE__READ
 			},
 			{
-				"write", SEPG_FIFO_FILE__WRITE
+				"write", SEMDB_FIFO_FILE__WRITE
 			},
 			{
-				"create", SEPG_FIFO_FILE__CREATE
+				"create", SEMDB_FIFO_FILE__CREATE
 			},
 			{
-				"getattr", SEPG_FIFO_FILE__GETATTR
+				"getattr", SEMDB_FIFO_FILE__GETATTR
 			},
 			{
-				"unlink", SEPG_FIFO_FILE__UNLINK
+				"unlink", SEMDB_FIFO_FILE__UNLINK
 			},
 			{
-				"rename", SEPG_FIFO_FILE__RENAME
+				"rename", SEMDB_FIFO_FILE__RENAME
 			},
 			{
 				NULL, 0UL
@@ -257,31 +257,31 @@ static struct
 		}
 	},
 	{
-		"db_database", SEPG_CLASS_DB_DATABASE,
+		"db_database", SEMDB_CLASS_DB_DATABASE,
 		{
 			{
-				"create", SEPG_DB_DATABASE__CREATE
+				"create", SEMDB_DB_DATABASE__CREATE
 			},
 			{
-				"drop", SEPG_DB_DATABASE__DROP
+				"drop", SEMDB_DB_DATABASE__DROP
 			},
 			{
-				"getattr", SEPG_DB_DATABASE__GETATTR
+				"getattr", SEMDB_DB_DATABASE__GETATTR
 			},
 			{
-				"setattr", SEPG_DB_DATABASE__SETATTR
+				"setattr", SEMDB_DB_DATABASE__SETATTR
 			},
 			{
-				"relabelfrom", SEPG_DB_DATABASE__RELABELFROM
+				"relabelfrom", SEMDB_DB_DATABASE__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_DATABASE__RELABELTO
+				"relabelto", SEMDB_DB_DATABASE__RELABELTO
 			},
 			{
-				"access", SEPG_DB_DATABASE__ACCESS
+				"access", SEMDB_DB_DATABASE__ACCESS
 			},
 			{
-				"load_module", SEPG_DB_DATABASE__LOAD_MODULE
+				"load_module", SEMDB_DB_DATABASE__LOAD_MODULE
 			},
 			{
 				NULL, 0UL
@@ -289,34 +289,34 @@ static struct
 		}
 	},
 	{
-		"db_schema", SEPG_CLASS_DB_SCHEMA,
+		"db_schema", SEMDB_CLASS_DB_SCHEMA,
 		{
 			{
-				"create", SEPG_DB_SCHEMA__CREATE
+				"create", SEMDB_DB_SCHEMA__CREATE
 			},
 			{
-				"drop", SEPG_DB_SCHEMA__DROP
+				"drop", SEMDB_DB_SCHEMA__DROP
 			},
 			{
-				"getattr", SEPG_DB_SCHEMA__GETATTR
+				"getattr", SEMDB_DB_SCHEMA__GETATTR
 			},
 			{
-				"setattr", SEPG_DB_SCHEMA__SETATTR
+				"setattr", SEMDB_DB_SCHEMA__SETATTR
 			},
 			{
-				"relabelfrom", SEPG_DB_SCHEMA__RELABELFROM
+				"relabelfrom", SEMDB_DB_SCHEMA__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_SCHEMA__RELABELTO
+				"relabelto", SEMDB_DB_SCHEMA__RELABELTO
 			},
 			{
-				"search", SEPG_DB_SCHEMA__SEARCH
+				"search", SEMDB_DB_SCHEMA__SEARCH
 			},
 			{
-				"add_name", SEPG_DB_SCHEMA__ADD_NAME
+				"add_name", SEMDB_DB_SCHEMA__ADD_NAME
 			},
 			{
-				"remove_name", SEPG_DB_SCHEMA__REMOVE_NAME
+				"remove_name", SEMDB_DB_SCHEMA__REMOVE_NAME
 			},
 			{
 				NULL, 0UL
@@ -324,40 +324,40 @@ static struct
 		}
 	},
 	{
-		"db_table", SEPG_CLASS_DB_TABLE,
+		"db_table", SEMDB_CLASS_DB_TABLE,
 		{
 			{
-				"create", SEPG_DB_TABLE__CREATE
+				"create", SEMDB_DB_TABLE__CREATE
 			},
 			{
-				"drop", SEPG_DB_TABLE__DROP
+				"drop", SEMDB_DB_TABLE__DROP
 			},
 			{
-				"getattr", SEPG_DB_TABLE__GETATTR
+				"getattr", SEMDB_DB_TABLE__GETATTR
 			},
 			{
-				"setattr", SEPG_DB_TABLE__SETATTR
+				"setattr", SEMDB_DB_TABLE__SETATTR
 			},
 			{
-				"relabelfrom", SEPG_DB_TABLE__RELABELFROM
+				"relabelfrom", SEMDB_DB_TABLE__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_TABLE__RELABELTO
+				"relabelto", SEMDB_DB_TABLE__RELABELTO
 			},
 			{
-				"select", SEPG_DB_TABLE__SELECT
+				"select", SEMDB_DB_TABLE__SELECT
 			},
 			{
-				"update", SEPG_DB_TABLE__UPDATE
+				"update", SEMDB_DB_TABLE__UPDATE
 			},
 			{
-				"insert", SEPG_DB_TABLE__INSERT
+				"insert", SEMDB_DB_TABLE__INSERT
 			},
 			{
-				"delete", SEPG_DB_TABLE__DELETE
+				"delete", SEMDB_DB_TABLE__DELETE
 			},
 			{
-				"lock", SEPG_DB_TABLE__LOCK
+				"lock", SEMDB_DB_TABLE__LOCK
 			},
 			{
 				NULL, 0UL
@@ -365,34 +365,34 @@ static struct
 		}
 	},
 	{
-		"db_sequence", SEPG_CLASS_DB_SEQUENCE,
+		"db_sequence", SEMDB_CLASS_DB_SEQUENCE,
 		{
 			{
-				"create", SEPG_DB_SEQUENCE__CREATE
+				"create", SEMDB_DB_SEQUENCE__CREATE
 			},
 			{
-				"drop", SEPG_DB_SEQUENCE__DROP
+				"drop", SEMDB_DB_SEQUENCE__DROP
 			},
 			{
-				"getattr", SEPG_DB_SEQUENCE__GETATTR
+				"getattr", SEMDB_DB_SEQUENCE__GETATTR
 			},
 			{
-				"setattr", SEPG_DB_SEQUENCE__SETATTR
+				"setattr", SEMDB_DB_SEQUENCE__SETATTR
 			},
 			{
-				"relabelfrom", SEPG_DB_SEQUENCE__RELABELFROM
+				"relabelfrom", SEMDB_DB_SEQUENCE__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_SEQUENCE__RELABELTO
+				"relabelto", SEMDB_DB_SEQUENCE__RELABELTO
 			},
 			{
-				"get_value", SEPG_DB_SEQUENCE__GET_VALUE
+				"get_value", SEMDB_DB_SEQUENCE__GET_VALUE
 			},
 			{
-				"next_value", SEPG_DB_SEQUENCE__NEXT_VALUE
+				"next_value", SEMDB_DB_SEQUENCE__NEXT_VALUE
 			},
 			{
-				"set_value", SEPG_DB_SEQUENCE__SET_VALUE
+				"set_value", SEMDB_DB_SEQUENCE__SET_VALUE
 			},
 			{
 				NULL, 0UL
@@ -400,34 +400,34 @@ static struct
 		}
 	},
 	{
-		"db_procedure", SEPG_CLASS_DB_PROCEDURE,
+		"db_procedure", SEMDB_CLASS_DB_PROCEDURE,
 		{
 			{
-				"create", SEPG_DB_PROCEDURE__CREATE
+				"create", SEMDB_DB_PROCEDURE__CREATE
 			},
 			{
-				"drop", SEPG_DB_PROCEDURE__DROP
+				"drop", SEMDB_DB_PROCEDURE__DROP
 			},
 			{
-				"getattr", SEPG_DB_PROCEDURE__GETATTR
+				"getattr", SEMDB_DB_PROCEDURE__GETATTR
 			},
 			{
-				"setattr", SEPG_DB_PROCEDURE__SETATTR
+				"setattr", SEMDB_DB_PROCEDURE__SETATTR
 			},
 			{
-				"relabelfrom", SEPG_DB_PROCEDURE__RELABELFROM
+				"relabelfrom", SEMDB_DB_PROCEDURE__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_PROCEDURE__RELABELTO
+				"relabelto", SEMDB_DB_PROCEDURE__RELABELTO
 			},
 			{
-				"execute", SEPG_DB_PROCEDURE__EXECUTE
+				"execute", SEMDB_DB_PROCEDURE__EXECUTE
 			},
 			{
-				"entrypoint", SEPG_DB_PROCEDURE__ENTRYPOINT
+				"entrypoint", SEMDB_DB_PROCEDURE__ENTRYPOINT
 			},
 			{
-				"install", SEPG_DB_PROCEDURE__INSTALL
+				"install", SEMDB_DB_PROCEDURE__INSTALL
 			},
 			{
 				NULL, 0UL
@@ -435,34 +435,34 @@ static struct
 		}
 	},
 	{
-		"db_column", SEPG_CLASS_DB_COLUMN,
+		"db_column", SEMDB_CLASS_DB_COLUMN,
 		{
 			{
-				"create", SEPG_DB_COLUMN__CREATE
+				"create", SEMDB_DB_COLUMN__CREATE
 			},
 			{
-				"drop", SEPG_DB_COLUMN__DROP
+				"drop", SEMDB_DB_COLUMN__DROP
 			},
 			{
-				"getattr", SEPG_DB_COLUMN__GETATTR
+				"getattr", SEMDB_DB_COLUMN__GETATTR
 			},
 			{
-				"setattr", SEPG_DB_COLUMN__SETATTR
+				"setattr", SEMDB_DB_COLUMN__SETATTR
 			},
 			{
-				"relabelfrom", SEPG_DB_COLUMN__RELABELFROM
+				"relabelfrom", SEMDB_DB_COLUMN__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_COLUMN__RELABELTO
+				"relabelto", SEMDB_DB_COLUMN__RELABELTO
 			},
 			{
-				"select", SEPG_DB_COLUMN__SELECT
+				"select", SEMDB_DB_COLUMN__SELECT
 			},
 			{
-				"update", SEPG_DB_COLUMN__UPDATE
+				"update", SEMDB_DB_COLUMN__UPDATE
 			},
 			{
-				"insert", SEPG_DB_COLUMN__INSERT
+				"insert", SEMDB_DB_COLUMN__INSERT
 			},
 			{
 				NULL, 0UL
@@ -470,25 +470,25 @@ static struct
 		}
 	},
 	{
-		"db_tuple", SEPG_CLASS_DB_TUPLE,
+		"db_tuple", SEMDB_CLASS_DB_TUPLE,
 		{
 			{
-				"relabelfrom", SEPG_DB_TUPLE__RELABELFROM
+				"relabelfrom", SEMDB_DB_TUPLE__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_TUPLE__RELABELTO
+				"relabelto", SEMDB_DB_TUPLE__RELABELTO
 			},
 			{
-				"select", SEPG_DB_TUPLE__SELECT
+				"select", SEMDB_DB_TUPLE__SELECT
 			},
 			{
-				"update", SEPG_DB_TUPLE__UPDATE
+				"update", SEMDB_DB_TUPLE__UPDATE
 			},
 			{
-				"insert", SEPG_DB_TUPLE__INSERT
+				"insert", SEMDB_DB_TUPLE__INSERT
 			},
 			{
-				"delete", SEPG_DB_TUPLE__DELETE
+				"delete", SEMDB_DB_TUPLE__DELETE
 			},
 			{
 				NULL, 0UL
@@ -496,37 +496,37 @@ static struct
 		}
 	},
 	{
-		"db_blob", SEPG_CLASS_DB_BLOB,
+		"db_blob", SEMDB_CLASS_DB_BLOB,
 		{
 			{
-				"create", SEPG_DB_BLOB__CREATE
+				"create", SEMDB_DB_BLOB__CREATE
 			},
 			{
-				"drop", SEPG_DB_BLOB__DROP
+				"drop", SEMDB_DB_BLOB__DROP
 			},
 			{
-				"getattr", SEPG_DB_BLOB__GETATTR
+				"getattr", SEMDB_DB_BLOB__GETATTR
 			},
 			{
-				"setattr", SEPG_DB_BLOB__SETATTR
+				"setattr", SEMDB_DB_BLOB__SETATTR
 			},
 			{
-				"relabelfrom", SEPG_DB_BLOB__RELABELFROM
+				"relabelfrom", SEMDB_DB_BLOB__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_BLOB__RELABELTO
+				"relabelto", SEMDB_DB_BLOB__RELABELTO
 			},
 			{
-				"read", SEPG_DB_BLOB__READ
+				"read", SEMDB_DB_BLOB__READ
 			},
 			{
-				"write", SEPG_DB_BLOB__WRITE
+				"write", SEMDB_DB_BLOB__WRITE
 			},
 			{
-				"import", SEPG_DB_BLOB__IMPORT
+				"import", SEMDB_DB_BLOB__IMPORT
 			},
 			{
-				"export", SEPG_DB_BLOB__EXPORT
+				"export", SEMDB_DB_BLOB__EXPORT
 			},
 			{
 				NULL, 0UL
@@ -534,31 +534,31 @@ static struct
 		}
 	},
 	{
-		"db_language", SEPG_CLASS_DB_LANGUAGE,
+		"db_language", SEMDB_CLASS_DB_LANGUAGE,
 		{
 			{
-				"create", SEPG_DB_LANGUAGE__CREATE
+				"create", SEMDB_DB_LANGUAGE__CREATE
 			},
 			{
-				"drop", SEPG_DB_LANGUAGE__DROP
+				"drop", SEMDB_DB_LANGUAGE__DROP
 			},
 			{
-				"getattr", SEPG_DB_LANGUAGE__GETATTR
+				"getattr", SEMDB_DB_LANGUAGE__GETATTR
 			},
 			{
-				"setattr", SEPG_DB_LANGUAGE__SETATTR
+				"setattr", SEMDB_DB_LANGUAGE__SETATTR
 			},
 			{
-				"relabelfrom", SEPG_DB_LANGUAGE__RELABELFROM
+				"relabelfrom", SEMDB_DB_LANGUAGE__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_LANGUAGE__RELABELTO
+				"relabelto", SEMDB_DB_LANGUAGE__RELABELTO
 			},
 			{
-				"implement", SEPG_DB_LANGUAGE__IMPLEMENT
+				"implement", SEMDB_DB_LANGUAGE__IMPLEMENT
 			},
 			{
-				"execute", SEPG_DB_LANGUAGE__EXECUTE
+				"execute", SEMDB_DB_LANGUAGE__EXECUTE
 			},
 			{
 				NULL, 0UL
@@ -566,28 +566,28 @@ static struct
 		}
 	},
 	{
-		"db_view", SEPG_CLASS_DB_VIEW,
+		"db_view", SEMDB_CLASS_DB_VIEW,
 		{
 			{
-				"create", SEPG_DB_VIEW__CREATE
+				"create", SEMDB_DB_VIEW__CREATE
 			},
 			{
-				"drop", SEPG_DB_VIEW__DROP
+				"drop", SEMDB_DB_VIEW__DROP
 			},
 			{
-				"getattr", SEPG_DB_VIEW__GETATTR
+				"getattr", SEMDB_DB_VIEW__GETATTR
 			},
 			{
-				"setattr", SEPG_DB_VIEW__SETATTR
+				"setattr", SEMDB_DB_VIEW__SETATTR
 			},
 			{
-				"relabelfrom", SEPG_DB_VIEW__RELABELFROM
+				"relabelfrom", SEMDB_DB_VIEW__RELABELFROM
 			},
 			{
-				"relabelto", SEPG_DB_VIEW__RELABELTO
+				"relabelto", SEMDB_DB_VIEW__RELABELTO
 			},
 			{
-				"expand", SEPG_DB_VIEW__EXPAND
+				"expand", SEMDB_DB_VIEW__EXPAND
 			},
 			{
 				NULL, 0UL
@@ -687,7 +687,7 @@ semdb_audit_log(bool denied,
 	int			i;
 
 	/* lookup name of the object class */
-	Assert(tclass < SEPG_CLASS_MAX);
+	Assert(tclass < SEMDB_CLASS_MAX);
 	class_name = selinux_catalog[tclass].class_name;
 
 	/* lookup name of the permissions */
@@ -725,7 +725,7 @@ semdb_audit_log(bool denied,
  * target security context (tcontext) is a database object.
  *
  * The access control decision shall be set on the given av_decision.
- * The av_decision.allowed has a bitmask of SEPG_<class>__<perms>
+ * The av_decision.allowed has a bitmask of SEMDB_<class>__<perms>
  * to suggest a set of allowed actions in this object class.
  */
 void
@@ -741,7 +741,7 @@ semdb_compute_avd(const char *scontext,
 				deny_unknown = security_deny_unknown();
 
 	/* Get external code of the object class */
-	Assert(tclass < SEPG_CLASS_MAX);
+	Assert(tclass < SEMDB_CLASS_MAX);
 	Assert(tclass == selinux_catalog[tclass].class_code);
 
 	tclass_name = selinux_catalog[tclass].class_name;
@@ -831,7 +831,7 @@ semdb_compute_avd(const char *scontext,
  *
  * scontext: security context of the subject (mostly, peer process).
  * tcontext: security context of the upper database object.
- * tclass: class code (SEPG_CLASS_*) of the new object in creation
+ * tclass: class code (SEMDB_CLASS_*) of the new object in creation
  */
 char *
 semdb_compute_create(const char *scontext,
@@ -845,7 +845,7 @@ semdb_compute_create(const char *scontext,
 	char	   *result;
 
 	/* Get external code of the object class */
-	Assert(tclass < SEPG_CLASS_MAX);
+	Assert(tclass < SEMDB_CLASS_MAX);
 
 	tclass_name = selinux_catalog[tclass].class_name;
 	tclass_ex = string_to_security_class(tclass_name);
@@ -869,16 +869,16 @@ semdb_compute_create(const char *scontext,
 	 * libselinux returns malloc()'ed string, so we need to copy it on the
 	 * palloc()'ed region.
 	 */
-	PG_TRY();
+	MDB_TRY();
 	{
 		result = pstrdup(ncontext);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		freecon(ncontext);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	freecon(ncontext);
 
 	return result;
@@ -893,8 +893,8 @@ semdb_compute_create(const char *scontext,
  *
  * scontext: security label of the subject (mostly, peer process)
  * tcontext: security label of the object being referenced
- * tclass: class code (SEPG_CLASS_*) of the object being referenced
- * required: a mask of required permissions (SEPG_<class>__<perm>)
+ * tclass: class code (SEMDB_CLASS_*) of the object being referenced
+ * required: a mask of required permissions (SEMDB_<class>__<perm>)
  * audit_name: a human readable object name for audit logs, or NULL.
  * abort_on_violation: true, if error shall be raised on access violation
  */

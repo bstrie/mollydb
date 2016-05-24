@@ -410,7 +410,7 @@ _hash_metapinit(Relation rel, double num_tuples, ForkNumber forkNum)
 	Assert(i > 0);
 	metap->hashm_bmsize = 1 << i;
 	metap->hashm_bmshift = i + BYTE_TO_BIT;
-	Assert((1 << BMPG_SHIFT(metap)) == (BMPG_MASK(metap) + 1));
+	Assert((1 << BMMDB_SHIFT(metap)) == (BMMDB_MASK(metap) + 1));
 
 	/*
 	 * Label the index with its primary hash support function's OID.  This is

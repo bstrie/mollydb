@@ -71,11 +71,11 @@ nonexclusive_base_backup_cleanup(int code, Datum arg)
  * GRANT system.
  */
 Datum
-mdb_start_backup(PG_FUNCTION_ARGS)
+mdb_start_backup(MDB_FUNCTION_ARGS)
 {
-	text	   *backupid = PG_GETARG_TEXT_P(0);
-	bool		fast = PG_GETARG_BOOL(1);
-	bool		exclusive = PG_GETARG_BOOL(2);
+	text	   *backupid = MDB_GETARG_TEXT_P(0);
+	bool		fast = MDB_GETARG_BOOL(1);
+	bool		exclusive = MDB_GETARG_BOOL(2);
 	char	   *backupidstr;
 	XLogRecPtr	startpoint;
 	DIR		   *dir;
@@ -121,7 +121,7 @@ mdb_start_backup(PG_FUNCTION_ARGS)
 
 	FreeDir(dir);
 
-	PG_RETURN_LSN(startpoint);
+	MDB_RETURN_LSN(startpoint);
 }
 
 /*
@@ -145,7 +145,7 @@ mdb_start_backup(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-mdb_stop_backup(PG_FUNCTION_ARGS)
+mdb_stop_backup(MDB_FUNCTION_ARGS)
 {
 	XLogRecPtr	stoppoint;
 
@@ -165,7 +165,7 @@ mdb_stop_backup(PG_FUNCTION_ARGS)
 
 	exclusive_backup_running = false;
 
-	PG_RETURN_LSN(stoppoint);
+	MDB_RETURN_LSN(stoppoint);
 }
 
 
@@ -180,7 +180,7 @@ mdb_stop_backup(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-mdb_stop_backup_v2(PG_FUNCTION_ARGS)
+mdb_stop_backup_v2(MDB_FUNCTION_ARGS)
 {
 	ReturnSetInfo  *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc		tupdesc;
@@ -190,7 +190,7 @@ mdb_stop_backup_v2(PG_FUNCTION_ARGS)
 	Datum			values[3];
 	bool			nulls[3];
 
-	bool			exclusive = PG_GETARG_BOOL(0);
+	bool			exclusive = MDB_GETARG_BOOL(0);
 	XLogRecPtr		stoppoint;
 
 	/* check to see if caller supports us returning a tuplestore */
@@ -284,7 +284,7 @@ mdb_stop_backup_v2(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-mdb_switch_xlog(PG_FUNCTION_ARGS)
+mdb_switch_xlog(MDB_FUNCTION_ARGS)
 {
 	XLogRecPtr	switchpoint;
 
@@ -299,7 +299,7 @@ mdb_switch_xlog(PG_FUNCTION_ARGS)
 	/*
 	 * As a convenience, return the WAL location of the switch record
 	 */
-	PG_RETURN_LSN(switchpoint);
+	MDB_RETURN_LSN(switchpoint);
 }
 
 /*
@@ -309,9 +309,9 @@ mdb_switch_xlog(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-mdb_create_restore_point(PG_FUNCTION_ARGS)
+mdb_create_restore_point(MDB_FUNCTION_ARGS)
 {
-	text	   *restore_name = PG_GETARG_TEXT_P(0);
+	text	   *restore_name = MDB_GETARG_TEXT_P(0);
 	char	   *restore_name_str;
 	XLogRecPtr	restorepoint;
 
@@ -339,7 +339,7 @@ mdb_create_restore_point(PG_FUNCTION_ARGS)
 	/*
 	 * As a convenience, return the WAL location of the restore point record
 	 */
-	PG_RETURN_LSN(restorepoint);
+	MDB_RETURN_LSN(restorepoint);
 }
 
 /*
@@ -350,7 +350,7 @@ mdb_create_restore_point(PG_FUNCTION_ARGS)
  * to the kernel, but is not necessarily synced to disk.
  */
 Datum
-mdb_current_xlog_location(PG_FUNCTION_ARGS)
+mdb_current_xlog_location(MDB_FUNCTION_ARGS)
 {
 	XLogRecPtr	current_recptr;
 
@@ -362,7 +362,7 @@ mdb_current_xlog_location(PG_FUNCTION_ARGS)
 
 	current_recptr = GetXLogWriteRecPtr();
 
-	PG_RETURN_LSN(current_recptr);
+	MDB_RETURN_LSN(current_recptr);
 }
 
 /*
@@ -371,7 +371,7 @@ mdb_current_xlog_location(PG_FUNCTION_ARGS)
  * This function is mostly for debugging purposes.
  */
 Datum
-mdb_current_xlog_insert_location(PG_FUNCTION_ARGS)
+mdb_current_xlog_insert_location(MDB_FUNCTION_ARGS)
 {
 	XLogRecPtr	current_recptr;
 
@@ -383,7 +383,7 @@ mdb_current_xlog_insert_location(PG_FUNCTION_ARGS)
 
 	current_recptr = GetXLogInsertRecPtr();
 
-	PG_RETURN_LSN(current_recptr);
+	MDB_RETURN_LSN(current_recptr);
 }
 
 /*
@@ -392,7 +392,7 @@ mdb_current_xlog_insert_location(PG_FUNCTION_ARGS)
  * This function is mostly for debugging purposes.
  */
 Datum
-mdb_current_xlog_flush_location(PG_FUNCTION_ARGS)
+mdb_current_xlog_flush_location(MDB_FUNCTION_ARGS)
 {
 	XLogRecPtr	current_recptr;
 
@@ -404,7 +404,7 @@ mdb_current_xlog_flush_location(PG_FUNCTION_ARGS)
 
 	current_recptr = GetFlushRecPtr();
 
-	PG_RETURN_LSN(current_recptr);
+	MDB_RETURN_LSN(current_recptr);
 }
 
 /*
@@ -414,16 +414,16 @@ mdb_current_xlog_flush_location(PG_FUNCTION_ARGS)
  * and synced to disk by walreceiver.
  */
 Datum
-mdb_last_xlog_receive_location(PG_FUNCTION_ARGS)
+mdb_last_xlog_receive_location(MDB_FUNCTION_ARGS)
 {
 	XLogRecPtr	recptr;
 
 	recptr = GetWalRcvWriteRecPtr(NULL, NULL);
 
 	if (recptr == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_LSN(recptr);
+	MDB_RETURN_LSN(recptr);
 }
 
 /*
@@ -433,16 +433,16 @@ mdb_last_xlog_receive_location(PG_FUNCTION_ARGS)
  * connections during recovery.
  */
 Datum
-mdb_last_xlog_replay_location(PG_FUNCTION_ARGS)
+mdb_last_xlog_replay_location(MDB_FUNCTION_ARGS)
 {
 	XLogRecPtr	recptr;
 
 	recptr = GetXLogReplayRecPtr(NULL);
 
 	if (recptr == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_LSN(recptr);
+	MDB_RETURN_LSN(recptr);
 }
 
 /*
@@ -454,11 +454,11 @@ mdb_last_xlog_replay_location(PG_FUNCTION_ARGS)
  * expected usage is to determine which xlog file(s) are ready to archive.
  */
 Datum
-mdb_xlogfile_name_offset(PG_FUNCTION_ARGS)
+mdb_xlogfile_name_offset(MDB_FUNCTION_ARGS)
 {
 	XLogSegNo	xlogsegno;
 	uint32		xrecoff;
-	XLogRecPtr	locationpoint = PG_GETARG_LSN(0);
+	XLogRecPtr	locationpoint = MDB_GETARG_LSN(0);
 	char		xlogfilename[MAXFNAMELEN];
 	Datum		values[2];
 	bool		isnull[2];
@@ -508,7 +508,7 @@ mdb_xlogfile_name_offset(PG_FUNCTION_ARGS)
 
 	result = HeapTupleGetDatum(resultHeapTuple);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*
@@ -516,10 +516,10 @@ mdb_xlogfile_name_offset(PG_FUNCTION_ARGS)
  * such as is returned by mdb_stop_backup() or mdb_xlog_switch().
  */
 Datum
-mdb_xlogfile_name(PG_FUNCTION_ARGS)
+mdb_xlogfile_name(MDB_FUNCTION_ARGS)
 {
 	XLogSegNo	xlogsegno;
-	XLogRecPtr	locationpoint = PG_GETARG_LSN(0);
+	XLogRecPtr	locationpoint = MDB_GETARG_LSN(0);
 	char		xlogfilename[MAXFNAMELEN];
 
 	if (RecoveryInProgress())
@@ -531,7 +531,7 @@ mdb_xlogfile_name(PG_FUNCTION_ARGS)
 	XLByteToPrevSeg(locationpoint, xlogsegno);
 	XLogFileName(xlogfilename, ThisTimeLineID, xlogsegno);
 
-	PG_RETURN_TEXT_P(cstring_to_text(xlogfilename));
+	MDB_RETURN_TEXT_P(cstring_to_text(xlogfilename));
 }
 
 /*
@@ -541,7 +541,7 @@ mdb_xlogfile_name(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-mdb_xlog_replay_pause(PG_FUNCTION_ARGS)
+mdb_xlog_replay_pause(MDB_FUNCTION_ARGS)
 {
 	if (!RecoveryInProgress())
 		ereport(ERROR,
@@ -551,7 +551,7 @@ mdb_xlog_replay_pause(PG_FUNCTION_ARGS)
 
 	SetRecoveryPause(true);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -561,7 +561,7 @@ mdb_xlog_replay_pause(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-mdb_xlog_replay_resume(PG_FUNCTION_ARGS)
+mdb_xlog_replay_resume(MDB_FUNCTION_ARGS)
 {
 	if (!RecoveryInProgress())
 		ereport(ERROR,
@@ -571,14 +571,14 @@ mdb_xlog_replay_resume(PG_FUNCTION_ARGS)
 
 	SetRecoveryPause(false);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * mdb_is_xlog_replay_paused
  */
 Datum
-mdb_is_xlog_replay_paused(PG_FUNCTION_ARGS)
+mdb_is_xlog_replay_paused(MDB_FUNCTION_ARGS)
 {
 	if (!RecoveryInProgress())
 		ereport(ERROR,
@@ -586,7 +586,7 @@ mdb_is_xlog_replay_paused(PG_FUNCTION_ARGS)
 				 errmsg("recovery is not in progress"),
 				 errhint("Recovery control functions can only be executed during recovery.")));
 
-	PG_RETURN_BOOL(RecoveryIsPaused());
+	MDB_RETURN_BOOL(RecoveryIsPaused());
 }
 
 /*
@@ -596,48 +596,48 @@ mdb_is_xlog_replay_paused(PG_FUNCTION_ARGS)
  * returns NULL.
  */
 Datum
-mdb_last_xact_replay_timestamp(PG_FUNCTION_ARGS)
+mdb_last_xact_replay_timestamp(MDB_FUNCTION_ARGS)
 {
 	TimestampTz xtime;
 
 	xtime = GetLatestXTime();
 	if (xtime == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TIMESTAMPTZ(xtime);
+	MDB_RETURN_TIMESTAMPTZ(xtime);
 }
 
 /*
  * Returns bool with current recovery mode, a global state.
  */
 Datum
-mdb_is_in_recovery(PG_FUNCTION_ARGS)
+mdb_is_in_recovery(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(RecoveryInProgress());
+	MDB_RETURN_BOOL(RecoveryInProgress());
 }
 
 /*
  * Compute the difference in bytes between two WAL locations.
  */
 Datum
-mdb_xlog_location_diff(PG_FUNCTION_ARGS)
+mdb_xlog_location_diff(MDB_FUNCTION_ARGS)
 {
 	Datum		result;
 
 	result = DirectFunctionCall2(mdb_lsn_mi,
-								 PG_GETARG_DATUM(0),
-								 PG_GETARG_DATUM(1));
+								 MDB_GETARG_DATUM(0),
+								 MDB_GETARG_DATUM(1));
 
-	PG_RETURN_NUMERIC(result);
+	MDB_RETURN_NUMERIC(result);
 }
 
 /*
  * Returns bool with current on-line backup mode, a global state.
  */
 Datum
-mdb_is_in_backup(PG_FUNCTION_ARGS)
+mdb_is_in_backup(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(BackupInProgress());
+	MDB_RETURN_BOOL(BackupInProgress());
 }
 
 /*
@@ -647,7 +647,7 @@ mdb_is_in_backup(PG_FUNCTION_ARGS)
  * returns NULL.
  */
 Datum
-mdb_backup_start_time(PG_FUNCTION_ARGS)
+mdb_backup_start_time(MDB_FUNCTION_ARGS)
 {
 	Datum		xtime;
 	FILE	   *lfp;
@@ -665,7 +665,7 @@ mdb_backup_start_time(PG_FUNCTION_ARGS)
 					(errcode_for_file_access(),
 					 errmsg("could not read file \"%s\": %m",
 							BACKUP_LABEL_FILE)));
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	/*
@@ -703,5 +703,5 @@ mdb_backup_start_time(PG_FUNCTION_ARGS)
 								ObjectIdGetDatum(InvalidOid),
 								Int32GetDatum(-1));
 
-	PG_RETURN_DATUM(xtime);
+	MDB_RETURN_DATUM(xtime);
 }

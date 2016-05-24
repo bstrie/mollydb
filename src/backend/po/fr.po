@@ -1868,10 +1868,10 @@ msgstr "les fichiers de la base de données sont incompatibles avec le serveur"
 
 #: access/transam/xlog.c:4303
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x), but the server was compiled with PG_CONTROL_VERSION %d (0x%08x)."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d (0x%08x), but the server was compiled with MDB_CONTROL_VERSION %d (0x%08x)."
 msgstr ""
-"Le cluster de base de données a été initialisé avec un PG_CONTROL_VERSION à\n"
-"%d (0x%08x) alors que le serveur a été compilé avec un PG_CONTROL_VERSION à\n"
+"Le cluster de base de données a été initialisé avec un MDB_CONTROL_VERSION à\n"
+"%d (0x%08x) alors que le serveur a été compilé avec un MDB_CONTROL_VERSION à\n"
 "%d (0x%08x)."
 
 #: access/transam/xlog.c:4307
@@ -1883,10 +1883,10 @@ msgstr ""
 
 #: access/transam/xlog.c:4312
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d, but the server was compiled with PG_CONTROL_VERSION %d."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d, but the server was compiled with MDB_CONTROL_VERSION %d."
 msgstr ""
-"Le cluster de base de données a été initialisé avec un PG_CONTROL_VERSION à\n"
-"%d alors que le serveur a été compilé avec un PG_CONTROL_VERSION à %d."
+"Le cluster de base de données a été initialisé avec un MDB_CONTROL_VERSION à\n"
+"%d alors que le serveur a été compilé avec un MDB_CONTROL_VERSION à %d."
 
 #: access/transam/xlog.c:4315 access/transam/xlog.c:4339
 #: access/transam/xlog.c:4346 access/transam/xlog.c:4351
@@ -21794,10 +21794,10 @@ msgstr "bibliothèque « %s » incompatible : bloc magique manquant"
 
 #: utils/fmgr/dfmgr.c:268
 #, c-format
-msgid "Extension libraries are required to use the PG_MODULE_MAGIC macro."
+msgid "Extension libraries are required to use the MDB_MODULE_MAGIC macro."
 msgstr ""
 "Les bibliothèques étendues nécessitent l'utilisation de la macro\n"
-"PG_MODULE_MAGIC."
+"MDB_MODULE_MAGIC."
 
 #: utils/fmgr/dfmgr.c:304
 #, c-format

@@ -17,17 +17,17 @@ typedef struct
 /*
 ** timestamp ops
 */
-PG_FUNCTION_INFO_V1(gbt_ts_compress);
-PG_FUNCTION_INFO_V1(gbt_tstz_compress);
-PG_FUNCTION_INFO_V1(gbt_ts_fetch);
-PG_FUNCTION_INFO_V1(gbt_ts_union);
-PG_FUNCTION_INFO_V1(gbt_ts_picksplit);
-PG_FUNCTION_INFO_V1(gbt_ts_consistent);
-PG_FUNCTION_INFO_V1(gbt_ts_distance);
-PG_FUNCTION_INFO_V1(gbt_tstz_consistent);
-PG_FUNCTION_INFO_V1(gbt_tstz_distance);
-PG_FUNCTION_INFO_V1(gbt_ts_penalty);
-PG_FUNCTION_INFO_V1(gbt_ts_same);
+MDB_FUNCTION_INFO_V1(gbt_ts_compress);
+MDB_FUNCTION_INFO_V1(gbt_tstz_compress);
+MDB_FUNCTION_INFO_V1(gbt_ts_fetch);
+MDB_FUNCTION_INFO_V1(gbt_ts_union);
+MDB_FUNCTION_INFO_V1(gbt_ts_picksplit);
+MDB_FUNCTION_INFO_V1(gbt_ts_consistent);
+MDB_FUNCTION_INFO_V1(gbt_ts_distance);
+MDB_FUNCTION_INFO_V1(gbt_tstz_consistent);
+MDB_FUNCTION_INFO_V1(gbt_tstz_distance);
+MDB_FUNCTION_INFO_V1(gbt_ts_penalty);
+MDB_FUNCTION_INFO_V1(gbt_ts_same);
 
 
 #ifdef USE_FLOAT8_BYVAL
@@ -139,12 +139,12 @@ static const gbtree_ninfo tinfo =
 };
 
 
-PG_FUNCTION_INFO_V1(ts_dist);
+MDB_FUNCTION_INFO_V1(ts_dist);
 Datum
-ts_dist(PG_FUNCTION_ARGS)
+ts_dist(MDB_FUNCTION_ARGS)
 {
-	Timestamp	a = PG_GETARG_TIMESTAMP(0);
-	Timestamp	b = PG_GETARG_TIMESTAMP(1);
+	Timestamp	a = MDB_GETARG_TIMESTAMP(0);
+	Timestamp	b = MDB_GETARG_TIMESTAMP(1);
 	Interval   *r;
 
 	if (TIMESTAMP_NOT_FINITE(a) || TIMESTAMP_NOT_FINITE(b))
@@ -154,25 +154,25 @@ ts_dist(PG_FUNCTION_ARGS)
 		p->day = INT_MAX;
 		p->month = INT_MAX;
 #ifdef HAVE_INT64_TIMESTAMP
-		p->time = PG_INT64_MAX;
+		p->time = MDB_INT64_MAX;
 #else
 		p->time = DBL_MAX;
 #endif
-		PG_RETURN_INTERVAL_P(p);
+		MDB_RETURN_INTERVAL_P(p);
 	}
 	else
 		r = DatumGetIntervalP(DirectFunctionCall2(timestamp_mi,
-												  PG_GETARG_DATUM(0),
-												  PG_GETARG_DATUM(1)));
-	PG_RETURN_INTERVAL_P(abs_interval(r));
+												  MDB_GETARG_DATUM(0),
+												  MDB_GETARG_DATUM(1)));
+	MDB_RETURN_INTERVAL_P(abs_interval(r));
 }
 
-PG_FUNCTION_INFO_V1(tstz_dist);
+MDB_FUNCTION_INFO_V1(tstz_dist);
 Datum
-tstz_dist(PG_FUNCTION_ARGS)
+tstz_dist(MDB_FUNCTION_ARGS)
 {
-	TimestampTz a = PG_GETARG_TIMESTAMPTZ(0);
-	TimestampTz b = PG_GETARG_TIMESTAMPTZ(1);
+	TimestampTz a = MDB_GETARG_TIMESTAMPTZ(0);
+	TimestampTz b = MDB_GETARG_TIMESTAMPTZ(1);
 	Interval   *r;
 
 	if (TIMESTAMP_NOT_FINITE(a) || TIMESTAMP_NOT_FINITE(b))
@@ -182,17 +182,17 @@ tstz_dist(PG_FUNCTION_ARGS)
 		p->day = INT_MAX;
 		p->month = INT_MAX;
 #ifdef HAVE_INT64_TIMESTAMP
-		p->time = PG_INT64_MAX;
+		p->time = MDB_INT64_MAX;
 #else
 		p->time = DBL_MAX;
 #endif
-		PG_RETURN_INTERVAL_P(p);
+		MDB_RETURN_INTERVAL_P(p);
 	}
 
 	r = DatumGetIntervalP(DirectFunctionCall2(timestamp_mi,
-											  PG_GETARG_DATUM(0),
-											  PG_GETARG_DATUM(1)));
-	PG_RETURN_INTERVAL_P(abs_interval(r));
+											  MDB_GETARG_DATUM(0),
+											  MDB_GETARG_DATUM(1)));
+	MDB_RETURN_INTERVAL_P(abs_interval(r));
 }
 
 
@@ -210,18 +210,18 @@ tstz_to_ts_gmt(TimestampTz ts)
 
 
 Datum
-gbt_ts_compress(PG_FUNCTION_ARGS)
+gbt_ts_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
 }
 
 
 Datum
-gbt_tstz_compress(PG_FUNCTION_ARGS)
+gbt_tstz_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval;
 
 	if (entry->leafkey)
@@ -241,26 +241,26 @@ gbt_tstz_compress(PG_FUNCTION_ARGS)
 	else
 		retval = entry;
 
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 Datum
-gbt_ts_fetch(PG_FUNCTION_ARGS)
+gbt_ts_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
 }
 
 Datum
-gbt_ts_consistent(PG_FUNCTION_ARGS)
+gbt_ts_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	Timestamp	query = PG_GETARG_TIMESTAMP(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	Timestamp	query = MDB_GETARG_TIMESTAMP(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	tsKEY	   *kkk = (tsKEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
@@ -270,38 +270,38 @@ gbt_ts_consistent(PG_FUNCTION_ARGS)
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_BOOL(
+	MDB_RETURN_BOOL(
 				   gbt_num_consistent(&key, (void *) &query, &strategy, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 Datum
-gbt_ts_distance(PG_FUNCTION_ARGS)
+gbt_ts_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	Timestamp	query = PG_GETARG_TIMESTAMP(1);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	Timestamp	query = MDB_GETARG_TIMESTAMP(1);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
+	/* Oid		subtype = MDB_GETARG_OID(3); */
 	tsKEY	   *kkk = (tsKEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_FLOAT8(
+	MDB_RETURN_FLOAT8(
 			gbt_num_distance(&key, (void *) &query, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 Datum
-gbt_tstz_consistent(PG_FUNCTION_ARGS)
+gbt_tstz_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	TimestampTz query = PG_GETARG_TIMESTAMPTZ(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	TimestampTz query = MDB_GETARG_TIMESTAMPTZ(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	char	   *kkk = (char *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 	Timestamp	qqq;
@@ -313,18 +313,18 @@ gbt_tstz_consistent(PG_FUNCTION_ARGS)
 	key.upper = (GBT_NUMKEY *) &kkk[MAXALIGN(tinfo.size)];
 	qqq = tstz_to_ts_gmt(query);
 
-	PG_RETURN_BOOL(
+	MDB_RETURN_BOOL(
 				   gbt_num_consistent(&key, (void *) &qqq, &strategy, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 Datum
-gbt_tstz_distance(PG_FUNCTION_ARGS)
+gbt_tstz_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	TimestampTz query = PG_GETARG_TIMESTAMPTZ(1);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	TimestampTz query = MDB_GETARG_TIMESTAMPTZ(1);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
+	/* Oid		subtype = MDB_GETARG_OID(3); */
 	char	   *kkk = (char *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 	Timestamp	qqq;
@@ -333,20 +333,20 @@ gbt_tstz_distance(PG_FUNCTION_ARGS)
 	key.upper = (GBT_NUMKEY *) &kkk[MAXALIGN(tinfo.size)];
 	qqq = tstz_to_ts_gmt(query);
 
-	PG_RETURN_FLOAT8(
+	MDB_RETURN_FLOAT8(
 			  gbt_num_distance(&key, (void *) &qqq, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_ts_union(PG_FUNCTION_ARGS)
+gbt_ts_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	void	   *out = palloc(sizeof(tsKEY));
 
-	*(int *) PG_GETARG_POINTER(1) = sizeof(tsKEY);
-	PG_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
+	*(int *) MDB_GETARG_POINTER(1) = sizeof(tsKEY);
+	MDB_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
 }
 
 
@@ -359,11 +359,11 @@ gbt_ts_union(PG_FUNCTION_ARGS)
 
 
 Datum
-gbt_ts_penalty(PG_FUNCTION_ARGS)
+gbt_ts_penalty(MDB_FUNCTION_ARGS)
 {
-	tsKEY	   *origentry = (tsKEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	tsKEY	   *newentry = (tsKEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(1))->key);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	tsKEY	   *origentry = (tsKEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	tsKEY	   *newentry = (tsKEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(1))->key);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 
 	double		orgdbl[2],
 				newdbl[2];
@@ -384,28 +384,28 @@ gbt_ts_penalty(PG_FUNCTION_ARGS)
 
 	penalty_num(result, orgdbl[0], orgdbl[1], newdbl[0], newdbl[1]);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 
 }
 
 
 Datum
-gbt_ts_picksplit(PG_FUNCTION_ARGS)
+gbt_ts_picksplit(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(gbt_num_picksplit(
-									(GistEntryVector *) PG_GETARG_POINTER(0),
-									  (GIST_SPLITVEC *) PG_GETARG_POINTER(1),
+	MDB_RETURN_POINTER(gbt_num_picksplit(
+									(GistEntryVector *) MDB_GETARG_POINTER(0),
+									  (GIST_SPLITVEC *) MDB_GETARG_POINTER(1),
 										&tinfo
 										));
 }
 
 Datum
-gbt_ts_same(PG_FUNCTION_ARGS)
+gbt_ts_same(MDB_FUNCTION_ARGS)
 {
-	tsKEY	   *b1 = (tsKEY *) PG_GETARG_POINTER(0);
-	tsKEY	   *b2 = (tsKEY *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	tsKEY	   *b1 = (tsKEY *) MDB_GETARG_POINTER(0);
+	tsKEY	   *b2 = (tsKEY *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	*result = gbt_num_same((void *) b1, (void *) b2, &tinfo);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }

@@ -100,7 +100,7 @@ PLy_procedure_get(Oid fn_oid, Oid fn_rel, bool is_trigger)
 		proc = entry->proc;
 	}
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (!found)
 		{
@@ -120,14 +120,14 @@ PLy_procedure_get(Oid fn_oid, Oid fn_rel, bool is_trigger)
 		}
 		/* Found it and it's valid, it's fine to use it */
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Do not leave an uninitialised entry in the cache */
 		if (use_cache)
 			hash_search(PLy_procedure_cache, &key, HASH_REMOVE, NULL);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	ReleaseSysCache(procTup);
 
@@ -176,7 +176,7 @@ PLy_procedure_create(HeapTuple procTup, Oid fn_oid, bool is_trigger)
 	proc = (PLyProcedure *) palloc0(sizeof(PLyProcedure));
 	proc->mcxt = cxt;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		Datum		protrftypes_datum;
 		Datum		prosrcdatum;
@@ -353,13 +353,13 @@ PLy_procedure_create(HeapTuple procTup, Oid fn_oid, bool is_trigger)
 
 		pfree(procSource);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		MemoryContextSwitchTo(oldcxt);
 		PLy_procedure_delete(proc);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	MemoryContextSwitchTo(oldcxt);
 	return proc;

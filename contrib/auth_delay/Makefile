@@ -4,8 +4,8 @@ MODULES = auth_delay
 PGFILEDESC = "auth_delay - delay authentication failure reports"
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/auth_delay

@@ -60,7 +60,7 @@ mark_file_as_archived(const char *basedir, const char *fname)
 	snprintf(tmppath, sizeof(tmppath), "%s/archive_status/%s.done",
 			 basedir, fname);
 
-	fd = open(tmppath, O_WRONLY | O_CREAT | PG_BINARY, S_IRUSR | S_IWUSR);
+	fd = open(tmppath, O_WRONLY | O_CREAT | MDB_BINARY, S_IRUSR | S_IWUSR);
 	if (fd < 0)
 	{
 		fprintf(stderr, _("%s: could not create archive status file \"%s\": %s\n"),
@@ -104,7 +104,7 @@ open_walfile(StreamCtl *stream, XLogRecPtr startpoint)
 
 	snprintf(fn, sizeof(fn), "%s/%s%s", stream->basedir, current_walfile_name,
 			 stream->partial_suffix ? stream->partial_suffix : "");
-	f = open(fn, O_WRONLY | O_CREAT | PG_BINARY, S_IRUSR | S_IWUSR);
+	f = open(fn, O_WRONLY | O_CREAT | MDB_BINARY, S_IRUSR | S_IWUSR);
 	if (f == -1)
 	{
 		fprintf(stderr,
@@ -268,7 +268,7 @@ existsTimeLineHistoryFile(StreamCtl *stream)
 
 	snprintf(path, sizeof(path), "%s/%s", stream->basedir, histfname);
 
-	fd = open(path, O_RDONLY | PG_BINARY, 0);
+	fd = open(path, O_RDONLY | MDB_BINARY, 0);
 	if (fd < 0)
 	{
 		if (errno != ENOENT)
@@ -313,7 +313,7 @@ writeTimeLineHistoryFile(StreamCtl *stream, char *filename, char *content)
 
 	unlink(tmppath);
 
-	fd = open(tmppath, O_WRONLY | O_CREAT | PG_BINARY, S_IRUSR | S_IWUSR);
+	fd = open(tmppath, O_WRONLY | O_CREAT | MDB_BINARY, S_IRUSR | S_IWUSR);
 	if (fd < 0)
 	{
 		fprintf(stderr, _("%s: could not create timeline history file \"%s\": %s\n"),
@@ -429,7 +429,7 @@ CheckServerVersionForStreaming(PGconn *conn)
 	 * side.
 	 */
 	minServerMajor = 903;
-	maxServerMajor = PG_VERSION_NUM / 100;
+	maxServerMajor = MDB_VERSION_NUM / 100;
 	serverMajor = PQserverVersion(conn) / 100;
 	if (serverMajor < minServerMajor)
 	{
@@ -448,7 +448,7 @@ CheckServerVersionForStreaming(PGconn *conn)
 		fprintf(stderr, _("%s: incompatible server version %s; client does not support streaming from server versions newer than %s\n"),
 				progname,
 				serverver ? serverver : "'unknown'",
-				PG_VERSION);
+				MDB_VERSION);
 		return false;
 	}
 	return true;

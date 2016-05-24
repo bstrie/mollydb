@@ -644,7 +644,7 @@ load_relmap_file(bool shared)
 
 	/* Read data ... */
 	fd = OpenTransientFile(mapfilename,
-						   O_RDONLY | PG_BINARY, S_IRUSR | S_IWUSR);
+						   O_RDONLY | MDB_BINARY, S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(FATAL,
 				(errcode_for_file_access(),
@@ -743,7 +743,7 @@ write_relmap_file(bool shared, RelMapFile *newmap,
 	}
 
 	fd = OpenTransientFile(mapfilename,
-						   O_WRONLY | O_CREAT | PG_BINARY,
+						   O_WRONLY | O_CREAT | MDB_BINARY,
 						   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(ERROR,

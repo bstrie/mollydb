@@ -39,19 +39,19 @@
 #define plpython_inline_handler plpython3_inline_handler
 #endif
 
-extern void _PG_init(void);
+extern void _MDB_init(void);
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(plpython_validator);
-PG_FUNCTION_INFO_V1(plpython_call_handler);
-PG_FUNCTION_INFO_V1(plpython_inline_handler);
+MDB_FUNCTION_INFO_V1(plpython_validator);
+MDB_FUNCTION_INFO_V1(plpython_call_handler);
+MDB_FUNCTION_INFO_V1(plpython_inline_handler);
 
 #if PY_MAJOR_VERSION < 3
 /* Define aliases plpython2_call_handler etc */
-PG_FUNCTION_INFO_V1(plpython2_validator);
-PG_FUNCTION_INFO_V1(plpython2_call_handler);
-PG_FUNCTION_INFO_V1(plpython2_inline_handler);
+MDB_FUNCTION_INFO_V1(plpython2_validator);
+MDB_FUNCTION_INFO_V1(plpython2_call_handler);
+MDB_FUNCTION_INFO_V1(plpython2_inline_handler);
 #endif
 
 
@@ -75,7 +75,7 @@ static PLyExecutionContext *PLy_execution_contexts = NULL;
 
 
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	int		  **bitmask_ptr;
 
@@ -175,18 +175,18 @@ PLy_init_interp(void)
 }
 
 Datum
-plpython_validator(PG_FUNCTION_ARGS)
+plpython_validator(MDB_FUNCTION_ARGS)
 {
-	Oid			funcoid = PG_GETARG_OID(0);
+	Oid			funcoid = MDB_GETARG_OID(0);
 	HeapTuple	tuple;
 	Form_mdb_proc procStruct;
 	bool		is_trigger;
 
 	if (!CheckFunctionValidatorAccess(fcinfo->flinfo->fn_oid, funcoid))
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 
 	if (!check_function_bodies)
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 
 	/* Do this only after making sure we need to do something */
 	PLy_initialize();
@@ -204,12 +204,12 @@ plpython_validator(PG_FUNCTION_ARGS)
 	/* We can't validate triggers against any particular table ... */
 	PLy_procedure_get(funcoid, InvalidOid, is_trigger);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 #if PY_MAJOR_VERSION < 3
 Datum
-plpython2_validator(PG_FUNCTION_ARGS)
+plpython2_validator(MDB_FUNCTION_ARGS)
 {
 	/* call plpython validator with our fcinfo so it gets our oid */
 	return plpython_validator(fcinfo);
@@ -217,7 +217,7 @@ plpython2_validator(PG_FUNCTION_ARGS)
 #endif   /* PY_MAJOR_VERSION < 3 */
 
 Datum
-plpython_call_handler(PG_FUNCTION_ARGS)
+plpython_call_handler(MDB_FUNCTION_ARGS)
 {
 	Datum		retval;
 	PLyExecutionContext *exec_ctx;
@@ -232,7 +232,7 @@ plpython_call_handler(PG_FUNCTION_ARGS)
 	/*
 	 * Push execution context onto stack.  It is important that this get
 	 * popped again, so avoid putting anything that could throw error between
-	 * here and the PG_TRY.  (plpython_error_callback expects the stack entry
+	 * here and the MDB_TRY.  (plpython_error_callback expects the stack entry
 	 * to be there, so we have to make the context first.)
 	 */
 	exec_ctx = PLy_push_execution_context();
@@ -244,7 +244,7 @@ plpython_call_handler(PG_FUNCTION_ARGS)
 	plerrcontext.previous = error_context_stack;
 	error_context_stack = &plerrcontext;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		Oid			funcoid = fcinfo->flinfo->fn_oid;
 		PLyProcedure *proc;
@@ -266,13 +266,13 @@ plpython_call_handler(PG_FUNCTION_ARGS)
 			retval = PLy_exec_function(fcinfo, proc);
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		PLy_pop_execution_context();
 		PyErr_Clear();
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/* Pop the error context stack */
 	error_context_stack = plerrcontext.previous;
@@ -284,16 +284,16 @@ plpython_call_handler(PG_FUNCTION_ARGS)
 
 #if PY_MAJOR_VERSION < 3
 Datum
-plpython2_call_handler(PG_FUNCTION_ARGS)
+plpython2_call_handler(MDB_FUNCTION_ARGS)
 {
 	return plpython_call_handler(fcinfo);
 }
 #endif   /* PY_MAJOR_VERSION < 3 */
 
 Datum
-plpython_inline_handler(PG_FUNCTION_ARGS)
+plpython_inline_handler(MDB_FUNCTION_ARGS)
 {
-	InlineCodeBlock *codeblock = (InlineCodeBlock *) DatumGetPointer(PG_GETARG_DATUM(0));
+	InlineCodeBlock *codeblock = (InlineCodeBlock *) DatumGetPointer(MDB_GETARG_DATUM(0));
 	FunctionCallInfoData fake_fcinfo;
 	FmgrInfo	flinfo;
 	PLyProcedure proc;
@@ -325,7 +325,7 @@ plpython_inline_handler(PG_FUNCTION_ARGS)
 	/*
 	 * Push execution context onto stack.  It is important that this get
 	 * popped again, so avoid putting anything that could throw error between
-	 * here and the PG_TRY.  (plpython_inline_error_callback doesn't currently
+	 * here and the MDB_TRY.  (plpython_inline_error_callback doesn't currently
 	 * need the stack entry, but for consistency with plpython_call_handler we
 	 * do it in this order.)
 	 */
@@ -338,20 +338,20 @@ plpython_inline_handler(PG_FUNCTION_ARGS)
 	plerrcontext.previous = error_context_stack;
 	error_context_stack = &plerrcontext;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		PLy_procedure_compile(&proc, codeblock->source_text);
 		exec_ctx->curr_proc = &proc;
 		PLy_exec_function(&fake_fcinfo, &proc);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		PLy_pop_execution_context();
 		PLy_procedure_delete(&proc);
 		PyErr_Clear();
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/* Pop the error context stack */
 	error_context_stack = plerrcontext.previous;
@@ -361,12 +361,12 @@ plpython_inline_handler(PG_FUNCTION_ARGS)
 	/* Now clean up the transient procedure we made */
 	PLy_procedure_delete(&proc);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 #if PY_MAJOR_VERSION < 3
 Datum
-plpython2_inline_handler(PG_FUNCTION_ARGS)
+plpython2_inline_handler(MDB_FUNCTION_ARGS)
 {
 	return plpython_inline_handler(fcinfo);
 }

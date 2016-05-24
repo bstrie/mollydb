@@ -14,29 +14,29 @@
 #include "utils/selfuncs.h"
 #include "ltree.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* compare functions */
-PG_FUNCTION_INFO_V1(ltree_cmp);
-PG_FUNCTION_INFO_V1(ltree_lt);
-PG_FUNCTION_INFO_V1(ltree_le);
-PG_FUNCTION_INFO_V1(ltree_eq);
-PG_FUNCTION_INFO_V1(ltree_ne);
-PG_FUNCTION_INFO_V1(ltree_ge);
-PG_FUNCTION_INFO_V1(ltree_gt);
-PG_FUNCTION_INFO_V1(nlevel);
-PG_FUNCTION_INFO_V1(ltree_isparent);
-PG_FUNCTION_INFO_V1(ltree_risparent);
-PG_FUNCTION_INFO_V1(subltree);
-PG_FUNCTION_INFO_V1(subpath);
-PG_FUNCTION_INFO_V1(ltree_index);
-PG_FUNCTION_INFO_V1(ltree_addltree);
-PG_FUNCTION_INFO_V1(ltree_addtext);
-PG_FUNCTION_INFO_V1(ltree_textadd);
-PG_FUNCTION_INFO_V1(lca);
-PG_FUNCTION_INFO_V1(ltree2text);
-PG_FUNCTION_INFO_V1(text2ltree);
-PG_FUNCTION_INFO_V1(ltreeparentsel);
+MDB_FUNCTION_INFO_V1(ltree_cmp);
+MDB_FUNCTION_INFO_V1(ltree_lt);
+MDB_FUNCTION_INFO_V1(ltree_le);
+MDB_FUNCTION_INFO_V1(ltree_eq);
+MDB_FUNCTION_INFO_V1(ltree_ne);
+MDB_FUNCTION_INFO_V1(ltree_ge);
+MDB_FUNCTION_INFO_V1(ltree_gt);
+MDB_FUNCTION_INFO_V1(nlevel);
+MDB_FUNCTION_INFO_V1(ltree_isparent);
+MDB_FUNCTION_INFO_V1(ltree_risparent);
+MDB_FUNCTION_INFO_V1(subltree);
+MDB_FUNCTION_INFO_V1(subpath);
+MDB_FUNCTION_INFO_V1(ltree_index);
+MDB_FUNCTION_INFO_V1(ltree_addltree);
+MDB_FUNCTION_INFO_V1(ltree_addtext);
+MDB_FUNCTION_INFO_V1(ltree_textadd);
+MDB_FUNCTION_INFO_V1(lca);
+MDB_FUNCTION_INFO_V1(ltree2text);
+MDB_FUNCTION_INFO_V1(text2ltree);
+MDB_FUNCTION_INFO_V1(ltreeparentsel);
 
 int
 ltree_compare(const ltree *a, const ltree *b)
@@ -67,69 +67,69 @@ ltree_compare(const ltree *a, const ltree *b)
 }
 
 #define RUNCMP						\
-ltree *a	= PG_GETARG_LTREE(0);			\
-ltree *b	= PG_GETARG_LTREE(1);			\
+ltree *a	= MDB_GETARG_LTREE(0);			\
+ltree *b	= MDB_GETARG_LTREE(1);			\
 int res = ltree_compare(a,b);				\
-PG_FREE_IF_COPY(a,0);					\
-PG_FREE_IF_COPY(b,1);					\
+MDB_FREE_IF_COPY(a,0);					\
+MDB_FREE_IF_COPY(b,1);					\
 
 Datum
-ltree_cmp(PG_FUNCTION_ARGS)
+ltree_cmp(MDB_FUNCTION_ARGS)
 {
 	RUNCMP
-		PG_RETURN_INT32(res);
+		MDB_RETURN_INT32(res);
 }
 
 Datum
-ltree_lt(PG_FUNCTION_ARGS)
+ltree_lt(MDB_FUNCTION_ARGS)
 {
 	RUNCMP
-		PG_RETURN_BOOL((res < 0) ? true : false);
+		MDB_RETURN_BOOL((res < 0) ? true : false);
 }
 
 Datum
-ltree_le(PG_FUNCTION_ARGS)
+ltree_le(MDB_FUNCTION_ARGS)
 {
 	RUNCMP
-		PG_RETURN_BOOL((res <= 0) ? true : false);
+		MDB_RETURN_BOOL((res <= 0) ? true : false);
 }
 
 Datum
-ltree_eq(PG_FUNCTION_ARGS)
+ltree_eq(MDB_FUNCTION_ARGS)
 {
 	RUNCMP
-		PG_RETURN_BOOL((res == 0) ? true : false);
+		MDB_RETURN_BOOL((res == 0) ? true : false);
 }
 
 Datum
-ltree_ge(PG_FUNCTION_ARGS)
+ltree_ge(MDB_FUNCTION_ARGS)
 {
 	RUNCMP
-		PG_RETURN_BOOL((res >= 0) ? true : false);
+		MDB_RETURN_BOOL((res >= 0) ? true : false);
 }
 
 Datum
-ltree_gt(PG_FUNCTION_ARGS)
+ltree_gt(MDB_FUNCTION_ARGS)
 {
 	RUNCMP
-		PG_RETURN_BOOL((res > 0) ? true : false);
+		MDB_RETURN_BOOL((res > 0) ? true : false);
 }
 
 Datum
-ltree_ne(PG_FUNCTION_ARGS)
+ltree_ne(MDB_FUNCTION_ARGS)
 {
 	RUNCMP
-		PG_RETURN_BOOL((res != 0) ? true : false);
+		MDB_RETURN_BOOL((res != 0) ? true : false);
 }
 
 Datum
-nlevel(PG_FUNCTION_ARGS)
+nlevel(MDB_FUNCTION_ARGS)
 {
-	ltree	   *a = PG_GETARG_LTREE(0);
+	ltree	   *a = MDB_GETARG_LTREE(0);
 	int			res = a->numlevel;
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_RETURN_INT32(res);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_RETURN_INT32(res);
 }
 
 bool
@@ -157,27 +157,27 @@ inner_isparent(const ltree *c, const ltree *p)
 }
 
 Datum
-ltree_isparent(PG_FUNCTION_ARGS)
+ltree_isparent(MDB_FUNCTION_ARGS)
 {
-	ltree	   *c = PG_GETARG_LTREE(1);
-	ltree	   *p = PG_GETARG_LTREE(0);
+	ltree	   *c = MDB_GETARG_LTREE(1);
+	ltree	   *p = MDB_GETARG_LTREE(0);
 	bool		res = inner_isparent(c, p);
 
-	PG_FREE_IF_COPY(c, 1);
-	PG_FREE_IF_COPY(p, 0);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(c, 1);
+	MDB_FREE_IF_COPY(p, 0);
+	MDB_RETURN_BOOL(res);
 }
 
 Datum
-ltree_risparent(PG_FUNCTION_ARGS)
+ltree_risparent(MDB_FUNCTION_ARGS)
 {
-	ltree	   *c = PG_GETARG_LTREE(0);
-	ltree	   *p = PG_GETARG_LTREE(1);
+	ltree	   *c = MDB_GETARG_LTREE(0);
+	ltree	   *p = MDB_GETARG_LTREE(1);
 	bool		res = inner_isparent(c, p);
 
-	PG_FREE_IF_COPY(c, 0);
-	PG_FREE_IF_COPY(p, 1);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(c, 0);
+	MDB_FREE_IF_COPY(p, 1);
+	MDB_RETURN_BOOL(res);
 }
 
 
@@ -221,21 +221,21 @@ inner_subltree(ltree *t, int32 startpos, int32 endpos)
 }
 
 Datum
-subltree(PG_FUNCTION_ARGS)
+subltree(MDB_FUNCTION_ARGS)
 {
-	ltree	   *t = PG_GETARG_LTREE(0);
-	ltree	   *res = inner_subltree(t, PG_GETARG_INT32(1), PG_GETARG_INT32(2));
+	ltree	   *t = MDB_GETARG_LTREE(0);
+	ltree	   *res = inner_subltree(t, MDB_GETARG_INT32(1), MDB_GETARG_INT32(2));
 
-	PG_FREE_IF_COPY(t, 0);
-	PG_RETURN_POINTER(res);
+	MDB_FREE_IF_COPY(t, 0);
+	MDB_RETURN_POINTER(res);
 }
 
 Datum
-subpath(PG_FUNCTION_ARGS)
+subpath(MDB_FUNCTION_ARGS)
 {
-	ltree	   *t = PG_GETARG_LTREE(0);
-	int32		start = PG_GETARG_INT32(1);
-	int32		len = (fcinfo->nargs == 3) ? PG_GETARG_INT32(2) : 0;
+	ltree	   *t = MDB_GETARG_LTREE(0);
+	int32		start = MDB_GETARG_INT32(1);
+	int32		len = (fcinfo->nargs == 3) ? MDB_GETARG_INT32(2) : 0;
 	int32		end;
 	ltree	   *res;
 
@@ -259,8 +259,8 @@ subpath(PG_FUNCTION_ARGS)
 
 	res = inner_subltree(t, start, end);
 
-	PG_FREE_IF_COPY(t, 0);
-	PG_RETURN_POINTER(res);
+	MDB_FREE_IF_COPY(t, 0);
+	MDB_RETURN_POINTER(res);
 }
 
 static ltree *
@@ -280,23 +280,23 @@ ltree_concat(ltree *a, ltree *b)
 }
 
 Datum
-ltree_addltree(PG_FUNCTION_ARGS)
+ltree_addltree(MDB_FUNCTION_ARGS)
 {
-	ltree	   *a = PG_GETARG_LTREE(0);
-	ltree	   *b = PG_GETARG_LTREE(1);
+	ltree	   *a = MDB_GETARG_LTREE(0);
+	ltree	   *b = MDB_GETARG_LTREE(1);
 	ltree	   *r;
 
 	r = ltree_concat(a, b);
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_POINTER(r);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_POINTER(r);
 }
 
 Datum
-ltree_addtext(PG_FUNCTION_ARGS)
+ltree_addtext(MDB_FUNCTION_ARGS)
 {
-	ltree	   *a = PG_GETARG_LTREE(0);
-	text	   *b = PG_GETARG_TEXT_PP(1);
+	ltree	   *a = MDB_GETARG_LTREE(0);
+	text	   *b = MDB_GETARG_TEXT_PP(1);
 	char	   *s;
 	ltree	   *r,
 			   *tmp;
@@ -312,17 +312,17 @@ ltree_addtext(PG_FUNCTION_ARGS)
 
 	pfree(tmp);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_POINTER(r);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_POINTER(r);
 }
 
 Datum
-ltree_index(PG_FUNCTION_ARGS)
+ltree_index(MDB_FUNCTION_ARGS)
 {
-	ltree	   *a = PG_GETARG_LTREE(0);
-	ltree	   *b = PG_GETARG_LTREE(1);
-	int			start = (fcinfo->nargs == 3) ? PG_GETARG_INT32(2) : 0;
+	ltree	   *a = MDB_GETARG_LTREE(0);
+	ltree	   *b = MDB_GETARG_LTREE(1);
+	int			start = (fcinfo->nargs == 3) ? MDB_GETARG_INT32(2) : 0;
 	int			i,
 				j;
 	ltree_level *startptr,
@@ -340,9 +340,9 @@ ltree_index(PG_FUNCTION_ARGS)
 
 	if (a->numlevel - start < b->numlevel || a->numlevel == 0 || b->numlevel == 0)
 	{
-		PG_FREE_IF_COPY(a, 0);
-		PG_FREE_IF_COPY(b, 1);
-		PG_RETURN_INT32(-1);
+		MDB_FREE_IF_COPY(a, 0);
+		MDB_FREE_IF_COPY(b, 1);
+		MDB_RETURN_INT32(-1);
 	}
 
 	startptr = LTREE_FIRST(a);
@@ -372,16 +372,16 @@ ltree_index(PG_FUNCTION_ARGS)
 	if (!found)
 		i = -1;
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_INT32(i);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_INT32(i);
 }
 
 Datum
-ltree_textadd(PG_FUNCTION_ARGS)
+ltree_textadd(MDB_FUNCTION_ARGS)
 {
-	ltree	   *a = PG_GETARG_LTREE(1);
-	text	   *b = PG_GETARG_TEXT_PP(0);
+	ltree	   *a = MDB_GETARG_LTREE(1);
+	text	   *b = MDB_GETARG_TEXT_PP(0);
 	char	   *s;
 	ltree	   *r,
 			   *tmp;
@@ -397,9 +397,9 @@ ltree_textadd(PG_FUNCTION_ARGS)
 
 	pfree(tmp);
 
-	PG_FREE_IF_COPY(a, 1);
-	PG_FREE_IF_COPY(b, 0);
-	PG_RETURN_POINTER(r);
+	MDB_FREE_IF_COPY(a, 1);
+	MDB_FREE_IF_COPY(b, 0);
+	MDB_RETURN_POINTER(r);
 }
 
 ltree *
@@ -468,7 +468,7 @@ lca_inner(ltree **a, int len)
 }
 
 Datum
-lca(PG_FUNCTION_ARGS)
+lca(MDB_FUNCTION_ARGS)
 {
 	int			i;
 	ltree	  **a,
@@ -476,22 +476,22 @@ lca(PG_FUNCTION_ARGS)
 
 	a = (ltree **) palloc(sizeof(ltree *) * fcinfo->nargs);
 	for (i = 0; i < fcinfo->nargs; i++)
-		a[i] = PG_GETARG_LTREE(i);
+		a[i] = MDB_GETARG_LTREE(i);
 	res = lca_inner(a, (int) fcinfo->nargs);
 	for (i = 0; i < fcinfo->nargs; i++)
-		PG_FREE_IF_COPY(a[i], i);
+		MDB_FREE_IF_COPY(a[i], i);
 	pfree(a);
 
 	if (res)
-		PG_RETURN_POINTER(res);
+		MDB_RETURN_POINTER(res);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 Datum
-text2ltree(PG_FUNCTION_ARGS)
+text2ltree(MDB_FUNCTION_ARGS)
 {
-	text	   *in = PG_GETARG_TEXT_PP(0);
+	text	   *in = MDB_GETARG_TEXT_PP(0);
 	char	   *s;
 	ltree	   *out;
 
@@ -500,15 +500,15 @@ text2ltree(PG_FUNCTION_ARGS)
 	out = (ltree *) DatumGetPointer(DirectFunctionCall1(ltree_in,
 														PointerGetDatum(s)));
 	pfree(s);
-	PG_FREE_IF_COPY(in, 0);
-	PG_RETURN_POINTER(out);
+	MDB_FREE_IF_COPY(in, 0);
+	MDB_RETURN_POINTER(out);
 }
 
 
 Datum
-ltree2text(PG_FUNCTION_ARGS)
+ltree2text(MDB_FUNCTION_ARGS)
 {
-	ltree	   *in = PG_GETARG_LTREE(0);
+	ltree	   *in = MDB_GETARG_LTREE(0);
 	char	   *ptr;
 	int			i;
 	ltree_level *curlevel;
@@ -530,9 +530,9 @@ ltree2text(PG_FUNCTION_ARGS)
 	}
 
 	SET_VARSIZE(out, ptr - ((char *) out));
-	PG_FREE_IF_COPY(in, 0);
+	MDB_FREE_IF_COPY(in, 0);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
@@ -542,12 +542,12 @@ ltree2text(PG_FUNCTION_ARGS)
  *	ltreeparentsel - Selectivity of parent relationship for ltree data types.
  */
 Datum
-ltreeparentsel(PG_FUNCTION_ARGS)
+ltreeparentsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
 	VariableStatData vardata;
 	Node	   *other;
 	bool		varonleft;
@@ -559,7 +559,7 @@ ltreeparentsel(PG_FUNCTION_ARGS)
 	 */
 	if (!get_restriction_variable(root, args, varRelid,
 								  &vardata, &other, &varonleft))
-		PG_RETURN_FLOAT8(DEFAULT_PARENT_SEL);
+		MDB_RETURN_FLOAT8(DEFAULT_PARENT_SEL);
 
 	/*
 	 * If the something is a NULL constant, assume operator is strict and
@@ -569,7 +569,7 @@ ltreeparentsel(PG_FUNCTION_ARGS)
 		((Const *) other)->constisnull)
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 	}
 
 	if (IsA(other, Const))
@@ -644,5 +644,5 @@ ltreeparentsel(PG_FUNCTION_ARGS)
 	/* result should be in range, but make sure... */
 	CLAMP_PROBABILITY(selec);
 
-	PG_RETURN_FLOAT8((float8) selec);
+	MDB_RETURN_FLOAT8((float8) selec);
 }

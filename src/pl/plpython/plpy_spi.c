@@ -85,7 +85,7 @@ PLy_spi_prepare(PyObject *self, PyObject *args)
 
 	PLy_spi_subtransaction_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		int			i;
 		PLyExecutionContext *exec_ctx = PLy_current_execution_context();
@@ -157,7 +157,7 @@ PLy_spi_prepare(PyObject *self, PyObject *args)
 
 		PLy_spi_subtransaction_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		Py_DECREF(plan);
 		Py_XDECREF(optr);
@@ -165,7 +165,7 @@ PLy_spi_prepare(PyObject *self, PyObject *args)
 		PLy_spi_subtransaction_abort(oldcontext, oldowner);
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	Assert(plan->plan != NULL);
 	return (PyObject *) plan;
@@ -243,7 +243,7 @@ PLy_spi_execute_plan(PyObject *ob, PyObject *list, long limit)
 
 	PLy_spi_subtransaction_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		PLyExecutionContext *exec_ctx = PLy_current_execution_context();
 		char	   *volatile nulls;
@@ -261,19 +261,19 @@ PLy_spi_execute_plan(PyObject *ob, PyObject *list, long limit)
 			elem = PySequence_GetItem(list, j);
 			if (elem != Py_None)
 			{
-				PG_TRY();
+				MDB_TRY();
 				{
 					plan->values[j] =
 						plan->args[j].out.d.func(&(plan->args[j].out.d),
 												 -1,
 												 elem);
 				}
-				PG_CATCH();
+				MDB_CATCH();
 				{
 					Py_DECREF(elem);
-					PG_RE_THROW();
+					MDB_RE_THROW();
 				}
-				PG_END_TRY();
+				MDB_END_TRY();
 
 				Py_DECREF(elem);
 				nulls[j] = ' ';
@@ -299,7 +299,7 @@ PLy_spi_execute_plan(PyObject *ob, PyObject *list, long limit)
 
 		PLy_spi_subtransaction_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		int			k;
 
@@ -319,7 +319,7 @@ PLy_spi_execute_plan(PyObject *ob, PyObject *list, long limit)
 		PLy_spi_subtransaction_abort(oldcontext, oldowner);
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	for (i = 0; i < nargs; i++)
 	{
@@ -355,7 +355,7 @@ PLy_spi_execute_query(char *query, long limit)
 
 	PLy_spi_subtransaction_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		PLyExecutionContext *exec_ctx = PLy_current_execution_context();
 
@@ -365,12 +365,12 @@ PLy_spi_execute_query(char *query, long limit)
 
 		PLy_spi_subtransaction_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		PLy_spi_subtransaction_abort(oldcontext, oldowner);
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (rv < 0)
 	{
@@ -419,7 +419,7 @@ PLy_spi_execute_fetch_result(SPITupleTable *tuptable, uint64 rows, int status)
 		PLy_typeinfo_init(&args, cxt);
 
 		oldcontext = CurrentMemoryContext;
-		PG_TRY();
+		MDB_TRY();
 		{
 			MemoryContext oldcontext2;
 
@@ -463,14 +463,14 @@ PLy_spi_execute_fetch_result(SPITupleTable *tuptable, uint64 rows, int status)
 			result->tupdesc = CreateTupleDescCopy(tuptable->tupdesc);
 			MemoryContextSwitchTo(oldcontext2);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			MemoryContextSwitchTo(oldcontext);
 			MemoryContextDelete(cxt);
 			Py_DECREF(result);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 
 		MemoryContextDelete(cxt);
 		SPI_freetuptable(tuptable);
@@ -488,18 +488,18 @@ PLy_spi_execute_fetch_result(SPITupleTable *tuptable, uint64 rows, int status)
  *	ResourceOwner oldowner = CurrentResourceOwner;
  *
  *	PLy_spi_subtransaction_begin(oldcontext, oldowner);
- *	PG_TRY();
+ *	MDB_TRY();
  *	{
  *		<call SPI functions>
  *		PLy_spi_subtransaction_commit(oldcontext, oldowner);
  *	}
- *	PG_CATCH();
+ *	MDB_CATCH();
  *	{
  *		<do cleanup>
  *		PLy_spi_subtransaction_abort(oldcontext, oldowner);
  *		return NULL;
  *	}
- *	PG_END_TRY();
+ *	MDB_END_TRY();
  *
  * These utilities take care of restoring connection to the SPI manager and
  * setting a Python exception in case of an abort.

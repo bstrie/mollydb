@@ -49,7 +49,7 @@ $node->restart;
 
 $node->command_ok([ 'mdb_basebackup', '-D', "$tempdir/backup" ],
 	'mdb_basebackup runs');
-ok(-f "$tempdir/backup/PG_VERSION", 'backup was created');
+ok(-f "$tempdir/backup/MDB_VERSION", 'backup was created');
 
 is_deeply(
 	[ sort(slurp_dir("$tempdir/backup/mdb_xlog/")) ],
@@ -60,7 +60,7 @@ $node->command_ok(
 	[   'mdb_basebackup', '-D', "$tempdir/backup2", '--xlogdir',
 		"$tempdir/xlog2" ],
 	'separate xlog directory');
-ok(-f "$tempdir/backup2/PG_VERSION", 'backup was created');
+ok(-f "$tempdir/backup2/MDB_VERSION", 'backup was created');
 ok(-d "$tempdir/xlog2/",             'xlog directory was created');
 
 $node->command_ok([ 'mdb_basebackup', '-D', "$tempdir/tarbackup", '-Ft' ],

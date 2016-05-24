@@ -12,7 +12,7 @@
 #include "fmgr.h"
 #include "libpq/pqformat.h"		/* needed for send/recv functions */
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 typedef struct Complex
 {
@@ -25,12 +25,12 @@ typedef struct Complex
  * Input/Output functions
  *****************************************************************************/
 
-PG_FUNCTION_INFO_V1(complex_in);
+MDB_FUNCTION_INFO_V1(complex_in);
 
 Datum
-complex_in(PG_FUNCTION_ARGS)
+complex_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	double		x,
 				y;
 	Complex    *result;
@@ -44,19 +44,19 @@ complex_in(PG_FUNCTION_ARGS)
 	result = (Complex *) palloc(sizeof(Complex));
 	result->x = x;
 	result->y = y;
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
-PG_FUNCTION_INFO_V1(complex_out);
+MDB_FUNCTION_INFO_V1(complex_out);
 
 Datum
-complex_out(PG_FUNCTION_ARGS)
+complex_out(MDB_FUNCTION_ARGS)
 {
-	Complex    *complex = (Complex *) PG_GETARG_POINTER(0);
+	Complex    *complex = (Complex *) MDB_GETARG_POINTER(0);
 	char	   *result;
 
 	result = psprintf("(%g,%g)", complex->x, complex->y);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*****************************************************************************
@@ -65,32 +65,32 @@ complex_out(PG_FUNCTION_ARGS)
  * These are optional.
  *****************************************************************************/
 
-PG_FUNCTION_INFO_V1(complex_recv);
+MDB_FUNCTION_INFO_V1(complex_recv);
 
 Datum
-complex_recv(PG_FUNCTION_ARGS)
+complex_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	Complex    *result;
 
 	result = (Complex *) palloc(sizeof(Complex));
 	result->x = pq_getmsgfloat8(buf);
 	result->y = pq_getmsgfloat8(buf);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
-PG_FUNCTION_INFO_V1(complex_send);
+MDB_FUNCTION_INFO_V1(complex_send);
 
 Datum
-complex_send(PG_FUNCTION_ARGS)
+complex_send(MDB_FUNCTION_ARGS)
 {
-	Complex    *complex = (Complex *) PG_GETARG_POINTER(0);
+	Complex    *complex = (Complex *) MDB_GETARG_POINTER(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendfloat8(&buf, complex->x);
 	pq_sendfloat8(&buf, complex->y);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*****************************************************************************
@@ -99,19 +99,19 @@ complex_send(PG_FUNCTION_ARGS)
  * A practical Complex datatype would provide much more than this, of course.
  *****************************************************************************/
 
-PG_FUNCTION_INFO_V1(complex_add);
+MDB_FUNCTION_INFO_V1(complex_add);
 
 Datum
-complex_add(PG_FUNCTION_ARGS)
+complex_add(MDB_FUNCTION_ARGS)
 {
-	Complex    *a = (Complex *) PG_GETARG_POINTER(0);
-	Complex    *b = (Complex *) PG_GETARG_POINTER(1);
+	Complex    *a = (Complex *) MDB_GETARG_POINTER(0);
+	Complex    *b = (Complex *) MDB_GETARG_POINTER(1);
 	Complex    *result;
 
 	result = (Complex *) palloc(sizeof(Complex));
 	result->x = a->x + b->x;
 	result->y = a->y + b->y;
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 
@@ -142,68 +142,68 @@ complex_abs_cmp_internal(Complex * a, Complex * b)
 }
 
 
-PG_FUNCTION_INFO_V1(complex_abs_lt);
+MDB_FUNCTION_INFO_V1(complex_abs_lt);
 
 Datum
-complex_abs_lt(PG_FUNCTION_ARGS)
+complex_abs_lt(MDB_FUNCTION_ARGS)
 {
-	Complex    *a = (Complex *) PG_GETARG_POINTER(0);
-	Complex    *b = (Complex *) PG_GETARG_POINTER(1);
+	Complex    *a = (Complex *) MDB_GETARG_POINTER(0);
+	Complex    *b = (Complex *) MDB_GETARG_POINTER(1);
 
-	PG_RETURN_BOOL(complex_abs_cmp_internal(a, b) < 0);
+	MDB_RETURN_BOOL(complex_abs_cmp_internal(a, b) < 0);
 }
 
-PG_FUNCTION_INFO_V1(complex_abs_le);
+MDB_FUNCTION_INFO_V1(complex_abs_le);
 
 Datum
-complex_abs_le(PG_FUNCTION_ARGS)
+complex_abs_le(MDB_FUNCTION_ARGS)
 {
-	Complex    *a = (Complex *) PG_GETARG_POINTER(0);
-	Complex    *b = (Complex *) PG_GETARG_POINTER(1);
+	Complex    *a = (Complex *) MDB_GETARG_POINTER(0);
+	Complex    *b = (Complex *) MDB_GETARG_POINTER(1);
 
-	PG_RETURN_BOOL(complex_abs_cmp_internal(a, b) <= 0);
+	MDB_RETURN_BOOL(complex_abs_cmp_internal(a, b) <= 0);
 }
 
-PG_FUNCTION_INFO_V1(complex_abs_eq);
+MDB_FUNCTION_INFO_V1(complex_abs_eq);
 
 Datum
-complex_abs_eq(PG_FUNCTION_ARGS)
+complex_abs_eq(MDB_FUNCTION_ARGS)
 {
-	Complex    *a = (Complex *) PG_GETARG_POINTER(0);
-	Complex    *b = (Complex *) PG_GETARG_POINTER(1);
+	Complex    *a = (Complex *) MDB_GETARG_POINTER(0);
+	Complex    *b = (Complex *) MDB_GETARG_POINTER(1);
 
-	PG_RETURN_BOOL(complex_abs_cmp_internal(a, b) == 0);
+	MDB_RETURN_BOOL(complex_abs_cmp_internal(a, b) == 0);
 }
 
-PG_FUNCTION_INFO_V1(complex_abs_ge);
+MDB_FUNCTION_INFO_V1(complex_abs_ge);
 
 Datum
-complex_abs_ge(PG_FUNCTION_ARGS)
+complex_abs_ge(MDB_FUNCTION_ARGS)
 {
-	Complex    *a = (Complex *) PG_GETARG_POINTER(0);
-	Complex    *b = (Complex *) PG_GETARG_POINTER(1);
+	Complex    *a = (Complex *) MDB_GETARG_POINTER(0);
+	Complex    *b = (Complex *) MDB_GETARG_POINTER(1);
 
-	PG_RETURN_BOOL(complex_abs_cmp_internal(a, b) >= 0);
+	MDB_RETURN_BOOL(complex_abs_cmp_internal(a, b) >= 0);
 }
 
-PG_FUNCTION_INFO_V1(complex_abs_gt);
+MDB_FUNCTION_INFO_V1(complex_abs_gt);
 
 Datum
-complex_abs_gt(PG_FUNCTION_ARGS)
+complex_abs_gt(MDB_FUNCTION_ARGS)
 {
-	Complex    *a = (Complex *) PG_GETARG_POINTER(0);
-	Complex    *b = (Complex *) PG_GETARG_POINTER(1);
+	Complex    *a = (Complex *) MDB_GETARG_POINTER(0);
+	Complex    *b = (Complex *) MDB_GETARG_POINTER(1);
 
-	PG_RETURN_BOOL(complex_abs_cmp_internal(a, b) > 0);
+	MDB_RETURN_BOOL(complex_abs_cmp_internal(a, b) > 0);
 }
 
-PG_FUNCTION_INFO_V1(complex_abs_cmp);
+MDB_FUNCTION_INFO_V1(complex_abs_cmp);
 
 Datum
-complex_abs_cmp(PG_FUNCTION_ARGS)
+complex_abs_cmp(MDB_FUNCTION_ARGS)
 {
-	Complex    *a = (Complex *) PG_GETARG_POINTER(0);
-	Complex    *b = (Complex *) PG_GETARG_POINTER(1);
+	Complex    *a = (Complex *) MDB_GETARG_POINTER(0);
+	Complex    *b = (Complex *) MDB_GETARG_POINTER(1);
 
-	PG_RETURN_INT32(complex_abs_cmp_internal(a, b));
+	MDB_RETURN_INT32(complex_abs_cmp_internal(a, b));
 }

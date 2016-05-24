@@ -37,10 +37,10 @@
 #include "utils/builtins.h"
 #include "utils/tqual.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(pgstattuple);
-PG_FUNCTION_INFO_V1(pgstattuplebyid);
+MDB_FUNCTION_INFO_V1(pgstattuple);
+MDB_FUNCTION_INFO_V1(pgstattuplebyid);
 
 /*
  * struct pgstattuple_type
@@ -156,9 +156,9 @@ build_pgstattuple_type(pgstattuple_type *stat, FunctionCallInfo fcinfo)
  */
 
 Datum
-pgstattuple(PG_FUNCTION_ARGS)
+pgstattuple(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
 	RangeVar   *relrv;
 	Relation	rel;
 
@@ -171,13 +171,13 @@ pgstattuple(PG_FUNCTION_ARGS)
 	relrv = makeRangeVarFromNameList(textToQualifiedNameList(relname));
 	rel = relation_openrv(relrv, AccessShareLock);
 
-	PG_RETURN_DATUM(pgstat_relation(rel, fcinfo));
+	MDB_RETURN_DATUM(pgstat_relation(rel, fcinfo));
 }
 
 Datum
-pgstattuplebyid(PG_FUNCTION_ARGS)
+pgstattuplebyid(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	Relation	rel;
 
 	if (!superuser())
@@ -188,7 +188,7 @@ pgstattuplebyid(PG_FUNCTION_ARGS)
 	/* open relation */
 	rel = relation_open(relid, AccessShareLock);
 
-	PG_RETURN_DATUM(pgstat_relation(rel, fcinfo));
+	MDB_RETURN_DATUM(pgstat_relation(rel, fcinfo));
 }
 
 /*

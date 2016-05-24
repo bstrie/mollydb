@@ -27,11 +27,11 @@ do_plperl_return_next(SV *sv)
 {
 	MemoryContext oldcontext = CurrentMemoryContext;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		plperl_return_next(sv);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *edata;
 
@@ -43,7 +43,7 @@ do_plperl_return_next(SV *sv)
 		/* Punt the error to Perl */
 		croak_cstr(edata->message);
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 

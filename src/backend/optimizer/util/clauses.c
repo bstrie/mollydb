@@ -5029,7 +5029,7 @@ evaluate_expr(Expr *expr, Oid result_type, int32 result_typmod,
 	if (!const_is_null)
 	{
 		if (resultTypLen == -1)
-			const_val = PointerGetDatum(PG_DETOAST_DATUM_COPY(const_val));
+			const_val = PointerGetDatum(MDB_DETOAST_DATUM_COPY(const_val));
 		else
 			const_val = datumCopy(const_val, resultTypByVal, resultTypLen);
 	}

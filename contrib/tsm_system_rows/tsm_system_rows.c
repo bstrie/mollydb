@@ -36,9 +36,9 @@
 #include "optimizer/cost.h"
 #include "utils/sampling.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(tsm_system_rows_handler);
+MDB_FUNCTION_INFO_V1(tsm_system_rows_handler);
 
 
 /* Private state */
@@ -79,7 +79,7 @@ static uint32 random_relative_prime(uint32 n, SamplerRandomState randstate);
  * Create a TsmRoutine descriptor for the SYSTEM_ROWS method.
  */
 Datum
-tsm_system_rows_handler(PG_FUNCTION_ARGS)
+tsm_system_rows_handler(MDB_FUNCTION_ARGS)
 {
 	TsmRoutine *tsm = makeNode(TsmRoutine);
 
@@ -96,7 +96,7 @@ tsm_system_rows_handler(PG_FUNCTION_ARGS)
 	tsm->NextSampleTuple = system_rows_nextsampletuple;
 	tsm->EndSampleScan = NULL;
 
-	PG_RETURN_POINTER(tsm);
+	MDB_RETURN_POINTER(tsm);
 }
 
 /*

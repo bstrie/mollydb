@@ -34,8 +34,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_LIST_H
-#define PG_LIST_H
+#ifndef MDB_LIST_H
+#define MDB_LIST_H
 
 #include "nodes/nodes.h"
 
@@ -317,4 +317,4 @@ extern List *list_copy_tail(const List *list, int nskip);
 extern int	length(List *list);
 #endif   /* ENABLE_LIST_COMPAT */
 
-#endif   /* PG_LIST_H */
+#endif   /* MDB_LIST_H */

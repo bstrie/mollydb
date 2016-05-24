@@ -4112,8 +4112,8 @@ INSERT INTO a SELECT * FROM a;
 #include "executor/spi.h"
 #include "utils/builtins.h"
 
-#ifdef PG_MODULE_MAGIC
-PG_MODULE_MAGIC;
+#ifdef MDB_MODULE_MAGIC
+MDB_MODULE_MAGIC;
 #endif
 
 int64 execq(text *sql, int cnt);

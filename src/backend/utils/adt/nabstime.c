@@ -192,9 +192,9 @@ tm2abstime(struct mdb_tm * tm, int tz)
  * Decode date/time string and return abstime.
  */
 Datum
-abstimein(PG_FUNCTION_ARGS)
+abstimein(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	AbsoluteTime result;
 	fsec_t		fsec;
 	int			tz = 0;
@@ -248,7 +248,7 @@ abstimein(PG_FUNCTION_ARGS)
 			break;
 	};
 
-	PG_RETURN_ABSOLUTETIME(result);
+	MDB_RETURN_ABSOLUTETIME(result);
 }
 
 
@@ -256,9 +256,9 @@ abstimein(PG_FUNCTION_ARGS)
  * Given an AbsoluteTime return the English text version of the date
  */
 Datum
-abstimeout(PG_FUNCTION_ARGS)
+abstimeout(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime time = PG_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime time = MDB_GETARG_ABSOLUTETIME(0);
 	char	   *result;
 	int			tz;
 	double		fsec = 0;
@@ -290,43 +290,43 @@ abstimeout(PG_FUNCTION_ARGS)
 	}
 
 	result = pstrdup(buf);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		abstimerecv			- converts external binary format to abstime
  */
 Datum
-abstimerecv(PG_FUNCTION_ARGS)
+abstimerecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_ABSOLUTETIME((AbsoluteTime) pq_getmsgint(buf, sizeof(AbsoluteTime)));
+	MDB_RETURN_ABSOLUTETIME((AbsoluteTime) pq_getmsgint(buf, sizeof(AbsoluteTime)));
 }
 
 /*
  *		abstimesend			- converts abstime to binary format
  */
 Datum
-abstimesend(PG_FUNCTION_ARGS)
+abstimesend(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime time = PG_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime time = MDB_GETARG_ABSOLUTETIME(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint(&buf, time, sizeof(time));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
 /* abstime_finite()
  */
 Datum
-abstime_finite(PG_FUNCTION_ARGS)
+abstime_finite(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime abstime = PG_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime abstime = MDB_GETARG_ABSOLUTETIME(0);
 
-	PG_RETURN_BOOL(abstime != INVALID_ABSTIME &&
+	MDB_RETURN_BOOL(abstime != INVALID_ABSTIME &&
 				   abstime != NOSTART_ABSTIME &&
 				   abstime != NOEND_ABSTIME);
 }
@@ -363,66 +363,66 @@ abstime_cmp_internal(AbsoluteTime a, AbsoluteTime b)
 }
 
 Datum
-abstimeeq(PG_FUNCTION_ARGS)
+abstimeeq(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	AbsoluteTime t2 = PG_GETARG_ABSOLUTETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime t2 = MDB_GETARG_ABSOLUTETIME(1);
 
-	PG_RETURN_BOOL(abstime_cmp_internal(t1, t2) == 0);
+	MDB_RETURN_BOOL(abstime_cmp_internal(t1, t2) == 0);
 }
 
 Datum
-abstimene(PG_FUNCTION_ARGS)
+abstimene(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	AbsoluteTime t2 = PG_GETARG_ABSOLUTETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime t2 = MDB_GETARG_ABSOLUTETIME(1);
 
-	PG_RETURN_BOOL(abstime_cmp_internal(t1, t2) != 0);
+	MDB_RETURN_BOOL(abstime_cmp_internal(t1, t2) != 0);
 }
 
 Datum
-abstimelt(PG_FUNCTION_ARGS)
+abstimelt(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	AbsoluteTime t2 = PG_GETARG_ABSOLUTETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime t2 = MDB_GETARG_ABSOLUTETIME(1);
 
-	PG_RETURN_BOOL(abstime_cmp_internal(t1, t2) < 0);
+	MDB_RETURN_BOOL(abstime_cmp_internal(t1, t2) < 0);
 }
 
 Datum
-abstimegt(PG_FUNCTION_ARGS)
+abstimegt(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	AbsoluteTime t2 = PG_GETARG_ABSOLUTETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime t2 = MDB_GETARG_ABSOLUTETIME(1);
 
-	PG_RETURN_BOOL(abstime_cmp_internal(t1, t2) > 0);
+	MDB_RETURN_BOOL(abstime_cmp_internal(t1, t2) > 0);
 }
 
 Datum
-abstimele(PG_FUNCTION_ARGS)
+abstimele(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	AbsoluteTime t2 = PG_GETARG_ABSOLUTETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime t2 = MDB_GETARG_ABSOLUTETIME(1);
 
-	PG_RETURN_BOOL(abstime_cmp_internal(t1, t2) <= 0);
+	MDB_RETURN_BOOL(abstime_cmp_internal(t1, t2) <= 0);
 }
 
 Datum
-abstimege(PG_FUNCTION_ARGS)
+abstimege(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	AbsoluteTime t2 = PG_GETARG_ABSOLUTETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime t2 = MDB_GETARG_ABSOLUTETIME(1);
 
-	PG_RETURN_BOOL(abstime_cmp_internal(t1, t2) >= 0);
+	MDB_RETURN_BOOL(abstime_cmp_internal(t1, t2) >= 0);
 }
 
 Datum
-btabstimecmp(PG_FUNCTION_ARGS)
+btabstimecmp(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	AbsoluteTime t2 = PG_GETARG_ABSOLUTETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime t2 = MDB_GETARG_ABSOLUTETIME(1);
 
-	PG_RETURN_INT32(abstime_cmp_internal(t1, t2));
+	MDB_RETURN_INT32(abstime_cmp_internal(t1, t2));
 }
 
 
@@ -430,9 +430,9 @@ btabstimecmp(PG_FUNCTION_ARGS)
  * Convert timestamp to abstime.
  */
 Datum
-timestamp_abstime(PG_FUNCTION_ARGS)
+timestamp_abstime(MDB_FUNCTION_ARGS)
 {
-	Timestamp	timestamp = PG_GETARG_TIMESTAMP(0);
+	Timestamp	timestamp = MDB_GETARG_TIMESTAMP(0);
 	AbsoluteTime result;
 	fsec_t		fsec;
 	int			tz;
@@ -456,16 +456,16 @@ timestamp_abstime(PG_FUNCTION_ARGS)
 		result = INVALID_ABSTIME;
 	}
 
-	PG_RETURN_ABSOLUTETIME(result);
+	MDB_RETURN_ABSOLUTETIME(result);
 }
 
 /* abstime_timestamp()
  * Convert abstime to timestamp.
  */
 Datum
-abstime_timestamp(PG_FUNCTION_ARGS)
+abstime_timestamp(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime abstime = PG_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime abstime = MDB_GETARG_ABSOLUTETIME(0);
 	Timestamp	result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -499,7 +499,7 @@ abstime_timestamp(PG_FUNCTION_ARGS)
 			break;
 	};
 
-	PG_RETURN_TIMESTAMP(result);
+	MDB_RETURN_TIMESTAMP(result);
 }
 
 
@@ -507,9 +507,9 @@ abstime_timestamp(PG_FUNCTION_ARGS)
  * Convert timestamp with time zone to abstime.
  */
 Datum
-timestamptz_abstime(PG_FUNCTION_ARGS)
+timestamptz_abstime(MDB_FUNCTION_ARGS)
 {
-	TimestampTz timestamp = PG_GETARG_TIMESTAMP(0);
+	TimestampTz timestamp = MDB_GETARG_TIMESTAMP(0);
 	AbsoluteTime result;
 	fsec_t		fsec;
 	struct mdb_tm tt,
@@ -529,16 +529,16 @@ timestamptz_abstime(PG_FUNCTION_ARGS)
 		result = INVALID_ABSTIME;
 	}
 
-	PG_RETURN_ABSOLUTETIME(result);
+	MDB_RETURN_ABSOLUTETIME(result);
 }
 
 /* abstime_timestamptz()
  * Convert abstime to timestamp with time zone.
  */
 Datum
-abstime_timestamptz(PG_FUNCTION_ARGS)
+abstime_timestamptz(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime abstime = PG_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime abstime = MDB_GETARG_ABSOLUTETIME(0);
 	TimestampTz result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -572,7 +572,7 @@ abstime_timestamptz(PG_FUNCTION_ARGS)
 			break;
 	};
 
-	PG_RETURN_TIMESTAMP(result);
+	MDB_RETURN_TIMESTAMP(result);
 }
 
 
@@ -584,9 +584,9 @@ abstime_timestamptz(PG_FUNCTION_ARGS)
  *		reltimein		- converts a reltime string in an internal format
  */
 Datum
-reltimein(PG_FUNCTION_ARGS)
+reltimein(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	RelativeTime result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -630,16 +630,16 @@ reltimein(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_RELATIVETIME(result);
+	MDB_RETURN_RELATIVETIME(result);
 }
 
 /*
  *		reltimeout		- converts the internal format to a reltime string
  */
 Datum
-reltimeout(PG_FUNCTION_ARGS)
+reltimeout(MDB_FUNCTION_ARGS)
 {
-	RelativeTime time = PG_GETARG_RELATIVETIME(0);
+	RelativeTime time = MDB_GETARG_RELATIVETIME(0);
 	char	   *result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -649,32 +649,32 @@ reltimeout(PG_FUNCTION_ARGS)
 	EncodeInterval(tm, 0, IntervalStyle, buf);
 
 	result = pstrdup(buf);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		reltimerecv			- converts external binary format to reltime
  */
 Datum
-reltimerecv(PG_FUNCTION_ARGS)
+reltimerecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_RELATIVETIME((RelativeTime) pq_getmsgint(buf, sizeof(RelativeTime)));
+	MDB_RETURN_RELATIVETIME((RelativeTime) pq_getmsgint(buf, sizeof(RelativeTime)));
 }
 
 /*
  *		reltimesend			- converts reltime to binary format
  */
 Datum
-reltimesend(PG_FUNCTION_ARGS)
+reltimesend(MDB_FUNCTION_ARGS)
 {
-	RelativeTime time = PG_GETARG_RELATIVETIME(0);
+	RelativeTime time = MDB_GETARG_RELATIVETIME(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint(&buf, time, sizeof(time));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -696,9 +696,9 @@ reltime2tm(RelativeTime time, struct mdb_tm * tm)
  *		tintervalin		- converts an tinterval string to internal format
  */
 Datum
-tintervalin(PG_FUNCTION_ARGS)
+tintervalin(MDB_FUNCTION_ARGS)
 {
-	char	   *tintervalstr = PG_GETARG_CSTRING(0);
+	char	   *tintervalstr = MDB_GETARG_CSTRING(0);
 	TimeInterval tinterval;
 	AbsoluteTime i_start,
 				i_end,
@@ -719,7 +719,7 @@ tintervalin(PG_FUNCTION_ARGS)
 	tinterval->data[0] = i_start;
 	tinterval->data[1] = i_end;
 
-	PG_RETURN_TIMEINTERVAL(tinterval);
+	MDB_RETURN_TIMEINTERVAL(tinterval);
 }
 
 
@@ -727,9 +727,9 @@ tintervalin(PG_FUNCTION_ARGS)
  *		tintervalout	- converts an internal tinterval format to a string
  */
 Datum
-tintervalout(PG_FUNCTION_ARGS)
+tintervalout(MDB_FUNCTION_ARGS)
 {
-	TimeInterval tinterval = PG_GETARG_TIMEINTERVAL(0);
+	TimeInterval tinterval = MDB_GETARG_TIMEINTERVAL(0);
 	char	   *i_str,
 			   *p;
 
@@ -750,16 +750,16 @@ tintervalout(PG_FUNCTION_ARGS)
 		pfree(p);
 	}
 	strcat(i_str, "\"]");
-	PG_RETURN_CSTRING(i_str);
+	MDB_RETURN_CSTRING(i_str);
 }
 
 /*
  *		tintervalrecv			- converts external binary format to tinterval
  */
 Datum
-tintervalrecv(PG_FUNCTION_ARGS)
+tintervalrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	TimeInterval tinterval;
 	int32		status;
 
@@ -780,23 +780,23 @@ tintervalrecv(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_BINARY_REPRESENTATION),
 				 errmsg("invalid status in external \"tinterval\" value")));
 
-	PG_RETURN_TIMEINTERVAL(tinterval);
+	MDB_RETURN_TIMEINTERVAL(tinterval);
 }
 
 /*
  *		tintervalsend			- converts tinterval to binary format
  */
 Datum
-tintervalsend(PG_FUNCTION_ARGS)
+tintervalsend(MDB_FUNCTION_ARGS)
 {
-	TimeInterval tinterval = PG_GETARG_TIMEINTERVAL(0);
+	TimeInterval tinterval = MDB_GETARG_TIMEINTERVAL(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint(&buf, tinterval->status, sizeof(tinterval->status));
 	pq_sendint(&buf, tinterval->data[0], sizeof(tinterval->data[0]));
 	pq_sendint(&buf, tinterval->data[1], sizeof(tinterval->data[1]));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -805,9 +805,9 @@ tintervalsend(PG_FUNCTION_ARGS)
  *****************************************************************************/
 
 Datum
-interval_reltime(PG_FUNCTION_ARGS)
+interval_reltime(MDB_FUNCTION_ARGS)
 {
-	Interval   *interval = PG_GETARG_INTERVAL_P(0);
+	Interval   *interval = MDB_GETARG_INTERVAL_P(0);
 	RelativeTime time;
 	int			year,
 				month,
@@ -832,14 +832,14 @@ interval_reltime(PG_FUNCTION_ARGS)
 	else
 		time = span;
 
-	PG_RETURN_RELATIVETIME(time);
+	MDB_RETURN_RELATIVETIME(time);
 }
 
 
 Datum
-reltime_interval(PG_FUNCTION_ARGS)
+reltime_interval(MDB_FUNCTION_ARGS)
 {
-	RelativeTime reltime = PG_GETARG_RELATIVETIME(0);
+	RelativeTime reltime = MDB_GETARG_RELATIVETIME(0);
 	Interval   *result;
 	int			year,
 				month,
@@ -880,7 +880,7 @@ reltime_interval(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_INTERVAL_P(result);
+	MDB_RETURN_INTERVAL_P(result);
 }
 
 
@@ -888,10 +888,10 @@ reltime_interval(PG_FUNCTION_ARGS)
  *		mktinterval		- creates a time interval with endpoints t1 and t2
  */
 Datum
-mktinterval(PG_FUNCTION_ARGS)
+mktinterval(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	AbsoluteTime t2 = PG_GETARG_ABSOLUTETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime t2 = MDB_GETARG_ABSOLUTETIME(1);
 	AbsoluteTime tstart = ABSTIMEMIN(t1, t2);
 	AbsoluteTime tend = ABSTIMEMAX(t1, t2);
 	TimeInterval tinterval;
@@ -908,7 +908,7 @@ mktinterval(PG_FUNCTION_ARGS)
 		tinterval->data[1] = tend;
 	}
 
-	PG_RETURN_TIMEINTERVAL(tinterval);
+	MDB_RETURN_TIMEINTERVAL(tinterval);
 }
 
 /*
@@ -922,18 +922,18 @@ mktinterval(PG_FUNCTION_ARGS)
  *		timepl			- returns the value of (abstime t1 + reltime t2)
  */
 Datum
-timepl(PG_FUNCTION_ARGS)
+timepl(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	RelativeTime t2 = PG_GETARG_RELATIVETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	RelativeTime t2 = MDB_GETARG_RELATIVETIME(1);
 
 	if (AbsoluteTimeIsReal(t1) &&
 		RelativeTimeIsValid(t2) &&
 		((t2 > 0 && t1 < NOEND_ABSTIME - t2) ||
 		 (t2 <= 0 && t1 > NOSTART_ABSTIME - t2)))		/* prevent overflow */
-		PG_RETURN_ABSOLUTETIME(t1 + t2);
+		MDB_RETURN_ABSOLUTETIME(t1 + t2);
 
-	PG_RETURN_ABSOLUTETIME(INVALID_ABSTIME);
+	MDB_RETURN_ABSOLUTETIME(INVALID_ABSTIME);
 }
 
 
@@ -941,18 +941,18 @@ timepl(PG_FUNCTION_ARGS)
  *		timemi			- returns the value of (abstime t1 - reltime t2)
  */
 Datum
-timemi(PG_FUNCTION_ARGS)
+timemi(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t1 = PG_GETARG_ABSOLUTETIME(0);
-	RelativeTime t2 = PG_GETARG_RELATIVETIME(1);
+	AbsoluteTime t1 = MDB_GETARG_ABSOLUTETIME(0);
+	RelativeTime t2 = MDB_GETARG_RELATIVETIME(1);
 
 	if (AbsoluteTimeIsReal(t1) &&
 		RelativeTimeIsValid(t2) &&
 		((t2 > 0 && t1 > NOSTART_ABSTIME + t2) ||
 		 (t2 <= 0 && t1 < NOEND_ABSTIME + t2))) /* prevent overflow */
-		PG_RETURN_ABSOLUTETIME(t1 - t2);
+		MDB_RETURN_ABSOLUTETIME(t1 - t2);
 
-	PG_RETURN_ABSOLUTETIME(INVALID_ABSTIME);
+	MDB_RETURN_ABSOLUTETIME(INVALID_ABSTIME);
 }
 
 
@@ -960,10 +960,10 @@ timemi(PG_FUNCTION_ARGS)
  *		intinterval		- returns true iff absolute date is in the tinterval
  */
 Datum
-intinterval(PG_FUNCTION_ARGS)
+intinterval(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime t = PG_GETARG_ABSOLUTETIME(0);
-	TimeInterval tinterval = PG_GETARG_TIMEINTERVAL(1);
+	AbsoluteTime t = MDB_GETARG_ABSOLUTETIME(0);
+	TimeInterval tinterval = MDB_GETARG_TIMEINTERVAL(1);
 
 	if (tinterval->status == T_INTERVAL_VALID && t != INVALID_ABSTIME)
 	{
@@ -973,29 +973,29 @@ intinterval(PG_FUNCTION_ARGS)
 			DatumGetBool(DirectFunctionCall2(abstimele,
 											 AbsoluteTimeGetDatum(t),
 								  AbsoluteTimeGetDatum(tinterval->data[1]))))
-			PG_RETURN_BOOL(true);
+			MDB_RETURN_BOOL(true);
 	}
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 /*
  *		tintervalrel		- returns  relative time corresponding to tinterval
  */
 Datum
-tintervalrel(PG_FUNCTION_ARGS)
+tintervalrel(MDB_FUNCTION_ARGS)
 {
-	TimeInterval tinterval = PG_GETARG_TIMEINTERVAL(0);
+	TimeInterval tinterval = MDB_GETARG_TIMEINTERVAL(0);
 	AbsoluteTime t1 = tinterval->data[0];
 	AbsoluteTime t2 = tinterval->data[1];
 
 	if (tinterval->status != T_INTERVAL_VALID)
-		PG_RETURN_RELATIVETIME(INVALID_RELTIME);
+		MDB_RETURN_RELATIVETIME(INVALID_RELTIME);
 
 	if (AbsoluteTimeIsReal(t1) &&
 		AbsoluteTimeIsReal(t2))
-		PG_RETURN_RELATIVETIME(t2 - t1);
+		MDB_RETURN_RELATIVETIME(t2 - t1);
 
-	PG_RETURN_RELATIVETIME(INVALID_RELTIME);
+	MDB_RETURN_RELATIVETIME(INVALID_RELTIME);
 }
 
 
@@ -1005,9 +1005,9 @@ tintervalrel(PG_FUNCTION_ARGS)
  *		Now AbsoluteTime is time since Jan 1 1970 -mer 7 Feb 1992
  */
 Datum
-timenow(PG_FUNCTION_ARGS)
+timenow(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_ABSOLUTETIME(GetCurrentAbsoluteTime());
+	MDB_RETURN_ABSOLUTETIME(GetCurrentAbsoluteTime());
 }
 
 /*
@@ -1041,66 +1041,66 @@ reltime_cmp_internal(RelativeTime a, RelativeTime b)
 }
 
 Datum
-reltimeeq(PG_FUNCTION_ARGS)
+reltimeeq(MDB_FUNCTION_ARGS)
 {
-	RelativeTime t1 = PG_GETARG_RELATIVETIME(0);
-	RelativeTime t2 = PG_GETARG_RELATIVETIME(1);
+	RelativeTime t1 = MDB_GETARG_RELATIVETIME(0);
+	RelativeTime t2 = MDB_GETARG_RELATIVETIME(1);
 
-	PG_RETURN_BOOL(reltime_cmp_internal(t1, t2) == 0);
+	MDB_RETURN_BOOL(reltime_cmp_internal(t1, t2) == 0);
 }
 
 Datum
-reltimene(PG_FUNCTION_ARGS)
+reltimene(MDB_FUNCTION_ARGS)
 {
-	RelativeTime t1 = PG_GETARG_RELATIVETIME(0);
-	RelativeTime t2 = PG_GETARG_RELATIVETIME(1);
+	RelativeTime t1 = MDB_GETARG_RELATIVETIME(0);
+	RelativeTime t2 = MDB_GETARG_RELATIVETIME(1);
 
-	PG_RETURN_BOOL(reltime_cmp_internal(t1, t2) != 0);
+	MDB_RETURN_BOOL(reltime_cmp_internal(t1, t2) != 0);
 }
 
 Datum
-reltimelt(PG_FUNCTION_ARGS)
+reltimelt(MDB_FUNCTION_ARGS)
 {
-	RelativeTime t1 = PG_GETARG_RELATIVETIME(0);
-	RelativeTime t2 = PG_GETARG_RELATIVETIME(1);
+	RelativeTime t1 = MDB_GETARG_RELATIVETIME(0);
+	RelativeTime t2 = MDB_GETARG_RELATIVETIME(1);
 
-	PG_RETURN_BOOL(reltime_cmp_internal(t1, t2) < 0);
+	MDB_RETURN_BOOL(reltime_cmp_internal(t1, t2) < 0);
 }
 
 Datum
-reltimegt(PG_FUNCTION_ARGS)
+reltimegt(MDB_FUNCTION_ARGS)
 {
-	RelativeTime t1 = PG_GETARG_RELATIVETIME(0);
-	RelativeTime t2 = PG_GETARG_RELATIVETIME(1);
+	RelativeTime t1 = MDB_GETARG_RELATIVETIME(0);
+	RelativeTime t2 = MDB_GETARG_RELATIVETIME(1);
 
-	PG_RETURN_BOOL(reltime_cmp_internal(t1, t2) > 0);
+	MDB_RETURN_BOOL(reltime_cmp_internal(t1, t2) > 0);
 }
 
 Datum
-reltimele(PG_FUNCTION_ARGS)
+reltimele(MDB_FUNCTION_ARGS)
 {
-	RelativeTime t1 = PG_GETARG_RELATIVETIME(0);
-	RelativeTime t2 = PG_GETARG_RELATIVETIME(1);
+	RelativeTime t1 = MDB_GETARG_RELATIVETIME(0);
+	RelativeTime t2 = MDB_GETARG_RELATIVETIME(1);
 
-	PG_RETURN_BOOL(reltime_cmp_internal(t1, t2) <= 0);
+	MDB_RETURN_BOOL(reltime_cmp_internal(t1, t2) <= 0);
 }
 
 Datum
-reltimege(PG_FUNCTION_ARGS)
+reltimege(MDB_FUNCTION_ARGS)
 {
-	RelativeTime t1 = PG_GETARG_RELATIVETIME(0);
-	RelativeTime t2 = PG_GETARG_RELATIVETIME(1);
+	RelativeTime t1 = MDB_GETARG_RELATIVETIME(0);
+	RelativeTime t2 = MDB_GETARG_RELATIVETIME(1);
 
-	PG_RETURN_BOOL(reltime_cmp_internal(t1, t2) >= 0);
+	MDB_RETURN_BOOL(reltime_cmp_internal(t1, t2) >= 0);
 }
 
 Datum
-btreltimecmp(PG_FUNCTION_ARGS)
+btreltimecmp(MDB_FUNCTION_ARGS)
 {
-	RelativeTime t1 = PG_GETARG_RELATIVETIME(0);
-	RelativeTime t2 = PG_GETARG_RELATIVETIME(1);
+	RelativeTime t1 = MDB_GETARG_RELATIVETIME(0);
+	RelativeTime t2 = MDB_GETARG_RELATIVETIME(1);
 
-	PG_RETURN_INT32(reltime_cmp_internal(t1, t2));
+	MDB_RETURN_INT32(reltime_cmp_internal(t1, t2));
 }
 
 
@@ -1109,13 +1109,13 @@ btreltimecmp(PG_FUNCTION_ARGS)
  *		Check begin and end time.
  */
 Datum
-tintervalsame(PG_FUNCTION_ARGS)
+tintervalsame(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
 	if (i1->status == T_INTERVAL_INVAL || i2->status == T_INTERVAL_INVAL)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	if (DatumGetBool(DirectFunctionCall2(abstimeeq,
 										 AbsoluteTimeGetDatum(i1->data[0]),
@@ -1123,8 +1123,8 @@ tintervalsame(PG_FUNCTION_ARGS)
 		DatumGetBool(DirectFunctionCall2(abstimeeq,
 										 AbsoluteTimeGetDatum(i1->data[1]),
 										 AbsoluteTimeGetDatum(i2->data[1]))))
-		PG_RETURN_BOOL(true);
-	PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(false);
 }
 
 /*
@@ -1190,66 +1190,66 @@ tinterval_cmp_internal(TimeInterval a, TimeInterval b)
 }
 
 Datum
-tintervaleq(PG_FUNCTION_ARGS)
+tintervaleq(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
-	PG_RETURN_BOOL(tinterval_cmp_internal(i1, i2) == 0);
+	MDB_RETURN_BOOL(tinterval_cmp_internal(i1, i2) == 0);
 }
 
 Datum
-tintervalne(PG_FUNCTION_ARGS)
+tintervalne(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
-	PG_RETURN_BOOL(tinterval_cmp_internal(i1, i2) != 0);
+	MDB_RETURN_BOOL(tinterval_cmp_internal(i1, i2) != 0);
 }
 
 Datum
-tintervallt(PG_FUNCTION_ARGS)
+tintervallt(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
-	PG_RETURN_BOOL(tinterval_cmp_internal(i1, i2) < 0);
+	MDB_RETURN_BOOL(tinterval_cmp_internal(i1, i2) < 0);
 }
 
 Datum
-tintervalle(PG_FUNCTION_ARGS)
+tintervalle(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
-	PG_RETURN_BOOL(tinterval_cmp_internal(i1, i2) <= 0);
+	MDB_RETURN_BOOL(tinterval_cmp_internal(i1, i2) <= 0);
 }
 
 Datum
-tintervalgt(PG_FUNCTION_ARGS)
+tintervalgt(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
-	PG_RETURN_BOOL(tinterval_cmp_internal(i1, i2) > 0);
+	MDB_RETURN_BOOL(tinterval_cmp_internal(i1, i2) > 0);
 }
 
 Datum
-tintervalge(PG_FUNCTION_ARGS)
+tintervalge(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
-	PG_RETURN_BOOL(tinterval_cmp_internal(i1, i2) >= 0);
+	MDB_RETURN_BOOL(tinterval_cmp_internal(i1, i2) >= 0);
 }
 
 Datum
-bttintervalcmp(PG_FUNCTION_ARGS)
+bttintervalcmp(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
-	PG_RETURN_INT32(tinterval_cmp_internal(i1, i2));
+	MDB_RETURN_INT32(tinterval_cmp_internal(i1, i2));
 }
 
 
@@ -1268,155 +1268,155 @@ bttintervalcmp(PG_FUNCTION_ARGS)
  *								equal than reltime t
  */
 Datum
-tintervalleneq(PG_FUNCTION_ARGS)
+tintervalleneq(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i = PG_GETARG_TIMEINTERVAL(0);
-	RelativeTime t = PG_GETARG_RELATIVETIME(1);
+	TimeInterval i = MDB_GETARG_TIMEINTERVAL(0);
+	RelativeTime t = MDB_GETARG_RELATIVETIME(1);
 	RelativeTime rt;
 
 	if (i->status == T_INTERVAL_INVAL || t == INVALID_RELTIME)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	rt = DatumGetRelativeTime(DirectFunctionCall1(tintervalrel,
 												  TimeIntervalGetDatum(i)));
-	PG_RETURN_BOOL(rt != INVALID_RELTIME && rt == t);
+	MDB_RETURN_BOOL(rt != INVALID_RELTIME && rt == t);
 }
 
 Datum
-tintervallenne(PG_FUNCTION_ARGS)
+tintervallenne(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i = PG_GETARG_TIMEINTERVAL(0);
-	RelativeTime t = PG_GETARG_RELATIVETIME(1);
+	TimeInterval i = MDB_GETARG_TIMEINTERVAL(0);
+	RelativeTime t = MDB_GETARG_RELATIVETIME(1);
 	RelativeTime rt;
 
 	if (i->status == T_INTERVAL_INVAL || t == INVALID_RELTIME)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	rt = DatumGetRelativeTime(DirectFunctionCall1(tintervalrel,
 												  TimeIntervalGetDatum(i)));
-	PG_RETURN_BOOL(rt != INVALID_RELTIME && rt != t);
+	MDB_RETURN_BOOL(rt != INVALID_RELTIME && rt != t);
 }
 
 Datum
-tintervallenlt(PG_FUNCTION_ARGS)
+tintervallenlt(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i = PG_GETARG_TIMEINTERVAL(0);
-	RelativeTime t = PG_GETARG_RELATIVETIME(1);
+	TimeInterval i = MDB_GETARG_TIMEINTERVAL(0);
+	RelativeTime t = MDB_GETARG_RELATIVETIME(1);
 	RelativeTime rt;
 
 	if (i->status == T_INTERVAL_INVAL || t == INVALID_RELTIME)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	rt = DatumGetRelativeTime(DirectFunctionCall1(tintervalrel,
 												  TimeIntervalGetDatum(i)));
-	PG_RETURN_BOOL(rt != INVALID_RELTIME && rt < t);
+	MDB_RETURN_BOOL(rt != INVALID_RELTIME && rt < t);
 }
 
 Datum
-tintervallengt(PG_FUNCTION_ARGS)
+tintervallengt(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i = PG_GETARG_TIMEINTERVAL(0);
-	RelativeTime t = PG_GETARG_RELATIVETIME(1);
+	TimeInterval i = MDB_GETARG_TIMEINTERVAL(0);
+	RelativeTime t = MDB_GETARG_RELATIVETIME(1);
 	RelativeTime rt;
 
 	if (i->status == T_INTERVAL_INVAL || t == INVALID_RELTIME)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	rt = DatumGetRelativeTime(DirectFunctionCall1(tintervalrel,
 												  TimeIntervalGetDatum(i)));
-	PG_RETURN_BOOL(rt != INVALID_RELTIME && rt > t);
+	MDB_RETURN_BOOL(rt != INVALID_RELTIME && rt > t);
 }
 
 Datum
-tintervallenle(PG_FUNCTION_ARGS)
+tintervallenle(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i = PG_GETARG_TIMEINTERVAL(0);
-	RelativeTime t = PG_GETARG_RELATIVETIME(1);
+	TimeInterval i = MDB_GETARG_TIMEINTERVAL(0);
+	RelativeTime t = MDB_GETARG_RELATIVETIME(1);
 	RelativeTime rt;
 
 	if (i->status == T_INTERVAL_INVAL || t == INVALID_RELTIME)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	rt = DatumGetRelativeTime(DirectFunctionCall1(tintervalrel,
 												  TimeIntervalGetDatum(i)));
-	PG_RETURN_BOOL(rt != INVALID_RELTIME && rt <= t);
+	MDB_RETURN_BOOL(rt != INVALID_RELTIME && rt <= t);
 }
 
 Datum
-tintervallenge(PG_FUNCTION_ARGS)
+tintervallenge(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i = PG_GETARG_TIMEINTERVAL(0);
-	RelativeTime t = PG_GETARG_RELATIVETIME(1);
+	TimeInterval i = MDB_GETARG_TIMEINTERVAL(0);
+	RelativeTime t = MDB_GETARG_RELATIVETIME(1);
 	RelativeTime rt;
 
 	if (i->status == T_INTERVAL_INVAL || t == INVALID_RELTIME)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	rt = DatumGetRelativeTime(DirectFunctionCall1(tintervalrel,
 												  TimeIntervalGetDatum(i)));
-	PG_RETURN_BOOL(rt != INVALID_RELTIME && rt >= t);
+	MDB_RETURN_BOOL(rt != INVALID_RELTIME && rt >= t);
 }
 
 /*
  *		tintervalct		- returns true iff tinterval i1 contains tinterval i2
  */
 Datum
-tintervalct(PG_FUNCTION_ARGS)
+tintervalct(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
 	if (i1->status == T_INTERVAL_INVAL || i2->status == T_INTERVAL_INVAL)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	if (DatumGetBool(DirectFunctionCall2(abstimele,
 										 AbsoluteTimeGetDatum(i1->data[0]),
 									   AbsoluteTimeGetDatum(i2->data[0]))) &&
 		DatumGetBool(DirectFunctionCall2(abstimege,
 										 AbsoluteTimeGetDatum(i1->data[1]),
 										 AbsoluteTimeGetDatum(i2->data[1]))))
-		PG_RETURN_BOOL(true);
-	PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(false);
 }
 
 /*
  *		tintervalov		- returns true iff tinterval i1 (partially) overlaps i2
  */
 Datum
-tintervalov(PG_FUNCTION_ARGS)
+tintervalov(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i1 = PG_GETARG_TIMEINTERVAL(0);
-	TimeInterval i2 = PG_GETARG_TIMEINTERVAL(1);
+	TimeInterval i1 = MDB_GETARG_TIMEINTERVAL(0);
+	TimeInterval i2 = MDB_GETARG_TIMEINTERVAL(1);
 
 	if (i1->status == T_INTERVAL_INVAL || i2->status == T_INTERVAL_INVAL)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	if (DatumGetBool(DirectFunctionCall2(abstimelt,
 										 AbsoluteTimeGetDatum(i1->data[1]),
 									   AbsoluteTimeGetDatum(i2->data[0]))) ||
 		DatumGetBool(DirectFunctionCall2(abstimegt,
 										 AbsoluteTimeGetDatum(i1->data[0]),
 										 AbsoluteTimeGetDatum(i2->data[1]))))
-		PG_RETURN_BOOL(false);
-	PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(true);
 }
 
 /*
  *		tintervalstart	- returns  the start of tinterval i
  */
 Datum
-tintervalstart(PG_FUNCTION_ARGS)
+tintervalstart(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i = PG_GETARG_TIMEINTERVAL(0);
+	TimeInterval i = MDB_GETARG_TIMEINTERVAL(0);
 
 	if (i->status == T_INTERVAL_INVAL)
-		PG_RETURN_ABSOLUTETIME(INVALID_ABSTIME);
-	PG_RETURN_ABSOLUTETIME(i->data[0]);
+		MDB_RETURN_ABSOLUTETIME(INVALID_ABSTIME);
+	MDB_RETURN_ABSOLUTETIME(i->data[0]);
 }
 
 /*
  *		tintervalend		- returns  the end of tinterval i
  */
 Datum
-tintervalend(PG_FUNCTION_ARGS)
+tintervalend(MDB_FUNCTION_ARGS)
 {
-	TimeInterval i = PG_GETARG_TIMEINTERVAL(0);
+	TimeInterval i = MDB_GETARG_TIMEINTERVAL(0);
 
 	if (i->status == T_INTERVAL_INVAL)
-		PG_RETURN_ABSOLUTETIME(INVALID_ABSTIME);
-	PG_RETURN_ABSOLUTETIME(i->data[1]);
+		MDB_RETURN_ABSOLUTETIME(INVALID_ABSTIME);
+	MDB_RETURN_ABSOLUTETIME(i->data[1]);
 }
 
 
@@ -1565,7 +1565,7 @@ bogus:
  *	   time with precision up to microsecs.)			  - ay 3/95
  */
 Datum
-timeofday(PG_FUNCTION_ARGS)
+timeofday(MDB_FUNCTION_ARGS)
 {
 	struct timeval tp;
 	char		templ[128];
@@ -1578,5 +1578,5 @@ timeofday(PG_FUNCTION_ARGS)
 				mdb_localtime(&tt, session_timezone));
 	snprintf(buf, sizeof(buf), templ, tp.tv_usec);
 
-	PG_RETURN_TEXT_P(cstring_to_text(buf));
+	MDB_RETURN_TEXT_P(cstring_to_text(buf));
 }

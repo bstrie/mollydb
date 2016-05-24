@@ -26,7 +26,7 @@
 #include "utils/mdb_lsn.h"
 #include "utils/rel.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 static bytea *get_raw_page_internal(text *relname, ForkNumber forknum,
 					  BlockNumber blkno);
@@ -37,13 +37,13 @@ static bytea *get_raw_page_internal(text *relname, ForkNumber forknum,
  *
  * Returns a copy of a page from shared buffers as a bytea
  */
-PG_FUNCTION_INFO_V1(get_raw_page);
+MDB_FUNCTION_INFO_V1(get_raw_page);
 
 Datum
-get_raw_page(PG_FUNCTION_ARGS)
+get_raw_page(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
-	uint32		blkno = PG_GETARG_UINT32(1);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
+	uint32		blkno = MDB_GETARG_UINT32(1);
 	bytea	   *raw_page;
 
 	/*
@@ -51,14 +51,14 @@ get_raw_page(PG_FUNCTION_ARGS)
 	 * function, but here it's needed for safety because early 8.4 beta
 	 * releases mistakenly redefined get_raw_page() as taking three arguments.
 	 */
-	if (PG_NARGS() != 2)
+	if (MDB_NARGS() != 2)
 		ereport(ERROR,
 				(errmsg("wrong number of arguments to get_raw_page()"),
 				 errhint("Run the updated pageinspect.sql script.")));
 
 	raw_page = get_raw_page_internal(relname, MAIN_FORKNUM, blkno);
 
-	PG_RETURN_BYTEA_P(raw_page);
+	MDB_RETURN_BYTEA_P(raw_page);
 }
 
 /*
@@ -66,14 +66,14 @@ get_raw_page(PG_FUNCTION_ARGS)
  *
  * Same, for any fork
  */
-PG_FUNCTION_INFO_V1(get_raw_page_fork);
+MDB_FUNCTION_INFO_V1(get_raw_page_fork);
 
 Datum
-get_raw_page_fork(PG_FUNCTION_ARGS)
+get_raw_page_fork(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
-	text	   *forkname = PG_GETARG_TEXT_P(1);
-	uint32		blkno = PG_GETARG_UINT32(2);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
+	text	   *forkname = MDB_GETARG_TEXT_P(1);
+	uint32		blkno = MDB_GETARG_UINT32(2);
 	bytea	   *raw_page;
 	ForkNumber	forknum;
 
@@ -81,7 +81,7 @@ get_raw_page_fork(PG_FUNCTION_ARGS)
 
 	raw_page = get_raw_page_internal(relname, forknum, blkno);
 
-	PG_RETURN_BYTEA_P(raw_page);
+	MDB_RETURN_BYTEA_P(raw_page);
 }
 
 /*
@@ -163,12 +163,12 @@ get_raw_page_internal(text *relname, ForkNumber forknum, BlockNumber blkno)
  * Allows inspection of page header fields of a raw page
  */
 
-PG_FUNCTION_INFO_V1(page_header);
+MDB_FUNCTION_INFO_V1(page_header);
 
 Datum
-page_header(PG_FUNCTION_ARGS)
+page_header(MDB_FUNCTION_ARGS)
 {
-	bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
+	bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
 	int			raw_page_size;
 
 	TupleDesc	tupdesc;
@@ -234,5 +234,5 @@ page_header(PG_FUNCTION_ARGS)
 	tuple = heap_form_tuple(tupdesc, values, nulls);
 	result = HeapTupleGetDatum(tuple);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }

@@ -190,8 +190,8 @@ _hash_getovflpage(Relation rel, Buffer metabuf)
 
 	/* start search at hashm_firstfree */
 	orig_firstfree = metap->hashm_firstfree;
-	first_page = orig_firstfree >> BMPG_SHIFT(metap);
-	bit = orig_firstfree & BMPG_MASK(metap);
+	first_page = orig_firstfree >> BMMDB_SHIFT(metap);
+	bit = orig_firstfree & BMMDB_MASK(metap);
 	i = first_page;
 	j = bit / BITS_PER_MAP;
 	bit &= ~(BITS_PER_MAP - 1);
@@ -206,8 +206,8 @@ _hash_getovflpage(Relation rel, Buffer metabuf)
 		/* want to end search with the last existing overflow page */
 		splitnum = metap->hashm_ovflpoint;
 		max_ovflpg = metap->hashm_spares[splitnum] - 1;
-		last_page = max_ovflpg >> BMPG_SHIFT(metap);
-		last_bit = max_ovflpg & BMPG_MASK(metap);
+		last_page = max_ovflpg >> BMMDB_SHIFT(metap);
+		last_bit = max_ovflpg & BMMDB_MASK(metap);
 
 		if (i > last_page)
 			break;
@@ -307,7 +307,7 @@ found:
 	_hash_chgbufaccess(rel, metabuf, HASH_NOLOCK, HASH_WRITE);
 
 	/* convert bit to absolute bit number */
-	bit += (i << BMPG_SHIFT(metap));
+	bit += (i << BMMDB_SHIFT(metap));
 
 	/* Calculate address of the recycled overflow page */
 	blkno = bitno_to_blkno(metap, bit);
@@ -391,7 +391,7 @@ _hash_freeovflpage(Relation rel, Buffer ovflbuf,
 	uint32		ovflbitno;
 	int32		bitmappage,
 				bitmapbit;
-	Bucket bucket PG_USED_FOR_ASSERTS_ONLY;
+	Bucket bucket MDB_USED_FOR_ASSERTS_ONLY;
 
 	/* Get information from the doomed page */
 	_hash_checkpage(rel, ovflbuf, LH_OVERFLOW_PAGE);
@@ -454,8 +454,8 @@ _hash_freeovflpage(Relation rel, Buffer ovflbuf,
 	/* Identify which bit to set */
 	ovflbitno = blkno_to_bitno(metap, ovflblkno);
 
-	bitmappage = ovflbitno >> BMPG_SHIFT(metap);
-	bitmapbit = ovflbitno & BMPG_MASK(metap);
+	bitmappage = ovflbitno >> BMMDB_SHIFT(metap);
+	bitmapbit = ovflbitno & BMMDB_MASK(metap);
 
 	if (bitmappage >= metap->hashm_nmaps)
 		elog(ERROR, "invalid overflow bit number %u", ovflbitno);

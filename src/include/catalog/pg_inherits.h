@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_INHERITS_H
-#define PG_INHERITS_H
+#ifndef MDB_INHERITS_H
+#define MDB_INHERITS_H
 
 #include "catalog/genbki.h"
 
@@ -56,4 +56,4 @@ typedef FormData_mdb_inherits *Form_mdb_inherits;
  * ----------------
  */
 
-#endif   /* PG_INHERITS_H */
+#endif   /* MDB_INHERITS_H */

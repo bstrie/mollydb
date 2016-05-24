@@ -1691,14 +1691,14 @@ WaitOnLock(LOCALLOCK *locallock, ResourceOwner owner)
 	 * the locktable state must fully reflect the fact that we own the lock;
 	 * we can't do additional work on return.
 	 *
-	 * We can and do use a PG_TRY block to try to clean up after failure, but
+	 * We can and do use a MDB_TRY block to try to clean up after failure, but
 	 * this still has a major limitation: elog(FATAL) can occur while waiting
 	 * (eg, a "die" interrupt), and then control won't come back here. So all
 	 * cleanup of essential state should happen in LockErrorCleanup, not here.
-	 * We can use PG_TRY to clear the "waiting" status flags, since doing that
+	 * We can use MDB_TRY to clear the "waiting" status flags, since doing that
 	 * is unimportant if the process exits.
 	 */
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (ProcSleep(locallock, lockMethodTable) != STATUS_OK)
 		{
@@ -1719,7 +1719,7 @@ WaitOnLock(LOCALLOCK *locallock, ResourceOwner owner)
 			/* not reached */
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* In this path, awaitedLock remains set until LockErrorCleanup */
 
@@ -1732,9 +1732,9 @@ WaitOnLock(LOCALLOCK *locallock, ResourceOwner owner)
 		}
 
 		/* and propagate the error */
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	awaitedLock = NULL;
 

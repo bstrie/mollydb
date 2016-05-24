@@ -91,8 +91,8 @@ static void fmgr_info_other_lang(Oid functionId, FmgrInfo *finfo, HeapTuple proc
 static CFuncHashTabEntry *lookup_C_func(HeapTuple procedureTuple);
 static void record_C_func(HeapTuple procedureTuple,
 			  PGFunction user_fn, const Pg_finfo_record *inforec);
-static Datum fmgr_oldstyle(PG_FUNCTION_ARGS);
-static Datum fmgr_security_definer(PG_FUNCTION_ARGS);
+static Datum fmgr_oldstyle(MDB_FUNCTION_ARGS);
+static Datum fmgr_security_definer(MDB_FUNCTION_ARGS);
 
 
 /*
@@ -621,7 +621,7 @@ fmgr_internal_function(const char *proname)
  * Handler for old-style "C" language functions
  */
 static Datum
-fmgr_oldstyle(PG_FUNCTION_ARGS)
+fmgr_oldstyle(MDB_FUNCTION_ARGS)
 {
 	Oldstyle_fnextra *fnextra;
 	int			n_arguments = fcinfo->nargs;
@@ -646,10 +646,10 @@ fmgr_oldstyle(PG_FUNCTION_ARGS)
 	isnull = false;
 	for (i = 0; i < n_arguments; i++)
 	{
-		if (PG_ARGISNULL(i))
+		if (MDB_ARGISNULL(i))
 			isnull = true;
 		else if (fnextra->arg_toastable[i])
-			fcinfo->arg[i] = PointerGetDatum(PG_DETOAST_DATUM(fcinfo->arg[i]));
+			fcinfo->arg[i] = PointerGetDatum(MDB_DETOAST_DATUM(fcinfo->arg[i]));
 	}
 	fcinfo->isnull = isnull;
 
@@ -881,7 +881,7 @@ struct fmgr_security_definer_cache
  * the fcinfo itself can't be used re-entrantly anyway.
  */
 static Datum
-fmgr_security_definer(PG_FUNCTION_ARGS)
+fmgr_security_definer(MDB_FUNCTION_ARGS)
 {
 	Datum		result;
 	struct fmgr_security_definer_cache *volatile fcache;
@@ -957,12 +957,12 @@ fmgr_security_definer(PG_FUNCTION_ARGS)
 
 	/*
 	 * We don't need to restore GUC or userid settings on error, because the
-	 * ensuing xact or subxact abort will do that.  The PG_TRY block is only
+	 * ensuing xact or subxact abort will do that.  The MDB_TRY block is only
 	 * needed to clean up the flinfo link.
 	 */
 	save_flinfo = fcinfo->flinfo;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		fcinfo->flinfo = &fcache->flinfo;
 
@@ -980,14 +980,14 @@ fmgr_security_definer(PG_FUNCTION_ARGS)
 								   !IsA(fcinfo->resultinfo, ReturnSetInfo) ||
 								   ((ReturnSetInfo *) fcinfo->resultinfo)->isDone != ExprMultipleResult));
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		fcinfo->flinfo = save_flinfo;
 		if (fmgr_hook)
 			(*fmgr_hook) (FHET_ABORT, &fcache->flinfo, &fcache->arg);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	fcinfo->flinfo = save_flinfo;
 
@@ -2485,7 +2485,7 @@ get_fn_expr_variadic(FmgrInfo *flinfo)
  * simply calling an existing function.
  *
  * When this function returns false, callers should skip all validation work
- * and call PG_RETURN_VOID().  This never happens at present; it is reserved
+ * and call MDB_RETURN_VOID().  This never happens at present; it is reserved
  * for future expansion.
  *
  * In particular, checking that the validator corresponds to the function's

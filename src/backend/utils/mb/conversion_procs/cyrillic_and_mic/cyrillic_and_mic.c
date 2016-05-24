@@ -15,28 +15,28 @@
 #include "fmgr.h"
 #include "mb/mdb_wchar.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(koi8r_to_mic);
-PG_FUNCTION_INFO_V1(mic_to_koi8r);
-PG_FUNCTION_INFO_V1(iso_to_mic);
-PG_FUNCTION_INFO_V1(mic_to_iso);
-PG_FUNCTION_INFO_V1(win1251_to_mic);
-PG_FUNCTION_INFO_V1(mic_to_win1251);
-PG_FUNCTION_INFO_V1(win866_to_mic);
-PG_FUNCTION_INFO_V1(mic_to_win866);
-PG_FUNCTION_INFO_V1(koi8r_to_win1251);
-PG_FUNCTION_INFO_V1(win1251_to_koi8r);
-PG_FUNCTION_INFO_V1(koi8r_to_win866);
-PG_FUNCTION_INFO_V1(win866_to_koi8r);
-PG_FUNCTION_INFO_V1(win866_to_win1251);
-PG_FUNCTION_INFO_V1(win1251_to_win866);
-PG_FUNCTION_INFO_V1(iso_to_koi8r);
-PG_FUNCTION_INFO_V1(koi8r_to_iso);
-PG_FUNCTION_INFO_V1(iso_to_win1251);
-PG_FUNCTION_INFO_V1(win1251_to_iso);
-PG_FUNCTION_INFO_V1(iso_to_win866);
-PG_FUNCTION_INFO_V1(win866_to_iso);
+MDB_FUNCTION_INFO_V1(koi8r_to_mic);
+MDB_FUNCTION_INFO_V1(mic_to_koi8r);
+MDB_FUNCTION_INFO_V1(iso_to_mic);
+MDB_FUNCTION_INFO_V1(mic_to_iso);
+MDB_FUNCTION_INFO_V1(win1251_to_mic);
+MDB_FUNCTION_INFO_V1(mic_to_win1251);
+MDB_FUNCTION_INFO_V1(win866_to_mic);
+MDB_FUNCTION_INFO_V1(mic_to_win866);
+MDB_FUNCTION_INFO_V1(koi8r_to_win1251);
+MDB_FUNCTION_INFO_V1(win1251_to_koi8r);
+MDB_FUNCTION_INFO_V1(koi8r_to_win866);
+MDB_FUNCTION_INFO_V1(win866_to_koi8r);
+MDB_FUNCTION_INFO_V1(win866_to_win1251);
+MDB_FUNCTION_INFO_V1(win1251_to_win866);
+MDB_FUNCTION_INFO_V1(iso_to_koi8r);
+MDB_FUNCTION_INFO_V1(koi8r_to_iso);
+MDB_FUNCTION_INFO_V1(iso_to_win1251);
+MDB_FUNCTION_INFO_V1(win1251_to_iso);
+MDB_FUNCTION_INFO_V1(iso_to_win866);
+MDB_FUNCTION_INFO_V1(win866_to_iso);
 
 /* ----------
  * conv_proc(
@@ -301,281 +301,281 @@ static const unsigned char win8662iso[] = {
 
 
 Datum
-koi8r_to_mic(PG_FUNCTION_ARGS)
+koi8r_to_mic(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_KOI8R, PG_MULE_INTERNAL);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_KOI8R, MDB_MULE_INTERNAL);
 
-	latin2mic(src, dest, len, LC_KOI8_R, PG_KOI8R);
+	latin2mic(src, dest, len, LC_KOI8_R, MDB_KOI8R);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-mic_to_koi8r(PG_FUNCTION_ARGS)
+mic_to_koi8r(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_MULE_INTERNAL, PG_KOI8R);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_MULE_INTERNAL, MDB_KOI8R);
 
-	mic2latin(src, dest, len, LC_KOI8_R, PG_KOI8R);
+	mic2latin(src, dest, len, LC_KOI8_R, MDB_KOI8R);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-iso_to_mic(PG_FUNCTION_ARGS)
+iso_to_mic(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_ISO_8859_5, PG_MULE_INTERNAL);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_ISO_8859_5, MDB_MULE_INTERNAL);
 
-	latin2mic_with_table(src, dest, len, LC_KOI8_R, PG_ISO_8859_5, iso2koi);
+	latin2mic_with_table(src, dest, len, LC_KOI8_R, MDB_ISO_8859_5, iso2koi);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-mic_to_iso(PG_FUNCTION_ARGS)
+mic_to_iso(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_MULE_INTERNAL, PG_ISO_8859_5);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_MULE_INTERNAL, MDB_ISO_8859_5);
 
-	mic2latin_with_table(src, dest, len, LC_KOI8_R, PG_ISO_8859_5, koi2iso);
+	mic2latin_with_table(src, dest, len, LC_KOI8_R, MDB_ISO_8859_5, koi2iso);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-win1251_to_mic(PG_FUNCTION_ARGS)
+win1251_to_mic(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_WIN1251, PG_MULE_INTERNAL);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_WIN1251, MDB_MULE_INTERNAL);
 
-	latin2mic_with_table(src, dest, len, LC_KOI8_R, PG_WIN1251, win12512koi);
+	latin2mic_with_table(src, dest, len, LC_KOI8_R, MDB_WIN1251, win12512koi);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-mic_to_win1251(PG_FUNCTION_ARGS)
+mic_to_win1251(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_MULE_INTERNAL, PG_WIN1251);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_MULE_INTERNAL, MDB_WIN1251);
 
-	mic2latin_with_table(src, dest, len, LC_KOI8_R, PG_WIN1251, koi2win1251);
+	mic2latin_with_table(src, dest, len, LC_KOI8_R, MDB_WIN1251, koi2win1251);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-win866_to_mic(PG_FUNCTION_ARGS)
+win866_to_mic(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_WIN866, PG_MULE_INTERNAL);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_WIN866, MDB_MULE_INTERNAL);
 
-	latin2mic_with_table(src, dest, len, LC_KOI8_R, PG_WIN866, win8662koi);
+	latin2mic_with_table(src, dest, len, LC_KOI8_R, MDB_WIN866, win8662koi);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-mic_to_win866(PG_FUNCTION_ARGS)
+mic_to_win866(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_MULE_INTERNAL, PG_WIN866);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_MULE_INTERNAL, MDB_WIN866);
 
-	mic2latin_with_table(src, dest, len, LC_KOI8_R, PG_WIN866, koi2win866);
+	mic2latin_with_table(src, dest, len, LC_KOI8_R, MDB_WIN866, koi2win866);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-koi8r_to_win1251(PG_FUNCTION_ARGS)
+koi8r_to_win1251(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_KOI8R, PG_WIN1251);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_KOI8R, MDB_WIN1251);
 
-	local2local(src, dest, len, PG_KOI8R, PG_WIN1251, koi2win1251);
+	local2local(src, dest, len, MDB_KOI8R, MDB_WIN1251, koi2win1251);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-win1251_to_koi8r(PG_FUNCTION_ARGS)
+win1251_to_koi8r(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_WIN1251, PG_KOI8R);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_WIN1251, MDB_KOI8R);
 
-	local2local(src, dest, len, PG_WIN1251, PG_KOI8R, win12512koi);
+	local2local(src, dest, len, MDB_WIN1251, MDB_KOI8R, win12512koi);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-koi8r_to_win866(PG_FUNCTION_ARGS)
+koi8r_to_win866(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_KOI8R, PG_WIN866);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_KOI8R, MDB_WIN866);
 
-	local2local(src, dest, len, PG_KOI8R, PG_WIN866, koi2win866);
+	local2local(src, dest, len, MDB_KOI8R, MDB_WIN866, koi2win866);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-win866_to_koi8r(PG_FUNCTION_ARGS)
+win866_to_koi8r(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_WIN866, PG_KOI8R);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_WIN866, MDB_KOI8R);
 
-	local2local(src, dest, len, PG_WIN866, PG_KOI8R, win8662koi);
+	local2local(src, dest, len, MDB_WIN866, MDB_KOI8R, win8662koi);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-win866_to_win1251(PG_FUNCTION_ARGS)
+win866_to_win1251(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_WIN866, PG_WIN1251);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_WIN866, MDB_WIN1251);
 
-	local2local(src, dest, len, PG_WIN866, PG_WIN1251, win8662win1251);
+	local2local(src, dest, len, MDB_WIN866, MDB_WIN1251, win8662win1251);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-win1251_to_win866(PG_FUNCTION_ARGS)
+win1251_to_win866(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_WIN1251, PG_WIN866);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_WIN1251, MDB_WIN866);
 
-	local2local(src, dest, len, PG_WIN1251, PG_WIN866, win12512win866);
+	local2local(src, dest, len, MDB_WIN1251, MDB_WIN866, win12512win866);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-iso_to_koi8r(PG_FUNCTION_ARGS)
+iso_to_koi8r(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_ISO_8859_5, PG_KOI8R);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_ISO_8859_5, MDB_KOI8R);
 
-	local2local(src, dest, len, PG_ISO_8859_5, PG_KOI8R, iso2koi);
+	local2local(src, dest, len, MDB_ISO_8859_5, MDB_KOI8R, iso2koi);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-koi8r_to_iso(PG_FUNCTION_ARGS)
+koi8r_to_iso(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_KOI8R, PG_ISO_8859_5);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_KOI8R, MDB_ISO_8859_5);
 
-	local2local(src, dest, len, PG_KOI8R, PG_ISO_8859_5, koi2iso);
+	local2local(src, dest, len, MDB_KOI8R, MDB_ISO_8859_5, koi2iso);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-iso_to_win1251(PG_FUNCTION_ARGS)
+iso_to_win1251(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_ISO_8859_5, PG_WIN1251);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_ISO_8859_5, MDB_WIN1251);
 
-	local2local(src, dest, len, PG_ISO_8859_5, PG_WIN1251, iso2win1251);
+	local2local(src, dest, len, MDB_ISO_8859_5, MDB_WIN1251, iso2win1251);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-win1251_to_iso(PG_FUNCTION_ARGS)
+win1251_to_iso(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_WIN1251, PG_ISO_8859_5);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_WIN1251, MDB_ISO_8859_5);
 
-	local2local(src, dest, len, PG_WIN1251, PG_ISO_8859_5, win12512iso);
+	local2local(src, dest, len, MDB_WIN1251, MDB_ISO_8859_5, win12512iso);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-iso_to_win866(PG_FUNCTION_ARGS)
+iso_to_win866(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_ISO_8859_5, PG_WIN866);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_ISO_8859_5, MDB_WIN866);
 
-	local2local(src, dest, len, PG_ISO_8859_5, PG_WIN866, iso2win866);
+	local2local(src, dest, len, MDB_ISO_8859_5, MDB_WIN866, iso2win866);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-win866_to_iso(PG_FUNCTION_ARGS)
+win866_to_iso(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_WIN866, PG_ISO_8859_5);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_WIN866, MDB_ISO_8859_5);
 
-	local2local(src, dest, len, PG_WIN866, PG_ISO_8859_5, win8662iso);
+	local2local(src, dest, len, MDB_WIN866, MDB_ISO_8859_5, win8662iso);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

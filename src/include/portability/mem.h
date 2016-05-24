@@ -15,9 +15,9 @@
 #define IPCProtection	(0600)	/* access/modify by user only */
 
 #ifdef SHM_SHARE_MMU			/* use intimate shared memory on Solaris */
-#define PG_SHMAT_FLAGS			SHM_SHARE_MMU
+#define MDB_SHMAT_FLAGS			SHM_SHARE_MMU
 #else
-#define PG_SHMAT_FLAGS			0
+#define MDB_SHMAT_FLAGS			0
 #endif
 
 /* Linux prefers MAP_ANONYMOUS, but the flag is called MAP_ANON on other systems. */
@@ -38,7 +38,7 @@
 #define MAP_NOSYNC			0
 #endif
 
-#define PG_MMAP_FLAGS			(MAP_SHARED|MAP_ANONYMOUS|MAP_HASSEMAPHORE)
+#define MDB_MMAP_FLAGS			(MAP_SHARED|MAP_ANONYMOUS|MAP_HASSEMAPHORE)
 
 /* Some really old systems don't define MAP_FAILED. */
 #ifndef MAP_FAILED

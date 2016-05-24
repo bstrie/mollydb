@@ -6,31 +6,31 @@
 
 #include "_int.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(_int_different);
-PG_FUNCTION_INFO_V1(_int_same);
-PG_FUNCTION_INFO_V1(_int_contains);
-PG_FUNCTION_INFO_V1(_int_contained);
-PG_FUNCTION_INFO_V1(_int_overlap);
-PG_FUNCTION_INFO_V1(_int_union);
-PG_FUNCTION_INFO_V1(_int_inter);
+MDB_FUNCTION_INFO_V1(_int_different);
+MDB_FUNCTION_INFO_V1(_int_same);
+MDB_FUNCTION_INFO_V1(_int_contains);
+MDB_FUNCTION_INFO_V1(_int_contained);
+MDB_FUNCTION_INFO_V1(_int_overlap);
+MDB_FUNCTION_INFO_V1(_int_union);
+MDB_FUNCTION_INFO_V1(_int_inter);
 
 Datum
-_int_contained(PG_FUNCTION_ARGS)
+_int_contained(MDB_FUNCTION_ARGS)
 {
 	/* just reverse the operands and call _int_contains */
 	return DirectFunctionCall2(_int_contains,
-							   PG_GETARG_DATUM(1),
-							   PG_GETARG_DATUM(0));
+							   MDB_GETARG_DATUM(1),
+							   MDB_GETARG_DATUM(0));
 }
 
 Datum
-_int_contains(PG_FUNCTION_ARGS)
+_int_contains(MDB_FUNCTION_ARGS)
 {
 	/* Force copy so we can modify the arrays in-place */
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	ArrayType  *b = PG_GETARG_ARRAYTYPE_P_COPY(1);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	ArrayType  *b = MDB_GETARG_ARRAYTYPE_P_COPY(1);
 	bool		res;
 
 	CHECKARRVALID(a);
@@ -40,26 +40,26 @@ _int_contains(PG_FUNCTION_ARGS)
 	res = inner_int_contains(a, b);
 	pfree(a);
 	pfree(b);
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 Datum
-_int_different(PG_FUNCTION_ARGS)
+_int_different(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(!DatumGetBool(
+	MDB_RETURN_BOOL(!DatumGetBool(
 								 DirectFunctionCall2(
 													 _int_same,
-									   PointerGetDatum(PG_GETARG_POINTER(0)),
-										PointerGetDatum(PG_GETARG_POINTER(1))
+									   PointerGetDatum(MDB_GETARG_POINTER(0)),
+										PointerGetDatum(MDB_GETARG_POINTER(1))
 													 )
 								 ));
 }
 
 Datum
-_int_same(PG_FUNCTION_ARGS)
+_int_same(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	ArrayType  *b = PG_GETARG_ARRAYTYPE_P_COPY(1);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	ArrayType  *b = MDB_GETARG_ARRAYTYPE_P_COPY(1);
 	int			na,
 				nb;
 	int			n;
@@ -95,16 +95,16 @@ _int_same(PG_FUNCTION_ARGS)
 	pfree(a);
 	pfree(b);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*	_int_overlap -- does a overlap b?
  */
 Datum
-_int_overlap(PG_FUNCTION_ARGS)
+_int_overlap(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	ArrayType  *b = PG_GETARG_ARRAYTYPE_P_COPY(1);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	ArrayType  *b = MDB_GETARG_ARRAYTYPE_P_COPY(1);
 	bool		result;
 
 	CHECKARRVALID(a);
@@ -120,14 +120,14 @@ _int_overlap(PG_FUNCTION_ARGS)
 	pfree(a);
 	pfree(b);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-_int_union(PG_FUNCTION_ARGS)
+_int_union(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	ArrayType  *b = PG_GETARG_ARRAYTYPE_P_COPY(1);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	ArrayType  *b = MDB_GETARG_ARRAYTYPE_P_COPY(1);
 	ArrayType  *result;
 
 	CHECKARRVALID(a);
@@ -141,14 +141,14 @@ _int_union(PG_FUNCTION_ARGS)
 	pfree(a);
 	pfree(b);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-_int_inter(PG_FUNCTION_ARGS)
+_int_inter(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	ArrayType  *b = PG_GETARG_ARRAYTYPE_P_COPY(1);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	ArrayType  *b = MDB_GETARG_ARRAYTYPE_P_COPY(1);
 	ArrayType  *result;
 
 	CHECKARRVALID(a);
@@ -162,52 +162,52 @@ _int_inter(PG_FUNCTION_ARGS)
 	pfree(a);
 	pfree(b);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 
-PG_FUNCTION_INFO_V1(intset);
-PG_FUNCTION_INFO_V1(icount);
-PG_FUNCTION_INFO_V1(sort);
-PG_FUNCTION_INFO_V1(sort_asc);
-PG_FUNCTION_INFO_V1(sort_desc);
-PG_FUNCTION_INFO_V1(uniq);
-PG_FUNCTION_INFO_V1(idx);
-PG_FUNCTION_INFO_V1(subarray);
-PG_FUNCTION_INFO_V1(intarray_push_elem);
-PG_FUNCTION_INFO_V1(intarray_push_array);
-PG_FUNCTION_INFO_V1(intarray_del_elem);
-PG_FUNCTION_INFO_V1(intset_union_elem);
-PG_FUNCTION_INFO_V1(intset_subtract);
+MDB_FUNCTION_INFO_V1(intset);
+MDB_FUNCTION_INFO_V1(icount);
+MDB_FUNCTION_INFO_V1(sort);
+MDB_FUNCTION_INFO_V1(sort_asc);
+MDB_FUNCTION_INFO_V1(sort_desc);
+MDB_FUNCTION_INFO_V1(uniq);
+MDB_FUNCTION_INFO_V1(idx);
+MDB_FUNCTION_INFO_V1(subarray);
+MDB_FUNCTION_INFO_V1(intarray_push_elem);
+MDB_FUNCTION_INFO_V1(intarray_push_array);
+MDB_FUNCTION_INFO_V1(intarray_del_elem);
+MDB_FUNCTION_INFO_V1(intset_union_elem);
+MDB_FUNCTION_INFO_V1(intset_subtract);
 
 Datum
-intset(PG_FUNCTION_ARGS)
+intset(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(int_to_intset(PG_GETARG_INT32(0)));
+	MDB_RETURN_POINTER(int_to_intset(MDB_GETARG_INT32(0)));
 }
 
 Datum
-icount(PG_FUNCTION_ARGS)
+icount(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P(0);
 	int32		count = ARRNELEMS(a);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_RETURN_INT32(count);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_RETURN_INT32(count);
 }
 
 Datum
-sort(PG_FUNCTION_ARGS)
+sort(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	text	   *dirstr = (fcinfo->nargs == 2) ? PG_GETARG_TEXT_P(1) : NULL;
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	text	   *dirstr = (fcinfo->nargs == 2) ? MDB_GETARG_TEXT_P(1) : NULL;
 	int32		dc = (dirstr) ? VARSIZE(dirstr) - VARHDRSZ : 0;
 	char	   *d = (dirstr) ? VARDATA(dirstr) : NULL;
 	int			dir = -1;
 
 	CHECKARRVALID(a);
 	if (ARRNELEMS(a) < 2)
-		PG_RETURN_POINTER(a);
+		MDB_RETURN_POINTER(a);
 
 	if (dirstr == NULL || (dc == 3
 						   && (d[0] == 'A' || d[0] == 'a')
@@ -225,61 +225,61 @@ sort(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("second parameter must be \"ASC\" or \"DESC\"")));
 	QSORT(a, dir);
-	PG_RETURN_POINTER(a);
+	MDB_RETURN_POINTER(a);
 }
 
 Datum
-sort_asc(PG_FUNCTION_ARGS)
+sort_asc(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
 
 	CHECKARRVALID(a);
 	QSORT(a, 1);
-	PG_RETURN_POINTER(a);
+	MDB_RETURN_POINTER(a);
 }
 
 Datum
-sort_desc(PG_FUNCTION_ARGS)
+sort_desc(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
 
 	CHECKARRVALID(a);
 	QSORT(a, 0);
-	PG_RETURN_POINTER(a);
+	MDB_RETURN_POINTER(a);
 }
 
 Datum
-uniq(PG_FUNCTION_ARGS)
+uniq(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
 
 	CHECKARRVALID(a);
 	if (ARRNELEMS(a) < 2)
-		PG_RETURN_POINTER(a);
+		MDB_RETURN_POINTER(a);
 	a = _int_unique(a);
-	PG_RETURN_POINTER(a);
+	MDB_RETURN_POINTER(a);
 }
 
 Datum
-idx(PG_FUNCTION_ARGS)
+idx(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P(0);
 	int32		result;
 
 	CHECKARRVALID(a);
 	result = ARRNELEMS(a);
 	if (result)
-		result = intarray_match_first(a, PG_GETARG_INT32(1));
-	PG_FREE_IF_COPY(a, 0);
-	PG_RETURN_INT32(result);
+		result = intarray_match_first(a, MDB_GETARG_INT32(1));
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-subarray(PG_FUNCTION_ARGS)
+subarray(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P(0);
-	int32		start = PG_GETARG_INT32(1);
-	int32		len = (fcinfo->nargs == 3) ? PG_GETARG_INT32(2) : 0;
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P(0);
+	int32		start = MDB_GETARG_INT32(1);
+	int32		len = (fcinfo->nargs == 3) ? MDB_GETARG_INT32(2) : 0;
 	int32		end = 0;
 	int32		c;
 	ArrayType  *result;
@@ -289,8 +289,8 @@ subarray(PG_FUNCTION_ARGS)
 	CHECKARRVALID(a);
 	if (ARRISEMPTY(a))
 	{
-		PG_FREE_IF_COPY(a, 0);
-		PG_RETURN_POINTER(new_intArrayType(0));
+		MDB_FREE_IF_COPY(a, 0);
+		MDB_RETURN_POINTER(new_intArrayType(0));
 	}
 
 	c = ARRNELEMS(a);
@@ -313,46 +313,46 @@ subarray(PG_FUNCTION_ARGS)
 
 	if (start >= end || end <= 0)
 	{
-		PG_FREE_IF_COPY(a, 0);
-		PG_RETURN_POINTER(new_intArrayType(0));
+		MDB_FREE_IF_COPY(a, 0);
+		MDB_RETURN_POINTER(new_intArrayType(0));
 	}
 
 	result = new_intArrayType(end - start);
 	if (end - start > 0)
 		memcpy(ARRPTR(result), ARRPTR(a) + start, (end - start) * sizeof(int32));
-	PG_FREE_IF_COPY(a, 0);
-	PG_RETURN_POINTER(result);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-intarray_push_elem(PG_FUNCTION_ARGS)
+intarray_push_elem(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P(0);
 	ArrayType  *result;
 
-	result = intarray_add_elem(a, PG_GETARG_INT32(1));
-	PG_FREE_IF_COPY(a, 0);
-	PG_RETURN_POINTER(result);
+	result = intarray_add_elem(a, MDB_GETARG_INT32(1));
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-intarray_push_array(PG_FUNCTION_ARGS)
+intarray_push_array(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P(0);
-	ArrayType  *b = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *b = MDB_GETARG_ARRAYTYPE_P(1);
 	ArrayType  *result;
 
 	result = intarray_concat_arrays(a, b);
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_POINTER(result);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-intarray_del_elem(PG_FUNCTION_ARGS)
+intarray_del_elem(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	int32		elem = PG_GETARG_INT32(1);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	int32		elem = MDB_GETARG_INT32(1);
 	int32		c;
 	int32	   *aa;
 	int32		n = 0,
@@ -375,26 +375,26 @@ intarray_del_elem(PG_FUNCTION_ARGS)
 		}
 		a = resize_intArrayType(a, n);
 	}
-	PG_RETURN_POINTER(a);
+	MDB_RETURN_POINTER(a);
 }
 
 Datum
-intset_union_elem(PG_FUNCTION_ARGS)
+intset_union_elem(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P(0);
 	ArrayType  *result;
 
-	result = intarray_add_elem(a, PG_GETARG_INT32(1));
-	PG_FREE_IF_COPY(a, 0);
+	result = intarray_add_elem(a, MDB_GETARG_INT32(1));
+	MDB_FREE_IF_COPY(a, 0);
 	QSORT(result, 1);
-	PG_RETURN_POINTER(_int_unique(result));
+	MDB_RETURN_POINTER(_int_unique(result));
 }
 
 Datum
-intset_subtract(PG_FUNCTION_ARGS)
+intset_subtract(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	ArrayType  *b = PG_GETARG_ARRAYTYPE_P_COPY(1);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	ArrayType  *b = MDB_GETARG_ARRAYTYPE_P_COPY(1);
 	ArrayType  *result;
 	int32		ca;
 	int32		cb;
@@ -433,5 +433,5 @@ intset_subtract(PG_FUNCTION_ARGS)
 	result = resize_intArrayType(result, n);
 	pfree(a);
 	pfree(b);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }

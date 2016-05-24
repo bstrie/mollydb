@@ -141,9 +141,9 @@ extern void ForgetRelationFsyncRequests(RelFileNode rnode, ForkNumber forknum);
 extern void ForgetDatabaseFsyncRequests(Oid dbid);
 
 /* smgrtype.c */
-extern Datum smgrout(PG_FUNCTION_ARGS);
-extern Datum smgrin(PG_FUNCTION_ARGS);
-extern Datum smgreq(PG_FUNCTION_ARGS);
-extern Datum smgrne(PG_FUNCTION_ARGS);
+extern Datum smgrout(MDB_FUNCTION_ARGS);
+extern Datum smgrin(MDB_FUNCTION_ARGS);
+extern Datum smgreq(MDB_FUNCTION_ARGS);
+extern Datum smgrne(MDB_FUNCTION_ARGS);
 
 #endif   /* SMGR_H */

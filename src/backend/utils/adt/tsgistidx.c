@@ -92,12 +92,12 @@ static const uint8 number_of_ones[256] = {
 static int32 sizebitvec(BITVECP sign);
 
 Datum
-gtsvectorin(PG_FUNCTION_ARGS)
+gtsvectorin(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("gtsvector_in not implemented")));
-	PG_RETURN_DATUM(0);
+	MDB_RETURN_DATUM(0);
 }
 
 #define SINGOUTSTR	"%d true bits, %d false bits"
@@ -107,9 +107,9 @@ gtsvectorin(PG_FUNCTION_ARGS)
 static int	outbuf_maxlen = 0;
 
 Datum
-gtsvectorout(PG_FUNCTION_ARGS)
+gtsvectorout(MDB_FUNCTION_ARGS)
 {
-	SignTSVector *key = (SignTSVector *) DatumGetPointer(PG_DETOAST_DATUM(PG_GETARG_POINTER(0)));
+	SignTSVector *key = (SignTSVector *) DatumGetPointer(MDB_DETOAST_DATUM(MDB_GETARG_POINTER(0)));
 	char	   *outbuf;
 
 	if (outbuf_maxlen == 0)
@@ -125,8 +125,8 @@ gtsvectorout(PG_FUNCTION_ARGS)
 		sprintf(outbuf, SINGOUTSTR, cnttrue, (int) SIGLENBIT - cnttrue);
 	}
 
-	PG_FREE_IF_COPY(key, 0);
-	PG_RETURN_POINTER(outbuf);
+	MDB_FREE_IF_COPY(key, 0);
+	MDB_RETURN_POINTER(outbuf);
 }
 
 static int
@@ -178,9 +178,9 @@ makesign(BITVECP sign, SignTSVector *a)
 }
 
 Datum
-gtsvector_compress(PG_FUNCTION_ARGS)
+gtsvector_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval = entry;
 
 	if (entry->leafkey)
@@ -252,7 +252,7 @@ gtsvector_compress(PG_FUNCTION_ARGS)
 		LOOPBYTE
 		{
 			if ((sign[i] & 0xff) != 0xff)
-				PG_RETURN_POINTER(retval);
+				MDB_RETURN_POINTER(retval);
 		}
 
 		len = CALCGTSIZE(SIGNKEY | ALLISTRUE, 0);
@@ -265,14 +265,14 @@ gtsvector_compress(PG_FUNCTION_ARGS)
 					  entry->rel, entry->page,
 					  entry->offset, FALSE);
 	}
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 Datum
-gtsvector_decompress(PG_FUNCTION_ARGS)
+gtsvector_decompress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	SignTSVector *key = (SignTSVector *) DatumGetPointer(PG_DETOAST_DATUM(entry->key));
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	SignTSVector *key = (SignTSVector *) DatumGetPointer(MDB_DETOAST_DATUM(entry->key));
 
 	if (key != (SignTSVector *) DatumGetPointer(entry->key))
 	{
@@ -282,10 +282,10 @@ gtsvector_decompress(PG_FUNCTION_ARGS)
 					  entry->rel, entry->page,
 					  entry->offset, FALSE);
 
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
 
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 typedef struct
@@ -338,28 +338,28 @@ checkcondition_bit(void *checkval, QueryOperand *val, ExecPhraseData *data)
 }
 
 Datum
-gtsvector_consistent(PG_FUNCTION_ARGS)
+gtsvector_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	TSQuery		query = PG_GETARG_TSQUERY(1);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(1);
 
-	/* StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2); */
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2); */
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	SignTSVector *key = (SignTSVector *) DatumGetPointer(entry->key);
 
 	/* All cases served by this function are inexact */
 	*recheck = true;
 
 	if (!query->size)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	if (ISSIGNKEY(key))
 	{
 		if (ISALLTRUE(key))
-			PG_RETURN_BOOL(true);
+			MDB_RETURN_BOOL(true);
 
-		PG_RETURN_BOOL(TS_execute(
+		MDB_RETURN_BOOL(TS_execute(
 								  GETQUERY(query),
 								  (void *) GETSIGN(key), false,
 								  checkcondition_bit
@@ -371,7 +371,7 @@ gtsvector_consistent(PG_FUNCTION_ARGS)
 
 		chkval.arrb = GETARR(key);
 		chkval.arre = chkval.arrb + ARRNELEM(key);
-		PG_RETURN_BOOL(TS_execute(
+		MDB_RETURN_BOOL(TS_execute(
 								  GETQUERY(query),
 								  (void *) &chkval, true,
 								  checkcondition_arr
@@ -406,10 +406,10 @@ unionkey(BITVECP sbase, SignTSVector *add)
 
 
 Datum
-gtsvector_union(PG_FUNCTION_ARGS)
+gtsvector_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	int		   *size = (int *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	int		   *size = (int *) MDB_GETARG_POINTER(1);
 	BITVEC		base;
 	int32		i,
 				len;
@@ -435,15 +435,15 @@ gtsvector_union(PG_FUNCTION_ARGS)
 	if (!ISALLTRUE(result))
 		memcpy((void *) GETSIGN(result), (void *) base, sizeof(BITVEC));
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-gtsvector_same(PG_FUNCTION_ARGS)
+gtsvector_same(MDB_FUNCTION_ARGS)
 {
-	SignTSVector *a = (SignTSVector *) PG_GETARG_POINTER(0);
-	SignTSVector *b = (SignTSVector *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	SignTSVector *a = (SignTSVector *) MDB_GETARG_POINTER(0);
+	SignTSVector *b = (SignTSVector *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	if (ISSIGNKEY(a))
 	{							/* then b also ISSIGNKEY */
@@ -493,7 +493,7 @@ gtsvector_same(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 static int32
@@ -539,11 +539,11 @@ hemdist(SignTSVector *a, SignTSVector *b)
 }
 
 Datum
-gtsvector_penalty(PG_FUNCTION_ARGS)
+gtsvector_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *origentry = (GISTENTRY *) PG_GETARG_POINTER(0); /* always ISSIGNKEY */
-	GISTENTRY  *newentry = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *penalty = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *origentry = (GISTENTRY *) MDB_GETARG_POINTER(0); /* always ISSIGNKEY */
+	GISTENTRY  *newentry = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *penalty = (float *) MDB_GETARG_POINTER(2);
 	SignTSVector *origval = (SignTSVector *) DatumGetPointer(origentry->key);
 	SignTSVector *newval = (SignTSVector *) DatumGetPointer(newentry->key);
 	BITVECP		orig = GETSIGN(origval);
@@ -563,7 +563,7 @@ gtsvector_penalty(PG_FUNCTION_ARGS)
 	}
 	else
 		*penalty = hemdist(origval, newval);
-	PG_RETURN_POINTER(penalty);
+	MDB_RETURN_POINTER(penalty);
 }
 
 typedef struct
@@ -621,10 +621,10 @@ hemdistcache(CACHESIGN *a, CACHESIGN *b)
 }
 
 Datum
-gtsvector_picksplit(PG_FUNCTION_ARGS)
+gtsvector_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber k,
 				j;
 	SignTSVector *datum_l,
@@ -803,7 +803,7 @@ gtsvector_picksplit(PG_FUNCTION_ARGS)
 	v->spl_ldatum = PointerGetDatum(datum_l);
 	v->spl_rdatum = PointerGetDatum(datum_r);
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 /*
@@ -814,7 +814,7 @@ gtsvector_picksplit(PG_FUNCTION_ARGS)
  * This compatibility function should go away eventually.
  */
 Datum
-gtsvector_consistent_oldsig(PG_FUNCTION_ARGS)
+gtsvector_consistent_oldsig(MDB_FUNCTION_ARGS)
 {
 	return gtsvector_consistent(fcinfo);
 }

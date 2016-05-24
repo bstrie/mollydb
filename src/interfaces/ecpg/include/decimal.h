@@ -1,7 +1,7 @@
 /* src/interfaces/ecpg/include/decimal.h */
 
-#ifndef _ECPG_DECIMAL_H
-#define _ECPG_DECIMAL_H
+#ifndef _ECMDB_DECIMAL_H
+#define _ECMDB_DECIMAL_H
 
 #include <ecmdb_informix.h>
 
@@ -10,4 +10,4 @@
 typedef decimal dec_t;
 #endif   /* ndef _ECPGLIB_H */
 
-#endif   /* ndef _ECPG_DECIMAL_H */
+#endif   /* ndef _ECMDB_DECIMAL_H */

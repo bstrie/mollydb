@@ -45,21 +45,21 @@
 /*
  * public functions
  */
-PG_FUNCTION_INFO_V1(pgp_sym_encrypt_bytea);
-PG_FUNCTION_INFO_V1(pgp_sym_encrypt_text);
-PG_FUNCTION_INFO_V1(pgp_sym_decrypt_bytea);
-PG_FUNCTION_INFO_V1(pgp_sym_decrypt_text);
+MDB_FUNCTION_INFO_V1(pgp_sym_encrypt_bytea);
+MDB_FUNCTION_INFO_V1(pgp_sym_encrypt_text);
+MDB_FUNCTION_INFO_V1(pgp_sym_decrypt_bytea);
+MDB_FUNCTION_INFO_V1(pgp_sym_decrypt_text);
 
-PG_FUNCTION_INFO_V1(pgp_pub_encrypt_bytea);
-PG_FUNCTION_INFO_V1(pgp_pub_encrypt_text);
-PG_FUNCTION_INFO_V1(pgp_pub_decrypt_bytea);
-PG_FUNCTION_INFO_V1(pgp_pub_decrypt_text);
+MDB_FUNCTION_INFO_V1(pgp_pub_encrypt_bytea);
+MDB_FUNCTION_INFO_V1(pgp_pub_encrypt_text);
+MDB_FUNCTION_INFO_V1(pgp_pub_decrypt_bytea);
+MDB_FUNCTION_INFO_V1(pgp_pub_decrypt_text);
 
-PG_FUNCTION_INFO_V1(pgp_key_id_w);
+MDB_FUNCTION_INFO_V1(pgp_key_id_w);
 
-PG_FUNCTION_INFO_V1(mdb_armor);
-PG_FUNCTION_INFO_V1(mdb_dearmor);
-PG_FUNCTION_INFO_V1(pgp_armor_headers);
+MDB_FUNCTION_INFO_V1(mdb_armor);
+MDB_FUNCTION_INFO_V1(mdb_dearmor);
+MDB_FUNCTION_INFO_V1(pgp_armor_headers);
 
 /*
  * Mix a block of data into RNG.
@@ -143,13 +143,13 @@ convert_charset(text *src, int cset_from, int cset_to)
 static text *
 convert_from_utf8(text *src)
 {
-	return convert_charset(src, PG_UTF8, GetDatabaseEncoding());
+	return convert_charset(src, MDB_UTF8, GetDatabaseEncoding());
 }
 
 static text *
 convert_to_utf8(text *src)
 {
-	return convert_charset(src, GetDatabaseEncoding(), PG_UTF8);
+	return convert_charset(src, GetDatabaseEncoding(), MDB_UTF8);
 }
 
 static bool
@@ -641,92 +641,92 @@ decrypt_internal(int is_pubenc, int need_text, text *data,
  * Wrappers for symmetric-key functions
  */
 Datum
-pgp_sym_encrypt_bytea(PG_FUNCTION_ARGS)
+pgp_sym_encrypt_bytea(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data,
 			   *key;
 	text	   *arg = NULL;
 	text	   *res;
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	if (PG_NARGS() > 2)
-		arg = PG_GETARG_BYTEA_P(2);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	if (MDB_NARGS() > 2)
+		arg = MDB_GETARG_BYTEA_P(2);
 
 	res = encrypt_internal(0, 0, data, key, arg);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	if (PG_NARGS() > 2)
-		PG_FREE_IF_COPY(arg, 2);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	if (MDB_NARGS() > 2)
+		MDB_FREE_IF_COPY(arg, 2);
+	MDB_RETURN_TEXT_P(res);
 }
 
 Datum
-pgp_sym_encrypt_text(PG_FUNCTION_ARGS)
+pgp_sym_encrypt_text(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data,
 			   *key;
 	text	   *arg = NULL;
 	text	   *res;
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	if (PG_NARGS() > 2)
-		arg = PG_GETARG_BYTEA_P(2);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	if (MDB_NARGS() > 2)
+		arg = MDB_GETARG_BYTEA_P(2);
 
 	res = encrypt_internal(0, 1, data, key, arg);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	if (PG_NARGS() > 2)
-		PG_FREE_IF_COPY(arg, 2);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	if (MDB_NARGS() > 2)
+		MDB_FREE_IF_COPY(arg, 2);
+	MDB_RETURN_TEXT_P(res);
 }
 
 
 Datum
-pgp_sym_decrypt_bytea(PG_FUNCTION_ARGS)
+pgp_sym_decrypt_bytea(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data,
 			   *key;
 	text	   *arg = NULL;
 	text	   *res;
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	if (PG_NARGS() > 2)
-		arg = PG_GETARG_BYTEA_P(2);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	if (MDB_NARGS() > 2)
+		arg = MDB_GETARG_BYTEA_P(2);
 
 	res = decrypt_internal(0, 0, data, key, NULL, arg);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	if (PG_NARGS() > 2)
-		PG_FREE_IF_COPY(arg, 2);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	if (MDB_NARGS() > 2)
+		MDB_FREE_IF_COPY(arg, 2);
+	MDB_RETURN_TEXT_P(res);
 }
 
 Datum
-pgp_sym_decrypt_text(PG_FUNCTION_ARGS)
+pgp_sym_decrypt_text(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data,
 			   *key;
 	text	   *arg = NULL;
 	text	   *res;
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	if (PG_NARGS() > 2)
-		arg = PG_GETARG_BYTEA_P(2);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	if (MDB_NARGS() > 2)
+		arg = MDB_GETARG_BYTEA_P(2);
 
 	res = decrypt_internal(0, 1, data, key, NULL, arg);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	if (PG_NARGS() > 2)
-		PG_FREE_IF_COPY(arg, 2);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	if (MDB_NARGS() > 2)
+		MDB_FREE_IF_COPY(arg, 2);
+	MDB_RETURN_TEXT_P(res);
 }
 
 /*
@@ -734,52 +734,52 @@ pgp_sym_decrypt_text(PG_FUNCTION_ARGS)
  */
 
 Datum
-pgp_pub_encrypt_bytea(PG_FUNCTION_ARGS)
+pgp_pub_encrypt_bytea(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data,
 			   *key;
 	text	   *arg = NULL;
 	text	   *res;
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	if (PG_NARGS() > 2)
-		arg = PG_GETARG_BYTEA_P(2);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	if (MDB_NARGS() > 2)
+		arg = MDB_GETARG_BYTEA_P(2);
 
 	res = encrypt_internal(1, 0, data, key, arg);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	if (PG_NARGS() > 2)
-		PG_FREE_IF_COPY(arg, 2);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	if (MDB_NARGS() > 2)
+		MDB_FREE_IF_COPY(arg, 2);
+	MDB_RETURN_TEXT_P(res);
 }
 
 Datum
-pgp_pub_encrypt_text(PG_FUNCTION_ARGS)
+pgp_pub_encrypt_text(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data,
 			   *key;
 	text	   *arg = NULL;
 	text	   *res;
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	if (PG_NARGS() > 2)
-		arg = PG_GETARG_BYTEA_P(2);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	if (MDB_NARGS() > 2)
+		arg = MDB_GETARG_BYTEA_P(2);
 
 	res = encrypt_internal(1, 1, data, key, arg);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	if (PG_NARGS() > 2)
-		PG_FREE_IF_COPY(arg, 2);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	if (MDB_NARGS() > 2)
+		MDB_FREE_IF_COPY(arg, 2);
+	MDB_RETURN_TEXT_P(res);
 }
 
 
 Datum
-pgp_pub_decrypt_bytea(PG_FUNCTION_ARGS)
+pgp_pub_decrypt_bytea(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data,
 			   *key;
@@ -787,26 +787,26 @@ pgp_pub_decrypt_bytea(PG_FUNCTION_ARGS)
 			   *arg = NULL;
 	text	   *res;
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	if (PG_NARGS() > 2)
-		psw = PG_GETARG_BYTEA_P(2);
-	if (PG_NARGS() > 3)
-		arg = PG_GETARG_BYTEA_P(3);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	if (MDB_NARGS() > 2)
+		psw = MDB_GETARG_BYTEA_P(2);
+	if (MDB_NARGS() > 3)
+		arg = MDB_GETARG_BYTEA_P(3);
 
 	res = decrypt_internal(1, 0, data, key, psw, arg);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	if (PG_NARGS() > 2)
-		PG_FREE_IF_COPY(psw, 2);
-	if (PG_NARGS() > 3)
-		PG_FREE_IF_COPY(arg, 3);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	if (MDB_NARGS() > 2)
+		MDB_FREE_IF_COPY(psw, 2);
+	if (MDB_NARGS() > 3)
+		MDB_FREE_IF_COPY(arg, 3);
+	MDB_RETURN_TEXT_P(res);
 }
 
 Datum
-pgp_pub_decrypt_text(PG_FUNCTION_ARGS)
+pgp_pub_decrypt_text(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data,
 			   *key;
@@ -814,22 +814,22 @@ pgp_pub_decrypt_text(PG_FUNCTION_ARGS)
 			   *arg = NULL;
 	text	   *res;
 
-	data = PG_GETARG_BYTEA_P(0);
-	key = PG_GETARG_BYTEA_P(1);
-	if (PG_NARGS() > 2)
-		psw = PG_GETARG_BYTEA_P(2);
-	if (PG_NARGS() > 3)
-		arg = PG_GETARG_BYTEA_P(3);
+	data = MDB_GETARG_BYTEA_P(0);
+	key = MDB_GETARG_BYTEA_P(1);
+	if (MDB_NARGS() > 2)
+		psw = MDB_GETARG_BYTEA_P(2);
+	if (MDB_NARGS() > 3)
+		arg = MDB_GETARG_BYTEA_P(3);
 
 	res = decrypt_internal(1, 1, data, key, psw, arg);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_FREE_IF_COPY(key, 1);
-	if (PG_NARGS() > 2)
-		PG_FREE_IF_COPY(psw, 2);
-	if (PG_NARGS() > 3)
-		PG_FREE_IF_COPY(arg, 3);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_FREE_IF_COPY(key, 1);
+	if (MDB_NARGS() > 2)
+		MDB_FREE_IF_COPY(psw, 2);
+	if (MDB_NARGS() > 3)
+		MDB_FREE_IF_COPY(arg, 3);
+	MDB_RETURN_TEXT_P(res);
 }
 
 
@@ -932,7 +932,7 @@ parse_key_value_arrays(ArrayType *key_array, ArrayType *val_array,
 }
 
 Datum
-mdb_armor(PG_FUNCTION_ARGS)
+mdb_armor(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data;
 	text	   *res;
@@ -942,18 +942,18 @@ mdb_armor(PG_FUNCTION_ARGS)
 	char	  **keys = NULL,
 			  **values = NULL;
 
-	data = PG_GETARG_BYTEA_P(0);
+	data = MDB_GETARG_BYTEA_P(0);
 	data_len = VARSIZE(data) - VARHDRSZ;
-	if (PG_NARGS() == 3)
+	if (MDB_NARGS() == 3)
 	{
-		num_headers = parse_key_value_arrays(PG_GETARG_ARRAYTYPE_P(1),
-											 PG_GETARG_ARRAYTYPE_P(2),
+		num_headers = parse_key_value_arrays(MDB_GETARG_ARRAYTYPE_P(1),
+											 MDB_GETARG_ARRAYTYPE_P(2),
 											 &keys, &values);
 	}
-	else if (PG_NARGS() == 1)
+	else if (MDB_NARGS() == 1)
 		num_headers = 0;
 	else
-		elog(ERROR, "unexpected number of arguments %d", PG_NARGS());
+		elog(ERROR, "unexpected number of arguments %d", MDB_NARGS());
 
 	initStringInfo(&buf);
 
@@ -965,12 +965,12 @@ mdb_armor(PG_FUNCTION_ARGS)
 	memcpy(VARDATA(res), buf.data, buf.len);
 	pfree(buf.data);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_RETURN_TEXT_P(res);
 }
 
 Datum
-mdb_dearmor(PG_FUNCTION_ARGS)
+mdb_dearmor(MDB_FUNCTION_ARGS)
 {
 	text	   *data;
 	bytea	   *res;
@@ -978,7 +978,7 @@ mdb_dearmor(PG_FUNCTION_ARGS)
 	int			ret;
 	StringInfoData buf;
 
-	data = PG_GETARG_TEXT_P(0);
+	data = MDB_GETARG_TEXT_P(0);
 	data_len = VARSIZE(data) - VARHDRSZ;
 
 	initStringInfo(&buf);
@@ -993,8 +993,8 @@ mdb_dearmor(PG_FUNCTION_ARGS)
 	memcpy(VARDATA(res), buf.data, buf.len);
 	pfree(buf.data);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_RETURN_TEXT_P(res);
 }
 
 /* cross-call state for pgp_armor_headers */
@@ -1006,7 +1006,7 @@ typedef struct
 } pgp_armor_headers_state;
 
 Datum
-pgp_armor_headers(PG_FUNCTION_ARGS)
+pgp_armor_headers(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	pgp_armor_headers_state *state;
@@ -1018,7 +1018,7 @@ pgp_armor_headers(PG_FUNCTION_ARGS)
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		text	   *data = PG_GETARG_TEXT_PP(0);
+		text	   *data = MDB_GETARG_TEXT_PP(0);
 		int			res;
 		MemoryContext oldcontext;
 
@@ -1062,8 +1062,8 @@ pgp_armor_headers(PG_FUNCTION_ARGS)
 		utf8key = state->keys[funcctx->call_cntr];
 		utf8val = state->values[funcctx->call_cntr];
 
-		values[0] = mdb_any_to_server(utf8key, strlen(utf8key), PG_UTF8);
-		values[1] = mdb_any_to_server(utf8val, strlen(utf8val), PG_UTF8);
+		values[0] = mdb_any_to_server(utf8key, strlen(utf8key), MDB_UTF8);
+		values[1] = mdb_any_to_server(utf8val, strlen(utf8val), MDB_UTF8);
 
 		/* build a tuple */
 		tuple = BuildTupleFromCStrings(funcctx->attinmeta, values);
@@ -1078,14 +1078,14 @@ pgp_armor_headers(PG_FUNCTION_ARGS)
  */
 
 Datum
-pgp_key_id_w(PG_FUNCTION_ARGS)
+pgp_key_id_w(MDB_FUNCTION_ARGS)
 {
 	bytea	   *data;
 	text	   *res;
 	int			res_len;
 	MBuf	   *buf;
 
-	data = PG_GETARG_BYTEA_P(0);
+	data = MDB_GETARG_BYTEA_P(0);
 	buf = create_mbuf_from_vardata(data);
 	res = palloc(VARHDRSZ + 17);
 
@@ -1097,6 +1097,6 @@ pgp_key_id_w(PG_FUNCTION_ARGS)
 				 errmsg("%s", px_strerror(res_len))));
 	SET_VARSIZE(res, VARHDRSZ + res_len);
 
-	PG_FREE_IF_COPY(data, 0);
-	PG_RETURN_TEXT_P(res);
+	MDB_FREE_IF_COPY(data, 0);
+	MDB_RETURN_TEXT_P(res);
 }

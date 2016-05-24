@@ -34,10 +34,10 @@ static ArrayType *enum_range_internal(Oid enumtypoid, Oid lower, Oid upper);
 /* Basic I/O support */
 
 Datum
-enum_in(PG_FUNCTION_ARGS)
+enum_in(MDB_FUNCTION_ARGS)
 {
-	char	   *name = PG_GETARG_CSTRING(0);
-	Oid			enumtypoid = PG_GETARG_OID(1);
+	char	   *name = MDB_GETARG_CSTRING(0);
+	Oid			enumtypoid = MDB_GETARG_OID(1);
 	Oid			enumoid;
 	HeapTuple	tup;
 
@@ -67,13 +67,13 @@ enum_in(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(tup);
 
-	PG_RETURN_OID(enumoid);
+	MDB_RETURN_OID(enumoid);
 }
 
 Datum
-enum_out(PG_FUNCTION_ARGS)
+enum_out(MDB_FUNCTION_ARGS)
 {
-	Oid			enumval = PG_GETARG_OID(0);
+	Oid			enumval = MDB_GETARG_OID(0);
 	char	   *result;
 	HeapTuple	tup;
 	Form_mdb_enum en;
@@ -90,15 +90,15 @@ enum_out(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(tup);
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /* Binary I/O support */
 Datum
-enum_recv(PG_FUNCTION_ARGS)
+enum_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
-	Oid			enumtypoid = PG_GETARG_OID(1);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
+	Oid			enumtypoid = MDB_GETARG_OID(1);
 	Oid			enumoid;
 	HeapTuple	tup;
 	char	   *name;
@@ -130,13 +130,13 @@ enum_recv(PG_FUNCTION_ARGS)
 
 	pfree(name);
 
-	PG_RETURN_OID(enumoid);
+	MDB_RETURN_OID(enumoid);
 }
 
 Datum
-enum_send(PG_FUNCTION_ARGS)
+enum_send(MDB_FUNCTION_ARGS)
 {
-	Oid			enumval = PG_GETARG_OID(0);
+	Oid			enumval = MDB_GETARG_OID(0);
 	StringInfoData buf;
 	HeapTuple	tup;
 	Form_mdb_enum en;
@@ -154,7 +154,7 @@ enum_send(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(tup);
 
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /* Comparison functions and related */
@@ -210,89 +210,89 @@ enum_cmp_internal(Oid arg1, Oid arg2, FunctionCallInfo fcinfo)
 }
 
 Datum
-enum_lt(PG_FUNCTION_ARGS)
+enum_lt(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(enum_cmp_internal(a, b, fcinfo) < 0);
+	MDB_RETURN_BOOL(enum_cmp_internal(a, b, fcinfo) < 0);
 }
 
 Datum
-enum_le(PG_FUNCTION_ARGS)
+enum_le(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(enum_cmp_internal(a, b, fcinfo) <= 0);
+	MDB_RETURN_BOOL(enum_cmp_internal(a, b, fcinfo) <= 0);
 }
 
 Datum
-enum_eq(PG_FUNCTION_ARGS)
+enum_eq(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(a == b);
+	MDB_RETURN_BOOL(a == b);
 }
 
 Datum
-enum_ne(PG_FUNCTION_ARGS)
+enum_ne(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(a != b);
+	MDB_RETURN_BOOL(a != b);
 }
 
 Datum
-enum_ge(PG_FUNCTION_ARGS)
+enum_ge(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(enum_cmp_internal(a, b, fcinfo) >= 0);
+	MDB_RETURN_BOOL(enum_cmp_internal(a, b, fcinfo) >= 0);
 }
 
 Datum
-enum_gt(PG_FUNCTION_ARGS)
+enum_gt(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(enum_cmp_internal(a, b, fcinfo) > 0);
+	MDB_RETURN_BOOL(enum_cmp_internal(a, b, fcinfo) > 0);
 }
 
 Datum
-enum_smaller(PG_FUNCTION_ARGS)
+enum_smaller(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
-	PG_RETURN_OID(enum_cmp_internal(a, b, fcinfo) < 0 ? a : b);
+	MDB_RETURN_OID(enum_cmp_internal(a, b, fcinfo) < 0 ? a : b);
 }
 
 Datum
-enum_larger(PG_FUNCTION_ARGS)
+enum_larger(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
-	PG_RETURN_OID(enum_cmp_internal(a, b, fcinfo) > 0 ? a : b);
+	MDB_RETURN_OID(enum_cmp_internal(a, b, fcinfo) > 0 ? a : b);
 }
 
 Datum
-enum_cmp(PG_FUNCTION_ARGS)
+enum_cmp(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
 	if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else if (enum_cmp_internal(a, b, fcinfo) > 0)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 /* Enum programming support functions */
@@ -339,7 +339,7 @@ enum_endpoint(Oid enumtypoid, ScanDirection direction)
 }
 
 Datum
-enum_first(PG_FUNCTION_ARGS)
+enum_first(MDB_FUNCTION_ARGS)
 {
 	Oid			enumtypoid;
 	Oid			min;
@@ -364,11 +364,11 @@ enum_first(PG_FUNCTION_ARGS)
 				 errmsg("enum %s contains no values",
 						format_type_be(enumtypoid))));
 
-	PG_RETURN_OID(min);
+	MDB_RETURN_OID(min);
 }
 
 Datum
-enum_last(PG_FUNCTION_ARGS)
+enum_last(MDB_FUNCTION_ARGS)
 {
 	Oid			enumtypoid;
 	Oid			max;
@@ -393,25 +393,25 @@ enum_last(PG_FUNCTION_ARGS)
 				 errmsg("enum %s contains no values",
 						format_type_be(enumtypoid))));
 
-	PG_RETURN_OID(max);
+	MDB_RETURN_OID(max);
 }
 
 /* 2-argument variant of enum_range */
 Datum
-enum_range_bounds(PG_FUNCTION_ARGS)
+enum_range_bounds(MDB_FUNCTION_ARGS)
 {
 	Oid			lower;
 	Oid			upper;
 	Oid			enumtypoid;
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		lower = InvalidOid;
 	else
-		lower = PG_GETARG_OID(0);
-	if (PG_ARGISNULL(1))
+		lower = MDB_GETARG_OID(0);
+	if (MDB_ARGISNULL(1))
 		upper = InvalidOid;
 	else
-		upper = PG_GETARG_OID(1);
+		upper = MDB_GETARG_OID(1);
 
 	/*
 	 * We rely on being able to get the specific enum type from the calling
@@ -424,12 +424,12 @@ enum_range_bounds(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("could not determine actual enum type")));
 
-	PG_RETURN_ARRAYTYPE_P(enum_range_internal(enumtypoid, lower, upper));
+	MDB_RETURN_ARRAYTYPE_P(enum_range_internal(enumtypoid, lower, upper));
 }
 
 /* 1-argument variant of enum_range */
 Datum
-enum_range_all(PG_FUNCTION_ARGS)
+enum_range_all(MDB_FUNCTION_ARGS)
 {
 	Oid			enumtypoid;
 
@@ -444,7 +444,7 @@ enum_range_all(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("could not determine actual enum type")));
 
-	PG_RETURN_ARRAYTYPE_P(enum_range_internal(enumtypoid,
+	MDB_RETURN_ARRAYTYPE_P(enum_range_internal(enumtypoid,
 											  InvalidOid, InvalidOid));
 }
 

@@ -435,65 +435,65 @@ getWeights(ArrayType *win)
 }
 
 Datum
-ts_rank_wttf(PG_FUNCTION_ARGS)
+ts_rank_wttf(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *win = (ArrayType *) PG_DETOAST_DATUM(PG_GETARG_DATUM(0));
-	TSVector	txt = PG_GETARG_TSVECTOR(1);
-	TSQuery		query = PG_GETARG_TSQUERY(2);
-	int			method = PG_GETARG_INT32(3);
+	ArrayType  *win = (ArrayType *) MDB_DETOAST_DATUM(MDB_GETARG_DATUM(0));
+	TSVector	txt = MDB_GETARG_TSVECTOR(1);
+	TSQuery		query = MDB_GETARG_TSQUERY(2);
+	int			method = MDB_GETARG_INT32(3);
 	float		res;
 
 	res = calc_rank(getWeights(win), txt, query, method);
 
-	PG_FREE_IF_COPY(win, 0);
-	PG_FREE_IF_COPY(txt, 1);
-	PG_FREE_IF_COPY(query, 2);
-	PG_RETURN_FLOAT4(res);
+	MDB_FREE_IF_COPY(win, 0);
+	MDB_FREE_IF_COPY(txt, 1);
+	MDB_FREE_IF_COPY(query, 2);
+	MDB_RETURN_FLOAT4(res);
 }
 
 Datum
-ts_rank_wtt(PG_FUNCTION_ARGS)
+ts_rank_wtt(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *win = (ArrayType *) PG_DETOAST_DATUM(PG_GETARG_DATUM(0));
-	TSVector	txt = PG_GETARG_TSVECTOR(1);
-	TSQuery		query = PG_GETARG_TSQUERY(2);
+	ArrayType  *win = (ArrayType *) MDB_DETOAST_DATUM(MDB_GETARG_DATUM(0));
+	TSVector	txt = MDB_GETARG_TSVECTOR(1);
+	TSQuery		query = MDB_GETARG_TSQUERY(2);
 	float		res;
 
 	res = calc_rank(getWeights(win), txt, query, DEF_NORM_METHOD);
 
-	PG_FREE_IF_COPY(win, 0);
-	PG_FREE_IF_COPY(txt, 1);
-	PG_FREE_IF_COPY(query, 2);
-	PG_RETURN_FLOAT4(res);
+	MDB_FREE_IF_COPY(win, 0);
+	MDB_FREE_IF_COPY(txt, 1);
+	MDB_FREE_IF_COPY(query, 2);
+	MDB_RETURN_FLOAT4(res);
 }
 
 Datum
-ts_rank_ttf(PG_FUNCTION_ARGS)
+ts_rank_ttf(MDB_FUNCTION_ARGS)
 {
-	TSVector	txt = PG_GETARG_TSVECTOR(0);
-	TSQuery		query = PG_GETARG_TSQUERY(1);
-	int			method = PG_GETARG_INT32(2);
+	TSVector	txt = MDB_GETARG_TSVECTOR(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(1);
+	int			method = MDB_GETARG_INT32(2);
 	float		res;
 
 	res = calc_rank(getWeights(NULL), txt, query, method);
 
-	PG_FREE_IF_COPY(txt, 0);
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_FLOAT4(res);
+	MDB_FREE_IF_COPY(txt, 0);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_FLOAT4(res);
 }
 
 Datum
-ts_rank_tt(PG_FUNCTION_ARGS)
+ts_rank_tt(MDB_FUNCTION_ARGS)
 {
-	TSVector	txt = PG_GETARG_TSVECTOR(0);
-	TSQuery		query = PG_GETARG_TSQUERY(1);
+	TSVector	txt = MDB_GETARG_TSVECTOR(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(1);
 	float		res;
 
 	res = calc_rank(getWeights(NULL), txt, query, DEF_NORM_METHOD);
 
-	PG_FREE_IF_COPY(txt, 0);
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_FLOAT4(res);
+	MDB_FREE_IF_COPY(txt, 0);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_FLOAT4(res);
 }
 
 typedef struct
@@ -940,63 +940,63 @@ calc_rank_cd(const float4 *arrdata, TSVector txt, TSQuery query, int method)
 }
 
 Datum
-ts_rankcd_wttf(PG_FUNCTION_ARGS)
+ts_rankcd_wttf(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *win = (ArrayType *) PG_DETOAST_DATUM(PG_GETARG_DATUM(0));
-	TSVector	txt = PG_GETARG_TSVECTOR(1);
-	TSQuery		query = PG_GETARG_TSQUERY(2);
-	int			method = PG_GETARG_INT32(3);
+	ArrayType  *win = (ArrayType *) MDB_DETOAST_DATUM(MDB_GETARG_DATUM(0));
+	TSVector	txt = MDB_GETARG_TSVECTOR(1);
+	TSQuery		query = MDB_GETARG_TSQUERY(2);
+	int			method = MDB_GETARG_INT32(3);
 	float		res;
 
 	res = calc_rank_cd(getWeights(win), txt, query, method);
 
-	PG_FREE_IF_COPY(win, 0);
-	PG_FREE_IF_COPY(txt, 1);
-	PG_FREE_IF_COPY(query, 2);
-	PG_RETURN_FLOAT4(res);
+	MDB_FREE_IF_COPY(win, 0);
+	MDB_FREE_IF_COPY(txt, 1);
+	MDB_FREE_IF_COPY(query, 2);
+	MDB_RETURN_FLOAT4(res);
 }
 
 Datum
-ts_rankcd_wtt(PG_FUNCTION_ARGS)
+ts_rankcd_wtt(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *win = (ArrayType *) PG_DETOAST_DATUM(PG_GETARG_DATUM(0));
-	TSVector	txt = PG_GETARG_TSVECTOR(1);
-	TSQuery		query = PG_GETARG_TSQUERY(2);
+	ArrayType  *win = (ArrayType *) MDB_DETOAST_DATUM(MDB_GETARG_DATUM(0));
+	TSVector	txt = MDB_GETARG_TSVECTOR(1);
+	TSQuery		query = MDB_GETARG_TSQUERY(2);
 	float		res;
 
 	res = calc_rank_cd(getWeights(win), txt, query, DEF_NORM_METHOD);
 
-	PG_FREE_IF_COPY(win, 0);
-	PG_FREE_IF_COPY(txt, 1);
-	PG_FREE_IF_COPY(query, 2);
-	PG_RETURN_FLOAT4(res);
+	MDB_FREE_IF_COPY(win, 0);
+	MDB_FREE_IF_COPY(txt, 1);
+	MDB_FREE_IF_COPY(query, 2);
+	MDB_RETURN_FLOAT4(res);
 }
 
 Datum
-ts_rankcd_ttf(PG_FUNCTION_ARGS)
+ts_rankcd_ttf(MDB_FUNCTION_ARGS)
 {
-	TSVector	txt = PG_GETARG_TSVECTOR(0);
-	TSQuery		query = PG_GETARG_TSQUERY(1);
-	int			method = PG_GETARG_INT32(2);
+	TSVector	txt = MDB_GETARG_TSVECTOR(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(1);
+	int			method = MDB_GETARG_INT32(2);
 	float		res;
 
 	res = calc_rank_cd(getWeights(NULL), txt, query, method);
 
-	PG_FREE_IF_COPY(txt, 0);
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_FLOAT4(res);
+	MDB_FREE_IF_COPY(txt, 0);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_FLOAT4(res);
 }
 
 Datum
-ts_rankcd_tt(PG_FUNCTION_ARGS)
+ts_rankcd_tt(MDB_FUNCTION_ARGS)
 {
-	TSVector	txt = PG_GETARG_TSVECTOR(0);
-	TSQuery		query = PG_GETARG_TSQUERY(1);
+	TSVector	txt = MDB_GETARG_TSVECTOR(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(1);
 	float		res;
 
 	res = calc_rank_cd(getWeights(NULL), txt, query, DEF_NORM_METHOD);
 
-	PG_FREE_IF_COPY(txt, 0);
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_FLOAT4(res);
+	MDB_FREE_IF_COPY(txt, 0);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_FLOAT4(res);
 }

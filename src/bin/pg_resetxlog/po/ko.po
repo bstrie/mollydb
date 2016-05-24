@@ -458,9 +458,9 @@ msgstr "최근 CommitTsXid:                     %u\n"
 #, c-format
 msgid ""
 "%s: internal error -- sizeof(ControlFileData) is too large ... fix "
-"PG_CONTROL_SIZE\n"
+"MDB_CONTROL_SIZE\n"
 msgstr ""
-"%s: 내부 오류 -- sizeof(ControlFileData) 값이 너무 큼 ... PG_CONTROL_SIZE 고"
+"%s: 내부 오류 -- sizeof(ControlFileData) 값이 너무 큼 ... MDB_CONTROL_SIZE 고"
 "쳐야함\n"
 
 #: mdb_resetxlog.c:842

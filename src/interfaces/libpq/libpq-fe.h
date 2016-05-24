@@ -31,10 +31,10 @@ extern		"C"
 /*
  * Option flags for PQcopyResult
  */
-#define PG_COPYRES_ATTRS		  0x01
-#define PG_COPYRES_TUPLES		  0x02	/* Implies PG_COPYRES_ATTRS */
-#define PG_COPYRES_EVENTS		  0x04
-#define PG_COPYRES_NOTICEHOOKS	  0x08
+#define MDB_COPYRES_ATTRS		  0x01
+#define MDB_COPYRES_TUPLES		  0x02	/* Implies MDB_COPYRES_ATTRS */
+#define MDB_COPYRES_EVENTS		  0x04
+#define MDB_COPYRES_NOTICEHOOKS	  0x08
 
 /* Application-visible enum types */
 

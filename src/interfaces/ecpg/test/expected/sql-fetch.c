@@ -120,7 +120,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
 #line 32 "fetch.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) break;
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) break;
 #line 32 "fetch.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();
@@ -199,7 +199,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
 #line 50 "fetch.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) break;
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) break;
 #line 50 "fetch.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();

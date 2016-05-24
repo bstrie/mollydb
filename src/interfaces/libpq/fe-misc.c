@@ -71,7 +71,7 @@ static int	pqSocketPoll(int sock, int forRead, int forWrite, time_t end_time);
 int
 PQlibVersion(void)
 {
-	return PG_VERSION_NUM;
+	return MDB_VERSION_NUM;
 }
 
 /*
@@ -533,7 +533,7 @@ pqPutMsgStart(char msg_type, bool force_len, PGconn *conn)
 		endPos = conn->outCount;
 
 	/* do we want a length word? */
-	if (force_len || PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+	if (force_len || MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 	{
 		lenPos = endPos;
 		/* allow room for message length */
@@ -1206,14 +1206,14 @@ int
 PQenv2encoding(void)
 {
 	char	   *str;
-	int			encoding = PG_SQL_ASCII;
+	int			encoding = MDB_SQL_ASCII;
 
 	str = getenv("PGCLIENTENCODING");
 	if (str && *str != '\0')
 	{
 		encoding = mdb_char_to_encoding(str);
 		if (encoding < 0)
-			encoding = PG_SQL_ASCII;
+			encoding = MDB_SQL_ASCII;
 	}
 	return encoding;
 }
@@ -1241,7 +1241,7 @@ libpq_binddomain()
 		ldir = getenv("PGLOCALEDIR");
 		if (!ldir)
 			ldir = LOCALEDIR;
-		bindtextdomain(PG_TEXTDOMAIN("libpq"), ldir);
+		bindtextdomain(MDB_TEXTDOMAIN("libpq"), ldir);
 #ifdef WIN32
 		SetLastError(save_errno);
 #else
@@ -1254,14 +1254,14 @@ char *
 libpq_gettext(const char *msgid)
 {
 	libpq_binddomain();
-	return dgettext(PG_TEXTDOMAIN("libpq"), msgid);
+	return dgettext(MDB_TEXTDOMAIN("libpq"), msgid);
 }
 
 char *
 libpq_ngettext(const char *msgid, const char *msgid_plural, unsigned long n)
 {
 	libpq_binddomain();
-	return dngettext(PG_TEXTDOMAIN("libpq"), msgid, msgid_plural, n);
+	return dngettext(MDB_TEXTDOMAIN("libpq"), msgid, msgid_plural, n);
 }
 
 #endif   /* ENABLE_NLS */

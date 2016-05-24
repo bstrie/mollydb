@@ -65,7 +65,7 @@ diff -c -r bsd_indent/args.c mdb_bsd_indent/args.c
   #include <string.h>
   #include "indent_globs.h"
   
-+ #define INDENT_PG_VERSION	"1.1"
++ #define INDENT_MDB_VERSION	"1.1"
 + 
   /* profile types */
   #define	PRO_SPECIAL	1	/* special case */
@@ -115,7 +115,7 @@ diff -c -r bsd_indent/args.c mdb_bsd_indent/args.c
 + 
 + 		case VERSION:
 + 			{
-+ 				printf("mdb_bsd_indent %s\n", INDENT_PG_VERSION);
++ 				printf("mdb_bsd_indent %s\n", INDENT_MDB_VERSION);
 + 				exit(0);
 + 			}
 + 			break;

@@ -13,8 +13,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_MD5_H
-#define PG_MD5_H
+#ifndef MDB_MD5_H
+#define MDB_MD5_H
 
 #define MD5_PASSWD_LEN	35
 

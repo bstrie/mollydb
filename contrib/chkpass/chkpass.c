@@ -19,7 +19,7 @@
 #include "fmgr.h"
 #include "utils/builtins.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * This type encrypts it's input unless the first character is a colon.
@@ -51,11 +51,11 @@ verify_pass(const char *str)
 /*
  * CHKPASS reader.
  */
-PG_FUNCTION_INFO_V1(chkpass_in);
+MDB_FUNCTION_INFO_V1(chkpass_in);
 Datum
-chkpass_in(PG_FUNCTION_ARGS)
+chkpass_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	chkpass    *result;
 	char		mysalt[4];
 	char	   *crypt_output;
@@ -67,7 +67,7 @@ chkpass_in(PG_FUNCTION_ARGS)
 	{
 		result = (chkpass *) palloc0(sizeof(chkpass));
 		strlcpy(result->password, str + 1, 13 + 1);
-		PG_RETURN_POINTER(result);
+		MDB_RETURN_POINTER(result);
 	}
 
 	if (verify_pass(str) != 0)
@@ -90,7 +90,7 @@ chkpass_in(PG_FUNCTION_ARGS)
 
 	strlcpy(result->password, crypt_output, sizeof(result->password));
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
@@ -98,18 +98,18 @@ chkpass_in(PG_FUNCTION_ARGS)
  * Just like any string but we know it is max 15 (13 plus colon and terminator.)
  */
 
-PG_FUNCTION_INFO_V1(chkpass_out);
+MDB_FUNCTION_INFO_V1(chkpass_out);
 Datum
-chkpass_out(PG_FUNCTION_ARGS)
+chkpass_out(MDB_FUNCTION_ARGS)
 {
-	chkpass    *password = (chkpass *) PG_GETARG_POINTER(0);
+	chkpass    *password = (chkpass *) MDB_GETARG_POINTER(0);
 	char	   *result;
 
 	result = (char *) palloc(16);
 	result[0] = ':';
 	strlcpy(result + 1, password->password, 15);
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 
@@ -117,13 +117,13 @@ chkpass_out(PG_FUNCTION_ARGS)
  * special output function that doesn't output the colon
  */
 
-PG_FUNCTION_INFO_V1(chkpass_rout);
+MDB_FUNCTION_INFO_V1(chkpass_rout);
 Datum
-chkpass_rout(PG_FUNCTION_ARGS)
+chkpass_rout(MDB_FUNCTION_ARGS)
 {
-	chkpass    *password = (chkpass *) PG_GETARG_POINTER(0);
+	chkpass    *password = (chkpass *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_TEXT_P(cstring_to_text(password->password));
+	MDB_RETURN_TEXT_P(cstring_to_text(password->password));
 }
 
 
@@ -131,12 +131,12 @@ chkpass_rout(PG_FUNCTION_ARGS)
  * Boolean tests
  */
 
-PG_FUNCTION_INFO_V1(chkpass_eq);
+MDB_FUNCTION_INFO_V1(chkpass_eq);
 Datum
-chkpass_eq(PG_FUNCTION_ARGS)
+chkpass_eq(MDB_FUNCTION_ARGS)
 {
-	chkpass    *a1 = (chkpass *) PG_GETARG_POINTER(0);
-	text	   *a2 = PG_GETARG_TEXT_PP(1);
+	chkpass    *a1 = (chkpass *) MDB_GETARG_POINTER(0);
+	text	   *a2 = MDB_GETARG_TEXT_PP(1);
 	char		str[9];
 	char	   *crypt_output;
 
@@ -147,15 +147,15 @@ chkpass_eq(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("crypt() failed")));
 
-	PG_RETURN_BOOL(strcmp(a1->password, crypt_output) == 0);
+	MDB_RETURN_BOOL(strcmp(a1->password, crypt_output) == 0);
 }
 
-PG_FUNCTION_INFO_V1(chkpass_ne);
+MDB_FUNCTION_INFO_V1(chkpass_ne);
 Datum
-chkpass_ne(PG_FUNCTION_ARGS)
+chkpass_ne(MDB_FUNCTION_ARGS)
 {
-	chkpass    *a1 = (chkpass *) PG_GETARG_POINTER(0);
-	text	   *a2 = PG_GETARG_TEXT_PP(1);
+	chkpass    *a1 = (chkpass *) MDB_GETARG_POINTER(0);
+	text	   *a2 = MDB_GETARG_TEXT_PP(1);
 	char		str[9];
 	char	   *crypt_output;
 
@@ -166,5 +166,5 @@ chkpass_ne(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("crypt() failed")));
 
-	PG_RETURN_BOOL(strcmp(a1->password, crypt_output) != 0);
+	MDB_RETURN_BOOL(strcmp(a1->password, crypt_output) != 0);
 }

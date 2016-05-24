@@ -95,7 +95,7 @@ endif # GETTEXT_FILES
 	rm messages.po
 
 
-# catalog name extensions must match behavior of PG_TEXTDOMAIN() in c.h
+# catalog name extensions must match behavior of MDB_TEXTDOMAIN() in c.h
 install-po: all-po installdirs-po
 ifneq (,$(LANGUAGES))
 	for lang in $(LANGUAGES); do \

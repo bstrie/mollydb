@@ -18,7 +18,7 @@
 #include "tsearch/ts_locale.h"
 #include "tsearch/ts_utils.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 typedef struct
 {
@@ -39,8 +39,8 @@ typedef struct
 } DictSyn;
 
 
-PG_FUNCTION_INFO_V1(dxsyn_init);
-PG_FUNCTION_INFO_V1(dxsyn_lexize);
+MDB_FUNCTION_INFO_V1(dxsyn_init);
+MDB_FUNCTION_INFO_V1(dxsyn_lexize);
 
 static char *
 find_word(char *in, char **end)
@@ -138,9 +138,9 @@ read_dictionary(DictSyn *d, char *filename)
 }
 
 Datum
-dxsyn_init(PG_FUNCTION_ARGS)
+dxsyn_init(MDB_FUNCTION_ARGS)
 {
-	List	   *dictoptions = (List *) PG_GETARG_POINTER(0);
+	List	   *dictoptions = (List *) MDB_GETARG_POINTER(0);
 	DictSyn    *d;
 	ListCell   *l;
 	char	   *filename = NULL;
@@ -190,21 +190,21 @@ dxsyn_init(PG_FUNCTION_ARGS)
 	if (filename)
 		read_dictionary(d, filename);
 
-	PG_RETURN_POINTER(d);
+	MDB_RETURN_POINTER(d);
 }
 
 Datum
-dxsyn_lexize(PG_FUNCTION_ARGS)
+dxsyn_lexize(MDB_FUNCTION_ARGS)
 {
-	DictSyn    *d = (DictSyn *) PG_GETARG_POINTER(0);
-	char	   *in = (char *) PG_GETARG_POINTER(1);
-	int			length = PG_GETARG_INT32(2);
+	DictSyn    *d = (DictSyn *) MDB_GETARG_POINTER(0);
+	char	   *in = (char *) MDB_GETARG_POINTER(1);
+	int			length = MDB_GETARG_INT32(2);
 	Syn			word;
 	Syn		   *found;
 	TSLexeme   *res = NULL;
 
 	if (!length || d->len == 0)
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 
 	/* Create search pattern */
 	{
@@ -220,7 +220,7 @@ dxsyn_lexize(PG_FUNCTION_ARGS)
 	pfree(word.key);
 
 	if (!found)
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 
 	/* Parse string of synonyms and return array of words */
 	{
@@ -255,5 +255,5 @@ dxsyn_lexize(PG_FUNCTION_ARGS)
 		res[nsyns].lexeme = NULL;
 	}
 
-	PG_RETURN_POINTER(res);
+	MDB_RETURN_POINTER(res);
 }

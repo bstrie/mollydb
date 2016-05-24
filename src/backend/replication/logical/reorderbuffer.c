@@ -674,18 +674,18 @@ ReorderBufferQueueMessage(ReorderBuffer *rb, TransactionId xid,
 
 		/* setup snapshot to allow catalog access */
 		SetupHistoricSnapshot(snapshot_now, NULL);
-		PG_TRY();
+		MDB_TRY();
 		{
 			rb->message(rb, txn, lsn, false, prefix, message_size, message);
 
 			TeardownHistoricSnapshot(false);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			TeardownHistoricSnapshot(true);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 	}
 }
 
@@ -1407,7 +1407,7 @@ ReorderBufferCommit(ReorderBuffer *rb, TransactionId xid,
 	 */
 	using_subtxn = IsTransactionOrTransactionBlock();
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		ReorderBufferChange *change;
 		ReorderBufferChange *specinsert = NULL;
@@ -1677,9 +1677,9 @@ ReorderBufferCommit(ReorderBuffer *rb, TransactionId xid,
 		/* remove potential on-disk data, and deallocate */
 		ReorderBufferCleanupTXN(rb, txn);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
-		/* TODO: Encapsulate cleanup from the PG_TRY and PG_CATCH blocks */
+		/* TODO: Encapsulate cleanup from the MDB_TRY and MDB_CATCH blocks */
 		if (iterstate)
 			ReorderBufferIterTXNFinish(rb, iterstate);
 
@@ -1703,9 +1703,9 @@ ReorderBufferCommit(ReorderBuffer *rb, TransactionId xid,
 		/* remove potential on-disk data, and deallocate */
 		ReorderBufferCleanupTXN(rb, txn);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 /*
@@ -2145,7 +2145,7 @@ ReorderBufferSerializeTXN(ReorderBuffer *rb, ReorderBufferTXN *txn)
 
 			/* open segment, create it if necessary */
 			fd = OpenTransientFile(path,
-								   O_CREAT | O_WRONLY | O_APPEND | PG_BINARY,
+								   O_CREAT | O_WRONLY | O_APPEND | MDB_BINARY,
 								   S_IRUSR | S_IWUSR);
 
 			if (fd < 0)
@@ -2381,7 +2381,7 @@ ReorderBufferRestoreChanges(ReorderBuffer *rb, ReorderBufferTXN *txn,
 					NameStr(MyReplicationSlot->data.name), txn->xid,
 					(uint32) (recptr >> 32), (uint32) recptr);
 
-			*fd = OpenTransientFile(path, O_RDONLY | PG_BINARY, 0);
+			*fd = OpenTransientFile(path, O_RDONLY | MDB_BINARY, 0);
 			if (*fd < 0 && errno == ENOENT)
 			{
 				*fd = -1;
@@ -3066,7 +3066,7 @@ ApplyLogicalMappingFile(HTAB *tuplecid_data, Oid relid, const char *fname)
 	LogicalRewriteMappingData map;
 
 	sprintf(path, "mdb_logical/mappings/%s", fname);
-	fd = OpenTransientFile(path, O_RDONLY | PG_BINARY, 0);
+	fd = OpenTransientFile(path, O_RDONLY | MDB_BINARY, 0);
 	if (fd < 0)
 		ereport(ERROR,
 				(errmsg("could not open file \"%s\": %m", path)));

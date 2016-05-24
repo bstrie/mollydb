@@ -27,7 +27,7 @@
 #include "utils/timestamp.h"
 
 Datum
-mdb_control_system(PG_FUNCTION_ARGS)
+mdb_control_system(MDB_FUNCTION_ARGS)
 {
 	Datum				values[4];
 	bool				nulls[4];
@@ -67,11 +67,11 @@ mdb_control_system(PG_FUNCTION_ARGS)
 
 	htup = heap_form_tuple(tupdesc, values, nulls);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(htup));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(htup));
 }
 
 Datum
-mdb_control_checkpoint(PG_FUNCTION_ARGS)
+mdb_control_checkpoint(MDB_FUNCTION_ARGS)
 {
 	Datum				values[19];
 	bool				nulls[19];
@@ -199,11 +199,11 @@ mdb_control_checkpoint(PG_FUNCTION_ARGS)
 
 	htup = heap_form_tuple(tupdesc, values, nulls);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(htup));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(htup));
 }
 
 Datum
-mdb_control_recovery(PG_FUNCTION_ARGS)
+mdb_control_recovery(MDB_FUNCTION_ARGS)
 {
 	Datum				values[5];
 	bool				nulls[5];
@@ -248,11 +248,11 @@ mdb_control_recovery(PG_FUNCTION_ARGS)
 
 	htup = heap_form_tuple(tupdesc, values, nulls);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(htup));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(htup));
 }
 
 Datum
-mdb_control_init(PG_FUNCTION_ARGS)
+mdb_control_init(MDB_FUNCTION_ARGS)
 {
 	Datum				values[13];
 	bool				nulls[13];
@@ -337,5 +337,5 @@ mdb_control_init(PG_FUNCTION_ARGS)
 
 	htup = heap_form_tuple(tupdesc, values, nulls);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(htup));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(htup));
 }

@@ -77,7 +77,7 @@
 #include "utils/builtins.h"
 #include "utils/memutils.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* Location of permanent stats file (valid when database is shut down) */
 #define PGSS_DUMP_FILE	PGSTAT_STAT_PERMANENT_DIRECTORY "/mdb_stat_statements.stat"
@@ -90,13 +90,13 @@ PG_MODULE_MAGIC;
  * race conditions.  Besides, we only expect modest, infrequent I/O for query
  * strings, so placing the file on a faster filesystem is not compelling.
  */
-#define PGSS_TEXT_FILE	PG_STAT_TMP_DIR "/pgss_query_texts.stat"
+#define PGSS_TEXT_FILE	MDB_STAT_TMP_DIR "/pgss_query_texts.stat"
 
 /* Magic number identifying the stats file format */
 static const uint32 PGSS_FILE_HEADER = 0x20140125;
 
 /* MollyDB major version number, changes in which invalidate all entries */
-static const uint32 PGSS_PG_MAJOR_VERSION = PG_VERSION_NUM / 100;
+static const uint32 PGSS_MDB_MAJOR_VERSION = MDB_VERSION_NUM / 100;
 
 /* XXX: Should USAGE_EXEC reflect execution time and/or buffer usage? */
 #define USAGE_EXEC(duration)	(1.0)
@@ -275,13 +275,13 @@ static bool pgss_save;			/* whether to save stats across shutdown */
 
 /*---- Function declarations ----*/
 
-void		_PG_init(void);
-void		_PG_fini(void);
+void		_MDB_init(void);
+void		_MDB_fini(void);
 
-PG_FUNCTION_INFO_V1(mdb_stat_statements_reset);
-PG_FUNCTION_INFO_V1(mdb_stat_statements_1_2);
-PG_FUNCTION_INFO_V1(mdb_stat_statements_1_3);
-PG_FUNCTION_INFO_V1(mdb_stat_statements);
+MDB_FUNCTION_INFO_V1(mdb_stat_statements_reset);
+MDB_FUNCTION_INFO_V1(mdb_stat_statements_1_2);
+MDB_FUNCTION_INFO_V1(mdb_stat_statements_1_3);
+MDB_FUNCTION_INFO_V1(mdb_stat_statements);
 
 static void pgss_shmem_startup(void);
 static void pgss_shmem_shutdown(int code, Datum arg);
@@ -333,7 +333,7 @@ static int	comp_location(const void *a, const void *b);
  * Module load callback
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/*
 	 * In order to create our shared memory area, we have to be loaded via
@@ -429,7 +429,7 @@ _PG_init(void)
  * Module unload callback
  */
 void
-_PG_fini(void)
+_MDB_fini(void)
 {
 	/* Uninstall hooks. */
 	shmem_startup_hook = prev_shmem_startup_hook;
@@ -523,7 +523,7 @@ pgss_shmem_startup(void)
 	unlink(PGSS_TEXT_FILE);
 
 	/* Allocate new query text temp file */
-	qfile = AllocateFile(PGSS_TEXT_FILE, PG_BINARY_W);
+	qfile = AllocateFile(PGSS_TEXT_FILE, MDB_BINARY_W);
 	if (qfile == NULL)
 		goto write_error;
 
@@ -541,7 +541,7 @@ pgss_shmem_startup(void)
 	/*
 	 * Attempt to load old statistics from the dump file.
 	 */
-	file = AllocateFile(PGSS_DUMP_FILE, PG_BINARY_R);
+	file = AllocateFile(PGSS_DUMP_FILE, MDB_BINARY_R);
 	if (file == NULL)
 	{
 		if (errno != ENOENT)
@@ -560,7 +560,7 @@ pgss_shmem_startup(void)
 		goto read_error;
 
 	if (header != PGSS_FILE_HEADER ||
-		pgver != PGSS_PG_MAJOR_VERSION)
+		pgver != PGSS_MDB_MAJOR_VERSION)
 		goto data_error;
 
 	for (i = 0; i < num; i++)
@@ -573,7 +573,7 @@ pgss_shmem_startup(void)
 			goto read_error;
 
 		/* Encoding is the only field we can easily sanity-check */
-		if (!PG_VALID_BE_ENCODING(temp.encoding))
+		if (!MDB_VALID_BE_ENCODING(temp.encoding))
 			goto data_error;
 
 		/* Resize buffer as needed */
@@ -690,13 +690,13 @@ pgss_shmem_shutdown(int code, Datum arg)
 	if (!pgss_save)
 		return;
 
-	file = AllocateFile(PGSS_DUMP_FILE ".tmp", PG_BINARY_W);
+	file = AllocateFile(PGSS_DUMP_FILE ".tmp", MDB_BINARY_W);
 	if (file == NULL)
 		goto error;
 
 	if (fwrite(&PGSS_FILE_HEADER, sizeof(uint32), 1, file) != 1)
 		goto error;
-	if (fwrite(&PGSS_PG_MAJOR_VERSION, sizeof(uint32), 1, file) != 1)
+	if (fwrite(&PGSS_MDB_MAJOR_VERSION, sizeof(uint32), 1, file) != 1)
 		goto error;
 	num_entries = hash_get_num_entries(pgss_hash);
 	if (fwrite(&num_entries, sizeof(int32), 1, file) != 1)
@@ -869,7 +869,7 @@ static void
 pgss_ExecutorRun(QueryDesc *queryDesc, ScanDirection direction, uint64 count)
 {
 	nested_level++;
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (prev_ExecutorRun)
 			prev_ExecutorRun(queryDesc, direction, count);
@@ -877,12 +877,12 @@ pgss_ExecutorRun(QueryDesc *queryDesc, ScanDirection direction, uint64 count)
 			standard_ExecutorRun(queryDesc, direction, count);
 		nested_level--;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		nested_level--;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 /*
@@ -892,7 +892,7 @@ static void
 pgss_ExecutorFinish(QueryDesc *queryDesc)
 {
 	nested_level++;
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (prev_ExecutorFinish)
 			prev_ExecutorFinish(queryDesc);
@@ -900,12 +900,12 @@ pgss_ExecutorFinish(QueryDesc *queryDesc)
 			standard_ExecutorFinish(queryDesc);
 		nested_level--;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		nested_level--;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 /*
@@ -976,7 +976,7 @@ pgss_ProcessUtility(Node *parsetree, const char *queryString,
 		INSTR_TIME_SET_CURRENT(start);
 
 		nested_level++;
-		PG_TRY();
+		MDB_TRY();
 		{
 			if (prev_ProcessUtility)
 				prev_ProcessUtility(parsetree, queryString,
@@ -988,12 +988,12 @@ pgss_ProcessUtility(Node *parsetree, const char *queryString,
 										dest, completionTag);
 			nested_level--;
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			nested_level--;
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 
 		INSTR_TIME_SET_CURRENT(duration);
 		INSTR_TIME_SUBTRACT(duration, start);
@@ -1267,22 +1267,22 @@ done:
  * Reset all statement statistics.
  */
 Datum
-mdb_stat_statements_reset(PG_FUNCTION_ARGS)
+mdb_stat_statements_reset(MDB_FUNCTION_ARGS)
 {
 	if (!pgss || !pgss_hash)
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
 				 errmsg("mdb_stat_statements must be loaded via shared_preload_libraries")));
 	entry_reset();
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* Number of output arguments (columns) for various API versions */
-#define PG_STAT_STATEMENTS_COLS_V1_0	14
-#define PG_STAT_STATEMENTS_COLS_V1_1	18
-#define PG_STAT_STATEMENTS_COLS_V1_2	19
-#define PG_STAT_STATEMENTS_COLS_V1_3	23
-#define PG_STAT_STATEMENTS_COLS			23		/* maximum of above */
+#define MDB_STAT_STATEMENTS_COLS_V1_0	14
+#define MDB_STAT_STATEMENTS_COLS_V1_1	18
+#define MDB_STAT_STATEMENTS_COLS_V1_2	19
+#define MDB_STAT_STATEMENTS_COLS_V1_3	23
+#define MDB_STAT_STATEMENTS_COLS			23		/* maximum of above */
 
 /*
  * Retrieve statement statistics.
@@ -1295,9 +1295,9 @@ mdb_stat_statements_reset(PG_FUNCTION_ARGS)
  * function.  Unfortunately we weren't bright enough to do that for 1.1.
  */
 Datum
-mdb_stat_statements_1_3(PG_FUNCTION_ARGS)
+mdb_stat_statements_1_3(MDB_FUNCTION_ARGS)
 {
-	bool		showtext = PG_GETARG_BOOL(0);
+	bool		showtext = MDB_GETARG_BOOL(0);
 
 	mdb_stat_statements_internal(fcinfo, PGSS_V1_3, showtext);
 
@@ -1305,9 +1305,9 @@ mdb_stat_statements_1_3(PG_FUNCTION_ARGS)
 }
 
 Datum
-mdb_stat_statements_1_2(PG_FUNCTION_ARGS)
+mdb_stat_statements_1_2(MDB_FUNCTION_ARGS)
 {
-	bool		showtext = PG_GETARG_BOOL(0);
+	bool		showtext = MDB_GETARG_BOOL(0);
 
 	mdb_stat_statements_internal(fcinfo, PGSS_V1_2, showtext);
 
@@ -1319,7 +1319,7 @@ mdb_stat_statements_1_2(PG_FUNCTION_ARGS)
  * This can be removed someday, perhaps.
  */
 Datum
-mdb_stat_statements(PG_FUNCTION_ARGS)
+mdb_stat_statements(MDB_FUNCTION_ARGS)
 {
 	/* If it's really API 1.1, we'll figure that out below */
 	mdb_stat_statements_internal(fcinfo, PGSS_V1_0, true);
@@ -1379,21 +1379,21 @@ mdb_stat_statements_internal(FunctionCallInfo fcinfo,
 	 */
 	switch (tupdesc->natts)
 	{
-		case PG_STAT_STATEMENTS_COLS_V1_0:
+		case MDB_STAT_STATEMENTS_COLS_V1_0:
 			if (api_version != PGSS_V1_0)
 				elog(ERROR, "incorrect number of output arguments");
 			break;
-		case PG_STAT_STATEMENTS_COLS_V1_1:
+		case MDB_STAT_STATEMENTS_COLS_V1_1:
 			/* mdb_stat_statements() should have told us 1.0 */
 			if (api_version != PGSS_V1_0)
 				elog(ERROR, "incorrect number of output arguments");
 			api_version = PGSS_V1_1;
 			break;
-		case PG_STAT_STATEMENTS_COLS_V1_2:
+		case MDB_STAT_STATEMENTS_COLS_V1_2:
 			if (api_version != PGSS_V1_2)
 				elog(ERROR, "incorrect number of output arguments");
 			break;
-		case PG_STAT_STATEMENTS_COLS_V1_3:
+		case MDB_STAT_STATEMENTS_COLS_V1_3:
 			if (api_version != PGSS_V1_3)
 				elog(ERROR, "incorrect number of output arguments");
 			break;
@@ -1476,8 +1476,8 @@ mdb_stat_statements_internal(FunctionCallInfo fcinfo,
 	hash_seq_init(&hash_seq, pgss_hash);
 	while ((entry = hash_seq_search(&hash_seq)) != NULL)
 	{
-		Datum		values[PG_STAT_STATEMENTS_COLS];
-		bool		nulls[PG_STAT_STATEMENTS_COLS];
+		Datum		values[MDB_STAT_STATEMENTS_COLS];
+		bool		nulls[MDB_STAT_STATEMENTS_COLS];
 		int			i = 0;
 		Counters	tmp;
 		double		stddev;
@@ -1594,10 +1594,10 @@ mdb_stat_statements_internal(FunctionCallInfo fcinfo,
 			values[i++] = Float8GetDatumFast(tmp.blk_write_time);
 		}
 
-		Assert(i == (api_version == PGSS_V1_0 ? PG_STAT_STATEMENTS_COLS_V1_0 :
-					 api_version == PGSS_V1_1 ? PG_STAT_STATEMENTS_COLS_V1_1 :
-					 api_version == PGSS_V1_2 ? PG_STAT_STATEMENTS_COLS_V1_2 :
-					 api_version == PGSS_V1_3 ? PG_STAT_STATEMENTS_COLS_V1_3 :
+		Assert(i == (api_version == PGSS_V1_0 ? MDB_STAT_STATEMENTS_COLS_V1_0 :
+					 api_version == PGSS_V1_1 ? MDB_STAT_STATEMENTS_COLS_V1_1 :
+					 api_version == PGSS_V1_2 ? MDB_STAT_STATEMENTS_COLS_V1_2 :
+					 api_version == PGSS_V1_3 ? MDB_STAT_STATEMENTS_COLS_V1_3 :
 					 -1 /* fail if you forget to update this assert */ ));
 
 		tuplestore_putvalues(tupstore, tupdesc, values, nulls);
@@ -1814,7 +1814,7 @@ qtext_store(const char *query, int query_len,
 	*query_offset = off;
 
 	/* Now write the data into the successfully-reserved part of the file */
-	fd = OpenTransientFile(PGSS_TEXT_FILE, O_RDWR | O_CREAT | PG_BINARY,
+	fd = OpenTransientFile(PGSS_TEXT_FILE, O_RDWR | O_CREAT | MDB_BINARY,
 						   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		goto error;
@@ -1877,7 +1877,7 @@ qtext_load_file(Size *buffer_size)
 	int			fd;
 	struct stat stat;
 
-	fd = OpenTransientFile(PGSS_TEXT_FILE, O_RDONLY | PG_BINARY, 0);
+	fd = OpenTransientFile(PGSS_TEXT_FILE, O_RDONLY | MDB_BINARY, 0);
 	if (fd < 0)
 	{
 		if (errno != ENOENT)
@@ -2053,7 +2053,7 @@ gc_qtexts(void)
 	 * larger, this should always work on traditional filesystems; though we
 	 * could still lose on copy-on-write filesystems.
 	 */
-	qfile = AllocateFile(PGSS_TEXT_FILE, PG_BINARY_W);
+	qfile = AllocateFile(PGSS_TEXT_FILE, MDB_BINARY_W);
 	if (qfile == NULL)
 	{
 		ereport(LOG,
@@ -2169,7 +2169,7 @@ gc_fail:
 	 * Destroy the query text file and create a new, empty one
 	 */
 	(void) unlink(PGSS_TEXT_FILE);
-	qfile = AllocateFile(PGSS_TEXT_FILE, PG_BINARY_W);
+	qfile = AllocateFile(PGSS_TEXT_FILE, MDB_BINARY_W);
 	if (qfile == NULL)
 		ereport(LOG,
 				(errcode_for_file_access(),
@@ -2220,7 +2220,7 @@ entry_reset(void)
 	 * Write new empty query file, perhaps even creating a new one to recover
 	 * if the file was missing.
 	 */
-	qfile = AllocateFile(PGSS_TEXT_FILE, PG_BINARY_W);
+	qfile = AllocateFile(PGSS_TEXT_FILE, MDB_BINARY_W);
 	if (qfile == NULL)
 	{
 		ereport(LOG,

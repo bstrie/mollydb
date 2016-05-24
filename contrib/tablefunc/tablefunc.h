@@ -39,10 +39,10 @@
 /*
  * External declarations
  */
-extern Datum normal_rand(PG_FUNCTION_ARGS);
-extern Datum crosstab(PG_FUNCTION_ARGS);
-extern Datum crosstab_hash(PG_FUNCTION_ARGS);
-extern Datum connectby_text(PG_FUNCTION_ARGS);
-extern Datum connectby_text_serial(PG_FUNCTION_ARGS);
+extern Datum normal_rand(MDB_FUNCTION_ARGS);
+extern Datum crosstab(MDB_FUNCTION_ARGS);
+extern Datum crosstab_hash(MDB_FUNCTION_ARGS);
+extern Datum connectby_text(MDB_FUNCTION_ARGS);
+extern Datum connectby_text_serial(MDB_FUNCTION_ARGS);
 
 #endif   /* TABLEFUNC_H */

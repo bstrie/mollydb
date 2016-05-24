@@ -17,10 +17,10 @@
 #include "../../Unicode/uhc_to_utf8.map"
 #include "../../Unicode/utf8_to_uhc.map"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(uhc_to_utf8);
-PG_FUNCTION_INFO_V1(utf8_to_uhc);
+MDB_FUNCTION_INFO_V1(uhc_to_utf8);
+MDB_FUNCTION_INFO_V1(utf8_to_uhc);
 
 /* ----------
  * conv_proc(
@@ -33,37 +33,37 @@ PG_FUNCTION_INFO_V1(utf8_to_uhc);
  * ----------
  */
 Datum
-uhc_to_utf8(PG_FUNCTION_ARGS)
+uhc_to_utf8(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_UHC, PG_UTF8);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_UHC, MDB_UTF8);
 
 	LocalToUtf(src, len, dest,
 			   LUmapUHC, lengthof(LUmapUHC),
 			   NULL, 0,
 			   NULL,
-			   PG_UHC);
+			   MDB_UHC);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-utf8_to_uhc(PG_FUNCTION_ARGS)
+utf8_to_uhc(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_UTF8, PG_UHC);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_UTF8, MDB_UHC);
 
 	UtfToLocal(src, len, dest,
 			   ULmapUHC, lengthof(ULmapUHC),
 			   NULL, 0,
 			   NULL,
-			   PG_UHC);
+			   MDB_UHC);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

@@ -169,7 +169,7 @@ InternalIpcMemoryCreate(IpcMemoryKey memKey, Size size)
 	on_shmem_exit(IpcMemoryDelete, Int32GetDatum(shmid));
 
 	/* OK, should be able to attach to the segment */
-	memAddress = shmat(shmid, NULL, PG_SHMAT_FLAGS);
+	memAddress = shmat(shmid, NULL, MDB_SHMAT_FLAGS);
 
 	if (memAddress == (void *) -1)
 		elog(FATAL, "shmat(id=%d) failed: %m", shmid);
@@ -295,7 +295,7 @@ PGSharedMemoryIsInUse(unsigned long id1, unsigned long id2)
 	if (stat(DataDir, &statbuf) < 0)
 		return true;			/* if can't stat, be conservative */
 
-	hdr = (PGShmemHeader *) shmat(shmId, NULL, PG_SHMAT_FLAGS);
+	hdr = (PGShmemHeader *) shmat(shmId, NULL, MDB_SHMAT_FLAGS);
 
 	if (hdr == (PGShmemHeader *) -1)
 		return true;			/* if can't attach, be conservative */
@@ -363,7 +363,7 @@ CreateAnonymousSegment(Size *size)
 			allocsize += hugepagesize - (allocsize % hugepagesize);
 
 		ptr = mmap(NULL, allocsize, PROT_READ | PROT_WRITE,
-				   PG_MMAP_FLAGS | MAP_HUGETLB, -1, 0);
+				   MDB_MMAP_FLAGS | MAP_HUGETLB, -1, 0);
 		mmap_errno = errno;
 		if (huge_pages == HUGE_PAGES_TRY && ptr == MAP_FAILED)
 			elog(DEBUG1, "mmap with MAP_HUGETLB failed, huge pages disabled: %m");
@@ -379,7 +379,7 @@ CreateAnonymousSegment(Size *size)
 		 */
 		allocsize = *size;
 		ptr = mmap(NULL, allocsize, PROT_READ | PROT_WRITE,
-				   PG_MMAP_FLAGS, -1, 0);
+				   MDB_MMAP_FLAGS, -1, 0);
 		mmap_errno = errno;
 	}
 
@@ -702,7 +702,7 @@ PGSharedMemoryAttach(IpcMemoryKey key, IpcMemoryId *shmid)
 	if ((*shmid = shmget(key, sizeof(PGShmemHeader), 0)) < 0)
 		return NULL;
 
-	hdr = (PGShmemHeader *) shmat(*shmid, UsedShmemSegAddr, PG_SHMAT_FLAGS);
+	hdr = (PGShmemHeader *) shmat(*shmid, UsedShmemSegAddr, MDB_SHMAT_FLAGS);
 
 	if (hdr == (PGShmemHeader *) -1)
 		return NULL;			/* failed: must be some other app's */

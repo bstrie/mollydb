@@ -105,8 +105,8 @@ sed_file("doc/bug.template",
 sed_file("src/include/mdb_config.h.win32",
 "-e 's/#define PACKAGE_STRING \"MollyDB .*\"/#define PACKAGE_STRING \"MollyDB $fullversion\"/' "
 	  . "-e 's/#define PACKAGE_VERSION \".*\"/#define PACKAGE_VERSION \"$fullversion\"/' "
-	  . "-e 's/#define PG_VERSION \".*\"/#define PG_VERSION \"$fullversion\"/' "
-	  . "-e 's/#define PG_VERSION_NUM .*/#define PG_VERSION_NUM $padnumericversion/'"
+	  . "-e 's/#define MDB_VERSION \".*\"/#define MDB_VERSION \"$fullversion\"/' "
+	  . "-e 's/#define MDB_VERSION_NUM .*/#define MDB_VERSION_NUM $padnumericversion/'"
 );
 
 sed_file("src/interfaces/libpq/libpq.rc.in",

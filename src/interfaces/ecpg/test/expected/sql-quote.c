@@ -185,7 +185,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
 #line 51 "quote.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) break;
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) break;
 #line 51 "quote.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();

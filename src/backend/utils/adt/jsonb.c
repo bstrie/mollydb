@@ -93,9 +93,9 @@ static void add_indent(StringInfo out, bool indent, int level);
  * jsonb type input function
  */
 Datum
-jsonb_in(PG_FUNCTION_ARGS)
+jsonb_in(MDB_FUNCTION_ARGS)
 {
-	char	   *json = PG_GETARG_CSTRING(0);
+	char	   *json = MDB_GETARG_CSTRING(0);
 
 	return jsonb_from_cstring(json, strlen(json));
 }
@@ -109,9 +109,9 @@ jsonb_in(PG_FUNCTION_ARGS)
  * only version 1 is supported.
  */
 Datum
-jsonb_recv(PG_FUNCTION_ARGS)
+jsonb_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	int			version = pq_getmsgint(buf, 1);
 	char	   *str;
 	int			nbytes;
@@ -128,14 +128,14 @@ jsonb_recv(PG_FUNCTION_ARGS)
  * jsonb type output function
  */
 Datum
-jsonb_out(PG_FUNCTION_ARGS)
+jsonb_out(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
 	char	   *out;
 
 	out = JsonbToCString(NULL, &jb->root, VARSIZE(jb));
 
-	PG_RETURN_CSTRING(out);
+	MDB_RETURN_CSTRING(out);
 }
 
 /*
@@ -144,9 +144,9 @@ jsonb_out(PG_FUNCTION_ARGS)
  * Just send jsonb as a version number, then a string of text
  */
 Datum
-jsonb_send(PG_FUNCTION_ARGS)
+jsonb_send(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
 	StringInfoData buf;
 	StringInfo	jtext = makeStringInfo();
 	int			version = 1;
@@ -159,7 +159,7 @@ jsonb_send(PG_FUNCTION_ARGS)
 	pfree(jtext->data);
 	pfree(jtext);
 
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
@@ -169,9 +169,9 @@ jsonb_send(PG_FUNCTION_ARGS)
  * it uses the json parser internals not exposed elsewhere.
  */
 Datum
-jsonb_typeof(PG_FUNCTION_ARGS)
+jsonb_typeof(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *in = PG_GETARG_JSONB(0);
+	Jsonb	   *in = MDB_GETARG_JSONB(0);
 	JsonbIterator *it;
 	JsonbValue	v;
 	char	   *result;
@@ -212,7 +212,7 @@ jsonb_typeof(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(result));
+	MDB_RETURN_TEXT_P(cstring_to_text(result));
 }
 
 /*
@@ -245,7 +245,7 @@ jsonb_from_cstring(char *json, int len)
 	mdb_parse_json(lex, &sem);
 
 	/* after parsing, the item member has the composed jsonb structure */
-	PG_RETURN_POINTER(JsonbValueToJsonb(state.res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(state.res));
 }
 
 static size_t
@@ -1141,9 +1141,9 @@ add_jsonb(Datum val, bool is_null, JsonbInState *result,
  * SQL function to_jsonb(anyvalue)
  */
 Datum
-to_jsonb(PG_FUNCTION_ARGS)
+to_jsonb(MDB_FUNCTION_ARGS)
 {
-	Datum		val = PG_GETARG_DATUM(0);
+	Datum		val = MDB_GETARG_DATUM(0);
 	Oid			val_type = get_fn_expr_argtype(fcinfo->flinfo, 0);
 	JsonbInState result;
 	JsonbTypeCategory tcategory;
@@ -1161,16 +1161,16 @@ to_jsonb(PG_FUNCTION_ARGS)
 
 	datum_to_jsonb(val, false, &result, tcategory, outfuncoid, false);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(result.res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(result.res));
 }
 
 /*
  * SQL function jsonb_build_object(variadic "any")
  */
 Datum
-jsonb_build_object(PG_FUNCTION_ARGS)
+jsonb_build_object(MDB_FUNCTION_ARGS)
 {
-	int			nargs = PG_NARGS();
+	int			nargs = MDB_NARGS();
 	int			i;
 	Datum		arg;
 	Oid			val_type;
@@ -1189,7 +1189,7 @@ jsonb_build_object(PG_FUNCTION_ARGS)
 	{
 		/* process key */
 
-		if (PG_ARGISNULL(i))
+		if (MDB_ARGISNULL(i))
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 					 errmsg("argument %d: key must not be null", i + 1)));
@@ -1202,11 +1202,11 @@ jsonb_build_object(PG_FUNCTION_ARGS)
 		if (val_type == UNKNOWNOID && get_fn_expr_arg_stable(fcinfo->flinfo, i))
 		{
 			val_type = TEXTOID;
-			arg = CStringGetTextDatum(PG_GETARG_POINTER(i));
+			arg = CStringGetTextDatum(MDB_GETARG_POINTER(i));
 		}
 		else
 		{
-			arg = PG_GETARG_DATUM(i);
+			arg = MDB_GETARG_DATUM(i);
 		}
 		if (val_type == InvalidOid || val_type == UNKNOWNOID)
 			ereport(ERROR,
@@ -1222,32 +1222,32 @@ jsonb_build_object(PG_FUNCTION_ARGS)
 		if (val_type == UNKNOWNOID && get_fn_expr_arg_stable(fcinfo->flinfo, i + 1))
 		{
 			val_type = TEXTOID;
-			if (PG_ARGISNULL(i + 1))
+			if (MDB_ARGISNULL(i + 1))
 				arg = (Datum) 0;
 			else
-				arg = CStringGetTextDatum(PG_GETARG_POINTER(i + 1));
+				arg = CStringGetTextDatum(MDB_GETARG_POINTER(i + 1));
 		}
 		else
 		{
-			arg = PG_GETARG_DATUM(i + 1);
+			arg = MDB_GETARG_DATUM(i + 1);
 		}
 		if (val_type == InvalidOid || val_type == UNKNOWNOID)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 			   errmsg("argument %d: could not determine data type", i + 2)));
-		add_jsonb(arg, PG_ARGISNULL(i + 1), &result, val_type, false);
+		add_jsonb(arg, MDB_ARGISNULL(i + 1), &result, val_type, false);
 	}
 
 	result.res = pushJsonbValue(&result.parseState, WJB_END_OBJECT, NULL);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(result.res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(result.res));
 }
 
 /*
  * degenerate case of jsonb_build_object where it gets 0 arguments.
  */
 Datum
-jsonb_build_object_noargs(PG_FUNCTION_ARGS)
+jsonb_build_object_noargs(MDB_FUNCTION_ARGS)
 {
 	JsonbInState result;
 
@@ -1256,16 +1256,16 @@ jsonb_build_object_noargs(PG_FUNCTION_ARGS)
 	(void) pushJsonbValue(&result.parseState, WJB_BEGIN_OBJECT, NULL);
 	result.res = pushJsonbValue(&result.parseState, WJB_END_OBJECT, NULL);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(result.res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(result.res));
 }
 
 /*
  * SQL function jsonb_build_array(variadic "any")
  */
 Datum
-jsonb_build_array(PG_FUNCTION_ARGS)
+jsonb_build_array(MDB_FUNCTION_ARGS)
 {
-	int			nargs = PG_NARGS();
+	int			nargs = MDB_NARGS();
 	int			i;
 	Datum		arg;
 	Oid			val_type;
@@ -1282,32 +1282,32 @@ jsonb_build_array(PG_FUNCTION_ARGS)
 		if (val_type == UNKNOWNOID && get_fn_expr_arg_stable(fcinfo->flinfo, i))
 		{
 			val_type = TEXTOID;
-			if (PG_ARGISNULL(i))
+			if (MDB_ARGISNULL(i))
 				arg = (Datum) 0;
 			else
-				arg = CStringGetTextDatum(PG_GETARG_POINTER(i));
+				arg = CStringGetTextDatum(MDB_GETARG_POINTER(i));
 		}
 		else
 		{
-			arg = PG_GETARG_DATUM(i);
+			arg = MDB_GETARG_DATUM(i);
 		}
 		if (val_type == InvalidOid || val_type == UNKNOWNOID)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 			   errmsg("argument %d: could not determine data type", i + 1)));
-		add_jsonb(arg, PG_ARGISNULL(i), &result, val_type, false);
+		add_jsonb(arg, MDB_ARGISNULL(i), &result, val_type, false);
 	}
 
 	result.res = pushJsonbValue(&result.parseState, WJB_END_ARRAY, NULL);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(result.res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(result.res));
 }
 
 /*
  * degenerate case of jsonb_build_array where it gets 0 arguments.
  */
 Datum
-jsonb_build_array_noargs(PG_FUNCTION_ARGS)
+jsonb_build_array_noargs(MDB_FUNCTION_ARGS)
 {
 	JsonbInState result;
 
@@ -1316,7 +1316,7 @@ jsonb_build_array_noargs(PG_FUNCTION_ARGS)
 	(void) pushJsonbValue(&result.parseState, WJB_BEGIN_ARRAY, NULL);
 	result.res = pushJsonbValue(&result.parseState, WJB_END_ARRAY, NULL);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(result.res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(result.res));
 }
 
 
@@ -1328,9 +1328,9 @@ jsonb_build_array_noargs(PG_FUNCTION_ARGS)
  *
  */
 Datum
-jsonb_object(PG_FUNCTION_ARGS)
+jsonb_object(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *in_array = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *in_array = MDB_GETARG_ARRAYTYPE_P(0);
 	int			ndims = ARR_NDIM(in_array);
 	Datum	   *in_datums;
 	bool	   *in_nulls;
@@ -1420,7 +1420,7 @@ jsonb_object(PG_FUNCTION_ARGS)
 close_object:
 	result.res = pushJsonbValue(&result.parseState, WJB_END_OBJECT, NULL);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(result.res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(result.res));
 }
 
 /*
@@ -1430,10 +1430,10 @@ close_object:
  * pairwise.
  */
 Datum
-jsonb_object_two_arg(PG_FUNCTION_ARGS)
+jsonb_object_two_arg(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *key_array = PG_GETARG_ARRAYTYPE_P(0);
-	ArrayType  *val_array = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *key_array = MDB_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *val_array = MDB_GETARG_ARRAYTYPE_P(1);
 	int			nkdims = ARR_NDIM(key_array);
 	int			nvdims = ARR_NDIM(val_array);
 	Datum	   *key_datums,
@@ -1517,7 +1517,7 @@ jsonb_object_two_arg(PG_FUNCTION_ARGS)
 close_object:
 	result.res = pushJsonbValue(&result.parseState, WJB_END_OBJECT, NULL);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(result.res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(result.res));
 }
 
 
@@ -1559,7 +1559,7 @@ clone_parse_state(JsonbParseState *state)
  * jsonb_agg aggregate function
  */
 Datum
-jsonb_agg_transfn(PG_FUNCTION_ARGS)
+jsonb_agg_transfn(MDB_FUNCTION_ARGS)
 {
 	MemoryContext oldcontext,
 				aggcontext;
@@ -1581,7 +1581,7 @@ jsonb_agg_transfn(PG_FUNCTION_ARGS)
 
 	/* set up the accumulator on the first go round */
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		Oid			arg_type = get_fn_expr_argtype(fcinfo->flinfo, 1);
 
@@ -1603,17 +1603,17 @@ jsonb_agg_transfn(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		state = (JsonbAggState *) PG_GETARG_POINTER(0);
+		state = (JsonbAggState *) MDB_GETARG_POINTER(0);
 		result = state->res;
 	}
 
 	/* turn the argument into jsonb in the normal function context */
 
-	val = PG_ARGISNULL(1) ? (Datum) 0 : PG_GETARG_DATUM(1);
+	val = MDB_ARGISNULL(1) ? (Datum) 0 : MDB_GETARG_DATUM(1);
 
 	memset(&elem, 0, sizeof(JsonbInState));
 
-	datum_to_jsonb(val, PG_ARGISNULL(1), &elem, state->val_category,
+	datum_to_jsonb(val, MDB_ARGISNULL(1), &elem, state->val_category,
 				   state->val_output_func, false);
 
 	jbelem = JsonbValueToJsonb(elem.res);
@@ -1673,11 +1673,11 @@ jsonb_agg_transfn(PG_FUNCTION_ARGS)
 
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-jsonb_agg_finalfn(PG_FUNCTION_ARGS)
+jsonb_agg_finalfn(MDB_FUNCTION_ARGS)
 {
 	JsonbAggState *arg;
 	JsonbInState result;
@@ -1686,10 +1686,10 @@ jsonb_agg_finalfn(PG_FUNCTION_ARGS)
 	/* cannot be called directly because of internal-type argument */
 	Assert(AggCheckCallContext(fcinfo, NULL));
 
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();		/* returns null iff no input values */
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();		/* returns null iff no input values */
 
-	arg = (JsonbAggState *) PG_GETARG_POINTER(0);
+	arg = (JsonbAggState *) MDB_GETARG_POINTER(0);
 
 	/*
 	 * We need to do a shallow clone of the argument in case the final
@@ -1705,14 +1705,14 @@ jsonb_agg_finalfn(PG_FUNCTION_ARGS)
 
 	out = JsonbValueToJsonb(result.res);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 /*
  * jsonb_object_agg aggregate function
  */
 Datum
-jsonb_object_agg_transfn(PG_FUNCTION_ARGS)
+jsonb_object_agg_transfn(MDB_FUNCTION_ARGS)
 {
 	MemoryContext oldcontext,
 				aggcontext;
@@ -1735,7 +1735,7 @@ jsonb_object_agg_transfn(PG_FUNCTION_ARGS)
 
 	/* set up the accumulator on the first go round */
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		Oid			arg_type;
 
@@ -1769,18 +1769,18 @@ jsonb_object_agg_transfn(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		state = (JsonbAggState *) PG_GETARG_POINTER(0);
+		state = (JsonbAggState *) MDB_GETARG_POINTER(0);
 		result = state->res;
 	}
 
 	/* turn the argument into jsonb in the normal function context */
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("field name must not be null")));
 
-	val = PG_GETARG_DATUM(1);
+	val = MDB_GETARG_DATUM(1);
 
 	memset(&elem, 0, sizeof(JsonbInState));
 
@@ -1789,11 +1789,11 @@ jsonb_object_agg_transfn(PG_FUNCTION_ARGS)
 
 	jbkey = JsonbValueToJsonb(elem.res);
 
-	val = PG_ARGISNULL(2) ? (Datum) 0 : PG_GETARG_DATUM(2);
+	val = MDB_ARGISNULL(2) ? (Datum) 0 : MDB_GETARG_DATUM(2);
 
 	memset(&elem, 0, sizeof(JsonbInState));
 
-	datum_to_jsonb(val, PG_ARGISNULL(2), &elem, state->val_category,
+	datum_to_jsonb(val, MDB_ARGISNULL(2), &elem, state->val_category,
 				   state->val_output_func, false);
 
 	jbval = JsonbValueToJsonb(elem.res);
@@ -1904,11 +1904,11 @@ jsonb_object_agg_transfn(PG_FUNCTION_ARGS)
 
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-jsonb_object_agg_finalfn(PG_FUNCTION_ARGS)
+jsonb_object_agg_finalfn(MDB_FUNCTION_ARGS)
 {
 	JsonbAggState *arg;
 	JsonbInState result;
@@ -1917,10 +1917,10 @@ jsonb_object_agg_finalfn(PG_FUNCTION_ARGS)
 	/* cannot be called directly because of internal-type argument */
 	Assert(AggCheckCallContext(fcinfo, NULL));
 
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();		/* returns null iff no input values */
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();		/* returns null iff no input values */
 
-	arg = (JsonbAggState *) PG_GETARG_POINTER(0);
+	arg = (JsonbAggState *) MDB_GETARG_POINTER(0);
 
 	/*
 	 * We need to do a shallow clone of the argument's res field in case the
@@ -1937,5 +1937,5 @@ jsonb_object_agg_finalfn(PG_FUNCTION_ARGS)
 
 	out = JsonbValueToJsonb(result.res);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }

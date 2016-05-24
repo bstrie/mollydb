@@ -9,9 +9,9 @@
  * ----------
  */
 
-#ifndef PG_TRACE_H
-#define PG_TRACE_H
+#ifndef MDB_TRACE_H
+#define MDB_TRACE_H
 
 #include "utils/probes.h"		/* pgrminclude ignore */
 
-#endif   /* PG_TRACE_H */
+#endif   /* MDB_TRACE_H */

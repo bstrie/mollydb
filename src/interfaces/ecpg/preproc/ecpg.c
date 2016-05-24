@@ -22,7 +22,7 @@ bool		autocommit = false,
 
 char	   *output_filename;
 
-enum COMPAT_MODE compat = ECPG_COMPAT_PGSQL;
+enum COMPAT_MODE compat = ECMDB_COMPAT_PGSQL;
 
 struct _include_path *include_paths = NULL;
 struct cursor *cur = NULL;
@@ -111,16 +111,16 @@ add_preprocessor_define(char *define)
 	defines->next = pd;
 }
 
-#define ECPG_GETOPT_LONG_HELP			1
-#define ECPG_GETOPT_LONG_VERSION		2
-#define ECPG_GETOPT_LONG_REGRESSION		3
+#define ECMDB_GETOPT_LONG_HELP			1
+#define ECMDB_GETOPT_LONG_VERSION		2
+#define ECMDB_GETOPT_LONG_REGRESSION		3
 int
 main(int argc, char *const argv[])
 {
 	static struct option ecmdb_options[] = {
-		{"help", no_argument, NULL, ECPG_GETOPT_LONG_HELP},
-		{"version", no_argument, NULL, ECPG_GETOPT_LONG_VERSION},
-		{"regression", no_argument, NULL, ECPG_GETOPT_LONG_REGRESSION},
+		{"help", no_argument, NULL, ECMDB_GETOPT_LONG_HELP},
+		{"version", no_argument, NULL, ECMDB_GETOPT_LONG_VERSION},
+		{"regression", no_argument, NULL, ECMDB_GETOPT_LONG_REGRESSION},
 		{NULL, 0, NULL, 0}
 	};
 
@@ -134,7 +134,7 @@ main(int argc, char *const argv[])
 	char		my_exec_path[MAXPGPATH];
 	char		include_path[MAXPGPATH];
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("ecpg"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("ecpg"));
 
 	progname = get_progname(argv[0]);
 
@@ -149,11 +149,11 @@ main(int argc, char *const argv[])
 	{
 		switch (c)
 		{
-			case ECPG_GETOPT_LONG_VERSION:
-				printf("ecpg (MollyDB %s) %d.%d.%d\n", PG_VERSION,
+			case ECMDB_GETOPT_LONG_VERSION:
+				printf("ecpg (MollyDB %s) %d.%d.%d\n", MDB_VERSION,
 					   MAJOR_VERSION, MINOR_VERSION, PATCHLEVEL);
 				exit(0);
-			case ECPG_GETOPT_LONG_HELP:
+			case ECMDB_GETOPT_LONG_HELP:
 				help(progname);
 				exit(0);
 
@@ -171,7 +171,7 @@ main(int argc, char *const argv[])
 					exit(0);
 				}
 				break;
-			case ECPG_GETOPT_LONG_REGRESSION:
+			case ECMDB_GETOPT_LONG_REGRESSION:
 				regression_mode = true;
 				break;
 			case 'o':
@@ -179,7 +179,7 @@ main(int argc, char *const argv[])
 				if (strcmp(output_filename, "-") == 0)
 					yyout = stdout;
 				else
-					yyout = fopen(output_filename, PG_BINARY_W);
+					yyout = fopen(output_filename, MDB_BINARY_W);
 
 				if (yyout == NULL)
 				{
@@ -215,7 +215,7 @@ main(int argc, char *const argv[])
 					char		pkginclude_path[MAXPGPATH];
 					char		informix_path[MAXPGPATH];
 
-					compat = (strcmp(optarg, "INFORMIX") == 0) ? ECPG_COMPAT_INFORMIX : ECPG_COMPAT_INFORMIX_SE;
+					compat = (strcmp(optarg, "INFORMIX") == 0) ? ECMDB_COMPAT_INFORMIX : ECMDB_COMPAT_INFORMIX_SE;
 					get_pkginclude_path(my_exec_path, pkginclude_path);
 					snprintf(informix_path, MAXPGPATH, "%s/informix/esql", pkginclude_path);
 					add_include_path(informix_path);
@@ -315,7 +315,7 @@ main(int argc, char *const argv[])
 					ptr2ext[4] = '\0';
 				}
 
-				yyin = fopen(input_filename, PG_BINARY_R);
+				yyin = fopen(input_filename, MDB_BINARY_R);
 			}
 
 			if (out_option == 0)	/* calculate the output name */
@@ -331,7 +331,7 @@ main(int argc, char *const argv[])
 					ptr2ext[1] = (header_mode == true) ? 'h' : 'c';
 					ptr2ext[2] = '\0';
 
-					yyout = fopen(output_filename, PG_BINARY_W);
+					yyout = fopen(output_filename, MDB_BINARY_W);
 					if (yyout == NULL)
 					{
 						fprintf(stderr, _("%s: could not open file \"%s\": %s\n"),

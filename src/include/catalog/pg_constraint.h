@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_CONSTRAINT_H
-#define PG_CONSTRAINT_H
+#ifndef MDB_CONSTRAINT_H
+#define MDB_CONSTRAINT_H
 
 #include "catalog/genbki.h"
 
@@ -198,4 +198,4 @@ typedef FormData_mdb_constraint *Form_mdb_constraint;
  * the FKCONSTR_MATCH_xxx constants defined in parsenodes.h.
  */
 
-#endif   /* PG_CONSTRAINT_H */
+#endif   /* MDB_CONSTRAINT_H */

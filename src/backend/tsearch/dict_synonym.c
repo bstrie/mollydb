@@ -88,9 +88,9 @@ compareSyn(const void *a, const void *b)
 
 
 Datum
-dsynonym_init(PG_FUNCTION_ARGS)
+dsynonym_init(MDB_FUNCTION_ARGS)
 {
-	List	   *dictoptions = (List *) PG_GETARG_POINTER(0);
+	List	   *dictoptions = (List *) MDB_GETARG_POINTER(0);
 	DictSyn    *d;
 	ListCell   *l;
 	char	   *filename = NULL;
@@ -202,22 +202,22 @@ skipline:
 
 	d->case_sensitive = case_sensitive;
 
-	PG_RETURN_POINTER(d);
+	MDB_RETURN_POINTER(d);
 }
 
 Datum
-dsynonym_lexize(PG_FUNCTION_ARGS)
+dsynonym_lexize(MDB_FUNCTION_ARGS)
 {
-	DictSyn    *d = (DictSyn *) PG_GETARG_POINTER(0);
-	char	   *in = (char *) PG_GETARG_POINTER(1);
-	int32		len = PG_GETARG_INT32(2);
+	DictSyn    *d = (DictSyn *) MDB_GETARG_POINTER(0);
+	char	   *in = (char *) MDB_GETARG_POINTER(1);
+	int32		len = MDB_GETARG_INT32(2);
 	Syn			key,
 			   *found;
 	TSLexeme   *res;
 
 	/* note: d->len test protects against Solaris bsearch-of-no-items bug */
 	if (len <= 0 || d->len <= 0)
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 
 	if (d->case_sensitive)
 		key.in = pnstrdup(in, len);
@@ -230,11 +230,11 @@ dsynonym_lexize(PG_FUNCTION_ARGS)
 	pfree(key.in);
 
 	if (!found)
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 
 	res = palloc0(sizeof(TSLexeme) * 2);
 	res[0].lexeme = pnstrdup(found->out, found->outlen);
 	res[0].flags = found->flags;
 
-	PG_RETURN_POINTER(res);
+	MDB_RETURN_POINTER(res);
 }

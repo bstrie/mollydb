@@ -63,7 +63,7 @@ typedef char GinTernaryValue;
 
 #define DatumGetGinTernaryValue(X) ((GinTernaryValue)(X))
 #define GinTernaryValueGetDatum(X) ((Datum)(X))
-#define PG_RETURN_GIN_TERNARY_VALUE(x) return GinTernaryValueGetDatum(x)
+#define MDB_RETURN_GIN_TERNARY_VALUE(x) return GinTernaryValueGetDatum(x)
 
 /* GUC parameters */
 extern PGDLLIMPORT int GinFuzzySearchLimit;

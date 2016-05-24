@@ -15,14 +15,14 @@ typedef struct float8key
 /*
 ** float8 ops
 */
-PG_FUNCTION_INFO_V1(gbt_float8_compress);
-PG_FUNCTION_INFO_V1(gbt_float8_fetch);
-PG_FUNCTION_INFO_V1(gbt_float8_union);
-PG_FUNCTION_INFO_V1(gbt_float8_picksplit);
-PG_FUNCTION_INFO_V1(gbt_float8_consistent);
-PG_FUNCTION_INFO_V1(gbt_float8_distance);
-PG_FUNCTION_INFO_V1(gbt_float8_penalty);
-PG_FUNCTION_INFO_V1(gbt_float8_same);
+MDB_FUNCTION_INFO_V1(gbt_float8_compress);
+MDB_FUNCTION_INFO_V1(gbt_float8_fetch);
+MDB_FUNCTION_INFO_V1(gbt_float8_union);
+MDB_FUNCTION_INFO_V1(gbt_float8_picksplit);
+MDB_FUNCTION_INFO_V1(gbt_float8_consistent);
+MDB_FUNCTION_INFO_V1(gbt_float8_distance);
+MDB_FUNCTION_INFO_V1(gbt_float8_penalty);
+MDB_FUNCTION_INFO_V1(gbt_float8_same);
 
 
 static bool
@@ -97,18 +97,18 @@ static const gbtree_ninfo tinfo =
 };
 
 
-PG_FUNCTION_INFO_V1(float8_dist);
+MDB_FUNCTION_INFO_V1(float8_dist);
 Datum
-float8_dist(PG_FUNCTION_ARGS)
+float8_dist(MDB_FUNCTION_ARGS)
 {
-	float8		a = PG_GETARG_FLOAT8(0);
-	float8		b = PG_GETARG_FLOAT8(1);
+	float8		a = MDB_GETARG_FLOAT8(0);
+	float8		b = MDB_GETARG_FLOAT8(1);
 	float8		r;
 
 	r = a - b;
 	CHECKFLOATVAL(r, isinf(a) || isinf(b), true);
 
-	PG_RETURN_FLOAT8(Abs(r));
+	MDB_RETURN_FLOAT8(Abs(r));
 }
 
 /**************************************************
@@ -117,30 +117,30 @@ float8_dist(PG_FUNCTION_ARGS)
 
 
 Datum
-gbt_float8_compress(PG_FUNCTION_ARGS)
+gbt_float8_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
 }
 
 Datum
-gbt_float8_fetch(PG_FUNCTION_ARGS)
+gbt_float8_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
 }
 
 Datum
-gbt_float8_consistent(PG_FUNCTION_ARGS)
+gbt_float8_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	float8		query = PG_GETARG_FLOAT8(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	float8		query = MDB_GETARG_FLOAT8(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	float8KEY  *kkk = (float8KEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
@@ -150,72 +150,72 @@ gbt_float8_consistent(PG_FUNCTION_ARGS)
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_BOOL(
+	MDB_RETURN_BOOL(
 				   gbt_num_consistent(&key, (void *) &query, &strategy, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_float8_distance(PG_FUNCTION_ARGS)
+gbt_float8_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	float8		query = PG_GETARG_FLOAT8(1);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	float8		query = MDB_GETARG_FLOAT8(1);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
+	/* Oid		subtype = MDB_GETARG_OID(3); */
 	float8KEY  *kkk = (float8KEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_FLOAT8(
+	MDB_RETURN_FLOAT8(
 			gbt_num_distance(&key, (void *) &query, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_float8_union(PG_FUNCTION_ARGS)
+gbt_float8_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	void	   *out = palloc(sizeof(float8KEY));
 
-	*(int *) PG_GETARG_POINTER(1) = sizeof(float8KEY);
-	PG_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
+	*(int *) MDB_GETARG_POINTER(1) = sizeof(float8KEY);
+	MDB_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
 }
 
 
 Datum
-gbt_float8_penalty(PG_FUNCTION_ARGS)
+gbt_float8_penalty(MDB_FUNCTION_ARGS)
 {
-	float8KEY  *origentry = (float8KEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	float8KEY  *newentry = (float8KEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(1))->key);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	float8KEY  *origentry = (float8KEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	float8KEY  *newentry = (float8KEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(1))->key);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 
 	penalty_num(result, origentry->lower, origentry->upper, newentry->lower, newentry->upper);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 
 }
 
 Datum
-gbt_float8_picksplit(PG_FUNCTION_ARGS)
+gbt_float8_picksplit(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(gbt_num_picksplit(
-									(GistEntryVector *) PG_GETARG_POINTER(0),
-									  (GIST_SPLITVEC *) PG_GETARG_POINTER(1),
+	MDB_RETURN_POINTER(gbt_num_picksplit(
+									(GistEntryVector *) MDB_GETARG_POINTER(0),
+									  (GIST_SPLITVEC *) MDB_GETARG_POINTER(1),
 										&tinfo
 										));
 }
 
 Datum
-gbt_float8_same(PG_FUNCTION_ARGS)
+gbt_float8_same(MDB_FUNCTION_ARGS)
 {
-	float8KEY  *b1 = (float8KEY *) PG_GETARG_POINTER(0);
-	float8KEY  *b2 = (float8KEY *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	float8KEY  *b1 = (float8KEY *) MDB_GETARG_POINTER(0);
+	float8KEY  *b2 = (float8KEY *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	*result = gbt_num_same((void *) b1, (void *) b2, &tinfo);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }

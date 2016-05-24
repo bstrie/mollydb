@@ -11,8 +11,8 @@ REGRESS = file_fdw
 EXTRA_CLEAN = sql/file_fdw.sql expected/file_fdw.out
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/file_fdw

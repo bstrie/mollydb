@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TRIGGER_H
-#define PG_TRIGGER_H
+#ifndef MDB_TRIGGER_H
+#define MDB_TRIGGER_H
 
 #include "catalog/genbki.h"
 
@@ -142,4 +142,4 @@ typedef FormData_mdb_trigger *Form_mdb_trigger;
 #define TRIGGER_TYPE_MATCHES(type, level, timing, event) \
 	(((type) & (TRIGGER_TYPE_LEVEL_MASK | TRIGGER_TYPE_TIMING_MASK | (event))) == ((level) | (timing) | (event)))
 
-#endif   /* PG_TRIGGER_H */
+#endif   /* MDB_TRIGGER_H */

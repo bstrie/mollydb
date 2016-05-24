@@ -258,7 +258,7 @@ typedef enum
 /*
  * Method table for resource managers.
  *
- * This struct must be kept in sync with the PG_RMGR definition in
+ * This struct must be kept in sync with the MDB_RMGR definition in
  * rmgr.c.
  *
  * rm_identify must return a name for the record based on xl_info (without

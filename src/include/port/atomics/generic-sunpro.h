@@ -46,13 +46,13 @@
 
 #include <atomic.h>
 
-#define PG_HAVE_ATOMIC_U32_SUPPORT
+#define MDB_HAVE_ATOMIC_U32_SUPPORT
 typedef struct mdb_atomic_uint32
 {
 	volatile uint32 value;
 } mdb_atomic_uint32;
 
-#define PG_HAVE_ATOMIC_U64_SUPPORT
+#define MDB_HAVE_ATOMIC_U64_SUPPORT
 typedef struct mdb_atomic_uint64
 {
 	/*
@@ -73,7 +73,7 @@ typedef struct mdb_atomic_uint64
 
 #ifdef HAVE_ATOMIC_H
 
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
 static inline bool
 mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 									uint32 *expected, uint32 newval)
@@ -87,7 +87,7 @@ mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 	return ret;
 }
 
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
 static inline bool
 mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 									uint64 *expected, uint64 newval)

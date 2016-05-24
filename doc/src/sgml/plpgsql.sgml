@@ -2731,7 +2731,7 @@ GET STACKED DIAGNOSTICS <replaceable>variable</replaceable> { = | := } <replacea
          <entry>the name of the constraint related to exception</entry>
         </row>
         <row>
-         <entry><literal>PG_DATATYPE_NAME</literal></entry>
+         <entry><literal>MDB_DATATYPE_NAME</literal></entry>
          <entry>text</entry>
          <entry>the name of the data type related to exception</entry>
         </row>
@@ -2751,17 +2751,17 @@ GET STACKED DIAGNOSTICS <replaceable>variable</replaceable> { = | := } <replacea
          <entry>the name of the schema related to exception</entry>
         </row>
         <row>
-         <entry><literal>PG_EXCEPTION_DETAIL</literal></entry>
+         <entry><literal>MDB_EXCEPTION_DETAIL</literal></entry>
          <entry>text</entry>
          <entry>the text of the exception's detail message, if any</entry>
         </row>
         <row>
-         <entry><literal>PG_EXCEPTION_HINT</literal></entry>
+         <entry><literal>MDB_EXCEPTION_HINT</literal></entry>
          <entry>text</entry>
          <entry>the text of the exception's hint message, if any</entry>
         </row>
         <row>
-         <entry><literal>PG_EXCEPTION_CONTEXT</literal></entry>
+         <entry><literal>MDB_EXCEPTION_CONTEXT</literal></entry>
          <entry>text</entry>
          <entry>line(s) of text describing the call stack</entry>
         </row>
@@ -2786,8 +2786,8 @@ BEGIN
   ...
 EXCEPTION WHEN OTHERS THEN
   GET STACKED DIAGNOSTICS text_var1 = MESSAGE_TEXT,
-                          text_var2 = PG_EXCEPTION_DETAIL,
-                          text_var3 = PG_EXCEPTION_HINT;
+                          text_var2 = MDB_EXCEPTION_DETAIL,
+                          text_var3 = MDB_EXCEPTION_HINT;
 END;
 </programlisting>
     </para>
@@ -2811,7 +2811,7 @@ GET <optional> CURRENT </optional> DIAGNOSTICS <replaceable>variable</replaceabl
 
    <para>
     Currently only one information item is supported.  Status
-    item <literal>PG_CONTEXT</> will return a text string with line(s) of
+    item <literal>MDB_CONTEXT</> will return a text string with line(s) of
     text describing the call stack.  The first line refers to the
     current function and currently executing <command>GET DIAGNOSTICS</command>
     command.  The second and any subsequent lines refer to calling functions
@@ -2828,7 +2828,7 @@ CREATE OR REPLACE FUNCTION inner_func() RETURNS integer AS $$
 DECLARE
   stack text;
 BEGIN
-  GET DIAGNOSTICS stack = PG_CONTEXT;
+  GET DIAGNOSTICS stack = MDB_CONTEXT;
   RAISE NOTICE E'--- Call Stack ---\n%', stack;
   RETURN 1;
 END;

@@ -98,7 +98,7 @@ text_to_bits(char *str, int len)
  *
  * Allows inspection of line pointers and tuple headers of a heap page.
  */
-PG_FUNCTION_INFO_V1(heap_page_items);
+MDB_FUNCTION_INFO_V1(heap_page_items);
 
 typedef struct heap_page_items_state
 {
@@ -108,9 +108,9 @@ typedef struct heap_page_items_state
 } heap_page_items_state;
 
 Datum
-heap_page_items(PG_FUNCTION_ARGS)
+heap_page_items(MDB_FUNCTION_ARGS)
 {
-	bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
+	bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
 	heap_page_items_state *inter_call_data = NULL;
 	FuncCallContext *fctx;
 	int			raw_page_size;
@@ -392,10 +392,10 @@ tuple_data_split_internal(Oid relid, char *tupdata,
  * Split raw tuple data taken directly from page into distinct elements
  * taking into account null values.
  */
-PG_FUNCTION_INFO_V1(tuple_data_split);
+MDB_FUNCTION_INFO_V1(tuple_data_split);
 
 Datum
-tuple_data_split(PG_FUNCTION_ARGS)
+tuple_data_split(MDB_FUNCTION_ARGS)
 {
 	Oid				relid;
 	bytea		   *raw_data;
@@ -406,15 +406,15 @@ tuple_data_split(PG_FUNCTION_ARGS)
 	bits8		   *t_bits = NULL;
 	Datum			res;
 
-	relid = PG_GETARG_OID(0);
-	raw_data = PG_ARGISNULL(1) ? NULL : PG_GETARG_BYTEA_P(1);
-	t_infomask = PG_GETARG_INT16(2);
-	t_infomask2 = PG_GETARG_INT16(3);
-	t_bits_str = PG_ARGISNULL(4) ? NULL :
-		text_to_cstring(PG_GETARG_TEXT_PP(4));
+	relid = MDB_GETARG_OID(0);
+	raw_data = MDB_ARGISNULL(1) ? NULL : MDB_GETARG_BYTEA_P(1);
+	t_infomask = MDB_GETARG_INT16(2);
+	t_infomask2 = MDB_GETARG_INT16(3);
+	t_bits_str = MDB_ARGISNULL(4) ? NULL :
+		text_to_cstring(MDB_GETARG_TEXT_PP(4));
 
-	if (PG_NARGS() >= 6)
-		do_detoast = PG_GETARG_BOOL(5);
+	if (MDB_NARGS() >= 6)
+		do_detoast = MDB_GETARG_BOOL(5);
 
 	if (!superuser())
 		ereport(ERROR,
@@ -422,7 +422,7 @@ tuple_data_split(PG_FUNCTION_ARGS)
 				 errmsg("must be superuser to use raw page functions")));
 
 	if (!raw_data)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/*
 	 * Convert t_bits string back to the bits8 array as represented in the
@@ -473,5 +473,5 @@ tuple_data_split(PG_FUNCTION_ARGS)
 	if (t_bits)
 		pfree(t_bits);
 
-	PG_RETURN_ARRAYTYPE_P(res);
+	MDB_RETURN_ARRAYTYPE_P(res);
 }

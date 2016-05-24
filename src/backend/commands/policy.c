@@ -207,9 +207,9 @@ RelationBuildRowSecurity(Relation relation)
 
 	/*
 	 * Since rscxt lives under CacheMemoryContext, it is long-lived.  Use a
-	 * PG_TRY block to ensure it'll get freed if we fail partway through.
+	 * MDB_TRY block to ensure it'll get freed if we fail partway through.
 	 */
-	PG_TRY();
+	MDB_TRY();
 	{
 		Relation	catalog;
 		ScanKeyData skey;
@@ -320,14 +320,14 @@ RelationBuildRowSecurity(Relation relation)
 		systable_endscan(sscan);
 		heap_close(catalog, AccessShareLock);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Delete rscxt, first making sure it isn't active */
 		MemoryContextSwitchTo(oldcxt);
 		MemoryContextDelete(rscxt);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/* Success --- attach the policy descriptor to the relcache entry */
 	relation->rd_rsdesc = rsdesc;

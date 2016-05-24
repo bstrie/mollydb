@@ -654,7 +654,7 @@ typedef BTScanOpaqueData *BTScanOpaque;
 /*
  * prototypes for functions in nbtree.c (external entry points for btree)
  */
-extern Datum bthandler(PG_FUNCTION_ARGS);
+extern Datum bthandler(MDB_FUNCTION_ARGS);
 extern IndexBuildResult *btbuild(Relation heap, Relation index,
 		struct IndexInfo *indexInfo);
 extern void btbuildempty(Relation index);

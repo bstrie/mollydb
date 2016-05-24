@@ -8,8 +8,8 @@ DATA = mdb_buffercache--1.1.sql mdb_buffercache--1.0--1.1.sql mdb_buffercache--u
 PGFILEDESC = "mdb_buffercache - monitoring of shared buffer cache in real-time"
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/mdb_buffercache

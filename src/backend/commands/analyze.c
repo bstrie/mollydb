@@ -161,7 +161,7 @@ analyze_rel(Oid relid, RangeVar *relation, int options,
 				ereport(WARNING,
 				 (errmsg("skipping \"%s\" --- only superuser can analyze it",
 						 RelationGetRelationName(onerel))));
-			else if (onerel->rd_rel->relnamespace == PG_CATALOG_NAMESPACE)
+			else if (onerel->rd_rel->relnamespace == MDB_CATALOG_NAMESPACE)
 				ereport(WARNING,
 						(errmsg("skipping \"%s\" --- only superuser or database owner can analyze it",
 								RelationGetRelationName(onerel))));
@@ -1964,7 +1964,7 @@ compute_distinct_stats(VacAttrStatsP stats,
 				toowide_cnt++;
 				continue;
 			}
-			value = PointerGetDatum(PG_DETOAST_DATUM(value));
+			value = PointerGetDatum(MDB_DETOAST_DATUM(value));
 		}
 		else if (is_varwidth)
 		{
@@ -2318,7 +2318,7 @@ compute_scalar_stats(VacAttrStatsP stats,
 				toowide_cnt++;
 				continue;
 			}
-			value = PointerGetDatum(PG_DETOAST_DATUM(value));
+			value = PointerGetDatum(MDB_DETOAST_DATUM(value));
 		}
 		else if (is_varwidth)
 		{

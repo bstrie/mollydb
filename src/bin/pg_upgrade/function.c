@@ -81,7 +81,7 @@ get_loadable_libraries(void)
 			{
 				if (!found_public_plpython_handler)
 				{
-					mdb_log(PG_WARNING,
+					mdb_log(MDB_WARNING,
 						   "\nThe old cluster has a \"plpython_call_handler\" function defined\n"
 						   "in the \"public\" schema which is a duplicate of the one defined\n"
 						   "in the \"mdb_catalog\" schema.  You can confirm this by executing\n"
@@ -100,7 +100,7 @@ get_loadable_libraries(void)
 						   "in each affected database:\n"
 						   "\n");
 				}
-				mdb_log(PG_WARNING, "    %s\n", active_db->db_name);
+				mdb_log(MDB_WARNING, "    %s\n", active_db->db_name);
 				found_public_plpython_handler = true;
 			}
 			PQclear(res);
@@ -228,7 +228,7 @@ check_loadable_libraries(void)
 	if (found)
 	{
 		fclose(script);
-		mdb_log(PG_REPORT, "fatal\n");
+		mdb_log(MDB_REPORT, "fatal\n");
 		mdb_fatal("Your installation references loadable libraries that are missing from the\n"
 				 "new installation.  You can add these libraries to the new installation,\n"
 				 "or remove the functions using them from the old installation.  A list of\n"

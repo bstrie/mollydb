@@ -21,12 +21,12 @@ OH, me, I'm Terry Mackintosh <terry@terrym.com>
 #include "utils/rel.h"
 #include "utils/timestamp.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(moddatetime);
+MDB_FUNCTION_INFO_V1(moddatetime);
 
 Datum
-moddatetime(PG_FUNCTION_ARGS)
+moddatetime(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	Trigger    *trigger;		/* to get trigger name */

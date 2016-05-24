@@ -5,8 +5,8 @@
  *		src/bin/mdb_dump/mdb_backup_db.h
  */
 
-#ifndef PG_BACKUP_DB_H
-#define PG_BACKUP_DB_H
+#ifndef MDB_BACKUP_DB_H
+#define MDB_BACKUP_DB_H
 
 #include "mdb_backup.h"
 

@@ -6,12 +6,12 @@ PGAPPICON = win32
 PROGRAM = vacuumlo
 OBJS	= vacuumlo.o $(WIN32RES)
 
-PG_CPPFLAGS = -I$(libpq_srcdir)
-PG_LIBS = $(libpq_pgport)
+MDB_CPPFLAGS = -I$(libpq_srcdir)
+MDB_LIBS = $(libpq_pgport)
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/vacuumlo

@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TS_DICT_H
-#define PG_TS_DICT_H
+#ifndef MDB_TS_DICT_H
+#define MDB_TS_DICT_H
 
 #include "catalog/genbki.h"
 
@@ -63,4 +63,4 @@ typedef FormData_mdb_ts_dict *Form_mdb_ts_dict;
 DATA(insert OID = 3765 ( "simple" PGNSP PGUID 3727 _null_));
 DESCR("simple dictionary: just lower case and check for stopword");
 
-#endif   /* PG_TS_DICT_H */
+#endif   /* MDB_TS_DICT_H */

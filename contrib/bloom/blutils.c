@@ -34,7 +34,7 @@
 #define SETBIT(x,i)   GETWORD(x,i) |=  ( 0x01 << ( (i) % BITSIGNTYPE ) )
 #define GETBIT(x,i) ( (GETWORD(x,i) >> ( (i) % BITSIGNTYPE )) & 0x01 )
 
-PG_FUNCTION_INFO_V1(blhandler);
+MDB_FUNCTION_INFO_V1(blhandler);
 
 /* Kind of relation optioms for bloom index */
 static relopt_kind bl_relopt_kind;
@@ -46,7 +46,7 @@ static void mySrand(uint32 seed);
  * Module initialize function: initilized relation options.
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	int			i;
 	char		buf[16];
@@ -69,7 +69,7 @@ _PG_init(void)
  * and callbacks.
  */
 Datum
-blhandler(PG_FUNCTION_ARGS)
+blhandler(MDB_FUNCTION_ARGS)
 {
 	IndexAmRoutine *amroutine = makeNode(IndexAmRoutine);
 
@@ -105,7 +105,7 @@ blhandler(PG_FUNCTION_ARGS)
 	amroutine->amoptions = bloptions;
 	amroutine->amvalidate = blvalidate;
 
-	PG_RETURN_POINTER(amroutine);
+	MDB_RETURN_POINTER(amroutine);
 }
 
 /*

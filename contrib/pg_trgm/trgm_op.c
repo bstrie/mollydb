@@ -13,25 +13,25 @@
 #include "utils/memutils.h"
 #include "utils/mdb_crc.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* GUC variables */
 double similarity_threshold = 0.3f;
 double word_similarity_threshold = 0.6f;
 
-void		_PG_init(void);
+void		_MDB_init(void);
 
-PG_FUNCTION_INFO_V1(set_limit);
-PG_FUNCTION_INFO_V1(show_limit);
-PG_FUNCTION_INFO_V1(show_trgm);
-PG_FUNCTION_INFO_V1(similarity);
-PG_FUNCTION_INFO_V1(word_similarity);
-PG_FUNCTION_INFO_V1(similarity_dist);
-PG_FUNCTION_INFO_V1(similarity_op);
-PG_FUNCTION_INFO_V1(word_similarity_op);
-PG_FUNCTION_INFO_V1(word_similarity_commutator_op);
-PG_FUNCTION_INFO_V1(word_similarity_dist_op);
-PG_FUNCTION_INFO_V1(word_similarity_dist_commutator_op);
+MDB_FUNCTION_INFO_V1(set_limit);
+MDB_FUNCTION_INFO_V1(show_limit);
+MDB_FUNCTION_INFO_V1(show_trgm);
+MDB_FUNCTION_INFO_V1(similarity);
+MDB_FUNCTION_INFO_V1(word_similarity);
+MDB_FUNCTION_INFO_V1(similarity_dist);
+MDB_FUNCTION_INFO_V1(similarity_op);
+MDB_FUNCTION_INFO_V1(word_similarity_op);
+MDB_FUNCTION_INFO_V1(word_similarity_commutator_op);
+MDB_FUNCTION_INFO_V1(word_similarity_dist_op);
+MDB_FUNCTION_INFO_V1(word_similarity_dist_commutator_op);
 
 /* Trigram with position */
 typedef struct
@@ -44,7 +44,7 @@ typedef struct
  * Module load callback
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/* Define custom GUC variables. */
 	DefineCustomRealVariable("mdb_trgm.similarity_threshold",
@@ -78,9 +78,9 @@ _PG_init(void)
  * Use "mdb_trgm.similarity_threshold" GUC variable instead of this function.
  */
 Datum
-set_limit(PG_FUNCTION_ARGS)
+set_limit(MDB_FUNCTION_ARGS)
 {
-	float4		nlimit = PG_GETARG_FLOAT4(0);
+	float4		nlimit = MDB_GETARG_FLOAT4(0);
 	char	   *nlimit_str;
 	Oid			func_out_oid;
 	bool		is_varlena;
@@ -92,7 +92,7 @@ set_limit(PG_FUNCTION_ARGS)
 	SetConfigOption("mdb_trgm.similarity_threshold", nlimit_str,
 					PGC_USERSET, PGC_S_SESSION);
 
-	PG_RETURN_FLOAT4(similarity_threshold);
+	MDB_RETURN_FLOAT4(similarity_threshold);
 }
 
 /*
@@ -100,9 +100,9 @@ set_limit(PG_FUNCTION_ARGS)
  * Use "mdb_trgm.similarity_threshold" GUC variable instead of this function.
  */
 Datum
-show_limit(PG_FUNCTION_ARGS)
+show_limit(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT4(similarity_threshold);
+	MDB_RETURN_FLOAT4(similarity_threshold);
 }
 
 static int
@@ -871,9 +871,9 @@ trgm2int(trgm *ptr)
 }
 
 Datum
-show_trgm(PG_FUNCTION_ARGS)
+show_trgm(MDB_FUNCTION_ARGS)
 {
-	text	   *in = PG_GETARG_TEXT_P(0);
+	text	   *in = MDB_GETARG_TEXT_P(0);
 	TRGM	   *trg;
 	Datum	   *d;
 	ArrayType  *a;
@@ -914,9 +914,9 @@ show_trgm(PG_FUNCTION_ARGS)
 
 	pfree(d);
 	pfree(trg);
-	PG_FREE_IF_COPY(in, 0);
+	MDB_FREE_IF_COPY(in, 0);
 
-	PG_RETURN_POINTER(a);
+	MDB_RETURN_POINTER(a);
 }
 
 float4
@@ -1046,10 +1046,10 @@ trgm_presence_map(TRGM *query, TRGM *key)
 }
 
 Datum
-similarity(PG_FUNCTION_ARGS)
+similarity(MDB_FUNCTION_ARGS)
 {
-	text	   *in1 = PG_GETARG_TEXT_P(0);
-	text	   *in2 = PG_GETARG_TEXT_P(1);
+	text	   *in1 = MDB_GETARG_TEXT_P(0);
+	text	   *in2 = MDB_GETARG_TEXT_P(1);
 	TRGM	   *trg1,
 			   *trg2;
 	float4		res;
@@ -1061,108 +1061,108 @@ similarity(PG_FUNCTION_ARGS)
 
 	pfree(trg1);
 	pfree(trg2);
-	PG_FREE_IF_COPY(in1, 0);
-	PG_FREE_IF_COPY(in2, 1);
+	MDB_FREE_IF_COPY(in1, 0);
+	MDB_FREE_IF_COPY(in2, 1);
 
-	PG_RETURN_FLOAT4(res);
+	MDB_RETURN_FLOAT4(res);
 }
 
 Datum
-word_similarity(PG_FUNCTION_ARGS)
+word_similarity(MDB_FUNCTION_ARGS)
 {
-	text	   *in1 = PG_GETARG_TEXT_PP(0);
-	text	   *in2 = PG_GETARG_TEXT_PP(1);
+	text	   *in1 = MDB_GETARG_TEXT_PP(0);
+	text	   *in2 = MDB_GETARG_TEXT_PP(1);
 	float4		res;
 
 	res = calc_word_similarity(VARDATA_ANY(in1), VARSIZE_ANY_EXHDR(in1),
 								VARDATA_ANY(in2), VARSIZE_ANY_EXHDR(in2),
 								false);
 
-	PG_FREE_IF_COPY(in1, 0);
-	PG_FREE_IF_COPY(in2, 1);
-	PG_RETURN_FLOAT4(res);
+	MDB_FREE_IF_COPY(in1, 0);
+	MDB_FREE_IF_COPY(in2, 1);
+	MDB_RETURN_FLOAT4(res);
 }
 
 Datum
-similarity_dist(PG_FUNCTION_ARGS)
+similarity_dist(MDB_FUNCTION_ARGS)
 {
 	float4		res = DatumGetFloat4(DirectFunctionCall2(similarity,
-														 PG_GETARG_DATUM(0),
-														 PG_GETARG_DATUM(1)));
+														 MDB_GETARG_DATUM(0),
+														 MDB_GETARG_DATUM(1)));
 
-	PG_RETURN_FLOAT4(1.0 - res);
+	MDB_RETURN_FLOAT4(1.0 - res);
 }
 
 Datum
-similarity_op(PG_FUNCTION_ARGS)
+similarity_op(MDB_FUNCTION_ARGS)
 {
 	float4		res = DatumGetFloat4(DirectFunctionCall2(similarity,
-														 PG_GETARG_DATUM(0),
-														 PG_GETARG_DATUM(1)));
+														 MDB_GETARG_DATUM(0),
+														 MDB_GETARG_DATUM(1)));
 
-	PG_RETURN_BOOL(res >= similarity_threshold);
+	MDB_RETURN_BOOL(res >= similarity_threshold);
 }
 
 Datum
-word_similarity_op(PG_FUNCTION_ARGS)
+word_similarity_op(MDB_FUNCTION_ARGS)
 {
-	text	   *in1 = PG_GETARG_TEXT_PP(0);
-	text	   *in2 = PG_GETARG_TEXT_PP(1);
+	text	   *in1 = MDB_GETARG_TEXT_PP(0);
+	text	   *in2 = MDB_GETARG_TEXT_PP(1);
 	float4		res;
 
 	res = calc_word_similarity(VARDATA_ANY(in1), VARSIZE_ANY_EXHDR(in1),
 								VARDATA_ANY(in2), VARSIZE_ANY_EXHDR(in2),
 								true);
 
-	PG_FREE_IF_COPY(in1, 0);
-	PG_FREE_IF_COPY(in2, 1);
-	PG_RETURN_BOOL(res >= word_similarity_threshold);
+	MDB_FREE_IF_COPY(in1, 0);
+	MDB_FREE_IF_COPY(in2, 1);
+	MDB_RETURN_BOOL(res >= word_similarity_threshold);
 }
 
 Datum
-word_similarity_commutator_op(PG_FUNCTION_ARGS)
+word_similarity_commutator_op(MDB_FUNCTION_ARGS)
 {
-	text	   *in1 = PG_GETARG_TEXT_PP(0);
-	text	   *in2 = PG_GETARG_TEXT_PP(1);
+	text	   *in1 = MDB_GETARG_TEXT_PP(0);
+	text	   *in2 = MDB_GETARG_TEXT_PP(1);
 	float4		res;
 
 	res = calc_word_similarity(VARDATA_ANY(in2), VARSIZE_ANY_EXHDR(in2),
 								VARDATA_ANY(in1), VARSIZE_ANY_EXHDR(in1),
 								true);
 
-	PG_FREE_IF_COPY(in1, 0);
-	PG_FREE_IF_COPY(in2, 1);
-	PG_RETURN_BOOL(res >= word_similarity_threshold);
+	MDB_FREE_IF_COPY(in1, 0);
+	MDB_FREE_IF_COPY(in2, 1);
+	MDB_RETURN_BOOL(res >= word_similarity_threshold);
 }
 
 Datum
-word_similarity_dist_op(PG_FUNCTION_ARGS)
+word_similarity_dist_op(MDB_FUNCTION_ARGS)
 {
-	text	   *in1 = PG_GETARG_TEXT_PP(0);
-	text	   *in2 = PG_GETARG_TEXT_PP(1);
+	text	   *in1 = MDB_GETARG_TEXT_PP(0);
+	text	   *in2 = MDB_GETARG_TEXT_PP(1);
 	float4		res;
 
 	res = calc_word_similarity(VARDATA_ANY(in1), VARSIZE_ANY_EXHDR(in1),
 								VARDATA_ANY(in2), VARSIZE_ANY_EXHDR(in2),
 								false);
 
-	PG_FREE_IF_COPY(in1, 0);
-	PG_FREE_IF_COPY(in2, 1);
-	PG_RETURN_FLOAT4(1.0 - res);
+	MDB_FREE_IF_COPY(in1, 0);
+	MDB_FREE_IF_COPY(in2, 1);
+	MDB_RETURN_FLOAT4(1.0 - res);
 }
 
 Datum
-word_similarity_dist_commutator_op(PG_FUNCTION_ARGS)
+word_similarity_dist_commutator_op(MDB_FUNCTION_ARGS)
 {
-	text	   *in1 = PG_GETARG_TEXT_PP(0);
-	text	   *in2 = PG_GETARG_TEXT_PP(1);
+	text	   *in1 = MDB_GETARG_TEXT_PP(0);
+	text	   *in2 = MDB_GETARG_TEXT_PP(1);
 	float4		res;
 
 	res = calc_word_similarity(VARDATA_ANY(in2), VARSIZE_ANY_EXHDR(in2),
 								VARDATA_ANY(in1), VARSIZE_ANY_EXHDR(in1),
 								false);
 
-	PG_FREE_IF_COPY(in1, 0);
-	PG_FREE_IF_COPY(in2, 1);
-	PG_RETURN_FLOAT4(1.0 - res);
+	MDB_FREE_IF_COPY(in1, 0);
+	MDB_FREE_IF_COPY(in2, 1);
+	MDB_RETURN_FLOAT4(1.0 - res);
 }

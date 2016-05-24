@@ -1025,7 +1025,7 @@ SaveSlotToPath(ReplicationSlot *slot, const char *dir, int elevel)
 	sprintf(path, "%s/state", dir);
 
 	fd = OpenTransientFile(tmppath,
-						   O_CREAT | O_EXCL | O_WRONLY | PG_BINARY,
+						   O_CREAT | O_EXCL | O_WRONLY | MDB_BINARY,
 						   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 	{
@@ -1139,7 +1139,7 @@ RestoreSlotFromDisk(const char *name)
 
 	elog(DEBUG1, "restoring replication slot from \"%s\"", path);
 
-	fd = OpenTransientFile(path, O_RDWR | PG_BINARY, 0);
+	fd = OpenTransientFile(path, O_RDWR | MDB_BINARY, 0);
 
 	/*
 	 * We do not need to handle this as we are rename()ing the directory into

@@ -23,7 +23,7 @@
 #include "utils/rel.h"
 #include "utils/syscache.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * Copy from s (for source) to r (for result), wrapping with q (quote)
@@ -50,10 +50,10 @@ strcpy_quoted(StringInfo r, const char *s, const char q)
  * primary key values.  The channel will be "tcn" unless the trigger is
  * created with a parameter, in which case that parameter will be used.
  */
-PG_FUNCTION_INFO_V1(triggered_change_notification);
+MDB_FUNCTION_INFO_V1(triggered_change_notification);
 
 Datum
-triggered_change_notification(PG_FUNCTION_ARGS)
+triggered_change_notification(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	Trigger    *trigger;

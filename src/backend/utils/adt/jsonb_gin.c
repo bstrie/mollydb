@@ -37,10 +37,10 @@ static Datum make_scalar_key(const JsonbValue *scalarVal, bool is_key);
  */
 
 Datum
-gin_compare_jsonb(PG_FUNCTION_ARGS)
+gin_compare_jsonb(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_PP(0);
-	text	   *arg2 = PG_GETARG_TEXT_PP(1);
+	text	   *arg1 = MDB_GETARG_TEXT_PP(0);
+	text	   *arg2 = MDB_GETARG_TEXT_PP(1);
 	int32		result;
 	char	   *a1p,
 			   *a2p;
@@ -56,17 +56,17 @@ gin_compare_jsonb(PG_FUNCTION_ARGS)
 	/* Compare text as bttextcmp does, but always using C collation */
 	result = varstr_cmp(a1p, len1, a2p, len2, C_COLLATION_OID);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-gin_extract_jsonb(PG_FUNCTION_ARGS)
+gin_extract_jsonb(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = (Jsonb *) PG_GETARG_JSONB(0);
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
+	Jsonb	   *jb = (Jsonb *) MDB_GETARG_JSONB(0);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
 	int			total = 2 * JB_ROOT_COUNT(jb);
 	JsonbIterator *it;
 	JsonbValue	v;
@@ -78,7 +78,7 @@ gin_extract_jsonb(PG_FUNCTION_ARGS)
 	if (total == 0)
 	{
 		*nentries = 0;
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 	}
 
 	/* Otherwise, use 2 * root count as initial estimate of result size */
@@ -115,15 +115,15 @@ gin_extract_jsonb(PG_FUNCTION_ARGS)
 
 	*nentries = i;
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
 Datum
-gin_extract_jsonb_query(PG_FUNCTION_ARGS)
+gin_extract_jsonb_query(MDB_FUNCTION_ARGS)
 {
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
-	StrategyNumber strategy = PG_GETARG_UINT16(2);
-	int32	   *searchMode = (int32 *) PG_GETARG_POINTER(6);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
+	StrategyNumber strategy = MDB_GETARG_UINT16(2);
+	int32	   *searchMode = (int32 *) MDB_GETARG_POINTER(6);
 	Datum	   *entries;
 
 	if (strategy == JsonbContainsStrategyNumber)
@@ -131,7 +131,7 @@ gin_extract_jsonb_query(PG_FUNCTION_ARGS)
 		/* Query is a jsonb, so just apply gin_extract_jsonb... */
 		entries = (Datum *)
 			DatumGetPointer(DirectFunctionCall2(gin_extract_jsonb,
-												PG_GETARG_DATUM(0),
+												MDB_GETARG_DATUM(0),
 												PointerGetDatum(nentries)));
 		/* ...although "contains {}" requires a full index scan */
 		if (*nentries == 0)
@@ -140,7 +140,7 @@ gin_extract_jsonb_query(PG_FUNCTION_ARGS)
 	else if (strategy == JsonbExistsStrategyNumber)
 	{
 		/* Query is a text string, which we treat as a key */
-		text	   *query = PG_GETARG_TEXT_PP(0);
+		text	   *query = MDB_GETARG_TEXT_PP(0);
 
 		*nentries = 1;
 		entries = (Datum *) palloc(sizeof(Datum));
@@ -152,7 +152,7 @@ gin_extract_jsonb_query(PG_FUNCTION_ARGS)
 			 strategy == JsonbExistsAllStrategyNumber)
 	{
 		/* Query is a text array; each element is treated as a key */
-		ArrayType  *query = PG_GETARG_ARRAYTYPE_P(0);
+		ArrayType  *query = MDB_GETARG_ARRAYTYPE_P(0);
 		Datum	   *key_datums;
 		bool	   *key_nulls;
 		int			key_count;
@@ -186,20 +186,20 @@ gin_extract_jsonb_query(PG_FUNCTION_ARGS)
 		entries = NULL;			/* keep compiler quiet */
 	}
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
 Datum
-gin_consistent_jsonb(PG_FUNCTION_ARGS)
+gin_consistent_jsonb(MDB_FUNCTION_ARGS)
 {
-	bool	   *check = (bool *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
+	bool	   *check = (bool *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
 
-	/* Jsonb	   *query = PG_GETARG_JSONB(2); */
-	int32		nkeys = PG_GETARG_INT32(3);
+	/* Jsonb	   *query = MDB_GETARG_JSONB(2); */
+	int32		nkeys = MDB_GETARG_INT32(3);
 
-	/* Pointer	   *extra_data = (Pointer *) PG_GETARG_POINTER(4); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(5);
+	/* Pointer	   *extra_data = (Pointer *) MDB_GETARG_POINTER(4); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(5);
 	bool		res = true;
 	int32		i;
 
@@ -258,19 +258,19 @@ gin_consistent_jsonb(PG_FUNCTION_ARGS)
 	else
 		elog(ERROR, "unrecognized strategy number: %d", strategy);
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 Datum
-gin_triconsistent_jsonb(PG_FUNCTION_ARGS)
+gin_triconsistent_jsonb(MDB_FUNCTION_ARGS)
 {
-	GinTernaryValue *check = (GinTernaryValue *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
+	GinTernaryValue *check = (GinTernaryValue *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
 
-	/* Jsonb	   *query = PG_GETARG_JSONB(2); */
-	int32		nkeys = PG_GETARG_INT32(3);
+	/* Jsonb	   *query = MDB_GETARG_JSONB(2); */
+	int32		nkeys = MDB_GETARG_INT32(3);
 
-	/* Pointer	   *extra_data = (Pointer *) PG_GETARG_POINTER(4); */
+	/* Pointer	   *extra_data = (Pointer *) MDB_GETARG_POINTER(4); */
 	GinTernaryValue res = GIN_MAYBE;
 	int32		i;
 
@@ -310,7 +310,7 @@ gin_triconsistent_jsonb(PG_FUNCTION_ARGS)
 	else
 		elog(ERROR, "unrecognized strategy number: %d", strategy);
 
-	PG_RETURN_GIN_TERNARY_VALUE(res);
+	MDB_RETURN_GIN_TERNARY_VALUE(res);
 }
 
 /*
@@ -326,10 +326,10 @@ gin_triconsistent_jsonb(PG_FUNCTION_ARGS)
  */
 
 Datum
-gin_extract_jsonb_path(PG_FUNCTION_ARGS)
+gin_extract_jsonb_path(MDB_FUNCTION_ARGS)
 {
-	Jsonb	   *jb = PG_GETARG_JSONB(0);
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
+	Jsonb	   *jb = MDB_GETARG_JSONB(0);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
 	int			total = 2 * JB_ROOT_COUNT(jb);
 	JsonbIterator *it;
 	JsonbValue	v;
@@ -343,7 +343,7 @@ gin_extract_jsonb_path(PG_FUNCTION_ARGS)
 	if (total == 0)
 	{
 		*nentries = 0;
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 	}
 
 	/* Otherwise, use 2 * root count as initial estimate of result size */
@@ -420,15 +420,15 @@ gin_extract_jsonb_path(PG_FUNCTION_ARGS)
 
 	*nentries = i;
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
 Datum
-gin_extract_jsonb_query_path(PG_FUNCTION_ARGS)
+gin_extract_jsonb_query_path(MDB_FUNCTION_ARGS)
 {
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
-	StrategyNumber strategy = PG_GETARG_UINT16(2);
-	int32	   *searchMode = (int32 *) PG_GETARG_POINTER(6);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
+	StrategyNumber strategy = MDB_GETARG_UINT16(2);
+	int32	   *searchMode = (int32 *) MDB_GETARG_POINTER(6);
 	Datum	   *entries;
 
 	if (strategy != JsonbContainsStrategyNumber)
@@ -437,27 +437,27 @@ gin_extract_jsonb_query_path(PG_FUNCTION_ARGS)
 	/* Query is a jsonb, so just apply gin_extract_jsonb_path ... */
 	entries = (Datum *)
 		DatumGetPointer(DirectFunctionCall2(gin_extract_jsonb_path,
-											PG_GETARG_DATUM(0),
+											MDB_GETARG_DATUM(0),
 											PointerGetDatum(nentries)));
 
 	/* ... although "contains {}" requires a full index scan */
 	if (*nentries == 0)
 		*searchMode = GIN_SEARCH_MODE_ALL;
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
 Datum
-gin_consistent_jsonb_path(PG_FUNCTION_ARGS)
+gin_consistent_jsonb_path(MDB_FUNCTION_ARGS)
 {
-	bool	   *check = (bool *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
+	bool	   *check = (bool *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
 
-	/* Jsonb	   *query = PG_GETARG_JSONB(2); */
-	int32		nkeys = PG_GETARG_INT32(3);
+	/* Jsonb	   *query = MDB_GETARG_JSONB(2); */
+	int32		nkeys = MDB_GETARG_INT32(3);
 
-	/* Pointer	   *extra_data = (Pointer *) PG_GETARG_POINTER(4); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(5);
+	/* Pointer	   *extra_data = (Pointer *) MDB_GETARG_POINTER(4); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(5);
 	bool		res = true;
 	int32		i;
 
@@ -482,19 +482,19 @@ gin_consistent_jsonb_path(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 Datum
-gin_triconsistent_jsonb_path(PG_FUNCTION_ARGS)
+gin_triconsistent_jsonb_path(MDB_FUNCTION_ARGS)
 {
-	GinTernaryValue *check = (GinTernaryValue *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
+	GinTernaryValue *check = (GinTernaryValue *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
 
-	/* Jsonb	   *query = PG_GETARG_JSONB(2); */
-	int32		nkeys = PG_GETARG_INT32(3);
+	/* Jsonb	   *query = MDB_GETARG_JSONB(2); */
+	int32		nkeys = MDB_GETARG_INT32(3);
 
-	/* Pointer	   *extra_data = (Pointer *) PG_GETARG_POINTER(4); */
+	/* Pointer	   *extra_data = (Pointer *) MDB_GETARG_POINTER(4); */
 	GinTernaryValue res = GIN_MAYBE;
 	int32		i;
 
@@ -515,7 +515,7 @@ gin_triconsistent_jsonb_path(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_GIN_TERNARY_VALUE(res);
+	MDB_RETURN_GIN_TERNARY_VALUE(res);
 }
 
 /*

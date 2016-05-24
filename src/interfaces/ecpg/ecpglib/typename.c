@@ -1,6 +1,6 @@
 /* src/interfaces/ecpg/ecpglib/typename.c */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 
 #include <stdlib.h>

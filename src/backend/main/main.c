@@ -107,7 +107,7 @@ main(int argc, char *argv[])
 	 * error messages to be localized.
 	 */
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mollydb"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mollydb"));
 
 #ifdef WIN32
 
@@ -169,7 +169,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("mollydb (MollyDB) " PG_VERSION);
+			puts("mollydb (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 

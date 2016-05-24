@@ -14,7 +14,7 @@
 #include "utils/builtins.h"
 #include "utils/rel.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 typedef struct
 {
@@ -40,10 +40,10 @@ static EPlan *find_plan(char *ident, EPlan **eplan, int *nplans);
  * check_primary_key ('Fkey1', 'Fkey2', 'Ptable', 'Pkey1', 'Pkey2').
  */
 
-PG_FUNCTION_INFO_V1(check_primary_key);
+MDB_FUNCTION_INFO_V1(check_primary_key);
 
 Datum
-check_primary_key(PG_FUNCTION_ARGS)
+check_primary_key(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	Trigger    *trigger;		/* to get trigger name */
@@ -232,10 +232,10 @@ check_primary_key(PG_FUNCTION_ARGS)
  * 'Ftable1', 'Fkey11', 'Fkey12', 'Ftable2', 'Fkey21', 'Fkey22').
  */
 
-PG_FUNCTION_INFO_V1(check_foreign_key);
+MDB_FUNCTION_INFO_V1(check_foreign_key);
 
 Datum
-check_foreign_key(PG_FUNCTION_ARGS)
+check_foreign_key(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	Trigger    *trigger;		/* to get trigger name */

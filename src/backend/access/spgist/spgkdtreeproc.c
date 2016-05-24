@@ -23,16 +23,16 @@
 
 
 Datum
-smdb_kd_config(PG_FUNCTION_ARGS)
+smdb_kd_config(MDB_FUNCTION_ARGS)
 {
-	/* spgConfigIn *cfgin = (spgConfigIn *) PG_GETARG_POINTER(0); */
-	spgConfigOut *cfg = (spgConfigOut *) PG_GETARG_POINTER(1);
+	/* spgConfigIn *cfgin = (spgConfigIn *) MDB_GETARG_POINTER(0); */
+	spgConfigOut *cfg = (spgConfigOut *) MDB_GETARG_POINTER(1);
 
 	cfg->prefixType = FLOAT8OID;
 	cfg->labelType = VOIDOID;	/* we don't need node labels */
 	cfg->canReturnData = true;
 	cfg->longValuesOK = false;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 static int
@@ -49,10 +49,10 @@ getSide(double coord, bool isX, Point *tst)
 }
 
 Datum
-smdb_kd_choose(PG_FUNCTION_ARGS)
+smdb_kd_choose(MDB_FUNCTION_ARGS)
 {
-	spgChooseIn *in = (spgChooseIn *) PG_GETARG_POINTER(0);
-	spgChooseOut *out = (spgChooseOut *) PG_GETARG_POINTER(1);
+	spgChooseIn *in = (spgChooseIn *) MDB_GETARG_POINTER(0);
+	spgChooseOut *out = (spgChooseOut *) MDB_GETARG_POINTER(1);
 	Point	   *inPoint = DatumGetPointP(in->datum);
 	double		coord;
 
@@ -70,7 +70,7 @@ smdb_kd_choose(PG_FUNCTION_ARGS)
 	out->result.matchNode.levelAdd = 1;
 	out->result.matchNode.restDatum = PointPGetDatum(inPoint);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 typedef struct SortedPoint
@@ -103,10 +103,10 @@ y_cmp(const void *a, const void *b)
 
 
 Datum
-smdb_kd_picksplit(PG_FUNCTION_ARGS)
+smdb_kd_picksplit(MDB_FUNCTION_ARGS)
 {
-	spgPickSplitIn *in = (spgPickSplitIn *) PG_GETARG_POINTER(0);
-	spgPickSplitOut *out = (spgPickSplitOut *) PG_GETARG_POINTER(1);
+	spgPickSplitIn *in = (spgPickSplitIn *) MDB_GETARG_POINTER(0);
+	spgPickSplitOut *out = (spgPickSplitOut *) MDB_GETARG_POINTER(1);
 	int			i;
 	int			middle;
 	SortedPoint *sorted;
@@ -151,14 +151,14 @@ smdb_kd_picksplit(PG_FUNCTION_ARGS)
 		out->leafTupleDatums[n] = PointPGetDatum(p);
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-smdb_kd_inner_consistent(PG_FUNCTION_ARGS)
+smdb_kd_inner_consistent(MDB_FUNCTION_ARGS)
 {
-	spgInnerConsistentIn *in = (spgInnerConsistentIn *) PG_GETARG_POINTER(0);
-	spgInnerConsistentOut *out = (spgInnerConsistentOut *) PG_GETARG_POINTER(1);
+	spgInnerConsistentIn *in = (spgInnerConsistentIn *) MDB_GETARG_POINTER(0);
+	spgInnerConsistentOut *out = (spgInnerConsistentOut *) MDB_GETARG_POINTER(1);
 	double		coord;
 	int			which;
 	int			i;
@@ -261,7 +261,7 @@ smdb_kd_inner_consistent(PG_FUNCTION_ARGS)
 	out->levelAdds[0] = 1;
 	out->levelAdds[1] = 1;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*

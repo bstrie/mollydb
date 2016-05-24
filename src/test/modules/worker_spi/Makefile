@@ -7,8 +7,8 @@ DATA = worker_spi--1.0.sql
 PGFILEDESC = "worker_spi - background worker example"
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = src/test/modules/worker_spi

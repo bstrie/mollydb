@@ -34,7 +34,7 @@
 
 
 /* txid will be signed int8 in database, so must limit to 63 bits */
-#define MAX_TXID   ((uint64) PG_INT64_MAX)
+#define MAX_TXID   ((uint64) MDB_INT64_MAX)
 
 /* Use unsigned variant internally */
 typedef uint64 txid;
@@ -356,7 +356,7 @@ bad_format:
  *	If the current transaction does not have one, one is assigned.
  */
 Datum
-txid_current(PG_FUNCTION_ARGS)
+txid_current(MDB_FUNCTION_ARGS)
 {
 	txid		val;
 	TxidEpoch	state;
@@ -373,7 +373,7 @@ txid_current(PG_FUNCTION_ARGS)
 
 	val = convert_xid(GetTopTransactionId(), &state);
 
-	PG_RETURN_INT64(val);
+	MDB_RETURN_INT64(val);
 }
 
 /*
@@ -384,7 +384,7 @@ txid_current(PG_FUNCTION_ARGS)
  * Note that only top-transaction XIDs are included in the snapshot.
  */
 Datum
-txid_current_snapshot(PG_FUNCTION_ARGS)
+txid_current_snapshot(MDB_FUNCTION_ARGS)
 {
 	TxidSnapshot *snap;
 	uint32		nxip,
@@ -428,7 +428,7 @@ txid_current_snapshot(PG_FUNCTION_ARGS)
 	/* set size after sorting, because it may have removed duplicate xips */
 	SET_VARSIZE(snap, TXID_SNAPSHOT_SIZE(snap->nxip));
 
-	PG_RETURN_POINTER(snap);
+	MDB_RETURN_POINTER(snap);
 }
 
 /*
@@ -437,14 +437,14 @@ txid_current_snapshot(PG_FUNCTION_ARGS)
  *		input function for type txid_snapshot
  */
 Datum
-txid_snapshot_in(PG_FUNCTION_ARGS)
+txid_snapshot_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	TxidSnapshot *snap;
 
 	snap = parse_snapshot(str);
 
-	PG_RETURN_POINTER(snap);
+	MDB_RETURN_POINTER(snap);
 }
 
 /*
@@ -453,9 +453,9 @@ txid_snapshot_in(PG_FUNCTION_ARGS)
  *		output function for type txid_snapshot
  */
 Datum
-txid_snapshot_out(PG_FUNCTION_ARGS)
+txid_snapshot_out(MDB_FUNCTION_ARGS)
 {
-	TxidSnapshot *snap = (TxidSnapshot *) PG_GETARG_VARLENA_P(0);
+	TxidSnapshot *snap = (TxidSnapshot *) MDB_GETARG_VARLENA_P(0);
 	StringInfoData str;
 	uint32		i;
 
@@ -471,7 +471,7 @@ txid_snapshot_out(PG_FUNCTION_ARGS)
 		appendStringInfo(&str, TXID_FMT, snap->xip[i]);
 	}
 
-	PG_RETURN_CSTRING(str.data);
+	MDB_RETURN_CSTRING(str.data);
 }
 
 /*
@@ -482,9 +482,9 @@ txid_snapshot_out(PG_FUNCTION_ARGS)
  *		format: int4 nxip, int8 xmin, int8 xmax, int8 xip
  */
 Datum
-txid_snapshot_recv(PG_FUNCTION_ARGS)
+txid_snapshot_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	TxidSnapshot *snap;
 	txid		last = 0;
 	int			nxip;
@@ -526,13 +526,13 @@ txid_snapshot_recv(PG_FUNCTION_ARGS)
 	}
 	snap->nxip = nxip;
 	SET_VARSIZE(snap, TXID_SNAPSHOT_SIZE(nxip));
-	PG_RETURN_POINTER(snap);
+	MDB_RETURN_POINTER(snap);
 
 bad_format:
 	ereport(ERROR,
 			(errcode(ERRCODE_INVALID_BINARY_REPRESENTATION),
 			 errmsg("invalid external txid_snapshot data")));
-	PG_RETURN_POINTER(NULL);	/* keep compiler quiet */
+	MDB_RETURN_POINTER(NULL);	/* keep compiler quiet */
 }
 
 /*
@@ -543,9 +543,9 @@ bad_format:
  *		format: int4 nxip, int8 xmin, int8 xmax, int8 xip
  */
 Datum
-txid_snapshot_send(PG_FUNCTION_ARGS)
+txid_snapshot_send(MDB_FUNCTION_ARGS)
 {
-	TxidSnapshot *snap = (TxidSnapshot *) PG_GETARG_VARLENA_P(0);
+	TxidSnapshot *snap = (TxidSnapshot *) MDB_GETARG_VARLENA_P(0);
 	StringInfoData buf;
 	uint32		i;
 
@@ -555,7 +555,7 @@ txid_snapshot_send(PG_FUNCTION_ARGS)
 	pq_sendint64(&buf, snap->xmax);
 	for (i = 0; i < snap->nxip; i++)
 		pq_sendint64(&buf, snap->xip[i]);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
@@ -564,12 +564,12 @@ txid_snapshot_send(PG_FUNCTION_ARGS)
  *		is txid visible in snapshot ?
  */
 Datum
-txid_visible_in_snapshot(PG_FUNCTION_ARGS)
+txid_visible_in_snapshot(MDB_FUNCTION_ARGS)
 {
-	txid		value = PG_GETARG_INT64(0);
-	TxidSnapshot *snap = (TxidSnapshot *) PG_GETARG_VARLENA_P(1);
+	txid		value = MDB_GETARG_INT64(0);
+	TxidSnapshot *snap = (TxidSnapshot *) MDB_GETARG_VARLENA_P(1);
 
-	PG_RETURN_BOOL(is_visible_txid(value, snap));
+	MDB_RETURN_BOOL(is_visible_txid(value, snap));
 }
 
 /*
@@ -578,11 +578,11 @@ txid_visible_in_snapshot(PG_FUNCTION_ARGS)
  *		return snapshot's xmin
  */
 Datum
-txid_snapshot_xmin(PG_FUNCTION_ARGS)
+txid_snapshot_xmin(MDB_FUNCTION_ARGS)
 {
-	TxidSnapshot *snap = (TxidSnapshot *) PG_GETARG_VARLENA_P(0);
+	TxidSnapshot *snap = (TxidSnapshot *) MDB_GETARG_VARLENA_P(0);
 
-	PG_RETURN_INT64(snap->xmin);
+	MDB_RETURN_INT64(snap->xmin);
 }
 
 /*
@@ -591,11 +591,11 @@ txid_snapshot_xmin(PG_FUNCTION_ARGS)
  *		return snapshot's xmax
  */
 Datum
-txid_snapshot_xmax(PG_FUNCTION_ARGS)
+txid_snapshot_xmax(MDB_FUNCTION_ARGS)
 {
-	TxidSnapshot *snap = (TxidSnapshot *) PG_GETARG_VARLENA_P(0);
+	TxidSnapshot *snap = (TxidSnapshot *) MDB_GETARG_VARLENA_P(0);
 
-	PG_RETURN_INT64(snap->xmax);
+	MDB_RETURN_INT64(snap->xmax);
 }
 
 /*
@@ -604,7 +604,7 @@ txid_snapshot_xmax(PG_FUNCTION_ARGS)
  *		return in-progress TXIDs in snapshot.
  */
 Datum
-txid_snapshot_xip(PG_FUNCTION_ARGS)
+txid_snapshot_xip(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *fctx;
 	TxidSnapshot *snap;
@@ -613,7 +613,7 @@ txid_snapshot_xip(PG_FUNCTION_ARGS)
 	/* on first call initialize snap_state and get copy of snapshot */
 	if (SRF_IS_FIRSTCALL())
 	{
-		TxidSnapshot *arg = (TxidSnapshot *) PG_GETARG_VARLENA_P(0);
+		TxidSnapshot *arg = (TxidSnapshot *) MDB_GETARG_VARLENA_P(0);
 
 		fctx = SRF_FIRSTCALL_INIT();
 

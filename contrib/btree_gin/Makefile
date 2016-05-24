@@ -13,8 +13,8 @@ REGRESS = install_btree_gin int2 int4 int8 float4 float8 money oid \
 	numeric
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/btree_gin

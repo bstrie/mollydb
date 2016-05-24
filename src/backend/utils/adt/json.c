@@ -224,9 +224,9 @@ IsValidJsonNumber(const char *str, int len)
  * Input.
  */
 Datum
-json_in(PG_FUNCTION_ARGS)
+json_in(MDB_FUNCTION_ARGS)
 {
-	char	   *json = PG_GETARG_CSTRING(0);
+	char	   *json = MDB_GETARG_CSTRING(0);
 	text	   *result = cstring_to_text(json);
 	JsonLexContext *lex;
 
@@ -235,42 +235,42 @@ json_in(PG_FUNCTION_ARGS)
 	mdb_parse_json(lex, &nullSemAction);
 
 	/* Internal representation is the same as text, for now */
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /*
  * Output.
  */
 Datum
-json_out(PG_FUNCTION_ARGS)
+json_out(MDB_FUNCTION_ARGS)
 {
 	/* we needn't detoast because text_to_cstring will handle that */
-	Datum		txt = PG_GETARG_DATUM(0);
+	Datum		txt = MDB_GETARG_DATUM(0);
 
-	PG_RETURN_CSTRING(TextDatumGetCString(txt));
+	MDB_RETURN_CSTRING(TextDatumGetCString(txt));
 }
 
 /*
  * Binary send.
  */
 Datum
-json_send(PG_FUNCTION_ARGS)
+json_send(MDB_FUNCTION_ARGS)
 {
-	text	   *t = PG_GETARG_TEXT_PP(0);
+	text	   *t = MDB_GETARG_TEXT_PP(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendtext(&buf, VARDATA_ANY(t), VARSIZE_ANY_EXHDR(t));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
  * Binary receive.
  */
 Datum
-json_recv(PG_FUNCTION_ARGS)
+json_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	char	   *str;
 	int			nbytes;
 	JsonLexContext *lex;
@@ -281,7 +281,7 @@ json_recv(PG_FUNCTION_ARGS)
 	lex = makeJsonLexContextCstringLen(str, nbytes, false);
 	mdb_parse_json(lex, &nullSemAction);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(str, nbytes));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(str, nbytes));
 }
 
 /*
@@ -878,7 +878,7 @@ json_lex_string(JsonLexContext *lex)
 						   errdetail("\\u0000 cannot be converted to text."),
 								 report_json_context(lex)));
 					}
-					else if (GetDatabaseEncoding() == PG_UTF8)
+					else if (GetDatabaseEncoding() == MDB_UTF8)
 					{
 						unicode_to_utf8(ch, (unsigned char *) utf8str);
 						utf8len = mdb_utf_mblen((unsigned char *) utf8str);
@@ -1774,75 +1774,75 @@ add_json(Datum val, bool is_null, StringInfo result,
  * SQL function array_to_json(row)
  */
 extern Datum
-array_to_json(PG_FUNCTION_ARGS)
+array_to_json(MDB_FUNCTION_ARGS)
 {
-	Datum		array = PG_GETARG_DATUM(0);
+	Datum		array = MDB_GETARG_DATUM(0);
 	StringInfo	result;
 
 	result = makeStringInfo();
 
 	array_to_json_internal(array, result, false);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
 }
 
 /*
  * SQL function array_to_json(row, prettybool)
  */
 extern Datum
-array_to_json_pretty(PG_FUNCTION_ARGS)
+array_to_json_pretty(MDB_FUNCTION_ARGS)
 {
-	Datum		array = PG_GETARG_DATUM(0);
-	bool		use_line_feeds = PG_GETARG_BOOL(1);
+	Datum		array = MDB_GETARG_DATUM(0);
+	bool		use_line_feeds = MDB_GETARG_BOOL(1);
 	StringInfo	result;
 
 	result = makeStringInfo();
 
 	array_to_json_internal(array, result, use_line_feeds);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
 }
 
 /*
  * SQL function row_to_json(row)
  */
 extern Datum
-row_to_json(PG_FUNCTION_ARGS)
+row_to_json(MDB_FUNCTION_ARGS)
 {
-	Datum		array = PG_GETARG_DATUM(0);
+	Datum		array = MDB_GETARG_DATUM(0);
 	StringInfo	result;
 
 	result = makeStringInfo();
 
 	composite_to_json(array, result, false);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
 }
 
 /*
  * SQL function row_to_json(row, prettybool)
  */
 extern Datum
-row_to_json_pretty(PG_FUNCTION_ARGS)
+row_to_json_pretty(MDB_FUNCTION_ARGS)
 {
-	Datum		array = PG_GETARG_DATUM(0);
-	bool		use_line_feeds = PG_GETARG_BOOL(1);
+	Datum		array = MDB_GETARG_DATUM(0);
+	bool		use_line_feeds = MDB_GETARG_BOOL(1);
 	StringInfo	result;
 
 	result = makeStringInfo();
 
 	composite_to_json(array, result, use_line_feeds);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
 }
 
 /*
  * SQL function to_json(anyvalue)
  */
 Datum
-to_json(PG_FUNCTION_ARGS)
+to_json(MDB_FUNCTION_ARGS)
 {
-	Datum		val = PG_GETARG_DATUM(0);
+	Datum		val = MDB_GETARG_DATUM(0);
 	Oid			val_type = get_fn_expr_argtype(fcinfo->flinfo, 0);
 	StringInfo	result;
 	JsonTypeCategory tcategory;
@@ -1860,7 +1860,7 @@ to_json(PG_FUNCTION_ARGS)
 
 	datum_to_json(val, false, result, tcategory, outfuncoid, false);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
 }
 
 /*
@@ -1869,7 +1869,7 @@ to_json(PG_FUNCTION_ARGS)
  * aggregate input column as a json array value.
  */
 Datum
-json_agg_transfn(PG_FUNCTION_ARGS)
+json_agg_transfn(MDB_FUNCTION_ARGS)
 {
 	MemoryContext aggcontext,
 				oldcontext;
@@ -1882,7 +1882,7 @@ json_agg_transfn(PG_FUNCTION_ARGS)
 		elog(ERROR, "json_agg_transfn called in non-aggregate context");
 	}
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		Oid			arg_type = get_fn_expr_argtype(fcinfo->flinfo, 1);
 
@@ -1908,22 +1908,22 @@ json_agg_transfn(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		state = (JsonAggState *) PG_GETARG_POINTER(0);
+		state = (JsonAggState *) MDB_GETARG_POINTER(0);
 		appendStringInfoString(state->str, ", ");
 	}
 
 	/* fast path for NULLs */
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 	{
 		datum_to_json((Datum) 0, true, state->str, JSONTYPE_NULL,
 					  InvalidOid, false);
-		PG_RETURN_POINTER(state);
+		MDB_RETURN_POINTER(state);
 	}
 
-	val = PG_GETARG_DATUM(1);
+	val = MDB_GETARG_DATUM(1);
 
 	/* add some whitespace if structured type and not first item */
-	if (!PG_ARGISNULL(0) &&
+	if (!MDB_ARGISNULL(0) &&
 		(state->val_category == JSONTYPE_ARRAY ||
 		 state->val_category == JSONTYPE_COMPOSITE))
 	{
@@ -1938,30 +1938,30 @@ json_agg_transfn(PG_FUNCTION_ARGS)
 	 * is a pass-by-value type the same size as a pointer.  So we can safely
 	 * pass the JsonAggState pointer through nodeAgg.c's machinations.
 	 */
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 /*
  * json_agg final function
  */
 Datum
-json_agg_finalfn(PG_FUNCTION_ARGS)
+json_agg_finalfn(MDB_FUNCTION_ARGS)
 {
 	JsonAggState *state;
 
 	/* cannot be called directly because of internal-type argument */
 	Assert(AggCheckCallContext(fcinfo, NULL));
 
-	state = PG_ARGISNULL(0) ?
+	state = MDB_ARGISNULL(0) ?
 		NULL :
-		(JsonAggState *) PG_GETARG_POINTER(0);
+		(JsonAggState *) MDB_GETARG_POINTER(0);
 
 	/* NULL result for no rows in, as is standard with aggregates */
 	if (state == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Else return state with appropriate array terminator added */
-	PG_RETURN_TEXT_P(catenate_stringinfo_string(state->str, "]"));
+	MDB_RETURN_TEXT_P(catenate_stringinfo_string(state->str, "]"));
 }
 
 /*
@@ -1970,7 +1970,7 @@ json_agg_finalfn(PG_FUNCTION_ARGS)
  * aggregate two input columns as a single json object value.
  */
 Datum
-json_object_agg_transfn(PG_FUNCTION_ARGS)
+json_object_agg_transfn(MDB_FUNCTION_ARGS)
 {
 	MemoryContext aggcontext,
 				oldcontext;
@@ -1983,7 +1983,7 @@ json_object_agg_transfn(PG_FUNCTION_ARGS)
 		elog(ERROR, "json_object_agg_transfn called in non-aggregate context");
 	}
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		Oid			arg_type;
 
@@ -2022,7 +2022,7 @@ json_object_agg_transfn(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		state = (JsonAggState *) PG_GETARG_POINTER(0);
+		state = (JsonAggState *) MDB_GETARG_POINTER(0);
 		appendStringInfoString(state->str, ", ");
 	}
 
@@ -2034,48 +2034,48 @@ json_object_agg_transfn(PG_FUNCTION_ARGS)
 	 * unknownout() works fine.
 	 */
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("field name must not be null")));
 
-	arg = PG_GETARG_DATUM(1);
+	arg = MDB_GETARG_DATUM(1);
 
 	datum_to_json(arg, false, state->str, state->key_category,
 				  state->key_output_func, true);
 
 	appendStringInfoString(state->str, " : ");
 
-	if (PG_ARGISNULL(2))
+	if (MDB_ARGISNULL(2))
 		arg = (Datum) 0;
 	else
-		arg = PG_GETARG_DATUM(2);
+		arg = MDB_GETARG_DATUM(2);
 
-	datum_to_json(arg, PG_ARGISNULL(2), state->str, state->val_category,
+	datum_to_json(arg, MDB_ARGISNULL(2), state->str, state->val_category,
 				  state->val_output_func, false);
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 /*
  * json_object_agg final function.
  */
 Datum
-json_object_agg_finalfn(PG_FUNCTION_ARGS)
+json_object_agg_finalfn(MDB_FUNCTION_ARGS)
 {
 	JsonAggState *state;
 
 	/* cannot be called directly because of internal-type argument */
 	Assert(AggCheckCallContext(fcinfo, NULL));
 
-	state = PG_ARGISNULL(0) ? NULL : (JsonAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (JsonAggState *) MDB_GETARG_POINTER(0);
 
 	/* NULL result for no rows in, as is standard with aggregates */
 	if (state == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Else return state with appropriate object terminator added */
-	PG_RETURN_TEXT_P(catenate_stringinfo_string(state->str, " }"));
+	MDB_RETURN_TEXT_P(catenate_stringinfo_string(state->str, " }"));
 }
 
 /*
@@ -2102,9 +2102,9 @@ catenate_stringinfo_string(StringInfo buffer, const char *addon)
  * SQL function json_build_object(variadic "any")
  */
 Datum
-json_build_object(PG_FUNCTION_ARGS)
+json_build_object(MDB_FUNCTION_ARGS)
 {
-	int			nargs = PG_NARGS();
+	int			nargs = MDB_NARGS();
 	int			i;
 	Datum		arg;
 	const char *sep = "";
@@ -2142,13 +2142,13 @@ json_build_object(PG_FUNCTION_ARGS)
 					 errmsg("could not determine data type for argument %d",
 							i + 1)));
 
-		if (PG_ARGISNULL(i))
+		if (MDB_ARGISNULL(i))
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 					 errmsg("argument %d cannot be null", i + 1),
 					 errhint("Object keys should be text.")));
 
-		arg = PG_GETARG_DATUM(i);
+		arg = MDB_GETARG_DATUM(i);
 
 		add_json(arg, false, result, val_type, true);
 
@@ -2163,35 +2163,35 @@ json_build_object(PG_FUNCTION_ARGS)
 					 errmsg("could not determine data type for argument %d",
 							i + 2)));
 
-		if (PG_ARGISNULL(i + 1))
+		if (MDB_ARGISNULL(i + 1))
 			arg = (Datum) 0;
 		else
-			arg = PG_GETARG_DATUM(i + 1);
+			arg = MDB_GETARG_DATUM(i + 1);
 
-		add_json(arg, PG_ARGISNULL(i + 1), result, val_type, false);
+		add_json(arg, MDB_ARGISNULL(i + 1), result, val_type, false);
 	}
 
 	appendStringInfoChar(result, '}');
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
 }
 
 /*
  * degenerate case of json_build_object where it gets 0 arguments.
  */
 Datum
-json_build_object_noargs(PG_FUNCTION_ARGS)
+json_build_object_noargs(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_TEXT_P(cstring_to_text_with_len("{}", 2));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len("{}", 2));
 }
 
 /*
  * SQL function json_build_array(variadic "any")
  */
 Datum
-json_build_array(PG_FUNCTION_ARGS)
+json_build_array(MDB_FUNCTION_ARGS)
 {
-	int			nargs = PG_NARGS();
+	int			nargs = MDB_NARGS();
 	int			i;
 	Datum		arg;
 	const char *sep = "";
@@ -2222,26 +2222,26 @@ json_build_array(PG_FUNCTION_ARGS)
 					 errmsg("could not determine data type for argument %d",
 							i + 1)));
 
-		if (PG_ARGISNULL(i))
+		if (MDB_ARGISNULL(i))
 			arg = (Datum) 0;
 		else
-			arg = PG_GETARG_DATUM(i);
+			arg = MDB_GETARG_DATUM(i);
 
-		add_json(arg, PG_ARGISNULL(i), result, val_type, false);
+		add_json(arg, MDB_ARGISNULL(i), result, val_type, false);
 	}
 
 	appendStringInfoChar(result, ']');
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(result->data, result->len));
 }
 
 /*
  * degenerate case of json_build_array where it gets 0 arguments.
  */
 Datum
-json_build_array_noargs(PG_FUNCTION_ARGS)
+json_build_array_noargs(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_TEXT_P(cstring_to_text_with_len("[]", 2));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len("[]", 2));
 }
 
 /*
@@ -2251,9 +2251,9 @@ json_build_array_noargs(PG_FUNCTION_ARGS)
  * for a json object.
  */
 Datum
-json_object(PG_FUNCTION_ARGS)
+json_object(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *in_array = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *in_array = MDB_GETARG_ARRAYTYPE_P(0);
 	int			ndims = ARR_NDIM(in_array);
 	StringInfoData result;
 	Datum	   *in_datums;
@@ -2267,7 +2267,7 @@ json_object(PG_FUNCTION_ARGS)
 	switch (ndims)
 	{
 		case 0:
-			PG_RETURN_DATUM(CStringGetTextDatum("{}"));
+			MDB_RETURN_DATUM(CStringGetTextDatum("{}"));
 			break;
 
 		case 1:
@@ -2331,7 +2331,7 @@ json_object(PG_FUNCTION_ARGS)
 	rval = cstring_to_text_with_len(result.data, result.len);
 	pfree(result.data);
 
-	PG_RETURN_TEXT_P(rval);
+	MDB_RETURN_TEXT_P(rval);
 
 }
 
@@ -2342,10 +2342,10 @@ json_object(PG_FUNCTION_ARGS)
  * pairwise.
  */
 Datum
-json_object_two_arg(PG_FUNCTION_ARGS)
+json_object_two_arg(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *key_array = PG_GETARG_ARRAYTYPE_P(0);
-	ArrayType  *val_array = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *key_array = MDB_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *val_array = MDB_GETARG_ARRAYTYPE_P(1);
 	int			nkdims = ARR_NDIM(key_array);
 	int			nvdims = ARR_NDIM(val_array);
 	StringInfoData result;
@@ -2365,7 +2365,7 @@ json_object_two_arg(PG_FUNCTION_ARGS)
 				 errmsg("wrong number of array subscripts")));
 
 	if (nkdims == 0)
-		PG_RETURN_DATUM(CStringGetTextDatum("{}"));
+		MDB_RETURN_DATUM(CStringGetTextDatum("{}"));
 
 	deconstruct_array(key_array,
 					  TEXTOID, -1, false, 'i',
@@ -2417,7 +2417,7 @@ json_object_two_arg(PG_FUNCTION_ARGS)
 	rval = cstring_to_text_with_len(result.data, result.len);
 	pfree(result.data);
 
-	PG_RETURN_TEXT_P(rval);
+	MDB_RETURN_TEXT_P(rval);
 }
 
 
@@ -2479,7 +2479,7 @@ escape_json(StringInfo buf, const char *str)
  * JSON_TOKEN_COLON, JSON_TOKEN_COMMA, or JSON_TOKEN_END.
  */
 Datum
-json_typeof(PG_FUNCTION_ARGS)
+json_typeof(MDB_FUNCTION_ARGS)
 {
 	text	   *json;
 
@@ -2487,7 +2487,7 @@ json_typeof(PG_FUNCTION_ARGS)
 	JsonTokenType tok;
 	char	   *type;
 
-	json = PG_GETARG_TEXT_P(0);
+	json = MDB_GETARG_TEXT_P(0);
 	lex = makeJsonLexContext(json, false);
 
 	/* Lex exactly one token from the input and check its type. */
@@ -2518,5 +2518,5 @@ json_typeof(PG_FUNCTION_ARGS)
 			elog(ERROR, "unexpected json token: %d", tok);
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(type));
+	MDB_RETURN_TEXT_P(cstring_to_text(type));
 }

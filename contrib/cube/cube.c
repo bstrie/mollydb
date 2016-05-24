@@ -18,7 +18,7 @@
 
 #include "cubedata.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * Taken from the intarray contrib header
@@ -29,64 +29,64 @@ PG_MODULE_MAGIC;
 /*
 ** Input/Output routines
 */
-PG_FUNCTION_INFO_V1(cube_in);
-PG_FUNCTION_INFO_V1(cube_a_f8_f8);
-PG_FUNCTION_INFO_V1(cube_a_f8);
-PG_FUNCTION_INFO_V1(cube_out);
-PG_FUNCTION_INFO_V1(cube_f8);
-PG_FUNCTION_INFO_V1(cube_f8_f8);
-PG_FUNCTION_INFO_V1(cube_c_f8);
-PG_FUNCTION_INFO_V1(cube_c_f8_f8);
-PG_FUNCTION_INFO_V1(cube_dim);
-PG_FUNCTION_INFO_V1(cube_ll_coord);
-PG_FUNCTION_INFO_V1(cube_ur_coord);
-PG_FUNCTION_INFO_V1(cube_coord);
-PG_FUNCTION_INFO_V1(cube_coord_llur);
-PG_FUNCTION_INFO_V1(cube_subset);
+MDB_FUNCTION_INFO_V1(cube_in);
+MDB_FUNCTION_INFO_V1(cube_a_f8_f8);
+MDB_FUNCTION_INFO_V1(cube_a_f8);
+MDB_FUNCTION_INFO_V1(cube_out);
+MDB_FUNCTION_INFO_V1(cube_f8);
+MDB_FUNCTION_INFO_V1(cube_f8_f8);
+MDB_FUNCTION_INFO_V1(cube_c_f8);
+MDB_FUNCTION_INFO_V1(cube_c_f8_f8);
+MDB_FUNCTION_INFO_V1(cube_dim);
+MDB_FUNCTION_INFO_V1(cube_ll_coord);
+MDB_FUNCTION_INFO_V1(cube_ur_coord);
+MDB_FUNCTION_INFO_V1(cube_coord);
+MDB_FUNCTION_INFO_V1(cube_coord_llur);
+MDB_FUNCTION_INFO_V1(cube_subset);
 
 /*
 ** GiST support methods
 */
 
-PG_FUNCTION_INFO_V1(g_cube_consistent);
-PG_FUNCTION_INFO_V1(g_cube_compress);
-PG_FUNCTION_INFO_V1(g_cube_decompress);
-PG_FUNCTION_INFO_V1(g_cube_penalty);
-PG_FUNCTION_INFO_V1(g_cube_picksplit);
-PG_FUNCTION_INFO_V1(g_cube_union);
-PG_FUNCTION_INFO_V1(g_cube_same);
-PG_FUNCTION_INFO_V1(g_cube_distance);
+MDB_FUNCTION_INFO_V1(g_cube_consistent);
+MDB_FUNCTION_INFO_V1(g_cube_compress);
+MDB_FUNCTION_INFO_V1(g_cube_decompress);
+MDB_FUNCTION_INFO_V1(g_cube_penalty);
+MDB_FUNCTION_INFO_V1(g_cube_picksplit);
+MDB_FUNCTION_INFO_V1(g_cube_union);
+MDB_FUNCTION_INFO_V1(g_cube_same);
+MDB_FUNCTION_INFO_V1(g_cube_distance);
 
 /*
 ** B-tree support functions
 */
-PG_FUNCTION_INFO_V1(cube_eq);
-PG_FUNCTION_INFO_V1(cube_ne);
-PG_FUNCTION_INFO_V1(cube_lt);
-PG_FUNCTION_INFO_V1(cube_gt);
-PG_FUNCTION_INFO_V1(cube_le);
-PG_FUNCTION_INFO_V1(cube_ge);
-PG_FUNCTION_INFO_V1(cube_cmp);
+MDB_FUNCTION_INFO_V1(cube_eq);
+MDB_FUNCTION_INFO_V1(cube_ne);
+MDB_FUNCTION_INFO_V1(cube_lt);
+MDB_FUNCTION_INFO_V1(cube_gt);
+MDB_FUNCTION_INFO_V1(cube_le);
+MDB_FUNCTION_INFO_V1(cube_ge);
+MDB_FUNCTION_INFO_V1(cube_cmp);
 
 /*
 ** R-tree support functions
 */
 
-PG_FUNCTION_INFO_V1(cube_contains);
-PG_FUNCTION_INFO_V1(cube_contained);
-PG_FUNCTION_INFO_V1(cube_overlap);
-PG_FUNCTION_INFO_V1(cube_union);
-PG_FUNCTION_INFO_V1(cube_inter);
-PG_FUNCTION_INFO_V1(cube_size);
+MDB_FUNCTION_INFO_V1(cube_contains);
+MDB_FUNCTION_INFO_V1(cube_contained);
+MDB_FUNCTION_INFO_V1(cube_overlap);
+MDB_FUNCTION_INFO_V1(cube_union);
+MDB_FUNCTION_INFO_V1(cube_inter);
+MDB_FUNCTION_INFO_V1(cube_size);
 
 /*
 ** miscellaneous
 */
-PG_FUNCTION_INFO_V1(distance_taxicab);
-PG_FUNCTION_INFO_V1(cube_distance);
-PG_FUNCTION_INFO_V1(distance_chebyshev);
-PG_FUNCTION_INFO_V1(cube_is_point);
-PG_FUNCTION_INFO_V1(cube_enlarge);
+MDB_FUNCTION_INFO_V1(distance_taxicab);
+MDB_FUNCTION_INFO_V1(cube_distance);
+MDB_FUNCTION_INFO_V1(distance_chebyshev);
+MDB_FUNCTION_INFO_V1(cube_is_point);
+MDB_FUNCTION_INFO_V1(cube_enlarge);
 
 /*
 ** For internal use only
@@ -114,9 +114,9 @@ static bool cube_is_point_internal(NDBOX *cube);
 /* NdBox = [(lowerleft),(upperright)] */
 /* [(xLL(1)...xLL(N)),(xUR(1)...xUR(n))] */
 Datum
-cube_in(PG_FUNCTION_ARGS)
+cube_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	NDBOX	   *result;
 
 	cube_scanner_init(str);
@@ -126,7 +126,7 @@ cube_in(PG_FUNCTION_ARGS)
 
 	cube_scanner_finish();
 
-	PG_RETURN_NDBOX(result);
+	MDB_RETURN_NDBOX(result);
 }
 
 
@@ -134,10 +134,10 @@ cube_in(PG_FUNCTION_ARGS)
 ** Allows the construction of a cube from 2 float[]'s
 */
 Datum
-cube_a_f8_f8(PG_FUNCTION_ARGS)
+cube_a_f8_f8(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *ur = PG_GETARG_ARRAYTYPE_P(0);
-	ArrayType  *ll = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *ur = MDB_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *ll = MDB_GETARG_ARRAYTYPE_P(1);
 	NDBOX	   *result;
 	int			i;
 	int			dim;
@@ -187,16 +187,16 @@ cube_a_f8_f8(PG_FUNCTION_ARGS)
 	else
 		SET_POINT_BIT(result);
 
-	PG_RETURN_NDBOX(result);
+	MDB_RETURN_NDBOX(result);
 }
 
 /*
 ** Allows the construction of a zero-volume cube from a float[]
 */
 Datum
-cube_a_f8(PG_FUNCTION_ARGS)
+cube_a_f8(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *ur = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *ur = MDB_GETARG_ARRAYTYPE_P(0);
 	NDBOX	   *result;
 	int			i;
 	int			dim;
@@ -221,14 +221,14 @@ cube_a_f8(PG_FUNCTION_ARGS)
 	for (i = 0; i < dim; i++)
 		result->x[i] = dur[i];
 
-	PG_RETURN_NDBOX(result);
+	MDB_RETURN_NDBOX(result);
 }
 
 Datum
-cube_subset(PG_FUNCTION_ARGS)
+cube_subset(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *c = PG_GETARG_NDBOX(0);
-	ArrayType  *idx = PG_GETARG_ARRAYTYPE_P(1);
+	NDBOX	   *c = MDB_GETARG_NDBOX(0);
+	ArrayType  *idx = MDB_GETARG_ARRAYTYPE_P(1);
 	NDBOX	   *result;
 	int			size,
 				dim,
@@ -265,14 +265,14 @@ cube_subset(PG_FUNCTION_ARGS)
 			result->x[i + dim] = c->x[dx[i] + DIM(c) - 1];
 	}
 
-	PG_FREE_IF_COPY(c, 0);
-	PG_RETURN_NDBOX(result);
+	MDB_FREE_IF_COPY(c, 0);
+	MDB_RETURN_NDBOX(result);
 }
 
 Datum
-cube_out(PG_FUNCTION_ARGS)
+cube_out(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *cube = PG_GETARG_NDBOX(0);
+	NDBOX	   *cube = MDB_GETARG_NDBOX(0);
 	StringInfoData buf;
 	int			dim = DIM(cube);
 	int			i;
@@ -312,8 +312,8 @@ cube_out(PG_FUNCTION_ARGS)
 		appendStringInfoChar(&buf, ')');
 	}
 
-	PG_FREE_IF_COPY(cube, 0);
-	PG_RETURN_CSTRING(buf.data);
+	MDB_FREE_IF_COPY(cube, 0);
+	MDB_RETURN_CSTRING(buf.data);
 }
 
 
@@ -328,14 +328,14 @@ cube_out(PG_FUNCTION_ARGS)
 ** corresponding to strategy in the mdb_amop table.
 */
 Datum
-g_cube_consistent(PG_FUNCTION_ARGS)
+g_cube_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	NDBOX	   *query = PG_GETARG_NDBOX(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	NDBOX	   *query = MDB_GETARG_NDBOX(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	bool		res;
 
 	/* All cases served by this function are exact */
@@ -352,8 +352,8 @@ g_cube_consistent(PG_FUNCTION_ARGS)
 		res = g_cube_internal_consistent(DatumGetNDBOX(entry->key),
 										 query, strategy);
 
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_BOOL(res);
 }
 
 
@@ -362,10 +362,10 @@ g_cube_consistent(PG_FUNCTION_ARGS)
 ** returns the minimal bounding box that encloses all the entries in entryvec
 */
 Datum
-g_cube_union(PG_FUNCTION_ARGS)
+g_cube_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	int		   *sizep = (int *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	int		   *sizep = (int *) MDB_GETARG_POINTER(1);
 	NDBOX	   *out = (NDBOX *) NULL;
 	NDBOX	   *tmp;
 	int			i;
@@ -388,7 +388,7 @@ g_cube_union(PG_FUNCTION_ARGS)
 		tmp = out;
 	}
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 /*
@@ -397,16 +397,16 @@ g_cube_union(PG_FUNCTION_ARGS)
 */
 
 Datum
-g_cube_compress(PG_FUNCTION_ARGS)
+g_cube_compress(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(PG_GETARG_DATUM(0));
+	MDB_RETURN_DATUM(MDB_GETARG_DATUM(0));
 }
 
 Datum
-g_cube_decompress(PG_FUNCTION_ARGS)
+g_cube_decompress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	NDBOX	   *key = DatumGetNDBOX(PG_DETOAST_DATUM(entry->key));
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	NDBOX	   *key = DatumGetNDBOX(MDB_DETOAST_DATUM(entry->key));
 
 	if (key != DatumGetNDBOX(entry->key))
 	{
@@ -415,9 +415,9 @@ g_cube_decompress(PG_FUNCTION_ARGS)
 		gistentryinit(*retval, PointerGetDatum(key),
 					  entry->rel, entry->page,
 					  entry->offset, FALSE);
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 
@@ -426,11 +426,11 @@ g_cube_decompress(PG_FUNCTION_ARGS)
 ** As in the R-tree paper, we use change in area as our penalty metric
 */
 Datum
-g_cube_penalty(PG_FUNCTION_ARGS)
+g_cube_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *origentry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	GISTENTRY  *newentry = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *origentry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	GISTENTRY  *newentry = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 	NDBOX	   *ud;
 	double		tmp1,
 				tmp2;
@@ -444,7 +444,7 @@ g_cube_penalty(PG_FUNCTION_ARGS)
 	/*
 	 * fprintf(stderr, "penalty\n"); fprintf(stderr, "\t%g\n", *result);
 	 */
-	PG_RETURN_FLOAT8(*result);
+	MDB_RETURN_FLOAT8(*result);
 }
 
 
@@ -454,10 +454,10 @@ g_cube_penalty(PG_FUNCTION_ARGS)
 ** We use Guttman's poly time split algorithm
 */
 Datum
-g_cube_picksplit(PG_FUNCTION_ARGS)
+g_cube_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber i,
 				j;
 	NDBOX	   *datum_alpha,
@@ -599,18 +599,18 @@ g_cube_picksplit(PG_FUNCTION_ARGS)
 	v->spl_ldatum = PointerGetDatum(datum_l);
 	v->spl_rdatum = PointerGetDatum(datum_r);
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 /*
 ** Equality method
 */
 Datum
-g_cube_same(PG_FUNCTION_ARGS)
+g_cube_same(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *b1 = PG_GETARG_NDBOX(0);
-	NDBOX	   *b2 = PG_GETARG_NDBOX(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	NDBOX	   *b1 = MDB_GETARG_NDBOX(0);
+	NDBOX	   *b2 = MDB_GETARG_NDBOX(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	if (cube_cmp_v0(b1, b2) == 0)
 		*result = TRUE;
@@ -620,7 +620,7 @@ g_cube_same(PG_FUNCTION_ARGS)
 	/*
 	 * fprintf(stderr, "same: %s\n", (*result ? "TRUE" : "FALSE" ));
 	 */
-	PG_RETURN_NDBOX(result);
+	MDB_RETURN_NDBOX(result);
 }
 
 /*
@@ -766,25 +766,25 @@ cube_union_v0(NDBOX *a, NDBOX *b)
 }
 
 Datum
-cube_union(PG_FUNCTION_ARGS)
+cube_union(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0);
-	NDBOX	   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0);
+	NDBOX	   *b = MDB_GETARG_NDBOX(1);
 	NDBOX	   *res;
 
 	res = cube_union_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_NDBOX(res);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_NDBOX(res);
 }
 
 /* cube_inter */
 Datum
-cube_inter(PG_FUNCTION_ARGS)
+cube_inter(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0);
-	NDBOX	   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0);
+	NDBOX	   *b = MDB_GETARG_NDBOX(1);
 	NDBOX	   *result;
 	bool		swapped = false;
 	int			i;
@@ -844,26 +844,26 @@ cube_inter(PG_FUNCTION_ARGS)
 
 	if (swapped)
 	{
-		PG_FREE_IF_COPY(b, 0);
-		PG_FREE_IF_COPY(a, 1);
+		MDB_FREE_IF_COPY(b, 0);
+		MDB_FREE_IF_COPY(a, 1);
 	}
 	else
 	{
-		PG_FREE_IF_COPY(a, 0);
-		PG_FREE_IF_COPY(b, 1);
+		MDB_FREE_IF_COPY(a, 0);
+		MDB_FREE_IF_COPY(b, 1);
 	}
 
 	/*
 	 * Is it OK to return a non-null intersection for non-overlapping boxes?
 	 */
-	PG_RETURN_NDBOX(result);
+	MDB_RETURN_NDBOX(result);
 }
 
 /* cube_size */
 Datum
-cube_size(PG_FUNCTION_ARGS)
+cube_size(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0);
 	double		result;
 	int			i;
 
@@ -871,8 +871,8 @@ cube_size(PG_FUNCTION_ARGS)
 	for (i = 0; i < DIM(a); i++)
 		result = result * Abs((LL_COORD(a, i) - UR_COORD(a, i)));
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_RETURN_FLOAT8(result);
 }
 
 void
@@ -974,107 +974,107 @@ cube_cmp_v0(NDBOX *a, NDBOX *b)
 }
 
 Datum
-cube_cmp(PG_FUNCTION_ARGS)
+cube_cmp(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	int32		res;
 
 	res = cube_cmp_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_INT32(res);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_INT32(res);
 }
 
 
 Datum
-cube_eq(PG_FUNCTION_ARGS)
+cube_eq(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	int32		res;
 
 	res = cube_cmp_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_BOOL(res == 0);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_BOOL(res == 0);
 }
 
 
 Datum
-cube_ne(PG_FUNCTION_ARGS)
+cube_ne(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	int32		res;
 
 	res = cube_cmp_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_BOOL(res != 0);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_BOOL(res != 0);
 }
 
 
 Datum
-cube_lt(PG_FUNCTION_ARGS)
+cube_lt(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	int32		res;
 
 	res = cube_cmp_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_BOOL(res < 0);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_BOOL(res < 0);
 }
 
 
 Datum
-cube_gt(PG_FUNCTION_ARGS)
+cube_gt(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	int32		res;
 
 	res = cube_cmp_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_BOOL(res > 0);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_BOOL(res > 0);
 }
 
 
 Datum
-cube_le(PG_FUNCTION_ARGS)
+cube_le(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	int32		res;
 
 	res = cube_cmp_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_BOOL(res <= 0);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_BOOL(res <= 0);
 }
 
 
 Datum
-cube_ge(PG_FUNCTION_ARGS)
+cube_ge(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	int32		res;
 
 	res = cube_cmp_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_BOOL(res >= 0);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_BOOL(res >= 0);
 }
 
 
@@ -1119,33 +1119,33 @@ cube_contains_v0(NDBOX *a, NDBOX *b)
 }
 
 Datum
-cube_contains(PG_FUNCTION_ARGS)
+cube_contains(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	bool		res;
 
 	res = cube_contains_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_BOOL(res);
 }
 
 /* Contained */
 /* Box(A) Contained by Box(B) IFF Box(B) Contains Box(A) */
 Datum
-cube_contained(PG_FUNCTION_ARGS)
+cube_contained(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	bool		res;
 
 	res = cube_contains_v0(b, a);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_BOOL(res);
 }
 
 /* Overlap */
@@ -1194,17 +1194,17 @@ cube_overlap_v0(NDBOX *a, NDBOX *b)
 
 
 Datum
-cube_overlap(PG_FUNCTION_ARGS)
+cube_overlap(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	bool		res;
 
 	res = cube_overlap_v0(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_BOOL(res);
 }
 
 
@@ -1214,10 +1214,10 @@ cube_overlap(PG_FUNCTION_ARGS)
    distance between overlapping projections, this metric coincides with the
    "common sense" geometric distance */
 Datum
-cube_distance(PG_FUNCTION_ARGS)
+cube_distance(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	bool		swapped = false;
 	double		d,
 				distance;
@@ -1250,23 +1250,23 @@ cube_distance(PG_FUNCTION_ARGS)
 
 	if (swapped)
 	{
-		PG_FREE_IF_COPY(b, 0);
-		PG_FREE_IF_COPY(a, 1);
+		MDB_FREE_IF_COPY(b, 0);
+		MDB_FREE_IF_COPY(a, 1);
 	}
 	else
 	{
-		PG_FREE_IF_COPY(a, 0);
-		PG_FREE_IF_COPY(b, 1);
+		MDB_FREE_IF_COPY(a, 0);
+		MDB_FREE_IF_COPY(b, 1);
 	}
 
-	PG_RETURN_FLOAT8(sqrt(distance));
+	MDB_RETURN_FLOAT8(sqrt(distance));
 }
 
 Datum
-distance_taxicab(PG_FUNCTION_ARGS)
+distance_taxicab(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	bool		swapped = false;
 	double		distance;
 	int			i;
@@ -1294,23 +1294,23 @@ distance_taxicab(PG_FUNCTION_ARGS)
 
 	if (swapped)
 	{
-		PG_FREE_IF_COPY(b, 0);
-		PG_FREE_IF_COPY(a, 1);
+		MDB_FREE_IF_COPY(b, 0);
+		MDB_FREE_IF_COPY(a, 1);
 	}
 	else
 	{
-		PG_FREE_IF_COPY(a, 0);
-		PG_FREE_IF_COPY(b, 1);
+		MDB_FREE_IF_COPY(a, 0);
+		MDB_FREE_IF_COPY(b, 1);
 	}
 
-	PG_RETURN_FLOAT8(distance);
+	MDB_RETURN_FLOAT8(distance);
 }
 
 Datum
-distance_chebyshev(PG_FUNCTION_ARGS)
+distance_chebyshev(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0),
-			   *b = PG_GETARG_NDBOX(1);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0),
+			   *b = MDB_GETARG_NDBOX(1);
 	bool		swapped = false;
 	double		d,
 				distance;
@@ -1346,29 +1346,29 @@ distance_chebyshev(PG_FUNCTION_ARGS)
 
 	if (swapped)
 	{
-		PG_FREE_IF_COPY(b, 0);
-		PG_FREE_IF_COPY(a, 1);
+		MDB_FREE_IF_COPY(b, 0);
+		MDB_FREE_IF_COPY(a, 1);
 	}
 	else
 	{
-		PG_FREE_IF_COPY(a, 0);
-		PG_FREE_IF_COPY(b, 1);
+		MDB_FREE_IF_COPY(a, 0);
+		MDB_FREE_IF_COPY(b, 1);
 	}
 
-	PG_RETURN_FLOAT8(distance);
+	MDB_RETURN_FLOAT8(distance);
 }
 
 Datum
-g_cube_distance(PG_FUNCTION_ARGS)
+g_cube_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 	NDBOX	   *cube = DatumGetNDBOX(entry->key);
 	double		retval;
 
 	if (strategy == CubeKNNDistanceCoord)
 	{
-		int			coord = PG_GETARG_INT32(1);
+		int			coord = MDB_GETARG_INT32(1);
 
 		if (IS_POINT(cube))
 			retval = cube->x[(coord - 1) % DIM(cube)];
@@ -1378,7 +1378,7 @@ g_cube_distance(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		NDBOX	   *query = PG_GETARG_NDBOX(1);
+		NDBOX	   *query = MDB_GETARG_NDBOX(1);
 
 		switch (strategy)
 		{
@@ -1400,7 +1400,7 @@ g_cube_distance(PG_FUNCTION_ARGS)
 				break;
 		}
 	}
-	PG_RETURN_FLOAT8(retval);
+	MDB_RETURN_FLOAT8(retval);
 }
 
 static double
@@ -1420,14 +1420,14 @@ distance_1D(double a1, double a2, double b1, double b2)
 
 /* Test if a box is also a point */
 Datum
-cube_is_point(PG_FUNCTION_ARGS)
+cube_is_point(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *cube = PG_GETARG_NDBOX(0);
+	NDBOX	   *cube = MDB_GETARG_NDBOX(0);
 	bool		result;
 
 	result = cube_is_point_internal(cube);
-	PG_FREE_IF_COPY(cube, 0);
-	PG_RETURN_BOOL(result);
+	MDB_FREE_IF_COPY(cube, 0);
+	MDB_RETURN_BOOL(result);
 }
 
 static bool
@@ -1455,21 +1455,21 @@ cube_is_point_internal(NDBOX *cube)
 
 /* Return dimensions in use in the data structure */
 Datum
-cube_dim(PG_FUNCTION_ARGS)
+cube_dim(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *c = PG_GETARG_NDBOX(0);
+	NDBOX	   *c = MDB_GETARG_NDBOX(0);
 	int			dim = DIM(c);
 
-	PG_FREE_IF_COPY(c, 0);
-	PG_RETURN_INT32(dim);
+	MDB_FREE_IF_COPY(c, 0);
+	MDB_RETURN_INT32(dim);
 }
 
 /* Return a specific normalized LL coordinate */
 Datum
-cube_ll_coord(PG_FUNCTION_ARGS)
+cube_ll_coord(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *c = PG_GETARG_NDBOX(0);
-	int			n = PG_GETARG_INT32(1);
+	NDBOX	   *c = MDB_GETARG_NDBOX(0);
+	int			n = MDB_GETARG_INT32(1);
 	double		result;
 
 	if (DIM(c) >= n && n > 0)
@@ -1477,16 +1477,16 @@ cube_ll_coord(PG_FUNCTION_ARGS)
 	else
 		result = 0;
 
-	PG_FREE_IF_COPY(c, 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_FREE_IF_COPY(c, 0);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /* Return a specific normalized UR coordinate */
 Datum
-cube_ur_coord(PG_FUNCTION_ARGS)
+cube_ur_coord(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *c = PG_GETARG_NDBOX(0);
-	int			n = PG_GETARG_INT32(1);
+	NDBOX	   *c = MDB_GETARG_NDBOX(0);
+	int			n = MDB_GETARG_INT32(1);
 	double		result;
 
 	if (DIM(c) >= n && n > 0)
@@ -1494,8 +1494,8 @@ cube_ur_coord(PG_FUNCTION_ARGS)
 	else
 		result = 0;
 
-	PG_FREE_IF_COPY(c, 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_FREE_IF_COPY(c, 0);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
@@ -1504,10 +1504,10 @@ cube_ur_coord(PG_FUNCTION_ARGS)
  * Numbers from DIM+1 to 2*DIM denotes second corner coordinates.
  */
 Datum
-cube_coord(PG_FUNCTION_ARGS)
+cube_coord(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *cube = PG_GETARG_NDBOX(0);
-	int			coord = PG_GETARG_INT32(1);
+	NDBOX	   *cube = MDB_GETARG_NDBOX(0);
+	int			coord = MDB_GETARG_INT32(1);
 
 	if (coord <= 0 || coord > 2 * DIM(cube))
 		ereport(ERROR,
@@ -1515,9 +1515,9 @@ cube_coord(PG_FUNCTION_ARGS)
 				 errmsg("cube index %d is out of bounds", coord)));
 
 	if (IS_POINT(cube))
-		PG_RETURN_FLOAT8(cube->x[(coord - 1) % DIM(cube)]);
+		MDB_RETURN_FLOAT8(cube->x[(coord - 1) % DIM(cube)]);
 	else
-		PG_RETURN_FLOAT8(cube->x[coord - 1]);
+		MDB_RETURN_FLOAT8(cube->x[coord - 1]);
 }
 
 
@@ -1532,10 +1532,10 @@ cube_coord(PG_FUNCTION_ARGS)
  * representation-independent coordinate getter. This function implements it.
  */
 Datum
-cube_coord_llur(PG_FUNCTION_ARGS)
+cube_coord_llur(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *cube = PG_GETARG_NDBOX(0);
-	int			coord = PG_GETARG_INT32(1);
+	NDBOX	   *cube = MDB_GETARG_NDBOX(0);
+	int			coord = MDB_GETARG_INT32(1);
 
 	if (coord <= 0 || coord > 2 * DIM(cube))
 		ereport(ERROR,
@@ -1545,28 +1545,28 @@ cube_coord_llur(PG_FUNCTION_ARGS)
 	if (coord <= DIM(cube))
 	{
 		if (IS_POINT(cube))
-			PG_RETURN_FLOAT8(cube->x[coord - 1]);
+			MDB_RETURN_FLOAT8(cube->x[coord - 1]);
 		else
-			PG_RETURN_FLOAT8(Min(cube->x[coord - 1],
+			MDB_RETURN_FLOAT8(Min(cube->x[coord - 1],
 								 cube->x[coord - 1 + DIM(cube)]));
 	}
 	else
 	{
 		if (IS_POINT(cube))
-			PG_RETURN_FLOAT8(cube->x[(coord - 1) % DIM(cube)]);
+			MDB_RETURN_FLOAT8(cube->x[(coord - 1) % DIM(cube)]);
 		else
-			PG_RETURN_FLOAT8(Max(cube->x[coord - 1],
+			MDB_RETURN_FLOAT8(Max(cube->x[coord - 1],
 								 cube->x[coord - 1 - DIM(cube)]));
 	}
 }
 
 /* Increase or decrease box size by a radius in at least n dimensions. */
 Datum
-cube_enlarge(PG_FUNCTION_ARGS)
+cube_enlarge(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *a = PG_GETARG_NDBOX(0);
-	double		r = PG_GETARG_FLOAT8(1);
-	int32		n = PG_GETARG_INT32(2);
+	NDBOX	   *a = MDB_GETARG_NDBOX(0);
+	double		r = MDB_GETARG_FLOAT8(1);
+	int32		n = MDB_GETARG_INT32(2);
 	NDBOX	   *result;
 	int			dim = 0;
 	int			size;
@@ -1621,15 +1621,15 @@ cube_enlarge(PG_FUNCTION_ARGS)
 		SET_POINT_BIT(result);
 	}
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_RETURN_NDBOX(result);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_RETURN_NDBOX(result);
 }
 
 /* Create a one dimensional box with identical upper and lower coordinates */
 Datum
-cube_f8(PG_FUNCTION_ARGS)
+cube_f8(MDB_FUNCTION_ARGS)
 {
-	double		x = PG_GETARG_FLOAT8(0);
+	double		x = MDB_GETARG_FLOAT8(0);
 	NDBOX	   *result;
 	int			size;
 
@@ -1640,15 +1640,15 @@ cube_f8(PG_FUNCTION_ARGS)
 	SET_POINT_BIT(result);
 	result->x[0] = x;
 
-	PG_RETURN_NDBOX(result);
+	MDB_RETURN_NDBOX(result);
 }
 
 /* Create a one dimensional box */
 Datum
-cube_f8_f8(PG_FUNCTION_ARGS)
+cube_f8_f8(MDB_FUNCTION_ARGS)
 {
-	double		x0 = PG_GETARG_FLOAT8(0);
-	double		x1 = PG_GETARG_FLOAT8(1);
+	double		x0 = MDB_GETARG_FLOAT8(0);
+	double		x1 = MDB_GETARG_FLOAT8(1);
 	NDBOX	   *result;
 	int			size;
 
@@ -1671,16 +1671,16 @@ cube_f8_f8(PG_FUNCTION_ARGS)
 		result->x[1] = x1;
 	}
 
-	PG_RETURN_NDBOX(result);
+	MDB_RETURN_NDBOX(result);
 }
 
 /* Add a dimension to an existing cube with the same values for the new
    coordinate */
 Datum
-cube_c_f8(PG_FUNCTION_ARGS)
+cube_c_f8(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *cube = PG_GETARG_NDBOX(0);
-	double		x = PG_GETARG_FLOAT8(1);
+	NDBOX	   *cube = MDB_GETARG_NDBOX(0);
+	double		x = MDB_GETARG_FLOAT8(1);
 	NDBOX	   *result;
 	int			size;
 	int			i;
@@ -1711,17 +1711,17 @@ cube_c_f8(PG_FUNCTION_ARGS)
 		result->x[2 * DIM(result) - 1] = x;
 	}
 
-	PG_FREE_IF_COPY(cube, 0);
-	PG_RETURN_NDBOX(result);
+	MDB_FREE_IF_COPY(cube, 0);
+	MDB_RETURN_NDBOX(result);
 }
 
 /* Add a dimension to an existing cube */
 Datum
-cube_c_f8_f8(PG_FUNCTION_ARGS)
+cube_c_f8_f8(MDB_FUNCTION_ARGS)
 {
-	NDBOX	   *cube = PG_GETARG_NDBOX(0);
-	double		x1 = PG_GETARG_FLOAT8(1);
-	double		x2 = PG_GETARG_FLOAT8(2);
+	NDBOX	   *cube = MDB_GETARG_NDBOX(0);
+	double		x1 = MDB_GETARG_FLOAT8(1);
+	double		x2 = MDB_GETARG_FLOAT8(2);
 	NDBOX	   *result;
 	int			size;
 	int			i;
@@ -1752,6 +1752,6 @@ cube_c_f8_f8(PG_FUNCTION_ARGS)
 		result->x[2 * DIM(result) - 1] = x2;
 	}
 
-	PG_FREE_IF_COPY(cube, 0);
-	PG_RETURN_NDBOX(result);
+	MDB_FREE_IF_COPY(cube, 0);
+	MDB_RETURN_NDBOX(result);
 }

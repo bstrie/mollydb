@@ -167,9 +167,9 @@ check_relation_privileges(Oid relOid,
 		Oid			relnamespace = get_rel_namespace(relOid);
 
 		if (IsSystemNamespace(relnamespace) &&
-			(required & (SEPG_DB_TABLE__UPDATE |
-						 SEPG_DB_TABLE__INSERT |
-						 SEPG_DB_TABLE__DELETE)) != 0)
+			(required & (SEMDB_DB_TABLE__UPDATE |
+						 SEMDB_DB_TABLE__INSERT |
+						 SEMDB_DB_TABLE__DELETE)) != 0)
 			ereport(ERROR,
 					(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 					 errmsg("SELinux: hardwired security policy violation")));
@@ -191,27 +191,27 @@ check_relation_privileges(Oid relOid,
 	{
 		case RELKIND_RELATION:
 			result = semdb_avc_check_perms(&object,
-											 SEPG_CLASS_DB_TABLE,
+											 SEMDB_CLASS_DB_TABLE,
 											 required,
 											 audit_name,
 											 abort_on_violation);
 			break;
 
 		case RELKIND_SEQUENCE:
-			Assert((required & ~SEPG_DB_TABLE__SELECT) == 0);
+			Assert((required & ~SEMDB_DB_TABLE__SELECT) == 0);
 
-			if (required & SEPG_DB_TABLE__SELECT)
+			if (required & SEMDB_DB_TABLE__SELECT)
 				result = semdb_avc_check_perms(&object,
-												 SEPG_CLASS_DB_SEQUENCE,
-												 SEPG_DB_SEQUENCE__GET_VALUE,
+												 SEMDB_CLASS_DB_SEQUENCE,
+												 SEMDB_DB_SEQUENCE__GET_VALUE,
 												 audit_name,
 												 abort_on_violation);
 			break;
 
 		case RELKIND_VIEW:
 			result = semdb_avc_check_perms(&object,
-											 SEPG_CLASS_DB_VIEW,
-											 SEPG_DB_VIEW__EXPAND,
+											 SEMDB_CLASS_DB_VIEW,
+											 SEMDB_DB_VIEW__EXPAND,
 											 audit_name,
 											 abort_on_violation);
 			break;
@@ -242,16 +242,16 @@ check_relation_privileges(Oid relOid,
 		uint32		column_perms = 0;
 
 		if (bms_is_member(index, selected))
-			column_perms |= SEPG_DB_COLUMN__SELECT;
+			column_perms |= SEMDB_DB_COLUMN__SELECT;
 		if (bms_is_member(index, inserted))
 		{
-			if (required & SEPG_DB_TABLE__INSERT)
-				column_perms |= SEPG_DB_COLUMN__INSERT;
+			if (required & SEMDB_DB_TABLE__INSERT)
+				column_perms |= SEMDB_DB_COLUMN__INSERT;
 		}
 		if (bms_is_member(index, updated))
 		{
-			if (required & SEPG_DB_TABLE__UPDATE)
-				column_perms |= SEPG_DB_COLUMN__UPDATE;
+			if (required & SEMDB_DB_TABLE__UPDATE)
+				column_perms |= SEMDB_DB_COLUMN__UPDATE;
 		}
 		if (column_perms == 0)
 			continue;
@@ -265,7 +265,7 @@ check_relation_privileges(Oid relOid,
 		audit_name = getObjectDescription(&object);
 
 		result = semdb_avc_check_perms(&object,
-										 SEPG_CLASS_DB_COLUMN,
+										 SEMDB_CLASS_DB_COLUMN,
 										 column_perms,
 										 audit_name,
 										 abort_on_violation);
@@ -304,18 +304,18 @@ semdb_dml_privileges(List *rangeTabls, bool abort_on_violation)
 		 * Find out required permissions
 		 */
 		if (rte->requiredPerms & ACL_SELECT)
-			required |= SEPG_DB_TABLE__SELECT;
+			required |= SEMDB_DB_TABLE__SELECT;
 		if (rte->requiredPerms & ACL_INSERT)
-			required |= SEPG_DB_TABLE__INSERT;
+			required |= SEMDB_DB_TABLE__INSERT;
 		if (rte->requiredPerms & ACL_UPDATE)
 		{
 			if (!bms_is_empty(rte->updatedCols))
-				required |= SEPG_DB_TABLE__UPDATE;
+				required |= SEMDB_DB_TABLE__UPDATE;
 			else
-				required |= SEPG_DB_TABLE__LOCK;
+				required |= SEMDB_DB_TABLE__LOCK;
 		}
 		if (rte->requiredPerms & ACL_DELETE)
-			required |= SEPG_DB_TABLE__DELETE;
+			required |= SEMDB_DB_TABLE__DELETE;
 
 		/*
 		 * Skip, if nothing to be checked

@@ -38,12 +38,12 @@
 #endif
 #endif
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(mdb_file_write);
-PG_FUNCTION_INFO_V1(mdb_file_rename);
-PG_FUNCTION_INFO_V1(mdb_file_unlink);
-PG_FUNCTION_INFO_V1(mdb_logdir_ls);
+MDB_FUNCTION_INFO_V1(mdb_file_write);
+MDB_FUNCTION_INFO_V1(mdb_file_rename);
+MDB_FUNCTION_INFO_V1(mdb_file_unlink);
+MDB_FUNCTION_INFO_V1(mdb_logdir_ls);
 
 typedef struct
 {
@@ -115,7 +115,7 @@ requireSuperuser(void)
  */
 
 Datum
-mdb_file_write(PG_FUNCTION_ARGS)
+mdb_file_write(MDB_FUNCTION_ARGS)
 {
 	FILE	   *f;
 	char	   *filename;
@@ -124,10 +124,10 @@ mdb_file_write(PG_FUNCTION_ARGS)
 
 	requireSuperuser();
 
-	filename = convert_and_check_filename(PG_GETARG_TEXT_P(0), false);
-	data = PG_GETARG_TEXT_P(1);
+	filename = convert_and_check_filename(MDB_GETARG_TEXT_P(0), false);
+	data = MDB_GETARG_TEXT_P(1);
 
-	if (!PG_GETARG_BOOL(2))
+	if (!MDB_GETARG_BOOL(2))
 	{
 		struct stat fst;
 
@@ -158,12 +158,12 @@ mdb_file_write(PG_FUNCTION_ARGS)
 	}
 	fclose(f);
 
-	PG_RETURN_INT64(count);
+	MDB_RETURN_INT64(count);
 }
 
 
 Datum
-mdb_file_rename(PG_FUNCTION_ARGS)
+mdb_file_rename(MDB_FUNCTION_ARGS)
 {
 	char	   *fn1,
 			   *fn2,
@@ -172,15 +172,15 @@ mdb_file_rename(PG_FUNCTION_ARGS)
 
 	requireSuperuser();
 
-	if (PG_ARGISNULL(0) || PG_ARGISNULL(1))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0) || MDB_ARGISNULL(1))
+		MDB_RETURN_NULL();
 
-	fn1 = convert_and_check_filename(PG_GETARG_TEXT_P(0), false);
-	fn2 = convert_and_check_filename(PG_GETARG_TEXT_P(1), false);
-	if (PG_ARGISNULL(2))
+	fn1 = convert_and_check_filename(MDB_GETARG_TEXT_P(0), false);
+	fn2 = convert_and_check_filename(MDB_GETARG_TEXT_P(1), false);
+	if (MDB_ARGISNULL(2))
 		fn3 = 0;
 	else
-		fn3 = convert_and_check_filename(PG_GETARG_TEXT_P(2), false);
+		fn3 = convert_and_check_filename(MDB_GETARG_TEXT_P(2), false);
 
 	if (access(fn1, W_OK) < 0)
 	{
@@ -188,7 +188,7 @@ mdb_file_rename(PG_FUNCTION_ARGS)
 				(errcode_for_file_access(),
 				 errmsg("file \"%s\" is not accessible: %m", fn1)));
 
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 
 	if (fn3 && access(fn2, W_OK) < 0)
@@ -197,7 +197,7 @@ mdb_file_rename(PG_FUNCTION_ARGS)
 				(errcode_for_file_access(),
 				 errmsg("file \"%s\" is not accessible: %m", fn2)));
 
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 
 	rc = access(fn3 ? fn3 : fn2, 2);
@@ -248,23 +248,23 @@ mdb_file_rename(PG_FUNCTION_ARGS)
 				 errmsg("could not rename \"%s\" to \"%s\": %m", fn1, fn2)));
 	}
 
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 
 Datum
-mdb_file_unlink(PG_FUNCTION_ARGS)
+mdb_file_unlink(MDB_FUNCTION_ARGS)
 {
 	char	   *filename;
 
 	requireSuperuser();
 
-	filename = convert_and_check_filename(PG_GETARG_TEXT_P(0), false);
+	filename = convert_and_check_filename(MDB_GETARG_TEXT_P(0), false);
 
 	if (access(filename, W_OK) < 0)
 	{
 		if (errno == ENOENT)
-			PG_RETURN_BOOL(false);
+			MDB_RETURN_BOOL(false);
 		else
 			ereport(ERROR,
 					(errcode_for_file_access(),
@@ -277,14 +277,14 @@ mdb_file_unlink(PG_FUNCTION_ARGS)
 				(errcode_for_file_access(),
 				 errmsg("could not unlink file \"%s\": %m", filename)));
 
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 
 Datum
-mdb_logdir_ls(PG_FUNCTION_ARGS)
+mdb_logdir_ls(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	struct dirent *de;

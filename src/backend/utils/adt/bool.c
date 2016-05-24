@@ -127,9 +127,9 @@ parse_bool_with_len(const char *value, size_t len, bool *result)
  * In the switch statement, check the most-used possibilities first.
  */
 Datum
-boolin(PG_FUNCTION_ARGS)
+boolin(MDB_FUNCTION_ARGS)
 {
-	const char *in_str = PG_GETARG_CSTRING(0);
+	const char *in_str = MDB_GETARG_CSTRING(0);
 	const char *str;
 	size_t		len;
 	bool		result;
@@ -146,28 +146,28 @@ boolin(PG_FUNCTION_ARGS)
 		len--;
 
 	if (parse_bool_with_len(str, len, &result))
-		PG_RETURN_BOOL(result);
+		MDB_RETURN_BOOL(result);
 
 	ereport(ERROR,
 			(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
 		   errmsg("invalid input syntax for type boolean: \"%s\"", in_str)));
 
 	/* not reached */
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 /*
  *		boolout			- converts 1 or 0 to "t" or "f"
  */
 Datum
-boolout(PG_FUNCTION_ARGS)
+boolout(MDB_FUNCTION_ARGS)
 {
-	bool		b = PG_GETARG_BOOL(0);
+	bool		b = MDB_GETARG_BOOL(0);
 	char	   *result = (char *) palloc(2);
 
 	result[0] = (b) ? 't' : 'f';
 	result[1] = '\0';
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
@@ -177,27 +177,27 @@ boolout(PG_FUNCTION_ARGS)
  * as "true".
  */
 Datum
-boolrecv(PG_FUNCTION_ARGS)
+boolrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	int			ext;
 
 	ext = pq_getmsgbyte(buf);
-	PG_RETURN_BOOL((ext != 0) ? true : false);
+	MDB_RETURN_BOOL((ext != 0) ? true : false);
 }
 
 /*
  *		boolsend			- converts bool to binary format
  */
 Datum
-boolsend(PG_FUNCTION_ARGS)
+boolsend(MDB_FUNCTION_ARGS)
 {
-	bool		arg1 = PG_GETARG_BOOL(0);
+	bool		arg1 = MDB_GETARG_BOOL(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendbyte(&buf, arg1 ? 1 : 0);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
@@ -207,9 +207,9 @@ boolsend(PG_FUNCTION_ARGS)
  * this function follows the SQL-spec result (except for producing lower case)
  */
 Datum
-booltext(PG_FUNCTION_ARGS)
+booltext(MDB_FUNCTION_ARGS)
 {
-	bool		arg1 = PG_GETARG_BOOL(0);
+	bool		arg1 = MDB_GETARG_BOOL(0);
 	const char *str;
 
 	if (arg1)
@@ -217,7 +217,7 @@ booltext(PG_FUNCTION_ARGS)
 	else
 		str = "false";
 
-	PG_RETURN_TEXT_P(cstring_to_text(str));
+	MDB_RETURN_TEXT_P(cstring_to_text(str));
 }
 
 
@@ -226,57 +226,57 @@ booltext(PG_FUNCTION_ARGS)
  *****************************************************************************/
 
 Datum
-booleq(PG_FUNCTION_ARGS)
+booleq(MDB_FUNCTION_ARGS)
 {
-	bool		arg1 = PG_GETARG_BOOL(0);
-	bool		arg2 = PG_GETARG_BOOL(1);
+	bool		arg1 = MDB_GETARG_BOOL(0);
+	bool		arg2 = MDB_GETARG_BOOL(1);
 
-	PG_RETURN_BOOL(arg1 == arg2);
+	MDB_RETURN_BOOL(arg1 == arg2);
 }
 
 Datum
-boolne(PG_FUNCTION_ARGS)
+boolne(MDB_FUNCTION_ARGS)
 {
-	bool		arg1 = PG_GETARG_BOOL(0);
-	bool		arg2 = PG_GETARG_BOOL(1);
+	bool		arg1 = MDB_GETARG_BOOL(0);
+	bool		arg2 = MDB_GETARG_BOOL(1);
 
-	PG_RETURN_BOOL(arg1 != arg2);
+	MDB_RETURN_BOOL(arg1 != arg2);
 }
 
 Datum
-boollt(PG_FUNCTION_ARGS)
+boollt(MDB_FUNCTION_ARGS)
 {
-	bool		arg1 = PG_GETARG_BOOL(0);
-	bool		arg2 = PG_GETARG_BOOL(1);
+	bool		arg1 = MDB_GETARG_BOOL(0);
+	bool		arg2 = MDB_GETARG_BOOL(1);
 
-	PG_RETURN_BOOL(arg1 < arg2);
+	MDB_RETURN_BOOL(arg1 < arg2);
 }
 
 Datum
-boolgt(PG_FUNCTION_ARGS)
+boolgt(MDB_FUNCTION_ARGS)
 {
-	bool		arg1 = PG_GETARG_BOOL(0);
-	bool		arg2 = PG_GETARG_BOOL(1);
+	bool		arg1 = MDB_GETARG_BOOL(0);
+	bool		arg2 = MDB_GETARG_BOOL(1);
 
-	PG_RETURN_BOOL(arg1 > arg2);
+	MDB_RETURN_BOOL(arg1 > arg2);
 }
 
 Datum
-boolle(PG_FUNCTION_ARGS)
+boolle(MDB_FUNCTION_ARGS)
 {
-	bool		arg1 = PG_GETARG_BOOL(0);
-	bool		arg2 = PG_GETARG_BOOL(1);
+	bool		arg1 = MDB_GETARG_BOOL(0);
+	bool		arg2 = MDB_GETARG_BOOL(1);
 
-	PG_RETURN_BOOL(arg1 <= arg2);
+	MDB_RETURN_BOOL(arg1 <= arg2);
 }
 
 Datum
-boolge(PG_FUNCTION_ARGS)
+boolge(MDB_FUNCTION_ARGS)
 {
-	bool		arg1 = PG_GETARG_BOOL(0);
-	bool		arg2 = PG_GETARG_BOOL(1);
+	bool		arg1 = MDB_GETARG_BOOL(0);
+	bool		arg2 = MDB_GETARG_BOOL(1);
 
-	PG_RETURN_BOOL(arg1 >= arg2);
+	MDB_RETURN_BOOL(arg1 >= arg2);
 }
 
 /*
@@ -290,9 +290,9 @@ boolge(PG_FUNCTION_ARGS)
  * Note: this is only used in plain aggregate mode, not moving-aggregate mode.
  */
 Datum
-booland_statefunc(PG_FUNCTION_ARGS)
+booland_statefunc(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(PG_GETARG_BOOL(0) && PG_GETARG_BOOL(1));
+	MDB_RETURN_BOOL(MDB_GETARG_BOOL(0) && MDB_GETARG_BOOL(1));
 }
 
 /*
@@ -302,9 +302,9 @@ booland_statefunc(PG_FUNCTION_ARGS)
  * Note: this is only used in plain aggregate mode, not moving-aggregate mode.
  */
 Datum
-boolor_statefunc(PG_FUNCTION_ARGS)
+boolor_statefunc(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(PG_GETARG_BOOL(0) || PG_GETARG_BOOL(1));
+	MDB_RETURN_BOOL(MDB_GETARG_BOOL(0) || MDB_GETARG_BOOL(1));
 }
 
 typedef struct BoolAggState
@@ -331,73 +331,73 @@ makeBoolAggState(FunctionCallInfo fcinfo)
 }
 
 Datum
-bool_accum(PG_FUNCTION_ARGS)
+bool_accum(MDB_FUNCTION_ARGS)
 {
 	BoolAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (BoolAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (BoolAggState *) MDB_GETARG_POINTER(0);
 
 	/* Create the state data on first call */
 	if (state == NULL)
 		state = makeBoolAggState(fcinfo);
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 		state->aggcount++;
-		if (PG_GETARG_BOOL(1))
+		if (MDB_GETARG_BOOL(1))
 			state->aggtrue++;
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-bool_accum_inv(PG_FUNCTION_ARGS)
+bool_accum_inv(MDB_FUNCTION_ARGS)
 {
 	BoolAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (BoolAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (BoolAggState *) MDB_GETARG_POINTER(0);
 
 	/* bool_accum should have created the state data */
 	if (state == NULL)
 		elog(ERROR, "bool_accum_inv called with NULL state");
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 		state->aggcount--;
-		if (PG_GETARG_BOOL(1))
+		if (MDB_GETARG_BOOL(1))
 			state->aggtrue--;
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-bool_alltrue(PG_FUNCTION_ARGS)
+bool_alltrue(MDB_FUNCTION_ARGS)
 {
 	BoolAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (BoolAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (BoolAggState *) MDB_GETARG_POINTER(0);
 
 	/* if there were no non-null values, return NULL */
 	if (state == NULL || state->aggcount == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* true if all non-null values are true */
-	PG_RETURN_BOOL(state->aggtrue == state->aggcount);
+	MDB_RETURN_BOOL(state->aggtrue == state->aggcount);
 }
 
 Datum
-bool_anytrue(PG_FUNCTION_ARGS)
+bool_anytrue(MDB_FUNCTION_ARGS)
 {
 	BoolAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (BoolAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (BoolAggState *) MDB_GETARG_POINTER(0);
 
 	/* if there were no non-null values, return NULL */
 	if (state == NULL || state->aggcount == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* true if any non-null value is true */
-	PG_RETURN_BOOL(state->aggtrue > 0);
+	MDB_RETURN_BOOL(state->aggtrue > 0);
 }

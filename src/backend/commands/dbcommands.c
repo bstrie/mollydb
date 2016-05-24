@@ -343,7 +343,7 @@ createdb(const CreatedbStmt *stmt)
 		dbctype = src_ctype;
 
 	/* Some encodings are client only */
-	if (!PG_VALID_BE_ENCODING(encoding))
+	if (!MDB_VALID_BE_ENCODING(encoding))
 		ereport(ERROR,
 				(errcode(ERRCODE_WRONG_OBJECT_TYPE),
 				 errmsg("invalid server encoding %d", encoding)));
@@ -572,7 +572,7 @@ createdb(const CreatedbStmt *stmt)
 	 */
 	fparms.src_dboid = src_dboid;
 	fparms.dest_dboid = dboid;
-	PG_ENSURE_ERROR_CLEANUP(createdb_failure_callback,
+	MDB_ENSURE_ERROR_CLEANUP(createdb_failure_callback,
 							PointerGetDatum(&fparms));
 	{
 		/*
@@ -680,7 +680,7 @@ createdb(const CreatedbStmt *stmt)
 		 */
 		ForceSyncCommit();
 	}
-	PG_END_ENSURE_ERROR_CLEANUP(createdb_failure_callback,
+	MDB_END_ENSURE_ERROR_CLEANUP(createdb_failure_callback,
 								PointerGetDatum(&fparms));
 
 	return dboid;
@@ -715,12 +715,12 @@ check_encoding_locale_matches(int encoding, const char *collate, const char *cty
 	int			collate_encoding = mdb_get_encoding_from_locale(collate, true);
 
 	if (!(ctype_encoding == encoding ||
-		  ctype_encoding == PG_SQL_ASCII ||
+		  ctype_encoding == MDB_SQL_ASCII ||
 		  ctype_encoding == -1 ||
 #ifdef WIN32
-		  encoding == PG_UTF8 ||
+		  encoding == MDB_UTF8 ||
 #endif
-		  (encoding == PG_SQL_ASCII && superuser())))
+		  (encoding == MDB_SQL_ASCII && superuser())))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("encoding \"%s\" does not match locale \"%s\"",
@@ -730,12 +730,12 @@ check_encoding_locale_matches(int encoding, const char *collate, const char *cty
 					 mdb_encoding_to_char(ctype_encoding))));
 
 	if (!(collate_encoding == encoding ||
-		  collate_encoding == PG_SQL_ASCII ||
+		  collate_encoding == MDB_SQL_ASCII ||
 		  collate_encoding == -1 ||
 #ifdef WIN32
-		  encoding == PG_UTF8 ||
+		  encoding == MDB_UTF8 ||
 #endif
-		  (encoding == PG_SQL_ASCII && superuser())))
+		  (encoding == MDB_SQL_ASCII && superuser())))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("encoding \"%s\" does not match locale \"%s\"",
@@ -1215,7 +1215,7 @@ movedb(const char *dbname, const char *tblspcname)
 	 */
 	fparms.dest_dboid = db_id;
 	fparms.dest_tsoid = dst_tblspcoid;
-	PG_ENSURE_ERROR_CLEANUP(movedb_failure_callback,
+	MDB_ENSURE_ERROR_CLEANUP(movedb_failure_callback,
 							PointerGetDatum(&fparms));
 	{
 		/*
@@ -1297,7 +1297,7 @@ movedb(const char *dbname, const char *tblspcname)
 		 */
 		heap_close(pgdbrel, NoLock);
 	}
-	PG_END_ENSURE_ERROR_CLEANUP(movedb_failure_callback,
+	MDB_END_ENSURE_ERROR_CLEANUP(movedb_failure_callback,
 								PointerGetDatum(&fparms));
 
 	/*

@@ -19,17 +19,17 @@
 #include "utils/builtins.h"
 #include "utils/mdb_lsn.h"
 
-#define MAXPG_LSNLEN			17
-#define MAXPG_LSNCOMPONENT	8
+#define MAXMDB_LSNLEN			17
+#define MAXMDB_LSNCOMPONENT	8
 
 /*----------------------------------------------------------
  * Formatting and conversion routines.
  *---------------------------------------------------------*/
 
 Datum
-mdb_lsn_in(PG_FUNCTION_ARGS)
+mdb_lsn_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	int			len1,
 				len2;
 	uint32		id,
@@ -38,12 +38,12 @@ mdb_lsn_in(PG_FUNCTION_ARGS)
 
 	/* Sanity check input format. */
 	len1 = strspn(str, "0123456789abcdefABCDEF");
-	if (len1 < 1 || len1 > MAXPG_LSNCOMPONENT || str[len1] != '/')
+	if (len1 < 1 || len1 > MAXMDB_LSNCOMPONENT || str[len1] != '/')
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
 			   errmsg("invalid input syntax for type mdb_lsn: \"%s\"", str)));
 	len2 = strspn(str + len1 + 1, "0123456789abcdefABCDEF");
-	if (len2 < 1 || len2 > MAXPG_LSNCOMPONENT || str[len1 + 1 + len2] != '\0')
+	if (len2 < 1 || len2 > MAXMDB_LSNCOMPONENT || str[len1 + 1 + len2] != '\0')
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
 			   errmsg("invalid input syntax for type mdb_lsn: \"%s\"", str)));
@@ -53,14 +53,14 @@ mdb_lsn_in(PG_FUNCTION_ARGS)
 	off = (uint32) strtoul(str + len1 + 1, NULL, 16);
 	result = ((uint64) id << 32) | off;
 
-	PG_RETURN_LSN(result);
+	MDB_RETURN_LSN(result);
 }
 
 Datum
-mdb_lsn_out(PG_FUNCTION_ARGS)
+mdb_lsn_out(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	lsn = PG_GETARG_LSN(0);
-	char		buf[MAXPG_LSNLEN + 1];
+	XLogRecPtr	lsn = MDB_GETARG_LSN(0);
+	char		buf[MAXMDB_LSNLEN + 1];
 	char	   *result;
 	uint32		id,
 				off;
@@ -71,28 +71,28 @@ mdb_lsn_out(PG_FUNCTION_ARGS)
 
 	snprintf(buf, sizeof buf, "%X/%X", id, off);
 	result = pstrdup(buf);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 Datum
-mdb_lsn_recv(PG_FUNCTION_ARGS)
+mdb_lsn_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	XLogRecPtr	result;
 
 	result = pq_getmsgint64(buf);
-	PG_RETURN_LSN(result);
+	MDB_RETURN_LSN(result);
 }
 
 Datum
-mdb_lsn_send(PG_FUNCTION_ARGS)
+mdb_lsn_send(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	lsn = PG_GETARG_LSN(0);
+	XLogRecPtr	lsn = MDB_GETARG_LSN(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint64(&buf, lsn);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -101,77 +101,77 @@ mdb_lsn_send(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-mdb_lsn_eq(PG_FUNCTION_ARGS)
+mdb_lsn_eq(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
-	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
+	XLogRecPtr	lsn1 = MDB_GETARG_LSN(0);
+	XLogRecPtr	lsn2 = MDB_GETARG_LSN(1);
 
-	PG_RETURN_BOOL(lsn1 == lsn2);
+	MDB_RETURN_BOOL(lsn1 == lsn2);
 }
 
 Datum
-mdb_lsn_ne(PG_FUNCTION_ARGS)
+mdb_lsn_ne(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
-	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
+	XLogRecPtr	lsn1 = MDB_GETARG_LSN(0);
+	XLogRecPtr	lsn2 = MDB_GETARG_LSN(1);
 
-	PG_RETURN_BOOL(lsn1 != lsn2);
+	MDB_RETURN_BOOL(lsn1 != lsn2);
 }
 
 Datum
-mdb_lsn_lt(PG_FUNCTION_ARGS)
+mdb_lsn_lt(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
-	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
+	XLogRecPtr	lsn1 = MDB_GETARG_LSN(0);
+	XLogRecPtr	lsn2 = MDB_GETARG_LSN(1);
 
-	PG_RETURN_BOOL(lsn1 < lsn2);
+	MDB_RETURN_BOOL(lsn1 < lsn2);
 }
 
 Datum
-mdb_lsn_gt(PG_FUNCTION_ARGS)
+mdb_lsn_gt(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
-	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
+	XLogRecPtr	lsn1 = MDB_GETARG_LSN(0);
+	XLogRecPtr	lsn2 = MDB_GETARG_LSN(1);
 
-	PG_RETURN_BOOL(lsn1 > lsn2);
+	MDB_RETURN_BOOL(lsn1 > lsn2);
 }
 
 Datum
-mdb_lsn_le(PG_FUNCTION_ARGS)
+mdb_lsn_le(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
-	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
+	XLogRecPtr	lsn1 = MDB_GETARG_LSN(0);
+	XLogRecPtr	lsn2 = MDB_GETARG_LSN(1);
 
-	PG_RETURN_BOOL(lsn1 <= lsn2);
+	MDB_RETURN_BOOL(lsn1 <= lsn2);
 }
 
 Datum
-mdb_lsn_ge(PG_FUNCTION_ARGS)
+mdb_lsn_ge(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
-	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
+	XLogRecPtr	lsn1 = MDB_GETARG_LSN(0);
+	XLogRecPtr	lsn2 = MDB_GETARG_LSN(1);
 
-	PG_RETURN_BOOL(lsn1 >= lsn2);
+	MDB_RETURN_BOOL(lsn1 >= lsn2);
 }
 
 /* btree index opclass support */
 Datum
-mdb_lsn_cmp(PG_FUNCTION_ARGS)
+mdb_lsn_cmp(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	a = PG_GETARG_LSN(0);
-	XLogRecPtr	b = PG_GETARG_LSN(1);
+	XLogRecPtr	a = MDB_GETARG_LSN(0);
+	XLogRecPtr	b = MDB_GETARG_LSN(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 /* hash index opclass support */
 Datum
-mdb_lsn_hash(PG_FUNCTION_ARGS)
+mdb_lsn_hash(MDB_FUNCTION_ARGS)
 {
 	/* We can use hashint8 directly */
 	return hashint8(fcinfo);
@@ -183,10 +183,10 @@ mdb_lsn_hash(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-mdb_lsn_mi(PG_FUNCTION_ARGS)
+mdb_lsn_mi(MDB_FUNCTION_ARGS)
 {
-	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
-	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
+	XLogRecPtr	lsn1 = MDB_GETARG_LSN(0);
+	XLogRecPtr	lsn2 = MDB_GETARG_LSN(1);
 	char		buf[256];
 	Datum		result;
 

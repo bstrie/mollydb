@@ -11,8 +11,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_INHERITS_FN_H
-#define PG_INHERITS_FN_H
+#ifndef MDB_INHERITS_FN_H
+#define MDB_INHERITS_FN_H
 
 #include "nodes/mdb_list.h"
 #include "storage/lock.h"
@@ -23,4 +23,4 @@ extern List *find_all_inheritors(Oid parentrelId, LOCKMODE lockmode,
 extern bool has_subclass(Oid relationId);
 extern bool typeInheritsFrom(Oid subclassTypeId, Oid superclassTypeId);
 
-#endif   /* PG_INHERITS_FN_H */
+#endif   /* MDB_INHERITS_FN_H */

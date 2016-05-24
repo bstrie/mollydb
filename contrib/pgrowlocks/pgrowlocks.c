@@ -38,9 +38,9 @@
 #include "utils/snapmgr.h"
 #include "utils/tqual.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(pgrowlocks);
+MDB_FUNCTION_INFO_V1(pgrowlocks);
 
 /* ----------
  * pgrowlocks:
@@ -65,7 +65,7 @@ typedef struct
 #define		Atnum_pids		5
 
 Datum
-pgrowlocks(PG_FUNCTION_ARGS)
+pgrowlocks(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	HeapScanDesc scan;
@@ -93,7 +93,7 @@ pgrowlocks(PG_FUNCTION_ARGS)
 		attinmeta = TupleDescGetAttInMetadata(tupdesc);
 		funcctx->attinmeta = attinmeta;
 
-		relname = PG_GETARG_TEXT_P(0);
+		relname = MDB_GETARG_TEXT_P(0);
 		relrv = makeRangeVarFromNameList(textToQualifiedNameList(relname));
 		rel = heap_openrv(relrv, AccessShareLock);
 

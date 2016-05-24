@@ -329,7 +329,7 @@ ECPG: DeclareCursorStmtDECLAREcursor_namecursor_optionsCURSORopt_holdFORSelectSt
 
 		if ((braces_open > 0) && INFORMIX_MODE) /* we're in a function */
 			$$ = cat_str(3, adjust_outofscope_cursor_vars(this),
-				mm_strdup("ECPG_informix_reset_sqlca();"),
+				mm_strdup("ECMDB_informix_reset_sqlca();"),
 				comment);
 		else
 			$$ = cat2_str(adjust_outofscope_cursor_vars(this), comment);
@@ -341,7 +341,7 @@ ECPG: ClosePortalStmtCLOSEcursor_name block
 	}
 ECPG: opt_hold block
 	{
-		if (compat == ECPG_COMPAT_INFORMIX_SE && autocommit)
+		if (compat == ECMDB_COMPAT_INFORMIX_SE && autocommit)
 			$$ = mm_strdup("with hold");
 		else
 			$$ = EMPTY;

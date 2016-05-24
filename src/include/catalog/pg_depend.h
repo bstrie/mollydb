@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_DEPEND_H
-#define PG_DEPEND_H
+#ifndef MDB_DEPEND_H
+#define MDB_DEPEND_H
 
 #include "catalog/genbki.h"
 
@@ -87,4 +87,4 @@ typedef FormData_mdb_depend *Form_mdb_depend;
  * convenient to find from the contents of other catalogs.
  */
 
-#endif   /* PG_DEPEND_H */
+#endif   /* MDB_DEPEND_H */

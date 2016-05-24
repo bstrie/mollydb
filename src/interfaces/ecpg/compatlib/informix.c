@@ -1,6 +1,6 @@
 /* src/interfaces/ecpg/compatlib/informix.c */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 
 #include <math.h>
@@ -52,26 +52,26 @@ deccall2(decimal *arg1, decimal *arg2, int (*ptr) (numeric *, numeric *))
 	int			i;
 
 	if ((a1 = PGTYPESnumeric_new()) == NULL)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
 	if ((a2 = PGTYPESnumeric_new()) == NULL)
 	{
 		PGTYPESnumeric_free(a1);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	if (PGTYPESnumeric_from_decimal(arg1, a1) != 0)
 	{
 		PGTYPESnumeric_free(a1);
 		PGTYPESnumeric_free(a2);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	if (PGTYPESnumeric_from_decimal(arg2, a2) != 0)
 	{
 		PGTYPESnumeric_free(a1);
 		PGTYPESnumeric_free(a2);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	i = (*ptr) (a1, a2);
@@ -98,19 +98,19 @@ deccall3(decimal *arg1, decimal *arg2, decimal *result, int (*ptr) (numeric *, n
 		return 0;
 
 	if ((a1 = PGTYPESnumeric_new()) == NULL)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
 	if ((a2 = PGTYPESnumeric_new()) == NULL)
 	{
 		PGTYPESnumeric_free(a1);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	if ((nres = PGTYPESnumeric_new()) == NULL)
 	{
 		PGTYPESnumeric_free(a1);
 		PGTYPESnumeric_free(a2);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	if (PGTYPESnumeric_from_decimal(arg1, a1) != 0)
@@ -118,7 +118,7 @@ deccall3(decimal *arg1, decimal *arg2, decimal *result, int (*ptr) (numeric *, n
 		PGTYPESnumeric_free(a1);
 		PGTYPESnumeric_free(a2);
 		PGTYPESnumeric_free(nres);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	if (PGTYPESnumeric_from_decimal(arg2, a2) != 0)
@@ -126,7 +126,7 @@ deccall3(decimal *arg1, decimal *arg2, decimal *result, int (*ptr) (numeric *, n
 		PGTYPESnumeric_free(a1);
 		PGTYPESnumeric_free(a2);
 		PGTYPESnumeric_free(nres);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	i = (*ptr) (a1, a2, nres);
@@ -154,9 +154,9 @@ decadd(decimal *arg1, decimal *arg2, decimal *sum)
 	deccall3(arg1, arg2, sum, PGTYPESnumeric_add);
 
 	if (errno == PGTYPES_NUM_OVERFLOW)
-		return ECPG_INFORMIX_NUM_OVERFLOW;
+		return ECMDB_INFORMIX_NUM_OVERFLOW;
 	else if (errno == PGTYPES_NUM_UNDERFLOW)
-		return ECPG_INFORMIX_NUM_UNDERFLOW;
+		return ECMDB_INFORMIX_NUM_UNDERFLOW;
 	else if (errno != 0)
 		return -1;
 	else
@@ -208,7 +208,7 @@ deccvasc(char *cp, int len, decimal *np)
 	str = ecmdb_strndup(cp, len);/* decimal_in always converts the complete
 								 * string */
 	if (!str)
-		ret = ECPG_INFORMIX_NUM_UNDERFLOW;
+		ret = ECMDB_INFORMIX_NUM_UNDERFLOW;
 	else
 	{
 		errno = 0;
@@ -218,13 +218,13 @@ deccvasc(char *cp, int len, decimal *np)
 			switch (errno)
 			{
 				case PGTYPES_NUM_OVERFLOW:
-					ret = ECPG_INFORMIX_NUM_OVERFLOW;
+					ret = ECMDB_INFORMIX_NUM_OVERFLOW;
 					break;
 				case PGTYPES_NUM_BAD_NUMERIC:
-					ret = ECPG_INFORMIX_BAD_NUMERIC;
+					ret = ECMDB_INFORMIX_BAD_NUMERIC;
 					break;
 				default:
-					ret = ECPG_INFORMIX_BAD_EXPONENT;
+					ret = ECMDB_INFORMIX_BAD_EXPONENT;
 					break;
 			}
 		}
@@ -234,7 +234,7 @@ deccvasc(char *cp, int len, decimal *np)
 
 			PGTYPESnumeric_free(result);
 			if (i != 0)
-				ret = ECPG_INFORMIX_NUM_OVERFLOW;
+				ret = ECMDB_INFORMIX_NUM_OVERFLOW;
 		}
 	}
 
@@ -254,7 +254,7 @@ deccvdbl(double dbl, decimal *np)
 
 	nres = PGTYPESnumeric_new();
 	if (nres == NULL)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
 	result = PGTYPESnumeric_from_double(dbl, nres);
 	if (result == 0)
@@ -276,7 +276,7 @@ deccvint(int in, decimal *np)
 
 	nres = PGTYPESnumeric_new();
 	if (nres == NULL)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
 	result = PGTYPESnumeric_from_int(in, nres);
 	if (result == 0)
@@ -298,7 +298,7 @@ deccvlong(long lng, decimal *np)
 
 	nres = PGTYPESnumeric_new();
 	if (nres == NULL)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
 	result = PGTYPESnumeric_from_long(lng, nres);
 	if (result == 0)
@@ -320,13 +320,13 @@ decdiv(decimal *n1, decimal *n2, decimal *result)
 		switch (errno)
 		{
 			case PGTYPES_NUM_DIVIDE_ZERO:
-				return ECPG_INFORMIX_DIVIDE_ZERO;
+				return ECMDB_INFORMIX_DIVIDE_ZERO;
 				break;
 			case PGTYPES_NUM_OVERFLOW:
-				return ECPG_INFORMIX_NUM_OVERFLOW;
+				return ECMDB_INFORMIX_NUM_OVERFLOW;
 				break;
 			default:
-				return ECPG_INFORMIX_NUM_UNDERFLOW;
+				return ECMDB_INFORMIX_NUM_UNDERFLOW;
 				break;
 		}
 
@@ -345,10 +345,10 @@ decmul(decimal *n1, decimal *n2, decimal *result)
 		switch (errno)
 		{
 			case PGTYPES_NUM_OVERFLOW:
-				return ECPG_INFORMIX_NUM_OVERFLOW;
+				return ECMDB_INFORMIX_NUM_OVERFLOW;
 				break;
 			default:
-				return ECPG_INFORMIX_NUM_UNDERFLOW;
+				return ECMDB_INFORMIX_NUM_UNDERFLOW;
 				break;
 		}
 
@@ -367,10 +367,10 @@ decsub(decimal *n1, decimal *n2, decimal *result)
 		switch (errno)
 		{
 			case PGTYPES_NUM_OVERFLOW:
-				return ECPG_INFORMIX_NUM_OVERFLOW;
+				return ECMDB_INFORMIX_NUM_OVERFLOW;
 				break;
 			default:
-				return ECPG_INFORMIX_NUM_UNDERFLOW;
+				return ECMDB_INFORMIX_NUM_UNDERFLOW;
 				break;
 		}
 
@@ -389,12 +389,12 @@ dectoasc(decimal *np, char *cp, int len, int right)
 
 	nres = PGTYPESnumeric_new();
 	if (nres == NULL)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
 	if (PGTYPESnumeric_from_decimal(np, nres) != 0)
 	{
 		PGTYPESnumeric_free(nres);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	if (right >= 0)
@@ -435,12 +435,12 @@ dectodbl(decimal *np, double *dblp)
 	numeric    *nres = PGTYPESnumeric_new();
 
 	if (nres == NULL)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
 	if (PGTYPESnumeric_from_decimal(np, nres) != 0)
 	{
 		PGTYPESnumeric_free(nres);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	i = PGTYPESnumeric_to_double(nres, dblp);
@@ -456,19 +456,19 @@ dectoint(decimal *np, int *ip)
 	numeric    *nres = PGTYPESnumeric_new();
 
 	if (nres == NULL)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
 	if (PGTYPESnumeric_from_decimal(np, nres) != 0)
 	{
 		PGTYPESnumeric_free(nres);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	ret = PGTYPESnumeric_to_int(nres, ip);
 	PGTYPESnumeric_free(nres);
 
 	if (ret == PGTYPES_NUM_OVERFLOW)
-		ret = ECPG_INFORMIX_NUM_OVERFLOW;
+		ret = ECMDB_INFORMIX_NUM_OVERFLOW;
 
 	return ret;
 }
@@ -480,19 +480,19 @@ dectolong(decimal *np, long *lngp)
 	numeric    *nres = PGTYPESnumeric_new();
 
 	if (nres == NULL)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
 	if (PGTYPESnumeric_from_decimal(np, nres) != 0)
 	{
 		PGTYPESnumeric_free(nres);
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 	}
 
 	ret = PGTYPESnumeric_to_long(nres, lngp);
 	PGTYPESnumeric_free(nres);
 
 	if (ret == PGTYPES_NUM_OVERFLOW)
-		ret = ECPG_INFORMIX_NUM_OVERFLOW;
+		ret = ECMDB_INFORMIX_NUM_OVERFLOW;
 
 	return ret;
 }
@@ -504,7 +504,7 @@ rdatestr(date d, char *str)
 	char	   *tmp = PGTYPESdate_to_asc(d);
 
 	if (!tmp)
-		return ECPG_INFORMIX_DATE_CONVERT;
+		return ECMDB_INFORMIX_DATE_CONVERT;
 
 	/* move to user allocated buffer */
 	strcpy(str, tmp);
@@ -557,16 +557,16 @@ rdefmtdate(date * d, char *fmt, char *str)
 	switch (errno)
 	{
 		case PGTYPES_DATE_ERR_ENOSHORTDATE:
-			return ECPG_INFORMIX_ENOSHORTDATE;
+			return ECMDB_INFORMIX_ENOSHORTDATE;
 		case PGTYPES_DATE_ERR_EARGS:
 		case PGTYPES_DATE_ERR_ENOTDMY:
-			return ECPG_INFORMIX_ENOTDMY;
+			return ECMDB_INFORMIX_ENOTDMY;
 		case PGTYPES_DATE_BAD_DAY:
-			return ECPG_INFORMIX_BAD_DAY;
+			return ECMDB_INFORMIX_BAD_DAY;
 		case PGTYPES_DATE_BAD_MONTH:
-			return ECPG_INFORMIX_BAD_MONTH;
+			return ECMDB_INFORMIX_BAD_MONTH;
 		default:
-			return ECPG_INFORMIX_BAD_YEAR;
+			return ECMDB_INFORMIX_BAD_YEAR;
 	}
 }
 
@@ -578,9 +578,9 @@ rfmtdate(date d, char *fmt, char *str)
 		return 0;
 
 	if (errno == ENOMEM)
-		return ECPG_INFORMIX_OUT_OF_MEMORY;
+		return ECMDB_INFORMIX_OUT_OF_MEMORY;
 
-	return ECPG_INFORMIX_DATE_CONVERT;
+	return ECMDB_INFORMIX_DATE_CONVERT;
 }
 
 int
@@ -625,7 +625,7 @@ dtcvasc(char *str, timestamp * ts)
 	if (**endptr)
 	{
 		/* extra characters exist at the end */
-		return ECPG_INFORMIX_EXTRA_CHARS;
+		return ECMDB_INFORMIX_EXTRA_CHARS;
 	}
 	/* TODO: other Informix error codes missing */
 
@@ -1017,19 +1017,19 @@ rtypwidth(int sqltype, int sqllen)
 }
 
 void
-ECPG_informix_set_var(int number, void *pointer, int lineno)
+ECMDB_informix_set_var(int number, void *pointer, int lineno)
 {
 	ECPGset_var(number, pointer, lineno);
 }
 
 void *
-ECPG_informix_get_var(int number)
+ECMDB_informix_get_var(int number)
 {
 	return ECPGget_var(number);
 }
 
 void
-ECPG_informix_reset_sqlca(void)
+ECMDB_informix_reset_sqlca(void)
 {
 	struct sqlca_t *sqlca = ECPGget_sqlca();
 	if (sqlca == NULL)

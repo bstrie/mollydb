@@ -7684,13 +7684,13 @@ Branch: REL9_4_STABLE [c2b06ab17] 2015-01-30 22:45:58 -0500
       <listitem>
        <para>
         No longer require function prototypes for functions marked with the
-        <link linkend="xfunc-c"><function>PG_FUNCTION_INFO_V1</></link>
+        <link linkend="xfunc-c"><function>MDB_FUNCTION_INFO_V1</></link>
         macro (Peter Eisentraut)
        </para>
 
        <para>
         This change eliminates the need to write boilerplate prototypes.
-        Note that the <function>PG_FUNCTION_INFO_V1</> macro must appear
+        Note that the <function>MDB_FUNCTION_INFO_V1</> macro must appear
         before the corresponding function definition to avoid compiler
         warnings.
        </para>
@@ -7833,7 +7833,7 @@ Branch: REL9_4_STABLE [c2b06ab17] 2015-01-30 22:45:58 -0500
       <listitem>
        <para>
         Add a <application>configure</> flag that appends custom text to the
-        <envar>PG_VERSION</> string (Oskari Saarenmaa)
+        <envar>MDB_VERSION</> string (Oskari Saarenmaa)
        </para>
 
        <para>

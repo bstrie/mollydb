@@ -29,18 +29,18 @@
 #include <utils/rel.h>
 #include <utils/relcache.h>
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* Saved hook values in case of unload */
 static row_security_policy_hook_type prev_row_security_policy_hook_permissive = NULL;
 static row_security_policy_hook_type prev_row_security_policy_hook_restrictive = NULL;
 
-void		_PG_init(void);
-void		_PG_fini(void);
+void		_MDB_init(void);
+void		_MDB_fini(void);
 
 /* Install hooks */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/* Save values for unload  */
 	prev_row_security_policy_hook_permissive = row_security_policy_hook_permissive;
@@ -53,7 +53,7 @@ _PG_init(void)
 
 /* Uninstall hooks */
 void
-_PG_fini(void)
+_MDB_fini(void)
 {
 	row_security_policy_hook_permissive = prev_row_security_policy_hook_permissive;
 	row_security_policy_hook_restrictive = prev_row_security_policy_hook_restrictive;

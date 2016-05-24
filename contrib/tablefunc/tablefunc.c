@@ -44,7 +44,7 @@
 
 #include "tablefunc.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 static HTAB *load_categories_hash(char *cats_sql, MemoryContext per_query_ctx);
 static Tuplestorestate *get_crosstab_tuplestore(char *sql,
@@ -169,9 +169,9 @@ typedef struct crosstab_hashent
  * inputs are int numvals, float8 mean, and float8 stddev
  * returns setof float8
  */
-PG_FUNCTION_INFO_V1(normal_rand);
+MDB_FUNCTION_INFO_V1(normal_rand);
 Datum
-normal_rand(PG_FUNCTION_ARGS)
+normal_rand(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	uint64		call_cntr;
@@ -195,7 +195,7 @@ normal_rand(PG_FUNCTION_ARGS)
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		/* total number of tuples to be returned */
-		funcctx->max_calls = PG_GETARG_UINT32(0);
+		funcctx->max_calls = MDB_GETARG_UINT32(0);
 
 		/* allocate memory for user context */
 		fctx = (normal_rand_fctx *) palloc(sizeof(normal_rand_fctx));
@@ -206,8 +206,8 @@ normal_rand(PG_FUNCTION_ARGS)
 		 * Box-Muller algorithm so that we only actually calculate a new value
 		 * every other call.
 		 */
-		fctx->mean = PG_GETARG_FLOAT8(1);
-		fctx->stddev = PG_GETARG_FLOAT8(2);
+		fctx->mean = MDB_GETARG_FLOAT8(1);
+		fctx->stddev = MDB_GETARG_FLOAT8(2);
 		fctx->carry_val = 0;
 		fctx->use_carry = false;
 
@@ -344,11 +344,11 @@ get_normal_pair(float8 *x1, float8 *x2)
  *	  the number of result values columns) are skipped.
  * 5. Rows with all nulls in the values columns are skipped.
  */
-PG_FUNCTION_INFO_V1(crosstab);
+MDB_FUNCTION_INFO_V1(crosstab);
 Datum
-crosstab(PG_FUNCTION_ARGS)
+crosstab(MDB_FUNCTION_ARGS)
 {
-	char	   *sql = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *sql = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	Tuplestorestate *tupstore;
 	TupleDesc	tupdesc;
@@ -393,7 +393,7 @@ crosstab(PG_FUNCTION_ARGS)
 	{
 		SPI_finish();
 		rsinfo->isDone = ExprEndResult;
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	spi_tuptable = SPI_tuptable;
@@ -630,12 +630,12 @@ crosstab(PG_FUNCTION_ARGS)
  * 3. Missing values (i.e. missing category) are filled in with nulls.
  * 4. Extra values (i.e. not in category results) are skipped.
  */
-PG_FUNCTION_INFO_V1(crosstab_hash);
+MDB_FUNCTION_INFO_V1(crosstab_hash);
 Datum
-crosstab_hash(PG_FUNCTION_ARGS)
+crosstab_hash(MDB_FUNCTION_ARGS)
 {
-	char	   *sql = text_to_cstring(PG_GETARG_TEXT_PP(0));
-	char	   *cats_sql = text_to_cstring(PG_GETARG_TEXT_PP(1));
+	char	   *sql = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+	char	   *cats_sql = text_to_cstring(MDB_GETARG_TEXT_PP(1));
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
 	MemoryContext per_query_ctx;
@@ -979,19 +979,19 @@ get_crosstab_tuplestore(char *sql,
  *		row8	row6		  3		  row2~row4~row6~row8 6
  *
  */
-PG_FUNCTION_INFO_V1(connectby_text);
+MDB_FUNCTION_INFO_V1(connectby_text);
 
 #define CONNECTBY_NCOLS					4
 #define CONNECTBY_NCOLS_NOBRANCH		3
 
 Datum
-connectby_text(PG_FUNCTION_ARGS)
+connectby_text(MDB_FUNCTION_ARGS)
 {
-	char	   *relname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-	char	   *key_fld = text_to_cstring(PG_GETARG_TEXT_PP(1));
-	char	   *parent_key_fld = text_to_cstring(PG_GETARG_TEXT_PP(2));
-	char	   *start_with = text_to_cstring(PG_GETARG_TEXT_PP(3));
-	int			max_depth = PG_GETARG_INT32(4);
+	char	   *relname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+	char	   *key_fld = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+	char	   *parent_key_fld = text_to_cstring(MDB_GETARG_TEXT_PP(2));
+	char	   *start_with = text_to_cstring(MDB_GETARG_TEXT_PP(3));
+	int			max_depth = MDB_GETARG_INT32(4);
 	char	   *branch_delim = NULL;
 	bool		show_branch = false;
 	bool		show_serial = false;
@@ -1015,7 +1015,7 @@ connectby_text(PG_FUNCTION_ARGS)
 
 	if (fcinfo->nargs == 6)
 	{
-		branch_delim = text_to_cstring(PG_GETARG_TEXT_PP(5));
+		branch_delim = text_to_cstring(MDB_GETARG_TEXT_PP(5));
 		show_branch = true;
 	}
 	else
@@ -1062,16 +1062,16 @@ connectby_text(PG_FUNCTION_ARGS)
 	return (Datum) 0;
 }
 
-PG_FUNCTION_INFO_V1(connectby_text_serial);
+MDB_FUNCTION_INFO_V1(connectby_text_serial);
 Datum
-connectby_text_serial(PG_FUNCTION_ARGS)
+connectby_text_serial(MDB_FUNCTION_ARGS)
 {
-	char	   *relname = text_to_cstring(PG_GETARG_TEXT_PP(0));
-	char	   *key_fld = text_to_cstring(PG_GETARG_TEXT_PP(1));
-	char	   *parent_key_fld = text_to_cstring(PG_GETARG_TEXT_PP(2));
-	char	   *orderby_fld = text_to_cstring(PG_GETARG_TEXT_PP(3));
-	char	   *start_with = text_to_cstring(PG_GETARG_TEXT_PP(4));
-	int			max_depth = PG_GETARG_INT32(5);
+	char	   *relname = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+	char	   *key_fld = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+	char	   *parent_key_fld = text_to_cstring(MDB_GETARG_TEXT_PP(2));
+	char	   *orderby_fld = text_to_cstring(MDB_GETARG_TEXT_PP(3));
+	char	   *start_with = text_to_cstring(MDB_GETARG_TEXT_PP(4));
+	int			max_depth = MDB_GETARG_INT32(5);
 	char	   *branch_delim = NULL;
 	bool		show_branch = false;
 	bool		show_serial = true;
@@ -1095,7 +1095,7 @@ connectby_text_serial(PG_FUNCTION_ARGS)
 
 	if (fcinfo->nargs == 7)
 	{
-		branch_delim = text_to_cstring(PG_GETARG_TEXT_PP(6));
+		branch_delim = text_to_cstring(MDB_GETARG_TEXT_PP(6));
 		show_branch = true;
 	}
 	else

@@ -160,12 +160,12 @@ sub GenerateFiles
 		$extraver = '' unless defined $extraver;
 		while (<I>)
 		{
-			s{PG_VERSION "[^"]+"}{PG_VERSION "$self->{strver}$extraver"};
-			s{PG_VERSION_NUM \d+}{PG_VERSION_NUM $self->{numver}};
-s{PG_VERSION_STR "[^"]+"}{__STRINGIFY(x) #x\n#define __STRINGIFY2(z) __STRINGIFY(z)\n#define PG_VERSION_STR "MollyDB $self->{strver}$extraver, compiled by Visual C++ build " __STRINGIFY2(_MSC_VER) ", $bits-bit"};
+			s{MDB_VERSION "[^"]+"}{MDB_VERSION "$self->{strver}$extraver"};
+			s{MDB_VERSION_NUM \d+}{MDB_VERSION_NUM $self->{numver}};
+s{MDB_VERSION_STR "[^"]+"}{__STRINGIFY(x) #x\n#define __STRINGIFY2(z) __STRINGIFY(z)\n#define MDB_VERSION_STR "MollyDB $self->{strver}$extraver, compiled by Visual C++ build " __STRINGIFY2(_MSC_VER) ", $bits-bit"};
 			print O;
 		}
-		print O "#define PG_MAJORVERSION \"$self->{majorver}\"\n";
+		print O "#define MDB_MAJORVERSION \"$self->{majorver}\"\n";
 		print O "#define LOCALEDIR \"/share/locale\"\n"
 		  if ($self->{options}->{nls});
 		print O "/* defines added by config steps */\n";
@@ -262,7 +262,7 @@ s{PG_VERSION_STR "[^"]+"}{__STRINGIFY(x) #x\n#define __STRINGIFY2(z) __STRINGIFY
 	$self->GenerateDefFile(
 		"src/interfaces/ecpg/compatlib/compatlib.def",
 		"src/interfaces/ecpg/compatlib/exports.txt",
-		"LIBECPG_COMPAT");
+		"LIBECMDB_COMPAT");
 	$self->GenerateDefFile(
 		"src/interfaces/ecpg/pgtypeslib/pgtypeslib.def",
 		"src/interfaces/ecpg/pgtypeslib/exports.txt",

@@ -66,7 +66,7 @@ static OffsetNumber bernoulli_nextsampletuple(SampleScanState *node,
  * Create a TsmRoutine descriptor for the BERNOULLI method.
  */
 Datum
-tsm_bernoulli_handler(PG_FUNCTION_ARGS)
+tsm_bernoulli_handler(MDB_FUNCTION_ARGS)
 {
 	TsmRoutine *tsm = makeNode(TsmRoutine);
 
@@ -80,7 +80,7 @@ tsm_bernoulli_handler(PG_FUNCTION_ARGS)
 	tsm->NextSampleTuple = bernoulli_nextsampletuple;
 	tsm->EndSampleScan = NULL;
 
-	PG_RETURN_POINTER(tsm);
+	MDB_RETURN_POINTER(tsm);
 }
 
 /*
@@ -152,11 +152,11 @@ bernoulli_beginsamplescan(SampleScanState *node,
 				 errmsg("sample percentage must be between 0 and 100")));
 
 	/*
-	 * The cutoff is sample probability times (PG_UINT32_MAX + 1); we have to
+	 * The cutoff is sample probability times (MDB_UINT32_MAX + 1); we have to
 	 * store that as a uint64, of course.  Note that this gives strictly
 	 * correct behavior at the limits of zero or one probability.
 	 */
-	dcutoff = rint(((double) PG_UINT32_MAX + 1) * percent / 100);
+	dcutoff = rint(((double) MDB_UINT32_MAX + 1) * percent / 100);
 	sampler->cutoff = (uint64) dcutoff;
 	sampler->seed = seed;
 	sampler->lt = InvalidOffsetNumber;

@@ -13,7 +13,7 @@
 /* Taken over as part of MollyDB by Michael Meskes <meskes@mollydb.org>
    on Feb. 5th, 1998 */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 
 #include <locale.h>
@@ -165,7 +165,7 @@ static enum ARRAY_TYPE
 ecmdb_is_type_an_array(int type, const struct statement * stmt, const struct variable * var)
 {
 	char	   *array_query;
-	enum ARRAY_TYPE isarray = ECPG_ARRAY_NOT_SET;
+	enum ARRAY_TYPE isarray = ECMDB_ARRAY_NOT_SET;
 	PGresult   *query;
 	struct ECPGtype_information_cache *cache_entry;
 
@@ -175,93 +175,93 @@ ecmdb_is_type_an_array(int type, const struct statement * stmt, const struct var
 		 * Text like types are not an array for ecpg, but mollydb counts them
 		 * as an array. This define reminds you to not 'correct' these values.
 		 */
-#define not_an_array_in_ecpg ECPG_ARRAY_NONE
+#define not_an_array_in_ecpg ECMDB_ARRAY_NONE
 
 		/* populate cache with well known types to speed things up */
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), BOOLOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), BYTEAOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CHAROID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), BOOLOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), BYTEAOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CHAROID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
 		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), NAMEOID, not_an_array_in_ecpg, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INT8OID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INT2OID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INT2VECTOROID, ECPG_ARRAY_VECTOR, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INT4OID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), REGPROCOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TEXTOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), OIDOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIDOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), XIDOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CIDOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), OIDVECTOROID, ECPG_ARRAY_VECTOR, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), POINTOID, ECPG_ARRAY_VECTOR, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), LSEGOID, ECPG_ARRAY_VECTOR, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), PATHOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), BOXOID, ECPG_ARRAY_VECTOR, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), POLYGONOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), LINEOID, ECPG_ARRAY_VECTOR, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), FLOAT4OID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), FLOAT8OID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), ABSTIMEOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), RELTIMEOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TINTERVALOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), UNKNOWNOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CIRCLEOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CASHOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INETOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CIDROID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), BPCHAROID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), VARCHAROID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), DATEOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIMEOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIMESTAMPOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIMESTAMPTZOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INTERVALOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIMETZOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), ZPBITOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), VARBITOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
-		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), NUMERICOID, ECPG_ARRAY_NONE, stmt->lineno))
-			return (ECPG_ARRAY_ERROR);
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INT8OID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INT2OID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INT2VECTOROID, ECMDB_ARRAY_VECTOR, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INT4OID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), REGPROCOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TEXTOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), OIDOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIDOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), XIDOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CIDOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), OIDVECTOROID, ECMDB_ARRAY_VECTOR, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), POINTOID, ECMDB_ARRAY_VECTOR, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), LSEGOID, ECMDB_ARRAY_VECTOR, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), PATHOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), BOXOID, ECMDB_ARRAY_VECTOR, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), POLYGONOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), LINEOID, ECMDB_ARRAY_VECTOR, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), FLOAT4OID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), FLOAT8OID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), ABSTIMEOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), RELTIMEOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TINTERVALOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), UNKNOWNOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CIRCLEOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CASHOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INETOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), CIDROID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), BPCHAROID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), VARCHAROID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), DATEOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIMEOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIMESTAMPOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIMESTAMPTZOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), INTERVALOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), TIMETZOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), ZPBITOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), VARBITOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
+		if (!ecmdb_type_infocache_push(&(stmt->connection->cache_head), NUMERICOID, ECMDB_ARRAY_NONE, stmt->lineno))
+			return (ECMDB_ARRAY_ERROR);
 	}
 
 	for (cache_entry = (stmt->connection->cache_head); cache_entry != NULL; cache_entry = cache_entry->next)
@@ -272,36 +272,36 @@ ecmdb_is_type_an_array(int type, const struct statement * stmt, const struct var
 
 	array_query = (char *) ecmdb_alloc(strlen("select typlen from mdb_type where oid= and typelem<>0") + 11, stmt->lineno);
 	if (array_query == NULL)
-		return (ECPG_ARRAY_ERROR);
+		return (ECMDB_ARRAY_ERROR);
 
 	sprintf(array_query, "select typlen from mdb_type where oid=%d and typelem<>0", type);
 	query = PQexec(stmt->connection->connection, array_query);
 	ecmdb_free(array_query);
 	if (!ecmdb_check_PQresult(query, stmt->lineno, stmt->connection->connection, stmt->compat))
-		return (ECPG_ARRAY_ERROR);
+		return (ECMDB_ARRAY_ERROR);
 	else if (PQresultStatus(query) == PGRES_TUPLES_OK)
 	{
 		if (PQntuples(query) == 0)
-			isarray = ECPG_ARRAY_NONE;
+			isarray = ECMDB_ARRAY_NONE;
 		else
 		{
-			isarray = (atol((char *) PQgetvalue(query, 0, 0)) == -1) ? ECPG_ARRAY_ARRAY : ECPG_ARRAY_VECTOR;
+			isarray = (atol((char *) PQgetvalue(query, 0, 0)) == -1) ? ECMDB_ARRAY_ARRAY : ECMDB_ARRAY_VECTOR;
 			if (ecmdb_dynamic_type(type) == SQL3_CHARACTER ||
 				ecmdb_dynamic_type(type) == SQL3_CHARACTER_VARYING)
 			{
 				/*
 				 * arrays of character strings are not yet implemented
 				 */
-				isarray = ECPG_ARRAY_NONE;
+				isarray = ECMDB_ARRAY_NONE;
 			}
 		}
 		PQclear(query);
 	}
 	else
-		return (ECPG_ARRAY_ERROR);
+		return (ECMDB_ARRAY_ERROR);
 
 	ecmdb_type_infocache_push(&(stmt->connection->cache_head), type, isarray, stmt->lineno);
-	ecmdb_log("ecmdb_is_type_an_array on line %d: type (%d); C (%d); array (%s)\n", stmt->lineno, type, var->type, ECPG_IS_ARRAY(isarray) ? "yes" : "no");
+	ecmdb_log("ecmdb_is_type_an_array on line %d: type (%d); C (%d); array (%s)\n", stmt->lineno, type, var->type, ECMDB_IS_ARRAY(isarray) ? "yes" : "no");
 	return isarray;
 }
 
@@ -315,13 +315,13 @@ ecmdb_store_result(const PGresult *results, int act_field,
 				ntuples = PQntuples(results);
 	bool		status = true;
 
-	if ((isarray = ecmdb_is_type_an_array(PQftype(results, act_field), stmt, var)) == ECPG_ARRAY_ERROR)
+	if ((isarray = ecmdb_is_type_an_array(PQftype(results, act_field), stmt, var)) == ECMDB_ARRAY_ERROR)
 	{
-		ecmdb_raise(stmt->lineno, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(stmt->lineno, ECMDB_OUT_OF_MEMORY, ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 
-	if (isarray == ECPG_ARRAY_NONE)
+	if (isarray == ECMDB_ARRAY_NONE)
 	{
 		/*
 		 * if we don't have enough space, we cannot read all tuples
@@ -330,7 +330,7 @@ ecmdb_store_result(const PGresult *results, int act_field,
 		{
 			ecmdb_log("ecmdb_store_result on line %d: incorrect number of matches; %d don't fit into array of %ld\n",
 					 stmt->lineno, ntuples, var->arrsize);
-			ecmdb_raise(stmt->lineno, INFORMIX_MODE(stmt->compat) ? ECPG_INFORMIX_SUBSELECT_NOT_ONE : ECPG_TOO_MANY_MATCHES, ECPG_SQLSTATE_CARDINALITY_VIOLATION, NULL);
+			ecmdb_raise(stmt->lineno, INFORMIX_MODE(stmt->compat) ? ECMDB_INFORMIX_SUBSELECT_NOT_ONE : ECMDB_TOO_MANY_MATCHES, ECMDB_SQLSTATE_CARDINALITY_VIOLATION, NULL);
 			return false;
 		}
 	}
@@ -341,7 +341,7 @@ ecmdb_store_result(const PGresult *results, int act_field,
 		 */
 		if (var->arrsize == 0)
 		{
-			ecmdb_raise(stmt->lineno, ECPG_NO_ARRAY, ECPG_SQLSTATE_DATATYPE_MISMATCH, NULL);
+			ecmdb_raise(stmt->lineno, ECMDB_NO_ARRAY, ECMDB_SQLSTATE_DATATYPE_MISMATCH, NULL);
 			return false;
 		}
 	}
@@ -764,7 +764,7 @@ ecmdb_store_input(const int lineno, const bool force_indicator, const struct var
 					else if (var->offset == sizeof(int))
 						sprintf(mallocedval, "%c", (*((int *) var->value)) ? 't' : 'f');
 					else
-						ecmdb_raise(lineno, ECPG_CONVERT_BOOL, ECPG_SQLSTATE_DATATYPE_MISMATCH, NULL);
+						ecmdb_raise(lineno, ECMDB_CONVERT_BOOL, ECMDB_SQLSTATE_DATATYPE_MISMATCH, NULL);
 				}
 
 				*tobeinserted_p = mallocedval;
@@ -1041,7 +1041,7 @@ ecmdb_store_input(const int lineno, const bool force_indicator, const struct var
 
 			default:
 				/* Not implemented yet */
-				ecmdb_raise(lineno, ECPG_UNSUPPORTED, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, ecmdb_type_name(var->type));
+				ecmdb_raise(lineno, ECMDB_UNSUPPORTED, ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR, ecmdb_type_name(var->type));
 				return false;
 				break;
 		}
@@ -1306,8 +1306,8 @@ ecmdb_build_params(struct statement * stmt)
 			 * We have an argument but we dont have the matched up placeholder
 			 * in the string
 			 */
-			ecmdb_raise(stmt->lineno, ECPG_TOO_MANY_ARGUMENTS,
-					   ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_PARAMETERS,
+			ecmdb_raise(stmt->lineno, ECMDB_TOO_MANY_ARGUMENTS,
+					   ECMDB_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_PARAMETERS,
 					   NULL);
 			ecmdb_free_params(stmt, false);
 			return false;
@@ -1389,8 +1389,8 @@ ecmdb_build_params(struct statement * stmt)
 	/* Check if there are unmatched things left. */
 	if (next_insert(stmt->command, position, stmt->questionmarks) >= 0)
 	{
-		ecmdb_raise(stmt->lineno, ECPG_TOO_FEW_ARGUMENTS,
-				 ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_PARAMETERS, NULL);
+		ecmdb_raise(stmt->lineno, ECMDB_TOO_FEW_ARGUMENTS,
+				 ECMDB_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_PARAMETERS, NULL);
 		ecmdb_free_params(stmt, false);
 		return false;
 	}
@@ -1485,8 +1485,8 @@ ecmdb_process_output(struct statement * stmt, bool clear_result)
 
 	if (sqlca == NULL)
 	{
-		ecmdb_raise(stmt->lineno, ECPG_OUT_OF_MEMORY,
-				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(stmt->lineno, ECMDB_OUT_OF_MEMORY,
+				   ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return (false);
 	}
 
@@ -1505,7 +1505,7 @@ ecmdb_process_output(struct statement * stmt, bool clear_result)
 				if (ntuples)
 					ecmdb_log("ecmdb_process_output on line %d: incorrect number of matches (%d)\n",
 							 stmt->lineno, ntuples);
-				ecmdb_raise(stmt->lineno, ECPG_NOT_FOUND, ECPG_SQLSTATE_NO_DATA, NULL);
+				ecmdb_raise(stmt->lineno, ECMDB_NOT_FOUND, ECMDB_SQLSTATE_NO_DATA, NULL);
 				status = false;
 				break;
 			}
@@ -1654,14 +1654,14 @@ ecmdb_process_output(struct statement * stmt, bool clear_result)
 					}
 					else if (!INFORMIX_MODE(stmt->compat))
 					{
-						ecmdb_raise(stmt->lineno, ECPG_TOO_FEW_ARGUMENTS, ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_TARGETS, NULL);
+						ecmdb_raise(stmt->lineno, ECMDB_TOO_FEW_ARGUMENTS, ECMDB_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_TARGETS, NULL);
 						return (false);
 					}
 				}
 
 			if (status && var != NULL)
 			{
-				ecmdb_raise(stmt->lineno, ECPG_TOO_MANY_ARGUMENTS, ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_TARGETS, NULL);
+				ecmdb_raise(stmt->lineno, ECMDB_TOO_MANY_ARGUMENTS, ECMDB_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_TARGETS, NULL);
 				status = false;
 			}
 
@@ -1672,12 +1672,12 @@ ecmdb_process_output(struct statement * stmt, bool clear_result)
 			sqlca->sqlerrd[1] = PQoidValue(stmt->results);
 			sqlca->sqlerrd[2] = atol(PQcmdTuples(stmt->results));
 			ecmdb_log("ecmdb_process_output on line %d: OK: %s\n", stmt->lineno, cmdstat);
-			if (stmt->compat != ECPG_COMPAT_INFORMIX_SE &&
+			if (stmt->compat != ECMDB_COMPAT_INFORMIX_SE &&
 				!sqlca->sqlerrd[2] &&
 				(strncmp(cmdstat, "UPDATE", 6) == 0
 				 || strncmp(cmdstat, "INSERT", 6) == 0
 				 || strncmp(cmdstat, "DELETE", 6) == 0))
-				ecmdb_raise(stmt->lineno, ECPG_NOT_FOUND, ECPG_SQLSTATE_NO_DATA, NULL);
+				ecmdb_raise(stmt->lineno, ECMDB_NOT_FOUND, ECMDB_SQLSTATE_NO_DATA, NULL);
 			break;
 		case PGRES_COPY_OUT:
 			{
@@ -1747,7 +1747,7 @@ ecmdb_process_output(struct statement * stmt, bool clear_result)
 bool
 ecmdb_do_prologue(int lineno, const int compat, const int force_indicator,
 				 const char *connection_name, const bool questionmarks,
-				 enum ECPG_statement_type statement_type, const char *query,
+				 enum ECMDB_statement_type statement_type, const char *query,
 				 va_list args, struct statement ** stmt_out)
 {
 	struct statement *stmt;
@@ -1760,7 +1760,7 @@ ecmdb_do_prologue(int lineno, const int compat, const int force_indicator,
 
 	if (!query)
 	{
-		ecmdb_raise(lineno, ECPG_EMPTY, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, NULL);
+		ecmdb_raise(lineno, ECMDB_EMPTY, ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR, NULL);
 		return false;
 	}
 
@@ -1829,7 +1829,7 @@ ecmdb_do_prologue(int lineno, const int compat, const int force_indicator,
 		}
 		else
 		{
-			ecmdb_raise(lineno, ECPG_INVALID_STMT, ECPG_SQLSTATE_INVALID_SQL_STATEMENT_NAME, stmt->command);
+			ecmdb_raise(lineno, ECMDB_INVALID_STMT, ECMDB_SQLSTATE_INVALID_SQL_STATEMENT_NAME, stmt->command);
 			ecmdb_do_epilogue(stmt);
 			return (false);
 		}
@@ -1938,7 +1938,7 @@ ecmdb_do_prologue(int lineno, const int compat, const int force_indicator,
 			/* if variable is NULL, the statement hasn't been prepared */
 			if (var->pointer == NULL)
 			{
-				ecmdb_raise(lineno, ECPG_INVALID_STMT, ECPG_SQLSTATE_INVALID_SQL_STATEMENT_NAME, NULL);
+				ecmdb_raise(lineno, ECMDB_INVALID_STMT, ECMDB_SQLSTATE_INVALID_SQL_STATEMENT_NAME, NULL);
 				ecmdb_free(var);
 				ecmdb_do_epilogue(stmt);
 				return false;
@@ -1959,7 +1959,7 @@ ecmdb_do_prologue(int lineno, const int compat, const int force_indicator,
 	/* are we connected? */
 	if (con == NULL || con->connection == NULL)
 	{
-		ecmdb_raise(lineno, ECPG_NOT_CONN, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, (con) ? con->name : ecmdb_gettext("<empty>"));
+		ecmdb_raise(lineno, ECMDB_NOT_CONN, ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR, (con) ? con->name : ecmdb_gettext("<empty>"));
 		ecmdb_do_epilogue(stmt);
 		return false;
 	}
@@ -1999,7 +1999,7 @@ ecmdb_do(const int lineno, const int compat, const int force_indicator, const ch
 	struct statement *stmt = NULL;
 
 	if (!ecmdb_do_prologue(lineno, compat, force_indicator, connection_name,
-						  questionmarks, (enum ECPG_statement_type) st,
+						  questionmarks, (enum ECMDB_statement_type) st,
 						  query, args, &stmt))
 		goto fail;
 
@@ -2046,7 +2046,7 @@ bool
 ECPGdo_descriptor(int line, const char *connection,
 				  const char *descriptor, const char *query)
 {
-	return ECPGdo(line, ECPG_COMPAT_PGSQL, true, connection, '\0', 0, query, ECPGt_EOIT,
+	return ECPGdo(line, ECMDB_COMPAT_PGSQL, true, connection, '\0', 0, query, ECPGt_EOIT,
 				  ECPGt_descriptor, descriptor, 0L, 0L, 0L,
 				  ECPGt_NO_INDICATOR, NULL, 0L, 0L, 0L, ECPGt_EORT);
 }

@@ -9,8 +9,8 @@ DATA = dummy_seclabel--1.0.sql
 REGRESS = dummy_seclabel
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = src/test/modules/dummy_seclabel

@@ -721,29 +721,29 @@
 #undef PACKAGE_VERSION
 
 /* Define to the name of a signed 128-bit integer type. */
-#undef PG_INT128_TYPE
+#undef MDB_INT128_TYPE
 
 /* Define to the name of a signed 64-bit integer type. */
-#undef PG_INT64_TYPE
+#undef MDB_INT64_TYPE
 
 /* Define to the name of the default MollyDB service principal in Kerberos
    (GSSAPI). (--with-krb-srvnam=NAME) */
-#undef PG_KRB_SRVNAM
+#undef MDB_KRB_SRVNAM
 
 /* MollyDB major version as a string */
-#undef PG_MAJORVERSION
+#undef MDB_MAJORVERSION
 
 /* Define to gnu_printf if compiler supports it, else printf. */
-#undef PG_PRINTF_ATTRIBUTE
+#undef MDB_PRINTF_ATTRIBUTE
 
 /* MollyDB version as a string */
-#undef PG_VERSION
+#undef MDB_VERSION
 
 /* MollyDB version as a number */
-#undef PG_VERSION_NUM
+#undef MDB_VERSION_NUM
 
 /* A string containing the version number, platform, and C compiler */
-#undef PG_VERSION_STR
+#undef MDB_VERSION_STR
 
 /* Define to 1 to allow profiling output to be saved separately for each
    process. */

@@ -48,21 +48,21 @@ extern void regress_lseg_construct(LSEG *lseg, Point *pt1, Point *pt2);
 extern char *reverse_name(char *string);
 extern int	oldstyle_length(int n, text *t);
 
-#ifdef PG_MODULE_MAGIC
-PG_MODULE_MAGIC;
+#ifdef MDB_MODULE_MAGIC
+MDB_MODULE_MAGIC;
 #endif
 
 
 /*
  * Distance from a point to a path
  */
-PG_FUNCTION_INFO_V1(regress_dist_ptpath);
+MDB_FUNCTION_INFO_V1(regress_dist_ptpath);
 
 Datum
-regress_dist_ptpath(PG_FUNCTION_ARGS)
+regress_dist_ptpath(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	PATH	   *path = PG_GETARG_PATH_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(1);
 	float8		result = 0.0;	/* keep compiler quiet */
 	float8		tmp;
 	int			i;
@@ -71,7 +71,7 @@ regress_dist_ptpath(PG_FUNCTION_ARGS)
 	switch (path->npts)
 	{
 		case 0:
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		case 1:
 			result = point_dt(pt, &path->p[0]);
 			break;
@@ -93,20 +93,20 @@ regress_dist_ptpath(PG_FUNCTION_ARGS)
 			}
 			break;
 	}
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
  * this essentially does a cartesian product of the lsegs in the
  * two paths, and finds the min distance between any two lsegs
  */
-PG_FUNCTION_INFO_V1(regress_path_dist);
+MDB_FUNCTION_INFO_V1(regress_path_dist);
 
 Datum
-regress_path_dist(PG_FUNCTION_ARGS)
+regress_path_dist(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 	bool		have_min = false;
 	float8		min = 0.0;		/* initialize to keep compiler quiet */
 	float8		tmp;
@@ -134,9 +134,9 @@ regress_path_dist(PG_FUNCTION_ARGS)
 	}
 
 	if (!have_min)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_FLOAT8(min);
+	MDB_RETURN_FLOAT8(min);
 }
 
 PATH *
@@ -162,13 +162,13 @@ poly2path(POLYGON *poly)
 }
 
 /* return the point where two paths intersect, or NULL if no intersection. */
-PG_FUNCTION_INFO_V1(interpt_pp);
+MDB_FUNCTION_INFO_V1(interpt_pp);
 
 Datum
-interpt_pp(PG_FUNCTION_ARGS)
+interpt_pp(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 	int			i,
 				j;
 	LSEG		seg1,
@@ -191,14 +191,14 @@ interpt_pp(PG_FUNCTION_ARGS)
 	}
 
 	if (!found)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/*
 	 * Note: DirectFunctionCall2 will kick out an error if lseg_interpt()
 	 * returns NULL, but that should be impossible since we know the two
 	 * segments intersect.
 	 */
-	PG_RETURN_DATUM(DirectFunctionCall2(lseg_interpt,
+	MDB_RETURN_DATUM(DirectFunctionCall2(lseg_interpt,
 										LsegPGetDatum(&seg1),
 										LsegPGetDatum(&seg2)));
 }
@@ -214,19 +214,19 @@ regress_lseg_construct(LSEG *lseg, Point *pt1, Point *pt2)
 	lseg->p[1].y = pt2->y;
 }
 
-PG_FUNCTION_INFO_V1(overpaid);
+MDB_FUNCTION_INFO_V1(overpaid);
 
 Datum
-overpaid(PG_FUNCTION_ARGS)
+overpaid(MDB_FUNCTION_ARGS)
 {
-	HeapTupleHeader tuple = PG_GETARG_HEAPTUPLEHEADER(0);
+	HeapTupleHeader tuple = MDB_GETARG_HEAPTUPLEHEADER(0);
 	bool		isnull;
 	int32		salary;
 
 	salary = DatumGetInt32(GetAttributeByName(tuple, "salary", &isnull));
 	if (isnull)
-		PG_RETURN_NULL();
-	PG_RETURN_BOOL(salary > 699);
+		MDB_RETURN_NULL();
+	MDB_RETURN_BOOL(salary > 699);
 }
 
 /* New type "widget"
@@ -280,29 +280,29 @@ widget_out(WIDGET *widget)
 					widget->center.x, widget->center.y, widget->radius);
 }
 
-PG_FUNCTION_INFO_V1(pt_in_widget);
+MDB_FUNCTION_INFO_V1(pt_in_widget);
 
 Datum
-pt_in_widget(PG_FUNCTION_ARGS)
+pt_in_widget(MDB_FUNCTION_ARGS)
 {
-	Point	   *point = PG_GETARG_POINT_P(0);
-	WIDGET	   *widget = (WIDGET *) PG_GETARG_POINTER(1);
+	Point	   *point = MDB_GETARG_POINT_P(0);
+	WIDGET	   *widget = (WIDGET *) MDB_GETARG_POINTER(1);
 
-	PG_RETURN_BOOL(point_dt(point, &widget->center) < widget->radius);
+	MDB_RETURN_BOOL(point_dt(point, &widget->center) < widget->radius);
 }
 
-PG_FUNCTION_INFO_V1(boxarea);
+MDB_FUNCTION_INFO_V1(boxarea);
 
 Datum
-boxarea(PG_FUNCTION_ARGS)
+boxarea(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 	double		width,
 				height;
 
 	width = Abs(box->high.x - box->low.x);
 	height = Abs(box->high.y - box->low.y);
-	PG_RETURN_FLOAT8(width * height);
+	MDB_RETURN_FLOAT8(width * height);
 }
 
 char *
@@ -346,10 +346,10 @@ static int	fd17a_level = 0;
 static bool fd17b_recursion = true;
 static bool fd17a_recursion = true;
 
-PG_FUNCTION_INFO_V1(funny_dup17);
+MDB_FUNCTION_INFO_V1(funny_dup17);
 
 Datum
-funny_dup17(PG_FUNCTION_ARGS)
+funny_dup17(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	TransactionId *xid;
@@ -461,10 +461,10 @@ funny_dup17(PG_FUNCTION_ARGS)
 static SPIPlanPtr splan = NULL;
 static bool ttoff = false;
 
-PG_FUNCTION_INFO_V1(ttdummy);
+MDB_FUNCTION_INFO_V1(ttdummy);
 
 Datum
-ttdummy(PG_FUNCTION_ARGS)
+ttdummy(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	Trigger    *trigger;		/* to get trigger name */
@@ -656,31 +656,31 @@ ttdummy(PG_FUNCTION_ARGS)
 	return PointerGetDatum(rettuple);
 }
 
-PG_FUNCTION_INFO_V1(set_ttdummy);
+MDB_FUNCTION_INFO_V1(set_ttdummy);
 
 Datum
-set_ttdummy(PG_FUNCTION_ARGS)
+set_ttdummy(MDB_FUNCTION_ARGS)
 {
-	int32		on = PG_GETARG_INT32(0);
+	int32		on = MDB_GETARG_INT32(0);
 
 	if (ttoff)					/* OFF currently */
 	{
 		if (on == 0)
-			PG_RETURN_INT32(0);
+			MDB_RETURN_INT32(0);
 
 		/* turn ON */
 		ttoff = false;
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	}
 
 	/* ON currently */
 	if (on != 0)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 
 	/* turn OFF */
 	ttoff = true;
 
-	PG_RETURN_INT32(1);
+	MDB_RETURN_INT32(1);
 }
 
 
@@ -694,12 +694,12 @@ set_ttdummy(PG_FUNCTION_ARGS)
  *
  *		Note: Fills any missing positions with zeroes.
  */
-PG_FUNCTION_INFO_V1(int44in);
+MDB_FUNCTION_INFO_V1(int44in);
 
 Datum
-int44in(PG_FUNCTION_ARGS)
+int44in(MDB_FUNCTION_ARGS)
 {
-	char	   *input_string = PG_GETARG_CSTRING(0);
+	char	   *input_string = MDB_GETARG_CSTRING(0);
 	int32	   *result = (int32 *) palloc(4 * sizeof(int32));
 	int			i;
 
@@ -712,18 +712,18 @@ int44in(PG_FUNCTION_ARGS)
 	while (i < 4)
 		result[i++] = 0;
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
  *		int44out		- converts internal form to "num num ..."
  */
-PG_FUNCTION_INFO_V1(int44out);
+MDB_FUNCTION_INFO_V1(int44out);
 
 Datum
-int44out(PG_FUNCTION_ARGS)
+int44out(MDB_FUNCTION_ARGS)
 {
-	int32	   *an_array = (int32 *) PG_GETARG_POINTER(0);
+	int32	   *an_array = (int32 *) MDB_GETARG_POINTER(0);
 	char	   *result = (char *) palloc(16 * 4);		/* Allow 14 digits +
 														 * sign */
 	int			i;
@@ -738,14 +738,14 @@ int44out(PG_FUNCTION_ARGS)
 		*walk++ = ' ';
 	}
 	*--walk = '\0';
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
-PG_FUNCTION_INFO_V1(make_tuple_indirect);
+MDB_FUNCTION_INFO_V1(make_tuple_indirect);
 Datum
-make_tuple_indirect(PG_FUNCTION_ARGS)
+make_tuple_indirect(MDB_FUNCTION_ARGS)
 {
-	HeapTupleHeader rec = PG_GETARG_HEAPTUPLEHEADER(0);
+	HeapTupleHeader rec = MDB_GETARG_HEAPTUPLEHEADER(0);
 	HeapTupleData tuple;
 	int			ncolumns;
 	Datum	   *values;
@@ -827,7 +827,7 @@ make_tuple_indirect(PG_FUNCTION_ARGS)
 	MemoryContextSwitchTo(old_context);
 
 	/*
-	 * We intentionally don't use PG_RETURN_HEAPTUPLEHEADER here, because that
+	 * We intentionally don't use MDB_RETURN_HEAPTUPLEHEADER here, because that
 	 * would cause the indirect toast pointers to be flattened out of the
 	 * tuple immediately, rendering subsequent testing irrelevant.  So just
 	 * return the HeapTupleHeader pointer as-is.  This violates the general
@@ -835,13 +835,13 @@ make_tuple_indirect(PG_FUNCTION_ARGS)
 	 * long as the regression test scripts don't insert the result of this
 	 * function into a container type (record, array, etc) it should be OK.
 	 */
-	PG_RETURN_POINTER(newtup->t_data);
+	MDB_RETURN_POINTER(newtup->t_data);
 }
 
-PG_FUNCTION_INFO_V1(regress_putenv);
+MDB_FUNCTION_INFO_V1(regress_putenv);
 
 Datum
-regress_putenv(PG_FUNCTION_ARGS)
+regress_putenv(MDB_FUNCTION_ARGS)
 {
 	MemoryContext oldcontext;
 	char	   *envbuf;
@@ -850,22 +850,22 @@ regress_putenv(PG_FUNCTION_ARGS)
 		elog(ERROR, "must be superuser to change environment variables");
 
 	oldcontext = MemoryContextSwitchTo(TopMemoryContext);
-	envbuf = text_to_cstring((text *) PG_GETARG_POINTER(0));
+	envbuf = text_to_cstring((text *) MDB_GETARG_POINTER(0));
 	MemoryContextSwitchTo(oldcontext);
 
 	if (putenv(envbuf) != 0)
 		elog(ERROR, "could not set environment variable: %m");
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* Sleep until no process has a given PID. */
-PG_FUNCTION_INFO_V1(wait_pid);
+MDB_FUNCTION_INFO_V1(wait_pid);
 
 Datum
-wait_pid(PG_FUNCTION_ARGS)
+wait_pid(MDB_FUNCTION_ARGS)
 {
-	int			pid = PG_GETARG_INT32(0);
+	int			pid = MDB_GETARG_INT32(0);
 
 	if (!superuser())
 		elog(ERROR, "must be superuser to check PID liveness");
@@ -879,10 +879,10 @@ wait_pid(PG_FUNCTION_ARGS)
 	if (errno != ESRCH)
 		elog(ERROR, "could not check PID %d liveness: %m", pid);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
-#ifndef PG_HAVE_ATOMIC_FLAG_SIMULATION
+#ifndef MDB_HAVE_ATOMIC_FLAG_SIMULATION
 static void
 test_atomic_flag(void)
 {
@@ -912,7 +912,7 @@ test_atomic_flag(void)
 
 	mdb_atomic_clear_flag(&flag);
 }
-#endif   /* PG_HAVE_ATOMIC_FLAG_SIMULATION */
+#endif   /* MDB_HAVE_ATOMIC_FLAG_SIMULATION */
 
 static void
 test_atomic_uint32(void)
@@ -1014,7 +1014,7 @@ test_atomic_uint32(void)
 		elog(ERROR, "mdb_atomic_fetch_and_u32() #3 wrong");
 }
 
-#ifdef PG_HAVE_ATOMIC_U64_SUPPORT
+#ifdef MDB_HAVE_ATOMIC_U64_SUPPORT
 static void
 test_atomic_uint64(void)
 {
@@ -1090,12 +1090,12 @@ test_atomic_uint64(void)
 	if (mdb_atomic_fetch_and_u64(&var, ~0) != 0)
 		elog(ERROR, "mdb_atomic_fetch_and_u64() #3 wrong");
 }
-#endif   /* PG_HAVE_ATOMIC_U64_SUPPORT */
+#endif   /* MDB_HAVE_ATOMIC_U64_SUPPORT */
 
 
-PG_FUNCTION_INFO_V1(test_atomic_ops);
+MDB_FUNCTION_INFO_V1(test_atomic_ops);
 Datum
-test_atomic_ops(PG_FUNCTION_ARGS)
+test_atomic_ops(MDB_FUNCTION_ARGS)
 {
 	/* ---
 	 * Can't run the test under the semaphore emulation, it doesn't handle
@@ -1107,15 +1107,15 @@ test_atomic_ops(PG_FUNCTION_ARGS)
 	 * everywhere, whereas the efficient implementations wont.
 	 * ---
 	 */
-#ifndef PG_HAVE_ATOMIC_FLAG_SIMULATION
+#ifndef MDB_HAVE_ATOMIC_FLAG_SIMULATION
 	test_atomic_flag();
 #endif
 
 	test_atomic_uint32();
 
-#ifdef PG_HAVE_ATOMIC_U64_SUPPORT
+#ifdef MDB_HAVE_ATOMIC_U64_SUPPORT
 	test_atomic_uint64();
 #endif
 
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }

@@ -3335,7 +3335,7 @@ multixact_redo(XLogReaderState *record)
 }
 
 Datum
-mdb_get_multixact_members(PG_FUNCTION_ARGS)
+mdb_get_multixact_members(MDB_FUNCTION_ARGS)
 {
 	typedef struct
 	{
@@ -3343,7 +3343,7 @@ mdb_get_multixact_members(PG_FUNCTION_ARGS)
 		int			nmembers;
 		int			iter;
 	} mxact;
-	MultiXactId mxid = PG_GETARG_UINT32(0);
+	MultiXactId mxid = MDB_GETARG_UINT32(0);
 	mxact	   *multi;
 	FuncCallContext *funccxt;
 

@@ -119,7 +119,7 @@ typedef int Py_ssize_t;
 
 /* define our text domain for translations */
 #undef TEXTDOMAIN
-#define TEXTDOMAIN PG_TEXTDOMAIN("plpython")
+#define TEXTDOMAIN MDB_TEXTDOMAIN("plpython")
 
 #include <compile.h>
 #include <eval.h>

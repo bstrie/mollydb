@@ -10,14 +10,14 @@
 /*
 ** Text ops
 */
-PG_FUNCTION_INFO_V1(gbt_text_compress);
-PG_FUNCTION_INFO_V1(gbt_bpchar_compress);
-PG_FUNCTION_INFO_V1(gbt_text_union);
-PG_FUNCTION_INFO_V1(gbt_text_picksplit);
-PG_FUNCTION_INFO_V1(gbt_text_consistent);
-PG_FUNCTION_INFO_V1(gbt_bpchar_consistent);
-PG_FUNCTION_INFO_V1(gbt_text_penalty);
-PG_FUNCTION_INFO_V1(gbt_text_same);
+MDB_FUNCTION_INFO_V1(gbt_text_compress);
+MDB_FUNCTION_INFO_V1(gbt_bpchar_compress);
+MDB_FUNCTION_INFO_V1(gbt_text_union);
+MDB_FUNCTION_INFO_V1(gbt_text_picksplit);
+MDB_FUNCTION_INFO_V1(gbt_text_consistent);
+MDB_FUNCTION_INFO_V1(gbt_bpchar_consistent);
+MDB_FUNCTION_INFO_V1(gbt_text_penalty);
+MDB_FUNCTION_INFO_V1(gbt_text_same);
 
 
 /* define for comparison */
@@ -97,22 +97,22 @@ static gbtree_vinfo tinfo =
 
 
 Datum
-gbt_text_compress(PG_FUNCTION_ARGS)
+gbt_text_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
 	if (tinfo.eml == 0)
 	{
 		tinfo.eml = mdb_database_encoding_max_length();
 	}
 
-	PG_RETURN_POINTER(gbt_var_compress(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_var_compress(entry, &tinfo));
 }
 
 Datum
-gbt_bpchar_compress(PG_FUNCTION_ARGS)
+gbt_bpchar_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval;
 
 	if (tinfo.eml == 0)
@@ -134,20 +134,20 @@ gbt_bpchar_compress(PG_FUNCTION_ARGS)
 	else
 		retval = entry;
 
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 
 
 Datum
-gbt_text_consistent(PG_FUNCTION_ARGS)
+gbt_text_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	void	   *query = (void *) DatumGetTextP(PG_GETARG_DATUM(1));
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	void	   *query = (void *) DatumGetTextP(MDB_GETARG_DATUM(1));
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	bool		retval;
 	GBT_VARKEY *key = (GBT_VARKEY *) DatumGetPointer(entry->key);
 	GBT_VARKEY_R r = gbt_var_key_readable(key);
@@ -160,22 +160,22 @@ gbt_text_consistent(PG_FUNCTION_ARGS)
 		tinfo.eml = mdb_database_encoding_max_length();
 	}
 
-	retval = gbt_var_consistent(&r, query, strategy, PG_GET_COLLATION(),
+	retval = gbt_var_consistent(&r, query, strategy, MDB_GET_COLLATION(),
 								GIST_LEAF(entry), &tinfo);
 
-	PG_RETURN_BOOL(retval);
+	MDB_RETURN_BOOL(retval);
 }
 
 
 Datum
-gbt_bpchar_consistent(PG_FUNCTION_ARGS)
+gbt_bpchar_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	void	   *query = (void *) DatumGetPointer(PG_DETOAST_DATUM(PG_GETARG_DATUM(1)));
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	void	   *query = (void *) DatumGetPointer(MDB_DETOAST_DATUM(MDB_GETARG_DATUM(1)));
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	bool		retval;
 	GBT_VARKEY *key = (GBT_VARKEY *) DatumGetPointer(entry->key);
 	GBT_VARKEY_R r = gbt_var_key_readable(key);
@@ -189,53 +189,53 @@ gbt_bpchar_consistent(PG_FUNCTION_ARGS)
 		tinfo.eml = mdb_database_encoding_max_length();
 	}
 
-	retval = gbt_var_consistent(&r, trim, strategy, PG_GET_COLLATION(),
+	retval = gbt_var_consistent(&r, trim, strategy, MDB_GET_COLLATION(),
 								GIST_LEAF(entry), &tinfo);
-	PG_RETURN_BOOL(retval);
+	MDB_RETURN_BOOL(retval);
 }
 
 
 Datum
-gbt_text_union(PG_FUNCTION_ARGS)
+gbt_text_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	int32	   *size = (int *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	int32	   *size = (int *) MDB_GETARG_POINTER(1);
 
-	PG_RETURN_POINTER(gbt_var_union(entryvec, size, PG_GET_COLLATION(),
+	MDB_RETURN_POINTER(gbt_var_union(entryvec, size, MDB_GET_COLLATION(),
 									&tinfo));
 }
 
 
 Datum
-gbt_text_picksplit(PG_FUNCTION_ARGS)
+gbt_text_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 
-	gbt_var_picksplit(entryvec, v, PG_GET_COLLATION(),
+	gbt_var_picksplit(entryvec, v, MDB_GET_COLLATION(),
 					  &tinfo);
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 Datum
-gbt_text_same(PG_FUNCTION_ARGS)
+gbt_text_same(MDB_FUNCTION_ARGS)
 {
-	Datum		d1 = PG_GETARG_DATUM(0);
-	Datum		d2 = PG_GETARG_DATUM(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	Datum		d1 = MDB_GETARG_DATUM(0);
+	Datum		d2 = MDB_GETARG_DATUM(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
-	*result = gbt_var_same(d1, d2, PG_GET_COLLATION(), &tinfo);
-	PG_RETURN_POINTER(result);
+	*result = gbt_var_same(d1, d2, MDB_GET_COLLATION(), &tinfo);
+	MDB_RETURN_POINTER(result);
 }
 
 
 Datum
-gbt_text_penalty(PG_FUNCTION_ARGS)
+gbt_text_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *o = (GISTENTRY *) PG_GETARG_POINTER(0);
-	GISTENTRY  *n = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *o = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	GISTENTRY  *n = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 
-	PG_RETURN_POINTER(gbt_var_penalty(result, o, n, PG_GET_COLLATION(),
+	MDB_RETURN_POINTER(gbt_var_penalty(result, o, n, MDB_GET_COLLATION(),
 									  &tinfo));
 }

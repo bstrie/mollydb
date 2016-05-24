@@ -334,24 +334,24 @@ ordered_set_shutdown(Datum arg)
  * with a single input column in which we want to suppress nulls
  */
 Datum
-ordered_set_transition(PG_FUNCTION_ARGS)
+ordered_set_transition(MDB_FUNCTION_ARGS)
 {
 	OSAPerGroupState *osastate;
 
 	/* If first call, create the transition state workspace */
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		osastate = ordered_set_startup(fcinfo, false);
 	else
-		osastate = (OSAPerGroupState *) PG_GETARG_POINTER(0);
+		osastate = (OSAPerGroupState *) MDB_GETARG_POINTER(0);
 
 	/* Load the datum into the tuplesort object, but only if it's not null */
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
-		tuplesort_putdatum(osastate->sortstate, PG_GETARG_DATUM(1), false);
+		tuplesort_putdatum(osastate->sortstate, MDB_GETARG_DATUM(1), false);
 		osastate->number_of_rows++;
 	}
 
-	PG_RETURN_POINTER(osastate);
+	MDB_RETURN_POINTER(osastate);
 }
 
 /*
@@ -359,7 +359,7 @@ ordered_set_transition(PG_FUNCTION_ARGS)
  * with (potentially) multiple aggregated input columns
  */
 Datum
-ordered_set_transition_multi(PG_FUNCTION_ARGS)
+ordered_set_transition_multi(MDB_FUNCTION_ARGS)
 {
 	OSAPerGroupState *osastate;
 	TupleTableSlot *slot;
@@ -367,19 +367,19 @@ ordered_set_transition_multi(PG_FUNCTION_ARGS)
 	int			i;
 
 	/* If first call, create the transition state workspace */
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		osastate = ordered_set_startup(fcinfo, true);
 	else
-		osastate = (OSAPerGroupState *) PG_GETARG_POINTER(0);
+		osastate = (OSAPerGroupState *) MDB_GETARG_POINTER(0);
 
 	/* Form a tuple from all the other inputs besides the transition value */
 	slot = osastate->qstate->tupslot;
 	ExecClearTuple(slot);
-	nargs = PG_NARGS() - 1;
+	nargs = MDB_NARGS() - 1;
 	for (i = 0; i < nargs; i++)
 	{
-		slot->tts_values[i] = PG_GETARG_DATUM(i + 1);
-		slot->tts_isnull[i] = PG_ARGISNULL(i + 1);
+		slot->tts_values[i] = MDB_GETARG_DATUM(i + 1);
+		slot->tts_isnull[i] = MDB_ARGISNULL(i + 1);
 	}
 	if (osastate->qstate->aggref->aggkind == AGGKIND_HYPOTHETICAL)
 	{
@@ -395,7 +395,7 @@ ordered_set_transition_multi(PG_FUNCTION_ARGS)
 	tuplesort_puttupleslot(osastate->sortstate, slot);
 	osastate->number_of_rows++;
 
-	PG_RETURN_POINTER(osastate);
+	MDB_RETURN_POINTER(osastate);
 }
 
 
@@ -403,7 +403,7 @@ ordered_set_transition_multi(PG_FUNCTION_ARGS)
  * percentile_disc(float8) within group(anyelement) - discrete percentile
  */
 Datum
-percentile_disc_final(PG_FUNCTION_ARGS)
+percentile_disc_final(MDB_FUNCTION_ARGS)
 {
 	OSAPerGroupState *osastate;
 	double		percentile;
@@ -414,10 +414,10 @@ percentile_disc_final(PG_FUNCTION_ARGS)
 	Assert(AggCheckCallContext(fcinfo, NULL) == AGG_CONTEXT_AGGREGATE);
 
 	/* Get and check the percentile argument */
-	if (PG_ARGISNULL(1))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(1))
+		MDB_RETURN_NULL();
 
-	percentile = PG_GETARG_FLOAT8(1);
+	percentile = MDB_GETARG_FLOAT8(1);
 
 	if (percentile < 0 || percentile > 1 || isnan(percentile))
 		ereport(ERROR,
@@ -426,14 +426,14 @@ percentile_disc_final(PG_FUNCTION_ARGS)
 						percentile)));
 
 	/* If there were no regular rows, the result is NULL */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	osastate = (OSAPerGroupState *) PG_GETARG_POINTER(0);
+	osastate = (OSAPerGroupState *) MDB_GETARG_POINTER(0);
 
 	/* number_of_rows could be zero if we only saw NULL input values */
 	if (osastate->number_of_rows == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Finish the sort */
 	tuplesort_performsort(osastate->sortstate);
@@ -465,9 +465,9 @@ percentile_disc_final(PG_FUNCTION_ARGS)
 
 	/* We shouldn't have stored any nulls, but do the right thing anyway */
 	if (isnull)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_DATUM(val);
+		MDB_RETURN_DATUM(val);
 }
 
 
@@ -519,10 +519,10 @@ percentile_cont_final_common(FunctionCallInfo fcinfo,
 	Assert(AggCheckCallContext(fcinfo, NULL) == AGG_CONTEXT_AGGREGATE);
 
 	/* Get and check the percentile argument */
-	if (PG_ARGISNULL(1))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(1))
+		MDB_RETURN_NULL();
 
-	percentile = PG_GETARG_FLOAT8(1);
+	percentile = MDB_GETARG_FLOAT8(1);
 
 	if (percentile < 0 || percentile > 1 || isnan(percentile))
 		ereport(ERROR,
@@ -531,14 +531,14 @@ percentile_cont_final_common(FunctionCallInfo fcinfo,
 						percentile)));
 
 	/* If there were no regular rows, the result is NULL */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	osastate = (OSAPerGroupState *) PG_GETARG_POINTER(0);
+	osastate = (OSAPerGroupState *) MDB_GETARG_POINTER(0);
 
 	/* number_of_rows could be zero if we only saw NULL input values */
 	if (osastate->number_of_rows == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	Assert(expect_type == osastate->qstate->sortColType);
 
@@ -556,7 +556,7 @@ percentile_cont_final_common(FunctionCallInfo fcinfo,
 	if (!tuplesort_getdatum(osastate->sortstate, true, &first_val, &isnull, NULL))
 		elog(ERROR, "missing row in percentile_cont");
 	if (isnull)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (first_row == second_row)
 	{
@@ -568,7 +568,7 @@ percentile_cont_final_common(FunctionCallInfo fcinfo,
 			elog(ERROR, "missing row in percentile_cont");
 
 		if (isnull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 
 		proportion = (percentile * (osastate->number_of_rows - 1)) - first_row;
 		val = lerpfunc(first_val, second_val, proportion);
@@ -581,14 +581,14 @@ percentile_cont_final_common(FunctionCallInfo fcinfo,
 	 * trouble, since the cleanup callback will clear the tuplesort later.
 	 */
 
-	PG_RETURN_DATUM(val);
+	MDB_RETURN_DATUM(val);
 }
 
 /*
  * percentile_cont(float8) within group (float8)	- continuous percentile
  */
 Datum
-percentile_cont_float8_final(PG_FUNCTION_ARGS)
+percentile_cont_float8_final(MDB_FUNCTION_ARGS)
 {
 	return percentile_cont_final_common(fcinfo, FLOAT8OID, float8_lerp);
 }
@@ -597,7 +597,7 @@ percentile_cont_float8_final(PG_FUNCTION_ARGS)
  * percentile_cont(float8) within group (interval)	- continuous percentile
  */
 Datum
-percentile_cont_interval_final(PG_FUNCTION_ARGS)
+percentile_cont_interval_final(MDB_FUNCTION_ARGS)
 {
 	return percentile_cont_final_common(fcinfo, INTERVALOID, interval_lerp);
 }
@@ -706,7 +706,7 @@ setup_pct_info(int num_percentiles,
  * percentile_disc(float8[]) within group (anyelement)	- discrete percentiles
  */
 Datum
-percentile_disc_multi_final(PG_FUNCTION_ARGS)
+percentile_disc_multi_final(MDB_FUNCTION_ARGS)
 {
 	OSAPerGroupState *osastate;
 	ArrayType  *param;
@@ -724,19 +724,19 @@ percentile_disc_multi_final(PG_FUNCTION_ARGS)
 	Assert(AggCheckCallContext(fcinfo, NULL) == AGG_CONTEXT_AGGREGATE);
 
 	/* If there were no regular rows, the result is NULL */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	osastate = (OSAPerGroupState *) PG_GETARG_POINTER(0);
+	osastate = (OSAPerGroupState *) MDB_GETARG_POINTER(0);
 
 	/* number_of_rows could be zero if we only saw NULL input values */
 	if (osastate->number_of_rows == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Deconstruct the percentile-array input */
-	if (PG_ARGISNULL(1))
-		PG_RETURN_NULL();
-	param = PG_GETARG_ARRAYTYPE_P(1);
+	if (MDB_ARGISNULL(1))
+		MDB_RETURN_NULL();
+	param = MDB_GETARG_ARRAYTYPE_P(1);
 
 	deconstruct_array(param, FLOAT8OID,
 	/* hard-wired info on type float8 */
@@ -746,7 +746,7 @@ percentile_disc_multi_final(PG_FUNCTION_ARGS)
 					  &num_percentiles);
 
 	if (num_percentiles == 0)
-		PG_RETURN_POINTER(construct_empty_array(osastate->qstate->sortColType));
+		MDB_RETURN_POINTER(construct_empty_array(osastate->qstate->sortColType));
 
 	pct_info = setup_pct_info(num_percentiles,
 							  percentiles_datum,
@@ -809,7 +809,7 @@ percentile_disc_multi_final(PG_FUNCTION_ARGS)
 	 */
 
 	/* We make the output array the same shape as the input */
-	PG_RETURN_POINTER(construct_md_array(result_datum, result_isnull,
+	MDB_RETURN_POINTER(construct_md_array(result_datum, result_isnull,
 										 ARR_NDIM(param),
 										 ARR_DIMS(param),
 										 ARR_LBOUND(param),
@@ -845,21 +845,21 @@ percentile_cont_multi_final_common(FunctionCallInfo fcinfo,
 	Assert(AggCheckCallContext(fcinfo, NULL) == AGG_CONTEXT_AGGREGATE);
 
 	/* If there were no regular rows, the result is NULL */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	osastate = (OSAPerGroupState *) PG_GETARG_POINTER(0);
+	osastate = (OSAPerGroupState *) MDB_GETARG_POINTER(0);
 
 	/* number_of_rows could be zero if we only saw NULL input values */
 	if (osastate->number_of_rows == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	Assert(expect_type == osastate->qstate->sortColType);
 
 	/* Deconstruct the percentile-array input */
-	if (PG_ARGISNULL(1))
-		PG_RETURN_NULL();
-	param = PG_GETARG_ARRAYTYPE_P(1);
+	if (MDB_ARGISNULL(1))
+		MDB_RETURN_NULL();
+	param = MDB_GETARG_ARRAYTYPE_P(1);
 
 	deconstruct_array(param, FLOAT8OID,
 	/* hard-wired info on type float8 */
@@ -869,7 +869,7 @@ percentile_cont_multi_final_common(FunctionCallInfo fcinfo,
 					  &num_percentiles);
 
 	if (num_percentiles == 0)
-		PG_RETURN_POINTER(construct_empty_array(osastate->qstate->sortColType));
+		MDB_RETURN_POINTER(construct_empty_array(osastate->qstate->sortColType));
 
 	pct_info = setup_pct_info(num_percentiles,
 							  percentiles_datum,
@@ -967,7 +967,7 @@ percentile_cont_multi_final_common(FunctionCallInfo fcinfo,
 	 */
 
 	/* We make the output array the same shape as the input */
-	PG_RETURN_POINTER(construct_md_array(result_datum, result_isnull,
+	MDB_RETURN_POINTER(construct_md_array(result_datum, result_isnull,
 										 ARR_NDIM(param),
 										 ARR_DIMS(param), ARR_LBOUND(param),
 										 expect_type,
@@ -980,7 +980,7 @@ percentile_cont_multi_final_common(FunctionCallInfo fcinfo,
  * percentile_cont(float8[]) within group (float8)	- continuous percentiles
  */
 Datum
-percentile_cont_float8_multi_final(PG_FUNCTION_ARGS)
+percentile_cont_float8_multi_final(MDB_FUNCTION_ARGS)
 {
 	return percentile_cont_multi_final_common(fcinfo,
 											  FLOAT8OID,
@@ -993,7 +993,7 @@ percentile_cont_float8_multi_final(PG_FUNCTION_ARGS)
  * percentile_cont(float8[]) within group (interval)  - continuous percentiles
  */
 Datum
-percentile_cont_interval_multi_final(PG_FUNCTION_ARGS)
+percentile_cont_interval_multi_final(MDB_FUNCTION_ARGS)
 {
 	return percentile_cont_multi_final_common(fcinfo,
 											  INTERVALOID,
@@ -1007,7 +1007,7 @@ percentile_cont_interval_multi_final(PG_FUNCTION_ARGS)
  * mode() within group (anyelement) - most common value
  */
 Datum
-mode_final(PG_FUNCTION_ARGS)
+mode_final(MDB_FUNCTION_ARGS)
 {
 	OSAPerGroupState *osastate;
 	Datum		val;
@@ -1025,14 +1025,14 @@ mode_final(PG_FUNCTION_ARGS)
 	Assert(AggCheckCallContext(fcinfo, NULL) == AGG_CONTEXT_AGGREGATE);
 
 	/* If there were no regular rows, the result is NULL */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	osastate = (OSAPerGroupState *) PG_GETARG_POINTER(0);
+	osastate = (OSAPerGroupState *) MDB_GETARG_POINTER(0);
 
 	/* number_of_rows could be zero if we only saw NULL input values */
 	if (osastate->number_of_rows == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Look up the equality function for the datatype, if we didn't already */
 	equalfn = &(osastate->qstate->equalfn);
@@ -1104,9 +1104,9 @@ mode_final(PG_FUNCTION_ARGS)
 	 */
 
 	if (mode_freq)
-		PG_RETURN_DATUM(mode_val);
+		MDB_RETURN_DATUM(mode_val);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 
@@ -1146,7 +1146,7 @@ static int64
 hypothetical_rank_common(FunctionCallInfo fcinfo, int flag,
 						 int64 *number_of_rows)
 {
-	int			nargs = PG_NARGS() - 1;
+	int			nargs = MDB_NARGS() - 1;
 	int64		rank = 1;
 	OSAPerGroupState *osastate;
 	TupleTableSlot *slot;
@@ -1155,13 +1155,13 @@ hypothetical_rank_common(FunctionCallInfo fcinfo, int flag,
 	Assert(AggCheckCallContext(fcinfo, NULL) == AGG_CONTEXT_AGGREGATE);
 
 	/* If there were no regular rows, the rank is always 1 */
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		*number_of_rows = 0;
 		return 1;
 	}
 
-	osastate = (OSAPerGroupState *) PG_GETARG_POINTER(0);
+	osastate = (OSAPerGroupState *) MDB_GETARG_POINTER(0);
 	*number_of_rows = osastate->number_of_rows;
 
 	/* Adjust nargs to be the number of direct (or aggregated) args */
@@ -1176,8 +1176,8 @@ hypothetical_rank_common(FunctionCallInfo fcinfo, int flag,
 	ExecClearTuple(slot);
 	for (i = 0; i < nargs; i++)
 	{
-		slot->tts_values[i] = PG_GETARG_DATUM(i + 1);
-		slot->tts_isnull[i] = PG_ARGISNULL(i + 1);
+		slot->tts_values[i] = MDB_GETARG_DATUM(i + 1);
+		slot->tts_isnull[i] = MDB_ARGISNULL(i + 1);
 	}
 	slot->tts_values[i] = Int32GetDatum(flag);
 	slot->tts_isnull[i] = false;
@@ -1216,21 +1216,21 @@ hypothetical_rank_common(FunctionCallInfo fcinfo, int flag,
  * rank()  - rank of hypothetical row
  */
 Datum
-hypothetical_rank_final(PG_FUNCTION_ARGS)
+hypothetical_rank_final(MDB_FUNCTION_ARGS)
 {
 	int64		rank;
 	int64		rowcount;
 
 	rank = hypothetical_rank_common(fcinfo, -1, &rowcount);
 
-	PG_RETURN_INT64(rank);
+	MDB_RETURN_INT64(rank);
 }
 
 /*
  * percent_rank()	- percentile rank of hypothetical row
  */
 Datum
-hypothetical_percent_rank_final(PG_FUNCTION_ARGS)
+hypothetical_percent_rank_final(MDB_FUNCTION_ARGS)
 {
 	int64		rank;
 	int64		rowcount;
@@ -1239,18 +1239,18 @@ hypothetical_percent_rank_final(PG_FUNCTION_ARGS)
 	rank = hypothetical_rank_common(fcinfo, -1, &rowcount);
 
 	if (rowcount == 0)
-		PG_RETURN_FLOAT8(0);
+		MDB_RETURN_FLOAT8(0);
 
 	result_val = (double) (rank - 1) / (double) (rowcount);
 
-	PG_RETURN_FLOAT8(result_val);
+	MDB_RETURN_FLOAT8(result_val);
 }
 
 /*
  * cume_dist()	- cumulative distribution of hypothetical row
  */
 Datum
-hypothetical_cume_dist_final(PG_FUNCTION_ARGS)
+hypothetical_cume_dist_final(MDB_FUNCTION_ARGS)
 {
 	int64		rank;
 	int64		rowcount;
@@ -1260,16 +1260,16 @@ hypothetical_cume_dist_final(PG_FUNCTION_ARGS)
 
 	result_val = (double) (rank) / (double) (rowcount + 1);
 
-	PG_RETURN_FLOAT8(result_val);
+	MDB_RETURN_FLOAT8(result_val);
 }
 
 /*
  * dense_rank() - rank of hypothetical row without gaps in ranking
  */
 Datum
-hypothetical_dense_rank_final(PG_FUNCTION_ARGS)
+hypothetical_dense_rank_final(MDB_FUNCTION_ARGS)
 {
-	int			nargs = PG_NARGS() - 1;
+	int			nargs = MDB_NARGS() - 1;
 	int64		rank = 1;
 	int64		duplicate_count = 0;
 	OSAPerGroupState *osastate;
@@ -1287,10 +1287,10 @@ hypothetical_dense_rank_final(PG_FUNCTION_ARGS)
 	Assert(AggCheckCallContext(fcinfo, NULL) == AGG_CONTEXT_AGGREGATE);
 
 	/* If there were no regular rows, the rank is always 1 */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_INT64(rank);
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_INT64(rank);
 
-	osastate = (OSAPerGroupState *) PG_GETARG_POINTER(0);
+	osastate = (OSAPerGroupState *) MDB_GETARG_POINTER(0);
 
 	/* Adjust nargs to be the number of direct (or aggregated) args */
 	if (nargs % 2 != 0)
@@ -1331,8 +1331,8 @@ hypothetical_dense_rank_final(PG_FUNCTION_ARGS)
 	ExecClearTuple(slot);
 	for (i = 0; i < nargs; i++)
 	{
-		slot->tts_values[i] = PG_GETARG_DATUM(i + 1);
-		slot->tts_isnull[i] = PG_ARGISNULL(i + 1);
+		slot->tts_values[i] = MDB_GETARG_DATUM(i + 1);
+		slot->tts_isnull[i] = MDB_ARGISNULL(i + 1);
 	}
 	slot->tts_values[i] = Int32GetDatum(-1);
 	slot->tts_isnull[i] = false;
@@ -1393,5 +1393,5 @@ hypothetical_dense_rank_final(PG_FUNCTION_ARGS)
 
 	rank = rank - duplicate_count;
 
-	PG_RETURN_INT64(rank);
+	MDB_RETURN_INT64(rank);
 }

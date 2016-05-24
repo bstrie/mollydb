@@ -25,8 +25,8 @@
 
 
 /* signatures for MollyDB-specific library init/fini functions */
-typedef void (*PG_init_t) (void);
-typedef void (*PG_fini_t) (void);
+typedef void (*MDB_init_t) (void);
+typedef void (*MDB_fini_t) (void);
 
 /* hashtable entry for rendezvous variables */
 typedef struct
@@ -74,7 +74,7 @@ static char *substitute_libpath_macro(const char *name);
 static char *find_in_dynamic_libpath(const char *basename);
 
 /* Magic structure that module needs to match to be accepted */
-static const Pg_magic_struct magic_data = PG_MODULE_MAGIC_DATA;
+static const Pg_magic_struct magic_data = MDB_MODULE_MAGIC_DATA;
 
 
 /*
@@ -174,7 +174,7 @@ internal_load_library(const char *libname)
 	PGModuleMagicFunction magic_func;
 	char	   *load_error;
 	struct stat stat_buf;
-	PG_init_t	PG_init;
+	MDB_init_t	MDB_init;
 
 	/*
 	 * Scan the list of loaded FILES to see if the file has been loaded.
@@ -237,7 +237,7 @@ internal_load_library(const char *libname)
 
 		/* Check the magic function to determine compatibility */
 		magic_func = (PGModuleMagicFunction)
-			mdb_dlsym(file_scanner->handle, PG_MAGIC_FUNCTION_NAME_STRING);
+			mdb_dlsym(file_scanner->handle, MDB_MAGIC_FUNCTION_NAME_STRING);
 		if (magic_func)
 		{
 			const Pg_magic_struct *magic_data_ptr = (*magic_func) ();
@@ -265,15 +265,15 @@ internal_load_library(const char *libname)
 			ereport(ERROR,
 				  (errmsg("incompatible library \"%s\": missing magic block",
 						  libname),
-				   errhint("Extension libraries are required to use the PG_MODULE_MAGIC macro.")));
+				   errhint("Extension libraries are required to use the MDB_MODULE_MAGIC macro.")));
 		}
 
 		/*
-		 * If the library has a _PG_init() function, call it.
+		 * If the library has a _MDB_init() function, call it.
 		 */
-		PG_init = (PG_init_t) mdb_dlsym(file_scanner->handle, "_PG_init");
-		if (PG_init)
-			(*PG_init) ();
+		MDB_init = (MDB_init_t) mdb_dlsym(file_scanner->handle, "_MDB_init");
+		if (MDB_init)
+			(*MDB_init) ();
 
 		/* OK to link it into list */
 		if (file_list == NULL)
@@ -392,7 +392,7 @@ internal_unload_library(const char *libname)
 			   *prv,
 			   *nxt;
 	struct stat stat_buf;
-	PG_fini_t	PG_fini;
+	MDB_fini_t	MDB_fini;
 
 	/*
 	 * We need to do stat() in order to determine whether this is the same
@@ -421,11 +421,11 @@ internal_unload_library(const char *libname)
 				file_list = nxt;
 
 			/*
-			 * If the library has a _PG_fini() function, call it.
+			 * If the library has a _MDB_fini() function, call it.
 			 */
-			PG_fini = (PG_fini_t) mdb_dlsym(file_scanner->handle, "_PG_fini");
-			if (PG_fini)
-				(*PG_fini) ();
+			MDB_fini = (MDB_fini_t) mdb_dlsym(file_scanner->handle, "_MDB_fini");
+			if (MDB_fini)
+				(*MDB_fini) ();
 
 			clear_external_function_hash(file_scanner->handle);
 			mdb_dlclose(file_scanner->handle);

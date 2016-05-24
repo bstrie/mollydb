@@ -53,21 +53,21 @@
 
 
 Datum
-btboolcmp(PG_FUNCTION_ARGS)
+btboolcmp(MDB_FUNCTION_ARGS)
 {
-	bool		a = PG_GETARG_BOOL(0);
-	bool		b = PG_GETARG_BOOL(1);
+	bool		a = MDB_GETARG_BOOL(0);
+	bool		b = MDB_GETARG_BOOL(1);
 
-	PG_RETURN_INT32((int32) a - (int32) b);
+	MDB_RETURN_INT32((int32) a - (int32) b);
 }
 
 Datum
-btint2cmp(PG_FUNCTION_ARGS)
+btint2cmp(MDB_FUNCTION_ARGS)
 {
-	int16		a = PG_GETARG_INT16(0);
-	int16		b = PG_GETARG_INT16(1);
+	int16		a = MDB_GETARG_INT16(0);
+	int16		b = MDB_GETARG_INT16(1);
 
-	PG_RETURN_INT32((int32) a - (int32) b);
+	MDB_RETURN_INT32((int32) a - (int32) b);
 }
 
 static int
@@ -80,26 +80,26 @@ btint2fastcmp(Datum x, Datum y, SortSupport ssup)
 }
 
 Datum
-btint2sortsupport(PG_FUNCTION_ARGS)
+btint2sortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 
 	ssup->comparator = btint2fastcmp;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-btint4cmp(PG_FUNCTION_ARGS)
+btint4cmp(MDB_FUNCTION_ARGS)
 {
-	int32		a = PG_GETARG_INT32(0);
-	int32		b = PG_GETARG_INT32(1);
+	int32		a = MDB_GETARG_INT32(0);
+	int32		b = MDB_GETARG_INT32(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 static int
@@ -117,26 +117,26 @@ btint4fastcmp(Datum x, Datum y, SortSupport ssup)
 }
 
 Datum
-btint4sortsupport(PG_FUNCTION_ARGS)
+btint4sortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 
 	ssup->comparator = btint4fastcmp;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-btint8cmp(PG_FUNCTION_ARGS)
+btint8cmp(MDB_FUNCTION_ARGS)
 {
-	int64		a = PG_GETARG_INT64(0);
-	int64		b = PG_GETARG_INT64(1);
+	int64		a = MDB_GETARG_INT64(0);
+	int64		b = MDB_GETARG_INT64(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 static int
@@ -154,110 +154,110 @@ btint8fastcmp(Datum x, Datum y, SortSupport ssup)
 }
 
 Datum
-btint8sortsupport(PG_FUNCTION_ARGS)
+btint8sortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 
 	ssup->comparator = btint8fastcmp;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-btint48cmp(PG_FUNCTION_ARGS)
+btint48cmp(MDB_FUNCTION_ARGS)
 {
-	int32		a = PG_GETARG_INT32(0);
-	int64		b = PG_GETARG_INT64(1);
+	int32		a = MDB_GETARG_INT32(0);
+	int64		b = MDB_GETARG_INT64(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 Datum
-btint84cmp(PG_FUNCTION_ARGS)
+btint84cmp(MDB_FUNCTION_ARGS)
 {
-	int64		a = PG_GETARG_INT64(0);
-	int32		b = PG_GETARG_INT32(1);
+	int64		a = MDB_GETARG_INT64(0);
+	int32		b = MDB_GETARG_INT32(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 Datum
-btint24cmp(PG_FUNCTION_ARGS)
+btint24cmp(MDB_FUNCTION_ARGS)
 {
-	int16		a = PG_GETARG_INT16(0);
-	int32		b = PG_GETARG_INT32(1);
+	int16		a = MDB_GETARG_INT16(0);
+	int32		b = MDB_GETARG_INT32(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 Datum
-btint42cmp(PG_FUNCTION_ARGS)
+btint42cmp(MDB_FUNCTION_ARGS)
 {
-	int32		a = PG_GETARG_INT32(0);
-	int16		b = PG_GETARG_INT16(1);
+	int32		a = MDB_GETARG_INT32(0);
+	int16		b = MDB_GETARG_INT16(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 Datum
-btint28cmp(PG_FUNCTION_ARGS)
+btint28cmp(MDB_FUNCTION_ARGS)
 {
-	int16		a = PG_GETARG_INT16(0);
-	int64		b = PG_GETARG_INT64(1);
+	int16		a = MDB_GETARG_INT16(0);
+	int64		b = MDB_GETARG_INT64(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 Datum
-btint82cmp(PG_FUNCTION_ARGS)
+btint82cmp(MDB_FUNCTION_ARGS)
 {
-	int64		a = PG_GETARG_INT64(0);
-	int16		b = PG_GETARG_INT16(1);
+	int64		a = MDB_GETARG_INT64(0);
+	int16		b = MDB_GETARG_INT16(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 Datum
-btoidcmp(PG_FUNCTION_ARGS)
+btoidcmp(MDB_FUNCTION_ARGS)
 {
-	Oid			a = PG_GETARG_OID(0);
-	Oid			b = PG_GETARG_OID(1);
+	Oid			a = MDB_GETARG_OID(0);
+	Oid			b = MDB_GETARG_OID(1);
 
 	if (a > b)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else if (a == b)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 	else
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 }
 
 static int
@@ -275,55 +275,55 @@ btoidfastcmp(Datum x, Datum y, SortSupport ssup)
 }
 
 Datum
-btoidsortsupport(PG_FUNCTION_ARGS)
+btoidsortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 
 	ssup->comparator = btoidfastcmp;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-btoidvectorcmp(PG_FUNCTION_ARGS)
+btoidvectorcmp(MDB_FUNCTION_ARGS)
 {
-	oidvector  *a = (oidvector *) PG_GETARG_POINTER(0);
-	oidvector  *b = (oidvector *) PG_GETARG_POINTER(1);
+	oidvector  *a = (oidvector *) MDB_GETARG_POINTER(0);
+	oidvector  *b = (oidvector *) MDB_GETARG_POINTER(1);
 	int			i;
 
 	/* We arbitrarily choose to sort first by vector length */
 	if (a->dim1 != b->dim1)
-		PG_RETURN_INT32(a->dim1 - b->dim1);
+		MDB_RETURN_INT32(a->dim1 - b->dim1);
 
 	for (i = 0; i < a->dim1; i++)
 	{
 		if (a->values[i] != b->values[i])
 		{
 			if (a->values[i] > b->values[i])
-				PG_RETURN_INT32(1);
+				MDB_RETURN_INT32(1);
 			else
-				PG_RETURN_INT32(-1);
+				MDB_RETURN_INT32(-1);
 		}
 	}
-	PG_RETURN_INT32(0);
+	MDB_RETURN_INT32(0);
 }
 
 Datum
-btcharcmp(PG_FUNCTION_ARGS)
+btcharcmp(MDB_FUNCTION_ARGS)
 {
-	char		a = PG_GETARG_CHAR(0);
-	char		b = PG_GETARG_CHAR(1);
+	char		a = MDB_GETARG_CHAR(0);
+	char		b = MDB_GETARG_CHAR(1);
 
 	/* Be careful to compare chars as unsigned */
-	PG_RETURN_INT32((int32) ((uint8) a) - (int32) ((uint8) b));
+	MDB_RETURN_INT32((int32) ((uint8) a) - (int32) ((uint8) b));
 }
 
 Datum
-btnamecmp(PG_FUNCTION_ARGS)
+btnamecmp(MDB_FUNCTION_ARGS)
 {
-	Name		a = PG_GETARG_NAME(0);
-	Name		b = PG_GETARG_NAME(1);
+	Name		a = MDB_GETARG_NAME(0);
+	Name		b = MDB_GETARG_NAME(1);
 
-	PG_RETURN_INT32(strncmp(NameStr(*a), NameStr(*b), NAMEDATALEN));
+	MDB_RETURN_INT32(strncmp(NameStr(*a), NameStr(*b), NAMEDATALEN));
 }
 
 static int
@@ -336,10 +336,10 @@ btnamefastcmp(Datum x, Datum y, SortSupport ssup)
 }
 
 Datum
-btnamesortsupport(PG_FUNCTION_ARGS)
+btnamesortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 
 	ssup->comparator = btnamefastcmp;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

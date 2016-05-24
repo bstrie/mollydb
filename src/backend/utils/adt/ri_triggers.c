@@ -465,7 +465,7 @@ RI_FKey_check(TriggerData *trigdata)
  * ----------
  */
 Datum
-RI_FKey_check_ins(PG_FUNCTION_ARGS)
+RI_FKey_check_ins(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * Check that this is a valid trigger call on the right time and event.
@@ -486,7 +486,7 @@ RI_FKey_check_ins(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-RI_FKey_check_upd(PG_FUNCTION_ARGS)
+RI_FKey_check_upd(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * Check that this is a valid trigger call on the right time and event.
@@ -600,7 +600,7 @@ ri_Check_Pk_Match(Relation pk_rel, Relation fk_rel,
  * ----------
  */
 Datum
-RI_FKey_noaction_del(PG_FUNCTION_ARGS)
+RI_FKey_noaction_del(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * Check that this is a valid trigger call on the right time and event.
@@ -625,7 +625,7 @@ RI_FKey_noaction_del(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-RI_FKey_restrict_del(PG_FUNCTION_ARGS)
+RI_FKey_restrict_del(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * Check that this is a valid trigger call on the right time and event.
@@ -812,7 +812,7 @@ ri_restrict_del(TriggerData *trigdata, bool is_no_action)
  * ----------
  */
 Datum
-RI_FKey_noaction_upd(PG_FUNCTION_ARGS)
+RI_FKey_noaction_upd(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * Check that this is a valid trigger call on the right time and event.
@@ -837,7 +837,7 @@ RI_FKey_noaction_upd(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-RI_FKey_restrict_upd(PG_FUNCTION_ARGS)
+RI_FKey_restrict_upd(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * Check that this is a valid trigger call on the right time and event.
@@ -1033,7 +1033,7 @@ ri_restrict_upd(TriggerData *trigdata, bool is_no_action)
  * ----------
  */
 Datum
-RI_FKey_cascade_del(PG_FUNCTION_ARGS)
+RI_FKey_cascade_del(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	const RI_ConstraintInfo *riinfo;
@@ -1189,7 +1189,7 @@ RI_FKey_cascade_del(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-RI_FKey_cascade_upd(PG_FUNCTION_ARGS)
+RI_FKey_cascade_upd(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	const RI_ConstraintInfo *riinfo;
@@ -1370,7 +1370,7 @@ RI_FKey_cascade_upd(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-RI_FKey_setnull_del(PG_FUNCTION_ARGS)
+RI_FKey_setnull_del(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	const RI_ConstraintInfo *riinfo;
@@ -1535,7 +1535,7 @@ RI_FKey_setnull_del(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-RI_FKey_setnull_upd(PG_FUNCTION_ARGS)
+RI_FKey_setnull_upd(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	const RI_ConstraintInfo *riinfo;
@@ -1711,7 +1711,7 @@ RI_FKey_setnull_upd(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-RI_FKey_setdefault_del(PG_FUNCTION_ARGS)
+RI_FKey_setdefault_del(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	const RI_ConstraintInfo *riinfo;
@@ -1891,7 +1891,7 @@ RI_FKey_setdefault_del(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-RI_FKey_setdefault_upd(PG_FUNCTION_ARGS)
+RI_FKey_setdefault_upd(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	const RI_ConstraintInfo *riinfo;

@@ -40,7 +40,7 @@ case $testhost in
 		LISTEN_ADDRESSES=""
 		# Select a socket directory.  The algorithm is from the "configure"
 		# script; the outcome mimics mdb_regress.c:make_temp_sockdir().
-		PGHOST=$PG_REGRESS_SOCK_DIR
+		PGHOST=$MDB_REGRESS_SOCK_DIR
 		if [ "x$PGHOST" = x ]; then
 			{
 				dir=`(umask 077 &&
@@ -127,8 +127,8 @@ PGCONNECT_TIMEOUT=""; unset PGCONNECT_TIMEOUT
 PGHOSTADDR="";        unset PGHOSTADDR
 
 # Select a non-conflicting port number, similarly to mdb_regress.c
-PG_VERSION_NUM=`grep '#define PG_VERSION_NUM' "$newsrc"/src/include/mdb_config.h | awk '{print $3}'`
-PGPORT=`expr $PG_VERSION_NUM % 16384 + 49152`
+MDB_VERSION_NUM=`grep '#define MDB_VERSION_NUM' "$newsrc"/src/include/mdb_config.h | awk '{print $3}'`
+PGPORT=`expr $MDB_VERSION_NUM % 16384 + 49152`
 export PGPORT
 
 i=0
@@ -193,7 +193,7 @@ PGDATA=$BASE_PGDATA
 
 standard_initdb 'initdb'
 
-mdb_upgrade $PG_UPGRADE_OPTS -d "${PGDATA}.old" -D "${PGDATA}" -b "$oldbindir" -B "$bindir" -p "$PGPORT" -P "$PGPORT"
+mdb_upgrade $MDB_UPGRADE_OPTS -d "${PGDATA}.old" -D "${PGDATA}" -b "$oldbindir" -B "$bindir" -p "$PGPORT" -P "$PGPORT"
 
 mdb_ctl start -l "$logdir/postmaster2.log" -o "$POSTMASTER_OPTS" -w
 

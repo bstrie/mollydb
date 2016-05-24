@@ -44,7 +44,7 @@ handle_help_version_opts(int argc, char *argv[],
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			printf("%s (MollyDB) " PG_VERSION "\n", fixed_progname);
+			printf("%s (MollyDB) " MDB_VERSION "\n", fixed_progname);
 			exit(0);
 		}
 	}
@@ -258,9 +258,9 @@ executeMaintenanceCommand(PGconn *conn, const char *query, bool echo)
  */
 
 /* translator: abbreviation for "yes" */
-#define PG_YESLETTER gettext_noop("y")
+#define MDB_YESLETTER gettext_noop("y")
 /* translator: abbreviation for "no" */
-#define PG_NOLETTER gettext_noop("n")
+#define MDB_NOLETTER gettext_noop("n")
 
 bool
 yesno_prompt(const char *question)
@@ -271,7 +271,7 @@ yesno_prompt(const char *question)
 	   translator: This is a question followed by the translated options for
 	   "yes" and "no". */
 	snprintf(prompt, sizeof(prompt), _("%s (%s/%s) "),
-			 _(question), _(PG_YESLETTER), _(PG_NOLETTER));
+			 _(question), _(MDB_YESLETTER), _(MDB_NOLETTER));
 
 	for (;;)
 	{
@@ -279,12 +279,12 @@ yesno_prompt(const char *question)
 
 		resp = simple_prompt(prompt, 1, true);
 
-		if (strcmp(resp, _(PG_YESLETTER)) == 0)
+		if (strcmp(resp, _(MDB_YESLETTER)) == 0)
 		{
 			free(resp);
 			return true;
 		}
-		else if (strcmp(resp, _(PG_NOLETTER)) == 0)
+		else if (strcmp(resp, _(MDB_NOLETTER)) == 0)
 		{
 			free(resp);
 			return false;
@@ -292,7 +292,7 @@ yesno_prompt(const char *question)
 
 		free(resp);
 		printf(_("Please answer \"%s\" or \"%s\".\n"),
-			   _(PG_YESLETTER), _(PG_NOLETTER));
+			   _(MDB_YESLETTER), _(MDB_NOLETTER));
 	}
 }
 

@@ -1898,8 +1898,8 @@ _bt_vacuum_cycleid(Relation rel)
  * Note: the caller must guarantee that it will eventually call
  * _bt_end_vacuum, else we'll permanently leak an array slot.  To ensure
  * that this happens even in elog(FATAL) scenarios, the appropriate coding
- * is not just a PG_TRY, but
- *		PG_ENSURE_ERROR_CLEANUP(_bt_end_vacuum_callback, PointerGetDatum(rel))
+ * is not just a MDB_TRY, but
+ *		MDB_ENSURE_ERROR_CLEANUP(_bt_end_vacuum_callback, PointerGetDatum(rel))
  */
 BTCycleId
 _bt_start_vacuum(Relation rel)
@@ -1956,7 +1956,7 @@ _bt_start_vacuum(Relation rel)
  * _bt_end_vacuum --- mark a btree VACUUM operation as done
  *
  * Note: this is deliberately coded not to complain if no entry is found;
- * this allows the caller to put PG_TRY around the start_vacuum operation.
+ * this allows the caller to put MDB_TRY around the start_vacuum operation.
  */
 void
 _bt_end_vacuum(Relation rel)

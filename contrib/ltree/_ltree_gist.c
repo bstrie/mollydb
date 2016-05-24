@@ -13,12 +13,12 @@
 #include "ltree.h"
 
 
-PG_FUNCTION_INFO_V1(_ltree_compress);
-PG_FUNCTION_INFO_V1(_ltree_same);
-PG_FUNCTION_INFO_V1(_ltree_union);
-PG_FUNCTION_INFO_V1(_ltree_penalty);
-PG_FUNCTION_INFO_V1(_ltree_picksplit);
-PG_FUNCTION_INFO_V1(_ltree_consistent);
+MDB_FUNCTION_INFO_V1(_ltree_compress);
+MDB_FUNCTION_INFO_V1(_ltree_same);
+MDB_FUNCTION_INFO_V1(_ltree_union);
+MDB_FUNCTION_INFO_V1(_ltree_penalty);
+MDB_FUNCTION_INFO_V1(_ltree_picksplit);
+MDB_FUNCTION_INFO_V1(_ltree_consistent);
 
 #define GETENTRY(vec,pos) ((ltree_gist *) DatumGetPointer((vec)->vector[(pos)].key))
 #define NEXTVAL(x) ( (ltree*)( (char*)(x) + INTALIGN( VARSIZE(x) ) ) )
@@ -63,9 +63,9 @@ hashing(BITVECP sign, ltree *t)
 }
 
 Datum
-_ltree_compress(PG_FUNCTION_ARGS)
+_ltree_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval = entry;
 
 	if (entry->leafkey)
@@ -113,7 +113,7 @@ _ltree_compress(PG_FUNCTION_ARGS)
 		ALOOPBYTE
 		{
 			if ((sign[i] & 0xff) != 0xff)
-				PG_RETURN_POINTER(retval);
+				MDB_RETURN_POINTER(retval);
 		}
 		len = LTG_HDRSIZE;
 		key = (ltree_gist *) palloc0(len);
@@ -125,15 +125,15 @@ _ltree_compress(PG_FUNCTION_ARGS)
 					  entry->rel, entry->page,
 					  entry->offset, FALSE);
 	}
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 Datum
-_ltree_same(PG_FUNCTION_ARGS)
+_ltree_same(MDB_FUNCTION_ARGS)
 {
-	ltree_gist *a = (ltree_gist *) PG_GETARG_POINTER(0);
-	ltree_gist *b = (ltree_gist *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	ltree_gist *a = (ltree_gist *) MDB_GETARG_POINTER(0);
+	ltree_gist *b = (ltree_gist *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	if (LTG_ISALLTRUE(a) && LTG_ISALLTRUE(b))
 		*result = true;
@@ -157,7 +157,7 @@ _ltree_same(PG_FUNCTION_ARGS)
 			}
 		}
 	}
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 static int32
@@ -175,10 +175,10 @@ unionkey(BITVECP sbase, ltree_gist *add)
 }
 
 Datum
-_ltree_union(PG_FUNCTION_ARGS)
+_ltree_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	int		   *size = (int *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	int		   *size = (int *) MDB_GETARG_POINTER(1);
 	ABITVEC		base;
 	int32		i,
 				len;
@@ -203,7 +203,7 @@ _ltree_union(PG_FUNCTION_ARGS)
 		memcpy((void *) LTG_SIGN(result), (void *) base, sizeof(ABITVEC));
 	*size = len;
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 static int32
@@ -250,14 +250,14 @@ hemdist(ltree_gist *a, ltree_gist *b)
 
 
 Datum
-_ltree_penalty(PG_FUNCTION_ARGS)
+_ltree_penalty(MDB_FUNCTION_ARGS)
 {
-	ltree_gist *origval = (ltree_gist *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	ltree_gist *newval = (ltree_gist *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(1))->key);
-	float	   *penalty = (float *) PG_GETARG_POINTER(2);
+	ltree_gist *origval = (ltree_gist *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	ltree_gist *newval = (ltree_gist *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(1))->key);
+	float	   *penalty = (float *) MDB_GETARG_POINTER(2);
 
 	*penalty = hemdist(origval, newval);
-	PG_RETURN_POINTER(penalty);
+	MDB_RETURN_POINTER(penalty);
 }
 
 typedef struct
@@ -273,10 +273,10 @@ comparecost(const void *a, const void *b)
 }
 
 Datum
-_ltree_picksplit(PG_FUNCTION_ARGS)
+_ltree_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber k,
 				j;
 	ltree_gist *datum_l,
@@ -432,7 +432,7 @@ _ltree_picksplit(PG_FUNCTION_ARGS)
 	v->spl_ldatum = PointerGetDatum(datum_l);
 	v->spl_rdatum = PointerGetDatum(datum_r);
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 static bool
@@ -542,14 +542,14 @@ _arrq_cons(ltree_gist *key, ArrayType *_query)
 }
 
 Datum
-_ltree_consistent(PG_FUNCTION_ARGS)
+_ltree_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	char	   *query = (char *) DatumGetPointer(PG_DETOAST_DATUM(PG_GETARG_DATUM(1)));
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	char	   *query = (char *) DatumGetPointer(MDB_DETOAST_DATUM(MDB_GETARG_DATUM(1)));
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	ltree_gist *key = (ltree_gist *) DatumGetPointer(entry->key);
 	bool		res = false;
 
@@ -578,6 +578,6 @@ _ltree_consistent(PG_FUNCTION_ARGS)
 			/* internal error */
 			elog(ERROR, "unrecognized StrategyNumber: %d", strategy);
 	}
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_BOOL(res);
 }

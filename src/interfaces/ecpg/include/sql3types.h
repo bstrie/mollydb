@@ -1,5 +1,5 @@
-#ifndef _ECPG_SQL3TYPES_H
-#define _ECPG_SQL3TYPES_H
+#ifndef _ECMDB_SQL3TYPES_H
+#define _ECMDB_SQL3TYPES_H
 
 /* SQL3 dynamic type codes */
 
@@ -40,4 +40,4 @@ enum
 								 * standard) */
 };
 
-#endif   /* !_ECPG_SQL3TYPES_H */
+#endif   /* !_ECMDB_SQL3TYPES_H */

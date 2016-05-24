@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_AGGREGATE_H
-#define PG_AGGREGATE_H
+#ifndef MDB_AGGREGATE_H
+#define MDB_AGGREGATE_H
 
 #include "catalog/genbki.h"
 #include "catalog/objectaddress.h"
@@ -352,4 +352,4 @@ extern ObjectAddress AggregateCreate(const char *aggName,
 				const char *aggminitval,
 				char proparallel);
 
-#endif   /* PG_AGGREGATE_H */
+#endif   /* MDB_AGGREGATE_H */

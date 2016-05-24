@@ -248,10 +248,10 @@ findsubquery(QTNode *root, QTNode *ex, QTNode *subs, bool *isfind)
 }
 
 Datum
-tsquery_rewrite_query(PG_FUNCTION_ARGS)
+tsquery_rewrite_query(MDB_FUNCTION_ARGS)
 {
-	TSQuery		query = PG_GETARG_TSQUERY_COPY(0);
-	text	   *in = PG_GETARG_TEXT_P(1);
+	TSQuery		query = MDB_GETARG_TSQUERY_COPY(0);
+	text	   *in = MDB_GETARG_TEXT_P(1);
 	TSQuery		rewrited = query;
 	MemoryContext outercontext = CurrentMemoryContext;
 	MemoryContext oldcontext;
@@ -263,8 +263,8 @@ tsquery_rewrite_query(PG_FUNCTION_ARGS)
 
 	if (query->size == 0)
 	{
-		PG_FREE_IF_COPY(in, 1);
-		PG_RETURN_POINTER(rewrited);
+		MDB_FREE_IF_COPY(in, 1);
+		MDB_RETURN_POINTER(rewrited);
 	}
 
 	tree = QT2QTN(GETQUERY(query), GETOPERAND(query));
@@ -363,7 +363,7 @@ tsquery_rewrite_query(PG_FUNCTION_ARGS)
 		QTNBinary(tree);
 		rewrited = QTN2QT(tree);
 		QTNFree(tree);
-		PG_FREE_IF_COPY(query, 0);
+		MDB_FREE_IF_COPY(query, 0);
 	}
 	else
 	{
@@ -372,16 +372,16 @@ tsquery_rewrite_query(PG_FUNCTION_ARGS)
 	}
 
 	pfree(buf);
-	PG_FREE_IF_COPY(in, 1);
-	PG_RETURN_POINTER(rewrited);
+	MDB_FREE_IF_COPY(in, 1);
+	MDB_RETURN_POINTER(rewrited);
 }
 
 Datum
-tsquery_rewrite(PG_FUNCTION_ARGS)
+tsquery_rewrite(MDB_FUNCTION_ARGS)
 {
-	TSQuery		query = PG_GETARG_TSQUERY_COPY(0);
-	TSQuery		ex = PG_GETARG_TSQUERY(1);
-	TSQuery		subst = PG_GETARG_TSQUERY(2);
+	TSQuery		query = MDB_GETARG_TSQUERY_COPY(0);
+	TSQuery		ex = MDB_GETARG_TSQUERY(1);
+	TSQuery		subst = MDB_GETARG_TSQUERY(2);
 	TSQuery		rewrited = query;
 	QTNode	   *tree,
 			   *qex,
@@ -389,9 +389,9 @@ tsquery_rewrite(PG_FUNCTION_ARGS)
 
 	if (query->size == 0 || ex->size == 0)
 	{
-		PG_FREE_IF_COPY(ex, 1);
-		PG_FREE_IF_COPY(subst, 2);
-		PG_RETURN_POINTER(rewrited);
+		MDB_FREE_IF_COPY(ex, 1);
+		MDB_FREE_IF_COPY(subst, 2);
+		MDB_RETURN_POINTER(rewrited);
 	}
 
 	tree = QT2QTN(GETQUERY(query), GETOPERAND(query));
@@ -414,9 +414,9 @@ tsquery_rewrite(PG_FUNCTION_ARGS)
 	{
 		SET_VARSIZE(rewrited, HDRSIZETQ);
 		rewrited->size = 0;
-		PG_FREE_IF_COPY(ex, 1);
-		PG_FREE_IF_COPY(subst, 2);
-		PG_RETURN_POINTER(rewrited);
+		MDB_FREE_IF_COPY(ex, 1);
+		MDB_FREE_IF_COPY(subst, 2);
+		MDB_RETURN_POINTER(rewrited);
 	}
 	else
 	{
@@ -425,8 +425,8 @@ tsquery_rewrite(PG_FUNCTION_ARGS)
 		QTNFree(tree);
 	}
 
-	PG_FREE_IF_COPY(query, 0);
-	PG_FREE_IF_COPY(ex, 1);
-	PG_FREE_IF_COPY(subst, 2);
-	PG_RETURN_POINTER(rewrited);
+	MDB_FREE_IF_COPY(query, 0);
+	MDB_FREE_IF_COPY(ex, 1);
+	MDB_FREE_IF_COPY(subst, 2);
+	MDB_RETURN_POINTER(rewrited);
 }

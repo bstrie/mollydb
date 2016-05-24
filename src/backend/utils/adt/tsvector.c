@@ -173,9 +173,9 @@ WordEntryCMP(WordEntry *a, WordEntry *b, char *buf)
 
 
 Datum
-tsvectorin(PG_FUNCTION_ARGS)
+tsvectorin(MDB_FUNCTION_ARGS)
 {
-	char	   *buf = PG_GETARG_CSTRING(0);
+	char	   *buf = MDB_GETARG_CSTRING(0);
 	TSVectorParseState state;
 	WordEntryIN *arr;
 	int			totallen;
@@ -302,13 +302,13 @@ tsvectorin(PG_FUNCTION_ARGS)
 
 	Assert((strbuf + stroff - (char *) in) == totallen);
 
-	PG_RETURN_TSVECTOR(in);
+	MDB_RETURN_TSVECTOR(in);
 }
 
 Datum
-tsvectorout(PG_FUNCTION_ARGS)
+tsvectorout(MDB_FUNCTION_ARGS)
 {
-	TSVector	out = PG_GETARG_TSVECTOR(0);
+	TSVector	out = MDB_GETARG_TSVECTOR(0);
 	char	   *outbuf;
 	int32		i,
 				lenbuf = 0,
@@ -382,8 +382,8 @@ tsvectorout(PG_FUNCTION_ARGS)
 	}
 
 	*curout = '\0';
-	PG_FREE_IF_COPY(out, 0);
-	PG_RETURN_CSTRING(outbuf);
+	MDB_FREE_IF_COPY(out, 0);
+	MDB_RETURN_CSTRING(outbuf);
 }
 
 /*
@@ -399,9 +399,9 @@ tsvectorout(PG_FUNCTION_ARGS)
  */
 
 Datum
-tsvectorsend(PG_FUNCTION_ARGS)
+tsvectorsend(MDB_FUNCTION_ARGS)
 {
-	TSVector	vec = PG_GETARG_TSVECTOR(0);
+	TSVector	vec = MDB_GETARG_TSVECTOR(0);
 	StringInfoData buf;
 	int			i,
 				j;
@@ -434,13 +434,13 @@ tsvectorsend(PG_FUNCTION_ARGS)
 		weptr++;
 	}
 
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 Datum
-tsvectorrecv(PG_FUNCTION_ARGS)
+tsvectorrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	TSVector	vec;
 	int			i;
 	int32		nentries;
@@ -545,5 +545,5 @@ tsvectorrecv(PG_FUNCTION_ARGS)
 		qsort_arg((void *) ARRPTR(vec), vec->size, sizeof(WordEntry),
 				  compareentry, (void *) STRPTR(vec));
 
-	PG_RETURN_TSVECTOR(vec);
+	MDB_RETURN_TSVECTOR(vec);
 }

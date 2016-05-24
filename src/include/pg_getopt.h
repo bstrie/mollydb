@@ -6,8 +6,8 @@
  *
  * src/include/mdb_getopt.h
  */
-#ifndef PG_GETOPT_H
-#define PG_GETOPT_H
+#ifndef MDB_GETOPT_H
+#define MDB_GETOPT_H
 
 /* POSIX says getopt() is provided by unistd.h */
 #include <unistd.h>
@@ -43,4 +43,4 @@ extern int	optreset;
 extern int	getopt(int nargc, char *const * nargv, const char *ostr);
 #endif
 
-#endif   /* PG_GETOPT_H */
+#endif   /* MDB_GETOPT_H */

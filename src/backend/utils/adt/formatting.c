@@ -1048,9 +1048,9 @@ NUMDesc_prepare(NUMDesc *num, FormatNode *n)
 
 	/*
 	 * In case of an error, we need to remove the numeric from the cache.  Use
-	 * a PG_TRY block to ensure that this happens.
+	 * a MDB_TRY block to ensure that this happens.
 	 */
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (IS_EEEE(num) && n->key->id != NUM_E)
 			ereport(ERROR,
@@ -1213,12 +1213,12 @@ NUMDesc_prepare(NUMDesc *num, FormatNode *n)
 				break;
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		NUM_cache_remove(last_NUMCacheEntry);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 
 	return;
@@ -3383,17 +3383,17 @@ datetime_to_char_body(TmToChar *tmtc, text *fmt, bool is_interval, Oid collid)
  * -------------------
  */
 Datum
-timestamp_to_char(PG_FUNCTION_ARGS)
+timestamp_to_char(MDB_FUNCTION_ARGS)
 {
-	Timestamp	dt = PG_GETARG_TIMESTAMP(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1),
+	Timestamp	dt = MDB_GETARG_TIMESTAMP(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1),
 			   *res;
 	TmToChar	tmtc;
 	struct mdb_tm *tm;
 	int			thisdate;
 
 	if ((VARSIZE(fmt) - VARHDRSZ) <= 0 || TIMESTAMP_NOT_FINITE(dt))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	ZERO_tmtc(&tmtc);
 	tm = tmtcTm(&tmtc);
@@ -3407,17 +3407,17 @@ timestamp_to_char(PG_FUNCTION_ARGS)
 	tm->tm_wday = (thisdate + 1) % 7;
 	tm->tm_yday = thisdate - date2j(tm->tm_year, 1, 1) + 1;
 
-	if (!(res = datetime_to_char_body(&tmtc, fmt, false, PG_GET_COLLATION())))
-		PG_RETURN_NULL();
+	if (!(res = datetime_to_char_body(&tmtc, fmt, false, MDB_GET_COLLATION())))
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TEXT_P(res);
+	MDB_RETURN_TEXT_P(res);
 }
 
 Datum
-timestamptz_to_char(PG_FUNCTION_ARGS)
+timestamptz_to_char(MDB_FUNCTION_ARGS)
 {
-	TimestampTz dt = PG_GETARG_TIMESTAMP(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1),
+	TimestampTz dt = MDB_GETARG_TIMESTAMP(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1),
 			   *res;
 	TmToChar	tmtc;
 	int			tz;
@@ -3425,7 +3425,7 @@ timestamptz_to_char(PG_FUNCTION_ARGS)
 	int			thisdate;
 
 	if ((VARSIZE(fmt) - VARHDRSZ) <= 0 || TIMESTAMP_NOT_FINITE(dt))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	ZERO_tmtc(&tmtc);
 	tm = tmtcTm(&tmtc);
@@ -3439,10 +3439,10 @@ timestamptz_to_char(PG_FUNCTION_ARGS)
 	tm->tm_wday = (thisdate + 1) % 7;
 	tm->tm_yday = thisdate - date2j(tm->tm_year, 1, 1) + 1;
 
-	if (!(res = datetime_to_char_body(&tmtc, fmt, false, PG_GET_COLLATION())))
-		PG_RETURN_NULL();
+	if (!(res = datetime_to_char_body(&tmtc, fmt, false, MDB_GET_COLLATION())))
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TEXT_P(res);
+	MDB_RETURN_TEXT_P(res);
 }
 
 
@@ -3451,30 +3451,30 @@ timestamptz_to_char(PG_FUNCTION_ARGS)
  * -------------------
  */
 Datum
-interval_to_char(PG_FUNCTION_ARGS)
+interval_to_char(MDB_FUNCTION_ARGS)
 {
-	Interval   *it = PG_GETARG_INTERVAL_P(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1),
+	Interval   *it = MDB_GETARG_INTERVAL_P(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1),
 			   *res;
 	TmToChar	tmtc;
 	struct mdb_tm *tm;
 
 	if ((VARSIZE(fmt) - VARHDRSZ) <= 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	ZERO_tmtc(&tmtc);
 	tm = tmtcTm(&tmtc);
 
 	if (interval2tm(*it, tm, &tmtcFsec(&tmtc)) != 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* wday is meaningless, yday approximates the total span in days */
 	tm->tm_yday = (tm->tm_year * MONTHS_PER_YEAR + tm->tm_mon) * DAYS_PER_MONTH + tm->tm_mday;
 
-	if (!(res = datetime_to_char_body(&tmtc, fmt, true, PG_GET_COLLATION())))
-		PG_RETURN_NULL();
+	if (!(res = datetime_to_char_body(&tmtc, fmt, true, MDB_GET_COLLATION())))
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TEXT_P(res);
+	MDB_RETURN_TEXT_P(res);
 }
 
 /* ---------------------
@@ -3485,10 +3485,10 @@ interval_to_char(PG_FUNCTION_ARGS)
  * ---------------------
  */
 Datum
-to_timestamp(PG_FUNCTION_ARGS)
+to_timestamp(MDB_FUNCTION_ARGS)
 {
-	text	   *date_txt = PG_GETARG_TEXT_P(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1);
+	text	   *date_txt = MDB_GETARG_TEXT_P(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1);
 	Timestamp	result;
 	int			tz;
 	struct mdb_tm tm;
@@ -3503,7 +3503,7 @@ to_timestamp(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
 				 errmsg("timestamp out of range")));
 
-	PG_RETURN_TIMESTAMP(result);
+	MDB_RETURN_TIMESTAMP(result);
 }
 
 /* ----------
@@ -3512,10 +3512,10 @@ to_timestamp(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-to_date(PG_FUNCTION_ARGS)
+to_date(MDB_FUNCTION_ARGS)
 {
-	text	   *date_txt = PG_GETARG_TEXT_P(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1);
+	text	   *date_txt = MDB_GETARG_TEXT_P(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1);
 	DateADT		result;
 	struct mdb_tm tm;
 	fsec_t		fsec;
@@ -3538,7 +3538,7 @@ to_date(PG_FUNCTION_ARGS)
 				 errmsg("date out of range: \"%s\"",
 						text_to_cstring(date_txt))));
 
-	PG_RETURN_DATEADT(result);
+	MDB_RETURN_DATEADT(result);
 }
 
 /*
@@ -5002,7 +5002,7 @@ NUM_processor(FormatNode *node, NUMDesc *Num, char *inout,
 do { \
 	int len = VARSIZE_ANY_EXHDR(fmt); \
 	if (len <= 0 || len >= (INT_MAX-VARHDRSZ)/NUM_MAX_ITEM_SIZ)		\
-		PG_RETURN_TEXT_P(cstring_to_text("")); \
+		MDB_RETURN_TEXT_P(cstring_to_text("")); \
 	result	= (text *) palloc0((len * NUM_MAX_ITEM_SIZ) + 1 + VARHDRSZ);	\
 	format	= NUM_cache(len, &Num, fmt, &shouldFree);		\
 } while (0)
@@ -5015,7 +5015,7 @@ do { \
 do { \
 	int		len; \
 									\
-	NUM_processor(format, &Num, VARDATA(result), numstr, 0, out_pre_spaces, sign, true, PG_GET_COLLATION()); \
+	NUM_processor(format, &Num, VARDATA(result), numstr, 0, out_pre_spaces, sign, true, MDB_GET_COLLATION()); \
 									\
 	if (shouldFree)					\
 		pfree(format);				\
@@ -5034,10 +5034,10 @@ do { \
  * -------------------
  */
 Datum
-numeric_to_number(PG_FUNCTION_ARGS)
+numeric_to_number(MDB_FUNCTION_ARGS)
 {
-	text	   *value = PG_GETARG_TEXT_P(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1);
+	text	   *value = MDB_GETARG_TEXT_P(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1);
 	NUMDesc		Num;
 	Datum		result;
 	FormatNode *format;
@@ -5050,14 +5050,14 @@ numeric_to_number(PG_FUNCTION_ARGS)
 	len = VARSIZE(fmt) - VARHDRSZ;
 
 	if (len <= 0 || len >= INT_MAX / NUM_MAX_ITEM_SIZ)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	format = NUM_cache(len, &Num, fmt, &shouldFree);
 
 	numstr = (char *) palloc((len * NUM_MAX_ITEM_SIZ) + 1);
 
 	NUM_processor(format, &Num, VARDATA(value), numstr,
-				  VARSIZE(value) - VARHDRSZ, 0, 0, false, PG_GET_COLLATION());
+				  VARSIZE(value) - VARHDRSZ, 0, 0, false, MDB_GET_COLLATION());
 
 	scale = Num.post;
 	precision = Num.pre + Num.multi + scale;
@@ -5095,10 +5095,10 @@ numeric_to_number(PG_FUNCTION_ARGS)
  * ------------------
  */
 Datum
-numeric_to_char(PG_FUNCTION_ARGS)
+numeric_to_char(MDB_FUNCTION_ARGS)
 {
-	Numeric		value = PG_GETARG_NUMERIC(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1);
+	Numeric		value = MDB_GETARG_NUMERIC(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1);
 	NUMDesc		Num;
 	FormatNode *format;
 	text	   *result;
@@ -5211,7 +5211,7 @@ numeric_to_char(PG_FUNCTION_ARGS)
 	}
 
 	NUM_TOCHAR_finish;
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /* ---------------
@@ -5219,10 +5219,10 @@ numeric_to_char(PG_FUNCTION_ARGS)
  * ---------------
  */
 Datum
-int4_to_char(PG_FUNCTION_ARGS)
+int4_to_char(MDB_FUNCTION_ARGS)
 {
-	int32		value = PG_GETARG_INT32(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1);
+	int32		value = MDB_GETARG_INT32(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1);
 	NUMDesc		Num;
 	FormatNode *format;
 	text	   *result;
@@ -5306,7 +5306,7 @@ int4_to_char(PG_FUNCTION_ARGS)
 	}
 
 	NUM_TOCHAR_finish;
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /* ---------------
@@ -5314,10 +5314,10 @@ int4_to_char(PG_FUNCTION_ARGS)
  * ---------------
  */
 Datum
-int8_to_char(PG_FUNCTION_ARGS)
+int8_to_char(MDB_FUNCTION_ARGS)
 {
-	int64		value = PG_GETARG_INT64(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1);
+	int64		value = MDB_GETARG_INT64(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1);
 	NUMDesc		Num;
 	FormatNode *format;
 	text	   *result;
@@ -5416,7 +5416,7 @@ int8_to_char(PG_FUNCTION_ARGS)
 	}
 
 	NUM_TOCHAR_finish;
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /* -----------------
@@ -5424,10 +5424,10 @@ int8_to_char(PG_FUNCTION_ARGS)
  * -----------------
  */
 Datum
-float4_to_char(PG_FUNCTION_ARGS)
+float4_to_char(MDB_FUNCTION_ARGS)
 {
-	float4		value = PG_GETARG_FLOAT4(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1);
+	float4		value = MDB_GETARG_FLOAT4(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1);
 	NUMDesc		Num;
 	FormatNode *format;
 	text	   *result;
@@ -5522,7 +5522,7 @@ float4_to_char(PG_FUNCTION_ARGS)
 	}
 
 	NUM_TOCHAR_finish;
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /* -----------------
@@ -5530,10 +5530,10 @@ float4_to_char(PG_FUNCTION_ARGS)
  * -----------------
  */
 Datum
-float8_to_char(PG_FUNCTION_ARGS)
+float8_to_char(MDB_FUNCTION_ARGS)
 {
-	float8		value = PG_GETARG_FLOAT8(0);
-	text	   *fmt = PG_GETARG_TEXT_P(1);
+	float8		value = MDB_GETARG_FLOAT8(0);
+	text	   *fmt = MDB_GETARG_TEXT_P(1);
 	NUMDesc		Num;
 	FormatNode *format;
 	text	   *result;
@@ -5626,5 +5626,5 @@ float8_to_char(PG_FUNCTION_ARGS)
 	}
 
 	NUM_TOCHAR_finish;
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }

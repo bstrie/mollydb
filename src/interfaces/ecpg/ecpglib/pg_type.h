@@ -12,8 +12,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TYPE_H
-#define PG_TYPE_H
+#ifndef MDB_TYPE_H
+#define MDB_TYPE_H
 
 #define BOOLOID			16
 #define BYTEAOID		17
@@ -58,4 +58,4 @@
 #define VARBITOID	  1562
 #define NUMERICOID		1700
 
-#endif   /* PG_TYPE_H */
+#endif   /* MDB_TYPE_H */

@@ -36,7 +36,7 @@ mdb_to_ascii(unsigned char *src, unsigned char *src_end, unsigned char *dest, in
 #define RANGE_128	128
 #define RANGE_160	160
 
-	if (enc == PG_LATIN1)
+	if (enc == MDB_LATIN1)
 	{
 		/*
 		 * ISO-8859-1 <range: 160 -- 255>
@@ -44,7 +44,7 @@ mdb_to_ascii(unsigned char *src, unsigned char *src_end, unsigned char *dest, in
 		ascii = (const unsigned char *) "  cL Y  \"Ca  -R     'u .,      ?AAAAAAACEEEEIIII NOOOOOxOUUUUYTBaaaaaaaceeeeiiii nooooo/ouuuuyty";
 		range = RANGE_160;
 	}
-	else if (enc == PG_LATIN2)
+	else if (enc == MDB_LATIN2)
 	{
 		/*
 		 * ISO-8859-2 <range: 160 -- 255>
@@ -52,7 +52,7 @@ mdb_to_ascii(unsigned char *src, unsigned char *src_end, unsigned char *dest, in
 		ascii = (const unsigned char *) " A L LS \"SSTZ-ZZ a,l'ls ,sstz\"zzRAAAALCCCEEEEIIDDNNOOOOxRUUUUYTBraaaalccceeeeiiddnnoooo/ruuuuyt.";
 		range = RANGE_160;
 	}
-	else if (enc == PG_LATIN9)
+	else if (enc == MDB_LATIN9)
 	{
 		/*
 		 * ISO-8859-15 <range: 160 -- 255>
@@ -60,7 +60,7 @@ mdb_to_ascii(unsigned char *src, unsigned char *src_end, unsigned char *dest, in
 		ascii = (const unsigned char *) "  cL YS sCa  -R     Zu .z   EeY?AAAAAAACEEEEIIII NOOOOOxOUUUUYTBaaaaaaaceeeeiiii nooooo/ouuuuyty";
 		range = RANGE_160;
 	}
-	else if (enc == PG_WIN1250)
+	else if (enc == MDB_WIN1250)
 	{
 		/*
 		 * Window CP1250 <range: 128 -- 255>
@@ -114,10 +114,10 @@ encode_to_ascii(text *data, int enc)
  * ----------
  */
 Datum
-to_ascii_encname(PG_FUNCTION_ARGS)
+to_ascii_encname(MDB_FUNCTION_ARGS)
 {
-	text	   *data = PG_GETARG_TEXT_P_COPY(0);
-	char	   *encname = NameStr(*PG_GETARG_NAME(1));
+	text	   *data = MDB_GETARG_TEXT_P_COPY(0);
+	char	   *encname = NameStr(*MDB_GETARG_NAME(1));
 	int			enc = mdb_char_to_encoding(encname);
 
 	if (enc < 0)
@@ -125,7 +125,7 @@ to_ascii_encname(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_UNDEFINED_OBJECT),
 				 errmsg("%s is not a valid encoding name", encname)));
 
-	PG_RETURN_TEXT_P(encode_to_ascii(data, enc));
+	MDB_RETURN_TEXT_P(encode_to_ascii(data, enc));
 }
 
 /* ----------
@@ -133,17 +133,17 @@ to_ascii_encname(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-to_ascii_enc(PG_FUNCTION_ARGS)
+to_ascii_enc(MDB_FUNCTION_ARGS)
 {
-	text	   *data = PG_GETARG_TEXT_P_COPY(0);
-	int			enc = PG_GETARG_INT32(1);
+	text	   *data = MDB_GETARG_TEXT_P_COPY(0);
+	int			enc = MDB_GETARG_INT32(1);
 
-	if (!PG_VALID_ENCODING(enc))
+	if (!MDB_VALID_ENCODING(enc))
 		ereport(ERROR,
 				(errcode(ERRCODE_UNDEFINED_OBJECT),
 				 errmsg("%d is not a valid encoding code", enc)));
 
-	PG_RETURN_TEXT_P(encode_to_ascii(data, enc));
+	MDB_RETURN_TEXT_P(encode_to_ascii(data, enc));
 }
 
 /* ----------
@@ -151,12 +151,12 @@ to_ascii_enc(PG_FUNCTION_ARGS)
  * ----------
  */
 Datum
-to_ascii_default(PG_FUNCTION_ARGS)
+to_ascii_default(MDB_FUNCTION_ARGS)
 {
-	text	   *data = PG_GETARG_TEXT_P_COPY(0);
+	text	   *data = MDB_GETARG_TEXT_P_COPY(0);
 	int			enc = GetDatabaseEncoding();
 
-	PG_RETURN_TEXT_P(encode_to_ascii(data, enc));
+	MDB_RETURN_TEXT_P(encode_to_ascii(data, enc));
 }
 
 /* ----------

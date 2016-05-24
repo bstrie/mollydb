@@ -5,10 +5,10 @@
  *
  * A window function does not receive its arguments in the normal way
  * (and therefore the concept of strictness is irrelevant).  Instead it
- * receives a "WindowObject", which it can fetch with PG_WINDOW_OBJECT()
+ * receives a "WindowObject", which it can fetch with MDB_WINDOW_OBJECT()
  * (note V1 calling convention must be used).  Correct call context can
  * be tested with WindowObjectIsValid().  Although argument values are
- * not passed, the call is correctly set up so that PG_NARGS() can be
+ * not passed, the call is correctly set up so that MDB_NARGS() can be
  * used and argument type information can be obtained with
  * get_fn_expr_argtype(), get_fn_expr_arg_stable(), etc.
  *
@@ -36,7 +36,7 @@
 /* this struct is private in nodeWindowAgg.c */
 typedef struct WindowObjectData *WindowObject;
 
-#define PG_WINDOW_OBJECT() ((WindowObject) fcinfo->context)
+#define MDB_WINDOW_OBJECT() ((WindowObject) fcinfo->context)
 
 #define WindowObjectIsValid(winobj) \
 	((winobj) != NULL && IsA(winobj, WindowObjectData))

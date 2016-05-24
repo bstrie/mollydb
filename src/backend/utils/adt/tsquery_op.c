@@ -17,13 +17,13 @@
 #include "tsearch/ts_utils.h"
 
 Datum
-tsquery_numnode(PG_FUNCTION_ARGS)
+tsquery_numnode(MDB_FUNCTION_ARGS)
 {
-	TSQuery		query = PG_GETARG_TSQUERY(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(0);
 	int			nnode = query->size;
 
-	PG_FREE_IF_COPY(query, 0);
-	PG_RETURN_INT32(nnode);
+	MDB_FREE_IF_COPY(query, 0);
+	MDB_RETURN_INT32(nnode);
 }
 
 static QTNode *
@@ -48,22 +48,22 @@ join_tsqueries(TSQuery a, TSQuery b, int8 operator, uint16 distance)
 }
 
 Datum
-tsquery_and(PG_FUNCTION_ARGS)
+tsquery_and(MDB_FUNCTION_ARGS)
 {
-	TSQuery		a = PG_GETARG_TSQUERY_COPY(0);
-	TSQuery		b = PG_GETARG_TSQUERY_COPY(1);
+	TSQuery		a = MDB_GETARG_TSQUERY_COPY(0);
+	TSQuery		b = MDB_GETARG_TSQUERY_COPY(1);
 	QTNode	   *res;
 	TSQuery		query;
 
 	if (a->size == 0)
 	{
-		PG_FREE_IF_COPY(a, 1);
-		PG_RETURN_POINTER(b);
+		MDB_FREE_IF_COPY(a, 1);
+		MDB_RETURN_POINTER(b);
 	}
 	else if (b->size == 0)
 	{
-		PG_FREE_IF_COPY(b, 1);
-		PG_RETURN_POINTER(a);
+		MDB_FREE_IF_COPY(b, 1);
+		MDB_RETURN_POINTER(a);
 	}
 
 	res = join_tsqueries(a, b, OP_AND, 0);
@@ -71,29 +71,29 @@ tsquery_and(PG_FUNCTION_ARGS)
 	query = QTN2QT(res);
 
 	QTNFree(res);
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
 
-	PG_RETURN_TSQUERY(query);
+	MDB_RETURN_TSQUERY(query);
 }
 
 Datum
-tsquery_or(PG_FUNCTION_ARGS)
+tsquery_or(MDB_FUNCTION_ARGS)
 {
-	TSQuery		a = PG_GETARG_TSQUERY_COPY(0);
-	TSQuery		b = PG_GETARG_TSQUERY_COPY(1);
+	TSQuery		a = MDB_GETARG_TSQUERY_COPY(0);
+	TSQuery		b = MDB_GETARG_TSQUERY_COPY(1);
 	QTNode	   *res;
 	TSQuery		query;
 
 	if (a->size == 0)
 	{
-		PG_FREE_IF_COPY(a, 1);
-		PG_RETURN_POINTER(b);
+		MDB_FREE_IF_COPY(a, 1);
+		MDB_RETURN_POINTER(b);
 	}
 	else if (b->size == 0)
 	{
-		PG_FREE_IF_COPY(b, 1);
-		PG_RETURN_POINTER(a);
+		MDB_FREE_IF_COPY(b, 1);
+		MDB_RETURN_POINTER(a);
 	}
 
 	res = join_tsqueries(a, b, OP_OR, 0);
@@ -101,20 +101,20 @@ tsquery_or(PG_FUNCTION_ARGS)
 	query = QTN2QT(res);
 
 	QTNFree(res);
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
 
-	PG_RETURN_POINTER(query);
+	MDB_RETURN_POINTER(query);
 }
 
 Datum
-tsquery_phrase_distance(PG_FUNCTION_ARGS)
+tsquery_phrase_distance(MDB_FUNCTION_ARGS)
 {
-	TSQuery		a = PG_GETARG_TSQUERY_COPY(0);
-	TSQuery		b = PG_GETARG_TSQUERY_COPY(1);
+	TSQuery		a = MDB_GETARG_TSQUERY_COPY(0);
+	TSQuery		b = MDB_GETARG_TSQUERY_COPY(1);
 	QTNode	   *res;
 	TSQuery		query;
-	int32		distance = PG_GETARG_INT32(2);
+	int32		distance = MDB_GETARG_INT32(2);
 
 	if (distance < 0 || distance > MAXENTRYPOS)
 		ereport(ERROR,
@@ -123,13 +123,13 @@ tsquery_phrase_distance(PG_FUNCTION_ARGS)
 						MAXENTRYPOS)));
 	if (a->size == 0)
 	{
-		PG_FREE_IF_COPY(a, 1);
-		PG_RETURN_POINTER(b);
+		MDB_FREE_IF_COPY(a, 1);
+		MDB_RETURN_POINTER(b);
 	}
 	else if (b->size == 0)
 	{
-		PG_FREE_IF_COPY(b, 1);
-		PG_RETURN_POINTER(a);
+		MDB_FREE_IF_COPY(b, 1);
+		MDB_RETURN_POINTER(a);
 	}
 
 	res = join_tsqueries(a, b, OP_PHRASE, (uint16) distance);
@@ -137,31 +137,31 @@ tsquery_phrase_distance(PG_FUNCTION_ARGS)
 	query = QTN2QT(res);
 
 	QTNFree(res);
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
 
-	PG_RETURN_POINTER(cleanup_fakeval_and_phrase(query));
+	MDB_RETURN_POINTER(cleanup_fakeval_and_phrase(query));
 }
 
 Datum
-tsquery_phrase(PG_FUNCTION_ARGS)
+tsquery_phrase(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(DirectFunctionCall3(
+	MDB_RETURN_POINTER(DirectFunctionCall3(
 							tsquery_phrase_distance,
-							PG_GETARG_DATUM(0),
-							PG_GETARG_DATUM(1),
+							MDB_GETARG_DATUM(0),
+							MDB_GETARG_DATUM(1),
 							Int32GetDatum(1)));
 }
 
 Datum
-tsquery_not(PG_FUNCTION_ARGS)
+tsquery_not(MDB_FUNCTION_ARGS)
 {
-	TSQuery		a = PG_GETARG_TSQUERY_COPY(0);
+	TSQuery		a = MDB_GETARG_TSQUERY_COPY(0);
 	QTNode	   *res;
 	TSQuery		query;
 
 	if (a->size == 0)
-		PG_RETURN_POINTER(a);
+		MDB_RETURN_POINTER(a);
 
 	res = (QTNode *) palloc0(sizeof(QTNode));
 
@@ -178,9 +178,9 @@ tsquery_not(PG_FUNCTION_ARGS)
 	query = QTN2QT(res);
 
 	QTNFree(res);
-	PG_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(a, 0);
 
-	PG_RETURN_POINTER(query);
+	MDB_RETURN_POINTER(query);
 }
 
 static int
@@ -210,29 +210,29 @@ CompareTSQ(TSQuery a, TSQuery b)
 }
 
 Datum
-tsquery_cmp(PG_FUNCTION_ARGS)
+tsquery_cmp(MDB_FUNCTION_ARGS)
 {
-	TSQuery		a = PG_GETARG_TSQUERY_COPY(0);
-	TSQuery		b = PG_GETARG_TSQUERY_COPY(1);
+	TSQuery		a = MDB_GETARG_TSQUERY_COPY(0);
+	TSQuery		b = MDB_GETARG_TSQUERY_COPY(1);
 	int			res = CompareTSQ(a, b);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
 
-	PG_RETURN_INT32(res);
+	MDB_RETURN_INT32(res);
 }
 
 #define CMPFUNC( NAME, CONDITION )				\
 Datum											\
-NAME(PG_FUNCTION_ARGS) {						\
-	TSQuery  a = PG_GETARG_TSQUERY_COPY(0);		\
-	TSQuery  b = PG_GETARG_TSQUERY_COPY(1);		\
+NAME(MDB_FUNCTION_ARGS) {						\
+	TSQuery  a = MDB_GETARG_TSQUERY_COPY(0);		\
+	TSQuery  b = MDB_GETARG_TSQUERY_COPY(1);		\
 	int res = CompareTSQ(a,b);					\
 												\
-	PG_FREE_IF_COPY(a,0);						\
-	PG_FREE_IF_COPY(b,1);						\
+	MDB_FREE_IF_COPY(a,0);						\
+	MDB_FREE_IF_COPY(b,1);						\
 												\
-	PG_RETURN_BOOL( CONDITION );				\
+	MDB_RETURN_BOOL( CONDITION );				\
 }	\
 /* keep compiler quiet - no extra ; */			\
 extern int no_such_variable
@@ -325,10 +325,10 @@ remove_duplicates(char **strings, int n)
 }
 
 Datum
-tsq_mcontains(PG_FUNCTION_ARGS)
+tsq_mcontains(MDB_FUNCTION_ARGS)
 {
-	TSQuery		query = PG_GETARG_TSQUERY(0);
-	TSQuery		ex = PG_GETARG_TSQUERY(1);
+	TSQuery		query = MDB_GETARG_TSQUERY(0);
+	TSQuery		ex = MDB_GETARG_TSQUERY(1);
 	char	  **query_values;
 	int			query_nvalues;
 	char	  **ex_values;
@@ -367,17 +367,17 @@ tsq_mcontains(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-tsq_mcontained(PG_FUNCTION_ARGS)
+tsq_mcontained(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(
+	MDB_RETURN_DATUM(
 					DirectFunctionCall2(
 										tsq_mcontains,
-										PG_GETARG_DATUM(1),
-										PG_GETARG_DATUM(0)
+										MDB_GETARG_DATUM(1),
+										MDB_GETARG_DATUM(0)
 										)
 		);
 }

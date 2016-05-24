@@ -1859,8 +1859,8 @@ msgstr "los archivos de base de datos son incompatibles con el servidor"
 
 #: access/transam/xlog.c:4303
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x), but the server was compiled with PG_CONTROL_VERSION %d (0x%08x)."
-msgstr "Los archivos de base de datos fueron inicializados con PG_CONTROL_VERSION %d (0x%08x), pero el servidor fue compilado con PG_CONTROL_VERSION %d (0x%08x)."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d (0x%08x), but the server was compiled with MDB_CONTROL_VERSION %d (0x%08x)."
+msgstr "Los archivos de base de datos fueron inicializados con MDB_CONTROL_VERSION %d (0x%08x), pero el servidor fue compilado con MDB_CONTROL_VERSION %d (0x%08x)."
 
 #: access/transam/xlog.c:4307
 #, c-format
@@ -1869,8 +1869,8 @@ msgstr "Este puede ser un problema de discordancia en el orden de bytes. Parece 
 
 #: access/transam/xlog.c:4312
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d, but the server was compiled with PG_CONTROL_VERSION %d."
-msgstr "Los archivos de base de datos fueron inicializados con PG_CONTROL_VERSION %d, pero el servidor fue compilado con PG_CONTROL_VERSION %d."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d, but the server was compiled with MDB_CONTROL_VERSION %d."
+msgstr "Los archivos de base de datos fueron inicializados con MDB_CONTROL_VERSION %d, pero el servidor fue compilado con MDB_CONTROL_VERSION %d."
 
 #: access/transam/xlog.c:4315 access/transam/xlog.c:4339
 #: access/transam/xlog.c:4346 access/transam/xlog.c:4351
@@ -21057,8 +21057,8 @@ msgstr "biblioteca «%s» incompatible: no se encuentra el bloque mágico"
 
 #: utils/fmgr/dfmgr.c:268
 #, c-format
-msgid "Extension libraries are required to use the PG_MODULE_MAGIC macro."
-msgstr "Se requiere que las bibliotecas de extensión usen la macro PG_MODULE_MAGIC."
+msgid "Extension libraries are required to use the MDB_MODULE_MAGIC macro."
+msgstr "Se requiere que las bibliotecas de extensión usen la macro MDB_MODULE_MAGIC."
 
 #: utils/fmgr/dfmgr.c:304
 #, c-format

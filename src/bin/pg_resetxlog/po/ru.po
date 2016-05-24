@@ -1,4 +1,4 @@
-# PG_RESETXLOG Translated Messages into the Russian Language (UTF-8)
+# MDB_RESETXLOG Translated Messages into the Russian Language (UTF-8)
 #
 # Copyright (c) 2002-2005 Serguei A. Mokhov, mokhov@cs.concordia.ca
 # Copyright (c) 2012-2013 Alexander Lakhin, exclusion@gmail.com
@@ -487,10 +487,10 @@ msgstr "newestCommitTsXid:                    %u\n"
 #, c-format
 msgid ""
 "%s: internal error -- sizeof(ControlFileData) is too large ... fix "
-"PG_CONTROL_SIZE\n"
+"MDB_CONTROL_SIZE\n"
 msgstr ""
 "%s: внутренняя ошибка -- размер ControlFileData слишком велик -- исправьте "
-"PG_CONTROL_SIZE\n"
+"MDB_CONTROL_SIZE\n"
 
 #: mdb_resetxlog.c:842
 #, c-format

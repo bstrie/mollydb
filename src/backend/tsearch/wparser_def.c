@@ -793,7 +793,7 @@ p_isspecial(TParser *prs)
 	 * Check that only in utf encoding, because other encodings aren't
 	 * supported by mollydb or even exists.
 	 */
-	if (GetDatabaseEncoding() == PG_UTF8 && prs->usewide)
+	if (GetDatabaseEncoding() == MDB_UTF8 && prs->usewide)
 	{
 		static const mdb_wchar strange_letter[] = {
 			/*
@@ -1964,7 +1964,7 @@ TParserGet(TParser *prs)
 }
 
 Datum
-prsd_lextype(PG_FUNCTION_ARGS)
+prsd_lextype(MDB_FUNCTION_ARGS)
 {
 	LexDescr   *descr = (LexDescr *) palloc(sizeof(LexDescr) * (LASTNUM + 1));
 	int			i;
@@ -1978,38 +1978,38 @@ prsd_lextype(PG_FUNCTION_ARGS)
 
 	descr[LASTNUM].lexid = 0;
 
-	PG_RETURN_POINTER(descr);
+	MDB_RETURN_POINTER(descr);
 }
 
 Datum
-prsd_start(PG_FUNCTION_ARGS)
+prsd_start(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(TParserInit((char *) PG_GETARG_POINTER(0), PG_GETARG_INT32(1)));
+	MDB_RETURN_POINTER(TParserInit((char *) MDB_GETARG_POINTER(0), MDB_GETARG_INT32(1)));
 }
 
 Datum
-prsd_nexttoken(PG_FUNCTION_ARGS)
+prsd_nexttoken(MDB_FUNCTION_ARGS)
 {
-	TParser    *p = (TParser *) PG_GETARG_POINTER(0);
-	char	  **t = (char **) PG_GETARG_POINTER(1);
-	int		   *tlen = (int *) PG_GETARG_POINTER(2);
+	TParser    *p = (TParser *) MDB_GETARG_POINTER(0);
+	char	  **t = (char **) MDB_GETARG_POINTER(1);
+	int		   *tlen = (int *) MDB_GETARG_POINTER(2);
 
 	if (!TParserGet(p))
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 
 	*t = p->token;
 	*tlen = p->lenbytetoken;
 
-	PG_RETURN_INT32(p->type);
+	MDB_RETURN_INT32(p->type);
 }
 
 Datum
-prsd_end(PG_FUNCTION_ARGS)
+prsd_end(MDB_FUNCTION_ARGS)
 {
-	TParser    *p = (TParser *) PG_GETARG_POINTER(0);
+	TParser    *p = (TParser *) MDB_GETARG_POINTER(0);
 
 	TParserClose(p);
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 #define LEAVETOKEN(x)	( (x)==SPACE )
@@ -2284,7 +2284,7 @@ mark_hl_fragments(HeadlineParsedText *prs, TSQuery query, int highlight,
 	for (f = 0; f < max_fragments; f++)
 	{
 		maxitems = 0;
-		minwords = PG_INT32_MAX;
+		minwords = MDB_INT32_MAX;
 		minI = -1;
 
 		/*
@@ -2534,11 +2534,11 @@ mark_hl_words(HeadlineParsedText *prs, TSQuery query, int highlight,
 }
 
 Datum
-prsd_headline(PG_FUNCTION_ARGS)
+prsd_headline(MDB_FUNCTION_ARGS)
 {
-	HeadlineParsedText *prs = (HeadlineParsedText *) PG_GETARG_POINTER(0);
-	List	   *prsoptions = (List *) PG_GETARG_POINTER(1);
-	TSQuery		query = PG_GETARG_TSQUERY(2);
+	HeadlineParsedText *prs = (HeadlineParsedText *) MDB_GETARG_POINTER(0);
+	List	   *prsoptions = (List *) MDB_GETARG_POINTER(1);
+	TSQuery		query = MDB_GETARG_TSQUERY(2);
 
 	/* from opt + start and end tag */
 	int			min_words = 15;
@@ -2620,5 +2620,5 @@ prsd_headline(PG_FUNCTION_ARGS)
 	prs->stopsellen = strlen(prs->stopsel);
 	prs->fragdelimlen = strlen(prs->fragdelim);
 
-	PG_RETURN_POINTER(prs);
+	MDB_RETURN_POINTER(prs);
 }

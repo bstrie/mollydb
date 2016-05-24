@@ -152,7 +152,7 @@ GenericMatchText(char *s, int slen, char *p, int plen)
 {
 	if (mdb_database_encoding_max_length() == 1)
 		return SB_MatchText(s, slen, p, plen, 0, true);
-	else if (GetDatabaseEncoding() == PG_UTF8)
+	else if (GetDatabaseEncoding() == MDB_UTF8)
 		return UTF8_MatchText(s, slen, p, plen, 0, true);
 	else
 		return MB_MatchText(s, slen, p, plen, 0, true);
@@ -183,7 +183,7 @@ Generic_Text_IC_like(text *str, text *pat, Oid collation)
 													PointerGetDatum(str)));
 		s = VARDATA(str);
 		slen = (VARSIZE(str) - VARHDRSZ);
-		if (GetDatabaseEncoding() == PG_UTF8)
+		if (GetDatabaseEncoding() == MDB_UTF8)
 			return UTF8_MatchText(s, slen, p, plen, 0, true);
 		else
 			return MB_MatchText(s, slen, p, plen, 0, true);
@@ -228,10 +228,10 @@ Generic_Text_IC_like(text *str, text *pat, Oid collation)
  */
 
 Datum
-namelike(PG_FUNCTION_ARGS)
+namelike(MDB_FUNCTION_ARGS)
 {
-	Name		str = PG_GETARG_NAME(0);
-	text	   *pat = PG_GETARG_TEXT_PP(1);
+	Name		str = MDB_GETARG_NAME(0);
+	text	   *pat = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 	char	   *s,
 			   *p;
@@ -245,14 +245,14 @@ namelike(PG_FUNCTION_ARGS)
 
 	result = (GenericMatchText(s, slen, p, plen) == LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-namenlike(PG_FUNCTION_ARGS)
+namenlike(MDB_FUNCTION_ARGS)
 {
-	Name		str = PG_GETARG_NAME(0);
-	text	   *pat = PG_GETARG_TEXT_PP(1);
+	Name		str = MDB_GETARG_NAME(0);
+	text	   *pat = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 	char	   *s,
 			   *p;
@@ -266,14 +266,14 @@ namenlike(PG_FUNCTION_ARGS)
 
 	result = (GenericMatchText(s, slen, p, plen) != LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-textlike(PG_FUNCTION_ARGS)
+textlike(MDB_FUNCTION_ARGS)
 {
-	text	   *str = PG_GETARG_TEXT_PP(0);
-	text	   *pat = PG_GETARG_TEXT_PP(1);
+	text	   *str = MDB_GETARG_TEXT_PP(0);
+	text	   *pat = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 	char	   *s,
 			   *p;
@@ -287,14 +287,14 @@ textlike(PG_FUNCTION_ARGS)
 
 	result = (GenericMatchText(s, slen, p, plen) == LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-textnlike(PG_FUNCTION_ARGS)
+textnlike(MDB_FUNCTION_ARGS)
 {
-	text	   *str = PG_GETARG_TEXT_PP(0);
-	text	   *pat = PG_GETARG_TEXT_PP(1);
+	text	   *str = MDB_GETARG_TEXT_PP(0);
+	text	   *pat = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 	char	   *s,
 			   *p;
@@ -308,14 +308,14 @@ textnlike(PG_FUNCTION_ARGS)
 
 	result = (GenericMatchText(s, slen, p, plen) != LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-bytealike(PG_FUNCTION_ARGS)
+bytealike(MDB_FUNCTION_ARGS)
 {
-	bytea	   *str = PG_GETARG_BYTEA_PP(0);
-	bytea	   *pat = PG_GETARG_BYTEA_PP(1);
+	bytea	   *str = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *pat = MDB_GETARG_BYTEA_PP(1);
 	bool		result;
 	char	   *s,
 			   *p;
@@ -329,14 +329,14 @@ bytealike(PG_FUNCTION_ARGS)
 
 	result = (SB_MatchText(s, slen, p, plen, 0, true) == LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-byteanlike(PG_FUNCTION_ARGS)
+byteanlike(MDB_FUNCTION_ARGS)
 {
-	bytea	   *str = PG_GETARG_BYTEA_PP(0);
-	bytea	   *pat = PG_GETARG_BYTEA_PP(1);
+	bytea	   *str = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *pat = MDB_GETARG_BYTEA_PP(1);
 	bool		result;
 	char	   *s,
 			   *p;
@@ -350,7 +350,7 @@ byteanlike(PG_FUNCTION_ARGS)
 
 	result = (SB_MatchText(s, slen, p, plen, 0, true) != LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*
@@ -358,57 +358,57 @@ byteanlike(PG_FUNCTION_ARGS)
  */
 
 Datum
-nameiclike(PG_FUNCTION_ARGS)
+nameiclike(MDB_FUNCTION_ARGS)
 {
-	Name		str = PG_GETARG_NAME(0);
-	text	   *pat = PG_GETARG_TEXT_PP(1);
+	Name		str = MDB_GETARG_NAME(0);
+	text	   *pat = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 	text	   *strtext;
 
 	strtext = DatumGetTextP(DirectFunctionCall1(name_text,
 												NameGetDatum(str)));
-	result = (Generic_Text_IC_like(strtext, pat, PG_GET_COLLATION()) == LIKE_TRUE);
+	result = (Generic_Text_IC_like(strtext, pat, MDB_GET_COLLATION()) == LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-nameicnlike(PG_FUNCTION_ARGS)
+nameicnlike(MDB_FUNCTION_ARGS)
 {
-	Name		str = PG_GETARG_NAME(0);
-	text	   *pat = PG_GETARG_TEXT_PP(1);
+	Name		str = MDB_GETARG_NAME(0);
+	text	   *pat = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 	text	   *strtext;
 
 	strtext = DatumGetTextP(DirectFunctionCall1(name_text,
 												NameGetDatum(str)));
-	result = (Generic_Text_IC_like(strtext, pat, PG_GET_COLLATION()) != LIKE_TRUE);
+	result = (Generic_Text_IC_like(strtext, pat, MDB_GET_COLLATION()) != LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-texticlike(PG_FUNCTION_ARGS)
+texticlike(MDB_FUNCTION_ARGS)
 {
-	text	   *str = PG_GETARG_TEXT_PP(0);
-	text	   *pat = PG_GETARG_TEXT_PP(1);
+	text	   *str = MDB_GETARG_TEXT_PP(0);
+	text	   *pat = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = (Generic_Text_IC_like(str, pat, PG_GET_COLLATION()) == LIKE_TRUE);
+	result = (Generic_Text_IC_like(str, pat, MDB_GET_COLLATION()) == LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-texticnlike(PG_FUNCTION_ARGS)
+texticnlike(MDB_FUNCTION_ARGS)
 {
-	text	   *str = PG_GETARG_TEXT_PP(0);
-	text	   *pat = PG_GETARG_TEXT_PP(1);
+	text	   *str = MDB_GETARG_TEXT_PP(0);
+	text	   *pat = MDB_GETARG_TEXT_PP(1);
 	bool		result;
 
-	result = (Generic_Text_IC_like(str, pat, PG_GET_COLLATION()) != LIKE_TRUE);
+	result = (Generic_Text_IC_like(str, pat, MDB_GET_COLLATION()) != LIKE_TRUE);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*
@@ -416,10 +416,10 @@ texticnlike(PG_FUNCTION_ARGS)
  * convert the pattern to use MollyDB' standard backslash escape convention.
  */
 Datum
-like_escape(PG_FUNCTION_ARGS)
+like_escape(MDB_FUNCTION_ARGS)
 {
-	text	   *pat = PG_GETARG_TEXT_PP(0);
-	text	   *esc = PG_GETARG_TEXT_PP(1);
+	text	   *pat = MDB_GETARG_TEXT_PP(0);
+	text	   *esc = MDB_GETARG_TEXT_PP(1);
 	text	   *result;
 
 	if (mdb_database_encoding_max_length() == 1)
@@ -427,7 +427,7 @@ like_escape(PG_FUNCTION_ARGS)
 	else
 		result = MB_do_like_escape(pat, esc);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /*
@@ -435,11 +435,11 @@ like_escape(PG_FUNCTION_ARGS)
  * convert the pattern to use MollyDB' standard backslash escape convention.
  */
 Datum
-like_escape_bytea(PG_FUNCTION_ARGS)
+like_escape_bytea(MDB_FUNCTION_ARGS)
 {
-	bytea	   *pat = PG_GETARG_BYTEA_PP(0);
-	bytea	   *esc = PG_GETARG_BYTEA_PP(1);
+	bytea	   *pat = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *esc = MDB_GETARG_BYTEA_PP(1);
 	bytea	   *result = SB_do_like_escape((text *) pat, (text *) esc);
 
-	PG_RETURN_BYTEA_P((bytea *) result);
+	MDB_RETURN_BYTEA_P((bytea *) result);
 }

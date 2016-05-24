@@ -344,7 +344,7 @@ CreateReplicationSlot(PGconn *conn, const char *slot_name, const char *plugin,
 	res = PQexec(conn, query->data);
 	if (PQresultStatus(res) != PGRES_TUPLES_OK)
 	{
-		const char *sqlstate = PQresultErrorField(res, PG_DIAG_SQLSTATE);
+		const char *sqlstate = PQresultErrorField(res, MDB_DIAG_SQLSTATE);
 
 		if (slot_exists_ok &&
 			sqlstate &&

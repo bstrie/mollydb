@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TS_PARSER_H
-#define PG_TS_PARSER_H
+#ifndef MDB_TS_PARSER_H
+#define MDB_TS_PARSER_H
 
 #include "catalog/genbki.h"
 
@@ -64,4 +64,4 @@ typedef FormData_mdb_ts_parser *Form_mdb_ts_parser;
 DATA(insert OID = 3722 ( "default" PGNSP prsd_start prsd_nexttoken prsd_end prsd_headline prsd_lextype ));
 DESCR("default word parser");
 
-#endif   /* PG_TS_PARSER_H */
+#endif   /* MDB_TS_PARSER_H */

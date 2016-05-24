@@ -671,7 +671,7 @@ typedef struct
  * GlobalTransactionData struct definition.
  */
 Datum
-mdb_prepared_xact(PG_FUNCTION_ARGS)
+mdb_prepared_xact(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Working_State *status;
@@ -1151,7 +1151,7 @@ ReadTwoPhaseFile(TransactionId xid, bool give_warnings)
 
 	TwoPhaseFilePath(path, xid);
 
-	fd = OpenTransientFile(path, O_RDONLY | PG_BINARY, 0);
+	fd = OpenTransientFile(path, O_RDONLY | MDB_BINARY, 0);
 	if (fd < 0)
 	{
 		if (give_warnings)
@@ -1534,7 +1534,7 @@ RecreateTwoPhaseFile(TransactionId xid, void *content, int len)
 	TwoPhaseFilePath(path, xid);
 
 	fd = OpenTransientFile(path,
-						   O_CREAT | O_TRUNC | O_WRONLY | PG_BINARY,
+						   O_CREAT | O_TRUNC | O_WRONLY | MDB_BINARY,
 						   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(ERROR,

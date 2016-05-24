@@ -90,7 +90,7 @@ semdb_attribute_post_create(Oid relOid, AttrNumber attnum)
 	scontext = semdb_get_client_label();
 	tcontext = semdb_get_label(RelationRelationId, relOid, 0);
 	ncontext = semdb_compute_create(scontext, tcontext,
-									  SEPG_CLASS_DB_COLUMN,
+									  SEMDB_CLASS_DB_COLUMN,
 									  NameStr(attForm->attname));
 
 	/*
@@ -105,8 +105,8 @@ semdb_attribute_post_create(Oid relOid, AttrNumber attnum)
 					 getObjectIdentity(&object),
 					 quote_identifier(NameStr(attForm->attname)));
 	semdb_avc_check_perms_label(ncontext,
-								  SEPG_CLASS_DB_COLUMN,
-								  SEPG_DB_COLUMN__CREATE,
+								  SEMDB_CLASS_DB_COLUMN,
+								  SEMDB_DB_COLUMN__CREATE,
 								  audit_name.data,
 								  true);
 
@@ -148,8 +148,8 @@ semdb_attribute_drop(Oid relOid, AttrNumber attnum)
 	audit_name = getObjectIdentity(&object);
 
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_COLUMN,
-							SEPG_DB_COLUMN__DROP,
+							SEMDB_CLASS_DB_COLUMN,
+							SEMDB_DB_COLUMN__DROP,
 							audit_name,
 							true);
 	pfree(audit_name);
@@ -182,9 +182,9 @@ semdb_attribute_relabel(Oid relOid, AttrNumber attnum,
 	 * check db_column:{setattr relabelfrom} permission
 	 */
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_COLUMN,
-							SEPG_DB_COLUMN__SETATTR |
-							SEPG_DB_COLUMN__RELABELFROM,
+							SEMDB_CLASS_DB_COLUMN,
+							SEMDB_DB_COLUMN__SETATTR |
+							SEMDB_DB_COLUMN__RELABELFROM,
 							audit_name,
 							true);
 
@@ -192,8 +192,8 @@ semdb_attribute_relabel(Oid relOid, AttrNumber attnum,
 	 * check db_column:{relabelto} permission
 	 */
 	semdb_avc_check_perms_label(seclabel,
-								  SEPG_CLASS_DB_COLUMN,
-								  SEPG_DB_PROCEDURE__RELABELTO,
+								  SEMDB_CLASS_DB_COLUMN,
+								  SEMDB_DB_PROCEDURE__RELABELTO,
 								  audit_name,
 								  true);
 	pfree(audit_name);
@@ -222,8 +222,8 @@ semdb_attribute_setattr(Oid relOid, AttrNumber attnum)
 	audit_name = getObjectIdentity(&object);
 
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_COLUMN,
-							SEPG_DB_COLUMN__SETATTR,
+							SEMDB_CLASS_DB_COLUMN,
+							SEMDB_DB_COLUMN__SETATTR,
 							audit_name,
 							true);
 	pfree(audit_name);
@@ -273,7 +273,7 @@ semdb_relation_post_create(Oid relOid)
 
 	/* ignore indexes on toast tables */
 	if (classForm->relkind == RELKIND_INDEX &&
-		classForm->relnamespace == PG_TOAST_NAMESPACE)
+		classForm->relnamespace == MDB_TOAST_NAMESPACE)
 		goto out;
 
 	/*
@@ -283,21 +283,21 @@ semdb_relation_post_create(Oid relOid)
 	object.objectId = classForm->relnamespace;
 	object.objectSubId = 0;
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_SCHEMA,
-							SEPG_DB_SCHEMA__ADD_NAME,
+							SEMDB_CLASS_DB_SCHEMA,
+							SEMDB_DB_SCHEMA__ADD_NAME,
 							getObjectIdentity(&object),
 							true);
 
 	switch (classForm->relkind)
 	{
 		case RELKIND_RELATION:
-			tclass = SEPG_CLASS_DB_TABLE;
+			tclass = SEMDB_CLASS_DB_TABLE;
 			break;
 		case RELKIND_SEQUENCE:
-			tclass = SEPG_CLASS_DB_SEQUENCE;
+			tclass = SEMDB_CLASS_DB_SEQUENCE;
 			break;
 		case RELKIND_VIEW:
-			tclass = SEPG_CLASS_DB_VIEW;
+			tclass = SEMDB_CLASS_DB_VIEW;
 			break;
 		case RELKIND_INDEX:
 			/* deal with indexes specially; no need for tclass */
@@ -328,7 +328,7 @@ semdb_relation_post_create(Oid relOid)
 					 quote_identifier(NameStr(classForm->relname)));
 	semdb_avc_check_perms_label(rcontext,
 								  tclass,
-								  SEPG_DB_DATABASE__CREATE,
+								  SEMDB_DB_DATABASE__CREATE,
 								  audit_name.data,
 								  true);
 
@@ -374,15 +374,15 @@ semdb_relation_post_create(Oid relOid)
 
 			ccontext = semdb_compute_create(scontext,
 											  rcontext,
-											  SEPG_CLASS_DB_COLUMN,
+											  SEMDB_CLASS_DB_COLUMN,
 											  NameStr(attForm->attname));
 
 			/*
 			 * check db_column:{create} permission
 			 */
 			semdb_avc_check_perms_label(ccontext,
-										  SEPG_CLASS_DB_COLUMN,
-										  SEPG_DB_COLUMN__CREATE,
+										  SEMDB_CLASS_DB_COLUMN,
+										  SEMDB_DB_COLUMN__CREATE,
 										  audit_name.data,
 										  true);
 
@@ -420,17 +420,17 @@ semdb_relation_drop(Oid relOid)
 	switch (relkind)
 	{
 		case RELKIND_RELATION:
-			tclass = SEPG_CLASS_DB_TABLE;
+			tclass = SEMDB_CLASS_DB_TABLE;
 			break;
 		case RELKIND_SEQUENCE:
-			tclass = SEPG_CLASS_DB_SEQUENCE;
+			tclass = SEMDB_CLASS_DB_SEQUENCE;
 			break;
 		case RELKIND_VIEW:
-			tclass = SEPG_CLASS_DB_VIEW;
+			tclass = SEMDB_CLASS_DB_VIEW;
 			break;
 		case RELKIND_INDEX:
 			/* ignore indexes on toast tables */
-			if (get_rel_namespace(relOid) == PG_TOAST_NAMESPACE)
+			if (get_rel_namespace(relOid) == MDB_TOAST_NAMESPACE)
 				return;
 			/* other indexes are handled specially below; no need for tclass */
 			break;
@@ -448,8 +448,8 @@ semdb_relation_drop(Oid relOid)
 	audit_name = getObjectIdentity(&object);
 
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_SCHEMA,
-							SEPG_DB_SCHEMA__REMOVE_NAME,
+							SEMDB_CLASS_DB_SCHEMA,
+							SEMDB_DB_SCHEMA__REMOVE_NAME,
 							audit_name,
 							true);
 	pfree(audit_name);
@@ -471,7 +471,7 @@ semdb_relation_drop(Oid relOid)
 
 	semdb_avc_check_perms(&object,
 							tclass,
-							SEPG_DB_TABLE__DROP,
+							SEMDB_DB_TABLE__DROP,
 							audit_name,
 							true);
 	pfree(audit_name);
@@ -501,8 +501,8 @@ semdb_relation_drop(Oid relOid)
 			audit_name = getObjectIdentity(&object);
 
 			semdb_avc_check_perms(&object,
-									SEPG_CLASS_DB_COLUMN,
-									SEPG_DB_COLUMN__DROP,
+									SEMDB_CLASS_DB_COLUMN,
+									SEMDB_DB_COLUMN__DROP,
 									audit_name,
 									true);
 			pfree(audit_name);
@@ -526,11 +526,11 @@ semdb_relation_relabel(Oid relOid, const char *seclabel)
 
 	relkind = get_rel_relkind(relOid);
 	if (relkind == RELKIND_RELATION)
-		tclass = SEPG_CLASS_DB_TABLE;
+		tclass = SEMDB_CLASS_DB_TABLE;
 	else if (relkind == RELKIND_SEQUENCE)
-		tclass = SEPG_CLASS_DB_SEQUENCE;
+		tclass = SEMDB_CLASS_DB_SEQUENCE;
 	else if (relkind == RELKIND_VIEW)
-		tclass = SEPG_CLASS_DB_VIEW;
+		tclass = SEMDB_CLASS_DB_VIEW;
 	else
 		ereport(ERROR,
 				(errcode(ERRCODE_WRONG_OBJECT_TYPE),
@@ -547,8 +547,8 @@ semdb_relation_relabel(Oid relOid, const char *seclabel)
 	 */
 	semdb_avc_check_perms(&object,
 							tclass,
-							SEPG_DB_TABLE__SETATTR |
-							SEPG_DB_TABLE__RELABELFROM,
+							SEMDB_DB_TABLE__SETATTR |
+							SEMDB_DB_TABLE__RELABELFROM,
 							audit_name,
 							true);
 
@@ -557,7 +557,7 @@ semdb_relation_relabel(Oid relOid, const char *seclabel)
 	 */
 	semdb_avc_check_perms_label(seclabel,
 								  tclass,
-								  SEPG_DB_TABLE__RELABELTO,
+								  SEMDB_DB_TABLE__RELABELTO,
 								  audit_name,
 								  true);
 	pfree(audit_name);
@@ -585,13 +585,13 @@ semdb_relation_setattr(Oid relOid)
 	switch (get_rel_relkind(relOid))
 	{
 		case RELKIND_RELATION:
-			tclass = SEPG_CLASS_DB_TABLE;
+			tclass = SEMDB_CLASS_DB_TABLE;
 			break;
 		case RELKIND_SEQUENCE:
-			tclass = SEPG_CLASS_DB_SEQUENCE;
+			tclass = SEMDB_CLASS_DB_SEQUENCE;
 			break;
 		case RELKIND_VIEW:
-			tclass = SEPG_CLASS_DB_VIEW;
+			tclass = SEMDB_CLASS_DB_VIEW;
 			break;
 		case RELKIND_INDEX:
 			/* deal with indexes specially */
@@ -654,7 +654,7 @@ semdb_relation_setattr(Oid relOid)
 
 	semdb_avc_check_perms(&object,
 							tclass,
-							SEPG_DB_TABLE__SETATTR,
+							SEMDB_DB_TABLE__SETATTR,
 							audit_name,
 							true);
 	pfree(audit_name);

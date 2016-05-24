@@ -7676,7 +7676,7 @@ dynamic_library_path = 'C:\tools\mollydb;H:\my_project\lib;$libdir'
       <listitem>
        <para>
         Reports the version number of the server. It is determined by the
-        value of <literal>PG_VERSION</> when building the server.
+        value of <literal>MDB_VERSION</> when building the server.
        </para>
       </listitem>
      </varlistentry>
@@ -7690,7 +7690,7 @@ dynamic_library_path = 'C:\tools\mollydb;H:\my_project\lib;$libdir'
       <listitem>
        <para>
         Reports the version number of the server as an integer. It is determined
-        by the value of <literal>PG_VERSION_NUM</> when building the server.
+        by the value of <literal>MDB_VERSION_NUM</> when building the server.
        </para>
       </listitem>
      </varlistentry>

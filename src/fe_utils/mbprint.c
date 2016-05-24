@@ -40,7 +40,7 @@ mdb_get_utf8_id(void)
 	return utf8_id;
 }
 
-#define PG_UTF8		mdb_get_utf8_id()
+#define MDB_UTF8		mdb_get_utf8_id()
 
 
 /*
@@ -349,7 +349,7 @@ mdb_wcsformat(const unsigned char *pwcs, size_t len, int encoding,
 		}
 		else if (w < 0)			/* Non-ascii control char */
 		{
-			if (encoding == PG_UTF8)
+			if (encoding == MDB_UTF8)
 				sprintf((char *) ptr, "\\u%04X", utf8_to_unicode(pwcs));
 			else
 			{
@@ -391,7 +391,7 @@ mdb_wcsformat(const unsigned char *pwcs, size_t len, int encoding,
 unsigned char *
 mbvalidate(unsigned char *pwcs, int encoding)
 {
-	if (encoding == PG_UTF8)
+	if (encoding == MDB_UTF8)
 		mb_utf_validate(pwcs);
 	else
 	{

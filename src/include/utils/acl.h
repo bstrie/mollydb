@@ -106,14 +106,14 @@ typedef ArrayType Acl;
  * fmgr macros for these types
  */
 #define DatumGetAclItemP(X)		   ((AclItem *) DatumGetPointer(X))
-#define PG_GETARG_ACLITEM_P(n)	   DatumGetAclItemP(PG_GETARG_DATUM(n))
-#define PG_RETURN_ACLITEM_P(x)	   PG_RETURN_POINTER(x)
+#define MDB_GETARG_ACLITEM_P(n)	   DatumGetAclItemP(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_ACLITEM_P(x)	   MDB_RETURN_POINTER(x)
 
-#define DatumGetAclP(X)			   ((Acl *) PG_DETOAST_DATUM(X))
-#define DatumGetAclPCopy(X)		   ((Acl *) PG_DETOAST_DATUM_COPY(X))
-#define PG_GETARG_ACL_P(n)		   DatumGetAclP(PG_GETARG_DATUM(n))
-#define PG_GETARG_ACL_P_COPY(n)    DatumGetAclPCopy(PG_GETARG_DATUM(n))
-#define PG_RETURN_ACL_P(x)		   PG_RETURN_POINTER(x)
+#define DatumGetAclP(X)			   ((Acl *) MDB_DETOAST_DATUM(X))
+#define DatumGetAclPCopy(X)		   ((Acl *) MDB_DETOAST_DATUM_COPY(X))
+#define MDB_GETARG_ACL_P(n)		   DatumGetAclP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_ACL_P_COPY(n)    DatumGetAclPCopy(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_ACL_P(x)		   MDB_RETURN_POINTER(x)
 
 /*
  * ACL modification opcodes for aclupdate
@@ -244,16 +244,16 @@ extern void initialize_acl(void);
 /*
  * SQL functions (from acl.c)
  */
-extern Datum aclitemin(PG_FUNCTION_ARGS);
-extern Datum aclitemout(PG_FUNCTION_ARGS);
-extern Datum aclinsert(PG_FUNCTION_ARGS);
-extern Datum aclremove(PG_FUNCTION_ARGS);
-extern Datum aclcontains(PG_FUNCTION_ARGS);
-extern Datum makeaclitem(PG_FUNCTION_ARGS);
-extern Datum aclitem_eq(PG_FUNCTION_ARGS);
-extern Datum hash_aclitem(PG_FUNCTION_ARGS);
-extern Datum acldefault_sql(PG_FUNCTION_ARGS);
-extern Datum aclexplode(PG_FUNCTION_ARGS);
+extern Datum aclitemin(MDB_FUNCTION_ARGS);
+extern Datum aclitemout(MDB_FUNCTION_ARGS);
+extern Datum aclinsert(MDB_FUNCTION_ARGS);
+extern Datum aclremove(MDB_FUNCTION_ARGS);
+extern Datum aclcontains(MDB_FUNCTION_ARGS);
+extern Datum makeaclitem(MDB_FUNCTION_ARGS);
+extern Datum aclitem_eq(MDB_FUNCTION_ARGS);
+extern Datum hash_aclitem(MDB_FUNCTION_ARGS);
+extern Datum acldefault_sql(MDB_FUNCTION_ARGS);
+extern Datum aclexplode(MDB_FUNCTION_ARGS);
 
 /*
  * prototypes for functions in aclchk.c

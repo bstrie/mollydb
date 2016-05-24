@@ -141,7 +141,7 @@ perform_base_backup(basebackup_options *opt, DIR *tblspcdir)
 	 * do_mdb_stop_backup() should be inside the error cleanup block!
 	 */
 
-	PG_ENSURE_ERROR_CLEANUP(base_backup_cleanup, (Datum) 0);
+	MDB_ENSURE_ERROR_CLEANUP(base_backup_cleanup, (Datum) 0);
 	{
 		ListCell   *lc;
 		tablespaceinfo *ti;
@@ -248,7 +248,7 @@ perform_base_backup(basebackup_options *opt, DIR *tblspcdir)
 				pq_putemptymessage('c');		/* CopyDone */
 		}
 	}
-	PG_END_ENSURE_ERROR_CLEANUP(base_backup_cleanup, (Datum) 0);
+	MDB_END_ENSURE_ERROR_CLEANUP(base_backup_cleanup, (Datum) 0);
 
 	endptr = do_mdb_stop_backup(labelfile->data, !opt->nowait, &endtli);
 
@@ -899,14 +899,14 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 
 		/* Skip temporary files */
 		if (strncmp(de->d_name,
-					PG_TEMP_FILE_PREFIX,
-					strlen(PG_TEMP_FILE_PREFIX)) == 0)
+					MDB_TEMP_FILE_PREFIX,
+					strlen(MDB_TEMP_FILE_PREFIX)) == 0)
 			continue;
 
 		/* skip auto conf temporary file */
 		if (strncmp(de->d_name,
-					PG_AUTOCONF_FILENAME ".tmp",
-					sizeof(PG_AUTOCONF_FILENAME) + 4) == 0)
+					MDB_AUTOCONF_FILENAME ".tmp",
+					sizeof(MDB_AUTOCONF_FILENAME) + 4) == 0)
 			continue;
 
 		/*
@@ -962,12 +962,12 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 		}
 
 		/*
-		 * Skip temporary statistics files. PG_STAT_TMP_DIR must be skipped
+		 * Skip temporary statistics files. MDB_STAT_TMP_DIR must be skipped
 		 * even when stats_temp_directory is set because PGSS_TEXT_FILE is
 		 * always created there.
 		 */
 		if ((statrelpath != NULL && strcmp(pathbuf, statrelpath) == 0) ||
-		  strncmp(de->d_name, PG_STAT_TMP_DIR, strlen(PG_STAT_TMP_DIR)) == 0)
+		  strncmp(de->d_name, MDB_STAT_TMP_DIR, strlen(MDB_STAT_TMP_DIR)) == 0)
 		{
 			if (!sizeonly)
 				_tarWriteHeader(pathbuf + basepathlen + 1, NULL, &statbuf);

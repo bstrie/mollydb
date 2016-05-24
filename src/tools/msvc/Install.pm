@@ -701,7 +701,7 @@ sub DetermineMajorVersion
 {
 	my $f = read_file('src/include/mdb_config.h')
 	  || croak 'Could not open mdb_config.h';
-	$f =~ /^#define\s+PG_MAJORVERSION\s+"([^"]+)"/m
+	$f =~ /^#define\s+MDB_MAJORVERSION\s+"([^"]+)"/m
 	  || croak 'Could not determine major version';
 	return $1;
 }

@@ -103,7 +103,7 @@
 #ifdef HAVE__BUILTIN_CONSTANT_P
 #define ereport_domain(elevel, domain, rest)	\
 	do { \
-		if (errstart(elevel, __FILE__, __LINE__, PG_FUNCNAME_MACRO, domain)) \
+		if (errstart(elevel, __FILE__, __LINE__, MDB_FUNCNAME_MACRO, domain)) \
 			errfinish rest; \
 		if (__builtin_constant_p(elevel) && (elevel) >= ERROR) \
 			mdb_unreachable(); \
@@ -112,7 +112,7 @@
 #define ereport_domain(elevel, domain, rest)	\
 	do { \
 		const int elevel_ = (elevel); \
-		if (errstart(elevel_, __FILE__, __LINE__, PG_FUNCNAME_MACRO, domain)) \
+		if (errstart(elevel_, __FILE__, __LINE__, MDB_FUNCNAME_MACRO, domain)) \
 			errfinish rest; \
 		if (elevel_ >= ERROR) \
 			mdb_unreachable(); \
@@ -198,7 +198,7 @@ extern int	getinternalerrposition(void);
 #ifdef HAVE__BUILTIN_CONSTANT_P
 #define elog(elevel, ...)  \
 	do { \
-		elog_start(__FILE__, __LINE__, PG_FUNCNAME_MACRO); \
+		elog_start(__FILE__, __LINE__, MDB_FUNCNAME_MACRO); \
 		elog_finish(elevel, __VA_ARGS__); \
 		if (__builtin_constant_p(elevel) && (elevel) >= ERROR) \
 			mdb_unreachable(); \
@@ -207,7 +207,7 @@ extern int	getinternalerrposition(void);
 #define elog(elevel, ...)  \
 	do { \
 		int		elevel_; \
-		elog_start(__FILE__, __LINE__, PG_FUNCNAME_MACRO); \
+		elog_start(__FILE__, __LINE__, MDB_FUNCNAME_MACRO); \
 		elevel_ = (elevel); \
 		elog_finish(elevel_, __VA_ARGS__); \
 		if (elevel_ >= ERROR) \
@@ -216,7 +216,7 @@ extern int	getinternalerrposition(void);
 #endif   /* HAVE__BUILTIN_CONSTANT_P */
 #else							/* !HAVE__VA_ARGS */
 #define elog  \
-	elog_start(__FILE__, __LINE__, PG_FUNCNAME_MACRO), \
+	elog_start(__FILE__, __LINE__, MDB_FUNCNAME_MACRO), \
 	elog_finish
 #endif   /* HAVE__VA_ARGS */
 
@@ -245,19 +245,19 @@ extern PGDLLIMPORT ErrorContextCallback *error_context_stack;
 /*----------
  * API for catching ereport(ERROR) exits.  Use these macros like so:
  *
- *		PG_TRY();
+ *		MDB_TRY();
  *		{
  *			... code that might throw ereport(ERROR) ...
  *		}
- *		PG_CATCH();
+ *		MDB_CATCH();
  *		{
  *			... error recovery code ...
  *		}
- *		PG_END_TRY();
+ *		MDB_END_TRY();
  *
  * (The braces are not actually necessary, but are recommended so that
  * pgindent will indent the construct nicely.)  The error recovery code
- * can optionally do PG_RE_THROW() to propagate the same error outwards.
+ * can optionally do MDB_RE_THROW() to propagate the same error outwards.
  *
  * Note: while the system will correctly propagate any new ereport(ERROR)
  * occurring in the recovery section, there is a small limit on the number
@@ -269,36 +269,36 @@ extern PGDLLIMPORT ErrorContextCallback *error_context_stack;
  * exit straight through proc_exit().  Therefore, do NOT put any cleanup
  * of non-process-local resources into the error recovery section, at least
  * not without taking thought for what will happen during ereport(FATAL).
- * The PG_ENSURE_ERROR_CLEANUP macros provided by storage/ipc.h may be
+ * The MDB_ENSURE_ERROR_CLEANUP macros provided by storage/ipc.h may be
  * helpful in such cases.
  *
- * Note: if a local variable of the function containing PG_TRY is modified
- * in the PG_TRY section and used in the PG_CATCH section, that variable
+ * Note: if a local variable of the function containing MDB_TRY is modified
+ * in the MDB_TRY section and used in the MDB_CATCH section, that variable
  * must be declared "volatile" for POSIX compliance.  This is not mere
  * pedantry; we have seen bugs from compilers improperly optimizing code
  * away when such a variable was not marked.  Beware that gcc's -Wclobbered
  * warnings are just about entirely useless for catching such oversights.
  *----------
  */
-#define PG_TRY()  \
+#define MDB_TRY()  \
 	do { \
-		sigjmp_buf *save_exception_stack = PG_exception_stack; \
+		sigjmp_buf *save_exception_stack = MDB_exception_stack; \
 		ErrorContextCallback *save_context_stack = error_context_stack; \
 		sigjmp_buf local_sigjmp_buf; \
 		if (sigsetjmp(local_sigjmp_buf, 0) == 0) \
 		{ \
-			PG_exception_stack = &local_sigjmp_buf
+			MDB_exception_stack = &local_sigjmp_buf
 
-#define PG_CATCH()	\
+#define MDB_CATCH()	\
 		} \
 		else \
 		{ \
-			PG_exception_stack = save_exception_stack; \
+			MDB_exception_stack = save_exception_stack; \
 			error_context_stack = save_context_stack
 
-#define PG_END_TRY()  \
+#define MDB_END_TRY()  \
 		} \
-		PG_exception_stack = save_exception_stack; \
+		MDB_exception_stack = save_exception_stack; \
 		error_context_stack = save_context_stack; \
 	} while (0)
 
@@ -306,15 +306,15 @@ extern PGDLLIMPORT ErrorContextCallback *error_context_stack;
  * Some compilers understand mdb_attribute_noreturn(); for other compilers,
  * insert mdb_unreachable() so that the compiler gets the point.
  */
-#ifdef HAVE_PG_ATTRIBUTE_NORETURN
-#define PG_RE_THROW()  \
+#ifdef HAVE_MDB_ATTRIBUTE_NORETURN
+#define MDB_RE_THROW()  \
 	mdb_re_throw()
 #else
-#define PG_RE_THROW()  \
+#define MDB_RE_THROW()  \
 	(mdb_re_throw(), mdb_unreachable())
 #endif
 
-extern PGDLLIMPORT sigjmp_buf *PG_exception_stack;
+extern PGDLLIMPORT sigjmp_buf *MDB_exception_stack;
 
 
 /* Stuff that error handlers might want to use */

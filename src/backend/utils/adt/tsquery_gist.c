@@ -22,9 +22,9 @@
 
 
 Datum
-gtsquery_compress(PG_FUNCTION_ARGS)
+gtsquery_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval = entry;
 
 	if (entry->leafkey)
@@ -39,24 +39,24 @@ gtsquery_compress(PG_FUNCTION_ARGS)
 					  entry->offset, FALSE);
 	}
 
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 Datum
-gtsquery_decompress(PG_FUNCTION_ARGS)
+gtsquery_decompress(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(PG_GETARG_DATUM(0));
+	MDB_RETURN_DATUM(MDB_GETARG_DATUM(0));
 }
 
 Datum
-gtsquery_consistent(PG_FUNCTION_ARGS)
+gtsquery_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	TSQuery		query = PG_GETARG_TSQUERY(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	TSQuerySign key = DatumGetTSQuerySign(entry->key);
 	TSQuerySign sq = makeTSQuerySign(query);
 	bool		retval;
@@ -81,14 +81,14 @@ gtsquery_consistent(PG_FUNCTION_ARGS)
 		default:
 			retval = FALSE;
 	}
-	PG_RETURN_BOOL(retval);
+	MDB_RETURN_BOOL(retval);
 }
 
 Datum
-gtsquery_union(PG_FUNCTION_ARGS)
+gtsquery_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	int		   *size = (int *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	int		   *size = (int *) MDB_GETARG_POINTER(1);
 	TSQuerySign sign;
 	int			i;
 
@@ -99,19 +99,19 @@ gtsquery_union(PG_FUNCTION_ARGS)
 
 	*size = sizeof(TSQuerySign);
 
-	PG_RETURN_TSQUERYSIGN(sign);
+	MDB_RETURN_TSQUERYSIGN(sign);
 }
 
 Datum
-gtsquery_same(PG_FUNCTION_ARGS)
+gtsquery_same(MDB_FUNCTION_ARGS)
 {
-	TSQuerySign a = PG_GETARG_TSQUERYSIGN(0);
-	TSQuerySign b = PG_GETARG_TSQUERYSIGN(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	TSQuerySign a = MDB_GETARG_TSQUERYSIGN(0);
+	TSQuerySign b = MDB_GETARG_TSQUERYSIGN(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	*result = (a == b) ? true : false;
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 static int
@@ -135,15 +135,15 @@ hemdist(TSQuerySign a, TSQuerySign b)
 }
 
 Datum
-gtsquery_penalty(PG_FUNCTION_ARGS)
+gtsquery_penalty(MDB_FUNCTION_ARGS)
 {
-	TSQuerySign origval = DatumGetTSQuerySign(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	TSQuerySign newval = DatumGetTSQuerySign(((GISTENTRY *) PG_GETARG_POINTER(1))->key);
-	float	   *penalty = (float *) PG_GETARG_POINTER(2);
+	TSQuerySign origval = DatumGetTSQuerySign(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	TSQuerySign newval = DatumGetTSQuerySign(((GISTENTRY *) MDB_GETARG_POINTER(1))->key);
+	float	   *penalty = (float *) MDB_GETARG_POINTER(2);
 
 	*penalty = hemdist(origval, newval);
 
-	PG_RETURN_POINTER(penalty);
+	MDB_RETURN_POINTER(penalty);
 }
 
 
@@ -165,10 +165,10 @@ comparecost(const void *a, const void *b)
 #define WISH_F(a,b,c) (double)( -(double)(((a)-(b))*((a)-(b))*((a)-(b)))*(c) )
 
 Datum
-gtsquery_picksplit(PG_FUNCTION_ARGS)
+gtsquery_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber maxoff = entryvec->n - 2;
 	OffsetNumber k,
 				j;
@@ -260,7 +260,7 @@ gtsquery_picksplit(PG_FUNCTION_ARGS)
 	v->spl_ldatum = TSQuerySignGetDatum(datum_l);
 	v->spl_rdatum = TSQuerySignGetDatum(datum_r);
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 /*
@@ -271,7 +271,7 @@ gtsquery_picksplit(PG_FUNCTION_ARGS)
  * This compatibility function should go away eventually.
  */
 Datum
-gtsquery_consistent_oldsig(PG_FUNCTION_ARGS)
+gtsquery_consistent_oldsig(MDB_FUNCTION_ARGS)
 {
 	return gtsquery_consistent(fcinfo);
 }

@@ -107,7 +107,7 @@ SetRemoteDestReceiverParams(DestReceiver *self, Portal portal)
 
 	myState->portal = portal;
 
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 	{
 		/*
 		 * In protocol 2.0 the Bind message does not exist, so there is no way
@@ -139,7 +139,7 @@ printtup_startup(DestReceiver *self, int operation, TupleDesc typeinfo)
 												ALLOCSET_DEFAULT_INITSIZE,
 												ALLOCSET_DEFAULT_MAXSIZE);
 
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 	{
 		/*
 		 * Send portal name to frontend (obsolete cruft, gone in proto 3.0)
@@ -191,7 +191,7 @@ SendRowDescriptionMessage(TupleDesc typeinfo, List *targetlist, int16 *formats)
 {
 	Form_mdb_attribute *attrs = typeinfo->attrs;
 	int			natts = typeinfo->natts;
-	int			proto = PG_PROTOCOL_MAJOR(FrontendProtocol);
+	int			proto = MDB_PROTOCOL_MAJOR(FrontendProtocol);
 	int			i;
 	StringInfoData buf;
 	ListCell   *tlist_item = list_head(targetlist);

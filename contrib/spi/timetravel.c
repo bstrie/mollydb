@@ -19,7 +19,7 @@
 #include "utils/nabstime.h"
 #include "utils/rel.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* AbsoluteTime currabstime(void); */
 
@@ -75,10 +75,10 @@ static EPlan *find_plan(char *ident, EPlan **eplan, int *nplans);
 #define a_upd_user	3
 #define a_del_user	4
 
-PG_FUNCTION_INFO_V1(timetravel);
+MDB_FUNCTION_INFO_V1(timetravel);
 
 Datum							/* have to return HeapTuple to Executor */
-timetravel(PG_FUNCTION_ARGS)
+timetravel(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	Trigger    *trigger;		/* to get trigger name */
@@ -417,13 +417,13 @@ timetravel(PG_FUNCTION_ARGS)
  * set_timetravel (relname, on) --
  *					turn timetravel for specified relation ON/OFF
  */
-PG_FUNCTION_INFO_V1(set_timetravel);
+MDB_FUNCTION_INFO_V1(set_timetravel);
 
 Datum
-set_timetravel(PG_FUNCTION_ARGS)
+set_timetravel(MDB_FUNCTION_ARGS)
 {
-	Name		relname = PG_GETARG_NAME(0);
-	int32		on = PG_GETARG_INT32(1);
+	Name		relname = MDB_GETARG_NAME(0);
+	int32		on = MDB_GETARG_INT32(1);
 	char	   *rname;
 	char	   *d;
 	char	   *s;
@@ -478,27 +478,27 @@ set_timetravel(PG_FUNCTION_ARGS)
 		}
 		ret = 1;
 	}
-	PG_RETURN_INT32(ret);
+	MDB_RETURN_INT32(ret);
 }
 
 /*
  * get_timetravel (relname) --
  *	get timetravel status for specified relation (ON/OFF)
  */
-PG_FUNCTION_INFO_V1(get_timetravel);
+MDB_FUNCTION_INFO_V1(get_timetravel);
 
 Datum
-get_timetravel(PG_FUNCTION_ARGS)
+get_timetravel(MDB_FUNCTION_ARGS)
 {
-	Name		relname = PG_GETARG_NAME(0);
+	Name		relname = MDB_GETARG_NAME(0);
 	TTOffList  *pp;
 
 	for (pp = TTOff; pp; pp = pp->next)
 	{
 		if (namestrcmp(relname, pp->name) == 0)
-			PG_RETURN_INT32(0);
+			MDB_RETURN_INT32(0);
 	}
-	PG_RETURN_INT32(1);
+	MDB_RETURN_INT32(1);
 }
 
 static int

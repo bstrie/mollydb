@@ -48,11 +48,11 @@
  * Those functions which have text-type input arg will be deprecated
  * in the future release.
  */
-PG_FUNCTION_INFO_V1(pgstatindex);
-PG_FUNCTION_INFO_V1(pgstatindexbyid);
-PG_FUNCTION_INFO_V1(mdb_relpages);
-PG_FUNCTION_INFO_V1(mdb_relpagesbyid);
-PG_FUNCTION_INFO_V1(pgstatginindex);
+MDB_FUNCTION_INFO_V1(pgstatindex);
+MDB_FUNCTION_INFO_V1(pgstatindexbyid);
+MDB_FUNCTION_INFO_V1(mdb_relpages);
+MDB_FUNCTION_INFO_V1(mdb_relpagesbyid);
+MDB_FUNCTION_INFO_V1(pgstatginindex);
 
 #define IS_INDEX(r) ((r)->rd_rel->relkind == RELKIND_INDEX)
 #define IS_BTREE(r) ((r)->rd_rel->relam == BTREE_AM_OID)
@@ -102,9 +102,9 @@ static Datum pgstatindex_impl(Relation rel, FunctionCallInfo fcinfo);
  * ------------------------------------------------------
  */
 Datum
-pgstatindex(PG_FUNCTION_ARGS)
+pgstatindex(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
 	Relation	rel;
 	RangeVar   *relrv;
 
@@ -116,13 +116,13 @@ pgstatindex(PG_FUNCTION_ARGS)
 	relrv = makeRangeVarFromNameList(textToQualifiedNameList(relname));
 	rel = relation_openrv(relrv, AccessShareLock);
 
-	PG_RETURN_DATUM(pgstatindex_impl(rel, fcinfo));
+	MDB_RETURN_DATUM(pgstatindex_impl(rel, fcinfo));
 }
 
 Datum
-pgstatindexbyid(PG_FUNCTION_ARGS)
+pgstatindexbyid(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	Relation	rel;
 
 	if (!superuser())
@@ -132,7 +132,7 @@ pgstatindexbyid(PG_FUNCTION_ARGS)
 
 	rel = relation_open(relid, AccessShareLock);
 
-	PG_RETURN_DATUM(pgstatindex_impl(rel, fcinfo));
+	MDB_RETURN_DATUM(pgstatindex_impl(rel, fcinfo));
 }
 
 static Datum
@@ -295,9 +295,9 @@ pgstatindex_impl(Relation rel, FunctionCallInfo fcinfo)
  * --------------------------------------------------------
  */
 Datum
-mdb_relpages(PG_FUNCTION_ARGS)
+mdb_relpages(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
 	int64		relpages;
 	Relation	rel;
 	RangeVar   *relrv;
@@ -316,13 +316,13 @@ mdb_relpages(PG_FUNCTION_ARGS)
 
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_INT64(relpages);
+	MDB_RETURN_INT64(relpages);
 }
 
 Datum
-mdb_relpagesbyid(PG_FUNCTION_ARGS)
+mdb_relpagesbyid(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		relpages;
 	Relation	rel;
 
@@ -339,7 +339,7 @@ mdb_relpagesbyid(PG_FUNCTION_ARGS)
 
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_INT64(relpages);
+	MDB_RETURN_INT64(relpages);
 }
 
 /* ------------------------------------------------------
@@ -349,9 +349,9 @@ mdb_relpagesbyid(PG_FUNCTION_ARGS)
  * ------------------------------------------------------
  */
 Datum
-pgstatginindex(PG_FUNCTION_ARGS)
+pgstatginindex(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	Relation	rel;
 	Buffer		buffer;
 	Page		page;
@@ -415,5 +415,5 @@ pgstatginindex(PG_FUNCTION_ARGS)
 	tuple = heap_form_tuple(tupleDesc, values, nulls);
 	result = HeapTupleGetDatum(tuple);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }

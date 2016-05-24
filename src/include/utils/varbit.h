@@ -36,12 +36,12 @@ typedef struct
  * BIT and BIT VARYING are toastable varlena types.  They are the same
  * as far as representation goes, so we just have one set of macros.
  */
-#define DatumGetVarBitP(X)		   ((VarBit *) PG_DETOAST_DATUM(X))
-#define DatumGetVarBitPCopy(X)	   ((VarBit *) PG_DETOAST_DATUM_COPY(X))
+#define DatumGetVarBitP(X)		   ((VarBit *) MDB_DETOAST_DATUM(X))
+#define DatumGetVarBitPCopy(X)	   ((VarBit *) MDB_DETOAST_DATUM_COPY(X))
 #define VarBitPGetDatum(X)		   PointerGetDatum(X)
-#define PG_GETARG_VARBIT_P(n)	   DatumGetVarBitP(PG_GETARG_DATUM(n))
-#define PG_GETARG_VARBIT_P_COPY(n) DatumGetVarBitPCopy(PG_GETARG_DATUM(n))
-#define PG_RETURN_VARBIT_P(x)	   return VarBitPGetDatum(x)
+#define MDB_GETARG_VARBIT_P(n)	   DatumGetVarBitP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_VARBIT_P_COPY(n) DatumGetVarBitPCopy(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_VARBIT_P(x)	   return VarBitPGetDatum(x)
 
 /* Header overhead *in addition to* VARHDRSZ */
 #define VARBITHDRSZ			sizeof(int32)
@@ -67,49 +67,49 @@ typedef struct
 #define BITMASK 0xFF
 
 
-extern Datum bit_in(PG_FUNCTION_ARGS);
-extern Datum bit_out(PG_FUNCTION_ARGS);
-extern Datum bit_recv(PG_FUNCTION_ARGS);
-extern Datum bit_send(PG_FUNCTION_ARGS);
-extern Datum bittypmodin(PG_FUNCTION_ARGS);
-extern Datum bittypmodout(PG_FUNCTION_ARGS);
-extern Datum varbit_in(PG_FUNCTION_ARGS);
-extern Datum varbit_out(PG_FUNCTION_ARGS);
-extern Datum varbit_recv(PG_FUNCTION_ARGS);
-extern Datum varbit_send(PG_FUNCTION_ARGS);
-extern Datum varbittypmodin(PG_FUNCTION_ARGS);
-extern Datum varbittypmodout(PG_FUNCTION_ARGS);
-extern Datum bit(PG_FUNCTION_ARGS);
-extern Datum varbit_transform(PG_FUNCTION_ARGS);
-extern Datum varbit(PG_FUNCTION_ARGS);
-extern Datum biteq(PG_FUNCTION_ARGS);
-extern Datum bitne(PG_FUNCTION_ARGS);
-extern Datum bitlt(PG_FUNCTION_ARGS);
-extern Datum bitle(PG_FUNCTION_ARGS);
-extern Datum bitgt(PG_FUNCTION_ARGS);
-extern Datum bitge(PG_FUNCTION_ARGS);
-extern Datum bitcmp(PG_FUNCTION_ARGS);
+extern Datum bit_in(MDB_FUNCTION_ARGS);
+extern Datum bit_out(MDB_FUNCTION_ARGS);
+extern Datum bit_recv(MDB_FUNCTION_ARGS);
+extern Datum bit_send(MDB_FUNCTION_ARGS);
+extern Datum bittypmodin(MDB_FUNCTION_ARGS);
+extern Datum bittypmodout(MDB_FUNCTION_ARGS);
+extern Datum varbit_in(MDB_FUNCTION_ARGS);
+extern Datum varbit_out(MDB_FUNCTION_ARGS);
+extern Datum varbit_recv(MDB_FUNCTION_ARGS);
+extern Datum varbit_send(MDB_FUNCTION_ARGS);
+extern Datum varbittypmodin(MDB_FUNCTION_ARGS);
+extern Datum varbittypmodout(MDB_FUNCTION_ARGS);
+extern Datum bit(MDB_FUNCTION_ARGS);
+extern Datum varbit_transform(MDB_FUNCTION_ARGS);
+extern Datum varbit(MDB_FUNCTION_ARGS);
+extern Datum biteq(MDB_FUNCTION_ARGS);
+extern Datum bitne(MDB_FUNCTION_ARGS);
+extern Datum bitlt(MDB_FUNCTION_ARGS);
+extern Datum bitle(MDB_FUNCTION_ARGS);
+extern Datum bitgt(MDB_FUNCTION_ARGS);
+extern Datum bitge(MDB_FUNCTION_ARGS);
+extern Datum bitcmp(MDB_FUNCTION_ARGS);
 
 /* avoid the names bitand and bitor, since they are C++ keywords */
-extern Datum bit_and(PG_FUNCTION_ARGS);
-extern Datum bit_or(PG_FUNCTION_ARGS);
-extern Datum bitxor(PG_FUNCTION_ARGS);
-extern Datum bitnot(PG_FUNCTION_ARGS);
-extern Datum bitshiftleft(PG_FUNCTION_ARGS);
-extern Datum bitshiftright(PG_FUNCTION_ARGS);
-extern Datum bitcat(PG_FUNCTION_ARGS);
-extern Datum bitsubstr(PG_FUNCTION_ARGS);
-extern Datum bitsubstr_no_len(PG_FUNCTION_ARGS);
-extern Datum bitoverlay(PG_FUNCTION_ARGS);
-extern Datum bitoverlay_no_len(PG_FUNCTION_ARGS);
-extern Datum bitlength(PG_FUNCTION_ARGS);
-extern Datum bitoctetlength(PG_FUNCTION_ARGS);
-extern Datum bitfromint4(PG_FUNCTION_ARGS);
-extern Datum bittoint4(PG_FUNCTION_ARGS);
-extern Datum bitfromint8(PG_FUNCTION_ARGS);
-extern Datum bittoint8(PG_FUNCTION_ARGS);
-extern Datum bitposition(PG_FUNCTION_ARGS);
-extern Datum bitsetbit(PG_FUNCTION_ARGS);
-extern Datum bitgetbit(PG_FUNCTION_ARGS);
+extern Datum bit_and(MDB_FUNCTION_ARGS);
+extern Datum bit_or(MDB_FUNCTION_ARGS);
+extern Datum bitxor(MDB_FUNCTION_ARGS);
+extern Datum bitnot(MDB_FUNCTION_ARGS);
+extern Datum bitshiftleft(MDB_FUNCTION_ARGS);
+extern Datum bitshiftright(MDB_FUNCTION_ARGS);
+extern Datum bitcat(MDB_FUNCTION_ARGS);
+extern Datum bitsubstr(MDB_FUNCTION_ARGS);
+extern Datum bitsubstr_no_len(MDB_FUNCTION_ARGS);
+extern Datum bitoverlay(MDB_FUNCTION_ARGS);
+extern Datum bitoverlay_no_len(MDB_FUNCTION_ARGS);
+extern Datum bitlength(MDB_FUNCTION_ARGS);
+extern Datum bitoctetlength(MDB_FUNCTION_ARGS);
+extern Datum bitfromint4(MDB_FUNCTION_ARGS);
+extern Datum bittoint4(MDB_FUNCTION_ARGS);
+extern Datum bitfromint8(MDB_FUNCTION_ARGS);
+extern Datum bittoint8(MDB_FUNCTION_ARGS);
+extern Datum bitposition(MDB_FUNCTION_ARGS);
+extern Datum bitsetbit(MDB_FUNCTION_ARGS);
+extern Datum bitgetbit(MDB_FUNCTION_ARGS);
 
 #endif

@@ -1049,8 +1049,8 @@ msgstr "file database tidak kompatibel dengan server "
 
 #: access/transam/xlog.c:3596
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x), but the server was compiled with PG_CONTROL_VERSION %d (0x%08x)."
-msgstr "cluster database telah diinisilkan dengan PG_CONTROL_VERSION %d (0x%08x,) tapi server telah dikompilasi dengan PG_CONTROL_VERSION %d (0x%08x)."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d (0x%08x), but the server was compiled with MDB_CONTROL_VERSION %d (0x%08x)."
+msgstr "cluster database telah diinisilkan dengan MDB_CONTROL_VERSION %d (0x%08x,) tapi server telah dikompilasi dengan MDB_CONTROL_VERSION %d (0x%08x)."
 
 #: access/transam/xlog.c:3600
 #, c-format
@@ -1059,8 +1059,8 @@ msgstr "Hal Ini mungkin menjadi masalah dalam pengurutan byte tidak sesuai. Sepe
 
 #: access/transam/xlog.c:3605
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d, but the server was compiled with PG_CONTROL_VERSION %d."
-msgstr "cluster database telah diinisiakan dengan PG_CONTROL_VERSION %d, tapi server telah dikompilasi dengan  PG_CONTROL_VERSION %d."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d, but the server was compiled with MDB_CONTROL_VERSION %d."
+msgstr "cluster database telah diinisiakan dengan MDB_CONTROL_VERSION %d, tapi server telah dikompilasi dengan  MDB_CONTROL_VERSION %d."
 
 #: access/transam/xlog.c:3608 access/transam/xlog.c:3632 access/transam/xlog.c:3639 access/transam/xlog.c:3644
 #, c-format
@@ -17138,8 +17138,8 @@ msgstr "library « %s » tidak sesuai: magic block hilang"
 
 #: utils/fmgr/dfmgr.c:276
 #, c-format
-msgid "Extension libraries are required to use the PG_MODULE_MAGIC macro."
-msgstr "Ektensi library dibutuhkan untuk menggunakan macro PG_MODULE_MAGIC."
+msgid "Extension libraries are required to use the MDB_MODULE_MAGIC macro."
+msgstr "Ektensi library dibutuhkan untuk menggunakan macro MDB_MODULE_MAGIC."
 
 #: utils/fmgr/dfmgr.c:312
 #, c-format

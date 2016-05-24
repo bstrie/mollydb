@@ -46,7 +46,7 @@ bool		Array_nulls = true;
 #define AARR_FREE_IF_COPY(array,n) \
 	do { \
 		if (!VARATT_IS_EXPANDED_HEADER(array)) \
-			PG_FREE_IF_COPY(array, n); \
+			MDB_FREE_IF_COPY(array, n); \
 	} while (0)
 
 typedef enum
@@ -168,12 +168,12 @@ static int width_bucket_array_variable(Datum operand,
  *		  the internal representation of the input array
  */
 Datum
-array_in(PG_FUNCTION_ARGS)
+array_in(MDB_FUNCTION_ARGS)
 {
-	char	   *string = PG_GETARG_CSTRING(0);	/* external form */
-	Oid			element_type = PG_GETARG_OID(1);		/* type of an array
+	char	   *string = MDB_GETARG_CSTRING(0);	/* external form */
+	Oid			element_type = MDB_GETARG_OID(1);		/* type of an array
 														 * element */
-	int32		typmod = PG_GETARG_INT32(2);	/* typmod for array elements */
+	int32		typmod = MDB_GETARG_INT32(2);	/* typmod for array elements */
 	int			typlen;
 	bool		typbyval;
 	char		typalign;
@@ -372,7 +372,7 @@ array_in(PG_FUNCTION_ARGS)
 	nitems = ArrayGetNItems(ndim, dim);
 	/* Empty array? */
 	if (nitems == 0)
-		PG_RETURN_ARRAYTYPE_P(construct_empty_array(element_type));
+		MDB_RETURN_ARRAYTYPE_P(construct_empty_array(element_type));
 
 	dataPtr = (Datum *) palloc(nitems * sizeof(Datum));
 	nullsPtr = (bool *) palloc(nitems * sizeof(bool));
@@ -416,7 +416,7 @@ array_in(PG_FUNCTION_ARGS)
 	pfree(nullsPtr);
 	pfree(string_save);
 
-	PG_RETURN_ARRAYTYPE_P(retval);
+	MDB_RETURN_ARRAYTYPE_P(retval);
 }
 
 /*
@@ -921,7 +921,7 @@ ReadArrayStr(char *arrayStr,
 		{
 			/* let's just make sure data is not toasted */
 			if (typlen == -1)
-				values[i] = PointerGetDatum(PG_DETOAST_DATUM(values[i]));
+				values[i] = PointerGetDatum(MDB_DETOAST_DATUM(values[i]));
 			totbytes = att_addlength_datum(totbytes, typlen, values[i]);
 			totbytes = att_align_nominal(totbytes, typalign);
 			/* check for overflow of total request */
@@ -1008,9 +1008,9 @@ CopyArrayEls(ArrayType *array,
  *		  containing the array in its external format.
  */
 Datum
-array_out(PG_FUNCTION_ARGS)
+array_out(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *v = PG_GETARG_ANY_ARRAY(0);
+	AnyArrayType *v = MDB_GETARG_ANY_ARRAY(0);
 	Oid			element_type = AARR_ELEMTYPE(v);
 	int			typlen;
 	bool		typbyval;
@@ -1081,7 +1081,7 @@ array_out(PG_FUNCTION_ARGS)
 	if (nitems == 0)
 	{
 		retval = pstrdup("{}");
-		PG_RETURN_CSTRING(retval);
+		MDB_RETURN_CSTRING(retval);
 	}
 
 	/*
@@ -1239,7 +1239,7 @@ array_out(PG_FUNCTION_ARGS)
 	pfree(values);
 	pfree(needquotes);
 
-	PG_RETURN_CSTRING(retval);
+	MDB_RETURN_CSTRING(retval);
 }
 
 /*
@@ -1251,12 +1251,12 @@ array_out(PG_FUNCTION_ARGS)
  *		  the internal representation of the input array
  */
 Datum
-array_recv(PG_FUNCTION_ARGS)
+array_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
-	Oid			spec_element_type = PG_GETARG_OID(1);	/* type of an array
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
+	Oid			spec_element_type = MDB_GETARG_OID(1);	/* type of an array
 														 * element */
-	int32		typmod = PG_GETARG_INT32(2);	/* typmod for array elements */
+	int32		typmod = MDB_GETARG_INT32(2);	/* typmod for array elements */
 	Oid			element_type;
 	int			typlen;
 	bool		typbyval;
@@ -1360,7 +1360,7 @@ array_recv(PG_FUNCTION_ARGS)
 	if (nitems == 0)
 	{
 		/* Return empty array ... but not till we've validated element_type */
-		PG_RETURN_ARRAYTYPE_P(construct_empty_array(element_type));
+		MDB_RETURN_ARRAYTYPE_P(construct_empty_array(element_type));
 	}
 
 	typlen = my_extra->typlen;
@@ -1401,7 +1401,7 @@ array_recv(PG_FUNCTION_ARGS)
 	pfree(dataPtr);
 	pfree(nullsPtr);
 
-	PG_RETURN_ARRAYTYPE_P(retval);
+	MDB_RETURN_ARRAYTYPE_P(retval);
 }
 
 /*
@@ -1509,7 +1509,7 @@ ReadArrayBinary(StringInfo buf,
 		{
 			/* let's just make sure data is not toasted */
 			if (typlen == -1)
-				values[i] = PointerGetDatum(PG_DETOAST_DATUM(values[i]));
+				values[i] = PointerGetDatum(MDB_DETOAST_DATUM(values[i]));
 			totbytes = att_addlength_datum(totbytes, typlen, values[i]);
 			totbytes = att_align_nominal(totbytes, typalign);
 			/* check for overflow of total request */
@@ -1531,9 +1531,9 @@ ReadArrayBinary(StringInfo buf,
  *		  containing the array in its external binary format.
  */
 Datum
-array_send(PG_FUNCTION_ARGS)
+array_send(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *v = PG_GETARG_ANY_ARRAY(0);
+	AnyArrayType *v = MDB_GETARG_ANY_ARRAY(0);
 	Oid			element_type = AARR_ELEMTYPE(v);
 	int			typlen;
 	bool		typbyval;
@@ -1627,7 +1627,7 @@ array_send(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
@@ -1635,15 +1635,15 @@ array_send(PG_FUNCTION_ARGS)
  *		  returns the number of dimensions of the array pointed to by "v"
  */
 Datum
-array_ndims(PG_FUNCTION_ARGS)
+array_ndims(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *v = PG_GETARG_ANY_ARRAY(0);
+	AnyArrayType *v = MDB_GETARG_ANY_ARRAY(0);
 
 	/* Sanity check: does it look like an array at all? */
 	if (AARR_NDIM(v) <= 0 || AARR_NDIM(v) > MAXDIM)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT32(AARR_NDIM(v));
+	MDB_RETURN_INT32(AARR_NDIM(v));
 }
 
 /*
@@ -1651,9 +1651,9 @@ array_ndims(PG_FUNCTION_ARGS)
  *		  returns the dimensions of the array pointed to by "v", as a "text"
  */
 Datum
-array_dims(PG_FUNCTION_ARGS)
+array_dims(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *v = PG_GETARG_ANY_ARRAY(0);
+	AnyArrayType *v = MDB_GETARG_ANY_ARRAY(0);
 	char	   *p;
 	int			i;
 	int		   *dimv,
@@ -1668,7 +1668,7 @@ array_dims(PG_FUNCTION_ARGS)
 
 	/* Sanity check: does it look like an array at all? */
 	if (AARR_NDIM(v) <= 0 || AARR_NDIM(v) > MAXDIM)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	dimv = AARR_DIMS(v);
 	lb = AARR_LBOUND(v);
@@ -1680,7 +1680,7 @@ array_dims(PG_FUNCTION_ARGS)
 		p += strlen(p);
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(buf));
+	MDB_RETURN_TEXT_P(cstring_to_text(buf));
 }
 
 /*
@@ -1689,25 +1689,25 @@ array_dims(PG_FUNCTION_ARGS)
  *		the array pointed to by "v", as an int4
  */
 Datum
-array_lower(PG_FUNCTION_ARGS)
+array_lower(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *v = PG_GETARG_ANY_ARRAY(0);
-	int			reqdim = PG_GETARG_INT32(1);
+	AnyArrayType *v = MDB_GETARG_ANY_ARRAY(0);
+	int			reqdim = MDB_GETARG_INT32(1);
 	int		   *lb;
 	int			result;
 
 	/* Sanity check: does it look like an array at all? */
 	if (AARR_NDIM(v) <= 0 || AARR_NDIM(v) > MAXDIM)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Sanity check: was the requested dim valid */
 	if (reqdim <= 0 || reqdim > AARR_NDIM(v))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	lb = AARR_LBOUND(v);
 	result = lb[reqdim - 1];
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /*
@@ -1716,28 +1716,28 @@ array_lower(PG_FUNCTION_ARGS)
  *		the array pointed to by "v", as an int4
  */
 Datum
-array_upper(PG_FUNCTION_ARGS)
+array_upper(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *v = PG_GETARG_ANY_ARRAY(0);
-	int			reqdim = PG_GETARG_INT32(1);
+	AnyArrayType *v = MDB_GETARG_ANY_ARRAY(0);
+	int			reqdim = MDB_GETARG_INT32(1);
 	int		   *dimv,
 			   *lb;
 	int			result;
 
 	/* Sanity check: does it look like an array at all? */
 	if (AARR_NDIM(v) <= 0 || AARR_NDIM(v) > MAXDIM)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Sanity check: was the requested dim valid */
 	if (reqdim <= 0 || reqdim > AARR_NDIM(v))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	lb = AARR_LBOUND(v);
 	dimv = AARR_DIMS(v);
 
 	result = dimv[reqdim - 1] + lb[reqdim - 1] - 1;
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /*
@@ -1746,26 +1746,26 @@ array_upper(PG_FUNCTION_ARGS)
  *		the array pointed to by "v", as an int4
  */
 Datum
-array_length(PG_FUNCTION_ARGS)
+array_length(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *v = PG_GETARG_ANY_ARRAY(0);
-	int			reqdim = PG_GETARG_INT32(1);
+	AnyArrayType *v = MDB_GETARG_ANY_ARRAY(0);
+	int			reqdim = MDB_GETARG_INT32(1);
 	int		   *dimv;
 	int			result;
 
 	/* Sanity check: does it look like an array at all? */
 	if (AARR_NDIM(v) <= 0 || AARR_NDIM(v) > MAXDIM)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	/* Sanity check: was the requested dim valid */
 	if (reqdim <= 0 || reqdim > AARR_NDIM(v))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	dimv = AARR_DIMS(v);
 
 	result = dimv[reqdim - 1];
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /*
@@ -1773,11 +1773,11 @@ array_length(PG_FUNCTION_ARGS)
  *		returns the total number of elements in an array
  */
 Datum
-array_cardinality(PG_FUNCTION_ARGS)
+array_cardinality(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *v = PG_GETARG_ANY_ARRAY(0);
+	AnyArrayType *v = MDB_GETARG_ANY_ARRAY(0);
 
-	PG_RETURN_INT32(ArrayGetNItems(AARR_NDIM(v), AARR_DIMS(v)));
+	MDB_RETURN_INT32(ArrayGetNItems(AARR_NDIM(v), AARR_DIMS(v)));
 }
 
 
@@ -2253,7 +2253,7 @@ array_set_element(Datum arraydatum,
 
 	/* make sure item to be inserted is not toasted */
 	if (elmlen == -1 && !isNull)
-		dataValue = PointerGetDatum(PG_DETOAST_DATUM(dataValue));
+		dataValue = PointerGetDatum(MDB_DETOAST_DATUM(dataValue));
 
 	if (VARATT_IS_EXTERNAL_EXPANDED(DatumGetPointer(arraydatum)))
 	{
@@ -3144,9 +3144,9 @@ array_map(FunctionCallInfo fcinfo, Oid retType, ArrayMapState *amstate)
 	/* Get input array */
 	if (fcinfo->nargs < 1)
 		elog(ERROR, "invalid nargs: %d", fcinfo->nargs);
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		elog(ERROR, "null input array");
-	v = PG_GETARG_ANY_ARRAY(0);
+	v = MDB_GETARG_ANY_ARRAY(0);
 
 	inpType = AARR_ELEMTYPE(v);
 	ndim = AARR_NDIM(v);
@@ -3157,7 +3157,7 @@ array_map(FunctionCallInfo fcinfo, Oid retType, ArrayMapState *amstate)
 	if (nitems <= 0)
 	{
 		/* Return empty array */
-		PG_RETURN_ARRAYTYPE_P(construct_empty_array(retType));
+		MDB_RETURN_ARRAYTYPE_P(construct_empty_array(retType));
 	}
 
 	/*
@@ -3240,7 +3240,7 @@ array_map(FunctionCallInfo fcinfo, Oid retType, ArrayMapState *amstate)
 		{
 			/* Ensure data is not toasted */
 			if (typlen == -1)
-				values[i] = PointerGetDatum(PG_DETOAST_DATUM(values[i]));
+				values[i] = PointerGetDatum(MDB_DETOAST_DATUM(values[i]));
 			/* Update total result size */
 			nbytes = att_addlength_datum(nbytes, typlen, values[i]);
 			nbytes = att_align_nominal(nbytes, typalign);
@@ -3283,7 +3283,7 @@ array_map(FunctionCallInfo fcinfo, Oid retType, ArrayMapState *amstate)
 	pfree(values);
 	pfree(nulls);
 
-	PG_RETURN_ARRAYTYPE_P(result);
+	MDB_RETURN_ARRAYTYPE_P(result);
 }
 
 /*
@@ -3379,7 +3379,7 @@ construct_md_array(Datum *elems,
 		}
 		/* make sure data is not toasted */
 		if (elmlen == -1)
-			elems[i] = PointerGetDatum(PG_DETOAST_DATUM(elems[i]));
+			elems[i] = PointerGetDatum(MDB_DETOAST_DATUM(elems[i]));
 		nbytes = att_addlength_datum(nbytes, elmlen, elems[i]);
 		nbytes = att_align_nominal(nbytes, elmalign);
 		/* check for overflow of total request */
@@ -3586,11 +3586,11 @@ array_contains_nulls(ArrayType *array)
  * datatypes that don't have a total ordering (and hence no btree support).
  */
 Datum
-array_eq(PG_FUNCTION_ARGS)
+array_eq(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *array1 = PG_GETARG_ANY_ARRAY(0);
-	AnyArrayType *array2 = PG_GETARG_ANY_ARRAY(1);
-	Oid			collation = PG_GET_COLLATION();
+	AnyArrayType *array1 = MDB_GETARG_ANY_ARRAY(0);
+	AnyArrayType *array2 = MDB_GETARG_ANY_ARRAY(1);
+	Oid			collation = MDB_GET_COLLATION();
 	int			ndims1 = AARR_NDIM(array1);
 	int			ndims2 = AARR_NDIM(array2);
 	int		   *dims1 = AARR_DIMS(array1);
@@ -3701,7 +3701,7 @@ array_eq(PG_FUNCTION_ARGS)
 	AARR_FREE_IF_COPY(array1, 0);
 	AARR_FREE_IF_COPY(array2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 
@@ -3715,39 +3715,39 @@ array_eq(PG_FUNCTION_ARGS)
  */
 
 Datum
-array_ne(PG_FUNCTION_ARGS)
+array_ne(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(!DatumGetBool(array_eq(fcinfo)));
+	MDB_RETURN_BOOL(!DatumGetBool(array_eq(fcinfo)));
 }
 
 Datum
-array_lt(PG_FUNCTION_ARGS)
+array_lt(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(array_cmp(fcinfo) < 0);
+	MDB_RETURN_BOOL(array_cmp(fcinfo) < 0);
 }
 
 Datum
-array_gt(PG_FUNCTION_ARGS)
+array_gt(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(array_cmp(fcinfo) > 0);
+	MDB_RETURN_BOOL(array_cmp(fcinfo) > 0);
 }
 
 Datum
-array_le(PG_FUNCTION_ARGS)
+array_le(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(array_cmp(fcinfo) <= 0);
+	MDB_RETURN_BOOL(array_cmp(fcinfo) <= 0);
 }
 
 Datum
-array_ge(PG_FUNCTION_ARGS)
+array_ge(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(array_cmp(fcinfo) >= 0);
+	MDB_RETURN_BOOL(array_cmp(fcinfo) >= 0);
 }
 
 Datum
-btarraycmp(PG_FUNCTION_ARGS)
+btarraycmp(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_INT32(array_cmp(fcinfo));
+	MDB_RETURN_INT32(array_cmp(fcinfo));
 }
 
 /*
@@ -3759,9 +3759,9 @@ btarraycmp(PG_FUNCTION_ARGS)
 static int
 array_cmp(FunctionCallInfo fcinfo)
 {
-	AnyArrayType *array1 = PG_GETARG_ANY_ARRAY(0);
-	AnyArrayType *array2 = PG_GETARG_ANY_ARRAY(1);
-	Oid			collation = PG_GET_COLLATION();
+	AnyArrayType *array1 = MDB_GETARG_ANY_ARRAY(0);
+	AnyArrayType *array2 = MDB_GETARG_ANY_ARRAY(1);
+	Oid			collation = MDB_GET_COLLATION();
 	int			ndims1 = AARR_NDIM(array1);
 	int			ndims2 = AARR_NDIM(array2);
 	int		   *dims1 = AARR_DIMS(array1);
@@ -3928,9 +3928,9 @@ array_cmp(FunctionCallInfo fcinfo)
  */
 
 Datum
-hash_array(PG_FUNCTION_ARGS)
+hash_array(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *array = PG_GETARG_ANY_ARRAY(0);
+	AnyArrayType *array = MDB_GETARG_ANY_ARRAY(0);
 	int			ndims = AARR_NDIM(array);
 	int		   *dims = AARR_DIMS(array);
 	Oid			element_type = AARR_ELEMTYPE(array);
@@ -4017,7 +4017,7 @@ hash_array(PG_FUNCTION_ARGS)
 	/* Avoid leaking memory when handed toasted input. */
 	AARR_FREE_IF_COPY(array, 0);
 
-	PG_RETURN_UINT32(result);
+	MDB_RETURN_UINT32(result);
 }
 
 
@@ -4179,11 +4179,11 @@ array_contain_compare(AnyArrayType *array1, AnyArrayType *array2, Oid collation,
 }
 
 Datum
-arrayoverlap(PG_FUNCTION_ARGS)
+arrayoverlap(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *array1 = PG_GETARG_ANY_ARRAY(0);
-	AnyArrayType *array2 = PG_GETARG_ANY_ARRAY(1);
-	Oid			collation = PG_GET_COLLATION();
+	AnyArrayType *array1 = MDB_GETARG_ANY_ARRAY(0);
+	AnyArrayType *array2 = MDB_GETARG_ANY_ARRAY(1);
+	Oid			collation = MDB_GET_COLLATION();
 	bool		result;
 
 	result = array_contain_compare(array1, array2, collation, false,
@@ -4193,15 +4193,15 @@ arrayoverlap(PG_FUNCTION_ARGS)
 	AARR_FREE_IF_COPY(array1, 0);
 	AARR_FREE_IF_COPY(array2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-arraycontains(PG_FUNCTION_ARGS)
+arraycontains(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *array1 = PG_GETARG_ANY_ARRAY(0);
-	AnyArrayType *array2 = PG_GETARG_ANY_ARRAY(1);
-	Oid			collation = PG_GET_COLLATION();
+	AnyArrayType *array1 = MDB_GETARG_ANY_ARRAY(0);
+	AnyArrayType *array2 = MDB_GETARG_ANY_ARRAY(1);
+	Oid			collation = MDB_GET_COLLATION();
 	bool		result;
 
 	result = array_contain_compare(array2, array1, collation, true,
@@ -4211,15 +4211,15 @@ arraycontains(PG_FUNCTION_ARGS)
 	AARR_FREE_IF_COPY(array1, 0);
 	AARR_FREE_IF_COPY(array2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-arraycontained(PG_FUNCTION_ARGS)
+arraycontained(MDB_FUNCTION_ARGS)
 {
-	AnyArrayType *array1 = PG_GETARG_ANY_ARRAY(0);
-	AnyArrayType *array2 = PG_GETARG_ANY_ARRAY(1);
-	Oid			collation = PG_GET_COLLATION();
+	AnyArrayType *array1 = MDB_GETARG_ANY_ARRAY(0);
+	AnyArrayType *array2 = MDB_GETARG_ANY_ARRAY(1);
+	Oid			collation = MDB_GET_COLLATION();
 	bool		result;
 
 	result = array_contain_compare(array1, array2, collation, true,
@@ -4229,7 +4229,7 @@ arraycontained(PG_FUNCTION_ARGS)
 	AARR_FREE_IF_COPY(array1, 0);
 	AARR_FREE_IF_COPY(array2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 
@@ -5030,7 +5030,7 @@ accumArrayResult(ArrayBuildState *astate,
 	if (!disnull && !astate->typbyval)
 	{
 		if (astate->typlen == -1)
-			dvalue = PointerGetDatum(PG_DETOAST_DATUM_COPY(dvalue));
+			dvalue = PointerGetDatum(MDB_DETOAST_DATUM_COPY(dvalue));
 		else
 			dvalue = datumCopy(dvalue, astate->typbyval, astate->typlen);
 	}
@@ -5522,21 +5522,21 @@ makeArrayResultAny(ArrayBuildStateAny *astate,
 
 
 Datum
-array_larger(PG_FUNCTION_ARGS)
+array_larger(MDB_FUNCTION_ARGS)
 {
 	if (array_cmp(fcinfo) > 0)
-		PG_RETURN_DATUM(PG_GETARG_DATUM(0));
+		MDB_RETURN_DATUM(MDB_GETARG_DATUM(0));
 	else
-		PG_RETURN_DATUM(PG_GETARG_DATUM(1));
+		MDB_RETURN_DATUM(MDB_GETARG_DATUM(1));
 }
 
 Datum
-array_smaller(PG_FUNCTION_ARGS)
+array_smaller(MDB_FUNCTION_ARGS)
 {
 	if (array_cmp(fcinfo) < 0)
-		PG_RETURN_DATUM(PG_GETARG_DATUM(0));
+		MDB_RETURN_DATUM(MDB_GETARG_DATUM(0));
 	else
-		PG_RETURN_DATUM(PG_GETARG_DATUM(1));
+		MDB_RETURN_DATUM(MDB_GETARG_DATUM(1));
 }
 
 
@@ -5552,7 +5552,7 @@ typedef struct generate_subscripts_fctx
  *		Returns all subscripts of the array for any dimension
  */
 Datum
-generate_subscripts(PG_FUNCTION_ARGS)
+generate_subscripts(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	MemoryContext oldcontext;
@@ -5561,8 +5561,8 @@ generate_subscripts(PG_FUNCTION_ARGS)
 	/* stuff done only on the first call of the function */
 	if (SRF_IS_FIRSTCALL())
 	{
-		AnyArrayType *v = PG_GETARG_ANY_ARRAY(0);
-		int			reqdim = PG_GETARG_INT32(1);
+		AnyArrayType *v = MDB_GETARG_ANY_ARRAY(0);
+		int			reqdim = MDB_GETARG_INT32(1);
 		int		   *lb,
 				   *dimv;
 
@@ -5588,7 +5588,7 @@ generate_subscripts(PG_FUNCTION_ARGS)
 
 		fctx->lower = lb[reqdim - 1];
 		fctx->upper = dimv[reqdim - 1] + lb[reqdim - 1] - 1;
-		fctx->reverse = (PG_NARGS() < 3) ? false : PG_GETARG_BOOL(2);
+		fctx->reverse = (MDB_NARGS() < 3) ? false : MDB_GETARG_BOOL(2);
 
 		funcctx->user_fctx = fctx;
 
@@ -5616,7 +5616,7 @@ generate_subscripts(PG_FUNCTION_ARGS)
  *		Implements the 2-argument version of generate_subscripts
  */
 Datum
-generate_subscripts_nodir(PG_FUNCTION_ARGS)
+generate_subscripts_nodir(MDB_FUNCTION_ARGS)
 {
 	/* just call the other one -- it can handle both cases */
 	return generate_subscripts(fcinfo);
@@ -5627,7 +5627,7 @@ generate_subscripts_nodir(PG_FUNCTION_ARGS)
  *		Create and fill array with defined lower bounds.
  */
 Datum
-array_fill_with_lower_bounds(PG_FUNCTION_ARGS)
+array_fill_with_lower_bounds(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *dims;
 	ArrayType  *lbs;
@@ -5636,17 +5636,17 @@ array_fill_with_lower_bounds(PG_FUNCTION_ARGS)
 	Datum		value;
 	bool		isnull;
 
-	if (PG_ARGISNULL(1) || PG_ARGISNULL(2))
+	if (MDB_ARGISNULL(1) || MDB_ARGISNULL(2))
 		ereport(ERROR,
 				(errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED),
 			   errmsg("dimension array or low bound array cannot be null")));
 
-	dims = PG_GETARG_ARRAYTYPE_P(1);
-	lbs = PG_GETARG_ARRAYTYPE_P(2);
+	dims = MDB_GETARG_ARRAYTYPE_P(1);
+	lbs = MDB_GETARG_ARRAYTYPE_P(2);
 
-	if (!PG_ARGISNULL(0))
+	if (!MDB_ARGISNULL(0))
 	{
-		value = PG_GETARG_DATUM(0);
+		value = MDB_GETARG_DATUM(0);
 		isnull = false;
 	}
 	else
@@ -5660,7 +5660,7 @@ array_fill_with_lower_bounds(PG_FUNCTION_ARGS)
 		elog(ERROR, "could not determine data type of input");
 
 	result = array_fill_internal(dims, lbs, value, isnull, elmtype, fcinfo);
-	PG_RETURN_ARRAYTYPE_P(result);
+	MDB_RETURN_ARRAYTYPE_P(result);
 }
 
 /*
@@ -5668,7 +5668,7 @@ array_fill_with_lower_bounds(PG_FUNCTION_ARGS)
  *		Create and fill array with default lower bounds.
  */
 Datum
-array_fill(PG_FUNCTION_ARGS)
+array_fill(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *dims;
 	ArrayType  *result;
@@ -5676,16 +5676,16 @@ array_fill(PG_FUNCTION_ARGS)
 	Datum		value;
 	bool		isnull;
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 		ereport(ERROR,
 				(errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED),
 			   errmsg("dimension array or low bound array cannot be null")));
 
-	dims = PG_GETARG_ARRAYTYPE_P(1);
+	dims = MDB_GETARG_ARRAYTYPE_P(1);
 
-	if (!PG_ARGISNULL(0))
+	if (!MDB_ARGISNULL(0))
 	{
-		value = PG_GETARG_DATUM(0);
+		value = MDB_GETARG_DATUM(0);
 		isnull = false;
 	}
 	else
@@ -5699,7 +5699,7 @@ array_fill(PG_FUNCTION_ARGS)
 		elog(ERROR, "could not determine data type of input");
 
 	result = array_fill_internal(dims, NULL, value, isnull, elmtype, fcinfo);
-	PG_RETURN_ARRAYTYPE_P(result);
+	MDB_RETURN_ARRAYTYPE_P(result);
 }
 
 static ArrayType *
@@ -5848,7 +5848,7 @@ array_fill_internal(ArrayType *dims, ArrayType *lbs,
 
 		/* make sure data is not toasted */
 		if (elmlen == -1)
-			value = PointerGetDatum(PG_DETOAST_DATUM(value));
+			value = PointerGetDatum(MDB_DETOAST_DATUM(value));
 
 		nbytes = att_addlength_datum(0, elmlen, value);
 		nbytes = att_align_nominal(nbytes, elmalign);
@@ -5899,7 +5899,7 @@ array_fill_internal(ArrayType *dims, ArrayType *lbs,
  * UNNEST
  */
 Datum
-array_unnest(PG_FUNCTION_ARGS)
+array_unnest(MDB_FUNCTION_ARGS)
 {
 	typedef struct
 	{
@@ -5935,7 +5935,7 @@ array_unnest(PG_FUNCTION_ARGS)
 		 * and not before.  (If no detoast happens, we assume the originally
 		 * passed array will stick around till then.)
 		 */
-		arr = PG_GETARG_ANY_ARRAY(0);
+		arr = MDB_GETARG_ANY_ARRAY(0);
 
 		/* allocate memory for user context */
 		fctx = (array_unnest_fctx *) palloc(sizeof(array_unnest_fctx));
@@ -6068,9 +6068,9 @@ array_replace_internal(ArrayType *array,
 	if (typlen == -1)
 	{
 		if (!search_isnull)
-			search = PointerGetDatum(PG_DETOAST_DATUM(search));
+			search = PointerGetDatum(MDB_DETOAST_DATUM(search));
 		if (!replace_isnull)
-			replace = PointerGetDatum(PG_DETOAST_DATUM(replace));
+			replace = PointerGetDatum(MDB_DETOAST_DATUM(replace));
 	}
 
 	/* Prepare to apply the comparison operator */
@@ -6251,46 +6251,46 @@ array_replace_internal(ArrayType *array,
  * If used on a multi-dimensional array this will raise an error.
  */
 Datum
-array_remove(PG_FUNCTION_ARGS)
+array_remove(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *array;
-	Datum		search = PG_GETARG_DATUM(1);
-	bool		search_isnull = PG_ARGISNULL(1);
+	Datum		search = MDB_GETARG_DATUM(1);
+	bool		search_isnull = MDB_ARGISNULL(1);
 
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
-	array = PG_GETARG_ARRAYTYPE_P(0);
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
+	array = MDB_GETARG_ARRAYTYPE_P(0);
 
 	array = array_replace_internal(array,
 								   search, search_isnull,
 								   (Datum) 0, true,
-								   true, PG_GET_COLLATION(),
+								   true, MDB_GET_COLLATION(),
 								   fcinfo);
-	PG_RETURN_ARRAYTYPE_P(array);
+	MDB_RETURN_ARRAYTYPE_P(array);
 }
 
 /*
  * Replace any occurrences of an element in an array
  */
 Datum
-array_replace(PG_FUNCTION_ARGS)
+array_replace(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *array;
-	Datum		search = PG_GETARG_DATUM(1);
-	bool		search_isnull = PG_ARGISNULL(1);
-	Datum		replace = PG_GETARG_DATUM(2);
-	bool		replace_isnull = PG_ARGISNULL(2);
+	Datum		search = MDB_GETARG_DATUM(1);
+	bool		search_isnull = MDB_ARGISNULL(1);
+	Datum		replace = MDB_GETARG_DATUM(2);
+	bool		replace_isnull = MDB_ARGISNULL(2);
 
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
-	array = PG_GETARG_ARRAYTYPE_P(0);
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
+	array = MDB_GETARG_ARRAYTYPE_P(0);
 
 	array = array_replace_internal(array,
 								   search, search_isnull,
 								   replace, replace_isnull,
-								   false, PG_GET_COLLATION(),
+								   false, MDB_GET_COLLATION(),
 								   fcinfo);
-	PG_RETURN_ARRAYTYPE_P(array);
+	MDB_RETURN_ARRAYTYPE_P(array);
 }
 
 /*
@@ -6302,11 +6302,11 @@ array_replace(PG_FUNCTION_ARGS)
  * 0 is for inputs < first threshold, N is for inputs >= last threshold.
  */
 Datum
-width_bucket_array(PG_FUNCTION_ARGS)
+width_bucket_array(MDB_FUNCTION_ARGS)
 {
-	Datum		operand = PG_GETARG_DATUM(0);
-	ArrayType  *thresholds = PG_GETARG_ARRAYTYPE_P(1);
-	Oid			collation = PG_GET_COLLATION();
+	Datum		operand = MDB_GETARG_DATUM(0);
+	ArrayType  *thresholds = MDB_GETARG_ARRAYTYPE_P(1);
+	Oid			collation = MDB_GET_COLLATION();
 	Oid			element_type = ARR_ELEMTYPE(thresholds);
 	int			result;
 
@@ -6356,9 +6356,9 @@ width_bucket_array(PG_FUNCTION_ARGS)
 	}
 
 	/* Avoid leaking memory when handed toasted input. */
-	PG_FREE_IF_COPY(thresholds, 1);
+	MDB_FREE_IF_COPY(thresholds, 1);
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /*

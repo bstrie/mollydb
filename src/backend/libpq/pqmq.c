@@ -58,7 +58,7 @@ pq_redirect_to_shm_mq(dsm_segment *seg, shm_mq_handle *mqh)
 	pq_mq = shm_mq_get_queue(mqh);
 	pq_mq_handle = mqh;
 	whereToSendOutput = DestRemote;
-	FrontendProtocol = PG_PROTOCOL_LATEST;
+	FrontendProtocol = MDB_PROTOCOL_LATEST;
 	on_dsm_detach(seg, pq_cleanup_redirect_to_shm_mq, (Datum) 0);
 }
 
@@ -236,7 +236,7 @@ pq_parse_errornotice(StringInfo msg, ErrorData *edata)
 
 		switch (code)
 		{
-			case PG_DIAG_SEVERITY:
+			case MDB_DIAG_SEVERITY:
 				if (strcmp(value, "DEBUG") == 0)
 					edata->elevel = DEBUG1;		/* or some other DEBUG level */
 				else if (strcmp(value, "LOG") == 0)
@@ -256,55 +256,55 @@ pq_parse_errornotice(StringInfo msg, ErrorData *edata)
 				else
 					elog(ERROR, "unknown error severity");
 				break;
-			case PG_DIAG_SQLSTATE:
+			case MDB_DIAG_SQLSTATE:
 				if (strlen(value) != 5)
 					elog(ERROR, "malformed sql state");
 				edata->sqlerrcode = MAKE_SQLSTATE(value[0], value[1], value[2],
 												  value[3], value[4]);
 				break;
-			case PG_DIAG_MESSAGE_PRIMARY:
+			case MDB_DIAG_MESSAGE_PRIMARY:
 				edata->message = pstrdup(value);
 				break;
-			case PG_DIAG_MESSAGE_DETAIL:
+			case MDB_DIAG_MESSAGE_DETAIL:
 				edata->detail = pstrdup(value);
 				break;
-			case PG_DIAG_MESSAGE_HINT:
+			case MDB_DIAG_MESSAGE_HINT:
 				edata->hint = pstrdup(value);
 				break;
-			case PG_DIAG_STATEMENT_POSITION:
+			case MDB_DIAG_STATEMENT_POSITION:
 				edata->cursorpos = mdb_atoi(value, sizeof(int), '\0');
 				break;
-			case PG_DIAG_INTERNAL_POSITION:
+			case MDB_DIAG_INTERNAL_POSITION:
 				edata->internalpos = mdb_atoi(value, sizeof(int), '\0');
 				break;
-			case PG_DIAG_INTERNAL_QUERY:
+			case MDB_DIAG_INTERNAL_QUERY:
 				edata->internalquery = pstrdup(value);
 				break;
-			case PG_DIAG_CONTEXT:
+			case MDB_DIAG_CONTEXT:
 				edata->context = pstrdup(value);
 				break;
-			case PG_DIAG_SCHEMA_NAME:
+			case MDB_DIAG_SCHEMA_NAME:
 				edata->schema_name = pstrdup(value);
 				break;
-			case PG_DIAG_TABLE_NAME:
+			case MDB_DIAG_TABLE_NAME:
 				edata->table_name = pstrdup(value);
 				break;
-			case PG_DIAG_COLUMN_NAME:
+			case MDB_DIAG_COLUMN_NAME:
 				edata->column_name = pstrdup(value);
 				break;
-			case PG_DIAG_DATATYPE_NAME:
+			case MDB_DIAG_DATATYPE_NAME:
 				edata->datatype_name = pstrdup(value);
 				break;
-			case PG_DIAG_CONSTRAINT_NAME:
+			case MDB_DIAG_CONSTRAINT_NAME:
 				edata->constraint_name = pstrdup(value);
 				break;
-			case PG_DIAG_SOURCE_FILE:
+			case MDB_DIAG_SOURCE_FILE:
 				edata->filename = pstrdup(value);
 				break;
-			case PG_DIAG_SOURCE_LINE:
+			case MDB_DIAG_SOURCE_LINE:
 				edata->lineno = mdb_atoi(value, sizeof(int), '\0');
 				break;
-			case PG_DIAG_SOURCE_FUNCTION:
+			case MDB_DIAG_SOURCE_FUNCTION:
 				edata->funcname = pstrdup(value);
 				break;
 			default:

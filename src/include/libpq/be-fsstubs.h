@@ -19,31 +19,31 @@
 /*
  * LO functions available via mdb_proc entries
  */
-extern Datum lo_import(PG_FUNCTION_ARGS);
-extern Datum lo_import_with_oid(PG_FUNCTION_ARGS);
-extern Datum lo_export(PG_FUNCTION_ARGS);
+extern Datum lo_import(MDB_FUNCTION_ARGS);
+extern Datum lo_import_with_oid(MDB_FUNCTION_ARGS);
+extern Datum lo_export(MDB_FUNCTION_ARGS);
 
-extern Datum lo_creat(PG_FUNCTION_ARGS);
-extern Datum lo_create(PG_FUNCTION_ARGS);
-extern Datum lo_from_bytea(PG_FUNCTION_ARGS);
+extern Datum lo_creat(MDB_FUNCTION_ARGS);
+extern Datum lo_create(MDB_FUNCTION_ARGS);
+extern Datum lo_from_bytea(MDB_FUNCTION_ARGS);
 
-extern Datum lo_open(PG_FUNCTION_ARGS);
-extern Datum lo_close(PG_FUNCTION_ARGS);
+extern Datum lo_open(MDB_FUNCTION_ARGS);
+extern Datum lo_close(MDB_FUNCTION_ARGS);
 
-extern Datum loread(PG_FUNCTION_ARGS);
-extern Datum lowrite(PG_FUNCTION_ARGS);
+extern Datum loread(MDB_FUNCTION_ARGS);
+extern Datum lowrite(MDB_FUNCTION_ARGS);
 
-extern Datum lo_get(PG_FUNCTION_ARGS);
-extern Datum lo_get_fragment(PG_FUNCTION_ARGS);
-extern Datum lo_put(PG_FUNCTION_ARGS);
+extern Datum lo_get(MDB_FUNCTION_ARGS);
+extern Datum lo_get_fragment(MDB_FUNCTION_ARGS);
+extern Datum lo_put(MDB_FUNCTION_ARGS);
 
-extern Datum lo_lseek(PG_FUNCTION_ARGS);
-extern Datum lo_tell(PG_FUNCTION_ARGS);
-extern Datum lo_lseek64(PG_FUNCTION_ARGS);
-extern Datum lo_tell64(PG_FUNCTION_ARGS);
-extern Datum lo_unlink(PG_FUNCTION_ARGS);
-extern Datum lo_truncate(PG_FUNCTION_ARGS);
-extern Datum lo_truncate64(PG_FUNCTION_ARGS);
+extern Datum lo_lseek(MDB_FUNCTION_ARGS);
+extern Datum lo_tell(MDB_FUNCTION_ARGS);
+extern Datum lo_lseek64(MDB_FUNCTION_ARGS);
+extern Datum lo_tell64(MDB_FUNCTION_ARGS);
+extern Datum lo_unlink(MDB_FUNCTION_ARGS);
+extern Datum lo_truncate(MDB_FUNCTION_ARGS);
+extern Datum lo_truncate64(MDB_FUNCTION_ARGS);
 
 /*
  * compatibility option for access control

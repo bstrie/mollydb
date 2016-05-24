@@ -1012,7 +1012,7 @@ logical_rewrite_log_mapping(RewriteState state, TransactionId xid,
 		src->off = 0;
 		memcpy(src->path, path, sizeof(path));
 		src->vfd = PathNameOpenFile(path,
-									O_CREAT | O_EXCL | O_WRONLY | PG_BINARY,
+									O_CREAT | O_EXCL | O_WRONLY | MDB_BINARY,
 									S_IRUSR | S_IWUSR);
 		if (src->vfd < 0)
 			ereport(ERROR,
@@ -1132,7 +1132,7 @@ heap_xlog_logical_rewrite(XLogReaderState *r)
 			 xlrec->mapped_xid, XLogRecGetXid(r));
 
 	fd = OpenTransientFile(path,
-						   O_CREAT | O_WRONLY | PG_BINARY,
+						   O_CREAT | O_WRONLY | MDB_BINARY,
 						   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(ERROR,
@@ -1251,7 +1251,7 @@ CheckPointLogicalRewriteHeap(void)
 		}
 		else
 		{
-			int			fd = OpenTransientFile(path, O_RDONLY | PG_BINARY, 0);
+			int			fd = OpenTransientFile(path, O_RDONLY | MDB_BINARY, 0);
 
 			/*
 			 * The file cannot vanish due to concurrency since this function

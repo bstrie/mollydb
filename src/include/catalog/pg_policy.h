@@ -6,8 +6,8 @@
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  */
-#ifndef PG_POLICY_H
-#define PG_POLICY_H
+#ifndef MDB_POLICY_H
+#define MDB_POLICY_H
 
 #include "catalog/genbki.h"
 
@@ -50,4 +50,4 @@ typedef FormData_mdb_policy *Form_mdb_policy;
 #define Anum_mdb_policy_polqual		5
 #define Anum_mdb_policy_polwithcheck 6
 
-#endif   /* PG_POLICY_H */
+#endif   /* MDB_POLICY_H */

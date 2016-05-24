@@ -25,12 +25,12 @@
 
 #include "semdb.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * Declarations
  */
-void		_PG_init(void);
+void		_MDB_init(void);
 
 /*
  * Saved hook entries (if stacked)
@@ -307,7 +307,7 @@ semdb_utility_command(Node *parsetree,
 	semdb_context_info_t saved_context_info = semdb_context_info;
 	ListCell   *cell;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/*
 		 * Check command tag to avoid nefarious operations, and save the
@@ -370,12 +370,12 @@ semdb_utility_command(Node *parsetree,
 									context, params,
 									dest, completionTag);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		semdb_context_info = saved_context_info;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	semdb_context_info = saved_context_info;
 }
 
@@ -383,7 +383,7 @@ semdb_utility_command(Node *parsetree,
  * Module load/unload callback
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/*
 	 * We allow to load the SE-MollyDB module on single-user-mode or

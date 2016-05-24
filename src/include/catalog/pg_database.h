@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_DATABASE_H
-#define PG_DATABASE_H
+#ifndef MDB_DATABASE_H
+#define MDB_DATABASE_H
 
 #include "catalog/genbki.h"
 
@@ -79,4 +79,4 @@ DATA(insert OID = 1 (  template1 PGUID ENCODING "LC_COLLATE" "LC_CTYPE" t t -1 0
 SHDESCR("default template for new databases");
 #define TemplateDbOid			1
 
-#endif   /* PG_DATABASE_H */
+#endif   /* MDB_DATABASE_H */

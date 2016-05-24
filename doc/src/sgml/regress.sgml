@@ -347,8 +347,8 @@ make standbycheck
    <para>
     If you don't
     like the <command>diff</command> options that are used by default, set the
-    environment variable <envar>PG_REGRESS_DIFF_OPTS</envar>, for
-    instance <literal>PG_REGRESS_DIFF_OPTS='-u'</literal>.  (Or you
+    environment variable <envar>MDB_REGRESS_DIFF_OPTS</envar>, for
+    instance <literal>MDB_REGRESS_DIFF_OPTS='-u'</literal>.  (Or you
     can run <command>diff</command> yourself, if you prefer.)
    </para>
 

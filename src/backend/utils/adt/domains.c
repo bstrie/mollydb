@@ -198,7 +198,7 @@ domain_check_input(Datum value, bool isnull, DomainIOData *my_extra)
  * domain_in		- input routine for any domain type.
  */
 Datum
-domain_in(PG_FUNCTION_ARGS)
+domain_in(MDB_FUNCTION_ARGS)
 {
 	char	   *string;
 	Oid			domainType;
@@ -210,13 +210,13 @@ domain_in(PG_FUNCTION_ARGS)
 	 * typioparam argument should never be null in normal system usage, but it
 	 * could be null in a manual invocation --- if so, just return null.
 	 */
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		string = NULL;
 	else
-		string = PG_GETARG_CSTRING(0);
-	if (PG_ARGISNULL(1))
-		PG_RETURN_NULL();
-	domainType = PG_GETARG_OID(1);
+		string = MDB_GETARG_CSTRING(0);
+	if (MDB_ARGISNULL(1))
+		MDB_RETURN_NULL();
+	domainType = MDB_GETARG_OID(1);
 
 	/*
 	 * We arrange to look up the needed info just once per series of calls,
@@ -245,16 +245,16 @@ domain_in(PG_FUNCTION_ARGS)
 	domain_check_input(value, (string == NULL), my_extra);
 
 	if (string == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_DATUM(value);
+		MDB_RETURN_DATUM(value);
 }
 
 /*
  * domain_recv		- binary input routine for any domain type.
  */
 Datum
-domain_recv(PG_FUNCTION_ARGS)
+domain_recv(MDB_FUNCTION_ARGS)
 {
 	StringInfo	buf;
 	Oid			domainType;
@@ -266,13 +266,13 @@ domain_recv(PG_FUNCTION_ARGS)
 	 * typioparam argument should never be null in normal system usage, but it
 	 * could be null in a manual invocation --- if so, just return null.
 	 */
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		buf = NULL;
 	else
-		buf = (StringInfo) PG_GETARG_POINTER(0);
-	if (PG_ARGISNULL(1))
-		PG_RETURN_NULL();
-	domainType = PG_GETARG_OID(1);
+		buf = (StringInfo) MDB_GETARG_POINTER(0);
+	if (MDB_ARGISNULL(1))
+		MDB_RETURN_NULL();
+	domainType = MDB_GETARG_OID(1);
 
 	/*
 	 * We arrange to look up the needed info just once per series of calls,
@@ -301,9 +301,9 @@ domain_recv(PG_FUNCTION_ARGS)
 	domain_check_input(value, (buf == NULL), my_extra);
 
 	if (buf == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_DATUM(value);
+		MDB_RETURN_DATUM(value);
 }
 
 /*
@@ -356,9 +356,9 @@ errdatatype(Oid datatypeOid)
 		elog(ERROR, "cache lookup failed for type %u", datatypeOid);
 	typtup = (Form_mdb_type) GETSTRUCT(tup);
 
-	err_generic_string(PG_DIAG_SCHEMA_NAME,
+	err_generic_string(MDB_DIAG_SCHEMA_NAME,
 					   get_namespace_name(typtup->typnamespace));
-	err_generic_string(PG_DIAG_DATATYPE_NAME, NameStr(typtup->typname));
+	err_generic_string(MDB_DIAG_DATATYPE_NAME, NameStr(typtup->typname));
 
 	ReleaseSysCache(tup);
 
@@ -373,7 +373,7 @@ int
 errdomainconstraint(Oid datatypeOid, const char *conname)
 {
 	errdatatype(datatypeOid);
-	err_generic_string(PG_DIAG_CONSTRAINT_NAME, conname);
+	err_generic_string(MDB_DIAG_CONSTRAINT_NAME, conname);
 
 	return 0;					/* return value does not matter */
 }

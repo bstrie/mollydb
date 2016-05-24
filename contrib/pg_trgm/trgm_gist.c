@@ -28,16 +28,16 @@ typedef struct
 #define GETENTRY(vec,pos) ((TRGM *) DatumGetPointer((vec)->vector[(pos)].key))
 
 
-PG_FUNCTION_INFO_V1(gtrgm_in);
-PG_FUNCTION_INFO_V1(gtrgm_out);
-PG_FUNCTION_INFO_V1(gtrgm_compress);
-PG_FUNCTION_INFO_V1(gtrgm_decompress);
-PG_FUNCTION_INFO_V1(gtrgm_consistent);
-PG_FUNCTION_INFO_V1(gtrgm_distance);
-PG_FUNCTION_INFO_V1(gtrgm_union);
-PG_FUNCTION_INFO_V1(gtrgm_same);
-PG_FUNCTION_INFO_V1(gtrgm_penalty);
-PG_FUNCTION_INFO_V1(gtrgm_picksplit);
+MDB_FUNCTION_INFO_V1(gtrgm_in);
+MDB_FUNCTION_INFO_V1(gtrgm_out);
+MDB_FUNCTION_INFO_V1(gtrgm_compress);
+MDB_FUNCTION_INFO_V1(gtrgm_decompress);
+MDB_FUNCTION_INFO_V1(gtrgm_consistent);
+MDB_FUNCTION_INFO_V1(gtrgm_distance);
+MDB_FUNCTION_INFO_V1(gtrgm_union);
+MDB_FUNCTION_INFO_V1(gtrgm_same);
+MDB_FUNCTION_INFO_V1(gtrgm_penalty);
+MDB_FUNCTION_INFO_V1(gtrgm_picksplit);
 
 /* Number of one-bits in an unsigned byte */
 static const uint8 number_of_ones[256] = {
@@ -61,17 +61,17 @@ static const uint8 number_of_ones[256] = {
 
 
 Datum
-gtrgm_in(PG_FUNCTION_ARGS)
+gtrgm_in(MDB_FUNCTION_ARGS)
 {
 	elog(ERROR, "not implemented");
-	PG_RETURN_DATUM(0);
+	MDB_RETURN_DATUM(0);
 }
 
 Datum
-gtrgm_out(PG_FUNCTION_ARGS)
+gtrgm_out(MDB_FUNCTION_ARGS)
 {
 	elog(ERROR, "not implemented");
-	PG_RETURN_DATUM(0);
+	MDB_RETURN_DATUM(0);
 }
 
 static void
@@ -92,9 +92,9 @@ makesign(BITVECP sign, TRGM *a)
 }
 
 Datum
-gtrgm_compress(PG_FUNCTION_ARGS)
+gtrgm_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval = entry;
 
 	if (entry->leafkey)
@@ -119,7 +119,7 @@ gtrgm_compress(PG_FUNCTION_ARGS)
 		LOOPBYTE
 		{
 			if ((sign[i] & 0xff) != 0xff)
-				PG_RETURN_POINTER(retval);
+				MDB_RETURN_POINTER(retval);
 		}
 
 		len = CALCGTSIZE(SIGNKEY | ALLISTRUE, 0);
@@ -132,13 +132,13 @@ gtrgm_compress(PG_FUNCTION_ARGS)
 					  entry->rel, entry->page,
 					  entry->offset, FALSE);
 	}
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 Datum
-gtrgm_decompress(PG_FUNCTION_ARGS)
+gtrgm_decompress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval;
 	text	   *key;
 
@@ -150,12 +150,12 @@ gtrgm_decompress(PG_FUNCTION_ARGS)
 		retval = palloc(sizeof(GISTENTRY));
 		gistentryinit(*retval, PointerGetDatum(key),
 					  entry->rel, entry->page, entry->offset, entry->leafkey);
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
 	else
 	{
 		/* we can return the entry as-is */
-		PG_RETURN_POINTER(entry);
+		MDB_RETURN_POINTER(entry);
 	}
 }
 
@@ -178,14 +178,14 @@ cnt_sml_sign_common(TRGM *qtrg, BITVECP sign)
 }
 
 Datum
-gtrgm_consistent(PG_FUNCTION_ARGS)
+gtrgm_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	text	   *query = PG_GETARG_TEXT_P(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	text	   *query = MDB_GETARG_TEXT_P(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	TRGM	   *key = (TRGM *) DatumGetPointer(entry->key);
 	TRGM	   *qtrg;
 	bool		res;
@@ -238,7 +238,7 @@ gtrgm_consistent(PG_FUNCTION_ARGS)
 #endif
 				/* FALL THRU */
 			case RegExpStrategyNumber:
-				qtrg = createTrgmNFA(query, PG_GET_COLLATION(),
+				qtrg = createTrgmNFA(query, MDB_GET_COLLATION(),
 									 &graph, fcinfo->flinfo->fn_mcxt);
 				/* just in case an empty array is returned ... */
 				if (qtrg && ARRNELEM(qtrg) <= 0)
@@ -425,18 +425,18 @@ gtrgm_consistent(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 Datum
-gtrgm_distance(PG_FUNCTION_ARGS)
+gtrgm_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	text	   *query = PG_GETARG_TEXT_P(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	text	   *query = MDB_GETARG_TEXT_P(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	TRGM	   *key = (TRGM *) DatumGetPointer(entry->key);
 	TRGM	   *qtrg;
 	float8		res;
@@ -502,7 +502,7 @@ gtrgm_distance(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_FLOAT8(res);
+	MDB_RETURN_FLOAT8(res);
 }
 
 static int32
@@ -536,11 +536,11 @@ unionkey(BITVECP sbase, TRGM *add)
 
 
 Datum
-gtrgm_union(PG_FUNCTION_ARGS)
+gtrgm_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	int32		len = entryvec->n;
-	int		   *size = (int *) PG_GETARG_POINTER(1);
+	int		   *size = (int *) MDB_GETARG_POINTER(1);
 	BITVEC		base;
 	int32		i;
 	int32		flag = 0;
@@ -565,15 +565,15 @@ gtrgm_union(PG_FUNCTION_ARGS)
 		memcpy((void *) GETSIGN(result), (void *) base, sizeof(BITVEC));
 	*size = len;
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-gtrgm_same(PG_FUNCTION_ARGS)
+gtrgm_same(MDB_FUNCTION_ARGS)
 {
-	TRGM	   *a = (TRGM *) PG_GETARG_POINTER(0);
-	TRGM	   *b = (TRGM *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	TRGM	   *a = (TRGM *) MDB_GETARG_POINTER(0);
+	TRGM	   *b = (TRGM *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	if (ISSIGNKEY(a))
 	{							/* then b also ISSIGNKEY */
@@ -623,7 +623,7 @@ gtrgm_same(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 static int32
@@ -669,11 +669,11 @@ hemdist(TRGM *a, TRGM *b)
 }
 
 Datum
-gtrgm_penalty(PG_FUNCTION_ARGS)
+gtrgm_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *origentry = (GISTENTRY *) PG_GETARG_POINTER(0); /* always ISSIGNKEY */
-	GISTENTRY  *newentry = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *penalty = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *origentry = (GISTENTRY *) MDB_GETARG_POINTER(0); /* always ISSIGNKEY */
+	GISTENTRY  *newentry = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *penalty = (float *) MDB_GETARG_POINTER(2);
 	TRGM	   *origval = (TRGM *) DatumGetPointer(origentry->key);
 	TRGM	   *newval = (TRGM *) DatumGetPointer(newentry->key);
 	BITVECP		orig = GETSIGN(origval);
@@ -720,7 +720,7 @@ gtrgm_penalty(PG_FUNCTION_ARGS)
 	}
 	else
 		*penalty = hemdist(origval, newval);
-	PG_RETURN_POINTER(penalty);
+	MDB_RETURN_POINTER(penalty);
 }
 
 typedef struct
@@ -775,11 +775,11 @@ hemdistcache(CACHESIGN *a, CACHESIGN *b)
 }
 
 Datum
-gtrgm_picksplit(PG_FUNCTION_ARGS)
+gtrgm_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	OffsetNumber maxoff = entryvec->n - 2;
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber k,
 				j;
 	TRGM	   *datum_l,
@@ -955,5 +955,5 @@ gtrgm_picksplit(PG_FUNCTION_ARGS)
 	v->spl_ldatum = PointerGetDatum(datum_l);
 	v->spl_rdatum = PointerGetDatum(datum_r);
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }

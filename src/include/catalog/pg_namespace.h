@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_NAMESPACE_H
-#define PG_NAMESPACE_H
+#ifndef MDB_NAMESPACE_H
+#define MDB_NAMESPACE_H
 
 #include "catalog/genbki.h"
 
@@ -68,13 +68,13 @@ typedef FormData_mdb_namespace *Form_mdb_namespace;
 
 DATA(insert OID = 11 ( "mdb_catalog" PGUID _null_ ));
 DESCR("system catalog schema");
-#define PG_CATALOG_NAMESPACE 11
+#define MDB_CATALOG_NAMESPACE 11
 DATA(insert OID = 99 ( "mdb_toast" PGUID _null_ ));
 DESCR("reserved schema for TOAST tables");
-#define PG_TOAST_NAMESPACE 99
+#define MDB_TOAST_NAMESPACE 99
 DATA(insert OID = 2200 ( "public" PGUID _null_ ));
 DESCR("standard public schema");
-#define PG_PUBLIC_NAMESPACE 2200
+#define MDB_PUBLIC_NAMESPACE 2200
 
 
 /*
@@ -82,4 +82,4 @@ DESCR("standard public schema");
  */
 extern Oid	NamespaceCreate(const char *nspName, Oid ownerId, bool isTemp);
 
-#endif   /* PG_NAMESPACE_H */
+#endif   /* MDB_NAMESPACE_H */

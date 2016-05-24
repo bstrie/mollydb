@@ -27,27 +27,27 @@ typedef uint64 ean13;
 
 #define EAN13_FORMAT UINT64_FORMAT
 
-#define PG_GETARG_EAN13(n) PG_GETARG_INT64(n)
-#define PG_RETURN_EAN13(x) PG_RETURN_INT64(x)
+#define MDB_GETARG_EAN13(n) MDB_GETARG_INT64(n)
+#define MDB_RETURN_EAN13(x) MDB_RETURN_INT64(x)
 
-extern Datum isn_out(PG_FUNCTION_ARGS);
-extern Datum ean13_out(PG_FUNCTION_ARGS);
-extern Datum ean13_in(PG_FUNCTION_ARGS);
-extern Datum isbn_in(PG_FUNCTION_ARGS);
-extern Datum ismn_in(PG_FUNCTION_ARGS);
-extern Datum issn_in(PG_FUNCTION_ARGS);
-extern Datum upc_in(PG_FUNCTION_ARGS);
+extern Datum isn_out(MDB_FUNCTION_ARGS);
+extern Datum ean13_out(MDB_FUNCTION_ARGS);
+extern Datum ean13_in(MDB_FUNCTION_ARGS);
+extern Datum isbn_in(MDB_FUNCTION_ARGS);
+extern Datum ismn_in(MDB_FUNCTION_ARGS);
+extern Datum issn_in(MDB_FUNCTION_ARGS);
+extern Datum upc_in(MDB_FUNCTION_ARGS);
 
-extern Datum isbn_cast_from_ean13(PG_FUNCTION_ARGS);
-extern Datum ismn_cast_from_ean13(PG_FUNCTION_ARGS);
-extern Datum issn_cast_from_ean13(PG_FUNCTION_ARGS);
-extern Datum upc_cast_from_ean13(PG_FUNCTION_ARGS);
+extern Datum isbn_cast_from_ean13(MDB_FUNCTION_ARGS);
+extern Datum ismn_cast_from_ean13(MDB_FUNCTION_ARGS);
+extern Datum issn_cast_from_ean13(MDB_FUNCTION_ARGS);
+extern Datum upc_cast_from_ean13(MDB_FUNCTION_ARGS);
 
-extern Datum is_valid(PG_FUNCTION_ARGS);
-extern Datum make_valid(PG_FUNCTION_ARGS);
+extern Datum is_valid(MDB_FUNCTION_ARGS);
+extern Datum make_valid(MDB_FUNCTION_ARGS);
 
-extern Datum accept_weak_input(PG_FUNCTION_ARGS);
-extern Datum weak_input_status(PG_FUNCTION_ARGS);
+extern Datum accept_weak_input(MDB_FUNCTION_ARGS);
+extern Datum weak_input_status(MDB_FUNCTION_ARGS);
 
 extern void initialize(void);
 

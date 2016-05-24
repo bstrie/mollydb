@@ -41,7 +41,7 @@ NOTE: This file has a different expect file for regression tests on MinGW32
 TODO:
 	deccmp => DECUNKNOWN
 	decimal point: , and/or . ?
-	ECPG_INFORMIX_BAD_EXPONENT ?
+	ECMDB_INFORMIX_BAD_EXPONENT ?
 */
 
 char* decs[] = { "2E394", "-2", ".794", "3.44", "592.49E21", "-32.84e4",
@@ -237,11 +237,11 @@ check_errno(void)
 		case 0:
 			printf("(no errno set) - ");
 			break;
-		case ECPG_INFORMIX_NUM_OVERFLOW:
-			printf("(errno == ECPG_INFORMIX_NUM_OVERFLOW) - ");
+		case ECMDB_INFORMIX_NUM_OVERFLOW:
+			printf("(errno == ECMDB_INFORMIX_NUM_OVERFLOW) - ");
 			break;
-		case ECPG_INFORMIX_NUM_UNDERFLOW:
-			printf("(errno == ECPG_INFORMIX_NUM_UNDERFLOW) - ");
+		case ECMDB_INFORMIX_NUM_UNDERFLOW:
+			printf("(errno == ECMDB_INFORMIX_NUM_UNDERFLOW) - ");
 			break;
 		case PGTYPES_NUM_OVERFLOW:
 			printf("(errno == PGTYPES_NUM_OVERFLOW) - ");

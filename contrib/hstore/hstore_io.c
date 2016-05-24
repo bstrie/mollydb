@@ -20,7 +20,7 @@
 
 #include "hstore.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* old names for C functions */
 HSTORE_POLLUTE(hstore_from_text, tconvert);
@@ -401,15 +401,15 @@ hstorePairs(Pairs *pairs, int32 pcount, int32 buflen)
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_in);
+MDB_FUNCTION_INFO_V1(hstore_in);
 Datum
-hstore_in(PG_FUNCTION_ARGS)
+hstore_in(MDB_FUNCTION_ARGS)
 {
 	HSParser	state;
 	int32		buflen;
 	HStore	   *out;
 
-	state.begin = PG_GETARG_CSTRING(0);
+	state.begin = MDB_GETARG_CSTRING(0);
 
 	parse_hstore(&state);
 
@@ -417,27 +417,27 @@ hstore_in(PG_FUNCTION_ARGS)
 
 	out = hstorePairs(state.pairs, state.pcur, buflen);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_recv);
+MDB_FUNCTION_INFO_V1(hstore_recv);
 Datum
-hstore_recv(PG_FUNCTION_ARGS)
+hstore_recv(MDB_FUNCTION_ARGS)
 {
 	int32		buflen;
 	HStore	   *out;
 	Pairs	   *pairs;
 	int32		i;
 	int32		pcount;
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
 	pcount = pq_getmsgint(buf, 4);
 
 	if (pcount == 0)
 	{
 		out = hstorePairs(NULL, 0, 0);
-		PG_RETURN_POINTER(out);
+		MDB_RETURN_POINTER(out);
 	}
 
 	if (pcount < 0 || pcount > MaxAllocSize / sizeof(Pairs))
@@ -480,35 +480,35 @@ hstore_recv(PG_FUNCTION_ARGS)
 
 	out = hstorePairs(pairs, pcount, buflen);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_from_text);
+MDB_FUNCTION_INFO_V1(hstore_from_text);
 Datum
-hstore_from_text(PG_FUNCTION_ARGS)
+hstore_from_text(MDB_FUNCTION_ARGS)
 {
 	text	   *key;
 	text	   *val = NULL;
 	Pairs		p;
 	HStore	   *out;
 
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
 	p.needfree = false;
-	key = PG_GETARG_TEXT_PP(0);
+	key = MDB_GETARG_TEXT_PP(0);
 	p.key = VARDATA_ANY(key);
 	p.keylen = hstoreCheckKeyLen(VARSIZE_ANY_EXHDR(key));
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 	{
 		p.vallen = 0;
 		p.isnull = true;
 	}
 	else
 	{
-		val = PG_GETARG_TEXT_PP(1);
+		val = MDB_GETARG_TEXT_PP(1);
 		p.val = VARDATA_ANY(val);
 		p.vallen = hstoreCheckValLen(VARSIZE_ANY_EXHDR(val));
 		p.isnull = false;
@@ -516,13 +516,13 @@ hstore_from_text(PG_FUNCTION_ARGS)
 
 	out = hstorePairs(&p, 1, p.keylen + p.vallen);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_from_arrays);
+MDB_FUNCTION_INFO_V1(hstore_from_arrays);
 Datum
-hstore_from_arrays(PG_FUNCTION_ARGS)
+hstore_from_arrays(MDB_FUNCTION_ARGS)
 {
 	int32		buflen;
 	HStore	   *out;
@@ -537,10 +537,10 @@ hstore_from_arrays(PG_FUNCTION_ARGS)
 	ArrayType  *value_array;
 	int			i;
 
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	key_array = PG_GETARG_ARRAYTYPE_P(0);
+	key_array = MDB_GETARG_ARRAYTYPE_P(0);
 
 	Assert(ARR_ELEMTYPE(key_array) == TEXTOID);
 
@@ -567,7 +567,7 @@ hstore_from_arrays(PG_FUNCTION_ARGS)
 
 	/* value_array might be NULL */
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 	{
 		value_array = NULL;
 		value_count = key_count;
@@ -576,7 +576,7 @@ hstore_from_arrays(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		value_array = PG_GETARG_ARRAYTYPE_P(1);
+		value_array = MDB_GETARG_ARRAYTYPE_P(1);
 
 		Assert(ARR_ELEMTYPE(value_array) == TEXTOID);
 
@@ -633,15 +633,15 @@ hstore_from_arrays(PG_FUNCTION_ARGS)
 
 	out = hstorePairs(pairs, key_count, buflen);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_from_array);
+MDB_FUNCTION_INFO_V1(hstore_from_array);
 Datum
-hstore_from_array(PG_FUNCTION_ARGS)
+hstore_from_array(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *in_array = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *in_array = MDB_GETARG_ARRAYTYPE_P(0);
 	int			ndims = ARR_NDIM(in_array);
 	int			count;
 	int32		buflen;
@@ -658,7 +658,7 @@ hstore_from_array(PG_FUNCTION_ARGS)
 	{
 		case 0:
 			out = hstorePairs(NULL, 0, 0);
-			PG_RETURN_POINTER(out);
+			MDB_RETURN_POINTER(out);
 
 		case 1:
 			if ((ARR_DIMS(in_array)[0]) % 2)
@@ -726,7 +726,7 @@ hstore_from_array(PG_FUNCTION_ARGS)
 
 	out = hstorePairs(pairs, count, buflen);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 /* most of hstore_from_record is shamelessly swiped from record_out */
@@ -750,9 +750,9 @@ typedef struct RecordIOData
 	ColumnIOData columns[FLEXIBLE_ARRAY_MEMBER];
 } RecordIOData;
 
-PG_FUNCTION_INFO_V1(hstore_from_record);
+MDB_FUNCTION_INFO_V1(hstore_from_record);
 Datum
-hstore_from_record(PG_FUNCTION_ARGS)
+hstore_from_record(MDB_FUNCTION_ARGS)
 {
 	HeapTupleHeader rec;
 	int32		buflen;
@@ -769,7 +769,7 @@ hstore_from_record(PG_FUNCTION_ARGS)
 	Datum	   *values;
 	bool	   *nulls;
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		Oid			argtype = get_fn_expr_argtype(fcinfo->flinfo, 0);
 
@@ -785,7 +785,7 @@ hstore_from_record(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		rec = PG_GETARG_HEAPTUPLEHEADER(0);
+		rec = MDB_GETARG_HEAPTUPLEHEADER(0);
 
 		/* Extract type info from the tuple itself */
 		tupType = HeapTupleHeaderGetTypeId(rec);
@@ -899,13 +899,13 @@ hstore_from_record(PG_FUNCTION_ARGS)
 
 	ReleaseTupleDesc(tupdesc);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_populate_record);
+MDB_FUNCTION_INFO_V1(hstore_populate_record);
 Datum
-hstore_populate_record(PG_FUNCTION_ARGS)
+hstore_populate_record(MDB_FUNCTION_ARGS)
 {
 	Oid			argtype = get_fn_expr_argtype(fcinfo->flinfo, 0);
 	HStore	   *hs;
@@ -928,10 +928,10 @@ hstore_populate_record(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DATATYPE_MISMATCH),
 				 errmsg("first argument must be a rowtype")));
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
-		if (PG_ARGISNULL(1))
-			PG_RETURN_NULL();
+		if (MDB_ARGISNULL(1))
+			MDB_RETURN_NULL();
 
 		rec = NULL;
 
@@ -945,17 +945,17 @@ hstore_populate_record(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		rec = PG_GETARG_HEAPTUPLEHEADER(0);
+		rec = MDB_GETARG_HEAPTUPLEHEADER(0);
 
-		if (PG_ARGISNULL(1))
-			PG_RETURN_POINTER(rec);
+		if (MDB_ARGISNULL(1))
+			MDB_RETURN_POINTER(rec);
 
 		/* Extract type info from the tuple itself */
 		tupType = HeapTupleHeaderGetTypeId(rec);
 		tupTypmod = HeapTupleHeaderGetTypMod(rec);
 	}
 
-	hs = PG_GETARG_HS(1);
+	hs = MDB_GETARG_HS(1);
 	entries = ARRPTR(hs);
 	ptr = STRPTR(hs);
 
@@ -966,7 +966,7 @@ hstore_populate_record(PG_FUNCTION_ARGS)
 	 */
 
 	if (HS_COUNT(hs) == 0 && rec)
-		PG_RETURN_POINTER(rec);
+		MDB_RETURN_POINTER(rec);
 
 	tupdesc = lookup_rowtype_tupdesc(tupType, tupTypmod);
 	ncolumns = tupdesc->natts;
@@ -1097,7 +1097,7 @@ hstore_populate_record(PG_FUNCTION_ARGS)
 
 	ReleaseTupleDesc(tupdesc);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(rettuple));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(rettuple));
 }
 
 
@@ -1115,11 +1115,11 @@ cpw(char *dst, char *src, int len)
 	return dst;
 }
 
-PG_FUNCTION_INFO_V1(hstore_out);
+MDB_FUNCTION_INFO_V1(hstore_out);
 Datum
-hstore_out(PG_FUNCTION_ARGS)
+hstore_out(MDB_FUNCTION_ARGS)
 {
-	HStore	   *in = PG_GETARG_HS(0);
+	HStore	   *in = MDB_GETARG_HS(0);
 	int			buflen,
 				i;
 	int			count = HS_COUNT(in);
@@ -1129,7 +1129,7 @@ hstore_out(PG_FUNCTION_ARGS)
 	HEntry	   *entries = ARRPTR(in);
 
 	if (count == 0)
-		PG_RETURN_CSTRING(pstrdup(""));
+		MDB_RETURN_CSTRING(pstrdup(""));
 
 	buflen = 0;
 
@@ -1182,15 +1182,15 @@ hstore_out(PG_FUNCTION_ARGS)
 	}
 	*ptr = '\0';
 
-	PG_RETURN_CSTRING(out);
+	MDB_RETURN_CSTRING(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_send);
+MDB_FUNCTION_INFO_V1(hstore_send);
 Datum
-hstore_send(PG_FUNCTION_ARGS)
+hstore_send(MDB_FUNCTION_ARGS)
 {
-	HStore	   *in = PG_GETARG_HS(0);
+	HStore	   *in = MDB_GETARG_HS(0);
 	int			i;
 	int			count = HS_COUNT(in);
 	char	   *base = STRPTR(in);
@@ -1220,7 +1220,7 @@ hstore_send(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -1232,11 +1232,11 @@ hstore_send(PG_FUNCTION_ARGS)
  * as long as they don't start with a leading zero followed by another digit
  * (think zip codes or phone numbers starting with 0).
  */
-PG_FUNCTION_INFO_V1(hstore_to_json_loose);
+MDB_FUNCTION_INFO_V1(hstore_to_json_loose);
 Datum
-hstore_to_json_loose(PG_FUNCTION_ARGS)
+hstore_to_json_loose(MDB_FUNCTION_ARGS)
 {
-	HStore	   *in = PG_GETARG_HS(0);
+	HStore	   *in = MDB_GETARG_HS(0);
 	int			i;
 	int			count = HS_COUNT(in);
 	char	   *base = STRPTR(in);
@@ -1245,7 +1245,7 @@ hstore_to_json_loose(PG_FUNCTION_ARGS)
 				dst;
 
 	if (count == 0)
-		PG_RETURN_TEXT_P(cstring_to_text_with_len("{}", 2));
+		MDB_RETURN_TEXT_P(cstring_to_text_with_len("{}", 2));
 
 	initStringInfo(&tmp);
 	initStringInfo(&dst);
@@ -1284,14 +1284,14 @@ hstore_to_json_loose(PG_FUNCTION_ARGS)
 	}
 	appendStringInfoChar(&dst, '}');
 
-	PG_RETURN_TEXT_P(cstring_to_text(dst.data));
+	MDB_RETURN_TEXT_P(cstring_to_text(dst.data));
 }
 
-PG_FUNCTION_INFO_V1(hstore_to_json);
+MDB_FUNCTION_INFO_V1(hstore_to_json);
 Datum
-hstore_to_json(PG_FUNCTION_ARGS)
+hstore_to_json(MDB_FUNCTION_ARGS)
 {
-	HStore	   *in = PG_GETARG_HS(0);
+	HStore	   *in = MDB_GETARG_HS(0);
 	int			i;
 	int			count = HS_COUNT(in);
 	char	   *base = STRPTR(in);
@@ -1300,7 +1300,7 @@ hstore_to_json(PG_FUNCTION_ARGS)
 				dst;
 
 	if (count == 0)
-		PG_RETURN_TEXT_P(cstring_to_text_with_len("{}", 2));
+		MDB_RETURN_TEXT_P(cstring_to_text_with_len("{}", 2));
 
 	initStringInfo(&tmp);
 	initStringInfo(&dst);
@@ -1329,14 +1329,14 @@ hstore_to_json(PG_FUNCTION_ARGS)
 	}
 	appendStringInfoChar(&dst, '}');
 
-	PG_RETURN_TEXT_P(cstring_to_text(dst.data));
+	MDB_RETURN_TEXT_P(cstring_to_text(dst.data));
 }
 
-PG_FUNCTION_INFO_V1(hstore_to_jsonb);
+MDB_FUNCTION_INFO_V1(hstore_to_jsonb);
 Datum
-hstore_to_jsonb(PG_FUNCTION_ARGS)
+hstore_to_jsonb(MDB_FUNCTION_ARGS)
 {
-	HStore	   *in = PG_GETARG_HS(0);
+	HStore	   *in = MDB_GETARG_HS(0);
 	int			i;
 	int			count = HS_COUNT(in);
 	char	   *base = STRPTR(in);
@@ -1372,14 +1372,14 @@ hstore_to_jsonb(PG_FUNCTION_ARGS)
 
 	res = pushJsonbValue(&state, WJB_END_OBJECT, NULL);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(res));
 }
 
-PG_FUNCTION_INFO_V1(hstore_to_jsonb_loose);
+MDB_FUNCTION_INFO_V1(hstore_to_jsonb_loose);
 Datum
-hstore_to_jsonb_loose(PG_FUNCTION_ARGS)
+hstore_to_jsonb_loose(MDB_FUNCTION_ARGS)
 {
-	HStore	   *in = PG_GETARG_HS(0);
+	HStore	   *in = MDB_GETARG_HS(0);
 	int			i;
 	int			count = HS_COUNT(in);
 	char	   *base = STRPTR(in);
@@ -1444,5 +1444,5 @@ hstore_to_jsonb_loose(PG_FUNCTION_ARGS)
 
 	res = pushJsonbValue(&state, WJB_END_OBJECT, NULL);
 
-	PG_RETURN_POINTER(JsonbValueToJsonb(res));
+	MDB_RETURN_POINTER(JsonbValueToJsonb(res));
 }

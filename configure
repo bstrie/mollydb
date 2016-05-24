@@ -627,7 +627,7 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 vpath_build
-PG_VERSION_NUM
+MDB_VERSION_NUM
 PROVE
 OSX
 XSLTPROC
@@ -649,7 +649,7 @@ XGETTEXT
 MSGMERGE
 MSGFMT_FLAGS
 MSGFMT
-PG_CRC32C_OBJS
+MDB_CRC32C_OBJS
 CFLAGS_SSE42
 have_win32_dbghelp
 HAVE_IPV6
@@ -753,7 +753,7 @@ build_os
 build_vendor
 build_cpu
 build
-PG_MAJORVERSION
+MDB_MAJORVERSION
 configure_args
 target_alias
 host_alias
@@ -2711,11 +2711,11 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 configure_args=$ac_configure_args
 
 
-PG_MAJORVERSION=`expr "$PACKAGE_VERSION" : '\([0-9][0-9]*\.[0-9][0-9]*\)'`
+MDB_MAJORVERSION=`expr "$PACKAGE_VERSION" : '\([0-9][0-9]*\.[0-9][0-9]*\)'`
 
 
 cat >>confdefs.h <<_ACEOF
-#define PG_MAJORVERSION "$PG_MAJORVERSION"
+#define MDB_MAJORVERSION "$MDB_MAJORVERSION"
 _ACEOF
 
 
@@ -2733,18 +2733,18 @@ if test "${with_extra_version+set}" = set; then :
       as_fn_error $? "argument required for --with-extra-version option" "$LINENO" 5
       ;;
     *)
-      PG_VERSION="$PACKAGE_VERSION$withval"
+      MDB_VERSION="$PACKAGE_VERSION$withval"
       ;;
   esac
 
 else
-  PG_VERSION="$PACKAGE_VERSION"
+  MDB_VERSION="$PACKAGE_VERSION"
 fi
 
 
 
 cat >>confdefs.h <<_ACEOF
-#define PG_VERSION "$PG_VERSION"
+#define MDB_VERSION "$MDB_VERSION"
 _ACEOF
 
 
@@ -5532,7 +5532,7 @@ fi
 
 
 cat >>confdefs.h <<_ACEOF
-#define PG_KRB_SRVNAM "$with_krb_srvnam"
+#define MDB_KRB_SRVNAM "$with_krb_srvnam"
 _ACEOF
 
 
@@ -11145,7 +11145,7 @@ fi
 $as_echo "$pgac_cv_printf_archetype" >&6; }
 
 cat >>confdefs.h <<_ACEOF
-#define PG_PRINTF_ATTRIBUTE $pgac_cv_printf_archetype
+#define MDB_PRINTF_ATTRIBUTE $pgac_cv_printf_archetype
 _ACEOF
 
 
@@ -13678,7 +13678,7 @@ fi
 
 
 cat >>confdefs.h <<_ACEOF
-#define PG_INT64_TYPE $mdb_int64_type
+#define MDB_INT64_TYPE $mdb_int64_type
 _ACEOF
 
 
@@ -13814,7 +13814,7 @@ int main()
   bufz[0] = '\0';  /* in case snprintf fails to emit anything */
   snprintf(bufz, sizeof(bufz), "%zu", ~((size_t) 0));
   snprintf(buf64, sizeof(buf64), "%" INT64_MODIFIER "u",
-    (unsigned PG_INT64_TYPE) ~((size_t) 0));
+    (unsigned MDB_INT64_TYPE) ~((size_t) 0));
   if (strcmp(bufz, buf64) != 0)
     return 1;
   return 0;
@@ -14357,7 +14357,7 @@ fi
 $as_echo "$pgac_cv__128bit_int" >&6; }
 if test x"$pgac_cv__128bit_int" = xyes ; then
 
-$as_echo "#define PG_INT128_TYPE __int128" >>confdefs.h
+$as_echo "#define MDB_INT128_TYPE __int128" >>confdefs.h
 
 fi
 
@@ -14472,8 +14472,8 @@ else
 int
 main ()
 {
-PG_INT64_TYPE lock = 0;
-   __sync_val_compare_and_swap(&lock, 0, (PG_INT64_TYPE) 37);
+MDB_INT64_TYPE lock = 0;
+   __sync_val_compare_and_swap(&lock, 0, (MDB_INT64_TYPE) 37);
   ;
   return 0;
 }
@@ -14537,8 +14537,8 @@ else
 int
 main ()
 {
-PG_INT64_TYPE val = 0;
-   PG_INT64_TYPE expect = 0;
+MDB_INT64_TYPE val = 0;
+   MDB_INT64_TYPE expect = 0;
    __atomic_compare_exchange_n(&val, &expect, 37, 0, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED);
   ;
   return 0;
@@ -14763,14 +14763,14 @@ if test x"$USE_SSE42_CRC32C" = x"" && test x"$USE_SSE42_CRC32C_WITH_RUNTIME_CHEC
   fi
 fi
 
-# Set PG_CRC32C_OBJS appropriately depending on the selected implementation.
+# Set MDB_CRC32C_OBJS appropriately depending on the selected implementation.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking which CRC-32C implementation to use" >&5
 $as_echo_n "checking which CRC-32C implementation to use... " >&6; }
 if test x"$USE_SSE42_CRC32C" = x"1"; then
 
 $as_echo "#define USE_SSE42_CRC32C 1" >>confdefs.h
 
-  PG_CRC32C_OBJS="mdb_crc32c_sse42.o"
+  MDB_CRC32C_OBJS="mdb_crc32c_sse42.o"
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: SSE 4.2" >&5
 $as_echo "SSE 4.2" >&6; }
 else
@@ -14778,14 +14778,14 @@ else
 
 $as_echo "#define USE_SSE42_CRC32C_WITH_RUNTIME_CHECK 1" >>confdefs.h
 
-    PG_CRC32C_OBJS="mdb_crc32c_sse42.o mdb_crc32c_sb8.o mdb_crc32c_choose.o"
+    MDB_CRC32C_OBJS="mdb_crc32c_sse42.o mdb_crc32c_sb8.o mdb_crc32c_choose.o"
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: SSE 4.2 with runtime check" >&5
 $as_echo "SSE 4.2 with runtime check" >&6; }
   else
 
 $as_echo "#define USE_SLICING_BY_8_CRC32C 1" >>confdefs.h
 
-    PG_CRC32C_OBJS="mdb_crc32c_sb8.o"
+    MDB_CRC32C_OBJS="mdb_crc32c_sb8.o"
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: slicing-by-8" >&5
 $as_echo "slicing-by-8" >&6; }
   fi
@@ -15858,18 +15858,18 @@ fi
 
 
 cat >>confdefs.h <<_ACEOF
-#define PG_VERSION_STR "MollyDB $PG_VERSION on $host, compiled by $cc_string, `expr $ac_cv_sizeof_void_p \* 8`-bit"
+#define MDB_VERSION_STR "MollyDB $MDB_VERSION on $host, compiled by $cc_string, `expr $ac_cv_sizeof_void_p \* 8`-bit"
 _ACEOF
 
 
 # Supply a numeric version string for use by 3rd party add-ons
 # awk -F is a regex on some platforms, and not on others, so make "." a tab
-PG_VERSION_NUM="`echo "$PACKAGE_VERSION" | sed 's/[A-Za-z].*$//' |
+MDB_VERSION_NUM="`echo "$PACKAGE_VERSION" | sed 's/[A-Za-z].*$//' |
 tr '.' '	' |
 $AWK '{printf "%d%02d%02d", $1, $2, (NF >= 3) ? $3 : 0}'`"
 
 cat >>confdefs.h <<_ACEOF
-#define PG_VERSION_NUM $PG_VERSION_NUM
+#define MDB_VERSION_NUM $MDB_VERSION_NUM
 _ACEOF
 
 

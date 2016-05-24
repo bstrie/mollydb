@@ -153,7 +153,7 @@ get_restricted_token(const char *progname)
 	 * restricted token. If not, re-execute ourselves with one.
 	 */
 
-	if ((restrict_env = getenv("PG_RESTRICT_EXEC")) == NULL
+	if ((restrict_env = getenv("MDB_RESTRICT_EXEC")) == NULL
 		|| strcmp(restrict_env, "1") != 0)
 	{
 		PROCESS_INFORMATION pi;
@@ -163,7 +163,7 @@ get_restricted_token(const char *progname)
 
 		cmdline = mdb_strdup(GetCommandLine());
 
-		putenv("PG_RESTRICT_EXEC=1");
+		putenv("MDB_RESTRICT_EXEC=1");
 
 		if ((restrictedToken = CreateRestrictedProcess(cmdline, &pi, progname)) == 0)
 		{

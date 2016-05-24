@@ -1462,8 +1462,8 @@ msgstr "pliki bazy danych są niezgodne z serwerem"
 
 #: access/transam/xlog.c:4272
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x), but the server was compiled with PG_CONTROL_VERSION %d (0x%08x)."
-msgstr "Klaster bazy danych został zainicjowany z PG_CONTROL_VERSION %d (0x%08x), ale serwer był skompilowany z PG_CONTROL_VERSION %d (0x%08x)."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d (0x%08x), but the server was compiled with MDB_CONTROL_VERSION %d (0x%08x)."
+msgstr "Klaster bazy danych został zainicjowany z MDB_CONTROL_VERSION %d (0x%08x), ale serwer był skompilowany z MDB_CONTROL_VERSION %d (0x%08x)."
 
 #: access/transam/xlog.c:4276
 #, c-format
@@ -1472,8 +1472,8 @@ msgstr "Może to być problem niepoprawnego uporządkowania bajtów.  Wydaje si�
 
 #: access/transam/xlog.c:4281
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d, but the server was compiled with PG_CONTROL_VERSION %d."
-msgstr "Klaster bazy danych został zainicjowany z PG_CONTROL_VERSION %d, ale serwer był skompilowany z PG_CONTROL_VERSION %d."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d, but the server was compiled with MDB_CONTROL_VERSION %d."
+msgstr "Klaster bazy danych został zainicjowany z MDB_CONTROL_VERSION %d, ale serwer był skompilowany z MDB_CONTROL_VERSION %d."
 
 #: access/transam/xlog.c:4284 access/transam/xlog.c:4308
 #: access/transam/xlog.c:4315 access/transam/xlog.c:4320
@@ -20166,8 +20166,8 @@ msgstr "niezgodna biblioteka \"%s\": brak magicznego bloku"
 
 #: utils/fmgr/dfmgr.c:268
 #, c-format
-msgid "Extension libraries are required to use the PG_MODULE_MAGIC macro."
-msgstr "Biblioteki rozszerzenia są wymagane by użyć makra PG_MODULE_MAGIC."
+msgid "Extension libraries are required to use the MDB_MODULE_MAGIC macro."
+msgstr "Biblioteki rozszerzenia są wymagane by użyć makra MDB_MODULE_MAGIC."
 
 #: utils/fmgr/dfmgr.c:304
 #, c-format

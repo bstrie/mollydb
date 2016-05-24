@@ -313,11 +313,11 @@ OperatorShellMake(const char *operatorName,
  * "op" is being defined, the negator operator "negop" and the
  * commutator "commop" can also be defined without specifying
  * any information other than their names.  Since in order to
- * add "op" to the PG_OPERATOR catalog, all the Oid's for these
+ * add "op" to the MDB_OPERATOR catalog, all the Oid's for these
  * operators must be placed in the fields of "op", a forward
  * declaration is done on the commutator and negator operators.
  * This is called creating a shell, and its main effect is to
- * create a tuple in the PG_OPERATOR catalog with minimal
+ * create a tuple in the MDB_OPERATOR catalog with minimal
  * information about the operator (just its name and types).
  * Forward declaration is used only for this purpose, it is
  * not available to the user as it is for type definition.

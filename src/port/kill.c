@@ -27,7 +27,7 @@ pgkill(int pid, int sig)
 	DWORD		bytes;
 
 	/* we allow signal 0 here, but it will be ignored in mdb_queue_signal */
-	if (sig >= PG_SIGNAL_COUNT || sig < 0)
+	if (sig >= MDB_SIGNAL_COUNT || sig < 0)
 	{
 		errno = EINVAL;
 		return -1;

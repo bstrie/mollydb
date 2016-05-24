@@ -8,7 +8,7 @@
  * GUC_check_errmsg() and related functions, and try to avoid throwing
  * elog(ERROR).  This is not completely bulletproof at present --- in
  * particular out-of-memory will throw an error.  Could probably fix with
- * PG_TRY if necessary.
+ * MDB_TRY if necessary.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

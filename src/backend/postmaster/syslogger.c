@@ -256,7 +256,7 @@ SysLoggerMain(int argc, char *argv[])
 	pqsignal(SIGCONT, SIG_DFL);
 	pqsignal(SIGWINCH, SIG_DFL);
 
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 #ifdef WIN32
 	/* Fire up separate data transfer thread */
@@ -731,7 +731,7 @@ syslogger_parseArgs(int argc, char *argv[])
 	if (fd != -1)
 	{
 		syslogFile = fdopen(fd, "a");
-		setvbuf(syslogFile, NULL, PG_IOLBF, 0);
+		setvbuf(syslogFile, NULL, MDB_IOLBF, 0);
 	}
 #else							/* WIN32 */
 	fd = atoi(*argv++);
@@ -741,7 +741,7 @@ syslogger_parseArgs(int argc, char *argv[])
 		if (fd > 0)
 		{
 			syslogFile = fdopen(fd, "a");
-			setvbuf(syslogFile, NULL, PG_IOLBF, 0);
+			setvbuf(syslogFile, NULL, MDB_IOLBF, 0);
 		}
 	}
 #endif   /* WIN32 */
@@ -1120,7 +1120,7 @@ logfile_open(const char *filename, const char *mode, bool allow_errors)
 
 	if (fh)
 	{
-		setvbuf(fh, NULL, PG_IOLBF, 0);
+		setvbuf(fh, NULL, MDB_IOLBF, 0);
 
 #ifdef WIN32
 		/* use CRLF line endings on Windows */

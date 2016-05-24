@@ -30,8 +30,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_CRC32C_H
-#define PG_CRC32C_H
+#ifndef MDB_CRC32C_H
+#define MDB_CRC32C_H
 
 #include "port/mdb_bswap.h"
 
@@ -82,4 +82,4 @@ extern mdb_crc32c mdb_comp_crc32c_sb8(mdb_crc32c crc, const void *data, size_t l
 
 #endif
 
-#endif   /* PG_CRC32C_H */
+#endif   /* MDB_CRC32C_H */

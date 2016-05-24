@@ -29,7 +29,7 @@
  * RmgrNames is an array of resource manager names, to make error messages
  * a bit nicer.
  */
-#define PG_RMGR(symname,name,redo,desc,identify,startup,cleanup) \
+#define MDB_RMGR(symname,name,redo,desc,identify,startup,cleanup) \
   name,
 
 static const char *RmgrNames[RM_MAX_ID + 1] = {
@@ -276,7 +276,7 @@ SimpleXLogPageRead(XLogReaderState *xlogreader, XLogRecPtr targetPagePtr,
 
 		snprintf(xlogfpath, MAXPGPATH, "%s/" XLOGDIR "/%s", private->datadir, xlogfname);
 
-		xlogreadfd = open(xlogfpath, O_RDONLY | PG_BINARY, 0);
+		xlogreadfd = open(xlogfpath, O_RDONLY | MDB_BINARY, 0);
 
 		if (xlogreadfd < 0)
 		{

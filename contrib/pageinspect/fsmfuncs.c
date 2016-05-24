@@ -28,12 +28,12 @@
 /*
  * Dumps the contents of a FSM page.
  */
-PG_FUNCTION_INFO_V1(fsm_page_contents);
+MDB_FUNCTION_INFO_V1(fsm_page_contents);
 
 Datum
-fsm_page_contents(PG_FUNCTION_ARGS)
+fsm_page_contents(MDB_FUNCTION_ARGS)
 {
-	bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
+	bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
 	StringInfoData sinfo;
 	FSMPage		fsmpage;
 	int			i;
@@ -54,5 +54,5 @@ fsm_page_contents(PG_FUNCTION_ARGS)
 	}
 	appendStringInfo(&sinfo, "fp_next_slot: %d\n", fsmpage->fp_next_slot);
 
-	PG_RETURN_TEXT_P(cstring_to_text_with_len(sinfo.data, sinfo.len));
+	MDB_RETURN_TEXT_P(cstring_to_text_with_len(sinfo.data, sinfo.len));
 }

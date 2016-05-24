@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TS_CONFIG_H
-#define PG_TS_CONFIG_H
+#ifndef MDB_TS_CONFIG_H
+#define MDB_TS_CONFIG_H
 
 #include "catalog/genbki.h"
 
@@ -57,4 +57,4 @@ typedef FormData_mdb_ts_config *Form_mdb_ts_config;
 DATA(insert OID = 3748 ( "simple" PGNSP PGUID 3722 ));
 DESCR("simple configuration");
 
-#endif   /* PG_TS_CONFIG_H */
+#endif   /* MDB_TS_CONFIG_H */

@@ -8,11 +8,11 @@
 
 #include "_int.h"
 
-PG_FUNCTION_INFO_V1(bqarr_in);
-PG_FUNCTION_INFO_V1(bqarr_out);
-PG_FUNCTION_INFO_V1(boolop);
-PG_FUNCTION_INFO_V1(rboolop);
-PG_FUNCTION_INFO_V1(querytree);
+MDB_FUNCTION_INFO_V1(bqarr_in);
+MDB_FUNCTION_INFO_V1(bqarr_out);
+MDB_FUNCTION_INFO_V1(boolop);
+MDB_FUNCTION_INFO_V1(rboolop);
+MDB_FUNCTION_INFO_V1(querytree);
 
 
 /* parser's states */
@@ -408,19 +408,19 @@ query_has_required_values(QUERYTYPE *query)
  * boolean operations
  */
 Datum
-rboolop(PG_FUNCTION_ARGS)
+rboolop(MDB_FUNCTION_ARGS)
 {
 	/* just reverse the operands */
 	return DirectFunctionCall2(boolop,
-							   PG_GETARG_DATUM(1),
-							   PG_GETARG_DATUM(0));
+							   MDB_GETARG_DATUM(1),
+							   MDB_GETARG_DATUM(0));
 }
 
 Datum
-boolop(PG_FUNCTION_ARGS)
+boolop(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *val = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	QUERYTYPE  *query = PG_GETARG_QUERYTYPE_P(1);
+	ArrayType  *val = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	QUERYTYPE  *query = MDB_GETARG_QUERYTYPE_P(1);
 	CHKVAL		chkval;
 	bool		result;
 
@@ -433,8 +433,8 @@ boolop(PG_FUNCTION_ARGS)
 					 checkcondition_arr);
 	pfree(val);
 
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_BOOL(result);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_BOOL(result);
 }
 
 static void
@@ -475,9 +475,9 @@ findoprnd(ITEM *ptr, int32 *pos)
  * input
  */
 Datum
-bqarr_in(PG_FUNCTION_ARGS)
+bqarr_in(MDB_FUNCTION_ARGS)
 {
-	char	   *buf = (char *) PG_GETARG_POINTER(0);
+	char	   *buf = (char *) MDB_GETARG_POINTER(0);
 	WORKSTATE	state;
 	int32		i;
 	QUERYTYPE  *query;
@@ -539,7 +539,7 @@ bqarr_in(PG_FUNCTION_ARGS)
 	pfree(pbuf.data);
 #endif
 
-	PG_RETURN_POINTER(query);
+	MDB_RETURN_POINTER(query);
 }
 
 
@@ -639,9 +639,9 @@ infix(INFIX *in, bool first)
 
 
 Datum
-bqarr_out(PG_FUNCTION_ARGS)
+bqarr_out(MDB_FUNCTION_ARGS)
 {
-	QUERYTYPE  *query = PG_GETARG_QUERYTYPE_P(0);
+	QUERYTYPE  *query = MDB_GETARG_QUERYTYPE_P(0);
 	INFIX		nrm;
 
 	if (query->size == 0)
@@ -655,15 +655,15 @@ bqarr_out(PG_FUNCTION_ARGS)
 	*(nrm.cur) = '\0';
 	infix(&nrm, true);
 
-	PG_FREE_IF_COPY(query, 0);
-	PG_RETURN_POINTER(nrm.buf);
+	MDB_FREE_IF_COPY(query, 0);
+	MDB_RETURN_POINTER(nrm.buf);
 }
 
 
 /* Useless old "debugging" function for a fundamentally wrong algorithm */
 Datum
-querytree(PG_FUNCTION_ARGS)
+querytree(MDB_FUNCTION_ARGS)
 {
 	elog(ERROR, "querytree is no longer implemented");
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }

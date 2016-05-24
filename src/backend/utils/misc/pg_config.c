@@ -23,7 +23,7 @@
 #include "port.h"
 
 Datum
-mdb_config(PG_FUNCTION_ARGS)
+mdb_config(MDB_FUNCTION_ARGS)
 {
 	ReturnSetInfo	   *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	Tuplestorestate	   *tupstore;

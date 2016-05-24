@@ -2,8 +2,8 @@
  * This file contains stuff needed to be as compatible to Informix as possible.
  * src/interfaces/ecpg/include/ecmdb_informix.h
  */
-#ifndef _ECPG_INFORMIX_H
-#define _ECPG_INFORMIX_H
+#ifndef _ECMDB_INFORMIX_H
+#define _ECMDB_INFORMIX_H
 
 #include <ecpglib.h>
 #include <pgtypes_date.h>
@@ -13,20 +13,20 @@
 
 #define SQLNOTFOUND 100
 
-#define ECPG_INFORMIX_NUM_OVERFLOW	-1200
-#define ECPG_INFORMIX_NUM_UNDERFLOW -1201
-#define ECPG_INFORMIX_DIVIDE_ZERO	-1202
-#define ECPG_INFORMIX_BAD_YEAR		-1204
-#define ECPG_INFORMIX_BAD_MONTH		-1205
-#define ECPG_INFORMIX_BAD_DAY		-1206
-#define ECPG_INFORMIX_ENOSHORTDATE	-1209
-#define ECPG_INFORMIX_DATE_CONVERT	-1210
-#define ECPG_INFORMIX_OUT_OF_MEMORY -1211
-#define ECPG_INFORMIX_ENOTDMY		-1212
-#define ECPG_INFORMIX_BAD_NUMERIC	-1213
-#define ECPG_INFORMIX_BAD_EXPONENT	-1216
-#define ECPG_INFORMIX_BAD_DATE		-1218
-#define ECPG_INFORMIX_EXTRA_CHARS	-1264
+#define ECMDB_INFORMIX_NUM_OVERFLOW	-1200
+#define ECMDB_INFORMIX_NUM_UNDERFLOW -1201
+#define ECMDB_INFORMIX_DIVIDE_ZERO	-1202
+#define ECMDB_INFORMIX_BAD_YEAR		-1204
+#define ECMDB_INFORMIX_BAD_MONTH		-1205
+#define ECMDB_INFORMIX_BAD_DAY		-1206
+#define ECMDB_INFORMIX_ENOSHORTDATE	-1209
+#define ECMDB_INFORMIX_DATE_CONVERT	-1210
+#define ECMDB_INFORMIX_OUT_OF_MEMORY -1211
+#define ECMDB_INFORMIX_ENOTDMY		-1212
+#define ECMDB_INFORMIX_BAD_NUMERIC	-1213
+#define ECMDB_INFORMIX_BAD_EXPONENT	-1216
+#define ECMDB_INFORMIX_BAD_DATE		-1218
+#define ECMDB_INFORMIX_EXTRA_CHARS	-1264
 
 #ifdef __cplusplus
 extern		"C"
@@ -54,9 +54,9 @@ extern void rupshift(char *);
 extern int	byleng(char *, int);
 extern void ldchar(char *, int, char *);
 
-extern void ECPG_informix_set_var(int, void *, int);
-extern void *ECPG_informix_get_var(int);
-extern void ECPG_informix_reset_sqlca(void);
+extern void ECMDB_informix_set_var(int, void *, int);
+extern void *ECMDB_informix_get_var(int);
+extern void ECMDB_informix_reset_sqlca(void);
 
 /* Informix defines these in decimal.h */
 int			decadd(decimal *, decimal *, decimal *);
@@ -87,4 +87,4 @@ extern int	dtcvfmtasc(char *, char *, timestamp *);
 }
 #endif
 
-#endif   /* ndef _ECPG_INFORMIX_H */
+#endif   /* ndef _ECMDB_INFORMIX_H */

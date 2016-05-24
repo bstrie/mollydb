@@ -24,12 +24,12 @@
 #include "fmgr.h"
 #include "libpq/md5.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* passwords shorter than this will be rejected */
 #define MIN_PWD_LENGTH 8
 
-extern void _PG_init(void);
+extern void _MDB_init(void);
 
 /*
  * check_password
@@ -140,7 +140,7 @@ check_password(const char *username,
  * Module initialization function
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/* activate password checks when the module is loaded */
 	check_password_hook = check_password;

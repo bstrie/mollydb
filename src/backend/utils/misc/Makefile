@@ -20,7 +20,7 @@ OBJS = guc.o help_config.o mdb_config.o mdb_controldata.o mdb_rusage.o \
 # This location might depend on the installation directories. Therefore
 # we can't subsitute it into mdb_config.h.
 ifdef krb_srvtab
-override CPPFLAGS += -DPG_KRB_SRVTAB='"$(krb_srvtab)"'
+override CPPFLAGS += -DMDB_KRB_SRVTAB='"$(krb_srvtab)"'
 endif
 
 include $(top_srcdir)/src/backend/common.mk

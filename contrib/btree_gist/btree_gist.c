@@ -5,11 +5,11 @@
 
 #include "btree_gist.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(gbt_decompress);
-PG_FUNCTION_INFO_V1(gbtreekey_in);
-PG_FUNCTION_INFO_V1(gbtreekey_out);
+MDB_FUNCTION_INFO_V1(gbt_decompress);
+MDB_FUNCTION_INFO_V1(gbtreekey_in);
+MDB_FUNCTION_INFO_V1(gbtreekey_out);
 
 /**************************************************
  * In/Out for keys
@@ -17,24 +17,24 @@ PG_FUNCTION_INFO_V1(gbtreekey_out);
 
 
 Datum
-gbtreekey_in(PG_FUNCTION_ARGS)
+gbtreekey_in(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("<datatype>key_in() not implemented")));
 
-	PG_RETURN_POINTER(NULL);
+	MDB_RETURN_POINTER(NULL);
 }
 
 #include "btree_utils_var.h"
 #include "utils/builtins.h"
 Datum
-gbtreekey_out(PG_FUNCTION_ARGS)
+gbtreekey_out(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("<datatype>key_out() not implemented")));
-	PG_RETURN_POINTER(NULL);
+	MDB_RETURN_POINTER(NULL);
 }
 
 
@@ -43,7 +43,7 @@ gbtreekey_out(PG_FUNCTION_ARGS)
 ** do not do anything.
 */
 Datum
-gbt_decompress(PG_FUNCTION_ARGS)
+gbt_decompress(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(PG_GETARG_POINTER(0));
+	MDB_RETURN_POINTER(MDB_GETARG_POINTER(0));
 }

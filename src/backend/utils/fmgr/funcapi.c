@@ -48,7 +48,7 @@ static TypeFuncClass get_type_func_class(Oid typid);
  * and error checking
  */
 FuncCallContext *
-init_MultiFuncCall(PG_FUNCTION_ARGS)
+init_MultiFuncCall(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *retval;
 
@@ -126,7 +126,7 @@ init_MultiFuncCall(PG_FUNCTION_ARGS)
  * Do Multi-function per-call setup
  */
 FuncCallContext *
-per_MultiFuncCall(PG_FUNCTION_ARGS)
+per_MultiFuncCall(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *retval = (FuncCallContext *) fcinfo->flinfo->fn_extra;
 
@@ -153,7 +153,7 @@ per_MultiFuncCall(PG_FUNCTION_ARGS)
  * Clean up after init_MultiFuncCall
  */
 void
-end_MultiFuncCall(PG_FUNCTION_ARGS, FuncCallContext *funcctx)
+end_MultiFuncCall(MDB_FUNCTION_ARGS, FuncCallContext *funcctx)
 {
 	ReturnSetInfo *rsi = (ReturnSetInfo *) fcinfo->resultinfo;
 

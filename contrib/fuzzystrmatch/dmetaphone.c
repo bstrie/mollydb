@@ -123,10 +123,10 @@ static void DoubleMetaphone(char *, char **);
  * The MollyDB visible dmetaphone function.
  */
 
-PG_FUNCTION_INFO_V1(dmetaphone);
+MDB_FUNCTION_INFO_V1(dmetaphone);
 
 Datum
-dmetaphone(PG_FUNCTION_ARGS)
+dmetaphone(MDB_FUNCTION_ARGS)
 {
 	text	   *arg;
 	char	   *aptr,
@@ -134,10 +134,10 @@ dmetaphone(PG_FUNCTION_ARGS)
 			   *code;
 
 #ifdef DMETAPHONE_NOSTRICT
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 #endif
-	arg = PG_GETARG_TEXT_P(0);
+	arg = MDB_GETARG_TEXT_P(0);
 	aptr = text_to_cstring(arg);
 
 	DoubleMetaphone(aptr, codes);
@@ -145,17 +145,17 @@ dmetaphone(PG_FUNCTION_ARGS)
 	if (!code)
 		code = "";
 
-	PG_RETURN_TEXT_P(cstring_to_text(code));
+	MDB_RETURN_TEXT_P(cstring_to_text(code));
 }
 
 /*
  * The MollyDB visible dmetaphone_alt function.
  */
 
-PG_FUNCTION_INFO_V1(dmetaphone_alt);
+MDB_FUNCTION_INFO_V1(dmetaphone_alt);
 
 Datum
-dmetaphone_alt(PG_FUNCTION_ARGS)
+dmetaphone_alt(MDB_FUNCTION_ARGS)
 {
 	text	   *arg;
 	char	   *aptr,
@@ -163,10 +163,10 @@ dmetaphone_alt(PG_FUNCTION_ARGS)
 			   *code;
 
 #ifdef DMETAPHONE_NOSTRICT
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 #endif
-	arg = PG_GETARG_TEXT_P(0);
+	arg = MDB_GETARG_TEXT_P(0);
 	aptr = text_to_cstring(arg);
 
 	DoubleMetaphone(aptr, codes);
@@ -174,7 +174,7 @@ dmetaphone_alt(PG_FUNCTION_ARGS)
 	if (!code)
 		code = "";
 
-	PG_RETURN_TEXT_P(cstring_to_text(code));
+	MDB_RETURN_TEXT_P(cstring_to_text(code));
 }
 
 

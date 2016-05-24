@@ -193,8 +193,8 @@ typedef PageHeaderData *PageHeader;
  * As of Release 9.3, the checksum version must also be considered when
  * handling pages.
  */
-#define PG_PAGE_LAYOUT_VERSION		4
-#define PG_DATA_CHECKSUM_VERSION	1
+#define MDB_PAGE_LAYOUT_VERSION		4
+#define MDB_DATA_CHECKSUM_VERSION	1
 
 /* ----------------------------------------------------------------
  *						page support macros

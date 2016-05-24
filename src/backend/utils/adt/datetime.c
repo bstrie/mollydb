@@ -4711,7 +4711,7 @@ FetchDynamicTimeZone(TimeZoneAbbrevTable *tbl, const datetkn *tp)
  * and returns a set of (abbrev, utc_offset, is_dst).
  */
 Datum
-mdb_timezone_abbrevs(PG_FUNCTION_ARGS)
+mdb_timezone_abbrevs(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	int		   *pindex;
@@ -4839,7 +4839,7 @@ mdb_timezone_abbrevs(PG_FUNCTION_ARGS)
  * and returns a set of (name, abbrev, utc_offset, is_dst).
  */
 Datum
-mdb_timezone_names(PG_FUNCTION_ARGS)
+mdb_timezone_names(MDB_FUNCTION_ARGS)
 {
 	MemoryContext oldcontext;
 	FuncCallContext *funcctx;

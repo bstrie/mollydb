@@ -16,7 +16,7 @@
 #include "storage/bufmgr.h"
 #include "utils/rel.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 typedef struct vbits
 {
@@ -25,11 +25,11 @@ typedef struct vbits
 	uint8		bits[FLEXIBLE_ARRAY_MEMBER];
 } vbits;
 
-PG_FUNCTION_INFO_V1(mdb_visibility_map);
-PG_FUNCTION_INFO_V1(mdb_visibility_map_rel);
-PG_FUNCTION_INFO_V1(mdb_visibility);
-PG_FUNCTION_INFO_V1(mdb_visibility_rel);
-PG_FUNCTION_INFO_V1(mdb_visibility_map_summary);
+MDB_FUNCTION_INFO_V1(mdb_visibility_map);
+MDB_FUNCTION_INFO_V1(mdb_visibility_map_rel);
+MDB_FUNCTION_INFO_V1(mdb_visibility);
+MDB_FUNCTION_INFO_V1(mdb_visibility_rel);
+MDB_FUNCTION_INFO_V1(mdb_visibility_map_summary);
 
 static TupleDesc mdb_visibility_tupdesc(bool include_blkno, bool include_pd);
 static vbits *collect_visibility_data(Oid relid, bool include_pd);
@@ -38,10 +38,10 @@ static vbits *collect_visibility_data(Oid relid, bool include_pd);
  * Visibility map information for a single block of a relation.
  */
 Datum
-mdb_visibility_map(PG_FUNCTION_ARGS)
+mdb_visibility_map(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
-	int64		blkno = PG_GETARG_INT64(1);
+	Oid			relid = MDB_GETARG_OID(0);
+	int64		blkno = MDB_GETARG_INT64(1);
 	int32		mapbits;
 	Relation	rel;
 	Buffer		vmbuffer = InvalidBuffer;
@@ -67,7 +67,7 @@ mdb_visibility_map(PG_FUNCTION_ARGS)
 
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(heap_form_tuple(tupdesc, values, nulls)));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(heap_form_tuple(tupdesc, values, nulls)));
 }
 
 /*
@@ -75,10 +75,10 @@ mdb_visibility_map(PG_FUNCTION_ARGS)
  * page-level information for the same block.
  */
 Datum
-mdb_visibility(PG_FUNCTION_ARGS)
+mdb_visibility(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
-	int64		blkno = PG_GETARG_INT64(1);
+	Oid			relid = MDB_GETARG_OID(0);
+	int64		blkno = MDB_GETARG_INT64(1);
 	int32		mapbits;
 	Relation	rel;
 	Buffer		vmbuffer = InvalidBuffer;
@@ -114,21 +114,21 @@ mdb_visibility(PG_FUNCTION_ARGS)
 
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(heap_form_tuple(tupdesc, values, nulls)));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(heap_form_tuple(tupdesc, values, nulls)));
 }
 
 /*
  * Visibility map information for every block in a relation.
  */
 Datum
-mdb_visibility_map_rel(PG_FUNCTION_ARGS)
+mdb_visibility_map_rel(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	vbits	   *info;
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		Oid			relid = PG_GETARG_OID(0);
+		Oid			relid = MDB_GETARG_OID(0);
 		MemoryContext	oldcontext;
 
 		funcctx = SRF_FIRSTCALL_INIT();
@@ -165,14 +165,14 @@ mdb_visibility_map_rel(PG_FUNCTION_ARGS)
  * level information for each block.
  */
 Datum
-mdb_visibility_rel(PG_FUNCTION_ARGS)
+mdb_visibility_rel(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	vbits	   *info;
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		Oid			relid = PG_GETARG_OID(0);
+		Oid			relid = MDB_GETARG_OID(0);
 		MemoryContext	oldcontext;
 
 		funcctx = SRF_FIRSTCALL_INIT();
@@ -210,9 +210,9 @@ mdb_visibility_rel(PG_FUNCTION_ARGS)
  * map for a particular relation.
  */
 Datum
-mdb_visibility_map_summary(PG_FUNCTION_ARGS)
+mdb_visibility_map_summary(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	Relation	rel;
 	BlockNumber	nblocks;
 	BlockNumber	blkno;
@@ -255,7 +255,7 @@ mdb_visibility_map_summary(PG_FUNCTION_ARGS)
 	values[0] = Int64GetDatum(all_visible);
 	values[1] = Int64GetDatum(all_frozen);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(heap_form_tuple(tupdesc, values, nulls)));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(heap_form_tuple(tupdesc, values, nulls)));
 }
 
 /*

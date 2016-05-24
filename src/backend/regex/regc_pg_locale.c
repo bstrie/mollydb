@@ -64,29 +64,29 @@
 
 typedef enum
 {
-	PG_REGEX_LOCALE_C,			/* C locale (encoding independent) */
-	PG_REGEX_LOCALE_WIDE,		/* Use <wctype.h> functions */
-	PG_REGEX_LOCALE_1BYTE,		/* Use <ctype.h> functions */
-	PG_REGEX_LOCALE_WIDE_L,		/* Use locale_t <wctype.h> functions */
-	PG_REGEX_LOCALE_1BYTE_L		/* Use locale_t <ctype.h> functions */
-} PG_Locale_Strategy;
+	MDB_REGEX_LOCALE_C,			/* C locale (encoding independent) */
+	MDB_REGEX_LOCALE_WIDE,		/* Use <wctype.h> functions */
+	MDB_REGEX_LOCALE_1BYTE,		/* Use <ctype.h> functions */
+	MDB_REGEX_LOCALE_WIDE_L,		/* Use locale_t <wctype.h> functions */
+	MDB_REGEX_LOCALE_1BYTE_L		/* Use locale_t <ctype.h> functions */
+} MDB_Locale_Strategy;
 
-static PG_Locale_Strategy mdb_regex_strategy;
+static MDB_Locale_Strategy mdb_regex_strategy;
 static mdb_locale_t mdb_regex_locale;
 static Oid	mdb_regex_collation;
 
 /*
  * Hard-wired character properties for C locale
  */
-#define PG_ISDIGIT	0x01
-#define PG_ISALPHA	0x02
-#define PG_ISALNUM	(PG_ISDIGIT | PG_ISALPHA)
-#define PG_ISUPPER	0x04
-#define PG_ISLOWER	0x08
-#define PG_ISGRAPH	0x10
-#define PG_ISPRINT	0x20
-#define PG_ISPUNCT	0x40
-#define PG_ISSPACE	0x80
+#define MDB_ISDIGIT	0x01
+#define MDB_ISALPHA	0x02
+#define MDB_ISALNUM	(MDB_ISDIGIT | MDB_ISALPHA)
+#define MDB_ISUPPER	0x04
+#define MDB_ISLOWER	0x08
+#define MDB_ISGRAPH	0x10
+#define MDB_ISPRINT	0x20
+#define MDB_ISPUNCT	0x40
+#define MDB_ISSPACE	0x80
 
 static const unsigned char mdb_char_properties[128] = {
 	 /* NUL */ 0,
@@ -98,11 +98,11 @@ static const unsigned char mdb_char_properties[128] = {
 	 /* ^F */ 0,
 	 /* ^G */ 0,
 	 /* ^H */ 0,
-	 /* ^I */ PG_ISSPACE,
-	 /* ^J */ PG_ISSPACE,
-	 /* ^K */ PG_ISSPACE,
-	 /* ^L */ PG_ISSPACE,
-	 /* ^M */ PG_ISSPACE,
+	 /* ^I */ MDB_ISSPACE,
+	 /* ^J */ MDB_ISSPACE,
+	 /* ^K */ MDB_ISSPACE,
+	 /* ^L */ MDB_ISSPACE,
+	 /* ^M */ MDB_ISSPACE,
 	 /* ^N */ 0,
 	 /* ^O */ 0,
 	 /* ^P */ 0,
@@ -121,101 +121,101 @@ static const unsigned char mdb_char_properties[128] = {
 	 /* ^] */ 0,
 	 /* ^^ */ 0,
 	 /* ^_ */ 0,
-	 /* */ PG_ISPRINT | PG_ISSPACE,
-	 /* !  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* "  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* #  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* $  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* %  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* &  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* '  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* (  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* )  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* *  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* +  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* ,  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* -  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* .  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* /  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* 0  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* 1  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* 2  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* 3  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* 4  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* 5  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* 6  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* 7  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* 8  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* 9  */ PG_ISDIGIT | PG_ISGRAPH | PG_ISPRINT,
-	 /* :  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* ;  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* <  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* =  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* >  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* ?  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* @  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* A  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* B  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* C  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* D  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* E  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* F  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* G  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* H  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* I  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* J  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* K  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* L  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* M  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* N  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* O  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* P  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* Q  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* R  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* S  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* T  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* U  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* V  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* W  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* X  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* Y  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* Z  */ PG_ISALPHA | PG_ISUPPER | PG_ISGRAPH | PG_ISPRINT,
-	 /* [  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* \  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* ]  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* ^  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* _  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* `  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* a  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* b  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* c  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* d  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* e  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* f  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* g  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* h  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* i  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* j  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* k  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* l  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* m  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* n  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* o  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* p  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* q  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* r  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* s  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* t  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* u  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* v  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* w  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* x  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* y  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* z  */ PG_ISALPHA | PG_ISLOWER | PG_ISGRAPH | PG_ISPRINT,
-	 /* {  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* |  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* }  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
-	 /* ~  */ PG_ISGRAPH | PG_ISPRINT | PG_ISPUNCT,
+	 /* */ MDB_ISPRINT | MDB_ISSPACE,
+	 /* !  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* "  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* #  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* $  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* %  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* &  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* '  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* (  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* )  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* *  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* +  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* ,  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* -  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* .  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* /  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* 0  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* 1  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* 2  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* 3  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* 4  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* 5  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* 6  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* 7  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* 8  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* 9  */ MDB_ISDIGIT | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* :  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* ;  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* <  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* =  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* >  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* ?  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* @  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* A  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* B  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* C  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* D  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* E  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* F  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* G  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* H  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* I  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* J  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* K  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* L  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* M  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* N  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* O  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* P  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* Q  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* R  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* S  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* T  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* U  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* V  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* W  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* X  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* Y  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* Z  */ MDB_ISALPHA | MDB_ISUPPER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* [  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* \  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* ]  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* ^  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* _  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* `  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* a  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* b  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* c  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* d  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* e  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* f  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* g  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* h  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* i  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* j  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* k  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* l  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* m  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* n  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* o  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* p  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* q  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* r  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* s  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* t  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* u  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* v  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* w  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* x  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* y  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* z  */ MDB_ISALPHA | MDB_ISLOWER | MDB_ISGRAPH | MDB_ISPRINT,
+	 /* {  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* |  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* }  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
+	 /* ~  */ MDB_ISGRAPH | MDB_ISPRINT | MDB_ISPUNCT,
 	 /* DEL */ 0
 };
 
@@ -233,7 +233,7 @@ mdb_set_regex_collation(Oid collation)
 	if (lc_ctype_is_c(collation))
 	{
 		/* C/POSIX collations use this path regardless of database encoding */
-		mdb_regex_strategy = PG_REGEX_LOCALE_C;
+		mdb_regex_strategy = MDB_REGEX_LOCALE_C;
 		mdb_regex_locale = 0;
 		mdb_regex_collation = C_COLLATION_OID;
 	}
@@ -263,20 +263,20 @@ mdb_set_regex_collation(Oid collation)
 		}
 
 #ifdef USE_WIDE_UPPER_LOWER
-		if (GetDatabaseEncoding() == PG_UTF8)
+		if (GetDatabaseEncoding() == MDB_UTF8)
 		{
 			if (mdb_regex_locale)
-				mdb_regex_strategy = PG_REGEX_LOCALE_WIDE_L;
+				mdb_regex_strategy = MDB_REGEX_LOCALE_WIDE_L;
 			else
-				mdb_regex_strategy = PG_REGEX_LOCALE_WIDE;
+				mdb_regex_strategy = MDB_REGEX_LOCALE_WIDE;
 		}
 		else
 #endif   /* USE_WIDE_UPPER_LOWER */
 		{
 			if (mdb_regex_locale)
-				mdb_regex_strategy = PG_REGEX_LOCALE_1BYTE_L;
+				mdb_regex_strategy = MDB_REGEX_LOCALE_1BYTE_L;
 			else
-				mdb_regex_strategy = PG_REGEX_LOCALE_1BYTE;
+				mdb_regex_strategy = MDB_REGEX_LOCALE_1BYTE;
 		}
 
 		mdb_regex_collation = collation;
@@ -288,25 +288,25 @@ mdb_wc_isdigit(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			return (c <= (mdb_wchar) 127 &&
-					(mdb_char_properties[c] & PG_ISDIGIT));
-		case PG_REGEX_LOCALE_WIDE:
+					(mdb_char_properties[c] & MDB_ISDIGIT));
+		case MDB_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswdigit((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isdigit((unsigned char) c));
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswdigit_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isdigit_l((unsigned char) c, mdb_regex_locale));
@@ -321,25 +321,25 @@ mdb_wc_isalpha(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			return (c <= (mdb_wchar) 127 &&
-					(mdb_char_properties[c] & PG_ISALPHA));
-		case PG_REGEX_LOCALE_WIDE:
+					(mdb_char_properties[c] & MDB_ISALPHA));
+		case MDB_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswalpha((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isalpha((unsigned char) c));
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswalpha_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isalpha_l((unsigned char) c, mdb_regex_locale));
@@ -354,25 +354,25 @@ mdb_wc_isalnum(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			return (c <= (mdb_wchar) 127 &&
-					(mdb_char_properties[c] & PG_ISALNUM));
-		case PG_REGEX_LOCALE_WIDE:
+					(mdb_char_properties[c] & MDB_ISALNUM));
+		case MDB_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswalnum((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isalnum((unsigned char) c));
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswalnum_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isalnum_l((unsigned char) c, mdb_regex_locale));
@@ -387,25 +387,25 @@ mdb_wc_isupper(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			return (c <= (mdb_wchar) 127 &&
-					(mdb_char_properties[c] & PG_ISUPPER));
-		case PG_REGEX_LOCALE_WIDE:
+					(mdb_char_properties[c] & MDB_ISUPPER));
+		case MDB_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswupper((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isupper((unsigned char) c));
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswupper_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isupper_l((unsigned char) c, mdb_regex_locale));
@@ -420,25 +420,25 @@ mdb_wc_islower(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			return (c <= (mdb_wchar) 127 &&
-					(mdb_char_properties[c] & PG_ISLOWER));
-		case PG_REGEX_LOCALE_WIDE:
+					(mdb_char_properties[c] & MDB_ISLOWER));
+		case MDB_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswlower((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					islower((unsigned char) c));
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswlower_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					islower_l((unsigned char) c, mdb_regex_locale));
@@ -453,25 +453,25 @@ mdb_wc_isgraph(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			return (c <= (mdb_wchar) 127 &&
-					(mdb_char_properties[c] & PG_ISGRAPH));
-		case PG_REGEX_LOCALE_WIDE:
+					(mdb_char_properties[c] & MDB_ISGRAPH));
+		case MDB_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswgraph((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isgraph((unsigned char) c));
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswgraph_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isgraph_l((unsigned char) c, mdb_regex_locale));
@@ -486,25 +486,25 @@ mdb_wc_isprint(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			return (c <= (mdb_wchar) 127 &&
-					(mdb_char_properties[c] & PG_ISPRINT));
-		case PG_REGEX_LOCALE_WIDE:
+					(mdb_char_properties[c] & MDB_ISPRINT));
+		case MDB_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswprint((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isprint((unsigned char) c));
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswprint_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isprint_l((unsigned char) c, mdb_regex_locale));
@@ -519,25 +519,25 @@ mdb_wc_ispunct(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			return (c <= (mdb_wchar) 127 &&
-					(mdb_char_properties[c] & PG_ISPUNCT));
-		case PG_REGEX_LOCALE_WIDE:
+					(mdb_char_properties[c] & MDB_ISPUNCT));
+		case MDB_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswpunct((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					ispunct((unsigned char) c));
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswpunct_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					ispunct_l((unsigned char) c, mdb_regex_locale));
@@ -552,25 +552,25 @@ mdb_wc_isspace(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			return (c <= (mdb_wchar) 127 &&
-					(mdb_char_properties[c] & PG_ISSPACE));
-		case PG_REGEX_LOCALE_WIDE:
+					(mdb_char_properties[c] & MDB_ISSPACE));
+		case MDB_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswspace((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isspace((unsigned char) c));
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswspace_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isspace_l((unsigned char) c, mdb_regex_locale));
@@ -585,11 +585,11 @@ mdb_wc_toupper(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			if (c <= (mdb_wchar) 127)
 				return mdb_ascii_toupper((unsigned char) c);
 			return c;
-		case PG_REGEX_LOCALE_WIDE:
+		case MDB_REGEX_LOCALE_WIDE:
 			/* force C behavior for ASCII characters, per comments above */
 			if (c <= (mdb_wchar) 127)
 				return mdb_ascii_toupper((unsigned char) c);
@@ -598,20 +598,20 @@ mdb_wc_toupper(mdb_wchar c)
 				return towupper((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			/* force C behavior for ASCII characters, per comments above */
 			if (c <= (mdb_wchar) 127)
 				return mdb_ascii_toupper((unsigned char) c);
 			if (c <= (mdb_wchar) UCHAR_MAX)
 				return toupper((unsigned char) c);
 			return c;
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return towupper_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			if (c <= (mdb_wchar) UCHAR_MAX)
 				return toupper_l((unsigned char) c, mdb_regex_locale);
@@ -626,11 +626,11 @@ mdb_wc_tolower(mdb_wchar c)
 {
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			if (c <= (mdb_wchar) 127)
 				return mdb_ascii_tolower((unsigned char) c);
 			return c;
-		case PG_REGEX_LOCALE_WIDE:
+		case MDB_REGEX_LOCALE_WIDE:
 			/* force C behavior for ASCII characters, per comments above */
 			if (c <= (mdb_wchar) 127)
 				return mdb_ascii_tolower((unsigned char) c);
@@ -639,20 +639,20 @@ mdb_wc_tolower(mdb_wchar c)
 				return towlower((wint_t) c);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE:
 			/* force C behavior for ASCII characters, per comments above */
 			if (c <= (mdb_wchar) 127)
 				return mdb_ascii_tolower((unsigned char) c);
 			if (c <= (mdb_wchar) UCHAR_MAX)
 				return tolower((unsigned char) c);
 			return c;
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
 			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return towlower_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
 			if (c <= (mdb_wchar) UCHAR_MAX)
 				return tolower_l((unsigned char) c, mdb_regex_locale);
@@ -785,15 +785,15 @@ mdb_ctype_get_cache(mdb_wc_probefunc probefunc)
 	 */
 	switch (mdb_regex_strategy)
 	{
-		case PG_REGEX_LOCALE_C:
+		case MDB_REGEX_LOCALE_C:
 			max_chr = (mdb_wchar) 127;
 			break;
-		case PG_REGEX_LOCALE_WIDE:
-		case PG_REGEX_LOCALE_WIDE_L:
+		case MDB_REGEX_LOCALE_WIDE:
+		case MDB_REGEX_LOCALE_WIDE_L:
 			max_chr = (mdb_wchar) 0x7FF;
 			break;
-		case PG_REGEX_LOCALE_1BYTE:
-		case PG_REGEX_LOCALE_1BYTE_L:
+		case MDB_REGEX_LOCALE_1BYTE:
+		case MDB_REGEX_LOCALE_1BYTE_L:
 			max_chr = (mdb_wchar) UCHAR_MAX;
 			break;
 		default:

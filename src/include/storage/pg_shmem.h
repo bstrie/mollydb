@@ -21,8 +21,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_SHMEM_H
-#define PG_SHMEM_H
+#ifndef MDB_SHMEM_H
+#define MDB_SHMEM_H
 
 #include "storage/dsm_impl.h"
 
@@ -69,4 +69,4 @@ extern PGShmemHeader *PGSharedMemoryCreate(Size size, bool makePrivate,
 extern bool PGSharedMemoryIsInUse(unsigned long id1, unsigned long id2);
 extern void PGSharedMemoryDetach(void);
 
-#endif   /* PG_SHMEM_H */
+#endif   /* MDB_SHMEM_H */

@@ -1293,9 +1293,9 @@ PGShmemHeader
 PGTransactionStatusType
 PGVerbosity
 PGXACT
-PG_Locale_Strategy
-PG_Lock_Status
-PG_init_t
+MDB_Locale_Strategy
+MDB_Lock_Status
+MDB_init_t
 PGcancel
 PGconn
 PGdataValue

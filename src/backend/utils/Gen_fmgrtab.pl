@@ -164,7 +164,7 @@ foreach my $s (sort { $a->{oid} <=> $b->{oid} } @fmgr)
 	next if $seenit{ $s->{prosrc} };
 	$seenit{ $s->{prosrc} } = 1;
 	print H "#define F_" . uc $s->{prosrc} . " $s->{oid}\n";
-	print T "extern Datum $s->{prosrc} (PG_FUNCTION_ARGS);\n";
+	print T "extern Datum $s->{prosrc} (MDB_FUNCTION_ARGS);\n";
 }
 
 # Create the fmgr_builtins table

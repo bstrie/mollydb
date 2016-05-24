@@ -1,7 +1,7 @@
 /* src/interfaces/ecpg/include/datetime.h */
 
-#ifndef _ECPG_DATETIME_H
-#define _ECPG_DATETIME_H
+#ifndef _ECMDB_DATETIME_H
+#define _ECMDB_DATETIME_H
 
 #include <ecmdb_informix.h>
 
@@ -11,4 +11,4 @@ typedef timestamp dtime_t;
 typedef interval intrvl_t;
 #endif   /* ndef _ECPGLIB_H */
 
-#endif   /* ndef _ECPG_DATETIME_H */
+#endif   /* ndef _ECMDB_DATETIME_H */

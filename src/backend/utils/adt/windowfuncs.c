@@ -79,13 +79,13 @@ rank_up(WindowObject winobj)
  * just increment up from 1 until current partition finishes.
  */
 Datum
-window_row_number(PG_FUNCTION_ARGS)
+window_row_number(MDB_FUNCTION_ARGS)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	int64		curpos = WinGetCurrentPosition(winobj);
 
 	WinSetMarkPosition(winobj, curpos);
-	PG_RETURN_INT64(curpos + 1);
+	MDB_RETURN_INT64(curpos + 1);
 }
 
 
@@ -95,9 +95,9 @@ window_row_number(PG_FUNCTION_ARGS)
  * The new rank number is the current row number.
  */
 Datum
-window_rank(PG_FUNCTION_ARGS)
+window_rank(MDB_FUNCTION_ARGS)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	rank_context *context;
 	bool		up;
 
@@ -107,7 +107,7 @@ window_rank(PG_FUNCTION_ARGS)
 	if (up)
 		context->rank = WinGetCurrentPosition(winobj) + 1;
 
-	PG_RETURN_INT64(context->rank);
+	MDB_RETURN_INT64(context->rank);
 }
 
 /*
@@ -115,9 +115,9 @@ window_rank(PG_FUNCTION_ARGS)
  * Rank increases by 1 when key columns change.
  */
 Datum
-window_dense_rank(PG_FUNCTION_ARGS)
+window_dense_rank(MDB_FUNCTION_ARGS)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	rank_context *context;
 	bool		up;
 
@@ -127,7 +127,7 @@ window_dense_rank(PG_FUNCTION_ARGS)
 	if (up)
 		context->rank++;
 
-	PG_RETURN_INT64(context->rank);
+	MDB_RETURN_INT64(context->rank);
 }
 
 /*
@@ -137,9 +137,9 @@ window_dense_rank(PG_FUNCTION_ARGS)
  * rank and NR is the total number of rows, per spec.
  */
 Datum
-window_percent_rank(PG_FUNCTION_ARGS)
+window_percent_rank(MDB_FUNCTION_ARGS)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	rank_context *context;
 	bool		up;
 	int64		totalrows = WinGetPartitionRowCount(winobj);
@@ -154,9 +154,9 @@ window_percent_rank(PG_FUNCTION_ARGS)
 
 	/* return zero if there's only one row, per spec */
 	if (totalrows <= 1)
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 
-	PG_RETURN_FLOAT8((float8) (context->rank - 1) / (float8) (totalrows - 1));
+	MDB_RETURN_FLOAT8((float8) (context->rank - 1) / (float8) (totalrows - 1));
 }
 
 /*
@@ -166,9 +166,9 @@ window_percent_rank(PG_FUNCTION_ARGS)
  * peers to the current row, and NR is the total number of rows, per spec.
  */
 Datum
-window_cume_dist(PG_FUNCTION_ARGS)
+window_cume_dist(MDB_FUNCTION_ARGS)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	rank_context *context;
 	bool		up;
 	int64		totalrows = WinGetPartitionRowCount(winobj);
@@ -199,7 +199,7 @@ window_cume_dist(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_FLOAT8((float8) context->rank / (float8) totalrows);
+	MDB_RETURN_FLOAT8((float8) context->rank / (float8) totalrows);
 }
 
 /*
@@ -208,9 +208,9 @@ window_cume_dist(PG_FUNCTION_ARGS)
  * ranging from 1 (one) to n, per spec.
  */
 Datum
-window_ntile(PG_FUNCTION_ARGS)
+window_ntile(MDB_FUNCTION_ARGS)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	ntile_context *context;
 
 	context = (ntile_context *)
@@ -231,7 +231,7 @@ window_ntile(PG_FUNCTION_ARGS)
 		 * value.
 		 */
 		if (isnull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 
 		/*
 		 * per spec: If NT is less than or equal to 0 (zero), then an
@@ -272,7 +272,7 @@ window_ntile(PG_FUNCTION_ARGS)
 		context->rows_per_bucket = 1;
 	}
 
-	PG_RETURN_INT32(context->ntile);
+	MDB_RETURN_INT32(context->ntile);
 }
 
 /*
@@ -286,7 +286,7 @@ static Datum
 leadlag_common(FunctionCallInfo fcinfo,
 			   bool forward, bool withoffset, bool withdefault)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	int32		offset;
 	bool		const_offset;
 	Datum		result;
@@ -297,7 +297,7 @@ leadlag_common(FunctionCallInfo fcinfo,
 	{
 		offset = DatumGetInt32(WinGetFuncArgCurrent(winobj, 1, &isnull));
 		if (isnull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		const_offset = get_fn_expr_arg_stable(fcinfo->flinfo, 1);
 	}
 	else
@@ -323,9 +323,9 @@ leadlag_common(FunctionCallInfo fcinfo,
 	}
 
 	if (isnull)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*
@@ -335,7 +335,7 @@ leadlag_common(FunctionCallInfo fcinfo,
  * per spec.
  */
 Datum
-window_lag(PG_FUNCTION_ARGS)
+window_lag(MDB_FUNCTION_ARGS)
 {
 	return leadlag_common(fcinfo, false, false, false);
 }
@@ -347,7 +347,7 @@ window_lag(PG_FUNCTION_ARGS)
  * per spec.
  */
 Datum
-window_lag_with_offset(PG_FUNCTION_ARGS)
+window_lag_with_offset(MDB_FUNCTION_ARGS)
 {
 	return leadlag_common(fcinfo, false, true, false);
 }
@@ -358,7 +358,7 @@ window_lag_with_offset(PG_FUNCTION_ARGS)
  * as its third argument.
  */
 Datum
-window_lag_with_offset_and_default(PG_FUNCTION_ARGS)
+window_lag_with_offset_and_default(MDB_FUNCTION_ARGS)
 {
 	return leadlag_common(fcinfo, false, true, true);
 }
@@ -370,7 +370,7 @@ window_lag_with_offset_and_default(PG_FUNCTION_ARGS)
  * per spec.
  */
 Datum
-window_lead(PG_FUNCTION_ARGS)
+window_lead(MDB_FUNCTION_ARGS)
 {
 	return leadlag_common(fcinfo, true, false, false);
 }
@@ -382,7 +382,7 @@ window_lead(PG_FUNCTION_ARGS)
  * per spec.
  */
 Datum
-window_lead_with_offset(PG_FUNCTION_ARGS)
+window_lead_with_offset(MDB_FUNCTION_ARGS)
 {
 	return leadlag_common(fcinfo, true, true, false);
 }
@@ -393,7 +393,7 @@ window_lead_with_offset(PG_FUNCTION_ARGS)
  * as its third argument.
  */
 Datum
-window_lead_with_offset_and_default(PG_FUNCTION_ARGS)
+window_lead_with_offset_and_default(MDB_FUNCTION_ARGS)
 {
 	return leadlag_common(fcinfo, true, true, true);
 }
@@ -404,9 +404,9 @@ window_lead_with_offset_and_default(PG_FUNCTION_ARGS)
  * window frame, per spec.
  */
 Datum
-window_first_value(PG_FUNCTION_ARGS)
+window_first_value(MDB_FUNCTION_ARGS)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	Datum		result;
 	bool		isnull;
 
@@ -414,9 +414,9 @@ window_first_value(PG_FUNCTION_ARGS)
 								  0, WINDOW_SEEK_HEAD, true,
 								  &isnull, NULL);
 	if (isnull)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*
@@ -425,9 +425,9 @@ window_first_value(PG_FUNCTION_ARGS)
  * window frame, per spec.
  */
 Datum
-window_last_value(PG_FUNCTION_ARGS)
+window_last_value(MDB_FUNCTION_ARGS)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	Datum		result;
 	bool		isnull;
 
@@ -435,9 +435,9 @@ window_last_value(PG_FUNCTION_ARGS)
 								  0, WINDOW_SEEK_TAIL, true,
 								  &isnull, NULL);
 	if (isnull)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*
@@ -446,9 +446,9 @@ window_last_value(PG_FUNCTION_ARGS)
  * row of the window frame, per spec.
  */
 Datum
-window_nth_value(PG_FUNCTION_ARGS)
+window_nth_value(MDB_FUNCTION_ARGS)
 {
-	WindowObject winobj = PG_WINDOW_OBJECT();
+	WindowObject winobj = MDB_WINDOW_OBJECT();
 	bool		const_offset;
 	Datum		result;
 	bool		isnull;
@@ -456,7 +456,7 @@ window_nth_value(PG_FUNCTION_ARGS)
 
 	nth = DatumGetInt32(WinGetFuncArgCurrent(winobj, 1, &isnull));
 	if (isnull)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	const_offset = get_fn_expr_arg_stable(fcinfo->flinfo, 1);
 
 	if (nth <= 0)
@@ -468,7 +468,7 @@ window_nth_value(PG_FUNCTION_ARGS)
 								  nth - 1, WINDOW_SEEK_HEAD, const_offset,
 								  &isnull, NULL);
 	if (isnull)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }

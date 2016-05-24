@@ -36,7 +36,7 @@
 #include "utils/rel.h"
 #include "utils/sampling.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * Describes the valid options for objects that use this wrapper.
@@ -104,8 +104,8 @@ typedef struct FileFdwExecutionState
 /*
  * SQL functions
  */
-PG_FUNCTION_INFO_V1(file_fdw_handler);
-PG_FUNCTION_INFO_V1(file_fdw_validator);
+MDB_FUNCTION_INFO_V1(file_fdw_handler);
+MDB_FUNCTION_INFO_V1(file_fdw_validator);
 
 /*
  * FDW callback routines
@@ -159,7 +159,7 @@ static int file_acquire_sample_rows(Relation onerel, int elevel,
  * to my callback routines.
  */
 Datum
-file_fdw_handler(PG_FUNCTION_ARGS)
+file_fdw_handler(MDB_FUNCTION_ARGS)
 {
 	FdwRoutine *fdwroutine = makeNode(FdwRoutine);
 
@@ -174,7 +174,7 @@ file_fdw_handler(PG_FUNCTION_ARGS)
 	fdwroutine->AnalyzeForeignTable = fileAnalyzeForeignTable;
 	fdwroutine->IsForeignScanParallelSafe = fileIsForeignScanParallelSafe;
 
-	PG_RETURN_POINTER(fdwroutine);
+	MDB_RETURN_POINTER(fdwroutine);
 }
 
 /*
@@ -184,10 +184,10 @@ file_fdw_handler(PG_FUNCTION_ARGS)
  * Raise an ERROR if the option or its value is considered invalid.
  */
 Datum
-file_fdw_validator(PG_FUNCTION_ARGS)
+file_fdw_validator(MDB_FUNCTION_ARGS)
 {
-	List	   *options_list = untransformRelOptions(PG_GETARG_DATUM(0));
-	Oid			catalog = PG_GETARG_OID(1);
+	List	   *options_list = untransformRelOptions(MDB_GETARG_DATUM(0));
+	Oid			catalog = MDB_GETARG_OID(1);
 	char	   *filename = NULL;
 	DefElem    *force_not_null = NULL;
 	DefElem    *force_null = NULL;
@@ -303,7 +303,7 @@ file_fdw_validator(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_FDW_DYNAMIC_PARAMETER_VALUE_NEEDED),
 				 errmsg("filename is required for file_fdw foreign tables")));
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*

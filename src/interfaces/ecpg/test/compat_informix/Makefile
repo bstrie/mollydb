@@ -21,5 +21,5 @@ TESTS = test_informix test_informix.c \
 
 all: $(TESTS)
 
-rnull.c: rnull.pgc $(ECPG_TEST_DEPENDENCIES)
+rnull.c: rnull.pgc $(ECMDB_TEST_DEPENDENCIES)
 	$(ECPG) -r no_indicator -o $@ $<

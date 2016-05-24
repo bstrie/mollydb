@@ -60,9 +60,9 @@ typedef uint16 RepOriginId;
  *	need O_SYNC/O_DSYNC.
  */
 #ifdef O_DIRECT
-#define PG_O_DIRECT				O_DIRECT
+#define MDB_O_DIRECT				O_DIRECT
 #else
-#define PG_O_DIRECT				0
+#define MDB_O_DIRECT				0
 #endif
 
 /*

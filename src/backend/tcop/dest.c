@@ -195,7 +195,7 @@ NullCommand(CommandDest dest)
 			 * tell the fe that we saw an empty query string.  In protocols
 			 * before 3.0 this has a useless empty-string message body.
 			 */
-			if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
+			if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
 				pq_putemptymessage('I');
 			else
 				pq_putmessage('I', "", 1);
@@ -232,7 +232,7 @@ ReadyForQuery(CommandDest dest)
 	{
 		case DestRemote:
 		case DestRemoteExecute:
-			if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
+			if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
 			{
 				StringInfoData buf;
 
@@ -240,7 +240,7 @@ ReadyForQuery(CommandDest dest)
 				pq_sendbyte(&buf, TransactionBlockStatusCode());
 				pq_endmessage(&buf);
 			}
-			else if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 2)
+			else if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 2)
 				pq_putemptymessage('Z');
 			/* Flush output at end of cycle in any case. */
 			pq_flush();

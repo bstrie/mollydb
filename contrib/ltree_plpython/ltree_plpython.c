@@ -3,15 +3,15 @@
 #include "plpython.h"
 #include "ltree.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 
-PG_FUNCTION_INFO_V1(ltree_to_plpython);
+MDB_FUNCTION_INFO_V1(ltree_to_plpython);
 
 Datum
-ltree_to_plpython(PG_FUNCTION_ARGS)
+ltree_to_plpython(MDB_FUNCTION_ARGS)
 {
-	ltree	   *in = PG_GETARG_LTREE(0);
+	ltree	   *in = MDB_GETARG_LTREE(0);
 	int			i;
 	PyObject   *list;
 	ltree_level *curlevel;
@@ -25,7 +25,7 @@ ltree_to_plpython(PG_FUNCTION_ARGS)
 		curlevel = LEVEL_NEXT(curlevel);
 	}
 
-	PG_FREE_IF_COPY(in, 0);
+	MDB_FREE_IF_COPY(in, 0);
 
 	return PointerGetDatum(list);
 }

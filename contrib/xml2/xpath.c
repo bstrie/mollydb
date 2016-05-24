@@ -23,7 +23,7 @@
 #include <libxml/xmlerror.h>
 #include <libxml/parserInternals.h>
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* exported for use by xslt_proc.c */
 
@@ -59,7 +59,7 @@ static void cleanup_workspace(xpath_workspace *workspace);
  * Initialize for xml parsing.
  *
  * As with the underlying mdb_xml_init function, calls to this MUST be followed
- * by a PG_TRY block that guarantees that mdb_xml_done is called.
+ * by a MDB_TRY block that guarantees that mdb_xml_done is called.
  */
 PgXmlErrorContext *
 pgxml_parser_init(PgXmlStrictness strictness)
@@ -90,20 +90,20 @@ pgxml_parser_init(PgXmlStrictness strictness)
  * definitions for the contrib module, this won't be called.
  */
 
-PG_FUNCTION_INFO_V1(xml_is_well_formed);
+MDB_FUNCTION_INFO_V1(xml_is_well_formed);
 
 Datum
-xml_is_well_formed(PG_FUNCTION_ARGS)
+xml_is_well_formed(MDB_FUNCTION_ARGS)
 {
-	text	   *t = PG_GETARG_TEXT_P(0);		/* document buffer */
+	text	   *t = MDB_GETARG_TEXT_P(0);		/* document buffer */
 	bool		result = false;
 	int32		docsize = VARSIZE(t) - VARHDRSZ;
 	xmlDocPtr	doctree;
 	PgXmlErrorContext *xmlerrcxt;
 
-	xmlerrcxt = pgxml_parser_init(PG_XML_STRICTNESS_LEGACY);
+	xmlerrcxt = pgxml_parser_init(MDB_XML_STRICTNESS_LEGACY);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		doctree = xmlParseMemory((char *) VARDATA(t), docsize);
 
@@ -112,28 +112,28 @@ xml_is_well_formed(PG_FUNCTION_ARGS)
 		if (doctree != NULL)
 			xmlFreeDoc(doctree);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		mdb_xml_done(xmlerrcxt, true);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	mdb_xml_done(xmlerrcxt, false);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 
 /* Encodes special characters (<, >, &, " and \r) as XML entities */
 
-PG_FUNCTION_INFO_V1(xml_encode_special_chars);
+MDB_FUNCTION_INFO_V1(xml_encode_special_chars);
 
 Datum
-xml_encode_special_chars(PG_FUNCTION_ARGS)
+xml_encode_special_chars(MDB_FUNCTION_ARGS)
 {
-	text	   *tin = PG_GETARG_TEXT_P(0);
+	text	   *tin = MDB_GETARG_TEXT_P(0);
 	text	   *tout;
 	xmlChar    *ts,
 			   *tt;
@@ -148,7 +148,7 @@ xml_encode_special_chars(PG_FUNCTION_ARGS)
 
 	xmlFree(tt);
 
-	PG_RETURN_TEXT_P(tout);
+	MDB_RETURN_TEXT_P(tout);
 }
 
 /*
@@ -243,15 +243,15 @@ pgxml_texttoxmlchar(text *textstring)
  * This is a "raw" xpath function. Check that it returns child elements
  * properly
  */
-PG_FUNCTION_INFO_V1(xpath_nodeset);
+MDB_FUNCTION_INFO_V1(xpath_nodeset);
 
 Datum
-xpath_nodeset(PG_FUNCTION_ARGS)
+xpath_nodeset(MDB_FUNCTION_ARGS)
 {
-	text	   *document = PG_GETARG_TEXT_P(0);
-	text	   *xpathsupp = PG_GETARG_TEXT_P(1);		/* XPath expression */
-	xmlChar    *toptag = pgxml_texttoxmlchar(PG_GETARG_TEXT_P(2));
-	xmlChar    *septag = pgxml_texttoxmlchar(PG_GETARG_TEXT_P(3));
+	text	   *document = MDB_GETARG_TEXT_P(0);
+	text	   *xpathsupp = MDB_GETARG_TEXT_P(1);		/* XPath expression */
+	xmlChar    *toptag = pgxml_texttoxmlchar(MDB_GETARG_TEXT_P(2));
+	xmlChar    *septag = pgxml_texttoxmlchar(MDB_GETARG_TEXT_P(3));
 	xmlChar    *xpath;
 	text	   *xpres;
 	xmlXPathObjectPtr res;
@@ -268,22 +268,22 @@ xpath_nodeset(PG_FUNCTION_ARGS)
 	pfree(xpath);
 
 	if (xpres == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_TEXT_P(xpres);
+		MDB_RETURN_NULL();
+	MDB_RETURN_TEXT_P(xpres);
 }
 
 /*
  * The following function is almost identical, but returns the elements in
  * a list.
  */
-PG_FUNCTION_INFO_V1(xpath_list);
+MDB_FUNCTION_INFO_V1(xpath_list);
 
 Datum
-xpath_list(PG_FUNCTION_ARGS)
+xpath_list(MDB_FUNCTION_ARGS)
 {
-	text	   *document = PG_GETARG_TEXT_P(0);
-	text	   *xpathsupp = PG_GETARG_TEXT_P(1);		/* XPath expression */
-	xmlChar    *plainsep = pgxml_texttoxmlchar(PG_GETARG_TEXT_P(2));
+	text	   *document = MDB_GETARG_TEXT_P(0);
+	text	   *xpathsupp = MDB_GETARG_TEXT_P(1);		/* XPath expression */
+	xmlChar    *plainsep = pgxml_texttoxmlchar(MDB_GETARG_TEXT_P(2));
 	xmlChar    *xpath;
 	text	   *xpres;
 	xmlXPathObjectPtr res;
@@ -300,18 +300,18 @@ xpath_list(PG_FUNCTION_ARGS)
 	pfree(xpath);
 
 	if (xpres == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_TEXT_P(xpres);
+		MDB_RETURN_NULL();
+	MDB_RETURN_TEXT_P(xpres);
 }
 
 
-PG_FUNCTION_INFO_V1(xpath_string);
+MDB_FUNCTION_INFO_V1(xpath_string);
 
 Datum
-xpath_string(PG_FUNCTION_ARGS)
+xpath_string(MDB_FUNCTION_ARGS)
 {
-	text	   *document = PG_GETARG_TEXT_P(0);
-	text	   *xpathsupp = PG_GETARG_TEXT_P(1);		/* XPath expression */
+	text	   *document = MDB_GETARG_TEXT_P(0);
+	text	   *xpathsupp = MDB_GETARG_TEXT_P(1);		/* XPath expression */
 	xmlChar    *xpath;
 	int32		pathsize;
 	text	   *xpres;
@@ -341,18 +341,18 @@ xpath_string(PG_FUNCTION_ARGS)
 	pfree(xpath);
 
 	if (xpres == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_TEXT_P(xpres);
+		MDB_RETURN_NULL();
+	MDB_RETURN_TEXT_P(xpres);
 }
 
 
-PG_FUNCTION_INFO_V1(xpath_number);
+MDB_FUNCTION_INFO_V1(xpath_number);
 
 Datum
-xpath_number(PG_FUNCTION_ARGS)
+xpath_number(MDB_FUNCTION_ARGS)
 {
-	text	   *document = PG_GETARG_TEXT_P(0);
-	text	   *xpathsupp = PG_GETARG_TEXT_P(1);		/* XPath expression */
+	text	   *document = MDB_GETARG_TEXT_P(0);
+	text	   *xpathsupp = MDB_GETARG_TEXT_P(1);		/* XPath expression */
 	xmlChar    *xpath;
 	float4		fRes;
 	xmlXPathObjectPtr res;
@@ -365,26 +365,26 @@ xpath_number(PG_FUNCTION_ARGS)
 	pfree(xpath);
 
 	if (res == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	fRes = xmlXPathCastToNumber(res);
 
 	cleanup_workspace(&workspace);
 
 	if (xmlXPathIsNaN(fRes))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_FLOAT4(fRes);
+	MDB_RETURN_FLOAT4(fRes);
 }
 
 
-PG_FUNCTION_INFO_V1(xpath_bool);
+MDB_FUNCTION_INFO_V1(xpath_bool);
 
 Datum
-xpath_bool(PG_FUNCTION_ARGS)
+xpath_bool(MDB_FUNCTION_ARGS)
 {
-	text	   *document = PG_GETARG_TEXT_P(0);
-	text	   *xpathsupp = PG_GETARG_TEXT_P(1);		/* XPath expression */
+	text	   *document = MDB_GETARG_TEXT_P(0);
+	text	   *xpathsupp = MDB_GETARG_TEXT_P(1);		/* XPath expression */
 	xmlChar    *xpath;
 	int			bRes;
 	xmlXPathObjectPtr res;
@@ -397,13 +397,13 @@ xpath_bool(PG_FUNCTION_ARGS)
 	pfree(xpath);
 
 	if (res == NULL)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	bRes = xmlXPathCastToBoolean(res);
 
 	cleanup_workspace(&workspace);
 
-	PG_RETURN_BOOL(bRes);
+	MDB_RETURN_BOOL(bRes);
 }
 
 
@@ -421,9 +421,9 @@ pgxml_xpath(text *document, xmlChar *xpath, xpath_workspace *workspace)
 	workspace->ctxt = NULL;
 	workspace->res = NULL;
 
-	xmlerrcxt = pgxml_parser_init(PG_XML_STRICTNESS_LEGACY);
+	xmlerrcxt = pgxml_parser_init(MDB_XML_STRICTNESS_LEGACY);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		workspace->doctree = xmlParseMemory((char *) VARDATA(document),
 											docsize);
@@ -444,15 +444,15 @@ pgxml_xpath(text *document, xmlChar *xpath, xpath_workspace *workspace)
 			xmlXPathFreeCompExpr(comppath);
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		cleanup_workspace(workspace);
 
 		mdb_xml_done(xmlerrcxt, true);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (workspace->res == NULL)
 		cleanup_workspace(workspace);
@@ -519,17 +519,17 @@ pgxml_result_to_text(xmlXPathObjectPtr res,
  * xpath_table is a table function. It needs some tidying (as do the
  * other functions here!
  */
-PG_FUNCTION_INFO_V1(xpath_table);
+MDB_FUNCTION_INFO_V1(xpath_table);
 
 Datum
-xpath_table(PG_FUNCTION_ARGS)
+xpath_table(MDB_FUNCTION_ARGS)
 {
 	/* Function parameters */
-	char	   *pkeyfield = text_to_cstring(PG_GETARG_TEXT_PP(0));
-	char	   *xmlfield = text_to_cstring(PG_GETARG_TEXT_PP(1));
-	char	   *relname = text_to_cstring(PG_GETARG_TEXT_PP(2));
-	char	   *xpathset = text_to_cstring(PG_GETARG_TEXT_PP(3));
-	char	   *condition = text_to_cstring(PG_GETARG_TEXT_PP(4));
+	char	   *pkeyfield = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+	char	   *xmlfield = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+	char	   *relname = text_to_cstring(MDB_GETARG_TEXT_PP(2));
+	char	   *xpathset = text_to_cstring(MDB_GETARG_TEXT_PP(3));
+	char	   *condition = text_to_cstring(MDB_GETARG_TEXT_PP(4));
 
 	/* SPI (input tuple) support */
 	SPITupleTable *tuptable;
@@ -685,9 +685,9 @@ xpath_table(PG_FUNCTION_ARGS)
 	 * Setup the parser.  This should happen after we are done evaluating the
 	 * query, in case it calls functions that set up libxml differently.
 	 */
-	xmlerrcxt = pgxml_parser_init(PG_XML_STRICTNESS_LEGACY);
+	xmlerrcxt = pgxml_parser_init(MDB_XML_STRICTNESS_LEGACY);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/* For each row i.e. document returned from SPI */
 		uint64		i;
@@ -812,16 +812,16 @@ xpath_table(PG_FUNCTION_ARGS)
 				pfree(xmldoc);
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (doctree != NULL)
 			xmlFreeDoc(doctree);
 
 		mdb_xml_done(xmlerrcxt, true);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (doctree != NULL)
 		xmlFreeDoc(doctree);

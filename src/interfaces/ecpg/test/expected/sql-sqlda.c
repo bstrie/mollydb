@@ -24,10 +24,10 @@
 
 
 #line 1 "sqlda.h"
-#ifndef ECPG_SQLDA_H
-#define ECPG_SQLDA_H
+#ifndef ECMDB_SQLDA_H
+#define ECMDB_SQLDA_H
 
-#ifdef _ECPG_INFORMIX_H
+#ifdef _ECMDB_INFORMIX_H
 
 #include "sqlda-compat.h"
 typedef struct sqlvar_compat sqlvar_t;
@@ -41,7 +41,7 @@ typedef struct sqlda_struct sqlda_t;
 
 #endif
 
-#endif   /* ECPG_SQLDA_H */
+#endif   /* ECMDB_SQLDA_H */
 
 #line 7 "sqlda.pgc"
 
@@ -273,7 +273,7 @@ if (sqlca.sqlcode < 0) exit (1);}
 	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
 #line 111 "sqlda.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) break;
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) break;
 #line 111 "sqlda.pgc"
 
 if (sqlca.sqlcode < 0) exit (1);}

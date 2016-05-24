@@ -982,7 +982,7 @@ postquel_get_single_result(TupleTableSlot *slot,
  * fmgr_sql: function call manager for SQL functions
  */
 Datum
-fmgr_sql(PG_FUNCTION_ARGS)
+fmgr_sql(MDB_FUNCTION_ARGS)
 {
 	SQLFunctionCachePtr fcache;
 	ErrorContextCallback sqlerrcontext;
@@ -1051,7 +1051,7 @@ fmgr_sql(PG_FUNCTION_ARGS)
 
 	if (fcache == NULL)
 	{
-		init_sql_fcache(fcinfo->flinfo, PG_GET_COLLATION(), lazyEvalOK);
+		init_sql_fcache(fcinfo->flinfo, MDB_GET_COLLATION(), lazyEvalOK);
 		fcache = (SQLFunctionCachePtr) fcinfo->flinfo->fn_extra;
 	}
 

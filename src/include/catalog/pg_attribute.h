@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_ATTRIBUTE_H
-#define PG_ATTRIBUTE_H
+#ifndef MDB_ATTRIBUTE_H
+#define MDB_ATTRIBUTE_H
 
 #include "catalog/genbki.h"
 
@@ -220,4 +220,4 @@ typedef FormData_mdb_attribute *Form_mdb_attribute;
  * ----------------
  */
 
-#endif   /* PG_ATTRIBUTE_H */
+#endif   /* MDB_ATTRIBUTE_H */

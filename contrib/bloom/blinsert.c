@@ -23,7 +23,7 @@
 
 #include "bloom.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * State of bloom index build.  We accumulate one page data here before

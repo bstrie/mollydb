@@ -11,8 +11,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_CONVERSION_FN_H
-#define PG_CONVERSION_FN_H
+#ifndef MDB_CONVERSION_FN_H
+#define MDB_CONVERSION_FN_H
 
 
 #include "catalog/objectaddress.h"
@@ -24,4 +24,4 @@ extern ObjectAddress ConversionCreate(const char *conname, Oid connamespace,
 extern void RemoveConversionById(Oid conversionOid);
 extern Oid	FindDefaultConversion(Oid connamespace, int32 for_encoding, int32 to_encoding);
 
-#endif   /* PG_CONVERSION_FN_H */
+#endif   /* MDB_CONVERSION_FN_H */

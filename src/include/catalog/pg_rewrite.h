@@ -19,8 +19,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_REWRITE_H
-#define PG_REWRITE_H
+#ifndef MDB_REWRITE_H
+#define MDB_REWRITE_H
 
 #include "catalog/genbki.h"
 
@@ -65,4 +65,4 @@ typedef FormData_mdb_rewrite *Form_mdb_rewrite;
 #define Anum_mdb_rewrite_ev_qual			6
 #define Anum_mdb_rewrite_ev_action		7
 
-#endif   /* PG_REWRITE_H */
+#endif   /* MDB_REWRITE_H */

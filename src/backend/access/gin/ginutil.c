@@ -30,7 +30,7 @@
  * and callbacks.
  */
 Datum
-ginhandler(PG_FUNCTION_ARGS)
+ginhandler(MDB_FUNCTION_ARGS)
 {
 	IndexAmRoutine *amroutine = makeNode(IndexAmRoutine);
 
@@ -66,7 +66,7 @@ ginhandler(PG_FUNCTION_ARGS)
 	amroutine->ammarkpos = NULL;
 	amroutine->amrestrpos = NULL;
 
-	PG_RETURN_POINTER(amroutine);
+	MDB_RETURN_POINTER(amroutine);
 }
 
 /*

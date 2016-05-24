@@ -24,21 +24,21 @@
 #include "utils/lsyscache.h"
 #include "miscadmin.h"
 
-PG_FUNCTION_INFO_V1(_int_overlap_sel);
-PG_FUNCTION_INFO_V1(_int_contains_sel);
-PG_FUNCTION_INFO_V1(_int_contained_sel);
-PG_FUNCTION_INFO_V1(_int_overlap_joinsel);
-PG_FUNCTION_INFO_V1(_int_contains_joinsel);
-PG_FUNCTION_INFO_V1(_int_contained_joinsel);
-PG_FUNCTION_INFO_V1(_int_matchsel);
+MDB_FUNCTION_INFO_V1(_int_overlap_sel);
+MDB_FUNCTION_INFO_V1(_int_contains_sel);
+MDB_FUNCTION_INFO_V1(_int_contained_sel);
+MDB_FUNCTION_INFO_V1(_int_overlap_joinsel);
+MDB_FUNCTION_INFO_V1(_int_contains_joinsel);
+MDB_FUNCTION_INFO_V1(_int_contained_joinsel);
+MDB_FUNCTION_INFO_V1(_int_matchsel);
 
-Datum		_int_overlap_sel(PG_FUNCTION_ARGS);
-Datum		_int_contains_sel(PG_FUNCTION_ARGS);
-Datum		_int_contained_sel(PG_FUNCTION_ARGS);
-Datum		_int_overlap_joinsel(PG_FUNCTION_ARGS);
-Datum		_int_contains_joinsel(PG_FUNCTION_ARGS);
-Datum		_int_contained_joinsel(PG_FUNCTION_ARGS);
-Datum		_int_matchsel(PG_FUNCTION_ARGS);
+Datum		_int_overlap_sel(MDB_FUNCTION_ARGS);
+Datum		_int_contains_sel(MDB_FUNCTION_ARGS);
+Datum		_int_contained_sel(MDB_FUNCTION_ARGS);
+Datum		_int_overlap_joinsel(MDB_FUNCTION_ARGS);
+Datum		_int_contains_joinsel(MDB_FUNCTION_ARGS);
+Datum		_int_contained_joinsel(MDB_FUNCTION_ARGS);
+Datum		_int_matchsel(MDB_FUNCTION_ARGS);
 
 
 static Selectivity int_query_opr_selec(ITEM *item, Datum *values, float4 *freqs,
@@ -60,66 +60,66 @@ static int	compare_val_int4(const void *a, const void *b);
  */
 
 Datum
-_int_overlap_sel(PG_FUNCTION_ARGS)
+_int_overlap_sel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall4(arraycontsel,
-										PG_GETARG_DATUM(0),
+	MDB_RETURN_DATUM(DirectFunctionCall4(arraycontsel,
+										MDB_GETARG_DATUM(0),
 									  ObjectIdGetDatum(OID_ARRAY_OVERLAP_OP),
-										PG_GETARG_DATUM(2),
-										PG_GETARG_DATUM(3)));
+										MDB_GETARG_DATUM(2),
+										MDB_GETARG_DATUM(3)));
 }
 
 Datum
-_int_contains_sel(PG_FUNCTION_ARGS)
+_int_contains_sel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall4(arraycontsel,
-										PG_GETARG_DATUM(0),
+	MDB_RETURN_DATUM(DirectFunctionCall4(arraycontsel,
+										MDB_GETARG_DATUM(0),
 									 ObjectIdGetDatum(OID_ARRAY_CONTAINS_OP),
-										PG_GETARG_DATUM(2),
-										PG_GETARG_DATUM(3)));
+										MDB_GETARG_DATUM(2),
+										MDB_GETARG_DATUM(3)));
 }
 
 Datum
-_int_contained_sel(PG_FUNCTION_ARGS)
+_int_contained_sel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall4(arraycontsel,
-										PG_GETARG_DATUM(0),
+	MDB_RETURN_DATUM(DirectFunctionCall4(arraycontsel,
+										MDB_GETARG_DATUM(0),
 									ObjectIdGetDatum(OID_ARRAY_CONTAINED_OP),
-										PG_GETARG_DATUM(2),
-										PG_GETARG_DATUM(3)));
+										MDB_GETARG_DATUM(2),
+										MDB_GETARG_DATUM(3)));
 }
 
 Datum
-_int_overlap_joinsel(PG_FUNCTION_ARGS)
+_int_overlap_joinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall5(arraycontjoinsel,
-										PG_GETARG_DATUM(0),
+	MDB_RETURN_DATUM(DirectFunctionCall5(arraycontjoinsel,
+										MDB_GETARG_DATUM(0),
 									  ObjectIdGetDatum(OID_ARRAY_OVERLAP_OP),
-										PG_GETARG_DATUM(2),
-										PG_GETARG_DATUM(3),
-										PG_GETARG_DATUM(4)));
+										MDB_GETARG_DATUM(2),
+										MDB_GETARG_DATUM(3),
+										MDB_GETARG_DATUM(4)));
 }
 
 Datum
-_int_contains_joinsel(PG_FUNCTION_ARGS)
+_int_contains_joinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall5(arraycontjoinsel,
-										PG_GETARG_DATUM(0),
+	MDB_RETURN_DATUM(DirectFunctionCall5(arraycontjoinsel,
+										MDB_GETARG_DATUM(0),
 									 ObjectIdGetDatum(OID_ARRAY_CONTAINS_OP),
-										PG_GETARG_DATUM(2),
-										PG_GETARG_DATUM(3),
-										PG_GETARG_DATUM(4)));
+										MDB_GETARG_DATUM(2),
+										MDB_GETARG_DATUM(3),
+										MDB_GETARG_DATUM(4)));
 }
 
 Datum
-_int_contained_joinsel(PG_FUNCTION_ARGS)
+_int_contained_joinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall5(arraycontjoinsel,
-										PG_GETARG_DATUM(0),
+	MDB_RETURN_DATUM(DirectFunctionCall5(arraycontjoinsel,
+										MDB_GETARG_DATUM(0),
 									ObjectIdGetDatum(OID_ARRAY_CONTAINED_OP),
-										PG_GETARG_DATUM(2),
-										PG_GETARG_DATUM(3),
-										PG_GETARG_DATUM(4)));
+										MDB_GETARG_DATUM(2),
+										MDB_GETARG_DATUM(3),
+										MDB_GETARG_DATUM(4)));
 }
 
 
@@ -127,12 +127,12 @@ _int_contained_joinsel(PG_FUNCTION_ARGS)
  * _int_matchsel -- restriction selectivity function for intarray @@ query_int
  */
 Datum
-_int_matchsel(PG_FUNCTION_ARGS)
+_int_matchsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
 
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
 	VariableStatData vardata;
 	Node	   *other;
 	bool		varonleft;
@@ -155,14 +155,14 @@ _int_matchsel(PG_FUNCTION_ARGS)
 	 */
 	if (!get_restriction_variable(root, args, varRelid,
 								  &vardata, &other, &varonleft))
-		PG_RETURN_FLOAT8(DEFAULT_EQ_SEL);
+		MDB_RETURN_FLOAT8(DEFAULT_EQ_SEL);
 
 	/*
 	 * Variable should be int[]. We don't support cases where variable is
 	 * query_int.
 	 */
 	if (vardata.vartype != INT4ARRAYOID)
-		PG_RETURN_FLOAT8(DEFAULT_EQ_SEL);
+		MDB_RETURN_FLOAT8(DEFAULT_EQ_SEL);
 
 	/*
 	 * Can't do anything useful if the something is not a constant, either.
@@ -170,7 +170,7 @@ _int_matchsel(PG_FUNCTION_ARGS)
 	if (!IsA(other, Const))
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(DEFAULT_EQ_SEL);
+		MDB_RETURN_FLOAT8(DEFAULT_EQ_SEL);
 	}
 
 	/*
@@ -179,7 +179,7 @@ _int_matchsel(PG_FUNCTION_ARGS)
 	if (((Const *) other)->constisnull)
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 	}
 
 	/* The caller made sure the const is a query, so get it now */
@@ -243,7 +243,7 @@ _int_matchsel(PG_FUNCTION_ARGS)
 
 	CLAMP_PROBABILITY(selec);
 
-	PG_RETURN_FLOAT8((float8) selec);
+	MDB_RETURN_FLOAT8((float8) selec);
 }
 
 /*

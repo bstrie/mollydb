@@ -23,7 +23,7 @@
 
 #include "parser/gramparse.h"
 
-#define PG_KEYWORD(a,b,c) {a,b,c},
+#define MDB_KEYWORD(a,b,c) {a,b,c},
 
 #else
 
@@ -33,7 +33,7 @@
  * We don't need the token number for frontend uses, so leave it out to avoid
  * requiring backend headers that won't compile cleanly here.
  */
-#define PG_KEYWORD(a,b,c) {a,0,c},
+#define MDB_KEYWORD(a,b,c) {a,0,c},
 
 #endif   /* FRONTEND */
 

@@ -1577,7 +1577,7 @@ SnapBuildSerialize(SnapBuild *builder, XLogRecPtr lsn)
 
 	/* we have valid data now, open tempfile and write it there */
 	fd = OpenTransientFile(tmppath,
-						   O_CREAT | O_EXCL | O_WRONLY | PG_BINARY,
+						   O_CREAT | O_EXCL | O_WRONLY | MDB_BINARY,
 						   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(ERROR,
@@ -1658,7 +1658,7 @@ SnapBuildRestore(SnapBuild *builder, XLogRecPtr lsn)
 	sprintf(path, "mdb_logical/snapshots/%X-%X.snap",
 			(uint32) (lsn >> 32), (uint32) lsn);
 
-	fd = OpenTransientFile(path, O_RDONLY | PG_BINARY, 0);
+	fd = OpenTransientFile(path, O_RDONLY | MDB_BINARY, 0);
 
 	if (fd < 0 && errno == ENOENT)
 		return false;

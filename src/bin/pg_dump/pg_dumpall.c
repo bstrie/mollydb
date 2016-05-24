@@ -29,7 +29,7 @@
 #include "fe_utils/string_utils.h"
 
 /* version string we expect back from mdb_dump */
-#define PGDUMP_VERSIONSTR "mdb_dump (MollyDB) " PG_VERSION "\n"
+#define PGDUMP_VERSIONSTR "mdb_dump (MollyDB) " MDB_VERSION "\n"
 
 
 static void help(void);
@@ -151,7 +151,7 @@ main(int argc, char *argv[])
 				ret;
 	int			optindex;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_dump"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mdb_dump"));
 
 	progname = get_progname(argv[0]);
 
@@ -164,7 +164,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("mdb_dumpall (MollyDB) " PG_VERSION);
+			puts("mdb_dumpall (MollyDB) " MDB_VERSION);
 			exit_nicely(0);
 		}
 	}
@@ -412,7 +412,7 @@ main(int argc, char *argv[])
 	 */
 	if (filename)
 	{
-		OPF = fopen(filename, PG_BINARY_W);
+		OPF = fopen(filename, MDB_BINARY_W);
 		if (!OPF)
 		{
 			fprintf(stderr, _("%s: could not open the output file \"%s\": %s\n"),
@@ -1710,7 +1710,7 @@ dumpDatabases(PGconn *conn)
 
 		if (filename)
 		{
-			OPF = fopen(filename, PG_BINARY_A);
+			OPF = fopen(filename, MDB_BINARY_A);
 			if (!OPF)
 			{
 				fprintf(stderr, _("%s: could not re-open the output file \"%s\": %s\n"),
@@ -1979,7 +1979,7 @@ connectDatabase(const char *dbname, const char *connection_string,
 		exit_nicely(1);
 	}
 
-	my_version = PG_VERSION_NUM;
+	my_version = MDB_VERSION_NUM;
 
 	/*
 	 * We allow the server to be back to 7.0, and up to any minor release of
@@ -1990,7 +1990,7 @@ connectDatabase(const char *dbname, const char *connection_string,
 			(server_version / 100) > (my_version / 100)))
 	{
 		fprintf(stderr, _("server version: %s; %s version: %s\n"),
-				remoteversion_str, progname, PG_VERSION);
+				remoteversion_str, progname, MDB_VERSION);
 		fprintf(stderr, _("aborting because of server version mismatch\n"));
 		exit_nicely(1);
 	}

@@ -13,7 +13,7 @@ utf_u2e(char *utf8_str, size_t len)
 {
 	char	   *ret;
 
-	ret = mdb_any_to_server(utf8_str, len, PG_UTF8);
+	ret = mdb_any_to_server(utf8_str, len, MDB_UTF8);
 
 	/* ensure we have a copy even if no conversion happened */
 	if (ret == utf8_str)
@@ -32,7 +32,7 @@ utf_e2u(const char *str)
 {
 	char	   *ret;
 
-	ret = mdb_server_to_any(str, strlen(str), PG_UTF8);
+	ret = mdb_server_to_any(str, strlen(str), MDB_UTF8);
 
 	/* ensure we have a copy even if no conversion happened */
 	if (ret == str)
@@ -83,7 +83,7 @@ sv2cstr(SV *sv)
 	 * SQL_ASCII database, just request the byte soup without trying to make
 	 * it UTF8, because that might fail.
 	 */
-	if (GetDatabaseEncoding() == PG_SQL_ASCII)
+	if (GetDatabaseEncoding() == MDB_SQL_ASCII)
 		val = SvPV(sv, len);
 	else
 		val = SvPVutf8(sv, len);
@@ -111,7 +111,7 @@ cstr2sv(const char *str)
 	char	   *utf8_str;
 
 	/* no conversion when SQL_ASCII */
-	if (GetDatabaseEncoding() == PG_SQL_ASCII)
+	if (GetDatabaseEncoding() == MDB_SQL_ASCII)
 		return newSVpv(str, 0);
 
 	utf8_str = utf_e2u(str);

@@ -51,9 +51,9 @@ static int	trackitem_compare_lexemes(const void *e1, const void *e2);
  *	ts_typanalyze -- a custom typanalyze function for tsvector columns
  */
 Datum
-ts_typanalyze(PG_FUNCTION_ARGS)
+ts_typanalyze(MDB_FUNCTION_ARGS)
 {
-	VacAttrStats *stats = (VacAttrStats *) PG_GETARG_POINTER(0);
+	VacAttrStats *stats = (VacAttrStats *) MDB_GETARG_POINTER(0);
 	Form_mdb_attribute attr = stats->attr;
 
 	/* If the attstattarget column is negative, use the default value */
@@ -65,7 +65,7 @@ ts_typanalyze(PG_FUNCTION_ARGS)
 	/* see comment about the choice of minrows in commands/analyze.c */
 	stats->minrows = 300 * attr->attstattarget;
 
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 /*

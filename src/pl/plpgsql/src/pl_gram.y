@@ -307,11 +307,11 @@ static	void			check_raise_parameters(PLpgSQL_stmt_raise *stmt);
 %token <keyword>	K_OPTION
 %token <keyword>	K_OR
 %token <keyword>	K_PERFORM
-%token <keyword>	K_PG_CONTEXT
-%token <keyword>	K_PG_DATATYPE_NAME
-%token <keyword>	K_PG_EXCEPTION_CONTEXT
-%token <keyword>	K_PG_EXCEPTION_DETAIL
-%token <keyword>	K_PG_EXCEPTION_HINT
+%token <keyword>	K_MDB_CONTEXT
+%token <keyword>	K_MDB_DATATYPE_NAME
+%token <keyword>	K_MDB_EXCEPTION_CONTEXT
+%token <keyword>	K_MDB_EXCEPTION_DETAIL
+%token <keyword>	K_MDB_EXCEPTION_HINT
 %token <keyword>	K_PRINT_STRICT_PARAMS
 %token <keyword>	K_PRIOR
 %token <keyword>	K_QUERY
@@ -1031,16 +1031,16 @@ getdiag_item :
 												K_RESULT_OID, "result_oid"))
 							$$ = PLPGSQL_GETDIAG_RESULT_OID;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_CONTEXT, "mdb_context"))
+												K_MDB_CONTEXT, "mdb_context"))
 							$$ = PLPGSQL_GETDIAG_CONTEXT;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_EXCEPTION_DETAIL, "mdb_exception_detail"))
+												K_MDB_EXCEPTION_DETAIL, "mdb_exception_detail"))
 							$$ = PLPGSQL_GETDIAG_ERROR_DETAIL;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_EXCEPTION_HINT, "mdb_exception_hint"))
+												K_MDB_EXCEPTION_HINT, "mdb_exception_hint"))
 							$$ = PLPGSQL_GETDIAG_ERROR_HINT;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_EXCEPTION_CONTEXT, "mdb_exception_context"))
+												K_MDB_EXCEPTION_CONTEXT, "mdb_exception_context"))
 							$$ = PLPGSQL_GETDIAG_ERROR_CONTEXT;
 						else if (tok_is_keyword(tok, &yylval,
 												K_COLUMN_NAME, "column_name"))
@@ -1049,7 +1049,7 @@ getdiag_item :
 												K_CONSTRAINT_NAME, "constraint_name"))
 							$$ = PLPGSQL_GETDIAG_CONSTRAINT_NAME;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_DATATYPE_NAME, "mdb_datatype_name"))
+												K_MDB_DATATYPE_NAME, "mdb_datatype_name"))
 							$$ = PLPGSQL_GETDIAG_DATATYPE_NAME;
 						else if (tok_is_keyword(tok, &yylval,
 												K_MESSAGE_TEXT, "message_text"))
@@ -2432,11 +2432,11 @@ unreserved_keyword	:
 				| K_OPEN
 				| K_OPTION
 				| K_PERFORM
-				| K_PG_CONTEXT
-				| K_PG_DATATYPE_NAME
-				| K_PG_EXCEPTION_CONTEXT
-				| K_PG_EXCEPTION_DETAIL
-				| K_PG_EXCEPTION_HINT
+				| K_MDB_CONTEXT
+				| K_MDB_DATATYPE_NAME
+				| K_MDB_EXCEPTION_CONTEXT
+				| K_MDB_EXCEPTION_DETAIL
+				| K_MDB_EXCEPTION_HINT
 				| K_PRINT_STRICT_PARAMS
 				| K_PRIOR
 				| K_QUERY

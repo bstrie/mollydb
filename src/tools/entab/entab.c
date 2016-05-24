@@ -10,9 +10,9 @@
 #include <unistd.h>
 
 #if defined(WIN32) || defined(__CYGWIN__)
-#define PG_BINARY_R "rb"
+#define MDB_BINARY_R "rb"
 #else
-#define PG_BINARY_R "r"
+#define MDB_BINARY_R "r"
 #endif
 
 #define NUL		'\0'
@@ -128,7 +128,7 @@ main(int argc, char **argv)
 			in_file = stdin;
 		else
 		{
-			if ((in_file = fopen(*argv, PG_BINARY_R)) == NULL)
+			if ((in_file = fopen(*argv, MDB_BINARY_R)) == NULL)
 			{
 				fprintf(stderr, "Cannot open file %s: %s\n", argv[0], strerror(errno));
 				exit(1);

@@ -96,7 +96,7 @@ main(int argc, char *argv[])
 	char	   *DataDir = NULL;
 	int			fd;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_resetxlog"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mdb_resetxlog"));
 
 	progname = get_progname(argv[0]);
 
@@ -109,7 +109,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("mdb_resetxlog (MollyDB) " PG_VERSION);
+			puts("mdb_resetxlog (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}
@@ -467,7 +467,7 @@ ReadControlFile(void)
 	char	   *buffer;
 	mdb_crc32c	crc;
 
-	if ((fd = open(XLOG_CONTROL_FILE, O_RDONLY | PG_BINARY, 0)) < 0)
+	if ((fd = open(XLOG_CONTROL_FILE, O_RDONLY | MDB_BINARY, 0)) < 0)
 	{
 		/*
 		 * If mdb_control is not there at all, or we can't read it, the odds
@@ -485,9 +485,9 @@ ReadControlFile(void)
 	}
 
 	/* Use malloc to ensure we have a maxaligned buffer */
-	buffer = (char *) mdb_malloc(PG_CONTROL_SIZE);
+	buffer = (char *) mdb_malloc(MDB_CONTROL_SIZE);
 
-	len = read(fd, buffer, PG_CONTROL_SIZE);
+	len = read(fd, buffer, MDB_CONTROL_SIZE);
 	if (len < 0)
 	{
 		fprintf(stderr, _("%s: could not read file \"%s\": %s\n"),
@@ -497,7 +497,7 @@ ReadControlFile(void)
 	close(fd);
 
 	if (len >= sizeof(ControlFileData) &&
-	  ((ControlFileData *) buffer)->mdb_control_version == PG_CONTROL_VERSION)
+	  ((ControlFileData *) buffer)->mdb_control_version == MDB_CONTROL_VERSION)
 	{
 		/* Check the CRC. */
 		INIT_CRC32C(crc);
@@ -543,7 +543,7 @@ GuessControlValues(void)
 	guessed = true;
 	memset(&ControlFile, 0, sizeof(ControlFile));
 
-	ControlFile.mdb_control_version = PG_CONTROL_VERSION;
+	ControlFile.mdb_control_version = MDB_CONTROL_VERSION;
 	ControlFile.catalog_version_no = CATALOG_VERSION_NO;
 
 	/*
@@ -771,7 +771,7 @@ static void
 RewriteControlFile(void)
 {
 	int			fd;
-	char		buffer[PG_CONTROL_SIZE];		/* need not be aligned */
+	char		buffer[MDB_CONTROL_SIZE];		/* need not be aligned */
 
 	/*
 	 * Adjust fields as needed to force an empty XLOG starting at
@@ -815,27 +815,27 @@ RewriteControlFile(void)
 	FIN_CRC32C(ControlFile.crc);
 
 	/*
-	 * We write out PG_CONTROL_SIZE bytes into mdb_control, zero-padding the
+	 * We write out MDB_CONTROL_SIZE bytes into mdb_control, zero-padding the
 	 * excess over sizeof(ControlFileData).  This reduces the odds of
 	 * premature-EOF errors when reading mdb_control.  We'll still fail when we
 	 * check the contents of the file, but hopefully with a more specific
 	 * error than "couldn't read mdb_control".
 	 */
-	if (sizeof(ControlFileData) > PG_CONTROL_SIZE)
+	if (sizeof(ControlFileData) > MDB_CONTROL_SIZE)
 	{
 		fprintf(stderr,
-				_("%s: internal error -- sizeof(ControlFileData) is too large ... fix PG_CONTROL_SIZE\n"),
+				_("%s: internal error -- sizeof(ControlFileData) is too large ... fix MDB_CONTROL_SIZE\n"),
 				progname);
 		exit(1);
 	}
 
-	memset(buffer, 0, PG_CONTROL_SIZE);
+	memset(buffer, 0, MDB_CONTROL_SIZE);
 	memcpy(buffer, &ControlFile, sizeof(ControlFileData));
 
 	unlink(XLOG_CONTROL_FILE);
 
 	fd = open(XLOG_CONTROL_FILE,
-			  O_RDWR | O_CREAT | O_EXCL | PG_BINARY,
+			  O_RDWR | O_CREAT | O_EXCL | MDB_BINARY,
 			  S_IRUSR | S_IWUSR);
 	if (fd < 0)
 	{
@@ -845,7 +845,7 @@ RewriteControlFile(void)
 	}
 
 	errno = 0;
-	if (write(fd, buffer, PG_CONTROL_SIZE) != PG_CONTROL_SIZE)
+	if (write(fd, buffer, MDB_CONTROL_SIZE) != MDB_CONTROL_SIZE)
 	{
 		/* if write didn't set errno, assume problem is no disk space */
 		if (errno == 0)
@@ -1116,7 +1116,7 @@ WriteEmptyXLOG(void)
 
 	unlink(path);
 
-	fd = open(path, O_RDWR | O_CREAT | O_EXCL | PG_BINARY,
+	fd = open(path, O_RDWR | O_CREAT | O_EXCL | MDB_BINARY,
 			  S_IRUSR | S_IWUSR);
 	if (fd < 0)
 	{

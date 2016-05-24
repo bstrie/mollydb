@@ -34,8 +34,8 @@ HANDLE		pgwin32_initial_signal_pipe = INVALID_HANDLE_VALUE;
 static CRITICAL_SECTION mdb_signal_crit_sec;
 
 /* Note that array elements 0 are unused since they correspond to signal 0 */
-static pqsigfunc mdb_signal_array[PG_SIGNAL_COUNT];
-static pqsigfunc mdb_signal_defaults[PG_SIGNAL_COUNT];
+static pqsigfunc mdb_signal_array[MDB_SIGNAL_COUNT];
+static pqsigfunc mdb_signal_defaults[MDB_SIGNAL_COUNT];
 
 
 /* Signal handling thread function */
@@ -72,7 +72,7 @@ pgwin32_signal_initialize(void)
 
 	InitializeCriticalSection(&mdb_signal_crit_sec);
 
-	for (i = 0; i < PG_SIGNAL_COUNT; i++)
+	for (i = 0; i < MDB_SIGNAL_COUNT; i++)
 	{
 		mdb_signal_array[i] = SIG_DFL;
 		mdb_signal_defaults[i] = SIG_IGN;
@@ -114,7 +114,7 @@ pgwin32_dispatch_queued_signals(void)
 		/* One or more unblocked signals queued for execution */
 		int			i;
 
-		for (i = 1; i < PG_SIGNAL_COUNT; i++)
+		for (i = 1; i < MDB_SIGNAL_COUNT; i++)
 		{
 			if (exec_mask & sigmask(i))
 			{
@@ -169,7 +169,7 @@ pqsignal(int signum, pqsigfunc handler)
 {
 	pqsigfunc	prevfunc;
 
-	if (signum >= PG_SIGNAL_COUNT || signum < 0)
+	if (signum >= MDB_SIGNAL_COUNT || signum < 0)
 		return SIG_ERR;
 	prevfunc = mdb_signal_array[signum];
 	mdb_signal_array[signum] = handler;
@@ -209,7 +209,7 @@ pgwin32_create_signal_listener(pid_t pid)
 void
 mdb_queue_signal(int signum)
 {
-	if (signum >= PG_SIGNAL_COUNT || signum <= 0)
+	if (signum >= MDB_SIGNAL_COUNT || signum <= 0)
 		return;
 
 	EnterCriticalSection(&mdb_signal_crit_sec);

@@ -26,9 +26,9 @@
 #include "utils/lsyscache.h"
 #include "utils/rel.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(mdb_prewarm);
+MDB_FUNCTION_INFO_V1(mdb_prewarm);
 
 typedef enum
 {
@@ -52,7 +52,7 @@ static char blockbuffer[BLCKSZ];
  * return value is the number of blocks successfully prewarmed.
  */
 Datum
-mdb_prewarm(PG_FUNCTION_ARGS)
+mdb_prewarm(MDB_FUNCTION_ARGS)
 {
 	Oid			relOid;
 	text	   *forkName;
@@ -70,16 +70,16 @@ mdb_prewarm(PG_FUNCTION_ARGS)
 	AclResult	aclresult;
 
 	/* Basic sanity checking. */
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("relation cannot be null")));
-	relOid = PG_GETARG_OID(0);
-	if (PG_ARGISNULL(1))
+	relOid = MDB_GETARG_OID(0);
+	if (MDB_ARGISNULL(1))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 (errmsg("prewarm type cannot be null"))));
-	type = PG_GETARG_TEXT_P(1);
+	type = MDB_GETARG_TEXT_P(1);
 	ttype = text_to_cstring(type);
 	if (strcmp(ttype, "prefetch") == 0)
 		ptype = PREWARM_PREFETCH;
@@ -93,13 +93,13 @@ mdb_prewarm(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("invalid prewarm type"),
 				 errhint("Valid prewarm types are \"prefetch\", \"read\", and \"buffer\".")));
-		PG_RETURN_INT64(0);		/* Placate compiler. */
+		MDB_RETURN_INT64(0);		/* Placate compiler. */
 	}
-	if (PG_ARGISNULL(2))
+	if (MDB_ARGISNULL(2))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 (errmsg("relation fork cannot be null"))));
-	forkName = PG_GETARG_TEXT_P(2);
+	forkName = MDB_GETARG_TEXT_P(2);
 	forkString = text_to_cstring(forkName);
 	forkNumber = forkname_to_number(forkString);
 
@@ -119,22 +119,22 @@ mdb_prewarm(PG_FUNCTION_ARGS)
 
 	/* Validate block numbers, or handle nulls. */
 	nblocks = RelationGetNumberOfBlocksInFork(rel, forkNumber);
-	if (PG_ARGISNULL(3))
+	if (MDB_ARGISNULL(3))
 		first_block = 0;
 	else
 	{
-		first_block = PG_GETARG_INT64(3);
+		first_block = MDB_GETARG_INT64(3);
 		if (first_block < 0 || first_block >= nblocks)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 					 errmsg("starting block number must be between 0 and " INT64_FORMAT,
 							nblocks - 1)));
 	}
-	if (PG_ARGISNULL(4))
+	if (MDB_ARGISNULL(4))
 		last_block = nblocks - 1;
 	else
 	{
-		last_block = PG_GETARG_INT64(4);
+		last_block = MDB_GETARG_INT64(4);
 		if (last_block < 0 || last_block >= nblocks)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -202,5 +202,5 @@ mdb_prewarm(PG_FUNCTION_ARGS)
 	/* Close relation, release lock. */
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_INT64(blocks_done);
+	MDB_RETURN_INT64(blocks_done);
 }

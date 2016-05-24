@@ -74,7 +74,7 @@ mdb_open_tzfile(const char *name, char *canonname)
 	strcat(fullname, "/");
 	strcat(fullname, name);
 
-	return open(fullname, O_RDONLY | PG_BINARY, 0);
+	return open(fullname, O_RDONLY | MDB_BINARY, 0);
 }
 
 

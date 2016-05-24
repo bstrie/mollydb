@@ -22,8 +22,8 @@ typedef struct mdb_uuid_t mdb_uuid_t;
 
 /* fmgr interface macros */
 #define UUIDPGetDatum(X)		PointerGetDatum(X)
-#define PG_RETURN_UUID_P(X)		return UUIDPGetDatum(X)
+#define MDB_RETURN_UUID_P(X)		return UUIDPGetDatum(X)
 #define DatumGetUUIDP(X)		((mdb_uuid_t *) DatumGetPointer(X))
-#define PG_GETARG_UUID_P(X)		DatumGetUUIDP(PG_GETARG_DATUM(X))
+#define MDB_GETARG_UUID_P(X)		DatumGetUUIDP(MDB_GETARG_DATUM(X))
 
 #endif   /* UUID_H */

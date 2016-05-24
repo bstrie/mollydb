@@ -26,9 +26,9 @@ typedef struct
 
 
 Datum
-dsimple_init(PG_FUNCTION_ARGS)
+dsimple_init(MDB_FUNCTION_ARGS)
 {
-	List	   *dictoptions = (List *) PG_GETARG_POINTER(0);
+	List	   *dictoptions = (List *) MDB_GETARG_POINTER(0);
 	DictSimple *d = (DictSimple *) palloc0(sizeof(DictSimple));
 	bool		stoploaded = false,
 				acceptloaded = false;
@@ -67,15 +67,15 @@ dsimple_init(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_POINTER(d);
+	MDB_RETURN_POINTER(d);
 }
 
 Datum
-dsimple_lexize(PG_FUNCTION_ARGS)
+dsimple_lexize(MDB_FUNCTION_ARGS)
 {
-	DictSimple *d = (DictSimple *) PG_GETARG_POINTER(0);
-	char	   *in = (char *) PG_GETARG_POINTER(1);
-	int32		len = PG_GETARG_INT32(2);
+	DictSimple *d = (DictSimple *) MDB_GETARG_POINTER(0);
+	char	   *in = (char *) MDB_GETARG_POINTER(1);
+	int32		len = MDB_GETARG_INT32(2);
 	char	   *txt;
 	TSLexeme   *res;
 
@@ -86,19 +86,19 @@ dsimple_lexize(PG_FUNCTION_ARGS)
 		/* reject as stopword */
 		pfree(txt);
 		res = palloc0(sizeof(TSLexeme) * 2);
-		PG_RETURN_POINTER(res);
+		MDB_RETURN_POINTER(res);
 	}
 	else if (d->accept)
 	{
 		/* accept */
 		res = palloc0(sizeof(TSLexeme) * 2);
 		res[0].lexeme = txt;
-		PG_RETURN_POINTER(res);
+		MDB_RETURN_POINTER(res);
 	}
 	else
 	{
 		/* report as unrecognized */
 		pfree(txt);
-		PG_RETURN_POINTER(NULL);
+		MDB_RETURN_POINTER(NULL);
 	}
 }

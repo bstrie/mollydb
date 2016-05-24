@@ -23,10 +23,10 @@
  * Lexize one word by dictionary, mostly debug function
  */
 Datum
-ts_lexize(PG_FUNCTION_ARGS)
+ts_lexize(MDB_FUNCTION_ARGS)
 {
-	Oid			dictId = PG_GETARG_OID(0);
-	text	   *in = PG_GETARG_TEXT_P(1);
+	Oid			dictId = MDB_GETARG_OID(0);
+	text	   *in = MDB_GETARG_TEXT_P(1);
 	ArrayType  *a;
 	TSDictionaryCacheEntry *dict;
 	TSLexeme   *res,
@@ -55,7 +55,7 @@ ts_lexize(PG_FUNCTION_ARGS)
 	}
 
 	if (!res)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	ptr = res;
 	while (ptr->lexeme)
@@ -85,5 +85,5 @@ ts_lexize(PG_FUNCTION_ARGS)
 	pfree(res);
 	pfree(da);
 
-	PG_RETURN_POINTER(a);
+	MDB_RETURN_POINTER(a);
 }

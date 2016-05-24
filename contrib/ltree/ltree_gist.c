@@ -12,48 +12,48 @@
 
 #define NEXTVAL(x) ( (lquery*)( (char*)(x) + INTALIGN( VARSIZE(x) ) ) )
 
-PG_FUNCTION_INFO_V1(ltree_gist_in);
-PG_FUNCTION_INFO_V1(ltree_gist_out);
+MDB_FUNCTION_INFO_V1(ltree_gist_in);
+MDB_FUNCTION_INFO_V1(ltree_gist_out);
 
 Datum
-ltree_gist_in(PG_FUNCTION_ARGS)
+ltree_gist_in(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("ltree_gist_in() not implemented")));
-	PG_RETURN_DATUM(0);
+	MDB_RETURN_DATUM(0);
 }
 
 Datum
-ltree_gist_out(PG_FUNCTION_ARGS)
+ltree_gist_out(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("ltree_gist_out() not implemented")));
-	PG_RETURN_DATUM(0);
+	MDB_RETURN_DATUM(0);
 }
 
-PG_FUNCTION_INFO_V1(ltree_compress);
-PG_FUNCTION_INFO_V1(ltree_decompress);
-PG_FUNCTION_INFO_V1(ltree_same);
-PG_FUNCTION_INFO_V1(ltree_union);
-PG_FUNCTION_INFO_V1(ltree_penalty);
-PG_FUNCTION_INFO_V1(ltree_picksplit);
-PG_FUNCTION_INFO_V1(ltree_consistent);
+MDB_FUNCTION_INFO_V1(ltree_compress);
+MDB_FUNCTION_INFO_V1(ltree_decompress);
+MDB_FUNCTION_INFO_V1(ltree_same);
+MDB_FUNCTION_INFO_V1(ltree_union);
+MDB_FUNCTION_INFO_V1(ltree_penalty);
+MDB_FUNCTION_INFO_V1(ltree_picksplit);
+MDB_FUNCTION_INFO_V1(ltree_consistent);
 
 #define ISEQ(a,b)	( (a)->numlevel == (b)->numlevel && ltree_compare(a,b)==0 )
 #define GETENTRY(vec,pos) ((ltree_gist *) DatumGetPointer((vec)->vector[(pos)].key))
 
 Datum
-ltree_compress(PG_FUNCTION_ARGS)
+ltree_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval = entry;
 
 	if (entry->leafkey)
 	{							/* ltree */
 		ltree_gist *key;
-		ltree	   *val = (ltree *) DatumGetPointer(PG_DETOAST_DATUM(entry->key));
+		ltree	   *val = (ltree *) DatumGetPointer(MDB_DETOAST_DATUM(entry->key));
 		int32		len = LTG_HDRSIZE + VARSIZE(val);
 
 		key = (ltree_gist *) palloc0(len);
@@ -66,14 +66,14 @@ ltree_compress(PG_FUNCTION_ARGS)
 					  entry->rel, entry->page,
 					  entry->offset, FALSE);
 	}
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 Datum
-ltree_decompress(PG_FUNCTION_ARGS)
+ltree_decompress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	ltree_gist *key = (ltree_gist *) DatumGetPointer(PG_DETOAST_DATUM(entry->key));
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	ltree_gist *key = (ltree_gist *) DatumGetPointer(MDB_DETOAST_DATUM(entry->key));
 
 	if (PointerGetDatum(key) != entry->key)
 	{
@@ -82,21 +82,21 @@ ltree_decompress(PG_FUNCTION_ARGS)
 		gistentryinit(*retval, PointerGetDatum(key),
 					  entry->rel, entry->page,
 					  entry->offset, FALSE);
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 Datum
-ltree_same(PG_FUNCTION_ARGS)
+ltree_same(MDB_FUNCTION_ARGS)
 {
-	ltree_gist *a = (ltree_gist *) PG_GETARG_POINTER(0);
-	ltree_gist *b = (ltree_gist *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	ltree_gist *a = (ltree_gist *) MDB_GETARG_POINTER(0);
+	ltree_gist *b = (ltree_gist *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	*result = false;
 	if (LTG_ISONENODE(a) != LTG_ISONENODE(b))
-		PG_RETURN_POINTER(result);
+		MDB_RETURN_POINTER(result);
 
 	if (LTG_ISONENODE(a))
 		*result = (ISEQ(LTG_NODE(a), LTG_NODE(b))) ? true : false;
@@ -107,12 +107,12 @@ ltree_same(PG_FUNCTION_ARGS)
 					sb = LTG_SIGN(b);
 
 		if (LTG_ISALLTRUE(a) != LTG_ISALLTRUE(b))
-			PG_RETURN_POINTER(result);
+			MDB_RETURN_POINTER(result);
 
 		if (!ISEQ(LTG_LNODE(a), LTG_LNODE(b)))
-			PG_RETURN_POINTER(result);
+			MDB_RETURN_POINTER(result);
 		if (!ISEQ(LTG_RNODE(a), LTG_RNODE(b)))
-			PG_RETURN_POINTER(result);
+			MDB_RETURN_POINTER(result);
 
 		*result = true;
 		if (!LTG_ISALLTRUE(a))
@@ -128,7 +128,7 @@ ltree_same(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 static void
@@ -148,10 +148,10 @@ hashing(BITVECP sign, ltree *t)
 }
 
 Datum
-ltree_union(PG_FUNCTION_ARGS)
+ltree_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	int		   *size = (int *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	int		   *size = (int *) MDB_GETARG_POINTER(1);
 	BITVEC		base;
 	int32		i,
 				j;
@@ -228,15 +228,15 @@ ltree_union(PG_FUNCTION_ARGS)
 	else
 		memcpy((void *) LTG_RNODE(result), (void *) right, VARSIZE(right));
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-ltree_penalty(PG_FUNCTION_ARGS)
+ltree_penalty(MDB_FUNCTION_ARGS)
 {
-	ltree_gist *origval = (ltree_gist *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	ltree_gist *newval = (ltree_gist *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(1))->key);
-	float	   *penalty = (float *) PG_GETARG_POINTER(2);
+	ltree_gist *origval = (ltree_gist *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	ltree_gist *newval = (ltree_gist *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(1))->key);
+	float	   *penalty = (float *) MDB_GETARG_POINTER(2);
 	int32		cmpr,
 				cmpl;
 
@@ -245,7 +245,7 @@ ltree_penalty(PG_FUNCTION_ARGS)
 
 	*penalty = Max(cmpl, 0) + Max(cmpr, 0);
 
-	PG_RETURN_POINTER(penalty);
+	MDB_RETURN_POINTER(penalty);
 }
 
 /* used for sorting */
@@ -266,10 +266,10 @@ treekey_cmp(const void *a, const void *b)
 
 
 Datum
-ltree_picksplit(PG_FUNCTION_ARGS)
+ltree_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber j;
 	int32		i;
 	RIX		   *array;
@@ -419,7 +419,7 @@ ltree_picksplit(PG_FUNCTION_ARGS)
 	v->spl_ldatum = PointerGetDatum(lu);
 	v->spl_rdatum = PointerGetDatum(ru);
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 static bool
@@ -604,13 +604,13 @@ arrq_cons(ltree_gist *key, ArrayType *_query)
 }
 
 Datum
-ltree_consistent(PG_FUNCTION_ARGS)
+ltree_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	ltree_gist *key = (ltree_gist *) DatumGetPointer(entry->key);
 	void	   *query = NULL;
 	bool		res = false;
@@ -621,18 +621,18 @@ ltree_consistent(PG_FUNCTION_ARGS)
 	switch (strategy)
 	{
 		case BTLessStrategyNumber:
-			query = PG_GETARG_LTREE(1);
+			query = MDB_GETARG_LTREE(1);
 			res = (GIST_LEAF(entry)) ?
 				(ltree_compare((ltree *) query, LTG_NODE(key)) > 0)
 				:
 				(ltree_compare((ltree *) query, LTG_GETLNODE(key)) >= 0);
 			break;
 		case BTLessEqualStrategyNumber:
-			query = PG_GETARG_LTREE(1);
+			query = MDB_GETARG_LTREE(1);
 			res = (ltree_compare((ltree *) query, LTG_GETLNODE(key)) >= 0);
 			break;
 		case BTEqualStrategyNumber:
-			query = PG_GETARG_LTREE(1);
+			query = MDB_GETARG_LTREE(1);
 			if (GIST_LEAF(entry))
 				res = (ltree_compare((ltree *) query, LTG_NODE(key)) == 0);
 			else
@@ -643,25 +643,25 @@ ltree_consistent(PG_FUNCTION_ARGS)
 					);
 			break;
 		case BTGreaterEqualStrategyNumber:
-			query = PG_GETARG_LTREE(1);
+			query = MDB_GETARG_LTREE(1);
 			res = (ltree_compare((ltree *) query, LTG_GETRNODE(key)) <= 0);
 			break;
 		case BTGreaterStrategyNumber:
-			query = PG_GETARG_LTREE(1);
+			query = MDB_GETARG_LTREE(1);
 			res = (GIST_LEAF(entry)) ?
 				(ltree_compare((ltree *) query, LTG_GETRNODE(key)) < 0)
 				:
 				(ltree_compare((ltree *) query, LTG_GETRNODE(key)) <= 0);
 			break;
 		case 10:
-			query = PG_GETARG_LTREE_COPY(1);
+			query = MDB_GETARG_LTREE_COPY(1);
 			res = (GIST_LEAF(entry)) ?
 				inner_isparent((ltree *) query, LTG_NODE(key))
 				:
 				gist_isparent(key, (ltree *) query);
 			break;
 		case 11:
-			query = PG_GETARG_LTREE(1);
+			query = MDB_GETARG_LTREE(1);
 			res = (GIST_LEAF(entry)) ?
 				inner_isparent(LTG_NODE(key), (ltree *) query)
 				:
@@ -669,7 +669,7 @@ ltree_consistent(PG_FUNCTION_ARGS)
 			break;
 		case 12:
 		case 13:
-			query = PG_GETARG_LQUERY(1);
+			query = MDB_GETARG_LQUERY(1);
 			if (GIST_LEAF(entry))
 				res = DatumGetBool(DirectFunctionCall2(ltq_regex,
 											  PointerGetDatum(LTG_NODE(key)),
@@ -680,7 +680,7 @@ ltree_consistent(PG_FUNCTION_ARGS)
 			break;
 		case 14:
 		case 15:
-			query = PG_GETARG_LQUERY(1);
+			query = MDB_GETARG_LQUERY(1);
 			if (GIST_LEAF(entry))
 				res = DatumGetBool(DirectFunctionCall2(ltxtq_exec,
 											  PointerGetDatum(LTG_NODE(key)),
@@ -691,7 +691,7 @@ ltree_consistent(PG_FUNCTION_ARGS)
 			break;
 		case 16:
 		case 17:
-			query = DatumGetPointer(PG_DETOAST_DATUM(PG_GETARG_DATUM(1)));
+			query = DatumGetPointer(MDB_DETOAST_DATUM(MDB_GETARG_DATUM(1)));
 			if (GIST_LEAF(entry))
 				res = DatumGetBool(DirectFunctionCall2(lt_q_regex,
 											  PointerGetDatum(LTG_NODE(key)),
@@ -705,6 +705,6 @@ ltree_consistent(PG_FUNCTION_ARGS)
 			elog(ERROR, "unrecognized StrategyNumber: %d", strategy);
 	}
 
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_BOOL(res);
 }

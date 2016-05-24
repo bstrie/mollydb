@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TYPE_H
-#define PG_TYPE_H
+#ifndef MDB_TYPE_H
+#define MDB_TYPE_H
 
 #include "catalog/genbki.h"
 
@@ -737,4 +737,4 @@ DATA(insert OID = 3831 ( anyrange		PGNSP PGUID  -1 f p P f t \054 0 0 0 anyrange
 	 (typid) == ANYENUMOID || \
 	 (typid) == ANYRANGEOID)
 
-#endif   /* PG_TYPE_H */
+#endif   /* MDB_TYPE_H */

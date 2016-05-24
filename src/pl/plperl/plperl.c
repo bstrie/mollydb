@@ -45,7 +45,7 @@
 
 /* define our text domain for translations */
 #undef TEXTDOMAIN
-#define TEXTDOMAIN PG_TEXTDOMAIN("plperl")
+#define TEXTDOMAIN MDB_TEXTDOMAIN("plperl")
 
 /* perl stuff */
 #include "plperl.h"
@@ -60,7 +60,7 @@ EXTERN_C void boot_DynaLoader(pTHX_ CV *cv);
 EXTERN_C void boot_MollyDB__InServer__Util(pTHX_ CV *cv);
 EXTERN_C void boot_MollyDB__InServer__SPI(pTHX_ CV *cv);
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /**********************************************************************
  * Information associated with a Perl interpreter.  We have one interpreter
@@ -244,16 +244,16 @@ static plperl_call_data *current_call_data = NULL;
 /**********************************************************************
  * Forward declarations
  **********************************************************************/
-void		_PG_init(void);
+void		_MDB_init(void);
 
 static PerlInterpreter *plperl_init_interp(void);
 static void plperl_destroy_interp(PerlInterpreter **);
 static void plperl_fini(int code, Datum arg);
 static void set_interp_require(bool trusted);
 
-static Datum plperl_func_handler(PG_FUNCTION_ARGS);
-static Datum plperl_trigger_handler(PG_FUNCTION_ARGS);
-static void plperl_event_trigger_handler(PG_FUNCTION_ARGS);
+static Datum plperl_func_handler(MDB_FUNCTION_ARGS);
+static Datum plperl_trigger_handler(MDB_FUNCTION_ARGS);
+static void plperl_event_trigger_handler(MDB_FUNCTION_ARGS);
 
 static void free_plperl_function(plperl_proc_desc *prodesc);
 
@@ -372,12 +372,12 @@ perm_fmgr_info(Oid functionId, FmgrInfo *finfo)
 
 
 /*
- * _PG_init()			- library load-time initialization
+ * _MDB_init()			- library load-time initialization
  *
  * DO NOT make this static nor change its name!
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/*
 	 * Be sure we do initialization only once.
@@ -505,7 +505,7 @@ set_interp_require(bool trusted)
 
 /*
  * Cleanup perl interpreters, including running END blocks.
- * Does not fully undo the actions of _PG_init() nor make it callable again.
+ * Does not fully undo the actions of _MDB_init() nor make it callable again.
  */
 static void
 plperl_fini(int code, Datum arg)
@@ -1762,10 +1762,10 @@ plperl_modify_tuple(HV *hvTD, TriggerData *tdata, HeapTuple otup)
  * The call handler is called to run normal functions (including trigger
  * functions) that are defined in mdb_proc.
  */
-PG_FUNCTION_INFO_V1(plperl_call_handler);
+MDB_FUNCTION_INFO_V1(plperl_call_handler);
 
 Datum
-plperl_call_handler(PG_FUNCTION_ARGS)
+plperl_call_handler(MDB_FUNCTION_ARGS)
 {
 	Datum		retval;
 	plperl_call_data *save_call_data = current_call_data;
@@ -1776,7 +1776,7 @@ plperl_call_handler(PG_FUNCTION_ARGS)
 	MemSet(&this_call_data, 0, sizeof(this_call_data));
 	this_call_data.fcinfo = fcinfo;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		current_call_data = &this_call_data;
 		if (CALLED_AS_TRIGGER(fcinfo))
@@ -1789,15 +1789,15 @@ plperl_call_handler(PG_FUNCTION_ARGS)
 		else
 			retval = plperl_func_handler(fcinfo);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (this_call_data.prodesc)
 			decrement_prodesc_refcount(this_call_data.prodesc);
 		current_call_data = save_call_data;
 		activate_interpreter(oldinterp);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (this_call_data.prodesc)
 		decrement_prodesc_refcount(this_call_data.prodesc);
@@ -1809,12 +1809,12 @@ plperl_call_handler(PG_FUNCTION_ARGS)
 /*
  * The inline handler runs anonymous code blocks (DO blocks).
  */
-PG_FUNCTION_INFO_V1(plperl_inline_handler);
+MDB_FUNCTION_INFO_V1(plperl_inline_handler);
 
 Datum
-plperl_inline_handler(PG_FUNCTION_ARGS)
+plperl_inline_handler(MDB_FUNCTION_ARGS)
 {
-	InlineCodeBlock *codeblock = (InlineCodeBlock *) PG_GETARG_POINTER(0);
+	InlineCodeBlock *codeblock = (InlineCodeBlock *) MDB_GETARG_POINTER(0);
 	FunctionCallInfoData fake_fcinfo;
 	FmgrInfo	flinfo;
 	plperl_proc_desc desc;
@@ -1862,7 +1862,7 @@ plperl_inline_handler(PG_FUNCTION_ARGS)
 	this_call_data.prodesc = &desc;
 	/* we do not bother with refcounting the fake prodesc */
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		SV		   *perlret;
 
@@ -1885,15 +1885,15 @@ plperl_inline_handler(PG_FUNCTION_ARGS)
 		if (SPI_finish() != SPI_OK_FINISH)
 			elog(ERROR, "SPI_finish() failed");
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (desc.reference)
 			SvREFCNT_dec(desc.reference);
 		current_call_data = save_call_data;
 		activate_interpreter(oldinterp);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (desc.reference)
 		SvREFCNT_dec(desc.reference);
@@ -1903,7 +1903,7 @@ plperl_inline_handler(PG_FUNCTION_ARGS)
 
 	error_context_stack = pl_error_context.previous;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -1911,12 +1911,12 @@ plperl_inline_handler(PG_FUNCTION_ARGS)
  * being created/replaced. The precise behavior of the validator may be
  * modified by the check_function_bodies GUC.
  */
-PG_FUNCTION_INFO_V1(plperl_validator);
+MDB_FUNCTION_INFO_V1(plperl_validator);
 
 Datum
-plperl_validator(PG_FUNCTION_ARGS)
+plperl_validator(MDB_FUNCTION_ARGS)
 {
-	Oid			funcoid = PG_GETARG_OID(0);
+	Oid			funcoid = MDB_GETARG_OID(0);
 	HeapTuple	tuple;
 	Form_mdb_proc proc;
 	char		functyptype;
@@ -1929,7 +1929,7 @@ plperl_validator(PG_FUNCTION_ARGS)
 	int			i;
 
 	if (!CheckFunctionValidatorAccess(fcinfo->flinfo->fn_oid, funcoid))
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 
 	/* Get the new function's mdb_proc entry */
 	tuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcoid));
@@ -1979,7 +1979,7 @@ plperl_validator(PG_FUNCTION_ARGS)
 	}
 
 	/* the result of a validator is ignored */
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
@@ -1991,26 +1991,26 @@ plperl_validator(PG_FUNCTION_ARGS)
  * trusted or not by inspecting the actual mdb_language tuple.
  */
 
-PG_FUNCTION_INFO_V1(plperlu_call_handler);
+MDB_FUNCTION_INFO_V1(plperlu_call_handler);
 
 Datum
-plperlu_call_handler(PG_FUNCTION_ARGS)
+plperlu_call_handler(MDB_FUNCTION_ARGS)
 {
 	return plperl_call_handler(fcinfo);
 }
 
-PG_FUNCTION_INFO_V1(plperlu_inline_handler);
+MDB_FUNCTION_INFO_V1(plperlu_inline_handler);
 
 Datum
-plperlu_inline_handler(PG_FUNCTION_ARGS)
+plperlu_inline_handler(MDB_FUNCTION_ARGS)
 {
 	return plperl_inline_handler(fcinfo);
 }
 
-PG_FUNCTION_INFO_V1(plperlu_validator);
+MDB_FUNCTION_INFO_V1(plperlu_validator);
 
 Datum
-plperlu_validator(PG_FUNCTION_ARGS)
+plperlu_validator(MDB_FUNCTION_ARGS)
 {
 	/* call plperl validator with our fcinfo so it gets our oid */
 	return plperl_validator(fcinfo);
@@ -2329,7 +2329,7 @@ plperl_call_perl_event_trigger_func(plperl_proc_desc *desc,
 }
 
 static Datum
-plperl_func_handler(PG_FUNCTION_ARGS)
+plperl_func_handler(MDB_FUNCTION_ARGS)
 {
 	plperl_proc_desc *prodesc;
 	SV		   *perlret;
@@ -2440,7 +2440,7 @@ plperl_func_handler(PG_FUNCTION_ARGS)
 
 
 static Datum
-plperl_trigger_handler(PG_FUNCTION_ARGS)
+plperl_trigger_handler(MDB_FUNCTION_ARGS)
 {
 	plperl_proc_desc *prodesc;
 	SV		   *perlret;
@@ -2546,7 +2546,7 @@ plperl_trigger_handler(PG_FUNCTION_ARGS)
 
 
 static void
-plperl_event_trigger_handler(PG_FUNCTION_ARGS)
+plperl_event_trigger_handler(MDB_FUNCTION_ARGS)
 {
 	plperl_proc_desc *prodesc;
 	SV		   *svTD;
@@ -3036,7 +3036,7 @@ plperl_spi_exec(char *query, int limit)
 	/* Want to run inside function's memory context */
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		int			spi_rv;
 
@@ -3058,7 +3058,7 @@ plperl_spi_exec(char *query, int limit)
 		 */
 		SPI_restore_connection();
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *edata;
 
@@ -3085,7 +3085,7 @@ plperl_spi_exec(char *query, int limit)
 		/* Can't get here, but keep compiler quiet */
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return ret_hv;
 }
@@ -3267,7 +3267,7 @@ plperl_spi_query(char *query)
 	/* Want to run inside function's memory context */
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		SPIPlanPtr	plan;
 		Portal		portal;
@@ -3299,7 +3299,7 @@ plperl_spi_query(char *query)
 		 */
 		SPI_restore_connection();
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *edata;
 
@@ -3326,7 +3326,7 @@ plperl_spi_query(char *query)
 		/* Can't get here, but keep compiler quiet */
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return cursor;
 }
@@ -3350,7 +3350,7 @@ plperl_spi_fetchrow(char *cursor)
 	/* Want to run inside function's memory context */
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		Portal		p = SPI_cursor_find(cursor);
 
@@ -3385,7 +3385,7 @@ plperl_spi_fetchrow(char *cursor)
 		 */
 		SPI_restore_connection();
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *edata;
 
@@ -3412,7 +3412,7 @@ plperl_spi_fetchrow(char *cursor)
 		/* Can't get here, but keep compiler quiet */
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return row;
 }
@@ -3448,7 +3448,7 @@ plperl_spi_prepare(char *query, int argc, SV **argv)
 	BeginInternalSubTransaction(NULL);
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		CHECK_FOR_INTERRUPTS();
 
@@ -3550,7 +3550,7 @@ plperl_spi_prepare(char *query, int argc, SV **argv)
 		 */
 		SPI_restore_connection();
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *edata;
 
@@ -3587,7 +3587,7 @@ plperl_spi_prepare(char *query, int argc, SV **argv)
 		/* Can't get here, but keep compiler quiet */
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/************************************************************
 	 * Return the query's hash key to the caller.
@@ -3621,7 +3621,7 @@ plperl_spi_exec_prepared(char *query, HV *attr, int argc, SV **argv)
 	/* Want to run inside function's memory context */
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/************************************************************
 		 * Fetch the saved plan descriptor, see if it's o.k.
@@ -3701,7 +3701,7 @@ plperl_spi_exec_prepared(char *query, HV *attr, int argc, SV **argv)
 		 */
 		SPI_restore_connection();
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *edata;
 
@@ -3728,7 +3728,7 @@ plperl_spi_exec_prepared(char *query, HV *attr, int argc, SV **argv)
 		/* Can't get here, but keep compiler quiet */
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return ret_hv;
 }
@@ -3757,7 +3757,7 @@ plperl_spi_query_prepared(char *query, int argc, SV **argv)
 	/* Want to run inside function's memory context */
 	MemoryContextSwitchTo(oldcontext);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/************************************************************
 		 * Fetch the saved plan descriptor, see if it's o.k.
@@ -3830,7 +3830,7 @@ plperl_spi_query_prepared(char *query, int argc, SV **argv)
 		 */
 		SPI_restore_connection();
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *edata;
 
@@ -3857,7 +3857,7 @@ plperl_spi_query_prepared(char *query, int argc, SV **argv)
 		/* Can't get here, but keep compiler quiet */
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return cursor;
 }
@@ -3904,7 +3904,7 @@ hv_store_string(HV *hv, const char *key, SV *val)
 	char	   *hkey;
 	SV		  **ret;
 
-	hkey = mdb_server_to_any(key, strlen(key), PG_UTF8);
+	hkey = mdb_server_to_any(key, strlen(key), MDB_UTF8);
 
 	/*
 	 * hv_store() recognizes a negative klen parameter as meaning a UTF-8
@@ -3930,7 +3930,7 @@ hv_fetch_string(HV *hv, const char *key)
 	char	   *hkey;
 	SV		  **ret;
 
-	hkey = mdb_server_to_any(key, strlen(key), PG_UTF8);
+	hkey = mdb_server_to_any(key, strlen(key), MDB_UTF8);
 
 	/* See notes in hv_store_string */
 	hlen = -(int) strlen(hkey);

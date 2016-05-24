@@ -26,7 +26,7 @@
 #include "pgtime.h"				/* for mdb_time_t */
 
 
-#define PG_BACKEND_VERSIONSTR "mollydb (MollyDB) " PG_VERSION "\n"
+#define MDB_BACKEND_VERSIONSTR "mollydb (MollyDB) " MDB_VERSION "\n"
 
 #define InvalidPid				(-1)
 

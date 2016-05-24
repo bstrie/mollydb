@@ -232,7 +232,7 @@ PgArchiverMain(int argc, char *argv[])
 	pqsignal(SIGTTOU, SIG_DFL);
 	pqsignal(SIGCONT, SIG_DFL);
 	pqsignal(SIGWINCH, SIG_DFL);
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/*
 	 * Identify myself via ps

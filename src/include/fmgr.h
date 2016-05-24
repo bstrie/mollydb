@@ -135,35 +135,35 @@ extern void fmgr_info_copy(FmgrInfo *dstinfo, FmgrInfo *srcinfo,
  * A C-coded fmgr-compatible function should be declared as
  *
  *		Datum
- *		function_name(PG_FUNCTION_ARGS)
+ *		function_name(MDB_FUNCTION_ARGS)
  *		{
  *			...
  *		}
  *
- * It should access its arguments using appropriate PG_GETARG_xxx macros
- * and should return its result using PG_RETURN_xxx.
+ * It should access its arguments using appropriate MDB_GETARG_xxx macros
+ * and should return its result using MDB_RETURN_xxx.
  *
  *-------------------------------------------------------------------------
  */
 
 /* Standard parameter list for fmgr-compatible functions */
-#define PG_FUNCTION_ARGS	FunctionCallInfo fcinfo
+#define MDB_FUNCTION_ARGS	FunctionCallInfo fcinfo
 
 /*
  * Get collation function should use.
  */
-#define PG_GET_COLLATION()	(fcinfo->fncollation)
+#define MDB_GET_COLLATION()	(fcinfo->fncollation)
 
 /*
  * Get number of arguments passed to function.
  */
-#define PG_NARGS() (fcinfo->nargs)
+#define MDB_NARGS() (fcinfo->nargs)
 
 /*
  * If function is not marked "proisstrict" in mdb_proc, it must check for
  * null arguments using this macro.  Do not try to GETARG a null argument!
  */
-#define PG_ARGISNULL(n)  (fcinfo->argnull[n])
+#define MDB_ARGISNULL(n)  (fcinfo->argnull[n])
 
 /*
  * Support for fetching detoasted copies of toastable datatypes (all of
@@ -193,15 +193,15 @@ extern struct varlena *mdb_detoast_datum_slice(struct varlena * datum,
 					   int32 first, int32 count);
 extern struct varlena *mdb_detoast_datum_packed(struct varlena * datum);
 
-#define PG_DETOAST_DATUM(datum) \
+#define MDB_DETOAST_DATUM(datum) \
 	mdb_detoast_datum((struct varlena *) DatumGetPointer(datum))
-#define PG_DETOAST_DATUM_COPY(datum) \
+#define MDB_DETOAST_DATUM_COPY(datum) \
 	mdb_detoast_datum_copy((struct varlena *) DatumGetPointer(datum))
-#define PG_DETOAST_DATUM_SLICE(datum,f,c) \
+#define MDB_DETOAST_DATUM_SLICE(datum,f,c) \
 		mdb_detoast_datum_slice((struct varlena *) DatumGetPointer(datum), \
 		(int32) (f), (int32) (c))
 /* WARNING -- unaligned pointer */
-#define PG_DETOAST_DATUM_PACKED(datum) \
+#define MDB_DETOAST_DATUM_PACKED(datum) \
 	mdb_detoast_datum_packed((struct varlena *) DatumGetPointer(datum))
 
 /*
@@ -213,108 +213,108 @@ extern struct varlena *mdb_detoast_datum_packed(struct varlena * datum);
  * but we currently require that support functions for indexes not leak
  * memory.
  */
-#define PG_FREE_IF_COPY(ptr,n) \
+#define MDB_FREE_IF_COPY(ptr,n) \
 	do { \
-		if ((Pointer) (ptr) != PG_GETARG_POINTER(n)) \
+		if ((Pointer) (ptr) != MDB_GETARG_POINTER(n)) \
 			pfree(ptr); \
 	} while (0)
 
 /* Macros for fetching arguments of standard types */
 
-#define PG_GETARG_DATUM(n)	 (fcinfo->arg[n])
-#define PG_GETARG_INT32(n)	 DatumGetInt32(PG_GETARG_DATUM(n))
-#define PG_GETARG_UINT32(n)  DatumGetUInt32(PG_GETARG_DATUM(n))
-#define PG_GETARG_INT16(n)	 DatumGetInt16(PG_GETARG_DATUM(n))
-#define PG_GETARG_UINT16(n)  DatumGetUInt16(PG_GETARG_DATUM(n))
-#define PG_GETARG_CHAR(n)	 DatumGetChar(PG_GETARG_DATUM(n))
-#define PG_GETARG_BOOL(n)	 DatumGetBool(PG_GETARG_DATUM(n))
-#define PG_GETARG_OID(n)	 DatumGetObjectId(PG_GETARG_DATUM(n))
-#define PG_GETARG_POINTER(n) DatumGetPointer(PG_GETARG_DATUM(n))
-#define PG_GETARG_CSTRING(n) DatumGetCString(PG_GETARG_DATUM(n))
-#define PG_GETARG_NAME(n)	 DatumGetName(PG_GETARG_DATUM(n))
+#define MDB_GETARG_DATUM(n)	 (fcinfo->arg[n])
+#define MDB_GETARG_INT32(n)	 DatumGetInt32(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_UINT32(n)  DatumGetUInt32(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_INT16(n)	 DatumGetInt16(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_UINT16(n)  DatumGetUInt16(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_CHAR(n)	 DatumGetChar(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_BOOL(n)	 DatumGetBool(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_OID(n)	 DatumGetObjectId(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_POINTER(n) DatumGetPointer(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_CSTRING(n) DatumGetCString(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_NAME(n)	 DatumGetName(MDB_GETARG_DATUM(n))
 /* these macros hide the pass-by-reference-ness of the datatype: */
-#define PG_GETARG_FLOAT4(n)  DatumGetFloat4(PG_GETARG_DATUM(n))
-#define PG_GETARG_FLOAT8(n)  DatumGetFloat8(PG_GETARG_DATUM(n))
-#define PG_GETARG_INT64(n)	 DatumGetInt64(PG_GETARG_DATUM(n))
+#define MDB_GETARG_FLOAT4(n)  DatumGetFloat4(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_FLOAT8(n)  DatumGetFloat8(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_INT64(n)	 DatumGetInt64(MDB_GETARG_DATUM(n))
 /* use this if you want the raw, possibly-toasted input datum: */
-#define PG_GETARG_RAW_VARLENA_P(n)	((struct varlena *) PG_GETARG_POINTER(n))
+#define MDB_GETARG_RAW_VARLENA_P(n)	((struct varlena *) MDB_GETARG_POINTER(n))
 /* use this if you want the input datum de-toasted: */
-#define PG_GETARG_VARLENA_P(n) PG_DETOAST_DATUM(PG_GETARG_DATUM(n))
+#define MDB_GETARG_VARLENA_P(n) MDB_DETOAST_DATUM(MDB_GETARG_DATUM(n))
 /* and this if you can handle 1-byte-header datums: */
-#define PG_GETARG_VARLENA_PP(n) PG_DETOAST_DATUM_PACKED(PG_GETARG_DATUM(n))
+#define MDB_GETARG_VARLENA_PP(n) MDB_DETOAST_DATUM_PACKED(MDB_GETARG_DATUM(n))
 /* DatumGetFoo macros for varlena types will typically look like this: */
-#define DatumGetByteaP(X)			((bytea *) PG_DETOAST_DATUM(X))
-#define DatumGetByteaPP(X)			((bytea *) PG_DETOAST_DATUM_PACKED(X))
-#define DatumGetTextP(X)			((text *) PG_DETOAST_DATUM(X))
-#define DatumGetTextPP(X)			((text *) PG_DETOAST_DATUM_PACKED(X))
-#define DatumGetBpCharP(X)			((BpChar *) PG_DETOAST_DATUM(X))
-#define DatumGetBpCharPP(X)			((BpChar *) PG_DETOAST_DATUM_PACKED(X))
-#define DatumGetVarCharP(X)			((VarChar *) PG_DETOAST_DATUM(X))
-#define DatumGetVarCharPP(X)		((VarChar *) PG_DETOAST_DATUM_PACKED(X))
-#define DatumGetHeapTupleHeader(X)	((HeapTupleHeader) PG_DETOAST_DATUM(X))
+#define DatumGetByteaP(X)			((bytea *) MDB_DETOAST_DATUM(X))
+#define DatumGetByteaPP(X)			((bytea *) MDB_DETOAST_DATUM_PACKED(X))
+#define DatumGetTextP(X)			((text *) MDB_DETOAST_DATUM(X))
+#define DatumGetTextPP(X)			((text *) MDB_DETOAST_DATUM_PACKED(X))
+#define DatumGetBpCharP(X)			((BpChar *) MDB_DETOAST_DATUM(X))
+#define DatumGetBpCharPP(X)			((BpChar *) MDB_DETOAST_DATUM_PACKED(X))
+#define DatumGetVarCharP(X)			((VarChar *) MDB_DETOAST_DATUM(X))
+#define DatumGetVarCharPP(X)		((VarChar *) MDB_DETOAST_DATUM_PACKED(X))
+#define DatumGetHeapTupleHeader(X)	((HeapTupleHeader) MDB_DETOAST_DATUM(X))
 /* And we also offer variants that return an OK-to-write copy */
-#define DatumGetByteaPCopy(X)		((bytea *) PG_DETOAST_DATUM_COPY(X))
-#define DatumGetTextPCopy(X)		((text *) PG_DETOAST_DATUM_COPY(X))
-#define DatumGetBpCharPCopy(X)		((BpChar *) PG_DETOAST_DATUM_COPY(X))
-#define DatumGetVarCharPCopy(X)		((VarChar *) PG_DETOAST_DATUM_COPY(X))
-#define DatumGetHeapTupleHeaderCopy(X)	((HeapTupleHeader) PG_DETOAST_DATUM_COPY(X))
+#define DatumGetByteaPCopy(X)		((bytea *) MDB_DETOAST_DATUM_COPY(X))
+#define DatumGetTextPCopy(X)		((text *) MDB_DETOAST_DATUM_COPY(X))
+#define DatumGetBpCharPCopy(X)		((BpChar *) MDB_DETOAST_DATUM_COPY(X))
+#define DatumGetVarCharPCopy(X)		((VarChar *) MDB_DETOAST_DATUM_COPY(X))
+#define DatumGetHeapTupleHeaderCopy(X)	((HeapTupleHeader) MDB_DETOAST_DATUM_COPY(X))
 /* Variants which return n bytes starting at pos. m */
-#define DatumGetByteaPSlice(X,m,n)	((bytea *) PG_DETOAST_DATUM_SLICE(X,m,n))
-#define DatumGetTextPSlice(X,m,n)	((text *) PG_DETOAST_DATUM_SLICE(X,m,n))
-#define DatumGetBpCharPSlice(X,m,n) ((BpChar *) PG_DETOAST_DATUM_SLICE(X,m,n))
-#define DatumGetVarCharPSlice(X,m,n) ((VarChar *) PG_DETOAST_DATUM_SLICE(X,m,n))
+#define DatumGetByteaPSlice(X,m,n)	((bytea *) MDB_DETOAST_DATUM_SLICE(X,m,n))
+#define DatumGetTextPSlice(X,m,n)	((text *) MDB_DETOAST_DATUM_SLICE(X,m,n))
+#define DatumGetBpCharPSlice(X,m,n) ((BpChar *) MDB_DETOAST_DATUM_SLICE(X,m,n))
+#define DatumGetVarCharPSlice(X,m,n) ((VarChar *) MDB_DETOAST_DATUM_SLICE(X,m,n))
 /* GETARG macros for varlena types will typically look like this: */
-#define PG_GETARG_BYTEA_P(n)		DatumGetByteaP(PG_GETARG_DATUM(n))
-#define PG_GETARG_BYTEA_PP(n)		DatumGetByteaPP(PG_GETARG_DATUM(n))
-#define PG_GETARG_TEXT_P(n)			DatumGetTextP(PG_GETARG_DATUM(n))
-#define PG_GETARG_TEXT_PP(n)		DatumGetTextPP(PG_GETARG_DATUM(n))
-#define PG_GETARG_BPCHAR_P(n)		DatumGetBpCharP(PG_GETARG_DATUM(n))
-#define PG_GETARG_BPCHAR_PP(n)		DatumGetBpCharPP(PG_GETARG_DATUM(n))
-#define PG_GETARG_VARCHAR_P(n)		DatumGetVarCharP(PG_GETARG_DATUM(n))
-#define PG_GETARG_VARCHAR_PP(n)		DatumGetVarCharPP(PG_GETARG_DATUM(n))
-#define PG_GETARG_HEAPTUPLEHEADER(n)	DatumGetHeapTupleHeader(PG_GETARG_DATUM(n))
+#define MDB_GETARG_BYTEA_P(n)		DatumGetByteaP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_BYTEA_PP(n)		DatumGetByteaPP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_TEXT_P(n)			DatumGetTextP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_TEXT_PP(n)		DatumGetTextPP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_BPCHAR_P(n)		DatumGetBpCharP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_BPCHAR_PP(n)		DatumGetBpCharPP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_VARCHAR_P(n)		DatumGetVarCharP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_VARCHAR_PP(n)		DatumGetVarCharPP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_HEAPTUPLEHEADER(n)	DatumGetHeapTupleHeader(MDB_GETARG_DATUM(n))
 /* And we also offer variants that return an OK-to-write copy */
-#define PG_GETARG_BYTEA_P_COPY(n)	DatumGetByteaPCopy(PG_GETARG_DATUM(n))
-#define PG_GETARG_TEXT_P_COPY(n)	DatumGetTextPCopy(PG_GETARG_DATUM(n))
-#define PG_GETARG_BPCHAR_P_COPY(n)	DatumGetBpCharPCopy(PG_GETARG_DATUM(n))
-#define PG_GETARG_VARCHAR_P_COPY(n) DatumGetVarCharPCopy(PG_GETARG_DATUM(n))
-#define PG_GETARG_HEAPTUPLEHEADER_COPY(n)	DatumGetHeapTupleHeaderCopy(PG_GETARG_DATUM(n))
+#define MDB_GETARG_BYTEA_P_COPY(n)	DatumGetByteaPCopy(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_TEXT_P_COPY(n)	DatumGetTextPCopy(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_BPCHAR_P_COPY(n)	DatumGetBpCharPCopy(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_VARCHAR_P_COPY(n) DatumGetVarCharPCopy(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_HEAPTUPLEHEADER_COPY(n)	DatumGetHeapTupleHeaderCopy(MDB_GETARG_DATUM(n))
 /* And a b-byte slice from position a -also OK to write */
-#define PG_GETARG_BYTEA_P_SLICE(n,a,b) DatumGetByteaPSlice(PG_GETARG_DATUM(n),a,b)
-#define PG_GETARG_TEXT_P_SLICE(n,a,b)  DatumGetTextPSlice(PG_GETARG_DATUM(n),a,b)
-#define PG_GETARG_BPCHAR_P_SLICE(n,a,b) DatumGetBpCharPSlice(PG_GETARG_DATUM(n),a,b)
-#define PG_GETARG_VARCHAR_P_SLICE(n,a,b) DatumGetVarCharPSlice(PG_GETARG_DATUM(n),a,b)
+#define MDB_GETARG_BYTEA_P_SLICE(n,a,b) DatumGetByteaPSlice(MDB_GETARG_DATUM(n),a,b)
+#define MDB_GETARG_TEXT_P_SLICE(n,a,b)  DatumGetTextPSlice(MDB_GETARG_DATUM(n),a,b)
+#define MDB_GETARG_BPCHAR_P_SLICE(n,a,b) DatumGetBpCharPSlice(MDB_GETARG_DATUM(n),a,b)
+#define MDB_GETARG_VARCHAR_P_SLICE(n,a,b) DatumGetVarCharPSlice(MDB_GETARG_DATUM(n),a,b)
 
 /* To return a NULL do this: */
-#define PG_RETURN_NULL()  \
+#define MDB_RETURN_NULL()  \
 	do { fcinfo->isnull = true; return (Datum) 0; } while (0)
 
 /* A few internal functions return void (which is not the same as NULL!) */
-#define PG_RETURN_VOID()	 return (Datum) 0
+#define MDB_RETURN_VOID()	 return (Datum) 0
 
 /* Macros for returning results of standard types */
 
-#define PG_RETURN_DATUM(x)	 return (x)
-#define PG_RETURN_INT32(x)	 return Int32GetDatum(x)
-#define PG_RETURN_UINT32(x)  return UInt32GetDatum(x)
-#define PG_RETURN_INT16(x)	 return Int16GetDatum(x)
-#define PG_RETURN_UINT16(x)  return UInt16GetDatum(x)
-#define PG_RETURN_CHAR(x)	 return CharGetDatum(x)
-#define PG_RETURN_BOOL(x)	 return BoolGetDatum(x)
-#define PG_RETURN_OID(x)	 return ObjectIdGetDatum(x)
-#define PG_RETURN_POINTER(x) return PointerGetDatum(x)
-#define PG_RETURN_CSTRING(x) return CStringGetDatum(x)
-#define PG_RETURN_NAME(x)	 return NameGetDatum(x)
+#define MDB_RETURN_DATUM(x)	 return (x)
+#define MDB_RETURN_INT32(x)	 return Int32GetDatum(x)
+#define MDB_RETURN_UINT32(x)  return UInt32GetDatum(x)
+#define MDB_RETURN_INT16(x)	 return Int16GetDatum(x)
+#define MDB_RETURN_UINT16(x)  return UInt16GetDatum(x)
+#define MDB_RETURN_CHAR(x)	 return CharGetDatum(x)
+#define MDB_RETURN_BOOL(x)	 return BoolGetDatum(x)
+#define MDB_RETURN_OID(x)	 return ObjectIdGetDatum(x)
+#define MDB_RETURN_POINTER(x) return PointerGetDatum(x)
+#define MDB_RETURN_CSTRING(x) return CStringGetDatum(x)
+#define MDB_RETURN_NAME(x)	 return NameGetDatum(x)
 /* these macros hide the pass-by-reference-ness of the datatype: */
-#define PG_RETURN_FLOAT4(x)  return Float4GetDatum(x)
-#define PG_RETURN_FLOAT8(x)  return Float8GetDatum(x)
-#define PG_RETURN_INT64(x)	 return Int64GetDatum(x)
+#define MDB_RETURN_FLOAT4(x)  return Float4GetDatum(x)
+#define MDB_RETURN_FLOAT8(x)  return Float8GetDatum(x)
+#define MDB_RETURN_INT64(x)	 return Int64GetDatum(x)
 /* RETURN macros for other pass-by-ref types will typically look like this: */
-#define PG_RETURN_BYTEA_P(x)   PG_RETURN_POINTER(x)
-#define PG_RETURN_TEXT_P(x)    PG_RETURN_POINTER(x)
-#define PG_RETURN_BPCHAR_P(x)  PG_RETURN_POINTER(x)
-#define PG_RETURN_VARCHAR_P(x) PG_RETURN_POINTER(x)
-#define PG_RETURN_HEAPTUPLEHEADER(x)  return HeapTupleHeaderGetDatum(x)
+#define MDB_RETURN_BYTEA_P(x)   MDB_RETURN_POINTER(x)
+#define MDB_RETURN_TEXT_P(x)    MDB_RETURN_POINTER(x)
+#define MDB_RETURN_BPCHAR_P(x)  MDB_RETURN_POINTER(x)
+#define MDB_RETURN_VARCHAR_P(x) MDB_RETURN_POINTER(x)
+#define MDB_RETURN_HEAPTUPLEHEADER(x)  return HeapTupleHeaderGetDatum(x)
 
 
 /*-------------------------------------------------------------------------
@@ -325,7 +325,7 @@ extern struct varlena *mdb_detoast_datum_packed(struct varlena * datum);
  * convention defined in this header file; version 0 is the old "plain C"
  * convention.  A version-1 function must be accompanied by the macro call
  *
- *		PG_FUNCTION_INFO_V1(function_name);
+ *		MDB_FUNCTION_INFO_V1(function_name);
  *
  * Note that internal functions do not need this decoration since they are
  * assumed to be version-1.
@@ -347,8 +347,8 @@ typedef const Pg_finfo_record *(*PGFInfoFunction) (void);
  *	Win32 loadable functions usually link with 'dlltool --export-all', but it
  *	doesn't hurt to add PGDLLIMPORT in case they don't.
  */
-#define PG_FUNCTION_INFO_V1(funcname) \
-Datum funcname(PG_FUNCTION_ARGS); \
+#define MDB_FUNCTION_INFO_V1(funcname) \
+Datum funcname(MDB_FUNCTION_ARGS); \
 extern PGDLLEXPORT const Pg_finfo_record * CppConcat(mdb_finfo_,funcname)(void); \
 const Pg_finfo_record * \
 CppConcat(mdb_finfo_,funcname) (void) \
@@ -363,7 +363,7 @@ extern int no_such_variable
  *		Support for verifying backend compatibility of loaded modules
  *
  * We require dynamically-loaded modules to include the macro call
- *		PG_MODULE_MAGIC;
+ *		MDB_MODULE_MAGIC;
  * so that we can check for obvious incompatibility, such as being compiled
  * for a different major MollyDB version.
  *
@@ -397,10 +397,10 @@ typedef struct
 } Pg_magic_struct;
 
 /* The actual data block contents */
-#define PG_MODULE_MAGIC_DATA \
+#define MDB_MODULE_MAGIC_DATA \
 { \
 	sizeof(Pg_magic_struct), \
-	PG_VERSION_NUM / 100, \
+	MDB_VERSION_NUM / 100, \
 	FUNC_MAX_ARGS, \
 	INDEX_MAX_KEYS, \
 	NAMEDATALEN, \
@@ -414,15 +414,15 @@ typedef struct
  */
 typedef const Pg_magic_struct *(*PGModuleMagicFunction) (void);
 
-#define PG_MAGIC_FUNCTION_NAME Pg_magic_func
-#define PG_MAGIC_FUNCTION_NAME_STRING "Pg_magic_func"
+#define MDB_MAGIC_FUNCTION_NAME Pg_magic_func
+#define MDB_MAGIC_FUNCTION_NAME_STRING "Pg_magic_func"
 
-#define PG_MODULE_MAGIC \
-extern PGDLLEXPORT const Pg_magic_struct *PG_MAGIC_FUNCTION_NAME(void); \
+#define MDB_MODULE_MAGIC \
+extern PGDLLEXPORT const Pg_magic_struct *MDB_MAGIC_FUNCTION_NAME(void); \
 const Pg_magic_struct * \
-PG_MAGIC_FUNCTION_NAME(void) \
+MDB_MAGIC_FUNCTION_NAME(void) \
 { \
-	static const Pg_magic_struct Pg_magic_data = PG_MODULE_MAGIC_DATA; \
+	static const Pg_magic_struct Pg_magic_data = MDB_MODULE_MAGIC_DATA; \
 	return &Pg_magic_data; \
 } \
 extern int no_such_variable

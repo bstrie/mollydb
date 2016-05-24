@@ -19,14 +19,14 @@ TESTS = array_of_struct array_of_struct.c \
 
 all: $(TESTS)
 
-array_of_struct.c: array_of_struct.pgc $(ECPG_TEST_DEPENDENCIES)
+array_of_struct.c: array_of_struct.pgc $(ECMDB_TEST_DEPENDENCIES)
 	$(ECPG) -c -o $@ $<
 
-pointer_to_struct.c: pointer_to_struct.pgc $(ECPG_TEST_DEPENDENCIES)
+pointer_to_struct.c: pointer_to_struct.pgc $(ECMDB_TEST_DEPENDENCIES)
 	$(ECPG) -c -o $@ $<
 
-autoprep.c: autoprep.pgc $(ECPG_TEST_DEPENDENCIES)
+autoprep.c: autoprep.pgc $(ECMDB_TEST_DEPENDENCIES)
 	$(ECPG) -r prepare -o $@ $<
 
-strings.c: strings.pgc strings.h $(ECPG_TEST_DEPENDENCIES)
+strings.c: strings.pgc strings.h $(ECMDB_TEST_DEPENDENCIES)
 	$(ECPG) -i -o $@ $<

@@ -17,10 +17,10 @@
 #include "../../Unicode/sjis_to_utf8.map"
 #include "../../Unicode/utf8_to_sjis.map"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(sjis_to_utf8);
-PG_FUNCTION_INFO_V1(utf8_to_sjis);
+MDB_FUNCTION_INFO_V1(sjis_to_utf8);
+MDB_FUNCTION_INFO_V1(utf8_to_sjis);
 
 /* ----------
  * conv_proc(
@@ -33,37 +33,37 @@ PG_FUNCTION_INFO_V1(utf8_to_sjis);
  * ----------
  */
 Datum
-sjis_to_utf8(PG_FUNCTION_ARGS)
+sjis_to_utf8(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_SJIS, PG_UTF8);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_SJIS, MDB_UTF8);
 
 	LocalToUtf(src, len, dest,
 			   LUmapSJIS, lengthof(LUmapSJIS),
 			   NULL, 0,
 			   NULL,
-			   PG_SJIS);
+			   MDB_SJIS);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-utf8_to_sjis(PG_FUNCTION_ARGS)
+utf8_to_sjis(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_UTF8, PG_SJIS);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_UTF8, MDB_SJIS);
 
 	UtfToLocal(src, len, dest,
 			   ULmapSJIS, lengthof(ULmapSJIS),
 			   NULL, 0,
 			   NULL,
-			   PG_SJIS);
+			   MDB_SJIS);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

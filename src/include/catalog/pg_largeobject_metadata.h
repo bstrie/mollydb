@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_LARGEOBJECT_METADATA_H
-#define PG_LARGEOBJECT_METADATA_H
+#ifndef MDB_LARGEOBJECT_METADATA_H
+#define MDB_LARGEOBJECT_METADATA_H
 
 #include "catalog/genbki.h"
 
@@ -52,4 +52,4 @@ typedef FormData_mdb_largeobject_metadata *Form_mdb_largeobject_metadata;
 #define Anum_mdb_largeobject_metadata_lomowner	1
 #define Anum_mdb_largeobject_metadata_lomacl		2
 
-#endif   /* PG_LARGEOBJECT_METADATA_H */
+#endif   /* MDB_LARGEOBJECT_METADATA_H */

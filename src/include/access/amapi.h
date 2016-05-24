@@ -169,6 +169,6 @@ typedef struct IndexAmRoutine
 extern IndexAmRoutine *GetIndexAmRoutine(Oid amhandler);
 extern IndexAmRoutine *GetIndexAmRoutineByAmId(Oid amoid);
 
-extern Datum amvalidate(PG_FUNCTION_ARGS);
+extern Datum amvalidate(MDB_FUNCTION_ARGS);
 
 #endif   /* AMAPI_H */

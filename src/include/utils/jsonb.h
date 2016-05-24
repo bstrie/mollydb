@@ -65,10 +65,10 @@ typedef enum
 #define JGIN_MAXLENGTH	125		/* max length of text part before hashing */
 
 /* Convenience macros */
-#define DatumGetJsonb(d)	((Jsonb *) PG_DETOAST_DATUM(d))
+#define DatumGetJsonb(d)	((Jsonb *) MDB_DETOAST_DATUM(d))
 #define JsonbGetDatum(p)	PointerGetDatum(p)
-#define PG_GETARG_JSONB(x)	DatumGetJsonb(PG_GETARG_DATUM(x))
-#define PG_RETURN_JSONB(x)	PG_RETURN_POINTER(x)
+#define MDB_GETARG_JSONB(x)	DatumGetJsonb(MDB_GETARG_DATUM(x))
+#define MDB_RETURN_JSONB(x)	MDB_RETURN_POINTER(x)
 
 typedef struct JsonbPair JsonbPair;
 typedef struct JsonbValue JsonbValue;
@@ -344,72 +344,72 @@ typedef struct JsonbIterator
 } JsonbIterator;
 
 /* I/O routines */
-extern Datum jsonb_in(PG_FUNCTION_ARGS);
-extern Datum jsonb_out(PG_FUNCTION_ARGS);
-extern Datum jsonb_recv(PG_FUNCTION_ARGS);
-extern Datum jsonb_send(PG_FUNCTION_ARGS);
-extern Datum jsonb_typeof(PG_FUNCTION_ARGS);
+extern Datum jsonb_in(MDB_FUNCTION_ARGS);
+extern Datum jsonb_out(MDB_FUNCTION_ARGS);
+extern Datum jsonb_recv(MDB_FUNCTION_ARGS);
+extern Datum jsonb_send(MDB_FUNCTION_ARGS);
+extern Datum jsonb_typeof(MDB_FUNCTION_ARGS);
 
 /* generator routines */
-extern Datum to_jsonb(PG_FUNCTION_ARGS);
+extern Datum to_jsonb(MDB_FUNCTION_ARGS);
 
-extern Datum jsonb_build_object(PG_FUNCTION_ARGS);
-extern Datum jsonb_build_object_noargs(PG_FUNCTION_ARGS);
-extern Datum jsonb_build_array(PG_FUNCTION_ARGS);
-extern Datum jsonb_build_array_noargs(PG_FUNCTION_ARGS);
-extern Datum jsonb_object(PG_FUNCTION_ARGS);
-extern Datum jsonb_object_two_arg(PG_FUNCTION_ARGS);
+extern Datum jsonb_build_object(MDB_FUNCTION_ARGS);
+extern Datum jsonb_build_object_noargs(MDB_FUNCTION_ARGS);
+extern Datum jsonb_build_array(MDB_FUNCTION_ARGS);
+extern Datum jsonb_build_array_noargs(MDB_FUNCTION_ARGS);
+extern Datum jsonb_object(MDB_FUNCTION_ARGS);
+extern Datum jsonb_object_two_arg(MDB_FUNCTION_ARGS);
 
 /* jsonb_agg, json_object_agg functions */
-extern Datum jsonb_agg_transfn(PG_FUNCTION_ARGS);
-extern Datum jsonb_agg_finalfn(PG_FUNCTION_ARGS);
-extern Datum jsonb_object_agg_transfn(PG_FUNCTION_ARGS);
-extern Datum jsonb_object_agg_finalfn(PG_FUNCTION_ARGS);
+extern Datum jsonb_agg_transfn(MDB_FUNCTION_ARGS);
+extern Datum jsonb_agg_finalfn(MDB_FUNCTION_ARGS);
+extern Datum jsonb_object_agg_transfn(MDB_FUNCTION_ARGS);
+extern Datum jsonb_object_agg_finalfn(MDB_FUNCTION_ARGS);
 
 /* Indexing-related ops */
-extern Datum jsonb_exists(PG_FUNCTION_ARGS);
-extern Datum jsonb_exists_any(PG_FUNCTION_ARGS);
-extern Datum jsonb_exists_all(PG_FUNCTION_ARGS);
-extern Datum jsonb_contains(PG_FUNCTION_ARGS);
-extern Datum jsonb_contained(PG_FUNCTION_ARGS);
-extern Datum jsonb_ne(PG_FUNCTION_ARGS);
-extern Datum jsonb_lt(PG_FUNCTION_ARGS);
-extern Datum jsonb_gt(PG_FUNCTION_ARGS);
-extern Datum jsonb_le(PG_FUNCTION_ARGS);
-extern Datum jsonb_ge(PG_FUNCTION_ARGS);
-extern Datum jsonb_eq(PG_FUNCTION_ARGS);
-extern Datum jsonb_cmp(PG_FUNCTION_ARGS);
-extern Datum jsonb_hash(PG_FUNCTION_ARGS);
+extern Datum jsonb_exists(MDB_FUNCTION_ARGS);
+extern Datum jsonb_exists_any(MDB_FUNCTION_ARGS);
+extern Datum jsonb_exists_all(MDB_FUNCTION_ARGS);
+extern Datum jsonb_contains(MDB_FUNCTION_ARGS);
+extern Datum jsonb_contained(MDB_FUNCTION_ARGS);
+extern Datum jsonb_ne(MDB_FUNCTION_ARGS);
+extern Datum jsonb_lt(MDB_FUNCTION_ARGS);
+extern Datum jsonb_gt(MDB_FUNCTION_ARGS);
+extern Datum jsonb_le(MDB_FUNCTION_ARGS);
+extern Datum jsonb_ge(MDB_FUNCTION_ARGS);
+extern Datum jsonb_eq(MDB_FUNCTION_ARGS);
+extern Datum jsonb_cmp(MDB_FUNCTION_ARGS);
+extern Datum jsonb_hash(MDB_FUNCTION_ARGS);
 
 /* GIN support functions for jsonb_ops */
-extern Datum gin_compare_jsonb(PG_FUNCTION_ARGS);
-extern Datum gin_extract_jsonb(PG_FUNCTION_ARGS);
-extern Datum gin_extract_jsonb_query(PG_FUNCTION_ARGS);
-extern Datum gin_consistent_jsonb(PG_FUNCTION_ARGS);
-extern Datum gin_triconsistent_jsonb(PG_FUNCTION_ARGS);
+extern Datum gin_compare_jsonb(MDB_FUNCTION_ARGS);
+extern Datum gin_extract_jsonb(MDB_FUNCTION_ARGS);
+extern Datum gin_extract_jsonb_query(MDB_FUNCTION_ARGS);
+extern Datum gin_consistent_jsonb(MDB_FUNCTION_ARGS);
+extern Datum gin_triconsistent_jsonb(MDB_FUNCTION_ARGS);
 
 /* GIN support functions for jsonb_path_ops */
-extern Datum gin_extract_jsonb_path(PG_FUNCTION_ARGS);
-extern Datum gin_extract_jsonb_query_path(PG_FUNCTION_ARGS);
-extern Datum gin_consistent_jsonb_path(PG_FUNCTION_ARGS);
-extern Datum gin_triconsistent_jsonb_path(PG_FUNCTION_ARGS);
+extern Datum gin_extract_jsonb_path(MDB_FUNCTION_ARGS);
+extern Datum gin_extract_jsonb_query_path(MDB_FUNCTION_ARGS);
+extern Datum gin_consistent_jsonb_path(MDB_FUNCTION_ARGS);
+extern Datum gin_triconsistent_jsonb_path(MDB_FUNCTION_ARGS);
 
 /* pretty printer, returns text */
-extern Datum jsonb_pretty(PG_FUNCTION_ARGS);
+extern Datum jsonb_pretty(MDB_FUNCTION_ARGS);
 
 /* concatenation */
-extern Datum jsonb_concat(PG_FUNCTION_ARGS);
+extern Datum jsonb_concat(MDB_FUNCTION_ARGS);
 
 /* deletion */
-extern Datum jsonb_delete(PG_FUNCTION_ARGS);
-extern Datum jsonb_delete_idx(PG_FUNCTION_ARGS);
-extern Datum jsonb_delete_path(PG_FUNCTION_ARGS);
+extern Datum jsonb_delete(MDB_FUNCTION_ARGS);
+extern Datum jsonb_delete_idx(MDB_FUNCTION_ARGS);
+extern Datum jsonb_delete_path(MDB_FUNCTION_ARGS);
 
 /* replacement */
-extern Datum jsonb_set(PG_FUNCTION_ARGS);
+extern Datum jsonb_set(MDB_FUNCTION_ARGS);
 
 /* insert after or before (for arrays) */
-extern Datum jsonb_insert(PG_FUNCTION_ARGS);
+extern Datum jsonb_insert(MDB_FUNCTION_ARGS);
 
 /* Support functions */
 extern uint32 getJsonbOffset(const JsonbContainer *jc, int index);

@@ -206,10 +206,10 @@ t_readline(FILE *fp)
 	len = strlen(buf);
 
 	/* Make sure the input is valid UTF-8 */
-	(void) mdb_verify_mbstr(PG_UTF8, buf, len, false);
+	(void) mdb_verify_mbstr(MDB_UTF8, buf, len, false);
 
 	/* And convert */
-	recoded = mdb_any_to_server(buf, len, PG_UTF8);
+	recoded = mdb_any_to_server(buf, len, MDB_UTF8);
 	if (recoded == buf)
 	{
 		/*

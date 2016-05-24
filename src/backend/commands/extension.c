@@ -851,7 +851,7 @@ execute_extension_script(Oid extensionOid, ExtensionControlFile *control,
 	 */
 	creating_extension = true;
 	CurrentExtensionObject = extensionOid;
-	PG_TRY();
+	MDB_TRY();
 	{
 		char	   *c_sql = read_extension_script_file(control, filename);
 		Datum		t_sql;
@@ -905,13 +905,13 @@ execute_extension_script(Oid extensionOid, ExtensionControlFile *control,
 
 		execute_sql_string(c_sql, filename);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		creating_extension = false;
 		CurrentExtensionObject = InvalidOid;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	creating_extension = false;
 	CurrentExtensionObject = InvalidOid;
@@ -1710,7 +1710,7 @@ RemoveExtensionById(Oid extId)
  * current DB.
  */
 Datum
-mdb_available_extensions(PG_FUNCTION_ARGS)
+mdb_available_extensions(MDB_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -1819,7 +1819,7 @@ mdb_available_extensions(PG_FUNCTION_ARGS)
  * current DB.
  */
 Datum
-mdb_available_extension_versions(PG_FUNCTION_ARGS)
+mdb_available_extension_versions(MDB_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -2008,9 +2008,9 @@ get_available_versions_for_extension(ExtensionControlFile *pcontrol,
  * specified extension.
  */
 Datum
-mdb_extension_update_paths(PG_FUNCTION_ARGS)
+mdb_extension_update_paths(MDB_FUNCTION_ARGS)
 {
-	Name		extname = PG_GETARG_NAME(0);
+	Name		extname = MDB_GETARG_NAME(0);
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
 	Tuplestorestate *tupstore;
@@ -2122,10 +2122,10 @@ mdb_extension_update_paths(PG_FUNCTION_ARGS)
  * or in part during mdb_dump.
  */
 Datum
-mdb_extension_config_dump(PG_FUNCTION_ARGS)
+mdb_extension_config_dump(MDB_FUNCTION_ARGS)
 {
-	Oid			tableoid = PG_GETARG_OID(0);
-	text	   *wherecond = PG_GETARG_TEXT_P(1);
+	Oid			tableoid = MDB_GETARG_OID(0);
+	text	   *wherecond = MDB_GETARG_TEXT_P(1);
 	char	   *tablename;
 	Relation	extRel;
 	ScanKeyData key[1];
@@ -2299,7 +2299,7 @@ mdb_extension_config_dump(PG_FUNCTION_ARGS)
 
 	heap_close(extRel, RowExclusiveLock);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -3114,7 +3114,7 @@ read_whole_file(const char *filename, int *length)
 				 errmsg("file \"%s\" is too large", filename)));
 	bytes_to_read = (size_t) fst.st_size;
 
-	if ((file = AllocateFile(filename, PG_BINARY_R)) == NULL)
+	if ((file = AllocateFile(filename, MDB_BINARY_R)) == NULL)
 		ereport(ERROR,
 				(errcode_for_file_access(),
 				 errmsg("could not open file \"%s\" for reading: %m",

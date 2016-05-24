@@ -15,13 +15,13 @@
 /*
 ** GiST support methods
 */
-PG_FUNCTION_INFO_V1(g_int_consistent);
-PG_FUNCTION_INFO_V1(g_int_compress);
-PG_FUNCTION_INFO_V1(g_int_decompress);
-PG_FUNCTION_INFO_V1(g_int_penalty);
-PG_FUNCTION_INFO_V1(g_int_picksplit);
-PG_FUNCTION_INFO_V1(g_int_union);
-PG_FUNCTION_INFO_V1(g_int_same);
+MDB_FUNCTION_INFO_V1(g_int_consistent);
+MDB_FUNCTION_INFO_V1(g_int_compress);
+MDB_FUNCTION_INFO_V1(g_int_decompress);
+MDB_FUNCTION_INFO_V1(g_int_penalty);
+MDB_FUNCTION_INFO_V1(g_int_picksplit);
+MDB_FUNCTION_INFO_V1(g_int_union);
+MDB_FUNCTION_INFO_V1(g_int_same);
 
 
 /*
@@ -31,14 +31,14 @@ PG_FUNCTION_INFO_V1(g_int_same);
 ** corresponding to strategy in the mdb_amop table.
 */
 Datum
-g_int_consistent(PG_FUNCTION_ARGS)
+g_int_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	ArrayType  *query = PG_GETARG_ARRAYTYPE_P_COPY(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	ArrayType  *query = MDB_GETARG_ARRAYTYPE_P_COPY(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	bool		retval;
 
 	/* this is exact except for RTSameStrategyNumber */
@@ -51,7 +51,7 @@ g_int_consistent(PG_FUNCTION_ARGS)
 								GIST_LEAF(entry));
 
 		pfree(query);
-		PG_RETURN_BOOL(retval);
+		MDB_RETURN_BOOL(retval);
 	}
 
 	/* sort query for fast search, key is already sorted */
@@ -92,14 +92,14 @@ g_int_consistent(PG_FUNCTION_ARGS)
 			retval = FALSE;
 	}
 	pfree(query);
-	PG_RETURN_BOOL(retval);
+	MDB_RETURN_BOOL(retval);
 }
 
 Datum
-g_int_union(PG_FUNCTION_ARGS)
+g_int_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	int		   *size = (int *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	int		   *size = (int *) MDB_GETARG_POINTER(1);
 	int32		i,
 			   *ptr;
 	ArrayType  *res;
@@ -129,16 +129,16 @@ g_int_union(PG_FUNCTION_ARGS)
 	QSORT(res, 1);
 	res = _int_unique(res);
 	*size = VARSIZE(res);
-	PG_RETURN_POINTER(res);
+	MDB_RETURN_POINTER(res);
 }
 
 /*
 ** GiST Compress and Decompress methods
 */
 Datum
-g_int_compress(PG_FUNCTION_ARGS)
+g_int_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval;
 	ArrayType  *r;
 	int			len;
@@ -161,7 +161,7 @@ g_int_compress(PG_FUNCTION_ARGS)
 		gistentryinit(*retval, PointerGetDatum(r),
 					  entry->rel, entry->page, entry->offset, FALSE);
 
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
 
 	/*
@@ -175,7 +175,7 @@ g_int_compress(PG_FUNCTION_ARGS)
 	{
 		if (r != (ArrayType *) DatumGetPointer(entry->key))
 			pfree(r);
-		PG_RETURN_POINTER(entry);
+		MDB_RETURN_POINTER(entry);
 	}
 
 	if ((len = ARRNELEMS(r)) >= 2 * MAXNUMRANGE)
@@ -207,16 +207,16 @@ g_int_compress(PG_FUNCTION_ARGS)
 		retval = palloc(sizeof(GISTENTRY));
 		gistentryinit(*retval, PointerGetDatum(r),
 					  entry->rel, entry->page, entry->offset, FALSE);
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
 	else
-		PG_RETURN_POINTER(entry);
+		MDB_RETURN_POINTER(entry);
 }
 
 Datum
-g_int_decompress(PG_FUNCTION_ARGS)
+g_int_decompress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval;
 	ArrayType  *r;
 	int		   *dr,
@@ -237,10 +237,10 @@ g_int_decompress(PG_FUNCTION_ARGS)
 			retval = palloc(sizeof(GISTENTRY));
 			gistentryinit(*retval, PointerGetDatum(in),
 						  entry->rel, entry->page, entry->offset, FALSE);
-			PG_RETURN_POINTER(retval);
+			MDB_RETURN_POINTER(retval);
 		}
 
-		PG_RETURN_POINTER(entry);
+		MDB_RETURN_POINTER(entry);
 	}
 
 	lenin = ARRNELEMS(in);
@@ -253,9 +253,9 @@ g_int_decompress(PG_FUNCTION_ARGS)
 			gistentryinit(*retval, PointerGetDatum(in),
 						  entry->rel, entry->page, entry->offset, FALSE);
 
-			PG_RETURN_POINTER(retval);
+			MDB_RETURN_POINTER(retval);
 		}
-		PG_RETURN_POINTER(entry);
+		MDB_RETURN_POINTER(entry);
 	}
 
 	din = ARRPTR(in);
@@ -275,18 +275,18 @@ g_int_decompress(PG_FUNCTION_ARGS)
 	gistentryinit(*retval, PointerGetDatum(r),
 				  entry->rel, entry->page, entry->offset, FALSE);
 
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 /*
 ** The GiST Penalty method for _intments
 */
 Datum
-g_int_penalty(PG_FUNCTION_ARGS)
+g_int_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *origentry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	GISTENTRY  *newentry = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *origentry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	GISTENTRY  *newentry = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 	ArrayType  *ud;
 	float		tmp1,
 				tmp2;
@@ -298,17 +298,17 @@ g_int_penalty(PG_FUNCTION_ARGS)
 	*result = tmp1 - tmp2;
 	pfree(ud);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 
 
 Datum
-g_int_same(PG_FUNCTION_ARGS)
+g_int_same(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *a = PG_GETARG_ARRAYTYPE_P(0);
-	ArrayType  *b = PG_GETARG_ARRAYTYPE_P(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	ArrayType  *a = MDB_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *b = MDB_GETARG_ARRAYTYPE_P(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 	int32		n = ARRNELEMS(a);
 	int32	   *da,
 			   *db;
@@ -319,7 +319,7 @@ g_int_same(PG_FUNCTION_ARGS)
 	if (n != ARRNELEMS(b))
 	{
 		*result = false;
-		PG_RETURN_POINTER(result);
+		MDB_RETURN_POINTER(result);
 	}
 	*result = TRUE;
 	da = ARRPTR(a);
@@ -333,7 +333,7 @@ g_int_same(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*****************************************************************
@@ -360,10 +360,10 @@ comparecost(const void *a, const void *b)
 ** We use Guttman's poly time split algorithm
 */
 Datum
-g_int_picksplit(PG_FUNCTION_ARGS)
+g_int_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber i,
 				j;
 	ArrayType  *datum_alpha,
@@ -540,5 +540,5 @@ g_int_picksplit(PG_FUNCTION_ARGS)
 	v->spl_ldatum = PointerGetDatum(datum_l);
 	v->spl_rdatum = PointerGetDatum(datum_r);
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }

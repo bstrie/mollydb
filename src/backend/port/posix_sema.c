@@ -28,10 +28,10 @@
 
 #ifdef USE_NAMED_POSIX_SEMAPHORES
 /* PGSemaphore is pointer to pointer to sem_t */
-#define PG_SEM_REF(x)	(*(x))
+#define MDB_SEM_REF(x)	(*(x))
 #else
 /* PGSemaphore is pointer to sem_t */
-#define PG_SEM_REF(x)	(x)
+#define MDB_SEM_REF(x)	(x)
 #endif
 
 
@@ -219,7 +219,7 @@ PGSemaphoreReset(PGSemaphore sema)
 	 */
 	for (;;)
 	{
-		if (sem_trywait(PG_SEM_REF(sema)) < 0)
+		if (sem_trywait(MDB_SEM_REF(sema)) < 0)
 		{
 			if (errno == EAGAIN || errno == EDEADLK)
 				break;			/* got it down to 0 */
@@ -243,7 +243,7 @@ PGSemaphoreLock(PGSemaphore sema)
 	/* See notes in sysv_sema.c's implementation of PGSemaphoreLock. */
 	do
 	{
-		errStatus = sem_wait(PG_SEM_REF(sema));
+		errStatus = sem_wait(MDB_SEM_REF(sema));
 	} while (errStatus < 0 && errno == EINTR);
 
 	if (errStatus < 0)
@@ -268,7 +268,7 @@ PGSemaphoreUnlock(PGSemaphore sema)
 	 */
 	do
 	{
-		errStatus = sem_post(PG_SEM_REF(sema));
+		errStatus = sem_post(MDB_SEM_REF(sema));
 	} while (errStatus < 0 && errno == EINTR);
 
 	if (errStatus < 0)
@@ -292,7 +292,7 @@ PGSemaphoreTryLock(PGSemaphore sema)
 	 */
 	do
 	{
-		errStatus = sem_trywait(PG_SEM_REF(sema));
+		errStatus = sem_trywait(MDB_SEM_REF(sema));
 	} while (errStatus < 0 && errno == EINTR);
 
 	if (errStatus < 0)

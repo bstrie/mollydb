@@ -736,7 +736,7 @@ typedef struct spgLeafConsistentOut
   <para>
    If the indexed column is of a collatable data type, the index collation
    will be passed to all the support methods, using the standard
-   <function>PG_GET_COLLATION()</> mechanism.
+   <function>MDB_GET_COLLATION()</> mechanism.
   </para>
 
 </sect1>

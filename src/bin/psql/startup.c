@@ -107,7 +107,7 @@ main(int argc, char *argv[])
 	char	   *password_prompt = NULL;
 	bool		new_pass;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("psql"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("psql"));
 
 	if (argc > 1)
 	{
@@ -163,7 +163,7 @@ main(int argc, char *argv[])
 
 	EstablishVariableSpace();
 
-	SetVariable(pset.vars, "VERSION", PG_VERSION_STR);
+	SetVariable(pset.vars, "VERSION", MDB_VERSION_STR);
 
 	/* Default values for variables */
 	SetVariableBool(pset.vars, "AUTOCOMMIT");
@@ -747,8 +747,8 @@ process_psqlrc_file(char *filename)
 #define R_OK 4
 #endif
 
-	psqlrc_minor = psprintf("%s-%s", filename, PG_VERSION);
-	psqlrc_major = psprintf("%s-%s", filename, PG_MAJORVERSION);
+	psqlrc_minor = psprintf("%s-%s", filename, MDB_VERSION);
+	psqlrc_major = psprintf("%s-%s", filename, MDB_MAJORVERSION);
 
 	/* check for minor version first, then major, then no version */
 	if (access(psqlrc_minor, R_OK) == 0)
@@ -771,7 +771,7 @@ process_psqlrc_file(char *filename)
 static void
 showVersion(void)
 {
-	puts("psql (MollyDB) " PG_VERSION);
+	puts("psql (MollyDB) " MDB_VERSION);
 }
 
 

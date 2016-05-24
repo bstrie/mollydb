@@ -48,7 +48,7 @@
 /*
  * Set the upper and lower bounds of sequence values.
  */
-#define SEQ_MAXVALUE	PG_INT64_MAX
+#define SEQ_MAXVALUE	MDB_INT64_MAX
 #define SEQ_MINVALUE	(-SEQ_MAXVALUE)
 
 /*
@@ -90,7 +90,7 @@
 #define MAXPGPATH		1024
 
 /*
- * PG_SOMAXCONN: maximum accept-queue length limit passed to
+ * MDB_SOMAXCONN: maximum accept-queue length limit passed to
  * listen(2).  You'd think we should use SOMAXCONN from
  * <sys/socket.h>, but on many systems that symbol is much smaller
  * than the kernel's actual limit.  In any case, this symbol need be
@@ -98,7 +98,7 @@
  * rather than silently reducing the value to what it can handle
  * (which is what most if not all Unixen do).
  */
-#define PG_SOMAXCONN	10000
+#define MDB_SOMAXCONN	10000
 
 /*
  * You can try changing this if you have a machine with bytes of
@@ -180,7 +180,7 @@
  * the older rand() function, which is often different from --- and
  * considerably inferior to --- random().
  */
-#define MAX_RANDOM_VALUE  PG_INT32_MAX
+#define MAX_RANDOM_VALUE  MDB_INT32_MAX
 
 /*
  * On PPC machines, decide whether to use the mutex hint bit in LWARX
@@ -217,7 +217,7 @@
  * wasted memory. The default is 128, which should be large enough for all
  * supported platforms.
  */
-#define PG_CACHE_LINE_SIZE		128
+#define MDB_CACHE_LINE_SIZE		128
 
 /*
  *------------------------------------------------------------------------

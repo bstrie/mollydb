@@ -1007,7 +1007,7 @@ pqGetErrorNotice2(PGconn *conn, bool isError)
 	{
 		/* what comes before the colon is severity */
 		*splitp = '\0';
-		pqSaveMessageField(res, PG_DIAG_SEVERITY, workBuf.data);
+		pqSaveMessageField(res, MDB_DIAG_SEVERITY, workBuf.data);
 		startp = splitp + 3;
 	}
 	else
@@ -1020,16 +1020,16 @@ pqGetErrorNotice2(PGconn *conn, bool isError)
 	{
 		/* what comes before the newline is primary message */
 		*splitp++ = '\0';
-		pqSaveMessageField(res, PG_DIAG_MESSAGE_PRIMARY, startp);
+		pqSaveMessageField(res, MDB_DIAG_MESSAGE_PRIMARY, startp);
 		/* the rest is detail; strip any leading whitespace */
 		while (*splitp && isspace((unsigned char) *splitp))
 			splitp++;
-		pqSaveMessageField(res, PG_DIAG_MESSAGE_DETAIL, splitp);
+		pqSaveMessageField(res, MDB_DIAG_MESSAGE_DETAIL, splitp);
 	}
 	else
 	{
 		/* single-line message, so all primary */
-		pqSaveMessageField(res, PG_DIAG_MESSAGE_PRIMARY, startp);
+		pqSaveMessageField(res, MDB_DIAG_MESSAGE_PRIMARY, startp);
 	}
 
 	/*

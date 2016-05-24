@@ -17,7 +17,7 @@
 #include "port/atomics.h"
 #include "storage/spin.h"
 
-#ifdef PG_HAVE_MEMORY_BARRIER_EMULATION
+#ifdef MDB_HAVE_MEMORY_BARRIER_EMULATION
 #ifdef WIN32
 #error "barriers are required (and provided) on WIN32 platforms"
 #endif
@@ -25,7 +25,7 @@
 #include <signal.h>
 #endif
 
-#ifdef PG_HAVE_MEMORY_BARRIER_EMULATION
+#ifdef MDB_HAVE_MEMORY_BARRIER_EMULATION
 void
 mdb_spinlock_barrier(void)
 {
@@ -42,7 +42,7 @@ mdb_spinlock_barrier(void)
 }
 #endif
 
-#ifdef PG_HAVE_COMPILER_BARRIER_EMULATION
+#ifdef MDB_HAVE_COMPILER_BARRIER_EMULATION
 void
 mdb_extern_compiler_barrier(void)
 {
@@ -51,7 +51,7 @@ mdb_extern_compiler_barrier(void)
 #endif
 
 
-#ifdef PG_HAVE_ATOMIC_FLAG_SIMULATION
+#ifdef MDB_HAVE_ATOMIC_FLAG_SIMULATION
 
 void
 mdb_atomic_init_flag_impl(volatile mdb_atomic_flag *ptr)
@@ -84,9 +84,9 @@ mdb_atomic_clear_flag_impl(volatile mdb_atomic_flag *ptr)
 	S_UNLOCK((slock_t *) &ptr->sema);
 }
 
-#endif   /* PG_HAVE_ATOMIC_FLAG_SIMULATION */
+#endif   /* MDB_HAVE_ATOMIC_FLAG_SIMULATION */
 
-#ifdef PG_HAVE_ATOMIC_U32_SIMULATION
+#ifdef MDB_HAVE_ATOMIC_U32_SIMULATION
 void
 mdb_atomic_init_u32_impl(volatile mdb_atomic_uint32 *ptr, uint32 val_)
 {
@@ -145,4 +145,4 @@ mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_)
 	return oldval;
 }
 
-#endif   /* PG_HAVE_ATOMIC_U32_SIMULATION */
+#endif   /* MDB_HAVE_ATOMIC_U32_SIMULATION */

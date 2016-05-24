@@ -84,7 +84,7 @@ main(int argc, char **argv)
 				dry_run = true;
 				break;
 			case 'V':
-				puts("isolationtester (MollyDB) " PG_VERSION);
+				puts("isolationtester (MollyDB) " MDB_VERSION);
 				exit(0);
 			default:
 				fprintf(stderr, "Usage: isolationtester [-n] [CONNINFO]\n");
@@ -842,9 +842,9 @@ try_complete_step(Step *step, int flags)
 				 */
 				{
 					const char *sev = PQresultErrorField(res,
-														 PG_DIAG_SEVERITY);
+														 MDB_DIAG_SEVERITY);
 					const char *msg = PQresultErrorField(res,
-													PG_DIAG_MESSAGE_PRIMARY);
+													MDB_DIAG_MESSAGE_PRIMARY);
 
 					if (sev && msg)
 						step->errormsg = psprintf("%s:  %s", sev, msg);

@@ -177,7 +177,7 @@ BufferShmemSize(void)
 	/* size of buffer descriptors */
 	size = add_size(size, mul_size(NBuffers, sizeof(BufferDescPadded)));
 	/* to allow aligning buffer descriptors */
-	size = add_size(size, PG_CACHE_LINE_SIZE);
+	size = add_size(size, MDB_CACHE_LINE_SIZE);
 
 	/* size of data pages */
 	size = add_size(size, mul_size(NBuffers, BLCKSZ));
@@ -195,7 +195,7 @@ BufferShmemSize(void)
 	 */
 	size = add_size(size, mul_size(NBuffers, sizeof(LWLockMinimallyPadded)));
 	/* to allow aligning the above */
-	size = add_size(size, PG_CACHE_LINE_SIZE);
+	size = add_size(size, MDB_CACHE_LINE_SIZE);
 
 	/* size of checkpoint sort array in bufmgr.c */
 	size = add_size(size, mul_size(NBuffers, sizeof(CkptSortItem)));

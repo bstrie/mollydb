@@ -272,7 +272,7 @@ PortalCleanup(Portal portal)
 
 			/* We must make the portal's resource owner current */
 			saveResourceOwner = CurrentResourceOwner;
-			PG_TRY();
+			MDB_TRY();
 			{
 				if (portal->resowner)
 					CurrentResourceOwner = portal->resowner;
@@ -280,13 +280,13 @@ PortalCleanup(Portal portal)
 				ExecutorEnd(queryDesc);
 				FreeQueryDesc(queryDesc);
 			}
-			PG_CATCH();
+			MDB_CATCH();
 			{
 				/* Ensure CurrentResourceOwner is restored on error */
 				CurrentResourceOwner = saveResourceOwner;
-				PG_RE_THROW();
+				MDB_RE_THROW();
 			}
-			PG_END_TRY();
+			MDB_END_TRY();
 			CurrentResourceOwner = saveResourceOwner;
 		}
 	}
@@ -343,7 +343,7 @@ PersistHoldablePortal(Portal portal)
 	saveActivePortal = ActivePortal;
 	saveResourceOwner = CurrentResourceOwner;
 	savePortalContext = PortalContext;
-	PG_TRY();
+	MDB_TRY();
 	{
 		ActivePortal = portal;
 		if (portal->resowner)
@@ -408,7 +408,7 @@ PersistHoldablePortal(Portal portal)
 				elog(ERROR, "unexpected end of tuple stream");
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Uncaught error while executing portal: mark it dead */
 		MarkPortalFailed(portal);
@@ -418,9 +418,9 @@ PersistHoldablePortal(Portal portal)
 		CurrentResourceOwner = saveResourceOwner;
 		PortalContext = savePortalContext;
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	MemoryContextSwitchTo(oldcxt);
 

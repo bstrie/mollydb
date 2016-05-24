@@ -521,13 +521,13 @@ StreamServerPort(int family, char *hostName, unsigned short portNumber,
 #endif
 
 		/*
-		 * Select appropriate accept-queue length limit.  PG_SOMAXCONN is only
+		 * Select appropriate accept-queue length limit.  MDB_SOMAXCONN is only
 		 * intended to provide a clamp on the request on platforms where an
 		 * overly large request provokes a kernel error (are there any?).
 		 */
 		maxconn = MaxBackends * 2;
-		if (maxconn > PG_SOMAXCONN)
-			maxconn = PG_SOMAXCONN;
+		if (maxconn > MDB_SOMAXCONN)
+			maxconn = MDB_SOMAXCONN;
 
 		err = listen(fd, maxconn);
 		if (err < 0)
@@ -1264,11 +1264,11 @@ pq_getmessage(StringInfo s, int maxlen)
 		 * large message), we will elog(ERROR), but we want to discard the
 		 * message body so as not to lose communication sync.
 		 */
-		PG_TRY();
+		MDB_TRY();
 		{
 			enlargeStringInfo(s, len);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			if (pq_discardbytes(len) == EOF)
 				ereport(COMMERROR,
@@ -1277,9 +1277,9 @@ pq_getmessage(StringInfo s, int maxlen)
 
 			/* we discarded the rest of the message so we're back in sync. */
 			PqCommReadingMsg = false;
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 
 		/* And grab the message */
 		if (pq_getbytes(s->data, len) == EOF)
@@ -1523,7 +1523,7 @@ socket_putmessage(char msgtype, const char *s, size_t len)
 	if (msgtype)
 		if (internal_putbytes(&msgtype, 1))
 			goto fail;
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
 	{
 		uint32		n32;
 
@@ -1550,7 +1550,7 @@ fail:
 static void
 socket_putmessage_noblock(char msgtype, const char *s, size_t len)
 {
-	int res		PG_USED_FOR_ASSERTS_ONLY;
+	int res		MDB_USED_FOR_ASSERTS_ONLY;
 	int			required;
 
 	/*

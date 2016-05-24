@@ -14,8 +14,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_FOREIGN_SERVER_H
-#define PG_FOREIGN_SERVER_H
+#ifndef MDB_FOREIGN_SERVER_H
+#define MDB_FOREIGN_SERVER_H
 
 #include "catalog/genbki.h"
 
@@ -61,4 +61,4 @@ typedef FormData_mdb_foreign_server *Form_mdb_foreign_server;
 #define Anum_mdb_foreign_server_srvacl			6
 #define Anum_mdb_foreign_server_srvoptions		7
 
-#endif   /* PG_FOREIGN_SERVER_H */
+#endif   /* MDB_FOREIGN_SERVER_H */

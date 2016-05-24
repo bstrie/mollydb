@@ -240,7 +240,7 @@ extern TupleTableSlot *TupleDescGetSlot(TupleDesc tupdesc);
  * The basic API for SRFs looks something like:
  *
  * Datum
- * my_Set_Returning_Function(PG_FUNCTION_ARGS)
+ * my_Set_Returning_Function(MDB_FUNCTION_ARGS)
  * {
  *	FuncCallContext    *funcctx;
  *	Datum				result;
@@ -278,9 +278,9 @@ extern TupleTableSlot *TupleDescGetSlot(TupleDesc tupdesc);
  */
 
 /* from funcapi.c */
-extern FuncCallContext *init_MultiFuncCall(PG_FUNCTION_ARGS);
-extern FuncCallContext *per_MultiFuncCall(PG_FUNCTION_ARGS);
-extern void end_MultiFuncCall(PG_FUNCTION_ARGS, FuncCallContext *funcctx);
+extern FuncCallContext *init_MultiFuncCall(MDB_FUNCTION_ARGS);
+extern FuncCallContext *per_MultiFuncCall(MDB_FUNCTION_ARGS);
+extern void end_MultiFuncCall(MDB_FUNCTION_ARGS, FuncCallContext *funcctx);
 
 #define SRF_IS_FIRSTCALL() (fcinfo->flinfo->fn_extra == NULL)
 
@@ -294,7 +294,7 @@ extern void end_MultiFuncCall(PG_FUNCTION_ARGS, FuncCallContext *funcctx);
 		(_funcctx)->call_cntr++; \
 		rsi = (ReturnSetInfo *) fcinfo->resultinfo; \
 		rsi->isDone = ExprMultipleResult; \
-		PG_RETURN_DATUM(_result); \
+		MDB_RETURN_DATUM(_result); \
 	} while (0)
 
 #define SRF_RETURN_NEXT_NULL(_funcctx) \
@@ -303,7 +303,7 @@ extern void end_MultiFuncCall(PG_FUNCTION_ARGS, FuncCallContext *funcctx);
 		(_funcctx)->call_cntr++; \
 		rsi = (ReturnSetInfo *) fcinfo->resultinfo; \
 		rsi->isDone = ExprMultipleResult; \
-		PG_RETURN_NULL(); \
+		MDB_RETURN_NULL(); \
 	} while (0)
 
 #define  SRF_RETURN_DONE(_funcctx) \
@@ -312,7 +312,7 @@ extern void end_MultiFuncCall(PG_FUNCTION_ARGS, FuncCallContext *funcctx);
 		end_MultiFuncCall(fcinfo, _funcctx); \
 		rsi = (ReturnSetInfo *) fcinfo->resultinfo; \
 		rsi->isDone = ExprEndResult; \
-		PG_RETURN_NULL(); \
+		MDB_RETURN_NULL(); \
 	} while (0)
 
 #endif   /* FUNCAPI_H */

@@ -45,15 +45,15 @@
  */
 
 Datum
-areasel(PG_FUNCTION_ARGS)
+areasel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(0.005);
+	MDB_RETURN_FLOAT8(0.005);
 }
 
 Datum
-areajoinsel(PG_FUNCTION_ARGS)
+areajoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(0.005);
+	MDB_RETURN_FLOAT8(0.005);
 }
 
 /*
@@ -64,15 +64,15 @@ areajoinsel(PG_FUNCTION_ARGS)
  */
 
 Datum
-positionsel(PG_FUNCTION_ARGS)
+positionsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(0.1);
+	MDB_RETURN_FLOAT8(0.1);
 }
 
 Datum
-positionjoinsel(PG_FUNCTION_ARGS)
+positionjoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(0.1);
+	MDB_RETURN_FLOAT8(0.1);
 }
 
 /*
@@ -83,13 +83,13 @@ positionjoinsel(PG_FUNCTION_ARGS)
  */
 
 Datum
-contsel(PG_FUNCTION_ARGS)
+contsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(0.001);
+	MDB_RETURN_FLOAT8(0.001);
 }
 
 Datum
-contjoinsel(PG_FUNCTION_ARGS)
+contjoinsel(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(0.001);
+	MDB_RETURN_FLOAT8(0.001);
 }

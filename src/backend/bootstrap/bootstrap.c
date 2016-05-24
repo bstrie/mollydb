@@ -129,7 +129,7 @@ static const struct typinfo TypInfo[] = {
 	{"cid", CIDOID, 0, 4, true, 'i', 'p', InvalidOid,
 	F_CIDIN, F_CIDOUT},
 	{"mdb_node_tree", PGNODETREEOID, 0, -1, false, 'i', 'x', DEFAULT_COLLATION_OID,
-	F_PG_NODE_TREE_IN, F_PG_NODE_TREE_OUT},
+	F_MDB_NODE_TREE_IN, F_MDB_NODE_TREE_OUT},
 	{"int2vector", INT2VECTOROID, INT2OID, -1, false, 'i', 'p', InvalidOid,
 	F_INT2VECTORIN, F_INT2VECTOROUT},
 	{"oidvector", OIDVECTOROID, OIDOID, -1, false, 'i', 'p', InvalidOid,
@@ -246,7 +246,7 @@ AuxiliaryProcessMain(int argc, char *argv[])
 				SetConfigOption("fsync", "false", PGC_POSTMASTER, PGC_S_ARGV);
 				break;
 			case 'k':
-				bootstrap_data_checksum_version = PG_DATA_CHECKSUM_VERSION;
+				bootstrap_data_checksum_version = MDB_DATA_CHECKSUM_VERSION;
 				break;
 			case 'r':
 				strlcpy(OutputFileName, optarg, MAXPGPATH);

@@ -15140,7 +15140,7 @@ SELECT * FROM mdb_ls_dir('.') WITH ORDINALITY AS t(ls,n);
  mdb_clog         | 12
  mdb_snapshots    | 13
  mdb_multixact    | 14
- PG_VERSION      | 15
+ MDB_VERSION      | 15
  mdb_xlog         | 16
  mdb_hba.conf     | 17
  mdb_stat_tmp     | 18

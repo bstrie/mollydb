@@ -1881,11 +1881,11 @@ textarray_to_strvaluelist(ArrayType *arr)
  * SQL-callable version of get_object_address
  */
 Datum
-mdb_get_object_address(PG_FUNCTION_ARGS)
+mdb_get_object_address(MDB_FUNCTION_ARGS)
 {
-	char	   *ttype = TextDatumGetCString(PG_GETARG_DATUM(0));
-	ArrayType  *namearr = PG_GETARG_ARRAYTYPE_P(1);
-	ArrayType  *argsarr = PG_GETARG_ARRAYTYPE_P(2);
+	char	   *ttype = TextDatumGetCString(MDB_GETARG_DATUM(0));
+	ArrayType  *namearr = MDB_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *argsarr = MDB_GETARG_ARRAYTYPE_P(2);
 	int			itype;
 	ObjectType	type;
 	List	   *name;
@@ -2057,7 +2057,7 @@ mdb_get_object_address(PG_FUNCTION_ARGS)
 
 	htup = heap_form_tuple(tupdesc, values, nulls);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(htup));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(htup));
 }
 
 /*
@@ -3332,35 +3332,35 @@ getOpFamilyDescription(StringInfo buffer, Oid opfid)
  * SQL-level callable version of getObjectDescription
  */
 Datum
-mdb_describe_object(PG_FUNCTION_ARGS)
+mdb_describe_object(MDB_FUNCTION_ARGS)
 {
-	Oid			classid = PG_GETARG_OID(0);
-	Oid			objid = PG_GETARG_OID(1);
-	int32		subobjid = PG_GETARG_INT32(2);
+	Oid			classid = MDB_GETARG_OID(0);
+	Oid			objid = MDB_GETARG_OID(1);
+	int32		subobjid = MDB_GETARG_INT32(2);
 	char	   *description;
 	ObjectAddress address;
 
 	/* for "pinned" items in mdb_depend, return null */
 	if (!OidIsValid(classid) && !OidIsValid(objid))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	address.classId = classid;
 	address.objectId = objid;
 	address.objectSubId = subobjid;
 
 	description = getObjectDescription(&address);
-	PG_RETURN_TEXT_P(cstring_to_text(description));
+	MDB_RETURN_TEXT_P(cstring_to_text(description));
 }
 
 /*
  * SQL-level callable function to obtain object type + identity
  */
 Datum
-mdb_identify_object(PG_FUNCTION_ARGS)
+mdb_identify_object(MDB_FUNCTION_ARGS)
 {
-	Oid			classid = PG_GETARG_OID(0);
-	Oid			objid = PG_GETARG_OID(1);
-	int32		subobjid = PG_GETARG_INT32(2);
+	Oid			classid = MDB_GETARG_OID(0);
+	Oid			objid = MDB_GETARG_OID(1);
+	int32		subobjid = MDB_GETARG_INT32(2);
 	Oid			schema_oid = InvalidOid;
 	const char *objname = NULL;
 	ObjectAddress address;
@@ -3465,18 +3465,18 @@ mdb_identify_object(PG_FUNCTION_ARGS)
 
 	htup = heap_form_tuple(tupdesc, values, nulls);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(htup));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(htup));
 }
 
 /*
  * SQL-level callable function to obtain object type + identity
  */
 Datum
-mdb_identify_object_as_address(PG_FUNCTION_ARGS)
+mdb_identify_object_as_address(MDB_FUNCTION_ARGS)
 {
-	Oid			classid = PG_GETARG_OID(0);
-	Oid			objid = PG_GETARG_OID(1);
-	int32		subobjid = PG_GETARG_INT32(2);
+	Oid			classid = MDB_GETARG_OID(0);
+	Oid			objid = MDB_GETARG_OID(1);
+	int32		subobjid = MDB_GETARG_INT32(2);
 	ObjectAddress address;
 	char	   *identity;
 	List	   *names;
@@ -3525,7 +3525,7 @@ mdb_identify_object_as_address(PG_FUNCTION_ARGS)
 
 	htup = heap_form_tuple(tupdesc, values, nulls);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(htup));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(htup));
 }
 
 /*

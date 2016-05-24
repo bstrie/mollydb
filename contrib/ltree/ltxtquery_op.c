@@ -10,8 +10,8 @@
 #include "ltree.h"
 #include "miscadmin.h"
 
-PG_FUNCTION_INFO_V1(ltxtq_exec);
-PG_FUNCTION_INFO_V1(ltxtq_rexec);
+MDB_FUNCTION_INFO_V1(ltxtq_exec);
+MDB_FUNCTION_INFO_V1(ltxtq_rexec);
 
 /*
  * check for boolean condition
@@ -84,10 +84,10 @@ checkcondition_str(void *checkval, ITEM *val)
 }
 
 Datum
-ltxtq_exec(PG_FUNCTION_ARGS)
+ltxtq_exec(MDB_FUNCTION_ARGS)
 {
-	ltree	   *val = PG_GETARG_LTREE(0);
-	ltxtquery  *query = PG_GETARG_LTXTQUERY(1);
+	ltree	   *val = MDB_GETARG_LTREE(0);
+	ltxtquery  *query = MDB_GETARG_LTXTQUERY(1);
 	CHKVAL		chkval;
 	bool		result;
 
@@ -101,16 +101,16 @@ ltxtq_exec(PG_FUNCTION_ARGS)
 						   checkcondition_str
 		);
 
-	PG_FREE_IF_COPY(val, 0);
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_BOOL(result);
+	MDB_FREE_IF_COPY(val, 0);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-ltxtq_rexec(PG_FUNCTION_ARGS)
+ltxtq_rexec(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall2(ltxtq_exec,
-										PG_GETARG_DATUM(1),
-										PG_GETARG_DATUM(0)
+	MDB_RETURN_DATUM(DirectFunctionCall2(ltxtq_exec,
+										MDB_GETARG_DATUM(1),
+										MDB_GETARG_DATUM(0)
 										));
 }

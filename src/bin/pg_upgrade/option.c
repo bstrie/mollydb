@@ -89,7 +89,7 @@ parseCommandLine(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("mdb_upgrade (MollyDB) " PG_VERSION);
+			puts("mdb_upgrade (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}
@@ -200,7 +200,7 @@ parseCommandLine(int argc, char *argv[])
 				break;
 
 			case 'v':
-				mdb_log(PG_REPORT, "Running in verbose mode\n");
+				mdb_log(MDB_REPORT, "Running in verbose mode\n");
 				log_opts.verbose = true;
 				break;
 
@@ -399,8 +399,8 @@ adjust_data_dir(ClusterInfo *cluster)
 		return;
 	fclose(fp);
 
-	/* If PG_VERSION exists, it can't be a config-only dir */
-	snprintf(filename, sizeof(filename), "%s/PG_VERSION", cluster->pgconfig);
+	/* If MDB_VERSION exists, it can't be a config-only dir */
+	snprintf(filename, sizeof(filename), "%s/MDB_VERSION", cluster->pgconfig);
 	if ((fp = fopen(filename, "r")) != NULL)
 	{
 		fclose(fp);
@@ -503,7 +503,7 @@ get_sock_dir(ClusterInfo *cluster, bool live_check)
 
 			/* warn of port number correction */
 			if (orig_port != DEF_PGUPORT && old_cluster.port != orig_port)
-				mdb_log(PG_WARNING, "User-supplied old port number %hu corrected to %hu\n",
+				mdb_log(MDB_WARNING, "User-supplied old port number %hu corrected to %hu\n",
 					   orig_port, cluster->port);
 		}
 	}

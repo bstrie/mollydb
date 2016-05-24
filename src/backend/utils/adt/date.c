@@ -108,9 +108,9 @@ anytime_typmodout(bool istz, int32 typmod)
  * Given date text string, convert to internal date format.
  */
 Datum
-date_in(PG_FUNCTION_ARGS)
+date_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	DateADT		date;
 	fsec_t		fsec;
 	struct mdb_tm tt,
@@ -149,11 +149,11 @@ date_in(PG_FUNCTION_ARGS)
 
 		case DTK_LATE:
 			DATE_NOEND(date);
-			PG_RETURN_DATEADT(date);
+			MDB_RETURN_DATEADT(date);
 
 		case DTK_EARLY:
 			DATE_NOBEGIN(date);
-			PG_RETURN_DATEADT(date);
+			MDB_RETURN_DATEADT(date);
 
 		default:
 			DateTimeParseError(DTERR_BAD_FORMAT, str, "date");
@@ -174,16 +174,16 @@ date_in(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
 				 errmsg("date out of range: \"%s\"", str)));
 
-	PG_RETURN_DATEADT(date);
+	MDB_RETURN_DATEADT(date);
 }
 
 /* date_out()
  * Given internal format date, convert to text string.
  */
 Datum
-date_out(PG_FUNCTION_ARGS)
+date_out(MDB_FUNCTION_ARGS)
 {
-	DateADT		date = PG_GETARG_DATEADT(0);
+	DateADT		date = MDB_GETARG_DATEADT(0);
 	char	   *result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -199,16 +199,16 @@ date_out(PG_FUNCTION_ARGS)
 	}
 
 	result = pstrdup(buf);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		date_recv			- converts external binary format to date
  */
 Datum
-date_recv(PG_FUNCTION_ARGS)
+date_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	DateADT		result;
 
 	result = (DateADT) pq_getmsgint(buf, sizeof(DateADT));
@@ -221,36 +221,36 @@ date_recv(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
 				 errmsg("date out of range")));
 
-	PG_RETURN_DATEADT(result);
+	MDB_RETURN_DATEADT(result);
 }
 
 /*
  *		date_send			- converts date to binary format
  */
 Datum
-date_send(PG_FUNCTION_ARGS)
+date_send(MDB_FUNCTION_ARGS)
 {
-	DateADT		date = PG_GETARG_DATEADT(0);
+	DateADT		date = MDB_GETARG_DATEADT(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint(&buf, date, sizeof(date));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
  *		make_date			- date constructor
  */
 Datum
-make_date(PG_FUNCTION_ARGS)
+make_date(MDB_FUNCTION_ARGS)
 {
 	struct mdb_tm tm;
 	DateADT		date;
 	int			dterr;
 
-	tm.tm_year = PG_GETARG_INT32(0);
-	tm.tm_mon = PG_GETARG_INT32(1);
-	tm.tm_mday = PG_GETARG_INT32(2);
+	tm.tm_year = MDB_GETARG_INT32(0);
+	tm.tm_mon = MDB_GETARG_INT32(1);
+	tm.tm_mday = MDB_GETARG_INT32(2);
 
 	/*
 	 * Note: we'll reject zero or negative year values.  Perhaps negatives
@@ -280,7 +280,7 @@ make_date(PG_FUNCTION_ARGS)
 				 errmsg("date out of range: %d-%02d-%02d",
 						tm.tm_year, tm.tm_mon, tm.tm_mday)));
 
-	PG_RETURN_DATEADT(date);
+	MDB_RETURN_DATEADT(date);
 }
 
 /*
@@ -303,70 +303,70 @@ EncodeSpecialDate(DateADT dt, char *str)
  */
 
 Datum
-date_eq(PG_FUNCTION_ARGS)
+date_eq(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
-	PG_RETURN_BOOL(dateVal1 == dateVal2);
+	MDB_RETURN_BOOL(dateVal1 == dateVal2);
 }
 
 Datum
-date_ne(PG_FUNCTION_ARGS)
+date_ne(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
-	PG_RETURN_BOOL(dateVal1 != dateVal2);
+	MDB_RETURN_BOOL(dateVal1 != dateVal2);
 }
 
 Datum
-date_lt(PG_FUNCTION_ARGS)
+date_lt(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
-	PG_RETURN_BOOL(dateVal1 < dateVal2);
+	MDB_RETURN_BOOL(dateVal1 < dateVal2);
 }
 
 Datum
-date_le(PG_FUNCTION_ARGS)
+date_le(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
-	PG_RETURN_BOOL(dateVal1 <= dateVal2);
+	MDB_RETURN_BOOL(dateVal1 <= dateVal2);
 }
 
 Datum
-date_gt(PG_FUNCTION_ARGS)
+date_gt(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
-	PG_RETURN_BOOL(dateVal1 > dateVal2);
+	MDB_RETURN_BOOL(dateVal1 > dateVal2);
 }
 
 Datum
-date_ge(PG_FUNCTION_ARGS)
+date_ge(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
-	PG_RETURN_BOOL(dateVal1 >= dateVal2);
+	MDB_RETURN_BOOL(dateVal1 >= dateVal2);
 }
 
 Datum
-date_cmp(PG_FUNCTION_ARGS)
+date_cmp(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
 	if (dateVal1 < dateVal2)
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 	else if (dateVal1 > dateVal2)
-		PG_RETURN_INT32(1);
-	PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(1);
+	MDB_RETURN_INT32(0);
 }
 
 static int
@@ -383,68 +383,68 @@ date_fastcmp(Datum x, Datum y, SortSupport ssup)
 }
 
 Datum
-date_sortsupport(PG_FUNCTION_ARGS)
+date_sortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 
 	ssup->comparator = date_fastcmp;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-date_finite(PG_FUNCTION_ARGS)
+date_finite(MDB_FUNCTION_ARGS)
 {
-	DateADT		date = PG_GETARG_DATEADT(0);
+	DateADT		date = MDB_GETARG_DATEADT(0);
 
-	PG_RETURN_BOOL(!DATE_NOT_FINITE(date));
+	MDB_RETURN_BOOL(!DATE_NOT_FINITE(date));
 }
 
 Datum
-date_larger(PG_FUNCTION_ARGS)
+date_larger(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
-	PG_RETURN_DATEADT((dateVal1 > dateVal2) ? dateVal1 : dateVal2);
+	MDB_RETURN_DATEADT((dateVal1 > dateVal2) ? dateVal1 : dateVal2);
 }
 
 Datum
-date_smaller(PG_FUNCTION_ARGS)
+date_smaller(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
-	PG_RETURN_DATEADT((dateVal1 < dateVal2) ? dateVal1 : dateVal2);
+	MDB_RETURN_DATEADT((dateVal1 < dateVal2) ? dateVal1 : dateVal2);
 }
 
 /* Compute difference between two dates in days.
  */
 Datum
-date_mi(PG_FUNCTION_ARGS)
+date_mi(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal1 = PG_GETARG_DATEADT(0);
-	DateADT		dateVal2 = PG_GETARG_DATEADT(1);
+	DateADT		dateVal1 = MDB_GETARG_DATEADT(0);
+	DateADT		dateVal2 = MDB_GETARG_DATEADT(1);
 
 	if (DATE_NOT_FINITE(dateVal1) || DATE_NOT_FINITE(dateVal2))
 		ereport(ERROR,
 				(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
 				 errmsg("cannot subtract infinite dates")));
 
-	PG_RETURN_INT32((int32) (dateVal1 - dateVal2));
+	MDB_RETURN_INT32((int32) (dateVal1 - dateVal2));
 }
 
 /* Add a number of days to a date, giving a new date.
  * Must handle both positive and negative numbers of days.
  */
 Datum
-date_pli(PG_FUNCTION_ARGS)
+date_pli(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	int32		days = PG_GETARG_INT32(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	int32		days = MDB_GETARG_INT32(1);
 	DateADT		result;
 
 	if (DATE_NOT_FINITE(dateVal))
-		PG_RETURN_DATEADT(dateVal);		/* can't change infinity */
+		MDB_RETURN_DATEADT(dateVal);		/* can't change infinity */
 
 	result = dateVal + days;
 
@@ -455,20 +455,20 @@ date_pli(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
 				 errmsg("date out of range")));
 
-	PG_RETURN_DATEADT(result);
+	MDB_RETURN_DATEADT(result);
 }
 
 /* Subtract a number of days from a date, giving a new date.
  */
 Datum
-date_mii(PG_FUNCTION_ARGS)
+date_mii(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	int32		days = PG_GETARG_INT32(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	int32		days = MDB_GETARG_INT32(1);
 	DateADT		result;
 
 	if (DATE_NOT_FINITE(dateVal))
-		PG_RETURN_DATEADT(dateVal);		/* can't change infinity */
+		MDB_RETURN_DATEADT(dateVal);		/* can't change infinity */
 
 	result = dateVal - days;
 
@@ -479,7 +479,7 @@ date_mii(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
 				 errmsg("date out of range")));
 
-	PG_RETURN_DATEADT(result);
+	MDB_RETURN_DATEADT(result);
 }
 
 /*
@@ -608,339 +608,339 @@ date2timestamp_no_overflow(DateADT dateVal)
  */
 
 Datum
-date_eq_timestamp(PG_FUNCTION_ARGS)
+date_eq_timestamp(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	Timestamp	dt2 = PG_GETARG_TIMESTAMP(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	Timestamp	dt2 = MDB_GETARG_TIMESTAMP(1);
 	Timestamp	dt1;
 
 	dt1 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) == 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) == 0);
 }
 
 Datum
-date_ne_timestamp(PG_FUNCTION_ARGS)
+date_ne_timestamp(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	Timestamp	dt2 = PG_GETARG_TIMESTAMP(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	Timestamp	dt2 = MDB_GETARG_TIMESTAMP(1);
 	Timestamp	dt1;
 
 	dt1 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) != 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) != 0);
 }
 
 Datum
-date_lt_timestamp(PG_FUNCTION_ARGS)
+date_lt_timestamp(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	Timestamp	dt2 = PG_GETARG_TIMESTAMP(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	Timestamp	dt2 = MDB_GETARG_TIMESTAMP(1);
 	Timestamp	dt1;
 
 	dt1 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) < 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) < 0);
 }
 
 Datum
-date_gt_timestamp(PG_FUNCTION_ARGS)
+date_gt_timestamp(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	Timestamp	dt2 = PG_GETARG_TIMESTAMP(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	Timestamp	dt2 = MDB_GETARG_TIMESTAMP(1);
 	Timestamp	dt1;
 
 	dt1 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) > 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) > 0);
 }
 
 Datum
-date_le_timestamp(PG_FUNCTION_ARGS)
+date_le_timestamp(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	Timestamp	dt2 = PG_GETARG_TIMESTAMP(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	Timestamp	dt2 = MDB_GETARG_TIMESTAMP(1);
 	Timestamp	dt1;
 
 	dt1 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) <= 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) <= 0);
 }
 
 Datum
-date_ge_timestamp(PG_FUNCTION_ARGS)
+date_ge_timestamp(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	Timestamp	dt2 = PG_GETARG_TIMESTAMP(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	Timestamp	dt2 = MDB_GETARG_TIMESTAMP(1);
 	Timestamp	dt1;
 
 	dt1 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) >= 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) >= 0);
 }
 
 Datum
-date_cmp_timestamp(PG_FUNCTION_ARGS)
+date_cmp_timestamp(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	Timestamp	dt2 = PG_GETARG_TIMESTAMP(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	Timestamp	dt2 = MDB_GETARG_TIMESTAMP(1);
 	Timestamp	dt1;
 
 	dt1 = date2timestamp(dateVal);
 
-	PG_RETURN_INT32(timestamp_cmp_internal(dt1, dt2));
+	MDB_RETURN_INT32(timestamp_cmp_internal(dt1, dt2));
 }
 
 Datum
-date_eq_timestamptz(PG_FUNCTION_ARGS)
+date_eq_timestamptz(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	TimestampTz dt2 = PG_GETARG_TIMESTAMPTZ(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	TimestampTz dt2 = MDB_GETARG_TIMESTAMPTZ(1);
 	TimestampTz dt1;
 
 	dt1 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) == 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) == 0);
 }
 
 Datum
-date_ne_timestamptz(PG_FUNCTION_ARGS)
+date_ne_timestamptz(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	TimestampTz dt2 = PG_GETARG_TIMESTAMPTZ(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	TimestampTz dt2 = MDB_GETARG_TIMESTAMPTZ(1);
 	TimestampTz dt1;
 
 	dt1 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) != 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) != 0);
 }
 
 Datum
-date_lt_timestamptz(PG_FUNCTION_ARGS)
+date_lt_timestamptz(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	TimestampTz dt2 = PG_GETARG_TIMESTAMPTZ(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	TimestampTz dt2 = MDB_GETARG_TIMESTAMPTZ(1);
 	TimestampTz dt1;
 
 	dt1 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) < 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) < 0);
 }
 
 Datum
-date_gt_timestamptz(PG_FUNCTION_ARGS)
+date_gt_timestamptz(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	TimestampTz dt2 = PG_GETARG_TIMESTAMPTZ(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	TimestampTz dt2 = MDB_GETARG_TIMESTAMPTZ(1);
 	TimestampTz dt1;
 
 	dt1 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) > 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) > 0);
 }
 
 Datum
-date_le_timestamptz(PG_FUNCTION_ARGS)
+date_le_timestamptz(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	TimestampTz dt2 = PG_GETARG_TIMESTAMPTZ(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	TimestampTz dt2 = MDB_GETARG_TIMESTAMPTZ(1);
 	TimestampTz dt1;
 
 	dt1 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) <= 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) <= 0);
 }
 
 Datum
-date_ge_timestamptz(PG_FUNCTION_ARGS)
+date_ge_timestamptz(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	TimestampTz dt2 = PG_GETARG_TIMESTAMPTZ(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	TimestampTz dt2 = MDB_GETARG_TIMESTAMPTZ(1);
 	TimestampTz dt1;
 
 	dt1 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) >= 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) >= 0);
 }
 
 Datum
-date_cmp_timestamptz(PG_FUNCTION_ARGS)
+date_cmp_timestamptz(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	TimestampTz dt2 = PG_GETARG_TIMESTAMPTZ(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	TimestampTz dt2 = MDB_GETARG_TIMESTAMPTZ(1);
 	TimestampTz dt1;
 
 	dt1 = date2timestamptz(dateVal);
 
-	PG_RETURN_INT32(timestamptz_cmp_internal(dt1, dt2));
+	MDB_RETURN_INT32(timestamptz_cmp_internal(dt1, dt2));
 }
 
 Datum
-timestamp_eq_date(PG_FUNCTION_ARGS)
+timestamp_eq_date(MDB_FUNCTION_ARGS)
 {
-	Timestamp	dt1 = PG_GETARG_TIMESTAMP(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	Timestamp	dt1 = MDB_GETARG_TIMESTAMP(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	Timestamp	dt2;
 
 	dt2 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) == 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) == 0);
 }
 
 Datum
-timestamp_ne_date(PG_FUNCTION_ARGS)
+timestamp_ne_date(MDB_FUNCTION_ARGS)
 {
-	Timestamp	dt1 = PG_GETARG_TIMESTAMP(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	Timestamp	dt1 = MDB_GETARG_TIMESTAMP(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	Timestamp	dt2;
 
 	dt2 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) != 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) != 0);
 }
 
 Datum
-timestamp_lt_date(PG_FUNCTION_ARGS)
+timestamp_lt_date(MDB_FUNCTION_ARGS)
 {
-	Timestamp	dt1 = PG_GETARG_TIMESTAMP(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	Timestamp	dt1 = MDB_GETARG_TIMESTAMP(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	Timestamp	dt2;
 
 	dt2 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) < 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) < 0);
 }
 
 Datum
-timestamp_gt_date(PG_FUNCTION_ARGS)
+timestamp_gt_date(MDB_FUNCTION_ARGS)
 {
-	Timestamp	dt1 = PG_GETARG_TIMESTAMP(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	Timestamp	dt1 = MDB_GETARG_TIMESTAMP(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	Timestamp	dt2;
 
 	dt2 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) > 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) > 0);
 }
 
 Datum
-timestamp_le_date(PG_FUNCTION_ARGS)
+timestamp_le_date(MDB_FUNCTION_ARGS)
 {
-	Timestamp	dt1 = PG_GETARG_TIMESTAMP(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	Timestamp	dt1 = MDB_GETARG_TIMESTAMP(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	Timestamp	dt2;
 
 	dt2 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) <= 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) <= 0);
 }
 
 Datum
-timestamp_ge_date(PG_FUNCTION_ARGS)
+timestamp_ge_date(MDB_FUNCTION_ARGS)
 {
-	Timestamp	dt1 = PG_GETARG_TIMESTAMP(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	Timestamp	dt1 = MDB_GETARG_TIMESTAMP(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	Timestamp	dt2;
 
 	dt2 = date2timestamp(dateVal);
 
-	PG_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) >= 0);
+	MDB_RETURN_BOOL(timestamp_cmp_internal(dt1, dt2) >= 0);
 }
 
 Datum
-timestamp_cmp_date(PG_FUNCTION_ARGS)
+timestamp_cmp_date(MDB_FUNCTION_ARGS)
 {
-	Timestamp	dt1 = PG_GETARG_TIMESTAMP(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	Timestamp	dt1 = MDB_GETARG_TIMESTAMP(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	Timestamp	dt2;
 
 	dt2 = date2timestamp(dateVal);
 
-	PG_RETURN_INT32(timestamp_cmp_internal(dt1, dt2));
+	MDB_RETURN_INT32(timestamp_cmp_internal(dt1, dt2));
 }
 
 Datum
-timestamptz_eq_date(PG_FUNCTION_ARGS)
+timestamptz_eq_date(MDB_FUNCTION_ARGS)
 {
-	TimestampTz dt1 = PG_GETARG_TIMESTAMPTZ(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	TimestampTz dt1 = MDB_GETARG_TIMESTAMPTZ(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	TimestampTz dt2;
 
 	dt2 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) == 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) == 0);
 }
 
 Datum
-timestamptz_ne_date(PG_FUNCTION_ARGS)
+timestamptz_ne_date(MDB_FUNCTION_ARGS)
 {
-	TimestampTz dt1 = PG_GETARG_TIMESTAMPTZ(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	TimestampTz dt1 = MDB_GETARG_TIMESTAMPTZ(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	TimestampTz dt2;
 
 	dt2 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) != 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) != 0);
 }
 
 Datum
-timestamptz_lt_date(PG_FUNCTION_ARGS)
+timestamptz_lt_date(MDB_FUNCTION_ARGS)
 {
-	TimestampTz dt1 = PG_GETARG_TIMESTAMPTZ(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	TimestampTz dt1 = MDB_GETARG_TIMESTAMPTZ(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	TimestampTz dt2;
 
 	dt2 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) < 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) < 0);
 }
 
 Datum
-timestamptz_gt_date(PG_FUNCTION_ARGS)
+timestamptz_gt_date(MDB_FUNCTION_ARGS)
 {
-	TimestampTz dt1 = PG_GETARG_TIMESTAMPTZ(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	TimestampTz dt1 = MDB_GETARG_TIMESTAMPTZ(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	TimestampTz dt2;
 
 	dt2 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) > 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) > 0);
 }
 
 Datum
-timestamptz_le_date(PG_FUNCTION_ARGS)
+timestamptz_le_date(MDB_FUNCTION_ARGS)
 {
-	TimestampTz dt1 = PG_GETARG_TIMESTAMPTZ(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	TimestampTz dt1 = MDB_GETARG_TIMESTAMPTZ(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	TimestampTz dt2;
 
 	dt2 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) <= 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) <= 0);
 }
 
 Datum
-timestamptz_ge_date(PG_FUNCTION_ARGS)
+timestamptz_ge_date(MDB_FUNCTION_ARGS)
 {
-	TimestampTz dt1 = PG_GETARG_TIMESTAMPTZ(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	TimestampTz dt1 = MDB_GETARG_TIMESTAMPTZ(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	TimestampTz dt2;
 
 	dt2 = date2timestamptz(dateVal);
 
-	PG_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) >= 0);
+	MDB_RETURN_BOOL(timestamptz_cmp_internal(dt1, dt2) >= 0);
 }
 
 Datum
-timestamptz_cmp_date(PG_FUNCTION_ARGS)
+timestamptz_cmp_date(MDB_FUNCTION_ARGS)
 {
-	TimestampTz dt1 = PG_GETARG_TIMESTAMPTZ(0);
-	DateADT		dateVal = PG_GETARG_DATEADT(1);
+	TimestampTz dt1 = MDB_GETARG_TIMESTAMPTZ(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(1);
 	TimestampTz dt2;
 
 	dt2 = date2timestamptz(dateVal);
 
-	PG_RETURN_INT32(timestamptz_cmp_internal(dt1, dt2));
+	MDB_RETURN_INT32(timestamptz_cmp_internal(dt1, dt2));
 }
 
 
@@ -951,10 +951,10 @@ timestamptz_cmp_date(PG_FUNCTION_ARGS)
  * and then using the timestamp plus interval function.
  */
 Datum
-date_pl_interval(PG_FUNCTION_ARGS)
+date_pl_interval(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	Interval   *span = PG_GETARG_INTERVAL_P(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	Interval   *span = MDB_GETARG_INTERVAL_P(1);
 	Timestamp	dateStamp;
 
 	dateStamp = date2timestamp(dateVal);
@@ -971,10 +971,10 @@ date_pl_interval(PG_FUNCTION_ARGS)
  * and then using the timestamp minus interval function.
  */
 Datum
-date_mi_interval(PG_FUNCTION_ARGS)
+date_mi_interval(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
-	Interval   *span = PG_GETARG_INTERVAL_P(1);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
+	Interval   *span = MDB_GETARG_INTERVAL_P(1);
 	Timestamp	dateStamp;
 
 	dateStamp = date2timestamp(dateVal);
@@ -988,23 +988,23 @@ date_mi_interval(PG_FUNCTION_ARGS)
  * Convert date to timestamp data type.
  */
 Datum
-date_timestamp(PG_FUNCTION_ARGS)
+date_timestamp(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
 	Timestamp	result;
 
 	result = date2timestamp(dateVal);
 
-	PG_RETURN_TIMESTAMP(result);
+	MDB_RETURN_TIMESTAMP(result);
 }
 
 /* timestamp_date()
  * Convert timestamp to date data type.
  */
 Datum
-timestamp_date(PG_FUNCTION_ARGS)
+timestamp_date(MDB_FUNCTION_ARGS)
 {
-	Timestamp	timestamp = PG_GETARG_TIMESTAMP(0);
+	Timestamp	timestamp = MDB_GETARG_TIMESTAMP(0);
 	DateADT		result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -1024,7 +1024,7 @@ timestamp_date(PG_FUNCTION_ARGS)
 		result = date2j(tm->tm_year, tm->tm_mon, tm->tm_mday) - POSTGRES_EPOCH_JDATE;
 	}
 
-	PG_RETURN_DATEADT(result);
+	MDB_RETURN_DATEADT(result);
 }
 
 
@@ -1032,14 +1032,14 @@ timestamp_date(PG_FUNCTION_ARGS)
  * Convert date to timestamp with time zone data type.
  */
 Datum
-date_timestamptz(PG_FUNCTION_ARGS)
+date_timestamptz(MDB_FUNCTION_ARGS)
 {
-	DateADT		dateVal = PG_GETARG_DATEADT(0);
+	DateADT		dateVal = MDB_GETARG_DATEADT(0);
 	TimestampTz result;
 
 	result = date2timestamptz(dateVal);
 
-	PG_RETURN_TIMESTAMP(result);
+	MDB_RETURN_TIMESTAMP(result);
 }
 
 
@@ -1047,9 +1047,9 @@ date_timestamptz(PG_FUNCTION_ARGS)
  * Convert timestamp with time zone to date data type.
  */
 Datum
-timestamptz_date(PG_FUNCTION_ARGS)
+timestamptz_date(MDB_FUNCTION_ARGS)
 {
-	TimestampTz timestamp = PG_GETARG_TIMESTAMP(0);
+	TimestampTz timestamp = MDB_GETARG_TIMESTAMP(0);
 	DateADT		result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -1070,7 +1070,7 @@ timestamptz_date(PG_FUNCTION_ARGS)
 		result = date2j(tm->tm_year, tm->tm_mon, tm->tm_mday) - POSTGRES_EPOCH_JDATE;
 	}
 
-	PG_RETURN_DATEADT(result);
+	MDB_RETURN_DATEADT(result);
 }
 
 
@@ -1078,9 +1078,9 @@ timestamptz_date(PG_FUNCTION_ARGS)
  * Convert abstime to date data type.
  */
 Datum
-abstime_date(PG_FUNCTION_ARGS)
+abstime_date(MDB_FUNCTION_ARGS)
 {
-	AbsoluteTime abstime = PG_GETARG_ABSOLUTETIME(0);
+	AbsoluteTime abstime = MDB_GETARG_ABSOLUTETIME(0);
 	DateADT		result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -1119,7 +1119,7 @@ abstime_date(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_DATEADT(result);
+	MDB_RETURN_DATEADT(result);
 }
 
 
@@ -1128,14 +1128,14 @@ abstime_date(PG_FUNCTION_ARGS)
  *****************************************************************************/
 
 Datum
-time_in(PG_FUNCTION_ARGS)
+time_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		typmod = PG_GETARG_INT32(2);
+	int32		typmod = MDB_GETARG_INT32(2);
 	TimeADT		result;
 	fsec_t		fsec;
 	struct mdb_tm tt,
@@ -1158,7 +1158,7 @@ time_in(PG_FUNCTION_ARGS)
 	tm2time(tm, fsec, &result);
 	AdjustTimeForTypmod(&result, typmod);
 
-	PG_RETURN_TIMEADT(result);
+	MDB_RETURN_TIMEADT(result);
 }
 
 /* tm2time()
@@ -1216,9 +1216,9 @@ recalc:
 }
 
 Datum
-time_out(PG_FUNCTION_ARGS)
+time_out(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time = PG_GETARG_TIMEADT(0);
+	TimeADT		time = MDB_GETARG_TIMEADT(0);
 	char	   *result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -1229,7 +1229,7 @@ time_out(PG_FUNCTION_ARGS)
 	EncodeTimeOnly(tm, fsec, false, 0, DateStyle, buf);
 
 	result = pstrdup(buf);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
@@ -1239,14 +1239,14 @@ time_out(PG_FUNCTION_ARGS)
  * time representations ...
  */
 Datum
-time_recv(PG_FUNCTION_ARGS)
+time_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		typmod = PG_GETARG_INT32(2);
+	int32		typmod = MDB_GETARG_INT32(2);
 	TimeADT		result;
 
 #ifdef HAVE_INT64_TIMESTAMP
@@ -1267,16 +1267,16 @@ time_recv(PG_FUNCTION_ARGS)
 
 	AdjustTimeForTypmod(&result, typmod);
 
-	PG_RETURN_TIMEADT(result);
+	MDB_RETURN_TIMEADT(result);
 }
 
 /*
  *		time_send			- converts time to binary format
  */
 Datum
-time_send(PG_FUNCTION_ARGS)
+time_send(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time = PG_GETARG_TIMEADT(0);
+	TimeADT		time = MDB_GETARG_TIMEADT(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
@@ -1285,34 +1285,34 @@ time_send(PG_FUNCTION_ARGS)
 #else
 	pq_sendfloat8(&buf, time);
 #endif
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 Datum
-timetypmodin(PG_FUNCTION_ARGS)
+timetypmodin(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *ta = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *ta = MDB_GETARG_ARRAYTYPE_P(0);
 
-	PG_RETURN_INT32(anytime_typmodin(false, ta));
+	MDB_RETURN_INT32(anytime_typmodin(false, ta));
 }
 
 Datum
-timetypmodout(PG_FUNCTION_ARGS)
+timetypmodout(MDB_FUNCTION_ARGS)
 {
-	int32		typmod = PG_GETARG_INT32(0);
+	int32		typmod = MDB_GETARG_INT32(0);
 
-	PG_RETURN_CSTRING(anytime_typmodout(false, typmod));
+	MDB_RETURN_CSTRING(anytime_typmodout(false, typmod));
 }
 
 /*
  *		make_time			- time constructor
  */
 Datum
-make_time(PG_FUNCTION_ARGS)
+make_time(MDB_FUNCTION_ARGS)
 {
-	int			tm_hour = PG_GETARG_INT32(0);
-	int			tm_min = PG_GETARG_INT32(1);
-	double		sec = PG_GETARG_FLOAT8(2);
+	int			tm_hour = MDB_GETARG_INT32(0);
+	int			tm_min = MDB_GETARG_INT32(1);
+	double		sec = MDB_GETARG_FLOAT8(2);
 	TimeADT		time;
 
 	/* This should match the checks in DecodeTimeOnly */
@@ -1334,7 +1334,7 @@ make_time(PG_FUNCTION_ARGS)
 	time = ((tm_hour * MINS_PER_HOUR + tm_min) * SECS_PER_MINUTE) + sec;
 #endif
 
-	PG_RETURN_TIMEADT(time);
+	MDB_RETURN_TIMEADT(time);
 }
 
 
@@ -1343,10 +1343,10 @@ make_time(PG_FUNCTION_ARGS)
  * increases in allowed precision.
  */
 Datum
-time_transform(PG_FUNCTION_ARGS)
+time_transform(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(TemporalTransform(MAX_TIME_PRECISION,
-										(Node *) PG_GETARG_POINTER(0)));
+	MDB_RETURN_POINTER(TemporalTransform(MAX_TIME_PRECISION,
+										(Node *) MDB_GETARG_POINTER(0)));
 }
 
 /* time_scale()
@@ -1354,16 +1354,16 @@ time_transform(PG_FUNCTION_ARGS)
  * Used by MollyDB type system to stuff columns.
  */
 Datum
-time_scale(PG_FUNCTION_ARGS)
+time_scale(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time = PG_GETARG_TIMEADT(0);
-	int32		typmod = PG_GETARG_INT32(1);
+	TimeADT		time = MDB_GETARG_TIMEADT(0);
+	int32		typmod = MDB_GETARG_INT32(1);
 	TimeADT		result;
 
 	result = time;
 	AdjustTimeForTypmod(&result, typmod);
 
-	PG_RETURN_TIMEADT(result);
+	MDB_RETURN_TIMEADT(result);
 }
 
 /* AdjustTimeForTypmod()
@@ -1437,74 +1437,74 @@ AdjustTimeForTypmod(TimeADT *time, int32 typmod)
 
 
 Datum
-time_eq(PG_FUNCTION_ARGS)
+time_eq(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 
-	PG_RETURN_BOOL(time1 == time2);
+	MDB_RETURN_BOOL(time1 == time2);
 }
 
 Datum
-time_ne(PG_FUNCTION_ARGS)
+time_ne(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 
-	PG_RETURN_BOOL(time1 != time2);
+	MDB_RETURN_BOOL(time1 != time2);
 }
 
 Datum
-time_lt(PG_FUNCTION_ARGS)
+time_lt(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 
-	PG_RETURN_BOOL(time1 < time2);
+	MDB_RETURN_BOOL(time1 < time2);
 }
 
 Datum
-time_le(PG_FUNCTION_ARGS)
+time_le(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 
-	PG_RETURN_BOOL(time1 <= time2);
+	MDB_RETURN_BOOL(time1 <= time2);
 }
 
 Datum
-time_gt(PG_FUNCTION_ARGS)
+time_gt(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 
-	PG_RETURN_BOOL(time1 > time2);
+	MDB_RETURN_BOOL(time1 > time2);
 }
 
 Datum
-time_ge(PG_FUNCTION_ARGS)
+time_ge(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 
-	PG_RETURN_BOOL(time1 >= time2);
+	MDB_RETURN_BOOL(time1 >= time2);
 }
 
 Datum
-time_cmp(PG_FUNCTION_ARGS)
+time_cmp(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 
 	if (time1 < time2)
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 	if (time1 > time2)
-		PG_RETURN_INT32(1);
-	PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(1);
+	MDB_RETURN_INT32(0);
 }
 
 Datum
-time_hash(PG_FUNCTION_ARGS)
+time_hash(MDB_FUNCTION_ARGS)
 {
 	/* We can use either hashint8 or hashfloat8 directly */
 #ifdef HAVE_INT64_TIMESTAMP
@@ -1515,21 +1515,21 @@ time_hash(PG_FUNCTION_ARGS)
 }
 
 Datum
-time_larger(PG_FUNCTION_ARGS)
+time_larger(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 
-	PG_RETURN_TIMEADT((time1 > time2) ? time1 : time2);
+	MDB_RETURN_TIMEADT((time1 > time2) ? time1 : time2);
 }
 
 Datum
-time_smaller(PG_FUNCTION_ARGS)
+time_smaller(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 
-	PG_RETURN_TIMEADT((time1 < time2) ? time1 : time2);
+	MDB_RETURN_TIMEADT((time1 < time2) ? time1 : time2);
 }
 
 /* overlaps_time() --- implements the SQL OVERLAPS operator.
@@ -1539,20 +1539,20 @@ time_smaller(PG_FUNCTION_ARGS)
  * where some of the inputs are null.
  */
 Datum
-overlaps_time(PG_FUNCTION_ARGS)
+overlaps_time(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * The arguments are TimeADT, but we leave them as generic Datums to avoid
 	 * dereferencing nulls (TimeADT is pass-by-reference!)
 	 */
-	Datum		ts1 = PG_GETARG_DATUM(0);
-	Datum		te1 = PG_GETARG_DATUM(1);
-	Datum		ts2 = PG_GETARG_DATUM(2);
-	Datum		te2 = PG_GETARG_DATUM(3);
-	bool		ts1IsNull = PG_ARGISNULL(0);
-	bool		te1IsNull = PG_ARGISNULL(1);
-	bool		ts2IsNull = PG_ARGISNULL(2);
-	bool		te2IsNull = PG_ARGISNULL(3);
+	Datum		ts1 = MDB_GETARG_DATUM(0);
+	Datum		te1 = MDB_GETARG_DATUM(1);
+	Datum		ts2 = MDB_GETARG_DATUM(2);
+	Datum		te2 = MDB_GETARG_DATUM(3);
+	bool		ts1IsNull = MDB_ARGISNULL(0);
+	bool		te1IsNull = MDB_ARGISNULL(1);
+	bool		ts2IsNull = MDB_ARGISNULL(2);
+	bool		te2IsNull = MDB_ARGISNULL(3);
 
 #define TIMEADT_GT(t1,t2) \
 	(DatumGetTimeADT(t1) > DatumGetTimeADT(t2))
@@ -1567,7 +1567,7 @@ overlaps_time(PG_FUNCTION_ARGS)
 	if (ts1IsNull)
 	{
 		if (te1IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		/* swap null for non-null */
 		ts1 = te1;
 		te1IsNull = true;
@@ -1587,7 +1587,7 @@ overlaps_time(PG_FUNCTION_ARGS)
 	if (ts2IsNull)
 	{
 		if (te2IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		/* swap null for non-null */
 		ts2 = te2;
 		te2IsNull = true;
@@ -1614,33 +1614,33 @@ overlaps_time(PG_FUNCTION_ARGS)
 		 * in the presence of nulls it's not quite completely so.
 		 */
 		if (te2IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		if (TIMEADT_LT(ts1, te2))
-			PG_RETURN_BOOL(true);
+			MDB_RETURN_BOOL(true);
 		if (te1IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 
 		/*
 		 * If te1 is not null then we had ts1 <= te1 above, and we just found
 		 * ts1 >= te2, hence te1 >= te2.
 		 */
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 	else if (TIMEADT_LT(ts1, ts2))
 	{
 		/* This case is ts2 < te1 OR te2 < te1 */
 		if (te1IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		if (TIMEADT_LT(ts2, te1))
-			PG_RETURN_BOOL(true);
+			MDB_RETURN_BOOL(true);
 		if (te2IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 
 		/*
 		 * If te2 is not null then we had ts2 <= te2 above, and we just found
 		 * ts2 >= te1, hence te2 >= te1.
 		 */
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 	else
 	{
@@ -1649,8 +1649,8 @@ overlaps_time(PG_FUNCTION_ARGS)
 		 * rather silly way of saying "true if both are nonnull, else null".
 		 */
 		if (te1IsNull || te2IsNull)
-			PG_RETURN_NULL();
-		PG_RETURN_BOOL(true);
+			MDB_RETURN_NULL();
+		MDB_RETURN_BOOL(true);
 	}
 
 #undef TIMEADT_GT
@@ -1661,16 +1661,16 @@ overlaps_time(PG_FUNCTION_ARGS)
  * Convert timestamp to time data type.
  */
 Datum
-timestamp_time(PG_FUNCTION_ARGS)
+timestamp_time(MDB_FUNCTION_ARGS)
 {
-	Timestamp	timestamp = PG_GETARG_TIMESTAMP(0);
+	Timestamp	timestamp = MDB_GETARG_TIMESTAMP(0);
 	TimeADT		result;
 	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 
 	if (TIMESTAMP_NOT_FINITE(timestamp))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (timestamp2tm(timestamp, NULL, tm, &fsec, NULL, NULL) != 0)
 		ereport(ERROR,
@@ -1689,16 +1689,16 @@ timestamp_time(PG_FUNCTION_ARGS)
 	result = ((tm->tm_hour * MINS_PER_HOUR + tm->tm_min) * SECS_PER_MINUTE) + tm->tm_sec + fsec;
 #endif
 
-	PG_RETURN_TIMEADT(result);
+	MDB_RETURN_TIMEADT(result);
 }
 
 /* timestamptz_time()
  * Convert timestamptz to time data type.
  */
 Datum
-timestamptz_time(PG_FUNCTION_ARGS)
+timestamptz_time(MDB_FUNCTION_ARGS)
 {
-	TimestampTz timestamp = PG_GETARG_TIMESTAMP(0);
+	TimestampTz timestamp = MDB_GETARG_TIMESTAMP(0);
 	TimeADT		result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -1706,7 +1706,7 @@ timestamptz_time(PG_FUNCTION_ARGS)
 	fsec_t		fsec;
 
 	if (TIMESTAMP_NOT_FINITE(timestamp))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (timestamp2tm(timestamp, &tz, tm, &fsec, NULL, NULL) != 0)
 		ereport(ERROR,
@@ -1725,17 +1725,17 @@ timestamptz_time(PG_FUNCTION_ARGS)
 	result = ((tm->tm_hour * MINS_PER_HOUR + tm->tm_min) * SECS_PER_MINUTE) + tm->tm_sec + fsec;
 #endif
 
-	PG_RETURN_TIMEADT(result);
+	MDB_RETURN_TIMEADT(result);
 }
 
 /* datetime_timestamp()
  * Convert date and time to timestamp data type.
  */
 Datum
-datetime_timestamp(PG_FUNCTION_ARGS)
+datetime_timestamp(MDB_FUNCTION_ARGS)
 {
-	DateADT		date = PG_GETARG_DATEADT(0);
-	TimeADT		time = PG_GETARG_TIMEADT(1);
+	DateADT		date = MDB_GETARG_DATEADT(0);
+	TimeADT		time = MDB_GETARG_TIMEADT(1);
 	Timestamp	result;
 
 	result = date2timestamp(date);
@@ -1748,16 +1748,16 @@ datetime_timestamp(PG_FUNCTION_ARGS)
 					 errmsg("timestamp out of range")));
 	}
 
-	PG_RETURN_TIMESTAMP(result);
+	MDB_RETURN_TIMESTAMP(result);
 }
 
 /* time_interval()
  * Convert time to interval data type.
  */
 Datum
-time_interval(PG_FUNCTION_ARGS)
+time_interval(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time = PG_GETARG_TIMEADT(0);
+	TimeADT		time = MDB_GETARG_TIMEADT(0);
 	Interval   *result;
 
 	result = (Interval *) palloc(sizeof(Interval));
@@ -1766,7 +1766,7 @@ time_interval(PG_FUNCTION_ARGS)
 	result->day = 0;
 	result->month = 0;
 
-	PG_RETURN_INTERVAL_P(result);
+	MDB_RETURN_INTERVAL_P(result);
 }
 
 /* interval_time()
@@ -1778,9 +1778,9 @@ time_interval(PG_FUNCTION_ARGS)
  * so that, say, '-2 hours' becomes '22:00:00'.
  */
 Datum
-interval_time(PG_FUNCTION_ARGS)
+interval_time(MDB_FUNCTION_ARGS)
 {
-	Interval   *span = PG_GETARG_INTERVAL_P(0);
+	Interval   *span = MDB_GETARG_INTERVAL_P(0);
 	TimeADT		result;
 
 #ifdef HAVE_INT64_TIMESTAMP
@@ -1803,17 +1803,17 @@ interval_time(PG_FUNCTION_ARGS)
 		result -= floor(result / (double) SECS_PER_DAY) * (double) SECS_PER_DAY;
 #endif
 
-	PG_RETURN_TIMEADT(result);
+	MDB_RETURN_TIMEADT(result);
 }
 
 /* time_mi_time()
  * Subtract two times to produce an interval.
  */
 Datum
-time_mi_time(PG_FUNCTION_ARGS)
+time_mi_time(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time1 = PG_GETARG_TIMEADT(0);
-	TimeADT		time2 = PG_GETARG_TIMEADT(1);
+	TimeADT		time1 = MDB_GETARG_TIMEADT(0);
+	TimeADT		time2 = MDB_GETARG_TIMEADT(1);
 	Interval   *result;
 
 	result = (Interval *) palloc(sizeof(Interval));
@@ -1822,17 +1822,17 @@ time_mi_time(PG_FUNCTION_ARGS)
 	result->day = 0;
 	result->time = time1 - time2;
 
-	PG_RETURN_INTERVAL_P(result);
+	MDB_RETURN_INTERVAL_P(result);
 }
 
 /* time_pl_interval()
  * Add interval to time.
  */
 Datum
-time_pl_interval(PG_FUNCTION_ARGS)
+time_pl_interval(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time = PG_GETARG_TIMEADT(0);
-	Interval   *span = PG_GETARG_INTERVAL_P(1);
+	TimeADT		time = MDB_GETARG_TIMEADT(0);
+	Interval   *span = MDB_GETARG_INTERVAL_P(1);
 	TimeADT		result;
 
 #ifdef HAVE_INT64_TIMESTAMP
@@ -1849,17 +1849,17 @@ time_pl_interval(PG_FUNCTION_ARGS)
 		result += SECS_PER_DAY;
 #endif
 
-	PG_RETURN_TIMEADT(result);
+	MDB_RETURN_TIMEADT(result);
 }
 
 /* time_mi_interval()
  * Subtract interval from time.
  */
 Datum
-time_mi_interval(PG_FUNCTION_ARGS)
+time_mi_interval(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time = PG_GETARG_TIMEADT(0);
-	Interval   *span = PG_GETARG_INTERVAL_P(1);
+	TimeADT		time = MDB_GETARG_TIMEADT(0);
+	Interval   *span = MDB_GETARG_INTERVAL_P(1);
 	TimeADT		result;
 
 #ifdef HAVE_INT64_TIMESTAMP
@@ -1876,7 +1876,7 @@ time_mi_interval(PG_FUNCTION_ARGS)
 		result += SECS_PER_DAY;
 #endif
 
-	PG_RETURN_TIMEADT(result);
+	MDB_RETURN_TIMEADT(result);
 }
 
 
@@ -1884,10 +1884,10 @@ time_mi_interval(PG_FUNCTION_ARGS)
  * Extract specified field from time type.
  */
 Datum
-time_part(PG_FUNCTION_ARGS)
+time_part(MDB_FUNCTION_ARGS)
 {
-	text	   *units = PG_GETARG_TEXT_PP(0);
-	TimeADT		time = PG_GETARG_TIMEADT(1);
+	text	   *units = MDB_GETARG_TEXT_PP(0);
+	TimeADT		time = MDB_GETARG_TIMEADT(1);
 	float8		result;
 	int			type,
 				val;
@@ -1979,7 +1979,7 @@ time_part(PG_FUNCTION_ARGS)
 		result = 0;
 	}
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2005,14 +2005,14 @@ tm2timetz(struct mdb_tm * tm, fsec_t fsec, int tz, TimeTzADT *result)
 }
 
 Datum
-timetz_in(PG_FUNCTION_ARGS)
+timetz_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		typmod = PG_GETARG_INT32(2);
+	int32		typmod = MDB_GETARG_INT32(2);
 	TimeTzADT  *result;
 	fsec_t		fsec;
 	struct mdb_tm tt,
@@ -2036,13 +2036,13 @@ timetz_in(PG_FUNCTION_ARGS)
 	tm2timetz(tm, fsec, tz, result);
 	AdjustTimeForTypmod(&(result->time), typmod);
 
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 Datum
-timetz_out(PG_FUNCTION_ARGS)
+timetz_out(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time = PG_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time = MDB_GETARG_TIMETZADT_P(0);
 	char	   *result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -2054,21 +2054,21 @@ timetz_out(PG_FUNCTION_ARGS)
 	EncodeTimeOnly(tm, fsec, true, tz, DateStyle, buf);
 
 	result = pstrdup(buf);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		timetz_recv			- converts external binary format to timetz
  */
 Datum
-timetz_recv(PG_FUNCTION_ARGS)
+timetz_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		typmod = PG_GETARG_INT32(2);
+	int32		typmod = MDB_GETARG_INT32(2);
 	TimeTzADT  *result;
 
 	result = (TimeTzADT *) palloc(sizeof(TimeTzADT));
@@ -2099,16 +2099,16 @@ timetz_recv(PG_FUNCTION_ARGS)
 
 	AdjustTimeForTypmod(&(result->time), typmod);
 
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 /*
  *		timetz_send			- converts timetz to binary format
  */
 Datum
-timetz_send(PG_FUNCTION_ARGS)
+timetz_send(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time = PG_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time = MDB_GETARG_TIMETZADT_P(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
@@ -2118,23 +2118,23 @@ timetz_send(PG_FUNCTION_ARGS)
 	pq_sendfloat8(&buf, time->time);
 #endif
 	pq_sendint(&buf, time->zone, sizeof(time->zone));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 Datum
-timetztypmodin(PG_FUNCTION_ARGS)
+timetztypmodin(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *ta = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *ta = MDB_GETARG_ARRAYTYPE_P(0);
 
-	PG_RETURN_INT32(anytime_typmodin(true, ta));
+	MDB_RETURN_INT32(anytime_typmodin(true, ta));
 }
 
 Datum
-timetztypmodout(PG_FUNCTION_ARGS)
+timetztypmodout(MDB_FUNCTION_ARGS)
 {
-	int32		typmod = PG_GETARG_INT32(0);
+	int32		typmod = MDB_GETARG_INT32(0);
 
-	PG_RETURN_CSTRING(anytime_typmodout(true, typmod));
+	MDB_RETURN_CSTRING(anytime_typmodout(true, typmod));
 }
 
 
@@ -2179,10 +2179,10 @@ recalc:
  * Used by MollyDB type system to stuff columns.
  */
 Datum
-timetz_scale(PG_FUNCTION_ARGS)
+timetz_scale(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time = PG_GETARG_TIMETZADT_P(0);
-	int32		typmod = PG_GETARG_INT32(1);
+	TimeTzADT  *time = MDB_GETARG_TIMETZADT_P(0);
+	int32		typmod = MDB_GETARG_INT32(1);
 	TimeTzADT  *result;
 
 	result = (TimeTzADT *) palloc(sizeof(TimeTzADT));
@@ -2192,7 +2192,7 @@ timetz_scale(PG_FUNCTION_ARGS)
 
 	AdjustTimeForTypmod(&(result->time), typmod);
 
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 
@@ -2229,72 +2229,72 @@ timetz_cmp_internal(TimeTzADT *time1, TimeTzADT *time2)
 }
 
 Datum
-timetz_eq(PG_FUNCTION_ARGS)
+timetz_eq(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time1 = PG_GETARG_TIMETZADT_P(0);
-	TimeTzADT  *time2 = PG_GETARG_TIMETZADT_P(1);
+	TimeTzADT  *time1 = MDB_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time2 = MDB_GETARG_TIMETZADT_P(1);
 
-	PG_RETURN_BOOL(timetz_cmp_internal(time1, time2) == 0);
+	MDB_RETURN_BOOL(timetz_cmp_internal(time1, time2) == 0);
 }
 
 Datum
-timetz_ne(PG_FUNCTION_ARGS)
+timetz_ne(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time1 = PG_GETARG_TIMETZADT_P(0);
-	TimeTzADT  *time2 = PG_GETARG_TIMETZADT_P(1);
+	TimeTzADT  *time1 = MDB_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time2 = MDB_GETARG_TIMETZADT_P(1);
 
-	PG_RETURN_BOOL(timetz_cmp_internal(time1, time2) != 0);
+	MDB_RETURN_BOOL(timetz_cmp_internal(time1, time2) != 0);
 }
 
 Datum
-timetz_lt(PG_FUNCTION_ARGS)
+timetz_lt(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time1 = PG_GETARG_TIMETZADT_P(0);
-	TimeTzADT  *time2 = PG_GETARG_TIMETZADT_P(1);
+	TimeTzADT  *time1 = MDB_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time2 = MDB_GETARG_TIMETZADT_P(1);
 
-	PG_RETURN_BOOL(timetz_cmp_internal(time1, time2) < 0);
+	MDB_RETURN_BOOL(timetz_cmp_internal(time1, time2) < 0);
 }
 
 Datum
-timetz_le(PG_FUNCTION_ARGS)
+timetz_le(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time1 = PG_GETARG_TIMETZADT_P(0);
-	TimeTzADT  *time2 = PG_GETARG_TIMETZADT_P(1);
+	TimeTzADT  *time1 = MDB_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time2 = MDB_GETARG_TIMETZADT_P(1);
 
-	PG_RETURN_BOOL(timetz_cmp_internal(time1, time2) <= 0);
+	MDB_RETURN_BOOL(timetz_cmp_internal(time1, time2) <= 0);
 }
 
 Datum
-timetz_gt(PG_FUNCTION_ARGS)
+timetz_gt(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time1 = PG_GETARG_TIMETZADT_P(0);
-	TimeTzADT  *time2 = PG_GETARG_TIMETZADT_P(1);
+	TimeTzADT  *time1 = MDB_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time2 = MDB_GETARG_TIMETZADT_P(1);
 
-	PG_RETURN_BOOL(timetz_cmp_internal(time1, time2) > 0);
+	MDB_RETURN_BOOL(timetz_cmp_internal(time1, time2) > 0);
 }
 
 Datum
-timetz_ge(PG_FUNCTION_ARGS)
+timetz_ge(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time1 = PG_GETARG_TIMETZADT_P(0);
-	TimeTzADT  *time2 = PG_GETARG_TIMETZADT_P(1);
+	TimeTzADT  *time1 = MDB_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time2 = MDB_GETARG_TIMETZADT_P(1);
 
-	PG_RETURN_BOOL(timetz_cmp_internal(time1, time2) >= 0);
+	MDB_RETURN_BOOL(timetz_cmp_internal(time1, time2) >= 0);
 }
 
 Datum
-timetz_cmp(PG_FUNCTION_ARGS)
+timetz_cmp(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time1 = PG_GETARG_TIMETZADT_P(0);
-	TimeTzADT  *time2 = PG_GETARG_TIMETZADT_P(1);
+	TimeTzADT  *time1 = MDB_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time2 = MDB_GETARG_TIMETZADT_P(1);
 
-	PG_RETURN_INT32(timetz_cmp_internal(time1, time2));
+	MDB_RETURN_INT32(timetz_cmp_internal(time1, time2));
 }
 
 Datum
-timetz_hash(PG_FUNCTION_ARGS)
+timetz_hash(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *key = PG_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *key = MDB_GETARG_TIMETZADT_P(0);
 	uint32		thash;
 
 	/*
@@ -2311,45 +2311,45 @@ timetz_hash(PG_FUNCTION_ARGS)
 											 Float8GetDatumFast(key->time)));
 #endif
 	thash ^= DatumGetUInt32(hash_uint32(key->zone));
-	PG_RETURN_UINT32(thash);
+	MDB_RETURN_UINT32(thash);
 }
 
 Datum
-timetz_larger(PG_FUNCTION_ARGS)
+timetz_larger(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time1 = PG_GETARG_TIMETZADT_P(0);
-	TimeTzADT  *time2 = PG_GETARG_TIMETZADT_P(1);
+	TimeTzADT  *time1 = MDB_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time2 = MDB_GETARG_TIMETZADT_P(1);
 	TimeTzADT  *result;
 
 	if (timetz_cmp_internal(time1, time2) > 0)
 		result = time1;
 	else
 		result = time2;
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 Datum
-timetz_smaller(PG_FUNCTION_ARGS)
+timetz_smaller(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time1 = PG_GETARG_TIMETZADT_P(0);
-	TimeTzADT  *time2 = PG_GETARG_TIMETZADT_P(1);
+	TimeTzADT  *time1 = MDB_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *time2 = MDB_GETARG_TIMETZADT_P(1);
 	TimeTzADT  *result;
 
 	if (timetz_cmp_internal(time1, time2) < 0)
 		result = time1;
 	else
 		result = time2;
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 /* timetz_pl_interval()
  * Add interval to timetz.
  */
 Datum
-timetz_pl_interval(PG_FUNCTION_ARGS)
+timetz_pl_interval(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time = PG_GETARG_TIMETZADT_P(0);
-	Interval   *span = PG_GETARG_INTERVAL_P(1);
+	TimeTzADT  *time = MDB_GETARG_TIMETZADT_P(0);
+	Interval   *span = MDB_GETARG_INTERVAL_P(1);
 	TimeTzADT  *result;
 
 #ifndef HAVE_INT64_TIMESTAMP
@@ -2372,17 +2372,17 @@ timetz_pl_interval(PG_FUNCTION_ARGS)
 
 	result->zone = time->zone;
 
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 /* timetz_mi_interval()
  * Subtract interval from timetz.
  */
 Datum
-timetz_mi_interval(PG_FUNCTION_ARGS)
+timetz_mi_interval(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *time = PG_GETARG_TIMETZADT_P(0);
-	Interval   *span = PG_GETARG_INTERVAL_P(1);
+	TimeTzADT  *time = MDB_GETARG_TIMETZADT_P(0);
+	Interval   *span = MDB_GETARG_INTERVAL_P(1);
 	TimeTzADT  *result;
 
 #ifndef HAVE_INT64_TIMESTAMP
@@ -2405,7 +2405,7 @@ timetz_mi_interval(PG_FUNCTION_ARGS)
 
 	result->zone = time->zone;
 
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 /* overlaps_timetz() --- implements the SQL OVERLAPS operator.
@@ -2415,20 +2415,20 @@ timetz_mi_interval(PG_FUNCTION_ARGS)
  * where some of the inputs are null.
  */
 Datum
-overlaps_timetz(PG_FUNCTION_ARGS)
+overlaps_timetz(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * The arguments are TimeTzADT *, but we leave them as generic Datums for
 	 * convenience of notation --- and to avoid dereferencing nulls.
 	 */
-	Datum		ts1 = PG_GETARG_DATUM(0);
-	Datum		te1 = PG_GETARG_DATUM(1);
-	Datum		ts2 = PG_GETARG_DATUM(2);
-	Datum		te2 = PG_GETARG_DATUM(3);
-	bool		ts1IsNull = PG_ARGISNULL(0);
-	bool		te1IsNull = PG_ARGISNULL(1);
-	bool		ts2IsNull = PG_ARGISNULL(2);
-	bool		te2IsNull = PG_ARGISNULL(3);
+	Datum		ts1 = MDB_GETARG_DATUM(0);
+	Datum		te1 = MDB_GETARG_DATUM(1);
+	Datum		ts2 = MDB_GETARG_DATUM(2);
+	Datum		te2 = MDB_GETARG_DATUM(3);
+	bool		ts1IsNull = MDB_ARGISNULL(0);
+	bool		te1IsNull = MDB_ARGISNULL(1);
+	bool		ts2IsNull = MDB_ARGISNULL(2);
+	bool		te2IsNull = MDB_ARGISNULL(3);
 
 #define TIMETZ_GT(t1,t2) \
 	DatumGetBool(DirectFunctionCall2(timetz_gt,t1,t2))
@@ -2443,7 +2443,7 @@ overlaps_timetz(PG_FUNCTION_ARGS)
 	if (ts1IsNull)
 	{
 		if (te1IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		/* swap null for non-null */
 		ts1 = te1;
 		te1IsNull = true;
@@ -2463,7 +2463,7 @@ overlaps_timetz(PG_FUNCTION_ARGS)
 	if (ts2IsNull)
 	{
 		if (te2IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		/* swap null for non-null */
 		ts2 = te2;
 		te2IsNull = true;
@@ -2490,33 +2490,33 @@ overlaps_timetz(PG_FUNCTION_ARGS)
 		 * in the presence of nulls it's not quite completely so.
 		 */
 		if (te2IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		if (TIMETZ_LT(ts1, te2))
-			PG_RETURN_BOOL(true);
+			MDB_RETURN_BOOL(true);
 		if (te1IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 
 		/*
 		 * If te1 is not null then we had ts1 <= te1 above, and we just found
 		 * ts1 >= te2, hence te1 >= te2.
 		 */
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 	else if (TIMETZ_LT(ts1, ts2))
 	{
 		/* This case is ts2 < te1 OR te2 < te1 */
 		if (te1IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		if (TIMETZ_LT(ts2, te1))
-			PG_RETURN_BOOL(true);
+			MDB_RETURN_BOOL(true);
 		if (te2IsNull)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 
 		/*
 		 * If te2 is not null then we had ts2 <= te2 above, and we just found
 		 * ts2 >= te1, hence te2 >= te1.
 		 */
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 	else
 	{
@@ -2525,8 +2525,8 @@ overlaps_timetz(PG_FUNCTION_ARGS)
 		 * rather silly way of saying "true if both are nonnull, else null".
 		 */
 		if (te1IsNull || te2IsNull)
-			PG_RETURN_NULL();
-		PG_RETURN_BOOL(true);
+			MDB_RETURN_NULL();
+		MDB_RETURN_BOOL(true);
 	}
 
 #undef TIMETZ_GT
@@ -2535,22 +2535,22 @@ overlaps_timetz(PG_FUNCTION_ARGS)
 
 
 Datum
-timetz_time(PG_FUNCTION_ARGS)
+timetz_time(MDB_FUNCTION_ARGS)
 {
-	TimeTzADT  *timetz = PG_GETARG_TIMETZADT_P(0);
+	TimeTzADT  *timetz = MDB_GETARG_TIMETZADT_P(0);
 	TimeADT		result;
 
 	/* swallow the time zone and just return the time */
 	result = timetz->time;
 
-	PG_RETURN_TIMEADT(result);
+	MDB_RETURN_TIMEADT(result);
 }
 
 
 Datum
-time_timetz(PG_FUNCTION_ARGS)
+time_timetz(MDB_FUNCTION_ARGS)
 {
-	TimeADT		time = PG_GETARG_TIMEADT(0);
+	TimeADT		time = MDB_GETARG_TIMEADT(0);
 	TimeTzADT  *result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -2566,7 +2566,7 @@ time_timetz(PG_FUNCTION_ARGS)
 	result->time = time;
 	result->zone = tz;
 
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 
@@ -2574,9 +2574,9 @@ time_timetz(PG_FUNCTION_ARGS)
  * Convert timestamp to timetz data type.
  */
 Datum
-timestamptz_timetz(PG_FUNCTION_ARGS)
+timestamptz_timetz(MDB_FUNCTION_ARGS)
 {
-	TimestampTz timestamp = PG_GETARG_TIMESTAMP(0);
+	TimestampTz timestamp = MDB_GETARG_TIMESTAMP(0);
 	TimeTzADT  *result;
 	struct mdb_tm tt,
 			   *tm = &tt;
@@ -2584,7 +2584,7 @@ timestamptz_timetz(PG_FUNCTION_ARGS)
 	fsec_t		fsec;
 
 	if (TIMESTAMP_NOT_FINITE(timestamp))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (timestamp2tm(timestamp, &tz, tm, &fsec, NULL, NULL) != 0)
 		ereport(ERROR,
@@ -2595,7 +2595,7 @@ timestamptz_timetz(PG_FUNCTION_ARGS)
 
 	tm2timetz(tm, fsec, tz, result);
 
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 
@@ -2606,10 +2606,10 @@ timestamptz_timetz(PG_FUNCTION_ARGS)
  * - thomas 2000-03-10
  */
 Datum
-datetimetz_timestamptz(PG_FUNCTION_ARGS)
+datetimetz_timestamptz(MDB_FUNCTION_ARGS)
 {
-	DateADT		date = PG_GETARG_DATEADT(0);
-	TimeTzADT  *time = PG_GETARG_TIMETZADT_P(1);
+	DateADT		date = MDB_GETARG_DATEADT(0);
+	TimeTzADT  *time = MDB_GETARG_TIMETZADT_P(1);
 	TimestampTz result;
 
 	if (DATE_IS_NOBEGIN(date))
@@ -2643,7 +2643,7 @@ datetimetz_timestamptz(PG_FUNCTION_ARGS)
 					 errmsg("date out of range for timestamp")));
 	}
 
-	PG_RETURN_TIMESTAMP(result);
+	MDB_RETURN_TIMESTAMP(result);
 }
 
 
@@ -2651,10 +2651,10 @@ datetimetz_timestamptz(PG_FUNCTION_ARGS)
  * Extract specified field from time type.
  */
 Datum
-timetz_part(PG_FUNCTION_ARGS)
+timetz_part(MDB_FUNCTION_ARGS)
 {
-	text	   *units = PG_GETARG_TEXT_PP(0);
-	TimeTzADT  *time = PG_GETARG_TIMETZADT_P(1);
+	text	   *units = MDB_GETARG_TEXT_PP(0);
+	TimeTzADT  *time = MDB_GETARG_TIMETZADT_P(1);
 	float8		result;
 	int			type,
 				val;
@@ -2759,7 +2759,7 @@ timetz_part(PG_FUNCTION_ARGS)
 		result = 0;
 	}
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /* timetz_zone()
@@ -2767,10 +2767,10 @@ timetz_part(PG_FUNCTION_ARGS)
  * Applies DST rules as of the current date.
  */
 Datum
-timetz_zone(PG_FUNCTION_ARGS)
+timetz_zone(MDB_FUNCTION_ARGS)
 {
-	text	   *zone = PG_GETARG_TEXT_PP(0);
-	TimeTzADT  *t = PG_GETARG_TIMETZADT_P(1);
+	text	   *zone = MDB_GETARG_TEXT_PP(0);
+	TimeTzADT  *t = MDB_GETARG_TIMETZADT_P(1);
 	TimeTzADT  *result;
 	int			tz;
 	char		tzname[TZ_STRLEN_MAX + 1];
@@ -2850,17 +2850,17 @@ timetz_zone(PG_FUNCTION_ARGS)
 
 	result->zone = tz;
 
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }
 
 /* timetz_izone()
  * Encode time with time zone type with specified time interval as time zone.
  */
 Datum
-timetz_izone(PG_FUNCTION_ARGS)
+timetz_izone(MDB_FUNCTION_ARGS)
 {
-	Interval   *zone = PG_GETARG_INTERVAL_P(0);
-	TimeTzADT  *time = PG_GETARG_TIMETZADT_P(1);
+	Interval   *zone = MDB_GETARG_INTERVAL_P(0);
+	TimeTzADT  *time = MDB_GETARG_TIMETZADT_P(1);
 	TimeTzADT  *result;
 	int			tz;
 
@@ -2895,5 +2895,5 @@ timetz_izone(PG_FUNCTION_ARGS)
 
 	result->zone = tz;
 
-	PG_RETURN_TIMETZADT_P(result);
+	MDB_RETURN_TIMETZADT_P(result);
 }

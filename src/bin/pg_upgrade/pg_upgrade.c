@@ -101,8 +101,8 @@ main(int argc, char **argv)
 	check_new_cluster();
 	report_clusters_compatible();
 
-	mdb_log(PG_REPORT, "\nPerforming Upgrade\n");
-	mdb_log(PG_REPORT, "------------------\n");
+	mdb_log(MDB_REPORT, "\nPerforming Upgrade\n");
+	mdb_log(MDB_REPORT, "------------------\n");
 
 	prepare_new_cluster();
 
@@ -161,8 +161,8 @@ main(int argc, char **argv)
 
 	issue_warnings();
 
-	mdb_log(PG_REPORT, "\nUpgrade Complete\n");
-	mdb_log(PG_REPORT, "----------------\n");
+	mdb_log(MDB_REPORT, "\nUpgrade Complete\n");
+	mdb_log(MDB_REPORT, "----------------\n");
 
 	output_completion_banner(analyze_script_file_name,
 							 deletion_script_file_name);
@@ -306,7 +306,7 @@ create_new_objects(void)
 					log_file_name[MAXPGPATH];
 		DbInfo	   *old_db = &old_cluster.dbarr.dbs[dbnum];
 
-		mdb_log(PG_STATUS, "%s", old_db->db_name);
+		mdb_log(MDB_STATUS, "%s", old_db->db_name);
 		snprintf(sql_file_name, sizeof(sql_file_name), DB_DUMP_FILE_MASK, old_db->db_oid);
 		snprintf(log_file_name, sizeof(log_file_name), DB_DUMP_LOG_FILE_MASK, old_db->db_oid);
 

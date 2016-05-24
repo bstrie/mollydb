@@ -56,7 +56,7 @@ open_target_file(const char *path, bool trunc)
 
 	snprintf(dstpath, sizeof(dstpath), "%s/%s", datadir_target, path);
 
-	mode = O_WRONLY | O_CREAT | PG_BINARY;
+	mode = O_WRONLY | O_CREAT | MDB_BINARY;
 	if (trunc)
 		mode |= O_TRUNC;
 	dstfd = open(dstpath, mode, 0600);
@@ -284,7 +284,7 @@ slurpFile(const char *datadir, const char *path, size_t *filesize)
 
 	snprintf(fullpath, sizeof(fullpath), "%s/%s", datadir, path);
 
-	if ((fd = open(fullpath, O_RDONLY | PG_BINARY, 0)) == -1)
+	if ((fd = open(fullpath, O_RDONLY | MDB_BINARY, 0)) == -1)
 		mdb_fatal("could not open file \"%s\" for reading: %s\n",
 				 fullpath, strerror(errno));
 

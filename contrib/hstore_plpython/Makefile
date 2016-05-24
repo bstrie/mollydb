@@ -4,7 +4,7 @@ MODULE_big = hstore_plpython$(python_majorversion)
 OBJS = hstore_plpython.o $(WIN32RES)
 PGFILEDESC = "hstore_plpython - hstore transform for plpython"
 
-PG_CPPFLAGS = -I$(top_srcdir)/src/pl/plpython $(python_includespec) -I$(top_srcdir)/contrib/hstore
+MDB_CPPFLAGS = -I$(top_srcdir)/src/pl/plpython $(python_includespec) -I$(top_srcdir)/contrib/hstore
 
 EXTENSION = hstore_plpythonu hstore_plpython2u hstore_plpython3u
 DATA = hstore_plpythonu--1.0.sql hstore_plpython2u--1.0.sql hstore_plpython3u--1.0.sql
@@ -13,8 +13,8 @@ REGRESS = hstore_plpython
 REGRESS_PLPYTHON3_MANGLE := $(REGRESS)
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/hstore_plpython

@@ -1,6 +1,6 @@
 /* src/interfaces/ecpg/ecpglib/misc.c */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 
 #include <limits.h>
@@ -108,7 +108,7 @@ ecmdb_init(const struct connection * con, const char *connection_name, const int
 
 	if (sqlca == NULL)
 	{
-		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY,
+		ecmdb_raise(lineno, ECMDB_OUT_OF_MEMORY, ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY,
 				   NULL);
 		return (false);
 	}
@@ -116,7 +116,7 @@ ecmdb_init(const struct connection * con, const char *connection_name, const int
 	ecmdb_init_sqlca(sqlca);
 	if (con == NULL)
 	{
-		ecmdb_raise(lineno, ECPG_NO_CONN, ECPG_SQLSTATE_CONNECTION_DOES_NOT_EXIST,
+		ecmdb_raise(lineno, ECMDB_NO_CONN, ECMDB_SQLSTATE_CONNECTION_DOES_NOT_EXIST,
 				   connection_name ? connection_name : ecmdb_gettext("NULL"));
 		return (false);
 	}
@@ -172,7 +172,7 @@ ECPGstatus(int lineno, const char *connection_name)
 	/* are we connected? */
 	if (con->connection == NULL)
 	{
-		ecmdb_raise(lineno, ECPG_NOT_CONN, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, con->name);
+		ecmdb_raise(lineno, ECMDB_NOT_CONN, ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR, con->name);
 		return false;
 	}
 
@@ -218,13 +218,13 @@ ECPGtrans(int lineno, const char *connection_name, const char *transaction)
 		if (PQtransactionStatus(con->connection) == PQTRANS_IDLE && !con->autocommit && strncmp(transaction, "begin", 5) != 0 && strncmp(transaction, "start", 5) != 0)
 		{
 			res = PQexec(con->connection, "begin transaction");
-			if (!ecmdb_check_PQresult(res, lineno, con->connection, ECPG_COMPAT_PGSQL))
+			if (!ecmdb_check_PQresult(res, lineno, con->connection, ECMDB_COMPAT_PGSQL))
 				return FALSE;
 			PQclear(res);
 		}
 
 		res = PQexec(con->connection, transaction);
-		if (!ecmdb_check_PQresult(res, lineno, con->connection, ECPG_COMPAT_PGSQL))
+		if (!ecmdb_check_PQresult(res, lineno, con->connection, ECMDB_COMPAT_PGSQL))
 			return FALSE;
 		PQclear(res);
 	}
@@ -500,7 +500,7 @@ ecmdb_gettext(const char *msgid)
 		ldir = getenv("PGLOCALEDIR");
 		if (!ldir)
 			ldir = LOCALEDIR;
-		bindtextdomain(PG_TEXTDOMAIN("ecpglib"), ldir);
+		bindtextdomain(MDB_TEXTDOMAIN("ecpglib"), ldir);
 #ifdef WIN32
 		SetLastError(save_errno);
 #else
@@ -508,7 +508,7 @@ ecmdb_gettext(const char *msgid)
 #endif
 	}
 
-	return dgettext(PG_TEXTDOMAIN("ecpglib"), msgid);
+	return dgettext(MDB_TEXTDOMAIN("ecpglib"), msgid);
 }
 #endif   /* ENABLE_NLS */
 
@@ -537,12 +537,12 @@ ECPGset_var(int number, void *pointer, int lineno)
 
 		if (sqlca == NULL)
 		{
-			ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
-					   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+			ecmdb_raise(lineno, ECMDB_OUT_OF_MEMORY,
+					   ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 			return;
 		}
 
-		sqlca->sqlcode = ECPG_OUT_OF_MEMORY;
+		sqlca->sqlcode = ECMDB_OUT_OF_MEMORY;
 		strncpy(sqlca->sqlstate, "YE001", sizeof(sqlca->sqlstate));
 		snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc), "out of memory on line %d", lineno);
 		sqlca->sqlerrm.sqlerrml = strlen(sqlca->sqlerrm.sqlerrmc);

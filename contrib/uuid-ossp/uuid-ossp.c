@@ -108,19 +108,19 @@ do { \
 
 #endif   /* !HAVE_UUID_OSSP */
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(uuid_nil);
-PG_FUNCTION_INFO_V1(uuid_ns_dns);
-PG_FUNCTION_INFO_V1(uuid_ns_url);
-PG_FUNCTION_INFO_V1(uuid_ns_oid);
-PG_FUNCTION_INFO_V1(uuid_ns_x500);
+MDB_FUNCTION_INFO_V1(uuid_nil);
+MDB_FUNCTION_INFO_V1(uuid_ns_dns);
+MDB_FUNCTION_INFO_V1(uuid_ns_url);
+MDB_FUNCTION_INFO_V1(uuid_ns_oid);
+MDB_FUNCTION_INFO_V1(uuid_ns_x500);
 
-PG_FUNCTION_INFO_V1(uuid_generate_v1);
-PG_FUNCTION_INFO_V1(uuid_generate_v1mc);
-PG_FUNCTION_INFO_V1(uuid_generate_v3);
-PG_FUNCTION_INFO_V1(uuid_generate_v4);
-PG_FUNCTION_INFO_V1(uuid_generate_v5);
+MDB_FUNCTION_INFO_V1(uuid_generate_v1);
+MDB_FUNCTION_INFO_V1(uuid_generate_v1mc);
+MDB_FUNCTION_INFO_V1(uuid_generate_v3);
+MDB_FUNCTION_INFO_V1(uuid_generate_v4);
+MDB_FUNCTION_INFO_V1(uuid_generate_v5);
 
 #ifdef HAVE_UUID_OSSP
 
@@ -398,7 +398,7 @@ uuid_generate_internal(int v, unsigned char *ns, char *ptr, int len)
 
 
 Datum
-uuid_nil(PG_FUNCTION_ARGS)
+uuid_nil(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_UUID_OSSP
 	return special_uuid_value("nil");
@@ -410,7 +410,7 @@ uuid_nil(PG_FUNCTION_ARGS)
 
 
 Datum
-uuid_ns_dns(PG_FUNCTION_ARGS)
+uuid_ns_dns(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_UUID_OSSP
 	return special_uuid_value("ns:DNS");
@@ -422,7 +422,7 @@ uuid_ns_dns(PG_FUNCTION_ARGS)
 
 
 Datum
-uuid_ns_url(PG_FUNCTION_ARGS)
+uuid_ns_url(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_UUID_OSSP
 	return special_uuid_value("ns:URL");
@@ -434,7 +434,7 @@ uuid_ns_url(PG_FUNCTION_ARGS)
 
 
 Datum
-uuid_ns_oid(PG_FUNCTION_ARGS)
+uuid_ns_oid(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_UUID_OSSP
 	return special_uuid_value("ns:OID");
@@ -446,7 +446,7 @@ uuid_ns_oid(PG_FUNCTION_ARGS)
 
 
 Datum
-uuid_ns_x500(PG_FUNCTION_ARGS)
+uuid_ns_x500(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_UUID_OSSP
 	return special_uuid_value("ns:X500");
@@ -458,14 +458,14 @@ uuid_ns_x500(PG_FUNCTION_ARGS)
 
 
 Datum
-uuid_generate_v1(PG_FUNCTION_ARGS)
+uuid_generate_v1(MDB_FUNCTION_ARGS)
 {
 	return uuid_generate_internal(UUID_MAKE_V1, NULL, NULL, 0);
 }
 
 
 Datum
-uuid_generate_v1mc(PG_FUNCTION_ARGS)
+uuid_generate_v1mc(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_UUID_OSSP
 	char	   *buf = NULL;
@@ -496,10 +496,10 @@ uuid_generate_v1mc(PG_FUNCTION_ARGS)
 
 
 Datum
-uuid_generate_v3(PG_FUNCTION_ARGS)
+uuid_generate_v3(MDB_FUNCTION_ARGS)
 {
-	mdb_uuid_t  *ns = PG_GETARG_UUID_P(0);
-	text	   *name = PG_GETARG_TEXT_P(1);
+	mdb_uuid_t  *ns = MDB_GETARG_UUID_P(0);
+	text	   *name = MDB_GETARG_TEXT_P(1);
 
 #ifdef HAVE_UUID_OSSP
 	return uuid_generate_v35_internal(UUID_MAKE_V3, ns, name);
@@ -511,17 +511,17 @@ uuid_generate_v3(PG_FUNCTION_ARGS)
 
 
 Datum
-uuid_generate_v4(PG_FUNCTION_ARGS)
+uuid_generate_v4(MDB_FUNCTION_ARGS)
 {
 	return uuid_generate_internal(UUID_MAKE_V4, NULL, NULL, 0);
 }
 
 
 Datum
-uuid_generate_v5(PG_FUNCTION_ARGS)
+uuid_generate_v5(MDB_FUNCTION_ARGS)
 {
-	mdb_uuid_t  *ns = PG_GETARG_UUID_P(0);
-	text	   *name = PG_GETARG_TEXT_P(1);
+	mdb_uuid_t  *ns = MDB_GETARG_UUID_P(0);
+	text	   *name = MDB_GETARG_TEXT_P(1);
 
 #ifdef HAVE_UUID_OSSP
 	return uuid_generate_v35_internal(UUID_MAKE_V5, ns, name);

@@ -242,7 +242,7 @@ if (sqlca.sqlcode < 0) exit (1);}
 #line 49 "outofscope.pgc"
 
 
-	if (sqlca.sqlcode != 0 && sqlca.sqlcode != ECPG_NOT_FOUND)
+	if (sqlca.sqlcode != 0 && sqlca.sqlcode != ECMDB_NOT_FOUND)
 		exit(1);
 }
 
@@ -335,7 +335,7 @@ if (sqlca.sqlcode < 0) exit (1);}
 	{
 		memset(myvar, 0, sizeof(MYTYPE));
 		get_record1();
-		if (sqlca.sqlcode == ECPG_NOT_FOUND)
+		if (sqlca.sqlcode == ECMDB_NOT_FOUND)
 			break;
 		printf("id=%d%s t='%s'%s d1=%lf%s d2=%lf%s c = '%s'%s\n",
 			myvar->id, mynullvar->id ? " (NULL)" : "",

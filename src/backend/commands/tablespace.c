@@ -17,9 +17,9 @@
  * named by tablespace OIDs and point to the actual tablespace directories.
  * There is also a per-cluster version directory in each tablespace.
  * Thus the full path to an arbitrary file is
- *			$PGDATA/mdb_tblspc/spcoid/PG_MAJORVER_CATVER/dboid/relfilenode
+ *			$PGDATA/mdb_tblspc/spcoid/MDB_MAJORVER_CATVER/dboid/relfilenode
  * e.g.
- *			$PGDATA/mdb_tblspc/20981/PG_9.0_201002161/719849/83292814
+ *			$PGDATA/mdb_tblspc/20981/MDB_9.0_201002161/719849/83292814
  *
  * There are two tablespaces created at initdb time: mdb_global (for shared
  * tables) and mdb_default (for everything else).  For backwards compatibility
@@ -278,7 +278,7 @@ CreateTableSpace(CreateTableSpaceStmt *stmt)
 
 	/*
 	 * Check that location isn't too long. Remember that we're going to append
-	 * 'PG_XXX/<dboid>/<relid>_<fork>.<nnn>'.  FYI, we never actually
+	 * 'MDB_XXX/<dboid>/<relid>_<fork>.<nnn>'.  FYI, we never actually
 	 * reference the whole path here, but mkdir() uses the first two parts.
 	 */
 	if (strlen(location) + 1 + strlen(TABLESPACE_VERSION_DIRECTORY) + 1 +

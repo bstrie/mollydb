@@ -19,10 +19,10 @@
 #include "../../Unicode/euc_jis_2004_to_utf8_combined.map"
 #include "../../Unicode/utf8_to_euc_jis_2004_combined.map"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(euc_jis_2004_to_utf8);
-PG_FUNCTION_INFO_V1(utf8_to_euc_jis_2004);
+MDB_FUNCTION_INFO_V1(euc_jis_2004_to_utf8);
+MDB_FUNCTION_INFO_V1(utf8_to_euc_jis_2004);
 
 /* ----------
  * conv_proc(
@@ -35,37 +35,37 @@ PG_FUNCTION_INFO_V1(utf8_to_euc_jis_2004);
  * ----------
  */
 Datum
-euc_jis_2004_to_utf8(PG_FUNCTION_ARGS)
+euc_jis_2004_to_utf8(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_EUC_JIS_2004, PG_UTF8);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_EUC_JIS_2004, MDB_UTF8);
 
 	LocalToUtf(src, len, dest,
 			   LUmapEUC_JIS_2004, lengthof(LUmapEUC_JIS_2004),
 			LUmapEUC_JIS_2004_combined, lengthof(LUmapEUC_JIS_2004_combined),
 			   NULL,
-			   PG_EUC_JIS_2004);
+			   MDB_EUC_JIS_2004);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-utf8_to_euc_jis_2004(PG_FUNCTION_ARGS)
+utf8_to_euc_jis_2004(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_UTF8, PG_EUC_JIS_2004);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_UTF8, MDB_EUC_JIS_2004);
 
 	UtfToLocal(src, len, dest,
 			   ULmapEUC_JIS_2004, lengthof(ULmapEUC_JIS_2004),
 			ULmapEUC_JIS_2004_combined, lengthof(ULmapEUC_JIS_2004_combined),
 			   NULL,
-			   PG_EUC_JIS_2004);
+			   MDB_EUC_JIS_2004);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

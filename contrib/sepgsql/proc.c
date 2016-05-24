@@ -79,8 +79,8 @@ semdb_proc_post_create(Oid functionId)
 	object.objectId = proForm->pronamespace;
 	object.objectSubId = 0;
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_SCHEMA,
-							SEPG_DB_SCHEMA__ADD_NAME,
+							SEMDB_CLASS_DB_SCHEMA,
+							SEMDB_DB_SCHEMA__ADD_NAME,
 							getObjectIdentity(&object),
 							true);
 
@@ -97,7 +97,7 @@ semdb_proc_post_create(Oid functionId)
 	tcontext = semdb_get_label(NamespaceRelationId,
 								 proForm->pronamespace, 0);
 	ncontext = semdb_compute_create(scontext, tcontext,
-									  SEPG_CLASS_DB_PROCEDURE,
+									  SEMDB_CLASS_DB_PROCEDURE,
 									  NameStr(proForm->proname));
 
 	/*
@@ -119,12 +119,12 @@ semdb_proc_post_create(Oid functionId)
 	}
 	appendStringInfoChar(&audit_name, ')');
 
-	required = SEPG_DB_PROCEDURE__CREATE;
+	required = SEMDB_DB_PROCEDURE__CREATE;
 	if (proForm->proleakproof)
-		required |= SEPG_DB_PROCEDURE__INSTALL;
+		required |= SEMDB_DB_PROCEDURE__INSTALL;
 
 	semdb_avc_check_perms_label(ncontext,
-								  SEPG_CLASS_DB_PROCEDURE,
+								  SEMDB_CLASS_DB_PROCEDURE,
 								  required,
 								  audit_name.data,
 								  true);
@@ -168,8 +168,8 @@ semdb_proc_drop(Oid functionId)
 	audit_name = getObjectIdentity(&object);
 
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_SCHEMA,
-							SEPG_DB_SCHEMA__REMOVE_NAME,
+							SEMDB_CLASS_DB_SCHEMA,
+							SEMDB_DB_SCHEMA__REMOVE_NAME,
 							audit_name,
 							true);
 	pfree(audit_name);
@@ -183,8 +183,8 @@ semdb_proc_drop(Oid functionId)
 	audit_name = getObjectIdentity(&object);
 
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_PROCEDURE,
-							SEPG_DB_PROCEDURE__DROP,
+							SEMDB_CLASS_DB_PROCEDURE,
+							SEMDB_DB_PROCEDURE__DROP,
 							audit_name,
 							true);
 	pfree(audit_name);
@@ -211,9 +211,9 @@ semdb_proc_relabel(Oid functionId, const char *seclabel)
 	 * check db_procedure:{setattr relabelfrom} permission
 	 */
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_PROCEDURE,
-							SEPG_DB_PROCEDURE__SETATTR |
-							SEPG_DB_PROCEDURE__RELABELFROM,
+							SEMDB_CLASS_DB_PROCEDURE,
+							SEMDB_DB_PROCEDURE__SETATTR |
+							SEMDB_DB_PROCEDURE__RELABELFROM,
 							audit_name,
 							true);
 
@@ -221,8 +221,8 @@ semdb_proc_relabel(Oid functionId, const char *seclabel)
 	 * check db_procedure:{relabelto} permission
 	 */
 	semdb_avc_check_perms_label(seclabel,
-								  SEPG_CLASS_DB_PROCEDURE,
-								  SEPG_DB_PROCEDURE__RELABELTO,
+								  SEMDB_CLASS_DB_PROCEDURE,
+								  SEMDB_DB_PROCEDURE__RELABELTO,
 								  audit_name,
 								  true);
 	pfree(audit_name);
@@ -286,9 +286,9 @@ semdb_proc_setattr(Oid functionId)
 	/*
 	 * check db_procedure:{setattr (install)} permission
 	 */
-	required = SEPG_DB_PROCEDURE__SETATTR;
+	required = SEMDB_DB_PROCEDURE__SETATTR;
 	if (!oldform->proleakproof && newform->proleakproof)
-		required |= SEPG_DB_PROCEDURE__INSTALL;
+		required |= SEMDB_DB_PROCEDURE__INSTALL;
 
 	object.classId = ProcedureRelationId;
 	object.objectId = functionId;
@@ -296,7 +296,7 @@ semdb_proc_setattr(Oid functionId)
 	audit_name = getObjectIdentity(&object);
 
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_PROCEDURE,
+							SEMDB_CLASS_DB_PROCEDURE,
 							required,
 							audit_name,
 							true);
@@ -327,8 +327,8 @@ semdb_proc_execute(Oid functionId)
 	object.objectSubId = 0;
 	audit_name = getObjectIdentity(&object);
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_PROCEDURE,
-							SEPG_DB_PROCEDURE__EXECUTE,
+							SEMDB_CLASS_DB_PROCEDURE,
+							SEMDB_DB_PROCEDURE__EXECUTE,
 							audit_name,
 							true);
 	pfree(audit_name);

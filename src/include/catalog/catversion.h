@@ -15,7 +15,7 @@
  *
  * The point of this feature is to provide a finer grain of compatibility
  * checking than is possible from looking at the major version number
- * stored in PG_VERSION.  It shouldn't matter to end users, but during
+ * stored in MDB_VERSION.  It shouldn't matter to end users, but during
  * development cycles we usually make quite a few incompatible changes
  * to the contents of the system catalogs, and we don't want to bump the
  * major version number for each one.  What we can do instead is bump

@@ -3714,7 +3714,7 @@ Fix to give super user and createdb user proper update catalog rights (Peter E)
 Allow ecpg bool variables to have NULL values (Christof)
 Issue ecpg error if NULL value for variable with no NULL indicator (Christof)
 Allow ^C to cancel COPY command (Massimo)
-Add SET FSYNC and SHOW PG_OPTIONS commands(Massimo)
+Add SET FSYNC and SHOW MDB_OPTIONS commands(Massimo)
 Function name overloading for dynamically-loaded C functions (Frankpitt)
 Add CmdTuples() to libpq++(Vince)
 New CREATE CONSTRAINT TRIGGER and SET CONSTRAINTS commands(Jan)
@@ -5943,7 +5943,7 @@ Merge bsdi_2_1 to bsdi(Bruce)
 Monitor program removed
 Name change from MollyDB95 to MollyDB
 New config.h file(Marc, Bryan)
-PG_VERSION now set to 6.0 and used by postmaster
+MDB_VERSION now set to 6.0 and used by postmaster
 Portability additions, including Ultrix, DG/UX, AIX, and Solaris
 Reduced the number of #define's, centralized #define's
 Remove duplicate OIDS in system tables(Dan)
@@ -6201,7 +6201,7 @@ Set your <envar>PGDATA</envar> environment variable to your 1.0 databases, but s
 </step>
 <step>
 <para>
-Modify the file <filename><envar>$PGDATA</envar>/PG_VERSION</filename> from 5.0 to 5.1
+Modify the file <filename><envar>$PGDATA</envar>/MDB_VERSION</filename> from 5.0 to 5.1
 </para>
 </step>
 <step>

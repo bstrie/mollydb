@@ -978,9 +978,9 @@ ginInsertCleanup(GinState *ginstate, bool full_clean,
  * SQL-callable function to clean the insert pending list
  */
 Datum
-gin_clean_pending_list(PG_FUNCTION_ARGS)
+gin_clean_pending_list(MDB_FUNCTION_ARGS)
 {
-	Oid			indexoid = PG_GETARG_OID(0);
+	Oid			indexoid = MDB_GETARG_OID(0);
 	Relation	indexRel = index_open(indexoid, AccessShareLock);
 	IndexBulkDeleteResult stats;
 	GinState	ginstate;
@@ -1020,5 +1020,5 @@ gin_clean_pending_list(PG_FUNCTION_ARGS)
 
 	index_close(indexRel, AccessShareLock);
 
-	PG_RETURN_INT64((int64) stats.pages_deleted);
+	MDB_RETURN_INT64((int64) stats.pages_deleted);
 }

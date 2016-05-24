@@ -394,23 +394,23 @@ error_commit_ts_disabled(void)
  * SQL-callable wrapper to obtain commit time of a transaction
  */
 Datum
-mdb_xact_commit_timestamp(PG_FUNCTION_ARGS)
+mdb_xact_commit_timestamp(MDB_FUNCTION_ARGS)
 {
-	TransactionId xid = PG_GETARG_UINT32(0);
+	TransactionId xid = MDB_GETARG_UINT32(0);
 	TimestampTz ts;
 	bool		found;
 
 	found = TransactionIdGetCommitTsData(xid, &ts, NULL);
 
 	if (!found)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TIMESTAMPTZ(ts);
+	MDB_RETURN_TIMESTAMPTZ(ts);
 }
 
 
 Datum
-mdb_last_committed_xact(PG_FUNCTION_ARGS)
+mdb_last_committed_xact(MDB_FUNCTION_ARGS)
 {
 	TransactionId xid;
 	TimestampTz ts;
@@ -448,7 +448,7 @@ mdb_last_committed_xact(PG_FUNCTION_ARGS)
 
 	htup = heap_form_tuple(tupdesc, values, nulls);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(htup));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(htup));
 }
 
 

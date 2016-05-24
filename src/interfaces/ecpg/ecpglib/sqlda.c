@@ -6,7 +6,7 @@
  * is a simple free(sqlda) as expected by the ESQL/C examples.
  */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 #include "mdb_type.h"
 
@@ -396,7 +396,7 @@ ecmdb_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult
 				ecmdb_get_data(res, row, i, lineno,
 							  sqlda->sqlvar[i].sqltype, ECPGt_NO_INDICATOR,
 							  sqlda->sqlvar[i].sqldata, NULL, 0, 0, 0,
-							  ECPG_ARRAY_NONE, compat, false);
+							  ECMDB_ARRAY_NONE, compat, false);
 		}
 		else
 			ECPGset_noind_null(sqlda->sqlvar[i].sqltype, sqlda->sqlvar[i].sqldata);
@@ -581,7 +581,7 @@ ecmdb_set_native_sqlda(int lineno, struct sqlda_struct ** _sqlda, const PGresult
 				ecmdb_get_data(res, row, i, lineno,
 							  sqlda->sqlvar[i].sqltype, ECPGt_NO_INDICATOR,
 							  sqlda->sqlvar[i].sqldata, NULL, 0, 0, 0,
-							  ECPG_ARRAY_NONE, compat, false);
+							  ECMDB_ARRAY_NONE, compat, false);
 		}
 
 		offset = next_offset;

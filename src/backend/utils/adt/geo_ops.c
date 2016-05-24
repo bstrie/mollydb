@@ -349,9 +349,9 @@ pair_count(char *s, char delim)
  *				also supports the older style "(f8, f8, f8, f8)"
  */
 Datum
-box_in(PG_FUNCTION_ARGS)
+box_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	BOX		   *box = (BOX *) palloc(sizeof(BOX));
 	bool		isopen;
 	double		x,
@@ -373,26 +373,26 @@ box_in(PG_FUNCTION_ARGS)
 		box->low.y = y;
 	}
 
-	PG_RETURN_BOX_P(box);
+	MDB_RETURN_BOX_P(box);
 }
 
 /*		box_out -		convert a box to external form.
  */
 Datum
-box_out(PG_FUNCTION_ARGS)
+box_out(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 
-	PG_RETURN_CSTRING(path_encode(PATH_NONE, 2, &(box->high)));
+	MDB_RETURN_CSTRING(path_encode(PATH_NONE, 2, &(box->high)));
 }
 
 /*
  *		box_recv			- converts external binary format to box
  */
 Datum
-box_recv(PG_FUNCTION_ARGS)
+box_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	BOX		   *box;
 	double		x,
 				y;
@@ -418,16 +418,16 @@ box_recv(PG_FUNCTION_ARGS)
 		box->low.y = y;
 	}
 
-	PG_RETURN_BOX_P(box);
+	MDB_RETURN_BOX_P(box);
 }
 
 /*
  *		box_send			- converts box to binary format
  */
 Datum
-box_send(PG_FUNCTION_ARGS)
+box_send(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
@@ -435,7 +435,7 @@ box_send(PG_FUNCTION_ARGS)
 	pq_sendfloat8(&buf, box->high.y);
 	pq_sendfloat8(&buf, box->low.x);
 	pq_sendfloat8(&buf, box->low.y);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -501,12 +501,12 @@ box_copy(BOX *box)
 /*		box_same		-		are two boxes identical?
  */
 Datum
-box_same(PG_FUNCTION_ARGS)
+box_same(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPeq(box1->high.x, box2->high.x) &&
+	MDB_RETURN_BOOL(FPeq(box1->high.x, box2->high.x) &&
 				   FPeq(box1->low.x, box2->low.x) &&
 				   FPeq(box1->high.y, box2->high.y) &&
 				   FPeq(box1->low.y, box2->low.y));
@@ -515,12 +515,12 @@ box_same(PG_FUNCTION_ARGS)
 /*		box_overlap		-		does box1 overlap box2?
  */
 Datum
-box_overlap(PG_FUNCTION_ARGS)
+box_overlap(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(box_ov(box1, box2));
+	MDB_RETURN_BOOL(box_ov(box1, box2));
 }
 
 static bool
@@ -535,12 +535,12 @@ box_ov(BOX *box1, BOX *box2)
 /*		box_left		-		is box1 strictly left of box2?
  */
 Datum
-box_left(PG_FUNCTION_ARGS)
+box_left(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPlt(box1->high.x, box2->low.x));
+	MDB_RETURN_BOOL(FPlt(box1->high.x, box2->low.x));
 }
 
 /*		box_overleft	-		is the right edge of box1 at or left of
@@ -550,23 +550,23 @@ box_left(PG_FUNCTION_ARGS)
  *		when time ranges are stored as rectangles.
  */
 Datum
-box_overleft(PG_FUNCTION_ARGS)
+box_overleft(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPle(box1->high.x, box2->high.x));
+	MDB_RETURN_BOOL(FPle(box1->high.x, box2->high.x));
 }
 
 /*		box_right		-		is box1 strictly right of box2?
  */
 Datum
-box_right(PG_FUNCTION_ARGS)
+box_right(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPgt(box1->low.x, box2->high.x));
+	MDB_RETURN_BOOL(FPgt(box1->low.x, box2->high.x));
 }
 
 /*		box_overright	-		is the left edge of box1 at or right of
@@ -576,69 +576,69 @@ box_right(PG_FUNCTION_ARGS)
  *		are stored as rectangles.
  */
 Datum
-box_overright(PG_FUNCTION_ARGS)
+box_overright(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPge(box1->low.x, box2->low.x));
+	MDB_RETURN_BOOL(FPge(box1->low.x, box2->low.x));
 }
 
 /*		box_below		-		is box1 strictly below box2?
  */
 Datum
-box_below(PG_FUNCTION_ARGS)
+box_below(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPlt(box1->high.y, box2->low.y));
+	MDB_RETURN_BOOL(FPlt(box1->high.y, box2->low.y));
 }
 
 /*		box_overbelow	-		is the upper edge of box1 at or below
  *								the upper edge of box2?
  */
 Datum
-box_overbelow(PG_FUNCTION_ARGS)
+box_overbelow(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPle(box1->high.y, box2->high.y));
+	MDB_RETURN_BOOL(FPle(box1->high.y, box2->high.y));
 }
 
 /*		box_above		-		is box1 strictly above box2?
  */
 Datum
-box_above(PG_FUNCTION_ARGS)
+box_above(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPgt(box1->low.y, box2->high.y));
+	MDB_RETURN_BOOL(FPgt(box1->low.y, box2->high.y));
 }
 
 /*		box_overabove	-		is the lower edge of box1 at or above
  *								the lower edge of box2?
  */
 Datum
-box_overabove(PG_FUNCTION_ARGS)
+box_overabove(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPge(box1->low.y, box2->low.y));
+	MDB_RETURN_BOOL(FPge(box1->low.y, box2->low.y));
 }
 
 /*		box_contained	-		is box1 contained by box2?
  */
 Datum
-box_contained(PG_FUNCTION_ARGS)
+box_contained(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPle(box1->high.x, box2->high.x) &&
+	MDB_RETURN_BOOL(FPle(box1->high.x, box2->high.x) &&
 				   FPge(box1->low.x, box2->low.x) &&
 				   FPle(box1->high.y, box2->high.y) &&
 				   FPge(box1->low.y, box2->low.y));
@@ -647,12 +647,12 @@ box_contained(PG_FUNCTION_ARGS)
 /*		box_contain		-		does box1 contain box2?
  */
 Datum
-box_contain(PG_FUNCTION_ARGS)
+box_contain(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPge(box1->high.x, box2->high.x) &&
+	MDB_RETURN_BOOL(FPge(box1->high.x, box2->high.x) &&
 				   FPle(box1->low.x, box2->low.x) &&
 				   FPge(box1->high.y, box2->high.y) &&
 				   FPle(box1->low.y, box2->low.y));
@@ -668,21 +668,21 @@ box_contain(PG_FUNCTION_ARGS)
  * not supported in the PG 8.1 rtree operator class extension.
  */
 Datum
-box_below_eq(PG_FUNCTION_ARGS)
+box_below_eq(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPle(box1->high.y, box2->low.y));
+	MDB_RETURN_BOOL(FPle(box1->high.y, box2->low.y));
 }
 
 Datum
-box_above_eq(PG_FUNCTION_ARGS)
+box_above_eq(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPge(box1->low.y, box2->high.y));
+	MDB_RETURN_BOOL(FPge(box1->low.y, box2->high.y));
 }
 
 
@@ -690,48 +690,48 @@ box_above_eq(PG_FUNCTION_ARGS)
  *								our accuracy constraint?
  */
 Datum
-box_lt(PG_FUNCTION_ARGS)
+box_lt(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPlt(box_ar(box1), box_ar(box2)));
+	MDB_RETURN_BOOL(FPlt(box_ar(box1), box_ar(box2)));
 }
 
 Datum
-box_gt(PG_FUNCTION_ARGS)
+box_gt(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPgt(box_ar(box1), box_ar(box2)));
+	MDB_RETURN_BOOL(FPgt(box_ar(box1), box_ar(box2)));
 }
 
 Datum
-box_eq(PG_FUNCTION_ARGS)
+box_eq(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPeq(box_ar(box1), box_ar(box2)));
+	MDB_RETURN_BOOL(FPeq(box_ar(box1), box_ar(box2)));
 }
 
 Datum
-box_le(PG_FUNCTION_ARGS)
+box_le(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPle(box_ar(box1), box_ar(box2)));
+	MDB_RETURN_BOOL(FPle(box_ar(box1), box_ar(box2)));
 }
 
 Datum
-box_ge(PG_FUNCTION_ARGS)
+box_ge(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(FPge(box_ar(box1), box_ar(box2)));
+	MDB_RETURN_BOOL(FPge(box_ar(box1), box_ar(box2)));
 }
 
 
@@ -742,11 +742,11 @@ box_ge(PG_FUNCTION_ARGS)
 /*		box_area		-		returns the area of the box.
  */
 Datum
-box_area(PG_FUNCTION_ARGS)
+box_area(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 
-	PG_RETURN_FLOAT8(box_ar(box));
+	MDB_RETURN_FLOAT8(box_ar(box));
 }
 
 
@@ -754,11 +754,11 @@ box_area(PG_FUNCTION_ARGS)
  *								  (horizontal magnitude).
  */
 Datum
-box_width(PG_FUNCTION_ARGS)
+box_width(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 
-	PG_RETURN_FLOAT8(box->high.x - box->low.x);
+	MDB_RETURN_FLOAT8(box->high.x - box->low.x);
 }
 
 
@@ -766,11 +766,11 @@ box_width(PG_FUNCTION_ARGS)
  *								  (vertical magnitude).
  */
 Datum
-box_height(PG_FUNCTION_ARGS)
+box_height(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 
-	PG_RETURN_FLOAT8(box->high.y - box->low.y);
+	MDB_RETURN_FLOAT8(box->high.y - box->low.y);
 }
 
 
@@ -778,31 +778,31 @@ box_height(PG_FUNCTION_ARGS)
  *								  center points of two boxes.
  */
 Datum
-box_distance(PG_FUNCTION_ARGS)
+box_distance(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 	Point		a,
 				b;
 
 	box_cn(&a, box1);
 	box_cn(&b, box2);
 
-	PG_RETURN_FLOAT8(HYPOT(a.x - b.x, a.y - b.y));
+	MDB_RETURN_FLOAT8(HYPOT(a.x - b.x, a.y - b.y));
 }
 
 
 /*		box_center		-		returns the center point of the box.
  */
 Datum
-box_center(PG_FUNCTION_ARGS)
+box_center(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 	Point	   *result = (Point *) palloc(sizeof(Point));
 
 	box_cn(result, box);
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 
@@ -854,14 +854,14 @@ box_ht(BOX *box)
  *				  or NULL if they do not intersect.
  */
 Datum
-box_intersect(PG_FUNCTION_ARGS)
+box_intersect(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0);
-	BOX		   *box2 = PG_GETARG_BOX_P(1);
+	BOX		   *box1 = MDB_GETARG_BOX_P(0);
+	BOX		   *box2 = MDB_GETARG_BOX_P(1);
 	BOX		   *result;
 
 	if (!box_ov(box1, box2))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	result = (BOX *) palloc(sizeof(BOX));
 
@@ -870,7 +870,7 @@ box_intersect(PG_FUNCTION_ARGS)
 	result->high.y = Min(box1->high.y, box2->high.y);
 	result->low.y = Max(box1->low.y, box2->low.y);
 
-	PG_RETURN_BOX_P(result);
+	MDB_RETURN_BOX_P(result);
 }
 
 
@@ -879,14 +879,14 @@ box_intersect(PG_FUNCTION_ARGS)
  *				  positive-slope diagonal of "box".
  */
 Datum
-box_diagonal(PG_FUNCTION_ARGS)
+box_diagonal(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 	LSEG	   *result = (LSEG *) palloc(sizeof(LSEG));
 
 	statlseg_construct(result, &box->high, &box->low);
 
-	PG_RETURN_LSEG_P(result);
+	MDB_RETURN_LSEG_P(result);
 }
 
 /***********************************************************************
@@ -916,9 +916,9 @@ line_decode(char *s, const char *str, LINE *line)
 }
 
 Datum
-line_in(PG_FUNCTION_ARGS)
+line_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	LINE	   *line = (LINE *) palloc(sizeof(LINE));
 	LSEG		lseg;
 	bool		isopen;
@@ -949,28 +949,28 @@ line_in(PG_FUNCTION_ARGS)
 		line_construct_pts(line, &lseg.p[0], &lseg.p[1]);
 	}
 
-	PG_RETURN_LINE_P(line);
+	MDB_RETURN_LINE_P(line);
 }
 
 
 Datum
-line_out(PG_FUNCTION_ARGS)
+line_out(MDB_FUNCTION_ARGS)
 {
-	LINE	   *line = PG_GETARG_LINE_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(0);
 	char	   *astr = float8out_internal(line->A);
 	char	   *bstr = float8out_internal(line->B);
 	char	   *cstr = float8out_internal(line->C);
 
-	PG_RETURN_CSTRING(psprintf("{%s,%s,%s}", astr, bstr, cstr));
+	MDB_RETURN_CSTRING(psprintf("{%s,%s,%s}", astr, bstr, cstr));
 }
 
 /*
  *		line_recv			- converts external binary format to line
  */
 Datum
-line_recv(PG_FUNCTION_ARGS)
+line_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	LINE	   *line;
 
 	line = (LINE *) palloc(sizeof(LINE));
@@ -979,23 +979,23 @@ line_recv(PG_FUNCTION_ARGS)
 	line->B = pq_getmsgfloat8(buf);
 	line->C = pq_getmsgfloat8(buf);
 
-	PG_RETURN_LINE_P(line);
+	MDB_RETURN_LINE_P(line);
 }
 
 /*
  *		line_send			- converts line to binary format
  */
 Datum
-line_send(PG_FUNCTION_ARGS)
+line_send(MDB_FUNCTION_ARGS)
 {
-	LINE	   *line = PG_GETARG_LINE_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendfloat8(&buf, line->A);
 	pq_sendfloat8(&buf, line->B);
 	pq_sendfloat8(&buf, line->C);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -1076,14 +1076,14 @@ line_construct_pts(LINE *line, Point *pt1, Point *pt2)
  * two points
  */
 Datum
-line_construct_pp(PG_FUNCTION_ARGS)
+line_construct_pp(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 	LINE	   *result = (LINE *) palloc(sizeof(LINE));
 
 	line_construct_pts(result, pt1, pt2);
-	PG_RETURN_LINE_P(result);
+	MDB_RETURN_LINE_P(result);
 }
 
 
@@ -1092,63 +1092,63 @@ line_construct_pp(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-line_intersect(PG_FUNCTION_ARGS)
+line_intersect(MDB_FUNCTION_ARGS)
 {
-	LINE	   *l1 = PG_GETARG_LINE_P(0);
-	LINE	   *l2 = PG_GETARG_LINE_P(1);
+	LINE	   *l1 = MDB_GETARG_LINE_P(0);
+	LINE	   *l2 = MDB_GETARG_LINE_P(1);
 
-	PG_RETURN_BOOL(!DatumGetBool(DirectFunctionCall2(line_parallel,
+	MDB_RETURN_BOOL(!DatumGetBool(DirectFunctionCall2(line_parallel,
 													 LinePGetDatum(l1),
 													 LinePGetDatum(l2))));
 }
 
 Datum
-line_parallel(PG_FUNCTION_ARGS)
+line_parallel(MDB_FUNCTION_ARGS)
 {
-	LINE	   *l1 = PG_GETARG_LINE_P(0);
-	LINE	   *l2 = PG_GETARG_LINE_P(1);
+	LINE	   *l1 = MDB_GETARG_LINE_P(0);
+	LINE	   *l2 = MDB_GETARG_LINE_P(1);
 
 	if (FPzero(l1->B))
-		PG_RETURN_BOOL(FPzero(l2->B));
+		MDB_RETURN_BOOL(FPzero(l2->B));
 
-	PG_RETURN_BOOL(FPeq(l2->A, l1->A * (l2->B / l1->B)));
+	MDB_RETURN_BOOL(FPeq(l2->A, l1->A * (l2->B / l1->B)));
 }
 
 Datum
-line_perp(PG_FUNCTION_ARGS)
+line_perp(MDB_FUNCTION_ARGS)
 {
-	LINE	   *l1 = PG_GETARG_LINE_P(0);
-	LINE	   *l2 = PG_GETARG_LINE_P(1);
+	LINE	   *l1 = MDB_GETARG_LINE_P(0);
+	LINE	   *l2 = MDB_GETARG_LINE_P(1);
 
 	if (FPzero(l1->A))
-		PG_RETURN_BOOL(FPzero(l2->B));
+		MDB_RETURN_BOOL(FPzero(l2->B));
 	else if (FPzero(l1->B))
-		PG_RETURN_BOOL(FPzero(l2->A));
+		MDB_RETURN_BOOL(FPzero(l2->A));
 
-	PG_RETURN_BOOL(FPeq(((l1->A * l2->B) / (l1->B * l2->A)), -1.0));
+	MDB_RETURN_BOOL(FPeq(((l1->A * l2->B) / (l1->B * l2->A)), -1.0));
 }
 
 Datum
-line_vertical(PG_FUNCTION_ARGS)
+line_vertical(MDB_FUNCTION_ARGS)
 {
-	LINE	   *line = PG_GETARG_LINE_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(0);
 
-	PG_RETURN_BOOL(FPzero(line->B));
+	MDB_RETURN_BOOL(FPzero(line->B));
 }
 
 Datum
-line_horizontal(PG_FUNCTION_ARGS)
+line_horizontal(MDB_FUNCTION_ARGS)
 {
-	LINE	   *line = PG_GETARG_LINE_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(0);
 
-	PG_RETURN_BOOL(FPzero(line->A));
+	MDB_RETURN_BOOL(FPzero(line->A));
 }
 
 Datum
-line_eq(PG_FUNCTION_ARGS)
+line_eq(MDB_FUNCTION_ARGS)
 {
-	LINE	   *l1 = PG_GETARG_LINE_P(0);
-	LINE	   *l2 = PG_GETARG_LINE_P(1);
+	LINE	   *l1 = MDB_GETARG_LINE_P(0);
+	LINE	   *l2 = MDB_GETARG_LINE_P(1);
 	double		k;
 
 	if (!FPzero(l2->A))
@@ -1160,7 +1160,7 @@ line_eq(PG_FUNCTION_ARGS)
 	else
 		k = 1.0;
 
-	PG_RETURN_BOOL(FPeq(l1->A, k * l2->A) &&
+	MDB_RETURN_BOOL(FPeq(l1->A, k * l2->A) &&
 				   FPeq(l1->B, k * l2->B) &&
 				   FPeq(l1->C, k * l2->C));
 }
@@ -1174,39 +1174,39 @@ line_eq(PG_FUNCTION_ARGS)
  * Distance between two lines.
  */
 Datum
-line_distance(PG_FUNCTION_ARGS)
+line_distance(MDB_FUNCTION_ARGS)
 {
-	LINE	   *l1 = PG_GETARG_LINE_P(0);
-	LINE	   *l2 = PG_GETARG_LINE_P(1);
+	LINE	   *l1 = MDB_GETARG_LINE_P(0);
+	LINE	   *l2 = MDB_GETARG_LINE_P(1);
 	float8		result;
 	Point	   *tmp;
 
 	if (!DatumGetBool(DirectFunctionCall2(line_parallel,
 										  LinePGetDatum(l1),
 										  LinePGetDatum(l2))))
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 	if (FPzero(l1->B))			/* vertical? */
-		PG_RETURN_FLOAT8(fabs(l1->C - l2->C));
+		MDB_RETURN_FLOAT8(fabs(l1->C - l2->C));
 	tmp = point_construct(0.0, l1->C);
 	result = dist_pl_internal(tmp, l2);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /* line_interpt()
  * Point where two lines l1, l2 intersect (if any)
  */
 Datum
-line_interpt(PG_FUNCTION_ARGS)
+line_interpt(MDB_FUNCTION_ARGS)
 {
-	LINE	   *l1 = PG_GETARG_LINE_P(0);
-	LINE	   *l2 = PG_GETARG_LINE_P(1);
+	LINE	   *l1 = MDB_GETARG_LINE_P(0);
+	LINE	   *l2 = MDB_GETARG_LINE_P(1);
 	Point	   *result;
 
 	result = line_interpt_internal(l1, l2);
 
 	if (result == NULL)
-		PG_RETURN_NULL();
-	PG_RETURN_POINT_P(result);
+		MDB_RETURN_NULL();
+	MDB_RETURN_POINT_P(result);
 }
 
 /*
@@ -1281,15 +1281,15 @@ line_interpt_internal(LINE *l1, LINE *l2)
  *---------------------------------------------------------*/
 
 Datum
-path_area(PG_FUNCTION_ARGS)
+path_area(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(0);
 	double		area = 0.0;
 	int			i,
 				j;
 
 	if (!path->closed)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	for (i = 0; i < path->npts; i++)
 	{
@@ -1299,14 +1299,14 @@ path_area(PG_FUNCTION_ARGS)
 	}
 
 	area *= 0.5;
-	PG_RETURN_FLOAT8(area < 0.0 ? -area : area);
+	MDB_RETURN_FLOAT8(area < 0.0 ? -area : area);
 }
 
 
 Datum
-path_in(PG_FUNCTION_ARGS)
+path_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	PATH	   *path;
 	bool		isopen;
 	char	   *s;
@@ -1368,16 +1368,16 @@ path_in(PG_FUNCTION_ARGS)
 	/* prevent instability in unused pad bytes */
 	path->dummy = 0;
 
-	PG_RETURN_PATH_P(path);
+	MDB_RETURN_PATH_P(path);
 }
 
 
 Datum
-path_out(PG_FUNCTION_ARGS)
+path_out(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(0);
 
-	PG_RETURN_CSTRING(path_encode(path->closed ? PATH_CLOSED : PATH_OPEN, path->npts, path->p));
+	MDB_RETURN_CSTRING(path_encode(path->closed ? PATH_CLOSED : PATH_OPEN, path->npts, path->p));
 }
 
 /*
@@ -1387,9 +1387,9 @@ path_out(PG_FUNCTION_ARGS)
  * of points, and the points.
  */
 Datum
-path_recv(PG_FUNCTION_ARGS)
+path_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	PATH	   *path;
 	int			closed;
 	int32		npts;
@@ -1418,16 +1418,16 @@ path_recv(PG_FUNCTION_ARGS)
 		path->p[i].y = pq_getmsgfloat8(buf);
 	}
 
-	PG_RETURN_PATH_P(path);
+	MDB_RETURN_PATH_P(path);
 }
 
 /*
  *		path_send			- converts path to binary format
  */
 Datum
-path_send(PG_FUNCTION_ARGS)
+path_send(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(0);
 	StringInfoData buf;
 	int32		i;
 
@@ -1439,7 +1439,7 @@ path_send(PG_FUNCTION_ARGS)
 		pq_sendfloat8(&buf, path->p[i].x);
 		pq_sendfloat8(&buf, path->p[i].y);
 	}
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -1452,48 +1452,48 @@ path_send(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-path_n_lt(PG_FUNCTION_ARGS)
+path_n_lt(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 
-	PG_RETURN_BOOL(p1->npts < p2->npts);
+	MDB_RETURN_BOOL(p1->npts < p2->npts);
 }
 
 Datum
-path_n_gt(PG_FUNCTION_ARGS)
+path_n_gt(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 
-	PG_RETURN_BOOL(p1->npts > p2->npts);
+	MDB_RETURN_BOOL(p1->npts > p2->npts);
 }
 
 Datum
-path_n_eq(PG_FUNCTION_ARGS)
+path_n_eq(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 
-	PG_RETURN_BOOL(p1->npts == p2->npts);
+	MDB_RETURN_BOOL(p1->npts == p2->npts);
 }
 
 Datum
-path_n_le(PG_FUNCTION_ARGS)
+path_n_le(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 
-	PG_RETURN_BOOL(p1->npts <= p2->npts);
+	MDB_RETURN_BOOL(p1->npts <= p2->npts);
 }
 
 Datum
-path_n_ge(PG_FUNCTION_ARGS)
+path_n_ge(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 
-	PG_RETURN_BOOL(p1->npts >= p2->npts);
+	MDB_RETURN_BOOL(p1->npts >= p2->npts);
 }
 
 /*----------------------------------------------------------
@@ -1501,48 +1501,48 @@ path_n_ge(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-path_isclosed(PG_FUNCTION_ARGS)
+path_isclosed(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(0);
 
-	PG_RETURN_BOOL(path->closed);
+	MDB_RETURN_BOOL(path->closed);
 }
 
 Datum
-path_isopen(PG_FUNCTION_ARGS)
+path_isopen(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(0);
 
-	PG_RETURN_BOOL(!path->closed);
+	MDB_RETURN_BOOL(!path->closed);
 }
 
 Datum
-path_npoints(PG_FUNCTION_ARGS)
+path_npoints(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(0);
 
-	PG_RETURN_INT32(path->npts);
+	MDB_RETURN_INT32(path->npts);
 }
 
 
 Datum
-path_close(PG_FUNCTION_ARGS)
+path_close(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P_COPY(0);
+	PATH	   *path = MDB_GETARG_PATH_P_COPY(0);
 
 	path->closed = TRUE;
 
-	PG_RETURN_PATH_P(path);
+	MDB_RETURN_PATH_P(path);
 }
 
 Datum
-path_open(PG_FUNCTION_ARGS)
+path_open(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P_COPY(0);
+	PATH	   *path = MDB_GETARG_PATH_P_COPY(0);
 
 	path->closed = FALSE;
 
-	PG_RETURN_PATH_P(path);
+	MDB_RETURN_PATH_P(path);
 }
 
 
@@ -1552,10 +1552,10 @@ path_open(PG_FUNCTION_ARGS)
  *		O(n^2) iterative edge check.
  */
 Datum
-path_inter(PG_FUNCTION_ARGS)
+path_inter(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 	BOX			b1,
 				b2;
 	int			i,
@@ -1564,7 +1564,7 @@ path_inter(PG_FUNCTION_ARGS)
 				seg2;
 
 	if (p1->npts <= 0 || p2->npts <= 0)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	b1.high.x = b1.low.x = p1->p[0].x;
 	b1.high.y = b1.low.y = p1->p[0].y;
@@ -1585,7 +1585,7 @@ path_inter(PG_FUNCTION_ARGS)
 		b2.low.y = Min(p2->p[i].y, b2.low.y);
 	}
 	if (!box_ov(&b1, &b2))
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	/* pairwise check lseg intersections */
 	for (i = 0; i < p1->npts; i++)
@@ -1617,12 +1617,12 @@ path_inter(PG_FUNCTION_ARGS)
 			statlseg_construct(&seg1, &p1->p[iprev], &p1->p[i]);
 			statlseg_construct(&seg2, &p2->p[jprev], &p2->p[j]);
 			if (lseg_intersect_internal(&seg1, &seg2))
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 		}
 	}
 
 	/* if we dropped through, no two segs intersected */
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 /* path_distance()
@@ -1630,10 +1630,10 @@ path_inter(PG_FUNCTION_ARGS)
  *	two paths, and finds the min distance between any two lsegs
  */
 Datum
-path_distance(PG_FUNCTION_ARGS)
+path_distance(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 	float8		min = 0.0;		/* initialize to keep compiler quiet */
 	bool		have_min = false;
 	float8		tmp;
@@ -1683,9 +1683,9 @@ path_distance(PG_FUNCTION_ARGS)
 	}
 
 	if (!have_min)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_FLOAT8(min);
+	MDB_RETURN_FLOAT8(min);
 }
 
 
@@ -1694,9 +1694,9 @@ path_distance(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-path_length(PG_FUNCTION_ARGS)
+path_length(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(0);
 	float8		result = 0.0;
 	int			i;
 
@@ -1716,7 +1716,7 @@ path_length(PG_FUNCTION_ARGS)
 		result += point_dt(&path->p[iprev], &path->p[i]);
 	}
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /***********************************************************************
@@ -1733,51 +1733,51 @@ path_length(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-point_in(PG_FUNCTION_ARGS)
+point_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	Point	   *point = (Point *) palloc(sizeof(Point));
 
 	pair_decode(str, &point->x, &point->y, NULL, "point", str);
-	PG_RETURN_POINT_P(point);
+	MDB_RETURN_POINT_P(point);
 }
 
 Datum
-point_out(PG_FUNCTION_ARGS)
+point_out(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
 
-	PG_RETURN_CSTRING(path_encode(PATH_NONE, 1, pt));
+	MDB_RETURN_CSTRING(path_encode(PATH_NONE, 1, pt));
 }
 
 /*
  *		point_recv			- converts external binary format to point
  */
 Datum
-point_recv(PG_FUNCTION_ARGS)
+point_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	Point	   *point;
 
 	point = (Point *) palloc(sizeof(Point));
 	point->x = pq_getmsgfloat8(buf);
 	point->y = pq_getmsgfloat8(buf);
-	PG_RETURN_POINT_P(point);
+	MDB_RETURN_POINT_P(point);
 }
 
 /*
  *		point_send			- converts point to binary format
  */
 Datum
-point_send(PG_FUNCTION_ARGS)
+point_send(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendfloat8(&buf, pt->x);
 	pq_sendfloat8(&buf, pt->y);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -1818,75 +1818,75 @@ point_copy(Point *pt)
  *---------------------------------------------------------*/
 
 Datum
-point_left(PG_FUNCTION_ARGS)
+point_left(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(FPlt(pt1->x, pt2->x));
+	MDB_RETURN_BOOL(FPlt(pt1->x, pt2->x));
 }
 
 Datum
-point_right(PG_FUNCTION_ARGS)
+point_right(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(FPgt(pt1->x, pt2->x));
+	MDB_RETURN_BOOL(FPgt(pt1->x, pt2->x));
 }
 
 Datum
-point_above(PG_FUNCTION_ARGS)
+point_above(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(FPgt(pt1->y, pt2->y));
+	MDB_RETURN_BOOL(FPgt(pt1->y, pt2->y));
 }
 
 Datum
-point_below(PG_FUNCTION_ARGS)
+point_below(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(FPlt(pt1->y, pt2->y));
+	MDB_RETURN_BOOL(FPlt(pt1->y, pt2->y));
 }
 
 Datum
-point_vert(PG_FUNCTION_ARGS)
+point_vert(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(FPeq(pt1->x, pt2->x));
+	MDB_RETURN_BOOL(FPeq(pt1->x, pt2->x));
 }
 
 Datum
-point_horiz(PG_FUNCTION_ARGS)
+point_horiz(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(FPeq(pt1->y, pt2->y));
+	MDB_RETURN_BOOL(FPeq(pt1->y, pt2->y));
 }
 
 Datum
-point_eq(PG_FUNCTION_ARGS)
+point_eq(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(FPeq(pt1->x, pt2->x) && FPeq(pt1->y, pt2->y));
+	MDB_RETURN_BOOL(FPeq(pt1->x, pt2->x) && FPeq(pt1->y, pt2->y));
 }
 
 Datum
-point_ne(PG_FUNCTION_ARGS)
+point_ne(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(FPne(pt1->x, pt2->x) || FPne(pt1->y, pt2->y));
+	MDB_RETURN_BOOL(FPne(pt1->x, pt2->x) || FPne(pt1->y, pt2->y));
 }
 
 /*----------------------------------------------------------
@@ -1894,12 +1894,12 @@ point_ne(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-point_distance(PG_FUNCTION_ARGS)
+point_distance(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_FLOAT8(HYPOT(pt1->x - pt2->x, pt1->y - pt2->y));
+	MDB_RETURN_FLOAT8(HYPOT(pt1->x - pt2->x, pt1->y - pt2->y));
 }
 
 double
@@ -1913,12 +1913,12 @@ point_dt(Point *pt1, Point *pt2)
 }
 
 Datum
-point_slope(PG_FUNCTION_ARGS)
+point_slope(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_FLOAT8(point_sl(pt1, pt2));
+	MDB_RETURN_FLOAT8(point_sl(pt1, pt2));
 }
 
 
@@ -1947,32 +1947,32 @@ point_sl(Point *pt1, Point *pt2)
  *---------------------------------------------------------*/
 
 Datum
-lseg_in(PG_FUNCTION_ARGS)
+lseg_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	LSEG	   *lseg = (LSEG *) palloc(sizeof(LSEG));
 	bool		isopen;
 
 	path_decode(str, true, 2, &(lseg->p[0]), &isopen, NULL, "lseg", str);
-	PG_RETURN_LSEG_P(lseg);
+	MDB_RETURN_LSEG_P(lseg);
 }
 
 
 Datum
-lseg_out(PG_FUNCTION_ARGS)
+lseg_out(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *ls = PG_GETARG_LSEG_P(0);
+	LSEG	   *ls = MDB_GETARG_LSEG_P(0);
 
-	PG_RETURN_CSTRING(path_encode(PATH_OPEN, 2, (Point *) &(ls->p[0])));
+	MDB_RETURN_CSTRING(path_encode(PATH_OPEN, 2, (Point *) &(ls->p[0])));
 }
 
 /*
  *		lseg_recv			- converts external binary format to lseg
  */
 Datum
-lseg_recv(PG_FUNCTION_ARGS)
+lseg_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	LSEG	   *lseg;
 
 	lseg = (LSEG *) palloc(sizeof(LSEG));
@@ -1982,16 +1982,16 @@ lseg_recv(PG_FUNCTION_ARGS)
 	lseg->p[1].x = pq_getmsgfloat8(buf);
 	lseg->p[1].y = pq_getmsgfloat8(buf);
 
-	PG_RETURN_LSEG_P(lseg);
+	MDB_RETURN_LSEG_P(lseg);
 }
 
 /*
  *		lseg_send			- converts lseg to binary format
  */
 Datum
-lseg_send(PG_FUNCTION_ARGS)
+lseg_send(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *ls = PG_GETARG_LSEG_P(0);
+	LSEG	   *ls = MDB_GETARG_LSEG_P(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
@@ -1999,7 +1999,7 @@ lseg_send(PG_FUNCTION_ARGS)
 	pq_sendfloat8(&buf, ls->p[0].y);
 	pq_sendfloat8(&buf, ls->p[1].x);
 	pq_sendfloat8(&buf, ls->p[1].y);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -2007,10 +2007,10 @@ lseg_send(PG_FUNCTION_ARGS)
  *		form a LSEG from two Points.
  */
 Datum
-lseg_construct(PG_FUNCTION_ARGS)
+lseg_construct(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 	LSEG	   *result = (LSEG *) palloc(sizeof(LSEG));
 
 	result->p[0].x = pt1->x;
@@ -2018,7 +2018,7 @@ lseg_construct(PG_FUNCTION_ARGS)
 	result->p[1].x = pt2->x;
 	result->p[1].y = pt2->y;
 
-	PG_RETURN_LSEG_P(result);
+	MDB_RETURN_LSEG_P(result);
 }
 
 /* like lseg_construct, but assume space already allocated */
@@ -2032,11 +2032,11 @@ statlseg_construct(LSEG *lseg, Point *pt1, Point *pt2)
 }
 
 Datum
-lseg_length(PG_FUNCTION_ARGS)
+lseg_length(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
 
-	PG_RETURN_FLOAT8(point_dt(&lseg->p[0], &lseg->p[1]));
+	MDB_RETURN_FLOAT8(point_dt(&lseg->p[0], &lseg->p[1]));
 }
 
 /*----------------------------------------------------------
@@ -2048,12 +2048,12 @@ lseg_length(PG_FUNCTION_ARGS)
  **  both segments.
  */
 Datum
-lseg_intersect(PG_FUNCTION_ARGS)
+lseg_intersect(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_BOOL(lseg_intersect_internal(l1, l2));
+	MDB_RETURN_BOOL(lseg_intersect_internal(l1, l2));
 }
 
 static bool
@@ -2074,12 +2074,12 @@ lseg_intersect_internal(LSEG *l1, LSEG *l2)
 }
 
 Datum
-lseg_parallel(PG_FUNCTION_ARGS)
+lseg_parallel(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_BOOL(FPeq(point_sl(&l1->p[0], &l1->p[1]),
+	MDB_RETURN_BOOL(FPeq(point_sl(&l1->p[0], &l1->p[1]),
 						point_sl(&l2->p[0], &l2->p[1])));
 }
 
@@ -2093,10 +2093,10 @@ lseg_parallel(PG_FUNCTION_ARGS)
  * - thomas 1998-01-31
  */
 Datum
-lseg_perp(PG_FUNCTION_ARGS)
+lseg_perp(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 	double		m1,
 				m2;
 
@@ -2107,91 +2107,91 @@ lseg_perp(PG_FUNCTION_ARGS)
 	printf("lseg_perp- slopes are %g and %g\n", m1, m2);
 #endif
 	if (FPzero(m1))
-		PG_RETURN_BOOL(FPeq(m2, DBL_MAX));
+		MDB_RETURN_BOOL(FPeq(m2, DBL_MAX));
 	else if (FPzero(m2))
-		PG_RETURN_BOOL(FPeq(m1, DBL_MAX));
+		MDB_RETURN_BOOL(FPeq(m1, DBL_MAX));
 
-	PG_RETURN_BOOL(FPeq(m1 / m2, -1.0));
+	MDB_RETURN_BOOL(FPeq(m1 / m2, -1.0));
 }
 
 Datum
-lseg_vertical(PG_FUNCTION_ARGS)
+lseg_vertical(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
 
-	PG_RETURN_BOOL(FPeq(lseg->p[0].x, lseg->p[1].x));
+	MDB_RETURN_BOOL(FPeq(lseg->p[0].x, lseg->p[1].x));
 }
 
 Datum
-lseg_horizontal(PG_FUNCTION_ARGS)
+lseg_horizontal(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
 
-	PG_RETURN_BOOL(FPeq(lseg->p[0].y, lseg->p[1].y));
+	MDB_RETURN_BOOL(FPeq(lseg->p[0].y, lseg->p[1].y));
 }
 
 
 Datum
-lseg_eq(PG_FUNCTION_ARGS)
+lseg_eq(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_BOOL(FPeq(l1->p[0].x, l2->p[0].x) &&
+	MDB_RETURN_BOOL(FPeq(l1->p[0].x, l2->p[0].x) &&
 				   FPeq(l1->p[0].y, l2->p[0].y) &&
 				   FPeq(l1->p[1].x, l2->p[1].x) &&
 				   FPeq(l1->p[1].y, l2->p[1].y));
 }
 
 Datum
-lseg_ne(PG_FUNCTION_ARGS)
+lseg_ne(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_BOOL(!FPeq(l1->p[0].x, l2->p[0].x) ||
+	MDB_RETURN_BOOL(!FPeq(l1->p[0].x, l2->p[0].x) ||
 				   !FPeq(l1->p[0].y, l2->p[0].y) ||
 				   !FPeq(l1->p[1].x, l2->p[1].x) ||
 				   !FPeq(l1->p[1].y, l2->p[1].y));
 }
 
 Datum
-lseg_lt(PG_FUNCTION_ARGS)
+lseg_lt(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_BOOL(FPlt(point_dt(&l1->p[0], &l1->p[1]),
+	MDB_RETURN_BOOL(FPlt(point_dt(&l1->p[0], &l1->p[1]),
 						point_dt(&l2->p[0], &l2->p[1])));
 }
 
 Datum
-lseg_le(PG_FUNCTION_ARGS)
+lseg_le(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_BOOL(FPle(point_dt(&l1->p[0], &l1->p[1]),
+	MDB_RETURN_BOOL(FPle(point_dt(&l1->p[0], &l1->p[1]),
 						point_dt(&l2->p[0], &l2->p[1])));
 }
 
 Datum
-lseg_gt(PG_FUNCTION_ARGS)
+lseg_gt(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_BOOL(FPgt(point_dt(&l1->p[0], &l1->p[1]),
+	MDB_RETURN_BOOL(FPgt(point_dt(&l1->p[0], &l1->p[1]),
 						point_dt(&l2->p[0], &l2->p[1])));
 }
 
 Datum
-lseg_ge(PG_FUNCTION_ARGS)
+lseg_ge(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_BOOL(FPge(point_dt(&l1->p[0], &l1->p[1]),
+	MDB_RETURN_BOOL(FPge(point_dt(&l1->p[0], &l1->p[1]),
 						point_dt(&l2->p[0], &l2->p[1])));
 }
 
@@ -2206,12 +2206,12 @@ lseg_ge(PG_FUNCTION_ARGS)
  *		segment.
  */
 Datum
-lseg_distance(PG_FUNCTION_ARGS)
+lseg_distance(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_FLOAT8(lseg_dt(l1, l2));
+	MDB_RETURN_FLOAT8(lseg_dt(l1, l2));
 }
 
 /* lseg_dt()
@@ -2242,9 +2242,9 @@ lseg_dt(LSEG *l1, LSEG *l2)
 
 
 Datum
-lseg_center(PG_FUNCTION_ARGS)
+lseg_center(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
 	Point	   *result;
 
 	result = (Point *) palloc(sizeof(Point));
@@ -2252,7 +2252,7 @@ lseg_center(PG_FUNCTION_ARGS)
 	result->x = (lseg->p[0].x + lseg->p[1].x) / 2.0;
 	result->y = (lseg->p[0].y + lseg->p[1].y) / 2.0;
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 static Point *
@@ -2307,17 +2307,17 @@ lseg_interpt_internal(LSEG *l1, LSEG *l2)
  *		Find the intersection point of two segments (if any).
  */
 Datum
-lseg_interpt(PG_FUNCTION_ARGS)
+lseg_interpt(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 	Point	   *result;
 
 	result = lseg_interpt_internal(l1, l2);
 	if (!PointerIsValid(result))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 /***********************************************************************
@@ -2336,12 +2336,12 @@ lseg_interpt(PG_FUNCTION_ARGS)
  * Distance from a point to a line
  */
 Datum
-dist_pl(PG_FUNCTION_ARGS)
+dist_pl(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	LINE	   *line = PG_GETARG_LINE_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(1);
 
-	PG_RETURN_FLOAT8(dist_pl_internal(pt, line));
+	MDB_RETURN_FLOAT8(dist_pl_internal(pt, line));
 }
 
 static double
@@ -2355,12 +2355,12 @@ dist_pl_internal(Point *pt, LINE *line)
  * Distance from a point to a lseg
  */
 Datum
-dist_ps(PG_FUNCTION_ARGS)
+dist_ps(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	LSEG	   *lseg = PG_GETARG_LSEG_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_FLOAT8(dist_ps_internal(pt, lseg));
+	MDB_RETURN_FLOAT8(dist_ps_internal(pt, lseg));
 }
 
 static double
@@ -2420,10 +2420,10 @@ dist_ps_internal(Point *pt, LSEG *lseg)
  * Distance from a point to a path
  */
 Datum
-dist_ppath(PG_FUNCTION_ARGS)
+dist_ppath(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	PATH	   *path = PG_GETARG_PATH_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(1);
 	float8		result = 0.0;	/* keep compiler quiet */
 	bool		have_min = false;
 	float8		tmp;
@@ -2434,7 +2434,7 @@ dist_ppath(PG_FUNCTION_ARGS)
 	{
 		case 0:
 			/* no points in path? then result is undefined... */
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		case 1:
 			/* one point in path? then get distance between two points... */
 			result = point_dt(pt, &path->p[0]);
@@ -2470,17 +2470,17 @@ dist_ppath(PG_FUNCTION_ARGS)
 			}
 			break;
 	}
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
  * Distance from a point to a box
  */
 Datum
-dist_pb(PG_FUNCTION_ARGS)
+dist_pb(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 	float8		result;
 	Point	   *near;
 
@@ -2489,17 +2489,17 @@ dist_pb(PG_FUNCTION_ARGS)
 											  BoxPGetDatum(box)));
 	result = point_dt(near, pt);
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
  * Distance from a lseg to a line
  */
 Datum
-dist_sl(PG_FUNCTION_ARGS)
+dist_sl(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
-	LINE	   *line = PG_GETARG_LINE_P(1);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(1);
 	float8		result,
 				d2;
 
@@ -2514,17 +2514,17 @@ dist_sl(PG_FUNCTION_ARGS)
 			result = d2;
 	}
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
  * Distance from a lseg to a box
  */
 Datum
-dist_sb(PG_FUNCTION_ARGS)
+dist_sb(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 	Point	   *tmp;
 	Datum		result;
 
@@ -2535,18 +2535,18 @@ dist_sb(PG_FUNCTION_ARGS)
 								 PointPGetDatum(tmp),
 								 BoxPGetDatum(box));
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*
  * Distance from a line to a box
  */
 Datum
-dist_lb(PG_FUNCTION_ARGS)
+dist_lb(MDB_FUNCTION_ARGS)
 {
 #ifdef NOT_USED
-	LINE	   *line = PG_GETARG_LINE_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	LINE	   *line = MDB_GETARG_LINE_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 #endif
 
 	/* need to think about this one for a while */
@@ -2554,17 +2554,17 @@ dist_lb(PG_FUNCTION_ARGS)
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("function \"dist_lb\" not implemented")));
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 /*
  * Distance from a circle to a polygon
  */
 Datum
-dist_cpoly(PG_FUNCTION_ARGS)
+dist_cpoly(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
-	POLYGON    *poly = PG_GETARG_POLYGON_P(1);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(1);
 	float8		result;
 
 	/* calculate distance to center, and subtract radius */
@@ -2574,34 +2574,34 @@ dist_cpoly(PG_FUNCTION_ARGS)
 	if (result < 0)
 		result = 0;
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
  * Distance from a point to a polygon
  */
 Datum
-dist_ppoly(PG_FUNCTION_ARGS)
+dist_ppoly(MDB_FUNCTION_ARGS)
 {
-	Point	   *point = PG_GETARG_POINT_P(0);
-	POLYGON    *poly = PG_GETARG_POLYGON_P(1);
+	Point	   *point = MDB_GETARG_POINT_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(1);
 	float8		result;
 
 	result = dist_ppoly_internal(point, poly);
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-dist_polyp(PG_FUNCTION_ARGS)
+dist_polyp(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *poly = PG_GETARG_POLYGON_P(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	float8		result;
 
 	result = dist_ppoly_internal(point, poly);
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 static double
@@ -2711,10 +2711,10 @@ has_interpt_sl(LSEG *lseg, LINE *line)
  *		through the point.
  */
 Datum
-close_pl(PG_FUNCTION_ARGS)
+close_pl(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	LINE	   *line = PG_GETARG_LINE_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(1);
 	Point	   *result;
 	LINE	   *tmp;
 	double		invm;
@@ -2725,13 +2725,13 @@ close_pl(PG_FUNCTION_ARGS)
 	{
 		result->x = line->C;
 		result->y = pt->y;
-		PG_RETURN_POINT_P(result);
+		MDB_RETURN_POINT_P(result);
 	}
 	if (FPzero(line->A))		/* horizontal? */
 	{
 		result->x = pt->x;
 		result->y = line->C;
-		PG_RETURN_POINT_P(result);
+		MDB_RETURN_POINT_P(result);
 	}
 	/* drop a perpendicular and find the intersection point */
 
@@ -2740,7 +2740,7 @@ close_pl(PG_FUNCTION_ARGS)
 	tmp = line_construct_pm(pt, invm);
 	result = line_interpt_internal(tmp, line);
 	Assert(result != NULL);
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 
@@ -2755,10 +2755,10 @@ close_pl(PG_FUNCTION_ARGS)
  *		bug fixes by gthaker@atl.lmco.com; May 1, 1998
  */
 Datum
-close_ps(PG_FUNCTION_ARGS)
+close_ps(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	LSEG	   *lseg = PG_GETARG_LSEG_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(1);
 	Point	   *result = NULL;
 	LINE	   *tmp;
 	double		invm;
@@ -2787,14 +2787,14 @@ close_ps(PG_FUNCTION_ARGS)
 		else if (pt->y > lseg->p[yh].y)
 			result = point_copy(&lseg->p[yh]);	/* above the lseg */
 		if (result != NULL)
-			PG_RETURN_POINT_P(result);
+			MDB_RETURN_POINT_P(result);
 
 		/* point lines along (to left or right) of the vertical lseg. */
 
 		result = (Point *) palloc(sizeof(Point));
 		result->x = lseg->p[0].x;
 		result->y = pt->y;
-		PG_RETURN_POINT_P(result);
+		MDB_RETURN_POINT_P(result);
 	}
 	else if (FPeq(lseg->p[0].y, lseg->p[1].y))	/* horizontal? */
 	{
@@ -2807,13 +2807,13 @@ close_ps(PG_FUNCTION_ARGS)
 		else if (pt->x > lseg->p[xh].x)
 			result = point_copy(&lseg->p[xh]);	/* right of the lseg */
 		if (result != NULL)
-			PG_RETURN_POINT_P(result);
+			MDB_RETURN_POINT_P(result);
 
 		/* point lines along (at top or below) the horiz. lseg. */
 		result = (Point *) palloc(sizeof(Point));
 		result->x = pt->x;
 		result->y = lseg->p[0].y;
-		PG_RETURN_POINT_P(result);
+		MDB_RETURN_POINT_P(result);
 	}
 
 	/*
@@ -2832,7 +2832,7 @@ close_ps(PG_FUNCTION_ARGS)
 		printf("close_ps below: tmp A %f  B %f   C %f\n",
 			   tmp->A, tmp->B, tmp->C);
 #endif
-		PG_RETURN_POINT_P(result);
+		MDB_RETURN_POINT_P(result);
 	}
 	tmp = line_construct_pm(&lseg->p[yh], invm);		/* upper edge of the
 														 * "band" */
@@ -2844,7 +2844,7 @@ close_ps(PG_FUNCTION_ARGS)
 		printf("close_ps above: tmp A %f  B %f   C %f\n",
 			   tmp->A, tmp->B, tmp->C);
 #endif
-		PG_RETURN_POINT_P(result);
+		MDB_RETURN_POINT_P(result);
 	}
 
 	/*
@@ -2861,7 +2861,7 @@ close_ps(PG_FUNCTION_ARGS)
 #ifdef GEODEBUG
 	printf("close_ps- result.x %f  result.y %f\n", result->x, result->y);
 #endif
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 
@@ -2869,10 +2869,10 @@ close_ps(PG_FUNCTION_ARGS)
  * Closest point to l1 on l2.
  */
 Datum
-close_lseg(PG_FUNCTION_ARGS)
+close_lseg(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *l1 = PG_GETARG_LSEG_P(0);
-	LSEG	   *l2 = PG_GETARG_LSEG_P(1);
+	LSEG	   *l1 = MDB_GETARG_LSEG_P(0);
+	LSEG	   *l2 = MDB_GETARG_LSEG_P(1);
 	Point	   *result = NULL;
 	Point		point;
 	double		dist;
@@ -2913,17 +2913,17 @@ close_lseg(PG_FUNCTION_ARGS)
 	if (result == NULL)
 		result = point_copy(&point);
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 /* close_pb()
  * Closest point on or in box to specified point.
  */
 Datum
-close_pb(PG_FUNCTION_ARGS)
+close_pb(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 	LSEG		lseg,
 				seg;
 	Point		point;
@@ -2933,7 +2933,7 @@ close_pb(PG_FUNCTION_ARGS)
 	if (DatumGetBool(DirectFunctionCall2(on_pb,
 										 PointPGetDatum(pt),
 										 BoxPGetDatum(box))))
-		PG_RETURN_POINT_P(pt);
+		MDB_RETURN_POINT_P(pt);
 
 	/* pairwise check lseg distances */
 	point.x = box->low.x;
@@ -2964,7 +2964,7 @@ close_pb(PG_FUNCTION_ARGS)
 		memcpy(&lseg, &seg, sizeof(lseg));
 	}
 
-	PG_RETURN_DATUM(DirectFunctionCall2(close_ps,
+	MDB_RETURN_DATUM(DirectFunctionCall2(close_ps,
 										PointPGetDatum(pt),
 										LsegPGetDatum(&lseg)));
 }
@@ -2979,18 +2979,18 @@ close_pb(PG_FUNCTION_ARGS)
  * - thomas 1998-01-31
  */
 Datum
-close_sl(PG_FUNCTION_ARGS)
+close_sl(MDB_FUNCTION_ARGS)
 {
 #ifdef NOT_USED
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
-	LINE	   *line = PG_GETARG_LINE_P(1);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(1);
 	Point	   *result;
 	float8		d1,
 				d2;
 
 	result = interpt_sl(lseg, line);
 	if (result)
-		PG_RETURN_POINT_P(result);
+		MDB_RETURN_POINT_P(result);
 
 	d1 = dist_pl_internal(&lseg->p[0], line);
 	d2 = dist_pl_internal(&lseg->p[1], line);
@@ -2999,31 +2999,31 @@ close_sl(PG_FUNCTION_ARGS)
 	else
 		result = point_copy(&lseg->p[1]);
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 #endif
 
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("function \"close_sl\" not implemented")));
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 /* close_ls()
  * Closest point on line segment to line.
  */
 Datum
-close_ls(PG_FUNCTION_ARGS)
+close_ls(MDB_FUNCTION_ARGS)
 {
-	LINE	   *line = PG_GETARG_LINE_P(0);
-	LSEG	   *lseg = PG_GETARG_LSEG_P(1);
+	LINE	   *line = MDB_GETARG_LINE_P(0);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(1);
 	Point	   *result;
 	float8		d1,
 				d2;
 
 	result = interpt_sl(lseg, line);
 	if (result)
-		PG_RETURN_POINT_P(result);
+		MDB_RETURN_POINT_P(result);
 
 	d1 = dist_pl_internal(&lseg->p[0], line);
 	d2 = dist_pl_internal(&lseg->p[1], line);
@@ -3032,17 +3032,17 @@ close_ls(PG_FUNCTION_ARGS)
 	else
 		result = point_copy(&lseg->p[1]);
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 /* close_sb()
  * Closest point on or in box to line segment.
  */
 Datum
-close_sb(PG_FUNCTION_ARGS)
+close_sb(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 	Point		point;
 	LSEG		bseg,
 				seg;
@@ -3055,7 +3055,7 @@ close_sb(PG_FUNCTION_ARGS)
 										 BoxPGetDatum(box))))
 	{
 		box_cn(&point, box);
-		PG_RETURN_DATUM(DirectFunctionCall2(close_ps,
+		MDB_RETURN_DATUM(DirectFunctionCall2(close_ps,
 											PointPGetDatum(&point),
 											LsegPGetDatum(lseg)));
 	}
@@ -3090,17 +3090,17 @@ close_sb(PG_FUNCTION_ARGS)
 	}
 
 	/* OK, we now have the closest line segment on the box boundary */
-	PG_RETURN_DATUM(DirectFunctionCall2(close_lseg,
+	MDB_RETURN_DATUM(DirectFunctionCall2(close_lseg,
 										LsegPGetDatum(lseg),
 										LsegPGetDatum(&bseg)));
 }
 
 Datum
-close_lb(PG_FUNCTION_ARGS)
+close_lb(MDB_FUNCTION_ARGS)
 {
 #ifdef NOT_USED
-	LINE	   *line = PG_GETARG_LINE_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	LINE	   *line = MDB_GETARG_LINE_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 #endif
 
 	/* think about this one for a while */
@@ -3108,7 +3108,7 @@ close_lb(PG_FUNCTION_ARGS)
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("function \"close_lb\" not implemented")));
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 /*---------------------------------------------------------------------
@@ -3120,12 +3120,12 @@ close_lb(PG_FUNCTION_ARGS)
  *		Does the point satisfy the equation?
  */
 Datum
-on_pl(PG_FUNCTION_ARGS)
+on_pl(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	LINE	   *line = PG_GETARG_LINE_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(1);
 
-	PG_RETURN_BOOL(FPzero(line->A * pt->x + line->B * pt->y + line->C));
+	MDB_RETURN_BOOL(FPzero(line->A * pt->x + line->B * pt->y + line->C));
 }
 
 
@@ -3134,12 +3134,12 @@ on_pl(PG_FUNCTION_ARGS)
  * This algorithm seems to behave nicely even with lsb residues - tgl 1997-07-09
  */
 Datum
-on_ps(PG_FUNCTION_ARGS)
+on_ps(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	LSEG	   *lseg = PG_GETARG_LSEG_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(1);
 
-	PG_RETURN_BOOL(on_ps_internal(pt, lseg));
+	MDB_RETURN_BOOL(on_ps_internal(pt, lseg));
 }
 
 static bool
@@ -3150,22 +3150,22 @@ on_ps_internal(Point *pt, LSEG *lseg)
 }
 
 Datum
-on_pb(PG_FUNCTION_ARGS)
+on_pb(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(pt->x <= box->high.x && pt->x >= box->low.x &&
+	MDB_RETURN_BOOL(pt->x <= box->high.x && pt->x >= box->low.x &&
 				   pt->y <= box->high.y && pt->y >= box->low.y);
 }
 
 Datum
-box_contain_pt(PG_FUNCTION_ARGS)
+box_contain_pt(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
-	Point	   *pt = PG_GETARG_POINT_P(1);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
+	Point	   *pt = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(pt->x <= box->high.x && pt->x >= box->low.x &&
+	MDB_RETURN_BOOL(pt->x <= box->high.x && pt->x >= box->low.x &&
 				   pt->y <= box->high.y && pt->y >= box->low.y);
 }
 
@@ -3181,10 +3181,10 @@ box_contain_pt(PG_FUNCTION_ARGS)
  *				(we can do p-in-p in lg(n), but it takes preprocessing)
  */
 Datum
-on_ppath(PG_FUNCTION_ARGS)
+on_ppath(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
-	PATH	   *path = PG_GETARG_PATH_P(1);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(1);
 	int			i,
 				n;
 	double		a,
@@ -3200,23 +3200,23 @@ on_ppath(PG_FUNCTION_ARGS)
 			b = point_dt(pt, &path->p[i + 1]);
 			if (FPeq(a + b,
 					 point_dt(&path->p[i], &path->p[i + 1])))
-				PG_RETURN_BOOL(true);
+				MDB_RETURN_BOOL(true);
 			a = b;
 		}
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 
 	/*-- CLOSED --*/
-	PG_RETURN_BOOL(point_inside(pt, path->npts, path->p) != 0);
+	MDB_RETURN_BOOL(point_inside(pt, path->npts, path->p) != 0);
 }
 
 Datum
-on_sl(PG_FUNCTION_ARGS)
+on_sl(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
-	LINE	   *line = PG_GETARG_LINE_P(1);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(1);
 
-	PG_RETURN_BOOL(DatumGetBool(DirectFunctionCall2(on_pl,
+	MDB_RETURN_BOOL(DatumGetBool(DirectFunctionCall2(on_pl,
 												 PointPGetDatum(&lseg->p[0]),
 													LinePGetDatum(line))) &&
 				   DatumGetBool(DirectFunctionCall2(on_pl,
@@ -3225,12 +3225,12 @@ on_sl(PG_FUNCTION_ARGS)
 }
 
 Datum
-on_sb(PG_FUNCTION_ARGS)
+on_sb(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 
-	PG_RETURN_BOOL(DatumGetBool(DirectFunctionCall2(on_pb,
+	MDB_RETURN_BOOL(DatumGetBool(DirectFunctionCall2(on_pb,
 												 PointPGetDatum(&lseg->p[0]),
 													BoxPGetDatum(box))) &&
 				   DatumGetBool(DirectFunctionCall2(on_pb,
@@ -3244,12 +3244,12 @@ on_sb(PG_FUNCTION_ARGS)
  *-------------------------------------------------------------------*/
 
 Datum
-inter_sl(PG_FUNCTION_ARGS)
+inter_sl(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
-	LINE	   *line = PG_GETARG_LINE_P(1);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
+	LINE	   *line = MDB_GETARG_LINE_P(1);
 
-	PG_RETURN_BOOL(has_interpt_sl(lseg, line));
+	MDB_RETURN_BOOL(has_interpt_sl(lseg, line));
 }
 
 /* inter_sb()
@@ -3263,10 +3263,10 @@ inter_sl(PG_FUNCTION_ARGS)
  * - thomas 1998-01-30
  */
 Datum
-inter_sb(PG_FUNCTION_ARGS)
+inter_sb(MDB_FUNCTION_ARGS)
 {
-	LSEG	   *lseg = PG_GETARG_LSEG_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	LSEG	   *lseg = MDB_GETARG_LSEG_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 	BOX			lbox;
 	LSEG		bseg;
 	Point		point;
@@ -3278,7 +3278,7 @@ inter_sb(PG_FUNCTION_ARGS)
 
 	/* nothing close to overlap? then not going to intersect */
 	if (!box_ov(&lbox, box))
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	/* an endpoint of segment is inside box? then clearly intersects */
 	if (DatumGetBool(DirectFunctionCall2(on_pb,
@@ -3287,41 +3287,41 @@ inter_sb(PG_FUNCTION_ARGS)
 		DatumGetBool(DirectFunctionCall2(on_pb,
 										 PointPGetDatum(&lseg->p[1]),
 										 BoxPGetDatum(box))))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 
 	/* pairwise check lseg intersections */
 	point.x = box->low.x;
 	point.y = box->high.y;
 	statlseg_construct(&bseg, &box->low, &point);
 	if (lseg_intersect_internal(&bseg, lseg))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 
 	statlseg_construct(&bseg, &box->high, &point);
 	if (lseg_intersect_internal(&bseg, lseg))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 
 	point.x = box->high.x;
 	point.y = box->low.y;
 	statlseg_construct(&bseg, &box->low, &point);
 	if (lseg_intersect_internal(&bseg, lseg))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 
 	statlseg_construct(&bseg, &box->high, &point);
 	if (lseg_intersect_internal(&bseg, lseg))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 
 	/* if we dropped through, no two segs intersected */
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 /* inter_lb()
  * Do line and box intersect?
  */
 Datum
-inter_lb(PG_FUNCTION_ARGS)
+inter_lb(MDB_FUNCTION_ARGS)
 {
-	LINE	   *line = PG_GETARG_LINE_P(0);
-	BOX		   *box = PG_GETARG_BOX_P(1);
+	LINE	   *line = MDB_GETARG_LINE_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(1);
 	LSEG		bseg;
 	Point		p1,
 				p2;
@@ -3333,25 +3333,25 @@ inter_lb(PG_FUNCTION_ARGS)
 	p2.y = box->high.y;
 	statlseg_construct(&bseg, &p1, &p2);
 	if (has_interpt_sl(&bseg, line))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 	p1.x = box->high.x;
 	p1.y = box->high.y;
 	statlseg_construct(&bseg, &p1, &p2);
 	if (has_interpt_sl(&bseg, line))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 	p2.x = box->high.x;
 	p2.y = box->low.y;
 	statlseg_construct(&bseg, &p1, &p2);
 	if (has_interpt_sl(&bseg, line))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 	p1.x = box->low.x;
 	p1.y = box->low.y;
 	statlseg_construct(&bseg, &p1, &p2);
 	if (has_interpt_sl(&bseg, line))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 
 	/* if we dropped through, no intersection */
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 /*------------------------------------------------------------------
@@ -3407,9 +3407,9 @@ make_bound_box(POLYGON *poly)
  *				also supports the older style "(x1,...,xn,y1,...yn)"
  *------------------------------------------------------------------*/
 Datum
-poly_in(PG_FUNCTION_ARGS)
+poly_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	POLYGON    *poly;
 	int			npts;
 	int			size;
@@ -3440,7 +3440,7 @@ poly_in(PG_FUNCTION_ARGS)
 
 	make_bound_box(poly);
 
-	PG_RETURN_POLYGON_P(poly);
+	MDB_RETURN_POLYGON_P(poly);
 }
 
 /*---------------------------------------------------------------
@@ -3448,11 +3448,11 @@ poly_in(PG_FUNCTION_ARGS)
  *			  character string format "((f8,f8),...,(f8,f8))"
  *---------------------------------------------------------------*/
 Datum
-poly_out(PG_FUNCTION_ARGS)
+poly_out(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *poly = PG_GETARG_POLYGON_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(0);
 
-	PG_RETURN_CSTRING(path_encode(PATH_CLOSED, poly->npts, poly->p));
+	MDB_RETURN_CSTRING(path_encode(PATH_CLOSED, poly->npts, poly->p));
 }
 
 /*
@@ -3464,9 +3464,9 @@ poly_out(PG_FUNCTION_ARGS)
  * omit it from external representation.)
  */
 Datum
-poly_recv(PG_FUNCTION_ARGS)
+poly_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	POLYGON    *poly;
 	int32		npts;
 	int32		i;
@@ -3492,16 +3492,16 @@ poly_recv(PG_FUNCTION_ARGS)
 
 	make_bound_box(poly);
 
-	PG_RETURN_POLYGON_P(poly);
+	MDB_RETURN_POLYGON_P(poly);
 }
 
 /*
  *		poly_send			- converts polygon to binary format
  */
 Datum
-poly_send(PG_FUNCTION_ARGS)
+poly_send(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *poly = PG_GETARG_POLYGON_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(0);
 	StringInfoData buf;
 	int32		i;
 
@@ -3512,7 +3512,7 @@ poly_send(PG_FUNCTION_ARGS)
 		pq_sendfloat8(&buf, poly->p[i].x);
 		pq_sendfloat8(&buf, poly->p[i].y);
 	}
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -3522,10 +3522,10 @@ poly_send(PG_FUNCTION_ARGS)
  * of B?
  *-------------------------------------------------------*/
 Datum
-poly_left(PG_FUNCTION_ARGS)
+poly_left(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	result = polya->boundbox.high.x < polyb->boundbox.low.x;
@@ -3533,10 +3533,10 @@ poly_left(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*-------------------------------------------------------
@@ -3545,10 +3545,10 @@ poly_left(PG_FUNCTION_ARGS)
  * of B?
  *-------------------------------------------------------*/
 Datum
-poly_overleft(PG_FUNCTION_ARGS)
+poly_overleft(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	result = polya->boundbox.high.x <= polyb->boundbox.high.x;
@@ -3556,10 +3556,10 @@ poly_overleft(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*-------------------------------------------------------
@@ -3568,10 +3568,10 @@ poly_overleft(PG_FUNCTION_ARGS)
  * of B?
  *-------------------------------------------------------*/
 Datum
-poly_right(PG_FUNCTION_ARGS)
+poly_right(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	result = polya->boundbox.low.x > polyb->boundbox.high.x;
@@ -3579,10 +3579,10 @@ poly_right(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*-------------------------------------------------------
@@ -3591,10 +3591,10 @@ poly_right(PG_FUNCTION_ARGS)
  * of B?
  *-------------------------------------------------------*/
 Datum
-poly_overright(PG_FUNCTION_ARGS)
+poly_overright(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	result = polya->boundbox.low.x >= polyb->boundbox.low.x;
@@ -3602,10 +3602,10 @@ poly_overright(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*-------------------------------------------------------
@@ -3614,10 +3614,10 @@ poly_overright(PG_FUNCTION_ARGS)
  * of B?
  *-------------------------------------------------------*/
 Datum
-poly_below(PG_FUNCTION_ARGS)
+poly_below(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	result = polya->boundbox.high.y < polyb->boundbox.low.y;
@@ -3625,10 +3625,10 @@ poly_below(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*-------------------------------------------------------
@@ -3637,10 +3637,10 @@ poly_below(PG_FUNCTION_ARGS)
  * of B?
  *-------------------------------------------------------*/
 Datum
-poly_overbelow(PG_FUNCTION_ARGS)
+poly_overbelow(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	result = polya->boundbox.high.y <= polyb->boundbox.high.y;
@@ -3648,10 +3648,10 @@ poly_overbelow(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*-------------------------------------------------------
@@ -3660,10 +3660,10 @@ poly_overbelow(PG_FUNCTION_ARGS)
  * of B?
  *-------------------------------------------------------*/
 Datum
-poly_above(PG_FUNCTION_ARGS)
+poly_above(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	result = polya->boundbox.low.y > polyb->boundbox.high.y;
@@ -3671,10 +3671,10 @@ poly_above(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*-------------------------------------------------------
@@ -3683,10 +3683,10 @@ poly_above(PG_FUNCTION_ARGS)
  * of B?
  *-------------------------------------------------------*/
 Datum
-poly_overabove(PG_FUNCTION_ARGS)
+poly_overabove(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	result = polya->boundbox.low.y >= polyb->boundbox.low.y;
@@ -3694,10 +3694,10 @@ poly_overabove(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 
@@ -3709,10 +3709,10 @@ poly_overabove(PG_FUNCTION_ARGS)
  *	closed shapes.
  *-------------------------------------------------------*/
 Datum
-poly_same(PG_FUNCTION_ARGS)
+poly_same(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	if (polya->npts != polyb->npts)
@@ -3723,20 +3723,20 @@ poly_same(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*-----------------------------------------------------------------
  * Determine if polygon A overlaps polygon B
  *-----------------------------------------------------------------*/
 Datum
-poly_overlap(PG_FUNCTION_ARGS)
+poly_overlap(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	/* Quick check by bounding box */
@@ -3791,10 +3791,10 @@ poly_overlap(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 /*
@@ -3916,10 +3916,10 @@ lseg_inside_poly(Point *a, Point *b, POLYGON *poly, int start)
  * Determine if polygon A contains polygon B.
  *-----------------------------------------------------------------*/
 Datum
-poly_contain(PG_FUNCTION_ARGS)
+poly_contain(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 	bool		result;
 
 	/*
@@ -3951,10 +3951,10 @@ poly_contain(PG_FUNCTION_ARGS)
 	/*
 	 * Avoid leaking memory for toasted inputs ... needed for rtree indexes
 	 */
-	PG_FREE_IF_COPY(polya, 0);
-	PG_FREE_IF_COPY(polyb, 1);
+	MDB_FREE_IF_COPY(polya, 0);
+	MDB_FREE_IF_COPY(polyb, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 
@@ -3962,48 +3962,48 @@ poly_contain(PG_FUNCTION_ARGS)
  * Determine if polygon A is contained by polygon B
  *-----------------------------------------------------------------*/
 Datum
-poly_contained(PG_FUNCTION_ARGS)
+poly_contained(MDB_FUNCTION_ARGS)
 {
-	Datum		polya = PG_GETARG_DATUM(0);
-	Datum		polyb = PG_GETARG_DATUM(1);
+	Datum		polya = MDB_GETARG_DATUM(0);
+	Datum		polyb = MDB_GETARG_DATUM(1);
 
 	/* Just switch the arguments and pass it off to poly_contain */
-	PG_RETURN_DATUM(DirectFunctionCall2(poly_contain, polyb, polya));
+	MDB_RETURN_DATUM(DirectFunctionCall2(poly_contain, polyb, polya));
 }
 
 
 Datum
-poly_contain_pt(PG_FUNCTION_ARGS)
+poly_contain_pt(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *poly = PG_GETARG_POLYGON_P(0);
-	Point	   *p = PG_GETARG_POINT_P(1);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(0);
+	Point	   *p = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOOL(point_inside(p, poly->npts, poly->p) != 0);
+	MDB_RETURN_BOOL(point_inside(p, poly->npts, poly->p) != 0);
 }
 
 Datum
-pt_contained_poly(PG_FUNCTION_ARGS)
+pt_contained_poly(MDB_FUNCTION_ARGS)
 {
-	Point	   *p = PG_GETARG_POINT_P(0);
-	POLYGON    *poly = PG_GETARG_POLYGON_P(1);
+	Point	   *p = MDB_GETARG_POINT_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(1);
 
-	PG_RETURN_BOOL(point_inside(p, poly->npts, poly->p) != 0);
+	MDB_RETURN_BOOL(point_inside(p, poly->npts, poly->p) != 0);
 }
 
 
 Datum
-poly_distance(PG_FUNCTION_ARGS)
+poly_distance(MDB_FUNCTION_ARGS)
 {
 #ifdef NOT_USED
-	POLYGON    *polya = PG_GETARG_POLYGON_P(0);
-	POLYGON    *polyb = PG_GETARG_POLYGON_P(1);
+	POLYGON    *polya = MDB_GETARG_POLYGON_P(0);
+	POLYGON    *polyb = MDB_GETARG_POLYGON_P(1);
 #endif
 
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("function \"poly_distance\" not implemented")));
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 
@@ -4014,19 +4014,19 @@ poly_distance(PG_FUNCTION_ARGS)
  ***********************************************************************/
 
 Datum
-construct_point(PG_FUNCTION_ARGS)
+construct_point(MDB_FUNCTION_ARGS)
 {
-	float8		x = PG_GETARG_FLOAT8(0);
-	float8		y = PG_GETARG_FLOAT8(1);
+	float8		x = MDB_GETARG_FLOAT8(0);
+	float8		y = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_POINT_P(point_construct(x, y));
+	MDB_RETURN_POINT_P(point_construct(x, y));
 }
 
 Datum
-point_add(PG_FUNCTION_ARGS)
+point_add(MDB_FUNCTION_ARGS)
 {
-	Point	   *p1 = PG_GETARG_POINT_P(0);
-	Point	   *p2 = PG_GETARG_POINT_P(1);
+	Point	   *p1 = MDB_GETARG_POINT_P(0);
+	Point	   *p2 = MDB_GETARG_POINT_P(1);
 	Point	   *result;
 
 	result = (Point *) palloc(sizeof(Point));
@@ -4034,14 +4034,14 @@ point_add(PG_FUNCTION_ARGS)
 	result->x = (p1->x + p2->x);
 	result->y = (p1->y + p2->y);
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 Datum
-point_sub(PG_FUNCTION_ARGS)
+point_sub(MDB_FUNCTION_ARGS)
 {
-	Point	   *p1 = PG_GETARG_POINT_P(0);
-	Point	   *p2 = PG_GETARG_POINT_P(1);
+	Point	   *p1 = MDB_GETARG_POINT_P(0);
+	Point	   *p2 = MDB_GETARG_POINT_P(1);
 	Point	   *result;
 
 	result = (Point *) palloc(sizeof(Point));
@@ -4049,14 +4049,14 @@ point_sub(PG_FUNCTION_ARGS)
 	result->x = (p1->x - p2->x);
 	result->y = (p1->y - p2->y);
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 Datum
-point_mul(PG_FUNCTION_ARGS)
+point_mul(MDB_FUNCTION_ARGS)
 {
-	Point	   *p1 = PG_GETARG_POINT_P(0);
-	Point	   *p2 = PG_GETARG_POINT_P(1);
+	Point	   *p1 = MDB_GETARG_POINT_P(0);
+	Point	   *p2 = MDB_GETARG_POINT_P(1);
 	Point	   *result;
 
 	result = (Point *) palloc(sizeof(Point));
@@ -4064,14 +4064,14 @@ point_mul(PG_FUNCTION_ARGS)
 	result->x = (p1->x * p2->x) - (p1->y * p2->y);
 	result->y = (p1->x * p2->y) + (p1->y * p2->x);
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 Datum
-point_div(PG_FUNCTION_ARGS)
+point_div(MDB_FUNCTION_ARGS)
 {
-	Point	   *p1 = PG_GETARG_POINT_P(0);
-	Point	   *p2 = PG_GETARG_POINT_P(1);
+	Point	   *p1 = MDB_GETARG_POINT_P(0);
+	Point	   *p2 = MDB_GETARG_POINT_P(1);
 	Point	   *result;
 	double		div;
 
@@ -4087,7 +4087,7 @@ point_div(PG_FUNCTION_ARGS)
 	result->x = ((p1->x * p2->x) + (p1->y * p2->y)) / div;
 	result->y = ((p2->x * p1->y) - (p2->y * p1->x)) / div;
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 
@@ -4098,43 +4098,43 @@ point_div(PG_FUNCTION_ARGS)
  ***********************************************************************/
 
 Datum
-points_box(PG_FUNCTION_ARGS)
+points_box(MDB_FUNCTION_ARGS)
 {
-	Point	   *p1 = PG_GETARG_POINT_P(0);
-	Point	   *p2 = PG_GETARG_POINT_P(1);
+	Point	   *p1 = MDB_GETARG_POINT_P(0);
+	Point	   *p2 = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOX_P(box_construct(p1->x, p2->x, p1->y, p2->y));
+	MDB_RETURN_BOX_P(box_construct(p1->x, p2->x, p1->y, p2->y));
 }
 
 Datum
-box_add(PG_FUNCTION_ARGS)
+box_add(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
-	Point	   *p = PG_GETARG_POINT_P(1);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
+	Point	   *p = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOX_P(box_construct((box->high.x + p->x),
+	MDB_RETURN_BOX_P(box_construct((box->high.x + p->x),
 								  (box->low.x + p->x),
 								  (box->high.y + p->y),
 								  (box->low.y + p->y)));
 }
 
 Datum
-box_sub(PG_FUNCTION_ARGS)
+box_sub(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
-	Point	   *p = PG_GETARG_POINT_P(1);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
+	Point	   *p = MDB_GETARG_POINT_P(1);
 
-	PG_RETURN_BOX_P(box_construct((box->high.x - p->x),
+	MDB_RETURN_BOX_P(box_construct((box->high.x - p->x),
 								  (box->low.x - p->x),
 								  (box->high.y - p->y),
 								  (box->low.y - p->y)));
 }
 
 Datum
-box_mul(PG_FUNCTION_ARGS)
+box_mul(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
-	Point	   *p = PG_GETARG_POINT_P(1);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
+	Point	   *p = MDB_GETARG_POINT_P(1);
 	BOX		   *result;
 	Point	   *high,
 			   *low;
@@ -4148,14 +4148,14 @@ box_mul(PG_FUNCTION_ARGS)
 
 	result = box_construct(high->x, low->x, high->y, low->y);
 
-	PG_RETURN_BOX_P(result);
+	MDB_RETURN_BOX_P(result);
 }
 
 Datum
-box_div(PG_FUNCTION_ARGS)
+box_div(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
-	Point	   *p = PG_GETARG_POINT_P(1);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
+	Point	   *p = MDB_GETARG_POINT_P(1);
 	BOX		   *result;
 	Point	   *high,
 			   *low;
@@ -4169,16 +4169,16 @@ box_div(PG_FUNCTION_ARGS)
 
 	result = box_construct(high->x, low->x, high->y, low->y);
 
-	PG_RETURN_BOX_P(result);
+	MDB_RETURN_BOX_P(result);
 }
 
 /*
  * Convert point to empty box
  */
 Datum
-point_box(PG_FUNCTION_ARGS)
+point_box(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt = PG_GETARG_POINT_P(0);
+	Point	   *pt = MDB_GETARG_POINT_P(0);
 	BOX		   *box;
 
 	box = (BOX *) palloc(sizeof(BOX));
@@ -4188,17 +4188,17 @@ point_box(PG_FUNCTION_ARGS)
 	box->high.y = pt->y;
 	box->low.y = pt->y;
 
-	PG_RETURN_BOX_P(box);
+	MDB_RETURN_BOX_P(box);
 }
 
 /*
  * Smallest bounding box that includes both of the given boxes
  */
 Datum
-boxes_bound_box(PG_FUNCTION_ARGS)
+boxes_bound_box(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box1 = PG_GETARG_BOX_P(0),
-			   *box2 = PG_GETARG_BOX_P(1),
+	BOX		   *box1 = MDB_GETARG_BOX_P(0),
+			   *box2 = MDB_GETARG_BOX_P(1),
 			   *container;
 
 	container = (BOX *) palloc(sizeof(BOX));
@@ -4208,7 +4208,7 @@ boxes_bound_box(PG_FUNCTION_ARGS)
 	container->high.y = Max(box1->high.y, box2->high.y);
 	container->low.y = Min(box1->low.y, box2->low.y);
 
-	PG_RETURN_BOX_P(container);
+	MDB_RETURN_BOX_P(container);
 }
 
 
@@ -4222,17 +4222,17 @@ boxes_bound_box(PG_FUNCTION_ARGS)
  * Concatenate two paths (only if they are both open).
  */
 Datum
-path_add(PG_FUNCTION_ARGS)
+path_add(MDB_FUNCTION_ARGS)
 {
-	PATH	   *p1 = PG_GETARG_PATH_P(0);
-	PATH	   *p2 = PG_GETARG_PATH_P(1);
+	PATH	   *p1 = MDB_GETARG_PATH_P(0);
+	PATH	   *p2 = MDB_GETARG_PATH_P(1);
 	PATH	   *result;
 	int			size,
 				base_size;
 	int			i;
 
 	if (p1->closed || p2->closed)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	base_size = sizeof(p1->p[0]) * (p1->npts + p2->npts);
 	size = offsetof(PATH, p) +base_size;
@@ -4263,17 +4263,17 @@ path_add(PG_FUNCTION_ARGS)
 		result->p[i + p1->npts].y = p2->p[i].y;
 	}
 
-	PG_RETURN_PATH_P(result);
+	MDB_RETURN_PATH_P(result);
 }
 
 /* path_add_pt()
  * Translation operators.
  */
 Datum
-path_add_pt(PG_FUNCTION_ARGS)
+path_add_pt(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P_COPY(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	PATH	   *path = MDB_GETARG_PATH_P_COPY(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	int			i;
 
 	for (i = 0; i < path->npts; i++)
@@ -4282,14 +4282,14 @@ path_add_pt(PG_FUNCTION_ARGS)
 		path->p[i].y += point->y;
 	}
 
-	PG_RETURN_PATH_P(path);
+	MDB_RETURN_PATH_P(path);
 }
 
 Datum
-path_sub_pt(PG_FUNCTION_ARGS)
+path_sub_pt(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P_COPY(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	PATH	   *path = MDB_GETARG_PATH_P_COPY(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	int			i;
 
 	for (i = 0; i < path->npts; i++)
@@ -4298,17 +4298,17 @@ path_sub_pt(PG_FUNCTION_ARGS)
 		path->p[i].y -= point->y;
 	}
 
-	PG_RETURN_PATH_P(path);
+	MDB_RETURN_PATH_P(path);
 }
 
 /* path_mul_pt()
  * Rotation and scaling operators.
  */
 Datum
-path_mul_pt(PG_FUNCTION_ARGS)
+path_mul_pt(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P_COPY(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	PATH	   *path = MDB_GETARG_PATH_P_COPY(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	Point	   *p;
 	int			i;
 
@@ -4321,14 +4321,14 @@ path_mul_pt(PG_FUNCTION_ARGS)
 		path->p[i].y = p->y;
 	}
 
-	PG_RETURN_PATH_P(path);
+	MDB_RETURN_PATH_P(path);
 }
 
 Datum
-path_div_pt(PG_FUNCTION_ARGS)
+path_div_pt(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P_COPY(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	PATH	   *path = MDB_GETARG_PATH_P_COPY(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	Point	   *p;
 	int			i;
 
@@ -4341,28 +4341,28 @@ path_div_pt(PG_FUNCTION_ARGS)
 		path->p[i].y = p->y;
 	}
 
-	PG_RETURN_PATH_P(path);
+	MDB_RETURN_PATH_P(path);
 }
 
 
 Datum
-path_center(PG_FUNCTION_ARGS)
+path_center(MDB_FUNCTION_ARGS)
 {
 #ifdef NOT_USED
-	PATH	   *path = PG_GETARG_PATH_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(0);
 #endif
 
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("function \"path_center\" not implemented")));
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 Datum
-path_poly(PG_FUNCTION_ARGS)
+path_poly(MDB_FUNCTION_ARGS)
 {
-	PATH	   *path = PG_GETARG_PATH_P(0);
+	PATH	   *path = MDB_GETARG_PATH_P(0);
 	POLYGON    *poly;
 	int			size;
 	int			i;
@@ -4391,7 +4391,7 @@ path_poly(PG_FUNCTION_ARGS)
 
 	make_bound_box(poly);
 
-	PG_RETURN_POLYGON_P(poly);
+	MDB_RETURN_POLYGON_P(poly);
 }
 
 
@@ -4402,18 +4402,18 @@ path_poly(PG_FUNCTION_ARGS)
  ***********************************************************************/
 
 Datum
-poly_npoints(PG_FUNCTION_ARGS)
+poly_npoints(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *poly = PG_GETARG_POLYGON_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(0);
 
-	PG_RETURN_INT32(poly->npts);
+	MDB_RETURN_INT32(poly->npts);
 }
 
 
 Datum
-poly_center(PG_FUNCTION_ARGS)
+poly_center(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *poly = PG_GETARG_POLYGON_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(0);
 	Datum		result;
 	CIRCLE	   *circle;
 
@@ -4422,22 +4422,22 @@ poly_center(PG_FUNCTION_ARGS)
 	result = DirectFunctionCall1(circle_center,
 								 CirclePGetDatum(circle));
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 
 Datum
-poly_box(PG_FUNCTION_ARGS)
+poly_box(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *poly = PG_GETARG_POLYGON_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(0);
 	BOX		   *box;
 
 	if (poly->npts < 1)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	box = box_copy(&poly->boundbox);
 
-	PG_RETURN_BOX_P(box);
+	MDB_RETURN_BOX_P(box);
 }
 
 
@@ -4445,9 +4445,9 @@ poly_box(PG_FUNCTION_ARGS)
  * Convert a box to a polygon.
  */
 Datum
-box_poly(PG_FUNCTION_ARGS)
+box_poly(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 	POLYGON    *poly;
 	int			size;
 
@@ -4470,14 +4470,14 @@ box_poly(PG_FUNCTION_ARGS)
 	box_fill(&poly->boundbox, box->high.x, box->low.x,
 			 box->high.y, box->low.y);
 
-	PG_RETURN_POLYGON_P(poly);
+	MDB_RETURN_POLYGON_P(poly);
 }
 
 
 Datum
-poly_path(PG_FUNCTION_ARGS)
+poly_path(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *poly = PG_GETARG_POLYGON_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(0);
 	PATH	   *path;
 	int			size;
 	int			i;
@@ -4501,7 +4501,7 @@ poly_path(PG_FUNCTION_ARGS)
 		path->p[i].y = poly->p[i].y;
 	}
 
-	PG_RETURN_PATH_P(path);
+	MDB_RETURN_PATH_P(path);
 }
 
 
@@ -4522,9 +4522,9 @@ poly_path(PG_FUNCTION_ARGS)
  *				also supports quick entry style "(f8,f8,f8)"
  */
 Datum
-circle_in(PG_FUNCTION_ARGS)
+circle_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	CIRCLE	   *circle = (CIRCLE *) palloc(sizeof(CIRCLE));
 	char	   *s,
 			   *cp;
@@ -4578,15 +4578,15 @@ circle_in(PG_FUNCTION_ARGS)
 				 errmsg("invalid input syntax for type %s: \"%s\"",
 						"circle", str)));
 
-	PG_RETURN_CIRCLE_P(circle);
+	MDB_RETURN_CIRCLE_P(circle);
 }
 
 /*		circle_out		-		convert a circle to external form.
  */
 Datum
-circle_out(PG_FUNCTION_ARGS)
+circle_out(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
 	StringInfoData str;
 
 	initStringInfo(&str);
@@ -4599,16 +4599,16 @@ circle_out(PG_FUNCTION_ARGS)
 	single_encode(circle->radius, &str);
 	appendStringInfoChar(&str, RDELIM_C);
 
-	PG_RETURN_CSTRING(str.data);
+	MDB_RETURN_CSTRING(str.data);
 }
 
 /*
  *		circle_recv			- converts external binary format to circle
  */
 Datum
-circle_recv(PG_FUNCTION_ARGS)
+circle_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	CIRCLE	   *circle;
 
 	circle = (CIRCLE *) palloc(sizeof(CIRCLE));
@@ -4622,23 +4622,23 @@ circle_recv(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_BINARY_REPRESENTATION),
 				 errmsg("invalid radius in external \"circle\" value")));
 
-	PG_RETURN_CIRCLE_P(circle);
+	MDB_RETURN_CIRCLE_P(circle);
 }
 
 /*
  *		circle_send			- converts circle to binary format
  */
 Datum
-circle_send(PG_FUNCTION_ARGS)
+circle_send(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendfloat8(&buf, circle->center.x);
 	pq_sendfloat8(&buf, circle->center.y);
 	pq_sendfloat8(&buf, circle->radius);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -4650,12 +4650,12 @@ circle_send(PG_FUNCTION_ARGS)
 /*		circles identical?
  */
 Datum
-circle_same(PG_FUNCTION_ARGS)
+circle_same(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPeq(circle1->radius, circle2->radius) &&
+	MDB_RETURN_BOOL(FPeq(circle1->radius, circle2->radius) &&
 				   FPeq(circle1->center.x, circle2->center.x) &&
 				   FPeq(circle1->center.y, circle2->center.y));
 }
@@ -4663,12 +4663,12 @@ circle_same(PG_FUNCTION_ARGS)
 /*		circle_overlap	-		does circle1 overlap circle2?
  */
 Datum
-circle_overlap(PG_FUNCTION_ARGS)
+circle_overlap(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPle(point_dt(&circle1->center, &circle2->center),
+	MDB_RETURN_BOOL(FPle(point_dt(&circle1->center, &circle2->center),
 						circle1->radius + circle2->radius));
 }
 
@@ -4676,36 +4676,36 @@ circle_overlap(PG_FUNCTION_ARGS)
  *								the right edge of circle2?
  */
 Datum
-circle_overleft(PG_FUNCTION_ARGS)
+circle_overleft(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPle((circle1->center.x + circle1->radius),
+	MDB_RETURN_BOOL(FPle((circle1->center.x + circle1->radius),
 						(circle2->center.x + circle2->radius)));
 }
 
 /*		circle_left		-		is circle1 strictly left of circle2?
  */
 Datum
-circle_left(PG_FUNCTION_ARGS)
+circle_left(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPlt((circle1->center.x + circle1->radius),
+	MDB_RETURN_BOOL(FPlt((circle1->center.x + circle1->radius),
 						(circle2->center.x - circle2->radius)));
 }
 
 /*		circle_right	-		is circle1 strictly right of circle2?
  */
 Datum
-circle_right(PG_FUNCTION_ARGS)
+circle_right(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPgt((circle1->center.x - circle1->radius),
+	MDB_RETURN_BOOL(FPgt((circle1->center.x - circle1->radius),
 						(circle2->center.x + circle2->radius)));
 }
 
@@ -4713,59 +4713,59 @@ circle_right(PG_FUNCTION_ARGS)
  *								the left edge of circle2?
  */
 Datum
-circle_overright(PG_FUNCTION_ARGS)
+circle_overright(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPge((circle1->center.x - circle1->radius),
+	MDB_RETURN_BOOL(FPge((circle1->center.x - circle1->radius),
 						(circle2->center.x - circle2->radius)));
 }
 
 /*		circle_contained		-		is circle1 contained by circle2?
  */
 Datum
-circle_contained(PG_FUNCTION_ARGS)
+circle_contained(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPle((point_dt(&circle1->center, &circle2->center) + circle1->radius), circle2->radius));
+	MDB_RETURN_BOOL(FPle((point_dt(&circle1->center, &circle2->center) + circle1->radius), circle2->radius));
 }
 
 /*		circle_contain	-		does circle1 contain circle2?
  */
 Datum
-circle_contain(PG_FUNCTION_ARGS)
+circle_contain(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPle((point_dt(&circle1->center, &circle2->center) + circle2->radius), circle1->radius));
+	MDB_RETURN_BOOL(FPle((point_dt(&circle1->center, &circle2->center) + circle2->radius), circle1->radius));
 }
 
 
 /*		circle_below		-		is circle1 strictly below circle2?
  */
 Datum
-circle_below(PG_FUNCTION_ARGS)
+circle_below(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPlt((circle1->center.y + circle1->radius),
+	MDB_RETURN_BOOL(FPlt((circle1->center.y + circle1->radius),
 						(circle2->center.y - circle2->radius)));
 }
 
 /*		circle_above	-		is circle1 strictly above circle2?
  */
 Datum
-circle_above(PG_FUNCTION_ARGS)
+circle_above(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPgt((circle1->center.y - circle1->radius),
+	MDB_RETURN_BOOL(FPgt((circle1->center.y - circle1->radius),
 						(circle2->center.y + circle2->radius)));
 }
 
@@ -4773,12 +4773,12 @@ circle_above(PG_FUNCTION_ARGS)
  *								the upper edge of circle2?
  */
 Datum
-circle_overbelow(PG_FUNCTION_ARGS)
+circle_overbelow(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPle((circle1->center.y + circle1->radius),
+	MDB_RETURN_BOOL(FPle((circle1->center.y + circle1->radius),
 						(circle2->center.y + circle2->radius)));
 }
 
@@ -4786,12 +4786,12 @@ circle_overbelow(PG_FUNCTION_ARGS)
  *								the lower edge of circle2?
  */
 Datum
-circle_overabove(PG_FUNCTION_ARGS)
+circle_overabove(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPge((circle1->center.y - circle1->radius),
+	MDB_RETURN_BOOL(FPge((circle1->center.y - circle1->radius),
 						(circle2->center.y - circle2->radius)));
 }
 
@@ -4800,57 +4800,57 @@ circle_overabove(PG_FUNCTION_ARGS)
  *								our accuracy constraint?
  */
 Datum
-circle_eq(PG_FUNCTION_ARGS)
+circle_eq(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPeq(circle_ar(circle1), circle_ar(circle2)));
+	MDB_RETURN_BOOL(FPeq(circle_ar(circle1), circle_ar(circle2)));
 }
 
 Datum
-circle_ne(PG_FUNCTION_ARGS)
+circle_ne(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPne(circle_ar(circle1), circle_ar(circle2)));
+	MDB_RETURN_BOOL(FPne(circle_ar(circle1), circle_ar(circle2)));
 }
 
 Datum
-circle_lt(PG_FUNCTION_ARGS)
+circle_lt(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPlt(circle_ar(circle1), circle_ar(circle2)));
+	MDB_RETURN_BOOL(FPlt(circle_ar(circle1), circle_ar(circle2)));
 }
 
 Datum
-circle_gt(PG_FUNCTION_ARGS)
+circle_gt(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPgt(circle_ar(circle1), circle_ar(circle2)));
+	MDB_RETURN_BOOL(FPgt(circle_ar(circle1), circle_ar(circle2)));
 }
 
 Datum
-circle_le(PG_FUNCTION_ARGS)
+circle_le(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPle(circle_ar(circle1), circle_ar(circle2)));
+	MDB_RETURN_BOOL(FPle(circle_ar(circle1), circle_ar(circle2)));
 }
 
 Datum
-circle_ge(PG_FUNCTION_ARGS)
+circle_ge(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 
-	PG_RETURN_BOOL(FPge(circle_ar(circle1), circle_ar(circle2)));
+	MDB_RETURN_BOOL(FPge(circle_ar(circle1), circle_ar(circle2)));
 }
 
 
@@ -4876,10 +4876,10 @@ circle_copy(CIRCLE *circle)
  * Translation operator.
  */
 Datum
-circle_add_pt(PG_FUNCTION_ARGS)
+circle_add_pt(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	CIRCLE	   *result;
 
 	result = circle_copy(circle);
@@ -4887,14 +4887,14 @@ circle_add_pt(PG_FUNCTION_ARGS)
 	result->center.x += point->x;
 	result->center.y += point->y;
 
-	PG_RETURN_CIRCLE_P(result);
+	MDB_RETURN_CIRCLE_P(result);
 }
 
 Datum
-circle_sub_pt(PG_FUNCTION_ARGS)
+circle_sub_pt(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	CIRCLE	   *result;
 
 	result = circle_copy(circle);
@@ -4902,7 +4902,7 @@ circle_sub_pt(PG_FUNCTION_ARGS)
 	result->center.x -= point->x;
 	result->center.y -= point->y;
 
-	PG_RETURN_CIRCLE_P(result);
+	MDB_RETURN_CIRCLE_P(result);
 }
 
 
@@ -4910,10 +4910,10 @@ circle_sub_pt(PG_FUNCTION_ARGS)
  * Rotation and scaling operators.
  */
 Datum
-circle_mul_pt(PG_FUNCTION_ARGS)
+circle_mul_pt(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	CIRCLE	   *result;
 	Point	   *p;
 
@@ -4926,14 +4926,14 @@ circle_mul_pt(PG_FUNCTION_ARGS)
 	result->center.y = p->y;
 	result->radius *= HYPOT(point->x, point->y);
 
-	PG_RETURN_CIRCLE_P(result);
+	MDB_RETURN_CIRCLE_P(result);
 }
 
 Datum
-circle_div_pt(PG_FUNCTION_ARGS)
+circle_div_pt(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	CIRCLE	   *result;
 	Point	   *p;
 
@@ -4946,40 +4946,40 @@ circle_div_pt(PG_FUNCTION_ARGS)
 	result->center.y = p->y;
 	result->radius /= HYPOT(point->x, point->y);
 
-	PG_RETURN_CIRCLE_P(result);
+	MDB_RETURN_CIRCLE_P(result);
 }
 
 
 /*		circle_area		-		returns the area of the circle.
  */
 Datum
-circle_area(PG_FUNCTION_ARGS)
+circle_area(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
 
-	PG_RETURN_FLOAT8(circle_ar(circle));
+	MDB_RETURN_FLOAT8(circle_ar(circle));
 }
 
 
 /*		circle_diameter -		returns the diameter of the circle.
  */
 Datum
-circle_diameter(PG_FUNCTION_ARGS)
+circle_diameter(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
 
-	PG_RETURN_FLOAT8(2 * circle->radius);
+	MDB_RETURN_FLOAT8(2 * circle->radius);
 }
 
 
 /*		circle_radius	-		returns the radius of the circle.
  */
 Datum
-circle_radius(PG_FUNCTION_ARGS)
+circle_radius(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
 
-	PG_RETURN_FLOAT8(circle->radius);
+	MDB_RETURN_FLOAT8(circle->radius);
 }
 
 
@@ -4987,41 +4987,41 @@ circle_radius(PG_FUNCTION_ARGS)
  *								  two circles.
  */
 Datum
-circle_distance(PG_FUNCTION_ARGS)
+circle_distance(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle1 = PG_GETARG_CIRCLE_P(0);
-	CIRCLE	   *circle2 = PG_GETARG_CIRCLE_P(1);
+	CIRCLE	   *circle1 = MDB_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle2 = MDB_GETARG_CIRCLE_P(1);
 	float8		result;
 
 	result = point_dt(&circle1->center, &circle2->center)
 		- (circle1->radius + circle2->radius);
 	if (result < 0)
 		result = 0;
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
 Datum
-circle_contain_pt(PG_FUNCTION_ARGS)
+circle_contain_pt(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	double		d;
 
 	d = point_dt(&circle->center, point);
-	PG_RETURN_BOOL(d <= circle->radius);
+	MDB_RETURN_BOOL(d <= circle->radius);
 }
 
 
 Datum
-pt_contained_circle(PG_FUNCTION_ARGS)
+pt_contained_circle(MDB_FUNCTION_ARGS)
 {
-	Point	   *point = PG_GETARG_POINT_P(0);
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(1);
+	Point	   *point = MDB_GETARG_POINT_P(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(1);
 	double		d;
 
 	d = point_dt(&circle->center, point);
-	PG_RETURN_BOOL(d <= circle->radius);
+	MDB_RETURN_BOOL(d <= circle->radius);
 }
 
 
@@ -5029,47 +5029,47 @@ pt_contained_circle(PG_FUNCTION_ARGS)
  *						  a point and a circle.
  */
 Datum
-dist_pc(PG_FUNCTION_ARGS)
+dist_pc(MDB_FUNCTION_ARGS)
 {
-	Point	   *point = PG_GETARG_POINT_P(0);
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(1);
+	Point	   *point = MDB_GETARG_POINT_P(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(1);
 	float8		result;
 
 	result = point_dt(point, &circle->center) - circle->radius;
 	if (result < 0)
 		result = 0;
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
  * Distance from a circle to a point
  */
 Datum
-dist_cpoint(PG_FUNCTION_ARGS)
+dist_cpoint(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
-	Point	   *point = PG_GETARG_POINT_P(1);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
+	Point	   *point = MDB_GETARG_POINT_P(1);
 	float8		result;
 
 	result = point_dt(point, &circle->center) - circle->radius;
 	if (result < 0)
 		result = 0;
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*		circle_center	-		returns the center point of the circle.
  */
 Datum
-circle_center(PG_FUNCTION_ARGS)
+circle_center(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
 	Point	   *result;
 
 	result = (Point *) palloc(sizeof(Point));
 	result->x = circle->center.x;
 	result->y = circle->center.y;
 
-	PG_RETURN_POINT_P(result);
+	MDB_RETURN_POINT_P(result);
 }
 
 
@@ -5087,10 +5087,10 @@ circle_ar(CIRCLE *circle)
  *---------------------------------------------------------*/
 
 Datum
-cr_circle(PG_FUNCTION_ARGS)
+cr_circle(MDB_FUNCTION_ARGS)
 {
-	Point	   *center = PG_GETARG_POINT_P(0);
-	float8		radius = PG_GETARG_FLOAT8(1);
+	Point	   *center = MDB_GETARG_POINT_P(0);
+	float8		radius = MDB_GETARG_FLOAT8(1);
 	CIRCLE	   *result;
 
 	result = (CIRCLE *) palloc(sizeof(CIRCLE));
@@ -5099,13 +5099,13 @@ cr_circle(PG_FUNCTION_ARGS)
 	result->center.y = center->y;
 	result->radius = radius;
 
-	PG_RETURN_CIRCLE_P(result);
+	MDB_RETURN_CIRCLE_P(result);
 }
 
 Datum
-circle_box(PG_FUNCTION_ARGS)
+circle_box(MDB_FUNCTION_ARGS)
 {
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(0);
 	BOX		   *box;
 	double		delta;
 
@@ -5118,16 +5118,16 @@ circle_box(PG_FUNCTION_ARGS)
 	box->high.y = circle->center.y + delta;
 	box->low.y = circle->center.y - delta;
 
-	PG_RETURN_BOX_P(box);
+	MDB_RETURN_BOX_P(box);
 }
 
 /* box_circle()
  * Convert a box to a circle.
  */
 Datum
-box_circle(PG_FUNCTION_ARGS)
+box_circle(MDB_FUNCTION_ARGS)
 {
-	BOX		   *box = PG_GETARG_BOX_P(0);
+	BOX		   *box = MDB_GETARG_BOX_P(0);
 	CIRCLE	   *circle;
 
 	circle = (CIRCLE *) palloc(sizeof(CIRCLE));
@@ -5137,15 +5137,15 @@ box_circle(PG_FUNCTION_ARGS)
 
 	circle->radius = point_dt(&circle->center, &box->high);
 
-	PG_RETURN_CIRCLE_P(circle);
+	MDB_RETURN_CIRCLE_P(circle);
 }
 
 
 Datum
-circle_poly(PG_FUNCTION_ARGS)
+circle_poly(MDB_FUNCTION_ARGS)
 {
-	int32		npts = PG_GETARG_INT32(0);
-	CIRCLE	   *circle = PG_GETARG_CIRCLE_P(1);
+	int32		npts = MDB_GETARG_INT32(0);
+	CIRCLE	   *circle = MDB_GETARG_CIRCLE_P(1);
 	POLYGON    *poly;
 	int			base_size,
 				size;
@@ -5187,7 +5187,7 @@ circle_poly(PG_FUNCTION_ARGS)
 
 	make_bound_box(poly);
 
-	PG_RETURN_POLYGON_P(poly);
+	MDB_RETURN_POLYGON_P(poly);
 }
 
 /*		poly_circle		- convert polygon to circle
@@ -5196,9 +5196,9 @@ circle_poly(PG_FUNCTION_ARGS)
  *	rather than straight average values of points - tgl 97/01/21.
  */
 Datum
-poly_circle(PG_FUNCTION_ARGS)
+poly_circle(MDB_FUNCTION_ARGS)
 {
-	POLYGON    *poly = PG_GETARG_POLYGON_P(0);
+	POLYGON    *poly = MDB_GETARG_POLYGON_P(0);
 	CIRCLE	   *circle;
 	int			i;
 
@@ -5225,7 +5225,7 @@ poly_circle(PG_FUNCTION_ARGS)
 		circle->radius += point_dt(&poly->p[i], &circle->center);
 	circle->radius /= poly->npts;
 
-	PG_RETURN_CIRCLE_P(circle);
+	MDB_RETURN_CIRCLE_P(circle);
 }
 
 

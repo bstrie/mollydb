@@ -22,30 +22,30 @@
 
 
 Datum
-gin_cmp_tslexeme(PG_FUNCTION_ARGS)
+gin_cmp_tslexeme(MDB_FUNCTION_ARGS)
 {
-	text	   *a = PG_GETARG_TEXT_PP(0);
-	text	   *b = PG_GETARG_TEXT_PP(1);
+	text	   *a = MDB_GETARG_TEXT_PP(0);
+	text	   *b = MDB_GETARG_TEXT_PP(1);
 	int			cmp;
 
 	cmp = tsCompareString(VARDATA_ANY(a), VARSIZE_ANY_EXHDR(a),
 						  VARDATA_ANY(b), VARSIZE_ANY_EXHDR(b),
 						  false);
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_INT32(cmp);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_INT32(cmp);
 }
 
 Datum
-gin_cmp_prefix(PG_FUNCTION_ARGS)
+gin_cmp_prefix(MDB_FUNCTION_ARGS)
 {
-	text	   *a = PG_GETARG_TEXT_PP(0);
-	text	   *b = PG_GETARG_TEXT_PP(1);
+	text	   *a = MDB_GETARG_TEXT_PP(0);
+	text	   *b = MDB_GETARG_TEXT_PP(1);
 
 #ifdef NOT_USED
-	StrategyNumber strategy = PG_GETARG_UINT16(2);
-	Pointer		extra_data = PG_GETARG_POINTER(3);
+	StrategyNumber strategy = MDB_GETARG_UINT16(2);
+	Pointer		extra_data = MDB_GETARG_POINTER(3);
 #endif
 	int			cmp;
 
@@ -56,16 +56,16 @@ gin_cmp_prefix(PG_FUNCTION_ARGS)
 	if (cmp < 0)
 		cmp = 1;				/* prevent continue scan */
 
-	PG_FREE_IF_COPY(a, 0);
-	PG_FREE_IF_COPY(b, 1);
-	PG_RETURN_INT32(cmp);
+	MDB_FREE_IF_COPY(a, 0);
+	MDB_FREE_IF_COPY(b, 1);
+	MDB_RETURN_INT32(cmp);
 }
 
 Datum
-gin_extract_tsvector(PG_FUNCTION_ARGS)
+gin_extract_tsvector(MDB_FUNCTION_ARGS)
 {
-	TSVector	vector = PG_GETARG_TSVECTOR(0);
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
+	TSVector	vector = MDB_GETARG_TSVECTOR(0);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
 	Datum	   *entries = NULL;
 
 	*nentries = vector->size;
@@ -87,22 +87,22 @@ gin_extract_tsvector(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_FREE_IF_COPY(vector, 0);
-	PG_RETURN_POINTER(entries);
+	MDB_FREE_IF_COPY(vector, 0);
+	MDB_RETURN_POINTER(entries);
 }
 
 Datum
-gin_extract_tsquery(PG_FUNCTION_ARGS)
+gin_extract_tsquery(MDB_FUNCTION_ARGS)
 {
-	TSQuery		query = PG_GETARG_TSQUERY(0);
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
+	TSQuery		query = MDB_GETARG_TSQUERY(0);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
 
-	/* StrategyNumber strategy = PG_GETARG_UINT16(2); */
-	bool	  **ptr_partialmatch = (bool **) PG_GETARG_POINTER(3);
-	Pointer   **extra_data = (Pointer **) PG_GETARG_POINTER(4);
+	/* StrategyNumber strategy = MDB_GETARG_UINT16(2); */
+	bool	  **ptr_partialmatch = (bool **) MDB_GETARG_POINTER(3);
+	Pointer   **extra_data = (Pointer **) MDB_GETARG_POINTER(4);
 
-	/* bool   **nullFlags = (bool **) PG_GETARG_POINTER(5); */
-	int32	   *searchMode = (int32 *) PG_GETARG_POINTER(6);
+	/* bool   **nullFlags = (bool **) MDB_GETARG_POINTER(5); */
+	int32	   *searchMode = (int32 *) MDB_GETARG_POINTER(6);
 	Datum	   *entries = NULL;
 
 	*nentries = 0;
@@ -165,9 +165,9 @@ gin_extract_tsquery(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_FREE_IF_COPY(query, 0);
+	MDB_FREE_IF_COPY(query, 0);
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
 typedef struct
@@ -276,16 +276,16 @@ TS_execute_ternary(GinChkVal *gcv, QueryItem *curitem)
 }
 
 Datum
-gin_tsquery_consistent(PG_FUNCTION_ARGS)
+gin_tsquery_consistent(MDB_FUNCTION_ARGS)
 {
-	bool	   *check = (bool *) PG_GETARG_POINTER(0);
+	bool	   *check = (bool *) MDB_GETARG_POINTER(0);
 
-	/* StrategyNumber strategy = PG_GETARG_UINT16(1); */
-	TSQuery		query = PG_GETARG_TSQUERY(2);
+	/* StrategyNumber strategy = MDB_GETARG_UINT16(1); */
+	TSQuery		query = MDB_GETARG_TSQUERY(2);
 
-	/* int32	nkeys = PG_GETARG_INT32(3); */
-	Pointer    *extra_data = (Pointer *) PG_GETARG_POINTER(4);
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(5);
+	/* int32	nkeys = MDB_GETARG_INT32(3); */
+	Pointer    *extra_data = (Pointer *) MDB_GETARG_POINTER(4);
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(5);
 	bool		res = FALSE;
 
 	/* The query requires recheck only if it involves weights */
@@ -311,19 +311,19 @@ gin_tsquery_consistent(PG_FUNCTION_ARGS)
 						 checkcondition_gin);
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 Datum
-gin_tsquery_triconsistent(PG_FUNCTION_ARGS)
+gin_tsquery_triconsistent(MDB_FUNCTION_ARGS)
 {
-	GinTernaryValue *check = (GinTernaryValue *) PG_GETARG_POINTER(0);
+	GinTernaryValue *check = (GinTernaryValue *) MDB_GETARG_POINTER(0);
 
-	/* StrategyNumber strategy = PG_GETARG_UINT16(1); */
-	TSQuery		query = PG_GETARG_TSQUERY(2);
+	/* StrategyNumber strategy = MDB_GETARG_UINT16(1); */
+	TSQuery		query = MDB_GETARG_TSQUERY(2);
 
-	/* int32	nkeys = PG_GETARG_INT32(3); */
-	Pointer    *extra_data = (Pointer *) PG_GETARG_POINTER(4);
+	/* int32	nkeys = MDB_GETARG_INT32(3); */
+	Pointer    *extra_data = (Pointer *) MDB_GETARG_POINTER(4);
 	GinTernaryValue res = GIN_FALSE;
 	bool		recheck;
 
@@ -350,7 +350,7 @@ gin_tsquery_triconsistent(PG_FUNCTION_ARGS)
 			res = GIN_MAYBE;
 	}
 
-	PG_RETURN_GIN_TERNARY_VALUE(res);
+	MDB_RETURN_GIN_TERNARY_VALUE(res);
 }
 
 /*
@@ -362,9 +362,9 @@ gin_tsquery_triconsistent(PG_FUNCTION_ARGS)
  * If you try that you'll find the opr_sanity regression test complains.)
  */
 Datum
-gin_extract_tsvector_2args(PG_FUNCTION_ARGS)
+gin_extract_tsvector_2args(MDB_FUNCTION_ARGS)
 {
-	if (PG_NARGS() < 3)			/* should not happen */
+	if (MDB_NARGS() < 3)			/* should not happen */
 		elog(ERROR, "gin_extract_tsvector requires three arguments");
 	return gin_extract_tsvector(fcinfo);
 }
@@ -374,9 +374,9 @@ gin_extract_tsvector_2args(PG_FUNCTION_ARGS)
  * only five arguments.
  */
 Datum
-gin_extract_tsquery_5args(PG_FUNCTION_ARGS)
+gin_extract_tsquery_5args(MDB_FUNCTION_ARGS)
 {
-	if (PG_NARGS() < 7)			/* should not happen */
+	if (MDB_NARGS() < 7)			/* should not happen */
 		elog(ERROR, "gin_extract_tsquery requires seven arguments");
 	return gin_extract_tsquery(fcinfo);
 }
@@ -386,9 +386,9 @@ gin_extract_tsquery_5args(PG_FUNCTION_ARGS)
  * only six arguments.
  */
 Datum
-gin_tsquery_consistent_6args(PG_FUNCTION_ARGS)
+gin_tsquery_consistent_6args(MDB_FUNCTION_ARGS)
 {
-	if (PG_NARGS() < 8)			/* should not happen */
+	if (MDB_NARGS() < 8)			/* should not happen */
 		elog(ERROR, "gin_tsquery_consistent requires eight arguments");
 	return gin_tsquery_consistent(fcinfo);
 }
@@ -398,7 +398,7 @@ gin_tsquery_consistent_6args(PG_FUNCTION_ARGS)
  * types that are no longer considered appropriate.
  */
 Datum
-gin_extract_tsquery_oldsig(PG_FUNCTION_ARGS)
+gin_extract_tsquery_oldsig(MDB_FUNCTION_ARGS)
 {
 	return gin_extract_tsquery(fcinfo);
 }
@@ -408,7 +408,7 @@ gin_extract_tsquery_oldsig(PG_FUNCTION_ARGS)
  * types that are no longer considered appropriate.
  */
 Datum
-gin_tsquery_consistent_oldsig(PG_FUNCTION_ARGS)
+gin_tsquery_consistent_oldsig(MDB_FUNCTION_ARGS)
 {
 	return gin_tsquery_consistent(fcinfo);
 }

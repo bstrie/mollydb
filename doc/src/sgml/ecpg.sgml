@@ -5004,7 +5004,7 @@ sqlstate: 42P01
 
     <variablelist>
      <varlistentry>
-      <term>0 (<symbol>ECPG_NO_ERROR</symbol>)</term>
+      <term>0 (<symbol>ECMDB_NO_ERROR</symbol>)</term>
       <listitem>
        <para>
         Indicates no error. (SQLSTATE 00000)
@@ -5013,7 +5013,7 @@ sqlstate: 42P01
     </varlistentry>
 
     <varlistentry>
-     <term>100 (<symbol>ECPG_NOT_FOUND</symbol>)</term>
+     <term>100 (<symbol>ECMDB_NOT_FOUND</symbol>)</term>
      <listitem>
       <para>
        This is a harmless condition indicating that the last command
@@ -5028,7 +5028,7 @@ sqlstate: 42P01
 while (1)
 {
     EXEC SQL FETCH ... ;
-    if (sqlca.sqlcode == ECPG_NOT_FOUND)
+    if (sqlca.sqlcode == ECMDB_NOT_FOUND)
         break;
 }
 </programlisting>
@@ -5040,7 +5040,7 @@ while (1)
     </varlistentry>
 
      <varlistentry>
-      <term>-12 (<symbol>ECPG_OUT_OF_MEMORY</symbol>)</term>
+      <term>-12 (<symbol>ECMDB_OUT_OF_MEMORY</symbol>)</term>
       <listitem>
        <para>
         Indicates that your virtual memory is exhausted.  The numeric
@@ -5051,7 +5051,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-200 (<symbol>ECPG_UNSUPPORTED</symbol>)</term>
+     <term>-200 (<symbol>ECMDB_UNSUPPORTED</symbol>)</term>
      <listitem>
       <para>
        Indicates the preprocessor has generated something that the
@@ -5063,7 +5063,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-201 (<symbol>ECPG_TOO_MANY_ARGUMENTS</symbol>)</term>
+     <term>-201 (<symbol>ECMDB_TOO_MANY_ARGUMENTS</symbol>)</term>
      <listitem>
       <para>
        This means that the command specified more host variables than
@@ -5073,7 +5073,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-202 (<symbol>ECPG_TOO_FEW_ARGUMENTS</symbol>)</term>
+     <term>-202 (<symbol>ECMDB_TOO_FEW_ARGUMENTS</symbol>)</term>
      <listitem>
       <para>
        This means that the command specified fewer host variables than
@@ -5083,7 +5083,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-203 (<symbol>ECPG_TOO_MANY_MATCHES</symbol>)</term>
+     <term>-203 (<symbol>ECMDB_TOO_MANY_MATCHES</symbol>)</term>
      <listitem>
       <para>
        This means a query has returned multiple rows but the statement
@@ -5094,7 +5094,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-204 (<symbol>ECPG_INT_FORMAT</symbol>)</term>
+     <term>-204 (<symbol>ECMDB_INT_FORMAT</symbol>)</term>
      <listitem>
       <para>
        The host variable is of type <type>int</type> and the datum in
@@ -5107,7 +5107,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-205 (<symbol>ECPG_UINT_FORMAT</symbol>)</term>
+     <term>-205 (<symbol>ECMDB_UINT_FORMAT</symbol>)</term>
      <listitem>
       <para>
        The host variable is of type <type>unsigned int</type> and the
@@ -5120,7 +5120,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-206 (<symbol>ECPG_FLOAT_FORMAT</symbol>)</term>
+     <term>-206 (<symbol>ECMDB_FLOAT_FORMAT</symbol>)</term>
      <listitem>
       <para>
        The host variable is of type <type>float</type> and the datum
@@ -5133,7 +5133,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-207 (<symbol>ECPG_NUMERIC_FORMAT</symbol>)</term>
+     <term>-207 (<symbol>ECMDB_NUMERIC_FORMAT</symbol>)</term>
      <listitem>
       <para>
        The host variable is of type <type>numeric</type> and the datum
@@ -5145,7 +5145,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-208 (<symbol>ECPG_INTERVAL_FORMAT</symbol>)</term>
+     <term>-208 (<symbol>ECMDB_INTERVAL_FORMAT</symbol>)</term>
      <listitem>
       <para>
        The host variable is of type <type>interval</type> and the datum
@@ -5157,7 +5157,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-209 (<symbol>ECPG_DATE_FORMAT</symbol>)</term>
+     <term>-209 (<symbol>ECMDB_DATE_FORMAT</symbol>)</term>
      <listitem>
       <para>
        The host variable is of type <type>date</type> and the datum in
@@ -5169,7 +5169,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-210 (<symbol>ECPG_TIMESTAMP_FORMAT</symbol>)</term>
+     <term>-210 (<symbol>ECMDB_TIMESTAMP_FORMAT</symbol>)</term>
      <listitem>
       <para>
        The host variable is of type <type>timestamp</type> and the
@@ -5181,7 +5181,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-211 (<symbol>ECPG_CONVERT_BOOL</symbol>)</term>
+     <term>-211 (<symbol>ECMDB_CONVERT_BOOL</symbol>)</term>
      <listitem>
       <para>
        This means the host variable is of type <type>bool</type> and
@@ -5192,7 +5192,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-212 (<symbol>ECPG_EMPTY</symbol>)</term>
+     <term>-212 (<symbol>ECMDB_EMPTY</symbol>)</term>
      <listitem>
       <para>
        The statement sent to the <productname>MollyDB</productname>
@@ -5204,7 +5204,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-213 (<symbol>ECPG_MISSING_INDICATOR</symbol>)</term>
+     <term>-213 (<symbol>ECMDB_MISSING_INDICATOR</symbol>)</term>
      <listitem>
       <para>
        A null value was returned and no null indicator variable was
@@ -5214,7 +5214,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-214 (<symbol>ECPG_NO_ARRAY</symbol>)</term>
+     <term>-214 (<symbol>ECMDB_NO_ARRAY</symbol>)</term>
      <listitem>
       <para>
        An ordinary variable was used in a place that requires an
@@ -5224,7 +5224,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-215 (<symbol>ECPG_DATA_NOT_ARRAY</symbol>)</term>
+     <term>-215 (<symbol>ECMDB_DATA_NOT_ARRAY</symbol>)</term>
      <listitem>
       <para>
        The database returned an ordinary variable in a place that
@@ -5236,7 +5236,7 @@ while (1)
 <![IGNORE[
     <!-- disabled by #if 0 in ecpglib -->
     <varlistentry>
-     <term>-216 (<symbol>ECPG_ARRAY_INSERT</symbol>)</term>
+     <term>-216 (<symbol>ECMDB_ARRAY_INSERT</symbol>)</term>
      <listitem>
       <para>
        The value could not be inserted into the array.  (SQLSTATE
@@ -5247,7 +5247,7 @@ while (1)
 ]]>
 
     <varlistentry>
-     <term>-220 (<symbol>ECPG_NO_CONN</symbol>)</term>
+     <term>-220 (<symbol>ECMDB_NO_CONN</symbol>)</term>
      <listitem>
       <para>
        The program tried to access a connection that does not exist.
@@ -5257,7 +5257,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-221 (<symbol>ECPG_NOT_CONN</symbol>)</term>
+     <term>-221 (<symbol>ECMDB_NOT_CONN</symbol>)</term>
      <listitem>
       <para>
        The program tried to access a connection that does exist but is
@@ -5267,7 +5267,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-230 (<symbol>ECPG_INVALID_STMT</symbol>)</term>
+     <term>-230 (<symbol>ECMDB_INVALID_STMT</symbol>)</term>
      <listitem>
       <para>
        The statement you are trying to use has not been prepared.
@@ -5277,7 +5277,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-239 (<symbol>ECPG_INFORMIX_DUPLICATE_KEY</symbol>)</term>
+     <term>-239 (<symbol>ECMDB_INFORMIX_DUPLICATE_KEY</symbol>)</term>
      <listitem>
       <para>
        Duplicate key error, violation of unique constraint (Informix
@@ -5287,7 +5287,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-240 (<symbol>ECPG_UNKNOWN_DESCRIPTOR</symbol>)</term>
+     <term>-240 (<symbol>ECMDB_UNKNOWN_DESCRIPTOR</symbol>)</term>
      <listitem>
       <para>
        The descriptor specified was not found.  The statement you are
@@ -5297,7 +5297,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-241 (<symbol>ECPG_INVALID_DESCRIPTOR_INDEX</symbol>)</term>
+     <term>-241 (<symbol>ECMDB_INVALID_DESCRIPTOR_INDEX</symbol>)</term>
      <listitem>
       <para>
        The descriptor index specified was out of range.  (SQLSTATE
@@ -5307,7 +5307,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-242 (<symbol>ECPG_UNKNOWN_DESCRIPTOR_ITEM</symbol>)</term>
+     <term>-242 (<symbol>ECMDB_UNKNOWN_DESCRIPTOR_ITEM</symbol>)</term>
      <listitem>
       <para>
        An invalid descriptor item was requested.  (This is an internal
@@ -5317,7 +5317,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-243 (<symbol>ECPG_VAR_NOT_NUMERIC</symbol>)</term>
+     <term>-243 (<symbol>ECMDB_VAR_NOT_NUMERIC</symbol>)</term>
      <listitem>
       <para>
        During the execution of a dynamic statement, the database
@@ -5328,7 +5328,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-244 (<symbol>ECPG_VAR_NOT_CHAR</symbol>)</term>
+     <term>-244 (<symbol>ECMDB_VAR_NOT_CHAR</symbol>)</term>
      <listitem>
       <para>
        During the execution of a dynamic statement, the database
@@ -5339,7 +5339,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-284 (<symbol>ECPG_INFORMIX_SUBSELECT_NOT_ONE</symbol>)</term>
+     <term>-284 (<symbol>ECMDB_INFORMIX_SUBSELECT_NOT_ONE</symbol>)</term>
      <listitem>
       <para>
        A result of the subquery is not single row (Informix
@@ -5349,7 +5349,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-400 (<symbol>ECPG_PGSQL</symbol>)</term>
+     <term>-400 (<symbol>ECMDB_PGSQL</symbol>)</term>
      <listitem>
       <para>
        Some error caused by the <productname>MollyDB</productname>
@@ -5360,7 +5360,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-401 (<symbol>ECPG_TRANS</symbol>)</term>
+     <term>-401 (<symbol>ECMDB_TRANS</symbol>)</term>
      <listitem>
       <para>
        The <productname>MollyDB</productname> server signaled that
@@ -5371,7 +5371,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-402 (<symbol>ECPG_CONNECT</symbol>)</term>
+     <term>-402 (<symbol>ECMDB_CONNECT</symbol>)</term>
      <listitem>
       <para>
        The connection attempt to the database did not succeed.
@@ -5381,7 +5381,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-403 (<symbol>ECPG_DUPLICATE_KEY</symbol>)</term>
+     <term>-403 (<symbol>ECMDB_DUPLICATE_KEY</symbol>)</term>
      <listitem>
       <para>
        Duplicate key error, violation of unique constraint.  (SQLSTATE
@@ -5391,7 +5391,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-404 (<symbol>ECPG_SUBSELECT_NOT_ONE</symbol>)</term>
+     <term>-404 (<symbol>ECMDB_SUBSELECT_NOT_ONE</symbol>)</term>
      <listitem>
       <para>
        A result for the subquery is not single row. (SQLSTATE 21000)
@@ -5402,7 +5402,7 @@ while (1)
 <![IGNORE[
     <!-- currently not used by the code -->
     <varlistentry>
-     <term>-600 (<symbol>ECPG_WARNING_UNRECOGNIZED</symbol>)</term>
+     <term>-600 (<symbol>ECMDB_WARNING_UNRECOGNIZED</symbol>)</term>
      <listitem>
       <para>
        An unrecognized warning was received from the server.
@@ -5411,7 +5411,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-601 (<symbol>ECPG_WARNING_QUERY_IGNORED</symbol>)</term>
+     <term>-601 (<symbol>ECMDB_WARNING_QUERY_IGNORED</symbol>)</term>
      <listitem>
       <para>
        Current transaction is aborted.  Queries are ignored until the
@@ -5422,7 +5422,7 @@ while (1)
 ]]>
 
     <varlistentry>
-     <term>-602 (<symbol>ECPG_WARNING_UNKNOWN_PORTAL</symbol>)</term>
+     <term>-602 (<symbol>ECMDB_WARNING_UNKNOWN_PORTAL</symbol>)</term>
      <listitem>
       <para>
        An invalid cursor name was specified. (SQLSTATE 34000)
@@ -5431,7 +5431,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-603 (<symbol>ECPG_WARNING_IN_TRANSACTION</symbol>)</term>
+     <term>-603 (<symbol>ECMDB_WARNING_IN_TRANSACTION</symbol>)</term>
      <listitem>
       <para>
        Transaction is in progress. (SQLSTATE 25001)
@@ -5440,7 +5440,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-604 (<symbol>ECPG_WARNING_NO_TRANSACTION</symbol>)</term>
+     <term>-604 (<symbol>ECMDB_WARNING_NO_TRANSACTION</symbol>)</term>
      <listitem>
       <para>
        There is no active (in-progress) transaction. (SQLSTATE 25P01)
@@ -5449,7 +5449,7 @@ while (1)
     </varlistentry>
 
     <varlistentry>
-     <term>-605 (<symbol>ECPG_WARNING_PORTAL_EXISTS</symbol>)</term>
+     <term>-605 (<symbol>ECMDB_WARNING_PORTAL_EXISTS</symbol>)</term>
      <listitem>
       <para>
        An existing cursor name was specified. (SQLSTATE 42P03)
@@ -8228,8 +8228,8 @@ int decadd(decimal *arg1, decimal *arg2, decimal *sum);
         (<literal>arg1</>), a pointer to the second operand of type decimal
         (<literal>arg2</>) and a pointer to a value of type decimal that will
         contain the sum (<literal>sum</>). On success, the function returns 0.
-        <symbol>ECPG_INFORMIX_NUM_OVERFLOW</> is returned in case of overflow and
-        <symbol>ECPG_INFORMIX_NUM_UNDERFLOW</> in case of underflow. -1 is returned for
+        <symbol>ECMDB_INFORMIX_NUM_OVERFLOW</> is returned in case of overflow and
+        <symbol>ECMDB_INFORMIX_NUM_UNDERFLOW</> in case of underflow. -1 is returned for
         other failures and <varname>errno</> is set to the respective <varname>errno</> number of the
         pgtypeslib.
        </para>
@@ -8310,11 +8310,11 @@ int deccvasc(char *cp, int len, decimal *np);
        </para>
        <para>
         The function returns 0 on success. If overflow or underflow occurred,
-        <literal>ECPG_INFORMIX_NUM_OVERFLOW</> or
-        <literal>ECPG_INFORMIX_NUM_UNDERFLOW</> is returned. If the ASCII
+        <literal>ECMDB_INFORMIX_NUM_OVERFLOW</> or
+        <literal>ECMDB_INFORMIX_NUM_UNDERFLOW</> is returned. If the ASCII
         representation could not be parsed,
-        <literal>ECPG_INFORMIX_BAD_NUMERIC</> is returned or
-        <literal>ECPG_INFORMIX_BAD_EXPONENT</> if this problem occurred while
+        <literal>ECMDB_INFORMIX_BAD_NUMERIC</> is returned or
+        <literal>ECMDB_INFORMIX_BAD_EXPONENT</> if this problem occurred while
         parsing the exponent.
        </para>
       </listitem>
@@ -8396,10 +8396,10 @@ int decdiv(decimal *n1, decimal *n2, decimal *result);
        <para>
         On success, 0 is returned and a negative value if the division fails.
         If overflow or underflow occurred, the function returns
-        <literal>ECPG_INFORMIX_NUM_OVERFLOW</> or
-        <literal>ECPG_INFORMIX_NUM_UNDERFLOW</> respectively. If an attempt to
+        <literal>ECMDB_INFORMIX_NUM_OVERFLOW</> or
+        <literal>ECMDB_INFORMIX_NUM_UNDERFLOW</> respectively. If an attempt to
         divide by zero is observed, the function returns
-        <literal>ECPG_INFORMIX_DIVIDE_ZERO</literal>.
+        <literal>ECMDB_INFORMIX_DIVIDE_ZERO</literal>.
        </para>
       </listitem>
      </varlistentry>
@@ -8420,8 +8420,8 @@ int decmul(decimal *n1, decimal *n2, decimal *result);
        <para>
         On success, 0 is returned and a negative value if the multiplication
         fails. If overflow or underflow occurred, the function returns
-        <literal>ECPG_INFORMIX_NUM_OVERFLOW</> or
-        <literal>ECPG_INFORMIX_NUM_UNDERFLOW</> respectively.
+        <literal>ECMDB_INFORMIX_NUM_OVERFLOW</> or
+        <literal>ECMDB_INFORMIX_NUM_UNDERFLOW</> respectively.
        </para>
       </listitem>
      </varlistentry>
@@ -8442,8 +8442,8 @@ int decsub(decimal *n1, decimal *n2, decimal *result);
        <para>
         On success, 0 is returned and a negative value if the subtraction
         fails. If overflow or underflow occurred, the function returns
-        <literal>ECPG_INFORMIX_NUM_OVERFLOW</> or
-        <literal>ECPG_INFORMIX_NUM_UNDERFLOW</> respectively.
+        <literal>ECMDB_INFORMIX_NUM_OVERFLOW</> or
+        <literal>ECMDB_INFORMIX_NUM_UNDERFLOW</> respectively.
        </para>
       </listitem>
      </varlistentry>
@@ -8472,7 +8472,7 @@ int dectoasc(decimal *np, char *cp, int len, int right)
        </para>
        <para>
         The function returns either -1 if the buffer <literal>cp</> was too
-        small or <literal>ECPG_INFORMIX_OUT_OF_MEMORY</> if memory was
+        small or <literal>ECMDB_INFORMIX_OUT_OF_MEMORY</> if memory was
         exhausted.
        </para>
       </listitem>
@@ -8511,7 +8511,7 @@ int dectoint(decimal *np, int *ip);
        </para>
        <para>
         On success, 0 is returned and a negative value if the conversion
-        failed. If an overflow occurred, <literal>ECPG_INFORMIX_NUM_OVERFLOW</>
+        failed. If an overflow occurred, <literal>ECMDB_INFORMIX_NUM_OVERFLOW</>
         is returned.
        </para>
        <para>
@@ -8537,7 +8537,7 @@ int dectolong(decimal *np, long *lngp);
        </para>
        <para>
         On success, 0 is returned and a negative value if the conversion
-        failed. If an overflow occurred, <literal>ECPG_INFORMIX_NUM_OVERFLOW</>
+        failed. If an overflow occurred, <literal>ECMDB_INFORMIX_NUM_OVERFLOW</>
         is returned.
        </para>
        <para>
@@ -8675,32 +8675,32 @@ int rdefmtdate(date *d, char *fmt, char *str);
          </listitem>
          <listitem>
           <para>
-           <literal>ECPG_INFORMIX_ENOSHORTDATE</> - The date does not contain
+           <literal>ECMDB_INFORMIX_ENOSHORTDATE</> - The date does not contain
            delimiters between day, month and year. In this case the input
            string must be exactly 6 or 8 bytes long but isn't.
           </para>
          </listitem>
          <listitem>
           <para>
-           <literal>ECPG_INFORMIX_ENOTDMY</> - The format string did not
+           <literal>ECMDB_INFORMIX_ENOTDMY</> - The format string did not
            correctly indicate the sequential order of year, month and day.
           </para>
          </listitem>
          <listitem>
           <para>
-           <literal>ECPG_INFORMIX_BAD_DAY</> - The input string does not
+           <literal>ECMDB_INFORMIX_BAD_DAY</> - The input string does not
            contain a valid day.
           </para>
          </listitem>
          <listitem>
           <para>
-           <literal>ECPG_INFORMIX_BAD_MONTH</> - The input string does not
+           <literal>ECMDB_INFORMIX_BAD_MONTH</> - The input string does not
            contain a valid month.
           </para>
          </listitem>
          <listitem>
           <para>
-           <literal>ECPG_INFORMIX_BAD_YEAR</> - The input string does not
+           <literal>ECMDB_INFORMIX_BAD_YEAR</> - The input string does not
            contain a valid year.
           </para>
          </listitem>
@@ -9281,7 +9281,7 @@ risnull(CINTTYPE, (char *) &i);
     values.
     <variablelist>
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_NUM_OVERFLOW</></term>
+      <term><literal>ECMDB_INFORMIX_NUM_OVERFLOW</></term>
       <listitem>
        <para>
         Functions return this value if an overflow occurred in a
@@ -9292,7 +9292,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_NUM_UNDERFLOW</></term>
+      <term><literal>ECMDB_INFORMIX_NUM_UNDERFLOW</></term>
       <listitem>
        <para>
         Functions return this value if an underflow occurred in a calculation.
@@ -9302,7 +9302,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_DIVIDE_ZERO</></term>
+      <term><literal>ECMDB_INFORMIX_DIVIDE_ZERO</></term>
       <listitem>
        <para>
         Functions return this value if an attempt to divide by zero is
@@ -9312,7 +9312,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_BAD_YEAR</></term>
+      <term><literal>ECMDB_INFORMIX_BAD_YEAR</></term>
       <listitem>
        <para>
         Functions return this value if a bad value for a year was found while
@@ -9323,7 +9323,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_BAD_MONTH</></term>
+      <term><literal>ECMDB_INFORMIX_BAD_MONTH</></term>
       <listitem>
        <para>
         Functions return this value if a bad value for a month was found while
@@ -9334,7 +9334,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_BAD_DAY</></term>
+      <term><literal>ECMDB_INFORMIX_BAD_DAY</></term>
       <listitem>
        <para>
         Functions return this value if a bad value for a day was found while
@@ -9345,7 +9345,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_ENOSHORTDATE</></term>
+      <term><literal>ECMDB_INFORMIX_ENOSHORTDATE</></term>
       <listitem>
        <para>
         Functions return this value if a parsing routine needs a short date
@@ -9356,7 +9356,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_DATE_CONVERT</></term>
+      <term><literal>ECMDB_INFORMIX_DATE_CONVERT</></term>
       <listitem>
        <para>
         Functions return this value if an error occurred during date
@@ -9367,7 +9367,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_OUT_OF_MEMORY</></term>
+      <term><literal>ECMDB_INFORMIX_OUT_OF_MEMORY</></term>
       <listitem>
        <para>
         Functions return this value if memory was exhausted during
@@ -9378,7 +9378,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_ENOTDMY</></term>
+      <term><literal>ECMDB_INFORMIX_ENOTDMY</></term>
       <listitem>
        <para>
         Functions return this value if a parsing routine was supposed to get a
@@ -9389,7 +9389,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_BAD_NUMERIC</></term>
+      <term><literal>ECMDB_INFORMIX_BAD_NUMERIC</></term>
       <listitem>
        <para>
         Functions return this value either if a parsing routine cannot parse
@@ -9402,7 +9402,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_BAD_EXPONENT</></term>
+      <term><literal>ECMDB_INFORMIX_BAD_EXPONENT</></term>
       <listitem>
        <para>
         Functions return this value if a parsing routine cannot parse
@@ -9413,7 +9413,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_BAD_DATE</></term>
+      <term><literal>ECMDB_INFORMIX_BAD_DATE</></term>
       <listitem>
        <para>
         Functions return this value if a parsing routine cannot parse
@@ -9424,7 +9424,7 @@ risnull(CINTTYPE, (char *) &i);
      </varlistentry>
 
      <varlistentry>
-      <term><literal>ECPG_INFORMIX_EXTRA_CHARS</></term>
+      <term><literal>ECMDB_INFORMIX_EXTRA_CHARS</></term>
       <listitem>
        <para>
         Functions return this value if a parsing routine is passed extra

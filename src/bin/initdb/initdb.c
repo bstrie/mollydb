@@ -69,11 +69,11 @@
 #include "miscadmin.h"
 
 
-/* Define PG_FLUSH_DATA_WORKS if we have an implementation for mdb_flush_data */
+/* Define MDB_FLUSH_DATA_WORKS if we have an implementation for mdb_flush_data */
 #if defined(HAVE_SYNC_FILE_RANGE)
-#define PG_FLUSH_DATA_WORKS 1
+#define MDB_FLUSH_DATA_WORKS 1
 #elif defined(USE_POSIX_FADVISE) && defined(POSIX_FADV_DONTNEED)
-#define PG_FLUSH_DATA_WORKS 1
+#define MDB_FLUSH_DATA_WORKS 1
 #endif
 
 /* Ideally this would be in a .h file, but it hardly seems worth the trouble */
@@ -238,7 +238,7 @@ static void writefile(char *path, char **lines);
 static void walkdir(const char *path,
 		void (*action) (const char *fname, bool isdir),
 		bool process_symlinks);
-#ifdef PG_FLUSH_DATA_WORKS
+#ifdef MDB_FLUSH_DATA_WORKS
 static void pre_sync_fname(const char *fname, bool isdir);
 #endif
 static void fsync_fname_ext(const char *fname, bool isdir);
@@ -292,40 +292,40 @@ void		initialize_data_directory(void);
 /*
  * macros for running pipes to mollydb
  */
-#define PG_CMD_DECL		char cmd[MAXPGPATH]; FILE *cmdfd
+#define MDB_CMD_DECL		char cmd[MAXPGPATH]; FILE *cmdfd
 
-#define PG_CMD_OPEN \
+#define MDB_CMD_OPEN \
 do { \
 	cmdfd = popen_check(cmd, "w"); \
 	if (cmdfd == NULL) \
 		exit_nicely(); /* message already printed by popen_check */ \
 } while (0)
 
-#define PG_CMD_CLOSE \
+#define MDB_CMD_CLOSE \
 do { \
 	if (pclose_check(cmdfd)) \
 		exit_nicely(); /* message already printed by pclose_check */ \
 } while (0)
 
-#define PG_CMD_PUTS(line) \
+#define MDB_CMD_PUTS(line) \
 do { \
 	if (fputs(line, cmdfd) < 0 || fflush(cmdfd) < 0) \
 		output_failed = true, output_errno = errno; \
 } while (0)
 
-#define PG_CMD_PRINTF1(fmt, arg1) \
+#define MDB_CMD_PRINTF1(fmt, arg1) \
 do { \
 	if (fprintf(cmdfd, fmt, arg1) < 0 || fflush(cmdfd) < 0) \
 		output_failed = true, output_errno = errno; \
 } while (0)
 
-#define PG_CMD_PRINTF2(fmt, arg1, arg2) \
+#define MDB_CMD_PRINTF2(fmt, arg1, arg2) \
 do { \
 	if (fprintf(cmdfd, fmt, arg1, arg2) < 0 || fflush(cmdfd) < 0) \
 		output_failed = true, output_errno = errno; \
 } while (0)
 
-#define PG_CMD_PRINTF3(fmt, arg1, arg2, arg3)		\
+#define MDB_CMD_PRINTF3(fmt, arg1, arg2, arg3)		\
 do { \
 	if (fprintf(cmdfd, fmt, arg1, arg2, arg3) < 0 || fflush(cmdfd) < 0) \
 		output_failed = true, output_errno = errno; \
@@ -501,7 +501,7 @@ readfile(const char *path)
 /*
  * write an array of lines to a file
  *
- * This is only used to write text files.  Use fopen "w" not PG_BINARY_W
+ * This is only used to write text files.  Use fopen "w" not MDB_BINARY_W
  * so that the resulting configuration files are nicely editable on Windows.
  */
 static void
@@ -615,14 +615,14 @@ walkdir(const char *path,
  * Ignores errors trying to open unreadable files, and reports other errors
  * non-fatally.
  */
-#ifdef PG_FLUSH_DATA_WORKS
+#ifdef MDB_FLUSH_DATA_WORKS
 
 static void
 pre_sync_fname(const char *fname, bool isdir)
 {
 	int			fd;
 
-	fd = open(fname, O_RDONLY | PG_BINARY);
+	fd = open(fname, O_RDONLY | MDB_BINARY);
 
 	if (fd < 0)
 	{
@@ -643,13 +643,13 @@ pre_sync_fname(const char *fname, bool isdir)
 #elif defined(USE_POSIX_FADVISE) && defined(POSIX_FADV_DONTNEED)
 	(void) posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 #else
-#error PG_FLUSH_DATA_WORKS should not have been defined
+#error MDB_FLUSH_DATA_WORKS should not have been defined
 #endif
 
 	(void) close(fd);
 }
 
-#endif   /* PG_FLUSH_DATA_WORKS */
+#endif   /* MDB_FLUSH_DATA_WORKS */
 
 /*
  * fsync_fname_ext -- Try to fsync a file or directory
@@ -671,7 +671,7 @@ fsync_fname_ext(const char *fname, bool isdir)
 	 * cases here.  Using O_RDWR will cause us to fail to fsync files that are
 	 * not writable by our userid, but we assume that's OK.
 	 */
-	flags = PG_BINARY;
+	flags = MDB_BINARY;
 	if (!isdir)
 		flags |= O_RDWR;
 	else
@@ -983,7 +983,7 @@ check_input(char *path)
 }
 
 /*
- * write out the PG_VERSION file in the data dir, or its subdirectory
+ * write out the MDB_VERSION file in the data dir, or its subdirectory
  * if extrapath is not NULL
  */
 static void
@@ -993,17 +993,17 @@ write_version_file(char *extrapath)
 	char	   *path;
 
 	if (extrapath == NULL)
-		path = psprintf("%s/PG_VERSION", mdb_data);
+		path = psprintf("%s/MDB_VERSION", mdb_data);
 	else
-		path = psprintf("%s/%s/PG_VERSION", mdb_data, extrapath);
+		path = psprintf("%s/%s/MDB_VERSION", mdb_data, extrapath);
 
-	if ((version_file = fopen(path, PG_BINARY_W)) == NULL)
+	if ((version_file = fopen(path, MDB_BINARY_W)) == NULL)
 	{
 		fprintf(stderr, _("%s: could not open file \"%s\" for writing: %s\n"),
 				progname, path, strerror(errno));
 		exit_nicely();
 	}
-	if (fprintf(version_file, "%s\n", PG_MAJORVERSION) < 0 ||
+	if (fprintf(version_file, "%s\n", MDB_MAJORVERSION) < 0 ||
 		fclose(version_file))
 	{
 		fprintf(stderr, _("%s: could not write file \"%s\": %s\n"),
@@ -1024,7 +1024,7 @@ set_null_conf(void)
 	char	   *path;
 
 	path = psprintf("%s/mollydb.conf", mdb_data);
-	conf_file = fopen(path, PG_BINARY_W);
+	conf_file = fopen(path, MDB_BINARY_W);
 	if (conf_file == NULL)
 	{
 		fprintf(stderr, _("%s: could not open file \"%s\" for writing: %s\n"),
@@ -1434,7 +1434,7 @@ setup_config(void)
 static void
 bootstrap_template1(void)
 {
-	PG_CMD_DECL;
+	MDB_CMD_DECL;
 	char	  **line;
 	char	   *talkargs = "";
 	char	  **bki_lines;
@@ -1452,7 +1452,7 @@ bootstrap_template1(void)
 	/* Check that bki file appears to be of the right version */
 
 	snprintf(headerline, sizeof(headerline), "# MollyDB %s\n",
-			 PG_MAJORVERSION);
+			 MDB_MAJORVERSION);
 
 	if (strcmp(headerline, *bki_lines) != 0)
 	{
@@ -1460,7 +1460,7 @@ bootstrap_template1(void)
 				_("%s: input file \"%s\" does not belong to MollyDB %s\n"
 				  "Check your installation or specify the correct path "
 				  "using the option -L.\n"),
-				progname, bki_file, PG_VERSION);
+				progname, bki_file, MDB_VERSION);
 		exit_nicely();
 	}
 
@@ -1512,15 +1512,15 @@ bootstrap_template1(void)
 			 data_checksums ? "-k" : "",
 			 boot_options, talkargs);
 
-	PG_CMD_OPEN;
+	MDB_CMD_OPEN;
 
 	for (line = bki_lines; *line != NULL; line++)
 	{
-		PG_CMD_PUTS(*line);
+		MDB_CMD_PUTS(*line);
 		free(*line);
 	}
 
-	PG_CMD_CLOSE;
+	MDB_CMD_CLOSE;
 
 	free(bki_lines);
 
@@ -1544,7 +1544,7 @@ setup_auth(FILE *cmdfd)
 	};
 
 	for (line = mdb_authid_setup; *line != NULL; line++)
-		PG_CMD_PUTS(*line);
+		MDB_CMD_PUTS(*line);
 }
 
 /*
@@ -1610,7 +1610,7 @@ get_set_pwd(FILE *cmdfd)
 
 	}
 
-	PG_CMD_PRINTF2("ALTER USER \"%s\" WITH PASSWORD E'%s';\n\n",
+	MDB_CMD_PRINTF2("ALTER USER \"%s\" WITH PASSWORD E'%s';\n\n",
 				   username, escape_quotes(pwd1));
 
 	free(pwd1);
@@ -1697,7 +1697,7 @@ setup_depend(FILE *cmdfd)
 	};
 
 	for (line = mdb_depend_setup; *line != NULL; line++)
-		PG_CMD_PUTS(*line);
+		MDB_CMD_PUTS(*line);
 }
 
 /*
@@ -1713,7 +1713,7 @@ setup_sysviews(FILE *cmdfd)
 
 	for (line = sysviews_setup; *line != NULL; line++)
 	{
-		PG_CMD_PUTS(*line);
+		MDB_CMD_PUTS(*line);
 		free(*line);
 	}
 
@@ -1726,35 +1726,35 @@ setup_sysviews(FILE *cmdfd)
 static void
 setup_description(FILE *cmdfd)
 {
-	PG_CMD_PUTS("CREATE TEMP TABLE tmp_mdb_description ( "
+	MDB_CMD_PUTS("CREATE TEMP TABLE tmp_mdb_description ( "
 				"	objoid oid, "
 				"	classname name, "
 				"	objsubid int4, "
 				"	description text) WITHOUT OIDS;\n\n");
 
-	PG_CMD_PRINTF1("COPY tmp_mdb_description FROM E'%s';\n\n",
+	MDB_CMD_PRINTF1("COPY tmp_mdb_description FROM E'%s';\n\n",
 				   escape_quotes(desc_file));
 
-	PG_CMD_PUTS("INSERT INTO mdb_description "
+	MDB_CMD_PUTS("INSERT INTO mdb_description "
 				" SELECT t.objoid, c.oid, t.objsubid, t.description "
 				"  FROM tmp_mdb_description t, mdb_class c "
 				"    WHERE c.relname = t.classname;\n\n");
 
-	PG_CMD_PUTS("CREATE TEMP TABLE tmp_mdb_shdescription ( "
+	MDB_CMD_PUTS("CREATE TEMP TABLE tmp_mdb_shdescription ( "
 				" objoid oid, "
 				" classname name, "
 				" description text) WITHOUT OIDS;\n\n");
 
-	PG_CMD_PRINTF1("COPY tmp_mdb_shdescription FROM E'%s';\n\n",
+	MDB_CMD_PRINTF1("COPY tmp_mdb_shdescription FROM E'%s';\n\n",
 				   escape_quotes(shdesc_file));
 
-	PG_CMD_PUTS("INSERT INTO mdb_shdescription "
+	MDB_CMD_PUTS("INSERT INTO mdb_shdescription "
 				" SELECT t.objoid, c.oid, t.description "
 				"  FROM tmp_mdb_shdescription t, mdb_class c "
 				"   WHERE c.relname = t.classname;\n\n");
 
 	/* Create default descriptions for operator implementation functions */
-	PG_CMD_PUTS("WITH funcdescs AS ( "
+	MDB_CMD_PUTS("WITH funcdescs AS ( "
 				"SELECT p.oid as p_oid, oprname, "
 			  "coalesce(obj_description(o.oid, 'mdb_operator'),'') as opdesc "
 				"FROM mdb_proc p JOIN mdb_operator o ON oprcode = p.oid ) "
@@ -1770,8 +1770,8 @@ setup_description(FILE *cmdfd)
 	 * Even though the tables are temp, drop them explicitly so they don't get
 	 * copied into template0/mollydb databases.
 	 */
-	PG_CMD_PUTS("DROP TABLE tmp_mdb_description;\n\n");
-	PG_CMD_PUTS("DROP TABLE tmp_mdb_shdescription;\n\n");
+	MDB_CMD_PUTS("DROP TABLE tmp_mdb_description;\n\n");
+	MDB_CMD_PUTS("DROP TABLE tmp_mdb_shdescription;\n\n");
 }
 
 #ifdef HAVE_LOCALE_T
@@ -1826,7 +1826,7 @@ setup_collation(FILE *cmdfd)
 	if (!locale_a_handle)
 		return;					/* complaint already printed */
 
-	PG_CMD_PUTS("CREATE TEMP TABLE tmp_mdb_collation ( "
+	MDB_CMD_PUTS("CREATE TEMP TABLE tmp_mdb_collation ( "
 				"	collname name, "
 				"	locale name, "
 				"	encoding int) WITHOUT OIDS;\n\n");
@@ -1880,16 +1880,16 @@ setup_collation(FILE *cmdfd)
 			/* error message printed by mdb_get_encoding_from_locale() */
 			continue;
 		}
-		if (!PG_VALID_BE_ENCODING(enc))
+		if (!MDB_VALID_BE_ENCODING(enc))
 			continue;			/* ignore locales for client-only encodings */
-		if (enc == PG_SQL_ASCII)
+		if (enc == MDB_SQL_ASCII)
 			continue;			/* C/POSIX are already in the catalog */
 
 		count++;
 
 		quoted_locale = escape_quotes(localebuf);
 
-		PG_CMD_PRINTF3("INSERT INTO tmp_mdb_collation VALUES (E'%s', E'%s', %d);\n\n",
+		MDB_CMD_PRINTF3("INSERT INTO tmp_mdb_collation VALUES (E'%s', E'%s', %d);\n\n",
 					   quoted_locale, quoted_locale, enc);
 
 		/*
@@ -1901,7 +1901,7 @@ setup_collation(FILE *cmdfd)
 		{
 			char	   *quoted_alias = escape_quotes(alias);
 
-			PG_CMD_PRINTF3("INSERT INTO tmp_mdb_collation VALUES (E'%s', E'%s', %d);\n\n",
+			MDB_CMD_PRINTF3("INSERT INTO tmp_mdb_collation VALUES (E'%s', E'%s', %d);\n\n",
 						   quoted_alias, quoted_locale, enc);
 			free(quoted_alias);
 		}
@@ -1909,7 +1909,7 @@ setup_collation(FILE *cmdfd)
 	}
 
 	/* Add an SQL-standard name */
-	PG_CMD_PRINTF1("INSERT INTO tmp_mdb_collation VALUES ('ucs_basic', 'C', %d);\n\n", PG_UTF8);
+	MDB_CMD_PRINTF1("INSERT INTO tmp_mdb_collation VALUES ('ucs_basic', 'C', %d);\n\n", MDB_UTF8);
 
 	/*
 	 * When copying collations to the final location, eliminate aliases that
@@ -1922,7 +1922,7 @@ setup_collation(FILE *cmdfd)
 	 * Also, eliminate any aliases that conflict with mdb_collation's
 	 * hard-wired entries for "C" etc.
 	 */
-	PG_CMD_PUTS("INSERT INTO mdb_collation (collname, collnamespace, collowner, collencoding, collcollate, collctype) "
+	MDB_CMD_PUTS("INSERT INTO mdb_collation (collname, collnamespace, collowner, collencoding, collcollate, collctype) "
 				" SELECT DISTINCT ON (collname, encoding)"
 				"   collname, "
 				"   (SELECT oid FROM mdb_namespace WHERE nspname = 'mdb_catalog') AS collnamespace, "
@@ -1936,7 +1936,7 @@ setup_collation(FILE *cmdfd)
 	 * Even though the table is temp, drop it explicitly so it doesn't get
 	 * copied into template0/mollydb databases.
 	 */
-	PG_CMD_PUTS("DROP TABLE tmp_mdb_collation;\n\n");
+	MDB_CMD_PUTS("DROP TABLE tmp_mdb_collation;\n\n");
 
 	pclose(locale_a_handle);
 
@@ -1961,7 +1961,7 @@ setup_conversion(FILE *cmdfd)
 	for (line = conv_lines; *line != NULL; line++)
 	{
 		if (strstr(*line, "DROP CONVERSION") != *line)
-			PG_CMD_PUTS(*line);
+			MDB_CMD_PUTS(*line);
 		free(*line);
 	}
 
@@ -1980,7 +1980,7 @@ setup_dictionary(FILE *cmdfd)
 	conv_lines = readfile(dictionary_file);
 	for (line = conv_lines; *line != NULL; line++)
 	{
-		PG_CMD_PUTS(*line);
+		MDB_CMD_PUTS(*line);
 		free(*line);
 	}
 
@@ -2163,7 +2163,7 @@ setup_privileges(FILE *cmdfd)
 	priv_lines = replace_token(privileges_setup, "$POSTGRES_SUPERUSERNAME",
 							   escape_quotes(username));
 	for (line = priv_lines; *line != NULL; line++)
-		PG_CMD_PUTS(*line);
+		MDB_CMD_PUTS(*line);
 }
 
 /*
@@ -2178,7 +2178,7 @@ set_info_version(void)
 				minor = 0,
 				micro = 0;
 	char	   *endptr;
-	char	   *vstr = mdb_strdup(PG_VERSION);
+	char	   *vstr = mdb_strdup(MDB_VERSION);
 	char	   *ptr;
 
 	ptr = vstr + (strlen(vstr) - 1);
@@ -2207,18 +2207,18 @@ setup_schema(FILE *cmdfd)
 
 	for (line = lines; *line != NULL; line++)
 	{
-		PG_CMD_PUTS(*line);
+		MDB_CMD_PUTS(*line);
 		free(*line);
 	}
 
 	free(lines);
 
-	PG_CMD_PRINTF1("UPDATE information_schema.sql_implementation_info "
+	MDB_CMD_PRINTF1("UPDATE information_schema.sql_implementation_info "
 				   "  SET character_value = '%s' "
 				   "  WHERE implementation_info_name = 'DBMS VERSION';\n\n",
 				   infoversion);
 
-	PG_CMD_PRINTF1("COPY information_schema.sql_features "
+	MDB_CMD_PRINTF1("COPY information_schema.sql_features "
 				   "  (feature_id, feature_name, sub_feature_id, "
 				   "  sub_feature_name, is_supported, comments) "
 				   " FROM E'%s';\n\n",
@@ -2231,7 +2231,7 @@ setup_schema(FILE *cmdfd)
 static void
 load_plmdb(FILE *cmdfd)
 {
-	PG_CMD_PUTS("CREATE EXTENSION plmdb;\n\n");
+	MDB_CMD_PUTS("CREATE EXTENSION plmdb;\n\n");
 }
 
 /*
@@ -2241,7 +2241,7 @@ static void
 vacuum_db(FILE *cmdfd)
 {
 	/* Run analyze before VACUUM so the statistics are frozen. */
-	PG_CMD_PUTS("ANALYZE;\n\nVACUUM FREEZE;\n\n");
+	MDB_CMD_PUTS("ANALYZE;\n\nVACUUM FREEZE;\n\n");
 }
 
 /*
@@ -2279,7 +2279,7 @@ make_template0(FILE *cmdfd)
 	};
 
 	for (line = template0_setup; *line; line++)
-		PG_CMD_PUTS(*line);
+		MDB_CMD_PUTS(*line);
 }
 
 /*
@@ -2296,7 +2296,7 @@ make_mollydb(FILE *cmdfd)
 	};
 
 	for (line = mollydb_setup; *line; line++)
-		PG_CMD_PUTS(*line);
+		MDB_CMD_PUTS(*line);
 }
 
 /*
@@ -2347,7 +2347,7 @@ fsync_pgdata(void)
 	 * If possible, hint to the kernel that we're soon going to fsync the data
 	 * directory and its contents.
 	 */
-#ifdef PG_FLUSH_DATA_WORKS
+#ifdef MDB_FLUSH_DATA_WORKS
 	walkdir(mdb_data, pre_sync_fname, false);
 	if (xlog_is_symlink)
 		walkdir(mdb_xlog, pre_sync_fname, false);
@@ -2575,12 +2575,12 @@ check_locale_encoding(const char *locale, int user_enc)
 
 	/* See notes in createdb() to understand these tests */
 	if (!(locale_enc == user_enc ||
-		  locale_enc == PG_SQL_ASCII ||
+		  locale_enc == MDB_SQL_ASCII ||
 		  locale_enc == -1 ||
 #ifdef WIN32
-		  user_enc == PG_UTF8 ||
+		  user_enc == MDB_UTF8 ||
 #endif
-		  user_enc == PG_SQL_ASCII))
+		  user_enc == MDB_SQL_ASCII))
 	{
 		fprintf(stderr, _("%s: encoding mismatch\n"), progname);
 		fprintf(stderr,
@@ -2789,7 +2789,7 @@ setup_bin_paths(const char *argv0)
 {
 	int			ret;
 
-	if ((ret = find_other_exec(argv0, "mollydb", PG_BACKEND_VERSIONSTR,
+	if ((ret = find_other_exec(argv0, "mollydb", MDB_BACKEND_VERSIONSTR,
 							   backend_exec)) < 0)
 	{
 		char		full_path[MAXPGPATH];
@@ -2889,8 +2889,8 @@ setup_locale_encoding(void)
 			printf(_("Encoding \"%s\" implied by locale is not allowed as a server-side encoding.\n"
 			"The default database encoding will be set to \"%s\" instead.\n"),
 				   mdb_encoding_to_char(ctype_enc),
-				   mdb_encoding_to_char(PG_UTF8));
-			ctype_enc = PG_UTF8;
+				   mdb_encoding_to_char(MDB_UTF8));
+			ctype_enc = MDB_UTF8;
 			encodingid = encodingid_to_string(ctype_enc);
 #else
 			fprintf(stderr,
@@ -2944,8 +2944,8 @@ setup_data_file_paths(void)
 				"POSTGRES_SUPERUSERNAME=%s\nPOSTGRES_BKI=%s\n"
 				"POSTGRES_DESCR=%s\nPOSTGRES_SHDESCR=%s\n"
 				"POSTGRESQL_CONF_SAMPLE=%s\n"
-				"PG_HBA_SAMPLE=%s\nPG_IDENT_SAMPLE=%s\n",
-				PG_VERSION,
+				"MDB_HBA_SAMPLE=%s\nMDB_IDENT_SAMPLE=%s\n",
+				MDB_VERSION,
 				mdb_data, share_path, bin_path,
 				username, bki_file,
 				desc_file, shdesc_file,
@@ -3231,7 +3231,7 @@ warn_on_mount_point(int error)
 void
 initialize_data_directory(void)
 {
-	PG_CMD_DECL;
+	MDB_CMD_DECL;
 	int			i;
 
 	setup_signals();
@@ -3268,7 +3268,7 @@ initialize_data_directory(void)
 
 	check_ok();
 
-	/* Top level PG_VERSION is checked by bootstrapper, so make it first */
+	/* Top level MDB_VERSION is checked by bootstrapper, so make it first */
 	write_version_file(NULL);
 
 	/* Select suitable configuration settings */
@@ -3282,7 +3282,7 @@ initialize_data_directory(void)
 	bootstrap_template1();
 
 	/*
-	 * Make the per-database PG_VERSION for template1 only after init'ing it
+	 * Make the per-database MDB_VERSION for template1 only after init'ing it
 	 */
 	write_version_file("base/1");
 
@@ -3298,7 +3298,7 @@ initialize_data_directory(void)
 			 backend_exec, backend_options,
 			 DEVNULL);
 
-	PG_CMD_OPEN;
+	MDB_CMD_OPEN;
 
 	setup_auth(cmdfd);
 	if (pwprompt || pwfilename)
@@ -3328,7 +3328,7 @@ initialize_data_directory(void)
 
 	make_mollydb(cmdfd);
 
-	PG_CMD_CLOSE;
+	MDB_CMD_CLOSE;
 
 	check_ok();
 }
@@ -3382,11 +3382,11 @@ main(int argc, char *argv[])
 	 * unexpected output ordering when, eg, output is redirected to a file.
 	 * POSIX says we must do this before any other usage of these files.
 	 */
-	setvbuf(stdout, NULL, PG_IOLBF, 0);
+	setvbuf(stdout, NULL, MDB_IOLBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("initdb"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("initdb"));
 
 	if (argc > 1)
 	{
@@ -3397,7 +3397,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("initdb (MollyDB) " PG_VERSION);
+			puts("initdb (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}

@@ -17,8 +17,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_COLLATION_H
-#define PG_COLLATION_H
+#ifndef MDB_COLLATION_H
+#define MDB_COLLATION_H
 
 #include "catalog/genbki.h"
 
@@ -73,4 +73,4 @@ DATA(insert OID = 951 ( POSIX		PGNSP PGUID -1 "POSIX" "POSIX" ));
 DESCR("standard POSIX collation");
 #define POSIX_COLLATION_OID		951
 
-#endif   /* PG_COLLATION_H */
+#endif   /* MDB_COLLATION_H */

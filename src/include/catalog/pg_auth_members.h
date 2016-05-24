@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_AUTH_MEMBERS_H
-#define PG_AUTH_MEMBERS_H
+#ifndef MDB_AUTH_MEMBERS_H
+#define MDB_AUTH_MEMBERS_H
 
 #include "catalog/genbki.h"
 
@@ -54,4 +54,4 @@ typedef FormData_mdb_auth_members *Form_mdb_auth_members;
 #define Anum_mdb_auth_members_grantor		3
 #define Anum_mdb_auth_members_admin_option	4
 
-#endif   /* PG_AUTH_MEMBERS_H */
+#endif   /* MDB_AUTH_MEMBERS_H */

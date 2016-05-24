@@ -43,9 +43,9 @@
  *				Now, always NULL terminated
  */
 Datum
-namein(PG_FUNCTION_ARGS)
+namein(MDB_FUNCTION_ARGS)
 {
-	char	   *s = PG_GETARG_CSTRING(0);
+	char	   *s = MDB_GETARG_CSTRING(0);
 	Name		result;
 	int			len;
 
@@ -59,27 +59,27 @@ namein(PG_FUNCTION_ARGS)
 	result = (Name) palloc0(NAMEDATALEN);
 	memcpy(NameStr(*result), s, len);
 
-	PG_RETURN_NAME(result);
+	MDB_RETURN_NAME(result);
 }
 
 /*
  *		nameout - converts internal representation to "..."
  */
 Datum
-nameout(PG_FUNCTION_ARGS)
+nameout(MDB_FUNCTION_ARGS)
 {
-	Name		s = PG_GETARG_NAME(0);
+	Name		s = MDB_GETARG_NAME(0);
 
-	PG_RETURN_CSTRING(pstrdup(NameStr(*s)));
+	MDB_RETURN_CSTRING(pstrdup(NameStr(*s)));
 }
 
 /*
  *		namerecv			- converts external binary format to name
  */
 Datum
-namerecv(PG_FUNCTION_ARGS)
+namerecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	Name		result;
 	char	   *str;
 	int			nbytes;
@@ -94,21 +94,21 @@ namerecv(PG_FUNCTION_ARGS)
 	result = (NameData *) palloc0(NAMEDATALEN);
 	memcpy(result, str, nbytes);
 	pfree(str);
-	PG_RETURN_NAME(result);
+	MDB_RETURN_NAME(result);
 }
 
 /*
  *		namesend			- converts name to binary format
  */
 Datum
-namesend(PG_FUNCTION_ARGS)
+namesend(MDB_FUNCTION_ARGS)
 {
-	Name		s = PG_GETARG_NAME(0);
+	Name		s = MDB_GETARG_NAME(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendtext(&buf, NameStr(*s), strlen(NameStr(*s)));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -131,57 +131,57 @@ namesend(PG_FUNCTION_ARGS)
  *
  */
 Datum
-nameeq(PG_FUNCTION_ARGS)
+nameeq(MDB_FUNCTION_ARGS)
 {
-	Name		arg1 = PG_GETARG_NAME(0);
-	Name		arg2 = PG_GETARG_NAME(1);
+	Name		arg1 = MDB_GETARG_NAME(0);
+	Name		arg2 = MDB_GETARG_NAME(1);
 
-	PG_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) == 0);
+	MDB_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) == 0);
 }
 
 Datum
-namene(PG_FUNCTION_ARGS)
+namene(MDB_FUNCTION_ARGS)
 {
-	Name		arg1 = PG_GETARG_NAME(0);
-	Name		arg2 = PG_GETARG_NAME(1);
+	Name		arg1 = MDB_GETARG_NAME(0);
+	Name		arg2 = MDB_GETARG_NAME(1);
 
-	PG_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) != 0);
+	MDB_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) != 0);
 }
 
 Datum
-namelt(PG_FUNCTION_ARGS)
+namelt(MDB_FUNCTION_ARGS)
 {
-	Name		arg1 = PG_GETARG_NAME(0);
-	Name		arg2 = PG_GETARG_NAME(1);
+	Name		arg1 = MDB_GETARG_NAME(0);
+	Name		arg2 = MDB_GETARG_NAME(1);
 
-	PG_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) < 0);
+	MDB_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) < 0);
 }
 
 Datum
-namele(PG_FUNCTION_ARGS)
+namele(MDB_FUNCTION_ARGS)
 {
-	Name		arg1 = PG_GETARG_NAME(0);
-	Name		arg2 = PG_GETARG_NAME(1);
+	Name		arg1 = MDB_GETARG_NAME(0);
+	Name		arg2 = MDB_GETARG_NAME(1);
 
-	PG_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) <= 0);
+	MDB_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) <= 0);
 }
 
 Datum
-namegt(PG_FUNCTION_ARGS)
+namegt(MDB_FUNCTION_ARGS)
 {
-	Name		arg1 = PG_GETARG_NAME(0);
-	Name		arg2 = PG_GETARG_NAME(1);
+	Name		arg1 = MDB_GETARG_NAME(0);
+	Name		arg2 = MDB_GETARG_NAME(1);
 
-	PG_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) > 0);
+	MDB_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) > 0);
 }
 
 Datum
-namege(PG_FUNCTION_ARGS)
+namege(MDB_FUNCTION_ARGS)
 {
-	Name		arg1 = PG_GETARG_NAME(0);
-	Name		arg2 = PG_GETARG_NAME(1);
+	Name		arg1 = MDB_GETARG_NAME(0);
+	Name		arg2 = MDB_GETARG_NAME(1);
 
-	PG_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) >= 0);
+	MDB_RETURN_BOOL(strncmp(NameStr(*arg1), NameStr(*arg2), NAMEDATALEN) >= 0);
 }
 
 
@@ -261,15 +261,15 @@ namestrcmp(Name name, const char *str)
  * SQL-functions CURRENT_USER, SESSION_USER
  */
 Datum
-current_user(PG_FUNCTION_ARGS)
+current_user(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall1(namein, CStringGetDatum(GetUserNameFromId(GetUserId(), false))));
+	MDB_RETURN_DATUM(DirectFunctionCall1(namein, CStringGetDatum(GetUserNameFromId(GetUserId(), false))));
 }
 
 Datum
-session_user(PG_FUNCTION_ARGS)
+session_user(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall1(namein, CStringGetDatum(GetUserNameFromId(GetSessionUserId(), false))));
+	MDB_RETURN_DATUM(DirectFunctionCall1(namein, CStringGetDatum(GetUserNameFromId(GetSessionUserId(), false))));
 }
 
 
@@ -277,24 +277,24 @@ session_user(PG_FUNCTION_ARGS)
  * SQL-functions CURRENT_SCHEMA, CURRENT_SCHEMAS
  */
 Datum
-current_schema(PG_FUNCTION_ARGS)
+current_schema(MDB_FUNCTION_ARGS)
 {
 	List	   *search_path = fetch_search_path(false);
 	char	   *nspname;
 
 	if (search_path == NIL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	nspname = get_namespace_name(linitial_oid(search_path));
 	list_free(search_path);
 	if (!nspname)
-		PG_RETURN_NULL();		/* recently-deleted namespace? */
-	PG_RETURN_DATUM(DirectFunctionCall1(namein, CStringGetDatum(nspname)));
+		MDB_RETURN_NULL();		/* recently-deleted namespace? */
+	MDB_RETURN_DATUM(DirectFunctionCall1(namein, CStringGetDatum(nspname)));
 }
 
 Datum
-current_schemas(PG_FUNCTION_ARGS)
+current_schemas(MDB_FUNCTION_ARGS)
 {
-	List	   *search_path = fetch_search_path(PG_GETARG_BOOL(0));
+	List	   *search_path = fetch_search_path(MDB_GETARG_BOOL(0));
 	ListCell   *l;
 	Datum	   *names;
 	int			i;
@@ -321,5 +321,5 @@ current_schemas(PG_FUNCTION_ARGS)
 							false,		/* Name is not by-val */
 							'c');		/* alignment of Name */
 
-	PG_RETURN_POINTER(array);
+	MDB_RETURN_POINTER(array);
 }

@@ -26,5 +26,5 @@ TESTS = array array.c \
 
 all: $(TESTS)
 
-oldexec.c: oldexec.pgc $(ECPG_TEST_DEPENDENCIES)
+oldexec.c: oldexec.pgc $(ECMDB_TEST_DEPENDENCIES)
 	$(ECPG) -r questionmarks -o $@ $<

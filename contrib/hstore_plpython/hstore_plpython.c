@@ -4,15 +4,15 @@
 #include "plpy_typeio.h"
 #include "hstore.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 
-PG_FUNCTION_INFO_V1(hstore_to_plpython);
+MDB_FUNCTION_INFO_V1(hstore_to_plpython);
 
 Datum
-hstore_to_plpython(PG_FUNCTION_ARGS)
+hstore_to_plpython(MDB_FUNCTION_ARGS)
 {
-	HStore	   *in = PG_GETARG_HS(0);
+	HStore	   *in = MDB_GETARG_HS(0);
 	int			i;
 	int			count = HS_COUNT(in);
 	char	   *base = STRPTR(in);
@@ -45,17 +45,17 @@ hstore_to_plpython(PG_FUNCTION_ARGS)
 }
 
 
-PG_FUNCTION_INFO_V1(plpython_to_hstore);
+MDB_FUNCTION_INFO_V1(plpython_to_hstore);
 
 Datum
-plpython_to_hstore(PG_FUNCTION_ARGS)
+plpython_to_hstore(MDB_FUNCTION_ARGS)
 {
 	PyObject   *dict;
 	volatile PyObject *items_v = NULL;
 	int32		pcount;
 	HStore	   *out;
 
-	dict = (PyObject *) PG_GETARG_POINTER(0);
+	dict = (PyObject *) MDB_GETARG_POINTER(0);
 	if (!PyMapping_Check(dict))
 		ereport(ERROR,
 				(errcode(ERRCODE_WRONG_OBJECT_TYPE),
@@ -64,7 +64,7 @@ plpython_to_hstore(PG_FUNCTION_ARGS)
 	pcount = PyMapping_Size(dict);
 	items_v = PyMapping_Items(dict);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		int32		buflen;
 		int32		i;
@@ -105,12 +105,12 @@ plpython_to_hstore(PG_FUNCTION_ARGS)
 		pcount = hstoreUniquePairs(pairs, pcount, &buflen);
 		out = hstorePairs(pairs, pcount, buflen);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		Py_DECREF(items_v);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }

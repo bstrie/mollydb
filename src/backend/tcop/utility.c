@@ -934,8 +934,8 @@ ProcessUtilitySlow(Node *parsetree,
 	/* All event trigger calls are done only when isCompleteQuery is true */
 	needCleanup = isCompleteQuery && EventTriggerBeginCompleteQuery();
 
-	/* PG_TRY block is to ensure we call EventTriggerEndCompleteQuery */
-	PG_TRY();
+	/* MDB_TRY block is to ensure we call EventTriggerEndCompleteQuery */
+	MDB_TRY();
 	{
 		if (isCompleteQuery)
 			EventTriggerDDLCommandStart(parsetree);
@@ -1406,17 +1406,17 @@ ProcessUtilitySlow(Node *parsetree,
 				 * command itself is queued, which is enough.
 				 */
 				EventTriggerInhibitCommandCollection();
-				PG_TRY();
+				MDB_TRY();
 				{
 					address = ExecRefreshMatView((RefreshMatViewStmt *) parsetree,
 										 queryString, params, completionTag);
 				}
-				PG_CATCH();
+				MDB_CATCH();
 				{
 					EventTriggerUndoInhibitCommandCollection();
-					PG_RE_THROW();
+					MDB_RE_THROW();
 				}
-				PG_END_TRY();
+				MDB_END_TRY();
 				EventTriggerUndoInhibitCommandCollection();
 				break;
 
@@ -1564,13 +1564,13 @@ ProcessUtilitySlow(Node *parsetree,
 			EventTriggerDDLCommandEnd(parsetree);
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (needCleanup)
 			EventTriggerEndCompleteQuery();
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (needCleanup)
 		EventTriggerEndCompleteQuery();

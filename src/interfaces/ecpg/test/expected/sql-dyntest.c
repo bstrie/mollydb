@@ -15,8 +15,8 @@
 
 
 #line 1 "sql3types.h"
-#ifndef _ECPG_SQL3TYPES_H
-#define _ECPG_SQL3TYPES_H
+#ifndef _ECMDB_SQL3TYPES_H
+#define _ECMDB_SQL3TYPES_H
 
 /* SQL3 dynamic type codes */
 
@@ -57,7 +57,7 @@ enum
 								 * standard) */
 };
 
-#endif   /* !_ECPG_SQL3TYPES_H */
+#endif   /* !_ECMDB_SQL3TYPES_H */
 
 #line 7 "dyntest.pgc"
 
@@ -120,7 +120,7 @@ struct sqlca_t
 
 struct sqlca_t *ECPGget_sqlca(void);
 
-#ifndef POSTGRES_ECPG_INTERNAL
+#ifndef POSTGRES_ECMDB_INTERNAL
 #define sqlca (*ECPGget_sqlca())
 #endif
 

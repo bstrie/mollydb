@@ -62,9 +62,9 @@ end_progress_output(void)
  *		prep_status("about to flarb the next %d files", fileCount );
  *
  *		if(( message = flarbFiles(fileCount)) == NULL)
- *		  report_status(PG_REPORT, "ok" );
+ *		  report_status(MDB_REPORT, "ok" );
  *		else
- *		  mdb_log(PG_FATAL, "failed - %s\n", message );
+ *		  mdb_log(MDB_FATAL, "failed - %s\n", message );
  */
 void
 prep_status(const char *fmt,...)
@@ -77,10 +77,10 @@ prep_status(const char *fmt,...)
 	va_end(args);
 
 	if (strlen(message) > 0 && message[strlen(message) - 1] == '\n')
-		mdb_log(PG_REPORT, "%s", message);
+		mdb_log(MDB_REPORT, "%s", message);
 	else
 		/* trim strings that don't end in a newline */
-		mdb_log(PG_REPORT, "%-*s", MESSAGE_WIDTH, message);
+		mdb_log(MDB_REPORT, "%-*s", MESSAGE_WIDTH, message);
 }
 
 
@@ -91,12 +91,12 @@ mdb_log_v(eLogType type, const char *fmt, va_list ap)
 
 	vsnprintf(message, sizeof(message), fmt, ap);
 
-	/* PG_VERBOSE and PG_STATUS are only output in verbose mode */
+	/* MDB_VERBOSE and MDB_STATUS are only output in verbose mode */
 	/* fopen() on log_opts.internal might have failed, so check it */
-	if (((type != PG_VERBOSE && type != PG_STATUS) || log_opts.verbose) &&
+	if (((type != MDB_VERBOSE && type != MDB_STATUS) || log_opts.verbose) &&
 		log_opts.internal != NULL)
 	{
-		if (type == PG_STATUS)
+		if (type == MDB_STATUS)
 			/* status messages need two leading spaces and a newline */
 			fprintf(log_opts.internal, "  %s\n", message);
 		else
@@ -106,12 +106,12 @@ mdb_log_v(eLogType type, const char *fmt, va_list ap)
 
 	switch (type)
 	{
-		case PG_VERBOSE:
+		case MDB_VERBOSE:
 			if (log_opts.verbose)
 				printf("%s", _(message));
 			break;
 
-		case PG_STATUS:
+		case MDB_STATUS:
 			/* for output to a display, do leading truncation and append \r */
 			if (isatty(fileno(stdout)))
 				/* -2 because we use a 2-space indent */
@@ -126,12 +126,12 @@ mdb_log_v(eLogType type, const char *fmt, va_list ap)
 				printf("  %s\n", _(message));
 			break;
 
-		case PG_REPORT:
-		case PG_WARNING:
+		case MDB_REPORT:
+		case MDB_WARNING:
 			printf("%s", _(message));
 			break;
 
-		case PG_FATAL:
+		case MDB_FATAL:
 			printf("\n%s", _(message));
 			printf("Failure, exiting\n");
 			exit(1);
@@ -161,7 +161,7 @@ mdb_fatal(const char *fmt,...)
 	va_list		args;
 
 	va_start(args, fmt);
-	mdb_log_v(PG_FATAL, fmt, args);
+	mdb_log_v(MDB_FATAL, fmt, args);
 	va_end(args);
 	printf("Failure, exiting\n");
 	exit(1);
@@ -172,7 +172,7 @@ void
 check_ok(void)
 {
 	/* all seems well */
-	report_status(PG_REPORT, "ok");
+	report_status(MDB_REPORT, "ok");
 	fflush(stdout);
 }
 

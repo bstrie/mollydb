@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_EXTENSION_H
-#define PG_EXTENSION_H
+#ifndef MDB_EXTENSION_H
+#define MDB_EXTENSION_H
 
 #include "catalog/genbki.h"
 
@@ -69,4 +69,4 @@ typedef FormData_mdb_extension *Form_mdb_extension;
  * ----------------
  */
 
-#endif   /* PG_EXTENSION_H */
+#endif   /* MDB_EXTENSION_H */

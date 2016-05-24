@@ -21,7 +21,7 @@
 #include "tsearch/ts_public.h"
 #include "utils/builtins.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * An unaccent dictionary uses a trie to find a string to replace.  Each node
@@ -112,7 +112,7 @@ initTrie(char *filename)
 		 */
 		skip = true;
 
-		PG_TRY();
+		MDB_TRY();
 		{
 			char	   *line;
 
@@ -204,7 +204,7 @@ initTrie(char *filename)
 			}
 			skip = false;
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			ErrorData  *errdata;
 			MemoryContext ecxt;
@@ -218,10 +218,10 @@ initTrie(char *filename)
 			else
 			{
 				MemoryContextSwitchTo(ecxt);
-				PG_RE_THROW();
+				MDB_RE_THROW();
 			}
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 	}
 	while (skip);
 
@@ -262,11 +262,11 @@ findReplaceTo(TrieChar *node, const unsigned char *src, int srclen,
 	return result;
 }
 
-PG_FUNCTION_INFO_V1(unaccent_init);
+MDB_FUNCTION_INFO_V1(unaccent_init);
 Datum
-unaccent_init(PG_FUNCTION_ARGS)
+unaccent_init(MDB_FUNCTION_ARGS)
 {
-	List	   *dictoptions = (List *) PG_GETARG_POINTER(0);
+	List	   *dictoptions = (List *) MDB_GETARG_POINTER(0);
 	TrieChar   *rootTrie = NULL;
 	bool		fileloaded = false;
 	ListCell   *l;
@@ -300,16 +300,16 @@ unaccent_init(PG_FUNCTION_ARGS)
 				 errmsg("missing Rules parameter")));
 	}
 
-	PG_RETURN_POINTER(rootTrie);
+	MDB_RETURN_POINTER(rootTrie);
 }
 
-PG_FUNCTION_INFO_V1(unaccent_lexize);
+MDB_FUNCTION_INFO_V1(unaccent_lexize);
 Datum
-unaccent_lexize(PG_FUNCTION_ARGS)
+unaccent_lexize(MDB_FUNCTION_ARGS)
 {
-	TrieChar   *rootTrie = (TrieChar *) PG_GETARG_POINTER(0);
-	char	   *srcchar = (char *) PG_GETARG_POINTER(1);
-	int32		len = PG_GETARG_INT32(2);
+	TrieChar   *rootTrie = (TrieChar *) MDB_GETARG_POINTER(0);
+	char	   *srcchar = (char *) MDB_GETARG_POINTER(1);
+	int32		len = MDB_GETARG_INT32(2);
 	char	   *srcstart = srcchar;
 	TSLexeme   *res;
 	StringInfoData buf;
@@ -357,15 +357,15 @@ unaccent_lexize(PG_FUNCTION_ARGS)
 	else
 		res = NULL;
 
-	PG_RETURN_POINTER(res);
+	MDB_RETURN_POINTER(res);
 }
 
 /*
  * Function-like wrapper for dictionary
  */
-PG_FUNCTION_INFO_V1(unaccent_dict);
+MDB_FUNCTION_INFO_V1(unaccent_dict);
 Datum
-unaccent_dict(PG_FUNCTION_ARGS)
+unaccent_dict(MDB_FUNCTION_ARGS)
 {
 	text	   *str;
 	int			strArg;
@@ -373,17 +373,17 @@ unaccent_dict(PG_FUNCTION_ARGS)
 	TSDictionaryCacheEntry *dict;
 	TSLexeme   *res;
 
-	if (PG_NARGS() == 1)
+	if (MDB_NARGS() == 1)
 	{
 		dictOid = get_ts_dict_oid(stringToQualifiedNameList("unaccent"), false);
 		strArg = 0;
 	}
 	else
 	{
-		dictOid = PG_GETARG_OID(0);
+		dictOid = MDB_GETARG_OID(0);
 		strArg = 1;
 	}
-	str = PG_GETARG_TEXT_P(strArg);
+	str = MDB_GETARG_TEXT_P(strArg);
 
 	dict = lookup_ts_dictionary_cache(dictOid);
 
@@ -393,16 +393,16 @@ unaccent_dict(PG_FUNCTION_ARGS)
 									  Int32GetDatum(VARSIZE(str) - VARHDRSZ),
 													 PointerGetDatum(NULL)));
 
-	PG_FREE_IF_COPY(str, strArg);
+	MDB_FREE_IF_COPY(str, strArg);
 
 	if (res == NULL)
 	{
-		PG_RETURN_TEXT_P(PG_GETARG_TEXT_P_COPY(strArg));
+		MDB_RETURN_TEXT_P(MDB_GETARG_TEXT_P_COPY(strArg));
 	}
 	else if (res->lexeme == NULL)
 	{
 		pfree(res);
-		PG_RETURN_TEXT_P(PG_GETARG_TEXT_P_COPY(strArg));
+		MDB_RETURN_TEXT_P(MDB_GETARG_TEXT_P_COPY(strArg));
 	}
 	else
 	{
@@ -411,6 +411,6 @@ unaccent_dict(PG_FUNCTION_ARGS)
 		pfree(res->lexeme);
 		pfree(res);
 
-		PG_RETURN_TEXT_P(txt);
+		MDB_RETURN_TEXT_P(txt);
 	}
 }

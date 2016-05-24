@@ -130,30 +130,30 @@ typedef struct
 
 
 /* use in array iterator */
-Datum		ltree_isparent(PG_FUNCTION_ARGS);
-Datum		ltree_risparent(PG_FUNCTION_ARGS);
-Datum		ltq_regex(PG_FUNCTION_ARGS);
-Datum		ltq_rregex(PG_FUNCTION_ARGS);
-Datum		lt_q_regex(PG_FUNCTION_ARGS);
-Datum		lt_q_rregex(PG_FUNCTION_ARGS);
-Datum		ltxtq_exec(PG_FUNCTION_ARGS);
-Datum		ltxtq_rexec(PG_FUNCTION_ARGS);
-Datum		_ltq_regex(PG_FUNCTION_ARGS);
-Datum		_ltq_rregex(PG_FUNCTION_ARGS);
-Datum		_lt_q_regex(PG_FUNCTION_ARGS);
-Datum		_lt_q_rregex(PG_FUNCTION_ARGS);
-Datum		_ltxtq_exec(PG_FUNCTION_ARGS);
-Datum		_ltxtq_rexec(PG_FUNCTION_ARGS);
-Datum		_ltree_isparent(PG_FUNCTION_ARGS);
-Datum		_ltree_risparent(PG_FUNCTION_ARGS);
+Datum		ltree_isparent(MDB_FUNCTION_ARGS);
+Datum		ltree_risparent(MDB_FUNCTION_ARGS);
+Datum		ltq_regex(MDB_FUNCTION_ARGS);
+Datum		ltq_rregex(MDB_FUNCTION_ARGS);
+Datum		lt_q_regex(MDB_FUNCTION_ARGS);
+Datum		lt_q_rregex(MDB_FUNCTION_ARGS);
+Datum		ltxtq_exec(MDB_FUNCTION_ARGS);
+Datum		ltxtq_rexec(MDB_FUNCTION_ARGS);
+Datum		_ltq_regex(MDB_FUNCTION_ARGS);
+Datum		_ltq_rregex(MDB_FUNCTION_ARGS);
+Datum		_lt_q_regex(MDB_FUNCTION_ARGS);
+Datum		_lt_q_rregex(MDB_FUNCTION_ARGS);
+Datum		_ltxtq_exec(MDB_FUNCTION_ARGS);
+Datum		_ltxtq_rexec(MDB_FUNCTION_ARGS);
+Datum		_ltree_isparent(MDB_FUNCTION_ARGS);
+Datum		_ltree_risparent(MDB_FUNCTION_ARGS);
 
 /* Concatenation functions */
-Datum		ltree_addltree(PG_FUNCTION_ARGS);
-Datum		ltree_addtext(PG_FUNCTION_ARGS);
-Datum		ltree_textadd(PG_FUNCTION_ARGS);
+Datum		ltree_addltree(MDB_FUNCTION_ARGS);
+Datum		ltree_addtext(MDB_FUNCTION_ARGS);
+Datum		ltree_textadd(MDB_FUNCTION_ARGS);
 
 /* Util function */
-Datum		ltree_in(PG_FUNCTION_ARGS);
+Datum		ltree_in(MDB_FUNCTION_ARGS);
 
 bool ltree_execute(ITEM *curitem, void *checkval,
 			  bool calcnot, bool (*chkcond) (void *checkval, ITEM *val));
@@ -165,12 +165,12 @@ bool compare_subnode(ltree_level *t, char *q, int len,
 ltree	   *lca_inner(ltree **a, int len);
 int			ltree_strncasecmp(const char *a, const char *b, size_t s);
 
-#define PG_GETARG_LTREE(x)	((ltree*)DatumGetPointer(PG_DETOAST_DATUM(PG_GETARG_DATUM(x))))
-#define PG_GETARG_LTREE_COPY(x) ((ltree*)DatumGetPointer(PG_DETOAST_DATUM_COPY(PG_GETARG_DATUM(x))))
-#define PG_GETARG_LQUERY(x) ((lquery*)DatumGetPointer(PG_DETOAST_DATUM(PG_GETARG_DATUM(x))))
-#define PG_GETARG_LQUERY_COPY(x) ((lquery*)DatumGetPointer(PG_DETOAST_DATUM_COPY(PG_GETARG_DATUM(x))))
-#define PG_GETARG_LTXTQUERY(x) ((ltxtquery*)DatumGetPointer(PG_DETOAST_DATUM(PG_GETARG_DATUM(x))))
-#define PG_GETARG_LTXTQUERY_COPY(x) ((ltxtquery*)DatumGetPointer(PG_DETOAST_DATUM_COPY(PG_GETARG_DATUM(x))))
+#define MDB_GETARG_LTREE(x)	((ltree*)DatumGetPointer(MDB_DETOAST_DATUM(MDB_GETARG_DATUM(x))))
+#define MDB_GETARG_LTREE_COPY(x) ((ltree*)DatumGetPointer(MDB_DETOAST_DATUM_COPY(MDB_GETARG_DATUM(x))))
+#define MDB_GETARG_LQUERY(x) ((lquery*)DatumGetPointer(MDB_DETOAST_DATUM(MDB_GETARG_DATUM(x))))
+#define MDB_GETARG_LQUERY_COPY(x) ((lquery*)DatumGetPointer(MDB_DETOAST_DATUM_COPY(MDB_GETARG_DATUM(x))))
+#define MDB_GETARG_LTXTQUERY(x) ((ltxtquery*)DatumGetPointer(MDB_DETOAST_DATUM(MDB_GETARG_DATUM(x))))
+#define MDB_GETARG_LTXTQUERY_COPY(x) ((ltxtquery*)DatumGetPointer(MDB_DETOAST_DATUM_COPY(MDB_GETARG_DATUM(x))))
 
 /* GiST support for ltree */
 

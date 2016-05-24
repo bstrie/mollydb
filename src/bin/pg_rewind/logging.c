@@ -38,21 +38,21 @@ mdb_log_v(eLogType type, const char *fmt, va_list ap)
 
 	switch (type)
 	{
-		case PG_DEBUG:
+		case MDB_DEBUG:
 			if (debug)
 				printf("%s", _(message));
 			break;
 
-		case PG_PROGRESS:
+		case MDB_PROGRESS:
 			if (showprogress)
 				printf("%s", _(message));
 			break;
 
-		case PG_WARNING:
+		case MDB_WARNING:
 			printf("%s", _(message));
 			break;
 
-		case PG_FATAL:
+		case MDB_FATAL:
 			printf("\n%s", _(message));
 			printf("%s", _("Failure, exiting\n"));
 			exit(1);
@@ -85,7 +85,7 @@ mdb_fatal(const char *fmt,...)
 	va_list		args;
 
 	va_start(args, fmt);
-	mdb_log_v(PG_FATAL, fmt, args);
+	mdb_log_v(MDB_FATAL, fmt, args);
 	va_end(args);
 	/* should not get here, mdb_log_v() exited already */
 	exit(1);
@@ -137,7 +137,7 @@ progress_report(bool force)
 	snprintf(fetch_size_str, sizeof(fetch_size_str), INT64_FORMAT,
 			 fetch_size / 1024);
 
-	mdb_log(PG_PROGRESS, "%*s/%s kB (%d%%) copied",
+	mdb_log(MDB_PROGRESS, "%*s/%s kB (%d%%) copied",
 		   (int) strlen(fetch_size_str), fetch_done_str, fetch_size_str,
 		   percent);
 	printf("\r");

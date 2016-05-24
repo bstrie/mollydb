@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_ATTRDEF_H
-#define PG_ATTRDEF_H
+#ifndef MDB_ATTRDEF_H
+#define MDB_ATTRDEF_H
 
 #include "catalog/genbki.h"
 
@@ -56,4 +56,4 @@ typedef FormData_mdb_attrdef *Form_mdb_attrdef;
 #define Anum_mdb_attrdef_adbin			3
 #define Anum_mdb_attrdef_adsrc			4
 
-#endif   /* PG_ATTRDEF_H */
+#endif   /* MDB_ATTRDEF_H */

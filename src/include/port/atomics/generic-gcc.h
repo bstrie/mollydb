@@ -56,10 +56,10 @@
 #ifdef HAVE_ATOMICS
 
 /* generic gcc based atomic flag implementation */
-#if !defined(PG_HAVE_ATOMIC_FLAG_SUPPORT) \
+#if !defined(MDB_HAVE_ATOMIC_FLAG_SUPPORT) \
 	&& (defined(HAVE_GCC__SYNC_INT32_TAS) || defined(HAVE_GCC__SYNC_CHAR_TAS))
 
-#define PG_HAVE_ATOMIC_FLAG_SUPPORT
+#define MDB_HAVE_ATOMIC_FLAG_SUPPORT
 typedef struct mdb_atomic_flag
 {
 	/* some platforms only have a 8 bit wide TAS */
@@ -74,10 +74,10 @@ typedef struct mdb_atomic_flag
 #endif /* !ATOMIC_FLAG_SUPPORT && SYNC_INT32_TAS */
 
 /* generic gcc based atomic uint32 implementation */
-#if !defined(PG_HAVE_ATOMIC_U32_SUPPORT) \
+#if !defined(MDB_HAVE_ATOMIC_U32_SUPPORT) \
 	&& (defined(HAVE_GCC__ATOMIC_INT32_CAS) || defined(HAVE_GCC__SYNC_INT32_CAS))
 
-#define PG_HAVE_ATOMIC_U32_SUPPORT
+#define MDB_HAVE_ATOMIC_U32_SUPPORT
 typedef struct mdb_atomic_uint32
 {
 	volatile uint32 value;
@@ -86,11 +86,11 @@ typedef struct mdb_atomic_uint32
 #endif /* defined(HAVE_GCC__ATOMIC_INT32_CAS) || defined(HAVE_GCC__SYNC_INT32_CAS) */
 
 /* generic gcc based atomic uint64 implementation */
-#if !defined(PG_HAVE_ATOMIC_U64_SUPPORT) \
-	&& !defined(PG_DISABLE_64_BIT_ATOMICS) \
+#if !defined(MDB_HAVE_ATOMIC_U64_SUPPORT) \
+	&& !defined(MDB_DISABLE_64_BIT_ATOMICS) \
 	&& (defined(HAVE_GCC__ATOMIC_INT64_CAS) || defined(HAVE_GCC__SYNC_INT64_CAS))
 
-#define PG_HAVE_ATOMIC_U64_SUPPORT
+#define MDB_HAVE_ATOMIC_U64_SUPPORT
 
 typedef struct mdb_atomic_uint64
 {
@@ -99,12 +99,12 @@ typedef struct mdb_atomic_uint64
 
 #endif /* defined(HAVE_GCC__ATOMIC_INT64_CAS) || defined(HAVE_GCC__SYNC_INT64_CAS) */
 
-#ifdef PG_HAVE_ATOMIC_FLAG_SUPPORT
+#ifdef MDB_HAVE_ATOMIC_FLAG_SUPPORT
 
 #if defined(HAVE_GCC__SYNC_CHAR_TAS) || defined(HAVE_GCC__SYNC_INT32_TAS)
 
-#ifndef PG_HAVE_ATOMIC_TEST_SET_FLAG
-#define PG_HAVE_ATOMIC_TEST_SET_FLAG
+#ifndef MDB_HAVE_ATOMIC_TEST_SET_FLAG
+#define MDB_HAVE_ATOMIC_TEST_SET_FLAG
 static inline bool
 mdb_atomic_test_set_flag_impl(volatile mdb_atomic_flag *ptr)
 {
@@ -116,8 +116,8 @@ mdb_atomic_test_set_flag_impl(volatile mdb_atomic_flag *ptr)
 
 #endif /* defined(HAVE_GCC__SYNC_*_TAS) */
 
-#ifndef PG_HAVE_ATOMIC_UNLOCKED_TEST_FLAG
-#define PG_HAVE_ATOMIC_UNLOCKED_TEST_FLAG
+#ifndef MDB_HAVE_ATOMIC_UNLOCKED_TEST_FLAG
+#define MDB_HAVE_ATOMIC_UNLOCKED_TEST_FLAG
 static inline bool
 mdb_atomic_unlocked_test_flag_impl(volatile mdb_atomic_flag *ptr)
 {
@@ -125,8 +125,8 @@ mdb_atomic_unlocked_test_flag_impl(volatile mdb_atomic_flag *ptr)
 }
 #endif
 
-#ifndef PG_HAVE_ATOMIC_CLEAR_FLAG
-#define PG_HAVE_ATOMIC_CLEAR_FLAG
+#ifndef MDB_HAVE_ATOMIC_CLEAR_FLAG
+#define MDB_HAVE_ATOMIC_CLEAR_FLAG
 static inline void
 mdb_atomic_clear_flag_impl(volatile mdb_atomic_flag *ptr)
 {
@@ -134,8 +134,8 @@ mdb_atomic_clear_flag_impl(volatile mdb_atomic_flag *ptr)
 }
 #endif
 
-#ifndef PG_HAVE_ATOMIC_INIT_FLAG
-#define PG_HAVE_ATOMIC_INIT_FLAG
+#ifndef MDB_HAVE_ATOMIC_INIT_FLAG
+#define MDB_HAVE_ATOMIC_INIT_FLAG
 static inline void
 mdb_atomic_init_flag_impl(volatile mdb_atomic_flag *ptr)
 {
@@ -143,11 +143,11 @@ mdb_atomic_init_flag_impl(volatile mdb_atomic_flag *ptr)
 }
 #endif
 
-#endif /* defined(PG_HAVE_ATOMIC_FLAG_SUPPORT) */
+#endif /* defined(MDB_HAVE_ATOMIC_FLAG_SUPPORT) */
 
 /* prefer __atomic, it has a better API */
-#if !defined(PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32) && defined(HAVE_GCC__ATOMIC_INT32_CAS)
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
+#if !defined(MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U32) && defined(HAVE_GCC__ATOMIC_INT32_CAS)
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
 static inline bool
 mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 									uint32 *expected, uint32 newval)
@@ -158,8 +158,8 @@ mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 }
 #endif
 
-#if !defined(PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32) && defined(HAVE_GCC__SYNC_INT32_CAS)
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
+#if !defined(MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U32) && defined(HAVE_GCC__SYNC_INT32_CAS)
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
 static inline bool
 mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 									uint32 *expected, uint32 newval)
@@ -173,8 +173,8 @@ mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 }
 #endif
 
-#if !defined(PG_HAVE_ATOMIC_FETCH_ADD_U32) && defined(HAVE_GCC__SYNC_INT32_CAS)
-#define PG_HAVE_ATOMIC_FETCH_ADD_U32
+#if !defined(MDB_HAVE_ATOMIC_FETCH_ADD_U32) && defined(HAVE_GCC__SYNC_INT32_CAS)
+#define MDB_HAVE_ATOMIC_FETCH_ADD_U32
 static inline uint32
 mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_)
 {
@@ -183,10 +183,10 @@ mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_)
 #endif
 
 
-#if !defined(PG_DISABLE_64_BIT_ATOMICS)
+#if !defined(MDB_DISABLE_64_BIT_ATOMICS)
 
-#if !defined(PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64) && defined(HAVE_GCC__ATOMIC_INT64_CAS)
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
+#if !defined(MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U64) && defined(HAVE_GCC__ATOMIC_INT64_CAS)
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
 static inline bool
 mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 									uint64 *expected, uint64 newval)
@@ -196,8 +196,8 @@ mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 }
 #endif
 
-#if !defined(PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64) && defined(HAVE_GCC__SYNC_INT64_CAS)
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
+#if !defined(MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U64) && defined(HAVE_GCC__SYNC_INT64_CAS)
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
 static inline bool
 mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 									uint64 *expected, uint64 newval)
@@ -211,8 +211,8 @@ mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 }
 #endif
 
-#if !defined(PG_HAVE_ATOMIC_FETCH_ADD_U64) && defined(HAVE_GCC__SYNC_INT64_CAS)
-#define PG_HAVE_ATOMIC_FETCH_ADD_U64
+#if !defined(MDB_HAVE_ATOMIC_FETCH_ADD_U64) && defined(HAVE_GCC__SYNC_INT64_CAS)
+#define MDB_HAVE_ATOMIC_FETCH_ADD_U64
 static inline uint64
 mdb_atomic_fetch_add_u64_impl(volatile mdb_atomic_uint64 *ptr, int64 add_)
 {
@@ -220,6 +220,6 @@ mdb_atomic_fetch_add_u64_impl(volatile mdb_atomic_uint64 *ptr, int64 add_)
 }
 #endif
 
-#endif /* !defined(PG_DISABLE_64_BIT_ATOMICS) */
+#endif /* !defined(MDB_DISABLE_64_BIT_ATOMICS) */
 
 #endif /* defined(HAVE_ATOMICS) */

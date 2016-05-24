@@ -11,8 +11,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_CONSTRAINT_FN_H
-#define PG_CONSTRAINT_FN_H
+#ifndef MDB_CONSTRAINT_FN_H
+#define MDB_CONSTRAINT_FN_H
 
 #include "catalog/dependency.h"
 #include "nodes/mdb_list.h"
@@ -79,4 +79,4 @@ extern bool check_functional_grouping(Oid relid,
 						  List *grouping_columns,
 						  List **constraintDeps);
 
-#endif   /* PG_CONSTRAINT_FN_H */
+#endif   /* MDB_CONSTRAINT_FN_H */

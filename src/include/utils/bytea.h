@@ -26,28 +26,28 @@ typedef enum
 extern int	bytea_output;		/* ByteaOutputType, but int for GUC enum */
 
 /* functions are in utils/adt/varlena.c */
-extern Datum byteain(PG_FUNCTION_ARGS);
-extern Datum byteaout(PG_FUNCTION_ARGS);
-extern Datum bytearecv(PG_FUNCTION_ARGS);
-extern Datum byteasend(PG_FUNCTION_ARGS);
-extern Datum byteaoctetlen(PG_FUNCTION_ARGS);
-extern Datum byteaGetByte(PG_FUNCTION_ARGS);
-extern Datum byteaGetBit(PG_FUNCTION_ARGS);
-extern Datum byteaSetByte(PG_FUNCTION_ARGS);
-extern Datum byteaSetBit(PG_FUNCTION_ARGS);
-extern Datum byteaeq(PG_FUNCTION_ARGS);
-extern Datum byteane(PG_FUNCTION_ARGS);
-extern Datum bytealt(PG_FUNCTION_ARGS);
-extern Datum byteale(PG_FUNCTION_ARGS);
-extern Datum byteagt(PG_FUNCTION_ARGS);
-extern Datum byteage(PG_FUNCTION_ARGS);
-extern Datum byteacmp(PG_FUNCTION_ARGS);
-extern Datum bytea_sortsupport(PG_FUNCTION_ARGS);
-extern Datum byteacat(PG_FUNCTION_ARGS);
-extern Datum byteapos(PG_FUNCTION_ARGS);
-extern Datum bytea_substr(PG_FUNCTION_ARGS);
-extern Datum bytea_substr_no_len(PG_FUNCTION_ARGS);
-extern Datum byteaoverlay(PG_FUNCTION_ARGS);
-extern Datum byteaoverlay_no_len(PG_FUNCTION_ARGS);
+extern Datum byteain(MDB_FUNCTION_ARGS);
+extern Datum byteaout(MDB_FUNCTION_ARGS);
+extern Datum bytearecv(MDB_FUNCTION_ARGS);
+extern Datum byteasend(MDB_FUNCTION_ARGS);
+extern Datum byteaoctetlen(MDB_FUNCTION_ARGS);
+extern Datum byteaGetByte(MDB_FUNCTION_ARGS);
+extern Datum byteaGetBit(MDB_FUNCTION_ARGS);
+extern Datum byteaSetByte(MDB_FUNCTION_ARGS);
+extern Datum byteaSetBit(MDB_FUNCTION_ARGS);
+extern Datum byteaeq(MDB_FUNCTION_ARGS);
+extern Datum byteane(MDB_FUNCTION_ARGS);
+extern Datum bytealt(MDB_FUNCTION_ARGS);
+extern Datum byteale(MDB_FUNCTION_ARGS);
+extern Datum byteagt(MDB_FUNCTION_ARGS);
+extern Datum byteage(MDB_FUNCTION_ARGS);
+extern Datum byteacmp(MDB_FUNCTION_ARGS);
+extern Datum bytea_sortsupport(MDB_FUNCTION_ARGS);
+extern Datum byteacat(MDB_FUNCTION_ARGS);
+extern Datum byteapos(MDB_FUNCTION_ARGS);
+extern Datum bytea_substr(MDB_FUNCTION_ARGS);
+extern Datum bytea_substr_no_len(MDB_FUNCTION_ARGS);
+extern Datum byteaoverlay(MDB_FUNCTION_ARGS);
+extern Datum byteaoverlay_no_len(MDB_FUNCTION_ARGS);
 
 #endif   /* BYTEA_H */

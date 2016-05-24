@@ -1885,7 +1885,7 @@ spgdoinsert(Relation index, SpGistState *state,
 	 * that.
 	 */
 	if (!isnull && state->attType.attlen == -1)
-		datum = PointerGetDatum(PG_DETOAST_DATUM(datum));
+		datum = PointerGetDatum(MDB_DETOAST_DATUM(datum));
 
 	leafDatum = datum;
 

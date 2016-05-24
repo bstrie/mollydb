@@ -1618,7 +1618,7 @@ BaseBackup(void)
 	 * can't work with servers older than 9.1.
 	 */
 	minServerMajor = 901;
-	maxServerMajor = PG_VERSION_NUM / 100;
+	maxServerMajor = MDB_VERSION_NUM / 100;
 	serverMajor = PQserverVersion(conn) / 100;
 	if (serverMajor < minServerMajor || serverMajor > maxServerMajor)
 	{
@@ -1971,7 +1971,7 @@ main(int argc, char **argv)
 	int			option_index;
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_basebackup"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mdb_basebackup"));
 
 	if (argc > 1)
 	{
@@ -1983,7 +1983,7 @@ main(int argc, char **argv)
 		else if (strcmp(argv[1], "-V") == 0
 				 || strcmp(argv[1], "--version") == 0)
 		{
-			puts("mdb_basebackup (MollyDB) " PG_VERSION);
+			puts("mdb_basebackup (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}

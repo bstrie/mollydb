@@ -2755,7 +2755,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
         The following field codes are available:
         <variablelist>
          <varlistentry id="libpq-pg-diag-severity">
-          <term><symbol>PG_DIAG_SEVERITY</></term>
+          <term><symbol>MDB_DIAG_SEVERITY</></term>
           <listitem>
            <para>
             The severity; the field contents are <literal>ERROR</>,
@@ -2769,7 +2769,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
 
          <varlistentry id="libpq-pg-diag-sqlstate">
           <term>
-           <symbol>PG_DIAG_SQLSTATE</>
+           <symbol>MDB_DIAG_SQLSTATE</>
           <indexterm>
            <primary>error codes</primary>
            <secondary>libpq</secondary>
@@ -2789,7 +2789,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-message-primary">
-          <term><symbol>PG_DIAG_MESSAGE_PRIMARY</></term>
+          <term><symbol>MDB_DIAG_MESSAGE_PRIMARY</></term>
           <listitem>
            <para>
             The primary human-readable error message (typically one line).
@@ -2799,7 +2799,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-message-detail">
-          <term><symbol>PG_DIAG_MESSAGE_DETAIL</></term>
+          <term><symbol>MDB_DIAG_MESSAGE_DETAIL</></term>
           <listitem>
            <para>
             Detail: an optional secondary error message carrying more
@@ -2809,7 +2809,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-message-hint">
-          <term><symbol>PG_DIAG_MESSAGE_HINT</></term>
+          <term><symbol>MDB_DIAG_MESSAGE_HINT</></term>
           <listitem>
            <para>
             Hint: an optional suggestion what to do about the problem.
@@ -2821,7 +2821,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-statement-position">
-          <term><symbol>PG_DIAG_STATEMENT_POSITION</></term>
+          <term><symbol>MDB_DIAG_STATEMENT_POSITION</></term>
           <listitem>
            <para>
             A string containing a decimal integer indicating an error cursor
@@ -2833,21 +2833,21 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-internal-position">
-          <term><symbol>PG_DIAG_INTERNAL_POSITION</></term>
+          <term><symbol>MDB_DIAG_INTERNAL_POSITION</></term>
           <listitem>
            <para>
             This is defined the same as the
-            <symbol>PG_DIAG_STATEMENT_POSITION</> field, but it is used
+            <symbol>MDB_DIAG_STATEMENT_POSITION</> field, but it is used
             when the cursor position refers to an internally generated
             command rather than the one submitted by the client.  The
-            <symbol>PG_DIAG_INTERNAL_QUERY</> field will always appear when
+            <symbol>MDB_DIAG_INTERNAL_QUERY</> field will always appear when
             this field appears.
            </para>
           </listitem>
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-internal-query">
-          <term><symbol>PG_DIAG_INTERNAL_QUERY</></term>
+          <term><symbol>MDB_DIAG_INTERNAL_QUERY</></term>
           <listitem>
            <para>
             The text of a failed internally-generated command.  This could
@@ -2857,7 +2857,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-context">
-          <term><symbol>PG_DIAG_CONTEXT</></term>
+          <term><symbol>MDB_DIAG_CONTEXT</></term>
           <listitem>
            <para>
             An indication of the context in which the error occurred.
@@ -2869,7 +2869,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-schema-name">
-          <term><symbol>PG_DIAG_SCHEMA_NAME</></term>
+          <term><symbol>MDB_DIAG_SCHEMA_NAME</></term>
           <listitem>
            <para>
             If the error was associated with a specific database object,
@@ -2879,7 +2879,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-table-name">
-          <term><symbol>PG_DIAG_TABLE_NAME</></term>
+          <term><symbol>MDB_DIAG_TABLE_NAME</></term>
           <listitem>
            <para>
             If the error was associated with a specific table, the name of the
@@ -2890,7 +2890,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-column-name">
-          <term><symbol>PG_DIAG_COLUMN_NAME</></term>
+          <term><symbol>MDB_DIAG_COLUMN_NAME</></term>
           <listitem>
            <para>
             If the error was associated with a specific table column, the name
@@ -2901,7 +2901,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-datatype-name">
-          <term><symbol>PG_DIAG_DATATYPE_NAME</></term>
+          <term><symbol>MDB_DIAG_DATATYPE_NAME</></term>
           <listitem>
            <para>
             If the error was associated with a specific data type, the name of
@@ -2912,7 +2912,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-constraint-name">
-          <term><symbol>PG_DIAG_CONSTRAINT_NAME</></term>
+          <term><symbol>MDB_DIAG_CONSTRAINT_NAME</></term>
           <listitem>
            <para>
             If the error was associated with a specific constraint, the name
@@ -2925,7 +2925,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-source-file">
-          <term><symbol>PG_DIAG_SOURCE_FILE</></term>
+          <term><symbol>MDB_DIAG_SOURCE_FILE</></term>
           <listitem>
            <para>
             The file name of the source-code location where the error was
@@ -2935,7 +2935,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-source-line">
-          <term><symbol>PG_DIAG_SOURCE_LINE</></term>
+          <term><symbol>MDB_DIAG_SOURCE_LINE</></term>
           <listitem>
            <para>
             The line number of the source-code location where the error
@@ -2945,7 +2945,7 @@ char *PQresultErrorField(const PGresult *res, int fieldcode);
          </varlistentry>
 
          <varlistentry id="libpq-pg-diag-source-function">
-          <term><symbol>PG_DIAG_SOURCE_FUNCTION</></term>
+          <term><symbol>MDB_DIAG_SOURCE_FUNCTION</></term>
           <listitem>
            <para>
             The name of the source-code function reporting the error.
@@ -5921,13 +5921,13 @@ PGresult *PQcopyResult(const PGresult *src, int flags);
       copy any error message in the source.  (It does copy the command status
       string, however.)  The <parameter>flags</parameter> argument determines
       what else is copied.  It is a bitwise OR of several flags.
-      <literal>PG_COPYRES_ATTRS</literal> specifies copying the source
+      <literal>MDB_COPYRES_ATTRS</literal> specifies copying the source
       result's attributes (column definitions).
-      <literal>PG_COPYRES_TUPLES</literal> specifies copying the source
+      <literal>MDB_COPYRES_TUPLES</literal> specifies copying the source
       result's tuples.  (This implies copying the attributes, too.)
-      <literal>PG_COPYRES_NOTICEHOOKS</literal> specifies
+      <literal>MDB_COPYRES_NOTICEHOOKS</literal> specifies
       copying the source result's notify hooks.
-      <literal>PG_COPYRES_EVENTS</literal> specifies copying the source
+      <literal>MDB_COPYRES_EVENTS</literal> specifies copying the source
       result's events.  (But any instance data associated with the source
       is not copied.)
      </para>
@@ -6660,10 +6660,10 @@ main(void)
     /* result instanceData is available */
     data = PQresultInstanceData(res, myEventProc);
 
-    /* If PG_COPYRES_EVENTS is used, sends a PGEVT_RESULTCOPY to myEventProc */
-    res_copy = PQcopyResult(res, PG_COPYRES_TUPLES | PG_COPYRES_EVENTS);
+    /* If MDB_COPYRES_EVENTS is used, sends a PGEVT_RESULTCOPY to myEventProc */
+    res_copy = PQcopyResult(res, MDB_COPYRES_TUPLES | MDB_COPYRES_EVENTS);
 
-    /* result instanceData is available if PG_COPYRES_EVENTS was
+    /* result instanceData is available if MDB_COPYRES_EVENTS was
      * used during the PQcopyResult call.
      */
     data = PQresultInstanceData(res_copy, myEventProc);

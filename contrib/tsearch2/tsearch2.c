@@ -21,7 +21,7 @@
 #include "utils/guc.h"
 #include "utils/syscache.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 static Oid	current_dictionary_oid = InvalidOid;
 static Oid	current_parser_oid = InvalidOid;
@@ -45,9 +45,9 @@ static Oid	current_parser_oid = InvalidOid;
 					 CStringGetDatum(text_to_cstring(text))))
 
 #define UNSUPPORTED_FUNCTION(name)						\
-	PG_FUNCTION_INFO_V1(name);							\
+	MDB_FUNCTION_INFO_V1(name);							\
 	Datum												\
-	name(PG_FUNCTION_ARGS)								\
+	name(MDB_FUNCTION_ARGS)								\
 	{													\
 		ereport(ERROR,									\
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),\
@@ -55,31 +55,31 @@ static Oid	current_parser_oid = InvalidOid;
 						format_procedure(fcinfo->flinfo->fn_oid)), \
 				 errhint("Switch to new tsearch functionality."))); \
 		/* keep compiler quiet */						\
-		PG_RETURN_NULL();								\
+		MDB_RETURN_NULL();								\
 	}													\
 	extern int no_such_variable
 
 static Oid	GetCurrentDict(void);
 static Oid	GetCurrentParser(void);
 
-PG_FUNCTION_INFO_V1(tsa_lexize_byname);
-PG_FUNCTION_INFO_V1(tsa_lexize_bycurrent);
-PG_FUNCTION_INFO_V1(tsa_set_curdict);
-PG_FUNCTION_INFO_V1(tsa_set_curdict_byname);
-PG_FUNCTION_INFO_V1(tsa_token_type_current);
-PG_FUNCTION_INFO_V1(tsa_set_curprs);
-PG_FUNCTION_INFO_V1(tsa_set_curprs_byname);
-PG_FUNCTION_INFO_V1(tsa_parse_current);
-PG_FUNCTION_INFO_V1(tsa_set_curcfg);
-PG_FUNCTION_INFO_V1(tsa_set_curcfg_byname);
-PG_FUNCTION_INFO_V1(tsa_to_tsvector_name);
-PG_FUNCTION_INFO_V1(tsa_to_tsquery_name);
-PG_FUNCTION_INFO_V1(tsa_plainto_tsquery_name);
-PG_FUNCTION_INFO_V1(tsa_headline_byname);
-PG_FUNCTION_INFO_V1(tsa_ts_stat);
-PG_FUNCTION_INFO_V1(tsa_tsearch2);
-PG_FUNCTION_INFO_V1(tsa_rewrite_accum);
-PG_FUNCTION_INFO_V1(tsa_rewrite_finish);
+MDB_FUNCTION_INFO_V1(tsa_lexize_byname);
+MDB_FUNCTION_INFO_V1(tsa_lexize_bycurrent);
+MDB_FUNCTION_INFO_V1(tsa_set_curdict);
+MDB_FUNCTION_INFO_V1(tsa_set_curdict_byname);
+MDB_FUNCTION_INFO_V1(tsa_token_type_current);
+MDB_FUNCTION_INFO_V1(tsa_set_curprs);
+MDB_FUNCTION_INFO_V1(tsa_set_curprs_byname);
+MDB_FUNCTION_INFO_V1(tsa_parse_current);
+MDB_FUNCTION_INFO_V1(tsa_set_curcfg);
+MDB_FUNCTION_INFO_V1(tsa_set_curcfg_byname);
+MDB_FUNCTION_INFO_V1(tsa_to_tsvector_name);
+MDB_FUNCTION_INFO_V1(tsa_to_tsquery_name);
+MDB_FUNCTION_INFO_V1(tsa_plainto_tsquery_name);
+MDB_FUNCTION_INFO_V1(tsa_headline_byname);
+MDB_FUNCTION_INFO_V1(tsa_ts_stat);
+MDB_FUNCTION_INFO_V1(tsa_tsearch2);
+MDB_FUNCTION_INFO_V1(tsa_rewrite_accum);
+MDB_FUNCTION_INFO_V1(tsa_rewrite_finish);
 
 
 /*
@@ -124,10 +124,10 @@ UNSUPPORTED_FUNCTION(tsa_get_covers);
 
 /* lexize(text, text) */
 Datum
-tsa_lexize_byname(PG_FUNCTION_ARGS)
+tsa_lexize_byname(MDB_FUNCTION_ARGS)
 {
-	text	   *dictname = PG_GETARG_TEXT_PP(0);
-	Datum		arg1 = PG_GETARG_DATUM(1);
+	text	   *dictname = MDB_GETARG_TEXT_PP(0);
+	Datum		arg1 = MDB_GETARG_DATUM(1);
 
 	return DirectFunctionCall2(ts_lexize,
 				ObjectIdGetDatum(TextGetObjectId(regdictionaryin, dictname)),
@@ -136,9 +136,9 @@ tsa_lexize_byname(PG_FUNCTION_ARGS)
 
 /* lexize(text) */
 Datum
-tsa_lexize_bycurrent(PG_FUNCTION_ARGS)
+tsa_lexize_bycurrent(MDB_FUNCTION_ARGS)
 {
-	Datum		arg0 = PG_GETARG_DATUM(0);
+	Datum		arg0 = MDB_GETARG_DATUM(0);
 	Oid			id = GetCurrentDict();
 
 	return DirectFunctionCall2(ts_lexize,
@@ -148,9 +148,9 @@ tsa_lexize_bycurrent(PG_FUNCTION_ARGS)
 
 /* set_curdict(int) */
 Datum
-tsa_set_curdict(PG_FUNCTION_ARGS)
+tsa_set_curdict(MDB_FUNCTION_ARGS)
 {
-	Oid			dict_oid = PG_GETARG_OID(0);
+	Oid			dict_oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists(TSDICTOID,
 							  ObjectIdGetDatum(dict_oid),
@@ -160,26 +160,26 @@ tsa_set_curdict(PG_FUNCTION_ARGS)
 
 	current_dictionary_oid = dict_oid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* set_curdict(text) */
 Datum
-tsa_set_curdict_byname(PG_FUNCTION_ARGS)
+tsa_set_curdict_byname(MDB_FUNCTION_ARGS)
 {
-	text	   *name = PG_GETARG_TEXT_PP(0);
+	text	   *name = MDB_GETARG_TEXT_PP(0);
 	Oid			dict_oid;
 
 	dict_oid = get_ts_dict_oid(stringToQualifiedNameList(text_to_cstring(name)), false);
 
 	current_dictionary_oid = dict_oid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* token_type() */
 Datum
-tsa_token_type_current(PG_FUNCTION_ARGS)
+tsa_token_type_current(MDB_FUNCTION_ARGS)
 {
 	INSERT_ARGUMENT0(ObjectIdGetDatum(GetCurrentParser()), false);
 	return ts_token_type_byid(fcinfo);
@@ -187,9 +187,9 @@ tsa_token_type_current(PG_FUNCTION_ARGS)
 
 /* set_curprs(int) */
 Datum
-tsa_set_curprs(PG_FUNCTION_ARGS)
+tsa_set_curprs(MDB_FUNCTION_ARGS)
 {
-	Oid			parser_oid = PG_GETARG_OID(0);
+	Oid			parser_oid = MDB_GETARG_OID(0);
 
 	if (!SearchSysCacheExists(TSPARSEROID,
 							  ObjectIdGetDatum(parser_oid),
@@ -199,26 +199,26 @@ tsa_set_curprs(PG_FUNCTION_ARGS)
 
 	current_parser_oid = parser_oid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* set_curprs(text) */
 Datum
-tsa_set_curprs_byname(PG_FUNCTION_ARGS)
+tsa_set_curprs_byname(MDB_FUNCTION_ARGS)
 {
-	text	   *name = PG_GETARG_TEXT_PP(0);
+	text	   *name = MDB_GETARG_TEXT_PP(0);
 	Oid			parser_oid;
 
 	parser_oid = get_ts_parser_oid(stringToQualifiedNameList(text_to_cstring(name)), false);
 
 	current_parser_oid = parser_oid;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* parse(text) */
 Datum
-tsa_parse_current(PG_FUNCTION_ARGS)
+tsa_parse_current(MDB_FUNCTION_ARGS)
 {
 	INSERT_ARGUMENT0(ObjectIdGetDatum(GetCurrentParser()), false);
 	return ts_parse_byid(fcinfo);
@@ -226,9 +226,9 @@ tsa_parse_current(PG_FUNCTION_ARGS)
 
 /* set_curcfg(int) */
 Datum
-tsa_set_curcfg(PG_FUNCTION_ARGS)
+tsa_set_curcfg(MDB_FUNCTION_ARGS)
 {
-	Oid			arg0 = PG_GETARG_OID(0);
+	Oid			arg0 = MDB_GETARG_OID(0);
 	char	   *name;
 
 	name = DatumGetCString(DirectFunctionCall1(regconfigout,
@@ -237,14 +237,14 @@ tsa_set_curcfg(PG_FUNCTION_ARGS)
 	SetConfigOption("default_text_search_config", name,
 					PGC_USERSET, PGC_S_SESSION);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* set_curcfg(text) */
 Datum
-tsa_set_curcfg_byname(PG_FUNCTION_ARGS)
+tsa_set_curcfg_byname(MDB_FUNCTION_ARGS)
 {
-	text	   *arg0 = PG_GETARG_TEXT_PP(0);
+	text	   *arg0 = MDB_GETARG_TEXT_PP(0);
 	char	   *name;
 
 	name = text_to_cstring(arg0);
@@ -252,15 +252,15 @@ tsa_set_curcfg_byname(PG_FUNCTION_ARGS)
 	SetConfigOption("default_text_search_config", name,
 					PGC_USERSET, PGC_S_SESSION);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* to_tsvector(text, text) */
 Datum
-tsa_to_tsvector_name(PG_FUNCTION_ARGS)
+tsa_to_tsvector_name(MDB_FUNCTION_ARGS)
 {
-	text	   *cfgname = PG_GETARG_TEXT_PP(0);
-	Datum		arg1 = PG_GETARG_DATUM(1);
+	text	   *cfgname = MDB_GETARG_TEXT_PP(0);
+	Datum		arg1 = MDB_GETARG_DATUM(1);
 	Oid			config_oid;
 
 	config_oid = TextGetObjectId(regconfigin, cfgname);
@@ -271,10 +271,10 @@ tsa_to_tsvector_name(PG_FUNCTION_ARGS)
 
 /* to_tsquery(text, text) */
 Datum
-tsa_to_tsquery_name(PG_FUNCTION_ARGS)
+tsa_to_tsquery_name(MDB_FUNCTION_ARGS)
 {
-	text	   *cfgname = PG_GETARG_TEXT_PP(0);
-	Datum		arg1 = PG_GETARG_DATUM(1);
+	text	   *cfgname = MDB_GETARG_TEXT_PP(0);
+	Datum		arg1 = MDB_GETARG_DATUM(1);
 	Oid			config_oid;
 
 	config_oid = TextGetObjectId(regconfigin, cfgname);
@@ -286,10 +286,10 @@ tsa_to_tsquery_name(PG_FUNCTION_ARGS)
 
 /* plainto_tsquery(text, text) */
 Datum
-tsa_plainto_tsquery_name(PG_FUNCTION_ARGS)
+tsa_plainto_tsquery_name(MDB_FUNCTION_ARGS)
 {
-	text	   *cfgname = PG_GETARG_TEXT_PP(0);
-	Datum		arg1 = PG_GETARG_DATUM(1);
+	text	   *cfgname = MDB_GETARG_TEXT_PP(0);
+	Datum		arg1 = MDB_GETARG_DATUM(1);
 	Oid			config_oid;
 
 	config_oid = TextGetObjectId(regconfigin, cfgname);
@@ -300,11 +300,11 @@ tsa_plainto_tsquery_name(PG_FUNCTION_ARGS)
 
 /* headline(text, text, tsquery [,text]) */
 Datum
-tsa_headline_byname(PG_FUNCTION_ARGS)
+tsa_headline_byname(MDB_FUNCTION_ARGS)
 {
-	Datum		arg0 = PG_GETARG_DATUM(0);
-	Datum		arg1 = PG_GETARG_DATUM(1);
-	Datum		arg2 = PG_GETARG_DATUM(2);
+	Datum		arg0 = MDB_GETARG_DATUM(0);
+	Datum		arg1 = MDB_GETARG_DATUM(1);
+	Datum		arg2 = MDB_GETARG_DATUM(2);
 	Datum		result;
 	Oid			config_oid;
 
@@ -312,12 +312,12 @@ tsa_headline_byname(PG_FUNCTION_ARGS)
 	config_oid = DatumGetObjectId(DirectFunctionCall1(regconfigin,
 								CStringGetDatum(TextDatumGetCString(arg0))));
 
-	if (PG_NARGS() == 3)
+	if (MDB_NARGS() == 3)
 		result = DirectFunctionCall3(ts_headline_byid,
 								   ObjectIdGetDatum(config_oid), arg1, arg2);
 	else
 	{
-		Datum		arg3 = PG_GETARG_DATUM(3);
+		Datum		arg3 = MDB_GETARG_DATUM(3);
 
 		result = DirectFunctionCall4(ts_headline_byid_opt,
 									 ObjectIdGetDatum(config_oid),
@@ -337,7 +337,7 @@ tsa_headline_byname(PG_FUNCTION_ARGS)
  * is deliberately removed as being a security risk.
  */
 Datum
-tsa_tsearch2(PG_FUNCTION_ARGS)
+tsa_tsearch2(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata;
 	Trigger    *trigger;
@@ -382,7 +382,7 @@ tsa_tsearch2(PG_FUNCTION_ARGS)
 
 
 Datum
-tsa_rewrite_accum(PG_FUNCTION_ARGS)
+tsa_rewrite_accum(MDB_FUNCTION_ARGS)
 {
 	TSQuery		acc;
 	ArrayType  *qa;
@@ -399,19 +399,19 @@ tsa_rewrite_accum(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, &aggcontext))
 		elog(ERROR, "tsa_rewrite_accum called in non-aggregate context");
 
-	if (PG_ARGISNULL(0) || PG_GETARG_POINTER(0) == NULL)
+	if (MDB_ARGISNULL(0) || MDB_GETARG_POINTER(0) == NULL)
 	{
 		acc = (TSQuery) MemoryContextAlloc(aggcontext, HDRSIZETQ);
 		SET_VARSIZE(acc, HDRSIZETQ);
 		acc->size = 0;
 	}
 	else
-		acc = PG_GETARG_TSQUERY(0);
+		acc = MDB_GETARG_TSQUERY(0);
 
-	if (PG_ARGISNULL(1) || PG_GETARG_POINTER(1) == NULL)
-		PG_RETURN_TSQUERY(acc);
+	if (MDB_ARGISNULL(1) || MDB_GETARG_POINTER(1) == NULL)
+		MDB_RETURN_TSQUERY(acc);
 	else
-		qa = PG_GETARG_ARRAYTYPE_P_COPY(1);
+		qa = MDB_GETARG_ARRAYTYPE_P_COPY(1);
 
 	if (ARR_NDIM(qa) != 1)
 		elog(ERROR, "array must be one-dimensional, not %d dimensions",
@@ -427,7 +427,7 @@ tsa_rewrite_accum(PG_FUNCTION_ARGS)
 	if (q->size == 0)
 	{
 		pfree(elemsp);
-		PG_RETURN_POINTER(acc);
+		MDB_RETURN_POINTER(acc);
 	}
 
 	if (!acc->size)
@@ -435,7 +435,7 @@ tsa_rewrite_accum(PG_FUNCTION_ARGS)
 		if (VARSIZE(acc) > HDRSIZETQ)
 		{
 			pfree(elemsp);
-			PG_RETURN_POINTER(acc);
+			MDB_RETURN_POINTER(acc);
 		}
 		else
 			acctree = QT2QTN(GETQUERY(q), GETOPERAND(q));
@@ -450,7 +450,7 @@ tsa_rewrite_accum(PG_FUNCTION_ARGS)
 	if (q->size == 0)
 	{
 		pfree(elemsp);
-		PG_RETURN_POINTER(acc);
+		MDB_RETURN_POINTER(acc);
 	}
 	qex = QT2QTN(GETQUERY(q), GETOPERAND(q));
 	QTNTernary(qex);
@@ -485,16 +485,16 @@ tsa_rewrite_accum(PG_FUNCTION_ARGS)
 	QTNFree(subs);
 	QTNFree(acctree);
 
-	PG_RETURN_TSQUERY(acc);
+	MDB_RETURN_TSQUERY(acc);
 }
 
 Datum
-tsa_rewrite_finish(PG_FUNCTION_ARGS)
+tsa_rewrite_finish(MDB_FUNCTION_ARGS)
 {
-	TSQuery		acc = PG_GETARG_TSQUERY(0);
+	TSQuery		acc = MDB_GETARG_TSQUERY(0);
 	TSQuery		rewrited;
 
-	if (acc == NULL || PG_ARGISNULL(0) || acc->size == 0)
+	if (acc == NULL || MDB_ARGISNULL(0) || acc->size == 0)
 	{
 		rewrited = (TSQuery) palloc(HDRSIZETQ);
 		SET_VARSIZE(rewrited, HDRSIZETQ);
@@ -507,7 +507,7 @@ tsa_rewrite_finish(PG_FUNCTION_ARGS)
 		pfree(acc);
 	}
 
-	PG_RETURN_POINTER(rewrited);
+	MDB_RETURN_POINTER(rewrited);
 }
 
 

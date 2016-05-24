@@ -9812,7 +9812,7 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
 		 */
 		if (IsSystemNamespace(relForm->relnamespace) || relForm->relisshared ||
 			isAnyTempNamespace(relForm->relnamespace) ||
-			relForm->relnamespace == PG_TOAST_NAMESPACE)
+			relForm->relnamespace == MDB_TOAST_NAMESPACE)
 			continue;
 
 		/* Only move the object type requested */

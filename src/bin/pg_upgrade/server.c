@@ -29,7 +29,7 @@ connectToServer(ClusterInfo *cluster, const char *db_name)
 
 	if (conn == NULL || PQstatus(conn) != CONNECTION_OK)
 	{
-		mdb_log(PG_REPORT, "connection to database failed: %s\n",
+		mdb_log(MDB_REPORT, "connection to database failed: %s\n",
 			   PQerrorMessage(conn));
 
 		if (conn)
@@ -113,13 +113,13 @@ executeQueryOrDie(PGconn *conn, const char *fmt,...)
 	vsnprintf(query, sizeof(query), fmt, args);
 	va_end(args);
 
-	mdb_log(PG_VERBOSE, "executing: %s\n", query);
+	mdb_log(MDB_VERBOSE, "executing: %s\n", query);
 	result = PQexec(conn, query);
 	status = PQresultStatus(result);
 
 	if ((status != PGRES_TUPLES_OK) && (status != PGRES_COMMAND_OK))
 	{
-		mdb_log(PG_REPORT, "SQL command failed\n%s\n%s\n", query,
+		mdb_log(MDB_REPORT, "SQL command failed\n%s\n%s\n", query,
 			   PQerrorMessage(conn));
 		PQclear(result);
 		PQfinish(conn);
@@ -136,7 +136,7 @@ executeQueryOrDie(PGconn *conn, const char *fmt,...)
  *
  * gets the version (in unsigned int form) for the given datadir. Assumes
  * that datadir is an absolute path to a valid pgdata directory. The version
- * is retrieved by reading the PG_VERSION file.
+ * is retrieved by reading the MDB_VERSION file.
  */
 uint32
 get_major_server_version(ClusterInfo *cluster)
@@ -146,7 +146,7 @@ get_major_server_version(ClusterInfo *cluster)
 	int			integer_version = 0;
 	int			fractional_version = 0;
 
-	snprintf(ver_filename, sizeof(ver_filename), "%s/PG_VERSION",
+	snprintf(ver_filename, sizeof(ver_filename), "%s/MDB_VERSION",
 			 cluster->pgdata);
 	if ((version_fd = fopen(ver_filename, "r")) == NULL)
 		mdb_fatal("could not open version file: %s\n", ver_filename);
@@ -267,7 +267,7 @@ start_postmaster(ClusterInfo *cluster, bool throw_error)
 	if ((conn = get_db_conn(cluster, "template1")) == NULL ||
 		PQstatus(conn) != CONNECTION_OK)
 	{
-		mdb_log(PG_REPORT, "\nconnection to database failed: %s\n",
+		mdb_log(MDB_REPORT, "\nconnection to database failed: %s\n",
 			   PQerrorMessage(conn));
 		if (conn)
 			PQfinish(conn);

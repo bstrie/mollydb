@@ -40,19 +40,19 @@ static text *dotrim(const char *string, int stringlen,
  ********************************************************************/
 
 Datum
-lower(PG_FUNCTION_ARGS)
+lower(MDB_FUNCTION_ARGS)
 {
-	text	   *in_string = PG_GETARG_TEXT_PP(0);
+	text	   *in_string = MDB_GETARG_TEXT_PP(0);
 	char	   *out_string;
 	text	   *result;
 
 	out_string = str_tolower(VARDATA_ANY(in_string),
 							 VARSIZE_ANY_EXHDR(in_string),
-							 PG_GET_COLLATION());
+							 MDB_GET_COLLATION());
 	result = cstring_to_text(out_string);
 	pfree(out_string);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 
@@ -71,19 +71,19 @@ lower(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-upper(PG_FUNCTION_ARGS)
+upper(MDB_FUNCTION_ARGS)
 {
-	text	   *in_string = PG_GETARG_TEXT_PP(0);
+	text	   *in_string = MDB_GETARG_TEXT_PP(0);
 	char	   *out_string;
 	text	   *result;
 
 	out_string = str_toupper(VARDATA_ANY(in_string),
 							 VARSIZE_ANY_EXHDR(in_string),
-							 PG_GET_COLLATION());
+							 MDB_GET_COLLATION());
 	result = cstring_to_text(out_string);
 	pfree(out_string);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 
@@ -105,19 +105,19 @@ upper(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-initcap(PG_FUNCTION_ARGS)
+initcap(MDB_FUNCTION_ARGS)
 {
-	text	   *in_string = PG_GETARG_TEXT_PP(0);
+	text	   *in_string = MDB_GETARG_TEXT_PP(0);
 	char	   *out_string;
 	text	   *result;
 
 	out_string = str_initcap(VARDATA_ANY(in_string),
 							 VARSIZE_ANY_EXHDR(in_string),
-							 PG_GET_COLLATION());
+							 MDB_GET_COLLATION());
 	result = cstring_to_text(out_string);
 	pfree(out_string);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 
@@ -138,11 +138,11 @@ initcap(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-lpad(PG_FUNCTION_ARGS)
+lpad(MDB_FUNCTION_ARGS)
 {
-	text	   *string1 = PG_GETARG_TEXT_PP(0);
-	int32		len = PG_GETARG_INT32(1);
-	text	   *string2 = PG_GETARG_TEXT_PP(2);
+	text	   *string1 = MDB_GETARG_TEXT_PP(0);
+	int32		len = MDB_GETARG_INT32(1);
+	text	   *string2 = MDB_GETARG_TEXT_PP(2);
 	text	   *ret;
 	char	   *ptr1,
 			   *ptr2,
@@ -215,7 +215,7 @@ lpad(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(ret, ptr_ret - (char *) ret);
 
-	PG_RETURN_TEXT_P(ret);
+	MDB_RETURN_TEXT_P(ret);
 }
 
 
@@ -236,11 +236,11 @@ lpad(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-rpad(PG_FUNCTION_ARGS)
+rpad(MDB_FUNCTION_ARGS)
 {
-	text	   *string1 = PG_GETARG_TEXT_PP(0);
-	int32		len = PG_GETARG_INT32(1);
-	text	   *string2 = PG_GETARG_TEXT_PP(2);
+	text	   *string1 = MDB_GETARG_TEXT_PP(0);
+	int32		len = MDB_GETARG_INT32(1);
+	text	   *string2 = MDB_GETARG_TEXT_PP(2);
 	text	   *ret;
 	char	   *ptr1,
 			   *ptr2,
@@ -312,7 +312,7 @@ rpad(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(ret, ptr_ret - (char *) ret);
 
-	PG_RETURN_TEXT_P(ret);
+	MDB_RETURN_TEXT_P(ret);
 }
 
 
@@ -332,17 +332,17 @@ rpad(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-btrim(PG_FUNCTION_ARGS)
+btrim(MDB_FUNCTION_ARGS)
 {
-	text	   *string = PG_GETARG_TEXT_PP(0);
-	text	   *set = PG_GETARG_TEXT_PP(1);
+	text	   *string = MDB_GETARG_TEXT_PP(0);
+	text	   *set = MDB_GETARG_TEXT_PP(1);
 	text	   *ret;
 
 	ret = dotrim(VARDATA_ANY(string), VARSIZE_ANY_EXHDR(string),
 				 VARDATA_ANY(set), VARSIZE_ANY_EXHDR(set),
 				 true, true);
 
-	PG_RETURN_TEXT_P(ret);
+	MDB_RETURN_TEXT_P(ret);
 }
 
 /********************************************************************
@@ -352,16 +352,16 @@ btrim(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-btrim1(PG_FUNCTION_ARGS)
+btrim1(MDB_FUNCTION_ARGS)
 {
-	text	   *string = PG_GETARG_TEXT_PP(0);
+	text	   *string = MDB_GETARG_TEXT_PP(0);
 	text	   *ret;
 
 	ret = dotrim(VARDATA_ANY(string), VARSIZE_ANY_EXHDR(string),
 				 " ", 1,
 				 true, true);
 
-	PG_RETURN_TEXT_P(ret);
+	MDB_RETURN_TEXT_P(ret);
 }
 
 /*
@@ -537,10 +537,10 @@ dotrim(const char *string, int stringlen,
  ********************************************************************/
 
 Datum
-byteatrim(PG_FUNCTION_ARGS)
+byteatrim(MDB_FUNCTION_ARGS)
 {
-	bytea	   *string = PG_GETARG_BYTEA_PP(0);
-	bytea	   *set = PG_GETARG_BYTEA_PP(1);
+	bytea	   *string = MDB_GETARG_BYTEA_PP(0);
+	bytea	   *set = MDB_GETARG_BYTEA_PP(1);
 	bytea	   *ret;
 	char	   *ptr,
 			   *end,
@@ -555,7 +555,7 @@ byteatrim(PG_FUNCTION_ARGS)
 	setlen = VARSIZE_ANY_EXHDR(set);
 
 	if (stringlen <= 0 || setlen <= 0)
-		PG_RETURN_BYTEA_P(string);
+		MDB_RETURN_BYTEA_P(string);
 
 	m = stringlen;
 	ptr = VARDATA_ANY(string);
@@ -597,7 +597,7 @@ byteatrim(PG_FUNCTION_ARGS)
 	SET_VARSIZE(ret, VARHDRSZ + m);
 	memcpy(VARDATA(ret), ptr, m);
 
-	PG_RETURN_BYTEA_P(ret);
+	MDB_RETURN_BYTEA_P(ret);
 }
 
 /********************************************************************
@@ -616,17 +616,17 @@ byteatrim(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-ltrim(PG_FUNCTION_ARGS)
+ltrim(MDB_FUNCTION_ARGS)
 {
-	text	   *string = PG_GETARG_TEXT_PP(0);
-	text	   *set = PG_GETARG_TEXT_PP(1);
+	text	   *string = MDB_GETARG_TEXT_PP(0);
+	text	   *set = MDB_GETARG_TEXT_PP(1);
 	text	   *ret;
 
 	ret = dotrim(VARDATA_ANY(string), VARSIZE_ANY_EXHDR(string),
 				 VARDATA_ANY(set), VARSIZE_ANY_EXHDR(set),
 				 true, false);
 
-	PG_RETURN_TEXT_P(ret);
+	MDB_RETURN_TEXT_P(ret);
 }
 
 /********************************************************************
@@ -636,16 +636,16 @@ ltrim(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-ltrim1(PG_FUNCTION_ARGS)
+ltrim1(MDB_FUNCTION_ARGS)
 {
-	text	   *string = PG_GETARG_TEXT_PP(0);
+	text	   *string = MDB_GETARG_TEXT_PP(0);
 	text	   *ret;
 
 	ret = dotrim(VARDATA_ANY(string), VARSIZE_ANY_EXHDR(string),
 				 " ", 1,
 				 true, false);
 
-	PG_RETURN_TEXT_P(ret);
+	MDB_RETURN_TEXT_P(ret);
 }
 
 /********************************************************************
@@ -664,17 +664,17 @@ ltrim1(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-rtrim(PG_FUNCTION_ARGS)
+rtrim(MDB_FUNCTION_ARGS)
 {
-	text	   *string = PG_GETARG_TEXT_PP(0);
-	text	   *set = PG_GETARG_TEXT_PP(1);
+	text	   *string = MDB_GETARG_TEXT_PP(0);
+	text	   *set = MDB_GETARG_TEXT_PP(1);
 	text	   *ret;
 
 	ret = dotrim(VARDATA_ANY(string), VARSIZE_ANY_EXHDR(string),
 				 VARDATA_ANY(set), VARSIZE_ANY_EXHDR(set),
 				 false, true);
 
-	PG_RETURN_TEXT_P(ret);
+	MDB_RETURN_TEXT_P(ret);
 }
 
 /********************************************************************
@@ -684,16 +684,16 @@ rtrim(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-rtrim1(PG_FUNCTION_ARGS)
+rtrim1(MDB_FUNCTION_ARGS)
 {
-	text	   *string = PG_GETARG_TEXT_PP(0);
+	text	   *string = MDB_GETARG_TEXT_PP(0);
 	text	   *ret;
 
 	ret = dotrim(VARDATA_ANY(string), VARSIZE_ANY_EXHDR(string),
 				 " ", 1,
 				 false, true);
 
-	PG_RETURN_TEXT_P(ret);
+	MDB_RETURN_TEXT_P(ret);
 }
 
 
@@ -715,11 +715,11 @@ rtrim1(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-translate(PG_FUNCTION_ARGS)
+translate(MDB_FUNCTION_ARGS)
 {
-	text	   *string = PG_GETARG_TEXT_PP(0);
-	text	   *from = PG_GETARG_TEXT_PP(1);
-	text	   *to = PG_GETARG_TEXT_PP(2);
+	text	   *string = MDB_GETARG_TEXT_PP(0);
+	text	   *from = MDB_GETARG_TEXT_PP(1);
+	text	   *to = MDB_GETARG_TEXT_PP(2);
 	text	   *result;
 	char	   *from_ptr,
 			   *to_ptr;
@@ -737,7 +737,7 @@ translate(PG_FUNCTION_ARGS)
 
 	m = VARSIZE_ANY_EXHDR(string);
 	if (m <= 0)
-		PG_RETURN_TEXT_P(string);
+		MDB_RETURN_TEXT_P(string);
 	source = VARDATA_ANY(string);
 
 	fromlen = VARSIZE_ANY_EXHDR(from);
@@ -815,7 +815,7 @@ translate(PG_FUNCTION_ARGS)
 	 * probably won't live long anyway.
 	 */
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /********************************************************************
@@ -841,18 +841,18 @@ translate(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-ascii(PG_FUNCTION_ARGS)
+ascii(MDB_FUNCTION_ARGS)
 {
-	text	   *string = PG_GETARG_TEXT_PP(0);
+	text	   *string = MDB_GETARG_TEXT_PP(0);
 	int			encoding = GetDatabaseEncoding();
 	unsigned char *data;
 
 	if (VARSIZE_ANY_EXHDR(string) <= 0)
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 
 	data = (unsigned char *) VARDATA_ANY(string);
 
-	if (encoding == PG_UTF8 && *data > 127)
+	if (encoding == MDB_UTF8 && *data > 127)
 	{
 		/* return the code point for Unicode */
 
@@ -885,7 +885,7 @@ ascii(PG_FUNCTION_ARGS)
 			result = (result << 6) + (data[i] & 0x3f);
 		}
 
-		PG_RETURN_INT32(result);
+		MDB_RETURN_INT32(result);
 	}
 	else
 	{
@@ -895,7 +895,7 @@ ascii(PG_FUNCTION_ARGS)
 					 errmsg("requested character too large")));
 
 
-		PG_RETURN_INT32((int32) *data);
+		MDB_RETURN_INT32((int32) *data);
 	}
 }
 
@@ -922,13 +922,13 @@ ascii(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-chr			(PG_FUNCTION_ARGS)
+chr			(MDB_FUNCTION_ARGS)
 {
-	uint32		cvalue = PG_GETARG_UINT32(0);
+	uint32		cvalue = MDB_GETARG_UINT32(0);
 	text	   *result;
 	int			encoding = GetDatabaseEncoding();
 
-	if (encoding == PG_UTF8 && cvalue > 127)
+	if (encoding == MDB_UTF8 && cvalue > 127)
 	{
 		/* for Unicode we treat the argument as a code point */
 		int			bytes;
@@ -1012,7 +1012,7 @@ chr			(PG_FUNCTION_ARGS)
 		*VARDATA(result) = (char) cvalue;
 	}
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /********************************************************************
@@ -1030,10 +1030,10 @@ chr			(PG_FUNCTION_ARGS)
  ********************************************************************/
 
 Datum
-repeat(PG_FUNCTION_ARGS)
+repeat(MDB_FUNCTION_ARGS)
 {
-	text	   *string = PG_GETARG_TEXT_PP(0);
-	int32		count = PG_GETARG_INT32(1);
+	text	   *string = MDB_GETARG_TEXT_PP(0);
+	int32		count = MDB_GETARG_INT32(1);
 	text	   *result;
 	int			slen,
 				tlen;
@@ -1070,5 +1070,5 @@ repeat(PG_FUNCTION_ARGS)
 		cp += slen;
 	}
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }

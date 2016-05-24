@@ -196,7 +196,7 @@ static int	CheckRADIUSAuth(Port *port);
  * registry setting. Microsoft recommends that it is not set higher than
  * 65535 bytes, so that seems like a reasonable limit for us as well.
  */
-#define PG_MAX_AUTH_TOKEN_LENGTH	65535
+#define MDB_MAX_AUTH_TOKEN_LENGTH	65535
 
 
 /*----------------------------------------------------------------
@@ -647,7 +647,7 @@ recv_password_packet(Port *port)
 	StringInfoData buf;
 
 	pq_startmsgread();
-	if (PG_PROTOCOL_MAJOR(port->proto) >= 3)
+	if (MDB_PROTOCOL_MAJOR(port->proto) >= 3)
 	{
 		/* Expect 'p' message type */
 		int			mtype;
@@ -819,7 +819,7 @@ mdb_GSS_recvauth(Port *port)
 	 * messages are supposed to be parsable without relying on the length
 	 * word; but it's not worth changing it now.)
 	 */
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 		ereport(FATAL,
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("GSSAPI is not supported in protocol version 2")));
@@ -889,7 +889,7 @@ mdb_GSS_recvauth(Port *port)
 
 		/* Get the actual GSS token */
 		initStringInfo(&buf);
-		if (pq_getmessage(&buf, PG_MAX_AUTH_TOKEN_LENGTH))
+		if (pq_getmessage(&buf, MDB_MAX_AUTH_TOKEN_LENGTH))
 		{
 			/* EOF - pq_getmessage already logged error */
 			pfree(buf.data);
@@ -1085,7 +1085,7 @@ mdb_SSPI_recvauth(Port *port)
 	 * messages are supposed to be parsable without relying on the length
 	 * word; but it's not worth changing it now.)
 	 */
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) < 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) < 3)
 		ereport(FATAL,
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("SSPI is not supported in protocol version 2")));
@@ -1128,7 +1128,7 @@ mdb_SSPI_recvauth(Port *port)
 
 		/* Get the actual SSPI token */
 		initStringInfo(&buf);
-		if (pq_getmessage(&buf, PG_MAX_AUTH_TOKEN_LENGTH))
+		if (pq_getmessage(&buf, MDB_MAX_AUTH_TOKEN_LENGTH))
 		{
 			/* EOF - pq_getmessage already logged error */
 			pfree(buf.data);

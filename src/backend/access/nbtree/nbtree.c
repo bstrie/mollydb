@@ -81,7 +81,7 @@ static void btvacuumpage(BTVacState *vstate, BlockNumber blkno,
  * and callbacks.
  */
 Datum
-bthandler(PG_FUNCTION_ARGS)
+bthandler(MDB_FUNCTION_ARGS)
 {
 	IndexAmRoutine *amroutine = makeNode(IndexAmRoutine);
 
@@ -117,7 +117,7 @@ bthandler(PG_FUNCTION_ARGS)
 	amroutine->ammarkpos = btmarkpos;
 	amroutine->amrestrpos = btrestrpos;
 
-	PG_RETURN_POINTER(amroutine);
+	MDB_RETURN_POINTER(amroutine);
 }
 
 /*
@@ -680,13 +680,13 @@ btbulkdelete(IndexVacuumInfo *info, IndexBulkDeleteResult *stats,
 
 	/* Establish the vacuum cycle ID to use for this scan */
 	/* The ENSURE stuff ensures we clean up shared memory on failure */
-	PG_ENSURE_ERROR_CLEANUP(_bt_end_vacuum_callback, PointerGetDatum(rel));
+	MDB_ENSURE_ERROR_CLEANUP(_bt_end_vacuum_callback, PointerGetDatum(rel));
 	{
 		cycleid = _bt_start_vacuum(rel);
 
 		btvacuumscan(info, stats, callback, callback_state, cycleid);
 	}
-	PG_END_ENSURE_ERROR_CLEANUP(_bt_end_vacuum_callback, PointerGetDatum(rel));
+	MDB_END_ENSURE_ERROR_CLEANUP(_bt_end_vacuum_callback, PointerGetDatum(rel));
 	_bt_end_vacuum(rel);
 
 	return stats;

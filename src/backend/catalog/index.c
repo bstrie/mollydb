@@ -3326,7 +3326,7 @@ reindex_index(Oid indexId, bool skip_constraint_checks, char persistence,
 	 */
 	TransferPredicateLocksToHeapRelation(iRel);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/* Suppress use of the target index while rebuilding it */
 		SetReindexProcessing(heapId, indexId);
@@ -3353,13 +3353,13 @@ reindex_index(Oid indexId, bool skip_constraint_checks, char persistence,
 		/* Note: we do not need to re-establish pkey setting */
 		index_build(heapRelation, iRel, indexInfo, false, true);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Make sure flag gets cleared on error exit */
 		ResetReindexProcessing();
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	ResetReindexProcessing();
 
 	/*
@@ -3535,7 +3535,7 @@ reindex_relation(Oid relid, int flags, int options)
 	if (is_mdb_class)
 		(void) RelationGetIndexAttrBitmap(rel, INDEX_ATTR_BITMAP_ALL);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		List	   *doneIndexes;
 		ListCell   *indexId;
@@ -3585,13 +3585,13 @@ reindex_relation(Oid relid, int flags, int options)
 				doneIndexes = lappend_oid(doneIndexes, indexOid);
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Make sure list gets cleared on error exit */
 		ResetReindexPending();
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	ResetReindexPending();
 
 	if (is_mdb_class)
@@ -3665,7 +3665,7 @@ ReindexIsProcessingIndex(Oid indexOid)
  * SetReindexProcessing
  *		Set flag that specified heap/index are being reindexed.
  *
- * NB: caller must use a PG_TRY block to ensure ResetReindexProcessing is done.
+ * NB: caller must use a MDB_TRY block to ensure ResetReindexProcessing is done.
  */
 static void
 SetReindexProcessing(Oid heapOid, Oid indexOid)
@@ -3695,7 +3695,7 @@ ResetReindexProcessing(void)
  * SetReindexPending
  *		Mark the given indexes as pending reindex.
  *
- * NB: caller must use a PG_TRY block to ensure ResetReindexPending is done.
+ * NB: caller must use a MDB_TRY block to ensure ResetReindexPending is done.
  * Also, we assume that the current memory context stays valid throughout.
  */
 static void

@@ -45,7 +45,7 @@ get_controlfile(char *DataDir, const char *progname)
 	ControlFile = palloc(sizeof(ControlFileData));
 	snprintf(ControlFilePath, MAXPGPATH, "%s/global/mdb_control", DataDir);
 
-	if ((fd = open(ControlFilePath, O_RDONLY | PG_BINARY, 0)) == -1)
+	if ((fd = open(ControlFilePath, O_RDONLY | MDB_BINARY, 0)) == -1)
 #ifndef FRONTEND
 		ereport(ERROR,
 				(errcode_for_file_access(),

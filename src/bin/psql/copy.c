@@ -292,10 +292,10 @@ do_copy(const char *args)
 				fflush(stdout);
 				fflush(stderr);
 				errno = 0;
-				copystream = popen(options->file, PG_BINARY_R);
+				copystream = popen(options->file, MDB_BINARY_R);
 			}
 			else
-				copystream = fopen(options->file, PG_BINARY_R);
+				copystream = fopen(options->file, MDB_BINARY_R);
 		}
 		else if (!options->psql_inout)
 			copystream = pset.cur_cmd_source;
@@ -312,10 +312,10 @@ do_copy(const char *args)
 				fflush(stderr);
 				errno = 0;
 				disable_sigpipe_trap();
-				copystream = popen(options->file, PG_BINARY_W);
+				copystream = popen(options->file, MDB_BINARY_W);
 			}
 			else
-				copystream = fopen(options->file, PG_BINARY_W);
+				copystream = fopen(options->file, MDB_BINARY_W);
 		}
 		else if (!options->psql_inout)
 			copystream = pset.queryFout;

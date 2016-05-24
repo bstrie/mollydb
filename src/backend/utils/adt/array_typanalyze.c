@@ -94,9 +94,9 @@ static int	countitem_compare_count(const void *e1, const void *e2);
  * array_typanalyze -- typanalyze function for array columns
  */
 Datum
-array_typanalyze(PG_FUNCTION_ARGS)
+array_typanalyze(MDB_FUNCTION_ARGS)
 {
-	VacAttrStats *stats = (VacAttrStats *) PG_GETARG_POINTER(0);
+	VacAttrStats *stats = (VacAttrStats *) MDB_GETARG_POINTER(0);
 	Oid			element_typeid;
 	TypeCacheEntry *typentry;
 	ArrayAnalyzeExtraData *extra_data;
@@ -106,7 +106,7 @@ array_typanalyze(PG_FUNCTION_ARGS)
 	 * operators, in which case we also can't do anything, so just fail.
 	 */
 	if (!std_typanalyze(stats))
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	/*
 	 * Check attribute data type is a varlena array (or a domain over one).
@@ -128,7 +128,7 @@ array_typanalyze(PG_FUNCTION_ARGS)
 	if (!OidIsValid(typentry->eq_opr) ||
 		!OidIsValid(typentry->cmp_proc_finfo.fn_oid) ||
 		!OidIsValid(typentry->hash_proc_finfo.fn_oid))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 
 	/* Store our findings for use by compute_array_stats() */
 	extra_data = (ArrayAnalyzeExtraData *) palloc(sizeof(ArrayAnalyzeExtraData));
@@ -153,7 +153,7 @@ array_typanalyze(PG_FUNCTION_ARGS)
 	 * be increased for array analysis purposes?
 	 */
 
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 /*

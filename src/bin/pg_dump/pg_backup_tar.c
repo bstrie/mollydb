@@ -177,7 +177,7 @@ InitArchiveFmt_Tar(ArchiveHandle *AH)
 	{
 		if (AH->fSpec && strcmp(AH->fSpec, "") != 0)
 		{
-			ctx->tarFH = fopen(AH->fSpec, PG_BINARY_W);
+			ctx->tarFH = fopen(AH->fSpec, MDB_BINARY_W);
 			if (ctx->tarFH == NULL)
 				exit_horribly(modulename,
 						   "could not open TOC file \"%s\" for output: %s\n",
@@ -215,7 +215,7 @@ InitArchiveFmt_Tar(ArchiveHandle *AH)
 	{							/* Read Mode */
 		if (AH->fSpec && strcmp(AH->fSpec, "") != 0)
 		{
-			ctx->tarFH = fopen(AH->fSpec, PG_BINARY_R);
+			ctx->tarFH = fopen(AH->fSpec, MDB_BINARY_R);
 			if (ctx->tarFH == NULL)
 				exit_horribly(modulename, "could not open TOC file \"%s\" for input: %s\n",
 							  AH->fSpec, strerror(errno));

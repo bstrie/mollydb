@@ -787,7 +787,7 @@ CreateLockFile(const char *filename, bool amPostmaster,
 	 * the previous reboot, or one that's only one or two counts larger and
 	 * hence the lockfile's PID now refers to an ancestor shell process.  We
 	 * allow mdb_ctl to pass down its parent shell PID (our grandparent PID)
-	 * via the environment variable PG_GRANDPARENT_PID; this is so that
+	 * via the environment variable MDB_GRANDPARENT_PID; this is so that
 	 * launching the postmaster via mdb_ctl can be just as reliable as
 	 * launching it directly.  There is no provision for detecting
 	 * further-removed ancestor processes, but if the init script is written
@@ -810,7 +810,7 @@ CreateLockFile(const char *filename, bool amPostmaster,
 	my_p_pid = 0;
 #endif
 
-	envvar = getenv("PG_GRANDPARENT_PID");
+	envvar = getenv("MDB_GRANDPARENT_PID");
 	if (envvar)
 		my_gp_pid = atoi(envvar);
 	else
@@ -1123,7 +1123,7 @@ TouchSocketLockFiles(void)
 		int			fd;
 		char		buffer[1];
 
-		fd = open(socketLockFile, O_RDONLY | PG_BINARY, 0);
+		fd = open(socketLockFile, O_RDONLY | MDB_BINARY, 0);
 		if (fd >= 0)
 		{
 			read(fd, buffer, sizeof(buffer));
@@ -1155,7 +1155,7 @@ AddToDataDirLockFile(int target_line, const char *str)
 	char		srcbuffer[BLCKSZ];
 	char		destbuffer[BLCKSZ];
 
-	fd = open(DIRECTORY_LOCK_FILE, O_RDWR | PG_BINARY, 0);
+	fd = open(DIRECTORY_LOCK_FILE, O_RDWR | MDB_BINARY, 0);
 	if (fd < 0)
 	{
 		ereport(LOG,
@@ -1266,7 +1266,7 @@ RecheckDataDirLockFile(void)
 	long		file_pid;
 	char		buffer[BLCKSZ];
 
-	fd = open(DIRECTORY_LOCK_FILE, O_RDWR | PG_BINARY, 0);
+	fd = open(DIRECTORY_LOCK_FILE, O_RDWR | MDB_BINARY, 0);
 	if (fd < 0)
 	{
 		/*
@@ -1323,7 +1323,7 @@ RecheckDataDirLockFile(void)
  */
 
 /*
- * Determine whether the PG_VERSION file in directory `path' indicates
+ * Determine whether the MDB_VERSION file in directory `path' indicates
  * a data version compatible with the version of this program.
  *
  * If compatible, return. Otherwise, ereport(FATAL).
@@ -1339,13 +1339,13 @@ ValidatePgVersion(const char *path)
 	long		my_major = 0,
 				my_minor = 0;
 	char	   *endptr;
-	const char *version_string = PG_VERSION;
+	const char *version_string = MDB_VERSION;
 
 	my_major = strtol(version_string, &endptr, 10);
 	if (*endptr == '.')
 		my_minor = strtol(endptr + 1, NULL, 10);
 
-	snprintf(full_path, sizeof(full_path), "%s/PG_VERSION", path);
+	snprintf(full_path, sizeof(full_path), "%s/MDB_VERSION", path);
 
 	file = AllocateFile(full_path, "r");
 	if (!file)

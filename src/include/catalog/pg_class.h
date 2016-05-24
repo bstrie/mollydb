@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_CLASS_H
-#define PG_CLASS_H
+#ifndef MDB_CLASS_H
+#define MDB_CLASS_H
 
 #include "catalog/genbki.h"
 
@@ -177,4 +177,4 @@ DESCR("");
  * has the same meaning as 'd'
  */
 #define		  REPLICA_IDENTITY_INDEX	'i'
-#endif   /* PG_CLASS_H */
+#endif   /* MDB_CLASS_H */

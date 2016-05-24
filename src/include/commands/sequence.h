@@ -64,14 +64,14 @@ typedef struct xl_seq_rec
 	/* SEQUENCE TUPLE DATA FOLLOWS AT THE END */
 } xl_seq_rec;
 
-extern Datum nextval(PG_FUNCTION_ARGS);
-extern Datum nextval_oid(PG_FUNCTION_ARGS);
-extern Datum currval_oid(PG_FUNCTION_ARGS);
-extern Datum setval_oid(PG_FUNCTION_ARGS);
-extern Datum setval3_oid(PG_FUNCTION_ARGS);
-extern Datum lastval(PG_FUNCTION_ARGS);
+extern Datum nextval(MDB_FUNCTION_ARGS);
+extern Datum nextval_oid(MDB_FUNCTION_ARGS);
+extern Datum currval_oid(MDB_FUNCTION_ARGS);
+extern Datum setval_oid(MDB_FUNCTION_ARGS);
+extern Datum setval3_oid(MDB_FUNCTION_ARGS);
+extern Datum lastval(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_sequence_parameters(PG_FUNCTION_ARGS);
+extern Datum mdb_sequence_parameters(MDB_FUNCTION_ARGS);
 
 extern ObjectAddress DefineSequence(CreateSeqStmt *stmt);
 extern ObjectAddress AlterSequence(AlterSeqStmt *stmt);

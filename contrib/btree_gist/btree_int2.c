@@ -15,14 +15,14 @@ typedef struct int16key
 /*
 ** int16 ops
 */
-PG_FUNCTION_INFO_V1(gbt_int2_compress);
-PG_FUNCTION_INFO_V1(gbt_int2_fetch);
-PG_FUNCTION_INFO_V1(gbt_int2_union);
-PG_FUNCTION_INFO_V1(gbt_int2_picksplit);
-PG_FUNCTION_INFO_V1(gbt_int2_consistent);
-PG_FUNCTION_INFO_V1(gbt_int2_distance);
-PG_FUNCTION_INFO_V1(gbt_int2_penalty);
-PG_FUNCTION_INFO_V1(gbt_int2_same);
+MDB_FUNCTION_INFO_V1(gbt_int2_compress);
+MDB_FUNCTION_INFO_V1(gbt_int2_fetch);
+MDB_FUNCTION_INFO_V1(gbt_int2_union);
+MDB_FUNCTION_INFO_V1(gbt_int2_picksplit);
+MDB_FUNCTION_INFO_V1(gbt_int2_consistent);
+MDB_FUNCTION_INFO_V1(gbt_int2_distance);
+MDB_FUNCTION_INFO_V1(gbt_int2_penalty);
+MDB_FUNCTION_INFO_V1(gbt_int2_same);
 
 static bool
 gbt_int2gt(const void *a, const void *b)
@@ -89,12 +89,12 @@ static const gbtree_ninfo tinfo =
 };
 
 
-PG_FUNCTION_INFO_V1(int2_dist);
+MDB_FUNCTION_INFO_V1(int2_dist);
 Datum
-int2_dist(PG_FUNCTION_ARGS)
+int2_dist(MDB_FUNCTION_ARGS)
 {
-	int16		a = PG_GETARG_INT16(0);
-	int16		b = PG_GETARG_INT16(1);
+	int16		a = MDB_GETARG_INT16(0);
+	int16		b = MDB_GETARG_INT16(1);
 	int16		r;
 	int16		ra;
 
@@ -107,7 +107,7 @@ int2_dist(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
 
-	PG_RETURN_INT16(ra);
+	MDB_RETURN_INT16(ra);
 }
 
 
@@ -117,30 +117,30 @@ int2_dist(PG_FUNCTION_ARGS)
 
 
 Datum
-gbt_int2_compress(PG_FUNCTION_ARGS)
+gbt_int2_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
 }
 
 Datum
-gbt_int2_fetch(PG_FUNCTION_ARGS)
+gbt_int2_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
 }
 
 Datum
-gbt_int2_consistent(PG_FUNCTION_ARGS)
+gbt_int2_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	int16		query = PG_GETARG_INT16(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	int16		query = MDB_GETARG_INT16(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	int16KEY   *kkk = (int16KEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
@@ -150,71 +150,71 @@ gbt_int2_consistent(PG_FUNCTION_ARGS)
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_BOOL(
+	MDB_RETURN_BOOL(
 				   gbt_num_consistent(&key, (void *) &query, &strategy, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_int2_distance(PG_FUNCTION_ARGS)
+gbt_int2_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	int16		query = PG_GETARG_INT16(1);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	int16		query = MDB_GETARG_INT16(1);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
+	/* Oid		subtype = MDB_GETARG_OID(3); */
 	int16KEY   *kkk = (int16KEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_FLOAT8(
+	MDB_RETURN_FLOAT8(
 			gbt_num_distance(&key, (void *) &query, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_int2_union(PG_FUNCTION_ARGS)
+gbt_int2_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	void	   *out = palloc(sizeof(int16KEY));
 
-	*(int *) PG_GETARG_POINTER(1) = sizeof(int16KEY);
-	PG_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
+	*(int *) MDB_GETARG_POINTER(1) = sizeof(int16KEY);
+	MDB_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
 }
 
 
 Datum
-gbt_int2_penalty(PG_FUNCTION_ARGS)
+gbt_int2_penalty(MDB_FUNCTION_ARGS)
 {
-	int16KEY   *origentry = (int16KEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	int16KEY   *newentry = (int16KEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(1))->key);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	int16KEY   *origentry = (int16KEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	int16KEY   *newentry = (int16KEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(1))->key);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 
 	penalty_num(result, origentry->lower, origentry->upper, newentry->lower, newentry->upper);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-gbt_int2_picksplit(PG_FUNCTION_ARGS)
+gbt_int2_picksplit(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(gbt_num_picksplit(
-									(GistEntryVector *) PG_GETARG_POINTER(0),
-									  (GIST_SPLITVEC *) PG_GETARG_POINTER(1),
+	MDB_RETURN_POINTER(gbt_num_picksplit(
+									(GistEntryVector *) MDB_GETARG_POINTER(0),
+									  (GIST_SPLITVEC *) MDB_GETARG_POINTER(1),
 										&tinfo
 										));
 }
 
 Datum
-gbt_int2_same(PG_FUNCTION_ARGS)
+gbt_int2_same(MDB_FUNCTION_ARGS)
 {
-	int16KEY   *b1 = (int16KEY *) PG_GETARG_POINTER(0);
-	int16KEY   *b2 = (int16KEY *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	int16KEY   *b1 = (int16KEY *) MDB_GETARG_POINTER(0);
+	int16KEY   *b2 = (int16KEY *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	*result = gbt_num_same((void *) b1, (void *) b2, &tinfo);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }

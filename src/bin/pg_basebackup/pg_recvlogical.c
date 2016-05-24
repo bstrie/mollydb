@@ -328,7 +328,7 @@ StreamLogicalLog(void)
 			if (strcmp(outfile, "-") == 0)
 				outfd = fileno(stdout);
 			else
-				outfd = open(outfile, O_CREAT | O_APPEND | O_WRONLY | PG_BINARY,
+				outfd = open(outfile, O_CREAT | O_APPEND | O_WRONLY | MDB_BINARY,
 							 S_IRUSR | S_IWUSR);
 			if (outfd == -1)
 			{
@@ -653,7 +653,7 @@ main(int argc, char **argv)
 	char	   *db_name;
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_basebackup"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mdb_basebackup"));
 
 	if (argc > 1)
 	{
@@ -665,7 +665,7 @@ main(int argc, char **argv)
 		else if (strcmp(argv[1], "-V") == 0 ||
 				 strcmp(argv[1], "--version") == 0)
 		{
-			puts("mdb_recvlogical (MollyDB) " PG_VERSION);
+			puts("mdb_recvlogical (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}

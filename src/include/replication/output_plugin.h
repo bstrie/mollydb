@@ -29,7 +29,7 @@ typedef struct OutputPluginOptions
 } OutputPluginOptions;
 
 /*
- * Type of the shared library symbol _PG_output_plugin_init that is looked up
+ * Type of the shared library symbol _MDB_output_plugin_init that is looked up
  * when loading an output plugin shared library.
  */
 typedef void (*LogicalOutputPluginInit) (struct OutputPluginCallbacks *cb);

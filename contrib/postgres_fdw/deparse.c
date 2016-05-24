@@ -2113,7 +2113,7 @@ deparseFuncExpr(FuncExpr *node, deparse_expr_cxt *context)
 	use_variadic = node->funcvariadic;
 
 	/* Print schema name only if it's not mdb_catalog */
-	if (procform->pronamespace != PG_CATALOG_NAMESPACE)
+	if (procform->pronamespace != MDB_CATALOG_NAMESPACE)
 	{
 		const char *schemaname;
 
@@ -2204,7 +2204,7 @@ deparseOperatorName(StringInfo buf, Form_mdb_operator opform)
 	opname = NameStr(opform->oprname);
 
 	/* Print schema name only if it's not mdb_catalog */
-	if (opform->oprnamespace != PG_CATALOG_NAMESPACE)
+	if (opform->oprnamespace != MDB_CATALOG_NAMESPACE)
 	{
 		const char *opnspname;
 

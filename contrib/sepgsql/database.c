@@ -65,8 +65,8 @@ semdb_database_post_create(Oid databaseId, const char *dtemplate)
 	initStringInfo(&audit_name);
 	appendStringInfo(&audit_name, "%s", quote_identifier(dtemplate));
 	semdb_avc_check_perms_label(tcontext,
-								  SEPG_CLASS_DB_DATABASE,
-								  SEPG_DB_DATABASE__GETATTR,
+								  SEMDB_CLASS_DB_DATABASE,
+								  SEMDB_DB_DATABASE__GETATTR,
 								  audit_name.data,
 								  true);
 
@@ -94,7 +94,7 @@ semdb_database_post_create(Oid databaseId, const char *dtemplate)
 
 	ncontext = semdb_compute_create(semdb_get_client_label(),
 									  tcontext,
-									  SEPG_CLASS_DB_DATABASE,
+									  SEMDB_CLASS_DB_DATABASE,
 									  NameStr(datForm->datname));
 
 	/*
@@ -104,8 +104,8 @@ semdb_database_post_create(Oid databaseId, const char *dtemplate)
 	appendStringInfo(&audit_name, "%s",
 					 quote_identifier(NameStr(datForm->datname)));
 	semdb_avc_check_perms_label(ncontext,
-								  SEPG_CLASS_DB_DATABASE,
-								  SEPG_DB_DATABASE__CREATE,
+								  SEMDB_CLASS_DB_DATABASE,
+								  SEMDB_DB_DATABASE__CREATE,
 								  audit_name.data,
 								  true);
 
@@ -145,8 +145,8 @@ semdb_database_drop(Oid databaseId)
 	audit_name = getObjectIdentity(&object);
 
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_DATABASE,
-							SEPG_DB_DATABASE__DROP,
+							SEMDB_CLASS_DB_DATABASE,
+							SEMDB_DB_DATABASE__DROP,
 							audit_name,
 							true);
 	pfree(audit_name);
@@ -172,8 +172,8 @@ semdb_database_setattr(Oid databaseId)
 	audit_name = getObjectIdentity(&object);
 
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_DATABASE,
-							SEPG_DB_DATABASE__SETATTR,
+							SEMDB_CLASS_DB_DATABASE,
+							SEMDB_DB_DATABASE__SETATTR,
 							audit_name,
 							true);
 	pfree(audit_name);
@@ -199,9 +199,9 @@ semdb_database_relabel(Oid databaseId, const char *seclabel)
 	 * check db_database:{setattr relabelfrom} permission
 	 */
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_DATABASE,
-							SEPG_DB_DATABASE__SETATTR |
-							SEPG_DB_DATABASE__RELABELFROM,
+							SEMDB_CLASS_DB_DATABASE,
+							SEMDB_DB_DATABASE__SETATTR |
+							SEMDB_DB_DATABASE__RELABELFROM,
 							audit_name,
 							true);
 
@@ -209,8 +209,8 @@ semdb_database_relabel(Oid databaseId, const char *seclabel)
 	 * check db_database:{relabelto} permission
 	 */
 	semdb_avc_check_perms_label(seclabel,
-								  SEPG_CLASS_DB_DATABASE,
-								  SEPG_DB_DATABASE__RELABELTO,
+								  SEMDB_CLASS_DB_DATABASE,
+								  SEMDB_DB_DATABASE__RELABELTO,
 								  audit_name,
 								  true);
 	pfree(audit_name);

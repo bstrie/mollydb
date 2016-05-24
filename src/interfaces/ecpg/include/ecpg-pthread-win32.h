@@ -2,8 +2,8 @@
 /*
  * pthread mapping macros for win32 native thread implementation
  */
-#ifndef _ECPG_PTHREAD_WIN32_H
-#define _ECPG_PTHREAD_WIN32_H
+#ifndef _ECMDB_PTHREAD_WIN32_H
+#define _ECMDB_PTHREAD_WIN32_H
 
 #ifdef ENABLE_THREAD_SAFETY
 
@@ -55,4 +55,4 @@ void		win32_pthread_once(volatile pthread_once_t *once, void (*fn) (void));
 #endif   /* WIN32 */
 #endif   /* ENABLE_THREAD_SAFETY */
 
-#endif   /* _ECPG_PTHREAD_WIN32_H */
+#endif   /* _ECMDB_PTHREAD_WIN32_H */

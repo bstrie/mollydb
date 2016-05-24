@@ -48,148 +48,148 @@ struct encoding_match
 };
 
 static const struct encoding_match encoding_match_list[] = {
-	{PG_EUC_JP, "EUC-JP"},
-	{PG_EUC_JP, "eucJP"},
-	{PG_EUC_JP, "IBM-eucJP"},
-	{PG_EUC_JP, "sdeckanji"},
-	{PG_EUC_JP, "CP20932"},
+	{MDB_EUC_JP, "EUC-JP"},
+	{MDB_EUC_JP, "eucJP"},
+	{MDB_EUC_JP, "IBM-eucJP"},
+	{MDB_EUC_JP, "sdeckanji"},
+	{MDB_EUC_JP, "CP20932"},
 
-	{PG_EUC_CN, "EUC-CN"},
-	{PG_EUC_CN, "eucCN"},
-	{PG_EUC_CN, "IBM-eucCN"},
-	{PG_EUC_CN, "GB2312"},
-	{PG_EUC_CN, "dechanzi"},
-	{PG_EUC_CN, "CP20936"},
+	{MDB_EUC_CN, "EUC-CN"},
+	{MDB_EUC_CN, "eucCN"},
+	{MDB_EUC_CN, "IBM-eucCN"},
+	{MDB_EUC_CN, "GB2312"},
+	{MDB_EUC_CN, "dechanzi"},
+	{MDB_EUC_CN, "CP20936"},
 
-	{PG_EUC_KR, "EUC-KR"},
-	{PG_EUC_KR, "eucKR"},
-	{PG_EUC_KR, "IBM-eucKR"},
-	{PG_EUC_KR, "deckorean"},
-	{PG_EUC_KR, "5601"},
-	{PG_EUC_KR, "CP51949"},
+	{MDB_EUC_KR, "EUC-KR"},
+	{MDB_EUC_KR, "eucKR"},
+	{MDB_EUC_KR, "IBM-eucKR"},
+	{MDB_EUC_KR, "deckorean"},
+	{MDB_EUC_KR, "5601"},
+	{MDB_EUC_KR, "CP51949"},
 
-	{PG_EUC_TW, "EUC-TW"},
-	{PG_EUC_TW, "eucTW"},
-	{PG_EUC_TW, "IBM-eucTW"},
-	{PG_EUC_TW, "cns11643"},
+	{MDB_EUC_TW, "EUC-TW"},
+	{MDB_EUC_TW, "eucTW"},
+	{MDB_EUC_TW, "IBM-eucTW"},
+	{MDB_EUC_TW, "cns11643"},
 	/* No codepage for EUC-TW ? */
 
-	{PG_UTF8, "UTF-8"},
-	{PG_UTF8, "utf8"},
-	{PG_UTF8, "CP65001"},
+	{MDB_UTF8, "UTF-8"},
+	{MDB_UTF8, "utf8"},
+	{MDB_UTF8, "CP65001"},
 
-	{PG_LATIN1, "ISO-8859-1"},
-	{PG_LATIN1, "ISO8859-1"},
-	{PG_LATIN1, "iso88591"},
-	{PG_LATIN1, "CP28591"},
+	{MDB_LATIN1, "ISO-8859-1"},
+	{MDB_LATIN1, "ISO8859-1"},
+	{MDB_LATIN1, "iso88591"},
+	{MDB_LATIN1, "CP28591"},
 
-	{PG_LATIN2, "ISO-8859-2"},
-	{PG_LATIN2, "ISO8859-2"},
-	{PG_LATIN2, "iso88592"},
-	{PG_LATIN2, "CP28592"},
+	{MDB_LATIN2, "ISO-8859-2"},
+	{MDB_LATIN2, "ISO8859-2"},
+	{MDB_LATIN2, "iso88592"},
+	{MDB_LATIN2, "CP28592"},
 
-	{PG_LATIN3, "ISO-8859-3"},
-	{PG_LATIN3, "ISO8859-3"},
-	{PG_LATIN3, "iso88593"},
-	{PG_LATIN3, "CP28593"},
+	{MDB_LATIN3, "ISO-8859-3"},
+	{MDB_LATIN3, "ISO8859-3"},
+	{MDB_LATIN3, "iso88593"},
+	{MDB_LATIN3, "CP28593"},
 
-	{PG_LATIN4, "ISO-8859-4"},
-	{PG_LATIN4, "ISO8859-4"},
-	{PG_LATIN4, "iso88594"},
-	{PG_LATIN4, "CP28594"},
+	{MDB_LATIN4, "ISO-8859-4"},
+	{MDB_LATIN4, "ISO8859-4"},
+	{MDB_LATIN4, "iso88594"},
+	{MDB_LATIN4, "CP28594"},
 
-	{PG_LATIN5, "ISO-8859-9"},
-	{PG_LATIN5, "ISO8859-9"},
-	{PG_LATIN5, "iso88599"},
-	{PG_LATIN5, "CP28599"},
+	{MDB_LATIN5, "ISO-8859-9"},
+	{MDB_LATIN5, "ISO8859-9"},
+	{MDB_LATIN5, "iso88599"},
+	{MDB_LATIN5, "CP28599"},
 
-	{PG_LATIN6, "ISO-8859-10"},
-	{PG_LATIN6, "ISO8859-10"},
-	{PG_LATIN6, "iso885910"},
+	{MDB_LATIN6, "ISO-8859-10"},
+	{MDB_LATIN6, "ISO8859-10"},
+	{MDB_LATIN6, "iso885910"},
 
-	{PG_LATIN7, "ISO-8859-13"},
-	{PG_LATIN7, "ISO8859-13"},
-	{PG_LATIN7, "iso885913"},
+	{MDB_LATIN7, "ISO-8859-13"},
+	{MDB_LATIN7, "ISO8859-13"},
+	{MDB_LATIN7, "iso885913"},
 
-	{PG_LATIN8, "ISO-8859-14"},
-	{PG_LATIN8, "ISO8859-14"},
-	{PG_LATIN8, "iso885914"},
+	{MDB_LATIN8, "ISO-8859-14"},
+	{MDB_LATIN8, "ISO8859-14"},
+	{MDB_LATIN8, "iso885914"},
 
-	{PG_LATIN9, "ISO-8859-15"},
-	{PG_LATIN9, "ISO8859-15"},
-	{PG_LATIN9, "iso885915"},
-	{PG_LATIN9, "CP28605"},
+	{MDB_LATIN9, "ISO-8859-15"},
+	{MDB_LATIN9, "ISO8859-15"},
+	{MDB_LATIN9, "iso885915"},
+	{MDB_LATIN9, "CP28605"},
 
-	{PG_LATIN10, "ISO-8859-16"},
-	{PG_LATIN10, "ISO8859-16"},
-	{PG_LATIN10, "iso885916"},
+	{MDB_LATIN10, "ISO-8859-16"},
+	{MDB_LATIN10, "ISO8859-16"},
+	{MDB_LATIN10, "iso885916"},
 
-	{PG_KOI8R, "KOI8-R"},
-	{PG_KOI8R, "CP20866"},
+	{MDB_KOI8R, "KOI8-R"},
+	{MDB_KOI8R, "CP20866"},
 
-	{PG_KOI8U, "KOI8-U"},
-	{PG_KOI8U, "CP21866"},
+	{MDB_KOI8U, "KOI8-U"},
+	{MDB_KOI8U, "CP21866"},
 
-	{PG_WIN866, "CP866"},
-	{PG_WIN874, "CP874"},
-	{PG_WIN1250, "CP1250"},
-	{PG_WIN1251, "CP1251"},
-	{PG_WIN1251, "ansi-1251"},
-	{PG_WIN1252, "CP1252"},
-	{PG_WIN1253, "CP1253"},
-	{PG_WIN1254, "CP1254"},
-	{PG_WIN1255, "CP1255"},
-	{PG_WIN1256, "CP1256"},
-	{PG_WIN1257, "CP1257"},
-	{PG_WIN1258, "CP1258"},
+	{MDB_WIN866, "CP866"},
+	{MDB_WIN874, "CP874"},
+	{MDB_WIN1250, "CP1250"},
+	{MDB_WIN1251, "CP1251"},
+	{MDB_WIN1251, "ansi-1251"},
+	{MDB_WIN1252, "CP1252"},
+	{MDB_WIN1253, "CP1253"},
+	{MDB_WIN1254, "CP1254"},
+	{MDB_WIN1255, "CP1255"},
+	{MDB_WIN1256, "CP1256"},
+	{MDB_WIN1257, "CP1257"},
+	{MDB_WIN1258, "CP1258"},
 
-	{PG_ISO_8859_5, "ISO-8859-5"},
-	{PG_ISO_8859_5, "ISO8859-5"},
-	{PG_ISO_8859_5, "iso88595"},
-	{PG_ISO_8859_5, "CP28595"},
+	{MDB_ISO_8859_5, "ISO-8859-5"},
+	{MDB_ISO_8859_5, "ISO8859-5"},
+	{MDB_ISO_8859_5, "iso88595"},
+	{MDB_ISO_8859_5, "CP28595"},
 
-	{PG_ISO_8859_6, "ISO-8859-6"},
-	{PG_ISO_8859_6, "ISO8859-6"},
-	{PG_ISO_8859_6, "iso88596"},
-	{PG_ISO_8859_6, "CP28596"},
+	{MDB_ISO_8859_6, "ISO-8859-6"},
+	{MDB_ISO_8859_6, "ISO8859-6"},
+	{MDB_ISO_8859_6, "iso88596"},
+	{MDB_ISO_8859_6, "CP28596"},
 
-	{PG_ISO_8859_7, "ISO-8859-7"},
-	{PG_ISO_8859_7, "ISO8859-7"},
-	{PG_ISO_8859_7, "iso88597"},
-	{PG_ISO_8859_7, "CP28597"},
+	{MDB_ISO_8859_7, "ISO-8859-7"},
+	{MDB_ISO_8859_7, "ISO8859-7"},
+	{MDB_ISO_8859_7, "iso88597"},
+	{MDB_ISO_8859_7, "CP28597"},
 
-	{PG_ISO_8859_8, "ISO-8859-8"},
-	{PG_ISO_8859_8, "ISO8859-8"},
-	{PG_ISO_8859_8, "iso88598"},
-	{PG_ISO_8859_8, "CP28598"},
+	{MDB_ISO_8859_8, "ISO-8859-8"},
+	{MDB_ISO_8859_8, "ISO8859-8"},
+	{MDB_ISO_8859_8, "iso88598"},
+	{MDB_ISO_8859_8, "CP28598"},
 
-	{PG_SJIS, "SJIS"},
-	{PG_SJIS, "PCK"},
-	{PG_SJIS, "CP932"},
-	{PG_SJIS, "SHIFT_JIS"},
+	{MDB_SJIS, "SJIS"},
+	{MDB_SJIS, "PCK"},
+	{MDB_SJIS, "CP932"},
+	{MDB_SJIS, "SHIFT_JIS"},
 
-	{PG_BIG5, "BIG5"},
-	{PG_BIG5, "BIG5HKSCS"},
-	{PG_BIG5, "Big5-HKSCS"},
-	{PG_BIG5, "CP950"},
+	{MDB_BIG5, "BIG5"},
+	{MDB_BIG5, "BIG5HKSCS"},
+	{MDB_BIG5, "Big5-HKSCS"},
+	{MDB_BIG5, "CP950"},
 
-	{PG_GBK, "GBK"},
-	{PG_GBK, "CP936"},
+	{MDB_GBK, "GBK"},
+	{MDB_GBK, "CP936"},
 
-	{PG_UHC, "UHC"},
-	{PG_UHC, "CP949"},
+	{MDB_UHC, "UHC"},
+	{MDB_UHC, "CP949"},
 
-	{PG_JOHAB, "JOHAB"},
-	{PG_JOHAB, "CP1361"},
+	{MDB_JOHAB, "JOHAB"},
+	{MDB_JOHAB, "CP1361"},
 
-	{PG_GB18030, "GB18030"},
-	{PG_GB18030, "CP54936"},
+	{MDB_GB18030, "GB18030"},
+	{MDB_GB18030, "CP54936"},
 
-	{PG_SHIFT_JIS_2004, "SJIS_2004"},
+	{MDB_SHIFT_JIS_2004, "SJIS_2004"},
 
-	{PG_SQL_ASCII, "US-ASCII"},
+	{MDB_SQL_ASCII, "US-ASCII"},
 
-	{PG_SQL_ASCII, NULL}		/* end marker */
+	{MDB_SQL_ASCII, NULL}		/* end marker */
 };
 
 #ifdef WIN32
@@ -308,7 +308,7 @@ mdb_codepage_to_encoding(UINT cp)
  * Pass in NULL to get the encoding for the current locale setting.
  * Pass "" to get the encoding selected by the server's environment.
  *
- * If the result is PG_SQL_ASCII, callers should treat it as being compatible
+ * If the result is MDB_SQL_ASCII, callers should treat it as being compatible
  * with any desired encoding.
  *
  * If running in the backend and write_message is false, this function must
@@ -329,7 +329,7 @@ mdb_get_encoding_from_locale(const char *ctype, bool write_message)
 		/* If locale is C or POSIX, we can allow all encodings */
 		if (mdb_strcasecmp(ctype, "C") == 0 ||
 			mdb_strcasecmp(ctype, "POSIX") == 0)
-			return PG_SQL_ASCII;
+			return MDB_SQL_ASCII;
 
 		save = setlocale(LC_CTYPE, NULL);
 		if (!save)
@@ -367,7 +367,7 @@ mdb_get_encoding_from_locale(const char *ctype, bool write_message)
 		/* If locale is C or POSIX, we can allow all encodings */
 		if (mdb_strcasecmp(ctype, "C") == 0 ||
 			mdb_strcasecmp(ctype, "POSIX") == 0)
-			return PG_SQL_ASCII;
+			return MDB_SQL_ASCII;
 
 #ifndef WIN32
 		sys = nl_langinfo(CODESET);
@@ -402,7 +402,7 @@ mdb_get_encoding_from_locale(const char *ctype, bool write_message)
 	if (strlen(sys) == 0)
 	{
 		free(sys);
-		return PG_UTF8;
+		return MDB_UTF8;
 	}
 #endif
 
@@ -440,7 +440,7 @@ mdb_get_encoding_from_locale(const char *ctype, bool write_message)
 int
 mdb_get_encoding_from_locale(const char *ctype, bool write_message)
 {
-	return PG_SQL_ASCII;
+	return MDB_SQL_ASCII;
 }
 
 #endif   /* (HAVE_LANGINFO_H && CODESET) || WIN32 */

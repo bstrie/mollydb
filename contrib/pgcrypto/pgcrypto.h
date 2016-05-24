@@ -29,22 +29,22 @@
  * contrib/pgcrypto/pgcrypto.h
  */
 
-#ifndef _PG_CRYPTO_H
-#define _PG_CRYPTO_H
+#ifndef _MDB_CRYPTO_H
+#define _MDB_CRYPTO_H
 
 #include "fmgr.h"
 
 /* exported functions */
-Datum		mdb_digest(PG_FUNCTION_ARGS);
-Datum		mdb_hmac(PG_FUNCTION_ARGS);
-Datum		mdb_gen_salt(PG_FUNCTION_ARGS);
-Datum		mdb_gen_salt_rounds(PG_FUNCTION_ARGS);
-Datum		mdb_crypt(PG_FUNCTION_ARGS);
-Datum		mdb_encrypt(PG_FUNCTION_ARGS);
-Datum		mdb_decrypt(PG_FUNCTION_ARGS);
-Datum		mdb_encrypt_iv(PG_FUNCTION_ARGS);
-Datum		mdb_decrypt_iv(PG_FUNCTION_ARGS);
-Datum		mdb_random_bytes(PG_FUNCTION_ARGS);
-Datum		mdb_random_uuid(PG_FUNCTION_ARGS);
+Datum		mdb_digest(MDB_FUNCTION_ARGS);
+Datum		mdb_hmac(MDB_FUNCTION_ARGS);
+Datum		mdb_gen_salt(MDB_FUNCTION_ARGS);
+Datum		mdb_gen_salt_rounds(MDB_FUNCTION_ARGS);
+Datum		mdb_crypt(MDB_FUNCTION_ARGS);
+Datum		mdb_encrypt(MDB_FUNCTION_ARGS);
+Datum		mdb_decrypt(MDB_FUNCTION_ARGS);
+Datum		mdb_encrypt_iv(MDB_FUNCTION_ARGS);
+Datum		mdb_decrypt_iv(MDB_FUNCTION_ARGS);
+Datum		mdb_random_bytes(MDB_FUNCTION_ARGS);
+Datum		mdb_random_uuid(MDB_FUNCTION_ARGS);
 
 #endif

@@ -40,8 +40,8 @@ enum gbtree_type
  * Generic btree functions
  */
 
-Datum		gbtreekey_in(PG_FUNCTION_ARGS);
+Datum		gbtreekey_in(MDB_FUNCTION_ARGS);
 
-Datum		gbtreekey_out(PG_FUNCTION_ARGS);
+Datum		gbtreekey_out(MDB_FUNCTION_ARGS);
 
 #endif

@@ -163,8 +163,8 @@ typedef struct BloomScanOpaqueData
 typedef BloomScanOpaqueData *BloomScanOpaque;
 
 /* blutils.c */
-extern void _PG_init(void);
-extern Datum blhandler(PG_FUNCTION_ARGS);
+extern void _MDB_init(void);
+extern Datum blhandler(MDB_FUNCTION_ARGS);
 extern void initBloomState(BloomState * state, Relation index);
 extern void BloomInitMetapage(Relation index);
 extern void BloomInitPage(Page page, uint16 flags);

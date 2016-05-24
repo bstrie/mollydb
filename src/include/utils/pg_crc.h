@@ -31,8 +31,8 @@
  *
  * src/include/utils/mdb_crc.h
  */
-#ifndef PG_CRC_H
-#define PG_CRC_H
+#ifndef MDB_CRC_H
+#define MDB_CRC_H
 
 typedef uint32 mdb_crc32;
 
@@ -104,4 +104,4 @@ do {															  \
  */
 extern PGDLLIMPORT const uint32 mdb_crc32_table[256];
 
-#endif   /* PG_CRC_H */
+#endif   /* MDB_CRC_H */

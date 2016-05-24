@@ -11,8 +11,8 @@
 #include "ltree.h"
 #include "miscadmin.h"
 
-PG_FUNCTION_INFO_V1(ltxtq_in);
-PG_FUNCTION_INFO_V1(ltxtq_out);
+MDB_FUNCTION_INFO_V1(ltxtq_in);
+MDB_FUNCTION_INFO_V1(ltxtq_out);
 
 
 /* parser's states */
@@ -383,9 +383,9 @@ queryin(char *buf)
  * in without morphology
  */
 Datum
-ltxtq_in(PG_FUNCTION_ARGS)
+ltxtq_in(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(queryin((char *) PG_GETARG_POINTER(0)));
+	MDB_RETURN_POINTER(queryin((char *) MDB_GETARG_POINTER(0)));
 }
 
 /*
@@ -513,9 +513,9 @@ infix(INFIX *in, bool first)
 }
 
 Datum
-ltxtq_out(PG_FUNCTION_ARGS)
+ltxtq_out(MDB_FUNCTION_ARGS)
 {
-	ltxtquery  *query = PG_GETARG_LTXTQUERY(0);
+	ltxtquery  *query = MDB_GETARG_LTXTQUERY(0);
 	INFIX		nrm;
 
 	if (query->size == 0)
@@ -531,6 +531,6 @@ ltxtq_out(PG_FUNCTION_ARGS)
 	nrm.op = GETOPERAND(query);
 	infix(&nrm, true);
 
-	PG_FREE_IF_COPY(query, 0);
-	PG_RETURN_POINTER(nrm.buf);
+	MDB_FREE_IF_COPY(query, 0);
+	MDB_RETURN_POINTER(nrm.buf);
 }

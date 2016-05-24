@@ -96,7 +96,7 @@ tt_process_call(FuncCallContext *funcctx)
 }
 
 Datum
-ts_token_type_byid(PG_FUNCTION_ARGS)
+ts_token_type_byid(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Datum		result;
@@ -104,7 +104,7 @@ ts_token_type_byid(PG_FUNCTION_ARGS)
 	if (SRF_IS_FIRSTCALL())
 	{
 		funcctx = SRF_FIRSTCALL_INIT();
-		tt_setup_firstcall(funcctx, PG_GETARG_OID(0));
+		tt_setup_firstcall(funcctx, MDB_GETARG_OID(0));
 	}
 
 	funcctx = SRF_PERCALL_SETUP();
@@ -115,14 +115,14 @@ ts_token_type_byid(PG_FUNCTION_ARGS)
 }
 
 Datum
-ts_token_type_byname(PG_FUNCTION_ARGS)
+ts_token_type_byname(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Datum		result;
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		text	   *prsname = PG_GETARG_TEXT_P(0);
+		text	   *prsname = MDB_GETARG_TEXT_P(0);
 		Oid			prsId;
 
 		funcctx = SRF_FIRSTCALL_INIT();
@@ -240,18 +240,18 @@ prs_process_call(FuncCallContext *funcctx)
 }
 
 Datum
-ts_parse_byid(PG_FUNCTION_ARGS)
+ts_parse_byid(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Datum		result;
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		text	   *txt = PG_GETARG_TEXT_P(1);
+		text	   *txt = MDB_GETARG_TEXT_P(1);
 
 		funcctx = SRF_FIRSTCALL_INIT();
-		prs_setup_firstcall(funcctx, PG_GETARG_OID(0), txt);
-		PG_FREE_IF_COPY(txt, 1);
+		prs_setup_firstcall(funcctx, MDB_GETARG_OID(0), txt);
+		MDB_FREE_IF_COPY(txt, 1);
 	}
 
 	funcctx = SRF_PERCALL_SETUP();
@@ -262,15 +262,15 @@ ts_parse_byid(PG_FUNCTION_ARGS)
 }
 
 Datum
-ts_parse_byname(PG_FUNCTION_ARGS)
+ts_parse_byname(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Datum		result;
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		text	   *prsname = PG_GETARG_TEXT_P(0);
-		text	   *txt = PG_GETARG_TEXT_P(1);
+		text	   *prsname = MDB_GETARG_TEXT_P(0);
+		text	   *txt = MDB_GETARG_TEXT_P(1);
 		Oid			prsId;
 
 		funcctx = SRF_FIRSTCALL_INIT();
@@ -286,18 +286,18 @@ ts_parse_byname(PG_FUNCTION_ARGS)
 }
 
 Datum
-ts_headline_byid_opt(PG_FUNCTION_ARGS)
+ts_headline_byid_opt(MDB_FUNCTION_ARGS)
 {
-	text	   *in = PG_GETARG_TEXT_P(1);
-	TSQuery		query = PG_GETARG_TSQUERY(2);
-	text	   *opt = (PG_NARGS() > 3 && PG_GETARG_POINTER(3)) ? PG_GETARG_TEXT_P(3) : NULL;
+	text	   *in = MDB_GETARG_TEXT_P(1);
+	TSQuery		query = MDB_GETARG_TSQUERY(2);
+	text	   *opt = (MDB_NARGS() > 3 && MDB_GETARG_POINTER(3)) ? MDB_GETARG_TEXT_P(3) : NULL;
 	HeadlineParsedText prs;
 	List	   *prsoptions;
 	text	   *out;
 	TSConfigCacheEntry *cfg;
 	TSParserCacheEntry *prsobj;
 
-	cfg = lookup_ts_config_cache(PG_GETARG_OID(0));
+	cfg = lookup_ts_config_cache(MDB_GETARG_OID(0));
 	prsobj = lookup_ts_parser_cache(cfg->prsId);
 
 	if (!OidIsValid(prsobj->headlineOid))
@@ -323,41 +323,41 @@ ts_headline_byid_opt(PG_FUNCTION_ARGS)
 
 	out = generateHeadline(&prs);
 
-	PG_FREE_IF_COPY(in, 1);
-	PG_FREE_IF_COPY(query, 2);
+	MDB_FREE_IF_COPY(in, 1);
+	MDB_FREE_IF_COPY(query, 2);
 	if (opt)
-		PG_FREE_IF_COPY(opt, 3);
+		MDB_FREE_IF_COPY(opt, 3);
 	pfree(prs.words);
 	pfree(prs.startsel);
 	pfree(prs.stopsel);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 Datum
-ts_headline_byid(PG_FUNCTION_ARGS)
+ts_headline_byid(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall3(ts_headline_byid_opt,
-										PG_GETARG_DATUM(0),
-										PG_GETARG_DATUM(1),
-										PG_GETARG_DATUM(2)));
+	MDB_RETURN_DATUM(DirectFunctionCall3(ts_headline_byid_opt,
+										MDB_GETARG_DATUM(0),
+										MDB_GETARG_DATUM(1),
+										MDB_GETARG_DATUM(2)));
 }
 
 Datum
-ts_headline(PG_FUNCTION_ARGS)
+ts_headline(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall3(ts_headline_byid_opt,
+	MDB_RETURN_DATUM(DirectFunctionCall3(ts_headline_byid_opt,
 								  ObjectIdGetDatum(getTSCurrentConfig(true)),
-										PG_GETARG_DATUM(0),
-										PG_GETARG_DATUM(1)));
+										MDB_GETARG_DATUM(0),
+										MDB_GETARG_DATUM(1)));
 }
 
 Datum
-ts_headline_opt(PG_FUNCTION_ARGS)
+ts_headline_opt(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall4(ts_headline_byid_opt,
+	MDB_RETURN_DATUM(DirectFunctionCall4(ts_headline_byid_opt,
 								  ObjectIdGetDatum(getTSCurrentConfig(true)),
-										PG_GETARG_DATUM(0),
-										PG_GETARG_DATUM(1),
-										PG_GETARG_DATUM(2)));
+										MDB_GETARG_DATUM(0),
+										MDB_GETARG_DATUM(1),
+										MDB_GETARG_DATUM(2)));
 }

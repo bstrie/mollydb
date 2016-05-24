@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_EVENT_TRIGGER_H
-#define PG_EVENT_TRIGGER_H
+#ifndef MDB_EVENT_TRIGGER_H
+#define MDB_EVENT_TRIGGER_H
 
 #include "catalog/genbki.h"
 
@@ -61,4 +61,4 @@ typedef FormData_mdb_event_trigger *Form_mdb_event_trigger;
 #define Anum_mdb_event_trigger_evtenabled		5
 #define Anum_mdb_event_trigger_evttags			6
 
-#endif   /* PG_EVENT_TRIGGER_H */
+#endif   /* MDB_EVENT_TRIGGER_H */

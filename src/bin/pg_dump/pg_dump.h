@@ -11,8 +11,8 @@
  *-------------------------------------------------------------------------
  */
 
-#ifndef PG_DUMP_H
-#define PG_DUMP_H
+#ifndef MDB_DUMP_H
+#define MDB_DUMP_H
 
 #include "mdb_backup.h"
 
@@ -650,4 +650,4 @@ extern void processExtensionTables(Archive *fout, ExtensionInfo extinfo[],
 extern EventTriggerInfo *getEventTriggers(Archive *fout, int *numEventTriggers);
 extern void getPolicies(Archive *fout, TableInfo tblinfo[], int numTables);
 
-#endif   /* PG_DUMP_H */
+#endif   /* MDB_DUMP_H */

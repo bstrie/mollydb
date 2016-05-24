@@ -19,7 +19,7 @@
 #include "storage/spin.h"
 
 /* Identifier for shared memory segments used by this extension. */
-#define		PG_TEST_SHM_MQ_MAGIC		0x79fb2447
+#define		MDB_TEST_SHM_MQ_MAGIC		0x79fb2447
 
 /*
  * This structure is stored in the dynamic shared memory segment.  We use

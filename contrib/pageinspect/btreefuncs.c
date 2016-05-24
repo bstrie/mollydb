@@ -36,9 +36,9 @@
 #include "utils/rel.h"
 
 
-PG_FUNCTION_INFO_V1(bt_metap);
-PG_FUNCTION_INFO_V1(bt_page_items);
-PG_FUNCTION_INFO_V1(bt_page_stats);
+MDB_FUNCTION_INFO_V1(bt_metap);
+MDB_FUNCTION_INFO_V1(bt_page_items);
+MDB_FUNCTION_INFO_V1(bt_page_stats);
 
 #define IS_INDEX(r) ((r)->rd_rel->relkind == RELKIND_INDEX)
 #define IS_BTREE(r) ((r)->rd_rel->relam == BTREE_AM_OID)
@@ -154,10 +154,10 @@ GetBTPageStatistics(BlockNumber blkno, Buffer buffer, BTPageStat *stat)
  * -----------------------------------------------
  */
 Datum
-bt_page_stats(PG_FUNCTION_ARGS)
+bt_page_stats(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
-	uint32		blkno = PG_GETARG_UINT32(1);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
+	uint32		blkno = MDB_GETARG_UINT32(1);
 	Buffer		buffer;
 	Relation	rel;
 	RangeVar   *relrv;
@@ -229,7 +229,7 @@ bt_page_stats(PG_FUNCTION_ARGS)
 
 	result = HeapTupleGetDatum(tuple);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*-------------------------------------------------------
@@ -251,10 +251,10 @@ struct user_args
 };
 
 Datum
-bt_page_items(PG_FUNCTION_ARGS)
+bt_page_items(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
-	uint32		blkno = PG_GETARG_UINT32(1);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
+	uint32		blkno = MDB_GETARG_UINT32(1);
 	Datum		result;
 	char	   *values[6];
 	HeapTuple	tuple;
@@ -403,9 +403,9 @@ bt_page_items(PG_FUNCTION_ARGS)
  * ------------------------------------------------
  */
 Datum
-bt_metap(PG_FUNCTION_ARGS)
+bt_metap(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
 	Datum		result;
 	Relation	rel;
 	RangeVar   *relrv;
@@ -465,5 +465,5 @@ bt_metap(PG_FUNCTION_ARGS)
 	UnlockReleaseBuffer(buffer);
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }

@@ -34,7 +34,7 @@
 #include "utils/typcache.h"
 
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 #define HAVE_TCL_VERSION(maj,min) \
 	((TCL_MAJOR_VERSION > maj) || \
@@ -52,7 +52,7 @@ PG_MODULE_MAGIC;
 
 /* define our text domain for translations */
 #undef TEXTDOMAIN
-#define TEXTDOMAIN PG_TEXTDOMAIN("pltcl")
+#define TEXTDOMAIN MDB_TEXTDOMAIN("pltcl")
 
 
 /*
@@ -68,13 +68,13 @@ PG_MODULE_MAGIC;
 static inline char *
 utf_u2e(const char *src)
 {
-	return mdb_any_to_server(src, strlen(src), PG_UTF8);
+	return mdb_any_to_server(src, strlen(src), MDB_UTF8);
 }
 
 static inline char *
 utf_e2u(const char *src)
 {
-	return mdb_server_to_any(src, strlen(src), PG_UTF8);
+	return mdb_server_to_any(src, strlen(src), MDB_UTF8);
 }
 
 #define UTF_BEGIN \
@@ -205,18 +205,18 @@ static const TclExceptionNameMap exception_name_map[] = {
 /**********************************************************************
  * Forward declarations
  **********************************************************************/
-void		_PG_init(void);
+void		_MDB_init(void);
 
 static void pltcl_init_interp(pltcl_interp_desc *interp_desc, bool pltrusted);
 static pltcl_interp_desc *pltcl_fetch_interp(bool pltrusted);
 static void pltcl_init_load_unknown(Tcl_Interp *interp);
 
-static Datum pltcl_handler(PG_FUNCTION_ARGS, bool pltrusted);
+static Datum pltcl_handler(MDB_FUNCTION_ARGS, bool pltrusted);
 
-static Datum pltcl_func_handler(PG_FUNCTION_ARGS, bool pltrusted);
+static Datum pltcl_func_handler(MDB_FUNCTION_ARGS, bool pltrusted);
 
-static HeapTuple pltcl_trigger_handler(PG_FUNCTION_ARGS, bool pltrusted);
-static void pltcl_event_trigger_handler(PG_FUNCTION_ARGS, bool pltrusted);
+static HeapTuple pltcl_trigger_handler(MDB_FUNCTION_ARGS, bool pltrusted);
+static void pltcl_event_trigger_handler(MDB_FUNCTION_ARGS, bool pltrusted);
 
 static void throw_tcl_error(Tcl_Interp *interp, const char *proname);
 
@@ -330,7 +330,7 @@ perm_fmgr_info(Oid functionId, FmgrInfo *finfo)
 }
 
 /*
- * _PG_init()			- library load-time initialization
+ * _MDB_init()			- library load-time initialization
  *
  * DO NOT make this static nor change its name!
  *
@@ -338,7 +338,7 @@ perm_fmgr_info(Oid functionId, FmgrInfo *finfo)
  * in case the pltcl library is preloaded in the postmaster.
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	Tcl_NotifierProcs notifier;
 	HASHCTL		hash_ctl;
@@ -608,11 +608,11 @@ pltcl_init_load_unknown(Tcl_Interp *interp)
  *				  call this function for execution of
  *				  PL/Tcl procedures.
  **********************************************************************/
-PG_FUNCTION_INFO_V1(pltcl_call_handler);
+MDB_FUNCTION_INFO_V1(pltcl_call_handler);
 
 /* keep non-static */
 Datum
-pltcl_call_handler(PG_FUNCTION_ARGS)
+pltcl_call_handler(MDB_FUNCTION_ARGS)
 {
 	return pltcl_handler(fcinfo, true);
 }
@@ -620,18 +620,18 @@ pltcl_call_handler(PG_FUNCTION_ARGS)
 /*
  * Alternative handler for unsafe functions
  */
-PG_FUNCTION_INFO_V1(pltclu_call_handler);
+MDB_FUNCTION_INFO_V1(pltclu_call_handler);
 
 /* keep non-static */
 Datum
-pltclu_call_handler(PG_FUNCTION_ARGS)
+pltclu_call_handler(MDB_FUNCTION_ARGS)
 {
 	return pltcl_handler(fcinfo, false);
 }
 
 
 static Datum
-pltcl_handler(PG_FUNCTION_ARGS, bool pltrusted)
+pltcl_handler(MDB_FUNCTION_ARGS, bool pltrusted)
 {
 	Datum		retval;
 	FunctionCallInfo save_fcinfo;
@@ -643,7 +643,7 @@ pltcl_handler(PG_FUNCTION_ARGS, bool pltrusted)
 	save_fcinfo = pltcl_current_fcinfo;
 	save_prodesc = pltcl_current_prodesc;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/*
 		 * Determine if called as function or trigger and call appropriate
@@ -666,13 +666,13 @@ pltcl_handler(PG_FUNCTION_ARGS, bool pltrusted)
 			retval = pltcl_func_handler(fcinfo, pltrusted);
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		pltcl_current_fcinfo = save_fcinfo;
 		pltcl_current_prodesc = save_prodesc;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	pltcl_current_fcinfo = save_fcinfo;
 	pltcl_current_prodesc = save_prodesc;
@@ -685,7 +685,7 @@ pltcl_handler(PG_FUNCTION_ARGS, bool pltrusted)
  * pltcl_func_handler()		- Handler for regular function calls
  **********************************************************************/
 static Datum
-pltcl_func_handler(PG_FUNCTION_ARGS, bool pltrusted)
+pltcl_func_handler(MDB_FUNCTION_ARGS, bool pltrusted)
 {
 	pltcl_proc_desc *prodesc;
 	Tcl_Interp *volatile interp;
@@ -720,7 +720,7 @@ pltcl_func_handler(PG_FUNCTION_ARGS, bool pltrusted)
 	/************************************************************
 	 * Add all call arguments to the command
 	 ************************************************************/
-	PG_TRY();
+	MDB_TRY();
 	{
 		for (i = 0; i < prodesc->nargs; i++)
 		{
@@ -778,13 +778,13 @@ pltcl_func_handler(PG_FUNCTION_ARGS, bool pltrusted)
 			}
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Release refcount to free tcl_cmd */
 		Tcl_DecrRefCount(tcl_cmd);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/************************************************************
 	 * Call the Tcl function
@@ -833,7 +833,7 @@ pltcl_func_handler(PG_FUNCTION_ARGS, bool pltrusted)
  * pltcl_trigger_handler()	- Handler for trigger calls
  **********************************************************************/
 static HeapTuple
-pltcl_trigger_handler(PG_FUNCTION_ARGS, bool pltrusted)
+pltcl_trigger_handler(MDB_FUNCTION_ARGS, bool pltrusted)
 {
 	pltcl_proc_desc *prodesc;
 	Tcl_Interp *volatile interp;
@@ -876,7 +876,7 @@ pltcl_trigger_handler(PG_FUNCTION_ARGS, bool pltrusted)
 	tcl_cmd = Tcl_NewObj();
 	Tcl_IncrRefCount(tcl_cmd);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/* The procedure name (note this is all ASCII, so no utf_e2u) */
 		Tcl_ListObjAppendElement(NULL, tcl_cmd,
@@ -1016,12 +1016,12 @@ pltcl_trigger_handler(PG_FUNCTION_ARGS, bool pltrusted)
 			 Tcl_NewStringObj(utf_e2u(trigdata->tg_trigger->tgargs[i]), -1));
 
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		Tcl_DecrRefCount(tcl_cmd);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/************************************************************
 	 * Call the Tcl function
@@ -1066,7 +1066,7 @@ pltcl_trigger_handler(PG_FUNCTION_ARGS, bool pltrusted)
 						utf_u2e(Tcl_GetStringResult(interp)))));
 
 	/* Use a TRY to ensure ret_values will get freed */
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (ret_numvals % 2 != 0)
 			ereport(ERROR,
@@ -1148,12 +1148,12 @@ pltcl_trigger_handler(PG_FUNCTION_ARGS, bool pltrusted)
 		if (rettup == NULL)
 			elog(ERROR, "SPI_modifytuple() failed - RC = %d", SPI_result);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ckfree((char *) ret_values);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	ckfree((char *) ret_values);
 
 	return rettup;
@@ -1163,7 +1163,7 @@ pltcl_trigger_handler(PG_FUNCTION_ARGS, bool pltrusted)
  * pltcl_event_trigger_handler()	- Handler for event trigger calls
  **********************************************************************/
 static void
-pltcl_event_trigger_handler(PG_FUNCTION_ARGS, bool pltrusted)
+pltcl_event_trigger_handler(MDB_FUNCTION_ARGS, bool pltrusted)
 {
 	pltcl_proc_desc *prodesc;
 	Tcl_Interp *volatile interp;
@@ -1647,7 +1647,7 @@ pltcl_elog(ClientData cdata, Tcl_Interp *interp,
 	 * back to us at all.
 	 */
 	oldcontext = CurrentMemoryContext;
-	PG_TRY();
+	MDB_TRY();
 	{
 		UTF_BEGIN;
 		ereport(level,
@@ -1655,7 +1655,7 @@ pltcl_elog(ClientData cdata, Tcl_Interp *interp,
 				 errmsg("%s", UTF_U2E(Tcl_GetString(objv[2])))));
 		UTF_END;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *edata;
 
@@ -1673,7 +1673,7 @@ pltcl_elog(ClientData cdata, Tcl_Interp *interp,
 
 		return TCL_ERROR;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return TCL_OK;
 }
@@ -1691,7 +1691,7 @@ pltcl_construct_errorCode(Tcl_Interp *interp, ErrorData *edata)
 	Tcl_ListObjAppendElement(interp, obj,
 							 Tcl_NewStringObj("POSTGRES", -1));
 	Tcl_ListObjAppendElement(interp, obj,
-							 Tcl_NewStringObj(PG_VERSION, -1));
+							 Tcl_NewStringObj(MDB_VERSION, -1));
 	Tcl_ListObjAppendElement(interp, obj,
 							 Tcl_NewStringObj("SQLSTATE", -1));
 	Tcl_ListObjAppendElement(interp, obj,
@@ -1946,7 +1946,7 @@ pltcl_argisnull(ClientData cdata, Tcl_Interp *interp,
 	/************************************************************
 	 * Get the requested NULL state
 	 ************************************************************/
-	Tcl_SetObjResult(interp, Tcl_NewBooleanObj(PG_ARGISNULL(argno)));
+	Tcl_SetObjResult(interp, Tcl_NewBooleanObj(MDB_ARGISNULL(argno)));
 	return TCL_OK;
 }
 
@@ -1999,17 +1999,17 @@ pltcl_returnnull(ClientData cdata, Tcl_Interp *interp,
  *
  *	...
  *	pltcl_subtrans_begin(oldcontext, oldowner);
- *	PG_TRY();
+ *	MDB_TRY();
  *	{
  *		do something risky;
  *		pltcl_subtrans_commit(oldcontext, oldowner);
  *	}
- *	PG_CATCH();
+ *	MDB_CATCH();
  *	{
  *		pltcl_subtrans_abort(interp, oldcontext, oldowner);
  *		return TCL_ERROR;
  *	}
- *	PG_END_TRY();
+ *	MDB_END_TRY();
  *	return TCL_OK;
  *----------
  */
@@ -2151,7 +2151,7 @@ pltcl_SPI_execute(ClientData cdata, Tcl_Interp *interp,
 
 	pltcl_subtrans_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		UTF_BEGIN;
 		spi_rc = SPI_execute(UTF_U2E(Tcl_GetString(objv[query_idx])),
@@ -2167,12 +2167,12 @@ pltcl_SPI_execute(ClientData cdata, Tcl_Interp *interp,
 
 		pltcl_subtrans_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		pltcl_subtrans_abort(interp, oldcontext, oldowner);
 		return TCL_ERROR;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return my_rc;
 }
@@ -2350,7 +2350,7 @@ pltcl_SPI_prepare(ClientData cdata, Tcl_Interp *interp,
 
 	pltcl_subtrans_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/************************************************************
 		 * Resolve argument type names and then look them up by oid
@@ -2393,7 +2393,7 @@ pltcl_SPI_prepare(ClientData cdata, Tcl_Interp *interp,
 
 		pltcl_subtrans_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		pltcl_subtrans_abort(interp, oldcontext, oldowner);
 
@@ -2401,7 +2401,7 @@ pltcl_SPI_prepare(ClientData cdata, Tcl_Interp *interp,
 
 		return TCL_ERROR;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/************************************************************
 	 * Insert a hashtable entry for the plan and return
@@ -2579,7 +2579,7 @@ pltcl_SPI_execute_plan(ClientData cdata, Tcl_Interp *interp,
 
 	pltcl_subtrans_begin(oldcontext, oldowner);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/************************************************************
 		 * Setup the value array for SPI_execute_plan() using
@@ -2622,12 +2622,12 @@ pltcl_SPI_execute_plan(ClientData cdata, Tcl_Interp *interp,
 
 		pltcl_subtrans_commit(oldcontext, oldowner);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		pltcl_subtrans_abort(interp, oldcontext, oldowner);
 		return TCL_ERROR;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return my_rc;
 }

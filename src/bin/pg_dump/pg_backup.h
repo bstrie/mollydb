@@ -20,8 +20,8 @@
  *-------------------------------------------------------------------------
  */
 
-#ifndef PG_BACKUP_H
-#define PG_BACKUP_H
+#ifndef MDB_BACKUP_H
+#define MDB_BACKUP_H
 
 #include "fe_utils/simple_list.h"
 #include "libpq-fe.h"
@@ -288,4 +288,4 @@ extern int	archprintf(Archive *AH, const char *fmt,...) mdb_attribute_printf(2, 
 #define appendStringLiteralAH(buf,str,AH) \
 	appendStringLiteral(buf, str, (AH)->encoding, (AH)->std_strings)
 
-#endif   /* PG_BACKUP_H */
+#endif   /* MDB_BACKUP_H */

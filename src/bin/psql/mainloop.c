@@ -179,7 +179,7 @@ MainLoop(FILE *source)
 		pset.lineno++;
 
 		/* ignore UTF-8 Unicode byte-order mark */
-		if (pset.lineno == 1 && pset.encoding == PG_UTF8 && strncmp(line, "\xef\xbb\xbf", 3) == 0)
+		if (pset.lineno == 1 && pset.encoding == MDB_UTF8 && strncmp(line, "\xef\xbb\xbf", 3) == 0)
 			memmove(line, line + 3, strlen(line + 3) + 1);
 
 		/* Detect attempts to run custom-format dumps as SQL scripts */

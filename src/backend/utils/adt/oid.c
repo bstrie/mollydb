@@ -111,48 +111,48 @@ oidin_subr(const char *s, char **endloc)
 }
 
 Datum
-oidin(PG_FUNCTION_ARGS)
+oidin(MDB_FUNCTION_ARGS)
 {
-	char	   *s = PG_GETARG_CSTRING(0);
+	char	   *s = MDB_GETARG_CSTRING(0);
 	Oid			result;
 
 	result = oidin_subr(s, NULL);
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 Datum
-oidout(PG_FUNCTION_ARGS)
+oidout(MDB_FUNCTION_ARGS)
 {
-	Oid			o = PG_GETARG_OID(0);
+	Oid			o = MDB_GETARG_OID(0);
 	char	   *result = (char *) palloc(12);
 
 	snprintf(result, 12, "%u", o);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		oidrecv			- converts external binary format to oid
  */
 Datum
-oidrecv(PG_FUNCTION_ARGS)
+oidrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_OID((Oid) pq_getmsgint(buf, sizeof(Oid)));
+	MDB_RETURN_OID((Oid) pq_getmsgint(buf, sizeof(Oid)));
 }
 
 /*
  *		oidsend			- converts oid to binary format
  */
 Datum
-oidsend(PG_FUNCTION_ARGS)
+oidsend(MDB_FUNCTION_ARGS)
 {
-	Oid			arg1 = PG_GETARG_OID(0);
+	Oid			arg1 = MDB_GETARG_OID(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint(&buf, arg1, sizeof(Oid));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
@@ -188,9 +188,9 @@ buildoidvector(const Oid *oids, int n)
  *		oidvectorin			- converts "num num ..." to internal form
  */
 Datum
-oidvectorin(PG_FUNCTION_ARGS)
+oidvectorin(MDB_FUNCTION_ARGS)
 {
-	char	   *oidString = PG_GETARG_CSTRING(0);
+	char	   *oidString = MDB_GETARG_CSTRING(0);
 	oidvector  *result;
 	int			n;
 
@@ -218,16 +218,16 @@ oidvectorin(PG_FUNCTION_ARGS)
 	result->dim1 = n;
 	result->lbound1 = 0;
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
  *		oidvectorout - converts internal form to "num num ..."
  */
 Datum
-oidvectorout(PG_FUNCTION_ARGS)
+oidvectorout(MDB_FUNCTION_ARGS)
 {
-	oidvector  *oidArray = (oidvector *) PG_GETARG_POINTER(0);
+	oidvector  *oidArray = (oidvector *) MDB_GETARG_POINTER(0);
 	int			num,
 				nnums = oidArray->dim1;
 	char	   *rp;
@@ -244,16 +244,16 @@ oidvectorout(PG_FUNCTION_ARGS)
 			;
 	}
 	*rp = '\0';
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		oidvectorrecv			- converts external binary format to oidvector
  */
 Datum
-oidvectorrecv(PG_FUNCTION_ARGS)
+oidvectorrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	FunctionCallInfoData locfcinfo;
 	oidvector  *result;
 
@@ -292,14 +292,14 @@ oidvectorrecv(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("oidvector has too many elements")));
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
  *		oidvectorsend			- converts oidvector to binary format
  */
 Datum
-oidvectorsend(PG_FUNCTION_ARGS)
+oidvectorsend(MDB_FUNCTION_ARGS)
 {
 	return array_send(fcinfo);
 }
@@ -334,121 +334,121 @@ oidparse(Node *node)
  *****************************************************************************/
 
 Datum
-oideq(PG_FUNCTION_ARGS)
+oideq(MDB_FUNCTION_ARGS)
 {
-	Oid			arg1 = PG_GETARG_OID(0);
-	Oid			arg2 = PG_GETARG_OID(1);
+	Oid			arg1 = MDB_GETARG_OID(0);
+	Oid			arg2 = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(arg1 == arg2);
+	MDB_RETURN_BOOL(arg1 == arg2);
 }
 
 Datum
-oidne(PG_FUNCTION_ARGS)
+oidne(MDB_FUNCTION_ARGS)
 {
-	Oid			arg1 = PG_GETARG_OID(0);
-	Oid			arg2 = PG_GETARG_OID(1);
+	Oid			arg1 = MDB_GETARG_OID(0);
+	Oid			arg2 = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(arg1 != arg2);
+	MDB_RETURN_BOOL(arg1 != arg2);
 }
 
 Datum
-oidlt(PG_FUNCTION_ARGS)
+oidlt(MDB_FUNCTION_ARGS)
 {
-	Oid			arg1 = PG_GETARG_OID(0);
-	Oid			arg2 = PG_GETARG_OID(1);
+	Oid			arg1 = MDB_GETARG_OID(0);
+	Oid			arg2 = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(arg1 < arg2);
+	MDB_RETURN_BOOL(arg1 < arg2);
 }
 
 Datum
-oidle(PG_FUNCTION_ARGS)
+oidle(MDB_FUNCTION_ARGS)
 {
-	Oid			arg1 = PG_GETARG_OID(0);
-	Oid			arg2 = PG_GETARG_OID(1);
+	Oid			arg1 = MDB_GETARG_OID(0);
+	Oid			arg2 = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(arg1 <= arg2);
+	MDB_RETURN_BOOL(arg1 <= arg2);
 }
 
 Datum
-oidge(PG_FUNCTION_ARGS)
+oidge(MDB_FUNCTION_ARGS)
 {
-	Oid			arg1 = PG_GETARG_OID(0);
-	Oid			arg2 = PG_GETARG_OID(1);
+	Oid			arg1 = MDB_GETARG_OID(0);
+	Oid			arg2 = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(arg1 >= arg2);
+	MDB_RETURN_BOOL(arg1 >= arg2);
 }
 
 Datum
-oidgt(PG_FUNCTION_ARGS)
+oidgt(MDB_FUNCTION_ARGS)
 {
-	Oid			arg1 = PG_GETARG_OID(0);
-	Oid			arg2 = PG_GETARG_OID(1);
+	Oid			arg1 = MDB_GETARG_OID(0);
+	Oid			arg2 = MDB_GETARG_OID(1);
 
-	PG_RETURN_BOOL(arg1 > arg2);
+	MDB_RETURN_BOOL(arg1 > arg2);
 }
 
 Datum
-oidlarger(PG_FUNCTION_ARGS)
+oidlarger(MDB_FUNCTION_ARGS)
 {
-	Oid			arg1 = PG_GETARG_OID(0);
-	Oid			arg2 = PG_GETARG_OID(1);
+	Oid			arg1 = MDB_GETARG_OID(0);
+	Oid			arg2 = MDB_GETARG_OID(1);
 
-	PG_RETURN_OID((arg1 > arg2) ? arg1 : arg2);
+	MDB_RETURN_OID((arg1 > arg2) ? arg1 : arg2);
 }
 
 Datum
-oidsmaller(PG_FUNCTION_ARGS)
+oidsmaller(MDB_FUNCTION_ARGS)
 {
-	Oid			arg1 = PG_GETARG_OID(0);
-	Oid			arg2 = PG_GETARG_OID(1);
+	Oid			arg1 = MDB_GETARG_OID(0);
+	Oid			arg2 = MDB_GETARG_OID(1);
 
-	PG_RETURN_OID((arg1 < arg2) ? arg1 : arg2);
+	MDB_RETURN_OID((arg1 < arg2) ? arg1 : arg2);
 }
 
 Datum
-oidvectoreq(PG_FUNCTION_ARGS)
+oidvectoreq(MDB_FUNCTION_ARGS)
 {
 	int32		cmp = DatumGetInt32(btoidvectorcmp(fcinfo));
 
-	PG_RETURN_BOOL(cmp == 0);
+	MDB_RETURN_BOOL(cmp == 0);
 }
 
 Datum
-oidvectorne(PG_FUNCTION_ARGS)
+oidvectorne(MDB_FUNCTION_ARGS)
 {
 	int32		cmp = DatumGetInt32(btoidvectorcmp(fcinfo));
 
-	PG_RETURN_BOOL(cmp != 0);
+	MDB_RETURN_BOOL(cmp != 0);
 }
 
 Datum
-oidvectorlt(PG_FUNCTION_ARGS)
+oidvectorlt(MDB_FUNCTION_ARGS)
 {
 	int32		cmp = DatumGetInt32(btoidvectorcmp(fcinfo));
 
-	PG_RETURN_BOOL(cmp < 0);
+	MDB_RETURN_BOOL(cmp < 0);
 }
 
 Datum
-oidvectorle(PG_FUNCTION_ARGS)
+oidvectorle(MDB_FUNCTION_ARGS)
 {
 	int32		cmp = DatumGetInt32(btoidvectorcmp(fcinfo));
 
-	PG_RETURN_BOOL(cmp <= 0);
+	MDB_RETURN_BOOL(cmp <= 0);
 }
 
 Datum
-oidvectorge(PG_FUNCTION_ARGS)
+oidvectorge(MDB_FUNCTION_ARGS)
 {
 	int32		cmp = DatumGetInt32(btoidvectorcmp(fcinfo));
 
-	PG_RETURN_BOOL(cmp >= 0);
+	MDB_RETURN_BOOL(cmp >= 0);
 }
 
 Datum
-oidvectorgt(PG_FUNCTION_ARGS)
+oidvectorgt(MDB_FUNCTION_ARGS)
 {
 	int32		cmp = DatumGetInt32(btoidvectorcmp(fcinfo));
 
-	PG_RETURN_BOOL(cmp > 0);
+	MDB_RETURN_BOOL(cmp > 0);
 }

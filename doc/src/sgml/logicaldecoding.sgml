@@ -345,7 +345,7 @@ $ mdb_recvlogical -d mollydb --slot test --drop-slot
    <sect2 id="logicaldecoding-output-init">
     <title>Initialization Function</title>
     <indexterm zone="logicaldecoding">
-     <primary>_PG_output_plugin_init</primary>
+     <primary>_MDB_output_plugin_init</primary>
     </indexterm>
     <para>
      An output plugin is loaded by dynamically loading a shared library with
@@ -353,7 +353,7 @@ $ mdb_recvlogical -d mollydb --slot test --drop-slot
      search path is used to locate the library. To provide the required output
      plugin callbacks and to indicate that the library is actually an output
      plugin it needs to provide a function named
-     <function>_PG_output_plugin_init</function>. This function is passed a
+     <function>_MDB_output_plugin_init</function>. This function is passed a
      struct that needs to be filled with the callback function pointers for
      individual actions.
 <programlisting>

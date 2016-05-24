@@ -456,7 +456,7 @@ typedef struct
 typedef union WALInsertLockPadded
 {
 	WALInsertLock l;
-	char		pad[PG_CACHE_LINE_SIZE];
+	char		pad[MDB_CACHE_LINE_SIZE];
 } WALInsertLockPadded;
 
 /*
@@ -483,7 +483,7 @@ typedef struct XLogCtlInsert
 	 * read on every WAL insertion, but updated rarely, and we don't want
 	 * those reads to steal the cache line containing Curr/PrevBytePos.
 	 */
-	char		pad[PG_CACHE_LINE_SIZE];
+	char		pad[MDB_CACHE_LINE_SIZE];
 
 	/*
 	 * fullPageWrites is the master copy used by all backends to determine
@@ -699,7 +699,7 @@ typedef enum
 {
 	XLOG_FROM_ANY = 0,			/* request to read WAL from any source */
 	XLOG_FROM_ARCHIVE,			/* restored using restore_command */
-	XLOG_FROM_PG_XLOG,			/* existing file in mdb_xlog */
+	XLOG_FROM_MDB_XLOG,			/* existing file in mdb_xlog */
 	XLOG_FROM_STREAM			/* streamed from master */
 } XLogSource;
 
@@ -1444,7 +1444,7 @@ WALInsertLockAcquireExclusive(void)
 		LWLockAcquire(&WALInsertLocks[i].l.lock, LW_EXCLUSIVE);
 		LWLockUpdateVar(&WALInsertLocks[i].l.lock,
 						&WALInsertLocks[i].l.insertingAt,
-						PG_UINT64_MAX);
+						MDB_UINT64_MAX);
 	}
 	/* Variable value reset to 0 at release */
 	LWLockAcquire(&WALInsertLocks[i].l.lock, LW_EXCLUSIVE);
@@ -2982,7 +2982,7 @@ XLogFileInit(XLogSegNo logsegno, bool *use_existent, bool use_lock)
 	 */
 	if (*use_existent)
 	{
-		fd = BasicOpenFile(path, O_RDWR | PG_BINARY | get_sync_bit(sync_method),
+		fd = BasicOpenFile(path, O_RDWR | MDB_BINARY | get_sync_bit(sync_method),
 						   S_IRUSR | S_IWUSR);
 		if (fd < 0)
 		{
@@ -3008,7 +3008,7 @@ XLogFileInit(XLogSegNo logsegno, bool *use_existent, bool use_lock)
 	unlink(tmppath);
 
 	/* do not use get_sync_bit() here --- want to fsync only at end of fill */
-	fd = BasicOpenFile(tmppath, O_RDWR | O_CREAT | O_EXCL | PG_BINARY,
+	fd = BasicOpenFile(tmppath, O_RDWR | O_CREAT | O_EXCL | MDB_BINARY,
 					   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(ERROR,
@@ -3101,7 +3101,7 @@ XLogFileInit(XLogSegNo logsegno, bool *use_existent, bool use_lock)
 	*use_existent = false;
 
 	/* Now open original target segment (might not be file I just made) */
-	fd = BasicOpenFile(path, O_RDWR | PG_BINARY | get_sync_bit(sync_method),
+	fd = BasicOpenFile(path, O_RDWR | MDB_BINARY | get_sync_bit(sync_method),
 					   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(ERROR,
@@ -3143,7 +3143,7 @@ XLogFileCopy(XLogSegNo destsegno, TimeLineID srcTLI, XLogSegNo srcsegno,
 	 * Open the source file
 	 */
 	XLogFilePath(path, srcTLI, srcsegno);
-	srcfd = OpenTransientFile(path, O_RDONLY | PG_BINARY, 0);
+	srcfd = OpenTransientFile(path, O_RDONLY | MDB_BINARY, 0);
 	if (srcfd < 0)
 		ereport(ERROR,
 				(errcode_for_file_access(),
@@ -3157,7 +3157,7 @@ XLogFileCopy(XLogSegNo destsegno, TimeLineID srcTLI, XLogSegNo srcsegno,
 	unlink(tmppath);
 
 	/* do not use get_sync_bit() here --- want to fsync only at end of fill */
-	fd = OpenTransientFile(tmppath, O_RDWR | O_CREAT | O_EXCL | PG_BINARY,
+	fd = OpenTransientFile(tmppath, O_RDWR | O_CREAT | O_EXCL | MDB_BINARY,
 						   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(ERROR,
@@ -3330,7 +3330,7 @@ XLogFileOpen(XLogSegNo segno)
 
 	XLogFilePath(path, ThisTimeLineID, segno);
 
-	fd = BasicOpenFile(path, O_RDWR | PG_BINARY | get_sync_bit(sync_method),
+	fd = BasicOpenFile(path, O_RDWR | MDB_BINARY | get_sync_bit(sync_method),
 					   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(PANIC,
@@ -3373,7 +3373,7 @@ XLogFileRead(XLogSegNo segno, int emode, TimeLineID tli,
 				return -1;
 			break;
 
-		case XLOG_FROM_PG_XLOG:
+		case XLOG_FROM_MDB_XLOG:
 		case XLOG_FROM_STREAM:
 			XLogFilePath(path, tli, segno);
 			restoredFromArchive = false;
@@ -3397,7 +3397,7 @@ XLogFileRead(XLogSegNo segno, int emode, TimeLineID tli,
 		snprintf(path, MAXPGPATH, XLOGDIR "/%s", xlogfname);
 	}
 
-	fd = BasicOpenFile(path, O_RDONLY | PG_BINARY, 0);
+	fd = BasicOpenFile(path, O_RDONLY | MDB_BINARY, 0);
 	if (fd >= 0)
 	{
 		/* Success! */
@@ -3480,10 +3480,10 @@ XLogFileReadAnyTLI(XLogSegNo segno, int emode, int source)
 			}
 		}
 
-		if (source == XLOG_FROM_ANY || source == XLOG_FROM_PG_XLOG)
+		if (source == XLOG_FROM_ANY || source == XLOG_FROM_MDB_XLOG)
 		{
 			fd = XLogFileRead(segno, emode, tli,
-							  XLOG_FROM_PG_XLOG, true);
+							  XLOG_FROM_MDB_XLOG, true);
 			if (fd != -1)
 			{
 				if (!expectedTLEs)
@@ -4184,12 +4184,12 @@ static void
 WriteControlFile(void)
 {
 	int			fd;
-	char		buffer[PG_CONTROL_SIZE];		/* need not be aligned */
+	char		buffer[MDB_CONTROL_SIZE];		/* need not be aligned */
 
 	/*
 	 * Initialize version and compatibility-check fields
 	 */
-	ControlFile->mdb_control_version = PG_CONTROL_VERSION;
+	ControlFile->mdb_control_version = MDB_CONTROL_VERSION;
 	ControlFile->catalog_version_no = CATALOG_VERSION_NO;
 
 	ControlFile->maxAlign = MAXIMUM_ALIGNOF;
@@ -4222,20 +4222,20 @@ WriteControlFile(void)
 	FIN_CRC32C(ControlFile->crc);
 
 	/*
-	 * We write out PG_CONTROL_SIZE bytes into mdb_control, zero-padding the
+	 * We write out MDB_CONTROL_SIZE bytes into mdb_control, zero-padding the
 	 * excess over sizeof(ControlFileData).  This reduces the odds of
 	 * premature-EOF errors when reading mdb_control.  We'll still fail when we
 	 * check the contents of the file, but hopefully with a more specific
 	 * error than "couldn't read mdb_control".
 	 */
-	if (sizeof(ControlFileData) > PG_CONTROL_SIZE)
-		elog(PANIC, "sizeof(ControlFileData) is larger than PG_CONTROL_SIZE; fix either one");
+	if (sizeof(ControlFileData) > MDB_CONTROL_SIZE)
+		elog(PANIC, "sizeof(ControlFileData) is larger than MDB_CONTROL_SIZE; fix either one");
 
-	memset(buffer, 0, PG_CONTROL_SIZE);
+	memset(buffer, 0, MDB_CONTROL_SIZE);
 	memcpy(buffer, ControlFile, sizeof(ControlFileData));
 
 	fd = BasicOpenFile(XLOG_CONTROL_FILE,
-					   O_RDWR | O_CREAT | O_EXCL | PG_BINARY,
+					   O_RDWR | O_CREAT | O_EXCL | MDB_BINARY,
 					   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(PANIC,
@@ -4244,7 +4244,7 @@ WriteControlFile(void)
 						XLOG_CONTROL_FILE)));
 
 	errno = 0;
-	if (write(fd, buffer, PG_CONTROL_SIZE) != PG_CONTROL_SIZE)
+	if (write(fd, buffer, MDB_CONTROL_SIZE) != MDB_CONTROL_SIZE)
 	{
 		/* if write didn't set errno, assume problem is no disk space */
 		if (errno == 0)
@@ -4275,7 +4275,7 @@ ReadControlFile(void)
 	 * Read data...
 	 */
 	fd = BasicOpenFile(XLOG_CONTROL_FILE,
-					   O_RDWR | PG_BINARY,
+					   O_RDWR | MDB_BINARY,
 					   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(PANIC,
@@ -4297,21 +4297,21 @@ ReadControlFile(void)
 	 * enlightening than complaining about wrong CRC.
 	 */
 
-	if (ControlFile->mdb_control_version != PG_CONTROL_VERSION && ControlFile->mdb_control_version % 65536 == 0 && ControlFile->mdb_control_version / 65536 != 0)
+	if (ControlFile->mdb_control_version != MDB_CONTROL_VERSION && ControlFile->mdb_control_version % 65536 == 0 && ControlFile->mdb_control_version / 65536 != 0)
 		ereport(FATAL,
 				(errmsg("database files are incompatible with server"),
-				 errdetail("The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x),"
-		 " but the server was compiled with PG_CONTROL_VERSION %d (0x%08x).",
+				 errdetail("The database cluster was initialized with MDB_CONTROL_VERSION %d (0x%08x),"
+		 " but the server was compiled with MDB_CONTROL_VERSION %d (0x%08x).",
 			ControlFile->mdb_control_version, ControlFile->mdb_control_version,
-						   PG_CONTROL_VERSION, PG_CONTROL_VERSION),
+						   MDB_CONTROL_VERSION, MDB_CONTROL_VERSION),
 				 errhint("This could be a problem of mismatched byte ordering.  It looks like you need to initdb.")));
 
-	if (ControlFile->mdb_control_version != PG_CONTROL_VERSION)
+	if (ControlFile->mdb_control_version != MDB_CONTROL_VERSION)
 		ereport(FATAL,
 				(errmsg("database files are incompatible with server"),
-				 errdetail("The database cluster was initialized with PG_CONTROL_VERSION %d,"
-				  " but the server was compiled with PG_CONTROL_VERSION %d.",
-						ControlFile->mdb_control_version, PG_CONTROL_VERSION),
+				 errdetail("The database cluster was initialized with MDB_CONTROL_VERSION %d,"
+				  " but the server was compiled with MDB_CONTROL_VERSION %d.",
+						ControlFile->mdb_control_version, MDB_CONTROL_VERSION),
 				 errhint("It looks like you need to initdb.")));
 
 	/* Now check the CRC. */
@@ -4471,7 +4471,7 @@ UpdateControlFile(void)
 	FIN_CRC32C(ControlFile->crc);
 
 	fd = BasicOpenFile(XLOG_CONTROL_FILE,
-					   O_RDWR | PG_BINARY,
+					   O_RDWR | MDB_BINARY,
 					   S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		ereport(PANIC,
@@ -9613,7 +9613,7 @@ get_sync_bit(int method)
 	 * don't work with O_DIRECT, so it is required for correctness too.
 	 */
 	if (!XLogIsNeeded() && !AmWalReceiverProcess())
-		o_direct_flag = PG_O_DIRECT;
+		o_direct_flag = MDB_O_DIRECT;
 
 	switch (method)
 	{
@@ -9851,7 +9851,7 @@ do_mdb_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 	WALInsertLockRelease();
 
 	/* Ensure we release forcePageWrites if fail below */
-	PG_ENSURE_ERROR_CLEANUP(mdb_start_backup_callback, (Datum) BoolGetDatum(exclusive));
+	MDB_ENSURE_ERROR_CLEANUP(mdb_start_backup_callback, (Datum) BoolGetDatum(exclusive));
 	{
 		bool		gotUniqueStartpoint = false;
 		struct dirent *de;
@@ -10177,7 +10177,7 @@ do_mdb_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 			pfree(tblspcmapfile);
 		}
 	}
-	PG_END_ENSURE_ERROR_CLEANUP(mdb_start_backup_callback, (Datum) BoolGetDatum(exclusive));
+	MDB_END_ENSURE_ERROR_CLEANUP(mdb_start_backup_callback, (Datum) BoolGetDatum(exclusive));
 
 	/*
 	 * We're done.  As a convenience, return the starting WAL location.
@@ -10975,7 +10975,7 @@ XLogPageRead(XLogReaderState *xlogreader, XLogRecPtr targetPagePtr, int reqLen,
 	(XLogPageReadPrivate *) xlogreader->private_data;
 	int			emode = private->emode;
 	uint32		targetPageOff;
-	XLogSegNo targetSegNo PG_USED_FOR_ASSERTS_ONLY;
+	XLogSegNo targetSegNo MDB_USED_FOR_ASSERTS_ONLY;
 
 	XLByteToSeg(targetPagePtr, targetSegNo);
 	targetPageOff = targetPagePtr % XLogSegSize;
@@ -11152,7 +11152,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 	 *-------
 	 */
 	if (!InArchiveRecovery)
-		currentSource = XLOG_FROM_PG_XLOG;
+		currentSource = XLOG_FROM_MDB_XLOG;
 	else if (currentSource == 0)
 		currentSource = XLOG_FROM_ARCHIVE;
 
@@ -11171,7 +11171,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 			switch (currentSource)
 			{
 				case XLOG_FROM_ARCHIVE:
-				case XLOG_FROM_PG_XLOG:
+				case XLOG_FROM_MDB_XLOG:
 
 					/*
 					 * Check to see if the trigger file exists. Note that we
@@ -11308,7 +11308,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 					elog(ERROR, "unexpected WAL source %d", currentSource);
 			}
 		}
-		else if (currentSource == XLOG_FROM_PG_XLOG)
+		else if (currentSource == XLOG_FROM_MDB_XLOG)
 		{
 			/*
 			 * We just successfully read a file in mdb_xlog. We prefer files in
@@ -11333,7 +11333,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 		switch (currentSource)
 		{
 			case XLOG_FROM_ARCHIVE:
-			case XLOG_FROM_PG_XLOG:
+			case XLOG_FROM_MDB_XLOG:
 				/* Close any old file we might have open. */
 				if (readFile >= 0)
 				{
@@ -11501,7 +11501,7 @@ emode_for_corrupt_record(int emode, XLogRecPtr RecPtr)
 {
 	static XLogRecPtr lastComplaint = 0;
 
-	if (readSource == XLOG_FROM_PG_XLOG && emode == LOG)
+	if (readSource == XLOG_FROM_MDB_XLOG && emode == LOG)
 	{
 		if (RecPtr == lastComplaint)
 			emode = DEBUG1;

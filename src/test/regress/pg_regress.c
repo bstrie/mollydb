@@ -810,7 +810,7 @@ initialize_environment(void)
 			doputenv("PGHOST", hostname);
 		else
 		{
-			sockdir = getenv("PG_REGRESS_SOCK_DIR");
+			sockdir = getenv("MDB_REGRESS_SOCK_DIR");
 			if (!sockdir)
 				sockdir = make_temp_sockdir();
 			doputenv("PGHOST", sockdir);
@@ -2029,7 +2029,7 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 	char		buf2[MAXPGPATH * 4];
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_regress"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mdb_regress"));
 
 	atexit(stop_postmaster);
 
@@ -2044,8 +2044,8 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 	 */
 	ifunc(argc, argv);
 
-	if (getenv("PG_REGRESS_DIFF_OPTS"))
-		pretty_diff_opts = getenv("PG_REGRESS_DIFF_OPTS");
+	if (getenv("MDB_REGRESS_DIFF_OPTS"))
+		pretty_diff_opts = getenv("MDB_REGRESS_DIFF_OPTS");
 
 	while ((c = getopt_long(argc, argv, "hV", long_options, &option_index)) != -1)
 	{
@@ -2055,7 +2055,7 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 				help();
 				exit(0);
 			case 'V':
-				puts("mdb_regress (MollyDB) " PG_VERSION);
+				puts("mdb_regress (MollyDB) " MDB_VERSION);
 				exit(0);
 			case 1:
 
@@ -2165,7 +2165,7 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 		 * systems; elsewhere, the use of a private socket directory already
 		 * prevents interference.
 		 */
-		port = 0xC000 | (PG_VERSION_NUM & 0x3FFF);
+		port = 0xC000 | (MDB_VERSION_NUM & 0x3FFF);
 
 	inputdir = make_absolute_path(inputdir);
 	outputdir = make_absolute_path(outputdir);

@@ -146,27 +146,27 @@ mdb_logical_slot_get_changes_guts(FunctionCallInfo fcinfo, bool confirm, bool bi
 
 	CheckLogicalDecodingRequirements();
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 		ereport(ERROR,
 				(errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED),
 				 errmsg("slot name must not be null")));
-	name = PG_GETARG_NAME(0);
+	name = MDB_GETARG_NAME(0);
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 		upto_lsn = InvalidXLogRecPtr;
 	else
-		upto_lsn = PG_GETARG_LSN(1);
+		upto_lsn = MDB_GETARG_LSN(1);
 
-	if (PG_ARGISNULL(2))
+	if (MDB_ARGISNULL(2))
 		upto_nchanges = InvalidXLogRecPtr;
 	else
-		upto_nchanges = PG_GETARG_INT32(2);
+		upto_nchanges = MDB_GETARG_INT32(2);
 
-	if (PG_ARGISNULL(3))
+	if (MDB_ARGISNULL(3))
 		ereport(ERROR,
 				(errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED),
 				 errmsg("options array must not be null")));
-	arr = PG_GETARG_ARRAYTYPE_P(3);
+	arr = MDB_GETARG_ARRAYTYPE_P(3);
 
 	/* check to see if caller supports us returning a tuplestore */
 	if (rsinfo == NULL || !IsA(rsinfo, ReturnSetInfo))
@@ -242,7 +242,7 @@ mdb_logical_slot_get_changes_guts(FunctionCallInfo fcinfo, bool confirm, bool bi
 
 	ReplicationSlotAcquire(NameStr(*name));
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/* restart at slot's confirmed_flush */
 		ctx = CreateDecodingContext(InvalidXLogRecPtr,
@@ -329,14 +329,14 @@ mdb_logical_slot_get_changes_guts(FunctionCallInfo fcinfo, bool confirm, bool bi
 		ReplicationSlotRelease();
 		InvalidateSystemCaches();
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* clear all timetravel entries */
 		InvalidateSystemCaches();
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return (Datum) 0;
 }
@@ -345,7 +345,7 @@ mdb_logical_slot_get_changes_guts(FunctionCallInfo fcinfo, bool confirm, bool bi
  * SQL function returning the changestream as text, consuming the data.
  */
 Datum
-mdb_logical_slot_get_changes(PG_FUNCTION_ARGS)
+mdb_logical_slot_get_changes(MDB_FUNCTION_ARGS)
 {
 	return mdb_logical_slot_get_changes_guts(fcinfo, true, false);
 }
@@ -354,7 +354,7 @@ mdb_logical_slot_get_changes(PG_FUNCTION_ARGS)
  * SQL function returning the changestream as text, only peeking ahead.
  */
 Datum
-mdb_logical_slot_peek_changes(PG_FUNCTION_ARGS)
+mdb_logical_slot_peek_changes(MDB_FUNCTION_ARGS)
 {
 	return mdb_logical_slot_get_changes_guts(fcinfo, false, false);
 }
@@ -363,7 +363,7 @@ mdb_logical_slot_peek_changes(PG_FUNCTION_ARGS)
  * SQL function returning the changestream in binary, consuming the data.
  */
 Datum
-mdb_logical_slot_get_binary_changes(PG_FUNCTION_ARGS)
+mdb_logical_slot_get_binary_changes(MDB_FUNCTION_ARGS)
 {
 	return mdb_logical_slot_get_changes_guts(fcinfo, true, true);
 }
@@ -372,7 +372,7 @@ mdb_logical_slot_get_binary_changes(PG_FUNCTION_ARGS)
  * SQL function returning the changestream in binary, only peeking ahead.
  */
 Datum
-mdb_logical_slot_peek_binary_changes(PG_FUNCTION_ARGS)
+mdb_logical_slot_peek_binary_changes(MDB_FUNCTION_ARGS)
 {
 	return mdb_logical_slot_get_changes_guts(fcinfo, false, true);
 }
@@ -382,20 +382,20 @@ mdb_logical_slot_peek_binary_changes(PG_FUNCTION_ARGS)
  * SQL function for writing logical decoding message into WAL.
  */
 Datum
-mdb_logical_emit_message_bytea(PG_FUNCTION_ARGS)
+mdb_logical_emit_message_bytea(MDB_FUNCTION_ARGS)
 {
-	bool		transactional = PG_GETARG_BOOL(0);
-	char	   *prefix = text_to_cstring(PG_GETARG_TEXT_PP(1));
-	bytea	   *data = PG_GETARG_BYTEA_PP(2);
+	bool		transactional = MDB_GETARG_BOOL(0);
+	char	   *prefix = text_to_cstring(MDB_GETARG_TEXT_PP(1));
+	bytea	   *data = MDB_GETARG_BYTEA_PP(2);
 	XLogRecPtr	lsn;
 
 	lsn = LogLogicalMessage(prefix, VARDATA_ANY(data), VARSIZE_ANY_EXHDR(data),
 							transactional);
-	PG_RETURN_LSN(lsn);
+	MDB_RETURN_LSN(lsn);
 }
 
 Datum
-mdb_logical_emit_message_text(PG_FUNCTION_ARGS)
+mdb_logical_emit_message_text(MDB_FUNCTION_ARGS)
 {
 	/* bytea and text are compatible */
 	return mdb_logical_emit_message_bytea(fcinfo);

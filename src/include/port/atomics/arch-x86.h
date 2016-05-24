@@ -53,13 +53,13 @@
 
 #if defined(__GNUC__) || defined(__INTEL_COMPILER)
 
-#define PG_HAVE_ATOMIC_FLAG_SUPPORT
+#define MDB_HAVE_ATOMIC_FLAG_SUPPORT
 typedef struct mdb_atomic_flag
 {
 	volatile char value;
 } mdb_atomic_flag;
 
-#define PG_HAVE_ATOMIC_U32_SUPPORT
+#define MDB_HAVE_ATOMIC_U32_SUPPORT
 typedef struct mdb_atomic_uint32
 {
 	volatile uint32 value;
@@ -70,7 +70,7 @@ typedef struct mdb_atomic_uint32
  * 486 can't do it anyway.
  */
 #ifdef __x86_64__
-#define PG_HAVE_ATOMIC_U64_SUPPORT
+#define MDB_HAVE_ATOMIC_U64_SUPPORT
 typedef struct mdb_atomic_uint64
 {
 	/* alignment guaranteed due to being on a 64bit platform */
@@ -82,7 +82,7 @@ typedef struct mdb_atomic_uint64
 
 #endif /* defined(HAVE_ATOMICS) */
 
-#if !defined(PG_HAVE_SPIN_DELAY)
+#if !defined(MDB_HAVE_SPIN_DELAY)
 /*
  * This sequence is equivalent to the PAUSE instruction ("rep" is
  * ignored by old IA32 processors if the following instruction is
@@ -107,21 +107,21 @@ typedef struct mdb_atomic_uint64
  *     consuming execution resources excessively.
  */
 #if defined(__GNUC__) || defined(__INTEL_COMPILER)
-#define PG_HAVE_SPIN_DELAY
+#define MDB_HAVE_SPIN_DELAY
 static __inline__ void
 mdb_spin_delay_impl(void)
 {
 	__asm__ __volatile__(" rep; nop			\n");
 }
 #elif defined(WIN32_ONLY_COMPILER) && defined(__x86_64__)
-#define PG_HAVE_SPIN_DELAY
+#define MDB_HAVE_SPIN_DELAY
 static __forceinline void
 mdb_spin_delay_impl(void)
 {
 	_mm_pause();
 }
 #elif defined(WIN32_ONLY_COMPILER)
-#define PG_HAVE_SPIN_DELAY
+#define MDB_HAVE_SPIN_DELAY
 static __forceinline void
 mdb_spin_delay_impl(void)
 {
@@ -129,14 +129,14 @@ mdb_spin_delay_impl(void)
 	__asm rep nop;
 }
 #endif
-#endif /* !defined(PG_HAVE_SPIN_DELAY) */
+#endif /* !defined(MDB_HAVE_SPIN_DELAY) */
 
 
 #if defined(HAVE_ATOMICS)
 
 #if defined(__GNUC__) || defined(__INTEL_COMPILER)
 
-#define PG_HAVE_ATOMIC_TEST_SET_FLAG
+#define MDB_HAVE_ATOMIC_TEST_SET_FLAG
 static inline bool
 mdb_atomic_test_set_flag_impl(volatile mdb_atomic_flag *ptr)
 {
@@ -151,7 +151,7 @@ mdb_atomic_test_set_flag_impl(volatile mdb_atomic_flag *ptr)
 	return _res == 0;
 }
 
-#define PG_HAVE_ATOMIC_CLEAR_FLAG
+#define MDB_HAVE_ATOMIC_CLEAR_FLAG
 static inline void
 mdb_atomic_clear_flag_impl(volatile mdb_atomic_flag *ptr)
 {
@@ -163,7 +163,7 @@ mdb_atomic_clear_flag_impl(volatile mdb_atomic_flag *ptr)
 	ptr->value = 0;
 }
 
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
 static inline bool
 mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 									uint32 *expected, uint32 newval)
@@ -184,7 +184,7 @@ mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 	return (bool) ret;
 }
 
-#define PG_HAVE_ATOMIC_FETCH_ADD_U32
+#define MDB_HAVE_ATOMIC_FETCH_ADD_U32
 static inline uint32
 mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_)
 {
@@ -200,7 +200,7 @@ mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_)
 
 #ifdef __x86_64__
 
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
 static inline bool
 mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 									uint64 *expected, uint64 newval)
@@ -221,7 +221,7 @@ mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 	return (bool) ret;
 }
 
-#define PG_HAVE_ATOMIC_FETCH_ADD_U64
+#define MDB_HAVE_ATOMIC_FETCH_ADD_U64
 static inline uint64
 mdb_atomic_fetch_add_u64_impl(volatile mdb_atomic_uint64 *ptr, int64 add_)
 {

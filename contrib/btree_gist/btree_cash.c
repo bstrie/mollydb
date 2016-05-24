@@ -16,14 +16,14 @@ typedef struct
 /*
 ** Cash ops
 */
-PG_FUNCTION_INFO_V1(gbt_cash_compress);
-PG_FUNCTION_INFO_V1(gbt_cash_fetch);
-PG_FUNCTION_INFO_V1(gbt_cash_union);
-PG_FUNCTION_INFO_V1(gbt_cash_picksplit);
-PG_FUNCTION_INFO_V1(gbt_cash_consistent);
-PG_FUNCTION_INFO_V1(gbt_cash_distance);
-PG_FUNCTION_INFO_V1(gbt_cash_penalty);
-PG_FUNCTION_INFO_V1(gbt_cash_same);
+MDB_FUNCTION_INFO_V1(gbt_cash_compress);
+MDB_FUNCTION_INFO_V1(gbt_cash_fetch);
+MDB_FUNCTION_INFO_V1(gbt_cash_union);
+MDB_FUNCTION_INFO_V1(gbt_cash_picksplit);
+MDB_FUNCTION_INFO_V1(gbt_cash_consistent);
+MDB_FUNCTION_INFO_V1(gbt_cash_distance);
+MDB_FUNCTION_INFO_V1(gbt_cash_penalty);
+MDB_FUNCTION_INFO_V1(gbt_cash_same);
 
 static bool
 gbt_cashgt(const void *a, const void *b)
@@ -90,12 +90,12 @@ static const gbtree_ninfo tinfo =
 };
 
 
-PG_FUNCTION_INFO_V1(cash_dist);
+MDB_FUNCTION_INFO_V1(cash_dist);
 Datum
-cash_dist(PG_FUNCTION_ARGS)
+cash_dist(MDB_FUNCTION_ARGS)
 {
-	Cash		a = PG_GETARG_CASH(0);
-	Cash		b = PG_GETARG_CASH(1);
+	Cash		a = MDB_GETARG_CASH(0);
+	Cash		b = MDB_GETARG_CASH(1);
 	Cash		r;
 	Cash		ra;
 
@@ -108,7 +108,7 @@ cash_dist(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("money out of range")));
 
-	PG_RETURN_CASH(ra);
+	MDB_RETURN_CASH(ra);
 }
 
 /**************************************************
@@ -117,30 +117,30 @@ cash_dist(PG_FUNCTION_ARGS)
 
 
 Datum
-gbt_cash_compress(PG_FUNCTION_ARGS)
+gbt_cash_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
 }
 
 Datum
-gbt_cash_fetch(PG_FUNCTION_ARGS)
+gbt_cash_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
 }
 
 Datum
-gbt_cash_consistent(PG_FUNCTION_ARGS)
+gbt_cash_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	Cash		query = PG_GETARG_CASH(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	Cash		query = MDB_GETARG_CASH(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	cashKEY    *kkk = (cashKEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
@@ -150,72 +150,72 @@ gbt_cash_consistent(PG_FUNCTION_ARGS)
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_BOOL(
+	MDB_RETURN_BOOL(
 				   gbt_num_consistent(&key, (void *) &query, &strategy, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_cash_distance(PG_FUNCTION_ARGS)
+gbt_cash_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	Cash		query = PG_GETARG_CASH(1);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	Cash		query = MDB_GETARG_CASH(1);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
+	/* Oid		subtype = MDB_GETARG_OID(3); */
 	cashKEY    *kkk = (cashKEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_FLOAT8(
+	MDB_RETURN_FLOAT8(
 			gbt_num_distance(&key, (void *) &query, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_cash_union(PG_FUNCTION_ARGS)
+gbt_cash_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	void	   *out = palloc(sizeof(cashKEY));
 
-	*(int *) PG_GETARG_POINTER(1) = sizeof(cashKEY);
-	PG_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
+	*(int *) MDB_GETARG_POINTER(1) = sizeof(cashKEY);
+	MDB_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
 }
 
 
 Datum
-gbt_cash_penalty(PG_FUNCTION_ARGS)
+gbt_cash_penalty(MDB_FUNCTION_ARGS)
 {
-	cashKEY    *origentry = (cashKEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	cashKEY    *newentry = (cashKEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(1))->key);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	cashKEY    *origentry = (cashKEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	cashKEY    *newentry = (cashKEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(1))->key);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 
 	penalty_num(result, origentry->lower, origentry->upper, newentry->lower, newentry->upper);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 
 }
 
 Datum
-gbt_cash_picksplit(PG_FUNCTION_ARGS)
+gbt_cash_picksplit(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(gbt_num_picksplit(
-									(GistEntryVector *) PG_GETARG_POINTER(0),
-									  (GIST_SPLITVEC *) PG_GETARG_POINTER(1),
+	MDB_RETURN_POINTER(gbt_num_picksplit(
+									(GistEntryVector *) MDB_GETARG_POINTER(0),
+									  (GIST_SPLITVEC *) MDB_GETARG_POINTER(1),
 										&tinfo
 										));
 }
 
 Datum
-gbt_cash_same(PG_FUNCTION_ARGS)
+gbt_cash_same(MDB_FUNCTION_ARGS)
 {
-	cashKEY    *b1 = (cashKEY *) PG_GETARG_POINTER(0);
-	cashKEY    *b2 = (cashKEY *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	cashKEY    *b1 = (cashKEY *) MDB_GETARG_POINTER(0);
+	cashKEY    *b2 = (cashKEY *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	*result = gbt_num_same((void *) b1, (void *) b2, &tinfo);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }

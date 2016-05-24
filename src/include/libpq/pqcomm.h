@@ -101,14 +101,14 @@ typedef struct
  * version.
  */
 
-#define PG_PROTOCOL_MAJOR(v)	((v) >> 16)
-#define PG_PROTOCOL_MINOR(v)	((v) & 0x0000ffff)
-#define PG_PROTOCOL(m,n)	(((m) << 16) | (n))
+#define MDB_PROTOCOL_MAJOR(v)	((v) >> 16)
+#define MDB_PROTOCOL_MINOR(v)	((v) & 0x0000ffff)
+#define MDB_PROTOCOL(m,n)	(((m) << 16) | (n))
 
 /* The earliest and latest frontend/backend protocol version supported. */
 
-#define PG_PROTOCOL_EARLIEST	PG_PROTOCOL(1,0)
-#define PG_PROTOCOL_LATEST		PG_PROTOCOL(3,0)
+#define MDB_PROTOCOL_EARLIEST	MDB_PROTOCOL(1,0)
+#define MDB_PROTOCOL_LATEST		MDB_PROTOCOL(3,0)
 
 typedef uint32 ProtocolVersion; /* FE/BE protocol version number */
 
@@ -184,7 +184,7 @@ typedef uint32 AuthRequest;
  * The cancel request code must not match any protocol version number
  * we're ever likely to use.  This random choice should do.
  */
-#define CANCEL_REQUEST_CODE PG_PROTOCOL(1234,5678)
+#define CANCEL_REQUEST_CODE MDB_PROTOCOL(1234,5678)
 
 typedef struct CancelRequestPacket
 {
@@ -199,6 +199,6 @@ typedef struct CancelRequestPacket
  * A client can also start by sending a SSL negotiation request, to get a
  * secure channel.
  */
-#define NEGOTIATE_SSL_CODE PG_PROTOCOL(1234,5679)
+#define NEGOTIATE_SSL_CODE MDB_PROTOCOL(1234,5679)
 
 #endif   /* PQCOMM_H */

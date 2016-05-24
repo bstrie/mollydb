@@ -72,7 +72,7 @@ typedef struct
   { \
 	(*(result)) += FLT_MIN; \
 	(*(result)) += (float) ( ((double)(tmp)) / ( (double)(tmp) + ( ((double)(oupper))*0.49F - ((double)(olower))*0.49F ) ) ); \
-	(*(result)) *= (FLT_MAX / (((GISTENTRY *) PG_GETARG_POINTER(0))->rel->rd_att->natts + 1)); \
+	(*(result)) *= (FLT_MAX / (((GISTENTRY *) MDB_GETARG_POINTER(0))->rel->rd_att->natts + 1)); \
   } \
 } while (0);
 

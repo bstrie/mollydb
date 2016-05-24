@@ -12,8 +12,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TRANSFORM_H
-#define PG_TRANSFORM_H
+#ifndef MDB_TRANSFORM_H
+#define MDB_TRANSFORM_H
 
 #include "catalog/genbki.h"
 
@@ -44,4 +44,4 @@ typedef FormData_mdb_transform *Form_mdb_transform;
 #define Anum_mdb_transform_trffromsql	3
 #define Anum_mdb_transform_trftosql	4
 
-#endif   /* PG_TRANSFORM_H */
+#endif   /* MDB_TRANSFORM_H */

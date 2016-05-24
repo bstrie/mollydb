@@ -494,7 +494,7 @@ psql_scan_slash_option(PsqlScanState state,
 					   bool semicolon)
 {
 	PQExpBufferData mybuf;
-	int			lexresult PG_USED_FOR_ASSERTS_ONLY;
+	int			lexresult MDB_USED_FOR_ASSERTS_ONLY;
 	int			final_state;
 	char		local_quote;
 
@@ -704,7 +704,7 @@ evaluate_backtick(PsqlScanState state)
 
 	initPQExpBuffer(&cmd_output);
 
-	fd = popen(cmd, PG_BINARY_R);
+	fd = popen(cmd, MDB_BINARY_R);
 	if (!fd)
 	{
 		state->callbacks->write_error("%s: %s\n", cmd, strerror(errno));

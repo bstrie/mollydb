@@ -151,7 +151,7 @@ extern HStore *hstoreUpgrade(Datum orig);
 
 #define DatumGetHStoreP(d) hstoreUpgrade(d)
 
-#define PG_GETARG_HS(x) DatumGetHStoreP(PG_GETARG_DATUM(x))
+#define MDB_GETARG_HS(x) DatumGetHStoreP(MDB_GETARG_DATUM(x))
 
 
 /*
@@ -193,9 +193,9 @@ extern Pairs *hstoreArrayToPairs(ArrayType *a, int *npairs);
 
 #if HSTORE_POLLUTE_NAMESPACE
 #define HSTORE_POLLUTE(newname_,oldname_) \
-	PG_FUNCTION_INFO_V1(oldname_);		  \
-	Datum newname_(PG_FUNCTION_ARGS);	  \
-	Datum oldname_(PG_FUNCTION_ARGS) { return newname_(fcinfo); } \
+	MDB_FUNCTION_INFO_V1(oldname_);		  \
+	Datum newname_(MDB_FUNCTION_ARGS);	  \
+	Datum oldname_(MDB_FUNCTION_ARGS) { return newname_(fcinfo); } \
 	extern int no_such_variable
 #else
 #define HSTORE_POLLUTE(newname_,oldname_) \

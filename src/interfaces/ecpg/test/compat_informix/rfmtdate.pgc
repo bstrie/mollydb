@@ -131,20 +131,20 @@ main(void)
 	/* 1994 is not a leap year, it accepts the date as 01-03-1994 */
 	date_test_defmt("ddmmyy", "29-02-1994");
 
-	/* ECPG_INFORMIX_ENOTDMY, need "dd", "mm" and "yy" */
+	/* ECMDB_INFORMIX_ENOTDMY, need "dd", "mm" and "yy" */
 	date_test_defmt("dmy", "20/11/1954");
 
-	/* ECPG_INFORMIX_ENOSHORTDATE */
+	/* ECMDB_INFORMIX_ENOSHORTDATE */
 	date_test_defmt("ddmmyy", "21254");
 	date_test_defmt("ddmmyy", "    21254    ");
 
-	/* ECPG_INFORMIX_BAD_DAY */
+	/* ECMDB_INFORMIX_BAD_DAY */
 	date_test_defmt("ddmmyy", "320494");
 
-	/* ECPG_INFORMIX_BAD_MONTH */
+	/* ECMDB_INFORMIX_BAD_MONTH */
 	date_test_defmt("mm-yyyy-dd", "13-1993-21");
 
-	/* ECPG_INFORMIX_BAD_YEAR */
+	/* ECMDB_INFORMIX_BAD_YEAR */
 	/* ??? */
 
 	return (0);
@@ -155,17 +155,17 @@ check_return(int ret)
 {
 	switch(ret)
 	{
-		case ECPG_INFORMIX_ENOTDMY:
-			printf("(ECPG_INFORMIX_ENOTDMY)");
+		case ECMDB_INFORMIX_ENOTDMY:
+			printf("(ECMDB_INFORMIX_ENOTDMY)");
 			break;
-		case ECPG_INFORMIX_ENOSHORTDATE:
-			printf("(ECPG_INFORMIX_ENOSHORTDATE)");
+		case ECMDB_INFORMIX_ENOSHORTDATE:
+			printf("(ECMDB_INFORMIX_ENOSHORTDATE)");
 			break;
-		case ECPG_INFORMIX_BAD_DAY:
-			printf("(ECPG_INFORMIX_BAD_DAY)");
+		case ECMDB_INFORMIX_BAD_DAY:
+			printf("(ECMDB_INFORMIX_BAD_DAY)");
 			break;
-		case ECPG_INFORMIX_BAD_MONTH:
-			printf("(ECPG_INFORMIX_BAD_MONTH)");
+		case ECMDB_INFORMIX_BAD_MONTH:
+			printf("(ECMDB_INFORMIX_BAD_MONTH)");
 			break;
 		default:
 			printf("(unknown ret: %d)", ret);

@@ -41,11 +41,11 @@
 #include "utils/snapmgr.h"
 #include "tcop/utility.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(worker_spi_launch);
+MDB_FUNCTION_INFO_V1(worker_spi_launch);
 
-void		_PG_init(void);
+void		_MDB_init(void);
 void		worker_spi_main(Datum) mdb_attribute_noreturn();
 
 /* flags set by signal handlers */
@@ -305,7 +305,7 @@ worker_spi_main(Datum main_arg)
  * be done.
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	BackgroundWorker worker;
 	unsigned int i;
@@ -364,9 +364,9 @@ _PG_init(void)
  * Dynamically launch an SPI worker.
  */
 Datum
-worker_spi_launch(PG_FUNCTION_ARGS)
+worker_spi_launch(MDB_FUNCTION_ARGS)
 {
-	int32		i = PG_GETARG_INT32(0);
+	int32		i = MDB_GETARG_INT32(0);
 	BackgroundWorker worker;
 	BackgroundWorkerHandle *handle;
 	BgwHandleStatus status;
@@ -385,7 +385,7 @@ worker_spi_launch(PG_FUNCTION_ARGS)
 	worker.bgw_notify_pid = MyProcPid;
 
 	if (!RegisterDynamicBackgroundWorker(&worker, &handle))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	status = WaitForBackgroundWorkerStartup(handle, &pid);
 
@@ -401,5 +401,5 @@ worker_spi_launch(PG_FUNCTION_ARGS)
 				 errhint("Kill all remaining database processes and restart the database.")));
 	Assert(status == BGWH_STARTED);
 
-	PG_RETURN_INT32(pid);
+	MDB_RETURN_INT32(pid);
 }

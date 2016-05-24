@@ -35,13 +35,13 @@
 #define TimestampTzGetDatum(X) Int64GetDatum(X)
 #define IntervalPGetDatum(X) PointerGetDatum(X)
 
-#define PG_GETARG_TIMESTAMP(n) DatumGetTimestamp(PG_GETARG_DATUM(n))
-#define PG_GETARG_TIMESTAMPTZ(n) DatumGetTimestampTz(PG_GETARG_DATUM(n))
-#define PG_GETARG_INTERVAL_P(n) DatumGetIntervalP(PG_GETARG_DATUM(n))
+#define MDB_GETARG_TIMESTAMP(n) DatumGetTimestamp(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_TIMESTAMPTZ(n) DatumGetTimestampTz(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_INTERVAL_P(n) DatumGetIntervalP(MDB_GETARG_DATUM(n))
 
-#define PG_RETURN_TIMESTAMP(x) return TimestampGetDatum(x)
-#define PG_RETURN_TIMESTAMPTZ(x) return TimestampTzGetDatum(x)
-#define PG_RETURN_INTERVAL_P(x) return IntervalPGetDatum(x)
+#define MDB_RETURN_TIMESTAMP(x) return TimestampGetDatum(x)
+#define MDB_RETURN_TIMESTAMPTZ(x) return TimestampTzGetDatum(x)
+#define MDB_RETURN_INTERVAL_P(x) return IntervalPGetDatum(x)
 #else							/* !HAVE_INT64_TIMESTAMP */
 
 #define DatumGetTimestamp(X)  ((Timestamp) DatumGetFloat8(X))
@@ -52,13 +52,13 @@
 #define TimestampTzGetDatum(X) Float8GetDatum(X)
 #define IntervalPGetDatum(X) PointerGetDatum(X)
 
-#define PG_GETARG_TIMESTAMP(n) DatumGetTimestamp(PG_GETARG_DATUM(n))
-#define PG_GETARG_TIMESTAMPTZ(n) DatumGetTimestampTz(PG_GETARG_DATUM(n))
-#define PG_GETARG_INTERVAL_P(n) DatumGetIntervalP(PG_GETARG_DATUM(n))
+#define MDB_GETARG_TIMESTAMP(n) DatumGetTimestamp(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_TIMESTAMPTZ(n) DatumGetTimestampTz(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_INTERVAL_P(n) DatumGetIntervalP(MDB_GETARG_DATUM(n))
 
-#define PG_RETURN_TIMESTAMP(x) return TimestampGetDatum(x)
-#define PG_RETURN_TIMESTAMPTZ(x) return TimestampTzGetDatum(x)
-#define PG_RETURN_INTERVAL_P(x) return IntervalPGetDatum(x)
+#define MDB_RETURN_TIMESTAMP(x) return TimestampGetDatum(x)
+#define MDB_RETURN_TIMESTAMPTZ(x) return TimestampTzGetDatum(x)
+#define MDB_RETURN_INTERVAL_P(x) return IntervalPGetDatum(x)
 #endif   /* HAVE_INT64_TIMESTAMP */
 
 
@@ -92,126 +92,126 @@ extern TimestampTz PgReloadTime;
  * timestamp.c prototypes
  */
 
-extern Datum timestamp_in(PG_FUNCTION_ARGS);
-extern Datum timestamp_out(PG_FUNCTION_ARGS);
-extern Datum timestamp_recv(PG_FUNCTION_ARGS);
-extern Datum timestamp_send(PG_FUNCTION_ARGS);
-extern Datum timestamptypmodin(PG_FUNCTION_ARGS);
-extern Datum timestamptypmodout(PG_FUNCTION_ARGS);
-extern Datum timestamp_transform(PG_FUNCTION_ARGS);
-extern Datum timestamp_scale(PG_FUNCTION_ARGS);
-extern Datum timestamp_eq(PG_FUNCTION_ARGS);
-extern Datum timestamp_ne(PG_FUNCTION_ARGS);
-extern Datum timestamp_lt(PG_FUNCTION_ARGS);
-extern Datum timestamp_le(PG_FUNCTION_ARGS);
-extern Datum timestamp_ge(PG_FUNCTION_ARGS);
-extern Datum timestamp_gt(PG_FUNCTION_ARGS);
-extern Datum timestamp_finite(PG_FUNCTION_ARGS);
-extern Datum timestamp_cmp(PG_FUNCTION_ARGS);
-extern Datum timestamp_sortsupport(PG_FUNCTION_ARGS);
-extern Datum timestamp_hash(PG_FUNCTION_ARGS);
-extern Datum timestamp_smaller(PG_FUNCTION_ARGS);
-extern Datum timestamp_larger(PG_FUNCTION_ARGS);
+extern Datum timestamp_in(MDB_FUNCTION_ARGS);
+extern Datum timestamp_out(MDB_FUNCTION_ARGS);
+extern Datum timestamp_recv(MDB_FUNCTION_ARGS);
+extern Datum timestamp_send(MDB_FUNCTION_ARGS);
+extern Datum timestamptypmodin(MDB_FUNCTION_ARGS);
+extern Datum timestamptypmodout(MDB_FUNCTION_ARGS);
+extern Datum timestamp_transform(MDB_FUNCTION_ARGS);
+extern Datum timestamp_scale(MDB_FUNCTION_ARGS);
+extern Datum timestamp_eq(MDB_FUNCTION_ARGS);
+extern Datum timestamp_ne(MDB_FUNCTION_ARGS);
+extern Datum timestamp_lt(MDB_FUNCTION_ARGS);
+extern Datum timestamp_le(MDB_FUNCTION_ARGS);
+extern Datum timestamp_ge(MDB_FUNCTION_ARGS);
+extern Datum timestamp_gt(MDB_FUNCTION_ARGS);
+extern Datum timestamp_finite(MDB_FUNCTION_ARGS);
+extern Datum timestamp_cmp(MDB_FUNCTION_ARGS);
+extern Datum timestamp_sortsupport(MDB_FUNCTION_ARGS);
+extern Datum timestamp_hash(MDB_FUNCTION_ARGS);
+extern Datum timestamp_smaller(MDB_FUNCTION_ARGS);
+extern Datum timestamp_larger(MDB_FUNCTION_ARGS);
 
-extern Datum timestamp_eq_timestamptz(PG_FUNCTION_ARGS);
-extern Datum timestamp_ne_timestamptz(PG_FUNCTION_ARGS);
-extern Datum timestamp_lt_timestamptz(PG_FUNCTION_ARGS);
-extern Datum timestamp_le_timestamptz(PG_FUNCTION_ARGS);
-extern Datum timestamp_gt_timestamptz(PG_FUNCTION_ARGS);
-extern Datum timestamp_ge_timestamptz(PG_FUNCTION_ARGS);
-extern Datum timestamp_cmp_timestamptz(PG_FUNCTION_ARGS);
+extern Datum timestamp_eq_timestamptz(MDB_FUNCTION_ARGS);
+extern Datum timestamp_ne_timestamptz(MDB_FUNCTION_ARGS);
+extern Datum timestamp_lt_timestamptz(MDB_FUNCTION_ARGS);
+extern Datum timestamp_le_timestamptz(MDB_FUNCTION_ARGS);
+extern Datum timestamp_gt_timestamptz(MDB_FUNCTION_ARGS);
+extern Datum timestamp_ge_timestamptz(MDB_FUNCTION_ARGS);
+extern Datum timestamp_cmp_timestamptz(MDB_FUNCTION_ARGS);
 
-extern Datum make_timestamp(PG_FUNCTION_ARGS);
-extern Datum make_timestamptz(PG_FUNCTION_ARGS);
-extern Datum make_timestamptz_at_timezone(PG_FUNCTION_ARGS);
-extern Datum float8_timestamptz(PG_FUNCTION_ARGS);
+extern Datum make_timestamp(MDB_FUNCTION_ARGS);
+extern Datum make_timestamptz(MDB_FUNCTION_ARGS);
+extern Datum make_timestamptz_at_timezone(MDB_FUNCTION_ARGS);
+extern Datum float8_timestamptz(MDB_FUNCTION_ARGS);
 
-extern Datum timestamptz_eq_timestamp(PG_FUNCTION_ARGS);
-extern Datum timestamptz_ne_timestamp(PG_FUNCTION_ARGS);
-extern Datum timestamptz_lt_timestamp(PG_FUNCTION_ARGS);
-extern Datum timestamptz_le_timestamp(PG_FUNCTION_ARGS);
-extern Datum timestamptz_gt_timestamp(PG_FUNCTION_ARGS);
-extern Datum timestamptz_ge_timestamp(PG_FUNCTION_ARGS);
-extern Datum timestamptz_cmp_timestamp(PG_FUNCTION_ARGS);
+extern Datum timestamptz_eq_timestamp(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_ne_timestamp(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_lt_timestamp(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_le_timestamp(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_gt_timestamp(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_ge_timestamp(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_cmp_timestamp(MDB_FUNCTION_ARGS);
 
-extern Datum interval_in(PG_FUNCTION_ARGS);
-extern Datum interval_out(PG_FUNCTION_ARGS);
-extern Datum interval_recv(PG_FUNCTION_ARGS);
-extern Datum interval_send(PG_FUNCTION_ARGS);
-extern Datum intervaltypmodin(PG_FUNCTION_ARGS);
-extern Datum intervaltypmodout(PG_FUNCTION_ARGS);
-extern Datum interval_transform(PG_FUNCTION_ARGS);
-extern Datum interval_scale(PG_FUNCTION_ARGS);
-extern Datum interval_eq(PG_FUNCTION_ARGS);
-extern Datum interval_ne(PG_FUNCTION_ARGS);
-extern Datum interval_lt(PG_FUNCTION_ARGS);
-extern Datum interval_le(PG_FUNCTION_ARGS);
-extern Datum interval_ge(PG_FUNCTION_ARGS);
-extern Datum interval_gt(PG_FUNCTION_ARGS);
-extern Datum interval_finite(PG_FUNCTION_ARGS);
-extern Datum interval_cmp(PG_FUNCTION_ARGS);
-extern Datum interval_hash(PG_FUNCTION_ARGS);
-extern Datum interval_smaller(PG_FUNCTION_ARGS);
-extern Datum interval_larger(PG_FUNCTION_ARGS);
-extern Datum interval_justify_interval(PG_FUNCTION_ARGS);
-extern Datum interval_justify_hours(PG_FUNCTION_ARGS);
-extern Datum interval_justify_days(PG_FUNCTION_ARGS);
-extern Datum make_interval(PG_FUNCTION_ARGS);
+extern Datum interval_in(MDB_FUNCTION_ARGS);
+extern Datum interval_out(MDB_FUNCTION_ARGS);
+extern Datum interval_recv(MDB_FUNCTION_ARGS);
+extern Datum interval_send(MDB_FUNCTION_ARGS);
+extern Datum intervaltypmodin(MDB_FUNCTION_ARGS);
+extern Datum intervaltypmodout(MDB_FUNCTION_ARGS);
+extern Datum interval_transform(MDB_FUNCTION_ARGS);
+extern Datum interval_scale(MDB_FUNCTION_ARGS);
+extern Datum interval_eq(MDB_FUNCTION_ARGS);
+extern Datum interval_ne(MDB_FUNCTION_ARGS);
+extern Datum interval_lt(MDB_FUNCTION_ARGS);
+extern Datum interval_le(MDB_FUNCTION_ARGS);
+extern Datum interval_ge(MDB_FUNCTION_ARGS);
+extern Datum interval_gt(MDB_FUNCTION_ARGS);
+extern Datum interval_finite(MDB_FUNCTION_ARGS);
+extern Datum interval_cmp(MDB_FUNCTION_ARGS);
+extern Datum interval_hash(MDB_FUNCTION_ARGS);
+extern Datum interval_smaller(MDB_FUNCTION_ARGS);
+extern Datum interval_larger(MDB_FUNCTION_ARGS);
+extern Datum interval_justify_interval(MDB_FUNCTION_ARGS);
+extern Datum interval_justify_hours(MDB_FUNCTION_ARGS);
+extern Datum interval_justify_days(MDB_FUNCTION_ARGS);
+extern Datum make_interval(MDB_FUNCTION_ARGS);
 
-extern Datum timestamp_trunc(PG_FUNCTION_ARGS);
-extern Datum interval_trunc(PG_FUNCTION_ARGS);
-extern Datum timestamp_part(PG_FUNCTION_ARGS);
-extern Datum interval_part(PG_FUNCTION_ARGS);
-extern Datum timestamp_zone_transform(PG_FUNCTION_ARGS);
-extern Datum timestamp_zone(PG_FUNCTION_ARGS);
-extern Datum timestamp_izone_transform(PG_FUNCTION_ARGS);
-extern Datum timestamp_izone(PG_FUNCTION_ARGS);
-extern Datum timestamp_timestamptz(PG_FUNCTION_ARGS);
+extern Datum timestamp_trunc(MDB_FUNCTION_ARGS);
+extern Datum interval_trunc(MDB_FUNCTION_ARGS);
+extern Datum timestamp_part(MDB_FUNCTION_ARGS);
+extern Datum interval_part(MDB_FUNCTION_ARGS);
+extern Datum timestamp_zone_transform(MDB_FUNCTION_ARGS);
+extern Datum timestamp_zone(MDB_FUNCTION_ARGS);
+extern Datum timestamp_izone_transform(MDB_FUNCTION_ARGS);
+extern Datum timestamp_izone(MDB_FUNCTION_ARGS);
+extern Datum timestamp_timestamptz(MDB_FUNCTION_ARGS);
 
-extern Datum timestamptz_in(PG_FUNCTION_ARGS);
-extern Datum timestamptz_out(PG_FUNCTION_ARGS);
-extern Datum timestamptz_recv(PG_FUNCTION_ARGS);
-extern Datum timestamptz_send(PG_FUNCTION_ARGS);
-extern Datum timestamptztypmodin(PG_FUNCTION_ARGS);
-extern Datum timestamptztypmodout(PG_FUNCTION_ARGS);
-extern Datum timestamptz_scale(PG_FUNCTION_ARGS);
-extern Datum timestamptz_timestamp(PG_FUNCTION_ARGS);
-extern Datum timestamptz_zone(PG_FUNCTION_ARGS);
-extern Datum timestamptz_izone(PG_FUNCTION_ARGS);
-extern Datum timestamptz_timestamptz(PG_FUNCTION_ARGS);
+extern Datum timestamptz_in(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_out(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_recv(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_send(MDB_FUNCTION_ARGS);
+extern Datum timestamptztypmodin(MDB_FUNCTION_ARGS);
+extern Datum timestamptztypmodout(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_scale(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_timestamp(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_zone(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_izone(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_timestamptz(MDB_FUNCTION_ARGS);
 
-extern Datum interval_um(PG_FUNCTION_ARGS);
-extern Datum interval_pl(PG_FUNCTION_ARGS);
-extern Datum interval_mi(PG_FUNCTION_ARGS);
-extern Datum interval_mul(PG_FUNCTION_ARGS);
-extern Datum mul_d_interval(PG_FUNCTION_ARGS);
-extern Datum interval_div(PG_FUNCTION_ARGS);
-extern Datum interval_accum(PG_FUNCTION_ARGS);
-extern Datum interval_combine(PG_FUNCTION_ARGS);
-extern Datum interval_accum_inv(PG_FUNCTION_ARGS);
-extern Datum interval_avg(PG_FUNCTION_ARGS);
+extern Datum interval_um(MDB_FUNCTION_ARGS);
+extern Datum interval_pl(MDB_FUNCTION_ARGS);
+extern Datum interval_mi(MDB_FUNCTION_ARGS);
+extern Datum interval_mul(MDB_FUNCTION_ARGS);
+extern Datum mul_d_interval(MDB_FUNCTION_ARGS);
+extern Datum interval_div(MDB_FUNCTION_ARGS);
+extern Datum interval_accum(MDB_FUNCTION_ARGS);
+extern Datum interval_combine(MDB_FUNCTION_ARGS);
+extern Datum interval_accum_inv(MDB_FUNCTION_ARGS);
+extern Datum interval_avg(MDB_FUNCTION_ARGS);
 
-extern Datum timestamp_mi(PG_FUNCTION_ARGS);
-extern Datum timestamp_pl_interval(PG_FUNCTION_ARGS);
-extern Datum timestamp_mi_interval(PG_FUNCTION_ARGS);
-extern Datum timestamp_age(PG_FUNCTION_ARGS);
-extern Datum overlaps_timestamp(PG_FUNCTION_ARGS);
+extern Datum timestamp_mi(MDB_FUNCTION_ARGS);
+extern Datum timestamp_pl_interval(MDB_FUNCTION_ARGS);
+extern Datum timestamp_mi_interval(MDB_FUNCTION_ARGS);
+extern Datum timestamp_age(MDB_FUNCTION_ARGS);
+extern Datum overlaps_timestamp(MDB_FUNCTION_ARGS);
 
-extern Datum timestamptz_pl_interval(PG_FUNCTION_ARGS);
-extern Datum timestamptz_mi_interval(PG_FUNCTION_ARGS);
-extern Datum timestamptz_age(PG_FUNCTION_ARGS);
-extern Datum timestamptz_trunc(PG_FUNCTION_ARGS);
-extern Datum timestamptz_part(PG_FUNCTION_ARGS);
+extern Datum timestamptz_pl_interval(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_mi_interval(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_age(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_trunc(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_part(MDB_FUNCTION_ARGS);
 
-extern Datum now(PG_FUNCTION_ARGS);
-extern Datum statement_timestamp(PG_FUNCTION_ARGS);
-extern Datum clock_timestamp(PG_FUNCTION_ARGS);
+extern Datum now(MDB_FUNCTION_ARGS);
+extern Datum statement_timestamp(MDB_FUNCTION_ARGS);
+extern Datum clock_timestamp(MDB_FUNCTION_ARGS);
 
-extern Datum mdb_postmaster_start_time(PG_FUNCTION_ARGS);
-extern Datum mdb_conf_load_time(PG_FUNCTION_ARGS);
+extern Datum mdb_postmaster_start_time(MDB_FUNCTION_ARGS);
+extern Datum mdb_conf_load_time(MDB_FUNCTION_ARGS);
 
-extern Datum generate_series_timestamp(PG_FUNCTION_ARGS);
-extern Datum generate_series_timestamptz(PG_FUNCTION_ARGS);
+extern Datum generate_series_timestamp(MDB_FUNCTION_ARGS);
+extern Datum generate_series_timestamptz(MDB_FUNCTION_ARGS);
 
 /* Internal routines (not fmgr-callable) */
 

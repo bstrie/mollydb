@@ -618,9 +618,9 @@ strftime_win32(char *dst, size_t dstlen,
 			 GetLastError());
 
 	dst[len] = '\0';
-	if (GetDatabaseEncoding() != PG_UTF8)
+	if (GetDatabaseEncoding() != MDB_UTF8)
 	{
-		char	   *convstr = mdb_any_to_server(dst, len, PG_UTF8);
+		char	   *convstr = mdb_any_to_server(dst, len, MDB_UTF8);
 
 		if (convstr != dst)
 		{
@@ -1261,7 +1261,7 @@ wchar2char(char *to, const wchar_t *from, size_t tolen, mdb_locale_t locale)
 	 * for some reason mbstowcs and wcstombs won't do this for us, so we use
 	 * MultiByteToWideChar().
 	 */
-	if (GetDatabaseEncoding() == PG_UTF8)
+	if (GetDatabaseEncoding() == MDB_UTF8)
 	{
 		result = WideCharToMultiByte(CP_UTF8, 0, from, -1, to, tolen,
 									 NULL, NULL);
@@ -1326,7 +1326,7 @@ char2wchar(wchar_t *to, size_t tolen, const char *from, size_t fromlen,
 
 #ifdef WIN32
 	/* See WIN32 "Unicode" comment above */
-	if (GetDatabaseEncoding() == PG_UTF8)
+	if (GetDatabaseEncoding() == MDB_UTF8)
 	{
 		/* Win32 API does not work for zero-length input */
 		if (fromlen == 0)

@@ -1,6 +1,6 @@
 /* src/interfaces/ecpg/ecpglib/connect.c */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 
 #include "ecpg-pthread-win32.h"
@@ -117,7 +117,7 @@ ecmdb_finish(struct connection * act)
 		struct ECPGtype_information_cache *cache,
 				   *ptr;
 
-		ecmdb_deallocate_all_conn(0, ECPG_COMPAT_PGSQL, act);
+		ecmdb_deallocate_all_conn(0, ECMDB_COMPAT_PGSQL, act);
 		PQfinish(act->connection);
 
 		/*
@@ -177,7 +177,7 @@ ECPGsetcommit(int lineno, const char *mode, const char *connection_name)
 		if (PQtransactionStatus(con->connection) == PQTRANS_IDLE)
 		{
 			results = PQexec(con->connection, "begin transaction");
-			if (!ecmdb_check_PQresult(results, lineno, con->connection, ECPG_COMPAT_PGSQL))
+			if (!ecmdb_check_PQresult(results, lineno, con->connection, ECMDB_COMPAT_PGSQL))
 				return false;
 			PQclear(results);
 		}
@@ -188,7 +188,7 @@ ECPGsetcommit(int lineno, const char *mode, const char *connection_name)
 		if (PQtransactionStatus(con->connection) != PQTRANS_IDLE)
 		{
 			results = PQexec(con->connection, "commit");
-			if (!ecmdb_check_PQresult(results, lineno, con->connection, ECPG_COMPAT_PGSQL))
+			if (!ecmdb_check_PQresult(results, lineno, con->connection, ECMDB_COMPAT_PGSQL))
 				return false;
 			PQclear(results);
 		}
@@ -218,8 +218,8 @@ ECPGsetconn(int lineno, const char *connection_name)
 static void
 ECPGnoticeReceiver(void *arg, const PGresult *result)
 {
-	char	   *sqlstate = PQresultErrorField(result, PG_DIAG_SQLSTATE);
-	char	   *message = PQresultErrorField(result, PG_DIAG_MESSAGE_PRIMARY);
+	char	   *sqlstate = PQresultErrorField(result, MDB_DIAG_SQLSTATE);
+	char	   *message = PQresultErrorField(result, MDB_DIAG_MESSAGE_PRIMARY);
 	struct sqlca_t *sqlca = ECPGget_sqlca();
 	int			sqlcode;
 
@@ -231,7 +231,7 @@ ECPGnoticeReceiver(void *arg, const PGresult *result)
 
 	(void) arg;					/* keep the compiler quiet */
 	if (sqlstate == NULL)
-		sqlstate = ECPG_SQLSTATE_ECPG_INTERNAL_ERROR;
+		sqlstate = ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR;
 
 	if (message == NULL)		/* Shouldn't happen, but need to be sure */
 		message = ecmdb_gettext("empty message text");
@@ -243,14 +243,14 @@ ECPGnoticeReceiver(void *arg, const PGresult *result)
 	ecmdb_log("ECPGnoticeReceiver: %s\n", message);
 
 	/* map to SQLCODE for backward compatibility */
-	if (strcmp(sqlstate, ECPG_SQLSTATE_INVALID_CURSOR_NAME) == 0)
-		sqlcode = ECPG_WARNING_UNKNOWN_PORTAL;
-	else if (strcmp(sqlstate, ECPG_SQLSTATE_ACTIVE_SQL_TRANSACTION) == 0)
-		sqlcode = ECPG_WARNING_IN_TRANSACTION;
-	else if (strcmp(sqlstate, ECPG_SQLSTATE_NO_ACTIVE_SQL_TRANSACTION) == 0)
-		sqlcode = ECPG_WARNING_NO_TRANSACTION;
-	else if (strcmp(sqlstate, ECPG_SQLSTATE_DUPLICATE_CURSOR) == 0)
-		sqlcode = ECPG_WARNING_PORTAL_EXISTS;
+	if (strcmp(sqlstate, ECMDB_SQLSTATE_INVALID_CURSOR_NAME) == 0)
+		sqlcode = ECMDB_WARNING_UNKNOWN_PORTAL;
+	else if (strcmp(sqlstate, ECMDB_SQLSTATE_ACTIVE_SQL_TRANSACTION) == 0)
+		sqlcode = ECMDB_WARNING_IN_TRANSACTION;
+	else if (strcmp(sqlstate, ECMDB_SQLSTATE_NO_ACTIVE_SQL_TRANSACTION) == 0)
+		sqlcode = ECMDB_WARNING_NO_TRANSACTION;
+	else if (strcmp(sqlstate, ECMDB_SQLSTATE_DUPLICATE_CURSOR) == 0)
+		sqlcode = ECMDB_WARNING_PORTAL_EXISTS;
 	else
 		sqlcode = 0;
 
@@ -286,8 +286,8 @@ ECPGconnect(int lineno, int c, const char *name, const char *user, const char *p
 
 	if (sqlca == NULL)
 	{
-		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
-				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(lineno, ECMDB_OUT_OF_MEMORY,
+				   ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		ecmdb_free(dbname);
 		return false;
 	}
@@ -306,10 +306,10 @@ ECPGconnect(int lineno, int c, const char *name, const char *user, const char *p
 
 		/*
 		 * Informix uses an environment variable DBPATH that overrides the
-		 * connection parameters given here. We do the same with PG_DBPATH as
+		 * connection parameters given here. We do the same with MDB_DBPATH as
 		 * the syntax is different.
 		 */
-		envname = getenv("PG_DBPATH");
+		envname = getenv("MDB_DBPATH");
 		if (envname)
 		{
 			ecmdb_free(dbname);
@@ -398,7 +398,7 @@ ECPGconnect(int lineno, int c, const char *name, const char *user, const char *p
 						if (strncmp(dbname, "unix:", 5) != 0)
 						{
 							ecmdb_log("ECPGconnect: socketname %s given for TCP connection on line %d\n", host, lineno);
-							ecmdb_raise(lineno, ECPG_CONNECT, ECPG_SQLSTATE_SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION, realname ? realname : ecmdb_gettext("<DEFAULT>"));
+							ecmdb_raise(lineno, ECMDB_CONNECT, ECMDB_SQLSTATE_SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION, realname ? realname : ecmdb_gettext("<DEFAULT>"));
 							if (host)
 								ecmdb_free(host);
 
@@ -427,7 +427,7 @@ ECPGconnect(int lineno, int c, const char *name, const char *user, const char *p
 					if (strcmp(dbname + offset, "localhost") != 0 && strcmp(dbname + offset, "127.0.0.1") != 0)
 					{
 						ecmdb_log("ECPGconnect: non-localhost access via sockets on line %d\n", lineno);
-						ecmdb_raise(lineno, ECPG_CONNECT, ECPG_SQLSTATE_SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION, realname ? realname : ecmdb_gettext("<DEFAULT>"));
+						ecmdb_raise(lineno, ECMDB_CONNECT, ECMDB_SQLSTATE_SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION, realname ? realname : ecmdb_gettext("<DEFAULT>"));
 						if (host)
 							ecmdb_free(host);
 						if (port)
@@ -644,7 +644,7 @@ ECPGconnect(int lineno, int c, const char *name, const char *user, const char *p
 		pthread_mutex_unlock(&connections_mutex);
 #endif
 
-		ecmdb_raise(lineno, ECPG_CONNECT, ECPG_SQLSTATE_SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION, db);
+		ecmdb_raise(lineno, ECMDB_CONNECT, ECMDB_SQLSTATE_SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION, db);
 		if (realname)
 			ecmdb_free(realname);
 
@@ -673,8 +673,8 @@ ECPGdisconnect(int lineno, const char *connection_name)
 
 	if (sqlca == NULL)
 	{
-		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
-				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(lineno, ECMDB_OUT_OF_MEMORY,
+				   ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return (false);
 	}
 

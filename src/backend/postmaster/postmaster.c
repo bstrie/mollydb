@@ -602,7 +602,7 @@ PostmasterMain(int argc, char *argv[])
 	 * postmaster/checkpointer.c.
 	 */
 	pqinitmask();
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	pqsignal(SIGHUP, SIGHUP_handler);	/* reread config file and have
 										 * children do same */
@@ -1368,7 +1368,7 @@ getInstallationPaths(const char *argv0)
 
 #ifdef EXEC_BACKEND
 	/* Locate executable backend before we change working directory */
-	if (find_other_exec(argv0, "mollydb", PG_BACKEND_VERSIONSTR,
+	if (find_other_exec(argv0, "mollydb", MDB_BACKEND_VERSIONSTR,
 						mollydb_exec_path) < 0)
 		ereport(FATAL,
 				(errmsg("%s: could not locate matching mollydb executable",
@@ -1478,12 +1478,12 @@ checkDataDir(void)
 				 errdetail("Permissions should be u=rwx (0700).")));
 #endif
 
-	/* Look for PG_VERSION before looking for mdb_control */
+	/* Look for MDB_VERSION before looking for mdb_control */
 	ValidatePgVersion(DataDir);
 
 	snprintf(path, sizeof(path), "%s/global/mdb_control", DataDir);
 
-	fp = AllocateFile(path, PG_BINARY_R);
+	fp = AllocateFile(path, MDB_BINARY_R);
 	if (fp == NULL)
 	{
 		write_stderr("%s: could not find the database system\n"
@@ -1634,12 +1634,12 @@ ServerLoop(void)
 
 		if (pmState == PM_WAIT_DEAD_END)
 		{
-			PG_SETMASK(&UnBlockSig);
+			MDB_SETMASK(&UnBlockSig);
 
 			mdb_usleep(100000L); /* 100 msec seems reasonable */
 			selres = 0;
 
-			PG_SETMASK(&BlockSig);
+			MDB_SETMASK(&BlockSig);
 		}
 		else
 		{
@@ -1649,11 +1649,11 @@ ServerLoop(void)
 			/* Needs to run with blocked signals! */
 			DetermineSleepTime(&timeout);
 
-			PG_SETMASK(&UnBlockSig);
+			MDB_SETMASK(&UnBlockSig);
 
 			selres = select(nSockets, &rmask, NULL, NULL, &timeout);
 
-			PG_SETMASK(&BlockSig);
+			MDB_SETMASK(&BlockSig);
 		}
 
 		/* Now check the select() result */
@@ -1984,17 +1984,17 @@ retry1:
 
 	/* Check we can handle the protocol the frontend is using. */
 
-	if (PG_PROTOCOL_MAJOR(proto) < PG_PROTOCOL_MAJOR(PG_PROTOCOL_EARLIEST) ||
-		PG_PROTOCOL_MAJOR(proto) > PG_PROTOCOL_MAJOR(PG_PROTOCOL_LATEST) ||
-		(PG_PROTOCOL_MAJOR(proto) == PG_PROTOCOL_MAJOR(PG_PROTOCOL_LATEST) &&
-		 PG_PROTOCOL_MINOR(proto) > PG_PROTOCOL_MINOR(PG_PROTOCOL_LATEST)))
+	if (MDB_PROTOCOL_MAJOR(proto) < MDB_PROTOCOL_MAJOR(MDB_PROTOCOL_EARLIEST) ||
+		MDB_PROTOCOL_MAJOR(proto) > MDB_PROTOCOL_MAJOR(MDB_PROTOCOL_LATEST) ||
+		(MDB_PROTOCOL_MAJOR(proto) == MDB_PROTOCOL_MAJOR(MDB_PROTOCOL_LATEST) &&
+		 MDB_PROTOCOL_MINOR(proto) > MDB_PROTOCOL_MINOR(MDB_PROTOCOL_LATEST)))
 		ereport(FATAL,
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("unsupported frontend protocol %u.%u: server supports %u.0 to %u.%u",
-						PG_PROTOCOL_MAJOR(proto), PG_PROTOCOL_MINOR(proto),
-						PG_PROTOCOL_MAJOR(PG_PROTOCOL_EARLIEST),
-						PG_PROTOCOL_MAJOR(PG_PROTOCOL_LATEST),
-						PG_PROTOCOL_MINOR(PG_PROTOCOL_LATEST))));
+						MDB_PROTOCOL_MAJOR(proto), MDB_PROTOCOL_MINOR(proto),
+						MDB_PROTOCOL_MAJOR(MDB_PROTOCOL_EARLIEST),
+						MDB_PROTOCOL_MAJOR(MDB_PROTOCOL_LATEST),
+						MDB_PROTOCOL_MINOR(MDB_PROTOCOL_LATEST))));
 
 	/*
 	 * Now fetch parameters out of startup packet and save them into the Port
@@ -2006,7 +2006,7 @@ retry1:
 	 */
 	oldcontext = MemoryContextSwitchTo(TopMemoryContext);
 
-	if (PG_PROTOCOL_MAJOR(proto) >= 3)
+	if (MDB_PROTOCOL_MAJOR(proto) >= 3)
 	{
 		int32		offset = sizeof(ProtocolVersion);
 
@@ -2463,7 +2463,7 @@ SIGHUP_handler(SIGNAL_ARGS)
 {
 	int			save_errno = errno;
 
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	if (Shutdown <= SmartShutdown)
 	{
@@ -2505,7 +2505,7 @@ SIGHUP_handler(SIGNAL_ARGS)
 #endif
 	}
 
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	errno = save_errno;
 }
@@ -2519,7 +2519,7 @@ pmdie(SIGNAL_ARGS)
 {
 	int			save_errno = errno;
 
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	ereport(DEBUG2,
 			(errmsg_internal("postmaster received signal %d",
@@ -2675,7 +2675,7 @@ pmdie(SIGNAL_ARGS)
 			break;
 	}
 
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	errno = save_errno;
 }
@@ -2690,7 +2690,7 @@ reaper(SIGNAL_ARGS)
 	int			pid;			/* process id of dead child process */
 	int			exitstatus;		/* its exit status */
 
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	ereport(DEBUG4,
 			(errmsg_internal("reaping dead processes")));
@@ -2989,7 +2989,7 @@ reaper(SIGNAL_ARGS)
 	PostmasterStateMachine();
 
 	/* Done with signal handler */
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	errno = save_errno;
 }
@@ -4068,7 +4068,7 @@ BackendInitialize(Port *port)
 	pqsignal(SIGTERM, startup_die);
 	pqsignal(SIGQUIT, startup_die);
 	InitializeTimeouts();		/* establishes SIGALRM handler */
-	PG_SETMASK(&StartupBlockSig);
+	MDB_SETMASK(&StartupBlockSig);
 
 	/*
 	 * Get the remote host name and port for logging and status display.
@@ -4179,7 +4179,7 @@ BackendInitialize(Port *port)
 	 * Disable the timeout, and prevent SIGTERM/SIGQUIT again.
 	 */
 	disable_timeout(STARTUP_PACKET_TIMEOUT, false);
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 }
 
 
@@ -4330,20 +4330,20 @@ internal_forkexec(int argc, char *argv[], Port *port)
 
 	/* Calculate name for temp file */
 	snprintf(tmpfilename, MAXPGPATH, "%s/%s.backend_var.%d.%lu",
-			 PG_TEMP_FILES_DIR, PG_TEMP_FILE_PREFIX,
+			 MDB_TEMP_FILES_DIR, MDB_TEMP_FILE_PREFIX,
 			 MyProcPid, ++tmpBackendFileNum);
 
 	/* Open file */
-	fp = AllocateFile(tmpfilename, PG_BINARY_W);
+	fp = AllocateFile(tmpfilename, MDB_BINARY_W);
 	if (!fp)
 	{
 		/*
 		 * As in OpenTemporaryFileInTablespace, try to make the temp-file
 		 * directory
 		 */
-		mkdir(PG_TEMP_FILES_DIR, S_IRWXU);
+		mkdir(MDB_TEMP_FILES_DIR, S_IRWXU);
 
-		fp = AllocateFile(tmpfilename, PG_BINARY_W);
+		fp = AllocateFile(tmpfilename, MDB_BINARY_W);
 		if (!fp)
 		{
 			ereport(LOG,
@@ -4680,7 +4680,7 @@ SubPostmasterMain(int argc, char *argv[])
 
 	/* In EXEC_BACKEND case we will not have inherited these settings */
 	pqinitmask();
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	/* Read in remaining GUC variables */
 	read_nondefault_variables();
@@ -4896,7 +4896,7 @@ sigusr1_handler(SIGNAL_ARGS)
 {
 	int			save_errno = errno;
 
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	/* Process background worker state change. */
 	if (CheckPostmasterSignal(PMSIGNAL_BACKGROUND_WORKER_CHANGE))
@@ -5030,7 +5030,7 @@ sigusr1_handler(SIGNAL_ARGS)
 		signal_child(StartupPID, SIGUSR2);
 	}
 
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	errno = save_errno;
 }
@@ -5461,13 +5461,13 @@ BackgroundWorkerInitializeConnectionByOid(Oid dboid, Oid useroid)
 void
 BackgroundWorkerBlockSignals(void)
 {
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 }
 
 void
 BackgroundWorkerUnblockSignals(void)
 {
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 }
 
 #ifdef EXEC_BACKEND
@@ -5950,7 +5950,7 @@ read_backend_variables(char *id, Port *port)
 	FILE	   *fp;
 
 	/* Open file */
-	fp = AllocateFile(id, PG_BINARY_R);
+	fp = AllocateFile(id, MDB_BINARY_R);
 	if (!fp)
 	{
 		write_stderr("could not open backend variables file \"%s\": %s\n",

@@ -22,7 +22,7 @@
 #define GIST_QUERY_DEBUG
 */
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * Auxiliary data structure for picksplit method.
@@ -37,12 +37,12 @@ typedef struct
 /*
 ** Input/Output routines
 */
-PG_FUNCTION_INFO_V1(seg_in);
-PG_FUNCTION_INFO_V1(seg_out);
-PG_FUNCTION_INFO_V1(seg_size);
-PG_FUNCTION_INFO_V1(seg_lower);
-PG_FUNCTION_INFO_V1(seg_upper);
-PG_FUNCTION_INFO_V1(seg_center);
+MDB_FUNCTION_INFO_V1(seg_in);
+MDB_FUNCTION_INFO_V1(seg_out);
+MDB_FUNCTION_INFO_V1(seg_size);
+MDB_FUNCTION_INFO_V1(seg_lower);
+MDB_FUNCTION_INFO_V1(seg_upper);
+MDB_FUNCTION_INFO_V1(seg_center);
 
 /*
 ** GiST support methods
@@ -102,9 +102,9 @@ static int	restore(char *s, float val, int n);
  *****************************************************************************/
 
 Datum
-seg_in(PG_FUNCTION_ARGS)
+seg_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 	SEG		   *result = palloc(sizeof(SEG));
 
 	seg_scanner_init(str);
@@ -114,13 +114,13 @@ seg_in(PG_FUNCTION_ARGS)
 
 	seg_scanner_finish();
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-seg_out(PG_FUNCTION_ARGS)
+seg_out(MDB_FUNCTION_ARGS)
 {
-	SEG		   *seg = (SEG *) PG_GETARG_POINTER(0);
+	SEG		   *seg = (SEG *) MDB_GETARG_POINTER(0);
 	char	   *result;
 	char	   *p;
 
@@ -155,31 +155,31 @@ seg_out(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 Datum
-seg_center(PG_FUNCTION_ARGS)
+seg_center(MDB_FUNCTION_ARGS)
 {
-	SEG		   *seg = (SEG *) PG_GETARG_POINTER(0);
+	SEG		   *seg = (SEG *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_FLOAT4(((float) seg->lower + (float) seg->upper) / 2.0);
+	MDB_RETURN_FLOAT4(((float) seg->lower + (float) seg->upper) / 2.0);
 }
 
 Datum
-seg_lower(PG_FUNCTION_ARGS)
+seg_lower(MDB_FUNCTION_ARGS)
 {
-	SEG		   *seg = (SEG *) PG_GETARG_POINTER(0);
+	SEG		   *seg = (SEG *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_FLOAT4(seg->lower);
+	MDB_RETURN_FLOAT4(seg->lower);
 }
 
 Datum
-seg_upper(PG_FUNCTION_ARGS)
+seg_upper(MDB_FUNCTION_ARGS)
 {
-	SEG		   *seg = (SEG *) PG_GETARG_POINTER(0);
+	SEG		   *seg = (SEG *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_FLOAT4(seg->upper);
+	MDB_RETURN_FLOAT4(seg->upper);
 }
 
 
@@ -667,11 +667,11 @@ rt_seg_size(SEG *a, float *size)
 }
 
 Datum
-seg_size(PG_FUNCTION_ARGS)
+seg_size(MDB_FUNCTION_ARGS)
 {
-	SEG		   *seg = (SEG *) PG_GETARG_POINTER(0);
+	SEG		   *seg = (SEG *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_FLOAT4((float) Abs(seg->upper - seg->lower));
+	MDB_RETURN_FLOAT4((float) Abs(seg->upper - seg->lower));
 }
 
 

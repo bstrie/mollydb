@@ -134,7 +134,7 @@ main(int argc, char **argv)
 	int			i;
 	int			j;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_config"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mdb_config"));
 
 	progname = get_progname(argv[0]);
 

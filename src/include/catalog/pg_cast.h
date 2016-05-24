@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_CAST_H
-#define PG_CAST_H
+#ifndef MDB_CAST_H
+#define MDB_CAST_H
 
 #include "catalog/genbki.h"
 
@@ -378,4 +378,4 @@ DATA(insert ( 1700 1700 1703 i f ));
 DATA(insert (  114 3802    0 a i ));
 DATA(insert ( 3802	114    0 a i ));
 
-#endif   /* PG_CAST_H */
+#endif   /* MDB_CAST_H */

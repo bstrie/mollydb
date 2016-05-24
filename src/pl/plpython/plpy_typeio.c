@@ -285,7 +285,7 @@ PLyDict_FromTuple(PLyTypeInfo *info, HeapTuple tuple, TupleDesc desc)
 	if (dict == NULL)
 		PLy_elog(ERROR, "could not create new dictionary");
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		int			i;
 
@@ -319,13 +319,13 @@ PLyDict_FromTuple(PLyTypeInfo *info, HeapTuple tuple, TupleDesc desc)
 		MemoryContextSwitchTo(oldcontext);
 		MemoryContextReset(scratch_context);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		MemoryContextSwitchTo(oldcontext);
 		Py_DECREF(dict);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return dict;
 }
@@ -710,7 +710,7 @@ PLyObject_ToBytea(PLyObToDatum *arg, int32 typmod, PyObject *plrv)
 	if (!plrv_so)
 		PLy_elog(ERROR, "could not create bytes representation of Python object");
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		char	   *plrv_sc = PyBytes_AsString(plrv_so);
 		size_t		len = PyBytes_Size(plrv_so);
@@ -721,12 +721,12 @@ PLyObject_ToBytea(PLyObToDatum *arg, int32 typmod, PyObject *plrv)
 		memcpy(VARDATA(result), plrv_sc, len);
 		rv = PointerGetDatum(result);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		Py_XDECREF(plrv_so);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	Py_XDECREF(plrv_so);
 
@@ -981,7 +981,7 @@ PLyMapping_ToComposite(PLyTypeInfo *info, TupleDesc desc, PyObject *mapping)
 		key = NameStr(desc->attrs[i]->attname);
 		value = NULL;
 		att = &info->out.r.atts[i];
-		PG_TRY();
+		MDB_TRY();
 		{
 			value = PyMapping_GetItemString(mapping, key);
 			if (value == Py_None)
@@ -1004,12 +1004,12 @@ PLyMapping_ToComposite(PLyTypeInfo *info, TupleDesc desc, PyObject *mapping)
 			Py_XDECREF(value);
 			value = NULL;
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			Py_XDECREF(value);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 	}
 
 	tuple = heap_form_tuple(desc, values, nulls);
@@ -1073,7 +1073,7 @@ PLySequence_ToComposite(PLyTypeInfo *info, TupleDesc desc, PyObject *sequence)
 
 		value = NULL;
 		att = &info->out.r.atts[i];
-		PG_TRY();
+		MDB_TRY();
 		{
 			value = PySequence_GetItem(sequence, idx);
 			Assert(value);
@@ -1091,12 +1091,12 @@ PLySequence_ToComposite(PLyTypeInfo *info, TupleDesc desc, PyObject *sequence)
 			Py_XDECREF(value);
 			value = NULL;
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			Py_XDECREF(value);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 
 		idx++;
 	}
@@ -1144,7 +1144,7 @@ PLyGenericObject_ToComposite(PLyTypeInfo *info, TupleDesc desc, PyObject *object
 		key = NameStr(desc->attrs[i]->attname);
 		value = NULL;
 		att = &info->out.r.atts[i];
-		PG_TRY();
+		MDB_TRY();
 		{
 			value = PyObject_GetAttrString(object, key);
 			if (value == Py_None)
@@ -1168,12 +1168,12 @@ PLyGenericObject_ToComposite(PLyTypeInfo *info, TupleDesc desc, PyObject *object
 			Py_XDECREF(value);
 			value = NULL;
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			Py_XDECREF(value);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 	}
 
 	tuple = heap_form_tuple(desc, values, nulls);

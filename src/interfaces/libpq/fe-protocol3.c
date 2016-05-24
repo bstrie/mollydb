@@ -905,7 +905,7 @@ pqGetErrorNotice3(PGconn *conn, bool isError)
 	 * Read the fields and save into res.
 	 *
 	 * While at it, save the SQLSTATE in conn->last_sqlstate, and note whether
-	 * we saw a PG_DIAG_STATEMENT_POSITION field.
+	 * we saw a MDB_DIAG_STATEMENT_POSITION field.
 	 */
 	for (;;)
 	{
@@ -916,17 +916,17 @@ pqGetErrorNotice3(PGconn *conn, bool isError)
 		if (pqGets(&workBuf, conn))
 			goto fail;
 		pqSaveMessageField(res, id, workBuf.data);
-		if (id == PG_DIAG_SQLSTATE)
+		if (id == MDB_DIAG_SQLSTATE)
 			strlcpy(conn->last_sqlstate, workBuf.data,
 					sizeof(conn->last_sqlstate));
-		else if (id == PG_DIAG_STATEMENT_POSITION)
+		else if (id == MDB_DIAG_STATEMENT_POSITION)
 			have_position = true;
 	}
 
 	/*
 	 * Save the active query text, if any, into res as well; but only if we
 	 * might need it for an error cursor display, which is only true if there
-	 * is a PG_DIAG_STATEMENT_POSITION field.
+	 * is a MDB_DIAG_STATEMENT_POSITION field.
 	 */
 	if (have_position && conn->last_query && res)
 		res->errQuery = pqResultStrdup(res, conn->last_query);
@@ -1007,19 +1007,19 @@ pqBuildErrorMessage3(PQExpBuffer msg, const PGresult *res,
 	}
 
 	/* Else build error message from relevant fields */
-	val = PQresultErrorField(res, PG_DIAG_SEVERITY);
+	val = PQresultErrorField(res, MDB_DIAG_SEVERITY);
 	if (val)
 		appendPQExpBuffer(msg, "%s:  ", val);
 	if (verbosity == PQERRORS_VERBOSE)
 	{
-		val = PQresultErrorField(res, PG_DIAG_SQLSTATE);
+		val = PQresultErrorField(res, MDB_DIAG_SQLSTATE);
 		if (val)
 			appendPQExpBuffer(msg, "%s: ", val);
 	}
-	val = PQresultErrorField(res, PG_DIAG_MESSAGE_PRIMARY);
+	val = PQresultErrorField(res, MDB_DIAG_MESSAGE_PRIMARY);
 	if (val)
 		appendPQExpBufferStr(msg, val);
-	val = PQresultErrorField(res, PG_DIAG_STATEMENT_POSITION);
+	val = PQresultErrorField(res, MDB_DIAG_STATEMENT_POSITION);
 	if (val)
 	{
 		if (verbosity != PQERRORS_TERSE && res->errQuery != NULL)
@@ -1038,10 +1038,10 @@ pqBuildErrorMessage3(PQExpBuffer msg, const PGresult *res,
 	}
 	else
 	{
-		val = PQresultErrorField(res, PG_DIAG_INTERNAL_POSITION);
+		val = PQresultErrorField(res, MDB_DIAG_INTERNAL_POSITION);
 		if (val)
 		{
-			querytext = PQresultErrorField(res, PG_DIAG_INTERNAL_QUERY);
+			querytext = PQresultErrorField(res, MDB_DIAG_INTERNAL_QUERY);
 			if (verbosity != PQERRORS_TERSE && querytext != NULL)
 			{
 				/* emit position as a syntax cursor display */
@@ -1062,20 +1062,20 @@ pqBuildErrorMessage3(PQExpBuffer msg, const PGresult *res,
 		if (querytext && querypos > 0)
 			reportErrorPosition(msg, querytext, querypos,
 								res->client_encoding);
-		val = PQresultErrorField(res, PG_DIAG_MESSAGE_DETAIL);
+		val = PQresultErrorField(res, MDB_DIAG_MESSAGE_DETAIL);
 		if (val)
 			appendPQExpBuffer(msg, libpq_gettext("DETAIL:  %s\n"), val);
-		val = PQresultErrorField(res, PG_DIAG_MESSAGE_HINT);
+		val = PQresultErrorField(res, MDB_DIAG_MESSAGE_HINT);
 		if (val)
 			appendPQExpBuffer(msg, libpq_gettext("HINT:  %s\n"), val);
-		val = PQresultErrorField(res, PG_DIAG_INTERNAL_QUERY);
+		val = PQresultErrorField(res, MDB_DIAG_INTERNAL_QUERY);
 		if (val)
 			appendPQExpBuffer(msg, libpq_gettext("QUERY:  %s\n"), val);
 		if (show_context == PQSHOW_CONTEXT_ALWAYS ||
 			(show_context == PQSHOW_CONTEXT_ERRORS &&
 			 res->resultStatus == PGRES_FATAL_ERROR))
 		{
-			val = PQresultErrorField(res, PG_DIAG_CONTEXT);
+			val = PQresultErrorField(res, MDB_DIAG_CONTEXT);
 			if (val)
 				appendPQExpBuffer(msg, libpq_gettext("CONTEXT:  %s\n"),
 								  val);
@@ -1083,23 +1083,23 @@ pqBuildErrorMessage3(PQExpBuffer msg, const PGresult *res,
 	}
 	if (verbosity == PQERRORS_VERBOSE)
 	{
-		val = PQresultErrorField(res, PG_DIAG_SCHEMA_NAME);
+		val = PQresultErrorField(res, MDB_DIAG_SCHEMA_NAME);
 		if (val)
 			appendPQExpBuffer(msg,
 							  libpq_gettext("SCHEMA NAME:  %s\n"), val);
-		val = PQresultErrorField(res, PG_DIAG_TABLE_NAME);
+		val = PQresultErrorField(res, MDB_DIAG_TABLE_NAME);
 		if (val)
 			appendPQExpBuffer(msg,
 							  libpq_gettext("TABLE NAME:  %s\n"), val);
-		val = PQresultErrorField(res, PG_DIAG_COLUMN_NAME);
+		val = PQresultErrorField(res, MDB_DIAG_COLUMN_NAME);
 		if (val)
 			appendPQExpBuffer(msg,
 							  libpq_gettext("COLUMN NAME:  %s\n"), val);
-		val = PQresultErrorField(res, PG_DIAG_DATATYPE_NAME);
+		val = PQresultErrorField(res, MDB_DIAG_DATATYPE_NAME);
 		if (val)
 			appendPQExpBuffer(msg,
 							  libpq_gettext("DATATYPE NAME:  %s\n"), val);
-		val = PQresultErrorField(res, PG_DIAG_CONSTRAINT_NAME);
+		val = PQresultErrorField(res, MDB_DIAG_CONSTRAINT_NAME);
 		if (val)
 			appendPQExpBuffer(msg,
 							  libpq_gettext("CONSTRAINT NAME:  %s\n"), val);
@@ -1109,9 +1109,9 @@ pqBuildErrorMessage3(PQExpBuffer msg, const PGresult *res,
 		const char *valf;
 		const char *vall;
 
-		valf = PQresultErrorField(res, PG_DIAG_SOURCE_FILE);
-		vall = PQresultErrorField(res, PG_DIAG_SOURCE_LINE);
-		val = PQresultErrorField(res, PG_DIAG_SOURCE_FUNCTION);
+		valf = PQresultErrorField(res, MDB_DIAG_SOURCE_FILE);
+		vall = PQresultErrorField(res, MDB_DIAG_SOURCE_LINE);
+		val = PQresultErrorField(res, MDB_DIAG_SOURCE_FUNCTION);
 		if (val || valf || vall)
 		{
 			appendPQExpBufferStr(msg, libpq_gettext("LOCATION:  "));

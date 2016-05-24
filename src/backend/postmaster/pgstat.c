@@ -3489,7 +3489,7 @@ PgstatCollectorMain(int argc, char *argv[])
 	pqsignal(SIGTTOU, SIG_DFL);
 	pqsignal(SIGCONT, SIG_DFL);
 	pqsignal(SIGWINCH, SIG_DFL);
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/*
 	 * Identify myself via ps
@@ -3901,7 +3901,7 @@ pgstat_write_statsfiles(bool permanent, bool allDbs)
 	/*
 	 * Open the statistics temp file to write out the current values.
 	 */
-	fpout = AllocateFile(tmpfile, PG_BINARY_W);
+	fpout = AllocateFile(tmpfile, MDB_BINARY_W);
 	if (fpout == NULL)
 	{
 		ereport(LOG,
@@ -4078,7 +4078,7 @@ pgstat_write_db_statsfile(PgStat_StatDBEntry *dbentry, bool permanent)
 	/*
 	 * Open the statistics temp file to write out the current values.
 	 */
-	fpout = AllocateFile(tmpfile, PG_BINARY_W);
+	fpout = AllocateFile(tmpfile, MDB_BINARY_W);
 	if (fpout == NULL)
 	{
 		ereport(LOG,
@@ -4222,7 +4222,7 @@ pgstat_read_statsfiles(Oid onlydb, bool permanent, bool deep)
 	 * not yet written the stats file the first time.  Any other failure
 	 * condition is suspicious.
 	 */
-	if ((fpin = AllocateFile(statfile, PG_BINARY_R)) == NULL)
+	if ((fpin = AllocateFile(statfile, MDB_BINARY_R)) == NULL)
 	{
 		if (errno != ENOENT)
 			ereport(pgStatRunningInCollector ? LOG : WARNING,
@@ -4405,7 +4405,7 @@ pgstat_read_db_statsfile(Oid databaseid, HTAB *tabhash, HTAB *funchash,
 	 * not yet written the stats file the first time.  Any other failure
 	 * condition is suspicious.
 	 */
-	if ((fpin = AllocateFile(statfile, PG_BINARY_R)) == NULL)
+	if ((fpin = AllocateFile(statfile, MDB_BINARY_R)) == NULL)
 	{
 		if (errno != ENOENT)
 			ereport(pgStatRunningInCollector ? LOG : WARNING,
@@ -4560,7 +4560,7 @@ pgstat_read_db_statsfile_timestamp(Oid databaseid, bool permanent,
 	 * Try to open the stats file.  As above, anything but ENOENT is worthy of
 	 * complaining about.
 	 */
-	if ((fpin = AllocateFile(statfile, PG_BINARY_R)) == NULL)
+	if ((fpin = AllocateFile(statfile, MDB_BINARY_R)) == NULL)
 	{
 		if (errno != ENOENT)
 			ereport(pgStatRunningInCollector ? LOG : WARNING,

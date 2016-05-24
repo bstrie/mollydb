@@ -16,7 +16,7 @@ char		saved_argv0[MAXPGPATH];
 char		isolation_exec[MAXPGPATH];
 bool		looked_up_isolation_exec = false;
 
-#define PG_ISOLATION_VERSIONSTR "isolationtester (MollyDB) " PG_VERSION "\n"
+#define MDB_ISOLATION_VERSIONSTR "isolationtester (MollyDB) " MDB_VERSION "\n"
 
 /*
  * start an isolation tester process for specified file (including
@@ -40,7 +40,7 @@ isolation_start_test(const char *testname,
 	{
 		/* look for isolationtester binary */
 		if (find_other_exec(saved_argv0, "isolationtester",
-							PG_ISOLATION_VERSIONSTR, isolation_exec) != 0)
+							MDB_ISOLATION_VERSIONSTR, isolation_exec) != 0)
 		{
 			fprintf(stderr, _("could not find proper isolationtester binary\n"));
 			exit(2);

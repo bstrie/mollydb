@@ -121,7 +121,7 @@ datapagemap_print(datapagemap_t *map)
 
 	iter = datapagemap_iterate(map);
 	while (datapagemap_next(iter, &blocknum))
-		mdb_log(PG_DEBUG, "  block %u\n", blocknum);
+		mdb_log(MDB_DEBUG, "  block %u\n", blocknum);
 
 	mdb_free(iter);
 }

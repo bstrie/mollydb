@@ -109,14 +109,14 @@ anybit_typmodout(int32 typmod)
  *		  VARHDRSZ bytes or from atttypmod.
  */
 Datum
-bit_in(PG_FUNCTION_ARGS)
+bit_in(MDB_FUNCTION_ARGS)
 {
-	char	   *input_string = PG_GETARG_CSTRING(0);
+	char	   *input_string = MDB_GETARG_CSTRING(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		atttypmod = PG_GETARG_INT32(2);
+	int32		atttypmod = MDB_GETARG_INT32(2);
 	VarBit	   *result;			/* The resulting bit string			  */
 	char	   *sp;				/* pointer into the character string  */
 	bits8	   *r;				/* pointer into the result */
@@ -237,12 +237,12 @@ bit_in(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 
 Datum
-bit_out(PG_FUNCTION_ARGS)
+bit_out(MDB_FUNCTION_ARGS)
 {
 #if 1
 	/* same as varbit output */
@@ -253,7 +253,7 @@ bit_out(PG_FUNCTION_ARGS)
 	 * This is how one would print a hex string, in case someone wants to
 	 * write a formatting function.
 	 */
-	VarBit	   *s = PG_GETARG_VARBIT_P(0);
+	VarBit	   *s = MDB_GETARG_VARBIT_P(0);
 	char	   *result,
 			   *r;
 	bits8	   *sp;
@@ -282,7 +282,7 @@ bit_out(PG_FUNCTION_ARGS)
 		r--;
 	*r = '\0';
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 #endif
 }
 
@@ -290,14 +290,14 @@ bit_out(PG_FUNCTION_ARGS)
  *		bit_recv			- converts external binary format to bit
  */
 Datum
-bit_recv(PG_FUNCTION_ARGS)
+bit_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		atttypmod = PG_GETARG_INT32(2);
+	int32		atttypmod = MDB_GETARG_INT32(2);
 	VarBit	   *result;
 	int			len,
 				bitlen;
@@ -335,14 +335,14 @@ bit_recv(PG_FUNCTION_ARGS)
 		*(VARBITS(result) + VARBITBYTES(result) - 1) &= mask;
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
  *		bit_send			- converts bit to binary format
  */
 Datum
-bit_send(PG_FUNCTION_ARGS)
+bit_send(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as varbit_send, so share code */
 	return varbit_send(fcinfo);
@@ -357,11 +357,11 @@ bit_send(PG_FUNCTION_ARGS)
  * If doing explicit cast, silently truncate or zero-pad to specified length.
  */
 Datum
-bit(PG_FUNCTION_ARGS)
+bit(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg = PG_GETARG_VARBIT_P(0);
-	int32		len = PG_GETARG_INT32(1);
-	bool		isExplicit = PG_GETARG_BOOL(2);
+	VarBit	   *arg = MDB_GETARG_VARBIT_P(0);
+	int32		len = MDB_GETARG_INT32(1);
+	bool		isExplicit = MDB_GETARG_BOOL(2);
 	VarBit	   *result;
 	int			rlen;
 	int			ipad;
@@ -369,7 +369,7 @@ bit(PG_FUNCTION_ARGS)
 
 	/* No work if typmod is invalid or supplied data matches it already */
 	if (len <= 0 || len == VARBITLEN(arg))
-		PG_RETURN_VARBIT_P(arg);
+		MDB_RETURN_VARBIT_P(arg);
 
 	if (!isExplicit)
 		ereport(ERROR,
@@ -398,23 +398,23 @@ bit(PG_FUNCTION_ARGS)
 		*(VARBITS(result) + VARBITBYTES(result) - 1) &= mask;
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 Datum
-bittypmodin(PG_FUNCTION_ARGS)
+bittypmodin(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *ta = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *ta = MDB_GETARG_ARRAYTYPE_P(0);
 
-	PG_RETURN_INT32(anybit_typmodin(ta, "bit"));
+	MDB_RETURN_INT32(anybit_typmodin(ta, "bit"));
 }
 
 Datum
-bittypmodout(PG_FUNCTION_ARGS)
+bittypmodout(MDB_FUNCTION_ARGS)
 {
-	int32		typmod = PG_GETARG_INT32(0);
+	int32		typmod = MDB_GETARG_INT32(0);
 
-	PG_RETURN_CSTRING(anybit_typmodout(typmod));
+	MDB_RETURN_CSTRING(anybit_typmodout(typmod));
 }
 
 
@@ -425,14 +425,14 @@ bittypmodout(PG_FUNCTION_ARGS)
  *		the maximum length, not the exact length to force the bitstring to.
  */
 Datum
-varbit_in(PG_FUNCTION_ARGS)
+varbit_in(MDB_FUNCTION_ARGS)
 {
-	char	   *input_string = PG_GETARG_CSTRING(0);
+	char	   *input_string = MDB_GETARG_CSTRING(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		atttypmod = PG_GETARG_INT32(2);
+	int32		atttypmod = MDB_GETARG_INT32(2);
 	VarBit	   *result;			/* The resulting bit string			  */
 	char	   *sp;				/* pointer into the character string  */
 	bits8	   *r;				/* pointer into the result */
@@ -549,7 +549,7 @@ varbit_in(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
@@ -560,9 +560,9 @@ varbit_in(PG_FUNCTION_ARGS)
  * cannot emit.  Consider using hex output for such values.
  */
 Datum
-varbit_out(PG_FUNCTION_ARGS)
+varbit_out(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *s = PG_GETARG_VARBIT_P(0);
+	VarBit	   *s = MDB_GETARG_VARBIT_P(0);
 	char	   *result,
 			   *r;
 	bits8	   *sp;
@@ -597,7 +597,7 @@ varbit_out(PG_FUNCTION_ARGS)
 	}
 	*r = '\0';
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
@@ -606,14 +606,14 @@ varbit_out(PG_FUNCTION_ARGS)
  * External format is the bitlen as an int32, then the byte array.
  */
 Datum
-varbit_recv(PG_FUNCTION_ARGS)
+varbit_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		atttypmod = PG_GETARG_INT32(2);
+	int32		atttypmod = MDB_GETARG_INT32(2);
 	VarBit	   *result;
 	int			len,
 				bitlen;
@@ -651,22 +651,22 @@ varbit_recv(PG_FUNCTION_ARGS)
 		*(VARBITS(result) + VARBITBYTES(result) - 1) &= mask;
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
  *		varbit_send			- converts varbit to binary format
  */
 Datum
-varbit_send(PG_FUNCTION_ARGS)
+varbit_send(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *s = PG_GETARG_VARBIT_P(0);
+	VarBit	   *s = MDB_GETARG_VARBIT_P(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendint(&buf, VARBITLEN(s), sizeof(int32));
 	pq_sendbytes(&buf, (char *) VARBITS(s), VARBITBYTES(s));
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
@@ -676,9 +676,9 @@ varbit_send(PG_FUNCTION_ARGS)
  * argument, since that only affects truncation cases.
  */
 Datum
-varbit_transform(PG_FUNCTION_ARGS)
+varbit_transform(MDB_FUNCTION_ARGS)
 {
-	FuncExpr   *expr = (FuncExpr *) PG_GETARG_POINTER(0);
+	FuncExpr   *expr = (FuncExpr *) MDB_GETARG_POINTER(0);
 	Node	   *ret = NULL;
 	Node	   *typmod;
 
@@ -699,7 +699,7 @@ varbit_transform(PG_FUNCTION_ARGS)
 			ret = relabel_to_typmod(source, new_typmod);
 	}
 
-	PG_RETURN_POINTER(ret);
+	MDB_RETURN_POINTER(ret);
 }
 
 /*
@@ -711,11 +711,11 @@ varbit_transform(PG_FUNCTION_ARGS)
  * If doing explicit cast, silently truncate to max length.
  */
 Datum
-varbit(PG_FUNCTION_ARGS)
+varbit(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg = PG_GETARG_VARBIT_P(0);
-	int32		len = PG_GETARG_INT32(1);
-	bool		isExplicit = PG_GETARG_BOOL(2);
+	VarBit	   *arg = MDB_GETARG_VARBIT_P(0);
+	int32		len = MDB_GETARG_INT32(1);
+	bool		isExplicit = MDB_GETARG_BOOL(2);
 	VarBit	   *result;
 	int			rlen;
 	int			ipad;
@@ -723,7 +723,7 @@ varbit(PG_FUNCTION_ARGS)
 
 	/* No work if typmod is invalid or supplied data matches it already */
 	if (len <= 0 || len >= VARBITLEN(arg))
-		PG_RETURN_VARBIT_P(arg);
+		MDB_RETURN_VARBIT_P(arg);
 
 	if (!isExplicit)
 		ereport(ERROR,
@@ -746,23 +746,23 @@ varbit(PG_FUNCTION_ARGS)
 		*(VARBITS(result) + VARBITBYTES(result) - 1) &= mask;
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 Datum
-varbittypmodin(PG_FUNCTION_ARGS)
+varbittypmodin(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *ta = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *ta = MDB_GETARG_ARRAYTYPE_P(0);
 
-	PG_RETURN_INT32(anybit_typmodin(ta, "varbit"));
+	MDB_RETURN_INT32(anybit_typmodin(ta, "varbit"));
 }
 
 Datum
-varbittypmodout(PG_FUNCTION_ARGS)
+varbittypmodout(MDB_FUNCTION_ARGS)
 {
-	int32		typmod = PG_GETARG_INT32(0);
+	int32		typmod = MDB_GETARG_INT32(0);
 
-	PG_RETURN_CSTRING(anybit_typmodout(typmod));
+	MDB_RETURN_CSTRING(anybit_typmodout(typmod));
 }
 
 
@@ -817,10 +817,10 @@ bit_cmp(VarBit *arg1, VarBit *arg2)
 }
 
 Datum
-biteq(PG_FUNCTION_ARGS)
+biteq(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	bool		result;
 	int			bitlen1,
 				bitlen2;
@@ -834,17 +834,17 @@ biteq(PG_FUNCTION_ARGS)
 	else
 		result = (bit_cmp(arg1, arg2) == 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-bitne(PG_FUNCTION_ARGS)
+bitne(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	bool		result;
 	int			bitlen1,
 				bitlen2;
@@ -858,85 +858,85 @@ bitne(PG_FUNCTION_ARGS)
 	else
 		result = (bit_cmp(arg1, arg2) != 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-bitlt(PG_FUNCTION_ARGS)
+bitlt(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	bool		result;
 
 	result = (bit_cmp(arg1, arg2) < 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-bitle(PG_FUNCTION_ARGS)
+bitle(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	bool		result;
 
 	result = (bit_cmp(arg1, arg2) <= 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-bitgt(PG_FUNCTION_ARGS)
+bitgt(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	bool		result;
 
 	result = (bit_cmp(arg1, arg2) > 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-bitge(PG_FUNCTION_ARGS)
+bitge(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	bool		result;
 
 	result = (bit_cmp(arg1, arg2) >= 0);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-bitcmp(PG_FUNCTION_ARGS)
+bitcmp(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	int32		result;
 
 	result = bit_cmp(arg1, arg2);
 
-	PG_FREE_IF_COPY(arg1, 0);
-	PG_FREE_IF_COPY(arg2, 1);
+	MDB_FREE_IF_COPY(arg1, 0);
+	MDB_FREE_IF_COPY(arg2, 1);
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /*
@@ -944,12 +944,12 @@ bitcmp(PG_FUNCTION_ARGS)
  * Concatenation of bit strings
  */
 Datum
-bitcat(PG_FUNCTION_ARGS)
+bitcat(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 
-	PG_RETURN_VARBIT_P(bit_catenate(arg1, arg2));
+	MDB_RETURN_VARBIT_P(bit_catenate(arg1, arg2));
 }
 
 static VarBit *
@@ -1012,19 +1012,19 @@ bit_catenate(VarBit *arg1, VarBit *arg2)
  * SQL draft 6.10 9)
  */
 Datum
-bitsubstr(PG_FUNCTION_ARGS)
+bitsubstr(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_VARBIT_P(bitsubstring(PG_GETARG_VARBIT_P(0),
-									PG_GETARG_INT32(1),
-									PG_GETARG_INT32(2),
+	MDB_RETURN_VARBIT_P(bitsubstring(MDB_GETARG_VARBIT_P(0),
+									MDB_GETARG_INT32(1),
+									MDB_GETARG_INT32(2),
 									false));
 }
 
 Datum
-bitsubstr_no_len(PG_FUNCTION_ARGS)
+bitsubstr_no_len(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_VARBIT_P(bitsubstring(PG_GETARG_VARBIT_P(0),
-									PG_GETARG_INT32(1),
+	MDB_RETURN_VARBIT_P(bitsubstring(MDB_GETARG_VARBIT_P(0),
+									MDB_GETARG_INT32(1),
 									-1, true));
 }
 
@@ -1127,26 +1127,26 @@ bitsubstring(VarBit *arg, int32 s, int32 l, bool length_not_specified)
  * This code is a direct implementation of what the standard says.
  */
 Datum
-bitoverlay(PG_FUNCTION_ARGS)
+bitoverlay(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *t1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *t2 = PG_GETARG_VARBIT_P(1);
-	int			sp = PG_GETARG_INT32(2);		/* substring start position */
-	int			sl = PG_GETARG_INT32(3);		/* substring length */
+	VarBit	   *t1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *t2 = MDB_GETARG_VARBIT_P(1);
+	int			sp = MDB_GETARG_INT32(2);		/* substring start position */
+	int			sl = MDB_GETARG_INT32(3);		/* substring length */
 
-	PG_RETURN_VARBIT_P(bit_overlay(t1, t2, sp, sl));
+	MDB_RETURN_VARBIT_P(bit_overlay(t1, t2, sp, sl));
 }
 
 Datum
-bitoverlay_no_len(PG_FUNCTION_ARGS)
+bitoverlay_no_len(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *t1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *t2 = PG_GETARG_VARBIT_P(1);
-	int			sp = PG_GETARG_INT32(2);		/* substring start position */
+	VarBit	   *t1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *t2 = MDB_GETARG_VARBIT_P(1);
+	int			sp = MDB_GETARG_INT32(2);		/* substring start position */
 	int			sl;
 
 	sl = VARBITLEN(t2);			/* defaults to length(t2) */
-	PG_RETURN_VARBIT_P(bit_overlay(t1, t2, sp, sl));
+	MDB_RETURN_VARBIT_P(bit_overlay(t1, t2, sp, sl));
 }
 
 static VarBit *
@@ -1185,19 +1185,19 @@ bit_overlay(VarBit *t1, VarBit *t2, int sp, int sl)
  * Return the length of a bit string
  */
 Datum
-bitlength(PG_FUNCTION_ARGS)
+bitlength(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg = PG_GETARG_VARBIT_P(0);
+	VarBit	   *arg = MDB_GETARG_VARBIT_P(0);
 
-	PG_RETURN_INT32(VARBITLEN(arg));
+	MDB_RETURN_INT32(VARBITLEN(arg));
 }
 
 Datum
-bitoctetlength(PG_FUNCTION_ARGS)
+bitoctetlength(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg = PG_GETARG_VARBIT_P(0);
+	VarBit	   *arg = MDB_GETARG_VARBIT_P(0);
 
-	PG_RETURN_INT32(VARBITBYTES(arg));
+	MDB_RETURN_INT32(VARBITBYTES(arg));
 }
 
 /*
@@ -1205,10 +1205,10 @@ bitoctetlength(PG_FUNCTION_ARGS)
  * perform a logical AND on two bit strings.
  */
 Datum
-bit_and(PG_FUNCTION_ARGS)
+bit_and(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	VarBit	   *result;
 	int			len,
 				bitlen1,
@@ -1238,7 +1238,7 @@ bit_and(PG_FUNCTION_ARGS)
 
 	/* Padding is not needed as & of 0 pad is 0 */
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
@@ -1246,10 +1246,10 @@ bit_and(PG_FUNCTION_ARGS)
  * perform a logical OR on two bit strings.
  */
 Datum
-bit_or(PG_FUNCTION_ARGS)
+bit_or(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	VarBit	   *result;
 	int			len,
 				bitlen1,
@@ -1285,7 +1285,7 @@ bit_or(PG_FUNCTION_ARGS)
 		*r &= mask;
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
@@ -1293,10 +1293,10 @@ bit_or(PG_FUNCTION_ARGS)
  * perform a logical XOR on two bit strings.
  */
 Datum
-bitxor(PG_FUNCTION_ARGS)
+bitxor(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	VarBit	   *arg2 = PG_GETARG_VARBIT_P(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *arg2 = MDB_GETARG_VARBIT_P(1);
 	VarBit	   *result;
 	int			len,
 				bitlen1,
@@ -1333,7 +1333,7 @@ bitxor(PG_FUNCTION_ARGS)
 		*r &= mask;
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
@@ -1341,9 +1341,9 @@ bitxor(PG_FUNCTION_ARGS)
  * perform a logical NOT on a bit string.
  */
 Datum
-bitnot(PG_FUNCTION_ARGS)
+bitnot(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg = PG_GETARG_VARBIT_P(0);
+	VarBit	   *arg = MDB_GETARG_VARBIT_P(0);
 	VarBit	   *result;
 	bits8	   *p,
 			   *r;
@@ -1366,7 +1366,7 @@ bitnot(PG_FUNCTION_ARGS)
 		*r &= mask;
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
@@ -1374,10 +1374,10 @@ bitnot(PG_FUNCTION_ARGS)
  * do a left shift (i.e. towards the beginning of the string)
  */
 Datum
-bitshiftleft(PG_FUNCTION_ARGS)
+bitshiftleft(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg = PG_GETARG_VARBIT_P(0);
-	int32		shft = PG_GETARG_INT32(1);
+	VarBit	   *arg = MDB_GETARG_VARBIT_P(0);
+	int32		shft = MDB_GETARG_INT32(1);
 	VarBit	   *result;
 	int			byte_shift,
 				ishift,
@@ -1387,7 +1387,7 @@ bitshiftleft(PG_FUNCTION_ARGS)
 
 	/* Negative shift is a shift to the right */
 	if (shft < 0)
-		PG_RETURN_DATUM(DirectFunctionCall2(bitshiftright,
+		MDB_RETURN_DATUM(DirectFunctionCall2(bitshiftright,
 											VarBitPGetDatum(arg),
 											Int32GetDatum(-shft)));
 
@@ -1400,7 +1400,7 @@ bitshiftleft(PG_FUNCTION_ARGS)
 	if (shft >= VARBITLEN(arg))
 	{
 		MemSet(r, 0, VARBITBYTES(arg));
-		PG_RETURN_VARBIT_P(result);
+		MDB_RETURN_VARBIT_P(result);
 	}
 
 	byte_shift = shft / BITS_PER_BYTE;
@@ -1426,7 +1426,7 @@ bitshiftleft(PG_FUNCTION_ARGS)
 			*r = 0;
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
@@ -1434,10 +1434,10 @@ bitshiftleft(PG_FUNCTION_ARGS)
  * do a right shift (i.e. towards the end of the string)
  */
 Datum
-bitshiftright(PG_FUNCTION_ARGS)
+bitshiftright(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg = PG_GETARG_VARBIT_P(0);
-	int32		shft = PG_GETARG_INT32(1);
+	VarBit	   *arg = MDB_GETARG_VARBIT_P(0);
+	int32		shft = MDB_GETARG_INT32(1);
 	VarBit	   *result;
 	int			byte_shift,
 				ishift,
@@ -1447,7 +1447,7 @@ bitshiftright(PG_FUNCTION_ARGS)
 
 	/* Negative shift is a shift to the left */
 	if (shft < 0)
-		PG_RETURN_DATUM(DirectFunctionCall2(bitshiftleft,
+		MDB_RETURN_DATUM(DirectFunctionCall2(bitshiftleft,
 											VarBitPGetDatum(arg),
 											Int32GetDatum(-shft)));
 
@@ -1460,7 +1460,7 @@ bitshiftright(PG_FUNCTION_ARGS)
 	if (shft >= VARBITLEN(arg))
 	{
 		MemSet(r, 0, VARBITBYTES(arg));
-		PG_RETURN_VARBIT_P(result);
+		MDB_RETURN_VARBIT_P(result);
 	}
 
 	byte_shift = shft / BITS_PER_BYTE;
@@ -1489,7 +1489,7 @@ bitshiftright(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
@@ -1497,10 +1497,10 @@ bitshiftright(PG_FUNCTION_ARGS)
  * bits here, as it just seems more intuitive.
  */
 Datum
-bitfromint4(PG_FUNCTION_ARGS)
+bitfromint4(MDB_FUNCTION_ARGS)
 {
-	int32		a = PG_GETARG_INT32(0);
-	int32		typmod = PG_GETARG_INT32(1);
+	int32		a = MDB_GETARG_INT32(0);
+	int32		typmod = MDB_GETARG_INT32(1);
 	VarBit	   *result;
 	bits8	   *r;
 	int			rlen;
@@ -1548,13 +1548,13 @@ bitfromint4(PG_FUNCTION_ARGS)
 	if (destbitsleft > 0)
 		*r = (bits8) ((a << (8 - destbitsleft)) & BITMASK);
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 Datum
-bittoint4(PG_FUNCTION_ARGS)
+bittoint4(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg = PG_GETARG_VARBIT_P(0);
+	VarBit	   *arg = MDB_GETARG_VARBIT_P(0);
 	uint32		result;
 	bits8	   *r;
 
@@ -1573,14 +1573,14 @@ bittoint4(PG_FUNCTION_ARGS)
 	/* Now shift the result to take account of the padding at the end */
 	result >>= VARBITPAD(arg);
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 Datum
-bitfromint8(PG_FUNCTION_ARGS)
+bitfromint8(MDB_FUNCTION_ARGS)
 {
-	int64		a = PG_GETARG_INT64(0);
-	int32		typmod = PG_GETARG_INT32(1);
+	int64		a = MDB_GETARG_INT64(0);
+	int32		typmod = MDB_GETARG_INT32(1);
 	VarBit	   *result;
 	bits8	   *r;
 	int			rlen;
@@ -1628,13 +1628,13 @@ bitfromint8(PG_FUNCTION_ARGS)
 	if (destbitsleft > 0)
 		*r = (bits8) ((a << (8 - destbitsleft)) & BITMASK);
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 Datum
-bittoint8(PG_FUNCTION_ARGS)
+bittoint8(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg = PG_GETARG_VARBIT_P(0);
+	VarBit	   *arg = MDB_GETARG_VARBIT_P(0);
 	uint64		result;
 	bits8	   *r;
 
@@ -1653,7 +1653,7 @@ bittoint8(PG_FUNCTION_ARGS)
 	/* Now shift the result to take account of the padding at the end */
 	result >>= VARBITPAD(arg);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
@@ -1664,10 +1664,10 @@ bittoint8(PG_FUNCTION_ARGS)
  * Compatible in usage with POSITION() functions for other data types.
  */
 Datum
-bitposition(PG_FUNCTION_ARGS)
+bitposition(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *str = PG_GETARG_VARBIT_P(0);
-	VarBit	   *substr = PG_GETARG_VARBIT_P(1);
+	VarBit	   *str = MDB_GETARG_VARBIT_P(0);
+	VarBit	   *substr = MDB_GETARG_VARBIT_P(1);
 	int			substr_length,
 				str_length,
 				i,
@@ -1687,11 +1687,11 @@ bitposition(PG_FUNCTION_ARGS)
 
 	/* String has zero length or substring longer than string, return 0 */
 	if ((str_length == 0) || (substr_length > str_length))
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 
 	/* zero-length substring means return 1 */
 	if (substr_length == 0)
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 
 	/* Initialise the padding masks */
 	end_mask = BITMASK << VARBITPAD(substr);
@@ -1755,10 +1755,10 @@ bitposition(PG_FUNCTION_ARGS)
 			}
 			/* Have we found a match? */
 			if (is_match)
-				PG_RETURN_INT32(i * BITS_PER_BYTE + is + 1);
+				MDB_RETURN_INT32(i * BITS_PER_BYTE + is + 1);
 		}
 	}
-	PG_RETURN_INT32(0);
+	MDB_RETURN_INT32(0);
 }
 
 
@@ -1773,11 +1773,11 @@ bitposition(PG_FUNCTION_ARGS)
  * inconsistent with the standard substring, position, overlay functions
  */
 Datum
-bitsetbit(PG_FUNCTION_ARGS)
+bitsetbit(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	int32		n = PG_GETARG_INT32(1);
-	int32		newBit = PG_GETARG_INT32(2);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	int32		n = MDB_GETARG_INT32(1);
+	int32		newBit = MDB_GETARG_INT32(2);
 	VarBit	   *result;
 	int			len,
 				bitlen;
@@ -1822,7 +1822,7 @@ bitsetbit(PG_FUNCTION_ARGS)
 	else
 		r[byteNo] |= (1 << bitNo);
 
-	PG_RETURN_VARBIT_P(result);
+	MDB_RETURN_VARBIT_P(result);
 }
 
 /*
@@ -1835,10 +1835,10 @@ bitsetbit(PG_FUNCTION_ARGS)
  * inconsistent with the standard substring, position, overlay functions
  */
 Datum
-bitgetbit(PG_FUNCTION_ARGS)
+bitgetbit(MDB_FUNCTION_ARGS)
 {
-	VarBit	   *arg1 = PG_GETARG_VARBIT_P(0);
-	int32		n = PG_GETARG_INT32(1);
+	VarBit	   *arg1 = MDB_GETARG_VARBIT_P(0);
+	int32		n = MDB_GETARG_INT32(1);
 	int			bitlen;
 	bits8	   *p;
 	int			byteNo,
@@ -1857,7 +1857,7 @@ bitgetbit(PG_FUNCTION_ARGS)
 	bitNo = BITS_PER_BYTE - 1 - (n % BITS_PER_BYTE);
 
 	if (p[byteNo] & (1 << bitNo))
-		PG_RETURN_INT32(1);
+		MDB_RETURN_INT32(1);
 	else
-		PG_RETURN_INT32(0);
+		MDB_RETURN_INT32(0);
 }

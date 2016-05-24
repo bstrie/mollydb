@@ -61,16 +61,16 @@ static void parseNameAndArgTypes(const char *string, bool allowNone,
  * match an existing mdb_proc entry.
  */
 Datum
-regprocin(PG_FUNCTION_ARGS)
+regprocin(MDB_FUNCTION_ARGS)
 {
-	char	   *pro_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *pro_name_or_oid = MDB_GETARG_CSTRING(0);
 	RegProcedure result = InvalidOid;
 	List	   *names;
 	FuncCandidateList clist;
 
 	/* '-' ? */
 	if (strcmp(pro_name_or_oid, "-") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (pro_name_or_oid[0] >= '0' &&
@@ -79,7 +79,7 @@ regprocin(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										  CStringGetDatum(pro_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/* Else it's a name, possibly schema-qualified */
@@ -128,7 +128,7 @@ regprocin(PG_FUNCTION_ARGS)
 					 errmsg("more than one function named \"%s\"",
 							pro_name_or_oid)));
 
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/*
@@ -150,7 +150,7 @@ regprocin(PG_FUNCTION_ARGS)
 
 	result = clist->oid;
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -159,9 +159,9 @@ regprocin(PG_FUNCTION_ARGS)
  * If the name is not found, we return NULL.
  */
 Datum
-to_regproc(PG_FUNCTION_ARGS)
+to_regproc(MDB_FUNCTION_ARGS)
 {
-	char	   *pro_name = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *pro_name = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	List	   *names;
 	FuncCandidateList clist;
 
@@ -173,25 +173,25 @@ to_regproc(PG_FUNCTION_ARGS)
 	clist = FuncnameGetCandidates(names, -1, NIL, false, false, true);
 
 	if (clist == NULL || clist->next != NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_OID(clist->oid);
+	MDB_RETURN_OID(clist->oid);
 }
 
 /*
  * regprocout		- converts proc OID to "pro_name"
  */
 Datum
-regprocout(PG_FUNCTION_ARGS)
+regprocout(MDB_FUNCTION_ARGS)
 {
-	RegProcedure proid = PG_GETARG_OID(0);
+	RegProcedure proid = MDB_GETARG_OID(0);
 	char	   *result;
 	HeapTuple	proctup;
 
 	if (proid == InvalidOid)
 	{
 		result = pstrdup("-");
-		PG_RETURN_CSTRING(result);
+		MDB_RETURN_CSTRING(result);
 	}
 
 	proctup = SearchSysCache1(PROCOID, ObjectIdGetDatum(proid));
@@ -237,14 +237,14 @@ regprocout(PG_FUNCTION_ARGS)
 		snprintf(result, NAMEDATALEN, "%u", proid);
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regprocrecv			- converts external binary format to regproc
  */
 Datum
-regprocrecv(PG_FUNCTION_ARGS)
+regprocrecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -254,7 +254,7 @@ regprocrecv(PG_FUNCTION_ARGS)
  *		regprocsend			- converts regproc to binary format
  */
 Datum
-regprocsend(PG_FUNCTION_ARGS)
+regprocsend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -270,9 +270,9 @@ regprocsend(PG_FUNCTION_ARGS)
  * match an existing mdb_proc entry.
  */
 Datum
-regprocedurein(PG_FUNCTION_ARGS)
+regprocedurein(MDB_FUNCTION_ARGS)
 {
-	char	   *pro_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *pro_name_or_oid = MDB_GETARG_CSTRING(0);
 	RegProcedure result = InvalidOid;
 	List	   *names;
 	int			nargs;
@@ -281,7 +281,7 @@ regprocedurein(PG_FUNCTION_ARGS)
 
 	/* '-' ? */
 	if (strcmp(pro_name_or_oid, "-") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (pro_name_or_oid[0] >= '0' &&
@@ -290,7 +290,7 @@ regprocedurein(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										  CStringGetDatum(pro_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/*
@@ -320,7 +320,7 @@ regprocedurein(PG_FUNCTION_ARGS)
 
 	result = clist->oid;
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -329,9 +329,9 @@ regprocedurein(PG_FUNCTION_ARGS)
  * If the name is not found, we return NULL.
  */
 Datum
-to_regprocedure(PG_FUNCTION_ARGS)
+to_regprocedure(MDB_FUNCTION_ARGS)
 {
-	char	   *pro_name = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *pro_name = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	List	   *names;
 	int			nargs;
 	Oid			argtypes[FUNC_MAX_ARGS];
@@ -349,10 +349,10 @@ to_regprocedure(PG_FUNCTION_ARGS)
 	for (; clist; clist = clist->next)
 	{
 		if (memcmp(clist->args, argtypes, nargs * sizeof(Oid)) == 0)
-			PG_RETURN_OID(clist->oid);
+			MDB_RETURN_OID(clist->oid);
 	}
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 /*
@@ -478,9 +478,9 @@ format_procedure_parts(Oid procedure_oid, List **objnames, List **objargs)
  * regprocedureout		- converts proc OID to "pro_name(args)"
  */
 Datum
-regprocedureout(PG_FUNCTION_ARGS)
+regprocedureout(MDB_FUNCTION_ARGS)
 {
-	RegProcedure proid = PG_GETARG_OID(0);
+	RegProcedure proid = MDB_GETARG_OID(0);
 	char	   *result;
 
 	if (proid == InvalidOid)
@@ -488,14 +488,14 @@ regprocedureout(PG_FUNCTION_ARGS)
 	else
 		result = format_procedure(proid);
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regprocedurerecv			- converts external binary format to regprocedure
  */
 Datum
-regprocedurerecv(PG_FUNCTION_ARGS)
+regprocedurerecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -505,7 +505,7 @@ regprocedurerecv(PG_FUNCTION_ARGS)
  *		regproceduresend			- converts regprocedure to binary format
  */
 Datum
-regproceduresend(PG_FUNCTION_ARGS)
+regproceduresend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -521,16 +521,16 @@ regproceduresend(PG_FUNCTION_ARGS)
  * match an existing mdb_operator entry.
  */
 Datum
-regoperin(PG_FUNCTION_ARGS)
+regoperin(MDB_FUNCTION_ARGS)
 {
-	char	   *opr_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *opr_name_or_oid = MDB_GETARG_CSTRING(0);
 	Oid			result = InvalidOid;
 	List	   *names;
 	FuncCandidateList clist;
 
 	/* '0' ? */
 	if (strcmp(opr_name_or_oid, "0") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (opr_name_or_oid[0] >= '0' &&
@@ -539,7 +539,7 @@ regoperin(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										  CStringGetDatum(opr_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/* Else it's a name, possibly schema-qualified */
@@ -587,7 +587,7 @@ regoperin(PG_FUNCTION_ARGS)
 					 errmsg("more than one operator named %s",
 							opr_name_or_oid)));
 
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/*
@@ -609,7 +609,7 @@ regoperin(PG_FUNCTION_ARGS)
 
 	result = clist->oid;
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -618,9 +618,9 @@ regoperin(PG_FUNCTION_ARGS)
  * If the name is not found, we return NULL.
  */
 Datum
-to_regoper(PG_FUNCTION_ARGS)
+to_regoper(MDB_FUNCTION_ARGS)
 {
-	char	   *opr_name = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *opr_name = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	List	   *names;
 	FuncCandidateList clist;
 
@@ -632,25 +632,25 @@ to_regoper(PG_FUNCTION_ARGS)
 	clist = OpernameGetCandidates(names, '\0', true);
 
 	if (clist == NULL || clist->next != NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_OID(clist->oid);
+	MDB_RETURN_OID(clist->oid);
 }
 
 /*
  * regoperout		- converts operator OID to "opr_name"
  */
 Datum
-regoperout(PG_FUNCTION_ARGS)
+regoperout(MDB_FUNCTION_ARGS)
 {
-	Oid			oprid = PG_GETARG_OID(0);
+	Oid			oprid = MDB_GETARG_OID(0);
 	char	   *result;
 	HeapTuple	opertup;
 
 	if (oprid == InvalidOid)
 	{
 		result = pstrdup("0");
-		PG_RETURN_CSTRING(result);
+		MDB_RETURN_CSTRING(result);
 	}
 
 	opertup = SearchSysCache1(OPEROID, ObjectIdGetDatum(oprid));
@@ -702,14 +702,14 @@ regoperout(PG_FUNCTION_ARGS)
 		snprintf(result, NAMEDATALEN, "%u", oprid);
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regoperrecv			- converts external binary format to regoper
  */
 Datum
-regoperrecv(PG_FUNCTION_ARGS)
+regoperrecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -719,7 +719,7 @@ regoperrecv(PG_FUNCTION_ARGS)
  *		regopersend			- converts regoper to binary format
  */
 Datum
-regopersend(PG_FUNCTION_ARGS)
+regopersend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -735,9 +735,9 @@ regopersend(PG_FUNCTION_ARGS)
  * match an existing mdb_operator entry.
  */
 Datum
-regoperatorin(PG_FUNCTION_ARGS)
+regoperatorin(MDB_FUNCTION_ARGS)
 {
-	char	   *opr_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *opr_name_or_oid = MDB_GETARG_CSTRING(0);
 	Oid			result;
 	List	   *names;
 	int			nargs;
@@ -745,7 +745,7 @@ regoperatorin(PG_FUNCTION_ARGS)
 
 	/* '0' ? */
 	if (strcmp(opr_name_or_oid, "0") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (opr_name_or_oid[0] >= '0' &&
@@ -754,7 +754,7 @@ regoperatorin(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										  CStringGetDatum(opr_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/*
@@ -786,7 +786,7 @@ regoperatorin(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_UNDEFINED_FUNCTION),
 				 errmsg("operator does not exist: %s", opr_name_or_oid)));
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -795,9 +795,9 @@ regoperatorin(PG_FUNCTION_ARGS)
  * If the name is not found, we return NULL.
  */
 Datum
-to_regoperator(PG_FUNCTION_ARGS)
+to_regoperator(MDB_FUNCTION_ARGS)
 {
-	char	   *opr_name_or_oid = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *opr_name_or_oid = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	Oid			result;
 	List	   *names;
 	int			nargs;
@@ -823,9 +823,9 @@ to_regoperator(PG_FUNCTION_ARGS)
 	result = OpernameGetOprid(names, argtypes[0], argtypes[1]);
 
 	if (!OidIsValid(result))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -939,9 +939,9 @@ format_operator_parts(Oid operator_oid, List **objnames, List **objargs)
  * regoperatorout		- converts operator OID to "opr_name(args)"
  */
 Datum
-regoperatorout(PG_FUNCTION_ARGS)
+regoperatorout(MDB_FUNCTION_ARGS)
 {
-	Oid			oprid = PG_GETARG_OID(0);
+	Oid			oprid = MDB_GETARG_OID(0);
 	char	   *result;
 
 	if (oprid == InvalidOid)
@@ -949,14 +949,14 @@ regoperatorout(PG_FUNCTION_ARGS)
 	else
 		result = format_operator(oprid);
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regoperatorrecv			- converts external binary format to regoperator
  */
 Datum
-regoperatorrecv(PG_FUNCTION_ARGS)
+regoperatorrecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -966,7 +966,7 @@ regoperatorrecv(PG_FUNCTION_ARGS)
  *		regoperatorsend			- converts regoperator to binary format
  */
 Datum
-regoperatorsend(PG_FUNCTION_ARGS)
+regoperatorsend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -982,15 +982,15 @@ regoperatorsend(PG_FUNCTION_ARGS)
  * match an existing mdb_class entry.
  */
 Datum
-regclassin(PG_FUNCTION_ARGS)
+regclassin(MDB_FUNCTION_ARGS)
 {
-	char	   *class_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *class_name_or_oid = MDB_GETARG_CSTRING(0);
 	Oid			result = InvalidOid;
 	List	   *names;
 
 	/* '-' ? */
 	if (strcmp(class_name_or_oid, "-") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (class_name_or_oid[0] >= '0' &&
@@ -999,7 +999,7 @@ regclassin(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										CStringGetDatum(class_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/* Else it's a name, possibly schema-qualified */
@@ -1038,7 +1038,7 @@ regclassin(PG_FUNCTION_ARGS)
 		systable_endscan(sysscan);
 		heap_close(hdesc, AccessShareLock);
 
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/*
@@ -1050,7 +1050,7 @@ regclassin(PG_FUNCTION_ARGS)
 	/* We might not even have permissions on this relation; don't lock it. */
 	result = RangeVarGetRelid(makeRangeVarFromNameList(names), NoLock, false);
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -1059,9 +1059,9 @@ regclassin(PG_FUNCTION_ARGS)
  * If the name is not found, we return NULL.
  */
 Datum
-to_regclass(PG_FUNCTION_ARGS)
+to_regclass(MDB_FUNCTION_ARGS)
 {
-	char	   *class_name = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *class_name = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	Oid			result;
 	List	   *names;
 
@@ -1075,25 +1075,25 @@ to_regclass(PG_FUNCTION_ARGS)
 	result = RangeVarGetRelid(makeRangeVarFromNameList(names), NoLock, true);
 
 	if (OidIsValid(result))
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
  * regclassout		- converts class OID to "class_name"
  */
 Datum
-regclassout(PG_FUNCTION_ARGS)
+regclassout(MDB_FUNCTION_ARGS)
 {
-	Oid			classid = PG_GETARG_OID(0);
+	Oid			classid = MDB_GETARG_OID(0);
 	char	   *result;
 	HeapTuple	classtup;
 
 	if (classid == InvalidOid)
 	{
 		result = pstrdup("-");
-		PG_RETURN_CSTRING(result);
+		MDB_RETURN_CSTRING(result);
 	}
 
 	classtup = SearchSysCache1(RELOID, ObjectIdGetDatum(classid));
@@ -1134,14 +1134,14 @@ regclassout(PG_FUNCTION_ARGS)
 		snprintf(result, NAMEDATALEN, "%u", classid);
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regclassrecv			- converts external binary format to regclass
  */
 Datum
-regclassrecv(PG_FUNCTION_ARGS)
+regclassrecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -1151,7 +1151,7 @@ regclassrecv(PG_FUNCTION_ARGS)
  *		regclasssend			- converts regclass to binary format
  */
 Datum
-regclasssend(PG_FUNCTION_ARGS)
+regclasssend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -1173,15 +1173,15 @@ regclasssend(PG_FUNCTION_ARGS)
  * info generated by the parser, however.)
  */
 Datum
-regtypein(PG_FUNCTION_ARGS)
+regtypein(MDB_FUNCTION_ARGS)
 {
-	char	   *typ_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *typ_name_or_oid = MDB_GETARG_CSTRING(0);
 	Oid			result = InvalidOid;
 	int32		typmod;
 
 	/* '-' ? */
 	if (strcmp(typ_name_or_oid, "-") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (typ_name_or_oid[0] >= '0' &&
@@ -1190,7 +1190,7 @@ regtypein(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										  CStringGetDatum(typ_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/* Else it's a type name, possibly schema-qualified or decorated */
@@ -1229,7 +1229,7 @@ regtypein(PG_FUNCTION_ARGS)
 		systable_endscan(sysscan);
 		heap_close(hdesc, AccessShareLock);
 
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/*
@@ -1238,7 +1238,7 @@ regtypein(PG_FUNCTION_ARGS)
 	 */
 	parseTypeString(typ_name_or_oid, &result, &typmod, false);
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -1247,9 +1247,9 @@ regtypein(PG_FUNCTION_ARGS)
  * If the name is not found, we return NULL.
  */
 Datum
-to_regtype(PG_FUNCTION_ARGS)
+to_regtype(MDB_FUNCTION_ARGS)
 {
-	char	   *typ_name = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *typ_name = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	Oid			result;
 	int32		typmod;
 
@@ -1259,25 +1259,25 @@ to_regtype(PG_FUNCTION_ARGS)
 	parseTypeString(typ_name, &result, &typmod, true);
 
 	if (OidIsValid(result))
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
  * regtypeout		- converts type OID to "typ_name"
  */
 Datum
-regtypeout(PG_FUNCTION_ARGS)
+regtypeout(MDB_FUNCTION_ARGS)
 {
-	Oid			typid = PG_GETARG_OID(0);
+	Oid			typid = MDB_GETARG_OID(0);
 	char	   *result;
 	HeapTuple	typetup;
 
 	if (typid == InvalidOid)
 	{
 		result = pstrdup("-");
-		PG_RETURN_CSTRING(result);
+		MDB_RETURN_CSTRING(result);
 	}
 
 	typetup = SearchSysCache1(TYPEOID, ObjectIdGetDatum(typid));
@@ -1309,14 +1309,14 @@ regtypeout(PG_FUNCTION_ARGS)
 		snprintf(result, NAMEDATALEN, "%u", typid);
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regtyperecv			- converts external binary format to regtype
  */
 Datum
-regtyperecv(PG_FUNCTION_ARGS)
+regtyperecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -1326,7 +1326,7 @@ regtyperecv(PG_FUNCTION_ARGS)
  *		regtypesend			- converts regtype to binary format
  */
 Datum
-regtypesend(PG_FUNCTION_ARGS)
+regtypesend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -1345,15 +1345,15 @@ regtypesend(PG_FUNCTION_ARGS)
  * making it work then.
  */
 Datum
-regconfigin(PG_FUNCTION_ARGS)
+regconfigin(MDB_FUNCTION_ARGS)
 {
-	char	   *cfg_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *cfg_name_or_oid = MDB_GETARG_CSTRING(0);
 	Oid			result;
 	List	   *names;
 
 	/* '-' ? */
 	if (strcmp(cfg_name_or_oid, "-") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (cfg_name_or_oid[0] >= '0' &&
@@ -1362,7 +1362,7 @@ regconfigin(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										  CStringGetDatum(cfg_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/*
@@ -1373,23 +1373,23 @@ regconfigin(PG_FUNCTION_ARGS)
 
 	result = get_ts_config_oid(names, false);
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
  * regconfigout		- converts tsconfig OID to "tsconfigname"
  */
 Datum
-regconfigout(PG_FUNCTION_ARGS)
+regconfigout(MDB_FUNCTION_ARGS)
 {
-	Oid			cfgid = PG_GETARG_OID(0);
+	Oid			cfgid = MDB_GETARG_OID(0);
 	char	   *result;
 	HeapTuple	cfgtup;
 
 	if (cfgid == InvalidOid)
 	{
 		result = pstrdup("-");
-		PG_RETURN_CSTRING(result);
+		MDB_RETURN_CSTRING(result);
 	}
 
 	cfgtup = SearchSysCache1(TSCONFIGOID, ObjectIdGetDatum(cfgid));
@@ -1419,14 +1419,14 @@ regconfigout(PG_FUNCTION_ARGS)
 		snprintf(result, NAMEDATALEN, "%u", cfgid);
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regconfigrecv			- converts external binary format to regconfig
  */
 Datum
-regconfigrecv(PG_FUNCTION_ARGS)
+regconfigrecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -1436,7 +1436,7 @@ regconfigrecv(PG_FUNCTION_ARGS)
  *		regconfigsend			- converts regconfig to binary format
  */
 Datum
-regconfigsend(PG_FUNCTION_ARGS)
+regconfigsend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -1455,15 +1455,15 @@ regconfigsend(PG_FUNCTION_ARGS)
  * making it work then.
  */
 Datum
-regdictionaryin(PG_FUNCTION_ARGS)
+regdictionaryin(MDB_FUNCTION_ARGS)
 {
-	char	   *dict_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *dict_name_or_oid = MDB_GETARG_CSTRING(0);
 	Oid			result;
 	List	   *names;
 
 	/* '-' ? */
 	if (strcmp(dict_name_or_oid, "-") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (dict_name_or_oid[0] >= '0' &&
@@ -1472,7 +1472,7 @@ regdictionaryin(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										 CStringGetDatum(dict_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/*
@@ -1483,23 +1483,23 @@ regdictionaryin(PG_FUNCTION_ARGS)
 
 	result = get_ts_dict_oid(names, false);
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
  * regdictionaryout		- converts tsdictionary OID to "tsdictionaryname"
  */
 Datum
-regdictionaryout(PG_FUNCTION_ARGS)
+regdictionaryout(MDB_FUNCTION_ARGS)
 {
-	Oid			dictid = PG_GETARG_OID(0);
+	Oid			dictid = MDB_GETARG_OID(0);
 	char	   *result;
 	HeapTuple	dicttup;
 
 	if (dictid == InvalidOid)
 	{
 		result = pstrdup("-");
-		PG_RETURN_CSTRING(result);
+		MDB_RETURN_CSTRING(result);
 	}
 
 	dicttup = SearchSysCache1(TSDICTOID, ObjectIdGetDatum(dictid));
@@ -1530,14 +1530,14 @@ regdictionaryout(PG_FUNCTION_ARGS)
 		snprintf(result, NAMEDATALEN, "%u", dictid);
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regdictionaryrecv	- converts external binary format to regdictionary
  */
 Datum
-regdictionaryrecv(PG_FUNCTION_ARGS)
+regdictionaryrecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -1547,7 +1547,7 @@ regdictionaryrecv(PG_FUNCTION_ARGS)
  *		regdictionarysend	- converts regdictionary to binary format
  */
 Datum
-regdictionarysend(PG_FUNCTION_ARGS)
+regdictionarysend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -1565,15 +1565,15 @@ regdictionarysend(PG_FUNCTION_ARGS)
  * making it work then.
  */
 Datum
-regrolein(PG_FUNCTION_ARGS)
+regrolein(MDB_FUNCTION_ARGS)
 {
-	char	   *role_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *role_name_or_oid = MDB_GETARG_CSTRING(0);
 	Oid			result;
 	List	   *names;
 
 	/* '-' ? */
 	if (strcmp(role_name_or_oid, "-") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (role_name_or_oid[0] >= '0' &&
@@ -1582,7 +1582,7 @@ regrolein(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										 CStringGetDatum(role_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/* Normal case: see if the name matches any mdb_authid entry. */
@@ -1595,7 +1595,7 @@ regrolein(PG_FUNCTION_ARGS)
 
 	result = get_role_oid(strVal(linitial(names)), false);
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -1604,9 +1604,9 @@ regrolein(PG_FUNCTION_ARGS)
  * If the name is not found, we return NULL.
  */
 Datum
-to_regrole(PG_FUNCTION_ARGS)
+to_regrole(MDB_FUNCTION_ARGS)
 {
-	char	   *role_name = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *role_name = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	Oid			result;
 	List	   *names;
 
@@ -1620,24 +1620,24 @@ to_regrole(PG_FUNCTION_ARGS)
 	result = get_role_oid(strVal(linitial(names)), true);
 
 	if (OidIsValid(result))
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
  * regroleout		- converts role OID to "role_name"
  */
 Datum
-regroleout(PG_FUNCTION_ARGS)
+regroleout(MDB_FUNCTION_ARGS)
 {
-	Oid			roleoid = PG_GETARG_OID(0);
+	Oid			roleoid = MDB_GETARG_OID(0);
 	char	   *result;
 
 	if (roleoid == InvalidOid)
 	{
 		result = pstrdup("-");
-		PG_RETURN_CSTRING(result);
+		MDB_RETURN_CSTRING(result);
 	}
 
 	result = GetUserNameFromId(roleoid, true);
@@ -1654,14 +1654,14 @@ regroleout(PG_FUNCTION_ARGS)
 		snprintf(result, NAMEDATALEN, "%u", roleoid);
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regrolerecv - converts external binary format to regrole
  */
 Datum
-regrolerecv(PG_FUNCTION_ARGS)
+regrolerecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -1671,7 +1671,7 @@ regrolerecv(PG_FUNCTION_ARGS)
  *		regrolesend - converts regrole to binary format
  */
 Datum
-regrolesend(PG_FUNCTION_ARGS)
+regrolesend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -1686,15 +1686,15 @@ regrolesend(PG_FUNCTION_ARGS)
  * match an existing mdb_namespace entry.
  */
 Datum
-regnamespacein(PG_FUNCTION_ARGS)
+regnamespacein(MDB_FUNCTION_ARGS)
 {
-	char	   *nsp_name_or_oid = PG_GETARG_CSTRING(0);
+	char	   *nsp_name_or_oid = MDB_GETARG_CSTRING(0);
 	Oid			result;
 	List	   *names;
 
 	/* '-' ? */
 	if (strcmp(nsp_name_or_oid, "-") == 0)
-		PG_RETURN_OID(InvalidOid);
+		MDB_RETURN_OID(InvalidOid);
 
 	/* Numeric OID? */
 	if (nsp_name_or_oid[0] >= '0' &&
@@ -1703,7 +1703,7 @@ regnamespacein(PG_FUNCTION_ARGS)
 	{
 		result = DatumGetObjectId(DirectFunctionCall1(oidin,
 										  CStringGetDatum(nsp_name_or_oid)));
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	}
 
 	/* Normal case: see if the name matches any mdb_namespace entry. */
@@ -1716,7 +1716,7 @@ regnamespacein(PG_FUNCTION_ARGS)
 
 	result = get_namespace_oid(strVal(linitial(names)), false);
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -1725,9 +1725,9 @@ regnamespacein(PG_FUNCTION_ARGS)
  * If the name is not found, we return NULL.
  */
 Datum
-to_regnamespace(PG_FUNCTION_ARGS)
+to_regnamespace(MDB_FUNCTION_ARGS)
 {
-	char	   *nsp_name = text_to_cstring(PG_GETARG_TEXT_PP(0));
+	char	   *nsp_name = text_to_cstring(MDB_GETARG_TEXT_PP(0));
 	Oid			result;
 	List	   *names;
 
@@ -1741,24 +1741,24 @@ to_regnamespace(PG_FUNCTION_ARGS)
 	result = get_namespace_oid(strVal(linitial(names)), true);
 
 	if (OidIsValid(result))
-		PG_RETURN_OID(result);
+		MDB_RETURN_OID(result);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
  * regnamespaceout		- converts namespace OID to "nsp_name"
  */
 Datum
-regnamespaceout(PG_FUNCTION_ARGS)
+regnamespaceout(MDB_FUNCTION_ARGS)
 {
-	Oid			nspid = PG_GETARG_OID(0);
+	Oid			nspid = MDB_GETARG_OID(0);
 	char	   *result;
 
 	if (nspid == InvalidOid)
 	{
 		result = pstrdup("-");
-		PG_RETURN_CSTRING(result);
+		MDB_RETURN_CSTRING(result);
 	}
 
 	result = get_namespace_name(nspid);
@@ -1775,14 +1775,14 @@ regnamespaceout(PG_FUNCTION_ARGS)
 		snprintf(result, NAMEDATALEN, "%u", nspid);
 	}
 
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
  *		regnamespacerecv	- converts external binary format to regnamespace
  */
 Datum
-regnamespacerecv(PG_FUNCTION_ARGS)
+regnamespacerecv(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidrecv, so share code */
 	return oidrecv(fcinfo);
@@ -1792,7 +1792,7 @@ regnamespacerecv(PG_FUNCTION_ARGS)
  *		regnamespacesend		- converts regnamespace to binary format
  */
 Datum
-regnamespacesend(PG_FUNCTION_ARGS)
+regnamespacesend(MDB_FUNCTION_ARGS)
 {
 	/* Exactly the same as oidsend, so share code */
 	return oidsend(fcinfo);
@@ -1806,9 +1806,9 @@ regnamespacesend(PG_FUNCTION_ARGS)
  * and related functions.
  */
 Datum
-text_regclass(PG_FUNCTION_ARGS)
+text_regclass(MDB_FUNCTION_ARGS)
 {
-	text	   *relname = PG_GETARG_TEXT_P(0);
+	text	   *relname = MDB_GETARG_TEXT_P(0);
 	Oid			result;
 	RangeVar   *rv;
 
@@ -1817,7 +1817,7 @@ text_regclass(PG_FUNCTION_ARGS)
 	/* We might not even have permissions on this relation; don't lock it. */
 	result = RangeVarGetRelid(rv, NoLock, false);
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 

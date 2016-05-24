@@ -22,4 +22,4 @@
  * slow, so disable entirely for now.
  * XXX: We might want to change that at some point for AARCH64
  */
-#define PG_DISABLE_64_BIT_ATOMICS
+#define MDB_DISABLE_64_BIT_ATOMICS

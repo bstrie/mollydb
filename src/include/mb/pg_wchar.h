@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_WCHAR_H
-#define PG_WCHAR_H
+#ifndef MDB_WCHAR_H
+#define MDB_WCHAR_H
 
 /*
  * The mdb_wchar type
@@ -224,9 +224,9 @@ typedef unsigned int mdb_wchar;
  *			in the mdb_wchar_table[] array (in mb/wchar.c)!
  *
  *			If you add some encoding don't forget to check
- *			PG_ENCODING_BE_LAST macro.
+ *			MDB_ENCODING_BE_LAST macro.
  *
- * PG_SQL_ASCII is default encoding and must be = 0.
+ * MDB_SQL_ASCII is default encoding and must be = 0.
  *
  * XXX	We must avoid renumbering any backend encoding until libpq's major
  * version number is increased beyond 5; it turns out that the backend
@@ -235,79 +235,79 @@ typedef unsigned int mdb_wchar;
  */
 typedef enum mdb_enc
 {
-	PG_SQL_ASCII = 0,			/* SQL/ASCII */
-	PG_EUC_JP,					/* EUC for Japanese */
-	PG_EUC_CN,					/* EUC for Chinese */
-	PG_EUC_KR,					/* EUC for Korean */
-	PG_EUC_TW,					/* EUC for Taiwan */
-	PG_EUC_JIS_2004,			/* EUC-JIS-2004 */
-	PG_UTF8,					/* Unicode UTF8 */
-	PG_MULE_INTERNAL,			/* Mule internal code */
-	PG_LATIN1,					/* ISO-8859-1 Latin 1 */
-	PG_LATIN2,					/* ISO-8859-2 Latin 2 */
-	PG_LATIN3,					/* ISO-8859-3 Latin 3 */
-	PG_LATIN4,					/* ISO-8859-4 Latin 4 */
-	PG_LATIN5,					/* ISO-8859-9 Latin 5 */
-	PG_LATIN6,					/* ISO-8859-10 Latin6 */
-	PG_LATIN7,					/* ISO-8859-13 Latin7 */
-	PG_LATIN8,					/* ISO-8859-14 Latin8 */
-	PG_LATIN9,					/* ISO-8859-15 Latin9 */
-	PG_LATIN10,					/* ISO-8859-16 Latin10 */
-	PG_WIN1256,					/* windows-1256 */
-	PG_WIN1258,					/* Windows-1258 */
-	PG_WIN866,					/* (MS-DOS CP866) */
-	PG_WIN874,					/* windows-874 */
-	PG_KOI8R,					/* KOI8-R */
-	PG_WIN1251,					/* windows-1251 */
-	PG_WIN1252,					/* windows-1252 */
-	PG_ISO_8859_5,				/* ISO-8859-5 */
-	PG_ISO_8859_6,				/* ISO-8859-6 */
-	PG_ISO_8859_7,				/* ISO-8859-7 */
-	PG_ISO_8859_8,				/* ISO-8859-8 */
-	PG_WIN1250,					/* windows-1250 */
-	PG_WIN1253,					/* windows-1253 */
-	PG_WIN1254,					/* windows-1254 */
-	PG_WIN1255,					/* windows-1255 */
-	PG_WIN1257,					/* windows-1257 */
-	PG_KOI8U,					/* KOI8-U */
-	/* PG_ENCODING_BE_LAST points to the above entry */
+	MDB_SQL_ASCII = 0,			/* SQL/ASCII */
+	MDB_EUC_JP,					/* EUC for Japanese */
+	MDB_EUC_CN,					/* EUC for Chinese */
+	MDB_EUC_KR,					/* EUC for Korean */
+	MDB_EUC_TW,					/* EUC for Taiwan */
+	MDB_EUC_JIS_2004,			/* EUC-JIS-2004 */
+	MDB_UTF8,					/* Unicode UTF8 */
+	MDB_MULE_INTERNAL,			/* Mule internal code */
+	MDB_LATIN1,					/* ISO-8859-1 Latin 1 */
+	MDB_LATIN2,					/* ISO-8859-2 Latin 2 */
+	MDB_LATIN3,					/* ISO-8859-3 Latin 3 */
+	MDB_LATIN4,					/* ISO-8859-4 Latin 4 */
+	MDB_LATIN5,					/* ISO-8859-9 Latin 5 */
+	MDB_LATIN6,					/* ISO-8859-10 Latin6 */
+	MDB_LATIN7,					/* ISO-8859-13 Latin7 */
+	MDB_LATIN8,					/* ISO-8859-14 Latin8 */
+	MDB_LATIN9,					/* ISO-8859-15 Latin9 */
+	MDB_LATIN10,					/* ISO-8859-16 Latin10 */
+	MDB_WIN1256,					/* windows-1256 */
+	MDB_WIN1258,					/* Windows-1258 */
+	MDB_WIN866,					/* (MS-DOS CP866) */
+	MDB_WIN874,					/* windows-874 */
+	MDB_KOI8R,					/* KOI8-R */
+	MDB_WIN1251,					/* windows-1251 */
+	MDB_WIN1252,					/* windows-1252 */
+	MDB_ISO_8859_5,				/* ISO-8859-5 */
+	MDB_ISO_8859_6,				/* ISO-8859-6 */
+	MDB_ISO_8859_7,				/* ISO-8859-7 */
+	MDB_ISO_8859_8,				/* ISO-8859-8 */
+	MDB_WIN1250,					/* windows-1250 */
+	MDB_WIN1253,					/* windows-1253 */
+	MDB_WIN1254,					/* windows-1254 */
+	MDB_WIN1255,					/* windows-1255 */
+	MDB_WIN1257,					/* windows-1257 */
+	MDB_KOI8U,					/* KOI8-U */
+	/* MDB_ENCODING_BE_LAST points to the above entry */
 
 	/* followings are for client encoding only */
-	PG_SJIS,					/* Shift JIS (Windows-932) */
-	PG_BIG5,					/* Big5 (Windows-950) */
-	PG_GBK,						/* GBK (Windows-936) */
-	PG_UHC,						/* UHC (Windows-949) */
-	PG_GB18030,					/* GB18030 */
-	PG_JOHAB,					/* EUC for Korean JOHAB */
-	PG_SHIFT_JIS_2004,			/* Shift-JIS-2004 */
-	_PG_LAST_ENCODING_			/* mark only */
+	MDB_SJIS,					/* Shift JIS (Windows-932) */
+	MDB_BIG5,					/* Big5 (Windows-950) */
+	MDB_GBK,						/* GBK (Windows-936) */
+	MDB_UHC,						/* UHC (Windows-949) */
+	MDB_GB18030,					/* GB18030 */
+	MDB_JOHAB,					/* EUC for Korean JOHAB */
+	MDB_SHIFT_JIS_2004,			/* Shift-JIS-2004 */
+	_MDB_LAST_ENCODING_			/* mark only */
 
 } mdb_enc;
 
-#define PG_ENCODING_BE_LAST PG_KOI8U
+#define MDB_ENCODING_BE_LAST MDB_KOI8U
 
 /*
  * Please use these tests before access to mdb_encconv_tbl[]
  * or to other places...
  */
-#define PG_VALID_BE_ENCODING(_enc) \
-		((_enc) >= 0 && (_enc) <= PG_ENCODING_BE_LAST)
+#define MDB_VALID_BE_ENCODING(_enc) \
+		((_enc) >= 0 && (_enc) <= MDB_ENCODING_BE_LAST)
 
-#define PG_ENCODING_IS_CLIENT_ONLY(_enc) \
-		((_enc) > PG_ENCODING_BE_LAST && (_enc) < _PG_LAST_ENCODING_)
+#define MDB_ENCODING_IS_CLIENT_ONLY(_enc) \
+		((_enc) > MDB_ENCODING_BE_LAST && (_enc) < _MDB_LAST_ENCODING_)
 
-#define PG_VALID_ENCODING(_enc) \
-		((_enc) >= 0 && (_enc) < _PG_LAST_ENCODING_)
+#define MDB_VALID_ENCODING(_enc) \
+		((_enc) >= 0 && (_enc) < _MDB_LAST_ENCODING_)
 
 /* On FE are possible all encodings */
-#define PG_VALID_FE_ENCODING(_enc)	PG_VALID_ENCODING(_enc)
+#define MDB_VALID_FE_ENCODING(_enc)	MDB_VALID_ENCODING(_enc)
 
 /*
  * Table for mapping an encoding number to official encoding name and
  * possibly other subsidiary data.  Be careful to check encoding number
  * before accessing a table entry!
  *
- * if (PG_VALID_ENCODING(encoding))
+ * if (MDB_VALID_ENCODING(encoding))
  *		mdb_enc2name_tbl[ encoding ];
  */
 typedef struct mdb_enc2name
@@ -426,9 +426,9 @@ typedef uint32 (*utf_local_conversion_func) (uint32 code);
  * used by frontends.)
  */
 #define CHECK_ENCODING_CONVERSION_ARGS(srcencoding,destencoding) \
-	check_encoding_conversion_args(PG_GETARG_INT32(0), \
-								   PG_GETARG_INT32(1), \
-								   PG_GETARG_INT32(4), \
+	check_encoding_conversion_args(MDB_GETARG_INT32(0), \
+								   MDB_GETARG_INT32(1), \
+								   MDB_GETARG_INT32(4), \
 								   (srcencoding), \
 								   (destencoding))
 
@@ -558,4 +558,4 @@ extern bool mdb_utf8_islegal(const unsigned char *source, int length);
 extern WCHAR *pgwin32_message_to_UTF16(const char *str, int len, int *utf16len);
 #endif
 
-#endif   /* PG_WCHAR_H */
+#endif   /* MDB_WCHAR_H */

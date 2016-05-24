@@ -68,7 +68,7 @@ static void StartupProcSigHupHandler(SIGNAL_ARGS);
 static void
 startupproc_quickdie(SIGNAL_ARGS)
 {
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	/*
 	 * We DO NOT want to run proc_exit() callbacks -- we're here because
@@ -208,7 +208,7 @@ StartupProcessMain(void)
 	/*
 	 * Unblock signals (they were blocked when the postmaster forked us)
 	 */
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/*
 	 * Do what we came for.

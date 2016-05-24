@@ -32,11 +32,11 @@
 #include "utils/syscache.h"
 #include "utils/typcache.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* These must be available to mdb_dlsym() */
-extern void _PG_init(void);
-extern void _PG_output_plugin_init(OutputPluginCallbacks *cb);
+extern void _MDB_init(void);
+extern void _MDB_output_plugin_init(OutputPluginCallbacks *cb);
 
 typedef struct
 {
@@ -70,16 +70,16 @@ static void mdb_decode_message(LogicalDecodingContext *ctx,
 							  Size sz, const char *message);
 
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/* other plugins can perform things here */
 }
 
 /* specify output plugin callbacks */
 void
-_PG_output_plugin_init(OutputPluginCallbacks *cb)
+_MDB_output_plugin_init(OutputPluginCallbacks *cb)
 {
-	AssertVariableIsOfType(&_PG_output_plugin_init, LogicalOutputPluginInit);
+	AssertVariableIsOfType(&_MDB_output_plugin_init, LogicalOutputPluginInit);
 
 	cb->startup_cb = mdb_decode_startup;
 	cb->begin_cb = mdb_decode_begin_txn;
@@ -384,7 +384,7 @@ tuple_to_stringinfo(StringInfo s, TupleDesc tupdesc, HeapTuple tuple, bool skip_
 		{
 			Datum		val;	/* definitely detoasted Datum */
 
-			val = PointerGetDatum(PG_DETOAST_DATUM(origval));
+			val = PointerGetDatum(MDB_DETOAST_DATUM(origval));
 			print_literal(s, typid, OidOutputFunctionCall(typoutput, val));
 		}
 	}

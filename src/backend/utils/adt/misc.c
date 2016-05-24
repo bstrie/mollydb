@@ -68,14 +68,14 @@ count_nulls(FunctionCallInfo fcinfo,
 				   *dims;
 		bits8	   *bitmap;
 
-		Assert(PG_NARGS() == 1);
+		Assert(MDB_NARGS() == 1);
 
 		/*
 		 * If we get a null as VARIADIC array argument, we can't say anything
 		 * useful about the number of elements, so return NULL.  This behavior
 		 * is consistent with other variadic functions - see concat_internal.
 		 */
-		if (PG_ARGISNULL(0))
+		if (MDB_ARGISNULL(0))
 			return false;
 
 		/*
@@ -88,7 +88,7 @@ count_nulls(FunctionCallInfo fcinfo,
 		Assert(OidIsValid(get_base_element_type(get_fn_expr_argtype(fcinfo->flinfo, 0))));
 
 		/* OK, safe to fetch the array value */
-		arr = PG_GETARG_ARRAYTYPE_P(0);
+		arr = MDB_GETARG_ARRAYTYPE_P(0);
 
 		/* Count the array elements */
 		ndims = ARR_NDIM(arr);
@@ -121,13 +121,13 @@ count_nulls(FunctionCallInfo fcinfo,
 	else
 	{
 		/* Separate arguments, so just count 'em */
-		for (i = 0; i < PG_NARGS(); i++)
+		for (i = 0; i < MDB_NARGS(); i++)
 		{
-			if (PG_ARGISNULL(i))
+			if (MDB_ARGISNULL(i))
 				count++;
 		}
 
-		*nargs = PG_NARGS();
+		*nargs = MDB_NARGS();
 		*nulls = count;
 	}
 
@@ -139,15 +139,15 @@ count_nulls(FunctionCallInfo fcinfo,
  *	Count the number of NULL arguments
  */
 Datum
-mdb_num_nulls(PG_FUNCTION_ARGS)
+mdb_num_nulls(MDB_FUNCTION_ARGS)
 {
 	int32		nargs,
 				nulls;
 
 	if (!count_nulls(fcinfo, &nargs, &nulls))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT32(nulls);
+	MDB_RETURN_INT32(nulls);
 }
 
 /*
@@ -155,15 +155,15 @@ mdb_num_nulls(PG_FUNCTION_ARGS)
  *	Count the number of non-NULL arguments
  */
 Datum
-mdb_num_nonnulls(PG_FUNCTION_ARGS)
+mdb_num_nonnulls(MDB_FUNCTION_ARGS)
 {
 	int32		nargs,
 				nulls;
 
 	if (!count_nulls(fcinfo, &nargs, &nulls))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT32(nargs - nulls);
+	MDB_RETURN_INT32(nargs - nulls);
 }
 
 
@@ -172,14 +172,14 @@ mdb_num_nonnulls(PG_FUNCTION_ARGS)
  *	Expose the current database to the user
  */
 Datum
-current_database(PG_FUNCTION_ARGS)
+current_database(MDB_FUNCTION_ARGS)
 {
 	Name		db;
 
 	db = (Name) palloc(NAMEDATALEN);
 
 	namestrcpy(db, get_database_name(MyDatabaseId));
-	PG_RETURN_NAME(db);
+	MDB_RETURN_NAME(db);
 }
 
 
@@ -189,13 +189,13 @@ current_database(PG_FUNCTION_ARGS)
  *	We might want to use ActivePortal->sourceText someday.
  */
 Datum
-current_query(PG_FUNCTION_ARGS)
+current_query(MDB_FUNCTION_ARGS)
 {
 	/* there is no easy way to access the more concise 'query_string' */
 	if (debug_query_string)
-		PG_RETURN_TEXT_P(cstring_to_text(debug_query_string));
+		MDB_RETURN_TEXT_P(cstring_to_text(debug_query_string));
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
@@ -280,9 +280,9 @@ mdb_signal_backend(int pid, int sig)
  * Note that only superusers can signal superuser-owned processes.
  */
 Datum
-mdb_cancel_backend(PG_FUNCTION_ARGS)
+mdb_cancel_backend(MDB_FUNCTION_ARGS)
 {
-	int			r = mdb_signal_backend(PG_GETARG_INT32(0), SIGINT);
+	int			r = mdb_signal_backend(MDB_GETARG_INT32(0), SIGINT);
 
 	if (r == SIGNAL_BACKEND_NOSUPERUSER)
 		ereport(ERROR,
@@ -294,7 +294,7 @@ mdb_cancel_backend(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 				 (errmsg("must be a member of the role whose query is being canceled or member of mdb_signal_backend"))));
 
-	PG_RETURN_BOOL(r == SIGNAL_BACKEND_SUCCESS);
+	MDB_RETURN_BOOL(r == SIGNAL_BACKEND_SUCCESS);
 }
 
 /*
@@ -304,9 +304,9 @@ mdb_cancel_backend(PG_FUNCTION_ARGS)
  * Note that only superusers can signal superuser-owned processes.
  */
 Datum
-mdb_terminate_backend(PG_FUNCTION_ARGS)
+mdb_terminate_backend(MDB_FUNCTION_ARGS)
 {
-	int			r = mdb_signal_backend(PG_GETARG_INT32(0), SIGTERM);
+	int			r = mdb_signal_backend(MDB_GETARG_INT32(0), SIGTERM);
 
 	if (r == SIGNAL_BACKEND_NOSUPERUSER)
 		ereport(ERROR,
@@ -318,7 +318,7 @@ mdb_terminate_backend(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 				 (errmsg("must be a member of the role whose process is being terminated or member of mdb_signal_backend"))));
 
-	PG_RETURN_BOOL(r == SIGNAL_BACKEND_SUCCESS);
+	MDB_RETURN_BOOL(r == SIGNAL_BACKEND_SUCCESS);
 }
 
 /*
@@ -328,16 +328,16 @@ mdb_terminate_backend(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-mdb_reload_conf(PG_FUNCTION_ARGS)
+mdb_reload_conf(MDB_FUNCTION_ARGS)
 {
 	if (kill(PostmasterPid, SIGHUP))
 	{
 		ereport(WARNING,
 				(errmsg("failed to send signal to postmaster: %m")));
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 
@@ -348,17 +348,17 @@ mdb_reload_conf(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-mdb_rotate_logfile(PG_FUNCTION_ARGS)
+mdb_rotate_logfile(MDB_FUNCTION_ARGS)
 {
 	if (!Logging_collector)
 	{
 		ereport(WARNING,
 		(errmsg("rotation not possible because log collection not active")));
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 	}
 
 	SendPostmasterSignal(PMSIGNAL_ROTATE_LOGFILE);
-	PG_RETURN_BOOL(true);
+	MDB_RETURN_BOOL(true);
 }
 
 /* Function to find out which databases make use of a tablespace */
@@ -370,7 +370,7 @@ typedef struct
 } ts_db_fctx;
 
 Datum
-mdb_tablespace_databases(PG_FUNCTION_ARGS)
+mdb_tablespace_databases(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	struct dirent *de;
@@ -379,7 +379,7 @@ mdb_tablespace_databases(PG_FUNCTION_ARGS)
 	if (SRF_IS_FIRSTCALL())
 	{
 		MemoryContext oldcontext;
-		Oid			tablespaceOid = PG_GETARG_OID(0);
+		Oid			tablespaceOid = MDB_GETARG_OID(0);
 
 		funcctx = SRF_FIRSTCALL_INIT();
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
@@ -461,9 +461,9 @@ mdb_tablespace_databases(PG_FUNCTION_ARGS)
  * mdb_tablespace_location - get location for a tablespace
  */
 Datum
-mdb_tablespace_location(PG_FUNCTION_ARGS)
+mdb_tablespace_location(MDB_FUNCTION_ARGS)
 {
-	Oid			tablespaceOid = PG_GETARG_OID(0);
+	Oid			tablespaceOid = MDB_GETARG_OID(0);
 	char		sourcepath[MAXPGPATH];
 	char		targetpath[MAXPGPATH];
 	int			rllen;
@@ -481,7 +481,7 @@ mdb_tablespace_location(PG_FUNCTION_ARGS)
 	 */
 	if (tablespaceOid == DEFAULTTABLESPACE_OID ||
 		tablespaceOid == GLOBALTABLESPACE_OID)
-		PG_RETURN_TEXT_P(cstring_to_text(""));
+		MDB_RETURN_TEXT_P(cstring_to_text(""));
 
 #if defined(HAVE_READLINK) || defined(WIN32)
 
@@ -504,12 +504,12 @@ mdb_tablespace_location(PG_FUNCTION_ARGS)
 						sourcepath)));
 	targetpath[rllen] = '\0';
 
-	PG_RETURN_TEXT_P(cstring_to_text(targetpath));
+	MDB_RETURN_TEXT_P(cstring_to_text(targetpath));
 #else
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("tablespaces are not supported on this platform")));
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 #endif
 }
 
@@ -517,9 +517,9 @@ mdb_tablespace_location(PG_FUNCTION_ARGS)
  * mdb_sleep - delay for N seconds
  */
 Datum
-mdb_sleep(PG_FUNCTION_ARGS)
+mdb_sleep(MDB_FUNCTION_ARGS)
 {
-	float8		secs = PG_GETARG_FLOAT8(0);
+	float8		secs = MDB_GETARG_FLOAT8(0);
 	float8		endtime;
 
 	/*
@@ -564,12 +564,12 @@ mdb_sleep(PG_FUNCTION_ARGS)
 		ResetLatch(MyLatch);
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* Function to return the list of grammar keywords */
 Datum
-mdb_get_keywords(PG_FUNCTION_ARGS)
+mdb_get_keywords(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 
@@ -641,9 +641,9 @@ mdb_get_keywords(PG_FUNCTION_ARGS)
  * Return the type of the argument.
  */
 Datum
-mdb_typeof(PG_FUNCTION_ARGS)
+mdb_typeof(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_OID(get_fn_expr_argtype(fcinfo->flinfo, 0));
+	MDB_RETURN_OID(get_fn_expr_argtype(fcinfo->flinfo, 0));
 }
 
 
@@ -652,24 +652,24 @@ mdb_typeof(PG_FUNCTION_ARGS)
  * of the argument.
  */
 Datum
-mdb_collation_for(PG_FUNCTION_ARGS)
+mdb_collation_for(MDB_FUNCTION_ARGS)
 {
 	Oid			typeid;
 	Oid			collid;
 
 	typeid = get_fn_expr_argtype(fcinfo->flinfo, 0);
 	if (!typeid)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	if (!type_is_collatable(typeid) && typeid != UNKNOWNOID)
 		ereport(ERROR,
 				(errcode(ERRCODE_DATATYPE_MISMATCH),
 				 errmsg("collations are not supported by type %s",
 						format_type_be(typeid))));
 
-	collid = PG_GET_COLLATION();
+	collid = MDB_GET_COLLATION();
 	if (!collid)
-		PG_RETURN_NULL();
-	PG_RETURN_TEXT_P(cstring_to_text(generate_collation_name(collid)));
+		MDB_RETURN_NULL();
+	MDB_RETURN_TEXT_P(cstring_to_text(generate_collation_name(collid)));
 }
 
 
@@ -681,12 +681,12 @@ mdb_collation_for(PG_FUNCTION_ARGS)
  * for additional information.
  */
 Datum
-mdb_relation_is_updatable(PG_FUNCTION_ARGS)
+mdb_relation_is_updatable(MDB_FUNCTION_ARGS)
 {
-	Oid			reloid = PG_GETARG_OID(0);
-	bool		include_triggers = PG_GETARG_BOOL(1);
+	Oid			reloid = MDB_GETARG_OID(0);
+	bool		include_triggers = MDB_GETARG_BOOL(1);
 
-	PG_RETURN_INT32(relation_is_updatable(reloid, include_triggers, NULL));
+	MDB_RETURN_INT32(relation_is_updatable(reloid, include_triggers, NULL));
 }
 
 /*
@@ -698,17 +698,17 @@ mdb_relation_is_updatable(PG_FUNCTION_ARGS)
  * we want that decision in C code where we could change it without initdb.
  */
 Datum
-mdb_column_is_updatable(PG_FUNCTION_ARGS)
+mdb_column_is_updatable(MDB_FUNCTION_ARGS)
 {
-	Oid			reloid = PG_GETARG_OID(0);
-	AttrNumber	attnum = PG_GETARG_INT16(1);
+	Oid			reloid = MDB_GETARG_OID(0);
+	AttrNumber	attnum = MDB_GETARG_INT16(1);
 	AttrNumber	col = attnum - FirstLowInvalidHeapAttributeNumber;
-	bool		include_triggers = PG_GETARG_BOOL(2);
+	bool		include_triggers = MDB_GETARG_BOOL(2);
 	int			events;
 
 	/* System columns are never updatable */
 	if (attnum <= 0)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	events = relation_is_updatable(reloid, include_triggers,
 								   bms_make_singleton(col));
@@ -716,7 +716,7 @@ mdb_column_is_updatable(PG_FUNCTION_ARGS)
 	/* We require both updatability and deletability of the relation */
 #define REQ_EVENTS ((1 << CMD_UPDATE) | (1 << CMD_DELETE))
 
-	PG_RETURN_BOOL((events & REQ_EVENTS) == REQ_EVENTS);
+	MDB_RETURN_BOOL((events & REQ_EVENTS) == REQ_EVENTS);
 }
 
 
@@ -758,10 +758,10 @@ is_ident_cont(unsigned char c)
  * the last identifier are disallowed.
  */
 Datum
-parse_ident(PG_FUNCTION_ARGS)
+parse_ident(MDB_FUNCTION_ARGS)
 {
-	text	   *qualname = PG_GETARG_TEXT_PP(0);
-	bool		strict = PG_GETARG_BOOL(1);
+	text	   *qualname = MDB_GETARG_TEXT_PP(0);
+	bool		strict = MDB_GETARG_BOOL(1);
 	char	   *qualname_str = text_to_cstring(qualname);
 	ArrayBuildState *astate = NULL;
 	char	   *nextp;
@@ -888,5 +888,5 @@ parse_ident(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_DATUM(makeArrayResult(astate, CurrentMemoryContext));
+	MDB_RETURN_DATUM(makeArrayResult(astate, CurrentMemoryContext));
 }

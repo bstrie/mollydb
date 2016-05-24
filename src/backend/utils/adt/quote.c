@@ -21,15 +21,15 @@
  *	  returns a properly quoted identifier
  */
 Datum
-quote_ident(PG_FUNCTION_ARGS)
+quote_ident(MDB_FUNCTION_ARGS)
 {
-	text	   *t = PG_GETARG_TEXT_PP(0);
+	text	   *t = MDB_GETARG_TEXT_PP(0);
 	const char *qstr;
 	char	   *str;
 
 	str = text_to_cstring(t);
 	qstr = quote_identifier(str);
-	PG_RETURN_TEXT_P(cstring_to_text(qstr));
+	MDB_RETURN_TEXT_P(cstring_to_text(qstr));
 }
 
 /*
@@ -74,9 +74,9 @@ quote_literal_internal(char *dst, const char *src, size_t len)
  *	  returns a properly quoted literal
  */
 Datum
-quote_literal(PG_FUNCTION_ARGS)
+quote_literal(MDB_FUNCTION_ARGS)
 {
-	text	   *t = PG_GETARG_TEXT_P(0);
+	text	   *t = MDB_GETARG_TEXT_P(0);
 	text	   *result;
 	char	   *cp1;
 	char	   *cp2;
@@ -91,7 +91,7 @@ quote_literal(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(result, VARHDRSZ + quote_literal_internal(cp2, cp1, len));
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 /*
@@ -121,11 +121,11 @@ quote_literal_cstr(const char *rawstr)
  *	  as the text string 'NULL'.
  */
 Datum
-quote_nullable(PG_FUNCTION_ARGS)
+quote_nullable(MDB_FUNCTION_ARGS)
 {
-	if (PG_ARGISNULL(0))
-		PG_RETURN_TEXT_P(cstring_to_text("NULL"));
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_TEXT_P(cstring_to_text("NULL"));
 	else
-		PG_RETURN_DATUM(DirectFunctionCall1(quote_literal,
-											PG_GETARG_DATUM(0)));
+		MDB_RETURN_DATUM(DirectFunctionCall1(quote_literal,
+											MDB_GETARG_DATUM(0)));
 }

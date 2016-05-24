@@ -16,57 +16,57 @@
 #include "executor/executor.h"	/* for GetAttributeByName() */
 #include "utils/geo_decls.h"	/* for point type */
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 
 /* By Value */
 
-PG_FUNCTION_INFO_V1(add_one);
+MDB_FUNCTION_INFO_V1(add_one);
 
 Datum
-add_one(PG_FUNCTION_ARGS)
+add_one(MDB_FUNCTION_ARGS)
 {
-	int32		arg = PG_GETARG_INT32(0);
+	int32		arg = MDB_GETARG_INT32(0);
 
-	PG_RETURN_INT32(arg + 1);
+	MDB_RETURN_INT32(arg + 1);
 }
 
 /* By Reference, Fixed Length */
 
-PG_FUNCTION_INFO_V1(add_one_float8);
+MDB_FUNCTION_INFO_V1(add_one_float8);
 
 Datum
-add_one_float8(PG_FUNCTION_ARGS)
+add_one_float8(MDB_FUNCTION_ARGS)
 {
 	/* The macros for FLOAT8 hide its pass-by-reference nature */
-	float8		arg = PG_GETARG_FLOAT8(0);
+	float8		arg = MDB_GETARG_FLOAT8(0);
 
-	PG_RETURN_FLOAT8(arg + 1.0);
+	MDB_RETURN_FLOAT8(arg + 1.0);
 }
 
-PG_FUNCTION_INFO_V1(makepoint);
+MDB_FUNCTION_INFO_V1(makepoint);
 
 Datum
-makepoint(PG_FUNCTION_ARGS)
+makepoint(MDB_FUNCTION_ARGS)
 {
-	Point	   *pointx = PG_GETARG_POINT_P(0);
-	Point	   *pointy = PG_GETARG_POINT_P(1);
+	Point	   *pointx = MDB_GETARG_POINT_P(0);
+	Point	   *pointy = MDB_GETARG_POINT_P(1);
 	Point	   *new_point = (Point *) palloc(sizeof(Point));
 
 	new_point->x = pointx->x;
 	new_point->y = pointy->y;
 
-	PG_RETURN_POINT_P(new_point);
+	MDB_RETURN_POINT_P(new_point);
 }
 
 /* By Reference, Variable Length */
 
-PG_FUNCTION_INFO_V1(copytext);
+MDB_FUNCTION_INFO_V1(copytext);
 
 Datum
-copytext(PG_FUNCTION_ARGS)
+copytext(MDB_FUNCTION_ARGS)
 {
-	text	   *t = PG_GETARG_TEXT_P(0);
+	text	   *t = MDB_GETARG_TEXT_P(0);
 
 	/*
 	 * VARSIZE is the total size of the struct in bytes.
@@ -81,16 +81,16 @@ copytext(PG_FUNCTION_ARGS)
 	memcpy((void *) VARDATA(new_t),		/* destination */
 		   (void *) VARDATA(t), /* source */
 		   VARSIZE(t) - VARHDRSZ);		/* how many bytes */
-	PG_RETURN_TEXT_P(new_t);
+	MDB_RETURN_TEXT_P(new_t);
 }
 
-PG_FUNCTION_INFO_V1(concat_text);
+MDB_FUNCTION_INFO_V1(concat_text);
 
 Datum
-concat_text(PG_FUNCTION_ARGS)
+concat_text(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_P(0);
-	text	   *arg2 = PG_GETARG_TEXT_P(1);
+	text	   *arg1 = MDB_GETARG_TEXT_P(0);
+	text	   *arg2 = MDB_GETARG_TEXT_P(1);
 	int32		arg1_size = VARSIZE(arg1) - VARHDRSZ;
 	int32		arg2_size = VARSIZE(arg2) - VARHDRSZ;
 	int32		new_text_size = arg1_size + arg2_size + VARHDRSZ;
@@ -99,28 +99,28 @@ concat_text(PG_FUNCTION_ARGS)
 	SET_VARSIZE(new_text, new_text_size);
 	memcpy(VARDATA(new_text), VARDATA(arg1), arg1_size);
 	memcpy(VARDATA(new_text) + arg1_size, VARDATA(arg2), arg2_size);
-	PG_RETURN_TEXT_P(new_text);
+	MDB_RETURN_TEXT_P(new_text);
 }
 
 /* Composite types */
 
-PG_FUNCTION_INFO_V1(c_overpaid);
+MDB_FUNCTION_INFO_V1(c_overpaid);
 
 Datum
-c_overpaid(PG_FUNCTION_ARGS)
+c_overpaid(MDB_FUNCTION_ARGS)
 {
-	HeapTupleHeader t = PG_GETARG_HEAPTUPLEHEADER(0);
-	int32		limit = PG_GETARG_INT32(1);
+	HeapTupleHeader t = MDB_GETARG_HEAPTUPLEHEADER(0);
+	int32		limit = MDB_GETARG_INT32(1);
 	bool		isnull;
 	int32		salary;
 
 	salary = DatumGetInt32(GetAttributeByName(t, "salary", &isnull));
 	if (isnull)
-		PG_RETURN_BOOL(false);
+		MDB_RETURN_BOOL(false);
 
 	/*
-	 * Alternatively, we might prefer to do PG_RETURN_NULL() for null salary
+	 * Alternatively, we might prefer to do MDB_RETURN_NULL() for null salary
 	 */
 
-	PG_RETURN_BOOL(salary > limit);
+	MDB_RETURN_BOOL(salary > limit);
 }

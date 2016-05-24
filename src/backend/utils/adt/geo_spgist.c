@@ -354,26 +354,26 @@ overAbove4D(RectBox *rect_box, RangeBox *query)
  * SP-GiST config function
  */
 Datum
-smdb_box_quad_config(PG_FUNCTION_ARGS)
+smdb_box_quad_config(MDB_FUNCTION_ARGS)
 {
-	spgConfigOut *cfg = (spgConfigOut *) PG_GETARG_POINTER(1);
+	spgConfigOut *cfg = (spgConfigOut *) MDB_GETARG_POINTER(1);
 
 	cfg->prefixType = BOXOID;
 	cfg->labelType = VOIDOID;	/* We don't need node labels. */
 	cfg->canReturnData = true;
 	cfg->longValuesOK = false;
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * SP-GiST choose function
  */
 Datum
-smdb_box_quad_choose(PG_FUNCTION_ARGS)
+smdb_box_quad_choose(MDB_FUNCTION_ARGS)
 {
-	spgChooseIn *in = (spgChooseIn *) PG_GETARG_POINTER(0);
-	spgChooseOut *out = (spgChooseOut *) PG_GETARG_POINTER(1);
+	spgChooseIn *in = (spgChooseIn *) MDB_GETARG_POINTER(0);
+	spgChooseOut *out = (spgChooseOut *) MDB_GETARG_POINTER(1);
 	BOX		   *centroid = DatumGetBoxP(in->prefixDatum),
 			   *box = DatumGetBoxP(in->datum);
 
@@ -384,7 +384,7 @@ smdb_box_quad_choose(PG_FUNCTION_ARGS)
 	if (!in->allTheSame)
 		out->result.matchNode.nodeN = getQuadrant(centroid, box);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -394,10 +394,10 @@ smdb_box_quad_choose(PG_FUNCTION_ARGS)
  * point as the median of the coordinates of the boxes.
  */
 Datum
-smdb_box_quad_picksplit(PG_FUNCTION_ARGS)
+smdb_box_quad_picksplit(MDB_FUNCTION_ARGS)
 {
-	spgPickSplitIn	*in = (spgPickSplitIn *) PG_GETARG_POINTER(0);
-	spgPickSplitOut	*out = (spgPickSplitOut *) PG_GETARG_POINTER(1);
+	spgPickSplitIn	*in = (spgPickSplitIn *) MDB_GETARG_POINTER(0);
+	spgPickSplitOut	*out = (spgPickSplitOut *) MDB_GETARG_POINTER(1);
 	BOX		   *centroid;
 	int			median,
 				i;
@@ -454,17 +454,17 @@ smdb_box_quad_picksplit(PG_FUNCTION_ARGS)
 		out->mapTuplesToNodes[i] = quadrant;
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * SP-GiST inner consistent function
  */
 Datum
-smdb_box_quad_inner_consistent(PG_FUNCTION_ARGS)
+smdb_box_quad_inner_consistent(MDB_FUNCTION_ARGS)
 {
-	spgInnerConsistentIn *in = (spgInnerConsistentIn *) PG_GETARG_POINTER(0);
-	spgInnerConsistentOut *out = (spgInnerConsistentOut *) PG_GETARG_POINTER(1);
+	spgInnerConsistentIn *in = (spgInnerConsistentIn *) MDB_GETARG_POINTER(0);
+	spgInnerConsistentOut *out = (spgInnerConsistentOut *) MDB_GETARG_POINTER(1);
 	int				i;
 	MemoryContext	old_ctx;
 	RectBox		   *rect_box;
@@ -480,7 +480,7 @@ smdb_box_quad_inner_consistent(PG_FUNCTION_ARGS)
 		for (i = 0; i < in->nNodes; i++)
 			out->nodeNumbers[i] = i;
 
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 	}
 
 	/*
@@ -597,17 +597,17 @@ smdb_box_quad_inner_consistent(PG_FUNCTION_ARGS)
 	/* Switch back */
 	MemoryContextSwitchTo(old_ctx);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * SP-GiST inner consistent function
  */
 Datum
-smdb_box_quad_leaf_consistent(PG_FUNCTION_ARGS)
+smdb_box_quad_leaf_consistent(MDB_FUNCTION_ARGS)
 {
-	spgLeafConsistentIn *in = (spgLeafConsistentIn *) PG_GETARG_POINTER(0);
-	spgLeafConsistentOut *out = (spgLeafConsistentOut *) PG_GETARG_POINTER(1);
+	spgLeafConsistentIn *in = (spgLeafConsistentIn *) MDB_GETARG_POINTER(0);
+	spgLeafConsistentOut *out = (spgLeafConsistentOut *) MDB_GETARG_POINTER(1);
 	Datum		leaf = in->leafDatum;
 	bool		flag = true;
 	int			i;
@@ -695,5 +695,5 @@ smdb_box_quad_leaf_consistent(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_BOOL(flag);
+	MDB_RETURN_BOOL(flag);
 }

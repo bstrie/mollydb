@@ -19,8 +19,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_AM_H
-#define PG_AM_H
+#ifndef MDB_AM_H
+#define MDB_AM_H
 
 #include "catalog/genbki.h"
 
@@ -84,4 +84,4 @@ DATA(insert OID = 3580 (  brin		brinhandler i ));
 DESCR("block range index (BRIN) access method");
 #define BRIN_AM_OID 3580
 
-#endif   /* PG_AM_H */
+#endif   /* MDB_AM_H */

@@ -102,12 +102,12 @@ default_range_selectivity(Oid operator)
  * rangesel -- restriction selectivity for range operators
  */
 Datum
-rangesel(PG_FUNCTION_ARGS)
+rangesel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
 	VariableStatData vardata;
 	Node	   *other;
 	bool		varonleft;
@@ -121,7 +121,7 @@ rangesel(PG_FUNCTION_ARGS)
 	 */
 	if (!get_restriction_variable(root, args, varRelid,
 								  &vardata, &other, &varonleft))
-		PG_RETURN_FLOAT8(default_range_selectivity(operator));
+		MDB_RETURN_FLOAT8(default_range_selectivity(operator));
 
 	/*
 	 * Can't do anything useful if the something is not a constant, either.
@@ -129,7 +129,7 @@ rangesel(PG_FUNCTION_ARGS)
 	if (!IsA(other, Const))
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(default_range_selectivity(operator));
+		MDB_RETURN_FLOAT8(default_range_selectivity(operator));
 	}
 
 	/*
@@ -139,7 +139,7 @@ rangesel(PG_FUNCTION_ARGS)
 	if (((Const *) other)->constisnull)
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 	}
 
 	/*
@@ -154,7 +154,7 @@ rangesel(PG_FUNCTION_ARGS)
 		{
 			/* Use default selectivity (should we raise an error instead?) */
 			ReleaseVariableStats(vardata);
-			PG_RETURN_FLOAT8(default_range_selectivity(operator));
+			MDB_RETURN_FLOAT8(default_range_selectivity(operator));
 		}
 	}
 
@@ -220,7 +220,7 @@ rangesel(PG_FUNCTION_ARGS)
 
 	CLAMP_PROBABILITY(selec);
 
-	PG_RETURN_FLOAT8((float8) selec);
+	MDB_RETURN_FLOAT8((float8) selec);
 }
 
 static double

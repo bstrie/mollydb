@@ -97,7 +97,7 @@ main(int argc, char *argv[])
 	char		xlogfilename[MAXFNAMELEN];
 	int			c;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_controldata"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mdb_controldata"));
 
 	progname = get_progname(argv[0]);
 
@@ -110,7 +110,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("mdb_controldata (MollyDB) " PG_VERSION);
+			puts("mdb_controldata (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}

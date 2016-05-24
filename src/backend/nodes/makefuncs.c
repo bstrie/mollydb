@@ -309,7 +309,7 @@ makeConst(Oid consttype,
 	 * improves consistency of representation, which is important for equal().
 	 */
 	if (!constisnull && constlen == -1)
-		constvalue = PointerGetDatum(PG_DETOAST_DATUM(constvalue));
+		constvalue = PointerGetDatum(MDB_DETOAST_DATUM(constvalue));
 
 	cnst->consttype = consttype;
 	cnst->consttypmod = consttypmod;

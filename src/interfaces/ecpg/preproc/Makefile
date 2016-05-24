@@ -24,7 +24,7 @@ override CPPFLAGS := -I../include -I$(top_srcdir)/src/interfaces/ecpg/include \
 	-DMINOR_VERSION=$(MINOR_VERSION) -DPATCHLEVEL=$(PATCHLEVEL) \
 	 $(CPPFLAGS)
 
-override CFLAGS += $(PTHREAD_CFLAGS) -DECPG_COMPILE
+override CFLAGS += $(PTHREAD_CFLAGS) -DECMDB_COMPILE
 
 OBJS=	preproc.o pgc.o type.o ecpg.o output.o parser.o \
 	keywords.o c_keywords.o ecmdb_keywords.o ../ecpglib/typename.o descriptor.o variable.o \

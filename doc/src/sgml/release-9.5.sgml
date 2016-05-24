@@ -1879,9 +1879,9 @@ max_wal_size = (3 * checkpoint_segments) * 16MB
        <para>
         Control the Linux <acronym>OOM</> killer via new environment
         variables <link
-        linkend="linux-memory-overcommit"><envar>PG_OOM_ADJUST_FILE</></>
+        linkend="linux-memory-overcommit"><envar>MDB_OOM_ADJUST_FILE</></>
         and <link
-        linkend="linux-memory-overcommit"><envar>PG_OOM_ADJUST_VALUE</></>,
+        linkend="linux-memory-overcommit"><envar>MDB_OOM_ADJUST_VALUE</></>,
         instead of compile-time options <literal>LINUX_OOM_SCORE_ADJ</> and
         <literal>LINUX_OOM_ADJ</>
         (Gurjeet Singh)
@@ -2418,9 +2418,9 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
        <para>
         Control the Linux <acronym>OOM</> killer via new environment
         variables <link
-        linkend="linux-memory-overcommit"><envar>PG_OOM_ADJUST_FILE</></>
+        linkend="linux-memory-overcommit"><envar>MDB_OOM_ADJUST_FILE</></>
         and <link
-        linkend="linux-memory-overcommit"><envar>PG_OOM_ADJUST_VALUE</></>
+        linkend="linux-memory-overcommit"><envar>MDB_OOM_ADJUST_VALUE</></>
         (Gurjeet Singh)
        </para>
 

@@ -61,27 +61,27 @@ static char *printTypmod(const char *typname, int32 typmod, Oid typmodout);
  * Not worth changing it now, however.
  */
 Datum
-format_type(PG_FUNCTION_ARGS)
+format_type(MDB_FUNCTION_ARGS)
 {
 	Oid			type_oid;
 	int32		typemod;
 	char	   *result;
 
 	/* Since this function is not strict, we must test for null args */
-	if (PG_ARGISNULL(0))
-		PG_RETURN_NULL();
+	if (MDB_ARGISNULL(0))
+		MDB_RETURN_NULL();
 
-	type_oid = PG_GETARG_OID(0);
+	type_oid = MDB_GETARG_OID(0);
 
-	if (PG_ARGISNULL(1))
+	if (MDB_ARGISNULL(1))
 		result = format_type_internal(type_oid, -1, false, true, false);
 	else
 	{
-		typemod = PG_GETARG_INT32(1);
+		typemod = MDB_GETARG_INT32(1);
 		result = format_type_internal(type_oid, typemod, true, true, false);
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(result));
+	MDB_RETURN_TEXT_P(cstring_to_text(result));
 }
 
 /*
@@ -421,9 +421,9 @@ type_maximum_size(Oid type_oid, int32 typemod)
  * oidvectortypes			- converts a vector of type OIDs to "typname" list
  */
 Datum
-oidvectortypes(PG_FUNCTION_ARGS)
+oidvectortypes(MDB_FUNCTION_ARGS)
 {
-	oidvector  *oidArray = (oidvector *) PG_GETARG_POINTER(0);
+	oidvector  *oidArray = (oidvector *) MDB_GETARG_POINTER(0);
 	char	   *result;
 	int			numargs = oidArray->dim1;
 	int			num;
@@ -457,5 +457,5 @@ oidvectortypes(PG_FUNCTION_ARGS)
 		left -= slen;
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(result));
+	MDB_RETURN_TEXT_P(cstring_to_text(result));
 }

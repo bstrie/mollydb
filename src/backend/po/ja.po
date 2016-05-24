@@ -1126,8 +1126,8 @@ msgstr "データベースファイルがサーバと互換性がありません
 
 #: access/transam/xlog.c:4709
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x), but the server was compiled with PG_CONTROL_VERSION %d (0x%08x)."
-msgstr "データベースクラスタはPG_CONTROL_VERSION %d (0x%08x)で初期化されましたが、サーバはPG_CONTROL_VERSION %d (0x%08x)でコンパイルされています。"
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d (0x%08x), but the server was compiled with MDB_CONTROL_VERSION %d (0x%08x)."
+msgstr "データベースクラスタはMDB_CONTROL_VERSION %d (0x%08x)で初期化されましたが、サーバはMDB_CONTROL_VERSION %d (0x%08x)でコンパイルされています。"
 
 #: access/transam/xlog.c:4713
 #, c-format
@@ -1138,8 +1138,8 @@ msgstr ""
 
 #: access/transam/xlog.c:4718
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d, but the server was compiled with PG_CONTROL_VERSION %d."
-msgstr "データベースクラスタはPG_CONTROL_VERSION %d で初期化されましたが、サーバは PG_CONTROL_VERSION %d でコンパイルされています。"
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d, but the server was compiled with MDB_CONTROL_VERSION %d."
+msgstr "データベースクラスタはMDB_CONTROL_VERSION %d で初期化されましたが、サーバは MDB_CONTROL_VERSION %d でコンパイルされています。"
 
 #: access/transam/xlog.c:4721 access/transam/xlog.c:4745
 #: access/transam/xlog.c:4752 access/transam/xlog.c:4757
@@ -17897,8 +17897,8 @@ msgstr "\"%s\"は互換性がないライブラリです。マジックブロッ
 
 #: utils/fmgr/dfmgr.c:276
 #, c-format
-msgid "Extension libraries are required to use the PG_MODULE_MAGIC macro."
-msgstr "拡張ライブラリはPG_MODULE_MAGICマクロを使用しなければなりません。"
+msgid "Extension libraries are required to use the MDB_MODULE_MAGIC macro."
+msgstr "拡張ライブラリはMDB_MODULE_MAGICマクロを使用しなければなりません。"
 
 #: utils/fmgr/dfmgr.c:312
 #, c-format

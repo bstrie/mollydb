@@ -14,8 +14,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_REPLICATION_ORIGIN_H
-#define PG_REPLICATION_ORIGIN_H
+#ifndef MDB_REPLICATION_ORIGIN_H
+#define MDB_REPLICATION_ORIGIN_H
 
 #include "catalog/genbki.h"
 #include "access/xlogdefs.h"
@@ -67,4 +67,4 @@ typedef FormData_mdb_replication_origin *Form_mdb_replication_origin;
  * ----------------
  */
 
-#endif   /* PG_REPLICATION_ORIGIN_H */
+#endif   /* MDB_REPLICATION_ORIGIN_H */

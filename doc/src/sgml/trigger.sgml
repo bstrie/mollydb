@@ -709,12 +709,12 @@ CREATE TABLE ttest (
 #include "commands/trigger.h"   /* ... triggers ... */
 #include "utils/rel.h"          /* ... and relations */
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(trigf);
+MDB_FUNCTION_INFO_V1(trigf);
 
 Datum
-trigf(PG_FUNCTION_ARGS)
+trigf(MDB_FUNCTION_ARGS)
 {
     TriggerData *trigdata = (TriggerData *) fcinfo->context;
     TupleDesc   tupdesc;

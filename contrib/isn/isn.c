@@ -24,7 +24,7 @@
 #include "ISSN.h"
 #include "UPC.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 #define MAXEAN13LEN 18
 
@@ -942,194 +942,194 @@ initialize(void)
 
 /* isn_out
  */
-PG_FUNCTION_INFO_V1(isn_out);
+MDB_FUNCTION_INFO_V1(isn_out);
 Datum
-isn_out(PG_FUNCTION_ARGS)
+isn_out(MDB_FUNCTION_ARGS)
 {
-	ean13		val = PG_GETARG_EAN13(0);
+	ean13		val = MDB_GETARG_EAN13(0);
 	char	   *result;
 	char		buf[MAXEAN13LEN + 1];
 
 	(void) ean2string(val, false, buf, true);
 
 	result = pstrdup(buf);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /* ean13_out
  */
-PG_FUNCTION_INFO_V1(ean13_out);
+MDB_FUNCTION_INFO_V1(ean13_out);
 Datum
-ean13_out(PG_FUNCTION_ARGS)
+ean13_out(MDB_FUNCTION_ARGS)
 {
-	ean13		val = PG_GETARG_EAN13(0);
+	ean13		val = MDB_GETARG_EAN13(0);
 	char	   *result;
 	char		buf[MAXEAN13LEN + 1];
 
 	(void) ean2string(val, false, buf, false);
 
 	result = pstrdup(buf);
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /* ean13_in
  */
-PG_FUNCTION_INFO_V1(ean13_in);
+MDB_FUNCTION_INFO_V1(ean13_in);
 Datum
-ean13_in(PG_FUNCTION_ARGS)
+ean13_in(MDB_FUNCTION_ARGS)
 {
-	const char *str = PG_GETARG_CSTRING(0);
+	const char *str = MDB_GETARG_CSTRING(0);
 	ean13		result;
 
 	(void) string2ean(str, false, &result, EAN13);
-	PG_RETURN_EAN13(result);
+	MDB_RETURN_EAN13(result);
 }
 
 /* isbn_in
  */
-PG_FUNCTION_INFO_V1(isbn_in);
+MDB_FUNCTION_INFO_V1(isbn_in);
 Datum
-isbn_in(PG_FUNCTION_ARGS)
+isbn_in(MDB_FUNCTION_ARGS)
 {
-	const char *str = PG_GETARG_CSTRING(0);
+	const char *str = MDB_GETARG_CSTRING(0);
 	ean13		result;
 
 	(void) string2ean(str, false, &result, ISBN);
-	PG_RETURN_EAN13(result);
+	MDB_RETURN_EAN13(result);
 }
 
 /* ismn_in
  */
-PG_FUNCTION_INFO_V1(ismn_in);
+MDB_FUNCTION_INFO_V1(ismn_in);
 Datum
-ismn_in(PG_FUNCTION_ARGS)
+ismn_in(MDB_FUNCTION_ARGS)
 {
-	const char *str = PG_GETARG_CSTRING(0);
+	const char *str = MDB_GETARG_CSTRING(0);
 	ean13		result;
 
 	(void) string2ean(str, false, &result, ISMN);
-	PG_RETURN_EAN13(result);
+	MDB_RETURN_EAN13(result);
 }
 
 /* issn_in
  */
-PG_FUNCTION_INFO_V1(issn_in);
+MDB_FUNCTION_INFO_V1(issn_in);
 Datum
-issn_in(PG_FUNCTION_ARGS)
+issn_in(MDB_FUNCTION_ARGS)
 {
-	const char *str = PG_GETARG_CSTRING(0);
+	const char *str = MDB_GETARG_CSTRING(0);
 	ean13		result;
 
 	(void) string2ean(str, false, &result, ISSN);
-	PG_RETURN_EAN13(result);
+	MDB_RETURN_EAN13(result);
 }
 
 /* upc_in
  */
-PG_FUNCTION_INFO_V1(upc_in);
+MDB_FUNCTION_INFO_V1(upc_in);
 Datum
-upc_in(PG_FUNCTION_ARGS)
+upc_in(MDB_FUNCTION_ARGS)
 {
-	const char *str = PG_GETARG_CSTRING(0);
+	const char *str = MDB_GETARG_CSTRING(0);
 	ean13		result;
 
 	(void) string2ean(str, false, &result, UPC);
-	PG_RETURN_EAN13(result);
+	MDB_RETURN_EAN13(result);
 }
 
 /* casting functions
 */
-PG_FUNCTION_INFO_V1(isbn_cast_from_ean13);
+MDB_FUNCTION_INFO_V1(isbn_cast_from_ean13);
 Datum
-isbn_cast_from_ean13(PG_FUNCTION_ARGS)
+isbn_cast_from_ean13(MDB_FUNCTION_ARGS)
 {
-	ean13		val = PG_GETARG_EAN13(0);
+	ean13		val = MDB_GETARG_EAN13(0);
 	ean13		result;
 
 	(void) ean2isn(val, false, &result, ISBN);
 
-	PG_RETURN_EAN13(result);
+	MDB_RETURN_EAN13(result);
 }
 
-PG_FUNCTION_INFO_V1(ismn_cast_from_ean13);
+MDB_FUNCTION_INFO_V1(ismn_cast_from_ean13);
 Datum
-ismn_cast_from_ean13(PG_FUNCTION_ARGS)
+ismn_cast_from_ean13(MDB_FUNCTION_ARGS)
 {
-	ean13		val = PG_GETARG_EAN13(0);
+	ean13		val = MDB_GETARG_EAN13(0);
 	ean13		result;
 
 	(void) ean2isn(val, false, &result, ISMN);
 
-	PG_RETURN_EAN13(result);
+	MDB_RETURN_EAN13(result);
 }
 
-PG_FUNCTION_INFO_V1(issn_cast_from_ean13);
+MDB_FUNCTION_INFO_V1(issn_cast_from_ean13);
 Datum
-issn_cast_from_ean13(PG_FUNCTION_ARGS)
+issn_cast_from_ean13(MDB_FUNCTION_ARGS)
 {
-	ean13		val = PG_GETARG_EAN13(0);
+	ean13		val = MDB_GETARG_EAN13(0);
 	ean13		result;
 
 	(void) ean2isn(val, false, &result, ISSN);
 
-	PG_RETURN_EAN13(result);
+	MDB_RETURN_EAN13(result);
 }
 
-PG_FUNCTION_INFO_V1(upc_cast_from_ean13);
+MDB_FUNCTION_INFO_V1(upc_cast_from_ean13);
 Datum
-upc_cast_from_ean13(PG_FUNCTION_ARGS)
+upc_cast_from_ean13(MDB_FUNCTION_ARGS)
 {
-	ean13		val = PG_GETARG_EAN13(0);
+	ean13		val = MDB_GETARG_EAN13(0);
 	ean13		result;
 
 	(void) ean2isn(val, false, &result, UPC);
 
-	PG_RETURN_EAN13(result);
+	MDB_RETURN_EAN13(result);
 }
 
 
 /* is_valid - returns false if the "invalid-check-digit-on-input" is set
  */
-PG_FUNCTION_INFO_V1(is_valid);
+MDB_FUNCTION_INFO_V1(is_valid);
 Datum
-is_valid(PG_FUNCTION_ARGS)
+is_valid(MDB_FUNCTION_ARGS)
 {
-	ean13		val = PG_GETARG_EAN13(0);
+	ean13		val = MDB_GETARG_EAN13(0);
 
-	PG_RETURN_BOOL((val & 1) == 0);
+	MDB_RETURN_BOOL((val & 1) == 0);
 }
 
 /* make_valid - unsets the "invalid-check-digit-on-input" flag
  */
-PG_FUNCTION_INFO_V1(make_valid);
+MDB_FUNCTION_INFO_V1(make_valid);
 Datum
-make_valid(PG_FUNCTION_ARGS)
+make_valid(MDB_FUNCTION_ARGS)
 {
-	ean13		val = PG_GETARG_EAN13(0);
+	ean13		val = MDB_GETARG_EAN13(0);
 
 	val &= ~((ean13) 1);
-	PG_RETURN_EAN13(val);
+	MDB_RETURN_EAN13(val);
 }
 
 /* this function temporarily sets weak input flag
  * (to lose the strictness of check digit acceptance)
  * It's a helper function, not intended to be used!!
  */
-PG_FUNCTION_INFO_V1(accept_weak_input);
+MDB_FUNCTION_INFO_V1(accept_weak_input);
 Datum
-accept_weak_input(PG_FUNCTION_ARGS)
+accept_weak_input(MDB_FUNCTION_ARGS)
 {
 #ifdef ISN_WEAK_MODE
-	g_weak = PG_GETARG_BOOL(0);
+	g_weak = MDB_GETARG_BOOL(0);
 #else
 	/* function has no effect */
 #endif   /* ISN_WEAK_MODE */
-	PG_RETURN_BOOL(g_weak);
+	MDB_RETURN_BOOL(g_weak);
 }
 
-PG_FUNCTION_INFO_V1(weak_input_status);
+MDB_FUNCTION_INFO_V1(weak_input_status);
 Datum
-weak_input_status(PG_FUNCTION_ARGS)
+weak_input_status(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_BOOL(g_weak);
+	MDB_RETURN_BOOL(g_weak);
 }

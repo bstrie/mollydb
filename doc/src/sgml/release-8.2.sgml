@@ -4897,7 +4897,7 @@
      <listitem>
       <para>
        C-language loadable modules must now include a
-       <link linkend="xfunc-c-dynload"><literal>PG_MODULE_MAGIC</></link>
+       <link linkend="xfunc-c-dynload"><literal>MDB_MODULE_MAGIC</></link>
        macro call for version compatibility checking
        (Martijn van Oosterhout)
       </para>
@@ -6736,7 +6736,7 @@
 
      <listitem>
       <para>
-       Add <literal>PG_VERSION_NUM</> for use by third-party
+       Add <literal>MDB_VERSION_NUM</> for use by third-party
        applications wanting to test the backend version in C using &gt;
        and &lt; comparisons (Bruce)
       </para>
@@ -6839,11 +6839,11 @@
 
       <para>
        New <link linkend="xfunc-c-dynload">functions</link>
-       <function>_PG_init()</> and <function>_PG_fini()</> are
+       <function>_MDB_init()</> and <function>_MDB_fini()</> are
        called if the library defines such symbols.  Hence we no
        longer need to specify an initialization function in
        <varname>shared_preload_libraries</>; we can assume that
-       the library used the <function>_PG_init()</> convention
+       the library used the <function>_MDB_init()</> convention
        instead.
       </para>
      </listitem>
@@ -6851,7 +6851,7 @@
      <listitem>
       <para>
        Add <link
-       linkend="xfunc-c-dynload"><literal>PG_MODULE_MAGIC</></link>
+       linkend="xfunc-c-dynload"><literal>MDB_MODULE_MAGIC</></link>
        header block to all shared object files (Martijn van
        Oosterhout)
       </para>

@@ -33,47 +33,47 @@ static const int NStorageManagers = lengthof(StorageManager);
 
 
 Datum
-smgrin(PG_FUNCTION_ARGS)
+smgrin(MDB_FUNCTION_ARGS)
 {
-	char	   *s = PG_GETARG_CSTRING(0);
+	char	   *s = MDB_GETARG_CSTRING(0);
 	int16		i;
 
 	for (i = 0; i < NStorageManagers; i++)
 	{
 		if (strcmp(s, StorageManager[i].smgr_name) == 0)
-			PG_RETURN_INT16(i);
+			MDB_RETURN_INT16(i);
 	}
 	elog(ERROR, "unrecognized storage manager name \"%s\"", s);
-	PG_RETURN_INT16(0);
+	MDB_RETURN_INT16(0);
 }
 
 Datum
-smgrout(PG_FUNCTION_ARGS)
+smgrout(MDB_FUNCTION_ARGS)
 {
-	int16		i = PG_GETARG_INT16(0);
+	int16		i = MDB_GETARG_INT16(0);
 	char	   *s;
 
 	if (i >= NStorageManagers || i < 0)
 		elog(ERROR, "invalid storage manager ID: %d", i);
 
 	s = pstrdup(StorageManager[i].smgr_name);
-	PG_RETURN_CSTRING(s);
+	MDB_RETURN_CSTRING(s);
 }
 
 Datum
-smgreq(PG_FUNCTION_ARGS)
+smgreq(MDB_FUNCTION_ARGS)
 {
-	int16		a = PG_GETARG_INT16(0);
-	int16		b = PG_GETARG_INT16(1);
+	int16		a = MDB_GETARG_INT16(0);
+	int16		b = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(a == b);
+	MDB_RETURN_BOOL(a == b);
 }
 
 Datum
-smgrne(PG_FUNCTION_ARGS)
+smgrne(MDB_FUNCTION_ARGS)
 {
-	int16		a = PG_GETARG_INT16(0);
-	int16		b = PG_GETARG_INT16(1);
+	int16		a = MDB_GETARG_INT16(0);
+	int16		b = MDB_GETARG_INT16(1);
 
-	PG_RETURN_BOOL(a != b);
+	MDB_RETURN_BOOL(a != b);
 }

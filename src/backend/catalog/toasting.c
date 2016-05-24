@@ -246,7 +246,7 @@ create_toast_table(Relation rel, Oid toastOid, Oid toastIndexOid,
 	if (isTempOrTempToastNamespace(rel->rd_rel->relnamespace))
 		namespaceid = GetTempToastNamespace();
 	else
-		namespaceid = PG_TOAST_NAMESPACE;
+		namespaceid = MDB_TOAST_NAMESPACE;
 
 	/*
 	 * Use binary-upgrade override for mdb_type.oid, if supplied.  We might be

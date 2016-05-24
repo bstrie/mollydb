@@ -53,17 +53,17 @@ check_return(int ret)
 {
 	switch(ret)
 	{
-		case ECPG_INFORMIX_ENOTDMY:
-			printf("(ECPG_INFORMIX_ENOTDMY)");
+		case ECMDB_INFORMIX_ENOTDMY:
+			printf("(ECMDB_INFORMIX_ENOTDMY)");
 			break;
-		case ECPG_INFORMIX_ENOSHORTDATE:
-			printf("(ECPG_INFORMIX_ENOSHORTDATE)");
+		case ECMDB_INFORMIX_ENOSHORTDATE:
+			printf("(ECMDB_INFORMIX_ENOSHORTDATE)");
 			break;
-		case ECPG_INFORMIX_BAD_DAY:
-			printf("(ECPG_INFORMIX_BAD_DAY)");
+		case ECMDB_INFORMIX_BAD_DAY:
+			printf("(ECMDB_INFORMIX_BAD_DAY)");
 			break;
-		case ECPG_INFORMIX_BAD_MONTH:
-			printf("(ECPG_INFORMIX_BAD_MONTH)");
+		case ECMDB_INFORMIX_BAD_MONTH:
+			printf("(ECMDB_INFORMIX_BAD_MONTH)");
 			break;
 		default:
 			printf("(unknown ret: %d)", ret);

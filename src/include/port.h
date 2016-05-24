@@ -10,8 +10,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_PORT_H
-#define PG_PORT_H
+#ifndef MDB_PORT_H
+#define MDB_PORT_H
 
 #include <ctype.h>
 #include <netdb.h>
@@ -206,7 +206,7 @@ extern char *pgwin32_setlocale(int category, const char *locale);
 extern char *simple_prompt(const char *prompt, int maxlen, bool echo);
 
 #ifdef WIN32
-#define PG_SIGNAL_COUNT 32
+#define MDB_SIGNAL_COUNT 32
 #define kill(pid,sig)	pgkill(pid,sig)
 extern int	pgkill(int pid, int sig);
 #endif
@@ -332,13 +332,13 @@ extern int	gettimeofday(struct timeval * tp, struct timezone * tzp);
  * as _IOFBF.  To add insult to injury, setvbuf(file, NULL, _IOFBF, 0)
  * crashes outright if "parameter validation" is enabled.  Therefore, in
  * places where we'd like to select line-buffered mode, we fall back to
- * unbuffered mode instead on Windows.  Always use PG_IOLBF not _IOLBF
+ * unbuffered mode instead on Windows.  Always use MDB_IOLBF not _IOLBF
  * directly in order to implement this behavior.
  */
 #ifndef WIN32
-#define PG_IOLBF	_IOLBF
+#define MDB_IOLBF	_IOLBF
 #else
-#define PG_IOLBF	_IONBF
+#define MDB_IOLBF	_IONBF
 #endif
 
 /*
@@ -469,4 +469,4 @@ extern char *escape_single_quotes_ascii(const char *src);
 /* port/wait_error.c */
 extern char *wait_result_to_str(int exit_status);
 
-#endif   /* PG_PORT_H */
+#endif   /* MDB_PORT_H */

@@ -11,8 +11,8 @@ PGFILEDESC = "dict_xsyn - add-on dictionary template for full-text search"
 REGRESS = dict_xsyn
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/dict_xsyn

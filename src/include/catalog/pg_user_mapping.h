@@ -14,8 +14,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_USER_MAPPING_H
-#define PG_USER_MAPPING_H
+#ifndef MDB_USER_MAPPING_H
+#define MDB_USER_MAPPING_H
 
 #include "catalog/genbki.h"
 
@@ -54,4 +54,4 @@ typedef FormData_mdb_user_mapping *Form_mdb_user_mapping;
 #define Anum_mdb_user_mapping_umserver		2
 #define Anum_mdb_user_mapping_umoptions		3
 
-#endif   /* PG_USER_MAPPING_H */
+#endif   /* MDB_USER_MAPPING_H */

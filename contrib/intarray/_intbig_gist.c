@@ -12,13 +12,13 @@
 /*
 ** _intbig methods
 */
-PG_FUNCTION_INFO_V1(g_intbig_consistent);
-PG_FUNCTION_INFO_V1(g_intbig_compress);
-PG_FUNCTION_INFO_V1(g_intbig_decompress);
-PG_FUNCTION_INFO_V1(g_intbig_penalty);
-PG_FUNCTION_INFO_V1(g_intbig_picksplit);
-PG_FUNCTION_INFO_V1(g_intbig_union);
-PG_FUNCTION_INFO_V1(g_intbig_same);
+MDB_FUNCTION_INFO_V1(g_intbig_consistent);
+MDB_FUNCTION_INFO_V1(g_intbig_compress);
+MDB_FUNCTION_INFO_V1(g_intbig_decompress);
+MDB_FUNCTION_INFO_V1(g_intbig_penalty);
+MDB_FUNCTION_INFO_V1(g_intbig_picksplit);
+MDB_FUNCTION_INFO_V1(g_intbig_union);
+MDB_FUNCTION_INFO_V1(g_intbig_same);
 
 /* Number of one-bits in an unsigned byte */
 static const uint8 number_of_ones[256] = {
@@ -40,25 +40,25 @@ static const uint8 number_of_ones[256] = {
 	4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
 };
 
-PG_FUNCTION_INFO_V1(_intbig_in);
-PG_FUNCTION_INFO_V1(_intbig_out);
+MDB_FUNCTION_INFO_V1(_intbig_in);
+MDB_FUNCTION_INFO_V1(_intbig_out);
 
 Datum
-_intbig_in(PG_FUNCTION_ARGS)
+_intbig_in(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("_intbig_in() not implemented")));
-	PG_RETURN_DATUM(0);
+	MDB_RETURN_DATUM(0);
 }
 
 Datum
-_intbig_out(PG_FUNCTION_ARGS)
+_intbig_out(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 			 errmsg("_intbig_out() not implemented")));
-	PG_RETURN_DATUM(0);
+	MDB_RETURN_DATUM(0);
 }
 
 
@@ -102,11 +102,11 @@ _intbig_contains(GISTTYPE *a, ArrayType *b)
 }
 
 Datum
-g_intbig_same(PG_FUNCTION_ARGS)
+g_intbig_same(MDB_FUNCTION_ARGS)
 {
-	GISTTYPE   *a = (GISTTYPE *) PG_GETARG_POINTER(0);
-	GISTTYPE   *b = (GISTTYPE *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	GISTTYPE   *a = (GISTTYPE *) MDB_GETARG_POINTER(0);
+	GISTTYPE   *b = (GISTTYPE *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	if (ISALLTRUE(a) && ISALLTRUE(b))
 		*result = true;
@@ -130,13 +130,13 @@ g_intbig_same(PG_FUNCTION_ARGS)
 			}
 		}
 	}
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-g_intbig_compress(PG_FUNCTION_ARGS)
+g_intbig_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
 	if (entry->leafkey)
 	{
@@ -173,7 +173,7 @@ g_intbig_compress(PG_FUNCTION_ARGS)
 		if (in != DatumGetArrayTypeP(entry->key))
 			pfree(in);
 
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
 	else if (!ISALLTRUE(DatumGetPointer(entry->key)))
 	{
@@ -185,7 +185,7 @@ g_intbig_compress(PG_FUNCTION_ARGS)
 		LOOPBYTE
 		{
 			if ((sign[i] & 0xff) != 0xff)
-				PG_RETURN_POINTER(entry);
+				MDB_RETURN_POINTER(entry);
 		}
 
 		res = (GISTTYPE *) palloc(CALCGTSIZE(ALLISTRUE));
@@ -197,10 +197,10 @@ g_intbig_compress(PG_FUNCTION_ARGS)
 					  entry->rel, entry->page,
 					  entry->offset, FALSE);
 
-		PG_RETURN_POINTER(retval);
+		MDB_RETURN_POINTER(retval);
 	}
 
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 
@@ -247,9 +247,9 @@ hemdist(GISTTYPE *a, GISTTYPE *b)
 }
 
 Datum
-g_intbig_decompress(PG_FUNCTION_ARGS)
+g_intbig_decompress(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(PG_GETARG_DATUM(0));
+	MDB_RETURN_DATUM(MDB_GETARG_DATUM(0));
 }
 
 static int32
@@ -266,10 +266,10 @@ unionkey(BITVECP sbase, GISTTYPE *add)
 }
 
 Datum
-g_intbig_union(PG_FUNCTION_ARGS)
+g_intbig_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	int		   *size = (int *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	int		   *size = (int *) MDB_GETARG_POINTER(1);
 	BITVEC		base;
 	int32		i,
 				len;
@@ -294,20 +294,20 @@ g_intbig_union(PG_FUNCTION_ARGS)
 		memcpy((void *) GETSIGN(result), (void *) base, sizeof(BITVEC));
 	*size = len;
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-g_intbig_penalty(PG_FUNCTION_ARGS)
+g_intbig_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *origentry = (GISTENTRY *) PG_GETARG_POINTER(0); /* always ISSIGNKEY */
-	GISTENTRY  *newentry = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *penalty = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *origentry = (GISTENTRY *) MDB_GETARG_POINTER(0); /* always ISSIGNKEY */
+	GISTENTRY  *newentry = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *penalty = (float *) MDB_GETARG_POINTER(2);
 	GISTTYPE   *origval = (GISTTYPE *) DatumGetPointer(origentry->key);
 	GISTTYPE   *newval = (GISTTYPE *) DatumGetPointer(newentry->key);
 
 	*penalty = hemdist(origval, newval);
-	PG_RETURN_POINTER(penalty);
+	MDB_RETURN_POINTER(penalty);
 }
 
 
@@ -325,10 +325,10 @@ comparecost(const void *a, const void *b)
 
 
 Datum
-g_intbig_picksplit(PG_FUNCTION_ARGS)
+g_intbig_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber k,
 				j;
 	GISTTYPE   *datum_l,
@@ -485,33 +485,33 @@ g_intbig_picksplit(PG_FUNCTION_ARGS)
 	v->spl_ldatum = PointerGetDatum(datum_l);
 	v->spl_rdatum = PointerGetDatum(datum_r);
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 Datum
-g_intbig_consistent(PG_FUNCTION_ARGS)
+g_intbig_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	ArrayType  *query = PG_GETARG_ARRAYTYPE_P(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	ArrayType  *query = MDB_GETARG_ARRAYTYPE_P(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	bool		retval;
 
 	/* All cases served by this function are inexact */
 	*recheck = true;
 
 	if (ISALLTRUE(DatumGetPointer(entry->key)))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 
 	if (strategy == BooleanSearchStrategy)
 	{
 		retval = signconsistent((QUERYTYPE *) query,
 								GETSIGN(DatumGetPointer(entry->key)),
 								false);
-		PG_FREE_IF_COPY(query, 1);
-		PG_RETURN_BOOL(retval);
+		MDB_FREE_IF_COPY(query, 1);
+		MDB_RETURN_BOOL(retval);
 	}
 
 	CHECKARRVALID(query);
@@ -596,6 +596,6 @@ g_intbig_consistent(PG_FUNCTION_ARGS)
 		default:
 			retval = FALSE;
 	}
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_BOOL(retval);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_BOOL(retval);
 }

@@ -10,8 +10,8 @@
 #
 #   [variable assignments, see below]
 #
-#   PG_CONFIG = mdb_config
-#   PGXS := $(shell $(PG_CONFIG) --pgxs)
+#   MDB_CONFIG = mdb_config
+#   PGXS := $(shell $(MDB_CONFIG) --pgxs)
 #   include $(PGXS)
 #
 #   [custom rules, rarely necessary]
@@ -41,10 +41,10 @@
 #   REGRESS -- list of regression test cases (without suffix)
 #   REGRESS_OPTS -- additional switches to pass to mdb_regress
 #   EXTRA_CLEAN -- extra files to remove in 'make clean'
-#   PG_CPPFLAGS -- will be added to CPPFLAGS
-#   PG_LIBS -- will be added to PROGRAM link line
+#   MDB_CPPFLAGS -- will be added to CPPFLAGS
+#   MDB_LIBS -- will be added to PROGRAM link line
 #   SHLIB_LINK -- will be added to MODULE_big link line
-#   PG_CONFIG -- path to mdb_config program for the MollyDB installation
+#   MDB_CONFIG -- path to mdb_config program for the MollyDB installation
 #     to build against (typically just "mdb_config" to use the first one in
 #     your PATH)
 #
@@ -93,8 +93,8 @@ docmoduledir := contrib
 endif
 endif
 
-ifdef PG_CPPFLAGS
-override CPPFLAGS := $(PG_CPPFLAGS) $(CPPFLAGS)
+ifdef MDB_CPPFLAGS
+override CPPFLAGS := $(MDB_CPPFLAGS) $(CPPFLAGS)
 endif
 
 all: $(PROGRAM) $(DATA_built) $(SCRIPTS_built) $(addsuffix $(DLSUFFIX), $(MODULES)) $(addsuffix .control, $(EXTENSION))
@@ -293,5 +293,5 @@ endif
 
 ifdef PROGRAM
 $(PROGRAM): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(PG_LIBS) $(LDFLAGS) $(LDFLAGS_EX) $(LIBS) -o $@$(X)
+	$(CC) $(CFLAGS) $(OBJS) $(MDB_LIBS) $(LDFLAGS) $(LDFLAGS_EX) $(LIBS) -o $@$(X)
 endif

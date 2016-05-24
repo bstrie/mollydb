@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_AUTHID_H
-#define PG_AUTHID_H
+#ifndef MDB_AUTHID_H
+#define MDB_AUTHID_H
 
 #include "catalog/genbki.h"
 
@@ -105,4 +105,4 @@ DATA(insert OID = 4200 ( "mdb_signal_backend" f t f f f f f -1 _null_ _null_));
 
 #define DEFAULT_ROLE_SIGNAL_BACKENDID	4200
 
-#endif   /* PG_AUTHID_H */
+#endif   /* MDB_AUTHID_H */

@@ -66,12 +66,12 @@ PLy_exec_function(FunctionCallInfo fcinfo, PLyProcedure *proc)
 
 	/*
 	 * If the function is called recursively, we must push outer-level
-	 * arguments into the stack.  This must be immediately before the PG_TRY
+	 * arguments into the stack.  This must be immediately before the MDB_TRY
 	 * to ensure that the corresponding pop happens.
 	 */
 	PLy_global_args_push(proc);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (proc->is_setof)
 		{
@@ -256,7 +256,7 @@ PLy_exec_function(FunctionCallInfo fcinfo, PLyProcedure *proc)
 			rv = (proc->result.out.d.func) (&proc->result.out.d, -1, plrv);
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Pop old arguments from the stack if they were pushed above */
 		PLy_global_args_pop(proc);
@@ -281,9 +281,9 @@ PLy_exec_function(FunctionCallInfo fcinfo, PLyProcedure *proc)
 			srfstate->savedargs = NULL;
 		}
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	error_context_stack = plerrcontext.previous;
 
@@ -343,7 +343,7 @@ PLy_exec_trigger(FunctionCallInfo fcinfo, PLyProcedure *proc)
 	PLy_input_tuple_funcs(&(proc->result), tdata->tg_relation->rd_att);
 	PLy_output_tuple_funcs(&(proc->result), tdata->tg_relation->rd_att);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		plargs = PLy_trigger_build_args(fcinfo, proc, &rv);
 		plrv = PLy_procedure_call(proc, "TD", plargs);
@@ -402,14 +402,14 @@ PLy_exec_trigger(FunctionCallInfo fcinfo, PLyProcedure *proc)
 			}
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		Py_XDECREF(plargs);
 		Py_XDECREF(plrv);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	Py_DECREF(plargs);
 	Py_DECREF(plrv);
@@ -426,7 +426,7 @@ PLy_function_build_args(FunctionCallInfo fcinfo, PLyProcedure *proc)
 	PyObject   *volatile args = NULL;
 	int			i;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		args = PyList_New(proc->nargs);
 		for (i = 0; i < proc->nargs; i++)
@@ -502,14 +502,14 @@ PLy_function_build_args(FunctionCallInfo fcinfo, PLyProcedure *proc)
 			PLy_output_record_funcs(&(proc->result), desc);
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		Py_XDECREF(arg);
 		Py_XDECREF(args);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return args;
 }
@@ -731,7 +731,7 @@ PLy_trigger_build_args(FunctionCallInfo fcinfo, PLyProcedure *proc, HeapTuple *r
 	PyObject   *volatile pltdata = NULL;
 	char	   *stroid;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		pltdata = PyDict_New();
 		if (!pltdata)
@@ -882,12 +882,12 @@ PLy_trigger_build_args(FunctionCallInfo fcinfo, PLyProcedure *proc, HeapTuple *r
 		PyDict_SetItemString(pltdata, "args", pltargs);
 		Py_DECREF(pltargs);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		Py_XDECREF(pltdata);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return pltdata;
 }
@@ -919,7 +919,7 @@ PLy_modify_tuple(PLyProcedure *proc, PyObject *pltd, TriggerData *tdata,
 	modvalues = NULL;
 	modnulls = NULL;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		if ((plntup = PyDict_GetItemString(pltd, "new")) == NULL)
 			ereport(ERROR,
@@ -1006,7 +1006,7 @@ PLy_modify_tuple(PLyProcedure *proc, PyObject *pltd, TriggerData *tdata,
 		if (rtup == NULL)
 			elog(ERROR, "SPI_modifytuple failed: error %d", SPI_result);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		Py_XDECREF(plntup);
 		Py_XDECREF(plkeys);
@@ -1019,9 +1019,9 @@ PLy_modify_tuple(PLyProcedure *proc, PyObject *pltd, TriggerData *tdata,
 		if (modattrs)
 			pfree(modattrs);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	Py_DECREF(plntup);
 	Py_DECREF(plkeys);
@@ -1053,7 +1053,7 @@ PLy_procedure_call(PLyProcedure *proc, const char *kargs, PyObject *vargs)
 
 	PyDict_SetItemString(proc->globals, kargs, vargs);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 #if PY_VERSION_HEX >= 0x03020000
 		rv = PyEval_EvalCode(proc->code,
@@ -1070,12 +1070,12 @@ PLy_procedure_call(PLyProcedure *proc, const char *kargs, PyObject *vargs)
 		 */
 		Assert(list_length(explicit_subtransactions) >= save_subxact_level);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		PLy_abort_open_subtransactions(save_subxact_level);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	PLy_abort_open_subtransactions(save_subxact_level);
 

@@ -4,7 +4,7 @@ MODULE_big = hstore_plperl
 OBJS = hstore_plperl.o $(WIN32RES)
 PGFILEDESC = "hstore_plperl - hstore transform for plperl"
 
-PG_CPPFLAGS = -I$(top_srcdir)/src/pl/plperl -I$(top_srcdir)/contrib/hstore
+MDB_CPPFLAGS = -I$(top_srcdir)/src/pl/plperl -I$(top_srcdir)/contrib/hstore
 
 EXTENSION = hstore_plperl hstore_plperlu
 DATA = hstore_plperl--1.0.sql hstore_plperlu--1.0.sql
@@ -13,8 +13,8 @@ REGRESS = hstore_plperl hstore_plperlu create_transform
 EXTRA_INSTALL = contrib/hstore
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/hstore_plperl

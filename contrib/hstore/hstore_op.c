@@ -126,46 +126,46 @@ hstoreArrayToPairs(ArrayType *a, int *npairs)
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_fetchval);
+MDB_FUNCTION_INFO_V1(hstore_fetchval);
 Datum
-hstore_fetchval(PG_FUNCTION_ARGS)
+hstore_fetchval(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
-	text	   *key = PG_GETARG_TEXT_PP(1);
+	HStore	   *hs = MDB_GETARG_HS(0);
+	text	   *key = MDB_GETARG_TEXT_PP(1);
 	HEntry	   *entries = ARRPTR(hs);
 	text	   *out;
 	int			idx = hstoreFindKey(hs, NULL,
 									VARDATA_ANY(key), VARSIZE_ANY_EXHDR(key));
 
 	if (idx < 0 || HSTORE_VALISNULL(entries, idx))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	out = cstring_to_text_with_len(HSTORE_VAL(entries, STRPTR(hs), idx),
 								   HSTORE_VALLEN(entries, idx));
 
-	PG_RETURN_TEXT_P(out);
+	MDB_RETURN_TEXT_P(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_exists);
+MDB_FUNCTION_INFO_V1(hstore_exists);
 Datum
-hstore_exists(PG_FUNCTION_ARGS)
+hstore_exists(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
-	text	   *key = PG_GETARG_TEXT_PP(1);
+	HStore	   *hs = MDB_GETARG_HS(0);
+	text	   *key = MDB_GETARG_TEXT_PP(1);
 	int			idx = hstoreFindKey(hs, NULL,
 									VARDATA_ANY(key), VARSIZE_ANY_EXHDR(key));
 
-	PG_RETURN_BOOL(idx >= 0);
+	MDB_RETURN_BOOL(idx >= 0);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_exists_any);
+MDB_FUNCTION_INFO_V1(hstore_exists_any);
 Datum
-hstore_exists_any(PG_FUNCTION_ARGS)
+hstore_exists_any(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
-	ArrayType  *keys = PG_GETARG_ARRAYTYPE_P(1);
+	HStore	   *hs = MDB_GETARG_HS(0);
+	ArrayType  *keys = MDB_GETARG_ARRAYTYPE_P(1);
 	int			nkeys;
 	Pairs	   *key_pairs = hstoreArrayToPairs(keys, &nkeys);
 	int			i;
@@ -190,16 +190,16 @@ hstore_exists_any(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_exists_all);
+MDB_FUNCTION_INFO_V1(hstore_exists_all);
 Datum
-hstore_exists_all(PG_FUNCTION_ARGS)
+hstore_exists_all(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
-	ArrayType  *keys = PG_GETARG_ARRAYTYPE_P(1);
+	HStore	   *hs = MDB_GETARG_HS(0);
+	ArrayType  *keys = MDB_GETARG_ARRAYTYPE_P(1);
 	int			nkeys;
 	Pairs	   *key_pairs = hstoreArrayToPairs(keys, &nkeys);
 	int			i;
@@ -224,31 +224,31 @@ hstore_exists_all(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_defined);
+MDB_FUNCTION_INFO_V1(hstore_defined);
 Datum
-hstore_defined(PG_FUNCTION_ARGS)
+hstore_defined(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
-	text	   *key = PG_GETARG_TEXT_PP(1);
+	HStore	   *hs = MDB_GETARG_HS(0);
+	text	   *key = MDB_GETARG_TEXT_PP(1);
 	HEntry	   *entries = ARRPTR(hs);
 	int			idx = hstoreFindKey(hs, NULL,
 									VARDATA_ANY(key), VARSIZE_ANY_EXHDR(key));
 	bool		res = (idx >= 0 && !HSTORE_VALISNULL(entries, idx));
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_delete);
+MDB_FUNCTION_INFO_V1(hstore_delete);
 Datum
-hstore_delete(PG_FUNCTION_ARGS)
+hstore_delete(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
-	text	   *key = PG_GETARG_TEXT_PP(1);
+	HStore	   *hs = MDB_GETARG_HS(0);
+	text	   *key = MDB_GETARG_TEXT_PP(1);
 	char	   *keyptr = VARDATA_ANY(key);
 	int			keylen = VARSIZE_ANY_EXHDR(key);
 	HStore	   *out = palloc(VARSIZE(hs));
@@ -286,15 +286,15 @@ hstore_delete(PG_FUNCTION_ARGS)
 
 	HS_FINALIZE(out, outcount, bufd, ptrd);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_delete_array);
+MDB_FUNCTION_INFO_V1(hstore_delete_array);
 Datum
-hstore_delete_array(PG_FUNCTION_ARGS)
+hstore_delete_array(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
+	HStore	   *hs = MDB_GETARG_HS(0);
 	HStore	   *out = palloc(VARSIZE(hs));
 	int			hs_count = HS_COUNT(hs);
 	char	   *ps,
@@ -305,7 +305,7 @@ hstore_delete_array(PG_FUNCTION_ARGS)
 	int			i,
 				j;
 	int			outcount = 0;
-	ArrayType  *key_array = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *key_array = MDB_GETARG_ARRAYTYPE_P(1);
 	int			nkeys;
 	Pairs	   *key_pairs = hstoreArrayToPairs(key_array, &nkeys);
 
@@ -323,7 +323,7 @@ hstore_delete_array(PG_FUNCTION_ARGS)
 		memcpy(out, hs, VARSIZE(hs));
 		HS_FIXSIZE(out, hs_count);
 		HS_SETCOUNT(out, hs_count);
-		PG_RETURN_POINTER(out);
+		MDB_RETURN_POINTER(out);
 	}
 
 	/*
@@ -365,16 +365,16 @@ hstore_delete_array(PG_FUNCTION_ARGS)
 
 	HS_FINALIZE(out, outcount, bufd, pd);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_delete_hstore);
+MDB_FUNCTION_INFO_V1(hstore_delete_hstore);
 Datum
-hstore_delete_hstore(PG_FUNCTION_ARGS)
+hstore_delete_hstore(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
-	HStore	   *hs2 = PG_GETARG_HS(1);
+	HStore	   *hs = MDB_GETARG_HS(0);
+	HStore	   *hs2 = MDB_GETARG_HS(1);
 	HStore	   *out = palloc(VARSIZE(hs));
 	int			hs_count = HS_COUNT(hs);
 	int			hs2_count = HS_COUNT(hs2);
@@ -405,7 +405,7 @@ hstore_delete_hstore(PG_FUNCTION_ARGS)
 		memcpy(out, hs, VARSIZE(hs));
 		HS_FIXSIZE(out, hs_count);
 		HS_SETCOUNT(out, hs_count);
-		PG_RETURN_POINTER(out);
+		MDB_RETURN_POINTER(out);
 	}
 
 	/*
@@ -465,16 +465,16 @@ hstore_delete_hstore(PG_FUNCTION_ARGS)
 
 	HS_FINALIZE(out, outcount, bufd, pd);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_concat);
+MDB_FUNCTION_INFO_V1(hstore_concat);
 Datum
-hstore_concat(PG_FUNCTION_ARGS)
+hstore_concat(MDB_FUNCTION_ARGS)
 {
-	HStore	   *s1 = PG_GETARG_HS(0);
-	HStore	   *s2 = PG_GETARG_HS(1);
+	HStore	   *s1 = MDB_GETARG_HS(0);
+	HStore	   *s2 = MDB_GETARG_HS(1);
 	HStore	   *out = palloc(VARSIZE(s1) + VARSIZE(s2));
 	char	   *ps1,
 			   *ps2,
@@ -498,7 +498,7 @@ hstore_concat(PG_FUNCTION_ARGS)
 		memcpy(out, s2, VARSIZE(s2));
 		HS_FIXSIZE(out, s2count);
 		HS_SETCOUNT(out, s2count);
-		PG_RETURN_POINTER(out);
+		MDB_RETURN_POINTER(out);
 	}
 
 	if (s2count == 0)
@@ -507,7 +507,7 @@ hstore_concat(PG_FUNCTION_ARGS)
 		memcpy(out, s1, VARSIZE(s1));
 		HS_FIXSIZE(out, s1count);
 		HS_SETCOUNT(out, s1count);
-		PG_RETURN_POINTER(out);
+		MDB_RETURN_POINTER(out);
 	}
 
 	ps1 = STRPTR(s1);
@@ -563,18 +563,18 @@ hstore_concat(PG_FUNCTION_ARGS)
 
 	HS_FINALIZE(out, outcount, bufd, pd);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_slice_to_array);
+MDB_FUNCTION_INFO_V1(hstore_slice_to_array);
 Datum
-hstore_slice_to_array(PG_FUNCTION_ARGS)
+hstore_slice_to_array(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
+	HStore	   *hs = MDB_GETARG_HS(0);
 	HEntry	   *entries = ARRPTR(hs);
 	char	   *ptr = STRPTR(hs);
-	ArrayType  *key_array = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *key_array = MDB_GETARG_ARRAYTYPE_P(1);
 	ArrayType  *aout;
 	Datum	   *key_datums;
 	bool	   *key_nulls;
@@ -590,7 +590,7 @@ hstore_slice_to_array(PG_FUNCTION_ARGS)
 	if (key_count == 0)
 	{
 		aout = construct_empty_array(TEXTOID);
-		PG_RETURN_POINTER(aout);
+		MDB_RETURN_POINTER(aout);
 	}
 
 	out_datums = palloc(sizeof(Datum) * key_count);
@@ -626,18 +626,18 @@ hstore_slice_to_array(PG_FUNCTION_ARGS)
 							  ARR_LBOUND(key_array),
 							  TEXTOID, -1, false, 'i');
 
-	PG_RETURN_POINTER(aout);
+	MDB_RETURN_POINTER(aout);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_slice_to_hstore);
+MDB_FUNCTION_INFO_V1(hstore_slice_to_hstore);
 Datum
-hstore_slice_to_hstore(PG_FUNCTION_ARGS)
+hstore_slice_to_hstore(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
+	HStore	   *hs = MDB_GETARG_HS(0);
 	HEntry	   *entries = ARRPTR(hs);
 	char	   *ptr = STRPTR(hs);
-	ArrayType  *key_array = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *key_array = MDB_GETARG_ARRAYTYPE_P(1);
 	HStore	   *out;
 	int			nkeys;
 	Pairs	   *key_pairs = hstoreArrayToPairs(key_array, &nkeys);
@@ -650,7 +650,7 @@ hstore_slice_to_hstore(PG_FUNCTION_ARGS)
 	if (nkeys == 0)
 	{
 		out = hstorePairs(NULL, 0, 0);
-		PG_RETURN_POINTER(out);
+		MDB_RETURN_POINTER(out);
 	}
 
 	/* hstoreArrayToPairs() checked overflow */
@@ -688,15 +688,15 @@ hstore_slice_to_hstore(PG_FUNCTION_ARGS)
 
 	out = hstorePairs(out_pairs, out_count, bufsiz);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_akeys);
+MDB_FUNCTION_INFO_V1(hstore_akeys);
 Datum
-hstore_akeys(PG_FUNCTION_ARGS)
+hstore_akeys(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
+	HStore	   *hs = MDB_GETARG_HS(0);
 	Datum	   *d;
 	ArrayType  *a;
 	HEntry	   *entries = ARRPTR(hs);
@@ -707,7 +707,7 @@ hstore_akeys(PG_FUNCTION_ARGS)
 	if (count == 0)
 	{
 		a = construct_empty_array(TEXTOID);
-		PG_RETURN_POINTER(a);
+		MDB_RETURN_POINTER(a);
 	}
 
 	d = (Datum *) palloc(sizeof(Datum) * count);
@@ -723,15 +723,15 @@ hstore_akeys(PG_FUNCTION_ARGS)
 	a = construct_array(d, count,
 						TEXTOID, -1, false, 'i');
 
-	PG_RETURN_POINTER(a);
+	MDB_RETURN_POINTER(a);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_avals);
+MDB_FUNCTION_INFO_V1(hstore_avals);
 Datum
-hstore_avals(PG_FUNCTION_ARGS)
+hstore_avals(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
+	HStore	   *hs = MDB_GETARG_HS(0);
 	Datum	   *d;
 	bool	   *nulls;
 	ArrayType  *a;
@@ -744,7 +744,7 @@ hstore_avals(PG_FUNCTION_ARGS)
 	if (count == 0)
 	{
 		a = construct_empty_array(TEXTOID);
-		PG_RETURN_POINTER(a);
+		MDB_RETURN_POINTER(a);
 	}
 
 	d = (Datum *) palloc(sizeof(Datum) * count);
@@ -770,7 +770,7 @@ hstore_avals(PG_FUNCTION_ARGS)
 	a = construct_md_array(d, nulls, 1, &count, &lb,
 						   TEXTOID, -1, false, 'i');
 
-	PG_RETURN_POINTER(a);
+	MDB_RETURN_POINTER(a);
 }
 
 
@@ -823,24 +823,24 @@ hstore_to_array_internal(HStore *hs, int ndims)
 							  TEXTOID, -1, false, 'i');
 }
 
-PG_FUNCTION_INFO_V1(hstore_to_array);
+MDB_FUNCTION_INFO_V1(hstore_to_array);
 Datum
-hstore_to_array(PG_FUNCTION_ARGS)
+hstore_to_array(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
+	HStore	   *hs = MDB_GETARG_HS(0);
 	ArrayType  *out = hstore_to_array_internal(hs, 1);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
-PG_FUNCTION_INFO_V1(hstore_to_matrix);
+MDB_FUNCTION_INFO_V1(hstore_to_matrix);
 Datum
-hstore_to_matrix(PG_FUNCTION_ARGS)
+hstore_to_matrix(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
+	HStore	   *hs = MDB_GETARG_HS(0);
 	ArrayType  *out = hstore_to_array_internal(hs, 2);
 
-	PG_RETURN_POINTER(out);
+	MDB_RETURN_POINTER(out);
 }
 
 /*
@@ -881,9 +881,9 @@ setup_firstcall(FuncCallContext *funcctx, HStore *hs,
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_skeys);
+MDB_FUNCTION_INFO_V1(hstore_skeys);
 Datum
-hstore_skeys(PG_FUNCTION_ARGS)
+hstore_skeys(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	HStore	   *hs;
@@ -891,7 +891,7 @@ hstore_skeys(PG_FUNCTION_ARGS)
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		hs = PG_GETARG_HS(0);
+		hs = MDB_GETARG_HS(0);
 		funcctx = SRF_FIRSTCALL_INIT();
 		setup_firstcall(funcctx, hs, NULL);
 	}
@@ -915,9 +915,9 @@ hstore_skeys(PG_FUNCTION_ARGS)
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_svals);
+MDB_FUNCTION_INFO_V1(hstore_svals);
 Datum
-hstore_svals(PG_FUNCTION_ARGS)
+hstore_svals(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	HStore	   *hs;
@@ -925,7 +925,7 @@ hstore_svals(PG_FUNCTION_ARGS)
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		hs = PG_GETARG_HS(0);
+		hs = MDB_GETARG_HS(0);
 		funcctx = SRF_FIRSTCALL_INIT();
 		setup_firstcall(funcctx, hs, NULL);
 	}
@@ -946,7 +946,7 @@ hstore_svals(PG_FUNCTION_ARGS)
 			(funcctx)->call_cntr++;
 			rsi = (ReturnSetInfo *) fcinfo->resultinfo;
 			rsi->isDone = ExprMultipleResult;
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 		}
 		else
 		{
@@ -963,12 +963,12 @@ hstore_svals(PG_FUNCTION_ARGS)
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_contains);
+MDB_FUNCTION_INFO_V1(hstore_contains);
 Datum
-hstore_contains(PG_FUNCTION_ARGS)
+hstore_contains(MDB_FUNCTION_ARGS)
 {
-	HStore	   *val = PG_GETARG_HS(0);
-	HStore	   *tmpl = PG_GETARG_HS(1);
+	HStore	   *val = MDB_GETARG_HS(0);
+	HStore	   *tmpl = MDB_GETARG_HS(1);
 	bool		res = true;
 	HEntry	   *te = ARRPTR(tmpl);
 	char	   *tstr = STRPTR(tmpl);
@@ -1007,24 +1007,24 @@ hstore_contains(PG_FUNCTION_ARGS)
 			res = false;
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_contained);
+MDB_FUNCTION_INFO_V1(hstore_contained);
 Datum
-hstore_contained(PG_FUNCTION_ARGS)
+hstore_contained(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall2(hstore_contains,
-										PG_GETARG_DATUM(1),
-										PG_GETARG_DATUM(0)
+	MDB_RETURN_DATUM(DirectFunctionCall2(hstore_contains,
+										MDB_GETARG_DATUM(1),
+										MDB_GETARG_DATUM(0)
 										));
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_each);
+MDB_FUNCTION_INFO_V1(hstore_each);
 Datum
-hstore_each(PG_FUNCTION_ARGS)
+hstore_each(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	HStore	   *hs;
@@ -1032,7 +1032,7 @@ hstore_each(PG_FUNCTION_ARGS)
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		hs = PG_GETARG_HS(0);
+		hs = MDB_GETARG_HS(0);
 		funcctx = SRF_FIRSTCALL_INIT();
 		setup_firstcall(funcctx, hs, fcinfo);
 	}
@@ -1083,12 +1083,12 @@ hstore_each(PG_FUNCTION_ARGS)
  * buffer first, then the entry pos array.
  */
 
-PG_FUNCTION_INFO_V1(hstore_cmp);
+MDB_FUNCTION_INFO_V1(hstore_cmp);
 Datum
-hstore_cmp(PG_FUNCTION_ARGS)
+hstore_cmp(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs1 = PG_GETARG_HS(0);
-	HStore	   *hs2 = PG_GETARG_HS(1);
+	HStore	   *hs1 = MDB_GETARG_HS(0);
+	HStore	   *hs2 = MDB_GETARG_HS(1);
 	int			hcount1 = HS_COUNT(hs1);
 	int			hcount2 = HS_COUNT(hs2);
 	int			res = 0;
@@ -1158,84 +1158,84 @@ hstore_cmp(PG_FUNCTION_ARGS)
 	 * this is a btree support function; this is one of the few places where
 	 * memory needs to be explicitly freed.
 	 */
-	PG_FREE_IF_COPY(hs1, 0);
-	PG_FREE_IF_COPY(hs2, 1);
-	PG_RETURN_INT32(res);
+	MDB_FREE_IF_COPY(hs1, 0);
+	MDB_FREE_IF_COPY(hs2, 1);
+	MDB_RETURN_INT32(res);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_eq);
+MDB_FUNCTION_INFO_V1(hstore_eq);
 Datum
-hstore_eq(PG_FUNCTION_ARGS)
+hstore_eq(MDB_FUNCTION_ARGS)
 {
 	int			res = DatumGetInt32(DirectFunctionCall2(hstore_cmp,
-														PG_GETARG_DATUM(0),
-														PG_GETARG_DATUM(1)));
+														MDB_GETARG_DATUM(0),
+														MDB_GETARG_DATUM(1)));
 
-	PG_RETURN_BOOL(res == 0);
+	MDB_RETURN_BOOL(res == 0);
 }
 
-PG_FUNCTION_INFO_V1(hstore_ne);
+MDB_FUNCTION_INFO_V1(hstore_ne);
 Datum
-hstore_ne(PG_FUNCTION_ARGS)
+hstore_ne(MDB_FUNCTION_ARGS)
 {
 	int			res = DatumGetInt32(DirectFunctionCall2(hstore_cmp,
-														PG_GETARG_DATUM(0),
-														PG_GETARG_DATUM(1)));
+														MDB_GETARG_DATUM(0),
+														MDB_GETARG_DATUM(1)));
 
-	PG_RETURN_BOOL(res != 0);
+	MDB_RETURN_BOOL(res != 0);
 }
 
-PG_FUNCTION_INFO_V1(hstore_gt);
+MDB_FUNCTION_INFO_V1(hstore_gt);
 Datum
-hstore_gt(PG_FUNCTION_ARGS)
+hstore_gt(MDB_FUNCTION_ARGS)
 {
 	int			res = DatumGetInt32(DirectFunctionCall2(hstore_cmp,
-														PG_GETARG_DATUM(0),
-														PG_GETARG_DATUM(1)));
+														MDB_GETARG_DATUM(0),
+														MDB_GETARG_DATUM(1)));
 
-	PG_RETURN_BOOL(res > 0);
+	MDB_RETURN_BOOL(res > 0);
 }
 
-PG_FUNCTION_INFO_V1(hstore_ge);
+MDB_FUNCTION_INFO_V1(hstore_ge);
 Datum
-hstore_ge(PG_FUNCTION_ARGS)
+hstore_ge(MDB_FUNCTION_ARGS)
 {
 	int			res = DatumGetInt32(DirectFunctionCall2(hstore_cmp,
-														PG_GETARG_DATUM(0),
-														PG_GETARG_DATUM(1)));
+														MDB_GETARG_DATUM(0),
+														MDB_GETARG_DATUM(1)));
 
-	PG_RETURN_BOOL(res >= 0);
+	MDB_RETURN_BOOL(res >= 0);
 }
 
-PG_FUNCTION_INFO_V1(hstore_lt);
+MDB_FUNCTION_INFO_V1(hstore_lt);
 Datum
-hstore_lt(PG_FUNCTION_ARGS)
+hstore_lt(MDB_FUNCTION_ARGS)
 {
 	int			res = DatumGetInt32(DirectFunctionCall2(hstore_cmp,
-														PG_GETARG_DATUM(0),
-														PG_GETARG_DATUM(1)));
+														MDB_GETARG_DATUM(0),
+														MDB_GETARG_DATUM(1)));
 
-	PG_RETURN_BOOL(res < 0);
+	MDB_RETURN_BOOL(res < 0);
 }
 
-PG_FUNCTION_INFO_V1(hstore_le);
+MDB_FUNCTION_INFO_V1(hstore_le);
 Datum
-hstore_le(PG_FUNCTION_ARGS)
+hstore_le(MDB_FUNCTION_ARGS)
 {
 	int			res = DatumGetInt32(DirectFunctionCall2(hstore_cmp,
-														PG_GETARG_DATUM(0),
-														PG_GETARG_DATUM(1)));
+														MDB_GETARG_DATUM(0),
+														MDB_GETARG_DATUM(1)));
 
-	PG_RETURN_BOOL(res <= 0);
+	MDB_RETURN_BOOL(res <= 0);
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_hash);
+MDB_FUNCTION_INFO_V1(hstore_hash);
 Datum
-hstore_hash(PG_FUNCTION_ARGS)
+hstore_hash(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = PG_GETARG_HS(0);
+	HStore	   *hs = MDB_GETARG_HS(0);
 	Datum		hval = hash_any((unsigned char *) VARDATA(hs),
 								VARSIZE(hs) - VARHDRSZ);
 
@@ -1250,6 +1250,6 @@ hstore_hash(PG_FUNCTION_ARGS)
 						 HSE_ENDPOS(ARRPTR(hs)[2 * HS_COUNT(hs) - 1])) :
 			HSHRDSIZE));
 
-	PG_FREE_IF_COPY(hs, 0);
-	PG_RETURN_DATUM(hval);
+	MDB_FREE_IF_COPY(hs, 0);
+	MDB_RETURN_DATUM(hval);
 }

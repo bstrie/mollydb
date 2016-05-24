@@ -192,32 +192,32 @@ ProcessConfigFileInternal(GucContext context, bool applySettings, int elevel)
 	}
 
 	/*
-	 * Parse the PG_AUTOCONF_FILENAME file, if present, after the main file to
+	 * Parse the MDB_AUTOCONF_FILENAME file, if present, after the main file to
 	 * replace any parameters set by ALTER SYSTEM command.  Because this file
 	 * is in the data directory, we can't read it until the DataDir has been
 	 * set.
 	 */
 	if (DataDir)
 	{
-		if (!ParseConfigFile(PG_AUTOCONF_FILENAME, false,
+		if (!ParseConfigFile(MDB_AUTOCONF_FILENAME, false,
 							 NULL, 0, 0, elevel,
 							 &head, &tail))
 		{
 			/* Syntax error(s) detected in the file, so bail out */
 			error = true;
-			ConfFileWithError = PG_AUTOCONF_FILENAME;
+			ConfFileWithError = MDB_AUTOCONF_FILENAME;
 			goto bail_out;
 		}
 	}
 	else
 	{
 		/*
-		 * If DataDir is not set, the PG_AUTOCONF_FILENAME file cannot be
+		 * If DataDir is not set, the MDB_AUTOCONF_FILENAME file cannot be
 		 * read.  In this case, we don't want to accept any settings but
 		 * data_directory from mollydb.conf, because they might be
-		 * overwritten with settings in the PG_AUTOCONF_FILENAME file which
+		 * overwritten with settings in the MDB_AUTOCONF_FILENAME file which
 		 * will be read later. OTOH, since data_directory isn't allowed in the
-		 * PG_AUTOCONF_FILENAME file, it will never be overwritten later.
+		 * MDB_AUTOCONF_FILENAME file, it will never be overwritten later.
 		 */
 		ConfigVariable *newlist = NULL;
 

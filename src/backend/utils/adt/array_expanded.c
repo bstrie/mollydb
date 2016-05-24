@@ -415,7 +415,7 @@ DatumGetAnyArray(Datum d)
 	}
 
 	/* Else do regular detoasting as needed */
-	return (AnyArrayType *) PG_DETOAST_DATUM(d);
+	return (AnyArrayType *) MDB_DETOAST_DATUM(d);
 }
 
 /*

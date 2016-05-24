@@ -1,6 +1,6 @@
 /* src/interfaces/ecpg/ecpglib/error.c */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 
 #include "ecpgerrno.h"
@@ -26,63 +26,63 @@ ecmdb_raise(int line, int code, const char *sqlstate, const char *str)
 
 	switch (code)
 	{
-		case ECPG_NOT_FOUND:
+		case ECMDB_NOT_FOUND:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("no data found on line %d"), line);
 			break;
 
-		case ECPG_OUT_OF_MEMORY:
+		case ECMDB_OUT_OF_MEMORY:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("out of memory on line %d"), line);
 			break;
 
-		case ECPG_UNSUPPORTED:
+		case ECMDB_UNSUPPORTED:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 			  ecmdb_gettext("unsupported type \"%s\" on line %d"), str, line);
 			break;
 
-		case ECPG_TOO_MANY_ARGUMENTS:
+		case ECMDB_TOO_MANY_ARGUMENTS:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("too many arguments on line %d"), line);
 			break;
 
-		case ECPG_TOO_FEW_ARGUMENTS:
+		case ECMDB_TOO_FEW_ARGUMENTS:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("too few arguments on line %d"), line);
 			break;
 
-		case ECPG_INT_FORMAT:
+		case ECMDB_INT_FORMAT:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("invalid input syntax for type int: \"%s\", on line %d"), str, line);
 			break;
 
-		case ECPG_UINT_FORMAT:
+		case ECMDB_UINT_FORMAT:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("invalid input syntax for type unsigned int: \"%s\", on line %d"), str, line);
 			break;
 
-		case ECPG_FLOAT_FORMAT:
+		case ECMDB_FLOAT_FORMAT:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("invalid input syntax for floating-point type: \"%s\", on line %d"), str, line);
 			break;
 
-		case ECPG_CONVERT_BOOL:
+		case ECMDB_CONVERT_BOOL:
 			if (str)
 				snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 				/*------
@@ -95,105 +95,105 @@ ecmdb_raise(int line, int code, const char *sqlstate, const char *str)
 						 ecmdb_gettext("could not convert boolean value: size mismatch, on line %d"), line);
 			break;
 
-		case ECPG_EMPTY:
+		case ECMDB_EMPTY:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("empty query on line %d"), line);
 			break;
 
-		case ECPG_MISSING_INDICATOR:
+		case ECMDB_MISSING_INDICATOR:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 			  ecmdb_gettext("null value without indicator on line %d"), line);
 			break;
 
-		case ECPG_NO_ARRAY:
+		case ECMDB_NO_ARRAY:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("variable does not have an array type on line %d"), line);
 			break;
 
-		case ECPG_DATA_NOT_ARRAY:
+		case ECMDB_DATA_NOT_ARRAY:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("data read from server is not an array on line %d"), line);
 			break;
 
-		case ECPG_ARRAY_INSERT:
+		case ECMDB_ARRAY_INSERT:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("inserting an array of variables is not supported on line %d"), line);
 			break;
 
-		case ECPG_NO_CONN:
+		case ECMDB_NO_CONN:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("connection \"%s\" does not exist on line %d"), str, line);
 			break;
 
-		case ECPG_NOT_CONN:
+		case ECMDB_NOT_CONN:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("not connected to connection \"%s\" on line %d"), str, line);
 			break;
 
-		case ECPG_INVALID_STMT:
+		case ECMDB_INVALID_STMT:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("invalid statement name \"%s\" on line %d"), str, line);
 			break;
 
-		case ECPG_UNKNOWN_DESCRIPTOR:
+		case ECMDB_UNKNOWN_DESCRIPTOR:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("descriptor \"%s\" not found on line %d"), str, line);
 			break;
 
-		case ECPG_INVALID_DESCRIPTOR_INDEX:
+		case ECMDB_INVALID_DESCRIPTOR_INDEX:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 			 ecmdb_gettext("descriptor index out of range on line %d"), line);
 			break;
 
-		case ECPG_UNKNOWN_DESCRIPTOR_ITEM:
+		case ECMDB_UNKNOWN_DESCRIPTOR_ITEM:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("unrecognized descriptor item \"%s\" on line %d"), str, line);
 			break;
 
-		case ECPG_VAR_NOT_NUMERIC:
+		case ECMDB_VAR_NOT_NUMERIC:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("variable does not have a numeric type on line %d"), line);
 			break;
 
-		case ECPG_VAR_NOT_CHAR:
+		case ECMDB_VAR_NOT_CHAR:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 					 ecmdb_gettext("variable does not have a character type on line %d"), line);
 			break;
 
-		case ECPG_TRANS:
+		case ECMDB_TRANS:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
 			ecmdb_gettext("error in transaction processing on line %d"), line);
 			break;
 
-		case ECPG_CONNECT:
+		case ECMDB_CONNECT:
 			snprintf(sqlca->sqlerrm.sqlerrmc, sizeof(sqlca->sqlerrm.sqlerrmc),
 			/*------
 			   translator: this string will be truncated at 149 characters expanded.  */
@@ -231,18 +231,18 @@ ecmdb_raise_backend(int line, PGresult *result, PGconn *conn, int compat)
 
 	if (result)
 	{
-		sqlstate = PQresultErrorField(result, PG_DIAG_SQLSTATE);
+		sqlstate = PQresultErrorField(result, MDB_DIAG_SQLSTATE);
 		if (sqlstate == NULL)
-			sqlstate = ECPG_SQLSTATE_ECPG_INTERNAL_ERROR;
-		message = PQresultErrorField(result, PG_DIAG_MESSAGE_PRIMARY);
+			sqlstate = ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR;
+		message = PQresultErrorField(result, MDB_DIAG_MESSAGE_PRIMARY);
 	}
 	else
 	{
-		sqlstate = ECPG_SQLSTATE_ECPG_INTERNAL_ERROR;
+		sqlstate = ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR;
 		message = PQerrorMessage(conn);
 	}
 
-	if (strcmp(sqlstate, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR) == 0)
+	if (strcmp(sqlstate, ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR) == 0)
 	{
 		/*
 		 * we might get here if the connection breaks down, so let's check for
@@ -264,11 +264,11 @@ ecmdb_raise_backend(int line, PGresult *result, PGconn *conn, int compat)
 
 	/* assign SQLCODE for backward compatibility */
 	if (strncmp(sqlca->sqlstate, "23505", sizeof(sqlca->sqlstate)) == 0)
-		sqlca->sqlcode = INFORMIX_MODE(compat) ? ECPG_INFORMIX_DUPLICATE_KEY : ECPG_DUPLICATE_KEY;
+		sqlca->sqlcode = INFORMIX_MODE(compat) ? ECMDB_INFORMIX_DUPLICATE_KEY : ECMDB_DUPLICATE_KEY;
 	else if (strncmp(sqlca->sqlstate, "21000", sizeof(sqlca->sqlstate)) == 0)
-		sqlca->sqlcode = INFORMIX_MODE(compat) ? ECPG_INFORMIX_SUBSELECT_NOT_ONE : ECPG_SUBSELECT_NOT_ONE;
+		sqlca->sqlcode = INFORMIX_MODE(compat) ? ECMDB_INFORMIX_SUBSELECT_NOT_ONE : ECMDB_SUBSELECT_NOT_ONE;
 	else
-		sqlca->sqlcode = ECPG_PGSQL;
+		sqlca->sqlcode = ECMDB_PGSQL;
 
 	/* %.*s is safe here as long as sqlstate is all-ASCII */
 	ecmdb_log("raising sqlstate %.*s (sqlcode %ld): %s\n",
@@ -297,7 +297,7 @@ ecmdb_check_PQresult(PGresult *results, int lineno, PGconn *connection, enum COM
 			break;
 		case PGRES_EMPTY_QUERY:
 			/* do nothing */
-			ecmdb_raise(lineno, ECPG_EMPTY, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, NULL);
+			ecmdb_raise(lineno, ECMDB_EMPTY, ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR, NULL);
 			PQclear(results);
 			return (false);
 			break;

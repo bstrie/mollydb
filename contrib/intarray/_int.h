@@ -150,10 +150,10 @@ typedef struct QUERYTYPE
 #define CLOSE	5
 
 /* fmgr macros for QUERYTYPE objects */
-#define DatumGetQueryTypeP(X)		  ((QUERYTYPE *) PG_DETOAST_DATUM(X))
-#define DatumGetQueryTypePCopy(X)	  ((QUERYTYPE *) PG_DETOAST_DATUM_COPY(X))
-#define PG_GETARG_QUERYTYPE_P(n)	  DatumGetQueryTypeP(PG_GETARG_DATUM(n))
-#define PG_GETARG_QUERYTYPE_P_COPY(n) DatumGetQueryTypePCopy(PG_GETARG_DATUM(n))
+#define DatumGetQueryTypeP(X)		  ((QUERYTYPE *) MDB_DETOAST_DATUM(X))
+#define DatumGetQueryTypePCopy(X)	  ((QUERYTYPE *) MDB_DETOAST_DATUM_COPY(X))
+#define MDB_GETARG_QUERYTYPE_P(n)	  DatumGetQueryTypeP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_QUERYTYPE_P_COPY(n) DatumGetQueryTypePCopy(MDB_GETARG_DATUM(n))
 
 bool		signconsistent(QUERYTYPE *query, BITVEC sign, bool calcnot);
 bool		execconsistent(QUERYTYPE *query, ArrayType *array, bool calcnot);

@@ -36,8 +36,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_OPCLASS_H
-#define PG_OPCLASS_H
+#ifndef MDB_OPCLASS_H
+#define MDB_OPCLASS_H
 
 #include "catalog/genbki.h"
 
@@ -273,4 +273,4 @@ DATA(insert (	3580	mdb_lsn_minmax_ops		PGNSP PGUID 4082  3220 t 3220 ));
 DATA(insert (	3580	box_inclusion_ops		PGNSP PGUID 4104   603 t 603 ));
 /* no brin opclass for the geometric types except box */
 
-#endif   /* PG_OPCLASS_H */
+#endif   /* MDB_OPCLASS_H */

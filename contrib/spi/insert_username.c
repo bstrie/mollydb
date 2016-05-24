@@ -15,12 +15,12 @@
 #include "utils/builtins.h"
 #include "utils/rel.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(insert_username);
+MDB_FUNCTION_INFO_V1(insert_username);
 
 Datum
-insert_username(PG_FUNCTION_ARGS)
+insert_username(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	Trigger    *trigger;		/* to get trigger name */

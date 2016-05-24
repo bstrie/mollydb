@@ -1,6 +1,6 @@
 /* src/interfaces/ecpg/ecpglib/memory.c */
 
-#define POSTGRES_ECPG_INTERNAL
+#define POSTGRES_ECMDB_INTERNAL
 #include "mollydb_fe.h"
 
 #include "ecpg-pthread-win32.h"
@@ -22,7 +22,7 @@ ecmdb_alloc(long size, int lineno)
 
 	if (!new)
 	{
-		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(lineno, ECMDB_OUT_OF_MEMORY, ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return NULL;
 	}
 
@@ -36,7 +36,7 @@ ecmdb_realloc(void *ptr, long size, int lineno)
 
 	if (!new)
 	{
-		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(lineno, ECMDB_OUT_OF_MEMORY, ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return NULL;
 	}
 
@@ -54,7 +54,7 @@ ecmdb_strdup(const char *string, int lineno)
 	new = strdup(string);
 	if (!new)
 	{
-		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_raise(lineno, ECMDB_OUT_OF_MEMORY, ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY, NULL);
 		return NULL;
 	}
 

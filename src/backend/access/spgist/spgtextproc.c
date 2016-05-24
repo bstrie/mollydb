@@ -76,16 +76,16 @@ typedef struct spgNodePtr
 
 
 Datum
-smdb_text_config(PG_FUNCTION_ARGS)
+smdb_text_config(MDB_FUNCTION_ARGS)
 {
-	/* spgConfigIn *cfgin = (spgConfigIn *) PG_GETARG_POINTER(0); */
-	spgConfigOut *cfg = (spgConfigOut *) PG_GETARG_POINTER(1);
+	/* spgConfigIn *cfgin = (spgConfigIn *) MDB_GETARG_POINTER(0); */
+	spgConfigOut *cfg = (spgConfigOut *) MDB_GETARG_POINTER(1);
 
 	cfg->prefixType = TEXTOID;
 	cfg->labelType = INT2OID;
 	cfg->canReturnData = true;
 	cfg->longValuesOK = true;	/* suffixing will shorten long values */
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -164,10 +164,10 @@ searchChar(Datum *nodeLabels, int nNodes, int16 c, int *i)
 }
 
 Datum
-smdb_text_choose(PG_FUNCTION_ARGS)
+smdb_text_choose(MDB_FUNCTION_ARGS)
 {
-	spgChooseIn *in = (spgChooseIn *) PG_GETARG_POINTER(0);
-	spgChooseOut *out = (spgChooseOut *) PG_GETARG_POINTER(1);
+	spgChooseIn *in = (spgChooseIn *) MDB_GETARG_POINTER(0);
+	spgChooseOut *out = (spgChooseOut *) MDB_GETARG_POINTER(1);
 	text	   *inText = DatumGetTextPP(in->datum);
 	char	   *inStr = VARDATA_ANY(inText);
 	int			inSize = VARSIZE_ANY_EXHDR(inText);
@@ -227,7 +227,7 @@ smdb_text_choose(PG_FUNCTION_ARGS)
 								  prefixSize - commonLen - 1);
 			}
 
-			PG_RETURN_VOID();
+			MDB_RETURN_VOID();
 		}
 	}
 	else if (inSize > in->level)
@@ -291,7 +291,7 @@ smdb_text_choose(PG_FUNCTION_ARGS)
 		out->result.addNode.nodeN = i;
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /* qsort comparator to sort spgNodePtr structs by "c" */
@@ -305,10 +305,10 @@ cmpNodePtr(const void *a, const void *b)
 }
 
 Datum
-smdb_text_picksplit(PG_FUNCTION_ARGS)
+smdb_text_picksplit(MDB_FUNCTION_ARGS)
 {
-	spgPickSplitIn *in = (spgPickSplitIn *) PG_GETARG_POINTER(0);
-	spgPickSplitOut *out = (spgPickSplitOut *) PG_GETARG_POINTER(1);
+	spgPickSplitIn *in = (spgPickSplitIn *) MDB_GETARG_POINTER(0);
+	spgPickSplitOut *out = (spgPickSplitOut *) MDB_GETARG_POINTER(1);
 	text	   *text0 = DatumGetTextPP(in->datums[0]);
 	int			i,
 				commonLen;
@@ -394,15 +394,15 @@ smdb_text_picksplit(PG_FUNCTION_ARGS)
 		out->mapTuplesToNodes[nodes[i].i] = out->nNodes - 1;
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-smdb_text_inner_consistent(PG_FUNCTION_ARGS)
+smdb_text_inner_consistent(MDB_FUNCTION_ARGS)
 {
-	spgInnerConsistentIn *in = (spgInnerConsistentIn *) PG_GETARG_POINTER(0);
-	spgInnerConsistentOut *out = (spgInnerConsistentOut *) PG_GETARG_POINTER(1);
-	bool		collate_is_c = lc_collate_is_c(PG_GET_COLLATION());
+	spgInnerConsistentIn *in = (spgInnerConsistentIn *) MDB_GETARG_POINTER(0);
+	spgInnerConsistentOut *out = (spgInnerConsistentOut *) MDB_GETARG_POINTER(1);
+	bool		collate_is_c = lc_collate_is_c(MDB_GET_COLLATION());
 	text	   *reconstructedValue;
 	text	   *reconstrText;
 	int			maxReconstrLen;
@@ -538,14 +538,14 @@ smdb_text_inner_consistent(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-smdb_text_leaf_consistent(PG_FUNCTION_ARGS)
+smdb_text_leaf_consistent(MDB_FUNCTION_ARGS)
 {
-	spgLeafConsistentIn *in = (spgLeafConsistentIn *) PG_GETARG_POINTER(0);
-	spgLeafConsistentOut *out = (spgLeafConsistentOut *) PG_GETARG_POINTER(1);
+	spgLeafConsistentIn *in = (spgLeafConsistentIn *) MDB_GETARG_POINTER(0);
+	spgLeafConsistentOut *out = (spgLeafConsistentOut *) MDB_GETARG_POINTER(1);
 	int			level = in->level;
 	text	   *leafValue,
 			   *reconstrValue = NULL;
@@ -605,7 +605,7 @@ smdb_text_leaf_consistent(PG_FUNCTION_ARGS)
 
 			r = varstr_cmp(fullValue, Min(queryLen, fullLen),
 						   VARDATA_ANY(query), Min(queryLen, fullLen),
-						   PG_GET_COLLATION());
+						   MDB_GET_COLLATION());
 		}
 		else
 		{
@@ -649,5 +649,5 @@ smdb_text_leaf_consistent(PG_FUNCTION_ARGS)
 			break;				/* no need to consider remaining conditions */
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }

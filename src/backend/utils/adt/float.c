@@ -218,9 +218,9 @@ is_infinite(double val)
  *		float4in		- converts "num" to float4
  */
 Datum
-float4in(PG_FUNCTION_ARGS)
+float4in(MDB_FUNCTION_ARGS)
 {
-	char	   *num = PG_GETARG_CSTRING(0);
+	char	   *num = MDB_GETARG_CSTRING(0);
 	char	   *orig_num;
 	double		val;
 	char	   *endptr;
@@ -350,7 +350,7 @@ float4in(PG_FUNCTION_ARGS)
 	 */
 	CHECKFLOATVAL((float4) val, isinf(val), val == 0);
 
-	PG_RETURN_FLOAT4((float4) val);
+	MDB_RETURN_FLOAT4((float4) val);
 }
 
 /*
@@ -358,13 +358,13 @@ float4in(PG_FUNCTION_ARGS)
  *						  using a standard output format
  */
 Datum
-float4out(PG_FUNCTION_ARGS)
+float4out(MDB_FUNCTION_ARGS)
 {
-	float4		num = PG_GETARG_FLOAT4(0);
+	float4		num = MDB_GETARG_FLOAT4(0);
 	char	   *ascii = (char *) palloc(MAXFLOATWIDTH + 1);
 
 	if (isnan(num))
-		PG_RETURN_CSTRING(strcpy(ascii, "NaN"));
+		MDB_RETURN_CSTRING(strcpy(ascii, "NaN"));
 
 	switch (is_infinite(num))
 	{
@@ -385,43 +385,43 @@ float4out(PG_FUNCTION_ARGS)
 			}
 	}
 
-	PG_RETURN_CSTRING(ascii);
+	MDB_RETURN_CSTRING(ascii);
 }
 
 /*
  *		float4recv			- converts external binary format to float4
  */
 Datum
-float4recv(PG_FUNCTION_ARGS)
+float4recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_FLOAT4(pq_getmsgfloat4(buf));
+	MDB_RETURN_FLOAT4(pq_getmsgfloat4(buf));
 }
 
 /*
  *		float4send			- converts float4 to binary format
  */
 Datum
-float4send(PG_FUNCTION_ARGS)
+float4send(MDB_FUNCTION_ARGS)
 {
-	float4		num = PG_GETARG_FLOAT4(0);
+	float4		num = MDB_GETARG_FLOAT4(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendfloat4(&buf, num);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*
  *		float8in		- converts "num" to float8
  */
 Datum
-float8in(PG_FUNCTION_ARGS)
+float8in(MDB_FUNCTION_ARGS)
 {
-	char	   *num = PG_GETARG_CSTRING(0);
+	char	   *num = MDB_GETARG_CSTRING(0);
 
-	PG_RETURN_FLOAT8(float8in_internal(num, NULL, "double precision", num));
+	MDB_RETURN_FLOAT8(float8in_internal(num, NULL, "double precision", num));
 }
 
 /*
@@ -580,11 +580,11 @@ float8in_internal(char *num, char **endptr_p,
  *						  using a standard output format
  */
 Datum
-float8out(PG_FUNCTION_ARGS)
+float8out(MDB_FUNCTION_ARGS)
 {
-	float8		num = PG_GETARG_FLOAT8(0);
+	float8		num = MDB_GETARG_FLOAT8(0);
 
-	PG_RETURN_CSTRING(float8out_internal(num));
+	MDB_RETURN_CSTRING(float8out_internal(num));
 }
 
 /*
@@ -628,25 +628,25 @@ float8out_internal(double num)
  *		float8recv			- converts external binary format to float8
  */
 Datum
-float8recv(PG_FUNCTION_ARGS)
+float8recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_FLOAT8(pq_getmsgfloat8(buf));
+	MDB_RETURN_FLOAT8(pq_getmsgfloat8(buf));
 }
 
 /*
  *		float8send			- converts float8 to binary format
  */
 Datum
-float8send(PG_FUNCTION_ARGS)
+float8send(MDB_FUNCTION_ARGS)
 {
-	float8		num = PG_GETARG_FLOAT8(0);
+	float8		num = MDB_GETARG_FLOAT8(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendfloat8(&buf, num);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -663,60 +663,60 @@ float8send(PG_FUNCTION_ARGS)
  *		float4abs		- returns |arg1| (absolute value)
  */
 Datum
-float4abs(PG_FUNCTION_ARGS)
+float4abs(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
 
-	PG_RETURN_FLOAT4((float4) fabs(arg1));
+	MDB_RETURN_FLOAT4((float4) fabs(arg1));
 }
 
 /*
  *		float4um		- returns -arg1 (unary minus)
  */
 Datum
-float4um(PG_FUNCTION_ARGS)
+float4um(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
 	float4		result;
 
 	result = -arg1;
-	PG_RETURN_FLOAT4(result);
+	MDB_RETURN_FLOAT4(result);
 }
 
 Datum
-float4up(PG_FUNCTION_ARGS)
+float4up(MDB_FUNCTION_ARGS)
 {
-	float4		arg = PG_GETARG_FLOAT4(0);
+	float4		arg = MDB_GETARG_FLOAT4(0);
 
-	PG_RETURN_FLOAT4(arg);
+	MDB_RETURN_FLOAT4(arg);
 }
 
 Datum
-float4larger(PG_FUNCTION_ARGS)
+float4larger(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float4		result;
 
 	if (float4_cmp_internal(arg1, arg2) > 0)
 		result = arg1;
 	else
 		result = arg2;
-	PG_RETURN_FLOAT4(result);
+	MDB_RETURN_FLOAT4(result);
 }
 
 Datum
-float4smaller(PG_FUNCTION_ARGS)
+float4smaller(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float4		result;
 
 	if (float4_cmp_internal(arg1, arg2) < 0)
 		result = arg1;
 	else
 		result = arg2;
-	PG_RETURN_FLOAT4(result);
+	MDB_RETURN_FLOAT4(result);
 }
 
 /*
@@ -729,11 +729,11 @@ float4smaller(PG_FUNCTION_ARGS)
  *		float8abs		- returns |arg1| (absolute value)
  */
 Datum
-float8abs(PG_FUNCTION_ARGS)
+float8abs(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 
-	PG_RETURN_FLOAT8(fabs(arg1));
+	MDB_RETURN_FLOAT8(fabs(arg1));
 }
 
 
@@ -741,49 +741,49 @@ float8abs(PG_FUNCTION_ARGS)
  *		float8um		- returns -arg1 (unary minus)
  */
 Datum
-float8um(PG_FUNCTION_ARGS)
+float8um(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	result = -arg1;
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float8up(PG_FUNCTION_ARGS)
+float8up(MDB_FUNCTION_ARGS)
 {
-	float8		arg = PG_GETARG_FLOAT8(0);
+	float8		arg = MDB_GETARG_FLOAT8(0);
 
-	PG_RETURN_FLOAT8(arg);
+	MDB_RETURN_FLOAT8(arg);
 }
 
 Datum
-float8larger(PG_FUNCTION_ARGS)
+float8larger(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	if (float8_cmp_internal(arg1, arg2) > 0)
 		result = arg1;
 	else
 		result = arg2;
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float8smaller(PG_FUNCTION_ARGS)
+float8smaller(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	if (float8_cmp_internal(arg1, arg2) < 0)
 		result = arg1;
 	else
 		result = arg2;
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -800,10 +800,10 @@ float8smaller(PG_FUNCTION_ARGS)
  *		float4div		- returns arg1 / arg2
  */
 Datum
-float4pl(PG_FUNCTION_ARGS)
+float4pl(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float4		result;
 
 	result = arg1 + arg2;
@@ -816,39 +816,39 @@ float4pl(PG_FUNCTION_ARGS)
 	 * 1.4013e-45.
 	 */
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), true);
-	PG_RETURN_FLOAT4(result);
+	MDB_RETURN_FLOAT4(result);
 }
 
 Datum
-float4mi(PG_FUNCTION_ARGS)
+float4mi(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float4		result;
 
 	result = arg1 - arg2;
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), true);
-	PG_RETURN_FLOAT4(result);
+	MDB_RETURN_FLOAT4(result);
 }
 
 Datum
-float4mul(PG_FUNCTION_ARGS)
+float4mul(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float4		result;
 
 	result = arg1 * arg2;
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2),
 				  arg1 == 0 || arg2 == 0);
-	PG_RETURN_FLOAT4(result);
+	MDB_RETURN_FLOAT4(result);
 }
 
 Datum
-float4div(PG_FUNCTION_ARGS)
+float4div(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float4		result;
 
 	if (arg2 == 0.0)
@@ -859,7 +859,7 @@ float4div(PG_FUNCTION_ARGS)
 	result = arg1 / arg2;
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), arg1 == 0);
-	PG_RETURN_FLOAT4(result);
+	MDB_RETURN_FLOAT4(result);
 }
 
 /*
@@ -869,50 +869,50 @@ float4div(PG_FUNCTION_ARGS)
  *		float8div		- returns arg1 / arg2
  */
 Datum
-float8pl(PG_FUNCTION_ARGS)
+float8pl(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	result = arg1 + arg2;
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float8mi(PG_FUNCTION_ARGS)
+float8mi(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	result = arg1 - arg2;
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float8mul(PG_FUNCTION_ARGS)
+float8mul(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	result = arg1 * arg2;
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2),
 				  arg1 == 0 || arg2 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float8div(PG_FUNCTION_ARGS)
+float8div(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	if (arg2 == 0.0)
@@ -923,7 +923,7 @@ float8div(PG_FUNCTION_ARGS)
 	result = arg1 / arg2;
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), arg1 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -967,66 +967,66 @@ float4_cmp_internal(float4 a, float4 b)
 }
 
 Datum
-float4eq(PG_FUNCTION_ARGS)
+float4eq(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float4_cmp_internal(arg1, arg2) == 0);
+	MDB_RETURN_BOOL(float4_cmp_internal(arg1, arg2) == 0);
 }
 
 Datum
-float4ne(PG_FUNCTION_ARGS)
+float4ne(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float4_cmp_internal(arg1, arg2) != 0);
+	MDB_RETURN_BOOL(float4_cmp_internal(arg1, arg2) != 0);
 }
 
 Datum
-float4lt(PG_FUNCTION_ARGS)
+float4lt(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float4_cmp_internal(arg1, arg2) < 0);
+	MDB_RETURN_BOOL(float4_cmp_internal(arg1, arg2) < 0);
 }
 
 Datum
-float4le(PG_FUNCTION_ARGS)
+float4le(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float4_cmp_internal(arg1, arg2) <= 0);
+	MDB_RETURN_BOOL(float4_cmp_internal(arg1, arg2) <= 0);
 }
 
 Datum
-float4gt(PG_FUNCTION_ARGS)
+float4gt(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float4_cmp_internal(arg1, arg2) > 0);
+	MDB_RETURN_BOOL(float4_cmp_internal(arg1, arg2) > 0);
 }
 
 Datum
-float4ge(PG_FUNCTION_ARGS)
+float4ge(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float4_cmp_internal(arg1, arg2) >= 0);
+	MDB_RETURN_BOOL(float4_cmp_internal(arg1, arg2) >= 0);
 }
 
 Datum
-btfloat4cmp(PG_FUNCTION_ARGS)
+btfloat4cmp(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_INT32(float4_cmp_internal(arg1, arg2));
+	MDB_RETURN_INT32(float4_cmp_internal(arg1, arg2));
 }
 
 static int
@@ -1039,12 +1039,12 @@ btfloat4fastcmp(Datum x, Datum y, SortSupport ssup)
 }
 
 Datum
-btfloat4sortsupport(PG_FUNCTION_ARGS)
+btfloat4sortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 
 	ssup->comparator = btfloat4fastcmp;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -1081,66 +1081,66 @@ float8_cmp_internal(float8 a, float8 b)
 }
 
 Datum
-float8eq(PG_FUNCTION_ARGS)
+float8eq(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) == 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) == 0);
 }
 
 Datum
-float8ne(PG_FUNCTION_ARGS)
+float8ne(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) != 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) != 0);
 }
 
 Datum
-float8lt(PG_FUNCTION_ARGS)
+float8lt(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) < 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) < 0);
 }
 
 Datum
-float8le(PG_FUNCTION_ARGS)
+float8le(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) <= 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) <= 0);
 }
 
 Datum
-float8gt(PG_FUNCTION_ARGS)
+float8gt(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) > 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) > 0);
 }
 
 Datum
-float8ge(PG_FUNCTION_ARGS)
+float8ge(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) >= 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) >= 0);
 }
 
 Datum
-btfloat8cmp(PG_FUNCTION_ARGS)
+btfloat8cmp(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_INT32(float8_cmp_internal(arg1, arg2));
+	MDB_RETURN_INT32(float8_cmp_internal(arg1, arg2));
 }
 
 static int
@@ -1153,32 +1153,32 @@ btfloat8fastcmp(Datum x, Datum y, SortSupport ssup)
 }
 
 Datum
-btfloat8sortsupport(PG_FUNCTION_ARGS)
+btfloat8sortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 
 	ssup->comparator = btfloat8fastcmp;
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-btfloat48cmp(PG_FUNCTION_ARGS)
+btfloat48cmp(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
 	/* widen float4 to float8 and then compare */
-	PG_RETURN_INT32(float8_cmp_internal(arg1, arg2));
+	MDB_RETURN_INT32(float8_cmp_internal(arg1, arg2));
 }
 
 Datum
-btfloat84cmp(PG_FUNCTION_ARGS)
+btfloat84cmp(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
 	/* widen float4 to float8 and then compare */
-	PG_RETURN_INT32(float8_cmp_internal(arg1, arg2));
+	MDB_RETURN_INT32(float8_cmp_internal(arg1, arg2));
 }
 
 
@@ -1192,11 +1192,11 @@ btfloat84cmp(PG_FUNCTION_ARGS)
  *		ftod			- converts a float4 number to a float8 number
  */
 Datum
-ftod(PG_FUNCTION_ARGS)
+ftod(MDB_FUNCTION_ARGS)
 {
-	float4		num = PG_GETARG_FLOAT4(0);
+	float4		num = MDB_GETARG_FLOAT4(0);
 
-	PG_RETURN_FLOAT8((float8) num);
+	MDB_RETURN_FLOAT8((float8) num);
 }
 
 
@@ -1204,13 +1204,13 @@ ftod(PG_FUNCTION_ARGS)
  *		dtof			- converts a float8 number to a float4 number
  */
 Datum
-dtof(PG_FUNCTION_ARGS)
+dtof(MDB_FUNCTION_ARGS)
 {
-	float8		num = PG_GETARG_FLOAT8(0);
+	float8		num = MDB_GETARG_FLOAT8(0);
 
 	CHECKFLOATVAL((float4) num, isinf(num), num == 0);
 
-	PG_RETURN_FLOAT4((float4) num);
+	MDB_RETURN_FLOAT4((float4) num);
 }
 
 
@@ -1218,9 +1218,9 @@ dtof(PG_FUNCTION_ARGS)
  *		dtoi4			- converts a float8 number to an int4 number
  */
 Datum
-dtoi4(PG_FUNCTION_ARGS)
+dtoi4(MDB_FUNCTION_ARGS)
 {
-	float8		num = PG_GETARG_FLOAT8(0);
+	float8		num = MDB_GETARG_FLOAT8(0);
 	int32		result;
 
 	/* 'Inf' is handled by INT_MAX */
@@ -1230,7 +1230,7 @@ dtoi4(PG_FUNCTION_ARGS)
 				 errmsg("integer out of range")));
 
 	result = (int32) rint(num);
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 
@@ -1238,16 +1238,16 @@ dtoi4(PG_FUNCTION_ARGS)
  *		dtoi2			- converts a float8 number to an int2 number
  */
 Datum
-dtoi2(PG_FUNCTION_ARGS)
+dtoi2(MDB_FUNCTION_ARGS)
 {
-	float8		num = PG_GETARG_FLOAT8(0);
+	float8		num = MDB_GETARG_FLOAT8(0);
 
 	if (num < SHRT_MIN || num > SHRT_MAX || isnan(num))
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
 
-	PG_RETURN_INT16((int16) rint(num));
+	MDB_RETURN_INT16((int16) rint(num));
 }
 
 
@@ -1255,11 +1255,11 @@ dtoi2(PG_FUNCTION_ARGS)
  *		i4tod			- converts an int4 number to a float8 number
  */
 Datum
-i4tod(PG_FUNCTION_ARGS)
+i4tod(MDB_FUNCTION_ARGS)
 {
-	int32		num = PG_GETARG_INT32(0);
+	int32		num = MDB_GETARG_INT32(0);
 
-	PG_RETURN_FLOAT8((float8) num);
+	MDB_RETURN_FLOAT8((float8) num);
 }
 
 
@@ -1267,11 +1267,11 @@ i4tod(PG_FUNCTION_ARGS)
  *		i2tod			- converts an int2 number to a float8 number
  */
 Datum
-i2tod(PG_FUNCTION_ARGS)
+i2tod(MDB_FUNCTION_ARGS)
 {
-	int16		num = PG_GETARG_INT16(0);
+	int16		num = MDB_GETARG_INT16(0);
 
-	PG_RETURN_FLOAT8((float8) num);
+	MDB_RETURN_FLOAT8((float8) num);
 }
 
 
@@ -1279,16 +1279,16 @@ i2tod(PG_FUNCTION_ARGS)
  *		ftoi4			- converts a float4 number to an int4 number
  */
 Datum
-ftoi4(PG_FUNCTION_ARGS)
+ftoi4(MDB_FUNCTION_ARGS)
 {
-	float4		num = PG_GETARG_FLOAT4(0);
+	float4		num = MDB_GETARG_FLOAT4(0);
 
 	if (num < INT_MIN || num > INT_MAX || isnan(num))
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
 
-	PG_RETURN_INT32((int32) rint(num));
+	MDB_RETURN_INT32((int32) rint(num));
 }
 
 
@@ -1296,16 +1296,16 @@ ftoi4(PG_FUNCTION_ARGS)
  *		ftoi2			- converts a float4 number to an int2 number
  */
 Datum
-ftoi2(PG_FUNCTION_ARGS)
+ftoi2(MDB_FUNCTION_ARGS)
 {
-	float4		num = PG_GETARG_FLOAT4(0);
+	float4		num = MDB_GETARG_FLOAT4(0);
 
 	if (num < SHRT_MIN || num > SHRT_MAX || isnan(num))
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
 
-	PG_RETURN_INT16((int16) rint(num));
+	MDB_RETURN_INT16((int16) rint(num));
 }
 
 
@@ -1313,11 +1313,11 @@ ftoi2(PG_FUNCTION_ARGS)
  *		i4tof			- converts an int4 number to a float4 number
  */
 Datum
-i4tof(PG_FUNCTION_ARGS)
+i4tof(MDB_FUNCTION_ARGS)
 {
-	int32		num = PG_GETARG_INT32(0);
+	int32		num = MDB_GETARG_INT32(0);
 
-	PG_RETURN_FLOAT4((float4) num);
+	MDB_RETURN_FLOAT4((float4) num);
 }
 
 
@@ -1325,11 +1325,11 @@ i4tof(PG_FUNCTION_ARGS)
  *		i2tof			- converts an int2 number to a float4 number
  */
 Datum
-i2tof(PG_FUNCTION_ARGS)
+i2tof(MDB_FUNCTION_ARGS)
 {
-	int16		num = PG_GETARG_INT16(0);
+	int16		num = MDB_GETARG_INT16(0);
 
-	PG_RETURN_FLOAT4((float4) num);
+	MDB_RETURN_FLOAT4((float4) num);
 }
 
 
@@ -1343,11 +1343,11 @@ i2tof(PG_FUNCTION_ARGS)
  *		dround			- returns	ROUND(arg1)
  */
 Datum
-dround(PG_FUNCTION_ARGS)
+dround(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 
-	PG_RETURN_FLOAT8(rint(arg1));
+	MDB_RETURN_FLOAT8(rint(arg1));
 }
 
 /*
@@ -1355,11 +1355,11 @@ dround(PG_FUNCTION_ARGS)
  *						  equal to the specified float
  */
 Datum
-dceil(PG_FUNCTION_ARGS)
+dceil(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 
-	PG_RETURN_FLOAT8(ceil(arg1));
+	MDB_RETURN_FLOAT8(ceil(arg1));
 }
 
 /*
@@ -1367,11 +1367,11 @@ dceil(PG_FUNCTION_ARGS)
  *						  equal to the specified float
  */
 Datum
-dfloor(PG_FUNCTION_ARGS)
+dfloor(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 
-	PG_RETURN_FLOAT8(floor(arg1));
+	MDB_RETURN_FLOAT8(floor(arg1));
 }
 
 /*
@@ -1380,9 +1380,9 @@ dfloor(PG_FUNCTION_ARGS)
  *						  argument is greater than zero.
  */
 Datum
-dsign(PG_FUNCTION_ARGS)
+dsign(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	if (arg1 > 0)
@@ -1392,7 +1392,7 @@ dsign(PG_FUNCTION_ARGS)
 	else
 		result = 0.0;
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
@@ -1403,9 +1403,9 @@ dsign(PG_FUNCTION_ARGS)
  *										than or equal to arg1
  */
 Datum
-dtrunc(PG_FUNCTION_ARGS)
+dtrunc(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	if (arg1 >= 0)
@@ -1413,7 +1413,7 @@ dtrunc(PG_FUNCTION_ARGS)
 	else
 		result = -floor(-arg1);
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1421,9 +1421,9 @@ dtrunc(PG_FUNCTION_ARGS)
  *		dsqrt			- returns square root of arg1
  */
 Datum
-dsqrt(PG_FUNCTION_ARGS)
+dsqrt(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	if (arg1 < 0)
@@ -1434,7 +1434,7 @@ dsqrt(PG_FUNCTION_ARGS)
 	result = sqrt(arg1);
 
 	CHECKFLOATVAL(result, isinf(arg1), arg1 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1442,14 +1442,14 @@ dsqrt(PG_FUNCTION_ARGS)
  *		dcbrt			- returns cube root of arg1
  */
 Datum
-dcbrt(PG_FUNCTION_ARGS)
+dcbrt(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	result = cbrt(arg1);
 	CHECKFLOATVAL(result, isinf(arg1), arg1 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1457,10 +1457,10 @@ dcbrt(PG_FUNCTION_ARGS)
  *		dpow			- returns pow(arg1,arg2)
  */
 Datum
-dpow(PG_FUNCTION_ARGS)
+dpow(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	/*
@@ -1502,7 +1502,7 @@ dpow(PG_FUNCTION_ARGS)
 		result = get_float8_infinity();
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), arg1 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1510,9 +1510,9 @@ dpow(PG_FUNCTION_ARGS)
  *		dexp			- returns the exponential function of arg1
  */
 Datum
-dexp(PG_FUNCTION_ARGS)
+dexp(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	errno = 0;
@@ -1521,7 +1521,7 @@ dexp(PG_FUNCTION_ARGS)
 		result = get_float8_infinity();
 
 	CHECKFLOATVAL(result, isinf(arg1), false);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1529,9 +1529,9 @@ dexp(PG_FUNCTION_ARGS)
  *		dlog1			- returns the natural logarithm of arg1
  */
 Datum
-dlog1(PG_FUNCTION_ARGS)
+dlog1(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/*
@@ -1550,7 +1550,7 @@ dlog1(PG_FUNCTION_ARGS)
 	result = log(arg1);
 
 	CHECKFLOATVAL(result, isinf(arg1), arg1 == 1);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1558,9 +1558,9 @@ dlog1(PG_FUNCTION_ARGS)
  *		dlog10			- returns the base 10 logarithm of arg1
  */
 Datum
-dlog10(PG_FUNCTION_ARGS)
+dlog10(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/*
@@ -1580,7 +1580,7 @@ dlog10(PG_FUNCTION_ARGS)
 	result = log10(arg1);
 
 	CHECKFLOATVAL(result, isinf(arg1), arg1 == 1);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1588,14 +1588,14 @@ dlog10(PG_FUNCTION_ARGS)
  *		dacos			- returns the arccos of arg1 (radians)
  */
 Datum
-dacos(PG_FUNCTION_ARGS)
+dacos(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	/*
 	 * The principal branch of the inverse cosine function maps values in the
@@ -1610,7 +1610,7 @@ dacos(PG_FUNCTION_ARGS)
 	result = acos(arg1);
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1618,14 +1618,14 @@ dacos(PG_FUNCTION_ARGS)
  *		dasin			- returns the arcsin of arg1 (radians)
  */
 Datum
-dasin(PG_FUNCTION_ARGS)
+dasin(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	/*
 	 * The principal branch of the inverse sine function maps values in the
@@ -1640,7 +1640,7 @@ dasin(PG_FUNCTION_ARGS)
 	result = asin(arg1);
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1648,14 +1648,14 @@ dasin(PG_FUNCTION_ARGS)
  *		datan			- returns the arctan of arg1 (radians)
  */
 Datum
-datan(PG_FUNCTION_ARGS)
+datan(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	/*
 	 * The principal branch of the inverse tangent function maps all inputs to
@@ -1665,7 +1665,7 @@ datan(PG_FUNCTION_ARGS)
 	result = atan(arg1);
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1673,15 +1673,15 @@ datan(PG_FUNCTION_ARGS)
  *		atan2			- returns the arctan of arg1/arg2 (radians)
  */
 Datum
-datan2(PG_FUNCTION_ARGS)
+datan2(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if either input is NaN */
 	if (isnan(arg1) || isnan(arg2))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	/*
 	 * atan2 maps all inputs to values in the range [-Pi, Pi], so the result
@@ -1690,7 +1690,7 @@ datan2(PG_FUNCTION_ARGS)
 	result = atan2(arg1, arg2);
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1698,14 +1698,14 @@ datan2(PG_FUNCTION_ARGS)
  *		dcos			- returns the cosine of arg1 (radians)
  */
 Datum
-dcos(PG_FUNCTION_ARGS)
+dcos(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	/*
 	 * cos() is periodic and so theoretically can work for all finite inputs,
@@ -1730,7 +1730,7 @@ dcos(PG_FUNCTION_ARGS)
 				 errmsg("input is out of range")));
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1738,14 +1738,14 @@ dcos(PG_FUNCTION_ARGS)
  *		dcot			- returns the cotangent of arg1 (radians)
  */
 Datum
-dcot(PG_FUNCTION_ARGS)
+dcot(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	/* Be sure to throw an error if the input is infinite --- see dcos() */
 	errno = 0;
@@ -1757,7 +1757,7 @@ dcot(PG_FUNCTION_ARGS)
 
 	result = 1.0 / result;
 	CHECKFLOATVAL(result, true /* cot(0) == Inf */ , true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1765,14 +1765,14 @@ dcot(PG_FUNCTION_ARGS)
  *		dsin			- returns the sine of arg1 (radians)
  */
 Datum
-dsin(PG_FUNCTION_ARGS)
+dsin(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	/* Be sure to throw an error if the input is infinite --- see dcos() */
 	errno = 0;
@@ -1783,7 +1783,7 @@ dsin(PG_FUNCTION_ARGS)
 				 errmsg("input is out of range")));
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1791,14 +1791,14 @@ dsin(PG_FUNCTION_ARGS)
  *		dtan			- returns the tangent of arg1 (radians)
  */
 Datum
-dtan(PG_FUNCTION_ARGS)
+dtan(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	/* Be sure to throw an error if the input is infinite --- see dcos() */
 	errno = 0;
@@ -1809,7 +1809,7 @@ dtan(PG_FUNCTION_ARGS)
 				 errmsg("input is out of range")));
 
 	CHECKFLOATVAL(result, true /* tan(pi/2) == Inf */ , true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1934,14 +1934,14 @@ acosd_q1(double x)
  *		dacosd			- returns the arccos of arg1 (degrees)
  */
 Datum
-dacosd(PG_FUNCTION_ARGS)
+dacosd(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	INIT_DEGREE_CONSTANTS();
 
@@ -1961,7 +1961,7 @@ dacosd(PG_FUNCTION_ARGS)
 		result = 90.0 + asind_q1(-arg1);
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -1969,14 +1969,14 @@ dacosd(PG_FUNCTION_ARGS)
  *		dasind			- returns the arcsin of arg1 (degrees)
  */
 Datum
-dasind(PG_FUNCTION_ARGS)
+dasind(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	INIT_DEGREE_CONSTANTS();
 
@@ -1996,7 +1996,7 @@ dasind(PG_FUNCTION_ARGS)
 		result = -asind_q1(-arg1);
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2004,15 +2004,15 @@ dasind(PG_FUNCTION_ARGS)
  *		datand			- returns the arctan of arg1 (degrees)
  */
 Datum
-datand(PG_FUNCTION_ARGS)
+datand(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 	volatile float8 atan_arg1;
 
 	/* Per the POSIX spec, return NaN if the input is NaN */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	INIT_DEGREE_CONSTANTS();
 
@@ -2026,7 +2026,7 @@ datand(PG_FUNCTION_ARGS)
 	result = (atan_arg1 / atan_1_0) * 45.0;
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2034,16 +2034,16 @@ datand(PG_FUNCTION_ARGS)
  *		atan2d			- returns the arctan of arg1/arg2 (degrees)
  */
 Datum
-datan2d(PG_FUNCTION_ARGS)
+datan2d(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 	volatile float8 atan2_arg1_arg2;
 
 	/* Per the POSIX spec, return NaN if either input is NaN */
 	if (isnan(arg1) || isnan(arg2))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	INIT_DEGREE_CONSTANTS();
 
@@ -2060,7 +2060,7 @@ datan2d(PG_FUNCTION_ARGS)
 	result = (atan2_arg1_arg2 / atan_1_0) * 45.0;
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2136,9 +2136,9 @@ cosd_q1(double x)
  *		dcosd			- returns the cosine of arg1 (degrees)
  */
 Datum
-dcosd(PG_FUNCTION_ARGS)
+dcosd(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 	int			sign = 1;
 
@@ -2147,7 +2147,7 @@ dcosd(PG_FUNCTION_ARGS)
 	 * if the input is infinite.
 	 */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	if (isinf(arg1))
 		ereport(ERROR,
@@ -2181,7 +2181,7 @@ dcosd(PG_FUNCTION_ARGS)
 	result = sign * cosd_q1(arg1);
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2189,9 +2189,9 @@ dcosd(PG_FUNCTION_ARGS)
  *		dcotd			- returns the cotangent of arg1 (degrees)
  */
 Datum
-dcotd(PG_FUNCTION_ARGS)
+dcotd(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 	volatile float8 cot_arg1;
 	int			sign = 1;
@@ -2201,7 +2201,7 @@ dcotd(PG_FUNCTION_ARGS)
 	 * if the input is infinite.
 	 */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	if (isinf(arg1))
 		ereport(ERROR,
@@ -2246,7 +2246,7 @@ dcotd(PG_FUNCTION_ARGS)
 		result = 0.0;
 
 	CHECKFLOATVAL(result, true /* cotd(0) == Inf */ , true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2254,9 +2254,9 @@ dcotd(PG_FUNCTION_ARGS)
  *		dsind			- returns the sine of arg1 (degrees)
  */
 Datum
-dsind(PG_FUNCTION_ARGS)
+dsind(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 	int			sign = 1;
 
@@ -2265,7 +2265,7 @@ dsind(PG_FUNCTION_ARGS)
 	 * if the input is infinite.
 	 */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	if (isinf(arg1))
 		ereport(ERROR,
@@ -2300,7 +2300,7 @@ dsind(PG_FUNCTION_ARGS)
 	result = sign * sind_q1(arg1);
 
 	CHECKFLOATVAL(result, false, true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2308,9 +2308,9 @@ dsind(PG_FUNCTION_ARGS)
  *		dtand			- returns the tangent of arg1 (degrees)
  */
 Datum
-dtand(PG_FUNCTION_ARGS)
+dtand(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 	volatile float8 tan_arg1;
 	int			sign = 1;
@@ -2320,7 +2320,7 @@ dtand(PG_FUNCTION_ARGS)
 	 * if the input is infinite.
 	 */
 	if (isnan(arg1))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	if (isinf(arg1))
 		ereport(ERROR,
@@ -2365,7 +2365,7 @@ dtand(PG_FUNCTION_ARGS)
 		result = 0.0;
 
 	CHECKFLOATVAL(result, true /* tand(90) == Inf */ , true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2373,15 +2373,15 @@ dtand(PG_FUNCTION_ARGS)
  *		degrees		- returns degrees converted from radians
  */
 Datum
-degrees(PG_FUNCTION_ARGS)
+degrees(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	result = arg1 / RADIANS_PER_DEGREE;
 
 	CHECKFLOATVAL(result, isinf(arg1), arg1 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2389,9 +2389,9 @@ degrees(PG_FUNCTION_ARGS)
  *		dpi				- returns the constant PI
  */
 Datum
-dpi(PG_FUNCTION_ARGS)
+dpi(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_FLOAT8(M_PI);
+	MDB_RETURN_FLOAT8(M_PI);
 }
 
 
@@ -2399,15 +2399,15 @@ dpi(PG_FUNCTION_ARGS)
  *		radians		- returns radians converted from degrees
  */
 Datum
-radians(PG_FUNCTION_ARGS)
+radians(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
 	float8		result;
 
 	result = arg1 * RADIANS_PER_DEGREE;
 
 	CHECKFLOATVAL(result, isinf(arg1), arg1 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2415,14 +2415,14 @@ radians(PG_FUNCTION_ARGS)
  *		drandom		- returns a random number
  */
 Datum
-drandom(PG_FUNCTION_ARGS)
+drandom(MDB_FUNCTION_ARGS)
 {
 	float8		result;
 
 	/* result [0.0 - 1.0) */
 	result = (double) random() / ((double) MAX_RANDOM_VALUE + 1);
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 
@@ -2430,9 +2430,9 @@ drandom(PG_FUNCTION_ARGS)
  *		setseed		- set seed for the random number generator
  */
 Datum
-setseed(PG_FUNCTION_ARGS)
+setseed(MDB_FUNCTION_ARGS)
 {
-	float8		seed = PG_GETARG_FLOAT8(0);
+	float8		seed = MDB_GETARG_FLOAT8(0);
 	int			iseed;
 
 	if (seed < -1 || seed > 1)
@@ -2441,7 +2441,7 @@ setseed(PG_FUNCTION_ARGS)
 	iseed = (int) (seed * MAX_RANDOM_VALUE);
 	srandom((unsigned int) iseed);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
@@ -2493,10 +2493,10 @@ check_float8_array(ArrayType *transarray, const char *caller, int n)
  * shouldn't be called outside aggregate context.
  */
 Datum
-float8_combine(PG_FUNCTION_ARGS)
+float8_combine(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray1 = PG_GETARG_ARRAYTYPE_P(0);
-	ArrayType  *transarray2 = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *transarray1 = MDB_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray2 = MDB_GETARG_ARRAYTYPE_P(1);
 	float8	   *transvalues1;
 	float8	   *transvalues2;
 	float8		N,
@@ -2525,14 +2525,14 @@ float8_combine(PG_FUNCTION_ARGS)
 	transvalues1[1] = sumX;
 	transvalues1[2] = sumX2;
 
-	PG_RETURN_ARRAYTYPE_P(transarray1);
+	MDB_RETURN_ARRAYTYPE_P(transarray1);
 }
 
 Datum
-float8_accum(PG_FUNCTION_ARGS)
+float8_accum(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
-	float8		newval = PG_GETARG_FLOAT8(1);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
+	float8		newval = MDB_GETARG_FLOAT8(1);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -2560,7 +2560,7 @@ float8_accum(PG_FUNCTION_ARGS)
 		transvalues[1] = sumX;
 		transvalues[2] = sumX2;
 
-		PG_RETURN_ARRAYTYPE_P(transarray);
+		MDB_RETURN_ARRAYTYPE_P(transarray);
 	}
 	else
 	{
@@ -2575,17 +2575,17 @@ float8_accum(PG_FUNCTION_ARGS)
 								 FLOAT8OID,
 								 sizeof(float8), FLOAT8PASSBYVAL, 'd');
 
-		PG_RETURN_ARRAYTYPE_P(result);
+		MDB_RETURN_ARRAYTYPE_P(result);
 	}
 }
 
 Datum
-float4_accum(PG_FUNCTION_ARGS)
+float4_accum(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 
 	/* do computations as float8 */
-	float8		newval = PG_GETARG_FLOAT4(1);
+	float8		newval = MDB_GETARG_FLOAT4(1);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -2613,7 +2613,7 @@ float4_accum(PG_FUNCTION_ARGS)
 		transvalues[1] = sumX;
 		transvalues[2] = sumX2;
 
-		PG_RETURN_ARRAYTYPE_P(transarray);
+		MDB_RETURN_ARRAYTYPE_P(transarray);
 	}
 	else
 	{
@@ -2628,14 +2628,14 @@ float4_accum(PG_FUNCTION_ARGS)
 								 FLOAT8OID,
 								 sizeof(float8), FLOAT8PASSBYVAL, 'd');
 
-		PG_RETURN_ARRAYTYPE_P(result);
+		MDB_RETURN_ARRAYTYPE_P(result);
 	}
 }
 
 Datum
-float8_avg(PG_FUNCTION_ARGS)
+float8_avg(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX;
@@ -2647,15 +2647,15 @@ float8_avg(PG_FUNCTION_ARGS)
 
 	/* SQL defines AVG of no values to be NULL */
 	if (N == 0.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_FLOAT8(sumX / N);
+	MDB_RETURN_FLOAT8(sumX / N);
 }
 
 Datum
-float8_var_pop(PG_FUNCTION_ARGS)
+float8_var_pop(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -2669,22 +2669,22 @@ float8_var_pop(PG_FUNCTION_ARGS)
 
 	/* Population variance is undefined when N is 0, so return NULL */
 	if (N == 0.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numerator = N * sumX2 - sumX * sumX;
 	CHECKFLOATVAL(numerator, isinf(sumX2) || isinf(sumX), true);
 
 	/* Watch out for roundoff error producing a negative numerator */
 	if (numerator <= 0.0)
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 
-	PG_RETURN_FLOAT8(numerator / (N * N));
+	MDB_RETURN_FLOAT8(numerator / (N * N));
 }
 
 Datum
-float8_var_samp(PG_FUNCTION_ARGS)
+float8_var_samp(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -2698,22 +2698,22 @@ float8_var_samp(PG_FUNCTION_ARGS)
 
 	/* Sample variance is undefined when N is 0 or 1, so return NULL */
 	if (N <= 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numerator = N * sumX2 - sumX * sumX;
 	CHECKFLOATVAL(numerator, isinf(sumX2) || isinf(sumX), true);
 
 	/* Watch out for roundoff error producing a negative numerator */
 	if (numerator <= 0.0)
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 
-	PG_RETURN_FLOAT8(numerator / (N * (N - 1.0)));
+	MDB_RETURN_FLOAT8(numerator / (N * (N - 1.0)));
 }
 
 Datum
-float8_stddev_pop(PG_FUNCTION_ARGS)
+float8_stddev_pop(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -2727,22 +2727,22 @@ float8_stddev_pop(PG_FUNCTION_ARGS)
 
 	/* Population stddev is undefined when N is 0, so return NULL */
 	if (N == 0.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numerator = N * sumX2 - sumX * sumX;
 	CHECKFLOATVAL(numerator, isinf(sumX2) || isinf(sumX), true);
 
 	/* Watch out for roundoff error producing a negative numerator */
 	if (numerator <= 0.0)
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 
-	PG_RETURN_FLOAT8(sqrt(numerator / (N * N)));
+	MDB_RETURN_FLOAT8(sqrt(numerator / (N * N)));
 }
 
 Datum
-float8_stddev_samp(PG_FUNCTION_ARGS)
+float8_stddev_samp(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -2756,16 +2756,16 @@ float8_stddev_samp(PG_FUNCTION_ARGS)
 
 	/* Sample stddev is undefined when N is 0 or 1, so return NULL */
 	if (N <= 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numerator = N * sumX2 - sumX * sumX;
 	CHECKFLOATVAL(numerator, isinf(sumX2) || isinf(sumX), true);
 
 	/* Watch out for roundoff error producing a negative numerator */
 	if (numerator <= 0.0)
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 
-	PG_RETURN_FLOAT8(sqrt(numerator / (N * (N - 1.0))));
+	MDB_RETURN_FLOAT8(sqrt(numerator / (N * (N - 1.0))));
 }
 
 /*
@@ -2785,11 +2785,11 @@ float8_stddev_samp(PG_FUNCTION_ARGS)
  */
 
 Datum
-float8_regr_accum(PG_FUNCTION_ARGS)
+float8_regr_accum(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
-	float8		newvalY = PG_GETARG_FLOAT8(1);
-	float8		newvalX = PG_GETARG_FLOAT8(2);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
+	float8		newvalY = MDB_GETARG_FLOAT8(1);
+	float8		newvalX = MDB_GETARG_FLOAT8(2);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -2833,7 +2833,7 @@ float8_regr_accum(PG_FUNCTION_ARGS)
 		transvalues[4] = sumY2;
 		transvalues[5] = sumXY;
 
-		PG_RETURN_ARRAYTYPE_P(transarray);
+		MDB_RETURN_ARRAYTYPE_P(transarray);
 	}
 	else
 	{
@@ -2851,7 +2851,7 @@ float8_regr_accum(PG_FUNCTION_ARGS)
 								 FLOAT8OID,
 								 sizeof(float8), FLOAT8PASSBYVAL, 'd');
 
-		PG_RETURN_ARRAYTYPE_P(result);
+		MDB_RETURN_ARRAYTYPE_P(result);
 	}
 }
 
@@ -2864,10 +2864,10 @@ float8_regr_accum(PG_FUNCTION_ARGS)
  * shouldn't be called outside aggregate context.
  */
 Datum
-float8_regr_combine(PG_FUNCTION_ARGS)
+float8_regr_combine(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray1 = PG_GETARG_ARRAYTYPE_P(0);
-	ArrayType  *transarray2 = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *transarray1 = MDB_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray2 = MDB_GETARG_ARRAYTYPE_P(1);
 	float8	   *transvalues1;
 	float8	   *transvalues2;
 	float8		N,
@@ -2914,14 +2914,14 @@ float8_regr_combine(PG_FUNCTION_ARGS)
 	transvalues1[4] = sumY2;
 	transvalues1[5] = sumXY;
 
-	PG_RETURN_ARRAYTYPE_P(transarray1);
+	MDB_RETURN_ARRAYTYPE_P(transarray1);
 }
 
 
 Datum
-float8_regr_sxx(PG_FUNCTION_ARGS)
+float8_regr_sxx(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -2935,22 +2935,22 @@ float8_regr_sxx(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numerator = N * sumX2 - sumX * sumX;
 	CHECKFLOATVAL(numerator, isinf(sumX2) || isinf(sumX), true);
 
 	/* Watch out for roundoff error producing a negative numerator */
 	if (numerator <= 0.0)
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 
-	PG_RETURN_FLOAT8(numerator / N);
+	MDB_RETURN_FLOAT8(numerator / N);
 }
 
 Datum
-float8_regr_syy(PG_FUNCTION_ARGS)
+float8_regr_syy(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumY,
@@ -2964,22 +2964,22 @@ float8_regr_syy(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numerator = N * sumY2 - sumY * sumY;
 	CHECKFLOATVAL(numerator, isinf(sumY2) || isinf(sumY), true);
 
 	/* Watch out for roundoff error producing a negative numerator */
 	if (numerator <= 0.0)
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 
-	PG_RETURN_FLOAT8(numerator / N);
+	MDB_RETURN_FLOAT8(numerator / N);
 }
 
 Datum
-float8_regr_sxy(PG_FUNCTION_ARGS)
+float8_regr_sxy(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -2995,7 +2995,7 @@ float8_regr_sxy(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numerator = N * sumXY - sumX * sumY;
 	CHECKFLOATVAL(numerator, isinf(sumXY) || isinf(sumX) ||
@@ -3003,13 +3003,13 @@ float8_regr_sxy(PG_FUNCTION_ARGS)
 
 	/* A negative result is valid here */
 
-	PG_RETURN_FLOAT8(numerator / N);
+	MDB_RETURN_FLOAT8(numerator / N);
 }
 
 Datum
-float8_regr_avgx(PG_FUNCTION_ARGS)
+float8_regr_avgx(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX;
@@ -3020,15 +3020,15 @@ float8_regr_avgx(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_FLOAT8(sumX / N);
+	MDB_RETURN_FLOAT8(sumX / N);
 }
 
 Datum
-float8_regr_avgy(PG_FUNCTION_ARGS)
+float8_regr_avgy(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumY;
@@ -3039,15 +3039,15 @@ float8_regr_avgy(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_FLOAT8(sumY / N);
+	MDB_RETURN_FLOAT8(sumY / N);
 }
 
 Datum
-float8_covar_pop(PG_FUNCTION_ARGS)
+float8_covar_pop(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -3063,19 +3063,19 @@ float8_covar_pop(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numerator = N * sumXY - sumX * sumY;
 	CHECKFLOATVAL(numerator, isinf(sumXY) || isinf(sumX) ||
 				  isinf(sumY), true);
 
-	PG_RETURN_FLOAT8(numerator / (N * N));
+	MDB_RETURN_FLOAT8(numerator / (N * N));
 }
 
 Datum
-float8_covar_samp(PG_FUNCTION_ARGS)
+float8_covar_samp(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -3091,19 +3091,19 @@ float8_covar_samp(PG_FUNCTION_ARGS)
 
 	/* if N is <= 1 we should return NULL */
 	if (N < 2.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numerator = N * sumXY - sumX * sumY;
 	CHECKFLOATVAL(numerator, isinf(sumXY) || isinf(sumX) ||
 				  isinf(sumY), true);
 
-	PG_RETURN_FLOAT8(numerator / (N * (N - 1.0)));
+	MDB_RETURN_FLOAT8(numerator / (N * (N - 1.0)));
 }
 
 Datum
-float8_corr(PG_FUNCTION_ARGS)
+float8_corr(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -3125,7 +3125,7 @@ float8_corr(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numeratorX = N * sumX2 - sumX * sumX;
 	CHECKFLOATVAL(numeratorX, isinf(sumX2) || isinf(sumX), true);
@@ -3135,15 +3135,15 @@ float8_corr(PG_FUNCTION_ARGS)
 	CHECKFLOATVAL(numeratorXY, isinf(sumXY) || isinf(sumX) ||
 				  isinf(sumY), true);
 	if (numeratorX <= 0 || numeratorY <= 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_FLOAT8(numeratorXY / sqrt(numeratorX * numeratorY));
+	MDB_RETURN_FLOAT8(numeratorXY / sqrt(numeratorX * numeratorY));
 }
 
 Datum
-float8_regr_r2(PG_FUNCTION_ARGS)
+float8_regr_r2(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -3165,7 +3165,7 @@ float8_regr_r2(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numeratorX = N * sumX2 - sumX * sumX;
 	CHECKFLOATVAL(numeratorX, isinf(sumX2) || isinf(sumX), true);
@@ -3175,19 +3175,19 @@ float8_regr_r2(PG_FUNCTION_ARGS)
 	CHECKFLOATVAL(numeratorXY, isinf(sumXY) || isinf(sumX) ||
 				  isinf(sumY), true);
 	if (numeratorX <= 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	/* per spec, horizontal line produces 1.0 */
 	if (numeratorY <= 0)
-		PG_RETURN_FLOAT8(1.0);
+		MDB_RETURN_FLOAT8(1.0);
 
-	PG_RETURN_FLOAT8((numeratorXY * numeratorXY) /
+	MDB_RETURN_FLOAT8((numeratorXY * numeratorXY) /
 					 (numeratorX * numeratorY));
 }
 
 Datum
-float8_regr_slope(PG_FUNCTION_ARGS)
+float8_regr_slope(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -3206,7 +3206,7 @@ float8_regr_slope(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numeratorX = N * sumX2 - sumX * sumX;
 	CHECKFLOATVAL(numeratorX, isinf(sumX2) || isinf(sumX), true);
@@ -3214,15 +3214,15 @@ float8_regr_slope(PG_FUNCTION_ARGS)
 	CHECKFLOATVAL(numeratorXY, isinf(sumXY) || isinf(sumX) ||
 				  isinf(sumY), true);
 	if (numeratorX <= 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_FLOAT8(numeratorXY / numeratorX);
+	MDB_RETURN_FLOAT8(numeratorXY / numeratorX);
 }
 
 Datum
-float8_regr_intercept(PG_FUNCTION_ARGS)
+float8_regr_intercept(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	float8	   *transvalues;
 	float8		N,
 				sumX,
@@ -3241,7 +3241,7 @@ float8_regr_intercept(PG_FUNCTION_ARGS)
 
 	/* if N is 0 we should return NULL */
 	if (N < 1.0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	numeratorX = N * sumX2 - sumX * sumX;
 	CHECKFLOATVAL(numeratorX, isinf(sumX2) || isinf(sumX), true);
@@ -3249,9 +3249,9 @@ float8_regr_intercept(PG_FUNCTION_ARGS)
 	CHECKFLOATVAL(numeratorXXY, isinf(sumY) || isinf(sumX2) ||
 				  isinf(sumX) || isinf(sumXY), true);
 	if (numeratorX <= 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_FLOAT8(numeratorXXY / numeratorX);
+	MDB_RETURN_FLOAT8(numeratorXXY / numeratorX);
 }
 
 
@@ -3268,47 +3268,47 @@ float8_regr_intercept(PG_FUNCTION_ARGS)
  *		float48div		- returns arg1 / arg2
  */
 Datum
-float48pl(PG_FUNCTION_ARGS)
+float48pl(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	result = arg1 + arg2;
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float48mi(PG_FUNCTION_ARGS)
+float48mi(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	result = arg1 - arg2;
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float48mul(PG_FUNCTION_ARGS)
+float48mul(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	result = arg1 * arg2;
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2),
 				  arg1 == 0 || arg2 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float48div(PG_FUNCTION_ARGS)
+float48div(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 	float8		result;
 
 	if (arg2 == 0.0)
@@ -3318,7 +3318,7 @@ float48div(PG_FUNCTION_ARGS)
 
 	result = arg1 / arg2;
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), arg1 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
@@ -3328,50 +3328,50 @@ float48div(PG_FUNCTION_ARGS)
  *		float84div		- returns arg1 / arg2
  */
 Datum
-float84pl(PG_FUNCTION_ARGS)
+float84pl(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float8		result;
 
 	result = arg1 + arg2;
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float84mi(PG_FUNCTION_ARGS)
+float84mi(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float8		result;
 
 	result = arg1 - arg2;
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), true);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float84mul(PG_FUNCTION_ARGS)
+float84mul(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float8		result;
 
 	result = arg1 * arg2;
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2),
 				  arg1 == 0 || arg2 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-float84div(PG_FUNCTION_ARGS)
+float84div(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 	float8		result;
 
 	if (arg2 == 0.0)
@@ -3382,7 +3382,7 @@ float84div(PG_FUNCTION_ARGS)
 	result = arg1 / arg2;
 
 	CHECKFLOATVAL(result, isinf(arg1) || isinf(arg2), arg1 == 0);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
@@ -3395,114 +3395,114 @@ float84div(PG_FUNCTION_ARGS)
  *		float48{eq,ne,lt,le,gt,ge}		- float4/float8 comparison operations
  */
 Datum
-float48eq(PG_FUNCTION_ARGS)
+float48eq(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) == 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) == 0);
 }
 
 Datum
-float48ne(PG_FUNCTION_ARGS)
+float48ne(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) != 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) != 0);
 }
 
 Datum
-float48lt(PG_FUNCTION_ARGS)
+float48lt(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) < 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) < 0);
 }
 
 Datum
-float48le(PG_FUNCTION_ARGS)
+float48le(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) <= 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) <= 0);
 }
 
 Datum
-float48gt(PG_FUNCTION_ARGS)
+float48gt(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) > 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) > 0);
 }
 
 Datum
-float48ge(PG_FUNCTION_ARGS)
+float48ge(MDB_FUNCTION_ARGS)
 {
-	float4		arg1 = PG_GETARG_FLOAT4(0);
-	float8		arg2 = PG_GETARG_FLOAT8(1);
+	float4		arg1 = MDB_GETARG_FLOAT4(0);
+	float8		arg2 = MDB_GETARG_FLOAT8(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) >= 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) >= 0);
 }
 
 /*
  *		float84{eq,ne,lt,le,gt,ge}		- float8/float4 comparison operations
  */
 Datum
-float84eq(PG_FUNCTION_ARGS)
+float84eq(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) == 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) == 0);
 }
 
 Datum
-float84ne(PG_FUNCTION_ARGS)
+float84ne(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) != 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) != 0);
 }
 
 Datum
-float84lt(PG_FUNCTION_ARGS)
+float84lt(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) < 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) < 0);
 }
 
 Datum
-float84le(PG_FUNCTION_ARGS)
+float84le(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) <= 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) <= 0);
 }
 
 Datum
-float84gt(PG_FUNCTION_ARGS)
+float84gt(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) > 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) > 0);
 }
 
 Datum
-float84ge(PG_FUNCTION_ARGS)
+float84ge(MDB_FUNCTION_ARGS)
 {
-	float8		arg1 = PG_GETARG_FLOAT8(0);
-	float4		arg2 = PG_GETARG_FLOAT4(1);
+	float8		arg1 = MDB_GETARG_FLOAT8(0);
+	float4		arg2 = MDB_GETARG_FLOAT4(1);
 
-	PG_RETURN_BOOL(float8_cmp_internal(arg1, arg2) >= 0);
+	MDB_RETURN_BOOL(float8_cmp_internal(arg1, arg2) >= 0);
 }
 
 /*
@@ -3520,12 +3520,12 @@ float84ge(PG_FUNCTION_ARGS)
  * don't allow either of the histogram bounds to be +/- infinity.
  */
 Datum
-width_bucket_float8(PG_FUNCTION_ARGS)
+width_bucket_float8(MDB_FUNCTION_ARGS)
 {
-	float8		operand = PG_GETARG_FLOAT8(0);
-	float8		bound1 = PG_GETARG_FLOAT8(1);
-	float8		bound2 = PG_GETARG_FLOAT8(2);
-	int32		count = PG_GETARG_INT32(3);
+	float8		operand = MDB_GETARG_FLOAT8(0);
+	float8		bound1 = MDB_GETARG_FLOAT8(1);
+	float8		bound2 = MDB_GETARG_FLOAT8(2);
+	int32		count = MDB_GETARG_INT32(3);
 	int32		result;
 
 	if (count <= 0.0)
@@ -3584,7 +3584,7 @@ width_bucket_float8(PG_FUNCTION_ARGS)
 		result = 0;				/* keep the compiler quiet */
 	}
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /* ========== PRIVATE ROUTINES ========== */

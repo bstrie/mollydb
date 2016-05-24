@@ -158,7 +158,7 @@ kwlist_line: while (<KWLIST>)
 {
 	my ($line) = $_;
 
-	if ($line =~ /^PG_KEYWORD\(\"(.*)\", (.*), (.*)\)/)
+	if ($line =~ /^MDB_KEYWORD\(\"(.*)\", (.*), (.*)\)/)
 	{
 		my ($kwstring) = $1;
 		my ($kwname)   = $2;

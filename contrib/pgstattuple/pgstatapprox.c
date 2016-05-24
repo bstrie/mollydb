@@ -28,7 +28,7 @@
 #include "utils/tqual.h"
 #include "commands/vacuum.h"
 
-PG_FUNCTION_INFO_V1(pgstattuple_approx);
+MDB_FUNCTION_INFO_V1(pgstattuple_approx);
 
 typedef struct output_type
 {
@@ -206,9 +206,9 @@ statapprox_heap(Relation rel, output_type *stat)
  * Returns estimated live/dead tuple statistics for the given relid.
  */
 Datum
-pgstattuple_approx(PG_FUNCTION_ARGS)
+pgstattuple_approx(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	Relation	rel;
 	output_type stat = {0};
 	TupleDesc	tupdesc;

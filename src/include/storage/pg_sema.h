@@ -17,8 +17,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_SEMA_H
-#define PG_SEMA_H
+#ifndef MDB_SEMA_H
+#define MDB_SEMA_H
 
 /*
  * PGSemaphoreData and pointer type PGSemaphore are the data structure
@@ -80,4 +80,4 @@ extern void PGSemaphoreUnlock(PGSemaphore sema);
 /* Lock a semaphore only if able to do so without blocking */
 extern bool PGSemaphoreTryLock(PGSemaphore sema);
 
-#endif   /* PG_SEMA_H */
+#endif   /* MDB_SEMA_H */

@@ -1181,7 +1181,7 @@ exec_stmt_block(PLpgSQL_execstate *estate, PLpgSQL_stmt_block *block)
 		/* Want to run statements inside function's memory context */
 		MemoryContextSwitchTo(oldcontext);
 
-		PG_TRY();
+		MDB_TRY();
 		{
 			/*
 			 * We need to run the block's statements with a new eval_econtext
@@ -1234,7 +1234,7 @@ exec_stmt_block(PLpgSQL_execstate *estate, PLpgSQL_stmt_block *block)
 			 */
 			SPI_restore_connection();
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			ErrorData  *edata;
 			ListCell   *e;
@@ -1322,7 +1322,7 @@ exec_stmt_block(PLpgSQL_execstate *estate, PLpgSQL_stmt_block *block)
 			else
 				FreeErrorData(edata);
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 
 		Assert(save_cur_error == estate->cur_error);
 	}
@@ -3154,15 +3154,15 @@ exec_stmt_raise(PLpgSQL_execstate *estate, PLpgSQL_stmt_raise *stmt)
 			 (err_detail != NULL) ? errdetail_internal("%s", err_detail) : 0,
 			 (err_hint != NULL) ? errhint("%s", err_hint) : 0,
 			 (err_column != NULL) ?
-			 err_generic_string(PG_DIAG_COLUMN_NAME, err_column) : 0,
+			 err_generic_string(MDB_DIAG_COLUMN_NAME, err_column) : 0,
 			 (err_constraint != NULL) ?
-			 err_generic_string(PG_DIAG_CONSTRAINT_NAME, err_constraint) : 0,
+			 err_generic_string(MDB_DIAG_CONSTRAINT_NAME, err_constraint) : 0,
 			 (err_datatype != NULL) ?
-			 err_generic_string(PG_DIAG_DATATYPE_NAME, err_datatype) : 0,
+			 err_generic_string(MDB_DIAG_DATATYPE_NAME, err_datatype) : 0,
 			 (err_table != NULL) ?
-			 err_generic_string(PG_DIAG_TABLE_NAME, err_table) : 0,
+			 err_generic_string(MDB_DIAG_TABLE_NAME, err_table) : 0,
 			 (err_schema != NULL) ?
-			 err_generic_string(PG_DIAG_SCHEMA_NAME, err_schema) : 0));
+			 err_generic_string(MDB_DIAG_SCHEMA_NAME, err_schema) : 0));
 
 	if (condname != NULL)
 		pfree(condname);

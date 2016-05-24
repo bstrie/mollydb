@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_BSWAP_H
-#define PG_BSWAP_H
+#ifndef MDB_BSWAP_H
+#define MDB_BSWAP_H
 
 #ifdef HAVE__BUILTIN_BSWAP32
 #define BSWAP32(x) __builtin_bswap32(x)
@@ -65,4 +65,4 @@
 #endif   /* SIZEOF_DATUM == 8 */
 #endif   /* WORDS_BIGENDIAN */
 
-#endif   /* PG_BSWAP_H */
+#endif   /* MDB_BSWAP_H */

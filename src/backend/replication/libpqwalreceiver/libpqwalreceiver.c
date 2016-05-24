@@ -35,9 +35,9 @@
 #include <sys/select.h>
 #endif
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-void		_PG_init(void);
+void		_MDB_init(void);
 
 /* Current connection to the primary, if any */
 static PGconn *streamConn = NULL;
@@ -64,7 +64,7 @@ static PGresult *libpqrcv_PQexec(const char *query);
  * Module load callback
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/* Tell walreceiver how to reach us */
 	if (walrcv_connect != NULL || walrcv_identify_system != NULL ||

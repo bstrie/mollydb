@@ -157,7 +157,7 @@ InitArchiveFmt_Custom(ArchiveHandle *AH)
 	{
 		if (AH->fSpec && strcmp(AH->fSpec, "") != 0)
 		{
-			AH->FH = fopen(AH->fSpec, PG_BINARY_W);
+			AH->FH = fopen(AH->fSpec, MDB_BINARY_W);
 			if (!AH->FH)
 				exit_horribly(modulename, "could not open output file \"%s\": %s\n",
 							  AH->fSpec, strerror(errno));
@@ -176,7 +176,7 @@ InitArchiveFmt_Custom(ArchiveHandle *AH)
 	{
 		if (AH->fSpec && strcmp(AH->fSpec, "") != 0)
 		{
-			AH->FH = fopen(AH->fSpec, PG_BINARY_R);
+			AH->FH = fopen(AH->fSpec, MDB_BINARY_R);
 			if (!AH->FH)
 				exit_horribly(modulename, "could not open input file \"%s\": %s\n",
 							  AH->fSpec, strerror(errno));
@@ -765,7 +765,7 @@ _ReopenArchive(ArchiveHandle *AH)
 					  strerror(errno));
 #endif
 
-	AH->FH = fopen(AH->fSpec, PG_BINARY_R);
+	AH->FH = fopen(AH->fSpec, MDB_BINARY_R);
 	if (!AH->FH)
 		exit_horribly(modulename, "could not open input file \"%s\": %s\n",
 					  AH->fSpec, strerror(errno));

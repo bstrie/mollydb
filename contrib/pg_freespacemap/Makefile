@@ -8,8 +8,8 @@ DATA = mdb_freespacemap--1.0.sql mdb_freespacemap--unpackaged--1.0.sql
 PGFILEDESC = "mdb_freespacemap - monitoring of free space map"
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/mdb_freespacemap

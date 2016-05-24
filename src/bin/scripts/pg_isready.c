@@ -64,7 +64,7 @@ main(int argc, char **argv)
 	};
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pgscripts"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("pgscripts"));
 	handle_help_version_opts(argc, argv, progname, help);
 
 	while ((c = getopt_long(argc, argv, "d:h:p:qt:U:", long_options, NULL)) != -1)

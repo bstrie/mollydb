@@ -52,7 +52,7 @@ static void gistvacuumpage(Relation rel, Page page, Buffer buffer);
  * and callbacks.
  */
 Datum
-gisthandler(PG_FUNCTION_ARGS)
+gisthandler(MDB_FUNCTION_ARGS)
 {
 	IndexAmRoutine *amroutine = makeNode(IndexAmRoutine);
 
@@ -88,7 +88,7 @@ gisthandler(PG_FUNCTION_ARGS)
 	amroutine->ammarkpos = NULL;
 	amroutine->amrestrpos = NULL;
 
-	PG_RETURN_POINTER(amroutine);
+	MDB_RETURN_POINTER(amroutine);
 }
 
 /*

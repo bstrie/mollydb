@@ -15,10 +15,10 @@
 #include "fmgr.h"
 #include "mb/mdb_wchar.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(ascii_to_mic);
-PG_FUNCTION_INFO_V1(mic_to_ascii);
+MDB_FUNCTION_INFO_V1(ascii_to_mic);
+MDB_FUNCTION_INFO_V1(mic_to_ascii);
 
 /* ----------
  * conv_proc(
@@ -32,29 +32,29 @@ PG_FUNCTION_INFO_V1(mic_to_ascii);
  */
 
 Datum
-ascii_to_mic(PG_FUNCTION_ARGS)
+ascii_to_mic(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_SQL_ASCII, PG_MULE_INTERNAL);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_SQL_ASCII, MDB_MULE_INTERNAL);
 
 	mdb_ascii2mic(src, dest, len);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-mic_to_ascii(PG_FUNCTION_ARGS)
+mic_to_ascii(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_MULE_INTERNAL, PG_SQL_ASCII);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_MULE_INTERNAL, MDB_SQL_ASCII);
 
 	mdb_mic2ascii(src, dest, len);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

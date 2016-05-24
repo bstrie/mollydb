@@ -63,7 +63,7 @@ whenever_action(int mode)
 	if ((mode & 1) == 1 && when_nf.code != W_NOTHING)
 	{
 		output_line_number();
-		fprintf(yyout, "\nif (sqlca.sqlcode == ECPG_NOT_FOUND) ");
+		fprintf(yyout, "\nif (sqlca.sqlcode == ECMDB_NOT_FOUND) ");
 		print_action(&when_nf);
 	}
 	if (when_warn.code != W_NOTHING)
@@ -126,7 +126,7 @@ static char *ecmdb_statement_type_name[] = {
 };
 
 void
-output_statement(char *stmt, int whenever_mode, enum ECPG_statement_type st)
+output_statement(char *stmt, int whenever_mode, enum ECMDB_statement_type st)
 {
 	fprintf(yyout, "{ ECPGdo(__LINE__, %d, %d, %s, %d, ", compat, force_indicator, connection ? connection : "NULL", questionmarks);
 	if (st == ECPGst_execute || st == ECPGst_exec_immediate)

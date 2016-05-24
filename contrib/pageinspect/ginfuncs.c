@@ -24,14 +24,14 @@
 #define ItemPointerGetDatum(X)	 PointerGetDatum(X)
 
 
-PG_FUNCTION_INFO_V1(gin_metapage_info);
-PG_FUNCTION_INFO_V1(gin_page_opaque_info);
-PG_FUNCTION_INFO_V1(gin_leafpage_items);
+MDB_FUNCTION_INFO_V1(gin_metapage_info);
+MDB_FUNCTION_INFO_V1(gin_page_opaque_info);
+MDB_FUNCTION_INFO_V1(gin_leafpage_items);
 
 Datum
-gin_metapage_info(PG_FUNCTION_ARGS)
+gin_metapage_info(MDB_FUNCTION_ARGS)
 {
-	bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
+	bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
 	int			raw_page_size;
 	TupleDesc	tupdesc;
 	Page		page;
@@ -91,9 +91,9 @@ gin_metapage_info(PG_FUNCTION_ARGS)
 
 
 Datum
-gin_page_opaque_info(PG_FUNCTION_ARGS)
+gin_page_opaque_info(MDB_FUNCTION_ARGS)
 {
-	bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
+	bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
 	int			raw_page_size;
 	TupleDesc	tupdesc;
 	Page		page;
@@ -170,9 +170,9 @@ typedef struct gin_leafpage_items_state
 } gin_leafpage_items_state;
 
 Datum
-gin_leafpage_items(PG_FUNCTION_ARGS)
+gin_leafpage_items(MDB_FUNCTION_ARGS)
 {
-	bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
+	bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
 	int			raw_page_size;
 	FuncCallContext *fctx;
 	gin_leafpage_items_state *inter_call_data;

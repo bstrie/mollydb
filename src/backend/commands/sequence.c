@@ -501,9 +501,9 @@ AlterSequence(AlterSeqStmt *stmt)
  * called the function directly.
  */
 Datum
-nextval(PG_FUNCTION_ARGS)
+nextval(MDB_FUNCTION_ARGS)
 {
-	text	   *seqin = PG_GETARG_TEXT_P(0);
+	text	   *seqin = MDB_GETARG_TEXT_P(0);
 	RangeVar   *sequence;
 	Oid			relid;
 
@@ -519,15 +519,15 @@ nextval(PG_FUNCTION_ARGS)
 	 */
 	relid = RangeVarGetRelid(sequence, NoLock, false);
 
-	PG_RETURN_INT64(nextval_internal(relid));
+	MDB_RETURN_INT64(nextval_internal(relid));
 }
 
 Datum
-nextval_oid(PG_FUNCTION_ARGS)
+nextval_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 
-	PG_RETURN_INT64(nextval_internal(relid));
+	MDB_RETURN_INT64(nextval_internal(relid));
 }
 
 static int64
@@ -769,9 +769,9 @@ nextval_internal(Oid relid)
 }
 
 Datum
-currval_oid(PG_FUNCTION_ARGS)
+currval_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	int64		result;
 	SeqTable	elm;
 	Relation	seqrel;
@@ -796,11 +796,11 @@ currval_oid(PG_FUNCTION_ARGS)
 
 	relation_close(seqrel, NoLock);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 Datum
-lastval(PG_FUNCTION_ARGS)
+lastval(MDB_FUNCTION_ARGS)
 {
 	Relation	seqrel;
 	int64		result;
@@ -831,7 +831,7 @@ lastval(PG_FUNCTION_ARGS)
 	result = last_used_seq->last;
 	relation_close(seqrel, NoLock);
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 /*
@@ -949,14 +949,14 @@ do_setval(Oid relid, int64 next, bool iscalled)
  * See do_setval for discussion.
  */
 Datum
-setval_oid(PG_FUNCTION_ARGS)
+setval_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
-	int64		next = PG_GETARG_INT64(1);
+	Oid			relid = MDB_GETARG_OID(0);
+	int64		next = MDB_GETARG_INT64(1);
 
 	do_setval(relid, next, true);
 
-	PG_RETURN_INT64(next);
+	MDB_RETURN_INT64(next);
 }
 
 /*
@@ -964,15 +964,15 @@ setval_oid(PG_FUNCTION_ARGS)
  * See do_setval for discussion.
  */
 Datum
-setval3_oid(PG_FUNCTION_ARGS)
+setval3_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
-	int64		next = PG_GETARG_INT64(1);
-	bool		iscalled = PG_GETARG_BOOL(2);
+	Oid			relid = MDB_GETARG_OID(0);
+	int64		next = MDB_GETARG_INT64(1);
+	bool		iscalled = MDB_GETARG_BOOL(2);
 
 	do_setval(relid, next, iscalled);
 
-	PG_RETURN_INT64(next);
+	MDB_RETURN_INT64(next);
 }
 
 
@@ -995,18 +995,18 @@ open_share_lock(SeqTable seq)
 		ResourceOwner currentOwner;
 
 		currentOwner = CurrentResourceOwner;
-		PG_TRY();
+		MDB_TRY();
 		{
 			CurrentResourceOwner = TopTransactionResourceOwner;
 			LockRelationOid(seq->relid, AccessShareLock);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			/* Ensure CurrentResourceOwner is restored on error */
 			CurrentResourceOwner = currentOwner;
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 		CurrentResourceOwner = currentOwner;
 
 		/* Flag that we have a lock in the current xact */
@@ -1522,9 +1522,9 @@ process_owned_by(Relation seqrel, List *owned_by)
  * Return sequence parameters, for use by information schema
  */
 Datum
-mdb_sequence_parameters(PG_FUNCTION_ARGS)
+mdb_sequence_parameters(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	TupleDesc	tupdesc;
 	Datum		values[5];
 	bool		isnull[5];

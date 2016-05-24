@@ -50,20 +50,20 @@ PLyUnicode_Bytes(PyObject *unicode)
 	 * that MollyDB does (EUC_TW and MULE_INTERNAL). UTF-8 is used as an
 	 * intermediary in PLyUnicode_FromString as well.
 	 */
-	if (GetDatabaseEncoding() != PG_UTF8)
+	if (GetDatabaseEncoding() != MDB_UTF8)
 	{
-		PG_TRY();
+		MDB_TRY();
 		{
 			encoded = mdb_any_to_server(utf8string,
 									   strlen(utf8string),
-									   PG_UTF8);
+									   MDB_UTF8);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			Py_DECREF(bytes);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 	}
 	else
 		encoded = utf8string;
@@ -111,7 +111,7 @@ PLyUnicode_FromStringAndSize(const char *s, Py_ssize_t size)
 	char	   *utf8string;
 	PyObject   *o;
 
-	utf8string = mdb_server_to_any(s, size, PG_UTF8);
+	utf8string = mdb_server_to_any(s, size, MDB_UTF8);
 
 	if (utf8string == s)
 	{

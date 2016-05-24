@@ -18,7 +18,7 @@
 #define NUM_BUFFERCACHE_PAGES_MIN_ELEM	8
 #define NUM_BUFFERCACHE_PAGES_ELEM	9
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * Record structure holding the to be exposed cache data.
@@ -58,10 +58,10 @@ typedef struct
  * Function returning data from the shared buffer cache - buffer number,
  * relation node/tablespace/database/blocknum and dirty indicator.
  */
-PG_FUNCTION_INFO_V1(mdb_buffercache_pages);
+MDB_FUNCTION_INFO_V1(mdb_buffercache_pages);
 
 Datum
-mdb_buffercache_pages(PG_FUNCTION_ARGS)
+mdb_buffercache_pages(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Datum		result;

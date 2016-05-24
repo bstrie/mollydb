@@ -18,7 +18,7 @@ command_exit_is([ 'mdb_ctl', 'start', '-D', "$tempdir/nonexistent" ],
 
 command_ok([ 'mdb_ctl', 'initdb', '-D', "$tempdir/data", '-o', '-N' ],
 	'mdb_ctl initdb');
-command_ok([ $ENV{PG_REGRESS}, '--config-auth', "$tempdir/data" ],
+command_ok([ $ENV{MDB_REGRESS}, '--config-auth', "$tempdir/data" ],
 	'configure authentication');
 open CONF, ">>$tempdir/data/mollydb.conf";
 print CONF "fsync = off\n";

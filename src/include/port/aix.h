@@ -10,5 +10,5 @@
  * advantage of inlining, build a 64-bit MollyDB.
  */
 #if defined(__ILP32__) && defined(__IBMC__)
-#define PG_FORCE_DISABLE_INLINE
+#define MDB_FORCE_DISABLE_INLINE
 #endif

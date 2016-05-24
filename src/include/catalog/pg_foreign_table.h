@@ -14,8 +14,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_FOREIGN_TABLE_H
-#define PG_FOREIGN_TABLE_H
+#ifndef MDB_FOREIGN_TABLE_H
+#define MDB_FOREIGN_TABLE_H
 
 #include "catalog/genbki.h"
 
@@ -53,4 +53,4 @@ typedef FormData_mdb_foreign_table *Form_mdb_foreign_table;
 #define Anum_mdb_foreign_table_ftserver			2
 #define Anum_mdb_foreign_table_ftoptions			3
 
-#endif   /* PG_FOREIGN_TABLE_H */
+#endif   /* MDB_FOREIGN_TABLE_H */

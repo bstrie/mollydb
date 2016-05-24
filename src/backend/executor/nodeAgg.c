@@ -3679,7 +3679,7 @@ AggRegisterCallback(FunctionCallInfo fcinfo,
  * an aggregate?
  */
 Datum
-aggregate_dummy(PG_FUNCTION_ARGS)
+aggregate_dummy(MDB_FUNCTION_ARGS)
 {
 	elog(ERROR, "aggregate function %u called as normal function",
 		 fcinfo->flinfo->fn_oid);

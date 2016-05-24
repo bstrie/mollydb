@@ -29,8 +29,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_INIT_PRIVS_H
-#define PG_INIT_PRIVS_H
+#ifndef MDB_INIT_PRIVS_H
+#define MDB_INIT_PRIVS_H
 
 #include "catalog/genbki.h"
 
@@ -98,4 +98,4 @@ typedef enum InitPrivsType
  *	The initial contents are loaded near the end of initdb.
  */
 
-#endif   /* PG_INIT_PRIVS_H */
+#endif   /* MDB_INIT_PRIVS_H */

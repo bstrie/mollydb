@@ -77,11 +77,11 @@ static Pointer datum_write(Pointer ptr, Datum datum, bool typbyval,
  */
 
 Datum
-range_in(PG_FUNCTION_ARGS)
+range_in(MDB_FUNCTION_ARGS)
 {
-	char	   *input_str = PG_GETARG_CSTRING(0);
-	Oid			rngtypoid = PG_GETARG_OID(1);
-	Oid			typmod = PG_GETARG_INT32(2);
+	char	   *input_str = MDB_GETARG_CSTRING(0);
+	Oid			rngtypoid = MDB_GETARG_OID(1);
+	Oid			typmod = MDB_GETARG_INT32(2);
 	RangeType  *range;
 	RangeIOData *cache;
 	char		flags;
@@ -115,13 +115,13 @@ range_in(PG_FUNCTION_ARGS)
 	/* serialize and canonicalize */
 	range = make_range(cache->typcache, &lower, &upper, flags & RANGE_EMPTY);
 
-	PG_RETURN_RANGE(range);
+	MDB_RETURN_RANGE(range);
 }
 
 Datum
-range_out(PG_FUNCTION_ARGS)
+range_out(MDB_FUNCTION_ARGS)
 {
-	RangeType  *range = PG_GETARG_RANGE(0);
+	RangeType  *range = MDB_GETARG_RANGE(0);
 	char	   *output_str;
 	RangeIOData *cache;
 	char		flags;
@@ -148,7 +148,7 @@ range_out(PG_FUNCTION_ARGS)
 	/* construct result string */
 	output_str = range_deparse(flags, lbound_str, ubound_str);
 
-	PG_RETURN_CSTRING(output_str);
+	MDB_RETURN_CSTRING(output_str);
 }
 
 /*
@@ -159,11 +159,11 @@ range_out(PG_FUNCTION_ARGS)
  */
 
 Datum
-range_recv(PG_FUNCTION_ARGS)
+range_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
-	Oid			rngtypoid = PG_GETARG_OID(1);
-	int32		typmod = PG_GETARG_INT32(2);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
+	Oid			rngtypoid = MDB_GETARG_OID(1);
+	int32		typmod = MDB_GETARG_INT32(2);
 	RangeType  *range;
 	RangeIOData *cache;
 	char		flags;
@@ -238,13 +238,13 @@ range_recv(PG_FUNCTION_ARGS)
 	/* serialize and canonicalize */
 	range = make_range(cache->typcache, &lower, &upper, flags & RANGE_EMPTY);
 
-	PG_RETURN_RANGE(range);
+	MDB_RETURN_RANGE(range);
 }
 
 Datum
-range_send(PG_FUNCTION_ARGS)
+range_send(MDB_FUNCTION_ARGS)
 {
-	RangeType  *range = PG_GETARG_RANGE(0);
+	RangeType  *range = MDB_GETARG_RANGE(0);
 	StringInfo	buf = makeStringInfo();
 	RangeIOData *cache;
 	char		flags;
@@ -287,7 +287,7 @@ range_send(PG_FUNCTION_ARGS)
 		pq_sendbytes(buf, bound_data, bound_len);
 	}
 
-	PG_RETURN_BYTEA_P(pq_endtypsend(buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(buf));
 }
 
 /*
@@ -357,10 +357,10 @@ get_range_io_data(FunctionCallInfo fcinfo, Oid rngtypid, IOFuncSelector func)
 
 /* Construct standard-form range value from two arguments */
 Datum
-range_constructor2(PG_FUNCTION_ARGS)
+range_constructor2(MDB_FUNCTION_ARGS)
 {
-	Datum		arg1 = PG_GETARG_DATUM(0);
-	Datum		arg2 = PG_GETARG_DATUM(1);
+	Datum		arg1 = MDB_GETARG_DATUM(0);
+	Datum		arg2 = MDB_GETARG_DATUM(1);
 	Oid			rngtypid = get_fn_expr_rettype(fcinfo->flinfo);
 	RangeType  *range;
 	TypeCacheEntry *typcache;
@@ -369,27 +369,27 @@ range_constructor2(PG_FUNCTION_ARGS)
 
 	typcache = range_get_typcache(fcinfo, rngtypid);
 
-	lower.val = PG_ARGISNULL(0) ? (Datum) 0 : arg1;
-	lower.infinite = PG_ARGISNULL(0);
+	lower.val = MDB_ARGISNULL(0) ? (Datum) 0 : arg1;
+	lower.infinite = MDB_ARGISNULL(0);
 	lower.inclusive = true;
 	lower.lower = true;
 
-	upper.val = PG_ARGISNULL(1) ? (Datum) 0 : arg2;
-	upper.infinite = PG_ARGISNULL(1);
+	upper.val = MDB_ARGISNULL(1) ? (Datum) 0 : arg2;
+	upper.infinite = MDB_ARGISNULL(1);
 	upper.inclusive = false;
 	upper.lower = false;
 
 	range = make_range(typcache, &lower, &upper, false);
 
-	PG_RETURN_RANGE(range);
+	MDB_RETURN_RANGE(range);
 }
 
 /* Construct general range value from three arguments */
 Datum
-range_constructor3(PG_FUNCTION_ARGS)
+range_constructor3(MDB_FUNCTION_ARGS)
 {
-	Datum		arg1 = PG_GETARG_DATUM(0);
-	Datum		arg2 = PG_GETARG_DATUM(1);
+	Datum		arg1 = MDB_GETARG_DATUM(0);
+	Datum		arg2 = MDB_GETARG_DATUM(1);
 	Oid			rngtypid = get_fn_expr_rettype(fcinfo->flinfo);
 	RangeType  *range;
 	TypeCacheEntry *typcache;
@@ -399,26 +399,26 @@ range_constructor3(PG_FUNCTION_ARGS)
 
 	typcache = range_get_typcache(fcinfo, rngtypid);
 
-	if (PG_ARGISNULL(2))
+	if (MDB_ARGISNULL(2))
 		ereport(ERROR,
 				(errcode(ERRCODE_DATA_EXCEPTION),
 			   errmsg("range constructor flags argument must not be null")));
 
-	flags = range_parse_flags(text_to_cstring(PG_GETARG_TEXT_P(2)));
+	flags = range_parse_flags(text_to_cstring(MDB_GETARG_TEXT_P(2)));
 
-	lower.val = PG_ARGISNULL(0) ? (Datum) 0 : arg1;
-	lower.infinite = PG_ARGISNULL(0);
+	lower.val = MDB_ARGISNULL(0) ? (Datum) 0 : arg1;
+	lower.infinite = MDB_ARGISNULL(0);
 	lower.inclusive = (flags & RANGE_LB_INC) != 0;
 	lower.lower = true;
 
-	upper.val = PG_ARGISNULL(1) ? (Datum) 0 : arg2;
-	upper.infinite = PG_ARGISNULL(1);
+	upper.val = MDB_ARGISNULL(1) ? (Datum) 0 : arg2;
+	upper.infinite = MDB_ARGISNULL(1);
 	upper.inclusive = (flags & RANGE_UB_INC) != 0;
 	upper.lower = false;
 
 	range = make_range(typcache, &lower, &upper, false);
 
-	PG_RETURN_RANGE(range);
+	MDB_RETURN_RANGE(range);
 }
 
 
@@ -426,9 +426,9 @@ range_constructor3(PG_FUNCTION_ARGS)
 
 /* extract lower bound value */
 Datum
-range_lower(PG_FUNCTION_ARGS)
+range_lower(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
 	TypeCacheEntry *typcache;
 	RangeBound	lower;
 	RangeBound	upper;
@@ -440,16 +440,16 @@ range_lower(PG_FUNCTION_ARGS)
 
 	/* Return NULL if there's no finite lower bound */
 	if (empty || lower.infinite)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(lower.val);
+	MDB_RETURN_DATUM(lower.val);
 }
 
 /* extract upper bound value */
 Datum
-range_upper(PG_FUNCTION_ARGS)
+range_upper(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
 	TypeCacheEntry *typcache;
 	RangeBound	lower;
 	RangeBound	upper;
@@ -461,9 +461,9 @@ range_upper(PG_FUNCTION_ARGS)
 
 	/* Return NULL if there's no finite upper bound */
 	if (empty || upper.infinite)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(upper.val);
+	MDB_RETURN_DATUM(upper.val);
 }
 
 
@@ -471,52 +471,52 @@ range_upper(PG_FUNCTION_ARGS)
 
 /* is range empty? */
 Datum
-range_empty(PG_FUNCTION_ARGS)
+range_empty(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
 	char		flags = range_get_flags(r1);
 
-	PG_RETURN_BOOL(flags & RANGE_EMPTY);
+	MDB_RETURN_BOOL(flags & RANGE_EMPTY);
 }
 
 /* is lower bound inclusive? */
 Datum
-range_lower_inc(PG_FUNCTION_ARGS)
+range_lower_inc(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
 	char		flags = range_get_flags(r1);
 
-	PG_RETURN_BOOL(flags & RANGE_LB_INC);
+	MDB_RETURN_BOOL(flags & RANGE_LB_INC);
 }
 
 /* is upper bound inclusive? */
 Datum
-range_upper_inc(PG_FUNCTION_ARGS)
+range_upper_inc(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
 	char		flags = range_get_flags(r1);
 
-	PG_RETURN_BOOL(flags & RANGE_UB_INC);
+	MDB_RETURN_BOOL(flags & RANGE_UB_INC);
 }
 
 /* is lower bound infinite? */
 Datum
-range_lower_inf(PG_FUNCTION_ARGS)
+range_lower_inf(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
 	char		flags = range_get_flags(r1);
 
-	PG_RETURN_BOOL(flags & RANGE_LB_INF);
+	MDB_RETURN_BOOL(flags & RANGE_LB_INF);
 }
 
 /* is upper bound infinite? */
 Datum
-range_upper_inf(PG_FUNCTION_ARGS)
+range_upper_inf(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
 	char		flags = range_get_flags(r1);
 
-	PG_RETURN_BOOL(flags & RANGE_UB_INF);
+	MDB_RETURN_BOOL(flags & RANGE_UB_INF);
 }
 
 
@@ -524,28 +524,28 @@ range_upper_inf(PG_FUNCTION_ARGS)
 
 /* contains? */
 Datum
-range_contains_elem(PG_FUNCTION_ARGS)
+range_contains_elem(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r = PG_GETARG_RANGE(0);
-	Datum		val = PG_GETARG_DATUM(1);
+	RangeType  *r = MDB_GETARG_RANGE(0);
+	Datum		val = MDB_GETARG_DATUM(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r));
 
-	PG_RETURN_BOOL(range_contains_elem_internal(typcache, r, val));
+	MDB_RETURN_BOOL(range_contains_elem_internal(typcache, r, val));
 }
 
 /* contained by? */
 Datum
-elem_contained_by_range(PG_FUNCTION_ARGS)
+elem_contained_by_range(MDB_FUNCTION_ARGS)
 {
-	Datum		val = PG_GETARG_DATUM(0);
-	RangeType  *r = PG_GETARG_RANGE(1);
+	Datum		val = MDB_GETARG_DATUM(0);
+	RangeType  *r = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r));
 
-	PG_RETURN_BOOL(range_contains_elem_internal(typcache, r, val));
+	MDB_RETURN_BOOL(range_contains_elem_internal(typcache, r, val));
 }
 
 
@@ -585,15 +585,15 @@ range_eq_internal(TypeCacheEntry *typcache, RangeType *r1, RangeType *r2)
 
 /* equality */
 Datum
-range_eq(PG_FUNCTION_ARGS)
+range_eq(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_eq_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_eq_internal(typcache, r1, r2));
 }
 
 /* inequality (internal version) */
@@ -605,41 +605,41 @@ range_ne_internal(TypeCacheEntry *typcache, RangeType *r1, RangeType *r2)
 
 /* inequality */
 Datum
-range_ne(PG_FUNCTION_ARGS)
+range_ne(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_ne_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_ne_internal(typcache, r1, r2));
 }
 
 /* contains? */
 Datum
-range_contains(PG_FUNCTION_ARGS)
+range_contains(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_contains_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_contains_internal(typcache, r1, r2));
 }
 
 /* contained by? */
 Datum
-range_contained_by(PG_FUNCTION_ARGS)
+range_contained_by(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_contained_by_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_contained_by_internal(typcache, r1, r2));
 }
 
 /* strictly left of? (internal version) */
@@ -669,15 +669,15 @@ range_before_internal(TypeCacheEntry *typcache, RangeType *r1, RangeType *r2)
 
 /* strictly left of? */
 Datum
-range_before(PG_FUNCTION_ARGS)
+range_before(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_before_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_before_internal(typcache, r1, r2));
 }
 
 /* strictly right of? (internal version) */
@@ -707,15 +707,15 @@ range_after_internal(TypeCacheEntry *typcache, RangeType *r1, RangeType *r2)
 
 /* strictly right of? */
 Datum
-range_after(PG_FUNCTION_ARGS)
+range_after(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_after_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_after_internal(typcache, r1, r2));
 }
 
 /*
@@ -808,15 +808,15 @@ range_adjacent_internal(TypeCacheEntry *typcache, RangeType *r1, RangeType *r2)
 
 /* adjacent to (but not overlapping)? */
 Datum
-range_adjacent(PG_FUNCTION_ARGS)
+range_adjacent(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_adjacent_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_adjacent_internal(typcache, r1, r2));
 }
 
 /* overlaps? (internal version) */
@@ -854,15 +854,15 @@ range_overlaps_internal(TypeCacheEntry *typcache, RangeType *r1, RangeType *r2)
 
 /* overlaps? */
 Datum
-range_overlaps(PG_FUNCTION_ARGS)
+range_overlaps(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_overlaps_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_overlaps_internal(typcache, r1, r2));
 }
 
 /* does not extend to right of? (internal version) */
@@ -895,15 +895,15 @@ range_overleft_internal(TypeCacheEntry *typcache, RangeType *r1, RangeType *r2)
 
 /* does not extend to right of? */
 Datum
-range_overleft(PG_FUNCTION_ARGS)
+range_overleft(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_overleft_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_overleft_internal(typcache, r1, r2));
 }
 
 /* does not extend to left of? (internal version) */
@@ -936,15 +936,15 @@ range_overright_internal(TypeCacheEntry *typcache, RangeType *r1, RangeType *r2)
 
 /* does not extend to left of? */
 Datum
-range_overright(PG_FUNCTION_ARGS)
+range_overright(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_BOOL(range_overright_internal(typcache, r1, r2));
+	MDB_RETURN_BOOL(range_overright_internal(typcache, r1, r2));
 }
 
 
@@ -952,10 +952,10 @@ range_overright(PG_FUNCTION_ARGS)
 
 /* set difference */
 Datum
-range_minus(PG_FUNCTION_ARGS)
+range_minus(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 	RangeBound	lower1,
 				lower2;
@@ -979,7 +979,7 @@ range_minus(PG_FUNCTION_ARGS)
 
 	/* if either is empty, r1 is the correct answer */
 	if (empty1 || empty2)
-		PG_RETURN_RANGE(r1);
+		MDB_RETURN_RANGE(r1);
 
 	cmp_l1l2 = range_cmp_bounds(typcache, &lower1, &lower2);
 	cmp_l1u2 = range_cmp_bounds(typcache, &lower1, &upper2);
@@ -992,27 +992,27 @@ range_minus(PG_FUNCTION_ARGS)
 			  errmsg("result of range difference would not be contiguous")));
 
 	if (cmp_l1u2 > 0 || cmp_u1l2 < 0)
-		PG_RETURN_RANGE(r1);
+		MDB_RETURN_RANGE(r1);
 
 	if (cmp_l1l2 >= 0 && cmp_u1u2 <= 0)
-		PG_RETURN_RANGE(make_empty_range(typcache));
+		MDB_RETURN_RANGE(make_empty_range(typcache));
 
 	if (cmp_l1l2 <= 0 && cmp_u1l2 >= 0 && cmp_u1u2 <= 0)
 	{
 		lower2.inclusive = !lower2.inclusive;
 		lower2.lower = false;	/* it will become the upper bound */
-		PG_RETURN_RANGE(make_range(typcache, &lower1, &lower2, false));
+		MDB_RETURN_RANGE(make_range(typcache, &lower1, &lower2, false));
 	}
 
 	if (cmp_l1l2 >= 0 && cmp_u1u2 >= 0 && cmp_l1u2 <= 0)
 	{
 		upper2.inclusive = !upper2.inclusive;
 		upper2.lower = true;	/* it will become the lower bound */
-		PG_RETURN_RANGE(make_range(typcache, &upper2, &upper1, false));
+		MDB_RETURN_RANGE(make_range(typcache, &upper2, &upper1, false));
 	}
 
 	elog(ERROR, "unexpected case in range_minus");
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 /*
@@ -1066,15 +1066,15 @@ range_union_internal(TypeCacheEntry *typcache, RangeType *r1, RangeType *r2,
 }
 
 Datum
-range_union(PG_FUNCTION_ARGS)
+range_union(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_RANGE(range_union_internal(typcache, r1, r2, true));
+	MDB_RETURN_RANGE(range_union_internal(typcache, r1, r2, true));
 }
 
 /*
@@ -1082,23 +1082,23 @@ range_union(PG_FUNCTION_ARGS)
  * input ranges.
  */
 Datum
-range_merge(PG_FUNCTION_ARGS)
+range_merge(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(r1));
 
-	PG_RETURN_RANGE(range_union_internal(typcache, r1, r2, false));
+	MDB_RETURN_RANGE(range_union_internal(typcache, r1, r2, false));
 }
 
 /* set intersection */
 Datum
-range_intersect(PG_FUNCTION_ARGS)
+range_intersect(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 	RangeBound	lower1,
 				lower2;
@@ -1119,7 +1119,7 @@ range_intersect(PG_FUNCTION_ARGS)
 	range_deserialize(typcache, r2, &lower2, &upper2, &empty2);
 
 	if (empty1 || empty2 || !DatumGetBool(range_overlaps(fcinfo)))
-		PG_RETURN_RANGE(make_empty_range(typcache));
+		MDB_RETURN_RANGE(make_empty_range(typcache));
 
 	if (range_cmp_bounds(typcache, &lower1, &lower2) >= 0)
 		result_lower = &lower1;
@@ -1131,17 +1131,17 @@ range_intersect(PG_FUNCTION_ARGS)
 	else
 		result_upper = &upper2;
 
-	PG_RETURN_RANGE(make_range(typcache, result_lower, result_upper, false));
+	MDB_RETURN_RANGE(make_range(typcache, result_lower, result_upper, false));
 }
 
 /* Btree support */
 
 /* btree comparator */
 Datum
-range_cmp(PG_FUNCTION_ARGS)
+range_cmp(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
 	TypeCacheEntry *typcache;
 	RangeBound	lower1,
 				lower2;
@@ -1176,52 +1176,52 @@ range_cmp(PG_FUNCTION_ARGS)
 			cmp = range_cmp_bounds(typcache, &upper1, &upper2);
 	}
 
-	PG_FREE_IF_COPY(r1, 0);
-	PG_FREE_IF_COPY(r2, 1);
+	MDB_FREE_IF_COPY(r1, 0);
+	MDB_FREE_IF_COPY(r2, 1);
 
-	PG_RETURN_INT32(cmp);
+	MDB_RETURN_INT32(cmp);
 }
 
 /* inequality operators using the range_cmp function */
 Datum
-range_lt(PG_FUNCTION_ARGS)
+range_lt(MDB_FUNCTION_ARGS)
 {
 	int			cmp = range_cmp(fcinfo);
 
-	PG_RETURN_BOOL(cmp < 0);
+	MDB_RETURN_BOOL(cmp < 0);
 }
 
 Datum
-range_le(PG_FUNCTION_ARGS)
+range_le(MDB_FUNCTION_ARGS)
 {
 	int			cmp = range_cmp(fcinfo);
 
-	PG_RETURN_BOOL(cmp <= 0);
+	MDB_RETURN_BOOL(cmp <= 0);
 }
 
 Datum
-range_ge(PG_FUNCTION_ARGS)
+range_ge(MDB_FUNCTION_ARGS)
 {
 	int			cmp = range_cmp(fcinfo);
 
-	PG_RETURN_BOOL(cmp >= 0);
+	MDB_RETURN_BOOL(cmp >= 0);
 }
 
 Datum
-range_gt(PG_FUNCTION_ARGS)
+range_gt(MDB_FUNCTION_ARGS)
 {
 	int			cmp = range_cmp(fcinfo);
 
-	PG_RETURN_BOOL(cmp > 0);
+	MDB_RETURN_BOOL(cmp > 0);
 }
 
 /* Hash support */
 
 /* hash a range value */
 Datum
-hash_range(PG_FUNCTION_ARGS)
+hash_range(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r = PG_GETARG_RANGE(0);
+	RangeType  *r = MDB_GETARG_RANGE(0);
 	uint32		result;
 	TypeCacheEntry *typcache;
 	TypeCacheEntry *scache;
@@ -1277,7 +1277,7 @@ hash_range(PG_FUNCTION_ARGS)
 	result = (result << 1) | (result >> 31);
 	result ^= upper_hash;
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /*
@@ -1289,9 +1289,9 @@ hash_range(PG_FUNCTION_ARGS)
  */
 
 Datum
-int4range_canonical(PG_FUNCTION_ARGS)
+int4range_canonical(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r = PG_GETARG_RANGE(0);
+	RangeType  *r = MDB_GETARG_RANGE(0);
 	TypeCacheEntry *typcache;
 	RangeBound	lower;
 	RangeBound	upper;
@@ -1302,7 +1302,7 @@ int4range_canonical(PG_FUNCTION_ARGS)
 	range_deserialize(typcache, r, &lower, &upper, &empty);
 
 	if (empty)
-		PG_RETURN_RANGE(r);
+		MDB_RETURN_RANGE(r);
 
 	if (!lower.infinite && !lower.inclusive)
 	{
@@ -1316,13 +1316,13 @@ int4range_canonical(PG_FUNCTION_ARGS)
 		upper.inclusive = false;
 	}
 
-	PG_RETURN_RANGE(range_serialize(typcache, &lower, &upper, false));
+	MDB_RETURN_RANGE(range_serialize(typcache, &lower, &upper, false));
 }
 
 Datum
-int8range_canonical(PG_FUNCTION_ARGS)
+int8range_canonical(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r = PG_GETARG_RANGE(0);
+	RangeType  *r = MDB_GETARG_RANGE(0);
 	TypeCacheEntry *typcache;
 	RangeBound	lower;
 	RangeBound	upper;
@@ -1333,7 +1333,7 @@ int8range_canonical(PG_FUNCTION_ARGS)
 	range_deserialize(typcache, r, &lower, &upper, &empty);
 
 	if (empty)
-		PG_RETURN_RANGE(r);
+		MDB_RETURN_RANGE(r);
 
 	if (!lower.infinite && !lower.inclusive)
 	{
@@ -1347,13 +1347,13 @@ int8range_canonical(PG_FUNCTION_ARGS)
 		upper.inclusive = false;
 	}
 
-	PG_RETURN_RANGE(range_serialize(typcache, &lower, &upper, false));
+	MDB_RETURN_RANGE(range_serialize(typcache, &lower, &upper, false));
 }
 
 Datum
-daterange_canonical(PG_FUNCTION_ARGS)
+daterange_canonical(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r = PG_GETARG_RANGE(0);
+	RangeType  *r = MDB_GETARG_RANGE(0);
 	TypeCacheEntry *typcache;
 	RangeBound	lower;
 	RangeBound	upper;
@@ -1364,7 +1364,7 @@ daterange_canonical(PG_FUNCTION_ARGS)
 	range_deserialize(typcache, r, &lower, &upper, &empty);
 
 	if (empty)
-		PG_RETURN_RANGE(r);
+		MDB_RETURN_RANGE(r);
 
 	if (!lower.infinite && !lower.inclusive)
 	{
@@ -1378,7 +1378,7 @@ daterange_canonical(PG_FUNCTION_ARGS)
 		upper.inclusive = false;
 	}
 
-	PG_RETURN_RANGE(range_serialize(typcache, &lower, &upper, false));
+	MDB_RETURN_RANGE(range_serialize(typcache, &lower, &upper, false));
 }
 
 /*
@@ -1394,28 +1394,28 @@ daterange_canonical(PG_FUNCTION_ARGS)
  */
 
 Datum
-int4range_subdiff(PG_FUNCTION_ARGS)
+int4range_subdiff(MDB_FUNCTION_ARGS)
 {
-	int32		v1 = PG_GETARG_INT32(0);
-	int32		v2 = PG_GETARG_INT32(1);
+	int32		v1 = MDB_GETARG_INT32(0);
+	int32		v2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_FLOAT8((float8) v1 - (float8) v2);
+	MDB_RETURN_FLOAT8((float8) v1 - (float8) v2);
 }
 
 Datum
-int8range_subdiff(PG_FUNCTION_ARGS)
+int8range_subdiff(MDB_FUNCTION_ARGS)
 {
-	int64		v1 = PG_GETARG_INT64(0);
-	int64		v2 = PG_GETARG_INT64(1);
+	int64		v1 = MDB_GETARG_INT64(0);
+	int64		v2 = MDB_GETARG_INT64(1);
 
-	PG_RETURN_FLOAT8((float8) v1 - (float8) v2);
+	MDB_RETURN_FLOAT8((float8) v1 - (float8) v2);
 }
 
 Datum
-numrange_subdiff(PG_FUNCTION_ARGS)
+numrange_subdiff(MDB_FUNCTION_ARGS)
 {
-	Datum		v1 = PG_GETARG_DATUM(0);
-	Datum		v2 = PG_GETARG_DATUM(1);
+	Datum		v1 = MDB_GETARG_DATUM(0);
+	Datum		v2 = MDB_GETARG_DATUM(1);
 	Datum		numresult;
 	float8		floatresult;
 
@@ -1424,23 +1424,23 @@ numrange_subdiff(PG_FUNCTION_ARGS)
 	floatresult = DatumGetFloat8(DirectFunctionCall1(numeric_float8,
 													 numresult));
 
-	PG_RETURN_FLOAT8(floatresult);
+	MDB_RETURN_FLOAT8(floatresult);
 }
 
 Datum
-daterange_subdiff(PG_FUNCTION_ARGS)
+daterange_subdiff(MDB_FUNCTION_ARGS)
 {
-	int32		v1 = PG_GETARG_INT32(0);
-	int32		v2 = PG_GETARG_INT32(1);
+	int32		v1 = MDB_GETARG_INT32(0);
+	int32		v2 = MDB_GETARG_INT32(1);
 
-	PG_RETURN_FLOAT8((float8) v1 - (float8) v2);
+	MDB_RETURN_FLOAT8((float8) v1 - (float8) v2);
 }
 
 Datum
-tsrange_subdiff(PG_FUNCTION_ARGS)
+tsrange_subdiff(MDB_FUNCTION_ARGS)
 {
-	Timestamp	v1 = PG_GETARG_TIMESTAMP(0);
-	Timestamp	v2 = PG_GETARG_TIMESTAMP(1);
+	Timestamp	v1 = MDB_GETARG_TIMESTAMP(0);
+	Timestamp	v2 = MDB_GETARG_TIMESTAMP(1);
 	float8		result;
 
 #ifdef HAVE_INT64_TIMESTAMP
@@ -1449,14 +1449,14 @@ tsrange_subdiff(PG_FUNCTION_ARGS)
 	result = v1 - v2;
 #endif
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 Datum
-tstzrange_subdiff(PG_FUNCTION_ARGS)
+tstzrange_subdiff(MDB_FUNCTION_ARGS)
 {
-	Timestamp	v1 = PG_GETARG_TIMESTAMP(0);
-	Timestamp	v2 = PG_GETARG_TIMESTAMP(1);
+	Timestamp	v1 = MDB_GETARG_TIMESTAMP(0);
+	Timestamp	v2 = MDB_GETARG_TIMESTAMP(1);
 	float8		result;
 
 #ifdef HAVE_INT64_TIMESTAMP
@@ -1465,7 +1465,7 @@ tstzrange_subdiff(PG_FUNCTION_ARGS)
 	result = v1 - v2;
 #endif
 
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 
 /*
@@ -1582,7 +1582,7 @@ range_serialize(TypeCacheEntry *typcache, RangeBound *lower, RangeBound *upper,
 		 * short-header varlena objects to stay as-is.
 		 */
 		if (typlen == -1)
-			lower->val = PointerGetDatum(PG_DETOAST_DATUM_PACKED(lower->val));
+			lower->val = PointerGetDatum(MDB_DETOAST_DATUM_PACKED(lower->val));
 
 		msize = datum_compute_size(msize, lower->val, typbyval, typalign,
 								   typlen, typstorage);
@@ -1592,7 +1592,7 @@ range_serialize(TypeCacheEntry *typcache, RangeBound *lower, RangeBound *upper,
 	{
 		/* Make sure item to be inserted is not toasted */
 		if (typlen == -1)
-			upper->val = PointerGetDatum(PG_DETOAST_DATUM_PACKED(upper->val));
+			upper->val = PointerGetDatum(MDB_DETOAST_DATUM_PACKED(upper->val));
 
 		msize = datum_compute_size(msize, upper->val, typbyval, typalign,
 								   typlen, typstorage);

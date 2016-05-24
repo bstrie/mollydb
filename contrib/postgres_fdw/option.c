@@ -59,13 +59,13 @@ static bool is_libpq_option(const char *keyword);
  *
  * Raise an ERROR if the option or its value is considered invalid.
  */
-PG_FUNCTION_INFO_V1(mollydb_fdw_validator);
+MDB_FUNCTION_INFO_V1(mollydb_fdw_validator);
 
 Datum
-mollydb_fdw_validator(PG_FUNCTION_ARGS)
+mollydb_fdw_validator(MDB_FUNCTION_ARGS)
 {
-	List	   *options_list = untransformRelOptions(PG_GETARG_DATUM(0));
-	Oid			catalog = PG_GETARG_OID(1);
+	List	   *options_list = untransformRelOptions(MDB_GETARG_DATUM(0));
+	Oid			catalog = MDB_GETARG_OID(1);
 	ListCell   *cell;
 
 	/* Build our options lists if we didn't yet. */
@@ -144,7 +144,7 @@ mollydb_fdw_validator(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*

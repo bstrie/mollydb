@@ -479,7 +479,7 @@ PortalStart(Portal portal, ParamListInfo params,
 	saveActivePortal = ActivePortal;
 	saveResourceOwner = CurrentResourceOwner;
 	savePortalContext = PortalContext;
-	PG_TRY();
+	MDB_TRY();
 	{
 		ActivePortal = portal;
 		if (portal->resowner)
@@ -608,7 +608,7 @@ PortalStart(Portal portal, ParamListInfo params,
 				break;
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Uncaught error while executing portal: mark it dead */
 		MarkPortalFailed(portal);
@@ -618,9 +618,9 @@ PortalStart(Portal portal, ParamListInfo params,
 		CurrentResourceOwner = saveResourceOwner;
 		PortalContext = savePortalContext;
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	MemoryContextSwitchTo(oldContext);
 
@@ -757,7 +757,7 @@ PortalRun(Portal portal, long count, bool isTopLevel,
 	saveResourceOwner = CurrentResourceOwner;
 	savePortalContext = PortalContext;
 	saveMemoryContext = CurrentMemoryContext;
-	PG_TRY();
+	MDB_TRY();
 	{
 		ActivePortal = portal;
 		if (portal->resowner)
@@ -827,7 +827,7 @@ PortalRun(Portal portal, long count, bool isTopLevel,
 				break;
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Uncaught error while executing portal: mark it dead */
 		MarkPortalFailed(portal);
@@ -844,9 +844,9 @@ PortalRun(Portal portal, long count, bool isTopLevel,
 			CurrentResourceOwner = saveResourceOwner;
 		PortalContext = savePortalContext;
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (saveMemoryContext == saveTopTransactionContext)
 		MemoryContextSwitchTo(TopTransactionContext);
@@ -1398,7 +1398,7 @@ PortalRunFetch(Portal portal,
 	saveActivePortal = ActivePortal;
 	saveResourceOwner = CurrentResourceOwner;
 	savePortalContext = PortalContext;
-	PG_TRY();
+	MDB_TRY();
 	{
 		ActivePortal = portal;
 		if (portal->resowner)
@@ -1436,7 +1436,7 @@ PortalRunFetch(Portal portal,
 				break;
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Uncaught error while executing portal: mark it dead */
 		MarkPortalFailed(portal);
@@ -1446,9 +1446,9 @@ PortalRunFetch(Portal portal,
 		CurrentResourceOwner = saveResourceOwner;
 		PortalContext = savePortalContext;
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	MemoryContextSwitchTo(oldContext);
 

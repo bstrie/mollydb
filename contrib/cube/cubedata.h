@@ -43,9 +43,9 @@ typedef struct NDBOX
 #define POINT_SIZE(_dim)	(offsetof(NDBOX, x) + sizeof(double)*(_dim))
 #define CUBE_SIZE(_dim)		(offsetof(NDBOX, x) + sizeof(double)*(_dim)*2)
 
-#define DatumGetNDBOX(x)	((NDBOX *) PG_DETOAST_DATUM(x))
-#define PG_GETARG_NDBOX(x)	DatumGetNDBOX(PG_GETARG_DATUM(x))
-#define PG_RETURN_NDBOX(x)	PG_RETURN_POINTER(x)
+#define DatumGetNDBOX(x)	((NDBOX *) MDB_DETOAST_DATUM(x))
+#define MDB_GETARG_NDBOX(x)	DatumGetNDBOX(MDB_GETARG_DATUM(x))
+#define MDB_RETURN_NDBOX(x)	MDB_RETURN_POINTER(x)
 
 #define CubeKNNDistanceCoord			15		/* ~> */
 #define CubeKNNDistanceTaxicab			16		/* <#> */

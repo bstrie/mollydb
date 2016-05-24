@@ -15,20 +15,20 @@
 #include "tcop/utility.h"
 #include "utils/builtins.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(get_command_type);
-PG_FUNCTION_INFO_V1(get_command_tag);
-PG_FUNCTION_INFO_V1(get_altertable_subcmdtypes);
+MDB_FUNCTION_INFO_V1(get_command_type);
+MDB_FUNCTION_INFO_V1(get_command_tag);
+MDB_FUNCTION_INFO_V1(get_altertable_subcmdtypes);
 
 /*
  * Return the textual representation of the struct type used to represent a
  * command in struct CollectedCommand format.
  */
 Datum
-get_command_type(PG_FUNCTION_ARGS)
+get_command_type(MDB_FUNCTION_ARGS)
 {
-	CollectedCommand *cmd = (CollectedCommand *) PG_GETARG_POINTER(0);
+	CollectedCommand *cmd = (CollectedCommand *) MDB_GETARG_POINTER(0);
 	const char *type;
 
 	switch (cmd->type)
@@ -59,7 +59,7 @@ get_command_type(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(type));
+	MDB_RETURN_TEXT_P(cstring_to_text(type));
 }
 
 /*
@@ -67,14 +67,14 @@ get_command_type(PG_FUNCTION_ARGS)
  * CollectedCommand struct.
  */
 Datum
-get_command_tag(PG_FUNCTION_ARGS)
+get_command_tag(MDB_FUNCTION_ARGS)
 {
-	CollectedCommand *cmd = (CollectedCommand *) PG_GETARG_POINTER(0);
+	CollectedCommand *cmd = (CollectedCommand *) MDB_GETARG_POINTER(0);
 
 	if (!cmd->parsetree)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_TEXT_P(cstring_to_text(CreateCommandTag(cmd->parsetree)));
+	MDB_RETURN_TEXT_P(cstring_to_text(CreateCommandTag(cmd->parsetree)));
 }
 
 /*
@@ -82,9 +82,9 @@ get_command_tag(PG_FUNCTION_ARGS)
  * command.
  */
 Datum
-get_altertable_subcmdtypes(PG_FUNCTION_ARGS)
+get_altertable_subcmdtypes(MDB_FUNCTION_ARGS)
 {
-	CollectedCommand *cmd = (CollectedCommand *) PG_GETARG_POINTER(0);
+	CollectedCommand *cmd = (CollectedCommand *) MDB_GETARG_POINTER(0);
 	ArrayBuildState *astate = NULL;
 	ListCell   *cell;
 
@@ -297,5 +297,5 @@ get_altertable_subcmdtypes(PG_FUNCTION_ARGS)
 	if (astate == NULL)
 		elog(ERROR, "empty alter table subcommand list");
 
-	PG_RETURN_ARRAYTYPE_P(makeArrayResult(astate, CurrentMemoryContext));
+	MDB_RETURN_ARRAYTYPE_P(makeArrayResult(astate, CurrentMemoryContext));
 }

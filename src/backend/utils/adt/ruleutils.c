@@ -462,25 +462,25 @@ static char *flatten_reloptions(Oid relid);
  * ----------
  */
 Datum
-mdb_get_ruledef(PG_FUNCTION_ARGS)
+mdb_get_ruledef(MDB_FUNCTION_ARGS)
 {
-	Oid			ruleoid = PG_GETARG_OID(0);
+	Oid			ruleoid = MDB_GETARG_OID(0);
 	int			prettyFlags;
 
 	prettyFlags = PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_ruledef_worker(ruleoid, prettyFlags)));
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_ruledef_worker(ruleoid, prettyFlags)));
 }
 
 
 Datum
-mdb_get_ruledef_ext(PG_FUNCTION_ARGS)
+mdb_get_ruledef_ext(MDB_FUNCTION_ARGS)
 {
-	Oid			ruleoid = PG_GETARG_OID(0);
-	bool		pretty = PG_GETARG_BOOL(1);
+	Oid			ruleoid = MDB_GETARG_OID(0);
+	bool		pretty = MDB_GETARG_BOOL(1);
 	int			prettyFlags;
 
 	prettyFlags = pretty ? PRETTYFLAG_PAREN | PRETTYFLAG_INDENT : PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_ruledef_worker(ruleoid, prettyFlags)));
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_ruledef_worker(ruleoid, prettyFlags)));
 }
 
 
@@ -559,47 +559,47 @@ mdb_get_ruledef_worker(Oid ruleoid, int prettyFlags)
  * ----------
  */
 Datum
-mdb_get_viewdef(PG_FUNCTION_ARGS)
+mdb_get_viewdef(MDB_FUNCTION_ARGS)
 {
 	/* By OID */
-	Oid			viewoid = PG_GETARG_OID(0);
+	Oid			viewoid = MDB_GETARG_OID(0);
 	int			prettyFlags;
 
 	prettyFlags = PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
 }
 
 
 Datum
-mdb_get_viewdef_ext(PG_FUNCTION_ARGS)
+mdb_get_viewdef_ext(MDB_FUNCTION_ARGS)
 {
 	/* By OID */
-	Oid			viewoid = PG_GETARG_OID(0);
-	bool		pretty = PG_GETARG_BOOL(1);
+	Oid			viewoid = MDB_GETARG_OID(0);
+	bool		pretty = MDB_GETARG_BOOL(1);
 	int			prettyFlags;
 
 	prettyFlags = pretty ? PRETTYFLAG_PAREN | PRETTYFLAG_INDENT : PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
 }
 
 Datum
-mdb_get_viewdef_wrap(PG_FUNCTION_ARGS)
+mdb_get_viewdef_wrap(MDB_FUNCTION_ARGS)
 {
 	/* By OID */
-	Oid			viewoid = PG_GETARG_OID(0);
-	int			wrap = PG_GETARG_INT32(1);
+	Oid			viewoid = MDB_GETARG_OID(0);
+	int			wrap = MDB_GETARG_INT32(1);
 	int			prettyFlags;
 
 	/* calling this implies we want pretty printing */
 	prettyFlags = PRETTYFLAG_PAREN | PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, wrap)));
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, wrap)));
 }
 
 Datum
-mdb_get_viewdef_name(PG_FUNCTION_ARGS)
+mdb_get_viewdef_name(MDB_FUNCTION_ARGS)
 {
 	/* By qualified name */
-	text	   *viewname = PG_GETARG_TEXT_P(0);
+	text	   *viewname = MDB_GETARG_TEXT_P(0);
 	int			prettyFlags;
 	RangeVar   *viewrel;
 	Oid			viewoid;
@@ -610,16 +610,16 @@ mdb_get_viewdef_name(PG_FUNCTION_ARGS)
 	viewrel = makeRangeVarFromNameList(textToQualifiedNameList(viewname));
 	viewoid = RangeVarGetRelid(viewrel, NoLock, false);
 
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
 }
 
 
 Datum
-mdb_get_viewdef_name_ext(PG_FUNCTION_ARGS)
+mdb_get_viewdef_name_ext(MDB_FUNCTION_ARGS)
 {
 	/* By qualified name */
-	text	   *viewname = PG_GETARG_TEXT_P(0);
-	bool		pretty = PG_GETARG_BOOL(1);
+	text	   *viewname = MDB_GETARG_TEXT_P(0);
+	bool		pretty = MDB_GETARG_BOOL(1);
 	int			prettyFlags;
 	RangeVar   *viewrel;
 	Oid			viewoid;
@@ -630,7 +630,7 @@ mdb_get_viewdef_name_ext(PG_FUNCTION_ARGS)
 	viewrel = makeRangeVarFromNameList(textToQualifiedNameList(viewname));
 	viewoid = RangeVarGetRelid(viewrel, NoLock, false);
 
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
 }
 
 /*
@@ -712,20 +712,20 @@ mdb_get_viewdef_worker(Oid viewoid, int prettyFlags, int wrapColumn)
  * ----------
  */
 Datum
-mdb_get_triggerdef(PG_FUNCTION_ARGS)
+mdb_get_triggerdef(MDB_FUNCTION_ARGS)
 {
-	Oid			trigid = PG_GETARG_OID(0);
+	Oid			trigid = MDB_GETARG_OID(0);
 
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_triggerdef_worker(trigid, false)));
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_triggerdef_worker(trigid, false)));
 }
 
 Datum
-mdb_get_triggerdef_ext(PG_FUNCTION_ARGS)
+mdb_get_triggerdef_ext(MDB_FUNCTION_ARGS)
 {
-	Oid			trigid = PG_GETARG_OID(0);
-	bool		pretty = PG_GETARG_BOOL(1);
+	Oid			trigid = MDB_GETARG_OID(0);
+	bool		pretty = MDB_GETARG_BOOL(1);
 
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_triggerdef_worker(trigid, pretty)));
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_triggerdef_worker(trigid, pretty)));
 }
 
 static char *
@@ -964,28 +964,28 @@ mdb_get_triggerdef_worker(Oid trigid, bool pretty)
  * ----------
  */
 Datum
-mdb_get_indexdef(PG_FUNCTION_ARGS)
+mdb_get_indexdef(MDB_FUNCTION_ARGS)
 {
-	Oid			indexrelid = PG_GETARG_OID(0);
+	Oid			indexrelid = MDB_GETARG_OID(0);
 	int			prettyFlags;
 
 	prettyFlags = PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_indexdef_worker(indexrelid, 0,
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_indexdef_worker(indexrelid, 0,
 														   NULL,
 														   false, false,
 														   prettyFlags)));
 }
 
 Datum
-mdb_get_indexdef_ext(PG_FUNCTION_ARGS)
+mdb_get_indexdef_ext(MDB_FUNCTION_ARGS)
 {
-	Oid			indexrelid = PG_GETARG_OID(0);
-	int32		colno = PG_GETARG_INT32(1);
-	bool		pretty = PG_GETARG_BOOL(2);
+	Oid			indexrelid = MDB_GETARG_OID(0);
+	int32		colno = MDB_GETARG_INT32(1);
+	bool		pretty = MDB_GETARG_BOOL(2);
 	int			prettyFlags;
 
 	prettyFlags = pretty ? PRETTYFLAG_PAREN | PRETTYFLAG_INDENT : PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_indexdef_worker(indexrelid, colno,
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_indexdef_worker(indexrelid, colno,
 														   NULL,
 														   colno != 0,
 														   false,
@@ -1305,26 +1305,26 @@ mdb_get_indexdef_worker(Oid indexrelid, int colno,
  * appear after "ALTER TABLE ... ADD CONSTRAINT <constraintname>".
  */
 Datum
-mdb_get_constraintdef(PG_FUNCTION_ARGS)
+mdb_get_constraintdef(MDB_FUNCTION_ARGS)
 {
-	Oid			constraintId = PG_GETARG_OID(0);
+	Oid			constraintId = MDB_GETARG_OID(0);
 	int			prettyFlags;
 
 	prettyFlags = PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_constraintdef_worker(constraintId,
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_constraintdef_worker(constraintId,
 																false,
 															  prettyFlags)));
 }
 
 Datum
-mdb_get_constraintdef_ext(PG_FUNCTION_ARGS)
+mdb_get_constraintdef_ext(MDB_FUNCTION_ARGS)
 {
-	Oid			constraintId = PG_GETARG_OID(0);
-	bool		pretty = PG_GETARG_BOOL(1);
+	Oid			constraintId = MDB_GETARG_OID(0);
+	bool		pretty = MDB_GETARG_BOOL(1);
 	int			prettyFlags;
 
 	prettyFlags = pretty ? PRETTYFLAG_PAREN | PRETTYFLAG_INDENT : PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(mdb_get_constraintdef_worker(constraintId,
+	MDB_RETURN_TEXT_P(string_to_text(mdb_get_constraintdef_worker(constraintId,
 																false,
 															  prettyFlags)));
 }
@@ -1714,10 +1714,10 @@ decompile_column_index_array(Datum column_index_array, Oid relId,
  * ----------
  */
 Datum
-mdb_get_expr(PG_FUNCTION_ARGS)
+mdb_get_expr(MDB_FUNCTION_ARGS)
 {
-	text	   *expr = PG_GETARG_TEXT_P(0);
-	Oid			relid = PG_GETARG_OID(1);
+	text	   *expr = MDB_GETARG_TEXT_P(0);
+	Oid			relid = MDB_GETARG_OID(1);
 	int			prettyFlags;
 	char	   *relname;
 
@@ -1735,20 +1735,20 @@ mdb_get_expr(PG_FUNCTION_ARGS)
 		 * examining catalog entries for just-deleted relations.
 		 */
 		if (relname == NULL)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 	}
 	else
 		relname = NULL;
 
-	PG_RETURN_TEXT_P(mdb_get_expr_worker(expr, relid, relname, prettyFlags));
+	MDB_RETURN_TEXT_P(mdb_get_expr_worker(expr, relid, relname, prettyFlags));
 }
 
 Datum
-mdb_get_expr_ext(PG_FUNCTION_ARGS)
+mdb_get_expr_ext(MDB_FUNCTION_ARGS)
 {
-	text	   *expr = PG_GETARG_TEXT_P(0);
-	Oid			relid = PG_GETARG_OID(1);
-	bool		pretty = PG_GETARG_BOOL(2);
+	text	   *expr = MDB_GETARG_TEXT_P(0);
+	Oid			relid = MDB_GETARG_OID(1);
+	bool		pretty = MDB_GETARG_BOOL(2);
 	int			prettyFlags;
 	char	   *relname;
 
@@ -1760,12 +1760,12 @@ mdb_get_expr_ext(PG_FUNCTION_ARGS)
 		relname = get_rel_name(relid);
 		/* See notes above */
 		if (relname == NULL)
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 	}
 	else
 		relname = NULL;
 
-	PG_RETURN_TEXT_P(mdb_get_expr_worker(expr, relid, relname, prettyFlags));
+	MDB_RETURN_TEXT_P(mdb_get_expr_worker(expr, relid, relname, prettyFlags));
 }
 
 static text *
@@ -1804,9 +1804,9 @@ mdb_get_expr_worker(text *expr, Oid relid, const char *relname, int prettyFlags)
  * ----------
  */
 Datum
-mdb_get_userbyid(PG_FUNCTION_ARGS)
+mdb_get_userbyid(MDB_FUNCTION_ARGS)
 {
-	Oid			roleid = PG_GETARG_OID(0);
+	Oid			roleid = MDB_GETARG_OID(0);
 	Name		result;
 	HeapTuple	roletup;
 	Form_mdb_authid role_rec;
@@ -1830,7 +1830,7 @@ mdb_get_userbyid(PG_FUNCTION_ARGS)
 	else
 		sprintf(NameStr(*result), "unknown (OID=%u)", roleid);
 
-	PG_RETURN_NAME(result);
+	MDB_RETURN_NAME(result);
 }
 
 
@@ -1842,10 +1842,10 @@ mdb_get_userbyid(PG_FUNCTION_ARGS)
  *		is --- see documentation for reason.
  */
 Datum
-mdb_get_serial_sequence(PG_FUNCTION_ARGS)
+mdb_get_serial_sequence(MDB_FUNCTION_ARGS)
 {
-	text	   *tablename = PG_GETARG_TEXT_P(0);
-	text	   *columnname = PG_GETARG_TEXT_PP(1);
+	text	   *tablename = MDB_GETARG_TEXT_P(0);
+	text	   *columnname = MDB_GETARG_TEXT_PP(1);
 	RangeVar   *tablerv;
 	Oid			tableOid;
 	char	   *column;
@@ -1917,10 +1917,10 @@ mdb_get_serial_sequence(PG_FUNCTION_ARGS)
 
 		result = generate_qualified_relation_name(sequenceId);
 
-		PG_RETURN_TEXT_P(string_to_text(result));
+		MDB_RETURN_TEXT_P(string_to_text(result));
 	}
 
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 
@@ -1935,9 +1935,9 @@ mdb_get_serial_sequence(PG_FUNCTION_ARGS)
  * with "AS ", and no preceding line will look like that.
  */
 Datum
-mdb_get_functiondef(PG_FUNCTION_ARGS)
+mdb_get_functiondef(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	StringInfoData buf;
 	StringInfoData dq;
 	HeapTuple	proctup;
@@ -2115,7 +2115,7 @@ mdb_get_functiondef(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(proctup);
 
-	PG_RETURN_TEXT_P(string_to_text(buf.data));
+	MDB_RETURN_TEXT_P(string_to_text(buf.data));
 }
 
 /*
@@ -2125,9 +2125,9 @@ mdb_get_functiondef(PG_FUNCTION_ARGS)
  *		CREATE FUNCTION.
  */
 Datum
-mdb_get_function_arguments(PG_FUNCTION_ARGS)
+mdb_get_function_arguments(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	StringInfoData buf;
 	HeapTuple	proctup;
 
@@ -2141,7 +2141,7 @@ mdb_get_function_arguments(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(proctup);
 
-	PG_RETURN_TEXT_P(string_to_text(buf.data));
+	MDB_RETURN_TEXT_P(string_to_text(buf.data));
 }
 
 /*
@@ -2151,9 +2151,9 @@ mdb_get_function_arguments(PG_FUNCTION_ARGS)
  *		ALTER FUNCTION, etc.  In particular, don't print defaults.
  */
 Datum
-mdb_get_function_identity_arguments(PG_FUNCTION_ARGS)
+mdb_get_function_identity_arguments(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	StringInfoData buf;
 	HeapTuple	proctup;
 
@@ -2167,7 +2167,7 @@ mdb_get_function_identity_arguments(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(proctup);
 
-	PG_RETURN_TEXT_P(string_to_text(buf.data));
+	MDB_RETURN_TEXT_P(string_to_text(buf.data));
 }
 
 /*
@@ -2176,9 +2176,9 @@ mdb_get_function_identity_arguments(PG_FUNCTION_ARGS)
  *		This is what would appear after RETURNS in CREATE FUNCTION.
  */
 Datum
-mdb_get_function_result(PG_FUNCTION_ARGS)
+mdb_get_function_result(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
+	Oid			funcid = MDB_GETARG_OID(0);
 	StringInfoData buf;
 	HeapTuple	proctup;
 
@@ -2192,7 +2192,7 @@ mdb_get_function_result(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(proctup);
 
-	PG_RETURN_TEXT_P(string_to_text(buf.data));
+	MDB_RETURN_TEXT_P(string_to_text(buf.data));
 }
 
 /*
@@ -2419,10 +2419,10 @@ print_function_trftypes(StringInfo buf, HeapTuple proctup)
  * how information_schema.sql uses it.
  */
 Datum
-mdb_get_function_arg_default(PG_FUNCTION_ARGS)
+mdb_get_function_arg_default(MDB_FUNCTION_ARGS)
 {
-	Oid			funcid = PG_GETARG_OID(0);
-	int32		nth_arg = PG_GETARG_INT32(1);
+	Oid			funcid = MDB_GETARG_OID(0);
+	int32		nth_arg = MDB_GETARG_INT32(1);
 	HeapTuple	proctup;
 	Form_mdb_proc proc;
 	int			numargs;
@@ -2446,7 +2446,7 @@ mdb_get_function_arg_default(PG_FUNCTION_ARGS)
 	if (nth_arg < 1 || nth_arg > numargs || !is_input_argument(nth_arg - 1, argmodes))
 	{
 		ReleaseSysCache(proctup);
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	nth_inputarg = 0;
@@ -2460,7 +2460,7 @@ mdb_get_function_arg_default(PG_FUNCTION_ARGS)
 	if (isnull)
 	{
 		ReleaseSysCache(proctup);
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	str = TextDatumGetCString(proargdefaults);
@@ -2479,14 +2479,14 @@ mdb_get_function_arg_default(PG_FUNCTION_ARGS)
 	if (nth_default < 0 || nth_default >= list_length(argdefaults))
 	{
 		ReleaseSysCache(proctup);
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 	node = list_nth(argdefaults, nth_default);
 	str = deparse_expression(node, NIL, false, false);
 
 	ReleaseSysCache(proctup);
 
-	PG_RETURN_TEXT_P(string_to_text(str));
+	MDB_RETURN_TEXT_P(string_to_text(str));
 }
 
 

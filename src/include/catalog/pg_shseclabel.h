@@ -8,8 +8,8 @@
  *
  * -------------------------------------------------------------------------
  */
-#ifndef PG_SHSECLABEL_H
-#define PG_SHSECLABEL_H
+#ifndef MDB_SHSECLABEL_H
+#define MDB_SHSECLABEL_H
 
 #include "catalog/genbki.h"
 
@@ -44,4 +44,4 @@ typedef FormData_mdb_shseclabel *Form_mdb_shseclabel;
 #define Anum_mdb_shseclabel_provider		3
 #define Anum_mdb_shseclabel_label		4
 
-#endif   /* PG_SHSECLABEL_H */
+#endif   /* MDB_SHSECLABEL_H */

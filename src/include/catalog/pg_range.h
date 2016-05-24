@@ -19,8 +19,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_RANGE_H
-#define PG_RANGE_H
+#ifndef MDB_RANGE_H
+#define MDB_RANGE_H
 
 #include "catalog/genbki.h"
 
@@ -82,4 +82,4 @@ extern void RangeCreate(Oid rangeTypeOid, Oid rangeSubType, Oid rangeCollation,
 			RegProcedure rangeSubDiff);
 extern void RangeDelete(Oid rangeTypeOid);
 
-#endif   /* PG_RANGE_H */
+#endif   /* MDB_RANGE_H */

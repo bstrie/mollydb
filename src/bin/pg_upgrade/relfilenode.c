@@ -30,7 +30,7 @@ void
 transfer_all_new_tablespaces(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 							 char *old_pgdata, char *new_pgdata)
 {
-	mdb_log(PG_REPORT, "%s user relation files\n",
+	mdb_log(MDB_REPORT, "%s user relation files\n",
 	  user_opts.transfer_mode == TRANSFER_MODE_LINK ? "Linking" : "Copying");
 
 	/*
@@ -240,11 +240,11 @@ transfer_relfile(FileNameMap *map, const char *type_suffix, bool vm_must_add_fro
 		unlink(new_file);
 
 		/* Copying files might take some time, so give feedback. */
-		mdb_log(PG_STATUS, "%s", old_file);
+		mdb_log(MDB_STATUS, "%s", old_file);
 
 		if (user_opts.transfer_mode == TRANSFER_MODE_COPY)
 		{
-			mdb_log(PG_VERBOSE, "copying \"%s\" to \"%s\"\n", old_file, new_file);
+			mdb_log(MDB_VERBOSE, "copying \"%s\" to \"%s\"\n", old_file, new_file);
 
 			/* Rewrite visibility map if needed */
 			if (vm_must_add_frozenbit && (strcmp(type_suffix, "_vm") == 0))
@@ -258,7 +258,7 @@ transfer_relfile(FileNameMap *map, const char *type_suffix, bool vm_must_add_fro
 		}
 		else
 		{
-			mdb_log(PG_VERBOSE, "linking \"%s\" to \"%s\"\n", old_file, new_file);
+			mdb_log(MDB_VERBOSE, "linking \"%s\" to \"%s\"\n", old_file, new_file);
 
 			/* Rewrite visibility map if needed */
 			if (vm_must_add_frozenbit && (strcmp(type_suffix, "_vm") == 0))

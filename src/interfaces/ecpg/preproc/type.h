@@ -1,8 +1,8 @@
 /*
  * src/interfaces/ecpg/preproc/type.h
  */
-#ifndef _ECPG_PREPROC_TYPE_H
-#define _ECPG_PREPROC_TYPE_H
+#ifndef _ECMDB_PREPROC_TYPE_H
+#define _ECMDB_PREPROC_TYPE_H
 
 #include "ecpgtype.h"
 
@@ -195,4 +195,4 @@ struct fetch_desc
 	char	   *name;
 };
 
-#endif   /* _ECPG_PREPROC_TYPE_H */
+#endif   /* _ECMDB_PREPROC_TYPE_H */

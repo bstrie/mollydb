@@ -230,12 +230,12 @@ hstoreValidOldFormat(HStore *hs)
 
 
 /*
- * hstoreUpgrade: PG_DETOAST_DATUM plus support for conversion of old hstores
+ * hstoreUpgrade: MDB_DETOAST_DATUM plus support for conversion of old hstores
  */
 HStore *
 hstoreUpgrade(Datum orig)
 {
-	HStore	   *hs = (HStore *) PG_DETOAST_DATUM(orig);
+	HStore	   *hs = (HStore *) MDB_DETOAST_DATUM(orig);
 	int			valid_new;
 	int			valid_old;
 	bool		writable;
@@ -323,7 +323,7 @@ hstoreUpgrade(Datum orig)
 	 */
 
 	if (!writable)
-		hs = (HStore *) PG_DETOAST_DATUM_COPY(orig);
+		hs = (HStore *) MDB_DETOAST_DATUM_COPY(orig);
 
 	{
 		int			count = hs->size_;
@@ -356,13 +356,13 @@ hstoreUpgrade(Datum orig)
 }
 
 
-PG_FUNCTION_INFO_V1(hstore_version_diag);
+MDB_FUNCTION_INFO_V1(hstore_version_diag);
 Datum
-hstore_version_diag(PG_FUNCTION_ARGS)
+hstore_version_diag(MDB_FUNCTION_ARGS)
 {
-	HStore	   *hs = (HStore *) PG_DETOAST_DATUM(PG_GETARG_DATUM(0));
+	HStore	   *hs = (HStore *) MDB_DETOAST_DATUM(MDB_GETARG_DATUM(0));
 	int			valid_new = hstoreValidNewFormat(hs);
 	int			valid_old = hstoreValidOldFormat(hs);
 
-	PG_RETURN_INT32(valid_old * 10 + valid_new);
+	MDB_RETURN_INT32(valid_old * 10 + valid_new);
 }

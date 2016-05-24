@@ -8,27 +8,27 @@
 
 #include "_int.h"
 
-PG_FUNCTION_INFO_V1(ginint4_queryextract);
+MDB_FUNCTION_INFO_V1(ginint4_queryextract);
 
 Datum
-ginint4_queryextract(PG_FUNCTION_ARGS)
+ginint4_queryextract(MDB_FUNCTION_ARGS)
 {
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
-	StrategyNumber strategy = PG_GETARG_UINT16(2);
-	int32	   *searchMode = (int32 *) PG_GETARG_POINTER(6);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
+	StrategyNumber strategy = MDB_GETARG_UINT16(2);
+	int32	   *searchMode = (int32 *) MDB_GETARG_POINTER(6);
 	Datum	   *res = NULL;
 
 	*nentries = 0;
 
 	if (strategy == BooleanSearchStrategy)
 	{
-		QUERYTYPE  *query = PG_GETARG_QUERYTYPE_P(0);
+		QUERYTYPE  *query = MDB_GETARG_QUERYTYPE_P(0);
 		ITEM	   *items = GETQUERY(query);
 		int			i;
 
 		/* empty query must fail */
 		if (query->size <= 0)
-			PG_RETURN_POINTER(NULL);
+			MDB_RETURN_POINTER(NULL);
 
 		/*
 		 * If the query doesn't have any required primitive values (for
@@ -57,7 +57,7 @@ ginint4_queryextract(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		ArrayType  *query = PG_GETARG_ARRAYTYPE_P(0);
+		ArrayType  *query = MDB_GETARG_ARRAYTYPE_P(0);
 
 		CHECKARRVALID(query);
 		*nentries = ARRNELEMS(query);
@@ -102,20 +102,20 @@ ginint4_queryextract(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_POINTER(res);
+	MDB_RETURN_POINTER(res);
 }
 
-PG_FUNCTION_INFO_V1(ginint4_consistent);
+MDB_FUNCTION_INFO_V1(ginint4_consistent);
 
 Datum
-ginint4_consistent(PG_FUNCTION_ARGS)
+ginint4_consistent(MDB_FUNCTION_ARGS)
 {
-	bool	   *check = (bool *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
-	int32		nkeys = PG_GETARG_INT32(3);
+	bool	   *check = (bool *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
+	int32		nkeys = MDB_GETARG_INT32(3);
 
-	/* Pointer	   *extra_data = (Pointer *) PG_GETARG_POINTER(4); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(5);
+	/* Pointer	   *extra_data = (Pointer *) MDB_GETARG_POINTER(4); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(5);
 	bool		res = FALSE;
 	int32		i;
 
@@ -165,7 +165,7 @@ ginint4_consistent(PG_FUNCTION_ARGS)
 			break;
 		case BooleanSearchStrategy:
 			{
-				QUERYTYPE  *query = PG_GETARG_QUERYTYPE_P(2);
+				QUERYTYPE  *query = MDB_GETARG_QUERYTYPE_P(2);
 
 				/* result is not lossy */
 				*recheck = false;
@@ -177,5 +177,5 @@ ginint4_consistent(PG_FUNCTION_ARGS)
 				 strategy);
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }

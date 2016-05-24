@@ -166,7 +166,7 @@ fuzzy_open_file(const char *directory, const char *fname)
 		const char *datadir;
 
 		/* fname */
-		fd = open(fname, O_RDONLY | PG_BINARY, 0);
+		fd = open(fname, O_RDONLY | MDB_BINARY, 0);
 		if (fd < 0 && errno != ENOENT)
 			return -1;
 		else if (fd >= 0)
@@ -175,7 +175,7 @@ fuzzy_open_file(const char *directory, const char *fname)
 		/* XLOGDIR / fname */
 		snprintf(fpath, MAXPGPATH, "%s/%s",
 				 XLOGDIR, fname);
-		fd = open(fpath, O_RDONLY | PG_BINARY, 0);
+		fd = open(fpath, O_RDONLY | MDB_BINARY, 0);
 		if (fd < 0 && errno != ENOENT)
 			return -1;
 		else if (fd >= 0)
@@ -187,7 +187,7 @@ fuzzy_open_file(const char *directory, const char *fname)
 		{
 			snprintf(fpath, MAXPGPATH, "%s/%s/%s",
 					 datadir, XLOGDIR, fname);
-			fd = open(fpath, O_RDONLY | PG_BINARY, 0);
+			fd = open(fpath, O_RDONLY | MDB_BINARY, 0);
 			if (fd < 0 && errno != ENOENT)
 				return -1;
 			else if (fd >= 0)
@@ -199,7 +199,7 @@ fuzzy_open_file(const char *directory, const char *fname)
 		/* directory / fname */
 		snprintf(fpath, MAXPGPATH, "%s/%s",
 				 directory, fname);
-		fd = open(fpath, O_RDONLY | PG_BINARY, 0);
+		fd = open(fpath, O_RDONLY | MDB_BINARY, 0);
 		if (fd < 0 && errno != ENOENT)
 			return -1;
 		else if (fd >= 0)
@@ -208,7 +208,7 @@ fuzzy_open_file(const char *directory, const char *fname)
 		/* directory / XLOGDIR / fname */
 		snprintf(fpath, MAXPGPATH, "%s/%s/%s",
 				 directory, XLOGDIR, fname);
-		fd = open(fpath, O_RDONLY | PG_BINARY, 0);
+		fd = open(fpath, O_RDONLY | MDB_BINARY, 0);
 		if (fd < 0 && errno != ENOENT)
 			return -1;
 		else if (fd >= 0)
@@ -809,7 +809,7 @@ main(int argc, char **argv)
 				}
 				break;
 			case 'V':
-				puts("mdb_xlogdump (MollyDB) " PG_VERSION);
+				puts("mdb_xlogdump (MollyDB) " MDB_VERSION);
 				exit(EXIT_SUCCESS);
 				break;
 			case 'x':

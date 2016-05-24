@@ -189,7 +189,7 @@ sub tap_check
 	# adjust the environment for just this test
 	local %ENV = %ENV;
 	$ENV{PERL5LIB} = "$topdir/src/test/perl;$ENV{PERL5LIB}";
-	$ENV{PG_REGRESS} = "$topdir/$Config/mdb_regress/mdb_regress";
+	$ENV{MDB_REGRESS} = "$topdir/$Config/mdb_regress/mdb_regress";
 
 	$ENV{TESTDIR} = "$dir";
 

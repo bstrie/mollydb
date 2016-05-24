@@ -85,16 +85,16 @@ get_tablespace_paths(void)
 		if (stat(os_info.old_tablespaces[tblnum], &statBuf) != 0)
 		{
 			if (errno == ENOENT)
-				report_status(PG_FATAL,
+				report_status(MDB_FATAL,
 							  "tablespace directory \"%s\" does not exist\n",
 							  os_info.old_tablespaces[tblnum]);
 			else
-				report_status(PG_FATAL,
+				report_status(MDB_FATAL,
 						   "cannot stat() tablespace directory \"%s\": %s\n",
 					   os_info.old_tablespaces[tblnum], getErrorText());
 		}
 		if (!S_ISDIR(statBuf.st_mode))
-			report_status(PG_FATAL,
+			report_status(MDB_FATAL,
 						  "tablespace path \"%s\" is not a directory\n",
 						  os_info.old_tablespaces[tblnum]);
 	}
@@ -117,7 +117,7 @@ set_tablespace_directory_suffix(ClusterInfo *cluster)
 		/* This cluster has a version-specific subdirectory */
 
 		/* The leading slash is needed to start a new directory. */
-		cluster->tablespace_suffix = psprintf("/PG_%s_%d",
+		cluster->tablespace_suffix = psprintf("/MDB_%s_%d",
 											  cluster->major_version_str,
 											  cluster->controldata.cat_ver);
 	}

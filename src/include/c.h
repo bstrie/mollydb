@@ -48,7 +48,7 @@
 #include "mollydb_ext.h"
 
 /* Must undef mdb_config_ext.h symbols before including mdb_config.h */
-#undef PG_INT64_TYPE
+#undef MDB_INT64_TYPE
 
 #include "mdb_config.h"
 #include "mdb_config_manual.h"	/* must be after mdb_config.h */
@@ -102,14 +102,14 @@
 #endif
 
 /*
- * Force disable inlining if PG_FORCE_DISABLE_INLINE is defined. This is used
+ * Force disable inlining if MDB_FORCE_DISABLE_INLINE is defined. This is used
  * to work around compiler bugs and might also be useful for investigatory
  * purposes by defining the symbol in the platform's header..
  *
  * This is done early (in slightly the wrong section) as functionality later
  * in this file might want to rely on inline functions.
  */
-#ifdef PG_FORCE_DISABLE_INLINE
+#ifdef MDB_FORCE_DISABLE_INLINE
 #undef inline
 #define inline
 #endif
@@ -171,12 +171,12 @@
 
 /* Which __func__ symbol do we have, if any? */
 #ifdef HAVE_FUNCNAME__FUNC
-#define PG_FUNCNAME_MACRO	__func__
+#define MDB_FUNCNAME_MACRO	__func__
 #else
 #ifdef HAVE_FUNCNAME__FUNCTION
-#define PG_FUNCNAME_MACRO	__FUNCTION__
+#define MDB_FUNCNAME_MACRO	__FUNCTION__
 #else
-#define PG_FUNCNAME_MACRO	NULL
+#define MDB_FUNCNAME_MACRO	NULL
 #endif
 #endif
 
@@ -317,28 +317,28 @@ typedef unsigned long long int uint64;
  *		There currently is only a limited support for the type. E.g. 128bit
  *		literals and snprintf are not supported; but math is.
  */
-#if defined(PG_INT128_TYPE)
+#if defined(MDB_INT128_TYPE)
 #define HAVE_INT128
-typedef PG_INT128_TYPE int128;
-typedef unsigned PG_INT128_TYPE uint128;
+typedef MDB_INT128_TYPE int128;
+typedef unsigned MDB_INT128_TYPE uint128;
 #endif
 
 /*
  * stdint.h limits aren't guaranteed to be present and aren't guaranteed to
  * have compatible types with our fixed width types. So just define our own.
  */
-#define PG_INT8_MIN		(-0x7F-1)
-#define PG_INT8_MAX		(0x7F)
-#define PG_UINT8_MAX	(0xFF)
-#define PG_INT16_MIN	(-0x7FFF-1)
-#define PG_INT16_MAX	(0x7FFF)
-#define PG_UINT16_MAX	(0xFFFF)
-#define PG_INT32_MIN	(-0x7FFFFFFF-1)
-#define PG_INT32_MAX	(0x7FFFFFFF)
-#define PG_UINT32_MAX	(0xFFFFFFFF)
-#define PG_INT64_MIN	(-INT64CONST(0x7FFFFFFFFFFFFFFF) - 1)
-#define PG_INT64_MAX	INT64CONST(0x7FFFFFFFFFFFFFFF)
-#define PG_UINT64_MAX	UINT64CONST(0xFFFFFFFFFFFFFFFF)
+#define MDB_INT8_MIN		(-0x7F-1)
+#define MDB_INT8_MAX		(0x7F)
+#define MDB_UINT8_MAX	(0xFF)
+#define MDB_INT16_MIN	(-0x7FFF-1)
+#define MDB_INT16_MAX	(0x7FFF)
+#define MDB_UINT16_MAX	(0xFFFF)
+#define MDB_INT32_MIN	(-0x7FFFFFFF-1)
+#define MDB_INT32_MAX	(0x7FFFFFFF)
+#define MDB_UINT32_MAX	(0xFFFFFFFF)
+#define MDB_INT64_MIN	(-INT64CONST(0x7FFFFFFFFFFFFFFF) - 1)
+#define MDB_INT64_MAX	INT64CONST(0x7FFFFFFFFFFFFFFF)
+#define MDB_UINT64_MAX	UINT64CONST(0xFFFFFFFFFFFFFFFF)
 
 /* Select timestamp representation (float8 or int64) */
 #ifdef USE_INTEGER_DATETIMES
@@ -580,7 +580,7 @@ typedef NameData *Name;
 #define MAXALIGN(LEN)			TYPEALIGN(MAXIMUM_ALIGNOF, (LEN))
 /* MAXALIGN covers only built-in types, not buffers */
 #define BUFFERALIGN(LEN)		TYPEALIGN(ALIGNOF_BUFFER, (LEN))
-#define CACHELINEALIGN(LEN)		TYPEALIGN(PG_CACHE_LINE_SIZE, (LEN))
+#define CACHELINEALIGN(LEN)		TYPEALIGN(MDB_CACHE_LINE_SIZE, (LEN))
 
 #define TYPEALIGN_DOWN(ALIGNVAL,LEN)  \
 	(((uintptr_t) (LEN)) & ~((uintptr_t) ((ALIGNVAL) - 1)))
@@ -624,7 +624,7 @@ typedef NameData *Name;
 /* GCC and XLC support format attributes */
 #if defined(__GNUC__) || defined(__IBMC__)
 #define mdb_attribute_format_arg(a) __attribute__((format_arg(a)))
-#define mdb_attribute_printf(f,a) __attribute__((format(PG_PRINTF_ATTRIBUTE, f, a)))
+#define mdb_attribute_printf(f,a) __attribute__((format(MDB_PRINTF_ATTRIBUTE, f, a)))
 #else
 #define mdb_attribute_format_arg(a)
 #define mdb_attribute_printf(f,a)
@@ -635,7 +635,7 @@ typedef NameData *Name;
 #define mdb_attribute_aligned(a) __attribute__((aligned(a)))
 #define mdb_attribute_noreturn() __attribute__((noreturn))
 #define mdb_attribute_packed() __attribute__((packed))
-#define HAVE_PG_ATTRIBUTE_NORETURN 1
+#define HAVE_MDB_ATTRIBUTE_NORETURN 1
 #else
 /*
  * NB: aligned and packed are not given default definitions because they
@@ -956,14 +956,14 @@ typedef NameData *Name;
 
 
 /*
- * Append PG_USED_FOR_ASSERTS_ONLY to definitions of variables that are only
+ * Append MDB_USED_FOR_ASSERTS_ONLY to definitions of variables that are only
  * used in assert-enabled builds, to avoid compiler warnings about unused
  * variables in assert-disabled builds.
  */
 #ifdef USE_ASSERT_CHECKING
-#define PG_USED_FOR_ASSERTS_ONLY
+#define MDB_USED_FOR_ASSERTS_ONLY
 #else
-#define PG_USED_FOR_ASSERTS_ONLY mdb_attribute_unused()
+#define MDB_USED_FOR_ASSERTS_ONLY mdb_attribute_unused()
 #endif
 
 
@@ -975,7 +975,7 @@ typedef NameData *Name;
  * versions, we mangle the gettext domain name by appending those
  * version numbers.  The coding rule ought to be that wherever the
  * domain name is mentioned as a literal, it must be wrapped into
- * PG_TEXTDOMAIN().  The macros below do not work on non-literals; but
+ * MDB_TEXTDOMAIN().  The macros below do not work on non-literals; but
  * that is somewhat intentional because it avoids having to worry
  * about multiple states of premangling and postmangling as the values
  * are being passed around.
@@ -987,9 +987,9 @@ typedef NameData *Name;
 #define CppAsString2(x) CppAsString(x)
 
 #ifdef SO_MAJOR_VERSION
-#define PG_TEXTDOMAIN(domain) (domain CppAsString2(SO_MAJOR_VERSION) "-" PG_MAJORVERSION)
+#define MDB_TEXTDOMAIN(domain) (domain CppAsString2(SO_MAJOR_VERSION) "-" MDB_MAJORVERSION)
 #else
-#define PG_TEXTDOMAIN(domain) (domain "-" PG_MAJORVERSION)
+#define MDB_TEXTDOMAIN(domain) (domain "-" MDB_MAJORVERSION)
 #endif
 
 
@@ -1010,15 +1010,15 @@ typedef NameData *Name;
  *	that is OK because we can already handle those cleanly.
  */
 #if defined(WIN32) || defined(__CYGWIN__)
-#define PG_BINARY	O_BINARY
-#define PG_BINARY_A "ab"
-#define PG_BINARY_R "rb"
-#define PG_BINARY_W "wb"
+#define MDB_BINARY	O_BINARY
+#define MDB_BINARY_A "ab"
+#define MDB_BINARY_R "rb"
+#define MDB_BINARY_W "wb"
 #else
-#define PG_BINARY	0
-#define PG_BINARY_A "a"
-#define PG_BINARY_R "r"
-#define PG_BINARY_W "w"
+#define MDB_BINARY	0
+#define MDB_BINARY_A "a"
+#define MDB_BINARY_R "r"
+#define MDB_BINARY_W "w"
 #endif
 
 /*

@@ -184,9 +184,9 @@ connect_mdb_server(ForeignServer *server, UserMapping *user)
 	PGconn	   *volatile conn = NULL;
 
 	/*
-	 * Use PG_TRY block to ensure closing connection on error.
+	 * Use MDB_TRY block to ensure closing connection on error.
 	 */
-	PG_TRY();
+	MDB_TRY();
 	{
 		const char **keywords;
 		const char **values;
@@ -259,14 +259,14 @@ connect_mdb_server(ForeignServer *server, UserMapping *user)
 		pfree(keywords);
 		pfree(values);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Release PGconn data structure if we managed to create one */
 		if (conn)
 			PQfinish(conn);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return conn;
 }
@@ -538,13 +538,13 @@ pgfdw_report_error(int elevel, PGresult *res, PGconn *conn,
 				   bool clear, const char *sql)
 {
 	/* If requested, PGresult must be released before leaving this function. */
-	PG_TRY();
+	MDB_TRY();
 	{
-		char	   *diag_sqlstate = PQresultErrorField(res, PG_DIAG_SQLSTATE);
-		char	   *message_primary = PQresultErrorField(res, PG_DIAG_MESSAGE_PRIMARY);
-		char	   *message_detail = PQresultErrorField(res, PG_DIAG_MESSAGE_DETAIL);
-		char	   *message_hint = PQresultErrorField(res, PG_DIAG_MESSAGE_HINT);
-		char	   *message_context = PQresultErrorField(res, PG_DIAG_CONTEXT);
+		char	   *diag_sqlstate = PQresultErrorField(res, MDB_DIAG_SQLSTATE);
+		char	   *message_primary = PQresultErrorField(res, MDB_DIAG_MESSAGE_PRIMARY);
+		char	   *message_detail = PQresultErrorField(res, MDB_DIAG_MESSAGE_DETAIL);
+		char	   *message_hint = PQresultErrorField(res, MDB_DIAG_MESSAGE_HINT);
+		char	   *message_context = PQresultErrorField(res, MDB_DIAG_CONTEXT);
 		int			sqlstate;
 
 		if (diag_sqlstate)
@@ -573,13 +573,13 @@ pgfdw_report_error(int elevel, PGresult *res, PGconn *conn,
 				 message_context ? errcontext("%s", message_context) : 0,
 				 sql ? errcontext("Remote SQL command: %s", sql) : 0));
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (clear)
 			PQclear(res);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 	if (clear)
 		PQclear(res);
 }

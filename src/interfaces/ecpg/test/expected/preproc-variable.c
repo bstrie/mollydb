@@ -219,7 +219,7 @@ if (sqlca.sqlcode < 0) exit (1);}
 	ECPGt_short,&(ind_children.smallint),(long)1,(long)1,sizeof(short), ECPGt_EORT);
 #line 72 "variable.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) break;
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) break;
 #line 72 "variable.pgc"
 
 if (sqlca.sqlcode < 0) exit (1);}

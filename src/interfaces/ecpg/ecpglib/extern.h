@@ -1,7 +1,7 @@
 /* src/interfaces/ecpg/ecpglib/extern.h */
 
-#ifndef _ECPG_LIB_EXTERN_H
-#define _ECPG_LIB_EXTERN_H
+#ifndef _ECMDB_LIB_EXTERN_H
+#define _ECMDB_LIB_EXTERN_H
 
 #include "mollydb_fe.h"
 #include "libpq-fe.h"
@@ -15,19 +15,19 @@
 
 enum COMPAT_MODE
 {
-	ECPG_COMPAT_PGSQL = 0, ECPG_COMPAT_INFORMIX, ECPG_COMPAT_INFORMIX_SE
+	ECMDB_COMPAT_PGSQL = 0, ECMDB_COMPAT_INFORMIX, ECMDB_COMPAT_INFORMIX_SE
 };
 
 extern bool ecmdb_internal_regression_mode;
 
-#define INFORMIX_MODE(X) ((X) == ECPG_COMPAT_INFORMIX || (X) == ECPG_COMPAT_INFORMIX_SE)
+#define INFORMIX_MODE(X) ((X) == ECMDB_COMPAT_INFORMIX || (X) == ECMDB_COMPAT_INFORMIX_SE)
 
 enum ARRAY_TYPE
 {
-	ECPG_ARRAY_ERROR, ECPG_ARRAY_NOT_SET, ECPG_ARRAY_ARRAY, ECPG_ARRAY_VECTOR, ECPG_ARRAY_NONE
+	ECMDB_ARRAY_ERROR, ECMDB_ARRAY_NOT_SET, ECMDB_ARRAY_ARRAY, ECMDB_ARRAY_VECTOR, ECMDB_ARRAY_NONE
 };
 
-#define ECPG_IS_ARRAY(X) ((X) == ECPG_ARRAY_ARRAY || (X) == ECPG_ARRAY_VECTOR)
+#define ECMDB_IS_ARRAY(X) ((X) == ECMDB_ARRAY_ARRAY || (X) == ECMDB_ARRAY_VECTOR)
 
 /* A generic varchar type. */
 struct ECPGgeneric_varchar
@@ -56,7 +56,7 @@ struct statement
 	struct connection *connection;
 	enum COMPAT_MODE compat;
 	bool		force_indicator;
-	enum ECPG_statement_type statement_type;
+	enum ECMDB_statement_type statement_type;
 	bool		questionmarks;
 	struct variable *inlist;
 	struct variable *outlist;
@@ -170,7 +170,7 @@ bool ecmdb_store_result(const PGresult *results, int act_field,
 bool		ecmdb_store_input(const int, const bool, const struct variable *, char **, bool);
 void		ecmdb_free_params(struct statement * stmt, bool print);
 bool ecmdb_do_prologue(int, const int, const int, const char *, const bool,
-				 enum ECPG_statement_type, const char *, va_list,
+				 enum ECMDB_statement_type, const char *, va_list,
 				 struct statement **);
 bool		ecmdb_build_params(struct statement *);
 bool		ecmdb_autostart_transaction(struct statement * stmt);
@@ -197,27 +197,27 @@ void		ecmdb_set_native_sqlda(int, struct sqlda_struct **, const PGresult *, int,
 /* SQLSTATE values generated or processed by ecpglib (intentionally
  * not exported -- users should refer to the codes directly) */
 
-#define ECPG_SQLSTATE_NO_DATA				"02000"
-#define ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_PARAMETERS	"07001"
-#define ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_TARGETS		"07002"
-#define ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION	"07006"
-#define ECPG_SQLSTATE_INVALID_DESCRIPTOR_INDEX		"07009"
-#define ECPG_SQLSTATE_SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION	"08001"
-#define ECPG_SQLSTATE_CONNECTION_DOES_NOT_EXIST		"08003"
-#define ECPG_SQLSTATE_TRANSACTION_RESOLUTION_UNKNOWN	"08007"
-#define ECPG_SQLSTATE_CARDINALITY_VIOLATION "21000"
-#define ECPG_SQLSTATE_NULL_VALUE_NO_INDICATOR_PARAMETER "22002"
-#define ECPG_SQLSTATE_ACTIVE_SQL_TRANSACTION		"25001"
-#define ECPG_SQLSTATE_NO_ACTIVE_SQL_TRANSACTION		"25P01"
-#define ECPG_SQLSTATE_INVALID_SQL_STATEMENT_NAME	"26000"
-#define ECPG_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME	"33000"
-#define ECPG_SQLSTATE_INVALID_CURSOR_NAME	"34000"
-#define ECPG_SQLSTATE_SYNTAX_ERROR			"42601"
-#define ECPG_SQLSTATE_DATATYPE_MISMATCH		"42804"
-#define ECPG_SQLSTATE_DUPLICATE_CURSOR		"42P03"
+#define ECMDB_SQLSTATE_NO_DATA				"02000"
+#define ECMDB_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_PARAMETERS	"07001"
+#define ECMDB_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_TARGETS		"07002"
+#define ECMDB_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION	"07006"
+#define ECMDB_SQLSTATE_INVALID_DESCRIPTOR_INDEX		"07009"
+#define ECMDB_SQLSTATE_SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION	"08001"
+#define ECMDB_SQLSTATE_CONNECTION_DOES_NOT_EXIST		"08003"
+#define ECMDB_SQLSTATE_TRANSACTION_RESOLUTION_UNKNOWN	"08007"
+#define ECMDB_SQLSTATE_CARDINALITY_VIOLATION "21000"
+#define ECMDB_SQLSTATE_NULL_VALUE_NO_INDICATOR_PARAMETER "22002"
+#define ECMDB_SQLSTATE_ACTIVE_SQL_TRANSACTION		"25001"
+#define ECMDB_SQLSTATE_NO_ACTIVE_SQL_TRANSACTION		"25P01"
+#define ECMDB_SQLSTATE_INVALID_SQL_STATEMENT_NAME	"26000"
+#define ECMDB_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME	"33000"
+#define ECMDB_SQLSTATE_INVALID_CURSOR_NAME	"34000"
+#define ECMDB_SQLSTATE_SYNTAX_ERROR			"42601"
+#define ECMDB_SQLSTATE_DATATYPE_MISMATCH		"42804"
+#define ECMDB_SQLSTATE_DUPLICATE_CURSOR		"42P03"
 
 /* implementation-defined internal errors of ecpg */
-#define ECPG_SQLSTATE_ECPG_INTERNAL_ERROR	"YE000"
-#define ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY	"YE001"
+#define ECMDB_SQLSTATE_ECMDB_INTERNAL_ERROR	"YE000"
+#define ECMDB_SQLSTATE_ECMDB_OUT_OF_MEMORY	"YE001"
 
-#endif   /* _ECPG_LIB_EXTERN_H */
+#endif   /* _ECMDB_LIB_EXTERN_H */

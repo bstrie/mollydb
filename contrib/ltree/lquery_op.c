@@ -11,11 +11,11 @@
 #include "utils/formatting.h"
 #include "ltree.h"
 
-PG_FUNCTION_INFO_V1(ltq_regex);
-PG_FUNCTION_INFO_V1(ltq_rregex);
+MDB_FUNCTION_INFO_V1(ltq_regex);
+MDB_FUNCTION_INFO_V1(ltq_rregex);
 
-PG_FUNCTION_INFO_V1(lt_q_regex);
-PG_FUNCTION_INFO_V1(lt_q_rregex);
+MDB_FUNCTION_INFO_V1(lt_q_regex);
+MDB_FUNCTION_INFO_V1(lt_q_rregex);
 
 #define NEXTVAL(x) ( (lquery*)( (char*)(x) + INTALIGN( VARSIZE(x) ) ) )
 
@@ -300,10 +300,10 @@ checkCond(lquery_level *curq, int query_numlevel, ltree_level *curt, int tree_nu
 }
 
 Datum
-ltq_regex(PG_FUNCTION_ARGS)
+ltq_regex(MDB_FUNCTION_ARGS)
 {
-	ltree	   *tree = PG_GETARG_LTREE(0);
-	lquery	   *query = PG_GETARG_LQUERY(1);
+	ltree	   *tree = MDB_GETARG_LTREE(0);
+	lquery	   *query = MDB_GETARG_LQUERY(1);
 	bool		res = false;
 
 	if (query->flag & LQUERY_HASNOT)
@@ -321,25 +321,25 @@ ltq_regex(PG_FUNCTION_ARGS)
 						LTREE_FIRST(tree), tree->numlevel, NULL);
 	}
 
-	PG_FREE_IF_COPY(tree, 0);
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(tree, 0);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_BOOL(res);
 }
 
 Datum
-ltq_rregex(PG_FUNCTION_ARGS)
+ltq_rregex(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall2(ltq_regex,
-										PG_GETARG_DATUM(1),
-										PG_GETARG_DATUM(0)
+	MDB_RETURN_DATUM(DirectFunctionCall2(ltq_regex,
+										MDB_GETARG_DATUM(1),
+										MDB_GETARG_DATUM(0)
 										));
 }
 
 Datum
-lt_q_regex(PG_FUNCTION_ARGS)
+lt_q_regex(MDB_FUNCTION_ARGS)
 {
-	ltree	   *tree = PG_GETARG_LTREE(0);
-	ArrayType  *_query = PG_GETARG_ARRAYTYPE_P(1);
+	ltree	   *tree = MDB_GETARG_LTREE(0);
+	ArrayType  *_query = MDB_GETARG_ARRAYTYPE_P(1);
 	lquery	   *query = (lquery *) ARR_DATA_PTR(_query);
 	bool		res = false;
 	int			num = ArrayGetNItems(ARR_NDIM(_query), ARR_DIMS(_query));
@@ -366,16 +366,16 @@ lt_q_regex(PG_FUNCTION_ARGS)
 		query = NEXTVAL(query);
 	}
 
-	PG_FREE_IF_COPY(tree, 0);
-	PG_FREE_IF_COPY(_query, 1);
-	PG_RETURN_BOOL(res);
+	MDB_FREE_IF_COPY(tree, 0);
+	MDB_FREE_IF_COPY(_query, 1);
+	MDB_RETURN_BOOL(res);
 }
 
 Datum
-lt_q_rregex(PG_FUNCTION_ARGS)
+lt_q_rregex(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall2(lt_q_regex,
-										PG_GETARG_DATUM(1),
-										PG_GETARG_DATUM(0)
+	MDB_RETURN_DATUM(DirectFunctionCall2(lt_q_regex,
+										MDB_GETARG_DATUM(1),
+										MDB_GETARG_DATUM(0)
 										));
 }

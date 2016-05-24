@@ -166,7 +166,7 @@ copy_file_range(const char *path, off_t begin, off_t end, bool trunc)
 
 	snprintf(srcpath, sizeof(srcpath), "%s/%s", datadir_source, path);
 
-	srcfd = open(srcpath, O_RDONLY | PG_BINARY, 0);
+	srcfd = open(srcpath, O_RDONLY | MDB_BINARY, 0);
 	if (srcfd < 0)
 		mdb_fatal("could not open source file \"%s\": %s\n",
 				 srcpath, strerror(errno));

@@ -37,8 +37,8 @@ all:
 
 # MollyDB version number
 VERSION = @PACKAGE_VERSION@
-MAJORVERSION = @PG_MAJORVERSION@
-VERSION_NUM = @PG_VERSION_NUM@
+MAJORVERSION = @MDB_MAJORVERSION@
+VERSION_NUM = @MDB_VERSION_NUM@
 
 # Set top_srcdir, srcdir, and VPATH.
 ifdef PGXS
@@ -148,21 +148,21 @@ localedir := @localedir@
 
 else # PGXS case
 
-# Extension makefiles should set PG_CONFIG, but older ones might not
-ifndef PG_CONFIG
-PG_CONFIG = mdb_config
+# Extension makefiles should set MDB_CONFIG, but older ones might not
+ifndef MDB_CONFIG
+MDB_CONFIG = mdb_config
 endif
 
-bindir := $(shell $(PG_CONFIG) --bindir)
-datadir := $(shell $(PG_CONFIG) --sharedir)
-sysconfdir := $(shell $(PG_CONFIG) --sysconfdir)
-libdir := $(shell $(PG_CONFIG) --libdir)
-pkglibdir := $(shell $(PG_CONFIG) --pkglibdir)
-includedir := $(shell $(PG_CONFIG) --includedir)
-pkgincludedir := $(shell $(PG_CONFIG) --pkgincludedir)
-mandir := $(shell $(PG_CONFIG) --mandir)
-docdir := $(shell $(PG_CONFIG) --docdir)
-localedir := $(shell $(PG_CONFIG) --localedir)
+bindir := $(shell $(MDB_CONFIG) --bindir)
+datadir := $(shell $(MDB_CONFIG) --sharedir)
+sysconfdir := $(shell $(MDB_CONFIG) --sysconfdir)
+libdir := $(shell $(MDB_CONFIG) --libdir)
+pkglibdir := $(shell $(MDB_CONFIG) --pkglibdir)
+includedir := $(shell $(MDB_CONFIG) --includedir)
+pkgincludedir := $(shell $(MDB_CONFIG) --pkgincludedir)
+mandir := $(shell $(MDB_CONFIG) --mandir)
+docdir := $(shell $(MDB_CONFIG) --docdir)
+localedir := $(shell $(MDB_CONFIG) --localedir)
 
 endif # PGXS
 
@@ -332,7 +332,7 @@ endif
 endif
 
 PROVE = @PROVE@
-PG_PROVE_FLAGS = -I $(top_srcdir)/src/test/perl/
+MDB_PROVE_FLAGS = -I $(top_srcdir)/src/test/perl/
 PROVE_FLAGS = --verbose
 
 # prepend to path if already set, else just set it
@@ -353,12 +353,12 @@ ifeq ($(enable_tap_tests),yes)
 
 define prove_installcheck
 rm -rf $(CURDIR)/tmp_check/log
-cd $(srcdir) && TESTDIR='$(CURDIR)' PATH="$(bindir):$$PATH" PGPORT='6$(DEF_PGPORT)' top_builddir='$(CURDIR)/$(top_builddir)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/mdb_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
+cd $(srcdir) && TESTDIR='$(CURDIR)' PATH="$(bindir):$$PATH" PGPORT='6$(DEF_PGPORT)' top_builddir='$(CURDIR)/$(top_builddir)' MDB_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/mdb_regress' $(PROVE) $(MDB_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
 endef
 
 define prove_check
 rm -rf $(CURDIR)/tmp_check/log
-cd $(srcdir) && TESTDIR='$(CURDIR)' $(with_temp_install) PGPORT='6$(DEF_PGPORT)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/mdb_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
+cd $(srcdir) && TESTDIR='$(CURDIR)' $(with_temp_install) PGPORT='6$(DEF_PGPORT)' MDB_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/mdb_regress' $(PROVE) $(MDB_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
 endef
 
 else
@@ -592,7 +592,7 @@ endif
 LIBOBJS = @LIBOBJS@
 
 # files needed for the chosen CRC-32C implementation
-PG_CRC32C_OBJS = @PG_CRC32C_OBJS@
+MDB_CRC32C_OBJS = @MDB_CRC32C_OBJS@
 
 LIBS := -lpgcommon -lpgport $(LIBS)
 

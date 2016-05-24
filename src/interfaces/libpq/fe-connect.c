@@ -280,7 +280,7 @@ static const internalPQconninfoOption PQconninfoOptions[] = {
 
 #if defined(ENABLE_GSS) || defined(ENABLE_SSPI)
 	/* Kerberos and GSSAPI authentication support specifying the service name */
-	{"krbsrvname", "PGKRBSRVNAME", PG_KRB_SRVNAM, NULL,
+	{"krbsrvname", "PGKRBSRVNAME", MDB_KRB_SRVNAM, NULL,
 		"Kerberos-service-name", "", 20,
 	offsetof(struct mdb_conn, krbsrvname)},
 #endif
@@ -1501,7 +1501,7 @@ connectDBStart(PGconn *conn)
 	conn->addrlist = addrs;
 	conn->addr_cur = addrs;
 	conn->addrlist_family = hint.ai_family;
-	conn->pversion = PG_PROTOCOL(3, 0);
+	conn->pversion = MDB_PROTOCOL(3, 0);
 	conn->send_appname = true;
 	conn->status = CONNECTION_NEEDED;
 
@@ -2075,7 +2075,7 @@ keep_going:						/* We will come back to here until there is
 				/*
 				 * Build the startup packet.
 				 */
-				if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+				if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 					startpacket = pqBuildStartupPacket3(conn, &packetlen,
 														EnvironmentOptions);
 				else
@@ -2278,7 +2278,7 @@ keep_going:						/* We will come back to here until there is
 					goto error_return;
 				}
 
-				if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+				if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 				{
 					/* Read message length word */
 					if (pqGetInt(&msgLength, 4, conn))
@@ -2333,9 +2333,9 @@ keep_going:						/* We will come back to here until there is
 					 * If we tried to open the connection in 3.0 protocol,
 					 * fall back to 2.0 protocol.
 					 */
-					if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+					if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 					{
-						conn->pversion = PG_PROTOCOL(2, 0);
+						conn->pversion = MDB_PROTOCOL(2, 0);
 						/* Must drop the old connection */
 						pqDropConnection(conn, true);
 						conn->status = CONNECTION_NEEDED;
@@ -2370,7 +2370,7 @@ keep_going:						/* We will come back to here until there is
 				/* Handle errors. */
 				if (beresp == 'E')
 				{
-					if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+					if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 					{
 						if (pqGetErrorNotice3(conn, true))
 						{
@@ -2573,7 +2573,7 @@ keep_going:						/* We will come back to here until there is
 						 */
 						const char *sqlstate;
 
-						sqlstate = PQresultErrorField(res, PG_DIAG_SQLSTATE);
+						sqlstate = PQresultErrorField(res, MDB_DIAG_SQLSTATE);
 						if (sqlstate &&
 							strcmp(sqlstate, ERRCODE_APPNAME_UNKNOWN) == 0)
 						{
@@ -2605,7 +2605,7 @@ keep_going:						/* We will come back to here until there is
 				conn->addr_cur = NULL;
 
 				/* Fire up post-connection housekeeping if needed */
-				if (PG_PROTOCOL_MAJOR(conn->pversion) < 3)
+				if (MDB_PROTOCOL_MAJOR(conn->pversion) < 3)
 				{
 					conn->status = CONNECTION_SETENV;
 					conn->setenv_state = SETENV_STATE_CLIENT_ENCODING_SEND;
@@ -2785,7 +2785,7 @@ makeEmptyPGconn(void)
 	conn->options_valid = false;
 	conn->nonblocking = false;
 	conn->setenv_state = SETENV_STATE_IDLE;
-	conn->client_encoding = PG_SQL_ASCII;
+	conn->client_encoding = MDB_SQL_ASCII;
 	conn->std_strings = false;	/* unless server says differently */
 	conn->verbosity = PQERRORS_DEFAULT;
 	conn->show_context = PQSHOW_CONTEXT_ERRORS;
@@ -5427,7 +5427,7 @@ PQprotocolVersion(const PGconn *conn)
 		return 0;
 	if (conn->status == CONNECTION_BAD)
 		return 0;
-	return PG_PROTOCOL_MAJOR(conn->pversion);
+	return MDB_PROTOCOL_MAJOR(conn->pversion);
 }
 
 int
@@ -5543,7 +5543,7 @@ PQsetClientEncoding(PGconn *conn, const char *encoding)
 		 * backend to report the parameter value, and we'll change state at
 		 * that time.
 		 */
-		if (PG_PROTOCOL_MAJOR(conn->pversion) < 3)
+		if (MDB_PROTOCOL_MAJOR(conn->pversion) < 3)
 			pqSaveParameterStatus(conn, "client_encoding", encoding);
 		status = 0;				/* everything is ok */
 	}
@@ -5849,7 +5849,7 @@ dot_mdb_pass_warning(PGconn *conn)
 	/* If it was 'invalid authorization', add .pgpass mention */
 	/* only works with >= 9.0 servers */
 	if (conn->dot_pgpass_used && conn->password_needed && conn->result &&
-		strcmp(PQresultErrorField(conn->result, PG_DIAG_SQLSTATE),
+		strcmp(PQresultErrorField(conn->result, MDB_DIAG_SQLSTATE),
 			   ERRCODE_INVALID_PASSWORD) == 0)
 	{
 		char		pgpassfile[MAXPGPATH];

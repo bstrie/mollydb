@@ -30,8 +30,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_AMPROC_H
-#define PG_AMPROC_H
+#ifndef MDB_AMPROC_H
+#define MDB_AMPROC_H
 
 #include "catalog/genbki.h"
 
@@ -670,4 +670,4 @@ DATA(insert (	4104   603	 603  4  4108 ));
 DATA(insert (	4104   603	 603  11 4067 ));
 DATA(insert (	4104   603	 603  13  187 ));
 
-#endif   /* PG_AMPROC_H */
+#endif   /* MDB_AMPROC_H */

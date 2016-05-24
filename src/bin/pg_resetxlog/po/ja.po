@@ -349,10 +349,10 @@ msgstr "データベージチェックサムのバージョン:           %u\n"
 
 #: mdb_resetxlog.c:692
 #, c-format
-msgid "%s: internal error -- sizeof(ControlFileData) is too large ... fix PG_CONTROL_SIZE\n"
+msgid "%s: internal error -- sizeof(ControlFileData) is too large ... fix MDB_CONTROL_SIZE\n"
 msgstr ""
 "%s: 内部エラー -- sizeof(ControlFileData)が大きすぎます \n"
-"... PG_CONTROL_SIZE を修正してください\n"
+"... MDB_CONTROL_SIZE を修正してください\n"
 
 #: mdb_resetxlog.c:707
 #, c-format

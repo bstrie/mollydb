@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
-PG_UPGRADE: IN-PLACE UPGRADES FOR POSTGRESQL
+MDB_UPGRADE: IN-PLACE UPGRADES FOR POSTGRESQL
 ------------------------------------------------------------------------------
 
 Upgrading a MollyDB database from one major release to another can be

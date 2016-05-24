@@ -180,31 +180,31 @@ extern Pattern_Prefix_Status pattern_fixed_prefix(Const *patt,
 extern Const *make_greater_string(const Const *str_const, FmgrInfo *ltproc,
 					Oid collation);
 
-extern Datum eqsel(PG_FUNCTION_ARGS);
-extern Datum neqsel(PG_FUNCTION_ARGS);
-extern Datum scalarltsel(PG_FUNCTION_ARGS);
-extern Datum scalargtsel(PG_FUNCTION_ARGS);
-extern Datum regexeqsel(PG_FUNCTION_ARGS);
-extern Datum icregexeqsel(PG_FUNCTION_ARGS);
-extern Datum likesel(PG_FUNCTION_ARGS);
-extern Datum iclikesel(PG_FUNCTION_ARGS);
-extern Datum regexnesel(PG_FUNCTION_ARGS);
-extern Datum icregexnesel(PG_FUNCTION_ARGS);
-extern Datum nlikesel(PG_FUNCTION_ARGS);
-extern Datum icnlikesel(PG_FUNCTION_ARGS);
+extern Datum eqsel(MDB_FUNCTION_ARGS);
+extern Datum neqsel(MDB_FUNCTION_ARGS);
+extern Datum scalarltsel(MDB_FUNCTION_ARGS);
+extern Datum scalargtsel(MDB_FUNCTION_ARGS);
+extern Datum regexeqsel(MDB_FUNCTION_ARGS);
+extern Datum icregexeqsel(MDB_FUNCTION_ARGS);
+extern Datum likesel(MDB_FUNCTION_ARGS);
+extern Datum iclikesel(MDB_FUNCTION_ARGS);
+extern Datum regexnesel(MDB_FUNCTION_ARGS);
+extern Datum icregexnesel(MDB_FUNCTION_ARGS);
+extern Datum nlikesel(MDB_FUNCTION_ARGS);
+extern Datum icnlikesel(MDB_FUNCTION_ARGS);
 
-extern Datum eqjoinsel(PG_FUNCTION_ARGS);
-extern Datum neqjoinsel(PG_FUNCTION_ARGS);
-extern Datum scalarltjoinsel(PG_FUNCTION_ARGS);
-extern Datum scalargtjoinsel(PG_FUNCTION_ARGS);
-extern Datum regexeqjoinsel(PG_FUNCTION_ARGS);
-extern Datum icregexeqjoinsel(PG_FUNCTION_ARGS);
-extern Datum likejoinsel(PG_FUNCTION_ARGS);
-extern Datum iclikejoinsel(PG_FUNCTION_ARGS);
-extern Datum regexnejoinsel(PG_FUNCTION_ARGS);
-extern Datum icregexnejoinsel(PG_FUNCTION_ARGS);
-extern Datum nlikejoinsel(PG_FUNCTION_ARGS);
-extern Datum icnlikejoinsel(PG_FUNCTION_ARGS);
+extern Datum eqjoinsel(MDB_FUNCTION_ARGS);
+extern Datum neqjoinsel(MDB_FUNCTION_ARGS);
+extern Datum scalarltjoinsel(MDB_FUNCTION_ARGS);
+extern Datum scalargtjoinsel(MDB_FUNCTION_ARGS);
+extern Datum regexeqjoinsel(MDB_FUNCTION_ARGS);
+extern Datum icregexeqjoinsel(MDB_FUNCTION_ARGS);
+extern Datum likejoinsel(MDB_FUNCTION_ARGS);
+extern Datum iclikejoinsel(MDB_FUNCTION_ARGS);
+extern Datum regexnejoinsel(MDB_FUNCTION_ARGS);
+extern Datum icregexnejoinsel(MDB_FUNCTION_ARGS);
+extern Datum nlikejoinsel(MDB_FUNCTION_ARGS);
+extern Datum icnlikejoinsel(MDB_FUNCTION_ARGS);
 
 extern Selectivity boolvarsel(PlannerInfo *root, Node *arg, int varRelid);
 extern Selectivity booltestsel(PlannerInfo *root, BoolTestType booltesttype,
@@ -245,7 +245,7 @@ extern Selectivity scalararraysel_containment(PlannerInfo *root,
 						   Node *leftop, Node *rightop,
 						   Oid elemtype, bool isEquality, bool useOr,
 						   int varRelid);
-extern Datum arraycontsel(PG_FUNCTION_ARGS);
-extern Datum arraycontjoinsel(PG_FUNCTION_ARGS);
+extern Datum arraycontsel(MDB_FUNCTION_ARGS);
+extern Datum arraycontjoinsel(MDB_FUNCTION_ARGS);
 
 #endif   /* SELFUNCS_H */

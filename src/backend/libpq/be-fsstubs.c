@@ -95,10 +95,10 @@ static Oid	lo_import_internal(text *filename, Oid lobjOid);
  *****************************************************************************/
 
 Datum
-lo_open(PG_FUNCTION_ARGS)
+lo_open(MDB_FUNCTION_ARGS)
 {
-	Oid			lobjId = PG_GETARG_OID(0);
-	int32		mode = PG_GETARG_INT32(1);
+	Oid			lobjId = MDB_GETARG_OID(0);
+	int32		mode = MDB_GETARG_INT32(1);
 	LargeObjectDesc *lobjDesc;
 	int			fd;
 
@@ -115,18 +115,18 @@ lo_open(PG_FUNCTION_ARGS)
 #if FSDB
 		elog(DEBUG4, "could not open large object %u", lobjId);
 #endif
-		PG_RETURN_INT32(-1);
+		MDB_RETURN_INT32(-1);
 	}
 
 	fd = newLOfd(lobjDesc);
 
-	PG_RETURN_INT32(fd);
+	MDB_RETURN_INT32(fd);
 }
 
 Datum
-lo_close(PG_FUNCTION_ARGS)
+lo_close(MDB_FUNCTION_ARGS)
 {
-	int32		fd = PG_GETARG_INT32(0);
+	int32		fd = MDB_GETARG_INT32(0);
 
 	if (fd < 0 || fd >= cookies_size || cookies[fd] == NULL)
 		ereport(ERROR,
@@ -141,7 +141,7 @@ lo_close(PG_FUNCTION_ARGS)
 
 	deleteLOfd(fd);
 
-	PG_RETURN_INT32(0);
+	MDB_RETURN_INT32(0);
 }
 
 
@@ -226,11 +226,11 @@ lo_write(int fd, const char *buf, int len)
 }
 
 Datum
-lo_lseek(PG_FUNCTION_ARGS)
+lo_lseek(MDB_FUNCTION_ARGS)
 {
-	int32		fd = PG_GETARG_INT32(0);
-	int32		offset = PG_GETARG_INT32(1);
-	int32		whence = PG_GETARG_INT32(2);
+	int32		fd = MDB_GETARG_INT32(0);
+	int32		offset = MDB_GETARG_INT32(1);
+	int32		whence = MDB_GETARG_INT32(2);
 	int64		status;
 
 	if (fd < 0 || fd >= cookies_size || cookies[fd] == NULL)
@@ -247,15 +247,15 @@ lo_lseek(PG_FUNCTION_ARGS)
 		errmsg("lo_lseek result out of range for large-object descriptor %d",
 			   fd)));
 
-	PG_RETURN_INT32((int32) status);
+	MDB_RETURN_INT32((int32) status);
 }
 
 Datum
-lo_lseek64(PG_FUNCTION_ARGS)
+lo_lseek64(MDB_FUNCTION_ARGS)
 {
-	int32		fd = PG_GETARG_INT32(0);
-	int64		offset = PG_GETARG_INT64(1);
-	int32		whence = PG_GETARG_INT32(2);
+	int32		fd = MDB_GETARG_INT32(0);
+	int64		offset = MDB_GETARG_INT64(1);
+	int32		whence = MDB_GETARG_INT32(2);
 	int64		status;
 
 	if (fd < 0 || fd >= cookies_size || cookies[fd] == NULL)
@@ -265,11 +265,11 @@ lo_lseek64(PG_FUNCTION_ARGS)
 
 	status = inv_seek(cookies[fd], offset, whence);
 
-	PG_RETURN_INT64(status);
+	MDB_RETURN_INT64(status);
 }
 
 Datum
-lo_creat(PG_FUNCTION_ARGS)
+lo_creat(MDB_FUNCTION_ARGS)
 {
 	Oid			lobjId;
 
@@ -281,13 +281,13 @@ lo_creat(PG_FUNCTION_ARGS)
 
 	lobjId = inv_create(InvalidOid);
 
-	PG_RETURN_OID(lobjId);
+	MDB_RETURN_OID(lobjId);
 }
 
 Datum
-lo_create(PG_FUNCTION_ARGS)
+lo_create(MDB_FUNCTION_ARGS)
 {
-	Oid			lobjId = PG_GETARG_OID(0);
+	Oid			lobjId = MDB_GETARG_OID(0);
 
 	/*
 	 * We don't actually need to store into fscxt, but create it anyway to
@@ -297,13 +297,13 @@ lo_create(PG_FUNCTION_ARGS)
 
 	lobjId = inv_create(lobjId);
 
-	PG_RETURN_OID(lobjId);
+	MDB_RETURN_OID(lobjId);
 }
 
 Datum
-lo_tell(PG_FUNCTION_ARGS)
+lo_tell(MDB_FUNCTION_ARGS)
 {
-	int32		fd = PG_GETARG_INT32(0);
+	int32		fd = MDB_GETARG_INT32(0);
 	int64		offset;
 
 	if (fd < 0 || fd >= cookies_size || cookies[fd] == NULL)
@@ -320,13 +320,13 @@ lo_tell(PG_FUNCTION_ARGS)
 		 errmsg("lo_tell result out of range for large-object descriptor %d",
 				fd)));
 
-	PG_RETURN_INT32((int32) offset);
+	MDB_RETURN_INT32((int32) offset);
 }
 
 Datum
-lo_tell64(PG_FUNCTION_ARGS)
+lo_tell64(MDB_FUNCTION_ARGS)
 {
-	int32		fd = PG_GETARG_INT32(0);
+	int32		fd = MDB_GETARG_INT32(0);
 	int64		offset;
 
 	if (fd < 0 || fd >= cookies_size || cookies[fd] == NULL)
@@ -336,13 +336,13 @@ lo_tell64(PG_FUNCTION_ARGS)
 
 	offset = inv_tell(cookies[fd]);
 
-	PG_RETURN_INT64(offset);
+	MDB_RETURN_INT64(offset);
 }
 
 Datum
-lo_unlink(PG_FUNCTION_ARGS)
+lo_unlink(MDB_FUNCTION_ARGS)
 {
-	Oid			lobjId = PG_GETARG_OID(0);
+	Oid			lobjId = MDB_GETARG_OID(0);
 
 	/* Must be owner of the largeobject */
 	if (!lo_compat_privileges &&
@@ -372,7 +372,7 @@ lo_unlink(PG_FUNCTION_ARGS)
 	 * inv_drop does not create a need for end-of-transaction cleanup and
 	 * hence we don't need to have created fscxt.
 	 */
-	PG_RETURN_INT32(inv_drop(lobjId));
+	MDB_RETURN_INT32(inv_drop(lobjId));
 }
 
 /*****************************************************************************
@@ -380,10 +380,10 @@ lo_unlink(PG_FUNCTION_ARGS)
  *****************************************************************************/
 
 Datum
-loread(PG_FUNCTION_ARGS)
+loread(MDB_FUNCTION_ARGS)
 {
-	int32		fd = PG_GETARG_INT32(0);
-	int32		len = PG_GETARG_INT32(1);
+	int32		fd = MDB_GETARG_INT32(0);
+	int32		len = MDB_GETARG_INT32(1);
 	bytea	   *retval;
 	int			totalread;
 
@@ -394,20 +394,20 @@ loread(PG_FUNCTION_ARGS)
 	totalread = lo_read(fd, VARDATA(retval), len);
 	SET_VARSIZE(retval, totalread + VARHDRSZ);
 
-	PG_RETURN_BYTEA_P(retval);
+	MDB_RETURN_BYTEA_P(retval);
 }
 
 Datum
-lowrite(PG_FUNCTION_ARGS)
+lowrite(MDB_FUNCTION_ARGS)
 {
-	int32		fd = PG_GETARG_INT32(0);
-	bytea	   *wbuf = PG_GETARG_BYTEA_P(1);
+	int32		fd = MDB_GETARG_INT32(0);
+	bytea	   *wbuf = MDB_GETARG_BYTEA_P(1);
 	int			bytestowrite;
 	int			totalwritten;
 
 	bytestowrite = VARSIZE(wbuf) - VARHDRSZ;
 	totalwritten = lo_write(fd, VARDATA(wbuf), bytestowrite);
-	PG_RETURN_INT32(totalwritten);
+	MDB_RETURN_INT32(totalwritten);
 }
 
 /*****************************************************************************
@@ -419,11 +419,11 @@ lowrite(PG_FUNCTION_ARGS)
  *	  imports a file as an (inversion) large object.
  */
 Datum
-lo_import(PG_FUNCTION_ARGS)
+lo_import(MDB_FUNCTION_ARGS)
 {
-	text	   *filename = PG_GETARG_TEXT_PP(0);
+	text	   *filename = MDB_GETARG_TEXT_PP(0);
 
-	PG_RETURN_OID(lo_import_internal(filename, InvalidOid));
+	MDB_RETURN_OID(lo_import_internal(filename, InvalidOid));
 }
 
 /*
@@ -431,12 +431,12 @@ lo_import(PG_FUNCTION_ARGS)
  *	  imports a file as an (inversion) large object specifying oid.
  */
 Datum
-lo_import_with_oid(PG_FUNCTION_ARGS)
+lo_import_with_oid(MDB_FUNCTION_ARGS)
 {
-	text	   *filename = PG_GETARG_TEXT_PP(0);
-	Oid			oid = PG_GETARG_OID(1);
+	text	   *filename = MDB_GETARG_TEXT_PP(0);
+	Oid			oid = MDB_GETARG_OID(1);
 
-	PG_RETURN_OID(lo_import_internal(filename, oid));
+	MDB_RETURN_OID(lo_import_internal(filename, oid));
 }
 
 static Oid
@@ -444,7 +444,7 @@ lo_import_internal(text *filename, Oid lobjOid)
 {
 	int			fd;
 	int			nbytes,
-				tmp PG_USED_FOR_ASSERTS_ONLY;
+				tmp MDB_USED_FOR_ASSERTS_ONLY;
 	char		buf[BUFSIZE];
 	char		fnamebuf[MAXPGPATH];
 	LargeObjectDesc *lobj;
@@ -464,7 +464,7 @@ lo_import_internal(text *filename, Oid lobjOid)
 	 * open the file to be read in
 	 */
 	text_to_cstring_buffer(filename, fnamebuf, sizeof(fnamebuf));
-	fd = OpenTransientFile(fnamebuf, O_RDONLY | PG_BINARY, S_IRWXU);
+	fd = OpenTransientFile(fnamebuf, O_RDONLY | MDB_BINARY, S_IRWXU);
 	if (fd < 0)
 		ereport(ERROR,
 				(errcode_for_file_access(),
@@ -504,10 +504,10 @@ lo_import_internal(text *filename, Oid lobjOid)
  *	  exports an (inversion) large object.
  */
 Datum
-lo_export(PG_FUNCTION_ARGS)
+lo_export(MDB_FUNCTION_ARGS)
 {
-	Oid			lobjId = PG_GETARG_OID(0);
-	text	   *filename = PG_GETARG_TEXT_PP(1);
+	Oid			lobjId = MDB_GETARG_OID(0);
+	text	   *filename = MDB_GETARG_TEXT_PP(1);
 	int			fd;
 	int			nbytes,
 				tmp;
@@ -540,7 +540,7 @@ lo_export(PG_FUNCTION_ARGS)
 	 */
 	text_to_cstring_buffer(filename, fnamebuf, sizeof(fnamebuf));
 	oumask = umask(S_IWGRP | S_IWOTH);
-	fd = OpenTransientFile(fnamebuf, O_CREAT | O_WRONLY | O_TRUNC | PG_BINARY,
+	fd = OpenTransientFile(fnamebuf, O_CREAT | O_WRONLY | O_TRUNC | MDB_BINARY,
 						   S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	umask(oumask);
 	if (fd < 0)
@@ -565,7 +565,7 @@ lo_export(PG_FUNCTION_ARGS)
 	CloseTransientFile(fd);
 	inv_close(lobj);
 
-	PG_RETURN_INT32(1);
+	MDB_RETURN_INT32(1);
 }
 
 /*
@@ -608,23 +608,23 @@ lo_truncate_internal(int32 fd, int64 len)
 }
 
 Datum
-lo_truncate(PG_FUNCTION_ARGS)
+lo_truncate(MDB_FUNCTION_ARGS)
 {
-	int32		fd = PG_GETARG_INT32(0);
-	int32		len = PG_GETARG_INT32(1);
+	int32		fd = MDB_GETARG_INT32(0);
+	int32		len = MDB_GETARG_INT32(1);
 
 	lo_truncate_internal(fd, len);
-	PG_RETURN_INT32(0);
+	MDB_RETURN_INT32(0);
 }
 
 Datum
-lo_truncate64(PG_FUNCTION_ARGS)
+lo_truncate64(MDB_FUNCTION_ARGS)
 {
-	int32		fd = PG_GETARG_INT32(0);
-	int64		len = PG_GETARG_INT64(1);
+	int32		fd = MDB_GETARG_INT32(0);
+	int64		len = MDB_GETARG_INT64(1);
 
 	lo_truncate_internal(fd, len);
-	PG_RETURN_INT32(0);
+	MDB_RETURN_INT32(0);
 }
 
 /*
@@ -768,7 +768,7 @@ lo_get_fragment_internal(Oid loOid, int64 offset, int32 nbytes)
 	LargeObjectDesc *loDesc;
 	int64		loSize;
 	int64		result_length;
-	int total_read PG_USED_FOR_ASSERTS_ONLY;
+	int total_read MDB_USED_FOR_ASSERTS_ONLY;
 	bytea	   *result = NULL;
 
 	/*
@@ -830,25 +830,25 @@ lo_get_fragment_internal(Oid loOid, int64 offset, int32 nbytes)
  * Read entire LO
  */
 Datum
-lo_get(PG_FUNCTION_ARGS)
+lo_get(MDB_FUNCTION_ARGS)
 {
-	Oid			loOid = PG_GETARG_OID(0);
+	Oid			loOid = MDB_GETARG_OID(0);
 	bytea	   *result;
 
 	result = lo_get_fragment_internal(loOid, 0, -1);
 
-	PG_RETURN_BYTEA_P(result);
+	MDB_RETURN_BYTEA_P(result);
 }
 
 /*
  * Read range within LO
  */
 Datum
-lo_get_fragment(PG_FUNCTION_ARGS)
+lo_get_fragment(MDB_FUNCTION_ARGS)
 {
-	Oid			loOid = PG_GETARG_OID(0);
-	int64		offset = PG_GETARG_INT64(1);
-	int32		nbytes = PG_GETARG_INT32(2);
+	Oid			loOid = MDB_GETARG_OID(0);
+	int64		offset = MDB_GETARG_INT64(1);
+	int32		nbytes = MDB_GETARG_INT32(2);
 	bytea	   *result;
 
 	if (nbytes < 0)
@@ -858,19 +858,19 @@ lo_get_fragment(PG_FUNCTION_ARGS)
 
 	result = lo_get_fragment_internal(loOid, offset, nbytes);
 
-	PG_RETURN_BYTEA_P(result);
+	MDB_RETURN_BYTEA_P(result);
 }
 
 /*
  * Create LO with initial contents given by a bytea argument
  */
 Datum
-lo_from_bytea(PG_FUNCTION_ARGS)
+lo_from_bytea(MDB_FUNCTION_ARGS)
 {
-	Oid			loOid = PG_GETARG_OID(0);
-	bytea	   *str = PG_GETARG_BYTEA_PP(1);
+	Oid			loOid = MDB_GETARG_OID(0);
+	bytea	   *str = MDB_GETARG_BYTEA_PP(1);
 	LargeObjectDesc *loDesc;
-	int written PG_USED_FOR_ASSERTS_ONLY;
+	int written MDB_USED_FOR_ASSERTS_ONLY;
 
 	CreateFSContext();
 
@@ -880,20 +880,20 @@ lo_from_bytea(PG_FUNCTION_ARGS)
 	Assert(written == VARSIZE_ANY_EXHDR(str));
 	inv_close(loDesc);
 
-	PG_RETURN_OID(loOid);
+	MDB_RETURN_OID(loOid);
 }
 
 /*
  * Update range within LO
  */
 Datum
-lo_put(PG_FUNCTION_ARGS)
+lo_put(MDB_FUNCTION_ARGS)
 {
-	Oid			loOid = PG_GETARG_OID(0);
-	int64		offset = PG_GETARG_INT64(1);
-	bytea	   *str = PG_GETARG_BYTEA_PP(2);
+	Oid			loOid = MDB_GETARG_OID(0);
+	int64		offset = MDB_GETARG_INT64(1);
+	bytea	   *str = MDB_GETARG_BYTEA_PP(2);
 	LargeObjectDesc *loDesc;
-	int written PG_USED_FOR_ASSERTS_ONLY;
+	int written MDB_USED_FOR_ASSERTS_ONLY;
 
 	CreateFSContext();
 
@@ -903,5 +903,5 @@ lo_put(PG_FUNCTION_ARGS)
 	Assert(written == VARSIZE_ANY_EXHDR(str));
 	inv_close(loDesc);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

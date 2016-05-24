@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_OPFAMILY_H
-#define PG_OPFAMILY_H
+#ifndef MDB_OPFAMILY_H
+#define MDB_OPFAMILY_H
 
 #include "catalog/genbki.h"
 
@@ -184,4 +184,4 @@ DATA(insert OID = 4082 (	3580	mdb_lsn_minmax_ops		PGNSP PGUID ));
 DATA(insert OID = 4104 (	3580	box_inclusion_ops		PGNSP PGUID ));
 DATA(insert OID = 5000 (	4000	box_ops		PGNSP PGUID ));
 
-#endif   /* PG_OPFAMILY_H */
+#endif   /* MDB_OPFAMILY_H */

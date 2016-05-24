@@ -148,13 +148,13 @@ copy_file(char *fromfile, char *tofile)
 	/*
 	 * Open the files
 	 */
-	srcfd = OpenTransientFile(fromfile, O_RDONLY | PG_BINARY, 0);
+	srcfd = OpenTransientFile(fromfile, O_RDONLY | MDB_BINARY, 0);
 	if (srcfd < 0)
 		ereport(ERROR,
 				(errcode_for_file_access(),
 				 errmsg("could not open file \"%s\": %m", fromfile)));
 
-	dstfd = OpenTransientFile(tofile, O_RDWR | O_CREAT | O_EXCL | PG_BINARY,
+	dstfd = OpenTransientFile(tofile, O_RDWR | O_CREAT | O_EXCL | MDB_BINARY,
 							  S_IRUSR | S_IWUSR);
 	if (dstfd < 0)
 		ereport(ERROR,

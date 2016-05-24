@@ -130,7 +130,7 @@ BEGIN
 		) t(c int)
 	$$) AS t(crash_pid int);
 EXCEPTION WHEN OTHERS THEN
-	GET STACKED DIAGNOSTICS detail = PG_EXCEPTION_DETAIL;
+	GET STACKED DIAGNOSTICS detail = MDB_EXCEPTION_DETAIL;
 	-- Expected error in a non-LDAP build.
 	IF NOT detail LIKE 'syntax error in service file%' THEN RAISE; END IF;
 END

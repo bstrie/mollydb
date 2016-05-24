@@ -119,8 +119,8 @@ typedef struct
  * DT_NOBEGIN represents timestamp -infinity; DT_NOEND represents +infinity
  */
 #ifdef HAVE_INT64_TIMESTAMP
-#define DT_NOBEGIN		PG_INT64_MIN
-#define DT_NOEND		PG_INT64_MAX
+#define DT_NOBEGIN		MDB_INT64_MIN
+#define DT_NOEND		MDB_INT64_MAX
 #else							/* !HAVE_INT64_TIMESTAMP */
 #ifdef HUGE_VAL
 #define DT_NOBEGIN		(-HUGE_VAL)

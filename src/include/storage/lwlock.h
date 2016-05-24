@@ -95,7 +95,7 @@ typedef struct LWLock
  * because slock_t is more than 2 bytes on some obscure platforms, we allow
  * for the possibility that it might be 64.
  */
-#define LWLOCK_PADDED_SIZE	PG_CACHE_LINE_SIZE
+#define LWLOCK_PADDED_SIZE	MDB_CACHE_LINE_SIZE
 #define LWLOCK_MINIMAL_SIZE (sizeof(LWLock) <= 32 ? 32 : 64)
 
 /* LWLock, padded to a full cache line size */

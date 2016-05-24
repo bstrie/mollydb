@@ -9784,7 +9784,7 @@ ALTER EXTENSION hstore UPDATE;
        <para>
         Allow options to be passed to the regression
         test output comparison utility via <link
-        linkend="regress-evaluation"><envar>PG_REGRESS_DIFF_OPTS</></link>
+        linkend="regress-evaluation"><envar>MDB_REGRESS_DIFF_OPTS</></link>
         (Peter Eisentraut)
        </para>
       </listitem>

@@ -12,7 +12,7 @@
 #include "libpq/be-fsstubs.h"
 #include "utils/rel.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 #define atooid(x)  ((Oid) strtoul((x), NULL, 10))
 
@@ -20,10 +20,10 @@ PG_MODULE_MAGIC;
 /*
  * This is the trigger that protects us from orphaned large objects
  */
-PG_FUNCTION_INFO_V1(lo_manage);
+MDB_FUNCTION_INFO_V1(lo_manage);
 
 Datum
-lo_manage(PG_FUNCTION_ARGS)
+lo_manage(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	int			attnum;			/* attribute number to monitor	*/

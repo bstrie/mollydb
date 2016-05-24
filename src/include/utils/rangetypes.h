@@ -68,12 +68,12 @@ typedef struct
 /*
  * fmgr macros for range type objects
  */
-#define DatumGetRangeType(X)		((RangeType *) PG_DETOAST_DATUM(X))
-#define DatumGetRangeTypeCopy(X)	((RangeType *) PG_DETOAST_DATUM_COPY(X))
+#define DatumGetRangeType(X)		((RangeType *) MDB_DETOAST_DATUM(X))
+#define DatumGetRangeTypeCopy(X)	((RangeType *) MDB_DETOAST_DATUM_COPY(X))
 #define RangeTypeGetDatum(X)		PointerGetDatum(X)
-#define PG_GETARG_RANGE(n)			DatumGetRangeType(PG_GETARG_DATUM(n))
-#define PG_GETARG_RANGE_COPY(n)		DatumGetRangeTypeCopy(PG_GETARG_DATUM(n))
-#define PG_RETURN_RANGE(x)			return RangeTypeGetDatum(x)
+#define MDB_GETARG_RANGE(n)			DatumGetRangeType(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_RANGE_COPY(n)		DatumGetRangeTypeCopy(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_RANGE(x)			return RangeTypeGetDatum(x)
 
 /* Operator strategy numbers used in the GiST and SP-GiST range opclasses */
 /* Numbers are chosen to match up operator names with existing usages */
@@ -93,43 +93,43 @@ typedef struct
  */
 
 /* I/O */
-extern Datum range_in(PG_FUNCTION_ARGS);
-extern Datum range_out(PG_FUNCTION_ARGS);
-extern Datum range_recv(PG_FUNCTION_ARGS);
-extern Datum range_send(PG_FUNCTION_ARGS);
+extern Datum range_in(MDB_FUNCTION_ARGS);
+extern Datum range_out(MDB_FUNCTION_ARGS);
+extern Datum range_recv(MDB_FUNCTION_ARGS);
+extern Datum range_send(MDB_FUNCTION_ARGS);
 
 /* constructors */
-extern Datum range_constructor2(PG_FUNCTION_ARGS);
-extern Datum range_constructor3(PG_FUNCTION_ARGS);
+extern Datum range_constructor2(MDB_FUNCTION_ARGS);
+extern Datum range_constructor3(MDB_FUNCTION_ARGS);
 
 /* range -> subtype */
-extern Datum range_lower(PG_FUNCTION_ARGS);
-extern Datum range_upper(PG_FUNCTION_ARGS);
+extern Datum range_lower(MDB_FUNCTION_ARGS);
+extern Datum range_upper(MDB_FUNCTION_ARGS);
 
 /* range -> bool */
-extern Datum range_empty(PG_FUNCTION_ARGS);
-extern Datum range_lower_inc(PG_FUNCTION_ARGS);
-extern Datum range_upper_inc(PG_FUNCTION_ARGS);
-extern Datum range_lower_inf(PG_FUNCTION_ARGS);
-extern Datum range_upper_inf(PG_FUNCTION_ARGS);
+extern Datum range_empty(MDB_FUNCTION_ARGS);
+extern Datum range_lower_inc(MDB_FUNCTION_ARGS);
+extern Datum range_upper_inc(MDB_FUNCTION_ARGS);
+extern Datum range_lower_inf(MDB_FUNCTION_ARGS);
+extern Datum range_upper_inf(MDB_FUNCTION_ARGS);
 
 /* range, element -> bool */
-extern Datum range_contains_elem(PG_FUNCTION_ARGS);
-extern Datum elem_contained_by_range(PG_FUNCTION_ARGS);
+extern Datum range_contains_elem(MDB_FUNCTION_ARGS);
+extern Datum elem_contained_by_range(MDB_FUNCTION_ARGS);
 
 extern bool range_contains_elem_internal(TypeCacheEntry *typcache, RangeType *r, Datum val);
 
 /* range, range -> bool */
-extern Datum range_eq(PG_FUNCTION_ARGS);
-extern Datum range_ne(PG_FUNCTION_ARGS);
-extern Datum range_contains(PG_FUNCTION_ARGS);
-extern Datum range_contained_by(PG_FUNCTION_ARGS);
-extern Datum range_before(PG_FUNCTION_ARGS);
-extern Datum range_after(PG_FUNCTION_ARGS);
-extern Datum range_adjacent(PG_FUNCTION_ARGS);
-extern Datum range_overlaps(PG_FUNCTION_ARGS);
-extern Datum range_overleft(PG_FUNCTION_ARGS);
-extern Datum range_overright(PG_FUNCTION_ARGS);
+extern Datum range_eq(MDB_FUNCTION_ARGS);
+extern Datum range_ne(MDB_FUNCTION_ARGS);
+extern Datum range_contains(MDB_FUNCTION_ARGS);
+extern Datum range_contained_by(MDB_FUNCTION_ARGS);
+extern Datum range_before(MDB_FUNCTION_ARGS);
+extern Datum range_after(MDB_FUNCTION_ARGS);
+extern Datum range_adjacent(MDB_FUNCTION_ARGS);
+extern Datum range_overlaps(MDB_FUNCTION_ARGS);
+extern Datum range_overleft(MDB_FUNCTION_ARGS);
+extern Datum range_overright(MDB_FUNCTION_ARGS);
 
 /* internal versions of the above */
 extern bool range_eq_internal(TypeCacheEntry *typcache, RangeType *r1,
@@ -154,36 +154,36 @@ extern bool range_overright_internal(TypeCacheEntry *typcache, RangeType *r1,
 						 RangeType *r2);
 
 /* range, range -> range */
-extern Datum range_minus(PG_FUNCTION_ARGS);
-extern Datum range_union(PG_FUNCTION_ARGS);
-extern Datum range_intersect(PG_FUNCTION_ARGS);
+extern Datum range_minus(MDB_FUNCTION_ARGS);
+extern Datum range_union(MDB_FUNCTION_ARGS);
+extern Datum range_intersect(MDB_FUNCTION_ARGS);
 
 /* BTree support */
-extern Datum range_cmp(PG_FUNCTION_ARGS);
-extern Datum range_lt(PG_FUNCTION_ARGS);
-extern Datum range_le(PG_FUNCTION_ARGS);
-extern Datum range_ge(PG_FUNCTION_ARGS);
-extern Datum range_gt(PG_FUNCTION_ARGS);
+extern Datum range_cmp(MDB_FUNCTION_ARGS);
+extern Datum range_lt(MDB_FUNCTION_ARGS);
+extern Datum range_le(MDB_FUNCTION_ARGS);
+extern Datum range_ge(MDB_FUNCTION_ARGS);
+extern Datum range_gt(MDB_FUNCTION_ARGS);
 
 /* Hash support */
-extern Datum hash_range(PG_FUNCTION_ARGS);
+extern Datum hash_range(MDB_FUNCTION_ARGS);
 
 /* ANALYZE support */
-extern Datum range_typanalyze(PG_FUNCTION_ARGS);
-extern Datum rangesel(PG_FUNCTION_ARGS);
+extern Datum range_typanalyze(MDB_FUNCTION_ARGS);
+extern Datum rangesel(MDB_FUNCTION_ARGS);
 
 /* Canonical functions */
-extern Datum int4range_canonical(PG_FUNCTION_ARGS);
-extern Datum int8range_canonical(PG_FUNCTION_ARGS);
-extern Datum daterange_canonical(PG_FUNCTION_ARGS);
+extern Datum int4range_canonical(MDB_FUNCTION_ARGS);
+extern Datum int8range_canonical(MDB_FUNCTION_ARGS);
+extern Datum daterange_canonical(MDB_FUNCTION_ARGS);
 
 /* Subtype Difference functions */
-extern Datum int4range_subdiff(PG_FUNCTION_ARGS);
-extern Datum int8range_subdiff(PG_FUNCTION_ARGS);
-extern Datum numrange_subdiff(PG_FUNCTION_ARGS);
-extern Datum daterange_subdiff(PG_FUNCTION_ARGS);
-extern Datum tsrange_subdiff(PG_FUNCTION_ARGS);
-extern Datum tstzrange_subdiff(PG_FUNCTION_ARGS);
+extern Datum int4range_subdiff(MDB_FUNCTION_ARGS);
+extern Datum int8range_subdiff(MDB_FUNCTION_ARGS);
+extern Datum numrange_subdiff(MDB_FUNCTION_ARGS);
+extern Datum daterange_subdiff(MDB_FUNCTION_ARGS);
+extern Datum tsrange_subdiff(MDB_FUNCTION_ARGS);
+extern Datum tstzrange_subdiff(MDB_FUNCTION_ARGS);
 
 /* assorted support functions */
 extern TypeCacheEntry *range_get_typcache(FunctionCallInfo fcinfo,
@@ -206,14 +206,14 @@ extern bool bounds_adjacent(TypeCacheEntry *typcache, RangeBound bound1,
 extern RangeType *make_empty_range(TypeCacheEntry *typcache);
 
 /* GiST support (in rangetypes_gist.c) */
-extern Datum range_gist_consistent(PG_FUNCTION_ARGS);
-extern Datum range_gist_compress(PG_FUNCTION_ARGS);
-extern Datum range_gist_decompress(PG_FUNCTION_ARGS);
-extern Datum range_gist_fetch(PG_FUNCTION_ARGS);
-extern Datum range_gist_union(PG_FUNCTION_ARGS);
-extern Datum range_merge(PG_FUNCTION_ARGS);
-extern Datum range_gist_penalty(PG_FUNCTION_ARGS);
-extern Datum range_gist_picksplit(PG_FUNCTION_ARGS);
-extern Datum range_gist_same(PG_FUNCTION_ARGS);
+extern Datum range_gist_consistent(MDB_FUNCTION_ARGS);
+extern Datum range_gist_compress(MDB_FUNCTION_ARGS);
+extern Datum range_gist_decompress(MDB_FUNCTION_ARGS);
+extern Datum range_gist_fetch(MDB_FUNCTION_ARGS);
+extern Datum range_gist_union(MDB_FUNCTION_ARGS);
+extern Datum range_merge(MDB_FUNCTION_ARGS);
+extern Datum range_gist_penalty(MDB_FUNCTION_ARGS);
+extern Datum range_gist_picksplit(MDB_FUNCTION_ARGS);
+extern Datum range_gist_same(MDB_FUNCTION_ARGS);
 
 #endif   /* RANGETYPES_H */

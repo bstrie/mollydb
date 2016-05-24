@@ -15,14 +15,14 @@ typedef struct int32key
 /*
 ** int32 ops
 */
-PG_FUNCTION_INFO_V1(gbt_int4_compress);
-PG_FUNCTION_INFO_V1(gbt_int4_fetch);
-PG_FUNCTION_INFO_V1(gbt_int4_union);
-PG_FUNCTION_INFO_V1(gbt_int4_picksplit);
-PG_FUNCTION_INFO_V1(gbt_int4_consistent);
-PG_FUNCTION_INFO_V1(gbt_int4_distance);
-PG_FUNCTION_INFO_V1(gbt_int4_penalty);
-PG_FUNCTION_INFO_V1(gbt_int4_same);
+MDB_FUNCTION_INFO_V1(gbt_int4_compress);
+MDB_FUNCTION_INFO_V1(gbt_int4_fetch);
+MDB_FUNCTION_INFO_V1(gbt_int4_union);
+MDB_FUNCTION_INFO_V1(gbt_int4_picksplit);
+MDB_FUNCTION_INFO_V1(gbt_int4_consistent);
+MDB_FUNCTION_INFO_V1(gbt_int4_distance);
+MDB_FUNCTION_INFO_V1(gbt_int4_penalty);
+MDB_FUNCTION_INFO_V1(gbt_int4_same);
 
 
 static bool
@@ -90,12 +90,12 @@ static const gbtree_ninfo tinfo =
 };
 
 
-PG_FUNCTION_INFO_V1(int4_dist);
+MDB_FUNCTION_INFO_V1(int4_dist);
 Datum
-int4_dist(PG_FUNCTION_ARGS)
+int4_dist(MDB_FUNCTION_ARGS)
 {
-	int32		a = PG_GETARG_INT32(0);
-	int32		b = PG_GETARG_INT32(1);
+	int32		a = MDB_GETARG_INT32(0);
+	int32		b = MDB_GETARG_INT32(1);
 	int32		r;
 	int32		ra;
 
@@ -108,7 +108,7 @@ int4_dist(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("integer out of range")));
 
-	PG_RETURN_INT32(ra);
+	MDB_RETURN_INT32(ra);
 }
 
 
@@ -118,30 +118,30 @@ int4_dist(PG_FUNCTION_ARGS)
 
 
 Datum
-gbt_int4_compress(PG_FUNCTION_ARGS)
+gbt_int4_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
 }
 
 Datum
-gbt_int4_fetch(PG_FUNCTION_ARGS)
+gbt_int4_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
 }
 
 Datum
-gbt_int4_consistent(PG_FUNCTION_ARGS)
+gbt_int4_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	int32		query = PG_GETARG_INT32(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	int32		query = MDB_GETARG_INT32(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	int32KEY   *kkk = (int32KEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
@@ -151,71 +151,71 @@ gbt_int4_consistent(PG_FUNCTION_ARGS)
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_BOOL(
+	MDB_RETURN_BOOL(
 				   gbt_num_consistent(&key, (void *) &query, &strategy, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_int4_distance(PG_FUNCTION_ARGS)
+gbt_int4_distance(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	int32		query = PG_GETARG_INT32(1);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	int32		query = MDB_GETARG_INT32(1);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
+	/* Oid		subtype = MDB_GETARG_OID(3); */
 	int32KEY   *kkk = (int32KEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_FLOAT8(
+	MDB_RETURN_FLOAT8(
 			gbt_num_distance(&key, (void *) &query, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_int4_union(PG_FUNCTION_ARGS)
+gbt_int4_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	void	   *out = palloc(sizeof(int32KEY));
 
-	*(int *) PG_GETARG_POINTER(1) = sizeof(int32KEY);
-	PG_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
+	*(int *) MDB_GETARG_POINTER(1) = sizeof(int32KEY);
+	MDB_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
 }
 
 
 Datum
-gbt_int4_penalty(PG_FUNCTION_ARGS)
+gbt_int4_penalty(MDB_FUNCTION_ARGS)
 {
-	int32KEY   *origentry = (int32KEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	int32KEY   *newentry = (int32KEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(1))->key);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	int32KEY   *origentry = (int32KEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	int32KEY   *newentry = (int32KEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(1))->key);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 
 	penalty_num(result, origentry->lower, origentry->upper, newentry->lower, newentry->upper);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-gbt_int4_picksplit(PG_FUNCTION_ARGS)
+gbt_int4_picksplit(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(gbt_num_picksplit(
-									(GistEntryVector *) PG_GETARG_POINTER(0),
-									  (GIST_SPLITVEC *) PG_GETARG_POINTER(1),
+	MDB_RETURN_POINTER(gbt_num_picksplit(
+									(GistEntryVector *) MDB_GETARG_POINTER(0),
+									  (GIST_SPLITVEC *) MDB_GETARG_POINTER(1),
 										&tinfo
 										));
 }
 
 Datum
-gbt_int4_same(PG_FUNCTION_ARGS)
+gbt_int4_same(MDB_FUNCTION_ARGS)
 {
-	int32KEY   *b1 = (int32KEY *) PG_GETARG_POINTER(0);
-	int32KEY   *b2 = (int32KEY *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	int32KEY   *b1 = (int32KEY *) MDB_GETARG_POINTER(0);
+	int32KEY   *b2 = (int32KEY *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	*result = gbt_num_same((void *) b1, (void *) b2, &tinfo);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }

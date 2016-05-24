@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_LANGUAGE_H
-#define PG_LANGUAGE_H
+#ifndef MDB_LANGUAGE_H
+#define MDB_LANGUAGE_H
 
 #include "catalog/genbki.h"
 
@@ -79,4 +79,4 @@ DATA(insert OID = 14 ( "sql"		PGUID f t 0 0 2248 _null_ ));
 DESCR("SQL-language functions");
 #define SQLlanguageId 14
 
-#endif   /* PG_LANGUAGE_H */
+#endif   /* MDB_LANGUAGE_H */

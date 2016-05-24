@@ -15,8 +15,8 @@ subdir = src/bin/mdb_rewind
 top_builddir = ../../..
 include $(top_builddir)/src/Makefile.global
 
-PG_CPPFLAGS = -I$(libpq_srcdir)
-PG_LIBS = $(libpq_pgport)
+MDB_CPPFLAGS = -I$(libpq_srcdir)
+MDB_LIBS = $(libpq_pgport)
 
 override CPPFLAGS := -I$(libpq_srcdir) -DFRONTEND $(CPPFLAGS)
 

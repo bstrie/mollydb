@@ -35,7 +35,7 @@
   <varname>shared_preload_libraries</>.  A module wishing to run a background
   worker can register it by calling
   <function>RegisterBackgroundWorker(<type>BackgroundWorker *worker</type>)</function>
-  from its <function>_PG_init()</>.  Background workers can also be started
+  from its <function>_MDB_init()</>.  Background workers can also be started
   after the system is up and running by calling the function
   <function>RegisterDynamicBackgroundWorker(<type>BackgroundWorker
   *worker, BackgroundWorkerHandle **handle</type>)</function>.  Unlike

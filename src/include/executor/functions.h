@@ -20,7 +20,7 @@
 /* This struct is known only within executor/functions.c */
 typedef struct SQLFunctionParseInfo *SQLFunctionParseInfoPtr;
 
-extern Datum fmgr_sql(PG_FUNCTION_ARGS);
+extern Datum fmgr_sql(MDB_FUNCTION_ARGS);
 
 extern SQLFunctionParseInfoPtr prepare_sql_fn_parse_info(HeapTuple procedureTuple,
 						  Node *call_expr,

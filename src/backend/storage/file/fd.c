@@ -84,13 +84,13 @@
 #include "utils/resowner_private.h"
 
 
-/* Define PG_FLUSH_DATA_WORKS if we have an implementation for mdb_flush_data */
+/* Define MDB_FLUSH_DATA_WORKS if we have an implementation for mdb_flush_data */
 #if defined(HAVE_SYNC_FILE_RANGE)
-#define PG_FLUSH_DATA_WORKS 1
+#define MDB_FLUSH_DATA_WORKS 1
 #elif !defined(WIN32) && defined(MS_ASYNC)
-#define PG_FLUSH_DATA_WORKS 1
+#define MDB_FLUSH_DATA_WORKS 1
 #elif defined(USE_POSIX_FADVISE) && defined(POSIX_FADV_DONTNEED)
-#define PG_FLUSH_DATA_WORKS 1
+#define MDB_FLUSH_DATA_WORKS 1
 #endif
 
 /*
@@ -310,7 +310,7 @@ static void walkdir(const char *path,
 		void (*action) (const char *fname, bool isdir, int elevel),
 		bool process_symlinks,
 		int elevel);
-#ifdef PG_FLUSH_DATA_WORKS
+#ifdef MDB_FLUSH_DATA_WORKS
 static void pre_sync_fname(const char *fname, bool isdir, int elevel);
 #endif
 static void datadir_fsync_fname(const char *fname, bool isdir, int elevel);
@@ -597,7 +597,7 @@ durable_rename(const char *oldfile, const char *newfile, int elevel)
 	if (fsync_fname_ext(oldfile, false, false, elevel) != 0)
 		return -1;
 
-	fd = OpenTransientFile((char *) newfile, PG_BINARY | O_RDWR, 0);
+	fd = OpenTransientFile((char *) newfile, MDB_BINARY | O_RDWR, 0);
 	if (fd < 0)
 	{
 		if (errno != ENOENT)
@@ -1042,7 +1042,7 @@ LruInsert(File file)
 		/* seek to the right position */
 		if (vfdP->seekPos != (off_t) 0)
 		{
-			off_t returnValue PG_USED_FOR_ASSERTS_ONLY;
+			off_t returnValue MDB_USED_FOR_ASSERTS_ONLY;
 
 			returnValue = lseek(vfdP->fd, vfdP->seekPos, SEEK_SET);
 			Assert(returnValue != (off_t) -1);
@@ -1365,13 +1365,13 @@ OpenTemporaryFileInTablespace(Oid tblspcOid, bool rejectError)
 	{
 		/* The default tablespace is {datadir}/base */
 		snprintf(tempdirpath, sizeof(tempdirpath), "base/%s",
-				 PG_TEMP_FILES_DIR);
+				 MDB_TEMP_FILES_DIR);
 	}
 	else
 	{
 		/* All other tablespaces are accessed via symlinks */
 		snprintf(tempdirpath, sizeof(tempdirpath), "mdb_tblspc/%u/%s/%s",
-				 tblspcOid, TABLESPACE_VERSION_DIRECTORY, PG_TEMP_FILES_DIR);
+				 tblspcOid, TABLESPACE_VERSION_DIRECTORY, MDB_TEMP_FILES_DIR);
 	}
 
 	/*
@@ -1379,14 +1379,14 @@ OpenTemporaryFileInTablespace(Oid tblspcOid, bool rejectError)
 	 * database instance.
 	 */
 	snprintf(tempfilepath, sizeof(tempfilepath), "%s/%s%d.%ld",
-			 tempdirpath, PG_TEMP_FILE_PREFIX, MyProcPid, tempFileCounter++);
+			 tempdirpath, MDB_TEMP_FILE_PREFIX, MyProcPid, tempFileCounter++);
 
 	/*
 	 * Open the file.  Note: we don't use O_EXCL, in case there is an orphaned
 	 * temp file that can be reused.
 	 */
 	file = PathNameOpenFile(tempfilepath,
-							O_RDWR | O_CREAT | O_TRUNC | PG_BINARY,
+							O_RDWR | O_CREAT | O_TRUNC | MDB_BINARY,
 							0600);
 	if (file <= 0)
 	{
@@ -1401,7 +1401,7 @@ OpenTemporaryFileInTablespace(Oid tblspcOid, bool rejectError)
 		mkdir(tempdirpath, S_IRWXU);
 
 		file = PathNameOpenFile(tempfilepath,
-								O_RDWR | O_CREAT | O_TRUNC | PG_BINARY,
+								O_RDWR | O_CREAT | O_TRUNC | MDB_BINARY,
 								0600);
 		if (file <= 0 && rejectError)
 			elog(ERROR, "could not create temporary file \"%s\": %m",
@@ -2584,7 +2584,7 @@ RemovePgTempFiles(void)
 	/*
 	 * First process temp files in mdb_default ($PGDATA/base)
 	 */
-	snprintf(temp_path, sizeof(temp_path), "base/%s", PG_TEMP_FILES_DIR);
+	snprintf(temp_path, sizeof(temp_path), "base/%s", MDB_TEMP_FILES_DIR);
 	RemovePgTempFilesInDir(temp_path);
 	RemovePgTempRelationFiles("base");
 
@@ -2600,7 +2600,7 @@ RemovePgTempFiles(void)
 			continue;
 
 		snprintf(temp_path, sizeof(temp_path), "mdb_tblspc/%s/%s/%s",
-			spc_de->d_name, TABLESPACE_VERSION_DIRECTORY, PG_TEMP_FILES_DIR);
+			spc_de->d_name, TABLESPACE_VERSION_DIRECTORY, MDB_TEMP_FILES_DIR);
 		RemovePgTempFilesInDir(temp_path);
 
 		snprintf(temp_path, sizeof(temp_path), "mdb_tblspc/%s/%s",
@@ -2615,7 +2615,7 @@ RemovePgTempFiles(void)
 	 * DataDir as well.
 	 */
 #ifdef EXEC_BACKEND
-	RemovePgTempFilesInDir(PG_TEMP_FILES_DIR);
+	RemovePgTempFilesInDir(MDB_TEMP_FILES_DIR);
 #endif
 }
 
@@ -2648,8 +2648,8 @@ RemovePgTempFilesInDir(const char *tmpdirname)
 				 tmpdirname, temp_de->d_name);
 
 		if (strncmp(temp_de->d_name,
-					PG_TEMP_FILE_PREFIX,
-					strlen(PG_TEMP_FILE_PREFIX)) == 0)
+					MDB_TEMP_FILE_PREFIX,
+					strlen(MDB_TEMP_FILE_PREFIX)) == 0)
 			unlink(rm_path);	/* note we ignore any error */
 		else
 			elog(LOG,
@@ -2838,7 +2838,7 @@ SyncDataDirectory(void)
 	 * directory and its contents.  Errors in this step are even less
 	 * interesting than normal, so log them only at DEBUG1.
 	 */
-#ifdef PG_FLUSH_DATA_WORKS
+#ifdef MDB_FLUSH_DATA_WORKS
 	walkdir(".", pre_sync_fname, false, DEBUG1);
 	if (xlog_is_symlink)
 		walkdir("mdb_xlog", pre_sync_fname, false, DEBUG1);
@@ -2942,7 +2942,7 @@ walkdir(const char *path,
  * Ignores errors trying to open unreadable files, and logs other errors at a
  * caller-specified level.
  */
-#ifdef PG_FLUSH_DATA_WORKS
+#ifdef MDB_FLUSH_DATA_WORKS
 
 static void
 pre_sync_fname(const char *fname, bool isdir, int elevel)
@@ -2953,7 +2953,7 @@ pre_sync_fname(const char *fname, bool isdir, int elevel)
 	if (isdir)
 		return;
 
-	fd = OpenTransientFile((char *) fname, O_RDONLY | PG_BINARY, 0);
+	fd = OpenTransientFile((char *) fname, O_RDONLY | MDB_BINARY, 0);
 
 	if (fd < 0)
 	{
@@ -2974,7 +2974,7 @@ pre_sync_fname(const char *fname, bool isdir, int elevel)
 	(void) CloseTransientFile(fd);
 }
 
-#endif   /* PG_FLUSH_DATA_WORKS */
+#endif   /* MDB_FLUSH_DATA_WORKS */
 
 static void
 datadir_fsync_fname(const char *fname, bool isdir, int elevel)
@@ -3007,7 +3007,7 @@ fsync_fname_ext(const char *fname, bool isdir, bool ignore_perm, int elevel)
 	 * cases here.  Using O_RDWR will cause us to fail to fsync files that are
 	 * not writable by our userid, but we assume that's OK.
 	 */
-	flags = PG_BINARY;
+	flags = MDB_BINARY;
 	if (!isdir)
 		flags |= O_RDWR;
 	else

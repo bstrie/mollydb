@@ -34,7 +34,7 @@ __attribute__((format(gnu_printf, 2, 3)));], [])],
                   [pgac_cv_printf_archetype=gnu_printf],
                   [pgac_cv_printf_archetype=printf])
 ac_c_werror_flag=$ac_save_c_werror_flag])
-AC_DEFINE_UNQUOTED([PG_PRINTF_ATTRIBUTE], [$pgac_cv_printf_archetype],
+AC_DEFINE_UNQUOTED([MDB_PRINTF_ATTRIBUTE], [$pgac_cv_printf_archetype],
                    [Define to gnu_printf if compiler supports it, else printf.])
 ])# PGAC_PRINTF_ARCHETYPE
 
@@ -94,7 +94,7 @@ undefine([Ac_cachevar])dnl
 # PGAC_TYPE_128BIT_INT
 # ---------------------
 # Check if __int128 is a working 128 bit integer type, and if so
-# define PG_INT128_TYPE to that typename.  This currently only detects
+# define MDB_INT128_TYPE to that typename.  This currently only detects
 # a GCC/clang extension, but support for different environments may be
 # added in the future.
 #
@@ -125,7 +125,7 @@ return 1;
 [pgac_cv__128bit_int=yes],
 [pgac_cv__128bit_int=no])])
 if test x"$pgac_cv__128bit_int" = xyes ; then
-  AC_DEFINE(PG_INT128_TYPE, __int128, [Define to the name of a signed 128-bit integer type.])
+  AC_DEFINE(MDB_INT128_TYPE, __int128, [Define to the name of a signed 128-bit integer type.])
 fi])# PGAC_TYPE_128BIT_INT
 
 
@@ -420,8 +420,8 @@ fi])# PGAC_HAVE_GCC__SYNC_INT32_CAS
 AC_DEFUN([PGAC_HAVE_GCC__SYNC_INT64_CAS],
 [AC_CACHE_CHECK(for builtin __sync int64 atomic operations, pgac_cv_gcc_sync_int64_cas,
 [AC_LINK_IFELSE([AC_LANG_PROGRAM([],
-  [PG_INT64_TYPE lock = 0;
-   __sync_val_compare_and_swap(&lock, 0, (PG_INT64_TYPE) 37);])],
+  [MDB_INT64_TYPE lock = 0;
+   __sync_val_compare_and_swap(&lock, 0, (MDB_INT64_TYPE) 37);])],
   [pgac_cv_gcc_sync_int64_cas="yes"],
   [pgac_cv_gcc_sync_int64_cas="no"])])
 if test x"$pgac_cv_gcc_sync_int64_cas" = x"yes"; then
@@ -451,8 +451,8 @@ fi])# PGAC_HAVE_GCC__ATOMIC_INT32_CAS
 AC_DEFUN([PGAC_HAVE_GCC__ATOMIC_INT64_CAS],
 [AC_CACHE_CHECK(for builtin __atomic int64 atomic operations, pgac_cv_gcc_atomic_int64_cas,
 [AC_LINK_IFELSE([AC_LANG_PROGRAM([],
-  [PG_INT64_TYPE val = 0;
-   PG_INT64_TYPE expect = 0;
+  [MDB_INT64_TYPE val = 0;
+   MDB_INT64_TYPE expect = 0;
    __atomic_compare_exchange_n(&val, &expect, 37, 0, __ATOMIC_SEQ_CST, __ATOMIC_RELAXED);])],
   [pgac_cv_gcc_atomic_int64_cas="yes"],
   [pgac_cv_gcc_atomic_int64_cas="no"])])

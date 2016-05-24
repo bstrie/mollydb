@@ -41,9 +41,9 @@
 #include "utils/syscache.h"
 
 
-Datum		fmgr_internal_validator(PG_FUNCTION_ARGS);
-Datum		fmgr_c_validator(PG_FUNCTION_ARGS);
-Datum		fmgr_sql_validator(PG_FUNCTION_ARGS);
+Datum		fmgr_internal_validator(MDB_FUNCTION_ARGS);
+Datum		fmgr_c_validator(MDB_FUNCTION_ARGS);
+Datum		fmgr_sql_validator(MDB_FUNCTION_ARGS);
 
 typedef struct
 {
@@ -743,16 +743,16 @@ ProcedureCreate(const char *procedureName,
  * a known builtin function.
  */
 Datum
-fmgr_internal_validator(PG_FUNCTION_ARGS)
+fmgr_internal_validator(MDB_FUNCTION_ARGS)
 {
-	Oid			funcoid = PG_GETARG_OID(0);
+	Oid			funcoid = MDB_GETARG_OID(0);
 	HeapTuple	tuple;
 	bool		isnull;
 	Datum		tmp;
 	char	   *prosrc;
 
 	if (!CheckFunctionValidatorAccess(fcinfo->flinfo->fn_oid, funcoid))
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 
 	/*
 	 * We do not honor check_function_bodies since it's unlikely the function
@@ -776,7 +776,7 @@ fmgr_internal_validator(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(tuple);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
@@ -789,9 +789,9 @@ fmgr_internal_validator(PG_FUNCTION_ARGS)
  * information record.
  */
 Datum
-fmgr_c_validator(PG_FUNCTION_ARGS)
+fmgr_c_validator(MDB_FUNCTION_ARGS)
 {
-	Oid			funcoid = PG_GETARG_OID(0);
+	Oid			funcoid = MDB_GETARG_OID(0);
 	void	   *libraryhandle;
 	HeapTuple	tuple;
 	bool		isnull;
@@ -800,7 +800,7 @@ fmgr_c_validator(PG_FUNCTION_ARGS)
 	char	   *probin;
 
 	if (!CheckFunctionValidatorAccess(fcinfo->flinfo->fn_oid, funcoid))
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 
 	/*
 	 * It'd be most consistent to skip the check if !check_function_bodies,
@@ -827,7 +827,7 @@ fmgr_c_validator(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(tuple);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 
@@ -837,9 +837,9 @@ fmgr_c_validator(PG_FUNCTION_ARGS)
  * Parse it here in order to be sure that it contains no syntax errors.
  */
 Datum
-fmgr_sql_validator(PG_FUNCTION_ARGS)
+fmgr_sql_validator(MDB_FUNCTION_ARGS)
 {
-	Oid			funcoid = PG_GETARG_OID(0);
+	Oid			funcoid = MDB_GETARG_OID(0);
 	HeapTuple	tuple;
 	Form_mdb_proc proc;
 	List	   *raw_parsetree_list;
@@ -854,7 +854,7 @@ fmgr_sql_validator(PG_FUNCTION_ARGS)
 	int			i;
 
 	if (!CheckFunctionValidatorAccess(fcinfo->flinfo->fn_oid, funcoid))
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 
 	tuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcoid));
 	if (!HeapTupleIsValid(tuple))
@@ -955,7 +955,7 @@ fmgr_sql_validator(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(tuple);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*

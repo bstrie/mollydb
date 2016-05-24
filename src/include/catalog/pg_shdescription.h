@@ -26,8 +26,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_SHDESCRIPTION_H
-#define PG_SHDESCRIPTION_H
+#ifndef MDB_SHDESCRIPTION_H
+#define MDB_SHDESCRIPTION_H
 
 #include "catalog/genbki.h"
 
@@ -75,4 +75,4 @@ typedef FormData_mdb_shdescription *Form_mdb_shdescription;
  *	by genbki.pl and loaded during initdb.
  */
 
-#endif   /* PG_SHDESCRIPTION_H */
+#endif   /* MDB_SHDESCRIPTION_H */

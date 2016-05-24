@@ -169,14 +169,14 @@ static float8 call_subtype_diff(TypeCacheEntry *typcache,
 
 /* GiST query consistency check */
 Datum
-range_gist_consistent(PG_FUNCTION_ARGS)
+range_gist_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	Datum		query = PG_GETARG_DATUM(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	Datum		query = MDB_GETARG_DATUM(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	RangeType  *key = DatumGetRangeType(entry->key);
 	TypeCacheEntry *typcache;
 
@@ -186,18 +186,18 @@ range_gist_consistent(PG_FUNCTION_ARGS)
 	typcache = range_get_typcache(fcinfo, RangeTypeGetOid(key));
 
 	if (GIST_LEAF(entry))
-		PG_RETURN_BOOL(range_gist_consistent_leaf(typcache, strategy,
+		MDB_RETURN_BOOL(range_gist_consistent_leaf(typcache, strategy,
 												  key, query));
 	else
-		PG_RETURN_BOOL(range_gist_consistent_int(typcache, strategy,
+		MDB_RETURN_BOOL(range_gist_consistent_int(typcache, strategy,
 												 key, query));
 }
 
 /* form union range */
 Datum
-range_gist_union(PG_FUNCTION_ARGS)
+range_gist_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *ent = entryvec->vector;
 	RangeType  *result_range;
 	TypeCacheEntry *typcache;
@@ -213,32 +213,32 @@ range_gist_union(PG_FUNCTION_ARGS)
 										 DatumGetRangeType(ent[i].key));
 	}
 
-	PG_RETURN_RANGE(result_range);
+	MDB_RETURN_RANGE(result_range);
 }
 
 /* compress, decompress, fetch are no-ops */
 Datum
-range_gist_compress(PG_FUNCTION_ARGS)
+range_gist_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 Datum
-range_gist_decompress(PG_FUNCTION_ARGS)
+range_gist_decompress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 Datum
-range_gist_fetch(PG_FUNCTION_ARGS)
+range_gist_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(entry);
+	MDB_RETURN_POINTER(entry);
 }
 
 /*
@@ -252,11 +252,11 @@ range_gist_fetch(PG_FUNCTION_ARGS)
  * - Favor adding ranges to narrower original predicates
  */
 Datum
-range_gist_penalty(PG_FUNCTION_ARGS)
+range_gist_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *origentry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	GISTENTRY  *newentry = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *penalty = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *origentry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	GISTENTRY  *newentry = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *penalty = (float *) MDB_GETARG_POINTER(2);
 	RangeType  *orig = DatumGetRangeType(origentry->key);
 	RangeType  *new = DatumGetRangeType(newentry->key);
 	TypeCacheEntry *typcache;
@@ -499,7 +499,7 @@ range_gist_penalty(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_POINTER(penalty);
+	MDB_RETURN_POINTER(penalty);
 }
 
 /*
@@ -509,10 +509,10 @@ range_gist_penalty(PG_FUNCTION_ARGS)
  * ranges of the same class, use the appropriate split method for that class.
  */
 Datum
-range_gist_picksplit(PG_FUNCTION_ARGS)
+range_gist_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	TypeCacheEntry *typcache;
 	OffsetNumber i;
 	RangeType  *pred_left;
@@ -663,16 +663,16 @@ range_gist_picksplit(PG_FUNCTION_ARGS)
 		range_gist_class_split(typcache, entryvec, v, classes_groups);
 	}
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 /* equality comparator for GiST */
 Datum
-range_gist_same(PG_FUNCTION_ARGS)
+range_gist_same(MDB_FUNCTION_ARGS)
 {
-	RangeType  *r1 = PG_GETARG_RANGE(0);
-	RangeType  *r2 = PG_GETARG_RANGE(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	RangeType  *r1 = MDB_GETARG_RANGE(0);
+	RangeType  *r2 = MDB_GETARG_RANGE(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	/*
 	 * range_eq will ignore the RANGE_CONTAIN_EMPTY flag, so we have to check
@@ -691,7 +691,7 @@ range_gist_same(PG_FUNCTION_ARGS)
 		*result = range_eq_internal(typcache, r1, r2);
 	}
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*

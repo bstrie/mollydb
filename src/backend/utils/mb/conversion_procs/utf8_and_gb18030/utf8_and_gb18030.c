@@ -17,10 +17,10 @@
 #include "../../Unicode/gb18030_to_utf8.map"
 #include "../../Unicode/utf8_to_gb18030.map"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(gb18030_to_utf8);
-PG_FUNCTION_INFO_V1(utf8_to_gb18030);
+MDB_FUNCTION_INFO_V1(gb18030_to_utf8);
+MDB_FUNCTION_INFO_V1(utf8_to_gb18030);
 
 /*
  * Convert 4-byte GB18030 characters to and from a linear code space
@@ -188,37 +188,37 @@ conv_utf8_to_18030(uint32 code)
  * ----------
  */
 Datum
-gb18030_to_utf8(PG_FUNCTION_ARGS)
+gb18030_to_utf8(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_GB18030, PG_UTF8);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_GB18030, MDB_UTF8);
 
 	LocalToUtf(src, len, dest,
 			   LUmapGB18030, lengthof(LUmapGB18030),
 			   NULL, 0,
 			   conv_18030_to_utf8,
-			   PG_GB18030);
+			   MDB_GB18030);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-utf8_to_gb18030(PG_FUNCTION_ARGS)
+utf8_to_gb18030(MDB_FUNCTION_ARGS)
 {
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_UTF8, PG_GB18030);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_UTF8, MDB_GB18030);
 
 	UtfToLocal(src, len, dest,
 			   ULmapGB18030, lengthof(ULmapGB18030),
 			   NULL, 0,
 			   conv_utf8_to_18030,
-			   PG_GB18030);
+			   MDB_GB18030);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

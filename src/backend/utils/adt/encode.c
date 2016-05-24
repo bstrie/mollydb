@@ -33,10 +33,10 @@ static const struct mdb_encoding *mdb_find_encoding(const char *name);
  */
 
 Datum
-binary_encode(PG_FUNCTION_ARGS)
+binary_encode(MDB_FUNCTION_ARGS)
 {
-	bytea	   *data = PG_GETARG_BYTEA_P(0);
-	Datum		name = PG_GETARG_DATUM(1);
+	bytea	   *data = MDB_GETARG_BYTEA_P(0);
+	Datum		name = MDB_GETARG_DATUM(1);
 	text	   *result;
 	char	   *namebuf;
 	int			datalen,
@@ -65,14 +65,14 @@ binary_encode(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(result, VARHDRSZ + res);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }
 
 Datum
-binary_decode(PG_FUNCTION_ARGS)
+binary_decode(MDB_FUNCTION_ARGS)
 {
-	text	   *data = PG_GETARG_TEXT_P(0);
-	Datum		name = PG_GETARG_DATUM(1);
+	text	   *data = MDB_GETARG_TEXT_P(0);
+	Datum		name = MDB_GETARG_DATUM(1);
 	bytea	   *result;
 	char	   *namebuf;
 	int			datalen,
@@ -101,7 +101,7 @@ binary_decode(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(result, VARHDRSZ + res);
 
-	PG_RETURN_BYTEA_P(result);
+	MDB_RETURN_BYTEA_P(result);
 }
 
 

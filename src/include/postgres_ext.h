@@ -40,7 +40,7 @@ typedef unsigned int Oid;
 /* you will need to include <limits.h> to use the above #define */
 
 /* Define a signed 64-bit integer type for use in client API declarations. */
-typedef PG_INT64_TYPE mdb_int64;
+typedef MDB_INT64_TYPE mdb_int64;
 
 
 /*
@@ -48,22 +48,22 @@ typedef PG_INT64_TYPE mdb_int64;
  * between frontend and backend, and also to export them to libpq
  * applications.
  */
-#define PG_DIAG_SEVERITY		'S'
-#define PG_DIAG_SQLSTATE		'C'
-#define PG_DIAG_MESSAGE_PRIMARY 'M'
-#define PG_DIAG_MESSAGE_DETAIL	'D'
-#define PG_DIAG_MESSAGE_HINT	'H'
-#define PG_DIAG_STATEMENT_POSITION 'P'
-#define PG_DIAG_INTERNAL_POSITION 'p'
-#define PG_DIAG_INTERNAL_QUERY	'q'
-#define PG_DIAG_CONTEXT			'W'
-#define PG_DIAG_SCHEMA_NAME		's'
-#define PG_DIAG_TABLE_NAME		't'
-#define PG_DIAG_COLUMN_NAME		'c'
-#define PG_DIAG_DATATYPE_NAME	'd'
-#define PG_DIAG_CONSTRAINT_NAME 'n'
-#define PG_DIAG_SOURCE_FILE		'F'
-#define PG_DIAG_SOURCE_LINE		'L'
-#define PG_DIAG_SOURCE_FUNCTION 'R'
+#define MDB_DIAG_SEVERITY		'S'
+#define MDB_DIAG_SQLSTATE		'C'
+#define MDB_DIAG_MESSAGE_PRIMARY 'M'
+#define MDB_DIAG_MESSAGE_DETAIL	'D'
+#define MDB_DIAG_MESSAGE_HINT	'H'
+#define MDB_DIAG_STATEMENT_POSITION 'P'
+#define MDB_DIAG_INTERNAL_POSITION 'p'
+#define MDB_DIAG_INTERNAL_QUERY	'q'
+#define MDB_DIAG_CONTEXT			'W'
+#define MDB_DIAG_SCHEMA_NAME		's'
+#define MDB_DIAG_TABLE_NAME		't'
+#define MDB_DIAG_COLUMN_NAME		'c'
+#define MDB_DIAG_DATATYPE_NAME	'd'
+#define MDB_DIAG_CONSTRAINT_NAME 'n'
+#define MDB_DIAG_SOURCE_FILE		'F'
+#define MDB_DIAG_SOURCE_LINE		'L'
+#define MDB_DIAG_SOURCE_FUNCTION 'R'
 
 #endif   /* POSTGRES_EXT_H */

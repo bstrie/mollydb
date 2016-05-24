@@ -18,12 +18,12 @@
 
 #include "test_shm_mq.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(test_shm_mq);
-PG_FUNCTION_INFO_V1(test_shm_mq_pipelined);
+MDB_FUNCTION_INFO_V1(test_shm_mq);
+MDB_FUNCTION_INFO_V1(test_shm_mq_pipelined);
 
-void		_PG_init(void);
+void		_MDB_init(void);
 
 static void verify_message(Size origlen, char *origdata, Size newlen,
 			   char *newdata);
@@ -37,14 +37,14 @@ static void verify_message(Size origlen, char *origdata, Size newlen,
  * we check whether the final message matches the one we started with.
  */
 Datum
-test_shm_mq(PG_FUNCTION_ARGS)
+test_shm_mq(MDB_FUNCTION_ARGS)
 {
-	int64		queue_size = PG_GETARG_INT64(0);
-	text	   *message = PG_GETARG_TEXT_PP(1);
+	int64		queue_size = MDB_GETARG_INT64(0);
+	text	   *message = MDB_GETARG_TEXT_PP(1);
 	char	   *message_contents = VARDATA_ANY(message);
 	int			message_size = VARSIZE_ANY_EXHDR(message);
-	int32		loop_count = PG_GETARG_INT32(2);
-	int32		nworkers = PG_GETARG_INT32(3);
+	int32		loop_count = MDB_GETARG_INT32(2);
+	int32		nworkers = MDB_GETARG_INT32(3);
 	dsm_segment *seg;
 	shm_mq_handle *outqh;
 	shm_mq_handle *inqh;
@@ -112,7 +112,7 @@ test_shm_mq(PG_FUNCTION_ARGS)
 	/* Clean up. */
 	dsm_detach(seg);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -126,15 +126,15 @@ test_shm_mq(PG_FUNCTION_ARGS)
  * back before we've finished sending them.
  */
 Datum
-test_shm_mq_pipelined(PG_FUNCTION_ARGS)
+test_shm_mq_pipelined(MDB_FUNCTION_ARGS)
 {
-	int64		queue_size = PG_GETARG_INT64(0);
-	text	   *message = PG_GETARG_TEXT_PP(1);
+	int64		queue_size = MDB_GETARG_INT64(0);
+	text	   *message = MDB_GETARG_TEXT_PP(1);
 	char	   *message_contents = VARDATA_ANY(message);
 	int			message_size = VARSIZE_ANY_EXHDR(message);
-	int32		loop_count = PG_GETARG_INT32(2);
-	int32		nworkers = PG_GETARG_INT32(3);
-	bool		verify = PG_GETARG_BOOL(4);
+	int32		loop_count = MDB_GETARG_INT32(2);
+	int32		nworkers = MDB_GETARG_INT32(3);
+	bool		verify = MDB_GETARG_BOOL(4);
 	int32		send_count = 0;
 	int32		receive_count = 0;
 	dsm_segment *seg;
@@ -239,7 +239,7 @@ test_shm_mq_pipelined(PG_FUNCTION_ARGS)
 	/* Clean up. */
 	dsm_detach(seg);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*

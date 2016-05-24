@@ -467,7 +467,7 @@ SendTimeLineHistory(TimeLineHistoryCmd *cmd)
 	pq_sendint(&buf, len, 4);		/* col1 len */
 	pq_sendbytes(&buf, histfname, len);
 
-	fd = OpenTransientFile(path, O_RDONLY | PG_BINARY, 0666);
+	fd = OpenTransientFile(path, O_RDONLY | MDB_BINARY, 0666);
 	if (fd < 0)
 		ereport(ERROR,
 				(errcode_for_file_access(),
@@ -2085,7 +2085,7 @@ retry:
 
 			XLogFilePath(path, curFileTimeLine, sendSegNo);
 
-			sendFile = BasicOpenFile(path, O_RDONLY | PG_BINARY, 0);
+			sendFile = BasicOpenFile(path, O_RDONLY | MDB_BINARY, 0);
 			if (sendFile < 0)
 			{
 				/*
@@ -2747,9 +2747,9 @@ WalSndGetStateString(WalSndState state)
  * standby servers.
  */
 Datum
-mdb_stat_get_wal_senders(PG_FUNCTION_ARGS)
+mdb_stat_get_wal_senders(MDB_FUNCTION_ARGS)
 {
-#define PG_STAT_GET_WAL_SENDERS_COLS	8
+#define MDB_STAT_GET_WAL_SENDERS_COLS	8
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
 	Tuplestorestate *tupstore;
@@ -2799,8 +2799,8 @@ mdb_stat_get_wal_senders(PG_FUNCTION_ARGS)
 		XLogRecPtr	apply;
 		int			priority;
 		WalSndState state;
-		Datum		values[PG_STAT_GET_WAL_SENDERS_COLS];
-		bool		nulls[PG_STAT_GET_WAL_SENDERS_COLS];
+		Datum		values[MDB_STAT_GET_WAL_SENDERS_COLS];
+		bool		nulls[MDB_STAT_GET_WAL_SENDERS_COLS];
 
 		if (walsnd->pid == 0)
 			continue;
@@ -2823,7 +2823,7 @@ mdb_stat_get_wal_senders(PG_FUNCTION_ARGS)
 			 * Only superusers can see details. Other users only get the pid
 			 * value to know it's a walsender, but no details.
 			 */
-			MemSet(&nulls[1], true, PG_STAT_GET_WAL_SENDERS_COLS - 1);
+			MemSet(&nulls[1], true, MDB_STAT_GET_WAL_SENDERS_COLS - 1);
 		}
 		else
 		{

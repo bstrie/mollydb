@@ -18,7 +18,7 @@
 #include "executor/instrument.h"
 #include "utils/guc.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* GUC variables */
 static int	auto_explain_log_min_duration = -1; /* msec or -1 */
@@ -55,8 +55,8 @@ static bool current_query_sampled = true;
 	(auto_explain_log_min_duration >= 0 && \
 	 (nesting_level == 0 || auto_explain_log_nested_statements))
 
-void		_PG_init(void);
-void		_PG_fini(void);
+void		_MDB_init(void);
+void		_MDB_fini(void);
 
 static void explain_ExecutorStart(QueryDesc *queryDesc, int eflags);
 static void explain_ExecutorRun(QueryDesc *queryDesc,
@@ -70,7 +70,7 @@ static void explain_ExecutorEnd(QueryDesc *queryDesc);
  * Module load callback
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/* Define custom GUC variables. */
 	DefineCustomIntVariable("auto_explain.log_min_duration",
@@ -193,7 +193,7 @@ _PG_init(void)
  * Module unload callback
  */
 void
-_PG_fini(void)
+_MDB_fini(void)
 {
 	/* Uninstall hooks. */
 	ExecutorStart_hook = prev_ExecutorStart;
@@ -260,7 +260,7 @@ static void
 explain_ExecutorRun(QueryDesc *queryDesc, ScanDirection direction, uint64 count)
 {
 	nesting_level++;
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (prev_ExecutorRun)
 			prev_ExecutorRun(queryDesc, direction, count);
@@ -268,12 +268,12 @@ explain_ExecutorRun(QueryDesc *queryDesc, ScanDirection direction, uint64 count)
 			standard_ExecutorRun(queryDesc, direction, count);
 		nesting_level--;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		nesting_level--;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 /*
@@ -283,7 +283,7 @@ static void
 explain_ExecutorFinish(QueryDesc *queryDesc)
 {
 	nesting_level++;
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (prev_ExecutorFinish)
 			prev_ExecutorFinish(queryDesc);
@@ -291,12 +291,12 @@ explain_ExecutorFinish(QueryDesc *queryDesc)
 			standard_ExecutorFinish(queryDesc);
 		nesting_level--;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		nesting_level--;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 /*

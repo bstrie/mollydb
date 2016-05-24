@@ -79,7 +79,7 @@ semdb_schema_post_create(Oid namespaceId)
 	tcontext = semdb_get_label(DatabaseRelationId, MyDatabaseId, 0);
 	ncontext = semdb_compute_create(semdb_get_client_label(),
 									  tcontext,
-									  SEPG_CLASS_DB_SCHEMA,
+									  SEMDB_CLASS_DB_SCHEMA,
 									  nsp_name);
 
 	/*
@@ -88,8 +88,8 @@ semdb_schema_post_create(Oid namespaceId)
 	initStringInfo(&audit_name);
 	appendStringInfo(&audit_name, "%s", quote_identifier(nsp_name));
 	semdb_avc_check_perms_label(ncontext,
-								  SEPG_CLASS_DB_SCHEMA,
-								  SEPG_DB_SCHEMA__CREATE,
+								  SEMDB_CLASS_DB_SCHEMA,
+								  SEMDB_DB_SCHEMA__CREATE,
 								  audit_name.data,
 								  true);
 	systable_endscan(sscan);
@@ -127,8 +127,8 @@ semdb_schema_drop(Oid namespaceId)
 	audit_name = getObjectIdentity(&object);
 
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_SCHEMA,
-							SEPG_DB_SCHEMA__DROP,
+							SEMDB_CLASS_DB_SCHEMA,
+							SEMDB_DB_SCHEMA__DROP,
 							audit_name,
 							true);
 	pfree(audit_name);
@@ -155,9 +155,9 @@ semdb_schema_relabel(Oid namespaceId, const char *seclabel)
 	 * check db_schema:{setattr relabelfrom} permission
 	 */
 	semdb_avc_check_perms(&object,
-							SEPG_CLASS_DB_SCHEMA,
-							SEPG_DB_SCHEMA__SETATTR |
-							SEPG_DB_SCHEMA__RELABELFROM,
+							SEMDB_CLASS_DB_SCHEMA,
+							SEMDB_DB_SCHEMA__SETATTR |
+							SEMDB_DB_SCHEMA__RELABELFROM,
 							audit_name,
 							true);
 
@@ -165,8 +165,8 @@ semdb_schema_relabel(Oid namespaceId, const char *seclabel)
 	 * check db_schema:{relabelto} permission
 	 */
 	semdb_avc_check_perms_label(seclabel,
-								  SEPG_CLASS_DB_SCHEMA,
-								  SEPG_DB_SCHEMA__RELABELTO,
+								  SEMDB_CLASS_DB_SCHEMA,
+								  SEMDB_DB_SCHEMA__RELABELTO,
 								  audit_name,
 								  true);
 	pfree(audit_name);
@@ -190,7 +190,7 @@ check_schema_perms(Oid namespaceId, uint32 required, bool abort_on_violation)
 	audit_name = getObjectIdentity(&object);
 
 	result = semdb_avc_check_perms(&object,
-									 SEPG_CLASS_DB_SCHEMA,
+									 SEMDB_CLASS_DB_SCHEMA,
 									 required,
 									 audit_name,
 									 abort_on_violation);
@@ -203,7 +203,7 @@ check_schema_perms(Oid namespaceId, uint32 required, bool abort_on_violation)
 void
 semdb_schema_setattr(Oid namespaceId)
 {
-	check_schema_perms(namespaceId, SEPG_DB_SCHEMA__SETATTR, true);
+	check_schema_perms(namespaceId, SEMDB_DB_SCHEMA__SETATTR, true);
 }
 
 /* db_schema:{search} permission */
@@ -211,27 +211,27 @@ bool
 semdb_schema_search(Oid namespaceId, bool abort_on_violation)
 {
 	return check_schema_perms(namespaceId,
-							  SEPG_DB_SCHEMA__SEARCH,
+							  SEMDB_DB_SCHEMA__SEARCH,
 							  abort_on_violation);
 }
 
 void
 semdb_schema_add_name(Oid namespaceId)
 {
-	check_schema_perms(namespaceId, SEPG_DB_SCHEMA__ADD_NAME, true);
+	check_schema_perms(namespaceId, SEMDB_DB_SCHEMA__ADD_NAME, true);
 }
 
 void
 semdb_schema_remove_name(Oid namespaceId)
 {
-	check_schema_perms(namespaceId, SEPG_DB_SCHEMA__REMOVE_NAME, true);
+	check_schema_perms(namespaceId, SEMDB_DB_SCHEMA__REMOVE_NAME, true);
 }
 
 void
 semdb_schema_rename(Oid namespaceId)
 {
 	check_schema_perms(namespaceId,
-					   SEPG_DB_SCHEMA__ADD_NAME |
-					   SEPG_DB_SCHEMA__REMOVE_NAME,
+					   SEMDB_DB_SCHEMA__ADD_NAME |
+					   SEMDB_DB_SCHEMA__REMOVE_NAME,
 					   true);
 }

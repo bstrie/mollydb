@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_INDEX_H
-#define PG_INDEX_H
+#ifndef MDB_INDEX_H
+#define MDB_INDEX_H
 
 #include "catalog/genbki.h"
 
@@ -108,4 +108,4 @@ typedef FormData_mdb_index *Form_mdb_index;
 #define IndexIsReady(indexForm) ((indexForm)->indisready)
 #define IndexIsLive(indexForm)	((indexForm)->indislive)
 
-#endif   /* PG_INDEX_H */
+#endif   /* MDB_INDEX_H */

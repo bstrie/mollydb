@@ -15,7 +15,7 @@
 #include "commands/defrem.h"
 #include "tsearch/ts_public.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 typedef struct
 {
@@ -24,13 +24,13 @@ typedef struct
 } DictInt;
 
 
-PG_FUNCTION_INFO_V1(dintdict_init);
-PG_FUNCTION_INFO_V1(dintdict_lexize);
+MDB_FUNCTION_INFO_V1(dintdict_init);
+MDB_FUNCTION_INFO_V1(dintdict_lexize);
 
 Datum
-dintdict_init(PG_FUNCTION_ARGS)
+dintdict_init(MDB_FUNCTION_ARGS)
 {
-	List	   *dictoptions = (List *) PG_GETARG_POINTER(0);
+	List	   *dictoptions = (List *) MDB_GETARG_POINTER(0);
 	DictInt    *d;
 	ListCell   *l;
 
@@ -59,19 +59,19 @@ dintdict_init(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_POINTER(d);
+	MDB_RETURN_POINTER(d);
 }
 
 Datum
-dintdict_lexize(PG_FUNCTION_ARGS)
+dintdict_lexize(MDB_FUNCTION_ARGS)
 {
-	DictInt    *d = (DictInt *) PG_GETARG_POINTER(0);
-	char	   *in = (char *) PG_GETARG_POINTER(1);
-	char	   *txt = pnstrdup(in, PG_GETARG_INT32(2));
+	DictInt    *d = (DictInt *) MDB_GETARG_POINTER(0);
+	char	   *in = (char *) MDB_GETARG_POINTER(1);
+	char	   *txt = pnstrdup(in, MDB_GETARG_INT32(2));
 	TSLexeme   *res = palloc0(sizeof(TSLexeme) * 2);
 
 	res[1].lexeme = NULL;
-	if (PG_GETARG_INT32(2) > d->maxlen)
+	if (MDB_GETARG_INT32(2) > d->maxlen)
 	{
 		if (d->rejectlong)
 		{
@@ -91,5 +91,5 @@ dintdict_lexize(PG_FUNCTION_ARGS)
 		res[0].lexeme = txt;
 	}
 
-	PG_RETURN_POINTER(res);
+	MDB_RETURN_POINTER(res);
 }

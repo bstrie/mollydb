@@ -417,8 +417,8 @@ msgstr "Epok för NextXID:                       %u\n"
 
 #: mdb_resetxlog.c:751
 #, c-format
-msgid "%s: internal error -- sizeof(ControlFileData) is too large ... fix PG_CONTROL_SIZE\n"
-msgstr "%s: Internt fel: sizeof(ControlFileData) är alltför stor. Rätta till PG_CONTROL_SIZE.\n"
+msgid "%s: internal error -- sizeof(ControlFileData) is too large ... fix MDB_CONTROL_SIZE\n"
+msgstr "%s: Internt fel: sizeof(ControlFileData) är alltför stor. Rätta till MDB_CONTROL_SIZE.\n"
 
 #: mdb_resetxlog.c:766
 #, c-format

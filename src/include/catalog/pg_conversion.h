@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_CONVERSION_H
-#define PG_CONVERSION_H
+#ifndef MDB_CONVERSION_H
+#define MDB_CONVERSION_H
 
 #include "catalog/genbki.h"
 
@@ -74,4 +74,4 @@ typedef FormData_mdb_conversion *Form_mdb_conversion;
  * ---------------
  */
 
-#endif   /* PG_CONVERSION_H */
+#endif   /* MDB_CONVERSION_H */

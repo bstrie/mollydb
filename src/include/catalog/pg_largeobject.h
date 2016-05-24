@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_LARGEOBJECT_H
-#define PG_LARGEOBJECT_H
+#ifndef MDB_LARGEOBJECT_H
+#define MDB_LARGEOBJECT_H
 
 #include "catalog/genbki.h"
 
@@ -57,4 +57,4 @@ extern Oid	LargeObjectCreate(Oid loid);
 extern void LargeObjectDrop(Oid loid);
 extern bool LargeObjectExists(Oid loid);
 
-#endif   /* PG_LARGEOBJECT_H */
+#endif   /* MDB_LARGEOBJECT_H */

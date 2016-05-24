@@ -7,8 +7,8 @@
  * ----------
  */
 
-#ifndef _PG_LZCOMPRESS_H_
-#define _PG_LZCOMPRESS_H_
+#ifndef _MDB_LZCOMPRESS_H_
+#define _MDB_LZCOMPRESS_H_
 
 
 /* ----------
@@ -88,4 +88,4 @@ extern int32 pglz_compress(const char *source, int32 slen, char *dest,
 extern int32 pglz_decompress(const char *source, int32 slen, char *dest,
 				int32 rawsize);
 
-#endif   /* _PG_LZCOMPRESS_H_ */
+#endif   /* _MDB_LZCOMPRESS_H_ */

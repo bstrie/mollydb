@@ -5,12 +5,12 @@ OBJS = passwordcheck.o $(WIN32RES)
 PGFILEDESC = "passwordcheck - strengthen user password checks"
 
 # uncomment the following two lines to enable cracklib support
-# PG_CPPFLAGS = -DUSE_CRACKLIB '-DCRACKLIB_DICTPATH="/usr/lib/cracklib_dict"'
+# MDB_CPPFLAGS = -DUSE_CRACKLIB '-DCRACKLIB_DICTPATH="/usr/lib/cracklib_dict"'
 # SHLIB_LINK = -lcrack
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/passwordcheck

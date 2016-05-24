@@ -487,7 +487,7 @@ PLy_output(volatile int level, PyObject *self, PyObject *args, PyObject *kw)
 	}
 
 	oldcontext = CurrentMemoryContext;
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (message != NULL)
 			mdb_verifymbstr(message, strlen(message), false);
@@ -512,17 +512,17 @@ PLy_output(volatile int level, PyObject *self, PyObject *args, PyObject *kw)
 				 (detail != NULL) ? errdetail_internal("%s", detail) : 0,
 				 (hint != NULL) ? errhint("%s", hint) : 0,
 				 (column != NULL) ?
-				 err_generic_string(PG_DIAG_COLUMN_NAME, column) : 0,
+				 err_generic_string(MDB_DIAG_COLUMN_NAME, column) : 0,
 				 (constraint != NULL) ?
-				 err_generic_string(PG_DIAG_CONSTRAINT_NAME, constraint) : 0,
+				 err_generic_string(MDB_DIAG_CONSTRAINT_NAME, constraint) : 0,
 				 (datatype != NULL) ?
-				 err_generic_string(PG_DIAG_DATATYPE_NAME, datatype) : 0,
+				 err_generic_string(MDB_DIAG_DATATYPE_NAME, datatype) : 0,
 				 (table != NULL) ?
-				 err_generic_string(PG_DIAG_TABLE_NAME, table) : 0,
+				 err_generic_string(MDB_DIAG_TABLE_NAME, table) : 0,
 				 (schema != NULL) ?
-				 err_generic_string(PG_DIAG_SCHEMA_NAME, schema) : 0));
+				 err_generic_string(MDB_DIAG_SCHEMA_NAME, schema) : 0));
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData	*edata;
 
@@ -535,7 +535,7 @@ PLy_output(volatile int level, PyObject *self, PyObject *args, PyObject *kw)
 
 		return NULL;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/*
 	 * return a legal object so the interpreter will continue on its merry way

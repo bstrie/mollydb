@@ -113,7 +113,7 @@ mdb_open_tzfile(const char *name, char *canonname)
 	if (canonname)
 		strlcpy(canonname, fullname + orignamelen + 1, TZ_STRLEN_MAX + 1);
 
-	return open(fullname, O_RDONLY | PG_BINARY, 0);
+	return open(fullname, O_RDONLY | MDB_BINARY, 0);
 }
 
 

@@ -136,7 +136,7 @@ mdb_ltoa(int32 value, char *a)
 	 * Avoid problems with the most negative integer not being representable
 	 * as a positive integer.
 	 */
-	if (value == PG_INT32_MIN)
+	if (value == MDB_INT32_MIN)
 	{
 		memcpy(a, "-2147483648", 12);
 		return;
@@ -190,7 +190,7 @@ mdb_lltoa(int64 value, char *a)
 	 * Avoid problems with the most negative integer not being representable
 	 * as a positive integer.
 	 */
-	if (value == PG_INT64_MIN)
+	if (value == MDB_INT64_MIN)
 	{
 		memcpy(a, "-9223372036854775808", 21);
 		return;

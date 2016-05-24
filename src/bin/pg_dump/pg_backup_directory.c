@@ -208,7 +208,7 @@ InitArchiveFmt_Directory(ArchiveHandle *AH)
 
 		setFilePath(AH, fname, "toc.dat");
 
-		tocFH = cfopen_read(fname, PG_BINARY_R);
+		tocFH = cfopen_read(fname, MDB_BINARY_R);
 		if (tocFH == NULL)
 			exit_horribly(modulename,
 						  "could not open input file \"%s\": %s\n",
@@ -336,7 +336,7 @@ _StartData(ArchiveHandle *AH, TocEntry *te)
 
 	setFilePath(AH, fname, tctx->filename);
 
-	ctx->dataFH = cfopen_write(fname, PG_BINARY_W, AH->compression);
+	ctx->dataFH = cfopen_write(fname, MDB_BINARY_W, AH->compression);
 	if (ctx->dataFH == NULL)
 		exit_horribly(modulename, "could not open output file \"%s\": %s\n",
 					  fname, strerror(errno));
@@ -396,7 +396,7 @@ _PrintFileData(ArchiveHandle *AH, char *filename)
 	if (!filename)
 		return;
 
-	cfp = cfopen_read(filename, PG_BINARY_R);
+	cfp = cfopen_read(filename, MDB_BINARY_R);
 
 	if (!cfp)
 		exit_horribly(modulename, "could not open input file \"%s\": %s\n",
@@ -448,7 +448,7 @@ _LoadBlobs(ArchiveHandle *AH)
 
 	setFilePath(AH, fname, "blobs.toc");
 
-	ctx->blobsTocFH = cfopen_read(fname, PG_BINARY_R);
+	ctx->blobsTocFH = cfopen_read(fname, MDB_BINARY_R);
 
 	if (ctx->blobsTocFH == NULL)
 		exit_horribly(modulename, "could not open large object TOC file \"%s\" for input: %s\n",
@@ -582,7 +582,7 @@ _CloseArchive(ArchiveHandle *AH)
 		ctx->pstate = ParallelBackupStart(AH);
 
 		/* The TOC is always created uncompressed */
-		tocFH = cfopen_write(fname, PG_BINARY_W, 0);
+		tocFH = cfopen_write(fname, MDB_BINARY_W, 0);
 		if (tocFH == NULL)
 			exit_horribly(modulename, "could not open output file \"%s\": %s\n",
 						  fname, strerror(errno));
@@ -659,7 +659,7 @@ _StartBlob(ArchiveHandle *AH, TocEntry *te, Oid oid)
 
 	snprintf(fname, MAXPGPATH, "%s/blob_%u.dat", ctx->directory, oid);
 
-	ctx->dataFH = cfopen_write(fname, PG_BINARY_W, AH->compression);
+	ctx->dataFH = cfopen_write(fname, MDB_BINARY_W, AH->compression);
 
 	if (ctx->dataFH == NULL)
 		exit_horribly(modulename, "could not open output file \"%s\": %s\n",

@@ -555,7 +555,7 @@ set_pglocale_pgservice(const char *argv0, const char *app)
 																 * PGLOCALEDIR */
 
 	/* don't set LC_ALL in the backend */
-	if (strcmp(app, PG_TEXTDOMAIN("mollydb")) != 0)
+	if (strcmp(app, MDB_TEXTDOMAIN("mollydb")) != 0)
 	{
 		setlocale(LC_ALL, "");
 

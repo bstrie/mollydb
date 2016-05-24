@@ -55,13 +55,13 @@ typedef TimeIntervalData *TimeInterval;
 #define RelativeTimeGetDatum(X)  Int32GetDatum(X)
 #define TimeIntervalGetDatum(X)  PointerGetDatum(X)
 
-#define PG_GETARG_ABSOLUTETIME(n)  DatumGetAbsoluteTime(PG_GETARG_DATUM(n))
-#define PG_GETARG_RELATIVETIME(n)  DatumGetRelativeTime(PG_GETARG_DATUM(n))
-#define PG_GETARG_TIMEINTERVAL(n)  DatumGetTimeInterval(PG_GETARG_DATUM(n))
+#define MDB_GETARG_ABSOLUTETIME(n)  DatumGetAbsoluteTime(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_RELATIVETIME(n)  DatumGetRelativeTime(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_TIMEINTERVAL(n)  DatumGetTimeInterval(MDB_GETARG_DATUM(n))
 
-#define PG_RETURN_ABSOLUTETIME(x)  return AbsoluteTimeGetDatum(x)
-#define PG_RETURN_RELATIVETIME(x)  return RelativeTimeGetDatum(x)
-#define PG_RETURN_TIMEINTERVAL(x)  return TimeIntervalGetDatum(x)
+#define MDB_RETURN_ABSOLUTETIME(x)  return AbsoluteTimeGetDatum(x)
+#define MDB_RETURN_RELATIVETIME(x)  return RelativeTimeGetDatum(x)
+#define MDB_RETURN_TIMEINTERVAL(x)  return TimeIntervalGetDatum(x)
 
 /*
  * Reserved values
@@ -99,65 +99,65 @@ typedef TimeIntervalData *TimeInterval;
 /*
  * nabstime.c prototypes
  */
-extern Datum abstimein(PG_FUNCTION_ARGS);
-extern Datum abstimeout(PG_FUNCTION_ARGS);
-extern Datum abstimerecv(PG_FUNCTION_ARGS);
-extern Datum abstimesend(PG_FUNCTION_ARGS);
+extern Datum abstimein(MDB_FUNCTION_ARGS);
+extern Datum abstimeout(MDB_FUNCTION_ARGS);
+extern Datum abstimerecv(MDB_FUNCTION_ARGS);
+extern Datum abstimesend(MDB_FUNCTION_ARGS);
 
-extern Datum abstimeeq(PG_FUNCTION_ARGS);
-extern Datum abstimene(PG_FUNCTION_ARGS);
-extern Datum abstimelt(PG_FUNCTION_ARGS);
-extern Datum abstimegt(PG_FUNCTION_ARGS);
-extern Datum abstimele(PG_FUNCTION_ARGS);
-extern Datum abstimege(PG_FUNCTION_ARGS);
-extern Datum abstime_finite(PG_FUNCTION_ARGS);
+extern Datum abstimeeq(MDB_FUNCTION_ARGS);
+extern Datum abstimene(MDB_FUNCTION_ARGS);
+extern Datum abstimelt(MDB_FUNCTION_ARGS);
+extern Datum abstimegt(MDB_FUNCTION_ARGS);
+extern Datum abstimele(MDB_FUNCTION_ARGS);
+extern Datum abstimege(MDB_FUNCTION_ARGS);
+extern Datum abstime_finite(MDB_FUNCTION_ARGS);
 
-extern Datum timestamp_abstime(PG_FUNCTION_ARGS);
-extern Datum abstime_timestamp(PG_FUNCTION_ARGS);
-extern Datum timestamptz_abstime(PG_FUNCTION_ARGS);
-extern Datum abstime_timestamptz(PG_FUNCTION_ARGS);
+extern Datum timestamp_abstime(MDB_FUNCTION_ARGS);
+extern Datum abstime_timestamp(MDB_FUNCTION_ARGS);
+extern Datum timestamptz_abstime(MDB_FUNCTION_ARGS);
+extern Datum abstime_timestamptz(MDB_FUNCTION_ARGS);
 
-extern Datum reltimein(PG_FUNCTION_ARGS);
-extern Datum reltimeout(PG_FUNCTION_ARGS);
-extern Datum reltimerecv(PG_FUNCTION_ARGS);
-extern Datum reltimesend(PG_FUNCTION_ARGS);
-extern Datum tintervalin(PG_FUNCTION_ARGS);
-extern Datum tintervalout(PG_FUNCTION_ARGS);
-extern Datum tintervalrecv(PG_FUNCTION_ARGS);
-extern Datum tintervalsend(PG_FUNCTION_ARGS);
-extern Datum interval_reltime(PG_FUNCTION_ARGS);
-extern Datum reltime_interval(PG_FUNCTION_ARGS);
-extern Datum mktinterval(PG_FUNCTION_ARGS);
-extern Datum timepl(PG_FUNCTION_ARGS);
-extern Datum timemi(PG_FUNCTION_ARGS);
+extern Datum reltimein(MDB_FUNCTION_ARGS);
+extern Datum reltimeout(MDB_FUNCTION_ARGS);
+extern Datum reltimerecv(MDB_FUNCTION_ARGS);
+extern Datum reltimesend(MDB_FUNCTION_ARGS);
+extern Datum tintervalin(MDB_FUNCTION_ARGS);
+extern Datum tintervalout(MDB_FUNCTION_ARGS);
+extern Datum tintervalrecv(MDB_FUNCTION_ARGS);
+extern Datum tintervalsend(MDB_FUNCTION_ARGS);
+extern Datum interval_reltime(MDB_FUNCTION_ARGS);
+extern Datum reltime_interval(MDB_FUNCTION_ARGS);
+extern Datum mktinterval(MDB_FUNCTION_ARGS);
+extern Datum timepl(MDB_FUNCTION_ARGS);
+extern Datum timemi(MDB_FUNCTION_ARGS);
 
-extern Datum intinterval(PG_FUNCTION_ARGS);
-extern Datum tintervalrel(PG_FUNCTION_ARGS);
-extern Datum timenow(PG_FUNCTION_ARGS);
-extern Datum reltimeeq(PG_FUNCTION_ARGS);
-extern Datum reltimene(PG_FUNCTION_ARGS);
-extern Datum reltimelt(PG_FUNCTION_ARGS);
-extern Datum reltimegt(PG_FUNCTION_ARGS);
-extern Datum reltimele(PG_FUNCTION_ARGS);
-extern Datum reltimege(PG_FUNCTION_ARGS);
-extern Datum tintervalsame(PG_FUNCTION_ARGS);
-extern Datum tintervaleq(PG_FUNCTION_ARGS);
-extern Datum tintervalne(PG_FUNCTION_ARGS);
-extern Datum tintervallt(PG_FUNCTION_ARGS);
-extern Datum tintervalgt(PG_FUNCTION_ARGS);
-extern Datum tintervalle(PG_FUNCTION_ARGS);
-extern Datum tintervalge(PG_FUNCTION_ARGS);
-extern Datum tintervalleneq(PG_FUNCTION_ARGS);
-extern Datum tintervallenne(PG_FUNCTION_ARGS);
-extern Datum tintervallenlt(PG_FUNCTION_ARGS);
-extern Datum tintervallengt(PG_FUNCTION_ARGS);
-extern Datum tintervallenle(PG_FUNCTION_ARGS);
-extern Datum tintervallenge(PG_FUNCTION_ARGS);
-extern Datum tintervalct(PG_FUNCTION_ARGS);
-extern Datum tintervalov(PG_FUNCTION_ARGS);
-extern Datum tintervalstart(PG_FUNCTION_ARGS);
-extern Datum tintervalend(PG_FUNCTION_ARGS);
-extern Datum timeofday(PG_FUNCTION_ARGS);
+extern Datum intinterval(MDB_FUNCTION_ARGS);
+extern Datum tintervalrel(MDB_FUNCTION_ARGS);
+extern Datum timenow(MDB_FUNCTION_ARGS);
+extern Datum reltimeeq(MDB_FUNCTION_ARGS);
+extern Datum reltimene(MDB_FUNCTION_ARGS);
+extern Datum reltimelt(MDB_FUNCTION_ARGS);
+extern Datum reltimegt(MDB_FUNCTION_ARGS);
+extern Datum reltimele(MDB_FUNCTION_ARGS);
+extern Datum reltimege(MDB_FUNCTION_ARGS);
+extern Datum tintervalsame(MDB_FUNCTION_ARGS);
+extern Datum tintervaleq(MDB_FUNCTION_ARGS);
+extern Datum tintervalne(MDB_FUNCTION_ARGS);
+extern Datum tintervallt(MDB_FUNCTION_ARGS);
+extern Datum tintervalgt(MDB_FUNCTION_ARGS);
+extern Datum tintervalle(MDB_FUNCTION_ARGS);
+extern Datum tintervalge(MDB_FUNCTION_ARGS);
+extern Datum tintervalleneq(MDB_FUNCTION_ARGS);
+extern Datum tintervallenne(MDB_FUNCTION_ARGS);
+extern Datum tintervallenlt(MDB_FUNCTION_ARGS);
+extern Datum tintervallengt(MDB_FUNCTION_ARGS);
+extern Datum tintervallenle(MDB_FUNCTION_ARGS);
+extern Datum tintervallenge(MDB_FUNCTION_ARGS);
+extern Datum tintervalct(MDB_FUNCTION_ARGS);
+extern Datum tintervalov(MDB_FUNCTION_ARGS);
+extern Datum tintervalstart(MDB_FUNCTION_ARGS);
+extern Datum tintervalend(MDB_FUNCTION_ARGS);
+extern Datum timeofday(MDB_FUNCTION_ARGS);
 
 /* non-fmgr-callable support routines */
 extern AbsoluteTime GetCurrentAbsoluteTime(void);

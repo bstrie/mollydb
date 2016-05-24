@@ -62,13 +62,13 @@ output_check_banner(bool live_check)
 {
 	if (user_opts.check && live_check)
 	{
-		mdb_log(PG_REPORT, "Performing Consistency Checks on Old Live Server\n");
-		mdb_log(PG_REPORT, "------------------------------------------------\n");
+		mdb_log(MDB_REPORT, "Performing Consistency Checks on Old Live Server\n");
+		mdb_log(MDB_REPORT, "------------------------------------------------\n");
 	}
 	else
 	{
-		mdb_log(PG_REPORT, "Performing Consistency Checks\n");
-		mdb_log(PG_REPORT, "-----------------------------\n");
+		mdb_log(MDB_REPORT, "Performing Consistency Checks\n");
+		mdb_log(MDB_REPORT, "-----------------------------\n");
 	}
 }
 
@@ -150,13 +150,13 @@ report_clusters_compatible(void)
 {
 	if (user_opts.check)
 	{
-		mdb_log(PG_REPORT, "\n*Clusters are compatible*\n");
+		mdb_log(MDB_REPORT, "\n*Clusters are compatible*\n");
 		/* stops new cluster */
 		stop_postmaster(false);
 		exit(0);
 	}
 
-	mdb_log(PG_REPORT, "\n"
+	mdb_log(MDB_REPORT, "\n"
 		   "If mdb_upgrade fails after this point, you must re-initdb the\n"
 		   "new cluster before continuing.\n");
 }
@@ -181,24 +181,24 @@ output_completion_banner(char *analyze_script_file_name,
 {
 	/* Did we copy the free space files? */
 	if (GET_MAJOR_VERSION(old_cluster.major_version) >= 804)
-		mdb_log(PG_REPORT,
+		mdb_log(MDB_REPORT,
 			   "Optimizer statistics are not transferred by mdb_upgrade so,\n"
 			   "once you start the new server, consider running:\n"
 			   "    %s\n\n", analyze_script_file_name);
 	else
-		mdb_log(PG_REPORT,
+		mdb_log(MDB_REPORT,
 			   "Optimizer statistics and free space information are not transferred\n"
 		"by mdb_upgrade so, once you start the new server, consider running:\n"
 			   "    %s\n\n", analyze_script_file_name);
 
 
 	if (deletion_script_file_name)
-		mdb_log(PG_REPORT,
+		mdb_log(MDB_REPORT,
 			"Running this script will delete the old cluster's data files:\n"
 			   "    %s\n",
 			   deletion_script_file_name);
 	else
-		mdb_log(PG_REPORT,
+		mdb_log(MDB_REPORT,
 		  "Could not create a script to delete the old cluster's data files\n"
 		  "because user-defined tablespaces or the new cluster's data directory\n"
 		  "exist in the old cluster directory.  The old cluster's contents must\n"
@@ -224,9 +224,9 @@ check_cluster_versions(void)
 		mdb_fatal("This utility can only upgrade from MollyDB version 8.4 and later.\n");
 
 	/* Only current PG version is supported as a target */
-	if (GET_MAJOR_VERSION(new_cluster.major_version) != GET_MAJOR_VERSION(PG_VERSION_NUM))
+	if (GET_MAJOR_VERSION(new_cluster.major_version) != GET_MAJOR_VERSION(MDB_VERSION_NUM))
 		mdb_fatal("This utility can only upgrade to MollyDB version %s.\n",
-				 PG_MAJORVERSION);
+				 MDB_MAJORVERSION);
 
 	/*
 	 * We can't allow downgrading because we use the target mdb_dump, and
@@ -515,7 +515,7 @@ create_script_for_old_cluster_deletion(char **deletion_script_file_name)
 	/* Some people put the new data directory inside the old one. */
 	if (path_is_prefix_of_path(old_cluster_pgdata, new_cluster_pgdata))
 	{
-		mdb_log(PG_WARNING,
+		mdb_log(MDB_WARNING,
 		   "\nWARNING:  new data directory should not be inside the old data directory, e.g. %s\n", old_cluster_pgdata);
 
 		/* Unlink file in case it is left over from a previous run. */
@@ -539,7 +539,7 @@ create_script_for_old_cluster_deletion(char **deletion_script_file_name)
 		if (path_is_prefix_of_path(old_cluster_pgdata, old_tablespace_dir))
 		{
 			/* reproduce warning from CREATE TABLESPACE that is in the log */
-			mdb_log(PG_WARNING,
+			mdb_log(MDB_WARNING,
 				   "\nWARNING:  user-defined tablespace locations should not be inside the data directory, e.g. %s\n", old_tablespace_dir);
 
 			/* Unlink file in case it is left over from a previous run. */
@@ -578,9 +578,9 @@ create_script_for_old_cluster_deletion(char **deletion_script_file_name)
 			int			dbnum;
 
 			fprintf(script, "\n");
-			/* remove PG_VERSION? */
+			/* remove MDB_VERSION? */
 			if (GET_MAJOR_VERSION(old_cluster.major_version) <= 804)
-				fprintf(script, RM_CMD " %s%cPG_VERSION\n",
+				fprintf(script, RM_CMD " %s%cMDB_VERSION\n",
 						fix_path_separator(os_info.old_tablespaces[tblnum]),
 						PATH_SEPARATOR);
 
@@ -835,7 +835,7 @@ check_for_isn_and_int8_passing_mismatch(ClusterInfo *cluster)
 
 	if (found)
 	{
-		mdb_log(PG_REPORT, "fatal\n");
+		mdb_log(MDB_REPORT, "fatal\n");
 		mdb_fatal("Your installation contains \"contrib/isn\" functions which rely on the\n"
 		  "bigint data type.  Your old and new clusters pass bigint values\n"
 		"differently so this cluster cannot currently be upgraded.  You can\n"
@@ -939,7 +939,7 @@ check_for_reg_data_type_usage(ClusterInfo *cluster)
 
 	if (found)
 	{
-		mdb_log(PG_REPORT, "fatal\n");
+		mdb_log(MDB_REPORT, "fatal\n");
 		mdb_fatal("Your installation contains one of the reg* data types in user tables.\n"
 		 "These data types reference system OIDs that are not preserved by\n"
 		"mdb_upgrade, so this cluster cannot currently be upgraded.  You can\n"
@@ -1030,7 +1030,7 @@ check_for_jsonb_9_4_usage(ClusterInfo *cluster)
 
 	if (found)
 	{
-		mdb_log(PG_REPORT, "fatal\n");
+		mdb_log(MDB_REPORT, "fatal\n");
 		mdb_fatal("Your installation contains one of the JSONB data types in user tables.\n"
 				 "The internal format of JSONB changed during 9.4 beta so this cluster cannot currently\n"
 				 "be upgraded.  You can remove the problem tables and restart the upgrade.  A list\n"

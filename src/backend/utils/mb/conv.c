@@ -105,7 +105,7 @@ mic2latin(const unsigned char *mic, unsigned char *p, int len,
 	{
 		c1 = *mic;
 		if (c1 == 0)
-			report_invalid_encoding(PG_MULE_INTERNAL, (const char *) mic, len);
+			report_invalid_encoding(MDB_MULE_INTERNAL, (const char *) mic, len);
 		if (!IS_HIGHBIT_SET(c1))
 		{
 			/* easy for ASCII */
@@ -118,10 +118,10 @@ mic2latin(const unsigned char *mic, unsigned char *p, int len,
 			int			l = mdb_mic_mblen(mic);
 
 			if (len < l)
-				report_invalid_encoding(PG_MULE_INTERNAL, (const char *) mic,
+				report_invalid_encoding(MDB_MULE_INTERNAL, (const char *) mic,
 										len);
 			if (l != 2 || c1 != lc || !IS_HIGHBIT_SET(mic[1]))
-				report_untranslatable_char(PG_MULE_INTERNAL, encoding,
+				report_untranslatable_char(MDB_MULE_INTERNAL, encoding,
 										   (const char *) mic, len);
 			*p++ = mic[1];
 			mic += 2;
@@ -148,7 +148,7 @@ mdb_ascii2mic(const unsigned char *l, unsigned char *p, int len)
 	{
 		c1 = *l;
 		if (c1 == 0 || IS_HIGHBIT_SET(c1))
-			report_invalid_encoding(PG_SQL_ASCII, (const char *) l, len);
+			report_invalid_encoding(MDB_SQL_ASCII, (const char *) l, len);
 		*p++ = c1;
 		l++;
 		len--;
@@ -168,7 +168,7 @@ mdb_mic2ascii(const unsigned char *mic, unsigned char *p, int len)
 	{
 		c1 = *mic;
 		if (c1 == 0 || IS_HIGHBIT_SET(c1))
-			report_untranslatable_char(PG_MULE_INTERNAL, PG_SQL_ASCII,
+			report_untranslatable_char(MDB_MULE_INTERNAL, MDB_SQL_ASCII,
 									   (const char *) mic, len);
 		*p++ = c1;
 		mic++;
@@ -216,7 +216,7 @@ latin2mic_with_table(const unsigned char *l,
 				*p++ = c2;
 			}
 			else
-				report_untranslatable_char(encoding, PG_MULE_INTERNAL,
+				report_untranslatable_char(encoding, MDB_MULE_INTERNAL,
 										   (const char *) l, len);
 		}
 		l++;
@@ -252,7 +252,7 @@ mic2latin_with_table(const unsigned char *mic,
 	{
 		c1 = *mic;
 		if (c1 == 0)
-			report_invalid_encoding(PG_MULE_INTERNAL, (const char *) mic, len);
+			report_invalid_encoding(MDB_MULE_INTERNAL, (const char *) mic, len);
 		if (!IS_HIGHBIT_SET(c1))
 		{
 			/* easy for ASCII */
@@ -265,12 +265,12 @@ mic2latin_with_table(const unsigned char *mic,
 			int			l = mdb_mic_mblen(mic);
 
 			if (len < l)
-				report_invalid_encoding(PG_MULE_INTERNAL, (const char *) mic,
+				report_invalid_encoding(MDB_MULE_INTERNAL, (const char *) mic,
 										len);
 			if (l != 2 || c1 != lc || !IS_HIGHBIT_SET(mic[1]) ||
 				(c2 = tab[mic[1] - HIGHBIT]) == 0)
 			{
-				report_untranslatable_char(PG_MULE_INTERNAL, encoding,
+				report_untranslatable_char(MDB_MULE_INTERNAL, encoding,
 										   (const char *) mic, len);
 				break;			/* keep compiler quiet */
 			}
@@ -399,7 +399,7 @@ UtfToLocal(const unsigned char *utf, int len,
 	const mdb_utf_to_local *p;
 	const mdb_utf_to_local_combined *cp;
 
-	if (!PG_VALID_ENCODING(encoding))
+	if (!MDB_VALID_ENCODING(encoding))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("invalid encoding number: %d", encoding)));
@@ -538,13 +538,13 @@ UtfToLocal(const unsigned char *utf, int len,
 		}
 
 		/* failed to translate this character */
-		report_untranslatable_char(PG_UTF8, encoding,
+		report_untranslatable_char(MDB_UTF8, encoding,
 								   (const char *) (utf - l), len);
 	}
 
 	/* if we broke out of loop early, must be invalid input */
 	if (len > 0)
-		report_invalid_encoding(PG_UTF8, (const char *) utf, len);
+		report_invalid_encoding(MDB_UTF8, (const char *) utf, len);
 
 	*iso = '\0';
 }
@@ -585,7 +585,7 @@ LocalToUtf(const unsigned char *iso, int len,
 	const mdb_local_to_utf *p;
 	const mdb_local_to_utf_combined *cp;
 
-	if (!PG_VALID_ENCODING(encoding))
+	if (!MDB_VALID_ENCODING(encoding))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("invalid encoding number: %d", encoding)));
@@ -672,7 +672,7 @@ LocalToUtf(const unsigned char *iso, int len,
 		}
 
 		/* failed to translate this character */
-		report_untranslatable_char(encoding, PG_UTF8,
+		report_untranslatable_char(encoding, MDB_UTF8,
 								   (const char *) (iso - l), len);
 	}
 

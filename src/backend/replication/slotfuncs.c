@@ -37,10 +37,10 @@ check_permissions(void)
  * replication slot.
  */
 Datum
-mdb_create_physical_replication_slot(PG_FUNCTION_ARGS)
+mdb_create_physical_replication_slot(MDB_FUNCTION_ARGS)
 {
-	Name		name = PG_GETARG_NAME(0);
-	bool 		immediately_reserve = PG_GETARG_BOOL(1);
+	Name		name = MDB_GETARG_NAME(0);
+	bool 		immediately_reserve = MDB_GETARG_BOOL(1);
 	Datum		values[2];
 	bool		nulls[2];
 	TupleDesc	tupdesc;
@@ -84,7 +84,7 @@ mdb_create_physical_replication_slot(PG_FUNCTION_ARGS)
 
 	ReplicationSlotRelease();
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 
@@ -92,10 +92,10 @@ mdb_create_physical_replication_slot(PG_FUNCTION_ARGS)
  * SQL function for creating a new logical replication slot.
  */
 Datum
-mdb_create_logical_replication_slot(PG_FUNCTION_ARGS)
+mdb_create_logical_replication_slot(MDB_FUNCTION_ARGS)
 {
-	Name		name = PG_GETARG_NAME(0);
-	Name		plugin = PG_GETARG_NAME(1);
+	Name		name = MDB_GETARG_NAME(0);
+	Name		plugin = MDB_GETARG_NAME(1);
 
 	LogicalDecodingContext *ctx = NULL;
 
@@ -147,7 +147,7 @@ mdb_create_logical_replication_slot(PG_FUNCTION_ARGS)
 	ReplicationSlotPersist();
 	ReplicationSlotRelease();
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 
@@ -155,9 +155,9 @@ mdb_create_logical_replication_slot(PG_FUNCTION_ARGS)
  * SQL function for dropping a replication slot.
  */
 Datum
-mdb_drop_replication_slot(PG_FUNCTION_ARGS)
+mdb_drop_replication_slot(MDB_FUNCTION_ARGS)
 {
-	Name		name = PG_GETARG_NAME(0);
+	Name		name = MDB_GETARG_NAME(0);
 
 	check_permissions();
 
@@ -165,16 +165,16 @@ mdb_drop_replication_slot(PG_FUNCTION_ARGS)
 
 	ReplicationSlotDrop(NameStr(*name));
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
  * mdb_get_replication_slots - SQL SRF showing active replication slots.
  */
 Datum
-mdb_get_replication_slots(PG_FUNCTION_ARGS)
+mdb_get_replication_slots(MDB_FUNCTION_ARGS)
 {
-#define PG_GET_REPLICATION_SLOTS_COLS 10
+#define MDB_GET_REPLICATION_SLOTS_COLS 10
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
 	Tuplestorestate *tupstore;
@@ -216,8 +216,8 @@ mdb_get_replication_slots(PG_FUNCTION_ARGS)
 	for (slotno = 0; slotno < max_replication_slots; slotno++)
 	{
 		ReplicationSlot *slot = &ReplicationSlotCtl->replication_slots[slotno];
-		Datum		values[PG_GET_REPLICATION_SLOTS_COLS];
-		bool		nulls[PG_GET_REPLICATION_SLOTS_COLS];
+		Datum		values[MDB_GET_REPLICATION_SLOTS_COLS];
+		bool		nulls[MDB_GET_REPLICATION_SLOTS_COLS];
 
 		TransactionId xmin;
 		TransactionId catalog_xmin;

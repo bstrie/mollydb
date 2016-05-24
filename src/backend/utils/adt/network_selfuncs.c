@@ -75,12 +75,12 @@ static int inet_hist_match_divider(inet *boundary, inet *query,
  * Selectivity estimation for the subnet inclusion/overlap operators
  */
 Datum
-networksel(PG_FUNCTION_ARGS)
+networksel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
-	int			varRelid = PG_GETARG_INT32(3);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
+	int			varRelid = MDB_GETARG_INT32(3);
 	VariableStatData vardata;
 	Node	   *other;
 	bool		varonleft;
@@ -101,7 +101,7 @@ networksel(PG_FUNCTION_ARGS)
 	 */
 	if (!get_restriction_variable(root, args, varRelid,
 								  &vardata, &other, &varonleft))
-		PG_RETURN_FLOAT8(DEFAULT_SEL(operator));
+		MDB_RETURN_FLOAT8(DEFAULT_SEL(operator));
 
 	/*
 	 * Can't do anything useful if the something is not a constant, either.
@@ -109,14 +109,14 @@ networksel(PG_FUNCTION_ARGS)
 	if (!IsA(other, Const))
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(DEFAULT_SEL(operator));
+		MDB_RETURN_FLOAT8(DEFAULT_SEL(operator));
 	}
 
 	/* All of the operators handled here are strict. */
 	if (((Const *) other)->constisnull)
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(0.0);
+		MDB_RETURN_FLOAT8(0.0);
 	}
 	constvalue = ((Const *) other)->constvalue;
 
@@ -124,7 +124,7 @@ networksel(PG_FUNCTION_ARGS)
 	if (!HeapTupleIsValid(vardata.statsTuple))
 	{
 		ReleaseVariableStats(vardata);
-		PG_RETURN_FLOAT8(DEFAULT_SEL(operator));
+		MDB_RETURN_FLOAT8(DEFAULT_SEL(operator));
 	}
 
 	stats = (Form_mdb_statistic) GETSTRUCT(vardata.statsTuple);
@@ -173,7 +173,7 @@ networksel(PG_FUNCTION_ARGS)
 
 	ReleaseVariableStats(vardata);
 
-	PG_RETURN_FLOAT8(selec);
+	MDB_RETURN_FLOAT8(selec);
 }
 
 /*
@@ -195,15 +195,15 @@ networksel(PG_FUNCTION_ARGS)
  * iterate over the histogram arrays.
  */
 Datum
-networkjoinsel(PG_FUNCTION_ARGS)
+networkjoinsel(MDB_FUNCTION_ARGS)
 {
-	PlannerInfo *root = (PlannerInfo *) PG_GETARG_POINTER(0);
-	Oid			operator = PG_GETARG_OID(1);
-	List	   *args = (List *) PG_GETARG_POINTER(2);
+	PlannerInfo *root = (PlannerInfo *) MDB_GETARG_POINTER(0);
+	Oid			operator = MDB_GETARG_OID(1);
+	List	   *args = (List *) MDB_GETARG_POINTER(2);
 #ifdef NOT_USED
-	JoinType	jointype = (JoinType) PG_GETARG_INT16(3);
+	JoinType	jointype = (JoinType) MDB_GETARG_INT16(3);
 #endif
-	SpecialJoinInfo *sjinfo = (SpecialJoinInfo *) PG_GETARG_POINTER(4);
+	SpecialJoinInfo *sjinfo = (SpecialJoinInfo *) MDB_GETARG_POINTER(4);
 	double		selec;
 	VariableStatData vardata1;
 	VariableStatData vardata2;
@@ -246,7 +246,7 @@ networkjoinsel(PG_FUNCTION_ARGS)
 
 	CLAMP_PROBABILITY(selec);
 
-	PG_RETURN_FLOAT8((float8) selec);
+	MDB_RETURN_FLOAT8((float8) selec);
 }
 
 /*

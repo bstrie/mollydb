@@ -51,7 +51,7 @@ Item
 <tbody>
 
 <row>
- <entry><filename>PG_VERSION</></entry>
+ <entry><filename>MDB_VERSION</></entry>
  <entry>A file containing the major version number of <productname>MollyDB</productname></entry>
 </row>
 
@@ -250,7 +250,7 @@ location specified in the tablespace's <command>CREATE TABLESPACE</> command).
 This symbolic link is named after
 the tablespace's OID.  Inside the physical tablespace directory there is
 a subdirectory with a name that depends on the <productname>MollyDB</>
-server version, such as <literal>PG_9.0_201008051</>.  (The reason for using
+server version, such as <literal>MDB_9.0_201008051</>.  (The reason for using
 this subdirectory is so that successive versions of the database can use
 the same <command>CREATE TABLESPACE</> location value without conflicts.)
 Within the version-specific subdirectory, there is
@@ -327,7 +327,7 @@ supporting a <acronym>TOAST</>-able data type must be careful about how they
 handle potentially <acronym>TOAST</>ed input values: an input might not
 actually consist of a four-byte length word and contents until after it's
 been <firstterm>detoasted</>.  (This is normally done by invoking
-<function>PG_DETOAST_DATUM</> before doing anything with an input value,
+<function>MDB_DETOAST_DATUM</> before doing anything with an input value,
 but in some cases more efficient approaches are possible.
 See <xref linkend="xtypes-toast"> for more detail.)
 </para>
@@ -540,7 +540,7 @@ a standard header and meet the other API requirements given
 in <filename>src/include/utils/expandeddatum.h</>.  C-level functions
 working with the data type can choose to handle either representation.
 Functions that do not know about the expanded representation, but simply
-apply <function>PG_DETOAST_DATUM</> to their inputs, will automatically
+apply <function>MDB_DETOAST_DATUM</> to their inputs, will automatically
 receive the traditional varlena representation; so support for an expanded
 representation can be introduced incrementally, one function at a time.
 </para>

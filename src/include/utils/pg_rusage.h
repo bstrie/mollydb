@@ -11,8 +11,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_RUSAGE_H
-#define PG_RUSAGE_H
+#ifndef MDB_RUSAGE_H
+#define MDB_RUSAGE_H
 
 #include <sys/time.h>
 
@@ -34,4 +34,4 @@ typedef struct PGRUsage
 extern void mdb_rusage_init(PGRUsage *ru0);
 extern const char *mdb_rusage_show(const PGRUsage *ru0);
 
-#endif   /* PG_RUSAGE_H */
+#endif   /* MDB_RUSAGE_H */

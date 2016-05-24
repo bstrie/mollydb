@@ -132,7 +132,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 	/* we have the result of cmd in "output". so parse it line by line now */
 	while (fgets(bufin, sizeof(bufin), output))
 	{
-		mdb_log(PG_VERBOSE, "%s", bufin);
+		mdb_log(MDB_VERBOSE, "%s", bufin);
 
 		if ((p = strstr(bufin, "mdb_control version number:")) != NULL)
 		{
@@ -465,69 +465,69 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 		!got_largesz || !got_walsz || !got_walseg || !got_ident ||
 		!got_index || !got_toast ||
 		(!got_large_object &&
-		 cluster->controldata.ctrl_ver >= LARGE_OBJECT_SIZE_PG_CONTROL_VER) ||
+		 cluster->controldata.ctrl_ver >= LARGE_OBJECT_SIZE_MDB_CONTROL_VER) ||
 		!got_date_is_int || !got_data_checksum_version)
 	{
-		mdb_log(PG_REPORT,
+		mdb_log(MDB_REPORT,
 			   "The %s cluster lacks some required control information:\n",
 			   CLUSTER_NAME(cluster));
 
 		if (!got_xid)
-			mdb_log(PG_REPORT, "  checkpoint next XID\n");
+			mdb_log(MDB_REPORT, "  checkpoint next XID\n");
 
 		if (!got_oid)
-			mdb_log(PG_REPORT, "  latest checkpoint next OID\n");
+			mdb_log(MDB_REPORT, "  latest checkpoint next OID\n");
 
 		if (!got_multi)
-			mdb_log(PG_REPORT, "  latest checkpoint next MultiXactId\n");
+			mdb_log(MDB_REPORT, "  latest checkpoint next MultiXactId\n");
 
 		if (!got_oldestmulti &&
 			cluster->controldata.cat_ver >= MULTIXACT_FORMATCHANGE_CAT_VER)
-			mdb_log(PG_REPORT, "  latest checkpoint oldest MultiXactId\n");
+			mdb_log(MDB_REPORT, "  latest checkpoint oldest MultiXactId\n");
 
 		if (!got_mxoff)
-			mdb_log(PG_REPORT, "  latest checkpoint next MultiXactOffset\n");
+			mdb_log(MDB_REPORT, "  latest checkpoint next MultiXactOffset\n");
 
 		if (!live_check && !got_nextxlogfile)
-			mdb_log(PG_REPORT, "  first WAL segment after reset\n");
+			mdb_log(MDB_REPORT, "  first WAL segment after reset\n");
 
 		if (!got_float8_pass_by_value)
-			mdb_log(PG_REPORT, "  float8 argument passing method\n");
+			mdb_log(MDB_REPORT, "  float8 argument passing method\n");
 
 		if (!got_align)
-			mdb_log(PG_REPORT, "  maximum alignment\n");
+			mdb_log(MDB_REPORT, "  maximum alignment\n");
 
 		if (!got_blocksz)
-			mdb_log(PG_REPORT, "  block size\n");
+			mdb_log(MDB_REPORT, "  block size\n");
 
 		if (!got_largesz)
-			mdb_log(PG_REPORT, "  large relation segment size\n");
+			mdb_log(MDB_REPORT, "  large relation segment size\n");
 
 		if (!got_walsz)
-			mdb_log(PG_REPORT, "  WAL block size\n");
+			mdb_log(MDB_REPORT, "  WAL block size\n");
 
 		if (!got_walseg)
-			mdb_log(PG_REPORT, "  WAL segment size\n");
+			mdb_log(MDB_REPORT, "  WAL segment size\n");
 
 		if (!got_ident)
-			mdb_log(PG_REPORT, "  maximum identifier length\n");
+			mdb_log(MDB_REPORT, "  maximum identifier length\n");
 
 		if (!got_index)
-			mdb_log(PG_REPORT, "  maximum number of indexed columns\n");
+			mdb_log(MDB_REPORT, "  maximum number of indexed columns\n");
 
 		if (!got_toast)
-			mdb_log(PG_REPORT, "  maximum TOAST chunk size\n");
+			mdb_log(MDB_REPORT, "  maximum TOAST chunk size\n");
 
 		if (!got_large_object &&
-			cluster->controldata.ctrl_ver >= LARGE_OBJECT_SIZE_PG_CONTROL_VER)
-			mdb_log(PG_REPORT, "  large-object chunk size\n");
+			cluster->controldata.ctrl_ver >= LARGE_OBJECT_SIZE_MDB_CONTROL_VER)
+			mdb_log(MDB_REPORT, "  large-object chunk size\n");
 
 		if (!got_date_is_int)
-			mdb_log(PG_REPORT, "  dates/times are integers?\n");
+			mdb_log(MDB_REPORT, "  dates/times are integers?\n");
 
 		/* value added in MollyDB 9.3 */
 		if (!got_data_checksum_version)
-			mdb_log(PG_REPORT, "  data checksum version\n");
+			mdb_log(MDB_REPORT, "  data checksum version\n");
 
 		mdb_fatal("Cannot continue without required control information, terminating\n");
 	}
@@ -611,7 +611,7 @@ disable_old_cluster(void)
 		mdb_fatal("Unable to rename %s to %s.\n", old_path, new_path);
 	check_ok();
 
-	mdb_log(PG_REPORT, "\n"
+	mdb_log(MDB_REPORT, "\n"
 		   "If you want to start the old cluster, you will need to remove\n"
 		   "the \".old\" suffix from %s/global/mdb_control.old.\n"
 		 "Because \"link\" mode was used, the old cluster cannot be safely\n"

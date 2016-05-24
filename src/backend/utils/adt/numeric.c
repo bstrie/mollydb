@@ -312,11 +312,11 @@ typedef struct
 #if SIZEOF_DATUM == 8
 #define NumericAbbrevGetDatum(X) ((Datum) SET_8_BYTES(X))
 #define DatumGetNumericAbbrev(X) ((int64) GET_8_BYTES(X))
-#define NUMERIC_ABBREV_NAN		 NumericAbbrevGetDatum(PG_INT64_MIN)
+#define NUMERIC_ABBREV_NAN		 NumericAbbrevGetDatum(MDB_INT64_MIN)
 #else
 #define NumericAbbrevGetDatum(X) ((Datum) SET_4_BYTES(X))
 #define DatumGetNumericAbbrev(X) ((int32) GET_4_BYTES(X))
-#define NUMERIC_ABBREV_NAN		 NumericAbbrevGetDatum(PG_INT32_MIN)
+#define NUMERIC_ABBREV_NAN		 NumericAbbrevGetDatum(MDB_INT32_MIN)
 #endif
 
 
@@ -505,14 +505,14 @@ static void compute_bucket(Numeric operand, Numeric bound1, Numeric bound2,
  *	Input function for numeric data type
  */
 Datum
-numeric_in(PG_FUNCTION_ARGS)
+numeric_in(MDB_FUNCTION_ARGS)
 {
-	char	   *str = PG_GETARG_CSTRING(0);
+	char	   *str = MDB_GETARG_CSTRING(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		typmod = PG_GETARG_INT32(2);
+	int32		typmod = MDB_GETARG_INT32(2);
 	Numeric		res;
 	const char *cp;
 
@@ -577,7 +577,7 @@ numeric_in(PG_FUNCTION_ARGS)
 		free_var(&value);
 	}
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -587,9 +587,9 @@ numeric_in(PG_FUNCTION_ARGS)
  *	Output function for numeric data type
  */
 Datum
-numeric_out(PG_FUNCTION_ARGS)
+numeric_out(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	NumericVar	x;
 	char	   *str;
 
@@ -597,7 +597,7 @@ numeric_out(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_CSTRING(pstrdup("NaN"));
+		MDB_RETURN_CSTRING(pstrdup("NaN"));
 
 	/*
 	 * Get the number in the variable format.
@@ -606,7 +606,7 @@ numeric_out(PG_FUNCTION_ARGS)
 
 	str = get_str_from_var(&x);
 
-	PG_RETURN_CSTRING(str);
+	MDB_RETURN_CSTRING(str);
 }
 
 /*
@@ -737,14 +737,14 @@ numeric_normalize(Numeric num)
  * ndigits, weight, sign, dscale, NumericDigits.
  */
 Datum
-numeric_recv(PG_FUNCTION_ARGS)
+numeric_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
 #ifdef NOT_USED
-	Oid			typelem = PG_GETARG_OID(1);
+	Oid			typelem = MDB_GETARG_OID(1);
 #endif
-	int32		typmod = PG_GETARG_INT32(2);
+	int32		typmod = MDB_GETARG_INT32(2);
 	NumericVar	value;
 	Numeric		res;
 	int			len,
@@ -801,16 +801,16 @@ numeric_recv(PG_FUNCTION_ARGS)
 	res = make_result(&value);
 	free_var(&value);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 /*
  *		numeric_send			- converts numeric to binary format
  */
 Datum
-numeric_send(PG_FUNCTION_ARGS)
+numeric_send(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	NumericVar	x;
 	StringInfoData buf;
 	int			i;
@@ -826,7 +826,7 @@ numeric_send(PG_FUNCTION_ARGS)
 	for (i = 0; i < x.ndigits; i++)
 		pq_sendint(&buf, x.digits[i], sizeof(NumericDigit));
 
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -840,9 +840,9 @@ numeric_send(PG_FUNCTION_ARGS)
  * constrained numeric is also unoptimizable.
  */
 Datum
-numeric_transform(PG_FUNCTION_ARGS)
+numeric_transform(MDB_FUNCTION_ARGS)
 {
-	FuncExpr   *expr = (FuncExpr *) PG_GETARG_POINTER(0);
+	FuncExpr   *expr = (FuncExpr *) MDB_GETARG_POINTER(0);
 	Node	   *ret = NULL;
 	Node	   *typmod;
 
@@ -873,7 +873,7 @@ numeric_transform(PG_FUNCTION_ARGS)
 			ret = relabel_to_typmod(source, new_typmod);
 	}
 
-	PG_RETURN_POINTER(ret);
+	MDB_RETURN_POINTER(ret);
 }
 
 /*
@@ -884,10 +884,10 @@ numeric_transform(PG_FUNCTION_ARGS)
  *	scale of the attribute have to be applied on the value.
  */
 Datum
-numeric		(PG_FUNCTION_ARGS)
+numeric		(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
-	int32		typmod = PG_GETARG_INT32(1);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
+	int32		typmod = MDB_GETARG_INT32(1);
 	Numeric		new;
 	int32		tmp_typmod;
 	int			precision;
@@ -900,7 +900,7 @@ numeric		(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * If the value isn't a valid type modifier, simply return a copy of the
@@ -910,7 +910,7 @@ numeric		(PG_FUNCTION_ARGS)
 	{
 		new = (Numeric) palloc(VARSIZE(num));
 		memcpy(new, num, VARSIZE(num));
-		PG_RETURN_NUMERIC(new);
+		MDB_RETURN_NUMERIC(new);
 	}
 
 	/*
@@ -942,7 +942,7 @@ numeric		(PG_FUNCTION_ARGS)
 		else
 			new->choice.n_long.n_sign_dscale = NUMERIC_SIGN(new) |
 				((uint16) scale & NUMERIC_DSCALE_MASK);
-		PG_RETURN_NUMERIC(new);
+		MDB_RETURN_NUMERIC(new);
 	}
 
 	/*
@@ -957,13 +957,13 @@ numeric		(PG_FUNCTION_ARGS)
 
 	free_var(&var);
 
-	PG_RETURN_NUMERIC(new);
+	MDB_RETURN_NUMERIC(new);
 }
 
 Datum
-numerictypmodin(PG_FUNCTION_ARGS)
+numerictypmodin(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *ta = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *ta = MDB_GETARG_ARRAYTYPE_P(0);
 	int32	   *tl;
 	int			n;
 	int32		typmod;
@@ -1002,13 +1002,13 @@ numerictypmodin(PG_FUNCTION_ARGS)
 		typmod = 0;				/* keep compiler quiet */
 	}
 
-	PG_RETURN_INT32(typmod);
+	MDB_RETURN_INT32(typmod);
 }
 
 Datum
-numerictypmodout(PG_FUNCTION_ARGS)
+numerictypmodout(MDB_FUNCTION_ARGS)
 {
-	int32		typmod = PG_GETARG_INT32(0);
+	int32		typmod = MDB_GETARG_INT32(0);
 	char	   *res = (char *) palloc(64);
 
 	if (typmod >= 0)
@@ -1018,7 +1018,7 @@ numerictypmodout(PG_FUNCTION_ARGS)
 	else
 		*res = '\0';
 
-	PG_RETURN_CSTRING(res);
+	MDB_RETURN_CSTRING(res);
 }
 
 
@@ -1030,16 +1030,16 @@ numerictypmodout(PG_FUNCTION_ARGS)
  */
 
 Datum
-numeric_abs(PG_FUNCTION_ARGS)
+numeric_abs(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	Numeric		res;
 
 	/*
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Do it the easy way directly on the packed format
@@ -1053,21 +1053,21 @@ numeric_abs(PG_FUNCTION_ARGS)
 	else
 		res->choice.n_long.n_sign_dscale = NUMERIC_POS | NUMERIC_DSCALE(num);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
 Datum
-numeric_uminus(PG_FUNCTION_ARGS)
+numeric_uminus(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	Numeric		res;
 
 	/*
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Do it the easy way directly on the packed format
@@ -1094,20 +1094,20 @@ numeric_uminus(PG_FUNCTION_ARGS)
 				NUMERIC_POS | NUMERIC_DSCALE(num);
 	}
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
 Datum
-numeric_uplus(PG_FUNCTION_ARGS)
+numeric_uplus(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	Numeric		res;
 
 	res = (Numeric) palloc(VARSIZE(num));
 	memcpy(res, num, VARSIZE(num));
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 /*
@@ -1117,9 +1117,9 @@ numeric_uplus(PG_FUNCTION_ARGS)
  * to 0, and 1 if the argument is greater than zero.
  */
 Datum
-numeric_sign(PG_FUNCTION_ARGS)
+numeric_sign(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	Numeric		res;
 	NumericVar	result;
 
@@ -1127,7 +1127,7 @@ numeric_sign(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	init_var(&result);
 
@@ -1150,7 +1150,7 @@ numeric_sign(PG_FUNCTION_ARGS)
 	res = make_result(&result);
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -1162,10 +1162,10 @@ numeric_sign(PG_FUNCTION_ARGS)
  *	point --- Oracle interprets rounding that way.
  */
 Datum
-numeric_round(PG_FUNCTION_ARGS)
+numeric_round(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
-	int32		scale = PG_GETARG_INT32(1);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
+	int32		scale = MDB_GETARG_INT32(1);
 	Numeric		res;
 	NumericVar	arg;
 
@@ -1173,7 +1173,7 @@ numeric_round(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Limit the scale value to avoid possible overflow in calculations
@@ -1199,7 +1199,7 @@ numeric_round(PG_FUNCTION_ARGS)
 	res = make_result(&arg);
 
 	free_var(&arg);
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -1211,10 +1211,10 @@ numeric_round(PG_FUNCTION_ARGS)
  *	point --- Oracle interprets truncation that way.
  */
 Datum
-numeric_trunc(PG_FUNCTION_ARGS)
+numeric_trunc(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
-	int32		scale = PG_GETARG_INT32(1);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
+	int32		scale = MDB_GETARG_INT32(1);
 	Numeric		res;
 	NumericVar	arg;
 
@@ -1222,7 +1222,7 @@ numeric_trunc(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Limit the scale value to avoid possible overflow in calculations
@@ -1248,7 +1248,7 @@ numeric_trunc(PG_FUNCTION_ARGS)
 	res = make_result(&arg);
 
 	free_var(&arg);
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -1258,14 +1258,14 @@ numeric_trunc(PG_FUNCTION_ARGS)
  *	Return the smallest integer greater than or equal to the argument
  */
 Datum
-numeric_ceil(PG_FUNCTION_ARGS)
+numeric_ceil(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	Numeric		res;
 	NumericVar	result;
 
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	init_var_from_num(num, &result);
 	ceil_var(&result, &result);
@@ -1273,7 +1273,7 @@ numeric_ceil(PG_FUNCTION_ARGS)
 	res = make_result(&result);
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -1283,14 +1283,14 @@ numeric_ceil(PG_FUNCTION_ARGS)
  *	Return the largest integer equal to or less than the argument
  */
 Datum
-numeric_floor(PG_FUNCTION_ARGS)
+numeric_floor(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	Numeric		res;
 	NumericVar	result;
 
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	init_var_from_num(num, &result);
 	floor_var(&result, &result);
@@ -1298,7 +1298,7 @@ numeric_floor(PG_FUNCTION_ARGS)
 	res = make_result(&result);
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -1308,13 +1308,13 @@ numeric_floor(PG_FUNCTION_ARGS)
  *	Generate series of numeric.
  */
 Datum
-generate_series_numeric(PG_FUNCTION_ARGS)
+generate_series_numeric(MDB_FUNCTION_ARGS)
 {
 	return generate_series_step_numeric(fcinfo);
 }
 
 Datum
-generate_series_step_numeric(PG_FUNCTION_ARGS)
+generate_series_step_numeric(MDB_FUNCTION_ARGS)
 {
 	generate_series_numeric_fctx *fctx;
 	FuncCallContext *funcctx;
@@ -1322,8 +1322,8 @@ generate_series_step_numeric(PG_FUNCTION_ARGS)
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		Numeric		start_num = PG_GETARG_NUMERIC(0);
-		Numeric		stop_num = PG_GETARG_NUMERIC(1);
+		Numeric		start_num = MDB_GETARG_NUMERIC(0);
+		Numeric		stop_num = MDB_GETARG_NUMERIC(1);
 		NumericVar	steploc = const_one;
 
 		/* handle NaN in start and stop values */
@@ -1338,9 +1338,9 @@ generate_series_step_numeric(PG_FUNCTION_ARGS)
 					 errmsg("stop value cannot be NaN")));
 
 		/* see if we were given an explicit step size */
-		if (PG_NARGS() == 3)
+		if (MDB_NARGS() == 3)
 		{
-			Numeric		step_num = PG_GETARG_NUMERIC(2);
+			Numeric		step_num = MDB_GETARG_NUMERIC(2);
 
 			if (NUMERIC_IS_NAN(step_num))
 				ereport(ERROR,
@@ -1431,12 +1431,12 @@ generate_series_step_numeric(PG_FUNCTION_ARGS)
  * count+1). We don't allow "NaN" for any of the numeric arguments.
  */
 Datum
-width_bucket_numeric(PG_FUNCTION_ARGS)
+width_bucket_numeric(MDB_FUNCTION_ARGS)
 {
-	Numeric		operand = PG_GETARG_NUMERIC(0);
-	Numeric		bound1 = PG_GETARG_NUMERIC(1);
-	Numeric		bound2 = PG_GETARG_NUMERIC(2);
-	int32		count = PG_GETARG_INT32(3);
+	Numeric		operand = MDB_GETARG_NUMERIC(0);
+	Numeric		bound1 = MDB_GETARG_NUMERIC(1);
+	Numeric		bound2 = MDB_GETARG_NUMERIC(2);
+	int32		count = MDB_GETARG_INT32(3);
 	NumericVar	count_var;
 	NumericVar	result_var;
 	int32		result;
@@ -1495,7 +1495,7 @@ width_bucket_numeric(PG_FUNCTION_ARGS)
 	free_var(&count_var);
 	free_var(&result_var);
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /*
@@ -1582,9 +1582,9 @@ compute_bucket(Numeric operand, Numeric bound1, Numeric bound2,
  * Sort support strategy routine.
  */
 Datum
-numeric_sortsupport(PG_FUNCTION_ARGS)
+numeric_sortsupport(MDB_FUNCTION_ARGS)
 {
-	SortSupport ssup = (SortSupport) PG_GETARG_POINTER(0);
+	SortSupport ssup = (SortSupport) MDB_GETARG_POINTER(0);
 
 	ssup->comparator = numeric_fast_cmp;
 
@@ -1615,7 +1615,7 @@ numeric_sortsupport(PG_FUNCTION_ARGS)
 		MemoryContextSwitchTo(oldcontext);
 	}
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 /*
@@ -1626,7 +1626,7 @@ static Datum
 numeric_abbrev_convert(Datum original_datum, SortSupport ssup)
 {
 	NumericSortSupport *nss = ssup->ssup_extra;
-	void	   *original_varatt = PG_DETOAST_DATUM_PACKED(original_datum);
+	void	   *original_varatt = MDB_DETOAST_DATUM_PACKED(original_datum);
 	Numeric		value;
 	Datum		result;
 
@@ -1849,7 +1849,7 @@ numeric_abbrev_convert_var(NumericVar *var, NumericSortSupport *nss)
 	}
 	else if (weight > 83)
 	{
-		result = PG_INT64_MAX;
+		result = MDB_INT64_MAX;
 	}
 	else
 	{
@@ -1904,7 +1904,7 @@ numeric_abbrev_convert_var(NumericVar *var, NumericSortSupport *nss)
 	}
 	else if (weight > 20)
 	{
-		result = PG_INT32_MAX;
+		result = MDB_INT32_MAX;
 	}
 	else
 	{
@@ -1971,109 +1971,109 @@ numeric_abbrev_convert_var(NumericVar *var, NumericSortSupport *nss)
  */
 
 Datum
-numeric_cmp(PG_FUNCTION_ARGS)
+numeric_cmp(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	int			result;
 
 	result = cmp_numerics(num1, num2);
 
-	PG_FREE_IF_COPY(num1, 0);
-	PG_FREE_IF_COPY(num2, 1);
+	MDB_FREE_IF_COPY(num1, 0);
+	MDB_FREE_IF_COPY(num2, 1);
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 
 Datum
-numeric_eq(PG_FUNCTION_ARGS)
+numeric_eq(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	bool		result;
 
 	result = cmp_numerics(num1, num2) == 0;
 
-	PG_FREE_IF_COPY(num1, 0);
-	PG_FREE_IF_COPY(num2, 1);
+	MDB_FREE_IF_COPY(num1, 0);
+	MDB_FREE_IF_COPY(num2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-numeric_ne(PG_FUNCTION_ARGS)
+numeric_ne(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	bool		result;
 
 	result = cmp_numerics(num1, num2) != 0;
 
-	PG_FREE_IF_COPY(num1, 0);
-	PG_FREE_IF_COPY(num2, 1);
+	MDB_FREE_IF_COPY(num1, 0);
+	MDB_FREE_IF_COPY(num2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-numeric_gt(PG_FUNCTION_ARGS)
+numeric_gt(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	bool		result;
 
 	result = cmp_numerics(num1, num2) > 0;
 
-	PG_FREE_IF_COPY(num1, 0);
-	PG_FREE_IF_COPY(num2, 1);
+	MDB_FREE_IF_COPY(num1, 0);
+	MDB_FREE_IF_COPY(num2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-numeric_ge(PG_FUNCTION_ARGS)
+numeric_ge(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	bool		result;
 
 	result = cmp_numerics(num1, num2) >= 0;
 
-	PG_FREE_IF_COPY(num1, 0);
-	PG_FREE_IF_COPY(num2, 1);
+	MDB_FREE_IF_COPY(num1, 0);
+	MDB_FREE_IF_COPY(num2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-numeric_lt(PG_FUNCTION_ARGS)
+numeric_lt(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	bool		result;
 
 	result = cmp_numerics(num1, num2) < 0;
 
-	PG_FREE_IF_COPY(num1, 0);
-	PG_FREE_IF_COPY(num2, 1);
+	MDB_FREE_IF_COPY(num1, 0);
+	MDB_FREE_IF_COPY(num2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-numeric_le(PG_FUNCTION_ARGS)
+numeric_le(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	bool		result;
 
 	result = cmp_numerics(num1, num2) <= 0;
 
-	PG_FREE_IF_COPY(num1, 0);
-	PG_FREE_IF_COPY(num2, 1);
+	MDB_FREE_IF_COPY(num1, 0);
+	MDB_FREE_IF_COPY(num2, 1);
 
-	PG_RETURN_BOOL(result);
+	MDB_RETURN_BOOL(result);
 }
 
 static int
@@ -2109,9 +2109,9 @@ cmp_numerics(Numeric num1, Numeric num2)
 }
 
 Datum
-hash_numeric(PG_FUNCTION_ARGS)
+hash_numeric(MDB_FUNCTION_ARGS)
 {
-	Numeric		key = PG_GETARG_NUMERIC(0);
+	Numeric		key = MDB_GETARG_NUMERIC(0);
 	Datum		digit_hash;
 	Datum		result;
 	int			weight;
@@ -2123,7 +2123,7 @@ hash_numeric(PG_FUNCTION_ARGS)
 
 	/* If it's NaN, don't try to hash the rest of the fields */
 	if (NUMERIC_IS_NAN(key))
-		PG_RETURN_UINT32(0);
+		MDB_RETURN_UINT32(0);
 
 	weight = NUMERIC_WEIGHT(key);
 	start_offset = 0;
@@ -2155,7 +2155,7 @@ hash_numeric(PG_FUNCTION_ARGS)
 	 * regardless of any other fields.
 	 */
 	if (NUMERIC_NDIGITS(key) == start_offset)
-		PG_RETURN_UINT32(-1);
+		MDB_RETURN_UINT32(-1);
 
 	for (i = NUMERIC_NDIGITS(key) - 1; i >= 0; i--)
 	{
@@ -2181,7 +2181,7 @@ hash_numeric(PG_FUNCTION_ARGS)
 	/* Mix in the weight, via XOR */
 	result = digit_hash ^ weight;
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 
@@ -2199,10 +2199,10 @@ hash_numeric(PG_FUNCTION_ARGS)
  *	Add two numerics
  */
 Datum
-numeric_add(PG_FUNCTION_ARGS)
+numeric_add(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	NumericVar	arg1;
 	NumericVar	arg2;
 	NumericVar	result;
@@ -2212,7 +2212,7 @@ numeric_add(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num1) || NUMERIC_IS_NAN(num2))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Unpack the values, let add_var() compute the result and return it.
@@ -2227,7 +2227,7 @@ numeric_add(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2237,10 +2237,10 @@ numeric_add(PG_FUNCTION_ARGS)
  *	Subtract one numeric from another
  */
 Datum
-numeric_sub(PG_FUNCTION_ARGS)
+numeric_sub(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	NumericVar	arg1;
 	NumericVar	arg2;
 	NumericVar	result;
@@ -2250,7 +2250,7 @@ numeric_sub(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num1) || NUMERIC_IS_NAN(num2))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Unpack the values, let sub_var() compute the result and return it.
@@ -2265,7 +2265,7 @@ numeric_sub(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2275,10 +2275,10 @@ numeric_sub(PG_FUNCTION_ARGS)
  *	Calculate the product of two numerics
  */
 Datum
-numeric_mul(PG_FUNCTION_ARGS)
+numeric_mul(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	NumericVar	arg1;
 	NumericVar	arg2;
 	NumericVar	result;
@@ -2288,7 +2288,7 @@ numeric_mul(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num1) || NUMERIC_IS_NAN(num2))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Unpack the values, let mul_var() compute the result and return it.
@@ -2307,7 +2307,7 @@ numeric_mul(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2317,10 +2317,10 @@ numeric_mul(PG_FUNCTION_ARGS)
  *	Divide one numeric into another
  */
 Datum
-numeric_div(PG_FUNCTION_ARGS)
+numeric_div(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	NumericVar	arg1;
 	NumericVar	arg2;
 	NumericVar	result;
@@ -2331,7 +2331,7 @@ numeric_div(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num1) || NUMERIC_IS_NAN(num2))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Unpack the arguments
@@ -2355,7 +2355,7 @@ numeric_div(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2365,10 +2365,10 @@ numeric_div(PG_FUNCTION_ARGS)
  *	Divide one numeric into another, truncating the result to an integer
  */
 Datum
-numeric_div_trunc(PG_FUNCTION_ARGS)
+numeric_div_trunc(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	NumericVar	arg1;
 	NumericVar	arg2;
 	NumericVar	result;
@@ -2378,7 +2378,7 @@ numeric_div_trunc(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num1) || NUMERIC_IS_NAN(num2))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Unpack the arguments
@@ -2397,7 +2397,7 @@ numeric_div_trunc(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2407,17 +2407,17 @@ numeric_div_trunc(PG_FUNCTION_ARGS)
  *	Calculate the modulo of two numerics
  */
 Datum
-numeric_mod(PG_FUNCTION_ARGS)
+numeric_mod(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	Numeric		res;
 	NumericVar	arg1;
 	NumericVar	arg2;
 	NumericVar	result;
 
 	if (NUMERIC_IS_NAN(num1) || NUMERIC_IS_NAN(num2))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	init_var_from_num(num1, &arg1);
 	init_var_from_num(num2, &arg2);
@@ -2430,7 +2430,7 @@ numeric_mod(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2440,9 +2440,9 @@ numeric_mod(PG_FUNCTION_ARGS)
  *	Increment a number by one
  */
 Datum
-numeric_inc(PG_FUNCTION_ARGS)
+numeric_inc(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	NumericVar	arg;
 	Numeric		res;
 
@@ -2450,7 +2450,7 @@ numeric_inc(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Compute the result and return it
@@ -2463,7 +2463,7 @@ numeric_inc(PG_FUNCTION_ARGS)
 
 	free_var(&arg);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2473,19 +2473,19 @@ numeric_inc(PG_FUNCTION_ARGS)
  *	Return the smaller of two numbers
  */
 Datum
-numeric_smaller(PG_FUNCTION_ARGS)
+numeric_smaller(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 
 	/*
 	 * Use cmp_numerics so that this will agree with the comparison operators,
 	 * particularly as regards comparisons involving NaN.
 	 */
 	if (cmp_numerics(num1, num2) < 0)
-		PG_RETURN_NUMERIC(num1);
+		MDB_RETURN_NUMERIC(num1);
 	else
-		PG_RETURN_NUMERIC(num2);
+		MDB_RETURN_NUMERIC(num2);
 }
 
 
@@ -2495,19 +2495,19 @@ numeric_smaller(PG_FUNCTION_ARGS)
  *	Return the larger of two numbers
  */
 Datum
-numeric_larger(PG_FUNCTION_ARGS)
+numeric_larger(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 
 	/*
 	 * Use cmp_numerics so that this will agree with the comparison operators,
 	 * particularly as regards comparisons involving NaN.
 	 */
 	if (cmp_numerics(num1, num2) > 0)
-		PG_RETURN_NUMERIC(num1);
+		MDB_RETURN_NUMERIC(num1);
 	else
-		PG_RETURN_NUMERIC(num2);
+		MDB_RETURN_NUMERIC(num2);
 }
 
 
@@ -2524,9 +2524,9 @@ numeric_larger(PG_FUNCTION_ARGS)
  * Compute factorial
  */
 Datum
-numeric_fac(PG_FUNCTION_ARGS)
+numeric_fac(MDB_FUNCTION_ARGS)
 {
-	int64		num = PG_GETARG_INT64(0);
+	int64		num = MDB_GETARG_INT64(0);
 	Numeric		res;
 	NumericVar	fact;
 	NumericVar	result;
@@ -2534,7 +2534,7 @@ numeric_fac(PG_FUNCTION_ARGS)
 	if (num <= 1)
 	{
 		res = make_result(&const_one);
-		PG_RETURN_NUMERIC(res);
+		MDB_RETURN_NUMERIC(res);
 	}
 	/* Fail immediately if the result would overflow */
 	if (num > 32177)
@@ -2562,7 +2562,7 @@ numeric_fac(PG_FUNCTION_ARGS)
 	free_var(&fact);
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2572,9 +2572,9 @@ numeric_fac(PG_FUNCTION_ARGS)
  *	Compute the square root of a numeric.
  */
 Datum
-numeric_sqrt(PG_FUNCTION_ARGS)
+numeric_sqrt(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	Numeric		res;
 	NumericVar	arg;
 	NumericVar	result;
@@ -2585,7 +2585,7 @@ numeric_sqrt(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Unpack the argument and determine the result scale.  We choose a scale
@@ -2613,7 +2613,7 @@ numeric_sqrt(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2623,9 +2623,9 @@ numeric_sqrt(PG_FUNCTION_ARGS)
  *	Raise e to the power of x
  */
 Datum
-numeric_exp(PG_FUNCTION_ARGS)
+numeric_exp(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	Numeric		res;
 	NumericVar	arg;
 	NumericVar	result;
@@ -2636,7 +2636,7 @@ numeric_exp(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Unpack the argument and determine the result scale.  We choose a scale
@@ -2674,7 +2674,7 @@ numeric_exp(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2684,9 +2684,9 @@ numeric_exp(PG_FUNCTION_ARGS)
  *	Compute the natural logarithm of x
  */
 Datum
-numeric_ln(PG_FUNCTION_ARGS)
+numeric_ln(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	Numeric		res;
 	NumericVar	arg;
 	NumericVar	result;
@@ -2697,7 +2697,7 @@ numeric_ln(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	init_var_from_num(num, &arg);
 	init_var(&result);
@@ -2716,7 +2716,7 @@ numeric_ln(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2726,10 +2726,10 @@ numeric_ln(PG_FUNCTION_ARGS)
  *	Compute the logarithm of x in a given base
  */
 Datum
-numeric_log(PG_FUNCTION_ARGS)
+numeric_log(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	Numeric		res;
 	NumericVar	arg1;
 	NumericVar	arg2;
@@ -2739,7 +2739,7 @@ numeric_log(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num1) || NUMERIC_IS_NAN(num2))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Initialize things
@@ -2758,7 +2758,7 @@ numeric_log(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
@@ -2768,10 +2768,10 @@ numeric_log(PG_FUNCTION_ARGS)
  *	Raise b to the power of x
  */
 Datum
-numeric_power(PG_FUNCTION_ARGS)
+numeric_power(MDB_FUNCTION_ARGS)
 {
-	Numeric		num1 = PG_GETARG_NUMERIC(0);
-	Numeric		num2 = PG_GETARG_NUMERIC(1);
+	Numeric		num1 = MDB_GETARG_NUMERIC(0);
+	Numeric		num2 = MDB_GETARG_NUMERIC(1);
 	Numeric		res;
 	NumericVar	arg1;
 	NumericVar	arg2;
@@ -2782,7 +2782,7 @@ numeric_power(PG_FUNCTION_ARGS)
 	 * Handle NaN
 	 */
 	if (NUMERIC_IS_NAN(num1) || NUMERIC_IS_NAN(num2))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	/*
 	 * Initialize things
@@ -2823,7 +2823,7 @@ numeric_power(PG_FUNCTION_ARGS)
 	free_var(&result);
 	free_var(&arg2_trunc);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 /*
@@ -2832,14 +2832,14 @@ numeric_power(PG_FUNCTION_ARGS)
  *	Returns the scale, i.e. the count of decimal digits in the fractional part
  */
 Datum
-numeric_scale(PG_FUNCTION_ARGS)
+numeric_scale(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT32(NUMERIC_DSCALE(num));
+	MDB_RETURN_INT32(NUMERIC_DSCALE(num));
 }
 
 
@@ -2853,9 +2853,9 @@ numeric_scale(PG_FUNCTION_ARGS)
 
 
 Datum
-int4_numeric(PG_FUNCTION_ARGS)
+int4_numeric(MDB_FUNCTION_ARGS)
 {
-	int32		val = PG_GETARG_INT32(0);
+	int32		val = MDB_GETARG_INT32(0);
 	Numeric		res;
 	NumericVar	result;
 
@@ -2867,14 +2867,14 @@ int4_numeric(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
 Datum
-numeric_int4(PG_FUNCTION_ARGS)
+numeric_int4(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	NumericVar	x;
 	int32		result;
 
@@ -2887,7 +2887,7 @@ numeric_int4(PG_FUNCTION_ARGS)
 	/* Convert to variable format, then convert to int4 */
 	init_var_from_num(num, &x);
 	result = numericvar_to_int32(&x);
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }
 
 /*
@@ -2919,9 +2919,9 @@ numericvar_to_int32(NumericVar *var)
 }
 
 Datum
-int8_numeric(PG_FUNCTION_ARGS)
+int8_numeric(MDB_FUNCTION_ARGS)
 {
-	int64		val = PG_GETARG_INT64(0);
+	int64		val = MDB_GETARG_INT64(0);
 	Numeric		res;
 	NumericVar	result;
 
@@ -2933,14 +2933,14 @@ int8_numeric(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
 Datum
-numeric_int8(PG_FUNCTION_ARGS)
+numeric_int8(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	NumericVar	x;
 	int64		result;
 
@@ -2958,14 +2958,14 @@ numeric_int8(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("bigint out of range")));
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 
 Datum
-int2_numeric(PG_FUNCTION_ARGS)
+int2_numeric(MDB_FUNCTION_ARGS)
 {
-	int16		val = PG_GETARG_INT16(0);
+	int16		val = MDB_GETARG_INT16(0);
 	Numeric		res;
 	NumericVar	result;
 
@@ -2977,14 +2977,14 @@ int2_numeric(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
 Datum
-numeric_int2(PG_FUNCTION_ARGS)
+numeric_int2(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	NumericVar	x;
 	int64		val;
 	int16		result;
@@ -3012,20 +3012,20 @@ numeric_int2(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("smallint out of range")));
 
-	PG_RETURN_INT16(result);
+	MDB_RETURN_INT16(result);
 }
 
 
 Datum
-float8_numeric(PG_FUNCTION_ARGS)
+float8_numeric(MDB_FUNCTION_ARGS)
 {
-	float8		val = PG_GETARG_FLOAT8(0);
+	float8		val = MDB_GETARG_FLOAT8(0);
 	Numeric		res;
 	NumericVar	result;
 	char		buf[DBL_DIG + 100];
 
 	if (isnan(val))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	sprintf(buf, "%.*g", DBL_DIG, val);
 
@@ -3038,19 +3038,19 @@ float8_numeric(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
 Datum
-numeric_float8(PG_FUNCTION_ARGS)
+numeric_float8(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	char	   *tmp;
 	Datum		result;
 
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	tmp = DatumGetCString(DirectFunctionCall1(numeric_out,
 											  NumericGetDatum(num)));
@@ -3059,35 +3059,35 @@ numeric_float8(PG_FUNCTION_ARGS)
 
 	pfree(tmp);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 
 /* Convert numeric to float8; if out of range, return +/- HUGE_VAL */
 Datum
-numeric_float8_no_overflow(PG_FUNCTION_ARGS)
+numeric_float8_no_overflow(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	double		val;
 
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_FLOAT8(get_float8_nan());
+		MDB_RETURN_FLOAT8(get_float8_nan());
 
 	val = numeric_to_double_no_overflow(num);
 
-	PG_RETURN_FLOAT8(val);
+	MDB_RETURN_FLOAT8(val);
 }
 
 Datum
-float4_numeric(PG_FUNCTION_ARGS)
+float4_numeric(MDB_FUNCTION_ARGS)
 {
-	float4		val = PG_GETARG_FLOAT4(0);
+	float4		val = MDB_GETARG_FLOAT4(0);
 	Numeric		res;
 	NumericVar	result;
 	char		buf[FLT_DIG + 100];
 
 	if (isnan(val))
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	sprintf(buf, "%.*g", FLT_DIG, val);
 
@@ -3100,19 +3100,19 @@ float4_numeric(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 }
 
 
 Datum
-numeric_float4(PG_FUNCTION_ARGS)
+numeric_float4(MDB_FUNCTION_ARGS)
 {
-	Numeric		num = PG_GETARG_NUMERIC(0);
+	Numeric		num = MDB_GETARG_NUMERIC(0);
 	char	   *tmp;
 	Datum		result;
 
 	if (NUMERIC_IS_NAN(num))
-		PG_RETURN_FLOAT4(get_float4_nan());
+		MDB_RETURN_FLOAT4(get_float4_nan());
 
 	tmp = DatumGetCString(DirectFunctionCall1(numeric_out,
 											  NumericGetDatum(num)));
@@ -3121,7 +3121,7 @@ numeric_float4(PG_FUNCTION_ARGS)
 
 	pfree(tmp);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 
@@ -3333,27 +3333,27 @@ do_numeric_discard(NumericAggState *state, Numeric newval)
  * Generic transition function for numeric aggregates that require sumX2.
  */
 Datum
-numeric_accum(PG_FUNCTION_ARGS)
+numeric_accum(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	/* Create the state data on the first call */
 	if (state == NULL)
 		state = makeNumericAggState(fcinfo, true);
 
-	if (!PG_ARGISNULL(1))
-		do_numeric_accum(state, PG_GETARG_NUMERIC(1));
+	if (!MDB_ARGISNULL(1))
+		do_numeric_accum(state, MDB_GETARG_NUMERIC(1));
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 /*
  * Generic combine function for numeric aggregates which require sumX2
  */
 Datum
-numeric_combine(PG_FUNCTION_ARGS)
+numeric_combine(MDB_FUNCTION_ARGS)
 {
 	NumericAggState	   *state1;
 	NumericAggState	   *state2;
@@ -3363,11 +3363,11 @@ numeric_combine(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, &agg_context))
 		elog(ERROR, "aggregate function called in non-aggregate context");
 
-	state1 = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
-	state2 = PG_ARGISNULL(1) ? NULL : (NumericAggState *) PG_GETARG_POINTER(1);
+	state1 = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
+	state2 = MDB_ARGISNULL(1) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(1);
 
 	if (state2 == NULL)
-		PG_RETURN_POINTER(state1);
+		MDB_RETURN_POINTER(state1);
 
 	/* manually copy all fields from state2 to state1 */
 	if (state1 == NULL)
@@ -3388,7 +3388,7 @@ numeric_combine(PG_FUNCTION_ARGS)
 
 		MemoryContextSwitchTo(old_context);
 
-		PG_RETURN_POINTER(state1);
+		MDB_RETURN_POINTER(state1);
 	}
 
 	if (state2->N > 0)
@@ -3417,34 +3417,34 @@ numeric_combine(PG_FUNCTION_ARGS)
 
 		MemoryContextSwitchTo(old_context);
 	}
-	PG_RETURN_POINTER(state1);
+	MDB_RETURN_POINTER(state1);
 }
 
 /*
  * Generic transition function for numeric aggregates that don't require sumX2.
  */
 Datum
-numeric_avg_accum(PG_FUNCTION_ARGS)
+numeric_avg_accum(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	/* Create the state data on the first call */
 	if (state == NULL)
 		state = makeNumericAggState(fcinfo, false);
 
-	if (!PG_ARGISNULL(1))
-		do_numeric_accum(state, PG_GETARG_NUMERIC(1));
+	if (!MDB_ARGISNULL(1))
+		do_numeric_accum(state, MDB_GETARG_NUMERIC(1));
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 /*
  * Combine function for numeric aggregates which don't require sumX2
  */
 Datum
-numeric_avg_combine(PG_FUNCTION_ARGS)
+numeric_avg_combine(MDB_FUNCTION_ARGS)
 {
 	NumericAggState	   *state1;
 	NumericAggState	   *state2;
@@ -3454,11 +3454,11 @@ numeric_avg_combine(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, &agg_context))
 		elog(ERROR, "aggregate function called in non-aggregate context");
 
-	state1 = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
-	state2 = PG_ARGISNULL(1) ? NULL : (NumericAggState *) PG_GETARG_POINTER(1);
+	state1 = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
+	state2 = MDB_ARGISNULL(1) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(1);
 
 	if (state2 == NULL)
-		PG_RETURN_POINTER(state1);
+		MDB_RETURN_POINTER(state1);
 
 	/* manually copy all fields from state2 to state1 */
 	if (state1 == NULL)
@@ -3476,7 +3476,7 @@ numeric_avg_combine(PG_FUNCTION_ARGS)
 
 		MemoryContextSwitchTo(old_context);
 
-		PG_RETURN_POINTER(state1);
+		MDB_RETURN_POINTER(state1);
 	}
 
 	if (state2->N > 0)
@@ -3504,7 +3504,7 @@ numeric_avg_combine(PG_FUNCTION_ARGS)
 
 		MemoryContextSwitchTo(old_context);
 	}
-	PG_RETURN_POINTER(state1);
+	MDB_RETURN_POINTER(state1);
 }
 
 /*
@@ -3516,7 +3516,7 @@ numeric_avg_combine(PG_FUNCTION_ARGS)
  * which matches the original input state.
  */
 Datum
-numeric_avg_serialize(PG_FUNCTION_ARGS)
+numeric_avg_serialize(MDB_FUNCTION_ARGS)
 {
 	NumericAggState	   *state;
 	StringInfoData		buf;
@@ -3528,7 +3528,7 @@ numeric_avg_serialize(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, NULL))
 		elog(ERROR, "aggregate function called in non-aggregate context");
 
-	state = (NumericAggState *) PG_GETARG_POINTER(0);
+	state = (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	/*
 	 * This is a little wasteful since make_result converts the NumericVar
@@ -3559,7 +3559,7 @@ numeric_avg_serialize(PG_FUNCTION_ARGS)
 
 	result = pq_endtypsend(&buf);
 
-	PG_RETURN_BYTEA_P(result);
+	MDB_RETURN_BYTEA_P(result);
 }
 
 /*
@@ -3572,9 +3572,9 @@ numeric_avg_serialize(PG_FUNCTION_ARGS)
  * which matches the original bytea value.
  */
 Datum
-numeric_avg_deserialize(PG_FUNCTION_ARGS)
+numeric_avg_deserialize(MDB_FUNCTION_ARGS)
 {
-	bytea			   *sstate = PG_GETARG_BYTEA_P(0);
+	bytea			   *sstate = MDB_GETARG_BYTEA_P(0);
 	NumericAggState	   *result;
 	Datum				temp;
 	StringInfoData		buf;
@@ -3613,7 +3613,7 @@ numeric_avg_deserialize(PG_FUNCTION_ARGS)
 	pq_getmsgend(&buf);
 	pfree(buf.data);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
@@ -3626,7 +3626,7 @@ numeric_avg_deserialize(PG_FUNCTION_ARGS)
  * matches the original input state.
  */
 Datum
-numeric_serialize(PG_FUNCTION_ARGS)
+numeric_serialize(MDB_FUNCTION_ARGS)
 {
 	NumericAggState	   *state;
 	StringInfoData		buf;
@@ -3639,7 +3639,7 @@ numeric_serialize(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, NULL))
 		elog(ERROR, "aggregate function called in non-aggregate context");
 
-	state = (NumericAggState *) PG_GETARG_POINTER(0);
+	state = (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	/*
 	 * This is a little wasteful since make_result converts the NumericVar
@@ -3677,7 +3677,7 @@ numeric_serialize(PG_FUNCTION_ARGS)
 
 	result = pq_endtypsend(&buf);
 
-	PG_RETURN_BYTEA_P(result);
+	MDB_RETURN_BYTEA_P(result);
 }
 
 /*
@@ -3690,9 +3690,9 @@ numeric_serialize(PG_FUNCTION_ARGS)
  * matches the original bytea value.
  */
 Datum
-numeric_deserialize(PG_FUNCTION_ARGS)
+numeric_deserialize(MDB_FUNCTION_ARGS)
 {
-	bytea			   *sstate = PG_GETARG_BYTEA_P(0);
+	bytea			   *sstate = MDB_GETARG_BYTEA_P(0);
 	NumericAggState	   *result;
 	Datum				temp;
 	StringInfoData		buf;
@@ -3738,7 +3738,7 @@ numeric_deserialize(PG_FUNCTION_ARGS)
 	pq_getmsgend(&buf);
 	pfree(buf.data);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
@@ -3746,24 +3746,24 @@ numeric_deserialize(PG_FUNCTION_ARGS)
  * (with or without requirement for X^2).
  */
 Datum
-numeric_accum_inv(PG_FUNCTION_ARGS)
+numeric_accum_inv(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	/* Should not get here with no state */
 	if (state == NULL)
 		elog(ERROR, "numeric_accum_inv called with NULL state");
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 		/* If we fail to perform the inverse transition, return NULL */
-		if (!do_numeric_discard(state, PG_GETARG_NUMERIC(1)))
-			PG_RETURN_NULL();
+		if (!do_numeric_discard(state, MDB_GETARG_NUMERIC(1)))
+			MDB_RETURN_NULL();
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 
@@ -3848,87 +3848,87 @@ typedef NumericAggState PolyNumAggState;
 #endif
 
 Datum
-int2_accum(PG_FUNCTION_ARGS)
+int2_accum(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/* Create the state data on the first call */
 	if (state == NULL)
 		state = makePolyNumAggState(fcinfo, true);
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 #ifdef HAVE_INT128
-		do_int128_accum(state, (int128) PG_GETARG_INT16(1));
+		do_int128_accum(state, (int128) MDB_GETARG_INT16(1));
 #else
 		Numeric		newval;
 
 		newval = DatumGetNumeric(DirectFunctionCall1(int2_numeric,
-													 PG_GETARG_DATUM(1)));
+													 MDB_GETARG_DATUM(1)));
 		do_numeric_accum(state, newval);
 #endif
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-int4_accum(PG_FUNCTION_ARGS)
+int4_accum(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/* Create the state data on the first call */
 	if (state == NULL)
 		state = makePolyNumAggState(fcinfo, true);
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 #ifdef HAVE_INT128
-		do_int128_accum(state, (int128) PG_GETARG_INT32(1));
+		do_int128_accum(state, (int128) MDB_GETARG_INT32(1));
 #else
 		Numeric		newval;
 
 		newval = DatumGetNumeric(DirectFunctionCall1(int4_numeric,
-													 PG_GETARG_DATUM(1)));
+													 MDB_GETARG_DATUM(1)));
 		do_numeric_accum(state, newval);
 #endif
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-int8_accum(PG_FUNCTION_ARGS)
+int8_accum(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	/* Create the state data on the first call */
 	if (state == NULL)
 		state = makeNumericAggState(fcinfo, true);
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 		Numeric		newval;
 
 		newval = DatumGetNumeric(DirectFunctionCall1(int8_numeric,
-													 PG_GETARG_DATUM(1)));
+													 MDB_GETARG_DATUM(1)));
 		do_numeric_accum(state, newval);
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 /*
  * Combine function for numeric aggregates which require sumX2
  */
 Datum
-numeric_poly_combine(PG_FUNCTION_ARGS)
+numeric_poly_combine(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState *state1;
 	PolyNumAggState *state2;
@@ -3938,11 +3938,11 @@ numeric_poly_combine(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, &agg_context))
 		elog(ERROR, "aggregate function called in non-aggregate context");
 
-	state1 = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
-	state2 = PG_ARGISNULL(1) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(1);
+	state1 = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
+	state2 = MDB_ARGISNULL(1) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(1);
 
 	if (state2 == NULL)
-		PG_RETURN_POINTER(state1);
+		MDB_RETURN_POINTER(state1);
 
 	/* manually copy all fields from state2 to state1 */
 	if (state1 == NULL)
@@ -3965,7 +3965,7 @@ numeric_poly_combine(PG_FUNCTION_ARGS)
 
 		MemoryContextSwitchTo(old_context);
 
-		PG_RETURN_POINTER(state1);
+		MDB_RETURN_POINTER(state1);
 	}
 
 	if (state2->N > 0)
@@ -3987,7 +3987,7 @@ numeric_poly_combine(PG_FUNCTION_ARGS)
 #endif
 
 	}
-	PG_RETURN_POINTER(state1);
+	MDB_RETURN_POINTER(state1);
 }
 
 /*
@@ -3999,7 +3999,7 @@ numeric_poly_combine(PG_FUNCTION_ARGS)
  * state which matches the original input state.
  */
 Datum
-numeric_poly_serialize(PG_FUNCTION_ARGS)
+numeric_poly_serialize(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState	   *state;
 	StringInfoData		buf;
@@ -4011,7 +4011,7 @@ numeric_poly_serialize(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, NULL))
 		elog(ERROR, "aggregate function called in non-aggregate context");
 
-	state = (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/*
 	 * If the platform supports int128 then sumX and sumX2 will be a 128 bit
@@ -4062,7 +4062,7 @@ numeric_poly_serialize(PG_FUNCTION_ARGS)
 
 	result = pq_endtypsend(&buf);
 
-	PG_RETURN_BYTEA_P(result);
+	MDB_RETURN_BYTEA_P(result);
 }
 
 /*
@@ -4074,9 +4074,9 @@ numeric_poly_serialize(PG_FUNCTION_ARGS)
  * state which matches the original input state.
  */
 Datum
-numeric_poly_deserialize(PG_FUNCTION_ARGS)
+numeric_poly_deserialize(MDB_FUNCTION_ARGS)
 {
-	bytea			   *sstate = PG_GETARG_BYTEA_P(0);
+	bytea			   *sstate = MDB_GETARG_BYTEA_P(0);
 	PolyNumAggState	   *result;
 	Datum				sumX;
 	Datum				sumX2;
@@ -4130,37 +4130,37 @@ numeric_poly_deserialize(PG_FUNCTION_ARGS)
 	pq_getmsgend(&buf);
 	pfree(buf.data);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
  * Transition function for int8 input when we don't need sumX2.
  */
 Datum
-int8_avg_accum(PG_FUNCTION_ARGS)
+int8_avg_accum(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/* Create the state data on the first call */
 	if (state == NULL)
 		state = makePolyNumAggState(fcinfo, false);
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 #ifdef HAVE_INT128
-		do_int128_accum(state, (int128) PG_GETARG_INT64(1));
+		do_int128_accum(state, (int128) MDB_GETARG_INT64(1));
 #else
 		Numeric		newval;
 
 		newval = DatumGetNumeric(DirectFunctionCall1(int8_numeric,
-													 PG_GETARG_DATUM(1)));
+													 MDB_GETARG_DATUM(1)));
 		do_numeric_accum(state, newval);
 #endif
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 /*
@@ -4168,7 +4168,7 @@ int8_avg_accum(PG_FUNCTION_ARGS)
  * sumX2
  */
 Datum
-int8_avg_combine(PG_FUNCTION_ARGS)
+int8_avg_combine(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState	   *state1;
 	PolyNumAggState	   *state2;
@@ -4178,11 +4178,11 @@ int8_avg_combine(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, &agg_context))
 		elog(ERROR, "aggregate function called in non-aggregate context");
 
-	state1 = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
-	state2 = PG_ARGISNULL(1) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(1);
+	state1 = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
+	state2 = MDB_ARGISNULL(1) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(1);
 
 	if (state2 == NULL)
-		PG_RETURN_POINTER(state1);
+		MDB_RETURN_POINTER(state1);
 
 	/* manually copy all fields from state2 to state1 */
 	if (state1 == NULL)
@@ -4200,7 +4200,7 @@ int8_avg_combine(PG_FUNCTION_ARGS)
 #endif
 		MemoryContextSwitchTo(old_context);
 
-		PG_RETURN_POINTER(state1);
+		MDB_RETURN_POINTER(state1);
 	}
 
 	if (state2->N > 0)
@@ -4220,7 +4220,7 @@ int8_avg_combine(PG_FUNCTION_ARGS)
 #endif
 
 	}
-	PG_RETURN_POINTER(state1);
+	MDB_RETURN_POINTER(state1);
 }
 
 /*
@@ -4231,7 +4231,7 @@ int8_avg_combine(PG_FUNCTION_ARGS)
  * matches the original input state.
  */
 Datum
-int8_avg_serialize(PG_FUNCTION_ARGS)
+int8_avg_serialize(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState	   *state;
 	StringInfoData		buf;
@@ -4242,7 +4242,7 @@ int8_avg_serialize(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, NULL))
 		elog(ERROR, "aggregate function called in non-aggregate context");
 
-	state = (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/*
 	 * If the platform supports int128 then sumX will be a 128 integer type.
@@ -4280,7 +4280,7 @@ int8_avg_serialize(PG_FUNCTION_ARGS)
 
 	result = pq_endtypsend(&buf);
 
-	PG_RETURN_BYTEA_P(result);
+	MDB_RETURN_BYTEA_P(result);
 }
 
 /*
@@ -4291,9 +4291,9 @@ int8_avg_serialize(PG_FUNCTION_ARGS)
  * matches the original bytea value.
  */
 Datum
-int8_avg_deserialize(PG_FUNCTION_ARGS)
+int8_avg_deserialize(MDB_FUNCTION_ARGS)
 {
-	bytea			   *sstate = PG_GETARG_BYTEA_P(0);
+	bytea			   *sstate = MDB_GETARG_BYTEA_P(0);
 	PolyNumAggState	   *result;
 	StringInfoData		buf;
 	Datum				temp;
@@ -4335,7 +4335,7 @@ int8_avg_deserialize(PG_FUNCTION_ARGS)
 	pq_getmsgend(&buf);
 	pfree(buf.data);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 /*
@@ -4343,25 +4343,25 @@ int8_avg_deserialize(PG_FUNCTION_ARGS)
  */
 
 Datum
-int2_accum_inv(PG_FUNCTION_ARGS)
+int2_accum_inv(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/* Should not get here with no state */
 	if (state == NULL)
 		elog(ERROR, "int2_accum_inv called with NULL state");
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 #ifdef HAVE_INT128
-		do_int128_discard(state, (int128) PG_GETARG_INT16(1));
+		do_int128_discard(state, (int128) MDB_GETARG_INT16(1));
 #else
 		Numeric		newval;
 
 		newval = DatumGetNumeric(DirectFunctionCall1(int2_numeric,
-													 PG_GETARG_DATUM(1)));
+													 MDB_GETARG_DATUM(1)));
 
 		/* Should never fail, all inputs have dscale 0 */
 		if (!do_numeric_discard(state, newval))
@@ -4369,29 +4369,29 @@ int2_accum_inv(PG_FUNCTION_ARGS)
 #endif
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-int4_accum_inv(PG_FUNCTION_ARGS)
+int4_accum_inv(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/* Should not get here with no state */
 	if (state == NULL)
 		elog(ERROR, "int4_accum_inv called with NULL state");
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 #ifdef HAVE_INT128
-		do_int128_discard(state, (int128) PG_GETARG_INT32(1));
+		do_int128_discard(state, (int128) MDB_GETARG_INT32(1));
 #else
 		Numeric		newval;
 
 		newval = DatumGetNumeric(DirectFunctionCall1(int4_numeric,
-													 PG_GETARG_DATUM(1)));
+													 MDB_GETARG_DATUM(1)));
 
 		/* Should never fail, all inputs have dscale 0 */
 		if (!do_numeric_discard(state, newval))
@@ -4399,55 +4399,55 @@ int4_accum_inv(PG_FUNCTION_ARGS)
 #endif
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-int8_accum_inv(PG_FUNCTION_ARGS)
+int8_accum_inv(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	/* Should not get here with no state */
 	if (state == NULL)
 		elog(ERROR, "int8_accum_inv called with NULL state");
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 		Numeric		newval;
 
 		newval = DatumGetNumeric(DirectFunctionCall1(int8_numeric,
-													 PG_GETARG_DATUM(1)));
+													 MDB_GETARG_DATUM(1)));
 
 		/* Should never fail, all inputs have dscale 0 */
 		if (!do_numeric_discard(state, newval))
 			elog(ERROR, "do_numeric_discard failed unexpectedly");
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-int8_avg_accum_inv(PG_FUNCTION_ARGS)
+int8_avg_accum_inv(MDB_FUNCTION_ARGS)
 {
 	PolyNumAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/* Should not get here with no state */
 	if (state == NULL)
 		elog(ERROR, "int8_avg_accum_inv called with NULL state");
 
-	if (!PG_ARGISNULL(1))
+	if (!MDB_ARGISNULL(1))
 	{
 #ifdef HAVE_INT128
-		do_int128_discard(state, (int128) PG_GETARG_INT64(1));
+		do_int128_discard(state, (int128) MDB_GETARG_INT64(1));
 #else
 		Numeric		newval;
 
 		newval = DatumGetNumeric(DirectFunctionCall1(int8_numeric,
-													 PG_GETARG_DATUM(1)));
+													 MDB_GETARG_DATUM(1)));
 
 		/* Should never fail, all inputs have dscale 0 */
 		if (!do_numeric_discard(state, newval))
@@ -4455,22 +4455,22 @@ int8_avg_accum_inv(PG_FUNCTION_ARGS)
 #endif
 	}
 
-	PG_RETURN_POINTER(state);
+	MDB_RETURN_POINTER(state);
 }
 
 Datum
-numeric_poly_sum(PG_FUNCTION_ARGS)
+numeric_poly_sum(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_INT128
 	PolyNumAggState *state;
 	Numeric		res;
 	NumericVar	result;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/* If there were no non-null inputs, return NULL */
 	if (state == NULL || state->N == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	init_var(&result);
 
@@ -4480,14 +4480,14 @@ numeric_poly_sum(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_NUMERIC(res);
+	MDB_RETURN_NUMERIC(res);
 #else
 	return numeric_sum(fcinfo);
 #endif
 }
 
 Datum
-numeric_poly_avg(PG_FUNCTION_ARGS)
+numeric_poly_avg(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_INT128
 	PolyNumAggState *state;
@@ -4495,11 +4495,11 @@ numeric_poly_avg(PG_FUNCTION_ARGS)
 	Datum		countd,
 				sumd;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	/* If there were no non-null inputs, return NULL */
 	if (state == NULL || state->N == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	init_var(&result);
 
@@ -4511,49 +4511,49 @@ numeric_poly_avg(PG_FUNCTION_ARGS)
 
 	free_var(&result);
 
-	PG_RETURN_DATUM(DirectFunctionCall2(numeric_div, sumd, countd));
+	MDB_RETURN_DATUM(DirectFunctionCall2(numeric_div, sumd, countd));
 #else
 	return numeric_avg(fcinfo);
 #endif
 }
 
 Datum
-numeric_avg(PG_FUNCTION_ARGS)
+numeric_avg(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 	Datum		N_datum;
 	Datum		sumX_datum;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	/* If there were no non-null inputs, return NULL */
 	if (state == NULL || (state->N + state->NaNcount) == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (state->NaNcount > 0)	/* there was at least one NaN input */
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
 	N_datum = DirectFunctionCall1(int8_numeric, Int64GetDatum(state->N));
 	sumX_datum = NumericGetDatum(make_result(&state->sumX));
 
-	PG_RETURN_DATUM(DirectFunctionCall2(numeric_div, sumX_datum, N_datum));
+	MDB_RETURN_DATUM(DirectFunctionCall2(numeric_div, sumX_datum, N_datum));
 }
 
 Datum
-numeric_sum(PG_FUNCTION_ARGS)
+numeric_sum(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	/* If there were no non-null inputs, return NULL */
 	if (state == NULL || (state->N + state->NaNcount) == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	if (state->NaNcount > 0)	/* there was at least one NaN input */
-		PG_RETURN_NUMERIC(make_result(&const_nan));
+		MDB_RETURN_NUMERIC(make_result(&const_nan));
 
-	PG_RETURN_NUMERIC(make_result(&(state->sumX)));
+	MDB_RETURN_NUMERIC(make_result(&(state->sumX)));
 }
 
 /*
@@ -4652,71 +4652,71 @@ numeric_stddev_internal(NumericAggState *state,
 }
 
 Datum
-numeric_var_samp(PG_FUNCTION_ARGS)
+numeric_var_samp(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 	Numeric		res;
 	bool		is_null;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	res = numeric_stddev_internal(state, true, true, &is_null);
 
 	if (is_null)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_NUMERIC(res);
+		MDB_RETURN_NUMERIC(res);
 }
 
 Datum
-numeric_stddev_samp(PG_FUNCTION_ARGS)
+numeric_stddev_samp(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 	Numeric		res;
 	bool		is_null;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	res = numeric_stddev_internal(state, false, true, &is_null);
 
 	if (is_null)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_NUMERIC(res);
+		MDB_RETURN_NUMERIC(res);
 }
 
 Datum
-numeric_var_pop(PG_FUNCTION_ARGS)
+numeric_var_pop(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 	Numeric		res;
 	bool		is_null;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	res = numeric_stddev_internal(state, true, false, &is_null);
 
 	if (is_null)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_NUMERIC(res);
+		MDB_RETURN_NUMERIC(res);
 }
 
 Datum
-numeric_stddev_pop(PG_FUNCTION_ARGS)
+numeric_stddev_pop(MDB_FUNCTION_ARGS)
 {
 	NumericAggState *state;
 	Numeric		res;
 	bool		is_null;
 
-	state = PG_ARGISNULL(0) ? NULL : (NumericAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (NumericAggState *) MDB_GETARG_POINTER(0);
 
 	res = numeric_stddev_internal(state, false, false, &is_null);
 
 	if (is_null)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_NUMERIC(res);
+		MDB_RETURN_NUMERIC(res);
 }
 
 #ifdef HAVE_INT128
@@ -4754,84 +4754,84 @@ numeric_poly_stddev_internal(Int128AggState *state,
 #endif
 
 Datum
-numeric_poly_var_samp(PG_FUNCTION_ARGS)
+numeric_poly_var_samp(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_INT128
 	PolyNumAggState *state;
 	Numeric		res;
 	bool		is_null;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	res = numeric_poly_stddev_internal(state, true, true, &is_null);
 
 	if (is_null)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_NUMERIC(res);
+		MDB_RETURN_NUMERIC(res);
 #else
 	return numeric_var_samp(fcinfo);
 #endif
 }
 
 Datum
-numeric_poly_stddev_samp(PG_FUNCTION_ARGS)
+numeric_poly_stddev_samp(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_INT128
 	PolyNumAggState *state;
 	Numeric		res;
 	bool		is_null;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	res = numeric_poly_stddev_internal(state, false, true, &is_null);
 
 	if (is_null)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_NUMERIC(res);
+		MDB_RETURN_NUMERIC(res);
 #else
 	return numeric_stddev_samp(fcinfo);
 #endif
 }
 
 Datum
-numeric_poly_var_pop(PG_FUNCTION_ARGS)
+numeric_poly_var_pop(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_INT128
 	PolyNumAggState *state;
 	Numeric		res;
 	bool		is_null;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	res = numeric_poly_stddev_internal(state, true, false, &is_null);
 
 	if (is_null)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_NUMERIC(res);
+		MDB_RETURN_NUMERIC(res);
 #else
 	return numeric_var_pop(fcinfo);
 #endif
 }
 
 Datum
-numeric_poly_stddev_pop(PG_FUNCTION_ARGS)
+numeric_poly_stddev_pop(MDB_FUNCTION_ARGS)
 {
 #ifdef HAVE_INT128
 	PolyNumAggState *state;
 	Numeric		res;
 	bool		is_null;
 
-	state = PG_ARGISNULL(0) ? NULL : (PolyNumAggState *) PG_GETARG_POINTER(0);
+	state = MDB_ARGISNULL(0) ? NULL : (PolyNumAggState *) MDB_GETARG_POINTER(0);
 
 	res = numeric_poly_stddev_internal(state, false, false, &is_null);
 
 	if (is_null)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_NUMERIC(res);
+		MDB_RETURN_NUMERIC(res);
 #else
 	return numeric_stddev_pop(fcinfo);
 #endif
@@ -4858,18 +4858,18 @@ numeric_poly_stddev_pop(PG_FUNCTION_ARGS)
  */
 
 Datum
-int2_sum(PG_FUNCTION_ARGS)
+int2_sum(MDB_FUNCTION_ARGS)
 {
 	int64		newval;
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		/* No non-null input seen so far... */
-		if (PG_ARGISNULL(1))
-			PG_RETURN_NULL();	/* still no non-null */
+		if (MDB_ARGISNULL(1))
+			MDB_RETURN_NULL();	/* still no non-null */
 		/* This is the first non-null input. */
-		newval = (int64) PG_GETARG_INT16(1);
-		PG_RETURN_INT64(newval);
+		newval = (int64) MDB_GETARG_INT16(1);
+		MDB_RETURN_INT64(newval);
 	}
 
 	/*
@@ -4882,43 +4882,43 @@ int2_sum(PG_FUNCTION_ARGS)
 #ifndef USE_FLOAT8_BYVAL		/* controls int8 too */
 	if (AggCheckCallContext(fcinfo, NULL))
 	{
-		int64	   *oldsum = (int64 *) PG_GETARG_POINTER(0);
+		int64	   *oldsum = (int64 *) MDB_GETARG_POINTER(0);
 
 		/* Leave the running sum unchanged in the new input is null */
-		if (!PG_ARGISNULL(1))
-			*oldsum = *oldsum + (int64) PG_GETARG_INT16(1);
+		if (!MDB_ARGISNULL(1))
+			*oldsum = *oldsum + (int64) MDB_GETARG_INT16(1);
 
-		PG_RETURN_POINTER(oldsum);
+		MDB_RETURN_POINTER(oldsum);
 	}
 	else
 #endif
 	{
-		int64		oldsum = PG_GETARG_INT64(0);
+		int64		oldsum = MDB_GETARG_INT64(0);
 
 		/* Leave sum unchanged if new input is null. */
-		if (PG_ARGISNULL(1))
-			PG_RETURN_INT64(oldsum);
+		if (MDB_ARGISNULL(1))
+			MDB_RETURN_INT64(oldsum);
 
 		/* OK to do the addition. */
-		newval = oldsum + (int64) PG_GETARG_INT16(1);
+		newval = oldsum + (int64) MDB_GETARG_INT16(1);
 
-		PG_RETURN_INT64(newval);
+		MDB_RETURN_INT64(newval);
 	}
 }
 
 Datum
-int4_sum(PG_FUNCTION_ARGS)
+int4_sum(MDB_FUNCTION_ARGS)
 {
 	int64		newval;
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		/* No non-null input seen so far... */
-		if (PG_ARGISNULL(1))
-			PG_RETURN_NULL();	/* still no non-null */
+		if (MDB_ARGISNULL(1))
+			MDB_RETURN_NULL();	/* still no non-null */
 		/* This is the first non-null input. */
-		newval = (int64) PG_GETARG_INT32(1);
-		PG_RETURN_INT64(newval);
+		newval = (int64) MDB_GETARG_INT32(1);
+		MDB_RETURN_INT64(newval);
 	}
 
 	/*
@@ -4931,27 +4931,27 @@ int4_sum(PG_FUNCTION_ARGS)
 #ifndef USE_FLOAT8_BYVAL		/* controls int8 too */
 	if (AggCheckCallContext(fcinfo, NULL))
 	{
-		int64	   *oldsum = (int64 *) PG_GETARG_POINTER(0);
+		int64	   *oldsum = (int64 *) MDB_GETARG_POINTER(0);
 
 		/* Leave the running sum unchanged in the new input is null */
-		if (!PG_ARGISNULL(1))
-			*oldsum = *oldsum + (int64) PG_GETARG_INT32(1);
+		if (!MDB_ARGISNULL(1))
+			*oldsum = *oldsum + (int64) MDB_GETARG_INT32(1);
 
-		PG_RETURN_POINTER(oldsum);
+		MDB_RETURN_POINTER(oldsum);
 	}
 	else
 #endif
 	{
-		int64		oldsum = PG_GETARG_INT64(0);
+		int64		oldsum = MDB_GETARG_INT64(0);
 
 		/* Leave sum unchanged if new input is null. */
-		if (PG_ARGISNULL(1))
-			PG_RETURN_INT64(oldsum);
+		if (MDB_ARGISNULL(1))
+			MDB_RETURN_INT64(oldsum);
 
 		/* OK to do the addition. */
-		newval = oldsum + (int64) PG_GETARG_INT32(1);
+		newval = oldsum + (int64) MDB_GETARG_INT32(1);
 
-		PG_RETURN_INT64(newval);
+		MDB_RETURN_INT64(newval);
 	}
 }
 
@@ -4959,19 +4959,19 @@ int4_sum(PG_FUNCTION_ARGS)
  * Note: this function is obsolete, it's no longer used for SUM(int8).
  */
 Datum
-int8_sum(PG_FUNCTION_ARGS)
+int8_sum(MDB_FUNCTION_ARGS)
 {
 	Numeric		oldsum;
 	Datum		newval;
 
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
 		/* No non-null input seen so far... */
-		if (PG_ARGISNULL(1))
-			PG_RETURN_NULL();	/* still no non-null */
+		if (MDB_ARGISNULL(1))
+			MDB_RETURN_NULL();	/* still no non-null */
 		/* This is the first non-null input. */
-		newval = DirectFunctionCall1(int8_numeric, PG_GETARG_DATUM(1));
-		PG_RETURN_DATUM(newval);
+		newval = DirectFunctionCall1(int8_numeric, MDB_GETARG_DATUM(1));
+		MDB_RETURN_DATUM(newval);
 	}
 
 	/*
@@ -4980,16 +4980,16 @@ int8_sum(PG_FUNCTION_ARGS)
 	 * our first parameter in-place.
 	 */
 
-	oldsum = PG_GETARG_NUMERIC(0);
+	oldsum = MDB_GETARG_NUMERIC(0);
 
 	/* Leave sum unchanged if new input is null. */
-	if (PG_ARGISNULL(1))
-		PG_RETURN_NUMERIC(oldsum);
+	if (MDB_ARGISNULL(1))
+		MDB_RETURN_NUMERIC(oldsum);
 
 	/* OK to do the addition. */
-	newval = DirectFunctionCall1(int8_numeric, PG_GETARG_DATUM(1));
+	newval = DirectFunctionCall1(int8_numeric, MDB_GETARG_DATUM(1));
 
-	PG_RETURN_DATUM(DirectFunctionCall2(numeric_add,
+	MDB_RETURN_DATUM(DirectFunctionCall2(numeric_add,
 										NumericGetDatum(oldsum), newval));
 }
 
@@ -5010,10 +5010,10 @@ typedef struct Int8TransTypeData
 } Int8TransTypeData;
 
 Datum
-int2_avg_accum(PG_FUNCTION_ARGS)
+int2_avg_accum(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *transarray;
-	int16		newval = PG_GETARG_INT16(1);
+	int16		newval = MDB_GETARG_INT16(1);
 	Int8TransTypeData *transdata;
 
 	/*
@@ -5022,9 +5022,9 @@ int2_avg_accum(PG_FUNCTION_ARGS)
 	 * a copy of it before scribbling on it.
 	 */
 	if (AggCheckCallContext(fcinfo, NULL))
-		transarray = PG_GETARG_ARRAYTYPE_P(0);
+		transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	else
-		transarray = PG_GETARG_ARRAYTYPE_P_COPY(0);
+		transarray = MDB_GETARG_ARRAYTYPE_P_COPY(0);
 
 	if (ARR_HASNULL(transarray) ||
 		ARR_SIZE(transarray) != ARR_OVERHEAD_NONULLS(1) + sizeof(Int8TransTypeData))
@@ -5034,14 +5034,14 @@ int2_avg_accum(PG_FUNCTION_ARGS)
 	transdata->count++;
 	transdata->sum += newval;
 
-	PG_RETURN_ARRAYTYPE_P(transarray);
+	MDB_RETURN_ARRAYTYPE_P(transarray);
 }
 
 Datum
-int4_avg_accum(PG_FUNCTION_ARGS)
+int4_avg_accum(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *transarray;
-	int32		newval = PG_GETARG_INT32(1);
+	int32		newval = MDB_GETARG_INT32(1);
 	Int8TransTypeData *transdata;
 
 	/*
@@ -5050,9 +5050,9 @@ int4_avg_accum(PG_FUNCTION_ARGS)
 	 * a copy of it before scribbling on it.
 	 */
 	if (AggCheckCallContext(fcinfo, NULL))
-		transarray = PG_GETARG_ARRAYTYPE_P(0);
+		transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	else
-		transarray = PG_GETARG_ARRAYTYPE_P_COPY(0);
+		transarray = MDB_GETARG_ARRAYTYPE_P_COPY(0);
 
 	if (ARR_HASNULL(transarray) ||
 		ARR_SIZE(transarray) != ARR_OVERHEAD_NONULLS(1) + sizeof(Int8TransTypeData))
@@ -5062,11 +5062,11 @@ int4_avg_accum(PG_FUNCTION_ARGS)
 	transdata->count++;
 	transdata->sum += newval;
 
-	PG_RETURN_ARRAYTYPE_P(transarray);
+	MDB_RETURN_ARRAYTYPE_P(transarray);
 }
 
 Datum
-int4_avg_combine(PG_FUNCTION_ARGS)
+int4_avg_combine(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *transarray1;
 	ArrayType  *transarray2;
@@ -5076,8 +5076,8 @@ int4_avg_combine(PG_FUNCTION_ARGS)
 	if (!AggCheckCallContext(fcinfo, NULL))
 		elog(ERROR, "aggregate function called in non-aggregate context");
 
-	transarray1 = PG_GETARG_ARRAYTYPE_P(0);
-	transarray2 = PG_GETARG_ARRAYTYPE_P(1);
+	transarray1 = MDB_GETARG_ARRAYTYPE_P(0);
+	transarray2 = MDB_GETARG_ARRAYTYPE_P(1);
 
 	if (ARR_HASNULL(transarray1) ||
 		ARR_SIZE(transarray1) != ARR_OVERHEAD_NONULLS(1) + sizeof(Int8TransTypeData))
@@ -5093,14 +5093,14 @@ int4_avg_combine(PG_FUNCTION_ARGS)
 	state1->count += state2->count;
 	state1->sum += state2->sum;
 
-	PG_RETURN_ARRAYTYPE_P(transarray1);
+	MDB_RETURN_ARRAYTYPE_P(transarray1);
 }
 
 Datum
-int2_avg_accum_inv(PG_FUNCTION_ARGS)
+int2_avg_accum_inv(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *transarray;
-	int16		newval = PG_GETARG_INT16(1);
+	int16		newval = MDB_GETARG_INT16(1);
 	Int8TransTypeData *transdata;
 
 	/*
@@ -5109,9 +5109,9 @@ int2_avg_accum_inv(PG_FUNCTION_ARGS)
 	 * a copy of it before scribbling on it.
 	 */
 	if (AggCheckCallContext(fcinfo, NULL))
-		transarray = PG_GETARG_ARRAYTYPE_P(0);
+		transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	else
-		transarray = PG_GETARG_ARRAYTYPE_P_COPY(0);
+		transarray = MDB_GETARG_ARRAYTYPE_P_COPY(0);
 
 	if (ARR_HASNULL(transarray) ||
 		ARR_SIZE(transarray) != ARR_OVERHEAD_NONULLS(1) + sizeof(Int8TransTypeData))
@@ -5121,14 +5121,14 @@ int2_avg_accum_inv(PG_FUNCTION_ARGS)
 	transdata->count--;
 	transdata->sum -= newval;
 
-	PG_RETURN_ARRAYTYPE_P(transarray);
+	MDB_RETURN_ARRAYTYPE_P(transarray);
 }
 
 Datum
-int4_avg_accum_inv(PG_FUNCTION_ARGS)
+int4_avg_accum_inv(MDB_FUNCTION_ARGS)
 {
 	ArrayType  *transarray;
-	int32		newval = PG_GETARG_INT32(1);
+	int32		newval = MDB_GETARG_INT32(1);
 	Int8TransTypeData *transdata;
 
 	/*
@@ -5137,9 +5137,9 @@ int4_avg_accum_inv(PG_FUNCTION_ARGS)
 	 * a copy of it before scribbling on it.
 	 */
 	if (AggCheckCallContext(fcinfo, NULL))
-		transarray = PG_GETARG_ARRAYTYPE_P(0);
+		transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	else
-		transarray = PG_GETARG_ARRAYTYPE_P_COPY(0);
+		transarray = MDB_GETARG_ARRAYTYPE_P_COPY(0);
 
 	if (ARR_HASNULL(transarray) ||
 		ARR_SIZE(transarray) != ARR_OVERHEAD_NONULLS(1) + sizeof(Int8TransTypeData))
@@ -5149,13 +5149,13 @@ int4_avg_accum_inv(PG_FUNCTION_ARGS)
 	transdata->count--;
 	transdata->sum -= newval;
 
-	PG_RETURN_ARRAYTYPE_P(transarray);
+	MDB_RETURN_ARRAYTYPE_P(transarray);
 }
 
 Datum
-int8_avg(PG_FUNCTION_ARGS)
+int8_avg(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	Int8TransTypeData *transdata;
 	Datum		countd,
 				sumd;
@@ -5167,14 +5167,14 @@ int8_avg(PG_FUNCTION_ARGS)
 
 	/* SQL defines AVG of no values to be NULL */
 	if (transdata->count == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	countd = DirectFunctionCall1(int8_numeric,
 								 Int64GetDatumFast(transdata->count));
 	sumd = DirectFunctionCall1(int8_numeric,
 							   Int64GetDatumFast(transdata->sum));
 
-	PG_RETURN_DATUM(DirectFunctionCall2(numeric_div, sumd, countd));
+	MDB_RETURN_DATUM(DirectFunctionCall2(numeric_div, sumd, countd));
 }
 
 /*
@@ -5182,9 +5182,9 @@ int8_avg(PG_FUNCTION_ARGS)
  * final function for both.
  */
 Datum
-int2int4_sum(PG_FUNCTION_ARGS)
+int2int4_sum(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *transarray = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *transarray = MDB_GETARG_ARRAYTYPE_P(0);
 	Int8TransTypeData *transdata;
 
 	if (ARR_HASNULL(transarray) ||
@@ -5194,9 +5194,9 @@ int2int4_sum(PG_FUNCTION_ARGS)
 
 	/* SQL defines SUM of no values to be NULL */
 	if (transdata->count == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(Int64GetDatumFast(transdata->sum));
+	MDB_RETURN_DATUM(Int64GetDatumFast(transdata->sum));
 }
 
 

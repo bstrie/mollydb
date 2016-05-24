@@ -26,11 +26,11 @@ typedef void (*shmem_startup_hook_type) (void);
  * or ereport(FATAL) exits from a block of code.  (Typical examples are
  * undoing transient changes to shared-memory state.)
  *
- *		PG_ENSURE_ERROR_CLEANUP(cleanup_function, arg);
+ *		MDB_ENSURE_ERROR_CLEANUP(cleanup_function, arg);
  *		{
  *			... code that might throw ereport(ERROR) or ereport(FATAL) ...
  *		}
- *		PG_END_ENSURE_ERROR_CLEANUP(cleanup_function, arg);
+ *		MDB_END_ENSURE_ERROR_CLEANUP(cleanup_function, arg);
  *
  * where the cleanup code is in a function declared per mdb_on_exit_callback.
  * The Datum value "arg" can carry any information the cleanup function
@@ -44,20 +44,20 @@ typedef void (*shmem_startup_hook_type) (void);
  * Note: the macro arguments are multiply evaluated, so avoid side-effects.
  *----------
  */
-#define PG_ENSURE_ERROR_CLEANUP(cleanup_function, arg)	\
+#define MDB_ENSURE_ERROR_CLEANUP(cleanup_function, arg)	\
 	do { \
 		before_shmem_exit(cleanup_function, arg); \
-		PG_TRY()
+		MDB_TRY()
 
-#define PG_END_ENSURE_ERROR_CLEANUP(cleanup_function, arg)	\
+#define MDB_END_ENSURE_ERROR_CLEANUP(cleanup_function, arg)	\
 		cancel_before_shmem_exit(cleanup_function, arg); \
-		PG_CATCH(); \
+		MDB_CATCH(); \
 		{ \
 			cancel_before_shmem_exit(cleanup_function, arg); \
 			cleanup_function (0, arg); \
-			PG_RE_THROW(); \
+			MDB_RE_THROW(); \
 		} \
-		PG_END_TRY(); \
+		MDB_END_TRY(); \
 	} while (0)
 
 

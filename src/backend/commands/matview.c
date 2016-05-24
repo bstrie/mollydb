@@ -335,17 +335,17 @@ ExecRefreshMatView(RefreshMatViewStmt *stmt, const char *queryString,
 	{
 		int			old_depth = matview_maintenance_depth;
 
-		PG_TRY();
+		MDB_TRY();
 		{
 			refresh_by_match_merge(matviewOid, OIDNewHeap, relowner,
 								   save_sec_context);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			matview_maintenance_depth = old_depth;
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 		Assert(matview_maintenance_depth == old_depth);
 	}
 	else

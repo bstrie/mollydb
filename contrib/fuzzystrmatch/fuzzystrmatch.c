@@ -43,7 +43,7 @@
 #include "mb/mdb_wchar.h"
 #include "utils/builtins.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * Soundex
@@ -154,15 +154,15 @@ getcode(char c)
 /* These prevent GH from becoming F */
 #define NOGHTOF(c)	(getcode(c) & 16)	/* BDH */
 
-PG_FUNCTION_INFO_V1(levenshtein_with_costs);
+MDB_FUNCTION_INFO_V1(levenshtein_with_costs);
 Datum
-levenshtein_with_costs(PG_FUNCTION_ARGS)
+levenshtein_with_costs(MDB_FUNCTION_ARGS)
 {
-	text	   *src = PG_GETARG_TEXT_PP(0);
-	text	   *dst = PG_GETARG_TEXT_PP(1);
-	int			ins_c = PG_GETARG_INT32(2);
-	int			del_c = PG_GETARG_INT32(3);
-	int			sub_c = PG_GETARG_INT32(4);
+	text	   *src = MDB_GETARG_TEXT_PP(0);
+	text	   *dst = MDB_GETARG_TEXT_PP(1);
+	int			ins_c = MDB_GETARG_INT32(2);
+	int			del_c = MDB_GETARG_INT32(3);
+	int			sub_c = MDB_GETARG_INT32(4);
 	const char *s_data;
 	const char *t_data;
 	int			s_bytes,
@@ -175,17 +175,17 @@ levenshtein_with_costs(PG_FUNCTION_ARGS)
 	s_bytes = VARSIZE_ANY_EXHDR(src);
 	t_bytes = VARSIZE_ANY_EXHDR(dst);
 
-	PG_RETURN_INT32(varstr_levenshtein(s_data, s_bytes, t_data, t_bytes,
+	MDB_RETURN_INT32(varstr_levenshtein(s_data, s_bytes, t_data, t_bytes,
 									   ins_c, del_c, sub_c, false));
 }
 
 
-PG_FUNCTION_INFO_V1(levenshtein);
+MDB_FUNCTION_INFO_V1(levenshtein);
 Datum
-levenshtein(PG_FUNCTION_ARGS)
+levenshtein(MDB_FUNCTION_ARGS)
 {
-	text	   *src = PG_GETARG_TEXT_PP(0);
-	text	   *dst = PG_GETARG_TEXT_PP(1);
+	text	   *src = MDB_GETARG_TEXT_PP(0);
+	text	   *dst = MDB_GETARG_TEXT_PP(1);
 	const char *s_data;
 	const char *t_data;
 	int			s_bytes,
@@ -198,21 +198,21 @@ levenshtein(PG_FUNCTION_ARGS)
 	s_bytes = VARSIZE_ANY_EXHDR(src);
 	t_bytes = VARSIZE_ANY_EXHDR(dst);
 
-	PG_RETURN_INT32(varstr_levenshtein(s_data, s_bytes, t_data, t_bytes,
+	MDB_RETURN_INT32(varstr_levenshtein(s_data, s_bytes, t_data, t_bytes,
 									   1, 1, 1, false));
 }
 
 
-PG_FUNCTION_INFO_V1(levenshtein_less_equal_with_costs);
+MDB_FUNCTION_INFO_V1(levenshtein_less_equal_with_costs);
 Datum
-levenshtein_less_equal_with_costs(PG_FUNCTION_ARGS)
+levenshtein_less_equal_with_costs(MDB_FUNCTION_ARGS)
 {
-	text	   *src = PG_GETARG_TEXT_PP(0);
-	text	   *dst = PG_GETARG_TEXT_PP(1);
-	int			ins_c = PG_GETARG_INT32(2);
-	int			del_c = PG_GETARG_INT32(3);
-	int			sub_c = PG_GETARG_INT32(4);
-	int			max_d = PG_GETARG_INT32(5);
+	text	   *src = MDB_GETARG_TEXT_PP(0);
+	text	   *dst = MDB_GETARG_TEXT_PP(1);
+	int			ins_c = MDB_GETARG_INT32(2);
+	int			del_c = MDB_GETARG_INT32(3);
+	int			sub_c = MDB_GETARG_INT32(4);
+	int			max_d = MDB_GETARG_INT32(5);
 	const char *s_data;
 	const char *t_data;
 	int			s_bytes,
@@ -225,20 +225,20 @@ levenshtein_less_equal_with_costs(PG_FUNCTION_ARGS)
 	s_bytes = VARSIZE_ANY_EXHDR(src);
 	t_bytes = VARSIZE_ANY_EXHDR(dst);
 
-	PG_RETURN_INT32(varstr_levenshtein_less_equal(s_data, s_bytes,
+	MDB_RETURN_INT32(varstr_levenshtein_less_equal(s_data, s_bytes,
 												  t_data, t_bytes,
 												  ins_c, del_c, sub_c,
 												  max_d, false));
 }
 
 
-PG_FUNCTION_INFO_V1(levenshtein_less_equal);
+MDB_FUNCTION_INFO_V1(levenshtein_less_equal);
 Datum
-levenshtein_less_equal(PG_FUNCTION_ARGS)
+levenshtein_less_equal(MDB_FUNCTION_ARGS)
 {
-	text	   *src = PG_GETARG_TEXT_PP(0);
-	text	   *dst = PG_GETARG_TEXT_PP(1);
-	int			max_d = PG_GETARG_INT32(2);
+	text	   *src = MDB_GETARG_TEXT_PP(0);
+	text	   *dst = MDB_GETARG_TEXT_PP(1);
+	int			max_d = MDB_GETARG_INT32(2);
 	const char *s_data;
 	const char *t_data;
 	int			s_bytes,
@@ -251,7 +251,7 @@ levenshtein_less_equal(PG_FUNCTION_ARGS)
 	s_bytes = VARSIZE_ANY_EXHDR(src);
 	t_bytes = VARSIZE_ANY_EXHDR(dst);
 
-	PG_RETURN_INT32(varstr_levenshtein_less_equal(s_data, s_bytes,
+	MDB_RETURN_INT32(varstr_levenshtein_less_equal(s_data, s_bytes,
 												  t_data, t_bytes,
 												  1, 1, 1,
 												  max_d, false));
@@ -263,11 +263,11 @@ levenshtein_less_equal(PG_FUNCTION_ARGS)
  * Returns number of characters requested
  * (suggested value is 4)
  */
-PG_FUNCTION_INFO_V1(metaphone);
+MDB_FUNCTION_INFO_V1(metaphone);
 Datum
-metaphone(PG_FUNCTION_ARGS)
+metaphone(MDB_FUNCTION_ARGS)
 {
-	char	   *str_i = TextDatumGetCString(PG_GETARG_DATUM(0));
+	char	   *str_i = TextDatumGetCString(MDB_GETARG_DATUM(0));
 	size_t		str_i_len = strlen(str_i);
 	int			reqlen;
 	char	   *metaph;
@@ -275,7 +275,7 @@ metaphone(PG_FUNCTION_ARGS)
 
 	/* return an empty string if we receive one */
 	if (!(str_i_len > 0))
-		PG_RETURN_TEXT_P(cstring_to_text(""));
+		MDB_RETURN_TEXT_P(cstring_to_text(""));
 
 	if (str_i_len > MAX_METAPHONE_STRLEN)
 		ereport(ERROR,
@@ -283,7 +283,7 @@ metaphone(PG_FUNCTION_ARGS)
 				 errmsg("argument exceeds the maximum length of %d bytes",
 						MAX_METAPHONE_STRLEN)));
 
-	reqlen = PG_GETARG_INT32(1);
+	reqlen = MDB_GETARG_INT32(1);
 	if (reqlen > MAX_METAPHONE_STRLEN)
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -298,13 +298,13 @@ metaphone(PG_FUNCTION_ARGS)
 
 	retval = _metaphone(str_i, reqlen, &metaph);
 	if (retval == META_SUCCESS)
-		PG_RETURN_TEXT_P(cstring_to_text(metaph));
+		MDB_RETURN_TEXT_P(cstring_to_text(metaph));
 	else
 	{
 		/* internal error */
 		elog(ERROR, "metaphone: failure");
 		/* keep the compiler quiet */
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 }
 
@@ -727,19 +727,19 @@ _metaphone(char *word,			/* IN */
 /*
  * SQL function: soundex(text) returns text
  */
-PG_FUNCTION_INFO_V1(soundex);
+MDB_FUNCTION_INFO_V1(soundex);
 
 Datum
-soundex(PG_FUNCTION_ARGS)
+soundex(MDB_FUNCTION_ARGS)
 {
 	char		outstr[SOUNDEX_LEN + 1];
 	char	   *arg;
 
-	arg = text_to_cstring(PG_GETARG_TEXT_P(0));
+	arg = text_to_cstring(MDB_GETARG_TEXT_P(0));
 
 	_soundex(arg, outstr);
 
-	PG_RETURN_TEXT_P(cstring_to_text(outstr));
+	MDB_RETURN_TEXT_P(cstring_to_text(outstr));
 }
 
 static void
@@ -791,18 +791,18 @@ _soundex(const char *instr, char *outstr)
 	}
 }
 
-PG_FUNCTION_INFO_V1(difference);
+MDB_FUNCTION_INFO_V1(difference);
 
 Datum
-difference(PG_FUNCTION_ARGS)
+difference(MDB_FUNCTION_ARGS)
 {
 	char		sndx1[SOUNDEX_LEN + 1],
 				sndx2[SOUNDEX_LEN + 1];
 	int			i,
 				result;
 
-	_soundex(text_to_cstring(PG_GETARG_TEXT_P(0)), sndx1);
-	_soundex(text_to_cstring(PG_GETARG_TEXT_P(1)), sndx2);
+	_soundex(text_to_cstring(MDB_GETARG_TEXT_P(0)), sndx1);
+	_soundex(text_to_cstring(MDB_GETARG_TEXT_P(1)), sndx2);
 
 	result = 0;
 	for (i = 0; i < SOUNDEX_LEN; i++)
@@ -811,5 +811,5 @@ difference(PG_FUNCTION_ARGS)
 			result++;
 	}
 
-	PG_RETURN_INT32(result);
+	MDB_RETURN_INT32(result);
 }

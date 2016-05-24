@@ -516,7 +516,7 @@ static void
 bgworker_quickdie(SIGNAL_ARGS)
 {
 	sigaddset(&BlockSig, SIGQUIT);		/* prevent nested calls */
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	/*
 	 * We DO NOT want to run proc_exit() callbacks -- we're here because
@@ -545,7 +545,7 @@ bgworker_quickdie(SIGNAL_ARGS)
 static void
 bgworker_die(SIGNAL_ARGS)
 {
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	ereport(FATAL,
 			(errcode(ERRCODE_ADMIN_SHUTDOWN),
@@ -649,7 +649,7 @@ StartBackgroundWorker(void)
 	 */
 	if (sigsetjmp(local_sigjmp_buf, 1) != 0)
 	{
-		/* Since not using PG_TRY, must reset error stack by hand */
+		/* Since not using MDB_TRY, must reset error stack by hand */
 		error_context_stack = NULL;
 
 		/* Prevent interrupts while cleaning up */
@@ -669,7 +669,7 @@ StartBackgroundWorker(void)
 	}
 
 	/* We can now handle ereport(ERROR) */
-	PG_exception_stack = &local_sigjmp_buf;
+	MDB_exception_stack = &local_sigjmp_buf;
 
 	/*
 	 * If the background worker request shared memory access, set that up now;
@@ -732,7 +732,7 @@ StartBackgroundWorker(void)
 /*
  * Register a new background worker while processing shared_preload_libraries.
  *
- * This can only be called in the _PG_init function of a module library
+ * This can only be called in the _MDB_init function of a module library
  * that's loaded by shared_preload_libraries; otherwise it has no effect.
  */
 void

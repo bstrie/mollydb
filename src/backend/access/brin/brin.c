@@ -75,7 +75,7 @@ static void brin_vacuum_scan(Relation idxrel, BufferAccessStrategy strategy);
  * and callbacks.
  */
 Datum
-brinhandler(PG_FUNCTION_ARGS)
+brinhandler(MDB_FUNCTION_ARGS)
 {
 	IndexAmRoutine *amroutine = makeNode(IndexAmRoutine);
 
@@ -111,7 +111,7 @@ brinhandler(PG_FUNCTION_ARGS)
 	amroutine->ammarkpos = NULL;
 	amroutine->amrestrpos = NULL;
 
-	PG_RETURN_POINTER(amroutine);
+	MDB_RETURN_POINTER(amroutine);
 }
 
 /*
@@ -783,9 +783,9 @@ brinoptions(Datum reloptions, bool validate)
  * that are not currently summarized.
  */
 Datum
-brin_summarize_new_values(PG_FUNCTION_ARGS)
+brin_summarize_new_values(MDB_FUNCTION_ARGS)
 {
-	Oid			indexoid = PG_GETARG_OID(0);
+	Oid			indexoid = MDB_GETARG_OID(0);
 	Oid			heapoid;
 	Relation	indexRel;
 	Relation	heapRel;
@@ -835,7 +835,7 @@ brin_summarize_new_values(PG_FUNCTION_ARGS)
 	relation_close(indexRel, ShareUpdateExclusiveLock);
 	relation_close(heapRel, ShareUpdateExclusiveLock);
 
-	PG_RETURN_INT32((int32) numSummarized);
+	MDB_RETURN_INT32((int32) numSummarized);
 }
 
 /*

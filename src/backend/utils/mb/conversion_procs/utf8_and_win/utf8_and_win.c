@@ -37,10 +37,10 @@
 #include "../../Unicode/win874_to_utf8.map"
 #include "../../Unicode/win1258_to_utf8.map"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(win_to_utf8);
-PG_FUNCTION_INFO_V1(utf8_to_win);
+MDB_FUNCTION_INFO_V1(win_to_utf8);
+MDB_FUNCTION_INFO_V1(utf8_to_win);
 
 /* ----------
  * conv_proc(
@@ -63,51 +63,51 @@ typedef struct
 } mdb_conv_map;
 
 static const mdb_conv_map maps[] = {
-	{PG_WIN866, LUmapWIN866, ULmapWIN866,
+	{MDB_WIN866, LUmapWIN866, ULmapWIN866,
 		lengthof(LUmapWIN866),
 	lengthof(ULmapWIN866)},
-	{PG_WIN874, LUmapWIN874, ULmapWIN874,
+	{MDB_WIN874, LUmapWIN874, ULmapWIN874,
 		lengthof(LUmapWIN874),
 	lengthof(ULmapWIN874)},
-	{PG_WIN1250, LUmapWIN1250, ULmapWIN1250,
+	{MDB_WIN1250, LUmapWIN1250, ULmapWIN1250,
 		lengthof(LUmapWIN1250),
 	lengthof(ULmapWIN1250)},
-	{PG_WIN1251, LUmapWIN1251, ULmapWIN1251,
+	{MDB_WIN1251, LUmapWIN1251, ULmapWIN1251,
 		lengthof(LUmapWIN1251),
 	lengthof(ULmapWIN1251)},
-	{PG_WIN1252, LUmapWIN1252, ULmapWIN1252,
+	{MDB_WIN1252, LUmapWIN1252, ULmapWIN1252,
 		lengthof(LUmapWIN1252),
 	lengthof(ULmapWIN1252)},
-	{PG_WIN1253, LUmapWIN1253, ULmapWIN1253,
+	{MDB_WIN1253, LUmapWIN1253, ULmapWIN1253,
 		lengthof(LUmapWIN1253),
 	lengthof(ULmapWIN1253)},
-	{PG_WIN1254, LUmapWIN1254, ULmapWIN1254,
+	{MDB_WIN1254, LUmapWIN1254, ULmapWIN1254,
 		lengthof(LUmapWIN1254),
 	lengthof(ULmapWIN1254)},
-	{PG_WIN1255, LUmapWIN1255, ULmapWIN1255,
+	{MDB_WIN1255, LUmapWIN1255, ULmapWIN1255,
 		lengthof(LUmapWIN1255),
 	lengthof(ULmapWIN1255)},
-	{PG_WIN1256, LUmapWIN1256, ULmapWIN1256,
+	{MDB_WIN1256, LUmapWIN1256, ULmapWIN1256,
 		lengthof(LUmapWIN1256),
 	lengthof(ULmapWIN1256)},
-	{PG_WIN1257, LUmapWIN1257, ULmapWIN1257,
+	{MDB_WIN1257, LUmapWIN1257, ULmapWIN1257,
 		lengthof(LUmapWIN1257),
 	lengthof(ULmapWIN1257)},
-	{PG_WIN1258, LUmapWIN1258, ULmapWIN1258,
+	{MDB_WIN1258, LUmapWIN1258, ULmapWIN1258,
 		lengthof(LUmapWIN1258),
 	lengthof(ULmapWIN1258)},
 };
 
 Datum
-win_to_utf8(PG_FUNCTION_ARGS)
+win_to_utf8(MDB_FUNCTION_ARGS)
 {
-	int			encoding = PG_GETARG_INT32(0);
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	int			encoding = MDB_GETARG_INT32(0);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 	int			i;
 
-	CHECK_ENCODING_CONVERSION_ARGS(-1, PG_UTF8);
+	CHECK_ENCODING_CONVERSION_ARGS(-1, MDB_UTF8);
 
 	for (i = 0; i < lengthof(maps); i++)
 	{
@@ -118,7 +118,7 @@ win_to_utf8(PG_FUNCTION_ARGS)
 					   NULL, 0,
 					   NULL,
 					   encoding);
-			PG_RETURN_VOID();
+			MDB_RETURN_VOID();
 		}
 	}
 
@@ -127,19 +127,19 @@ win_to_utf8(PG_FUNCTION_ARGS)
 			 errmsg("unexpected encoding ID %d for WIN character sets",
 					encoding)));
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-utf8_to_win(PG_FUNCTION_ARGS)
+utf8_to_win(MDB_FUNCTION_ARGS)
 {
-	int			encoding = PG_GETARG_INT32(1);
-	unsigned char *src = (unsigned char *) PG_GETARG_CSTRING(2);
-	unsigned char *dest = (unsigned char *) PG_GETARG_CSTRING(3);
-	int			len = PG_GETARG_INT32(4);
+	int			encoding = MDB_GETARG_INT32(1);
+	unsigned char *src = (unsigned char *) MDB_GETARG_CSTRING(2);
+	unsigned char *dest = (unsigned char *) MDB_GETARG_CSTRING(3);
+	int			len = MDB_GETARG_INT32(4);
 	int			i;
 
-	CHECK_ENCODING_CONVERSION_ARGS(PG_UTF8, -1);
+	CHECK_ENCODING_CONVERSION_ARGS(MDB_UTF8, -1);
 
 	for (i = 0; i < lengthof(maps); i++)
 	{
@@ -150,7 +150,7 @@ utf8_to_win(PG_FUNCTION_ARGS)
 					   NULL, 0,
 					   NULL,
 					   encoding);
-			PG_RETURN_VOID();
+			MDB_RETURN_VOID();
 		}
 	}
 
@@ -159,5 +159,5 @@ utf8_to_win(PG_FUNCTION_ARGS)
 			 errmsg("unexpected encoding ID %d for WIN character sets",
 					encoding)));
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

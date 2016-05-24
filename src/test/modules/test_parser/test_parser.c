@@ -14,7 +14,7 @@
 
 #include "fmgr.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /*
  * types
@@ -39,29 +39,29 @@ typedef struct
 /*
  * functions
  */
-PG_FUNCTION_INFO_V1(testprs_start);
-PG_FUNCTION_INFO_V1(testprs_getlexeme);
-PG_FUNCTION_INFO_V1(testprs_end);
-PG_FUNCTION_INFO_V1(testprs_lextype);
+MDB_FUNCTION_INFO_V1(testprs_start);
+MDB_FUNCTION_INFO_V1(testprs_getlexeme);
+MDB_FUNCTION_INFO_V1(testprs_end);
+MDB_FUNCTION_INFO_V1(testprs_lextype);
 
 Datum
-testprs_start(PG_FUNCTION_ARGS)
+testprs_start(MDB_FUNCTION_ARGS)
 {
 	ParserState *pst = (ParserState *) palloc0(sizeof(ParserState));
 
-	pst->buffer = (char *) PG_GETARG_POINTER(0);
-	pst->len = PG_GETARG_INT32(1);
+	pst->buffer = (char *) MDB_GETARG_POINTER(0);
+	pst->len = MDB_GETARG_INT32(1);
 	pst->pos = 0;
 
-	PG_RETURN_POINTER(pst);
+	MDB_RETURN_POINTER(pst);
 }
 
 Datum
-testprs_getlexeme(PG_FUNCTION_ARGS)
+testprs_getlexeme(MDB_FUNCTION_ARGS)
 {
-	ParserState *pst = (ParserState *) PG_GETARG_POINTER(0);
-	char	  **t = (char **) PG_GETARG_POINTER(1);
-	int		   *tlen = (int *) PG_GETARG_POINTER(2);
+	ParserState *pst = (ParserState *) MDB_GETARG_POINTER(0);
+	char	  **t = (char **) MDB_GETARG_POINTER(1);
+	int		   *tlen = (int *) MDB_GETARG_POINTER(2);
 	int			startpos = pst->pos;
 	int			type;
 
@@ -93,20 +93,20 @@ testprs_getlexeme(PG_FUNCTION_ARGS)
 	if (*tlen == 0)
 		type = 0;
 
-	PG_RETURN_INT32(type);
+	MDB_RETURN_INT32(type);
 }
 
 Datum
-testprs_end(PG_FUNCTION_ARGS)
+testprs_end(MDB_FUNCTION_ARGS)
 {
-	ParserState *pst = (ParserState *) PG_GETARG_POINTER(0);
+	ParserState *pst = (ParserState *) MDB_GETARG_POINTER(0);
 
 	pfree(pst);
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }
 
 Datum
-testprs_lextype(PG_FUNCTION_ARGS)
+testprs_lextype(MDB_FUNCTION_ARGS)
 {
 	/*
 	 * Remarks: - we have to return the blanks for headline reason - we use
@@ -124,5 +124,5 @@ testprs_lextype(PG_FUNCTION_ARGS)
 	descr[1].descr = pstrdup("Space symbols");
 	descr[2].lexid = 0;
 
-	PG_RETURN_POINTER(descr);
+	MDB_RETURN_POINTER(descr);
 }

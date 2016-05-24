@@ -15,8 +15,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_DEFAULT_ACL_H
-#define PG_DEFAULT_ACL_H
+#ifndef MDB_DEFAULT_ACL_H
+#define MDB_DEFAULT_ACL_H
 
 #include "catalog/genbki.h"
 
@@ -71,4 +71,4 @@ typedef FormData_mdb_default_acl *Form_mdb_default_acl;
 #define DEFACLOBJ_FUNCTION		'f'		/* function */
 #define DEFACLOBJ_TYPE			'T'		/* type */
 
-#endif   /* PG_DEFAULT_ACL_H */
+#endif   /* MDB_DEFAULT_ACL_H */

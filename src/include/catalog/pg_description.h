@@ -33,8 +33,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_DESCRIPTION_H
-#define PG_DESCRIPTION_H
+#ifndef MDB_DESCRIPTION_H
+#define MDB_DESCRIPTION_H
 
 #include "catalog/genbki.h"
 
@@ -84,4 +84,4 @@ typedef FormData_mdb_description *Form_mdb_description;
  *	by genbki.pl and loaded during initdb.
  */
 
-#endif   /* PG_DESCRIPTION_H */
+#endif   /* MDB_DESCRIPTION_H */

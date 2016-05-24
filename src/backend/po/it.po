@@ -1806,8 +1806,8 @@ msgstr "i file del database sono incompatibili col server"
 
 #: access/transam/xlog.c:4303
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x), but the server was compiled with PG_CONTROL_VERSION %d (0x%08x)."
-msgstr "Il cluster di database è stato inizializzato con PG_CONTROL_VERSION %d (0x%08x), ma il server è stato compilato con PG_CONTROL_VERSION %d (0x%08x)."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d (0x%08x), but the server was compiled with MDB_CONTROL_VERSION %d (0x%08x)."
+msgstr "Il cluster di database è stato inizializzato con MDB_CONTROL_VERSION %d (0x%08x), ma il server è stato compilato con MDB_CONTROL_VERSION %d (0x%08x)."
 
 #: access/transam/xlog.c:4307
 #, c-format
@@ -1816,8 +1816,8 @@ msgstr "Questo potrebbe essere un problema di ordinamento di byte che non combac
 
 #: access/transam/xlog.c:4312
 #, c-format
-msgid "The database cluster was initialized with PG_CONTROL_VERSION %d, but the server was compiled with PG_CONTROL_VERSION %d."
-msgstr "Il cluster di database è stato inizializzato con PG_CONTROL_VERSION %d, ma il server è stato compilato con PG_CONTROL_VERSION %d."
+msgid "The database cluster was initialized with MDB_CONTROL_VERSION %d, but the server was compiled with MDB_CONTROL_VERSION %d."
+msgstr "Il cluster di database è stato inizializzato con MDB_CONTROL_VERSION %d, ma il server è stato compilato con MDB_CONTROL_VERSION %d."
 
 #: access/transam/xlog.c:4315 access/transam/xlog.c:4339
 #: access/transam/xlog.c:4346 access/transam/xlog.c:4351
@@ -20412,8 +20412,8 @@ msgstr "libreria \"%s\" incompatibile: manca il magic block"
 
 #: utils/fmgr/dfmgr.c:268
 #, c-format
-msgid "Extension libraries are required to use the PG_MODULE_MAGIC macro."
-msgstr "Le librerie di estensione devono usare la macro PG_MODULE_MAGIC."
+msgid "Extension libraries are required to use the MDB_MODULE_MAGIC macro."
+msgstr "Le librerie di estensione devono usare la macro MDB_MODULE_MAGIC."
 
 #: utils/fmgr/dfmgr.c:304
 #, c-format

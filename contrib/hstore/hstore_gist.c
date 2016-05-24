@@ -82,36 +82,36 @@ crc32_sz(char *buf, int size)
 }
 
 
-PG_FUNCTION_INFO_V1(ghstore_in);
-PG_FUNCTION_INFO_V1(ghstore_out);
+MDB_FUNCTION_INFO_V1(ghstore_in);
+MDB_FUNCTION_INFO_V1(ghstore_out);
 
 
 Datum
-ghstore_in(PG_FUNCTION_ARGS)
+ghstore_in(MDB_FUNCTION_ARGS)
 {
 	elog(ERROR, "Not implemented");
-	PG_RETURN_DATUM(0);
+	MDB_RETURN_DATUM(0);
 }
 
 Datum
-ghstore_out(PG_FUNCTION_ARGS)
+ghstore_out(MDB_FUNCTION_ARGS)
 {
 	elog(ERROR, "Not implemented");
-	PG_RETURN_DATUM(0);
+	MDB_RETURN_DATUM(0);
 }
 
-PG_FUNCTION_INFO_V1(ghstore_consistent);
-PG_FUNCTION_INFO_V1(ghstore_compress);
-PG_FUNCTION_INFO_V1(ghstore_decompress);
-PG_FUNCTION_INFO_V1(ghstore_penalty);
-PG_FUNCTION_INFO_V1(ghstore_picksplit);
-PG_FUNCTION_INFO_V1(ghstore_union);
-PG_FUNCTION_INFO_V1(ghstore_same);
+MDB_FUNCTION_INFO_V1(ghstore_consistent);
+MDB_FUNCTION_INFO_V1(ghstore_compress);
+MDB_FUNCTION_INFO_V1(ghstore_decompress);
+MDB_FUNCTION_INFO_V1(ghstore_penalty);
+MDB_FUNCTION_INFO_V1(ghstore_picksplit);
+MDB_FUNCTION_INFO_V1(ghstore_union);
+MDB_FUNCTION_INFO_V1(ghstore_same);
 
 Datum
-ghstore_compress(PG_FUNCTION_ARGS)
+ghstore_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 	GISTENTRY  *retval = entry;
 
 	if (entry->leafkey)
@@ -155,7 +155,7 @@ ghstore_compress(PG_FUNCTION_ARGS)
 		LOOPBYTE
 		{
 			if ((sign[i] & 0xff) != 0xff)
-				PG_RETURN_POINTER(retval);
+				MDB_RETURN_POINTER(retval);
 		}
 
 		res = (GISTTYPE *) palloc(CALCGTSIZE(ALLISTRUE));
@@ -169,7 +169,7 @@ ghstore_compress(PG_FUNCTION_ARGS)
 					  FALSE);
 	}
 
-	PG_RETURN_POINTER(retval);
+	MDB_RETURN_POINTER(retval);
 }
 
 /*
@@ -177,17 +177,17 @@ ghstore_compress(PG_FUNCTION_ARGS)
  * this function can be a no-op.
  */
 Datum
-ghstore_decompress(PG_FUNCTION_ARGS)
+ghstore_decompress(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(PG_GETARG_POINTER(0));
+	MDB_RETURN_POINTER(MDB_GETARG_POINTER(0));
 }
 
 Datum
-ghstore_same(PG_FUNCTION_ARGS)
+ghstore_same(MDB_FUNCTION_ARGS)
 {
-	GISTTYPE   *a = (GISTTYPE *) PG_GETARG_POINTER(0);
-	GISTTYPE   *b = (GISTTYPE *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	GISTTYPE   *a = (GISTTYPE *) MDB_GETARG_POINTER(0);
+	GISTTYPE   *b = (GISTTYPE *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	if (ISALLTRUE(a) && ISALLTRUE(b))
 		*result = true;
@@ -211,7 +211,7 @@ ghstore_same(PG_FUNCTION_ARGS)
 			}
 		}
 	}
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 static int32
@@ -272,12 +272,12 @@ unionkey(BITVECP sbase, GISTTYPE *add)
 }
 
 Datum
-ghstore_union(PG_FUNCTION_ARGS)
+ghstore_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	int32		len = entryvec->n;
 
-	int		   *size = (int *) PG_GETARG_POINTER(1);
+	int		   *size = (int *) MDB_GETARG_POINTER(1);
 	BITVEC		base;
 	int32		i;
 	int32		flag = 0;
@@ -301,20 +301,20 @@ ghstore_union(PG_FUNCTION_ARGS)
 		memcpy((void *) GETSIGN(result), (void *) base, sizeof(BITVEC));
 	*size = len;
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }
 
 Datum
-ghstore_penalty(PG_FUNCTION_ARGS)
+ghstore_penalty(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *origentry = (GISTENTRY *) PG_GETARG_POINTER(0); /* always ISSIGNKEY */
-	GISTENTRY  *newentry = (GISTENTRY *) PG_GETARG_POINTER(1);
-	float	   *penalty = (float *) PG_GETARG_POINTER(2);
+	GISTENTRY  *origentry = (GISTENTRY *) MDB_GETARG_POINTER(0); /* always ISSIGNKEY */
+	GISTENTRY  *newentry = (GISTENTRY *) MDB_GETARG_POINTER(1);
+	float	   *penalty = (float *) MDB_GETARG_POINTER(2);
 	GISTTYPE   *origval = (GISTTYPE *) DatumGetPointer(origentry->key);
 	GISTTYPE   *newval = (GISTTYPE *) DatumGetPointer(newentry->key);
 
 	*penalty = hemdist(origval, newval);
-	PG_RETURN_POINTER(penalty);
+	MDB_RETURN_POINTER(penalty);
 }
 
 
@@ -332,12 +332,12 @@ comparecost(const void *a, const void *b)
 
 
 Datum
-ghstore_picksplit(PG_FUNCTION_ARGS)
+ghstore_picksplit(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	OffsetNumber maxoff = entryvec->n - 2;
 
-	GIST_SPLITVEC *v = (GIST_SPLITVEC *) PG_GETARG_POINTER(1);
+	GIST_SPLITVEC *v = (GIST_SPLITVEC *) MDB_GETARG_POINTER(1);
 	OffsetNumber k,
 				j;
 	GISTTYPE   *datum_l,
@@ -492,18 +492,18 @@ ghstore_picksplit(PG_FUNCTION_ARGS)
 	v->spl_ldatum = PointerGetDatum(datum_l);
 	v->spl_rdatum = PointerGetDatum(datum_r);
 
-	PG_RETURN_POINTER(v);
+	MDB_RETURN_POINTER(v);
 }
 
 
 Datum
-ghstore_consistent(PG_FUNCTION_ARGS)
+ghstore_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTTYPE   *entry = (GISTTYPE *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTTYPE   *entry = (GISTTYPE *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	bool		res = true;
 	BITVECP		sign;
 
@@ -511,14 +511,14 @@ ghstore_consistent(PG_FUNCTION_ARGS)
 	*recheck = true;
 
 	if (ISALLTRUE(entry))
-		PG_RETURN_BOOL(true);
+		MDB_RETURN_BOOL(true);
 
 	sign = GETSIGN(entry);
 
 	if (strategy == HStoreContainsStrategyNumber ||
 		strategy == HStoreOldContainsStrategyNumber)
 	{
-		HStore	   *query = PG_GETARG_HS(1);
+		HStore	   *query = MDB_GETARG_HS(1);
 		HEntry	   *qe = ARRPTR(query);
 		char	   *qv = STRPTR(query);
 		int			count = HS_COUNT(query);
@@ -545,14 +545,14 @@ ghstore_consistent(PG_FUNCTION_ARGS)
 	}
 	else if (strategy == HStoreExistsStrategyNumber)
 	{
-		text	   *query = PG_GETARG_TEXT_PP(1);
+		text	   *query = MDB_GETARG_TEXT_PP(1);
 		int			crc = crc32_sz(VARDATA_ANY(query), VARSIZE_ANY_EXHDR(query));
 
 		res = (GETBIT(sign, HASHVAL(crc))) ? true : false;
 	}
 	else if (strategy == HStoreExistsAllStrategyNumber)
 	{
-		ArrayType  *query = PG_GETARG_ARRAYTYPE_P(1);
+		ArrayType  *query = MDB_GETARG_ARRAYTYPE_P(1);
 		Datum	   *key_datums;
 		bool	   *key_nulls;
 		int			key_count;
@@ -575,7 +575,7 @@ ghstore_consistent(PG_FUNCTION_ARGS)
 	}
 	else if (strategy == HStoreExistsAnyStrategyNumber)
 	{
-		ArrayType  *query = PG_GETARG_ARRAYTYPE_P(1);
+		ArrayType  *query = MDB_GETARG_ARRAYTYPE_P(1);
 		Datum	   *key_datums;
 		bool	   *key_nulls;
 		int			key_count;
@@ -601,5 +601,5 @@ ghstore_consistent(PG_FUNCTION_ARGS)
 	else
 		elog(ERROR, "Unsupported strategy number: %d", strategy);
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }

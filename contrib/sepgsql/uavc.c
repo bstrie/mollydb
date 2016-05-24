@@ -183,16 +183,16 @@ semdb_avc_unlabeled(void)
 			ereport(ERROR,
 					(errcode(ERRCODE_INTERNAL_ERROR),
 			   errmsg("SELinux: failed to get initial security label: %m")));
-		PG_TRY();
+		MDB_TRY();
 		{
 			avc_unlabeled = MemoryContextStrdup(avc_mem_cxt, unlabeled);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			freecon(unlabeled);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 
 		freecon(unlabeled);
 	}
@@ -246,14 +246,14 @@ semdb_avc_compute(const char *scontext, const char *tcontext, uint16 tclass)
 	 * semdb_needs_fmgr_hook to check whether the supplied function is a
 	 * trusted procedure, or not.
 	 */
-	if (tclass == SEPG_CLASS_DB_PROCEDURE)
+	if (tclass == SEMDB_CLASS_DB_PROCEDURE)
 	{
 		if (!ucontext)
 			ncontext = semdb_compute_create(scontext, tcontext,
-											  SEPG_CLASS_PROCESS, NULL);
+											  SEMDB_CLASS_PROCESS, NULL);
 		else
 			ncontext = semdb_compute_create(scontext, ucontext,
-											  SEPG_CLASS_PROCESS, NULL);
+											  SEMDB_CLASS_PROCESS, NULL);
 		if (strcmp(scontext, ncontext) == 0)
 		{
 			pfree(ncontext);
@@ -337,7 +337,7 @@ semdb_avc_lookup(const char *scontext, const char *tcontext, uint16 tclass)
  * permissions. Otherwise, it returns 'false' or raises an error according
  * to the 'abort_on_violation' argument.
  * The 'tobject' and 'tclass' identify the target object being referenced,
- * and 'required' is a bitmask of permissions (SEPG_*__*) defined for each
+ * and 'required' is a bitmask of permissions (SEMDB_*__*) defined for each
  * object classes.
  * The 'audit_name' is the object name (optional). If SEPGSQL_AVC_NOAUDIT
  * was supplied, it means to skip all the audit messages.
@@ -467,10 +467,10 @@ semdb_avc_trusted_proc(Oid functionId)
 	{
 		if (tcontext)
 			cache = semdb_avc_lookup(scontext, tcontext,
-									   SEPG_CLASS_DB_PROCEDURE);
+									   SEMDB_CLASS_DB_PROCEDURE);
 		else
 			cache = semdb_avc_lookup(scontext, semdb_avc_unlabeled(),
-									   SEPG_CLASS_DB_PROCEDURE);
+									   SEMDB_CLASS_DB_PROCEDURE);
 	} while (!semdb_avc_check_valid());
 
 	return cache->ncontext;
@@ -490,7 +490,7 @@ semdb_avc_exit(int code, Datum arg)
 /*
  * semdb_avc_init
  *
- * Initialize the userspace AVC.  This should be called from _PG_init.
+ * Initialize the userspace AVC.  This should be called from _MDB_init.
  */
 void
 semdb_avc_init(void)

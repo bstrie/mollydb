@@ -77,19 +77,19 @@ network_in(char *src, bool is_cidr)
 }
 
 Datum
-inet_in(PG_FUNCTION_ARGS)
+inet_in(MDB_FUNCTION_ARGS)
 {
-	char	   *src = PG_GETARG_CSTRING(0);
+	char	   *src = MDB_GETARG_CSTRING(0);
 
-	PG_RETURN_INET_P(network_in(src, false));
+	MDB_RETURN_INET_P(network_in(src, false));
 }
 
 Datum
-cidr_in(PG_FUNCTION_ARGS)
+cidr_in(MDB_FUNCTION_ARGS)
 {
-	char	   *src = PG_GETARG_CSTRING(0);
+	char	   *src = MDB_GETARG_CSTRING(0);
 
-	PG_RETURN_INET_P(network_in(src, true));
+	MDB_RETURN_INET_P(network_in(src, true));
 }
 
 
@@ -121,19 +121,19 @@ network_out(inet *src, bool is_cidr)
 }
 
 Datum
-inet_out(PG_FUNCTION_ARGS)
+inet_out(MDB_FUNCTION_ARGS)
 {
-	inet	   *src = PG_GETARG_INET_PP(0);
+	inet	   *src = MDB_GETARG_INET_PP(0);
 
-	PG_RETURN_CSTRING(network_out(src, false));
+	MDB_RETURN_CSTRING(network_out(src, false));
 }
 
 Datum
-cidr_out(PG_FUNCTION_ARGS)
+cidr_out(MDB_FUNCTION_ARGS)
 {
-	inet	   *src = PG_GETARG_INET_PP(0);
+	inet	   *src = MDB_GETARG_INET_PP(0);
 
-	PG_RETURN_CSTRING(network_out(src, true));
+	MDB_RETURN_CSTRING(network_out(src, true));
 }
 
 
@@ -206,19 +206,19 @@ network_recv(StringInfo buf, bool is_cidr)
 }
 
 Datum
-inet_recv(PG_FUNCTION_ARGS)
+inet_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_INET_P(network_recv(buf, false));
+	MDB_RETURN_INET_P(network_recv(buf, false));
 }
 
 Datum
-cidr_recv(PG_FUNCTION_ARGS)
+cidr_recv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_INET_P(network_recv(buf, true));
+	MDB_RETURN_INET_P(network_recv(buf, true));
 }
 
 
@@ -248,26 +248,26 @@ network_send(inet *addr, bool is_cidr)
 }
 
 Datum
-inet_send(PG_FUNCTION_ARGS)
+inet_send(MDB_FUNCTION_ARGS)
 {
-	inet	   *addr = PG_GETARG_INET_PP(0);
+	inet	   *addr = MDB_GETARG_INET_PP(0);
 
-	PG_RETURN_BYTEA_P(network_send(addr, false));
+	MDB_RETURN_BYTEA_P(network_send(addr, false));
 }
 
 Datum
-cidr_send(PG_FUNCTION_ARGS)
+cidr_send(MDB_FUNCTION_ARGS)
 {
-	inet	   *addr = PG_GETARG_INET_PP(0);
+	inet	   *addr = MDB_GETARG_INET_PP(0);
 
-	PG_RETURN_BYTEA_P(network_send(addr, true));
+	MDB_RETURN_BYTEA_P(network_send(addr, true));
 }
 
 
 Datum
-inet_to_cidr(PG_FUNCTION_ARGS)
+inet_to_cidr(MDB_FUNCTION_ARGS)
 {
-	inet	   *src = PG_GETARG_INET_PP(0);
+	inet	   *src = MDB_GETARG_INET_PP(0);
 	inet	   *dst;
 	int			bits;
 	int			byte;
@@ -302,14 +302,14 @@ inet_to_cidr(PG_FUNCTION_ARGS)
 		byte++;
 	}
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 Datum
-inet_set_masklen(PG_FUNCTION_ARGS)
+inet_set_masklen(MDB_FUNCTION_ARGS)
 {
-	inet	   *src = PG_GETARG_INET_PP(0);
-	int			bits = PG_GETARG_INT32(1);
+	inet	   *src = MDB_GETARG_INET_PP(0);
+	int			bits = MDB_GETARG_INT32(1);
 	inet	   *dst;
 
 	if (bits == -1)
@@ -326,14 +326,14 @@ inet_set_masklen(PG_FUNCTION_ARGS)
 
 	ip_bits(dst) = bits;
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 Datum
-cidr_set_masklen(PG_FUNCTION_ARGS)
+cidr_set_masklen(MDB_FUNCTION_ARGS)
 {
-	inet	   *src = PG_GETARG_INET_PP(0);
-	int			bits = PG_GETARG_INT32(1);
+	inet	   *src = MDB_GETARG_INET_PP(0);
+	int			bits = MDB_GETARG_INT32(1);
 	inet	   *dst;
 	int			byte;
 	int			nbits;
@@ -371,7 +371,7 @@ cidr_set_masklen(PG_FUNCTION_ARGS)
 		byte++;
 	}
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 /*
@@ -406,105 +406,105 @@ network_cmp_internal(inet *a1, inet *a2)
 }
 
 Datum
-network_cmp(PG_FUNCTION_ARGS)
+network_cmp(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
-	PG_RETURN_INT32(network_cmp_internal(a1, a2));
+	MDB_RETURN_INT32(network_cmp_internal(a1, a2));
 }
 
 /*
  *	Boolean ordering tests.
  */
 Datum
-network_lt(PG_FUNCTION_ARGS)
+network_lt(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
-	PG_RETURN_BOOL(network_cmp_internal(a1, a2) < 0);
+	MDB_RETURN_BOOL(network_cmp_internal(a1, a2) < 0);
 }
 
 Datum
-network_le(PG_FUNCTION_ARGS)
+network_le(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
-	PG_RETURN_BOOL(network_cmp_internal(a1, a2) <= 0);
+	MDB_RETURN_BOOL(network_cmp_internal(a1, a2) <= 0);
 }
 
 Datum
-network_eq(PG_FUNCTION_ARGS)
+network_eq(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
-	PG_RETURN_BOOL(network_cmp_internal(a1, a2) == 0);
+	MDB_RETURN_BOOL(network_cmp_internal(a1, a2) == 0);
 }
 
 Datum
-network_ge(PG_FUNCTION_ARGS)
+network_ge(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
-	PG_RETURN_BOOL(network_cmp_internal(a1, a2) >= 0);
+	MDB_RETURN_BOOL(network_cmp_internal(a1, a2) >= 0);
 }
 
 Datum
-network_gt(PG_FUNCTION_ARGS)
+network_gt(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
-	PG_RETURN_BOOL(network_cmp_internal(a1, a2) > 0);
+	MDB_RETURN_BOOL(network_cmp_internal(a1, a2) > 0);
 }
 
 Datum
-network_ne(PG_FUNCTION_ARGS)
+network_ne(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
-	PG_RETURN_BOOL(network_cmp_internal(a1, a2) != 0);
+	MDB_RETURN_BOOL(network_cmp_internal(a1, a2) != 0);
 }
 
 /*
  * MIN/MAX support functions.
  */
 Datum
-network_smaller(PG_FUNCTION_ARGS)
+network_smaller(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
 	if (network_cmp_internal(a1, a2) < 0)
-		PG_RETURN_INET_P(a1);
+		MDB_RETURN_INET_P(a1);
 	else
-		PG_RETURN_INET_P(a2);
+		MDB_RETURN_INET_P(a2);
 }
 
 Datum
-network_larger(PG_FUNCTION_ARGS)
+network_larger(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
 	if (network_cmp_internal(a1, a2) > 0)
-		PG_RETURN_INET_P(a1);
+		MDB_RETURN_INET_P(a1);
 	else
-		PG_RETURN_INET_P(a2);
+		MDB_RETURN_INET_P(a2);
 }
 
 /*
  * Support function for hash indexes on inet/cidr.
  */
 Datum
-hashinet(PG_FUNCTION_ARGS)
+hashinet(MDB_FUNCTION_ARGS)
 {
-	inet	   *addr = PG_GETARG_INET_PP(0);
+	inet	   *addr = MDB_GETARG_INET_PP(0);
 	int			addrsize = ip_addrsize(addr);
 
 	/* XXX this assumes there are no pad bytes in the data structure */
@@ -515,87 +515,87 @@ hashinet(PG_FUNCTION_ARGS)
  *	Boolean network-inclusion tests.
  */
 Datum
-network_sub(PG_FUNCTION_ARGS)
+network_sub(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
 	if (ip_family(a1) == ip_family(a2))
 	{
-		PG_RETURN_BOOL(ip_bits(a1) > ip_bits(a2) &&
+		MDB_RETURN_BOOL(ip_bits(a1) > ip_bits(a2) &&
 					   bitncmp(ip_addr(a1), ip_addr(a2), ip_bits(a2)) == 0);
 	}
 
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 Datum
-network_subeq(PG_FUNCTION_ARGS)
+network_subeq(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
 	if (ip_family(a1) == ip_family(a2))
 	{
-		PG_RETURN_BOOL(ip_bits(a1) >= ip_bits(a2) &&
+		MDB_RETURN_BOOL(ip_bits(a1) >= ip_bits(a2) &&
 					   bitncmp(ip_addr(a1), ip_addr(a2), ip_bits(a2)) == 0);
 	}
 
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 Datum
-network_sup(PG_FUNCTION_ARGS)
+network_sup(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
 	if (ip_family(a1) == ip_family(a2))
 	{
-		PG_RETURN_BOOL(ip_bits(a1) < ip_bits(a2) &&
+		MDB_RETURN_BOOL(ip_bits(a1) < ip_bits(a2) &&
 					   bitncmp(ip_addr(a1), ip_addr(a2), ip_bits(a1)) == 0);
 	}
 
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 Datum
-network_supeq(PG_FUNCTION_ARGS)
+network_supeq(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
 	if (ip_family(a1) == ip_family(a2))
 	{
-		PG_RETURN_BOOL(ip_bits(a1) <= ip_bits(a2) &&
+		MDB_RETURN_BOOL(ip_bits(a1) <= ip_bits(a2) &&
 					   bitncmp(ip_addr(a1), ip_addr(a2), ip_bits(a1)) == 0);
 	}
 
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 Datum
-network_overlap(PG_FUNCTION_ARGS)
+network_overlap(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
 	if (ip_family(a1) == ip_family(a2))
 	{
-		PG_RETURN_BOOL(bitncmp(ip_addr(a1), ip_addr(a2),
+		MDB_RETURN_BOOL(bitncmp(ip_addr(a1), ip_addr(a2),
 							   Min(ip_bits(a1), ip_bits(a2))) == 0);
 	}
 
-	PG_RETURN_BOOL(false);
+	MDB_RETURN_BOOL(false);
 }
 
 /*
  * Extract data from a network datatype.
  */
 Datum
-network_host(PG_FUNCTION_ARGS)
+network_host(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 	char	   *ptr;
 	char		tmp[sizeof("xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:255.255.255.255/128")];
 
@@ -610,7 +610,7 @@ network_host(PG_FUNCTION_ARGS)
 	if ((ptr = strchr(tmp, '/')) != NULL)
 		*ptr = '\0';
 
-	PG_RETURN_TEXT_P(cstring_to_text(tmp));
+	MDB_RETURN_TEXT_P(cstring_to_text(tmp));
 }
 
 /*
@@ -619,9 +619,9 @@ network_host(PG_FUNCTION_ARGS)
  * of CoerceViaIO.
  */
 Datum
-network_show(PG_FUNCTION_ARGS)
+network_show(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 	int			len;
 	char		tmp[sizeof("xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:255.255.255.255/128")];
 
@@ -638,13 +638,13 @@ network_show(PG_FUNCTION_ARGS)
 		snprintf(tmp + len, sizeof(tmp) - len, "/%u", ip_bits(ip));
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(tmp));
+	MDB_RETURN_TEXT_P(cstring_to_text(tmp));
 }
 
 Datum
-inet_abbrev(PG_FUNCTION_ARGS)
+inet_abbrev(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 	char	   *dst;
 	char		tmp[sizeof("xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:255.255.255.255/128")];
 
@@ -656,13 +656,13 @@ inet_abbrev(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_BINARY_REPRESENTATION),
 				 errmsg("could not format inet value: %m")));
 
-	PG_RETURN_TEXT_P(cstring_to_text(tmp));
+	MDB_RETURN_TEXT_P(cstring_to_text(tmp));
 }
 
 Datum
-cidr_abbrev(PG_FUNCTION_ARGS)
+cidr_abbrev(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 	char	   *dst;
 	char		tmp[sizeof("xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:255.255.255.255/128")];
 
@@ -674,40 +674,40 @@ cidr_abbrev(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_BINARY_REPRESENTATION),
 				 errmsg("could not format cidr value: %m")));
 
-	PG_RETURN_TEXT_P(cstring_to_text(tmp));
+	MDB_RETURN_TEXT_P(cstring_to_text(tmp));
 }
 
 Datum
-network_masklen(PG_FUNCTION_ARGS)
+network_masklen(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 
-	PG_RETURN_INT32(ip_bits(ip));
+	MDB_RETURN_INT32(ip_bits(ip));
 }
 
 Datum
-network_family(PG_FUNCTION_ARGS)
+network_family(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 
 	switch (ip_family(ip))
 	{
 		case PGSQL_AF_INET:
-			PG_RETURN_INT32(4);
+			MDB_RETURN_INT32(4);
 			break;
 		case PGSQL_AF_INET6:
-			PG_RETURN_INT32(6);
+			MDB_RETURN_INT32(6);
 			break;
 		default:
-			PG_RETURN_INT32(0);
+			MDB_RETURN_INT32(0);
 			break;
 	}
 }
 
 Datum
-network_broadcast(PG_FUNCTION_ARGS)
+network_broadcast(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 	inet	   *dst;
 	int			byte;
 	int			bits;
@@ -750,13 +750,13 @@ network_broadcast(PG_FUNCTION_ARGS)
 	ip_bits(dst) = ip_bits(ip);
 	SET_INET_VARSIZE(dst);
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 Datum
-network_network(PG_FUNCTION_ARGS)
+network_network(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 	inet	   *dst;
 	int			byte;
 	int			bits;
@@ -794,13 +794,13 @@ network_network(PG_FUNCTION_ARGS)
 	ip_bits(dst) = ip_bits(ip);
 	SET_INET_VARSIZE(dst);
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 Datum
-network_netmask(PG_FUNCTION_ARGS)
+network_netmask(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 	inet	   *dst;
 	int			byte;
 	int			bits;
@@ -836,13 +836,13 @@ network_netmask(PG_FUNCTION_ARGS)
 	ip_bits(dst) = ip_maxbits(ip);
 	SET_INET_VARSIZE(dst);
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 Datum
-network_hostmask(PG_FUNCTION_ARGS)
+network_hostmask(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 	inet	   *dst;
 	int			byte;
 	int			bits;
@@ -884,7 +884,7 @@ network_hostmask(PG_FUNCTION_ARGS)
 	ip_bits(dst) = ip_maxbits(ip);
 	SET_INET_VARSIZE(dst);
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 /*
@@ -892,22 +892,22 @@ network_hostmask(PG_FUNCTION_ARGS)
  * check that we can create a network which contains both of the networks.
  */
 Datum
-inet_same_family(PG_FUNCTION_ARGS)
+inet_same_family(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0);
-	inet	   *a2 = PG_GETARG_INET_PP(1);
+	inet	   *a1 = MDB_GETARG_INET_PP(0);
+	inet	   *a2 = MDB_GETARG_INET_PP(1);
 
-	PG_RETURN_BOOL(ip_family(a1) == ip_family(a2));
+	MDB_RETURN_BOOL(ip_family(a1) == ip_family(a2));
 }
 
 /*
  * Returns the smallest CIDR which contains both of the inputs.
  */
 Datum
-inet_merge(PG_FUNCTION_ARGS)
+inet_merge(MDB_FUNCTION_ARGS)
 {
-	inet	   *a1 = PG_GETARG_INET_PP(0),
-			   *a2 = PG_GETARG_INET_PP(1),
+	inet	   *a1 = MDB_GETARG_INET_PP(0),
+			   *a2 = MDB_GETARG_INET_PP(1),
 			   *result;
 	int			commonbits;
 
@@ -936,7 +936,7 @@ inet_merge(PG_FUNCTION_ARGS)
 	/* Set varlena header correctly. */
 	SET_INET_VARSIZE(result);
 
-	PG_RETURN_INET_P(result);
+	MDB_RETURN_INET_P(result);
 }
 
 /*
@@ -1155,14 +1155,14 @@ network_scan_last(Datum in)
  * IP address that the client is connecting from (NULL if Unix socket)
  */
 Datum
-inet_client_addr(PG_FUNCTION_ARGS)
+inet_client_addr(MDB_FUNCTION_ARGS)
 {
 	Port	   *port = MyProcPort;
 	char		remote_host[NI_MAXHOST];
 	int			ret;
 
 	if (port == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	switch (port->raddr.addr.ss_family)
 	{
@@ -1172,7 +1172,7 @@ inet_client_addr(PG_FUNCTION_ARGS)
 #endif
 			break;
 		default:
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 	}
 
 	remote_host[0] = '\0';
@@ -1182,11 +1182,11 @@ inet_client_addr(PG_FUNCTION_ARGS)
 							 NULL, 0,
 							 NI_NUMERICHOST | NI_NUMERICSERV);
 	if (ret != 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	clean_ipv6_addr(port->raddr.addr.ss_family, remote_host);
 
-	PG_RETURN_INET_P(network_in(remote_host, false));
+	MDB_RETURN_INET_P(network_in(remote_host, false));
 }
 
 
@@ -1194,14 +1194,14 @@ inet_client_addr(PG_FUNCTION_ARGS)
  * port that the client is connecting from (NULL if Unix socket)
  */
 Datum
-inet_client_port(PG_FUNCTION_ARGS)
+inet_client_port(MDB_FUNCTION_ARGS)
 {
 	Port	   *port = MyProcPort;
 	char		remote_port[NI_MAXSERV];
 	int			ret;
 
 	if (port == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	switch (port->raddr.addr.ss_family)
 	{
@@ -1211,7 +1211,7 @@ inet_client_port(PG_FUNCTION_ARGS)
 #endif
 			break;
 		default:
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 	}
 
 	remote_port[0] = '\0';
@@ -1221,9 +1221,9 @@ inet_client_port(PG_FUNCTION_ARGS)
 							 remote_port, sizeof(remote_port),
 							 NI_NUMERICHOST | NI_NUMERICSERV);
 	if (ret != 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(DirectFunctionCall1(int4in, CStringGetDatum(remote_port)));
+	MDB_RETURN_DATUM(DirectFunctionCall1(int4in, CStringGetDatum(remote_port)));
 }
 
 
@@ -1231,14 +1231,14 @@ inet_client_port(PG_FUNCTION_ARGS)
  * IP address that the server accepted the connection on (NULL if Unix socket)
  */
 Datum
-inet_server_addr(PG_FUNCTION_ARGS)
+inet_server_addr(MDB_FUNCTION_ARGS)
 {
 	Port	   *port = MyProcPort;
 	char		local_host[NI_MAXHOST];
 	int			ret;
 
 	if (port == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	switch (port->laddr.addr.ss_family)
 	{
@@ -1248,7 +1248,7 @@ inet_server_addr(PG_FUNCTION_ARGS)
 #endif
 			break;
 		default:
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 	}
 
 	local_host[0] = '\0';
@@ -1258,11 +1258,11 @@ inet_server_addr(PG_FUNCTION_ARGS)
 							 NULL, 0,
 							 NI_NUMERICHOST | NI_NUMERICSERV);
 	if (ret != 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	clean_ipv6_addr(port->laddr.addr.ss_family, local_host);
 
-	PG_RETURN_INET_P(network_in(local_host, false));
+	MDB_RETURN_INET_P(network_in(local_host, false));
 }
 
 
@@ -1270,14 +1270,14 @@ inet_server_addr(PG_FUNCTION_ARGS)
  * port that the server accepted the connection on (NULL if Unix socket)
  */
 Datum
-inet_server_port(PG_FUNCTION_ARGS)
+inet_server_port(MDB_FUNCTION_ARGS)
 {
 	Port	   *port = MyProcPort;
 	char		local_port[NI_MAXSERV];
 	int			ret;
 
 	if (port == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	switch (port->laddr.addr.ss_family)
 	{
@@ -1287,7 +1287,7 @@ inet_server_port(PG_FUNCTION_ARGS)
 #endif
 			break;
 		default:
-			PG_RETURN_NULL();
+			MDB_RETURN_NULL();
 	}
 
 	local_port[0] = '\0';
@@ -1297,16 +1297,16 @@ inet_server_port(PG_FUNCTION_ARGS)
 							 local_port, sizeof(local_port),
 							 NI_NUMERICHOST | NI_NUMERICSERV);
 	if (ret != 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_DATUM(DirectFunctionCall1(int4in, CStringGetDatum(local_port)));
+	MDB_RETURN_DATUM(DirectFunctionCall1(int4in, CStringGetDatum(local_port)));
 }
 
 
 Datum
-inetnot(PG_FUNCTION_ARGS)
+inetnot(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
 	inet	   *dst;
 
 	dst = (inet *) palloc0(sizeof(inet));
@@ -1324,15 +1324,15 @@ inetnot(PG_FUNCTION_ARGS)
 	ip_family(dst) = ip_family(ip);
 	SET_INET_VARSIZE(dst);
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 
 Datum
-inetand(PG_FUNCTION_ARGS)
+inetand(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
-	inet	   *ip2 = PG_GETARG_INET_PP(1);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
+	inet	   *ip2 = MDB_GETARG_INET_PP(1);
 	inet	   *dst;
 
 	dst = (inet *) palloc0(sizeof(inet));
@@ -1356,15 +1356,15 @@ inetand(PG_FUNCTION_ARGS)
 	ip_family(dst) = ip_family(ip);
 	SET_INET_VARSIZE(dst);
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 
 Datum
-inetor(PG_FUNCTION_ARGS)
+inetor(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
-	inet	   *ip2 = PG_GETARG_INET_PP(1);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
+	inet	   *ip2 = MDB_GETARG_INET_PP(1);
 	inet	   *dst;
 
 	dst = (inet *) palloc0(sizeof(inet));
@@ -1388,7 +1388,7 @@ inetor(PG_FUNCTION_ARGS)
 	ip_family(dst) = ip_family(ip);
 	SET_INET_VARSIZE(dst);
 
-	PG_RETURN_INET_P(dst);
+	MDB_RETURN_INET_P(dst);
 }
 
 
@@ -1445,30 +1445,30 @@ internal_inetpl(inet *ip, int64 addend)
 
 
 Datum
-inetpl(PG_FUNCTION_ARGS)
+inetpl(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
-	int64		addend = PG_GETARG_INT64(1);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
+	int64		addend = MDB_GETARG_INT64(1);
 
-	PG_RETURN_INET_P(internal_inetpl(ip, addend));
+	MDB_RETURN_INET_P(internal_inetpl(ip, addend));
 }
 
 
 Datum
-inetmi_int8(PG_FUNCTION_ARGS)
+inetmi_int8(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
-	int64		addend = PG_GETARG_INT64(1);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
+	int64		addend = MDB_GETARG_INT64(1);
 
-	PG_RETURN_INET_P(internal_inetpl(ip, -addend));
+	MDB_RETURN_INET_P(internal_inetpl(ip, -addend));
 }
 
 
 Datum
-inetmi(PG_FUNCTION_ARGS)
+inetmi(MDB_FUNCTION_ARGS)
 {
-	inet	   *ip = PG_GETARG_INET_PP(0);
-	inet	   *ip2 = PG_GETARG_INET_PP(1);
+	inet	   *ip = MDB_GETARG_INET_PP(0);
+	inet	   *ip2 = MDB_GETARG_INET_PP(1);
 	int64		res = 0;
 
 	if (ip_family(ip) != ip_family(ip2))
@@ -1523,7 +1523,7 @@ inetmi(PG_FUNCTION_ARGS)
 			res |= ((int64) -1) << (byte * 8);
 	}
 
-	PG_RETURN_INT64(res);
+	MDB_RETURN_INT64(res);
 }
 
 

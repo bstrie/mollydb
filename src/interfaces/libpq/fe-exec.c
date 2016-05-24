@@ -46,7 +46,7 @@ char	   *const pgresStatus[] = {
  * static state needed by PQescapeString and PQescapeBytea; initialize to
  * values that result in backward-compatible behavior
  */
-static int	static_client_encoding = PG_SQL_ASCII;
+static int	static_client_encoding = MDB_SQL_ASCII;
 static bool static_std_strings = false;
 
 
@@ -207,7 +207,7 @@ PQmakeEmptyPGresult(PGconn *conn, ExecStatusType status)
 		result->noticeHooks.noticeRecArg = NULL;
 		result->noticeHooks.noticeProc = NULL;
 		result->noticeHooks.noticeProcArg = NULL;
-		result->client_encoding = PG_SQL_ASCII;
+		result->client_encoding = MDB_SQL_ASCII;
 	}
 
 	return result;
@@ -274,18 +274,18 @@ PQsetResultAttrs(PGresult *res, int numAttributes, PGresAttDesc *attDescs)
  *
  * To set custom attributes, use PQsetResultAttrs.  That function requires
  * that there are no attrs contained in the result, so to use that
- * function you cannot use the PG_COPYRES_ATTRS or PG_COPYRES_TUPLES
+ * function you cannot use the MDB_COPYRES_ATTRS or MDB_COPYRES_TUPLES
  * options with this function.
  *
  * Options:
- *	 PG_COPYRES_ATTRS - Copy the source result's attributes
+ *	 MDB_COPYRES_ATTRS - Copy the source result's attributes
  *
- *	 PG_COPYRES_TUPLES - Copy the source result's tuples.  This implies
+ *	 MDB_COPYRES_TUPLES - Copy the source result's tuples.  This implies
  *	 copying the attrs, seeing how the attrs are needed by the tuples.
  *
- *	 PG_COPYRES_EVENTS - Copy the source result's events.
+ *	 MDB_COPYRES_EVENTS - Copy the source result's events.
  *
- *	 PG_COPYRES_NOTICEHOOKS - Copy the source result's notice hooks.
+ *	 MDB_COPYRES_NOTICEHOOKS - Copy the source result's notice hooks.
  */
 PGresult *
 PQcopyResult(const PGresult *src, int flags)
@@ -305,7 +305,7 @@ PQcopyResult(const PGresult *src, int flags)
 	strcpy(dest->cmdStatus, src->cmdStatus);
 
 	/* Wants attrs? */
-	if (flags & (PG_COPYRES_ATTRS | PG_COPYRES_TUPLES))
+	if (flags & (MDB_COPYRES_ATTRS | MDB_COPYRES_TUPLES))
 	{
 		if (!PQsetResultAttrs(dest, src->numAttributes, src->attDescs))
 		{
@@ -315,7 +315,7 @@ PQcopyResult(const PGresult *src, int flags)
 	}
 
 	/* Wants to copy tuples? */
-	if (flags & PG_COPYRES_TUPLES)
+	if (flags & MDB_COPYRES_TUPLES)
 	{
 		int			tup,
 					field;
@@ -336,11 +336,11 @@ PQcopyResult(const PGresult *src, int flags)
 	}
 
 	/* Wants to copy notice hooks? */
-	if (flags & PG_COPYRES_NOTICEHOOKS)
+	if (flags & MDB_COPYRES_NOTICEHOOKS)
 		dest->noticeHooks = src->noticeHooks;
 
 	/* Wants to copy PGEvents? */
-	if ((flags & PG_COPYRES_EVENTS) && src->nEvents > 0)
+	if ((flags & MDB_COPYRES_EVENTS) && src->nEvents > 0)
 	{
 		dest->events = dupEvents(src->events, src->nEvents);
 		if (!dest->events)
@@ -822,8 +822,8 @@ pqInternalNotice(const PGNoticeHooks *hooks, const char *fmt,...)
 	/*
 	 * Set up fields of notice.
 	 */
-	pqSaveMessageField(res, PG_DIAG_MESSAGE_PRIMARY, msgBuf);
-	pqSaveMessageField(res, PG_DIAG_SEVERITY, libpq_gettext("NOTICE"));
+	pqSaveMessageField(res, MDB_DIAG_MESSAGE_PRIMARY, msgBuf);
+	pqSaveMessageField(res, MDB_DIAG_SEVERITY, libpq_gettext("NOTICE"));
 	/* XXX should provide a SQLSTATE too? */
 
 	/*
@@ -966,7 +966,7 @@ pqSaveParameterStatus(PGconn *conn, const char *name, const char *value)
 		conn->client_encoding = mdb_char_to_encoding(value);
 		/* if we don't recognize the encoding name, fall back to SQL_ASCII */
 		if (conn->client_encoding < 0)
-			conn->client_encoding = PG_SQL_ASCII;
+			conn->client_encoding = MDB_SQL_ASCII;
 		static_client_encoding = conn->client_encoding;
 	}
 	else if (strcmp(name, "standard_conforming_strings") == 0)
@@ -1026,8 +1026,8 @@ pqRowProcessor(PGconn *conn, const char **errmsgp)
 	{
 		/* Copy everything that should be in the result at this point */
 		res = PQcopyResult(res,
-						   PG_COPYRES_ATTRS | PG_COPYRES_EVENTS |
-						   PG_COPYRES_NOTICEHOOKS);
+						   MDB_COPYRES_ATTRS | MDB_COPYRES_EVENTS |
+						   MDB_COPYRES_NOTICEHOOKS);
 		if (!res)
 			return 0;
 	}
@@ -1235,7 +1235,7 @@ PQsendPrepare(PGconn *conn,
 	}
 
 	/* This isn't gonna work on a 2.0 server */
-	if (PG_PROTOCOL_MAJOR(conn->pversion) < 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) < 3)
 	{
 		printfPQExpBuffer(&conn->errorMessage,
 		 libpq_gettext("function requires at least protocol version 3.0\n"));
@@ -1399,7 +1399,7 @@ PQsendQueryGuts(PGconn *conn,
 	int			i;
 
 	/* This isn't gonna work on a 2.0 server */
-	if (PG_PROTOCOL_MAJOR(conn->pversion) < 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) < 3)
 	{
 		printfPQExpBuffer(&conn->errorMessage,
 		 libpq_gettext("function requires at least protocol version 3.0\n"));
@@ -1649,7 +1649,7 @@ PQconsumeInput(PGconn *conn)
 static void
 parseInput(PGconn *conn)
 {
-	if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 		pqParseInput3(conn);
 	else
 		pqParseInput2(conn);
@@ -1926,7 +1926,7 @@ PQexecStart(PGconn *conn)
 		PQclear(result);		/* only need its status */
 		if (resultStatus == PGRES_COPY_IN)
 		{
-			if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+			if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 			{
 				/* In protocol 3, we can get out of a COPY IN state */
 				if (PQputCopyEnd(conn,
@@ -1944,7 +1944,7 @@ PQexecStart(PGconn *conn)
 		}
 		else if (resultStatus == PGRES_COPY_OUT)
 		{
-			if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+			if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 			{
 				/*
 				 * In protocol 3, we can get out of a COPY OUT state: we just
@@ -2117,7 +2117,7 @@ PQsendDescribe(PGconn *conn, char desc_type, const char *desc_target)
 		return 0;
 
 	/* This isn't gonna work on a 2.0 server */
-	if (PG_PROTOCOL_MAJOR(conn->pversion) < 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) < 3)
 	{
 		printfPQExpBuffer(&conn->errorMessage,
 		 libpq_gettext("function requires at least protocol version 3.0\n"));
@@ -2241,7 +2241,7 @@ PQputCopyData(PGconn *conn, const char *buffer, int nbytes)
 				return pqIsnonblocking(conn) ? 0 : -1;
 		}
 		/* Send the data (too simple to delegate to fe-protocol files) */
-		if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+		if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 		{
 			if (pqPutMsgStart('d', false, conn) < 0 ||
 				pqPutnchar(buffer, nbytes, conn) < 0 ||
@@ -2284,7 +2284,7 @@ PQputCopyEnd(PGconn *conn, const char *errormsg)
 	 * Send the COPY END indicator.  This is simple enough that we don't
 	 * bother delegating it to the fe-protocol files.
 	 */
-	if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 	{
 		if (errormsg)
 		{
@@ -2369,7 +2369,7 @@ PQgetCopyData(PGconn *conn, char **buffer, int async)
 						  libpq_gettext("no COPY in progress\n"));
 		return -2;
 	}
-	if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 		return pqGetCopyData3(conn, buffer, async);
 	else
 		return pqGetCopyData2(conn, buffer, async);
@@ -2411,7 +2411,7 @@ PQgetline(PGconn *conn, char *s, int maxlen)
 	if (!conn)
 		return EOF;
 
-	if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 		return pqGetline3(conn, s, maxlen);
 	else
 		return pqGetline2(conn, s, maxlen);
@@ -2454,7 +2454,7 @@ PQgetlineAsync(PGconn *conn, char *buffer, int bufsize)
 	if (!conn)
 		return -1;
 
-	if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 		return pqGetlineAsync3(conn, buffer, bufsize);
 	else
 		return pqGetlineAsync2(conn, buffer, bufsize);
@@ -2507,7 +2507,7 @@ PQendcopy(PGconn *conn)
 	if (!conn)
 		return 0;
 
-	if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 		return pqEndcopy3(conn);
 	else
 		return pqEndcopy2(conn);
@@ -2560,7 +2560,7 @@ PQfn(PGconn *conn,
 		return NULL;
 	}
 
-	if (PG_PROTOCOL_MAJOR(conn->pversion) >= 3)
+	if (MDB_PROTOCOL_MAJOR(conn->pversion) >= 3)
 		return pqFunctionCall3(conn, fnid,
 							   result_buf, result_len,
 							   result_is_int,

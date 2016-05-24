@@ -591,7 +591,7 @@ typedef struct ginxlogDeleteListPages
 
 
 /* ginutil.c */
-extern Datum ginhandler(PG_FUNCTION_ARGS);
+extern Datum ginhandler(MDB_FUNCTION_ARGS);
 extern bytea *ginoptions(Datum reloptions, bool validate);
 extern void initGinState(GinState *state, Relation index);
 extern Buffer GinNewBuffer(Relation index);
@@ -881,7 +881,7 @@ extern void ginFreeScanKeys(GinScanOpaque so);
 extern int64 gingetbitmap(IndexScanDesc scan, TIDBitmap *tbm);
 
 /* ginfast.c */
-extern Datum gin_clean_pending_list(PG_FUNCTION_ARGS);
+extern Datum gin_clean_pending_list(MDB_FUNCTION_ARGS);
 
 /* ginlogic.c */
 extern void ginInitConsistentFunction(GinState *ginstate, GinScanKey key);

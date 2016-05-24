@@ -30,11 +30,11 @@
  * Note that an empty input string will implicitly be converted to \0.
  */
 Datum
-charin(PG_FUNCTION_ARGS)
+charin(MDB_FUNCTION_ARGS)
 {
-	char	   *ch = PG_GETARG_CSTRING(0);
+	char	   *ch = MDB_GETARG_CSTRING(0);
 
-	PG_RETURN_CHAR(ch[0]);
+	MDB_RETURN_CHAR(ch[0]);
 }
 
 /*
@@ -45,14 +45,14 @@ charin(PG_FUNCTION_ARGS)
  * inverse of the charin() function for such data.
  */
 Datum
-charout(PG_FUNCTION_ARGS)
+charout(MDB_FUNCTION_ARGS)
 {
-	char		ch = PG_GETARG_CHAR(0);
+	char		ch = MDB_GETARG_CHAR(0);
 	char	   *result = (char *) palloc(2);
 
 	result[0] = ch;
 	result[1] = '\0';
-	PG_RETURN_CSTRING(result);
+	MDB_RETURN_CSTRING(result);
 }
 
 /*
@@ -63,25 +63,25 @@ charout(PG_FUNCTION_ARGS)
  * cases people use char for a 1-byte binary type.
  */
 Datum
-charrecv(PG_FUNCTION_ARGS)
+charrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_CHAR(pq_getmsgbyte(buf));
+	MDB_RETURN_CHAR(pq_getmsgbyte(buf));
 }
 
 /*
  *		charsend			- converts char to binary format
  */
 Datum
-charsend(PG_FUNCTION_ARGS)
+charsend(MDB_FUNCTION_ARGS)
 {
-	char		arg1 = PG_GETARG_CHAR(0);
+	char		arg1 = MDB_GETARG_CHAR(0);
 	StringInfoData buf;
 
 	pq_begintypsend(&buf);
 	pq_sendbyte(&buf, arg1);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 /*****************************************************************************
@@ -96,86 +96,86 @@ charsend(PG_FUNCTION_ARGS)
  */
 
 Datum
-chareq(PG_FUNCTION_ARGS)
+chareq(MDB_FUNCTION_ARGS)
 {
-	char		arg1 = PG_GETARG_CHAR(0);
-	char		arg2 = PG_GETARG_CHAR(1);
+	char		arg1 = MDB_GETARG_CHAR(0);
+	char		arg2 = MDB_GETARG_CHAR(1);
 
-	PG_RETURN_BOOL(arg1 == arg2);
+	MDB_RETURN_BOOL(arg1 == arg2);
 }
 
 Datum
-charne(PG_FUNCTION_ARGS)
+charne(MDB_FUNCTION_ARGS)
 {
-	char		arg1 = PG_GETARG_CHAR(0);
-	char		arg2 = PG_GETARG_CHAR(1);
+	char		arg1 = MDB_GETARG_CHAR(0);
+	char		arg2 = MDB_GETARG_CHAR(1);
 
-	PG_RETURN_BOOL(arg1 != arg2);
+	MDB_RETURN_BOOL(arg1 != arg2);
 }
 
 Datum
-charlt(PG_FUNCTION_ARGS)
+charlt(MDB_FUNCTION_ARGS)
 {
-	char		arg1 = PG_GETARG_CHAR(0);
-	char		arg2 = PG_GETARG_CHAR(1);
+	char		arg1 = MDB_GETARG_CHAR(0);
+	char		arg2 = MDB_GETARG_CHAR(1);
 
-	PG_RETURN_BOOL((uint8) arg1 < (uint8) arg2);
+	MDB_RETURN_BOOL((uint8) arg1 < (uint8) arg2);
 }
 
 Datum
-charle(PG_FUNCTION_ARGS)
+charle(MDB_FUNCTION_ARGS)
 {
-	char		arg1 = PG_GETARG_CHAR(0);
-	char		arg2 = PG_GETARG_CHAR(1);
+	char		arg1 = MDB_GETARG_CHAR(0);
+	char		arg2 = MDB_GETARG_CHAR(1);
 
-	PG_RETURN_BOOL((uint8) arg1 <= (uint8) arg2);
+	MDB_RETURN_BOOL((uint8) arg1 <= (uint8) arg2);
 }
 
 Datum
-chargt(PG_FUNCTION_ARGS)
+chargt(MDB_FUNCTION_ARGS)
 {
-	char		arg1 = PG_GETARG_CHAR(0);
-	char		arg2 = PG_GETARG_CHAR(1);
+	char		arg1 = MDB_GETARG_CHAR(0);
+	char		arg2 = MDB_GETARG_CHAR(1);
 
-	PG_RETURN_BOOL((uint8) arg1 > (uint8) arg2);
+	MDB_RETURN_BOOL((uint8) arg1 > (uint8) arg2);
 }
 
 Datum
-charge(PG_FUNCTION_ARGS)
+charge(MDB_FUNCTION_ARGS)
 {
-	char		arg1 = PG_GETARG_CHAR(0);
-	char		arg2 = PG_GETARG_CHAR(1);
+	char		arg1 = MDB_GETARG_CHAR(0);
+	char		arg2 = MDB_GETARG_CHAR(1);
 
-	PG_RETURN_BOOL((uint8) arg1 >= (uint8) arg2);
+	MDB_RETURN_BOOL((uint8) arg1 >= (uint8) arg2);
 }
 
 
 Datum
-chartoi4(PG_FUNCTION_ARGS)
+chartoi4(MDB_FUNCTION_ARGS)
 {
-	char		arg1 = PG_GETARG_CHAR(0);
+	char		arg1 = MDB_GETARG_CHAR(0);
 
-	PG_RETURN_INT32((int32) ((int8) arg1));
+	MDB_RETURN_INT32((int32) ((int8) arg1));
 }
 
 Datum
-i4tochar(PG_FUNCTION_ARGS)
+i4tochar(MDB_FUNCTION_ARGS)
 {
-	int32		arg1 = PG_GETARG_INT32(0);
+	int32		arg1 = MDB_GETARG_INT32(0);
 
 	if (arg1 < SCHAR_MIN || arg1 > SCHAR_MAX)
 		ereport(ERROR,
 				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
 				 errmsg("\"char\" out of range")));
 
-	PG_RETURN_CHAR((int8) arg1);
+	MDB_RETURN_CHAR((int8) arg1);
 }
 
 
 Datum
-text_char(PG_FUNCTION_ARGS)
+text_char(MDB_FUNCTION_ARGS)
 {
-	text	   *arg1 = PG_GETARG_TEXT_P(0);
+	text	   *arg1 = MDB_GETARG_TEXT_P(0);
 	char		result;
 
 	/*
@@ -188,13 +188,13 @@ text_char(PG_FUNCTION_ARGS)
 	else
 		result = '\0';
 
-	PG_RETURN_CHAR(result);
+	MDB_RETURN_CHAR(result);
 }
 
 Datum
-char_text(PG_FUNCTION_ARGS)
+char_text(MDB_FUNCTION_ARGS)
 {
-	char		arg1 = PG_GETARG_CHAR(0);
+	char		arg1 = MDB_GETARG_CHAR(0);
 	text	   *result = palloc(VARHDRSZ + 1);
 
 	/*
@@ -209,5 +209,5 @@ char_text(PG_FUNCTION_ARGS)
 	else
 		SET_VARSIZE(result, VARHDRSZ);
 
-	PG_RETURN_TEXT_P(result);
+	MDB_RETURN_TEXT_P(result);
 }

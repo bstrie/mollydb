@@ -26,10 +26,10 @@
 #include "miscadmin.h"
 
 
-PG_FUNCTION_INFO_V1(brin_page_type);
-PG_FUNCTION_INFO_V1(brin_page_items);
-PG_FUNCTION_INFO_V1(brin_metapage_info);
-PG_FUNCTION_INFO_V1(brin_revmap_data);
+MDB_FUNCTION_INFO_V1(brin_page_type);
+MDB_FUNCTION_INFO_V1(brin_page_items);
+MDB_FUNCTION_INFO_V1(brin_metapage_info);
+MDB_FUNCTION_INFO_V1(brin_revmap_data);
 
 typedef struct brin_column_state
 {
@@ -42,9 +42,9 @@ static Page verify_brin_page(bytea *raw_page, uint16 type,
 				 const char *strtype);
 
 Datum
-brin_page_type(PG_FUNCTION_ARGS)
+brin_page_type(MDB_FUNCTION_ARGS)
 {
-	bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
+	bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
 	Page		page = VARDATA(raw_page);
 	int			raw_page_size;
 	char	   *type;
@@ -79,7 +79,7 @@ brin_page_type(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(type));
+	MDB_RETURN_TEXT_P(cstring_to_text(type));
 }
 
 /*
@@ -121,10 +121,10 @@ verify_brin_page(bytea *raw_page, uint16 type, const char *strtype)
  * Usage: SELECT * FROM brin_page_items(get_raw_page('idx', 1), 'idx'::regclass);
  */
 Datum
-brin_page_items(PG_FUNCTION_ARGS)
+brin_page_items(MDB_FUNCTION_ARGS)
 {
-	bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
-	Oid			indexRelid = PG_GETARG_OID(1);
+	bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
+	Oid			indexRelid = MDB_GETARG_OID(1);
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
 	MemoryContext oldcontext;
@@ -322,9 +322,9 @@ brin_page_items(PG_FUNCTION_ARGS)
 }
 
 Datum
-brin_metapage_info(PG_FUNCTION_ARGS)
+brin_metapage_info(MDB_FUNCTION_ARGS)
 {
-	bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
+	bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
 	Page		page;
 	BrinMetaPageData *meta;
 	TupleDesc	tupdesc;
@@ -354,14 +354,14 @@ brin_metapage_info(PG_FUNCTION_ARGS)
 
 	htup = heap_form_tuple(tupdesc, values, nulls);
 
-	PG_RETURN_DATUM(HeapTupleGetDatum(htup));
+	MDB_RETURN_DATUM(HeapTupleGetDatum(htup));
 }
 
 /*
  * Return the TID array stored in a BRIN revmap page
  */
 Datum
-brin_revmap_data(PG_FUNCTION_ARGS)
+brin_revmap_data(MDB_FUNCTION_ARGS)
 {
 	struct
 	{
@@ -377,7 +377,7 @@ brin_revmap_data(PG_FUNCTION_ARGS)
 
 	if (SRF_IS_FIRSTCALL())
 	{
-		bytea	   *raw_page = PG_GETARG_BYTEA_P(0);
+		bytea	   *raw_page = MDB_GETARG_BYTEA_P(0);
 		MemoryContext mctx;
 		Page		page;
 

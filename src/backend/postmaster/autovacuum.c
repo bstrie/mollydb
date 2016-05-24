@@ -474,7 +474,7 @@ AutoVacLauncherMain(int argc, char *argv[])
 	 */
 	if (sigsetjmp(local_sigjmp_buf, 1) != 0)
 	{
-		/* since not using PG_TRY, must reset error stack by hand */
+		/* since not using MDB_TRY, must reset error stack by hand */
 		error_context_stack = NULL;
 
 		/* Prevents interrupts while cleaning up */
@@ -525,10 +525,10 @@ AutoVacLauncherMain(int argc, char *argv[])
 	}
 
 	/* We can now handle ereport(ERROR) */
-	PG_exception_stack = &local_sigjmp_buf;
+	MDB_exception_stack = &local_sigjmp_buf;
 
 	/* must unblock signals before calling rebuild_database_list */
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/*
 	 * Force zero_damaged_pages OFF in the autovac process, even if it is set
@@ -1539,9 +1539,9 @@ AutoVacWorkerMain(int argc, char *argv[])
 	}
 
 	/* We can now handle ereport(ERROR) */
-	PG_exception_stack = &local_sigjmp_buf;
+	MDB_exception_stack = &local_sigjmp_buf;
 
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/*
 	 * Force zero_damaged_pages OFF in the autovac process, even if it is set
@@ -2327,7 +2327,7 @@ do_autovacuum(void)
 		 * and continue with the next one in schedule; in particular, this
 		 * happens if we are interrupted with SIGINT.
 		 */
-		PG_TRY();
+		MDB_TRY();
 		{
 			/* have at it */
 			MemoryContextSwitchTo(TopTransactionContext);
@@ -2341,7 +2341,7 @@ do_autovacuum(void)
 			 */
 			QueryCancelPending = false;
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			/*
 			 * Abort the transaction, start a new one, and proceed with the
@@ -2365,7 +2365,7 @@ do_autovacuum(void)
 			StartTransactionCommand();
 			RESUME_INTERRUPTS();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 
 		/* the PGXACT flags are reset at the next end of transaction */
 

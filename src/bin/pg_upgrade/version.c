@@ -67,15 +67,15 @@ new_9_0_populate_mdb_largeobject_metadata(ClusterInfo *cluster, bool check_mode)
 
 	if (found)
 	{
-		report_status(PG_WARNING, "warning");
+		report_status(MDB_WARNING, "warning");
 		if (check_mode)
-			mdb_log(PG_WARNING, "\n"
+			mdb_log(MDB_WARNING, "\n"
 				   "Your installation contains large objects.  The new database has an\n"
 				   "additional large object permission table.  After upgrading, you will be\n"
 				   "given a command to populate the mdb_largeobject permission table with\n"
 				   "default permissions.\n\n");
 		else
-			mdb_log(PG_WARNING, "\n"
+			mdb_log(MDB_WARNING, "\n"
 				   "Your installation contains large objects.  The new database has an\n"
 				   "additional large object permission table, so default permissions must be\n"
 				   "defined for all large objects.  The file\n"
@@ -165,7 +165,7 @@ old_9_3_check_for_line_data_type_usage(ClusterInfo *cluster)
 
 	if (found)
 	{
-		mdb_log(PG_REPORT, "fatal\n");
+		mdb_log(MDB_REPORT, "fatal\n");
 		mdb_fatal("Your installation contains the \"line\" data type in user tables.  This\n"
 				 "data type changed its internal and input/output format between your old\n"
 				 "and new clusters so this cluster cannot currently be upgraded.  You can\n"

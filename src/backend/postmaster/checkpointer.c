@@ -257,7 +257,7 @@ CheckpointerMain(void)
 	 */
 	if (sigsetjmp(local_sigjmp_buf, 1) != 0)
 	{
-		/* Since not using PG_TRY, must reset error stack by hand */
+		/* Since not using MDB_TRY, must reset error stack by hand */
 		error_context_stack = NULL;
 
 		/* Prevent interrupts while cleaning up */
@@ -326,12 +326,12 @@ CheckpointerMain(void)
 	}
 
 	/* We can now handle ereport(ERROR) */
-	PG_exception_stack = &local_sigjmp_buf;
+	MDB_exception_stack = &local_sigjmp_buf;
 
 	/*
 	 * Unblock signals (they were blocked when the postmaster forked us)
 	 */
-	PG_SETMASK(&UnBlockSig);
+	MDB_SETMASK(&UnBlockSig);
 
 	/*
 	 * Ensure all shared memory values are set correctly for the config. Doing
@@ -809,7 +809,7 @@ IsCheckpointOnSchedule(double progress)
 static void
 chkpt_quickdie(SIGNAL_ARGS)
 {
-	PG_SETMASK(&BlockSig);
+	MDB_SETMASK(&BlockSig);
 
 	/*
 	 * We DO NOT want to run proc_exit() callbacks -- we're here because

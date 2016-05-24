@@ -104,7 +104,7 @@ main(int argc, char **argv)
 	TimeLineID	endtli;
 	ControlFileData ControlFile_new;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_rewind"));
+	set_pglocale_pgservice(argv[0], MDB_TEXTDOMAIN("mdb_rewind"));
 	progname = get_progname(argv[0]);
 
 	/* Process command-line arguments */
@@ -117,7 +117,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("mdb_rewind (MollyDB) " PG_VERSION);
+			puts("mdb_rewind (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}
@@ -276,9 +276,9 @@ main(int argc, char **argv)
 	 * Build the filemap, by comparing the source and target data directories.
 	 */
 	filemap_create();
-	mdb_log(PG_PROGRESS, "reading source file list\n");
+	mdb_log(MDB_PROGRESS, "reading source file list\n");
 	fetchSourceFileList();
-	mdb_log(PG_PROGRESS, "reading target file list\n");
+	mdb_log(MDB_PROGRESS, "reading target file list\n");
 	traverse_datadir(datadir_target, &process_target_file);
 
 	/*
@@ -288,7 +288,7 @@ main(int argc, char **argv)
 	 * XXX: If we supported rewinding a server that was not shut down cleanly,
 	 * we would need to replay until the end of WAL here.
 	 */
-	mdb_log(PG_PROGRESS, "reading WAL in target\n");
+	mdb_log(MDB_PROGRESS, "reading WAL in target\n");
 	extractPageMap(datadir_target, chkptrec, lastcommontliIndex,
 				   ControlFile_target.checkPoint);
 	filemap_finalize();
@@ -305,7 +305,7 @@ main(int argc, char **argv)
 	 */
 	if (showprogress)
 	{
-		mdb_log(PG_PROGRESS, "need to copy %lu MB (total source directory size is %lu MB)\n",
+		mdb_log(MDB_PROGRESS, "need to copy %lu MB (total source directory size is %lu MB)\n",
 			   (unsigned long) (filemap->fetch_size / (1024 * 1024)),
 			   (unsigned long) (filemap->total_size / (1024 * 1024)));
 
@@ -322,7 +322,7 @@ main(int argc, char **argv)
 
 	progress_report(true);
 
-	mdb_log(PG_PROGRESS, "\ncreating backup label and updating control file\n");
+	mdb_log(MDB_PROGRESS, "\ncreating backup label and updating control file\n");
 	createBackupLabel(chkptredo, chkpttli, chkptrec);
 
 	/*
@@ -350,7 +350,7 @@ main(int argc, char **argv)
 	ControlFile_new.state = DB_IN_ARCHIVE_RECOVERY;
 	updateControlFile(&ControlFile_new);
 
-	mdb_log(PG_PROGRESS, "syncing target data directory\n");
+	mdb_log(MDB_PROGRESS, "syncing target data directory\n");
 	syncTargetDirectory(argv[0]);
 
 	printf(_("Done!\n"));
@@ -368,8 +368,8 @@ sanityChecks(void)
 		mdb_fatal("source and target clusters are from different systems\n");
 
 	/* check version */
-	if (ControlFile_target.mdb_control_version != PG_CONTROL_VERSION ||
-		ControlFile_source.mdb_control_version != PG_CONTROL_VERSION ||
+	if (ControlFile_target.mdb_control_version != MDB_CONTROL_VERSION ||
+		ControlFile_source.mdb_control_version != MDB_CONTROL_VERSION ||
 		ControlFile_target.catalog_version_no != CATALOG_VERSION_NO ||
 		ControlFile_source.catalog_version_no != CATALOG_VERSION_NO)
 	{
@@ -380,7 +380,7 @@ sanityChecks(void)
 	 * Target cluster need to use checksums or hint bit wal-logging, this to
 	 * prevent from data corruption that could occur because of hint bits.
 	 */
-	if (ControlFile_target.data_checksum_version != PG_DATA_CHECKSUM_VERSION &&
+	if (ControlFile_target.data_checksum_version != MDB_DATA_CHECKSUM_VERSION &&
 		!ControlFile_target.wal_log_hints)
 	{
 		mdb_fatal("target server needs to use either data checksums or \"wal_log_hints = on\"\n");
@@ -470,9 +470,9 @@ getTimelineHistory(ControlFileData *controlFile, int *nentries)
 		int		i;
 
 		if (controlFile == &ControlFile_source)
-			mdb_log(PG_DEBUG, "Source timeline history:\n");
+			mdb_log(MDB_DEBUG, "Source timeline history:\n");
 		else if (controlFile == &ControlFile_target)
-			mdb_log(PG_DEBUG, "Target timeline history:\n");
+			mdb_log(MDB_DEBUG, "Target timeline history:\n");
 		else
 			Assert(false);
 
@@ -484,7 +484,7 @@ getTimelineHistory(ControlFileData *controlFile, int *nentries)
 			TimeLineHistoryEntry *entry;
 
 			entry = &history[i];
-			mdb_log(PG_DEBUG,
+			mdb_log(MDB_DEBUG,
 			/* translator: %d is a timeline number, others are LSN positions */
 				   "%d: %X/%X - %X/%X\n", entry->tli,
 				   (uint32) (entry->begin >> 32), (uint32) (entry->begin),
@@ -617,9 +617,9 @@ checkControlFile(ControlFileData *ControlFile)
 static void
 digestControlFile(ControlFileData *ControlFile, char *src, size_t size)
 {
-	if (size != PG_CONTROL_SIZE)
+	if (size != MDB_CONTROL_SIZE)
 		mdb_fatal("unexpected control file size %d, expected %d\n",
-				 (int) size, PG_CONTROL_SIZE);
+				 (int) size, MDB_CONTROL_SIZE);
 
 	memcpy(ControlFile, src, sizeof(ControlFileData));
 
@@ -633,7 +633,7 @@ digestControlFile(ControlFileData *ControlFile, char *src, size_t size)
 static void
 updateControlFile(ControlFileData *ControlFile)
 {
-	char		buffer[PG_CONTROL_SIZE];
+	char		buffer[MDB_CONTROL_SIZE];
 
 	/* Recalculate CRC of control file */
 	INIT_CRC32C(ControlFile->crc);
@@ -643,16 +643,16 @@ updateControlFile(ControlFileData *ControlFile)
 	FIN_CRC32C(ControlFile->crc);
 
 	/*
-	 * Write out PG_CONTROL_SIZE bytes into mdb_control by zero-padding the
+	 * Write out MDB_CONTROL_SIZE bytes into mdb_control by zero-padding the
 	 * excess over sizeof(ControlFileData) to avoid premature EOF related
 	 * errors when reading it.
 	 */
-	memset(buffer, 0, PG_CONTROL_SIZE);
+	memset(buffer, 0, MDB_CONTROL_SIZE);
 	memcpy(buffer, ControlFile, sizeof(ControlFileData));
 
 	open_target_file("global/mdb_control", false);
 
-	write_target_range(buffer, 0, PG_CONTROL_SIZE);
+	write_target_range(buffer, 0, MDB_CONTROL_SIZE);
 
 	close_target_file();
 }
@@ -676,7 +676,7 @@ syncTargetDirectory(const char *argv0)
 
 	/* locate initdb binary */
 	if ((ret = find_other_exec(argv0, "initdb",
-							   "initdb (MollyDB) " PG_VERSION "\n",
+							   "initdb (MollyDB) " MDB_VERSION "\n",
 							   exec_path)) < 0)
 	{
 		char        full_path[MAXPGPATH];

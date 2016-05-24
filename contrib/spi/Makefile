@@ -15,13 +15,13 @@ DOCS = $(addsuffix .example, $(MODULES))
 
 # this is needed for the regression tests;
 # comment out if you want a quieter refint package for other uses
-PG_CPPFLAGS = -DREFINT_VERBOSE
+MDB_CPPFLAGS = -DREFINT_VERBOSE
 
 LDFLAGS_SL += -L$(top_builddir)/src/port -lpgport
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/spi

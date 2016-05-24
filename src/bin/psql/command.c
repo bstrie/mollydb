@@ -1956,7 +1956,7 @@ connection_warnings(bool in_startup)
 {
 	if (!pset.quiet && !pset.notty)
 	{
-		int			client_ver = PG_VERSION_NUM;
+		int			client_ver = MDB_VERSION_NUM;
 
 		if (pset.sversion != client_ver)
 		{
@@ -1976,11 +1976,11 @@ connection_warnings(bool in_startup)
 			}
 
 			printf(_("%s (%s, server %s)\n"),
-				   pset.progname, PG_VERSION, server_version);
+				   pset.progname, MDB_VERSION, server_version);
 		}
 		/* For version match, only print psql banner on startup. */
 		else if (in_startup)
-			printf("%s (%s)\n", pset.progname, PG_VERSION);
+			printf("%s (%s)\n", pset.progname, MDB_VERSION);
 
 		if (pset.sversion / 100 > client_ver / 100)
 			printf(_("WARNING: %s major version %d.%d, server major version %d.%d.\n"
@@ -2275,7 +2275,7 @@ do_edit(const char *filename_arg, PQExpBuffer query_buf,
 
 	if (!error && before.st_mtime != after.st_mtime)
 	{
-		stream = fopen(fname, PG_BINARY_R);
+		stream = fopen(fname, MDB_BINARY_R);
 		if (!stream)
 		{
 			psql_error("%s: %s\n", fname, strerror(errno));
@@ -2363,7 +2363,7 @@ process_file(char *filename, bool use_relative_path)
 			filename = relpath;
 		}
 
-		fd = fopen(filename, PG_BINARY_R);
+		fd = fopen(filename, MDB_BINARY_R);
 
 		if (!fd)
 		{
@@ -3558,12 +3558,12 @@ minimal_error_message(PGresult *res)
 
 	msg = createPQExpBuffer();
 
-	fld = PQresultErrorField(res, PG_DIAG_SEVERITY);
+	fld = PQresultErrorField(res, MDB_DIAG_SEVERITY);
 	if (fld)
 		printfPQExpBuffer(msg, "%s:  ", fld);
 	else
 		printfPQExpBuffer(msg, "ERROR:  ");
-	fld = PQresultErrorField(res, PG_DIAG_MESSAGE_PRIMARY);
+	fld = PQresultErrorField(res, MDB_DIAG_MESSAGE_PRIMARY);
 	if (fld)
 		appendPQExpBufferStr(msg, fld);
 	else

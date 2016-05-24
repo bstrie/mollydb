@@ -29,14 +29,14 @@ AC_CONFIG_AUX_DIR(config)
 AC_PREFIX_DEFAULT(/usr/local/mdb)
 AC_SUBST(configure_args, [$ac_configure_args])
 
-[PG_MAJORVERSION=`expr "$PACKAGE_VERSION" : '\([0-9][0-9]*\.[0-9][0-9]*\)'`]
-AC_SUBST(PG_MAJORVERSION)
-AC_DEFINE_UNQUOTED(PG_MAJORVERSION, "$PG_MAJORVERSION", [MollyDB major version as a string])
+[MDB_MAJORVERSION=`expr "$PACKAGE_VERSION" : '\([0-9][0-9]*\.[0-9][0-9]*\)'`]
+AC_SUBST(MDB_MAJORVERSION)
+AC_DEFINE_UNQUOTED(MDB_MAJORVERSION, "$MDB_MAJORVERSION", [MollyDB major version as a string])
 
 PGAC_ARG_REQ(with, extra-version, [STRING], [append STRING to version],
-             [PG_VERSION="$PACKAGE_VERSION$withval"],
-             [PG_VERSION="$PACKAGE_VERSION"])
-AC_DEFINE_UNQUOTED(PG_VERSION, "$PG_VERSION", [MollyDB version as a string])
+             [MDB_VERSION="$PACKAGE_VERSION$withval"],
+             [MDB_VERSION="$PACKAGE_VERSION"])
+AC_DEFINE_UNQUOTED(MDB_VERSION, "$MDB_VERSION", [MollyDB version as a string])
 
 AC_CANONICAL_HOST
 
@@ -659,7 +659,7 @@ PGAC_ARG_REQ(with, krb-srvnam,
              [NAME], [default service principal name in Kerberos (GSSAPI) [mollydb]],
              [],
              [with_krb_srvnam="mollydb"])
-AC_DEFINE_UNQUOTED([PG_KRB_SRVNAM], ["$with_krb_srvnam"],
+AC_DEFINE_UNQUOTED([MDB_KRB_SRVNAM], ["$with_krb_srvnam"],
                    [Define to the name of the default MollyDB service principal in Kerberos (GSSAPI). (--with-krb-srvnam=NAME)])
 
 
@@ -1737,7 +1737,7 @@ else
   fi
 fi
 
-AC_DEFINE_UNQUOTED(PG_INT64_TYPE, $mdb_int64_type,
+AC_DEFINE_UNQUOTED(MDB_INT64_TYPE, $mdb_int64_type,
   [Define to the name of a signed 64-bit integer type.])
 
 dnl If we need to use "long long int", figure out whether nnnLL notation works.
@@ -1941,24 +1941,24 @@ if test x"$USE_SSE42_CRC32C" = x"" && test x"$USE_SSE42_CRC32C_WITH_RUNTIME_CHEC
   fi
 fi
 
-# Set PG_CRC32C_OBJS appropriately depending on the selected implementation.
+# Set MDB_CRC32C_OBJS appropriately depending on the selected implementation.
 AC_MSG_CHECKING([which CRC-32C implementation to use])
 if test x"$USE_SSE42_CRC32C" = x"1"; then
   AC_DEFINE(USE_SSE42_CRC32C, 1, [Define to 1 use Intel SSE 4.2 CRC instructions.])
-  PG_CRC32C_OBJS="mdb_crc32c_sse42.o"
+  MDB_CRC32C_OBJS="mdb_crc32c_sse42.o"
   AC_MSG_RESULT(SSE 4.2)
 else
   if test x"$USE_SSE42_CRC32C_WITH_RUNTIME_CHECK" = x"1"; then
     AC_DEFINE(USE_SSE42_CRC32C_WITH_RUNTIME_CHECK, 1, [Define to 1 to use Intel SSSE 4.2 CRC instructions with a runtime check.])
-    PG_CRC32C_OBJS="mdb_crc32c_sse42.o mdb_crc32c_sb8.o mdb_crc32c_choose.o"
+    MDB_CRC32C_OBJS="mdb_crc32c_sse42.o mdb_crc32c_sb8.o mdb_crc32c_choose.o"
     AC_MSG_RESULT(SSE 4.2 with runtime check)
   else
     AC_DEFINE(USE_SLICING_BY_8_CRC32C, 1, [Define to 1 to use Intel SSE 4.2 CRC instructions with a runtime check.])
-    PG_CRC32C_OBJS="mdb_crc32c_sb8.o"
+    MDB_CRC32C_OBJS="mdb_crc32c_sb8.o"
     AC_MSG_RESULT(slicing-by-8)
   fi
 fi
-AC_SUBST(PG_CRC32C_OBJS)
+AC_SUBST(MDB_CRC32C_OBJS)
 
 
 # Select semaphore implementation type.
@@ -2140,17 +2140,17 @@ else
   cc_string=$CC
 fi
 
-AC_DEFINE_UNQUOTED(PG_VERSION_STR,
-                   ["MollyDB $PG_VERSION on $host, compiled by $cc_string, `expr $ac_cv_sizeof_void_p \* 8`-bit"],
+AC_DEFINE_UNQUOTED(MDB_VERSION_STR,
+                   ["MollyDB $MDB_VERSION on $host, compiled by $cc_string, `expr $ac_cv_sizeof_void_p \* 8`-bit"],
                    [A string containing the version number, platform, and C compiler])
 
 # Supply a numeric version string for use by 3rd party add-ons
 # awk -F is a regex on some platforms, and not on others, so make "." a tab
-[PG_VERSION_NUM="`echo "$PACKAGE_VERSION" | sed 's/[A-Za-z].*$//' |
+[MDB_VERSION_NUM="`echo "$PACKAGE_VERSION" | sed 's/[A-Za-z].*$//' |
 tr '.' '	' |
 $AWK '{printf "%d%02d%02d", $1, $2, (NF >= 3) ? $3 : 0}'`"]
-AC_DEFINE_UNQUOTED(PG_VERSION_NUM, $PG_VERSION_NUM, [MollyDB version as a number])
-AC_SUBST(PG_VERSION_NUM)
+AC_DEFINE_UNQUOTED(MDB_VERSION_NUM, $MDB_VERSION_NUM, [MollyDB version as a number])
+AC_SUBST(MDB_VERSION_NUM)
 
 
 # Begin output steps

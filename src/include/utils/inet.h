@@ -102,17 +102,17 @@ typedef struct macaddr
 /*
  * fmgr interface macros
  */
-#define DatumGetInetP(X)	((inet *) PG_DETOAST_DATUM(X))
-#define DatumGetInetPP(X)	((inet *) PG_DETOAST_DATUM_PACKED(X))
+#define DatumGetInetP(X)	((inet *) MDB_DETOAST_DATUM(X))
+#define DatumGetInetPP(X)	((inet *) MDB_DETOAST_DATUM_PACKED(X))
 #define InetPGetDatum(X)	PointerGetDatum(X)
-#define PG_GETARG_INET_P(n) DatumGetInetP(PG_GETARG_DATUM(n))
-#define PG_GETARG_INET_PP(n) DatumGetInetPP(PG_GETARG_DATUM(n))
-#define PG_RETURN_INET_P(x) return InetPGetDatum(x)
+#define MDB_GETARG_INET_P(n) DatumGetInetP(MDB_GETARG_DATUM(n))
+#define MDB_GETARG_INET_PP(n) DatumGetInetPP(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_INET_P(x) return InetPGetDatum(x)
 /* macaddr is a fixed-length pass-by-reference datatype */
 #define DatumGetMacaddrP(X)    ((macaddr *) DatumGetPointer(X))
 #define MacaddrPGetDatum(X)    PointerGetDatum(X)
-#define PG_GETARG_MACADDR_P(n) DatumGetMacaddrP(PG_GETARG_DATUM(n))
-#define PG_RETURN_MACADDR_P(x) return MacaddrPGetDatum(x)
+#define MDB_GETARG_MACADDR_P(n) DatumGetMacaddrP(MDB_GETARG_DATUM(n))
+#define MDB_RETURN_MACADDR_P(x) return MacaddrPGetDatum(x)
 
 /*
  * Support functions in network.c
@@ -123,19 +123,19 @@ extern int	bitncommon(const unsigned char *l, const unsigned char *r, int n);
 /*
  * GiST support functions in network_gist.c
  */
-extern Datum inet_gist_fetch(PG_FUNCTION_ARGS);
-extern Datum inet_gist_consistent(PG_FUNCTION_ARGS);
-extern Datum inet_gist_union(PG_FUNCTION_ARGS);
-extern Datum inet_gist_compress(PG_FUNCTION_ARGS);
-extern Datum inet_gist_decompress(PG_FUNCTION_ARGS);
-extern Datum inet_gist_penalty(PG_FUNCTION_ARGS);
-extern Datum inet_gist_picksplit(PG_FUNCTION_ARGS);
-extern Datum inet_gist_same(PG_FUNCTION_ARGS);
+extern Datum inet_gist_fetch(MDB_FUNCTION_ARGS);
+extern Datum inet_gist_consistent(MDB_FUNCTION_ARGS);
+extern Datum inet_gist_union(MDB_FUNCTION_ARGS);
+extern Datum inet_gist_compress(MDB_FUNCTION_ARGS);
+extern Datum inet_gist_decompress(MDB_FUNCTION_ARGS);
+extern Datum inet_gist_penalty(MDB_FUNCTION_ARGS);
+extern Datum inet_gist_picksplit(MDB_FUNCTION_ARGS);
+extern Datum inet_gist_same(MDB_FUNCTION_ARGS);
 
 /*
  * Estimation functions in network_selfuncs.c
  */
-extern Datum networksel(PG_FUNCTION_ARGS);
-extern Datum networkjoinsel(PG_FUNCTION_ARGS);
+extern Datum networksel(MDB_FUNCTION_ARGS);
+extern Datum networkjoinsel(MDB_FUNCTION_ARGS);
 
 #endif   /* INET_H */

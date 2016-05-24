@@ -1114,7 +1114,7 @@ X509_NAME_to_cstring(X509_NAME *name)
 	nullterm = '\0';
 	BIO_write(membuf, &nullterm, 1);
 	size = BIO_get_mem_data(membuf, &sp);
-	dp = mdb_any_to_server(sp, size - 1, PG_UTF8);
+	dp = mdb_any_to_server(sp, size - 1, MDB_UTF8);
 
 	result = pstrdup(dp);
 	if (dp != sp)

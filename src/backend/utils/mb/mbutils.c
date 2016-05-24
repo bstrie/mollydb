@@ -81,9 +81,9 @@ static FmgrInfo *ToClientConvProc = NULL;
 /*
  * These variables track the currently-selected encodings.
  */
-static const mdb_enc2name *ClientEncoding = &mdb_enc2name_tbl[PG_SQL_ASCII];
-static const mdb_enc2name *DatabaseEncoding = &mdb_enc2name_tbl[PG_SQL_ASCII];
-static const mdb_enc2name *MessageEncoding = &mdb_enc2name_tbl[PG_SQL_ASCII];
+static const mdb_enc2name *ClientEncoding = &mdb_enc2name_tbl[MDB_SQL_ASCII];
+static const mdb_enc2name *DatabaseEncoding = &mdb_enc2name_tbl[MDB_SQL_ASCII];
+static const mdb_enc2name *MessageEncoding = &mdb_enc2name_tbl[MDB_SQL_ASCII];
 
 /*
  * During backend startup we can't set client encoding because we (a)
@@ -92,7 +92,7 @@ static const mdb_enc2name *MessageEncoding = &mdb_enc2name_tbl[PG_SQL_ASCII];
  * remembers it for InitializeClientEncoding() to apply later.
  */
 static bool backend_startup_complete = false;
-static int	pending_client_encoding = PG_SQL_ASCII;
+static int	pending_client_encoding = MDB_SQL_ASCII;
 
 
 /* Internal functions */
@@ -116,7 +116,7 @@ PrepareClientEncoding(int encoding)
 	int			current_server_encoding;
 	ListCell   *lc;
 
-	if (!PG_VALID_FE_ENCODING(encoding))
+	if (!MDB_VALID_FE_ENCODING(encoding))
 		return -1;
 
 	/* Can't do anything during startup, per notes above */
@@ -129,8 +129,8 @@ PrepareClientEncoding(int encoding)
 	 * Check for cases that require no conversion function.
 	 */
 	if (current_server_encoding == encoding ||
-		current_server_encoding == PG_SQL_ASCII ||
-		encoding == PG_SQL_ASCII)
+		current_server_encoding == MDB_SQL_ASCII ||
+		encoding == MDB_SQL_ASCII)
 		return 0;
 
 	if (IsTransactionState())
@@ -217,7 +217,7 @@ SetClientEncoding(int encoding)
 	ListCell   *prev;
 	ListCell   *next;
 
-	if (!PG_VALID_FE_ENCODING(encoding))
+	if (!MDB_VALID_FE_ENCODING(encoding))
 		return -1;
 
 	/* Can't do anything during startup, per notes above */
@@ -233,8 +233,8 @@ SetClientEncoding(int encoding)
 	 * Check for cases that require no conversion function.
 	 */
 	if (current_server_encoding == encoding ||
-		current_server_encoding == PG_SQL_ASCII ||
-		encoding == PG_SQL_ASCII)
+		current_server_encoding == MDB_SQL_ASCII ||
+		encoding == MDB_SQL_ASCII)
 	{
 		ClientEncoding = &mdb_enc2name_tbl[encoding];
 		ToServerConvProc = NULL;
@@ -346,10 +346,10 @@ mdb_do_encoding_conversion(unsigned char *src, int len,
 	if (src_encoding == dest_encoding)
 		return src;				/* no conversion required, assume valid */
 
-	if (dest_encoding == PG_SQL_ASCII)
+	if (dest_encoding == MDB_SQL_ASCII)
 		return src;				/* any string is valid in SQL_ASCII */
 
-	if (src_encoding == PG_SQL_ASCII)
+	if (src_encoding == MDB_SQL_ASCII)
 	{
 		/* No conversion is possible, but we must validate the result */
 		(void) mdb_verify_mbstr(dest_encoding, (const char *) src, len, false);
@@ -394,10 +394,10 @@ mdb_do_encoding_conversion(unsigned char *src, int len,
  *
  * BYTEA convert_to(TEXT string, NAME encoding_name) */
 Datum
-mdb_convert_to(PG_FUNCTION_ARGS)
+mdb_convert_to(MDB_FUNCTION_ARGS)
 {
-	Datum		string = PG_GETARG_DATUM(0);
-	Datum		dest_encoding_name = PG_GETARG_DATUM(1);
+	Datum		string = MDB_GETARG_DATUM(0);
+	Datum		dest_encoding_name = MDB_GETARG_DATUM(1);
 	Datum		src_encoding_name = DirectFunctionCall1(namein,
 									CStringGetDatum(DatabaseEncoding->name));
 	Datum		result;
@@ -410,7 +410,7 @@ mdb_convert_to(PG_FUNCTION_ARGS)
 	result = DirectFunctionCall3(mdb_convert, string,
 								 src_encoding_name, dest_encoding_name);
 
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*
@@ -419,10 +419,10 @@ mdb_convert_to(PG_FUNCTION_ARGS)
  *
  * TEXT convert_from(BYTEA string, NAME encoding_name) */
 Datum
-mdb_convert_from(PG_FUNCTION_ARGS)
+mdb_convert_from(MDB_FUNCTION_ARGS)
 {
-	Datum		string = PG_GETARG_DATUM(0);
-	Datum		src_encoding_name = PG_GETARG_DATUM(1);
+	Datum		string = MDB_GETARG_DATUM(0);
+	Datum		src_encoding_name = MDB_GETARG_DATUM(1);
 	Datum		dest_encoding_name = DirectFunctionCall1(namein,
 									CStringGetDatum(DatabaseEncoding->name));
 	Datum		result;
@@ -437,7 +437,7 @@ mdb_convert_from(PG_FUNCTION_ARGS)
 	 * in this case it will be because we've told mdb_convert to return one
 	 * that is valid as text in the current database encoding.
 	 */
-	PG_RETURN_DATUM(result);
+	MDB_RETURN_DATUM(result);
 }
 
 /*
@@ -446,12 +446,12 @@ mdb_convert_from(PG_FUNCTION_ARGS)
  * BYTEA convert(BYTEA string, NAME src_encoding_name, NAME dest_encoding_name)
  */
 Datum
-mdb_convert(PG_FUNCTION_ARGS)
+mdb_convert(MDB_FUNCTION_ARGS)
 {
-	bytea	   *string = PG_GETARG_BYTEA_PP(0);
-	char	   *src_encoding_name = NameStr(*PG_GETARG_NAME(1));
+	bytea	   *string = MDB_GETARG_BYTEA_PP(0);
+	char	   *src_encoding_name = NameStr(*MDB_GETARG_NAME(1));
 	int			src_encoding = mdb_char_to_encoding(src_encoding_name);
-	char	   *dest_encoding_name = NameStr(*PG_GETARG_NAME(2));
+	char	   *dest_encoding_name = NameStr(*MDB_GETARG_NAME(2));
 	int			dest_encoding = mdb_char_to_encoding(dest_encoding_name);
 	const char *src_str;
 	char	   *dest_str;
@@ -495,9 +495,9 @@ mdb_convert(PG_FUNCTION_ARGS)
 		pfree(dest_str);
 
 	/* free memory if allocated by the toaster */
-	PG_FREE_IF_COPY(string, 0);
+	MDB_FREE_IF_COPY(string, 0);
 
-	PG_RETURN_BYTEA_P(retval);
+	MDB_RETURN_BYTEA_P(retval);
 }
 
 /*
@@ -508,10 +508,10 @@ mdb_convert(PG_FUNCTION_ARGS)
  * INT4 length (BYTEA string, NAME src_encoding_name)
  */
 Datum
-length_in_encoding(PG_FUNCTION_ARGS)
+length_in_encoding(MDB_FUNCTION_ARGS)
 {
-	bytea	   *string = PG_GETARG_BYTEA_PP(0);
-	char	   *src_encoding_name = NameStr(*PG_GETARG_NAME(1));
+	bytea	   *string = MDB_GETARG_BYTEA_PP(0);
+	char	   *src_encoding_name = NameStr(*MDB_GETARG_NAME(1));
 	int			src_encoding = mdb_char_to_encoding(src_encoding_name);
 	const char *src_str;
 	int			len;
@@ -528,7 +528,7 @@ length_in_encoding(PG_FUNCTION_ARGS)
 
 	retval = mdb_verify_mbstr_len(src_encoding, src_str, len, false);
 
-	PG_RETURN_INT32(retval);
+	MDB_RETURN_INT32(retval);
 }
 
 /*
@@ -537,14 +537,14 @@ length_in_encoding(PG_FUNCTION_ARGS)
  * Note encoding is specified numerically, not by name as above.
  */
 Datum
-mdb_encoding_max_length_sql(PG_FUNCTION_ARGS)
+mdb_encoding_max_length_sql(MDB_FUNCTION_ARGS)
 {
-	int			encoding = PG_GETARG_INT32(0);
+	int			encoding = MDB_GETARG_INT32(0);
 
-	if (PG_VALID_ENCODING(encoding))
-		PG_RETURN_INT32(mdb_wchar_table[encoding].maxmblen);
+	if (MDB_VALID_ENCODING(encoding))
+		MDB_RETURN_INT32(mdb_wchar_table[encoding].maxmblen);
 	else
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 }
 
 /*
@@ -575,7 +575,7 @@ mdb_any_to_server(const char *s, int len, int encoding)
 		return (char *) s;		/* empty string is always valid */
 
 	if (encoding == DatabaseEncoding->encoding ||
-		encoding == PG_SQL_ASCII)
+		encoding == MDB_SQL_ASCII)
 	{
 		/*
 		 * No conversion is needed, but we must still validate the data.
@@ -584,7 +584,7 @@ mdb_any_to_server(const char *s, int len, int encoding)
 		return (char *) s;
 	}
 
-	if (DatabaseEncoding->encoding == PG_SQL_ASCII)
+	if (DatabaseEncoding->encoding == MDB_SQL_ASCII)
 	{
 		/*
 		 * No conversion is possible, but we must still validate the data,
@@ -595,7 +595,7 @@ mdb_any_to_server(const char *s, int len, int encoding)
 		 * to the parser but we have no way to convert it.  We compromise by
 		 * rejecting the data if it contains any non-ASCII characters.
 		 */
-		if (PG_VALID_BE_ENCODING(encoding))
+		if (MDB_VALID_BE_ENCODING(encoding))
 			(void) mdb_verify_mbstr(encoding, s, len, false);
 		else
 		{
@@ -607,7 +607,7 @@ mdb_any_to_server(const char *s, int len, int encoding)
 					ereport(ERROR,
 							(errcode(ERRCODE_CHARACTER_NOT_IN_REPERTOIRE),
 					 errmsg("invalid byte value for encoding \"%s\": 0x%02x",
-							mdb_enc2name_tbl[PG_SQL_ASCII].name,
+							mdb_enc2name_tbl[MDB_SQL_ASCII].name,
 							(unsigned char) s[i])));
 			}
 		}
@@ -648,10 +648,10 @@ mdb_server_to_any(const char *s, int len, int encoding)
 		return (char *) s;		/* empty string is always valid */
 
 	if (encoding == DatabaseEncoding->encoding ||
-		encoding == PG_SQL_ASCII)
+		encoding == MDB_SQL_ASCII)
 		return (char *) s;		/* assume data is valid */
 
-	if (DatabaseEncoding->encoding == PG_SQL_ASCII)
+	if (DatabaseEncoding->encoding == MDB_SQL_ASCII)
 	{
 		/* No conversion is possible, but we must validate the result */
 		(void) mdb_verify_mbstr(encoding, s, len, false);
@@ -908,7 +908,7 @@ cliplen(const char *str, int len, int limit)
 void
 SetDatabaseEncoding(int encoding)
 {
-	if (!PG_VALID_BE_ENCODING(encoding))
+	if (!MDB_VALID_BE_ENCODING(encoding))
 		elog(ERROR, "invalid database encoding: %d", encoding);
 
 	DatabaseEncoding = &mdb_enc2name_tbl[encoding];
@@ -919,7 +919,7 @@ void
 SetMessageEncoding(int encoding)
 {
 	/* Some calls happen before we can elog()! */
-	Assert(PG_VALID_ENCODING(encoding));
+	Assert(MDB_VALID_ENCODING(encoding));
 
 	MessageEncoding = &mdb_enc2name_tbl[encoding];
 	Assert(MessageEncoding->encoding == encoding);
@@ -988,13 +988,13 @@ mdb_bind_textdomain_codeset(const char *domainname)
 
 	if (mdb_strcasecmp(ctype, "C") == 0 || mdb_strcasecmp(ctype, "POSIX") == 0)
 #endif
-		if (encoding != PG_SQL_ASCII &&
+		if (encoding != MDB_SQL_ASCII &&
 			raw_mdb_bind_textdomain_codeset(domainname, encoding))
 			return encoding;
 
 	new_msgenc = mdb_get_encoding_from_locale(NULL, elog_ok);
 	if (new_msgenc < 0)
-		new_msgenc = PG_SQL_ASCII;
+		new_msgenc = MDB_SQL_ASCII;
 
 #ifdef WIN32
 	if (!raw_mdb_bind_textdomain_codeset(domainname, new_msgenc))
@@ -1024,13 +1024,13 @@ GetDatabaseEncodingName(void)
 }
 
 Datum
-getdatabaseencoding(PG_FUNCTION_ARGS)
+getdatabaseencoding(MDB_FUNCTION_ARGS)
 {
 	return DirectFunctionCall1(namein, CStringGetDatum(DatabaseEncoding->name));
 }
 
 Datum
-mdb_client_encoding(PG_FUNCTION_ARGS)
+mdb_client_encoding(MDB_FUNCTION_ARGS)
 {
 	return DirectFunctionCall1(namein, CStringGetDatum(ClientEncoding->name));
 }
@@ -1085,7 +1085,7 @@ pgwin32_message_to_UTF16(const char *str, int len, int *utf16len)
 			utf8 = (char *) mdb_do_encoding_conversion((unsigned char *) str,
 													  len,
 													  GetMessageEncoding(),
-													  PG_UTF8);
+													  MDB_UTF8);
 			if (utf8 != str)
 				len = strlen(utf8);
 		}

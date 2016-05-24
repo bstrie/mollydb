@@ -8,8 +8,8 @@
  *
  * -------------------------------------------------------------------------
  */
-#ifndef PG_SECLABEL_H
-#define PG_SECLABEL_H
+#ifndef MDB_SECLABEL_H
+#define MDB_SECLABEL_H
 
 #include "catalog/genbki.h"
 
@@ -43,4 +43,4 @@ CATALOG(mdb_seclabel,3596) BKI_WITHOUT_OIDS
 #define Anum_mdb_seclabel_provider	4
 #define Anum_mdb_seclabel_label		5
 
-#endif   /* PG_SECLABEL_H */
+#endif   /* MDB_SECLABEL_H */

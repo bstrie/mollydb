@@ -31,7 +31,7 @@
 #include "preproc.h"
 
 
-#define PG_KEYWORD(a,b,c) {a,b,c},
+#define MDB_KEYWORD(a,b,c) {a,b,c},
 
 const ScanKeyword SQLScanKeywords[] = {
 #include "parser/kwlist.h"

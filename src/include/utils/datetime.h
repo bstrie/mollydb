@@ -346,7 +346,7 @@ extern TimeZoneAbbrevTable *ConvertTimeZoneAbbrevs(struct tzEntry *abbrevs,
 					   int n);
 extern void InstallTimeZoneAbbrevs(TimeZoneAbbrevTable *tbl);
 
-extern Datum mdb_timezone_abbrevs(PG_FUNCTION_ARGS);
-extern Datum mdb_timezone_names(PG_FUNCTION_ARGS);
+extern Datum mdb_timezone_abbrevs(MDB_FUNCTION_ARGS);
+extern Datum mdb_timezone_names(MDB_FUNCTION_ARGS);
 
 #endif   /* DATETIME_H */

@@ -356,10 +356,10 @@ msgstr "Verze kontrolních součtů datových stránek:           %u\n"
 #, c-format
 msgid ""
 "%s: internal error -- sizeof(ControlFileData) is too large ... fix "
-"PG_CONTROL_SIZE\n"
+"MDB_CONTROL_SIZE\n"
 msgstr ""
 "%s: interní chyba -- sizeof(ControlFileData) je příliš velký ... opravte "
-"PG_CONTROL_SIZE\n"
+"MDB_CONTROL_SIZE\n"
 
 #: mdb_resetxlog.c:705
 #, c-format

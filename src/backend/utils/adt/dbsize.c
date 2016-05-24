@@ -129,32 +129,32 @@ calculate_database_size(Oid dbOid)
 }
 
 Datum
-mdb_database_size_oid(PG_FUNCTION_ARGS)
+mdb_database_size_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			dbOid = PG_GETARG_OID(0);
+	Oid			dbOid = MDB_GETARG_OID(0);
 	int64		size;
 
 	size = calculate_database_size(dbOid);
 
 	if (size == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT64(size);
+	MDB_RETURN_INT64(size);
 }
 
 Datum
-mdb_database_size_name(PG_FUNCTION_ARGS)
+mdb_database_size_name(MDB_FUNCTION_ARGS)
 {
-	Name		dbName = PG_GETARG_NAME(0);
+	Name		dbName = MDB_GETARG_NAME(0);
 	Oid			dbOid = get_database_oid(NameStr(*dbName), false);
 	int64		size;
 
 	size = calculate_database_size(dbOid);
 
 	if (size == 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT64(size);
+	MDB_RETURN_INT64(size);
 }
 
 
@@ -232,32 +232,32 @@ calculate_tablespace_size(Oid tblspcOid)
 }
 
 Datum
-mdb_tablespace_size_oid(PG_FUNCTION_ARGS)
+mdb_tablespace_size_oid(MDB_FUNCTION_ARGS)
 {
-	Oid			tblspcOid = PG_GETARG_OID(0);
+	Oid			tblspcOid = MDB_GETARG_OID(0);
 	int64		size;
 
 	size = calculate_tablespace_size(tblspcOid);
 
 	if (size < 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT64(size);
+	MDB_RETURN_INT64(size);
 }
 
 Datum
-mdb_tablespace_size_name(PG_FUNCTION_ARGS)
+mdb_tablespace_size_name(MDB_FUNCTION_ARGS)
 {
-	Name		tblspcName = PG_GETARG_NAME(0);
+	Name		tblspcName = MDB_GETARG_NAME(0);
 	Oid			tblspcOid = get_tablespace_oid(NameStr(*tblspcName), false);
 	int64		size;
 
 	size = calculate_tablespace_size(tblspcOid);
 
 	if (size < 0)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_INT64(size);
+	MDB_RETURN_INT64(size);
 }
 
 
@@ -306,10 +306,10 @@ calculate_relation_size(RelFileNode *rfn, BackendId backend, ForkNumber forknum)
 }
 
 Datum
-mdb_relation_size(PG_FUNCTION_ARGS)
+mdb_relation_size(MDB_FUNCTION_ARGS)
 {
-	Oid			relOid = PG_GETARG_OID(0);
-	text	   *forkName = PG_GETARG_TEXT_P(1);
+	Oid			relOid = MDB_GETARG_OID(0);
+	text	   *forkName = MDB_GETARG_TEXT_P(1);
 	Relation	rel;
 	int64		size;
 
@@ -323,14 +323,14 @@ mdb_relation_size(PG_FUNCTION_ARGS)
 	 * already-dropped tables than throw an error and abort the whole query.
 	 */
 	if (rel == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	size = calculate_relation_size(&(rel->rd_node), rel->rd_backend,
 							  forkname_to_number(text_to_cstring(forkName)));
 
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_INT64(size);
+	MDB_RETURN_INT64(size);
 }
 
 /*
@@ -446,41 +446,41 @@ calculate_indexes_size(Relation rel)
 }
 
 Datum
-mdb_table_size(PG_FUNCTION_ARGS)
+mdb_table_size(MDB_FUNCTION_ARGS)
 {
-	Oid			relOid = PG_GETARG_OID(0);
+	Oid			relOid = MDB_GETARG_OID(0);
 	Relation	rel;
 	int64		size;
 
 	rel = try_relation_open(relOid, AccessShareLock);
 
 	if (rel == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	size = calculate_table_size(rel);
 
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_INT64(size);
+	MDB_RETURN_INT64(size);
 }
 
 Datum
-mdb_indexes_size(PG_FUNCTION_ARGS)
+mdb_indexes_size(MDB_FUNCTION_ARGS)
 {
-	Oid			relOid = PG_GETARG_OID(0);
+	Oid			relOid = MDB_GETARG_OID(0);
 	Relation	rel;
 	int64		size;
 
 	rel = try_relation_open(relOid, AccessShareLock);
 
 	if (rel == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	size = calculate_indexes_size(rel);
 
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_INT64(size);
+	MDB_RETURN_INT64(size);
 }
 
 /*
@@ -507,31 +507,31 @@ calculate_total_relation_size(Relation rel)
 }
 
 Datum
-mdb_total_relation_size(PG_FUNCTION_ARGS)
+mdb_total_relation_size(MDB_FUNCTION_ARGS)
 {
-	Oid			relOid = PG_GETARG_OID(0);
+	Oid			relOid = MDB_GETARG_OID(0);
 	Relation	rel;
 	int64		size;
 
 	rel = try_relation_open(relOid, AccessShareLock);
 
 	if (rel == NULL)
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
 	size = calculate_total_relation_size(rel);
 
 	relation_close(rel, AccessShareLock);
 
-	PG_RETURN_INT64(size);
+	MDB_RETURN_INT64(size);
 }
 
 /*
  * formatting with size units
  */
 Datum
-mdb_size_pretty(PG_FUNCTION_ARGS)
+mdb_size_pretty(MDB_FUNCTION_ARGS)
 {
-	int64		size = PG_GETARG_INT64(0);
+	int64		size = MDB_GETARG_INT64(0);
 	char		buf[64];
 	int64		limit = 10 * 1024;
 	int64		limit2 = limit * 2 - 1;
@@ -566,7 +566,7 @@ mdb_size_pretty(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(buf));
+	MDB_RETURN_TEXT_P(cstring_to_text(buf));
 }
 
 static char *
@@ -641,9 +641,9 @@ numeric_shift_right(Numeric n, unsigned count)
 }
 
 Datum
-mdb_size_pretty_numeric(PG_FUNCTION_ARGS)
+mdb_size_pretty_numeric(MDB_FUNCTION_ARGS)
 {
-	Numeric		size = PG_GETARG_NUMERIC(0);
+	Numeric		size = MDB_GETARG_NUMERIC(0);
 	Numeric		limit,
 				limit2;
 	char	   *result;
@@ -696,16 +696,16 @@ mdb_size_pretty_numeric(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_TEXT_P(cstring_to_text(result));
+	MDB_RETURN_TEXT_P(cstring_to_text(result));
 }
 
 /*
  * Convert a human-readable size to a size in bytes
  */
 Datum
-mdb_size_bytes(PG_FUNCTION_ARGS)
+mdb_size_bytes(MDB_FUNCTION_ARGS)
 {
-	text	   *arg = PG_GETARG_TEXT_PP(0);
+	text	   *arg = MDB_GETARG_TEXT_PP(0);
 	char	   *str,
 			   *strptr,
 			   *endptr;
@@ -848,7 +848,7 @@ mdb_size_bytes(PG_FUNCTION_ARGS)
 	result = DatumGetInt64(DirectFunctionCall1(numeric_int8,
 											   NumericGetDatum(num)));
 
-	PG_RETURN_INT64(result);
+	MDB_RETURN_INT64(result);
 }
 
 /*
@@ -866,16 +866,16 @@ mdb_size_bytes(PG_FUNCTION_ARGS)
  * seems better to quietly return NULL.
  */
 Datum
-mdb_relation_filenode(PG_FUNCTION_ARGS)
+mdb_relation_filenode(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	Oid			result;
 	HeapTuple	tuple;
 	Form_mdb_class relform;
 
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tuple))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	relform = (Form_mdb_class) GETSTRUCT(tuple);
 
 	switch (relform->relkind)
@@ -902,9 +902,9 @@ mdb_relation_filenode(PG_FUNCTION_ARGS)
 	ReleaseSysCache(tuple);
 
 	if (!OidIsValid(result))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 
-	PG_RETURN_OID(result);
+	MDB_RETURN_OID(result);
 }
 
 /*
@@ -921,18 +921,18 @@ mdb_relation_filenode(PG_FUNCTION_ARGS)
  * tablespace.
  */
 Datum
-mdb_filenode_relation(PG_FUNCTION_ARGS)
+mdb_filenode_relation(MDB_FUNCTION_ARGS)
 {
-	Oid			reltablespace = PG_GETARG_OID(0);
-	Oid			relfilenode = PG_GETARG_OID(1);
+	Oid			reltablespace = MDB_GETARG_OID(0);
+	Oid			relfilenode = MDB_GETARG_OID(1);
 	Oid			heaprel = InvalidOid;
 
 	heaprel = RelidByRelfilenode(reltablespace, relfilenode);
 
 	if (!OidIsValid(heaprel))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	else
-		PG_RETURN_OID(heaprel);
+		MDB_RETURN_OID(heaprel);
 }
 
 /*
@@ -941,9 +941,9 @@ mdb_filenode_relation(PG_FUNCTION_ARGS)
  * See comments for mdb_relation_filenode.
  */
 Datum
-mdb_relation_filepath(PG_FUNCTION_ARGS)
+mdb_relation_filepath(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
+	Oid			relid = MDB_GETARG_OID(0);
 	HeapTuple	tuple;
 	Form_mdb_class relform;
 	RelFileNode rnode;
@@ -952,7 +952,7 @@ mdb_relation_filepath(PG_FUNCTION_ARGS)
 
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tuple))
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	relform = (Form_mdb_class) GETSTRUCT(tuple);
 
 	switch (relform->relkind)
@@ -992,7 +992,7 @@ mdb_relation_filepath(PG_FUNCTION_ARGS)
 	if (!OidIsValid(rnode.relNode))
 	{
 		ReleaseSysCache(tuple);
-		PG_RETURN_NULL();
+		MDB_RETURN_NULL();
 	}
 
 	/* Determine owning backend. */
@@ -1022,5 +1022,5 @@ mdb_relation_filepath(PG_FUNCTION_ARGS)
 
 	path = relpathbackend(rnode, backend, MAIN_FORKNUM);
 
-	PG_RETURN_TEXT_P(cstring_to_text(path));
+	MDB_RETURN_TEXT_P(cstring_to_text(path));
 }

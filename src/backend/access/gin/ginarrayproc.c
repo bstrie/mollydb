@@ -30,12 +30,12 @@
  * extractValue support function
  */
 Datum
-ginarrayextract(PG_FUNCTION_ARGS)
+ginarrayextract(MDB_FUNCTION_ARGS)
 {
 	/* Make copy of array input to ensure it doesn't disappear while in use */
-	ArrayType  *array = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	int32	   *nkeys = (int32 *) PG_GETARG_POINTER(1);
-	bool	  **nullFlags = (bool **) PG_GETARG_POINTER(2);
+	ArrayType  *array = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	int32	   *nkeys = (int32 *) MDB_GETARG_POINTER(1);
+	bool	  **nullFlags = (bool **) MDB_GETARG_POINTER(2);
 	int16		elmlen;
 	bool		elmbyval;
 	char		elmalign;
@@ -55,7 +55,7 @@ ginarrayextract(PG_FUNCTION_ARGS)
 	*nullFlags = nulls;
 
 	/* we should not free array, elems[i] points into it */
-	PG_RETURN_POINTER(elems);
+	MDB_RETURN_POINTER(elems);
 }
 
 /*
@@ -65,9 +65,9 @@ ginarrayextract(PG_FUNCTION_ARGS)
  * function should go away eventually.
  */
 Datum
-ginarrayextract_2args(PG_FUNCTION_ARGS)
+ginarrayextract_2args(MDB_FUNCTION_ARGS)
 {
-	if (PG_NARGS() < 3)			/* should not happen */
+	if (MDB_NARGS() < 3)			/* should not happen */
 		elog(ERROR, "ginarrayextract requires three arguments");
 	return ginarrayextract(fcinfo);
 }
@@ -76,17 +76,17 @@ ginarrayextract_2args(PG_FUNCTION_ARGS)
  * extractQuery support function
  */
 Datum
-ginqueryarrayextract(PG_FUNCTION_ARGS)
+ginqueryarrayextract(MDB_FUNCTION_ARGS)
 {
 	/* Make copy of array input to ensure it doesn't disappear while in use */
-	ArrayType  *array = PG_GETARG_ARRAYTYPE_P_COPY(0);
-	int32	   *nkeys = (int32 *) PG_GETARG_POINTER(1);
-	StrategyNumber strategy = PG_GETARG_UINT16(2);
+	ArrayType  *array = MDB_GETARG_ARRAYTYPE_P_COPY(0);
+	int32	   *nkeys = (int32 *) MDB_GETARG_POINTER(1);
+	StrategyNumber strategy = MDB_GETARG_UINT16(2);
 
-	/* bool   **pmatch = (bool **) PG_GETARG_POINTER(3); */
-	/* Pointer	   *extra_data = (Pointer *) PG_GETARG_POINTER(4); */
-	bool	  **nullFlags = (bool **) PG_GETARG_POINTER(5);
-	int32	   *searchMode = (int32 *) PG_GETARG_POINTER(6);
+	/* bool   **pmatch = (bool **) MDB_GETARG_POINTER(3); */
+	/* Pointer	   *extra_data = (Pointer *) MDB_GETARG_POINTER(4); */
+	bool	  **nullFlags = (bool **) MDB_GETARG_POINTER(5);
+	int32	   *searchMode = (int32 *) MDB_GETARG_POINTER(6);
 	int16		elmlen;
 	bool		elmbyval;
 	char		elmalign;
@@ -132,26 +132,26 @@ ginqueryarrayextract(PG_FUNCTION_ARGS)
 	}
 
 	/* we should not free array, elems[i] points into it */
-	PG_RETURN_POINTER(elems);
+	MDB_RETURN_POINTER(elems);
 }
 
 /*
  * consistent support function
  */
 Datum
-ginarrayconsistent(PG_FUNCTION_ARGS)
+ginarrayconsistent(MDB_FUNCTION_ARGS)
 {
-	bool	   *check = (bool *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
+	bool	   *check = (bool *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
 
-	/* ArrayType  *query = PG_GETARG_ARRAYTYPE_P(2); */
-	int32		nkeys = PG_GETARG_INT32(3);
+	/* ArrayType  *query = MDB_GETARG_ARRAYTYPE_P(2); */
+	int32		nkeys = MDB_GETARG_INT32(3);
 
-	/* Pointer	   *extra_data = (Pointer *) PG_GETARG_POINTER(4); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(5);
+	/* Pointer	   *extra_data = (Pointer *) MDB_GETARG_POINTER(4); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(5);
 
-	/* Datum	   *queryKeys = (Datum *) PG_GETARG_POINTER(6); */
-	bool	   *nullFlags = (bool *) PG_GETARG_POINTER(7);
+	/* Datum	   *queryKeys = (Datum *) MDB_GETARG_POINTER(6); */
+	bool	   *nullFlags = (bool *) MDB_GETARG_POINTER(7);
 	bool		res;
 	int32		i;
 
@@ -216,24 +216,24 @@ ginarrayconsistent(PG_FUNCTION_ARGS)
 			res = false;
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 /*
  * triconsistent support function
  */
 Datum
-ginarraytriconsistent(PG_FUNCTION_ARGS)
+ginarraytriconsistent(MDB_FUNCTION_ARGS)
 {
-	GinTernaryValue *check = (GinTernaryValue *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
+	GinTernaryValue *check = (GinTernaryValue *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
 
-	/* ArrayType  *query = PG_GETARG_ARRAYTYPE_P(2); */
-	int32		nkeys = PG_GETARG_INT32(3);
+	/* ArrayType  *query = MDB_GETARG_ARRAYTYPE_P(2); */
+	int32		nkeys = MDB_GETARG_INT32(3);
 
-	/* Pointer	   *extra_data = (Pointer *) PG_GETARG_POINTER(4); */
-	/* Datum	   *queryKeys = (Datum *) PG_GETARG_POINTER(5); */
-	bool	   *nullFlags = (bool *) PG_GETARG_POINTER(6);
+	/* Pointer	   *extra_data = (Pointer *) MDB_GETARG_POINTER(4); */
+	/* Datum	   *queryKeys = (Datum *) MDB_GETARG_POINTER(5); */
+	bool	   *nullFlags = (bool *) MDB_GETARG_POINTER(6);
 	GinTernaryValue res;
 	int32		i;
 
@@ -301,5 +301,5 @@ ginarraytriconsistent(PG_FUNCTION_ARGS)
 			res = false;
 	}
 
-	PG_RETURN_GIN_TERNARY_VALUE(res);
+	MDB_RETURN_GIN_TERNARY_VALUE(res);
 }

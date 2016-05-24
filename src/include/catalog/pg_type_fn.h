@@ -11,8 +11,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TYPE_FN_H
-#define PG_TYPE_FN_H
+#ifndef MDB_TYPE_FN_H
+#define MDB_TYPE_FN_H
 
 #include "catalog/objectaddress.h"
 #include "nodes/nodes.h"
@@ -81,4 +81,4 @@ extern char *makeArrayTypeName(const char *typeName, Oid typeNamespace);
 extern bool moveArrayTypeName(Oid typeOid, const char *typeName,
 				  Oid typeNamespace);
 
-#endif   /* PG_TYPE_FN_H */
+#endif   /* MDB_TYPE_FN_H */

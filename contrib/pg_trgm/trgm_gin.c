@@ -10,11 +10,11 @@
 #include "fmgr.h"
 
 
-PG_FUNCTION_INFO_V1(gin_extract_trgm);
-PG_FUNCTION_INFO_V1(gin_extract_value_trgm);
-PG_FUNCTION_INFO_V1(gin_extract_query_trgm);
-PG_FUNCTION_INFO_V1(gin_trgm_consistent);
-PG_FUNCTION_INFO_V1(gin_trgm_triconsistent);
+MDB_FUNCTION_INFO_V1(gin_extract_trgm);
+MDB_FUNCTION_INFO_V1(gin_extract_value_trgm);
+MDB_FUNCTION_INFO_V1(gin_extract_query_trgm);
+MDB_FUNCTION_INFO_V1(gin_trgm_consistent);
+MDB_FUNCTION_INFO_V1(gin_trgm_triconsistent);
 
 /*
  * This function can only be called if a pre-9.1 version of the GIN operator
@@ -22,21 +22,21 @@ PG_FUNCTION_INFO_V1(gin_trgm_triconsistent);
  * of upgrade-in-place).  Cope.
  */
 Datum
-gin_extract_trgm(PG_FUNCTION_ARGS)
+gin_extract_trgm(MDB_FUNCTION_ARGS)
 {
-	if (PG_NARGS() == 3)
+	if (MDB_NARGS() == 3)
 		return gin_extract_value_trgm(fcinfo);
-	if (PG_NARGS() == 7)
+	if (MDB_NARGS() == 7)
 		return gin_extract_query_trgm(fcinfo);
 	elog(ERROR, "unexpected number of arguments to gin_extract_trgm");
-	PG_RETURN_NULL();
+	MDB_RETURN_NULL();
 }
 
 Datum
-gin_extract_value_trgm(PG_FUNCTION_ARGS)
+gin_extract_value_trgm(MDB_FUNCTION_ARGS)
 {
-	text	   *val = (text *) PG_GETARG_TEXT_P(0);
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
+	text	   *val = (text *) MDB_GETARG_TEXT_P(0);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
 	Datum	   *entries = NULL;
 	TRGM	   *trg;
 	int32		trglen;
@@ -64,21 +64,21 @@ gin_extract_value_trgm(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
 Datum
-gin_extract_query_trgm(PG_FUNCTION_ARGS)
+gin_extract_query_trgm(MDB_FUNCTION_ARGS)
 {
-	text	   *val = (text *) PG_GETARG_TEXT_P(0);
-	int32	   *nentries = (int32 *) PG_GETARG_POINTER(1);
-	StrategyNumber strategy = PG_GETARG_UINT16(2);
+	text	   *val = (text *) MDB_GETARG_TEXT_P(0);
+	int32	   *nentries = (int32 *) MDB_GETARG_POINTER(1);
+	StrategyNumber strategy = MDB_GETARG_UINT16(2);
 
-	/* bool   **pmatch = (bool **) PG_GETARG_POINTER(3); */
-	Pointer   **extra_data = (Pointer **) PG_GETARG_POINTER(4);
+	/* bool   **pmatch = (bool **) MDB_GETARG_POINTER(3); */
+	Pointer   **extra_data = (Pointer **) MDB_GETARG_POINTER(4);
 
-	/* bool   **nullFlags = (bool **) PG_GETARG_POINTER(5); */
-	int32	   *searchMode = (int32 *) PG_GETARG_POINTER(6);
+	/* bool   **nullFlags = (bool **) MDB_GETARG_POINTER(5); */
+	int32	   *searchMode = (int32 *) MDB_GETARG_POINTER(6);
 	Datum	   *entries = NULL;
 	TRGM	   *trg;
 	int32		trglen;
@@ -111,7 +111,7 @@ gin_extract_query_trgm(PG_FUNCTION_ARGS)
 #endif
 			/* FALL THRU */
 		case RegExpStrategyNumber:
-			trg = createTrgmNFA(val, PG_GET_COLLATION(),
+			trg = createTrgmNFA(val, MDB_GET_COLLATION(),
 								&graph, CurrentMemoryContext);
 			if (trg && ARRNELEM(trg) > 0)
 			{
@@ -130,7 +130,7 @@ gin_extract_query_trgm(PG_FUNCTION_ARGS)
 				/* No result: have to do full index scan. */
 				*nentries = 0;
 				*searchMode = GIN_SEARCH_MODE_ALL;
-				PG_RETURN_POINTER(entries);
+				MDB_RETURN_POINTER(entries);
 			}
 			break;
 		default:
@@ -161,19 +161,19 @@ gin_extract_query_trgm(PG_FUNCTION_ARGS)
 	if (trglen == 0)
 		*searchMode = GIN_SEARCH_MODE_ALL;
 
-	PG_RETURN_POINTER(entries);
+	MDB_RETURN_POINTER(entries);
 }
 
 Datum
-gin_trgm_consistent(PG_FUNCTION_ARGS)
+gin_trgm_consistent(MDB_FUNCTION_ARGS)
 {
-	bool	   *check = (bool *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
+	bool	   *check = (bool *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
 
-	/* text    *query = PG_GETARG_TEXT_P(2); */
-	int32		nkeys = PG_GETARG_INT32(3);
-	Pointer    *extra_data = (Pointer *) PG_GETARG_POINTER(4);
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(5);
+	/* text    *query = MDB_GETARG_TEXT_P(2); */
+	int32		nkeys = MDB_GETARG_INT32(3);
+	Pointer    *extra_data = (Pointer *) MDB_GETARG_POINTER(4);
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(5);
 	bool		res;
 	int32		i,
 				ntrue;
@@ -253,7 +253,7 @@ gin_trgm_consistent(PG_FUNCTION_ARGS)
 			break;
 	}
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 /*
@@ -263,14 +263,14 @@ gin_trgm_consistent(PG_FUNCTION_ARGS)
  * consistent function.
  */
 Datum
-gin_trgm_triconsistent(PG_FUNCTION_ARGS)
+gin_trgm_triconsistent(MDB_FUNCTION_ARGS)
 {
-	GinTernaryValue  *check = (GinTernaryValue *) PG_GETARG_POINTER(0);
-	StrategyNumber strategy = PG_GETARG_UINT16(1);
+	GinTernaryValue  *check = (GinTernaryValue *) MDB_GETARG_POINTER(0);
+	StrategyNumber strategy = MDB_GETARG_UINT16(1);
 
-	/* text    *query = PG_GETARG_TEXT_P(2); */
-	int32		nkeys = PG_GETARG_INT32(3);
-	Pointer    *extra_data = (Pointer *) PG_GETARG_POINTER(4);
+	/* text    *query = MDB_GETARG_TEXT_P(2); */
+	int32		nkeys = MDB_GETARG_INT32(3);
+	Pointer    *extra_data = (Pointer *) MDB_GETARG_POINTER(4);
 	GinTernaryValue	res = GIN_MAYBE;
 	int32		i,
 				ntrue;
@@ -351,5 +351,5 @@ gin_trgm_triconsistent(PG_FUNCTION_ARGS)
 
 	/* All cases served by this function are inexact */
 	Assert(res != GIN_TRUE);
-	PG_RETURN_GIN_TERNARY_VALUE(res);
+	MDB_RETURN_GIN_TERNARY_VALUE(res);
 }

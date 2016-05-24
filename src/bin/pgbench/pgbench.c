@@ -512,7 +512,7 @@ strtoint64(const char *str)
 		 */
 		if (strncmp(ptr, "9223372036854775808", 19) == 0)
 		{
-			result = PG_INT64_MIN;
+			result = MDB_INT64_MIN;
 			ptr += 19;
 			goto gotdigits;
 		}
@@ -1161,7 +1161,7 @@ coerceToInt(PgBenchValue *pval, int64 *ival)
 	{
 		double dval = pval->u.dval;
 		Assert(pval->type == PGBT_DOUBLE);
-		if (dval < PG_INT64_MIN || PG_INT64_MAX < dval)
+		if (dval < MDB_INT64_MIN || MDB_INT64_MAX < dval)
 		{
 			fprintf(stderr, "double to int overflow for %f\n", dval);
 			return false;
@@ -1312,7 +1312,7 @@ evalFunc(TState *thread, CState *st,
 								if (func == PGBENCH_DIV)
 								{
 									/* overflow check (needed for INT64_MIN) */
-									if (li == PG_INT64_MIN)
+									if (li == MDB_INT64_MIN)
 									{
 										fprintf(stderr, "bigint out of range\n");
 										return false;
@@ -3431,7 +3431,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pgbench (MollyDB) " PG_VERSION);
+			puts("pgbench (MollyDB) " MDB_VERSION);
 			exit(0);
 		}
 	}
@@ -3909,7 +3909,7 @@ main(int argc, char **argv)
 		res = PQexec(con, "select count(*) from pgbench_branches");
 		if (PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
-			char	   *sqlState = PQresultErrorField(res, PG_DIAG_SQLSTATE);
+			char	   *sqlState = PQresultErrorField(res, MDB_DIAG_SQLSTATE);
 
 			fprintf(stderr, "%s", PQerrorMessage(con));
 			if (sqlState && strcmp(sqlState, ERRCODE_UNDEFINED_TABLE) == 0)
@@ -4197,7 +4197,7 @@ threadRun(void *arg)
 		FD_ZERO(&input_mask);
 
 		maxsock = -1;
-		min_usec = PG_INT64_MAX;
+		min_usec = MDB_INT64_MAX;
 		for (i = 0; i < nstate; i++)
 		{
 			CState	   *st = &state[i];
@@ -4224,7 +4224,7 @@ threadRun(void *arg)
 				{
 					int			this_usec;
 
-					if (min_usec == PG_INT64_MAX)
+					if (min_usec == MDB_INT64_MAX)
 					{
 						instr_time	now;
 
@@ -4283,7 +4283,7 @@ threadRun(void *arg)
 		{
 			int			nsocks; /* return from select(2) */
 
-			if (min_usec != PG_INT64_MAX)
+			if (min_usec != MDB_INT64_MAX)
 			{
 				struct timeval timeout;
 

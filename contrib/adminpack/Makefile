@@ -2,15 +2,15 @@
 
 MODULE_big = adminpack
 OBJS = adminpack.o $(WIN32RES)
-PG_CPPFLAGS = -I$(libpq_srcdir)
+MDB_CPPFLAGS = -I$(libpq_srcdir)
 
 EXTENSION = adminpack
 DATA = adminpack--1.0.sql
 PGFILEDESC = "adminpack - support functions for pgAdmin"
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/adminpack

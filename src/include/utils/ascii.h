@@ -13,9 +13,9 @@
 
 #include "fmgr.h"
 
-extern Datum to_ascii_encname(PG_FUNCTION_ARGS);
-extern Datum to_ascii_enc(PG_FUNCTION_ARGS);
-extern Datum to_ascii_default(PG_FUNCTION_ARGS);
+extern Datum to_ascii_encname(MDB_FUNCTION_ARGS);
+extern Datum to_ascii_enc(MDB_FUNCTION_ARGS);
+extern Datum to_ascii_default(MDB_FUNCTION_ARGS);
 
 extern void ascii_safe_strlcpy(char *dest, const char *src, size_t destsiz);
 

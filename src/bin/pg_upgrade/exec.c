@@ -33,8 +33,8 @@ static int	win32_check_directory_write_permissions(void);
  * successfully, exec_prog() returns true.
  *
  * If the command fails, an error message is saved to the specified log_file.
- * If throw_error is true, this raises a PG_FATAL error and mdb_upgrade
- * terminates; otherwise it is just reported as PG_REPORT and exec_prog()
+ * If throw_error is true, this raises a MDB_FATAL error and mdb_upgrade
+ * terminates; otherwise it is just reported as MDB_REPORT and exec_prog()
  * returns false.
  *
  * The code requires it be called first from the primary thread on Windows.
@@ -70,7 +70,7 @@ exec_prog(const char *log_file, const char *opt_log_file,
 	if (written >= MAXCMDLEN)
 		mdb_fatal("command too long\n");
 
-	mdb_log(PG_VERBOSE, "%s\n", cmd);
+	mdb_log(MDB_VERBOSE, "%s\n", cmd);
 
 #ifdef WIN32
 
@@ -138,17 +138,17 @@ exec_prog(const char *log_file, const char *opt_log_file,
 	if (result != 0)
 	{
 		/* we might be in on a progress status line, so go to the next line */
-		report_status(PG_REPORT, "\n*failure*");
+		report_status(MDB_REPORT, "\n*failure*");
 		fflush(stdout);
 
-		mdb_log(PG_VERBOSE, "There were problems executing \"%s\"\n", cmd);
+		mdb_log(MDB_VERBOSE, "There were problems executing \"%s\"\n", cmd);
 		if (opt_log_file)
-			mdb_log(throw_error ? PG_FATAL : PG_REPORT,
+			mdb_log(throw_error ? MDB_FATAL : MDB_REPORT,
 				   "Consult the last few lines of \"%s\" or \"%s\" for\n"
 				   "the probable cause of the failure.\n",
 				   log_file, opt_log_file);
 		else
-			mdb_log(throw_error ? PG_FATAL : PG_REPORT,
+			mdb_log(throw_error ? MDB_FATAL : MDB_REPORT,
 				   "Consult the last few lines of \"%s\" for\n"
 				   "the probable cause of the failure.\n",
 				   log_file);
@@ -284,10 +284,10 @@ check_data_dir(const char *mdb_data)
 				 requiredSubdirs[subdirnum]);
 
 		if (stat(subDirName, &statBuf) != 0)
-			report_status(PG_FATAL, "check for \"%s\" failed: %s\n",
+			report_status(MDB_FATAL, "check for \"%s\" failed: %s\n",
 						  subDirName, getErrorText());
 		else if (!S_ISDIR(statBuf.st_mode))
-			report_status(PG_FATAL, "%s is not a directory\n",
+			report_status(MDB_FATAL, "%s is not a directory\n",
 						  subDirName);
 	}
 }
@@ -308,10 +308,10 @@ check_bin_dir(ClusterInfo *cluster)
 
 	/* check bindir */
 	if (stat(cluster->bindir, &statBuf) != 0)
-		report_status(PG_FATAL, "check for \"%s\" failed: %s\n",
+		report_status(MDB_FATAL, "check for \"%s\" failed: %s\n",
 					  cluster->bindir, getErrorText());
 	else if (!S_ISDIR(statBuf.st_mode))
-		report_status(PG_FATAL, "%s is not a directory\n",
+		report_status(MDB_FATAL, "%s is not a directory\n",
 					  cluster->bindir);
 
 	validate_exec(cluster->bindir, "mollydb");

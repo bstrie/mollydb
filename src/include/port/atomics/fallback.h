@@ -29,7 +29,7 @@
  * For example, I'm not sure that Itanium's acq and rel add up to a full
  * fence.  But all of our actual implementations seem OK in this regard.
  */
-#define PG_HAVE_MEMORY_BARRIER_EMULATION
+#define MDB_HAVE_MEMORY_BARRIER_EMULATION
 
 extern void mdb_spinlock_barrier(void);
 #define mdb_memory_barrier_impl mdb_spinlock_barrier
@@ -45,7 +45,7 @@ extern void mdb_spinlock_barrier(void);
  *
  * A native compiler barrier for sure is a lot faster than this...
  */
-#define PG_HAVE_COMPILER_BARRIER_EMULATION
+#define MDB_HAVE_COMPILER_BARRIER_EMULATION
 extern void mdb_extern_compiler_barrier(void);
 #define mdb_compiler_barrier_impl mdb_extern_compiler_barrier
 #endif
@@ -62,10 +62,10 @@ extern void mdb_extern_compiler_barrier(void);
  * to a spinlock. Instead assign a spinlock on initialization of the atomic
  * variable.
  */
-#if !defined(PG_HAVE_ATOMIC_FLAG_SUPPORT) && !defined(PG_HAVE_ATOMIC_U32_SUPPORT)
+#if !defined(MDB_HAVE_ATOMIC_FLAG_SUPPORT) && !defined(MDB_HAVE_ATOMIC_U32_SUPPORT)
 
-#define PG_HAVE_ATOMIC_FLAG_SIMULATION
-#define PG_HAVE_ATOMIC_FLAG_SUPPORT
+#define MDB_HAVE_ATOMIC_FLAG_SIMULATION
+#define MDB_HAVE_ATOMIC_FLAG_SUPPORT
 
 typedef struct mdb_atomic_flag
 {
@@ -82,13 +82,13 @@ typedef struct mdb_atomic_flag
 #endif
 } mdb_atomic_flag;
 
-#endif /* PG_HAVE_ATOMIC_FLAG_SUPPORT */
+#endif /* MDB_HAVE_ATOMIC_FLAG_SUPPORT */
 
-#if !defined(PG_HAVE_ATOMIC_U32_SUPPORT)
+#if !defined(MDB_HAVE_ATOMIC_U32_SUPPORT)
 
-#define PG_HAVE_ATOMIC_U32_SIMULATION
+#define MDB_HAVE_ATOMIC_U32_SIMULATION
 
-#define PG_HAVE_ATOMIC_U32_SUPPORT
+#define MDB_HAVE_ATOMIC_U32_SUPPORT
 typedef struct mdb_atomic_uint32
 {
 	/* Check mdb_atomic_flag's definition above for an explanation */
@@ -100,20 +100,20 @@ typedef struct mdb_atomic_uint32
 	volatile uint32 value;
 } mdb_atomic_uint32;
 
-#endif /* PG_HAVE_ATOMIC_U32_SUPPORT */
+#endif /* MDB_HAVE_ATOMIC_U32_SUPPORT */
 
-#ifdef PG_HAVE_ATOMIC_FLAG_SIMULATION
+#ifdef MDB_HAVE_ATOMIC_FLAG_SIMULATION
 
-#define PG_HAVE_ATOMIC_INIT_FLAG
+#define MDB_HAVE_ATOMIC_INIT_FLAG
 extern void mdb_atomic_init_flag_impl(volatile mdb_atomic_flag *ptr);
 
-#define PG_HAVE_ATOMIC_TEST_SET_FLAG
+#define MDB_HAVE_ATOMIC_TEST_SET_FLAG
 extern bool mdb_atomic_test_set_flag_impl(volatile mdb_atomic_flag *ptr);
 
-#define PG_HAVE_ATOMIC_CLEAR_FLAG
+#define MDB_HAVE_ATOMIC_CLEAR_FLAG
 extern void mdb_atomic_clear_flag_impl(volatile mdb_atomic_flag *ptr);
 
-#define PG_HAVE_ATOMIC_UNLOCKED_TEST_FLAG
+#define MDB_HAVE_ATOMIC_UNLOCKED_TEST_FLAG
 static inline bool
 mdb_atomic_unlocked_test_flag_impl(volatile mdb_atomic_flag *ptr)
 {
@@ -126,18 +126,18 @@ mdb_atomic_unlocked_test_flag_impl(volatile mdb_atomic_flag *ptr)
 	return true;
 }
 
-#endif /* PG_HAVE_ATOMIC_FLAG_SIMULATION */
+#endif /* MDB_HAVE_ATOMIC_FLAG_SIMULATION */
 
-#ifdef PG_HAVE_ATOMIC_U32_SIMULATION
+#ifdef MDB_HAVE_ATOMIC_U32_SIMULATION
 
-#define PG_HAVE_ATOMIC_INIT_U32
+#define MDB_HAVE_ATOMIC_INIT_U32
 extern void mdb_atomic_init_u32_impl(volatile mdb_atomic_uint32 *ptr, uint32 val_);
 
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
 extern bool mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 												uint32 *expected, uint32 newval);
 
-#define PG_HAVE_ATOMIC_FETCH_ADD_U32
+#define MDB_HAVE_ATOMIC_FETCH_ADD_U32
 extern uint32 mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_);
 
-#endif /* PG_HAVE_ATOMIC_U32_SIMULATION */
+#endif /* MDB_HAVE_ATOMIC_U32_SIMULATION */

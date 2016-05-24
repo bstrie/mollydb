@@ -18,8 +18,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_TS_CONFIG_MAP_H
-#define PG_TS_CONFIG_MAP_H
+#ifndef MDB_TS_CONFIG_MAP_H
+#define MDB_TS_CONFIG_MAP_H
 
 #include "catalog/genbki.h"
 
@@ -75,4 +75,4 @@ DATA(insert ( 3748	20	1	3765 ));
 DATA(insert ( 3748	21	1	3765 ));
 DATA(insert ( 3748	22	1	3765 ));
 
-#endif   /* PG_TS_CONFIG_MAP_H */
+#endif   /* MDB_TS_CONFIG_MAP_H */

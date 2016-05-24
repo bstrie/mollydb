@@ -1622,7 +1622,7 @@ formrdesc(const char *relationName, Oid relationReltype,
 	relation->rd_rel = (Form_mdb_class) palloc0(CLASS_TUPLE_SIZE);
 
 	namestrcpy(&relation->rd_rel->relname, relationName);
-	relation->rd_rel->relnamespace = PG_CATALOG_NAMESPACE;
+	relation->rd_rel->relnamespace = MDB_CATALOG_NAMESPACE;
 	relation->rd_rel->reltype = relationReltype;
 
 	/*
@@ -4596,9 +4596,9 @@ RelationGetExclusionInfo(Relation indexRelation,
 int
 errtable(Relation rel)
 {
-	err_generic_string(PG_DIAG_SCHEMA_NAME,
+	err_generic_string(MDB_DIAG_SCHEMA_NAME,
 					   get_namespace_name(RelationGetNamespace(rel)));
-	err_generic_string(PG_DIAG_TABLE_NAME, RelationGetRelationName(rel));
+	err_generic_string(MDB_DIAG_TABLE_NAME, RelationGetRelationName(rel));
 
 	return 0;					/* return value does not matter */
 }
@@ -4638,7 +4638,7 @@ int
 errtablecolname(Relation rel, const char *colname)
 {
 	errtable(rel);
-	err_generic_string(PG_DIAG_COLUMN_NAME, colname);
+	err_generic_string(MDB_DIAG_COLUMN_NAME, colname);
 
 	return 0;					/* return value does not matter */
 }
@@ -4651,7 +4651,7 @@ int
 errtableconstraint(Relation rel, const char *conname)
 {
 	errtable(rel);
-	err_generic_string(PG_DIAG_CONSTRAINT_NAME, conname);
+	err_generic_string(MDB_DIAG_CONSTRAINT_NAME, conname);
 
 	return 0;					/* return value does not matter */
 }
@@ -4732,7 +4732,7 @@ load_relcache_init_file(bool shared)
 		snprintf(initfilename, sizeof(initfilename), "%s/%s",
 				 DatabasePath, RELCACHE_INIT_FILENAME);
 
-	fp = AllocateFile(initfilename, PG_BINARY_R);
+	fp = AllocateFile(initfilename, MDB_BINARY_R);
 	if (fp == NULL)
 		return false;
 
@@ -5123,7 +5123,7 @@ write_relcache_init_file(bool shared)
 
 	unlink(tempfilename);		/* in case it exists w/wrong permissions */
 
-	fp = AllocateFile(tempfilename, PG_BINARY_W);
+	fp = AllocateFile(tempfilename, MDB_BINARY_W);
 	if (fp == NULL)
 	{
 		/*

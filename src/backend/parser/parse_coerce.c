@@ -316,7 +316,7 @@ coerce_type(ParseState *pstate, Node *node,
 		 */
 		if (!con->constisnull && newcon->constlen == -1)
 			newcon->constvalue =
-				PointerGetDatum(PG_DETOAST_DATUM(newcon->constvalue));
+				PointerGetDatum(MDB_DETOAST_DATUM(newcon->constvalue));
 
 #ifdef RANDOMIZE_ALLOCATED_MEMORY
 
@@ -339,7 +339,7 @@ coerce_type(ParseState *pstate, Node *node,
 								   DatumGetCString(con->constvalue),
 								   inputTypeMod);
 			if (newcon->constlen == -1)
-				val2 = PointerGetDatum(PG_DETOAST_DATUM(val2));
+				val2 = PointerGetDatum(MDB_DETOAST_DATUM(val2));
 			if (!datumIsEqual(newcon->constvalue, val2, false, newcon->constlen))
 				elog(WARNING, "type %s has unstable input conversion for \"%s\"",
 				   typeTypeName(baseType), DatumGetCString(con->constvalue));

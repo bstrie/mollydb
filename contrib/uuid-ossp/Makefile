@@ -14,13 +14,13 @@ SHLIB_LINK += $(UUID_LIBS)
 # We copy some needed files verbatim from pgcrypto
 pgcrypto_src = $(top_srcdir)/contrib/pgcrypto
 
-PG_CPPFLAGS = -I$(pgcrypto_src)
+MDB_CPPFLAGS = -I$(pgcrypto_src)
 
 EXTRA_CLEAN = md5.c sha1.c
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = contrib/uuid-ossp

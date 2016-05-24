@@ -16,8 +16,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_FOREIGN_DATA_WRAPPER_H
-#define PG_FOREIGN_DATA_WRAPPER_H
+#ifndef MDB_FOREIGN_DATA_WRAPPER_H
+#define MDB_FOREIGN_DATA_WRAPPER_H
 
 #include "catalog/genbki.h"
 
@@ -61,4 +61,4 @@ typedef FormData_mdb_foreign_data_wrapper *Form_mdb_foreign_data_wrapper;
 #define Anum_mdb_foreign_data_wrapper_fdwacl			5
 #define Anum_mdb_foreign_data_wrapper_fdwoptions		6
 
-#endif   /* PG_FOREIGN_DATA_WRAPPER_H */
+#endif   /* MDB_FOREIGN_DATA_WRAPPER_H */

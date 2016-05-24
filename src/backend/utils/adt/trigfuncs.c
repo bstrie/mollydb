@@ -26,7 +26,7 @@
  * if the OLD and NEW records are identical.
  */
 Datum
-suppress_redundant_updates_trigger(PG_FUNCTION_ARGS)
+suppress_redundant_updates_trigger(MDB_FUNCTION_ARGS)
 {
 	TriggerData *trigdata = (TriggerData *) fcinfo->context;
 	HeapTuple	newtuple,

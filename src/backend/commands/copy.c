@@ -337,7 +337,7 @@ static bool CopyGetInt16(CopyState cstate, int16 *val);
 static void
 SendCopyBegin(CopyState cstate)
 {
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
 	{
 		/* new way */
 		StringInfoData buf;
@@ -353,7 +353,7 @@ SendCopyBegin(CopyState cstate)
 		pq_endmessage(&buf);
 		cstate->copy_dest = COPY_NEW_FE;
 	}
-	else if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 2)
+	else if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 2)
 	{
 		/* old way */
 		if (cstate->binary)
@@ -382,7 +382,7 @@ SendCopyBegin(CopyState cstate)
 static void
 ReceiveCopyBegin(CopyState cstate)
 {
-	if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
+	if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 3)
 	{
 		/* new way */
 		StringInfoData buf;
@@ -399,7 +399,7 @@ ReceiveCopyBegin(CopyState cstate)
 		cstate->copy_dest = COPY_NEW_FE;
 		cstate->fe_msgbuf = makeStringInfo();
 	}
-	else if (PG_PROTOCOL_MAJOR(FrontendProtocol) >= 2)
+	else if (MDB_PROTOCOL_MAJOR(FrontendProtocol) >= 2)
 	{
 		/* old way */
 		if (cstate->binary)
@@ -1621,7 +1621,7 @@ BeginCopy(bool is_from,
 		(cstate->file_encoding != GetDatabaseEncoding() ||
 		 mdb_database_encoding_max_length() > 1);
 	/* See Multibyte encoding comment above */
-	cstate->encoding_embeds_ascii = PG_ENCODING_IS_CLIENT_ONLY(cstate->file_encoding);
+	cstate->encoding_embeds_ascii = MDB_ENCODING_IS_CLIENT_ONLY(cstate->file_encoding);
 
 	cstate->copy_dest = COPY_FILE;		/* default */
 
@@ -1742,7 +1742,7 @@ BeginCopyTo(Relation rel,
 
 		if (is_program)
 		{
-			cstate->copy_file = OpenPipeStream(cstate->filename, PG_BINARY_W);
+			cstate->copy_file = OpenPipeStream(cstate->filename, MDB_BINARY_W);
 			if (cstate->copy_file == NULL)
 				ereport(ERROR,
 						(errcode_for_file_access(),
@@ -1764,7 +1764,7 @@ BeginCopyTo(Relation rel,
 					  errmsg("relative path not allowed for COPY to file")));
 
 			oumask = umask(S_IWGRP | S_IWOTH);
-			cstate->copy_file = AllocateFile(cstate->filename, PG_BINARY_W);
+			cstate->copy_file = AllocateFile(cstate->filename, MDB_BINARY_W);
 			umask(oumask);
 			if (cstate->copy_file == NULL)
 				ereport(ERROR,
@@ -1801,7 +1801,7 @@ DoCopyTo(CopyState cstate)
 	bool		fe_copy = (pipe && whereToSendOutput == DestRemote);
 	uint64		processed;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		if (fe_copy)
 			SendCopyBegin(cstate);
@@ -1811,7 +1811,7 @@ DoCopyTo(CopyState cstate)
 		if (fe_copy)
 			SendCopyEnd(cstate);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/*
 		 * Make sure we turn off old-style COPY OUT mode upon error. It is
@@ -1819,9 +1819,9 @@ DoCopyTo(CopyState cstate)
 		 * not on.
 		 */
 		pq_endcopyout(true);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	return processed;
 }
@@ -2780,7 +2780,7 @@ BeginCopyFrom(Relation rel,
 
 		if (cstate->is_program)
 		{
-			cstate->copy_file = OpenPipeStream(cstate->filename, PG_BINARY_R);
+			cstate->copy_file = OpenPipeStream(cstate->filename, MDB_BINARY_R);
 			if (cstate->copy_file == NULL)
 				ereport(ERROR,
 						(errcode_for_file_access(),
@@ -2791,7 +2791,7 @@ BeginCopyFrom(Relation rel,
 		{
 			struct stat st;
 
-			cstate->copy_file = AllocateFile(cstate->filename, PG_BINARY_R);
+			cstate->copy_file = AllocateFile(cstate->filename, MDB_BINARY_R);
 			if (cstate->copy_file == NULL)
 				ereport(ERROR,
 						(errcode_for_file_access(),

@@ -716,11 +716,11 @@ pushval_asis(Datum opaque, TSQueryParserState state, char *strval, int lenval,
  * in without morphology
  */
 Datum
-tsqueryin(PG_FUNCTION_ARGS)
+tsqueryin(MDB_FUNCTION_ARGS)
 {
-	char	   *in = PG_GETARG_CSTRING(0);
+	char	   *in = MDB_GETARG_CSTRING(0);
 
-	PG_RETURN_TSQUERY(parse_tsquery(in, pushval_asis, PointerGetDatum(NULL), false));
+	MDB_RETURN_TSQUERY(parse_tsquery(in, pushval_asis, PointerGetDatum(NULL), false));
 }
 
 /*
@@ -906,9 +906,9 @@ infix(INFIX *in, int parentPriority)
 }
 
 Datum
-tsqueryout(PG_FUNCTION_ARGS)
+tsqueryout(MDB_FUNCTION_ARGS)
 {
-	TSQuery		query = PG_GETARG_TSQUERY(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(0);
 	INFIX		nrm;
 
 	if (query->size == 0)
@@ -916,7 +916,7 @@ tsqueryout(PG_FUNCTION_ARGS)
 		char	   *b = palloc(1);
 
 		*b = '\0';
-		PG_RETURN_POINTER(b);
+		MDB_RETURN_POINTER(b);
 	}
 	nrm.curpol = GETQUERY(query);
 	nrm.buflen = 32;
@@ -925,8 +925,8 @@ tsqueryout(PG_FUNCTION_ARGS)
 	nrm.op = GETOPERAND(query);
 	infix(&nrm, -1 /* lowest priority */);
 
-	PG_FREE_IF_COPY(query, 0);
-	PG_RETURN_CSTRING(nrm.buf);
+	MDB_FREE_IF_COPY(query, 0);
+	MDB_RETURN_CSTRING(nrm.buf);
 }
 
 /*
@@ -948,9 +948,9 @@ tsqueryout(PG_FUNCTION_ARGS)
  * uint16	distance (only for OP_PHRASE)
  */
 Datum
-tsquerysend(PG_FUNCTION_ARGS)
+tsquerysend(MDB_FUNCTION_ARGS)
 {
-	TSQuery		query = PG_GETARG_TSQUERY(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(0);
 	StringInfoData buf;
 	int			i;
 	QueryItem  *item = GETQUERY(query);
@@ -981,15 +981,15 @@ tsquerysend(PG_FUNCTION_ARGS)
 		item++;
 	}
 
-	PG_FREE_IF_COPY(query, 0);
+	MDB_FREE_IF_COPY(query, 0);
 
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 Datum
-tsqueryrecv(PG_FUNCTION_ARGS)
+tsqueryrecv(MDB_FUNCTION_ARGS)
 {
-	StringInfo		buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo		buf = (StringInfo) MDB_GETARG_POINTER(0);
 	TSQuery			query;
 	int				i,
 					len;
@@ -1112,9 +1112,9 @@ tsqueryrecv(PG_FUNCTION_ARGS)
 	SET_VARSIZE(query, len + datalen);
 
 	if (needcleanup)
-		PG_RETURN_TSQUERY(cleanup_fakeval_and_phrase(query));
+		MDB_RETURN_TSQUERY(cleanup_fakeval_and_phrase(query));
 
-	PG_RETURN_TSQUERY(query);
+	MDB_RETURN_TSQUERY(query);
 }
 
 /*
@@ -1122,9 +1122,9 @@ tsqueryrecv(PG_FUNCTION_ARGS)
  * which will be executed in non-leaf pages in index
  */
 Datum
-tsquerytree(PG_FUNCTION_ARGS)
+tsquerytree(MDB_FUNCTION_ARGS)
 {
-	TSQuery		query = PG_GETARG_TSQUERY(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(0);
 	INFIX		nrm;
 	text	   *res;
 	QueryItem  *q;
@@ -1134,7 +1134,7 @@ tsquerytree(PG_FUNCTION_ARGS)
 	{
 		res = (text *) palloc(VARHDRSZ);
 		SET_VARSIZE(res, VARHDRSZ);
-		PG_RETURN_POINTER(res);
+		MDB_RETURN_POINTER(res);
 	}
 
 	q = clean_NOT(GETQUERY(query), &len);
@@ -1155,7 +1155,7 @@ tsquerytree(PG_FUNCTION_ARGS)
 		pfree(q);
 	}
 
-	PG_FREE_IF_COPY(query, 0);
+	MDB_FREE_IF_COPY(query, 0);
 
-	PG_RETURN_TEXT_P(res);
+	MDB_RETURN_TEXT_P(res);
 }

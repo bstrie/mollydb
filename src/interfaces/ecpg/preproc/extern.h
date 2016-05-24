@@ -1,7 +1,7 @@
 /* src/interfaces/ecpg/preproc/extern.h */
 
-#ifndef _ECPG_PREPROC_EXTERN_H
-#define _ECPG_PREPROC_EXTERN_H
+#ifndef _ECMDB_PREPROC_EXTERN_H
+#define _ECMDB_PREPROC_EXTERN_H
 
 #include "type.h"
 
@@ -68,7 +68,7 @@ extern const int NumSQLScanKeywords;
 extern const char *get_dtype(enum ECPGdtype);
 extern void lex_init(void);
 extern void output_line_number(void);
-extern void output_statement(char *, int, enum ECPG_statement_type);
+extern void output_statement(char *, int, enum ECMDB_statement_type);
 extern void output_prepare_statement(char *, char *);
 extern void output_deallocate_prepare_statement(char *);
 extern void output_simple_statement(char *);
@@ -122,10 +122,10 @@ extern int	filtered_base_yylex(void);
 
 enum COMPAT_MODE
 {
-	ECPG_COMPAT_PGSQL = 0, ECPG_COMPAT_INFORMIX, ECPG_COMPAT_INFORMIX_SE
+	ECMDB_COMPAT_PGSQL = 0, ECMDB_COMPAT_INFORMIX, ECMDB_COMPAT_INFORMIX_SE
 };
 extern enum COMPAT_MODE compat;
 
-#define INFORMIX_MODE	(compat == ECPG_COMPAT_INFORMIX || compat == ECPG_COMPAT_INFORMIX_SE)
+#define INFORMIX_MODE	(compat == ECMDB_COMPAT_INFORMIX || compat == ECMDB_COMPAT_INFORMIX_SE)
 
-#endif   /* _ECPG_PREPROC_EXTERN_H */
+#endif   /* _ECMDB_PREPROC_EXTERN_H */

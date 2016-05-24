@@ -18,13 +18,13 @@ typedef struct
 /*
 ** OID ops
 */
-PG_FUNCTION_INFO_V1(gbt_macad_compress);
-PG_FUNCTION_INFO_V1(gbt_macad_fetch);
-PG_FUNCTION_INFO_V1(gbt_macad_union);
-PG_FUNCTION_INFO_V1(gbt_macad_picksplit);
-PG_FUNCTION_INFO_V1(gbt_macad_consistent);
-PG_FUNCTION_INFO_V1(gbt_macad_penalty);
-PG_FUNCTION_INFO_V1(gbt_macad_same);
+MDB_FUNCTION_INFO_V1(gbt_macad_compress);
+MDB_FUNCTION_INFO_V1(gbt_macad_fetch);
+MDB_FUNCTION_INFO_V1(gbt_macad_union);
+MDB_FUNCTION_INFO_V1(gbt_macad_picksplit);
+MDB_FUNCTION_INFO_V1(gbt_macad_consistent);
+MDB_FUNCTION_INFO_V1(gbt_macad_penalty);
+MDB_FUNCTION_INFO_V1(gbt_macad_same);
 
 
 static bool
@@ -108,30 +108,30 @@ mac_2_uint64(macaddr *m)
 
 
 Datum
-gbt_macad_compress(PG_FUNCTION_ARGS)
+gbt_macad_compress(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_compress(entry, &tinfo));
 }
 
 Datum
-gbt_macad_fetch(PG_FUNCTION_ARGS)
+gbt_macad_fetch(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
 
-	PG_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
+	MDB_RETURN_POINTER(gbt_num_fetch(entry, &tinfo));
 }
 
 Datum
-gbt_macad_consistent(PG_FUNCTION_ARGS)
+gbt_macad_consistent(MDB_FUNCTION_ARGS)
 {
-	GISTENTRY  *entry = (GISTENTRY *) PG_GETARG_POINTER(0);
-	macaddr    *query = (macaddr *) PG_GETARG_POINTER(1);
-	StrategyNumber strategy = (StrategyNumber) PG_GETARG_UINT16(2);
+	GISTENTRY  *entry = (GISTENTRY *) MDB_GETARG_POINTER(0);
+	macaddr    *query = (macaddr *) MDB_GETARG_POINTER(1);
+	StrategyNumber strategy = (StrategyNumber) MDB_GETARG_UINT16(2);
 
-	/* Oid		subtype = PG_GETARG_OID(3); */
-	bool	   *recheck = (bool *) PG_GETARG_POINTER(4);
+	/* Oid		subtype = MDB_GETARG_OID(3); */
+	bool	   *recheck = (bool *) MDB_GETARG_POINTER(4);
 	macKEY	   *kkk = (macKEY *) DatumGetPointer(entry->key);
 	GBT_NUMKEY_R key;
 
@@ -141,29 +141,29 @@ gbt_macad_consistent(PG_FUNCTION_ARGS)
 	key.lower = (GBT_NUMKEY *) &kkk->lower;
 	key.upper = (GBT_NUMKEY *) &kkk->upper;
 
-	PG_RETURN_BOOL(
+	MDB_RETURN_BOOL(
 				   gbt_num_consistent(&key, (void *) query, &strategy, GIST_LEAF(entry), &tinfo)
 		);
 }
 
 
 Datum
-gbt_macad_union(PG_FUNCTION_ARGS)
+gbt_macad_union(MDB_FUNCTION_ARGS)
 {
-	GistEntryVector *entryvec = (GistEntryVector *) PG_GETARG_POINTER(0);
+	GistEntryVector *entryvec = (GistEntryVector *) MDB_GETARG_POINTER(0);
 	void	   *out = palloc0(sizeof(macKEY));
 
-	*(int *) PG_GETARG_POINTER(1) = sizeof(macKEY);
-	PG_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
+	*(int *) MDB_GETARG_POINTER(1) = sizeof(macKEY);
+	MDB_RETURN_POINTER(gbt_num_union((void *) out, entryvec, &tinfo));
 }
 
 
 Datum
-gbt_macad_penalty(PG_FUNCTION_ARGS)
+gbt_macad_penalty(MDB_FUNCTION_ARGS)
 {
-	macKEY	   *origentry = (macKEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(0))->key);
-	macKEY	   *newentry = (macKEY *) DatumGetPointer(((GISTENTRY *) PG_GETARG_POINTER(1))->key);
-	float	   *result = (float *) PG_GETARG_POINTER(2);
+	macKEY	   *origentry = (macKEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(0))->key);
+	macKEY	   *newentry = (macKEY *) DatumGetPointer(((GISTENTRY *) MDB_GETARG_POINTER(1))->key);
+	float	   *result = (float *) MDB_GETARG_POINTER(2);
 	uint64		iorg[2],
 				inew[2];
 
@@ -174,27 +174,27 @@ gbt_macad_penalty(PG_FUNCTION_ARGS)
 
 	penalty_num(result, iorg[0], iorg[1], inew[0], inew[1]);
 
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 
 }
 
 Datum
-gbt_macad_picksplit(PG_FUNCTION_ARGS)
+gbt_macad_picksplit(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_POINTER(gbt_num_picksplit(
-									(GistEntryVector *) PG_GETARG_POINTER(0),
-									  (GIST_SPLITVEC *) PG_GETARG_POINTER(1),
+	MDB_RETURN_POINTER(gbt_num_picksplit(
+									(GistEntryVector *) MDB_GETARG_POINTER(0),
+									  (GIST_SPLITVEC *) MDB_GETARG_POINTER(1),
 										&tinfo
 										));
 }
 
 Datum
-gbt_macad_same(PG_FUNCTION_ARGS)
+gbt_macad_same(MDB_FUNCTION_ARGS)
 {
-	macKEY	   *b1 = (macKEY *) PG_GETARG_POINTER(0);
-	macKEY	   *b2 = (macKEY *) PG_GETARG_POINTER(1);
-	bool	   *result = (bool *) PG_GETARG_POINTER(2);
+	macKEY	   *b1 = (macKEY *) MDB_GETARG_POINTER(0);
+	macKEY	   *b2 = (macKEY *) MDB_GETARG_POINTER(1);
+	bool	   *result = (bool *) MDB_GETARG_POINTER(2);
 
 	*result = gbt_num_same((void *) b1, (void *) b2, &tinfo);
-	PG_RETURN_POINTER(result);
+	MDB_RETURN_POINTER(result);
 }

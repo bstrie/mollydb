@@ -30,7 +30,7 @@ static bool plmdb_extra_checks_check_hook(char **newvalue, void **extra, GucSour
 static void plmdb_extra_warnings_assign_hook(const char *newvalue, void *extra);
 static void plmdb_extra_errors_assign_hook(const char *newvalue, void *extra);
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* Custom GUC variable */
 static const struct config_enum_entry variable_conflict_options[] = {
@@ -130,12 +130,12 @@ plmdb_extra_errors_assign_hook(const char *newvalue, void *extra)
 
 
 /*
- * _PG_init()			- library load-time initialization
+ * _MDB_init()			- library load-time initialization
  *
  * DO NOT make this static nor change its name!
  */
 void
-_PG_init(void)
+_MDB_init(void)
 {
 	/* Be sure we do initialization only once (should be redundant now) */
 	static bool inited = false;
@@ -209,10 +209,10 @@ _PG_init(void)
  * call this function for execution of PL/pgSQL procedures.
  * ----------
  */
-PG_FUNCTION_INFO_V1(plmdb_call_handler);
+MDB_FUNCTION_INFO_V1(plmdb_call_handler);
 
 Datum
-plmdb_call_handler(PG_FUNCTION_ARGS)
+plmdb_call_handler(MDB_FUNCTION_ARGS)
 {
 	PLpgSQL_function *func;
 	PLpgSQL_execstate *save_cur_estate;
@@ -234,7 +234,7 @@ plmdb_call_handler(PG_FUNCTION_ARGS)
 	/* Mark the function as busy, so it can't be deleted from under us */
 	func->use_count++;
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		/*
 		 * Determine if called as function or trigger and call appropriate
@@ -252,14 +252,14 @@ plmdb_call_handler(PG_FUNCTION_ARGS)
 		else
 			retval = plmdb_exec_function(func, fcinfo, NULL);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/* Decrement use-count, restore cur_estate, and propagate error */
 		func->use_count--;
 		func->cur_estate = save_cur_estate;
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	func->use_count--;
 
@@ -280,12 +280,12 @@ plmdb_call_handler(PG_FUNCTION_ARGS)
  * Called by MollyDB to execute an anonymous code block
  * ----------
  */
-PG_FUNCTION_INFO_V1(plmdb_inline_handler);
+MDB_FUNCTION_INFO_V1(plmdb_inline_handler);
 
 Datum
-plmdb_inline_handler(PG_FUNCTION_ARGS)
+plmdb_inline_handler(MDB_FUNCTION_ARGS)
 {
-	InlineCodeBlock *codeblock = (InlineCodeBlock *) DatumGetPointer(PG_GETARG_DATUM(0));
+	InlineCodeBlock *codeblock = (InlineCodeBlock *) DatumGetPointer(MDB_GETARG_DATUM(0));
 	PLpgSQL_function *func;
 	FunctionCallInfoData fake_fcinfo;
 	FmgrInfo	flinfo;
@@ -322,11 +322,11 @@ plmdb_inline_handler(PG_FUNCTION_ARGS)
 	simple_eval_estate = CreateExecutorState();
 
 	/* And run the function */
-	PG_TRY();
+	MDB_TRY();
 	{
 		retval = plmdb_exec_function(func, &fake_fcinfo, simple_eval_estate);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		/*
 		 * We need to clean up what would otherwise be long-lived resources
@@ -357,9 +357,9 @@ plmdb_inline_handler(PG_FUNCTION_ARGS)
 		plmdb_free_function_memory(func);
 
 		/* And propagate the error */
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	/* Clean up the private EState */
 	FreeExecutorState(simple_eval_estate);
@@ -387,12 +387,12 @@ plmdb_inline_handler(PG_FUNCTION_ARGS)
  * CREATE FUNCTION time.
  * ----------
  */
-PG_FUNCTION_INFO_V1(plmdb_validator);
+MDB_FUNCTION_INFO_V1(plmdb_validator);
 
 Datum
-plmdb_validator(PG_FUNCTION_ARGS)
+plmdb_validator(MDB_FUNCTION_ARGS)
 {
-	Oid			funcoid = PG_GETARG_OID(0);
+	Oid			funcoid = MDB_GETARG_OID(0);
 	HeapTuple	tuple;
 	Form_mdb_proc proc;
 	char		functyptype;
@@ -405,7 +405,7 @@ plmdb_validator(PG_FUNCTION_ARGS)
 	int			i;
 
 	if (!CheckFunctionValidatorAccess(fcinfo->flinfo->fn_oid, funcoid))
-		PG_RETURN_VOID();
+		MDB_RETURN_VOID();
 
 	/* Get the new function's mdb_proc entry */
 	tuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcoid));
@@ -499,5 +499,5 @@ plmdb_validator(PG_FUNCTION_ARGS)
 
 	ReleaseSysCache(tuple);
 
-	PG_RETURN_VOID();
+	MDB_RETURN_VOID();
 }

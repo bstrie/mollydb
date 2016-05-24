@@ -8,8 +8,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_REWIND_H
-#define PG_REWIND_H
+#ifndef MDB_REWIND_H
+#define MDB_REWIND_H
 
 #include "c.h"
 
@@ -45,4 +45,4 @@ extern XLogRecPtr readOneRecord(const char *datadir, XLogRecPtr ptr,
 extern TimeLineHistoryEntry *rewind_parseTimeLineHistory(char *buffer,
 							TimeLineID targetTLI, int *nentries);
 
-#endif   /* PG_REWIND_H */
+#endif   /* MDB_REWIND_H */

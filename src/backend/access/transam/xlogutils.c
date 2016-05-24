@@ -686,7 +686,7 @@ XLogRead(char *buf, TimeLineID tli, XLogRecPtr startptr, Size count)
 
 			XLogFilePath(path, tli, sendSegNo);
 
-			sendFile = BasicOpenFile(path, O_RDONLY | PG_BINARY, 0);
+			sendFile = BasicOpenFile(path, O_RDONLY | MDB_BINARY, 0);
 
 			if (sendFile < 0)
 			{

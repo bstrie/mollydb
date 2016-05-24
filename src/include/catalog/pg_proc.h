@@ -20,8 +20,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_PROC_H
-#define PG_PROC_H
+#ifndef MDB_PROC_H
+#define MDB_PROC_H
 
 #include "catalog/genbki.h"
 
@@ -1946,10 +1946,10 @@ DESCR("convert string with specified destination encoding name");
 DATA(insert OID = 1813 (  convert		   PGNSP PGUID 12 1 0 0 0 f f f f t f s s 3 0 17 "17 19 19" _null_ _null_ _null_ _null_ _null_ mdb_convert _null_ _null_ _null_ ));
 DESCR("convert string with specified encoding names");
 
-DATA(insert OID = 1264 (  mdb_char_to_encoding	   PGNSP PGUID 12 1 0 0 0 f f f f t f s s 1 0 23 "19" _null_ _null_ _null_ _null_ _null_ PG_char_to_encoding _null_ _null_ _null_ ));
+DATA(insert OID = 1264 (  mdb_char_to_encoding	   PGNSP PGUID 12 1 0 0 0 f f f f t f s s 1 0 23 "19" _null_ _null_ _null_ _null_ _null_ MDB_char_to_encoding _null_ _null_ _null_ ));
 DESCR("convert encoding name to encoding id");
 
-DATA(insert OID = 1597 (  mdb_encoding_to_char	   PGNSP PGUID 12 1 0 0 0 f f f f t f s s 1 0 19 "23" _null_ _null_ _null_ _null_ _null_ PG_encoding_to_char _null_ _null_ _null_ ));
+DATA(insert OID = 1597 (  mdb_encoding_to_char	   PGNSP PGUID 12 1 0 0 0 f f f f t f s s 1 0 19 "23" _null_ _null_ _null_ _null_ _null_ MDB_encoding_to_char _null_ _null_ _null_ ));
 DESCR("convert encoding id to encoding name");
 
 DATA(insert OID = 2319 (  mdb_encoding_max_length   PGNSP PGUID 12 1 0 0 0 f f f f t f i s 1 0 23 "23" _null_ _null_ _null_ _null_ _null_ mdb_encoding_max_length_sql _null_ _null_ _null_ ));
@@ -5351,4 +5351,4 @@ DESCR("mdb_controldata init state information as a function");
 #define PROARGMODE_VARIADIC 'v'
 #define PROARGMODE_TABLE	't'
 
-#endif   /* PG_PROC_H */
+#endif   /* MDB_PROC_H */

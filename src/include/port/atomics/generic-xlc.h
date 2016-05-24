@@ -18,7 +18,7 @@
 
 #if defined(HAVE_ATOMICS)
 
-#define PG_HAVE_ATOMIC_U32_SUPPORT
+#define MDB_HAVE_ATOMIC_U32_SUPPORT
 typedef struct mdb_atomic_uint32
 {
 	volatile uint32 value;
@@ -27,7 +27,7 @@ typedef struct mdb_atomic_uint32
 
 /* 64bit atomics are only supported in 64bit mode */
 #ifdef __64BIT__
-#define PG_HAVE_ATOMIC_U64_SUPPORT
+#define MDB_HAVE_ATOMIC_U64_SUPPORT
 typedef struct mdb_atomic_uint64
 {
 	volatile uint64 value mdb_attribute_aligned(8);
@@ -35,7 +35,7 @@ typedef struct mdb_atomic_uint64
 
 #endif /* __64BIT__ */
 
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
 static inline bool
 mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 									uint32 *expected, uint32 newval)
@@ -69,7 +69,7 @@ mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 	return ret;
 }
 
-#define PG_HAVE_ATOMIC_FETCH_ADD_U32
+#define MDB_HAVE_ATOMIC_FETCH_ADD_U32
 static inline uint32
 mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_)
 {
@@ -80,9 +80,9 @@ mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_)
 	return __fetch_and_add((volatile int *)&ptr->value, add_);
 }
 
-#ifdef PG_HAVE_ATOMIC_U64_SUPPORT
+#ifdef MDB_HAVE_ATOMIC_U64_SUPPORT
 
-#define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
+#define MDB_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
 static inline bool
 mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 									uint64 *expected, uint64 newval)
@@ -99,13 +99,13 @@ mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 	return ret;
 }
 
-#define PG_HAVE_ATOMIC_FETCH_ADD_U64
+#define MDB_HAVE_ATOMIC_FETCH_ADD_U64
 static inline uint64
 mdb_atomic_fetch_add_u64_impl(volatile mdb_atomic_uint64 *ptr, int64 add_)
 {
 	return __fetch_and_addlp((volatile long *)&ptr->value, add_);
 }
 
-#endif /* PG_HAVE_ATOMIC_U64_SUPPORT */
+#endif /* MDB_HAVE_ATOMIC_U64_SUPPORT */
 
 #endif /* defined(HAVE_ATOMICS) */

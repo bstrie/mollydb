@@ -6,8 +6,8 @@ EXTRA_INSTALL=contrib/pageinspect
 ISOLATIONCHECKS=summarization-and-inprogress-insertion
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = src/test/modules/brin

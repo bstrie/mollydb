@@ -9,8 +9,8 @@
  *
  *-------------------------------------------------------------------------
  */
-#ifndef PG_REWIND_LOGGING_H
-#define PG_REWIND_LOGGING_H
+#ifndef MDB_REWIND_LOGGING_H
+#define MDB_REWIND_LOGGING_H
 
 /* progress counters */
 extern uint64 fetch_size;
@@ -21,10 +21,10 @@ extern uint64 fetch_done;
  */
 typedef enum
 {
-	PG_DEBUG,
-	PG_PROGRESS,
-	PG_WARNING,
-	PG_FATAL
+	MDB_DEBUG,
+	MDB_PROGRESS,
+	MDB_WARNING,
+	MDB_FATAL
 } eLogType;
 
 extern void mdb_log(eLogType type, const char *fmt,...) mdb_attribute_printf(2, 3);
@@ -32,4 +32,4 @@ extern void mdb_fatal(const char *fmt,...) mdb_attribute_printf(1, 2) mdb_attrib
 
 extern void progress_report(bool force);
 
-#endif   /* PG_REWIND_LOGGING_H */
+#endif   /* MDB_REWIND_LOGGING_H */

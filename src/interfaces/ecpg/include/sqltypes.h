@@ -1,5 +1,5 @@
-#ifndef ECPG_SQLTYPES_H
-#define ECPG_SQLTYPES_H
+#ifndef ECMDB_SQLTYPES_H
+#define ECMDB_SQLTYPES_H
 
 #include <limits.h>
 
@@ -54,4 +54,4 @@
 #define SQLSERIAL8	ECPGt_long
 #endif
 
-#endif   /* ndef ECPG_SQLTYPES_H */
+#endif   /* ndef ECMDB_SQLTYPES_H */

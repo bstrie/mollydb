@@ -204,10 +204,10 @@ xmlChar_to_encoding(const xmlChar *encoding_name)
  * representation.
  */
 Datum
-xml_in(PG_FUNCTION_ARGS)
+xml_in(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXML
-	char	   *s = PG_GETARG_CSTRING(0);
+	char	   *s = MDB_GETARG_CSTRING(0);
 	xmltype    *vardata;
 	xmlDocPtr	doc;
 
@@ -220,7 +220,7 @@ xml_in(PG_FUNCTION_ARGS)
 	doc = xml_parse(vardata, xmloption, true, GetDatabaseEncoding());
 	xmlFreeDoc(doc);
 
-	PG_RETURN_XML_P(vardata);
+	MDB_RETURN_XML_P(vardata);
 #else
 	NO_XML_SUPPORT();
 	return 0;
@@ -228,7 +228,7 @@ xml_in(PG_FUNCTION_ARGS)
 }
 
 
-#define PG_XML_DEFAULT_VERSION "1.0"
+#define MDB_XML_DEFAULT_VERSION "1.0"
 
 
 /*
@@ -282,9 +282,9 @@ xml_out_internal(xmltype *x, mdb_enc target_encoding)
 
 
 Datum
-xml_out(PG_FUNCTION_ARGS)
+xml_out(MDB_FUNCTION_ARGS)
 {
-	xmltype    *x = PG_GETARG_XML_P(0);
+	xmltype    *x = MDB_GETARG_XML_P(0);
 
 	/*
 	 * xml_out removes the encoding property in all cases.  This is because we
@@ -292,15 +292,15 @@ xml_out(PG_FUNCTION_ARGS)
 	 * different client encoding, so we'd do more harm than good by including
 	 * it.
 	 */
-	PG_RETURN_CSTRING(xml_out_internal(x, 0));
+	MDB_RETURN_CSTRING(xml_out_internal(x, 0));
 }
 
 
 Datum
-xml_recv(PG_FUNCTION_ARGS)
+xml_recv(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXML
-	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
+	StringInfo	buf = (StringInfo) MDB_GETARG_POINTER(0);
 	xmltype    *result;
 	char	   *str;
 	char	   *newstr;
@@ -336,7 +336,7 @@ xml_recv(PG_FUNCTION_ARGS)
 	 * where the input has to go through the normal client to server encoding
 	 * conversion.
 	 */
-	encoding = encodingStr ? xmlChar_to_encoding(encodingStr) : PG_UTF8;
+	encoding = encodingStr ? xmlChar_to_encoding(encodingStr) : MDB_UTF8;
 
 	/*
 	 * Parse the data to check if it is well-formed XML data.  Assume that
@@ -355,7 +355,7 @@ xml_recv(PG_FUNCTION_ARGS)
 		pfree(newstr);
 	}
 
-	PG_RETURN_XML_P(result);
+	MDB_RETURN_XML_P(result);
 #else
 	NO_XML_SUPPORT();
 	return 0;
@@ -364,9 +364,9 @@ xml_recv(PG_FUNCTION_ARGS)
 
 
 Datum
-xml_send(PG_FUNCTION_ARGS)
+xml_send(MDB_FUNCTION_ARGS)
 {
-	xmltype    *x = PG_GETARG_XML_P(0);
+	xmltype    *x = MDB_GETARG_XML_P(0);
 	char	   *outval;
 	StringInfoData buf;
 
@@ -379,7 +379,7 @@ xml_send(PG_FUNCTION_ARGS)
 	pq_begintypsend(&buf);
 	pq_sendtext(&buf, outval, strlen(outval));
 	pfree(outval);
-	PG_RETURN_BYTEA_P(pq_endtypsend(&buf));
+	MDB_RETURN_BYTEA_P(pq_endtypsend(&buf));
 }
 
 
@@ -417,10 +417,10 @@ xmlBuffer_to_xmltype(xmlBufferPtr buf)
 
 
 Datum
-xmlcomment(PG_FUNCTION_ARGS)
+xmlcomment(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXML
-	text	   *arg = PG_GETARG_TEXT_P(0);
+	text	   *arg = MDB_GETARG_TEXT_P(0);
 	char	   *argdata = VARDATA(arg);
 	int			len = VARSIZE(arg) - VARHDRSZ;
 	StringInfoData buf;
@@ -444,7 +444,7 @@ xmlcomment(PG_FUNCTION_ARGS)
 	appendStringInfoText(&buf, arg);
 	appendStringInfoString(&buf, "-->");
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(&buf));
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(&buf));
 #else
 	NO_XML_SUPPORT();
 	return 0;
@@ -524,39 +524,39 @@ xmlconcat(List *args)
  * XMLAGG support
  */
 Datum
-xmlconcat2(PG_FUNCTION_ARGS)
+xmlconcat2(MDB_FUNCTION_ARGS)
 {
-	if (PG_ARGISNULL(0))
+	if (MDB_ARGISNULL(0))
 	{
-		if (PG_ARGISNULL(1))
-			PG_RETURN_NULL();
+		if (MDB_ARGISNULL(1))
+			MDB_RETURN_NULL();
 		else
-			PG_RETURN_XML_P(PG_GETARG_XML_P(1));
+			MDB_RETURN_XML_P(MDB_GETARG_XML_P(1));
 	}
-	else if (PG_ARGISNULL(1))
-		PG_RETURN_XML_P(PG_GETARG_XML_P(0));
+	else if (MDB_ARGISNULL(1))
+		MDB_RETURN_XML_P(MDB_GETARG_XML_P(0));
 	else
-		PG_RETURN_XML_P(xmlconcat(list_make2(PG_GETARG_XML_P(0),
-											 PG_GETARG_XML_P(1))));
+		MDB_RETURN_XML_P(xmlconcat(list_make2(MDB_GETARG_XML_P(0),
+											 MDB_GETARG_XML_P(1))));
 }
 
 
 Datum
-texttoxml(PG_FUNCTION_ARGS)
+texttoxml(MDB_FUNCTION_ARGS)
 {
-	text	   *data = PG_GETARG_TEXT_P(0);
+	text	   *data = MDB_GETARG_TEXT_P(0);
 
-	PG_RETURN_XML_P(xmlparse(data, xmloption, true));
+	MDB_RETURN_XML_P(xmlparse(data, xmloption, true));
 }
 
 
 Datum
-xmltotext(PG_FUNCTION_ARGS)
+xmltotext(MDB_FUNCTION_ARGS)
 {
-	xmltype    *data = PG_GETARG_XML_P(0);
+	xmltype    *data = MDB_GETARG_XML_P(0);
 
 	/* It's actually binary compatible. */
-	PG_RETURN_TEXT_P((text *) data);
+	MDB_RETURN_TEXT_P((text *) data);
 }
 
 
@@ -631,9 +631,9 @@ xmlelement(XmlExprState *xmlExpr, ExprContext *econtext)
 	}
 
 	/* now safe to run libxml */
-	xmlerrcxt = mdb_xml_init(PG_XML_STRICTNESS_ALL);
+	xmlerrcxt = mdb_xml_init(MDB_XML_STRICTNESS_ALL);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		buf = xmlBufferCreate();
 		if (buf == NULL || xmlerrcxt->err_occurred)
@@ -672,7 +672,7 @@ xmlelement(XmlExprState *xmlExpr, ExprContext *econtext)
 
 		result = xmlBuffer_to_xmltype(buf);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (writer)
 			xmlFreeTextWriter(writer);
@@ -681,9 +681,9 @@ xmlelement(XmlExprState *xmlExpr, ExprContext *econtext)
 
 		mdb_xml_done(xmlerrcxt, true);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	xmlBufferFree(buf);
 
@@ -824,7 +824,7 @@ xmlroot(xmltype *data, text *version, int standalone)
  * parameter.
  */
 Datum
-xmlvalidate(PG_FUNCTION_ARGS)
+xmlvalidate(MDB_FUNCTION_ARGS)
 {
 	ereport(ERROR,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
@@ -842,13 +842,13 @@ xml_is_document(xmltype *arg)
 	MemoryContext ccxt = CurrentMemoryContext;
 
 	/* We want to catch ereport(INVALID_XML_DOCUMENT) and return false */
-	PG_TRY();
+	MDB_TRY();
 	{
 		doc = xml_parse((text *) arg, XMLOPTION_DOCUMENT, true,
 						GetDatabaseEncoding());
 		result = true;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		ErrorData  *errdata;
 		MemoryContext ecxt;
@@ -863,10 +863,10 @@ xml_is_document(xmltype *arg)
 		else
 		{
 			MemoryContextSwitchTo(ecxt);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (doc)
 		xmlFreeDoc(doc);
@@ -932,7 +932,7 @@ mdb_xml_init_library(void)
  *
  * strictness determines which errors are reported and which are ignored.
  *
- * Calls to this function MUST be followed by a PG_TRY block that guarantees
+ * Calls to this function MUST be followed by a MDB_TRY block that guarantees
  * that mdb_xml_done() is called during either normal or error exit.
  *
  * This is exported for use by contrib/xml2, as well as other code that might
@@ -1094,7 +1094,7 @@ mdb_xml_error_occurred(PgXmlErrorContext *errcxt)
 
 /* Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender */
 /* Beware of multiple evaluations of argument! */
-#define PG_XMLISNAMECHAR(c) \
+#define MDB_XMLISNAMECHAR(c) \
 	(xmlIsBaseChar_ch(c) || xmlIsIdeographicQ(c) \
 			|| xmlIsDigit_ch(c) \
 			|| c == '.' || c == '-' || c == '_' || c == ':' \
@@ -1153,7 +1153,7 @@ parse_xml_decl(const xmlChar *str, size_t *lenp,
 	/* if next char is name char, it's a PI like <?xml-stylesheet ...?> */
 	utf8len = strlen((const char *) (p + 5));
 	utf8char = xmlGetUTF8Char(p + 5, &utf8len);
-	if (PG_XMLISNAMECHAR(utf8char))
+	if (MDB_XMLISNAMECHAR(utf8char))
 		goto finished;
 
 	p += 5;
@@ -1289,8 +1289,8 @@ static bool
 print_xml_decl(StringInfo buf, const xmlChar *version,
 			   mdb_enc encoding, int standalone)
 {
-	if ((version && strcmp((const char *) version, PG_XML_DEFAULT_VERSION) != 0)
-		|| (encoding && encoding != PG_UTF8)
+	if ((version && strcmp((const char *) version, MDB_XML_DEFAULT_VERSION) != 0)
+		|| (encoding && encoding != MDB_UTF8)
 		|| standalone != -1)
 	{
 		appendStringInfoString(buf, "<?xml");
@@ -1298,9 +1298,9 @@ print_xml_decl(StringInfo buf, const xmlChar *version,
 		if (version)
 			appendStringInfo(buf, " version=\"%s\"", version);
 		else
-			appendStringInfo(buf, " version=\"%s\"", PG_XML_DEFAULT_VERSION);
+			appendStringInfo(buf, " version=\"%s\"", MDB_XML_DEFAULT_VERSION);
 
-		if (encoding && encoding != PG_UTF8)
+		if (encoding && encoding != MDB_UTF8)
 		{
 			/*
 			 * XXX might be useful to convert this to IANA names (ISO-8859-1
@@ -1349,13 +1349,13 @@ xml_parse(text *data, XmlOptionType xmloption_arg, bool preserve_whitespace,
 	utf8string = mdb_do_encoding_conversion(string,
 										   len,
 										   encoding,
-										   PG_UTF8);
+										   MDB_UTF8);
 
 	/* Start up libxml and its parser */
-	xmlerrcxt = mdb_xml_init(PG_XML_STRICTNESS_WELLFORMED);
+	xmlerrcxt = mdb_xml_init(MDB_XML_STRICTNESS_WELLFORMED);
 
 	/* Use a TRY block to ensure we clean up correctly */
-	PG_TRY();
+	MDB_TRY();
 	{
 		xmlInitParser();
 
@@ -1412,7 +1412,7 @@ xml_parse(text *data, XmlOptionType xmloption_arg, bool preserve_whitespace,
 			}
 		}
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (doc != NULL)
 			xmlFreeDoc(doc);
@@ -1421,9 +1421,9 @@ xml_parse(text *data, XmlOptionType xmloption_arg, bool preserve_whitespace,
 
 		mdb_xml_done(xmlerrcxt, true);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	xmlFreeParserCtxt(ctxt);
 
@@ -1624,7 +1624,7 @@ xml_errorHandler(void *data, xmlErrorPtr error)
 
 		default:
 			/* Ignore error if only doing well-formedness check */
-			if (xmlerrcxt->strictness == PG_XML_STRICTNESS_WELLFORMED)
+			if (xmlerrcxt->strictness == MDB_XML_STRICTNESS_WELLFORMED)
 				return;
 			break;
 	}
@@ -1677,7 +1677,7 @@ xml_errorHandler(void *data, xmlErrorPtr error)
 	 * distinguish between notices, warnings and errors here --- the old-style
 	 * generic error handler wouldn't have done that either.
 	 */
-	if (xmlerrcxt->strictness == PG_XML_STRICTNESS_LEGACY)
+	if (xmlerrcxt->strictness == MDB_XML_STRICTNESS_LEGACY)
 	{
 		appendStringInfoLineSeparator(&xmlerrcxt->err_buf);
 		appendStringInfoString(&xmlerrcxt->err_buf, errorBuf->data);
@@ -1796,10 +1796,10 @@ sqlchar_to_unicode(char *s)
 	mdb_wchar	ret[2];			/* need space for trailing zero */
 
 	/* note we're not assuming s is null-terminated */
-	utf8string = mdb_server_to_any(s, mdb_mblen(s), PG_UTF8);
+	utf8string = mdb_server_to_any(s, mdb_mblen(s), MDB_UTF8);
 
-	mdb_encoding_mb2wchar_with_len(PG_UTF8, utf8string, ret,
-								  mdb_encoding_mblen(PG_UTF8, utf8string));
+	mdb_encoding_mb2wchar_with_len(MDB_UTF8, utf8string, ret,
+								  mdb_encoding_mblen(MDB_UTF8, utf8string));
 
 	if (utf8string != s)
 		pfree(utf8string);
@@ -1898,7 +1898,7 @@ unicode_to_sqlchar(mdb_wchar c)
 	memset(utf8string, 0, sizeof(utf8string));
 	unicode_to_utf8(c, (unsigned char *) utf8string);
 
-	result = mdb_any_to_server(utf8string, strlen(utf8string), PG_UTF8);
+	result = mdb_any_to_server(utf8string, strlen(utf8string), MDB_UTF8);
 	/* if mdb_any_to_server didn't strdup, we must */
 	if (result == utf8string)
 		result = pstrdup(result);
@@ -2096,9 +2096,9 @@ map_sql_value_to_xml_value(Datum value, Oid type, bool xml_escape_strings)
 					volatile xmlTextWriterPtr writer = NULL;
 					char	   *result;
 
-					xmlerrcxt = mdb_xml_init(PG_XML_STRICTNESS_ALL);
+					xmlerrcxt = mdb_xml_init(MDB_XML_STRICTNESS_ALL);
 
-					PG_TRY();
+					MDB_TRY();
 					{
 						buf = xmlBufferCreate();
 						if (buf == NULL || xmlerrcxt->err_occurred)
@@ -2122,7 +2122,7 @@ map_sql_value_to_xml_value(Datum value, Oid type, bool xml_escape_strings)
 
 						result = pstrdup((const char *) xmlBufferContent(buf));
 					}
-					PG_CATCH();
+					MDB_CATCH();
 					{
 						if (writer)
 							xmlFreeTextWriter(writer);
@@ -2131,9 +2131,9 @@ map_sql_value_to_xml_value(Datum value, Oid type, bool xml_escape_strings)
 
 						mdb_xml_done(xmlerrcxt, true);
 
-						PG_RE_THROW();
+						MDB_RE_THROW();
 					}
-					PG_END_TRY();
+					MDB_END_TRY();
 
 					xmlBufferFree(buf);
 
@@ -2341,41 +2341,41 @@ table_to_xml_internal(Oid relid,
 
 
 Datum
-table_to_xml(PG_FUNCTION_ARGS)
+table_to_xml(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	Oid			relid = MDB_GETARG_OID(0);
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(table_to_xml_internal(relid, NULL,
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(table_to_xml_internal(relid, NULL,
 														  nulls, tableforest,
 														   targetns, true)));
 }
 
 
 Datum
-query_to_xml(PG_FUNCTION_ARGS)
+query_to_xml(MDB_FUNCTION_ARGS)
 {
-	char	   *query = text_to_cstring(PG_GETARG_TEXT_PP(0));
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	char	   *query = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(query_to_xml_internal(query, NULL,
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(query_to_xml_internal(query, NULL,
 													NULL, nulls, tableforest,
 														   targetns, true)));
 }
 
 
 Datum
-cursor_to_xml(PG_FUNCTION_ARGS)
+cursor_to_xml(MDB_FUNCTION_ARGS)
 {
-	char	   *name = text_to_cstring(PG_GETARG_TEXT_PP(0));
-	int32		count = PG_GETARG_INT32(1);
-	bool		nulls = PG_GETARG_BOOL(2);
-	bool		tableforest = PG_GETARG_BOOL(3);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(4));
+	char	   *name = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+	int32		count = MDB_GETARG_INT32(1);
+	bool		nulls = MDB_GETARG_BOOL(2);
+	bool		tableforest = MDB_GETARG_BOOL(3);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(4));
 
 	StringInfoData result;
 	Portal		portal;
@@ -2397,7 +2397,7 @@ cursor_to_xml(PG_FUNCTION_ARGS)
 
 	SPI_finish();
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(&result));
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(&result));
 }
 
 
@@ -2493,12 +2493,12 @@ query_to_xml_internal(const char *query, char *tablename,
 
 
 Datum
-table_to_xmlschema(PG_FUNCTION_ARGS)
+table_to_xmlschema(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	Oid			relid = MDB_GETARG_OID(0);
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 	const char *result;
 	Relation	rel;
 
@@ -2507,17 +2507,17 @@ table_to_xmlschema(PG_FUNCTION_ARGS)
 										tableforest, targetns);
 	heap_close(rel, NoLock);
 
-	PG_RETURN_XML_P(cstring_to_xmltype(result));
+	MDB_RETURN_XML_P(cstring_to_xmltype(result));
 }
 
 
 Datum
-query_to_xmlschema(PG_FUNCTION_ARGS)
+query_to_xmlschema(MDB_FUNCTION_ARGS)
 {
-	char	   *query = text_to_cstring(PG_GETARG_TEXT_PP(0));
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	char	   *query = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 	const char *result;
 	SPIPlanPtr	plan;
 	Portal		portal;
@@ -2536,17 +2536,17 @@ query_to_xmlschema(PG_FUNCTION_ARGS)
 	SPI_cursor_close(portal);
 	SPI_finish();
 
-	PG_RETURN_XML_P(cstring_to_xmltype(result));
+	MDB_RETURN_XML_P(cstring_to_xmltype(result));
 }
 
 
 Datum
-cursor_to_xmlschema(PG_FUNCTION_ARGS)
+cursor_to_xmlschema(MDB_FUNCTION_ARGS)
 {
-	char	   *name = text_to_cstring(PG_GETARG_TEXT_PP(0));
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	char	   *name = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 	const char *xmlschema;
 	Portal		portal;
 
@@ -2562,17 +2562,17 @@ cursor_to_xmlschema(PG_FUNCTION_ARGS)
 													 tableforest, targetns));
 	SPI_finish();
 
-	PG_RETURN_XML_P(cstring_to_xmltype(xmlschema));
+	MDB_RETURN_XML_P(cstring_to_xmltype(xmlschema));
 }
 
 
 Datum
-table_to_xml_and_xmlschema(PG_FUNCTION_ARGS)
+table_to_xml_and_xmlschema(MDB_FUNCTION_ARGS)
 {
-	Oid			relid = PG_GETARG_OID(0);
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	Oid			relid = MDB_GETARG_OID(0);
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 	Relation	rel;
 	const char *xmlschema;
 
@@ -2581,19 +2581,19 @@ table_to_xml_and_xmlschema(PG_FUNCTION_ARGS)
 										   tableforest, targetns);
 	heap_close(rel, NoLock);
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(table_to_xml_internal(relid,
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(table_to_xml_internal(relid,
 											   xmlschema, nulls, tableforest,
 														   targetns, true)));
 }
 
 
 Datum
-query_to_xml_and_xmlschema(PG_FUNCTION_ARGS)
+query_to_xml_and_xmlschema(MDB_FUNCTION_ARGS)
 {
-	char	   *query = text_to_cstring(PG_GETARG_TEXT_PP(0));
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	char	   *query = text_to_cstring(MDB_GETARG_TEXT_PP(0));
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 
 	const char *xmlschema;
 	SPIPlanPtr	plan;
@@ -2612,7 +2612,7 @@ query_to_xml_and_xmlschema(PG_FUNCTION_ARGS)
 	SPI_cursor_close(portal);
 	SPI_finish();
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(query_to_xml_internal(query, NULL,
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(query_to_xml_internal(query, NULL,
 											   xmlschema, nulls, tableforest,
 														   targetns, true)));
 }
@@ -2670,12 +2670,12 @@ schema_to_xml_internal(Oid nspid, const char *xmlschema, bool nulls,
 
 
 Datum
-schema_to_xml(PG_FUNCTION_ARGS)
+schema_to_xml(MDB_FUNCTION_ARGS)
 {
-	Name		name = PG_GETARG_NAME(0);
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	Name		name = MDB_GETARG_NAME(0);
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 
 	char	   *schemaname;
 	Oid			nspid;
@@ -2683,7 +2683,7 @@ schema_to_xml(PG_FUNCTION_ARGS)
 	schemaname = NameStr(*name);
 	nspid = LookupExplicitNamespace(schemaname, false);
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(schema_to_xml_internal(nspid, NULL,
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(schema_to_xml_internal(nspid, NULL,
 									   nulls, tableforest, targetns, true)));
 }
 
@@ -2761,25 +2761,25 @@ schema_to_xmlschema_internal(const char *schemaname, bool nulls,
 
 
 Datum
-schema_to_xmlschema(PG_FUNCTION_ARGS)
+schema_to_xmlschema(MDB_FUNCTION_ARGS)
 {
-	Name		name = PG_GETARG_NAME(0);
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	Name		name = MDB_GETARG_NAME(0);
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(schema_to_xmlschema_internal(NameStr(*name),
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(schema_to_xmlschema_internal(NameStr(*name),
 											 nulls, tableforest, targetns)));
 }
 
 
 Datum
-schema_to_xml_and_xmlschema(PG_FUNCTION_ARGS)
+schema_to_xml_and_xmlschema(MDB_FUNCTION_ARGS)
 {
-	Name		name = PG_GETARG_NAME(0);
-	bool		nulls = PG_GETARG_BOOL(1);
-	bool		tableforest = PG_GETARG_BOOL(2);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(3));
+	Name		name = MDB_GETARG_NAME(0);
+	bool		nulls = MDB_GETARG_BOOL(1);
+	bool		tableforest = MDB_GETARG_BOOL(2);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(3));
 	char	   *schemaname;
 	Oid			nspid;
 	StringInfo	xmlschema;
@@ -2790,7 +2790,7 @@ schema_to_xml_and_xmlschema(PG_FUNCTION_ARGS)
 	xmlschema = schema_to_xmlschema_internal(schemaname, nulls,
 											 tableforest, targetns);
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(schema_to_xml_internal(nspid,
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(schema_to_xml_internal(nspid,
 													  xmlschema->data, nulls,
 											  tableforest, targetns, true)));
 }
@@ -2848,13 +2848,13 @@ database_to_xml_internal(const char *xmlschema, bool nulls,
 
 
 Datum
-database_to_xml(PG_FUNCTION_ARGS)
+database_to_xml(MDB_FUNCTION_ARGS)
 {
-	bool		nulls = PG_GETARG_BOOL(0);
-	bool		tableforest = PG_GETARG_BOOL(1);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(2));
+	bool		nulls = MDB_GETARG_BOOL(0);
+	bool		tableforest = MDB_GETARG_BOOL(1);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(2));
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(database_to_xml_internal(NULL, nulls,
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(database_to_xml_internal(NULL, nulls,
 													tableforest, targetns)));
 }
 
@@ -2903,28 +2903,28 @@ database_to_xmlschema_internal(bool nulls, bool tableforest,
 
 
 Datum
-database_to_xmlschema(PG_FUNCTION_ARGS)
+database_to_xmlschema(MDB_FUNCTION_ARGS)
 {
-	bool		nulls = PG_GETARG_BOOL(0);
-	bool		tableforest = PG_GETARG_BOOL(1);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(2));
+	bool		nulls = MDB_GETARG_BOOL(0);
+	bool		tableforest = MDB_GETARG_BOOL(1);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(2));
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(database_to_xmlschema_internal(nulls,
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(database_to_xmlschema_internal(nulls,
 													tableforest, targetns)));
 }
 
 
 Datum
-database_to_xml_and_xmlschema(PG_FUNCTION_ARGS)
+database_to_xml_and_xmlschema(MDB_FUNCTION_ARGS)
 {
-	bool		nulls = PG_GETARG_BOOL(0);
-	bool		tableforest = PG_GETARG_BOOL(1);
-	const char *targetns = text_to_cstring(PG_GETARG_TEXT_PP(2));
+	bool		nulls = MDB_GETARG_BOOL(0);
+	bool		tableforest = MDB_GETARG_BOOL(1);
+	const char *targetns = text_to_cstring(MDB_GETARG_TEXT_PP(2));
 	StringInfo	xmlschema;
 
 	xmlschema = database_to_xmlschema_internal(nulls, tableforest, targetns);
 
-	PG_RETURN_XML_P(stringinfo_to_xmltype(database_to_xml_internal(xmlschema->data,
+	MDB_RETURN_XML_P(stringinfo_to_xmltype(database_to_xml_internal(xmlschema->data,
 											 nulls, tableforest, targetns)));
 }
 
@@ -3622,18 +3622,18 @@ xml_xmlnodetoxmltype(xmlNodePtr cur, PgXmlErrorContext *xmlerrcxt)
 			xml_ereport(xmlerrcxt, ERROR, ERRCODE_OUT_OF_MEMORY,
 						"could not copy node");
 
-		PG_TRY();
+		MDB_TRY();
 		{
 			xmlNodeDump(buf, NULL, cur_copy, 0, 1);
 			result = xmlBuffer_to_xmltype(buf);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			xmlFreeNode(cur_copy);
 			xmlBufferFree(buf);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 		xmlFreeNode(cur_copy);
 		xmlBufferFree(buf);
 	}
@@ -3642,7 +3642,7 @@ xml_xmlnodetoxmltype(xmlNodePtr cur, PgXmlErrorContext *xmlerrcxt)
 		xmlChar    *str;
 
 		str = xmlXPathCastNodeToString(cur);
-		PG_TRY();
+		MDB_TRY();
 		{
 			/* Here we rely on XML having the same representation as TEXT */
 			char	   *escaped = escape_xml((char *) str);
@@ -3650,12 +3650,12 @@ xml_xmlnodetoxmltype(xmlNodePtr cur, PgXmlErrorContext *xmlerrcxt)
 			result = (xmltype *) cstring_to_text(escaped);
 			pfree(escaped);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			xmlFree(str);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 		xmlFree(str);
 	}
 
@@ -3827,9 +3827,9 @@ xpath_internal(text *xpath_expr_text, xmltype *data, ArrayType *namespaces,
 	memcpy(xpath_expr, VARDATA(xpath_expr_text), xpath_len);
 	xpath_expr[xpath_len] = '\0';
 
-	xmlerrcxt = mdb_xml_init(PG_XML_STRICTNESS_ALL);
+	xmlerrcxt = mdb_xml_init(MDB_XML_STRICTNESS_ALL);
 
-	PG_TRY();
+	MDB_TRY();
 	{
 		xmlInitParser();
 
@@ -3903,7 +3903,7 @@ xpath_internal(text *xpath_expr_text, xmltype *data, ArrayType *namespaces,
 		else
 			(void) xml_xpathobjtoxmlarray(xpathobj, astate, xmlerrcxt);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (xpathobj)
 			xmlXPathFreeObject(xpathobj);
@@ -3918,9 +3918,9 @@ xpath_internal(text *xpath_expr_text, xmltype *data, ArrayType *namespaces,
 
 		mdb_xml_done(xmlerrcxt, true);
 
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	xmlXPathFreeObject(xpathobj);
 	xmlXPathFreeCompExpr(xpathcomp);
@@ -3940,18 +3940,18 @@ xpath_internal(text *xpath_expr_text, xmltype *data, ArrayType *namespaces,
  * some kind of substitution for XQuery sequences).
  */
 Datum
-xpath(PG_FUNCTION_ARGS)
+xpath(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXML
-	text	   *xpath_expr_text = PG_GETARG_TEXT_P(0);
-	xmltype    *data = PG_GETARG_XML_P(1);
-	ArrayType  *namespaces = PG_GETARG_ARRAYTYPE_P(2);
+	text	   *xpath_expr_text = MDB_GETARG_TEXT_P(0);
+	xmltype    *data = MDB_GETARG_XML_P(1);
+	ArrayType  *namespaces = MDB_GETARG_ARRAYTYPE_P(2);
 	ArrayBuildState *astate;
 
 	astate = initArrayResult(XMLOID, CurrentMemoryContext, true);
 	xpath_internal(xpath_expr_text, data, namespaces,
 				   NULL, astate);
-	PG_RETURN_ARRAYTYPE_P(makeArrayResult(astate, CurrentMemoryContext));
+	MDB_RETURN_ARRAYTYPE_P(makeArrayResult(astate, CurrentMemoryContext));
 #else
 	NO_XML_SUPPORT();
 	return 0;
@@ -3963,17 +3963,17 @@ xpath(PG_FUNCTION_ARGS)
  * in a given XML document, returning a boolean.
  */
 Datum
-xmlexists(PG_FUNCTION_ARGS)
+xmlexists(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXML
-	text	   *xpath_expr_text = PG_GETARG_TEXT_P(0);
-	xmltype    *data = PG_GETARG_XML_P(1);
+	text	   *xpath_expr_text = MDB_GETARG_TEXT_P(0);
+	xmltype    *data = MDB_GETARG_XML_P(1);
 	int			res_nitems;
 
 	xpath_internal(xpath_expr_text, data, NULL,
 				   &res_nitems, NULL);
 
-	PG_RETURN_BOOL(res_nitems > 0);
+	MDB_RETURN_BOOL(res_nitems > 0);
 #else
 	NO_XML_SUPPORT();
 	return 0;
@@ -3986,18 +3986,18 @@ xmlexists(PG_FUNCTION_ARGS)
  * xmlexists as it supports namespaces and is not defined in SQL/XML.
  */
 Datum
-xpath_exists(PG_FUNCTION_ARGS)
+xpath_exists(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXML
-	text	   *xpath_expr_text = PG_GETARG_TEXT_P(0);
-	xmltype    *data = PG_GETARG_XML_P(1);
-	ArrayType  *namespaces = PG_GETARG_ARRAYTYPE_P(2);
+	text	   *xpath_expr_text = MDB_GETARG_TEXT_P(0);
+	xmltype    *data = MDB_GETARG_XML_P(1);
+	ArrayType  *namespaces = MDB_GETARG_ARRAYTYPE_P(2);
 	int			res_nitems;
 
 	xpath_internal(xpath_expr_text, data, namespaces,
 				   &res_nitems, NULL);
 
-	PG_RETURN_BOOL(res_nitems > 0);
+	MDB_RETURN_BOOL(res_nitems > 0);
 #else
 	NO_XML_SUPPORT();
 	return 0;
@@ -4016,17 +4016,17 @@ wellformed_xml(text *data, XmlOptionType xmloption_arg)
 	volatile xmlDocPtr doc = NULL;
 
 	/* We want to catch any exceptions and return false */
-	PG_TRY();
+	MDB_TRY();
 	{
 		doc = xml_parse(data, xmloption_arg, true, GetDatabaseEncoding());
 		result = true;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		FlushErrorState();
 		result = false;
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	if (doc)
 		xmlFreeDoc(doc);
@@ -4036,12 +4036,12 @@ wellformed_xml(text *data, XmlOptionType xmloption_arg)
 #endif
 
 Datum
-xml_is_well_formed(PG_FUNCTION_ARGS)
+xml_is_well_formed(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXML
-	text	   *data = PG_GETARG_TEXT_P(0);
+	text	   *data = MDB_GETARG_TEXT_P(0);
 
-	PG_RETURN_BOOL(wellformed_xml(data, xmloption));
+	MDB_RETURN_BOOL(wellformed_xml(data, xmloption));
 #else
 	NO_XML_SUPPORT();
 	return 0;
@@ -4049,12 +4049,12 @@ xml_is_well_formed(PG_FUNCTION_ARGS)
 }
 
 Datum
-xml_is_well_formed_document(PG_FUNCTION_ARGS)
+xml_is_well_formed_document(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXML
-	text	   *data = PG_GETARG_TEXT_P(0);
+	text	   *data = MDB_GETARG_TEXT_P(0);
 
-	PG_RETURN_BOOL(wellformed_xml(data, XMLOPTION_DOCUMENT));
+	MDB_RETURN_BOOL(wellformed_xml(data, XMLOPTION_DOCUMENT));
 #else
 	NO_XML_SUPPORT();
 	return 0;
@@ -4062,12 +4062,12 @@ xml_is_well_formed_document(PG_FUNCTION_ARGS)
 }
 
 Datum
-xml_is_well_formed_content(PG_FUNCTION_ARGS)
+xml_is_well_formed_content(MDB_FUNCTION_ARGS)
 {
 #ifdef USE_LIBXML
-	text	   *data = PG_GETARG_TEXT_P(0);
+	text	   *data = MDB_GETARG_TEXT_P(0);
 
-	PG_RETURN_BOOL(wellformed_xml(data, XMLOPTION_CONTENT));
+	MDB_RETURN_BOOL(wellformed_xml(data, XMLOPTION_CONTENT));
 #else
 	NO_XML_SUPPORT();
 	return 0;

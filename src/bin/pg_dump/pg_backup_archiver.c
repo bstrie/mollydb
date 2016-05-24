@@ -1299,7 +1299,7 @@ SortTocFromFile(Archive *AHX)
 	memset(ropt->idWanted, 0, sizeof(bool) * AH->maxDumpId);
 
 	/* Setup the file */
-	fh = fopen(ropt->tocFile, PG_BINARY_R);
+	fh = fopen(ropt->tocFile, MDB_BINARY_R);
 	if (!fh)
 		exit_horribly(modulename, "could not open TOC file \"%s\": %s\n",
 					  ropt->tocFile, strerror(errno));
@@ -1448,7 +1448,7 @@ SetOutput(ArchiveHandle *AH, const char *filename, int compression)
 	{
 		char		fmode[10];
 
-		/* Don't use PG_BINARY_x since this is zlib */
+		/* Don't use MDB_BINARY_x since this is zlib */
 		sprintf(fmode, "wb%d", compression);
 		if (fn >= 0)
 			AH->OF = gzdopen(dup(fn), fmode);
@@ -1462,16 +1462,16 @@ SetOutput(ArchiveHandle *AH, const char *filename, int compression)
 		if (AH->mode == archModeAppend)
 		{
 			if (fn >= 0)
-				AH->OF = fdopen(dup(fn), PG_BINARY_A);
+				AH->OF = fdopen(dup(fn), MDB_BINARY_A);
 			else
-				AH->OF = fopen(filename, PG_BINARY_A);
+				AH->OF = fopen(filename, MDB_BINARY_A);
 		}
 		else
 		{
 			if (fn >= 0)
-				AH->OF = fdopen(dup(fn), PG_BINARY_W);
+				AH->OF = fdopen(dup(fn), MDB_BINARY_W);
 			else
-				AH->OF = fopen(filename, PG_BINARY_W);
+				AH->OF = fopen(filename, MDB_BINARY_W);
 		}
 		AH->gzOut = 0;
 	}
@@ -2064,7 +2064,7 @@ _discoverArchiveFormat(ArchiveHandle *AH)
 		}
 		else
 		{
-			fh = fopen(AH->fSpec, PG_BINARY_R);
+			fh = fopen(AH->fSpec, MDB_BINARY_R);
 			if (!fh)
 				exit_horribly(modulename, "could not open input file \"%s\": %s\n",
 							  AH->fSpec, strerror(errno));
@@ -2230,14 +2230,14 @@ _allocAH(const char *FileSpec, const ArchiveFormat fmt,
 	AH->version = ((AH->vmaj * 256 + AH->vmin) * 256 + AH->vrev) * 256 + 0;
 
 	/* initialize for backwards compatible string processing */
-	AH->public.encoding = 0;	/* PG_SQL_ASCII */
+	AH->public.encoding = 0;	/* MDB_SQL_ASCII */
 	AH->public.std_strings = false;
 
 	/* sql error handling */
 	AH->public.exit_on_error = true;
 	AH->public.n_errors = 0;
 
-	AH->archiveDumpVersion = PG_VERSION;
+	AH->archiveDumpVersion = MDB_VERSION;
 
 	AH->createDate = time(NULL);
 
@@ -3496,7 +3496,7 @@ WriteHead(ArchiveHandle *AH)
 	WriteInt(AH, crtm.tm_isdst);
 	WriteStr(AH, PQdb(AH->connection));
 	WriteStr(AH, AH->public.remoteVersionStr);
-	WriteStr(AH, PG_VERSION);
+	WriteStr(AH, MDB_VERSION);
 }
 
 void

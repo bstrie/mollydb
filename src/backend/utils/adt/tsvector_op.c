@@ -65,7 +65,7 @@ typedef struct
 
 #define STATHDRSIZE (offsetof(TSVectorStat, data))
 
-static Datum tsvector_update_trigger(PG_FUNCTION_ARGS, bool config_column);
+static Datum tsvector_update_trigger(MDB_FUNCTION_ARGS, bool config_column);
 static int tsvector_bsearch(const TSVector tsv, char *lexeme, int lexeme_len);
 
 /*
@@ -133,14 +133,14 @@ silly_cmp_tsvector(const TSVector a, const TSVector b)
 
 #define TSVECTORCMPFUNC( type, action, ret )			\
 Datum													\
-tsvector_##type(PG_FUNCTION_ARGS)						\
+tsvector_##type(MDB_FUNCTION_ARGS)						\
 {														\
-	TSVector	a = PG_GETARG_TSVECTOR(0);				\
-	TSVector	b = PG_GETARG_TSVECTOR(1);				\
+	TSVector	a = MDB_GETARG_TSVECTOR(0);				\
+	TSVector	b = MDB_GETARG_TSVECTOR(1);				\
 	int			res = silly_cmp_tsvector(a, b);			\
-	PG_FREE_IF_COPY(a,0);								\
-	PG_FREE_IF_COPY(b,1);								\
-	PG_RETURN_##ret( res action 0 );					\
+	MDB_FREE_IF_COPY(a,0);								\
+	MDB_FREE_IF_COPY(b,1);								\
+	MDB_RETURN_##ret( res action 0 );					\
 }	\
 /* keep compiler quiet - no extra ; */					\
 extern int no_such_variable
@@ -154,9 +154,9 @@ TSVECTORCMPFUNC(ne, !=, BOOL);
 TSVECTORCMPFUNC(cmp, +, INT32);
 
 Datum
-tsvector_strip(PG_FUNCTION_ARGS)
+tsvector_strip(MDB_FUNCTION_ARGS)
 {
-	TSVector	in = PG_GETARG_TSVECTOR(0);
+	TSVector	in = MDB_GETARG_TSVECTOR(0);
 	TSVector	out;
 	int			i,
 				len = 0;
@@ -182,25 +182,25 @@ tsvector_strip(PG_FUNCTION_ARGS)
 		cur += arrout[i].len;
 	}
 
-	PG_FREE_IF_COPY(in, 0);
-	PG_RETURN_POINTER(out);
+	MDB_FREE_IF_COPY(in, 0);
+	MDB_RETURN_POINTER(out);
 }
 
 Datum
-tsvector_length(PG_FUNCTION_ARGS)
+tsvector_length(MDB_FUNCTION_ARGS)
 {
-	TSVector	in = PG_GETARG_TSVECTOR(0);
+	TSVector	in = MDB_GETARG_TSVECTOR(0);
 	int32		ret = in->size;
 
-	PG_FREE_IF_COPY(in, 0);
-	PG_RETURN_INT32(ret);
+	MDB_FREE_IF_COPY(in, 0);
+	MDB_RETURN_INT32(ret);
 }
 
 Datum
-tsvector_setweight(PG_FUNCTION_ARGS)
+tsvector_setweight(MDB_FUNCTION_ARGS)
 {
-	TSVector	in = PG_GETARG_TSVECTOR(0);
-	char		cw = PG_GETARG_CHAR(1);
+	TSVector	in = MDB_GETARG_TSVECTOR(0);
+	char		cw = MDB_GETARG_CHAR(1);
 	TSVector	out;
 	int			i,
 				j;
@@ -249,8 +249,8 @@ tsvector_setweight(PG_FUNCTION_ARGS)
 		entry++;
 	}
 
-	PG_FREE_IF_COPY(in, 0);
-	PG_RETURN_POINTER(out);
+	MDB_FREE_IF_COPY(in, 0);
+	MDB_RETURN_POINTER(out);
 }
 
 /*
@@ -259,11 +259,11 @@ tsvector_setweight(PG_FUNCTION_ARGS)
  * Assign weight w to elements of tsin that are listed in lexemes.
  */
 Datum
-tsvector_setweight_by_filter(PG_FUNCTION_ARGS)
+tsvector_setweight_by_filter(MDB_FUNCTION_ARGS)
 {
-	TSVector	tsin = PG_GETARG_TSVECTOR(0);
-	char		char_weight = PG_GETARG_CHAR(1);
-	ArrayType  *lexemes = PG_GETARG_ARRAYTYPE_P(2);
+	TSVector	tsin = MDB_GETARG_TSVECTOR(0);
+	char		char_weight = MDB_GETARG_CHAR(1);
+	ArrayType  *lexemes = MDB_GETARG_ARRAYTYPE_P(2);
 
 	TSVector	tsout;
 	int			i,
@@ -331,10 +331,10 @@ tsvector_setweight_by_filter(PG_FUNCTION_ARGS)
 		}
 	}
 
-	PG_FREE_IF_COPY(tsin, 0);
-	PG_FREE_IF_COPY(lexemes, 2);
+	MDB_FREE_IF_COPY(tsin, 0);
+	MDB_FREE_IF_COPY(lexemes, 2);
 
-	PG_RETURN_POINTER(tsout);
+	MDB_RETURN_POINTER(tsout);
 }
 
 #define compareEntry(pa, a, pb, b) \
@@ -509,23 +509,23 @@ tsvector_delete_by_indices(TSVector tsv, int *indices_to_delete,
  * Implementation of user-level ts_delete(tsvector, text).
  */
 Datum
-tsvector_delete_str(PG_FUNCTION_ARGS)
+tsvector_delete_str(MDB_FUNCTION_ARGS)
 {
-	TSVector	tsin = PG_GETARG_TSVECTOR(0),
+	TSVector	tsin = MDB_GETARG_TSVECTOR(0),
 				tsout;
-	text	   *tlexeme = PG_GETARG_TEXT_P(1);
+	text	   *tlexeme = MDB_GETARG_TEXT_P(1);
 	char	   *lexeme = VARDATA(tlexeme);
 	int			lexeme_len = VARSIZE_ANY_EXHDR(tlexeme),
 				skip_index;
 
 	if ((skip_index = tsvector_bsearch(tsin, lexeme, lexeme_len)) == -1)
-		PG_RETURN_POINTER(tsin);
+		MDB_RETURN_POINTER(tsin);
 
 	tsout = tsvector_delete_by_indices(tsin, &skip_index, 1);
 
-	PG_FREE_IF_COPY(tsin, 0);
-	PG_FREE_IF_COPY(tlexeme, 1);
-	PG_RETURN_POINTER(tsout);
+	MDB_FREE_IF_COPY(tsin, 0);
+	MDB_FREE_IF_COPY(tlexeme, 1);
+	MDB_RETURN_POINTER(tsout);
 }
 
 /*
@@ -533,11 +533,11 @@ tsvector_delete_str(PG_FUNCTION_ARGS)
  * Implementation of user-level ts_delete(tsvector, text[]).
  */
 Datum
-tsvector_delete_arr(PG_FUNCTION_ARGS)
+tsvector_delete_arr(MDB_FUNCTION_ARGS)
 {
-	TSVector	tsin = PG_GETARG_TSVECTOR(0),
+	TSVector	tsin = MDB_GETARG_TSVECTOR(0),
 				tsout;
-	ArrayType  *lexemes = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *lexemes = MDB_GETARG_ARRAYTYPE_P(1);
 	int			i, nlex,
 				skip_count,
 			   *skip_indices;
@@ -575,10 +575,10 @@ tsvector_delete_arr(PG_FUNCTION_ARGS)
 	tsout = tsvector_delete_by_indices(tsin, skip_indices, skip_count);
 
 	pfree(skip_indices);
-	PG_FREE_IF_COPY(tsin, 0);
-	PG_FREE_IF_COPY(lexemes, 1);
+	MDB_FREE_IF_COPY(tsin, 0);
+	MDB_FREE_IF_COPY(lexemes, 1);
 
-	PG_RETURN_POINTER(tsout);
+	MDB_RETURN_POINTER(tsout);
 }
 
 /*
@@ -588,7 +588,7 @@ tsvector_delete_arr(PG_FUNCTION_ARGS)
  *     weights: char array of weights corresponding to positions
  */
 Datum
-tsvector_unnest(PG_FUNCTION_ARGS)
+tsvector_unnest(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext	   *funcctx;
 	TSVector			tsin;
@@ -610,7 +610,7 @@ tsvector_unnest(PG_FUNCTION_ARGS)
 						   TEXTARRAYOID, -1, 0);
 		funcctx->tuple_desc = BlessTupleDesc(tupdesc);
 
-		funcctx->user_fctx = PG_GETARG_TSVECTOR_COPY(0);
+		funcctx->user_fctx = MDB_GETARG_TSVECTOR_COPY(0);
 
 		MemoryContextSwitchTo(oldcontext);
 	}
@@ -680,9 +680,9 @@ tsvector_unnest(PG_FUNCTION_ARGS)
  * Convert tsvector to array of lexemes.
  */
 Datum
-tsvector_to_array(PG_FUNCTION_ARGS)
+tsvector_to_array(MDB_FUNCTION_ARGS)
 {
-	TSVector			tsin  = PG_GETARG_TSVECTOR(0);
+	TSVector			tsin  = MDB_GETARG_TSVECTOR(0);
 	WordEntry		   *arrin = ARRPTR(tsin);
 	Datum				*elements;
 	int					i;
@@ -700,17 +700,17 @@ tsvector_to_array(PG_FUNCTION_ARGS)
 	array = construct_array(elements, tsin->size, TEXTOID, -1, false, 'i');
 
 	pfree(elements);
-	PG_FREE_IF_COPY(tsin, 0);
-	PG_RETURN_POINTER(array);
+	MDB_FREE_IF_COPY(tsin, 0);
+	MDB_RETURN_POINTER(array);
 }
 
 /*
  * Build tsvector from array of lexemes.
  */
 Datum
-array_to_tsvector(PG_FUNCTION_ARGS)
+array_to_tsvector(MDB_FUNCTION_ARGS)
 {
-	ArrayType  *v = PG_GETARG_ARRAYTYPE_P(0);
+	ArrayType  *v = MDB_GETARG_ARRAYTYPE_P(0);
 	TSVector	tsout;
 	Datum	   *dlexemes;
 	WordEntry  *arrout;
@@ -752,19 +752,19 @@ array_to_tsvector(PG_FUNCTION_ARGS)
 		cur += lex_len;
 	}
 
-	PG_FREE_IF_COPY(v, 0);
-	PG_RETURN_POINTER(tsout);
+	MDB_FREE_IF_COPY(v, 0);
+	MDB_RETURN_POINTER(tsout);
 }
 
 /*
  * ts_filter(): keep only lexemes with given weights in tsvector.
  */
 Datum
-tsvector_filter(PG_FUNCTION_ARGS)
+tsvector_filter(MDB_FUNCTION_ARGS)
 {
-	TSVector	tsin = PG_GETARG_TSVECTOR(0),
+	TSVector	tsin = MDB_GETARG_TSVECTOR(0),
 				tsout;
-	ArrayType  *weights = PG_GETARG_ARRAYTYPE_P(1);
+	ArrayType  *weights = MDB_GETARG_ARRAYTYPE_P(1);
 	WordEntry  *arrin = ARRPTR(tsin),
 			   *arrout;
 	char	   *datain = STRPTR(tsin),
@@ -857,15 +857,15 @@ tsvector_filter(PG_FUNCTION_ARGS)
 
 	SET_VARSIZE(tsout, CALCDATASIZE(tsout->size, cur_pos));
 
-	PG_FREE_IF_COPY(tsin, 0);
-	PG_RETURN_POINTER(tsout);
+	MDB_FREE_IF_COPY(tsin, 0);
+	MDB_RETURN_POINTER(tsout);
 }
 
 Datum
-tsvector_concat(PG_FUNCTION_ARGS)
+tsvector_concat(MDB_FUNCTION_ARGS)
 {
-	TSVector	in1 = PG_GETARG_TSVECTOR(0);
-	TSVector	in2 = PG_GETARG_TSVECTOR(1);
+	TSVector	in1 = MDB_GETARG_TSVECTOR(0);
+	TSVector	in2 = MDB_GETARG_TSVECTOR(1);
 	TSVector	out;
 	WordEntry  *ptr;
 	WordEntry  *ptr1,
@@ -1078,9 +1078,9 @@ tsvector_concat(PG_FUNCTION_ARGS)
 	Assert(output_bytes <= VARSIZE(out));
 	SET_VARSIZE(out, output_bytes);
 
-	PG_FREE_IF_COPY(in1, 0);
-	PG_FREE_IF_COPY(in2, 1);
-	PG_RETURN_POINTER(out);
+	MDB_FREE_IF_COPY(in1, 0);
+	MDB_FREE_IF_COPY(in2, 1);
+	MDB_RETURN_POINTER(out);
 }
 
 /*
@@ -1575,26 +1575,26 @@ tsquery_requires_match(QueryItem *curitem)
  * boolean operations
  */
 Datum
-ts_match_qv(PG_FUNCTION_ARGS)
+ts_match_qv(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_DATUM(DirectFunctionCall2(ts_match_vq,
-										PG_GETARG_DATUM(1),
-										PG_GETARG_DATUM(0)));
+	MDB_RETURN_DATUM(DirectFunctionCall2(ts_match_vq,
+										MDB_GETARG_DATUM(1),
+										MDB_GETARG_DATUM(0)));
 }
 
 Datum
-ts_match_vq(PG_FUNCTION_ARGS)
+ts_match_vq(MDB_FUNCTION_ARGS)
 {
-	TSVector	val = PG_GETARG_TSVECTOR(0);
-	TSQuery		query = PG_GETARG_TSQUERY(1);
+	TSVector	val = MDB_GETARG_TSVECTOR(0);
+	TSQuery		query = MDB_GETARG_TSQUERY(1);
 	CHKVAL		chkval;
 	bool		result;
 
 	if (!val->size || !query->size)
 	{
-		PG_FREE_IF_COPY(val, 0);
-		PG_FREE_IF_COPY(query, 1);
-		PG_RETURN_BOOL(false);
+		MDB_FREE_IF_COPY(val, 0);
+		MDB_FREE_IF_COPY(query, 1);
+		MDB_RETURN_BOOL(false);
 	}
 
 	chkval.arrb = ARRPTR(val);
@@ -1608,22 +1608,22 @@ ts_match_vq(PG_FUNCTION_ARGS)
 						checkcondition_str
 		);
 
-	PG_FREE_IF_COPY(val, 0);
-	PG_FREE_IF_COPY(query, 1);
-	PG_RETURN_BOOL(result);
+	MDB_FREE_IF_COPY(val, 0);
+	MDB_FREE_IF_COPY(query, 1);
+	MDB_RETURN_BOOL(result);
 }
 
 Datum
-ts_match_tt(PG_FUNCTION_ARGS)
+ts_match_tt(MDB_FUNCTION_ARGS)
 {
 	TSVector	vector;
 	TSQuery		query;
 	bool		res;
 
 	vector = DatumGetTSVector(DirectFunctionCall1(to_tsvector,
-												  PG_GETARG_DATUM(0)));
+												  MDB_GETARG_DATUM(0)));
 	query = DatumGetTSQuery(DirectFunctionCall1(plainto_tsquery,
-												PG_GETARG_DATUM(1)));
+												MDB_GETARG_DATUM(1)));
 
 	res = DatumGetBool(DirectFunctionCall2(ts_match_vq,
 										   TSVectorGetDatum(vector),
@@ -1632,27 +1632,27 @@ ts_match_tt(PG_FUNCTION_ARGS)
 	pfree(vector);
 	pfree(query);
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 Datum
-ts_match_tq(PG_FUNCTION_ARGS)
+ts_match_tq(MDB_FUNCTION_ARGS)
 {
 	TSVector	vector;
-	TSQuery		query = PG_GETARG_TSQUERY(1);
+	TSQuery		query = MDB_GETARG_TSQUERY(1);
 	bool		res;
 
 	vector = DatumGetTSVector(DirectFunctionCall1(to_tsvector,
-												  PG_GETARG_DATUM(0)));
+												  MDB_GETARG_DATUM(0)));
 
 	res = DatumGetBool(DirectFunctionCall2(ts_match_vq,
 										   TSVectorGetDatum(vector),
 										   TSQueryGetDatum(query)));
 
 	pfree(vector);
-	PG_FREE_IF_COPY(query, 1);
+	MDB_FREE_IF_COPY(query, 1);
 
-	PG_RETURN_BOOL(res);
+	MDB_RETURN_BOOL(res);
 }
 
 /*
@@ -2040,7 +2040,7 @@ ts_stat_sql(MemoryContext persistentContext, text *txt, text *ws)
 }
 
 Datum
-ts_stat1(PG_FUNCTION_ARGS)
+ts_stat1(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Datum		result;
@@ -2048,12 +2048,12 @@ ts_stat1(PG_FUNCTION_ARGS)
 	if (SRF_IS_FIRSTCALL())
 	{
 		TSVectorStat *stat;
-		text	   *txt = PG_GETARG_TEXT_P(0);
+		text	   *txt = MDB_GETARG_TEXT_P(0);
 
 		funcctx = SRF_FIRSTCALL_INIT();
 		SPI_connect();
 		stat = ts_stat_sql(funcctx->multi_call_memory_ctx, txt, NULL);
-		PG_FREE_IF_COPY(txt, 0);
+		MDB_FREE_IF_COPY(txt, 0);
 		ts_setup_firstcall(fcinfo, funcctx, stat);
 		SPI_finish();
 	}
@@ -2065,7 +2065,7 @@ ts_stat1(PG_FUNCTION_ARGS)
 }
 
 Datum
-ts_stat2(PG_FUNCTION_ARGS)
+ts_stat2(MDB_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Datum		result;
@@ -2073,14 +2073,14 @@ ts_stat2(PG_FUNCTION_ARGS)
 	if (SRF_IS_FIRSTCALL())
 	{
 		TSVectorStat *stat;
-		text	   *txt = PG_GETARG_TEXT_P(0);
-		text	   *ws = PG_GETARG_TEXT_P(1);
+		text	   *txt = MDB_GETARG_TEXT_P(0);
+		text	   *ws = MDB_GETARG_TEXT_P(1);
 
 		funcctx = SRF_FIRSTCALL_INIT();
 		SPI_connect();
 		stat = ts_stat_sql(funcctx->multi_call_memory_ctx, txt, ws);
-		PG_FREE_IF_COPY(txt, 0);
-		PG_FREE_IF_COPY(ws, 1);
+		MDB_FREE_IF_COPY(txt, 0);
+		MDB_FREE_IF_COPY(ws, 1);
 		ts_setup_firstcall(fcinfo, funcctx, stat);
 		SPI_finish();
 	}
@@ -2103,19 +2103,19 @@ ts_stat2(PG_FUNCTION_ARGS)
  * be explicitly schema-qualified.
  */
 Datum
-tsvector_update_trigger_byid(PG_FUNCTION_ARGS)
+tsvector_update_trigger_byid(MDB_FUNCTION_ARGS)
 {
 	return tsvector_update_trigger(fcinfo, false);
 }
 
 Datum
-tsvector_update_trigger_bycolumn(PG_FUNCTION_ARGS)
+tsvector_update_trigger_bycolumn(MDB_FUNCTION_ARGS)
 {
 	return tsvector_update_trigger(fcinfo, true);
 }
 
 static Datum
-tsvector_update_trigger(PG_FUNCTION_ARGS, bool config_column)
+tsvector_update_trigger(MDB_FUNCTION_ARGS, bool config_column)
 {
 	TriggerData *trigdata;
 	Trigger    *trigger;

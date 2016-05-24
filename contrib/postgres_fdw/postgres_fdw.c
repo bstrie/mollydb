@@ -39,7 +39,7 @@
 #include "utils/rel.h"
 #include "utils/sampling.h"
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* Default CPU cost to start up a foreign query. */
 #define DEFAULT_FDW_STARTUP_COST	100.0
@@ -267,7 +267,7 @@ typedef struct
 /*
  * SQL functions
  */
-PG_FUNCTION_INFO_V1(mollydb_fdw_handler);
+MDB_FUNCTION_INFO_V1(mollydb_fdw_handler);
 
 /*
  * FDW callback routines
@@ -414,7 +414,7 @@ static void add_paths_with_pathkeys_for_rel(PlannerInfo *root, RelOptInfo *rel,
  * to my callback routines.
  */
 Datum
-mollydb_fdw_handler(PG_FUNCTION_ARGS)
+mollydb_fdw_handler(MDB_FUNCTION_ARGS)
 {
 	FdwRoutine *routine = makeNode(FdwRoutine);
 
@@ -457,7 +457,7 @@ mollydb_fdw_handler(PG_FUNCTION_ARGS)
 	/* Support functions for join push-down */
 	routine->GetForeignJoinPaths = mollydbGetForeignJoinPaths;
 
-	PG_RETURN_POINTER(routine);
+	MDB_RETURN_POINTER(routine);
 }
 
 /*
@@ -1446,7 +1446,7 @@ mollydbReScanForeignScan(ForeignScanState *node)
 	}
 
 	/*
-	 * We don't use a PG_TRY block here, so be careful not to throw error
+	 * We don't use a MDB_TRY block here, so be careful not to throw error
 	 * without releasing the PGresult.
 	 */
 	res = pgfdw_exec_query(fsstate->conn, sql);
@@ -1791,7 +1791,7 @@ mollydbExecForeignInsert(EState *estate,
 	/*
 	 * Get the result, and check for success.
 	 *
-	 * We don't use a PG_TRY block here, so be careful not to throw error
+	 * We don't use a MDB_TRY block here, so be careful not to throw error
 	 * without releasing the PGresult.
 	 */
 	res = pgfdw_get_result(fmstate->conn, fmstate->query);
@@ -1867,7 +1867,7 @@ mollydbExecForeignUpdate(EState *estate,
 	/*
 	 * Get the result, and check for success.
 	 *
-	 * We don't use a PG_TRY block here, so be careful not to throw error
+	 * We don't use a MDB_TRY block here, so be careful not to throw error
 	 * without releasing the PGresult.
 	 */
 	res = pgfdw_get_result(fmstate->conn, fmstate->query);
@@ -1943,7 +1943,7 @@ mollydbExecForeignDelete(EState *estate,
 	/*
 	 * Get the result, and check for success.
 	 *
-	 * We don't use a PG_TRY block here, so be careful not to throw error
+	 * We don't use a MDB_TRY block here, so be careful not to throw error
 	 * without releasing the PGresult.
 	 */
 	res = pgfdw_get_result(fmstate->conn, fmstate->query);
@@ -1993,7 +1993,7 @@ mollydbEndForeignModify(EState *estate,
 		snprintf(sql, sizeof(sql), "DEALLOCATE %s", fmstate->p_name);
 
 		/*
-		 * We don't use a PG_TRY block here, so be careful not to throw error
+		 * We don't use a MDB_TRY block here, so be careful not to throw error
 		 * without releasing the PGresult.
 		 */
 		res = pgfdw_exec_query(fmstate->conn, sql);
@@ -2749,7 +2749,7 @@ get_remote_estimate(const char *sql, PGconn *conn,
 	PGresult   *volatile res = NULL;
 
 	/* PGresult must be released before leaving this function. */
-	PG_TRY();
+	MDB_TRY();
 	{
 		char	   *line;
 		char	   *p;
@@ -2779,13 +2779,13 @@ get_remote_estimate(const char *sql, PGconn *conn,
 		PQclear(res);
 		res = NULL;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (res)
 			PQclear(res);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 /*
@@ -2871,7 +2871,7 @@ create_cursor(ForeignScanState *node)
 	/*
 	 * Get the result, and check for success.
 	 *
-	 * We don't use a PG_TRY block here, so be careful not to throw error
+	 * We don't use a MDB_TRY block here, so be careful not to throw error
 	 * without releasing the PGresult.
 	 */
 	res = pgfdw_get_result(conn, buf.data);
@@ -2910,7 +2910,7 @@ fetch_more_data(ForeignScanState *node)
 	oldcontext = MemoryContextSwitchTo(fsstate->batch_cxt);
 
 	/* PGresult must be released before leaving this function. */
-	PG_TRY();
+	MDB_TRY();
 	{
 		PGconn	   *conn = fsstate->conn;
 		char		sql[64];
@@ -2954,13 +2954,13 @@ fetch_more_data(ForeignScanState *node)
 		PQclear(res);
 		res = NULL;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (res)
 			PQclear(res);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	MemoryContextSwitchTo(oldcontext);
 }
@@ -3027,7 +3027,7 @@ close_cursor(PGconn *conn, unsigned int cursor_number)
 	snprintf(sql, sizeof(sql), "CLOSE c%u", cursor_number);
 
 	/*
-	 * We don't use a PG_TRY block here, so be careful not to throw error
+	 * We don't use a MDB_TRY block here, so be careful not to throw error
 	 * without releasing the PGresult.
 	 */
 	res = pgfdw_exec_query(conn, sql);
@@ -3069,7 +3069,7 @@ prepare_foreign_modify(PgFdwModifyState *fmstate)
 	/*
 	 * Get the result, and check for success.
 	 *
-	 * We don't use a PG_TRY block here, so be careful not to throw error
+	 * We don't use a MDB_TRY block here, so be careful not to throw error
 	 * without releasing the PGresult.
 	 */
 	res = pgfdw_get_result(fmstate->conn, fmstate->query);
@@ -3150,13 +3150,13 @@ convert_prep_stmt_params(PgFdwModifyState *fmstate,
  *		Store the result of a RETURNING clause
  *
  * On error, be sure to release the PGresult on the way out.  Callers do not
- * have PG_TRY blocks to ensure this happens.
+ * have MDB_TRY blocks to ensure this happens.
  */
 static void
 store_returning_result(PgFdwModifyState *fmstate,
 					   TupleTableSlot *slot, PGresult *res)
 {
-	PG_TRY();
+	MDB_TRY();
 	{
 		HeapTuple	newtup;
 
@@ -3169,13 +3169,13 @@ store_returning_result(PgFdwModifyState *fmstate,
 		/* tuple will be deleted when it is cleared from the slot */
 		ExecStoreTuple(newtup, slot, InvalidBuffer, true);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (res)
 			PQclear(res);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 }
 
 /*
@@ -3212,7 +3212,7 @@ execute_dml_stmt(ForeignScanState *node)
 	/*
 	 * Get the result, and check for success.
 	 *
-	 * We don't use a PG_TRY block here, so be careful not to throw error
+	 * We don't use a MDB_TRY block here, so be careful not to throw error
 	 * without releasing the PGresult.
 	 */
 	dmstate->result = pgfdw_get_result(dmstate->conn, dmstate->query);
@@ -3260,9 +3260,9 @@ get_returning_data(ForeignScanState *node)
 	{
 		/*
 		 * On error, be sure to release the PGresult on the way out.  Callers
-		 * do not have PG_TRY blocks to ensure this happens.
+		 * do not have MDB_TRY blocks to ensure this happens.
 		 */
-		PG_TRY();
+		MDB_TRY();
 		{
 			HeapTuple	newtup;
 
@@ -3275,13 +3275,13 @@ get_returning_data(ForeignScanState *node)
 												dmstate->temp_cxt);
 			ExecStoreTuple(newtup, slot, InvalidBuffer, false);
 		}
-		PG_CATCH();
+		MDB_CATCH();
 		{
 			if (dmstate->result)
 				PQclear(dmstate->result);
-			PG_RE_THROW();
+			MDB_RE_THROW();
 		}
-		PG_END_TRY();
+		MDB_END_TRY();
 	}
 	dmstate->next_tuple++;
 
@@ -3416,7 +3416,7 @@ mollydbAnalyzeForeignTable(Relation relation,
 	deparseAnalyzeSizeSql(&sql, relation);
 
 	/* In what follows, do not risk leaking any PGresults. */
-	PG_TRY();
+	MDB_TRY();
 	{
 		res = pgfdw_exec_query(conn, sql.data);
 		if (PQresultStatus(res) != PGRES_TUPLES_OK)
@@ -3429,13 +3429,13 @@ mollydbAnalyzeForeignTable(Relation relation,
 		PQclear(res);
 		res = NULL;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (res)
 			PQclear(res);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	ReleaseConnection(conn);
 
@@ -3510,7 +3510,7 @@ mollydbAcquireSampleRowsFunc(Relation relation, int elevel,
 	deparseAnalyzeSql(&sql, relation, &astate.retrieved_attrs);
 
 	/* In what follows, do not risk leaking any PGresults. */
-	PG_TRY();
+	MDB_TRY();
 	{
 		res = pgfdw_exec_query(conn, sql.data);
 		if (PQresultStatus(res) != PGRES_COMMAND_OK)
@@ -3584,13 +3584,13 @@ mollydbAcquireSampleRowsFunc(Relation relation, int elevel,
 		/* Close the cursor, just to be tidy. */
 		close_cursor(conn, cursor_number);
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (res)
 			PQclear(res);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	ReleaseConnection(conn);
 
@@ -3732,7 +3732,7 @@ mollydbImportForeignSchema(ImportForeignSchemaStmt *stmt, Oid serverOid)
 	initStringInfo(&buf);
 
 	/* In what follows, do not risk leaking any PGresults. */
-	PG_TRY();
+	MDB_TRY();
 	{
 		/* Check that the schema really exists */
 		appendStringInfoString(&buf, "SELECT 1 FROM mdb_catalog.mdb_namespace WHERE nspname = ");
@@ -3935,13 +3935,13 @@ mollydbImportForeignSchema(ImportForeignSchemaStmt *stmt, Oid serverOid)
 		PQclear(res);
 		res = NULL;
 	}
-	PG_CATCH();
+	MDB_CATCH();
 	{
 		if (res)
 			PQclear(res);
-		PG_RE_THROW();
+		MDB_RE_THROW();
 	}
-	PG_END_TRY();
+	MDB_END_TRY();
 
 	ReleaseConnection(conn);
 

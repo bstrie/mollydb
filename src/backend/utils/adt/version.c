@@ -18,7 +18,7 @@
 
 
 Datum
-mdb_version(PG_FUNCTION_ARGS)
+mdb_version(MDB_FUNCTION_ARGS)
 {
-	PG_RETURN_TEXT_P(cstring_to_text(PG_VERSION_STR));
+	MDB_RETURN_TEXT_P(cstring_to_text(MDB_VERSION_STR));
 }

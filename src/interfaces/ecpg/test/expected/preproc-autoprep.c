@@ -204,7 +204,7 @@ if (sqlca.sqlcode < 0) sqlprint();}
 	ECPGt_int,&(ind1),(long)1,(long)1,sizeof(int), ECPGt_EORT);
 #line 55 "autoprep.pgc"
 
-if (sqlca.sqlcode == ECPG_NOT_FOUND) break;
+if (sqlca.sqlcode == ECMDB_NOT_FOUND) break;
 #line 55 "autoprep.pgc"
 
 if (sqlca.sqlwarn[0] == 'W') sqlprint();

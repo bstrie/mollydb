@@ -10,8 +10,8 @@ DATA = test_shm_mq--1.0.sql
 REGRESS = test_shm_mq
 
 ifdef USE_PGXS
-PG_CONFIG = mdb_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+MDB_CONFIG = mdb_config
+PGXS := $(shell $(MDB_CONFIG) --pgxs)
 include $(PGXS)
 else
 subdir = src/test/modules/test_shm_mq

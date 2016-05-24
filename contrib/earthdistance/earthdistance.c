@@ -10,7 +10,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-PG_MODULE_MAGIC;
+MDB_MODULE_MAGIC;
 
 /* Earth's radius is in statute miles. */
 static const double EARTH_RADIUS = 3958.747716;
@@ -98,17 +98,17 @@ geo_distance_internal(Point *pt1, Point *pt2)
 
 #ifdef USE_FLOAT8_BYVAL
 
-PG_FUNCTION_INFO_V1(geo_distance);
+MDB_FUNCTION_INFO_V1(geo_distance);
 
 Datum
-geo_distance(PG_FUNCTION_ARGS)
+geo_distance(MDB_FUNCTION_ARGS)
 {
-	Point	   *pt1 = PG_GETARG_POINT_P(0);
-	Point	   *pt2 = PG_GETARG_POINT_P(1);
+	Point	   *pt1 = MDB_GETARG_POINT_P(0);
+	Point	   *pt2 = MDB_GETARG_POINT_P(1);
 	float8		result;
 
 	result = geo_distance_internal(pt1, pt2);
-	PG_RETURN_FLOAT8(result);
+	MDB_RETURN_FLOAT8(result);
 }
 #else							/* !USE_FLOAT8_BYVAL */
 

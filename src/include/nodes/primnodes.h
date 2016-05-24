@@ -421,8 +421,8 @@ typedef enum CoercionForm
 typedef struct FuncExpr
 {
 	Expr		xpr;
-	Oid			funcid;			/* PG_PROC OID of the function */
-	Oid			funcresulttype; /* PG_TYPE OID of result value */
+	Oid			funcid;			/* MDB_PROC OID of the function */
+	Oid			funcresulttype; /* MDB_TYPE OID of result value */
 	bool		funcretset;		/* true if function returns set */
 	bool		funcvariadic;	/* true if variadic arguments have been
 								 * combined into an array last argument */
@@ -468,9 +468,9 @@ typedef struct NamedArgExpr
 typedef struct OpExpr
 {
 	Expr		xpr;
-	Oid			opno;			/* PG_OPERATOR OID of the operator */
-	Oid			opfuncid;		/* PG_PROC OID of underlying function */
-	Oid			opresulttype;	/* PG_TYPE OID of result value */
+	Oid			opno;			/* MDB_OPERATOR OID of the operator */
+	Oid			opfuncid;		/* MDB_PROC OID of underlying function */
+	Oid			opresulttype;	/* MDB_TYPE OID of result value */
 	bool		opretset;		/* true if operator returns set */
 	Oid			opcollid;		/* OID of collation of result */
 	Oid			inputcollid;	/* OID of collation that operator should use */
@@ -511,8 +511,8 @@ typedef OpExpr NullIfExpr;
 typedef struct ScalarArrayOpExpr
 {
 	Expr		xpr;
-	Oid			opno;			/* PG_OPERATOR OID of the operator */
-	Oid			opfuncid;		/* PG_PROC OID of underlying function */
+	Oid			opno;			/* MDB_OPERATOR OID of the operator */
+	Oid			opfuncid;		/* MDB_PROC OID of underlying function */
 	bool		useOr;			/* true for ANY, false for ALL */
 	Oid			inputcollid;	/* OID of collation that operator should use */
 	List	   *args;			/* the scalar and array operands */
