@@ -1438,7 +1438,7 @@ format_elog_string(const char *fmt,...)
 /*
  * Actual output of the top-of-stack error message
  *
- * In the ereport(ERROR) case this is called from PostgresMain (or not at all,
+ * In the ereport(ERROR) case this is called from MollyDBMain (or not at all,
  * if the error is caught by somebody).  For all other severity levels this
  * is called by errfinish.
  */

@@ -10,7 +10,7 @@
 #
 #-------------------------------------------------------------------------
 
-# This file should be included by any Postgres module Makefile that
+# This file should be included by any MollyDB module Makefile that
 # wants to build a shared library (if possible for the current
 # platform). A static library is also built from the same object
 # files. Only one library can be built per makefile.

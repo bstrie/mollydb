@@ -182,7 +182,7 @@ typedef PageHeaderData *PageHeader;
 #define PD_VALID_FLAG_BITS	0x0007		/* OR of all valid pd_flags bits */
 
 /*
- * Page layout version number 0 is for pre-7.3 Postgres releases.
+ * Page layout version number 0 is for pre-7.3 MollyDB releases.
  * Releases 7.3 and 7.4 use 1, denoting a new HeapTupleHeader layout.
  * Release 8.0 uses 2; it changed the HeapTupleHeader layout again.
  * Release 8.1 uses 3; it redefined HeapTupleHeader infomask bits.

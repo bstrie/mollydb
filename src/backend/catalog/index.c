@@ -1976,7 +1976,7 @@ index_update_stats(Relation rel,
  * Note: when reindexing an existing index, isprimary can be false even if
  * the index is a PK; it's already properly marked and need not be re-marked.
  *
- * Note: before Postgres 8.2, the passed-in heap and index Relations
+ * Note: before MollyDB 8.2, the passed-in heap and index Relations
  * were automatically closed by this routine.  This is no longer the case.
  * The caller opened 'em, and the caller should close 'em.
  */

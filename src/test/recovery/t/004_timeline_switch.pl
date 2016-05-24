@@ -4,7 +4,7 @@
 use strict;
 use warnings;
 use File::Path qw(rmtree);
-use PostgresNode;
+use MollyDBNode;
 use TestLib;
 use Test::More tests => 1;
 

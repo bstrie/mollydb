@@ -67,7 +67,7 @@ static HeapTuple GetDatabaseTupleByOid(Oid dboid);
 static void PerformAuthentication(Port *port);
 static void CheckMyDatabase(const char *name, bool am_superuser);
 static void InitCommunication(void);
-static void ShutdownPostgres(int code, Datum arg);
+static void ShutdownMollyDB(int code, Datum arg);
 static void StatementTimeoutHandler(void);
 static void LockTimeoutHandler(void);
 static void IdleInTransactionSessionTimeoutHandler(void);
@@ -76,7 +76,7 @@ static void process_startup_options(Port *port, bool am_superuser);
 static void process_settings(Oid databaseid, Oid roleid);
 
 
-/*** InitPostgres support ***/
+/*** InitMollyDB support ***/
 
 
 /*
@@ -195,7 +195,7 @@ PerformAuthentication(Port *port)
 	/*
 	 * load_hba() and load_ident() want to work within the PostmasterContext,
 	 * so create that if it doesn't exist (which it won't).  We'll delete it
-	 * again later, in PostgresMain.
+	 * again later, in MollyDBMain.
 	 */
 	if (PostmasterContext == NULL)
 		PostmasterContext = AllocSetContextCreate(TopMemoryContext,
@@ -508,11 +508,11 @@ InitializeMaxBackends(void)
 
 /*
  * Early initialization of a backend (either standalone or under postmaster).
- * This happens even before InitPostgres.
+ * This happens even before InitMollyDB.
  *
- * This is separate from InitPostgres because it is also called by auxiliary
+ * This is separate from InitMollyDB because it is also called by auxiliary
  * processes, such as the background writer process, which may not call
- * InitPostgres at all.
+ * InitMollyDB at all.
  */
 void
 BaseInit(void)
@@ -532,7 +532,7 @@ BaseInit(void)
 
 
 /* --------------------------------
- * InitPostgres
+ * InitMollyDB
  *		Initialize POSTGRES.
  *
  * The database can be specified by name, using the in_dbname parameter, or by
@@ -552,11 +552,11 @@ BaseInit(void)
  * already have a PGPROC struct ... but it's not completely filled in yet.
  *
  * Note:
- *		Be very careful with the order of calls in the InitPostgres function.
+ *		Be very careful with the order of calls in the InitMollyDB function.
  * --------------------------------
  */
 void
-InitPostgres(const char *in_dbname, Oid dboid, const char *username,
+InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 			 Oid useroid, char *out_dbname)
 {
 	bool		bootstrap = IsBootstrapProcessingMode();
@@ -564,7 +564,7 @@ InitPostgres(const char *in_dbname, Oid dboid, const char *username,
 	char	   *fullpath;
 	char		dbname[NAMEDATALEN];
 
-	elog(DEBUG3, "InitPostgres");
+	elog(DEBUG3, "InitMollyDB");
 
 	/*
 	 * Add my PGPROC struct to the ProcArray.
@@ -662,7 +662,7 @@ InitPostgres(const char *in_dbname, Oid dboid, const char *username,
 	 * transaction --- if we fail during the initialization transaction, as is
 	 * entirely possible, we need the AbortTransaction call to clean up.
 	 */
-	before_shmem_exit(ShutdownPostgres, 0);
+	before_shmem_exit(ShutdownMollyDB, 0);
 
 	/* The autovacuum launcher is done here */
 	if (IsAutoVacuumLauncherProcess())
@@ -1133,7 +1133,7 @@ process_settings(Oid databaseid, Oid roleid)
  * cleanup fails.
  */
 static void
-ShutdownPostgres(int code, Datum arg)
+ShutdownMollyDB(int code, Datum arg)
 {
 	/* Make sure we've killed any active transaction */
 	AbortOutOfAnyTransaction();

@@ -26,7 +26,7 @@
  * and hours/minutes/seconds separately since the elapsed time spanned is
  * unknown until instantiated relative to an absolute time.
  *
- * Note that Postgres uses "time interval" to mean a bounded interval,
+ * Note that MollyDB uses "time interval" to mean a bounded interval,
  * consisting of a beginning and ending time, not a time span - thomas 97/03/20
  *
  * We have two implementations, one that uses int64 values with units of
@@ -180,7 +180,7 @@ typedef struct
 	 ((y) < JULIAN_MAXYEAR || \
 	  ((y) == JULIAN_MAXYEAR && ((m) < JULIAN_MAXMONTH))))
 
-/* Julian-date equivalents of Day 0 in Unix and Postgres reckoning */
+/* Julian-date equivalents of Day 0 in Unix and MollyDB reckoning */
 #define UNIX_EPOCH_JDATE		2440588 /* == date2j(1970, 1, 1) */
 #define POSTGRES_EPOCH_JDATE	2451545 /* == date2j(2000, 1, 1) */
 
@@ -221,7 +221,7 @@ typedef struct
 /* == (TIMESTAMP_END_JULIAN - POSTGRES_EPOCH_JDATE) * SECS_PER_DAY */
 #endif
 
-/* Range-check a date (given in Postgres, not Julian, numbering) */
+/* Range-check a date (given in MollyDB, not Julian, numbering) */
 #define IS_VALID_DATE(d) \
 	((DATETIME_MIN_JULIAN - POSTGRES_EPOCH_JDATE) <= (d) && \
 	 (d) < (DATE_END_JULIAN - POSTGRES_EPOCH_JDATE))

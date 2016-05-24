@@ -770,7 +770,7 @@ initialize_environment(void)
 	 * Set timezone and datestyle for datetime-related tests
 	 */
 	putenv("PGTZ=PST8PDT");
-	putenv("PGDATESTYLE=Postgres, MDY");
+	putenv("PGDATESTYLE=MollyDB, MDY");
 
 	/*
 	 * Likewise set intervalstyle to ensure consistent results.  This is a bit

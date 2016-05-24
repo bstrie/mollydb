@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * regexp.c
- *	  Postgres' interface to the regular expression package.
+ *	  MollyDB' interface to the regular expression package.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California

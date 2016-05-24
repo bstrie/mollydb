@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use Config;
-use PostgresNode;
+use MollyDBNode;
 use TestLib;
 use Test::More;
 
@@ -23,7 +23,7 @@ my $tempdir_short = TestLib::tempdir_short;
 # the full command and arguments to run.  Note that this is run
 # using $node->command_ok(), so the port does not need to be
 # specified and is pulled from $PGPORT, which is set by the
-# PostgresNode system.
+# MollyDBNode system.
 #
 # restore_cmd is the pg_restore command to run, if any.  Note
 # that this should generally be used when the pg_dump goes to

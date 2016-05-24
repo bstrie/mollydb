@@ -639,7 +639,7 @@ ldelete:;
 				 * current command, or by a later command in the current
 				 * transaction.  The former case is possible in a join DELETE
 				 * where multiple tuples join to the same target tuple. This
-				 * is somewhat questionable, but Postgres has always allowed
+				 * is somewhat questionable, but MollyDB has always allowed
 				 * it: we just ignore additional deletion attempts.
 				 *
 				 * The latter case arises if the tuple is modified by a
@@ -933,7 +933,7 @@ lreplace:;
 				 * current command, or by a later command in the current
 				 * transaction.  The former case is possible in a join UPDATE
 				 * where multiple tuples join to the same target tuple. This
-				 * is pretty questionable, but Postgres has always allowed it:
+				 * is pretty questionable, but MollyDB has always allowed it:
 				 * we just execute the first update action and ignore
 				 * additional update attempts.
 				 *

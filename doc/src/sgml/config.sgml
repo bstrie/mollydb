@@ -6490,7 +6490,7 @@ SET XML OPTION { DOCUMENT | CONTENT };
         rules for interpreting ambiguous date input values. For
         historical reasons, this variable contains two independent
         components: the output format specification (<literal>ISO</>,
-        <literal>Postgres</>, <literal>SQL</>, or <literal>German</>)
+        <literal>MollyDB</>, <literal>SQL</>, or <literal>German</>)
         and the input/output specification for year/month/day ordering
         (<literal>DMY</>, <literal>MDY</>, or <literal>YMD</>). These
         can be set separately or together. The keywords <literal>Euro</>

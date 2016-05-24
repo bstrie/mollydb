@@ -414,7 +414,7 @@
     <listitem>
      <para>
       Avoid a crash on old Windows versions (before 7SP1/2008R2SP1) with an
-      AVX2-capable CPU and a Postgres build done with Visual Studio 2013
+      AVX2-capable CPU and a MollyDB build done with Visual Studio 2013
       (Christian Ullrich)
      </para>
 
@@ -493,7 +493,7 @@
 
     <listitem>
      <para>
-      In PL/Perl, properly translate empty Postgres arrays into empty Perl
+      In PL/Perl, properly translate empty MollyDB arrays into empty Perl
       arrays (Alex Hunsaker)
      </para>
     </listitem>

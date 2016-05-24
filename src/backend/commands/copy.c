@@ -780,7 +780,7 @@ CopyLoadRawBuf(CopyState cstate)
  * input/output stream. The latter could be either stdin/stdout or a
  * socket, depending on whether we're running under Postmaster control.
  *
- * Do not allow a Postgres user without superuser privilege to read from
+ * Do not allow a MollyDB user without superuser privilege to read from
  * or write to a file.
  *
  * Do not allow the copy if user doesn't have proper permission to access

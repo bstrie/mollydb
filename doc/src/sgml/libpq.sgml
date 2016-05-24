@@ -254,7 +254,7 @@ PGconn *PQconnectStartParams(const char * const *keywords,
 
 PGconn *PQconnectStart(const char *conninfo);
 
-PostgresPollingStatusType PQconnectPoll(PGconn *conn);
+MollyDBPollingStatusType PQconnectPoll(PGconn *conn);
 </synopsis>
       </para>
 
@@ -622,7 +622,7 @@ void PQreset(PGconn *conn);
 <synopsis>
 int PQresetStart(PGconn *conn);
 
-PostgresPollingStatusType PQresetPoll(PGconn *conn);
+MollyDBPollingStatusType PQresetPoll(PGconn *conn);
 </synopsis>
       </para>
 

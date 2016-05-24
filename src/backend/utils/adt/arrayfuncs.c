@@ -4617,7 +4617,7 @@ array_copy(char *destptr, int nitems,
  * bits in the destination map are changed, not any before or after.
  *
  * Note: this could certainly be optimized using standard bitblt methods.
- * However, it's not clear that the typical Postgres array has enough elements
+ * However, it's not clear that the typical MollyDB array has enough elements
  * to make it worth worrying too much.  For the moment, KISS.
  */
 void

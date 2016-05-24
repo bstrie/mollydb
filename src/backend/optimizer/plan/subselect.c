@@ -2017,7 +2017,7 @@ process_sublinks_mutator(Node *node, process_sublinks_context *context)
 	 * Anywhere within the top-level AND/OR clause structure, we can tell
 	 * make_subplan() that NULL and FALSE are interchangeable.  So isTopQual
 	 * propagates down in both cases.  (Note that this is unlike the meaning
-	 * of "top level qual" used in most other places in Postgres.)
+	 * of "top level qual" used in most other places in MollyDB.)
 	 */
 	if (and_clause(node))
 	{

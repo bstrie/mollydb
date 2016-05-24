@@ -69,7 +69,7 @@ PG_MODULE_MAGIC;
  * (This is needed to ensure that an unprivileged user can't inject Perl code
  * that'll be executed with the privileges of some other SQL user.)
  *
- * The plperl_interp_desc structs are kept in a Postgres hash table indexed
+ * The plperl_interp_desc structs are kept in a MollyDB hash table indexed
  * by userid OID, with OID 0 used for the single untrusted interpreter.
  * Once created, an interpreter is kept for the life of the process.
  *
@@ -728,7 +728,7 @@ plperl_init_interp(void)
 	 * settings.
 	 *
 	 * We restore them using setlocale_perl(), defined below, so that Perl
-	 * doesn't have a different idea of the locale from Postgres.
+	 * doesn't have a different idea of the locale from MollyDB.
 	 *
 	 */
 
@@ -3138,8 +3138,8 @@ plperl_spi_execute_fetch_result(SPITupleTable *tuptable, uint64 processed,
 
 
 /*
- * Note: plperl_return_next is called both in Postgres and Perl contexts.
- * We report any errors in Postgres fashion (via ereport).  If called in
+ * Note: plperl_return_next is called both in MollyDB and Perl contexts.
+ * We report any errors in MollyDB fashion (via ereport).  If called in
  * Perl context, it is SPI.xs's responsibility to catch the error and
  * convert to a Perl error.  We assume (perhaps without adequate justification)
  * that we need not abort the current transaction if the Perl code traps the

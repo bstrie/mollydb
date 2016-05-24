@@ -2,7 +2,7 @@
  *
  * nbtree.c
  *	  Implementation of Lehman and Yao's btree management algorithm for
- *	  Postgres.
+ *	  MollyDB.
  *
  * NOTES
  *	  This file contains only the public interface routines.

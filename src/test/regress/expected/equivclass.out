@@ -5,7 +5,7 @@
 -- for handling "broken" ECs.  This is because an EC can only become broken
 -- if its underlying btree operator family doesn't include a complete set
 -- of cross-type equality operators.  There are not (and should not be)
--- any such families built into Postgres; so we have to hack things up
+-- any such families built into MollyDB; so we have to hack things up
 -- to create one.  We do this by making two alias types that are really
 -- int8 (so we need no new C code) and adding only some operators for them
 -- into the standard integer_ops opfamily.

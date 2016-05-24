@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * arrayaccess.h
- *	  Declarations for element-by-element access to Postgres arrays.
+ *	  Declarations for element-by-element access to MollyDB arrays.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

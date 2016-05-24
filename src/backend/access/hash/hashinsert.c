@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * hashinsert.c
- *	  Item insertion in hash tables for Postgres.
+ *	  Item insertion in hash tables for MollyDB.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California

@@ -605,7 +605,7 @@ describeOperators(const char *pattern, bool verbose, bool showSystem)
 	initPQExpBuffer(&buf);
 
 	/*
-	 * Note: before Postgres 9.1, we did not assign comments to any built-in
+	 * Note: before MollyDB 9.1, we did not assign comments to any built-in
 	 * operators, preferring to let the comment on the underlying function
 	 * suffice.  The coalesce() on the obj_description() calls below supports
 	 * this convention by providing a fallback lookup of a comment on the

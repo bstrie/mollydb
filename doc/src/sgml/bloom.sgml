@@ -205,17 +205,17 @@ DEFAULT FOR TYPE text USING bloom AS
 
   <para>
    Teodor Sigaev <email>teodor@mollydbpro.ru</email>,
-   Postgres Professional, Moscow, Russia
+   MollyDB Professional, Moscow, Russia
   </para>
 
   <para>
    Alexander Korotkov <email>a.korotkov@mollydbpro.ru</email>,
-   Postgres Professional, Moscow, Russia
+   MollyDB Professional, Moscow, Russia
   </para>
 
   <para>
    Oleg Bartunov <email>obartunov@mollydbpro.ru</email>,
-   Postgres Professional, Moscow, Russia
+   MollyDB Professional, Moscow, Russia
   </para>
  </sect2>
 

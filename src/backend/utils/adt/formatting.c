@@ -1574,7 +1574,7 @@ str_tolower(const char *buff, size_t nbytes, Oid collid)
 		/*
 		 * Note: we assume that tolower_l() will not be so broken as to need
 		 * an isupper_l() guard test.  When using the default collation, we
-		 * apply the traditional Postgres behavior that forces ASCII-style
+		 * apply the traditional MollyDB behavior that forces ASCII-style
 		 * treatment of I/i, but in non-default collations you get exactly
 		 * what the collation says.
 		 */
@@ -1694,7 +1694,7 @@ str_toupper(const char *buff, size_t nbytes, Oid collid)
 		/*
 		 * Note: we assume that toupper_l() will not be so broken as to need
 		 * an islower_l() guard test.  When using the default collation, we
-		 * apply the traditional Postgres behavior that forces ASCII-style
+		 * apply the traditional MollyDB behavior that forces ASCII-style
 		 * treatment of I/i, but in non-default collations you get exactly
 		 * what the collation says.
 		 */
@@ -1827,7 +1827,7 @@ str_initcap(const char *buff, size_t nbytes, Oid collid)
 		/*
 		 * Note: we assume that toupper_l()/tolower_l() will not be so broken
 		 * as to need guard tests.  When using the default collation, we apply
-		 * the traditional Postgres behavior that forces ASCII-style treatment
+		 * the traditional MollyDB behavior that forces ASCII-style treatment
 		 * of I/i, but in non-default collations you get exactly what the
 		 * collation says.
 		 */

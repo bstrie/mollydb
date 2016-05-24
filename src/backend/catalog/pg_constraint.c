@@ -96,7 +96,7 @@ CreateConstraintEntry(const char *constraintName,
 	namestrcpy(&cname, constraintName);
 
 	/*
-	 * Convert C arrays into Postgres arrays.
+	 * Convert C arrays into MollyDB arrays.
 	 */
 	if (constraintNKeys > 0)
 	{
@@ -444,7 +444,7 @@ ConstraintNameIsUsed(ConstraintCategory conCat, Oid objId,
  * Select a nonconflicting name for a new constraint.
  *
  * The objective here is to choose a name that is unique within the
- * specified namespace.  Postgres does not require this, but the SQL
+ * specified namespace.  MollyDB does not require this, but the SQL
  * spec does, and some apps depend on it.  Therefore we avoid choosing
  * default names that so conflict.
  *

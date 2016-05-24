@@ -1557,7 +1557,7 @@ PortalHashEnt
 PortalStatus
 PortalStrategy
 PostParseColumnRefHook
-PostgresPollingStatusType
+MollyDBPollingStatusType
 PostingItem
 PostponedQual
 PreParseColumnRefHook

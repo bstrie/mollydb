@@ -2,7 +2,7 @@
  *
  * walsender.c
  *
- * The WAL sender process (walsender) is new as of Postgres 9.0. It takes
+ * The WAL sender process (walsender) is new as of MollyDB 9.0. It takes
  * care of sending XLOG from the primary server to a single recipient.
  * (Note that there can be more than one walsender process concurrently.)
  * It is started by the postmaster when the walreceiver of a standby server

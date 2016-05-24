@@ -20,7 +20,7 @@
  * database is fully cached in RAM, it is reasonable to set them equal.)
  *
  * We also use a rough estimate "effective_cache_size" of the number of
- * disk pages in Postgres + OS-level disk cache.  (We can't simply use
+ * disk pages in MollyDB + OS-level disk cache.  (We can't simply use
  * NBuffers for this purpose because that would ignore the effects of
  * the kernel's disk cache.)
  *

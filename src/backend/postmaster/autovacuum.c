@@ -451,7 +451,7 @@ AutoVacLauncherMain(int argc, char *argv[])
 	InitProcess();
 #endif
 
-	InitPostgres(NULL, InvalidOid, NULL, InvalidOid, NULL);
+	InitMollyDB(NULL, InvalidOid, NULL, InvalidOid, NULL);
 
 	SetProcessingMode(NormalProcessing);
 
@@ -470,7 +470,7 @@ AutoVacLauncherMain(int argc, char *argv[])
 	/*
 	 * If an exception is encountered, processing resumes here.
 	 *
-	 * This code is a stripped down version of PostgresMain error recovery.
+	 * This code is a stripped down version of MollyDBMain error recovery.
 	 */
 	if (sigsetjmp(local_sigjmp_buf, 1) != 0)
 	{
@@ -1622,7 +1622,7 @@ AutoVacWorkerMain(int argc, char *argv[])
 
 		/*
 		 * Report autovac startup to the stats collector.  We deliberately do
-		 * this before InitPostgres, so that the last_autovac_time will get
+		 * this before InitMollyDB, so that the last_autovac_time will get
 		 * updated even if the connection attempt fails.  This is to prevent
 		 * autovac from getting "stuck" repeatedly selecting an unopenable
 		 * database, rather than making any progress on stuff it can connect
@@ -1636,7 +1636,7 @@ AutoVacWorkerMain(int argc, char *argv[])
 		 * Note: if we have selected a just-deleted database (due to using
 		 * stale stats info), we'll fail and exit here.
 		 */
-		InitPostgres(NULL, dbid, NULL, InvalidOid, dbname);
+		InitMollyDB(NULL, dbid, NULL, InvalidOid, dbname);
 		SetProcessingMode(NormalProcessing);
 		set_ps_display(dbname, false);
 		ereport(DEBUG1,

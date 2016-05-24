@@ -590,7 +590,7 @@ even for serializable transactions. Is this OK? If not, how do we
 address it?
 
     * External replication. Look at how this impacts external
-replication solutions, like Postgres-R, Slony, pgpool, HS/SR, etc.
+replication solutions, like MollyDB-R, Slony, pgpool, HS/SR, etc.
 This is related to the "WAL file replay" issue.
 
     * UNIQUE btree search for equality on all columns. Since a search

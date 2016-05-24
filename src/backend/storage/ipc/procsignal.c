@@ -166,7 +166,7 @@ CleanupProcSignalState(int status, Datum arg)
 
 /*
  * SendProcSignal
- *		Send a signal to a Postgres process
+ *		Send a signal to a MollyDB process
  *
  * Providing backendId is optional, but it will speed up the operation.
  *

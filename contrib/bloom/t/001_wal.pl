@@ -1,7 +1,7 @@
 # Test generic xlog record work for bloom index replication.
 use strict;
 use warnings;
-use PostgresNode;
+use MollyDBNode;
 use TestLib;
 use Test::More tests => 31;
 

@@ -279,7 +279,7 @@
   <para>
    When writing a bug report, please avoid confusing terminology.
    The software package in total is called <quote>MollyDB</quote>,
-   sometimes <quote>Postgres</quote> for short. If you
+   sometimes <quote>MollyDB</quote> for short. If you
    are specifically talking about the backend process, mention that, do not
    just say <quote>MollyDB crashes</quote>.  A crash of a single
    backend process is quite different from crash of the parent

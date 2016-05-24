@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * copyfuncs.c
- *	  Copy functions for Postgres tree nodes.
+ *	  Copy functions for MollyDB tree nodes.
  *
  * NOTE: we currently support copying all node types found in parse and
  * plan trees.  We do not support copying executor state trees; there

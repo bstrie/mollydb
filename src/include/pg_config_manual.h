@@ -70,7 +70,7 @@
 /*
  * Define this if you want to allow the lo_import and lo_export SQL
  * functions to be executed by ordinary users.  By default these
- * functions are only available to the Postgres superuser.  CAUTION:
+ * functions are only available to the MollyDB superuser.  CAUTION:
  * These functions are SECURITY HOLES since they can read and write
  * any file that the MollyDB server has permission to access.  If
  * you turn this on, don't say we didn't warn you.
@@ -129,7 +129,7 @@
 #endif
 
 /*
- * USE_POSIX_FADVISE controls whether Postgres will attempt to use the
+ * USE_POSIX_FADVISE controls whether MollyDB will attempt to use the
  * posix_fadvise() kernel call.  Usually the automatic configure tests are
  * sufficient, but some older Linux distributions had broken versions of
  * posix_fadvise().  If necessary you can remove the #define here.

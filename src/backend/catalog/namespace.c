@@ -3917,7 +3917,7 @@ assign_search_path(const char *newval, void *extra)
 }
 
 /*
- * InitializeSearchPath: initialize module during InitPostgres.
+ * InitializeSearchPath: initialize module during InitMollyDB.
  *
  * This is called after we are up enough to be able to do catalog lookups.
  */
@@ -4046,7 +4046,7 @@ fetch_search_path_array(Oid *sarray, int sarray_len)
 /*
  * Export the FooIsVisible functions as SQL-callable functions.
  *
- * Note: as of Postgres 8.4, these will silently return NULL if called on
+ * Note: as of MollyDB 8.4, these will silently return NULL if called on
  * a nonexistent object OID, rather than failing.  This is to avoid race
  * condition errors when a query that's scanning a catalog using an MVCC
  * snapshot uses one of these functions.  The underlying IsVisible functions

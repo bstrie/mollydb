@@ -271,7 +271,7 @@ InitShmemIndex(void)
  * whose maximum size is certain, this should be equal to max_size; that
  * ensures that no run-time out-of-shared-memory failures can occur.
  *
- * Note: before Postgres 9.0, this function returned NULL for some failure
+ * Note: before MollyDB 9.0, this function returned NULL for some failure
  * cases.  Now, it always throws error instead, so callers need not check
  * for NULL.
  */
@@ -326,7 +326,7 @@ ShmemInitHash(const char *name, /* table string name for shmem index */
  *	Returns: pointer to the object.  *foundPtr is set TRUE if the object was
  *		already in the shmem index (hence, already initialized).
  *
- *	Note: before Postgres 9.0, this function returned NULL for some failure
+ *	Note: before MollyDB 9.0, this function returned NULL for some failure
  *	cases.  Now, it always throws error instead, so callers need not check
  *	for NULL.
  */

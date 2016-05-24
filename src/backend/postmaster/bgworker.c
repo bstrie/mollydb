@@ -714,7 +714,7 @@ StartBackgroundWorker(void)
 								   true, NULL);
 
 	/*
-	 * Note that in normal processes, we would call InitPostgres here.  For a
+	 * Note that in normal processes, we would call InitMollyDB here.  For a
 	 * worker, however, we don't know what database to connect to, yet; so we
 	 * need to wait until the user code does it via
 	 * BackgroundWorkerInitializeConnection().

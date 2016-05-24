@@ -3,7 +3,7 @@ src/backend/access/hash/README
 Hash Indexing
 =============
 
-This directory contains an implementation of hash indexing for Postgres.
+This directory contains an implementation of hash indexing for MollyDB.
 Most of the core ideas are taken from Margo Seltzer and Ozan Yigit,
 A New Hashing Package for UNIX, Proceedings of the Winter USENIX Conference,
 January 1991.  (Our in-memory hashtable implementation,

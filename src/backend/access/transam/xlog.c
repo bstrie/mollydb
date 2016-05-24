@@ -7565,7 +7565,7 @@ RecoveryInProgress(void)
 
 		/*
 		 * Initialize TimeLineID and RedoRecPtr when we discover that recovery
-		 * is finished. InitPostgres() relies upon this behaviour to ensure
+		 * is finished. InitMollyDB() relies upon this behaviour to ensure
 		 * that InitXLOGAccess() is called at backend startup.  (If you change
 		 * this, see also LocalSetXLogInsertAllowed.)
 		 */
@@ -7804,7 +7804,7 @@ ReadCheckpointRecord(XLogReaderState *xlogreader, XLogRecPtr RecPtr,
  * (except in a standalone backend, which does StartupXLOG instead).  We need
  * to initialize the local copies of ThisTimeLineID and RedoRecPtr.
  *
- * Note: before Postgres 8.0, we went to some effort to keep the postmaster
+ * Note: before MollyDB 8.0, we went to some effort to keep the postmaster
  * process's copies of ThisTimeLineID and RedoRecPtr valid too.  This was
  * unnecessary however, since the postmaster itself never touches XLOG anyway.
  */

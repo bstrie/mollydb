@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Cwd;
 use Config;
-use PostgresNode;
+use MollyDBNode;
 use TestLib;
 use Test::More tests => 51;
 

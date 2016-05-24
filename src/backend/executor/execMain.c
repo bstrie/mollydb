@@ -1204,7 +1204,7 @@ CheckValidRowMarkRel(Relation rel, RowMarkType markType)
 /*
  * Initialize ResultRelInfo data for one result relation
  *
- * Caution: before Postgres 9.1, this function included the relkind checking
+ * Caution: before MollyDB 9.1, this function included the relkind checking
  * that's now in CheckValidResultRel, and it also did ExecOpenIndices if
  * appropriate.  Be sure callers cover those needs.
  */

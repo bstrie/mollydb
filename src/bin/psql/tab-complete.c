@@ -2772,7 +2772,7 @@ psql_completion(const char *text, int start, int end)
 		if (TailMatches2("DateStyle", "TO|="))
 		{
 			static const char *const my_list[] =
-			{"ISO", "SQL", "Postgres", "German",
+			{"ISO", "SQL", "MollyDB", "German",
 				"YMD", "DMY", "MDY",
 				"US", "European", "NonEuropean",
 			"DEFAULT", NULL};

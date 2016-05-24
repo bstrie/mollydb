@@ -59,13 +59,13 @@ overuse of "register" declarations.  (It used to include conversion of
 old-style function declarations to C89 style, but thank goodness they
 fixed that.)
 
-* We need the code to follow Postgres' portability conventions; this
+* We need the code to follow MollyDB' portability conventions; this
 includes relying on configure's results rather than hand-hacked #defines,
 and not relying on <stdint.h> features that may not exist on old systems.
-(In particular this means using Postgres' definitions of the int32 and
+(In particular this means using MollyDB' definitions of the int32 and
 int64 typedefs, not int_fast32_t/int_fast64_t.)
 
-* Since Postgres is typically built on a system that has its own copy
+* Since MollyDB is typically built on a system that has its own copy
 of the <time.h> functions, we must avoid conflicting with those.  This
 mandates renaming typedef time_t to pg_time_t, and similarly for most
 other exposed names.

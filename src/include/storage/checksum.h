@@ -16,7 +16,7 @@
 #include "storage/block.h"
 
 /*
- * Compute the checksum for a Postgres page.  The page must be aligned on a
+ * Compute the checksum for a MollyDB page.  The page must be aligned on a
  * 4-byte boundary.
  */
 extern uint16 pg_checksum_page(char *page, BlockNumber blkno);

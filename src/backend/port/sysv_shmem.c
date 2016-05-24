@@ -257,7 +257,7 @@ PGSharedMemoryIsInUse(unsigned long id1, unsigned long id2)
 
 		/*
 		 * EACCES implies that the segment belongs to some other userid, which
-		 * means it is not a Postgres shmem segment (or at least, not one that
+		 * means it is not a MollyDB shmem segment (or at least, not one that
 		 * is relevant to our data directory).
 		 */
 		if (errno == EACCES)
@@ -305,7 +305,7 @@ PGSharedMemoryIsInUse(unsigned long id1, unsigned long id2)
 		hdr->inode != statbuf.st_ino)
 	{
 		/*
-		 * It's either not a Postgres segment, or not one for my data
+		 * It's either not a MollyDB segment, or not one for my data
 		 * directory.  In either case it poses no threat.
 		 */
 		shmdt((void *) hdr);
@@ -410,8 +410,8 @@ CreateAnonymousSegment(Size *size)
  * standard header.  Also, register an on_shmem_exit callback to release
  * the storage.
  *
- * Dead Postgres segments are recycled if found, but we do not fail upon
- * collision with non-Postgres shmem segments.  The idea here is to detect and
+ * Dead MollyDB segments are recycled if found, but we do not fail upon
+ * collision with non-MollyDB shmem segments.  The idea here is to detect and
  * re-use keys that may have been assigned by a crashed postmaster or backend.
  *
  * makePrivate means to always create a new segment, rather than attach to
@@ -510,7 +510,7 @@ PGSharedMemoryCreate(Size size, bool makePrivate, int port,
 		}
 
 		/*
-		 * The segment appears to be from a dead Postgres process, or from a
+		 * The segment appears to be from a dead MollyDB process, or from a
 		 * previous cycle of life in this same process.  Zap it, if possible,
 		 * and any associated dynamic shared memory segments, as well. This
 		 * probably shouldn't fail, but if it does, assume the segment belongs
@@ -538,7 +538,7 @@ PGSharedMemoryCreate(Size size, bool makePrivate, int port,
 
 	/*
 	 * OK, we created a new segment.  Mark it as created by this process. The
-	 * order of assignments here is critical so that another Postgres process
+	 * order of assignments here is critical so that another MollyDB process
 	 * can't see the header as valid but belonging to an invalid PID!
 	 */
 	hdr = (PGShmemHeader *) memAddress;
@@ -690,7 +690,7 @@ PGSharedMemoryDetach(void)
 
 
 /*
- * Attach to shared memory and make sure it has a Postgres header
+ * Attach to shared memory and make sure it has a MollyDB header
  *
  * Returns attach address if OK, else NULL
  */
@@ -710,7 +710,7 @@ PGSharedMemoryAttach(IpcMemoryKey key, IpcMemoryId *shmid)
 	if (hdr->magic != PGShmemMagic)
 	{
 		shmdt((void *) hdr);
-		return NULL;			/* segment belongs to a non-Postgres app */
+		return NULL;			/* segment belongs to a non-MollyDB app */
 	}
 
 	return hdr;

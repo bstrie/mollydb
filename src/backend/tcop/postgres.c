@@ -1119,7 +1119,7 @@ exec_simple_query(const char *query_string)
 			 * the command-complete message is issued, to avoid confusing
 			 * clients who will expect either a command-complete message or an
 			 * error, not one and then the other.  But for compatibility with
-			 * historical Postgres behavior, we do not force a transaction
+			 * historical MollyDB behavior, we do not force a transaction
 			 * boundary between queries appearing in a single query string.
 			 */
 			finish_xact_command();
@@ -2556,7 +2556,7 @@ drop_unnamed_stmt(void)
 
 
 /* --------------------------------
- *		signal handler routines used in PostgresMain()
+ *		signal handler routines used in MollyDBMain()
  * --------------------------------
  */
 
@@ -3137,7 +3137,7 @@ stack_is_too_deep(void)
 	/*
 	 * On IA64 there is a separate "register" stack that requires its own
 	 * independent check.  For this, we have to measure the change in the
-	 * "BSP" pointer from PostgresMain to here.  Logic is just as above,
+	 * "BSP" pointer from MollyDBMain to here.  Logic is just as above,
 	 * except that we know IA64's register stack grows up.
 	 *
 	 * Note we assume that the same max_stack_depth applies to both stacks.
@@ -3280,7 +3280,7 @@ get_stats_option_name(const char *arg)
 
 /* ----------------------------------------------------------------
  * process_mollydb_switches
- *	   Parse command line arguments for PostgresMain
+ *	   Parse command line arguments for MollyDBMain
  *
  * This is called twice, once for the "secure" options coming from the
  * postmaster or command line, and once for the "insecure" options coming
@@ -3546,7 +3546,7 @@ process_mollydb_switches(int argc, char *argv[], GucContext ctx,
 
 
 /* ----------------------------------------------------------------
- * PostgresMain
+ * MollyDBMain
  *	   mollydb main loop -- all backends, interactive or otherwise start here
  *
  * argc/argv are the command line arguments to be used.  (When being forked
@@ -3557,7 +3557,7 @@ process_mollydb_switches(int argc, char *argv[], GucContext ctx,
  * ----------------------------------------------------------------
  */
 void
-PostgresMain(int argc, char *argv[],
+MollyDBMain(int argc, char *argv[],
 			 const char *dbname,
 			 const char *username)
 {
@@ -3709,14 +3709,14 @@ PostgresMain(int argc, char *argv[],
 	 * General initialization.
 	 *
 	 * NOTE: if you are tempted to add code in this vicinity, consider putting
-	 * it inside InitPostgres() instead.  In particular, anything that
+	 * it inside InitMollyDB() instead.  In particular, anything that
 	 * involves database access should be there, not here.
 	 */
-	InitPostgres(dbname, InvalidOid, username, InvalidOid, NULL);
+	InitMollyDB(dbname, InvalidOid, username, InvalidOid, NULL);
 
 	/*
 	 * If the PostmasterContext is still around, recycle the space; we don't
-	 * need it anymore after InitPostgres completes.  Note this does not trash
+	 * need it anymore after InitMollyDB completes.  Note this does not trash
 	 * *MyProcPort, because ConnCreate() allocated that space with malloc()
 	 * ... else we'd need to copy the Port data first.  Also, subsidiary data
 	 * such as the username isn't lost either; see ProcessStartupPacket().

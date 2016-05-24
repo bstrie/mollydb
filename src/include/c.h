@@ -371,7 +371,7 @@ typedef unsigned int Index;
 typedef signed int Offset;
 
 /*
- * Common Postgres datatype names (as used in the catalogs)
+ * Common MollyDB datatype names (as used in the catalogs)
  */
 typedef float float4;
 typedef double float8;

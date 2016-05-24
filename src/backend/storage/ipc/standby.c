@@ -323,7 +323,7 @@ ResolveRecoveryConflictWithDatabase(Oid dbid)
 	 *
 	 * No locking is required here because we already acquired
 	 * AccessExclusiveLock. Anybody trying to connect while we do this will
-	 * block during InitPostgres() and then disconnect when they see the
+	 * block during InitMollyDB() and then disconnect when they see the
 	 * database has been removed.
 	 */
 	while (CountDBBackends(dbid) > 0)

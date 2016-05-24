@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * hashpage.c
- *	  Hash table page management code for the Postgres hash access method
+ *	  Hash table page management code for the MollyDB hash access method
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -11,7 +11,7 @@
  *	  src/backend/access/hash/hashpage.c
  *
  * NOTES
- *	  Postgres hash pages look like ordinary relation pages.  The opaque
+ *	  MollyDB hash pages look like ordinary relation pages.  The opaque
  *	  data at high addresses includes information about the page including
  *	  whether a page is an overflow page or a true bucket, the bucket
  *	  number, and the block numbers of the preceding and following pages

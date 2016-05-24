@@ -1,7 +1,7 @@
 /*
  * xlogdefs.h
  *
- * Postgres transaction log manager record pointer and
+ * MollyDB transaction log manager record pointer and
  * timeline number definitions
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

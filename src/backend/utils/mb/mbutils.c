@@ -287,7 +287,7 @@ SetClientEncoding(int encoding)
 
 /*
  * Initialize client encoding conversions.
- *		Called from InitPostgres() once during backend startup.
+ *		Called from InitMollyDB() once during backend startup.
  */
 void
 InitializeClientEncoding(void)

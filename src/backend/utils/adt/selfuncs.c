@@ -71,7 +71,7 @@
  *
  *		float8 oprjoin (internal, oid, internal, int2, internal);
  *
- * (Before Postgres 8.4, join estimators had only the first four of these
+ * (Before MollyDB 8.4, join estimators had only the first four of these
  * parameters.  That signature is still allowed, but deprecated.)  The
  * relationship between jointype and sjinfo is explained in the comments for
  * clause_selectivity() --- the short version is that jointype is usually
@@ -1470,7 +1470,7 @@ boolvarsel(PlannerInfo *root, Node *arg, int varRelid)
 	{
 		/*
 		 * If we have no stats and it's a function call, estimate 0.3333333.
-		 * This seems a pretty unprincipled choice, but Postgres has been
+		 * This seems a pretty unprincipled choice, but MollyDB has been
 		 * using that estimate for function calls since 1992.  The hoariness
 		 * of this behavior suggests that we should not be in too much hurry
 		 * to use another value.
@@ -3242,7 +3242,7 @@ add_unique_group_var(PlannerInfo *root, List *varinfos,
  *		more than one Var, the initial product is probably too high (it's the
  *		worst case) but clamping to a fraction of the rel's rows seems to be a
  *		helpful heuristic for not letting the estimate get out of hand.  (The
- *		factor of 10 is derived from pre-Postgres-7.4 practice.)  The factor
+ *		factor of 10 is derived from pre-MollyDB-7.4 practice.)  The factor
  *		we multiply by to adjust for the restriction selectivity assumes that
  *		the restriction clauses are independent of the grouping, which may not
  *		be a valid assumption, but it's hard to do better.

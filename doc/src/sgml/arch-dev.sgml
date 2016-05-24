@@ -298,8 +298,8 @@
        implemented deep in the <firstterm>executor</firstterm>. The rule system was
        called whenever an individual row had been accessed. This
        implementation was removed in 1995 when the last official release
-       of the <productname>Berkeley Postgres</productname> project was
-       transformed into <productname>Postgres95</productname>.
+       of the <productname>Berkeley MollyDB</productname> project was
+       transformed into <productname>MollyDB95</productname>.
       </para>
      </listitem>
 

@@ -1,6 +1,6 @@
 # The MollyDB make files exploit features of GNU make that other
 # makes do not have. Because it is a common mistake for users to try
-# to build Postgres with a different make, we have this make file
+# to build MollyDB with a different make, we have this make file
 # that, as a service, will look for a GNU make and invoke it, or show
 # an error message if none could be found.
 

@@ -645,7 +645,7 @@ DecodeInterval(char **field, int *ftype, int nf,		/* int range, */
 	/*----------
 	 * The SQL standard defines the interval literal
 	 *	 '-1 1:00:00'
-	 * to mean "negative 1 days and negative 1 hours", while Postgres
+	 * to mean "negative 1 days and negative 1 hours", while MollyDB
 	 * traditionally treats this as meaning "negative 1 days and positive
 	 * 1 hours".  In SQL_STANDARD intervalstyle, we apply the leading sign
 	 * to all fields if there are no other explicit signs.
@@ -733,7 +733,7 @@ AddVerboseIntPart(char *cp, int value, const char *units,
 
 /* copy&pasted from .../src/backend/utils/adt/datetime.c */
 static char *
-AddPostgresIntPart(char *cp, int value, const char *units,
+AddMollyDBIntPart(char *cp, int value, const char *units,
 				   bool *is_zero, bool *is_before)
 {
 	if (value == 0)
@@ -923,9 +923,9 @@ EncodeInterval(struct /* pg_ */ tm * tm, fsec_t fsec, int style, char *str)
 
 			/* Compatible with mollydb < 8.4 when DateStyle = 'iso' */
 		case INTSTYLE_POSTGRES:
-			cp = AddPostgresIntPart(cp, year, "year", &is_zero, &is_before);
-			cp = AddPostgresIntPart(cp, mon, "mon", &is_zero, &is_before);
-			cp = AddPostgresIntPart(cp, mday, "day", &is_zero, &is_before);
+			cp = AddMollyDBIntPart(cp, year, "year", &is_zero, &is_before);
+			cp = AddMollyDBIntPart(cp, mon, "mon", &is_zero, &is_before);
+			cp = AddMollyDBIntPart(cp, mday, "day", &is_zero, &is_before);
 			if (is_zero || hour != 0 || min != 0 || sec != 0 || fsec != 0)
 			{
 				bool		minus = (hour < 0 || min < 0 || sec < 0 || fsec < 0);

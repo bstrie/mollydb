@@ -140,7 +140,7 @@ ProcGlobalSemas(void)
  *	  We also create all the per-process semaphores we will need to support
  *	  the requested number of backends.  We used to allocate semaphores
  *	  only when backends were actually started up, but that is bad because
- *	  it lets Postgres fail under load --- a lot of Unix systems are
+ *	  it lets MollyDB fail under load --- a lot of Unix systems are
  *	  (mis)configured with small limits on the number of semaphores, and
  *	  running out when trying to start another backend is a common failure.
  *	  So, now we grab enough semaphores to support the desired max number

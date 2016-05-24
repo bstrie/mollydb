@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * nbtpage.c
- *	  BTree-specific page management code for the Postgres btree access
+ *	  BTree-specific page management code for the MollyDB btree access
  *	  method.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -12,7 +12,7 @@
  *	  src/backend/access/nbtree/nbtpage.c
  *
  *	NOTES
- *	   Postgres btree pages look like ordinary relation pages.  The opaque
+ *	   MollyDB btree pages look like ordinary relation pages.  The opaque
  *	   data at high addresses includes pointers to left and right siblings
  *	   and flag data describing page state.  The first page in a btree, page
  *	   zero, is special -- it stores meta-information describing the tree.

@@ -72,7 +72,7 @@ extern void ProcessClientWriteInterrupt(bool blocked);
 
 extern void process_mollydb_switches(int argc, char *argv[],
 						  GucContext ctx, const char **dbname);
-extern void PostgresMain(int argc, char *argv[],
+extern void MollyDBMain(int argc, char *argv[],
 			 const char *dbname,
 			 const char *username) pg_attribute_noreturn();
 extern long get_stack_depth_rlimit(void);

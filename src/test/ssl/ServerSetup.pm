@@ -18,7 +18,7 @@ package ServerSetup;
 
 use strict;
 use warnings;
-use PostgresNode;
+use MollyDBNode;
 use TestLib;
 use File::Basename;
 use File::Copy;

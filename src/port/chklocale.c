@@ -302,7 +302,7 @@ pg_codepage_to_encoding(UINT cp)
 #if (defined(HAVE_LANGINFO_H) && defined(CODESET)) || defined(WIN32)
 
 /*
- * Given a setting for LC_CTYPE, return the Postgres ID of the associated
+ * Given a setting for LC_CTYPE, return the MollyDB ID of the associated
  * encoding, if we can determine it.  Return -1 if we can't determine it.
  *
  * Pass in NULL to get the encoding for the current locale setting.

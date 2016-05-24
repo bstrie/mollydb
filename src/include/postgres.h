@@ -357,7 +357,7 @@ typedef struct
 
 /*
  * Port Notes:
- *	Postgres makes the following assumptions about datatype sizes:
+ *	MollyDB makes the following assumptions about datatype sizes:
  *
  *	sizeof(Datum) == sizeof(void *) == 4 or 8
  *	sizeof(char) == 1
@@ -567,7 +567,7 @@ typedef Datum *DatumPtr;
  * DatumGetCString
  *		Returns C string (null-terminated string) value of a datum.
  *
- * Note: C string is not a full-fledged Postgres type at present,
+ * Note: C string is not a full-fledged MollyDB type at present,
  * but type input functions use this conversion for their inputs.
  */
 
@@ -577,7 +577,7 @@ typedef Datum *DatumPtr;
  * CStringGetDatum
  *		Returns datum representation for a C string (null-terminated string).
  *
- * Note: C string is not a full-fledged Postgres type at present,
+ * Note: C string is not a full-fledged MollyDB type at present,
  * but type output functions use this conversion for their outputs.
  * Note: CString is pass-by-reference; caller must ensure the pointed-to
  * value has adequate lifetime.

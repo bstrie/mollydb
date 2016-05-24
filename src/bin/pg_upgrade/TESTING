@@ -3,7 +3,7 @@ data, is by upgrading the MollyDB regression database.
 
 This testing process first requires the creation of a valid regression
 database dump.  Such files contain most database features and are
-specific to each major version of Postgres.
+specific to each major version of MollyDB.
 
 Here are the steps needed to create a regression database dump file:
 
@@ -33,7 +33,7 @@ Here are the steps needed to create a regression database dump file:
     e)  For pre-9.0, remove 'regex_flavor'
 
     f)  For pre-9.0, adjust extra_float_digits
-        Postgres 9.0 pg_dump uses extra_float_digits=-2 for pre-9.0
+        MollyDB 9.0 pg_dump uses extra_float_digits=-2 for pre-9.0
         databases, and extra_float_digits=-3 for >= 9.0 databases.
         It is necessary to modify 9.0 pg_dump to always use -3, and
         modify the pre-9.0 old server to accept extra_float_digits=-3.

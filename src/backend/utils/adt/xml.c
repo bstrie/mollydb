@@ -819,7 +819,7 @@ xmlroot(xmltype *data, text *version, int standalone)
  * Validate document (given as string) against DTD (given as external link)
  *
  * This has been removed because it is a security hole: unprivileged users
- * should not be able to use Postgres to fetch arbitrary external files,
+ * should not be able to use MollyDB to fetch arbitrary external files,
  * which unfortunately is exactly what libxml is willing to do with the DTD
  * parameter.
  */

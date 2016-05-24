@@ -167,7 +167,7 @@ foreach $file (@hfiles, @cfiles)
 			# .c file includes a system header before any PG header.
 			if ($include =~ m|^/|)
 			{
-				warn "$file includes $include before any Postgres inclusion\n"
+				warn "$file includes $include before any MollyDB inclusion\n"
 				  if $#includes == -1 && $file =~ m/\.c$/;
 				next;
 			}

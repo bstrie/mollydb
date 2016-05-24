@@ -38,7 +38,7 @@ typedef struct
 #define PGSQL_AF_INET6	(AF_INET + 1)
 
 /*
- * Both INET and CIDR addresses are represented within Postgres as varlena
+ * Both INET and CIDR addresses are represented within MollyDB as varlena
  * objects, ie, there is a varlena header in front of the struct type
  * depicted above.  This struct depicts what we actually have in memory
  * in "uncompressed" cases.  Note that since the maximum data size is only

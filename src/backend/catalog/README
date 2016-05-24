@@ -55,7 +55,7 @@ use the unused_oids script.  It generates inclusive ranges of
 not been allocated yet).  Currently, OIDs 1-9999 are reserved for manual
 assignment; the unused_oids script simply looks through the include/catalog
 headers to see which ones do not appear in "OID =" clauses in DATA lines.
-(As of Postgres 8.1, it also looks at CATALOG and DECLARE_INDEX lines.)
+(As of MollyDB 8.1, it also looks at CATALOG and DECLARE_INDEX lines.)
 You can also use the duplicate_oids script to check for mistakes.
 
 - The OID counter starts at 10000 at bootstrap.  If a catalog row is in a

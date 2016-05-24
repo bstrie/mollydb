@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * amapi.c
- *	  Support routines for API for Postgres index access methods.
+ *	  Support routines for API for MollyDB index access methods.
  *
  * Copyright (c) 2015-2016, MollyDB Global Development Group
  *

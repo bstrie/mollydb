@@ -18,7 +18,7 @@
 
 /*
  * This table stores info about all the built-in functions (ie, functions
- * that are compiled into the Postgres executable).  The table entries are
+ * that are compiled into the MollyDB executable).  The table entries are
  * required to appear in Oid order, so that binary search can be used.
  */
 

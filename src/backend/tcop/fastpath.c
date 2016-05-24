@@ -262,9 +262,9 @@ fetch_fp_info(Oid func_id, struct fp_info * fip)
  * and no use in proceeding...
  *
  * Note: palloc()s done here and in the called function do not need to be
- * cleaned up explicitly.  We are called from PostgresMain() in the
+ * cleaned up explicitly.  We are called from MollyDBMain() in the
  * MessageContext memory context, which will be automatically reset when
- * control returns to PostgresMain.
+ * control returns to MollyDBMain.
  */
 int
 HandleFunctionRequest(StringInfo msgBuf)

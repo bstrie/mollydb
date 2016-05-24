@@ -4,7 +4,7 @@
  *	  definition of the system "rewrite-rule" relation (pg_rewrite)
  *	  along with the relation's initial contents.
  *
- * As of Postgres 7.3, the primary key for this table is <ev_class, rulename>
+ * As of MollyDB 7.3, the primary key for this table is <ev_class, rulename>
  * --- ie, rule names are only unique among the rules of a given table.
  *
  *

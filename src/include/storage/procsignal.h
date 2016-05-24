@@ -18,7 +18,7 @@
 
 
 /*
- * Reasons for signalling a Postgres child process (a backend or an auxiliary
+ * Reasons for signalling a MollyDB child process (a backend or an auxiliary
  * process, like checkpointer).  We can cope with concurrent signals for different
  * reasons.  However, if the same reason is signaled multiple times in quick
  * succession, the process is likely to observe only one notification of it.

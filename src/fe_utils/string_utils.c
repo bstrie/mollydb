@@ -379,7 +379,7 @@ appendByteaLiteral(PQExpBuffer buf, const unsigned char *str, size_t length,
 
 
 /*
- * Deconstruct the text representation of a 1-dimensional Postgres array
+ * Deconstruct the text representation of a 1-dimensional MollyDB array
  * into individual items.
  *
  * On success, returns true and sets *itemarray and *nitems to describe

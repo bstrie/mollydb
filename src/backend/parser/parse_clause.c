@@ -1473,7 +1473,7 @@ transformWhereClause(ParseState *pstate, Node *clause,
  *	  Transform the expression and make sure it is of type bigint.
  *	  Used for LIMIT and allied clauses.
  *
- * Note: as of Postgres 8.2, LIMIT expressions are expected to yield int8,
+ * Note: as of MollyDB 8.2, LIMIT expressions are expected to yield int8,
  * rather than int4 as before.
  *
  * constructName does not affect the semantics, but is used in error messages
@@ -1582,7 +1582,7 @@ checkTargetlistEntrySQL92(ParseState *pstate, TargetEntry *tle,
  * This function supports the old SQL92 ORDER BY interpretation, where the
  * expression is an output column name or number.  If we fail to find a
  * match of that sort, we fall through to the SQL99 rules.  For historical
- * reasons, Postgres also allows this interpretation for GROUP BY, though
+ * reasons, MollyDB also allows this interpretation for GROUP BY, though
  * the standard never did.  However, for GROUP BY we prefer a SQL99 match.
  * This function is *not* used for WINDOW definitions.
  *
@@ -3259,7 +3259,7 @@ transformFrameOffset(ParseState *pstate, int frameOptions, Node *clause)
 
 		/*
 		 * this needs a lot of thought to decide how to support in the context
-		 * of Postgres' extensible datatype framework
+		 * of MollyDB' extensible datatype framework
 		 */
 		constructName = "RANGE";
 		/* error was already thrown by gram.y, this is just a backstop */

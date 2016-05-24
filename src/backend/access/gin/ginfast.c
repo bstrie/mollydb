@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * ginfast.c
- *	  Fast insert routines for the Postgres inverted index access method.
+ *	  Fast insert routines for the MollyDB inverted index access method.
  *	  Pending entries are stored in linear list of pages.  Later on
  *	  (typically during VACUUM), ginInsertCleanup() will be invoked to
  *	  transfer pending entries into the regular index structure.  This

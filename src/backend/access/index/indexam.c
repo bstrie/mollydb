@@ -677,7 +677,7 @@ index_can_return(Relation indexRelation, int attno)
  *		involved; it just builds an ordered list of them for
  *		each attribute on which an index is defined.
  *
- *		As of Postgres 8.3, support routines within an operator family
+ *		As of MollyDB 8.3, support routines within an operator family
  *		are further subdivided by the "left type" and "right type" of the
  *		query operator(s) that they support.  The "default" functions for a
  *		particular indexed attribute are those with both types equal to

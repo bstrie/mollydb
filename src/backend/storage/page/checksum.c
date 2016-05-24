@@ -18,6 +18,6 @@
 /*
  * The actual code is in storage/checksum_impl.h.  This is done so that
  * external programs can incorporate the checksum code by #include'ing
- * that file from the exported Postgres headers.  (Compare our CRC code.)
+ * that file from the exported MollyDB headers.  (Compare our CRC code.)
  */
 #include "storage/checksum_impl.h"

@@ -540,7 +540,7 @@
      <para>
       Perl resets the process's <literal>SIGFPE</> handler to
       <literal>SIG_IGN</>, which could result in crashes later on.  Restore
-      the normal Postgres signal handler after initializing PL/Perl.
+      the normal MollyDB signal handler after initializing PL/Perl.
      </para>
     </listitem>
 
@@ -8410,7 +8410,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       "Postgres" is now documented as an accepted alias for
+       "MollyDB" is now documented as an accepted alias for
        "MollyDB" (Peter)
       </para>
      </listitem>

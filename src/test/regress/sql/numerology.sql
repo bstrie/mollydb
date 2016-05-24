@@ -5,7 +5,7 @@
 
 --
 -- Test implicit type conversions
--- This fails for Postgres v6.1 (and earlier?)
+-- This fails for MollyDB v6.1 (and earlier?)
 --  so let's try explicit conversions for now - tgl 97/05/07
 --
 

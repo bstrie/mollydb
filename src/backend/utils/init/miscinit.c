@@ -381,7 +381,7 @@ GetAuthenticatedUserId(void)
  * StartTransaction and AbortTransaction to save/restore the settings,
  * and during the first transaction within a backend, the value to be saved
  * and perhaps restored is indeed invalid.  We have to be able to get
- * through AbortTransaction without asserting in case InitPostgres fails.
+ * through AbortTransaction without asserting in case InitMollyDB fails.
  */
 void
 GetUserIdAndSecContext(Oid *userid, int *sec_context)
@@ -902,7 +902,7 @@ CreateLockFile(const char *filename, bool amPostmaster,
 		 * --- which means that whatever process kill() is reporting about
 		 * isn't the one that made the lockfile.  (NOTE: this last
 		 * consideration is the only one that keeps us from blowing away a
-		 * Unix socket file belonging to an instance of Postgres being run by
+		 * Unix socket file belonging to an instance of MollyDB being run by
 		 * someone else, at least on machines where /tmp hasn't got a
 		 * stickybit.)
 		 */

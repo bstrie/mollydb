@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * readfuncs.c
- *	  Reader functions for Postgres tree nodes.
+ *	  Reader functions for MollyDB tree nodes.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California

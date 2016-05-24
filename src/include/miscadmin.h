@@ -186,7 +186,7 @@ extern PGDLLIMPORT Oid MyDatabaseTableSpace;
  * Date/Time Configuration
  *
  * DateStyle defines the output formatting choice for date/time types:
- *	USE_POSTGRES_DATES specifies traditional Postgres format
+ *	USE_POSTGRES_DATES specifies traditional MollyDB format
  *	USE_ISO_DATES specifies ISO-compliant format
  *	USE_SQL_DATES specifies Oracle/Ingres-compliant format
  *	USE_GERMAN_DATES specifies German-style dd.mm/yyyy
@@ -198,7 +198,7 @@ extern PGDLLIMPORT Oid MyDatabaseTableSpace;
  *	DATEORDER_DMY specifies field order dd-mm-yy ("European" convention)
  *	DATEORDER_MDY specifies field order mm-dd-yy ("US" convention)
  *
- * In the Postgres and SQL DateStyles, DateOrder also selects output field
+ * In the MollyDB and SQL DateStyles, DateOrder also selects output field
  * order: day comes before month in DMY style, else month comes before day.
  *
  * The user-visible "DateStyle" run-time parameter subsumes both of these.
@@ -221,8 +221,8 @@ extern PGDLLIMPORT int DateOrder;
 
 /*
  * IntervalStyles
- *	 INTSTYLE_POSTGRES			   Like Postgres < 8.4 when DateStyle = 'iso'
- *	 INTSTYLE_POSTGRES_VERBOSE	   Like Postgres < 8.4 when DateStyle != 'iso'
+ *	 INTSTYLE_POSTGRES			   Like MollyDB < 8.4 when DateStyle = 'iso'
+ *	 INTSTYLE_POSTGRES_VERBOSE	   Like MollyDB < 8.4 when DateStyle != 'iso'
  *	 INTSTYLE_SQL_STANDARD		   SQL standard interval literals
  *	 INTSTYLE_ISO_8601			   ISO-8601-basic formatted intervals
  */
@@ -414,7 +414,7 @@ extern AuxProcType MyAuxProcType;
 /* in utils/init/postinit.c */
 extern void pg_split_opts(char **argv, int *argcp, const char *optstr);
 extern void InitializeMaxBackends(void);
-extern void InitPostgres(const char *in_dbname, Oid dboid, const char *username,
+extern void InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 			 Oid useroid, char *out_dbname);
 extern void BaseInit(void);
 

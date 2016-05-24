@@ -295,7 +295,7 @@ param			\${integer}
  *
  * NOTE a fine point: if there is no newline following --, we will absorb
  * everything to the end of the input as a comment.  This is correct.  Older
- * versions of Postgres failed to recognize -- as a comment if the input
+ * versions of MollyDB failed to recognize -- as a comment if the input
  * did not end with a newline.
  *
  * XXX perhaps \f (formfeed) should be treated as a newline as well?
@@ -373,7 +373,7 @@ cppline			{space}*#([^i][A-Za-z]*|{if}|{ifdef}|{ifndef}|{import})((\/\*[^*/]*\*+
  * Other quoted strings must allow some special characters such as single-quote
  *	and newline.
  * Embedded single-quotes are implemented both in the SQL standard
- *	style of two adjacent single quotes "''" and in the Postgres/Java style
+ *	style of two adjacent single quotes "''" and in the MollyDB/Java style
  *	of escaped-quote "\'".
  * Other embedded escaped characters are matched explicitly and the leading
  *	backslash is dropped from the string. - thomas 1997-09-24

@@ -548,7 +548,7 @@ transformInsertStmt(ParseState *pstate, InsertStmt *stmt)
 		 *
 		 * It is important that this be handled just like a standalone SELECT;
 		 * otherwise the behavior of SELECT within INSERT might be different
-		 * from a stand-alone SELECT. (Indeed, Postgres up through 6.5 had
+		 * from a stand-alone SELECT. (Indeed, MollyDB up through 6.5 had
 		 * bugs of just that nature...)
 		 */
 		sub_pstate->p_rtable = sub_rtable;

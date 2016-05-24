@@ -82,7 +82,7 @@
  *	defined), then we fall back on an emulation that uses SysV semaphores
  *	(see spin.c).  This emulation will be MUCH MUCH slower than a proper TAS()
  *	implementation, because of the cost of a kernel call per lock or unlock.
- *	An old report is that Postgres spends around 40% of its time in semop(2)
+ *	An old report is that MollyDB spends around 40% of its time in semop(2)
  *	when using the SysV semaphore code.
  *
  *

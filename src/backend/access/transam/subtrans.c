@@ -37,7 +37,7 @@
 
 /*
  * Defines for SubTrans page sizes.  A page is the same BLCKSZ as is used
- * everywhere else in Postgres.
+ * everywhere else in MollyDB.
  *
  * Note: because TransactionIds are 32 bits and wrap around at 0xFFFFFFFF,
  * SubTrans page numbering also wraps around at

@@ -315,7 +315,7 @@ struct pg_conn
 	char	   *fbappname;		/* fallback application name */
 	char	   *dbName;			/* database name */
 	char	   *replication;	/* connect as the replication standby? */
-	char	   *pguser;			/* Postgres username and password, if any */
+	char	   *pguser;			/* MollyDB username and password, if any */
 	char	   *pgpass;
 	char	   *keepalives;		/* use TCP keepalives? */
 	char	   *keepalives_idle;	/* time between TCP keepalives */
@@ -556,7 +556,7 @@ extern void pqHandleSendFailure(PGconn *conn);
 
 /* === in fe-protocol2.c === */
 
-extern PostgresPollingStatusType pqSetenvPoll(PGconn *conn);
+extern MollyDBPollingStatusType pqSetenvPoll(PGconn *conn);
 
 extern char *pqBuildStartupPacket2(PGconn *conn, int *packetlen,
 					  const PQEnvironmentOption *options);
@@ -620,7 +620,7 @@ extern int	pqWriteReady(PGconn *conn);
 
 extern int	pqsecure_initialize(PGconn *);
 extern void pqsecure_destroy(void);
-extern PostgresPollingStatusType pqsecure_open_client(PGconn *);
+extern MollyDBPollingStatusType pqsecure_open_client(PGconn *);
 extern void pqsecure_close(PGconn *);
 extern ssize_t pqsecure_read(PGconn *, void *ptr, size_t len);
 extern ssize_t pqsecure_write(PGconn *, const void *ptr, size_t len);
@@ -638,7 +638,7 @@ extern void pq_reset_sigpipe(sigset_t *osigset, bool sigpipe_pending,
  */
 extern void pgtls_init_library(bool do_ssl, int do_crypto);
 extern int	pgtls_init(PGconn *conn);
-extern PostgresPollingStatusType pgtls_open_client(PGconn *conn);
+extern MollyDBPollingStatusType pgtls_open_client(PGconn *conn);
 extern void pgtls_close(PGconn *conn);
 extern ssize_t pgtls_read(PGconn *conn, void *ptr, size_t len);
 extern bool pgtls_read_pending(PGconn *conn);

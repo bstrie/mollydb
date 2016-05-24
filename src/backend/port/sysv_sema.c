@@ -191,8 +191,8 @@ IpcSemaphoreGetLastPID(IpcSemaphoreId semId, int semNum)
 /*
  * Create a semaphore set with the given number of useful semaphores
  * (an additional sema is actually allocated to serve as identifier).
- * Dead Postgres sema sets are recycled if found, but we do not fail
- * upon collision with non-Postgres sema sets.
+ * Dead MollyDB sema sets are recycled if found, but we do not fail
+ * upon collision with non-MollyDB sema sets.
  *
  * The idea here is to detect and re-use keys that may have been assigned
  * by a crashed postmaster or backend.
@@ -214,12 +214,12 @@ IpcSemaphoreCreate(int numSems)
 		if (semId >= 0)
 			break;				/* successful create */
 
-		/* See if it looks to be leftover from a dead Postgres process */
+		/* See if it looks to be leftover from a dead MollyDB process */
 		semId = semget(nextSemaKey, numSems + 1, 0);
 		if (semId < 0)
 			continue;			/* failed: must be some other app's */
 		if (IpcSemaphoreGetValue(semId, numSems) != PGSemaMagic)
-			continue;			/* sema belongs to a non-Postgres app */
+			continue;			/* sema belongs to a non-MollyDB app */
 
 		/*
 		 * If the creator PID is my own PID or does not belong to any extant
@@ -235,7 +235,7 @@ IpcSemaphoreCreate(int numSems)
 		}
 
 		/*
-		 * The sema set appears to be from a dead Postgres process, or from a
+		 * The sema set appears to be from a dead MollyDB process, or from a
 		 * previous cycle of life in this same process.  Zap it, if possible.
 		 * This probably shouldn't fail, but if it does, assume the sema set
 		 * belongs to someone else after all, and continue quietly.

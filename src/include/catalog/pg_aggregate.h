@@ -222,7 +222,7 @@ DATA(insert ( 2644	n 0 float4_accum	float8_var_samp			float8_combine			-						-	
 DATA(insert ( 2645	n 0 float8_accum	float8_var_samp			float8_combine			-						-							-				-				-						f f 0	1022	0	0	0		0	"{0,0,0}" _null_ ));
 DATA(insert ( 2646	n 0 numeric_accum	numeric_var_samp		numeric_combine			numeric_serialize		numeric_deserialize			numeric_accum	numeric_accum_inv numeric_var_samp		f f 0	2281	17	128 2281	128 _null_ _null_ ));
 
-/* variance: historical Postgres syntax for var_samp */
+/* variance: historical MollyDB syntax for var_samp */
 DATA(insert ( 2148	n 0 int8_accum		numeric_var_samp		numeric_combine			numeric_serialize		numeric_deserialize			int8_accum		int8_accum_inv	numeric_var_samp		f f 0	2281	17	128 2281	128 _null_ _null_ ));
 DATA(insert ( 2149	n 0 int4_accum		numeric_poly_var_samp	numeric_poly_combine	numeric_poly_serialize	numeric_poly_deserialize	int4_accum		int4_accum_inv	numeric_poly_var_samp	f f 0	2281	17	48	2281	48	_null_ _null_ ));
 DATA(insert ( 2150	n 0 int2_accum		numeric_poly_var_samp	numeric_poly_combine	numeric_poly_serialize	numeric_poly_deserialize	int2_accum		int2_accum_inv	numeric_poly_var_samp	f f 0	2281	17	48	2281	48	_null_ _null_ ));
@@ -246,7 +246,7 @@ DATA(insert ( 2715	n 0 float4_accum	float8_stddev_samp			float8_combine			-					
 DATA(insert ( 2716	n 0 float8_accum	float8_stddev_samp			float8_combine			-						-							-			-				-							f f 0	1022	0	0	0		0	"{0,0,0}" _null_ ));
 DATA(insert ( 2717	n 0 numeric_accum	numeric_stddev_samp			numeric_combine			numeric_serialize		numeric_deserialize			numeric_accum numeric_accum_inv numeric_stddev_samp		f f 0	2281	17	128 2281	128 _null_ _null_ ));
 
-/* stddev: historical Postgres syntax for stddev_samp */
+/* stddev: historical MollyDB syntax for stddev_samp */
 DATA(insert ( 2154	n 0 int8_accum		numeric_stddev_samp			numeric_combine			numeric_serialize		numeric_deserialize			int8_accum		int8_accum_inv	numeric_stddev_samp			f f 0	2281	17	128 2281	128 _null_ _null_ ));
 DATA(insert ( 2155	n 0 int4_accum		numeric_poly_stddev_samp	numeric_poly_combine	numeric_poly_serialize	numeric_poly_deserialize	int4_accum		int4_accum_inv	numeric_poly_stddev_samp	f f 0	2281	17	48	2281	48	_null_ _null_ ));
 DATA(insert ( 2156	n 0 int2_accum		numeric_poly_stddev_samp	numeric_poly_combine	numeric_poly_serialize	numeric_poly_deserialize	int2_accum		int2_accum_inv	numeric_poly_stddev_samp	f f 0	2281	17	48	2281	48	_null_ _null_ ));

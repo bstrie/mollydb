@@ -406,7 +406,7 @@ GetCurrentTimeUsec(struct pg_tm * tm, fsec_t *fsec, int *tzp)
  * Returns a pointer to the new end of string.  No NUL terminator is put
  * there; callers are responsible for NUL terminating str themselves.
  *
- * Before Postgres 8.4, this always left at least 2 fractional digits,
+ * Before MollyDB 8.4, this always left at least 2 fractional digits,
  * but conversations on the lists suggest this isn't desired
  * since showing '0.10' is misleading with values of precision(1).
  */
@@ -3453,7 +3453,7 @@ DecodeInterval(char **field, int *ftype, int nf, int range,
 	/*----------
 	 * The SQL standard defines the interval literal
 	 *	 '-1 1:00:00'
-	 * to mean "negative 1 days and negative 1 hours", while Postgres
+	 * to mean "negative 1 days and negative 1 hours", while MollyDB
 	 * traditionally treats this as meaning "negative 1 days and positive
 	 * 1 hours".  In SQL_STANDARD intervalstyle, we apply the leading sign
 	 * to all fields if there are no other explicit signs.
@@ -3992,7 +3992,7 @@ EncodeDateOnly(struct pg_tm * tm, int style, char *str)
 
 		case USE_POSTGRES_DATES:
 		default:
-			/* traditional date-only style for Postgres */
+			/* traditional date-only style for MollyDB */
 			if (DateOrder == DATEORDER_DMY)
 			{
 				str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
@@ -4052,7 +4052,7 @@ EncodeTimeOnly(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, int style,
  * style, str is where to write the output.
  *
  * Supported date styles:
- *	Postgres - day mon hh:mm:ss yyyy tz
+ *	MollyDB - day mon hh:mm:ss yyyy tz
  *	SQL - mm/dd/yyyy hh:mm:ss.ss tz
  *	ISO - yyyy-mm-dd hh:mm:ss+/-tz
  *	German - dd.mm.yyyy hh:mm:ss tz
@@ -4162,7 +4162,7 @@ EncodeDateTime(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, const char
 
 		case USE_POSTGRES_DATES:
 		default:
-			/* Backward-compatible with traditional Postgres abstime dates */
+			/* Backward-compatible with traditional MollyDB abstime dates */
 			day = date2j(tm->tm_year, tm->tm_mon, tm->tm_mday);
 			tm->tm_wday = j2day(day);
 			memcpy(str, days[tm->tm_wday], 3);
@@ -4239,7 +4239,7 @@ AddISO8601IntPart(char *cp, int value, char units)
 
 /* Append a mollydb-style interval field, but only if value isn't zero */
 static char *
-AddPostgresIntPart(char *cp, int value, const char *units,
+AddMollyDBIntPart(char *cp, int value, const char *units,
 				   bool *is_zero, bool *is_before)
 {
 	if (value == 0)
@@ -4284,7 +4284,7 @@ AddVerboseIntPart(char *cp, int value, const char *units,
 /* EncodeInterval()
  * Interpret time structure as a delta time and convert to string.
  *
- * Support "traditional Postgres" and ISO-8601 styles.
+ * Support "traditional MollyDB" and ISO-8601 styles.
  * Actually, afaik ISO does not address time interval formatting,
  *	but this looks similar to the spec for absolute date/time.
  * - thomas 1998-04-30
@@ -4427,15 +4427,15 @@ EncodeInterval(struct pg_tm * tm, fsec_t fsec, int style, char *str)
 
 			/* Compatible with mollydb < 8.4 when DateStyle = 'iso' */
 		case INTSTYLE_POSTGRES:
-			cp = AddPostgresIntPart(cp, year, "year", &is_zero, &is_before);
+			cp = AddMollyDBIntPart(cp, year, "year", &is_zero, &is_before);
 
 			/*
 			 * Ideally we should spell out "month" like we do for "year" and
 			 * "day".  However, for backward compatibility, we can't easily
 			 * fix this.  bjm 2011-05-24
 			 */
-			cp = AddPostgresIntPart(cp, mon, "mon", &is_zero, &is_before);
-			cp = AddPostgresIntPart(cp, mday, "day", &is_zero, &is_before);
+			cp = AddMollyDBIntPart(cp, mon, "mon", &is_zero, &is_before);
+			cp = AddMollyDBIntPart(cp, mday, "day", &is_zero, &is_before);
 			if (is_zero || hour != 0 || min != 0 || sec != 0 || fsec != 0)
 			{
 				bool		minus = (hour < 0 || min < 0 || sec < 0 || fsec < 0);

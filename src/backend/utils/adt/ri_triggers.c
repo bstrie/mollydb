@@ -620,7 +620,7 @@ RI_FKey_noaction_del(PG_FUNCTION_ARGS)
  *
  *	The SQL standard intends that this referential action occur exactly when
  *	the delete is performed, rather than after.  This appears to be
- *	the only difference between "NO ACTION" and "RESTRICT".  In Postgres
+ *	the only difference between "NO ACTION" and "RESTRICT".  In MollyDB
  *	we still implement this as an AFTER trigger, but it's non-deferrable.
  * ----------
  */
@@ -832,7 +832,7 @@ RI_FKey_noaction_upd(PG_FUNCTION_ARGS)
  *
  *	The SQL standard intends that this referential action occur exactly when
  *	the update is performed, rather than after.  This appears to be
- *	the only difference between "NO ACTION" and "RESTRICT".  In Postgres
+ *	the only difference between "NO ACTION" and "RESTRICT".  In MollyDB
  *	we still implement this as an AFTER trigger, but it's non-deferrable.
  * ----------
  */

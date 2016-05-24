@@ -165,7 +165,7 @@ DefineType(List *names, List *parameters)
 	ObjectAddress address;
 
 	/*
-	 * As of Postgres 8.4, we require superuser privilege to create a base
+	 * As of MollyDB 8.4, we require superuser privilege to create a base
 	 * type.  This is simple paranoia: there are too many ways to mess up the
 	 * system with an incorrect type definition (for instance, representation
 	 * parameters that don't match what the C code expects).  In practice it

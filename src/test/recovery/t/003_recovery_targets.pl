@@ -1,7 +1,7 @@
 # Test for recovery targets: name, timestamp, XID
 use strict;
 use warnings;
-use PostgresNode;
+use MollyDBNode;
 use TestLib;
 use Test::More tests => 7;
 

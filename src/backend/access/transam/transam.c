@@ -39,7 +39,7 @@ static XidStatus TransactionLogFetch(TransactionId transactionId);
 
 
 /* ----------------------------------------------------------------
- *		Postgres log access method interface
+ *		MollyDB log access method interface
  *
  *		TransactionLogFetch
  * ----------------------------------------------------------------

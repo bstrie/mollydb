@@ -27,7 +27,7 @@
  * Using T_Float as the node type simply indicates that
  * the contents of the string look like a valid numeric literal.
  *
- * (Before Postgres 7.0, we used a double to represent T_Float,
+ * (Before MollyDB 7.0, we used a double to represent T_Float,
  * but that creates loss-of-precision problems when the value is
  * ultimately destined to be converted to NUMERIC.  Since Value nodes
  * are only used in the parsing process, not for runtime data, it's

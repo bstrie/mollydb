@@ -4364,7 +4364,7 @@
      <para>
       Perl resets the process's <literal>SIGFPE</> handler to
       <literal>SIG_IGN</>, which could result in crashes later on.  Restore
-      the normal Postgres signal handler after initializing PL/Perl.
+      the normal MollyDB signal handler after initializing PL/Perl.
      </para>
     </listitem>
 
@@ -4685,14 +4685,14 @@
 
     <listitem>
      <para>
-      Use Postgres' encoding conversion functions, not Python's, when
+      Use MollyDB' encoding conversion functions, not Python's, when
       converting a Python Unicode string to the server encoding in
       PL/Python (Jan Urbanski)
      </para>
 
      <para>
       This avoids some corner-case problems, notably that Python doesn't
-      support all the encodings Postgres does.  A notable functional change
+      support all the encodings MollyDB does.  A notable functional change
       is that if the server encoding is SQL_ASCII, you will get the UTF-8
       representation of the string; formerly, any non-ASCII characters in
       the string would result in an error.

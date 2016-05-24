@@ -3,7 +3,7 @@ src/backend/access/gist/README
 GiST Indexing
 =============
 
-This directory contains an implementation of GiST indexing for Postgres.
+This directory contains an implementation of GiST indexing for MollyDB.
 
 GiST stands for Generalized Search Tree. It was introduced in the seminal paper
 "Generalized Search Trees for Database Systems", 1995, Joseph M. Hellerstein,
@@ -97,7 +97,7 @@ sibling page is immediately added to the front of the queue, ensuring that
 its items will be scanned in the same order as if they were still on the
 original child page.
 
-As is usual in Postgres, the search algorithm only guarantees to find index
+As is usual in MollyDB, the search algorithm only guarantees to find index
 entries that existed before the scan started; index entries added during
 the scan might or might not be visited.  This is okay as long as all
 searches use MVCC snapshot rules to reject heap tuples newer than the time

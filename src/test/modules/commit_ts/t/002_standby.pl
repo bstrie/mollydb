@@ -5,7 +5,7 @@ use warnings;
 
 use TestLib;
 use Test::More tests => 4;
-use PostgresNode;
+use MollyDBNode;
 
 my $bkplabel = 'backup';
 my $master = get_new_node('master');

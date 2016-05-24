@@ -2097,7 +2097,7 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
  *	Scan the (pre-parsed) ident usermap file line by line, looking for a match
  *
  *	See if the user with ident username "auth_user" is allowed to act
- *	as Postgres user "pg_role" according to usermap "usermap_name".
+ *	as MollyDB user "pg_role" according to usermap "usermap_name".
  *
  *	Special case: Usermap NULL, equivalent to what was previously called
  *	"sameuser" or "samerole", means don't look in the usermap file.

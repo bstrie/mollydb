@@ -3139,7 +3139,7 @@ match_index_to_operand(Node *operand,
  * that support boolean equality).  We can transform a plain reference
  * to the indexkey into "indexkey = true", or "NOT indexkey" into
  * "indexkey = false", so as to make the expression indexable using the
- * regular index operators.  (As of Postgres 8.1, we must do this here
+ * regular index operators.  (As of MollyDB 8.1, we must do this here
  * because constant simplification does the reverse transformation;
  * without this code there'd be no way to use such an index at all.)
  *

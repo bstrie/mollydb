@@ -735,8 +735,8 @@ StreamConnection(pgsocket server_fd, Port *port)
 
 		/*
 		 * This is a Win32 socket optimization.  The OS send buffer should be
-		 * large enough to send the whole Postgres send buffer in one go, or
-		 * performance suffers.  The Postgres send buffer can be enlarged if a
+		 * large enough to send the whole MollyDB send buffer in one go, or
+		 * performance suffers.  The MollyDB send buffer can be enlarged if a
 		 * very large message needs to be sent, but we won't attempt to
 		 * enlarge the OS buffer if that happens, so somewhat arbitrarily
 		 * ensure that the OS buffer is at least PQ_SEND_BUFFER_SIZE * 4.

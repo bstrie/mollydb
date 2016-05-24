@@ -1532,7 +1532,7 @@ connect_errReturn:
 static int
 connectDBComplete(PGconn *conn)
 {
-	PostgresPollingStatusType flag = PGRES_POLLING_WRITING;
+	MollyDBPollingStatusType flag = PGRES_POLLING_WRITING;
 	time_t		finish_time = ((time_t) -1);
 
 	if (conn == NULL || conn->status == CONNECTION_BAD)
@@ -1608,7 +1608,7 @@ connectDBComplete(PGconn *conn)
  *
  * Poll an asynchronous connection.
  *
- * Returns a PostgresPollingStatusType.
+ * Returns a MollyDBPollingStatusType.
  * Before calling this function, use select(2) to determine when data
  * has arrived..
  *
@@ -1630,7 +1630,7 @@ connectDBComplete(PGconn *conn)
  *
  * ----------------
  */
-PostgresPollingStatusType
+MollyDBPollingStatusType
 PQconnectPoll(PGconn *conn)
 {
 	PGresult   *res;
@@ -2120,7 +2120,7 @@ keep_going:						/* We will come back to here until there is
 		case CONNECTION_SSL_STARTUP:
 			{
 #ifdef USE_SSL
-				PostgresPollingStatusType pollres;
+				MollyDBPollingStatusType pollres;
 
 				/*
 				 * On first time through, get the postmaster's response to our
@@ -2266,7 +2266,7 @@ keep_going:						/* We will come back to here until there is
 				/*
 				 * Validate message type: we expect only an authentication
 				 * request or an error here.  Anything else probably means
-				 * it's not Postgres on the other end at all.
+				 * it's not MollyDB on the other end at all.
 				 */
 				if (!(beresp == 'R' || beresp == 'E'))
 				{
@@ -3122,12 +3122,12 @@ PQresetStart(PGconn *conn)
  * resets the connection to the backend
  * closes the existing connection and makes a new one
  */
-PostgresPollingStatusType
+MollyDBPollingStatusType
 PQresetPoll(PGconn *conn)
 {
 	if (conn)
 	{
-		PostgresPollingStatusType status = PQconnectPoll(conn);
+		MollyDBPollingStatusType status = PQconnectPoll(conn);
 
 		if (status == PGRES_POLLING_OK)
 		{

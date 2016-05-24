@@ -1840,7 +1840,7 @@ aclexplode(PG_FUNCTION_ARGS)
  *		The result is a boolean value: true if user has the indicated
  *		privilege, false if not.  The variants that take a relation OID
  *		return NULL if the OID doesn't exist (rather than failing, as
- *		they did before Postgres 8.4).
+ *		they did before MollyDB 8.4).
  */
 
 /*
@@ -4605,7 +4605,7 @@ pg_role_aclcheck(Oid role_oid, Oid roleid, AclMode mode)
 
 
 /*
- * initialization function (called by InitPostgres)
+ * initialization function (called by InitMollyDB)
  */
 void
 initialize_acl(void)

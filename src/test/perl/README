@@ -29,7 +29,7 @@ Each test script should begin with:
 
     use strict;
     use warnings;
-    use PostgresNode;
+    use MollyDBNode;
     use TestLib;
     # Replace with the number of tests to execute:
     use Test::More tests => 1;
@@ -53,4 +53,4 @@ Read the Test::More documentation for more on how to write tests:
 For available MollyDB-specific test methods and some example tests read the
 perldoc for the test modules, e.g.:
 
-    perldoc src/test/perl/PostgresNode.pm
+    perldoc src/test/perl/MollyDBNode.pm

@@ -1295,7 +1295,7 @@ pgstat_reset_single_counter(Oid objoid, PgStat_Single_Reset_Type type)
  * pgstat_report_autovac() -
  *
  *	Called from autovacuum.c to report startup of an autovacuum process.
- *	We are called before InitPostgres is done, so can't rely on MyDatabaseId;
+ *	We are called before InitMollyDB is done, so can't rely on MyDatabaseId;
  *	the db OID must be passed in, instead.
  * ----------
  */
@@ -2618,7 +2618,7 @@ CreateSharedBackendStatus(void)
  * pgstat_initialize() -
  *
  *	Initialize pgstats state, and set up our on-proc-exit hook.
- *	Called from InitPostgres.  MyBackendId must be set,
+ *	Called from InitMollyDB.  MyBackendId must be set,
  *	but we must not have started any transaction yet (since the
  *	exit hook must run after the last transaction exit).
  *	NOTE: MyDatabaseId isn't set yet; so the shutdown hook has to be careful.
@@ -2639,7 +2639,7 @@ pgstat_initialize(void)
  * pgstat_bestart() -
  *
  *	Initialize this backend's entry in the PgBackendStatus array.
- *	Called from InitPostgres.
+ *	Called from InitMollyDB.
  *	MyDatabaseId, session userid, and application_name must be set
  *	(hence, this cannot be combined with pgstat_initialize).
  * ----------

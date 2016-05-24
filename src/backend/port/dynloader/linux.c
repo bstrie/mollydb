@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * linux.c
- *	  Dynamic Loader for Postgres for Linux, generated from those for
+ *	  Dynamic Loader for MollyDB for Linux, generated from those for
  *	  Ultrix.
  *
  *	  You need to install the dld library on your Linux system!

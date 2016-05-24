@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * amapi.h
- *	  API for Postgres index access methods.
+ *	  API for MollyDB index access methods.
  *
  * Copyright (c) 2015-2016, MollyDB Global Development Group
  *

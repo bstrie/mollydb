@@ -196,7 +196,7 @@ check_datestyle(char **newval, void **extra, GucSource source)
 			strcpy(result, "German");
 			break;
 		default:
-			strcpy(result, "Postgres");
+			strcpy(result, "MollyDB");
 			break;
 	}
 	switch (newDateOrder)

@@ -98,7 +98,7 @@ typedef struct
  * backend is run.  The Port structure is kept in malloc'd memory and is
  * still available when a backend is running (see MyProcPort).  The data
  * it points to must also be malloc'd, or else palloc'd in TopMemoryContext,
- * so that it survives into PostgresMain execution!
+ * so that it survives into MollyDBMain execution!
  *
  * remote_hostname is set if we did a successful reverse lookup of the
  * client's IP address during connection setup.

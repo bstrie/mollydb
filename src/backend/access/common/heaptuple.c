@@ -6,7 +6,7 @@
  *
  * Some notes about varlenas and this code:
  *
- * Before Postgres 8.3 varlenas always had a 4-byte length header, and
+ * Before MollyDB 8.3 varlenas always had a 4-byte length header, and
  * therefore always needed 4-byte alignment (at least).  This wasted space
  * for short varlenas, for example CHAR(1) took 5 bytes and could need up to
  * 3 additional padding bytes for alignment.
@@ -29,7 +29,7 @@
  * for the 1-byte-header format.  This means that the actual start position
  * of a varlena datum may vary depending on which format it has.  To determine
  * what is stored, we have to require that alignment padding bytes be zero.
- * (Postgres actually has always zeroed them, but now it's required!)  Since
+ * (MollyDB actually has always zeroed them, but now it's required!)  Since
  * the first byte of a 1-byte-header varlena can never be zero, we can examine
  * the first byte after the previous datum to tell if it's a pad byte or the
  * start of a 1-byte-header varlena.

@@ -1404,7 +1404,7 @@ storage_name(char c)
  *		(3) If conflicting defaults are inherited from different parents
  *			(and not overridden by the child), an error is raised.
  *		(4) Otherwise the inherited default is used.
- *		Rule (3) is new in Postgres 7.1; in earlier releases you got a
+ *		Rule (3) is new in MollyDB 7.1; in earlier releases you got a
  *		rather arbitrary choice of which parent default to use.
  *----------
  */

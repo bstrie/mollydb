@@ -259,7 +259,7 @@ bpcharsend(PG_FUNCTION_ARGS)
  * Truncation rules: for an explicit cast, silently truncate to the given
  * length; for an implicit cast, raise error unless extra characters are
  * all spaces.  (This is sort-of per SQL: the spec would actually have us
- * raise a "completion condition" for the explicit cast case, but Postgres
+ * raise a "completion condition" for the explicit cast case, but MollyDB
  * hasn't got such a concept.)
  */
 Datum
@@ -586,7 +586,7 @@ varchar_transform(PG_FUNCTION_ARGS)
  * Truncation rules: for an explicit cast, silently truncate to the given
  * length; for an implicit cast, raise error unless extra characters are
  * all spaces.  (This is sort-of per SQL: the spec would actually have us
- * raise a "completion condition" for the explicit cast case, but Postgres
+ * raise a "completion condition" for the explicit cast case, but MollyDB
  * hasn't got such a concept.)
  */
 Datum

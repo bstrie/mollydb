@@ -52,7 +52,7 @@ AC_SUBST(BISONFLAGS)
 # Look for Flex, set the output variable FLEX to its path if found.
 # Reject versions before 2.5.31, as we need a reasonably non-buggy reentrant
 # scanner.  (Note: the well-publicized security problem in 2.5.31 does not
-# affect Postgres, and there are still distros shipping patched 2.5.31,
+# affect MollyDB, and there are still distros shipping patched 2.5.31,
 # so allow it.)  Also find Flex if its installed under `lex', but do not
 # accept other Lex programs.
 

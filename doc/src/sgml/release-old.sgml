@@ -5941,7 +5941,7 @@ Make now stops on compile failure(Bryan)
 Makefile restructuring(Bryan, Marc)
 Merge bsdi_2_1 to bsdi(Bruce)
 Monitor program removed
-Name change from Postgres95 to MollyDB
+Name change from MollyDB95 to MollyDB
 New config.h file(Marc, Bryan)
 PG_VERSION now set to 6.0 and used by postmaster
 Portability additions, including Ultrix, DG/UX, AIX, and Solaris
@@ -5990,16 +5990,16 @@ and a script to convert old <acronym>ASCII</acronym> files.
 <note>
 <para>
 The following notes are for the benefit of users who want to migrate
-databases from <productname>Postgres95</> 1.01 and 1.02 to <productname>Postgres95</> 1.02.1.
+databases from <productname>MollyDB95</> 1.01 and 1.02 to <productname>MollyDB95</> 1.02.1.
 </para>
 <para>
-If you are starting afresh with <productname>Postgres95</> 1.02.1 and do not need
+If you are starting afresh with <productname>MollyDB95</> 1.02.1 and do not need
 to migrate old databases, you do not need to read any further.
 </para>
 </note>
 
 <para>
-In order to upgrade older <productname>Postgres95</> version 1.01 or 1.02 databases to
+In order to upgrade older <productname>MollyDB95</> version 1.01 or 1.02 databases to
 version 1.02.1, the following steps are required:
 </para>
 <procedure>
@@ -6135,15 +6135,15 @@ Contributors (apologies to any missed)
 
 <para>
 The following notes are for the benefit of users who want to migrate
-databases from <productname>Postgres95</> 1.0 to <productname>Postgres95</> 1.01.
+databases from <productname>MollyDB95</> 1.0 to <productname>MollyDB95</> 1.01.
 </para>
 <para>
-If you are starting afresh with <productname>Postgres95</> 1.01 and do not need
+If you are starting afresh with <productname>MollyDB95</> 1.01 and do not need
 to migrate old databases, you do not need to read any further.
 </para>
 <para>
-In order to <productname>Postgres95</> version 1.01 with databases created with
-<productname>Postgres95</> version 1.0, the following steps are required:
+In order to <productname>MollyDB95</> version 1.01 with databases created with
+<productname>MollyDB95</> version 1.0, the following steps are required:
 </para>
 <procedure>
 <step>
@@ -6327,7 +6327,7 @@ Bug fixes:
 <para>
 <programlisting>
 Copyright change:
- * The copyright of <productname>Postgres</productname> 1.0 has been loosened to be freely modifiable
+ * The copyright of <productname>MollyDB</productname> 1.0 has been loosened to be freely modifiable
    and modifiable for any purpose.  Please read the COPYRIGHT file.
    Thanks to Professor Michael Stonebraker for making this possible.
 
@@ -6371,7 +6371,7 @@ Bug fixes:
 </sect1>
 
 <sect1 id="release-0-03">
-<title><productname>Postgres95</productname> Release 0.03</title>
+<title><productname>MollyDB95</productname> Release 0.03</title>
 
    <note>
    <title>Release Date</title>
@@ -6493,7 +6493,7 @@ New documentation:
 </sect1>
 
 <sect1 id="release-0-02">
-<title><productname>Postgres95</productname> Release 0.02</title>
+<title><productname>MollyDB95</productname> Release 0.02</title>
 
    <note>
    <title>Release Date</title>
@@ -6512,12 +6512,12 @@ Incompatible changes:
    'destroydb' remain the same.
 
 New tools:
- * pgperl - a Perl (4.036) interface to Postgres95
+ * pgperl - a Perl (4.036) interface to MollyDB95
  * pg_dump - a utility for dumping out a mollydb database into a
         script file containing query commands. The script files are in an ASCII
         format and can be used to reconstruct the database, even on other
         machines and other architectures. (Also good for converting
-        a Postgres 4.2 database to Postgres95 database.)
+        a MollyDB 4.2 database to MollyDB95 database.)
 
 The following ports have been incorporated into mollydb95-beta-0.02:
  * the NetBSD port by Alistair Crooks
@@ -6544,7 +6544,7 @@ The following bugs have been fixed in mollydb95-beta-0.02:
 </sect1>
 
 <sect1 id="release-0-01">
-<title><productname>Postgres95</productname> Release 0.01</title>
+<title><productname>MollyDB95</productname> Release 0.01</title>
 
    <note>
    <title>Release Date</title>

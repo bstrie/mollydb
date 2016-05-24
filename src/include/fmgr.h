@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------
  *
  * fmgr.h
- *	  Definitions for the Postgres function manager and function-call
+ *	  Definitions for the MollyDB function manager and function-call
  *	  interface.
  *
- * This file must be included by all Postgres modules that either define
+ * This file must be included by all MollyDB modules that either define
  * or call fmgr-callable functions.
  *
  *
@@ -696,7 +696,7 @@ extern PGDLLIMPORT fmgr_hook_type fmgr_hook;
  * !!! OLD INTERFACE !!!
  *
  * fmgr() is the only remaining vestige of the old-style caller support
- * functions.  It's no longer used anywhere in the Postgres distribution,
+ * functions.  It's no longer used anywhere in the MollyDB distribution,
  * but we should leave it around for a release or two to ease the transition
  * for user-supplied C functions.  OidFunctionCallN() replaces it for new
  * code.

@@ -2681,7 +2681,7 @@ This commit is also listed under libpq and PL/pgSQL
 2015-07-29 [13d856e17] Make TAP tests work on Windows.
 2015-12-02 [1caef31d9] Refactor Perl test code
 2015-12-07 [9821492ee] Cleanup some problems in new Perl test code
-2016-03-03 [2c83f435a] Rework PostgresNode's psql method
+2016-03-03 [2c83f435a] Rework MollyDBNode's psql method
 2016-02-26 [49148645f] Add a test framework for recovery
 2016-02-26 [74d58425c] Apply last revision of recovery patch
 2016-05-06 [6bd356c33] Add TAP tests for pg_dump

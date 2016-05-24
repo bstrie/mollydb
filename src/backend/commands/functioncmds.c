@@ -327,7 +327,7 @@ interpret_function_parameter_list(List *parameters,
 			ListCell   *px;
 
 			/*
-			 * As of Postgres 9.0 we disallow using the same name for two
+			 * As of MollyDB 9.0 we disallow using the same name for two
 			 * input or two output function parameters.  Depending on the
 			 * function's language, conflicting input and output names might
 			 * be bad too, but we leave it to the PL to complain if so.

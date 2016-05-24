@@ -2039,7 +2039,7 @@ rfree(regex_t *re)
  * Return nonzero to fail the operation with error code REG_CANCEL,
  * zero to keep going
  *
- * The current implementation is Postgres-specific.  If we ever get around
+ * The current implementation is MollyDB-specific.  If we ever get around
  * to splitting the regex code out as a standalone library, there will need
  * to be some API to let applications define a callback function for this.
  */
@@ -2055,7 +2055,7 @@ rcancelrequested(void)
  * Return nonzero to fail the operation with error code REG_ETOOBIG,
  * zero to keep going
  *
- * The current implementation is Postgres-specific.  If we ever get around
+ * The current implementation is MollyDB-specific.  If we ever get around
  * to splitting the regex code out as a standalone library, there will need
  * to be some API to let applications define a callback function for this.
  */

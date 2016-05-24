@@ -102,7 +102,7 @@ CreateSharedMemoryAndSemaphores(bool makePrivate, int port)
 		int			numSemas;
 
 		/*
-		 * Size of the Postgres shared-memory block is estimated via
+		 * Size of the MollyDB shared-memory block is estimated via
 		 * moderately-accurate estimates for the big hogs, plus 100K for the
 		 * stuff that's too small to bother with estimating.
 		 *

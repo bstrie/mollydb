@@ -97,7 +97,7 @@
  * on-the-fly as the caller repeatedly calls tuplesort_getXXX; this
  * saves one cycle of writing all the data out to disk and reading it in.
  *
- * Before Postgres 8.2, we always used a seven-tape polyphase merge, on the
+ * Before MollyDB 8.2, we always used a seven-tape polyphase merge, on the
  * grounds that 7 is the "sweet spot" on the tapes-to-passes curve according
  * to Knuth's figure 70 (section 5.4.2).  However, Knuth is assuming that
  * tape drives are expensive beasts, and in particular that there will always

@@ -240,7 +240,7 @@ MatchText(char *t, int tlen, char *p, int plen,
 
 /*
  * like_escape() --- given a pattern and an ESCAPE string,
- * convert the pattern to use Postgres' standard backslash escape convention.
+ * convert the pattern to use MollyDB' standard backslash escape convention.
  */
 #ifdef do_like_escape
 

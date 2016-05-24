@@ -1561,7 +1561,7 @@ type_function_name:	ecpg_ident		{ $$ = $1; }
 		;
 
 /* Column label --- allowed labels in "AS" clauses.
- * This presently includes *all* Postgres keywords.
+ * This presently includes *all* MollyDB keywords.
  */
 ColLabel:  ECPGColLabel				{ $$ = $1; }
 		| ECPGTypeName				{ $$ = $1; }

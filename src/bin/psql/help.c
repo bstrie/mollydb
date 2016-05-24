@@ -570,7 +570,7 @@ print_copyright(void)
 {
 	puts(
 		 "MollyDB Database Management System\n"
-		 "(formerly known as Postgres, then as Postgres95)\n\n"
+		 "(formerly known as MollyDB, then as MollyDB95)\n\n"
 		 "Portions Copyright (c) 1996-2016, MollyDB Global Development Group\n\n"
 		 "Portions Copyright (c) 1994, The Regents of the University of California\n\n"
 	"Permission to use, copy, modify, and distribute this software and its\n"

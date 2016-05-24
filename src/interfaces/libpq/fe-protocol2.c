@@ -46,7 +46,7 @@ static int	getNotify(PGconn *conn);
  * Polls the process of passing the values of a standard set of environment
  * variables to the backend.
  */
-PostgresPollingStatusType
+MollyDBPollingStatusType
 pqSetenvPoll(PGconn *conn)
 {
 	PGresult   *res;

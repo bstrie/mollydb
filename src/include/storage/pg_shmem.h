@@ -26,9 +26,9 @@
 
 #include "storage/dsm_impl.h"
 
-typedef struct PGShmemHeader	/* standard header for all Postgres shmem */
+typedef struct PGShmemHeader	/* standard header for all MollyDB shmem */
 {
-	int32		magic;			/* magic # to identify Postgres segments */
+	int32		magic;			/* magic # to identify MollyDB segments */
 #define PGShmemMagic  679834894
 	pid_t		creatorPID;		/* PID of creating process */
 	Size		totalsize;		/* total size of segment */

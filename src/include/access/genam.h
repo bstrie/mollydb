@@ -87,7 +87,7 @@ typedef struct SysScanDescData *SysScanDesc;
  * Enumeration specifying the type of uniqueness check to perform in
  * index_insert().
  *
- * UNIQUE_CHECK_YES is the traditional Postgres immediate check, possibly
+ * UNIQUE_CHECK_YES is the traditional MollyDB immediate check, possibly
  * blocking to see if a conflicting transaction commits.
  *
  * For deferrable unique constraints, UNIQUE_CHECK_PARTIAL is specified at

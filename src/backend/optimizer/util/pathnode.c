@@ -1836,7 +1836,7 @@ create_worktablescan_path(PlannerInfo *root, RelOptInfo *rel,
  *	  Creates a path corresponding to a scan of a foreign table, foreign join,
  *	  or foreign upper-relation processing, returning the pathnode.
  *
- * This function is never called from core Postgres; rather, it's expected
+ * This function is never called from core MollyDB; rather, it's expected
  * to be called by the GetForeignPaths, GetForeignJoinPaths, or
  * GetForeignUpperPaths function of a foreign data wrapper.  We make the FDW
  * supply all fields of the path, since we do not have any way to calculate

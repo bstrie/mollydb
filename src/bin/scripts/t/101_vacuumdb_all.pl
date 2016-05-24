@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use PostgresNode;
+use MollyDBNode;
 use Test::More tests => 2;
 
 my $node = get_new_node('main');

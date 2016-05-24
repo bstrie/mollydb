@@ -556,7 +556,7 @@ OperatorCreate(const char *operatorName,
 	 * user first defines one operator without giving negator or commutator,
 	 * then defines the other operator of the pair with the proper commutator
 	 * or negator attribute.  That style doesn't require creation of a shell,
-	 * and it's the only style that worked right before Postgres version 6.5.
+	 * and it's the only style that worked right before MollyDB version 6.5.
 	 * This code also takes care of the situation where the new operator is
 	 * its own commutator.
 	 */

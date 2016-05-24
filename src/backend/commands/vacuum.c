@@ -256,9 +256,9 @@ vacuum(int options, RangeVar *relation, Oid relid, VacuumParams *params,
 	 * vacuum_rel expects to be entered with no transaction active; it will
 	 * start and commit its own transaction.  But we are called by an SQL
 	 * command, and so we are executing inside a transaction already. We
-	 * commit the transaction started in PostgresMain() here, and start
+	 * commit the transaction started in MollyDBMain() here, and start
 	 * another one before exiting to match the commit waiting for us back in
-	 * PostgresMain().
+	 * MollyDBMain().
 	 */
 	if (use_own_xacts)
 	{
@@ -268,7 +268,7 @@ vacuum(int options, RangeVar *relation, Oid relid, VacuumParams *params,
 		if (ActiveSnapshotSet())
 			PopActiveSnapshot();
 
-		/* matches the StartTransaction in PostgresMain() */
+		/* matches the StartTransaction in MollyDBMain() */
 		CommitTransactionCommand();
 	}
 
@@ -341,7 +341,7 @@ vacuum(int options, RangeVar *relation, Oid relid, VacuumParams *params,
 
 		/*
 		 * This matches the CommitTransaction waiting for us in
-		 * PostgresMain().
+		 * MollyDBMain().
 		 */
 		StartTransactionCommand();
 	}

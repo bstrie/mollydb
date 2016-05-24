@@ -8,11 +8,11 @@
  *
  *	   Declarations which are specific to a particular interface should
  *	go in the header file for that interface (such as libpq-fe.h).  This
- *	file is only for fundamental Postgres declarations.
+ *	file is only for fundamental MollyDB declarations.
  *
- *	   User-written C functions don't count as "external to Postgres."
+ *	   User-written C functions don't count as "external to MollyDB."
  *	Those function much as local modifications to the backend itself, and
- *	use header files that are otherwise internal to Postgres to interface
+ *	use header files that are otherwise internal to MollyDB to interface
  *	with the backend.
  *
  * src/include/mollydb_ext.h
@@ -26,7 +26,7 @@
 #include "pg_config_ext.h"
 
 /*
- * Object ID is a fundamental type in Postgres.
+ * Object ID is a fundamental type in MollyDB.
  */
 typedef unsigned int Oid;
 

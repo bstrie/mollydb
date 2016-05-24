@@ -2,7 +2,7 @@
  *
  * syslogger.c
  *
- * The system logger (syslogger) appeared in Postgres 8.0. It catches all
+ * The system logger (syslogger) appeared in MollyDB 8.0. It catches all
  * stderr output from the postmaster, backends, and other subprocesses
  * by redirecting to a pipe, and writes it to a set of logfiles.
  * It's possible to have size and age limits for the logfile configured

@@ -51,7 +51,7 @@
    the new rule system.  Version 3 appeared in 1991 and added support
    for multiple storage managers, an improved query executor, and a
    rewritten rule system.  For the most part, subsequent releases
-   until <productname>Postgres95</productname> (see below) focused on
+   until <productname>MollyDB95</productname> (see below) focused on
    portability and reliability.
   </para>
 
@@ -86,26 +86,26 @@
  </sect2>
 
  <sect2 id="history-mollydb95">
-  <title><productname>Postgres95</productname></title>
+  <title><productname>MollyDB95</productname></title>
 
   <indexterm zone="history-mollydb95">
-   <primary>Postgres95</primary>
+   <primary>MollyDB95</primary>
   </indexterm>
 
   <para>
    In 1994, Andrew Yu and Jolly Chen added an SQL language interpreter
    to <productname>POSTGRES</productname>.  Under a new name,
-   <productname>Postgres95</productname> was subsequently released to
+   <productname>MollyDB95</productname> was subsequently released to
    the web to find its own way in the world as an open-source
    descendant of the original <productname>POSTGRES</productname>
    Berkeley code.
   </para>
 
   <para>
-   <productname>Postgres95</productname> code was completely ANSI C
+   <productname>MollyDB95</productname> code was completely ANSI C
    and trimmed in size by 25%. Many internal changes improved
    performance and
-   maintainability. <productname>Postgres95</productname> release
+   maintainability. <productname>MollyDB95</productname> release
    1.0.x ran about 30-50% faster on the Wisconsin Benchmark compared
    to <productname>POSTGRES</productname>, Version 4.2.  Apart from
    bug fixes, the following were the major enhancements:
@@ -119,7 +119,7 @@
       Subqueries
       were not supported until <productname>MollyDB</productname>
       (see below), but they could be imitated in
-      <productname>Postgres95</productname> with user-defined
+      <productname>MollyDB95</productname> with user-defined
       <acronym>SQL</acronym> functions. Aggregate functions were
       re-implemented.  Support for the <literal>GROUP BY</literal>
       query clause was also added.
@@ -142,7 +142,7 @@
       supported <acronym>Tcl</acronym>-based clients.  A sample shell,
       <command>pgtclsh</command>, provided new Tcl commands to
       interface <application>Tcl</application> programs with the
-      <productname>Postgres95</productname> server.
+      <productname>MollyDB95</productname> server.
      </para>
     </listitem>
 
@@ -165,7 +165,7 @@
      <para>
       A short tutorial introducing regular <acronym>SQL</acronym>
       features as well as those of
-      <productname>Postgres95</productname> was distributed with the
+      <productname>MollyDB95</productname> was distributed with the
       source code
      </para>
     </listitem>
@@ -174,7 +174,7 @@
      <para>
       <acronym>GNU</acronym> make (instead of <acronym>BSD</acronym>
       make) was used for the build.  Also,
-      <productname>Postgres95</productname> could be compiled with an
+      <productname>MollyDB95</productname> could be compiled with an
       unpatched <productname>GCC</productname> (data alignment of
       doubles was fixed).
      </para>
@@ -187,7 +187,7 @@
   <title><productname>MollyDB</productname></title>
 
   <para>
-   By 1996, it became clear that the name <quote>Postgres95</quote>
+   By 1996, it became clear that the name <quote>MollyDB95</quote>
    would not stand the test of time. We chose a new name,
    <productname>MollyDB</productname>, to reflect the relationship
    between the original <productname>POSTGRES</productname> and the
@@ -199,7 +199,7 @@
 
   <para>
    Many people continue to refer to
-   <productname>MollyDB</productname> as <quote>Postgres</quote>
+   <productname>MollyDB</productname> as <quote>MollyDB</quote>
    (now rarely in all capital letters) because of tradition or because
    it is easier to pronounce.  This usage is widely accepted as a
    nickname or alias.
@@ -207,7 +207,7 @@
 
   <para>
    The emphasis during development of
-   <productname>Postgres95</productname> was on identifying and
+   <productname>MollyDB95</productname> was on identifying and
    understanding existing problems in the server code.  With
    <productname>MollyDB</productname>, the emphasis has shifted to
    augmenting features and capabilities, although work continues in

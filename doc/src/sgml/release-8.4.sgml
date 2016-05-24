@@ -2120,7 +2120,7 @@
      <para>
       Perl resets the process's <literal>SIGFPE</> handler to
       <literal>SIG_IGN</>, which could result in crashes later on.  Restore
-      the normal Postgres signal handler after initializing PL/Perl.
+      the normal MollyDB signal handler after initializing PL/Perl.
      </para>
     </listitem>
 

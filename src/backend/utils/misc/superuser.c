@@ -41,7 +41,7 @@ static void RoleidCallback(Datum arg, int cacheid, uint32 hashvalue);
 
 
 /*
- * The Postgres user running this command has Postgres superuser privileges
+ * The MollyDB user running this command has MollyDB superuser privileges
  */
 bool
 superuser(void)
@@ -51,7 +51,7 @@ superuser(void)
 
 
 /*
- * The specified role has Postgres superuser privileges
+ * The specified role has MollyDB superuser privileges
  */
 bool
 superuser_arg(Oid roleid)

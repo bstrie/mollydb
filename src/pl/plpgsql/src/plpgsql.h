@@ -184,7 +184,7 @@ typedef enum
 
 
 typedef struct
-{								/* Postgres data type */
+{								/* MollyDB data type */
 	char	   *typname;		/* (simple) name of the type */
 	Oid			typoid;			/* OID of the data type */
 	int			ttype;			/* PLPGSQL_TTYPE_ code */

@@ -16,7 +16,7 @@
  * A temporary file is used to handle the data if it exceeds the
  * space limit specified by the caller.
  *
- * Beginning in Postgres 8.2, what is stored is just MinimalTuples;
+ * Beginning in MollyDB 8.2, what is stored is just MinimalTuples;
  * callers cannot expect valid system columns in regurgitated tuples.
  * Also, we have changed the API to return tuples in TupleTableSlots,
  * so that there is a check to prevent attempted access to system columns.

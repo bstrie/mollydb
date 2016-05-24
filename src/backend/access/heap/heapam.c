@@ -473,7 +473,7 @@ heapgetpage(HeapScanDesc scan, BlockNumber page)
  * scan direction will restart the scan, which is a bit odd, but a
  * request with the opposite scan direction will start a fresh scan
  * in the proper direction.  The latter is required behavior for cursors,
- * while the former case is generally undefined behavior in Postgres
+ * while the former case is generally undefined behavior in MollyDB
  * so we don't care too much.
  * ----------------
  */
@@ -6019,7 +6019,7 @@ heap_abort_speculative(Relation relation, HeapTuple tuple)
  * heap_inplace_update - update a tuple "in place" (ie, overwrite it)
  *
  * Overwriting violates both MVCC and transactional safety, so the uses
- * of this function in Postgres are extremely limited.  Nonetheless we
+ * of this function in MollyDB are extremely limited.  Nonetheless we
  * find some places to use it.
  *
  * The tuple cannot change size, and therefore it's reasonable to assume
@@ -7163,7 +7163,7 @@ log_heap_cleanup_info(RelFileNode rnode, TransactionId latestRemovedXid)
  * Perform XLogInsert for a heap-clean operation.  Caller must already
  * have modified the buffer and marked it dirty.
  *
- * Note: prior to Postgres 8.3, the entries in the nowunused[] array were
+ * Note: prior to MollyDB 8.3, the entries in the nowunused[] array were
  * zero-based tuple indexes.  Now they are one-based like other uses
  * of OffsetNumber.
  *

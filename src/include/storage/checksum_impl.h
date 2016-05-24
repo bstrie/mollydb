@@ -4,7 +4,7 @@
  *	  Checksum implementation for data pages.
  *
  * This file exists for the benefit of external programs that may wish to
- * check Postgres page checksums.  They can #include this to get the code
+ * check MollyDB page checksums.  They can #include this to get the code
  * referenced by storage/checksum.h.  (Note: you may need to redefine
  * Assert() as empty to compile this successfully externally.)
  *
@@ -168,7 +168,7 @@ pg_checksum_block(char *data, uint32 size)
 }
 
 /*
- * Compute the checksum for a Postgres page.  The page must be aligned on a
+ * Compute the checksum for a MollyDB page.  The page must be aligned on a
  * 4-byte boundary.
  *
  * The checksum includes the block number (to detect the case where a page is

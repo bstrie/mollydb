@@ -356,7 +356,7 @@ AuxiliaryProcessMain(int argc, char *argv[])
 
 	/*
 	 * When we are an auxiliary process, we aren't going to do the full
-	 * InitPostgres pushups, but there are a couple of things that need to get
+	 * InitMollyDB pushups, but there are a couple of things that need to get
 	 * lit up even in an auxiliary process.
 	 */
 	if (IsUnderPostmaster)
@@ -478,7 +478,7 @@ BootstrapModeMain(void)
 	 */
 	InitProcess();
 
-	InitPostgres(NULL, InvalidOid, NULL, InvalidOid, NULL);
+	InitMollyDB(NULL, InvalidOid, NULL, InvalidOid, NULL);
 
 	/* Initialize stuff for bootstrap-file processing */
 	for (i = 0; i < MAXATTR; i++)
@@ -526,7 +526,7 @@ bootstrap_signals(void)
 
 /*
  * Begin shutdown of an auxiliary process.  This is approximately the equivalent
- * of ShutdownPostgres() in postinit.c.  We can't run transactions in an
+ * of ShutdownMollyDB() in postinit.c.  We can't run transactions in an
  * auxiliary process, so most of the work of AbortTransaction() is not needed,
  * but we do need to make sure we've released any LWLocks we are holding.
  * (This is only critical during an error exit.)

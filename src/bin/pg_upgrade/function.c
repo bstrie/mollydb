@@ -183,9 +183,9 @@ check_loadable_libraries(void)
 		PGresult   *res;
 
 		/*
-		 * In Postgres 9.0, Python 3 support was added, and to do that, a
+		 * In MollyDB 9.0, Python 3 support was added, and to do that, a
 		 * plpython2u language was created with library name plpython2.so as a
-		 * symbolic link to plpython.so.  In Postgres 9.1, only the
+		 * symbolic link to plpython.so.  In MollyDB 9.1, only the
 		 * plpython2.so library was created, and both plpythonu and plpython2u
 		 * pointing to it.  For this reason, any reference to library name
 		 * "plpython" in an old PG <= 9.1 cluster must look for "plpython2" in

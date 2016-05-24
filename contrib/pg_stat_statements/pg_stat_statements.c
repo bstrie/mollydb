@@ -7,7 +7,7 @@
  * a shared hashtable.  (We track only as many distinct queries as will fit
  * in the designated amount of shared memory.)
  *
- * As of Postgres 9.2, this module normalizes query entries.  Normalization
+ * As of MollyDB 9.2, this module normalizes query entries.  Normalization
  * is a process whereby similar queries, typically differing only in their
  * constants (though the exact rules are somewhat more subtle than that) are
  * recognized as equivalent, and are tracked as a single entry.  This is

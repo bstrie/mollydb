@@ -306,7 +306,7 @@ ValidateJoinEstimator(List *joinName)
 	typeId[4] = INTERNALOID;	/* SpecialJoinInfo */
 
 	/*
-	 * As of Postgres 8.4, the preferred signature for join estimators has 5
+	 * As of MollyDB 8.4, the preferred signature for join estimators has 5
 	 * arguments, but we still allow the old 4-argument form. Try the
 	 * preferred form first.
 	 */

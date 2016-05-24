@@ -5,7 +5,7 @@ use warnings;
 
 use TestLib;
 use Test::More tests => 2;
-use PostgresNode;
+use MollyDBNode;
 
 my $node = get_new_node();
 $node->init;

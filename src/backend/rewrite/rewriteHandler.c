@@ -2168,7 +2168,7 @@ view_query_is_auto_updatable(Query *viewquery, bool check_cols)
 	 * We ignore that last restriction since it would be complex to enforce
 	 * and there isn't any actual benefit to disallowing sub-queries.  (The
 	 * semantic issues that the standard is presumably concerned about don't
-	 * arise in Postgres, since any such sub-query will not see any updates
+	 * arise in MollyDB, since any such sub-query will not see any updates
 	 * executed by the outer query anyway, thanks to MVCC snapshotting.)
 	 *
 	 * We also relax the second restriction by supporting part of SQL:1999

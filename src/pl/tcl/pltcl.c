@@ -101,7 +101,7 @@ utf_e2u(const char *src)
  * (This is needed to ensure that an unprivileged user can't inject Tcl code
  * that'll be executed with the privileges of some other SQL user.)
  *
- * The pltcl_interp_desc structs are kept in a Postgres hash table indexed
+ * The pltcl_interp_desc structs are kept in a MollyDB hash table indexed
  * by userid OID, with OID 0 used for the single untrusted interpreter.
  **********************************************************************/
 typedef struct pltcl_interp_desc
@@ -262,9 +262,9 @@ static Tcl_Obj *pltcl_build_tuple_argument(HeapTuple tuple, TupleDesc tupdesc);
  * has been compiled with multithreading support (i.e. when TCL_THREADS is
  * defined under Unix, and in all cases under Windows).
  * It's okay to disable the notifier because we never enter the Tcl event loop
- * from Postgres, so the notifier capabilities are initialized, but never
+ * from MollyDB, so the notifier capabilities are initialized, but never
  * used.  Only InitNotifier and DeleteFileHandler ever seem to get called
- * within Postgres, but we implement all the functions for completeness.
+ * within MollyDB, but we implement all the functions for completeness.
  */
 static ClientData
 pltcl_InitNotifier(void)

@@ -1177,7 +1177,7 @@ PostmasterMain(int argc, char *argv[])
 
 	/*
 	 * Remove old temporary files.  At this point there can be no other
-	 * Postgres processes running in this directory, so this should be safe.
+	 * MollyDB processes running in this directory, so this should be safe.
 	 */
 	RemovePgTempFiles();
 
@@ -1382,7 +1382,7 @@ getInstallationPaths(const char *argv0)
 	get_pkglib_path(my_exec_path, pkglib_path);
 
 	/*
-	 * Verify that there's a readable directory there; otherwise the Postgres
+	 * Verify that there's a readable directory there; otherwise the MollyDB
 	 * installation is incomplete or corrupt.  (A typical cause of this
 	 * failure is that the mollydb executable has been moved or hardlinked to
 	 * some directory that's not a sibling of the installation lib/
@@ -2129,7 +2129,7 @@ retry1:
 	}
 
 	/*
-	 * Truncate given database and user names to length of a Postgres name.
+	 * Truncate given database and user names to length of a MollyDB name.
 	 * This avoids lookup failures when overlength names are given.
 	 */
 	if (strlen(port->database_name) >= NAMEDATALEN)
@@ -2181,7 +2181,7 @@ retry1:
 					 errmsg("sorry, too many clients already")));
 			break;
 		case CAC_WAITBACKUP:
-			/* OK for now, will check in InitPostgres */
+			/* OK for now, will check in InitMollyDB */
 			break;
 		case CAC_OK:
 			break;
@@ -4032,7 +4032,7 @@ BackendInitialize(Port *port)
 	if (PreAuthDelay > 0)
 		pg_usleep(PreAuthDelay * 1000000L);
 
-	/* This flag will remain set until InitPostgres finishes authentication */
+	/* This flag will remain set until InitMollyDB finishes authentication */
 	ClientAuthInProgress = true;	/* limit visibility of log messages */
 
 	/* save process start time */
@@ -4132,11 +4132,11 @@ BackendInitialize(Port *port)
 	 * against the time limit.
 	 *
 	 * Note: AuthenticationTimeout is applied here while waiting for the
-	 * startup packet, and then again in InitPostgres for the duration of any
+	 * startup packet, and then again in InitMollyDB for the duration of any
 	 * authentication operations.  So a hostile client could tie up the
 	 * process for nearly twice AuthenticationTimeout before we kick him off.
 	 *
-	 * Note: because PostgresMain will call InitializeTimeouts again, the
+	 * Note: because MollyDBMain will call InitializeTimeouts again, the
 	 * registration of STARTUP_PACKET_TIMEOUT will be lost.  This is okay
 	 * since we never use it again after this function.
 	 */
@@ -4184,11 +4184,11 @@ BackendInitialize(Port *port)
 
 
 /*
- * BackendRun -- set up the backend's argument list and invoke PostgresMain()
+ * BackendRun -- set up the backend's argument list and invoke MollyDBMain()
  *
  * returns:
  *		Shouldn't return at all.
- *		If PostgresMain() fails, return status.
+ *		If MollyDBMain() fails, return status.
  */
 static void
 BackendRun(Port *port)
@@ -4212,7 +4212,7 @@ BackendRun(Port *port)
 	srandom((unsigned int) (MyProcPid ^ (usecs << 12) ^ secs));
 
 	/*
-	 * Now, build the argv vector that will be given to PostgresMain.
+	 * Now, build the argv vector that will be given to MollyDBMain.
 	 *
 	 * The maximum possible number of commandline arguments that could come
 	 * from ExtraOptions is (strlen(ExtraOptions) + 1) / 2; see
@@ -4251,11 +4251,11 @@ BackendRun(Port *port)
 
 	/*
 	 * Make sure we aren't in PostmasterContext anymore.  (We can't delete it
-	 * just yet, though, because InitPostgres will need the HBA data.)
+	 * just yet, though, because InitMollyDB will need the HBA data.)
 	 */
 	MemoryContextSwitchTo(TopMemoryContext);
 
-	PostgresMain(ac, av, port->database_name, port->user_name);
+	MollyDBMain(ac, av, port->database_name, port->user_name);
 }
 
 
@@ -5423,7 +5423,7 @@ BackgroundWorkerInitializeConnection(char *dbname, char *username)
 				(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 				 errmsg("database connection requirement not indicated during registration")));
 
-	InitPostgres(dbname, InvalidOid, username, InvalidOid, NULL);
+	InitMollyDB(dbname, InvalidOid, username, InvalidOid, NULL);
 
 	/* it had better not gotten out of "init" mode yet */
 	if (!IsInitProcessingMode())
@@ -5446,7 +5446,7 @@ BackgroundWorkerInitializeConnectionByOid(Oid dboid, Oid useroid)
 				(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 				 errmsg("database connection requirement not indicated during registration")));
 
-	InitPostgres(NULL, dboid, NULL, useroid, NULL);
+	InitMollyDB(NULL, dboid, NULL, useroid, NULL);
 
 	/* it had better not gotten out of "init" mode yet */
 	if (!IsInitProcessingMode())

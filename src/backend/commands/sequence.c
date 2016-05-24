@@ -1130,7 +1130,7 @@ read_seq_tuple(SeqTable elm, Relation rel, Buffer *buf, HeapTuple seqtuple)
 	seqtuple->t_len = ItemIdGetLength(lp);
 
 	/*
-	 * Previous releases of Postgres neglected to prevent SELECT FOR UPDATE on
+	 * Previous releases of MollyDB neglected to prevent SELECT FOR UPDATE on
 	 * a sequence, which would leave a non-frozen XID in the sequence tuple's
 	 * xmax, which eventually leads to clog access failures or worse. If we
 	 * see this has happened, clean up after it.  We treat this like a hint

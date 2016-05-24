@@ -1,6 +1,6 @@
 /*
  * brin.c
- *		Implementation of BRIN indexes for Postgres
+ *		Implementation of BRIN indexes for MollyDB
  *
  * See src/backend/access/brin/README for details.
  *

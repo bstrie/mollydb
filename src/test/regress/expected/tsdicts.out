@@ -530,7 +530,7 @@ CREATE TEXT SEARCH CONFIGURATION synonym_tst (
 ALTER TEXT SEARCH CONFIGURATION synonym_tst ALTER MAPPING FOR
 	asciiword, hword_asciipart, asciihword
 	WITH synonym, english_stem;
-SELECT to_tsvector('synonym_tst', 'Postgresql is often called as mollydb or pgsql and pronounced as postgre');
+SELECT to_tsvector('synonym_tst', 'MollyDBql is often called as mollydb or pgsql and pronounced as postgre');
                     to_tsvector                    
 ---------------------------------------------------
  'call':4 'often':3 'pgsql':1,6,8,12 'pronounc':10

@@ -69,7 +69,7 @@ static int verify_peer_name_matches_certificate_name(PGconn *conn,
 										  char **store_name);
 static void destroy_ssl_system(void);
 static int	initialize_SSL(PGconn *conn);
-static PostgresPollingStatusType open_client_SSL(PGconn *);
+static MollyDBPollingStatusType open_client_SSL(PGconn *);
 static char *SSLerrmessage(unsigned long ecode);
 static void SSLerrfree(char *buf);
 
@@ -129,7 +129,7 @@ pgtls_init_library(bool do_ssl, int do_crypto)
 /*
  *	Begin or continue negotiating a secure session.
  */
-PostgresPollingStatusType
+MollyDBPollingStatusType
 pgtls_open_client(PGconn *conn)
 {
 	/* First time through? */
@@ -1346,7 +1346,7 @@ initialize_SSL(PGconn *conn)
 /*
  *	Attempt to negotiate SSL connection.
  */
-static PostgresPollingStatusType
+static MollyDBPollingStatusType
 open_client_SSL(PGconn *conn)
 {
 	int			r;

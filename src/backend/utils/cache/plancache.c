@@ -110,7 +110,7 @@ static void PlanCacheUserMappingCallback(Datum arg, int cacheid,
 
 
 /*
- * InitPlanCache: initialize module during InitPostgres.
+ * InitPlanCache: initialize module during InitMollyDB.
  *
  * All we need to do is hook into inval.c's callback lists.
  */

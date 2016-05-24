@@ -78,11 +78,11 @@ typedef unsigned int pg_wchar;
  *	  to 0xf4) or 0x9d (if LC22 is in the range 0xf5 to 0xfe).
  *
  * "Official" encodings are those that have been assigned code numbers by
- * the XEmacs project; "private" encodings have Postgres-specific charset
+ * the XEmacs project; "private" encodings have MollyDB-specific charset
  * identifiers.
  *
  * See the "XEmacs Internals Manual", available at http://www.xemacs.org,
- * for more details.  Note that for historical reasons, Postgres'
+ * for more details.  Note that for historical reasons, MollyDB'
  * private-charset flag values do not match what XEmacs says they should be,
  * so this isn't really exactly MULE (not that private charsets would be
  * interoperable anyway).
@@ -142,7 +142,7 @@ typedef unsigned int pg_wchar;
 #define IS_LC2(c)	((unsigned char)(c) >= 0x90 && (unsigned char)(c) <= 0x99)
 
 /*
- * Postgres-specific prefix bytes for "private" single byte encodings
+ * MollyDB-specific prefix bytes for "private" single byte encodings
  * (According to the MULE docs, we should be using 0x9e for this)
  */
 #define LCPRV1_A		0x9a
@@ -154,7 +154,7 @@ typedef unsigned int pg_wchar;
 	((unsigned char)(c) >= 0xe0 && (unsigned char)(c) <= 0xef)
 
 /*
- * Postgres-specific prefix bytes for "private" multibyte encodings
+ * MollyDB-specific prefix bytes for "private" multibyte encodings
  * (According to the MULE docs, we should be using 0x9f for this)
  */
 #define LCPRV2_A		0x9c

@@ -413,7 +413,7 @@ texticnlike(PG_FUNCTION_ARGS)
 
 /*
  * like_escape() --- given a pattern and an ESCAPE string,
- * convert the pattern to use Postgres' standard backslash escape convention.
+ * convert the pattern to use MollyDB' standard backslash escape convention.
  */
 Datum
 like_escape(PG_FUNCTION_ARGS)
@@ -432,7 +432,7 @@ like_escape(PG_FUNCTION_ARGS)
 
 /*
  * like_escape_bytea() --- given a pattern and an ESCAPE string,
- * convert the pattern to use Postgres' standard backslash escape convention.
+ * convert the pattern to use MollyDB' standard backslash escape convention.
  */
 Datum
 like_escape_bytea(PG_FUNCTION_ARGS)

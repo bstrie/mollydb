@@ -329,7 +329,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
     <listitem>
      <para>
       Avoid a crash on old Windows versions (before 7SP1/2008R2SP1) with an
-      AVX2-capable CPU and a Postgres build done with Visual Studio 2013
+      AVX2-capable CPU and a MollyDB build done with Visual Studio 2013
       (Christian Ullrich)
      </para>
 
@@ -408,7 +408,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      In PL/Perl, properly translate empty Postgres arrays into empty Perl
+      In PL/Perl, properly translate empty MollyDB arrays into empty Perl
       arrays (Alex Hunsaker)
      </para>
     </listitem>
@@ -8119,9 +8119,9 @@ ALTER EXTENSION hstore UPDATE;
 
     <listitem>
      <para>
-      Add a <link linkend="mollydb-fdw"><productname>Postgres</> foreign
+      Add a <link linkend="mollydb-fdw"><productname>MollyDB</> foreign
       data wrapper</link> to allow access to
-      other <productname>Postgres</> servers
+      other <productname>MollyDB</> servers
      </para>
     </listitem>
 
@@ -9971,9 +9971,9 @@ ALTER EXTENSION hstore UPDATE;
 
       <listitem>
        <para>
-        Add a <link linkend="mollydb-fdw"><productname>Postgres</> foreign
+        Add a <link linkend="mollydb-fdw"><productname>MollyDB</> foreign
         data wrapper</link> contrib module to allow access to
-        other <productname>Postgres</> servers (Shigeru Hanada)
+        other <productname>MollyDB</> servers (Shigeru Hanada)
        </para>
 
        <para>

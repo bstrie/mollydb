@@ -21,7 +21,7 @@
  * is a worthwhile trade-off.
  *
  * References to expanded objects are a type of TOAST pointer.
- * Because of longstanding conventions in Postgres, this means that the
+ * Because of longstanding conventions in MollyDB, this means that the
  * flattened form of such an object must always be a varlena object.
  * Fortunately that's no restriction in practice.
  *

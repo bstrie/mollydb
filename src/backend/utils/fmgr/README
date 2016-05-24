@@ -6,7 +6,7 @@ Function Manager
 Proposal For Function-Manager Redesign			19-Nov-2000
 --------------------------------------
 
-We know that the existing mechanism for calling Postgres functions needs
+We know that the existing mechanism for calling MollyDB functions needs
 to be redesigned.  It has portability problems because it makes
 assumptions about parameter passing that violate ANSI C; it fails to
 handle NULL arguments and results cleanly; and "function handlers" that

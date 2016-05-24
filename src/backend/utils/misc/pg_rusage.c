@@ -33,7 +33,7 @@ pg_rusage_init(PGRUsage *ru0)
 /*
  * Compute elapsed time since ru0 usage snapshot, and format into
  * a displayable string.  Result is in a static string, which is
- * tacky, but no one ever claimed that the Postgres backend is
+ * tacky, but no one ever claimed that the MollyDB backend is
  * threadable...
  */
 const char *

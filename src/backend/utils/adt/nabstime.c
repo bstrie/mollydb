@@ -33,7 +33,7 @@
 
 /*
  * Unix epoch is Jan  1 00:00:00 1970.
- * Postgres knows about times sixty-eight years on either side of that
+ * MollyDB knows about times sixty-eight years on either side of that
  * for these 4-byte types.
  *
  * "tinterval" is two 4-byte fields.

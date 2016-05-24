@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * rangetypes.h
- *	  Declarations for Postgres range types.
+ *	  Declarations for MollyDB range types.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

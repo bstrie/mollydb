@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * numeric.c
- *	  An exact numeric data type for the Postgres database system
+ *	  An exact numeric data type for the MollyDB database system
  *
  * Original coding 1998, Jan Wieck.  Heavily revised 2003, Tom Lane.
  *
@@ -879,7 +879,7 @@ numeric_transform(PG_FUNCTION_ARGS)
 /*
  * numeric() -
  *
- *	This is a special function called by the Postgres database system
+ *	This is a special function called by the MollyDB database system
  *	before a value is stored in a tuple's attribute. The precision and
  *	scale of the attribute have to be applied on the value.
  */

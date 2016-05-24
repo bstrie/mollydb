@@ -2,7 +2,7 @@
  *
  * bgwriter.c
  *
- * The background writer (bgwriter) is new as of Postgres 8.0.  It attempts
+ * The background writer (bgwriter) is new as of MollyDB 8.0.  It attempts
  * to keep regular backends from having to write out dirty shared buffers
  * (which they would only do when needing to free a shared buffer to read in
  * another page).  In the best scenario all writes from shared buffers will
@@ -10,7 +10,7 @@
  * still empowered to issue writes if the bgwriter fails to maintain enough
  * clean shared buffers.
  *
- * As of Postgres 9.2 the bgwriter no longer handles checkpoints.
+ * As of MollyDB 9.2 the bgwriter no longer handles checkpoints.
  *
  * The bgwriter is started by the postmaster as soon as the startup subprocess
  * finishes, or as soon as recovery begins if we are doing archive recovery.

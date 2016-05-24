@@ -1,7 +1,7 @@
 # Minimal test testing synchronous replication sync_state transition
 use strict;
 use warnings;
-use PostgresNode;
+use MollyDBNode;
 use TestLib;
 use Test::More tests => 8;
 

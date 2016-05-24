@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * fmgr.c
- *	  The Postgres function manager.
+ *	  The MollyDB function manager.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -2077,7 +2077,7 @@ OidSendFunctionCall(Oid functionId, Datum val)
  * !!! OLD INTERFACE !!!
  *
  * fmgr() is the only remaining vestige of the old-style caller support
- * functions.  It's no longer used anywhere in the Postgres distribution,
+ * functions.  It's no longer used anywhere in the MollyDB distribution,
  * but we should leave it around for a release or two to ease the transition
  * for user-supplied C functions.  OidFunctionCallN() replaces it for new
  * code.

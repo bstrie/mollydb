@@ -3,7 +3,7 @@
 SHOW datestyle;
    DateStyle   
 ---------------
- Postgres, MDY
+ MollyDB, MDY
 (1 row)
 
 -- SET to some nondefault value
@@ -205,11 +205,11 @@ SHOW vacuum_cost_delay;
  100ms
 (1 row)
 
-SET datestyle = 'Postgres, MDY';
+SET datestyle = 'MollyDB, MDY';
 SHOW datestyle;
    DateStyle   
 ---------------
- Postgres, MDY
+ MollyDB, MDY
 (1 row)
 
 SELECT '2006-08-13 12:34:56'::timestamptz;
@@ -303,11 +303,11 @@ SHOW vacuum_cost_delay;
  30ms
 (1 row)
 
-SET LOCAL datestyle = 'Postgres, MDY';
+SET LOCAL datestyle = 'MollyDB, MDY';
 SHOW datestyle;
    DateStyle   
 ---------------
- Postgres, MDY
+ MollyDB, MDY
 (1 row)
 
 SELECT '2006-08-13 12:34:56'::timestamptz;
@@ -382,11 +382,11 @@ SHOW vacuum_cost_delay;
  30ms
 (1 row)
 
-SET LOCAL datestyle = 'Postgres, MDY';
+SET LOCAL datestyle = 'MollyDB, MDY';
 SHOW datestyle;
    DateStyle   
 ---------------
- Postgres, MDY
+ MollyDB, MDY
 (1 row)
 
 SELECT '2006-08-13 12:34:56'::timestamptz;
@@ -405,7 +405,7 @@ SHOW vacuum_cost_delay;
 SHOW datestyle;
    DateStyle   
 ---------------
- Postgres, MDY
+ MollyDB, MDY
 (1 row)
 
 SELECT '2006-08-13 12:34:56'::timestamptz;
@@ -444,11 +444,11 @@ SHOW vacuum_cost_delay;
 (1 row)
 
 SET datestyle = 'ISO, DMY';
-SET LOCAL datestyle = 'Postgres, MDY';
+SET LOCAL datestyle = 'MollyDB, MDY';
 SHOW datestyle;
    DateStyle   
 ---------------
- Postgres, MDY
+ MollyDB, MDY
 (1 row)
 
 SELECT '2006-08-13 12:34:56'::timestamptz;
@@ -497,7 +497,7 @@ RESET datestyle;
 SHOW datestyle;
    DateStyle   
 ---------------
- Postgres, MDY
+ MollyDB, MDY
 (1 row)
 
 SELECT '2006-08-13 12:34:56'::timestamptz;

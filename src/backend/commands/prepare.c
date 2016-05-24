@@ -774,7 +774,7 @@ pg_prepared_statement(PG_FUNCTION_ARGS)
 
 /*
  * This utility function takes a C array of Oids, and returns a Datum
- * pointing to a one-dimensional Postgres array of regtypes. An empty
+ * pointing to a one-dimensional MollyDB array of regtypes. An empty
  * array is returned as a zero-element array, not NULL.
  */
 static Datum

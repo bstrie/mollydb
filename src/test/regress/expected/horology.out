@@ -1,7 +1,7 @@
 --
 -- HOROLOGY
 --
-SET DateStyle = 'Postgres, MDY';
+SET DateStyle = 'MollyDB, MDY';
 --
 -- Test various input formats
 --
@@ -263,7 +263,7 @@ SELECT time with time zone 'T040506.789 -08';
  04:05:06.789-08
 (1 row)
 
-SET DateStyle = 'Postgres, MDY';
+SET DateStyle = 'MollyDB, MDY';
 -- Check Julian dates BC
 SELECT date 'J1520447' AS "Confucius' Birthday";
  Confucius' Birthday 
@@ -2215,11 +2215,11 @@ DROP TABLE TEMP_TIMESTAMP;
 --
 -- Formats
 --
-SET DateStyle TO 'US,Postgres';
+SET DateStyle TO 'US,MollyDB';
 SHOW DateStyle;
    DateStyle   
 ---------------
- Postgres, MDY
+ MollyDB, MDY
 (1 row)
 
 SELECT '' AS "64", d1 AS us_mollydb FROM TIMESTAMP_TBL;
@@ -2476,11 +2476,11 @@ SELECT '' AS seven, f1 AS us_sql FROM ABSTIME_TBL;
        | invalid
 (7 rows)
 
-SET DateStyle TO 'European,Postgres';
+SET DateStyle TO 'European,MollyDB';
 SHOW DateStyle;
    DateStyle   
 ---------------
- Postgres, DMY
+ MollyDB, DMY
 (1 row)
 
 INSERT INTO TIMESTAMP_TBL VALUES('13/06/1957');

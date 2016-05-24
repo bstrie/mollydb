@@ -2403,7 +2403,7 @@ printRemoteParam(int paramindex, Oid paramtype, int32 paramtypmod,
  * want the remote planner to generate a plan that depends on such a value
  * anyway.  Thus, we can't do something simple like "$1::paramtype".
  * Instead, we emit "((SELECT null::paramtype)::paramtype)".
- * In all extant versions of Postgres, the planner will see that as an unknown
+ * In all extant versions of MollyDB, the planner will see that as an unknown
  * constant value, which is what we want.  This might need adjustment if we
  * ever make the planner flatten scalar subqueries.  Note: the reason for the
  * apparently useless outer cast is to ensure that the representation as a

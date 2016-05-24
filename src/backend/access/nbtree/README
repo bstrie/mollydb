@@ -32,7 +32,7 @@ Differences to the Lehman & Yao algorithm
 -----------------------------------------
 
 We have made the following changes in order to incorporate the L&Y algorithm
-into Postgres:
+into MollyDB:
 
 The requirement that all btree keys be unique is too onerous,
 but the algorithm won't work correctly without it.  Fortunately, it is
@@ -60,7 +60,7 @@ key could go on either page.  (Currently, we try to find a page where
 there is room for the new key without a split.)
 
 Lehman and Yao don't require read locks, but assume that in-memory
-copies of tree pages are unshared.  Postgres shares in-memory buffers
+copies of tree pages are unshared.  MollyDB shares in-memory buffers
 among backends.  As a result, we do page-level read locking on btree
 pages in order to guarantee that no record is modified while we are
 examining it.  This reduces concurrency but guarantees correct
@@ -314,7 +314,7 @@ A deleted page can only be reclaimed once there is no scan or search that
 has a reference to it; until then, it must stay in place with its
 right-link undisturbed.  We implement this by waiting until all active
 snapshots and registered snapshots as of the deletion are gone; which is
-overly strong, but is simple to implement within Postgres.  When marked
+overly strong, but is simple to implement within MollyDB.  When marked
 dead, a deleted page is labeled with the next-transaction counter value.
 VACUUM can reclaim the page for re-use when this transaction number is
 older than RecentGlobalXmin.  As collateral damage, this implementation
@@ -351,7 +351,7 @@ avoids race conditions if two such operations are executing concurrently.
 VACUUM needs to do a linear scan of an index to search for deleted pages
 that can be reclaimed because they are older than all open transactions.
 For efficiency's sake, we'd like to use the same linear scan to search for
-deletable tuples.  Before Postgres 8.2, btbulkdelete scanned the leaf pages
+deletable tuples.  Before MollyDB 8.2, btbulkdelete scanned the leaf pages
 in index order, but it is possible to visit them in physical order instead.
 The tricky part of this is to avoid missing any deletable tuples in the
 presence of concurrent page splits: a page split could easily move some
@@ -598,7 +598,7 @@ The page level counts upwards from zero at the leaf level, to the tree
 depth minus 1 at the root.  (Counting up from the leaves ensures that we
 don't need to renumber any existing pages when splitting the root.)
 
-The Postgres disk block data format (an array of items) doesn't fit
+The MollyDB disk block data format (an array of items) doesn't fit
 Lehman and Yao's alternating-keys-and-pointers notion of a disk page,
 so we have to play some games.
 

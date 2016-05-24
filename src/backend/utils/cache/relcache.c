@@ -3379,7 +3379,7 @@ RelationCacheInitializePhase3(void)
 	 *
 	 * DatabaseNameIndexId isn't critical for relcache loading, but rather for
 	 * initial lookup of MyDatabaseId, without which we'll never find any
-	 * non-shared catalogs at all.  Autovacuum calls InitPostgres with a
+	 * non-shared catalogs at all.  Autovacuum calls InitMollyDB with a
 	 * database OID, so it instead depends on DatabaseOidIndexId.  We also
 	 * need to nail up some indexes on pg_authid and pg_auth_members for use
 	 * during client authentication.  SharedSecLabelObjectIndexId isn't
@@ -4682,7 +4682,7 @@ errtableconstraint(Relation rel, const char *conname)
  *			  relation descriptors using sequential scans and write 'em to
  *			  the initialization file for use by subsequent backends.
  *
- *		As of Postgres 9.0, there is one local initialization file in each
+ *		As of MollyDB 9.0, there is one local initialization file in each
  *		database, plus one shared initialization file for shared catalogs.
  *
  *		We could dispense with the initialization files and just build the

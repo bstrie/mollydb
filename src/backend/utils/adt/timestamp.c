@@ -775,7 +775,7 @@ float8_timestamptz(PG_FUNCTION_ARGS)
 					(errcode(ERRCODE_DATETIME_VALUE_OUT_OF_RANGE),
 					 errmsg("timestamp out of range: \"%g\"", seconds)));
 
-		/* Convert UNIX epoch to Postgres epoch */
+		/* Convert UNIX epoch to MollyDB epoch */
 		seconds -= ((POSTGRES_EPOCH_JDATE - UNIX_EPOCH_JDATE) * SECS_PER_DAY);
 
 #ifdef HAVE_INT64_TIMESTAMP
@@ -1645,7 +1645,7 @@ GetCurrentTimestamp(void)
 /*
  * GetCurrentIntegerTimestamp -- get the current operating system time as int64
  *
- * Result is the number of microseconds since the Postgres epoch. If compiled
+ * Result is the number of microseconds since the MollyDB epoch. If compiled
  * with --enable-integer-datetimes, this is identical to GetCurrentTimestamp(),
  * and is implemented as a macro.
  */
@@ -1744,7 +1744,7 @@ TimestampDifferenceExceeds(TimestampTz start_time,
 /*
  * Convert a time_t to TimestampTz.
  *
- * We do not use time_t internally in Postgres, but this is provided for use
+ * We do not use time_t internally in MollyDB, but this is provided for use
  * by functions that need to interpret, say, a stat(2) result.
  *
  * To avoid having the function's ABI vary depending on the width of time_t,

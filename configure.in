@@ -1721,7 +1721,7 @@ dnl If there is no native snprintf() or it does not handle the 64-bit type,
 dnl we force our own version of snprintf() to be used instead.
 dnl Note this test must be run after our initial check for snprintf/vsnprintf.
 
-dnl As of Postgres 8.4, we no longer support compilers without a working
+dnl As of MollyDB 8.4, we no longer support compilers without a working
 dnl 64-bit type.  But we still handle the case of snprintf being broken.
 
 PGAC_TYPE_64BIT_INT([long int])

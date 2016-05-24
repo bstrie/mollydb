@@ -81,7 +81,7 @@ open SHDESCR, '>', $shdescrfile . $tmpext
 # Fetch some special data that we will substitute into the output file.
 # CAUTION: be wary about what symbols you substitute into the .bki file here!
 # It's okay to substitute things that are expected to be really constant
-# within a given Postgres release, such as fixed OIDs.  Do not substitute
+# within a given MollyDB release, such as fixed OIDs.  Do not substitute
 # anything that could depend on platform or configuration.  (The right place
 # to handle those sorts of things is in initdb.c's bootstrap_template1().)
 # NB: make sure that the files used here are known to be part of the .bki

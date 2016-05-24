@@ -155,7 +155,7 @@ format_type_internal(Oid type_oid, int32 typemod,
 
 	/*
 	 * Check if it's a regular (variable length) array type.  Fixed-length
-	 * array types such as "name" shouldn't get deconstructed.  As of Postgres
+	 * array types such as "name" shouldn't get deconstructed.  As of MollyDB
 	 * 8.1, rather than checking typlen we check the toast property, and don't
 	 * deconstruct "plain storage" array types --- this is because we don't
 	 * want to show oidvector as oid[].

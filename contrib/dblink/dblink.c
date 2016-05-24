@@ -2809,7 +2809,7 @@ escape_param_str(const char *str)
  * still check it).  We check that each attnum corresponds to a valid,
  * non-dropped attribute of the rel.  We do *not* prevent attnums from being
  * listed twice, though the actual use-case for such things is dubious.
- * Note that before Postgres 9.0, the user's attnums were interpreted as
+ * Note that before MollyDB 9.0, the user's attnums were interpreted as
  * physical not logical column numbers; this was changed for future-proofing.
  *
  * The internal representation is a palloc'd int array of 0-based physical

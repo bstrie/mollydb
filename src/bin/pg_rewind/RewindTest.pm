@@ -40,7 +40,7 @@ use Exporter 'import';
 use File::Copy;
 use File::Path qw(rmtree);
 use IPC::Run qw(run);
-use PostgresNode;
+use MollyDBNode;
 use TestLib;
 use Test::More;
 

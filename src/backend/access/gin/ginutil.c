@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * ginutil.c
- *	  Utility routines for the Postgres inverted index access method.
+ *	  Utility routines for the MollyDB inverted index access method.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

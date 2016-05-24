@@ -768,7 +768,7 @@ next:
  * collation or opclass (instead matching everything, regardless of cataloged
  * collation/opclass of indexed attribute).
  *
- * At least historically, Postgres has not offered collations or opclasses
+ * At least historically, MollyDB has not offered collations or opclasses
  * with alternative-to-default notions of equality, so these additional
  * criteria should only be required infrequently.
  *

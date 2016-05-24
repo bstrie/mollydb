@@ -3,7 +3,7 @@
  * funcapi.h
  *	  Definitions for functions which return composite type and/or sets
  *
- * This file must be included by all Postgres modules that either define
+ * This file must be included by all MollyDB modules that either define
  * or call FUNCAPI-callable functions or macros.
  *
  *

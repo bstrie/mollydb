@@ -4,12 +4,12 @@
 # to try to ensure that the SELinux environment is set up appropriately and
 # the database is configured correctly.
 #
-# Note that this must be run against an installed Postgres database.
+# Note that this must be run against an installed MollyDB database.
 # There's no equivalent of "make check", and that wouldn't be terribly useful
 # since much of the value is in checking that you installed sepgsql into
 # your database correctly.
 #
-# This must be run in the contrib/sepgsql directory of a Postgres build tree.
+# This must be run in the contrib/sepgsql directory of a MollyDB build tree.
 #
 
 PG_BINDIR=`pg_config --bindir`

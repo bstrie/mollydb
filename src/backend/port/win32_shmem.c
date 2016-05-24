@@ -230,7 +230,7 @@ PGSharedMemoryCreate(Size size, bool makePrivate, int port,
 
 	/*
 	 * OK, we created a new segment.  Mark it as created by this process. The
-	 * order of assignments here is critical so that another Postgres process
+	 * order of assignments here is critical so that another MollyDB process
 	 * can't see the header as valid but belonging to an invalid PID!
 	 */
 	hdr = (PGShmemHeader *) memAddress;

@@ -2097,7 +2097,7 @@ dbase_redo(XLogReaderState *record)
 		{
 			/*
 			 * Lock database while we resolve conflicts to ensure that
-			 * InitPostgres() cannot fully re-execute concurrently. This
+			 * InitMollyDB() cannot fully re-execute concurrently. This
 			 * avoids backends re-connecting automatically to same database,
 			 * which can happen in some cases.
 			 */

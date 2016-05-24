@@ -3,11 +3,11 @@
 
 =head1 NAME
 
-PostgresNode - class representing MollyDB server instance
+MollyDBNode - class representing MollyDB server instance
 
 =head1 SYNOPSIS
 
-  use PostgresNode;
+  use MollyDBNode;
 
   my $node = get_new_node('mynode');
 
@@ -65,11 +65,11 @@ PostgresNode - class representing MollyDB server instance
 
 =head1 DESCRIPTION
 
-PostgresNode contains a set of routines able to work on a MollyDB node,
+MollyDBNode contains a set of routines able to work on a MollyDB node,
 allowing to start, stop, backup and initialize it with various options.
 The set of nodes managed by a given test is also managed by this module.
 
-In addition to node management, PostgresNode instances have some wrappers
+In addition to node management, MollyDBNode instances have some wrappers
 around Test::More functions to run commands with an environment set up to
 point to the instance.
 
@@ -77,7 +77,7 @@ The IPC::Run module is required.
 
 =cut
 
-package PostgresNode;
+package MollyDBNode;
 
 use strict;
 use warnings;
@@ -121,9 +121,9 @@ INIT
 
 =over
 
-=item PostgresNode::new($class, $name, $pghost, $pgport)
+=item MollyDBNode::new($class, $name, $pghost, $pgport)
 
-Create a new PostgresNode instance. Does not initdb or start it.
+Create a new MollyDBNode instance. Does not initdb or start it.
 
 You should generally prefer to use get_new_node() instead since it takes care
 of finding port numbers, registering instances for cleanup, etc.
@@ -341,7 +341,7 @@ sub set_replication_conf
 	  or die "set_replication_conf only works with the default host";
 
 	open my $hba, ">>$pgdata/pg_hba.conf";
-	print $hba "\n# Allow replication (set up by PostgresNode.pm)\n";
+	print $hba "\n# Allow replication (set up by MollyDBNode.pm)\n";
 	if (!$TestLib::windows_os)
 	{
 		print $hba "local replication all trust\n";
@@ -399,7 +399,7 @@ sub init
 	TestLib::system_or_bail($ENV{PG_REGRESS}, '--config-auth', $pgdata);
 
 	open my $conf, ">>$pgdata/mollydb.conf";
-	print $conf "\n# Added by PostgresNode.pm\n";
+	print $conf "\n# Added by MollyDBNode.pm\n";
 	print $conf "fsync = off\n";
 	print $conf "log_statement = all\n";
 	print $conf "port = $port\n";
@@ -558,7 +558,7 @@ sub _backup_fs
 =item $node->init_from_backup(root_node, backup_name)
 
 Initialize a node from a backup, which may come from this node or a different
-node. root_node must be a PostgresNode reference, backup_name the string name
+node. root_node must be a MollyDBNode reference, backup_name the string name
 of a backup previously created on that node with $node->backup.
 
 Does not start the node after initializing it.
@@ -824,13 +824,13 @@ sub _update_pid
 
 =item get_new_node(node_name)
 
-Build a new PostgresNode object, assigning a free port number. Standalone
+Build a new MollyDBNode object, assigning a free port number. Standalone
 function that's automatically imported.
 
 Remembers the node, to prevent its port number from being reused for another
 node, and to ensure that it gets shut down when the test script exits.
 
-You should generally use this instead of PostgresNode::new(...).
+You should generally use this instead of MollyDBNode::new(...).
 
 =cut
 
@@ -879,7 +879,7 @@ sub get_new_node
 	print "# Found free port $port\n";
 
 	# Lock port number found by creating a new node
-	my $node = new PostgresNode($name, $test_pghost, $port);
+	my $node = new MollyDBNode($name, $test_pghost, $port);
 
 	# Add node to list of nodes
 	push(@all_nodes, $node);
@@ -1220,7 +1220,7 @@ sub poll_query_until
 
 Runs a shell command like TestLib::command_ok, but with PGPORT
 set so that the command will default to connecting to this
-PostgresNode.
+MollyDBNode.
 
 =cut
 

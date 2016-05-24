@@ -1,7 +1,7 @@
 /*
  *	version.c
  *
- *	Postgres-version-specific routines
+ *	MollyDB-version-specific routines
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
  *	src/bin/pg_upgrade/version.c

@@ -54,7 +54,7 @@ static void check_root(const char *progname);
 
 
 /*
- * Any Postgres server process begins execution here.
+ * Any MollyDB server process begins execution here.
  */
 int
 main(int argc, char *argv[])
@@ -221,7 +221,7 @@ main(int argc, char *argv[])
 	else if (argc > 1 && strcmp(argv[1], "--describe-config") == 0)
 		GucInfoMain();			/* does not return */
 	else if (argc > 1 && strcmp(argv[1], "--single") == 0)
-		PostgresMain(argc, argv,
+		MollyDBMain(argc, argv,
 					 NULL,		/* no dbname */
 					 strdup(get_user_name_or_exit(progname)));	/* does not return */
 	else
@@ -315,7 +315,7 @@ init_locale(const char *categoryname, int category, const char *locale)
 
 /*
  * Help display should match the options accepted by PostmasterMain()
- * and PostgresMain().
+ * and MollyDBMain().
  *
  * XXX On Windows, non-ASCII localizations of these messages only display
  * correctly if the console output code page covers the necessary characters.

@@ -26,7 +26,7 @@
  *		typedef struct FormData_pg_type
  *
  *		Some of the values in a pg_type instance are copied into
- *		pg_attribute instances.  Some parts of Postgres use the pg_type copy,
+ *		pg_attribute instances.  Some parts of MollyDB use the pg_type copy,
  *		while others use the pg_attribute copy, so they must match.
  *		See struct FormData_pg_attribute for details.
  * ----------------
@@ -50,7 +50,7 @@ CATALOG(pg_type,1247) BKI_BOOTSTRAP BKI_ROWTYPE_OID(71) BKI_SCHEMA_MACRO
 	int16		typlen;
 
 	/*
-	 * typbyval determines whether internal Postgres routines pass a value of
+	 * typbyval determines whether internal MollyDB routines pass a value of
 	 * this type by value or by reference.  typbyval had better be FALSE if
 	 * the length is not 1, 2, or 4 (or 8 on 8-byte-Datum machines).
 	 * Variable-length types are always passed by reference. Note that
@@ -129,7 +129,7 @@ CATALOG(pg_type,1247) BKI_BOOTSTRAP BKI_ROWTYPE_OID(71) BKI_SCHEMA_MACRO
 	/* ----------------
 	 * typalign is the alignment required when storing a value of this
 	 * type.  It applies to storage on disk as well as most
-	 * representations of the value inside Postgres.  When multiple values
+	 * representations of the value inside MollyDB.  When multiple values
 	 * are stored consecutively, such as in the representation of a
 	 * complete row on disk, padding is inserted before a datum of this
 	 * type so that it begins on the specified boundary.  The alignment

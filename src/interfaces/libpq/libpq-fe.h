@@ -73,7 +73,7 @@ typedef enum
 	PGRES_POLLING_OK,
 	PGRES_POLLING_ACTIVE		/* unused; keep for awhile for backwards
 								 * compatibility */
-} PostgresPollingStatusType;
+} MollyDBPollingStatusType;
 
 typedef enum
 {
@@ -151,7 +151,7 @@ typedef struct pg_cancel PGcancel;
 /* PGnotify represents the occurrence of a NOTIFY message.
  * Ideally this would be an opaque typedef, but it's so simple that it's
  * unlikely to change.
- * NOTE: in Postgres 6.4 and later, the be_pid is the notifying backend's,
+ * NOTE: in MollyDB 6.4 and later, the be_pid is the notifying backend's,
  * whereas in earlier versions it was always your own backend's PID.
  */
 typedef struct pgNotify
@@ -251,7 +251,7 @@ typedef struct pgresAttDesc
 extern PGconn *PQconnectStart(const char *conninfo);
 extern PGconn *PQconnectStartParams(const char *const * keywords,
 					 const char *const * values, int expand_dbname);
-extern PostgresPollingStatusType PQconnectPoll(PGconn *conn);
+extern MollyDBPollingStatusType PQconnectPoll(PGconn *conn);
 
 /* Synchronous (blocking) */
 extern PGconn *PQconnectdb(const char *conninfo);
@@ -286,7 +286,7 @@ extern void PQconninfoFree(PQconninfoOption *connOptions);
  */
 /* Asynchronous (non-blocking) */
 extern int	PQresetStart(PGconn *conn);
-extern PostgresPollingStatusType PQresetPoll(PGconn *conn);
+extern MollyDBPollingStatusType PQresetPoll(PGconn *conn);
 
 /* Synchronous (blocking) */
 extern void PQreset(PGconn *conn);

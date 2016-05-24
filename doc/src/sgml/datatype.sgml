@@ -2261,7 +2261,7 @@ January 8 04:05:06 1999 PST
          <entry><literal>12/17/1997 07:37:16.00 PST</literal></entry>
         </row>
         <row>
-         <entry><literal>Postgres</literal></entry>
+         <entry><literal>MollyDB</literal></entry>
          <entry>original style</entry>
          <entry><literal>Wed Dec 17 07:37:16 1997 PST</literal></entry>
         </row>
@@ -2315,7 +2315,7 @@ January 8 04:05:06 1999 PST
          <entry><literal>12/17/1997 07:37:16.00 PST</literal></entry>
         </row>
         <row>
-         <entry><literal>Postgres, DMY</></entry>
+         <entry><literal>MollyDB, DMY</></entry>
          <entry><replaceable>day</replaceable>/<replaceable>month</replaceable>/<replaceable>year</replaceable></entry>
          <entry><literal>Wed 17 Dec 07:37:16 1997 PST</literal></entry>
         </row>
@@ -2733,7 +2733,7 @@ P <optional> <replaceable>years</>-<replaceable>months</>-<replaceable>days</> <
         </row>
         <row>
          <entry>1 year 2 months 3 days 4 hours 5 minutes 6 seconds</entry>
-         <entry>Traditional Postgres format: 1 year 2 months 3 days 4 hours 5 minutes 6 seconds</entry>
+         <entry>Traditional MollyDB format: 1 year 2 months 3 days 4 hours 5 minutes 6 seconds</entry>
         </row>
         <row>
          <entry>P1Y2M3DT4H5M6S</entry>

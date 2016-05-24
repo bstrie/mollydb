@@ -44,7 +44,7 @@
  *		compare the columns one at a time (see MJCompare).  The planner
  *		passes us enough information about the sort ordering of the inputs
  *		to allow us to determine how to make the comparison.  We may use the
- *		appropriate btree comparison function, since Postgres' only notion
+ *		appropriate btree comparison function, since MollyDB' only notion
  *		of ordering is specified by btree opfamilies.
  *
  *

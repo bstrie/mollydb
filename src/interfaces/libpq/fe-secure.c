@@ -171,7 +171,7 @@ pqsecure_initialize(PGconn *conn)
 /*
  *	Begin or continue negotiating a secure session.
  */
-PostgresPollingStatusType
+MollyDBPollingStatusType
 pqsecure_open_client(PGconn *conn)
 {
 #ifdef USE_SSL
