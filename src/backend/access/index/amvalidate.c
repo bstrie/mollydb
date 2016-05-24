@@ -15,12 +15,12 @@
 
 #include "access/amvalidate.h"
 #include "access/htup_details.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_amop.h"
-#include "catalog/pg_amproc.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_proc.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_amop.h"
+#include "catalog/mdb_amproc.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_proc.h"
 #include "parser/parse_coerce.h"
 #include "utils/syscache.h"
 
@@ -42,8 +42,8 @@ identify_opfamily_groups(CatCList *oprlist, CatCList *proclist)
 {
 	List	   *result = NIL;
 	OpFamilyOpFuncGroup *thisgroup;
-	Form_pg_amop oprform;
-	Form_pg_amproc procform;
+	Form_mdb_amop oprform;
+	Form_mdb_amproc procform;
 	int			io,
 				ip;
 
@@ -60,14 +60,14 @@ identify_opfamily_groups(CatCList *oprlist, CatCList *proclist)
 	io = ip = 0;
 	if (io < oprlist->n_members)
 	{
-		oprform = (Form_pg_amop) GETSTRUCT(&oprlist->members[io]->tuple);
+		oprform = (Form_mdb_amop) GETSTRUCT(&oprlist->members[io]->tuple);
 		io++;
 	}
 	else
 		oprform = NULL;
 	if (ip < proclist->n_members)
 	{
-		procform = (Form_pg_amproc) GETSTRUCT(&proclist->members[ip]->tuple);
+		procform = (Form_mdb_amproc) GETSTRUCT(&proclist->members[ip]->tuple);
 		ip++;
 	}
 	else
@@ -87,7 +87,7 @@ identify_opfamily_groups(CatCList *oprlist, CatCList *proclist)
 
 			if (io < oprlist->n_members)
 			{
-				oprform = (Form_pg_amop) GETSTRUCT(&oprlist->members[io]->tuple);
+				oprform = (Form_mdb_amop) GETSTRUCT(&oprlist->members[io]->tuple);
 				io++;
 			}
 			else
@@ -107,7 +107,7 @@ identify_opfamily_groups(CatCList *oprlist, CatCList *proclist)
 
 			if (ip < proclist->n_members)
 			{
-				procform = (Form_pg_amproc) GETSTRUCT(&proclist->members[ip]->tuple);
+				procform = (Form_mdb_amproc) GETSTRUCT(&proclist->members[ip]->tuple);
 				ip++;
 			}
 			else
@@ -152,14 +152,14 @@ check_amproc_signature(Oid funcid, Oid restype, bool exact,
 {
 	bool		result = true;
 	HeapTuple	tp;
-	Form_pg_proc procform;
+	Form_mdb_proc procform;
 	va_list		ap;
 	int			i;
 
 	tp = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcid));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for function %u", funcid);
-	procform = (Form_pg_proc) GETSTRUCT(tp);
+	procform = (Form_mdb_proc) GETSTRUCT(tp);
 
 	if (procform->prorettype != restype || procform->proretset ||
 		procform->pronargs < minargs || procform->pronargs > maxargs)
@@ -188,19 +188,19 @@ check_amproc_signature(Oid funcid, Oid restype, bool exact,
  *
  * Currently, we can hard-wire this as accepting only binary operators.  Also,
  * we can insist on exact type matches, since the given lefttype/righttype
- * come from pg_amop and should always match the operator exactly.
+ * come from mdb_amop and should always match the operator exactly.
  */
 bool
 check_amop_signature(Oid opno, Oid restype, Oid lefttype, Oid righttype)
 {
 	bool		result = true;
 	HeapTuple	tp;
-	Form_pg_operator opform;
+	Form_mdb_operator opform;
 
 	tp = SearchSysCache1(OPEROID, ObjectIdGetDatum(opno));
 	if (!HeapTupleIsValid(tp))	/* shouldn't happen */
 		elog(ERROR, "cache lookup failed for operator %u", opno);
-	opform = (Form_pg_operator) GETSTRUCT(tp);
+	opform = (Form_mdb_operator) GETSTRUCT(tp);
 
 	if (opform->oprresult != restype || opform->oprkind != 'b' ||
 		opform->oprleft != lefttype || opform->oprright != righttype)
@@ -230,7 +230,7 @@ opfamily_can_sort_type(Oid opfamilyoid, Oid datatypeoid)
 	for (i = 0; i < opclist->n_members; i++)
 	{
 		HeapTuple	classtup = &opclist->members[i]->tuple;
-		Form_pg_opclass classform = (Form_pg_opclass) GETSTRUCT(classtup);
+		Form_mdb_opclass classform = (Form_mdb_opclass) GETSTRUCT(classtup);
 
 		if (classform->opcfamily == opfamilyoid &&
 			classform->opcintype == datatypeoid)

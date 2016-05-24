@@ -37,7 +37,7 @@
    <listitem>
     <para>
      The built-in text search data types and functions all exist within
-     the system schema <literal>pg_catalog</>.  In an installation using
+     the system schema <literal>mdb_catalog</>.  In an installation using
      <application>tsearch2</>, these objects would usually have been in
      the <literal>public</> schema, though some users chose to place them
      in a separate schema of their own.  Explicitly schema-qualified
@@ -140,7 +140,7 @@
     <para>
      Make a dump from the old installation in the usual way,
      but be sure not to use <literal>-c</> (<literal>--clean</>)
-     option of <application>pg_dump</> or <application>pg_dumpall</>.
+     option of <application>mdb_dump</> or <application>mdb_dumpall</>.
     </para>
    </step>
 
@@ -163,14 +163,14 @@
      due to failure to recreate the original <application>tsearch2</>
      objects.  These errors can be ignored, but this means you cannot
      restore the dump in a single transaction (eg, you cannot use
-     <application>pg_restore</>'s <option>-1</> switch).
+     <application>mdb_restore</>'s <option>-1</> switch).
     </para>
    </step>
 
    <step>
     <para>
      Examine the contents of the restored <application>tsearch2</>
-     configuration tables (<structname>pg_ts_cfg</> and so on), and
+     configuration tables (<structname>mdb_ts_cfg</> and so on), and
      create equivalent built-in text search configurations as needed.
      You may drop the old configuration tables once you've extracted
      all the useful information from them.

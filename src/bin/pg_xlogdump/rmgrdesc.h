@@ -1,9 +1,9 @@
 /*
  * rmgrdesc.h
  *
- * pg_xlogdump resource managers declaration
+ * mdb_xlogdump resource managers declaration
  *
- * src/bin/pg_xlogdump/rmgrdesc.h
+ * src/bin/mdb_xlogdump/rmgrdesc.h
  */
 #ifndef RMGRDESC_H
 #define RMGRDESC_H

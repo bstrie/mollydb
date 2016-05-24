@@ -1,27 +1,27 @@
 <!--
-doc/src/sgml/ref/pg_basebackup.sgml
+doc/src/sgml/ref/mdb_basebackup.sgml
 MollyDB documentation
 -->
 
 <refentry id="app-pgbasebackup">
  <indexterm zone="app-pgbasebackup">
-  <primary>pg_basebackup</primary>
+  <primary>mdb_basebackup</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle>pg_basebackup</refentrytitle>
+  <refentrytitle>mdb_basebackup</refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_basebackup</refname>
+  <refname>mdb_basebackup</refname>
   <refpurpose>take a base backup of a <productname>MollyDB</productname> cluster</refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_basebackup</command>
+   <command>mdb_basebackup</command>
    <arg rep="repeat"><replaceable>option</></arg>
   </cmdsynopsis>
  </refsynopsisdiv>
@@ -31,7 +31,7 @@ MollyDB documentation
    Description
   </title>
   <para>
-   <application>pg_basebackup</application> is used to take base backups of
+   <application>mdb_basebackup</application> is used to take base backups of
    a running <productname>MollyDB</productname> database cluster. These
    are taken without affecting other clients to the database, and can be used
    both for point-in-time recovery (see <xref linkend="continuous-archiving">)
@@ -40,7 +40,7 @@ MollyDB documentation
   </para>
 
   <para>
-   <application>pg_basebackup</application> makes a binary copy of the database
+   <application>mdb_basebackup</application> makes a binary copy of the database
    cluster files, while making sure the system is put in and
    out of backup mode automatically. Backups are always taken of the entire
    database cluster; it is not possible to back up individual databases or
@@ -53,20 +53,20 @@ MollyDB documentation
    connection, and uses the replication protocol. The connection must be made
    with a superuser or a user having <literal>REPLICATION</literal>
    permissions (see <xref linkend="role-attributes">),
-   and <filename>pg_hba.conf</filename> must explicitly permit the replication
+   and <filename>mdb_hba.conf</filename> must explicitly permit the replication
    connection. The server must also be configured
    with <xref linkend="guc-max-wal-senders"> set high enough to leave at least
    one session available for the backup.
   </para>
 
   <para>
-   There can be multiple <command>pg_basebackup</command>s running at the same time, but it is
+   There can be multiple <command>mdb_basebackup</command>s running at the same time, but it is
    better from a performance point of view to take only one backup, and copy
    the result.
   </para>
 
   <para>
-   <application>pg_basebackup</application> can make a base backup from
+   <application>mdb_basebackup</application> can make a base backup from
    not only the master but also the standby. To take a backup from the standby,
    set up the standby so that it can accept replication connections (that is, set
    <varname>max_wal_senders</> and <xref linkend="guc-hot-standby">,
@@ -100,7 +100,7 @@ MollyDB documentation
      <para>
       All WAL records required for the backup must contain sufficient full-page writes,
       which requires you to enable <varname>full_page_writes</> on the master and
-      not to use a tool like <application>pg_compresslog</> as
+      not to use a tool like <application>mdb_compresslog</> as
       <varname>archive_command</> to remove full-page writes from WAL files.
      </para>
     </listitem>
@@ -122,7 +122,7 @@ MollyDB documentation
       <listitem>
        <para>
         Directory to write the output to.
-        <application>pg_basebackup</application> will create the directory and
+        <application>mdb_basebackup</application> will create the directory and
         any parent directories if necessary.  The directory may already exist,
         but it is an error if the directory already exists and is not empty.
        </para>
@@ -199,7 +199,7 @@ MollyDB documentation
         Valid values are between 32 kilobytes per second and 1024 megabytes per second.
        </para>
        <para>
-        The purpose is to limit the impact of <application>pg_basebackup</application>
+        The purpose is to limit the impact of <application>mdb_basebackup</application>
         on the running server.
        </para>
        <para>
@@ -220,7 +220,7 @@ MollyDB documentation
         ease setting up a standby server.
         The <filename>recovery.conf</filename> file will record the connection
         settings and, if specified, the replication slot
-        that <application>pg_basebackup</application> is using, so that the
+        that <application>mdb_basebackup</application> is using, so that the
         streaming replication will use the same settings later on.
        </para>
 
@@ -393,7 +393,7 @@ MollyDB documentation
       <listitem>
        <para>
         Sets the label for the backup. If none is specified, a default value of
-        <quote><literal>pg_basebackup base backup</literal></quote> will be used.
+        <quote><literal>mdb_basebackup base backup</literal></quote> will be used.
        </para>
       </listitem>
      </varlistentry>
@@ -449,7 +449,7 @@ MollyDB documentation
        </para>
        <para>
         The option is called <literal>--dbname</> for consistency with other
-        client applications, but because <application>pg_basebackup</application>
+        client applications, but because <application>mdb_basebackup</application>
         doesn't connect to any particular database in the cluster, database
         name in the connection string will be ignored.
        </para>
@@ -527,15 +527,15 @@ MollyDB documentation
       <term><option>--password</option></term>
       <listitem>
        <para>
-        Force <application>pg_basebackup</application> to prompt for a
+        Force <application>mdb_basebackup</application> to prompt for a
         password before connecting to a database.
        </para>
 
        <para>
         This option is never essential, since
-        <application>pg_basebackup</application> will automatically prompt
+        <application>mdb_basebackup</application> will automatically prompt
         for a password if the server demands password authentication.
-        However, <application>pg_basebackup</application> will waste a
+        However, <application>mdb_basebackup</application> will waste a
         connection attempt finding out that the server wants a password.
         In some cases it is worth typing <option>-W</> to avoid the extra
         connection attempt.
@@ -554,7 +554,7 @@ MollyDB documentation
        <term><option>--version</></term>
        <listitem>
        <para>
-       Print the <application>pg_basebackup</application> version and exit.
+       Print the <application>mdb_basebackup</application> version and exit.
        </para>
        </listitem>
      </varlistentry>
@@ -564,7 +564,7 @@ MollyDB documentation
        <term><option>--help</></term>
        <listitem>
        <para>
-       Show help about <application>pg_basebackup</application> command line
+       Show help about <application>mdb_basebackup</application> command line
        arguments, and exit.
        </para>
        </listitem>
@@ -618,7 +618,7 @@ MollyDB documentation
   </para>
 
   <para>
-   <application>pg_basebackup</application> works with servers of the same
+   <application>mdb_basebackup</application> works with servers of the same
    or an older major version, down to 9.1. However, WAL streaming mode (<literal>-X
    stream</literal>) only works with server version 9.3 and later, and tar format mode
    (<literal>--format=tar</literal>) of the current version only works with server version 9.5
@@ -635,7 +635,7 @@ MollyDB documentation
    and store it in the local directory
    <filename>/usr/local/mdb/data</filename>:
 <screen>
-<prompt>$</prompt> <userinput>pg_basebackup -h mydbserver -D /usr/local/mdb/data</userinput>
+<prompt>$</prompt> <userinput>mdb_basebackup -h mydbserver -D /usr/local/mdb/data</userinput>
 </screen>
   </para>
 
@@ -644,7 +644,7 @@ MollyDB documentation
    tar file for each tablespace, and store it in the directory
    <filename>backup</filename>, showing a progress report while running:
 <screen>
-<prompt>$</prompt> <userinput>pg_basebackup -D backup -Ft -z -P</userinput>
+<prompt>$</prompt> <userinput>mdb_basebackup -D backup -Ft -z -P</userinput>
 </screen>
   </para>
 
@@ -652,7 +652,7 @@ MollyDB documentation
    To create a backup of a single-tablespace local database and compress
    this with <productname>bzip2</productname>:
 <screen>
-<prompt>$</prompt> <userinput>pg_basebackup -D - -Ft | bzip2 &gt; backup.tar.bz2</userinput>
+<prompt>$</prompt> <userinput>mdb_basebackup -D - -Ft | bzip2 &gt; backup.tar.bz2</userinput>
 </screen>
    (This command will fail if there are multiple tablespaces in the
    database.)
@@ -663,7 +663,7 @@ MollyDB documentation
    <filename>/opt/ts</filename> is relocated
    to <filename>./backup/ts</filename>:
 <screen>
-<prompt>$</prompt> <userinput>pg_basebackup -D backup/data -T /opt/ts=$(pwd)/backup/ts</userinput>
+<prompt>$</prompt> <userinput>mdb_basebackup -D backup/data -T /opt/ts=$(pwd)/backup/ts</userinput>
 </screen>
   </para>
  </refsect1>

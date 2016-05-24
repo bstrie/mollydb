@@ -37,7 +37,7 @@ CREATE FUNCTION customer_credit(int) RETURNS text
 SECURITY LABEL ON FUNCTION customer_credit(int)
     IS 'system_u:object_r:semdb_trusted_proc_exec_t:s0';
 
-SELECT objtype, objname, label FROM pg_seclabels
+SELECT objtype, objname, label FROM mdb_seclabels
     WHERE provider = 'selinux'
      AND  objtype in ('table', 'column')
      AND  objname in ('t1', 't2', 't3', 't4', 't5', 't5.e', 't5.f', 't5.g')
@@ -52,7 +52,7 @@ SECURITY LABEL ON SCHEMA my_schema_2
     IS 'system_u:object_r:semdb_regtest_invisible_schema_t:s0';
 
 -- Hardwired Rules
-UPDATE pg_attribute SET attisdropped = true
+UPDATE mdb_attribute SET attisdropped = true
     WHERE attrelid = 't5'::regclass AND attname = 'f';	-- failed
 
 --

@@ -63,7 +63,7 @@ static bool		include_next;
 static void addlit(char *ytext, int yleng);
 static void addlitchar (unsigned char);
 static void parse_include (void);
-static bool ecpg_isspace(char ch);
+static bool ecmdb_isspace(char ch);
 static bool isdefine(void);
 static bool isinformixdefine(void);
 
@@ -300,7 +300,7 @@ param			\${integer}
  *
  * XXX perhaps \f (formfeed) should be treated as a newline as well?
  *
- * XXX if you change the set of whitespace characters, fix ecpg_isspace()
+ * XXX if you change the set of whitespace characters, fix ecmdb_isspace()
  * to agree.
  */
 
@@ -955,7 +955,7 @@ cppline			{space}*#([^i][A-Za-z]*|{if}|{ifdef}|{ifndef}|{import})((\/\*[^*/]*\*+
 					 *	contains at least one non-space character plus the ";"
 					 */
 					for (i = strlen(yytext)-2;
-						 i > 0 && ecpg_isspace(yytext[i]);
+						 i > 0 && ecmdb_isspace(yytext[i]);
 						 i-- )
 						;
 					yytext[i+1] = '\0';
@@ -1143,7 +1143,7 @@ cppline			{space}*#([^i][A-Za-z]*|{if}|{ifdef}|{ifndef}|{import})((\/\*[^*/]*\*+
 						 *	contains at least one non-space character plus the ";"
 						 */
 						for (i = strlen(yytext)-2;
-							 i > 0 && ecpg_isspace(yytext[i]);
+							 i > 0 && ecmdb_isspace(yytext[i]);
 							 i-- )
 							;
 						yytext[i+1] = '\0';
@@ -1337,7 +1337,7 @@ parse_include(void)
 	 * yytext contains at least one non-space character plus the ";"
 	 */
 	for (i = strlen(yytext)-2;
-		 i > 0 && ecpg_isspace(yytext[i]);
+		 i > 0 && ecmdb_isspace(yytext[i]);
 		 i--)
 		;
 
@@ -1414,10 +1414,10 @@ parse_include(void)
 }
 
 /*
- * ecpg_isspace() --- return TRUE if flex scanner considers char whitespace
+ * ecmdb_isspace() --- return TRUE if flex scanner considers char whitespace
  */
 static bool
-ecpg_isspace(char ch)
+ecmdb_isspace(char ch)
 {
 	if (ch == ' ' ||
 		ch == '\t' ||

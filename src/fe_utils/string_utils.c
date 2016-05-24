@@ -553,7 +553,7 @@ appendReloptionsArray(PQExpBuffer buffer, const char *reloptions,
  * namevar: name of query variable to match against an object-name pattern.
  * altnamevar: NULL, or name of an alternative variable to match against name.
  * visibilityrule: clause to use if we want to restrict to visible objects
- * (for example, "pg_catalog.pg_table_is_visible(p.oid)").  Can be NULL.
+ * (for example, "mdb_catalog.mdb_table_is_visible(p.oid)").  Can be NULL.
  *
  * Formatting note: the text already present in buf should end with a newline.
  * The appended text, if any, will end with one too.
@@ -627,7 +627,7 @@ processSQLNamePattern(PGconn *conn, PQExpBuffer buf, const char *pattern,
 		else if (!inquotes && isupper((unsigned char) ch))
 		{
 			appendPQExpBufferChar(&namebuf,
-								  pg_tolower((unsigned char) ch));
+								  mdb_tolower((unsigned char) ch));
 			cp++;
 		}
 		else if (!inquotes && ch == '*')

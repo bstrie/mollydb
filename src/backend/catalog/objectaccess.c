@@ -11,8 +11,8 @@
 #include "mollydb.h"
 
 #include "catalog/objectaccess.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_proc.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_proc.h"
 
 /*
  * Hook on object accesses.  This is intended as infrastructure for security

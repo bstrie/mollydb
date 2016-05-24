@@ -85,7 +85,7 @@ proc delmodule {conn modname} {
     regsub -all {'}  $xname {''} xname
 
     set found 0
-    pg_select $conn "select * from pltcl_modules where modname = '$xname'" \
+    mdb_select $conn "select * from pltcl_modules where modname = '$xname'" \
     MOD {
         set found 1
 	break;
@@ -97,21 +97,21 @@ proc delmodule {conn modname} {
 	return
     }
 
-    pg_result \
-        [pg_exec $conn "delete from pltcl_modules where modname = '$xname'"] \
+    mdb_result \
+        [mdb_exec $conn "delete from pltcl_modules where modname = '$xname'"] \
 	-clear
-    pg_result \
-        [pg_exec $conn "delete from pltcl_modfuncs where modname = '$xname'"] \
+    mdb_result \
+        [mdb_exec $conn "delete from pltcl_modfuncs where modname = '$xname'"] \
 	-clear
 
     puts "Module $modname removed"
 }
 
-set conn [eval pg_connect $dbname $options]
+set conn [eval mdb_connect $dbname $options]
 
 while {$i < $argc} {
     delmodule $conn [lindex $argv $i]
     incr i
 }
 
-pg_disconnect $conn
+mdb_disconnect $conn

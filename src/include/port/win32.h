@@ -361,18 +361,18 @@ typedef int pid_t;
 
 
 /* In backend/port/win32/signal.c */
-extern PGDLLIMPORT volatile int pg_signal_queue;
-extern PGDLLIMPORT int pg_signal_mask;
+extern PGDLLIMPORT volatile int mdb_signal_queue;
+extern PGDLLIMPORT int mdb_signal_mask;
 extern HANDLE pgwin32_signal_event;
 extern HANDLE pgwin32_initial_signal_pipe;
 
-#define UNBLOCKED_SIGNAL_QUEUE()	(pg_signal_queue & ~pg_signal_mask)
+#define UNBLOCKED_SIGNAL_QUEUE()	(mdb_signal_queue & ~mdb_signal_mask)
 
 
 void		pgwin32_signal_initialize(void);
 HANDLE		pgwin32_create_signal_listener(pid_t pid);
 void		pgwin32_dispatch_queued_signals(void);
-void		pg_queue_signal(int signum);
+void		mdb_queue_signal(int signum);
 
 /* In backend/port/win32/socket.c */
 #ifndef FRONTEND

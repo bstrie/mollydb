@@ -7,6 +7,6 @@
 /dropuser
 /reindexdb
 /vacuumdb
-/pg_isready
+/mdb_isready
 
 /tmp_check/

@@ -2,23 +2,23 @@
 
 <refentry id="pgtesttiming">
  <indexterm zone="pgtesttiming">
-  <primary>pg_test_timing</primary>
+  <primary>mdb_test_timing</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle><application>pg_test_timing</application></refentrytitle>
+  <refentrytitle><application>mdb_test_timing</application></refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_test_timing</refname>
+  <refname>mdb_test_timing</refname>
   <refpurpose>measure timing overhead</refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_test_timing</command>
+   <command>mdb_test_timing</command>
    <arg rep="repeat"><replaceable>option</replaceable></arg>
   </cmdsynopsis>
  </refsynopsisdiv>
@@ -27,7 +27,7 @@
   <title>Description</title>
 
  <para>
-  <application>pg_test_timing</> is a tool to measure the timing overhead
+  <application>mdb_test_timing</> is a tool to measure the timing overhead
   on your system and confirm that the system time never moves backwards.
   Systems that are slow to collect timing data can give less accurate
   <command>EXPLAIN ANALYZE</command> results.
@@ -38,7 +38,7 @@
   <title>Options</title>
 
    <para>
-    <application>pg_test_timing</application> accepts the following
+    <application>mdb_test_timing</application> accepts the following
     command-line options:
 
     <variablelist>
@@ -61,7 +61,7 @@
       <term><option>--version</></term>
       <listitem>
        <para>
-        Print the <application>pg_test_timing</application> version and exit.
+        Print the <application>mdb_test_timing</application> version and exit.
        </para>
       </listitem>
      </varlistentry>
@@ -71,7 +71,7 @@
       <term><option>--help</></term>
       <listitem>
        <para>
-        Show help about <application>pg_test_timing</application> command line
+        Show help about <application>mdb_test_timing</application> command line
         arguments, and exit.
        </para>
       </listitem>
@@ -136,7 +136,7 @@ EXPLAIN ANALYZE SELECT COUNT(*) FROM t;
    The i7-860 system measured runs the count query in 9.8 ms while
    the <command>EXPLAIN ANALYZE</command> version takes 16.6 ms, each
    processing just over 100,000 rows.  That 6.8 ms difference means the timing
-   overhead per row is 68 ns, about twice what pg_test_timing estimated it
+   overhead per row is 68 ns, about twice what mdb_test_timing estimated it
    would be.  Even that relatively small amount of overhead is making the fully
    timed count statement take almost 70% longer.  On more substantial queries,
    the timing overhead would be less problematic.
@@ -156,7 +156,7 @@ EXPLAIN ANALYZE SELECT COUNT(*) FROM t;
 # cat /sys/devices/system/clocksource/clocksource0/available_clocksource
 tsc hpet acpi_pm
 # echo acpi_pm > /sys/devices/system/clocksource/clocksource0/current_clocksource
-# pg_test_timing
+# mdb_test_timing
 Per loop time including overhead: 722.92 nsec
 Histogram of timing durations:
 < usec   % of total      count
@@ -207,7 +207,7 @@ jiffies
 $ dmesg | grep time.c
 time.c: Using 3.579545 MHz WALL PM GTOD PIT/TSC timer.
 time.c: Detected 2400.153 MHz processor.
-$ pg_test_timing
+$ mdb_test_timing
 Testing timing overhead for 3 seconds.
 Per timing duration including loop overhead: 97.75 ns
 Histogram of timing durations:

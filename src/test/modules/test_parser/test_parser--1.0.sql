@@ -27,6 +27,6 @@ CREATE TEXT SEARCH PARSER testparser (
     START    = testprs_start,
     GETTOKEN = testprs_getlexeme,
     END      = testprs_end,
-    HEADLINE = pg_catalog.prsd_headline,
+    HEADLINE = mdb_catalog.prsd_headline,
     LEXTYPES = testprs_lextype
 );

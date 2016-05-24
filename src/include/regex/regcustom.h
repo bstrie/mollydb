@@ -45,7 +45,7 @@
 #include <wctype.h>
 #endif
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 
 /* overrides for regguts.h definitions, if any */
@@ -56,7 +56,7 @@
 #define assert(x)		Assert(x)
 
 /* internal character type and related */
-typedef pg_wchar chr;			/* the type itself */
+typedef mdb_wchar chr;			/* the type itself */
 typedef unsigned uchr;			/* unsigned type that will hold a chr */
 typedef int celt;				/* type to hold chr, or NOCELT */
 
@@ -80,10 +80,10 @@ typedef int celt;				/* type to hold chr, or NOCELT */
 #define CHR_IS_IN_RANGE(c)	((c) <= CHR_MAX)
 
 /* functions operating on chr */
-#define iscalnum(x) pg_wc_isalnum(x)
-#define iscalpha(x) pg_wc_isalpha(x)
-#define iscdigit(x) pg_wc_isdigit(x)
-#define iscspace(x) pg_wc_isspace(x)
+#define iscalnum(x) mdb_wc_isalnum(x)
+#define iscalpha(x) mdb_wc_isalpha(x)
+#define iscdigit(x) mdb_wc_isdigit(x)
+#define iscspace(x) mdb_wc_isspace(x)
 
 /* and pick up the standard header */
 #include "regex.h"

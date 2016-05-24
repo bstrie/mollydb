@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * common.c
- *	Catalog routines used by pg_dump; long ago these were shared
+ *	Catalog routines used by mdb_dump; long ago these were shared
  *	by another dump tool, but not anymore.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -9,19 +9,19 @@
  *
  *
  * IDENTIFICATION
- *	  src/bin/pg_dump/common.c
+ *	  src/bin/mdb_dump/common.c
  *
  *-------------------------------------------------------------------------
  */
 #include "mollydb_fe.h"
 
-#include "pg_backup_archiver.h"
-#include "pg_backup_utils.h"
-#include "pg_dump.h"
+#include "mdb_backup_archiver.h"
+#include "mdb_backup_utils.h"
+#include "mdb_dump.h"
 
 #include <ctype.h>
 
-#include "catalog/pg_class.h"
+#include "catalog/mdb_class.h"
 #include "fe_utils/string_utils.h"
 
 
@@ -45,7 +45,7 @@ static int	numCatalogIds = 0;
  * a sorted-by-OID index array immediately after the objects are fetched,
  * and then we use binary search in findTableByOid() and friends.  (qsort'ing
  * the object arrays themselves would be simpler, but it doesn't work because
- * pg_dump.c may have already established pointers between items.)
+ * mdb_dump.c may have already established pointers between items.)
  */
 static DumpableObject **tblinfoindex;
 static DumpableObject **typinfoindex;
@@ -395,18 +395,18 @@ flagInhAttrs(DumpOptions *dopt, TableInfo *tblinfo, int numTables)
 			{
 				AttrDefInfo *attrDef;
 
-				attrDef = (AttrDefInfo *) pg_malloc(sizeof(AttrDefInfo));
+				attrDef = (AttrDefInfo *) mdb_malloc(sizeof(AttrDefInfo));
 				attrDef->dobj.objType = DO_ATTRDEF;
 				attrDef->dobj.catId.tableoid = 0;
 				attrDef->dobj.catId.oid = 0;
 				AssignDumpId(&attrDef->dobj);
-				attrDef->dobj.name = pg_strdup(tbinfo->dobj.name);
+				attrDef->dobj.name = mdb_strdup(tbinfo->dobj.name);
 				attrDef->dobj.namespace = tbinfo->dobj.namespace;
 				attrDef->dobj.dump = tbinfo->dobj.dump;
 
 				attrDef->adtable = tbinfo;
 				attrDef->adnum = j + 1;
-				attrDef->adef_expr = pg_strdup("NULL");
+				attrDef->adef_expr = mdb_strdup("NULL");
 
 				/* Will column be dumped explicitly? */
 				if (shouldPrintColumn(dopt, tbinfo, j))
@@ -457,13 +457,13 @@ AssignDumpId(DumpableObject *dobj)
 		{
 			newAlloc = 256;
 			dumpIdMap = (DumpableObject **)
-				pg_malloc(newAlloc * sizeof(DumpableObject *));
+				mdb_malloc(newAlloc * sizeof(DumpableObject *));
 		}
 		else
 		{
 			newAlloc = allocedDumpIds * 2;
 			dumpIdMap = (DumpableObject **)
-				pg_realloc(dumpIdMap, newAlloc * sizeof(DumpableObject *));
+				mdb_realloc(dumpIdMap, newAlloc * sizeof(DumpableObject *));
 		}
 		memset(dumpIdMap + allocedDumpIds, 0,
 			   (newAlloc - allocedDumpIds) * sizeof(DumpableObject *));
@@ -614,7 +614,7 @@ buildIndexArray(void *objArray, int numObjs, Size objSize)
 	DumpableObject **ptrs;
 	int			i;
 
-	ptrs = (DumpableObject **) pg_malloc(numObjs * sizeof(DumpableObject *));
+	ptrs = (DumpableObject **) mdb_malloc(numObjs * sizeof(DumpableObject *));
 	for (i = 0; i < numObjs; i++)
 		ptrs[i] = (DumpableObject *) ((char *) objArray + i * objSize);
 
@@ -658,7 +658,7 @@ getDumpableObjects(DumpableObject ***objs, int *numObjs)
 				j;
 
 	*objs = (DumpableObject **)
-		pg_malloc(allocedDumpIds * sizeof(DumpableObject *));
+		mdb_malloc(allocedDumpIds * sizeof(DumpableObject *));
 	j = 0;
 	for (i = 1; i < allocedDumpIds; i++)
 	{
@@ -682,13 +682,13 @@ addObjectDependency(DumpableObject *dobj, DumpId refId)
 		{
 			dobj->allocDeps = 16;
 			dobj->dependencies = (DumpId *)
-				pg_malloc(dobj->allocDeps * sizeof(DumpId));
+				mdb_malloc(dobj->allocDeps * sizeof(DumpId));
 		}
 		else
 		{
 			dobj->allocDeps *= 2;
 			dobj->dependencies = (DumpId *)
-				pg_realloc(dobj->dependencies,
+				mdb_realloc(dobj->dependencies,
 						   dobj->allocDeps * sizeof(DumpId));
 		}
 	}
@@ -894,7 +894,7 @@ findParentsByOid(TableInfo *self,
 	if (numParents > 0)
 	{
 		self->parents = (TableInfo **)
-			pg_malloc(sizeof(TableInfo *) * numParents);
+			mdb_malloc(sizeof(TableInfo *) * numParents);
 		j = 0;
 		for (i = 0; i < numInherits; i++)
 		{

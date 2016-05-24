@@ -129,7 +129,7 @@ LocalBufferAlloc(SMgrRelation smgr, ForkNumber forkNum, BlockNumber blockNum,
 		fprintf(stderr, "LB ALLOC (%u,%d,%d) %d\n",
 				smgr->smgr_rnode.node.relNode, forkNum, blockNum, -b - 1);
 #endif
-		buf_state = pg_atomic_read_u32(&bufHdr->state);
+		buf_state = mdb_atomic_read_u32(&bufHdr->state);
 
 		/* this part is equivalent to PinBuffer for a shared buffer */
 		if (LocalRefCount[b] == 0)
@@ -137,7 +137,7 @@ LocalBufferAlloc(SMgrRelation smgr, ForkNumber forkNum, BlockNumber blockNum,
 			if (BUF_STATE_GET_USAGECOUNT(buf_state) < BM_MAX_USAGE_COUNT)
 			{
 				buf_state += BUF_USAGECOUNT_ONE;
-				pg_atomic_write_u32(&bufHdr->state, buf_state);
+				mdb_atomic_write_u32(&bufHdr->state, buf_state);
 			}
 		}
 		LocalRefCount[b]++;
@@ -175,12 +175,12 @@ LocalBufferAlloc(SMgrRelation smgr, ForkNumber forkNum, BlockNumber blockNum,
 
 		if (LocalRefCount[b] == 0)
 		{
-			buf_state = pg_atomic_read_u32(&bufHdr->state);
+			buf_state = mdb_atomic_read_u32(&bufHdr->state);
 
 			if (BUF_STATE_GET_USAGECOUNT(buf_state) > 0)
 			{
 				buf_state -= BUF_USAGECOUNT_ONE;
-				pg_atomic_write_u32(&bufHdr->state, buf_state);
+				mdb_atomic_write_u32(&bufHdr->state, buf_state);
 				trycounter = NLocBuffer;
 			}
 			else
@@ -221,7 +221,7 @@ LocalBufferAlloc(SMgrRelation smgr, ForkNumber forkNum, BlockNumber blockNum,
 
 		/* Mark not-dirty now in case we error out below */
 		buf_state &= ~BM_DIRTY;
-		pg_atomic_write_u32(&bufHdr->state, buf_state);
+		mdb_atomic_write_u32(&bufHdr->state, buf_state);
 
 		pgBufferUsage.local_blks_written++;
 	}
@@ -248,7 +248,7 @@ LocalBufferAlloc(SMgrRelation smgr, ForkNumber forkNum, BlockNumber blockNum,
 		/* mark buffer invalid just in case hash insert fails */
 		CLEAR_BUFFERTAG(bufHdr->tag);
 		buf_state &= ~(BM_VALID | BM_TAG_VALID);
-		pg_atomic_write_u32(&bufHdr->state, buf_state);
+		mdb_atomic_write_u32(&bufHdr->state, buf_state);
 	}
 
 	hresult = (LocalBufferLookupEnt *)
@@ -265,7 +265,7 @@ LocalBufferAlloc(SMgrRelation smgr, ForkNumber forkNum, BlockNumber blockNum,
 	buf_state |= BM_TAG_VALID;
 	buf_state &= ~BUF_USAGECOUNT_MASK;
 	buf_state += BUF_USAGECOUNT_ONE;
-	pg_atomic_write_u32(&bufHdr->state, buf_state);
+	mdb_atomic_write_u32(&bufHdr->state, buf_state);
 
 	*foundPtr = FALSE;
 	return bufHdr;
@@ -294,14 +294,14 @@ MarkLocalBufferDirty(Buffer buffer)
 
 	bufHdr = GetLocalBufferDescriptor(bufid);
 
-	buf_state = pg_atomic_read_u32(&bufHdr->state);
+	buf_state = mdb_atomic_read_u32(&bufHdr->state);
 
 	if (!(buf_state & BM_DIRTY))
 		pgBufferUsage.local_blks_dirtied++;
 
 	buf_state |= BM_DIRTY;
 
-	pg_atomic_write_u32(&bufHdr->state, buf_state);
+	mdb_atomic_write_u32(&bufHdr->state, buf_state);
 }
 
 /*
@@ -327,7 +327,7 @@ DropRelFileNodeLocalBuffers(RelFileNode rnode, ForkNumber forkNum,
 		LocalBufferLookupEnt *hresult;
 		uint32		buf_state;
 
-		buf_state = pg_atomic_read_u32(&bufHdr->state);
+		buf_state = mdb_atomic_read_u32(&bufHdr->state);
 
 		if ((buf_state & BM_TAG_VALID) &&
 			RelFileNodeEquals(bufHdr->tag.rnode, rnode) &&
@@ -350,7 +350,7 @@ DropRelFileNodeLocalBuffers(RelFileNode rnode, ForkNumber forkNum,
 			CLEAR_BUFFERTAG(bufHdr->tag);
 			buf_state &= ~BUF_FLAG_MASK;
 			buf_state &= ~BUF_USAGECOUNT_MASK;
-			pg_atomic_write_u32(&bufHdr->state, buf_state);
+			mdb_atomic_write_u32(&bufHdr->state, buf_state);
 		}
 	}
 }
@@ -373,7 +373,7 @@ DropRelFileNodeAllLocalBuffers(RelFileNode rnode)
 		LocalBufferLookupEnt *hresult;
 		uint32		buf_state;
 
-		buf_state = pg_atomic_read_u32(&bufHdr->state);
+		buf_state = mdb_atomic_read_u32(&bufHdr->state);
 
 		if ((buf_state & BM_TAG_VALID) &&
 			RelFileNodeEquals(bufHdr->tag.rnode, rnode))
@@ -394,7 +394,7 @@ DropRelFileNodeAllLocalBuffers(RelFileNode rnode)
 			CLEAR_BUFFERTAG(bufHdr->tag);
 			buf_state &= ~BUF_FLAG_MASK;
 			buf_state &= ~BUF_USAGECOUNT_MASK;
-			pg_atomic_write_u32(&bufHdr->state, buf_state);
+			mdb_atomic_write_u32(&bufHdr->state, buf_state);
 		}
 	}
 }

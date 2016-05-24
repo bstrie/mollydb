@@ -39,7 +39,7 @@
 #include "access/parallel.h"
 #include "access/printtup.h"
 #include "access/xact.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/async.h"
 #include "commands/prepare.h"
 #include "libpq/libpq.h"
@@ -49,10 +49,10 @@
 #include "nodes/print.h"
 #include "optimizer/planner.h"
 #include "pgstat.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "parser/analyze.h"
 #include "parser/parser.h"
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 #include "postmaster/autovacuum.h"
 #include "postmaster/postmaster.h"
 #include "replication/slot.h"
@@ -73,7 +73,7 @@
 #include "utils/snapmgr.h"
 #include "utils/timeout.h"
 #include "utils/timestamp.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 
 /* ----------------
@@ -174,7 +174,7 @@ static int	interactive_getc(void);
 static int	SocketBackend(StringInfo inBuf);
 static int	ReadCommand(StringInfo inBuf);
 static void forbidden_in_wal_sender(char firstchar);
-static List *pg_rewrite_query(Query *query);
+static List *mdb_rewrite_query(Query *query);
 static bool check_log_statement(List *stmt_list);
 static int	errdetail_execute(List *raw_parsetree_list);
 static int	errdetail_params(ParamListInfo params);
@@ -599,7 +599,7 @@ ProcessClientWriteInterrupt(bool blocked)
  * commands are not processed any further than the raw parse stage.
  */
 List *
-pg_parse_query(const char *query_string)
+mdb_parse_query(const char *query_string)
 {
 	List	   *raw_parsetree_list;
 
@@ -641,7 +641,7 @@ pg_parse_query(const char *query_string)
  * NOTE: for reasons mentioned above, this must be separate from raw parsing.
  */
 List *
-pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
+mdb_analyze_and_rewrite(Node *parsetree, const char *query_string,
 					   Oid *paramTypes, int numParams)
 {
 	Query	   *query;
@@ -663,7 +663,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 	/*
 	 * (2) Rewrite the queries, as necessary
 	 */
-	querytree_list = pg_rewrite_query(query);
+	querytree_list = mdb_rewrite_query(query);
 
 	TRACE_POSTGRESQL_QUERY_REWRITE_DONE(query_string);
 
@@ -671,12 +671,12 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 }
 
 /*
- * Do parse analysis and rewriting.  This is the same as pg_analyze_and_rewrite
+ * Do parse analysis and rewriting.  This is the same as mdb_analyze_and_rewrite
  * except that external-parameter resolution is determined by parser callback
  * hooks instead of a fixed list of parameter datatypes.
  */
 List *
-pg_analyze_and_rewrite_params(Node *parsetree,
+mdb_analyze_and_rewrite_params(Node *parsetree,
 							  const char *query_string,
 							  ParserSetupHook parserSetup,
 							  void *parserSetupArg)
@@ -712,7 +712,7 @@ pg_analyze_and_rewrite_params(Node *parsetree,
 	/*
 	 * (2) Rewrite the queries, as necessary
 	 */
-	querytree_list = pg_rewrite_query(query);
+	querytree_list = mdb_rewrite_query(query);
 
 	TRACE_POSTGRESQL_QUERY_REWRITE_DONE(query_string);
 
@@ -726,7 +726,7 @@ pg_analyze_and_rewrite_params(Node *parsetree,
  * AcquireRewriteLocks() on it.
  */
 static List *
-pg_rewrite_query(Query *query)
+mdb_rewrite_query(Query *query)
 {
 	List	   *querytree_list;
 
@@ -778,7 +778,7 @@ pg_rewrite_query(Query *query)
  * This is a thin wrapper around planner() and takes the same parameters.
  */
 PlannedStmt *
-pg_plan_query(Query *querytree, int cursorOptions, ParamListInfo boundParams)
+mdb_plan_query(Query *querytree, int cursorOptions, ParamListInfo boundParams)
 {
 	PlannedStmt *plan;
 
@@ -837,7 +837,7 @@ pg_plan_query(Query *querytree, int cursorOptions, ParamListInfo boundParams)
  * list.  Utility statements are simply represented by their statement nodes.
  */
 List *
-pg_plan_queries(List *querytrees, int cursorOptions, ParamListInfo boundParams)
+mdb_plan_queries(List *querytrees, int cursorOptions, ParamListInfo boundParams)
 {
 	List	   *stmt_list = NIL;
 	ListCell   *query_list;
@@ -854,7 +854,7 @@ pg_plan_queries(List *querytrees, int cursorOptions, ParamListInfo boundParams)
 		}
 		else
 		{
-			stmt = (Node *) pg_plan_query(query, cursorOptions, boundParams);
+			stmt = (Node *) mdb_plan_query(query, cursorOptions, boundParams);
 		}
 
 		stmt_list = lappend(stmt_list, stmt);
@@ -924,7 +924,7 @@ exec_simple_query(const char *query_string)
 	 * Do basic parsing of the query or queries (this should be safe even if
 	 * we are in aborted transaction state!)
 	 */
-	parsetree_list = pg_parse_query(query_string);
+	parsetree_list = mdb_parse_query(query_string);
 
 	/* Log immediately if dictated by log_statement */
 	if (check_log_statement(parsetree_list))
@@ -1016,10 +1016,10 @@ exec_simple_query(const char *query_string)
 		 */
 		oldcontext = MemoryContextSwitchTo(MessageContext);
 
-		querytree_list = pg_analyze_and_rewrite(parsetree, query_string,
+		querytree_list = mdb_analyze_and_rewrite(parsetree, query_string,
 												NULL, 0);
 
-		plantree_list = pg_plan_queries(querytree_list,
+		plantree_list = mdb_plan_queries(querytree_list,
 										CURSOR_OPT_PARALLEL_OK, NULL);
 
 		/* Done with the snapshot used for parsing/planning */
@@ -1034,7 +1034,7 @@ exec_simple_query(const char *query_string)
 		 * already is one, silently drop it.
 		 */
 		portal = CreatePortal("", true, true);
-		/* Don't display the portal in pg_cursors */
+		/* Don't display the portal in mdb_cursors */
 		portal->visible = false;
 
 		/*
@@ -1263,7 +1263,7 @@ exec_parse_message(const char *query_string,	/* string to execute */
 	 * Do basic parsing of the query or queries (this should be safe even if
 	 * we are in aborted transaction state!)
 	 */
-	parsetree_list = pg_parse_query(query_string);
+	parsetree_list = mdb_parse_query(query_string);
 
 	/*
 	 * We only allow a single user statement in a prepared statement. This is
@@ -1349,7 +1349,7 @@ exec_parse_message(const char *query_string,	/* string to execute */
 		if (log_parser_stats)
 			ShowUsage("PARSE ANALYSIS STATISTICS");
 
-		querytree_list = pg_rewrite_query(query);
+		querytree_list = mdb_rewrite_query(query);
 
 		/* Done with the snapshot used for parsing */
 		if (snapshot_set)
@@ -1681,7 +1681,7 @@ exec_bind_message(StringInfo input_message)
 				if (isNull)
 					pstring = NULL;
 				else
-					pstring = pg_client_to_server(pbuf.data, plength);
+					pstring = mdb_client_to_server(pbuf.data, plength);
 
 				pval = OidInputFunctionCall(typinput, pstring, typioparam, -1);
 
@@ -3038,11 +3038,11 @@ ia64_get_bsp(void)
  *
  * Returns the old reference point, if any.
  */
-pg_stack_base_t
+mdb_stack_base_t
 set_stack_base(void)
 {
 	char		stack_base;
-	pg_stack_base_t old;
+	mdb_stack_base_t old;
 
 #if defined(__ia64__) || defined(__ia64)
 	old.stack_base_ptr = stack_base_ptr;
@@ -3070,7 +3070,7 @@ set_stack_base(void)
  * restores it afterwards.
  */
 void
-restore_stack_base(pg_stack_base_t base)
+restore_stack_base(mdb_stack_base_t base)
 {
 #if defined(__ia64__) || defined(__ia64)
 	stack_base_ptr = base.stack_base_ptr;

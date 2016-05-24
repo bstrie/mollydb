@@ -1,4 +1,4 @@
-/pg_regress
+/mdb_regress
 # Exclude subdirectories
 /log/
 /results/

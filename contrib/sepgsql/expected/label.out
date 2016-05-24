@@ -72,7 +72,7 @@ SELECT semdb_getcon();	-- confirm client privilege
 
 CREATE TABLE t4 (m int, n text);
 INSERT INTO t4 VALUES (1,'mmm'), (2,'nnn'), (3,'ooo');
-SELECT objtype, objname, label FROM pg_seclabels
+SELECT objtype, objname, label FROM mdb_seclabels
     WHERE provider = 'selinux' AND objtype = 'table' AND objname in ('t1', 't2', 't3');
  objtype | objname |                     label                     
 ---------+---------+-----------------------------------------------
@@ -81,7 +81,7 @@ SELECT objtype, objname, label FROM pg_seclabels
  table   | t3      | unconfined_u:object_r:user_semdb_table_t:s0
 (3 rows)
 
-SELECT objtype, objname, label FROM pg_seclabels
+SELECT objtype, objname, label FROM mdb_seclabels
     WHERE provider = 'selinux' AND objtype = 'column' AND (objname like 't3.%' OR objname like 't4.%');
  objtype |   objname   |                     label                     
 ---------+-------------+-----------------------------------------------
@@ -135,7 +135,7 @@ SET semdb.debug_audit = true;
 SET client_min_messages = log;
 SELECT f1();			-- normal procedure
 LOG:  SELinux: allowed { execute } scontext=unconfined_u:unconfined_r:semdb_regtest_user_t:s0 tcontext=unconfined_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="public.f1()"
-LOG:  SELinux: allowed { execute } scontext=unconfined_u:unconfined_r:semdb_regtest_user_t:s0 tcontext=system_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="pg_catalog.semdb_getcon()"
+LOG:  SELinux: allowed { execute } scontext=unconfined_u:unconfined_r:semdb_regtest_user_t:s0 tcontext=system_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="mdb_catalog.semdb_getcon()"
                          f1                          
 -----------------------------------------------------
  unconfined_u:unconfined_r:semdb_regtest_user_t:s0
@@ -145,7 +145,7 @@ SELECT f2();			-- trusted procedure
 LOG:  SELinux: allowed { execute } scontext=unconfined_u:unconfined_r:semdb_regtest_user_t:s0 tcontext=system_u:object_r:semdb_trusted_proc_exec_t:s0 tclass=db_procedure name="public.f2()"
 LOG:  SELinux: allowed { entrypoint } scontext=unconfined_u:unconfined_r:semdb_regtest_user_t:s0 tcontext=system_u:object_r:semdb_trusted_proc_exec_t:s0 tclass=db_procedure name="function f2()"
 LOG:  SELinux: allowed { transition } scontext=unconfined_u:unconfined_r:semdb_regtest_user_t:s0 tcontext=unconfined_u:unconfined_r:semdb_trusted_proc_t:s0 tclass=process
-LOG:  SELinux: allowed { execute } scontext=unconfined_u:unconfined_r:semdb_trusted_proc_t:s0 tcontext=system_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="pg_catalog.semdb_getcon()"
+LOG:  SELinux: allowed { execute } scontext=unconfined_u:unconfined_r:semdb_trusted_proc_t:s0 tcontext=system_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="mdb_catalog.semdb_getcon()"
                          f2                          
 -----------------------------------------------------
  unconfined_u:unconfined_r:semdb_trusted_proc_t:s0
@@ -163,7 +163,7 @@ LOG:  SELinux: allowed { entrypoint } scontext=unconfined_u:unconfined_r:semdb_r
 LOG:  SELinux: denied { transition } scontext=unconfined_u:unconfined_r:semdb_regtest_user_t:s0 tcontext=unconfined_u:unconfined_r:semdb_regtest_nosuch_t:s0 tclass=process
 ERROR:  SELinux: security policy violation
 SELECT semdb_getcon();	-- client's label must be restored
-LOG:  SELinux: allowed { execute } scontext=unconfined_u:unconfined_r:semdb_regtest_user_t:s0 tcontext=system_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="pg_catalog.semdb_getcon()"
+LOG:  SELinux: allowed { execute } scontext=unconfined_u:unconfined_r:semdb_regtest_user_t:s0 tcontext=system_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="mdb_catalog.semdb_getcon()"
                    semdb_getcon                    
 -----------------------------------------------------
  unconfined_u:unconfined_r:semdb_regtest_user_t:s0

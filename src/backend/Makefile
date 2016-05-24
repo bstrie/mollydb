@@ -142,7 +142,7 @@ parser/gram.h: parser/gram.y
 storage/lmgr/lwlocknames.h: storage/lmgr/generate-lwlocknames.pl storage/lmgr/lwlocknames.txt
 	$(MAKE) -C storage/lmgr lwlocknames.h
 
-utils/fmgroids.h: utils/Gen_fmgrtab.pl catalog/Catalog.pm $(top_srcdir)/src/include/catalog/pg_proc.h
+utils/fmgroids.h: utils/Gen_fmgrtab.pl catalog/Catalog.pm $(top_srcdir)/src/include/catalog/mdb_proc.h
 	$(MAKE) -C utils fmgroids.h
 
 utils/errcodes.h: utils/generate-errcodes.pl utils/errcodes.txt
@@ -225,8 +225,8 @@ endif
 endif
 	$(MAKE) -C catalog install-data
 	$(MAKE) -C tsearch install-data
-	$(INSTALL_DATA) $(srcdir)/libpq/pg_hba.conf.sample '$(DESTDIR)$(datadir)/pg_hba.conf.sample'
-	$(INSTALL_DATA) $(srcdir)/libpq/pg_ident.conf.sample '$(DESTDIR)$(datadir)/pg_ident.conf.sample'
+	$(INSTALL_DATA) $(srcdir)/libpq/mdb_hba.conf.sample '$(DESTDIR)$(datadir)/mdb_hba.conf.sample'
+	$(INSTALL_DATA) $(srcdir)/libpq/mdb_ident.conf.sample '$(DESTDIR)$(datadir)/mdb_ident.conf.sample'
 	$(INSTALL_DATA) $(srcdir)/utils/misc/mollydb.conf.sample '$(DESTDIR)$(datadir)/mollydb.conf.sample'
 	$(INSTALL_DATA) $(srcdir)/access/transam/recovery.conf.sample '$(DESTDIR)$(datadir)/recovery.conf.sample'
 
@@ -283,8 +283,8 @@ endif
 endif
 	$(MAKE) -C catalog uninstall-data
 	$(MAKE) -C tsearch uninstall-data
-	rm -f '$(DESTDIR)$(datadir)/pg_hba.conf.sample' \
-	      '$(DESTDIR)$(datadir)/pg_ident.conf.sample' \
+	rm -f '$(DESTDIR)$(datadir)/mdb_hba.conf.sample' \
+	      '$(DESTDIR)$(datadir)/mdb_ident.conf.sample' \
               '$(DESTDIR)$(datadir)/mollydb.conf.sample' \
 	      '$(DESTDIR)$(datadir)/recovery.conf.sample'
 
@@ -306,7 +306,7 @@ ifeq ($(PORTNAME), win32)
 endif
 
 distclean: clean
-	rm -f port/tas.s port/dynloader.c port/pg_sema.c port/pg_shmem.c
+	rm -f port/tas.s port/dynloader.c port/mdb_sema.c port/mdb_shmem.c
 
 maintainer-clean: distclean
 	rm -f bootstrap/bootparse.c \

@@ -2,23 +2,23 @@
 
 <refentry id="pgtestfsync">
  <indexterm zone="pgtestfsync">
-  <primary>pg_test_fsync</primary>
+  <primary>mdb_test_fsync</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle><application>pg_test_fsync</application></refentrytitle>
+  <refentrytitle><application>mdb_test_fsync</application></refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_test_fsync</refname>
+  <refname>mdb_test_fsync</refname>
   <refpurpose>determine fastest <varname>wal_sync_method</varname> for <productname>MollyDB</productname></refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_test_fsync</command>
+   <command>mdb_test_fsync</command>
    <arg rep="repeat"><replaceable>option</replaceable></arg>
   </cmdsynopsis>
  </refsynopsisdiv>
@@ -27,15 +27,15 @@
   <title>Description</title>
 
  <para>
-  <application>pg_test_fsync</> is intended to give you a reasonable
+  <application>mdb_test_fsync</> is intended to give you a reasonable
   idea of what the fastest <xref linkend="guc-wal-sync-method"> is on your
   specific system,
   as well as supplying diagnostic information in the event of an identified I/O
   problem.  However, differences shown by
-  <application>pg_test_fsync</application> might not make any significant
+  <application>mdb_test_fsync</application> might not make any significant
   difference in real database throughput, especially since many database servers
   are not speed-limited by their transaction logs.
-  <application>pg_test_fsync</application> reports average file sync operation
+  <application>mdb_test_fsync</application> reports average file sync operation
   time in microseconds for each <literal>wal_sync_method</literal>, which can also be used to
   inform efforts to optimize the value of <xref linkend="guc-commit-delay">.
  </para>
@@ -45,7 +45,7 @@
   <title>Options</title>
 
    <para>
-    <application>pg_test_fsync</application> accepts the following
+    <application>mdb_test_fsync</application> accepts the following
     command-line options:
 
     <variablelist>
@@ -57,9 +57,9 @@
        <para>
         Specifies the file name to write test data in.
         This file should be in the same file system that the
-        <filename>pg_xlog</> directory is or will be placed in.
-        (<filename>pg_xlog</> contains the <acronym>WAL</> files.)
-        The default is <filename>pg_test_fsync.out</> in the current
+        <filename>mdb_xlog</> directory is or will be placed in.
+        (<filename>mdb_xlog</> contains the <acronym>WAL</> files.)
+        The default is <filename>mdb_test_fsync.out</> in the current
         directory.
        </para>
       </listitem>
@@ -83,7 +83,7 @@
       <term><option>--version</></term>
       <listitem>
        <para>
-        Print the <application>pg_test_fsync</application> version and exit.
+        Print the <application>mdb_test_fsync</application> version and exit.
        </para>
       </listitem>
      </varlistentry>
@@ -93,7 +93,7 @@
       <term><option>--help</></term>
       <listitem>
        <para>
-        Show help about <application>pg_test_fsync</application> command line
+        Show help about <application>mdb_test_fsync</application> command line
         arguments, and exit.
        </para>
       </listitem>

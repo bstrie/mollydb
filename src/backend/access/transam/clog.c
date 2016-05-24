@@ -3,7 +3,7 @@
  * clog.c
  *		MollyDB transaction-commit-log manager
  *
- * This module replaces the old "pg_log" access code, which treated pg_log
+ * This module replaces the old "mdb_log" access code, which treated mdb_log
  * essentially like a relation, in that it went through the regular buffer
  * manager.  The problem with that was that there wasn't any good way to
  * recycle storage space for transactions so old that they'll never be
@@ -39,7 +39,7 @@
 #include "access/xloginsert.h"
 #include "access/xlogutils.h"
 #include "miscadmin.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 
 /*
  * Defines for CLOG page sizes.  A page is the same BLCKSZ as is used
@@ -450,7 +450,7 @@ CLOGShmemInit(void)
 {
 	ClogCtl->PagePrecedes = CLOGPagePrecedes;
 	SimpleLruInit(ClogCtl, "clog", CLOGShmemBuffers(), CLOG_LSNS_PER_PAGE,
-				  CLogControlLock, "pg_clog", LWTRANCHE_CLOG_BUFFERS);
+				  CLogControlLock, "mdb_clog", LWTRANCHE_CLOG_BUFFERS);
 }
 
 /*

@@ -2997,7 +2997,7 @@ msgstr "Use \"\\q\" para sair do %s.\n"
 #: mainloop.c:183
 msgid ""
 "The input is a MollyDB custom-format dump.\n"
-"Use the pg_restore command-line client to restore this dump to a database.\n"
+"Use the mdb_restore command-line client to restore this dump to a database.\n"
 msgstr ""
 
 #: mainloop.c:203

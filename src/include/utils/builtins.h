@@ -101,12 +101,12 @@ extern Datum has_type_privilege_id_name(PG_FUNCTION_ARGS);
 extern Datum has_type_privilege_id_id(PG_FUNCTION_ARGS);
 extern Datum has_type_privilege_name(PG_FUNCTION_ARGS);
 extern Datum has_type_privilege_id(PG_FUNCTION_ARGS);
-extern Datum pg_has_role_name_name(PG_FUNCTION_ARGS);
-extern Datum pg_has_role_name_id(PG_FUNCTION_ARGS);
-extern Datum pg_has_role_id_name(PG_FUNCTION_ARGS);
-extern Datum pg_has_role_id_id(PG_FUNCTION_ARGS);
-extern Datum pg_has_role_name(PG_FUNCTION_ARGS);
-extern Datum pg_has_role_id(PG_FUNCTION_ARGS);
+extern Datum mdb_has_role_name_name(PG_FUNCTION_ARGS);
+extern Datum mdb_has_role_name_id(PG_FUNCTION_ARGS);
+extern Datum mdb_has_role_id_name(PG_FUNCTION_ARGS);
+extern Datum mdb_has_role_id_id(PG_FUNCTION_ARGS);
+extern Datum mdb_has_role_name(PG_FUNCTION_ARGS);
+extern Datum mdb_has_role_id(PG_FUNCTION_ARGS);
 
 /* bool.c */
 extern Datum boolin(PG_FUNCTION_ARGS);
@@ -286,17 +286,17 @@ extern Datum current_schema(PG_FUNCTION_ARGS);
 extern Datum current_schemas(PG_FUNCTION_ARGS);
 
 /* numutils.c */
-extern int32 pg_atoi(const char *s, int size, int c);
-extern void pg_itoa(int16 i, char *a);
-extern void pg_ltoa(int32 l, char *a);
-extern void pg_lltoa(int64 ll, char *a);
-extern char *pg_ltostr_zeropad(char *str, int32 value, int32 minwidth);
-extern char *pg_ltostr(char *str, int32 value);
-extern uint64 pg_strtouint64(const char *str, char **endptr, int base);
+extern int32 mdb_atoi(const char *s, int size, int c);
+extern void mdb_itoa(int16 i, char *a);
+extern void mdb_ltoa(int32 l, char *a);
+extern void mdb_lltoa(int64 ll, char *a);
+extern char *mdb_ltostr_zeropad(char *str, int32 value, int32 minwidth);
+extern char *mdb_ltostr(char *str, int32 value);
+extern uint64 mdb_strtouint64(const char *str, char **endptr, int base);
 
 /*
  *		Per-opclass comparison functions for new btrees.  These are
- *		stored in pg_amproc; most are defined in access/nbtree/nbtcompare.c
+ *		stored in mdb_amproc; most are defined in access/nbtree/nbtcompare.c
  */
 extern Datum btboolcmp(PG_FUNCTION_ARGS);
 extern Datum btint2cmp(PG_FUNCTION_ARGS);
@@ -324,7 +324,7 @@ extern Datum bttextsortsupport(PG_FUNCTION_ARGS);
 
 /*
  *		Per-opclass sort support functions for new btrees.  Like the
- *		functions above, these are stored in pg_amproc; most are defined in
+ *		functions above, these are stored in mdb_amproc; most are defined in
  *		access/nbtree/nbtcompare.c
  */
 extern Datum btint2sortsupport(PG_FUNCTION_ARGS);
@@ -471,50 +471,50 @@ extern Datum float84ge(PG_FUNCTION_ARGS);
 extern Datum width_bucket_float8(PG_FUNCTION_ARGS);
 
 /* dbsize.c */
-extern Datum pg_tablespace_size_oid(PG_FUNCTION_ARGS);
-extern Datum pg_tablespace_size_name(PG_FUNCTION_ARGS);
-extern Datum pg_database_size_oid(PG_FUNCTION_ARGS);
-extern Datum pg_database_size_name(PG_FUNCTION_ARGS);
-extern Datum pg_relation_size(PG_FUNCTION_ARGS);
-extern Datum pg_total_relation_size(PG_FUNCTION_ARGS);
-extern Datum pg_size_pretty(PG_FUNCTION_ARGS);
-extern Datum pg_size_pretty_numeric(PG_FUNCTION_ARGS);
-extern Datum pg_size_bytes(PG_FUNCTION_ARGS);
-extern Datum pg_table_size(PG_FUNCTION_ARGS);
-extern Datum pg_indexes_size(PG_FUNCTION_ARGS);
-extern Datum pg_relation_filenode(PG_FUNCTION_ARGS);
-extern Datum pg_filenode_relation(PG_FUNCTION_ARGS);
-extern Datum pg_relation_filepath(PG_FUNCTION_ARGS);
+extern Datum mdb_tablespace_size_oid(PG_FUNCTION_ARGS);
+extern Datum mdb_tablespace_size_name(PG_FUNCTION_ARGS);
+extern Datum mdb_database_size_oid(PG_FUNCTION_ARGS);
+extern Datum mdb_database_size_name(PG_FUNCTION_ARGS);
+extern Datum mdb_relation_size(PG_FUNCTION_ARGS);
+extern Datum mdb_total_relation_size(PG_FUNCTION_ARGS);
+extern Datum mdb_size_pretty(PG_FUNCTION_ARGS);
+extern Datum mdb_size_pretty_numeric(PG_FUNCTION_ARGS);
+extern Datum mdb_size_bytes(PG_FUNCTION_ARGS);
+extern Datum mdb_table_size(PG_FUNCTION_ARGS);
+extern Datum mdb_indexes_size(PG_FUNCTION_ARGS);
+extern Datum mdb_relation_filenode(PG_FUNCTION_ARGS);
+extern Datum mdb_filenode_relation(PG_FUNCTION_ARGS);
+extern Datum mdb_relation_filepath(PG_FUNCTION_ARGS);
 
 /* genfile.c */
-extern Datum pg_stat_file(PG_FUNCTION_ARGS);
-extern Datum pg_stat_file_1arg(PG_FUNCTION_ARGS);
-extern Datum pg_read_file(PG_FUNCTION_ARGS);
-extern Datum pg_read_file_off_len(PG_FUNCTION_ARGS);
-extern Datum pg_read_file_all(PG_FUNCTION_ARGS);
-extern Datum pg_read_binary_file(PG_FUNCTION_ARGS);
-extern Datum pg_read_binary_file_off_len(PG_FUNCTION_ARGS);
-extern Datum pg_read_binary_file_all(PG_FUNCTION_ARGS);
-extern Datum pg_ls_dir(PG_FUNCTION_ARGS);
-extern Datum pg_ls_dir_1arg(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_file(PG_FUNCTION_ARGS);
+extern Datum mdb_stat_file_1arg(PG_FUNCTION_ARGS);
+extern Datum mdb_read_file(PG_FUNCTION_ARGS);
+extern Datum mdb_read_file_off_len(PG_FUNCTION_ARGS);
+extern Datum mdb_read_file_all(PG_FUNCTION_ARGS);
+extern Datum mdb_read_binary_file(PG_FUNCTION_ARGS);
+extern Datum mdb_read_binary_file_off_len(PG_FUNCTION_ARGS);
+extern Datum mdb_read_binary_file_all(PG_FUNCTION_ARGS);
+extern Datum mdb_ls_dir(PG_FUNCTION_ARGS);
+extern Datum mdb_ls_dir_1arg(PG_FUNCTION_ARGS);
 
 /* misc.c */
-extern Datum pg_num_nulls(PG_FUNCTION_ARGS);
-extern Datum pg_num_nonnulls(PG_FUNCTION_ARGS);
+extern Datum mdb_num_nulls(PG_FUNCTION_ARGS);
+extern Datum mdb_num_nonnulls(PG_FUNCTION_ARGS);
 extern Datum current_database(PG_FUNCTION_ARGS);
 extern Datum current_query(PG_FUNCTION_ARGS);
-extern Datum pg_cancel_backend(PG_FUNCTION_ARGS);
-extern Datum pg_terminate_backend(PG_FUNCTION_ARGS);
-extern Datum pg_reload_conf(PG_FUNCTION_ARGS);
-extern Datum pg_tablespace_databases(PG_FUNCTION_ARGS);
-extern Datum pg_tablespace_location(PG_FUNCTION_ARGS);
-extern Datum pg_rotate_logfile(PG_FUNCTION_ARGS);
-extern Datum pg_sleep(PG_FUNCTION_ARGS);
-extern Datum pg_get_keywords(PG_FUNCTION_ARGS);
-extern Datum pg_typeof(PG_FUNCTION_ARGS);
-extern Datum pg_collation_for(PG_FUNCTION_ARGS);
-extern Datum pg_relation_is_updatable(PG_FUNCTION_ARGS);
-extern Datum pg_column_is_updatable(PG_FUNCTION_ARGS);
+extern Datum mdb_cancel_backend(PG_FUNCTION_ARGS);
+extern Datum mdb_terminate_backend(PG_FUNCTION_ARGS);
+extern Datum mdb_reload_conf(PG_FUNCTION_ARGS);
+extern Datum mdb_tablespace_databases(PG_FUNCTION_ARGS);
+extern Datum mdb_tablespace_location(PG_FUNCTION_ARGS);
+extern Datum mdb_rotate_logfile(PG_FUNCTION_ARGS);
+extern Datum mdb_sleep(PG_FUNCTION_ARGS);
+extern Datum mdb_get_keywords(PG_FUNCTION_ARGS);
+extern Datum mdb_typeof(PG_FUNCTION_ARGS);
+extern Datum mdb_collation_for(PG_FUNCTION_ARGS);
+extern Datum mdb_relation_is_updatable(PG_FUNCTION_ARGS);
+extern Datum mdb_column_is_updatable(PG_FUNCTION_ARGS);
 extern Datum parse_ident(PG_FUNCTION_ARGS);
 
 /* oid.c */
@@ -599,14 +599,14 @@ extern Datum anyelement_in(PG_FUNCTION_ARGS);
 extern Datum anyelement_out(PG_FUNCTION_ARGS);
 extern Datum shell_in(PG_FUNCTION_ARGS);
 extern Datum shell_out(PG_FUNCTION_ARGS);
-extern Datum pg_node_tree_in(PG_FUNCTION_ARGS);
-extern Datum pg_node_tree_out(PG_FUNCTION_ARGS);
-extern Datum pg_node_tree_recv(PG_FUNCTION_ARGS);
-extern Datum pg_node_tree_send(PG_FUNCTION_ARGS);
-extern Datum pg_ddl_command_in(PG_FUNCTION_ARGS);
-extern Datum pg_ddl_command_out(PG_FUNCTION_ARGS);
-extern Datum pg_ddl_command_recv(PG_FUNCTION_ARGS);
-extern Datum pg_ddl_command_send(PG_FUNCTION_ARGS);
+extern Datum mdb_node_tree_in(PG_FUNCTION_ARGS);
+extern Datum mdb_node_tree_out(PG_FUNCTION_ARGS);
+extern Datum mdb_node_tree_recv(PG_FUNCTION_ARGS);
+extern Datum mdb_node_tree_send(PG_FUNCTION_ARGS);
+extern Datum mdb_ddl_command_in(PG_FUNCTION_ARGS);
+extern Datum mdb_ddl_command_out(PG_FUNCTION_ARGS);
+extern Datum mdb_ddl_command_recv(PG_FUNCTION_ARGS);
+extern Datum mdb_ddl_command_send(PG_FUNCTION_ARGS);
 
 /* regexp.c */
 extern Datum nameregexeq(PG_FUNCTION_ARGS);
@@ -712,28 +712,28 @@ extern Datum btrecordimagecmp(PG_FUNCTION_ARGS);
 
 /* ruleutils.c */
 extern bool quote_all_identifiers;
-extern Datum pg_get_ruledef(PG_FUNCTION_ARGS);
-extern Datum pg_get_ruledef_ext(PG_FUNCTION_ARGS);
-extern Datum pg_get_viewdef(PG_FUNCTION_ARGS);
-extern Datum pg_get_viewdef_ext(PG_FUNCTION_ARGS);
-extern Datum pg_get_viewdef_wrap(PG_FUNCTION_ARGS);
-extern Datum pg_get_viewdef_name(PG_FUNCTION_ARGS);
-extern Datum pg_get_viewdef_name_ext(PG_FUNCTION_ARGS);
-extern Datum pg_get_indexdef(PG_FUNCTION_ARGS);
-extern Datum pg_get_indexdef_ext(PG_FUNCTION_ARGS);
-extern Datum pg_get_triggerdef(PG_FUNCTION_ARGS);
-extern Datum pg_get_triggerdef_ext(PG_FUNCTION_ARGS);
-extern Datum pg_get_constraintdef(PG_FUNCTION_ARGS);
-extern Datum pg_get_constraintdef_ext(PG_FUNCTION_ARGS);
-extern Datum pg_get_expr(PG_FUNCTION_ARGS);
-extern Datum pg_get_expr_ext(PG_FUNCTION_ARGS);
-extern Datum pg_get_userbyid(PG_FUNCTION_ARGS);
-extern Datum pg_get_serial_sequence(PG_FUNCTION_ARGS);
-extern Datum pg_get_functiondef(PG_FUNCTION_ARGS);
-extern Datum pg_get_function_arguments(PG_FUNCTION_ARGS);
-extern Datum pg_get_function_identity_arguments(PG_FUNCTION_ARGS);
-extern Datum pg_get_function_result(PG_FUNCTION_ARGS);
-extern Datum pg_get_function_arg_default(PG_FUNCTION_ARGS);
+extern Datum mdb_get_ruledef(PG_FUNCTION_ARGS);
+extern Datum mdb_get_ruledef_ext(PG_FUNCTION_ARGS);
+extern Datum mdb_get_viewdef(PG_FUNCTION_ARGS);
+extern Datum mdb_get_viewdef_ext(PG_FUNCTION_ARGS);
+extern Datum mdb_get_viewdef_wrap(PG_FUNCTION_ARGS);
+extern Datum mdb_get_viewdef_name(PG_FUNCTION_ARGS);
+extern Datum mdb_get_viewdef_name_ext(PG_FUNCTION_ARGS);
+extern Datum mdb_get_indexdef(PG_FUNCTION_ARGS);
+extern Datum mdb_get_indexdef_ext(PG_FUNCTION_ARGS);
+extern Datum mdb_get_triggerdef(PG_FUNCTION_ARGS);
+extern Datum mdb_get_triggerdef_ext(PG_FUNCTION_ARGS);
+extern Datum mdb_get_constraintdef(PG_FUNCTION_ARGS);
+extern Datum mdb_get_constraintdef_ext(PG_FUNCTION_ARGS);
+extern Datum mdb_get_expr(PG_FUNCTION_ARGS);
+extern Datum mdb_get_expr_ext(PG_FUNCTION_ARGS);
+extern Datum mdb_get_userbyid(PG_FUNCTION_ARGS);
+extern Datum mdb_get_serial_sequence(PG_FUNCTION_ARGS);
+extern Datum mdb_get_functiondef(PG_FUNCTION_ARGS);
+extern Datum mdb_get_function_arguments(PG_FUNCTION_ARGS);
+extern Datum mdb_get_function_identity_arguments(PG_FUNCTION_ARGS);
+extern Datum mdb_get_function_result(PG_FUNCTION_ARGS);
+extern Datum mdb_get_function_arg_default(PG_FUNCTION_ARGS);
 extern const char *quote_identifier(const char *ident);
 extern char *quote_qualified_identifier(const char *qualifier,
 						   const char *ident);
@@ -867,7 +867,7 @@ extern Datum unknownout(PG_FUNCTION_ARGS);
 extern Datum unknownrecv(PG_FUNCTION_ARGS);
 extern Datum unknownsend(PG_FUNCTION_ARGS);
 
-extern Datum pg_column_size(PG_FUNCTION_ARGS);
+extern Datum mdb_column_size(PG_FUNCTION_ARGS);
 
 extern Datum bytea_string_agg_transfn(PG_FUNCTION_ARGS);
 extern Datum bytea_string_agg_finalfn(PG_FUNCTION_ARGS);
@@ -1135,16 +1135,16 @@ extern Datum suppress_redundant_updates_trigger(PG_FUNCTION_ARGS);
 /* encoding support functions */
 extern Datum getdatabaseencoding(PG_FUNCTION_ARGS);
 extern Datum database_character_set(PG_FUNCTION_ARGS);
-extern Datum pg_client_encoding(PG_FUNCTION_ARGS);
+extern Datum mdb_client_encoding(PG_FUNCTION_ARGS);
 extern Datum PG_encoding_to_char(PG_FUNCTION_ARGS);
 extern Datum PG_char_to_encoding(PG_FUNCTION_ARGS);
 extern Datum PG_character_set_name(PG_FUNCTION_ARGS);
 extern Datum PG_character_set_id(PG_FUNCTION_ARGS);
-extern Datum pg_convert(PG_FUNCTION_ARGS);
-extern Datum pg_convert_to(PG_FUNCTION_ARGS);
-extern Datum pg_convert_from(PG_FUNCTION_ARGS);
+extern Datum mdb_convert(PG_FUNCTION_ARGS);
+extern Datum mdb_convert_to(PG_FUNCTION_ARGS);
+extern Datum mdb_convert_from(PG_FUNCTION_ARGS);
 extern Datum length_in_encoding(PG_FUNCTION_ARGS);
-extern Datum pg_encoding_max_length_sql(PG_FUNCTION_ARGS);
+extern Datum mdb_encoding_max_length_sql(PG_FUNCTION_ARGS);
 
 /* format_type.c */
 extern Datum format_type(PG_FUNCTION_ARGS);
@@ -1168,43 +1168,43 @@ extern Datum set_config_by_name(PG_FUNCTION_ARGS);
 extern Datum show_all_settings(PG_FUNCTION_ARGS);
 extern Datum show_all_file_settings(PG_FUNCTION_ARGS);
 
-/* pg_config.c */
-extern Datum pg_config(PG_FUNCTION_ARGS);
+/* mdb_config.c */
+extern Datum mdb_config(PG_FUNCTION_ARGS);
 
-/* pg_controldata.c */
-extern Datum pg_control_checkpoint(PG_FUNCTION_ARGS);
-extern Datum pg_control_system(PG_FUNCTION_ARGS);
-extern Datum pg_control_init(PG_FUNCTION_ARGS);
-extern Datum pg_control_recovery(PG_FUNCTION_ARGS);
+/* mdb_controldata.c */
+extern Datum mdb_control_checkpoint(PG_FUNCTION_ARGS);
+extern Datum mdb_control_system(PG_FUNCTION_ARGS);
+extern Datum mdb_control_init(PG_FUNCTION_ARGS);
+extern Datum mdb_control_recovery(PG_FUNCTION_ARGS);
 
 /* rls.c */
 extern Datum row_security_active(PG_FUNCTION_ARGS);
 extern Datum row_security_active_name(PG_FUNCTION_ARGS);
 
 /* lockfuncs.c */
-extern Datum pg_lock_status(PG_FUNCTION_ARGS);
-extern Datum pg_blocking_pids(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_lock_int8(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_xact_lock_int8(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_lock_shared_int8(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS);
-extern Datum pg_try_advisory_lock_int8(PG_FUNCTION_ARGS);
-extern Datum pg_try_advisory_xact_lock_int8(PG_FUNCTION_ARGS);
-extern Datum pg_try_advisory_lock_shared_int8(PG_FUNCTION_ARGS);
-extern Datum pg_try_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_unlock_int8(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_unlock_shared_int8(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_lock_int4(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_xact_lock_int4(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_lock_shared_int4(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS);
-extern Datum pg_try_advisory_lock_int4(PG_FUNCTION_ARGS);
-extern Datum pg_try_advisory_xact_lock_int4(PG_FUNCTION_ARGS);
-extern Datum pg_try_advisory_lock_shared_int4(PG_FUNCTION_ARGS);
-extern Datum pg_try_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_unlock_int4(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_unlock_shared_int4(PG_FUNCTION_ARGS);
-extern Datum pg_advisory_unlock_all(PG_FUNCTION_ARGS);
+extern Datum mdb_lock_status(PG_FUNCTION_ARGS);
+extern Datum mdb_blocking_pids(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_lock_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_xact_lock_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_lock_shared_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_try_advisory_lock_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_try_advisory_xact_lock_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_try_advisory_lock_shared_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_try_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_unlock_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_unlock_shared_int8(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_lock_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_xact_lock_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_lock_shared_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_try_advisory_lock_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_try_advisory_xact_lock_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_try_advisory_lock_shared_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_try_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_unlock_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_unlock_shared_int4(PG_FUNCTION_ARGS);
+extern Datum mdb_advisory_unlock_all(PG_FUNCTION_ARGS);
 
 /* txid.c */
 extern Datum txid_snapshot_in(PG_FUNCTION_ARGS);
@@ -1251,24 +1251,24 @@ extern Datum window_last_value(PG_FUNCTION_ARGS);
 extern Datum window_nth_value(PG_FUNCTION_ARGS);
 
 /* access/spgist/spgquadtreeproc.c */
-extern Datum spg_quad_config(PG_FUNCTION_ARGS);
-extern Datum spg_quad_choose(PG_FUNCTION_ARGS);
-extern Datum spg_quad_picksplit(PG_FUNCTION_ARGS);
-extern Datum spg_quad_inner_consistent(PG_FUNCTION_ARGS);
-extern Datum spg_quad_leaf_consistent(PG_FUNCTION_ARGS);
+extern Datum smdb_quad_config(PG_FUNCTION_ARGS);
+extern Datum smdb_quad_choose(PG_FUNCTION_ARGS);
+extern Datum smdb_quad_picksplit(PG_FUNCTION_ARGS);
+extern Datum smdb_quad_inner_consistent(PG_FUNCTION_ARGS);
+extern Datum smdb_quad_leaf_consistent(PG_FUNCTION_ARGS);
 
 /* access/spgist/spgkdtreeproc.c */
-extern Datum spg_kd_config(PG_FUNCTION_ARGS);
-extern Datum spg_kd_choose(PG_FUNCTION_ARGS);
-extern Datum spg_kd_picksplit(PG_FUNCTION_ARGS);
-extern Datum spg_kd_inner_consistent(PG_FUNCTION_ARGS);
+extern Datum smdb_kd_config(PG_FUNCTION_ARGS);
+extern Datum smdb_kd_choose(PG_FUNCTION_ARGS);
+extern Datum smdb_kd_picksplit(PG_FUNCTION_ARGS);
+extern Datum smdb_kd_inner_consistent(PG_FUNCTION_ARGS);
 
 /* access/spgist/spgtextproc.c */
-extern Datum spg_text_config(PG_FUNCTION_ARGS);
-extern Datum spg_text_choose(PG_FUNCTION_ARGS);
-extern Datum spg_text_picksplit(PG_FUNCTION_ARGS);
-extern Datum spg_text_inner_consistent(PG_FUNCTION_ARGS);
-extern Datum spg_text_leaf_consistent(PG_FUNCTION_ARGS);
+extern Datum smdb_text_config(PG_FUNCTION_ARGS);
+extern Datum smdb_text_choose(PG_FUNCTION_ARGS);
+extern Datum smdb_text_picksplit(PG_FUNCTION_ARGS);
+extern Datum smdb_text_inner_consistent(PG_FUNCTION_ARGS);
+extern Datum smdb_text_leaf_consistent(PG_FUNCTION_ARGS);
 
 /* access/gin/ginarrayproc.c */
 extern Datum ginarrayextract(PG_FUNCTION_ARGS);
@@ -1284,42 +1284,42 @@ extern Datum tsm_bernoulli_handler(PG_FUNCTION_ARGS);
 extern Datum tsm_system_handler(PG_FUNCTION_ARGS);
 
 /* access/transam/twophase.c */
-extern Datum pg_prepared_xact(PG_FUNCTION_ARGS);
+extern Datum mdb_prepared_xact(PG_FUNCTION_ARGS);
 
 /* access/transam/multixact.c */
-extern Datum pg_get_multixact_members(PG_FUNCTION_ARGS);
+extern Datum mdb_get_multixact_members(PG_FUNCTION_ARGS);
 
 /* access/transam/committs.c */
-extern Datum pg_xact_commit_timestamp(PG_FUNCTION_ARGS);
-extern Datum pg_last_committed_xact(PG_FUNCTION_ARGS);
+extern Datum mdb_xact_commit_timestamp(PG_FUNCTION_ARGS);
+extern Datum mdb_last_committed_xact(PG_FUNCTION_ARGS);
 
 /* catalogs/dependency.c */
-extern Datum pg_describe_object(PG_FUNCTION_ARGS);
-extern Datum pg_identify_object(PG_FUNCTION_ARGS);
-extern Datum pg_identify_object_as_address(PG_FUNCTION_ARGS);
+extern Datum mdb_describe_object(PG_FUNCTION_ARGS);
+extern Datum mdb_identify_object(PG_FUNCTION_ARGS);
+extern Datum mdb_identify_object_as_address(PG_FUNCTION_ARGS);
 
 /* catalog/objectaddress.c */
-extern Datum pg_get_object_address(PG_FUNCTION_ARGS);
+extern Datum mdb_get_object_address(PG_FUNCTION_ARGS);
 
 /* commands/constraint.c */
 extern Datum unique_key_recheck(PG_FUNCTION_ARGS);
 
 /* commands/event_trigger.c */
-extern Datum pg_event_trigger_dropped_objects(PG_FUNCTION_ARGS);
-extern Datum pg_event_trigger_table_rewrite_oid(PG_FUNCTION_ARGS);
-extern Datum pg_event_trigger_table_rewrite_reason(PG_FUNCTION_ARGS);
-extern Datum pg_event_trigger_ddl_commands(PG_FUNCTION_ARGS);
+extern Datum mdb_event_trigger_dropped_objects(PG_FUNCTION_ARGS);
+extern Datum mdb_event_trigger_table_rewrite_oid(PG_FUNCTION_ARGS);
+extern Datum mdb_event_trigger_table_rewrite_reason(PG_FUNCTION_ARGS);
+extern Datum mdb_event_trigger_ddl_commands(PG_FUNCTION_ARGS);
 
 /* commands/extension.c */
-extern Datum pg_available_extensions(PG_FUNCTION_ARGS);
-extern Datum pg_available_extension_versions(PG_FUNCTION_ARGS);
-extern Datum pg_extension_update_paths(PG_FUNCTION_ARGS);
-extern Datum pg_extension_config_dump(PG_FUNCTION_ARGS);
+extern Datum mdb_available_extensions(PG_FUNCTION_ARGS);
+extern Datum mdb_available_extension_versions(PG_FUNCTION_ARGS);
+extern Datum mdb_extension_update_paths(PG_FUNCTION_ARGS);
+extern Datum mdb_extension_config_dump(PG_FUNCTION_ARGS);
 
 /* commands/prepare.c */
-extern Datum pg_prepared_statement(PG_FUNCTION_ARGS);
+extern Datum mdb_prepared_statement(PG_FUNCTION_ARGS);
 
 /* utils/mmgr/portalmem.c */
-extern Datum pg_cursor(PG_FUNCTION_ARGS);
+extern Datum mdb_cursor(PG_FUNCTION_ARGS);
 
 #endif   /* BUILTINS_H */

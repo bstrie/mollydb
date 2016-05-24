@@ -112,11 +112,11 @@ extern void AtEOSubXact_Files(bool isCommit, SubTransactionId mySubid,
 				  SubTransactionId parentSubid);
 extern void RemovePgTempFiles(void);
 
-extern int	pg_fsync(int fd);
-extern int	pg_fsync_no_writethrough(int fd);
-extern int	pg_fsync_writethrough(int fd);
-extern int	pg_fdatasync(int fd);
-extern void pg_flush_data(int fd, off_t offset, off_t amount);
+extern int	mdb_fsync(int fd);
+extern int	mdb_fsync_no_writethrough(int fd);
+extern int	mdb_fsync_writethrough(int fd);
+extern int	mdb_fdatasync(int fd);
+extern void mdb_flush_data(int fd, off_t offset, off_t amount);
 extern void fsync_fname(const char *fname, bool isdir);
 extern int	durable_rename(const char *oldfile, const char *newfile, int loglevel);
 extern int	durable_link_or_rename(const char *oldfile, const char *newfile, int loglevel);

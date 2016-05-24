@@ -1,28 +1,28 @@
-<!-- doc/src/sgml/ref/pg_restore.sgml -->
+<!-- doc/src/sgml/ref/mdb_restore.sgml -->
 
 <refentry id="APP-PGRESTORE">
  <indexterm zone="app-pgrestore">
-  <primary>pg_restore</primary>
+  <primary>mdb_restore</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle>pg_restore</refentrytitle>
+  <refentrytitle>mdb_restore</refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_restore</refname>
+  <refname>mdb_restore</refname>
 
   <refpurpose>
    restore a <productname>MollyDB</productname> database from an
-   archive file created by <application>pg_dump</application>
+   archive file created by <application>mdb_dump</application>
   </refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_restore</command>
+   <command>mdb_restore</command>
    <arg rep="repeat"><replaceable>connection-option</replaceable></arg>
    <arg rep="repeat"><replaceable>option</replaceable></arg>
    <arg choice="opt"><replaceable>filename</replaceable></arg>
@@ -34,35 +34,35 @@
   <title>Description</title>
 
   <para>
-   <application>pg_restore</application> is a utility for restoring a
+   <application>mdb_restore</application> is a utility for restoring a
    <productname>MollyDB</productname> database from an archive
    created by <xref linkend="app-pgdump"> in one of the non-plain-text
    formats.  It will issue the commands necessary to reconstruct the
    database to the state it was in at the time it was saved.  The
-   archive files also allow <application>pg_restore</application> to
+   archive files also allow <application>mdb_restore</application> to
    be selective about what is restored, or even to reorder the items
    prior to being restored. The archive files are designed to be
    portable across architectures.
   </para>
 
   <para>
-   <application>pg_restore</application> can operate in two modes.
-   If a database name is specified, <application>pg_restore</application>
+   <application>mdb_restore</application> can operate in two modes.
+   If a database name is specified, <application>mdb_restore</application>
    connects to that database and restores archive contents directly into
    the database.  Otherwise, a script containing the SQL
    commands necessary to rebuild the database is created and written
    to a file or standard output.  This script output is equivalent to
-   the plain text output format of <application>pg_dump</application>.
+   the plain text output format of <application>mdb_dump</application>.
    Some of the options controlling the output are therefore analogous to
-   <application>pg_dump</application> options.
+   <application>mdb_dump</application> options.
   </para>
 
   <para>
-   Obviously, <application>pg_restore</application> cannot restore information
+   Obviously, <application>mdb_restore</application> cannot restore information
    that is not present in the archive file.  For instance, if the
    archive was made using the <quote>dump data as
    <command>INSERT</command> commands</quote> option,
-   <application>pg_restore</application> will not be able to load the data
+   <application>mdb_restore</application> will not be able to load the data
    using <command>COPY</command> statements.
   </para>
  </refsect1>
@@ -71,7 +71,7 @@
   <title>Options</title>
 
    <para>
-    <application>pg_restore</application> accepts the following command
+    <application>mdb_restore</application> accepts the following command
     line arguments.
 
     <variablelist>
@@ -177,7 +177,7 @@
       <listitem>
        <para>
         Specify format of the archive.  It is not necessary to specify
-        the format, since <application>pg_restore</application> will
+        the format, since <application>mdb_restore</application> will
         determine the format automatically. If specified, it can be
         one of the following:
 
@@ -188,7 +188,7 @@
          <listitem>
           <para>
            The archive is in the custom format of
-           <application>pg_dump</application>.
+           <application>mdb_dump</application>.
           </para>
          </listitem>
         </varlistentry>
@@ -233,7 +233,7 @@
       <listitem>
        <para>
         Run the most time-consuming parts
-        of <application>pg_restore</> &mdash; those which load data,
+        of <application>mdb_restore</> &mdash; those which load data,
         create indexes, or create constraints &mdash; using multiple
         concurrent jobs.  This option can dramatically reduce the time
         to restore a large database to a server running on a
@@ -321,7 +321,7 @@
        <para>
         Do not output commands to set
         ownership of objects to match the original database.
-        By default, <application>pg_restore</application> issues
+        By default, <application>mdb_restore</application> issues
         <command>ALTER OWNER</> or
         <command>SET SESSION AUTHORIZATION</command>
         statements to set ownership of created schema elements.
@@ -405,7 +405,7 @@
 
        <note>
         <para>
-         When <option>-t</option> is specified, <application>pg_restore</>
+         When <option>-t</option> is specified, <application>mdb_restore</>
          makes no attempt to restore any other database objects that the
          selected table(s) might depend upon.  Therefore, there is no
          guarantee that a specific-table restore into a clean database will
@@ -416,8 +416,8 @@
        <note>
         <para>
          This flag does not behave identically to the <option>-t</option>
-         flag of <application>pg_dump</application>.  There is not currently
-         any provision for wild-card matching in <application>pg_restore</>,
+         flag of <application>mdb_dump</application>.  There is not currently
+         any provision for wild-card matching in <application>mdb_restore</>,
          nor can you include a schema name within its <option>-t</>.
         </para>
        </note>
@@ -467,7 +467,7 @@
        <term><option>--version</></term>
        <listitem>
        <para>
-       Print the <application>pg_restore</application> version and exit.
+       Print the <application>mdb_restore</application> version and exit.
        </para>
        </listitem>
      </varlistentry>
@@ -502,7 +502,7 @@
       <listitem>
        <para>
         This option is relevant only when performing a data-only restore.
-        It instructs <application>pg_restore</application> to execute commands
+        It instructs <application>mdb_restore</application> to execute commands
         to temporarily disable triggers on the target tables while
         the data is reloaded.  Use this if you have referential
         integrity checks or other triggers on the tables that you
@@ -513,7 +513,7 @@
         Presently, the commands emitted for
         <option>--disable-triggers</> must be done as superuser.  So you
         should also specify a superuser name with <option>-S</> or,
-        preferably, run <application>pg_restore</application> as a
+        preferably, run <application>mdb_restore</application> as a
         <productname>MollyDB</> superuser.
        </para>
       </listitem>
@@ -524,11 +524,11 @@
       <listitem>
        <para>
         This option is relevant only when restoring the contents of a table
-        which has row security.  By default, <application>pg_restore</application> will set
+        which has row security.  By default, <application>mdb_restore</application> will set
         <xref linkend="guc-row-security"> to off, to ensure
         that all data is restored in to the table.  If the user does not have
         sufficient privileges to bypass row security, then an error is thrown.
-        This parameter instructs <application>pg_restore</application> to set
+        This parameter instructs <application>mdb_restore</application> to set
         <xref linkend="guc-row-security"> to on instead, allowing the user to attempt to restore
         the contents of the table with row security enabled.  This might still
         fail if the user does not have the right to insert the rows from the
@@ -633,7 +633,7 @@
        <term><option>--help</></term>
        <listitem>
        <para>
-       Show help about <application>pg_restore</application> command line
+       Show help about <application>mdb_restore</application> command line
        arguments, and exit.
        </para>
        </listitem>
@@ -643,7 +643,7 @@
    </para>
 
    <para>
-    <application>pg_restore</application> also accepts
+    <application>mdb_restore</application> also accepts
     the following command line arguments for connection parameters:
 
     <variablelist>
@@ -704,15 +704,15 @@
       <term><option>--password</option></term>
       <listitem>
        <para>
-        Force <application>pg_restore</application> to prompt for a
+        Force <application>mdb_restore</application> to prompt for a
         password before connecting to a database.
        </para>
 
        <para>
         This option is never essential, since
-        <application>pg_restore</application> will automatically prompt
+        <application>mdb_restore</application> will automatically prompt
         for a password if the server demands password authentication.
-        However, <application>pg_restore</application> will waste a
+        However, <application>mdb_restore</application> will waste a
         connection attempt finding out that the server wants a password.
         In some cases it is worth typing <option>-W</> to avoid the extra
         connection attempt.
@@ -725,11 +725,11 @@
       <listitem>
        <para>
         Specifies a role name to be used to perform the restore.
-        This option causes <application>pg_restore</> to issue a
+        This option causes <application>mdb_restore</> to issue a
         <command>SET ROLE</> <replaceable class="parameter">rolename</>
         command after connecting to the database. It is useful when the
         authenticated user (specified by <option>-U</>) lacks privileges
-        needed by <application>pg_restore</>, but can switch to a role with
+        needed by <application>mdb_restore</>, but can switch to a role with
         the required rights.  Some installations have a policy against
         logging in directly as a superuser, and use of this option allows
         restores to be performed without violating the policy.
@@ -775,9 +775,9 @@
 
   <para>
    When a direct database connection is specified using the
-   <option>-d</option> option, <application>pg_restore</application>
+   <option>-d</option> option, <application>mdb_restore</application>
    internally executes <acronym>SQL</acronym> statements. If you have
-   problems running <application>pg_restore</application>, make sure
+   problems running <application>mdb_restore</application>, make sure
    you are able to select information from the database using, for
    example, <xref linkend="app-psql">.  Also, any default connection
    settings and environment variables used by the
@@ -792,7 +792,7 @@
   <para>
    If your installation has any local additions to the
    <literal>template1</> database, be careful to load the output of
-   <application>pg_restore</application> into a truly empty database;
+   <application>mdb_restore</application> into a truly empty database;
    otherwise you are likely to get errors due to duplicate definitions
    of the added objects.  To make an empty database without any local
    additions, copy from <literal>template0</> not <literal>template1</>, for example:
@@ -802,14 +802,14 @@ CREATE DATABASE foo WITH TEMPLATE template0;
   </para>
 
   <para>
-   The limitations of <application>pg_restore</application> are detailed below.
+   The limitations of <application>mdb_restore</application> are detailed below.
 
    <itemizedlist>
     <listitem>
      <para>
       When restoring data to a pre-existing table and the option
       <option>--disable-triggers</> is used,
-      <application>pg_restore</application> emits commands
+      <application>mdb_restore</application> emits commands
       to disable triggers on user tables before inserting the data, then emits commands to
       re-enable them after the data has been inserted.  If the restore is stopped in the
       middle, the system catalogs might be left in the wrong state.
@@ -817,7 +817,7 @@ CREATE DATABASE foo WITH TEMPLATE template0;
     </listitem>
 
     <listitem>
-     <para><application>pg_restore</application> cannot restore large objects
+     <para><application>mdb_restore</application> cannot restore large objects
       selectively;  for instance, only those for a specific table.  If
       an archive contains large objects, then all large objects will be
       restored, or none of them if they are excluded via <option>-L</option>,
@@ -830,7 +830,7 @@ CREATE DATABASE foo WITH TEMPLATE template0;
 
   <para>
    See also the <xref linkend="app-pgdump"> documentation for details on
-   limitations of <application>pg_dump</application>.
+   limitations of <application>mdb_dump</application>.
   </para>
 
   <para>
@@ -851,7 +851,7 @@ CREATE DATABASE foo WITH TEMPLATE template0;
    custom-format dump file:
 
 <screen>
-<prompt>$</prompt> <userinput>pg_dump -Fc mydb &gt; db.dump</userinput>
+<prompt>$</prompt> <userinput>mdb_dump -Fc mydb &gt; db.dump</userinput>
 </screen>
   </para>
 
@@ -860,11 +860,11 @@ CREATE DATABASE foo WITH TEMPLATE template0;
 
 <screen>
 <prompt>$</prompt> <userinput>dropdb mydb</userinput>
-<prompt>$</prompt> <userinput>pg_restore -C -d mollydb db.dump</userinput>
+<prompt>$</prompt> <userinput>mdb_restore -C -d mollydb db.dump</userinput>
 </screen>
 
    The database named in the <option>-d</> switch can be any database existing
-   in the cluster; <application>pg_restore</> only uses it to issue the
+   in the cluster; <application>mdb_restore</> only uses it to issue the
    <command>CREATE DATABASE</> command for <literal>mydb</>.  With
    <option>-C</>, data is always restored into the database name that appears
    in the dump file.
@@ -875,7 +875,7 @@ CREATE DATABASE foo WITH TEMPLATE template0;
 
 <screen>
 <prompt>$</prompt> <userinput>createdb -T template0 newdb</userinput>
-<prompt>$</prompt> <userinput>pg_restore -d newdb db.dump</userinput>
+<prompt>$</prompt> <userinput>mdb_restore -d newdb db.dump</userinput>
 </screen>
 
    Notice we don't use <option>-C</>, and instead connect directly to the
@@ -888,7 +888,7 @@ CREATE DATABASE foo WITH TEMPLATE template0;
    To reorder database items, it is first necessary to dump the table of
    contents of the archive:
 <screen>
-<prompt>$</prompt> <userinput>pg_restore -l db.dump &gt; db.list</userinput>
+<prompt>$</prompt> <userinput>mdb_restore -l db.dump &gt; db.list</userinput>
 </screen>
    The listing file consists of a header and one line for each item, e.g.:
 <programlisting>
@@ -902,7 +902,7 @@ CREATE DATABASE foo WITH TEMPLATE template0;
 ;     Integer: 4 bytes
 ;     Offset: 8 bytes
 ;     Dumped from database version: 8.3.5
-;     Dumped by pg_dump version: 8.3.8
+;     Dumped by mdb_dump version: 8.3.8
 ;
 ;
 ; Selected TOC Entries:
@@ -926,10 +926,10 @@ CREATE DATABASE foo WITH TEMPLATE template0;
 6; 145402 TABLE species_records mollydb
 ;8; 145416 TABLE ss_old mollydb
 </programlisting>
-   could be used as input to <application>pg_restore</application> and would only restore
+   could be used as input to <application>mdb_restore</application> and would only restore
    items 10 and 6, in that order:
 <screen>
-<prompt>$</prompt> <userinput>pg_restore -L db.list db.dump</userinput>
+<prompt>$</prompt> <userinput>mdb_restore -L db.list db.dump</userinput>
 </screen></para>
 
  </refsect1>

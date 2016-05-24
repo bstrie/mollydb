@@ -22,7 +22,7 @@
 #if defined(FRONTEND) || !defined(WIN32)
 
 /*
- * pg_usleep --- delay the specified number of microseconds.
+ * mdb_usleep --- delay the specified number of microseconds.
  *
  * NOTE: although the delay is specified in microseconds, the effective
  * resolution is only 1/HZ, or 10 milliseconds, on most Unixen.  Expect
@@ -33,7 +33,7 @@
  * CAUTION: the behavior when a signal arrives during the sleep is platform
  * dependent.  On most Unix-ish platforms, a signal does not terminate the
  * sleep; but on some, it will (the Windows implementation also allows signals
- * to terminate pg_usleep).  And there are platforms where not only does a
+ * to terminate mdb_usleep).  And there are platforms where not only does a
  * signal not terminate the sleep, but it actually resets the timeout counter
  * so that the sleep effectively starts over!  It is therefore rather hazardous
  * to use this for long sleeps; a continuing stream of signal events could
@@ -41,7 +41,7 @@
  * is to use WaitLatch() with a timeout.
  */
 void
-pg_usleep(long microsec)
+mdb_usleep(long microsec)
 {
 	if (microsec > 0)
 	{

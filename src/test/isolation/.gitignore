@@ -1,6 +1,6 @@
 # Local binaries
 /isolationtester
-/pg_isolation_regress
+/mdb_isolation_regress
 
 # Local generated source files
 /specparse.c

@@ -14,8 +14,8 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_type.h"
 #include "executor/executor.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
@@ -1110,12 +1110,12 @@ hash_ok_operator(OpExpr *expr)
 	{
 		/* else must look up the operator properties */
 		HeapTuple	tup;
-		Form_pg_operator optup;
+		Form_mdb_operator optup;
 
 		tup = SearchSysCache1(OPEROID, ObjectIdGetDatum(opid));
 		if (!HeapTupleIsValid(tup))
 			elog(ERROR, "cache lookup failed for operator %u", opid);
-		optup = (Form_pg_operator) GETSTRUCT(tup);
+		optup = (Form_mdb_operator) GETSTRUCT(tup);
 		if (!optup->oprcanhash || !func_strict(optup->oprcode))
 		{
 			ReleaseSysCache(tup);

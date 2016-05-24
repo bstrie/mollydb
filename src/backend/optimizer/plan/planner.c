@@ -22,7 +22,7 @@
 #include "access/parallel.h"
 #include "access/sysattr.h"
 #include "access/xact.h"
-#include "catalog/pg_constraint_fn.h"
+#include "catalog/mdb_constraint_fn.h"
 #include "executor/executor.h"
 #include "executor/nodeAgg.h"
 #include "foreign/fdwapi.h"

@@ -28,11 +28,11 @@ sub run_test
 
 	# The clusters are now diverged.
 
-	RewindTest::run_pg_rewind($test_mode);
+	RewindTest::run_mdb_rewind($test_mode);
 
-	# Check that the correct databases are present after pg_rewind.
+	# Check that the correct databases are present after mdb_rewind.
 	check_query(
-		'SELECT datname FROM pg_database ORDER BY 1',
+		'SELECT datname FROM mdb_database ORDER BY 1',
 		qq(beforepromotion
 inmaster
 mollydb

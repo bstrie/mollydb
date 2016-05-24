@@ -23,7 +23,7 @@
 #ifndef MISCADMIN_H
 #define MISCADMIN_H
 
-#include "pgtime.h"				/* for pg_time_t */
+#include "pgtime.h"				/* for mdb_time_t */
 
 
 #define PG_BACKEND_VERSIONSTR "mollydb (MollyDB) " PG_VERSION "\n"
@@ -159,7 +159,7 @@ extern int	MaxConnections;
 extern int	max_worker_processes;
 
 extern PGDLLIMPORT int MyProcPid;
-extern PGDLLIMPORT pg_time_t MyStartTime;
+extern PGDLLIMPORT mdb_time_t MyStartTime;
 extern PGDLLIMPORT struct Port *MyProcPort;
 extern PGDLLIMPORT struct Latch *MyLatch;
 extern long MyCancelKey;
@@ -262,13 +262,13 @@ typedef struct
 {
 	char	   *stack_base_ptr;
 	char	   *register_stack_base_ptr;
-} pg_stack_base_t;
+} mdb_stack_base_t;
 #else
-typedef char *pg_stack_base_t;
+typedef char *mdb_stack_base_t;
 #endif
 
-extern pg_stack_base_t set_stack_base(void);
-extern void restore_stack_base(pg_stack_base_t base);
+extern mdb_stack_base_t set_stack_base(void);
+extern void restore_stack_base(mdb_stack_base_t base);
 extern void check_stack_depth(void);
 extern bool stack_is_too_deep(void);
 
@@ -412,7 +412,7 @@ extern AuxProcType MyAuxProcType;
  *****************************************************************************/
 
 /* in utils/init/postinit.c */
-extern void pg_split_opts(char **argv, int *argcp, const char *optstr);
+extern void mdb_split_opts(char **argv, int *argcp, const char *optstr);
 extern void InitializeMaxBackends(void);
 extern void InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 			 Oid useroid, char *out_dbname);
@@ -459,7 +459,7 @@ extern bool RecheckDataDirLockFile(void);
 extern void ValidatePgVersion(const char *path);
 extern void process_shared_preload_libraries(void);
 extern void process_session_preload_libraries(void);
-extern void pg_bindtextdomain(const char *domain);
+extern void mdb_bindtextdomain(const char *domain);
 extern bool has_rolreplication(Oid roleid);
 
 /* in access/transam/xlog.c */

@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_proc_fn.h
- *	 prototypes for functions in catalog/pg_proc.c
+ * mdb_proc_fn.h
+ *	 prototypes for functions in catalog/mdb_proc.c
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_proc_fn.h
+ * src/include/catalog/mdb_proc_fn.h
  *
  *-------------------------------------------------------------------------
  */
@@ -15,7 +15,7 @@
 #define PG_PROC_FN_H
 
 #include "catalog/objectaddress.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 extern ObjectAddress ProcedureCreate(const char *procedureName,
 				Oid procNamespace,

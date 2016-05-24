@@ -76,7 +76,7 @@
 
     <listitem>
      <para>
-      Prevent possible crashes in <function>pg_get_expr()</> by disallowing
+      Prevent possible crashes in <function>mdb_get_expr()</> by disallowing
       it from being called with an argument that is not one of the system
       catalog columns it's intended to be used with
       (Heikki Linnakangas, Tom Lane)
@@ -351,7 +351,7 @@
 
     <listitem>
      <para>
-      When reading <filename>pg_hba.conf</> and related files, do not treat
+      When reading <filename>mdb_hba.conf</> and related files, do not treat
       <literal>@something</> as a file inclusion request if the <literal>@</>
       appears inside quote marks; also, never treat <literal>@</> by itself
       as a file inclusion request (Tom)
@@ -369,7 +369,7 @@
     <listitem>
      <para>
       Prevent infinite loop on some platforms if a directory is named as
-      an inclusion target in <filename>pg_hba.conf</> and related files
+      an inclusion target in <filename>mdb_hba.conf</> and related files
       (Tom)
      </para>
     </listitem>
@@ -964,7 +964,7 @@
 
     <listitem>
      <para>
-      Improve <application>pg_dump</> and <application>pg_restore</>'s
+      Improve <application>mdb_dump</> and <application>mdb_restore</>'s
       error reporting after failure to send a SQL command (Tom)
      </para>
     </listitem>
@@ -1006,7 +1006,7 @@
 
     <listitem>
      <para>
-      Make <function>pg_get_ruledef()</> parenthesize negative constants (Tom)
+      Make <function>mdb_get_ruledef()</> parenthesize negative constants (Tom)
      </para>
 
      <para>
@@ -1017,7 +1017,7 @@
       another recent patch to cause
       <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
-      <application>pg_dump</> output failing to reload, it is being treated
+      <application>mdb_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
       output is actually incorrect are 8.3.1 and 8.2.7.
      </para>
@@ -1135,7 +1135,7 @@
      <para>
       A side effect of the fix is that a transaction that has executed
       a not-yet-committed <command>LISTEN</> command will not see any
-      row in <structname>pg_listener</> for the <command>LISTEN</>,
+      row in <structname>mdb_listener</> for the <command>LISTEN</>,
       should it choose to look; formerly it would have.  This behavior
       was never documented one way or the other, but it is possible that
       some applications depend on the old behavior.
@@ -1833,7 +1833,7 @@ created in 7.4.9 and 7.3.11 releases.
 </para></listitem>
 
 <listitem><para>Fix race condition that could lead to <quote>file already
-exists</> errors during pg_clog file creation
+exists</> errors during mdb_clog file creation
 (Tom)</para></listitem>
 
 <listitem><para>Properly check <literal>DOMAIN</> constraints for
@@ -1964,7 +1964,7 @@ when current transaction is already aborted</para></listitem>
 <para>This bug sometimes caused a bogus error <quote>RIGHT JOIN is
 only supported with merge-joinable join conditions</>.</para></listitem>
 
-<listitem><para>Prevent core dump in <application>pg_autovacuum</> when a
+<listitem><para>Prevent core dump in <application>mdb_autovacuum</> when a
 table has been dropped</para></listitem>
 </itemizedlist>
 
@@ -2098,7 +2098,7 @@ code</para></listitem>
 
 <programlisting>
 BEGIN;
-UPDATE pg_proc SET proargtypes[3] = 'internal'::regtype
+UPDATE mdb_proc SET proargtypes[3] = 'internal'::regtype
 WHERE pronamespace = 11 AND pronargs = 5
      AND proargtypes[2] = 'cstring'::regtype;
 -- The command should report having updated 90 rows;
@@ -2110,7 +2110,7 @@ COMMIT;
 
 <programlisting>
 BEGIN;
-UPDATE pg_proc SET proargtypes[0] = 'internal'::regtype
+UPDATE mdb_proc SET proargtypes[0] = 'internal'::regtype
 WHERE oid IN (
    'dex_init(text)'::regprocedure,
    'snb_en_init(text)'::regprocedure,
@@ -2137,7 +2137,7 @@ COMMIT;
     as any other database, but fixing <literal>template0</> requires
     additional steps.  First, from any database issue:
 <programlisting>
-UPDATE pg_database SET datallowconn = true WHERE datname = 'template0';
+UPDATE mdb_database SET datallowconn = true WHERE datname = 'template0';
 </programlisting>
      Next connect to <literal>template0</> and perform the above repair
      procedures.  Finally, do:
@@ -2145,7 +2145,7 @@ UPDATE pg_database SET datallowconn = true WHERE datname = 'template0';
 -- re-freeze template0:
 VACUUM FREEZE;
 -- and protect it against future alterations:
-UPDATE pg_database SET datallowconn = false WHERE datname = 'template0';
+UPDATE mdb_database SET datallowconn = false WHERE datname = 'template0';
 </programlisting>
    </para>
   </sect2>
@@ -2188,14 +2188,14 @@ This error only occurred when the
 <listitem><para>Ensure operations done during backend shutdown are counted by
 statistics collector</para>
 <para>
-This is expected to resolve reports of <application>pg_autovacuum</>
+This is expected to resolve reports of <application>mdb_autovacuum</>
 not vacuuming the system catalogs often enough &mdash; it was not being
 told about catalog deletions caused by temporary table removal during
 backend exit.
 </para></listitem>
 <listitem><para>Additional buffer overrun checks in plmdb
 (Neil)</para></listitem>
-<listitem><para>Fix pg_dump to dump trigger names containing <literal>%</>
+<listitem><para>Fix mdb_dump to dump trigger names containing <literal>%</>
 correctly (Neil)</para></listitem>
 <listitem><para>Fix <filename>contrib/pgcrypto</> for newer OpenSSL builds
 (Marko Kreen)</para></listitem>
@@ -2322,7 +2322,7 @@ it as a potential-data-loss bug.
 Very large left joins using a hash join plan could fail to output unmatched
 left-side rows given just the right data distribution.
 </para></listitem>
-<listitem><para>Disallow running <application>pg_ctl</> as root</para>
+<listitem><para>Disallow running <application>mdb_ctl</> as root</para>
 <para>
 This is to guard against any possible security issues.
 </para></listitem>
@@ -2337,7 +2337,7 @@ result</para>
 In rare cases, a client might think that its last command had succeeded when
 it really had been aborted by forced database shutdown.
 </para></listitem>
-<listitem><para>Repair bug in <function>pg_stat_get_backend_idset</function></para>
+<listitem><para>Repair bug in <function>mdb_stat_get_backend_idset</function></para>
 <para>
 This could lead to misbehavior in some of the system-statistics views.
 </para></listitem>
@@ -2347,7 +2347,7 @@ tables</> bug</para>
 <para>
 This could arise in cases such as CLUSTER after ALTER TABLE DROP COLUMN.
 </para></listitem>
-<listitem><para>Prevent <literal>pg_ctl restart</> from adding <literal>-D</> multiple times</para></listitem>
+<listitem><para>Prevent <literal>mdb_ctl restart</> from adding <literal>-D</> multiple times</para></listitem>
 <listitem><para>Fix problem with NULL values in GiST indexes</para></listitem>
 <listitem><para><literal>::</> is no longer interpreted as a variable in an
 ECPG prepare statement</para></listitem>
@@ -2436,7 +2436,7 @@ aggregate plan</para></listitem>
 <listitem><para>Force cache update after renaming a column in a foreign key</para></listitem>
 <listitem><para>Pretty-print UNION queries correctly</para></listitem>
 <listitem><para>Make psql handle <literal>\r\n</> newlines properly in COPY IN</para></listitem>
-<listitem><para><application>pg_dump</> handled ACLs with grant options incorrectly</para></listitem>
+<listitem><para><application>mdb_dump</> handled ACLs with grant options incorrectly</para></listitem>
 <listitem><para>Fix thread support for OS X and Solaris</para></listitem>
 <listitem><para>Updated JDBC driver (build 215) with various fixes</para></listitem>
 <listitem><para>ECPG fixes</para></listitem>
@@ -2477,7 +2477,7 @@ aggregate plan</para></listitem>
 <listitem><para>ECPG fixes, including some for Informix compatibility (Michael)</para></listitem>
 <listitem><para>Fixes for compiling with thread-safety, particularly Solaris (Bruce)</para></listitem>
 <listitem><para>Fix error in COPY IN termination when using the old network protocol (ljb)</para></listitem>
-<listitem><para>Several important fixes in pg_autovacuum, including fixes for
+<listitem><para>Several important fixes in mdb_autovacuum, including fixes for
 large tables, unsigned oids, stability, temp tables, and debug mode
 (Matthew T. O'Connor)</para></listitem>
 <listitem><para>Fix problem with reading tar-format dumps on NetBSD and BSD/OS (Bruce)</para></listitem>
@@ -2533,7 +2533,7 @@ names from outer query levels.
    <para>
     The more severe of the two errors is that data type <type>anyarray</>
     has the wrong alignment label; this is a problem because the
-    <structname>pg_statistic</> system catalog uses <type>anyarray</>
+    <structname>mdb_statistic</> system catalog uses <type>anyarray</>
     columns.  The mislabeling can cause planner misestimations and even
     crashes when planning queries that involve <literal>WHERE</> clauses on
     double-aligned columns (such as <type>float8</> and <type>timestamp</>).
@@ -2543,43 +2543,43 @@ names from outer query levels.
    </para>
 
    <para>
-    The lesser error is that the system view <structname>pg_settings</>
+    The lesser error is that the system view <structname>mdb_settings</>
     ought to be marked as having public update access, to allow
-    <literal>UPDATE pg_settings</> to be used as a substitute for
+    <literal>UPDATE mdb_settings</> to be used as a substitute for
     <command>SET</>.  This can also be fixed either by initdb or manually,
     but it is not necessary to fix unless you want to use <literal>UPDATE
-    pg_settings</>.
+    mdb_settings</>.
    </para>
 
    <para>
     If you wish not to do an initdb, the following procedure will work
-    for fixing <structname>pg_statistic</>.  As the database superuser,
+    for fixing <structname>mdb_statistic</>.  As the database superuser,
     do:
 
 <programlisting>
--- clear out old data in pg_statistic:
-DELETE FROM pg_statistic;
-VACUUM pg_statistic;
+-- clear out old data in mdb_statistic:
+DELETE FROM mdb_statistic;
+VACUUM mdb_statistic;
 -- this should update 1 row:
-UPDATE pg_type SET typalign = 'd' WHERE oid = 2277;
+UPDATE mdb_type SET typalign = 'd' WHERE oid = 2277;
 -- this should update 6 rows:
-UPDATE pg_attribute SET attalign = 'd' WHERE atttypid = 2277;
+UPDATE mdb_attribute SET attalign = 'd' WHERE atttypid = 2277;
 --
 -- At this point you MUST start a fresh backend to avoid a crash!
 --
--- repopulate pg_statistic:
+-- repopulate mdb_statistic:
 ANALYZE;
 </programlisting>
 
     This can be done in a live database, but beware that all backends
     running in the altered database must be restarted before it is safe to
-    repopulate <structname>pg_statistic</>.
+    repopulate <structname>mdb_statistic</>.
    </para>
 
    <para>
-    To repair the <structname>pg_settings</> error, simply do:
+    To repair the <structname>mdb_settings</> error, simply do:
 <programlisting>
-GRANT SELECT, UPDATE ON pg_settings TO PUBLIC;
+GRANT SELECT, UPDATE ON mdb_settings TO PUBLIC;
 </programlisting>
    </para>
 
@@ -2592,7 +2592,7 @@ GRANT SELECT, UPDATE ON pg_settings TO PUBLIC;
     as any other database, but fixing <literal>template0</> requires
     additional steps.  First, from any database issue:
 <programlisting>
-UPDATE pg_database SET datallowconn = true WHERE datname = 'template0';
+UPDATE mdb_database SET datallowconn = true WHERE datname = 'template0';
 </programlisting>
      Next connect to <literal>template0</> and perform the above repair
      procedures.  Finally, do:
@@ -2600,7 +2600,7 @@ UPDATE pg_database SET datallowconn = true WHERE datname = 'template0';
 -- re-freeze template0:
 VACUUM FREEZE;
 -- and protect it against future alterations:
-UPDATE pg_database SET datallowconn = false WHERE datname = 'template0';
+UPDATE mdb_database SET datallowconn = false WHERE datname = 'template0';
 </programlisting>
    </para>
   </sect2>
@@ -2614,9 +2614,9 @@ UPDATE pg_database SET datallowconn = false WHERE datname = 'template0';
 </para>
 
 <itemizedlist>
-<listitem><para>Fix <structname>pg_statistics</> alignment bug that could crash optimizer</para>
+<listitem><para>Fix <structname>mdb_statistics</> alignment bug that could crash optimizer</para>
 <para>See above for details about this problem.</para></listitem>
-<listitem><para>Allow non-super users to update <structname>pg_settings</></para></listitem>
+<listitem><para>Allow non-super users to update <structname>mdb_settings</></para></listitem>
 <listitem><para>Fix several optimizer bugs, most of which led to
 <quote>variable not found in subplan target lists</> errors</para></listitem>
 <listitem><para>Avoid out-of-memory failure during startup of large multiple
@@ -2631,8 +2631,8 @@ during parallel testing</para></listitem>
 <listitem><para>Partial fix for Turkish-locale issues</para>
 <para>initdb will succeed now in Turkish locale, but there are still some
 inconveniences associated with the <literal>i/I</> problem.</para></listitem>
-<listitem><para>Make pg_dump set client encoding on restore</para></listitem>
-<listitem><para>Other minor pg_dump fixes</para></listitem>
+<listitem><para>Make mdb_dump set client encoding on restore</para></listitem>
+<listitem><para>Other minor mdb_dump fixes</para></listitem>
 <listitem><para>Allow ecpg to again use C keywords as column names (Michael)</para></listitem>
 <listitem><para>Added ecpg <literal>WHENEVER NOT_FOUND</> to
 <literal>SELECT/INSERT/UPDATE/DELETE</> (Michael)</para></listitem>
@@ -2711,7 +2711,7 @@ DROP SCHEMA information_schema CASCADE;
    releases.
 </para>
 </listitem>
-<listitem><para>Several <filename>contrib/pg_autovacuum</filename> fixes</para>
+<listitem><para>Several <filename>contrib/mdb_autovacuum</filename> fixes</para>
 <para>
    Fixes include improper variable initialization, missing vacuum after
    <command>TRUNCATE</command>, and duration computation overflow for long vacuums.
@@ -2754,7 +2754,7 @@ DROP SCHEMA information_schema CASCADE;
  This release fixes a bug in 7.4 where SSL didn't free all memory it allocated.
 </para>
 </listitem>
-<listitem><para>Prevent <filename>pg_service.conf</filename> from using service name as default dbname (Bruce)</para></listitem>
+<listitem><para>Prevent <filename>mdb_service.conf</filename> from using service name as default dbname (Bruce)</para></listitem>
 <listitem><para>Fix local ident authentication on FreeBSD (Tom)</para></listitem>
 </itemizedlist>
 
@@ -3046,7 +3046,7 @@ DROP SCHEMA information_schema CASCADE;
   <title>Migration to Version 7.4</title>
 
   <para>
-   A dump/restore using <application>pg_dump</application> is
+   A dump/restore using <application>mdb_dump</application> is
    required for those wishing to migrate data from any previous
    release.
   </para>
@@ -3293,7 +3293,7 @@ DROP SCHEMA information_schema CASCADE;
     </para>
    </listitem>
 
-   <listitem><para>Add start time to <literal>pg_stat_activity</literal> (Neil)</para></listitem>
+   <listitem><para>Add start time to <literal>mdb_stat_activity</literal> (Neil)</para></listitem>
    <listitem><para>New code to detect corrupt disk pages; erase with <varname>zero_damaged_pages</varname> (Tom)</para></listitem>
    <listitem><para>New client/server protocol: faster, no username length limit, allow clean exit from <command>COPY</command> (Tom)</para></listitem>
    <listitem><para>Add transaction status, table ID, column ID to client/server protocol (Tom)</para></listitem>
@@ -3559,10 +3559,10 @@ DROP SCHEMA information_schema CASCADE;
    </listitem>
 
    <listitem>
-    <para>Allow <filename>pg_hba.conf</filename> to accept netmasks in CIDR format (Andrew Dunstan)</para>
+    <para>Allow <filename>mdb_hba.conf</filename> to accept netmasks in CIDR format (Andrew Dunstan)</para>
     <para>
      This allows administrators to merge the host IP address and
-     netmask fields into a single CIDR field in <filename>pg_hba.conf</filename>.
+     netmask fields into a single CIDR field in <filename>mdb_hba.conf</filename>.
     </para>
    </listitem>
 
@@ -3588,7 +3588,7 @@ DROP SCHEMA information_schema CASCADE;
 
    <listitem>
     <para>
-     Add new columns in <literal>pg_settings</literal>:
+     Add new columns in <literal>mdb_settings</literal>:
      <literal>context</>, <literal>type</>, <literal>source</>,
      <literal>min_val</>, <literal>max_val</> (Joe)
     </para>
@@ -3611,7 +3611,7 @@ DROP SCHEMA information_schema CASCADE;
 
    <listitem>
     <para>
-     New <filename>pg_hba.conf</filename> record type
+     New <filename>mdb_hba.conf</filename> record type
      <literal>hostnossl</> to prevent SSL connections (Jon
      Jensen)
     </para>
@@ -3637,7 +3637,7 @@ DROP SCHEMA information_schema CASCADE;
 
    <listitem>
     <para>
-     Make <command>pg_ctl</command> better handle nonstandard ports (Greg)
+     Make <command>mdb_ctl</command> better handle nonstandard ports (Greg)
     </para>
    </listitem>
   </itemizedlist>
@@ -3652,10 +3652,10 @@ DROP SCHEMA information_schema CASCADE;
    <listitem><para>Print key name and value in foreign-key violation messages (Dmitry Tkach)</para></listitem>
 
    <listitem>
-    <para>Allow users to see their own queries in <literal>pg_stat_activity</literal> (Kevin Brown)</para>
+    <para>Allow users to see their own queries in <literal>mdb_stat_activity</literal> (Kevin Brown)</para>
     <para>
      In prior releases, only the superuser could see query strings
-     using <literal>pg_stat_activity</literal>. Now ordinary users
+     using <literal>mdb_stat_activity</literal>. Now ordinary users
      can see their own query strings.
     </para>
    </listitem>
@@ -3771,7 +3771,7 @@ DROP SCHEMA information_schema CASCADE;
    <listitem>
     <para>Add <literal>ALTER TABLE ... CLUSTER ON</literal> (Alvaro Herrera)</para>
     <para>
-     This command is used by <command>pg_dump</command> to record the
+     This command is used by <command>mdb_dump</command> to record the
      cluster column for each table previously clustered. This
      information is used by database-wide cluster to cluster all
      previously clustered tables.
@@ -3976,8 +3976,8 @@ DROP SCHEMA information_schema CASCADE;
      requirement of a standalone session, which was necessary in
      previous releases. The only tables that now require a standalone
      session for reindexing are the global system tables
-     <literal>pg_database</>, <literal>pg_shadow</>, and
-     <literal>pg_group</>.
+     <literal>mdb_database</>, <literal>mdb_shadow</>, and
+     <literal>mdb_group</>.
     </para>
    </listitem>
   </itemizedlist>
@@ -4197,8 +4197,8 @@ DROP SCHEMA information_schema CASCADE;
 
    <listitem>
     <para>
-     New functions <function>pg_get_triggerdef(prettyprint)</function>
-     and <function>pg_conversion_is_visible()</function> (Christopher)
+     New functions <function>mdb_get_triggerdef(prettyprint)</function>
+     and <function>mdb_conversion_is_visible()</function> (Christopher)
     </para>
    </listitem>
 
@@ -4215,7 +4215,7 @@ DROP SCHEMA information_schema CASCADE;
 
    <listitem>
     <para>
-     Make <function>pg_get_constraintdef</function> support
+     Make <function>mdb_get_constraintdef</function> support
      unique, primary-key, and check constraints (Christopher)
     </para>
    </listitem>
@@ -4356,51 +4356,51 @@ DROP SCHEMA information_schema CASCADE;
  </sect3>
 
  <sect3>
-  <title>pg_dump Changes</title>
+  <title>mdb_dump Changes</title>
 
   <itemizedlist>
-   <listitem><para>Multiple pg_dump fixes, including tar format and large objects</para></listitem>
-   <listitem><para>Allow pg_dump to dump specific schemas (Neil)</para></listitem>
+   <listitem><para>Multiple mdb_dump fixes, including tar format and large objects</para></listitem>
+   <listitem><para>Allow mdb_dump to dump specific schemas (Neil)</para></listitem>
 
    <listitem>
-    <para>Make pg_dump preserve column storage characteristics (Christopher)</para>
+    <para>Make mdb_dump preserve column storage characteristics (Christopher)</para>
     <para>
      This preserves <literal>ALTER TABLE ... SET STORAGE</literal> information.
     </para>
    </listitem>
 
-   <listitem><para>Make pg_dump preserve <command>CLUSTER</command> characteristics (Christopher)</para></listitem>
+   <listitem><para>Make mdb_dump preserve <command>CLUSTER</command> characteristics (Christopher)</para></listitem>
 
    <listitem>
     <para>
-     Have pg_dumpall use <command>GRANT</>/<command>REVOKE</> to dump database-level privileges (Tom)
+     Have mdb_dumpall use <command>GRANT</>/<command>REVOKE</> to dump database-level privileges (Tom)
     </para>
    </listitem>
 
    <listitem>
     <para>
-     Allow pg_dumpall to support the options <option>-a</>,
-     <option>-s</>, <option>-x</> of pg_dump (Tom)
+     Allow mdb_dumpall to support the options <option>-a</>,
+     <option>-s</>, <option>-x</> of mdb_dump (Tom)
     </para>
    </listitem>
 
-   <listitem><para>Prevent pg_dump from lowercasing identifiers specified on the command line (Tom)</para></listitem>
+   <listitem><para>Prevent mdb_dump from lowercasing identifiers specified on the command line (Tom)</para></listitem>
 
    <listitem>
     <para>
-     pg_dump options <option>--use-set-session-authorization</option>
+     mdb_dump options <option>--use-set-session-authorization</option>
      and <option>--no-reconnect</option> now do nothing, all dumps
      use <command>SET SESSION AUTHORIZATION</command>
     </para>
     <para>
-     pg_dump no longer reconnects to switch users, but instead always
+     mdb_dump no longer reconnects to switch users, but instead always
      uses <command>SET SESSION AUTHORIZATION</command>. This will
      reduce password prompting during restores.
     </para>
    </listitem>
 
    <listitem>
-    <para>Long options for <application>pg_dump</application> are now available on all platforms</para>
+    <para>Long options for <application>mdb_dump</application> are now available on all platforms</para>
     <para>
      <productname>MollyDB</productname> now includes its own
      long-option processing routines.
@@ -4607,7 +4607,7 @@ DROP SCHEMA information_schema CASCADE;
    <listitem><para>Add hash-based crosstab function to tablefuncs (Joe)</para></listitem>
    <listitem><para>Add serial column to order <function>connectby()</> siblings in tablefuncs (Nabil Sayegh,Joe)</para></listitem>
    <listitem><para>Add named persistent connections to dblink (Shridhar Daithanka)</para></listitem>
-   <listitem><para>New pg_autovacuum allows automatic <command>VACUUM</command> (Matthew T. O'Connor)</para></listitem>
+   <listitem><para>New mdb_autovacuum allows automatic <command>VACUUM</command> (Matthew T. O'Connor)</para></listitem>
    <listitem><para>Make pgbench honor environment variables <envar>PGHOST</>, <envar>PGPORT</>, <envar>PGUSER</> (Tatsuo)</para></listitem>
    <listitem><para>Improve intarray (Teodor Sigaev)</para></listitem>
    <listitem><para>Improve pgstattuple (Rod)</para></listitem>

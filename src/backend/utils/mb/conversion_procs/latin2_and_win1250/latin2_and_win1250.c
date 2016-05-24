@@ -13,7 +13,7 @@
 
 #include "mollydb.h"
 #include "fmgr.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 PG_MODULE_MAGIC;
 

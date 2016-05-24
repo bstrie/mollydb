@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_ts_config_map.h
+ * mdb_ts_config_map.h
  *	definition of token mappings for configurations of tsearch
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_ts_config_map.h
+ * src/include/catalog/mdb_ts_config_map.h
  *
  * NOTES
  *		the genbki.pl script reads this file and generates .bki
@@ -24,34 +24,34 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_ts_config_map definition.  cpp turns this into
- *		typedef struct FormData_pg_ts_config_map
+ *		mdb_ts_config_map definition.  cpp turns this into
+ *		typedef struct FormData_mdb_ts_config_map
  * ----------------
  */
 #define TSConfigMapRelationId	3603
 
-CATALOG(pg_ts_config_map,3603) BKI_WITHOUT_OIDS
+CATALOG(mdb_ts_config_map,3603) BKI_WITHOUT_OIDS
 {
 	Oid			mapcfg;			/* OID of configuration owning this entry */
 	int32		maptokentype;	/* token type from parser */
 	int32		mapseqno;		/* order in which to consult dictionaries */
 	Oid			mapdict;		/* dictionary to consult */
-} FormData_pg_ts_config_map;
+} FormData_mdb_ts_config_map;
 
-typedef FormData_pg_ts_config_map *Form_pg_ts_config_map;
+typedef FormData_mdb_ts_config_map *Form_mdb_ts_config_map;
 
 /* ----------------
- *		compiler constants for pg_ts_config_map
+ *		compiler constants for mdb_ts_config_map
  * ----------------
  */
-#define Natts_pg_ts_config_map				4
-#define Anum_pg_ts_config_map_mapcfg		1
-#define Anum_pg_ts_config_map_maptokentype	2
-#define Anum_pg_ts_config_map_mapseqno		3
-#define Anum_pg_ts_config_map_mapdict		4
+#define Natts_mdb_ts_config_map				4
+#define Anum_mdb_ts_config_map_mapcfg		1
+#define Anum_mdb_ts_config_map_maptokentype	2
+#define Anum_mdb_ts_config_map_mapseqno		3
+#define Anum_mdb_ts_config_map_mapdict		4
 
 /* ----------------
- *		initial contents of pg_ts_config_map
+ *		initial contents of mdb_ts_config_map
  * ----------------
  */
 

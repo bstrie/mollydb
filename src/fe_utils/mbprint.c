@@ -19,50 +19,50 @@
 
 /*
  * To avoid version-skew problems, this file must not use declarations
- * from pg_wchar.h: the encoding IDs we are dealing with are determined
+ * from mdb_wchar.h: the encoding IDs we are dealing with are determined
  * by the libpq.so we are linked with, and that might not match the
  * numbers we see at compile time.  (If this file were inside libpq,
  * the problem would go away...)
  *
- * Hence, we have our own definition of pg_wchar, and we get the values
+ * Hence, we have our own definition of mdb_wchar, and we get the values
  * of any needed encoding IDs on-the-fly.
  */
 
-typedef unsigned int pg_wchar;
+typedef unsigned int mdb_wchar;
 
 static int
-pg_get_utf8_id(void)
+mdb_get_utf8_id(void)
 {
 	static int	utf8_id = -1;
 
 	if (utf8_id < 0)
-		utf8_id = pg_char_to_encoding("utf8");
+		utf8_id = mdb_char_to_encoding("utf8");
 	return utf8_id;
 }
 
-#define PG_UTF8		pg_get_utf8_id()
+#define PG_UTF8		mdb_get_utf8_id()
 
 
 /*
  * Convert a UTF-8 character to a Unicode code point.
- * This is a one-character version of pg_utf2wchar_with_len.
+ * This is a one-character version of mdb_utf2wchar_with_len.
  *
  * No error checks here, c must point to a long-enough string.
  */
-static pg_wchar
+static mdb_wchar
 utf8_to_unicode(const unsigned char *c)
 {
 	if ((*c & 0x80) == 0)
-		return (pg_wchar) c[0];
+		return (mdb_wchar) c[0];
 	else if ((*c & 0xe0) == 0xc0)
-		return (pg_wchar) (((c[0] & 0x1f) << 6) |
+		return (mdb_wchar) (((c[0] & 0x1f) << 6) |
 						   (c[1] & 0x3f));
 	else if ((*c & 0xf0) == 0xe0)
-		return (pg_wchar) (((c[0] & 0x0f) << 12) |
+		return (mdb_wchar) (((c[0] & 0x0f) << 12) |
 						   ((c[1] & 0x3f) << 6) |
 						   (c[2] & 0x3f));
 	else if ((*c & 0xf8) == 0xf0)
-		return (pg_wchar) (((c[0] & 0x07) << 18) |
+		return (mdb_wchar) (((c[0] & 0x07) << 18) |
 						   ((c[1] & 0x3f) << 12) |
 						   ((c[2] & 0x3f) << 6) |
 						   (c[3] & 0x3f));
@@ -169,12 +169,12 @@ mb_utf_validate(unsigned char *pwcs)
  */
 
 /*
- * pg_wcswidth is the dumb display-width function.
+ * mdb_wcswidth is the dumb display-width function.
  * It assumes that everything will appear on one line.
- * OTOH it is easier to use than pg_wcssize if this applies to you.
+ * OTOH it is easier to use than mdb_wcssize if this applies to you.
  */
 int
-pg_wcswidth(const char *pwcs, size_t len, int encoding)
+mdb_wcswidth(const char *pwcs, size_t len, int encoding)
 {
 	int			width = 0;
 
@@ -198,17 +198,17 @@ pg_wcswidth(const char *pwcs, size_t len, int encoding)
 }
 
 /*
- * pg_wcssize takes the given string in the given encoding and returns three
+ * mdb_wcssize takes the given string in the given encoding and returns three
  * values:
  *	  result_width: Width in display characters of the longest line in string
  *	  result_height: Number of lines in display output
  *	  result_format_size: Number of bytes required to store formatted
  *		representation of string
  *
- * This MUST be kept in sync with pg_wcsformat!
+ * This MUST be kept in sync with mdb_wcsformat!
  */
 void
-pg_wcssize(const unsigned char *pwcs, size_t len, int encoding,
+mdb_wcssize(const unsigned char *pwcs, size_t len, int encoding,
 		   int *result_width, int *result_height, int *result_format_size)
 {
 	int			w,
@@ -288,10 +288,10 @@ pg_wcssize(const unsigned char *pwcs, size_t len, int encoding,
  *	Format a string into one or more "struct lineptr" lines.
  *	lines[i].ptr == NULL indicates the end of the array.
  *
- * This MUST be kept in sync with pg_wcssize!
+ * This MUST be kept in sync with mdb_wcssize!
  */
 void
-pg_wcsformat(const unsigned char *pwcs, size_t len, int encoding,
+mdb_wcsformat(const unsigned char *pwcs, size_t len, int encoding,
 			 struct lineptr * lines, int count)
 {
 	int			w,

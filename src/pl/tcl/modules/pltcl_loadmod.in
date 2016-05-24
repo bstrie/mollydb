@@ -83,8 +83,8 @@ proc __PLTcl_loadmod_check_table {conn tabname expnames exptypes} {
     set error 0
     set found 0
 
-    pg_select $conn "select C.relname, A.attname, A.attnum, T.typname 	\
-		from pg_catalog.pg_class C, pg_catalog.pg_attribute A, pg_catalog.pg_type T		\
+    mdb_select $conn "select C.relname, A.attname, A.attnum, T.typname 	\
+		from mdb_catalog.mdb_class C, mdb_catalog.mdb_attribute A, mdb_catalog.mdb_type T		\
 		where C.relname = '$tabname'				\
 		  and A.attrelid = C.oid				\
 		  and A.attnum > 0					\
@@ -204,14 +204,14 @@ proc __PLTcl_loadmod_read_current {conn} {
     set errors 0
 
     set curmodlist ""
-    pg_select $conn "select distinct modname from pltcl_modules" mtup {
+    mdb_select $conn "select distinct modname from pltcl_modules" mtup {
 	set mname $mtup(modname);
         lappend curmodlist $mname
     }
 
     foreach mname $curmodlist {
 	set srctext ""
-        pg_select $conn "select * from pltcl_modules		\
+        mdb_select $conn "select * from pltcl_modules		\
 		where modname = '$mname'			\
 		order by modseq" tup {
 	    append srctext $tup(modsrc)
@@ -301,7 +301,7 @@ proc __PLTcl_loadmod_create_tables {conn} {
 
     if {$status(create_table_modules)} {
         if {[catch {
-	        set res [pg_exec $conn				\
+	        set res [mdb_exec $conn				\
 		    "create table pltcl_modules (		\
 		        modname	name,				\
 			modseq	int2,				\
@@ -312,7 +312,7 @@ proc __PLTcl_loadmod_create_tables {conn} {
 	    exit 1
 	}
         if {[catch {
-	        set res [pg_exec $conn				\
+	        set res [mdb_exec $conn				\
 		    "create index pltcl_modules_i 		\
 		        on pltcl_modules using btree		\
 			(modname name_ops);"]
@@ -322,12 +322,12 @@ proc __PLTcl_loadmod_create_tables {conn} {
 	    exit 1
 	}
 	puts "Table pltcl_modules created"
-	pg_result $res -clear
+	mdb_result $res -clear
     }
 
     if {$status(create_table_modfuncs)} {
         if {[catch {
-	        set res [pg_exec $conn				\
+	        set res [mdb_exec $conn				\
 		    "create table pltcl_modfuncs (		\
 		        funcname name,				\
 			modname	 name);"]
@@ -337,7 +337,7 @@ proc __PLTcl_loadmod_create_tables {conn} {
 	    exit 1
 	}
         if {[catch {
-	        set res [pg_exec $conn				\
+	        set res [mdb_exec $conn				\
 		    "create index pltcl_modfuncs_i 		\
 		        on pltcl_modfuncs using hash		\
 			(funcname name_ops);"]
@@ -347,7 +347,7 @@ proc __PLTcl_loadmod_create_tables {conn} {
 	    exit 1
 	}
 	puts "Table pltcl_modfuncs created"
-	pg_result $res -clear
+	mdb_result $res -clear
     }
 }
 
@@ -427,17 +427,17 @@ proc __PLTcl_loadmod_load_modules {conn} {
     foreach modname $modlist {
 	set xname [__PLTcl_loadmod_quote $modname]
 
-        pg_result [pg_exec $conn "begin;"] -clear
+        mdb_result [mdb_exec $conn "begin;"] -clear
 
-	pg_result [pg_exec $conn 				\
+	mdb_result [mdb_exec $conn 				\
 		"delete from pltcl_modules where modname = '$xname'"] -clear
-	pg_result [pg_exec $conn 				\
+	mdb_result [mdb_exec $conn 				\
 		"delete from pltcl_modfuncs where modname = '$xname'"] -clear
 
 	foreach func $funcs($modname) {
 	    set xfunc [__PLTcl_loadmod_quote $func]
-	    pg_result [							\
-	        pg_exec $conn "insert into pltcl_modfuncs values (	\
+	    mdb_result [							\
+	        mdb_exec $conn "insert into pltcl_modfuncs values (	\
 			'$xfunc', '$xname')"				\
 	    ] -clear
 	}
@@ -448,14 +448,14 @@ proc __PLTcl_loadmod_load_modules {conn} {
 	    set xpart [__PLTcl_loadmod_quote $xpart]
 	    set srctext [string range $srctext 4000 end]
 
-	    pg_result [							\
-		pg_exec $conn "insert into pltcl_modules values (	\
+	    mdb_result [							\
+		mdb_exec $conn "insert into pltcl_modules values (	\
 			'$xname', $i, '$xpart')"			\
 	    ] -clear
 	    incr i
 	}
 
-        pg_result [pg_exec $conn "commit;"] -clear
+        mdb_result [mdb_exec $conn "commit;"] -clear
 
 	puts "Successfully loaded/updated module $modname"
     }
@@ -485,7 +485,7 @@ unset __PLTcl_loadmod_allglobs(dummy)
 
 puts ""
 
-set __PLTcl_loadmod_conn [eval pg_connect $dbname $options]
+set __PLTcl_loadmod_conn [eval mdb_connect $dbname $options]
 
 unset i dbname options errors opt val
 
@@ -496,6 +496,6 @@ __PLTcl_loadmod_read_new $__PLTcl_loadmod_conn
 __PLTcl_loadmod_create_tables $__PLTcl_loadmod_conn
 __PLTcl_loadmod_load_modules $__PLTcl_loadmod_conn
 
-pg_disconnect $__PLTcl_loadmod_conn
+mdb_disconnect $__PLTcl_loadmod_conn
 
 puts ""

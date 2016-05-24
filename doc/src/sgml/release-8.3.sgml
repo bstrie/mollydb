@@ -63,13 +63,13 @@
     <listitem>
      <para>
       Protect against race conditions when scanning
-      <structname>pg_tablespace</> (Stephen Frost, Tom Lane)
+      <structname>mdb_tablespace</> (Stephen Frost, Tom Lane)
      </para>
 
      <para>
       <command>CREATE DATABASE</> and <command>DROP DATABASE</> could
       misbehave if there were concurrent updates of
-      <structname>pg_tablespace</> entries.
+      <structname>mdb_tablespace</> entries.
      </para>
     </listitem>
 
@@ -218,7 +218,7 @@
      <para>
       Fix <command>CREATE INDEX CONCURRENTLY</> to use
       in-place updates when changing the state of an index's
-      <structname>pg_index</> row.  This prevents race conditions that could
+      <structname>mdb_index</> row.  This prevents race conditions that could
       cause concurrent sessions to miss updating the target index, thus
       resulting in corrupt concurrently-created indexes.
      </para>
@@ -299,7 +299,7 @@
 
     <listitem>
      <para>
-      Ignore incorrect <structname>pg_attribute</> entries for system
+      Ignore incorrect <structname>mdb_attribute</> entries for system
       columns for views (Tom Lane)
      </para>
 
@@ -362,7 +362,7 @@
 
     <listitem>
      <para>
-      Make <application>pg_ctl</> more robust about reading the
+      Make <application>mdb_ctl</> more robust about reading the
       <filename>postmaster.pid</> file (Heikki Linnakangas)
      </para>
 
@@ -382,7 +382,7 @@
     <listitem>
      <para>
       Fix bugs in the <filename>restore.sql</> script emitted by
-      <application>pg_dump</> in <literal>tar</> output format (Tom Lane)
+      <application>mdb_dump</> in <literal>tar</> output format (Tom Lane)
      </para>
 
      <para>
@@ -394,12 +394,12 @@
 
     <listitem>
      <para>
-      Fix <application>pg_restore</> to accept POSIX-conformant
+      Fix <application>mdb_restore</> to accept POSIX-conformant
       <literal>tar</> files (Brian Weaver, Tom Lane)
      </para>
 
      <para>
-      The original coding of <application>pg_dump</>'s <literal>tar</>
+      The original coding of <application>mdb_dump</>'s <literal>tar</>
       output mode produced files that are not fully conformant with the
       POSIX standard.  This has been corrected for version 9.3.  This
       patch updates previous branches so that they will accept both the
@@ -410,12 +410,12 @@
 
     <listitem>
      <para>
-      Fix <application>pg_resetxlog</> to locate <filename>postmaster.pid</>
+      Fix <application>mdb_resetxlog</> to locate <filename>postmaster.pid</>
       correctly when given a relative path to the data directory (Tom Lane)
      </para>
 
      <para>
-      This mistake could lead to <application>pg_resetxlog</> not noticing
+      This mistake could lead to <application>mdb_resetxlog</> not noticing
       that there is an active postmaster using the data directory.
      </para>
     </listitem>
@@ -693,7 +693,7 @@
     <listitem>
      <para>
       Ensure the <filename>backup_label</> file is fsync'd after
-      <function>pg_start_backup()</> (Dave Kerr)
+      <function>mdb_start_backup()</> (Dave Kerr)
      </para>
     </listitem>
 
@@ -903,12 +903,12 @@
 
     <listitem>
      <para>
-      Fix slow session startup when <structname>pg_attribute</> is very large
+      Fix slow session startup when <structname>mdb_attribute</> is very large
       (Tom Lane)
      </para>
 
      <para>
-      If <structname>pg_attribute</> exceeds one-fourth of
+      If <structname>mdb_attribute</> exceeds one-fourth of
       <varname>shared_buffers</>, cache rebuilding code that is sometimes
       needed during session start would trigger the synchronized-scan logic,
       causing it to take many times longer than normal.  The problem was
@@ -996,12 +996,12 @@
 
     <listitem>
      <para>
-      Fix several performance problems in <application>pg_dump</> when
+      Fix several performance problems in <application>mdb_dump</> when
       the database contains many objects (Jeff Janes, Tom Lane)
      </para>
 
      <para>
-      <application>pg_dump</> could get very slow if the database contained
+      <application>mdb_dump</> could get very slow if the database contained
       many schemas, or if many objects are in dependency loops, or if there
       are many owned sequences.
      </para>
@@ -1078,12 +1078,12 @@
 
     <listitem>
      <para>
-      Convert newlines to spaces in names written in <application>pg_dump</>
+      Convert newlines to spaces in names written in <application>mdb_dump</>
       comments (Robert Haas)
      </para>
 
      <para>
-      <application>pg_dump</> was incautious about sanitizing object names
+      <application>mdb_dump</> was incautious about sanitizing object names
       that are emitted within SQL comments in its output script.  A name
       containing a newline would at least render the script syntactically
       incorrect.  Maliciously crafted object names could present a SQL
@@ -1201,12 +1201,12 @@
 
     <listitem>
      <para>
-      Improve <application>pg_dump</>'s handling of inherited table columns
+      Improve <application>mdb_dump</>'s handling of inherited table columns
       (Tom Lane)
      </para>
 
      <para>
-      <application>pg_dump</> mishandled situations where a child column has
+      <application>mdb_dump</> mishandled situations where a child column has
       a different default expression than its parent column.  If the default
       is textually identical to the parent's default, but not actually the
       same (for instance, because of schema search path differences) it would
@@ -1219,14 +1219,14 @@
 
     <listitem>
      <para>
-      Fix <application>pg_restore</>'s direct-to-database mode for
+      Fix <application>mdb_restore</>'s direct-to-database mode for
       INSERT-style table data (Tom Lane)
      </para>
 
      <para>
       Direct-to-database restores from archive files made with
       <option>--inserts</> or <option>--column-inserts</> options fail when
-      using <application>pg_restore</> from a release dated September or
+      using <application>mdb_restore</> from a release dated September or
       December 2011, as a result of an oversight in a fix for another
       problem.  The archive file itself is not at fault, and text-mode
       output is okay.
@@ -1376,7 +1376,7 @@
       in an existing installation, you can (as a superuser) drop the
       <literal>information_schema</> schema then re-create it by sourcing
       <filename><replaceable>SHAREDIR</>/information_schema.sql</filename>.
-      (Run <literal>pg_config --sharedir</> if you're uncertain where
+      (Run <literal>mdb_config --sharedir</> if you're uncertain where
       <replaceable>SHAREDIR</> is.)  This must be repeated in each database
       to be fixed.
      </para>
@@ -1407,7 +1407,7 @@
 
      <para>
       The typical symptom was transient errors like <quote>missing chunk
-      number 0 for toast value NNNNN in pg_toast_2619</>, where the cited
+      number 0 for toast value NNNNN in mdb_toast_2619</>, where the cited
       toast table would always belong to a system catalog.
      </para>
     </listitem>
@@ -1506,7 +1506,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_dump</> to dump user-defined casts between
+      Fix <application>mdb_dump</> to dump user-defined casts between
       auto-generated types, such as table rowtypes (Tom Lane)
      </para>
     </listitem>
@@ -1773,7 +1773,7 @@
 
     <listitem>
      <para>
-      Fix typo in <function>pg_srand48</> seed initialization (Andres Freund)
+      Fix typo in <function>mdb_srand48</> seed initialization (Andres Freund)
      </para>
 
      <para>
@@ -1812,14 +1812,14 @@
 
     <listitem>
      <para>
-      Fix <function>pg_size_pretty()</> to avoid overflow for inputs close to
+      Fix <function>mdb_size_pretty()</> to avoid overflow for inputs close to
       2^63 (Tom Lane)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      In <application>pg_ctl</>, support silent mode for service registrations
+      In <application>mdb_ctl</>, support silent mode for service registrations
       on Windows (MauMau)
      </para>
     </listitem>
@@ -1833,12 +1833,12 @@
 
     <listitem>
      <para>
-      Fix <application>pg_restore</>'s direct-to-database mode for
+      Fix <application>mdb_restore</>'s direct-to-database mode for
       <varname>standard_conforming_strings</> (Tom Lane)
      </para>
 
      <para>
-      <application>pg_restore</> could emit incorrect commands when restoring
+      <application>mdb_restore</> could emit incorrect commands when restoring
       directly to a database server from an archive file that had been made
       with <varname>standard_conforming_strings</> set to <literal>on</>.
      </para>
@@ -1898,7 +1898,7 @@
      </para>
 
      <para>
-      <filename>contrib/pg_crypto</>'s blowfish encryption code could give
+      <filename>contrib/mdb_crypto</>'s blowfish encryption code could give
       wrong results on platforms where char is signed (which is most),
       leading to encrypted passwords being weaker than they should be.
      </para>
@@ -2048,7 +2048,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_restore</> to cope with long lines (over 1KB) in
+      Fix <application>mdb_restore</> to cope with long lines (over 1KB) in
       TOC files (Tom Lane)
      </para>
     </listitem>
@@ -2098,7 +2098,7 @@
 
     <listitem>
      <para>
-      Fix path separator used by <application>pg_regress</> on Cygwin
+      Fix path separator used by <application>mdb_regress</> on Cygwin
       (Andrew Dunstan)
      </para>
     </listitem>
@@ -2190,13 +2190,13 @@
 
     <listitem>
      <para>
-      Fix <application>pg_restore</>'s text output for large objects (BLOBs)
+      Fix <application>mdb_restore</>'s text output for large objects (BLOBs)
       when <varname>standard_conforming_strings</> is on (Tom Lane)
      </para>
 
      <para>
       Although restoring directly to a database worked correctly, string
-      escaping was incorrect if <application>pg_restore</> was asked for
+      escaping was incorrect if <application>mdb_restore</> was asked for
       SQL text output and <varname>standard_conforming_strings</> had been
       enabled in the source database.
      </para>
@@ -2596,7 +2596,7 @@
 
     <listitem>
      <para>
-      Prevent possible crashes in <function>pg_get_expr()</> by disallowing
+      Prevent possible crashes in <function>mdb_get_expr()</> by disallowing
       it from being called with an argument that is not one of the system
       catalog columns it's intended to be used with
       (Heikki Linnakangas, Tom Lane)
@@ -3289,7 +3289,7 @@
 
     <listitem>
      <para>
-      When reading <filename>pg_hba.conf</> and related files, do not treat
+      When reading <filename>mdb_hba.conf</> and related files, do not treat
       <literal>@something</> as a file inclusion request if the <literal>@</>
       appears inside quote marks; also, never treat <literal>@</> by itself
       as a file inclusion request (Tom)
@@ -3307,7 +3307,7 @@
     <listitem>
      <para>
       Prevent infinite loop on some platforms if a directory is named as
-      an inclusion target in <filename>pg_hba.conf</> and related files
+      an inclusion target in <filename>mdb_hba.conf</> and related files
       (Tom)
      </para>
     </listitem>
@@ -3429,7 +3429,7 @@
      </para>
 
      <para>
-      One known symptom of this bug is that rows in <structname>pg_listener</>
+      One known symptom of this bug is that rows in <structname>mdb_listener</>
       could be dropped under heavy load.
      </para>
     </listitem>
@@ -3722,7 +3722,7 @@
 
     <listitem>
      <para>
-      In <filename>contrib/pg_standby</>, disable triggering failover with a
+      In <filename>contrib/mdb_standby</>, disable triggering failover with a
       signal on Windows (Fujii Masao)
      </para>
 
@@ -3824,7 +3824,7 @@
 
     <listitem>
      <para>
-      Force WAL segment switch during <function>pg_start_backup()</>
+      Force WAL segment switch during <function>mdb_start_backup()</>
       (Heikki)
      </para>
 
@@ -4000,14 +4000,14 @@
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to not go into an infinite loop if
+      Fix <application>mdb_ctl</> to not go into an infinite loop if
       <filename>mollydb.conf</> is empty (Jeff Davis)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Improve <application>pg_dump</>'s efficiency when there are
+      Improve <application>mdb_dump</>'s efficiency when there are
       many large objects (Tamas Vincze)
      </para>
     </listitem>
@@ -4015,13 +4015,13 @@
     <listitem>
      <para>
       Use <literal>SIGUSR1</>, not <literal>SIGQUIT</>, as the
-      failover signal for <application>pg_standby</> (Heikki)
+      failover signal for <application>mdb_standby</> (Heikki)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Make <application>pg_standby</>'s <literal>maxretries</> option
+      Make <application>mdb_standby</>'s <literal>maxretries</> option
       behave as documented (Fujii Masao)
      </para>
     </listitem>
@@ -4221,13 +4221,13 @@
      <para>
       If <command>CLUSTER</> or a rewriting variant of <command>ALTER TABLE</>
       were executed by someone other than the table owner, the
-      <structname>pg_type</> entry for the table's TOAST table would end up
+      <structname>mdb_type</> entry for the table's TOAST table would end up
       marked as owned by that someone.  This caused no immediate problems,
       since the permissions on the TOAST rowtype aren't examined by any
       ordinary database operation.  However, it could lead to unexpected
       failures if one later tried to drop the role that issued the command
       (in 8.1 or 8.2), or <quote>owner of data type appears to be invalid</>
-      warnings from <application>pg_dump</> after having done so (in 8.3).
+      warnings from <application>mdb_dump</> after having done so (in 8.3).
      </para>
     </listitem>
 
@@ -4365,7 +4365,7 @@
 
     <listitem>
      <para>
-      Fix misordering of <application>pg_dump</> output for composite types
+      Fix misordering of <application>mdb_dump</> output for composite types
       (Tom)
      </para>
 
@@ -4447,7 +4447,7 @@
     <listitem>
      <para>
       Allow functions declared as taking <type>ANYARRAY</> to work on
-      the <structname>pg_statistic</> columns of that type (Tom)
+      the <structname>mdb_statistic</> columns of that type (Tom)
      </para>
 
      <para>
@@ -4813,18 +4813,18 @@
 
     <listitem>
      <para>
-      Fix recent breakage of <literal>pg_ctl restart</> (Tom)
+      Fix recent breakage of <literal>mdb_ctl restart</> (Tom)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Ensure <filename>pg_control</> is opened in binary mode
+      Ensure <filename>mdb_control</> is opened in binary mode
       (Itagaki Takahiro)
      </para>
 
      <para>
-      <application>pg_controldata</> and <application>pg_resetxlog</>
+      <application>mdb_controldata</> and <application>mdb_resetxlog</>
       did this incorrectly, and so could fail on Windows.
      </para>
     </listitem>
@@ -4892,7 +4892,7 @@
       might be removed too soon.  The impact of this on actual database
       operations would be minimal, since the system doesn't follow MVCC
       rules while examining catalogs, but it might result in transiently
-      wrong output from <application>pg_dump</> or other client programs.
+      wrong output from <application>mdb_dump</> or other client programs.
      </para>
     </listitem>
 
@@ -4903,19 +4903,19 @@
 
      <para>
       This error may explain some recent reports of failure to remove old
-      <structname>pg_clog</> data.
+      <structname>mdb_clog</> data.
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix incorrect HOT updates after <structname>pg_class</> is reindexed
+      Fix incorrect HOT updates after <structname>mdb_class</> is reindexed
       (Tom)
      </para>
 
      <para>
-      Corruption of <structname>pg_class</> could occur if <literal>REINDEX
-      TABLE pg_class</> was followed in the same session by an <literal>ALTER
+      Corruption of <structname>mdb_class</> could occur if <literal>REINDEX
+      TABLE mdb_class</> was followed in the same session by an <literal>ALTER
       TABLE RENAME</> or <literal>ALTER TABLE SET SCHEMA</> command.
      </para>
     </listitem>
@@ -5077,7 +5077,7 @@
     <listitem>
      <para>
       Allow spaces in the suffix part of an LDAP URL in
-      <filename>pg_hba.conf</> (Tom)
+      <filename>mdb_hba.conf</> (Tom)
      </para>
     </listitem>
 
@@ -5163,14 +5163,14 @@
 
     <listitem>
      <para>
-      Improve <application>pg_dump</> and <application>pg_restore</>'s
+      Improve <application>mdb_dump</> and <application>mdb_restore</>'s
       error reporting after failure to send a SQL command (Tom)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to properly preserve postmaster
+      Fix <application>mdb_ctl</> to properly preserve postmaster
       command-line arguments across a <literal>restart</> (Bruce)
      </para>
     </listitem>
@@ -5178,7 +5178,7 @@
     <listitem>
      <para>
       Fix erroneous WAL file cutoff point calculation in
-      <application>pg_standby</> (Simon)
+      <application>mdb_standby</> (Simon)
      </para>
     </listitem>
 
@@ -5227,7 +5227,7 @@
 
     <listitem>
      <para>
-      Make <function>pg_get_ruledef()</> parenthesize negative constants (Tom)
+      Make <function>mdb_get_ruledef()</> parenthesize negative constants (Tom)
      </para>
 
      <para>
@@ -5238,7 +5238,7 @@
       another recent patch to cause
       <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
-      <application>pg_dump</> output failing to reload, it is being treated
+      <application>mdb_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
       output is actually incorrect are 8.3.1 and 8.2.7.
      </para>
@@ -5247,7 +5247,7 @@
     <listitem>
      <para>
       Make <command>ALTER AGGREGATE ... OWNER TO</> update
-      <structname>pg_shdepend</> (Tom)
+      <structname>mdb_shdepend</> (Tom)
      </para>
 
      <para>
@@ -5350,7 +5350,7 @@
 
     <listitem>
      <para>
-      Fix <function>pg_get_ruledef()</> to show the alias, if any, attached
+      Fix <function>mdb_get_ruledef()</> to show the alias, if any, attached
       to the target table of an <command>UPDATE</> or <command>DELETE</>
       (Tom)
      </para>
@@ -5762,7 +5762,7 @@
      <para>
       A side effect of the fix is that a transaction that has executed
       a not-yet-committed <command>LISTEN</> command will not see any
-      row in <structname>pg_listener</> for the <command>LISTEN</>,
+      row in <structname>mdb_listener</> for the <command>LISTEN</>,
       should it choose to look; formerly it would have.  This behavior
       was never documented one way or the other, but it is possible that
       some applications depend on the old behavior.
@@ -5874,7 +5874,7 @@
 
     <listitem>
      <para>
-      Ensure <structname>pg_stat_activity</>.<structfield>waiting</> flag
+      Ensure <structname>mdb_stat_activity</>.<structfield>waiting</> flag
       is cleared when a lock wait is aborted (Tom)
      </para>
     </listitem>
@@ -5906,12 +5906,12 @@
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to correctly extract the postmaster's port
+      Fix <application>mdb_ctl</> to correctly extract the postmaster's port
       number from command-line options (Itagaki Takahiro, Tom)
      </para>
 
      <para>
-      Previously, <literal>pg_ctl start -w</> could try to contact the
+      Previously, <literal>mdb_ctl start -w</> could try to contact the
       postmaster on the wrong port, leading to bogus reports of startup
       failure.
      </para>
@@ -6132,7 +6132,7 @@
    <title>Migration to Version 8.3</title>
 
    <para>
-    A dump/restore using <application>pg_dump</application> is
+    A dump/restore using <application>mdb_dump</application> is
     required for those wishing to migrate data from any previous
     release.
    </para>
@@ -6226,7 +6226,7 @@ current_date &lt; 2017-11-17
       <para>
        The old naming convention is still honored when possible, but
        application code should no longer depend on it. Instead
-       use the new <literal>pg_type.typarray</literal> column to
+       use the new <literal>mdb_type.typarray</literal> column to
        identify the array data type associated with a given type.
       </para>
      </listitem>
@@ -6313,9 +6313,9 @@ current_date &lt; 2017-11-17
       </para>
 
       <para>
-       For example, <function>pg_database_size()</function> now requires
+       For example, <function>mdb_database_size()</function> now requires
        <literal>CONNECT</> permission, which is granted to everyone by
-       default. <function>pg_tablespace_size()</function> requires
+       default. <function>mdb_tablespace_size()</function> requires
        <literal>CREATE</> permission in the tablespace, or is allowed if
        the tablespace is the default tablespace for the database.
       </para>
@@ -6414,7 +6414,7 @@ current_date &lt; 2017-11-17
       </para>
 
       <para>
-       This was removed because <function>pg_stat_reset()</function>
+       This was removed because <function>mdb_stat_reset()</function>
        can be used for this purpose.
       </para>
      </listitem>
@@ -6661,7 +6661,7 @@ current_date &lt; 2017-11-17
       <para>
        Non-persistent transaction IDs do not increment the global
        transaction counter. Therefore, they reduce the load on
-       <structname>pg_clog</> and increase the time between forced
+       <structname>mdb_clog</> and increase the time between forced
        vacuums to prevent transaction ID wraparound.
        Other performance
        improvements were also made that should improve concurrency.
@@ -6830,7 +6830,7 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        Place temporary tables' TOAST tables in special schemas named
-       <literal>pg_toast_temp_<replaceable>nnn</></literal> (Tom)
+       <literal>mdb_toast_temp_<replaceable>nnn</></literal> (Tom)
       </para>
 
       <para>
@@ -6973,7 +6973,7 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        Autovacuum now reports its activity start time in
-       <literal>pg_stat_activity</literal> (Tom)
+       <literal>mdb_stat_activity</literal> (Tom)
       </para>
      </listitem>
 
@@ -7006,7 +7006,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       New system view <literal>pg_stat_bgwriter</literal> displays
+       New system view <literal>mdb_stat_bgwriter</literal> displays
        statistics about background writer activity (Magnus)
       </para>
      </listitem>
@@ -7014,14 +7014,14 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        Add new columns for database-wide tuple statistics to
-       <literal>pg_stat_database</literal> (Magnus)
+       <literal>mdb_stat_database</literal> (Magnus)
       </para>
      </listitem>
 
      <listitem>
       <para>
        Add an <literal>xact_start</literal> (transaction start time) column to
-       <literal>pg_stat_activity</literal> (Neil)
+       <literal>mdb_stat_activity</literal> (Neil)
       </para>
 
       <para>
@@ -7032,7 +7032,7 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        Add <literal>n_live_tuples</> and <literal>n_dead_tuples</> columns
-       to <literal>pg_stat_all_tables</literal> and related views (Glen
+       to <literal>mdb_stat_all_tables</literal> and related views (Glen
        Parker)
       </para>
      </listitem>
@@ -7419,7 +7419,7 @@ current_date &lt; 2017-11-17
       <para>
        While this is reasonably safe, some administrators might wish to
        revoke the privilege. It is controlled by
-       <structname>pg_pltemplate</>.<structfield>tmpldbacreate</>.
+       <structname>mdb_pltemplate</>.<structfield>tmpldbacreate</>.
       </para>
      </listitem>
 
@@ -7620,7 +7620,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       Add <function>pg_stat_clear_snapshot()</function> to discard
+       Add <function>mdb_stat_clear_snapshot()</function> to discard
        statistics snapshots collected during the current transaction
        (Tom)
       </para>
@@ -7817,7 +7817,7 @@ current_date &lt; 2017-11-17
       <para>
        Allow type-name arguments to PL/Perl
        <function>spi_prepare()</function> to be data type aliases in
-       addition to names found in <literal>pg_type</literal> (Andrew)
+       addition to names found in <literal>mdb_type</literal> (Andrew)
       </para>
      </listitem>
 
@@ -7825,7 +7825,7 @@ current_date &lt; 2017-11-17
       <para>
        Allow type-name arguments to PL/Python
        <function>plpy.prepare()</function> to be data type aliases in
-       addition to names found in <literal>pg_type</literal> (Andrew)
+       addition to names found in <literal>mdb_type</literal> (Andrew)
       </para>
      </listitem>
 
@@ -7833,7 +7833,7 @@ current_date &lt; 2017-11-17
       <para>
        Allow type-name arguments to PL/Tcl <function>spi_prepare</> to
        be data type aliases in addition to names found in
-       <literal>pg_type</literal> (Andrew)
+       <literal>mdb_type</literal> (Andrew)
       </para>
      </listitem>
 
@@ -7956,31 +7956,31 @@ current_date &lt; 2017-11-17
    </sect3>
 
    <sect3>
-    <title><link linkend="APP-PGDUMP"><application>pg_dump</></link></title>
+    <title><link linkend="APP-PGDUMP"><application>mdb_dump</></link></title>
     <itemizedlist>
 
      <listitem>
       <para>
        Add <literal>--tablespaces-only</> and <literal>--roles-only</>
-       options to <application>pg_dumpall</application> (Dave Page)
+       options to <application>mdb_dumpall</application> (Dave Page)
       </para>
      </listitem>
 
      <listitem>
       <para>
        Add an output file option to
-       <application>pg_dumpall</application> (Dave Page)
+       <application>mdb_dumpall</application> (Dave Page)
       </para>
 
       <para>
        This is primarily useful on Windows, where output redirection of
-       child <application>pg_dump</application> processes does not work.
+       child <application>mdb_dump</application> processes does not work.
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Allow <application>pg_dumpall</> to accept an initial-connection
+       Allow <application>mdb_dumpall</> to accept an initial-connection
        database name rather than the default
        <literal>template1</literal> (Dave Page)
       </para>
@@ -8017,26 +8017,26 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        In <application>initdb</>, allow the location of the
-       <filename>pg_xlog</filename> directory to be specified
+       <filename>mdb_xlog</filename> directory to be specified
        (Euler Taveira de Oliveira)
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Enable server core dump generation in <application>pg_regress</>
+       Enable server core dump generation in <application>mdb_regress</>
        on supported operating systems (Andrew)
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Add a <literal>-t</> (timeout) parameter to <application>pg_ctl</>
+       Add a <literal>-t</> (timeout) parameter to <application>mdb_ctl</>
        (Bruce)
       </para>
 
       <para>
-       This controls how long <application>pg_ctl</> will wait when waiting
+       This controls how long <application>mdb_ctl</> will wait when waiting
        for server startup or shutdown.  Formerly the timeout was hard-wired
        as 60 seconds.
       </para>
@@ -8044,7 +8044,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       Add a <application>pg_ctl</> option to control generation
+       Add a <application>mdb_ctl</> option to control generation
        of server core dumps (Andrew)
       </para>
      </listitem>
@@ -8290,7 +8290,7 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        Fix <acronym>PGXS</> so extensions can be built against MollyDB
-       installations whose <application>pg_config</> program does not
+       installations whose <application>mdb_config</> program does not
        appear first in the <varname>PATH</> (Tom)
       </para>
      </listitem>
@@ -8340,7 +8340,7 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        Move <literal>NAMEDATALEN</> definition from
-       <filename>mollydb_ext.h</> to <filename>pg_config_manual.h</>
+       <filename>mollydb_ext.h</> to <filename>mdb_config_manual.h</>
        (Peter)
       </para>
      </listitem>
@@ -8380,7 +8380,7 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        <function>quote_identifier()</function> and
-       <application>pg_dump</application> no longer quote keywords that are
+       <application>mdb_dump</application> no longer quote keywords that are
        unreserved according to the grammar (Tom)
       </para>
      </listitem>
@@ -8447,7 +8447,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       Add <filename>contrib/pg_standby</filename> module for controlling
+       Add <filename>contrib/mdb_standby</filename> module for controlling
        warm standby operation (Simon)
       </para>
      </listitem>
@@ -8504,7 +8504,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       Add GIN support for <filename>contrib/pg_trgm</> (Guillaume Smet, Teodor)
+       Add GIN support for <filename>contrib/mdb_trgm</> (Guillaume Smet, Teodor)
       </para>
      </listitem>
 

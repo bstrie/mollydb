@@ -19,11 +19,11 @@
 
 #include <ctype.h>
 
-#include "catalog/pg_collation.h"
-#include "mb/pg_wchar.h"
+#include "catalog/mdb_collation.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "utils/builtins.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 
 
 #define LIKE_TRUE						1
@@ -32,18 +32,18 @@
 
 
 static int SB_MatchText(char *t, int tlen, char *p, int plen,
-			 pg_locale_t locale, bool locale_is_c);
+			 mdb_locale_t locale, bool locale_is_c);
 static text *SB_do_like_escape(text *, text *);
 
 static int MB_MatchText(char *t, int tlen, char *p, int plen,
-			 pg_locale_t locale, bool locale_is_c);
+			 mdb_locale_t locale, bool locale_is_c);
 static text *MB_do_like_escape(text *, text *);
 
 static int UTF8_MatchText(char *t, int tlen, char *p, int plen,
-			   pg_locale_t locale, bool locale_is_c);
+			   mdb_locale_t locale, bool locale_is_c);
 
 static int SB_IMatchText(char *t, int tlen, char *p, int plen,
-			  pg_locale_t locale, bool locale_is_c);
+			  mdb_locale_t locale, bool locale_is_c);
 
 static int	GenericMatchText(char *s, int slen, char *p, int plen);
 static int	Generic_Text_IC_like(text *str, text *pat, Oid collation);
@@ -62,8 +62,8 @@ wchareq(char *p1, char *p2)
 	if (*p1 != *p2)
 		return 0;
 
-	p1_len = pg_mblen(p1);
-	if (pg_mblen(p2) != p1_len)
+	p1_len = mdb_mblen(p1);
+	if (mdb_mblen(p2) != p1_len)
 		return 0;
 
 	/* They are the same length */
@@ -90,16 +90,16 @@ wchareq(char *p1, char *p2)
  * fold-on-the-fly processing, however.
  */
 static char
-SB_lower_char(unsigned char c, pg_locale_t locale, bool locale_is_c)
+SB_lower_char(unsigned char c, mdb_locale_t locale, bool locale_is_c)
 {
 	if (locale_is_c)
-		return pg_ascii_tolower(c);
+		return mdb_ascii_tolower(c);
 #ifdef HAVE_LOCALE_T
 	else if (locale)
 		return tolower_l(c, locale);
 #endif
 	else
-		return pg_tolower(c);
+		return mdb_tolower(c);
 }
 
 
@@ -108,9 +108,9 @@ SB_lower_char(unsigned char c, pg_locale_t locale, bool locale_is_c)
 /* Set up to compile like_match.c for multibyte characters */
 #define CHAREQ(p1, p2) wchareq((p1), (p2))
 #define NextChar(p, plen) \
-	do { int __l = pg_mblen(p); (p) +=__l; (plen) -=__l; } while (0)
+	do { int __l = mdb_mblen(p); (p) +=__l; (plen) -=__l; } while (0)
 #define CopyAdvChar(dst, src, srclen) \
-	do { int __l = pg_mblen(src); \
+	do { int __l = mdb_mblen(src); \
 		 (srclen) -= __l; \
 		 while (__l-- > 0) \
 			 *(dst)++ = *(src)++; \
@@ -150,7 +150,7 @@ SB_lower_char(unsigned char c, pg_locale_t locale, bool locale_is_c)
 static inline int
 GenericMatchText(char *s, int slen, char *p, int plen)
 {
-	if (pg_database_encoding_max_length() == 1)
+	if (mdb_database_encoding_max_length() == 1)
 		return SB_MatchText(s, slen, p, plen, 0, true);
 	else if (GetDatabaseEncoding() == PG_UTF8)
 		return UTF8_MatchText(s, slen, p, plen, 0, true);
@@ -172,7 +172,7 @@ Generic_Text_IC_like(text *str, text *pat, Oid collation)
 	 * character.  In the multi-byte case we don't have much choice :-(
 	 */
 
-	if (pg_database_encoding_max_length() > 1)
+	if (mdb_database_encoding_max_length() > 1)
 	{
 		/* lower's result is never packed, so OK to use old macros here */
 		pat = DatumGetTextP(DirectFunctionCall1Coll(lower, collation,
@@ -194,7 +194,7 @@ Generic_Text_IC_like(text *str, text *pat, Oid collation)
 		 * Here we need to prepare locale information for SB_lower_char. This
 		 * should match the methods used in str_tolower().
 		 */
-		pg_locale_t locale = 0;
+		mdb_locale_t locale = 0;
 		bool		locale_is_c = false;
 
 		if (lc_ctype_is_c(collation))
@@ -212,7 +212,7 @@ Generic_Text_IC_like(text *str, text *pat, Oid collation)
 						 errmsg("could not determine which collation to use for ILIKE"),
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
-			locale = pg_newlocale_from_collation(collation);
+			locale = mdb_newlocale_from_collation(collation);
 		}
 
 		p = VARDATA_ANY(pat);
@@ -422,7 +422,7 @@ like_escape(PG_FUNCTION_ARGS)
 	text	   *esc = PG_GETARG_TEXT_PP(1);
 	text	   *result;
 
-	if (pg_database_encoding_max_length() == 1)
+	if (mdb_database_encoding_max_length() == 1)
 		result = SB_do_like_escape(pat, esc);
 	else
 		result = MB_do_like_escape(pat, esc);

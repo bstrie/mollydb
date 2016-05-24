@@ -6,7 +6,7 @@
 
 #include "mollydb.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "utils/memutils.h"
 #include "utils/palloc.h"
 
@@ -54,7 +54,7 @@ PLyUnicode_Bytes(PyObject *unicode)
 	{
 		PG_TRY();
 		{
-			encoded = pg_any_to_server(utf8string,
+			encoded = mdb_any_to_server(utf8string,
 									   strlen(utf8string),
 									   PG_UTF8);
 		}
@@ -71,7 +71,7 @@ PLyUnicode_Bytes(PyObject *unicode)
 	/* finally, build a bytes object in the server encoding */
 	rv = PyBytes_FromStringAndSize(encoded, strlen(encoded));
 
-	/* if pg_any_to_server allocated memory, free it now */
+	/* if mdb_any_to_server allocated memory, free it now */
 	if (utf8string != encoded)
 		pfree(encoded);
 
@@ -111,7 +111,7 @@ PLyUnicode_FromStringAndSize(const char *s, Py_ssize_t size)
 	char	   *utf8string;
 	PyObject   *o;
 
-	utf8string = pg_server_to_any(s, size, PG_UTF8);
+	utf8string = mdb_server_to_any(s, size, PG_UTF8);
 
 	if (utf8string == s)
 	{

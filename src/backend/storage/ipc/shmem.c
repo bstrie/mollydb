@@ -68,7 +68,7 @@
 #include "access/transam.h"
 #include "miscadmin.h"
 #include "storage/lwlock.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "storage/shmem.h"
 #include "storage/spin.h"
 

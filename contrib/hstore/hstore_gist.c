@@ -5,8 +5,8 @@
 
 #include "access/gist.h"
 #include "access/stratnum.h"
-#include "catalog/pg_type.h"
-#include "utils/pg_crc.h"
+#include "catalog/mdb_type.h"
+#include "utils/mdb_crc.h"
 
 #include "hstore.h"
 
@@ -69,10 +69,10 @@ typedef struct
 #define WISH_F(a,b,c) (double)( -(double)(((a)-(b))*((a)-(b))*((a)-(b)))*(c) )
 
 /* shorthand for calculating CRC-32 of a single chunk of data. */
-static pg_crc32
+static mdb_crc32
 crc32_sz(char *buf, int size)
 {
-	pg_crc32	crc;
+	mdb_crc32	crc;
 
 	INIT_TRADITIONAL_CRC32(crc);
 	COMP_TRADITIONAL_CRC32(crc, buf, size);

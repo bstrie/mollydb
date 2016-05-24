@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_type.c
- *	  routines to support manipulation of the pg_type relation
+ * mdb_type.c
+ *	  routines to support manipulation of the mdb_type relation
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_type.c
+ *	  src/backend/catalog/mdb_type.c
  *
  *-------------------------------------------------------------------------
  */
@@ -21,11 +21,11 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
-#include "catalog/pg_type_fn.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
+#include "catalog/mdb_type_fn.h"
 #include "commands/typecmds.h"
 #include "miscadmin.h"
 #include "parser/scansup.h"
@@ -36,13 +36,13 @@
 #include "utils/rel.h"
 #include "utils/syscache.h"
 
-/* Potentially set by pg_upgrade_support functions */
-Oid			binary_upgrade_next_pg_type_oid = InvalidOid;
+/* Potentially set by mdb_upgrade_support functions */
+Oid			binary_upgrade_next_mdb_type_oid = InvalidOid;
 
 /* ----------------------------------------------------------------
  *		TypeShellMake
  *
- *		This procedure inserts a "shell" tuple into the pg_type relation.
+ *		This procedure inserts a "shell" tuple into the mdb_type relation.
  *		The type tuple inserted has valid but dummy values, and its
  *		"typisdefined" field is false indicating it's not really defined.
  *
@@ -55,12 +55,12 @@ Oid			binary_upgrade_next_pg_type_oid = InvalidOid;
 ObjectAddress
 TypeShellMake(const char *typeName, Oid typeNamespace, Oid ownerId)
 {
-	Relation	pg_type_desc;
+	Relation	mdb_type_desc;
 	TupleDesc	tupDesc;
 	int			i;
 	HeapTuple	tup;
-	Datum		values[Natts_pg_type];
-	bool		nulls[Natts_pg_type];
+	Datum		values[Natts_mdb_type];
+	bool		nulls[Natts_mdb_type];
 	Oid			typoid;
 	NameData	name;
 	ObjectAddress address;
@@ -68,15 +68,15 @@ TypeShellMake(const char *typeName, Oid typeNamespace, Oid ownerId)
 	Assert(PointerIsValid(typeName));
 
 	/*
-	 * open pg_type
+	 * open mdb_type
 	 */
-	pg_type_desc = heap_open(TypeRelationId, RowExclusiveLock);
-	tupDesc = pg_type_desc->rd_att;
+	mdb_type_desc = heap_open(TypeRelationId, RowExclusiveLock);
+	tupDesc = mdb_type_desc->rd_att;
 
 	/*
 	 * initialize our *nulls and *values arrays
 	 */
-	for (i = 0; i < Natts_pg_type; ++i)
+	for (i = 0; i < Natts_mdb_type; ++i)
 	{
 		nulls[i] = false;
 		values[i] = (Datum) NULL;		/* redundant, but safe */
@@ -91,60 +91,60 @@ TypeShellMake(const char *typeName, Oid typeNamespace, Oid ownerId)
 	 * mistaken for a usable type.
 	 */
 	namestrcpy(&name, typeName);
-	values[Anum_pg_type_typname - 1] = NameGetDatum(&name);
-	values[Anum_pg_type_typnamespace - 1] = ObjectIdGetDatum(typeNamespace);
-	values[Anum_pg_type_typowner - 1] = ObjectIdGetDatum(ownerId);
-	values[Anum_pg_type_typlen - 1] = Int16GetDatum(sizeof(int32));
-	values[Anum_pg_type_typbyval - 1] = BoolGetDatum(true);
-	values[Anum_pg_type_typtype - 1] = CharGetDatum(TYPTYPE_PSEUDO);
-	values[Anum_pg_type_typcategory - 1] = CharGetDatum(TYPCATEGORY_PSEUDOTYPE);
-	values[Anum_pg_type_typispreferred - 1] = BoolGetDatum(false);
-	values[Anum_pg_type_typisdefined - 1] = BoolGetDatum(false);
-	values[Anum_pg_type_typdelim - 1] = CharGetDatum(DEFAULT_TYPDELIM);
-	values[Anum_pg_type_typrelid - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_type_typelem - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_type_typarray - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_type_typinput - 1] = ObjectIdGetDatum(F_SHELL_IN);
-	values[Anum_pg_type_typoutput - 1] = ObjectIdGetDatum(F_SHELL_OUT);
-	values[Anum_pg_type_typreceive - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_type_typsend - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_type_typmodin - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_type_typmodout - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_type_typanalyze - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_type_typalign - 1] = CharGetDatum('i');
-	values[Anum_pg_type_typstorage - 1] = CharGetDatum('p');
-	values[Anum_pg_type_typnotnull - 1] = BoolGetDatum(false);
-	values[Anum_pg_type_typbasetype - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_type_typtypmod - 1] = Int32GetDatum(-1);
-	values[Anum_pg_type_typndims - 1] = Int32GetDatum(0);
-	values[Anum_pg_type_typcollation - 1] = ObjectIdGetDatum(InvalidOid);
-	nulls[Anum_pg_type_typdefaultbin - 1] = true;
-	nulls[Anum_pg_type_typdefault - 1] = true;
-	nulls[Anum_pg_type_typacl - 1] = true;
+	values[Anum_mdb_type_typname - 1] = NameGetDatum(&name);
+	values[Anum_mdb_type_typnamespace - 1] = ObjectIdGetDatum(typeNamespace);
+	values[Anum_mdb_type_typowner - 1] = ObjectIdGetDatum(ownerId);
+	values[Anum_mdb_type_typlen - 1] = Int16GetDatum(sizeof(int32));
+	values[Anum_mdb_type_typbyval - 1] = BoolGetDatum(true);
+	values[Anum_mdb_type_typtype - 1] = CharGetDatum(TYPTYPE_PSEUDO);
+	values[Anum_mdb_type_typcategory - 1] = CharGetDatum(TYPCATEGORY_PSEUDOTYPE);
+	values[Anum_mdb_type_typispreferred - 1] = BoolGetDatum(false);
+	values[Anum_mdb_type_typisdefined - 1] = BoolGetDatum(false);
+	values[Anum_mdb_type_typdelim - 1] = CharGetDatum(DEFAULT_TYPDELIM);
+	values[Anum_mdb_type_typrelid - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_type_typelem - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_type_typarray - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_type_typinput - 1] = ObjectIdGetDatum(F_SHELL_IN);
+	values[Anum_mdb_type_typoutput - 1] = ObjectIdGetDatum(F_SHELL_OUT);
+	values[Anum_mdb_type_typreceive - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_type_typsend - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_type_typmodin - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_type_typmodout - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_type_typanalyze - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_type_typalign - 1] = CharGetDatum('i');
+	values[Anum_mdb_type_typstorage - 1] = CharGetDatum('p');
+	values[Anum_mdb_type_typnotnull - 1] = BoolGetDatum(false);
+	values[Anum_mdb_type_typbasetype - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_type_typtypmod - 1] = Int32GetDatum(-1);
+	values[Anum_mdb_type_typndims - 1] = Int32GetDatum(0);
+	values[Anum_mdb_type_typcollation - 1] = ObjectIdGetDatum(InvalidOid);
+	nulls[Anum_mdb_type_typdefaultbin - 1] = true;
+	nulls[Anum_mdb_type_typdefault - 1] = true;
+	nulls[Anum_mdb_type_typacl - 1] = true;
 
 	/*
 	 * create a new type tuple
 	 */
 	tup = heap_form_tuple(tupDesc, values, nulls);
 
-	/* Use binary-upgrade override for pg_type.oid? */
+	/* Use binary-upgrade override for mdb_type.oid? */
 	if (IsBinaryUpgrade)
 	{
-		if (!OidIsValid(binary_upgrade_next_pg_type_oid))
+		if (!OidIsValid(binary_upgrade_next_mdb_type_oid))
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-			errmsg("pg_type OID value not set when in binary upgrade mode")));
+			errmsg("mdb_type OID value not set when in binary upgrade mode")));
 
-		HeapTupleSetOid(tup, binary_upgrade_next_pg_type_oid);
-		binary_upgrade_next_pg_type_oid = InvalidOid;
+		HeapTupleSetOid(tup, binary_upgrade_next_mdb_type_oid);
+		binary_upgrade_next_mdb_type_oid = InvalidOid;
 	}
 
 	/*
 	 * insert the tuple in the relation and get the tuple's oid.
 	 */
-	typoid = simple_heap_insert(pg_type_desc, tup);
+	typoid = simple_heap_insert(mdb_type_desc, tup);
 
-	CatalogUpdateIndexes(pg_type_desc, tup);
+	CatalogUpdateIndexes(mdb_type_desc, tup);
 
 	/*
 	 * Create dependencies.  We can/must skip this in bootstrap mode.
@@ -178,7 +178,7 @@ TypeShellMake(const char *typeName, Oid typeNamespace, Oid ownerId)
 	 * clean up and return the type-oid
 	 */
 	heap_freetuple(tup);
-	heap_close(pg_type_desc, RowExclusiveLock);
+	heap_close(mdb_type_desc, RowExclusiveLock);
 
 	return address;
 }
@@ -226,13 +226,13 @@ TypeCreate(Oid newTypeOid,
 		   bool typeNotNull,
 		   Oid typeCollation)
 {
-	Relation	pg_type_desc;
+	Relation	mdb_type_desc;
 	Oid			typeObjectId;
 	bool		rebuildDeps = false;
 	HeapTuple	tup;
-	bool		nulls[Natts_pg_type];
-	bool		replaces[Natts_pg_type];
-	Datum		values[Natts_pg_type];
+	bool		nulls[Natts_mdb_type];
+	bool		replaces[Natts_mdb_type];
+	Datum		values[Natts_mdb_type];
 	NameData	name;
 	int			i;
 	Acl		   *typacl = NULL;
@@ -326,7 +326,7 @@ TypeCreate(Oid newTypeOid,
 	/*
 	 * initialize arrays needed for heap_form_tuple or heap_modify_tuple
 	 */
-	for (i = 0; i < Natts_pg_type; ++i)
+	for (i = 0; i < Natts_mdb_type; ++i)
 	{
 		nulls[i] = false;
 		replaces[i] = true;
@@ -337,65 +337,65 @@ TypeCreate(Oid newTypeOid,
 	 * insert data values
 	 */
 	namestrcpy(&name, typeName);
-	values[Anum_pg_type_typname - 1] = NameGetDatum(&name);
-	values[Anum_pg_type_typnamespace - 1] = ObjectIdGetDatum(typeNamespace);
-	values[Anum_pg_type_typowner - 1] = ObjectIdGetDatum(ownerId);
-	values[Anum_pg_type_typlen - 1] = Int16GetDatum(internalSize);
-	values[Anum_pg_type_typbyval - 1] = BoolGetDatum(passedByValue);
-	values[Anum_pg_type_typtype - 1] = CharGetDatum(typeType);
-	values[Anum_pg_type_typcategory - 1] = CharGetDatum(typeCategory);
-	values[Anum_pg_type_typispreferred - 1] = BoolGetDatum(typePreferred);
-	values[Anum_pg_type_typisdefined - 1] = BoolGetDatum(true);
-	values[Anum_pg_type_typdelim - 1] = CharGetDatum(typDelim);
-	values[Anum_pg_type_typrelid - 1] = ObjectIdGetDatum(relationOid);
-	values[Anum_pg_type_typelem - 1] = ObjectIdGetDatum(elementType);
-	values[Anum_pg_type_typarray - 1] = ObjectIdGetDatum(arrayType);
-	values[Anum_pg_type_typinput - 1] = ObjectIdGetDatum(inputProcedure);
-	values[Anum_pg_type_typoutput - 1] = ObjectIdGetDatum(outputProcedure);
-	values[Anum_pg_type_typreceive - 1] = ObjectIdGetDatum(receiveProcedure);
-	values[Anum_pg_type_typsend - 1] = ObjectIdGetDatum(sendProcedure);
-	values[Anum_pg_type_typmodin - 1] = ObjectIdGetDatum(typmodinProcedure);
-	values[Anum_pg_type_typmodout - 1] = ObjectIdGetDatum(typmodoutProcedure);
-	values[Anum_pg_type_typanalyze - 1] = ObjectIdGetDatum(analyzeProcedure);
-	values[Anum_pg_type_typalign - 1] = CharGetDatum(alignment);
-	values[Anum_pg_type_typstorage - 1] = CharGetDatum(storage);
-	values[Anum_pg_type_typnotnull - 1] = BoolGetDatum(typeNotNull);
-	values[Anum_pg_type_typbasetype - 1] = ObjectIdGetDatum(baseType);
-	values[Anum_pg_type_typtypmod - 1] = Int32GetDatum(typeMod);
-	values[Anum_pg_type_typndims - 1] = Int32GetDatum(typNDims);
-	values[Anum_pg_type_typcollation - 1] = ObjectIdGetDatum(typeCollation);
+	values[Anum_mdb_type_typname - 1] = NameGetDatum(&name);
+	values[Anum_mdb_type_typnamespace - 1] = ObjectIdGetDatum(typeNamespace);
+	values[Anum_mdb_type_typowner - 1] = ObjectIdGetDatum(ownerId);
+	values[Anum_mdb_type_typlen - 1] = Int16GetDatum(internalSize);
+	values[Anum_mdb_type_typbyval - 1] = BoolGetDatum(passedByValue);
+	values[Anum_mdb_type_typtype - 1] = CharGetDatum(typeType);
+	values[Anum_mdb_type_typcategory - 1] = CharGetDatum(typeCategory);
+	values[Anum_mdb_type_typispreferred - 1] = BoolGetDatum(typePreferred);
+	values[Anum_mdb_type_typisdefined - 1] = BoolGetDatum(true);
+	values[Anum_mdb_type_typdelim - 1] = CharGetDatum(typDelim);
+	values[Anum_mdb_type_typrelid - 1] = ObjectIdGetDatum(relationOid);
+	values[Anum_mdb_type_typelem - 1] = ObjectIdGetDatum(elementType);
+	values[Anum_mdb_type_typarray - 1] = ObjectIdGetDatum(arrayType);
+	values[Anum_mdb_type_typinput - 1] = ObjectIdGetDatum(inputProcedure);
+	values[Anum_mdb_type_typoutput - 1] = ObjectIdGetDatum(outputProcedure);
+	values[Anum_mdb_type_typreceive - 1] = ObjectIdGetDatum(receiveProcedure);
+	values[Anum_mdb_type_typsend - 1] = ObjectIdGetDatum(sendProcedure);
+	values[Anum_mdb_type_typmodin - 1] = ObjectIdGetDatum(typmodinProcedure);
+	values[Anum_mdb_type_typmodout - 1] = ObjectIdGetDatum(typmodoutProcedure);
+	values[Anum_mdb_type_typanalyze - 1] = ObjectIdGetDatum(analyzeProcedure);
+	values[Anum_mdb_type_typalign - 1] = CharGetDatum(alignment);
+	values[Anum_mdb_type_typstorage - 1] = CharGetDatum(storage);
+	values[Anum_mdb_type_typnotnull - 1] = BoolGetDatum(typeNotNull);
+	values[Anum_mdb_type_typbasetype - 1] = ObjectIdGetDatum(baseType);
+	values[Anum_mdb_type_typtypmod - 1] = Int32GetDatum(typeMod);
+	values[Anum_mdb_type_typndims - 1] = Int32GetDatum(typNDims);
+	values[Anum_mdb_type_typcollation - 1] = ObjectIdGetDatum(typeCollation);
 
 	/*
 	 * initialize the default binary value for this type.  Check for nulls of
 	 * course.
 	 */
 	if (defaultTypeBin)
-		values[Anum_pg_type_typdefaultbin - 1] = CStringGetTextDatum(defaultTypeBin);
+		values[Anum_mdb_type_typdefaultbin - 1] = CStringGetTextDatum(defaultTypeBin);
 	else
-		nulls[Anum_pg_type_typdefaultbin - 1] = true;
+		nulls[Anum_mdb_type_typdefaultbin - 1] = true;
 
 	/*
 	 * initialize the default value for this type.
 	 */
 	if (defaultTypeValue)
-		values[Anum_pg_type_typdefault - 1] = CStringGetTextDatum(defaultTypeValue);
+		values[Anum_mdb_type_typdefault - 1] = CStringGetTextDatum(defaultTypeValue);
 	else
-		nulls[Anum_pg_type_typdefault - 1] = true;
+		nulls[Anum_mdb_type_typdefault - 1] = true;
 
 	typacl = get_user_default_acl(ACL_OBJECT_TYPE, ownerId,
 								  typeNamespace);
 	if (typacl != NULL)
-		values[Anum_pg_type_typacl - 1] = PointerGetDatum(typacl);
+		values[Anum_mdb_type_typacl - 1] = PointerGetDatum(typacl);
 	else
-		nulls[Anum_pg_type_typacl - 1] = true;
+		nulls[Anum_mdb_type_typacl - 1] = true;
 
 	/*
-	 * open pg_type and prepare to insert or update a row.
+	 * open mdb_type and prepare to insert or update a row.
 	 *
 	 * NOTE: updating will not work correctly in bootstrap mode; but we don't
 	 * expect to be overwriting any shell types in bootstrap mode.
 	 */
-	pg_type_desc = heap_open(TypeRelationId, RowExclusiveLock);
+	mdb_type_desc = heap_open(TypeRelationId, RowExclusiveLock);
 
 	tup = SearchSysCacheCopy2(TYPENAMENSP,
 							  CStringGetDatum(typeName),
@@ -406,7 +406,7 @@ TypeCreate(Oid newTypeOid,
 		 * check that the type is not already defined.  It may exist as a
 		 * shell type, however.
 		 */
-		if (((Form_pg_type) GETSTRUCT(tup))->typisdefined)
+		if (((Form_mdb_type) GETSTRUCT(tup))->typisdefined)
 			ereport(ERROR,
 					(errcode(ERRCODE_DUPLICATE_OBJECT),
 					 errmsg("type \"%s\" already exists", typeName)));
@@ -414,7 +414,7 @@ TypeCreate(Oid newTypeOid,
 		/*
 		 * shell type must have been created by same owner
 		 */
-		if (((Form_pg_type) GETSTRUCT(tup))->typowner != ownerId)
+		if (((Form_mdb_type) GETSTRUCT(tup))->typowner != ownerId)
 			aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_TYPE, typeName);
 
 		/* trouble if caller wanted to force the OID */
@@ -425,12 +425,12 @@ TypeCreate(Oid newTypeOid,
 		 * Okay to update existing shell type tuple
 		 */
 		tup = heap_modify_tuple(tup,
-								RelationGetDescr(pg_type_desc),
+								RelationGetDescr(mdb_type_desc),
 								values,
 								nulls,
 								replaces);
 
-		simple_heap_update(pg_type_desc, &tup->t_self, tup);
+		simple_heap_update(mdb_type_desc, &tup->t_self, tup);
 
 		typeObjectId = HeapTupleGetOid(tup);
 
@@ -438,31 +438,31 @@ TypeCreate(Oid newTypeOid,
 	}
 	else
 	{
-		tup = heap_form_tuple(RelationGetDescr(pg_type_desc),
+		tup = heap_form_tuple(RelationGetDescr(mdb_type_desc),
 							  values,
 							  nulls);
 
 		/* Force the OID if requested by caller */
 		if (OidIsValid(newTypeOid))
 			HeapTupleSetOid(tup, newTypeOid);
-		/* Use binary-upgrade override for pg_type.oid, if supplied. */
+		/* Use binary-upgrade override for mdb_type.oid, if supplied. */
 		else if (IsBinaryUpgrade)
 		{
-			if (!OidIsValid(binary_upgrade_next_pg_type_oid))
+			if (!OidIsValid(binary_upgrade_next_mdb_type_oid))
 				ereport(ERROR,
 						(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-						 errmsg("pg_type OID value not set when in binary upgrade mode")));
+						 errmsg("mdb_type OID value not set when in binary upgrade mode")));
 
-			HeapTupleSetOid(tup, binary_upgrade_next_pg_type_oid);
-			binary_upgrade_next_pg_type_oid = InvalidOid;
+			HeapTupleSetOid(tup, binary_upgrade_next_mdb_type_oid);
+			binary_upgrade_next_mdb_type_oid = InvalidOid;
 		}
 		/* else allow system to assign oid */
 
-		typeObjectId = simple_heap_insert(pg_type_desc, tup);
+		typeObjectId = simple_heap_insert(mdb_type_desc, tup);
 	}
 
 	/* Update indexes */
-	CatalogUpdateIndexes(pg_type_desc, tup);
+	CatalogUpdateIndexes(mdb_type_desc, tup);
 
 	/*
 	 * Create dependencies.  We can/must skip this in bootstrap mode.
@@ -497,7 +497,7 @@ TypeCreate(Oid newTypeOid,
 	/*
 	 * finish up
 	 */
-	heap_close(pg_type_desc, RowExclusiveLock);
+	heap_close(mdb_type_desc, RowExclusiveLock);
 
 	return address;
 }
@@ -551,7 +551,7 @@ GenerateTypeDependencies(Oid typeNamespace,
 	 * Make dependencies on namespace, owner, extension.
 	 *
 	 * For a relation rowtype (that's not a composite type), we should skip
-	 * these because we'll depend on them indirectly through the pg_class
+	 * these because we'll depend on them indirectly through the mdb_class
 	 * entry.  Likewise, skip for implicit arrays since we'll depend on them
 	 * through the element type.
 	 */
@@ -696,17 +696,17 @@ GenerateTypeDependencies(Oid typeNamespace,
 void
 RenameTypeInternal(Oid typeOid, const char *newTypeName, Oid typeNamespace)
 {
-	Relation	pg_type_desc;
+	Relation	mdb_type_desc;
 	HeapTuple	tuple;
-	Form_pg_type typ;
+	Form_mdb_type typ;
 	Oid			arrayOid;
 
-	pg_type_desc = heap_open(TypeRelationId, RowExclusiveLock);
+	mdb_type_desc = heap_open(TypeRelationId, RowExclusiveLock);
 
 	tuple = SearchSysCacheCopy1(TYPEOID, ObjectIdGetDatum(typeOid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for type %u", typeOid);
-	typ = (Form_pg_type) GETSTRUCT(tuple);
+	typ = (Form_mdb_type) GETSTRUCT(tuple);
 
 	/* We are not supposed to be changing schemas here */
 	Assert(typeNamespace == typ->typnamespace);
@@ -724,15 +724,15 @@ RenameTypeInternal(Oid typeOid, const char *newTypeName, Oid typeNamespace)
 	/* OK, do the rename --- tuple is a copy, so OK to scribble on it */
 	namestrcpy(&(typ->typname), newTypeName);
 
-	simple_heap_update(pg_type_desc, &tuple->t_self, tuple);
+	simple_heap_update(mdb_type_desc, &tuple->t_self, tuple);
 
 	/* update the system catalog indexes */
-	CatalogUpdateIndexes(pg_type_desc, tuple);
+	CatalogUpdateIndexes(mdb_type_desc, tuple);
 
 	InvokeObjectPostAlterHook(TypeRelationId, typeOid, 0);
 
 	heap_freetuple(tuple);
-	heap_close(pg_type_desc, RowExclusiveLock);
+	heap_close(mdb_type_desc, RowExclusiveLock);
 
 	/* If the type has an array type, recurse to handle that */
 	if (OidIsValid(arrayOid))
@@ -756,14 +756,14 @@ makeArrayTypeName(const char *typeName, Oid typeNamespace)
 {
 	char	   *arr = (char *) palloc(NAMEDATALEN);
 	int			namelen = strlen(typeName);
-	Relation	pg_type_desc;
+	Relation	mdb_type_desc;
 	int			i;
 
 	/*
 	 * The idea is to prepend underscores as needed until we make a name that
 	 * doesn't collide with anything...
 	 */
-	pg_type_desc = heap_open(TypeRelationId, AccessShareLock);
+	mdb_type_desc = heap_open(TypeRelationId, AccessShareLock);
 
 	for (i = 1; i < NAMEDATALEN - 1; i++)
 	{
@@ -781,7 +781,7 @@ makeArrayTypeName(const char *typeName, Oid typeNamespace)
 			break;
 	}
 
-	heap_close(pg_type_desc, AccessShareLock);
+	heap_close(mdb_type_desc, AccessShareLock);
 
 	if (i >= NAMEDATALEN - 1)
 		ereport(ERROR,

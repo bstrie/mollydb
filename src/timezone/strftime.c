@@ -110,7 +110,7 @@ static const struct lc_time_T C_time_locale = {
 
 static char *_add(const char *, char *, const char *);
 static char *_conv(int, const char *, char *, const char *);
-static char *_fmt(const char *, const struct pg_tm *, char *,
+static char *_fmt(const char *, const struct mdb_tm *, char *,
 	 const char *, int *);
 static char *_yconv(int, int, bool, bool, char *, const char *);
 
@@ -121,8 +121,8 @@ static char *_yconv(int, int, bool, bool, char *, const char *);
 
 
 size_t
-pg_strftime(char *s, size_t maxsize, const char *format,
-			const struct pg_tm * t)
+mdb_strftime(char *s, size_t maxsize, const char *format,
+			const struct mdb_tm * t)
 {
 	char	   *p;
 	int			warn;
@@ -136,7 +136,7 @@ pg_strftime(char *s, size_t maxsize, const char *format,
 }
 
 static char *
-_fmt(const char *format, const struct pg_tm * t, char *pt, const char *ptlim,
+_fmt(const char *format, const struct mdb_tm * t, char *pt, const char *ptlim,
 	 int *warnp)
 {
 	for (; *format; ++format)

@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_proc.c
- *	  routines to support manipulation of the pg_proc relation
+ * mdb_proc.c
+ *	  routines to support manipulation of the mdb_proc relation
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_proc.c
+ *	  src/backend/catalog/mdb_proc.c
  *
  *-------------------------------------------------------------------------
  */
@@ -19,16 +19,16 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_language.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_proc_fn.h"
-#include "catalog/pg_transform.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_language.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_proc_fn.h"
+#include "catalog/mdb_transform.h"
+#include "catalog/mdb_type.h"
 #include "commands/defrem.h"
 #include "executor/functions.h"
 #include "funcapi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "nodes/nodeFuncs.h"
 #include "parser/parse_type.h"
@@ -63,7 +63,7 @@ static bool match_prosrc_to_literal(const char *prosrc, const char *literal,
  *
  * Note: allParameterTypes, parameterModes, parameterNames, trftypes, and proconfig
  * are either arrays of the proper types or NULL.  We declare them Datum,
- * not "ArrayType *", to avoid importing array.h into pg_proc_fn.h.
+ * not "ArrayType *", to avoid importing array.h into mdb_proc_fn.h.
  * ----------------------------------------------------------------
  */
 ObjectAddress
@@ -110,9 +110,9 @@ ProcedureCreate(const char *procedureName,
 	Relation	rel;
 	HeapTuple	tup;
 	HeapTuple	oldtup;
-	bool		nulls[Natts_pg_proc];
-	Datum		values[Natts_pg_proc];
-	bool		replaces[Natts_pg_proc];
+	bool		nulls[Natts_mdb_proc];
+	Datum		values[Natts_mdb_proc];
+	bool		replaces[Natts_mdb_proc];
 	Oid			relid;
 	NameData	procname;
 	TupleDesc	tupDesc;
@@ -319,10 +319,10 @@ ProcedureCreate(const char *procedureName,
 	}
 
 	/*
-	 * All seems OK; prepare the data to be inserted into pg_proc.
+	 * All seems OK; prepare the data to be inserted into mdb_proc.
 	 */
 
-	for (i = 0; i < Natts_pg_proc; ++i)
+	for (i = 0; i < Natts_mdb_proc; ++i)
 	{
 		nulls[i] = false;
 		values[i] = (Datum) 0;
@@ -330,55 +330,55 @@ ProcedureCreate(const char *procedureName,
 	}
 
 	namestrcpy(&procname, procedureName);
-	values[Anum_pg_proc_proname - 1] = NameGetDatum(&procname);
-	values[Anum_pg_proc_pronamespace - 1] = ObjectIdGetDatum(procNamespace);
-	values[Anum_pg_proc_proowner - 1] = ObjectIdGetDatum(proowner);
-	values[Anum_pg_proc_prolang - 1] = ObjectIdGetDatum(languageObjectId);
-	values[Anum_pg_proc_procost - 1] = Float4GetDatum(procost);
-	values[Anum_pg_proc_prorows - 1] = Float4GetDatum(prorows);
-	values[Anum_pg_proc_provariadic - 1] = ObjectIdGetDatum(variadicType);
-	values[Anum_pg_proc_protransform - 1] = ObjectIdGetDatum(InvalidOid);
-	values[Anum_pg_proc_proisagg - 1] = BoolGetDatum(isAgg);
-	values[Anum_pg_proc_proiswindow - 1] = BoolGetDatum(isWindowFunc);
-	values[Anum_pg_proc_prosecdef - 1] = BoolGetDatum(security_definer);
-	values[Anum_pg_proc_proleakproof - 1] = BoolGetDatum(isLeakProof);
-	values[Anum_pg_proc_proisstrict - 1] = BoolGetDatum(isStrict);
-	values[Anum_pg_proc_proretset - 1] = BoolGetDatum(returnsSet);
-	values[Anum_pg_proc_provolatile - 1] = CharGetDatum(volatility);
-	values[Anum_pg_proc_proparallel - 1] = CharGetDatum(parallel);
-	values[Anum_pg_proc_pronargs - 1] = UInt16GetDatum(parameterCount);
-	values[Anum_pg_proc_pronargdefaults - 1] = UInt16GetDatum(list_length(parameterDefaults));
-	values[Anum_pg_proc_prorettype - 1] = ObjectIdGetDatum(returnType);
-	values[Anum_pg_proc_proargtypes - 1] = PointerGetDatum(parameterTypes);
+	values[Anum_mdb_proc_proname - 1] = NameGetDatum(&procname);
+	values[Anum_mdb_proc_pronamespace - 1] = ObjectIdGetDatum(procNamespace);
+	values[Anum_mdb_proc_proowner - 1] = ObjectIdGetDatum(proowner);
+	values[Anum_mdb_proc_prolang - 1] = ObjectIdGetDatum(languageObjectId);
+	values[Anum_mdb_proc_procost - 1] = Float4GetDatum(procost);
+	values[Anum_mdb_proc_prorows - 1] = Float4GetDatum(prorows);
+	values[Anum_mdb_proc_provariadic - 1] = ObjectIdGetDatum(variadicType);
+	values[Anum_mdb_proc_protransform - 1] = ObjectIdGetDatum(InvalidOid);
+	values[Anum_mdb_proc_proisagg - 1] = BoolGetDatum(isAgg);
+	values[Anum_mdb_proc_proiswindow - 1] = BoolGetDatum(isWindowFunc);
+	values[Anum_mdb_proc_prosecdef - 1] = BoolGetDatum(security_definer);
+	values[Anum_mdb_proc_proleakproof - 1] = BoolGetDatum(isLeakProof);
+	values[Anum_mdb_proc_proisstrict - 1] = BoolGetDatum(isStrict);
+	values[Anum_mdb_proc_proretset - 1] = BoolGetDatum(returnsSet);
+	values[Anum_mdb_proc_provolatile - 1] = CharGetDatum(volatility);
+	values[Anum_mdb_proc_proparallel - 1] = CharGetDatum(parallel);
+	values[Anum_mdb_proc_pronargs - 1] = UInt16GetDatum(parameterCount);
+	values[Anum_mdb_proc_pronargdefaults - 1] = UInt16GetDatum(list_length(parameterDefaults));
+	values[Anum_mdb_proc_prorettype - 1] = ObjectIdGetDatum(returnType);
+	values[Anum_mdb_proc_proargtypes - 1] = PointerGetDatum(parameterTypes);
 	if (allParameterTypes != PointerGetDatum(NULL))
-		values[Anum_pg_proc_proallargtypes - 1] = allParameterTypes;
+		values[Anum_mdb_proc_proallargtypes - 1] = allParameterTypes;
 	else
-		nulls[Anum_pg_proc_proallargtypes - 1] = true;
+		nulls[Anum_mdb_proc_proallargtypes - 1] = true;
 	if (parameterModes != PointerGetDatum(NULL))
-		values[Anum_pg_proc_proargmodes - 1] = parameterModes;
+		values[Anum_mdb_proc_proargmodes - 1] = parameterModes;
 	else
-		nulls[Anum_pg_proc_proargmodes - 1] = true;
+		nulls[Anum_mdb_proc_proargmodes - 1] = true;
 	if (parameterNames != PointerGetDatum(NULL))
-		values[Anum_pg_proc_proargnames - 1] = parameterNames;
+		values[Anum_mdb_proc_proargnames - 1] = parameterNames;
 	else
-		nulls[Anum_pg_proc_proargnames - 1] = true;
+		nulls[Anum_mdb_proc_proargnames - 1] = true;
 	if (parameterDefaults != NIL)
-		values[Anum_pg_proc_proargdefaults - 1] = CStringGetTextDatum(nodeToString(parameterDefaults));
+		values[Anum_mdb_proc_proargdefaults - 1] = CStringGetTextDatum(nodeToString(parameterDefaults));
 	else
-		nulls[Anum_pg_proc_proargdefaults - 1] = true;
+		nulls[Anum_mdb_proc_proargdefaults - 1] = true;
 	if (trftypes != PointerGetDatum(NULL))
-		values[Anum_pg_proc_protrftypes - 1] = trftypes;
+		values[Anum_mdb_proc_protrftypes - 1] = trftypes;
 	else
-		nulls[Anum_pg_proc_protrftypes - 1] = true;
-	values[Anum_pg_proc_prosrc - 1] = CStringGetTextDatum(prosrc);
+		nulls[Anum_mdb_proc_protrftypes - 1] = true;
+	values[Anum_mdb_proc_prosrc - 1] = CStringGetTextDatum(prosrc);
 	if (probin)
-		values[Anum_pg_proc_probin - 1] = CStringGetTextDatum(probin);
+		values[Anum_mdb_proc_probin - 1] = CStringGetTextDatum(probin);
 	else
-		nulls[Anum_pg_proc_probin - 1] = true;
+		nulls[Anum_mdb_proc_probin - 1] = true;
 	if (proconfig != PointerGetDatum(NULL))
-		values[Anum_pg_proc_proconfig - 1] = proconfig;
+		values[Anum_mdb_proc_proconfig - 1] = proconfig;
 	else
-		nulls[Anum_pg_proc_proconfig - 1] = true;
+		nulls[Anum_mdb_proc_proconfig - 1] = true;
 	/* proacl will be determined later */
 
 	rel = heap_open(ProcedureRelationId, RowExclusiveLock);
@@ -393,7 +393,7 @@ ProcedureCreate(const char *procedureName,
 	if (HeapTupleIsValid(oldtup))
 	{
 		/* There is one; okay to replace it? */
-		Form_pg_proc oldproc = (Form_pg_proc) GETSTRUCT(oldtup);
+		Form_mdb_proc oldproc = (Form_mdb_proc) GETSTRUCT(oldtup);
 		Datum		proargnames;
 		bool		isnull;
 
@@ -402,7 +402,7 @@ ProcedureCreate(const char *procedureName,
 					(errcode(ERRCODE_DUPLICATE_FUNCTION),
 			errmsg("function \"%s\" already exists with same argument types",
 				   procedureName)));
-		if (!pg_proc_ownercheck(HeapTupleGetOid(oldtup), proowner))
+		if (!mdb_proc_ownercheck(HeapTupleGetOid(oldtup), proowner))
 			aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_PROC,
 						   procedureName);
 
@@ -449,7 +449,7 @@ ProcedureCreate(const char *procedureName,
 		 * allow adding names to formerly unnamed parameters, though.
 		 */
 		proargnames = SysCacheGetAttr(PROCNAMEARGSNSP, oldtup,
-									  Anum_pg_proc_proargnames,
+									  Anum_mdb_proc_proargnames,
 									  &isnull);
 		if (!isnull)
 		{
@@ -461,7 +461,7 @@ ProcedureCreate(const char *procedureName,
 			int			j;
 
 			proargmodes = SysCacheGetAttr(PROCNAMEARGSNSP, oldtup,
-										  Anum_pg_proc_proargmodes,
+										  Anum_mdb_proc_proargmodes,
 										  &isnull);
 			if (isnull)
 				proargmodes = PointerGetDatum(NULL);	/* just to be sure */
@@ -510,7 +510,7 @@ ProcedureCreate(const char *procedureName,
 								 format_procedure(HeapTupleGetOid(oldtup)))));
 
 			proargdefaults = SysCacheGetAttr(PROCNAMEARGSNSP, oldtup,
-											 Anum_pg_proc_proargdefaults,
+											 Anum_mdb_proc_proargdefaults,
 											 &isnull);
 			Assert(!isnull);
 			oldDefaults = (List *) stringToNode(TextDatumGetCString(proargdefaults));
@@ -571,8 +571,8 @@ ProcedureCreate(const char *procedureName,
 		 * Do not change existing ownership or permissions, either.  Note
 		 * dependency-update code below has to agree with this decision.
 		 */
-		replaces[Anum_pg_proc_proowner - 1] = false;
-		replaces[Anum_pg_proc_proacl - 1] = false;
+		replaces[Anum_mdb_proc_proowner - 1] = false;
+		replaces[Anum_mdb_proc_proacl - 1] = false;
 
 		/* Okay, do it... */
 		tup = heap_modify_tuple(oldtup, tupDesc, values, nulls, replaces);
@@ -589,9 +589,9 @@ ProcedureCreate(const char *procedureName,
 		proacl = get_user_default_acl(ACL_OBJECT_FUNCTION, proowner,
 									  procNamespace);
 		if (proacl != NULL)
-			values[Anum_pg_proc_proacl - 1] = PointerGetDatum(proacl);
+			values[Anum_mdb_proc_proacl - 1] = PointerGetDatum(proacl);
 		else
-			nulls[Anum_pg_proc_proacl - 1] = true;
+			nulls[Anum_mdb_proc_proacl - 1] = true;
 
 		tup = heap_form_tuple(tupDesc, values, nulls);
 		simple_heap_insert(rel, tup);
@@ -605,7 +605,7 @@ ProcedureCreate(const char *procedureName,
 
 	/*
 	 * Create dependencies for the new function.  If we are updating an
-	 * existing function, first delete any existing pg_depend entries.
+	 * existing function, first delete any existing mdb_depend entries.
 	 * (However, since we are not changing ownership or permissions, the
 	 * shared dependencies do *not* need to change, and we leave them alone.)
 	 */
@@ -706,7 +706,7 @@ ProcedureCreate(const char *procedureName,
 		 * Set per-function configuration parameters so that the validation is
 		 * done with the environment the function expects.  However, if
 		 * check_function_bodies is off, we don't do this, because that would
-		 * create dump ordering hazards that pg_dump doesn't know how to deal
+		 * create dump ordering hazards that mdb_dump doesn't know how to deal
 		 * with.  (For example, a SET clause might refer to a not-yet-created
 		 * text search configuration.)	This means that the validator
 		 * shouldn't complain about anything that might depend on a GUC
@@ -763,7 +763,7 @@ fmgr_internal_validator(PG_FUNCTION_ARGS)
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for function %u", funcoid);
 
-	tmp = SysCacheGetAttr(PROCOID, tuple, Anum_pg_proc_prosrc, &isnull);
+	tmp = SysCacheGetAttr(PROCOID, tuple, Anum_mdb_proc_prosrc, &isnull);
 	if (isnull)
 		elog(ERROR, "null prosrc");
 	prosrc = TextDatumGetCString(tmp);
@@ -804,20 +804,20 @@ fmgr_c_validator(PG_FUNCTION_ARGS)
 
 	/*
 	 * It'd be most consistent to skip the check if !check_function_bodies,
-	 * but the purpose of that switch is to be helpful for pg_dump loading,
-	 * and for pg_dump loading it's much better if we *do* check.
+	 * but the purpose of that switch is to be helpful for mdb_dump loading,
+	 * and for mdb_dump loading it's much better if we *do* check.
 	 */
 
 	tuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcoid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for function %u", funcoid);
 
-	tmp = SysCacheGetAttr(PROCOID, tuple, Anum_pg_proc_prosrc, &isnull);
+	tmp = SysCacheGetAttr(PROCOID, tuple, Anum_mdb_proc_prosrc, &isnull);
 	if (isnull)
 		elog(ERROR, "null prosrc for C function %u", funcoid);
 	prosrc = TextDatumGetCString(tmp);
 
-	tmp = SysCacheGetAttr(PROCOID, tuple, Anum_pg_proc_probin, &isnull);
+	tmp = SysCacheGetAttr(PROCOID, tuple, Anum_mdb_proc_probin, &isnull);
 	if (isnull)
 		elog(ERROR, "null probin for C function %u", funcoid);
 	probin = TextDatumGetCString(tmp);
@@ -841,7 +841,7 @@ fmgr_sql_validator(PG_FUNCTION_ARGS)
 {
 	Oid			funcoid = PG_GETARG_OID(0);
 	HeapTuple	tuple;
-	Form_pg_proc proc;
+	Form_mdb_proc proc;
 	List	   *raw_parsetree_list;
 	List	   *querytree_list;
 	ListCell   *lc;
@@ -859,7 +859,7 @@ fmgr_sql_validator(PG_FUNCTION_ARGS)
 	tuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcoid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for function %u", funcoid);
-	proc = (Form_pg_proc) GETSTRUCT(tuple);
+	proc = (Form_mdb_proc) GETSTRUCT(tuple);
 
 	/* Disallow pseudotype result */
 	/* except for RECORD, VOID, or polymorphic */
@@ -892,7 +892,7 @@ fmgr_sql_validator(PG_FUNCTION_ARGS)
 	/* Postpone body checks if !check_function_bodies */
 	if (check_function_bodies)
 	{
-		tmp = SysCacheGetAttr(PROCOID, tuple, Anum_pg_proc_prosrc, &isnull);
+		tmp = SysCacheGetAttr(PROCOID, tuple, Anum_mdb_proc_prosrc, &isnull);
 		if (isnull)
 			elog(ERROR, "null prosrc");
 
@@ -918,7 +918,7 @@ fmgr_sql_validator(PG_FUNCTION_ARGS)
 		 * We can run the text through the raw parser though; this will at
 		 * least catch silly syntactic errors.
 		 */
-		raw_parsetree_list = pg_parse_query(prosrc);
+		raw_parsetree_list = mdb_parse_query(prosrc);
 
 		if (!haspolyarg)
 		{
@@ -937,7 +937,7 @@ fmgr_sql_validator(PG_FUNCTION_ARGS)
 				Node	   *parsetree = (Node *) lfirst(lc);
 				List	   *querytree_sublist;
 
-				querytree_sublist = pg_analyze_and_rewrite_params(parsetree,
+				querytree_sublist = mdb_analyze_and_rewrite_params(parsetree,
 																  prosrc,
 									   (ParserSetupHook) sql_fn_parser_setup,
 																  pinfo);
@@ -1071,7 +1071,7 @@ match_prosrc_to_query(const char *prosrc, const char *queryText,
 			 */
 			if (matchpos)
 				return 0;		/* multiple matches, fail */
-			matchpos = pg_mbstrlen_with_len(queryText, curpos + 1)
+			matchpos = mdb_mbstrlen_with_len(queryText, curpos + 1)
 				+ cursorpos;
 		}
 		else if (queryText[curpos] == '\'' &&
@@ -1084,7 +1084,7 @@ match_prosrc_to_query(const char *prosrc, const char *queryText,
 			 */
 			if (matchpos)
 				return 0;		/* multiple matches, fail */
-			matchpos = pg_mbstrlen_with_len(queryText, curpos + 1)
+			matchpos = mdb_mbstrlen_with_len(queryText, curpos + 1)
 				+ newcursorpos;
 		}
 	}
@@ -1137,7 +1137,7 @@ match_prosrc_to_literal(const char *prosrc, const char *literal,
 			if (cursorpos > 0)
 				newcp++;
 		}
-		chlen = pg_mblen(prosrc);
+		chlen = mdb_mblen(prosrc);
 		if (strncmp(prosrc, literal, chlen) != 0)
 			goto fail;
 		prosrc += chlen;

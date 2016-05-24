@@ -136,7 +136,7 @@ do { \
  * boundary.
  */
 static uint32
-pg_checksum_block(char *data, uint32 size)
+mdb_checksum_block(char *data, uint32 size)
 {
 	uint32		sums[N_SUMS];
 	uint32		(*dataArr)[N_SUMS] = (uint32 (*)[N_SUMS]) data;
@@ -176,7 +176,7 @@ pg_checksum_block(char *data, uint32 size)
  * checksum itself), and the page data.
  */
 uint16
-pg_checksum_page(char *page, BlockNumber blkno)
+mdb_checksum_page(char *page, BlockNumber blkno)
 {
 	PageHeader	phdr = (PageHeader) page;
 	uint16		save_checksum;
@@ -193,7 +193,7 @@ pg_checksum_page(char *page, BlockNumber blkno)
 	 */
 	save_checksum = phdr->pd_checksum;
 	phdr->pd_checksum = 0;
-	checksum = pg_checksum_block(page, BLCKSZ);
+	checksum = mdb_checksum_block(page, BLCKSZ);
 	phdr->pd_checksum = save_checksum;
 
 	/* Mix in the block number to detect transposed pages */

@@ -28,7 +28,7 @@
  *		-1 if trouble accessing directory (errno reflects the error)
  */
 int
-pg_check_dir(const char *dir)
+mdb_check_dir(const char *dir)
 {
 	int			result = 1;
 	DIR		   *chkdir;

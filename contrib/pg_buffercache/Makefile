@@ -1,18 +1,18 @@
-# contrib/pg_buffercache/Makefile
+# contrib/mdb_buffercache/Makefile
 
-MODULE_big = pg_buffercache
-OBJS = pg_buffercache_pages.o $(WIN32RES)
+MODULE_big = mdb_buffercache
+OBJS = mdb_buffercache_pages.o $(WIN32RES)
 
-EXTENSION = pg_buffercache
-DATA = pg_buffercache--1.1.sql pg_buffercache--1.0--1.1.sql pg_buffercache--unpackaged--1.0.sql
-PGFILEDESC = "pg_buffercache - monitoring of shared buffer cache in real-time"
+EXTENSION = mdb_buffercache
+DATA = mdb_buffercache--1.1.sql mdb_buffercache--1.0--1.1.sql mdb_buffercache--unpackaged--1.0.sql
+PGFILEDESC = "mdb_buffercache - monitoring of shared buffer cache in real-time"
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else
-subdir = contrib/pg_buffercache
+subdir = contrib/mdb_buffercache
 top_builddir = ../..
 include $(top_builddir)/src/Makefile.global
 include $(top_srcdir)/contrib/contrib-global.mk

@@ -10,7 +10,7 @@ DATA = test_shm_mq--1.0.sql
 REGRESS = test_shm_mq
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

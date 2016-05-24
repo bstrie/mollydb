@@ -87,7 +87,7 @@ mollydb: <replaceable>user</> <replaceable>database</> <replaceable>host</> <rep
   and thereby release some lock.  (Process 15610 must be the blocker, because
   there is no other active session.  In more complicated cases it would be
   necessary to look into the
-  <link linkend="view-pg-locks"><structname>pg_locks</structname></link>
+  <link linkend="view-pg-locks"><structname>mdb_locks</structname></link>
   system view to determine who is blocking whom.)
   </para>
 
@@ -200,11 +200,11 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
    <productname>MollyDB</productname> processes through temporary files.
    These files are stored in the directory named by the
    <xref linkend="guc-stats-temp-directory"> parameter,
-   <filename>pg_stat_tmp</filename> by default.
+   <filename>mdb_stat_tmp</filename> by default.
    For better performance, <varname>stats_temp_directory</> can be
    pointed at a RAM-based file system, decreasing physical I/O requirements.
    When the server shuts down cleanly, a permanent copy of the statistics
-   data is stored in the <filename>pg_stat</filename> subdirectory, so that
+   data is stored in the <filename>mdb_stat</filename> subdirectory, so that
    statistics can be retained across server restarts.  When recovery is
    performed at server start (e.g. after immediate shutdown, server crash,
    and point-in-time recovery), all statistics counters are reset.
@@ -254,17 +254,17 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
    the numbers are changing underneath you.  But if you want to see new
    results with each query, be sure to do the queries outside any transaction
    block.  Alternatively, you can invoke
-   <function>pg_stat_clear_snapshot</function>(), which will discard the
+   <function>mdb_stat_clear_snapshot</function>(), which will discard the
    current transaction's statistics snapshot (if any).  The next use of
    statistical information will cause a new snapshot to be fetched.
   </para>
 
   <para>
    A transaction can also see its own statistics (as yet untransmitted to the
-   collector) in the views <structname>pg_stat_xact_all_tables</>,
-   <structname>pg_stat_xact_sys_tables</>,
-   <structname>pg_stat_xact_user_tables</>, and
-   <structname>pg_stat_xact_user_functions</>.  These numbers do not act as
+   collector) in the views <structname>mdb_stat_xact_all_tables</>,
+   <structname>mdb_stat_xact_sys_tables</>,
+   <structname>mdb_stat_xact_user_tables</>, and
+   <structname>mdb_stat_xact_user_functions</>.  These numbers do not act as
    stated above; instead they update continuously throughout the transaction.
   </para>
 
@@ -282,8 +282,8 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
     <tbody>
      <row>
       <entry>
-       <structname>pg_stat_activity</structname>
-       <indexterm><primary>pg_stat_activity</primary></indexterm>
+       <structname>mdb_stat_activity</structname>
+       <indexterm><primary>mdb_stat_activity</primary></indexterm>
       </entry>
       <entry>
        One row per server process, showing information related to
@@ -293,7 +293,7 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_stat_replication</><indexterm><primary>pg_stat_replication</primary></indexterm></entry>
+      <entry><structname>mdb_stat_replication</><indexterm><primary>mdb_stat_replication</primary></indexterm></entry>
       <entry>One row per WAL sender process, showing statistics about
        replication to that sender's connected standby server.
        See <xref linkend="pg-stat-replication-view"> for details.
@@ -301,7 +301,7 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_stat_wal_receiver</><indexterm><primary>pg_stat_wal_receiver</primary></indexterm></entry>
+      <entry><structname>mdb_stat_wal_receiver</><indexterm><primary>mdb_stat_wal_receiver</primary></indexterm></entry>
       <entry>Only one row, showing statistics about the WAL receiver from
        that receiver's connected server.
        See <xref linkend="pg-stat-wal-receiver-view"> for details.
@@ -309,7 +309,7 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_stat_ssl</><indexterm><primary>pg_stat_ssl</primary></indexterm></entry>
+      <entry><structname>mdb_stat_ssl</><indexterm><primary>mdb_stat_ssl</primary></indexterm></entry>
       <entry>One row per connection (regular and replication), showing information about
        SSL used on this connection.
        See <xref linkend="pg-stat-ssl-view"> for details.
@@ -333,7 +333,7 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
 
     <tbody>
      <row>
-      <entry><structname>pg_stat_archiver</><indexterm><primary>pg_stat_archiver</primary></indexterm></entry>
+      <entry><structname>mdb_stat_archiver</><indexterm><primary>mdb_stat_archiver</primary></indexterm></entry>
       <entry>One row only, showing statistics about the
        WAL archiver process's activity. See
        <xref linkend="pg-stat-archiver-view"> for details.
@@ -341,7 +341,7 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_stat_bgwriter</><indexterm><primary>pg_stat_bgwriter</primary></indexterm></entry>
+      <entry><structname>mdb_stat_bgwriter</><indexterm><primary>mdb_stat_bgwriter</primary></indexterm></entry>
       <entry>One row only, showing statistics about the
        background writer process's activity. See
        <xref linkend="pg-stat-bgwriter-view"> for details.
@@ -349,14 +349,14 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_stat_database</><indexterm><primary>pg_stat_database</primary></indexterm></entry>
+      <entry><structname>mdb_stat_database</><indexterm><primary>mdb_stat_database</primary></indexterm></entry>
       <entry>One row per database, showing database-wide statistics. See
        <xref linkend="pg-stat-database-view"> for details.
       </entry>
      </row>
 
      <row>
-      <entry><structname>pg_stat_database_conflicts</><indexterm><primary>pg_stat_database_conflicts</primary></indexterm></entry>
+      <entry><structname>mdb_stat_database_conflicts</><indexterm><primary>mdb_stat_database_conflicts</primary></indexterm></entry>
       <entry>
        One row per database, showing database-wide statistics about
        query cancels due to conflict with recovery on standby servers.
@@ -365,7 +365,7 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_stat_all_tables</><indexterm><primary>pg_stat_all_tables</primary></indexterm></entry>
+      <entry><structname>mdb_stat_all_tables</><indexterm><primary>mdb_stat_all_tables</primary></indexterm></entry>
       <entry>
        One row for each table in the current database, showing statistics
        about accesses to that specific table.
@@ -374,40 +374,40 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_stat_sys_tables</><indexterm><primary>pg_stat_sys_tables</primary></indexterm></entry>
-      <entry>Same as <structname>pg_stat_all_tables</>, except that only
+      <entry><structname>mdb_stat_sys_tables</><indexterm><primary>mdb_stat_sys_tables</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_stat_all_tables</>, except that only
       system tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_stat_user_tables</><indexterm><primary>pg_stat_user_tables</primary></indexterm></entry>
-      <entry>Same as <structname>pg_stat_all_tables</>, except that only user
+      <entry><structname>mdb_stat_user_tables</><indexterm><primary>mdb_stat_user_tables</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_stat_all_tables</>, except that only user
       tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_stat_xact_all_tables</><indexterm><primary>pg_stat_xact_all_tables</primary></indexterm></entry>
-      <entry>Similar to <structname>pg_stat_all_tables</>, but counts actions
+      <entry><structname>mdb_stat_xact_all_tables</><indexterm><primary>mdb_stat_xact_all_tables</primary></indexterm></entry>
+      <entry>Similar to <structname>mdb_stat_all_tables</>, but counts actions
       taken so far within the current transaction (which are <emphasis>not</>
-      yet included in <structname>pg_stat_all_tables</> and related views).
+      yet included in <structname>mdb_stat_all_tables</> and related views).
       The columns for numbers of live and dead rows and vacuum and
       analyze actions are not present in this view.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_stat_xact_sys_tables</><indexterm><primary>pg_stat_xact_sys_tables</primary></indexterm></entry>
-      <entry>Same as <structname>pg_stat_xact_all_tables</>, except that only
+      <entry><structname>mdb_stat_xact_sys_tables</><indexterm><primary>mdb_stat_xact_sys_tables</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_stat_xact_all_tables</>, except that only
       system tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_stat_xact_user_tables</><indexterm><primary>pg_stat_xact_user_tables</primary></indexterm></entry>
-      <entry>Same as <structname>pg_stat_xact_all_tables</>, except that only
+      <entry><structname>mdb_stat_xact_user_tables</><indexterm><primary>mdb_stat_xact_user_tables</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_stat_xact_all_tables</>, except that only
       user tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_stat_all_indexes</><indexterm><primary>pg_stat_all_indexes</primary></indexterm></entry>
+      <entry><structname>mdb_stat_all_indexes</><indexterm><primary>mdb_stat_all_indexes</primary></indexterm></entry>
       <entry>
        One row for each index in the current database, showing statistics
        about accesses to that specific index.
@@ -416,19 +416,19 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_stat_sys_indexes</><indexterm><primary>pg_stat_sys_indexes</primary></indexterm></entry>
-      <entry>Same as <structname>pg_stat_all_indexes</>, except that only
+      <entry><structname>mdb_stat_sys_indexes</><indexterm><primary>mdb_stat_sys_indexes</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_stat_all_indexes</>, except that only
       indexes on system tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_stat_user_indexes</><indexterm><primary>pg_stat_user_indexes</primary></indexterm></entry>
-      <entry>Same as <structname>pg_stat_all_indexes</>, except that only
+      <entry><structname>mdb_stat_user_indexes</><indexterm><primary>mdb_stat_user_indexes</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_stat_all_indexes</>, except that only
       indexes on user tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_statio_all_tables</><indexterm><primary>pg_statio_all_tables</primary></indexterm></entry>
+      <entry><structname>mdb_statio_all_tables</><indexterm><primary>mdb_statio_all_tables</primary></indexterm></entry>
       <entry>
        One row for each table in the current database, showing statistics
        about I/O on that specific table.
@@ -437,19 +437,19 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_statio_sys_tables</><indexterm><primary>pg_statio_sys_tables</primary></indexterm></entry>
-      <entry>Same as <structname>pg_statio_all_tables</>, except that only
+      <entry><structname>mdb_statio_sys_tables</><indexterm><primary>mdb_statio_sys_tables</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_statio_all_tables</>, except that only
       system tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_statio_user_tables</><indexterm><primary>pg_statio_user_tables</primary></indexterm></entry>
-      <entry>Same as <structname>pg_statio_all_tables</>, except that only
+      <entry><structname>mdb_statio_user_tables</><indexterm><primary>mdb_statio_user_tables</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_statio_all_tables</>, except that only
       user tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_statio_all_indexes</><indexterm><primary>pg_statio_all_indexes</primary></indexterm></entry>
+      <entry><structname>mdb_statio_all_indexes</><indexterm><primary>mdb_statio_all_indexes</primary></indexterm></entry>
       <entry>
        One row for each index in the current database,
        showing statistics about I/O on that specific index.
@@ -458,19 +458,19 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_statio_sys_indexes</><indexterm><primary>pg_statio_sys_indexes</primary></indexterm></entry>
-      <entry>Same as <structname>pg_statio_all_indexes</>, except that only
+      <entry><structname>mdb_statio_sys_indexes</><indexterm><primary>mdb_statio_sys_indexes</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_statio_all_indexes</>, except that only
       indexes on system tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_statio_user_indexes</><indexterm><primary>pg_statio_user_indexes</primary></indexterm></entry>
-      <entry>Same as <structname>pg_statio_all_indexes</>, except that only
+      <entry><structname>mdb_statio_user_indexes</><indexterm><primary>mdb_statio_user_indexes</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_statio_all_indexes</>, except that only
       indexes on user tables are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_statio_all_sequences</><indexterm><primary>pg_statio_all_sequences</primary></indexterm></entry>
+      <entry><structname>mdb_statio_all_sequences</><indexterm><primary>mdb_statio_all_sequences</primary></indexterm></entry>
      <entry>
        One row for each sequence in the current database,
        showing statistics about I/O on that specific sequence.
@@ -479,20 +479,20 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_statio_sys_sequences</><indexterm><primary>pg_statio_sys_sequences</primary></indexterm></entry>
-      <entry>Same as <structname>pg_statio_all_sequences</>, except that only
+      <entry><structname>mdb_statio_sys_sequences</><indexterm><primary>mdb_statio_sys_sequences</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_statio_all_sequences</>, except that only
       system sequences are shown.  (Presently, no system sequences are defined,
       so this view is always empty.)</entry>
      </row>
 
      <row>
-      <entry><structname>pg_statio_user_sequences</><indexterm><primary>pg_statio_user_sequences</primary></indexterm></entry>
-      <entry>Same as <structname>pg_statio_all_sequences</>, except that only
+      <entry><structname>mdb_statio_user_sequences</><indexterm><primary>mdb_statio_user_sequences</primary></indexterm></entry>
+      <entry>Same as <structname>mdb_statio_all_sequences</>, except that only
       user sequences are shown.</entry>
      </row>
 
      <row>
-      <entry><structname>pg_stat_user_functions</><indexterm><primary>pg_stat_user_functions</primary></indexterm></entry>
+      <entry><structname>mdb_stat_user_functions</><indexterm><primary>mdb_stat_user_functions</primary></indexterm></entry>
       <entry>
        One row for each tracked function, showing statistics
        about executions of that function. See
@@ -501,14 +501,14 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      </row>
 
      <row>
-      <entry><structname>pg_stat_xact_user_functions</><indexterm><primary>pg_stat_xact_user_functions</primary></indexterm></entry>
-      <entry>Similar to <structname>pg_stat_user_functions</>, but counts only
+      <entry><structname>mdb_stat_xact_user_functions</><indexterm><primary>mdb_stat_xact_user_functions</primary></indexterm></entry>
+      <entry>Similar to <structname>mdb_stat_user_functions</>, but counts only
       calls during the current transaction (which are <emphasis>not</>
-      yet included in <structname>pg_stat_user_functions</>).</entry>
+      yet included in <structname>mdb_stat_user_functions</>).</entry>
      </row>
 
      <row>
-      <entry><structname>pg_stat_progress_vacuum</><indexterm><primary>pg_stat_progress_vacuum</primary></indexterm></entry>
+      <entry><structname>mdb_stat_progress_vacuum</><indexterm><primary>mdb_stat_progress_vacuum</primary></indexterm></entry>
       <entry>One row for each backend (including autovacuum worker processes) running
       <command>VACUUM</>, showing current progress.
       See <xref linkend='vacuum-progress-reporting'>.</entry>
@@ -523,7 +523,7 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
   </para>
 
   <para>
-   The <structname>pg_statio_</> views are primarily useful to
+   The <structname>mdb_statio_</> views are primarily useful to
    determine the effectiveness of the buffer cache.  When the number
    of actual disk reads is much smaller than the number of buffer
    hits, then the cache is satisfying most read requests without
@@ -540,8 +540,8 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
   </para>
 
 
-  <table id="pg-stat-activity-view" xreflabel="pg_stat_activity">
-   <title><structname>pg_stat_activity</structname> View</title>
+  <table id="pg-stat-activity-view" xreflabel="mdb_stat_activity">
+   <title><structname>mdb_stat_activity</structname> View</title>
 
    <tgroup cols="3">
     <thead>
@@ -757,7 +757,7 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
   </table>
 
   <para>
-   The <structname>pg_stat_activity</structname> view will have one row
+   The <structname>mdb_stat_activity</structname> view will have one row
    per server process, showing information related to
    the current activity of that process.
   </para>
@@ -1100,7 +1100,7 @@ mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: serve
      Here is an example of how wait events can be viewed
 
 <programlisting>
-SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event is NOT NULL;
+SELECT pid, wait_event_type, wait_event FROM mdb_stat_activity WHERE wait_event is NOT NULL;
  pid  | wait_event_type |  wait_event
 ------+-----------------+---------------
  2540 | Lock            | relation
@@ -1109,8 +1109,8 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
 </programlisting>
    </para>
 
-  <table id="pg-stat-replication-view" xreflabel="pg_stat_replication">
-   <title><structname>pg_stat_replication</structname> View</title>
+  <table id="pg-stat-replication-view" xreflabel="mdb_stat_replication">
+   <title><structname>mdb_stat_replication</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -1186,24 +1186,24 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
     </row>
     <row>
      <entry><structfield>sent_location</></entry>
-     <entry><type>pg_lsn</></entry>
+     <entry><type>mdb_lsn</></entry>
      <entry>Last transaction log position sent on this connection</entry>
     </row>
     <row>
      <entry><structfield>write_location</></entry>
-     <entry><type>pg_lsn</></entry>
+     <entry><type>mdb_lsn</></entry>
      <entry>Last transaction log position written to disk by this standby
       server</entry>
     </row>
     <row>
      <entry><structfield>flush_location</></entry>
-     <entry><type>pg_lsn</></entry>
+     <entry><type>mdb_lsn</></entry>
      <entry>Last transaction log position flushed to disk by this standby
       server</entry>
     </row>
     <row>
      <entry><structfield>replay_location</></entry>
-     <entry><type>pg_lsn</></entry>
+     <entry><type>mdb_lsn</></entry>
      <entry>Last transaction log position replayed into the database on this
       standby server</entry>
     </row>
@@ -1223,14 +1223,14 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_replication</structname> view will contain one row
+   The <structname>mdb_stat_replication</structname> view will contain one row
    per WAL sender process, showing statistics about replication to that
    sender's connected standby server.  Only directly connected standbys are
    listed; no information is available about downstream standby servers.
   </para>
 
-  <table id="pg-stat-wal-receiver-view" xreflabel="pg_stat_wal_receiver">
-   <title><structname>pg_stat_wal_receiver</structname> View</title>
+  <table id="pg-stat-wal-receiver-view" xreflabel="mdb_stat_wal_receiver">
+   <title><structname>mdb_stat_wal_receiver</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -1253,7 +1253,7 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
     </row>
     <row>
      <entry><structfield>receive_start_lsn</></entry>
-     <entry><type>pg_lsn</></entry>
+     <entry><type>mdb_lsn</></entry>
      <entry>First transaction log position used when WAL receiver is
       started</entry>
     </row>
@@ -1264,7 +1264,7 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
     </row>
     <row>
      <entry><structfield>received_lsn</></entry>
-     <entry><type>pg_lsn</></entry>
+     <entry><type>mdb_lsn</></entry>
      <entry>Last transaction log position already received and flushed to
       disk, the initial value of this field being the first log position used
       when WAL receiver is started</entry>
@@ -1289,7 +1289,7 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
     </row>
     <row>
      <entry><structfield>latest_end_lsn</></entry>
-     <entry><type>pg_lsn</></entry>
+     <entry><type>mdb_lsn</></entry>
      <entry>Last transaction log position reported to origin WAL sender</entry>
     </row>
     <row>
@@ -1307,13 +1307,13 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_wal_receiver</structname> view will contain only
+   The <structname>mdb_stat_wal_receiver</structname> view will contain only
    one row, showing statistics about the WAL receiver from that receiver's
    connected server.
   </para>
 
-  <table id="pg-stat-ssl-view" xreflabel="pg_stat_ssl">
-   <title><structname>pg_stat_ssl</structname> View</title>
+  <table id="pg-stat-ssl-view" xreflabel="mdb_stat_ssl">
+   <title><structname>mdb_stat_ssl</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -1373,17 +1373,17 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_ssl</structname> view will contain one row per
+   The <structname>mdb_stat_ssl</structname> view will contain one row per
    backend or WAL sender process, showing statistics about SSL usage on
-   this connection. It can be joined to <structname>pg_stat_activity</structname>
-   or <structname>pg_stat_replication</structname> on the
+   this connection. It can be joined to <structname>mdb_stat_activity</structname>
+   or <structname>mdb_stat_replication</structname> on the
    <structfield>pid</structfield> column to get more details about the
    connection.
   </para>
 
 
-  <table id="pg-stat-archiver-view" xreflabel="pg_stat_archiver">
-   <title><structname>pg_stat_archiver</structname> View</title>
+  <table id="pg-stat-archiver-view" xreflabel="mdb_stat_archiver">
+   <title><structname>mdb_stat_archiver</structname> View</title>
 
    <tgroup cols="3">
     <thead>
@@ -1435,12 +1435,12 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_archiver</structname> view will always have a
+   The <structname>mdb_stat_archiver</structname> view will always have a
    single row, containing data about the archiver process of the cluster.
   </para>
 
-  <table id="pg-stat-bgwriter-view" xreflabel="pg_stat_bgwriter">
-   <title><structname>pg_stat_bgwriter</structname> View</title>
+  <table id="pg-stat-bgwriter-view" xreflabel="mdb_stat_bgwriter">
+   <title><structname>mdb_stat_bgwriter</structname> View</title>
 
    <tgroup cols="3">
     <thead>
@@ -1522,12 +1522,12 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_bgwriter</structname> view will always have a
+   The <structname>mdb_stat_bgwriter</structname> view will always have a
    single row, containing global data for the cluster.
   </para>
 
-  <table id="pg-stat-database-view" xreflabel="pg_stat_database">
-   <title><structname>pg_stat_database</structname> View</title>
+  <table id="pg-stat-database-view" xreflabel="mdb_stat_database">
+   <title><structname>mdb_stat_database</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -1659,12 +1659,12 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_database</structname> view will contain one row
+   The <structname>mdb_stat_database</structname> view will contain one row
    for each database in the cluster, showing database-wide statistics.
   </para>
 
-  <table id="pg-stat-database-conflicts-view" xreflabel="pg_stat_database_conflicts">
-   <title><structname>pg_stat_database_conflicts</structname> View</title>
+  <table id="pg-stat-database-conflicts-view" xreflabel="mdb_stat_database_conflicts">
+   <title><structname>mdb_stat_database_conflicts</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -1720,15 +1720,15 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_database_conflicts</structname> view will contain
+   The <structname>mdb_stat_database_conflicts</structname> view will contain
    one row per database, showing database-wide statistics about
    query cancels occurring due to conflicts with recovery on standby servers.
    This view will only contain information on standby servers, since
    conflicts do not occur on master servers.
   </para>
 
-  <table id="pg-stat-all-tables-view" xreflabel="pg_stat_all_tables">
-   <title><structname>pg_stat_all_tables</structname> View</title>
+  <table id="pg-stat-all-tables-view" xreflabel="mdb_stat_all_tables">
+   <title><structname>mdb_stat_all_tables</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -1861,17 +1861,17 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_all_tables</structname> view will contain
+   The <structname>mdb_stat_all_tables</structname> view will contain
    one row for each table in the current database (including TOAST
    tables), showing statistics about accesses to that specific table. The
-   <structname>pg_stat_user_tables</structname> and
-   <structname>pg_stat_sys_tables</structname> views
+   <structname>mdb_stat_user_tables</structname> and
+   <structname>mdb_stat_sys_tables</structname> views
    contain the same information,
    but filtered to only show user and system tables respectively.
   </para>
 
-  <table id="pg-stat-all-indexes-view" xreflabel="pg_stat_all_indexes">
-   <title><structname>pg_stat_all_indexes</structname> View</title>
+  <table id="pg-stat-all-indexes-view" xreflabel="mdb_stat_all_indexes">
+   <title><structname>mdb_stat_all_indexes</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -1928,11 +1928,11 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_all_indexes</structname> view will contain
+   The <structname>mdb_stat_all_indexes</structname> view will contain
    one row for each index in the current database,
    showing statistics about accesses to that specific index. The
-   <structname>pg_stat_user_indexes</structname> and
-   <structname>pg_stat_sys_indexes</structname> views
+   <structname>mdb_stat_user_indexes</structname> and
+   <structname>mdb_stat_sys_indexes</structname> views
    contain the same information,
    but filtered to only show user and system indexes respectively.
   </para>
@@ -1944,11 +1944,11 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
    so it is difficult to associate individual heap row fetches
    with specific indexes when a bitmap scan is used.  Therefore, a bitmap
    scan increments the
-   <structname>pg_stat_all_indexes</>.<structfield>idx_tup_read</>
+   <structname>mdb_stat_all_indexes</>.<structfield>idx_tup_read</>
    count(s) for the index(es) it uses, and it increments the
-   <structname>pg_stat_all_tables</>.<structfield>idx_tup_fetch</>
+   <structname>mdb_stat_all_tables</>.<structfield>idx_tup_fetch</>
    count for the table, but it does not affect
-   <structname>pg_stat_all_indexes</>.<structfield>idx_tup_fetch</>.
+   <structname>mdb_stat_all_indexes</>.<structfield>idx_tup_fetch</>.
    The optimizer also accesses indexes to check for supplied constants
    whose values are outside the recorded range of the optimizer statistics
    because the optimizer statistics might be stale.
@@ -1966,8 +1966,8 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
    </para>
   </note>
 
-  <table id="pg-statio-all-tables-view" xreflabel="pg_statio_all_tables">
-   <title><structname>pg_statio_all_tables</structname> View</title>
+  <table id="pg-statio-all-tables-view" xreflabel="mdb_statio_all_tables">
+   <title><structname>mdb_statio_all_tables</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -2038,17 +2038,17 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_statio_all_tables</structname> view will contain
+   The <structname>mdb_statio_all_tables</structname> view will contain
    one row for each table in the current database (including TOAST
    tables), showing statistics about I/O on that specific table. The
-   <structname>pg_statio_user_tables</structname> and
-   <structname>pg_statio_sys_tables</structname> views
+   <structname>mdb_statio_user_tables</structname> and
+   <structname>mdb_statio_sys_tables</structname> views
    contain the same information,
    but filtered to only show user and system tables respectively.
   </para>
 
-  <table id="pg-statio-all-indexes-view" xreflabel="pg_statio_all_indexes">
-   <title><structname>pg_statio_all_indexes</structname> View</title>
+  <table id="pg-statio-all-indexes-view" xreflabel="mdb_statio_all_indexes">
+   <title><structname>mdb_statio_all_indexes</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -2099,17 +2099,17 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_statio_all_indexes</structname> view will contain
+   The <structname>mdb_statio_all_indexes</structname> view will contain
    one row for each index in the current database,
    showing statistics about I/O on that specific index. The
-   <structname>pg_statio_user_indexes</structname> and
-   <structname>pg_statio_sys_indexes</structname> views
+   <structname>mdb_statio_user_indexes</structname> and
+   <structname>mdb_statio_sys_indexes</structname> views
    contain the same information,
    but filtered to only show user and system indexes respectively.
   </para>
 
-  <table id="pg-statio-all-sequences-view" xreflabel="pg_statio_all_sequences">
-   <title><structname>pg_statio_all_sequences</structname> View</title>
+  <table id="pg-statio-all-sequences-view" xreflabel="mdb_statio_all_sequences">
+   <title><structname>mdb_statio_all_sequences</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -2150,13 +2150,13 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_statio_all_sequences</structname> view will contain
+   The <structname>mdb_statio_all_sequences</structname> view will contain
    one row for each sequence in the current database,
    showing statistics about I/O on that specific sequence.
   </para>
 
-  <table id="pg-stat-user-functions-view" xreflabel="pg_stat_user_functions">
-   <title><structname>pg_stat_user_functions</structname> View</title>
+  <table id="pg-stat-user-functions-view" xreflabel="mdb_stat_user_functions">
+   <title><structname>mdb_stat_user_functions</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -2204,7 +2204,7 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   The <structname>pg_stat_user_functions</structname> view will contain
+   The <structname>mdb_stat_user_functions</structname> view will contain
    one row for each tracked function, showing statistics about executions of
    that function.  The <xref linkend="guc-track-functions"> parameter
    controls exactly which functions are tracked.
@@ -2220,7 +2220,7 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
    queries that use the same underlying statistics access functions used by
    the standard views shown above.  For details such as the functions' names,
    consult the definitions of the standard views.  (For example, in
-   <application>psql</> you could issue <literal>\d+ pg_stat_activity</>.)
+   <application>psql</> you could issue <literal>\d+ mdb_stat_activity</>.)
    The access functions for per-database statistics take a database OID as an
    argument to identify which database to report on.
    The per-table and per-index functions take a table or index OID.
@@ -2250,7 +2250,7 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
 
      <row>
        <!-- See also the entry for this in func.sgml -->
-      <entry><literal><function>pg_backend_pid()</function></literal></entry>
+      <entry><literal><function>mdb_backend_pid()</function></literal></entry>
       <entry><type>integer</type></entry>
       <entry>
        Process ID of the server process handling the current session
@@ -2258,18 +2258,18 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_activity</function>(<type>integer</type>)</literal><indexterm><primary>pg_stat_get_activity</primary></indexterm></entry>
+      <entry><literal><function>mdb_stat_get_activity</function>(<type>integer</type>)</literal><indexterm><primary>mdb_stat_get_activity</primary></indexterm></entry>
       <entry><type>setof record</type></entry>
       <entry>
        Returns a record of information about the backend with the specified PID, or
        one record for each active backend in the system if <symbol>NULL</symbol> is
        specified. The fields returned are a subset of those in the
-       <structname>pg_stat_activity</structname> view.
+       <structname>mdb_stat_activity</structname> view.
       </entry>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_snapshot_timestamp()</function></literal><indexterm><primary>pg_stat_get_snapshot_timestamp</primary></indexterm></entry>
+      <entry><literal><function>mdb_stat_get_snapshot_timestamp()</function></literal><indexterm><primary>mdb_stat_get_snapshot_timestamp</primary></indexterm></entry>
       <entry><type>timestamp with time zone</type></entry>
       <entry>
        Returns the timestamp of the current statistics snapshot
@@ -2277,7 +2277,7 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_clear_snapshot()</function></literal><indexterm><primary>pg_stat_clear_snapshot</primary></indexterm></entry>
+      <entry><literal><function>mdb_stat_clear_snapshot()</function></literal><indexterm><primary>mdb_stat_clear_snapshot</primary></indexterm></entry>
       <entry><type>void</type></entry>
       <entry>
        Discard the current statistics snapshot
@@ -2285,7 +2285,7 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_reset()</function></literal><indexterm><primary>pg_stat_reset</primary></indexterm></entry>
+      <entry><literal><function>mdb_stat_reset()</function></literal><indexterm><primary>mdb_stat_reset</primary></indexterm></entry>
       <entry><type>void</type></entry>
       <entry>
        Reset all statistics counters for the current database to zero
@@ -2295,21 +2295,21 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_reset_shared</function>(text)</literal><indexterm><primary>pg_stat_reset_shared</primary></indexterm></entry>
+      <entry><literal><function>mdb_stat_reset_shared</function>(text)</literal><indexterm><primary>mdb_stat_reset_shared</primary></indexterm></entry>
       <entry><type>void</type></entry>
       <entry>
        Reset some cluster-wide statistics counters to zero, depending on the
        argument (requires superuser privileges by default, but EXECUTE for
        this functiion can be granted to others).
-       Calling <literal>pg_stat_reset_shared('bgwriter')</> will zero all the
-       counters shown in the <structname>pg_stat_bgwriter</> view.
-       Calling <literal>pg_stat_reset_shared('archiver')</> will zero all the
-       counters shown in the <structname>pg_stat_archiver</> view.
+       Calling <literal>mdb_stat_reset_shared('bgwriter')</> will zero all the
+       counters shown in the <structname>mdb_stat_bgwriter</> view.
+       Calling <literal>mdb_stat_reset_shared('archiver')</> will zero all the
+       counters shown in the <structname>mdb_stat_archiver</> view.
       </entry>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_reset_single_table_counters</function>(oid)</literal><indexterm><primary>pg_stat_reset_single_table_counters</primary></indexterm></entry>
+      <entry><literal><function>mdb_stat_reset_single_table_counters</function>(oid)</literal><indexterm><primary>mdb_stat_reset_single_table_counters</primary></indexterm></entry>
       <entry><type>void</type></entry>
       <entry>
        Reset statistics for a single table or index in the current database to
@@ -2319,7 +2319,7 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_reset_single_function_counters</function>(oid)</literal><indexterm><primary>pg_stat_reset_single_function_counters</primary></indexterm></entry>
+      <entry><literal><function>mdb_stat_reset_single_function_counters</function>(oid)</literal><indexterm><primary>mdb_stat_reset_single_function_counters</primary></indexterm></entry>
       <entry><type>void</type></entry>
       <entry>
        Reset statistics for a single function in the current database to
@@ -2332,8 +2332,8 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
   </table>
 
   <para>
-   <function>pg_stat_get_activity</function>, the underlying function of
-   the <structname>pg_stat_activity</> view, returns a set of records
+   <function>mdb_stat_get_activity</function>, the underlying function of
+   the <structname>mdb_stat_activity</> view, returns a set of records
    containing all the available information about each backend process.
    Sometimes it may be more convenient to obtain just a subset of this
    information.  In such cases, an older set of per-backend statistics
@@ -2341,15 +2341,15 @@ SELECT pid, wait_event_type, wait_event FROM pg_stat_activity WHERE wait_event i
    linkend="monitoring-stats-backend-funcs-table">.
    These access functions use a backend ID number, which ranges from one
    to the number of currently active backends.
-   The function <function>pg_stat_get_backend_idset</function> provides a
+   The function <function>mdb_stat_get_backend_idset</function> provides a
    convenient way to generate one row for each active backend for
    invoking these functions.  For example, to show the <acronym>PID</>s and
    current queries of all backends:
 
 <programlisting>
-SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
-       pg_stat_get_backend_activity(s.backendid) AS query
-    FROM (SELECT pg_stat_get_backend_idset() AS backendid) AS s;
+SELECT mdb_stat_get_backend_pid(s.backendid) AS pid,
+       mdb_stat_get_backend_activity(s.backendid) AS query
+    FROM (SELECT mdb_stat_get_backend_idset() AS backendid) AS s;
 </programlisting>
   </para>
 
@@ -2368,62 +2368,62 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
     <tbody>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_idset()</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_idset()</function></literal></entry>
       <entry><type>setof integer</type></entry>
       <entry>Set of currently active backend ID numbers (from 1 to the
        number of active backends)</entry>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_activity(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_activity(integer)</function></literal></entry>
       <entry><type>text</type></entry>
       <entry>Text of this backend's most recent query</>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_activity_start(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_activity_start(integer)</function></literal></entry>
       <entry><type>timestamp with time zone</type></entry>
       <entry>Time when the most recent query was started</entry>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_client_addr(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_client_addr(integer)</function></literal></entry>
       <entry><type>inet</type></entry>
       <entry>IP address of the client connected to this backend</entry>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_client_port(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_client_port(integer)</function></literal></entry>
       <entry><type>integer</type></entry>
       <entry>TCP port number that the client is using for communication</entry>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_dbid(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_dbid(integer)</function></literal></entry>
       <entry><type>oid</type></entry>
       <entry>OID of the database this backend is connected to</entry>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_pid(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_pid(integer)</function></literal></entry>
       <entry><type>integer</type></entry>
       <entry>Process ID of this backend</entry>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_start(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_start(integer)</function></literal></entry>
       <entry><type>timestamp with time zone</type></entry>
       <entry>Time when this process was started</entry>
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_userid(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_userid(integer)</function></literal></entry>
       <entry><type>oid</type></entry>
       <entry>OID of the user logged into this backend</entry>
      </row>
 
       <row>
-       <entry><literal><function>pg_stat_get_backend_wait_event_type(integer)</function></literal></entry>
+       <entry><literal><function>mdb_stat_get_backend_wait_event_type(integer)</function></literal></entry>
        <entry><type>text</type></entry>
         <entry>Wait event type name if backend is currently waiting, otherwise NULL.
         See <xref linkend="wait-event-table"> for details.
@@ -2431,7 +2431,7 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
       </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_wait_event(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_wait_event(integer)</function></literal></entry>
       <entry><type>text</type></entry>
        <entry>Wait event name if backend is currently waiting, otherwise NULL.
        See <xref linkend="wait-event-table"> for details.
@@ -2439,7 +2439,7 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
      </row>
 
      <row>
-      <entry><literal><function>pg_stat_get_backend_xact_start(integer)</function></literal></entry>
+      <entry><literal><function>mdb_stat_get_backend_xact_start(integer)</function></literal></entry>
       <entry><type>timestamp with time zone</type></entry>
       <entry>Time when the current transaction was started</entry>
      </row>
@@ -2461,7 +2461,7 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
 
   <para>
    Another useful tool for monitoring database activity is the
-   <structname>pg_locks</structname> system table.  It allows the
+   <structname>mdb_locks</structname> system table.  It allows the
    database administrator to view information about the outstanding
    locks in the lock manager. For example, this capability can be used
    to:
@@ -2493,7 +2493,7 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
     </listitem>
    </itemizedlist>
 
-   Details of the <structname>pg_locks</structname> view appear in
+   Details of the <structname>mdb_locks</structname> view appear in
    <xref linkend="view-pg-locks">.
    For more information on locking and managing concurrency with
    <productname>MollyDB</productname>, refer to <xref linkend="mvcc">.
@@ -2515,7 +2515,7 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
 
   <para>
    Whenever <command>VACUUM</> is running, the
-   <structname>pg_stat_progress_vacuum</structname> view will contain
+   <structname>mdb_stat_progress_vacuum</structname> view will contain
    one row for each backend (including autovacuum worker processes) that is
    currently vacuuming.  The tables below describe the information
    that will be reported and provide information about how to interpret it.
@@ -2524,8 +2524,8 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
    view.
   </para>
 
-  <table id="pg-stat-progress-vacuum-view" xreflabel="pg_stat_progress_vacuum">
-   <title><structname>pg_stat_progress_vacuum</structname> View</title>
+  <table id="pg-stat-progress-vacuum-view" xreflabel="mdb_stat_progress_vacuum">
+   <title><structname>mdb_stat_progress_vacuum</structname> View</title>
    <tgroup cols="3">
     <thead>
     <row>
@@ -2690,7 +2690,7 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
      <entry>
        <command>VACUUM</> is performing final cleanup.  During this phase,
        <command>VACUUM</> will vacuum the free space map, update statistics
-       in <literal>pg_class</>, and report statistics to the statistics
+       in <literal>mdb_class</>, and report statistics to the statistics
        collector.  When this phase is completed, <command>VACUUM</> will end.
      </entry>
     </row>
@@ -2848,7 +2848,7 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
      <entry><literal>statement-status</literal></entry>
      <entry><literal>(const char *)</literal></entry>
      <entry>Probe that fires anytime the server process updates its
-      <structname>pg_stat_activity</>.<structfield>status</>.
+      <structname>mdb_stat_activity</>.<structfield>status</>.
       arg0 is the new status string.</entry>
     </row>
     <row>
@@ -3248,7 +3248,7 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
   <para>
    The example below shows a DTrace script for analyzing transaction
    counts in the system, as an alternative to snapshotting
-   <structname>pg_stat_database</> before and after a performance test:
+   <structname>mdb_stat_database</> before and after a performance test:
 <programlisting>
 #!/usr/sbin/dtrace -qs
 
@@ -3326,7 +3326,7 @@ Total time (ns)                        2312105013
 
    <step>
     <para>
-     Include <filename>pg_trace.h</> if it is not already present in the
+     Include <filename>mdb_trace.h</> if it is not already present in the
      module(s) containing the probe points, and insert
      <literal>TRACE_POSTGRESQL</> probe macros at the desired locations
      in the source code
@@ -3374,7 +3374,7 @@ probe transaction__start(LocalTransactionId);
      At compile time, <literal>transaction__start</> is converted to a macro
      called <literal>TRACE_POSTGRESQL_TRANSACTION_START</> (notice the
      underscores are single here), which is available by including
-     <filename>pg_trace.h</>.  Add the macro call to the appropriate location
+     <filename>mdb_trace.h</>.  Add the macro call to the appropriate location
      in the source code.  In this case, it looks like the following:
 
 <programlisting>

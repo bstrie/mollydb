@@ -16,9 +16,9 @@
 #include "access/sysattr.h"
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "commands/seclabel.h"
 #include "lib/stringinfo.h"
 #include "utils/builtins.h"
@@ -50,10 +50,10 @@ semdb_proc_post_create(Oid functionId)
 	int			i;
 	StringInfoData audit_name;
 	ObjectAddress object;
-	Form_pg_proc proForm;
+	Form_mdb_proc proForm;
 
 	/*
-	 * Fetch namespace of the new procedure. Because pg_proc entry is not
+	 * Fetch namespace of the new procedure. Because mdb_proc entry is not
 	 * visible right now, we need to scan the catalog using SnapshotSelf.
 	 */
 	rel = heap_open(ProcedureRelationId, AccessShareLock);
@@ -70,7 +70,7 @@ semdb_proc_post_create(Oid functionId)
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "catalog lookup failed for proc %u", functionId);
 
-	proForm = (Form_pg_proc) GETSTRUCT(tuple);
+	proForm = (Form_mdb_proc) GETSTRUCT(tuple);
 
 	/*
 	 * check db_schema:{add_name} permission of the namespace
@@ -241,8 +241,8 @@ semdb_proc_setattr(Oid functionId)
 	SysScanDesc sscan;
 	HeapTuple	oldtup;
 	HeapTuple	newtup;
-	Form_pg_proc oldform;
-	Form_pg_proc newform;
+	Form_mdb_proc oldform;
+	Form_mdb_proc newform;
 	uint32		required;
 	ObjectAddress object;
 	char	   *audit_name;
@@ -262,7 +262,7 @@ semdb_proc_setattr(Oid functionId)
 	newtup = systable_getnext(sscan);
 	if (!HeapTupleIsValid(newtup))
 		elog(ERROR, "catalog lookup failed for function %u", functionId);
-	newform = (Form_pg_proc) GETSTRUCT(newtup);
+	newform = (Form_mdb_proc) GETSTRUCT(newtup);
 
 	/*
 	 * Fetch older catalog
@@ -270,7 +270,7 @@ semdb_proc_setattr(Oid functionId)
 	oldtup = SearchSysCache1(PROCOID, ObjectIdGetDatum(functionId));
 	if (!HeapTupleIsValid(oldtup))
 		elog(ERROR, "cache lookup failed for function %u", functionId);
-	oldform = (Form_pg_proc) GETSTRUCT(oldtup);
+	oldform = (Form_mdb_proc) GETSTRUCT(oldtup);
 
 	/*
 	 * Does this ALTER command takes operation to namespace?

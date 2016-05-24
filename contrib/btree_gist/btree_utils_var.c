@@ -10,7 +10,7 @@
 #include <float.h>
 
 #include "btree_utils_var.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 #include "utils/builtins.h"
 #include "utils/rel.h"
 
@@ -136,7 +136,7 @@ gbt_var_node_cp_len(const GBT_VARKEY *node, const gbtree_vinfo *tinfo)
 	{
 		if (tinfo->eml > 1 && l == 0)
 		{
-			if ((l = pg_mblen(p1)) != pg_mblen(p2))
+			if ((l = mdb_mblen(p1)) != mdb_mblen(p2))
 			{
 				return i;
 			}

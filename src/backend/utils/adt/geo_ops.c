@@ -5443,7 +5443,7 @@ plist_same(int npts, Point *p1, Point *p2)
  *-----------------------------------------------------------------------
  */
 double
-pg_hypot(double x, double y)
+mdb_hypot(double x, double y)
 {
 	double		yx;
 

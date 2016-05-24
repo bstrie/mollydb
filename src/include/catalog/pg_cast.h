@@ -1,16 +1,16 @@
 /*-------------------------------------------------------------------------
  *
- * pg_cast.h
- *	  definition of the system "type casts" relation (pg_cast)
+ * mdb_cast.h
+ *	  definition of the system "type casts" relation (mdb_cast)
  *	  along with the relation's initial contents.
  *
- * As of MollyDB 8.0, pg_cast describes not only type coercion functions
+ * As of MollyDB 8.0, mdb_cast describes not only type coercion functions
  * but also length coercion functions.
  *
  *
  * Copyright (c) 2002-2016, MollyDB Global Development Group
  *
- * src/include/catalog/pg_cast.h
+ * src/include/catalog/mdb_cast.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -24,25 +24,25 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_cast definition.  cpp turns this into
- *		typedef struct FormData_pg_cast
+ *		mdb_cast definition.  cpp turns this into
+ *		typedef struct FormData_mdb_cast
  * ----------------
  */
 #define CastRelationId	2605
 
-CATALOG(pg_cast,2605)
+CATALOG(mdb_cast,2605)
 {
 	Oid			castsource;		/* source datatype for cast */
 	Oid			casttarget;		/* destination datatype for cast */
 	Oid			castfunc;		/* cast function; 0 = binary coercible */
 	char		castcontext;	/* contexts in which cast can be used */
 	char		castmethod;		/* cast method */
-} FormData_pg_cast;
+} FormData_mdb_cast;
 
-typedef FormData_pg_cast *Form_pg_cast;
+typedef FormData_mdb_cast *Form_mdb_cast;
 
 /*
- * The allowable values for pg_cast.castcontext are specified by this enum.
+ * The allowable values for mdb_cast.castcontext are specified by this enum.
  * Since castcontext is stored as a "char", we use ASCII codes for human
  * convenience in reading the table.  Note that internally to the backend,
  * these values are converted to the CoercionContext enum (see primnodes.h),
@@ -58,7 +58,7 @@ typedef enum CoercionCodes
 } CoercionCodes;
 
 /*
- * The allowable values for pg_cast.castmethod are specified by this enum.
+ * The allowable values for mdb_cast.castmethod are specified by this enum.
  * Since castcontext is stored as a "char", we use ASCII codes for human
  * convenience in reading the table.
  */
@@ -71,18 +71,18 @@ typedef enum CoercionMethod
 
 
 /* ----------------
- *		compiler constants for pg_cast
+ *		compiler constants for mdb_cast
  * ----------------
  */
-#define Natts_pg_cast				5
-#define Anum_pg_cast_castsource		1
-#define Anum_pg_cast_casttarget		2
-#define Anum_pg_cast_castfunc		3
-#define Anum_pg_cast_castcontext	4
-#define Anum_pg_cast_castmethod		5
+#define Natts_mdb_cast				5
+#define Anum_mdb_cast_castsource		1
+#define Anum_mdb_cast_casttarget		2
+#define Anum_mdb_cast_castfunc		3
+#define Anum_mdb_cast_castcontext	4
+#define Anum_mdb_cast_castmethod		5
 
 /* ----------------
- *		initial contents of pg_cast
+ *		initial contents of mdb_cast
  *
  * Note: this table has OIDs, but we don't bother to assign them manually,
  * since nothing needs to know the specific OID of any built-in cast.
@@ -251,7 +251,7 @@ DATA(insert ( 1043	 19 1400 i f ));
 DATA(insert (	18	 23   77 e f ));
 DATA(insert (	23	 18   78 e f ));
 
-/* pg_node_tree can be coerced to, but not from, text */
+/* mdb_node_tree can be coerced to, but not from, text */
 DATA(insert (  194	 25    0 i b ));
 
 /*
@@ -330,7 +330,7 @@ DATA(insert ( 1560	 23 1684 e f ));
  * Note that the castcontext values specified here should be no stronger than
  * parse_coerce.c's automatic casts ('a' to text, 'e' from text) else odd
  * behavior will ensue when the automatic cast is applied instead of the
- * pg_cast entry!
+ * mdb_cast entry!
  */
 DATA(insert (  650	 25  730 a f ));
 DATA(insert (  869	 25  730 a f ));

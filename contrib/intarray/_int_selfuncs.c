@@ -16,9 +16,9 @@
 #include "_int.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_statistic.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_statistic.h"
+#include "catalog/mdb_type.h"
 #include "utils/selfuncs.h"
 #include "utils/syscache.h"
 #include "utils/lsyscache.h"
@@ -143,7 +143,7 @@ _int_matchsel(PG_FUNCTION_ARGS)
 	int			nmcelems = 0;
 	float4		minfreq = 0.0;
 	float4		nullfrac = 0.0;
-	Form_pg_statistic stats;
+	Form_mdb_statistic stats;
 	Datum	   *values = NULL;
 	int			nvalues = 0;
 	float4	   *numbers = NULL;
@@ -200,7 +200,7 @@ _int_matchsel(PG_FUNCTION_ARGS)
 	 */
 	if (HeapTupleIsValid(vardata.statsTuple))
 	{
-		stats = (Form_pg_statistic) GETSTRUCT(vardata.statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata.statsTuple);
 		nullfrac = stats->stanullfrac;
 
 		/*

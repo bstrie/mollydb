@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------
  *
- * pg_freespacemap.c
+ * mdb_freespacemap.c
  *	  display contents of a free space map
  *
- *	  contrib/pg_freespacemap/pg_freespacemap.c
+ *	  contrib/mdb_freespacemap/mdb_freespacemap.c
  *-------------------------------------------------------------------------
  */
 #include "mollydb.h"
@@ -17,10 +17,10 @@ PG_MODULE_MAGIC;
  * Returns the amount of free space on a given page, according to the
  * free space map.
  */
-PG_FUNCTION_INFO_V1(pg_freespace);
+PG_FUNCTION_INFO_V1(mdb_freespace);
 
 Datum
-pg_freespace(PG_FUNCTION_ARGS)
+mdb_freespace(PG_FUNCTION_ARGS)
 {
 	Oid			relid = PG_GETARG_OID(0);
 	int64		blkno = PG_GETARG_INT64(1);

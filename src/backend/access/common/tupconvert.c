@@ -84,7 +84,7 @@ convert_tuples_by_position(TupleDesc indesc,
 	same = true;
 	for (i = 0; i < n; i++)
 	{
-		Form_pg_attribute att = outdesc->attrs[i];
+		Form_mdb_attribute att = outdesc->attrs[i];
 		Oid			atttypid;
 		int32		atttypmod;
 
@@ -215,7 +215,7 @@ convert_tuples_by_name(TupleDesc indesc,
 	attrMap = (AttrNumber *) palloc0(n * sizeof(AttrNumber));
 	for (i = 0; i < n; i++)
 	{
-		Form_pg_attribute att = outdesc->attrs[i];
+		Form_mdb_attribute att = outdesc->attrs[i];
 		char	   *attname;
 		Oid			atttypid;
 		int32		atttypmod;

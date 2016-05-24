@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_crc32c_sb8.c
+ * mdb_crc32c_sb8.c
  *	  Compute CRC-32C checksum using slicing-by-8 algorithm.
  *
  * Michael E. Kounavis, Frank L. Berry,
@@ -13,26 +13,26 @@
  *
  *
  * IDENTIFICATION
- *	  src/port/pg_crc32c_sb8.c
+ *	  src/port/mdb_crc32c_sb8.c
  *
  *-------------------------------------------------------------------------
  */
 
 #include "c.h"
 
-#include "port/pg_crc32c.h"
+#include "port/mdb_crc32c.h"
 
-static const uint32 pg_crc32c_table[8][256];
+static const uint32 mdb_crc32c_table[8][256];
 
 /* Accumulate one input byte */
 #ifdef WORDS_BIGENDIAN
-#define CRC8(x) pg_crc32c_table[0][((crc >> 24) ^ (x)) & 0xFF] ^ (crc << 8)
+#define CRC8(x) mdb_crc32c_table[0][((crc >> 24) ^ (x)) & 0xFF] ^ (crc << 8)
 #else
-#define CRC8(x) pg_crc32c_table[0][(crc ^ (x)) & 0xFF] ^ (crc >> 8)
+#define CRC8(x) mdb_crc32c_table[0][(crc ^ (x)) & 0xFF] ^ (crc >> 8)
 #endif
 
-pg_crc32c
-pg_comp_crc32c_sb8(pg_crc32c crc, const void *data, size_t len)
+mdb_crc32c
+mdb_comp_crc32c_sb8(mdb_crc32c crc, const void *data, size_t len)
 {
 	const unsigned char *p = data;
 	const uint32 *p4;
@@ -77,10 +77,10 @@ pg_comp_crc32c_sb8(pg_crc32c crc, const void *data, size_t len)
 #endif
 
 		crc =
-			pg_crc32c_table[0][c0] ^ pg_crc32c_table[1][c1] ^
-			pg_crc32c_table[2][c2] ^ pg_crc32c_table[3][c3] ^
-			pg_crc32c_table[4][c4] ^ pg_crc32c_table[5][c5] ^
-			pg_crc32c_table[6][c6] ^ pg_crc32c_table[7][c7];
+			mdb_crc32c_table[0][c0] ^ mdb_crc32c_table[1][c1] ^
+			mdb_crc32c_table[2][c2] ^ mdb_crc32c_table[3][c3] ^
+			mdb_crc32c_table[4][c4] ^ mdb_crc32c_table[5][c5] ^
+			mdb_crc32c_table[6][c6] ^ mdb_crc32c_table[7][c7];
 
 		len -= 8;
 	}
@@ -106,7 +106,7 @@ pg_comp_crc32c_sb8(pg_crc32c crc, const void *data, size_t len)
  * order (IOW, the tables are stored in little-endian order even on big-endian
  * systems).
  */
-static const uint32 pg_crc32c_table[8][256] = {
+static const uint32 mdb_crc32c_table[8][256] = {
 #ifndef WORDS_BIGENDIAN
 	{
 		0x00000000, 0xF26B8303, 0xE13B70F7, 0x1350F3F4,

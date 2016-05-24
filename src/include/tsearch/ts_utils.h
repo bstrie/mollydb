@@ -14,7 +14,7 @@
 
 #include "tsearch/ts_type.h"
 #include "tsearch/ts_public.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 /*
  * Common parse definitions for tsvector and tsquery

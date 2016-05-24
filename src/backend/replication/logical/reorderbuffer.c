@@ -2139,7 +2139,7 @@ ReorderBufferSerializeTXN(ReorderBuffer *rb, ReorderBufferTXN *txn)
 			 * No need to care about TLIs here, only used during a single run,
 			 * so each LSN only maps to a specific WAL record.
 			 */
-			sprintf(path, "pg_replslot/%s/xid-%u-lsn-%X-%X.snap",
+			sprintf(path, "mdb_replslot/%s/xid-%u-lsn-%X-%X.snap",
 					NameStr(MyReplicationSlot->data.name), txn->xid,
 					(uint32) (recptr >> 32), (uint32) recptr);
 
@@ -2377,7 +2377,7 @@ ReorderBufferRestoreChanges(ReorderBuffer *rb, ReorderBufferTXN *txn,
 			 * No need to care about TLIs here, only used during a single run,
 			 * so each LSN only maps to a specific WAL record.
 			 */
-			sprintf(path, "pg_replslot/%s/xid-%u-lsn-%X-%X.snap",
+			sprintf(path, "mdb_replslot/%s/xid-%u-lsn-%X-%X.snap",
 					NameStr(MyReplicationSlot->data.name), txn->xid,
 					(uint32) (recptr >> 32), (uint32) recptr);
 
@@ -2615,7 +2615,7 @@ ReorderBufferRestoreCleanup(ReorderBuffer *rb, ReorderBufferTXN *txn)
 
 		XLogSegNoOffsetToRecPtr(cur, 0, recptr);
 
-		sprintf(path, "pg_replslot/%s/xid-%u-lsn-%X-%X.snap",
+		sprintf(path, "mdb_replslot/%s/xid-%u-lsn-%X-%X.snap",
 				NameStr(MyReplicationSlot->data.name), txn->xid,
 				(uint32) (recptr >> 32), (uint32) recptr);
 		if (unlink(path) != 0 && errno != ENOENT)
@@ -2638,8 +2638,8 @@ StartupReorderBuffer(void)
 	DIR		   *spill_dir;
 	struct dirent *spill_de;
 
-	logical_dir = AllocateDir("pg_replslot");
-	while ((logical_de = ReadDir(logical_dir, "pg_replslot")) != NULL)
+	logical_dir = AllocateDir("mdb_replslot");
+	while ((logical_de = ReadDir(logical_dir, "mdb_replslot")) != NULL)
 	{
 		struct stat statbuf;
 		char		path[MAXPGPATH];
@@ -2656,7 +2656,7 @@ StartupReorderBuffer(void)
 		 * ok, has to be a surviving logical slot, iterate and delete
 		 * everythign starting with xid-*
 		 */
-		sprintf(path, "pg_replslot/%s", logical_de->d_name);
+		sprintf(path, "mdb_replslot/%s", logical_de->d_name);
 
 		/* we're only creating directories here, skip if it's not our's */
 		if (lstat(path, &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
@@ -2672,7 +2672,7 @@ StartupReorderBuffer(void)
 			/* only look at names that can be ours */
 			if (strncmp(spill_de->d_name, "xid", 3) == 0)
 			{
-				sprintf(path, "pg_replslot/%s/%s", logical_de->d_name,
+				sprintf(path, "mdb_replslot/%s/%s", logical_de->d_name,
 						spill_de->d_name);
 
 				if (unlink(path) != 0)
@@ -2829,7 +2829,7 @@ ReorderBufferToastReplace(ReorderBuffer *rb, ReorderBufferTXN *txn,
 
 	for (natt = 0; natt < desc->natts; natt++)
 	{
-		Form_pg_attribute attr = desc->attrs[natt];
+		Form_mdb_attribute attr = desc->attrs[natt];
 		ReorderBufferToastEnt *ent;
 		struct varlena *varlena;
 
@@ -3065,7 +3065,7 @@ ApplyLogicalMappingFile(HTAB *tuplecid_data, Oid relid, const char *fname)
 	int			readBytes;
 	LogicalRewriteMappingData map;
 
-	sprintf(path, "pg_logical/mappings/%s", fname);
+	sprintf(path, "mdb_logical/mappings/%s", fname);
 	fd = OpenTransientFile(path, O_RDONLY | PG_BINARY, 0);
 	if (fd < 0)
 		ereport(ERROR,
@@ -3127,7 +3127,7 @@ ApplyLogicalMappingFile(HTAB *tuplecid_data, Oid relid, const char *fname)
 		{
 			/*
 			 * Make sure the existing mapping makes sense. We sometime update
-			 * old records that did not yet have a cmax (e.g. pg_class' own
+			 * old records that did not yet have a cmax (e.g. mdb_class' own
 			 * entry while rewriting it) during rewrites, so allow that.
 			 */
 			Assert(ent->cmin == InvalidCommandId || ent->cmin == new_ent->cmin);
@@ -3185,8 +3185,8 @@ UpdateLogicalMappings(HTAB *tuplecid_data, Oid relid, Snapshot snapshot)
 	size_t		off;
 	Oid			dboid = IsSharedRelation(relid) ? InvalidOid : MyDatabaseId;
 
-	mapping_dir = AllocateDir("pg_logical/mappings");
-	while ((mapping_de = ReadDir(mapping_dir, "pg_logical/mappings")) != NULL)
+	mapping_dir = AllocateDir("mdb_logical/mappings");
+	while ((mapping_de = ReadDir(mapping_dir, "mdb_logical/mappings")) != NULL)
 	{
 		Oid			f_dboid;
 		Oid			f_relid;

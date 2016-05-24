@@ -1,4 +1,4 @@
-# German message translation file for pg_basebackup
+# German message translation file for mdb_basebackup
 # Copyright (C) 2011 - 2016 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 # Peter Eisentraut <peter_e@gmx.net>, 2011 - 2016.
@@ -30,32 +30,32 @@ msgstr "Speicher aufgebraucht\n"
 msgid "cannot duplicate null pointer (internal error)\n"
 msgstr "kann NULL-Zeiger nicht kopieren (interner Fehler)\n"
 
-#: pg_basebackup.c:154
+#: mdb_basebackup.c:154
 #, c-format
 msgid "%s: directory name too long\n"
 msgstr "%s: Verzeichnisname zu lang\n"
 
-#: pg_basebackup.c:164
+#: mdb_basebackup.c:164
 #, c-format
 msgid "%s: multiple \"=\" signs in tablespace mapping\n"
 msgstr "%s: mehrere „=“-Zeichen im Tablespace-Mapping\n"
 
-#: pg_basebackup.c:177
+#: mdb_basebackup.c:177
 #, c-format
 msgid "%s: invalid tablespace mapping format \"%s\", must be \"OLDDIR=NEWDIR\"\n"
 msgstr "%s: ungültiges Tablespace-Mapping-Format „%s“, muss „ALTES_VERZ=NEUES_VERZ“ sein\n"
 
-#: pg_basebackup.c:190
+#: mdb_basebackup.c:190
 #, c-format
 msgid "%s: old directory is not an absolute path in tablespace mapping: %s\n"
 msgstr "%s: altes Verzeichnis im Tablespace-Mapping ist kein absoluter Pfad: %s\n"
 
-#: pg_basebackup.c:197
+#: mdb_basebackup.c:197
 #, c-format
 msgid "%s: new directory is not an absolute path in tablespace mapping: %s\n"
 msgstr "%s: neues Verzeichnis im Tablespace-Mapping ist kein absoluter Pfad: %s\n"
 
-#: pg_basebackup.c:231
+#: mdb_basebackup.c:231
 #, c-format
 msgid ""
 "%s takes a base backup of a running MollyDB server.\n"
@@ -64,17 +64,17 @@ msgstr ""
 "%s erzeugt eine Basissicherung eines laufenden MollyDB-Servers.\n"
 "\n"
 
-#: pg_basebackup.c:233 pg_receivexlog.c:66 pg_recvlogical.c:69
+#: mdb_basebackup.c:233 mdb_receivexlog.c:66 mdb_recvlogical.c:69
 #, c-format
 msgid "Usage:\n"
 msgstr "Aufruf:\n"
 
-#: pg_basebackup.c:234 pg_receivexlog.c:67 pg_recvlogical.c:70
+#: mdb_basebackup.c:234 mdb_receivexlog.c:67 mdb_recvlogical.c:70
 #, c-format
 msgid "  %s [OPTION]...\n"
 msgstr "  %s [OPTION]...\n"
 
-#: pg_basebackup.c:235
+#: mdb_basebackup.c:235
 #, c-format
 msgid ""
 "\n"
@@ -83,17 +83,17 @@ msgstr ""
 "\n"
 "Optionen, die die Ausgabe kontrollieren:\n"
 
-#: pg_basebackup.c:236
+#: mdb_basebackup.c:236
 #, c-format
 msgid "  -D, --pgdata=DIRECTORY receive base backup into directory\n"
 msgstr "  -D, --pgdata=VERZ      Basissicherung in dieses Verzeichnis empfangen\n"
 
-#: pg_basebackup.c:237
+#: mdb_basebackup.c:237
 #, c-format
 msgid "  -F, --format=p|t       output format (plain (default), tar)\n"
 msgstr "  -F, --format=p|t       Ausgabeformat (plain (Voreinstellung), tar)\n"
 
-#: pg_basebackup.c:238
+#: mdb_basebackup.c:238
 #, c-format
 msgid ""
 "  -r, --max-rate=RATE    maximum transfer rate to transfer data directory\n"
@@ -102,7 +102,7 @@ msgstr ""
 "  -r, --max-rate=RATE    maximale Transferrate für Übertragung des Datenver-\n"
 "                         zeichnisses (in kB/s, oder Suffix „k“ oder „M“ abgeben)\n"
 
-#: pg_basebackup.c:240
+#: mdb_basebackup.c:240
 #, c-format
 msgid ""
 "  -R, --write-recovery-conf\n"
@@ -111,12 +111,12 @@ msgstr ""
 "  -R, --write-recovery-conf\n"
 "                         recovery.conf schreiben nach der Sicherung\n"
 
-#: pg_basebackup.c:242 pg_receivexlog.c:74
+#: mdb_basebackup.c:242 mdb_receivexlog.c:74
 #, c-format
 msgid "  -S, --slot=SLOTNAME    replication slot to use\n"
 msgstr "  -S, --slot=SLOTNAME    zu verwendender Replikations-Slot\n"
 
-#: pg_basebackup.c:243
+#: mdb_basebackup.c:243
 #, c-format
 msgid ""
 "  -T, --tablespace-mapping=OLDDIR=NEWDIR\n"
@@ -125,14 +125,14 @@ msgstr ""
 "  -T, --tablespace-mapping=ALTES_VERZ=NEUES_VERZ\n"
 "                         Tablespace in ALTES_VERZ nach NEUES_VERZ verlagern\n"
 
-#: pg_basebackup.c:245
+#: mdb_basebackup.c:245
 #, c-format
 msgid "  -x, --xlog             include required WAL files in backup (fetch mode)\n"
 msgstr ""
 "  -x, --xlog             benötigte WAL-Dateien in Sicherung einbeziehen\n"
 "                         (Fetch-Modus)\n"
 
-#: pg_basebackup.c:246
+#: mdb_basebackup.c:246
 #, c-format
 msgid ""
 "  -X, --xlog-method=fetch|stream\n"
@@ -141,22 +141,22 @@ msgstr ""
 "  -X, --xlog-method=fetch|stream\n"
 "                         benötigte WAL-Dateien mit angegebener Methode einbeziehen\n"
 
-#: pg_basebackup.c:248
+#: mdb_basebackup.c:248
 #, c-format
 msgid "      --xlogdir=XLOGDIR  location for the transaction log directory\n"
 msgstr "      --xlogdir=XLOGVERZ Verzeichnis für das Transaktionslog\n"
 
-#: pg_basebackup.c:249
+#: mdb_basebackup.c:249
 #, c-format
 msgid "  -z, --gzip             compress tar output\n"
 msgstr "  -z, --gzip             Tar-Ausgabe komprimieren\n"
 
-#: pg_basebackup.c:250
+#: mdb_basebackup.c:250
 #, c-format
 msgid "  -Z, --compress=0-9     compress tar output with given compression level\n"
 msgstr "  -Z, --compress=0-9     Tar-Ausgabe mit angegebenem Niveau komprimieren\n"
 
-#: pg_basebackup.c:251
+#: mdb_basebackup.c:251
 #, c-format
 msgid ""
 "\n"
@@ -165,7 +165,7 @@ msgstr ""
 "\n"
 "Allgemeine Optionen:\n"
 
-#: pg_basebackup.c:252
+#: mdb_basebackup.c:252
 #, c-format
 msgid ""
 "  -c, --checkpoint=fast|spread\n"
@@ -174,32 +174,32 @@ msgstr ""
 "  -c, --checkpoint=fast|spread\n"
 "                         schnelles oder verteiltes Checkpointing einstellen\n"
 
-#: pg_basebackup.c:254
+#: mdb_basebackup.c:254
 #, c-format
 msgid "  -l, --label=LABEL      set backup label\n"
 msgstr "  -l, --label=LABEL      Backup-Label setzen\n"
 
-#: pg_basebackup.c:255
+#: mdb_basebackup.c:255
 #, c-format
 msgid "  -P, --progress         show progress information\n"
 msgstr "  -P, --progress         Fortschrittsinformationen zeigen\n"
 
-#: pg_basebackup.c:256 pg_receivexlog.c:76 pg_recvlogical.c:89
+#: mdb_basebackup.c:256 mdb_receivexlog.c:76 mdb_recvlogical.c:89
 #, c-format
 msgid "  -v, --verbose          output verbose messages\n"
 msgstr "  -v, --verbose          „Verbose“-Modus\n"
 
-#: pg_basebackup.c:257 pg_receivexlog.c:77 pg_recvlogical.c:90
+#: mdb_basebackup.c:257 mdb_receivexlog.c:77 mdb_recvlogical.c:90
 #, c-format
 msgid "  -V, --version          output version information, then exit\n"
 msgstr "  -V, --version          Versionsinformationen anzeigen, dann beenden\n"
 
-#: pg_basebackup.c:258 pg_receivexlog.c:78 pg_recvlogical.c:91
+#: mdb_basebackup.c:258 mdb_receivexlog.c:78 mdb_recvlogical.c:91
 #, c-format
 msgid "  -?, --help             show this help, then exit\n"
 msgstr "  -?, --help             diese Hilfe anzeigen, dann beenden\n"
 
-#: pg_basebackup.c:259 pg_receivexlog.c:79 pg_recvlogical.c:92
+#: mdb_basebackup.c:259 mdb_receivexlog.c:79 mdb_recvlogical.c:92
 #, c-format
 msgid ""
 "\n"
@@ -208,22 +208,22 @@ msgstr ""
 "\n"
 "Verbindungsoptionen:\n"
 
-#: pg_basebackup.c:260 pg_receivexlog.c:80
+#: mdb_basebackup.c:260 mdb_receivexlog.c:80
 #, c-format
 msgid "  -d, --dbname=CONNSTR   connection string\n"
 msgstr "  -d, --dbname=VERBDG    Verbindungsparameter\n"
 
-#: pg_basebackup.c:261 pg_receivexlog.c:81 pg_recvlogical.c:94
+#: mdb_basebackup.c:261 mdb_receivexlog.c:81 mdb_recvlogical.c:94
 #, c-format
 msgid "  -h, --host=HOSTNAME    database server host or socket directory\n"
 msgstr "  -h, --host=HOSTNAME    Name des Datenbankservers oder Socket-Verzeichnis\n"
 
-#: pg_basebackup.c:262 pg_receivexlog.c:82 pg_recvlogical.c:95
+#: mdb_basebackup.c:262 mdb_receivexlog.c:82 mdb_recvlogical.c:95
 #, c-format
 msgid "  -p, --port=PORT        database server port number\n"
 msgstr "  -p, --port=PORT        Portnummer des Datenbankservers\n"
 
-#: pg_basebackup.c:263
+#: mdb_basebackup.c:263
 #, c-format
 msgid ""
 "  -s, --status-interval=INTERVAL\n"
@@ -232,22 +232,22 @@ msgstr ""
 "  -s, --status-interval=INTERVALL\n"
 "                         Zeit zwischen an Server gesendeten Statuspaketen (in Sekunden)\n"
 
-#: pg_basebackup.c:265 pg_receivexlog.c:83 pg_recvlogical.c:96
+#: mdb_basebackup.c:265 mdb_receivexlog.c:83 mdb_recvlogical.c:96
 #, c-format
 msgid "  -U, --username=NAME    connect as specified database user\n"
 msgstr "  -U, --username=NAME    Datenbankbenutzername\n"
 
-#: pg_basebackup.c:266 pg_receivexlog.c:84 pg_recvlogical.c:97
+#: mdb_basebackup.c:266 mdb_receivexlog.c:84 mdb_recvlogical.c:97
 #, c-format
 msgid "  -w, --no-password      never prompt for password\n"
 msgstr "  -w, --no-password      niemals nach Passwort fragen\n"
 
-#: pg_basebackup.c:267 pg_receivexlog.c:85 pg_recvlogical.c:98
+#: mdb_basebackup.c:267 mdb_receivexlog.c:85 mdb_recvlogical.c:98
 #, c-format
 msgid "  -W, --password         force password prompt (should happen automatically)\n"
 msgstr "  -W, --password         nach Passwort fragen (sollte automatisch geschehen)\n"
 
-#: pg_basebackup.c:268 pg_receivexlog.c:89 pg_recvlogical.c:99
+#: mdb_basebackup.c:268 mdb_receivexlog.c:89 mdb_recvlogical.c:99
 #, c-format
 msgid ""
 "\n"
@@ -256,379 +256,379 @@ msgstr ""
 "\n"
 "Berichten Sie Fehler an <mdb-bugs@mollydb.org>.\n"
 
-#: pg_basebackup.c:311
+#: mdb_basebackup.c:311
 #, c-format
 msgid "%s: could not read from ready pipe: %s\n"
 msgstr "%s: konnte nicht aus bereiter Pipe lesen: %s\n"
 
-#: pg_basebackup.c:319 pg_basebackup.c:422 pg_basebackup.c:1887
+#: mdb_basebackup.c:319 mdb_basebackup.c:422 mdb_basebackup.c:1887
 #: streamutil.c:285
 #, c-format
 msgid "%s: could not parse transaction log location \"%s\"\n"
 msgstr "%s: konnte Transaktionslogposition „%s“ nicht interpretieren\n"
 
-#: pg_basebackup.c:435
+#: mdb_basebackup.c:435
 #, c-format
 msgid "%s: could not create pipe for background process: %s\n"
 msgstr "%s: konnte Pipe für Hintergrundprozess nicht erzeugen: %s\n"
 
-#: pg_basebackup.c:460 pg_basebackup.c:515 pg_basebackup.c:1263
+#: mdb_basebackup.c:460 mdb_basebackup.c:515 mdb_basebackup.c:1263
 #, c-format
 msgid "%s: could not create directory \"%s\": %s\n"
 msgstr "%s: konnte Verzeichnis „%s“ nicht erzeugen: %s\n"
 
-#: pg_basebackup.c:478
+#: mdb_basebackup.c:478
 #, c-format
 msgid "%s: could not create background process: %s\n"
 msgstr "%s: konnte Hintergrundprozess nicht erzeugen: %s\n"
 
-#: pg_basebackup.c:490
+#: mdb_basebackup.c:490
 #, c-format
 msgid "%s: could not create background thread: %s\n"
 msgstr "%s: konnte Hintergrund-Thread nicht erzeugen: %s\n"
 
-#: pg_basebackup.c:534
+#: mdb_basebackup.c:534
 #, c-format
 msgid "%s: directory \"%s\" exists but is not empty\n"
 msgstr "%s: Verzeichnis „%s“ existiert aber ist nicht leer\n"
 
-#: pg_basebackup.c:542
+#: mdb_basebackup.c:542
 #, c-format
 msgid "%s: could not access directory \"%s\": %s\n"
 msgstr "%s: konnte nicht auf Verzeichnis „%s“ zugreifen: %s\n"
 
-#: pg_basebackup.c:604
+#: mdb_basebackup.c:604
 #, c-format
 msgid "%*s/%s kB (100%%), %d/%d tablespace %*s"
 msgid_plural "%*s/%s kB (100%%), %d/%d tablespaces %*s"
 msgstr[0] "%*s/%s kB (100%%), %d/%d Tablespace %*s"
 msgstr[1] "%*s/%s kB (100%%), %d/%d Tablespaces %*s"
 
-#: pg_basebackup.c:616
+#: mdb_basebackup.c:616
 #, c-format
 msgid "%*s/%s kB (%d%%), %d/%d tablespace (%s%-*.*s)"
 msgid_plural "%*s/%s kB (%d%%), %d/%d tablespaces (%s%-*.*s)"
 msgstr[0] "%*s/%s kB (%d%%), %d/%d Tablespace (%s%-*.*s)"
 msgstr[1] "%*s/%s kB (%d%%), %d/%d Tablespaces (%s%-*.*s)"
 
-#: pg_basebackup.c:632
+#: mdb_basebackup.c:632
 #, c-format
 msgid "%*s/%s kB (%d%%), %d/%d tablespace"
 msgid_plural "%*s/%s kB (%d%%), %d/%d tablespaces"
 msgstr[0] "%*s/%s kB (%d%%), %d/%d Tablespace"
 msgstr[1] "%*s/%s kB (%d%%), %d/%d Tablespaces"
 
-#: pg_basebackup.c:654
+#: mdb_basebackup.c:654
 #, c-format
 msgid "%s: transfer rate \"%s\" is not a valid value\n"
 msgstr "%s: Transferrate „%s“ ist kein gültiger Wert\n"
 
-#: pg_basebackup.c:661
+#: mdb_basebackup.c:661
 #, c-format
 msgid "%s: invalid transfer rate \"%s\": %s\n"
 msgstr "%s: ungültige Transferrate „%s“: %s\n"
 
-#: pg_basebackup.c:671
+#: mdb_basebackup.c:671
 #, c-format
 msgid "%s: transfer rate must be greater than zero\n"
 msgstr "%s: Transferrate muss größer als null sein\n"
 
-#: pg_basebackup.c:705
+#: mdb_basebackup.c:705
 #, c-format
 msgid "%s: invalid --max-rate unit: \"%s\"\n"
 msgstr "%s: ungültige Einheit für --max-rate: „%s“\n"
 
-#: pg_basebackup.c:714
+#: mdb_basebackup.c:714
 #, c-format
 msgid "%s: transfer rate \"%s\" exceeds integer range\n"
 msgstr "%s: Transferrate „%s“ überschreitet Bereich für ganze Zahlen\n"
 
-#: pg_basebackup.c:726
+#: mdb_basebackup.c:726
 #, c-format
 msgid "%s: transfer rate \"%s\" is out of range\n"
 msgstr "%s: Transferrate „%s“ ist außerhalb des gültigen Bereichs\n"
 
-#: pg_basebackup.c:750
+#: mdb_basebackup.c:750
 #, c-format
 msgid "%s: could not write to compressed file \"%s\": %s\n"
 msgstr "%s: konnte nicht in komprimierte Datei „%s“ schreiben: %s\n"
 
-#: pg_basebackup.c:760 pg_basebackup.c:1357 pg_basebackup.c:1582
+#: mdb_basebackup.c:760 mdb_basebackup.c:1357 mdb_basebackup.c:1582
 #, c-format
 msgid "%s: could not write to file \"%s\": %s\n"
 msgstr "%s: konnte nicht in Datei „%s“ schreiben: %s\n"
 
-#: pg_basebackup.c:815 pg_basebackup.c:836 pg_basebackup.c:864
+#: mdb_basebackup.c:815 mdb_basebackup.c:836 mdb_basebackup.c:864
 #, c-format
 msgid "%s: could not set compression level %d: %s\n"
 msgstr "%s: konnte Komprimierungsniveau %d nicht setzen: %s\n"
 
-#: pg_basebackup.c:885
+#: mdb_basebackup.c:885
 #, c-format
 msgid "%s: could not create compressed file \"%s\": %s\n"
 msgstr "%s: konnte komprimierte Datei „%s“ nicht erzeugen: %s\n"
 
-#: pg_basebackup.c:896 pg_basebackup.c:1317 pg_basebackup.c:1575
+#: mdb_basebackup.c:896 mdb_basebackup.c:1317 mdb_basebackup.c:1575
 #, c-format
 msgid "%s: could not create file \"%s\": %s\n"
 msgstr "%s: konnte Datei „%s“ nicht erzeugen: %s\n"
 
-#: pg_basebackup.c:908 pg_basebackup.c:1172
+#: mdb_basebackup.c:908 mdb_basebackup.c:1172
 #, c-format
 msgid "%s: could not get COPY data stream: %s"
 msgstr "%s: konnte COPY-Datenstrom nicht empfangen: %s"
 
-#: pg_basebackup.c:965
+#: mdb_basebackup.c:965
 #, c-format
 msgid "%s: could not close compressed file \"%s\": %s\n"
 msgstr "%s: konnte komprimierte Datei „%s“ nicht schließen: %s\n"
 
-#: pg_basebackup.c:978 pg_recvlogical.c:577 receivelog.c:203 receivelog.c:351
+#: mdb_basebackup.c:978 mdb_recvlogical.c:577 receivelog.c:203 receivelog.c:351
 #: receivelog.c:738
 #, c-format
 msgid "%s: could not close file \"%s\": %s\n"
 msgstr "%s: konnte Datei „%s“ nicht schließen: %s\n"
 
-#: pg_basebackup.c:989 pg_basebackup.c:1201 pg_recvlogical.c:443
+#: mdb_basebackup.c:989 mdb_basebackup.c:1201 mdb_recvlogical.c:443
 #: receivelog.c:1019
 #, c-format
 msgid "%s: could not read COPY data: %s"
 msgstr "%s: konnte COPY-Daten nicht lesen: %s"
 
-#: pg_basebackup.c:1215
+#: mdb_basebackup.c:1215
 #, c-format
 msgid "%s: invalid tar block header size: %d\n"
 msgstr "%s: ungültige Tar-Block-Kopf-Größe: %d\n"
 
-#: pg_basebackup.c:1271
+#: mdb_basebackup.c:1271
 #, c-format
 msgid "%s: could not set permissions on directory \"%s\": %s\n"
 msgstr "%s: konnte Zugriffsrechte des Verzeichnisses „%s“ nicht setzen: %s\n"
 
-#: pg_basebackup.c:1295
+#: mdb_basebackup.c:1295
 #, c-format
 msgid "%s: could not create symbolic link from \"%s\" to \"%s\": %s\n"
 msgstr "%s: konnte symbolische Verknüpfung von „%s“ nach „%s“ nicht erzeugen: %s\n"
 
-#: pg_basebackup.c:1304
+#: mdb_basebackup.c:1304
 #, c-format
 msgid "%s: unrecognized link indicator \"%c\"\n"
 msgstr "%s: unbekannter Verknüpfungsindikator „%c“\n"
 
-#: pg_basebackup.c:1324
+#: mdb_basebackup.c:1324
 #, c-format
 msgid "%s: could not set permissions on file \"%s\": %s\n"
 msgstr "%s: konnte Rechte der Datei „%s“ nicht setzen: %s\n"
 
-#: pg_basebackup.c:1383
+#: mdb_basebackup.c:1383
 #, c-format
 msgid "%s: COPY stream ended before last file was finished\n"
 msgstr "%s: COPY-Strom endete vor dem Ende der letzten Datei\n"
 
-#: pg_basebackup.c:1469 pg_basebackup.c:1489 pg_basebackup.c:1496
-#: pg_basebackup.c:1550
+#: mdb_basebackup.c:1469 mdb_basebackup.c:1489 mdb_basebackup.c:1496
+#: mdb_basebackup.c:1550
 #, c-format
 msgid "%s: out of memory\n"
 msgstr "%s: Speicher aufgebraucht\n"
 
-#: pg_basebackup.c:1627
+#: mdb_basebackup.c:1627
 #, c-format
 msgid "%s: incompatible server version %s\n"
 msgstr "%s: inkompatible Serverversion %s\n"
 
-#: pg_basebackup.c:1674 pg_recvlogical.c:261 receivelog.c:536 receivelog.c:587
+#: mdb_basebackup.c:1674 mdb_recvlogical.c:261 receivelog.c:536 receivelog.c:587
 #: receivelog.c:627 streamutil.c:255 streamutil.c:359 streamutil.c:405
 #, c-format
 msgid "%s: could not send replication command \"%s\": %s"
 msgstr "%s: konnte Replikationsbefehl „%s“ nicht senden: %s"
 
-#: pg_basebackup.c:1685
+#: mdb_basebackup.c:1685
 #, c-format
 msgid "%s: could not initiate base backup: %s"
 msgstr "%s: konnte Basissicherung nicht starten: %s"
 
-#: pg_basebackup.c:1692
+#: mdb_basebackup.c:1692
 #, c-format
 msgid "%s: server returned unexpected response to BASE_BACKUP command; got %d rows and %d fields, expected %d rows and %d fields\n"
 msgstr "%s: unerwartete Antwort auf Befehl BASE_BACKUP: %d Zeilen und %d Felder erhalten, %d Zeilen und %d Felder erwartet\n"
 
-#: pg_basebackup.c:1712
+#: mdb_basebackup.c:1712
 #, c-format
 msgid "transaction log start point: %s on timeline %u\n"
 msgstr "Transaktionslog-Startpunkt: %s auf Zeitleiste %u\n"
 
-#: pg_basebackup.c:1721
+#: mdb_basebackup.c:1721
 #, c-format
 msgid "%s: could not get backup header: %s"
 msgstr "%s: konnte Kopf der Sicherung nicht empfangen: %s"
 
-#: pg_basebackup.c:1727
+#: mdb_basebackup.c:1727
 #, c-format
 msgid "%s: no data returned from server\n"
 msgstr "%s: keine Daten vom Server zurückgegeben\n"
 
-#: pg_basebackup.c:1759
+#: mdb_basebackup.c:1759
 #, c-format
 msgid "%s: can only write single tablespace to stdout, database has %d\n"
 msgstr "%s: kann nur einen einzelnen Tablespace auf die Standardausgabe schreiben, Datenbank hat %d\n"
 
-#: pg_basebackup.c:1771
+#: mdb_basebackup.c:1771
 #, c-format
 msgid "%s: starting background WAL receiver\n"
 msgstr "%s: Hintergrund-WAL-Receiver wird gestartet\n"
 
-#: pg_basebackup.c:1802
+#: mdb_basebackup.c:1802
 #, c-format
 msgid "%s: could not get transaction log end position from server: %s"
 msgstr "%s: konnte Transaktionslogendposition nicht vom Server empfangen: %s"
 
-#: pg_basebackup.c:1809
+#: mdb_basebackup.c:1809
 #, c-format
 msgid "%s: no transaction log end position returned from server\n"
 msgstr "%s: kein Transaktionslogendpunkt vom Server zurückgegeben\n"
 
-#: pg_basebackup.c:1821
+#: mdb_basebackup.c:1821
 #, c-format
 msgid "%s: final receive failed: %s"
 msgstr "%s: letztes Empfangen fehlgeschlagen: %s"
 
-#: pg_basebackup.c:1839
+#: mdb_basebackup.c:1839
 #, c-format
 msgid "%s: waiting for background process to finish streaming ...\n"
 msgstr "%s: warte bis Hintergrundprozess Streaming beendet hat ...\n"
 
-#: pg_basebackup.c:1845
+#: mdb_basebackup.c:1845
 #, c-format
 msgid "%s: could not send command to background pipe: %s\n"
 msgstr "%s: konnte Befehl nicht an Hintergrund-Pipe senden: %s\n"
 
-#: pg_basebackup.c:1854
+#: mdb_basebackup.c:1854
 #, c-format
 msgid "%s: could not wait for child process: %s\n"
 msgstr "%s: konnte nicht auf Kindprozess warten: %s\n"
 
-#: pg_basebackup.c:1860
+#: mdb_basebackup.c:1860
 #, c-format
 msgid "%s: child %d died, expected %d\n"
 msgstr "%s: Kindprozess %d endete, aber %d wurde erwartet\n"
 
-#: pg_basebackup.c:1866
+#: mdb_basebackup.c:1866
 #, c-format
 msgid "%s: child process did not exit normally\n"
 msgstr "%s: Kindprozess hat nicht normal beendet\n"
 
-#: pg_basebackup.c:1872
+#: mdb_basebackup.c:1872
 #, c-format
 msgid "%s: child process exited with error %d\n"
 msgstr "%s: Kindprozess hat mit Fehler %d beendet\n"
 
-#: pg_basebackup.c:1899
+#: mdb_basebackup.c:1899
 #, c-format
 msgid "%s: could not wait for child thread: %s\n"
 msgstr "%s: konnte nicht auf Kind-Thread warten: %s\n"
 
-#: pg_basebackup.c:1906
+#: mdb_basebackup.c:1906
 #, c-format
 msgid "%s: could not get child thread exit status: %s\n"
 msgstr "%s: konnte Statuscode des Kind-Threads nicht ermitteln: %s\n"
 
-#: pg_basebackup.c:1912
+#: mdb_basebackup.c:1912
 #, c-format
 msgid "%s: child thread exited with error %u\n"
 msgstr "%s: Kind-Thread hat mit Fehler %u beendet\n"
 
-#: pg_basebackup.c:2002
+#: mdb_basebackup.c:2002
 #, c-format
 msgid "%s: invalid output format \"%s\", must be \"plain\" or \"tar\"\n"
 msgstr "%s: ungültiges Ausgabeformat „%s“, muss „plain“ oder „tar“ sein\n"
 
-#: pg_basebackup.c:2023 pg_basebackup.c:2035
+#: mdb_basebackup.c:2023 mdb_basebackup.c:2035
 #, c-format
 msgid "%s: cannot specify both --xlog and --xlog-method\n"
 msgstr "%s: --xlog und --xlog-method können nicht zusammen verwendet werden\n"
 
-#: pg_basebackup.c:2050
+#: mdb_basebackup.c:2050
 #, c-format
 msgid "%s: invalid xlog-method option \"%s\", must be \"fetch\" or \"stream\"\n"
 msgstr "%s: ungültige Option „%s“ für --xlog-method, muss „fetch“ oder „stream“ sein\n"
 
-#: pg_basebackup.c:2072
+#: mdb_basebackup.c:2072
 #, c-format
 msgid "%s: invalid compression level \"%s\"\n"
 msgstr "%s: ungültiges Komprimierungsniveau „%s“\n"
 
-#: pg_basebackup.c:2084
+#: mdb_basebackup.c:2084
 #, c-format
 msgid "%s: invalid checkpoint argument \"%s\", must be \"fast\" or \"spread\"\n"
 msgstr "%s: ungültiges Checkpoint-Argument „%s“, muss „fast“ oder „spread“ sein\n"
 
-#: pg_basebackup.c:2111 pg_receivexlog.c:445 pg_recvlogical.c:760
+#: mdb_basebackup.c:2111 mdb_receivexlog.c:445 mdb_recvlogical.c:760
 #, c-format
 msgid "%s: invalid status interval \"%s\"\n"
 msgstr "%s: ungültiges Statusintervall „%s“\n"
 
-#: pg_basebackup.c:2127 pg_basebackup.c:2141 pg_basebackup.c:2152
-#: pg_basebackup.c:2165 pg_basebackup.c:2175 pg_basebackup.c:2185
-#: pg_basebackup.c:2197 pg_basebackup.c:2208 pg_receivexlog.c:477
-#: pg_receivexlog.c:491 pg_receivexlog.c:499 pg_receivexlog.c:509
-#: pg_receivexlog.c:520 pg_recvlogical.c:787 pg_recvlogical.c:801
-#: pg_recvlogical.c:812 pg_recvlogical.c:820 pg_recvlogical.c:828
-#: pg_recvlogical.c:836 pg_recvlogical.c:844 pg_recvlogical.c:852
+#: mdb_basebackup.c:2127 mdb_basebackup.c:2141 mdb_basebackup.c:2152
+#: mdb_basebackup.c:2165 mdb_basebackup.c:2175 mdb_basebackup.c:2185
+#: mdb_basebackup.c:2197 mdb_basebackup.c:2208 mdb_receivexlog.c:477
+#: mdb_receivexlog.c:491 mdb_receivexlog.c:499 mdb_receivexlog.c:509
+#: mdb_receivexlog.c:520 mdb_recvlogical.c:787 mdb_recvlogical.c:801
+#: mdb_recvlogical.c:812 mdb_recvlogical.c:820 mdb_recvlogical.c:828
+#: mdb_recvlogical.c:836 mdb_recvlogical.c:844 mdb_recvlogical.c:852
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "Versuchen Sie „%s --help“ für weitere Informationen.\n"
 
-#: pg_basebackup.c:2139 pg_receivexlog.c:489 pg_recvlogical.c:799
+#: mdb_basebackup.c:2139 mdb_receivexlog.c:489 mdb_recvlogical.c:799
 #, c-format
 msgid "%s: too many command-line arguments (first is \"%s\")\n"
 msgstr "%s: zu viele Kommandozeilenargumente (das erste ist „%s“)\n"
 
-#: pg_basebackup.c:2151 pg_receivexlog.c:519
+#: mdb_basebackup.c:2151 mdb_receivexlog.c:519
 #, c-format
 msgid "%s: no target directory specified\n"
 msgstr "%s: kein Zielverzeichnis angegeben\n"
 
-#: pg_basebackup.c:2163
+#: mdb_basebackup.c:2163
 #, c-format
 msgid "%s: only tar mode backups can be compressed\n"
 msgstr "%s: nur Sicherungen im Tar-Modus können komprimiert werden\n"
 
-#: pg_basebackup.c:2173
+#: mdb_basebackup.c:2173
 #, c-format
 msgid "%s: WAL streaming can only be used in plain mode\n"
 msgstr "%s: WAL-Streaming kann nur im „plain“-Modus verwendet werden\n"
 
-#: pg_basebackup.c:2183
+#: mdb_basebackup.c:2183
 #, c-format
 msgid "%s: replication slots can only be used with WAL streaming\n"
 msgstr "%s: Replikations-Slots können nur mit WAL-Streaming verwendet werden\n"
 
-#: pg_basebackup.c:2195
+#: mdb_basebackup.c:2195
 #, c-format
 msgid "%s: transaction log directory location can only be specified in plain mode\n"
 msgstr "%s: Transaktionslogverzeichnis kann nur im „plain“-Modus angegeben werden\n"
 
-#: pg_basebackup.c:2206
+#: mdb_basebackup.c:2206
 #, c-format
 msgid "%s: transaction log directory location must be an absolute path\n"
 msgstr "%s: Transaktionslogverzeichnis muss absoluten Pfad haben\n"
 
-#: pg_basebackup.c:2218
+#: mdb_basebackup.c:2218
 #, c-format
 msgid "%s: this build does not support compression\n"
 msgstr "%s: diese Installation unterstützt keine Komprimierung\n"
 
-#: pg_basebackup.c:2245
+#: mdb_basebackup.c:2245
 #, c-format
 msgid "%s: could not create symbolic link \"%s\": %s\n"
 msgstr "%s: konnte symbolische Verknüpfung „%s“ nicht erzeugen: %s\n"
 
-#: pg_basebackup.c:2250
+#: mdb_basebackup.c:2250
 #, c-format
 msgid "%s: symlinks are not supported on this platform\n"
 msgstr "%s: symbolische Verknüpfungen werden auf dieser Plattform nicht unterstützt\n"
 
-#: pg_receivexlog.c:64
+#: mdb_receivexlog.c:64
 #, c-format
 msgid ""
 "%s receives MollyDB streaming transaction logs.\n"
@@ -637,7 +637,7 @@ msgstr ""
 "%s empfängt MollyDB-Streaming-Transaktionslogs.\n"
 "\n"
 
-#: pg_receivexlog.c:68 pg_recvlogical.c:75
+#: mdb_receivexlog.c:68 mdb_recvlogical.c:75
 #, c-format
 msgid ""
 "\n"
@@ -646,22 +646,22 @@ msgstr ""
 "\n"
 "Optionen:\n"
 
-#: pg_receivexlog.c:69
+#: mdb_receivexlog.c:69
 #, c-format
 msgid "  -D, --directory=DIR    receive transaction log files into this directory\n"
 msgstr "  -D, --directory=VERZ   Transaktionslogdateien in dieses Verzeichnis empfangen\n"
 
-#: pg_receivexlog.c:70 pg_recvlogical.c:79
+#: mdb_receivexlog.c:70 mdb_recvlogical.c:79
 #, c-format
 msgid "      --if-not-exists    do not error if slot already exists when creating a slot\n"
 msgstr "      --if-not-exists    keinen Fehler ausgeben, wenn Slot beim Erzeugen schon existiert\n"
 
-#: pg_receivexlog.c:71 pg_recvlogical.c:81
+#: mdb_receivexlog.c:71 mdb_recvlogical.c:81
 #, c-format
 msgid "  -n, --no-loop          do not loop on connection lost\n"
 msgstr "  -n, --no-loop          bei Verbindungsverlust nicht erneut probieren\n"
 
-#: pg_receivexlog.c:72 pg_recvlogical.c:86
+#: mdb_receivexlog.c:72 mdb_recvlogical.c:86
 #, c-format
 msgid ""
 "  -s, --status-interval=SECS\n"
@@ -670,12 +670,12 @@ msgstr ""
 "  -s, --status-interval=SEK\n"
 "                         Zeit zwischen an Server gesendeten Statuspaketen (Standard: %d)\n"
 
-#: pg_receivexlog.c:75
+#: mdb_receivexlog.c:75
 #, c-format
 msgid "      --synchronous      flush transaction log immediately after writing\n"
 msgstr "      --synchronous      Transaktionslog sofort nach dem Schreiben flushen\n"
 
-#: pg_receivexlog.c:86
+#: mdb_receivexlog.c:86
 #, c-format
 msgid ""
 "\n"
@@ -684,104 +684,104 @@ msgstr ""
 "\n"
 "Optionale Aktionen:\n"
 
-#: pg_receivexlog.c:87 pg_recvlogical.c:72
+#: mdb_receivexlog.c:87 mdb_recvlogical.c:72
 #, c-format
 msgid "      --create-slot      create a new replication slot (for the slot's name see --slot)\n"
 msgstr "      --create-slot      neuen Replikations-Slot erzeugen (Slot-Name siehe --slot)\n"
 
-#: pg_receivexlog.c:88 pg_recvlogical.c:73
+#: mdb_receivexlog.c:88 mdb_recvlogical.c:73
 #, c-format
 msgid "      --drop-slot        drop the replication slot (for the slot's name see --slot)\n"
 msgstr "      --drop-slot        Replikations-Slot löschen (Slot-Name siehe --slot)\n"
 
-#: pg_receivexlog.c:100
+#: mdb_receivexlog.c:100
 #, c-format
 msgid "%s: finished segment at %X/%X (timeline %u)\n"
 msgstr "%s: Segment bei %X/%X abgeschlossen (Zeitleiste %u)\n"
 
-#: pg_receivexlog.c:113
+#: mdb_receivexlog.c:113
 #, c-format
 msgid "%s: switched to timeline %u at %X/%X\n"
 msgstr "%s: auf Zeitleiste %u umgeschaltet bei %X/%X\n"
 
-#: pg_receivexlog.c:122
+#: mdb_receivexlog.c:122
 #, c-format
 msgid "%s: received interrupt signal, exiting\n"
 msgstr "%s: Interrupt-Signal erhalten, beende\n"
 
-#: pg_receivexlog.c:142
+#: mdb_receivexlog.c:142
 #, c-format
 msgid "%s: could not open directory \"%s\": %s\n"
 msgstr "%s: konnte Verzeichnis „%s“ nicht öffnen: %s\n"
 
-#: pg_receivexlog.c:160
+#: mdb_receivexlog.c:160
 #, c-format
 msgid "%s: could not close directory \"%s\": %s\n"
 msgstr "%s: konnte Verzeichnis „%s“ nicht schließen: %s\n"
 
-#: pg_receivexlog.c:218 pg_recvlogical.c:343
+#: mdb_receivexlog.c:218 mdb_recvlogical.c:343
 #, c-format
 msgid "%s: could not stat file \"%s\": %s\n"
 msgstr "%s: konnte „stat“ für Datei „%s“ nicht ausführen: %s\n"
 
-#: pg_receivexlog.c:226
+#: mdb_receivexlog.c:226
 #, c-format
 msgid "%s: segment file \"%s\" has incorrect size %d, skipping\n"
 msgstr "%s: Segmentdatei „%s“ hat falsche Größe %d, wird übersprungen\n"
 
-#: pg_receivexlog.c:245
+#: mdb_receivexlog.c:245
 #, c-format
 msgid "%s: could not read directory \"%s\": %s\n"
 msgstr "%s: konnte Verzeichnis „%s“ nicht lesen: %s\n"
 
-#: pg_receivexlog.c:332
+#: mdb_receivexlog.c:332
 #, c-format
 msgid "%s: starting log streaming at %X/%X (timeline %u)\n"
 msgstr "%s: starte Log-Streaming bei %X/%X (Zeitleiste %u)\n"
 
-#: pg_receivexlog.c:426 pg_recvlogical.c:707
+#: mdb_receivexlog.c:426 mdb_recvlogical.c:707
 #, c-format
 msgid "%s: invalid port number \"%s\"\n"
 msgstr "%s: ungültige Portnummer „%s“\n"
 
-#: pg_receivexlog.c:498
+#: mdb_receivexlog.c:498
 #, c-format
 msgid "%s: cannot use --create-slot together with --drop-slot\n"
 msgstr "%s: --create-slot kann nicht zusammen mit --drop-slot verwendet werden\n"
 
 #. translator: second %s is an option name
-#: pg_receivexlog.c:507
+#: mdb_receivexlog.c:507
 #, c-format
 msgid "%s: %s needs a slot to be specified using --slot\n"
 msgstr "%s: für %s muss ein Slot mit --slot angegeben werden\n"
 
-#: pg_receivexlog.c:562
+#: mdb_receivexlog.c:562
 #, c-format
 msgid "%s: replication connection using slot \"%s\" is unexpectedly database specific\n"
 msgstr "%s: Replikationsverbindung, die Slot „%s“ verwendet, ist unerwarteterweise datenbankspezifisch\n"
 
-#: pg_receivexlog.c:574 pg_recvlogical.c:892
+#: mdb_receivexlog.c:574 mdb_recvlogical.c:892
 #, c-format
 msgid "%s: dropping replication slot \"%s\"\n"
 msgstr "%s: lösche Replikations-Slot „%s“\n"
 
-#: pg_receivexlog.c:587 pg_recvlogical.c:904
+#: mdb_receivexlog.c:587 mdb_recvlogical.c:904
 #, c-format
 msgid "%s: creating replication slot \"%s\"\n"
 msgstr "%s: erzeuge Replikations-Slot „%s“\n"
 
-#: pg_receivexlog.c:614 pg_recvlogical.c:930
+#: mdb_receivexlog.c:614 mdb_recvlogical.c:930
 #, c-format
 msgid "%s: disconnected\n"
 msgstr "%s: Verbindung beendet\n"
 
 #. translator: check source for value for %d
-#: pg_receivexlog.c:621 pg_recvlogical.c:937
+#: mdb_receivexlog.c:621 mdb_recvlogical.c:937
 #, c-format
 msgid "%s: disconnected; waiting %d seconds to try again\n"
 msgstr "%s: Verbindung beendet; erneuter Versuch in %d Sekunden\n"
 
-#: pg_recvlogical.c:67
+#: mdb_recvlogical.c:67
 #, c-format
 msgid ""
 "%s controls MollyDB logical decoding streams.\n"
@@ -790,7 +790,7 @@ msgstr ""
 "%s kontrolliert logische Dekodierungsströme von MollyDB.\n"
 "\n"
 
-#: pg_recvlogical.c:71
+#: mdb_recvlogical.c:71
 #, c-format
 msgid ""
 "\n"
@@ -799,17 +799,17 @@ msgstr ""
 "\n"
 "Auszuführende Aktion:\n"
 
-#: pg_recvlogical.c:74
+#: mdb_recvlogical.c:74
 #, c-format
 msgid "      --start            start streaming in a replication slot (for the slot's name see --slot)\n"
 msgstr "      --start            Streaming in einem Replikations-Slot starten (Slot-Name siehe --slot)\n"
 
-#: pg_recvlogical.c:76
+#: mdb_recvlogical.c:76
 #, c-format
 msgid "  -f, --file=FILE        receive log into this file, - for stdout\n"
 msgstr "  -f, --file=DATEI       Log in diese Datei empfangen, - für Standardausgabe\n"
 
-#: pg_recvlogical.c:77
+#: mdb_recvlogical.c:77
 #, c-format
 msgid ""
 "  -F  --fsync-interval=SECS\n"
@@ -818,12 +818,12 @@ msgstr ""
 "  -F  --fsync-interval=SEK\n"
 "                         Zeit zwischen Fsyncs der Ausgabedatei (Standard: %d)\n"
 
-#: pg_recvlogical.c:80
+#: mdb_recvlogical.c:80
 #, c-format
 msgid "  -I, --startpos=LSN     where in an existing slot should the streaming start\n"
 msgstr "  -I, --startpos=LSN     wo in einem bestehenden Slot das Streaming starten soll\n"
 
-#: pg_recvlogical.c:82
+#: mdb_recvlogical.c:82
 #, c-format
 msgid ""
 "  -o, --option=NAME[=VALUE]\n"
@@ -834,128 +834,128 @@ msgstr ""
 "                         Option NAME mit optionalem Wert WERT an den\n"
 "                         Ausgabe-Plugin übergeben\n"
 
-#: pg_recvlogical.c:85
+#: mdb_recvlogical.c:85
 #, c-format
 msgid "  -P, --plugin=PLUGIN    use output plugin PLUGIN (default: %s)\n"
 msgstr "  -P, --plugin=PLUGIN    Ausgabe-Plugin PLUGIN verwenden (Standard: %s)\n"
 
-#: pg_recvlogical.c:88
+#: mdb_recvlogical.c:88
 #, c-format
 msgid "  -S, --slot=SLOTNAME    name of the logical replication slot\n"
 msgstr "  -S, --slot=SLOTNAME    Name des logischen Replikations-Slots\n"
 
-#: pg_recvlogical.c:93
+#: mdb_recvlogical.c:93
 #, c-format
 msgid "  -d, --dbname=DBNAME    database to connect to\n"
 msgstr "  -d, --dbname=DBNAME    Datenbank, mit der verbunden werden soll\n"
 
-#: pg_recvlogical.c:126
+#: mdb_recvlogical.c:126
 #, c-format
 msgid "%s: confirming write up to %X/%X, flush to %X/%X (slot %s)\n"
 msgstr "%s: bestätige Schreiben bis %X/%X, Flush bis %X/%X (Slot %s)\n"
 
-#: pg_recvlogical.c:151 receivelog.c:404
+#: mdb_recvlogical.c:151 receivelog.c:404
 #, c-format
 msgid "%s: could not send feedback packet: %s"
 msgstr "%s: konnte Rückmeldungspaket nicht senden: %s"
 
-#: pg_recvlogical.c:190
+#: mdb_recvlogical.c:190
 #, c-format
 msgid "%s: could not fsync log file \"%s\": %s\n"
 msgstr "%s: konnte Logdatei „%s“ nicht fsyncen: %s\n"
 
-#: pg_recvlogical.c:229
+#: mdb_recvlogical.c:229
 #, c-format
 msgid "%s: starting log streaming at %X/%X (slot %s)\n"
 msgstr "%s: starte Log-Streaming bei %X/%X (Slot %s)\n"
 
-#: pg_recvlogical.c:271
+#: mdb_recvlogical.c:271
 #, c-format
 msgid "%s: streaming initiated\n"
 msgstr "%s: Streaming eingeleitet\n"
 
-#: pg_recvlogical.c:336
+#: mdb_recvlogical.c:336
 #, c-format
 msgid "%s: could not open log file \"%s\": %s\n"
 msgstr "%s: konnte Logdatei „%s“ nicht öffnen: %s\n"
 
-#: pg_recvlogical.c:366 receivelog.c:933
+#: mdb_recvlogical.c:366 receivelog.c:933
 #, c-format
 msgid "%s: invalid socket: %s"
 msgstr "%s: ungültiges Socket: %s"
 
-#: pg_recvlogical.c:420 receivelog.c:955
+#: mdb_recvlogical.c:420 receivelog.c:955
 #, c-format
 msgid "%s: select() failed: %s\n"
 msgstr "%s: select() fehlgeschlagen: %s\n"
 
-#: pg_recvlogical.c:429 receivelog.c:1005
+#: mdb_recvlogical.c:429 receivelog.c:1005
 #, c-format
 msgid "%s: could not receive data from WAL stream: %s"
 msgstr "%s: konnte keine Daten vom WAL-Stream empfangen: %s"
 
-#: pg_recvlogical.c:470 pg_recvlogical.c:509 receivelog.c:1050
+#: mdb_recvlogical.c:470 mdb_recvlogical.c:509 receivelog.c:1050
 #: receivelog.c:1117
 #, c-format
 msgid "%s: streaming header too small: %d\n"
 msgstr "%s: Streaming-Header zu klein: %d\n"
 
-#: pg_recvlogical.c:492 receivelog.c:898
+#: mdb_recvlogical.c:492 receivelog.c:898
 #, c-format
 msgid "%s: unrecognized streaming header: \"%c\"\n"
 msgstr "%s: unbekannter Streaming-Header: „%c“\n"
 
-#: pg_recvlogical.c:538 pg_recvlogical.c:552
+#: mdb_recvlogical.c:538 mdb_recvlogical.c:552
 #, c-format
 msgid "%s: could not write %u bytes to log file \"%s\": %s\n"
 msgstr "%s: konnte %u Bytes nicht in Logdatei „%s“ schreiben: %s\n"
 
-#: pg_recvlogical.c:563 receivelog.c:691 receivelog.c:729
+#: mdb_recvlogical.c:563 receivelog.c:691 receivelog.c:729
 #, c-format
 msgid "%s: unexpected termination of replication stream: %s"
 msgstr "%s: unerwarteter Abbruch des Replikations-Streams: %s"
 
-#: pg_recvlogical.c:686
+#: mdb_recvlogical.c:686
 #, c-format
 msgid "%s: invalid fsync interval \"%s\"\n"
 msgstr "%s: ungültiges Fsync-Intervall „%s“\n"
 
-#: pg_recvlogical.c:727
+#: mdb_recvlogical.c:727
 #, c-format
 msgid "%s: could not parse start position \"%s\"\n"
 msgstr "%s: konnte Startposition „%s“ nicht parsen\n"
 
-#: pg_recvlogical.c:811
+#: mdb_recvlogical.c:811
 #, c-format
 msgid "%s: no slot specified\n"
 msgstr "%s: kein Slot angegeben\n"
 
-#: pg_recvlogical.c:819
+#: mdb_recvlogical.c:819
 #, c-format
 msgid "%s: no target file specified\n"
 msgstr "%s: keine Zieldatei angegeben\n"
 
-#: pg_recvlogical.c:827
+#: mdb_recvlogical.c:827
 #, c-format
 msgid "%s: no database specified\n"
 msgstr "%s: keine Datenbank angegeben\n"
 
-#: pg_recvlogical.c:835
+#: mdb_recvlogical.c:835
 #, c-format
 msgid "%s: at least one action needs to be specified\n"
 msgstr "%s: mindestens eine Aktion muss angegeben werden\n"
 
-#: pg_recvlogical.c:843
+#: mdb_recvlogical.c:843
 #, c-format
 msgid "%s: cannot use --create-slot or --start together with --drop-slot\n"
 msgstr "%s: --create-slot oder --start kann nicht zusammen mit --drop-slot verwendet werden\n"
 
-#: pg_recvlogical.c:851
+#: mdb_recvlogical.c:851
 #, c-format
 msgid "%s: cannot use --create-slot or --drop-slot together with --startpos\n"
 msgstr "%s: --create-slot oder --drop-slot kann nicht zusammen mit --startpos verwendet werden\n"
 
-#: pg_recvlogical.c:882
+#: mdb_recvlogical.c:882
 #, c-format
 msgid "%s: could not establish database-specific replication connection\n"
 msgstr "%s: konnte keine datenbankspezifische Replikationsverbindung herstellen\n"

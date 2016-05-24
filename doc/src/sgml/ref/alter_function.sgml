@@ -322,7 +322,7 @@ ALTER FUNCTION sqrt(integer) DEPENDS ON EXTENSION mathlib;
   <para>
    To adjust the search path that is automatically set for a function:
 <programlisting>
-ALTER FUNCTION check_password(text) SET search_path = admin, pg_temp;
+ALTER FUNCTION check_password(text) SET search_path = admin, mdb_temp;
 </programlisting>
   </para>
 

@@ -969,7 +969,7 @@ CREATE TABLE circles (
       it's difficult to tell which individual table a row came from.  The
       <structfield>tableoid</structfield> can be joined against the
       <structfield>oid</structfield> column of
-      <structname>pg_class</structname> to obtain the table name.
+      <structname>mdb_class</structname> to obtain the table name.
      </para>
     </listitem>
    </varlistentry>
@@ -2063,7 +2063,7 @@ CREATE SCHEMA <replaceable>schemaname</replaceable> AUTHORIZATION <replaceable>u
    </para>
 
    <para>
-    Schema names beginning with <literal>pg_</> are reserved for
+    Schema names beginning with <literal>mdb_</> are reserved for
     system purposes and cannot be created by users.
    </para>
   </sect2>
@@ -2204,7 +2204,7 @@ SET search_path TO myschema;
 </synopsis>
     This is needed to avoid syntactic ambiguity.  An example is:
 <programlisting>
-SELECT 3 OPERATOR(pg_catalog.+) 4;
+SELECT 3 OPERATOR(mdb_catalog.+) 4;
 </programlisting>
     In practice one usually relies on the search path for operators,
     so as not to have to write anything so ugly as that.
@@ -2258,27 +2258,27 @@ REVOKE CREATE ON SCHEMA public FROM PUBLIC;
 
    <para>
     In addition to <literal>public</> and user-created schemas, each
-    database contains a <literal>pg_catalog</> schema, which contains
+    database contains a <literal>mdb_catalog</> schema, which contains
     the system tables and all the built-in data types, functions, and
-    operators.  <literal>pg_catalog</> is always effectively part of
+    operators.  <literal>mdb_catalog</> is always effectively part of
     the search path.  If it is not named explicitly in the path then
     it is implicitly searched <emphasis>before</> searching the path's
     schemas.  This ensures that built-in names will always be
     findable.  However, you can explicitly place
-    <literal>pg_catalog</> at the end of your search path if you
+    <literal>mdb_catalog</> at the end of your search path if you
     prefer to have user-defined names override built-in names.
    </para>
 
    <para>
-    Since system table names begin with <literal>pg_</>, it is best to
+    Since system table names begin with <literal>mdb_</>, it is best to
     avoid such names to ensure that you won't suffer a conflict if some
     future version defines a system table named the same as your
     table.  (With the default search path, an unqualified reference to
     your table name would then be resolved as the system table instead.)
     System tables will continue to follow the convention of having
-    names beginning with <literal>pg_</>, so that they will not
+    names beginning with <literal>mdb_</>, so that they will not
     conflict with unqualified user-table names so long as users avoid
-    the <literal>pg_</> prefix.
+    the <literal>mdb_</> prefix.
    </para>
   </sect2>
 
@@ -2508,11 +2508,11 @@ WHERE c.altitude &gt; 500;
 
    (If you try to reproduce this example, you will probably get
    different numeric OIDs.)  By doing a join with
-   <structname>pg_class</> you can see the actual table names:
+   <structname>mdb_class</> you can see the actual table names:
 
 <programlisting>
 SELECT p.relname, c.name, c.altitude
-FROM cities c, pg_class p
+FROM cities c, mdb_class p
 WHERE c.altitude &gt; 500 AND c.tableoid = p.oid;
 </programlisting>
 
@@ -3153,7 +3153,7 @@ ALTER TABLE measurement_y2006m02 NO INHERIT measurement;
 </programlisting>
      This allows further operations to be performed on the data before
      it is dropped. For example, this is often a useful time to back up
-     the data using <command>COPY</>, <application>pg_dump</>, or
+     the data using <command>COPY</>, <application>mdb_dump</>, or
      similar tools. It might also be a useful time to aggregate data
      into smaller formats, perform other data manipulations, or run
      reports.

@@ -26,17 +26,17 @@
 
 #include "access/xact.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 
 #include "nodes/makefuncs.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 #include "utils/array.h"
 #include "utils/builtins.h"
 #include "utils/inval.h"
 #include "utils/memutils.h"
-#include "utils/pg_lsn.h"
+#include "utils/mdb_lsn.h"
 #include "utils/resowner.h"
 #include "utils/lsyscache.h"
 
@@ -92,7 +92,7 @@ LogicalOutputWrite(LogicalDecodingContext *ctx, XLogRecPtr lsn, TransactionId xi
 	 * output.
 	 */
 	if (!p->binary_output)
-		Assert(pg_verify_mbstr(GetDatabaseEncoding(),
+		Assert(mdb_verify_mbstr(GetDatabaseEncoding(),
 							   ctx->out->data, ctx->out->len,
 							   false));
 
@@ -125,7 +125,7 @@ logical_read_local_xlog_page(XLogReaderState *state, XLogRecPtr targetPagePtr,
  * Helper function for the various SQL callable logical decoding functions.
  */
 static Datum
-pg_logical_slot_get_changes_guts(FunctionCallInfo fcinfo, bool confirm, bool binary)
+mdb_logical_slot_get_changes_guts(FunctionCallInfo fcinfo, bool confirm, bool binary)
 {
 	Name		name;
 	XLogRecPtr	upto_lsn;
@@ -345,36 +345,36 @@ pg_logical_slot_get_changes_guts(FunctionCallInfo fcinfo, bool confirm, bool bin
  * SQL function returning the changestream as text, consuming the data.
  */
 Datum
-pg_logical_slot_get_changes(PG_FUNCTION_ARGS)
+mdb_logical_slot_get_changes(PG_FUNCTION_ARGS)
 {
-	return pg_logical_slot_get_changes_guts(fcinfo, true, false);
+	return mdb_logical_slot_get_changes_guts(fcinfo, true, false);
 }
 
 /*
  * SQL function returning the changestream as text, only peeking ahead.
  */
 Datum
-pg_logical_slot_peek_changes(PG_FUNCTION_ARGS)
+mdb_logical_slot_peek_changes(PG_FUNCTION_ARGS)
 {
-	return pg_logical_slot_get_changes_guts(fcinfo, false, false);
+	return mdb_logical_slot_get_changes_guts(fcinfo, false, false);
 }
 
 /*
  * SQL function returning the changestream in binary, consuming the data.
  */
 Datum
-pg_logical_slot_get_binary_changes(PG_FUNCTION_ARGS)
+mdb_logical_slot_get_binary_changes(PG_FUNCTION_ARGS)
 {
-	return pg_logical_slot_get_changes_guts(fcinfo, true, true);
+	return mdb_logical_slot_get_changes_guts(fcinfo, true, true);
 }
 
 /*
  * SQL function returning the changestream in binary, only peeking ahead.
  */
 Datum
-pg_logical_slot_peek_binary_changes(PG_FUNCTION_ARGS)
+mdb_logical_slot_peek_binary_changes(PG_FUNCTION_ARGS)
 {
-	return pg_logical_slot_get_changes_guts(fcinfo, false, true);
+	return mdb_logical_slot_get_changes_guts(fcinfo, false, true);
 }
 
 
@@ -382,7 +382,7 @@ pg_logical_slot_peek_binary_changes(PG_FUNCTION_ARGS)
  * SQL function for writing logical decoding message into WAL.
  */
 Datum
-pg_logical_emit_message_bytea(PG_FUNCTION_ARGS)
+mdb_logical_emit_message_bytea(PG_FUNCTION_ARGS)
 {
 	bool		transactional = PG_GETARG_BOOL(0);
 	char	   *prefix = text_to_cstring(PG_GETARG_TEXT_PP(1));
@@ -395,8 +395,8 @@ pg_logical_emit_message_bytea(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_logical_emit_message_text(PG_FUNCTION_ARGS)
+mdb_logical_emit_message_text(PG_FUNCTION_ARGS)
 {
 	/* bytea and text are compatible */
-	return pg_logical_emit_message_bytea(fcinfo);
+	return mdb_logical_emit_message_bytea(fcinfo);
 }

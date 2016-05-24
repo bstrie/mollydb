@@ -4,5 +4,5 @@
 \echo Use "CREATE EXTENSION dummy_seclabel" to load this file. \quit
 
 CREATE FUNCTION dummy_seclabel_dummy()
-   RETURNS pg_catalog.void
+   RETURNS mdb_catalog.void
        AS 'MODULE_PATHNAME' LANGUAGE C;

@@ -23,7 +23,7 @@
 #include "access/relscan.h"
 #include "access/xloginsert.h"
 #include "catalog/index.h"
-#include "catalog/pg_am.h"
+#include "catalog/mdb_am.h"
 #include "miscadmin.h"
 #include "pgstat.h"
 #include "storage/bufmgr.h"
@@ -814,7 +814,7 @@ brin_summarize_new_values(PG_FUNCTION_ARGS)
 						RelationGetRelationName(indexRel))));
 
 	/* User must own the index (comparable to privileges needed for VACUUM) */
-	if (!pg_class_ownercheck(indexoid, GetUserId()))
+	if (!mdb_class_ownercheck(indexoid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 					   RelationGetRelationName(indexRel));
 

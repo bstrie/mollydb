@@ -99,7 +99,7 @@ extern void *repalloc_huge(void *pointer, Size size);
 
 /*
  * Although this header file is nominally backend-only, certain frontend
- * programs like pg_controldata include it via mollydb.h.  For some compilers
+ * programs like mdb_controldata include it via mollydb.h.  For some compilers
  * it's necessary to hide the inline definition of MemoryContextSwitchTo in
  * this scenario; hence the #ifndef FRONTEND.
  */
@@ -128,7 +128,7 @@ extern char *pstrdup(const char *in);
 extern char *pnstrdup(const char *in, Size len);
 
 /* sprintf into a palloc'd buffer --- these are in psprintf.c */
-extern char *psprintf(const char *fmt,...) pg_attribute_printf(1, 2);
-extern size_t pvsnprintf(char *buf, size_t len, const char *fmt, va_list args) pg_attribute_printf(3, 0);
+extern char *psprintf(const char *fmt,...) mdb_attribute_printf(1, 2);
+extern size_t pvsnprintf(char *buf, size_t len, const char *fmt, va_list args) mdb_attribute_printf(3, 0);
 
 #endif   /* PALLOC_H */

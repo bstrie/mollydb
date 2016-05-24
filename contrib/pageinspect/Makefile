@@ -11,7 +11,7 @@ DATA = pageinspect--1.4.sql pageinspect--1.3--1.4.sql \
 PGFILEDESC = "pageinspect - functions to inspect contents of database pages"
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

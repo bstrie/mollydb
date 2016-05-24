@@ -4,11 +4,11 @@
  *	  Selectivity functions and index cost estimation functions for
  *	  standard operators and index access methods.
  *
- *	  Selectivity routines are registered in the pg_operator catalog
+ *	  Selectivity routines are registered in the mdb_operator catalog
  *	  in the "oprrest" and "oprjoin" attributes.
  *
  *	  Index cost functions are located via the index AM's API struct,
- *	  which is obtained from the handler function registered in pg_am.
+ *	  which is obtained from the handler function registered in mdb_am.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -51,7 +51,7 @@
  * be treated as the variable relation.  May be zero if the args list
  * is known to contain vars of only one relation.
  *
- * This is represented at the SQL level (in pg_proc) as
+ * This is represented at the SQL level (in mdb_proc) as
  *
  *		float8 oprrest (internal, oid, internal, int4);
  *
@@ -87,7 +87,7 @@
  * For both oprrest and oprjoin functions, the operator's input collation OID
  * (if any) is passed using the standard fmgr mechanism, so that the estimator
  * function can fetch it with PG_GET_COLLATION().  Note, however, that all
- * statistics in pg_statistic are currently built using the database's default
+ * statistics in mdb_statistic are currently built using the database's default
  * collation.  Thus, in most cases where we are looking at statistics, we
  * should ignore the actual operator collation and use DEFAULT_COLLATION_OID.
  * We expect that the error induced by doing this is usually not large enough
@@ -104,14 +104,14 @@
 #include "access/htup_details.h"
 #include "access/sysattr.h"
 #include "catalog/index.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_opfamily.h"
-#include "catalog/pg_statistic.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_opfamily.h"
+#include "catalog/mdb_statistic.h"
+#include "catalog/mdb_type.h"
 #include "executor/executor.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
 #include "optimizer/clauses.h"
@@ -133,7 +133,7 @@
 #include "utils/index_selfuncs.h"
 #include "utils/lsyscache.h"
 #include "utils/nabstime.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 #include "utils/rel.h"
 #include "utils/selfuncs.h"
 #include "utils/spccache.h"
@@ -286,7 +286,7 @@ var_eq_const(VariableStatData *vardata, Oid operator,
 
 	if (HeapTupleIsValid(vardata->statsTuple))
 	{
-		Form_pg_statistic stats;
+		Form_mdb_statistic stats;
 		Datum	   *values;
 		int			nvalues;
 		float4	   *numbers;
@@ -294,7 +294,7 @@ var_eq_const(VariableStatData *vardata, Oid operator,
 		bool		match = false;
 		int			i;
 
-		stats = (Form_pg_statistic) GETSTRUCT(vardata->statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata->statsTuple);
 
 		/*
 		 * Is the constant "=" to any of the column's most common values?
@@ -421,12 +421,12 @@ var_eq_non_const(VariableStatData *vardata, Oid operator,
 
 	if (HeapTupleIsValid(vardata->statsTuple))
 	{
-		Form_pg_statistic stats;
+		Form_mdb_statistic stats;
 		double		ndistinct;
 		float4	   *numbers;
 		int			nnumbers;
 
-		stats = (Form_pg_statistic) GETSTRUCT(vardata->statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata->statsTuple);
 
 		/*
 		 * Search is for a value that we do not know a priori, but we will
@@ -531,7 +531,7 @@ static double
 scalarineqsel(PlannerInfo *root, Oid operator, bool isgt,
 			  VariableStatData *vardata, Datum constval, Oid consttype)
 {
-	Form_pg_statistic stats;
+	Form_mdb_statistic stats;
 	FmgrInfo	opproc;
 	double		mcv_selec,
 				hist_selec,
@@ -543,7 +543,7 @@ scalarineqsel(PlannerInfo *root, Oid operator, bool isgt,
 		/* no stats available, so default result */
 		return DEFAULT_INEQ_SEL;
 	}
-	stats = (Form_pg_statistic) GETSTRUCT(vardata->statsTuple);
+	stats = (Form_mdb_statistic) GETSTRUCT(vardata->statsTuple);
 
 	fmgr_info(get_opcode(operator), &opproc);
 
@@ -767,7 +767,7 @@ ineq_histogram_selectivity(PlannerInfo *root,
 	 * which staop to search for --- it's not necessarily the one we have at
 	 * hand!  (For example, we might have a '<=' operator rather than the '<'
 	 * operator that will appear in staop.)  For now, assume that whatever
-	 * appears in pg_statistic is sorted the same way our operator sorts, or
+	 * appears in mdb_statistic is sorted the same way our operator sorts, or
 	 * the reverse way if isgt is TRUE.
 	 */
 	if (HeapTupleIsValid(vardata->statsTuple) &&
@@ -1342,7 +1342,7 @@ patternsel(PG_FUNCTION_ARGS, Pattern_Type ptype, bool negate)
 									&sumcommon);
 
 		if (HeapTupleIsValid(vardata.statsTuple))
-			nullfrac = ((Form_pg_statistic) GETSTRUCT(vardata.statsTuple))->stanullfrac;
+			nullfrac = ((Form_mdb_statistic) GETSTRUCT(vardata.statsTuple))->stanullfrac;
 		else
 			nullfrac = 0.0;
 
@@ -1500,14 +1500,14 @@ booltestsel(PlannerInfo *root, BoolTestType booltesttype, Node *arg,
 
 	if (HeapTupleIsValid(vardata.statsTuple))
 	{
-		Form_pg_statistic stats;
+		Form_mdb_statistic stats;
 		double		freq_null;
 		Datum	   *values;
 		int			nvalues;
 		float4	   *numbers;
 		int			nnumbers;
 
-		stats = (Form_pg_statistic) GETSTRUCT(vardata.statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata.statsTuple);
 		freq_null = stats->stanullfrac;
 
 		if (get_attstatsslot(vardata.statsTuple,
@@ -1665,10 +1665,10 @@ nulltestsel(PlannerInfo *root, NullTestType nulltesttype, Node *arg,
 
 	if (HeapTupleIsValid(vardata.statsTuple))
 	{
-		Form_pg_statistic stats;
+		Form_mdb_statistic stats;
 		double		freq_null;
 
-		stats = (Form_pg_statistic) GETSTRUCT(vardata.statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata.statsTuple);
 		freq_null = stats->stanullfrac;
 
 		switch (nulltesttype)
@@ -2255,8 +2255,8 @@ eqjoinsel_inner(Oid operator,
 	double		nd2;
 	bool		isdefault1;
 	bool		isdefault2;
-	Form_pg_statistic stats1 = NULL;
-	Form_pg_statistic stats2 = NULL;
+	Form_mdb_statistic stats1 = NULL;
+	Form_mdb_statistic stats2 = NULL;
 	bool		have_mcvs1 = false;
 	Datum	   *values1 = NULL;
 	int			nvalues1 = 0;
@@ -2273,7 +2273,7 @@ eqjoinsel_inner(Oid operator,
 
 	if (HeapTupleIsValid(vardata1->statsTuple))
 	{
-		stats1 = (Form_pg_statistic) GETSTRUCT(vardata1->statsTuple);
+		stats1 = (Form_mdb_statistic) GETSTRUCT(vardata1->statsTuple);
 		have_mcvs1 = get_attstatsslot(vardata1->statsTuple,
 									  vardata1->atttype,
 									  vardata1->atttypmod,
@@ -2286,7 +2286,7 @@ eqjoinsel_inner(Oid operator,
 
 	if (HeapTupleIsValid(vardata2->statsTuple))
 	{
-		stats2 = (Form_pg_statistic) GETSTRUCT(vardata2->statsTuple);
+		stats2 = (Form_mdb_statistic) GETSTRUCT(vardata2->statsTuple);
 		have_mcvs2 = get_attstatsslot(vardata2->statsTuple,
 									  vardata2->atttype,
 									  vardata2->atttypmod,
@@ -2482,7 +2482,7 @@ eqjoinsel_semi(Oid operator,
 	double		nd2;
 	bool		isdefault1;
 	bool		isdefault2;
-	Form_pg_statistic stats1 = NULL;
+	Form_mdb_statistic stats1 = NULL;
 	bool		have_mcvs1 = false;
 	Datum	   *values1 = NULL;
 	int			nvalues1 = 0;
@@ -2518,7 +2518,7 @@ eqjoinsel_semi(Oid operator,
 
 	if (HeapTupleIsValid(vardata1->statsTuple))
 	{
-		stats1 = (Form_pg_statistic) GETSTRUCT(vardata1->statsTuple);
+		stats1 = (Form_mdb_statistic) GETSTRUCT(vardata1->statsTuple);
 		have_mcvs1 = get_attstatsslot(vardata1->statsTuple,
 									  vardata1->atttype,
 									  vardata1->atttypmod,
@@ -2887,7 +2887,7 @@ mergejoinscansel(PlannerInfo *root, Node *clause,
 	 * Look up the various operators we need.  If we don't find them all, it
 	 * probably means the opfamily is broken, but we just fail silently.
 	 *
-	 * Note: we expect that pg_statistic histograms will be sorted by the '<'
+	 * Note: we expect that mdb_statistic histograms will be sorted by the '<'
 	 * operator, regardless of which sort direction we are considering.
 	 */
 	switch (strategy)
@@ -3085,11 +3085,11 @@ mergejoinscansel(PlannerInfo *root, Node *clause,
 	 */
 	if (nulls_first)
 	{
-		Form_pg_statistic stats;
+		Form_mdb_statistic stats;
 
 		if (HeapTupleIsValid(leftvar.statsTuple))
 		{
-			stats = (Form_pg_statistic) GETSTRUCT(leftvar.statsTuple);
+			stats = (Form_mdb_statistic) GETSTRUCT(leftvar.statsTuple);
 			*leftstart += stats->stanullfrac;
 			CLAMP_PROBABILITY(*leftstart);
 			*leftend += stats->stanullfrac;
@@ -3097,7 +3097,7 @@ mergejoinscansel(PlannerInfo *root, Node *clause,
 		}
 		if (HeapTupleIsValid(rightvar.statsTuple))
 		{
-			stats = (Form_pg_statistic) GETSTRUCT(rightvar.statsTuple);
+			stats = (Form_mdb_statistic) GETSTRUCT(rightvar.statsTuple);
 			*rightstart += stats->stanullfrac;
 			CLAMP_PROBABILITY(*rightstart);
 			*rightend += stats->stanullfrac;
@@ -3563,9 +3563,9 @@ estimate_hash_bucketsize(PlannerInfo *root, Node *hashkey, double nbuckets)
 	/* Get fraction that are null */
 	if (HeapTupleIsValid(vardata.statsTuple))
 	{
-		Form_pg_statistic stats;
+		Form_mdb_statistic stats;
 
-		stats = (Form_pg_statistic) GETSTRUCT(vardata.statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata.statsTuple);
 		stanullfrac = stats->stanullfrac;
 	}
 	else
@@ -3658,7 +3658,7 @@ estimate_hash_bucketsize(PlannerInfo *root, Node *hashkey, double nbuckets)
  *	  Returns "true" if successful.
  *
  * XXX this routine is a hack: ideally we should look up the conversion
- * subroutines in pg_type.
+ * subroutines in mdb_type.
  *
  * All numeric datatypes are simply converted to their equivalent
  * "double" values.  (NUMERIC values that are outside the range of "double"
@@ -4087,7 +4087,7 @@ convert_string_datum(Datum value, Oid typid)
  * Also, assumptions about likely "normal" ranges of characters have been
  * removed - a data range of 0..255 is always used, for now.  (Perhaps
  * someday we will add information about actual byte data range to
- * pg_statistic.)
+ * mdb_statistic.)
  */
 static void
 convert_bytea_to_scalar(Datum value,
@@ -4374,7 +4374,7 @@ get_join_variables(PlannerInfo *root, List *args, SpecialJoinInfo *sjinfo,
  *	rel: RelOptInfo for relation containing variable; NULL if expression
  *		contains no Vars (NOTE this could point to a RelOptInfo of a
  *		subquery, not one in the current query).
- *	statsTuple: the pg_statistic entry for the variable, if one exists;
+ *	statsTuple: the mdb_statistic entry for the variable, if one exists;
  *		otherwise NULL.
  *	freefunc: pointer to a function to release statsTuple with.
  *	vartype: exposed type of the expression; this should always match
@@ -4600,7 +4600,7 @@ examine_simple_variable(PlannerInfo *root, Var *var,
 	{
 		/*
 		 * Plain table or parent of an inheritance appendrel, so look up the
-		 * column in pg_statistic
+		 * column in mdb_statistic
 		 */
 		vardata->statsTuple = SearchSysCache3(STATRELATTINH,
 											  ObjectIdGetDatum(rte->relid),
@@ -4744,15 +4744,15 @@ get_variable_numdistinct(VariableStatData *vardata, bool *isdefault)
 
 	/*
 	 * Determine the stadistinct value to use.  There are cases where we can
-	 * get an estimate even without a pg_statistic entry, or can get a better
-	 * value than is in pg_statistic.
+	 * get an estimate even without a mdb_statistic entry, or can get a better
+	 * value than is in mdb_statistic.
 	 */
 	if (HeapTupleIsValid(vardata->statsTuple))
 	{
-		/* Use the pg_statistic entry */
-		Form_pg_statistic stats;
+		/* Use the mdb_statistic entry */
+		Form_mdb_statistic stats;
 
-		stats = (Form_pg_statistic) GETSTRUCT(vardata->statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata->statsTuple);
 		stadistinct = stats->stadistinct;
 	}
 	else if (vardata->vartype == BOOLOID)
@@ -4797,7 +4797,7 @@ get_variable_numdistinct(VariableStatData *vardata, bool *isdefault)
 
 	/*
 	 * If there is a unique index or DISTINCT clause for the variable, assume
-	 * it is unique no matter what pg_statistic says; the statistics could be
+	 * it is unique no matter what mdb_statistic says; the statistics could be
 	 * out of date, or we might have found a partial unique index that proves
 	 * the var is unique for this query.
 	 */
@@ -4850,7 +4850,7 @@ get_variable_numdistinct(VariableStatData *vardata, bool *isdefault)
  *		If no data available, return FALSE.
  *
  * sortop is the "<" comparison operator to use.  This should generally
- * be "<" not ">", as only the former is likely to be found in pg_statistic.
+ * be "<" not ">", as only the former is likely to be found in mdb_statistic.
  */
 static bool
 get_variable_range(PlannerInfo *root, VariableStatData *vardata, Oid sortop,
@@ -5086,7 +5086,7 @@ get_actual_variable_range(PlannerInfo *root, VariableStatData *vardata,
 			heapRel = heap_open(rte->relid, NoLock);
 			indexRel = index_open(index->indexoid, AccessShareLock);
 
-			/* extract index key information from the index's pg_index info */
+			/* extract index key information from the index's mdb_index info */
 			indexInfo = BuildIndexInfo(indexRel);
 
 			/* some other stuff */
@@ -5262,7 +5262,7 @@ find_join_input_rel(PlannerInfo *root, Relids relids)
  */
 static int
 pattern_char_isalpha(char c, bool is_multibyte,
-					 pg_locale_t locale, bool locale_is_c)
+					 mdb_locale_t locale, bool locale_is_c)
 {
 	if (locale_is_c)
 		return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
@@ -5299,8 +5299,8 @@ like_fixed_prefix(Const *patt_const, bool case_insensitive, Oid collation,
 	Oid			typeid = patt_const->consttype;
 	int			pos,
 				match_pos;
-	bool		is_multibyte = (pg_database_encoding_max_length() > 1);
-	pg_locale_t locale = 0;
+	bool		is_multibyte = (mdb_database_encoding_max_length() > 1);
+	mdb_locale_t locale = 0;
 	bool		locale_is_c = false;
 
 	/* the right-hand const is type text or bytea */
@@ -5329,7 +5329,7 @@ like_fixed_prefix(Const *patt_const, bool case_insensitive, Oid collation,
 						 errmsg("could not determine which collation to use for ILIKE"),
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
-			locale = pg_newlocale_from_collation(collation);
+			locale = mdb_newlocale_from_collation(collation);
 		}
 	}
 
@@ -5905,7 +5905,7 @@ make_greater_string(const Const *str_const, FmgrInfo *ltproc, Oid collation)
 	if (datatype == BYTEAOID)
 		charinc = byte_increment;
 	else
-		charinc = pg_database_encoding_character_incrementer();
+		charinc = mdb_database_encoding_character_incrementer();
 
 	/* And search ... */
 	while (len > 0)
@@ -5917,7 +5917,7 @@ make_greater_string(const Const *str_const, FmgrInfo *ltproc, Oid collation)
 		if (datatype == BYTEAOID)
 			charlen = 1;
 		else
-			charlen = len - pg_mbcliplen(workstr, len, len - 1);
+			charlen = len - mdb_mbcliplen(workstr, len, len - 1);
 		lastchar = (unsigned char *) (workstr + len - charlen);
 
 		/*
@@ -6636,7 +6636,7 @@ btcostestimate(PlannerInfo *root, IndexPath *path, double loop_count,
 
 	/*
 	 * If we can get an estimate of the first column's ordering correlation C
-	 * from pg_statistic, estimate the index correlation as C for a
+	 * from mdb_statistic, estimate the index correlation as C for a
 	 * single-column index, or C * 0.75 for multiple columns. (The idea here
 	 * is that multiple columns dilute the importance of the first column's
 	 * ordering, but don't negate it entirely.  Before 8.0 we divided the
@@ -6948,7 +6948,7 @@ gincost_pattern(IndexOptInfo *index, int indexcol,
 	 * Get the operator's strategy number and declared input data types within
 	 * the index opfamily.  (We don't need the latter, but we use
 	 * get_op_opfamily_properties because it will throw error if it fails to
-	 * find a matching pg_amop entry.)
+	 * find a matching mdb_amop entry.)
 	 */
 	get_op_opfamily_properties(clause_op, index->opfamily[indexcol], false,
 							   &strategy_op, &lefttype, &righttype);

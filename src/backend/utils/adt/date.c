@@ -40,10 +40,10 @@
 #endif
 
 
-static int	time2tm(TimeADT time, struct pg_tm * tm, fsec_t *fsec);
-static int	timetz2tm(TimeTzADT *time, struct pg_tm * tm, fsec_t *fsec, int *tzp);
-static int	tm2time(struct pg_tm * tm, fsec_t fsec, TimeADT *result);
-static int	tm2timetz(struct pg_tm * tm, fsec_t fsec, int tz, TimeTzADT *result);
+static int	time2tm(TimeADT time, struct mdb_tm * tm, fsec_t *fsec);
+static int	timetz2tm(TimeTzADT *time, struct mdb_tm * tm, fsec_t *fsec, int *tzp);
+static int	tm2time(struct mdb_tm * tm, fsec_t fsec, TimeADT *result);
+static int	tm2timetz(struct mdb_tm * tm, fsec_t fsec, int tz, TimeTzADT *result);
 static void AdjustTimeForTypmod(TimeADT *time, int32 typmod);
 
 
@@ -113,7 +113,7 @@ date_in(PG_FUNCTION_ARGS)
 	char	   *str = PG_GETARG_CSTRING(0);
 	DateADT		date;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tzp;
 	int			dtype;
@@ -185,7 +185,7 @@ date_out(PG_FUNCTION_ARGS)
 {
 	DateADT		date = PG_GETARG_DATEADT(0);
 	char	   *result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	char		buf[MAXDATELEN + 1];
 
@@ -244,7 +244,7 @@ date_send(PG_FUNCTION_ARGS)
 Datum
 make_date(PG_FUNCTION_ARGS)
 {
-	struct pg_tm tm;
+	struct mdb_tm tm;
 	DateADT		date;
 	int			dterr;
 
@@ -523,7 +523,7 @@ static TimestampTz
 date2timestamptz(DateADT dateVal)
 {
 	TimestampTz result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 
@@ -1006,7 +1006,7 @@ timestamp_date(PG_FUNCTION_ARGS)
 {
 	Timestamp	timestamp = PG_GETARG_TIMESTAMP(0);
 	DateADT		result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 
@@ -1051,7 +1051,7 @@ timestamptz_date(PG_FUNCTION_ARGS)
 {
 	TimestampTz timestamp = PG_GETARG_TIMESTAMP(0);
 	DateADT		result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	int			tz;
@@ -1082,7 +1082,7 @@ abstime_date(PG_FUNCTION_ARGS)
 {
 	AbsoluteTime abstime = PG_GETARG_ABSOLUTETIME(0);
 	DateADT		result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 
@@ -1138,7 +1138,7 @@ time_in(PG_FUNCTION_ARGS)
 	int32		typmod = PG_GETARG_INT32(2);
 	TimeADT		result;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 	int			nf;
@@ -1165,7 +1165,7 @@ time_in(PG_FUNCTION_ARGS)
  * Convert a tm structure to a time data type.
  */
 static int
-tm2time(struct pg_tm * tm, fsec_t fsec, TimeADT *result)
+tm2time(struct mdb_tm * tm, fsec_t fsec, TimeADT *result)
 {
 #ifdef HAVE_INT64_TIMESTAMP
 	*result = ((((tm->tm_hour * MINS_PER_HOUR + tm->tm_min) * SECS_PER_MINUTE) + tm->tm_sec)
@@ -1179,12 +1179,12 @@ tm2time(struct pg_tm * tm, fsec_t fsec, TimeADT *result)
 /* time2tm()
  * Convert time data type to POSIX time structure.
  *
- * For dates within the range of pg_time_t, convert to the local time zone.
+ * For dates within the range of mdb_time_t, convert to the local time zone.
  * If out of this range, leave as UTC (in practice that could only happen
- * if pg_time_t is just 32 bits) - thomas 97/05/27
+ * if mdb_time_t is just 32 bits) - thomas 97/05/27
  */
 static int
-time2tm(TimeADT time, struct pg_tm * tm, fsec_t *fsec)
+time2tm(TimeADT time, struct mdb_tm * tm, fsec_t *fsec)
 {
 #ifdef HAVE_INT64_TIMESTAMP
 	tm->tm_hour = time / USECS_PER_HOUR;
@@ -1220,7 +1220,7 @@ time_out(PG_FUNCTION_ARGS)
 {
 	TimeADT		time = PG_GETARG_TIMEADT(0);
 	char	   *result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	char		buf[MAXDATELEN + 1];
@@ -1665,7 +1665,7 @@ timestamp_time(PG_FUNCTION_ARGS)
 {
 	Timestamp	timestamp = PG_GETARG_TIMESTAMP(0);
 	TimeADT		result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 
@@ -1700,7 +1700,7 @@ timestamptz_time(PG_FUNCTION_ARGS)
 {
 	TimestampTz timestamp = PG_GETARG_TIMESTAMP(0);
 	TimeADT		result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 	fsec_t		fsec;
@@ -1904,7 +1904,7 @@ time_part(PG_FUNCTION_ARGS)
 	if (type == UNITS)
 	{
 		fsec_t		fsec;
-		struct pg_tm tt,
+		struct mdb_tm tt,
 				   *tm = &tt;
 
 		time2tm(time, tm, &fsec);
@@ -1991,7 +1991,7 @@ time_part(PG_FUNCTION_ARGS)
  * Convert a tm structure to a time data type.
  */
 static int
-tm2timetz(struct pg_tm * tm, fsec_t fsec, int tz, TimeTzADT *result)
+tm2timetz(struct mdb_tm * tm, fsec_t fsec, int tz, TimeTzADT *result)
 {
 #ifdef HAVE_INT64_TIMESTAMP
 	result->time = ((((tm->tm_hour * MINS_PER_HOUR + tm->tm_min) * SECS_PER_MINUTE) + tm->tm_sec) *
@@ -2015,7 +2015,7 @@ timetz_in(PG_FUNCTION_ARGS)
 	int32		typmod = PG_GETARG_INT32(2);
 	TimeTzADT  *result;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 	int			nf;
@@ -2044,7 +2044,7 @@ timetz_out(PG_FUNCTION_ARGS)
 {
 	TimeTzADT  *time = PG_GETARG_TIMETZADT_P(0);
 	char	   *result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	int			tz;
@@ -2142,7 +2142,7 @@ timetztypmodout(PG_FUNCTION_ARGS)
  * Convert TIME WITH TIME ZONE data type to POSIX time structure.
  */
 static int
-timetz2tm(TimeTzADT *time, struct pg_tm * tm, fsec_t *fsec, int *tzp)
+timetz2tm(TimeTzADT *time, struct mdb_tm * tm, fsec_t *fsec, int *tzp)
 {
 	TimeOffset	trem = time->time;
 
@@ -2552,7 +2552,7 @@ time_timetz(PG_FUNCTION_ARGS)
 {
 	TimeADT		time = PG_GETARG_TIMEADT(0);
 	TimeTzADT  *result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	int			tz;
@@ -2578,7 +2578,7 @@ timestamptz_timetz(PG_FUNCTION_ARGS)
 {
 	TimestampTz timestamp = PG_GETARG_TIMESTAMP(0);
 	TimeTzADT  *result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 	fsec_t		fsec;
@@ -2673,7 +2673,7 @@ timetz_part(PG_FUNCTION_ARGS)
 		double		dummy;
 		int			tz;
 		fsec_t		fsec;
-		struct pg_tm tt,
+		struct mdb_tm tt,
 				   *tm = &tt;
 
 		timetz2tm(time, tm, &fsec, &tz);
@@ -2777,7 +2777,7 @@ timetz_zone(PG_FUNCTION_ARGS)
 	char	   *lowzone;
 	int			type,
 				val;
-	pg_tz	   *tzp;
+	mdb_tz	   *tzp;
 
 	/*
 	 * Look up the requested timezone.  First we look in the timezone
@@ -2804,23 +2804,23 @@ timetz_zone(PG_FUNCTION_ARGS)
 	else if (type == DYNTZ)
 	{
 		/* dynamic-offset abbreviation, resolve using current time */
-		pg_time_t	now = (pg_time_t) time(NULL);
-		struct pg_tm *tm;
+		mdb_time_t	now = (mdb_time_t) time(NULL);
+		struct mdb_tm *tm;
 
-		tm = pg_localtime(&now, tzp);
+		tm = mdb_localtime(&now, tzp);
 		tz = DetermineTimeZoneAbbrevOffset(tm, tzname, tzp);
 	}
 	else
 	{
 		/* try it as a full zone name */
-		tzp = pg_tzset(tzname);
+		tzp = mdb_tzset(tzname);
 		if (tzp)
 		{
 			/* Get the offset-from-GMT that is valid today for the zone */
-			pg_time_t	now = (pg_time_t) time(NULL);
-			struct pg_tm *tm;
+			mdb_time_t	now = (mdb_time_t) time(NULL);
+			struct mdb_tm *tm;
 
-			tm = pg_localtime(&now, tzp);
+			tm = mdb_localtime(&now, tzp);
 			tz = -tm->tm_gmtoff;
 		}
 		else

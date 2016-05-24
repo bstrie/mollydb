@@ -18,7 +18,7 @@
 #ifndef IPC_H
 #define IPC_H
 
-typedef void (*pg_on_exit_callback) (int code, Datum arg);
+typedef void (*mdb_on_exit_callback) (int code, Datum arg);
 typedef void (*shmem_startup_hook_type) (void);
 
 /*----------
@@ -32,7 +32,7 @@ typedef void (*shmem_startup_hook_type) (void);
  *		}
  *		PG_END_ENSURE_ERROR_CLEANUP(cleanup_function, arg);
  *
- * where the cleanup code is in a function declared per pg_on_exit_callback.
+ * where the cleanup code is in a function declared per mdb_on_exit_callback.
  * The Datum value "arg" can carry any information the cleanup function
  * needs.
  *
@@ -64,12 +64,12 @@ typedef void (*shmem_startup_hook_type) (void);
 /* ipc.c */
 extern PGDLLIMPORT bool proc_exit_inprogress;
 
-extern void proc_exit(int code) pg_attribute_noreturn();
+extern void proc_exit(int code) mdb_attribute_noreturn();
 extern void shmem_exit(int code);
-extern void on_proc_exit(pg_on_exit_callback function, Datum arg);
-extern void on_shmem_exit(pg_on_exit_callback function, Datum arg);
-extern void before_shmem_exit(pg_on_exit_callback function, Datum arg);
-extern void cancel_before_shmem_exit(pg_on_exit_callback function, Datum arg);
+extern void on_proc_exit(mdb_on_exit_callback function, Datum arg);
+extern void on_shmem_exit(mdb_on_exit_callback function, Datum arg);
+extern void before_shmem_exit(mdb_on_exit_callback function, Datum arg);
+extern void cancel_before_shmem_exit(mdb_on_exit_callback function, Datum arg);
 extern void on_exit_reset(void);
 
 /* ipci.c */

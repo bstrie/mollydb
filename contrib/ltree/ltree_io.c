@@ -52,7 +52,7 @@ ltree_in(PG_FUNCTION_ARGS)
 	ptr = buf;
 	while (*ptr)
 	{
-		charlen = pg_mblen(ptr);
+		charlen = mdb_mblen(ptr);
 		if (charlen == 1 && t_iseq(ptr, '.'))
 			num++;
 		ptr += charlen;
@@ -67,7 +67,7 @@ ltree_in(PG_FUNCTION_ARGS)
 	ptr = buf;
 	while (*ptr)
 	{
-		charlen = pg_mblen(ptr);
+		charlen = mdb_mblen(ptr);
 
 		if (state == LTPRS_WAITNAME)
 		{
@@ -213,7 +213,7 @@ lquery_in(PG_FUNCTION_ARGS)
 	ptr = buf;
 	while (*ptr)
 	{
-		charlen = pg_mblen(ptr);
+		charlen = mdb_mblen(ptr);
 
 		if (charlen == 1)
 		{
@@ -236,7 +236,7 @@ lquery_in(PG_FUNCTION_ARGS)
 	ptr = buf;
 	while (*ptr)
 	{
-		charlen = pg_mblen(ptr);
+		charlen = mdb_mblen(ptr);
 
 		if (state == LQPRS_WAITLEVEL)
 		{

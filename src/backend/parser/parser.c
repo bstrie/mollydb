@@ -81,7 +81,7 @@ raw_parser(const char *str)
 int
 base_yylex(YYSTYPE *lvalp, YYLTYPE *llocp, core_yyscan_t yyscanner)
 {
-	base_yy_extra_type *yyextra = pg_yyget_extra(yyscanner);
+	base_yy_extra_type *yyextra = mdb_yyget_extra(yyscanner);
 	int			cur_token;
 	int			next_token;
 	int			cur_token_length;

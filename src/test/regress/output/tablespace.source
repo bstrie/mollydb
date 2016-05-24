@@ -3,7 +3,7 @@ CREATE TABLESPACE testspacewith LOCATION '@testtablespace@' WITH (some_nonexiste
 ERROR:  unrecognized parameter "some_nonexistent_parameter"
 CREATE TABLESPACE testspacewith LOCATION '@testtablespace@' WITH (random_page_cost = 3.0); -- ok
 -- check to see the parameter was used
-SELECT spcoptions FROM pg_tablespace WHERE spcname = 'testspacewith';
+SELECT spcoptions FROM mdb_tablespace WHERE spcname = 'testspacewith';
        spcoptions       
 ------------------------
  {random_page_cost=3.0}
@@ -24,7 +24,7 @@ ALTER TABLESPACE testspace RESET (random_page_cost, seq_page_cost); -- ok
 CREATE SCHEMA testschema;
 -- try a table
 CREATE TABLE testschema.foo (i int) TABLESPACE testspace;
-SELECT relname, spcname FROM pg_catalog.pg_tablespace t, pg_catalog.pg_class c
+SELECT relname, spcname FROM mdb_catalog.mdb_tablespace t, mdb_catalog.mdb_class c
     where c.reltablespace = t.oid AND c.relname = 'foo';
  relname |  spcname  
 ---------+-----------
@@ -35,7 +35,7 @@ INSERT INTO testschema.foo VALUES(1);
 INSERT INTO testschema.foo VALUES(2);
 -- tables from dynamic sources
 CREATE TABLE testschema.asselect TABLESPACE testspace AS SELECT 1;
-SELECT relname, spcname FROM pg_catalog.pg_tablespace t, pg_catalog.pg_class c
+SELECT relname, spcname FROM mdb_catalog.mdb_tablespace t, mdb_catalog.mdb_class c
     where c.reltablespace = t.oid AND c.relname = 'asselect';
  relname  |  spcname  
 ----------+-----------
@@ -45,7 +45,7 @@ SELECT relname, spcname FROM pg_catalog.pg_tablespace t, pg_catalog.pg_class c
 PREPARE selectsource(int) AS SELECT $1;
 CREATE TABLE testschema.asexecute TABLESPACE testspace
     AS EXECUTE selectsource(2);
-SELECT relname, spcname FROM pg_catalog.pg_tablespace t, pg_catalog.pg_class c
+SELECT relname, spcname FROM mdb_catalog.mdb_tablespace t, mdb_catalog.mdb_class c
     where c.reltablespace = t.oid AND c.relname = 'asexecute';
   relname  |  spcname  
 -----------+-----------
@@ -54,7 +54,7 @@ SELECT relname, spcname FROM pg_catalog.pg_tablespace t, pg_catalog.pg_class c
 
 -- index
 CREATE INDEX foo_idx on testschema.foo(i) TABLESPACE testspace;
-SELECT relname, spcname FROM pg_catalog.pg_tablespace t, pg_catalog.pg_class c
+SELECT relname, spcname FROM mdb_catalog.mdb_tablespace t, mdb_catalog.mdb_class c
     where c.reltablespace = t.oid AND c.relname = 'foo_idx';
  relname |  spcname  
 ---------+-----------
@@ -93,10 +93,10 @@ CREATE TABLE tablespace_table (i int) TABLESPACE testspace; -- fail
 ERROR:  permission denied for tablespace testspace
 RESET ROLE;
 ALTER TABLESPACE testspace RENAME TO testspace_renamed;
-ALTER TABLE ALL IN TABLESPACE testspace_renamed SET TABLESPACE pg_default;
-ALTER INDEX ALL IN TABLESPACE testspace_renamed SET TABLESPACE pg_default;
+ALTER TABLE ALL IN TABLESPACE testspace_renamed SET TABLESPACE mdb_default;
+ALTER INDEX ALL IN TABLESPACE testspace_renamed SET TABLESPACE mdb_default;
 -- Should show notice that nothing was done
-ALTER TABLE ALL IN TABLESPACE testspace_renamed SET TABLESPACE pg_default;
+ALTER TABLE ALL IN TABLESPACE testspace_renamed SET TABLESPACE mdb_default;
 NOTICE:  no matching relations in tablespace "testspace_renamed" found
 -- Should succeed
 DROP TABLESPACE testspace_renamed;

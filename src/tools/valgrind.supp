@@ -45,7 +45,7 @@
 	padding_XLogRecData_CRC
 	Memcheck:Value8
 
-	fun:pg_comp_crc32c
+	fun:mdb_comp_crc32c
 	fun:XLogRecordAssemble
 }
 
@@ -89,7 +89,7 @@
 {
 	padding_twophase_CRC
 	Memcheck:Value8
-	fun:pg_comp_crc32c
+	fun:mdb_comp_crc32c
 	fun:EndPrepare
 }
 
@@ -122,29 +122,29 @@
 
 
 # gcc on ppc64 can generate a four-byte read to fetch the final "char" fields
-# of a FormData_pg_cast.  This is valid compiler behavior, because a proper
-# FormData_pg_cast has trailing padding.  Tuples we treat as structures omit
+# of a FormData_mdb_cast.  This is valid compiler behavior, because a proper
+# FormData_mdb_cast has trailing padding.  Tuples we treat as structures omit
 # that padding, so Valgrind reports an invalid read.  Practical trouble would
 # entail the missing pad bytes falling in a different memory page.  So long as
 # the structure is aligned, that will not happen.
 {
-	overread_tuplestruct_pg_cast
+	overread_tuplestruct_mdb_cast
 	Memcheck:Addr4
 
 	fun:IsBinaryCoercible
 }
 
 # Atomic writes to 64bit atomic vars uses compare/exchange to
-# guarantee atomic writes of 64bit variables. pg_atomic_write is used
+# guarantee atomic writes of 64bit variables. mdb_atomic_write is used
 # during initialization of the atomic variable; that leads to an
 # initial read of the old, undefined, memory value. But that's just to
 # make sure the swap works correctly.
 {
 	uninitialized_atomic_init_u64
 	Memcheck:Cond
-	fun:pg_atomic_exchange_u64_impl
-	fun:pg_atomic_write_u64_impl
-	fun:pg_atomic_init_u64_impl
+	fun:mdb_atomic_exchange_u64_impl
+	fun:mdb_atomic_write_u64_impl
+	fun:mdb_atomic_init_u64_impl
 }
 
 

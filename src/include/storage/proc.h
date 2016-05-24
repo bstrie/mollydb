@@ -18,7 +18,7 @@
 #include "lib/ilist.h"
 #include "storage/latch.h"
 #include "storage/lock.h"
-#include "storage/pg_sema.h"
+#include "storage/mdb_sema.h"
 
 /*
  * Each backend advertises up to PGPROC_MAX_CACHED_SUBXIDS TransactionIds
@@ -29,7 +29,7 @@
  * generated at least one subtransaction that didn't fit in the cache).
  * If none of the caches have overflowed, we can assume that an XID that's not
  * listed anywhere in the PGPROC array is not a running transaction.  Else we
- * have to look at pg_subtrans.
+ * have to look at mdb_subtrans.
  */
 #define PGPROC_MAX_CACHED_SUBXIDS 64	/* XXX guessed-at value */
 
@@ -145,7 +145,7 @@ struct PGPROC
 	/* true, if member of ProcArray group waiting for XID clear */
 	bool			procArrayGroupMember;
 	/* next ProcArray group member waiting for XID clear */
-	pg_atomic_uint32	procArrayGroupNext;
+	mdb_atomic_uint32	procArrayGroupNext;
 	/*
 	 * latest transaction id among the transaction's main XID and
 	 * subtransactions
@@ -224,7 +224,7 @@ typedef struct PROC_HDR
 	/* Head of list of bgworker free PGPROC structures */
 	PGPROC	   *bgworkerFreeProcs;
 	/* First pgproc waiting for group XID clear */
-	pg_atomic_uint32 procArrayGroupFirst;
+	mdb_atomic_uint32 procArrayGroupFirst;
 	/* WALWriter process's latch */
 	Latch	   *walwriterLatch;
 	/* Checkpointer process's latch */

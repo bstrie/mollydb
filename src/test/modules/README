@@ -6,7 +6,7 @@ intended for testing MollyDB and/or to serve as example code. The extensions
 here aren't intended to be installed in a production server and aren't suitable
 for "real work".
 
-Most extensions have their own pg_regress tests or isolationtester specs. Some
+Most extensions have their own mdb_regress tests or isolationtester specs. Some
 are also used by tests elsewhere in the tree.
 
 If you're adding new hooks or other functionality exposed as C-level API this

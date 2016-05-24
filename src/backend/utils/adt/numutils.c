@@ -21,7 +21,7 @@
 #include "utils/builtins.h"
 
 /*
- * pg_atoi: convert string to integer
+ * mdb_atoi: convert string to integer
  *
  * allows any number of leading or trailing whitespace characters.
  *
@@ -34,7 +34,7 @@
  * overflow.
  */
 int32
-pg_atoi(const char *s, int size, int c)
+mdb_atoi(const char *s, int size, int c)
 {
 	long		l;
 	char	   *badp;
@@ -107,7 +107,7 @@ pg_atoi(const char *s, int size, int c)
 }
 
 /*
- * pg_itoa: converts a signed 16-bit integer to its string representation
+ * mdb_itoa: converts a signed 16-bit integer to its string representation
  *
  * Caller must ensure that 'a' points to enough memory to hold the result
  * (at least 7 bytes, counting a leading sign and trailing NUL).
@@ -115,19 +115,19 @@ pg_atoi(const char *s, int size, int c)
  * It doesn't seem worth implementing this separately.
  */
 void
-pg_itoa(int16 i, char *a)
+mdb_itoa(int16 i, char *a)
 {
-	pg_ltoa((int32) i, a);
+	mdb_ltoa((int32) i, a);
 }
 
 /*
- * pg_ltoa: converts a signed 32-bit integer to its string representation
+ * mdb_ltoa: converts a signed 32-bit integer to its string representation
  *
  * Caller must ensure that 'a' points to enough memory to hold the result
  * (at least 12 bytes, counting a leading sign and trailing NUL).
  */
 void
-pg_ltoa(int32 value, char *a)
+mdb_ltoa(int32 value, char *a)
 {
 	char	   *start = a;
 	bool		neg = false;
@@ -175,13 +175,13 @@ pg_ltoa(int32 value, char *a)
 }
 
 /*
- * pg_lltoa: convert a signed 64-bit integer to its string representation
+ * mdb_lltoa: convert a signed 64-bit integer to its string representation
  *
  * Caller must ensure that 'a' points to enough memory to hold the result
  * (at least MAXINT8LEN+1 bytes, counting a leading sign and trailing NUL).
  */
 void
-pg_lltoa(int64 value, char *a)
+mdb_lltoa(int64 value, char *a)
 {
 	char	   *start = a;
 	bool		neg = false;
@@ -230,7 +230,7 @@ pg_lltoa(int64 value, char *a)
 
 
 /*
- * pg_ltostr_zeropad
+ * mdb_ltostr_zeropad
  *		Converts 'value' into a decimal string representation stored at 'str'.
  *		'minwidth' specifies the minimum width of the result; any extra space
  *		is filled up by prefixing the number with zeros.
@@ -241,18 +241,18 @@ pg_lltoa(int64 value, char *a)
  * The intended use-case for this function is to build strings that contain
  * multiple individual numbers, for example:
  *
- *	str = pg_ltostr_zeropad(str, hours, 2);
+ *	str = mdb_ltostr_zeropad(str, hours, 2);
  *	*str++ = ':';
- *	str = pg_ltostr_zeropad(str, mins, 2);
+ *	str = mdb_ltostr_zeropad(str, mins, 2);
  *	*str++ = ':';
- *	str = pg_ltostr_zeropad(str, secs, 2);
+ *	str = mdb_ltostr_zeropad(str, secs, 2);
  *	*str = '\0';
  *
  * Note: Caller must ensure that 'str' points to enough memory to hold the
  * result.
  */
 char *
-pg_ltostr_zeropad(char *str, int32 value, int32 minwidth)
+mdb_ltostr_zeropad(char *str, int32 value, int32 minwidth)
 {
 	char	   *start = str;
 	char	   *end = &str[minwidth];
@@ -300,18 +300,18 @@ pg_ltostr_zeropad(char *str, int32 value, int32 minwidth)
 
 	/*
 	 * If minwidth was not high enough to fit the number then num won't have
-	 * been divided down to zero.  We punt the problem to pg_ltostr(), which
+	 * been divided down to zero.  We punt the problem to mdb_ltostr(), which
 	 * will generate a correct answer in the minimum valid width.
 	 */
 	if (num != 0)
-		return pg_ltostr(str, value);
+		return mdb_ltostr(str, value);
 
 	/* Otherwise, return last output character + 1 */
 	return end;
 }
 
 /*
- * pg_ltostr
+ * mdb_ltostr
  *		Converts 'value' into a decimal string representation stored at 'str'.
  *
  * Returns the ending address of the string result (the last character written
@@ -320,16 +320,16 @@ pg_ltostr_zeropad(char *str, int32 value, int32 minwidth)
  * The intended use-case for this function is to build strings that contain
  * multiple individual numbers, for example:
  *
- *	str = pg_ltostr(str, a);
+ *	str = mdb_ltostr(str, a);
  *	*str++ = ' ';
- *	str = pg_ltostr(str, b);
+ *	str = mdb_ltostr(str, b);
  *	*str = '\0';
  *
  * Note: Caller must ensure that 'str' points to enough memory to hold the
  * result.
  */
 char *
-pg_ltostr(char *str, int32 value)
+mdb_ltostr(char *str, int32 value)
 {
 	char	   *start;
 	char	   *end;
@@ -390,7 +390,7 @@ pg_ltostr(char *str, int32 value)
 }
 
 /*
- * pg_strtouint64
+ * mdb_strtouint64
  *		Converts 'str' into an unsigned 64-bit integer.
  *
  * This has the identical API to strtoul(3), except that it will handle
@@ -400,7 +400,7 @@ pg_ltostr(char *str, int32 value)
  * such a function somewhere; let's not roll our own.
  */
 uint64
-pg_strtouint64(const char *str, char **endptr, int base)
+mdb_strtouint64(const char *str, char **endptr, int base)
 {
 #ifdef _MSC_VER					/* MSVC only */
 	return _strtoui64(str, endptr, base);

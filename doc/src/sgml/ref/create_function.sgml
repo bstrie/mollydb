@@ -755,7 +755,7 @@ SELECT * FROM dup(42);
     temporary-table schema, which is searched first by default, and
     is normally writable by anyone.  A secure arrangement can be obtained
     by forcing the temporary schema to be searched last.  To do this,
-    write <literal>pg_temp</><indexterm><primary>pg_temp</><secondary>securing functions</></> as the last entry in <varname>search_path</>.
+    write <literal>mdb_temp</><indexterm><primary>mdb_temp</><secondary>securing functions</></> as the last entry in <varname>search_path</>.
     This function illustrates safe usage:
    </para>
 
@@ -772,8 +772,8 @@ BEGIN
 END;
 $$  LANGUAGE plmdb
     SECURITY DEFINER
-    -- Set a secure search_path: trusted schema(s), then 'pg_temp'.
-    SET search_path = admin, pg_temp;
+    -- Set a secure search_path: trusted schema(s), then 'mdb_temp'.
+    SET search_path = admin, mdb_temp;
 </programlisting>
 
    <para>

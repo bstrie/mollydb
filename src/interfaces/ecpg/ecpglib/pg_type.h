@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_type.h
+ * mdb_type.h
  *	  Hard-wired knowledge about some standard type OIDs.
  *
- * XXX keep this in sync with src/include/catalog/pg_type.h
+ * XXX keep this in sync with src/include/catalog/mdb_type.h
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/interfaces/ecpg/ecpglib/pg_type.h
+ * src/interfaces/ecpg/ecpglib/mdb_type.h
  *
  *-------------------------------------------------------------------------
  */

@@ -9,16 +9,16 @@ select txid_current();
 
 select length(txid_current_snapshot()::text) >= 4;
 
-select pg_start_backup('should fail');
-select pg_switch_xlog();
-select pg_stop_backup();
+select mdb_start_backup('should fail');
+select mdb_switch_xlog();
+select mdb_stop_backup();
 
 -- should return no rows
-select * from pg_prepared_xacts;
+select * from mdb_prepared_xacts;
 
 -- just the startup process
 select locktype, virtualxid, virtualtransaction, mode, granted
-from pg_locks where virtualxid = '1/1';
+from mdb_locks where virtualxid = '1/1';
 
 -- suicide is painless
-select pg_cancel_backend(pg_backend_pid());
+select mdb_cancel_backend(mdb_backend_pid());

@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_collation.c
- *	  routines to support manipulation of the pg_collation relation
+ * mdb_collation.c
+ *	  routines to support manipulation of the mdb_collation relation
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_collation.c
+ *	  src/backend/catalog/mdb_collation.c
  *
  *-------------------------------------------------------------------------
  */
@@ -21,10 +21,10 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_collation_fn.h"
-#include "catalog/pg_namespace.h"
-#include "mb/pg_wchar.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_collation_fn.h"
+#include "catalog/mdb_namespace.h"
+#include "mb/mdb_wchar.h"
 #include "utils/builtins.h"
 #include "utils/fmgroids.h"
 #include "utils/rel.h"
@@ -35,7 +35,7 @@
 /*
  * CollationCreate
  *
- * Add a new tuple to pg_collation.
+ * Add a new tuple to mdb_collation.
  */
 Oid
 CollationCreate(const char *collname, Oid collnamespace,
@@ -46,8 +46,8 @@ CollationCreate(const char *collname, Oid collnamespace,
 	Relation	rel;
 	TupleDesc	tupDesc;
 	HeapTuple	tup;
-	Datum		values[Natts_pg_collation];
-	bool		nulls[Natts_pg_collation];
+	Datum		values[Natts_mdb_collation];
+	bool		nulls[Natts_mdb_collation];
 	NameData	name_name,
 				name_collate,
 				name_ctype;
@@ -75,7 +75,7 @@ CollationCreate(const char *collname, Oid collnamespace,
 		ereport(ERROR,
 				(errcode(ERRCODE_DUPLICATE_OBJECT),
 				 errmsg("collation \"%s\" for encoding \"%s\" already exists",
-						collname, pg_encoding_to_char(collencoding))));
+						collname, mdb_encoding_to_char(collencoding))));
 
 	/*
 	 * Also forbid matching an any-encoding entry.  This test of course is not
@@ -91,7 +91,7 @@ CollationCreate(const char *collname, Oid collnamespace,
 				 errmsg("collation \"%s\" already exists",
 						collname)));
 
-	/* open pg_collation */
+	/* open mdb_collation */
 	rel = heap_open(CollationRelationId, RowExclusiveLock);
 	tupDesc = RelationGetDescr(rel);
 
@@ -99,14 +99,14 @@ CollationCreate(const char *collname, Oid collnamespace,
 	memset(nulls, 0, sizeof(nulls));
 
 	namestrcpy(&name_name, collname);
-	values[Anum_pg_collation_collname - 1] = NameGetDatum(&name_name);
-	values[Anum_pg_collation_collnamespace - 1] = ObjectIdGetDatum(collnamespace);
-	values[Anum_pg_collation_collowner - 1] = ObjectIdGetDatum(collowner);
-	values[Anum_pg_collation_collencoding - 1] = Int32GetDatum(collencoding);
+	values[Anum_mdb_collation_collname - 1] = NameGetDatum(&name_name);
+	values[Anum_mdb_collation_collnamespace - 1] = ObjectIdGetDatum(collnamespace);
+	values[Anum_mdb_collation_collowner - 1] = ObjectIdGetDatum(collowner);
+	values[Anum_mdb_collation_collencoding - 1] = Int32GetDatum(collencoding);
 	namestrcpy(&name_collate, collcollate);
-	values[Anum_pg_collation_collcollate - 1] = NameGetDatum(&name_collate);
+	values[Anum_mdb_collation_collcollate - 1] = NameGetDatum(&name_collate);
 	namestrcpy(&name_ctype, collctype);
-	values[Anum_pg_collation_collctype - 1] = NameGetDatum(&name_ctype);
+	values[Anum_mdb_collation_collctype - 1] = NameGetDatum(&name_ctype);
 
 	tup = heap_form_tuple(tupDesc, values, nulls);
 
@@ -147,7 +147,7 @@ CollationCreate(const char *collname, Oid collnamespace,
 /*
  * RemoveCollationById
  *
- * Remove a tuple from pg_collation by Oid. This function is solely
+ * Remove a tuple from mdb_collation by Oid. This function is solely
  * called inside catalog/dependency.c
  */
 void

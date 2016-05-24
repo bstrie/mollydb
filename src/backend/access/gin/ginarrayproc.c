@@ -60,7 +60,7 @@ ginarrayextract(PG_FUNCTION_ARGS)
 
 /*
  * Formerly, ginarrayextract had only two arguments.  Now it has three,
- * but we still need a pg_proc entry with two args to support reloading
+ * but we still need a mdb_proc entry with two args to support reloading
  * pre-9.1 contrib/intarray opclass declarations.  This compatibility
  * function should go away eventually.
  */

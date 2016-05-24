@@ -119,7 +119,7 @@ typedef enum
 
 /*
  * PGPing - The ordering of this enum should not be altered because the
- * values are exposed externally via pg_isready.
+ * values are exposed externally via mdb_isready.
  */
 
 typedef enum
@@ -133,20 +133,20 @@ typedef enum
 /* PGconn encapsulates a connection to the backend.
  * The contents of this struct are not supposed to be known to applications.
  */
-typedef struct pg_conn PGconn;
+typedef struct mdb_conn PGconn;
 
 /* PGresult encapsulates the result of a query (or more precisely, of a single
  * SQL command --- a query string given to PQsendQuery can contain multiple
  * commands and thus return multiple PGresult objects).
  * The contents of this struct are not supposed to be known to applications.
  */
-typedef struct pg_result PGresult;
+typedef struct mdb_result PGresult;
 
 /* PGcancel encapsulates the information needed to cancel a running
  * query on an existing connection.
  * The contents of this struct are not supposed to be known to applications.
  */
-typedef struct pg_cancel PGcancel;
+typedef struct mdb_cancel PGcancel;
 
 /* PGnotify represents the occurrence of a NOTIFY message.
  * Ideally this would be an opaque typedef, but it's so simple that it's
@@ -564,13 +564,13 @@ extern int	lo_close(PGconn *conn, int fd);
 extern int	lo_read(PGconn *conn, int fd, char *buf, size_t len);
 extern int	lo_write(PGconn *conn, int fd, const char *buf, size_t len);
 extern int	lo_lseek(PGconn *conn, int fd, int offset, int whence);
-extern pg_int64 lo_lseek64(PGconn *conn, int fd, pg_int64 offset, int whence);
+extern mdb_int64 lo_lseek64(PGconn *conn, int fd, mdb_int64 offset, int whence);
 extern Oid	lo_creat(PGconn *conn, int mode);
 extern Oid	lo_create(PGconn *conn, Oid lobjId);
 extern int	lo_tell(PGconn *conn, int fd);
-extern pg_int64 lo_tell64(PGconn *conn, int fd);
+extern mdb_int64 lo_tell64(PGconn *conn, int fd);
 extern int	lo_truncate(PGconn *conn, int fd, size_t len);
-extern int	lo_truncate64(PGconn *conn, int fd, pg_int64 len);
+extern int	lo_truncate64(PGconn *conn, int fd, mdb_int64 len);
 extern int	lo_unlink(PGconn *conn, Oid lobjId);
 extern Oid	lo_import(PGconn *conn, const char *filename);
 extern Oid	lo_import_with_oid(PGconn *conn, const char *filename, Oid lobjId);
@@ -596,9 +596,9 @@ extern char *PQencryptPassword(const char *passwd, const char *user);
 
 /* === in encnames.c === */
 
-extern int	pg_char_to_encoding(const char *name);
-extern const char *pg_encoding_to_char(int encoding);
-extern int	pg_valid_server_encoding_id(int encoding);
+extern int	mdb_char_to_encoding(const char *name);
+extern const char *mdb_encoding_to_char(int encoding);
+extern int	mdb_valid_server_encoding_id(int encoding);
 
 #ifdef __cplusplus
 }

@@ -1655,7 +1655,7 @@
    is supposed to identify the underlying built-in type of the column.
    In <productname>MollyDB</productname>, this means that the type
    is defined in the system catalog schema
-   <literal>pg_catalog</literal>.  This column might be useful if the
+   <literal>mdb_catalog</literal>.  This column might be useful if the
    application can handle the well-known built-in types specially (for
    example, format the numeric types differently or use the data in
    the precision columns).  The columns <literal>udt_name</literal>,

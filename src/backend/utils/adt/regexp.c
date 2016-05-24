@@ -19,7 +19,7 @@
  *
  *		agc - incorporated Keith Bostic's Berkeley regex code into
  *		the tree for all ports. To distinguish this regex code from any that
- *		is existent on a platform, I've prepended the string "pg_" to
+ *		is existent on a platform, I've prepended the string "mdb_" to
  *		the functions regcomp, regerror, regexec and regfree.
  *		Fixed a bug that was originally a typo by me, where `i' was used
  *		instead of `oldest' when compiling regular expressions - benign
@@ -29,7 +29,7 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "miscadmin.h"
 #include "regex/regex.h"
@@ -41,11 +41,11 @@
 
 
 /* all the options of interest for regex functions */
-typedef struct pg_re_flags
+typedef struct mdb_re_flags
 {
 	int			cflags;			/* compile flags for Spencer's regex code */
 	bool		glob;			/* do it globally (for each occurrence) */
-} pg_re_flags;
+} mdb_re_flags;
 
 /* cross-call state for regexp_matches(), also regexp_split() */
 typedef struct regexp_matches_ctx
@@ -127,14 +127,14 @@ static Datum build_regexp_split_result(regexp_matches_ctx *splitctx);
  *	collation --- collation to use for LC_CTYPE-dependent behavior
  *
  * Pattern is given in the database encoding.  We internally convert to
- * an array of pg_wchar, which is what Spencer's regex package wants.
+ * an array of mdb_wchar, which is what Spencer's regex package wants.
  */
 static regex_t *
 RE_compile_and_cache(text *text_re, int cflags, Oid collation)
 {
 	int			text_re_len = VARSIZE_ANY_EXHDR(text_re);
 	char	   *text_re_val = VARDATA_ANY(text_re);
-	pg_wchar   *pattern;
+	mdb_wchar   *pattern;
 	int			pattern_len;
 	int			i;
 	int			regcomp_result;
@@ -173,12 +173,12 @@ RE_compile_and_cache(text *text_re, int cflags, Oid collation)
 	 */
 
 	/* Convert pattern string to wide characters */
-	pattern = (pg_wchar *) palloc((text_re_len + 1) * sizeof(pg_wchar));
-	pattern_len = pg_mb2wchar_with_len(text_re_val,
+	pattern = (mdb_wchar *) palloc((text_re_len + 1) * sizeof(mdb_wchar));
+	pattern_len = mdb_mb2wchar_with_len(text_re_val,
 									   pattern,
 									   text_re_len);
 
-	regcomp_result = pg_regcomp(&re_temp.cre_re,
+	regcomp_result = mdb_regcomp(&re_temp.cre_re,
 								pattern,
 								pattern_len,
 								cflags,
@@ -188,7 +188,7 @@ RE_compile_and_cache(text *text_re, int cflags, Oid collation)
 
 	if (regcomp_result != REG_OKAY)
 	{
-		/* re didn't compile (no need for pg_regfree, if so) */
+		/* re didn't compile (no need for mdb_regfree, if so) */
 
 		/*
 		 * Here and in other places in this file, do CHECK_FOR_INTERRUPTS
@@ -198,7 +198,7 @@ RE_compile_and_cache(text *text_re, int cflags, Oid collation)
 		 */
 		CHECK_FOR_INTERRUPTS();
 
-		pg_regerror(regcomp_result, &re_temp.cre_re, errMsg, sizeof(errMsg));
+		mdb_regerror(regcomp_result, &re_temp.cre_re, errMsg, sizeof(errMsg));
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_REGULAR_EXPRESSION),
 				 errmsg("invalid regular expression: %s", errMsg)));
@@ -213,7 +213,7 @@ RE_compile_and_cache(text *text_re, int cflags, Oid collation)
 	re_temp.cre_pat = malloc(Max(text_re_len, 1));
 	if (re_temp.cre_pat == NULL)
 	{
-		pg_regfree(&re_temp.cre_re);
+		mdb_regfree(&re_temp.cre_re);
 		ereport(ERROR,
 				(errcode(ERRCODE_OUT_OF_MEMORY),
 				 errmsg("out of memory")));
@@ -231,7 +231,7 @@ RE_compile_and_cache(text *text_re, int cflags, Oid collation)
 	{
 		--num_res;
 		Assert(num_res < MAX_CACHED_RES);
-		pg_regfree(&re_array[num_res].cre_re);
+		mdb_regfree(&re_array[num_res].cre_re);
 		free(re_array[num_res].cre_pat);
 	}
 
@@ -245,7 +245,7 @@ RE_compile_and_cache(text *text_re, int cflags, Oid collation)
 }
 
 /*
- * RE_wchar_execute - execute a RE on pg_wchar data
+ * RE_wchar_execute - execute a RE on mdb_wchar data
  *
  * Returns TRUE on match, FALSE on no match
  *
@@ -255,18 +255,18 @@ RE_compile_and_cache(text *text_re, int cflags, Oid collation)
  *	start_search -- the offset in the data to start searching
  *	nmatch, pmatch	--- optional return area for match details
  *
- * Data is given as array of pg_wchar which is what Spencer's regex package
+ * Data is given as array of mdb_wchar which is what Spencer's regex package
  * wants.
  */
 static bool
-RE_wchar_execute(regex_t *re, pg_wchar *data, int data_len,
+RE_wchar_execute(regex_t *re, mdb_wchar *data, int data_len,
 				 int start_search, int nmatch, regmatch_t *pmatch)
 {
 	int			regexec_result;
 	char		errMsg[100];
 
 	/* Perform RE match and return result */
-	regexec_result = pg_regexec(re,
+	regexec_result = mdb_regexec(re,
 								data,
 								data_len,
 								start_search,
@@ -279,7 +279,7 @@ RE_wchar_execute(regex_t *re, pg_wchar *data, int data_len,
 	{
 		/* re failed??? */
 		CHECK_FOR_INTERRUPTS();
-		pg_regerror(regexec_result, re, errMsg, sizeof(errMsg));
+		mdb_regerror(regexec_result, re, errMsg, sizeof(errMsg));
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_REGULAR_EXPRESSION),
 				 errmsg("regular expression failed: %s", errMsg)));
@@ -299,19 +299,19 @@ RE_wchar_execute(regex_t *re, pg_wchar *data, int data_len,
  *	nmatch, pmatch	--- optional return area for match details
  *
  * Data is given in the database encoding.  We internally
- * convert to array of pg_wchar which is what Spencer's regex package wants.
+ * convert to array of mdb_wchar which is what Spencer's regex package wants.
  */
 static bool
 RE_execute(regex_t *re, char *dat, int dat_len,
 		   int nmatch, regmatch_t *pmatch)
 {
-	pg_wchar   *data;
+	mdb_wchar   *data;
 	int			data_len;
 	bool		match;
 
 	/* Convert data string to wide characters */
-	data = (pg_wchar *) palloc((dat_len + 1) * sizeof(pg_wchar));
-	data_len = pg_mb2wchar_with_len(dat, data, dat_len);
+	data = (mdb_wchar *) palloc((dat_len + 1) * sizeof(mdb_wchar));
+	data_len = mdb_mb2wchar_with_len(dat, data, dat_len);
 
 	/* Perform RE match and return result */
 	match = RE_wchar_execute(re, data, data_len, 0, nmatch, pmatch);
@@ -333,7 +333,7 @@ RE_execute(regex_t *re, char *dat, int dat_len,
  *	nmatch, pmatch	--- optional return area for match details
  *
  * Both pattern and data are given in the database encoding.  We internally
- * convert to array of pg_wchar which is what Spencer's regex package wants.
+ * convert to array of mdb_wchar which is what Spencer's regex package wants.
  */
 static bool
 RE_compile_and_execute(text *text_re, char *dat, int dat_len,
@@ -359,7 +359,7 @@ RE_compile_and_execute(text *text_re, char *dat, int dat_len,
  * don't want some have to reject them after the fact.
  */
 static void
-parse_re_flags(pg_re_flags *flags, text *opts)
+parse_re_flags(mdb_re_flags *flags, text *opts)
 {
 	/* regex flavor is always folded into the compile flags */
 	flags->cflags = REG_ADVANCED;
@@ -491,7 +491,7 @@ textregexne(PG_FUNCTION_ARGS)
 
 /*
  *	routines that use the regexp stuff, but ignore the case.
- *	for this, we use the REG_ICASE flag to pg_regcomp
+ *	for this, we use the REG_ICASE flag to mdb_regcomp
  */
 
 
@@ -640,7 +640,7 @@ textregexreplace(PG_FUNCTION_ARGS)
 	text	   *r = PG_GETARG_TEXT_PP(2);
 	text	   *opt = PG_GETARG_TEXT_PP(3);
 	regex_t    *re;
-	pg_re_flags flags;
+	mdb_re_flags flags;
 
 	parse_re_flags(&flags, opt);
 
@@ -690,7 +690,7 @@ similar_escape(PG_FUNCTION_ARGS)
 			e = NULL;			/* no escape character */
 		else
 		{
-			int			escape_mblen = pg_mbstrlen_with_len(e, elen);
+			int			escape_mblen = mdb_mbstrlen_with_len(e, elen);
 
 			if (escape_mblen > 1)
 				ereport(ERROR,
@@ -742,7 +742,7 @@ similar_escape(PG_FUNCTION_ARGS)
 
 		if (elen > 1)
 		{
-			int			mblen = pg_mblen(p);
+			int			mblen = mdb_mblen(p);
 
 			if (mblen > 1)
 			{
@@ -918,9 +918,9 @@ setup_regexp_matches(text *orig_str, text *pattern, text *flags,
 {
 	regexp_matches_ctx *matchctx = palloc0(sizeof(regexp_matches_ctx));
 	int			orig_len;
-	pg_wchar   *wide_str;
+	mdb_wchar   *wide_str;
 	int			wide_len;
-	pg_re_flags re_flags;
+	mdb_re_flags re_flags;
 	regex_t    *cpattern;
 	regmatch_t *pmatch;
 	int			pmatch_len;
@@ -932,10 +932,10 @@ setup_regexp_matches(text *orig_str, text *pattern, text *flags,
 	/* save original string --- we'll extract result substrings from it */
 	matchctx->orig_str = orig_str;
 
-	/* convert string to pg_wchar form for matching */
+	/* convert string to mdb_wchar form for matching */
 	orig_len = VARSIZE_ANY_EXHDR(orig_str);
-	wide_str = (pg_wchar *) palloc(sizeof(pg_wchar) * (orig_len + 1));
-	wide_len = pg_mb2wchar_with_len(VARDATA_ANY(orig_str), wide_str, orig_len);
+	wide_str = (mdb_wchar *) palloc(sizeof(mdb_wchar) * (orig_len + 1));
+	wide_len = mdb_mb2wchar_with_len(VARDATA_ANY(orig_str), wide_str, orig_len);
 
 	/* determine options */
 	parse_re_flags(&re_flags, flags);
@@ -1248,7 +1248,7 @@ regexp_fixed_prefix(text *text_re, bool case_insensitive, Oid collation,
 	regex_t    *re;
 	int			cflags;
 	int			re_result;
-	pg_wchar   *str;
+	mdb_wchar   *str;
 	size_t		slen;
 	size_t		maxlen;
 	char		errMsg[100];
@@ -1263,7 +1263,7 @@ regexp_fixed_prefix(text *text_re, bool case_insensitive, Oid collation,
 	re = RE_compile_and_cache(text_re, cflags, collation);
 
 	/* Examine it to see if there's a fixed prefix */
-	re_result = pg_regprefix(re, &str, &slen);
+	re_result = mdb_regprefix(re, &str, &slen);
 
 	switch (re_result)
 	{
@@ -1282,17 +1282,17 @@ regexp_fixed_prefix(text *text_re, bool case_insensitive, Oid collation,
 		default:
 			/* re failed??? */
 			CHECK_FOR_INTERRUPTS();
-			pg_regerror(re_result, re, errMsg, sizeof(errMsg));
+			mdb_regerror(re_result, re, errMsg, sizeof(errMsg));
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_REGULAR_EXPRESSION),
 					 errmsg("regular expression failed: %s", errMsg)));
 			break;
 	}
 
-	/* Convert pg_wchar result back to database encoding */
-	maxlen = pg_database_encoding_max_length() * slen + 1;
+	/* Convert mdb_wchar result back to database encoding */
+	maxlen = mdb_database_encoding_max_length() * slen + 1;
 	result = (char *) palloc(maxlen);
-	slen = pg_wchar2mb_with_len(str, result, slen);
+	slen = mdb_wchar2mb_with_len(str, result, slen);
 	Assert(slen < maxlen);
 
 	free(str);

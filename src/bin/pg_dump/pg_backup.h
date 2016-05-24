@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup.h
+ * mdb_backup.h
  *
- *	Public interface to the pg_dump archiver routines.
+ *	Public interface to the mdb_dump archiver routines.
  *
- *	See the headers to pg_restore for more details.
+ *	See the headers to mdb_restore for more details.
  *
  * Copyright (c) 2000, Philip Warner
  *		Rights are granted to use this software in any way so long
@@ -15,7 +15,7 @@
  *
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/pg_backup.h
+ *		src/bin/mdb_dump/mdb_backup.h
  *
  *-------------------------------------------------------------------------
  */
@@ -195,14 +195,14 @@ typedef struct Archive
 
 
 /*
- * pg_dump uses two different mechanisms for identifying database objects:
+ * mdb_dump uses two different mechanisms for identifying database objects:
  *
  * CatalogId represents an object by the tableoid and oid of its defining
- * entry in the system catalogs.  We need this to interpret pg_depend entries,
+ * entry in the system catalogs.  We need this to interpret mdb_depend entries,
  * for instance.
  *
  * DumpId is a simple sequential integer counter assigned as dumpable objects
- * are identified during a pg_dump run.  We use DumpId internally in preference
+ * are identified during a mdb_dump run.  We use DumpId internally in preference
  * to CatalogId for two reasons: it's more compact, and we can assign DumpIds
  * to "objects" that don't have a separate CatalogId.  For example, it is
  * convenient to consider a table, its data, and its ACL as three separate
@@ -283,7 +283,7 @@ extern void SortTocFromFile(Archive *AHX);
 
 /* Convenience functions used only when writing DATA */
 extern void archputs(const char *s, Archive *AH);
-extern int	archprintf(Archive *AH, const char *fmt,...) pg_attribute_printf(2, 3);
+extern int	archprintf(Archive *AH, const char *fmt,...) mdb_attribute_printf(2, 3);
 
 #define appendStringLiteralAH(buf,str,AH) \
 	appendStringLiteral(buf, str, (AH)->encoding, (AH)->std_strings)

@@ -295,7 +295,7 @@
 
     <listitem>
      <para>
-      Prevent possible crashes in <function>pg_get_expr()</> by disallowing
+      Prevent possible crashes in <function>mdb_get_expr()</> by disallowing
       it from being called with an argument that is not one of the system
       catalog columns it's intended to be used with
       (Heikki Linnakangas, Tom Lane)
@@ -700,7 +700,7 @@
 
     <listitem>
      <para>
-      When reading <filename>pg_hba.conf</> and related files, do not treat
+      When reading <filename>mdb_hba.conf</> and related files, do not treat
       <literal>@something</> as a file inclusion request if the <literal>@</>
       appears inside quote marks; also, never treat <literal>@</> by itself
       as a file inclusion request (Tom)
@@ -718,7 +718,7 @@
     <listitem>
      <para>
       Prevent infinite loop on some platforms if a directory is named as
-      an inclusion target in <filename>pg_hba.conf</> and related files
+      an inclusion target in <filename>mdb_hba.conf</> and related files
       (Tom)
      </para>
     </listitem>
@@ -1087,7 +1087,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to not go into an infinite loop if
+      Fix <application>mdb_ctl</> to not go into an infinite loop if
       <filename>mollydb.conf</> is empty (Jeff Davis)
      </para>
     </listitem>
@@ -1216,13 +1216,13 @@
      <para>
       If <command>CLUSTER</> or a rewriting variant of <command>ALTER TABLE</>
       were executed by someone other than the table owner, the
-      <structname>pg_type</> entry for the table's TOAST table would end up
+      <structname>mdb_type</> entry for the table's TOAST table would end up
       marked as owned by that someone.  This caused no immediate problems,
       since the permissions on the TOAST rowtype aren't examined by any
       ordinary database operation.  However, it could lead to unexpected
       failures if one later tried to drop the role that issued the command
       (in 8.1 or 8.2), or <quote>owner of data type appears to be invalid</>
-      warnings from <application>pg_dump</> after having done so (in 8.3).
+      warnings from <application>mdb_dump</> after having done so (in 8.3).
      </para>
     </listitem>
 
@@ -1506,7 +1506,7 @@
 
     <listitem>
      <para>
-      Fix recent breakage of <literal>pg_ctl restart</> (Tom)
+      Fix recent breakage of <literal>mdb_ctl restart</> (Tom)
      </para>
     </listitem>
 
@@ -1673,14 +1673,14 @@
 
     <listitem>
      <para>
-      Improve <application>pg_dump</> and <application>pg_restore</>'s
+      Improve <application>mdb_dump</> and <application>mdb_restore</>'s
       error reporting after failure to send a SQL command (Tom)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to properly preserve postmaster
+      Fix <application>mdb_ctl</> to properly preserve postmaster
       command-line arguments across a <literal>restart</> (Bruce)
      </para>
     </listitem>
@@ -1730,7 +1730,7 @@
 
     <listitem>
      <para>
-      Make <function>pg_get_ruledef()</> parenthesize negative constants (Tom)
+      Make <function>mdb_get_ruledef()</> parenthesize negative constants (Tom)
      </para>
 
      <para>
@@ -1741,7 +1741,7 @@
       another recent patch to cause
       <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
-      <application>pg_dump</> output failing to reload, it is being treated
+      <application>mdb_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
       output is actually incorrect are 8.3.1 and 8.2.7.
      </para>
@@ -1750,7 +1750,7 @@
     <listitem>
      <para>
       Make <command>ALTER AGGREGATE ... OWNER TO</> update
-      <structname>pg_shdepend</> (Tom)
+      <structname>mdb_shdepend</> (Tom)
      </para>
 
      <para>
@@ -1915,7 +1915,7 @@
      <para>
       A side effect of the fix is that a transaction that has executed
       a not-yet-committed <command>LISTEN</> command will not see any
-      row in <structname>pg_listener</> for the <command>LISTEN</>,
+      row in <structname>mdb_listener</> for the <command>LISTEN</>,
       should it choose to look; formerly it would have.  This behavior
       was never documented one way or the other, but it is possible that
       some applications depend on the old behavior.
@@ -1961,12 +1961,12 @@
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to correctly extract the postmaster's port
+      Fix <application>mdb_ctl</> to correctly extract the postmaster's port
       number from command-line options (Itagaki Takahiro, Tom)
      </para>
 
      <para>
-      Previously, <literal>pg_ctl start -w</> could try to contact the
+      Previously, <literal>mdb_ctl start -w</> could try to contact the
       postmaster on the wrong port, leading to bogus reports of startup
       failure.
      </para>
@@ -2200,7 +2200,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_dump</> to correctly handle inheritance child tables
+      Fix <application>mdb_dump</> to correctly handle inheritance child tables
       that have default expressions different from their parent's (Tom)
      </para>
     </listitem>
@@ -2666,7 +2666,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_restore</> to handle a tar-format backup
+      Fix <application>mdb_restore</> to handle a tar-format backup
       that contains large objects (blobs) with comments (Tom)
      </para>
     </listitem>
@@ -2680,7 +2680,7 @@
 
      <listitem>
       <para>
-       Clean out <filename>pg_internal.init</> cache files during server
+       Clean out <filename>mdb_internal.init</> cache files during server
        restart (Simon)
       </para>
 
@@ -2943,7 +2943,7 @@ extents.
 <listitem><para>Clean up stray remaining uses of <literal>\'</> in strings
 (Bruce, Jan)</para></listitem>
 
-<listitem><para>Make autovacuum visible in <structname>pg_stat_activity</>
+<listitem><para>Make autovacuum visible in <structname>mdb_stat_activity</>
 (Alvaro)</para></listitem>
 
 <listitem><para>Disable <literal>full_page_writes</> (Tom)</para>
@@ -2986,10 +2986,10 @@ Fuhr)</para></listitem>
 <listitem><para>Fix problem with password prompting on some Win32 systems
 (Robert Kinberg)</para></listitem>
 
-<listitem><para>Improve <application>pg_dump</>'s handling of default values
+<listitem><para>Improve <application>mdb_dump</>'s handling of default values
 for domains</para></listitem>
 
-<listitem><para>Fix <application>pg_dumpall</> to handle identically-named
+<listitem><para>Fix <application>mdb_dumpall</> to handle identically-named
 users and groups reasonably (only possible when dumping from a pre-8.1 server)
 (Tom)</para>
 <para>The user and group will be merged into a single role with
@@ -2997,7 +2997,7 @@ users and groups reasonably (only possible when dumping from a pre-8.1 server)
 <literal>LOGIN</> permission, making it unusable as a user.
 </para></listitem>
 
-<listitem><para>Fix <application>pg_restore</> <literal>-n</> to work as
+<listitem><para>Fix <application>mdb_restore</> <literal>-n</> to work as
 documented (Tom)</para></listitem>
 </itemizedlist>
 
@@ -3055,7 +3055,7 @@ created in 8.0.4, 7.4.9, and 7.3.11 releases.
 </para></listitem>
 
 <listitem><para>Fix race condition that could lead to <quote>file already
-exists</> errors during pg_clog and pg_subtrans file creation
+exists</> errors during mdb_clog and mdb_subtrans file creation
 (Tom)</para></listitem>
 
 <listitem><para>Fix cases that could lead to crashes if a cache-invalidation
@@ -3072,11 +3072,11 @@ constraints in the proper order (Nakano Yoshihisa)</para></listitem>
 <listitem><para>Fixes to allow restoring dumps that have cross-schema
 references to custom operators or operator classes (Tom)</para></listitem>
 
-<listitem><para>Allow <application>pg_restore</> to continue properly after a
+<listitem><para>Allow <application>mdb_restore</> to continue properly after a
 <command>COPY</> failure; formerly it tried to treat the remaining
 <command>COPY</> data as SQL commands (Stephen Frost)</para></listitem>
 
-<listitem><para>Fix <application>pg_ctl</> <literal>unregister</> crash
+<listitem><para>Fix <application>mdb_ctl</> <literal>unregister</> crash
 when the  data directory is not specified (Magnus)</para></listitem>
 
 <listitem><para>Fix <application>libpq</> <function>PQprint</> HTML tags
@@ -3396,7 +3396,7 @@ DISTINCT query</para></listitem>
        prepared transaction can be committed after the machine is
        restarted. New syntax includes <command>PREPARE TRANSACTION</> and
        <command>COMMIT/ROLLBACK PREPARED</>. A new system view
-       <literal>pg_prepared_xacts</> has also been added.
+       <literal>mdb_prepared_xacts</> has also been added.
       </para>
      </listitem>
     </varlistentry>
@@ -3448,9 +3448,9 @@ DISTINCT query</para></listitem>
        <command>SET ROLE</> to switch to other roles she is a member of.
        This feature is a generalization of the SQL standard's concept of
        roles.
-       This change also replaces <structname>pg_shadow</> and
-       <structname>pg_group</> by new role-capable catalogs
-       <structname>pg_authid</> and <structname>pg_auth_members</>. The old
+       This change also replaces <structname>mdb_shadow</> and
+       <structname>mdb_group</> by new role-capable catalogs
+       <structname>mdb_authid</> and <structname>mdb_auth_members</>. The old
        tables are redefined as read-only views on the new role tables.
       </para>
      </listitem>
@@ -3474,7 +3474,7 @@ DISTINCT query</para></listitem>
 
     <varlistentry>
      <term>
-      Move <filename>/contrib/pg_autovacuum</> into the main server
+      Move <filename>/contrib/mdb_autovacuum</> into the main server
       (Alvaro)
      </term>
 
@@ -3551,7 +3551,7 @@ DISTINCT query</para></listitem>
    <title>Migration to Version 8.1</title>
 
    <para>
-    A dump/restore using <application>pg_dump</application> is required
+    A dump/restore using <application>mdb_dump</application> is required
     for those wishing to migrate data from any previous release.
    </para>
 
@@ -3737,16 +3737,16 @@ DISTINCT query</para></listitem>
       First, save this query into a file, such as <filename>fixseq.sql</>:
 <programlisting>
 SELECT  'ALTER TABLE ' ||
-   pg_catalog.quote_ident(n.nspname) || '.' ||
-   pg_catalog.quote_ident(c.relname) ||
-   ' ALTER COLUMN ' || pg_catalog.quote_ident(a.attname) ||
+   mdb_catalog.quote_ident(n.nspname) || '.' ||
+   mdb_catalog.quote_ident(c.relname) ||
+   ' ALTER COLUMN ' || mdb_catalog.quote_ident(a.attname) ||
    ' SET DEFAULT ' ||
    regexp_replace(d.adsrc,
                   $$val\(\(('[^']*')::text\)::regclass$$,
                   $$val(\1$$,
                   'g') ||
    ';'
-FROM    pg_namespace n, pg_class c, pg_attribute a, pg_attrdef d
+FROM    mdb_namespace n, mdb_class c, mdb_attribute a, mdb_attrdef d
 WHERE   n.oid = c.relnamespace AND
    c.oid = a.attrelid AND
    a.attrelid = d.adrelid AND
@@ -3802,11 +3802,11 @@ psql -t -f fixseq.sql db1 | psql -e db1
     <listitem>
      <para>
       <command>CREATE LANGUAGE</> can ignore the provided arguments
-      in favor of information from <structname>pg_pltemplate</>
+      in favor of information from <structname>mdb_pltemplate</>
       (Tom)
      </para>
      <para>
-      A new system catalog <structname>pg_pltemplate</> has been defined
+      A new system catalog <structname>mdb_pltemplate</> has been defined
       to carry information about the preferred definitions of procedural
       languages (such as whether they have validator functions).  When
       an entry exists in this catalog for the language being created,
@@ -3814,7 +3814,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
       language name and instead use the catalog information.  This measure
       was taken because of increasing problems with obsolete language
       definitions being loaded by old dump files.  As of 8.1,
-      <application>pg_dump</> will dump procedural language definitions as
+      <application>mdb_dump</> will dump procedural language definitions as
       just <command>CREATE LANGUAGE <replaceable>name</></command>, relying
       on a template entry to exist at load time.  We expect this will be a
       more future-proof representation.
@@ -3823,7 +3823,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
 
     <listitem>
      <para>
-      Make <function>pg_cancel_backend(int)</function> return a
+      Make <function>mdb_cancel_backend(int)</function> return a
       <type>boolean</type> rather than an <type>integer</type> (Neil)
      </para>
     </listitem>
@@ -4021,13 +4021,13 @@ psql -t -f fixseq.sql db1 | psql -e db1
      <listitem>
       <para>
        Add session start time and client IP address to
-       <literal>pg_stat_activity</> (Magnus)
+       <literal>mdb_stat_activity</> (Magnus)
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Adjust <literal>pg_stat</> views for bitmap scans (Tom)
+       Adjust <literal>mdb_stat</> views for bitmap scans (Tom)
       </para>
       <para>
        The meanings of some of the fields have changed slightly.
@@ -4036,7 +4036,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
 
      <listitem>
       <para>
-       Enhance <literal>pg_locks</> view (Tom)
+       Enhance <literal>mdb_locks</> view (Tom)
       </para>
      </listitem>
 
@@ -4087,11 +4087,11 @@ psql -t -f fixseq.sql db1 | psql -e db1
      <listitem>
       <para>
        Remove old <filename>*.backup</> files when we do
-       <function>pg_stop_backup()</> (Bruce)
+       <function>mdb_stop_backup()</> (Bruce)
       </para>
       <para>
        This prevents a large number of <filename>*.backup</> files from
-       existing in <filename>pg_xlog/</>.
+       existing in <filename>mdb_xlog/</>.
       </para>
      </listitem>
 
@@ -4128,7 +4128,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
 
      <listitem>
       <para>
-       New system catalog <structname>pg_pltemplate</> allows overriding
+       New system catalog <structname>mdb_pltemplate</> allows overriding
        obsolete procedural-language definitions in dump files (Tom)
       </para>
      </listitem>
@@ -4463,7 +4463,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
 
      <listitem>
       <para>
-       Add <function>pg_postmaster_start_time()</> function (Euler
+       Add <function>mdb_postmaster_start_time()</> function (Euler
        Taveira de Oliveira, Matthias Schmidt)
       </para>
      </listitem>
@@ -4499,7 +4499,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Add <function>pg_column_size()</> (Mark Kirkwood)
+       Add <function>mdb_column_size()</> (Mark Kirkwood)
       </para>
       <para>
        This returns storage size of a column, which might be compressed.
@@ -4582,38 +4582,38 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
         <listitem>
          <para>
-           <function>pg_tablespace_size()</>
+           <function>mdb_tablespace_size()</>
          </para>
         </listitem>
 
         <listitem>
          <para>
-          <function>pg_database_size()</>
+          <function>mdb_database_size()</>
          </para>
         </listitem>
 
         <listitem>
          <para>
-          <function>pg_relation_size()</>
+          <function>mdb_relation_size()</>
          </para>
         </listitem>
 
         <listitem>
          <para>
-          <function>pg_total_relation_size()</>
+          <function>mdb_total_relation_size()</>
          </para>
         </listitem>
 
         <listitem>
          <para>
-          <function>pg_size_pretty()</>
+          <function>mdb_size_pretty()</>
          </para>
         </listitem>
 
        </itemizedlist>
       </para>
       <para>
-       <function>pg_total_relation_size()</> includes indexes and TOAST
+       <function>mdb_total_relation_size()</> includes indexes and TOAST
        tables.
       </para>
      </listitem>
@@ -4628,19 +4628,19 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
         <listitem>
          <para>
-          <function>pg_stat_file()</>
+          <function>mdb_stat_file()</>
          </para>
         </listitem>
 
         <listitem>
          <para>
-          <function>pg_read_file()</>
+          <function>mdb_read_file()</>
          </para>
         </listitem>
 
         <listitem>
          <para>
-          <function>pg_ls_dir()</>
+          <function>mdb_ls_dir()</>
          </para>
         </listitem>
 
@@ -4650,21 +4650,21 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Add <function>pg_reload_conf()</> to force reloading of the
+       Add <function>mdb_reload_conf()</> to force reloading of the
        configuration files (Dave Page, Andreas Pflug)
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Add <function>pg_rotate_logfile()</> to force rotation of the
+       Add <function>mdb_rotate_logfile()</> to force rotation of the
        server log file (Dave Page, Andreas Pflug)
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Change <literal>pg_stat_*</> views to include TOAST tables (Tom)
+       Change <literal>mdb_stat_*</> views to include TOAST tables (Tom)
       </para>
      </listitem>
 
@@ -4798,7 +4798,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Move language handler functions into the <literal>pg_catalog</> schema
+       Move language handler functions into the <literal>mdb_catalog</> schema
       </para>
       <para>
        This makes it easier to drop the public schema if desired.
@@ -5088,13 +5088,13 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
 
    <sect3>
-    <title><application>pg_dump</> Changes</title>
+    <title><application>mdb_dump</> Changes</title>
     <itemizedlist>
 
      <listitem>
       <para>
        Add <option>-n</> / <option>--schema</> switch to
-       <application>pg_restore</> (Richard van den Berg)
+       <application>mdb_restore</> (Richard van den Berg)
       </para>
       <para>
        This allows just the objects in a specified schema to be restored.
@@ -5103,7 +5103,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Allow <application>pg_dump</> to dump large objects even in
+       Allow <application>mdb_dump</> to dump large objects even in
        text mode (Tom)
       </para>
       <para>
@@ -5114,7 +5114,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Allow <application>pg_dump</> to dump a consistent snapshot of
+       Allow <application>mdb_dump</> to dump a consistent snapshot of
        large objects (Tom)
       </para>
      </listitem>
@@ -5127,7 +5127,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Add <option>--encoding</> to <application>pg_dump</>
+       Add <option>--encoding</> to <application>mdb_dump</>
        (Magnus Hagander)
       </para>
       <para>
@@ -5139,14 +5139,14 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Rely on <structname>pg_pltemplate</> for procedural languages (Tom)
+       Rely on <structname>mdb_pltemplate</> for procedural languages (Tom)
       </para>
       <para>
        If the call handler for a procedural language is in the
-       <literal>pg_catalog</> schema, <application>pg_dump</> does not
+       <literal>mdb_catalog</> schema, <application>mdb_dump</> does not
        dump the handler.  Instead, it dumps the language using just
        <command>CREATE LANGUAGE <replaceable>name</></command>,
-       relying on the <structname>pg_pltemplate</> catalog to provide
+       relying on the <structname>mdb_pltemplate</> catalog to provide
        the language's creation parameters at load time.
       </para>
      </listitem>
@@ -5238,7 +5238,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Allow <application>pg_config</> to be compiled using MSVC (Andrew)
+       Allow <application>mdb_config</> to be compiled using MSVC (Andrew)
       </para>
       <para>
        This is required to build DBD::Pg using <application>MSVC</>.
@@ -5272,7 +5272,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Enhance <application>pg_config</> to be able to report more
+       Enhance <application>mdb_config</> to be able to report more
        build-time values (Tom)
       </para>
      </listitem>
@@ -5336,7 +5336,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Add <filename>/contrib/pg_buffercache</> contrib module (Mark
+       Add <filename>/contrib/mdb_buffercache</> contrib module (Mark
        Kirkwood)
       </para>
       <para>

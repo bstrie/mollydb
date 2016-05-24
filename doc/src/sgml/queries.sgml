@@ -793,7 +793,7 @@ ROWS FROM( ... <replaceable>function_call</replaceable> AS (<replaceable>column_
      Consider this example:
 <programlisting>
 SELECT *
-    FROM dblink('dbname=mydb', 'SELECT proname, prosrc FROM pg_proc')
+    FROM dblink('dbname=mydb', 'SELECT proname, prosrc FROM mdb_proc')
       AS t1(proname name, prosrc text)
     WHERE proname LIKE 'bytea%';
 </programlisting>

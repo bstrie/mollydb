@@ -784,7 +784,7 @@ dsm_impl_windows(dsm_op op, dsm_handle handle, Size request_size,
  * we're really doing is creating a bunch of files and mapping them into
  * our address space.  The operating system may feel obliged to
  * synchronize the contents to disk even if nothing is being paged out,
- * which will not serve us well.  The user can relocate the pg_dynshmem
+ * which will not serve us well.  The user can relocate the mdb_dynshmem
  * directory to a ramdisk to avoid this problem, if available.
  */
 static bool

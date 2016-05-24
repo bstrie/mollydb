@@ -17,7 +17,7 @@
 #include "fmgr.h"
 
 /*
- * LO functions available via pg_proc entries
+ * LO functions available via mdb_proc entries
  */
 extern Datum lo_import(PG_FUNCTION_ARGS);
 extern Datum lo_import_with_oid(PG_FUNCTION_ARGS);

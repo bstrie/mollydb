@@ -15,9 +15,9 @@
 #include "mollydb_fdw.h"
 
 #include "access/reloptions.h"
-#include "catalog/pg_foreign_server.h"
-#include "catalog/pg_foreign_table.h"
-#include "catalog/pg_user_mapping.h"
+#include "catalog/mdb_foreign_server.h"
+#include "catalog/mdb_foreign_table.h"
+#include "catalog/mdb_user_mapping.h"
 #include "commands/defrem.h"
 #include "commands/extension.h"
 #include "utils/builtins.h"

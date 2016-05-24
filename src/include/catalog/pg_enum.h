@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_enum.h
- *	  definition of the system "enum" relation (pg_enum)
+ * mdb_enum.h
+ *	  definition of the system "enum" relation (mdb_enum)
  *	  along with the relation's initial contents.
  *
  *
  * Copyright (c) 2006-2016, MollyDB Global Development Group
  *
- * src/include/catalog/pg_enum.h
+ * src/include/catalog/mdb_enum.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,45 +22,45 @@
 #define PG_ENUM_H
 
 #include "catalog/genbki.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 /* ----------------
- *		pg_enum definition.  cpp turns this into
- *		typedef struct FormData_pg_enum
+ *		mdb_enum definition.  cpp turns this into
+ *		typedef struct FormData_mdb_enum
  * ----------------
  */
 #define EnumRelationId	3501
 
-CATALOG(pg_enum,3501)
+CATALOG(mdb_enum,3501)
 {
 	Oid			enumtypid;		/* OID of owning enum type */
 	float4		enumsortorder;	/* sort position of this enum value */
 	NameData	enumlabel;		/* text representation of enum value */
-} FormData_pg_enum;
+} FormData_mdb_enum;
 
 /* ----------------
- *		Form_pg_enum corresponds to a pointer to a tuple with
- *		the format of pg_enum relation.
+ *		Form_mdb_enum corresponds to a pointer to a tuple with
+ *		the format of mdb_enum relation.
  * ----------------
  */
-typedef FormData_pg_enum *Form_pg_enum;
+typedef FormData_mdb_enum *Form_mdb_enum;
 
 /* ----------------
- *		compiler constants for pg_enum
+ *		compiler constants for mdb_enum
  * ----------------
  */
-#define Natts_pg_enum					3
-#define Anum_pg_enum_enumtypid			1
-#define Anum_pg_enum_enumsortorder		2
-#define Anum_pg_enum_enumlabel			3
+#define Natts_mdb_enum					3
+#define Anum_mdb_enum_enumtypid			1
+#define Anum_mdb_enum_enumsortorder		2
+#define Anum_mdb_enum_enumlabel			3
 
 /* ----------------
- *		pg_enum has no initial contents
+ *		mdb_enum has no initial contents
  * ----------------
  */
 
 /*
- * prototypes for functions in pg_enum.c
+ * prototypes for functions in mdb_enum.c
  */
 extern void EnumValuesCreate(Oid enumTypeOid, List *vals);
 extern void EnumValuesDelete(Oid enumTypeOid);

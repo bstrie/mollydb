@@ -106,7 +106,7 @@ initTrie(char *filename)
 	do
 	{
 		/*
-		 * pg_do_encoding_conversion() (called by tsearch_readline()) will
+		 * mdb_do_encoding_conversion() (called by tsearch_readline()) will
 		 * emit exception if it finds untranslatable characters in current
 		 * locale. We just skip such lines, continuing with the next.
 		 */
@@ -145,7 +145,7 @@ initTrie(char *filename)
 				state = 0;
 				for (ptr = line; *ptr; ptr += ptrlen)
 				{
-					ptrlen = pg_mblen(ptr);
+					ptrlen = mdb_mblen(ptr);
 					/* ignore whitespace, but end src or trg */
 					if (t_isspace(ptr))
 					{
@@ -275,7 +275,7 @@ unaccent_init(PG_FUNCTION_ARGS)
 	{
 		DefElem    *defel = (DefElem *) lfirst(l);
 
-		if (pg_strcasecmp("Rules", defel->defname) == 0)
+		if (mdb_strcasecmp("Rules", defel->defname) == 0)
 		{
 			if (fileloaded)
 				ereport(ERROR,
@@ -338,7 +338,7 @@ unaccent_lexize(PG_FUNCTION_ARGS)
 		}
 		else
 		{
-			matchlen = pg_mblen(srcchar);
+			matchlen = mdb_mblen(srcchar);
 			if (buf.data != NULL)
 				appendBinaryStringInfo(&buf, srcchar, matchlen);
 		}

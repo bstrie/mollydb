@@ -16,8 +16,8 @@
 #include "access/gin.h"
 #include "access/hash.h"
 #include "access/stratnum.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_type.h"
 #include "utils/builtins.h"
 #include "utils/jsonb.h"
 

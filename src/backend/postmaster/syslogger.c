@@ -34,7 +34,7 @@
 #include "lib/stringinfo.h"
 #include "libpq/pqsignal.h"
 #include "miscadmin.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 #include "pgtime.h"
 #include "postmaster/fork_process.h"
 #include "postmaster/postmaster.h"
@@ -42,7 +42,7 @@
 #include "storage/dsm.h"
 #include "storage/ipc.h"
 #include "storage/latch.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "utils/guc.h"
 #include "utils/ps_status.h"
 #include "utils/timestamp.h"
@@ -77,12 +77,12 @@ extern bool redirection_done;
 /*
  * Private state
  */
-static pg_time_t next_rotation_time;
+static mdb_time_t next_rotation_time;
 static bool pipe_eof_seen = false;
 static bool rotation_disabled = false;
 static FILE *syslogFile = NULL;
 static FILE *csvlogFile = NULL;
-NON_EXEC_STATIC pg_time_t first_syslogger_file_time = 0;
+NON_EXEC_STATIC mdb_time_t first_syslogger_file_time = 0;
 static char *last_file_name = NULL;
 static char *last_csv_file_name = NULL;
 
@@ -130,7 +130,7 @@ static volatile sig_atomic_t rotation_requested = false;
 static pid_t syslogger_forkexec(void);
 static void syslogger_parseArgs(int argc, char *argv[]);
 #endif
-NON_EXEC_STATIC void SysLoggerMain(int argc, char *argv[]) pg_attribute_noreturn();
+NON_EXEC_STATIC void SysLoggerMain(int argc, char *argv[]) mdb_attribute_noreturn();
 static void process_pipe_input(char *logbuffer, int *bytes_in_logbuffer);
 static void flush_pipe_input(char *logbuffer, int *bytes_in_logbuffer);
 static void open_csvlogfile(void);
@@ -141,7 +141,7 @@ static FILE *logfile_open(const char *filename, const char *mode,
 static unsigned int __stdcall pipeThread(void *arg);
 #endif
 static void logfile_rotate(bool time_based_rotation, int size_rotation_for);
-static char *logfile_getname(pg_time_t timestamp, const char *suffix);
+static char *logfile_getname(mdb_time_t timestamp, const char *suffix);
 static void set_next_rotation_time(void);
 static void sigHupHandler(SIGNAL_ARGS);
 static void sigUsr1Handler(SIGNAL_ARGS);
@@ -161,7 +161,7 @@ SysLoggerMain(int argc, char *argv[])
 	char	   *currentLogDir;
 	char	   *currentLogFilename;
 	int			currentLogRotationAge;
-	pg_time_t	now;
+	mdb_time_t	now;
 
 	now = MyStartTime;
 
@@ -270,7 +270,7 @@ SysLoggerMain(int argc, char *argv[])
 
 	/*
 	 * Remember active logfile's name.  We recompute this from the reference
-	 * time because passing down just the pg_time_t is a lot cheaper than
+	 * time because passing down just the mdb_time_t is a lot cheaper than
 	 * passing a whole file path in the EXEC_BACKEND case.
 	 */
 	last_file_name = logfile_getname(first_syslogger_file_time, NULL);
@@ -352,7 +352,7 @@ SysLoggerMain(int argc, char *argv[])
 		if (Log_RotationAge > 0 && !rotation_disabled)
 		{
 			/* Do a logfile rotation if it's time */
-			now = (pg_time_t) time(NULL);
+			now = (mdb_time_t) time(NULL);
 			if (now >= next_rotation_time)
 				rotation_requested = time_based_rotation = true;
 		}
@@ -377,7 +377,7 @@ SysLoggerMain(int argc, char *argv[])
 		{
 			/*
 			 * Force rotation when both values are zero. It means the request
-			 * was sent by pg_rotate_logfile.
+			 * was sent by mdb_rotate_logfile.
 			 */
 			if (!time_based_rotation && size_rotation_for == 0)
 				size_rotation_for = LOG_DESTINATION_STDERR | LOG_DESTINATION_CSVLOG;
@@ -398,7 +398,7 @@ SysLoggerMain(int argc, char *argv[])
 		 */
 		if (Log_RotationAge > 0 && !rotation_disabled)
 		{
-			pg_time_t	delay;
+			mdb_time_t	delay;
 
 			delay = next_rotation_time - now;
 			if (delay > 0)
@@ -1149,7 +1149,7 @@ logfile_rotate(bool time_based_rotation, int size_rotation_for)
 {
 	char	   *filename;
 	char	   *csvfilename = NULL;
-	pg_time_t	fntime;
+	mdb_time_t	fntime;
 	FILE	   *fh;
 
 	rotation_requested = false;
@@ -1278,7 +1278,7 @@ logfile_rotate(bool time_based_rotation, int size_rotation_for)
  * Result is palloc'd.
  */
 static char *
-logfile_getname(pg_time_t timestamp, const char *suffix)
+logfile_getname(mdb_time_t timestamp, const char *suffix)
 {
 	char	   *filename;
 	int			len;
@@ -1290,8 +1290,8 @@ logfile_getname(pg_time_t timestamp, const char *suffix)
 	len = strlen(filename);
 
 	/* treat Log_filename as a strftime pattern */
-	pg_strftime(filename + len, MAXPGPATH - len, Log_filename,
-				pg_localtime(&timestamp, log_timezone));
+	mdb_strftime(filename + len, MAXPGPATH - len, Log_filename,
+				mdb_localtime(&timestamp, log_timezone));
 
 	if (suffix != NULL)
 	{
@@ -1310,8 +1310,8 @@ logfile_getname(pg_time_t timestamp, const char *suffix)
 static void
 set_next_rotation_time(void)
 {
-	pg_time_t	now;
-	struct pg_tm *tm;
+	mdb_time_t	now;
+	struct mdb_tm *tm;
 	int			rotinterval;
 
 	/* nothing to do if time-based rotation is disabled */
@@ -1325,8 +1325,8 @@ set_next_rotation_time(void)
 	 * GMT.
 	 */
 	rotinterval = Log_RotationAge * SECS_PER_MINUTE;	/* convert to seconds */
-	now = (pg_time_t) time(NULL);
-	tm = pg_localtime(&now, log_timezone);
+	now = (mdb_time_t) time(NULL);
+	tm = mdb_localtime(&now, log_timezone);
 	now += tm->tm_gmtoff;
 	now -= now % rotinterval;
 	now += rotinterval;

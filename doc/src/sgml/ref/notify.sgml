@@ -166,7 +166,7 @@ NOTIFY <replaceable class="PARAMETER">channel</replaceable> [ , <replaceable cla
    current transaction so that cleanup can proceed.
   </para>
   <para>
-   The function <function>pg_notification_queue_usage</function> returns the
+   The function <function>mdb_notification_queue_usage</function> returns the
    fraction of the queue that is currently occupied by pending notifications.
    See <xref linkend="functions-info"> for more information.
   </para>
@@ -176,15 +176,15 @@ NOTIFY <replaceable class="PARAMETER">channel</replaceable> [ , <replaceable cla
   </para>
 
   <refsect2>
-   <title>pg_notify</title>
+   <title>mdb_notify</title>
 
    <indexterm>
-    <primary>pg_notify</primary>
+    <primary>mdb_notify</primary>
    </indexterm>
 
    <para>
     To send a notification you can also use the function
-    <literal><function>pg_notify</function>(<type>text</type>,
+    <literal><function>mdb_notify</function>(<type>text</type>,
     <type>text</type>)</literal>. The function takes the channel name as the
     first argument and the payload as the second. The function is much easier
     to use than the <command>NOTIFY</command> command if you need to work with
@@ -208,7 +208,7 @@ NOTIFY virtual, 'This is the payload';
 Asynchronous notification "virtual" with payload "This is the payload" received from server process with PID 8448.
 
 LISTEN foo;
-SELECT pg_notify('fo' || 'o', 'pay' || 'load');
+SELECT mdb_notify('fo' || 'o', 'pay' || 'load');
 Asynchronous notification "foo" with payload "payload" received from server process with PID 14728.
 </programlisting></para>
  </refsect1>

@@ -172,7 +172,7 @@ BuildIndexValueDescription(Relation indexRelation,
 						   Datum *values, bool *isnull)
 {
 	StringInfoData buf;
-	Form_pg_index idxrec;
+	Form_mdb_index idxrec;
 	HeapTuple	ht_idx;
 	int			natts = indexRelation->rd_rel->relnatts;
 	int			i;
@@ -193,12 +193,12 @@ BuildIndexValueDescription(Relation indexRelation,
 	 */
 
 	/*
-	 * Fetch the pg_index tuple by the Oid of the index
+	 * Fetch the mdb_index tuple by the Oid of the index
 	 */
 	ht_idx = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(indexrelid));
 	if (!HeapTupleIsValid(ht_idx))
 		elog(ERROR, "cache lookup failed for index %u", indexrelid);
-	idxrec = (Form_pg_index) GETSTRUCT(ht_idx);
+	idxrec = (Form_mdb_index) GETSTRUCT(ht_idx);
 
 	indrelid = idxrec->indrelid;
 	Assert(indexrelid == idxrec->indexrelid);
@@ -211,7 +211,7 @@ BuildIndexValueDescription(Relation indexRelation,
 	}
 
 	/* Table-level SELECT is enough, if the user has it */
-	aclresult = pg_class_aclcheck(indrelid, GetUserId(), ACL_SELECT);
+	aclresult = mdb_class_aclcheck(indrelid, GetUserId(), ACL_SELECT);
 	if (aclresult != ACLCHECK_OK)
 	{
 		/*
@@ -229,7 +229,7 @@ BuildIndexValueDescription(Relation indexRelation,
 			 * user has SELECT rights on them.
 			 */
 			if (attnum == InvalidAttrNumber ||
-				pg_attribute_aclcheck(indrelid, attnum, GetUserId(),
+				mdb_attribute_aclcheck(indrelid, attnum, GetUserId(),
 									  ACL_SELECT) != ACLCHECK_OK)
 			{
 				/* No access, so clean up and return */
@@ -242,7 +242,7 @@ BuildIndexValueDescription(Relation indexRelation,
 
 	initStringInfo(&buf);
 	appendStringInfo(&buf, "(%s)=(",
-					 pg_get_indexdef_columns(indexrelid, true));
+					 mdb_get_indexdef_columns(indexrelid, true));
 
 	for (i = 0; i < natts; i++)
 	{

@@ -102,7 +102,7 @@ sed_file("doc/bug.template",
 "-e 's/MollyDB version (example: MollyDB .*) *:  MollyDB .*/MollyDB version (example: MollyDB $fullversion):  MollyDB $fullversion/'"
 );
 
-sed_file("src/include/pg_config.h.win32",
+sed_file("src/include/mdb_config.h.win32",
 "-e 's/#define PACKAGE_STRING \"MollyDB .*\"/#define PACKAGE_STRING \"MollyDB $fullversion\"/' "
 	  . "-e 's/#define PACKAGE_VERSION \".*\"/#define PACKAGE_VERSION \"$fullversion\"/' "
 	  . "-e 's/#define PG_VERSION \".*\"/#define PG_VERSION \"$fullversion\"/' "

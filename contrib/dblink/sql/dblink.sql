@@ -78,7 +78,7 @@ WHERE t.a > 7;
 -- entails writing a core dump, that can take awhile.  Wait for the process to
 -- vanish.  At that point, the postmaster has called waitpid() on the crashed
 -- process, and it will accept no new connections until it has reinitialized
--- the cluster.  (We can't exploit pg_stat_activity, because the crash happens
+-- the cluster.  (We can't exploit mdb_stat_activity, because the crash happens
 -- after the backend updates shared memory to reflect its impending exit.)
 DO $pl$
 DECLARE
@@ -86,11 +86,11 @@ DECLARE
 BEGIN
 	PERFORM wait_pid(crash_pid)
 	FROM dblink(connection_parameters(), $$
-		SELECT pg_backend_pid() FROM dblink(
+		SELECT mdb_backend_pid() FROM dblink(
 			'service=test_ldap '||connection_parameters(),
 			-- This string concatenation is a hack to shoehorn a
 			-- set_pgservicefile call into the SQL statement.
-			'SELECT 1' || set_pgservicefile('pg_service.conf')
+			'SELECT 1' || set_pgservicefile('mdb_service.conf')
 		) t(c int)
 	$$) AS t(crash_pid int);
 EXCEPTION WHEN OTHERS THEN
@@ -436,7 +436,7 @@ SELECT dblink_exec('LISTEN foobar');
 SELECT dblink_exec('NOTIFY regression');
 SELECT dblink_exec('NOTIFY foobar');
 
-SELECT notify_name, be_pid = (select t.be_pid from dblink('select pg_backend_pid()') as t(be_pid int)) AS is_self_notify, extra from dblink_get_notify();
+SELECT notify_name, be_pid = (select t.be_pid from dblink('select mdb_backend_pid()') as t(be_pid int)) AS is_self_notify, extra from dblink_get_notify();
 
 SELECT * from dblink_get_notify();
 

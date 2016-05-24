@@ -5,5 +5,5 @@
 
 CREATE FUNCTION gen_random_uuid()
 RETURNS uuid
-AS 'MODULE_PATHNAME', 'pg_random_uuid'
+AS 'MODULE_PATHNAME', 'mdb_random_uuid'
 LANGUAGE C VOLATILE;

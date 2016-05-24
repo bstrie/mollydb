@@ -67,7 +67,7 @@
       in an existing installation, you can (as a superuser) drop the
       <literal>information_schema</> schema then re-create it by sourcing
       <filename><replaceable>SHAREDIR</>/information_schema.sql</filename>.
-      (Run <literal>pg_config --sharedir</> if you're uncertain where
+      (Run <literal>mdb_config --sharedir</> if you're uncertain where
       <replaceable>SHAREDIR</> is.)  This must be repeated in each database
       to be fixed.
      </para>
@@ -98,7 +98,7 @@
 
      <para>
       The typical symptom was transient errors like <quote>missing chunk
-      number 0 for toast value NNNNN in pg_toast_2619</>, where the cited
+      number 0 for toast value NNNNN in mdb_toast_2619</>, where the cited
       toast table would always belong to a system catalog.
      </para>
     </listitem>
@@ -376,7 +376,7 @@
 
     <listitem>
      <para>
-      Fix typo in <function>pg_srand48</> seed initialization (Andres Freund)
+      Fix typo in <function>mdb_srand48</> seed initialization (Andres Freund)
      </para>
 
      <para>
@@ -415,7 +415,7 @@
 
     <listitem>
      <para>
-      Fix <function>pg_size_pretty()</> to avoid overflow for inputs close to
+      Fix <function>mdb_size_pretty()</> to avoid overflow for inputs close to
       2^63 (Tom Lane)
      </para>
     </listitem>
@@ -429,12 +429,12 @@
 
     <listitem>
      <para>
-      Fix <application>pg_restore</>'s direct-to-database mode for
+      Fix <application>mdb_restore</>'s direct-to-database mode for
       <varname>standard_conforming_strings</> (Tom Lane)
      </para>
 
      <para>
-      <application>pg_restore</> could emit incorrect commands when restoring
+      <application>mdb_restore</> could emit incorrect commands when restoring
       directly to a database server from an archive file that had been made
       with <varname>standard_conforming_strings</> set to <literal>on</>.
      </para>
@@ -480,7 +480,7 @@
      </para>
 
      <para>
-      <filename>contrib/pg_crypto</>'s blowfish encryption code could give
+      <filename>contrib/mdb_crypto</>'s blowfish encryption code could give
       wrong results on platforms where char is signed (which is most),
       leading to encrypted passwords being weaker than they should be.
      </para>
@@ -617,7 +617,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_restore</> to cope with long lines (over 1KB) in
+      Fix <application>mdb_restore</> to cope with long lines (over 1KB) in
       TOC files (Tom Lane)
      </para>
     </listitem>
@@ -649,7 +649,7 @@
 
     <listitem>
      <para>
-      Fix path separator used by <application>pg_regress</> on Cygwin
+      Fix path separator used by <application>mdb_regress</> on Cygwin
       (Andrew Dunstan)
      </para>
     </listitem>
@@ -741,13 +741,13 @@
 
     <listitem>
      <para>
-      Fix <application>pg_restore</>'s text output for large objects (BLOBs)
+      Fix <application>mdb_restore</>'s text output for large objects (BLOBs)
       when <varname>standard_conforming_strings</> is on (Tom Lane)
      </para>
 
      <para>
       Although restoring directly to a database worked correctly, string
-      escaping was incorrect if <application>pg_restore</> was asked for
+      escaping was incorrect if <application>mdb_restore</> was asked for
       SQL text output and <varname>standard_conforming_strings</> had been
       enabled in the source database.
      </para>
@@ -1113,7 +1113,7 @@
 
     <listitem>
      <para>
-      Prevent possible crashes in <function>pg_get_expr()</> by disallowing
+      Prevent possible crashes in <function>mdb_get_expr()</> by disallowing
       it from being called with an argument that is not one of the system
       catalog columns it's intended to be used with
       (Heikki Linnakangas, Tom Lane)
@@ -1674,7 +1674,7 @@
 
     <listitem>
      <para>
-      When reading <filename>pg_hba.conf</> and related files, do not treat
+      When reading <filename>mdb_hba.conf</> and related files, do not treat
       <literal>@something</> as a file inclusion request if the <literal>@</>
       appears inside quote marks; also, never treat <literal>@</> by itself
       as a file inclusion request (Tom)
@@ -1692,7 +1692,7 @@
     <listitem>
      <para>
       Prevent infinite loop on some platforms if a directory is named as
-      an inclusion target in <filename>pg_hba.conf</> and related files
+      an inclusion target in <filename>mdb_hba.conf</> and related files
       (Tom)
      </para>
     </listitem>
@@ -1785,7 +1785,7 @@
      </para>
 
      <para>
-      One known symptom of this bug is that rows in <structname>pg_listener</>
+      One known symptom of this bug is that rows in <structname>mdb_listener</>
       could be dropped under heavy load.
      </para>
     </listitem>
@@ -2080,7 +2080,7 @@
 
     <listitem>
      <para>
-      Force WAL segment switch during <function>pg_start_backup()</>
+      Force WAL segment switch during <function>mdb_start_backup()</>
       (Heikki)
      </para>
 
@@ -2228,7 +2228,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to not go into an infinite loop if
+      Fix <application>mdb_ctl</> to not go into an infinite loop if
       <filename>mollydb.conf</> is empty (Jeff Davis)
      </para>
     </listitem>
@@ -2385,13 +2385,13 @@
      <para>
       If <command>CLUSTER</> or a rewriting variant of <command>ALTER TABLE</>
       were executed by someone other than the table owner, the
-      <structname>pg_type</> entry for the table's TOAST table would end up
+      <structname>mdb_type</> entry for the table's TOAST table would end up
       marked as owned by that someone.  This caused no immediate problems,
       since the permissions on the TOAST rowtype aren't examined by any
       ordinary database operation.  However, it could lead to unexpected
       failures if one later tried to drop the role that issued the command
       (in 8.1 or 8.2), or <quote>owner of data type appears to be invalid</>
-      warnings from <application>pg_dump</> after having done so (in 8.3).
+      warnings from <application>mdb_dump</> after having done so (in 8.3).
      </para>
     </listitem>
 
@@ -2777,18 +2777,18 @@
 
     <listitem>
      <para>
-      Fix recent breakage of <literal>pg_ctl restart</> (Tom)
+      Fix recent breakage of <literal>mdb_ctl restart</> (Tom)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Ensure <filename>pg_control</> is opened in binary mode
+      Ensure <filename>mdb_control</> is opened in binary mode
       (Itagaki Takahiro)
      </para>
 
      <para>
-      <application>pg_controldata</> and <application>pg_resetxlog</>
+      <application>mdb_controldata</> and <application>mdb_resetxlog</>
       did this incorrectly, and so could fail on Windows.
      </para>
     </listitem>
@@ -2852,7 +2852,7 @@
 
      <para>
       This error may explain some recent reports of failure to remove old
-      <structname>pg_clog</> data.
+      <structname>mdb_clog</> data.
      </para>
     </listitem>
 
@@ -2951,7 +2951,7 @@
     <listitem>
      <para>
       Allow spaces in the suffix part of an LDAP URL in
-      <filename>pg_hba.conf</> (Tom)
+      <filename>mdb_hba.conf</> (Tom)
      </para>
     </listitem>
 
@@ -3012,14 +3012,14 @@
 
     <listitem>
      <para>
-      Improve <application>pg_dump</> and <application>pg_restore</>'s
+      Improve <application>mdb_dump</> and <application>mdb_restore</>'s
       error reporting after failure to send a SQL command (Tom)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to properly preserve postmaster
+      Fix <application>mdb_ctl</> to properly preserve postmaster
       command-line arguments across a <literal>restart</> (Bruce)
      </para>
     </listitem>
@@ -3069,7 +3069,7 @@
 
     <listitem>
      <para>
-      Make <function>pg_get_ruledef()</> parenthesize negative constants (Tom)
+      Make <function>mdb_get_ruledef()</> parenthesize negative constants (Tom)
      </para>
 
      <para>
@@ -3080,7 +3080,7 @@
       another recent patch to cause
       <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
-      <application>pg_dump</> output failing to reload, it is being treated
+      <application>mdb_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
       output is actually incorrect are 8.3.1 and 8.2.7.
      </para>
@@ -3089,7 +3089,7 @@
     <listitem>
      <para>
       Make <command>ALTER AGGREGATE ... OWNER TO</> update
-      <structname>pg_shdepend</> (Tom)
+      <structname>mdb_shdepend</> (Tom)
      </para>
 
      <para>
@@ -3164,7 +3164,7 @@
 
     <listitem>
      <para>
-      Fix <function>pg_get_ruledef()</> to show the alias, if any, attached
+      Fix <function>mdb_get_ruledef()</> to show the alias, if any, attached
       to the target table of an <command>UPDATE</> or <command>DELETE</>
       (Tom)
      </para>
@@ -3369,7 +3369,7 @@
      <para>
       A side effect of the fix is that a transaction that has executed
       a not-yet-committed <command>LISTEN</> command will not see any
-      row in <structname>pg_listener</> for the <command>LISTEN</>,
+      row in <structname>mdb_listener</> for the <command>LISTEN</>,
       should it choose to look; formerly it would have.  This behavior
       was never documented one way or the other, but it is possible that
       some applications depend on the old behavior.
@@ -3433,7 +3433,7 @@
 
     <listitem>
      <para>
-      Ensure <structname>pg_stat_activity</>.<structfield>waiting</> flag
+      Ensure <structname>mdb_stat_activity</>.<structfield>waiting</> flag
       is cleared when a lock wait is aborted (Tom)
      </para>
     </listitem>
@@ -3459,12 +3459,12 @@
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to correctly extract the postmaster's port
+      Fix <application>mdb_ctl</> to correctly extract the postmaster's port
       number from command-line options (Itagaki Takahiro, Tom)
      </para>
 
      <para>
-      Previously, <literal>pg_ctl start -w</> could try to contact the
+      Previously, <literal>mdb_ctl start -w</> could try to contact the
       postmaster on the wrong port, leading to bogus reports of startup
       failure.
      </para>
@@ -3784,7 +3784,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_dump</> to correctly handle inheritance child tables
+      Fix <application>mdb_dump</> to correctly handle inheritance child tables
       that have default expressions different from their parent's (Tom)
      </para>
     </listitem>
@@ -3994,7 +3994,7 @@
 
     <listitem>
      <para>
-      Make <command>pg_ctl -w</> work properly in Windows service mode (Dave Page)
+      Make <command>mdb_ctl -w</> work properly in Windows service mode (Dave Page)
      </para>
     </listitem>
 
@@ -4110,7 +4110,7 @@
 
     <listitem>
      <para>
-      Allow <command>pg_dump</> to do binary backups larger than two gigabytes
+      Allow <command>mdb_dump</> to do binary backups larger than two gigabytes
       on Windows (Magnus)
      </para>
     </listitem>
@@ -4142,7 +4142,7 @@
 
     <listitem>
      <para>
-      Fix <command>pg_dump</> so it can dump a serial column's sequence
+      Fix <command>mdb_dump</> so it can dump a serial column's sequence
       using <option>-t</> when not also dumping the owning table
       (Tom)
      </para>
@@ -4439,7 +4439,7 @@
 
     <listitem>
      <para>
-      Fix Windows linking of <application>pg_dump</> using
+      Fix Windows linking of <application>mdb_dump</> using
       <filename>win32.mak</>
       (Hiroshi Saito)
      </para>
@@ -4504,13 +4504,13 @@
 
     <listitem>
      <para>
-      Make <application>pg_dumpall</> assume that databases have public
+      Make <application>mdb_dumpall</> assume that databases have public
       <literal>CONNECT</> privilege, when dumping from a pre-8.2 server (Tom)
      </para>
 
      <para>
       This preserves the previous behavior that anyone can connect to a
-      database if allowed by <filename>pg_hba.conf</>.
+      database if allowed by <filename>mdb_hba.conf</>.
      </para>
     </listitem>
 
@@ -4645,7 +4645,7 @@
    <title>Migration to Version 8.2</title>
 
    <para>
-    A dump/restore using <application>pg_dump</application> is
+    A dump/restore using <application>mdb_dump</application> is
     required for those wishing to migrate data from any previous
     release.
    </para>
@@ -4865,11 +4865,11 @@
 
      <listitem>
       <para>
-       Change behavior of <command>pg_dump</> <literal>-n</> and
+       Change behavior of <command>mdb_dump</> <literal>-n</> and
        <literal>-t</> options.  (Greg Sabino Mullane)
       </para>
       <para>
-       See the <command>pg_dump</> manual page for details.
+       See the <command>mdb_dump</> manual page for details.
       </para>
      </listitem>
 
@@ -5167,7 +5167,7 @@
        This is valuable for keeping warm standby slave servers
        in sync with the master.  Transaction log file switching now also happens
        automatically during <link
-       linkend="functions-admin"><function>pg_stop_backup()</></link>.
+       linkend="functions-admin"><function>mdb_stop_backup()</></link>.
        This ensures that all
        transaction log files needed for recovery can be archived immediately.
       </para>
@@ -5182,7 +5182,7 @@
        Add functions for interrogating the current transaction log insertion
        point and determining <acronym>WAL</> filenames from the
        hex <acronym>WAL</> locations displayed by <link
-       linkend="functions-admin"><function>pg_stop_backup()</></link>
+       linkend="functions-admin"><function>mdb_stop_backup()</></link>
        and related functions.
       </para>
      </listitem>
@@ -5248,7 +5248,7 @@
       <para>
        This gives SQL-level control over database access.  It works as
        an additional filter on top of the existing
-       <link linkend="auth-pg-hba-conf"><filename>pg_hba.conf</></link>
+       <link linkend="auth-pg-hba-conf"><filename>mdb_hba.conf</></link>
        controls.
       </para>
      </listitem>
@@ -5280,7 +5280,7 @@
 
       <para>
        <link
-       linkend="monitoring-stats-views-table"><literal>pg_stat_activity</></link>
+       linkend="monitoring-stats-views-table"><literal>mdb_stat_activity</></link>
        now shows autovacuum activity.
       </para>
      </listitem>
@@ -5304,7 +5304,7 @@
 
       <para>
        These values now appear in the <link
-       linkend="monitoring-stats-views-table"><literal>pg_stat_*_tables</></link>
+       linkend="monitoring-stats-views-table"><literal>mdb_stat_*_tables</></link>
        system views.
       </para>
      </listitem>
@@ -5320,7 +5320,7 @@
        This release enables <varname>stats_command_string</> by
        default, now that its overhead is minimal.  This means
        <link
-       linkend="monitoring-stats-views-table"><literal>pg_stat_activity</></link>
+       linkend="monitoring-stats-views-table"><literal>mdb_stat_activity</></link>
        will now show all active queries by default.
       </para>
      </listitem>
@@ -5328,12 +5328,12 @@
      <listitem>
       <para>
        Add a <literal>waiting</> column to <link
-       linkend="monitoring-stats-views-table"><literal>pg_stat_activity</></link>
+       linkend="monitoring-stats-views-table"><literal>mdb_stat_activity</></link>
        (Tom)
       </para>
 
       <para>
-       This allows <structname>pg_stat_activity</> to show all the
+       This allows <structname>mdb_stat_activity</> to show all the
        information included in the <application>ps</> display.
       </para>
      </listitem>
@@ -5349,7 +5349,7 @@
       <para>
        On platforms where it is expensive to update the <application>ps</>
        display, it might be worthwhile to turn this off and rely solely on
-       <structname>pg_stat_activity</> for status information.
+       <structname>mdb_stat_activity</> for status information.
       </para>
      </listitem>
 
@@ -5425,7 +5425,7 @@
 
      <listitem>
       <para>
-       Clean out <filename>pg_internal.init</> cache files during server
+       Clean out <filename>mdb_internal.init</> cache files during server
        restart (Simon)
       </para>
 
@@ -5638,9 +5638,9 @@
      <listitem>
       <para>
        Add system views <link
-       linkend="view-pg-prepared-statements"><literal>pg_prepared_statements</></link>
+       linkend="view-pg-prepared-statements"><literal>mdb_prepared_statements</></link>
        and <link
-       linkend="view-pg-cursors"><literal>pg_cursors</></link>
+       linkend="view-pg-cursors"><literal>mdb_cursors</></link>
        to show prepared statements and open cursors (Joachim Wieland, Neil)
       </para>
 
@@ -5861,7 +5861,7 @@
        databases, making them ineffective, and there was no provision
        at all for comments on roles or tablespaces.  This change adds a new
        shared catalog <link
-       linkend="catalog-pg-shdescription"><structname>pg_shdescription</structname></link>
+       linkend="catalog-pg-shdescription"><structname>mdb_shdescription</structname></link>
        and stores comments on databases, roles, and tablespaces therein.
       </para>
      </listitem>
@@ -5985,9 +5985,9 @@
      <listitem>
       <para>
        Add <link
-       linkend="view-pg-timezone-abbrevs"><varname>pg_timezone_abbrevs</></link>
+       linkend="view-pg-timezone-abbrevs"><varname>mdb_timezone_abbrevs</></link>
        and <link
-       linkend="view-pg-timezone-names"><varname>pg_timezone_names</></link>
+       linkend="view-pg-timezone-names"><varname>mdb_timezone_names</></link>
        views to show supported timezones (Magnus Hagander)
       </para>
      </listitem>
@@ -6194,7 +6194,7 @@
      <listitem>
       <para>
        Add a server-side sleep function <link
-       linkend="functions-datetime-delay"><function>pg_sleep()</></link>
+       linkend="functions-datetime-delay"><function>mdb_sleep()</></link>
        (Joachim Wieland)
       </para>
      </listitem>
@@ -6461,17 +6461,17 @@
    </sect3>
 
    <sect3>
-    <title><link linkend="APP-PGDUMP"><application>pg_dump</></link> Changes</title>
+    <title><link linkend="APP-PGDUMP"><application>mdb_dump</></link> Changes</title>
     <itemizedlist>
 
      <listitem>
       <para>
        Allow complex selection of objects to be included or excluded
-       by <application>pg_dump</> (Greg Sabino Mullane)
+       by <application>mdb_dump</> (Greg Sabino Mullane)
       </para>
 
       <para>
-       <application>pg_dump</> now supports multiple <literal>-n</>
+       <application>mdb_dump</> now supports multiple <literal>-n</>
        (schema) and <literal>-t</> (table) options, and adds
        <literal>-N</> and <literal>-T</> options to exclude objects.
        Also, the arguments of these switches can now be wild-card expressions
@@ -6484,7 +6484,7 @@
 
      <listitem>
       <para>
-       Add <link linkend="APP-PGRESTORE"><application>pg_restore</></link>
+       Add <link linkend="APP-PGRESTORE"><application>mdb_restore</></link>
        <literal>--no-data-for-failed-tables</> option to suppress
        loading data if table creation failed (i.e., the table already
        exists) (Martin Pitt)
@@ -6493,7 +6493,7 @@
 
      <listitem>
       <para>
-       Add <link linkend="APP-PGRESTORE"><application>pg_restore</></link>
+       Add <link linkend="APP-PGRESTORE"><application>mdb_restore</></link>
        option to run the entire session in a single transaction
        (Simon)
       </para>
@@ -6553,7 +6553,7 @@
       <para>
        Allow <link linkend="libpq-ldap"><acronym>LDAP</></link> lookups
        from <link
-       linkend="libpq-pgservice"><filename>pg_service.conf</></link>
+       linkend="libpq-pgservice"><filename>mdb_service.conf</></link>
        (Laurenz Albe)
       </para>
      </listitem>
@@ -6624,7 +6624,7 @@
      <listitem>
       <para>
        Add <acronym>MSVC</> support for utility commands and <link
-       linkend="APP-PGDUMP"><application>pg_dump</></link> (Hiroshi
+       linkend="APP-PGDUMP"><application>mdb_dump</></link> (Hiroshi
        Saito)
       </para>
      </listitem>
@@ -6987,7 +6987,7 @@
 
      <listitem>
       <para>
-       Add pg_freespacemap module to display free space map information
+       Add mdb_freespacemap module to display free space map information
        (Mark Kirkwood)
       </para>
      </listitem>

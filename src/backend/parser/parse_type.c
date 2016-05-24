@@ -16,7 +16,7 @@
 
 #include "access/htup_details.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "lib/stringinfo.h"
 #include "nodes/makefuncs.h"
 #include "parser/parser.h"
@@ -33,7 +33,7 @@ static int32 typenameTypeMod(ParseState *pstate, const TypeName *typeName,
 
 /*
  * LookupTypeName
- *		Given a TypeName object, lookup the pg_type syscache entry of the type.
+ *		Given a TypeName object, lookup the mdb_type syscache entry of the type.
  *		Returns NULL if no such type can be found.  If the type is found,
  *		the typmod value represented in the TypeName struct is computed and
  *		stored into *typmod_p.
@@ -201,7 +201,7 @@ LookupTypeName(ParseState *pstate, const TypeName *typeName,
 
 /*
  * LookupTypeNameOid
- *		Given a TypeName object, lookup the pg_type syscache entry of the type.
+ *		Given a TypeName object, lookup the mdb_type syscache entry of the type.
  *		Returns InvalidOid if no such type can be found.  If the type is found,
  *		return its Oid.
  *
@@ -255,7 +255,7 @@ typenameType(ParseState *pstate, const TypeName *typeName, int32 *typmod_p)
 				 errmsg("type \"%s\" does not exist",
 						TypeNameToString(typeName)),
 				 parser_errposition(pstate, typeName->location)));
-	if (!((Form_pg_type) GETSTRUCT(tup))->typisdefined)
+	if (!((Form_mdb_type) GETSTRUCT(tup))->typisdefined)
 		ereport(ERROR,
 				(errcode(ERRCODE_UNDEFINED_OBJECT),
 				 errmsg("type \"%s\" is only a shell",
@@ -331,14 +331,14 @@ typenameTypeMod(ParseState *pstate, const TypeName *typeName, Type typ)
 	 * for the shell-type case, since a shell couldn't possibly have a
 	 * typmodin function.
 	 */
-	if (!((Form_pg_type) GETSTRUCT(typ))->typisdefined)
+	if (!((Form_mdb_type) GETSTRUCT(typ))->typisdefined)
 		ereport(ERROR,
 				(errcode(ERRCODE_SYNTAX_ERROR),
 			errmsg("type modifier cannot be specified for shell type \"%s\"",
 				   TypeNameToString(typeName)),
 				 parser_errposition(pstate, typeName->location)));
 
-	typmodin = ((Form_pg_type) GETSTRUCT(typ))->typmodin;
+	typmodin = ((Form_mdb_type) GETSTRUCT(typ))->typmodin;
 
 	if (typmodin == InvalidOid)
 		ereport(ERROR,
@@ -580,9 +580,9 @@ typeTypeId(Type tp)
 int16
 typeLen(Type t)
 {
-	Form_pg_type typ;
+	Form_mdb_type typ;
 
-	typ = (Form_pg_type) GETSTRUCT(t);
+	typ = (Form_mdb_type) GETSTRUCT(t);
 	return typ->typlen;
 }
 
@@ -590,9 +590,9 @@ typeLen(Type t)
 bool
 typeByVal(Type t)
 {
-	Form_pg_type typ;
+	Form_mdb_type typ;
 
-	typ = (Form_pg_type) GETSTRUCT(t);
+	typ = (Form_mdb_type) GETSTRUCT(t);
 	return typ->typbyval;
 }
 
@@ -600,9 +600,9 @@ typeByVal(Type t)
 char *
 typeTypeName(Type t)
 {
-	Form_pg_type typ;
+	Form_mdb_type typ;
 
-	typ = (Form_pg_type) GETSTRUCT(t);
+	typ = (Form_mdb_type) GETSTRUCT(t);
 	/* pstrdup here because result may need to outlive the syscache entry */
 	return pstrdup(NameStr(typ->typname));
 }
@@ -611,9 +611,9 @@ typeTypeName(Type t)
 Oid
 typeTypeRelid(Type typ)
 {
-	Form_pg_type typtup;
+	Form_mdb_type typtup;
 
-	typtup = (Form_pg_type) GETSTRUCT(typ);
+	typtup = (Form_mdb_type) GETSTRUCT(typ);
 	return typtup->typrelid;
 }
 
@@ -621,9 +621,9 @@ typeTypeRelid(Type typ)
 Oid
 typeTypeCollation(Type typ)
 {
-	Form_pg_type typtup;
+	Form_mdb_type typtup;
 
-	typtup = (Form_pg_type) GETSTRUCT(typ);
+	typtup = (Form_mdb_type) GETSTRUCT(typ);
 	return typtup->typcollation;
 }
 
@@ -635,7 +635,7 @@ typeTypeCollation(Type typ)
 Datum
 stringTypeDatum(Type tp, char *string, int32 atttypmod)
 {
-	Form_pg_type typform = (Form_pg_type) GETSTRUCT(tp);
+	Form_mdb_type typform = (Form_mdb_type) GETSTRUCT(tp);
 	Oid			typinput = typform->typinput;
 	Oid			typioparam = getTypeIOParam(tp);
 
@@ -647,14 +647,14 @@ Oid
 typeidTypeRelid(Oid type_id)
 {
 	HeapTuple	typeTuple;
-	Form_pg_type type;
+	Form_mdb_type type;
 	Oid			result;
 
 	typeTuple = SearchSysCache1(TYPEOID, ObjectIdGetDatum(type_id));
 	if (!HeapTupleIsValid(typeTuple))
 		elog(ERROR, "cache lookup failed for type %u", type_id);
 
-	type = (Form_pg_type) GETSTRUCT(typeTuple);
+	type = (Form_mdb_type) GETSTRUCT(typeTuple);
 	result = type->typrelid;
 	ReleaseSysCache(typeTuple);
 	return result;
@@ -799,7 +799,7 @@ parseTypeString(const char *str, Oid *typeid_p, int32 *typmod_p, bool missing_ok
 	}
 	else
 	{
-		if (!((Form_pg_type) GETSTRUCT(tup))->typisdefined)
+		if (!((Form_mdb_type) GETSTRUCT(tup))->typisdefined)
 			ereport(ERROR,
 					(errcode(ERRCODE_UNDEFINED_OBJECT),
 					 errmsg("type \"%s\" is only a shell",

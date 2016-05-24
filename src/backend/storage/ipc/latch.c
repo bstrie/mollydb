@@ -387,7 +387,7 @@ SetLatch(volatile Latch *latch)
 	 * variables possibly changed by this process have been flushed to main
 	 * memory, before we check/set is_set.
 	 */
-	pg_memory_barrier();
+	mdb_memory_barrier();
 
 	/* Quick exit if already set */
 	if (latch->is_set)
@@ -469,7 +469,7 @@ ResetLatch(volatile Latch *latch)
 	 * falsely conclude that it needn't signal us, even though we have missed
 	 * seeing some flag updates that SetLatch was supposed to inform us of.
 	 */
-	pg_memory_barrier();
+	mdb_memory_barrier();
 }
 
 /*

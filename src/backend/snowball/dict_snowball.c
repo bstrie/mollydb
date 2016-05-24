@@ -68,7 +68,7 @@ PG_FUNCTION_INFO_V1(dsnowball_lexize);
 typedef struct stemmer_module
 {
 	const char *name;
-	pg_enc		enc;
+	mdb_enc		enc;
 	struct SN_env *(*create) (void);
 	void		(*close) (struct SN_env *);
 	int			(*stem) (struct SN_env *);
@@ -149,7 +149,7 @@ locate_stem_module(DictSnowball *d, char *lang)
 	for (m = stemmer_modules; m->name; m++)
 	{
 		if ((m->enc == PG_SQL_ASCII || m->enc == GetDatabaseEncoding()) &&
-			pg_strcasecmp(m->name, lang) == 0)
+			mdb_strcasecmp(m->name, lang) == 0)
 		{
 			d->stem = m->stem;
 			d->z = m->create();
@@ -163,7 +163,7 @@ locate_stem_module(DictSnowball *d, char *lang)
 	 */
 	for (m = stemmer_modules; m->name; m++)
 	{
-		if (m->enc == PG_UTF8 && pg_strcasecmp(m->name, lang) == 0)
+		if (m->enc == PG_UTF8 && mdb_strcasecmp(m->name, lang) == 0)
 		{
 			d->stem = m->stem;
 			d->z = m->create();
@@ -192,7 +192,7 @@ dsnowball_init(PG_FUNCTION_ARGS)
 	{
 		DefElem    *defel = (DefElem *) lfirst(l);
 
-		if (pg_strcasecmp("StopWords", defel->defname) == 0)
+		if (mdb_strcasecmp("StopWords", defel->defname) == 0)
 		{
 			if (stoploaded)
 				ereport(ERROR,
@@ -201,7 +201,7 @@ dsnowball_init(PG_FUNCTION_ARGS)
 			readstoplist(defGetString(defel), &d->stoplist, lowerstr);
 			stoploaded = true;
 		}
-		else if (pg_strcasecmp("Language", defel->defname) == 0)
+		else if (mdb_strcasecmp("Language", defel->defname) == 0)
 		{
 			if (d->stem)
 				ereport(ERROR,
@@ -252,7 +252,7 @@ dsnowball_lexize(PG_FUNCTION_ARGS)
 		{
 			char	   *recoded;
 
-			recoded = pg_server_to_any(txt, strlen(txt), PG_UTF8);
+			recoded = mdb_server_to_any(txt, strlen(txt), PG_UTF8);
 			if (recoded != txt)
 			{
 				pfree(txt);
@@ -278,7 +278,7 @@ dsnowball_lexize(PG_FUNCTION_ARGS)
 		{
 			char	   *recoded;
 
-			recoded = pg_any_to_server(txt, strlen(txt), PG_UTF8);
+			recoded = mdb_any_to_server(txt, strlen(txt), PG_UTF8);
 			if (recoded != txt)
 			{
 				pfree(txt);

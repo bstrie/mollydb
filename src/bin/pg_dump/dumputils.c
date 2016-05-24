@@ -2,13 +2,13 @@
  *
  * Utility routines for SQL dumping
  *
- * Basically this is stuff that is useful in both pg_dump and pg_dumpall.
+ * Basically this is stuff that is useful in both mdb_dump and mdb_dumpall.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/bin/pg_dump/dumputils.c
+ * src/bin/mdb_dump/dumputils.c
  *
  *-------------------------------------------------------------------------
  */
@@ -136,7 +136,7 @@ buildACLCommands(const char *name, const char *subname,
 	 * them in 'firstsql'.
 	 *
 	 * Revoke ACLs happen when an object starts out life with a set of
-	 * privileges (eg: GRANT SELECT ON pg_class TO PUBLIC;) and the user has
+	 * privileges (eg: GRANT SELECT ON mdb_class TO PUBLIC;) and the user has
 	 * decided to revoke those rights.  Since those objects come into being
 	 * with those default privileges, we have to revoke them to match what the
 	 * current state of affairs is.  Note that we only started explicitly
@@ -145,7 +145,7 @@ buildACLCommands(const char *name, const char *subname,
 	 * case, for initdb-created objects.  Prior to 9.6, we didn't handle
 	 * extensions correctly, but we do now by tracking their initial
 	 * privileges, in the same way we track initdb initial privileges, see
-	 * pg_init_privs.
+	 * mdb_init_privs.
 	 */
 	if (remoteVersion < 90600)
 	{
@@ -355,7 +355,7 @@ buildACLCommands(const char *name, const char *subname,
 }
 
 /*
- * Build ALTER DEFAULT PRIVILEGES command(s) for single pg_default_acl entry.
+ * Build ALTER DEFAULT PRIVILEGES command(s) for single mdb_default_acl entry.
  *
  *	type: the object type (TABLES, FUNCTIONS, etc)
  *	nspname: schema name, or NULL for global default privileges
@@ -636,8 +636,8 @@ buildShSecLabelQuery(PGconn *conn, const char *catalog_name, uint32 objectId,
 					 PQExpBuffer sql)
 {
 	appendPQExpBuffer(sql,
-					  "SELECT provider, label FROM pg_catalog.pg_shseclabel "
-					  "WHERE classoid = '%s'::pg_catalog.regclass AND "
+					  "SELECT provider, label FROM mdb_catalog.mdb_shseclabel "
+					  "WHERE classoid = '%s'::mdb_catalog.regclass AND "
 					  "objoid = %u", catalog_name, objectId);
 }
 
@@ -675,11 +675,11 @@ emitShSecLabels(PGconn *conn, PGresult *res, PQExpBuffer buffer,
  *
  * Build the subqueries to extract out the correct set of ACLs to be
  * GRANT'd and REVOKE'd for the specific kind of object, accounting for any
- * initial privileges (from pg_init_privs) and based on if we are in binary
+ * initial privileges (from mdb_init_privs) and based on if we are in binary
  * upgrade mode or not.
  *
  * Also builds subqueries to extract out the set of ACLs to go from the object
- * default privileges to the privileges in pg_init_privs, if we are in binary
+ * default privileges to the privileges in mdb_init_privs, if we are in binary
  * upgrade mode, so that those privileges can be set up and recorded in the new
  * cluster before the regular privileges are added on top of those.
  */
@@ -741,12 +741,12 @@ buildACLQueries(PQExpBuffer acl_subquery, PQExpBuffer racl_subquery,
 	 * the initial privileges which were set on extension objects, we need to
 	 * grab the set of GRANT and REVOKE commands necessary to get from the
 	 * default privileges of an object to the initial privileges as recorded
-	 * in pg_init_privs.
+	 * in mdb_init_privs.
 	 *
 	 * These will then be run ahead of the regular ACL commands, which were
 	 * calculated using the queries above, inside of a block which sets a flag
 	 * to indicate that the backend should record the results of these GRANT
-	 * and REVOKE statements into pg_init_privs.  This is how we preserve the
+	 * and REVOKE statements into mdb_init_privs.  This is how we preserve the
 	 * contents of that catalog across binary upgrades.
 	 */
 	if (binary_upgrade)

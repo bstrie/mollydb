@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup_archiver.h
+ * mdb_backup_archiver.h
  *
- *	Private interface to the pg_dump archiver routines.
+ *	Private interface to the mdb_dump archiver routines.
  *	It is NOT intended that these routines be called by any
  *	dumper directly.
  *
- *	See the headers to pg_restore for more details.
+ *	See the headers to mdb_restore for more details.
  *
  * Copyright (c) 2000, Philip Warner
  *		Rights are granted to use this software in any way so long
@@ -17,7 +17,7 @@
  *
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/pg_backup_archiver.h
+ *		src/bin/mdb_dump/mdb_backup_archiver.h
  *
  *-------------------------------------------------------------------------
  */
@@ -27,7 +27,7 @@
 
 #include <time.h>
 
-#include "pg_backup.h"
+#include "mdb_backup.h"
 
 #include "libpq-fe.h"
 #include "pqexpbuffer.h"
@@ -375,7 +375,7 @@ struct _tocEntry
 extern int	parallel_restore(struct ParallelArgs *args);
 extern void on_exit_close_archive(Archive *AHX);
 
-extern void warn_or_exit_horribly(ArchiveHandle *AH, const char *modulename, const char *fmt,...) pg_attribute_printf(3, 4);
+extern void warn_or_exit_horribly(ArchiveHandle *AH, const char *modulename, const char *fmt,...) mdb_attribute_printf(3, 4);
 
 extern void WriteTOC(ArchiveHandle *AH);
 extern void ReadTOC(ArchiveHandle *AH);
@@ -426,8 +426,8 @@ extern int	ReconnectToServer(ArchiveHandle *AH, const char *dbname, const char *
 extern void DropBlobIfExists(ArchiveHandle *AH, Oid oid);
 
 void		ahwrite(const void *ptr, size_t size, size_t nmemb, ArchiveHandle *AH);
-int			ahprintf(ArchiveHandle *AH, const char *fmt,...) pg_attribute_printf(2, 3);
+int			ahprintf(ArchiveHandle *AH, const char *fmt,...) mdb_attribute_printf(2, 3);
 
-void		ahlog(ArchiveHandle *AH, int level, const char *fmt,...) pg_attribute_printf(3, 4);
+void		ahlog(ArchiveHandle *AH, int level, const char *fmt,...) mdb_attribute_printf(3, 4);
 
 #endif

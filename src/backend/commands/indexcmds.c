@@ -23,17 +23,17 @@
 #include "catalog/catalog.h"
 #include "catalog/index.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_opfamily.h"
-#include "catalog/pg_tablespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_opfamily.h"
+#include "catalog/mdb_tablespace.h"
+#include "catalog/mdb_type.h"
 #include "commands/comment.h"
 #include "commands/dbcommands.h"
 #include "commands/defrem.h"
 #include "commands/tablecmds.h"
 #include "commands/tablespace.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "nodes/nodeFuncs.h"
 #include "optimizer/clauses.h"
@@ -93,8 +93,8 @@ static void RangeVarCallbackForReindexIndex(const RangeVar *relation,
  *		or NIL if not an exclusion constraint.
  *
  * This is tailored to the needs of ALTER TABLE ALTER TYPE, which recreates
- * any indexes that depended on a changing column from their pg_get_indexdef
- * or pg_get_constraintdef definitions.  We omit some of the sanity checks of
+ * any indexes that depended on a changing column from their mdb_get_indexdef
+ * or mdb_get_constraintdef definitions.  We omit some of the sanity checks of
  * DefineIndex.  We assume that the old and new indexes have the same number
  * of columns and that if one has an expression column or predicate, both do.
  * Errors arising from the attribute list still apply.
@@ -127,8 +127,8 @@ CheckIndexCompatible(Oid oldId,
 	Oid			accessMethodId;
 	Oid			relationId;
 	HeapTuple	tuple;
-	Form_pg_index indexForm;
-	Form_pg_am	accessMethodForm;
+	Form_mdb_index indexForm;
+	Form_mdb_am	accessMethodForm;
 	IndexAmRoutine *amRoutine;
 	bool		amcanorder;
 	int16	   *coloptions;
@@ -164,7 +164,7 @@ CheckIndexCompatible(Oid oldId,
 				 errmsg("access method \"%s\" does not exist",
 						accessMethodName)));
 	accessMethodId = HeapTupleGetOid(tuple);
-	accessMethodForm = (Form_pg_am) GETSTRUCT(tuple);
+	accessMethodForm = (Form_mdb_am) GETSTRUCT(tuple);
 	amRoutine = GetIndexAmRoutine(accessMethodForm->amhandler);
 	ReleaseSysCache(tuple);
 
@@ -196,18 +196,18 @@ CheckIndexCompatible(Oid oldId,
 					  amcanorder, isconstraint);
 
 
-	/* Get the soon-obsolete pg_index tuple. */
+	/* Get the soon-obsolete mdb_index tuple. */
 	tuple = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(oldId));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for index %u", oldId);
-	indexForm = (Form_pg_index) GETSTRUCT(tuple);
+	indexForm = (Form_mdb_index) GETSTRUCT(tuple);
 
 	/*
 	 * We don't assess expressions or predicates; assume incompatibility.
 	 * Also, if the index is invalid for any reason, treat it as incompatible.
 	 */
-	if (!(heap_attisnull(tuple, Anum_pg_index_indpred) &&
-		  heap_attisnull(tuple, Anum_pg_index_indexprs) &&
+	if (!(heap_attisnull(tuple, Anum_mdb_index_indpred) &&
+		  heap_attisnull(tuple, Anum_mdb_index_indexprs) &&
 		  IndexIsValid(indexForm)))
 	{
 		ReleaseSysCache(tuple);
@@ -218,11 +218,11 @@ CheckIndexCompatible(Oid oldId,
 	old_natts = indexForm->indnatts;
 	Assert(old_natts == numberOfAttributes);
 
-	d = SysCacheGetAttr(INDEXRELID, tuple, Anum_pg_index_indcollation, &isnull);
+	d = SysCacheGetAttr(INDEXRELID, tuple, Anum_mdb_index_indcollation, &isnull);
 	Assert(!isnull);
 	old_indcollation = (oidvector *) DatumGetPointer(d);
 
-	d = SysCacheGetAttr(INDEXRELID, tuple, Anum_pg_index_indclass, &isnull);
+	d = SysCacheGetAttr(INDEXRELID, tuple, Anum_mdb_index_indclass, &isnull);
 	Assert(!isnull);
 	old_indclass = (oidvector *) DatumGetPointer(d);
 
@@ -321,7 +321,7 @@ DefineIndex(Oid relationId,
 	Relation	rel;
 	Relation	indexRelation;
 	HeapTuple	tuple;
-	Form_pg_am	accessMethodForm;
+	Form_mdb_am	accessMethodForm;
 	IndexAmRoutine *amRoutine;
 	bool		amcanorder;
 	amoptions_function amoptions;
@@ -408,7 +408,7 @@ DefineIndex(Oid relationId,
 	{
 		AclResult	aclresult;
 
-		aclresult = pg_namespace_aclcheck(namespaceId, GetUserId(),
+		aclresult = mdb_namespace_aclcheck(namespaceId, GetUserId(),
 										  ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
@@ -434,7 +434,7 @@ DefineIndex(Oid relationId,
 	{
 		AclResult	aclresult;
 
-		aclresult = pg_tablespace_aclcheck(tablespaceId, GetUserId(),
+		aclresult = mdb_tablespace_aclcheck(tablespaceId, GetUserId(),
 										   ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_TABLESPACE,
@@ -442,7 +442,7 @@ DefineIndex(Oid relationId,
 	}
 
 	/*
-	 * Force shared indexes into the pg_global tablespace.  This is a bit of a
+	 * Force shared indexes into the mdb_global tablespace.  This is a bit of a
 	 * hack but seems simpler than marking them in the BKI commands.  On the
 	 * other hand, if it's not shared, don't allow it to be placed there.
 	 */
@@ -451,7 +451,7 @@ DefineIndex(Oid relationId,
 	else if (tablespaceId == GLOBALTABLESPACE_OID)
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-				 errmsg("only shared relations can be placed in pg_global tablespace")));
+				 errmsg("only shared relations can be placed in mdb_global tablespace")));
 
 	/*
 	 * Choose the index column names.
@@ -496,7 +496,7 @@ DefineIndex(Oid relationId,
 							accessMethodName)));
 	}
 	accessMethodId = HeapTupleGetOid(tuple);
-	accessMethodForm = (Form_pg_am) GETSTRUCT(tuple);
+	accessMethodForm = (Form_mdb_am) GETSTRUCT(tuple);
 	amRoutine = GetIndexAmRoutine(accessMethodForm->amhandler);
 
 	if (strcmp(accessMethodName, "hash") == 0 &&
@@ -771,7 +771,7 @@ DefineIndex(Oid relationId,
 	index_close(indexRelation, NoLock);
 
 	/*
-	 * Update the pg_index row to mark the index as ready for inserts. Once we
+	 * Update the mdb_index row to mark the index as ready for inserts. Once we
 	 * commit this transaction, any new transactions that open the table must
 	 * insert new entries into the index for insertions and non-HOT updates.
 	 */
@@ -903,12 +903,12 @@ DefineIndex(Oid relationId,
 	}
 
 	/*
-	 * Index can now be marked valid -- update its pg_index entry
+	 * Index can now be marked valid -- update its mdb_index entry
 	 */
 	index_set_state_flags(indexRelationId, INDEX_CREATE_SET_VALID);
 
 	/*
-	 * The pg_index update will cause backends (including this one) to update
+	 * The mdb_index update will cause backends (including this one) to update
 	 * relcache entries for the index itself, but we should also send a
 	 * relcache inval on the parent table to force replanning of cached plans.
 	 * Otherwise existing sessions might fail to use the new index where it
@@ -1035,7 +1035,7 @@ ComputeIndexAttrs(IndexInfo *indexInfo,
 		{
 			/* Simple index attribute */
 			HeapTuple	atttuple;
-			Form_pg_attribute attform;
+			Form_mdb_attribute attform;
 
 			Assert(attribute->expr == NULL);
 			atttuple = SearchSysCacheAttName(relId, attribute->name);
@@ -1053,7 +1053,7 @@ ComputeIndexAttrs(IndexInfo *indexInfo,
 							 errmsg("column \"%s\" does not exist",
 									attribute->name)));
 			}
-			attform = (Form_pg_attribute) GETSTRUCT(atttuple);
+			attform = (Form_mdb_attribute) GETSTRUCT(atttuple);
 			indexInfo->ii_KeyAttrNumbers[attn] = attform->attnum;
 			atttype = attform->atttypid;
 			attcollation = attform->attcollation;
@@ -1186,7 +1186,7 @@ ComputeIndexAttrs(IndexInfo *indexInfo,
 			if (strat == 0)
 			{
 				HeapTuple	opftuple;
-				Form_pg_opfamily opfform;
+				Form_mdb_opfamily opfform;
 
 				/*
 				 * attribute->opclass might not explicitly name the opfamily,
@@ -1198,7 +1198,7 @@ ComputeIndexAttrs(IndexInfo *indexInfo,
 				if (!HeapTupleIsValid(opftuple))
 					elog(ERROR, "cache lookup failed for opfamily %u",
 						 opfamily);
-				opfform = (Form_pg_opfamily) GETSTRUCT(opftuple);
+				opfform = (Form_mdb_opfamily) GETSTRUCT(opftuple);
 
 				ereport(ERROR,
 						(errcode(ERRCODE_WRONG_OBJECT_TYPE),
@@ -1348,7 +1348,7 @@ GetIndexOpClass(List *opclass, Oid attrType,
 	 * will accept binary compatibility.
 	 */
 	opClassId = HeapTupleGetOid(tuple);
-	opInputType = ((Form_pg_opclass) GETSTRUCT(tuple))->opcintype;
+	opInputType = ((Form_mdb_opclass) GETSTRUCT(tuple))->opcintype;
 
 	if (!IsBinaryCoercible(attrType, opInputType))
 		ereport(ERROR,
@@ -1395,12 +1395,12 @@ GetDefaultOpClass(Oid type_id, Oid am_id)
 	 * to specify which one he wants.  (The preferred-type special case is a
 	 * kluge for varchar: it's binary-compatible to both text and bpchar, so
 	 * we need a tiebreaker.)  If we find more than one exact match, then
-	 * someone put bogus entries in pg_opclass.
+	 * someone put bogus entries in mdb_opclass.
 	 */
 	rel = heap_open(OperatorClassRelationId, AccessShareLock);
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_opclass_opcmethod,
+				Anum_mdb_opclass_opcmethod,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(am_id));
 
@@ -1409,7 +1409,7 @@ GetDefaultOpClass(Oid type_id, Oid am_id)
 
 	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 	{
-		Form_pg_opclass opclass = (Form_pg_opclass) GETSTRUCT(tup);
+		Form_mdb_opclass opclass = (Form_mdb_opclass) GETSTRUCT(tup);
 
 		/* ignore altogether if not a default opclass */
 		if (!opclass->opcdefault)
@@ -1439,7 +1439,7 @@ GetDefaultOpClass(Oid type_id, Oid am_id)
 
 	heap_close(rel, AccessShareLock);
 
-	/* raise error if pg_opclass contains inconsistent data */
+	/* raise error if mdb_opclass contains inconsistent data */
 	if (nexact > 1)
 		ereport(ERROR,
 				(errcode(ERRCODE_DUPLICATE_OBJECT),
@@ -1512,9 +1512,9 @@ makeObjectName(const char *name1, const char *name2, const char *label)
 			name2chars--;
 	}
 
-	name1chars = pg_mbcliplen(name1, name1chars, name1chars);
+	name1chars = mdb_mbcliplen(name1, name1chars, name1chars);
 	if (name2)
-		name2chars = pg_mbcliplen(name2, name2chars, name2chars);
+		name2chars = mdb_mbcliplen(name2, name2chars, name2chars);
 
 	/* Now construct the string using the chosen lengths */
 	name = palloc(name1chars + name2chars + overhead + 1);
@@ -1709,7 +1709,7 @@ ChooseIndexColumnNames(List *indexElems)
 			sprintf(nbuf, "%d", i);
 
 			/* Ensure generated names are shorter than NAMEDATALEN */
-			nlen = pg_mbcliplen(origname, strlen(origname),
+			nlen = mdb_mbcliplen(origname, strlen(origname),
 								NAMEDATALEN - 1 - strlen(nbuf));
 			memcpy(buf, origname, nlen);
 			strcpy(buf + nlen, nbuf);
@@ -1799,7 +1799,7 @@ RangeVarCallbackForReindexIndex(const RangeVar *relation,
 				 errmsg("\"%s\" is not an index", relation->relname)));
 
 	/* Check permissions */
-	if (!pg_class_ownercheck(relId, GetUserId()))
+	if (!mdb_class_ownercheck(relId, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS, relation->relname);
 
 	/* Lock heap before index to avoid deadlock. */
@@ -1878,7 +1878,7 @@ ReindexMultipleTables(const char *objectName, ReindexObjectType objectKind,
 	{
 		objectOid = get_namespace_oid(objectName, false);
 
-		if (!pg_namespace_ownercheck(objectOid, GetUserId()))
+		if (!mdb_namespace_ownercheck(objectOid, GetUserId()))
 			aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_NAMESPACE,
 						   objectName);
 	}
@@ -1890,7 +1890,7 @@ ReindexMultipleTables(const char *objectName, ReindexObjectType objectKind,
 			ereport(ERROR,
 					(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 					 errmsg("can only reindex the currently open database")));
-		if (!pg_database_ownercheck(objectOid, GetUserId()))
+		if (!mdb_database_ownercheck(objectOid, GetUserId()))
 			aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_DATABASE,
 						   objectName);
 	}
@@ -1916,7 +1916,7 @@ ReindexMultipleTables(const char *objectName, ReindexObjectType objectKind,
 	{
 		num_keys = 1;
 		ScanKeyInit(&scan_keys[0],
-					Anum_pg_class_relnamespace,
+					Anum_mdb_class_relnamespace,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(objectOid));
 	}
@@ -1924,7 +1924,7 @@ ReindexMultipleTables(const char *objectName, ReindexObjectType objectKind,
 		num_keys = 0;
 
 	/*
-	 * Scan pg_class to build a list of the relations we need to reindex.
+	 * Scan mdb_class to build a list of the relations we need to reindex.
 	 *
 	 * We only consider plain relations and materialized views here (toast
 	 * rels will be processed indirectly by reindex_relation).
@@ -1933,7 +1933,7 @@ ReindexMultipleTables(const char *objectName, ReindexObjectType objectKind,
 	scan = heap_beginscan_catalog(relationRelation, num_keys, scan_keys);
 	while ((tuple = heap_getnext(scan, ForwardScanDirection)) != NULL)
 	{
-		Form_pg_class classtuple = (Form_pg_class) GETSTRUCT(tuple);
+		Form_mdb_class classtuple = (Form_mdb_class) GETSTRUCT(tuple);
 		Oid			relid = HeapTupleGetOid(tuple);
 
 		/*
@@ -1958,11 +1958,11 @@ ReindexMultipleTables(const char *objectName, ReindexObjectType objectKind,
 		old = MemoryContextSwitchTo(private_context);
 
 		/*
-		 * We always want to reindex pg_class first if it's selected to be
+		 * We always want to reindex mdb_class first if it's selected to be
 		 * reindexed.  This ensures that if there is any corruption in
-		 * pg_class' indexes, they will be fixed before we process any other
+		 * mdb_class' indexes, they will be fixed before we process any other
 		 * tables.  This is critical because reindexing itself will try to
-		 * update pg_class.
+		 * update mdb_class.
 		 */
 		if (relid == RelationRelationId)
 			relids = lcons_oid(relid, relids);

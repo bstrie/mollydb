@@ -90,7 +90,7 @@ foreach $charset (@charsets)
 	open(FILE, "> $file") || die("cannot open $file");
 
 	print FILE "/* src/backend/utils/mb/Unicode/$file */\n\n";
-	print FILE "static const pg_utf_to_local ULmap${charset}[ $count ] = {\n";
+	print FILE "static const mdb_utf_to_local ULmap${charset}[ $count ] = {\n";
 
 	for $index (sort { $a <=> $b } keys(%array))
 	{
@@ -144,7 +144,7 @@ foreach $charset (@charsets)
 	open(FILE, "> $file") || die("cannot open $file");
 
 	print FILE "/* src/backend/utils/mb/Unicode/$file */\n\n";
-	print FILE "static const pg_local_to_utf LUmap${charset}[ $count ] = {\n";
+	print FILE "static const mdb_local_to_utf LUmap${charset}[ $count ] = {\n";
 	for $index (sort { $a <=> $b } keys(%array))
 	{
 		$utf = $array{$index};

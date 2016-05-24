@@ -17,13 +17,13 @@
 
 #include "access/spgist.h"
 #include "access/stratnum.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "utils/builtins.h"
 #include "utils/geo_decls.h"
 
 
 Datum
-spg_kd_config(PG_FUNCTION_ARGS)
+smdb_kd_config(PG_FUNCTION_ARGS)
 {
 	/* spgConfigIn *cfgin = (spgConfigIn *) PG_GETARG_POINTER(0); */
 	spgConfigOut *cfg = (spgConfigOut *) PG_GETARG_POINTER(1);
@@ -49,7 +49,7 @@ getSide(double coord, bool isX, Point *tst)
 }
 
 Datum
-spg_kd_choose(PG_FUNCTION_ARGS)
+smdb_kd_choose(PG_FUNCTION_ARGS)
 {
 	spgChooseIn *in = (spgChooseIn *) PG_GETARG_POINTER(0);
 	spgChooseOut *out = (spgChooseOut *) PG_GETARG_POINTER(1);
@@ -103,7 +103,7 @@ y_cmp(const void *a, const void *b)
 
 
 Datum
-spg_kd_picksplit(PG_FUNCTION_ARGS)
+smdb_kd_picksplit(PG_FUNCTION_ARGS)
 {
 	spgPickSplitIn *in = (spgPickSplitIn *) PG_GETARG_POINTER(0);
 	spgPickSplitOut *out = (spgPickSplitOut *) PG_GETARG_POINTER(1);
@@ -155,7 +155,7 @@ spg_kd_picksplit(PG_FUNCTION_ARGS)
 }
 
 Datum
-spg_kd_inner_consistent(PG_FUNCTION_ARGS)
+smdb_kd_inner_consistent(PG_FUNCTION_ARGS)
 {
 	spgInnerConsistentIn *in = (spgInnerConsistentIn *) PG_GETARG_POINTER(0);
 	spgInnerConsistentOut *out = (spgInnerConsistentOut *) PG_GETARG_POINTER(1);
@@ -265,7 +265,7 @@ spg_kd_inner_consistent(PG_FUNCTION_ARGS)
 }
 
 /*
- * spg_kd_leaf_consistent() is the same as spg_quad_leaf_consistent(),
+ * smdb_kd_leaf_consistent() is the same as smdb_quad_leaf_consistent(),
  * since we support the same operators and the same leaf data type.
  * So we just borrow that function.
  */

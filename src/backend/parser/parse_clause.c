@@ -21,9 +21,9 @@
 #include "access/tsmapi.h"
 #include "catalog/catalog.h"
 #include "catalog/heap.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_constraint_fn.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_constraint_fn.h"
+#include "catalog/mdb_type.h"
 #include "commands/defrem.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
@@ -273,7 +273,7 @@ interpretOidsOption(List *defList, bool allowOids)
 		DefElem    *def = (DefElem *) lfirst(cell);
 
 		if (def->defnamespace == NULL &&
-			pg_strcasecmp(def->defname, "oids") == 0)
+			mdb_strcasecmp(def->defname, "oids") == 0)
 		{
 			if (!allowOids)
 				ereport(ERROR,
@@ -590,7 +590,7 @@ transformRangeFunction(ParseState *pstate, RangeFunction *r)
 		 * likely expecting an un-tweaked function call.
 		 *
 		 * Note: the transformation changes a non-schema-qualified unnest()
-		 * function name into schema-qualified pg_catalog.unnest().  This
+		 * function name into schema-qualified mdb_catalog.unnest().  This
 		 * choice is also a bit debatable, but it seems reasonable to force
 		 * use of built-in unnest() when we make this transformation.
 		 */
@@ -2791,7 +2791,7 @@ resolve_unique_index_expr(ParseState *pstate, InferClause *infer,
 			 * plain column reference.  Create one directly, and perform
 			 * expression transformation.  Planner expects this, and performs
 			 * its own normalization for the purposes of matching against
-			 * pg_index.
+			 * mdb_index.
 			 */
 			n = makeNode(ColumnRef);
 			n->fields = list_make1(makeString(ielem->name));

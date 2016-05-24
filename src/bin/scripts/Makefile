@@ -16,7 +16,7 @@ subdir = src/bin/scripts
 top_builddir = ../../..
 include $(top_builddir)/src/Makefile.global
 
-PROGRAMS = createdb createlang createuser dropdb droplang dropuser clusterdb vacuumdb reindexdb pg_isready
+PROGRAMS = createdb createlang createuser dropdb droplang dropuser clusterdb vacuumdb reindexdb mdb_isready
 
 override CPPFLAGS := -I$(libpq_srcdir) $(CPPFLAGS)
 LDFLAGS += -L$(top_builddir)/src/fe_utils -lpgfeutils -lpq
@@ -35,7 +35,7 @@ dropuser: dropuser.o common.o | submake-libpq submake-libpgport submake-libpgfeu
 clusterdb: clusterdb.o common.o | submake-libpq submake-libpgport submake-libpgfeutils
 vacuumdb: vacuumdb.o common.o | submake-libpq submake-libpgport submake-libpgfeutils
 reindexdb: reindexdb.o common.o | submake-libpq submake-libpgport submake-libpgfeutils
-pg_isready: pg_isready.o common.o | submake-libpq submake-libpgport
+mdb_isready: mdb_isready.o common.o | submake-libpq submake-libpgport
 
 install: all installdirs
 	$(INSTALL_PROGRAM) createdb$(X)   '$(DESTDIR)$(bindir)'/createdb$(X)
@@ -47,7 +47,7 @@ install: all installdirs
 	$(INSTALL_PROGRAM) clusterdb$(X)  '$(DESTDIR)$(bindir)'/clusterdb$(X)
 	$(INSTALL_PROGRAM) vacuumdb$(X)   '$(DESTDIR)$(bindir)'/vacuumdb$(X)
 	$(INSTALL_PROGRAM) reindexdb$(X)  '$(DESTDIR)$(bindir)'/reindexdb$(X)
-	$(INSTALL_PROGRAM) pg_isready$(X) '$(DESTDIR)$(bindir)'/pg_isready$(X)
+	$(INSTALL_PROGRAM) mdb_isready$(X) '$(DESTDIR)$(bindir)'/mdb_isready$(X)
 
 installdirs:
 	$(MKDIR_P) '$(DESTDIR)$(bindir)'

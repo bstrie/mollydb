@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_dumpall.c
+ * mdb_dumpall.c
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * pg_dumpall forces all pg_dump output to be text, since it also outputs
+ * mdb_dumpall forces all mdb_dump output to be text, since it also outputs
  * text into the same output stream.
  *
- * src/bin/pg_dump/pg_dumpall.c
+ * src/bin/mdb_dump/mdb_dumpall.c
  *
  *-------------------------------------------------------------------------
  */
@@ -25,11 +25,11 @@
 #include "getopt_long.h"
 
 #include "dumputils.h"
-#include "pg_backup.h"
+#include "mdb_backup.h"
 #include "fe_utils/string_utils.h"
 
-/* version string we expect back from pg_dump */
-#define PGDUMP_VERSIONSTR "pg_dump (MollyDB) " PG_VERSION "\n"
+/* version string we expect back from mdb_dump */
+#define PGDUMP_VERSIONSTR "mdb_dump (MollyDB) " PG_VERSION "\n"
 
 
 static void help(void);
@@ -63,7 +63,7 @@ static char *constructConnStr(const char **keywords, const char **values);
 static PGresult *executeQuery(PGconn *conn, const char *query);
 static void executeCommand(PGconn *conn, const char *query);
 
-static char pg_dump_bin[MAXPGPATH];
+static char mdb_dump_bin[MAXPGPATH];
 static const char *progname;
 static PQExpBuffer pgdumpopts;
 static char *connstr = "";
@@ -151,7 +151,7 @@ main(int argc, char *argv[])
 				ret;
 	int			optindex;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_dump"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_dump"));
 
 	progname = get_progname(argv[0]);
 
@@ -164,13 +164,13 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_dumpall (MollyDB) " PG_VERSION);
+			puts("mdb_dumpall (MollyDB) " PG_VERSION);
 			exit_nicely(0);
 		}
 	}
 
-	if ((ret = find_other_exec(argv[0], "pg_dump", PGDUMP_VERSIONSTR,
-							   pg_dump_bin)) < 0)
+	if ((ret = find_other_exec(argv[0], "mdb_dump", PGDUMP_VERSIONSTR,
+							   mdb_dump_bin)) < 0)
 	{
 		char		full_path[MAXPGPATH];
 
@@ -179,14 +179,14 @@ main(int argc, char *argv[])
 
 		if (ret == -1)
 			fprintf(stderr,
-					_("The program \"pg_dump\" is needed by %s "
+					_("The program \"mdb_dump\" is needed by %s "
 					  "but was not found in the\n"
 					  "same directory as \"%s\".\n"
 					  "Check your installation.\n"),
 					progname, full_path);
 		else
 			fprintf(stderr,
-					_("The program \"pg_dump\" was found by \"%s\"\n"
+					_("The program \"mdb_dump\" was found by \"%s\"\n"
 					  "but was not the same version as %s.\n"
 					  "Check your installation.\n"),
 					full_path, progname);
@@ -209,11 +209,11 @@ main(int argc, char *argv[])
 				break;
 
 			case 'd':
-				connstr = pg_strdup(optarg);
+				connstr = mdb_strdup(optarg);
 				break;
 
 			case 'f':
-				filename = pg_strdup(optarg);
+				filename = mdb_strdup(optarg);
 				appendPQExpBufferStr(pgdumpopts, " -f ");
 				doShellQuoting(pgdumpopts, filename);
 				break;
@@ -223,11 +223,11 @@ main(int argc, char *argv[])
 				break;
 
 			case 'h':
-				pghost = pg_strdup(optarg);
+				pghost = mdb_strdup(optarg);
 				break;
 
 			case 'l':
-				pgdb = pg_strdup(optarg);
+				pgdb = mdb_strdup(optarg);
 				break;
 
 			case 'o':
@@ -239,7 +239,7 @@ main(int argc, char *argv[])
 				break;
 
 			case 'p':
-				pgport = pg_strdup(optarg);
+				pgport = mdb_strdup(optarg);
 				break;
 
 			case 'r':
@@ -260,7 +260,7 @@ main(int argc, char *argv[])
 				break;
 
 			case 'U':
-				pguser = pg_strdup(optarg);
+				pguser = mdb_strdup(optarg);
 				break;
 
 			case 'v':
@@ -292,7 +292,7 @@ main(int argc, char *argv[])
 				break;
 
 			case 3:
-				use_role = pg_strdup(optarg);
+				use_role = mdb_strdup(optarg);
 				appendPQExpBufferStr(pgdumpopts, " --role ");
 				doShellQuoting(pgdumpopts, use_role);
 				break;
@@ -348,7 +348,7 @@ main(int argc, char *argv[])
 		exit_nicely(1);
 	}
 
-	/* Add long options to the pg_dump argument list */
+	/* Add long options to the mdb_dump argument list */
 	if (binary_upgrade)
 		appendPQExpBufferStr(pgdumpopts, " --binary-upgrade");
 	if (column_inserts)
@@ -462,7 +462,7 @@ main(int argc, char *argv[])
 
 	/* Replicate encoding and std_strings in output */
 	fprintf(OPF, "SET client_encoding = '%s';\n",
-			pg_encoding_to_char(encoding));
+			mdb_encoding_to_char(encoding));
 	fprintf(OPF, "SET standard_conforming_strings = %s;\n", std_strings);
 	if (strcmp(std_strings, "off") == 0)
 		fprintf(OPF, "SET escape_string_warning = off;\n");
@@ -608,15 +608,15 @@ dropRoles(PGconn *conn)
 	if (server_version >= 80100)
 		res = executeQuery(conn,
 						   "SELECT rolname "
-						   "FROM pg_authid "
+						   "FROM mdb_authid "
 						   "ORDER BY 1");
 	else
 		res = executeQuery(conn,
 						   "SELECT usename as rolname "
-						   "FROM pg_shadow "
+						   "FROM mdb_shadow "
 						   "UNION "
 						   "SELECT groname as rolname "
-						   "FROM pg_group "
+						   "FROM mdb_group "
 						   "ORDER BY 1");
 
 	i_rolname = PQfnumber(res, "rolname");
@@ -671,10 +671,10 @@ dumpRoles(PGconn *conn)
 						  "rolcreaterole, rolcreatedb, "
 						  "rolcanlogin, rolconnlimit, rolpassword, "
 						  "rolvaliduntil, rolreplication, rolbypassrls, "
-			 "pg_catalog.shobj_description(oid, 'pg_authid') as rolcomment, "
+			 "mdb_catalog.shobj_description(oid, 'mdb_authid') as rolcomment, "
 						  "rolname = current_user AS is_current_user "
-						  "FROM pg_authid "
-						  "WHERE rolname !~ '^pg_' "
+						  "FROM mdb_authid "
+						  "WHERE rolname !~ '^mdb_' "
 						  "ORDER BY 2");
 	else if (server_version >= 90500)
 		printfPQExpBuffer(buf,
@@ -682,9 +682,9 @@ dumpRoles(PGconn *conn)
 						  "rolcreaterole, rolcreatedb, "
 						  "rolcanlogin, rolconnlimit, rolpassword, "
 						  "rolvaliduntil, rolreplication, rolbypassrls, "
-			 "pg_catalog.shobj_description(oid, 'pg_authid') as rolcomment, "
+			 "mdb_catalog.shobj_description(oid, 'mdb_authid') as rolcomment, "
 						  "rolname = current_user AS is_current_user "
-						  "FROM pg_authid "
+						  "FROM mdb_authid "
 						  "ORDER BY 2");
 	else if (server_version >= 90100)
 		printfPQExpBuffer(buf,
@@ -693,9 +693,9 @@ dumpRoles(PGconn *conn)
 						  "rolcanlogin, rolconnlimit, rolpassword, "
 						  "rolvaliduntil, rolreplication, "
 						  "false as rolbypassrls, "
-			 "pg_catalog.shobj_description(oid, 'pg_authid') as rolcomment, "
+			 "mdb_catalog.shobj_description(oid, 'mdb_authid') as rolcomment, "
 						  "rolname = current_user AS is_current_user "
-						  "FROM pg_authid "
+						  "FROM mdb_authid "
 						  "ORDER BY 2");
 	else if (server_version >= 80200)
 		printfPQExpBuffer(buf,
@@ -704,9 +704,9 @@ dumpRoles(PGconn *conn)
 						  "rolcanlogin, rolconnlimit, rolpassword, "
 						  "rolvaliduntil, false as rolreplication, "
 						  "false as rolbypassrls, "
-			 "pg_catalog.shobj_description(oid, 'pg_authid') as rolcomment, "
+			 "mdb_catalog.shobj_description(oid, 'mdb_authid') as rolcomment, "
 						  "rolname = current_user AS is_current_user "
-						  "FROM pg_authid "
+						  "FROM mdb_authid "
 						  "ORDER BY 2");
 	else if (server_version >= 80100)
 		printfPQExpBuffer(buf,
@@ -717,7 +717,7 @@ dumpRoles(PGconn *conn)
 						  "false as rolbypassrls, "
 						  "null as rolcomment, "
 						  "rolname = current_user AS is_current_user "
-						  "FROM pg_authid "
+						  "FROM mdb_authid "
 						  "ORDER BY 2");
 	else
 		printfPQExpBuffer(buf,
@@ -734,7 +734,7 @@ dumpRoles(PGconn *conn)
 						  "false as rolbypassrls, "
 						  "null as rolcomment, "
 						  "usename = current_user AS is_current_user "
-						  "FROM pg_shadow "
+						  "FROM mdb_shadow "
 						  "UNION ALL "
 						  "SELECT 0 as oid, groname as rolname, "
 						  "false as rolsuper, "
@@ -749,8 +749,8 @@ dumpRoles(PGconn *conn)
 						  "false as rolbypassrls, "
 						  "null as rolcomment, "
 						  "false AS is_current_user "
-						  "FROM pg_group "
-						  "WHERE NOT EXISTS (SELECT 1 FROM pg_shadow "
+						  "FROM mdb_group "
+						  "WHERE NOT EXISTS (SELECT 1 FROM mdb_shadow "
 						  " WHERE usename = groname) "
 						  "ORDER BY 2");
 
@@ -782,9 +782,9 @@ dumpRoles(PGconn *conn)
 		auth_oid = atooid(PQgetvalue(res, i, i_oid));
 		rolename = PQgetvalue(res, i, i_rolname);
 
-		if (strncmp(rolename,"pg_",3) == 0)
+		if (strncmp(rolename,"mdb_",3) == 0)
 		{
-			fprintf(stderr, _("%s: role name starting with \"pg_\" skipped (%s)\n"),
+			fprintf(stderr, _("%s: role name starting with \"mdb_\" skipped (%s)\n"),
 					progname, rolename);
 			continue;
 		}
@@ -793,9 +793,9 @@ dumpRoles(PGconn *conn)
 
 		if (binary_upgrade)
 		{
-			appendPQExpBufferStr(buf, "\n-- For binary upgrade, must preserve pg_authid.oid\n");
+			appendPQExpBufferStr(buf, "\n-- For binary upgrade, must preserve mdb_authid.oid\n");
 			appendPQExpBuffer(buf,
-							  "SELECT pg_catalog.binary_upgrade_set_next_pg_authid_oid('%u'::pg_catalog.oid);\n\n",
+							  "SELECT mdb_catalog.binary_upgrade_set_next_mdb_authid_oid('%u'::mdb_catalog.oid);\n\n",
 							  auth_oid);
 		}
 
@@ -871,7 +871,7 @@ dumpRoles(PGconn *conn)
 		}
 
 		if (!no_security_labels && server_version >= 90200)
-			buildShSecLabels(conn, "pg_authid", auth_oid,
+			buildShSecLabels(conn, "mdb_authid", auth_oid,
 							 buf, "ROLE", rolename);
 
 		fprintf(OPF, "%s", buf->data);
@@ -910,11 +910,11 @@ dumpRoleMembership(PGconn *conn)
 					   "um.rolname AS member, "
 					   "a.admin_option, "
 					   "ug.rolname AS grantor "
-					   "FROM pg_auth_members a "
-					   "LEFT JOIN pg_authid ur on ur.oid = a.roleid "
-					   "LEFT JOIN pg_authid um on um.oid = a.member "
-					   "LEFT JOIN pg_authid ug on ug.oid = a.grantor "
-					   "WHERE NOT (ur.rolname ~ '^pg_' AND um.rolname ~ '^pg_')"
+					   "FROM mdb_auth_members a "
+					   "LEFT JOIN mdb_authid ur on ur.oid = a.roleid "
+					   "LEFT JOIN mdb_authid um on um.oid = a.member "
+					   "LEFT JOIN mdb_authid ug on ug.oid = a.grantor "
+					   "WHERE NOT (ur.rolname ~ '^mdb_' AND um.rolname ~ '^mdb_')"
 					   "ORDER BY 1,2,3");
 
 	if (PQntuples(res) > 0)
@@ -965,7 +965,7 @@ dumpGroups(PGconn *conn)
 	int			i;
 
 	res = executeQuery(conn,
-					   "SELECT groname, grolist FROM pg_group ORDER BY 1");
+					   "SELECT groname, grolist FROM mdb_group ORDER BY 1");
 
 	if (PQntuples(res) > 0)
 		fprintf(OPF, "--\n-- Role memberships\n--\n\n");
@@ -983,11 +983,11 @@ dumpGroups(PGconn *conn)
 		if (strlen(grolist) < 3)
 			continue;
 
-		grolist = pg_strdup(grolist);
+		grolist = mdb_strdup(grolist);
 		grolist[0] = '(';
 		grolist[strlen(grolist) - 1] = ')';
 		printfPQExpBuffer(buf,
-						  "SELECT usename FROM pg_shadow "
+						  "SELECT usename FROM mdb_shadow "
 						  "WHERE usesysid IN %s ORDER BY 1",
 						  grolist);
 		free(grolist);
@@ -1030,11 +1030,11 @@ dropTablespaces(PGconn *conn)
 
 	/*
 	 * Get all tablespaces except built-in ones (which we assume are named
-	 * pg_xxx)
+	 * mdb_xxx)
 	 */
 	res = executeQuery(conn, "SELECT spcname "
-					   "FROM pg_catalog.pg_tablespace "
-					   "WHERE spcname !~ '^pg_' "
+					   "FROM mdb_catalog.mdb_tablespace "
+					   "WHERE spcname !~ '^mdb_' "
 					   "ORDER BY 1");
 
 	if (PQntuples(res) > 0)
@@ -1065,41 +1065,41 @@ dumpTablespaces(PGconn *conn)
 
 	/*
 	 * Get all tablespaces except built-in ones (which we assume are named
-	 * pg_xxx)
+	 * mdb_xxx)
 	 */
 	if (server_version >= 90200)
 		res = executeQuery(conn, "SELECT oid, spcname, "
-						 "pg_catalog.pg_get_userbyid(spcowner) AS spcowner, "
-						   "pg_catalog.pg_tablespace_location(oid), spcacl, "
+						 "mdb_catalog.mdb_get_userbyid(spcowner) AS spcowner, "
+						   "mdb_catalog.mdb_tablespace_location(oid), spcacl, "
 						   "array_to_string(spcoptions, ', '),"
-						"pg_catalog.shobj_description(oid, 'pg_tablespace') "
-						   "FROM pg_catalog.pg_tablespace "
-						   "WHERE spcname !~ '^pg_' "
+						"mdb_catalog.shobj_description(oid, 'mdb_tablespace') "
+						   "FROM mdb_catalog.mdb_tablespace "
+						   "WHERE spcname !~ '^mdb_' "
 						   "ORDER BY 1");
 	else if (server_version >= 90000)
 		res = executeQuery(conn, "SELECT oid, spcname, "
-						 "pg_catalog.pg_get_userbyid(spcowner) AS spcowner, "
+						 "mdb_catalog.mdb_get_userbyid(spcowner) AS spcowner, "
 						   "spclocation, spcacl, "
 						   "array_to_string(spcoptions, ', '),"
-						"pg_catalog.shobj_description(oid, 'pg_tablespace') "
-						   "FROM pg_catalog.pg_tablespace "
-						   "WHERE spcname !~ '^pg_' "
+						"mdb_catalog.shobj_description(oid, 'mdb_tablespace') "
+						   "FROM mdb_catalog.mdb_tablespace "
+						   "WHERE spcname !~ '^mdb_' "
 						   "ORDER BY 1");
 	else if (server_version >= 80200)
 		res = executeQuery(conn, "SELECT oid, spcname, "
-						 "pg_catalog.pg_get_userbyid(spcowner) AS spcowner, "
+						 "mdb_catalog.mdb_get_userbyid(spcowner) AS spcowner, "
 						   "spclocation, spcacl, null, "
-						"pg_catalog.shobj_description(oid, 'pg_tablespace') "
-						   "FROM pg_catalog.pg_tablespace "
-						   "WHERE spcname !~ '^pg_' "
+						"mdb_catalog.shobj_description(oid, 'mdb_tablespace') "
+						   "FROM mdb_catalog.mdb_tablespace "
+						   "WHERE spcname !~ '^mdb_' "
 						   "ORDER BY 1");
 	else
 		res = executeQuery(conn, "SELECT oid, spcname, "
-						 "pg_catalog.pg_get_userbyid(spcowner) AS spcowner, "
+						 "mdb_catalog.mdb_get_userbyid(spcowner) AS spcowner, "
 						   "spclocation, spcacl, "
 						   "null, null "
-						   "FROM pg_catalog.pg_tablespace "
-						   "WHERE spcname !~ '^pg_' "
+						   "FROM mdb_catalog.mdb_tablespace "
+						   "WHERE spcname !~ '^mdb_' "
 						   "ORDER BY 1");
 
 	if (PQntuples(res) > 0)
@@ -1118,7 +1118,7 @@ dumpTablespaces(PGconn *conn)
 		char	   *fspcname;
 
 		/* needed for buildACLCommands() */
-		fspcname = pg_strdup(fmtId(spcname));
+		fspcname = mdb_strdup(fmtId(spcname));
 
 		appendPQExpBuffer(buf, "CREATE TABLESPACE %s", fspcname);
 		appendPQExpBuffer(buf, " OWNER %s", fmtId(spcowner));
@@ -1149,7 +1149,7 @@ dumpTablespaces(PGconn *conn)
 		}
 
 		if (!no_security_labels && server_version >= 90200)
-			buildShSecLabels(conn, "pg_tablespace", spcoid,
+			buildShSecLabels(conn, "mdb_tablespace", spcoid,
 							 buf, "TABLESPACE", fspcname);
 
 		fprintf(OPF, "%s", buf->data);
@@ -1177,12 +1177,12 @@ dropDBs(PGconn *conn)
 	if (server_version >= 70100)
 		res = executeQuery(conn,
 						   "SELECT datname "
-						   "FROM pg_database d "
+						   "FROM mdb_database d "
 						   "WHERE datallowconn ORDER BY 1");
 	else
 		res = executeQuery(conn,
 						   "SELECT datname "
-						   "FROM pg_database d "
+						   "FROM mdb_database d "
 						   "ORDER BY 1");
 
 	if (PQntuples(res) > 0)
@@ -1217,7 +1217,7 @@ dropDBs(PGconn *conn)
  * To minimize the number of reconnections (and possibly ensuing
  * password prompts) required by the output script, we emit all CREATE
  * DATABASE commands during the initial phase of the script, and then
- * run pg_dump for each database to dump the contents of that
+ * run mdb_dump for each database to dump the contents of that
  * database.  We skip databases marked not datallowconn, since we'd be
  * unable to connect to them anyway (and besides, we don't want to
  * dump template0).
@@ -1248,32 +1248,32 @@ dumpCreateDB(PGconn *conn)
 	 */
 	if (server_version >= 80400)
 		res = executeQuery(conn,
-						   "SELECT pg_encoding_to_char(encoding), "
+						   "SELECT mdb_encoding_to_char(encoding), "
 						   "datcollate, datctype "
-						   "FROM pg_database "
+						   "FROM mdb_database "
 						   "WHERE datname = 'template0'");
 	else if (server_version >= 70100)
 		res = executeQuery(conn,
-						   "SELECT pg_encoding_to_char(encoding), "
+						   "SELECT mdb_encoding_to_char(encoding), "
 						   "null::text AS datcollate, null::text AS datctype "
-						   "FROM pg_database "
+						   "FROM mdb_database "
 						   "WHERE datname = 'template0'");
 	else
 		res = executeQuery(conn,
-						   "SELECT pg_encoding_to_char(encoding), "
+						   "SELECT mdb_encoding_to_char(encoding), "
 						   "null::text AS datcollate, null::text AS datctype "
-						   "FROM pg_database "
+						   "FROM mdb_database "
 						   "WHERE datname = 'template1'");
 
 	/* If for some reason the template DB isn't there, treat as unknown */
 	if (PQntuples(res) > 0)
 	{
 		if (!PQgetisnull(res, 0, 0))
-			default_encoding = pg_strdup(PQgetvalue(res, 0, 0));
+			default_encoding = mdb_strdup(PQgetvalue(res, 0, 0));
 		if (!PQgetisnull(res, 0, 1))
-			default_collate = pg_strdup(PQgetvalue(res, 0, 1));
+			default_collate = mdb_strdup(PQgetvalue(res, 0, 1));
 		if (!PQgetisnull(res, 0, 2))
-			default_ctype = pg_strdup(PQgetvalue(res, 0, 2));
+			default_ctype = mdb_strdup(PQgetvalue(res, 0, 2));
 	}
 
 	PQclear(res);
@@ -1282,64 +1282,64 @@ dumpCreateDB(PGconn *conn)
 	if (server_version >= 90300)
 		res = executeQuery(conn,
 						   "SELECT datname, "
-						   "coalesce(rolname, (select rolname from pg_authid where oid=(select datdba from pg_database where datname='template0'))), "
-						   "pg_encoding_to_char(d.encoding), "
+						   "coalesce(rolname, (select rolname from mdb_authid where oid=(select datdba from mdb_database where datname='template0'))), "
+						   "mdb_encoding_to_char(d.encoding), "
 						   "datcollate, datctype, datfrozenxid, datminmxid, "
 						   "datistemplate, datacl, datconnlimit, "
-						   "(SELECT spcname FROM pg_tablespace t WHERE t.oid = d.dattablespace) AS dattablespace "
-			  "FROM pg_database d LEFT JOIN pg_authid u ON (datdba = u.oid) "
+						   "(SELECT spcname FROM mdb_tablespace t WHERE t.oid = d.dattablespace) AS dattablespace "
+			  "FROM mdb_database d LEFT JOIN mdb_authid u ON (datdba = u.oid) "
 						   "WHERE datallowconn ORDER BY 1");
 	else if (server_version >= 80400)
 		res = executeQuery(conn,
 						   "SELECT datname, "
-						   "coalesce(rolname, (select rolname from pg_authid where oid=(select datdba from pg_database where datname='template0'))), "
-						   "pg_encoding_to_char(d.encoding), "
+						   "coalesce(rolname, (select rolname from mdb_authid where oid=(select datdba from mdb_database where datname='template0'))), "
+						   "mdb_encoding_to_char(d.encoding), "
 					  "datcollate, datctype, datfrozenxid, 0 AS datminmxid, "
 						   "datistemplate, datacl, datconnlimit, "
-						   "(SELECT spcname FROM pg_tablespace t WHERE t.oid = d.dattablespace) AS dattablespace "
-			  "FROM pg_database d LEFT JOIN pg_authid u ON (datdba = u.oid) "
+						   "(SELECT spcname FROM mdb_tablespace t WHERE t.oid = d.dattablespace) AS dattablespace "
+			  "FROM mdb_database d LEFT JOIN mdb_authid u ON (datdba = u.oid) "
 						   "WHERE datallowconn ORDER BY 1");
 	else if (server_version >= 80100)
 		res = executeQuery(conn,
 						   "SELECT datname, "
-						   "coalesce(rolname, (select rolname from pg_authid where oid=(select datdba from pg_database where datname='template0'))), "
-						   "pg_encoding_to_char(d.encoding), "
+						   "coalesce(rolname, (select rolname from mdb_authid where oid=(select datdba from mdb_database where datname='template0'))), "
+						   "mdb_encoding_to_char(d.encoding), "
 						   "null::text AS datcollate, null::text AS datctype, datfrozenxid, 0 AS datminmxid, "
 						   "datistemplate, datacl, datconnlimit, "
-						   "(SELECT spcname FROM pg_tablespace t WHERE t.oid = d.dattablespace) AS dattablespace "
-			  "FROM pg_database d LEFT JOIN pg_authid u ON (datdba = u.oid) "
+						   "(SELECT spcname FROM mdb_tablespace t WHERE t.oid = d.dattablespace) AS dattablespace "
+			  "FROM mdb_database d LEFT JOIN mdb_authid u ON (datdba = u.oid) "
 						   "WHERE datallowconn ORDER BY 1");
 	else if (server_version >= 80000)
 		res = executeQuery(conn,
 						   "SELECT datname, "
-						   "coalesce(usename, (select usename from pg_shadow where usesysid=(select datdba from pg_database where datname='template0'))), "
-						   "pg_encoding_to_char(d.encoding), "
+						   "coalesce(usename, (select usename from mdb_shadow where usesysid=(select datdba from mdb_database where datname='template0'))), "
+						   "mdb_encoding_to_char(d.encoding), "
 						   "null::text AS datcollate, null::text AS datctype, datfrozenxid, 0 AS datminmxid, "
 						   "datistemplate, datacl, -1 as datconnlimit, "
-						   "(SELECT spcname FROM pg_tablespace t WHERE t.oid = d.dattablespace) AS dattablespace "
-		   "FROM pg_database d LEFT JOIN pg_shadow u ON (datdba = usesysid) "
+						   "(SELECT spcname FROM mdb_tablespace t WHERE t.oid = d.dattablespace) AS dattablespace "
+		   "FROM mdb_database d LEFT JOIN mdb_shadow u ON (datdba = usesysid) "
 						   "WHERE datallowconn ORDER BY 1");
 	else if (server_version >= 70300)
 		res = executeQuery(conn,
 						   "SELECT datname, "
-						   "coalesce(usename, (select usename from pg_shadow where usesysid=(select datdba from pg_database where datname='template0'))), "
-						   "pg_encoding_to_char(d.encoding), "
+						   "coalesce(usename, (select usename from mdb_shadow where usesysid=(select datdba from mdb_database where datname='template0'))), "
+						   "mdb_encoding_to_char(d.encoding), "
 						   "null::text AS datcollate, null::text AS datctype, datfrozenxid, 0 AS datminmxid, "
 						   "datistemplate, datacl, -1 as datconnlimit, "
-						   "'pg_default' AS dattablespace "
-		   "FROM pg_database d LEFT JOIN pg_shadow u ON (datdba = usesysid) "
+						   "'mdb_default' AS dattablespace "
+		   "FROM mdb_database d LEFT JOIN mdb_shadow u ON (datdba = usesysid) "
 						   "WHERE datallowconn ORDER BY 1");
 	else if (server_version >= 70100)
 		res = executeQuery(conn,
 						   "SELECT datname, "
 						   "coalesce("
-					"(select usename from pg_shadow where usesysid=datdba), "
-						   "(select usename from pg_shadow where usesysid=(select datdba from pg_database where datname='template0'))), "
-						   "pg_encoding_to_char(d.encoding), "
+					"(select usename from mdb_shadow where usesysid=datdba), "
+						   "(select usename from mdb_shadow where usesysid=(select datdba from mdb_database where datname='template0'))), "
+						   "mdb_encoding_to_char(d.encoding), "
 						   "null::text AS datcollate, null::text AS datctype, 0 AS datfrozenxid, 0 AS datminmxid, "
 						   "datistemplate, '' as datacl, -1 as datconnlimit, "
-						   "'pg_default' AS dattablespace "
-						   "FROM pg_database d "
+						   "'mdb_default' AS dattablespace "
+						   "FROM mdb_database d "
 						   "WHERE datallowconn ORDER BY 1");
 	else
 	{
@@ -1349,13 +1349,13 @@ dumpCreateDB(PGconn *conn)
 		 */
 		res = executeQuery(conn,
 						   "SELECT datname, "
-					"(select usename from pg_shadow where usesysid=datdba), "
-						   "pg_encoding_to_char(d.encoding), "
+					"(select usename from mdb_shadow where usesysid=datdba), "
+						   "mdb_encoding_to_char(d.encoding), "
 						   "null::text AS datcollate, null::text AS datctype, 0 AS datfrozenxid, 0 AS datminmxid, "
 						   "'f' as datistemplate, "
 						   "'' as datacl, -1 as datconnlimit, "
-						   "'pg_default' AS dattablespace "
-						   "FROM pg_database d "
+						   "'mdb_default' AS dattablespace "
+						   "FROM mdb_database d "
 						   "ORDER BY 1");
 	}
 
@@ -1374,7 +1374,7 @@ dumpCreateDB(PGconn *conn)
 		char	   *dbtablespace = PQgetvalue(res, i, 10);
 		char	   *fdbname;
 
-		fdbname = pg_strdup(fmtId(dbname));
+		fdbname = mdb_strdup(fmtId(dbname));
 
 		resetPQExpBuffer(buf);
 
@@ -1416,10 +1416,10 @@ dumpCreateDB(PGconn *conn)
 			 * uses the default from the template database.  If tablespace is
 			 * specified and tablespace creation failed earlier, (e.g. no such
 			 * directory), the database creation will fail too.  One solution
-			 * would be to use 'SET default_tablespace' like we do in pg_dump
+			 * would be to use 'SET default_tablespace' like we do in mdb_dump
 			 * for setting non-default database locations.
 			 */
-			if (strcmp(dbtablespace, "pg_default") != 0 && !no_tablespaces)
+			if (strcmp(dbtablespace, "mdb_default") != 0 && !no_tablespaces)
 				appendPQExpBuffer(buf, " TABLESPACE = %s",
 								  fmtId(dbtablespace));
 
@@ -1432,7 +1432,7 @@ dumpCreateDB(PGconn *conn)
 
 			appendPQExpBufferStr(buf, ";\n");
 		}
-		else if (strcmp(dbtablespace, "pg_default") != 0 && !no_tablespaces)
+		else if (strcmp(dbtablespace, "mdb_default") != 0 && !no_tablespaces)
 		{
 			/*
 			 * Cannot change tablespace of the database we're connected to, so
@@ -1454,7 +1454,7 @@ dumpCreateDB(PGconn *conn)
 		if (binary_upgrade)
 		{
 			appendPQExpBufferStr(buf, "-- For binary upgrade, set datfrozenxid and datminmxid.\n");
-			appendPQExpBuffer(buf, "UPDATE pg_catalog.pg_database "
+			appendPQExpBuffer(buf, "UPDATE mdb_catalog.mdb_database "
 							  "SET datfrozenxid = '%u', datminmxid = '%u' "
 							  "WHERE datname = ",
 							  dbfrozenxid, dbminmxid);
@@ -1508,10 +1508,10 @@ dumpDatabaseConfig(PGconn *conn, const char *dbname)
 		PGresult   *res;
 
 		if (server_version >= 90000)
-			printfPQExpBuffer(buf, "SELECT setconfig[%d] FROM pg_db_role_setting WHERE "
-							  "setrole = 0 AND setdatabase = (SELECT oid FROM pg_database WHERE datname = ", count);
+			printfPQExpBuffer(buf, "SELECT setconfig[%d] FROM mdb_db_role_setting WHERE "
+							  "setrole = 0 AND setdatabase = (SELECT oid FROM mdb_database WHERE datname = ", count);
 		else
-			printfPQExpBuffer(buf, "SELECT datconfig[%d] FROM pg_database WHERE datname = ", count);
+			printfPQExpBuffer(buf, "SELECT datconfig[%d] FROM mdb_database WHERE datname = ", count);
 		appendStringLiteralConn(buf, dbname, conn);
 
 		if (server_version >= 90000)
@@ -1552,13 +1552,13 @@ dumpUserConfig(PGconn *conn, const char *username)
 		PGresult   *res;
 
 		if (server_version >= 90000)
-			printfPQExpBuffer(buf, "SELECT setconfig[%d] FROM pg_db_role_setting WHERE "
+			printfPQExpBuffer(buf, "SELECT setconfig[%d] FROM mdb_db_role_setting WHERE "
 							  "setdatabase = 0 AND setrole = "
-					   "(SELECT oid FROM pg_authid WHERE rolname = ", count);
+					   "(SELECT oid FROM mdb_authid WHERE rolname = ", count);
 		else if (server_version >= 80100)
-			printfPQExpBuffer(buf, "SELECT rolconfig[%d] FROM pg_authid WHERE rolname = ", count);
+			printfPQExpBuffer(buf, "SELECT rolconfig[%d] FROM mdb_authid WHERE rolname = ", count);
 		else
-			printfPQExpBuffer(buf, "SELECT useconfig[%d] FROM pg_shadow WHERE usename = ", count);
+			printfPQExpBuffer(buf, "SELECT useconfig[%d] FROM mdb_shadow WHERE usename = ", count);
 		appendStringLiteralConn(buf, username, conn);
 		if (server_version >= 90000)
 			appendPQExpBufferChar(buf, ')');
@@ -1594,8 +1594,8 @@ dumpDbRoleConfig(PGconn *conn)
 	int			i;
 
 	printfPQExpBuffer(buf, "SELECT rolname, datname, unnest(setconfig) "
-					  "FROM pg_db_role_setting, pg_authid, pg_database "
-		  "WHERE setrole = pg_authid.oid AND setdatabase = pg_database.oid");
+					  "FROM mdb_db_role_setting, mdb_authid, mdb_database "
+		  "WHERE setrole = mdb_authid.oid AND setdatabase = mdb_database.oid");
 	res = executeQuery(conn, buf->data);
 
 	if (PQntuples(res) > 0)
@@ -1629,7 +1629,7 @@ makeAlterConfigCommand(PGconn *conn, const char *arrayitem,
 	char	   *mine;
 	PQExpBuffer buf;
 
-	mine = pg_strdup(arrayitem);
+	mine = mdb_strdup(arrayitem);
 	pos = strchr(mine, '=');
 	if (pos == NULL)
 	{
@@ -1648,8 +1648,8 @@ makeAlterConfigCommand(PGconn *conn, const char *arrayitem,
 	/*
 	 * Some GUC variable names are 'LIST' type and hence must not be quoted.
 	 */
-	if (pg_strcasecmp(mine, "DateStyle") == 0
-		|| pg_strcasecmp(mine, "search_path") == 0)
+	if (mdb_strcasecmp(mine, "DateStyle") == 0
+		|| mdb_strcasecmp(mine, "search_path") == 0)
 		appendPQExpBufferStr(buf, pos + 1);
 	else
 		appendStringLiteralConn(buf, pos + 1, conn);
@@ -1672,9 +1672,9 @@ dumpDatabases(PGconn *conn)
 	int			i;
 
 	if (server_version >= 70100)
-		res = executeQuery(conn, "SELECT datname FROM pg_database WHERE datallowconn ORDER BY 1");
+		res = executeQuery(conn, "SELECT datname FROM mdb_database WHERE datallowconn ORDER BY 1");
 	else
-		res = executeQuery(conn, "SELECT datname FROM pg_database ORDER BY 1");
+		res = executeQuery(conn, "SELECT datname FROM mdb_database ORDER BY 1");
 
 	for (i = 0; i < PQntuples(res); i++)
 	{
@@ -1689,10 +1689,10 @@ dumpDatabases(PGconn *conn)
 
 		/*
 		 * Restore will need to write to the target cluster.  This connection
-		 * setting is emitted for pg_dumpall rather than in the code also used
-		 * by pg_dump, so that a cluster with databases or users which have
-		 * this flag turned on can still be replicated through pg_dumpall
-		 * without editing the file or stream.  With pg_dump there are many
+		 * setting is emitted for mdb_dumpall rather than in the code also used
+		 * by mdb_dump, so that a cluster with databases or users which have
+		 * this flag turned on can still be replicated through mdb_dumpall
+		 * without editing the file or stream.  With mdb_dump there are many
 		 * other ways to allow the file to be used, and leaving it out allows
 		 * users to protect databases from being accidental restore targets.
 		 */
@@ -1704,7 +1704,7 @@ dumpDatabases(PGconn *conn)
 		ret = runPgDump(dbname);
 		if (ret != 0)
 		{
-			fprintf(stderr, _("%s: pg_dump failed on database \"%s\", exiting\n"), progname, dbname);
+			fprintf(stderr, _("%s: mdb_dump failed on database \"%s\", exiting\n"), progname, dbname);
 			exit_nicely(1);
 		}
 
@@ -1727,7 +1727,7 @@ dumpDatabases(PGconn *conn)
 
 
 /*
- * Run pg_dump on dbname.
+ * Run mdb_dump on dbname.
  */
 static int
 runPgDump(const char *dbname)
@@ -1736,11 +1736,11 @@ runPgDump(const char *dbname)
 	PQExpBuffer cmd = createPQExpBuffer();
 	int			ret;
 
-	appendPQExpBuffer(cmd, "\"%s\" %s", pg_dump_bin,
+	appendPQExpBuffer(cmd, "\"%s\" %s", mdb_dump_bin,
 					  pgdumpopts->data);
 
 	/*
-	 * If we have a filename, use the undocumented plain-append pg_dump
+	 * If we have a filename, use the undocumented plain-append mdb_dump
 	 * format.
 	 */
 	if (filename)
@@ -1777,7 +1777,7 @@ runPgDump(const char *dbname)
  * Build SECURITY LABEL command(s) for a shared object
  *
  * The caller has to provide object type and identifier to select security
- * labels from pg_seclabels system view.
+ * labels from mdb_seclabels system view.
  */
 static void
 buildShSecLabels(PGconn *conn, const char *catalog_name, uint32 objectId,
@@ -1858,8 +1858,8 @@ connectDatabase(const char *dbname, const char *connection_string,
 					argcount++;
 			}
 
-			keywords = pg_malloc0((argcount + 1) * sizeof(*keywords));
-			values = pg_malloc0((argcount + 1) * sizeof(*values));
+			keywords = mdb_malloc0((argcount + 1) * sizeof(*keywords));
+			values = mdb_malloc0((argcount + 1) * sizeof(*values));
 
 			for (conn_opt = conn_opts; conn_opt->keyword != NULL; conn_opt++)
 			{
@@ -1873,8 +1873,8 @@ connectDatabase(const char *dbname, const char *connection_string,
 		}
 		else
 		{
-			keywords = pg_malloc0((argcount + 1) * sizeof(*keywords));
-			values = pg_malloc0((argcount + 1) * sizeof(*values));
+			keywords = mdb_malloc0((argcount + 1) * sizeof(*keywords));
+			values = mdb_malloc0((argcount + 1) * sizeof(*values));
 		}
 
 		if (pghost)
@@ -1983,7 +1983,7 @@ connectDatabase(const char *dbname, const char *connection_string,
 
 	/*
 	 * We allow the server to be back to 7.0, and up to any minor release of
-	 * our own major version.  (See also version check in pg_dump.c.)
+	 * our own major version.  (See also version check in mdb_dump.c.)
 	 */
 	if (my_version != server_version
 		&& (server_version < 70000 ||
@@ -2000,19 +2000,19 @@ connectDatabase(const char *dbname, const char *connection_string,
 	 * the search path.
 	 */
 	if (server_version >= 70300)
-		executeCommand(conn, "SET search_path = pg_catalog");
+		executeCommand(conn, "SET search_path = mdb_catalog");
 
 	return conn;
 }
 
 /* ----------
  * Construct a connection string from the given keyword/value pairs. It is
- * used to pass the connection options to the pg_dump subprocess.
+ * used to pass the connection options to the mdb_dump subprocess.
  *
  * The following parameters are excluded:
- *	dbname		- varies in each pg_dump invocation
+ *	dbname		- varies in each mdb_dump invocation
  *	password	- it's not secure to pass a password on the command line
- *	fallback_application_name - we'll let pg_dump set it
+ *	fallback_application_name - we'll let mdb_dump set it
  * ----------
  */
 static char *
@@ -2038,7 +2038,7 @@ constructConnStr(const char **keywords, const char **values)
 		doConnStrQuoting(buf, values[i]);
 	}
 
-	connstr = pg_strdup(buf->data);
+	connstr = mdb_strdup(buf->data);
 	destroyPQExpBuffer(buf);
 	return connstr;
 }

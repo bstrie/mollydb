@@ -4,7 +4,7 @@
 #include "mollydb.h"
 
 #include "access/hash.h"
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "utils/builtins.h"
 #include "utils/formatting.h"
 

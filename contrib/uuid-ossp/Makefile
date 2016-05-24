@@ -19,7 +19,7 @@ PG_CPPFLAGS = -I$(pgcrypto_src)
 EXTRA_CLEAN = md5.c sha1.c
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

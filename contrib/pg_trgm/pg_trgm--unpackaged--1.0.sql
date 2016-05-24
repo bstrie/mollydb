@@ -1,28 +1,28 @@
-/* contrib/pg_trgm/pg_trgm--unpackaged--1.0.sql */
+/* contrib/mdb_trgm/mdb_trgm--unpackaged--1.0.sql */
 
 -- complain if script is sourced in psql, rather than via CREATE EXTENSION
-\echo Use "CREATE EXTENSION pg_trgm FROM unpackaged" to load this file. \quit
+\echo Use "CREATE EXTENSION mdb_trgm FROM unpackaged" to load this file. \quit
 
-ALTER EXTENSION pg_trgm ADD function set_limit(real);
-ALTER EXTENSION pg_trgm ADD function show_limit();
-ALTER EXTENSION pg_trgm ADD function show_trgm(text);
-ALTER EXTENSION pg_trgm ADD function similarity(text,text);
-ALTER EXTENSION pg_trgm ADD function similarity_op(text,text);
-ALTER EXTENSION pg_trgm ADD operator %(text,text);
-ALTER EXTENSION pg_trgm ADD type gtrgm;
-ALTER EXTENSION pg_trgm ADD function gtrgm_in(cstring);
-ALTER EXTENSION pg_trgm ADD function gtrgm_out(gtrgm);
-ALTER EXTENSION pg_trgm ADD function gtrgm_consistent(internal,text,integer,oid,internal);
-ALTER EXTENSION pg_trgm ADD function gtrgm_compress(internal);
-ALTER EXTENSION pg_trgm ADD function gtrgm_decompress(internal);
-ALTER EXTENSION pg_trgm ADD function gtrgm_penalty(internal,internal,internal);
-ALTER EXTENSION pg_trgm ADD function gtrgm_picksplit(internal,internal);
-ALTER EXTENSION pg_trgm ADD function gtrgm_union(bytea,internal);
-ALTER EXTENSION pg_trgm ADD function gtrgm_same(gtrgm,gtrgm,internal);
-ALTER EXTENSION pg_trgm ADD operator family gist_trgm_ops using gist;
-ALTER EXTENSION pg_trgm ADD operator class gist_trgm_ops using gist;
-ALTER EXTENSION pg_trgm ADD operator family gin_trgm_ops using gin;
-ALTER EXTENSION pg_trgm ADD operator class gin_trgm_ops using gin;
+ALTER EXTENSION mdb_trgm ADD function set_limit(real);
+ALTER EXTENSION mdb_trgm ADD function show_limit();
+ALTER EXTENSION mdb_trgm ADD function show_trgm(text);
+ALTER EXTENSION mdb_trgm ADD function similarity(text,text);
+ALTER EXTENSION mdb_trgm ADD function similarity_op(text,text);
+ALTER EXTENSION mdb_trgm ADD operator %(text,text);
+ALTER EXTENSION mdb_trgm ADD type gtrgm;
+ALTER EXTENSION mdb_trgm ADD function gtrgm_in(cstring);
+ALTER EXTENSION mdb_trgm ADD function gtrgm_out(gtrgm);
+ALTER EXTENSION mdb_trgm ADD function gtrgm_consistent(internal,text,integer,oid,internal);
+ALTER EXTENSION mdb_trgm ADD function gtrgm_compress(internal);
+ALTER EXTENSION mdb_trgm ADD function gtrgm_decompress(internal);
+ALTER EXTENSION mdb_trgm ADD function gtrgm_penalty(internal,internal,internal);
+ALTER EXTENSION mdb_trgm ADD function gtrgm_picksplit(internal,internal);
+ALTER EXTENSION mdb_trgm ADD function gtrgm_union(bytea,internal);
+ALTER EXTENSION mdb_trgm ADD function gtrgm_same(gtrgm,gtrgm,internal);
+ALTER EXTENSION mdb_trgm ADD operator family gist_trgm_ops using gist;
+ALTER EXTENSION mdb_trgm ADD operator class gist_trgm_ops using gist;
+ALTER EXTENSION mdb_trgm ADD operator family gin_trgm_ops using gin;
+ALTER EXTENSION mdb_trgm ADD operator class gin_trgm_ops using gin;
 
 -- These functions had different names/signatures in 9.0.  We can't just
 -- drop and recreate them because they are linked into the GIN opclass,
@@ -30,9 +30,9 @@ ALTER EXTENSION pg_trgm ADD operator class gin_trgm_ops using gin;
 
 -- First, absorb them into the extension under their old names.
 
-ALTER EXTENSION pg_trgm ADD function gin_extract_trgm(text, internal);
-ALTER EXTENSION pg_trgm ADD function gin_extract_trgm(text, internal, int2, internal, internal);
-ALTER EXTENSION pg_trgm ADD function gin_trgm_consistent(internal,smallint,text,integer,internal,internal);
+ALTER EXTENSION mdb_trgm ADD function gin_extract_trgm(text, internal);
+ALTER EXTENSION mdb_trgm ADD function gin_extract_trgm(text, internal, int2, internal, internal);
+ALTER EXTENSION mdb_trgm ADD function gin_trgm_consistent(internal,smallint,text,integer,internal,internal);
 
 -- Fix the names, and then do CREATE OR REPLACE to adjust the function
 -- bodies to be correct (ie, reference the correct C symbol).
@@ -53,17 +53,17 @@ LANGUAGE C IMMUTABLE STRICT;
 
 -- gin_trgm_consistent didn't change name.
 
--- Last, fix the parameter lists by means of direct UPDATE on the pg_proc
+-- Last, fix the parameter lists by means of direct UPDATE on the mdb_proc
 -- entries.  This is ugly as can be, but there's no other way to do it
 -- while preserving the identities (OIDs) of the functions.
 
-UPDATE pg_catalog.pg_proc
+UPDATE mdb_catalog.mdb_proc
 SET pronargs = 7, proargtypes = '25 2281 21 2281 2281 2281 2281'
-WHERE oid = 'gin_extract_query_trgm(text,internal,int2,internal,internal)'::pg_catalog.regprocedure;
+WHERE oid = 'gin_extract_query_trgm(text,internal,int2,internal,internal)'::mdb_catalog.regprocedure;
 
-UPDATE pg_catalog.pg_proc
+UPDATE mdb_catalog.mdb_proc
 SET pronargs = 8, proargtypes = '2281 21 25 23 2281 2281 2281 2281'
-WHERE oid = 'gin_trgm_consistent(internal,smallint,text,integer,internal,internal)'::pg_catalog.regprocedure;
+WHERE oid = 'gin_trgm_consistent(internal,smallint,text,integer,internal,internal)'::mdb_catalog.regprocedure;
 
 
 -- These were not in 9.0:
@@ -85,14 +85,14 @@ RETURNS float8
 AS 'MODULE_PATHNAME'
 LANGUAGE C IMMUTABLE STRICT;
 
--- Add new stuff to the operator classes.  See comment in pg_trgm--1.0.sql.
+-- Add new stuff to the operator classes.  See comment in mdb_trgm--1.0.sql.
 
 ALTER OPERATOR FAMILY gist_trgm_ops USING gist ADD
-        OPERATOR        2       <-> (text, text) FOR ORDER BY pg_catalog.float_ops,
-        OPERATOR        3       pg_catalog.~~ (text, text),
-        OPERATOR        4       pg_catalog.~~* (text, text),
+        OPERATOR        2       <-> (text, text) FOR ORDER BY mdb_catalog.float_ops,
+        OPERATOR        3       mdb_catalog.~~ (text, text),
+        OPERATOR        4       mdb_catalog.~~* (text, text),
         FUNCTION        8 (text, text)  gtrgm_distance (internal, text, int, oid);
 
 ALTER OPERATOR FAMILY gin_trgm_ops USING gin ADD
-        OPERATOR        3       pg_catalog.~~ (text, text),
-        OPERATOR        4       pg_catalog.~~* (text, text);
+        OPERATOR        3       mdb_catalog.~~ (text, text),
+        OPERATOR        4       mdb_catalog.~~* (text, text);

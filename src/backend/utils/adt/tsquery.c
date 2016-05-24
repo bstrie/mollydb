@@ -21,7 +21,7 @@
 #include "tsearch/ts_utils.h"
 #include "utils/builtins.h"
 #include "utils/memutils.h"
-#include "utils/pg_crc.h"
+#include "utils/mdb_crc.h"
 
 /* FTS operator priorities, see ts_type.h */
 const int tsearch_op_priority[OP_COUNT] =
@@ -77,7 +77,7 @@ get_modifiers(char *buf, int16 *weight, bool *prefix)
 		return buf;
 
 	buf++;
-	while (*buf && pg_mblen(buf) == 1)
+	while (*buf && mdb_mblen(buf) == 1)
 	{
 		switch (*buf)
 		{
@@ -235,7 +235,7 @@ gettoken_query(TSQueryParserState state,
 				if (t_iseq(state->buf, '!'))
 				{
 					(state->buf)++;		/* can safely ++, t_iseq guarantee
-										 * that pg_mblen()==1 */
+										 * that mdb_mblen()==1 */
 					*operator = OP_NOT;
 					state->state = WAITOPERAND;
 					return PT_OPR;
@@ -324,7 +324,7 @@ gettoken_query(TSQueryParserState state,
 				return PT_ERR;
 				break;
 		}
-		state->buf += pg_mblen(state->buf);
+		state->buf += mdb_mblen(state->buf);
 	}
 }
 
@@ -348,7 +348,7 @@ pushOperator(TSQueryParserState state, int8 oper, int16 distance)
 }
 
 static void
-pushValue_internal(TSQueryParserState state, pg_crc32 valcrc, int distance, int lenval, int weight, bool prefix)
+pushValue_internal(TSQueryParserState state, mdb_crc32 valcrc, int distance, int lenval, int weight, bool prefix)
 {
 	QueryOperand *tmp;
 
@@ -383,7 +383,7 @@ pushValue_internal(TSQueryParserState state, pg_crc32 valcrc, int distance, int 
 void
 pushValue(TSQueryParserState state, char *strval, int lenval, int16 weight, bool prefix)
 {
-	pg_crc32	valcrc;
+	mdb_crc32	valcrc;
 
 	if (lenval >= MAXSTRLEN)
 		ereport(ERROR,
@@ -761,7 +761,7 @@ infix(INFIX *in, int parentPriority)
 		char	   *op = in->op + curpol->distance;
 		int			clen;
 
-		RESIZEBUF(in, curpol->length * (pg_database_encoding_max_length() + 1) + 2 + 6);
+		RESIZEBUF(in, curpol->length * (mdb_database_encoding_max_length() + 1) + 2 + 6);
 		*(in->cur) = '\'';
 		in->cur++;
 		while (*op)
@@ -778,7 +778,7 @@ infix(INFIX *in, int parentPriority)
 			}
 			COPYCHAR(in->cur, op);
 
-			clen = pg_mblen(op);
+			clen = mdb_mblen(op);
 			op += clen;
 			in->cur += clen;
 		}
@@ -1024,7 +1024,7 @@ tsqueryrecv(PG_FUNCTION_ARGS)
 			uint8		weight;
 			uint8		prefix;
 			const char *val;
-			pg_crc32	valcrc;
+			mdb_crc32	valcrc;
 
 			weight = (uint8) pq_getmsgint(buf, sizeof(uint8));
 			prefix = (uint8) pq_getmsgint(buf, sizeof(uint8));

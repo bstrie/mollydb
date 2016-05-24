@@ -91,8 +91,8 @@ PQescapeString            88
 PQescapeBytea             89
 printfPQExpBuffer         90
 appendPQExpBuffer         91
-pg_encoding_to_char       92
-pg_utf_mblen              93
+mdb_encoding_to_char       92
+mdb_utf_mblen              93
 PQunescapeBytea           94
 PQfreemem                 95
 PQtransactionStatus       96
@@ -114,8 +114,8 @@ PQsendQueryPrepared       111
 PQdsplen                  112
 PQserverVersion           113
 PQgetssl                  114
-pg_char_to_encoding       115
-pg_valid_server_encoding  116
+mdb_char_to_encoding       115
+mdb_valid_server_encoding  116
 pqsignal                  117
 PQprepare                 118
 PQsendPrepare             119
@@ -138,7 +138,7 @@ PQsendDescribePrepared    135
 PQsendDescribePortal      136
 lo_truncate               137
 PQconnectionUsedPassword  138
-pg_valid_server_encoding_id 139
+mdb_valid_server_encoding_id 139
 PQconnectionNeedsPassword 140
 lo_import_with_oid        141
 PQcopyResult              142

@@ -1,8 +1,8 @@
 --
 -- OPR_SANITY
 -- Sanity checks for common errors in making operator/procedure system tables:
--- pg_operator, pg_proc, pg_cast, pg_conversion, pg_aggregate, pg_am,
--- pg_amop, pg_amproc, pg_opclass, pg_opfamily, pg_index.
+-- mdb_operator, mdb_proc, mdb_cast, mdb_conversion, mdb_aggregate, mdb_am,
+-- mdb_amop, mdb_amproc, mdb_opclass, mdb_opfamily, mdb_index.
 --
 -- Every test failure in this file should be closely inspected.
 -- The description of the failing test should be read carefully before
@@ -24,39 +24,39 @@
 -- This should match IsBinaryCoercible() in parse_coerce.c.
 create function binary_coercible(oid, oid) returns bool as $$
 SELECT ($1 = $2) OR
- EXISTS(select 1 from pg_catalog.pg_cast where
+ EXISTS(select 1 from mdb_catalog.mdb_cast where
         castsource = $1 and casttarget = $2 and
         castmethod = 'b' and castcontext = 'i') OR
- ($2 = 'pg_catalog.any'::pg_catalog.regtype) OR
- ($2 = 'pg_catalog.anyarray'::pg_catalog.regtype AND
-  EXISTS(select 1 from pg_catalog.pg_type where
+ ($2 = 'mdb_catalog.any'::mdb_catalog.regtype) OR
+ ($2 = 'mdb_catalog.anyarray'::mdb_catalog.regtype AND
+  EXISTS(select 1 from mdb_catalog.mdb_type where
          oid = $1 and typelem != 0 and typlen = -1)) OR
- ($2 = 'pg_catalog.anyrange'::pg_catalog.regtype AND
-  (select typtype from pg_catalog.pg_type where oid = $1) = 'r')
+ ($2 = 'mdb_catalog.anyrange'::mdb_catalog.regtype AND
+  (select typtype from mdb_catalog.mdb_type where oid = $1) = 'r')
 $$ language sql strict stable;
 
 -- This one ignores castcontext, so it considers only physical equivalence
 -- and not whether the coercion can be invoked implicitly.
 create function physically_coercible(oid, oid) returns bool as $$
 SELECT ($1 = $2) OR
- EXISTS(select 1 from pg_catalog.pg_cast where
+ EXISTS(select 1 from mdb_catalog.mdb_cast where
         castsource = $1 and casttarget = $2 and
         castmethod = 'b') OR
- ($2 = 'pg_catalog.any'::pg_catalog.regtype) OR
- ($2 = 'pg_catalog.anyarray'::pg_catalog.regtype AND
-  EXISTS(select 1 from pg_catalog.pg_type where
+ ($2 = 'mdb_catalog.any'::mdb_catalog.regtype) OR
+ ($2 = 'mdb_catalog.anyarray'::mdb_catalog.regtype AND
+  EXISTS(select 1 from mdb_catalog.mdb_type where
          oid = $1 and typelem != 0 and typlen = -1)) OR
- ($2 = 'pg_catalog.anyrange'::pg_catalog.regtype AND
-  (select typtype from pg_catalog.pg_type where oid = $1) = 'r')
+ ($2 = 'mdb_catalog.anyrange'::mdb_catalog.regtype AND
+  (select typtype from mdb_catalog.mdb_type where oid = $1) = 'r')
 $$ language sql strict stable;
 
 
--- **************** pg_proc ****************
+-- **************** mdb_proc ****************
 
--- Look for illegal values in pg_proc fields.
+-- Look for illegal values in mdb_proc fields.
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE p1.prolang = 0 OR p1.prorettype = 0 OR
        p1.pronargs < 0 OR
        p1.pronargdefaults < 0 OR
@@ -71,34 +71,34 @@ WHERE p1.prolang = 0 OR p1.prorettype = 0 OR
 
 -- prosrc should never be null or empty
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE prosrc IS NULL OR prosrc = '' OR prosrc = '-';
 
 -- proiswindow shouldn't be set together with proisagg or proretset
 SELECT p1.oid, p1.proname
-FROM pg_proc AS p1
+FROM mdb_proc AS p1
 WHERE proiswindow AND (proisagg OR proretset);
 
 -- pronargdefaults should be 0 iff proargdefaults is null
 SELECT p1.oid, p1.proname
-FROM pg_proc AS p1
+FROM mdb_proc AS p1
 WHERE (pronargdefaults <> 0) != (proargdefaults IS NOT NULL);
 
 -- probin should be non-empty for C functions, null everywhere else
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE prolang = 13 AND (probin IS NULL OR probin = '' OR probin = '-');
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE prolang != 13 AND probin IS NOT NULL;
 
 -- Look for conflicting proc definitions (same names and input datatypes).
 -- (This test should be dead code now that we have the unique index
--- pg_proc_proname_args_nsp_index, but I'll leave it in anyway.)
+-- mdb_proc_proname_args_nsp_index, but I'll leave it in anyway.)
 
 SELECT p1.oid, p1.proname, p2.oid, p2.proname
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.proname = p2.proname AND
     p1.pronargs = p2.pronargs AND
@@ -113,7 +113,7 @@ WHERE p1.oid != p2.oid AND
 -- dummy built-in function.
 
 SELECT p1.oid, p1.proname, p2.oid, p2.proname
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid < p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -139,7 +139,7 @@ WHERE p1.oid < p2.oid AND
 -- dummy built-in function.  Likewise, ignore range constructor functions.
 
 SELECT DISTINCT p1.prorettype, p2.prorettype
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -150,7 +150,7 @@ WHERE p1.oid != p2.oid AND
 ORDER BY 1, 2;
 
 SELECT DISTINCT p1.proargtypes[0], p2.proargtypes[0]
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -161,7 +161,7 @@ WHERE p1.oid != p2.oid AND
 ORDER BY 1, 2;
 
 SELECT DISTINCT p1.proargtypes[1], p2.proargtypes[1]
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -172,7 +172,7 @@ WHERE p1.oid != p2.oid AND
 ORDER BY 1, 2;
 
 SELECT DISTINCT p1.proargtypes[2], p2.proargtypes[2]
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -181,7 +181,7 @@ WHERE p1.oid != p2.oid AND
 ORDER BY 1, 2;
 
 SELECT DISTINCT p1.proargtypes[3], p2.proargtypes[3]
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -190,7 +190,7 @@ WHERE p1.oid != p2.oid AND
 ORDER BY 1, 2;
 
 SELECT DISTINCT p1.proargtypes[4], p2.proargtypes[4]
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -199,7 +199,7 @@ WHERE p1.oid != p2.oid AND
 ORDER BY 1, 2;
 
 SELECT DISTINCT p1.proargtypes[5], p2.proargtypes[5]
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -208,7 +208,7 @@ WHERE p1.oid != p2.oid AND
 ORDER BY 1, 2;
 
 SELECT DISTINCT p1.proargtypes[6], p2.proargtypes[6]
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -217,7 +217,7 @@ WHERE p1.oid != p2.oid AND
 ORDER BY 1, 2;
 
 SELECT DISTINCT p1.proargtypes[7], p2.proargtypes[7]
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid != p2.oid AND
     p1.prosrc = p2.prosrc AND
     p1.prolang = 12 AND p2.prolang = 12 AND
@@ -233,7 +233,7 @@ ORDER BY 1, 2;
 -- ensure they can only be called in an aggregate context.
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE p1.prorettype = 'internal'::regtype AND NOT
     'internal'::regtype = ANY (p1.proargtypes);
 
@@ -243,7 +243,7 @@ WHERE p1.prorettype = 'internal'::regtype AND NOT
 -- and GiST support functions associated with these pseudotypes.
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE p1.prorettype IN
     ('anyelement'::regtype, 'anyarray'::regtype, 'anynonarray'::regtype,
      'anyenum'::regtype, 'anyrange'::regtype)
@@ -265,10 +265,10 @@ ORDER BY 2;
 -- any shell types.
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE 'cstring'::regtype = ANY (p1.proargtypes)
-    AND NOT EXISTS(SELECT 1 FROM pg_type WHERE typinput = p1.oid)
-    AND NOT EXISTS(SELECT 1 FROM pg_conversion WHERE conproc = p1.oid)
+    AND NOT EXISTS(SELECT 1 FROM mdb_type WHERE typinput = p1.oid)
+    AND NOT EXISTS(SELECT 1 FROM mdb_conversion WHERE conproc = p1.oid)
     AND p1.oid != 'shell_in(cstring)'::regprocedure
 ORDER BY 1;
 
@@ -278,48 +278,48 @@ ORDER BY 1;
 -- However, we must manually exclude shell_out.
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE  p1.prorettype = 'cstring'::regtype
-    AND NOT EXISTS(SELECT 1 FROM pg_type WHERE typoutput = p1.oid)
-    AND NOT EXISTS(SELECT 1 FROM pg_type WHERE typmodout = p1.oid)
+    AND NOT EXISTS(SELECT 1 FROM mdb_type WHERE typoutput = p1.oid)
+    AND NOT EXISTS(SELECT 1 FROM mdb_type WHERE typmodout = p1.oid)
     AND p1.oid != 'shell_out(opaque)'::regprocedure
 ORDER BY 1;
 
 -- Check for length inconsistencies between the various argument-info arrays.
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE proallargtypes IS NOT NULL AND
     array_length(proallargtypes,1) < array_length(proargtypes,1);
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE proargmodes IS NOT NULL AND
     array_length(proargmodes,1) < array_length(proargtypes,1);
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE proargnames IS NOT NULL AND
     array_length(proargnames,1) < array_length(proargtypes,1);
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE proallargtypes IS NOT NULL AND proargmodes IS NOT NULL AND
     array_length(proallargtypes,1) <> array_length(proargmodes,1);
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE proallargtypes IS NOT NULL AND proargnames IS NOT NULL AND
     array_length(proallargtypes,1) <> array_length(proargnames,1);
 
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE proargmodes IS NOT NULL AND proargnames IS NOT NULL AND
     array_length(proargmodes,1) <> array_length(proargnames,1);
 
 -- Check that proallargtypes matches proargtypes
 SELECT p1.oid, p1.proname, p1.proargtypes, p1.proallargtypes, p1.proargmodes
-FROM pg_proc as p1
+FROM mdb_proc as p1
 WHERE proallargtypes IS NOT NULL AND
   ARRAY(SELECT unnest(proargtypes)) <>
   ARRAY(SELECT proallargtypes[i]
@@ -328,14 +328,14 @@ WHERE proallargtypes IS NOT NULL AND
 
 -- Check for protransform functions with the wrong signature
 SELECT p1.oid, p1.proname, p2.oid, p2.proname
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p2.oid = p1.protransform AND
     (p2.prorettype != 'internal'::regtype OR p2.proretset OR p2.pronargs != 1
      OR p2.proargtypes[0] != 'internal'::regtype);
 
--- Insist that all built-in pg_proc entries have descriptions
+-- Insist that all built-in mdb_proc entries have descriptions
 SELECT p1.oid, p1.proname
-FROM pg_proc as p1 LEFT JOIN pg_description as d
+FROM mdb_proc as p1 LEFT JOIN mdb_description as d
      ON p1.tableoid = d.classoid and p1.oid = d.objoid and d.objsubid = 0
 WHERE d.classoid IS NULL AND p1.oid <= 9999;
 
@@ -350,9 +350,9 @@ WHERE d.classoid IS NULL AND p1.oid <= 9999;
 \a\t
 
 SELECT p1.oid::regprocedure
-FROM pg_proc p1 JOIN pg_namespace pn
+FROM mdb_proc p1 JOIN mdb_namespace pn
      ON pronamespace = pn.oid
-WHERE nspname = 'pg_catalog' AND proleakproof
+WHERE nspname = 'mdb_catalog' AND proleakproof
 ORDER BY 1;
 
 -- restore normal output mode
@@ -363,7 +363,7 @@ ORDER BY 1;
 -- If the output of this query changes, you probably broke libpq.
 -- lo_initialize() assumes that there will be at most one match for
 -- each listed name.
-select proname, oid from pg_catalog.pg_proc
+select proname, oid from mdb_catalog.mdb_proc
 where proname in (
   'lo_open',
   'lo_close',
@@ -378,18 +378,18 @@ where proname in (
   'lo_truncate64',
   'loread',
   'lowrite')
-and pronamespace = (select oid from pg_catalog.pg_namespace
-                    where nspname = 'pg_catalog')
+and pronamespace = (select oid from mdb_catalog.mdb_namespace
+                    where nspname = 'mdb_catalog')
 order by 1;
 
 
--- **************** pg_cast ****************
+-- **************** mdb_cast ****************
 
--- Catch bogus values in pg_cast columns (other than cases detected by
+-- Catch bogus values in mdb_cast columns (other than cases detected by
 -- oidjoins test).
 
 SELECT *
-FROM pg_cast c
+FROM mdb_cast c
 WHERE castsource = 0 OR casttarget = 0 OR castcontext NOT IN ('e', 'a', 'i')
     OR castmethod NOT IN ('f', 'b' ,'i');
 
@@ -397,7 +397,7 @@ WHERE castsource = 0 OR casttarget = 0 OR castcontext NOT IN ('e', 'a', 'i')
 -- and zero otherwise
 
 SELECT *
-FROM pg_cast c
+FROM mdb_cast c
 WHERE (castmethod = 'f' AND castfunc = 0)
    OR (castmethod IN ('b', 'i') AND castfunc <> 0);
 
@@ -406,23 +406,23 @@ WHERE (castmethod = 'f' AND castfunc = 0)
 -- Such entries are not necessarily harmful, but they are useless.
 
 SELECT *
-FROM pg_cast c
+FROM mdb_cast c
 WHERE castsource = casttarget AND castfunc = 0;
 
 SELECT c.*
-FROM pg_cast c, pg_proc p
+FROM mdb_cast c, mdb_proc p
 WHERE c.castfunc = p.oid AND p.pronargs < 2 AND castsource = casttarget;
 
 -- Look for cast functions that don't have the right signature.  The
--- argument and result types in pg_proc must be the same as, or binary
--- compatible with, what it says in pg_cast.
+-- argument and result types in mdb_proc must be the same as, or binary
+-- compatible with, what it says in mdb_cast.
 -- As a special case, we allow casts from CHAR(n) that use functions
 -- declared to take TEXT.  This does not pass the binary-coercibility test
 -- because CHAR(n)-to-TEXT normally invokes rtrim().  However, the results
 -- are the same, so long as the function is one that ignores trailing blanks.
 
 SELECT c.*
-FROM pg_cast c, pg_proc p
+FROM mdb_cast c, mdb_proc p
 WHERE c.castfunc = p.oid AND
     (p.pronargs < 1 OR p.pronargs > 3
      OR NOT (binary_coercible(c.castsource, p.proargtypes[0])
@@ -431,7 +431,7 @@ WHERE c.castfunc = p.oid AND
      OR NOT binary_coercible(p.prorettype, c.casttarget));
 
 SELECT c.*
-FROM pg_cast c, pg_proc p
+FROM mdb_cast c, mdb_proc p
 WHERE c.castfunc = p.oid AND
     ((p.pronargs > 1 AND p.proargtypes[1] != 'int4'::regtype) OR
      (p.pronargs > 2 AND p.proargtypes[2] != 'bool'::regtype));
@@ -450,32 +450,32 @@ WHERE c.castfunc = p.oid AND
 -- because those are binary-compatible while the reverse goes through
 -- texttoxml(), which does an XML syntax check.
 
--- As of 9.1, this finds the cast from pg_node_tree to text, which we
+-- As of 9.1, this finds the cast from mdb_node_tree to text, which we
 -- intentionally do not provide a reverse pathway for.
 
 SELECT castsource::regtype, casttarget::regtype, castfunc, castcontext
-FROM pg_cast c
+FROM mdb_cast c
 WHERE c.castmethod = 'b' AND
-    NOT EXISTS (SELECT 1 FROM pg_cast k
+    NOT EXISTS (SELECT 1 FROM mdb_cast k
                 WHERE k.castmethod = 'b' AND
                     k.castsource = c.casttarget AND
                     k.casttarget = c.castsource);
 
 
--- **************** pg_conversion ****************
+-- **************** mdb_conversion ****************
 
--- Look for illegal values in pg_conversion fields.
+-- Look for illegal values in mdb_conversion fields.
 
 SELECT p1.oid, p1.conname
-FROM pg_conversion as p1
+FROM mdb_conversion as p1
 WHERE p1.conproc = 0 OR
-    pg_encoding_to_char(conforencoding) = '' OR
-    pg_encoding_to_char(contoencoding) = '';
+    mdb_encoding_to_char(conforencoding) = '' OR
+    mdb_encoding_to_char(contoencoding) = '';
 
 -- Look for conprocs that don't have the expected signature.
 
 SELECT p.oid, p.proname, c.oid, c.conname
-FROM pg_proc p, pg_conversion c
+FROM mdb_proc p, mdb_conversion c
 WHERE p.oid = c.conproc AND
     (p.prorettype != 'void'::regtype OR p.proretset OR
      p.pronargs != 5 OR
@@ -486,7 +486,7 @@ WHERE p.oid = c.conproc AND
      p.proargtypes[4] != 'int4'::regtype);
 
 -- Check for conprocs that don't perform the specific conversion that
--- pg_conversion alleges they do, by trying to invoke each conversion
+-- mdb_conversion alleges they do, by trying to invoke each conversion
 -- on some simple ASCII data.  (The conproc should throw an error if
 -- it doesn't accept the encodings that are passed to it.)
 -- Unfortunately, we can't test non-default conprocs this way, because
@@ -496,25 +496,25 @@ WHERE p.oid = c.conproc AND
 -- (Similarly, this doesn't cope with any search path issues.)
 
 SELECT p1.oid, p1.conname
-FROM pg_conversion as p1
+FROM mdb_conversion as p1
 WHERE condefault AND
-    convert('ABC'::bytea, pg_encoding_to_char(conforencoding),
-            pg_encoding_to_char(contoencoding)) != 'ABC';
+    convert('ABC'::bytea, mdb_encoding_to_char(conforencoding),
+            mdb_encoding_to_char(contoencoding)) != 'ABC';
 
 
--- **************** pg_operator ****************
+-- **************** mdb_operator ****************
 
--- Look for illegal values in pg_operator fields.
+-- Look for illegal values in mdb_operator fields.
 
 SELECT p1.oid, p1.oprname
-FROM pg_operator as p1
+FROM mdb_operator as p1
 WHERE (p1.oprkind != 'b' AND p1.oprkind != 'l' AND p1.oprkind != 'r') OR
     p1.oprresult = 0 OR p1.oprcode = 0;
 
 -- Look for missing or unwanted operand types
 
 SELECT p1.oid, p1.oprname
-FROM pg_operator as p1
+FROM mdb_operator as p1
 WHERE (p1.oprleft = 0 and p1.oprkind != 'l') OR
     (p1.oprleft != 0 and p1.oprkind = 'l') OR
     (p1.oprright = 0 and p1.oprkind != 'r') OR
@@ -523,7 +523,7 @@ WHERE (p1.oprleft = 0 and p1.oprkind != 'l') OR
 -- Look for conflicting operator definitions (same names and input datatypes).
 
 SELECT p1.oid, p1.oprcode, p2.oid, p2.oprcode
-FROM pg_operator AS p1, pg_operator AS p2
+FROM mdb_operator AS p1, mdb_operator AS p2
 WHERE p1.oid != p2.oid AND
     p1.oprname = p2.oprname AND
     p1.oprkind = p2.oprkind AND
@@ -536,7 +536,7 @@ WHERE p1.oid != p2.oid AND
 -- inherently essential, but it would be inefficient not to mark it so.
 
 SELECT p1.oid, p1.oprcode, p2.oid, p2.oprcode
-FROM pg_operator AS p1, pg_operator AS p2
+FROM mdb_operator AS p1, mdb_operator AS p2
 WHERE p1.oprcom = p2.oid AND
     (p1.oprkind != 'b' OR
      p1.oprleft != p2.oprright OR
@@ -553,7 +553,7 @@ WHERE p1.oprcom = p2.oid AND
 -- Also, A and B had better not be the same operator.
 
 SELECT p1.oid, p1.oprcode, p2.oid, p2.oprcode
-FROM pg_operator AS p1, pg_operator AS p2
+FROM mdb_operator AS p1, mdb_operator AS p2
 WHERE p1.oprnegate = p2.oid AND
     (p1.oprkind != p2.oprkind OR
      p1.oprleft != p2.oprleft OR
@@ -568,14 +568,14 @@ WHERE p1.oprnegate = p2.oid AND
 -- make sure you didn't link the wrong operators.
 
 SELECT DISTINCT o1.oprname AS op1, o2.oprname AS op2
-FROM pg_operator o1, pg_operator o2
+FROM mdb_operator o1, mdb_operator o2
 WHERE o1.oprcom = o2.oid AND o1.oprname <= o2.oprname
 ORDER BY 1, 2;
 
 -- Likewise for negator pairs.
 
 SELECT DISTINCT o1.oprname AS op1, o2.oprname AS op2
-FROM pg_operator o1, pg_operator o2
+FROM mdb_operator o1, mdb_operator o2
 WHERE o1.oprnegate = o2.oid AND o1.oprname <= o2.oprname
 ORDER BY 1, 2;
 
@@ -583,14 +583,14 @@ ORDER BY 1, 2;
 -- boolean, and must have a commutator (itself, unless it's a cross-type
 -- operator).
 
-SELECT p1.oid, p1.oprname FROM pg_operator AS p1
+SELECT p1.oid, p1.oprname FROM mdb_operator AS p1
 WHERE (p1.oprcanmerge OR p1.oprcanhash) AND NOT
     (p1.oprkind = 'b' AND p1.oprresult = 'bool'::regtype AND p1.oprcom != 0);
 
 -- What's more, the commutator had better be mergejoinable/hashjoinable too.
 
 SELECT p1.oid, p1.oprname, p2.oid, p2.oprname
-FROM pg_operator AS p1, pg_operator AS p2
+FROM mdb_operator AS p1, mdb_operator AS p2
 WHERE p1.oprcom = p2.oid AND
     (p1.oprcanmerge != p2.oprcanmerge OR
      p1.oprcanhash != p2.oprcanhash);
@@ -599,43 +599,43 @@ WHERE p1.oprcom = p2.oid AND
 -- opfamilies.
 
 SELECT p1.oid, p1.oprname
-FROM pg_operator AS p1
+FROM mdb_operator AS p1
 WHERE p1.oprcanmerge AND NOT EXISTS
-  (SELECT 1 FROM pg_amop
-   WHERE amopmethod = (SELECT oid FROM pg_am WHERE amname = 'btree') AND
+  (SELECT 1 FROM mdb_amop
+   WHERE amopmethod = (SELECT oid FROM mdb_am WHERE amname = 'btree') AND
          amopopr = p1.oid AND amopstrategy = 3);
 
 -- And the converse.
 
 SELECT p1.oid, p1.oprname, p.amopfamily
-FROM pg_operator AS p1, pg_amop p
+FROM mdb_operator AS p1, mdb_amop p
 WHERE amopopr = p1.oid
-  AND amopmethod = (SELECT oid FROM pg_am WHERE amname = 'btree')
+  AND amopmethod = (SELECT oid FROM mdb_am WHERE amname = 'btree')
   AND amopstrategy = 3
   AND NOT p1.oprcanmerge;
 
 -- Hashable operators should appear as members of hash index opfamilies.
 
 SELECT p1.oid, p1.oprname
-FROM pg_operator AS p1
+FROM mdb_operator AS p1
 WHERE p1.oprcanhash AND NOT EXISTS
-  (SELECT 1 FROM pg_amop
-   WHERE amopmethod = (SELECT oid FROM pg_am WHERE amname = 'hash') AND
+  (SELECT 1 FROM mdb_amop
+   WHERE amopmethod = (SELECT oid FROM mdb_am WHERE amname = 'hash') AND
          amopopr = p1.oid AND amopstrategy = 1);
 
 -- And the converse.
 
 SELECT p1.oid, p1.oprname, p.amopfamily
-FROM pg_operator AS p1, pg_amop p
+FROM mdb_operator AS p1, mdb_amop p
 WHERE amopopr = p1.oid
-  AND amopmethod = (SELECT oid FROM pg_am WHERE amname = 'hash')
+  AND amopmethod = (SELECT oid FROM mdb_am WHERE amname = 'hash')
   AND NOT p1.oprcanhash;
 
--- Check that each operator defined in pg_operator matches its oprcode entry
--- in pg_proc.  Easiest to do this separately for each oprkind.
+-- Check that each operator defined in mdb_operator matches its oprcode entry
+-- in mdb_proc.  Easiest to do this separately for each oprkind.
 
 SELECT p1.oid, p1.oprname, p2.oid, p2.proname
-FROM pg_operator AS p1, pg_proc AS p2
+FROM mdb_operator AS p1, mdb_proc AS p2
 WHERE p1.oprcode = p2.oid AND
     p1.oprkind = 'b' AND
     (p2.pronargs != 2
@@ -644,7 +644,7 @@ WHERE p1.oprcode = p2.oid AND
      OR NOT binary_coercible(p1.oprright, p2.proargtypes[1]));
 
 SELECT p1.oid, p1.oprname, p2.oid, p2.proname
-FROM pg_operator AS p1, pg_proc AS p2
+FROM mdb_operator AS p1, mdb_proc AS p2
 WHERE p1.oprcode = p2.oid AND
     p1.oprkind = 'l' AND
     (p2.pronargs != 1
@@ -653,7 +653,7 @@ WHERE p1.oprcode = p2.oid AND
      OR p1.oprleft != 0);
 
 SELECT p1.oid, p1.oprname, p2.oid, p2.proname
-FROM pg_operator AS p1, pg_proc AS p2
+FROM mdb_operator AS p1, mdb_proc AS p2
 WHERE p1.oprcode = p2.oid AND
     p1.oprkind = 'r' AND
     (p2.pronargs != 1
@@ -665,7 +665,7 @@ WHERE p1.oprcode = p2.oid AND
 -- should not be volatile.
 
 SELECT p1.oid, p1.oprname, p2.oid, p2.proname
-FROM pg_operator AS p1, pg_proc AS p2
+FROM mdb_operator AS p1, mdb_proc AS p2
 WHERE p1.oprcode = p2.oid AND
     (p1.oprcanmerge OR p1.oprcanhash) AND
     p2.provolatile = 'v';
@@ -676,7 +676,7 @@ WHERE p1.oprcode = p2.oid AND
 -- The proc signature we want is: float8 proc(internal, oid, internal, int4)
 
 SELECT p1.oid, p1.oprname, p2.oid, p2.proname
-FROM pg_operator AS p1, pg_proc AS p2
+FROM mdb_operator AS p1, mdb_proc AS p2
 WHERE p1.oprrest = p2.oid AND
     (p1.oprresult != 'bool'::regtype OR
      p2.prorettype != 'float8'::regtype OR p2.proretset OR
@@ -694,7 +694,7 @@ WHERE p1.oprrest = p2.oid AND
 -- estimator should be using it.)
 
 SELECT p1.oid, p1.oprname, p2.oid, p2.proname
-FROM pg_operator AS p1, pg_proc AS p2
+FROM mdb_operator AS p1, mdb_proc AS p2
 WHERE p1.oprjoin = p2.oid AND
     (p1.oprkind != 'b' OR p1.oprresult != 'bool'::regtype OR
      p2.prorettype != 'float8'::regtype OR p2.proretset OR
@@ -705,26 +705,26 @@ WHERE p1.oprjoin = p2.oid AND
      p2.proargtypes[3] != 'int2'::regtype OR
      p2.proargtypes[4] != 'internal'::regtype);
 
--- Insist that all built-in pg_operator entries have descriptions
+-- Insist that all built-in mdb_operator entries have descriptions
 SELECT p1.oid, p1.oprname
-FROM pg_operator as p1 LEFT JOIN pg_description as d
+FROM mdb_operator as p1 LEFT JOIN mdb_description as d
      ON p1.tableoid = d.classoid and p1.oid = d.objoid and d.objsubid = 0
 WHERE d.classoid IS NULL AND p1.oid <= 9999;
 
 -- Check that operators' underlying functions have suitable comments,
 -- namely 'implementation of XXX operator'.  (Note: it's not necessary to
--- put such comments into pg_proc.h; initdb will generate them as needed.)
+-- put such comments into mdb_proc.h; initdb will generate them as needed.)
 -- In some cases involving legacy names for operators, there are multiple
--- operators referencing the same pg_proc entry, so ignore operators whose
+-- operators referencing the same mdb_proc entry, so ignore operators whose
 -- comments say they are deprecated.
 -- We also have a few functions that are both operator support and meant to
 -- be called directly; those should have comments matching their operator.
 WITH funcdescs AS (
   SELECT p.oid as p_oid, proname, o.oid as o_oid,
-    obj_description(p.oid, 'pg_proc') as prodesc,
+    obj_description(p.oid, 'mdb_proc') as prodesc,
     'implementation of ' || oprname || ' operator' as expecteddesc,
-    obj_description(o.oid, 'pg_operator') as oprdesc
-  FROM pg_proc p JOIN pg_operator o ON oprcode = p.oid
+    obj_description(o.oid, 'mdb_operator') as oprdesc
+  FROM mdb_proc p JOIN mdb_operator o ON oprcode = p.oid
   WHERE o.oid <= 9999
 )
 SELECT * FROM funcdescs
@@ -738,10 +738,10 @@ SELECT * FROM funcdescs
 -- This should be a pretty short list; it's mostly legacy cases.
 WITH funcdescs AS (
   SELECT p.oid as p_oid, proname, o.oid as o_oid,
-    obj_description(p.oid, 'pg_proc') as prodesc,
+    obj_description(p.oid, 'mdb_proc') as prodesc,
     'implementation of ' || oprname || ' operator' as expecteddesc,
-    obj_description(o.oid, 'pg_operator') as oprdesc
-  FROM pg_proc p JOIN pg_operator o ON oprcode = p.oid
+    obj_description(o.oid, 'mdb_operator') as oprdesc
+  FROM mdb_proc p JOIN mdb_operator o ON oprcode = p.oid
   WHERE o.oid <= 9999
 )
 SELECT p_oid, proname, prodesc FROM funcdescs
@@ -750,44 +750,44 @@ SELECT p_oid, proname, prodesc FROM funcdescs
 ORDER BY 1;
 
 
--- **************** pg_aggregate ****************
+-- **************** mdb_aggregate ****************
 
--- Look for illegal values in pg_aggregate fields.
+-- Look for illegal values in mdb_aggregate fields.
 
 SELECT ctid, aggfnoid::oid
-FROM pg_aggregate as p1
+FROM mdb_aggregate as p1
 WHERE aggfnoid = 0 OR aggtransfn = 0 OR
     aggkind NOT IN ('n', 'o', 'h') OR
     aggnumdirectargs < 0 OR
     (aggkind = 'n' AND aggnumdirectargs > 0) OR
     aggtranstype = 0 OR aggtransspace < 0 OR aggmtransspace < 0;
 
--- Make sure the matching pg_proc entry is sensible, too.
+-- Make sure the matching mdb_proc entry is sensible, too.
 
 SELECT a.aggfnoid::oid, p.proname
-FROM pg_aggregate as a, pg_proc as p
+FROM mdb_aggregate as a, mdb_proc as p
 WHERE a.aggfnoid = p.oid AND
     (NOT p.proisagg OR p.proretset OR p.pronargs < a.aggnumdirectargs);
 
--- Make sure there are no proisagg pg_proc entries without matches.
+-- Make sure there are no proisagg mdb_proc entries without matches.
 
 SELECT oid, proname
-FROM pg_proc as p
+FROM mdb_proc as p
 WHERE p.proisagg AND
-    NOT EXISTS (SELECT 1 FROM pg_aggregate a WHERE a.aggfnoid = p.oid);
+    NOT EXISTS (SELECT 1 FROM mdb_aggregate a WHERE a.aggfnoid = p.oid);
 
 -- If there is no finalfn then the output type must be the transtype.
 
 SELECT a.aggfnoid::oid, p.proname
-FROM pg_aggregate as a, pg_proc as p
+FROM mdb_aggregate as a, mdb_proc as p
 WHERE a.aggfnoid = p.oid AND
     a.aggfinalfn = 0 AND p.prorettype != a.aggtranstype;
 
--- Cross-check transfn against its entry in pg_proc.
+-- Cross-check transfn against its entry in mdb_proc.
 -- NOTE: use physically_coercible here, not binary_coercible, because
 -- max and min on abstime are implemented using int4larger/int4smaller.
 SELECT a.aggfnoid::oid, p.proname, ptr.oid, ptr.proname
-FROM pg_aggregate AS a, pg_proc AS p, pg_proc AS ptr
+FROM mdb_aggregate AS a, mdb_proc AS p, mdb_proc AS ptr
 WHERE a.aggfnoid = p.oid AND
     a.aggtransfn = ptr.oid AND
     (ptr.proretset
@@ -805,10 +805,10 @@ WHERE a.aggfnoid = p.oid AND
      -- we could carry the check further, but 3 args is enough for now
     );
 
--- Cross-check finalfn (if present) against its entry in pg_proc.
+-- Cross-check finalfn (if present) against its entry in mdb_proc.
 
 SELECT a.aggfnoid::oid, p.proname, pfn.oid, pfn.proname
-FROM pg_aggregate AS a, pg_proc AS p, pg_proc AS pfn
+FROM mdb_aggregate AS a, mdb_proc AS p, mdb_proc AS pfn
 WHERE a.aggfnoid = p.oid AND
     a.aggfinalfn = pfn.oid AND
     (pfn.proretset OR
@@ -830,7 +830,7 @@ WHERE a.aggfnoid = p.oid AND
 -- can be assigned as the state value.
 
 SELECT a.aggfnoid::oid, p.proname, ptr.oid, ptr.proname
-FROM pg_aggregate AS a, pg_proc AS p, pg_proc AS ptr
+FROM mdb_aggregate AS a, mdb_proc AS p, mdb_proc AS ptr
 WHERE a.aggfnoid = p.oid AND
     a.aggtransfn = ptr.oid AND ptr.proisstrict AND
     a.agginitval IS NULL AND
@@ -839,12 +839,12 @@ WHERE a.aggfnoid = p.oid AND
 -- Check for inconsistent specifications of moving-aggregate columns.
 
 SELECT ctid, aggfnoid::oid
-FROM pg_aggregate as p1
+FROM mdb_aggregate as p1
 WHERE aggmtranstype != 0 AND
     (aggmtransfn = 0 OR aggminvtransfn = 0);
 
 SELECT ctid, aggfnoid::oid
-FROM pg_aggregate as p1
+FROM mdb_aggregate as p1
 WHERE aggmtranstype = 0 AND
     (aggmtransfn != 0 OR aggminvtransfn != 0 OR aggmfinalfn != 0 OR
      aggmtransspace != 0 OR aggminitval IS NOT NULL);
@@ -852,14 +852,14 @@ WHERE aggmtranstype = 0 AND
 -- If there is no mfinalfn then the output type must be the mtranstype.
 
 SELECT a.aggfnoid::oid, p.proname
-FROM pg_aggregate as a, pg_proc as p
+FROM mdb_aggregate as a, mdb_proc as p
 WHERE a.aggfnoid = p.oid AND
     a.aggmtransfn != 0 AND
     a.aggmfinalfn = 0 AND p.prorettype != a.aggmtranstype;
 
--- Cross-check mtransfn (if present) against its entry in pg_proc.
+-- Cross-check mtransfn (if present) against its entry in mdb_proc.
 SELECT a.aggfnoid::oid, p.proname, ptr.oid, ptr.proname
-FROM pg_aggregate AS a, pg_proc AS p, pg_proc AS ptr
+FROM mdb_aggregate AS a, mdb_proc AS p, mdb_proc AS ptr
 WHERE a.aggfnoid = p.oid AND
     a.aggmtransfn = ptr.oid AND
     (ptr.proretset
@@ -877,9 +877,9 @@ WHERE a.aggfnoid = p.oid AND
      -- we could carry the check further, but 3 args is enough for now
     );
 
--- Cross-check minvtransfn (if present) against its entry in pg_proc.
+-- Cross-check minvtransfn (if present) against its entry in mdb_proc.
 SELECT a.aggfnoid::oid, p.proname, ptr.oid, ptr.proname
-FROM pg_aggregate AS a, pg_proc AS p, pg_proc AS ptr
+FROM mdb_aggregate AS a, mdb_proc AS p, mdb_proc AS ptr
 WHERE a.aggfnoid = p.oid AND
     a.aggminvtransfn = ptr.oid AND
     (ptr.proretset
@@ -897,10 +897,10 @@ WHERE a.aggfnoid = p.oid AND
      -- we could carry the check further, but 3 args is enough for now
     );
 
--- Cross-check mfinalfn (if present) against its entry in pg_proc.
+-- Cross-check mfinalfn (if present) against its entry in mdb_proc.
 
 SELECT a.aggfnoid::oid, p.proname, pfn.oid, pfn.proname
-FROM pg_aggregate AS a, pg_proc AS p, pg_proc AS pfn
+FROM mdb_aggregate AS a, mdb_proc AS p, mdb_proc AS pfn
 WHERE a.aggfnoid = p.oid AND
     a.aggmfinalfn = pfn.oid AND
     (pfn.proretset OR
@@ -922,7 +922,7 @@ WHERE a.aggfnoid = p.oid AND
 -- can be assigned as the state value.
 
 SELECT a.aggfnoid::oid, p.proname, ptr.oid, ptr.proname
-FROM pg_aggregate AS a, pg_proc AS p, pg_proc AS ptr
+FROM mdb_aggregate AS a, mdb_proc AS p, mdb_proc AS ptr
 WHERE a.aggfnoid = p.oid AND
     a.aggmtransfn = ptr.oid AND ptr.proisstrict AND
     a.aggminitval IS NULL AND
@@ -931,24 +931,24 @@ WHERE a.aggfnoid = p.oid AND
 -- mtransfn and minvtransfn should have same strictness setting.
 
 SELECT a.aggfnoid::oid, p.proname, ptr.oid, ptr.proname, iptr.oid, iptr.proname
-FROM pg_aggregate AS a, pg_proc AS p, pg_proc AS ptr, pg_proc AS iptr
+FROM mdb_aggregate AS a, mdb_proc AS p, mdb_proc AS ptr, mdb_proc AS iptr
 WHERE a.aggfnoid = p.oid AND
     a.aggmtransfn = ptr.oid AND
     a.aggminvtransfn = iptr.oid AND
     ptr.proisstrict != iptr.proisstrict;
 
--- Cross-check aggsortop (if present) against pg_operator.
+-- Cross-check aggsortop (if present) against mdb_operator.
 -- We expect to find entries for bool_and, bool_or, every, max, and min.
 
 SELECT DISTINCT proname, oprname
-FROM pg_operator AS o, pg_aggregate AS a, pg_proc AS p
+FROM mdb_operator AS o, mdb_aggregate AS a, mdb_proc AS p
 WHERE a.aggfnoid = p.oid AND a.aggsortop = o.oid
 ORDER BY 1, 2;
 
 -- Check datatypes match
 
 SELECT a.aggfnoid::oid, o.oid
-FROM pg_operator AS o, pg_aggregate AS a, pg_proc AS p
+FROM mdb_operator AS o, mdb_aggregate AS a, mdb_proc AS p
 WHERE a.aggfnoid = p.oid AND a.aggsortop = o.oid AND
     (oprkind != 'b' OR oprresult != 'boolean'::regtype
      OR oprleft != p.proargtypes[0] OR oprright != p.proargtypes[0]);
@@ -956,10 +956,10 @@ WHERE a.aggfnoid = p.oid AND a.aggsortop = o.oid AND
 -- Check operator is a suitable btree opfamily member
 
 SELECT a.aggfnoid::oid, o.oid
-FROM pg_operator AS o, pg_aggregate AS a, pg_proc AS p
+FROM mdb_operator AS o, mdb_aggregate AS a, mdb_proc AS p
 WHERE a.aggfnoid = p.oid AND a.aggsortop = o.oid AND
-    NOT EXISTS(SELECT 1 FROM pg_amop
-               WHERE amopmethod = (SELECT oid FROM pg_am WHERE amname = 'btree')
+    NOT EXISTS(SELECT 1 FROM mdb_amop
+               WHERE amopmethod = (SELECT oid FROM mdb_am WHERE amname = 'btree')
                      AND amopopr = o.oid
                      AND amoplefttype = o.oprleft
                      AND amoprighttype = o.oprright);
@@ -967,11 +967,11 @@ WHERE a.aggfnoid = p.oid AND a.aggsortop = o.oid AND
 -- Check correspondence of btree strategies and names
 
 SELECT DISTINCT proname, oprname, amopstrategy
-FROM pg_operator AS o, pg_aggregate AS a, pg_proc AS p,
-     pg_amop as ao
+FROM mdb_operator AS o, mdb_aggregate AS a, mdb_proc AS p,
+     mdb_amop as ao
 WHERE a.aggfnoid = p.oid AND a.aggsortop = o.oid AND
     amopopr = o.oid AND
-    amopmethod = (SELECT oid FROM pg_am WHERE amname = 'btree')
+    amopmethod = (SELECT oid FROM mdb_am WHERE amname = 'btree')
 ORDER BY 1, 2;
 
 -- Check that there are not aggregates with the same name and different
@@ -984,7 +984,7 @@ ORDER BY 1, 2;
 -- The only aggregates that should show up here are count(x) and count(*).
 
 SELECT p1.oid::regprocedure, p2.oid::regprocedure
-FROM pg_proc AS p1, pg_proc AS p2
+FROM mdb_proc AS p1, mdb_proc AS p2
 WHERE p1.oid < p2.oid AND p1.proname = p2.proname AND
     p1.proisagg AND p2.proisagg AND
     array_dims(p1.proargtypes) != array_dims(p2.proargtypes)
@@ -993,7 +993,7 @@ ORDER BY 1;
 -- For the same reason, built-in aggregates with default arguments are no good.
 
 SELECT oid, proname
-FROM pg_proc AS p
+FROM mdb_proc AS p
 WHERE proisagg AND proargdefaults IS NOT NULL;
 
 -- For the same reason, we avoid creating built-in variadic aggregates, except
@@ -1001,55 +1001,55 @@ WHERE proisagg AND proargdefaults IS NOT NULL;
 -- that is not subject to the misplaced ORDER BY issue).
 
 SELECT p.oid, proname
-FROM pg_proc AS p JOIN pg_aggregate AS a ON a.aggfnoid = p.oid
+FROM mdb_proc AS p JOIN mdb_aggregate AS a ON a.aggfnoid = p.oid
 WHERE proisagg AND provariadic != 0 AND a.aggkind = 'n';
 
 -- Check that all serial functions have a return type the same as the serial
 -- type.
 SELECT a.aggserialfn,a.aggserialtype,p.prorettype
-FROM pg_aggregate a
-INNER JOIN pg_proc p ON a.aggserialfn = p.oid
+FROM mdb_aggregate a
+INNER JOIN mdb_proc p ON a.aggserialfn = p.oid
 WHERE a.aggserialtype <> p.prorettype;
 
 -- Check that all the deserial functions have the same input type as the
 -- serialtype
 SELECT a.aggserialfn,a.aggserialtype,p.proargtypes[0]
-FROM pg_aggregate a
-INNER JOIN pg_proc p ON a.aggdeserialfn = p.oid
+FROM mdb_aggregate a
+INNER JOIN mdb_proc p ON a.aggdeserialfn = p.oid
 WHERE p.proargtypes[0] <> a.aggserialtype;
 
 -- An aggregate should either have a complete set of serialtype, serial func
 -- and deserial func, or none of them.
 SELECT aggserialtype,aggserialfn,aggdeserialfn
-FROM pg_aggregate
+FROM mdb_aggregate
 WHERE (aggserialtype <> 0 OR aggserialfn <> 0 OR aggdeserialfn <> 0)
   AND (aggserialtype = 0 OR aggserialfn = 0 OR aggdeserialfn = 0);
 
 -- Check that all aggregates with serialtypes have internal states.
 -- (There's no point in serializing anything apart from internal)
 SELECT aggfnoid,aggserialtype,aggtranstype
-FROM pg_aggregate
+FROM mdb_aggregate
 WHERE aggserialtype <> 0 AND aggtranstype <> 'internal'::regtype;
 
 -- Check that all serial functions are strict. It's wasteful for these to be
 -- called with NULL values.
 SELECT aggfnoid,aggserialfn
-FROM pg_aggregate a
-INNER JOIN pg_proc p ON a.aggserialfn = p.oid
+FROM mdb_aggregate a
+INNER JOIN mdb_proc p ON a.aggserialfn = p.oid
 WHERE p.proisstrict = false;
 
 -- Check that all deserial functions are strict. It's wasteful for these to be
 -- called with NULL values.
 SELECT aggfnoid,aggdeserialfn
-FROM pg_aggregate a
-INNER JOIN pg_proc p ON a.aggdeserialfn = p.oid
+FROM mdb_aggregate a
+INNER JOIN mdb_proc p ON a.aggdeserialfn = p.oid
 WHERE p.proisstrict = false;
 
 -- Check that no combine functions with an INTERNAL return type are strict.
 SELECT aggfnoid,aggcombinefn
-FROM pg_aggregate a
-INNER JOIN pg_proc p ON a.aggcombinefn = p.oid
-INNER JOIN pg_type t ON a.aggtranstype = t.oid
+FROM mdb_aggregate a
+INNER JOIN mdb_proc p ON a.aggcombinefn = p.oid
+INNER JOIN mdb_type t ON a.aggtranstype = t.oid
 WHERE t.typname = 'internal' AND p.proisstrict = true;
 
 -- Check that aggregates which have the same transition function also have
@@ -1057,41 +1057,41 @@ WHERE t.typname = 'internal' AND p.proisstrict = true;
 SELECT a.aggfnoid, a.aggcombinefn, a.aggserialfn, a.aggdeserialfn,
        b.aggfnoid, b.aggcombinefn, b.aggserialfn, b.aggdeserialfn
 FROM
-    pg_aggregate a, pg_aggregate b
+    mdb_aggregate a, mdb_aggregate b
 WHERE
     a.aggfnoid < b.aggfnoid AND a.aggtransfn = b.aggtransfn AND
     (a.aggcombinefn != b.aggcombinefn OR a.aggserialfn != b.aggserialfn
      OR a.aggdeserialfn != b.aggdeserialfn);
 
--- **************** pg_opfamily ****************
+-- **************** mdb_opfamily ****************
 
--- Look for illegal values in pg_opfamily fields
+-- Look for illegal values in mdb_opfamily fields
 
 SELECT p1.oid
-FROM pg_opfamily as p1
+FROM mdb_opfamily as p1
 WHERE p1.opfmethod = 0 OR p1.opfnamespace = 0;
 
 
--- **************** pg_opclass ****************
+-- **************** mdb_opclass ****************
 
--- Look for illegal values in pg_opclass fields
+-- Look for illegal values in mdb_opclass fields
 
 SELECT p1.oid
-FROM pg_opclass AS p1
+FROM mdb_opclass AS p1
 WHERE p1.opcmethod = 0 OR p1.opcnamespace = 0 OR p1.opcfamily = 0
     OR p1.opcintype = 0;
 
 -- opcmethod must match owning opfamily's opfmethod
 
 SELECT p1.oid, p2.oid
-FROM pg_opclass AS p1, pg_opfamily AS p2
+FROM mdb_opclass AS p1, mdb_opfamily AS p2
 WHERE p1.opcfamily = p2.oid AND p1.opcmethod != p2.opfmethod;
 
--- There should not be multiple entries in pg_opclass with opcdefault true
+-- There should not be multiple entries in mdb_opclass with opcdefault true
 -- and the same opcmethod/opcintype combination.
 
 SELECT p1.oid, p2.oid
-FROM pg_opclass AS p1, pg_opclass AS p2
+FROM mdb_opclass AS p1, mdb_opclass AS p2
 WHERE p1.oid != p2.oid AND
     p1.opcmethod = p2.opcmethod AND p1.opcintype = p2.opcintype AND
     p1.opcdefault AND p2.opcdefault;
@@ -1099,45 +1099,45 @@ WHERE p1.oid != p2.oid AND
 -- Ask access methods to validate opclasses
 -- (this replaces a lot of SQL-level checks that used to be done in this file)
 
-SELECT oid, opcname FROM pg_opclass WHERE NOT amvalidate(oid);
+SELECT oid, opcname FROM mdb_opclass WHERE NOT amvalidate(oid);
 
 
--- **************** pg_am ****************
+-- **************** mdb_am ****************
 
--- Look for illegal values in pg_am fields
+-- Look for illegal values in mdb_am fields
 
 SELECT p1.oid, p1.amname
-FROM pg_am AS p1
+FROM mdb_am AS p1
 WHERE p1.amhandler = 0;
 
 -- Check for amhandler functions with the wrong signature
 
 SELECT p1.oid, p1.amname, p2.oid, p2.proname
-FROM pg_am AS p1, pg_proc AS p2
+FROM mdb_am AS p1, mdb_proc AS p2
 WHERE p2.oid = p1.amhandler AND
     (p2.prorettype != 'index_am_handler'::regtype OR p2.proretset
      OR p2.pronargs != 1
      OR p2.proargtypes[0] != 'internal'::regtype);
 
 
--- **************** pg_amop ****************
+-- **************** mdb_amop ****************
 
--- Look for illegal values in pg_amop fields
+-- Look for illegal values in mdb_amop fields
 
 SELECT p1.amopfamily, p1.amopstrategy
-FROM pg_amop as p1
+FROM mdb_amop as p1
 WHERE p1.amopfamily = 0 OR p1.amoplefttype = 0 OR p1.amoprighttype = 0
     OR p1.amopopr = 0 OR p1.amopmethod = 0 OR p1.amopstrategy < 1;
 
 SELECT p1.amopfamily, p1.amopstrategy
-FROM pg_amop as p1
+FROM mdb_amop as p1
 WHERE NOT ((p1.amoppurpose = 's' AND p1.amopsortfamily = 0) OR
            (p1.amoppurpose = 'o' AND p1.amopsortfamily <> 0));
 
 -- amopmethod must match owning opfamily's opfmethod
 
 SELECT p1.oid, p2.oid
-FROM pg_amop AS p1, pg_opfamily AS p2
+FROM mdb_amop AS p1, mdb_opfamily AS p2
 WHERE p1.amopfamily = p2.oid AND p1.amopmethod != p2.opfmethod;
 
 -- Make a list of all the distinct operator names being used in particular
@@ -1146,7 +1146,7 @@ WHERE p1.amopfamily = p2.oid AND p1.amopmethod != p2.opfmethod;
 -- swapping two operators within a family.
 
 SELECT DISTINCT amopmethod, amopstrategy, oprname
-FROM pg_amop p1 LEFT JOIN pg_operator p2 ON amopopr = p2.oid
+FROM mdb_amop p1 LEFT JOIN mdb_operator p2 ON amopopr = p2.oid
 ORDER BY 1, 2, 3;
 
 -- Check that all opclass search operators have selectivity estimators.
@@ -1154,7 +1154,7 @@ ORDER BY 1, 2, 3;
 -- to insist on for all standard datatypes.
 
 SELECT p1.amopfamily, p1.amopopr, p2.oid, p2.oprname
-FROM pg_amop AS p1, pg_operator AS p2
+FROM mdb_amop AS p1, mdb_operator AS p2
 WHERE p1.amopopr = p2.oid AND p1.amoppurpose = 's' AND
     (p2.oprrest = 0 OR p2.oprjoin = 0);
 
@@ -1162,12 +1162,12 @@ WHERE p1.amopopr = p2.oid AND p1.amoppurpose = 's' AND
 -- ones whose oprleft matches opcintype (possibly by coercion).
 
 SELECT p1.opcname, p1.opcfamily
-FROM pg_opclass AS p1
-WHERE NOT EXISTS(SELECT 1 FROM pg_amop AS p2
+FROM mdb_opclass AS p1
+WHERE NOT EXISTS(SELECT 1 FROM mdb_amop AS p2
                  WHERE p2.amopfamily = p1.opcfamily
                    AND binary_coercible(p1.opcintype, p2.amoplefttype));
 
--- Check that each operator listed in pg_amop has an associated opclass,
+-- Check that each operator listed in mdb_amop has an associated opclass,
 -- that is one whose opcintype matches oprleft (possibly by coercion).
 -- Otherwise the operator is useless because it cannot be matched to an index.
 -- (In principle it could be useful to list such operators in multiple-datatype
@@ -1175,8 +1175,8 @@ WHERE NOT EXISTS(SELECT 1 FROM pg_amop AS p2
 -- every datatype the family knows about.)
 
 SELECT p1.amopfamily, p1.amopstrategy, p1.amopopr
-FROM pg_amop AS p1
-WHERE NOT EXISTS(SELECT 1 FROM pg_opclass AS p2
+FROM mdb_amop AS p1
+WHERE NOT EXISTS(SELECT 1 FROM mdb_opclass AS p2
                  WHERE p2.opcfamily = p1.amopfamily
                    AND binary_coercible(p2.opcintype, p1.amoplefttype));
 
@@ -1186,24 +1186,24 @@ WHERE NOT EXISTS(SELECT 1 FROM pg_opclass AS p2
 -- for index probe queries.
 
 SELECT p1.amopfamily, p1.amopopr, p2.oprname, p3.prosrc
-FROM pg_amop AS p1, pg_operator AS p2, pg_proc AS p3
+FROM mdb_amop AS p1, mdb_operator AS p2, mdb_proc AS p3
 WHERE p1.amopopr = p2.oid AND p2.oprcode = p3.oid AND
     p1.amoplefttype = p1.amoprighttype AND
     p3.provolatile != 'i';
 
 SELECT p1.amopfamily, p1.amopopr, p2.oprname, p3.prosrc
-FROM pg_amop AS p1, pg_operator AS p2, pg_proc AS p3
+FROM mdb_amop AS p1, mdb_operator AS p2, mdb_proc AS p3
 WHERE p1.amopopr = p2.oid AND p2.oprcode = p3.oid AND
     p1.amoplefttype != p1.amoprighttype AND
     p3.provolatile = 'v';
 
 
--- **************** pg_amproc ****************
+-- **************** mdb_amproc ****************
 
--- Look for illegal values in pg_amproc fields
+-- Look for illegal values in mdb_amproc fields
 
 SELECT p1.amprocfamily, p1.amprocnum
-FROM pg_amproc as p1
+FROM mdb_amproc as p1
 WHERE p1.amprocfamily = 0 OR p1.amproclefttype = 0 OR p1.amprocrighttype = 0
     OR p1.amprocnum < 1 OR p1.amproc = 0;
 
@@ -1213,31 +1213,31 @@ WHERE p1.amprocfamily = 0 OR p1.amproclefttype = 0 OR p1.amprocrighttype = 0
 -- for index probe queries.
 
 SELECT p1.amprocfamily, p1.amproc, p2.prosrc
-FROM pg_amproc AS p1, pg_proc AS p2
+FROM mdb_amproc AS p1, mdb_proc AS p2
 WHERE p1.amproc = p2.oid AND
     p1.amproclefttype = p1.amprocrighttype AND
     p2.provolatile != 'i';
 
 SELECT p1.amprocfamily, p1.amproc, p2.prosrc
-FROM pg_amproc AS p1, pg_proc AS p2
+FROM mdb_amproc AS p1, mdb_proc AS p2
 WHERE p1.amproc = p2.oid AND
     p1.amproclefttype != p1.amprocrighttype AND
     p2.provolatile = 'v';
 
 
--- **************** pg_index ****************
+-- **************** mdb_index ****************
 
--- Look for illegal values in pg_index fields.
+-- Look for illegal values in mdb_index fields.
 
 SELECT p1.indexrelid, p1.indrelid
-FROM pg_index as p1
+FROM mdb_index as p1
 WHERE p1.indexrelid = 0 OR p1.indrelid = 0 OR
       p1.indnatts <= 0 OR p1.indnatts > 32;
 
 -- oidvector and int2vector fields should be of length indnatts.
 
 SELECT p1.indexrelid, p1.indrelid
-FROM pg_index as p1
+FROM mdb_index as p1
 WHERE array_lower(indkey, 1) != 0 OR array_upper(indkey, 1) != indnatts-1 OR
     array_lower(indclass, 1) != 0 OR array_upper(indclass, 1) != indnatts-1 OR
     array_lower(indcollation, 1) != 0 OR array_upper(indcollation, 1) != indnatts-1 OR
@@ -1249,9 +1249,9 @@ WHERE array_lower(indkey, 1) != 0 OR array_upper(indkey, 1) != indnatts-1 OR
 SELECT indexrelid::regclass, indrelid::regclass, attname, atttypid::regtype, opcname
 FROM (SELECT indexrelid, indrelid, unnest(indkey) as ikey,
              unnest(indclass) as iclass, unnest(indcollation) as icoll
-      FROM pg_index) ss,
-      pg_attribute a,
-      pg_opclass opc
+      FROM mdb_index) ss,
+      mdb_attribute a,
+      mdb_opclass opc
 WHERE a.attrelid = indrelid AND a.attnum = ikey AND opc.oid = iclass AND
       (NOT binary_coercible(atttypid, opcintype) OR icoll != attcollation);
 
@@ -1262,16 +1262,16 @@ WHERE a.attrelid = indrelid AND a.attnum = ikey AND opc.oid = iclass AND
 SELECT indexrelid::regclass, indrelid::regclass, attname, atttypid::regtype, opcname
 FROM (SELECT indexrelid, indrelid, unnest(indkey) as ikey,
              unnest(indclass) as iclass, unnest(indcollation) as icoll
-      FROM pg_index
+      FROM mdb_index
       WHERE indrelid < 16384) ss,
-      pg_attribute a,
-      pg_opclass opc
+      mdb_attribute a,
+      mdb_opclass opc
 WHERE a.attrelid = indrelid AND a.attnum = ikey AND opc.oid = iclass AND
       (opcintype != atttypid OR icoll != attcollation)
 ORDER BY 1;
 
 -- Check for system catalogs with collation-sensitive ordering.  This is not
--- a representational error in pg_index, but simply wrong catalog design.
+-- a representational error in mdb_index, but simply wrong catalog design.
 -- It's bad because we expect to be able to clone template0 and assign the
 -- copy a different database collation.  It would especially not work for
 -- shared catalogs.  Note that although text columns will show a collation
@@ -1281,9 +1281,9 @@ ORDER BY 1;
 SELECT indexrelid::regclass, indrelid::regclass, iclass, icoll
 FROM (SELECT indexrelid, indrelid,
              unnest(indclass) as iclass, unnest(indcollation) as icoll
-      FROM pg_index
+      FROM mdb_index
       WHERE indrelid < 16384) ss
 WHERE icoll != 0 AND iclass !=
-    (SELECT oid FROM pg_opclass
+    (SELECT oid FROM mdb_opclass
      WHERE opcname = 'text_pattern_ops' AND opcmethod =
-           (SELECT oid FROM pg_am WHERE amname = 'btree'));
+           (SELECT oid FROM mdb_am WHERE amname = 'btree'));

@@ -27,8 +27,8 @@
 #include "catalog/catalog.h"
 #include "catalog/dependency.h"
 #include "catalog/heap.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_constraint.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_constraint.h"
 #include "foreign/fdwapi.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
@@ -170,7 +170,7 @@ get_relation_info(PlannerInfo *root, Oid relationObjectId, bool inhparent,
 		{
 			Oid			indexoid = lfirst_oid(l);
 			Relation	indexRelation;
-			Form_pg_index index;
+			Form_mdb_index index;
 			IndexAmRoutine *amroutine;
 			IndexOptInfo *info;
 			int			ncolumns;
@@ -410,7 +410,7 @@ get_relation_info(PlannerInfo *root, Oid relationObjectId, bool inhparent,
 	{
 		Oid			fkoid = lfirst_oid(l);
 		HeapTuple	htup;
-		Form_pg_constraint constraint;
+		Form_mdb_constraint constraint;
 		ForeignKeyOptInfo *info;
 		Datum		adatum;
 		bool		isnull;
@@ -421,7 +421,7 @@ get_relation_info(PlannerInfo *root, Oid relationObjectId, bool inhparent,
 		htup = SearchSysCache1(CONSTROID, ObjectIdGetDatum(fkoid));
 		if (!HeapTupleIsValid(htup)) /* should not happen */
 			elog(ERROR, "cache lookup failed for constraint %u", fkoid);
-		constraint = (Form_pg_constraint) GETSTRUCT(htup);
+		constraint = (Form_mdb_constraint) GETSTRUCT(htup);
 
 		Assert(constraint->contype == CONSTRAINT_FOREIGN);
 
@@ -432,7 +432,7 @@ get_relation_info(PlannerInfo *root, Oid relationObjectId, bool inhparent,
 
 		/* conkey */
 		adatum = SysCacheGetAttr(CONSTROID, htup,
-									Anum_pg_constraint_conkey, &isnull);
+									Anum_mdb_constraint_conkey, &isnull);
 		Assert(!isnull);
 
 		arr = DatumGetArrayTypeP(adatum);
@@ -443,7 +443,7 @@ get_relation_info(PlannerInfo *root, Oid relationObjectId, bool inhparent,
 
 		/* confkey */
 		adatum = SysCacheGetAttr(CONSTROID, htup,
-									Anum_pg_constraint_confkey, &isnull);
+									Anum_mdb_constraint_confkey, &isnull);
 		Assert(!isnull);
 
 		arr = DatumGetArrayTypeP(adatum);
@@ -454,7 +454,7 @@ get_relation_info(PlannerInfo *root, Oid relationObjectId, bool inhparent,
 
 		/* conpfeqop */
 		adatum = SysCacheGetAttr(CONSTROID, htup,
-									Anum_pg_constraint_conpfeqop, &isnull);
+									Anum_mdb_constraint_conpfeqop, &isnull);
 		Assert(!isnull);
 
 		arr = DatumGetArrayTypeP(adatum);
@@ -610,7 +610,7 @@ infer_arbiter_indexes(PlannerInfo *root)
 	{
 		Oid			indexoid = lfirst_oid(l);
 		Relation	idxRel;
-		Form_pg_index idxForm;
+		Form_mdb_index idxForm;
 		Bitmapset  *indexedAttrs;
 		List	   *idxExprs;
 		List	   *predExprs;
@@ -931,7 +931,7 @@ estimate_rel_size(Relation rel, int32 *attr_widths,
 				*allvisfrac = 0;
 				break;
 			}
-			/* coerce values in pg_class to more desirable types */
+			/* coerce values in mdb_class to more desirable types */
 			relpages = (BlockNumber) rel->rd_rel->relpages;
 			reltuples = (double) rel->rd_rel->reltuples;
 			relallvisible = (BlockNumber) rel->rd_rel->relallvisible;
@@ -999,7 +999,7 @@ estimate_rel_size(Relation rel, int32 *attr_widths,
 			*allvisfrac = 0;
 			break;
 		case RELKIND_FOREIGN_TABLE:
-			/* Just use whatever's in pg_class */
+			/* Just use whatever's in mdb_class */
 			*pages = rel->rd_rel->relpages;
 			*tuples = rel->rd_rel->reltuples;
 			*allvisfrac = 0;
@@ -1035,7 +1035,7 @@ get_rel_data_width(Relation rel, int32 *attr_widths)
 
 	for (i = 1; i <= RelationGetNumberOfAttributes(rel); i++)
 	{
-		Form_pg_attribute att = rel->rd_att->attrs[i - 1];
+		Form_mdb_attribute att = rel->rd_att->attrs[i - 1];
 		int32		item_width;
 
 		if (att->attisdropped)
@@ -1170,7 +1170,7 @@ get_relation_constraints(PlannerInfo *root,
 
 			for (i = 1; i <= natts; i++)
 			{
-				Form_pg_attribute att = relation->rd_att->attrs[i - 1];
+				Form_mdb_attribute att = relation->rd_att->attrs[i - 1];
 
 				if (att->attnotnull && !att->attisdropped)
 				{
@@ -1320,7 +1320,7 @@ relation_excluded_by_constraints(PlannerInfo *root,
  * Ideally we would like to handle the dropped-column case too.  However this
  * creates problems for ExecTypeFromTL, which may be asked to build a tupdesc
  * for a tlist that includes vars of no-longer-existent types.  In theory we
- * could dig out the required info from the pg_attribute entries of the
+ * could dig out the required info from the mdb_attribute entries of the
  * relation, but that data is not readily available to ExecTypeFromTL.
  * For now, we don't apply the physical-tlist optimization when there are
  * dropped cols.
@@ -1352,7 +1352,7 @@ build_physical_tlist(PlannerInfo *root, RelOptInfo *rel)
 			numattrs = RelationGetNumberOfAttributes(relation);
 			for (attrno = 1; attrno <= numattrs; attrno++)
 			{
-				Form_pg_attribute att_tup = relation->rd_att->attrs[attrno - 1];
+				Form_mdb_attribute att_tup = relation->rd_att->attrs[attrno - 1];
 
 				if (att_tup->attisdropped)
 				{
@@ -1464,7 +1464,7 @@ build_index_tlist(PlannerInfo *root, IndexOptInfo *index,
 		if (indexkey != 0)
 		{
 			/* simple column */
-			Form_pg_attribute att_tup;
+			Form_mdb_attribute att_tup;
 
 			if (indexkey < 0)
 				att_tup = SystemAttributeDefinition(indexkey,

@@ -15,11 +15,11 @@
 
 #include "access/htup_details.h"
 #include "access/transam.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "executor/spi.h"
 #include "lib/stringinfo.h"
 #include "libpq/pqformat.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "parser/parse_coerce.h"
 #include "utils/array.h"
@@ -232,7 +232,7 @@ json_in(PG_FUNCTION_ARGS)
 
 	/* validate it */
 	lex = makeJsonLexContext(result, false);
-	pg_parse_json(lex, &nullSemAction);
+	mdb_parse_json(lex, &nullSemAction);
 
 	/* Internal representation is the same as text, for now */
 	PG_RETURN_TEXT_P(result);
@@ -279,7 +279,7 @@ json_recv(PG_FUNCTION_ARGS)
 
 	/* Validate it. */
 	lex = makeJsonLexContextCstringLen(str, nbytes, false);
-	pg_parse_json(lex, &nullSemAction);
+	mdb_parse_json(lex, &nullSemAction);
 
 	PG_RETURN_TEXT_P(cstring_to_text_with_len(str, nbytes));
 }
@@ -318,7 +318,7 @@ makeJsonLexContextCstringLen(char *json, int len, bool need_escapes)
 }
 
 /*
- * pg_parse_json
+ * mdb_parse_json
  *
  * Publicly visible entry point for the JSON parser.
  *
@@ -328,7 +328,7 @@ makeJsonLexContextCstringLen(char *json, int len, bool need_escapes)
  * pointer to a state object to be passed to those routines.
  */
 void
-pg_parse_json(JsonLexContext *lex, JsonSemAction *sem)
+mdb_parse_json(JsonLexContext *lex, JsonSemAction *sem)
 {
 	JsonTokenType tok;
 
@@ -819,7 +819,7 @@ json_lex_string(JsonLexContext *lex)
 						ch = (ch * 16) + (*s - 'A') + 10;
 					else
 					{
-						lex->token_terminator = s + pg_mblen(s);
+						lex->token_terminator = s + mdb_mblen(s);
 						ereport(ERROR,
 								(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
 								 errmsg("invalid input syntax for type json"),
@@ -881,7 +881,7 @@ json_lex_string(JsonLexContext *lex)
 					else if (GetDatabaseEncoding() == PG_UTF8)
 					{
 						unicode_to_utf8(ch, (unsigned char *) utf8str);
-						utf8len = pg_utf_mblen((unsigned char *) utf8str);
+						utf8len = mdb_utf_mblen((unsigned char *) utf8str);
 						appendBinaryStringInfo(lex->strval, utf8str, utf8len);
 					}
 					else if (ch <= 0x007f)
@@ -937,7 +937,7 @@ json_lex_string(JsonLexContext *lex)
 						break;
 					default:
 						/* Not a valid string escape, so error out. */
-						lex->token_terminator = s + pg_mblen(s);
+						lex->token_terminator = s + mdb_mblen(s);
 						ereport(ERROR,
 								(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
 								 errmsg("invalid input syntax for type json"),
@@ -955,7 +955,7 @@ json_lex_string(JsonLexContext *lex)
 				 * replace it with a switch statement, but testing so far has
 				 * shown it's not a performance win.
 				 */
-				lex->token_terminator = s + pg_mblen(s);
+				lex->token_terminator = s + mdb_mblen(s);
 				ereport(ERROR,
 						(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
 						 errmsg("invalid input syntax for type json"),
@@ -1285,7 +1285,7 @@ report_json_context(JsonLexContext *lex)
 			break;
 		/* Advance to next multibyte character */
 		if (IS_HIGHBIT_SET(*context_start))
-			context_start += pg_mblen(context_start);
+			context_start += mdb_mblen(context_start);
 		else
 			context_start++;
 	}
@@ -1324,7 +1324,7 @@ extract_mb_char(char *s)
 	char	   *res;
 	int			len;
 
-	len = pg_mblen(s);
+	len = mdb_mblen(s);
 	res = palloc(len + 1);
 	memcpy(res, s, len);
 	res[len] = '\0';
@@ -1499,7 +1499,7 @@ datum_to_json(Datum val, bool is_null, StringInfo result,
 		case JSONTYPE_DATE:
 			{
 				DateADT		date;
-				struct pg_tm tm;
+				struct mdb_tm tm;
 				char		buf[MAXDATELEN + 1];
 
 				date = DatumGetDateADT(val);
@@ -1518,7 +1518,7 @@ datum_to_json(Datum val, bool is_null, StringInfo result,
 		case JSONTYPE_TIMESTAMP:
 			{
 				Timestamp	timestamp;
-				struct pg_tm tm;
+				struct mdb_tm tm;
 				fsec_t		fsec;
 				char		buf[MAXDATELEN + 1];
 
@@ -1538,7 +1538,7 @@ datum_to_json(Datum val, bool is_null, StringInfo result,
 		case JSONTYPE_TIMESTAMPTZ:
 			{
 				TimestampTz timestamp;
-				struct pg_tm tm;
+				struct mdb_tm tm;
 				int			tz;
 				fsec_t		fsec;
 				const char *tzn = NULL;

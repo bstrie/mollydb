@@ -176,13 +176,13 @@ compat_find_digest(const char *name, PX_MD **res)
 {
 	init_f		init = NULL;
 
-	if (pg_strcasecmp(name, "sha224") == 0)
+	if (mdb_strcasecmp(name, "sha224") == 0)
 		init = init_sha224;
-	else if (pg_strcasecmp(name, "sha256") == 0)
+	else if (mdb_strcasecmp(name, "sha256") == 0)
 		init = init_sha256;
-	else if (pg_strcasecmp(name, "sha384") == 0)
+	else if (mdb_strcasecmp(name, "sha384") == 0)
 		init = init_sha384;
-	else if (pg_strcasecmp(name, "sha512") == 0)
+	else if (mdb_strcasecmp(name, "sha512") == 0)
 		init = init_sha512;
 	else
 		return PXE_NO_HASH;

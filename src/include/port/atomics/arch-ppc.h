@@ -20,7 +20,7 @@
  * But a load can be performed before a subsequent store, so sync must be used
  * for a full memory barrier.
  */
-#define pg_memory_barrier_impl()	__asm__ __volatile__ ("sync" : : : "memory")
-#define pg_read_barrier_impl()		__asm__ __volatile__ ("lwsync" : : : "memory")
-#define pg_write_barrier_impl()		__asm__ __volatile__ ("lwsync" : : : "memory")
+#define mdb_memory_barrier_impl()	__asm__ __volatile__ ("sync" : : : "memory")
+#define mdb_read_barrier_impl()		__asm__ __volatile__ ("lwsync" : : : "memory")
+#define mdb_write_barrier_impl()		__asm__ __volatile__ ("lwsync" : : : "memory")
 #endif

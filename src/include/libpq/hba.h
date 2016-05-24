@@ -12,7 +12,7 @@
 #define HBA_H
 
 #include "libpq/pqcomm.h"	/* pgrminclude ignore */	/* needed for NetBSD */
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 #include "regex/regex.h"
 
 
@@ -93,7 +93,7 @@ typedef struct IdentLine
 
 	char	   *usermap;
 	char	   *ident_user;
-	char	   *pg_role;
+	char	   *mdb_role;
 	regex_t		re;
 } IdentLine;
 
@@ -104,8 +104,8 @@ extern bool load_hba(void);
 extern bool load_ident(void);
 extern void hba_getauthmethod(hbaPort *port);
 extern int check_usermap(const char *usermap_name,
-			  const char *pg_role, const char *auth_user,
+			  const char *mdb_role, const char *auth_user,
 			  bool case_sensitive);
-extern bool pg_isblank(const char c);
+extern bool mdb_isblank(const char c);
 
 #endif   /* HBA_H */

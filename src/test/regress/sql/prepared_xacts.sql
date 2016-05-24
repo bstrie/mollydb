@@ -21,15 +21,15 @@ PREPARE TRANSACTION 'foo1';
 
 SELECT * FROM pxtest1;
 
--- Test pg_prepared_xacts system view
-SELECT gid FROM pg_prepared_xacts;
+-- Test mdb_prepared_xacts system view
+SELECT gid FROM mdb_prepared_xacts;
 
 -- Test ROLLBACK PREPARED
 ROLLBACK PREPARED 'foo1';
 
 SELECT * FROM pxtest1;
 
-SELECT gid FROM pg_prepared_xacts;
+SELECT gid FROM mdb_prepared_xacts;
 
 
 -- Test COMMIT PREPARED
@@ -50,7 +50,7 @@ UPDATE pxtest1 SET foobar = 'eee' WHERE foobar = 'ddd';
 SELECT * FROM pxtest1;
 PREPARE TRANSACTION 'foo3';
 
-SELECT gid FROM pg_prepared_xacts;
+SELECT gid FROM mdb_prepared_xacts;
 
 BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 INSERT INTO pxtest1 VALUES ('fff');
@@ -70,7 +70,7 @@ UPDATE pxtest1 SET foobar = 'eee' WHERE foobar = 'ddd';
 SELECT * FROM pxtest1;
 PREPARE TRANSACTION 'foo4';
 
-SELECT gid FROM pg_prepared_xacts;
+SELECT gid FROM mdb_prepared_xacts;
 
 BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SELECT * FROM pxtest1;
@@ -79,11 +79,11 @@ SELECT * FROM pxtest1;
 INSERT INTO pxtest1 VALUES ('fff');
 PREPARE TRANSACTION 'foo5';
 
-SELECT gid FROM pg_prepared_xacts;
+SELECT gid FROM mdb_prepared_xacts;
 
 ROLLBACK PREPARED 'foo4';
 
-SELECT gid FROM pg_prepared_xacts;
+SELECT gid FROM mdb_prepared_xacts;
 
 -- Clean up
 DROP TABLE pxtest1;
@@ -119,7 +119,7 @@ FETCH 1 FROM foo;
 SELECT * FROM pxtest2;
 
 -- There should be two prepared transactions
-SELECT gid FROM pg_prepared_xacts;
+SELECT gid FROM mdb_prepared_xacts;
 
 -- pxtest3 should be locked because of the pending DROP
 begin;
@@ -131,7 +131,7 @@ rollback;
 \c -
 
 -- There should still be two prepared transactions
-SELECT gid FROM pg_prepared_xacts;
+SELECT gid FROM mdb_prepared_xacts;
 
 -- pxtest3 should still be locked because of the pending DROP
 begin;
@@ -145,14 +145,14 @@ COMMIT PREPARED 'regress-one';
 SELECT * FROM pxtest2;
 
 -- There should be one prepared transaction
-SELECT gid FROM pg_prepared_xacts;
+SELECT gid FROM mdb_prepared_xacts;
 
 -- Commit table drop
 COMMIT PREPARED 'regress-two';
 SELECT * FROM pxtest3;
 
 -- There should be no prepared transactions
-SELECT gid FROM pg_prepared_xacts;
+SELECT gid FROM mdb_prepared_xacts;
 
 -- Clean up
 DROP TABLE pxtest2;

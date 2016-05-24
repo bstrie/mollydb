@@ -29,7 +29,7 @@ MollyDBNode - class representing MollyDB server instance
   # as well as the psql exit code. Pass some extra psql
   # options. If there's an error from psql raise an exception.
   my ($stdout, $stderr, $timed_out);
-  my $cmdret = $node->psql('mollydb', 'SELECT pg_sleep(60)',
+  my $cmdret = $node->psql('mollydb', 'SELECT mdb_sleep(60)',
 	  stdout => \$stdout, stderr => \$stderr,
 	  timeout => 30, timed_out => \$timed_out,
 	  extra_params => ['--single-transaction'],
@@ -45,7 +45,7 @@ MollyDBNode - class representing MollyDB server instance
   $node->poll_query_until('mollydb', q|SELECT random() < 0.1;|')
     or print "timed out";
 
-  # Do an online pg_basebackup
+  # Do an online mdb_basebackup
   my $ret = $node->backup('testbackup1');
 
   # Take a backup of a running server
@@ -249,7 +249,7 @@ sub connstr
 
 =item $node->data_dir()
 
-Returns the path to the data directory. mollydb.conf and pg_hba.conf are
+Returns the path to the data directory. mollydb.conf and mdb_hba.conf are
 always here.
 
 =cut
@@ -330,7 +330,7 @@ sub dump_info
 }
 
 
-# Internal method to set up trusted pg_hba.conf for replication.  Not
+# Internal method to set up trusted mdb_hba.conf for replication.  Not
 # documented because you shouldn't use it, it's called automatically if needed.
 sub set_replication_conf
 {
@@ -340,7 +340,7 @@ sub set_replication_conf
 	$self->host eq $test_pghost
 	  or die "set_replication_conf only works with the default host";
 
-	open my $hba, ">>$pgdata/pg_hba.conf";
+	open my $hba, ">>$pgdata/mdb_hba.conf";
 	print $hba "\n# Allow replication (set up by MollyDBNode.pm)\n";
 	if (!$TestLib::windows_os)
 	{
@@ -363,10 +363,10 @@ Initialize a new cluster for testing.
 Authentication is set up so that only the current OS user can access the
 cluster. On Unix, we use Unix domain socket connections, with the socket in
 a directory that's only accessible to the current user to ensure that.
-On Windows, we use SSPI authentication to ensure the same (by pg_regress
+On Windows, we use SSPI authentication to ensure the same (by mdb_regress
 --config-auth).
 
-pg_hba.conf is configured to allow replication connections. Pass the keyword
+mdb_hba.conf is configured to allow replication connections. Pass the keyword
 parameter hba_permit_replication => 0 to disable this.
 
 WAL archiving can be enabled on this node by passing the keyword parameter
@@ -435,7 +435,7 @@ sub init
 
 =item $node->append_conf(filename, str)
 
-A shortcut method to append to files like pg_hba.conf and mollydb.conf.
+A shortcut method to append to files like mdb_hba.conf and mollydb.conf.
 
 Does no validation or sanity checking. Does not reload the configuration
 after writing.
@@ -457,7 +457,7 @@ sub append_conf
 
 =item $node->backup(backup_name)
 
-Create a hot backup with B<pg_basebackup> in subdirectory B<backup_name> of
+Create a hot backup with B<mdb_basebackup> in subdirectory B<backup_name> of
 B<< $node->backup_dir >>, including the transaction logs. Transaction logs are
 fetched at the end of the backup, not streamed.
 
@@ -473,8 +473,8 @@ sub backup
 	my $port        = $self->port;
 	my $name        = $self->name;
 
-	print "# Taking pg_basebackup $backup_name from node \"$name\"\n";
-	TestLib::system_or_bail("pg_basebackup -D $backup_path -p $port -x");
+	print "# Taking mdb_basebackup $backup_name from node \"$name\"\n";
+	TestLib::system_or_bail("mdb_basebackup -D $backup_path -p $port -x");
 	print "# Backup finished\n";
 }
 
@@ -483,10 +483,10 @@ sub backup
 Create a backup with a filesystem level copy in subdirectory B<backup_name> of
 B<< $node->backup_dir >>, including transaction logs.
 
-Archiving must be enabled, as B<pg_start_backup()> and B<pg_stop_backup()> are
+Archiving must be enabled, as B<mdb_start_backup()> and B<mdb_stop_backup()> are
 used. This is not checked or enforced.
 
-The backup name is passed as the backup label to B<pg_start_backup()>.
+The backup name is passed as the backup label to B<mdb_start_backup()>.
 
 =cut
 
@@ -526,8 +526,8 @@ sub _backup_fs
 	if ($hot)
 	{
 		my $stdout = $self->safe_psql('mollydb',
-			"SELECT * FROM pg_start_backup('$backup_name');");
-		print "# pg_start_backup: $stdout\n";
+			"SELECT * FROM mdb_start_backup('$backup_name');");
+		print "# mdb_start_backup: $stdout\n";
 	}
 
 	RecursiveCopy::copypath(
@@ -535,17 +535,17 @@ sub _backup_fs
 		$backup_path,
 		filterfn => sub {
 			my $src = shift;
-			return ($src ne 'pg_log' and $src ne 'postmaster.pid');
+			return ($src ne 'mdb_log' and $src ne 'postmaster.pid');
 		});
 
 	if ($hot)
 	{
-		# We ignore pg_stop_backup's return value. We also assume archiving
+		# We ignore mdb_stop_backup's return value. We also assume archiving
 		# is enabled; otherwise the caller will have to copy the remaining
 		# segments.
 		my $stdout = $self->safe_psql('mollydb',
-			'SELECT * FROM pg_stop_backup();');
-		print "# pg_stop_backup: $stdout\n";
+			'SELECT * FROM mdb_stop_backup();');
+		print "# mdb_stop_backup: $stdout\n";
 	}
 
 	print "# Backup finished\n";
@@ -565,7 +565,7 @@ Does not start the node after initializing it.
 
 A recovery.conf is not created.
 
-pg_hba.conf is configured to allow replication connections. Pass the keyword
+mdb_hba.conf is configured to allow replication connections. Pass the keyword
 parameter hba_permit_replication => 0 to disable this.
 
 Streaming replication can be enabled on this node by passing the keyword
@@ -575,7 +575,7 @@ Restoring WAL segments from archives using restore_command can be enabled
 by passing the keyword parameter has_restoring => 1. This is disabled by
 default.
 
-The backup is copied, leaving the original unmodified. pg_hba.conf is
+The backup is copied, leaving the original unmodified. mdb_hba.conf is
 unconditionally set to enable replication connections.
 
 =cut
@@ -621,7 +621,7 @@ port = $port
 
 =item $node->start()
 
-Wrapper for pg_ctl -w start
+Wrapper for mdb_ctl -w start
 
 Start the node and wait until it is ready to accept connections.
 
@@ -634,14 +634,14 @@ sub start
 	my $pgdata = $self->data_dir;
 	my $name   = $self->name;
 	print("### Starting node \"$name\"\n");
-	my $ret = TestLib::system_log('pg_ctl', '-w', '-D', $self->data_dir, '-l',
+	my $ret = TestLib::system_log('mdb_ctl', '-w', '-D', $self->data_dir, '-l',
 		$self->logfile, 'start');
 
 	if ($ret != 0)
 	{
-		print "# pg_ctl failed; logfile:\n";
+		print "# mdb_ctl failed; logfile:\n";
 		print TestLib::slurp_file($self->logfile);
-		BAIL_OUT("pg_ctl failed");
+		BAIL_OUT("mdb_ctl failed");
 	}
 
 	$self->_update_pid;
@@ -651,7 +651,7 @@ sub start
 
 =item $node->stop(mode)
 
-Stop the node using pg_ctl -m $mode and wait for it to stop.
+Stop the node using mdb_ctl -m $mode and wait for it to stop.
 
 =cut
 
@@ -664,7 +664,7 @@ sub stop
 	$mode = 'fast' unless defined $mode;
 	return unless defined $self->{_pid};
 	print "### Stopping node \"$name\" using mode $mode\n";
-	TestLib::system_log('pg_ctl', '-D', $pgdata, '-m', $mode, 'stop');
+	TestLib::system_log('mdb_ctl', '-D', $pgdata, '-m', $mode, 'stop');
 	$self->{_pid} = undef;
 	$self->_update_pid;
 }
@@ -684,14 +684,14 @@ sub reload
 	my $pgdata = $self->data_dir;
 	my $name   = $self->name;
 	print "### Reloading node \"$name\"\n";
-	TestLib::system_log('pg_ctl', '-D', $pgdata, 'reload');
+	TestLib::system_log('mdb_ctl', '-D', $pgdata, 'reload');
 }
 
 =pod
 
 =item $node->restart()
 
-Wrapper for pg_ctl -w restart
+Wrapper for mdb_ctl -w restart
 
 =cut
 
@@ -703,7 +703,7 @@ sub restart
 	my $logfile = $self->logfile;
 	my $name    = $self->name;
 	print "### Restarting node \"$name\"\n";
-	TestLib::system_log('pg_ctl', '-D', $pgdata, '-w', '-l', $logfile,
+	TestLib::system_log('mdb_ctl', '-D', $pgdata, '-w', '-l', $logfile,
 		'restart');
 	$self->_update_pid;
 }
@@ -712,7 +712,7 @@ sub restart
 
 =item $node->promote()
 
-Wrapper for pg_ctl promote
+Wrapper for mdb_ctl promote
 
 =cut
 
@@ -724,7 +724,7 @@ sub promote
 	my $logfile = $self->logfile;
 	my $name    = $self->name;
 	print "### Promoting node \"$name\"\n";
-	TestLib::system_log('pg_ctl', '-D', $pgdata, '-l', $logfile, 'promote');
+	TestLib::system_log('mdb_ctl', '-D', $pgdata, '-l', $logfile, 'promote');
 }
 
 # Internal routine to enable streaming replication on a standby node.
@@ -1026,7 +1026,7 @@ If given, it must be an array reference containing additional parameters to B<ps
 e.g.
 
 	my ($stdout, $stderr, $timed_out);
-	my $cmdret = $node->psql('mollydb', 'SELECT pg_sleep(60)',
+	my $cmdret = $node->psql('mollydb', 'SELECT mdb_sleep(60)',
 		stdout => \$stdout, stderr => \$stderr,
 		timeout => 30, timed_out => \$timed_out,
 		extra_params => ['--single-transaction'])

@@ -8,7 +8,7 @@
 #include <limits.h>
 
 #include <ecpgtype.h>
-#include <ecpg_informix.h>
+#include <ecmdb_informix.h>
 #include <pgtypes_error.h>
 #include <pgtypes_date.h>
 #include <pgtypes_numeric.h>
@@ -176,7 +176,7 @@ deccopy(decimal *src, decimal *target)
 }
 
 static char *
-ecpg_strndup(const char *str, size_t len)
+ecmdb_strndup(const char *str, size_t len)
 {
 	size_t		real_len = strlen(str);
 	int			use_len = (int) ((real_len > len) ? len : real_len);
@@ -205,7 +205,7 @@ deccvasc(char *cp, int len, decimal *np)
 	if (risnull(CSTRINGTYPE, cp))
 		return 0;
 
-	str = ecpg_strndup(cp, len);/* decimal_in always converts the complete
+	str = ecmdb_strndup(cp, len);/* decimal_in always converts the complete
 								 * string */
 	if (!str)
 		ret = ECPG_INFORMIX_NUM_UNDERFLOW;

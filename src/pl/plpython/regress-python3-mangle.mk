@@ -31,6 +31,6 @@ pgregress-python3-mangle:
 
 check installcheck: pgregress-python3-mangle
 
-pg_regress_clean_files += sql/python3/ expected/python3/ results/python3/
+mdb_regress_clean_files += sql/python3/ expected/python3/ results/python3/
 
 endif # Python 3

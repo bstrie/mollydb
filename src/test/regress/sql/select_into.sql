@@ -27,12 +27,12 @@ GRANT ALL ON SCHEMA selinto_schema TO public;
 
 SET SESSION AUTHORIZATION selinto_user;
 SELECT * INTO TABLE selinto_schema.tmp1
-	  FROM pg_class WHERE relname like '%a%';	-- Error
+	  FROM mdb_class WHERE relname like '%a%';	-- Error
 SELECT oid AS clsoid, relname, relnatts + 10 AS x
 	  INTO selinto_schema.tmp2
-	  FROM pg_class WHERE relname like '%b%';	-- Error
+	  FROM mdb_class WHERE relname like '%b%';	-- Error
 CREATE TABLE selinto_schema.tmp3 (a,b,c)
-	   AS SELECT oid,relname,relacl FROM pg_class
+	   AS SELECT oid,relname,relacl FROM mdb_class
 	   WHERE relname like '%c%';	-- Error
 RESET SESSION AUTHORIZATION;
 
@@ -41,12 +41,12 @@ ALTER DEFAULT PRIVILEGES FOR ROLE selinto_user
 
 SET SESSION AUTHORIZATION selinto_user;
 SELECT * INTO TABLE selinto_schema.tmp1
-	  FROM pg_class WHERE relname like '%a%';	-- OK
+	  FROM mdb_class WHERE relname like '%a%';	-- OK
 SELECT oid AS clsoid, relname, relnatts + 10 AS x
 	  INTO selinto_schema.tmp2
-	  FROM pg_class WHERE relname like '%b%';	-- OK
+	  FROM mdb_class WHERE relname like '%b%';	-- OK
 CREATE TABLE selinto_schema.tmp3 (a,b,c)
-	   AS SELECT oid,relname,relacl FROM pg_class
+	   AS SELECT oid,relname,relacl FROM mdb_class
 	   WHERE relname like '%c%';	-- OK
 RESET SESSION AUTHORIZATION;
 

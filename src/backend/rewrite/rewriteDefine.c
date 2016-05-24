@@ -25,7 +25,7 @@
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_rewrite.h"
+#include "catalog/mdb_rewrite.h"
 #include "catalog/storage.h"
 #include "commands/policy.h"
 #include "miscadmin.h"
@@ -53,7 +53,7 @@ static void setRuleCheckAsUser_Query(Query *qry, Oid userid);
 /*
  * InsertRule -
  *	  takes the arguments and inserts them as a row into the system
- *	  relation "pg_rewrite"
+ *	  relation "mdb_rewrite"
  */
 static Oid
 InsertRule(char *rulname,
@@ -66,11 +66,11 @@ InsertRule(char *rulname,
 {
 	char	   *evqual = nodeToString(event_qual);
 	char	   *actiontree = nodeToString((Node *) action);
-	Datum		values[Natts_pg_rewrite];
-	bool		nulls[Natts_pg_rewrite];
-	bool		replaces[Natts_pg_rewrite];
+	Datum		values[Natts_mdb_rewrite];
+	bool		nulls[Natts_mdb_rewrite];
+	bool		replaces[Natts_mdb_rewrite];
 	NameData	rname;
-	Relation	pg_rewrite_desc;
+	Relation	mdb_rewrite_desc;
 	HeapTuple	tup,
 				oldtup;
 	Oid			rewriteObjectId;
@@ -84,18 +84,18 @@ InsertRule(char *rulname,
 	MemSet(nulls, false, sizeof(nulls));
 
 	namestrcpy(&rname, rulname);
-	values[Anum_pg_rewrite_rulename - 1] = NameGetDatum(&rname);
-	values[Anum_pg_rewrite_ev_class - 1] = ObjectIdGetDatum(eventrel_oid);
-	values[Anum_pg_rewrite_ev_type - 1] = CharGetDatum(evtype + '0');
-	values[Anum_pg_rewrite_ev_enabled - 1] = CharGetDatum(RULE_FIRES_ON_ORIGIN);
-	values[Anum_pg_rewrite_is_instead - 1] = BoolGetDatum(evinstead);
-	values[Anum_pg_rewrite_ev_qual - 1] = CStringGetTextDatum(evqual);
-	values[Anum_pg_rewrite_ev_action - 1] = CStringGetTextDatum(actiontree);
+	values[Anum_mdb_rewrite_rulename - 1] = NameGetDatum(&rname);
+	values[Anum_mdb_rewrite_ev_class - 1] = ObjectIdGetDatum(eventrel_oid);
+	values[Anum_mdb_rewrite_ev_type - 1] = CharGetDatum(evtype + '0');
+	values[Anum_mdb_rewrite_ev_enabled - 1] = CharGetDatum(RULE_FIRES_ON_ORIGIN);
+	values[Anum_mdb_rewrite_is_instead - 1] = BoolGetDatum(evinstead);
+	values[Anum_mdb_rewrite_ev_qual - 1] = CStringGetTextDatum(evqual);
+	values[Anum_mdb_rewrite_ev_action - 1] = CStringGetTextDatum(actiontree);
 
 	/*
-	 * Ready to store new pg_rewrite tuple
+	 * Ready to store new mdb_rewrite tuple
 	 */
-	pg_rewrite_desc = heap_open(RewriteRelationId, RowExclusiveLock);
+	mdb_rewrite_desc = heap_open(RewriteRelationId, RowExclusiveLock);
 
 	/*
 	 * Check to see if we are replacing an existing tuple
@@ -116,15 +116,15 @@ InsertRule(char *rulname,
 		 * When replacing, we don't need to replace every attribute
 		 */
 		MemSet(replaces, false, sizeof(replaces));
-		replaces[Anum_pg_rewrite_ev_type - 1] = true;
-		replaces[Anum_pg_rewrite_is_instead - 1] = true;
-		replaces[Anum_pg_rewrite_ev_qual - 1] = true;
-		replaces[Anum_pg_rewrite_ev_action - 1] = true;
+		replaces[Anum_mdb_rewrite_ev_type - 1] = true;
+		replaces[Anum_mdb_rewrite_is_instead - 1] = true;
+		replaces[Anum_mdb_rewrite_ev_qual - 1] = true;
+		replaces[Anum_mdb_rewrite_ev_action - 1] = true;
 
-		tup = heap_modify_tuple(oldtup, RelationGetDescr(pg_rewrite_desc),
+		tup = heap_modify_tuple(oldtup, RelationGetDescr(mdb_rewrite_desc),
 								values, nulls, replaces);
 
-		simple_heap_update(pg_rewrite_desc, &tup->t_self, tup);
+		simple_heap_update(mdb_rewrite_desc, &tup->t_self, tup);
 
 		ReleaseSysCache(oldtup);
 
@@ -133,13 +133,13 @@ InsertRule(char *rulname,
 	}
 	else
 	{
-		tup = heap_form_tuple(pg_rewrite_desc->rd_att, values, nulls);
+		tup = heap_form_tuple(mdb_rewrite_desc->rd_att, values, nulls);
 
-		rewriteObjectId = simple_heap_insert(pg_rewrite_desc, tup);
+		rewriteObjectId = simple_heap_insert(mdb_rewrite_desc, tup);
 	}
 
 	/* Need to update indexes in either case */
-	CatalogUpdateIndexes(pg_rewrite_desc, tup);
+	CatalogUpdateIndexes(mdb_rewrite_desc, tup);
 
 	heap_freetuple(tup);
 
@@ -183,7 +183,7 @@ InsertRule(char *rulname,
 	/* Post creation hook for new rule */
 	InvokeObjectPostCreateHook(RewriteRelationId, rewriteObjectId, 0);
 
-	heap_close(pg_rewrite_desc, RowExclusiveLock);
+	heap_close(mdb_rewrite_desc, RowExclusiveLock);
 
 	return rewriteObjectId;
 }
@@ -276,7 +276,7 @@ DefineQueryRewrite(char *rulename,
 	/*
 	 * Check user has permission to apply rules to this relation.
 	 */
-	if (!pg_class_ownercheck(event_relid, GetUserId()))
+	if (!mdb_class_ownercheck(event_relid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 					   RelationGetRelationName(event_relation));
 
@@ -388,7 +388,7 @@ DefineQueryRewrite(char *rulename,
 		{
 			/*
 			 * In versions before 7.3, the expected name was _RETviewname. For
-			 * backwards compatibility with old pg_dump output, accept that
+			 * backwards compatibility with old mdb_dump output, accept that
 			 * and silently change it to _RETURN.  Since this is just a quick
 			 * backwards-compatibility hack, limit the number of characters
 			 * checked to a few less than NAMEDATALEN; this saves having to
@@ -521,7 +521,7 @@ DefineQueryRewrite(char *rulename,
 							replace);
 
 		/*
-		 * Set pg_class 'relhasrules' field TRUE for event relation.
+		 * Set mdb_class 'relhasrules' field TRUE for event relation.
 		 *
 		 * Important side effect: an SI notice is broadcast to force all
 		 * backends (including me!) to update relcache entries with the new
@@ -533,11 +533,11 @@ DefineQueryRewrite(char *rulename,
 	/* ---------------------------------------------------------------------
 	 * If the relation is becoming a view:
 	 * - delete the associated storage files
-	 * - get rid of any system attributes in pg_attribute; a view shouldn't
+	 * - get rid of any system attributes in mdb_attribute; a view shouldn't
 	 *	 have any of those
 	 * - remove the toast table; there is no need for it anymore, and its
 	 *	 presence would make vacuum slightly more complicated
-	 * - set relkind to RELKIND_VIEW, and adjust other pg_class fields
+	 * - set relkind to RELKIND_VIEW, and adjust other mdb_class fields
 	 *	 to be appropriate for a view
 	 *
 	 * NB: we had better have AccessExclusiveLock to do this ...
@@ -548,7 +548,7 @@ DefineQueryRewrite(char *rulename,
 		Relation	relationRelation;
 		Oid			toastrelid;
 		HeapTuple	classTup;
-		Form_pg_class classForm;
+		Form_mdb_class classForm;
 
 		relationRelation = heap_open(RelationRelationId, RowExclusiveLock);
 		toastrelid = event_relation->rd_rel->reltoastrelid;
@@ -559,7 +559,7 @@ DefineQueryRewrite(char *rulename,
 
 		/*
 		 * Drop the toast table if any.  (This won't take care of updating the
-		 * toast fields in the relation's own pg_class entry; we handle that
+		 * toast fields in the relation's own mdb_class entry; we handle that
 		 * below.)
 		 */
 		if (OidIsValid(toastrelid))
@@ -585,20 +585,20 @@ DefineQueryRewrite(char *rulename,
 		}
 
 		/*
-		 * SetRelationRuleStatus may have updated the pg_class row, so we must
+		 * SetRelationRuleStatus may have updated the mdb_class row, so we must
 		 * advance the command counter before trying to update it again.
 		 */
 		CommandCounterIncrement();
 
 		/*
-		 * Fix pg_class entry to look like a normal view's, including setting
+		 * Fix mdb_class entry to look like a normal view's, including setting
 		 * the correct relkind and removal of reltoastrelid of the toast table
 		 * we potentially removed above.
 		 */
 		classTup = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(event_relid));
 		if (!HeapTupleIsValid(classTup))
 			elog(ERROR, "cache lookup failed for relation %u", event_relid);
-		classForm = (Form_pg_class) GETSTRUCT(classTup);
+		classForm = (Form_mdb_class) GETSTRUCT(classTup);
 
 		classForm->reltablespace = InvalidOid;
 		classForm->relpages = 0;
@@ -653,7 +653,7 @@ checkRuleResultList(List *targetList, TupleDesc resultDesc, bool isSelect,
 		TargetEntry *tle = (TargetEntry *) lfirst(tllist);
 		Oid			tletypid;
 		int32		tletypmod;
-		Form_pg_attribute attr;
+		Form_mdb_attribute attr;
 		char	   *attname;
 
 		/* resjunk entries may be ignored */
@@ -675,7 +675,7 @@ checkRuleResultList(List *targetList, TupleDesc resultDesc, bool isSelect,
 		 * expected to happen when creating an ON SELECT rule.  It'd be
 		 * possible if someone tried to convert a relation with dropped
 		 * columns to a view, but the only case we care about supporting
-		 * table-to-view conversion for is pg_dump, and pg_dump won't do that.
+		 * table-to-view conversion for is mdb_dump, and mdb_dump won't do that.
 		 *
 		 * Unfortunately, the situation is also possible when adding a rule
 		 * with RETURNING to a regular table, and rejecting that case is
@@ -830,7 +830,7 @@ void
 EnableDisableRule(Relation rel, const char *rulename,
 				  char fires_when)
 {
-	Relation	pg_rewrite_desc;
+	Relation	mdb_rewrite_desc;
 	Oid			owningRel = RelationGetRelid(rel);
 	Oid			eventRelationOid;
 	HeapTuple	ruletup;
@@ -839,7 +839,7 @@ EnableDisableRule(Relation rel, const char *rulename,
 	/*
 	 * Find the rule tuple to change.
 	 */
-	pg_rewrite_desc = heap_open(RewriteRelationId, RowExclusiveLock);
+	mdb_rewrite_desc = heap_open(RewriteRelationId, RowExclusiveLock);
 	ruletup = SearchSysCacheCopy2(RULERELNAME,
 								  ObjectIdGetDatum(owningRel),
 								  PointerGetDatum(rulename));
@@ -852,24 +852,24 @@ EnableDisableRule(Relation rel, const char *rulename,
 	/*
 	 * Verify that the user has appropriate permissions.
 	 */
-	eventRelationOid = ((Form_pg_rewrite) GETSTRUCT(ruletup))->ev_class;
+	eventRelationOid = ((Form_mdb_rewrite) GETSTRUCT(ruletup))->ev_class;
 	Assert(eventRelationOid == owningRel);
-	if (!pg_class_ownercheck(eventRelationOid, GetUserId()))
+	if (!mdb_class_ownercheck(eventRelationOid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 					   get_rel_name(eventRelationOid));
 
 	/*
 	 * Change ev_enabled if it is different from the desired new state.
 	 */
-	if (DatumGetChar(((Form_pg_rewrite) GETSTRUCT(ruletup))->ev_enabled) !=
+	if (DatumGetChar(((Form_mdb_rewrite) GETSTRUCT(ruletup))->ev_enabled) !=
 		fires_when)
 	{
-		((Form_pg_rewrite) GETSTRUCT(ruletup))->ev_enabled =
+		((Form_mdb_rewrite) GETSTRUCT(ruletup))->ev_enabled =
 			CharGetDatum(fires_when);
-		simple_heap_update(pg_rewrite_desc, &ruletup->t_self, ruletup);
+		simple_heap_update(mdb_rewrite_desc, &ruletup->t_self, ruletup);
 
 		/* keep system catalog indexes current */
-		CatalogUpdateIndexes(pg_rewrite_desc, ruletup);
+		CatalogUpdateIndexes(mdb_rewrite_desc, ruletup);
 
 		changed = true;
 	}
@@ -878,7 +878,7 @@ EnableDisableRule(Relation rel, const char *rulename,
 							  HeapTupleGetOid(ruletup), 0);
 
 	heap_freetuple(ruletup);
-	heap_close(pg_rewrite_desc, RowExclusiveLock);
+	heap_close(mdb_rewrite_desc, RowExclusiveLock);
 
 	/*
 	 * If we changed anything, broadcast a SI inval message to force each
@@ -898,12 +898,12 @@ RangeVarCallbackForRenameRule(const RangeVar *rv, Oid relid, Oid oldrelid,
 							  void *arg)
 {
 	HeapTuple	tuple;
-	Form_pg_class form;
+	Form_mdb_class form;
 
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tuple))
 		return;					/* concurrently dropped */
-	form = (Form_pg_class) GETSTRUCT(tuple);
+	form = (Form_mdb_class) GETSTRUCT(tuple);
 
 	/* only tables and views can have rules */
 	if (form->relkind != RELKIND_RELATION && form->relkind != RELKIND_VIEW)
@@ -918,7 +918,7 @@ RangeVarCallbackForRenameRule(const RangeVar *rv, Oid relid, Oid oldrelid,
 						rv->relname)));
 
 	/* you must own the table to rename one of its rules */
-	if (!pg_class_ownercheck(relid, GetUserId()))
+	if (!mdb_class_ownercheck(relid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS, rv->relname);
 
 	ReleaseSysCache(tuple);
@@ -933,9 +933,9 @@ RenameRewriteRule(RangeVar *relation, const char *oldName,
 {
 	Oid			relid;
 	Relation	targetrel;
-	Relation	pg_rewrite_desc;
+	Relation	mdb_rewrite_desc;
 	HeapTuple	ruletup;
-	Form_pg_rewrite ruleform;
+	Form_mdb_rewrite ruleform;
 	Oid			ruleOid;
 	ObjectAddress address;
 
@@ -951,8 +951,8 @@ RenameRewriteRule(RangeVar *relation, const char *oldName,
 	/* Have lock already, so just need to build relcache entry. */
 	targetrel = relation_open(relid, NoLock);
 
-	/* Prepare to modify pg_rewrite */
-	pg_rewrite_desc = heap_open(RewriteRelationId, RowExclusiveLock);
+	/* Prepare to modify mdb_rewrite */
+	mdb_rewrite_desc = heap_open(RewriteRelationId, RowExclusiveLock);
 
 	/* Fetch the rule's entry (it had better exist) */
 	ruletup = SearchSysCacheCopy2(RULERELNAME,
@@ -963,7 +963,7 @@ RenameRewriteRule(RangeVar *relation, const char *oldName,
 				(errcode(ERRCODE_UNDEFINED_OBJECT),
 				 errmsg("rule \"%s\" for relation \"%s\" does not exist",
 						oldName, RelationGetRelationName(targetrel))));
-	ruleform = (Form_pg_rewrite) GETSTRUCT(ruletup);
+	ruleform = (Form_mdb_rewrite) GETSTRUCT(ruletup);
 	ruleOid = HeapTupleGetOid(ruletup);
 
 	/* rule with the new name should not already exist */
@@ -985,13 +985,13 @@ RenameRewriteRule(RangeVar *relation, const char *oldName,
 	/* OK, do the update */
 	namestrcpy(&(ruleform->rulename), newName);
 
-	simple_heap_update(pg_rewrite_desc, &ruletup->t_self, ruletup);
+	simple_heap_update(mdb_rewrite_desc, &ruletup->t_self, ruletup);
 
 	/* keep system catalog indexes current */
-	CatalogUpdateIndexes(pg_rewrite_desc, ruletup);
+	CatalogUpdateIndexes(mdb_rewrite_desc, ruletup);
 
 	heap_freetuple(ruletup);
-	heap_close(pg_rewrite_desc, RowExclusiveLock);
+	heap_close(mdb_rewrite_desc, RowExclusiveLock);
 
 	/*
 	 * Invalidate relation's relcache entry so that other backends (and this

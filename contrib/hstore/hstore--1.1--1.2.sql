@@ -15,13 +15,13 @@ $$
 BEGIN
 
    PERFORM 1
-   FROM pg_proc p
-       JOIN  pg_depend d
+   FROM mdb_proc p
+       JOIN  mdb_depend d
           ON p.proname = 'hstore_to_json_loose'
-            AND d.classid = 'pg_proc'::regclass
+            AND d.classid = 'mdb_proc'::regclass
             AND d.objid = p.oid
-            AND d.refclassid = 'pg_extension'::regclass
-       JOIN pg_extension x
+            AND d.refclassid = 'mdb_extension'::regclass
+       JOIN mdb_extension x
           ON d.refobjid = x.oid
             AND  x.extname = 'hstore';
 

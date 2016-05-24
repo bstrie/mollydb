@@ -4,12 +4,12 @@
  *	multi-process support
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/parallel.c
+ *	src/bin/mdb_upgrade/parallel.c
  */
 
 #include "mollydb_fe.h"
 
-#include "pg_upgrade.h"
+#include "mdb_upgrade.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -88,13 +88,13 @@ parallel_exec_prog(const char *log_file, const char *opt_log_file,
 		/* parallel */
 #ifdef WIN32
 		if (thread_handles == NULL)
-			thread_handles = pg_malloc(user_opts.jobs * sizeof(HANDLE));
+			thread_handles = mdb_malloc(user_opts.jobs * sizeof(HANDLE));
 
 		if (exec_thread_args == NULL)
 		{
 			int			i;
 
-			exec_thread_args = pg_malloc(user_opts.jobs * sizeof(exec_thread_arg *));
+			exec_thread_args = mdb_malloc(user_opts.jobs * sizeof(exec_thread_arg *));
 
 			/*
 			 * For safety and performance, we keep the args allocated during
@@ -102,7 +102,7 @@ parallel_exec_prog(const char *log_file, const char *opt_log_file,
 			 * thread different from the one that allocated it.
 			 */
 			for (i = 0; i < user_opts.jobs; i++)
-				exec_thread_args[i] = pg_malloc0(sizeof(exec_thread_arg));
+				exec_thread_args[i] = mdb_malloc0(sizeof(exec_thread_arg));
 		}
 
 		cur_thread_args = (void **) exec_thread_args;
@@ -128,26 +128,26 @@ parallel_exec_prog(const char *log_file, const char *opt_log_file,
 			_exit(!exec_prog(log_file, opt_log_file, true, "%s", cmd));
 		else if (child < 0)
 			/* fork failed */
-			pg_fatal("could not create worker process: %s\n", strerror(errno));
+			mdb_fatal("could not create worker process: %s\n", strerror(errno));
 #else
 		/* empty array element are always at the end */
 		new_arg = exec_thread_args[parallel_jobs - 1];
 
 		/* Can only pass one pointer into the function, so use a struct */
 		if (new_arg->log_file)
-			pg_free(new_arg->log_file);
-		new_arg->log_file = pg_strdup(log_file);
+			mdb_free(new_arg->log_file);
+		new_arg->log_file = mdb_strdup(log_file);
 		if (new_arg->opt_log_file)
-			pg_free(new_arg->opt_log_file);
-		new_arg->opt_log_file = opt_log_file ? pg_strdup(opt_log_file) : NULL;
+			mdb_free(new_arg->opt_log_file);
+		new_arg->opt_log_file = opt_log_file ? mdb_strdup(opt_log_file) : NULL;
 		if (new_arg->cmd)
-			pg_free(new_arg->cmd);
-		new_arg->cmd = pg_strdup(cmd);
+			mdb_free(new_arg->cmd);
+		new_arg->cmd = mdb_strdup(cmd);
 
 		child = (HANDLE) _beginthreadex(NULL, 0, (void *) win32_exec_prog,
 										new_arg, 0, NULL);
 		if (child == 0)
-			pg_fatal("could not create worker thread: %s\n", strerror(errno));
+			mdb_fatal("could not create worker thread: %s\n", strerror(errno));
 
 		thread_handles[parallel_jobs - 1] = child;
 #endif
@@ -197,13 +197,13 @@ parallel_transfer_all_new_dbs(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 		/* parallel */
 #ifdef WIN32
 		if (thread_handles == NULL)
-			thread_handles = pg_malloc(user_opts.jobs * sizeof(HANDLE));
+			thread_handles = mdb_malloc(user_opts.jobs * sizeof(HANDLE));
 
 		if (transfer_thread_args == NULL)
 		{
 			int			i;
 
-			transfer_thread_args = pg_malloc(user_opts.jobs * sizeof(transfer_thread_arg *));
+			transfer_thread_args = mdb_malloc(user_opts.jobs * sizeof(transfer_thread_arg *));
 
 			/*
 			 * For safety and performance, we keep the args allocated during
@@ -211,7 +211,7 @@ parallel_transfer_all_new_dbs(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 			 * thread different from the one that allocated it.
 			 */
 			for (i = 0; i < user_opts.jobs; i++)
-				transfer_thread_args[i] = pg_malloc0(sizeof(transfer_thread_arg));
+				transfer_thread_args[i] = mdb_malloc0(sizeof(transfer_thread_arg));
 		}
 
 		cur_thread_args = (void **) transfer_thread_args;
@@ -242,7 +242,7 @@ parallel_transfer_all_new_dbs(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 		}
 		else if (child < 0)
 			/* fork failed */
-			pg_fatal("could not create worker process: %s\n", strerror(errno));
+			mdb_fatal("could not create worker process: %s\n", strerror(errno));
 #else
 		/* empty array element are always at the end */
 		new_arg = transfer_thread_args[parallel_jobs - 1];
@@ -251,19 +251,19 @@ parallel_transfer_all_new_dbs(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 		new_arg->old_db_arr = old_db_arr;
 		new_arg->new_db_arr = new_db_arr;
 		if (new_arg->old_pgdata)
-			pg_free(new_arg->old_pgdata);
-		new_arg->old_pgdata = pg_strdup(old_pgdata);
+			mdb_free(new_arg->old_pgdata);
+		new_arg->old_pgdata = mdb_strdup(old_pgdata);
 		if (new_arg->new_pgdata)
-			pg_free(new_arg->new_pgdata);
-		new_arg->new_pgdata = pg_strdup(new_pgdata);
+			mdb_free(new_arg->new_pgdata);
+		new_arg->new_pgdata = mdb_strdup(new_pgdata);
 		if (new_arg->old_tablespace)
-			pg_free(new_arg->old_tablespace);
-		new_arg->old_tablespace = old_tablespace ? pg_strdup(old_tablespace) : NULL;
+			mdb_free(new_arg->old_tablespace);
+		new_arg->old_tablespace = old_tablespace ? mdb_strdup(old_tablespace) : NULL;
 
 		child = (HANDLE) _beginthreadex(NULL, 0, (void *) win32_transfer_all_new_dbs,
 										new_arg, 0, NULL);
 		if (child == 0)
-			pg_fatal("could not create worker thread: %s\n", strerror(errno));
+			mdb_fatal("could not create worker thread: %s\n", strerror(errno));
 
 		thread_handles[parallel_jobs - 1] = child;
 #endif
@@ -311,7 +311,7 @@ reap_child(bool wait_for_child)
 		return false;
 
 	if (WEXITSTATUS(work_status) != 0)
-		pg_fatal("child worker exited abnormally: %s\n", strerror(errno));
+		mdb_fatal("child worker exited abnormally: %s\n", strerror(errno));
 #else
 	/* wait for one to finish */
 	thread_num = WaitForMultipleObjects(parallel_jobs, thread_handles,
@@ -326,7 +326,7 @@ reap_child(bool wait_for_child)
 	/* get the result */
 	GetExitCodeThread(thread_handles[thread_num], &res);
 	if (res != 0)
-		pg_fatal("child worker exited abnormally: %s\n", strerror(errno));
+		mdb_fatal("child worker exited abnormally: %s\n", strerror(errno));
 
 	/* dispose of handle to stop leaks */
 	CloseHandle(thread_handles[thread_num]);

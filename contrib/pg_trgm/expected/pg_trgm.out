@@ -1,4 +1,4 @@
-CREATE EXTENSION pg_trgm;
+CREATE EXTENSION mdb_trgm;
 select show_trgm('');
  show_trgm 
 -----------

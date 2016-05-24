@@ -1,24 +1,24 @@
-<!-- doc/src/sgml/ref/pg_config-ref.sgml -->
+<!-- doc/src/sgml/ref/mdb_config-ref.sgml -->
 
 <refentry id="app-pgconfig">
  <indexterm zone="app-pgconfig">
-  <primary>pg_config</primary>
+  <primary>mdb_config</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle>pg_config</refentrytitle>
+  <refentrytitle>mdb_config</refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_config</refname>
+  <refname>mdb_config</refname>
   <refpurpose>retrieve information about the installed version of <productname>MollyDB</></refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_config</command>
+   <command>mdb_config</command>
    <arg rep="repeat"><replaceable>option</replaceable></arg>
   </cmdsynopsis>
  </refsynopsisdiv>
@@ -26,7 +26,7 @@
  <refsect1>
   <title>Description</>
   <para>
-   The <application>pg_config</> utility prints configuration parameters
+   The <application>mdb_config</> utility prints configuration parameters
    of the currently installed version of <productname>MollyDB</>. It is
    intended, for example, to be used by software packages that want to interface
    to <productname>MollyDB</> to facilitate finding the required header files
@@ -39,7 +39,7 @@
   <title>Options</title>
 
   <para>
-   To use <application>pg_config</>, supply one or more of the following
+   To use <application>mdb_config</>, supply one or more of the following
    options:
    <variablelist>
     <varlistentry>
@@ -48,7 +48,7 @@
       <para>
        Print the location of user executables. Use this, for example, to find
        the <command>psql</> program. This is normally also the location
-       where the <filename>pg_config</> program resides.
+       where the <filename>mdb_config</> program resides.
       </para>
      </listitem>
     </varlistentry>
@@ -279,7 +279,7 @@
      <term><option>--help</></term>
       <listitem>
        <para>
-        Show help about <application>pg_config</application> command line
+        Show help about <application>mdb_config</application> command line
         arguments, and exit.
        </para>
       </listitem>
@@ -317,9 +317,9 @@
    To reproduce the build configuration of the current MollyDB
    installation, run the following command:
 <programlisting>
-eval ./configure `pg_config --configure`
+eval ./configure `mdb_config --configure`
 </programlisting>
-   The output of <literal>pg_config --configure</literal> contains
+   The output of <literal>mdb_config --configure</literal> contains
    shell quotation marks so arguments with spaces are represented
    correctly.  Therefore, using <literal>eval</literal> is required
    for proper results.

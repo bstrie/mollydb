@@ -11,8 +11,8 @@
  * One saving grace is that we only need deparse logic for node types that
  * we consider safe to send.
  *
- * We assume that the remote session's search_path is exactly "pg_catalog",
- * and thus we need schema-qualify all and only names outside pg_catalog.
+ * We assume that the remote session's search_path is exactly "mdb_catalog",
+ * and thus we need schema-qualify all and only names outside mdb_catalog.
  *
  * We do not consider that it is ever safe to send COLLATE expressions to
  * the remote server: it might not have the same collation names we do.
@@ -38,11 +38,11 @@
 #include "access/heapam.h"
 #include "access/htup_details.h"
 #include "access/sysattr.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "commands/defrem.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
@@ -140,7 +140,7 @@ static void deparseParam(Param *node, deparse_expr_cxt *context);
 static void deparseArrayRef(ArrayRef *node, deparse_expr_cxt *context);
 static void deparseFuncExpr(FuncExpr *node, deparse_expr_cxt *context);
 static void deparseOpExpr(OpExpr *node, deparse_expr_cxt *context);
-static void deparseOperatorName(StringInfo buf, Form_pg_operator opform);
+static void deparseOperatorName(StringInfo buf, Form_mdb_operator opform);
 static void deparseDistinctExpr(DistinctExpr *node, deparse_expr_cxt *context);
 static void deparseScalarArrayOpExpr(ScalarArrayOpExpr *node,
 						 deparse_expr_cxt *context);
@@ -703,8 +703,8 @@ foreign_expr_walker(Node *node,
  * This is almost just format_type_with_typemod(), except that if left to its
  * own devices, that function will make schema-qualification decisions based
  * on the local search_path, which is wrong.  We must schema-qualify all
- * type names that are not in pg_catalog.  We assume here that built-in types
- * are all in pg_catalog and need not be qualified; otherwise, qualify.
+ * type names that are not in mdb_catalog.  We assume here that built-in types
+ * are all in mdb_catalog and need not be qualified; otherwise, qualify.
  */
 static char *
 deparse_type_name(Oid type_oid, int32 typemod)
@@ -888,7 +888,7 @@ deparseTargetList(StringInfo buf,
 	first = true;
 	for (i = 1; i <= tupdesc->natts; i++)
 	{
-		Form_pg_attribute attr = tupdesc->attrs[i - 1];
+		Form_mdb_attribute attr = tupdesc->attrs[i - 1];
 
 		/* Ignore dropped attributes. */
 		if (attr->attisdropped)
@@ -1482,7 +1482,7 @@ deparseReturningList(StringInfo buf, PlannerInfo *root,
  * Note: we use local definition of block size, not remote definition.
  * This is perhaps debatable.
  *
- * Note: pg_relation_size() exists in 8.1 and later.
+ * Note: mdb_relation_size() exists in 8.1 and later.
  */
 void
 deparseAnalyzeSizeSql(StringInfo buf, Relation rel)
@@ -1493,9 +1493,9 @@ deparseAnalyzeSizeSql(StringInfo buf, Relation rel)
 	initStringInfo(&relname);
 	deparseRelation(&relname, rel);
 
-	appendStringInfoString(buf, "SELECT pg_catalog.pg_relation_size(");
+	appendStringInfoString(buf, "SELECT mdb_catalog.mdb_relation_size(");
 	deparseStringLiteral(buf, relname.data);
-	appendStringInfo(buf, "::pg_catalog.regclass) / %d", BLCKSZ);
+	appendStringInfo(buf, "::mdb_catalog.regclass) / %d", BLCKSZ);
 }
 
 /*
@@ -1729,7 +1729,7 @@ deparseRelation(StringInfo buf, Relation rel)
 	}
 
 	/*
-	 * Note: we could skip printing the schema name if it's pg_catalog, but
+	 * Note: we could skip printing the schema name if it's mdb_catalog, but
 	 * that doesn't seem worth the trouble.
 	 */
 	if (nspname == NULL)
@@ -2067,7 +2067,7 @@ deparseFuncExpr(FuncExpr *node, deparse_expr_cxt *context)
 {
 	StringInfo	buf = context->buf;
 	HeapTuple	proctup;
-	Form_pg_proc procform;
+	Form_mdb_proc procform;
 	const char *proname;
 	bool		use_variadic;
 	bool		first;
@@ -2107,12 +2107,12 @@ deparseFuncExpr(FuncExpr *node, deparse_expr_cxt *context)
 	proctup = SearchSysCache1(PROCOID, ObjectIdGetDatum(node->funcid));
 	if (!HeapTupleIsValid(proctup))
 		elog(ERROR, "cache lookup failed for function %u", node->funcid);
-	procform = (Form_pg_proc) GETSTRUCT(proctup);
+	procform = (Form_mdb_proc) GETSTRUCT(proctup);
 
 	/* Check if need to print VARIADIC (cf. ruleutils.c) */
 	use_variadic = node->funcvariadic;
 
-	/* Print schema name only if it's not pg_catalog */
+	/* Print schema name only if it's not mdb_catalog */
 	if (procform->pronamespace != PG_CATALOG_NAMESPACE)
 	{
 		const char *schemaname;
@@ -2149,7 +2149,7 @@ deparseOpExpr(OpExpr *node, deparse_expr_cxt *context)
 {
 	StringInfo	buf = context->buf;
 	HeapTuple	tuple;
-	Form_pg_operator form;
+	Form_mdb_operator form;
 	char		oprkind;
 	ListCell   *arg;
 
@@ -2157,7 +2157,7 @@ deparseOpExpr(OpExpr *node, deparse_expr_cxt *context)
 	tuple = SearchSysCache1(OPEROID, ObjectIdGetDatum(node->opno));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for operator %u", node->opno);
-	form = (Form_pg_operator) GETSTRUCT(tuple);
+	form = (Form_mdb_operator) GETSTRUCT(tuple);
 	oprkind = form->oprkind;
 
 	/* Sanity check. */
@@ -2196,14 +2196,14 @@ deparseOpExpr(OpExpr *node, deparse_expr_cxt *context)
  * Print the name of an operator.
  */
 static void
-deparseOperatorName(StringInfo buf, Form_pg_operator opform)
+deparseOperatorName(StringInfo buf, Form_mdb_operator opform)
 {
 	char	   *opname;
 
 	/* opname is not a SQL identifier, so we should not quote it. */
 	opname = NameStr(opform->oprname);
 
-	/* Print schema name only if it's not pg_catalog */
+	/* Print schema name only if it's not mdb_catalog */
 	if (opform->oprnamespace != PG_CATALOG_NAMESPACE)
 	{
 		const char *opnspname;
@@ -2246,7 +2246,7 @@ deparseScalarArrayOpExpr(ScalarArrayOpExpr *node, deparse_expr_cxt *context)
 {
 	StringInfo	buf = context->buf;
 	HeapTuple	tuple;
-	Form_pg_operator form;
+	Form_mdb_operator form;
 	Expr	   *arg1;
 	Expr	   *arg2;
 
@@ -2254,7 +2254,7 @@ deparseScalarArrayOpExpr(ScalarArrayOpExpr *node, deparse_expr_cxt *context)
 	tuple = SearchSysCache1(OPEROID, ObjectIdGetDatum(node->opno));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for operator %u", node->opno);
-	form = (Form_pg_operator) GETSTRUCT(tuple);
+	form = (Form_mdb_operator) GETSTRUCT(tuple);
 
 	/* Sanity check. */
 	Assert(list_length(node->args) == 2);

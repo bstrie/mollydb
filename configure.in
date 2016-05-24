@@ -1727,17 +1727,17 @@ dnl 64-bit type.  But we still handle the case of snprintf being broken.
 PGAC_TYPE_64BIT_INT([long int])
 
 if test x"$HAVE_LONG_INT_64" = x"yes" ; then
-  pg_int64_type="long int"
+  mdb_int64_type="long int"
 else
   PGAC_TYPE_64BIT_INT([long long int])
   if test x"$HAVE_LONG_LONG_INT_64" = x"yes" ; then
-    pg_int64_type="long long int"
+    mdb_int64_type="long long int"
   else
     AC_MSG_ERROR([Cannot find a working 64-bit integer type.])
   fi
 fi
 
-AC_DEFINE_UNQUOTED(PG_INT64_TYPE, $pg_int64_type,
+AC_DEFINE_UNQUOTED(PG_INT64_TYPE, $mdb_int64_type,
   [Define to the name of a signed 64-bit integer type.])
 
 dnl If we need to use "long long int", figure out whether nnnLL notation works.
@@ -1945,16 +1945,16 @@ fi
 AC_MSG_CHECKING([which CRC-32C implementation to use])
 if test x"$USE_SSE42_CRC32C" = x"1"; then
   AC_DEFINE(USE_SSE42_CRC32C, 1, [Define to 1 use Intel SSE 4.2 CRC instructions.])
-  PG_CRC32C_OBJS="pg_crc32c_sse42.o"
+  PG_CRC32C_OBJS="mdb_crc32c_sse42.o"
   AC_MSG_RESULT(SSE 4.2)
 else
   if test x"$USE_SSE42_CRC32C_WITH_RUNTIME_CHECK" = x"1"; then
     AC_DEFINE(USE_SSE42_CRC32C_WITH_RUNTIME_CHECK, 1, [Define to 1 to use Intel SSSE 4.2 CRC instructions with a runtime check.])
-    PG_CRC32C_OBJS="pg_crc32c_sse42.o pg_crc32c_sb8.o pg_crc32c_choose.o"
+    PG_CRC32C_OBJS="mdb_crc32c_sse42.o mdb_crc32c_sb8.o mdb_crc32c_choose.o"
     AC_MSG_RESULT(SSE 4.2 with runtime check)
   else
     AC_DEFINE(USE_SLICING_BY_8_CRC32C, 1, [Define to 1 to use Intel SSE 4.2 CRC instructions with a runtime check.])
-    PG_CRC32C_OBJS="pg_crc32c_sb8.o"
+    PG_CRC32C_OBJS="mdb_crc32c_sb8.o"
     AC_MSG_RESULT(slicing-by-8)
   fi
 fi
@@ -2183,10 +2183,10 @@ AC_CONFIG_FILES([GNUmakefile src/Makefile.global])
 
 AC_CONFIG_LINKS([
   src/backend/port/dynloader.c:src/backend/port/dynloader/${template}.c
-  src/backend/port/pg_sema.c:${SEMA_IMPLEMENTATION}
-  src/backend/port/pg_shmem.c:${SHMEM_IMPLEMENTATION}
+  src/backend/port/mdb_sema.c:${SEMA_IMPLEMENTATION}
+  src/backend/port/mdb_shmem.c:${SHMEM_IMPLEMENTATION}
   src/include/dynloader.h:src/backend/port/dynloader/${template}.h
-  src/include/pg_config_os.h:src/include/port/${template}.h
+  src/include/mdb_config_os.h:src/include/port/${template}.h
   src/Makefile.port:src/makefiles/Makefile.${template}
 ])
 
@@ -2202,19 +2202,19 @@ for FILE in $CONFIG_LINKS
 ])
 fi
 
-AC_CONFIG_HEADERS([src/include/pg_config.h],
+AC_CONFIG_HEADERS([src/include/mdb_config.h],
 [
-# Update timestamp for pg_config.h (see Makefile.global)
+# Update timestamp for mdb_config.h (see Makefile.global)
 echo >src/include/stamp-h
 ])
 
-AC_CONFIG_HEADERS([src/include/pg_config_ext.h],
+AC_CONFIG_HEADERS([src/include/mdb_config_ext.h],
 [
-# Update timestamp for pg_config_ext.h (see Makefile.global)
+# Update timestamp for mdb_config_ext.h (see Makefile.global)
 echo >src/include/stamp-ext-h
 ])
 
-AC_CONFIG_HEADERS([src/interfaces/ecpg/include/ecpg_config.h],
+AC_CONFIG_HEADERS([src/interfaces/ecpg/include/ecmdb_config.h],
                   [echo >src/interfaces/ecpg/include/stamp-h])
 
 AC_OUTPUT

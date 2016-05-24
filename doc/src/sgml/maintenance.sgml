@@ -505,18 +505,18 @@
    <para>
     The sole disadvantage of increasing <varname>autovacuum_freeze_max_age</>
     (and <varname>vacuum_freeze_table_age</> along with it)
-    is that the <filename>pg_clog</> subdirectory of the database cluster
+    is that the <filename>mdb_clog</> subdirectory of the database cluster
     will take more space, because it must store the commit status of all
     transactions back to the <varname>autovacuum_freeze_max_age</> horizon.
     The commit status uses two bits per transaction, so if
     <varname>autovacuum_freeze_max_age</> is set to its maximum allowed
-    value of two billion, <filename>pg_clog</> can be expected to
+    value of two billion, <filename>mdb_clog</> can be expected to
     grow to about half a gigabyte.  If this is trivial compared to your
     total database size, setting <varname>autovacuum_freeze_max_age</> to
     its maximum allowed value is recommended.  Otherwise, set it depending
-    on what you are willing to allow for <filename>pg_clog</> storage.
+    on what you are willing to allow for <filename>mdb_clog</> storage.
     (The default, 200 million transactions, translates to about 50MB of
-    <filename>pg_clog</> storage.)
+    <filename>mdb_clog</> storage.)
    </para>
 
    <para>
@@ -531,15 +531,15 @@
    <para>
     To track the age of the oldest unfrozen XIDs in a database,
     <command>VACUUM</> stores XID
-    statistics in the system tables <structname>pg_class</> and
-    <structname>pg_database</>.  In particular,
+    statistics in the system tables <structname>mdb_class</> and
+    <structname>mdb_database</>.  In particular,
     the <structfield>relfrozenxid</> column of a table's
-    <structname>pg_class</> row contains the freeze cutoff XID that was used
+    <structname>mdb_class</> row contains the freeze cutoff XID that was used
     by the last aggressive <command>VACUUM</> for that table.  All rows
     inserted by transactions with XIDs older than this cutoff XID are
     guaranteed to have been frozen.  Similarly,
     the <structfield>datfrozenxid</> column of a database's
-    <structname>pg_database</> row is a lower bound on the unfrozen XIDs
+    <structname>mdb_database</> row is a lower bound on the unfrozen XIDs
     appearing in that database &mdash; it is just the minimum of the
     per-table <structfield>relfrozenxid</> values within the database.
     A convenient way to
@@ -548,11 +548,11 @@
 <programlisting>
 SELECT c.oid::regclass as table_name,
        greatest(age(c.relfrozenxid),age(t.relfrozenxid)) as age
-FROM pg_class c
-LEFT JOIN pg_class t ON c.reltoastrelid = t.oid
+FROM mdb_class c
+LEFT JOIN mdb_class t ON c.reltoastrelid = t.oid
 WHERE c.relkind IN ('r', 'm');
 
-SELECT datname, age(datfrozenxid) FROM pg_database;
+SELECT datname, age(datfrozenxid) FROM mdb_database;
 </programlisting>
 
     The <literal>age</> column measures the number of transactions from the
@@ -634,7 +634,7 @@ HINT:  Stop the postmaster and vacuum that database in single-user mode.
      whenever there is more than one transaction concurrently locking a
      row.  Information about which transaction IDs are included in any
      particular multixact ID is stored separately in
-     the <filename>pg_multixact</> subdirectory, and only the multixact ID
+     the <filename>mdb_multixact</> subdirectory, and only the multixact ID
      appears in the <structfield>xmax</> field in the tuple header.
      Like transaction IDs, multixact IDs are implemented as a
      32-bit counter and corresponding storage, all of which requires
@@ -650,14 +650,14 @@ HINT:  Stop the postmaster and vacuum that database in single-user mode.
      <xref linkend="guc-vacuum-multixact-freeze-min-age">
      by a different value, which can be the zero value, a single
      transaction ID, or a newer multixact ID.  For each table,
-     <structname>pg_class</>.<structfield>relminmxid</> stores the oldest
+     <structname>mdb_class</>.<structfield>relminmxid</> stores the oldest
      possible multixact ID still appearing in any tuple of that table.
      If this value is older than
      <xref linkend="guc-vacuum-multixact-freeze-table-age">, an aggressive
      vacuum is forced.  As discussed in the previous section, an aggressive
      vacuum means that only those pages which are known to be all-frozen will
      be skipped.  <function>mxid_age()</> can be used on
-     <structname>pg_class</>.<structfield>relminmxid</> to find its age.
+     <structname>mdb_class</>.<structfield>relminmxid</> to find its age.
     </para>
 
     <para>
@@ -750,7 +750,7 @@ vacuum threshold = vacuum base threshold + vacuum scale factor * number of tuple
     the vacuum scale factor is
     <xref linkend="guc-autovacuum-vacuum-scale-factor">,
     and the number of tuples is
-    <structname>pg_class</structname>.<structfield>reltuples</structfield>.
+    <structname>mdb_class</structname>.<structfield>reltuples</structfield>.
     The number of obsolete tuples is obtained from the statistics
     collector; it is a semi-accurate count updated by each
     <command>UPDATE</command> and <command>DELETE</command> operation.  (It
@@ -910,12 +910,12 @@ analyze threshold = analyze base threshold + analyze scale factor * number of tu
    just pipe the server's
    <systemitem>stderr</> output to the desired program.
    If you start the server with
-   <command>pg_ctl</>, then <systemitem>stderr</>
+   <command>mdb_ctl</>, then <systemitem>stderr</>
    is already redirected to <systemitem>stdout</>, so you just need a
    pipe command, for example:
 
 <programlisting>
-pg_ctl start | rotatelogs /var/log/mdb_log 86400
+mdb_ctl start | rotatelogs /var/log/mdb_log 86400
 </programlisting>
   </para>
 

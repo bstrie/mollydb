@@ -509,8 +509,8 @@ msgstr "\\!: 失敗\n"
 # common.c:78
 #: common.c:45
 #, c-format
-msgid "%s: pg_strdup: cannot duplicate null pointer (internal error)\n"
-msgstr "%s: pg_strdup : 無法複製空指標 (內部錯誤)\n"
+msgid "%s: mdb_strdup: cannot duplicate null pointer (internal error)\n"
+msgstr "%s: mdb_strdup : 無法複製空指標 (內部錯誤)\n"
 
 # common.c:123
 #: common.c:90

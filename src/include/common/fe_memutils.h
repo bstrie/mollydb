@@ -10,7 +10,7 @@
 #define FE_MEMUTILS_H
 
 /*
- * Flags for pg_malloc_extended and palloc_extended, deliberately named
+ * Flags for mdb_malloc_extended and palloc_extended, deliberately named
  * the same as the backend flags.
  */
 #define MCXT_ALLOC_HUGE			0x01	/* allow huge allocation (> 1 GB) not
@@ -20,14 +20,14 @@
 
 /*
  * "Safe" memory allocation functions --- these exit(1) on failure
- * (except pg_malloc_extended with MCXT_ALLOC_NO_OOM)
+ * (except mdb_malloc_extended with MCXT_ALLOC_NO_OOM)
  */
-extern char *pg_strdup(const char *in);
-extern void *pg_malloc(size_t size);
-extern void *pg_malloc0(size_t size);
-extern void *pg_malloc_extended(size_t size, int flags);
-extern void *pg_realloc(void *pointer, size_t size);
-extern void pg_free(void *pointer);
+extern char *mdb_strdup(const char *in);
+extern void *mdb_malloc(size_t size);
+extern void *mdb_malloc0(size_t size);
+extern void *mdb_malloc_extended(size_t size, int flags);
+extern void *mdb_realloc(void *pointer, size_t size);
+extern void mdb_free(void *pointer);
 
 /* Equivalent functions, deliberately named the same as backend functions */
 extern char *pstrdup(const char *in);
@@ -38,7 +38,7 @@ extern void *repalloc(void *pointer, Size size);
 extern void pfree(void *pointer);
 
 /* sprintf into a palloc'd buffer --- these are in psprintf.c */
-extern char *psprintf(const char *fmt,...) pg_attribute_printf(1, 2);
-extern size_t pvsnprintf(char *buf, size_t len, const char *fmt, va_list args) pg_attribute_printf(3, 0);
+extern char *psprintf(const char *fmt,...) mdb_attribute_printf(1, 2);
+extern size_t pvsnprintf(char *buf, size_t len, const char *fmt, va_list args) mdb_attribute_printf(3, 0);
 
 #endif   /* FE_MEMUTILS_H */

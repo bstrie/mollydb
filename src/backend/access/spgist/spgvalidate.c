@@ -16,11 +16,11 @@
 #include "access/amvalidate.h"
 #include "access/htup_details.h"
 #include "access/spgist_private.h"
-#include "catalog/pg_amop.h"
-#include "catalog/pg_amproc.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_opfamily.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_amop.h"
+#include "catalog/mdb_amproc.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_opfamily.h"
+#include "catalog/mdb_type.h"
 #include "utils/builtins.h"
 #include "utils/syscache.h"
 
@@ -38,12 +38,12 @@ spgvalidate(Oid opclassoid)
 {
 	bool		result = true;
 	HeapTuple	classtup;
-	Form_pg_opclass classform;
+	Form_mdb_opclass classform;
 	Oid			opfamilyoid;
 	Oid			opcintype;
 	char	   *opclassname;
 	HeapTuple	familytup;
-	Form_pg_opfamily familyform;
+	Form_mdb_opfamily familyform;
 	char	   *opfamilyname;
 	CatCList   *proclist,
 			   *oprlist;
@@ -56,7 +56,7 @@ spgvalidate(Oid opclassoid)
 	classtup = SearchSysCache1(CLAOID, ObjectIdGetDatum(opclassoid));
 	if (!HeapTupleIsValid(classtup))
 		elog(ERROR, "cache lookup failed for operator class %u", opclassoid);
-	classform = (Form_pg_opclass) GETSTRUCT(classtup);
+	classform = (Form_mdb_opclass) GETSTRUCT(classtup);
 
 	opfamilyoid = classform->opcfamily;
 	opcintype = classform->opcintype;
@@ -66,7 +66,7 @@ spgvalidate(Oid opclassoid)
 	familytup = SearchSysCache1(OPFAMILYOID, ObjectIdGetDatum(opfamilyoid));
 	if (!HeapTupleIsValid(familytup))
 		elog(ERROR, "cache lookup failed for operator family %u", opfamilyoid);
-	familyform = (Form_pg_opfamily) GETSTRUCT(familytup);
+	familyform = (Form_mdb_opfamily) GETSTRUCT(familytup);
 
 	opfamilyname = NameStr(familyform->opfname);
 
@@ -78,7 +78,7 @@ spgvalidate(Oid opclassoid)
 	for (i = 0; i < proclist->n_members; i++)
 	{
 		HeapTuple	proctup = &proclist->members[i]->tuple;
-		Form_pg_amproc procform = (Form_pg_amproc) GETSTRUCT(proctup);
+		Form_mdb_amproc procform = (Form_mdb_amproc) GETSTRUCT(proctup);
 		bool		ok;
 
 		/*
@@ -136,7 +136,7 @@ spgvalidate(Oid opclassoid)
 	for (i = 0; i < oprlist->n_members; i++)
 	{
 		HeapTuple	oprtup = &oprlist->members[i]->tuple;
-		Form_pg_amop oprform = (Form_pg_amop) GETSTRUCT(oprtup);
+		Form_mdb_amop oprform = (Form_mdb_amop) GETSTRUCT(oprtup);
 
 		/* TODO: Check that only allowed strategy numbers exist */
 		if (oprform->amopstrategy < 1 || oprform->amopstrategy > 63)

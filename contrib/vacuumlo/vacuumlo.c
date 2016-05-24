@@ -22,7 +22,7 @@
 #endif
 
 #include "libpq-fe.h"
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 
 #define atooid(x)  ((Oid) strtoul((x), NULL, 10))
 
@@ -37,10 +37,10 @@ enum trivalue
 
 struct _param
 {
-	char	   *pg_user;
-	enum trivalue pg_prompt;
-	char	   *pg_port;
-	char	   *pg_host;
+	char	   *mdb_user;
+	enum trivalue mdb_prompt;
+	char	   *mdb_port;
+	char	   *mdb_host;
 	const char *progname;
 	int			verbose;
 	int			dry_run;
@@ -70,7 +70,7 @@ vacuumlo(const char *database, const struct _param * param)
 	bool		success = true;
 
 	/* Note: password can be carried over from a previous call */
-	if (param->pg_prompt == TRI_YES && password == NULL)
+	if (param->mdb_prompt == TRI_YES && password == NULL)
 		password = simple_prompt("Password: ", 100, false);
 
 	/*
@@ -85,11 +85,11 @@ vacuumlo(const char *database, const struct _param * param)
 		const char *values[PARAMS_ARRAY_SIZE];
 
 		keywords[0] = "host";
-		values[0] = param->pg_host;
+		values[0] = param->mdb_host;
 		keywords[1] = "port";
-		values[1] = param->pg_port;
+		values[1] = param->mdb_port;
 		keywords[2] = "user";
-		values[2] = param->pg_user;
+		values[2] = param->mdb_user;
 		keywords[3] = "password";
 		values[3] = password;
 		keywords[4] = "dbname";
@@ -111,7 +111,7 @@ vacuumlo(const char *database, const struct _param * param)
 		if (PQstatus(conn) == CONNECTION_BAD &&
 			PQconnectionNeedsPassword(conn) &&
 			password == NULL &&
-			param->pg_prompt != TRI_NO)
+			param->mdb_prompt != TRI_NO)
 		{
 			PQfinish(conn);
 			password = simple_prompt("Password: ", 100, false);
@@ -138,7 +138,7 @@ vacuumlo(const char *database, const struct _param * param)
 	/*
 	 * Don't get fooled by any non-system catalogs
 	 */
-	res = PQexec(conn, "SET search_path = pg_catalog");
+	res = PQexec(conn, "SET search_path = mdb_catalog");
 	if (PQresultStatus(res) != PGRES_COMMAND_OK)
 	{
 		fprintf(stderr, "Failed to set search_path:\n");
@@ -155,9 +155,9 @@ vacuumlo(const char *database, const struct _param * param)
 	buf[0] = '\0';
 	strcat(buf, "CREATE TEMP TABLE vacuum_l AS ");
 	if (PQserverVersion(conn) >= 90000)
-		strcat(buf, "SELECT oid AS lo FROM pg_largeobject_metadata");
+		strcat(buf, "SELECT oid AS lo FROM mdb_largeobject_metadata");
 	else
-		strcat(buf, "SELECT DISTINCT loid AS lo FROM pg_largeobject");
+		strcat(buf, "SELECT DISTINCT loid AS lo FROM mdb_largeobject");
 	res = PQexec(conn, buf);
 	if (PQresultStatus(res) != PGRES_COMMAND_OK)
 	{
@@ -190,8 +190,8 @@ vacuumlo(const char *database, const struct _param * param)
 	 * Now find any candidate tables that have columns of type oid.
 	 *
 	 * NOTE: we ignore system tables and temp tables by the expedient of
-	 * rejecting tables in schemas named 'pg_*'.  In particular, the temp
-	 * table formed above is ignored, and pg_largeobject will be too. If
+	 * rejecting tables in schemas named 'mdb_*'.  In particular, the temp
+	 * table formed above is ignored, and mdb_largeobject will be too. If
 	 * either of these were scanned, obviously we'd end up with nothing to
 	 * delete...
 	 *
@@ -200,14 +200,14 @@ vacuumlo(const char *database, const struct _param * param)
 	 */
 	buf[0] = '\0';
 	strcat(buf, "SELECT s.nspname, c.relname, a.attname ");
-	strcat(buf, "FROM pg_class c, pg_attribute a, pg_namespace s, pg_type t ");
+	strcat(buf, "FROM mdb_class c, mdb_attribute a, mdb_namespace s, mdb_type t ");
 	strcat(buf, "WHERE a.attnum > 0 AND NOT a.attisdropped ");
 	strcat(buf, "      AND a.attrelid = c.oid ");
 	strcat(buf, "      AND a.atttypid = t.oid ");
 	strcat(buf, "      AND c.relnamespace = s.oid ");
 	strcat(buf, "      AND t.typname in ('oid', 'lo') ");
 	strcat(buf, "      AND c.relkind in ('r', 'm')");
-	strcat(buf, "      AND s.nspname !~ '^pg_'");
+	strcat(buf, "      AND s.nspname !~ '^mdb_'");
 	res = PQexec(conn, buf);
 	if (PQresultStatus(res) != PGRES_TUPLES_OK)
 	{
@@ -459,10 +459,10 @@ main(int argc, char **argv)
 	progname = get_progname(argv[0]);
 
 	/* Set default parameter values */
-	param.pg_user = NULL;
-	param.pg_prompt = TRI_DEFAULT;
-	param.pg_host = NULL;
-	param.pg_port = NULL;
+	param.mdb_user = NULL;
+	param.mdb_prompt = TRI_DEFAULT;
+	param.mdb_host = NULL;
+	param.mdb_port = NULL;
 	param.progname = progname;
 	param.verbose = 0;
 	param.dry_run = 0;
@@ -514,13 +514,13 @@ main(int argc, char **argv)
 				}
 				break;
 			case 'U':
-				param.pg_user = strdup(optarg);
+				param.mdb_user = strdup(optarg);
 				break;
 			case 'w':
-				param.pg_prompt = TRI_NO;
+				param.mdb_prompt = TRI_NO;
 				break;
 			case 'W':
-				param.pg_prompt = TRI_YES;
+				param.mdb_prompt = TRI_YES;
 				break;
 			case 'p':
 				port = strtol(optarg, NULL, 10);
@@ -529,10 +529,10 @@ main(int argc, char **argv)
 					fprintf(stderr, "%s: invalid port number: %s\n", progname, optarg);
 					exit(1);
 				}
-				param.pg_port = strdup(optarg);
+				param.mdb_port = strdup(optarg);
 				break;
 			case 'h':
-				param.pg_host = strdup(optarg);
+				param.mdb_host = strdup(optarg);
 				break;
 		}
 	}

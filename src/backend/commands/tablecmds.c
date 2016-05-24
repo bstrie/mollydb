@@ -29,20 +29,20 @@
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_constraint.h"
-#include "catalog/pg_constraint_fn.h"
-#include "catalog/pg_depend.h"
-#include "catalog/pg_foreign_table.h"
-#include "catalog/pg_inherits.h"
-#include "catalog/pg_inherits_fn.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_tablespace.h"
-#include "catalog/pg_trigger.h"
-#include "catalog/pg_type.h"
-#include "catalog/pg_type_fn.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_constraint.h"
+#include "catalog/mdb_constraint_fn.h"
+#include "catalog/mdb_depend.h"
+#include "catalog/mdb_foreign_table.h"
+#include "catalog/mdb_inherits.h"
+#include "catalog/mdb_inherits_fn.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_tablespace.h"
+#include "catalog/mdb_trigger.h"
+#include "catalog/mdb_type.h"
+#include "catalog/mdb_type_fn.h"
 #include "catalog/storage.h"
 #include "catalog/storage_xlog.h"
 #include "catalog/toasting.h"
@@ -177,7 +177,7 @@ typedef struct NewConstraint
 	ConstrType	contype;		/* CHECK or FOREIGN */
 	Oid			refrelid;		/* PK rel, if FOREIGN */
 	Oid			refindid;		/* OID of PK's index, if FOREIGN */
-	Oid			conid;			/* OID of pg_constraint entry, if FOREIGN */
+	Oid			conid;			/* OID of mdb_constraint entry, if FOREIGN */
 	Node	   *qual;			/* Check expr or CONSTR_FOREIGN Constraint */
 	List	   *qualstate;		/* Execution state for CHECK */
 } NewConstraint;
@@ -443,7 +443,7 @@ static void RangeVarCallbackForAlterRelation(const RangeVar *rv, Oid relid,
  * The other arguments are used to extend the behavior for other cases:
  * relkind: relkind to assign to the new relation
  * ownerId: if not InvalidOid, use this as the new relation's owner.
- * typaddress: if not null, it's set to the pg_type entry's address.
+ * typaddress: if not null, it's set to the mdb_type entry's address.
  *
  * Note that permissions checks are done against current user regardless of
  * ownerId.  A nonzero ownerId is used when someone is creating a relation
@@ -504,7 +504,7 @@ DefineRelation(CreateStmt *stmt, char relkind, Oid ownerId,
 	/*
 	 * Security check: disallow creating temp tables from security-restricted
 	 * code.  This is needed because calling code might not expect untrusted
-	 * tables to appear in pg_temp at the front of its search path.
+	 * tables to appear in mdb_temp at the front of its search path.
 	 */
 	if (stmt->relation->relpersistence == RELPERSISTENCE_TEMP
 		&& InSecurityRestrictedOperation())
@@ -531,18 +531,18 @@ DefineRelation(CreateStmt *stmt, char relkind, Oid ownerId,
 	{
 		AclResult	aclresult;
 
-		aclresult = pg_tablespace_aclcheck(tablespaceId, GetUserId(),
+		aclresult = mdb_tablespace_aclcheck(tablespaceId, GetUserId(),
 										   ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_TABLESPACE,
 						   get_tablespace_name(tablespaceId));
 	}
 
-	/* In all cases disallow placing user relations in pg_global */
+	/* In all cases disallow placing user relations in mdb_global */
 	if (tablespaceId == GLOBALTABLESPACE_OID)
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-				 errmsg("only shared relations can be placed in pg_global tablespace")));
+				 errmsg("only shared relations can be placed in mdb_global tablespace")));
 
 	/* Identify user ID that will own the table */
 	if (!OidIsValid(ownerId))
@@ -565,7 +565,7 @@ DefineRelation(CreateStmt *stmt, char relkind, Oid ownerId,
 
 		ofTypeId = typenameTypeId(NULL, stmt->ofTypename);
 
-		aclresult = pg_type_aclcheck(ofTypeId, GetUserId(), ACL_USAGE);
+		aclresult = mdb_type_aclcheck(ofTypeId, GetUserId(), ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error_type(aclresult, ofTypeId);
 	}
@@ -591,7 +591,7 @@ DefineRelation(CreateStmt *stmt, char relkind, Oid ownerId,
 	 * Notice that we allow OIDs here only for plain tables, even though some
 	 * other relkinds can support them.  This is necessary because the
 	 * default_with_oids GUC must apply only to plain tables and not any other
-	 * relkind; doing otherwise would break existing pg_dump files.  We could
+	 * relkind; doing otherwise would break existing mdb_dump files.  We could
 	 * allow explicit "WITH OIDS" while not allowing default_with_oids to
 	 * affect other relkinds, but it would complicate interpretOidsOption().
 	 */
@@ -609,7 +609,7 @@ DefineRelation(CreateStmt *stmt, char relkind, Oid ownerId,
 	 *
 	 * We can set the atthasdef flags now in the tuple descriptor; this just
 	 * saves StoreAttrDefault from having to do an immediate update of the
-	 * pg_attribute rows.
+	 * mdb_attribute rows.
 	 */
 	rawDefaults = NIL;
 	cookedDefaults = NIL;
@@ -927,7 +927,7 @@ RangeVarCallbackForDropRelation(const RangeVar *rel, Oid relOid, Oid oldRelOid,
 	HeapTuple	tuple;
 	struct DropRelationCallbackState *state;
 	char		relkind;
-	Form_pg_class classform;
+	Form_mdb_class classform;
 	LOCKMODE	heap_lockmode;
 
 	state = (struct DropRelationCallbackState *) arg;
@@ -953,14 +953,14 @@ RangeVarCallbackForDropRelation(const RangeVar *rel, Oid relOid, Oid oldRelOid,
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relOid));
 	if (!HeapTupleIsValid(tuple))
 		return;					/* concurrently dropped, so nothing to do */
-	classform = (Form_pg_class) GETSTRUCT(tuple);
+	classform = (Form_mdb_class) GETSTRUCT(tuple);
 
 	if (classform->relkind != relkind)
 		DropErrorMsgWrongType(rel->relname, classform->relkind, relkind);
 
 	/* Allow DROP to either table owner or schema owner */
-	if (!pg_class_ownercheck(relOid, GetUserId()) &&
-		!pg_namespace_ownercheck(classform->relnamespace, GetUserId()))
+	if (!mdb_class_ownercheck(relOid, GetUserId()) &&
+		!mdb_namespace_ownercheck(classform->relnamespace, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 					   rel->relname);
 
@@ -976,7 +976,7 @@ RangeVarCallbackForDropRelation(const RangeVar *rel, Oid relOid, Oid oldRelOid,
 	 * In DROP INDEX, attempt to acquire lock on the parent table before
 	 * locking the index.  index_drop() will need this anyway, and since
 	 * regular queries lock tables before their indexes, we risk deadlock if
-	 * we do it the other way around.  No error if we don't find a pg_index
+	 * we do it the other way around.  No error if we don't find a mdb_index
 	 * entry, though --- the relation may have been dropped.
 	 */
 	if (relkind == RELKIND_INDEX && relOid != oldRelOid)
@@ -1124,7 +1124,7 @@ ExecuteTruncate(TruncateStmt *stmt)
 				seq_rel = relation_open(seq_relid, AccessExclusiveLock);
 
 				/* This check must match AlterSequence! */
-				if (!pg_class_ownercheck(seq_relid, GetUserId()))
+				if (!mdb_class_ownercheck(seq_relid, GetUserId()))
 					aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 								   RelationGetRelationName(seq_rel));
 
@@ -1300,7 +1300,7 @@ truncate_check_rel(Relation rel)
 						RelationGetRelationName(rel))));
 
 	/* Permissions checks */
-	aclresult = pg_class_aclcheck(RelationGetRelid(rel), GetUserId(),
+	aclresult = mdb_class_aclcheck(RelationGetRelid(rel), GetUserId(),
 								  ACL_TRUNCATE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_CLASS,
@@ -1546,7 +1546,7 @@ MergeAttributes(List *schema, List *supers, char relpersistence,
 		 * We should have an UNDER permission flag for this, but for now,
 		 * demand that creator of a child table own the parent.
 		 */
-		if (!pg_class_ownercheck(RelationGetRelid(relation), GetUserId()))
+		if (!mdb_class_ownercheck(RelationGetRelid(relation), GetUserId()))
 			aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 						   RelationGetRelationName(relation));
 
@@ -1578,7 +1578,7 @@ MergeAttributes(List *schema, List *supers, char relpersistence,
 		for (parent_attno = 1; parent_attno <= tupleDesc->natts;
 			 parent_attno++)
 		{
-			Form_pg_attribute attribute = tupleDesc->attrs[parent_attno - 1];
+			Form_mdb_attribute attribute = tupleDesc->attrs[parent_attno - 1];
 			char	   *attributeName = NameStr(attribute->attname);
 			int			exist_attno;
 			ColumnDef  *def;
@@ -1988,12 +1988,12 @@ StoreCatalogInheritance(Oid relationId, List *supers)
 		return;
 
 	/*
-	 * Store INHERITS information in pg_inherits using direct ancestors only.
+	 * Store INHERITS information in mdb_inherits using direct ancestors only.
 	 * Also enter dependencies on the direct ancestors, and make sure they are
 	 * marked with relhassubclass = true.
 	 *
 	 * (Once upon a time, both direct and indirect ancestors were found here
-	 * and then entered into pg_ipl.  Since that catalog doesn't exist
+	 * and then entered into mdb_ipl.  Since that catalog doesn't exist
 	 * anymore, there's no need to look for indirect ancestors.)
 	 */
 	relation = heap_open(InheritsRelationId, RowExclusiveLock);
@@ -2012,25 +2012,25 @@ StoreCatalogInheritance(Oid relationId, List *supers)
 
 /*
  * Make catalog entries showing relationId as being an inheritance child
- * of parentOid.  inhRelation is the already-opened pg_inherits catalog.
+ * of parentOid.  inhRelation is the already-opened mdb_inherits catalog.
  */
 static void
 StoreCatalogInheritance1(Oid relationId, Oid parentOid,
 						 int16 seqNumber, Relation inhRelation)
 {
 	TupleDesc	desc = RelationGetDescr(inhRelation);
-	Datum		values[Natts_pg_inherits];
-	bool		nulls[Natts_pg_inherits];
+	Datum		values[Natts_mdb_inherits];
+	bool		nulls[Natts_mdb_inherits];
 	ObjectAddress childobject,
 				parentobject;
 	HeapTuple	tuple;
 
 	/*
-	 * Make the pg_inherits entry
+	 * Make the mdb_inherits entry
 	 */
-	values[Anum_pg_inherits_inhrelid - 1] = ObjectIdGetDatum(relationId);
-	values[Anum_pg_inherits_inhparent - 1] = ObjectIdGetDatum(parentOid);
-	values[Anum_pg_inherits_inhseqno - 1] = Int16GetDatum(seqNumber);
+	values[Anum_mdb_inherits_inhrelid - 1] = ObjectIdGetDatum(relationId);
+	values[Anum_mdb_inherits_inhparent - 1] = ObjectIdGetDatum(parentOid);
+	values[Anum_mdb_inherits_inhseqno - 1] = Int16GetDatum(seqNumber);
 
 	memset(nulls, 0, sizeof(nulls));
 
@@ -2096,7 +2096,7 @@ findAttrByName(const char *attributeName, List *schema)
 
 /*
  * SetRelationHasSubclass
- *		Set the value of the relation's relhassubclass field in pg_class.
+ *		Set the value of the relation's relhassubclass field in mdb_class.
  *
  * NOTE: caller must be holding an appropriate lock on the relation.
  * ShareUpdateExclusiveLock is sufficient.
@@ -2104,7 +2104,7 @@ findAttrByName(const char *attributeName, List *schema)
  * NOTE: an important side-effect of this operation is that an SI invalidation
  * message is sent out to all backends --- including me --- causing plans
  * referencing the relation to be rebuilt with the new list of children.
- * This must happen even if we find that no change is needed in the pg_class
+ * This must happen even if we find that no change is needed in the mdb_class
  * row.
  */
 void
@@ -2112,16 +2112,16 @@ SetRelationHasSubclass(Oid relationId, bool relhassubclass)
 {
 	Relation	relationRelation;
 	HeapTuple	tuple;
-	Form_pg_class classtuple;
+	Form_mdb_class classtuple;
 
 	/*
-	 * Fetch a modifiable copy of the tuple, modify it, update pg_class.
+	 * Fetch a modifiable copy of the tuple, modify it, update mdb_class.
 	 */
 	relationRelation = heap_open(RelationRelationId, RowExclusiveLock);
 	tuple = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(relationId));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", relationId);
-	classtuple = (Form_pg_class) GETSTRUCT(tuple);
+	classtuple = (Form_mdb_class) GETSTRUCT(tuple);
 
 	if (classtuple->relhassubclass != relhassubclass)
 	{
@@ -2145,7 +2145,7 @@ SetRelationHasSubclass(Oid relationId, bool relhassubclass)
  *		renameatt_check			- basic sanity checks before attribute rename
  */
 static void
-renameatt_check(Oid myrelid, Form_pg_class classform, bool recursing)
+renameatt_check(Oid myrelid, Form_mdb_class classform, bool recursing)
 {
 	char		relkind = classform->relkind;
 
@@ -2175,7 +2175,7 @@ renameatt_check(Oid myrelid, Form_pg_class classform, bool recursing)
 	/*
 	 * permissions checking.  only the owner of a class can change its schema.
 	 */
-	if (!pg_class_ownercheck(myrelid, GetUserId()))
+	if (!mdb_class_ownercheck(myrelid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 					   NameStr(classform->relname));
 	if (!allowSystemTableMods && IsSystemClass(myrelid, classform))
@@ -2202,7 +2202,7 @@ renameatt_internal(Oid myrelid,
 	Relation	targetrelation;
 	Relation	attrelation;
 	HeapTuple	atttup;
-	Form_pg_attribute attform;
+	Form_mdb_attribute attform;
 	AttrNumber	attnum;
 
 	/*
@@ -2289,7 +2289,7 @@ renameatt_internal(Oid myrelid,
 				(errcode(ERRCODE_UNDEFINED_COLUMN),
 				 errmsg("column \"%s\" does not exist",
 						oldattname)));
-	attform = (Form_pg_attribute) GETSTRUCT(atttup);
+	attform = (Form_mdb_attribute) GETSTRUCT(atttup);
 
 	attnum = attform->attnum;
 	if (attnum <= 0)
@@ -2343,12 +2343,12 @@ RangeVarCallbackForRenameAttribute(const RangeVar *rv, Oid relid, Oid oldrelid,
 								   void *arg)
 {
 	HeapTuple	tuple;
-	Form_pg_class form;
+	Form_mdb_class form;
 
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tuple))
 		return;					/* concurrently dropped */
-	form = (Form_pg_class) GETSTRUCT(tuple);
+	form = (Form_mdb_class) GETSTRUCT(tuple);
 	renameatt_check(relid, form, false);
 	ReleaseSysCache(tuple);
 }
@@ -2408,7 +2408,7 @@ rename_constraint_internal(Oid myrelid,
 	Relation	targetrelation = NULL;
 	Oid			constraintOid;
 	HeapTuple	tuple;
-	Form_pg_constraint con;
+	Form_mdb_constraint con;
 	ObjectAddress address;
 
 	AssertArg(!myrelid || !mytypid);
@@ -2434,7 +2434,7 @@ rename_constraint_internal(Oid myrelid,
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for constraint %u",
 			 constraintOid);
-	con = (Form_pg_constraint) GETSTRUCT(tuple);
+	con = (Form_mdb_constraint) GETSTRUCT(tuple);
 
 	if (myrelid && con->contype == CONSTRAINT_CHECK && !con->connoinherit)
 	{
@@ -2595,7 +2595,7 @@ RenameRelationInternal(Oid myrelid, const char *newrelname, bool is_internal)
 	Relation	targetrelation;
 	Relation	relrelation;	/* for RELATION relation */
 	HeapTuple	reltup;
-	Form_pg_class relform;
+	Form_mdb_class relform;
 	Oid			namespaceId;
 
 	/*
@@ -2607,14 +2607,14 @@ RenameRelationInternal(Oid myrelid, const char *newrelname, bool is_internal)
 	namespaceId = RelationGetNamespace(targetrelation);
 
 	/*
-	 * Find relation's pg_class tuple, and make sure newrelname isn't in use.
+	 * Find relation's mdb_class tuple, and make sure newrelname isn't in use.
 	 */
 	relrelation = heap_open(RelationRelationId, RowExclusiveLock);
 
 	reltup = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(myrelid));
 	if (!HeapTupleIsValid(reltup))		/* shouldn't happen */
 		elog(ERROR, "cache lookup failed for relation %u", myrelid);
-	relform = (Form_pg_class) GETSTRUCT(reltup);
+	relform = (Form_mdb_class) GETSTRUCT(reltup);
 
 	if (get_relname_relid(newrelname, namespaceId) != InvalidOid)
 		ereport(ERROR,
@@ -2623,7 +2623,7 @@ RenameRelationInternal(Oid myrelid, const char *newrelname, bool is_internal)
 						newrelname)));
 
 	/*
-	 * Update pg_class tuple with new relname.  (Scribbling on reltup is OK
+	 * Update mdb_class tuple with new relname.  (Scribbling on reltup is OK
 	 * because it's a copy...)
 	 */
 	namestrcpy(&(relform->relname), newrelname);
@@ -2832,10 +2832,10 @@ AlterTableInternal(Oid relid, List *cmds, bool recurse)
  * AccessExclusiveLocks even if you think a lesser lock would do, unless you
  * have a solution for that also.
  *
- * Also note that pg_dump uses only an AccessShareLock, meaning that anything
+ * Also note that mdb_dump uses only an AccessShareLock, meaning that anything
  * that takes a lock less than AccessExclusiveLock can change object definitions
- * while pg_dump is running. Be careful to check that the appropriate data is
- * derived by pg_dump using an MVCC snapshot, rather than syscache lookups,
+ * while mdb_dump is running. Be careful to check that the appropriate data is
+ * derived by mdb_dump using an MVCC snapshot, rather than syscache lookups,
  * otherwise we might end up with an inconsistent dump that can't restore.
  */
 LOCKMODE
@@ -3844,7 +3844,7 @@ ATRewriteTables(AlterTableStmt *parsetree, List **wqueue, LOCKMODE lockmode)
 			 * original filenode having the wrong persistence setting.
 			 *
 			 * NB: This relies on swap_relation_files() also swapping the
-			 * persistence. That wouldn't work for pg_class, but that can't be
+			 * persistence. That wouldn't work for mdb_class, but that can't be
 			 * unlogged anyway.
 			 */
 			OIDNewHeap = make_new_heap(tab->relid, NewTableSpace, persistence,
@@ -4318,7 +4318,7 @@ ATSimplePermissions(Relation rel, int allowed_targets)
 		ATWrongRelkindError(rel, allowed_targets);
 
 	/* Permissions checks */
-	if (!pg_class_ownercheck(RelationGetRelid(rel), GetUserId()))
+	if (!mdb_class_ownercheck(RelationGetRelid(rel), GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 					   RelationGetRelationName(rel));
 
@@ -4494,17 +4494,17 @@ find_composite_type_dependencies(Oid typeOid, Relation origRelation,
 	Oid			arrayOid;
 
 	/*
-	 * We scan pg_depend to find those things that depend on the rowtype. (We
+	 * We scan mdb_depend to find those things that depend on the rowtype. (We
 	 * assume we can ignore refobjsubid for a rowtype.)
 	 */
 	depRel = heap_open(DependRelationId, AccessShareLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_refclassid,
+				Anum_mdb_depend_refclassid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(TypeRelationId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_refobjid,
+				Anum_mdb_depend_refobjid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(typeOid));
 
@@ -4513,18 +4513,18 @@ find_composite_type_dependencies(Oid typeOid, Relation origRelation,
 
 	while (HeapTupleIsValid(depTup = systable_getnext(depScan)))
 	{
-		Form_pg_depend pg_depend = (Form_pg_depend) GETSTRUCT(depTup);
+		Form_mdb_depend mdb_depend = (Form_mdb_depend) GETSTRUCT(depTup);
 		Relation	rel;
-		Form_pg_attribute att;
+		Form_mdb_attribute att;
 
 		/* Ignore dependees that aren't user columns of relations */
 		/* (we assume system columns are never of rowtypes) */
-		if (pg_depend->classid != RelationRelationId ||
-			pg_depend->objsubid <= 0)
+		if (mdb_depend->classid != RelationRelationId ||
+			mdb_depend->objsubid <= 0)
 			continue;
 
-		rel = relation_open(pg_depend->objid, AccessShareLock);
-		att = rel->rd_att->attrs[pg_depend->objsubid - 1];
+		rel = relation_open(mdb_depend->objid, AccessShareLock);
+		att = rel->rd_att->attrs[mdb_depend->objsubid - 1];
 
 		if (rel->rd_rel->relkind == RELKIND_RELATION ||
 			rel->rd_rel->relkind == RELKIND_MATVIEW)
@@ -4604,7 +4604,7 @@ find_typed_table_dependencies(Oid typeOid, const char *typeName, DropBehavior be
 	classRel = heap_open(RelationRelationId, AccessShareLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_class_reloftype,
+				Anum_mdb_class_reloftype,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(typeOid));
 
@@ -4640,7 +4640,7 @@ find_typed_table_dependencies(Oid typeOid, const char *typeName, DropBehavior be
 void
 check_of_type(HeapTuple typetuple)
 {
-	Form_pg_type typ = (Form_pg_type) GETSTRUCT(typetuple);
+	Form_mdb_type typ = (Form_mdb_type) GETSTRUCT(typetuple);
 	bool		typeOk = false;
 
 	if (typ->typtype == TYPTYPE_COMPOSITE)
@@ -4710,14 +4710,14 @@ ATExecAddColumn(List **wqueue, AlteredTableInfo *tab, Relation rel,
 	Relation	pgclass,
 				attrdesc;
 	HeapTuple	reltup;
-	FormData_pg_attribute attribute;
+	FormData_mdb_attribute attribute;
 	int			newattnum;
 	char		relkind;
 	HeapTuple	typeTuple;
 	Oid			typeOid;
 	int32		typmod;
 	Oid			collOid;
-	Form_pg_type tform;
+	Form_mdb_type tform;
 	Expr	   *defval;
 	List	   *children;
 	ListCell   *child;
@@ -4744,7 +4744,7 @@ ATExecAddColumn(List **wqueue, AlteredTableInfo *tab, Relation rel,
 		tuple = SearchSysCacheCopyAttName(myrelid, colDef->colname);
 		if (HeapTupleIsValid(tuple))
 		{
-			Form_pg_attribute childatt = (Form_pg_attribute) GETSTRUCT(tuple);
+			Form_mdb_attribute childatt = (Form_mdb_attribute) GETSTRUCT(tuple);
 			Oid			ctypeId;
 			int32		ctypmod;
 			Oid			ccollid;
@@ -4796,7 +4796,7 @@ ATExecAddColumn(List **wqueue, AlteredTableInfo *tab, Relation rel,
 	reltup = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(myrelid));
 	if (!HeapTupleIsValid(reltup))
 		elog(ERROR, "cache lookup failed for relation %u", myrelid);
-	relkind = ((Form_pg_class) GETSTRUCT(reltup))->relkind;
+	relkind = ((Form_mdb_class) GETSTRUCT(reltup))->relkind;
 
 	/* skip if the name already exists and if_not_exists is true */
 	if (!check_for_column_name_collision(rel, colDef->colname, if_not_exists))
@@ -4812,7 +4812,7 @@ ATExecAddColumn(List **wqueue, AlteredTableInfo *tab, Relation rel,
 		newattnum = ObjectIdAttributeNumber;
 	else
 	{
-		newattnum = ((Form_pg_class) GETSTRUCT(reltup))->relnatts + 1;
+		newattnum = ((Form_mdb_class) GETSTRUCT(reltup))->relnatts + 1;
 		if (newattnum > MaxHeapAttributeNumber)
 			ereport(ERROR,
 					(errcode(ERRCODE_TOO_MANY_COLUMNS),
@@ -4821,10 +4821,10 @@ ATExecAddColumn(List **wqueue, AlteredTableInfo *tab, Relation rel,
 	}
 
 	typeTuple = typenameType(NULL, colDef->typeName, &typmod);
-	tform = (Form_pg_type) GETSTRUCT(typeTuple);
+	tform = (Form_mdb_type) GETSTRUCT(typeTuple);
 	typeOid = HeapTupleGetOid(typeTuple);
 
-	aclresult = pg_type_aclcheck(typeOid, GetUserId(), ACL_USAGE);
+	aclresult = mdb_type_aclcheck(typeOid, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error_type(aclresult, typeOid);
 
@@ -4835,7 +4835,7 @@ ATExecAddColumn(List **wqueue, AlteredTableInfo *tab, Relation rel,
 					   list_make1_oid(rel->rd_rel->reltype),
 					   false);
 
-	/* construct new attribute's pg_attribute entry */
+	/* construct new attribute's mdb_attribute entry */
 	attribute.attrelid = myrelid;
 	namestrcpy(&(attribute.attname), colDef->colname);
 	attribute.atttypid = typeOid;
@@ -4863,12 +4863,12 @@ ATExecAddColumn(List **wqueue, AlteredTableInfo *tab, Relation rel,
 	heap_close(attrdesc, RowExclusiveLock);
 
 	/*
-	 * Update pg_class tuple as appropriate
+	 * Update mdb_class tuple as appropriate
 	 */
 	if (isOid)
-		((Form_pg_class) GETSTRUCT(reltup))->relhasoids = true;
+		((Form_mdb_class) GETSTRUCT(reltup))->relhasoids = true;
 	else
-		((Form_pg_class) GETSTRUCT(reltup))->relnatts = newattnum;
+		((Form_mdb_class) GETSTRUCT(reltup))->relnatts = newattnum;
 
 	simple_heap_update(pgclass, &reltup->t_self, reltup);
 
@@ -5066,7 +5066,7 @@ check_for_column_name_collision(Relation rel, const char *colname,
 	if (!HeapTupleIsValid(attTuple))
 		return true;
 
-	attnum = ((Form_pg_attribute) GETSTRUCT(attTuple))->attnum;
+	attnum = ((Form_mdb_attribute) GETSTRUCT(attTuple))->attnum;
 	ReleaseSysCache(attTuple);
 
 	/*
@@ -5197,7 +5197,7 @@ ATExecDropNotNull(Relation rel, const char *colName, LOCKMODE lockmode)
 				 errmsg("column \"%s\" of relation \"%s\" does not exist",
 						colName, RelationGetRelationName(rel))));
 
-	attnum = ((Form_pg_attribute) GETSTRUCT(tuple))->attnum;
+	attnum = ((Form_mdb_attribute) GETSTRUCT(tuple))->attnum;
 
 	/* Prevent them from altering a system attribute */
 	if (attnum <= 0)
@@ -5219,13 +5219,13 @@ ATExecDropNotNull(Relation rel, const char *colName, LOCKMODE lockmode)
 	{
 		Oid			indexoid = lfirst_oid(indexoidscan);
 		HeapTuple	indexTuple;
-		Form_pg_index indexStruct;
+		Form_mdb_index indexStruct;
 		int			i;
 
 		indexTuple = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(indexoid));
 		if (!HeapTupleIsValid(indexTuple))
 			elog(ERROR, "cache lookup failed for index %u", indexoid);
-		indexStruct = (Form_pg_index) GETSTRUCT(indexTuple);
+		indexStruct = (Form_mdb_index) GETSTRUCT(indexTuple);
 
 		/* If the index is not a primary key, skip the check */
 		if (indexStruct->indisprimary)
@@ -5252,9 +5252,9 @@ ATExecDropNotNull(Relation rel, const char *colName, LOCKMODE lockmode)
 	/*
 	 * Okay, actually perform the catalog change ... if needed
 	 */
-	if (((Form_pg_attribute) GETSTRUCT(tuple))->attnotnull)
+	if (((Form_mdb_attribute) GETSTRUCT(tuple))->attnotnull)
 	{
-		((Form_pg_attribute) GETSTRUCT(tuple))->attnotnull = FALSE;
+		((Form_mdb_attribute) GETSTRUCT(tuple))->attnotnull = FALSE;
 
 		simple_heap_update(attr_rel, &tuple->t_self, tuple);
 
@@ -5303,7 +5303,7 @@ ATExecSetNotNull(AlteredTableInfo *tab, Relation rel,
 				 errmsg("column \"%s\" of relation \"%s\" does not exist",
 						colName, RelationGetRelationName(rel))));
 
-	attnum = ((Form_pg_attribute) GETSTRUCT(tuple))->attnum;
+	attnum = ((Form_mdb_attribute) GETSTRUCT(tuple))->attnum;
 
 	/* Prevent them from altering a system attribute */
 	if (attnum <= 0)
@@ -5315,9 +5315,9 @@ ATExecSetNotNull(AlteredTableInfo *tab, Relation rel,
 	/*
 	 * Okay, actually perform the catalog change ... if needed
 	 */
-	if (!((Form_pg_attribute) GETSTRUCT(tuple))->attnotnull)
+	if (!((Form_mdb_attribute) GETSTRUCT(tuple))->attnotnull)
 	{
-		((Form_pg_attribute) GETSTRUCT(tuple))->attnotnull = TRUE;
+		((Form_mdb_attribute) GETSTRUCT(tuple))->attnotnull = TRUE;
 
 		simple_heap_update(attr_rel, &tuple->t_self, tuple);
 
@@ -5426,7 +5426,7 @@ ATPrepSetStatistics(Relation rel, const char *colName, Node *newValue, LOCKMODE 
 						RelationGetRelationName(rel))));
 
 	/* Permissions checks */
-	if (!pg_class_ownercheck(RelationGetRelid(rel), GetUserId()))
+	if (!mdb_class_ownercheck(RelationGetRelid(rel), GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 					   RelationGetRelationName(rel));
 }
@@ -5440,7 +5440,7 @@ ATExecSetStatistics(Relation rel, const char *colName, Node *newValue, LOCKMODE 
 	int			newtarget;
 	Relation	attrelation;
 	HeapTuple	tuple;
-	Form_pg_attribute attrtuple;
+	Form_mdb_attribute attrtuple;
 	AttrNumber	attnum;
 	ObjectAddress address;
 
@@ -5475,7 +5475,7 @@ ATExecSetStatistics(Relation rel, const char *colName, Node *newValue, LOCKMODE 
 				(errcode(ERRCODE_UNDEFINED_COLUMN),
 				 errmsg("column \"%s\" of relation \"%s\" does not exist",
 						colName, RelationGetRelationName(rel))));
-	attrtuple = (Form_pg_attribute) GETSTRUCT(tuple);
+	attrtuple = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 	attnum = attrtuple->attnum;
 	if (attnum <= 0)
@@ -5513,15 +5513,15 @@ ATExecSetOptions(Relation rel, const char *colName, Node *options,
 	Relation	attrelation;
 	HeapTuple	tuple,
 				newtuple;
-	Form_pg_attribute attrtuple;
+	Form_mdb_attribute attrtuple;
 	AttrNumber	attnum;
 	Datum		datum,
 				newOptions;
 	bool		isnull;
 	ObjectAddress address;
-	Datum		repl_val[Natts_pg_attribute];
-	bool		repl_null[Natts_pg_attribute];
-	bool		repl_repl[Natts_pg_attribute];
+	Datum		repl_val[Natts_mdb_attribute];
+	bool		repl_null[Natts_mdb_attribute];
+	bool		repl_repl[Natts_mdb_attribute];
 
 	attrelation = heap_open(AttributeRelationId, RowExclusiveLock);
 
@@ -5532,7 +5532,7 @@ ATExecSetOptions(Relation rel, const char *colName, Node *options,
 				(errcode(ERRCODE_UNDEFINED_COLUMN),
 				 errmsg("column \"%s\" of relation \"%s\" does not exist",
 						colName, RelationGetRelationName(rel))));
-	attrtuple = (Form_pg_attribute) GETSTRUCT(tuple);
+	attrtuple = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 	attnum = attrtuple->attnum;
 	if (attnum <= 0)
@@ -5543,7 +5543,7 @@ ATExecSetOptions(Relation rel, const char *colName, Node *options,
 
 	/* Generate new proposed attoptions (text array) */
 	Assert(IsA(options, List));
-	datum = SysCacheGetAttr(ATTNAME, tuple, Anum_pg_attribute_attoptions,
+	datum = SysCacheGetAttr(ATTNAME, tuple, Anum_mdb_attribute_attoptions,
 							&isnull);
 	newOptions = transformRelOptions(isnull ? (Datum) 0 : datum,
 									 (List *) options, NULL, NULL, false,
@@ -5555,10 +5555,10 @@ ATExecSetOptions(Relation rel, const char *colName, Node *options,
 	memset(repl_null, false, sizeof(repl_null));
 	memset(repl_repl, false, sizeof(repl_repl));
 	if (newOptions != (Datum) 0)
-		repl_val[Anum_pg_attribute_attoptions - 1] = newOptions;
+		repl_val[Anum_mdb_attribute_attoptions - 1] = newOptions;
 	else
-		repl_null[Anum_pg_attribute_attoptions - 1] = true;
-	repl_repl[Anum_pg_attribute_attoptions - 1] = true;
+		repl_null[Anum_mdb_attribute_attoptions - 1] = true;
+	repl_repl[Anum_mdb_attribute_attoptions - 1] = true;
 	newtuple = heap_modify_tuple(tuple, RelationGetDescr(attrelation),
 								 repl_val, repl_null, repl_repl);
 
@@ -5593,20 +5593,20 @@ ATExecSetStorage(Relation rel, const char *colName, Node *newValue, LOCKMODE loc
 	char		newstorage;
 	Relation	attrelation;
 	HeapTuple	tuple;
-	Form_pg_attribute attrtuple;
+	Form_mdb_attribute attrtuple;
 	AttrNumber	attnum;
 	ObjectAddress address;
 
 	Assert(IsA(newValue, String));
 	storagemode = strVal(newValue);
 
-	if (pg_strcasecmp(storagemode, "plain") == 0)
+	if (mdb_strcasecmp(storagemode, "plain") == 0)
 		newstorage = 'p';
-	else if (pg_strcasecmp(storagemode, "external") == 0)
+	else if (mdb_strcasecmp(storagemode, "external") == 0)
 		newstorage = 'e';
-	else if (pg_strcasecmp(storagemode, "extended") == 0)
+	else if (mdb_strcasecmp(storagemode, "extended") == 0)
 		newstorage = 'x';
-	else if (pg_strcasecmp(storagemode, "main") == 0)
+	else if (mdb_strcasecmp(storagemode, "main") == 0)
 		newstorage = 'm';
 	else
 	{
@@ -5626,7 +5626,7 @@ ATExecSetStorage(Relation rel, const char *colName, Node *newValue, LOCKMODE loc
 				(errcode(ERRCODE_UNDEFINED_COLUMN),
 				 errmsg("column \"%s\" of relation \"%s\" does not exist",
 						colName, RelationGetRelationName(rel))));
-	attrtuple = (Form_pg_attribute) GETSTRUCT(tuple);
+	attrtuple = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 	attnum = attrtuple->attnum;
 	if (attnum <= 0)
@@ -5701,7 +5701,7 @@ ATExecDropColumn(List **wqueue, Relation rel, const char *colName,
 				 bool missing_ok, LOCKMODE lockmode)
 {
 	HeapTuple	tuple;
-	Form_pg_attribute targetatt;
+	Form_mdb_attribute targetatt;
 	AttrNumber	attnum;
 	List	   *children;
 	ObjectAddress object;
@@ -5731,7 +5731,7 @@ ATExecDropColumn(List **wqueue, Relation rel, const char *colName,
 			return InvalidObjectAddress;
 		}
 	}
-	targetatt = (Form_pg_attribute) GETSTRUCT(tuple);
+	targetatt = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 	attnum = targetatt->attnum;
 
@@ -5768,7 +5768,7 @@ ATExecDropColumn(List **wqueue, Relation rel, const char *colName,
 		{
 			Oid			childrelid = lfirst_oid(child);
 			Relation	childrel;
-			Form_pg_attribute childatt;
+			Form_mdb_attribute childatt;
 
 			/* find_inheritance_children already got lock */
 			childrel = heap_open(childrelid, NoLock);
@@ -5778,7 +5778,7 @@ ATExecDropColumn(List **wqueue, Relation rel, const char *colName,
 			if (!HeapTupleIsValid(tuple))		/* shouldn't happen */
 				elog(ERROR, "cache lookup failed for attribute \"%s\" of relation %u",
 					 colName, childrelid);
-			childatt = (Form_pg_attribute) GETSTRUCT(tuple);
+			childatt = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 			if (childatt->attinhcount <= 0)		/* shouldn't happen */
 				elog(ERROR, "relation %u has non-inherited attribute \"%s\"",
@@ -5848,7 +5848,7 @@ ATExecDropColumn(List **wqueue, Relation rel, const char *colName,
 	performDeletion(&object, behavior, 0);
 
 	/*
-	 * If we dropped the OID column, must adjust pg_class.relhasoids and tell
+	 * If we dropped the OID column, must adjust mdb_class.relhasoids and tell
 	 * Phase 3 to physically get rid of the column.  We formerly left the
 	 * column in place physically, but this caused subtle problems.  See
 	 * http://archives.mollydb.org/mdb-hackers/2009-02/msg00363.php
@@ -5856,7 +5856,7 @@ ATExecDropColumn(List **wqueue, Relation rel, const char *colName,
 	if (attnum == ObjectIdAttributeNumber)
 	{
 		Relation	class_rel;
-		Form_pg_class tuple_class;
+		Form_mdb_class tuple_class;
 		AlteredTableInfo *tab;
 
 		class_rel = heap_open(RelationRelationId, RowExclusiveLock);
@@ -5866,7 +5866,7 @@ ATExecDropColumn(List **wqueue, Relation rel, const char *colName,
 		if (!HeapTupleIsValid(tuple))
 			elog(ERROR, "cache lookup failed for relation %u",
 				 RelationGetRelid(rel));
-		tuple_class = (Form_pg_class) GETSTRUCT(tuple);
+		tuple_class = (Form_mdb_class) GETSTRUCT(tuple);
 
 		tuple_class->relhasoids = false;
 		simple_heap_update(class_rel, &tuple->t_self, tuple);
@@ -6010,7 +6010,7 @@ ATExecAddIndexConstraint(AlteredTableInfo *tab, Relation rel,
 									  stmt->deferrable,
 									  stmt->initdeferred,
 									  stmt->primary,
-									  true,		/* update pg_index */
+									  true,		/* update mdb_index */
 									  true,		/* remove old dependencies */
 									  allowSystemTableMods,
 									  false);	/* is_internal */
@@ -6366,7 +6366,7 @@ ATAddForeignKeyConstraint(AlteredTableInfo *tab, Relation rel,
 	 * Note that we have to be careful about the difference between the actual
 	 * PK column type and the opclass' declared input type, which might be
 	 * only binary-compatible with it.  The declared opcintype is the right
-	 * thing to probe pg_amop with.
+	 * thing to probe mdb_amop with.
 	 */
 	if (numfks != numpks)
 		ereport(ERROR,
@@ -6386,7 +6386,7 @@ ATAddForeignKeyConstraint(AlteredTableInfo *tab, Relation rel,
 		Oid			fktype = fktypoid[i];
 		Oid			fktyped;
 		HeapTuple	cla_ht;
-		Form_pg_opclass cla_tup;
+		Form_mdb_opclass cla_tup;
 		Oid			amid;
 		Oid			opfamily;
 		Oid			opcintype;
@@ -6396,11 +6396,11 @@ ATAddForeignKeyConstraint(AlteredTableInfo *tab, Relation rel,
 		int16		eqstrategy;
 		Oid			pfeqop_right;
 
-		/* We need several fields out of the pg_opclass entry */
+		/* We need several fields out of the mdb_opclass entry */
 		cla_ht = SearchSysCache1(CLAOID, ObjectIdGetDatum(opclasses[i]));
 		if (!HeapTupleIsValid(cla_ht))
 			elog(ERROR, "cache lookup failed for opclass %u", opclasses[i]);
-		cla_tup = (Form_pg_opclass) GETSTRUCT(cla_ht);
+		cla_tup = (Form_mdb_opclass) GETSTRUCT(cla_ht);
 		amid = cla_tup->opcmethod;
 		opfamily = cla_tup->opcfamily;
 		opcintype = cla_tup->opcintype;
@@ -6511,7 +6511,7 @@ ATAddForeignKeyConstraint(AlteredTableInfo *tab, Relation rel,
 			/*
 			 * Identify coercion pathways from each of the old and new FK-side
 			 * column types to the right (foreign) operand type of the pfeqop.
-			 * We may assume that pg_constraint.conkey is not changing.
+			 * We may assume that mdb_constraint.conkey is not changing.
 			 */
 			old_fktype = tab->oldDesc->attrs[fkattnum[i] - 1]->atttypid;
 			new_fktype = fktype;
@@ -6565,7 +6565,7 @@ ATAddForeignKeyConstraint(AlteredTableInfo *tab, Relation rel,
 	}
 
 	/*
-	 * Record the FK constraint in pg_constraint.
+	 * Record the FK constraint in mdb_constraint.
 	 */
 	constrOid = CreateConstraintEntry(fkconstraint->conname,
 									  RelationGetNamespace(rel),
@@ -6656,7 +6656,7 @@ ATExecAlterConstraint(Relation rel, AlterTableCmd *cmd,
 	SysScanDesc scan;
 	ScanKeyData key;
 	HeapTuple	contuple;
-	Form_pg_constraint currcon = NULL;
+	Form_mdb_constraint currcon = NULL;
 	bool		found = false;
 	ObjectAddress address;
 
@@ -6669,7 +6669,7 @@ ATExecAlterConstraint(Relation rel, AlterTableCmd *cmd,
 	 * Find and check the target constraint
 	 */
 	ScanKeyInit(&key,
-				Anum_pg_constraint_conrelid,
+				Anum_mdb_constraint_conrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	scan = systable_beginscan(conrel, ConstraintRelidIndexId,
@@ -6677,7 +6677,7 @@ ATExecAlterConstraint(Relation rel, AlterTableCmd *cmd,
 
 	while (HeapTupleIsValid(contuple = systable_getnext(scan)))
 	{
-		currcon = (Form_pg_constraint) GETSTRUCT(contuple);
+		currcon = (Form_mdb_constraint) GETSTRUCT(contuple);
 		if (strcmp(NameStr(currcon->conname), cmdcon->conname) == 0)
 		{
 			found = true;
@@ -6702,7 +6702,7 @@ ATExecAlterConstraint(Relation rel, AlterTableCmd *cmd,
 	{
 		HeapTuple	copyTuple;
 		HeapTuple	tgtuple;
-		Form_pg_constraint copy_con;
+		Form_mdb_constraint copy_con;
 		List	   *otherrelids = NIL;
 		ScanKeyData tgkey;
 		SysScanDesc tgscan;
@@ -6713,7 +6713,7 @@ ATExecAlterConstraint(Relation rel, AlterTableCmd *cmd,
 		 * Now update the catalog, while we have the door open.
 		 */
 		copyTuple = heap_copytuple(contuple);
-		copy_con = (Form_pg_constraint) GETSTRUCT(copyTuple);
+		copy_con = (Form_mdb_constraint) GETSTRUCT(copyTuple);
 		copy_con->condeferrable = cmdcon->deferrable;
 		copy_con->condeferred = cmdcon->initdeferred;
 		simple_heap_update(conrel, &copyTuple->t_self, copyTuple);
@@ -6725,13 +6725,13 @@ ATExecAlterConstraint(Relation rel, AlterTableCmd *cmd,
 		heap_freetuple(copyTuple);
 
 		/*
-		 * Now we need to update the multiple entries in pg_trigger that
+		 * Now we need to update the multiple entries in mdb_trigger that
 		 * implement the constraint.
 		 */
 		tgrel = heap_open(TriggerRelationId, RowExclusiveLock);
 
 		ScanKeyInit(&tgkey,
-					Anum_pg_trigger_tgconstraint,
+					Anum_mdb_trigger_tgconstraint,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(HeapTupleGetOid(contuple)));
 
@@ -6740,10 +6740,10 @@ ATExecAlterConstraint(Relation rel, AlterTableCmd *cmd,
 
 		while (HeapTupleIsValid(tgtuple = systable_getnext(tgscan)))
 		{
-			Form_pg_trigger copy_tg;
+			Form_mdb_trigger copy_tg;
 
 			copyTuple = heap_copytuple(tgtuple);
-			copy_tg = (Form_pg_trigger) GETSTRUCT(copyTuple);
+			copy_tg = (Form_mdb_trigger) GETSTRUCT(copyTuple);
 
 			/* Remember OIDs of other relation(s) involved in FK constraint */
 			if (copy_tg->tgrelid != RelationGetRelid(rel))
@@ -6809,7 +6809,7 @@ ATExecValidateConstraint(Relation rel, char *constrName, bool recurse,
 	SysScanDesc scan;
 	ScanKeyData key;
 	HeapTuple	tuple;
-	Form_pg_constraint con = NULL;
+	Form_mdb_constraint con = NULL;
 	bool		found = false;
 	ObjectAddress address;
 
@@ -6819,7 +6819,7 @@ ATExecValidateConstraint(Relation rel, char *constrName, bool recurse,
 	 * Find and check the target constraint
 	 */
 	ScanKeyInit(&key,
-				Anum_pg_constraint_conrelid,
+				Anum_mdb_constraint_conrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	scan = systable_beginscan(conrel, ConstraintRelidIndexId,
@@ -6827,7 +6827,7 @@ ATExecValidateConstraint(Relation rel, char *constrName, bool recurse,
 
 	while (HeapTupleIsValid(tuple = systable_getnext(scan)))
 	{
-		con = (Form_pg_constraint) GETSTRUCT(tuple);
+		con = (Form_mdb_constraint) GETSTRUCT(tuple);
 		if (strcmp(NameStr(con->conname), constrName) == 0)
 		{
 			found = true;
@@ -6851,7 +6851,7 @@ ATExecValidateConstraint(Relation rel, char *constrName, bool recurse,
 	if (!con->convalidated)
 	{
 		HeapTuple	copyTuple;
-		Form_pg_constraint copy_con;
+		Form_mdb_constraint copy_con;
 
 		if (con->contype == CONSTRAINT_FOREIGN)
 		{
@@ -6936,7 +6936,7 @@ ATExecValidateConstraint(Relation rel, char *constrName, bool recurse,
 		 * Now update the catalog, while we have the door open.
 		 */
 		copyTuple = heap_copytuple(tuple);
-		copy_con = (Form_pg_constraint) GETSTRUCT(copyTuple);
+		copy_con = (Form_mdb_constraint) GETSTRUCT(copyTuple);
 		copy_con->convalidated = true;
 		simple_heap_update(conrel, &copyTuple->t_self, copyTuple);
 		CatalogUpdateIndexes(conrel, copyTuple);
@@ -6989,8 +6989,8 @@ transformColumnNameList(Oid relId, List *colList,
 					(errcode(ERRCODE_TOO_MANY_COLUMNS),
 					 errmsg("cannot have more than %d keys in a foreign key",
 							INDEX_MAX_KEYS)));
-		attnums[attnum] = ((Form_pg_attribute) GETSTRUCT(atttuple))->attnum;
-		atttypids[attnum] = ((Form_pg_attribute) GETSTRUCT(atttuple))->atttypid;
+		attnums[attnum] = ((Form_mdb_attribute) GETSTRUCT(atttuple))->attnum;
+		atttypids[attnum] = ((Form_mdb_attribute) GETSTRUCT(atttuple))->atttypid;
 		ReleaseSysCache(atttuple);
 		attnum++;
 	}
@@ -7019,7 +7019,7 @@ transformFkeyGetPrimaryKey(Relation pkrel, Oid *indexOid,
 	List	   *indexoidlist;
 	ListCell   *indexoidscan;
 	HeapTuple	indexTuple = NULL;
-	Form_pg_index indexStruct = NULL;
+	Form_mdb_index indexStruct = NULL;
 	Datum		indclassDatum;
 	bool		isnull;
 	oidvector  *indclass;
@@ -7027,7 +7027,7 @@ transformFkeyGetPrimaryKey(Relation pkrel, Oid *indexOid,
 
 	/*
 	 * Get the list of index OIDs for the table from the relcache, and look up
-	 * each one in the pg_index syscache until we find one marked primary key
+	 * each one in the mdb_index syscache until we find one marked primary key
 	 * (hopefully there isn't more than one such).  Insist it's valid, too.
 	 */
 	*indexOid = InvalidOid;
@@ -7041,7 +7041,7 @@ transformFkeyGetPrimaryKey(Relation pkrel, Oid *indexOid,
 		indexTuple = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(indexoid));
 		if (!HeapTupleIsValid(indexTuple))
 			elog(ERROR, "cache lookup failed for index %u", indexoid);
-		indexStruct = (Form_pg_index) GETSTRUCT(indexTuple);
+		indexStruct = (Form_mdb_index) GETSTRUCT(indexTuple);
 		if (indexStruct->indisprimary && IndexIsValid(indexStruct))
 		{
 			/*
@@ -7074,7 +7074,7 @@ transformFkeyGetPrimaryKey(Relation pkrel, Oid *indexOid,
 
 	/* Must get indclass the hard way */
 	indclassDatum = SysCacheGetAttr(INDEXRELID, indexTuple,
-									Anum_pg_index_indclass, &isnull);
+									Anum_mdb_index_indclass, &isnull);
 	Assert(!isnull);
 	indclass = (oidvector *) DatumGetPointer(indclassDatum);
 
@@ -7140,7 +7140,7 @@ transformFkeyCheckAttrs(Relation pkrel,
 
 	/*
 	 * Get the list of index OIDs for the table from the relcache, and look up
-	 * each one in the pg_index syscache, and match unique indexes to the list
+	 * each one in the mdb_index syscache, and match unique indexes to the list
 	 * of attnums we are given.
 	 */
 	indexoidlist = RelationGetIndexList(pkrel);
@@ -7148,13 +7148,13 @@ transformFkeyCheckAttrs(Relation pkrel,
 	foreach(indexoidscan, indexoidlist)
 	{
 		HeapTuple	indexTuple;
-		Form_pg_index indexStruct;
+		Form_mdb_index indexStruct;
 
 		indexoid = lfirst_oid(indexoidscan);
 		indexTuple = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(indexoid));
 		if (!HeapTupleIsValid(indexTuple))
 			elog(ERROR, "cache lookup failed for index %u", indexoid);
-		indexStruct = (Form_pg_index) GETSTRUCT(indexTuple);
+		indexStruct = (Form_mdb_index) GETSTRUCT(indexTuple);
 
 		/*
 		 * Must have the right number of columns; must be unique and not a
@@ -7164,8 +7164,8 @@ transformFkeyCheckAttrs(Relation pkrel,
 		if (indexStruct->indnatts == numattrs &&
 			indexStruct->indisunique &&
 			IndexIsValid(indexStruct) &&
-			heap_attisnull(indexTuple, Anum_pg_index_indpred) &&
-			heap_attisnull(indexTuple, Anum_pg_index_indexprs))
+			heap_attisnull(indexTuple, Anum_mdb_index_indpred) &&
+			heap_attisnull(indexTuple, Anum_mdb_index_indexprs))
 		{
 			Datum		indclassDatum;
 			bool		isnull;
@@ -7173,7 +7173,7 @@ transformFkeyCheckAttrs(Relation pkrel,
 
 			/* Must get indclass the hard way */
 			indclassDatum = SysCacheGetAttr(INDEXRELID, indexTuple,
-											Anum_pg_index_indclass, &isnull);
+											Anum_mdb_index_indclass, &isnull);
 			Assert(!isnull);
 			indclass = (oidvector *) DatumGetPointer(indclassDatum);
 
@@ -7280,14 +7280,14 @@ checkFkeyPermissions(Relation rel, int16 *attnums, int natts)
 	int			i;
 
 	/* Okay if we have relation-level REFERENCES permission */
-	aclresult = pg_class_aclcheck(RelationGetRelid(rel), roleid,
+	aclresult = mdb_class_aclcheck(RelationGetRelid(rel), roleid,
 								  ACL_REFERENCES);
 	if (aclresult == ACLCHECK_OK)
 		return;
 	/* Else we must have REFERENCES on each column */
 	for (i = 0; i < natts; i++)
 	{
-		aclresult = pg_attribute_aclcheck(RelationGetRelid(rel), attnums[i],
+		aclresult = mdb_attribute_aclcheck(RelationGetRelid(rel), attnums[i],
 										  roleid, ACL_REFERENCES);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_CLASS,
@@ -7315,7 +7315,7 @@ validateCheckConstraint(Relation rel, HeapTuple constrtup)
 	ExprContext *econtext;
 	MemoryContext oldcxt;
 	TupleTableSlot *slot;
-	Form_pg_constraint constrForm;
+	Form_mdb_constraint constrForm;
 	bool		isnull;
 	Snapshot	snapshot;
 
@@ -7323,7 +7323,7 @@ validateCheckConstraint(Relation rel, HeapTuple constrtup)
 	if (rel->rd_rel->relkind == RELKIND_FOREIGN_TABLE)
 		return;
 
-	constrForm = (Form_pg_constraint) GETSTRUCT(constrtup);
+	constrForm = (Form_mdb_constraint) GETSTRUCT(constrtup);
 
 	estate = CreateExecutorState();
 
@@ -7332,7 +7332,7 @@ validateCheckConstraint(Relation rel, HeapTuple constrtup)
 	 * matter to SysCacheGetAttr, because it only wants to be able to fetch
 	 * the tupdesc
 	 */
-	val = SysCacheGetAttr(CONSTROID, constrtup, Anum_pg_constraint_conbin,
+	val = SysCacheGetAttr(CONSTROID, constrtup, Anum_mdb_constraint_conbin,
 						  &isnull);
 	if (isnull)
 		elog(ERROR, "null conbin for constraint %u",
@@ -7656,7 +7656,7 @@ ATExecDropConstraint(Relation rel, const char *constrName,
 	List	   *children;
 	ListCell   *child;
 	Relation	conrel;
-	Form_pg_constraint con;
+	Form_mdb_constraint con;
 	SysScanDesc scan;
 	ScanKeyData key;
 	HeapTuple	tuple;
@@ -7673,7 +7673,7 @@ ATExecDropConstraint(Relation rel, const char *constrName,
 	 * Find and drop the target constraint
 	 */
 	ScanKeyInit(&key,
-				Anum_pg_constraint_conrelid,
+				Anum_mdb_constraint_conrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	scan = systable_beginscan(conrel, ConstraintRelidIndexId,
@@ -7683,7 +7683,7 @@ ATExecDropConstraint(Relation rel, const char *constrName,
 	{
 		ObjectAddress conobj;
 
-		con = (Form_pg_constraint) GETSTRUCT(tuple);
+		con = (Form_mdb_constraint) GETSTRUCT(tuple);
 
 		if (strcmp(NameStr(con->conname), constrName) != 0)
 			continue;
@@ -7754,7 +7754,7 @@ ATExecDropConstraint(Relation rel, const char *constrName,
 		CheckTableNotInUse(childrel, "ALTER TABLE");
 
 		ScanKeyInit(&key,
-					Anum_pg_constraint_conrelid,
+					Anum_mdb_constraint_conrelid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(childrelid));
 		scan = systable_beginscan(conrel, ConstraintRelidIndexId,
@@ -7763,7 +7763,7 @@ ATExecDropConstraint(Relation rel, const char *constrName,
 		/* scan for matching tuple - there should only be one */
 		while (HeapTupleIsValid(tuple = systable_getnext(scan)))
 		{
-			con = (Form_pg_constraint) GETSTRUCT(tuple);
+			con = (Form_mdb_constraint) GETSTRUCT(tuple);
 
 			/* Right now only CHECK constraints can be inherited */
 			if (con->contype != CONSTRAINT_CHECK)
@@ -7784,7 +7784,7 @@ ATExecDropConstraint(Relation rel, const char *constrName,
 
 		systable_endscan(scan);
 
-		con = (Form_pg_constraint) GETSTRUCT(copy_tuple);
+		con = (Form_mdb_constraint) GETSTRUCT(copy_tuple);
 
 		if (con->coninhcount <= 0)		/* shouldn't happen */
 			elog(ERROR, "relation %u has non-inherited constraint \"%s\"",
@@ -7853,7 +7853,7 @@ ATPrepAlterColumnType(List **wqueue,
 	TypeName   *typeName = def->typeName;
 	Node	   *transform = def->cooked_default;
 	HeapTuple	tuple;
-	Form_pg_attribute attTup;
+	Form_mdb_attribute attTup;
 	AttrNumber	attnum;
 	Oid			targettype;
 	int32		targettypmod;
@@ -7874,7 +7874,7 @@ ATPrepAlterColumnType(List **wqueue,
 				(errcode(ERRCODE_UNDEFINED_COLUMN),
 				 errmsg("column \"%s\" of relation \"%s\" does not exist",
 						colName, RelationGetRelationName(rel))));
-	attTup = (Form_pg_attribute) GETSTRUCT(tuple);
+	attTup = (Form_mdb_attribute) GETSTRUCT(tuple);
 	attnum = attTup->attnum;
 
 	/* Can't alter a system attribute */
@@ -7894,7 +7894,7 @@ ATPrepAlterColumnType(List **wqueue,
 	/* Look up the target type */
 	typenameTypeIdAndMod(NULL, typeName, &targettype, &targettypmod);
 
-	aclresult = pg_type_aclcheck(targettype, GetUserId(), ACL_USAGE);
+	aclresult = mdb_type_aclcheck(targettype, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error_type(aclresult, targettype);
 
@@ -8055,10 +8055,10 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 	ColumnDef  *def = (ColumnDef *) cmd->def;
 	TypeName   *typeName = def->typeName;
 	HeapTuple	heapTup;
-	Form_pg_attribute attTup;
+	Form_mdb_attribute attTup;
 	AttrNumber	attnum;
 	HeapTuple	typeTuple;
-	Form_pg_type tform;
+	Form_mdb_type tform;
 	Oid			targettype;
 	int32		targettypmod;
 	Oid			targetcollid;
@@ -8079,7 +8079,7 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 				(errcode(ERRCODE_UNDEFINED_COLUMN),
 				 errmsg("column \"%s\" of relation \"%s\" does not exist",
 						colName, RelationGetRelationName(rel))));
-	attTup = (Form_pg_attribute) GETSTRUCT(heapTup);
+	attTup = (Form_mdb_attribute) GETSTRUCT(heapTup);
 	attnum = attTup->attnum;
 
 	/* Check for multiple ALTER TYPE on same column --- can't cope */
@@ -8092,7 +8092,7 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 
 	/* Look up the target type (should not fail, since prep found it) */
 	typeTuple = typenameType(NULL, typeName, &targettypmod);
-	tform = (Form_pg_type) GETSTRUCT(typeTuple);
+	tform = (Form_mdb_type) GETSTRUCT(typeTuple);
 	targettype = HeapTupleGetOid(typeTuple);
 	/* And the collation */
 	targetcollid = GetColumnDefCollation(NULL, def, targettype);
@@ -8146,15 +8146,15 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 	depRel = heap_open(DependRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_refclassid,
+				Anum_mdb_depend_refclassid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationRelationId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_refobjid,
+				Anum_mdb_depend_refobjid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	ScanKeyInit(&key[2],
-				Anum_pg_depend_refobjsubid,
+				Anum_mdb_depend_refobjsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum((int32) attnum));
 
@@ -8163,7 +8163,7 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 
 	while (HeapTupleIsValid(depTup = systable_getnext(scan)))
 	{
-		Form_pg_depend foundDep = (Form_pg_depend) GETSTRUCT(depTup);
+		Form_mdb_depend foundDep = (Form_mdb_depend) GETSTRUCT(depTup);
 		ObjectAddress foundObject;
 
 		/* We don't expect any PIN dependencies on columns */
@@ -8188,7 +8188,7 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 							tab->changedIndexOids = lappend_oid(tab->changedIndexOids,
 													   foundObject.objectId);
 							tab->changedIndexDefs = lappend(tab->changedIndexDefs,
-							   pg_get_indexdef_string(foundObject.objectId));
+							   mdb_get_indexdef_string(foundObject.objectId));
 						}
 					}
 					else if (relKind == RELKIND_SEQUENCE)
@@ -8213,7 +8213,7 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 				if (!list_member_oid(tab->changedConstraintOids,
 									 foundObject.objectId))
 				{
-					char	   *defstring = pg_get_constraintdef_command(foundObject.objectId);
+					char	   *defstring = mdb_get_constraintdef_command(foundObject.objectId);
 
 					/*
 					 * Put NORMAL dependencies at the front of the list and
@@ -8349,15 +8349,15 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 	 * want to remove, and possibly a collation dependency.
 	 */
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_classid,
+				Anum_mdb_depend_classid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationRelationId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_objid,
+				Anum_mdb_depend_objid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	ScanKeyInit(&key[2],
-				Anum_pg_depend_objsubid,
+				Anum_mdb_depend_objsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum((int32) attnum));
 
@@ -8366,7 +8366,7 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 
 	while (HeapTupleIsValid(depTup = systable_getnext(scan)))
 	{
-		Form_pg_depend foundDep = (Form_pg_depend) GETSTRUCT(depTup);
+		Form_mdb_depend foundDep = (Form_mdb_depend) GETSTRUCT(depTup);
 
 		if (foundDep->deptype != DEPENDENCY_NORMAL)
 			elog(ERROR, "found unexpected dependency type '%c'",
@@ -8411,7 +8411,7 @@ ATExecAlterColumnType(AlteredTableInfo *tab, Relation rel,
 	add_column_collation_dependency(RelationGetRelid(rel), attnum, targetcollid);
 
 	/*
-	 * Drop any pg_statistic entry for the column, since it's now wrong type
+	 * Drop any mdb_statistic entry for the column, since it's now wrong type
 	 */
 	RemoveStatistics(RelationGetRelid(rel), attnum);
 
@@ -8465,12 +8465,12 @@ ATExecAlterColumnGenericOptions(Relation rel,
 	HeapTuple	tuple;
 	HeapTuple	newtuple;
 	bool		isnull;
-	Datum		repl_val[Natts_pg_attribute];
-	bool		repl_null[Natts_pg_attribute];
-	bool		repl_repl[Natts_pg_attribute];
+	Datum		repl_val[Natts_mdb_attribute];
+	bool		repl_null[Natts_mdb_attribute];
+	bool		repl_repl[Natts_mdb_attribute];
 	Datum		datum;
-	Form_pg_foreign_table fttableform;
-	Form_pg_attribute atttableform;
+	Form_mdb_foreign_table fttableform;
+	Form_mdb_attribute atttableform;
 	AttrNumber	attnum;
 	ObjectAddress address;
 
@@ -8485,7 +8485,7 @@ ATExecAlterColumnGenericOptions(Relation rel,
 				(errcode(ERRCODE_UNDEFINED_OBJECT),
 				 errmsg("foreign table \"%s\" does not exist",
 						RelationGetRelationName(rel))));
-	fttableform = (Form_pg_foreign_table) GETSTRUCT(tuple);
+	fttableform = (Form_mdb_foreign_table) GETSTRUCT(tuple);
 	server = GetForeignServer(fttableform->ftserver);
 	fdw = GetForeignDataWrapper(server->fdwid);
 
@@ -8501,7 +8501,7 @@ ATExecAlterColumnGenericOptions(Relation rel,
 						colName, RelationGetRelationName(rel))));
 
 	/* Prevent them from altering a system attribute */
-	atttableform = (Form_pg_attribute) GETSTRUCT(tuple);
+	atttableform = (Form_mdb_attribute) GETSTRUCT(tuple);
 	attnum = atttableform->attnum;
 	if (attnum <= 0)
 		ereport(ERROR,
@@ -8517,7 +8517,7 @@ ATExecAlterColumnGenericOptions(Relation rel,
 	/* Extract the current options */
 	datum = SysCacheGetAttr(ATTNAME,
 							tuple,
-							Anum_pg_attribute_attfdwoptions,
+							Anum_mdb_attribute_attfdwoptions,
 							&isnull);
 	if (isnull)
 		datum = PointerGetDatum(NULL);
@@ -8529,11 +8529,11 @@ ATExecAlterColumnGenericOptions(Relation rel,
 									fdw->fdwvalidator);
 
 	if (PointerIsValid(DatumGetPointer(datum)))
-		repl_val[Anum_pg_attribute_attfdwoptions - 1] = datum;
+		repl_val[Anum_mdb_attribute_attfdwoptions - 1] = datum;
 	else
-		repl_null[Anum_pg_attribute_attfdwoptions - 1] = true;
+		repl_null[Anum_mdb_attribute_attfdwoptions - 1] = true;
 
-	repl_repl[Anum_pg_attribute_attfdwoptions - 1] = true;
+	repl_repl[Anum_mdb_attribute_attfdwoptions - 1] = true;
 
 	/* Everything looks good - update the tuple */
 
@@ -8589,7 +8589,7 @@ ATPostAlterTypeCleanup(List **wqueue, AlteredTableInfo *tab, LOCKMODE lockmode)
 	{
 		Oid			oldId = lfirst_oid(oid_item);
 		HeapTuple	tup;
-		Form_pg_constraint con;
+		Form_mdb_constraint con;
 		Oid			relid;
 		Oid			confrelid;
 		bool		conislocal;
@@ -8597,7 +8597,7 @@ ATPostAlterTypeCleanup(List **wqueue, AlteredTableInfo *tab, LOCKMODE lockmode)
 		tup = SearchSysCache1(CONSTROID, ObjectIdGetDatum(oldId));
 		if (!HeapTupleIsValid(tup))		/* should not happen */
 			elog(ERROR, "cache lookup failed for constraint %u", oldId);
-		con = (Form_pg_constraint) GETSTRUCT(tup);
+		con = (Form_mdb_constraint) GETSTRUCT(tup);
 		relid = con->conrelid;
 		confrelid = con->confrelid;
 		conislocal = con->conislocal;
@@ -8876,7 +8876,7 @@ TryReuseForeignKey(Oid oldId, Constraint *con)
 		elog(ERROR, "cache lookup failed for constraint %u", oldId);
 
 	adatum = SysCacheGetAttr(CONSTROID, tup,
-							 Anum_pg_constraint_conpfeqop, &isNull);
+							 Anum_mdb_constraint_conpfeqop, &isNull);
 	if (isNull)
 		elog(ERROR, "null conpfeqop for constraint %u", oldId);
 	arr = DatumGetArrayTypeP(adatum);	/* ensure not toasted */
@@ -8913,7 +8913,7 @@ ATExecChangeOwner(Oid relationOid, Oid newOwnerId, bool recursing, LOCKMODE lock
 	Relation	target_rel;
 	Relation	class_rel;
 	HeapTuple	tuple;
-	Form_pg_class tuple_class;
+	Form_mdb_class tuple_class;
 
 	/*
 	 * Get exclusive lock till end of transaction on the target table. Use
@@ -8921,13 +8921,13 @@ ATExecChangeOwner(Oid relationOid, Oid newOwnerId, bool recursing, LOCKMODE lock
 	 */
 	target_rel = relation_open(relationOid, lockmode);
 
-	/* Get its pg_class tuple, too */
+	/* Get its mdb_class tuple, too */
 	class_rel = heap_open(RelationRelationId, RowExclusiveLock);
 
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relationOid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", relationOid);
-	tuple_class = (Form_pg_class) GETSTRUCT(tuple);
+	tuple_class = (Form_mdb_class) GETSTRUCT(tuple);
 
 	/* Can we change the ownership of this tuple? */
 	switch (tuple_class->relkind)
@@ -8943,7 +8943,7 @@ ATExecChangeOwner(Oid relationOid, Oid newOwnerId, bool recursing, LOCKMODE lock
 			{
 				/*
 				 * Because ALTER INDEX OWNER used to be allowed, and in fact
-				 * is generated by old versions of pg_dump, we give a warning
+				 * is generated by old versions of mdb_dump, we give a warning
 				 * and do nothing rather than erroring out.  Also, to avoid
 				 * unnecessary chatter while restoring those old dumps, say
 				 * nothing at all if the command would be a no-op anyway.
@@ -9002,9 +9002,9 @@ ATExecChangeOwner(Oid relationOid, Oid newOwnerId, bool recursing, LOCKMODE lock
 	 */
 	if (tuple_class->relowner != newOwnerId)
 	{
-		Datum		repl_val[Natts_pg_class];
-		bool		repl_null[Natts_pg_class];
-		bool		repl_repl[Natts_pg_class];
+		Datum		repl_val[Natts_mdb_class];
+		bool		repl_null[Natts_mdb_class];
+		bool		repl_repl[Natts_mdb_class];
 		Acl		   *newAcl;
 		Datum		aclDatum;
 		bool		isNull;
@@ -9020,7 +9020,7 @@ ATExecChangeOwner(Oid relationOid, Oid newOwnerId, bool recursing, LOCKMODE lock
 				AclResult	aclresult;
 
 				/* Otherwise, must be owner of the existing object */
-				if (!pg_class_ownercheck(relationOid, GetUserId()))
+				if (!mdb_class_ownercheck(relationOid, GetUserId()))
 					aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 								   RelationGetRelationName(target_rel));
 
@@ -9028,7 +9028,7 @@ ATExecChangeOwner(Oid relationOid, Oid newOwnerId, bool recursing, LOCKMODE lock
 				check_is_member_of_role(GetUserId(), newOwnerId);
 
 				/* New owner must have CREATE privilege on namespace */
-				aclresult = pg_namespace_aclcheck(namespaceOid, newOwnerId,
+				aclresult = mdb_namespace_aclcheck(namespaceOid, newOwnerId,
 												  ACL_CREATE);
 				if (aclresult != ACLCHECK_OK)
 					aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
@@ -9039,22 +9039,22 @@ ATExecChangeOwner(Oid relationOid, Oid newOwnerId, bool recursing, LOCKMODE lock
 		memset(repl_null, false, sizeof(repl_null));
 		memset(repl_repl, false, sizeof(repl_repl));
 
-		repl_repl[Anum_pg_class_relowner - 1] = true;
-		repl_val[Anum_pg_class_relowner - 1] = ObjectIdGetDatum(newOwnerId);
+		repl_repl[Anum_mdb_class_relowner - 1] = true;
+		repl_val[Anum_mdb_class_relowner - 1] = ObjectIdGetDatum(newOwnerId);
 
 		/*
 		 * Determine the modified ACL for the new owner.  This is only
 		 * necessary when the ACL is non-null.
 		 */
 		aclDatum = SysCacheGetAttr(RELOID, tuple,
-								   Anum_pg_class_relacl,
+								   Anum_mdb_class_relacl,
 								   &isNull);
 		if (!isNull)
 		{
 			newAcl = aclnewowner(DatumGetAclP(aclDatum),
 								 tuple_class->relowner, newOwnerId);
-			repl_repl[Anum_pg_class_relacl - 1] = true;
-			repl_val[Anum_pg_class_relacl - 1] = PointerGetDatum(newAcl);
+			repl_repl[Anum_mdb_class_relacl - 1] = true;
+			repl_val[Anum_mdb_class_relacl - 1] = PointerGetDatum(newAcl);
 		}
 
 		newtuple = heap_modify_tuple(tuple, RelationGetDescr(class_rel), repl_val, repl_null, repl_repl);
@@ -9074,7 +9074,7 @@ ATExecChangeOwner(Oid relationOid, Oid newOwnerId, bool recursing, LOCKMODE lock
 
 		/*
 		 * Update owner dependency reference, if any.  A composite type has
-		 * none, because it's tracked for the pg_type entry instead of here;
+		 * none, because it's tracked for the mdb_type entry instead of here;
 		 * indexes and TOAST tables don't have their own entries either.
 		 */
 		if (tuple_class->relkind != RELKIND_COMPOSITE_TYPE &&
@@ -9147,17 +9147,17 @@ change_owner_fix_column_acls(Oid relationOid, Oid oldOwnerId, Oid newOwnerId)
 
 	attRelation = heap_open(AttributeRelationId, RowExclusiveLock);
 	ScanKeyInit(&key[0],
-				Anum_pg_attribute_attrelid,
+				Anum_mdb_attribute_attrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relationOid));
 	scan = systable_beginscan(attRelation, AttributeRelidNumIndexId,
 							  true, NULL, 1, key);
 	while (HeapTupleIsValid(attributeTuple = systable_getnext(scan)))
 	{
-		Form_pg_attribute att = (Form_pg_attribute) GETSTRUCT(attributeTuple);
-		Datum		repl_val[Natts_pg_attribute];
-		bool		repl_null[Natts_pg_attribute];
-		bool		repl_repl[Natts_pg_attribute];
+		Form_mdb_attribute att = (Form_mdb_attribute) GETSTRUCT(attributeTuple);
+		Datum		repl_val[Natts_mdb_attribute];
+		bool		repl_null[Natts_mdb_attribute];
+		bool		repl_repl[Natts_mdb_attribute];
 		Acl		   *newAcl;
 		Datum		aclDatum;
 		bool		isNull;
@@ -9168,7 +9168,7 @@ change_owner_fix_column_acls(Oid relationOid, Oid oldOwnerId, Oid newOwnerId)
 			continue;
 
 		aclDatum = heap_getattr(attributeTuple,
-								Anum_pg_attribute_attacl,
+								Anum_mdb_attribute_attacl,
 								RelationGetDescr(attRelation),
 								&isNull);
 		/* Null ACLs do not require changes */
@@ -9180,8 +9180,8 @@ change_owner_fix_column_acls(Oid relationOid, Oid oldOwnerId, Oid newOwnerId)
 
 		newAcl = aclnewowner(DatumGetAclP(aclDatum),
 							 oldOwnerId, newOwnerId);
-		repl_repl[Anum_pg_attribute_attacl - 1] = true;
-		repl_val[Anum_pg_attribute_attacl - 1] = PointerGetDatum(newAcl);
+		repl_repl[Anum_mdb_attribute_attacl - 1] = true;
+		repl_val[Anum_mdb_attribute_attacl - 1] = PointerGetDatum(newAcl);
 
 		newtuple = heap_modify_tuple(attributeTuple,
 									 RelationGetDescr(attRelation),
@@ -9199,7 +9199,7 @@ change_owner_fix_column_acls(Oid relationOid, Oid oldOwnerId, Oid newOwnerId)
 /*
  * change_owner_recurse_to_sequences
  *
- * Helper function for ATExecChangeOwner.  Examines pg_depend searching
+ * Helper function for ATExecChangeOwner.  Examines mdb_depend searching
  * for sequences that are dependent on serial columns, and changes their
  * ownership.
  */
@@ -9218,11 +9218,11 @@ change_owner_recurse_to_sequences(Oid relationOid, Oid newOwnerId, LOCKMODE lock
 	depRel = heap_open(DependRelationId, AccessShareLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_refclassid,
+				Anum_mdb_depend_refclassid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationRelationId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_refobjid,
+				Anum_mdb_depend_refobjid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relationOid));
 	/* we leave refobjsubid unspecified */
@@ -9232,7 +9232,7 @@ change_owner_recurse_to_sequences(Oid relationOid, Oid newOwnerId, LOCKMODE lock
 
 	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 	{
-		Form_pg_depend depForm = (Form_pg_depend) GETSTRUCT(tup);
+		Form_mdb_depend depForm = (Form_mdb_depend) GETSTRUCT(tup);
 		Relation	seqRel;
 
 		/* skip dependencies other than auto dependencies on columns */
@@ -9326,7 +9326,7 @@ ATPrepSetTableSpace(AlteredTableInfo *tab, Relation rel, char *tablespacename, L
 	{
 		AclResult	aclresult;
 
-		aclresult = pg_tablespace_aclcheck(tablespaceId, GetUserId(), ACL_CREATE);
+		aclresult = mdb_tablespace_aclcheck(tablespaceId, GetUserId(), ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_TABLESPACE, tablespacename);
 	}
@@ -9354,9 +9354,9 @@ ATExecSetRelOptions(Relation rel, List *defList, AlterTableType operation,
 	Datum		datum;
 	bool		isnull;
 	Datum		newOptions;
-	Datum		repl_val[Natts_pg_class];
-	bool		repl_null[Natts_pg_class];
-	bool		repl_repl[Natts_pg_class];
+	Datum		repl_val[Natts_mdb_class];
+	bool		repl_null[Natts_mdb_class];
+	bool		repl_repl[Natts_mdb_class];
 	static char *validnsps[] = HEAP_RELOPT_NAMESPACES;
 
 	if (defList == NIL && operation != AT_ReplaceRelOptions)
@@ -9382,7 +9382,7 @@ ATExecSetRelOptions(Relation rel, List *defList, AlterTableType operation,
 	else
 	{
 		/* Get the old reloptions */
-		datum = SysCacheGetAttr(RELOID, tuple, Anum_pg_class_reloptions,
+		datum = SysCacheGetAttr(RELOID, tuple, Anum_mdb_class_reloptions,
 								&isnull);
 	}
 
@@ -9425,7 +9425,7 @@ ATExecSetRelOptions(Relation rel, List *defList, AlterTableType operation,
 		{
 			DefElem    *defel = (DefElem *) lfirst(cell);
 
-			if (pg_strcasecmp(defel->defname, "check_option") == 0)
+			if (mdb_strcasecmp(defel->defname, "check_option") == 0)
 				check_option = true;
 		}
 
@@ -9447,7 +9447,7 @@ ATExecSetRelOptions(Relation rel, List *defList, AlterTableType operation,
 	}
 
 	/*
-	 * All we need do here is update the pg_class row; the new options will be
+	 * All we need do here is update the mdb_class row; the new options will be
 	 * propagated into relcaches during post-commit cache inval.
 	 */
 	memset(repl_val, 0, sizeof(repl_val));
@@ -9455,11 +9455,11 @@ ATExecSetRelOptions(Relation rel, List *defList, AlterTableType operation,
 	memset(repl_repl, false, sizeof(repl_repl));
 
 	if (newOptions != (Datum) 0)
-		repl_val[Anum_pg_class_reloptions - 1] = newOptions;
+		repl_val[Anum_mdb_class_reloptions - 1] = newOptions;
 	else
-		repl_null[Anum_pg_class_reloptions - 1] = true;
+		repl_null[Anum_mdb_class_reloptions - 1] = true;
 
-	repl_repl[Anum_pg_class_reloptions - 1] = true;
+	repl_repl[Anum_mdb_class_reloptions - 1] = true;
 
 	newtuple = heap_modify_tuple(tuple, RelationGetDescr(pgclass),
 								 repl_val, repl_null, repl_repl);
@@ -9499,7 +9499,7 @@ ATExecSetRelOptions(Relation rel, List *defList, AlterTableType operation,
 		else
 		{
 			/* Get the old reloptions */
-			datum = SysCacheGetAttr(RELOID, tuple, Anum_pg_class_reloptions,
+			datum = SysCacheGetAttr(RELOID, tuple, Anum_mdb_class_reloptions,
 									&isnull);
 		}
 
@@ -9514,11 +9514,11 @@ ATExecSetRelOptions(Relation rel, List *defList, AlterTableType operation,
 		memset(repl_repl, false, sizeof(repl_repl));
 
 		if (newOptions != (Datum) 0)
-			repl_val[Anum_pg_class_reloptions - 1] = newOptions;
+			repl_val[Anum_mdb_class_reloptions - 1] = newOptions;
 		else
-			repl_null[Anum_pg_class_reloptions - 1] = true;
+			repl_null[Anum_mdb_class_reloptions - 1] = true;
 
-		repl_repl[Anum_pg_class_reloptions - 1] = true;
+		repl_repl[Anum_mdb_class_reloptions - 1] = true;
 
 		newtuple = heap_modify_tuple(tuple, RelationGetDescr(pgclass),
 									 repl_val, repl_null, repl_repl);
@@ -9554,9 +9554,9 @@ ATExecSetTableSpace(Oid tableOid, Oid newTableSpace, LOCKMODE lockmode)
 	Oid			newrelfilenode;
 	RelFileNode newrnode;
 	SMgrRelation dstrel;
-	Relation	pg_class;
+	Relation	mdb_class;
 	HeapTuple	tuple;
-	Form_pg_class rd_rel;
+	Form_mdb_class rd_rel;
 	ForkNumber	forkNum;
 	List	   *reltoastidxids = NIL;
 	ListCell   *lc;
@@ -9590,11 +9590,11 @@ ATExecSetTableSpace(Oid tableOid, Oid newTableSpace, LOCKMODE lockmode)
 				 errmsg("cannot move system relation \"%s\"",
 						RelationGetRelationName(rel))));
 
-	/* Can't move a non-shared relation into pg_global */
+	/* Can't move a non-shared relation into mdb_global */
 	if (newTableSpace == GLOBALTABLESPACE_OID)
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-				 errmsg("only shared relations can be placed in pg_global tablespace")));
+				 errmsg("only shared relations can be placed in mdb_global tablespace")));
 
 	/*
 	 * Don't allow moving temp tables of other backends ... their local buffer
@@ -9615,13 +9615,13 @@ ATExecSetTableSpace(Oid tableOid, Oid newTableSpace, LOCKMODE lockmode)
 		relation_close(toastRel, lockmode);
 	}
 
-	/* Get a modifiable copy of the relation's pg_class row */
-	pg_class = heap_open(RelationRelationId, RowExclusiveLock);
+	/* Get a modifiable copy of the relation's mdb_class row */
+	mdb_class = heap_open(RelationRelationId, RowExclusiveLock);
 
 	tuple = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(tableOid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", tableOid);
-	rd_rel = (Form_pg_class) GETSTRUCT(tuple);
+	rd_rel = (Form_mdb_class) GETSTRUCT(tuple);
 
 	/*
 	 * Since we copy the file directly without looking at the shared buffers,
@@ -9683,17 +9683,17 @@ ATExecSetTableSpace(Oid tableOid, Oid newTableSpace, LOCKMODE lockmode)
 	RelationDropStorage(rel);
 	smgrclose(dstrel);
 
-	/* update the pg_class row */
+	/* update the mdb_class row */
 	rd_rel->reltablespace = (newTableSpace == MyDatabaseTableSpace) ? InvalidOid : newTableSpace;
 	rd_rel->relfilenode = newrelfilenode;
-	simple_heap_update(pg_class, &tuple->t_self, tuple);
-	CatalogUpdateIndexes(pg_class, tuple);
+	simple_heap_update(mdb_class, &tuple->t_self, tuple);
+	CatalogUpdateIndexes(mdb_class, tuple);
 
 	InvokeObjectPostAlterHook(RelationRelationId, RelationGetRelid(rel), 0);
 
 	heap_freetuple(tuple);
 
-	heap_close(pg_class, RowExclusiveLock);
+	heap_close(mdb_class, RowExclusiveLock);
 
 	relation_close(rel, NoLock);
 
@@ -9746,13 +9746,13 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
 	orig_tablespaceoid = get_tablespace_oid(stmt->orig_tablespacename, false);
 	new_tablespaceoid = get_tablespace_oid(stmt->new_tablespacename, false);
 
-	/* Can't move shared relations in to or out of pg_global */
+	/* Can't move shared relations in to or out of mdb_global */
 	/* This is also checked by ATExecSetTableSpace, but nice to stop earlier */
 	if (orig_tablespaceoid == GLOBALTABLESPACE_OID ||
 		new_tablespaceoid == GLOBALTABLESPACE_OID)
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-				 errmsg("cannot move relations in to or out of pg_global tablespace")));
+				 errmsg("cannot move relations in to or out of mdb_global tablespace")));
 
 	/*
 	 * Must have CREATE rights on the new tablespace, unless it is the
@@ -9763,7 +9763,7 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
 	{
 		AclResult	aclresult;
 
-		aclresult = pg_tablespace_aclcheck(new_tablespaceoid, GetUserId(),
+		aclresult = mdb_tablespace_aclcheck(new_tablespaceoid, GetUserId(),
 										   ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_TABLESPACE,
@@ -9789,7 +9789,7 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
 	 * only find objects in our database, of course.
 	 */
 	ScanKeyInit(&key[0],
-				Anum_pg_class_reltablespace,
+				Anum_mdb_class_reltablespace,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(orig_tablespaceoid));
 
@@ -9798,12 +9798,12 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
 	while ((tuple = heap_getnext(scan, ForwardScanDirection)) != NULL)
 	{
 		Oid			relOid = HeapTupleGetOid(tuple);
-		Form_pg_class relForm;
+		Form_mdb_class relForm;
 
-		relForm = (Form_pg_class) GETSTRUCT(tuple);
+		relForm = (Form_mdb_class) GETSTRUCT(tuple);
 
 		/*
-		 * Do not move objects in pg_catalog as part of this, if an admin
+		 * Do not move objects in mdb_catalog as part of this, if an admin
 		 * really wishes to do so, they can issue the individual ALTER
 		 * commands directly.
 		 *
@@ -9835,7 +9835,7 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
 		 *
 		 * Caller must be considered an owner on the table to move it.
 		 */
-		if (!pg_class_ownercheck(relOid, GetUserId()))
+		if (!mdb_class_ownercheck(relOid, GetUserId()))
 			aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 						   NameStr(relForm->relname));
 
@@ -10070,14 +10070,14 @@ ATExecAddInherit(Relation child_rel, RangeVar *parent, LOCKMODE lockmode)
 	/*
 	 * Check for duplicates in the list of parents, and determine the highest
 	 * inhseqno already present; we'll use the next one for the new parent.
-	 * (Note: get RowExclusiveLock because we will write pg_inherits below.)
+	 * (Note: get RowExclusiveLock because we will write mdb_inherits below.)
 	 *
 	 * Note: we do not reject the case where the child already inherits from
 	 * the parent indirectly; CREATE TABLE doesn't reject comparable cases.
 	 */
 	catalogRelation = heap_open(InheritsRelationId, RowExclusiveLock);
 	ScanKeyInit(&key,
-				Anum_pg_inherits_inhrelid,
+				Anum_mdb_inherits_inhrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(child_rel)));
 	scan = systable_beginscan(catalogRelation, InheritsRelidSeqnoIndexId,
@@ -10087,7 +10087,7 @@ ATExecAddInherit(Relation child_rel, RangeVar *parent, LOCKMODE lockmode)
 	inhseqno = 0;
 	while (HeapTupleIsValid(inheritsTuple = systable_getnext(scan)))
 	{
-		Form_pg_inherits inh = (Form_pg_inherits) GETSTRUCT(inheritsTuple);
+		Form_mdb_inherits inh = (Form_mdb_inherits) GETSTRUCT(inheritsTuple);
 
 		if (inh->inhparent == RelationGetRelid(parent_rel))
 			ereport(ERROR,
@@ -10149,7 +10149,7 @@ ATExecAddInherit(Relation child_rel, RangeVar *parent, LOCKMODE lockmode)
 	ObjectAddressSet(address, RelationRelationId,
 					 RelationGetRelid(parent_rel));
 
-	/* Now we're done with pg_inherits */
+	/* Now we're done with mdb_inherits */
 	heap_close(catalogRelation, RowExclusiveLock);
 
 	/* keep our lock on the parent relation until commit */
@@ -10160,22 +10160,22 @@ ATExecAddInherit(Relation child_rel, RangeVar *parent, LOCKMODE lockmode)
 
 /*
  * Obtain the source-text form of the constraint expression for a check
- * constraint, given its pg_constraint tuple
+ * constraint, given its mdb_constraint tuple
  */
 static char *
 decompile_conbin(HeapTuple contup, TupleDesc tupdesc)
 {
-	Form_pg_constraint con;
+	Form_mdb_constraint con;
 	bool		isnull;
 	Datum		attr;
 	Datum		expr;
 
-	con = (Form_pg_constraint) GETSTRUCT(contup);
-	attr = heap_getattr(contup, Anum_pg_constraint_conbin, tupdesc, &isnull);
+	con = (Form_mdb_constraint) GETSTRUCT(contup);
+	attr = heap_getattr(contup, Anum_mdb_constraint_conbin, tupdesc, &isnull);
 	if (isnull)
 		elog(ERROR, "null conbin for constraint %u", HeapTupleGetOid(contup));
 
-	expr = DirectFunctionCall2(pg_get_expr, attr,
+	expr = DirectFunctionCall2(mdb_get_expr, attr,
 							   ObjectIdGetDatum(con->conrelid));
 	return TextDatumGetCString(expr);
 }
@@ -10190,8 +10190,8 @@ decompile_conbin(HeapTuple contup, TupleDesc tupdesc)
 static bool
 constraints_equivalent(HeapTuple a, HeapTuple b, TupleDesc tupleDesc)
 {
-	Form_pg_constraint acon = (Form_pg_constraint) GETSTRUCT(a);
-	Form_pg_constraint bcon = (Form_pg_constraint) GETSTRUCT(b);
+	Form_mdb_constraint acon = (Form_mdb_constraint) GETSTRUCT(a);
+	Form_mdb_constraint bcon = (Form_mdb_constraint) GETSTRUCT(b);
 
 	if (acon->condeferrable != bcon->condeferrable ||
 		acon->condeferred != bcon->condeferred ||
@@ -10232,7 +10232,7 @@ MergeAttributesIntoExisting(Relation child_rel, Relation parent_rel)
 
 	for (parent_attno = 1; parent_attno <= parent_natts; parent_attno++)
 	{
-		Form_pg_attribute attribute = tupleDesc->attrs[parent_attno - 1];
+		Form_mdb_attribute attribute = tupleDesc->attrs[parent_attno - 1];
 		char	   *attributeName = NameStr(attribute->attname);
 
 		/* Ignore dropped columns in the parent. */
@@ -10245,7 +10245,7 @@ MergeAttributesIntoExisting(Relation child_rel, Relation parent_rel)
 		if (HeapTupleIsValid(tuple))
 		{
 			/* Check they are same type, typmod, and collation */
-			Form_pg_attribute childatt = (Form_pg_attribute) GETSTRUCT(tuple);
+			Form_mdb_attribute childatt = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 			if (attribute->atttypid != childatt->atttypid ||
 				attribute->atttypmod != childatt->atttypmod)
@@ -10324,7 +10324,7 @@ MergeConstraintsIntoExisting(Relation child_rel, Relation parent_rel)
 
 	/* Outer loop scans through the parent's constraint definitions */
 	ScanKeyInit(&parent_key,
-				Anum_pg_constraint_conrelid,
+				Anum_mdb_constraint_conrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(parent_rel)));
 	parent_scan = systable_beginscan(catalog_relation, ConstraintRelidIndexId,
@@ -10332,7 +10332,7 @@ MergeConstraintsIntoExisting(Relation child_rel, Relation parent_rel)
 
 	while (HeapTupleIsValid(parent_tuple = systable_getnext(parent_scan)))
 	{
-		Form_pg_constraint parent_con = (Form_pg_constraint) GETSTRUCT(parent_tuple);
+		Form_mdb_constraint parent_con = (Form_mdb_constraint) GETSTRUCT(parent_tuple);
 		SysScanDesc child_scan;
 		ScanKeyData child_key;
 		HeapTuple	child_tuple;
@@ -10347,7 +10347,7 @@ MergeConstraintsIntoExisting(Relation child_rel, Relation parent_rel)
 
 		/* Search for a child constraint matching this one */
 		ScanKeyInit(&child_key,
-					Anum_pg_constraint_conrelid,
+					Anum_mdb_constraint_conrelid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(RelationGetRelid(child_rel)));
 		child_scan = systable_beginscan(catalog_relation, ConstraintRelidIndexId,
@@ -10355,7 +10355,7 @@ MergeConstraintsIntoExisting(Relation child_rel, Relation parent_rel)
 
 		while (HeapTupleIsValid(child_tuple = systable_getnext(child_scan)))
 		{
-			Form_pg_constraint child_con = (Form_pg_constraint) GETSTRUCT(child_tuple);
+			Form_mdb_constraint child_con = (Form_mdb_constraint) GETSTRUCT(child_tuple);
 			HeapTuple	child_copy;
 
 			if (child_con->contype != CONSTRAINT_CHECK)
@@ -10385,7 +10385,7 @@ MergeConstraintsIntoExisting(Relation child_rel, Relation parent_rel)
 			 * later on, this change will just roll back.)
 			 */
 			child_copy = heap_copytuple(child_tuple);
-			child_con = (Form_pg_constraint) GETSTRUCT(child_copy);
+			child_con = (Form_mdb_constraint) GETSTRUCT(child_copy);
 			child_con->coninhcount++;
 			simple_heap_update(catalog_relation, &child_copy->t_self, child_copy);
 			CatalogUpdateIndexes(catalog_relation, child_copy);
@@ -10412,7 +10412,7 @@ MergeConstraintsIntoExisting(Relation child_rel, Relation parent_rel)
  * ALTER TABLE NO INHERIT
  *
  * Drop a parent from the child's parents. This just adjusts the attinhcount
- * and attislocal of the columns and removes the pg_inherit and pg_depend
+ * and attislocal of the columns and removes the mdb_inherit and mdb_depend
  * entries.
  *
  * If attinhcount goes to 0 then attislocal gets set to true. If it goes back
@@ -10454,12 +10454,12 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
 	 */
 
 	/*
-	 * Find and destroy the pg_inherits entry linking the two, or error out if
+	 * Find and destroy the mdb_inherits entry linking the two, or error out if
 	 * there is none.
 	 */
 	catalogRelation = heap_open(InheritsRelationId, RowExclusiveLock);
 	ScanKeyInit(&key[0],
-				Anum_pg_inherits_inhrelid,
+				Anum_mdb_inherits_inhrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	scan = systable_beginscan(catalogRelation, InheritsRelidSeqnoIndexId,
@@ -10469,7 +10469,7 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
 	{
 		Oid			inhparent;
 
-		inhparent = ((Form_pg_inherits) GETSTRUCT(inheritsTuple))->inhparent;
+		inhparent = ((Form_mdb_inherits) GETSTRUCT(inheritsTuple))->inhparent;
 		if (inhparent == RelationGetRelid(parent_rel))
 		{
 			simple_heap_delete(catalogRelation, &inheritsTuple->t_self);
@@ -10493,14 +10493,14 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
 	 */
 	catalogRelation = heap_open(AttributeRelationId, RowExclusiveLock);
 	ScanKeyInit(&key[0],
-				Anum_pg_attribute_attrelid,
+				Anum_mdb_attribute_attrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	scan = systable_beginscan(catalogRelation, AttributeRelidNumIndexId,
 							  true, NULL, 1, key);
 	while (HeapTupleIsValid(attributeTuple = systable_getnext(scan)))
 	{
-		Form_pg_attribute att = (Form_pg_attribute) GETSTRUCT(attributeTuple);
+		Form_mdb_attribute att = (Form_mdb_attribute) GETSTRUCT(attributeTuple);
 
 		/* Ignore if dropped or not inherited */
 		if (att->attisdropped)
@@ -10513,7 +10513,7 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
 		{
 			/* Decrement inhcount and possibly set islocal to true */
 			HeapTuple	copyTuple = heap_copytuple(attributeTuple);
-			Form_pg_attribute copy_att = (Form_pg_attribute) GETSTRUCT(copyTuple);
+			Form_mdb_attribute copy_att = (Form_mdb_attribute) GETSTRUCT(copyTuple);
 
 			copy_att->attinhcount--;
 			if (copy_att->attinhcount == 0)
@@ -10535,7 +10535,7 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
 	 */
 	catalogRelation = heap_open(ConstraintRelationId, RowExclusiveLock);
 	ScanKeyInit(&key[0],
-				Anum_pg_constraint_conrelid,
+				Anum_mdb_constraint_conrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(parent_rel)));
 	scan = systable_beginscan(catalogRelation, ConstraintRelidIndexId,
@@ -10545,7 +10545,7 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
 
 	while (HeapTupleIsValid(constraintTuple = systable_getnext(scan)))
 	{
-		Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(constraintTuple);
+		Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(constraintTuple);
 
 		if (con->contype == CONSTRAINT_CHECK)
 			connames = lappend(connames, pstrdup(NameStr(con->conname)));
@@ -10555,7 +10555,7 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
 
 	/* Now scan the child's constraints */
 	ScanKeyInit(&key[0],
-				Anum_pg_constraint_conrelid,
+				Anum_mdb_constraint_conrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	scan = systable_beginscan(catalogRelation, ConstraintRelidIndexId,
@@ -10563,7 +10563,7 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
 
 	while (HeapTupleIsValid(constraintTuple = systable_getnext(scan)))
 	{
-		Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(constraintTuple);
+		Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(constraintTuple);
 		bool		match;
 		ListCell   *lc;
 
@@ -10584,7 +10584,7 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
 		{
 			/* Decrement inhcount and possibly set islocal to true */
 			HeapTuple	copyTuple = heap_copytuple(constraintTuple);
-			Form_pg_constraint copy_con = (Form_pg_constraint) GETSTRUCT(copyTuple);
+			Form_mdb_constraint copy_con = (Form_mdb_constraint) GETSTRUCT(copyTuple);
 
 			if (copy_con->coninhcount <= 0)		/* shouldn't happen */
 				elog(ERROR, "relation %u has non-inherited constraint \"%s\"",
@@ -10631,7 +10631,7 @@ ATExecDropInherit(Relation rel, RangeVar *parent, LOCKMODE lockmode)
  * INHERITS/ALTER TABLE INHERIT -- refclassid will be RelationRelationId) or
  * heap_create_with_catalog (CREATE TABLE OF/ALTER TABLE OF -- refclassid will
  * be TypeRelationId).  There's no convenient way to do this, so go trawling
- * through pg_depend.
+ * through mdb_depend.
  */
 static void
 drop_parent_dependency(Oid relid, Oid refclassid, Oid refobjid)
@@ -10644,15 +10644,15 @@ drop_parent_dependency(Oid relid, Oid refclassid, Oid refobjid)
 	catalogRelation = heap_open(DependRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_classid,
+				Anum_mdb_depend_classid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationRelationId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_objid,
+				Anum_mdb_depend_objid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 	ScanKeyInit(&key[2],
-				Anum_pg_depend_objsubid,
+				Anum_mdb_depend_objsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum(0));
 
@@ -10661,7 +10661,7 @@ drop_parent_dependency(Oid relid, Oid refclassid, Oid refobjid)
 
 	while (HeapTupleIsValid(depTuple = systable_getnext(scan)))
 	{
-		Form_pg_depend dep = (Form_pg_depend) GETSTRUCT(depTuple);
+		Form_mdb_depend dep = (Form_mdb_depend) GETSTRUCT(depTuple);
 
 		if (dep->refclassid == refclassid &&
 			dep->refobjid == refobjid &&
@@ -10710,7 +10710,7 @@ ATExecAddOf(Relation rel, const TypeName *ofTypename, LOCKMODE lockmode)
 	/* Fail if the table has any inheritance parents. */
 	inheritsRelation = heap_open(InheritsRelationId, AccessShareLock);
 	ScanKeyInit(&key,
-				Anum_pg_inherits_inhrelid,
+				Anum_mdb_inherits_inhrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 	scan = systable_beginscan(inheritsRelation, InheritsRelidSeqnoIndexId,
@@ -10732,7 +10732,7 @@ ATExecAddOf(Relation rel, const TypeName *ofTypename, LOCKMODE lockmode)
 	table_attno = 1;
 	for (type_attno = 1; type_attno <= typeTupleDesc->natts; type_attno++)
 	{
-		Form_pg_attribute type_attr,
+		Form_mdb_attribute type_attr,
 					table_attr;
 		const char *type_attname,
 				   *table_attname;
@@ -10776,7 +10776,7 @@ ATExecAddOf(Relation rel, const TypeName *ofTypename, LOCKMODE lockmode)
 	/* Any remaining columns at the end of the table had better be dropped. */
 	for (; table_attno <= tableTupleDesc->natts; table_attno++)
 	{
-		Form_pg_attribute table_attr = tableTupleDesc->attrs[table_attno - 1];
+		Form_mdb_attribute table_attr = tableTupleDesc->attrs[table_attno - 1];
 
 		if (!table_attr->attisdropped)
 			ereport(ERROR,
@@ -10798,12 +10798,12 @@ ATExecAddOf(Relation rel, const TypeName *ofTypename, LOCKMODE lockmode)
 	typeobj.objectSubId = 0;
 	recordDependencyOn(&tableobj, &typeobj, DEPENDENCY_NORMAL);
 
-	/* Update pg_class.reloftype */
+	/* Update mdb_class.reloftype */
 	relationRelation = heap_open(RelationRelationId, RowExclusiveLock);
 	classtuple = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(classtuple))
 		elog(ERROR, "cache lookup failed for relation %u", relid);
-	((Form_pg_class) GETSTRUCT(classtuple))->reloftype = typeid;
+	((Form_mdb_class) GETSTRUCT(classtuple))->reloftype = typeid;
 	simple_heap_update(relationRelation, &classtuple->t_self, classtuple);
 	CatalogUpdateIndexes(relationRelation, classtuple);
 
@@ -10843,12 +10843,12 @@ ATExecDropOf(Relation rel, LOCKMODE lockmode)
 
 	drop_parent_dependency(relid, TypeRelationId, rel->rd_rel->reloftype);
 
-	/* Clear pg_class.reloftype */
+	/* Clear mdb_class.reloftype */
 	relationRelation = heap_open(RelationRelationId, RowExclusiveLock);
 	tuple = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", relid);
-	((Form_pg_class) GETSTRUCT(tuple))->reloftype = InvalidOid;
+	((Form_mdb_class) GETSTRUCT(tuple))->reloftype = InvalidOid;
 	simple_heap_update(relationRelation, &tuple->t_self, tuple);
 	CatalogUpdateIndexes(relationRelation, tuple);
 
@@ -10868,33 +10868,33 @@ static void
 relation_mark_replica_identity(Relation rel, char ri_type, Oid indexOid,
 							   bool is_internal)
 {
-	Relation	pg_index;
-	Relation	pg_class;
-	HeapTuple	pg_class_tuple;
-	HeapTuple	pg_index_tuple;
-	Form_pg_class pg_class_form;
-	Form_pg_index pg_index_form;
+	Relation	mdb_index;
+	Relation	mdb_class;
+	HeapTuple	mdb_class_tuple;
+	HeapTuple	mdb_index_tuple;
+	Form_mdb_class mdb_class_form;
+	Form_mdb_index mdb_index_form;
 
 	ListCell   *index;
 
 	/*
 	 * Check whether relreplident has changed, and update it if so.
 	 */
-	pg_class = heap_open(RelationRelationId, RowExclusiveLock);
-	pg_class_tuple = SearchSysCacheCopy1(RELOID,
+	mdb_class = heap_open(RelationRelationId, RowExclusiveLock);
+	mdb_class_tuple = SearchSysCacheCopy1(RELOID,
 									ObjectIdGetDatum(RelationGetRelid(rel)));
-	if (!HeapTupleIsValid(pg_class_tuple))
+	if (!HeapTupleIsValid(mdb_class_tuple))
 		elog(ERROR, "cache lookup failed for relation \"%s\"",
 			 RelationGetRelationName(rel));
-	pg_class_form = (Form_pg_class) GETSTRUCT(pg_class_tuple);
-	if (pg_class_form->relreplident != ri_type)
+	mdb_class_form = (Form_mdb_class) GETSTRUCT(mdb_class_tuple);
+	if (mdb_class_form->relreplident != ri_type)
 	{
-		pg_class_form->relreplident = ri_type;
-		simple_heap_update(pg_class, &pg_class_tuple->t_self, pg_class_tuple);
-		CatalogUpdateIndexes(pg_class, pg_class_tuple);
+		mdb_class_form->relreplident = ri_type;
+		simple_heap_update(mdb_class, &mdb_class_tuple->t_self, mdb_class_tuple);
+		CatalogUpdateIndexes(mdb_class, mdb_class_tuple);
 	}
-	heap_close(pg_class, RowExclusiveLock);
-	heap_freetuple(pg_class_tuple);
+	heap_close(mdb_class, RowExclusiveLock);
+	heap_freetuple(mdb_class_tuple);
 
 	/*
 	 * Check whether the correct index is marked indisreplident; if so, we're
@@ -10904,61 +10904,61 @@ relation_mark_replica_identity(Relation rel, char ri_type, Oid indexOid,
 	{
 		Assert(ri_type == REPLICA_IDENTITY_INDEX);
 
-		pg_index_tuple = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(indexOid));
-		if (!HeapTupleIsValid(pg_index_tuple))
+		mdb_index_tuple = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(indexOid));
+		if (!HeapTupleIsValid(mdb_index_tuple))
 			elog(ERROR, "cache lookup failed for index %u", indexOid);
-		pg_index_form = (Form_pg_index) GETSTRUCT(pg_index_tuple);
+		mdb_index_form = (Form_mdb_index) GETSTRUCT(mdb_index_tuple);
 
-		if (pg_index_form->indisreplident)
+		if (mdb_index_form->indisreplident)
 		{
-			ReleaseSysCache(pg_index_tuple);
+			ReleaseSysCache(mdb_index_tuple);
 			return;
 		}
-		ReleaseSysCache(pg_index_tuple);
+		ReleaseSysCache(mdb_index_tuple);
 	}
 
 	/*
 	 * Clear the indisreplident flag from any index that had it previously,
 	 * and set it for any index that should have it now.
 	 */
-	pg_index = heap_open(IndexRelationId, RowExclusiveLock);
+	mdb_index = heap_open(IndexRelationId, RowExclusiveLock);
 	foreach(index, RelationGetIndexList(rel))
 	{
 		Oid			thisIndexOid = lfirst_oid(index);
 		bool		dirty = false;
 
-		pg_index_tuple = SearchSysCacheCopy1(INDEXRELID,
+		mdb_index_tuple = SearchSysCacheCopy1(INDEXRELID,
 											 ObjectIdGetDatum(thisIndexOid));
-		if (!HeapTupleIsValid(pg_index_tuple))
+		if (!HeapTupleIsValid(mdb_index_tuple))
 			elog(ERROR, "cache lookup failed for index %u", thisIndexOid);
-		pg_index_form = (Form_pg_index) GETSTRUCT(pg_index_tuple);
+		mdb_index_form = (Form_mdb_index) GETSTRUCT(mdb_index_tuple);
 
 		/*
 		 * Unset the bit if set.  We know it's wrong because we checked this
 		 * earlier.
 		 */
-		if (pg_index_form->indisreplident)
+		if (mdb_index_form->indisreplident)
 		{
 			dirty = true;
-			pg_index_form->indisreplident = false;
+			mdb_index_form->indisreplident = false;
 		}
 		else if (thisIndexOid == indexOid)
 		{
 			dirty = true;
-			pg_index_form->indisreplident = true;
+			mdb_index_form->indisreplident = true;
 		}
 
 		if (dirty)
 		{
-			simple_heap_update(pg_index, &pg_index_tuple->t_self, pg_index_tuple);
-			CatalogUpdateIndexes(pg_index, pg_index_tuple);
+			simple_heap_update(mdb_index, &mdb_index_tuple->t_self, mdb_index_tuple);
+			CatalogUpdateIndexes(mdb_index, mdb_index_tuple);
 			InvokeObjectPostAlterHookArg(IndexRelationId, thisIndexOid, 0,
 										 InvalidOid, is_internal);
 		}
-		heap_freetuple(pg_index_tuple);
+		heap_freetuple(mdb_index_tuple);
 	}
 
-	heap_close(pg_index, RowExclusiveLock);
+	heap_close(mdb_index, RowExclusiveLock);
 }
 
 /*
@@ -11048,7 +11048,7 @@ ATExecReplicaIdentity(Relation rel, ReplicaIdentityStmt *stmt, LOCKMODE lockmode
 	for (key = 0; key < indexRel->rd_index->indnatts; key++)
 	{
 		int16		attno = indexRel->rd_index->indkey.values[key];
-		Form_pg_attribute attr;
+		Form_mdb_attribute attr;
 
 		/* Allow OID column to be indexed; it's certainly not nullable */
 		if (attno == ObjectIdAttributeNumber)
@@ -11086,53 +11086,53 @@ ATExecReplicaIdentity(Relation rel, ReplicaIdentityStmt *stmt, LOCKMODE lockmode
 static void
 ATExecEnableRowSecurity(Relation rel)
 {
-	Relation	pg_class;
+	Relation	mdb_class;
 	Oid			relid;
 	HeapTuple	tuple;
 
 	relid = RelationGetRelid(rel);
 
-	pg_class = heap_open(RelationRelationId, RowExclusiveLock);
+	mdb_class = heap_open(RelationRelationId, RowExclusiveLock);
 
 	tuple = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(relid));
 
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", relid);
 
-	((Form_pg_class) GETSTRUCT(tuple))->relrowsecurity = true;
-	simple_heap_update(pg_class, &tuple->t_self, tuple);
+	((Form_mdb_class) GETSTRUCT(tuple))->relrowsecurity = true;
+	simple_heap_update(mdb_class, &tuple->t_self, tuple);
 
 	/* keep catalog indexes current */
-	CatalogUpdateIndexes(pg_class, tuple);
+	CatalogUpdateIndexes(mdb_class, tuple);
 
-	heap_close(pg_class, RowExclusiveLock);
+	heap_close(mdb_class, RowExclusiveLock);
 	heap_freetuple(tuple);
 }
 
 static void
 ATExecDisableRowSecurity(Relation rel)
 {
-	Relation	pg_class;
+	Relation	mdb_class;
 	Oid			relid;
 	HeapTuple	tuple;
 
 	relid = RelationGetRelid(rel);
 
 	/* Pull the record for this relation and update it */
-	pg_class = heap_open(RelationRelationId, RowExclusiveLock);
+	mdb_class = heap_open(RelationRelationId, RowExclusiveLock);
 
 	tuple = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(relid));
 
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", relid);
 
-	((Form_pg_class) GETSTRUCT(tuple))->relrowsecurity = false;
-	simple_heap_update(pg_class, &tuple->t_self, tuple);
+	((Form_mdb_class) GETSTRUCT(tuple))->relrowsecurity = false;
+	simple_heap_update(mdb_class, &tuple->t_self, tuple);
 
 	/* keep catalog indexes current */
-	CatalogUpdateIndexes(pg_class, tuple);
+	CatalogUpdateIndexes(mdb_class, tuple);
 
-	heap_close(pg_class, RowExclusiveLock);
+	heap_close(mdb_class, RowExclusiveLock);
 	heap_freetuple(tuple);
 }
 
@@ -11142,26 +11142,26 @@ ATExecDisableRowSecurity(Relation rel)
 static void
 ATExecForceNoForceRowSecurity(Relation rel, bool force_rls)
 {
-	Relation	pg_class;
+	Relation	mdb_class;
 	Oid			relid;
 	HeapTuple	tuple;
 
 	relid = RelationGetRelid(rel);
 
-	pg_class = heap_open(RelationRelationId, RowExclusiveLock);
+	mdb_class = heap_open(RelationRelationId, RowExclusiveLock);
 
 	tuple = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(relid));
 
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", relid);
 
-	((Form_pg_class) GETSTRUCT(tuple))->relforcerowsecurity = force_rls;
-	simple_heap_update(pg_class, &tuple->t_self, tuple);
+	((Form_mdb_class) GETSTRUCT(tuple))->relforcerowsecurity = force_rls;
+	simple_heap_update(mdb_class, &tuple->t_self, tuple);
 
 	/* keep catalog indexes current */
-	CatalogUpdateIndexes(pg_class, tuple);
+	CatalogUpdateIndexes(mdb_class, tuple);
 
-	heap_close(pg_class, RowExclusiveLock);
+	heap_close(mdb_class, RowExclusiveLock);
 	heap_freetuple(tuple);
 }
 
@@ -11176,11 +11176,11 @@ ATExecGenericOptions(Relation rel, List *options)
 	ForeignDataWrapper *fdw;
 	HeapTuple	tuple;
 	bool		isnull;
-	Datum		repl_val[Natts_pg_foreign_table];
-	bool		repl_null[Natts_pg_foreign_table];
-	bool		repl_repl[Natts_pg_foreign_table];
+	Datum		repl_val[Natts_mdb_foreign_table];
+	bool		repl_null[Natts_mdb_foreign_table];
+	bool		repl_repl[Natts_mdb_foreign_table];
 	Datum		datum;
-	Form_pg_foreign_table tableform;
+	Form_mdb_foreign_table tableform;
 
 	if (options == NIL)
 		return;
@@ -11193,7 +11193,7 @@ ATExecGenericOptions(Relation rel, List *options)
 				(errcode(ERRCODE_UNDEFINED_OBJECT),
 				 errmsg("foreign table \"%s\" does not exist",
 						RelationGetRelationName(rel))));
-	tableform = (Form_pg_foreign_table) GETSTRUCT(tuple);
+	tableform = (Form_mdb_foreign_table) GETSTRUCT(tuple);
 	server = GetForeignServer(tableform->ftserver);
 	fdw = GetForeignDataWrapper(server->fdwid);
 
@@ -11204,7 +11204,7 @@ ATExecGenericOptions(Relation rel, List *options)
 	/* Extract the current options */
 	datum = SysCacheGetAttr(FOREIGNTABLEREL,
 							tuple,
-							Anum_pg_foreign_table_ftoptions,
+							Anum_mdb_foreign_table_ftoptions,
 							&isnull);
 	if (isnull)
 		datum = PointerGetDatum(NULL);
@@ -11216,11 +11216,11 @@ ATExecGenericOptions(Relation rel, List *options)
 									fdw->fdwvalidator);
 
 	if (PointerIsValid(DatumGetPointer(datum)))
-		repl_val[Anum_pg_foreign_table_ftoptions - 1] = datum;
+		repl_val[Anum_mdb_foreign_table_ftoptions - 1] = datum;
 	else
-		repl_null[Anum_pg_foreign_table_ftoptions - 1] = true;
+		repl_null[Anum_mdb_foreign_table_ftoptions - 1] = true;
 
-	repl_repl[Anum_pg_foreign_table_ftoptions - 1] = true;
+	repl_repl[Anum_mdb_foreign_table_ftoptions - 1] = true;
 
 	/* Everything looks good - update the tuple */
 
@@ -11251,7 +11251,7 @@ ATExecGenericOptions(Relation rel, List *options)
 static bool
 ATPrepChangePersistence(Relation rel, bool toLogged)
 {
-	Relation	pg_constraint;
+	Relation	mdb_constraint;
 	HeapTuple	tuple;
 	SysScanDesc scan;
 	ScanKeyData skey[1];
@@ -11287,24 +11287,24 @@ ATPrepChangePersistence(Relation rel, bool toLogged)
 	 * permanent tables cannot reference unlogged ones.  Self-referencing
 	 * foreign keys can safely be ignored.
 	 */
-	pg_constraint = heap_open(ConstraintRelationId, AccessShareLock);
+	mdb_constraint = heap_open(ConstraintRelationId, AccessShareLock);
 
 	/*
 	 * Scan conrelid if changing to permanent, else confrelid.  This also
 	 * determines whether a useful index exists.
 	 */
 	ScanKeyInit(&skey[0],
-				toLogged ? Anum_pg_constraint_conrelid :
-				Anum_pg_constraint_confrelid,
+				toLogged ? Anum_mdb_constraint_conrelid :
+				Anum_mdb_constraint_confrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
-	scan = systable_beginscan(pg_constraint,
+	scan = systable_beginscan(mdb_constraint,
 							  toLogged ? ConstraintRelidIndexId : InvalidOid,
 							  true, NULL, 1, skey);
 
 	while (HeapTupleIsValid(tuple = systable_getnext(scan)))
 	{
-		Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(tuple);
+		Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(tuple);
 
 		if (con->contype == CONSTRAINT_FOREIGN)
 		{
@@ -11347,7 +11347,7 @@ ATPrepChangePersistence(Relation rel, bool toLogged)
 
 	systable_endscan(scan);
 
-	heap_close(pg_constraint, AccessShareLock);
+	heap_close(mdb_constraint, AccessShareLock);
 
 	return true;
 }
@@ -11433,7 +11433,7 @@ AlterTableNamespaceInternal(Relation rel, Oid oldNspOid, Oid nspOid,
 
 	Assert(objsMoved != NULL);
 
-	/* OK, modify the pg_class row and pg_depend entry */
+	/* OK, modify the mdb_class row and mdb_depend entry */
 	classRel = heap_open(RelationRelationId, RowExclusiveLock);
 
 	AlterRelationNamespaceInternal(classRel, RelationGetRelid(rel), oldNspOid,
@@ -11458,9 +11458,9 @@ AlterTableNamespaceInternal(Relation rel, Oid oldNspOid, Oid nspOid,
 }
 
 /*
- * The guts of relocating a relation to another namespace: fix the pg_class
- * entry, and the pg_depend entry if any.  Caller must already have
- * opened and write-locked pg_class.
+ * The guts of relocating a relation to another namespace: fix the mdb_class
+ * entry, and the mdb_depend entry if any.  Caller must already have
+ * opened and write-locked mdb_class.
  */
 void
 AlterRelationNamespaceInternal(Relation classRel, Oid relOid,
@@ -11469,14 +11469,14 @@ AlterRelationNamespaceInternal(Relation classRel, Oid relOid,
 							   ObjectAddresses *objsMoved)
 {
 	HeapTuple	classTup;
-	Form_pg_class classForm;
+	Form_mdb_class classForm;
 	ObjectAddress thisobj;
 	bool		already_done = false;
 
 	classTup = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(relOid));
 	if (!HeapTupleIsValid(classTup))
 		elog(ERROR, "cache lookup failed for relation %u", relOid);
-	classForm = (Form_pg_class) GETSTRUCT(classTup);
+	classForm = (Form_mdb_class) GETSTRUCT(classTup);
 
 	Assert(classForm->relnamespace == oldNspOid);
 
@@ -11554,7 +11554,7 @@ AlterIndexNamespaces(Relation classRel, Relation rel,
 		/*
 		 * Note: currently, the index will not have its own dependency on the
 		 * namespace, so we don't need to do changeDependencyFor(). There's no
-		 * row type in pg_type, either.
+		 * row type in mdb_type, either.
 		 *
 		 * XXX this objsMoved test may be pointless -- surely we have a single
 		 * dependency link from a relation to each index?
@@ -11595,11 +11595,11 @@ AlterSeqNamespaces(Relation classRel, Relation rel,
 	depRel = heap_open(DependRelationId, AccessShareLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_refclassid,
+				Anum_mdb_depend_refclassid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationRelationId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_refobjid,
+				Anum_mdb_depend_refobjid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	/* we leave refobjsubid unspecified */
@@ -11609,7 +11609,7 @@ AlterSeqNamespaces(Relation classRel, Relation rel,
 
 	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 	{
-		Form_pg_depend depForm = (Form_pg_depend) GETSTRUCT(tup);
+		Form_mdb_depend depForm = (Form_mdb_depend) GETSTRUCT(tup);
 		Relation	seqRel;
 
 		/* skip dependencies other than auto dependencies on columns */
@@ -11630,13 +11630,13 @@ AlterSeqNamespaces(Relation classRel, Relation rel,
 			continue;
 		}
 
-		/* Fix the pg_class and pg_depend entries */
+		/* Fix the mdb_class and mdb_depend entries */
 		AlterRelationNamespaceInternal(classRel, depForm->objid,
 									   oldNspOid, newNspOid,
 									   true, objsMoved);
 
 		/*
-		 * Sequences have entries in pg_type. We need to be careful to move
+		 * Sequences have entries in mdb_type. We need to be careful to move
 		 * them to the new namespace, too.
 		 */
 		AlterTypeNamespaceInternal(RelationGetForm(seqRel)->reltype,
@@ -11900,7 +11900,7 @@ RangeVarCallbackOwnsTable(const RangeVar *relation,
 				 errmsg("\"%s\" is not a table or materialized view", relation->relname)));
 
 	/* Check permissions */
-	if (!pg_class_ownercheck(relId, GetUserId()))
+	if (!mdb_class_ownercheck(relId, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS, relation->relname);
 }
 
@@ -11922,12 +11922,12 @@ RangeVarCallbackOwnsRelation(const RangeVar *relation,
 	if (!HeapTupleIsValid(tuple))		/* should not happen */
 		elog(ERROR, "cache lookup failed for relation %u", relId);
 
-	if (!pg_class_ownercheck(relId, GetUserId()))
+	if (!mdb_class_ownercheck(relId, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 					   relation->relname);
 
 	if (!allowSystemTableMods &&
-		IsSystemClass(relId, (Form_pg_class) GETSTRUCT(tuple)))
+		IsSystemClass(relId, (Form_mdb_class) GETSTRUCT(tuple)))
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 				 errmsg("permission denied: \"%s\" is a system catalog",
@@ -11947,18 +11947,18 @@ RangeVarCallbackForAlterRelation(const RangeVar *rv, Oid relid, Oid oldrelid,
 	Node	   *stmt = (Node *) arg;
 	ObjectType	reltype;
 	HeapTuple	tuple;
-	Form_pg_class classform;
+	Form_mdb_class classform;
 	AclResult	aclresult;
 	char		relkind;
 
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tuple))
 		return;					/* concurrently dropped */
-	classform = (Form_pg_class) GETSTRUCT(tuple);
+	classform = (Form_mdb_class) GETSTRUCT(tuple);
 	relkind = classform->relkind;
 
 	/* Must own relation. */
-	if (!pg_class_ownercheck(relid, GetUserId()))
+	if (!mdb_class_ownercheck(relid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS, rv->relname);
 
 	/* No system table modifications unless explicitly allowed. */
@@ -11976,7 +11976,7 @@ RangeVarCallbackForAlterRelation(const RangeVar *rv, Oid relid, Oid oldrelid,
 	 */
 	if (IsA(stmt, RenameStmt))
 	{
-		aclresult = pg_namespace_aclcheck(classform->relnamespace,
+		aclresult = mdb_namespace_aclcheck(classform->relnamespace,
 										  GetUserId(), ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_NAMESPACE,

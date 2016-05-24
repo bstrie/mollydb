@@ -53,7 +53,7 @@
 
 #include "storage/s_lock.h"
 #ifndef HAVE_SPINLOCKS
-#include "storage/pg_sema.h"
+#include "storage/mdb_sema.h"
 #endif
 
 

@@ -77,7 +77,7 @@
 
 static int
 MatchText(char *t, int tlen, char *p, int plen,
-		  pg_locale_t locale, bool locale_is_c)
+		  mdb_locale_t locale, bool locale_is_c)
 {
 	/* Fast path for match-everything pattern */
 	if (plen == 1 && *p == '%')

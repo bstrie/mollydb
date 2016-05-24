@@ -16,7 +16,7 @@
 
 #include "access/gist_private.h"
 #include "access/relscan.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "miscadmin.h"
 #include "pgstat.h"
 #include "lib/pairingheap.h"
@@ -202,7 +202,7 @@ gistindex_keytest(IndexScanDesc scan,
 			 * Call the Consistent function to evaluate the test.  The
 			 * arguments are the index datum (as a GISTENTRY*), the comparison
 			 * datum, the comparison operator's strategy number and subtype
-			 * from pg_amop, and the recheck flag.
+			 * from mdb_amop, and the recheck flag.
 			 *
 			 * (Presently there's no need to pass the subtype since it'll
 			 * always be zero, but might as well pass it for possible future
@@ -263,7 +263,7 @@ gistindex_keytest(IndexScanDesc scan,
 			 * Call the Distance function to evaluate the distance.  The
 			 * arguments are the index datum (as a GISTENTRY*), the comparison
 			 * datum, the ordering operator's strategy number and subtype from
-			 * pg_amop, and the recheck flag.
+			 * mdb_amop, and the recheck flag.
 			 *
 			 * (Presently there's no need to pass the subtype since it'll
 			 * always be zero, but might as well pass it for possible future

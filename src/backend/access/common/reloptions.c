@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * reloptions.c
- *	  Core support for relation options (pg_class.reloptions)
+ *	  Core support for relation options (mdb_class.reloptions)
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -21,7 +21,7 @@
 #include "access/nbtree.h"
 #include "access/reloptions.h"
 #include "access/spgist.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/defrem.h"
 #include "commands/tablespace.h"
 #include "commands/view.h"
@@ -35,7 +35,7 @@
 #include "utils/rel.h"
 
 /*
- * Contents of pg_class.reloptions
+ * Contents of mdb_class.reloptions
  *
  * To add an option:
  *
@@ -668,7 +668,7 @@ add_string_reloption(bits32 kinds, char *name, char *desc, char *default_val,
 
 /*
  * Transform a relation options list (list of DefElem) into the text array
- * format that is kept in pg_class.reloptions, including only those options
+ * format that is kept in mdb_class.reloptions, including only those options
  * that are in the passed namespace.  The output values do not include the
  * namespace.
  *
@@ -735,12 +735,12 @@ transformRelOptions(Datum oldOptions, List *defList, char *namspace,
 				}
 				else if (def->defnamespace == NULL)
 					continue;
-				else if (pg_strcasecmp(def->defnamespace, namspace) != 0)
+				else if (mdb_strcasecmp(def->defnamespace, namspace) != 0)
 					continue;
 
 				kw_len = strlen(def->defname);
 				if (text_len > kw_len && text_str[kw_len] == '=' &&
-					pg_strncasecmp(text_str, def->defname, kw_len) == 0)
+					mdb_strncasecmp(text_str, def->defname, kw_len) == 0)
 					break;
 			}
 			if (!cell)
@@ -788,7 +788,7 @@ transformRelOptions(Datum oldOptions, List *defList, char *namspace,
 				{
 					for (i = 0; validnsps[i]; i++)
 					{
-						if (pg_strcasecmp(def->defnamespace,
+						if (mdb_strcasecmp(def->defnamespace,
 										  validnsps[i]) == 0)
 						{
 							valid = true;
@@ -804,7 +804,7 @@ transformRelOptions(Datum oldOptions, List *defList, char *namspace,
 									def->defnamespace)));
 			}
 
-			if (ignoreOids && pg_strcasecmp(def->defname, "oids") == 0)
+			if (ignoreOids && mdb_strcasecmp(def->defname, "oids") == 0)
 				continue;
 
 			/* ignore if not in the same namespace */
@@ -815,7 +815,7 @@ transformRelOptions(Datum oldOptions, List *defList, char *namspace,
 			}
 			else if (def->defnamespace == NULL)
 				continue;
-			else if (pg_strcasecmp(def->defnamespace, namspace) != 0)
+			else if (mdb_strcasecmp(def->defnamespace, namspace) != 0)
 				continue;
 
 			/*
@@ -890,14 +890,14 @@ untransformRelOptions(Datum options)
 }
 
 /*
- * Extract and parse reloptions from a pg_class tuple.
+ * Extract and parse reloptions from a mdb_class tuple.
  *
  * This is a low-level routine, expected to be used by relcache code and
  * callers that do not have a table's relcache entry (e.g. autovacuum).  For
  * other uses, consider grabbing the rd_options pointer from the relcache entry
  * instead.
  *
- * tupdesc is pg_class' tuple descriptor.  amoptions is a pointer to the index
+ * tupdesc is mdb_class' tuple descriptor.  amoptions is a pointer to the index
  * AM's options parser function in the case of a tuple corresponding to an
  * index, or NULL otherwise.
  */
@@ -908,16 +908,16 @@ extractRelOptions(HeapTuple tuple, TupleDesc tupdesc,
 	bytea	   *options;
 	bool		isnull;
 	Datum		datum;
-	Form_pg_class classForm;
+	Form_mdb_class classForm;
 
 	datum = fastgetattr(tuple,
-						Anum_pg_class_reloptions,
+						Anum_mdb_class_reloptions,
 						tupdesc,
 						&isnull);
 	if (isnull)
 		return NULL;
 
-	classForm = (Form_pg_class) GETSTRUCT(tuple);
+	classForm = (Form_mdb_class) GETSTRUCT(tuple);
 
 	/* Parse into appropriate format; don't error out here */
 	switch (classForm->relkind)
@@ -1022,7 +1022,7 @@ parseRelOptions(Datum options, bool validate, relopt_kind kind,
 				int			kw_len = reloptions[j].gen->namelen;
 
 				if (text_len > kw_len && text_str[kw_len] == '=' &&
-					pg_strncasecmp(text_str, reloptions[j].gen->name,
+					mdb_strncasecmp(text_str, reloptions[j].gen->name,
 								   kw_len) == 0)
 				{
 					parse_one_reloption(&reloptions[j], text_str, text_len,
@@ -1202,7 +1202,7 @@ fillRelOptions(void *rdopts, Size basesize,
 
 		for (j = 0; j < numelems; j++)
 		{
-			if (pg_strcasecmp(options[i].gen->name, elems[j].optname) == 0)
+			if (mdb_strcasecmp(options[i].gen->name, elems[j].optname) == 0)
 			{
 				relopt_string *optstring;
 				char	   *itempos = ((char *) rdopts) + elems[j].offset;
@@ -1491,7 +1491,7 @@ AlterTableGetRelOptionsLockLevel(List *defList)
 
 		for (i = 0; relOpts[i]; i++)
 		{
-			if (pg_strncasecmp(relOpts[i]->name,
+			if (mdb_strncasecmp(relOpts[i]->name,
 							   def->defname,
 							   relOpts[i]->namelen + 1) == 0)
 			{

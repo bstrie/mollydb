@@ -7,7 +7,7 @@
  *
  * All we need internally to manage an extension is an OID so that the
  * dependent objects can be associated with it.  An extension is created by
- * populating the pg_extension catalog from a "control" file.
+ * populating the mdb_extension catalog from a "control" file.
  * The extension control file is parsed with the same parser we use for
  * mollydb.conf and recovery.conf.  An extension also has an installation
  * script file, containing SQL commands to create the extension's objects.
@@ -36,18 +36,18 @@
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_depend.h"
-#include "catalog/pg_extension.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_depend.h"
+#include "catalog/mdb_extension.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_type.h"
 #include "commands/alter.h"
 #include "commands/comment.h"
 #include "commands/defrem.h"
 #include "commands/extension.h"
 #include "commands/schemacmds.h"
 #include "funcapi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
 #include "storage/fd.h"
@@ -129,7 +129,7 @@ get_extension_oid(const char *extname, bool missing_ok)
 	rel = heap_open(ExtensionRelationId, AccessShareLock);
 
 	ScanKeyInit(&entry[0],
-				Anum_pg_extension_extname,
+				Anum_mdb_extension_extname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(extname));
 
@@ -185,7 +185,7 @@ get_extension_name(Oid ext_oid)
 
 	/* We assume that there can be at most one matching tuple */
 	if (HeapTupleIsValid(tuple))
-		result = pstrdup(NameStr(((Form_pg_extension) GETSTRUCT(tuple))->extname));
+		result = pstrdup(NameStr(((Form_mdb_extension) GETSTRUCT(tuple))->extname));
 	else
 		result = NULL;
 
@@ -224,7 +224,7 @@ get_extension_schema(Oid ext_oid)
 
 	/* We assume that there can be at most one matching tuple */
 	if (HeapTupleIsValid(tuple))
-		result = ((Form_pg_extension) GETSTRUCT(tuple))->extnamespace;
+		result = ((Form_mdb_extension) GETSTRUCT(tuple))->extnamespace;
 	else
 		result = InvalidOid;
 
@@ -543,7 +543,7 @@ parse_extension_control_file(ExtensionControlFile *control,
 		}
 		else if (strcmp(item->name, "encoding") == 0)
 		{
-			control->encoding = pg_valid_server_encoding(item->value);
+			control->encoding = mdb_valid_server_encoding(item->value);
 			if (control->encoding < 0)
 				ereport(ERROR,
 						(errcode(ERRCODE_UNDEFINED_OBJECT),
@@ -654,14 +654,14 @@ read_extension_script_file(const ExtensionControlFile *control,
 		src_encoding = control->encoding;
 
 	/* make sure that source string is valid in the expected encoding */
-	pg_verify_mbstr_len(src_encoding, src_str, len, false);
+	mdb_verify_mbstr_len(src_encoding, src_str, len, false);
 
 	/*
 	 * Convert the encoding to the database encoding. read_whole_file
 	 * null-terminated the string, so if no conversion happens the string is
 	 * valid as is.
 	 */
-	dest_str = pg_any_to_server(src_str, len, src_encoding);
+	dest_str = mdb_any_to_server(src_str, len, src_encoding);
 
 	return dest_str;
 }
@@ -689,7 +689,7 @@ execute_sql_string(const char *sql, const char *filename)
 	/*
 	 * Parse the SQL string into a list of raw parse trees.
 	 */
-	raw_parsetree_list = pg_parse_query(sql);
+	raw_parsetree_list = mdb_parse_query(sql);
 
 	/* All output from SELECTs goes to the bit bucket */
 	dest = CreateDestReceiver(DestNone);
@@ -705,11 +705,11 @@ execute_sql_string(const char *sql, const char *filename)
 		List	   *stmt_list;
 		ListCell   *lc2;
 
-		stmt_list = pg_analyze_and_rewrite(parsetree,
+		stmt_list = mdb_analyze_and_rewrite(parsetree,
 										   sql,
 										   NULL,
 										   0);
-		stmt_list = pg_plan_queries(stmt_list, CURSOR_OPT_PARALLEL_OK, NULL);
+		stmt_list = mdb_plan_queries(stmt_list, CURSOR_OPT_PARALLEL_OK, NULL);
 
 		foreach(lc2, stmt_list)
 		{
@@ -1394,9 +1394,9 @@ CreateExtensionInternal(CreateExtensionStmt *stmt, List *parents)
 	 * We don't check creation rights on the target namespace here.  If the
 	 * extension script actually creates any objects there, it will fail if
 	 * the user doesn't have such permissions.  But there are cases such as
-	 * procedural languages where it's convenient to set schema = pg_catalog
+	 * procedural languages where it's convenient to set schema = mdb_catalog
 	 * yet we don't want to restrict the command to users with ACL_CREATE for
-	 * pg_catalog.
+	 * mdb_catalog.
 	 */
 
 	/*
@@ -1476,7 +1476,7 @@ CreateExtensionInternal(CreateExtensionStmt *stmt, List *parents)
 	}
 
 	/*
-	 * Insert new tuple into pg_extension, and create dependency entries.
+	 * Insert new tuple into mdb_extension, and create dependency entries.
 	 */
 	address = InsertExtensionTuple(control->name, extowner,
 								   schemaOid, control->relocatable,
@@ -1521,7 +1521,7 @@ CreateExtension(CreateExtensionStmt *stmt)
 
 	/*
 	 * Check for duplicate extension name.  The unique index on
-	 * pg_extension.extname would catch this anyway, and serves as a backstop
+	 * mdb_extension.extname would catch this anyway, and serves as a backstop
 	 * in case of race conditions; but this is a friendlier error message, and
 	 * besides we need a check to support IF NOT EXISTS.
 	 */
@@ -1559,11 +1559,11 @@ CreateExtension(CreateExtensionStmt *stmt)
 /*
  * InsertExtensionTuple
  *
- * Insert the new pg_extension row, and create extension's dependency entries.
+ * Insert the new mdb_extension row, and create extension's dependency entries.
  * Return the OID assigned to the new row.
  *
- * This is exported for the benefit of pg_upgrade, which has to create a
- * pg_extension entry (and the extension-level dependencies) without
+ * This is exported for the benefit of mdb_upgrade, which has to create a
+ * mdb_extension entry (and the extension-level dependencies) without
  * actually running the extension's script.
  *
  * extConfig and extCondition should be arrays or PointerGetDatum(NULL).
@@ -1577,37 +1577,37 @@ InsertExtensionTuple(const char *extName, Oid extOwner,
 {
 	Oid			extensionOid;
 	Relation	rel;
-	Datum		values[Natts_pg_extension];
-	bool		nulls[Natts_pg_extension];
+	Datum		values[Natts_mdb_extension];
+	bool		nulls[Natts_mdb_extension];
 	HeapTuple	tuple;
 	ObjectAddress myself;
 	ObjectAddress nsp;
 	ListCell   *lc;
 
 	/*
-	 * Build and insert the pg_extension tuple
+	 * Build and insert the mdb_extension tuple
 	 */
 	rel = heap_open(ExtensionRelationId, RowExclusiveLock);
 
 	memset(values, 0, sizeof(values));
 	memset(nulls, 0, sizeof(nulls));
 
-	values[Anum_pg_extension_extname - 1] =
+	values[Anum_mdb_extension_extname - 1] =
 		DirectFunctionCall1(namein, CStringGetDatum(extName));
-	values[Anum_pg_extension_extowner - 1] = ObjectIdGetDatum(extOwner);
-	values[Anum_pg_extension_extnamespace - 1] = ObjectIdGetDatum(schemaOid);
-	values[Anum_pg_extension_extrelocatable - 1] = BoolGetDatum(relocatable);
-	values[Anum_pg_extension_extversion - 1] = CStringGetTextDatum(extVersion);
+	values[Anum_mdb_extension_extowner - 1] = ObjectIdGetDatum(extOwner);
+	values[Anum_mdb_extension_extnamespace - 1] = ObjectIdGetDatum(schemaOid);
+	values[Anum_mdb_extension_extrelocatable - 1] = BoolGetDatum(relocatable);
+	values[Anum_mdb_extension_extversion - 1] = CStringGetTextDatum(extVersion);
 
 	if (extConfig == PointerGetDatum(NULL))
-		nulls[Anum_pg_extension_extconfig - 1] = true;
+		nulls[Anum_mdb_extension_extconfig - 1] = true;
 	else
-		values[Anum_pg_extension_extconfig - 1] = extConfig;
+		values[Anum_mdb_extension_extconfig - 1] = extConfig;
 
 	if (extCondition == PointerGetDatum(NULL))
-		nulls[Anum_pg_extension_extcondition - 1] = true;
+		nulls[Anum_mdb_extension_extcondition - 1] = true;
 	else
-		values[Anum_pg_extension_extcondition - 1] = extCondition;
+		values[Anum_mdb_extension_extcondition - 1] = extCondition;
 
 	tuple = heap_form_tuple(rel->rd_att, values, nulls);
 
@@ -1652,7 +1652,7 @@ InsertExtensionTuple(const char *extName, Oid extOwner,
 /*
  * Guts of extension deletion.
  *
- * All we need do here is remove the pg_extension tuple itself.  Everything
+ * All we need do here is remove the mdb_extension tuple itself.  Everything
  * else is taken care of by the dependency infrastructure.
  */
 void
@@ -1666,8 +1666,8 @@ RemoveExtensionById(Oid extId)
 	/*
 	 * Disallow deletion of any extension that's currently open for insertion;
 	 * else subsequent executions of recordDependencyOnCurrentExtension()
-	 * could create dangling pg_depend records that refer to a no-longer-valid
-	 * pg_extension OID.  This is needed not so much because we think people
+	 * could create dangling mdb_depend records that refer to a no-longer-valid
+	 * mdb_extension OID.  This is needed not so much because we think people
 	 * might write "DROP EXTENSION foo" in foo's own script files, as because
 	 * errors in dependency management in extension script files could give
 	 * rise to cases where an extension is dropped as a result of recursing
@@ -1705,12 +1705,12 @@ RemoveExtensionById(Oid extId)
  * file in the control directory).  We parse each control file and report the
  * interesting fields.
  *
- * The system view pg_available_extensions provides a user interface to this
+ * The system view mdb_available_extensions provides a user interface to this
  * SRF, adding information about whether the extensions are installed in the
  * current DB.
  */
 Datum
-pg_available_extensions(PG_FUNCTION_ARGS)
+mdb_available_extensions(PG_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -1814,12 +1814,12 @@ pg_available_extensions(PG_FUNCTION_ARGS)
  * extension installation script).  For each version, we parse the related
  * control file(s) and report the interesting fields.
  *
- * The system view pg_available_extension_versions provides a user interface
+ * The system view mdb_available_extension_versions provides a user interface
  * to this SRF, adding information about which versions are installed in the
  * current DB.
  */
 Datum
-pg_available_extension_versions(PG_FUNCTION_ARGS)
+mdb_available_extension_versions(PG_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -1902,7 +1902,7 @@ pg_available_extension_versions(PG_FUNCTION_ARGS)
 }
 
 /*
- * Inner loop for pg_available_extension_versions:
+ * Inner loop for mdb_available_extension_versions:
  *		read versions of one extension, add rows to tupstore
  */
 static void
@@ -2008,7 +2008,7 @@ get_available_versions_for_extension(ExtensionControlFile *pcontrol,
  * specified extension.
  */
 Datum
-pg_extension_update_paths(PG_FUNCTION_ARGS)
+mdb_extension_update_paths(PG_FUNCTION_ARGS)
 {
 	Name		extname = PG_GETARG_NAME(0);
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
@@ -2115,14 +2115,14 @@ pg_extension_update_paths(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_extension_config_dump
+ * mdb_extension_config_dump
  *
  * Record information about a configuration table that belongs to an
  * extension being created, but whose contents should be dumped in whole
- * or in part during pg_dump.
+ * or in part during mdb_dump.
  */
 Datum
-pg_extension_config_dump(PG_FUNCTION_ARGS)
+mdb_extension_config_dump(PG_FUNCTION_ARGS)
 {
 	Oid			tableoid = PG_GETARG_OID(0);
 	text	   *wherecond = PG_GETARG_TEXT_P(1);
@@ -2136,9 +2136,9 @@ pg_extension_config_dump(PG_FUNCTION_ARGS)
 	int			arrayLength;
 	int			arrayIndex;
 	bool		isnull;
-	Datum		repl_val[Natts_pg_extension];
-	bool		repl_null[Natts_pg_extension];
-	bool		repl_repl[Natts_pg_extension];
+	Datum		repl_val[Natts_mdb_extension];
+	bool		repl_null[Natts_mdb_extension];
+	bool		repl_repl[Natts_mdb_extension];
 	ArrayType  *a;
 
 	/*
@@ -2148,7 +2148,7 @@ pg_extension_config_dump(PG_FUNCTION_ARGS)
 	if (!creating_extension)
 		ereport(ERROR,
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-				 errmsg("pg_extension_config_dump() can only be called "
+				 errmsg("mdb_extension_config_dump() can only be called "
 						"from an SQL script executed by CREATE EXTENSION")));
 
 	/*
@@ -2176,7 +2176,7 @@ pg_extension_config_dump(PG_FUNCTION_ARGS)
 	 * WHERE condition.
 	 */
 
-	/* Find the pg_extension tuple */
+	/* Find the mdb_extension tuple */
 	extRel = heap_open(ExtensionRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&key[0],
@@ -2200,7 +2200,7 @@ pg_extension_config_dump(PG_FUNCTION_ARGS)
 	/* Build or modify the extconfig value */
 	elementDatum = ObjectIdGetDatum(tableoid);
 
-	arrayDatum = heap_getattr(extTup, Anum_pg_extension_extconfig,
+	arrayDatum = heap_getattr(extTup, Anum_mdb_extension_extconfig,
 							  RelationGetDescr(extRel), &isnull);
 	if (isnull)
 	{
@@ -2248,13 +2248,13 @@ pg_extension_config_dump(PG_FUNCTION_ARGS)
 					  true /* OID's typbyval */ ,
 					  'i' /* OID's typalign */ );
 	}
-	repl_val[Anum_pg_extension_extconfig - 1] = PointerGetDatum(a);
-	repl_repl[Anum_pg_extension_extconfig - 1] = true;
+	repl_val[Anum_mdb_extension_extconfig - 1] = PointerGetDatum(a);
+	repl_repl[Anum_mdb_extension_extconfig - 1] = true;
 
 	/* Build or modify the extcondition value */
 	elementDatum = PointerGetDatum(wherecond);
 
-	arrayDatum = heap_getattr(extTup, Anum_pg_extension_extcondition,
+	arrayDatum = heap_getattr(extTup, Anum_mdb_extension_extcondition,
 							  RelationGetDescr(extRel), &isnull);
 	if (isnull)
 	{
@@ -2286,8 +2286,8 @@ pg_extension_config_dump(PG_FUNCTION_ARGS)
 					  false /* TEXT's typbyval */ ,
 					  'i' /* TEXT's typalign */ );
 	}
-	repl_val[Anum_pg_extension_extcondition - 1] = PointerGetDatum(a);
-	repl_repl[Anum_pg_extension_extcondition - 1] = true;
+	repl_val[Anum_mdb_extension_extcondition - 1] = PointerGetDatum(a);
+	repl_repl[Anum_mdb_extension_extcondition - 1] = true;
 
 	extTup = heap_modify_tuple(extTup, RelationGetDescr(extRel),
 							   repl_val, repl_null, repl_repl);
@@ -2320,12 +2320,12 @@ extension_config_remove(Oid extensionoid, Oid tableoid)
 	int			arrayLength;
 	int			arrayIndex;
 	bool		isnull;
-	Datum		repl_val[Natts_pg_extension];
-	bool		repl_null[Natts_pg_extension];
-	bool		repl_repl[Natts_pg_extension];
+	Datum		repl_val[Natts_mdb_extension];
+	bool		repl_null[Natts_mdb_extension];
+	bool		repl_repl[Natts_mdb_extension];
 	ArrayType  *a;
 
-	/* Find the pg_extension tuple */
+	/* Find the mdb_extension tuple */
 	extRel = heap_open(ExtensionRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&key[0],
@@ -2343,7 +2343,7 @@ extension_config_remove(Oid extensionoid, Oid tableoid)
 			 extensionoid);
 
 	/* Search extconfig for the tableoid */
-	arrayDatum = heap_getattr(extTup, Anum_pg_extension_extconfig,
+	arrayDatum = heap_getattr(extTup, Anum_mdb_extension_extconfig,
 							  RelationGetDescr(extRel), &isnull);
 	if (isnull)
 	{
@@ -2396,7 +2396,7 @@ extension_config_remove(Oid extensionoid, Oid tableoid)
 	if (arrayLength <= 1)
 	{
 		/* removing only element, just set array to null */
-		repl_null[Anum_pg_extension_extconfig - 1] = true;
+		repl_null[Anum_mdb_extension_extconfig - 1] = true;
 	}
 	else
 	{
@@ -2416,12 +2416,12 @@ extension_config_remove(Oid extensionoid, Oid tableoid)
 		a = construct_array(dvalues, arrayLength - 1,
 							OIDOID, sizeof(Oid), true, 'i');
 
-		repl_val[Anum_pg_extension_extconfig - 1] = PointerGetDatum(a);
+		repl_val[Anum_mdb_extension_extconfig - 1] = PointerGetDatum(a);
 	}
-	repl_repl[Anum_pg_extension_extconfig - 1] = true;
+	repl_repl[Anum_mdb_extension_extconfig - 1] = true;
 
 	/* Modify or delete the extcondition value */
-	arrayDatum = heap_getattr(extTup, Anum_pg_extension_extcondition,
+	arrayDatum = heap_getattr(extTup, Anum_mdb_extension_extcondition,
 							  RelationGetDescr(extRel), &isnull);
 	if (isnull)
 	{
@@ -2443,7 +2443,7 @@ extension_config_remove(Oid extensionoid, Oid tableoid)
 	if (arrayLength <= 1)
 	{
 		/* removing only element, just set array to null */
-		repl_null[Anum_pg_extension_extcondition - 1] = true;
+		repl_null[Anum_mdb_extension_extcondition - 1] = true;
 	}
 	else
 	{
@@ -2463,9 +2463,9 @@ extension_config_remove(Oid extensionoid, Oid tableoid)
 		a = construct_array(dvalues, arrayLength - 1,
 							TEXTOID, -1, false, 'i');
 
-		repl_val[Anum_pg_extension_extcondition - 1] = PointerGetDatum(a);
+		repl_val[Anum_mdb_extension_extcondition - 1] = PointerGetDatum(a);
 	}
-	repl_repl[Anum_pg_extension_extcondition - 1] = true;
+	repl_repl[Anum_mdb_extension_extcondition - 1] = true;
 
 	extTup = heap_modify_tuple(extTup, RelationGetDescr(extRel),
 							   repl_val, repl_null, repl_repl);
@@ -2493,7 +2493,7 @@ AlterExtensionNamespace(List *names, const char *newschema, Oid *oldschema)
 	ScanKeyData key[2];
 	SysScanDesc extScan;
 	HeapTuple	extTup;
-	Form_pg_extension extForm;
+	Form_mdb_extension extForm;
 	Relation	depRel;
 	SysScanDesc depScan;
 	HeapTuple	depTup;
@@ -2514,12 +2514,12 @@ AlterExtensionNamespace(List *names, const char *newschema, Oid *oldschema)
 	 * Permission check: must own extension.  Note that we don't bother to
 	 * check ownership of the individual member objects ...
 	 */
-	if (!pg_extension_ownercheck(extensionOid, GetUserId()))
+	if (!mdb_extension_ownercheck(extensionOid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_EXTENSION,
 					   extensionName);
 
 	/* Permission check: must have creation rights in target namespace */
-	aclresult = pg_namespace_aclcheck(nspOid, GetUserId(), ACL_CREATE);
+	aclresult = mdb_namespace_aclcheck(nspOid, GetUserId(), ACL_CREATE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_NAMESPACE, newschema);
 
@@ -2534,7 +2534,7 @@ AlterExtensionNamespace(List *names, const char *newschema, Oid *oldschema)
 						"because the extension contains the schema",
 						extensionName, newschema)));
 
-	/* Locate the pg_extension tuple */
+	/* Locate the mdb_extension tuple */
 	extRel = heap_open(ExtensionRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&key[0],
@@ -2552,7 +2552,7 @@ AlterExtensionNamespace(List *names, const char *newschema, Oid *oldschema)
 
 	/* Copy tuple so we can modify it below */
 	extTup = heap_copytuple(extTup);
-	extForm = (Form_pg_extension) GETSTRUCT(extTup);
+	extForm = (Form_mdb_extension) GETSTRUCT(extTup);
 
 	systable_endscan(extScan);
 
@@ -2576,17 +2576,17 @@ AlterExtensionNamespace(List *names, const char *newschema, Oid *oldschema)
 	objsMoved = new_object_addresses();
 
 	/*
-	 * Scan pg_depend to find objects that depend directly on the extension,
+	 * Scan mdb_depend to find objects that depend directly on the extension,
 	 * and alter each one's schema.
 	 */
 	depRel = heap_open(DependRelationId, AccessShareLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_refclassid,
+				Anum_mdb_depend_refclassid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(ExtensionRelationId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_refobjid,
+				Anum_mdb_depend_refobjid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(extensionOid));
 
@@ -2595,7 +2595,7 @@ AlterExtensionNamespace(List *names, const char *newschema, Oid *oldschema)
 
 	while (HeapTupleIsValid(depTup = systable_getnext(depScan)))
 	{
-		Form_pg_depend pg_depend = (Form_pg_depend) GETSTRUCT(depTup);
+		Form_mdb_depend mdb_depend = (Form_mdb_depend) GETSTRUCT(depTup);
 		ObjectAddress dep;
 		Oid			dep_oldNspOid;
 
@@ -2604,12 +2604,12 @@ AlterExtensionNamespace(List *names, const char *newschema, Oid *oldschema)
 		 * case we could see here is a normal dependency from another
 		 * extension.)
 		 */
-		if (pg_depend->deptype != DEPENDENCY_EXTENSION)
+		if (mdb_depend->deptype != DEPENDENCY_EXTENSION)
 			continue;
 
-		dep.classId = pg_depend->classid;
-		dep.objectId = pg_depend->objid;
-		dep.objectSubId = pg_depend->objsubid;
+		dep.classId = mdb_depend->classid;
+		dep.objectId = mdb_depend->objid;
+		dep.objectSubId = mdb_depend->objsubid;
 
 		if (dep.objectSubId != 0)		/* should not happen */
 			elog(ERROR, "extension should not have a sub-object dependency");
@@ -2648,7 +2648,7 @@ AlterExtensionNamespace(List *names, const char *newschema, Oid *oldschema)
 
 	relation_close(depRel, AccessShareLock);
 
-	/* Now adjust pg_extension.extnamespace */
+	/* Now adjust mdb_extension.extnamespace */
 	extForm->extnamespace = nspOid;
 
 	simple_heap_update(extRel, &extTup->t_self, extTup);
@@ -2698,12 +2698,12 @@ ExecAlterExtensionStmt(AlterExtensionStmt *stmt)
 				 errmsg("nested ALTER EXTENSION is not supported")));
 
 	/*
-	 * Look up the extension --- it must already exist in pg_extension
+	 * Look up the extension --- it must already exist in mdb_extension
 	 */
 	extRel = heap_open(ExtensionRelationId, AccessShareLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_extension_extname,
+				Anum_mdb_extension_extname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(stmt->extname));
 
@@ -2723,7 +2723,7 @@ ExecAlterExtensionStmt(AlterExtensionStmt *stmt)
 	/*
 	 * Determine the existing version we are updating from
 	 */
-	datum = heap_getattr(extTup, Anum_pg_extension_extversion,
+	datum = heap_getattr(extTup, Anum_mdb_extension_extversion,
 						 RelationGetDescr(extRel), &isnull);
 	if (isnull)
 		elog(ERROR, "extversion is null");
@@ -2734,7 +2734,7 @@ ExecAlterExtensionStmt(AlterExtensionStmt *stmt)
 	heap_close(extRel, AccessShareLock);
 
 	/* Permission check: must own extension */
-	if (!pg_extension_ownercheck(extensionOid, GetUserId()))
+	if (!mdb_extension_ownercheck(extensionOid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_EXTENSION,
 					   stmt->extname);
 
@@ -2799,7 +2799,7 @@ ExecAlterExtensionStmt(AlterExtensionStmt *stmt)
 										  versionName);
 
 	/*
-	 * Update the pg_extension row and execute the update scripts, one at a
+	 * Update the mdb_extension row and execute the update scripts, one at a
 	 * time
 	 */
 	ApplyExtensionUpdates(extensionOid, control,
@@ -2812,7 +2812,7 @@ ExecAlterExtensionStmt(AlterExtensionStmt *stmt)
 
 /*
  * Apply a series of update scripts as though individual ALTER EXTENSION
- * UPDATE commands had been given, including altering the pg_extension row
+ * UPDATE commands had been given, including altering the mdb_extension row
  * and dependencies each time.
  *
  * This might be more work than necessary, but it ensures that old update
@@ -2839,10 +2839,10 @@ ApplyExtensionUpdates(Oid extensionOid,
 		ScanKeyData key[1];
 		SysScanDesc extScan;
 		HeapTuple	extTup;
-		Form_pg_extension extForm;
-		Datum		values[Natts_pg_extension];
-		bool		nulls[Natts_pg_extension];
-		bool		repl[Natts_pg_extension];
+		Form_mdb_extension extForm;
+		Datum		values[Natts_mdb_extension];
+		bool		nulls[Natts_mdb_extension];
+		bool		repl[Natts_mdb_extension];
 		ObjectAddress myself;
 		ListCell   *lc;
 
@@ -2851,7 +2851,7 @@ ApplyExtensionUpdates(Oid extensionOid,
 		 */
 		control = read_extension_aux_control_file(pcontrol, versionName);
 
-		/* Find the pg_extension tuple */
+		/* Find the mdb_extension tuple */
 		extRel = heap_open(ExtensionRelationId, RowExclusiveLock);
 
 		ScanKeyInit(&key[0],
@@ -2868,7 +2868,7 @@ ApplyExtensionUpdates(Oid extensionOid,
 			elog(ERROR, "extension with oid %u does not exist",
 				 extensionOid);
 
-		extForm = (Form_pg_extension) GETSTRUCT(extTup);
+		extForm = (Form_mdb_extension) GETSTRUCT(extTup);
 
 		/*
 		 * Determine the target schema (set by original install)
@@ -2877,18 +2877,18 @@ ApplyExtensionUpdates(Oid extensionOid,
 		schemaName = get_namespace_name(schemaOid);
 
 		/*
-		 * Modify extrelocatable and extversion in the pg_extension tuple
+		 * Modify extrelocatable and extversion in the mdb_extension tuple
 		 */
 		memset(values, 0, sizeof(values));
 		memset(nulls, 0, sizeof(nulls));
 		memset(repl, 0, sizeof(repl));
 
-		values[Anum_pg_extension_extrelocatable - 1] =
+		values[Anum_mdb_extension_extrelocatable - 1] =
 			BoolGetDatum(control->relocatable);
-		repl[Anum_pg_extension_extrelocatable - 1] = true;
-		values[Anum_pg_extension_extversion - 1] =
+		repl[Anum_mdb_extension_extrelocatable - 1] = true;
+		values[Anum_mdb_extension_extversion - 1] =
 			CStringGetTextDatum(versionName);
-		repl[Anum_pg_extension_extversion - 1] = true;
+		repl[Anum_mdb_extension_extversion - 1] = true;
 
 		extTup = heap_modify_tuple(extTup, RelationGetDescr(extRel),
 								   values, nulls, repl);
@@ -2963,7 +2963,7 @@ ApplyExtensionUpdates(Oid extensionOid,
 		/*
 		 * Update prior-version name and loop around.  Since
 		 * execute_sql_string did a final CommandCounterIncrement, we can
-		 * update the pg_extension row again.
+		 * update the mdb_extension row again.
 		 */
 		oldVersionName = versionName;
 	}
@@ -2991,7 +2991,7 @@ ExecAlterExtensionContentsStmt(AlterExtensionContentsStmt *stmt,
 	extension.objectSubId = 0;
 
 	/* Permission check: must own extension */
-	if (!pg_extension_ownercheck(extension.objectId, GetUserId()))
+	if (!mdb_extension_ownercheck(extension.objectId, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_EXTENSION,
 					   stmt->extname);
 

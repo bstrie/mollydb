@@ -86,7 +86,7 @@ pgrename(const char *from, const char *to)
 
 		if (++loops > 100)		/* time out after 10 sec */
 			return -1;
-		pg_usleep(100000);		/* us */
+		mdb_usleep(100000);		/* us */
 	}
 	return 0;
 }
@@ -113,7 +113,7 @@ pgunlink(const char *path)
 			return -1;
 		if (++loops > 100)		/* time out after 10 sec */
 			return -1;
-		pg_usleep(100000);		/* us */
+		mdb_usleep(100000);		/* us */
 	}
 	return 0;
 }

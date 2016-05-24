@@ -1,4 +1,4 @@
-# Spanish message translation file for pg_controldata
+# Spanish message translation file for mdb_controldata
 #
 # Copyright (C) 2002-2013 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
@@ -9,7 +9,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_controldata (MollyDB 9.6)\n"
+"Project-Id-Version: mdb_controldata (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:15+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
@@ -58,17 +58,17 @@ msgstr "%s: codificaciones no coinciden\n"
 #, c-format
 msgid ""
 "WARNING: possible byte ordering mismatch\n"
-"The byte ordering used to store the pg_control file might not match the one\n"
+"The byte ordering used to store the mdb_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, and\n"
 "the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "ATENCIÓN: posible discordancia en orden de bytes\n"
-"El orden de bytes usado para almacenar el archivo pg_control puede no\n"
+"El orden de bytes usado para almacenar el archivo mdb_control puede no\n"
 "coincidir con el que usa este programa.  En tal caso, los resultados de abajo\n"
 "serán incorrectos, y esta instalación de MollyDB será incompatible con\n"
 "este directorio de datos.\n"
 
-#: pg_controldata.c:33
+#: mdb_controldata.c:33
 #, c-format
 msgid ""
 "%s displays control information of a MollyDB database cluster.\n"
@@ -77,17 +77,17 @@ msgstr ""
 "%s muestra información de control del cluster de MollyDB.\n"
 "\n"
 
-#: pg_controldata.c:34
+#: mdb_controldata.c:34
 #, c-format
 msgid "Usage:\n"
 msgstr "Empleo:\n"
 
-#: pg_controldata.c:35
+#: mdb_controldata.c:35
 #, c-format
 msgid "  %s [OPTION] [DATADIR]\n"
 msgstr "  %s [OPCIÓN] [DATADIR]\n"
 
-#: pg_controldata.c:36
+#: mdb_controldata.c:36
 #, c-format
 msgid ""
 "\n"
@@ -96,22 +96,22 @@ msgstr ""
 "\n"
 "Opciones:\n"
 
-#: pg_controldata.c:37
+#: mdb_controldata.c:37
 #, c-format
 msgid " [-D] DATADIR    data directory\n"
 msgstr " [-D] DATADIR    directorio de datos\n"
 
-#: pg_controldata.c:38
+#: mdb_controldata.c:38
 #, c-format
 msgid "  -V, --version  output version information, then exit\n"
 msgstr "  -V, --version  muestra información de la versión, luego sale\n"
 
-#: pg_controldata.c:39
+#: mdb_controldata.c:39
 #, c-format
 msgid "  -?, --help     show this help, then exit\n"
 msgstr "  -?, --help     muestra esta ayuda, luego sale\n"
 
-#: pg_controldata.c:40
+#: mdb_controldata.c:40
 #, c-format
 msgid ""
 "\n"
@@ -124,343 +124,343 @@ msgstr ""
 "la variable de entorno PGDATA.\n"
 "\n"
 
-#: pg_controldata.c:42
+#: mdb_controldata.c:42
 #, c-format
 msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr "Reporte errores a <mdb-bugs@mollydb.org>.\n"
 
-#: pg_controldata.c:52
+#: mdb_controldata.c:52
 msgid "starting up"
 msgstr "iniciando"
 
-#: pg_controldata.c:54
+#: mdb_controldata.c:54
 msgid "shut down"
 msgstr "apagado"
 
-#: pg_controldata.c:56
+#: mdb_controldata.c:56
 msgid "shut down in recovery"
 msgstr "apagado durante recuperación"
 
-#: pg_controldata.c:58
+#: mdb_controldata.c:58
 msgid "shutting down"
 msgstr "apagándose"
 
-#: pg_controldata.c:60
+#: mdb_controldata.c:60
 msgid "in crash recovery"
 msgstr "en recuperación"
 
-#: pg_controldata.c:62
+#: mdb_controldata.c:62
 msgid "in archive recovery"
 msgstr "en recuperación desde archivo"
 
-#: pg_controldata.c:64
+#: mdb_controldata.c:64
 msgid "in production"
 msgstr "en producción"
 
-#: pg_controldata.c:66
+#: mdb_controldata.c:66
 msgid "unrecognized status code"
 msgstr "código de estado no reconocido"
 
-#: pg_controldata.c:81
+#: mdb_controldata.c:81
 msgid "unrecognized wal_level"
 msgstr "wal_level no reconocido"
 
-#: pg_controldata.c:127 pg_controldata.c:145 pg_controldata.c:153
+#: mdb_controldata.c:127 mdb_controldata.c:145 mdb_controldata.c:153
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "Intente «%s --help» para mayor información.\n"
 
-#: pg_controldata.c:143
+#: mdb_controldata.c:143
 #, c-format
 msgid "%s: too many command-line arguments (first is \"%s\")\n"
 msgstr "%s: demasiados argumentos de línea de órdenes (el primero es «%s»)\n"
 
-#: pg_controldata.c:152
+#: mdb_controldata.c:152
 #, c-format
 msgid "%s: no data directory specified\n"
 msgstr "%s: no se ha especificado un directorio de datos\n"
 
-#: pg_controldata.c:190
+#: mdb_controldata.c:190
 #, c-format
-msgid "pg_control version number:            %u\n"
-msgstr "Número de versión de pg_control:            %u\n"
+msgid "mdb_control version number:            %u\n"
+msgstr "Número de versión de mdb_control:            %u\n"
 
-#: pg_controldata.c:192
+#: mdb_controldata.c:192
 #, c-format
 msgid "Catalog version number:               %u\n"
 msgstr "Número de versión del catálogo:             %u\n"
 
-#: pg_controldata.c:194
+#: mdb_controldata.c:194
 #, c-format
 msgid "Database system identifier:           %s\n"
 msgstr "Identificador de sistema:                   %s\n"
 
-#: pg_controldata.c:196
+#: mdb_controldata.c:196
 #, c-format
 msgid "Database cluster state:               %s\n"
 msgstr "Estado del sistema de base de datos:        %s\n"
 
-#: pg_controldata.c:198
+#: mdb_controldata.c:198
 #, c-format
-msgid "pg_control last modified:             %s\n"
-msgstr "Última modificación de pg_control:          %s\n"
+msgid "mdb_control last modified:             %s\n"
+msgstr "Última modificación de mdb_control:          %s\n"
 
-#: pg_controldata.c:200
+#: mdb_controldata.c:200
 #, c-format
 msgid "Latest checkpoint location:           %X/%X\n"
 msgstr "Ubicación del último checkpoint:            %X/%X\n"
 
-#: pg_controldata.c:203
+#: mdb_controldata.c:203
 #, c-format
 msgid "Prior checkpoint location:            %X/%X\n"
 msgstr "Ubicación del checkpoint anterior:          %X/%X\n"
 
-#: pg_controldata.c:206
+#: mdb_controldata.c:206
 #, c-format
 msgid "Latest checkpoint's REDO location:    %X/%X\n"
 msgstr "Ubicación de REDO de último checkpoint:     %X/%X\n"
 
-#: pg_controldata.c:209
+#: mdb_controldata.c:209
 #, c-format
 msgid "Latest checkpoint's REDO WAL file:    %s\n"
 msgstr "Ubicación de REDO de último checkpoint:     %s\n"
 
-#: pg_controldata.c:211
+#: mdb_controldata.c:211
 #, c-format
 msgid "Latest checkpoint's TimeLineID:       %u\n"
 msgstr "TimeLineID del último checkpoint:           %u\n"
 
-#: pg_controldata.c:213
+#: mdb_controldata.c:213
 #, c-format
 msgid "Latest checkpoint's PrevTimeLineID:   %u\n"
 msgstr "PrevTimeLineID del último checkpoint:       %u\n"
 
-#: pg_controldata.c:215
+#: mdb_controldata.c:215
 #, c-format
 msgid "Latest checkpoint's full_page_writes: %s\n"
 msgstr "full_page_writes del último checkpoint:     %s\n"
 
-#: pg_controldata.c:216 pg_controldata.c:261 pg_controldata.c:271
+#: mdb_controldata.c:216 mdb_controldata.c:261 mdb_controldata.c:271
 msgid "off"
 msgstr "desactivado"
 
-#: pg_controldata.c:216 pg_controldata.c:261 pg_controldata.c:271
+#: mdb_controldata.c:216 mdb_controldata.c:261 mdb_controldata.c:271
 msgid "on"
 msgstr "activado"
 
-#: pg_controldata.c:217
+#: mdb_controldata.c:217
 #, fuzzy, c-format
 #| msgid "Latest checkpoint's NextXID:          %u/%u\n"
 msgid "Latest checkpoint's NextXID:          %u:%u\n"
 msgstr "NextXID del checkpoint más reciente:        %u/%u\n"
 
-#: pg_controldata.c:220
+#: mdb_controldata.c:220
 #, c-format
 msgid "Latest checkpoint's NextOID:          %u\n"
 msgstr "NextOID de último checkpoint:               %u\n"
 
-#: pg_controldata.c:222
+#: mdb_controldata.c:222
 #, c-format
 msgid "Latest checkpoint's NextMultiXactId:  %u\n"
 msgstr "NextMultiXactId de último checkpoint:       %u\n"
 
-#: pg_controldata.c:224
+#: mdb_controldata.c:224
 #, c-format
 msgid "Latest checkpoint's NextMultiOffset:  %u\n"
 msgstr "NextMultiOffset de último checkpoint:       %u\n"
 
-#: pg_controldata.c:226
+#: mdb_controldata.c:226
 #, c-format
 msgid "Latest checkpoint's oldestXID:        %u\n"
 msgstr "oldestXID del último checkpoint:            %u\n"
 
-#: pg_controldata.c:228
+#: mdb_controldata.c:228
 #, c-format
 msgid "Latest checkpoint's oldestXID's DB:   %u\n"
 msgstr "DB del oldestXID del último checkpoint:     %u\n"
 
-#: pg_controldata.c:230
+#: mdb_controldata.c:230
 #, c-format
 msgid "Latest checkpoint's oldestActiveXID:  %u\n"
 msgstr "oldestActiveXID del último checkpoint:      %u\n"
 
-#: pg_controldata.c:232
+#: mdb_controldata.c:232
 #, c-format
 msgid "Latest checkpoint's oldestMultiXid:   %u\n"
 msgstr "oldestMultiXid del último checkpoint:       %u\n"
 
-#: pg_controldata.c:234
+#: mdb_controldata.c:234
 #, c-format
 msgid "Latest checkpoint's oldestMulti's DB: %u\n"
 msgstr "DB del oldestMultiXid del últ. checkpoint:  %u\n"
 
-#: pg_controldata.c:236
+#: mdb_controldata.c:236
 #, fuzzy, c-format
 #| msgid "Latest checkpoint's oldestCommitTs:   %u\n"
 msgid "Latest checkpoint's oldestCommitTsXid:%u\n"
 msgstr "oldestCommitTs del último checkpoint:       %u\n"
 
-#: pg_controldata.c:238
+#: mdb_controldata.c:238
 #, fuzzy, c-format
 #| msgid "Latest checkpoint's newestCommitTs:   %u\n"
 msgid "Latest checkpoint's newestCommitTsXid:%u\n"
 msgstr "newestCommitTs del último checkpoint:       %u\n"
 
-#: pg_controldata.c:240
+#: mdb_controldata.c:240
 #, c-format
 msgid "Time of latest checkpoint:            %s\n"
 msgstr "Instante de último checkpoint:              %s\n"
 
-#: pg_controldata.c:242
+#: mdb_controldata.c:242
 #, c-format
 msgid "Fake LSN counter for unlogged rels:   %X/%X\n"
 msgstr "Contador de LSN falsas para rels. unlogged: %X/%X\n"
 
-#: pg_controldata.c:245
+#: mdb_controldata.c:245
 #, c-format
 msgid "Minimum recovery ending location:     %X/%X\n"
 msgstr "Punto final mínimo de recuperación:         %X/%X\n"
 
-#: pg_controldata.c:248
+#: mdb_controldata.c:248
 #, c-format
 msgid "Min recovery ending loc's timeline:   %u\n"
 msgstr "Timeline de dicho punto final mínimo:       %u\n"
 
-#: pg_controldata.c:250
+#: mdb_controldata.c:250
 #, c-format
 msgid "Backup start location:                %X/%X\n"
 msgstr "Ubicación del inicio de backup:             %X/%X\n"
 
-#: pg_controldata.c:253
+#: mdb_controldata.c:253
 #, c-format
 msgid "Backup end location:                  %X/%X\n"
 msgstr "Ubicación del fin de backup:                %X/%X\n"
 
-#: pg_controldata.c:256
+#: mdb_controldata.c:256
 #, c-format
 msgid "End-of-backup record required:        %s\n"
 msgstr "Registro fin-de-backup requerido:           %s\n"
 
-#: pg_controldata.c:257
+#: mdb_controldata.c:257
 msgid "no"
 msgstr "no"
 
-#: pg_controldata.c:257
+#: mdb_controldata.c:257
 msgid "yes"
 msgstr "sí"
 
-#: pg_controldata.c:258
+#: mdb_controldata.c:258
 #, c-format
 msgid "wal_level setting:                    %s\n"
 msgstr "Parámetro wal_level:                        %s\n"
 
-#: pg_controldata.c:260
+#: mdb_controldata.c:260
 #, c-format
 msgid "wal_log_hints setting:                %s\n"
 msgstr "Parámetro wal_log_hings:                    %s\n"
 
-#: pg_controldata.c:262
+#: mdb_controldata.c:262
 #, c-format
 msgid "max_connections setting:              %d\n"
 msgstr "Parámetro max_connections:                  %d\n"
 
-#: pg_controldata.c:264
+#: mdb_controldata.c:264
 #, c-format
 msgid "max_worker_processes setting:         %d\n"
 msgstr "Parámetro max_worker_processes:             %d\n"
 
-#: pg_controldata.c:266
+#: mdb_controldata.c:266
 #, c-format
 msgid "max_prepared_xacts setting:           %d\n"
 msgstr "Parámetro max_prepared_xacts:               %d\n"
 
-#: pg_controldata.c:268
+#: mdb_controldata.c:268
 #, c-format
 msgid "max_locks_per_xact setting:           %d\n"
 msgstr "Parámetro max_locks_per_xact:               %d\n"
 
-#: pg_controldata.c:270
+#: mdb_controldata.c:270
 #, c-format
 msgid "track_commit_timestamp setting:       %s\n"
 msgstr "Parámetro track_commit_timestamp:           %s\n"
 
-#: pg_controldata.c:272
+#: mdb_controldata.c:272
 #, c-format
 msgid "Maximum data alignment:               %u\n"
 msgstr "Alineamiento máximo de datos:               %u\n"
 
-#: pg_controldata.c:275
+#: mdb_controldata.c:275
 #, c-format
 msgid "Database block size:                  %u\n"
 msgstr "Tamaño de bloque de la base de datos:       %u\n"
 
-#: pg_controldata.c:277
+#: mdb_controldata.c:277
 #, c-format
 msgid "Blocks per segment of large relation: %u\n"
 msgstr "Bloques por segmento en relación grande:    %u\n"
 
-#: pg_controldata.c:279
+#: mdb_controldata.c:279
 #, c-format
 msgid "WAL block size:                       %u\n"
 msgstr "Tamaño del bloque de WAL:                   %u\n"
 
-#: pg_controldata.c:281
+#: mdb_controldata.c:281
 #, c-format
 msgid "Bytes per WAL segment:                %u\n"
 msgstr "Bytes por segmento WAL:                     %u\n"
 
-#: pg_controldata.c:283
+#: mdb_controldata.c:283
 #, c-format
 msgid "Maximum length of identifiers:        %u\n"
 msgstr "Máxima longitud de identificadores:         %u\n"
 
-#: pg_controldata.c:285
+#: mdb_controldata.c:285
 #, c-format
 msgid "Maximum columns in an index:          %u\n"
 msgstr "Máximo número de columnas de un índice:     %u\n"
 
-#: pg_controldata.c:287
+#: mdb_controldata.c:287
 #, c-format
 msgid "Maximum size of a TOAST chunk:        %u\n"
 msgstr "Longitud máxima de un trozo TOAST:          %u\n"
 
-#: pg_controldata.c:289
+#: mdb_controldata.c:289
 #, c-format
 msgid "Size of a large-object chunk:         %u\n"
 msgstr "Longitud máx. de un trozo de objeto grande: %u\n"
 
-#: pg_controldata.c:291
+#: mdb_controldata.c:291
 #, c-format
 msgid "Date/time type storage:               %s\n"
 msgstr "Tipo de almacenamiento de horas y fechas:   %s\n"
 
-#: pg_controldata.c:292
+#: mdb_controldata.c:292
 msgid "64-bit integers"
 msgstr "enteros de 64 bits"
 
-#: pg_controldata.c:292
+#: mdb_controldata.c:292
 msgid "floating-point numbers"
 msgstr "números de punto flotante"
 
-#: pg_controldata.c:293
+#: mdb_controldata.c:293
 #, c-format
 msgid "Float4 argument passing:              %s\n"
 msgstr "Paso de parámetros float4:                  %s\n"
 
-#: pg_controldata.c:294 pg_controldata.c:296
+#: mdb_controldata.c:294 mdb_controldata.c:296
 msgid "by reference"
 msgstr "por referencia"
 
-#: pg_controldata.c:294 pg_controldata.c:296
+#: mdb_controldata.c:294 mdb_controldata.c:296
 msgid "by value"
 msgstr "por valor"
 
-#: pg_controldata.c:295
+#: mdb_controldata.c:295
 #, c-format
 msgid "Float8 argument passing:              %s\n"
 msgstr "Paso de parámetros float8:                  %s\n"
 
-#: pg_controldata.c:297
+#: mdb_controldata.c:297
 #, c-format
 msgid "Data page checksum version:           %u\n"
 msgstr "Versión de sumas de verificación de datos:  %u\n"

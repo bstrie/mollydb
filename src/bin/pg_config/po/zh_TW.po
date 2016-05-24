@@ -1,4 +1,4 @@
-# Traditional Chinese message translation file for pg_config
+# Traditional Chinese message translation file for mdb_config
 # Copyright (C) 2011 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 # 2004-12-13 Zhenbang Wei <forth@zbwei.net>
@@ -17,14 +17,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: pg_config.c:243 pg_config.c:259 pg_config.c:275 pg_config.c:291
-#: pg_config.c:307 pg_config.c:323 pg_config.c:339 pg_config.c:355
-#: pg_config.c:371
+#: mdb_config.c:243 mdb_config.c:259 mdb_config.c:275 mdb_config.c:291
+#: mdb_config.c:307 mdb_config.c:323 mdb_config.c:339 mdb_config.c:355
+#: mdb_config.c:371
 #, c-format
 msgid "not recorded\n"
 msgstr "沒有紀錄\n"
 
-#: pg_config.c:428
+#: mdb_config.c:428
 #, c-format
 msgid ""
 "\n"
@@ -35,12 +35,12 @@ msgstr ""
 "%s 顯示已安裝 MollyDB 資訊。\n"
 "\n"
 
-#: pg_config.c:429
+#: mdb_config.c:429
 #, c-format
 msgid "Usage:\n"
 msgstr "使用方法:\n"
 
-#: pg_config.c:430
+#: mdb_config.c:430
 #, c-format
 msgid ""
 "  %s [OPTION]...\n"
@@ -49,83 +49,83 @@ msgstr ""
 "  %s [選項]...\n"
 "\n"
 
-#: pg_config.c:431
+#: mdb_config.c:431
 #, c-format
 msgid "Options:\n"
 msgstr "選項:\n"
 
-#: pg_config.c:432
+#: mdb_config.c:432
 #, c-format
 msgid "  --bindir              show location of user executables\n"
 msgstr "  --bindir              顯示執行檔位置\n"
 
-#: pg_config.c:433
+#: mdb_config.c:433
 #, c-format
 msgid "  --docdir              show location of documentation files\n"
 msgstr "  --docdir              顯示文件檔位置\n"
 
-#: pg_config.c:434
+#: mdb_config.c:434
 #, c-format
 msgid "  --htmldir             show location of HTML documentation files\n"
 msgstr "  --htmldir             顯示 HTML 文件檔位置\n"
 
-#: pg_config.c:435
+#: mdb_config.c:435
 #, c-format
 msgid ""
 "  --includedir          show location of C header files of the client\n"
 "                        interfaces\n"
 msgstr "  --includedir          顯使用戶端介面 C 標頭檔位置\n"
 
-#: pg_config.c:437
+#: mdb_config.c:437
 #, c-format
 msgid "  --pkgincludedir       show location of other C header files\n"
 msgstr "  --pkgincludedir       顯示其他 C 標頭檔位置\n"
 
-#: pg_config.c:438
+#: mdb_config.c:438
 #, c-format
 msgid ""
 "  --includedir-server   show location of C header files for the server\n"
 msgstr "  --includedir-server   顯示伺服器 C 標頭檔位置\n"
 
-#: pg_config.c:439
+#: mdb_config.c:439
 #, c-format
 msgid "  --libdir              show location of object code libraries\n"
 msgstr "  --libdir              顯示程式庫位置\n"
 
-#: pg_config.c:440
+#: mdb_config.c:440
 #, c-format
 msgid "  --pkglibdir           show location of dynamically loadable modules\n"
 msgstr "  --pkglibdir           顯示可動態載入模組位置\n"
 
-#: pg_config.c:441
+#: mdb_config.c:441
 #, c-format
 msgid "  --localedir           show location of locale support files\n"
 msgstr "  --localedir           顯示區域支援檔位置\n"
 
-#: pg_config.c:442
+#: mdb_config.c:442
 #, c-format
 msgid "  --mandir              show location of manual pages\n"
 msgstr "  --mandir              顯示使用說明位置\n"
 
-#: pg_config.c:443
+#: mdb_config.c:443
 #, c-format
 msgid ""
 "  --sharedir            show location of architecture-independent support "
 "files\n"
 msgstr "  --sharedir            顯示與架構無關的支援檔位置\n"
 
-#: pg_config.c:444
+#: mdb_config.c:444
 #, c-format
 msgid ""
 "  --sysconfdir          show location of system-wide configuration files\n"
 msgstr "  --sysconfdir          顯示系統層級設定檔位置\n"
 
-#: pg_config.c:445
+#: mdb_config.c:445
 #, c-format
 msgid "  --pgxs                show location of extension makefile\n"
 msgstr "  --pgxs                顯示外部程式 makefile 位置\n"
 
-#: pg_config.c:446
+#: mdb_config.c:446
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
@@ -134,66 +134,66 @@ msgstr ""
 "  --configure           顯示建立 MollyDB 時 \"configure\" 命令搞\n"
 "                        所使用的參數\n"
 
-#: pg_config.c:448
+#: mdb_config.c:448
 #, c-format
 msgid "  --cc                  show CC value used when MollyDB was built\n"
 msgstr "  --cc                  顯示建立 MollyDB 時使用的 CC 值\n"
 
-#: pg_config.c:449
+#: mdb_config.c:449
 #, c-format
 msgid ""
 "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
 msgstr "  --cppflags            顯示建立 MollyDB 時使用的 CPPFLAGS 值\n"
 
-#: pg_config.c:450
+#: mdb_config.c:450
 #, c-format
 msgid ""
 "  --cflags              show CFLAGS value used when MollyDB was built\n"
 msgstr "  --cflags              顯示建立 MollyDB 時使用的 CFLAGS 值\n"
 
-#: pg_config.c:451
+#: mdb_config.c:451
 #, c-format
 msgid ""
 "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
 msgstr "  --cflags_sl           顯示建立 MollyDB 時使用的 CFLAGS_SL 值\n"
 
-#: pg_config.c:452
+#: mdb_config.c:452
 #, c-format
 msgid ""
 "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
 msgstr "  --ldflags             顯示建立 MollyDB 時使用的 LDFLAGS 值\n"
 
-#: pg_config.c:453
+#: mdb_config.c:453
 #, c-format
 msgid ""
 "  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was "
 "built\n"
 msgstr "  --ldflags_ex          顯示建立 MollyDB 時使用的 LDFLAGS_EX 值\n"
 
-#: pg_config.c:454
+#: mdb_config.c:454
 #, c-format
 msgid ""
 "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was "
 "built\n"
 msgstr "  --ldflags_sl          顯示建立 MollyDB 時使用的 LDFLAGS_SL 值\n"
 
-#: pg_config.c:455
+#: mdb_config.c:455
 #, c-format
 msgid ""
 "  --libs                show LIBS value used when MollyDB was built\n"
 msgstr "  --libs                顯示建立 MollyDB 時使用的 LIBS 值\n"
 
-#: pg_config.c:456
+#: mdb_config.c:456
 #, c-format
 msgid "  --version             show the MollyDB version\n"
 msgstr "  --version             顯示 MollyDB 版本\n"
 
-#: pg_config.c:457
+#: mdb_config.c:457
 #, c-format
 msgid "  --help                show this help, then exit\n"
 msgstr "  --help                顯示說明然後結束\n"
 
-#: pg_config.c:458
+#: mdb_config.c:458
 #, c-format
 msgid ""
 "\n"
@@ -204,23 +204,23 @@ msgstr ""
 "沒有參數，已顯示所有已知項目。\n"
 "\n"
 
-#: pg_config.c:459
+#: mdb_config.c:459
 #, c-format
 msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr "回報錯誤至 <mdb-bugs@mollydb.org>。\n"
 
 # postmaster/postmaster.c:512 postmaster/postmaster.c:525
-#: pg_config.c:465
+#: mdb_config.c:465
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "執行 \"%s --help\" 顯示更多資訊。\n"
 
-#: pg_config.c:504
+#: mdb_config.c:504
 #, c-format
 msgid "%s: could not find own program executable\n"
 msgstr "%s: 找不到程式執行檔\n"
 
-#: pg_config.c:527
+#: mdb_config.c:527
 #, c-format
 msgid "%s: invalid argument: %s\n"
 msgstr "%s: 無效的參數: %s\n"

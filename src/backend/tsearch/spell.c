@@ -62,7 +62,7 @@
 
 #include "mollydb.h"
 
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "tsearch/dicts/spell.h"
 #include "tsearch/ts_locale.h"
 #include "utils/memutils.h"
@@ -233,7 +233,7 @@ findchar(char *str, int c)
 	{
 		if (t_iseq(str, c))
 			return str;
-		str += pg_mblen(str);
+		str += mdb_mblen(str);
 	}
 
 	return NULL;
@@ -246,7 +246,7 @@ findchar2(char *str, int c1, int c2)
 	{
 		if (t_iseq(str, c1) || t_iseq(str, c2))
 			return str;
-		str += pg_mblen(str);
+		str += mdb_mblen(str);
 	}
 
 	return NULL;
@@ -365,10 +365,10 @@ getNextFlagFromString(IspellDict *Conf, char **sflagset, char *sflag)
 			case FM_LONG:
 			case FM_CHAR:
 				COPYCHAR(sflag, *sflagset);
-				sflag += pg_mblen(*sflagset);
+				sflag += mdb_mblen(*sflagset);
 
 				/* Go to start of the next flag */
-				*sflagset += pg_mblen(*sflagset);
+				*sflagset += mdb_mblen(*sflagset);
 
 				/* Check if we get all characters of flag */
 				maxstep--;
@@ -417,7 +417,7 @@ getNextFlagFromString(IspellDict *Conf, char **sflagset, char *sflag)
 								*sflagset)));
 					}
 
-					*sflagset += pg_mblen(*sflagset);
+					*sflagset += mdb_mblen(*sflagset);
 				}
 				stop = true;
 				break;
@@ -539,7 +539,7 @@ NIImportDictionary(IspellDict *Conf, const char *filename)
 			while (*s)
 			{
 				/* we allow only single encoded flags for faster works */
-				if (pg_mblen(s) == 1 && t_isprint(s) && !t_isspace(s))
+				if (mdb_mblen(s) == 1 && t_isprint(s) && !t_isspace(s))
 					s++;
 				else
 				{
@@ -560,7 +560,7 @@ NIImportDictionary(IspellDict *Conf, const char *filename)
 				*s = '\0';
 				break;
 			}
-			s += pg_mblen(s);
+			s += mdb_mblen(s);
 		}
 		pstr = lowerstr_ctx(Conf, line);
 
@@ -712,7 +712,7 @@ NIAddAffix(IspellDict *Conf, const char* flag, char flagflags, const char *mask,
 		int			masklen;
 		int			wmasklen;
 		int			err;
-		pg_wchar   *wmask;
+		mdb_wchar   *wmask;
 		char	   *tmask;
 
 		Affix->issimple = 0;
@@ -724,17 +724,17 @@ NIAddAffix(IspellDict *Conf, const char* flag, char flagflags, const char *mask,
 			sprintf(tmask, "^%s", mask);
 
 		masklen = strlen(tmask);
-		wmask = (pg_wchar *) tmpalloc((masklen + 1) * sizeof(pg_wchar));
-		wmasklen = pg_mb2wchar_with_len(tmask, wmask, masklen);
+		wmask = (mdb_wchar *) tmpalloc((masklen + 1) * sizeof(mdb_wchar));
+		wmasklen = mdb_mb2wchar_with_len(tmask, wmask, masklen);
 
-		err = pg_regcomp(&(Affix->reg.regex), wmask, wmasklen,
+		err = mdb_regcomp(&(Affix->reg.regex), wmask, wmasklen,
 						 REG_ADVANCED | REG_NOSUB,
 						 DEFAULT_COLLATION_OID);
 		if (err)
 		{
 			char		errstr[100];
 
-			pg_regerror(err, &(Affix->reg.regex), errstr, sizeof(errstr));
+			mdb_regerror(err, &(Affix->reg.regex), errstr, sizeof(errstr));
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_REGULAR_EXPRESSION),
 					 errmsg("invalid regular expression: %s", errstr)));
@@ -792,7 +792,7 @@ get_nextfield(char **str, char *next)
 				return false;
 			else if (!t_isspace(*str))
 			{
-				int			clen = pg_mblen(*str);
+				int			clen = mdb_mblen(*str);
 
 				if (clen < avail)
 				{
@@ -812,7 +812,7 @@ get_nextfield(char **str, char *next)
 			}
 			else
 			{
-				int			clen = pg_mblen(*str);
+				int			clen = mdb_mblen(*str);
 
 				if (clen < avail)
 				{
@@ -822,7 +822,7 @@ get_nextfield(char **str, char *next)
 				}
 			}
 		}
-		*str += pg_mblen(*str);
+		*str += mdb_mblen(*str);
 	}
 
 	*next = '\0';
@@ -919,7 +919,7 @@ parse_affentry(char *str, char *mask, char *find, char *repl)
 			else if (!t_isspace(str))
 			{
 				COPYCHAR(pmask, str);
-				pmask += pg_mblen(str);
+				pmask += mdb_mblen(str);
 				state = PAE_INMASK;
 			}
 		}
@@ -933,7 +933,7 @@ parse_affentry(char *str, char *mask, char *find, char *repl)
 			else if (!t_isspace(str))
 			{
 				COPYCHAR(pmask, str);
-				pmask += pg_mblen(str);
+				pmask += mdb_mblen(str);
 			}
 		}
 		else if (state == PAE_WAIT_FIND)
@@ -945,7 +945,7 @@ parse_affentry(char *str, char *mask, char *find, char *repl)
 			else if (t_isalpha(str) || t_iseq(str, '\'') /* english 's */ )
 			{
 				COPYCHAR(prepl, str);
-				prepl += pg_mblen(str);
+				prepl += mdb_mblen(str);
 				state = PAE_INREPL;
 			}
 			else if (!t_isspace(str))
@@ -963,7 +963,7 @@ parse_affentry(char *str, char *mask, char *find, char *repl)
 			else if (t_isalpha(str))
 			{
 				COPYCHAR(pfind, str);
-				pfind += pg_mblen(str);
+				pfind += mdb_mblen(str);
 			}
 			else if (!t_isspace(str))
 				ereport(ERROR,
@@ -979,7 +979,7 @@ parse_affentry(char *str, char *mask, char *find, char *repl)
 			else if (t_isalpha(str))
 			{
 				COPYCHAR(prepl, str);
-				prepl += pg_mblen(str);
+				prepl += mdb_mblen(str);
 				state = PAE_INREPL;
 			}
 			else if (!t_isspace(str))
@@ -997,7 +997,7 @@ parse_affentry(char *str, char *mask, char *find, char *repl)
 			else if (t_isalpha(str))
 			{
 				COPYCHAR(prepl, str);
-				prepl += pg_mblen(str);
+				prepl += mdb_mblen(str);
 			}
 			else if (!t_isspace(str))
 				ereport(ERROR,
@@ -1007,7 +1007,7 @@ parse_affentry(char *str, char *mask, char *find, char *repl)
 		else
 			elog(ERROR, "unrecognized state in parse_affentry: %d", state);
 
-		str += pg_mblen(str);
+		str += mdb_mblen(str);
 	}
 
 	*pmask = *pfind = *prepl = '\0';
@@ -1062,7 +1062,7 @@ addCompoundAffixFlagValue(IspellDict *Conf, char *s, uint32 val)
 	int				clen;
 
 	while (*s && t_isspace(s))
-		s += pg_mblen(s);
+		s += mdb_mblen(s);
 
 	if (!*s)
 		ereport(ERROR,
@@ -1073,7 +1073,7 @@ addCompoundAffixFlagValue(IspellDict *Conf, char *s, uint32 val)
 	sflag = sbuf;
 	while (*s && !t_isspace(s) && *s != '\n')
 	{
-		clen = pg_mblen(s);
+		clen = mdb_mblen(s);
 		COPYCHAR(sflag, s);
 		sflag += clen;
 		s += clen;
@@ -1250,7 +1250,7 @@ NIImportOOAffixes(IspellDict *Conf, const char *filename)
 			char	   *s = recoded + strlen("FLAG");
 
 			while (*s && t_isspace(s))
-				s += pg_mblen(s);
+				s += mdb_mblen(s);
 
 			if (*s)
 			{
@@ -1443,11 +1443,11 @@ NIImportAffixes(IspellDict *Conf, const char *filename)
 			if (s)
 			{
 				while (*s && !t_isspace(s))
-					s += pg_mblen(s);
+					s += mdb_mblen(s);
 				while (*s && t_isspace(s))
-					s += pg_mblen(s);
+					s += mdb_mblen(s);
 
-				if (*s && pg_mblen(s) == 1)
+				if (*s && mdb_mblen(s) == 1)
 				{
 					addCompoundAffixFlagValue(Conf, s, FF_COMPOUNDFLAG);
 					Conf->usecompound = true;
@@ -1476,7 +1476,7 @@ NIImportAffixes(IspellDict *Conf, const char *filename)
 			flagflags = 0;
 
 			while (*s && t_isspace(s))
-				s += pg_mblen(s);
+				s += mdb_mblen(s);
 
 			if (*s == '*')
 			{
@@ -1497,7 +1497,7 @@ NIImportAffixes(IspellDict *Conf, const char *filename)
 			 * be followed by EOL, whitespace, or ':'.  Otherwise this is a
 			 * new-format flag command.
 			 */
-			if (*s && pg_mblen(s) == 1)
+			if (*s && mdb_mblen(s) == 1)
 			{
 				COPYCHAR(flag, s);
 				flag[1] = '\0';
@@ -2097,16 +2097,16 @@ CheckAffix(const char *word, size_t len, AFFIX *Affix, int flagflags, char *neww
 	else
 	{
 		int			err;
-		pg_wchar   *data;
+		mdb_wchar   *data;
 		size_t		data_len;
 		int			newword_len;
 
 		/* Convert data string to wide characters */
 		newword_len = strlen(newword);
-		data = (pg_wchar *) palloc((newword_len + 1) * sizeof(pg_wchar));
-		data_len = pg_mb2wchar_with_len(newword, data, newword_len);
+		data = (mdb_wchar *) palloc((newword_len + 1) * sizeof(mdb_wchar));
+		data_len = mdb_mb2wchar_with_len(newword, data, newword_len);
 
-		if (!(err = pg_regexec(&(Affix->reg.regex), data, data_len, 0, NULL, 0, NULL, 0)))
+		if (!(err = mdb_regexec(&(Affix->reg.regex), data, data_len, 0, NULL, 0, NULL, 0)))
 		{
 			pfree(data);
 			return newword;

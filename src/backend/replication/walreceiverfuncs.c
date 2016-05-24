@@ -74,7 +74,7 @@ WalRcvRunning(void)
 {
 	WalRcvData *walrcv = WalRcv;
 	WalRcvState state;
-	pg_time_t	startTime;
+	mdb_time_t	startTime;
 
 	SpinLockAcquire(&walrcv->mutex);
 
@@ -91,7 +91,7 @@ WalRcvRunning(void)
 	 */
 	if (state == WALRCV_STARTING)
 	{
-		pg_time_t	now = (pg_time_t) time(NULL);
+		mdb_time_t	now = (mdb_time_t) time(NULL);
 
 		if ((now - startTime) > WALRCV_STARTUP_TIMEOUT)
 		{
@@ -119,7 +119,7 @@ WalRcvStreaming(void)
 {
 	WalRcvData *walrcv = WalRcv;
 	WalRcvState state;
-	pg_time_t	startTime;
+	mdb_time_t	startTime;
 
 	SpinLockAcquire(&walrcv->mutex);
 
@@ -136,7 +136,7 @@ WalRcvStreaming(void)
 	 */
 	if (state == WALRCV_STARTING)
 	{
-		pg_time_t	now = (pg_time_t) time(NULL);
+		mdb_time_t	now = (mdb_time_t) time(NULL);
 
 		if ((now - startTime) > WALRCV_STARTUP_TIMEOUT)
 		{
@@ -209,7 +209,7 @@ ShutdownWalRcv(void)
 		 */
 		HandleStartupProcInterrupts();
 
-		pg_usleep(100000);		/* 100ms */
+		mdb_usleep(100000);		/* 100ms */
 	}
 }
 
@@ -226,7 +226,7 @@ RequestXLogStreaming(TimeLineID tli, XLogRecPtr recptr, const char *conninfo,
 {
 	WalRcvData *walrcv = WalRcv;
 	bool		launch = false;
-	pg_time_t	now = (pg_time_t) time(NULL);
+	mdb_time_t	now = (mdb_time_t) time(NULL);
 
 	/*
 	 * We always start at the beginning of the segment. That prevents a broken

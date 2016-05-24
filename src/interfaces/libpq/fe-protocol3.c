@@ -20,7 +20,7 @@
 #include "libpq-fe.h"
 #include "libpq-int.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 #ifdef WIN32
 #include "win32.h"
@@ -1188,7 +1188,7 @@ reportErrorPosition(PQExpBuffer msg, const char *query, int loc, int encoding)
 	}
 
 	/* We can optimize a bit if it's a single-byte encoding */
-	mb_encoding = (pg_encoding_max_length(encoding) != 1);
+	mb_encoding = (mdb_encoding_max_length(encoding) != 1);
 
 	/*
 	 * Within the scanning loop, cno is the current character's logical
@@ -1249,12 +1249,12 @@ reportErrorPosition(PQExpBuffer msg, const char *query, int loc, int encoding)
 		{
 			int			w;
 
-			w = pg_encoding_dsplen(encoding, &wquery[qoffset]);
+			w = mdb_encoding_dsplen(encoding, &wquery[qoffset]);
 			/* treat any non-tab control chars as width 1 */
 			if (w <= 0)
 				w = 1;
 			scroffset += w;
-			qoffset += pg_encoding_mblen(encoding, &wquery[qoffset]);
+			qoffset += mdb_encoding_mblen(encoding, &wquery[qoffset]);
 		}
 		else
 		{
@@ -1322,9 +1322,9 @@ reportErrorPosition(PQExpBuffer msg, const char *query, int loc, int encoding)
 		 * width.
 		 */
 		scroffset = 0;
-		for (; i < msg->len; i += pg_encoding_mblen(encoding, &msg->data[i]))
+		for (; i < msg->len; i += mdb_encoding_mblen(encoding, &msg->data[i]))
 		{
-			int			w = pg_encoding_dsplen(encoding, &msg->data[i]);
+			int			w = mdb_encoding_dsplen(encoding, &msg->data[i]);
 
 			if (w <= 0)
 				w = 1;
@@ -2190,7 +2190,7 @@ build_startup_packet(const PGconn *conn, char *packet,
 	{
 		if ((val = getenv(next_eo->envName)) != NULL)
 		{
-			if (pg_strcasecmp(val, "default") != 0)
+			if (mdb_strcasecmp(val, "default") != 0)
 				ADD_STARTUP_OPTION(next_eo->pgName, val);
 		}
 	}

@@ -1,8 +1,8 @@
 /*
- * contrib/pg_standby/pg_standby.c
+ * contrib/mdb_standby/mdb_standby.c
  *
  *
- * pg_standby.c
+ * mdb_standby.c
  *
  * Production-ready example of how to create a Warm Standby
  * database server using continuous archiving as a
@@ -30,7 +30,7 @@
 #include <signal.h>
 #include <sys/time.h>
 
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 
 #include "access/xlog_internal.h"
 
@@ -67,7 +67,7 @@ char		exclusiveCleanupFileName[MAXFNAMELEN];		/* the file we need to
  *
  * The content of the trigger file determines the type of failover. If the
  * trigger file contains the word "smart" (or the file is empty), smart
- * failover is chosen: pg_standby acts as cp or ln command itself, on
+ * failover is chosen: mdb_standby acts as cp or ln command itself, on
  * successful completion all the available WAL records will be applied
  * resulting in zero data loss. But, it might take a long time to finish
  * recovery if there's a lot of unapplied WAL.
@@ -190,12 +190,12 @@ CustomizableNextWALFileReady(void)
 
 			/*
 			 * Windows 'cp' sets the final file size before the copy is
-			 * complete, and not yet ready to be opened by pg_standby. So we
+			 * complete, and not yet ready to be opened by mdb_standby. So we
 			 * wait for sleeptime secs before attempting to restore. If that
 			 * is not enough, we will rely on the retry/holdoff mechanism.
 			 * GNUWin32's cp does not have this problem.
 			 */
-			pg_usleep(sleeptime * 1000000L);
+			mdb_usleep(sleeptime * 1000000L);
 #endif
 			nextWALFileType = XLOG_DATA;
 			return true;
@@ -488,7 +488,7 @@ RestoreWALFileForRecovery(void)
 			}
 			return true;
 		}
-		pg_usleep(numretries++ * sleeptime * 1000000L);
+		mdb_usleep(numretries++ * sleeptime * 1000000L);
 	}
 
 	/*
@@ -521,9 +521,9 @@ usage(void)
 	printf("  -?, --help         show this help, then exit\n");
 	printf("\n"
 		   "Main intended use as restore_command in recovery.conf:\n"
-		   "  restore_command = 'pg_standby [OPTION]... ARCHIVELOCATION %%f %%p %%r'\n"
+		   "  restore_command = 'mdb_standby [OPTION]... ARCHIVELOCATION %%f %%p %%r'\n"
 		   "e.g.\n"
-	"  restore_command = 'pg_standby /mnt/server/archiverdir %%f %%p %%r'\n");
+	"  restore_command = 'mdb_standby /mnt/server/archiverdir %%f %%p %%r'\n");
 	printf("\nReport bugs to <mdb-bugs@mollydb.org>.\n");
 }
 
@@ -560,7 +560,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_standby (MollyDB) " PG_VERSION);
+			puts("mdb_standby (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -802,7 +802,7 @@ main(int argc, char **argv)
 			exit(1);
 
 		if (sleeptime <= 60)
-			pg_usleep(sleeptime * 1000000L);
+			mdb_usleep(sleeptime * 1000000L);
 
 		waittime += sleeptime;
 		if (waittime >= maxwaittime && maxwaittime > 0)

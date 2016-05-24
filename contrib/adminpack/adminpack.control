@@ -3,4 +3,4 @@ comment = 'administrative functions for MollyDB'
 default_version = '1.0'
 module_pathname = '$libdir/adminpack'
 relocatable = false
-schema = pg_catalog
+schema = mdb_catalog

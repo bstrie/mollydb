@@ -791,11 +791,11 @@ OldSerXidInit(void)
 	bool		found;
 
 	/*
-	 * Set up SLRU management of the pg_serial data.
+	 * Set up SLRU management of the mdb_serial data.
 	 */
 	OldSerXidSlruCtl->PagePrecedes = OldSerXidPagePrecedesLogically;
 	SimpleLruInit(OldSerXidSlruCtl, "oldserxid",
-				  NUM_OLDSERXID_BUFFERS, 0, OldSerXidLock, "pg_serial",
+				  NUM_OLDSERXID_BUFFERS, 0, OldSerXidLock, "mdb_serial",
 				  LWTRANCHE_OLDSERXID_BUFFERS);
 	/* Override default assumption that writes should be fsync'd */
 	OldSerXidSlruCtl->do_fsync = false;
@@ -1375,7 +1375,7 @@ predicatelock_hash(const void *key, Size keysize)
 /*
  * GetPredicateLockStatusData
  *		Return a table containing the internal state of the predicate
- *		lock manager for use in pg_lock_status.
+ *		lock manager for use in mdb_lock_status.
  *
  * Like GetLockStatusData, this function tries to hold the partition LWLocks
  * for as short a time as possible by returning two arrays that simply

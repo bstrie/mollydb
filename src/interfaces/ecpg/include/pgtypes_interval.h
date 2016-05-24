@@ -3,7 +3,7 @@
 #ifndef PGTYPES_INTERVAL
 #define PGTYPES_INTERVAL
 
-#include <ecpg_config.h>
+#include <ecmdb_config.h>
 
 #ifndef C_H
 

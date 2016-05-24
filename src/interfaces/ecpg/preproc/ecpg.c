@@ -117,7 +117,7 @@ add_preprocessor_define(char *define)
 int
 main(int argc, char *const argv[])
 {
-	static struct option ecpg_options[] = {
+	static struct option ecmdb_options[] = {
 		{"help", no_argument, NULL, ECPG_GETOPT_LONG_HELP},
 		{"version", no_argument, NULL, ECPG_GETOPT_LONG_VERSION},
 		{"regression", no_argument, NULL, ECPG_GETOPT_LONG_REGRESSION},
@@ -145,7 +145,7 @@ main(int argc, char *const argv[])
 	}
 
 	output_filename = NULL;
-	while ((c = getopt_long(argc, argv, "vcio:I:tD:dC:r:h?", ecpg_options, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "vcio:I:tD:dC:r:h?", ecmdb_options, NULL)) != -1)
 	{
 		switch (c)
 		{
@@ -427,7 +427,7 @@ main(int argc, char *const argv[])
 				 * and our variable counter for out of scope cursors'
 				 * variables
 				 */
-				ecpg_internal_var = 0;
+				ecmdb_internal_var = 0;
 
 				/* finally the actual connection */
 				connection = NULL;
@@ -448,7 +448,7 @@ main(int argc, char *const argv[])
 
 					/* add some compatibility headers */
 					if (INFORMIX_MODE)
-						fprintf(yyout, "/* Needed for informix compatibility */\n#include <ecpg_informix.h>\n");
+						fprintf(yyout, "/* Needed for informix compatibility */\n#include <ecmdb_informix.h>\n");
 
 					fprintf(yyout, "/* End of automatic include section */\n");
 				}

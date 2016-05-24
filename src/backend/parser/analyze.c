@@ -25,7 +25,7 @@
 #include "mollydb.h"
 
 #include "access/sysattr.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
@@ -944,7 +944,7 @@ transformOnConflictClause(ParseState *pstate,
 		Assert(pstate->p_next_resno == 1);
 		for (attno = 0; attno < targetrel->rd_rel->relnatts; attno++)
 		{
-			Form_pg_attribute attr = targetrel->rd_att->attrs[attno];
+			Form_mdb_attribute attr = targetrel->rd_att->attrs[attno];
 			char	   *name;
 
 			if (attr->attisdropped)

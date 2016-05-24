@@ -255,7 +255,7 @@ ROLLBACK;
    In order to allow the <productname>MollyDB</productname> query
    planner to make reasonably informed decisions when optimizing
    queries, the <link
-   linkend="catalog-pg-statistic"><structname>pg_statistic</structname></link>
+   linkend="catalog-pg-statistic"><structname>mdb_statistic</structname></link>
    data should be up-to-date for all tables used in the query.  Normally
    the <link linkend="autovacuum">autovacuum daemon</link> will take care
    of that automatically.  But if a table has recently had substantial

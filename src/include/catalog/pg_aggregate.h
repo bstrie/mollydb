@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_aggregate.h
- *	  definition of the system "aggregate" relation (pg_aggregate)
+ * mdb_aggregate.h
+ *	  definition of the system "aggregate" relation (mdb_aggregate)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_aggregate.h
+ * src/include/catalog/mdb_aggregate.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -21,14 +21,14 @@
 
 #include "catalog/genbki.h"
 #include "catalog/objectaddress.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 /* ----------------------------------------------------------------
- *		pg_aggregate definition.
+ *		mdb_aggregate definition.
  *
- *		cpp turns this into typedef struct FormData_pg_aggregate
+ *		cpp turns this into typedef struct FormData_mdb_aggregate
  *
- *	aggfnoid			pg_proc OID of the aggregate itself
+ *	aggfnoid			mdb_proc OID of the aggregate itself
  *	aggkind				aggregate kind, see AGGKIND_ categories below
  *	aggnumdirectargs	number of arguments that are "direct" arguments
  *	aggtransfn			transition function
@@ -53,7 +53,7 @@
  */
 #define AggregateRelationId  2600
 
-CATALOG(pg_aggregate,2600) BKI_WITHOUT_OIDS
+CATALOG(mdb_aggregate,2600) BKI_WITHOUT_OIDS
 {
 	regproc		aggfnoid;
 	char		aggkind;
@@ -79,42 +79,42 @@ CATALOG(pg_aggregate,2600) BKI_WITHOUT_OIDS
 	text		agginitval;
 	text		aggminitval;
 #endif
-} FormData_pg_aggregate;
+} FormData_mdb_aggregate;
 
 /* ----------------
- *		Form_pg_aggregate corresponds to a pointer to a tuple with
- *		the format of pg_aggregate relation.
+ *		Form_mdb_aggregate corresponds to a pointer to a tuple with
+ *		the format of mdb_aggregate relation.
  * ----------------
  */
-typedef FormData_pg_aggregate *Form_pg_aggregate;
+typedef FormData_mdb_aggregate *Form_mdb_aggregate;
 
 /* ----------------
- *		compiler constants for pg_aggregate
+ *		compiler constants for mdb_aggregate
  * ----------------
  */
 
-#define Natts_pg_aggregate					21
-#define Anum_pg_aggregate_aggfnoid			1
-#define Anum_pg_aggregate_aggkind			2
-#define Anum_pg_aggregate_aggnumdirectargs	3
-#define Anum_pg_aggregate_aggtransfn		4
-#define Anum_pg_aggregate_aggfinalfn		5
-#define Anum_pg_aggregate_aggcombinefn		6
-#define Anum_pg_aggregate_aggserialfn		7
-#define Anum_pg_aggregate_aggdeserialfn		8
-#define Anum_pg_aggregate_aggmtransfn		9
-#define Anum_pg_aggregate_aggminvtransfn	10
-#define Anum_pg_aggregate_aggmfinalfn		11
-#define Anum_pg_aggregate_aggfinalextra		12
-#define Anum_pg_aggregate_aggmfinalextra	13
-#define Anum_pg_aggregate_aggsortop			14
-#define Anum_pg_aggregate_aggtranstype		15
-#define Anum_pg_aggregate_aggserialtype		16
-#define Anum_pg_aggregate_aggtransspace		17
-#define Anum_pg_aggregate_aggmtranstype		18
-#define Anum_pg_aggregate_aggmtransspace	19
-#define Anum_pg_aggregate_agginitval		20
-#define Anum_pg_aggregate_aggminitval		21
+#define Natts_mdb_aggregate					21
+#define Anum_mdb_aggregate_aggfnoid			1
+#define Anum_mdb_aggregate_aggkind			2
+#define Anum_mdb_aggregate_aggnumdirectargs	3
+#define Anum_mdb_aggregate_aggtransfn		4
+#define Anum_mdb_aggregate_aggfinalfn		5
+#define Anum_mdb_aggregate_aggcombinefn		6
+#define Anum_mdb_aggregate_aggserialfn		7
+#define Anum_mdb_aggregate_aggdeserialfn		8
+#define Anum_mdb_aggregate_aggmtransfn		9
+#define Anum_mdb_aggregate_aggminvtransfn	10
+#define Anum_mdb_aggregate_aggmfinalfn		11
+#define Anum_mdb_aggregate_aggfinalextra		12
+#define Anum_mdb_aggregate_aggmfinalextra	13
+#define Anum_mdb_aggregate_aggsortop			14
+#define Anum_mdb_aggregate_aggtranstype		15
+#define Anum_mdb_aggregate_aggserialtype		16
+#define Anum_mdb_aggregate_aggtransspace		17
+#define Anum_mdb_aggregate_aggmtranstype		18
+#define Anum_mdb_aggregate_aggmtransspace	19
+#define Anum_mdb_aggregate_agginitval		20
+#define Anum_mdb_aggregate_aggminitval		21
 
 /*
  * Symbolic values for aggkind column.  We distinguish normal aggregates
@@ -133,7 +133,7 @@ typedef FormData_pg_aggregate *Form_pg_aggregate;
 
 
 /* ----------------
- * initial contents of pg_aggregate
+ * initial contents of mdb_aggregate
  * ---------------
  */
 
@@ -319,7 +319,7 @@ DATA(insert ( 3992	h 1 ordered_set_transition_multi	dense_rank_final						-	-	-	
 
 
 /*
- * prototypes for functions in pg_aggregate.c
+ * prototypes for functions in mdb_aggregate.c
  */
 extern ObjectAddress AggregateCreate(const char *aggName,
 				Oid aggNamespace,

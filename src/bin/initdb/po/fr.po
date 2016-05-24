@@ -679,13 +679,13 @@ msgstr ""
 msgid ""
 "\n"
 "WARNING: enabling \"trust\" authentication for local connections\n"
-"You can change this by editing pg_hba.conf or using the option -A, or\n"
+"You can change this by editing mdb_hba.conf or using the option -A, or\n"
 "--auth-local and --auth-host, the next time you run initdb.\n"
 msgstr ""
 "\n"
 "ATTENTION : active l'authentification « trust » pour les connexions\n"
 "locales.\n"
-"Vous pouvez changer cette configuration en éditant le fichier pg_hba.conf\n"
+"Vous pouvez changer cette configuration en éditant le fichier mdb_hba.conf\n"
 "ou en utilisant l'option -A, ou --auth-local et --auth-host au prochain\n"
 "lancement d'initdb.\n"
 
@@ -957,8 +957,8 @@ msgstr ""
 
 #: initdb.c:3567
 #, c-format
-msgid "%s: superuser name \"%s\" is disallowed; role names cannot begin with \"pg_\"\n"
-msgstr "%s : le nom de superutilisateur « %s » est non autorisé ; les noms de rôle ne peuvent pas commencer avec « pg_ »\n"
+msgid "%s: superuser name \"%s\" is disallowed; role names cannot begin with \"mdb_\"\n"
+msgstr "%s : le nom de superutilisateur « %s » est non autorisé ; les noms de rôle ne peuvent pas commencer avec « mdb_ »\n"
 
 #: initdb.c:3571
 #, c-format
@@ -998,13 +998,13 @@ msgid ""
 "\n"
 "Success. You can now start the database server using:\n"
 "\n"
-"    %s%s%spg_ctl%s -D %s%s%s -l logfile start\n"
+"    %s%s%smdb_ctl%s -D %s%s%s -l logfile start\n"
 "\n"
 msgstr ""
 "\n"
 "Succès. Vous pouvez maintenant lancer le serveur de bases de données en utilisant :\n"
 "\n"
-"    %s%s%spg_ctl%s -D %s%s%s -l journal_applicatif start\n"
+"    %s%s%smdb_ctl%s -D %s%s%s -l journal_applicatif start\n"
 "\n"
 
 #~ msgid "%s: could not close directory \"%s\": %s\n"
@@ -1075,8 +1075,8 @@ msgstr ""
 #~ msgid "setting password ... "
 #~ msgstr "initialisation du mot de passe... "
 
-#~ msgid "initializing pg_authid ... "
-#~ msgstr "initialisation de pg_authid... "
+#~ msgid "initializing mdb_authid ... "
+#~ msgstr "initialisation de mdb_authid... "
 
 #~ msgid "creating template1 database in %s/base/1 ... "
 #~ msgstr "création de la base de données template1 dans %s/base/1... "

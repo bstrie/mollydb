@@ -21,13 +21,13 @@
 
 #include <ctype.h>
 
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 #include "nodes/readfuncs.h"
 #include "nodes/value.h"
 
 
-/* Static state for pg_strtok */
-static char *pg_strtok_ptr = NULL;
+/* Static state for mdb_strtok */
+static char *mdb_strtok_ptr = NULL;
 
 
 /*
@@ -41,18 +41,18 @@ stringToNode(char *str)
 	void	   *retval;
 
 	/*
-	 * We save and restore the pre-existing state of pg_strtok. This makes the
+	 * We save and restore the pre-existing state of mdb_strtok. This makes the
 	 * world safe for re-entrant invocation of stringToNode, without incurring
 	 * a lot of notational overhead by having to pass the next-character
 	 * pointer around through all the readfuncs.c code.
 	 */
-	save_strtok = pg_strtok_ptr;
+	save_strtok = mdb_strtok_ptr;
 
-	pg_strtok_ptr = str;		/* point pg_strtok at the string to read */
+	mdb_strtok_ptr = str;		/* point mdb_strtok at the string to read */
 
 	retval = nodeRead(NULL, 0); /* do the reading */
 
-	pg_strtok_ptr = save_strtok;
+	mdb_strtok_ptr = save_strtok;
 
 	return retval;
 }
@@ -64,7 +64,7 @@ stringToNode(char *str)
  *****************************************************************************/
 
 /*
- * pg_strtok --- retrieve next "token" from a string.
+ * mdb_strtok --- retrieve next "token" from a string.
  *
  * Works kinda like strtok, except it never modifies the source string.
  * (Instead of storing nulls into the string, the length of the token
@@ -104,12 +104,12 @@ stringToNode(char *str)
  * as a single token.
  */
 char *
-pg_strtok(int *length)
+mdb_strtok(int *length)
 {
 	char	   *local_str;		/* working pointer to string */
 	char	   *ret_str;		/* start of token to return */
 
-	local_str = pg_strtok_ptr;
+	local_str = mdb_strtok_ptr;
 
 	while (*local_str == ' ' || *local_str == '\n' || *local_str == '\t')
 		local_str++;
@@ -117,7 +117,7 @@ pg_strtok(int *length)
 	if (*local_str == '\0')
 	{
 		*length = 0;
-		pg_strtok_ptr = local_str;
+		mdb_strtok_ptr = local_str;
 		return NULL;			/* no more tokens */
 	}
 
@@ -154,7 +154,7 @@ pg_strtok(int *length)
 	if (*length == 2 && ret_str[0] == '<' && ret_str[1] == '>')
 		*length = 0;
 
-	pg_strtok_ptr = local_str;
+	mdb_strtok_ptr = local_str;
 
 	return ret_str;
 }
@@ -236,7 +236,7 @@ nodeTokenType(char *token, int length)
 	}
 
 	/*
-	 * these three cases do not need length checks, since pg_strtok() will
+	 * these three cases do not need length checks, since mdb_strtok() will
 	 * always treat them as single-byte tokens
 	 */
 	else if (*token == '(')
@@ -259,7 +259,7 @@ nodeTokenType(char *token, int length)
  *	  Slightly higher-level reader.
  *
  * This routine applies some semantic knowledge on top of the purely
- * lexical tokenizer pg_strtok().   It can read
+ * lexical tokenizer mdb_strtok().   It can read
  *	* Value token nodes (integers, floats, or strings);
  *	* General nodes (via parseNodeString() from readfuncs.c);
  *	* Lists of the above;
@@ -271,7 +271,7 @@ nodeTokenType(char *token, int length)
  * a non-NULL token may be passed when the upper recursion level has already
  * scanned the first token of a node's representation.
  *
- * We assume pg_strtok is already initialized with a string to read (hence
+ * We assume mdb_strtok is already initialized with a string to read (hence
  * this should only be invoked from within a stringToNode operation).
  */
 void *
@@ -282,7 +282,7 @@ nodeRead(char *token, int tok_len)
 
 	if (token == NULL)			/* need to read a token? */
 	{
-		token = pg_strtok(&tok_len);
+		token = mdb_strtok(&tok_len);
 
 		if (token == NULL)		/* end of input */
 			return NULL;
@@ -294,7 +294,7 @@ nodeRead(char *token, int tok_len)
 	{
 		case LEFT_BRACE:
 			result = parseNodeString();
-			token = pg_strtok(&tok_len);
+			token = mdb_strtok(&tok_len);
 			if (token == NULL || token[0] != '}')
 				elog(ERROR, "did not find '}' at end of input node");
 			break;
@@ -308,7 +308,7 @@ nodeRead(char *token, int tok_len)
 				 * or a list of nodes/values:	(node node ...)
 				 *----------
 				 */
-				token = pg_strtok(&tok_len);
+				token = mdb_strtok(&tok_len);
 				if (token == NULL)
 					elog(ERROR, "unterminated List structure");
 				if (tok_len == 1 && token[0] == 'i')
@@ -319,7 +319,7 @@ nodeRead(char *token, int tok_len)
 						int			val;
 						char	   *endptr;
 
-						token = pg_strtok(&tok_len);
+						token = mdb_strtok(&tok_len);
 						if (token == NULL)
 							elog(ERROR, "unterminated List structure");
 						if (token[0] == ')')
@@ -339,7 +339,7 @@ nodeRead(char *token, int tok_len)
 						Oid			val;
 						char	   *endptr;
 
-						token = pg_strtok(&tok_len);
+						token = mdb_strtok(&tok_len);
 						if (token == NULL)
 							elog(ERROR, "unterminated List structure");
 						if (token[0] == ')')
@@ -360,7 +360,7 @@ nodeRead(char *token, int tok_len)
 						if (token[0] == ')')
 							break;
 						l = lappend(l, nodeRead(token, tok_len));
-						token = pg_strtok(&tok_len);
+						token = mdb_strtok(&tok_len);
 						if (token == NULL)
 							elog(ERROR, "unterminated List structure");
 					}

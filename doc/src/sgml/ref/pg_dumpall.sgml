@@ -1,27 +1,27 @@
 <!--
-doc/src/sgml/ref/pg_dumpall.sgml
+doc/src/sgml/ref/mdb_dumpall.sgml
 MollyDB documentation
 -->
 
 <refentry id="APP-PG-DUMPALL">
  <indexterm zone="app-pg-dumpall">
-  <primary>pg_dumpall</primary>
+  <primary>mdb_dumpall</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle><application>pg_dumpall</application></refentrytitle>
+  <refentrytitle><application>mdb_dumpall</application></refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_dumpall</refname>
+  <refname>mdb_dumpall</refname>
   <refpurpose>extract a <productname>MollyDB</productname> database cluster into a script file</refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_dumpall</command>
+   <command>mdb_dumpall</command>
    <arg rep="repeat"><replaceable>connection-option</replaceable></arg>
    <arg rep="repeat"><replaceable>option</replaceable></arg>
   </cmdsynopsis>
@@ -31,22 +31,22 @@ MollyDB documentation
   <title>Description</title>
 
   <para>
-   <application>pg_dumpall</application> is a utility for writing out
+   <application>mdb_dumpall</application> is a utility for writing out
    (<quote>dumping</quote>) all <productname>MollyDB</> databases
    of a cluster into one script file.  The script file contains
    <acronym>SQL</acronym> commands that can be used as input to <xref
    linkend="app-psql"> to restore the databases.  It does this by
    calling <xref linkend="app-pgdump"> for each database in a cluster.
-   <application>pg_dumpall</application> also dumps global objects
+   <application>mdb_dumpall</application> also dumps global objects
    that are common to all databases.
-   (<application>pg_dump</application> does not save these objects.)
+   (<application>mdb_dump</application> does not save these objects.)
    This currently includes information about database users and
    groups, tablespaces, and properties such as access permissions
    that apply to databases as a whole.
   </para>
 
   <para>
-   Since <application>pg_dumpall</application> reads tables from all
+   Since <application>mdb_dumpall</application> reads tables from all
    databases you will most likely have to connect as a database
    superuser in order to produce a complete dump.  Also you will need
    superuser privileges to execute the saved script in order to be
@@ -59,7 +59,7 @@ MollyDB documentation
   </para>
 
   <para>
-  <application>pg_dumpall</application> needs to connect several
+  <application>mdb_dumpall</application> needs to connect several
   times to the <productname>MollyDB</productname> server (once per
   database).  If you use password authentication it will ask for
   a password each time. It is convenient to have a
@@ -141,7 +141,7 @@ MollyDB documentation
        <para>
         Do not output commands to set
         ownership of objects to match the original database.
-        By default, <application>pg_dumpall</application> issues
+        By default, <application>mdb_dumpall</application> issues
         <command>ALTER OWNER</> or
         <command>SET SESSION AUTHORIZATION</command>
         statements to set ownership of created schema elements.
@@ -203,9 +203,9 @@ MollyDB documentation
       <listitem>
        <para>
         Specifies verbose mode.  This will cause
-        <application>pg_dumpall</application> to output start/stop
+        <application>mdb_dumpall</application> to output start/stop
         times to the dump file, and progress messages to standard error.
-        It will also enable verbose output in <application>pg_dump</>.
+        It will also enable verbose output in <application>mdb_dump</>.
        </para>
       </listitem>
      </varlistentry>
@@ -215,7 +215,7 @@ MollyDB documentation
        <term><option>--version</></term>
        <listitem>
        <para>
-       Print the <application>pg_dumpall</application> version and exit.
+       Print the <application>mdb_dumpall</application> version and exit.
        </para>
        </listitem>
      </varlistentry>
@@ -274,7 +274,7 @@ MollyDB documentation
       <listitem>
        <para>
         This option is relevant only when creating a data-only dump.
-        It instructs <application>pg_dumpall</application> to include commands
+        It instructs <application>mdb_dumpall</application> to include commands
         to temporarily disable triggers on the target tables while
         the data is reloaded.  Use this if you have referential
         integrity checks or other triggers on the tables that you
@@ -370,9 +370,9 @@ MollyDB documentation
        <para>
         Force quoting of all identifiers.  This option is recommended when
         dumping a database from a server whose <productname>MollyDB</>
-        major version is different from <application>pg_dumpall</>'s, or when
+        major version is different from <application>mdb_dumpall</>'s, or when
         the output is intended to be loaded into a server of a different
-        major version.  By default, <application>pg_dumpall</> quotes only
+        major version.  By default, <application>mdb_dumpall</> quotes only
         identifiers that are reserved words in its own major version.
         This sometimes results in compatibility issues when dealing with
         servers of other versions that may have slightly different sets
@@ -400,7 +400,7 @@ MollyDB documentation
        <term><option>--help</></term>
        <listitem>
        <para>
-       Show help about <application>pg_dumpall</application> command line
+       Show help about <application>mdb_dumpall</application> command line
        arguments, and exit.
        </para>
        </listitem>
@@ -423,7 +423,7 @@ MollyDB documentation
        </para>
        <para>
         The option is called <literal>--dbname</> for consistency with other
-        client applications, but because <application>pg_dumpall</application>
+        client applications, but because <application>mdb_dumpall</application>
         needs to connect to many databases, database name in the connection
         string will be ignored. Use <literal>-l</literal> option to specify
         the name of the database used to dump global objects and to discover
@@ -502,15 +502,15 @@ MollyDB documentation
       <term><option>--password</option></term>
       <listitem>
        <para>
-        Force <application>pg_dumpall</application> to prompt for a
+        Force <application>mdb_dumpall</application> to prompt for a
         password before connecting to a database.
        </para>
 
        <para>
         This option is never essential, since
-        <application>pg_dumpall</application> will automatically prompt
+        <application>mdb_dumpall</application> will automatically prompt
         for a password if the server demands password authentication.
-        However, <application>pg_dumpall</application> will waste a
+        However, <application>mdb_dumpall</application> will waste a
         connection attempt finding out that the server wants a password.
         In some cases it is worth typing <option>-W</> to avoid the extra
         connection attempt.
@@ -529,11 +529,11 @@ MollyDB documentation
       <listitem>
        <para>
         Specifies a role name to be used to create the dump.
-        This option causes <application>pg_dumpall</> to issue a
+        This option causes <application>mdb_dumpall</> to issue a
         <command>SET ROLE</> <replaceable class="parameter">rolename</>
         command after connecting to the database. It is useful when the
         authenticated user (specified by <option>-U</>) lacks privileges
-        needed by <application>pg_dumpall</>, but can switch to a role with
+        needed by <application>mdb_dumpall</>, but can switch to a role with
         the required rights.  Some installations have a policy against
         logging in directly as a superuser, and use of this option allows
         dumps to be made without violating the policy.
@@ -576,9 +576,9 @@ MollyDB documentation
   <title>Notes</title>
 
   <para>
-   Since <application>pg_dumpall</application> calls
-   <application>pg_dump</application> internally, some diagnostic
-   messages will refer to <application>pg_dump</application>.
+   Since <application>mdb_dumpall</application> calls
+   <application>mdb_dump</application> internally, some diagnostic
+   messages will refer to <application>mdb_dump</application>.
   </para>
 
   <para>
@@ -589,7 +589,7 @@ MollyDB documentation
   </para>
 
   <para>
-   <application>pg_dumpall</application> requires all needed
+   <application>mdb_dumpall</application> requires all needed
    tablespace directories to exist before the restore;  otherwise,
    database creation will fail for databases in non-default
    locations.
@@ -603,7 +603,7 @@ MollyDB documentation
    To dump all databases:
 
 <screen>
-<prompt>$</prompt> <userinput>pg_dumpall &gt; db.out</userinput>
+<prompt>$</prompt> <userinput>mdb_dumpall &gt; db.out</userinput>
 </screen>
   </para>
 
@@ -613,7 +613,7 @@ MollyDB documentation
 <prompt>$</prompt> <userinput>psql -f db.out mollydb</userinput>
 </screen>
    (It is not important to which database you connect here since the
-   script file created by <application>pg_dumpall</application> will
+   script file created by <application>mdb_dumpall</application> will
    contain the appropriate commands to create and connect to the saved
    databases.)
   </para>

@@ -31,7 +31,7 @@
  *		which case we need to separately record prepared transaction data
  *		in permanent storage. This includes locking information, pending
  *		notifications etc. All that state information is written to the
- *		per-transaction state file in the pg_twophase directory.
+ *		per-transaction state file in the mdb_twophase directory.
  *		All prepared transactions will be written prior to shutdown.
  *
  *		Life track of state data is following:
@@ -41,7 +41,7 @@
  *		  gxact->prepare_start_lsn.
  *		* If COMMIT occurs before checkpoint then backend reads data from WAL
  *		  using prepare_start_lsn.
- *		* On checkpoint state data copied to files in pg_twophase directory and
+ *		* On checkpoint state data copied to files in mdb_twophase directory and
  *		  fsynced
  *		* If COMMIT happens after checkpoint then backend reads state data from
  *		  files
@@ -69,11 +69,11 @@
 #include "access/xloginsert.h"
 #include "access/xlogutils.h"
 #include "access/xlogreader.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "catalog/storage.h"
 #include "funcapi.h"
 #include "miscadmin.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "pgstat.h"
 #include "replication/origin.h"
 #include "replication/syncrep.h"
@@ -93,7 +93,7 @@
 /*
  * Directory where Two-phase commit files reside within PGDATA
  */
-#define TWOPHASE_DIR "pg_twophase"
+#define TWOPHASE_DIR "mdb_twophase"
 
 /* GUC variable, can't be changed after startup */
 int			max_prepared_xacts = 0;
@@ -615,7 +615,7 @@ RemoveGXact(GlobalTransaction gxact)
 
 /*
  * Returns an array of all prepared transactions for the user-level
- * function pg_prepared_xact.
+ * function mdb_prepared_xact.
  *
  * The returned array and all its elements are copies of internal data
  * structures, to minimize the time we need to hold the TwoPhaseStateLock.
@@ -655,7 +655,7 @@ GetPreparedTransactionList(GlobalTransaction *gxacts)
 }
 
 
-/* Working status for pg_prepared_xact */
+/* Working status for mdb_prepared_xact */
 typedef struct
 {
 	GlobalTransaction array;
@@ -664,14 +664,14 @@ typedef struct
 } Working_State;
 
 /*
- * pg_prepared_xact
+ * mdb_prepared_xact
  *		Produce a view with one row per prepared transaction.
  *
  * This function is here so we don't have to export the
  * GlobalTransactionData struct definition.
  */
 Datum
-pg_prepared_xact(PG_FUNCTION_ARGS)
+mdb_prepared_xact(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Working_State *status;
@@ -690,7 +690,7 @@ pg_prepared_xact(PG_FUNCTION_ARGS)
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		/* build tupdesc for result tuples */
-		/* this had better match pg_prepared_xacts view in system_views.sql */
+		/* this had better match mdb_prepared_xacts view in system_views.sql */
 		tupdesc = CreateTemplateTupleDesc(5, false);
 		TupleDescInitEntry(tupdesc, (AttrNumber) 1, "transaction",
 						   XIDOID, -1, 0);
@@ -1029,7 +1029,7 @@ EndPrepare(GlobalTransaction gxact)
 	/* Go back and fill in total_len in the file header record */
 	hdr = (TwoPhaseFileHeader *) records.head->data;
 	Assert(hdr->magic == TWOPHASE_MAGIC);
-	hdr->total_len = records.total_len + sizeof(pg_crc32c);
+	hdr->total_len = records.total_len + sizeof(mdb_crc32c);
 
 	/*
 	 * If the data size exceeds MaxAllocSize, we won't be able to read it in
@@ -1146,7 +1146,7 @@ ReadTwoPhaseFile(TransactionId xid, bool give_warnings)
 	int			fd;
 	struct stat stat;
 	uint32		crc_offset;
-	pg_crc32c	calc_crc,
+	mdb_crc32c	calc_crc,
 				file_crc;
 
 	TwoPhaseFilePath(path, xid);
@@ -1181,14 +1181,14 @@ ReadTwoPhaseFile(TransactionId xid, bool give_warnings)
 
 	if (stat.st_size < (MAXALIGN(sizeof(TwoPhaseFileHeader)) +
 						MAXALIGN(sizeof(TwoPhaseRecordOnDisk)) +
-						sizeof(pg_crc32c)) ||
+						sizeof(mdb_crc32c)) ||
 		stat.st_size > MaxAllocSize)
 	{
 		CloseTransientFile(fd);
 		return NULL;
 	}
 
-	crc_offset = stat.st_size - sizeof(pg_crc32c);
+	crc_offset = stat.st_size - sizeof(mdb_crc32c);
 	if (crc_offset != MAXALIGN(crc_offset))
 	{
 		CloseTransientFile(fd);
@@ -1225,7 +1225,7 @@ ReadTwoPhaseFile(TransactionId xid, bool give_warnings)
 	COMP_CRC32C(calc_crc, buf, crc_offset);
 	FIN_CRC32C(calc_crc);
 
-	file_crc = *((pg_crc32c *) (buf + crc_offset));
+	file_crc = *((mdb_crc32c *) (buf + crc_offset));
 
 	if (!EQ_CRC32C(calc_crc, file_crc))
 	{
@@ -1380,7 +1380,7 @@ FinishPreparedTransaction(const char *gid, bool isCommit)
 	/*
 	 * The order of operations here is critical: make the XLOG entry for
 	 * commit or abort, then mark the transaction committed or aborted in
-	 * pg_clog, then remove its PGPROC from the global ProcArray (which means
+	 * mdb_clog, then remove its PGPROC from the global ProcArray (which means
 	 * TransactionIdIsInProgress will stop saying the prepared xact is in
 	 * progress), then run the post-commit or post-abort callbacks. The
 	 * callbacks will release the locks the transaction held.
@@ -1523,7 +1523,7 @@ void
 RecreateTwoPhaseFile(TransactionId xid, void *content, int len)
 {
 	char		path[MAXPGPATH];
-	pg_crc32c	statefile_crc;
+	mdb_crc32c	statefile_crc;
 	int			fd;
 
 	/* Recompute CRC */
@@ -1550,7 +1550,7 @@ RecreateTwoPhaseFile(TransactionId xid, void *content, int len)
 				(errcode_for_file_access(),
 				 errmsg("could not write two-phase state file: %m")));
 	}
-	if (write(fd, &statefile_crc, sizeof(pg_crc32c)) != sizeof(pg_crc32c))
+	if (write(fd, &statefile_crc, sizeof(mdb_crc32c)) != sizeof(mdb_crc32c))
 	{
 		CloseTransientFile(fd);
 		ereport(ERROR,
@@ -1562,7 +1562,7 @@ RecreateTwoPhaseFile(TransactionId xid, void *content, int len)
 	 * We must fsync the file because the end-of-replay checkpoint will not do
 	 * so, there being no GXACT in shared memory yet to tell it to.
 	 */
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 	{
 		CloseTransientFile(fd);
 		ereport(ERROR,
@@ -1656,14 +1656,14 @@ CheckPointTwoPhase(XLogRecPtr redo_horizon)
 /*
  * PrescanPreparedTransactions
  *
- * Scan the pg_twophase directory and determine the range of valid XIDs
+ * Scan the mdb_twophase directory and determine the range of valid XIDs
  * present.  This is run during database startup, after we have completed
  * reading WAL.  ShmemVariableCache->nextXid has been set to one more than
  * the highest XID for which evidence exists in WAL.
  *
  * We throw away any prepared xacts with main XID beyond nextXid --- if any
  * are present, it suggests that the DBA has done a PITR recovery to an
- * earlier point in time without cleaning out pg_twophase.  We dare not
+ * earlier point in time without cleaning out mdb_twophase.  We dare not
  * try to recover such prepared xacts since they likely depend on database
  * state that doesn't exist now.
  *
@@ -1674,7 +1674,7 @@ CheckPointTwoPhase(XLogRecPtr redo_horizon)
  *
  * Our other responsibility is to determine and return the oldest valid XID
  * among the prepared xacts (if none, return ShmemVariableCache->nextXid).
- * This is needed to synchronize pg_subtrans startup properly.
+ * This is needed to synchronize mdb_subtrans startup properly.
  *
  * If xids_p and nxids_p are not NULL, pointer to a palloc'd array of all
  * top-level xids is stored in *xids_p. The number of entries in the array
@@ -1811,14 +1811,14 @@ PrescanPreparedTransactions(TransactionId **xids_p, int *nxids_p)
 /*
  * StandbyRecoverPreparedTransactions
  *
- * Scan the pg_twophase directory and setup all the required information to
+ * Scan the mdb_twophase directory and setup all the required information to
  * allow standby queries to treat prepared transactions as still active.
  * This is never called at the end of recovery - we use
  * RecoverPreparedTransactions() at that point.
  *
  * Currently we simply call SubTransSetParent() for any subxids of prepared
  * transactions. If overwriteOK is true, it's OK if some XIDs have already
- * been marked in pg_subtrans.
+ * been marked in mdb_subtrans.
  */
 void
 StandbyRecoverPreparedTransactions(bool overwriteOK)
@@ -1894,7 +1894,7 @@ StandbyRecoverPreparedTransactions(bool overwriteOK)
 /*
  * RecoverPreparedTransactions
  *
- * Scan the pg_twophase directory and reload shared-memory state for each
+ * Scan the mdb_twophase directory and reload shared-memory state for each
  * prepared transaction (reacquire locks, etc).  This is run during database
  * startup.
  */
@@ -1972,7 +1972,7 @@ RecoverPreparedTransactions(void)
 
 			/*
 			 * Reconstruct subtrans state for the transaction --- needed
-			 * because pg_subtrans is not preserved over a restart.  Note that
+			 * because mdb_subtrans is not preserved over a restart.  Note that
 			 * we are linking all the subtransactions directly to the
 			 * top-level XID; there may originally have been a more complex
 			 * hierarchy, but there's no need to restore that exactly.
@@ -2089,7 +2089,7 @@ RecordTransactionCommitPrepared(TransactionId xid,
 	/* Flush XLOG to disk */
 	XLogFlush(recptr);
 
-	/* Mark the transaction committed in pg_clog */
+	/* Mark the transaction committed in mdb_clog */
 	TransactionIdCommitTree(xid, nchildren, children);
 
 	/* Checkpoint can proceed now */

@@ -254,7 +254,7 @@
 2016-03-01 [a892234f8] Change the format of the VM fork to add a second bit per
 2016-03-08 [77a1d1e79] Department of second thoughts: remove PD_ALL_FROZEN.
 2016-03-10 [fd31cd265] Don't vacuum all-frozen pages.
-2016-03-11 [7087166a8] pg_upgrade: Convert old visibility map format to new for
+2016-03-11 [7087166a8] mdb_upgrade: Convert old visibility map format to new for
 -->
        <para>
         Avoid re-vacuuming pages containing only frozen tuples
@@ -481,7 +481,7 @@
 -->
        <para>
         Speed up visibility tests for recently-created tuples by checking
-        our transaction snapshot, not <structname>pg_clog</>, to decide if the
+        our transaction snapshot, not <structname>mdb_clog</>, to decide if the
         source transaction should be considered committed (Jeff Janes, Tom
         Lane)
        </para>
@@ -749,11 +749,11 @@
 
       <listitem>
 <!--
-2016-03-10 [53be0b1ad] Provide much better wait information in pg_stat_activity
+2016-03-10 [53be0b1ad] Provide much better wait information in mdb_stat_activity
 -->
        <para>
         Improve the <link
-        linkend="pg-stat-activity-view"><structname>pg_stat_activity</></link>
+        linkend="pg-stat-activity-view"><structname>mdb_stat_activity</></link>
         view's information about what a process is waiting for (Amit Kapila,
         Ildus Kurbangaliev)
        </para>
@@ -761,7 +761,7 @@
        <para>
         Historically a process has only been shown as waiting if it was
         waiting for a heavyweight lock.  Now waits for lightweight locks
-        and buffer pins are also shown in <structname>pg_stat_activity</>.
+        and buffer pins are also shown in <structname>mdb_stat_activity</>.
         Also, the type of lock being waited for is now visible.
         These changes replace the <structfield>waiting</> column
         with <structfield>wait_event_type</> and <structfield>wait_event</>.
@@ -773,7 +773,7 @@
 2016-03-15 [c16dc1aca] Add simple VACUUM progress reporting.
 -->
        <para>
-        Add <link linkend="pg-stat-progress-vacuum-view"><structname>pg_stat_progress_vacuum</></link>
+        Add <link linkend="pg-stat-progress-vacuum-view"><structname>mdb_stat_progress_vacuum</></link>
         system view to provide progress reporting for <command>VACUUM</>
         operations (Amit Langote, Robert Haas, Vinayak Pokale, Rahila Syed)
        </para>
@@ -781,27 +781,27 @@
 
       <listitem>
 <!--
-2016-02-17 [a5c43b886] Add new system view, pg_config
+2016-02-17 [a5c43b886] Add new system view, mdb_config
 -->
        <para>
-        Add <link linkend="view-pg-config"><structname>pg_config</></link>
+        Add <link linkend="view-pg-config"><structname>mdb_config</></link>
         system view (Joe Conway)
        </para>
 
        <para>
         This view exposes the same information available from
-        the <application>pg_config</> utility, namely assorted compile-time
+        the <application>mdb_config</> utility, namely assorted compile-time
         configuration information for <productname>MollyDB</>.
        </para>
       </listitem>
 
       <listitem>
 <!--
-2015-08-10 [3f811c2d6] Add confirmed_flush column to pg_replication_slots.
+2015-08-10 [3f811c2d6] Add confirmed_flush column to mdb_replication_slots.
 -->
        <para>
         Add a <structfield>confirmed_flush_lsn</> column to
-        the <link linkend="view-pg-replication-slots"><structname>pg_replication_slots</></link>
+        the <link linkend="view-pg-replication-slots"><structname>mdb_replication_slots</></link>
         system view (Marko Tiikkaja)
        </para>
       </listitem>
@@ -811,7 +811,7 @@
 2016-01-07 [b1a9bad9e] pgstat: add WAL receiver status view & SRF
 -->
        <para>
-        Add <link linkend="pg-stat-wal-receiver-view"><structname>pg_stat_wal_receiver</></link>
+        Add <link linkend="pg-stat-wal-receiver-view"><structname>mdb_stat_wal_receiver</></link>
         system view to provide information about the state of a hot-standby
         server's WAL receiver process (Michael Paquier)
        </para>
@@ -822,7 +822,7 @@
 2016-02-22 [52f5d578d] Create a function to reliably identify which sessions bl
 -->
        <para>
-        Add <function>pg_blocking_pids()</> function to reliably identify
+        Add <function>mdb_blocking_pids()</> function to reliably identify
         which sessions block which others (Tom Lane)
        </para>
 
@@ -830,7 +830,7 @@
         This function returns an array of the process IDs of any sessions that
         are blocking the session with the given process ID.  Historically
         users have obtained such information using a self-join on
-        the <structname>pg_locks</> view; but it's unreasonably tedious to do
+        the <structname>mdb_locks</> view; but it's unreasonably tedious to do
         it that way with any modicum of correctness, and the addition of
         parallel queries has made the approach entirely impractical, since
         locks might be held or awaited by child worker processes rather than
@@ -843,30 +843,30 @@
 2016-03-05 [dc7d70ea0] Expose control file data via SQL accessible functions.
 -->
        <para>
-        Add <function>pg_control_system()</>,
-        <function>pg_control_checkpoint()</>,
-        <function>pg_control_recovery()</>,
-        and <function>pg_control_init()</> functions to expose fields
-        of <filename>pg_control</> to SQL (Joe Conway, Michael Paquier)
+        Add <function>mdb_control_system()</>,
+        <function>mdb_control_checkpoint()</>,
+        <function>mdb_control_recovery()</>,
+        and <function>mdb_control_init()</> functions to expose fields
+        of <filename>mdb_control</> to SQL (Joe Conway, Michael Paquier)
        </para>
       </listitem>
 
       <listitem>
 <!--
-2016-01-12 [e63bb4549] Add new user fn pg_current_xlog_flush_location()
+2016-01-12 [e63bb4549] Add new user fn mdb_current_xlog_flush_location()
 -->
        <para>
-        Add function <function>pg_current_xlog_flush_location()</> to expose
+        Add function <function>mdb_current_xlog_flush_location()</> to expose
         the current transaction log flush location (Tomas Vondra)
        </para>
       </listitem>
 
       <listitem>
 <!--
-2015-07-17 [a04bb65f7] Add new function pg_notification_queue_usage.
+2015-07-17 [a04bb65f7] Add new function mdb_notification_queue_usage.
 -->
        <para>
-        Add function <function>pg_notification_queue_usage()</> to report
+        Add function <function>mdb_notification_queue_usage()</> to report
         how full the <command>NOTIFY</> queue is (Brendan Jurd)
        </para>
       </listitem>
@@ -892,7 +892,7 @@
 2016-02-12 [59a884e98] Change delimiter used for display of NextXID
 -->
        <para>
-        Change display format for NextXID in <application>pg_controldata</>
+        Change display format for NextXID in <application>mdb_controldata</>
         and related places (Joe Conway, Bruce Momjian)
        </para>
 
@@ -1224,12 +1224,12 @@ XXX this is pending backpatch, may need to remove
 
       <listitem>
 <!--
-2015-08-11 [6fcd88511] Allow pg_create_physical_replication_slot() to reserve W
+2015-08-11 [6fcd88511] Allow mdb_create_physical_replication_slot() to reserve W
 2015-09-06 [c314ead5b] Add ability to reserve WAL upon slot creation via replic
 -->
        <para>
         Add a feature to the replication protocol, and a corresponding option
-        to the <function>pg_create_physical_replication_slot()</> function,
+        to the <function>mdb_create_physical_replication_slot()</> function,
         to allow reserving WAL immediately when creating a replication slot
         (Gurjeet Singh, Michael Paquier)
        </para>
@@ -1242,15 +1242,15 @@ XXX this is pending backpatch, may need to remove
 
       <listitem>
 <!--
-2015-07-28 [0dc848b03] pg_basebackup: Add -slot option
+2015-07-28 [0dc848b03] mdb_basebackup: Add -slot option
 -->
        <para>
-        Add a <option>--slot</option> option to <application>pg_basebackup</>
+        Add a <option>--slot</option> option to <application>mdb_basebackup</>
         (Peter Eisentraut)
        </para>
 
        <para>
-        This lets <application>pg_basebackup</> use a replication slot defined
+        This lets <application>mdb_basebackup</> use a replication slot defined
         for WAL streaming.  After the base backup completes, selecting the
         same slot for regular streaming replication allows seamless startup of
         the new standby server.
@@ -1262,7 +1262,7 @@ XXX this is pending backpatch, may need to remove
 2016-04-05 [711768546] Implement backup API functions for non-exclusive backups
 -->
        <para>
-        Extend <function>pg_start_backup()</> and <function>pg_stop_backup()</>
+        Extend <function>mdb_start_backup()</> and <function>mdb_stop_backup()</>
         to support non-exclusive backups (Magnus Hagander)
        </para>
       </listitem>
@@ -1370,7 +1370,7 @@ XXX this is pending backpatch, may need to remove
         extension, so that it will automatically go away if the extension is
         dropped (without needing <literal>CASCADE</>).  But the object is not
         part of the extension, and thus for example will be dumped separately
-        by <application>pg_dump</>.
+        by <application>mdb_dump</>.
        </para>
       </listitem>
 
@@ -1492,8 +1492,8 @@ XXX this is pending backpatch, may need to remove
 -->
        <para>
         Fix <command>DROP OPERATOR</> to
-        clear <structname>pg_operator</>.<structfield>oprcom</>
-        and <structname>pg_operator</>.<structfield>oprnegate</> links to the
+        clear <structname>mdb_operator</>.<structfield>oprcom</>
+        and <structname>mdb_operator</>.<structfield>oprnegate</> links to the
         dropped operator (Roma Sokolov)
        </para>
 
@@ -1553,12 +1553,12 @@ XXX this is pending backpatch, may need to remove
 
       <listitem>
 <!--
-2016-04-08 [293007898] Reserve the "pg_" namespace for roles
+2016-04-08 [293007898] Reserve the "mdb_" namespace for roles
 2016-05-06 [a89505fd2] Remove various special checks around default roles
-2016-05-08 [7df974ee0] Disallow superuser names starting with 'pg_' in initdb
+2016-05-08 [7df974ee0] Disallow superuser names starting with 'mdb_' in initdb
 -->
        <para>
-        Treat role names beginning with <literal>pg_</> as reserved
+        Treat role names beginning with <literal>mdb_</> as reserved
         (Stephen Frost)
        </para>
 
@@ -1958,27 +1958,27 @@ XXX this is pending backpatch, may need to remove
 
       <listitem>
 <!--
-2016-02-20 [53874c522] Add pg_size_bytes() to parse human-readable size strings
+2016-02-20 [53874c522] Add mdb_size_bytes() to parse human-readable size strings
 -->
        <para>
-        Add <function>pg_size_bytes()</> function to convert human-readable
+        Add <function>mdb_size_bytes()</> function to convert human-readable
         size strings to numbers (Pavel Stehule, Vitaly Burovoy, Dean Rasheed)
        </para>
 
        <para>
         This function converts strings like those produced
-        by <function>pg_size_pretty()</> into sizes in bytes.  An example
-        usage is <literal>SELECT oid::regclass FROM pg_class WHERE
-        pg_total_relation_size(oid) &gt; pg_size_bytes('10 GB')</>.
+        by <function>mdb_size_pretty()</> into sizes in bytes.  An example
+        usage is <literal>SELECT oid::regclass FROM mdb_class WHERE
+        mdb_total_relation_size(oid) &gt; mdb_size_bytes('10 GB')</>.
        </para>
       </listitem>
 
       <listitem>
 <!--
-2015-11-06 [8a1fab36a] pg_size_pretty: Format negative values similar to positi
+2015-11-06 [8a1fab36a] mdb_size_pretty: Format negative values similar to positi
 -->
        <para>
-        In <function>pg_size_pretty()</>, format negative numbers similarly
+        In <function>mdb_size_pretty()</>, format negative numbers similarly
         to positive ones (Adrian Vondendriesch)
        </para>
 
@@ -2201,11 +2201,11 @@ This commit is also listed under psql and PL/pgSQL
 
       <listitem>
 <!--
-2015-09-14 [d02426029] Check existency of table/schema for -t/-n option (pg_dum
+2015-09-14 [d02426029] Check existency of table/schema for -t/-n option (mdb_dum
 -->
        <para>
-        Add <option>--strict-names</> option to <application>pg_dump</>
-        and <application>pg_restore</> (Pavel Stehule)
+        Add <option>--strict-names</> option to <application>mdb_dump</>
+        and <application>mdb_restore</> (Pavel Stehule)
        </para>
 
        <para>
@@ -2217,14 +2217,14 @@ This commit is also listed under psql and PL/pgSQL
 
       <listitem>
 <!--
-2016-04-06 [a9f0e8e5a] In pg_dump, use a bitmap to represent what to include
-2016-04-06 [d217b2c36] In pg_dump, split "dump" into "dump" and "dump_contains"
-2016-04-06 [23f34fa4b] In pg_dump, include pg_catalog and extension ACLs, if ch
-2016-05-06 [5d589993c] pg_dump performance and other fixes
+2016-04-06 [a9f0e8e5a] In mdb_dump, use a bitmap to represent what to include
+2016-04-06 [d217b2c36] In mdb_dump, split "dump" into "dump" and "dump_contains"
+2016-04-06 [23f34fa4b] In mdb_dump, include mdb_catalog and extension ACLs, if ch
+2016-05-06 [5d589993c] mdb_dump performance and other fixes
 2016-05-06 [e1b120a8c] Only issue LOCK TABLE commands when necessary
 -->
        <para>
-        In <application>pg_dump</>,
+        In <application>mdb_dump</>,
         dump locally-made changes in privilege assignments for system objects
         (Stephen Frost)
        </para>
@@ -2233,17 +2233,17 @@ This commit is also listed under psql and PL/pgSQL
         While it's always been possible for a superuser to change the
         privilege assignments for built-in or extension-created objects,
         such changes were formerly lost in a dump and reload.  Now,
-        <application>pg_dump</> recognizes and dumps such changes.
+        <application>mdb_dump</> recognizes and dumps such changes.
         (This works only when dumping from a 9.6 or later server, however.)
        </para>
       </listitem>
 
       <listitem>
 <!--
-2016-04-06 [3b3fcc4ee] pg_dump: Add table qualifications to some tags
+2016-04-06 [3b3fcc4ee] mdb_dump: Add table qualifications to some tags
 -->
        <para>
-        In <application>pg_dump</>, include the table name in object tags
+        In <application>mdb_dump</>, include the table name in object tags
         for object types that are only uniquely named per-table (for
         example, triggers) (Peter Eisentraut)
        </para>
@@ -2251,10 +2251,10 @@ This commit is also listed under psql and PL/pgSQL
 
       <listitem>
 <!--
-2015-07-02 [5671aaca8] Improve pg_restore's -t switch to match all types of rel
+2015-07-02 [5671aaca8] Improve mdb_restore's -t switch to match all types of rel
 -->
        <para>
-        Improve <application>pg_restore</>'s <option>-t</option> switch to
+        Improve <application>mdb_restore</>'s <option>-t</option> switch to
         match all types of relations, not only plain tables (Craig Ringer)
        </para>
       </listitem>
@@ -2629,10 +2629,10 @@ This commit is also listed under libpq and PL/pgSQL
 
       <listitem>
 <!--
-2015-12-01 [e50cda784] Use pg_rewind when target timeline was switched
+2015-12-01 [e50cda784] Use mdb_rewind when target timeline was switched
 -->
        <para>
-        Improve <application>pg_rewind</> so that it can work when the
+        Improve <application>mdb_rewind</> so that it can work when the
         target timeline changes (Alexander Korotkov)
        </para>
 
@@ -2684,7 +2684,7 @@ This commit is also listed under libpq and PL/pgSQL
 2016-03-03 [2c83f435a] Rework MollyDBNode's psql method
 2016-02-26 [49148645f] Add a test framework for recovery
 2016-02-26 [74d58425c] Apply last revision of recovery patch
-2016-05-06 [6bd356c33] Add TAP tests for pg_dump
+2016-05-06 [6bd356c33] Add TAP tests for mdb_dump
 -->
        <para>
         Improve TAP testing infrastructure
@@ -2726,10 +2726,10 @@ This commit is also listed under libpq and PL/pgSQL
 
       <listitem>
 <!--
-2016-01-05 [efa318bcf] Make pg_shseclabel available in early backend startup
+2016-01-05 [efa318bcf] Make mdb_shseclabel available in early backend startup
 -->
        <para>
-        Nail the <structname>pg_shseclabel</> system catalog into cache,
+        Nail the <structname>mdb_shseclabel</> system catalog into cache,
         so that it is available for access during connection authentication
         (Adam Brightwell)
        </para>
@@ -2755,23 +2755,23 @@ This commit is also listed under libpq and PL/pgSQL
         we've adopted for foreign data wrappers and tablesample handlers.
         This simplifies the C code and should make it more feasible to define
         index access methods in installable extensions.  A consequence is
-        that most of the columns of the <structname>pg_am</> system catalog
+        that most of the columns of the <structname>mdb_am</> system catalog
         have disappeared.
        </para>
       </listitem>
 
       <listitem>
 <!--
-2016-04-06 [6c268df12] Add new catalog called pg_init_privs
+2016-04-06 [6c268df12] Add new catalog called mdb_init_privs
 -->
        <para>
-        Add <structname>pg_init_privs</> system catalog to hold original
+        Add <structname>mdb_init_privs</> system catalog to hold original
         privileges of <application>initdb</>-created and extension-created
         objects (Stephen Frost)
        </para>
 
        <para>
-        This infrastructure allows <application>pg_dump</> to dump changes
+        This infrastructure allows <application>mdb_dump</> to dump changes
         that an installation may have made in privileges attached to system
         objects.  Formerly, such changes would be lost in a dump and reload,
         but now they can be preserved.
@@ -2869,7 +2869,7 @@ This commit is also listed under libpq and PL/pgSQL
 2016-03-18 [27199058d] Convert psql's flex lexer to be re-entrant, and make it
 2016-03-19 [0ea9efbe9] Split psql's lexer into two separate .l files for SQL an
 2016-03-20 [b6afae71a] Use %option bison-bridge in psql/pgbench lexers.
-2016-03-24 [588d963b0] Create src/fe_utils/, and move stuff into there from pg_
+2016-03-24 [588d963b0] Create src/fe_utils/, and move stuff into there from mdb_
 2016-03-24 [d65bea26a] Move psql's print.c and mbprint.c into src/fe_utils.
 2016-03-24 [c1156411a] Move psql's psqlscan.l into src/fe_utils.
 -->
@@ -3083,11 +3083,11 @@ This commit is also listed under libpq and PL/pgSQL
 
       <listitem>
 <!--
-2016-03-16 [f576b17cd] Add word_similarity to pg_trgm contrib module.
+2016-03-16 [f576b17cd] Add word_similarity to mdb_trgm contrib module.
 -->
        <para>
         Add support for <quote>word similarity</>
-        to <filename>contrib/pg_trgm</>
+        to <filename>contrib/mdb_trgm</>
         (Alexander Korotkov, Artur Zakirov)
        </para>
 
@@ -3099,11 +3099,11 @@ This commit is also listed under libpq and PL/pgSQL
 
       <listitem>
 <!--
-2016-03-16 [5871b8848] GUC variable pg_trgm.similarity_threshold insead of set_
+2016-03-16 [5871b8848] GUC variable mdb_trgm.similarity_threshold insead of set_
 -->
        <para>
-        Add configuration parameter <varname>pg_trgm.similarity_threshold</>
-        for <filename>contrib/pg_trgm</>'s similarity threshold
+        Add configuration parameter <varname>mdb_trgm.similarity_threshold</>
+        for <filename>contrib/mdb_trgm</>'s similarity threshold
         (Artur Zakirov)
        </para>
 
@@ -3116,30 +3116,30 @@ This commit is also listed under libpq and PL/pgSQL
 
       <listitem>
 <!--
-2015-07-20 [97f301464] This supports the triconsistent function for pg_trgm GIN
+2015-07-20 [97f301464] This supports the triconsistent function for mdb_trgm GIN
 -->
        <para>
-        Improve <filename>contrib/pg_trgm</>'s GIN operator class to speed up
+        Improve <filename>contrib/mdb_trgm</>'s GIN operator class to speed up
         index searches in which both common and rare keys appear (Jeff Janes)
        </para>
       </listitem>
 
       <listitem>
 <!--
-2015-12-25 [25bfa7efd] Improve the gin index scan performance in pg_trgm.
+2015-12-25 [25bfa7efd] Improve the gin index scan performance in mdb_trgm.
 -->
        <para>
         Improve performance of similarity searches in
-        <filename>contrib/pg_trgm</> GIN indexes (Christophe Fornaroli)
+        <filename>contrib/mdb_trgm</> GIN indexes (Christophe Fornaroli)
        </para>
       </listitem>
 
       <listitem>
 <!--
-2016-03-08 [ba0a198fb] Add pg_visibility contrib module.
+2016-03-08 [ba0a198fb] Add mdb_visibility contrib module.
 -->
        <para>
-        Add <filename>contrib/pg_visibility</> module to allow examining
+        Add <filename>contrib/mdb_visibility</> module to allow examining
         table visibility maps (Robert Haas)
        </para>
       </listitem>

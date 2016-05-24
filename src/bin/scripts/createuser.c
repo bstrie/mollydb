@@ -92,13 +92,13 @@ main(int argc, char *argv[])
 		switch (c)
 		{
 			case 'h':
-				host = pg_strdup(optarg);
+				host = mdb_strdup(optarg);
 				break;
 			case 'p':
-				port = pg_strdup(optarg);
+				port = mdb_strdup(optarg);
 				break;
 			case 'U':
-				username = pg_strdup(optarg);
+				username = mdb_strdup(optarg);
 				break;
 			case 'g':
 				simple_string_list_append(&roles, optarg);
@@ -145,7 +145,7 @@ main(int argc, char *argv[])
 				login = TRI_NO;
 				break;
 			case 'c':
-				conn_limit = pg_strdup(optarg);
+				conn_limit = mdb_strdup(optarg);
 				break;
 			case 'P':
 				pwprompt = true;

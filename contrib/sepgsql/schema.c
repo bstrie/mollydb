@@ -16,8 +16,8 @@
 #include "access/sysattr.h"
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_database.h"
-#include "catalog/pg_namespace.h"
+#include "catalog/mdb_database.h"
+#include "catalog/mdb_namespace.h"
 #include "commands/seclabel.h"
 #include "lib/stringinfo.h"
 #include "miscadmin.h"
@@ -45,7 +45,7 @@ semdb_schema_post_create(Oid namespaceId)
 	char	   *ncontext;
 	const char *nsp_name;
 	ObjectAddress object;
-	Form_pg_namespace nspForm;
+	Form_mdb_namespace nspForm;
 	StringInfoData audit_name;
 
 	/*
@@ -54,7 +54,7 @@ semdb_schema_post_create(Oid namespaceId)
 	 *
 	 * XXX - uncoming version of libselinux supports to take object name to
 	 * handle special treatment on default security label; such as special
-	 * label on "pg_temp" schema.
+	 * label on "mdb_temp" schema.
 	 */
 	rel = heap_open(NamespaceRelationId, AccessShareLock);
 
@@ -69,12 +69,12 @@ semdb_schema_post_create(Oid namespaceId)
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "catalog lookup failed for namespace %u", namespaceId);
 
-	nspForm = (Form_pg_namespace) GETSTRUCT(tuple);
+	nspForm = (Form_mdb_namespace) GETSTRUCT(tuple);
 	nsp_name = NameStr(nspForm->nspname);
-	if (strncmp(nsp_name, "pg_temp_", 8) == 0)
-		nsp_name = "pg_temp";
-	else if (strncmp(nsp_name, "pg_toast_temp_", 14) == 0)
-		nsp_name = "pg_toast_temp";
+	if (strncmp(nsp_name, "mdb_temp_", 8) == 0)
+		nsp_name = "mdb_temp";
+	else if (strncmp(nsp_name, "mdb_toast_temp_", 14) == 0)
+		nsp_name = "mdb_toast_temp";
 
 	tcontext = semdb_get_label(DatabaseRelationId, MyDatabaseId, 0);
 	ncontext = semdb_compute_create(semdb_get_client_label(),

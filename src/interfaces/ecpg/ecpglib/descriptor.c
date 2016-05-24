@@ -5,7 +5,7 @@
 
 #define POSTGRES_ECPG_INTERNAL
 #include "mollydb_fe.h"
-#include "pg_type.h"
+#include "mdb_type.h"
 
 #include "ecpg-pthread-win32.h"
 #include "ecpgtype.h"
@@ -58,9 +58,9 @@ static struct descriptor *all_descriptors = NULL;
 
 /* old internal convenience function that might go away later */
 static PGresult *
-ecpg_result_by_descriptor(int line, const char *name)
+ecmdb_result_by_descriptor(int line, const char *name)
 {
-	struct descriptor *desc = ecpg_find_desc(line, name);
+	struct descriptor *desc = ecmdb_find_desc(line, name);
 
 	if (desc == NULL)
 		return NULL;
@@ -68,7 +68,7 @@ ecpg_result_by_descriptor(int line, const char *name)
 }
 
 static unsigned int
-ecpg_dynamic_type_DDT(Oid type)
+ecmdb_dynamic_type_DDT(Oid type)
 {
 	switch (type)
 	{
@@ -95,19 +95,19 @@ ECPGget_desc_header(int lineno, const char *desc_name, int *count)
 
 	if (sqlca == NULL)
 	{
-		ecpg_raise(lineno, ECPG_OUT_OF_MEMORY,
+		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
 				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 
-	ecpg_init_sqlca(sqlca);
-	ECPGresult = ecpg_result_by_descriptor(lineno, desc_name);
+	ecmdb_init_sqlca(sqlca);
+	ECPGresult = ecmdb_result_by_descriptor(lineno, desc_name);
 	if (!ECPGresult)
 		return false;
 
 	*count = PQnfields(ECPGresult);
 	sqlca->sqlerrd[2] = 1;
-	ecpg_log("ECPGget_desc_header: found %d attributes\n", *count);
+	ecmdb_log("ECPGget_desc_header: found %d attributes\n", *count);
 	return true;
 }
 
@@ -149,7 +149,7 @@ get_int_item(int lineno, void *var, enum ECPGttype vartype, int value)
 			*(double *) var = (double) value;
 			break;
 		default:
-			ecpg_raise(lineno, ECPG_VAR_NOT_NUMERIC, ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
+			ecmdb_raise(lineno, ECPG_VAR_NOT_NUMERIC, ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
 			return (false);
 	}
 
@@ -194,7 +194,7 @@ set_int_item(int lineno, int *target, const void *var, enum ECPGttype vartype)
 			*target = *(const double *) var;
 			break;
 		default:
-			ecpg_raise(lineno, ECPG_VAR_NOT_NUMERIC, ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
+			ecmdb_raise(lineno, ECPG_VAR_NOT_NUMERIC, ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
 			return (false);
 	}
 
@@ -227,7 +227,7 @@ get_char_item(int lineno, void *var, enum ECPGttype vartype, char *value, int va
 			}
 			break;
 		default:
-			ecpg_raise(lineno, ECPG_VAR_NOT_CHAR, ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
+			ecmdb_raise(lineno, ECPG_VAR_NOT_CHAR, ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION, NULL);
 			return (false);
 	}
 
@@ -237,7 +237,7 @@ get_char_item(int lineno, void *var, enum ECPGttype vartype, char *value, int va
 #define RETURN_IF_NO_DATA	if (ntuples < 1) \
 				{ \
 					va_end(args); \
-					ecpg_raise(lineno, ECPG_NOT_FOUND, ECPG_SQLSTATE_NO_DATA, NULL); \
+					ecmdb_raise(lineno, ECPG_NOT_FOUND, ECPG_SQLSTATE_NO_DATA, NULL); \
 					return (false); \
 				}
 
@@ -254,14 +254,14 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 
 	if (sqlca == NULL)
 	{
-		ecpg_raise(lineno, ECPG_OUT_OF_MEMORY,
+		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
 				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 
 	va_start(args, index);
-	ecpg_init_sqlca(sqlca);
-	ECPGresult = ecpg_result_by_descriptor(lineno, desc_name);
+	ecmdb_init_sqlca(sqlca);
+	ECPGresult = ecmdb_result_by_descriptor(lineno, desc_name);
 	if (!ECPGresult)
 	{
 		va_end(args);
@@ -272,12 +272,12 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 
 	if (index < 1 || index > PQnfields(ECPGresult))
 	{
-		ecpg_raise(lineno, ECPG_INVALID_DESCRIPTOR_INDEX, ECPG_SQLSTATE_INVALID_DESCRIPTOR_INDEX, NULL);
+		ecmdb_raise(lineno, ECPG_INVALID_DESCRIPTOR_INDEX, ECPG_SQLSTATE_INVALID_DESCRIPTOR_INDEX, NULL);
 		va_end(args);
 		return (false);
 	}
 
-	ecpg_log("ECPGget_desc: reading items for tuple %d\n", index);
+	ecmdb_log("ECPGget_desc: reading items for tuple %d\n", index);
 	--index;
 
 	type = va_arg(args, enum ECPGdtype);
@@ -336,7 +336,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 					return (false);
 				}
 
-				ecpg_log("ECPGget_desc: NAME = %s\n", PQfname(ECPGresult, index));
+				ecmdb_log("ECPGget_desc: NAME = %s\n", PQfname(ECPGresult, index));
 				break;
 
 			case ECPGd_nullable:
@@ -364,7 +364,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 					return (false);
 				}
 
-				ecpg_log("ECPGget_desc: SCALE = %d\n", (PQfmod(ECPGresult, index) - VARHDRSZ) & 0xffff);
+				ecmdb_log("ECPGget_desc: SCALE = %d\n", (PQfmod(ECPGresult, index) - VARHDRSZ) & 0xffff);
 				break;
 
 			case ECPGd_precision:
@@ -374,7 +374,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 					return (false);
 				}
 
-				ecpg_log("ECPGget_desc: PRECISION = %d\n", PQfmod(ECPGresult, index) >> 16);
+				ecmdb_log("ECPGget_desc: PRECISION = %d\n", PQfmod(ECPGresult, index) >> 16);
 				break;
 
 			case ECPGd_octet:
@@ -384,7 +384,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 					return (false);
 				}
 
-				ecpg_log("ECPGget_desc: OCTET_LENGTH = %d\n", PQfsize(ECPGresult, index));
+				ecmdb_log("ECPGget_desc: OCTET_LENGTH = %d\n", PQfsize(ECPGresult, index));
 				break;
 
 			case ECPGd_length:
@@ -394,27 +394,27 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 					return (false);
 				}
 
-				ecpg_log("ECPGget_desc: LENGTH = %d\n", PQfmod(ECPGresult, index) - VARHDRSZ);
+				ecmdb_log("ECPGget_desc: LENGTH = %d\n", PQfmod(ECPGresult, index) - VARHDRSZ);
 				break;
 
 			case ECPGd_type:
-				if (!get_int_item(lineno, var, vartype, ecpg_dynamic_type(PQftype(ECPGresult, index))))
+				if (!get_int_item(lineno, var, vartype, ecmdb_dynamic_type(PQftype(ECPGresult, index))))
 				{
 					va_end(args);
 					return (false);
 				}
 
-				ecpg_log("ECPGget_desc: TYPE = %d\n", ecpg_dynamic_type(PQftype(ECPGresult, index)));
+				ecmdb_log("ECPGget_desc: TYPE = %d\n", ecmdb_dynamic_type(PQftype(ECPGresult, index)));
 				break;
 
 			case ECPGd_di_code:
-				if (!get_int_item(lineno, var, vartype, ecpg_dynamic_type_DDT(PQftype(ECPGresult, index))))
+				if (!get_int_item(lineno, var, vartype, ecmdb_dynamic_type_DDT(PQftype(ECPGresult, index))))
 				{
 					va_end(args);
 					return (false);
 				}
 
-				ecpg_log("ECPGget_desc: TYPE = %d\n", ecpg_dynamic_type_DDT(PQftype(ECPGresult, index)));
+				ecmdb_log("ECPGget_desc: TYPE = %d\n", ecmdb_dynamic_type_DDT(PQftype(ECPGresult, index)));
 				break;
 
 			case ECPGd_cardinality:
@@ -424,7 +424,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 					return (false);
 				}
 
-				ecpg_log("ECPGget_desc: CARDINALITY = %d\n", PQntuples(ECPGresult));
+				ecmdb_log("ECPGget_desc: CARDINALITY = %d\n", PQntuples(ECPGresult));
 				break;
 
 			case ECPGd_ret_length:
@@ -437,16 +437,16 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 				 */
 				if (arrsize > 0 && ntuples > arrsize)
 				{
-					ecpg_log("ECPGget_desc on line %d: incorrect number of matches; %d don't fit into array of %ld\n",
+					ecmdb_log("ECPGget_desc on line %d: incorrect number of matches; %d don't fit into array of %ld\n",
 							 lineno, ntuples, arrsize);
-					ecpg_raise(lineno, ECPG_TOO_MANY_MATCHES, ECPG_SQLSTATE_CARDINALITY_VIOLATION, NULL);
+					ecmdb_raise(lineno, ECPG_TOO_MANY_MATCHES, ECPG_SQLSTATE_CARDINALITY_VIOLATION, NULL);
 					va_end(args);
 					return false;
 				}
 				/* allocate storage if needed */
 				if (arrsize == 0 && *(void **) var == NULL)
 				{
-					void	   *mem = (void *) ecpg_auto_alloc(offset * ntuples, lineno);
+					void	   *mem = (void *) ecmdb_auto_alloc(offset * ntuples, lineno);
 
 					if (!mem)
 					{
@@ -465,13 +465,13 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 						return (false);
 					}
 					var = (char *) var + offset;
-					ecpg_log("ECPGget_desc: RETURNED[%d] = %d\n", act_tuple, PQgetlength(ECPGresult, act_tuple, index));
+					ecmdb_log("ECPGget_desc: RETURNED[%d] = %d\n", act_tuple, PQgetlength(ECPGresult, act_tuple, index));
 				}
 				break;
 
 			default:
 				snprintf(type_str, sizeof(type_str), "%d", type);
-				ecpg_raise(lineno, ECPG_UNKNOWN_DESCRIPTOR_ITEM, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, type_str);
+				ecmdb_raise(lineno, ECPG_UNKNOWN_DESCRIPTOR_ITEM, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, type_str);
 				va_end(args);
 				return (false);
 		}
@@ -486,18 +486,18 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 
 		/* Make sure we do NOT honor the locale for numeric input */
 		/* since the database gives the standard decimal point */
-		oldlocale = ecpg_strdup(setlocale(LC_NUMERIC, NULL), lineno);
+		oldlocale = ecmdb_strdup(setlocale(LC_NUMERIC, NULL), lineno);
 		setlocale(LC_NUMERIC, "C");
 
 		memset(&stmt, 0, sizeof stmt);
 		stmt.lineno = lineno;
 
 		/* desperate try to guess something sensible */
-		stmt.connection = ecpg_get_connection(NULL);
-		ecpg_store_result(ECPGresult, index, &stmt, &data_var);
+		stmt.connection = ecmdb_get_connection(NULL);
+		ecmdb_store_result(ECPGresult, index, &stmt, &data_var);
 
 		setlocale(LC_NUMERIC, oldlocale);
-		ecpg_free(oldlocale);
+		ecmdb_free(oldlocale);
 	}
 	else if (data_var.ind_type != ECPGt_NO_INDICATOR && data_var.ind_pointer != NULL)
 
@@ -513,9 +513,9 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 		 */
 		if (data_var.ind_arrsize > 0 && ntuples > data_var.ind_arrsize)
 		{
-			ecpg_log("ECPGget_desc on line %d: incorrect number of matches (indicator); %d don't fit into array of %ld\n",
+			ecmdb_log("ECPGget_desc on line %d: incorrect number of matches (indicator); %d don't fit into array of %ld\n",
 					 lineno, ntuples, data_var.ind_arrsize);
-			ecpg_raise(lineno, ECPG_TOO_MANY_MATCHES, ECPG_SQLSTATE_CARDINALITY_VIOLATION, NULL);
+			ecmdb_raise(lineno, ECPG_TOO_MANY_MATCHES, ECPG_SQLSTATE_CARDINALITY_VIOLATION, NULL);
 			va_end(args);
 			return false;
 		}
@@ -523,7 +523,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 		/* allocate storage if needed */
 		if (data_var.ind_arrsize == 0 && data_var.ind_value == NULL)
 		{
-			void	   *mem = (void *) ecpg_auto_alloc(data_var.ind_offset * ntuples, lineno);
+			void	   *mem = (void *) ecmdb_auto_alloc(data_var.ind_offset * ntuples, lineno);
 
 			if (!mem)
 			{
@@ -542,7 +542,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 				return (false);
 			}
 			data_var.ind_value = (char *) data_var.ind_value + data_var.ind_offset;
-			ecpg_log("ECPGget_desc: INDICATOR[%d] = %d\n", act_tuple, -PQgetisnull(ECPGresult, act_tuple, index));
+			ecmdb_log("ECPGget_desc: INDICATOR[%d] = %d\n", act_tuple, -PQgetisnull(ECPGresult, act_tuple, index));
 		}
 	}
 	sqlca->sqlerrd[2] = ntuples;
@@ -555,7 +555,7 @@ ECPGget_desc(int lineno, const char *desc_name, int index,...)
 bool
 ECPGset_desc_header(int lineno, const char *desc_name, int count)
 {
-	struct descriptor *desc = ecpg_find_desc(lineno, desc_name);
+	struct descriptor *desc = ecmdb_find_desc(lineno, desc_name);
 
 	if (desc == NULL)
 		return false;
@@ -571,7 +571,7 @@ ECPGset_desc(int lineno, const char *desc_name, int index,...)
 	struct descriptor_item *desc_item;
 	struct variable *var;
 
-	desc = ecpg_find_desc(lineno, desc_name);
+	desc = ecmdb_find_desc(lineno, desc_name);
 	if (desc == NULL)
 		return false;
 
@@ -583,7 +583,7 @@ ECPGset_desc(int lineno, const char *desc_name, int index,...)
 
 	if (desc_item == NULL)
 	{
-		desc_item = (struct descriptor_item *) ecpg_alloc(sizeof(*desc_item), lineno);
+		desc_item = (struct descriptor_item *) ecmdb_alloc(sizeof(*desc_item), lineno);
 		if (!desc_item)
 			return false;
 		desc_item->num = index;
@@ -593,7 +593,7 @@ ECPGset_desc(int lineno, const char *desc_name, int index,...)
 		desc->items = desc_item;
 	}
 
-	if (!(var = (struct variable *) ecpg_alloc(sizeof(struct variable), lineno)))
+	if (!(var = (struct variable *) ecmdb_alloc(sizeof(struct variable), lineno)))
 		return false;
 
 	va_start(args, index);
@@ -635,14 +635,14 @@ ECPGset_desc(int lineno, const char *desc_name, int index,...)
 		{
 			case ECPGd_data:
 				{
-					if (!ecpg_store_input(lineno, true, var, &tobeinserted, false))
+					if (!ecmdb_store_input(lineno, true, var, &tobeinserted, false))
 					{
-						ecpg_free(var);
+						ecmdb_free(var);
 						va_end(args);
 						return false;
 					}
 
-					ecpg_free(desc_item->data); /* free() takes care of a
+					ecmdb_free(desc_item->data); /* free() takes care of a
 												 * potential NULL value */
 					desc_item->data = (char *) tobeinserted;
 					tobeinserted = NULL;
@@ -674,14 +674,14 @@ ECPGset_desc(int lineno, const char *desc_name, int index,...)
 					char		type_str[20];
 
 					snprintf(type_str, sizeof(type_str), "%d", itemtype);
-					ecpg_raise(lineno, ECPG_UNKNOWN_DESCRIPTOR_ITEM, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, type_str);
-					ecpg_free(var);
+					ecmdb_raise(lineno, ECPG_UNKNOWN_DESCRIPTOR_ITEM, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, type_str);
+					ecmdb_free(var);
 					va_end(args);
 					return false;
 				}
 		}
 	}
-	ecpg_free(var);
+	ecmdb_free(var);
 	va_end(args);
 
 	return true;
@@ -697,15 +697,15 @@ descriptor_free(struct descriptor * desc)
 	{
 		struct descriptor_item *di;
 
-		ecpg_free(desc_item->data);
+		ecmdb_free(desc_item->data);
 		di = desc_item;
 		desc_item = desc_item->next;
-		ecpg_free(di);
+		ecmdb_free(di);
 	}
 
-	ecpg_free(desc->name);
+	ecmdb_free(desc->name);
 	PQclear(desc->result);
-	ecpg_free(desc);
+	ecmdb_free(desc);
 }
 
 bool
@@ -717,12 +717,12 @@ ECPGdeallocate_desc(int line, const char *name)
 
 	if (sqlca == NULL)
 	{
-		ecpg_raise(line, ECPG_OUT_OF_MEMORY,
+		ecmdb_raise(line, ECPG_OUT_OF_MEMORY,
 				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 
-	ecpg_init_sqlca(sqlca);
+	ecmdb_init_sqlca(sqlca);
 	for (desc = get_descriptors(), prev = NULL; desc; prev = desc, desc = desc->next)
 	{
 		if (strcmp(name, desc->name) == 0)
@@ -735,7 +735,7 @@ ECPGdeallocate_desc(int line, const char *name)
 			return true;
 		}
 	}
-	ecpg_raise(line, ECPG_UNKNOWN_DESCRIPTOR, ECPG_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME, name);
+	ecmdb_raise(line, ECPG_UNKNOWN_DESCRIPTOR, ECPG_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME, name);
 	return false;
 }
 
@@ -763,20 +763,20 @@ ECPGallocate_desc(int line, const char *name)
 
 	if (sqlca == NULL)
 	{
-		ecpg_raise(line, ECPG_OUT_OF_MEMORY,
+		ecmdb_raise(line, ECPG_OUT_OF_MEMORY,
 				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 
-	ecpg_init_sqlca(sqlca);
-	new = (struct descriptor *) ecpg_alloc(sizeof(struct descriptor), line);
+	ecmdb_init_sqlca(sqlca);
+	new = (struct descriptor *) ecmdb_alloc(sizeof(struct descriptor), line);
 	if (!new)
 		return false;
 	new->next = get_descriptors();
-	new->name = ecpg_alloc(strlen(name) + 1, line);
+	new->name = ecmdb_alloc(strlen(name) + 1, line);
 	if (!new->name)
 	{
-		ecpg_free(new);
+		ecmdb_free(new);
 		return false;
 	}
 	new->count = -1;
@@ -784,9 +784,9 @@ ECPGallocate_desc(int line, const char *name)
 	new->result = PQmakeEmptyPGresult(NULL, 0);
 	if (!new->result)
 	{
-		ecpg_free(new->name);
-		ecpg_free(new);
-		ecpg_raise(line, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
+		ecmdb_free(new->name);
+		ecmdb_free(new);
+		ecmdb_raise(line, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
 		return false;
 	}
 	strcpy(new->name, name);
@@ -796,7 +796,7 @@ ECPGallocate_desc(int line, const char *name)
 
 /* Find descriptor with name in the connection. */
 struct descriptor *
-ecpg_find_desc(int line, const char *name)
+ecmdb_find_desc(int line, const char *name)
 {
 	struct descriptor *desc;
 
@@ -806,7 +806,7 @@ ecpg_find_desc(int line, const char *name)
 			return desc;
 	}
 
-	ecpg_raise(line, ECPG_UNKNOWN_DESCRIPTOR, ECPG_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME, name);
+	ecmdb_raise(line, ECPG_UNKNOWN_DESCRIPTOR, ECPG_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME, name);
 	return NULL;				/* not found */
 }
 
@@ -822,21 +822,21 @@ ECPGdescribe(int line, int compat, bool input, const char *connection_name, cons
 	/* DESCRIBE INPUT is not yet supported */
 	if (input)
 	{
-		ecpg_raise(line, ECPG_UNSUPPORTED, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, "DESCRIBE INPUT");
+		ecmdb_raise(line, ECPG_UNSUPPORTED, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, "DESCRIBE INPUT");
 		return ret;
 	}
 
-	con = ecpg_get_connection(connection_name);
+	con = ecmdb_get_connection(connection_name);
 	if (!con)
 	{
-		ecpg_raise(line, ECPG_NO_CONN, ECPG_SQLSTATE_CONNECTION_DOES_NOT_EXIST,
-				   connection_name ? connection_name : ecpg_gettext("NULL"));
+		ecmdb_raise(line, ECPG_NO_CONN, ECPG_SQLSTATE_CONNECTION_DOES_NOT_EXIST,
+				   connection_name ? connection_name : ecmdb_gettext("NULL"));
 		return ret;
 	}
-	prep = ecpg_find_prepared_statement(stmt_name, con, NULL);
+	prep = ecmdb_find_prepared_statement(stmt_name, con, NULL);
 	if (!prep)
 	{
-		ecpg_raise(line, ECPG_INVALID_STMT, ECPG_SQLSTATE_INVALID_SQL_STATEMENT_NAME, stmt_name);
+		ecmdb_raise(line, ECPG_INVALID_STMT, ECPG_SQLSTATE_INVALID_SQL_STATEMENT_NAME, stmt_name);
 		return ret;
 	}
 
@@ -871,13 +871,13 @@ ECPGdescribe(int line, int compat, bool input, const char *connection_name, cons
 			case ECPGt_descriptor:
 				{
 					char	   *name = ptr;
-					struct descriptor *desc = ecpg_find_desc(line, name);
+					struct descriptor *desc = ecmdb_find_desc(line, name);
 
 					if (desc == NULL)
 						break;
 
 					res = PQdescribePrepared(con->connection, stmt_name);
-					if (!ecpg_check_PQresult(res, line, con->connection, compat))
+					if (!ecmdb_check_PQresult(res, line, con->connection, compat))
 						break;
 
 					if (desc->result != NULL)
@@ -895,10 +895,10 @@ ECPGdescribe(int line, int compat, bool input, const char *connection_name, cons
 						struct sqlda_compat *sqlda;
 
 						res = PQdescribePrepared(con->connection, stmt_name);
-						if (!ecpg_check_PQresult(res, line, con->connection, compat))
+						if (!ecmdb_check_PQresult(res, line, con->connection, compat))
 							break;
 
-						sqlda = ecpg_build_compat_sqlda(line, res, -1, compat);
+						sqlda = ecmdb_build_compat_sqlda(line, res, -1, compat);
 						if (sqlda)
 						{
 							struct sqlda_compat *sqlda_old = *_sqlda;
@@ -923,10 +923,10 @@ ECPGdescribe(int line, int compat, bool input, const char *connection_name, cons
 						struct sqlda_struct *sqlda;
 
 						res = PQdescribePrepared(con->connection, stmt_name);
-						if (!ecpg_check_PQresult(res, line, con->connection, compat))
+						if (!ecmdb_check_PQresult(res, line, con->connection, compat))
 							break;
 
-						sqlda = ecpg_build_native_sqlda(line, res, -1, compat);
+						sqlda = ecmdb_build_native_sqlda(line, res, -1, compat);
 						if (sqlda)
 						{
 							struct sqlda_struct *sqlda_old = *_sqlda;

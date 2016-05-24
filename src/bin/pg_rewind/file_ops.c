@@ -22,7 +22,7 @@
 #include "file_ops.h"
 #include "filemap.h"
 #include "logging.h"
-#include "pg_rewind.h"
+#include "mdb_rewind.h"
 
 /*
  * Currently open target file.
@@ -61,7 +61,7 @@ open_target_file(const char *path, bool trunc)
 		mode |= O_TRUNC;
 	dstfd = open(dstpath, mode, 0600);
 	if (dstfd < 0)
-		pg_fatal("could not open target file \"%s\": %s\n",
+		mdb_fatal("could not open target file \"%s\": %s\n",
 				 dstpath, strerror(errno));
 }
 
@@ -75,7 +75,7 @@ close_target_file(void)
 		return;
 
 	if (close(dstfd) != 0)
-		pg_fatal("could not close target file \"%s\": %s\n",
+		mdb_fatal("could not close target file \"%s\": %s\n",
 				 dstpath, strerror(errno));
 
 	dstfd = -1;
@@ -95,7 +95,7 @@ write_target_range(char *buf, off_t begin, size_t size)
 		return;
 
 	if (lseek(dstfd, begin, SEEK_SET) == -1)
-		pg_fatal("could not seek in target file \"%s\": %s\n",
+		mdb_fatal("could not seek in target file \"%s\": %s\n",
 				 dstpath, strerror(errno));
 
 	writeleft = size;
@@ -111,7 +111,7 @@ write_target_range(char *buf, off_t begin, size_t size)
 			/* if write didn't set errno, assume problem is no disk space */
 			if (errno == 0)
 				errno = ENOSPC;
-			pg_fatal("could not write file \"%s\": %s\n",
+			mdb_fatal("could not write file \"%s\": %s\n",
 					 dstpath, strerror(errno));
 		}
 
@@ -161,7 +161,7 @@ create_target(file_entry_t *entry)
 
 		case FILE_TYPE_REGULAR:
 			/* can't happen. Regular files are created with open_target_file. */
-			pg_fatal("invalid action (CREATE) for regular file\n");
+			mdb_fatal("invalid action (CREATE) for regular file\n");
 			break;
 	}
 }
@@ -176,7 +176,7 @@ remove_target_file(const char *path)
 
 	snprintf(dstpath, sizeof(dstpath), "%s/%s", datadir_target, path);
 	if (unlink(dstpath) != 0)
-		pg_fatal("could not remove file \"%s\": %s\n",
+		mdb_fatal("could not remove file \"%s\": %s\n",
 				 dstpath, strerror(errno));
 }
 
@@ -193,11 +193,11 @@ truncate_target_file(const char *path, off_t newsize)
 
 	fd = open(dstpath, O_WRONLY, 0);
 	if (fd < 0)
-		pg_fatal("could not open file \"%s\" for truncation: %s\n",
+		mdb_fatal("could not open file \"%s\" for truncation: %s\n",
 				 dstpath, strerror(errno));
 
 	if (ftruncate(fd, newsize) != 0)
-		pg_fatal("could not truncate file \"%s\" to %u: %s\n",
+		mdb_fatal("could not truncate file \"%s\" to %u: %s\n",
 				 dstpath, (unsigned int) newsize, strerror(errno));
 
 	close(fd);
@@ -213,7 +213,7 @@ create_target_dir(const char *path)
 
 	snprintf(dstpath, sizeof(dstpath), "%s/%s", datadir_target, path);
 	if (mkdir(dstpath, S_IRWXU) != 0)
-		pg_fatal("could not create directory \"%s\": %s\n",
+		mdb_fatal("could not create directory \"%s\": %s\n",
 				 dstpath, strerror(errno));
 }
 
@@ -227,7 +227,7 @@ remove_target_dir(const char *path)
 
 	snprintf(dstpath, sizeof(dstpath), "%s/%s", datadir_target, path);
 	if (rmdir(dstpath) != 0)
-		pg_fatal("could not remove directory \"%s\": %s\n",
+		mdb_fatal("could not remove directory \"%s\": %s\n",
 				 dstpath, strerror(errno));
 }
 
@@ -241,7 +241,7 @@ create_target_symlink(const char *path, const char *link)
 
 	snprintf(dstpath, sizeof(dstpath), "%s/%s", datadir_target, path);
 	if (symlink(link, dstpath) != 0)
-		pg_fatal("could not create symbolic link at \"%s\": %s\n",
+		mdb_fatal("could not create symbolic link at \"%s\": %s\n",
 				 dstpath, strerror(errno));
 }
 
@@ -255,7 +255,7 @@ remove_target_symlink(const char *path)
 
 	snprintf(dstpath, sizeof(dstpath), "%s/%s", datadir_target, path);
 	if (unlink(dstpath) != 0)
-		pg_fatal("could not remove symbolic link \"%s\": %s\n",
+		mdb_fatal("could not remove symbolic link \"%s\": %s\n",
 				 dstpath, strerror(errno));
 }
 
@@ -285,19 +285,19 @@ slurpFile(const char *datadir, const char *path, size_t *filesize)
 	snprintf(fullpath, sizeof(fullpath), "%s/%s", datadir, path);
 
 	if ((fd = open(fullpath, O_RDONLY | PG_BINARY, 0)) == -1)
-		pg_fatal("could not open file \"%s\" for reading: %s\n",
+		mdb_fatal("could not open file \"%s\" for reading: %s\n",
 				 fullpath, strerror(errno));
 
 	if (fstat(fd, &statbuf) < 0)
-		pg_fatal("could not open file \"%s\" for reading: %s\n",
+		mdb_fatal("could not open file \"%s\" for reading: %s\n",
 				 fullpath, strerror(errno));
 
 	len = statbuf.st_size;
 
-	buffer = pg_malloc(len + 1);
+	buffer = mdb_malloc(len + 1);
 
 	if (read(fd, buffer, len) != len)
-		pg_fatal("could not read file \"%s\": %s\n",
+		mdb_fatal("could not read file \"%s\": %s\n",
 				 fullpath, strerror(errno));
 	close(fd);
 

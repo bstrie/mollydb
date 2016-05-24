@@ -19,13 +19,13 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_authid.h"
-#include "catalog/pg_language.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_pltemplate.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_proc_fn.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_authid.h"
+#include "catalog/mdb_language.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_pltemplate.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_proc_fn.h"
+#include "catalog/mdb_type.h"
 #include "commands/dbcommands.h"
 #include "commands/defrem.h"
 #include "commands/proclang.h"
@@ -84,7 +84,7 @@ CreateProceduralLanguage(CreatePLangStmt *stmt)
 		 */
 		if (stmt->plhandler)
 			ereport(NOTICE,
-					(errmsg("using pg_pltemplate information instead of CREATE LANGUAGE parameters")));
+					(errmsg("using mdb_pltemplate information instead of CREATE LANGUAGE parameters")));
 
 		/*
 		 * Check permission
@@ -96,14 +96,14 @@ CreateProceduralLanguage(CreatePLangStmt *stmt)
 						(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 						 errmsg("must be superuser to create procedural language \"%s\"",
 								stmt->plname)));
-			if (!pg_database_ownercheck(MyDatabaseId, GetUserId()))
+			if (!mdb_database_ownercheck(MyDatabaseId, GetUserId()))
 				aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_DATABASE,
 							   get_database_name(MyDatabaseId));
 		}
 
 		/*
 		 * Find or create the handler function, which we force to be in the
-		 * pg_catalog schema.  If already present, it must have the correct
+		 * mdb_catalog schema.  If already present, it must have the correct
 		 * return type.
 		 */
 		funcname = SystemFuncName(pltemplate->tmplhandler);
@@ -251,7 +251,7 @@ CreateProceduralLanguage(CreatePLangStmt *stmt)
 					(errcode(ERRCODE_UNDEFINED_OBJECT),
 					 errmsg("unsupported language \"%s\"",
 							stmt->plname),
-					 errhint("The supported languages are listed in the pg_pltemplate system catalog.")));
+					 errhint("The supported languages are listed in the mdb_pltemplate system catalog.")));
 
 		/*
 		 * Check permission
@@ -326,9 +326,9 @@ create_proc_lang(const char *languageName, bool replace,
 {
 	Relation	rel;
 	TupleDesc	tupDesc;
-	Datum		values[Natts_pg_language];
-	bool		nulls[Natts_pg_language];
-	bool		replaces[Natts_pg_language];
+	Datum		values[Natts_mdb_language];
+	bool		nulls[Natts_mdb_language];
+	bool		replaces[Natts_mdb_language];
 	NameData	langname;
 	HeapTuple	oldtup;
 	HeapTuple	tup;
@@ -345,14 +345,14 @@ create_proc_lang(const char *languageName, bool replace,
 	memset(replaces, true, sizeof(replaces));
 
 	namestrcpy(&langname, languageName);
-	values[Anum_pg_language_lanname - 1] = NameGetDatum(&langname);
-	values[Anum_pg_language_lanowner - 1] = ObjectIdGetDatum(languageOwner);
-	values[Anum_pg_language_lanispl - 1] = BoolGetDatum(true);
-	values[Anum_pg_language_lanpltrusted - 1] = BoolGetDatum(trusted);
-	values[Anum_pg_language_lanplcallfoid - 1] = ObjectIdGetDatum(handlerOid);
-	values[Anum_pg_language_laninline - 1] = ObjectIdGetDatum(inlineOid);
-	values[Anum_pg_language_lanvalidator - 1] = ObjectIdGetDatum(valOid);
-	nulls[Anum_pg_language_lanacl - 1] = true;
+	values[Anum_mdb_language_lanname - 1] = NameGetDatum(&langname);
+	values[Anum_mdb_language_lanowner - 1] = ObjectIdGetDatum(languageOwner);
+	values[Anum_mdb_language_lanispl - 1] = BoolGetDatum(true);
+	values[Anum_mdb_language_lanpltrusted - 1] = BoolGetDatum(trusted);
+	values[Anum_mdb_language_lanplcallfoid - 1] = ObjectIdGetDatum(handlerOid);
+	values[Anum_mdb_language_laninline - 1] = ObjectIdGetDatum(inlineOid);
+	values[Anum_mdb_language_lanvalidator - 1] = ObjectIdGetDatum(valOid);
+	nulls[Anum_mdb_language_lanacl - 1] = true;
 
 	/* Check for pre-existing definition */
 	oldtup = SearchSysCache1(LANGNAME, PointerGetDatum(languageName));
@@ -364,7 +364,7 @@ create_proc_lang(const char *languageName, bool replace,
 			ereport(ERROR,
 					(errcode(ERRCODE_DUPLICATE_OBJECT),
 					 errmsg("language \"%s\" already exists", languageName)));
-		if (!pg_language_ownercheck(HeapTupleGetOid(oldtup), languageOwner))
+		if (!mdb_language_ownercheck(HeapTupleGetOid(oldtup), languageOwner))
 			aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_LANGUAGE,
 						   languageName);
 
@@ -372,8 +372,8 @@ create_proc_lang(const char *languageName, bool replace,
 		 * Do not change existing ownership or permissions.  Note
 		 * dependency-update code below has to agree with this decision.
 		 */
-		replaces[Anum_pg_language_lanowner - 1] = false;
-		replaces[Anum_pg_language_lanacl - 1] = false;
+		replaces[Anum_mdb_language_lanowner - 1] = false;
+		replaces[Anum_mdb_language_lanacl - 1] = false;
 
 		/* Okay, do it... */
 		tup = heap_modify_tuple(oldtup, tupDesc, values, nulls, replaces);
@@ -395,7 +395,7 @@ create_proc_lang(const char *languageName, bool replace,
 
 	/*
 	 * Create dependencies for the new language.  If we are updating an
-	 * existing language, first delete any existing pg_depend entries.
+	 * existing language, first delete any existing mdb_depend entries.
 	 * (However, since we are not changing ownership or permissions, the
 	 * shared dependencies do *not* need to change, and we leave them alone.)
 	 */
@@ -461,7 +461,7 @@ find_language_template(const char *languageName)
 	rel = heap_open(PLTemplateRelationId, AccessShareLock);
 
 	ScanKeyInit(&key,
-				Anum_pg_pltemplate_tmplname,
+				Anum_mdb_pltemplate_tmplname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				NameGetDatum(languageName));
 	scan = systable_beginscan(rel, PLTemplateNameIndexId, true,
@@ -470,7 +470,7 @@ find_language_template(const char *languageName)
 	tup = systable_getnext(scan);
 	if (HeapTupleIsValid(tup))
 	{
-		Form_pg_pltemplate tmpl = (Form_pg_pltemplate) GETSTRUCT(tup);
+		Form_mdb_pltemplate tmpl = (Form_mdb_pltemplate) GETSTRUCT(tup);
 		Datum		datum;
 		bool		isnull;
 
@@ -479,22 +479,22 @@ find_language_template(const char *languageName)
 		result->tmpldbacreate = tmpl->tmpldbacreate;
 
 		/* Remaining fields are variable-width so we need heap_getattr */
-		datum = heap_getattr(tup, Anum_pg_pltemplate_tmplhandler,
+		datum = heap_getattr(tup, Anum_mdb_pltemplate_tmplhandler,
 							 RelationGetDescr(rel), &isnull);
 		if (!isnull)
 			result->tmplhandler = TextDatumGetCString(datum);
 
-		datum = heap_getattr(tup, Anum_pg_pltemplate_tmplinline,
+		datum = heap_getattr(tup, Anum_mdb_pltemplate_tmplinline,
 							 RelationGetDescr(rel), &isnull);
 		if (!isnull)
 			result->tmplinline = TextDatumGetCString(datum);
 
-		datum = heap_getattr(tup, Anum_pg_pltemplate_tmplvalidator,
+		datum = heap_getattr(tup, Anum_mdb_pltemplate_tmplvalidator,
 							 RelationGetDescr(rel), &isnull);
 		if (!isnull)
 			result->tmplvalidator = TextDatumGetCString(datum);
 
-		datum = heap_getattr(tup, Anum_pg_pltemplate_tmpllibrary,
+		datum = heap_getattr(tup, Anum_mdb_pltemplate_tmpllibrary,
 							 RelationGetDescr(rel), &isnull);
 		if (!isnull)
 			result->tmpllibrary = TextDatumGetCString(datum);

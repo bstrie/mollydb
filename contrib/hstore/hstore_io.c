@@ -6,7 +6,7 @@
 #include <ctype.h>
 
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "lib/stringinfo.h"
 #include "libpq/pqformat.h"
@@ -249,7 +249,7 @@ parse_hstore(HSParser *state)
 			if (state->cur - state->word == 4 && !escaped)
 			{
 				state->word[4] = '\0';
-				if (0 == pg_strcasecmp(state->word, "null"))
+				if (0 == mdb_strcasecmp(state->word, "null"))
 					state->pairs[state->pcur].isnull = true;
 			}
 			state->word = NULL;

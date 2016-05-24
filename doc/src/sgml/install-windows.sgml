@@ -318,8 +318,8 @@ $ENV{PATH}=$ENV{PATH} . ';c:\some\where\bison\bin';
     <varlistentry>
      <term><productname>zlib</productname></term>
      <listitem><para>
-      Required for compression support in <application>pg_dump</application>
-      and <application>pg_restore</application>. Binaries can be downloaded
+      Required for compression support in <application>mdb_dump</application>
+      and <application>mdb_restore</application>. Binaries can be downloaded
       from <ulink url="http://www.zlib.net"></>.
      </para></listitem>
     </varlistentry>

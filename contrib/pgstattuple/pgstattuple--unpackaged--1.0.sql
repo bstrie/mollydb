@@ -6,4 +6,4 @@
 ALTER EXTENSION pgstattuple ADD function pgstattuple(text);
 ALTER EXTENSION pgstattuple ADD function pgstattuple(oid);
 ALTER EXTENSION pgstattuple ADD function pgstatindex(text);
-ALTER EXTENSION pgstattuple ADD function pg_relpages(text);
+ALTER EXTENSION pgstattuple ADD function mdb_relpages(text);

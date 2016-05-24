@@ -13,14 +13,14 @@
 
 #include <unistd.h>
 
-#include "pg_rewind.h"
+#include "mdb_rewind.h"
 #include "filemap.h"
 #include "logging.h"
 
 #include "access/rmgr.h"
 #include "access/xlog_internal.h"
 #include "access/xlogreader.h"
-#include "catalog/pg_control.h"
+#include "catalog/mdb_control.h"
 #include "catalog/storage_xlog.h"
 #include "commands/dbcommands_xlog.h"
 
@@ -54,7 +54,7 @@ static int SimpleXLogPageRead(XLogReaderState *xlogreader,
 				   TimeLineID *pageTLI);
 
 /*
- * Read WAL from the datadir/pg_xlog, starting from 'startpoint' on timeline
+ * Read WAL from the datadir/mdb_xlog, starting from 'startpoint' on timeline
  * index 'tliIndex' in target timeline history, until 'endpoint'. Make note of
  * the data blocks touched by the WAL records, and return them in a page map.
  */
@@ -71,7 +71,7 @@ extractPageMap(const char *datadir, XLogRecPtr startpoint, int tliIndex,
 	private.tliIndex = tliIndex;
 	xlogreader = XLogReaderAllocate(&SimpleXLogPageRead, &private);
 	if (xlogreader == NULL)
-		pg_fatal("out of memory\n");
+		mdb_fatal("out of memory\n");
 
 	do
 	{
@@ -84,11 +84,11 @@ extractPageMap(const char *datadir, XLogRecPtr startpoint, int tliIndex,
 			errptr = startpoint ? startpoint : xlogreader->EndRecPtr;
 
 			if (errormsg)
-				pg_fatal("could not read WAL record at %X/%X: %s\n",
+				mdb_fatal("could not read WAL record at %X/%X: %s\n",
 						 (uint32) (errptr >> 32), (uint32) (errptr),
 						 errormsg);
 			else
-				pg_fatal("could not read WAL record at %X/%X\n",
+				mdb_fatal("could not read WAL record at %X/%X\n",
 						 (uint32) (startpoint >> 32),
 						 (uint32) (startpoint));
 		}
@@ -124,16 +124,16 @@ readOneRecord(const char *datadir, XLogRecPtr ptr, int tliIndex)
 	private.tliIndex = tliIndex;
 	xlogreader = XLogReaderAllocate(&SimpleXLogPageRead, &private);
 	if (xlogreader == NULL)
-		pg_fatal("out of memory\n");
+		mdb_fatal("out of memory\n");
 
 	record = XLogReadRecord(xlogreader, ptr, &errormsg);
 	if (record == NULL)
 	{
 		if (errormsg)
-			pg_fatal("could not read WAL record at %X/%X: %s\n",
+			mdb_fatal("could not read WAL record at %X/%X: %s\n",
 					 (uint32) (ptr >> 32), (uint32) (ptr), errormsg);
 		else
-			pg_fatal("could not read WAL record at %X/%X\n",
+			mdb_fatal("could not read WAL record at %X/%X\n",
 					 (uint32) (ptr >> 32), (uint32) (ptr));
 	}
 	endptr = xlogreader->EndRecPtr;
@@ -176,7 +176,7 @@ findLastCheckpoint(const char *datadir, XLogRecPtr forkptr, int tliIndex,
 	private.tliIndex = tliIndex;
 	xlogreader = XLogReaderAllocate(&SimpleXLogPageRead, &private);
 	if (xlogreader == NULL)
-		pg_fatal("out of memory\n");
+		mdb_fatal("out of memory\n");
 
 	searchptr = forkptr;
 	for (;;)
@@ -188,11 +188,11 @@ findLastCheckpoint(const char *datadir, XLogRecPtr forkptr, int tliIndex,
 		if (record == NULL)
 		{
 			if (errormsg)
-				pg_fatal("could not find previous WAL record at %X/%X: %s\n",
+				mdb_fatal("could not find previous WAL record at %X/%X: %s\n",
 						 (uint32) (searchptr >> 32), (uint32) (searchptr),
 						 errormsg);
 			else
-				pg_fatal("could not find previous WAL record at %X/%X\n",
+				mdb_fatal("could not find previous WAL record at %X/%X\n",
 						 (uint32) (searchptr >> 32), (uint32) (searchptr));
 		}
 
@@ -369,7 +369,7 @@ extractPageInfo(XLogReaderState *record)
 		 * we don't recognize the type. That's bad - we don't know how to
 		 * track that change.
 		 */
-		pg_fatal("WAL record modifies a relation, but record type is not recognized\n"
+		mdb_fatal("WAL record modifies a relation, but record type is not recognized\n"
 				 "lsn: %X/%X, rmgr: %s, info: %02X\n",
 		  (uint32) (record->ReadRecPtr >> 32), (uint32) (record->ReadRecPtr),
 				 RmgrNames[rmid], info);

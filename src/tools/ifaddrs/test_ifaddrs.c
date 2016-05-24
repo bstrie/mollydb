@@ -3,7 +3,7 @@
  *
  *
  *	test_ifaddrs.c
- *		test pg_foreach_ifaddr()
+ *		test mdb_foreach_ifaddr()
  */
 
 #include "mollydb.h"
@@ -68,7 +68,7 @@ main(int argc, char *argv[])
 	}
 #endif
 
-	if (pg_foreach_ifaddr(callback, NULL) < 0)
-		fprintf(stderr, "pg_foreach_ifaddr failed: %s\n", strerror(errno));
+	if (mdb_foreach_ifaddr(callback, NULL) < 0)
+		fprintf(stderr, "mdb_foreach_ifaddr failed: %s\n", strerror(errno));
 	return 0;
 }

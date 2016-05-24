@@ -517,7 +517,7 @@ typedef struct RelOptInfo
 	Relids		lateral_referencers;	/* rels that reference me laterally */
 	List	   *indexlist;		/* list of IndexOptInfo */
 	List	   *fkeylist;			/* list of ForeignKeyOptInfo */
-	BlockNumber pages;			/* size estimates derived from pg_class */
+	BlockNumber pages;			/* size estimates derived from mdb_class */
 	double		tuples;
 	double		allvisfrac;
 	PlannerInfo *subroot;		/* if subquery */
@@ -579,7 +579,7 @@ typedef struct IndexOptInfo
 	Oid			reltablespace;	/* tablespace of index (not table) */
 	RelOptInfo *rel;			/* back-link to index's table */
 
-	/* index-size statistics (from pg_class and elsewhere) */
+	/* index-size statistics (from mdb_class and elsewhere) */
 	BlockNumber pages;			/* number of disk pages in index */
 	double		tuples;			/* number of index tuples in index */
 	int			tree_height;	/* index tree height, or -1 if unknown */
@@ -595,7 +595,7 @@ typedef struct IndexOptInfo
 	bool	   *nulls_first;	/* do NULLs come first in the sort order? */
 	bool	   *canreturn;		/* which index cols can be returned in an
 								 * index-only scan? */
-	Oid			relam;			/* OID of the access method (in pg_am) */
+	Oid			relam;			/* OID of the access method (in mdb_am) */
 
 	List	   *indexprs;		/* expressions for non-simple index columns */
 	List	   *indpred;		/* predicate if a partial index, else NIL */
@@ -627,7 +627,7 @@ typedef struct IndexOptInfo
  * ForeignKeyOptInfo
  *		Per-foreign-key information for planning/optimization
  *
- * Only includes columns from pg_constraint related to foreign keys.
+ * Only includes columns from mdb_constraint related to foreign keys.
  *
  * conkeys[], confkeys[] and conpfeqop[] each have nkeys entries.
  */
@@ -1890,7 +1890,7 @@ typedef struct MinMaxAggInfo
 {
 	NodeTag		type;
 
-	Oid			aggfnoid;		/* pg_proc Oid of the aggregate */
+	Oid			aggfnoid;		/* mdb_proc Oid of the aggregate */
 	Oid			aggsortop;		/* Oid of its sort operator */
 	Expr	   *target;			/* expression we are aggregating on */
 	PlannerInfo *subroot;		/* modified "root" for planning the subquery */

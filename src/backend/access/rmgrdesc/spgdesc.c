@@ -17,7 +17,7 @@
 #include "access/spgist_private.h"
 
 void
-spg_desc(StringInfo buf, XLogReaderState *record)
+smdb_desc(StringInfo buf, XLogReaderState *record)
 {
 	char	   *rec = XLogRecGetData(record);
 	uint8		info = XLogRecGetInfo(record) & ~XLR_INFO_MASK;
@@ -82,7 +82,7 @@ spg_desc(StringInfo buf, XLogReaderState *record)
 }
 
 const char *
-spg_identify(uint8 info)
+smdb_identify(uint8 info)
 {
 	const char *id = NULL;
 

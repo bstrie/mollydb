@@ -18,7 +18,7 @@
 #define PRIMNODES_H
 
 #include "access/attnum.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 
 /* ----------------------------------------------------------------
@@ -74,7 +74,7 @@ typedef struct RangeVar
 	char	   *relname;		/* the relation/sequence name */
 	InhOption	inhOpt;			/* expand rel by inheritance? recursively act
 								 * on children? */
-	char		relpersistence; /* see RELPERSISTENCE_* in pg_class.h */
+	char		relpersistence; /* see RELPERSISTENCE_* in mdb_class.h */
 	Alias	   *alias;			/* table alias & optional column aliases */
 	int			location;		/* token location, or -1 if unknown */
 } RangeVar;
@@ -152,8 +152,8 @@ typedef struct Var
 								 * table, or INNER_VAR/OUTER_VAR/INDEX_VAR */
 	AttrNumber	varattno;		/* attribute number of this var, or zero for
 								 * all */
-	Oid			vartype;		/* pg_type OID for the type of this var */
-	int32		vartypmod;		/* pg_attribute typmod value */
+	Oid			vartype;		/* mdb_type OID for the type of this var */
+	int32		vartypmod;		/* mdb_attribute typmod value */
 	Oid			varcollid;		/* OID of collation, or InvalidOid if none */
 	Index		varlevelsup;	/* for subquery variables referencing outer
 								 * relations; 0 in a normal var, >0 means N
@@ -174,7 +174,7 @@ typedef struct Var
 typedef struct Const
 {
 	Expr		xpr;
-	Oid			consttype;		/* pg_type OID of the constant's datatype */
+	Oid			consttype;		/* mdb_type OID of the constant's datatype */
 	int32		consttypmod;	/* typmod value, if any */
 	Oid			constcollid;	/* OID of collation, or InvalidOid if none */
 	int			constlen;		/* typlen of the constant's datatype */
@@ -228,7 +228,7 @@ typedef struct Param
 	Expr		xpr;
 	ParamKind	paramkind;		/* kind of parameter. See above */
 	int			paramid;		/* numeric ID for parameter */
-	Oid			paramtype;		/* pg_type OID of parameter's datatype */
+	Oid			paramtype;		/* mdb_type OID of parameter's datatype */
 	int32		paramtypmod;	/* typmod value, if known */
 	Oid			paramcollid;	/* OID of collation, or InvalidOid if none */
 	int			location;		/* token location, or -1 if unknown */
@@ -267,7 +267,7 @@ typedef struct Param
 typedef struct Aggref
 {
 	Expr		xpr;
-	Oid			aggfnoid;		/* pg_proc Oid of the aggregate */
+	Oid			aggfnoid;		/* mdb_proc Oid of the aggregate */
 	Oid			aggtype;		/* type Oid of final result of the aggregate */
 	Oid			aggoutputtype;	/* type Oid of result of this aggregate */
 	Oid			aggcollid;		/* OID of collation of result */
@@ -282,7 +282,7 @@ typedef struct Aggref
 								 * combined into an array last argument */
 	bool		aggcombine;		/* combining agg; input is a transvalue */
 	bool		aggpartial;		/* partial agg; output is a transvalue */
-	char		aggkind;		/* aggregate kind (see pg_aggregate.h) */
+	char		aggkind;		/* aggregate kind (see mdb_aggregate.h) */
 	Index		agglevelsup;	/* > 0 if agg belongs to outer query */
 	int			location;		/* token location, or -1 if unknown */
 } Aggref;
@@ -328,7 +328,7 @@ typedef struct GroupingFunc
 typedef struct WindowFunc
 {
 	Expr		xpr;
-	Oid			winfnoid;		/* pg_proc Oid of the function */
+	Oid			winfnoid;		/* mdb_proc Oid of the function */
 	Oid			wintype;		/* type Oid of result of the window function */
 	Oid			wincollid;		/* OID of collation of result */
 	Oid			inputcollid;	/* OID of collation that function should use */
@@ -1402,7 +1402,7 @@ typedef struct OnConflictExpr
 	List	   *arbiterElems;	/* unique index arbiter list (of
 								 * InferenceElem's) */
 	Node	   *arbiterWhere;	/* unique index arbiter WHERE clause */
-	Oid			constraint;		/* pg_constraint OID for arbiter */
+	Oid			constraint;		/* mdb_constraint OID for arbiter */
 
 	/* ON CONFLICT UPDATE */
 	List	   *onConflictSet;	/* List of ON CONFLICT SET TargetEntrys */

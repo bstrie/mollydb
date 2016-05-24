@@ -32,7 +32,7 @@
       target relation's name (optionally schema-qualified) or OID.
       For example:
 <programlisting>
-test=&gt; SELECT * FROM pgstattuple('pg_catalog.pg_proc');
+test=&gt; SELECT * FROM pgstattuple('mdb_catalog.mdb_proc');
 -[ RECORD 1 ]------+-------
 table_len          | 458752
 tuple_count        | 1470
@@ -150,7 +150,7 @@ free_percent       | 1.95
       <function>pgstatindex</function> returns a record showing information
       about a B-tree index.  For example:
 <programlisting>
-test=&gt; SELECT * FROM pgstatindex('pg_cast_oid_index');
+test=&gt; SELECT * FROM pgstatindex('mdb_cast_oid_index');
 -[ RECORD 1 ]------+------
 version            | 2
 tree_level         | 0
@@ -337,14 +337,14 @@ pending_tuples | 0
    <varlistentry>
     <term>
      <indexterm>
-      <primary>pg_relpages</primary>
+      <primary>mdb_relpages</primary>
      </indexterm>
-     <function>pg_relpages(regclass) returns bigint</>
+     <function>mdb_relpages(regclass) returns bigint</>
     </term>
 
     <listitem>
      <para>
-      <function>pg_relpages</function> returns the number of pages in the
+      <function>mdb_relpages</function> returns the number of pages in the
       relation.
      </para>
     </listitem>
@@ -352,12 +352,12 @@ pending_tuples | 0
 
    <varlistentry>
     <term>
-     <function>pg_relpages(text) returns bigint</>
+     <function>mdb_relpages(text) returns bigint</>
     </term>
 
     <listitem>
      <para>
-      This is the same as <function>pg_relpages(regclass)</function>, except
+      This is the same as <function>mdb_relpages(regclass)</function>, except
       that the target relation is specified as TEXT. This function is kept
       because of backward-compatibility so far, and will be deprecated in
       some future release.
@@ -380,7 +380,7 @@ pending_tuples | 0
       The argument is the target relation's name or OID.
       For example:
 <programlisting>
-test=&gt; SELECT * FROM pgstattuple_approx('pg_catalog.pg_proc'::regclass);
+test=&gt; SELECT * FROM pgstattuple_approx('mdb_catalog.mdb_proc'::regclass);
 -[ RECORD 1 ]--------+-------
 table_len            | 573440
 scanned_percent      | 2
@@ -419,7 +419,7 @@ approx_free_percent  | 2.09
       presence and size in the appropriate counters, and adding up the
       free space on the page. At the end, it estimates the total number of
       live tuples based on the number of pages and tuples scanned (in the
-      same way that VACUUM estimates pg_class.reltuples).
+      same way that VACUUM estimates mdb_class.reltuples).
      </para>
 
      <table id="pgstatapprox-columns">

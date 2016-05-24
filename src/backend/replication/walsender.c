@@ -48,7 +48,7 @@
 #include "access/xact.h"
 #include "access/xlog_internal.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/dbcommands.h"
 #include "funcapi.h"
 #include "libpq/libpq.h"
@@ -75,7 +75,7 @@
 #include "utils/builtins.h"
 #include "utils/guc.h"
 #include "utils/memutils.h"
-#include "utils/pg_lsn.h"
+#include "utils/mdb_lsn.h"
 #include "utils/ps_status.h"
 #include "utils/resowner.h"
 #include "utils/timeout.h"
@@ -194,7 +194,7 @@ typedef void (*WalSndSendDataCallback) (void);
 static void WalSndLoop(WalSndSendDataCallback send_data);
 static void InitWalSenderSlot(void);
 static void WalSndKill(int code, Datum arg);
-static void WalSndShutdown(void) pg_attribute_noreturn();
+static void WalSndShutdown(void) mdb_attribute_noreturn();
 static void XLogSendPhysical(void);
 static void XLogSendLogical(void);
 static void WalSndDone(WalSndSendDataCallback send_data);
@@ -586,7 +586,7 @@ StartReplication(StartReplicationCmd *cmd)
 			 * segment that contains switchpoint, but on the new timeline, so
 			 * that it doesn't end up with a partial segment. If you ask for a
 			 * too old starting point, you'll get an error later when we fail
-			 * to find the requested WAL segment in pg_xlog.
+			 * to find the requested WAL segment in mdb_xlog.
 			 *
 			 * XXX: we could be more strict here and only allow a startpoint
 			 * that's older than the switchpoint, if it's still in the same
@@ -2054,7 +2054,7 @@ retry:
 			 *
 			 * For example, imagine that this server is currently on timeline
 			 * 5, and we're streaming timeline 4. The switch from timeline 4
-			 * to 5 happened at 0/13002088. In pg_xlog, we have these files:
+			 * to 5 happened at 0/13002088. In mdb_xlog, we have these files:
 			 *
 			 * ...
 			 * 000000040000000000000012
@@ -2488,7 +2488,7 @@ WalSndDone(WalSndSendDataCallback send_data)
 
 	/*
 	 * To figure out whether all WAL has successfully been replicated, check
-	 * flush location if valid, write otherwise. Tools like pg_receivexlog
+	 * flush location if valid, write otherwise. Tools like mdb_receivexlog
 	 * will usually (unless in synchronous mode) return an invalid flush
 	 * location.
 	 */
@@ -2747,7 +2747,7 @@ WalSndGetStateString(WalSndState state)
  * standby servers.
  */
 Datum
-pg_stat_get_wal_senders(PG_FUNCTION_ARGS)
+mdb_stat_get_wal_senders(PG_FUNCTION_ARGS)
 {
 #define PG_STAT_GET_WAL_SENDERS_COLS	8
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
@@ -2846,7 +2846,7 @@ pg_stat_get_wal_senders(PG_FUNCTION_ARGS)
 			values[5] = LSNGetDatum(apply);
 
 			/*
-			 * Treat a standby such as a pg_basebackup background process
+			 * Treat a standby such as a mdb_basebackup background process
 			 * which always returns an invalid flush location, as an
 			 * asynchronous standby.
 			 */

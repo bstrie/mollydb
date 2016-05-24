@@ -23,7 +23,7 @@
 
 #include "access/hash.h"
 #include "access/xact.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "libpq/pqformat.h"
 #include "miscadmin.h"
@@ -144,7 +144,7 @@ timestamp_in(PG_FUNCTION_ARGS)
 	int32		typmod = PG_GETARG_INT32(2);
 	Timestamp	result;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 	int			dtype;
@@ -209,7 +209,7 @@ timestamp_out(PG_FUNCTION_ARGS)
 {
 	Timestamp	timestamp = PG_GETARG_TIMESTAMP(0);
 	char	   *result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	char		buf[MAXDATELEN + 1];
@@ -243,7 +243,7 @@ timestamp_recv(PG_FUNCTION_ARGS)
 #endif
 	int32		typmod = PG_GETARG_INT32(2);
 	Timestamp	timestamp;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 
@@ -419,7 +419,7 @@ timestamptz_in(PG_FUNCTION_ARGS)
 	int32		typmod = PG_GETARG_INT32(2);
 	TimestampTz result;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 	int			dtype;
@@ -484,7 +484,7 @@ timestamptz_in(PG_FUNCTION_ARGS)
  * don't care, so we don't bother being consistent.
  */
 static int
-parse_sane_timezone(struct pg_tm * tm, text *zone)
+parse_sane_timezone(struct mdb_tm * tm, text *zone)
 {
 	char		tzname[TZ_STRLEN_MAX + 1];
 	int			rt;
@@ -502,7 +502,7 @@ parse_sane_timezone(struct pg_tm * tm, text *zone)
 	 * the timezone database unwisely uses a few zone names that are identical
 	 * to offset abbreviations.)
 	 *
-	 * Note pg_tzset happily parses numeric input that DecodeTimezone would
+	 * Note mdb_tzset happily parses numeric input that DecodeTimezone would
 	 * reject.  To avoid having it accept input that would otherwise be seen
 	 * as invalid, it's enough to disallow having a digit in the first
 	 * position of our input string.
@@ -520,7 +520,7 @@ parse_sane_timezone(struct pg_tm * tm, text *zone)
 		char	   *lowzone;
 		int			type,
 					val;
-		pg_tz	   *tzp;
+		mdb_tz	   *tzp;
 
 		if (rt == DTERR_TZDISP_OVERFLOW)
 			ereport(ERROR,
@@ -550,7 +550,7 @@ parse_sane_timezone(struct pg_tm * tm, text *zone)
 		else
 		{
 			/* try it as a full zone name */
-			tzp = pg_tzset(tzname);
+			tzp = mdb_tzset(tzname);
 			if (tzp)
 				tz = DetermineTimeZoneOffset(tm, tzp);
 			else
@@ -571,7 +571,7 @@ static Timestamp
 make_timestamp_internal(int year, int month, int day,
 						int hour, int min, double sec)
 {
-	struct pg_tm tm;
+	struct mdb_tm tm;
 	TimeOffset	date;
 	TimeOffset	time;
 	int			dterr;
@@ -713,7 +713,7 @@ make_timestamptz_at_timezone(PG_FUNCTION_ARGS)
 	text	   *zone = PG_GETARG_TEXT_PP(6);
 	TimestampTz result;
 	Timestamp	timestamp;
-	struct pg_tm tt;
+	struct mdb_tm tt;
 	int			tz;
 	fsec_t		fsec;
 
@@ -804,7 +804,7 @@ timestamptz_out(PG_FUNCTION_ARGS)
 	TimestampTz dt = PG_GETARG_TIMESTAMPTZ(0);
 	char	   *result;
 	int			tz;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	const char *tzn;
@@ -840,7 +840,7 @@ timestamptz_recv(PG_FUNCTION_ARGS)
 	int32		typmod = PG_GETARG_INT32(2);
 	TimestampTz timestamp;
 	int			tz;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 
@@ -935,7 +935,7 @@ interval_in(PG_FUNCTION_ARGS)
 	int32		typmod = PG_GETARG_INT32(2);
 	Interval   *result;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			dtype;
 	int			nf;
@@ -1011,7 +1011,7 @@ interval_out(PG_FUNCTION_ARGS)
 {
 	Interval   *span = PG_GETARG_INTERVAL_P(0);
 	char	   *result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	char		buf[MAXDATELEN + 1];
@@ -1605,13 +1605,13 @@ clock_timestamp(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_postmaster_start_time(PG_FUNCTION_ARGS)
+mdb_postmaster_start_time(PG_FUNCTION_ARGS)
 {
 	PG_RETURN_TIMESTAMPTZ(PgStartTime);
 }
 
 Datum
-pg_conf_load_time(PG_FUNCTION_ARGS)
+mdb_conf_load_time(PG_FUNCTION_ARGS)
 {
 	PG_RETURN_TIMESTAMPTZ(PgReloadTime);
 }
@@ -1748,12 +1748,12 @@ TimestampDifferenceExceeds(TimestampTz start_time,
  * by functions that need to interpret, say, a stat(2) result.
  *
  * To avoid having the function's ABI vary depending on the width of time_t,
- * we declare the argument as pg_time_t, which is cast-compatible with
+ * we declare the argument as mdb_time_t, which is cast-compatible with
  * time_t but always 64 bits wide (unless the platform has no 64-bit type).
  * This detail should be invisible to callers, at least at source code level.
  */
 TimestampTz
-time_t_to_timestamptz(pg_time_t tm)
+time_t_to_timestamptz(mdb_time_t tm)
 {
 	TimestampTz result;
 
@@ -1773,20 +1773,20 @@ time_t_to_timestamptz(pg_time_t tm)
  * This too is just marginally useful, but some places need it.
  *
  * To avoid having the function's ABI vary depending on the width of time_t,
- * we declare the result as pg_time_t, which is cast-compatible with
+ * we declare the result as mdb_time_t, which is cast-compatible with
  * time_t but always 64 bits wide (unless the platform has no 64-bit type).
  * This detail should be invisible to callers, at least at source code level.
  */
-pg_time_t
+mdb_time_t
 timestamptz_to_time_t(TimestampTz t)
 {
-	pg_time_t	result;
+	mdb_time_t	result;
 
 #ifdef HAVE_INT64_TIMESTAMP
-	result = (pg_time_t) (t / USECS_PER_SEC +
+	result = (mdb_time_t) (t / USECS_PER_SEC +
 				 ((POSTGRES_EPOCH_JDATE - UNIX_EPOCH_JDATE) * SECS_PER_DAY));
 #else
-	result = (pg_time_t) (t +
+	result = (mdb_time_t) (t +
 				 ((POSTGRES_EPOCH_JDATE - UNIX_EPOCH_JDATE) * SECS_PER_DAY));
 #endif
 
@@ -1805,7 +1805,7 @@ timestamptz_to_str(TimestampTz t)
 {
 	static char buf[MAXDATELEN + 1];
 	int			tz;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	const char *tzn;
@@ -1858,11 +1858,11 @@ dt2time(Timestamp jd, int *hour, int *min, int *sec, fsec_t *fsec)
  * If attimezone is NULL, the global timezone setting will be used.
  */
 int
-timestamp2tm(Timestamp dt, int *tzp, struct pg_tm * tm, fsec_t *fsec, const char **tzn, pg_tz *attimezone)
+timestamp2tm(Timestamp dt, int *tzp, struct mdb_tm * tm, fsec_t *fsec, const char **tzn, mdb_tz *attimezone)
 {
 	Timestamp	date;
 	Timestamp	time;
-	pg_time_t	utime;
+	mdb_time_t	utime;
 
 	/* Use session timezone if caller asks for default */
 	if (attimezone == NULL)
@@ -1936,13 +1936,13 @@ recalc_t:
 	}
 
 	/*
-	 * If the time falls within the range of pg_time_t, use pg_localtime() to
+	 * If the time falls within the range of mdb_time_t, use mdb_localtime() to
 	 * rotate to the local time zone.
 	 *
 	 * First, convert to an integral timestamp, avoiding possibly
 	 * platform-specific roundoff-in-wrong-direction errors, and adjust to
-	 * Unix epoch.  Then see if we can convert to pg_time_t without loss. This
-	 * coding avoids hardwiring any assumptions about the width of pg_time_t,
+	 * Unix epoch.  Then see if we can convert to mdb_time_t without loss. This
+	 * coding avoids hardwiring any assumptions about the width of mdb_time_t,
 	 * so it should behave sanely on machines without int64.
 	 */
 #ifdef HAVE_INT64_TIMESTAMP
@@ -1952,10 +1952,10 @@ recalc_t:
 	dt = rint(dt - *fsec +
 			  (POSTGRES_EPOCH_JDATE - UNIX_EPOCH_JDATE) * SECS_PER_DAY);
 #endif
-	utime = (pg_time_t) dt;
+	utime = (mdb_time_t) dt;
 	if ((Timestamp) utime == dt)
 	{
-		struct pg_tm *tx = pg_localtime(&utime, attimezone);
+		struct mdb_tm *tx = mdb_localtime(&utime, attimezone);
 
 		tm->tm_year = tx->tm_year + 1900;
 		tm->tm_mon = tx->tm_mon + 1;
@@ -1973,7 +1973,7 @@ recalc_t:
 	else
 	{
 		/*
-		 * When out of range of pg_time_t, treat as GMT
+		 * When out of range of mdb_time_t, treat as GMT
 		 */
 		*tzp = 0;
 		/* Mark this as *no* time zone available */
@@ -1996,7 +1996,7 @@ recalc_t:
  * Returns -1 on failure (value out of range).
  */
 int
-tm2timestamp(struct pg_tm * tm, fsec_t fsec, int *tzp, Timestamp *result)
+tm2timestamp(struct mdb_tm * tm, fsec_t fsec, int *tzp, Timestamp *result)
 {
 	TimeOffset	date;
 	TimeOffset	time;
@@ -2048,7 +2048,7 @@ tm2timestamp(struct pg_tm * tm, fsec_t fsec, int *tzp, Timestamp *result)
  * Convert an interval data type to a tm structure.
  */
 int
-interval2tm(Interval span, struct pg_tm * tm, fsec_t *fsec)
+interval2tm(Interval span, struct mdb_tm * tm, fsec_t *fsec)
 {
 	TimeOffset	time;
 	TimeOffset	tfrac;
@@ -2094,7 +2094,7 @@ recalc:
 }
 
 int
-tm2interval(struct pg_tm * tm, fsec_t fsec, Interval *span)
+tm2interval(struct mdb_tm * tm, fsec_t fsec, Interval *span)
 {
 	double		total_months = (double) tm->tm_year * MONTHS_PER_YEAR + tm->tm_mon;
 
@@ -2162,12 +2162,12 @@ interval_finite(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 void
-GetEpochTime(struct pg_tm * tm)
+GetEpochTime(struct mdb_tm * tm)
 {
-	struct pg_tm *t0;
-	pg_time_t	epoch = 0;
+	struct mdb_tm *t0;
+	mdb_time_t	epoch = 0;
 
-	t0 = pg_gmtime(&epoch);
+	t0 = mdb_gmtime(&epoch);
 
 	tm->tm_year = t0->tm_year;
 	tm->tm_mon = t0->tm_mon;
@@ -2184,7 +2184,7 @@ Timestamp
 SetEpochTimestamp(void)
 {
 	Timestamp	dt;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 
 	GetEpochTime(tm);
@@ -3011,7 +3011,7 @@ timestamp_pl_interval(PG_FUNCTION_ARGS)
 	{
 		if (span->month != 0)
 		{
-			struct pg_tm tt,
+			struct mdb_tm tt,
 					   *tm = &tt;
 			fsec_t		fsec;
 
@@ -3044,7 +3044,7 @@ timestamp_pl_interval(PG_FUNCTION_ARGS)
 
 		if (span->day != 0)
 		{
-			struct pg_tm tt,
+			struct mdb_tm tt,
 					   *tm = &tt;
 			fsec_t		fsec;
 			int			julian;
@@ -3117,7 +3117,7 @@ timestamptz_pl_interval(PG_FUNCTION_ARGS)
 	{
 		if (span->month != 0)
 		{
-			struct pg_tm tt,
+			struct mdb_tm tt,
 					   *tm = &tt;
 			fsec_t		fsec;
 
@@ -3152,7 +3152,7 @@ timestamptz_pl_interval(PG_FUNCTION_ARGS)
 
 		if (span->day != 0)
 		{
-			struct pg_tm tt,
+			struct mdb_tm tt,
 					   *tm = &tt;
 			fsec_t		fsec;
 			int			julian;
@@ -3651,11 +3651,11 @@ timestamp_age(PG_FUNCTION_ARGS)
 	fsec_t		fsec,
 				fsec1,
 				fsec2;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
-	struct pg_tm tt1,
+	struct mdb_tm tt1,
 			   *tm1 = &tt1;
-	struct pg_tm tt2,
+	struct mdb_tm tt2,
 			   *tm2 = &tt2;
 
 	result = (Interval *) palloc(sizeof(Interval));
@@ -3774,11 +3774,11 @@ timestamptz_age(PG_FUNCTION_ARGS)
 	fsec_t		fsec,
 				fsec1,
 				fsec2;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
-	struct pg_tm tt1,
+	struct mdb_tm tt1,
 			   *tm1 = &tt1;
-	struct pg_tm tt2,
+	struct mdb_tm tt2,
 			   *tm2 = &tt2;
 	int			tz1;
 	int			tz2;
@@ -3906,7 +3906,7 @@ timestamp_trunc(PG_FUNCTION_ARGS)
 				val;
 	char	   *lowunits;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 
 	if (TIMESTAMP_NOT_FINITE(timestamp))
@@ -4040,7 +4040,7 @@ timestamptz_trunc(PG_FUNCTION_ARGS)
 	bool		redotz = false;
 	char	   *lowunits;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 
 	if (TIMESTAMP_NOT_FINITE(timestamp))
@@ -4195,7 +4195,7 @@ interval_trunc(PG_FUNCTION_ARGS)
 				val;
 	char	   *lowunits;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 
 	result = (Interval *) palloc(sizeof(Interval));
@@ -4548,7 +4548,7 @@ timestamp_part(PG_FUNCTION_ARGS)
 				val;
 	char	   *lowunits;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 
 	lowunits = downcase_truncate_identifier(VARDATA_ANY(units),
@@ -4770,7 +4770,7 @@ timestamptz_part(PG_FUNCTION_ARGS)
 	char	   *lowunits;
 	double		dummy;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 
 	lowunits = downcase_truncate_identifier(VARDATA_ANY(units),
@@ -4992,7 +4992,7 @@ interval_part(PG_FUNCTION_ARGS)
 				val;
 	char	   *lowunits;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 
 	lowunits = downcase_truncate_identifier(VARDATA_ANY(units),
@@ -5138,7 +5138,7 @@ timestamp_zone_transform(PG_FUNCTION_ARGS)
 		char	   *lowzone;
 		int			type,
 					abbrev_offset;
-		pg_tz	   *tzp;
+		mdb_tz	   *tzp;
 		bool		noop = false;
 
 		/*
@@ -5164,8 +5164,8 @@ timestamp_zone_transform(PG_FUNCTION_ARGS)
 		{
 			long		tzname_offset;
 
-			tzp = pg_tzset(tzname);
-			if (tzp && pg_get_timezone_offset(tzp, &tzname_offset))
+			tzp = mdb_tzset(tzname);
+			if (tzp && mdb_get_timezone_offset(tzp, &tzname_offset))
 				noop = (tzname_offset == 0);
 		}
 
@@ -5211,8 +5211,8 @@ timestamp_zone(PG_FUNCTION_ARGS)
 	char	   *lowzone;
 	int			type,
 				val;
-	pg_tz	   *tzp;
-	struct pg_tm tm;
+	mdb_tz	   *tzp;
+	struct mdb_tm tm;
 	fsec_t		fsec;
 
 	if (TIMESTAMP_NOT_FINITE(timestamp))
@@ -5254,7 +5254,7 @@ timestamp_zone(PG_FUNCTION_ARGS)
 	else
 	{
 		/* try it as a full zone name */
-		tzp = pg_tzset(tzname);
+		tzp = mdb_tzset(tzname);
 		if (tzp)
 		{
 			/* Apply the timezone change */
@@ -5383,7 +5383,7 @@ static TimestampTz
 timestamp2timestamptz(Timestamp timestamp)
 {
 	TimestampTz result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	int			tz;
@@ -5416,7 +5416,7 @@ timestamptz_timestamp(PG_FUNCTION_ARGS)
 {
 	TimestampTz timestamp = PG_GETARG_TIMESTAMPTZ(0);
 	Timestamp	result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	int			tz;
@@ -5452,7 +5452,7 @@ timestamptz_zone(PG_FUNCTION_ARGS)
 	char	   *lowzone;
 	int			type,
 				val;
-	pg_tz	   *tzp;
+	mdb_tz	   *tzp;
 
 	if (TIMESTAMP_NOT_FINITE(timestamp))
 		PG_RETURN_TIMESTAMP(timestamp);
@@ -5491,11 +5491,11 @@ timestamptz_zone(PG_FUNCTION_ARGS)
 	else
 	{
 		/* try it as a full zone name */
-		tzp = pg_tzset(tzname);
+		tzp = mdb_tzset(tzname);
 		if (tzp)
 		{
 			/* Apply the timezone change */
-			struct pg_tm tm;
+			struct mdb_tm tm;
 			fsec_t		fsec;
 
 			if (timestamp2tm(timestamp, &tz, &tm, &fsec, NULL, tzp) != 0)

@@ -27,7 +27,7 @@ override CPPFLAGS := -I../include -I$(top_srcdir)/src/interfaces/ecpg/include \
 override CFLAGS += $(PTHREAD_CFLAGS) -DECPG_COMPILE
 
 OBJS=	preproc.o pgc.o type.o ecpg.o output.o parser.o \
-	keywords.o c_keywords.o ecpg_keywords.o ../ecpglib/typename.o descriptor.o variable.o \
+	keywords.o c_keywords.o ecmdb_keywords.o ../ecpglib/typename.o descriptor.o variable.o \
 	$(WIN32RES)
 
 # Suppress parallel build to avoid a bug in GNU make 3.82
@@ -51,7 +51,7 @@ preproc.y: ../../../backend/parser/gram.y parse.pl ecpg.addons ecpg.header ecpg.
 	$(PERL) $(srcdir)/parse.pl $(srcdir) < $< > $@
 	$(PERL) $(srcdir)/check_rules.pl $(srcdir) $<
 
-ecpg_keywords.o c_keywords.o keywords.o preproc.o pgc.o parser.o: preproc.h
+ecmdb_keywords.o c_keywords.o keywords.o preproc.o pgc.o parser.o: preproc.h
 
 distprep: preproc.y preproc.c preproc.h pgc.c
 

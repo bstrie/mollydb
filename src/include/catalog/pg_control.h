@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_control.h
- *	  The system control file "pg_control" is not a heap relation.
+ * mdb_control.h
+ *	  The system control file "mdb_control" is not a heap relation.
  *	  However, we define it here so that the format is documented.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_control.h
+ * src/include/catalog/mdb_control.h
  *
  *-------------------------------------------------------------------------
  */
@@ -16,16 +16,16 @@
 #define PG_CONTROL_H
 
 #include "access/xlogdefs.h"
-#include "pgtime.h"				/* for pg_time_t */
-#include "port/pg_crc32c.h"
+#include "pgtime.h"				/* for mdb_time_t */
+#include "port/mdb_crc32c.h"
 
 
-/* Version identifier for this pg_control format */
+/* Version identifier for this mdb_control format */
 #define PG_CONTROL_VERSION	942
 
 /*
  * Body of CheckPoint XLOG records.  This is declared here because we keep
- * a copy of the latest one in pg_control for possible disaster recovery.
+ * a copy of the latest one in mdb_control for possible disaster recovery.
  * Changing this struct requires a PG_CONTROL_VERSION bump.
  */
 typedef struct CheckPoint
@@ -45,7 +45,7 @@ typedef struct CheckPoint
 	Oid			oldestXidDB;	/* database with minimum datfrozenxid */
 	MultiXactId oldestMulti;	/* cluster-wide minimum datminmxid */
 	Oid			oldestMultiDB;	/* database with minimum datminmxid */
-	pg_time_t	time;			/* time stamp of checkpoint */
+	mdb_time_t	time;			/* time stamp of checkpoint */
 	TransactionId oldestCommitTsXid;	/* oldest Xid with valid commit
 										 * timestamp */
 	TransactionId newestCommitTsXid;	/* newest Xid with valid commit
@@ -76,7 +76,7 @@ typedef struct CheckPoint
 
 
 /*
- * System status indicator.  Note this is stored in pg_control; if you change
+ * System status indicator.  Note this is stored in mdb_control; if you change
  * it, you must bump PG_CONTROL_VERSION
  */
 typedef enum DBState
@@ -91,7 +91,7 @@ typedef enum DBState
 } DBState;
 
 /*
- * Contents of pg_control.
+ * Contents of mdb_control.
  *
  * NOTE: try to keep this under 512 bytes so that it will fit on one physical
  * sector of typical disk drives.  This reduces the odds of corruption due to
@@ -108,25 +108,25 @@ typedef struct ControlFileData
 
 	/*
 	 * Version identifier information.  Keep these fields at the same offset,
-	 * especially pg_control_version; they won't be real useful if they move
+	 * especially mdb_control_version; they won't be real useful if they move
 	 * around.  (For historical reasons they must be 8 bytes into the file
 	 * rather than immediately at the front.)
 	 *
-	 * pg_control_version identifies the format of pg_control itself.
+	 * mdb_control_version identifies the format of mdb_control itself.
 	 * catalog_version_no identifies the format of the system catalogs.
 	 *
 	 * There are additional version identifiers in individual files; for
 	 * example, WAL logs contain per-page magic numbers that can serve as
 	 * version cues for the WAL log.
 	 */
-	uint32		pg_control_version;		/* PG_CONTROL_VERSION */
+	uint32		mdb_control_version;		/* PG_CONTROL_VERSION */
 	uint32		catalog_version_no;		/* see catversion.h */
 
 	/*
 	 * System status data
 	 */
 	DBState		state;			/* see enum above */
-	pg_time_t	time;			/* time stamp of last pg_control update */
+	mdb_time_t	time;			/* time stamp of last mdb_control update */
 	XLogRecPtr	checkPoint;		/* last check point record ptr */
 	XLogRecPtr	prevCheckPoint; /* previous check point record ptr */
 
@@ -156,14 +156,14 @@ typedef struct ControlFileData
 	 * backupEndPoint is the backup end location, if we are recovering from an
 	 * online backup which was taken from the standby and haven't reached the
 	 * end of backup yet. It is initialized to the minimum recovery point in
-	 * pg_control which was backed up last. It is reset to zero when the end
+	 * mdb_control which was backed up last. It is reset to zero when the end
 	 * of backup is reached, and we mustn't start up before that.
 	 *
 	 * If backupEndRequired is true, we know for sure that we're restoring
 	 * from a backup, and must see a backup-end record before we can safely
 	 * start up. If it's false, but backupStartPoint is set, a backup_label
 	 * file was found at startup but it may have been a leftover from a stray
-	 * pg_start_backup() call, not accompanied by pg_stop_backup().
+	 * mdb_start_backup() call, not accompanied by mdb_stop_backup().
 	 */
 	XLogRecPtr	minRecoveryPoint;
 	TimeLineID	minRecoveryPointTLI;
@@ -186,7 +186,7 @@ typedef struct ControlFileData
 	/*
 	 * This data is used to check for hardware-architecture compatibility of
 	 * the database and the backend executable.  We need not check endianness
-	 * explicitly, since the pg_control version will surely look wrong to a
+	 * explicitly, since the mdb_control version will surely look wrong to a
 	 * machine of different endianness, but we do need to worry about MAXALIGN
 	 * and floating-point format.  (Note: storage layout nominally also
 	 * depends on SHORTALIGN and INTALIGN, but in practice these are the same
@@ -213,7 +213,7 @@ typedef struct ControlFileData
 	uint32		indexMaxKeys;	/* max number of columns in an index */
 
 	uint32		toast_max_chunk_size;	/* chunk size in TOAST tables */
-	uint32		loblksize;		/* chunk size in pg_largeobject */
+	uint32		loblksize;		/* chunk size in mdb_largeobject */
 
 	/* flag indicating internal format of timestamp, interval, time */
 	bool		enableIntTimes; /* int64 storage enabled? */
@@ -226,11 +226,11 @@ typedef struct ControlFileData
 	uint32		data_checksum_version;
 
 	/* CRC of all above ... MUST BE LAST! */
-	pg_crc32c	crc;
+	mdb_crc32c	crc;
 } ControlFileData;
 
 /*
- * Physical size of the pg_control file.  Note that this is considerably
+ * Physical size of the mdb_control file.  Note that this is considerably
  * bigger than the actually used size (ie, sizeof(ControlFileData)).
  * The idea is to keep the physical size constant independent of format
  * changes, so that ReadControlFile will deliver a suitable wrong-version

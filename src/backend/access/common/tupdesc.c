@@ -20,7 +20,7 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "miscadmin.h"
 #include "parser/parse_type.h"
 #include "utils/acl.h"
@@ -57,26 +57,26 @@ CreateTemplateTupleDesc(int natts, bool hasoid)
 	 * alignment padding between the struct and the array of attribute row
 	 * pointers.
 	 *
-	 * Note: Only the fixed part of pg_attribute rows is included in tuple
+	 * Note: Only the fixed part of mdb_attribute rows is included in tuple
 	 * descriptors, so we only need ATTRIBUTE_FIXED_PART_SIZE space per attr.
 	 * That might need alignment padding, however.
 	 */
-	attroffset = sizeof(struct tupleDesc) + natts * sizeof(Form_pg_attribute);
+	attroffset = sizeof(struct tupleDesc) + natts * sizeof(Form_mdb_attribute);
 	attroffset = MAXALIGN(attroffset);
 	stg = palloc(attroffset + natts * MAXALIGN(ATTRIBUTE_FIXED_PART_SIZE));
 	desc = (TupleDesc) stg;
 
 	if (natts > 0)
 	{
-		Form_pg_attribute *attrs;
+		Form_mdb_attribute *attrs;
 		int			i;
 
-		attrs = (Form_pg_attribute *) (stg + sizeof(struct tupleDesc));
+		attrs = (Form_mdb_attribute *) (stg + sizeof(struct tupleDesc));
 		desc->attrs = attrs;
 		stg += attroffset;
 		for (i = 0; i < natts; i++)
 		{
-			attrs[i] = (Form_pg_attribute) stg;
+			attrs[i] = (Form_mdb_attribute) stg;
 			stg += MAXALIGN(ATTRIBUTE_FIXED_PART_SIZE);
 		}
 	}
@@ -99,16 +99,16 @@ CreateTemplateTupleDesc(int natts, bool hasoid)
 /*
  * CreateTupleDesc
  *		This function allocates a new TupleDesc pointing to a given
- *		Form_pg_attribute array.
+ *		Form_mdb_attribute array.
  *
- * Note: if the TupleDesc is ever freed, the Form_pg_attribute array
+ * Note: if the TupleDesc is ever freed, the Form_mdb_attribute array
  * will not be freed thereby.
  *
  * Tuple type ID information is initially set for an anonymous record type;
  * caller can overwrite this if needed.
  */
 TupleDesc
-CreateTupleDesc(int natts, bool hasoid, Form_pg_attribute *attrs)
+CreateTupleDesc(int natts, bool hasoid, Form_mdb_attribute *attrs)
 {
 	TupleDesc	desc;
 
@@ -363,8 +363,8 @@ equalTupleDescs(TupleDesc tupdesc1, TupleDesc tupdesc2)
 
 	for (i = 0; i < tupdesc1->natts; i++)
 	{
-		Form_pg_attribute attr1 = tupdesc1->attrs[i];
-		Form_pg_attribute attr2 = tupdesc2->attrs[i];
+		Form_mdb_attribute attr1 = tupdesc1->attrs[i];
+		Form_mdb_attribute attr2 = tupdesc2->attrs[i];
 
 		/*
 		 * We do not need to check every single field here: we can disregard
@@ -497,8 +497,8 @@ TupleDescInitEntry(TupleDesc desc,
 				   int attdim)
 {
 	HeapTuple	tuple;
-	Form_pg_type typeForm;
-	Form_pg_attribute att;
+	Form_mdb_type typeForm;
+	Form_mdb_attribute att;
 
 	/*
 	 * sanity checks
@@ -541,7 +541,7 @@ TupleDescInitEntry(TupleDesc desc,
 	tuple = SearchSysCache1(TYPEOID, ObjectIdGetDatum(oidtypeid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for type %u", oidtypeid);
-	typeForm = (Form_pg_type) GETSTRUCT(tuple);
+	typeForm = (Form_mdb_type) GETSTRUCT(tuple);
 
 	att->atttypid = oidtypeid;
 	att->attlen = typeForm->typlen;
@@ -622,7 +622,7 @@ BuildDescForRelation(List *schema)
 		attname = entry->colname;
 		typenameTypeIdAndMod(NULL, entry->typeName, &atttypid, &atttypmod);
 
-		aclresult = pg_type_aclcheck(atttypid, GetUserId(), ACL_USAGE);
+		aclresult = mdb_type_aclcheck(atttypid, GetUserId(), ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error_type(aclresult, atttypid);
 

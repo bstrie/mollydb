@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_statistic.h
- *	  definition of the system "statistic" relation (pg_statistic)
+ * mdb_statistic.h
+ *	  definition of the system "statistic" relation (mdb_statistic)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_statistic.h
+ * src/include/catalog/mdb_statistic.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,13 +22,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_statistic definition.  cpp turns this into
- *		typedef struct FormData_pg_statistic
+ *		mdb_statistic definition.  cpp turns this into
+ *		typedef struct FormData_mdb_statistic
  * ----------------
  */
 #define StatisticRelationId  2619
 
-CATALOG(pg_statistic,2619) BKI_WITHOUT_OIDS
+CATALOG(mdb_statistic,2619) BKI_WITHOUT_OIDS
 {
 	/* These fields form the unique key for the entry: */
 	Oid			starelid;		/* relation containing attribute */
@@ -60,7 +60,7 @@ CATALOG(pg_statistic,2619) BKI_WITHOUT_OIDS
 	 * unique (stadistinct = -1) or nearly so (for example, a column in
 	 * which values appear about twice on the average could be represented
 	 * by stadistinct = -0.5).  Because the number-of-rows statistic in
-	 * pg_class may be updated more frequently than pg_statistic is, it's
+	 * mdb_class may be updated more frequently than mdb_statistic is, it's
 	 * important to be able to describe such situations as a multiple of
 	 * the number of rows, rather than a fixed number of distinct values.
 	 * But in other cases a fixed number is correct (eg, a boolean column).
@@ -115,49 +115,49 @@ CATALOG(pg_statistic,2619) BKI_WITHOUT_OIDS
 	anyarray	stavalues4;
 	anyarray	stavalues5;
 #endif
-} FormData_pg_statistic;
+} FormData_mdb_statistic;
 
 #define STATISTIC_NUM_SLOTS  5
 
 
 /* ----------------
- *		Form_pg_statistic corresponds to a pointer to a tuple with
- *		the format of pg_statistic relation.
+ *		Form_mdb_statistic corresponds to a pointer to a tuple with
+ *		the format of mdb_statistic relation.
  * ----------------
  */
-typedef FormData_pg_statistic *Form_pg_statistic;
+typedef FormData_mdb_statistic *Form_mdb_statistic;
 
 /* ----------------
- *		compiler constants for pg_statistic
+ *		compiler constants for mdb_statistic
  * ----------------
  */
-#define Natts_pg_statistic				26
-#define Anum_pg_statistic_starelid		1
-#define Anum_pg_statistic_staattnum		2
-#define Anum_pg_statistic_stainherit	3
-#define Anum_pg_statistic_stanullfrac	4
-#define Anum_pg_statistic_stawidth		5
-#define Anum_pg_statistic_stadistinct	6
-#define Anum_pg_statistic_stakind1		7
-#define Anum_pg_statistic_stakind2		8
-#define Anum_pg_statistic_stakind3		9
-#define Anum_pg_statistic_stakind4		10
-#define Anum_pg_statistic_stakind5		11
-#define Anum_pg_statistic_staop1		12
-#define Anum_pg_statistic_staop2		13
-#define Anum_pg_statistic_staop3		14
-#define Anum_pg_statistic_staop4		15
-#define Anum_pg_statistic_staop5		16
-#define Anum_pg_statistic_stanumbers1	17
-#define Anum_pg_statistic_stanumbers2	18
-#define Anum_pg_statistic_stanumbers3	19
-#define Anum_pg_statistic_stanumbers4	20
-#define Anum_pg_statistic_stanumbers5	21
-#define Anum_pg_statistic_stavalues1	22
-#define Anum_pg_statistic_stavalues2	23
-#define Anum_pg_statistic_stavalues3	24
-#define Anum_pg_statistic_stavalues4	25
-#define Anum_pg_statistic_stavalues5	26
+#define Natts_mdb_statistic				26
+#define Anum_mdb_statistic_starelid		1
+#define Anum_mdb_statistic_staattnum		2
+#define Anum_mdb_statistic_stainherit	3
+#define Anum_mdb_statistic_stanullfrac	4
+#define Anum_mdb_statistic_stawidth		5
+#define Anum_mdb_statistic_stadistinct	6
+#define Anum_mdb_statistic_stakind1		7
+#define Anum_mdb_statistic_stakind2		8
+#define Anum_mdb_statistic_stakind3		9
+#define Anum_mdb_statistic_stakind4		10
+#define Anum_mdb_statistic_stakind5		11
+#define Anum_mdb_statistic_staop1		12
+#define Anum_mdb_statistic_staop2		13
+#define Anum_mdb_statistic_staop3		14
+#define Anum_mdb_statistic_staop4		15
+#define Anum_mdb_statistic_staop5		16
+#define Anum_mdb_statistic_stanumbers1	17
+#define Anum_mdb_statistic_stanumbers2	18
+#define Anum_mdb_statistic_stanumbers3	19
+#define Anum_mdb_statistic_stanumbers4	20
+#define Anum_mdb_statistic_stanumbers5	21
+#define Anum_mdb_statistic_stavalues1	22
+#define Anum_mdb_statistic_stavalues2	23
+#define Anum_mdb_statistic_stavalues3	24
+#define Anum_mdb_statistic_stavalues4	25
+#define Anum_mdb_statistic_stavalues5	26
 
 /*
  * Currently, five statistical slot "kinds" are defined by core MollyDB,
@@ -167,7 +167,7 @@ typedef FormData_pg_statistic *Form_pg_statistic;
  * typanalyze routine and the selectivity estimation functions of the type's
  * operators.
  *
- * Code reading the pg_statistic relation should not assume that a particular
+ * Code reading the mdb_statistic relation should not assume that a particular
  * data "kind" will appear in any particular slot.  Instead, search the
  * stakind fields to see if the desired data is available.  (The standard
  * function get_attstatsslot() may be used for this.)

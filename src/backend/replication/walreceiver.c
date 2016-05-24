@@ -18,7 +18,7 @@
  * If the primary server ends streaming, but doesn't disconnect, walreceiver
  * goes into "waiting" mode, and waits for the startup process to give new
  * instructions. The startup process will treat that the same as
- * disconnection, and will rescan the archive/pg_xlog directory. But when the
+ * disconnection, and will rescan the archive/mdb_xlog directory. But when the
  * startup process wants to try streaming replication again, it will just
  * nudge the existing walreceiver process that's waiting, instead of launching
  * a new one.
@@ -50,7 +50,7 @@
 #include "access/timeline.h"
 #include "access/transam.h"
 #include "access/xlog_internal.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "libpq/pqformat.h"
 #include "libpq/pqsignal.h"
@@ -62,7 +62,7 @@
 #include "storage/procarray.h"
 #include "utils/builtins.h"
 #include "utils/guc.h"
-#include "utils/pg_lsn.h"
+#include "utils/mdb_lsn.h"
 #include "utils/ps_status.h"
 #include "utils/resowner.h"
 #include "utils/timestamp.h"
@@ -344,7 +344,7 @@ WalReceiverMain(void)
 		 * we've already reached the end of the old timeline, the server will
 		 * finish the streaming immediately, and we will go back to await
 		 * orders from the startup process. If recovery_target_timeline is
-		 * 'latest', the startup process will scan pg_xlog and find the new
+		 * 'latest', the startup process will scan mdb_xlog and find the new
 		 * history file, bump recovery target timeline, and ask us to restart
 		 * on the new timeline.
 		 */
@@ -479,7 +479,7 @@ WalReceiverMain(void)
 						 * so we don't miss a new request for a reply.
 						 */
 						walrcv->force_reply = false;
-						pg_memory_barrier();
+						mdb_memory_barrier();
 						XLogWalRcvSendReply(true, false);
 					}
 				}
@@ -719,7 +719,7 @@ WalRcvFetchTimeLineHistoryFiles(TimeLineID first, TimeLineID last)
 										 tli)));
 
 			/*
-			 * Write the file to pg_xlog.
+			 * Write the file to mdb_xlog.
 			 */
 			writeTimeLineHistoryFile(tli, content, len);
 
@@ -1306,7 +1306,7 @@ WalRcvGetStateString(WalRcvState state)
  * received from the WAL sender of another server.
  */
 Datum
-pg_stat_get_wal_receiver(PG_FUNCTION_ARGS)
+mdb_stat_get_wal_receiver(PG_FUNCTION_ARGS)
 {
 #define PG_STAT_GET_WAL_RECEIVER_COLS	11
 	TupleDesc	tupdesc;

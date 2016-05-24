@@ -101,7 +101,7 @@ typedef struct JsonSemAction
  * points to. If the action pointers are NULL the parser
  * does nothing and just continues.
  */
-extern void pg_parse_json(JsonLexContext *lex, JsonSemAction *sem);
+extern void mdb_parse_json(JsonLexContext *lex, JsonSemAction *sem);
 
 /*
  * json_count_array_elements performs a fast secondary parse to determine the

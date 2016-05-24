@@ -66,7 +66,7 @@ validate_exec(const char *path)
 
 	/* Win32 requires a .exe suffix for stat() */
 	if (strlen(path) >= strlen(".exe") &&
-		pg_strcasecmp(path + strlen(path) - strlen(".exe"), ".exe") != 0)
+		mdb_strcasecmp(path + strlen(path) - strlen(".exe"), ".exe") != 0)
 	{
 		strlcpy(path_exe, path, sizeof(path_exe) - 4);
 		strcat(path_exe, ".exe");

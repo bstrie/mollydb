@@ -29,28 +29,28 @@ SELECT * FROM test_extdep_commands;
 SELECT * FROM test_extdep_commands \gexec
 -- make sure we have the right dependencies on the extension
 SELECT deptype, p.*
-  FROM pg_depend, pg_identify_object(classid, objid, objsubid) AS p
- WHERE refclassid = 'pg_extension'::regclass AND
-       refobjid = (SELECT oid FROM pg_extension WHERE extname = 'test_ext5')
+  FROM mdb_depend, mdb_identify_object(classid, objid, objsubid) AS p
+ WHERE refclassid = 'mdb_extension'::regclass AND
+       refobjid = (SELECT oid FROM mdb_extension WHERE extname = 'test_ext5')
 ORDER BY type;
 DROP EXTENSION test_ext5;
 -- anything still depending on the table?
 SELECT deptype, i.*
-  FROM pg_catalog.pg_depend, pg_identify_object(classid, objid, objsubid) i
-WHERE refclassid='pg_class'::regclass AND
+  FROM mdb_catalog.mdb_depend, mdb_identify_object(classid, objid, objsubid) i
+WHERE refclassid='mdb_class'::regclass AND
  refobjid='test_ext.a'::regclass AND NOT deptype IN ('i', 'a');
 DROP SCHEMA test_ext CASCADE;
 
 -- Second test: If we drop the table, the objects are dropped too and no
--- vestige remains in pg_depend.
+-- vestige remains in mdb_depend.
 SELECT * FROM test_extdep_commands \gexec
 DROP TABLE test_ext.a;		-- should fail, require cascade
 DROP TABLE test_ext.a CASCADE;
 -- anything still depending on the extension?  Should be only function b()
 SELECT deptype, i.*
-  FROM pg_catalog.pg_depend, pg_identify_object(classid, objid, objsubid) i
- WHERE refclassid='pg_extension'::regclass AND
- refobjid=(SELECT oid FROM pg_extension WHERE extname='test_ext5');
+  FROM mdb_catalog.mdb_depend, mdb_identify_object(classid, objid, objsubid) i
+ WHERE refclassid='mdb_extension'::regclass AND
+ refobjid=(SELECT oid FROM mdb_extension WHERE extname='test_ext5');
 DROP EXTENSION test_ext5;
 DROP SCHEMA test_ext CASCADE;
 
@@ -63,10 +63,10 @@ DROP MATERIALIZED VIEW d;
 DROP INDEX e;
 
 SELECT deptype, i.*
-  FROM pg_catalog.pg_depend, pg_identify_object(classid, objid, objsubid) i
- WHERE (refclassid='pg_extension'::regclass AND
-        refobjid=(SELECT oid FROM pg_extension WHERE extname='test_ext5'))
-	OR (refclassid='pg_class'::regclass AND refobjid='test_ext.a'::regclass)
+  FROM mdb_catalog.mdb_depend, mdb_identify_object(classid, objid, objsubid) i
+ WHERE (refclassid='mdb_extension'::regclass AND
+        refobjid=(SELECT oid FROM mdb_extension WHERE extname='test_ext5'))
+	OR (refclassid='mdb_class'::regclass AND refobjid='test_ext.a'::regclass)
    AND NOT deptype IN ('i', 'a');
 
 DROP TABLE a;

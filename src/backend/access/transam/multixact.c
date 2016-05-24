@@ -3,7 +3,7 @@
  * multixact.c
  *		MollyDB multi-transaction-log manager
  *
- * The pg_multixact manager is a pg_clog-like manager that stores an array of
+ * The mdb_multixact manager is a mdb_clog-like manager that stores an array of
  * MultiXactMember for each MultiXactId.  It is a fundamental part of the
  * shared-row-lock implementation.  Each MultiXactMember is comprised of a
  * TransactionId and a set of flag bits.  The name is a bit historical:
@@ -50,9 +50,9 @@
  *
  * We are able to remove segments no longer necessary by carefully tracking
  * each table's used values: during vacuum, any multixact older than a certain
- * value is removed; the cutoff value is stored in pg_class.  The minimum value
- * across all tables in each database is stored in pg_database, and the global
- * minimum across all databases is part of pg_control and is kept in shared
+ * value is removed; the cutoff value is stored in mdb_class.  The minimum value
+ * across all tables in each database is stored in mdb_database, and the global
+ * minimum across all databases is part of mdb_control and is kept in shared
  * memory.  Whenever that minimum is advanced, the SLRUs are truncated.
  *
  * When new multixactid values are to be created, care is taken that the
@@ -76,12 +76,12 @@
 #include "access/xact.h"
 #include "access/xlog.h"
 #include "access/xloginsert.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/dbcommands.h"
 #include "funcapi.h"
 #include "lib/ilist.h"
 #include "miscadmin.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "postmaster/autovacuum.h"
 #include "storage/lmgr.h"
 #include "storage/pmsignal.h"
@@ -272,10 +272,10 @@ typedef struct MultiXactStateData
 	 * that multis that have member xids that are older than the cutoff point
 	 * for xids must also be frozen, even if the multis themselves are newer
 	 * than the multixid cutoff point).  Whenever a full table vacuum happens,
-	 * the freezing point so computed is used as the new pg_class.relminmxid
+	 * the freezing point so computed is used as the new mdb_class.relminmxid
 	 * value.  The minimum of all those values in a database is stored as
-	 * pg_database.datminmxid.  In turn, the minimum of all of those values is
-	 * stored in pg_control and used as truncation point for pg_multixact.  At
+	 * mdb_database.datminmxid.  In turn, the minimum of all of those values is
+	 * stored in mdb_control and used as truncation point for mdb_multixact.  At
 	 * checkpoint or restartpoint, unneeded segments are removed.
 	 */
 	MultiXactId perBackendXactIds[FLEXIBLE_ARRAY_MEMBER];
@@ -430,7 +430,7 @@ MultiXactIdCreate(TransactionId xid1, MultiXactStatus status1,
  * is handled by the lower-level routines.
  *
  * Note: It is critical that MultiXactIds that come from an old cluster (i.e.
- * one upgraded by pg_upgrade from a cluster older than this feature) are not
+ * one upgraded by mdb_upgrade from a cluster older than this feature) are not
  * passed in.
  */
 MultiXactId
@@ -543,7 +543,7 @@ MultiXactIdExpand(MultiXactId multi, TransactionId xid, MultiXactStatus status)
  * because it is not legal to add members to an existing MultiXactId.
  *
  * Caller is expected to have verified that the multixact does not come from
- * a pg_upgraded share-locked tuple.
+ * a mdb_upgraded share-locked tuple.
  */
 bool
 MultiXactIdIsRunning(MultiXactId multi, bool isLockOnly)
@@ -556,7 +556,7 @@ MultiXactIdIsRunning(MultiXactId multi, bool isLockOnly)
 
 	/*
 	 * "false" here means we assume our callers have checked that the given
-	 * multi cannot possibly come from a pg_upgraded database.
+	 * multi cannot possibly come from a mdb_upgraded database.
 	 */
 	nmembers = GetMultiXactIdMembers(multi, &members, false, isLockOnly);
 
@@ -1178,7 +1178,7 @@ GetNewMultiXactId(int nmembers, MultiXactOffset *offset)
  * If the given MultiXactId is older than the value we know to be oldest, we
  * return -1.  The caller is expected to allow that only in permissible cases,
  * i.e. when the infomask lets it presuppose that the tuple had been
- * share-locked before a pg_upgrade; this means that the HEAP_XMAX_LOCK_ONLY
+ * share-locked before a mdb_upgrade; this means that the HEAP_XMAX_LOCK_ONLY
  * needs to be set, but HEAP_XMAX_KEYSHR_LOCK and HEAP_XMAX_EXCL_LOCK are not
  * set.
  *
@@ -1247,11 +1247,11 @@ GetMultiXactIdMembers(MultiXactId multi, MultiXactMember **members,
 	 * An ID older than MultiXactState->oldestMultiXactId cannot possibly be
 	 * useful; it has already been removed, or will be removed shortly, by
 	 * truncation.  Returning the wrong values could lead to an incorrect
-	 * visibility result.  However, to support pg_upgrade we need to allow an
+	 * visibility result.  However, to support mdb_upgrade we need to allow an
 	 * empty set to be returned regardless, if the caller is willing to accept
 	 * it; the caller is expected to check that it's an allowed condition
 	 * (such as ensuring that the infomask bits set on the tuple are
-	 * consistent with the pg_upgrade scenario).  If the caller is expecting
+	 * consistent with the mdb_upgrade scenario).  If the caller is expecting
 	 * this to be called only on recently created multis, then we raise an
 	 * error.
 	 *
@@ -1368,7 +1368,7 @@ retry:
 			/* Corner case 2: next multixact is still being filled in */
 			LWLockRelease(MultiXactOffsetControlLock);
 			CHECK_FOR_INTERRUPTS();
-			pg_usleep(1000L);
+			mdb_usleep(1000L);
 			goto retry;
 		}
 
@@ -1831,11 +1831,11 @@ MultiXactShmemInit(void)
 
 	SimpleLruInit(MultiXactOffsetCtl,
 				  "multixact_offset", NUM_MXACTOFFSET_BUFFERS, 0,
-				  MultiXactOffsetControlLock, "pg_multixact/offsets",
+				  MultiXactOffsetControlLock, "mdb_multixact/offsets",
 				  LWTRANCHE_MXACTOFFSET_BUFFERS);
 	SimpleLruInit(MultiXactMemberCtl,
 				  "multixact_member", NUM_MXACTMEMBER_BUFFERS, 0,
-				  MultiXactMemberControlLock, "pg_multixact/members",
+				  MultiXactMemberControlLock, "mdb_multixact/members",
 				  LWTRANCHE_MXACTMEMBER_BUFFERS);
 
 	/* Initialize our shared state struct */
@@ -1935,11 +1935,11 @@ ZeroMultiXactMemberPage(int pageno, bool writeXlog)
  * MaybeExtendOffsetSlru
  *		Extend the offsets SLRU area, if necessary
  *
- * After a binary upgrade from <= 9.2, the pg_multixact/offset SLRU area might
+ * After a binary upgrade from <= 9.2, the mdb_multixact/offset SLRU area might
  * contain files that are shorter than necessary; this would occur if the old
  * installation had used multixacts beyond the first page (files cannot be
- * copied, because the on-disk representation is different).  pg_upgrade would
- * update pg_control to set the next offset value to be at that position, so
+ * copied, because the on-disk representation is different).  mdb_upgrade would
+ * update mdb_control to set the next offset value to be at that position, so
  * that tuples marked as locked by such MultiXacts would be seen as visible
  * without having to consult multixact.  However, trying to create and use a
  * new MultiXactId would result in an error because the page on which the new
@@ -1976,7 +1976,7 @@ MaybeExtendOffsetSlru(void)
  *
  * StartupXLOG has already established nextMXact/nextOffset by calling
  * MultiXactSetNextMXact and/or MultiXactAdvanceNextMXact, and the oldestMulti
- * info from pg_control and/or MultiXactAdvanceOldest, but we haven't yet
+ * info from mdb_control and/or MultiXactAdvanceOldest, but we haven't yet
  * replayed WAL.
  */
 void
@@ -2032,7 +2032,7 @@ TrimMultiXact(void)
 	/*
 	 * Zero out the remainder of the current offsets page.  See notes in
 	 * TrimCLOG() for background.  Unlike CLOG, some WAL record covers every
-	 * pg_multixact SLRU mutation.  Since, also unlike CLOG, we ignore the WAL
+	 * mdb_multixact SLRU mutation.  Since, also unlike CLOG, we ignore the WAL
 	 * rule "write xlog before data," nextMXact successors may carry obsolete,
 	 * nonzero offset values.  Zero those so case 2 of GetMultiXactIdMembers()
 	 * operates normally.
@@ -3335,7 +3335,7 @@ multixact_redo(XLogReaderState *record)
 }
 
 Datum
-pg_get_multixact_members(PG_FUNCTION_ARGS)
+mdb_get_multixact_members(PG_FUNCTION_ARGS)
 {
 	typedef struct
 	{

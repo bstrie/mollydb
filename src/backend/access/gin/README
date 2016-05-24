@@ -87,7 +87,7 @@ The "items" that a GIN index indexes are composite values that contain
 zero or more "keys".  For example, an item might be an integer array, and
 then the keys would be the individual integer values.  The index actually
 stores and searches for the key values, not the items per se.  In the
-pg_opclass entry for a GIN opclass, the opcintype is the data type of the
+mdb_opclass entry for a GIN opclass, the opcintype is the data type of the
 items, and the opckeytype is the data type of the keys.  GIN is optimized
 for cases where items contain many keys and the same key values appear
 in many different items.
@@ -328,7 +328,7 @@ Compatibility
 -------------
 
 Compression of TIDs was introduced in 9.4. Some GIN indexes could remain in
-uncompressed format because of pg_upgrade from 9.3 or earlier versions.
+uncompressed format because of mdb_upgrade from 9.3 or earlier versions.
 For compatibility, old uncompressed format is also supported. Following
 rules are used to handle it:
 

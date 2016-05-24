@@ -65,7 +65,7 @@ typedef struct HashPageOpaqueData
 typedef HashPageOpaqueData *HashPageOpaque;
 
 /*
- * The page ID is for the convenience of pg_filedump and similar utilities,
+ * The page ID is for the convenience of mdb_filedump and similar utilities,
  * which otherwise would have a hard time telling pages of different index
  * types apart.  It should be the last 2 bytes on the page.  This is more or
  * less "free" due to alignment considerations.
@@ -159,7 +159,7 @@ typedef struct HashMetaPageData
 								 * allocated */
 	uint32		hashm_firstfree;	/* lowest-number free ovflpage (bit#) */
 	uint32		hashm_nmaps;	/* number of bitmap pages */
-	RegProcedure hashm_procid;	/* hash procedure id from pg_proc */
+	RegProcedure hashm_procid;	/* hash procedure id from mdb_proc */
 	uint32		hashm_spares[HASH_MAX_SPLITPOINTS];		/* spare pages before
 														 * each splitpoint */
 	BlockNumber hashm_mapp[HASH_MAX_BITMAPS];	/* blknos of ovfl bitmaps */

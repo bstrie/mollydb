@@ -15,7 +15,7 @@ ENCODING = UTF8
 NO_LOCALE = 1
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

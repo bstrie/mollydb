@@ -70,8 +70,8 @@
  * Function prototypes -- internal to this file only
  */
 
-static AbsoluteTime tm2abstime(struct pg_tm * tm, int tz);
-static void reltime2tm(RelativeTime time, struct pg_tm * tm);
+static AbsoluteTime tm2abstime(struct mdb_tm * tm, int tz);
+static void reltime2tm(RelativeTime time, struct mdb_tm * tm);
 static void parsetinterval(char *i_string,
 			   AbsoluteTime *i_start,
 			   AbsoluteTime *i_end);
@@ -95,15 +95,15 @@ GetCurrentAbsoluteTime(void)
 
 
 void
-abstime2tm(AbsoluteTime _time, int *tzp, struct pg_tm * tm, char **tzn)
+abstime2tm(AbsoluteTime _time, int *tzp, struct mdb_tm * tm, char **tzn)
 {
-	pg_time_t	time = (pg_time_t) _time;
-	struct pg_tm *tx;
+	mdb_time_t	time = (mdb_time_t) _time;
+	struct mdb_tm *tx;
 
 	if (tzp != NULL)
-		tx = pg_localtime(&time, session_timezone);
+		tx = mdb_localtime(&time, session_timezone);
 	else
-		tx = pg_gmtime(&time);
+		tx = mdb_gmtime(&time);
 
 	tm->tm_year = tx->tm_year + 1900;
 	tm->tm_mon = tx->tm_mon + 1;
@@ -147,7 +147,7 @@ abstime2tm(AbsoluteTime _time, int *tzp, struct pg_tm * tm, char **tzn)
  * Note that tm has full year (not 1900-based) and 1-based month.
  */
 static AbsoluteTime
-tm2abstime(struct pg_tm * tm, int tz)
+tm2abstime(struct mdb_tm * tm, int tz)
 {
 	int			day;
 	AbsoluteTime sec;
@@ -198,7 +198,7 @@ abstimein(PG_FUNCTION_ARGS)
 	AbsoluteTime result;
 	fsec_t		fsec;
 	int			tz = 0;
-	struct pg_tm date,
+	struct mdb_tm date,
 			   *tm = &date;
 	int			dterr;
 	char	   *field[MAXDATEFIELDS];
@@ -262,7 +262,7 @@ abstimeout(PG_FUNCTION_ARGS)
 	char	   *result;
 	int			tz;
 	double		fsec = 0;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	char		buf[MAXDATELEN + 1];
 	char		zone[MAXDATELEN + 1],
@@ -436,7 +436,7 @@ timestamp_abstime(PG_FUNCTION_ARGS)
 	AbsoluteTime result;
 	fsec_t		fsec;
 	int			tz;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 
 	if (TIMESTAMP_IS_NOBEGIN(timestamp))
@@ -467,7 +467,7 @@ abstime_timestamp(PG_FUNCTION_ARGS)
 {
 	AbsoluteTime abstime = PG_GETARG_ABSOLUTETIME(0);
 	Timestamp	result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 	char		zone[MAXDATELEN + 1],
@@ -512,7 +512,7 @@ timestamptz_abstime(PG_FUNCTION_ARGS)
 	TimestampTz timestamp = PG_GETARG_TIMESTAMP(0);
 	AbsoluteTime result;
 	fsec_t		fsec;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 
 	if (TIMESTAMP_IS_NOBEGIN(timestamp))
@@ -540,7 +540,7 @@ abstime_timestamptz(PG_FUNCTION_ARGS)
 {
 	AbsoluteTime abstime = PG_GETARG_ABSOLUTETIME(0);
 	TimestampTz result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	int			tz;
 	char		zone[MAXDATELEN + 1],
@@ -588,7 +588,7 @@ reltimein(PG_FUNCTION_ARGS)
 {
 	char	   *str = PG_GETARG_CSTRING(0);
 	RelativeTime result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	fsec_t		fsec;
 	int			dtype;
@@ -641,7 +641,7 @@ reltimeout(PG_FUNCTION_ARGS)
 {
 	RelativeTime time = PG_GETARG_RELATIVETIME(0);
 	char	   *result;
-	struct pg_tm tt,
+	struct mdb_tm tt,
 			   *tm = &tt;
 	char		buf[MAXDATELEN + 1];
 
@@ -679,7 +679,7 @@ reltimesend(PG_FUNCTION_ARGS)
 
 
 static void
-reltime2tm(RelativeTime time, struct pg_tm * tm)
+reltime2tm(RelativeTime time, struct mdb_tm * tm)
 {
 	double		dtime = time;
 
@@ -1570,12 +1570,12 @@ timeofday(PG_FUNCTION_ARGS)
 	struct timeval tp;
 	char		templ[128];
 	char		buf[128];
-	pg_time_t	tt;
+	mdb_time_t	tt;
 
 	gettimeofday(&tp, NULL);
-	tt = (pg_time_t) tp.tv_sec;
-	pg_strftime(templ, sizeof(templ), "%a %b %d %H:%M:%S.%%06d %Y %Z",
-				pg_localtime(&tt, session_timezone));
+	tt = (mdb_time_t) tp.tv_sec;
+	mdb_strftime(templ, sizeof(templ), "%a %b %d %H:%M:%S.%%06d %Y %Z",
+				mdb_localtime(&tt, session_timezone));
 	snprintf(buf, sizeof(buf), templ, tp.tv_usec);
 
 	PG_RETURN_TEXT_P(cstring_to_text(buf));

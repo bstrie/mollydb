@@ -33,10 +33,10 @@
 #include "access/htup_details.h"
 #include "access/sysattr.h"
 #include "access/xact.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_constraint.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_constraint.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_type.h"
 #include "commands/trigger.h"
 #include "executor/executor.h"
 #include "executor/spi.h"
@@ -102,15 +102,15 @@
 /* ----------
  * RI_ConstraintInfo
  *
- *	Information extracted from an FK pg_constraint entry.  This is cached in
+ *	Information extracted from an FK mdb_constraint entry.  This is cached in
  *	ri_constraint_cache.
  * ----------
  */
 typedef struct RI_ConstraintInfo
 {
-	Oid			constraint_id;	/* OID of pg_constraint entry (hash key) */
+	Oid			constraint_id;	/* OID of mdb_constraint entry (hash key) */
 	bool		valid;			/* successfully initialized? */
-	uint32		oidHashValue;	/* hash value of pg_constraint OID */
+	uint32		oidHashValue;	/* hash value of mdb_constraint OID */
 	NameData	conname;		/* name of the FK constraint */
 	Oid			pk_relid;		/* referenced relation */
 	Oid			fk_relid;		/* referencing relation */
@@ -138,7 +138,7 @@ typedef struct RI_ConstraintInfo
  */
 typedef struct RI_QueryKey
 {
-	Oid			constr_id;		/* OID of pg_constraint entry */
+	Oid			constr_id;		/* OID of mdb_constraint entry */
 	int32		constr_queryno; /* query type ID, see RI_PLAN_XXX above */
 } RI_QueryKey;
 
@@ -2316,9 +2316,9 @@ RI_Initial_Check(Trigger *trigger, Relation fk_rel, Relation pk_rel)
 	 */
 	if (!has_bypassrls_privilege(GetUserId()) &&
 		((pk_rel->rd_rel->relrowsecurity &&
-		  !pg_class_ownercheck(pkrte->relid, GetUserId())) ||
+		  !mdb_class_ownercheck(pkrte->relid, GetUserId())) ||
 		 (fk_rel->rd_rel->relrowsecurity &&
-		  !pg_class_ownercheck(fkrte->relid, GetUserId()))))
+		  !mdb_class_ownercheck(fkrte->relid, GetUserId()))))
 		return false;
 
 	/*----------
@@ -2578,14 +2578,14 @@ ri_GenerateQual(StringInfo buf,
 				const char *rightop, Oid rightoptype)
 {
 	HeapTuple	opertup;
-	Form_pg_operator operform;
+	Form_mdb_operator operform;
 	char	   *oprname;
 	char	   *nspname;
 
 	opertup = SearchSysCache1(OPEROID, ObjectIdGetDatum(opoid));
 	if (!HeapTupleIsValid(opertup))
 		elog(ERROR, "cache lookup failed for operator %u", opoid);
-	operform = (Form_pg_operator) GETSTRUCT(opertup);
+	operform = (Form_mdb_operator) GETSTRUCT(opertup);
 	Assert(operform->oprkind == 'b');
 	oprname = NameStr(operform->oprname);
 
@@ -2615,14 +2615,14 @@ static void
 ri_add_cast_to(StringInfo buf, Oid typid)
 {
 	HeapTuple	typetup;
-	Form_pg_type typform;
+	Form_mdb_type typform;
 	char	   *typname;
 	char	   *nspname;
 
 	typetup = SearchSysCache1(TYPEOID, ObjectIdGetDatum(typid));
 	if (!HeapTupleIsValid(typetup))
 		elog(ERROR, "cache lookup failed for type %u", typid);
-	typform = (Form_pg_type) GETSTRUCT(typetup);
+	typform = (Form_mdb_type) GETSTRUCT(typetup);
 
 	typname = NameStr(typform->typname);
 	nspname = get_namespace_name(typform->typnamespace);
@@ -2654,7 +2654,7 @@ static void
 ri_GenerateQualCollation(StringInfo buf, Oid collation)
 {
 	HeapTuple	tp;
-	Form_pg_collation colltup;
+	Form_mdb_collation colltup;
 	char	   *collname;
 	char		onename[MAX_QUOTED_NAME_LEN];
 
@@ -2665,7 +2665,7 @@ ri_GenerateQualCollation(StringInfo buf, Oid collation)
 	tp = SearchSysCache1(COLLOID, ObjectIdGetDatum(collation));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for collation %u", collation);
-	colltup = (Form_pg_collation) GETSTRUCT(tp);
+	colltup = (Form_mdb_collation) GETSTRUCT(tp);
 	collname = NameStr(colltup->collname);
 
 	/*
@@ -2686,7 +2686,7 @@ ri_GenerateQualCollation(StringInfo buf, Oid collation)
  *	Construct a hashtable key for a prepared SPI plan of an FK constraint.
  *
  *		key: output argument, *key is filled in based on the other arguments
- *		riinfo: info from pg_constraint entry
+ *		riinfo: info from mdb_constraint entry
  *		constr_queryno: an internal number identifying the query type
  *			(see RI_PLAN_XXX constants at head of file)
  * ----------
@@ -2766,7 +2766,7 @@ ri_FetchConstraintInfo(Trigger *trigger, Relation trig_rel, bool rel_is_pk)
 	if (!OidIsValid(constraintOid))
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_OBJECT_DEFINITION),
-		  errmsg("no pg_constraint entry for trigger \"%s\" on table \"%s\"",
+		  errmsg("no mdb_constraint entry for trigger \"%s\" on table \"%s\"",
 				 trigger->tgname, RelationGetRelationName(trig_rel)),
 				 errhint("Remove this referential integrity trigger and its mates, then do ALTER TABLE ADD CONSTRAINT.")));
 
@@ -2778,14 +2778,14 @@ ri_FetchConstraintInfo(Trigger *trigger, Relation trig_rel, bool rel_is_pk)
 	{
 		if (riinfo->fk_relid != trigger->tgconstrrelid ||
 			riinfo->pk_relid != RelationGetRelid(trig_rel))
-			elog(ERROR, "wrong pg_constraint entry for trigger \"%s\" on table \"%s\"",
+			elog(ERROR, "wrong mdb_constraint entry for trigger \"%s\" on table \"%s\"",
 				 trigger->tgname, RelationGetRelationName(trig_rel));
 	}
 	else
 	{
 		if (riinfo->fk_relid != RelationGetRelid(trig_rel) ||
 			riinfo->pk_relid != trigger->tgconstrrelid)
-			elog(ERROR, "wrong pg_constraint entry for trigger \"%s\" on table \"%s\"",
+			elog(ERROR, "wrong mdb_constraint entry for trigger \"%s\" on table \"%s\"",
 				 trigger->tgname, RelationGetRelationName(trig_rel));
 	}
 
@@ -2801,7 +2801,7 @@ ri_LoadConstraintInfo(Oid constraintOid)
 	RI_ConstraintInfo *riinfo;
 	bool		found;
 	HeapTuple	tup;
-	Form_pg_constraint conForm;
+	Form_mdb_constraint conForm;
 	Datum		adatum;
 	bool		isNull;
 	ArrayType  *arr;
@@ -2825,12 +2825,12 @@ ri_LoadConstraintInfo(Oid constraintOid)
 		return riinfo;
 
 	/*
-	 * Fetch the pg_constraint row so we can fill in the entry.
+	 * Fetch the mdb_constraint row so we can fill in the entry.
 	 */
 	tup = SearchSysCache1(CONSTROID, ObjectIdGetDatum(constraintOid));
 	if (!HeapTupleIsValid(tup)) /* should not happen */
 		elog(ERROR, "cache lookup failed for constraint %u", constraintOid);
-	conForm = (Form_pg_constraint) GETSTRUCT(tup);
+	conForm = (Form_mdb_constraint) GETSTRUCT(tup);
 
 	if (conForm->contype != CONSTRAINT_FOREIGN) /* should not happen */
 		elog(ERROR, "constraint %u is not a foreign key constraint",
@@ -2853,7 +2853,7 @@ ri_LoadConstraintInfo(Oid constraintOid)
 	 * going to look like a C array of values.
 	 */
 	adatum = SysCacheGetAttr(CONSTROID, tup,
-							 Anum_pg_constraint_conkey, &isNull);
+							 Anum_mdb_constraint_conkey, &isNull);
 	if (isNull)
 		elog(ERROR, "null conkey for constraint %u", constraintOid);
 	arr = DatumGetArrayTypeP(adatum);	/* ensure not toasted */
@@ -2870,7 +2870,7 @@ ri_LoadConstraintInfo(Oid constraintOid)
 		pfree(arr);				/* free de-toasted copy, if any */
 
 	adatum = SysCacheGetAttr(CONSTROID, tup,
-							 Anum_pg_constraint_confkey, &isNull);
+							 Anum_mdb_constraint_confkey, &isNull);
 	if (isNull)
 		elog(ERROR, "null confkey for constraint %u", constraintOid);
 	arr = DatumGetArrayTypeP(adatum);	/* ensure not toasted */
@@ -2884,7 +2884,7 @@ ri_LoadConstraintInfo(Oid constraintOid)
 		pfree(arr);				/* free de-toasted copy, if any */
 
 	adatum = SysCacheGetAttr(CONSTROID, tup,
-							 Anum_pg_constraint_conpfeqop, &isNull);
+							 Anum_mdb_constraint_conpfeqop, &isNull);
 	if (isNull)
 		elog(ERROR, "null conpfeqop for constraint %u", constraintOid);
 	arr = DatumGetArrayTypeP(adatum);	/* ensure not toasted */
@@ -2899,7 +2899,7 @@ ri_LoadConstraintInfo(Oid constraintOid)
 		pfree(arr);				/* free de-toasted copy, if any */
 
 	adatum = SysCacheGetAttr(CONSTROID, tup,
-							 Anum_pg_constraint_conppeqop, &isNull);
+							 Anum_mdb_constraint_conppeqop, &isNull);
 	if (isNull)
 		elog(ERROR, "null conppeqop for constraint %u", constraintOid);
 	arr = DatumGetArrayTypeP(adatum);	/* ensure not toasted */
@@ -2913,7 +2913,7 @@ ri_LoadConstraintInfo(Oid constraintOid)
 		pfree(arr);				/* free de-toasted copy, if any */
 
 	adatum = SysCacheGetAttr(CONSTROID, tup,
-							 Anum_pg_constraint_conffeqop, &isNull);
+							 Anum_mdb_constraint_conffeqop, &isNull);
 	if (isNull)
 		elog(ERROR, "null conffeqop for constraint %u", constraintOid);
 	arr = DatumGetArrayTypeP(adatum);	/* ensure not toasted */
@@ -2941,9 +2941,9 @@ ri_LoadConstraintInfo(Oid constraintOid)
 }
 
 /*
- * Callback for pg_constraint inval events
+ * Callback for mdb_constraint inval events
  *
- * While most syscache callbacks just flush all their entries, pg_constraint
+ * While most syscache callbacks just flush all their entries, mdb_constraint
  * gets enough update traffic that it's probably worth being smarter.
  * Invalidate any ri_constraint_cache entry associated with the syscache
  * entry with the specified hash value, or all entries if hashvalue == 0.
@@ -2965,7 +2965,7 @@ InvalidateConstraintCacheCallBack(Datum arg, int cacheid, uint32 hashvalue)
 	 * If the list of currently valid entries gets excessively large, we mark
 	 * them all invalid so we can empty the list.  This arrangement avoids
 	 * O(N^2) behavior in situations where a session touches many foreign keys
-	 * and also does many ALTER TABLEs, such as a restore from pg_dump.
+	 * and also does many ALTER TABLEs, such as a restore from mdb_dump.
 	 */
 	if (ri_constraint_cache_valid_count > 1000)
 		hashvalue = 0;			/* pretend it's a cache reset */
@@ -3263,13 +3263,13 @@ ri_ReportViolation(const RI_ConstraintInfo *riinfo,
 
 	if (check_enable_rls(rel_oid, InvalidOid, true) != RLS_ENABLED)
 	{
-		aclresult = pg_class_aclcheck(rel_oid, GetUserId(), ACL_SELECT);
+		aclresult = mdb_class_aclcheck(rel_oid, GetUserId(), ACL_SELECT);
 		if (aclresult != ACLCHECK_OK)
 		{
 			/* Try for column-level permissions */
 			for (idx = 0; idx < riinfo->nkeys; idx++)
 			{
-				aclresult = pg_attribute_aclcheck(rel_oid, attnums[idx],
+				aclresult = mdb_attribute_aclcheck(rel_oid, attnums[idx],
 												  GetUserId(),
 												  ACL_SELECT);
 
@@ -3399,7 +3399,7 @@ ri_InitHashTables(void)
 									  RI_INIT_CONSTRAINTHASHSIZE,
 									  &ctl, HASH_ELEM | HASH_BLOBS);
 
-	/* Arrange to flush cache on pg_constraint changes */
+	/* Arrange to flush cache on mdb_constraint changes */
 	CacheRegisterSyscacheCallback(CONSTROID,
 								  InvalidateConstraintCacheCallBack,
 								  (Datum) 0);

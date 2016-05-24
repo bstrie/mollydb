@@ -20,7 +20,7 @@ LANGUAGE C STRICT;
 -- page_header()
 --
 CREATE FUNCTION page_header(IN page bytea,
-    OUT lsn pg_lsn,
+    OUT lsn mdb_lsn,
     OUT checksum smallint,
     OUT flags smallint,
     OUT lower smallint,

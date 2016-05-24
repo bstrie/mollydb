@@ -61,13 +61,13 @@ $$;
 BEGIN;
 SELECT hs_locks_drop(257);
 SELECT hs_locks_create(257);
-SELECT count(*) > 257 FROM pg_locks;
+SELECT count(*) > 257 FROM mdb_locks;
 ROLLBACK;
 BEGIN;
 SELECT hs_locks_drop(257);
 SELECT hs_locks_create(257);
-SELECT count(*) > 257 FROM pg_locks;
+SELECT count(*) > 257 FROM mdb_locks;
 COMMIT;
 SELECT hs_locks_drop(257);
 
-SELECT pg_switch_xlog();
+SELECT mdb_switch_xlog();

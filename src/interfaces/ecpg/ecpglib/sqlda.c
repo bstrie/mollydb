@@ -8,7 +8,7 @@
 
 #define POSTGRES_ECPG_INTERNAL
 #include "mollydb_fe.h"
-#include "pg_type.h"
+#include "mdb_type.h"
 
 #include "ecpg-pthread-win32.h"
 #include "decimal.h"
@@ -30,7 +30,7 @@
  * - the next variable's offset in *next
  */
 static void
-ecpg_sqlda_align_add_size(long offset, int alignment, int size, long *current, long *next)
+ecmdb_sqlda_align_add_size(long offset, int alignment, int size, long *current, long *next)
 {
 	if (offset % alignment)
 		offset += alignment - (offset % alignment);
@@ -56,7 +56,7 @@ sqlda_compat_empty_size(const PGresult *res)
 		offset += strlen(PQfname(res, i)) + 1;
 
 	/* Add padding to the first field value */
-	ecpg_sqlda_align_add_size(offset, sizeof(int), 0, &offset, NULL);
+	ecmdb_sqlda_align_add_size(offset, sizeof(int), 0, &offset, NULL);
 
 	return offset;
 }
@@ -77,31 +77,31 @@ sqlda_common_total_size(const PGresult *res, int row, enum COMPAT_MODE compat, l
 		{
 			case ECPGt_short:
 			case ECPGt_unsigned_short:
-				ecpg_sqlda_align_add_size(offset, sizeof(short), sizeof(short), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(short), sizeof(short), &offset, &next_offset);
 				break;
 			case ECPGt_int:
 			case ECPGt_unsigned_int:
-				ecpg_sqlda_align_add_size(offset, sizeof(int), sizeof(int), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int), sizeof(int), &offset, &next_offset);
 				break;
 			case ECPGt_long:
 			case ECPGt_unsigned_long:
-				ecpg_sqlda_align_add_size(offset, sizeof(long), sizeof(long), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(long), sizeof(long), &offset, &next_offset);
 				break;
 			case ECPGt_long_long:
 			case ECPGt_unsigned_long_long:
-				ecpg_sqlda_align_add_size(offset, sizeof(long long), sizeof(long long), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(long long), sizeof(long long), &offset, &next_offset);
 				break;
 			case ECPGt_bool:
-				ecpg_sqlda_align_add_size(offset, sizeof(bool), sizeof(bool), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(bool), sizeof(bool), &offset, &next_offset);
 				break;
 			case ECPGt_float:
-				ecpg_sqlda_align_add_size(offset, sizeof(float), sizeof(float), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(float), sizeof(float), &offset, &next_offset);
 				break;
 			case ECPGt_double:
-				ecpg_sqlda_align_add_size(offset, sizeof(double), sizeof(double), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(double), sizeof(double), &offset, &next_offset);
 				break;
 			case ECPGt_decimal:
-				ecpg_sqlda_align_add_size(offset, sizeof(int), sizeof(decimal), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int), sizeof(decimal), &offset, &next_offset);
 				break;
 			case ECPGt_numeric:
 
@@ -110,7 +110,7 @@ sqlda_common_total_size(const PGresult *res, int row, enum COMPAT_MODE compat, l
 				 * int Unfortunately we need to do double work here to compute
 				 * the size of the space needed for the numeric structure.
 				 */
-				ecpg_sqlda_align_add_size(offset, sizeof(NumericDigit *), sizeof(numeric), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(NumericDigit *), sizeof(numeric), &offset, &next_offset);
 				if (!PQgetisnull(res, row, i))
 				{
 					char	   *val = PQgetvalue(res, row, i);
@@ -120,18 +120,18 @@ sqlda_common_total_size(const PGresult *res, int row, enum COMPAT_MODE compat, l
 					if (!num)
 						break;
 					if (num->ndigits)
-						ecpg_sqlda_align_add_size(next_offset, sizeof(int), num->ndigits + 1, &offset, &next_offset);
+						ecmdb_sqlda_align_add_size(next_offset, sizeof(int), num->ndigits + 1, &offset, &next_offset);
 					PGTYPESnumeric_free(num);
 				}
 				break;
 			case ECPGt_date:
-				ecpg_sqlda_align_add_size(offset, sizeof(date), sizeof(date), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(date), sizeof(date), &offset, &next_offset);
 				break;
 			case ECPGt_timestamp:
-				ecpg_sqlda_align_add_size(offset, sizeof(int64), sizeof(timestamp), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int64), sizeof(timestamp), &offset, &next_offset);
 				break;
 			case ECPGt_interval:
-				ecpg_sqlda_align_add_size(offset, sizeof(int64), sizeof(interval), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int64), sizeof(interval), &offset, &next_offset);
 				break;
 			case ECPGt_char:
 			case ECPGt_unsigned_char:
@@ -140,7 +140,7 @@ sqlda_common_total_size(const PGresult *res, int row, enum COMPAT_MODE compat, l
 				{
 					long		datalen = strlen(PQgetvalue(res, row, i)) + 1;
 
-					ecpg_sqlda_align_add_size(offset, sizeof(int), datalen, &offset, &next_offset);
+					ecmdb_sqlda_align_add_size(offset, sizeof(int), datalen, &offset, &next_offset);
 					break;
 				}
 		}
@@ -174,7 +174,7 @@ sqlda_native_empty_size(const PGresult *res)
 	offset = sizeof(struct sqlda_struct) + (sqld - 1) * sizeof(struct sqlvar_struct);
 
 	/* Add padding to the first field value */
-	ecpg_sqlda_align_add_size(offset, sizeof(int), 0, &offset, NULL);
+	ecmdb_sqlda_align_add_size(offset, sizeof(int), 0, &offset, NULL);
 
 	return offset;
 }
@@ -199,7 +199,7 @@ sqlda_native_total_size(const PGresult *res, int row, enum COMPAT_MODE compat)
  * the given row number
  */
 struct sqlda_compat *
-ecpg_build_compat_sqlda(int line, PGresult *res, int row, enum COMPAT_MODE compat)
+ecmdb_build_compat_sqlda(int line, PGresult *res, int row, enum COMPAT_MODE compat)
 {
 	struct sqlda_compat *sqlda;
 	struct sqlvar_compat *sqlvar;
@@ -209,7 +209,7 @@ ecpg_build_compat_sqlda(int line, PGresult *res, int row, enum COMPAT_MODE compa
 	int			i;
 
 	size = sqlda_compat_total_size(res, row, compat);
-	sqlda = (struct sqlda_compat *) ecpg_alloc(size, line);
+	sqlda = (struct sqlda_compat *) ecmdb_alloc(size, line);
 	if (!sqlda)
 		return NULL;
 
@@ -219,7 +219,7 @@ ecpg_build_compat_sqlda(int line, PGresult *res, int row, enum COMPAT_MODE compa
 	fname = (char *) (sqlvar + sqld);
 
 	sqlda->sqld = sqld;
-	ecpg_log("ecpg_build_compat_sqlda on line %d sqld = %d\n", line, sqld);
+	ecmdb_log("ecmdb_build_compat_sqlda on line %d sqld = %d\n", line, sqld);
 	sqlda->desc_occ = size;		/* cheat here, keep the full allocated size */
 	sqlda->sqlvar = sqlvar;
 
@@ -249,7 +249,7 @@ static int16 value_is_null = -1;
 static int16 value_is_not_null = 0;
 
 void
-ecpg_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult *res, int row, enum COMPAT_MODE compat)
+ecmdb_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult *res, int row, enum COMPAT_MODE compat)
 {
 	struct sqlda_compat *sqlda = (*_sqlda);
 	int			i;
@@ -275,45 +275,45 @@ ecpg_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult 
 		{
 			case ECPGt_short:
 			case ECPGt_unsigned_short:
-				ecpg_sqlda_align_add_size(offset, sizeof(short), sizeof(short), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(short), sizeof(short), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(short);
 				break;
 			case ECPGt_int:
 			case ECPGt_unsigned_int:
-				ecpg_sqlda_align_add_size(offset, sizeof(int), sizeof(int), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int), sizeof(int), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(int);
 				break;
 			case ECPGt_long:
 			case ECPGt_unsigned_long:
-				ecpg_sqlda_align_add_size(offset, sizeof(long), sizeof(long), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(long), sizeof(long), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(long);
 				break;
 			case ECPGt_long_long:
 			case ECPGt_unsigned_long_long:
-				ecpg_sqlda_align_add_size(offset, sizeof(long long), sizeof(long long), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(long long), sizeof(long long), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(long long);
 				break;
 			case ECPGt_bool:
-				ecpg_sqlda_align_add_size(offset, sizeof(bool), sizeof(bool), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(bool), sizeof(bool), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(bool);
 				break;
 			case ECPGt_float:
-				ecpg_sqlda_align_add_size(offset, sizeof(float), sizeof(float), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(float), sizeof(float), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(float);
 				break;
 			case ECPGt_double:
-				ecpg_sqlda_align_add_size(offset, sizeof(double), sizeof(double), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(double), sizeof(double), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(double);
 				break;
 			case ECPGt_decimal:
-				ecpg_sqlda_align_add_size(offset, sizeof(int), sizeof(decimal), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int), sizeof(decimal), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(decimal);
 				break;
@@ -324,7 +324,7 @@ ecpg_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult 
 
 					set_data = false;
 
-					ecpg_sqlda_align_add_size(offset, sizeof(NumericDigit *), sizeof(numeric), &offset, &next_offset);
+					ecmdb_sqlda_align_add_size(offset, sizeof(NumericDigit *), sizeof(numeric), &offset, &next_offset);
 					sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 					sqlda->sqlvar[i].sqllen = sizeof(numeric);
 
@@ -346,7 +346,7 @@ ecpg_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult 
 
 					if (num->ndigits)
 					{
-						ecpg_sqlda_align_add_size(next_offset, sizeof(int), num->ndigits + 1, &offset, &next_offset);
+						ecmdb_sqlda_align_add_size(next_offset, sizeof(int), num->ndigits + 1, &offset, &next_offset);
 						memcpy((char *) sqlda + offset, num->buf, num->ndigits + 1);
 
 						((numeric *) sqlda->sqlvar[i].sqldata)->buf = (NumericDigit *) sqlda + offset;
@@ -358,17 +358,17 @@ ecpg_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult 
 					break;
 				}
 			case ECPGt_date:
-				ecpg_sqlda_align_add_size(offset, sizeof(date), sizeof(date), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(date), sizeof(date), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(date);
 				break;
 			case ECPGt_timestamp:
-				ecpg_sqlda_align_add_size(offset, sizeof(int64), sizeof(timestamp), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int64), sizeof(timestamp), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(timestamp);
 				break;
 			case ECPGt_interval:
-				ecpg_sqlda_align_add_size(offset, sizeof(int64), sizeof(interval), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int64), sizeof(interval), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(interval);
 				break;
@@ -377,7 +377,7 @@ ecpg_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult 
 			case ECPGt_string:
 			default:
 				datalen = strlen(PQgetvalue(res, row, i)) + 1;
-				ecpg_sqlda_align_add_size(offset, sizeof(int), datalen, &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int), datalen, &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = datalen;
 				if (datalen > 32768)
@@ -386,14 +386,14 @@ ecpg_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult 
 		}
 
 		isnull = PQgetisnull(res, row, i);
-		ecpg_log("ecpg_set_compat_sqlda on line %d row %d col %d %s\n", lineno, row, i, isnull ? "IS NULL" : "IS NOT NULL");
+		ecmdb_log("ecmdb_set_compat_sqlda on line %d row %d col %d %s\n", lineno, row, i, isnull ? "IS NULL" : "IS NOT NULL");
 		sqlda->sqlvar[i].sqlind = isnull ? &value_is_null : &value_is_not_null;
 		sqlda->sqlvar[i].sqlitype = ECPGt_short;
 		sqlda->sqlvar[i].sqlilen = sizeof(short);
 		if (!isnull)
 		{
 			if (set_data)
-				ecpg_get_data(res, row, i, lineno,
+				ecmdb_get_data(res, row, i, lineno,
 							  sqlda->sqlvar[i].sqltype, ECPGt_NO_INDICATOR,
 							  sqlda->sqlvar[i].sqldata, NULL, 0, 0, 0,
 							  ECPG_ARRAY_NONE, compat, false);
@@ -406,14 +406,14 @@ ecpg_set_compat_sqlda(int lineno, struct sqlda_compat ** _sqlda, const PGresult 
 }
 
 struct sqlda_struct *
-ecpg_build_native_sqlda(int line, PGresult *res, int row, enum COMPAT_MODE compat)
+ecmdb_build_native_sqlda(int line, PGresult *res, int row, enum COMPAT_MODE compat)
 {
 	struct sqlda_struct *sqlda;
 	long		size;
 	int			i;
 
 	size = sqlda_native_total_size(res, row, compat);
-	sqlda = (struct sqlda_struct *) ecpg_alloc(size, line);
+	sqlda = (struct sqlda_struct *) ecmdb_alloc(size, line);
 	if (!sqlda)
 		return NULL;
 
@@ -421,7 +421,7 @@ ecpg_build_native_sqlda(int line, PGresult *res, int row, enum COMPAT_MODE compa
 
 	sprintf(sqlda->sqldaid, "SQLDA  ");
 	sqlda->sqld = sqlda->sqln = PQnfields(res);
-	ecpg_log("ecpg_build_native_sqlda on line %d sqld = %d\n", line, sqlda->sqld);
+	ecmdb_log("ecmdb_build_native_sqlda on line %d sqld = %d\n", line, sqlda->sqld);
 	sqlda->sqldabc = sizeof(struct sqlda_struct) + (sqlda->sqld - 1) * sizeof(struct sqlvar_struct);
 
 	for (i = 0; i < sqlda->sqld; i++)
@@ -438,7 +438,7 @@ ecpg_build_native_sqlda(int line, PGresult *res, int row, enum COMPAT_MODE compa
 }
 
 void
-ecpg_set_native_sqlda(int lineno, struct sqlda_struct ** _sqlda, const PGresult *res, int row, enum COMPAT_MODE compat)
+ecmdb_set_native_sqlda(int lineno, struct sqlda_struct ** _sqlda, const PGresult *res, int row, enum COMPAT_MODE compat)
 {
 	struct sqlda_struct *sqlda = (*_sqlda);
 	int			i;
@@ -464,45 +464,45 @@ ecpg_set_native_sqlda(int lineno, struct sqlda_struct ** _sqlda, const PGresult 
 		{
 			case ECPGt_short:
 			case ECPGt_unsigned_short:
-				ecpg_sqlda_align_add_size(offset, sizeof(short), sizeof(short), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(short), sizeof(short), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(short);
 				break;
 			case ECPGt_int:
 			case ECPGt_unsigned_int:
-				ecpg_sqlda_align_add_size(offset, sizeof(int), sizeof(int), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int), sizeof(int), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(int);
 				break;
 			case ECPGt_long:
 			case ECPGt_unsigned_long:
-				ecpg_sqlda_align_add_size(offset, sizeof(long), sizeof(long), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(long), sizeof(long), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(long);
 				break;
 			case ECPGt_long_long:
 			case ECPGt_unsigned_long_long:
-				ecpg_sqlda_align_add_size(offset, sizeof(long long), sizeof(long long), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(long long), sizeof(long long), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(long long);
 				break;
 			case ECPGt_bool:
-				ecpg_sqlda_align_add_size(offset, sizeof(bool), sizeof(bool), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(bool), sizeof(bool), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(bool);
 				break;
 			case ECPGt_float:
-				ecpg_sqlda_align_add_size(offset, sizeof(float), sizeof(float), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(float), sizeof(float), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(float);
 				break;
 			case ECPGt_double:
-				ecpg_sqlda_align_add_size(offset, sizeof(double), sizeof(double), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(double), sizeof(double), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(double);
 				break;
 			case ECPGt_decimal:
-				ecpg_sqlda_align_add_size(offset, sizeof(int), sizeof(decimal), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int), sizeof(decimal), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(decimal);
 				break;
@@ -513,7 +513,7 @@ ecpg_set_native_sqlda(int lineno, struct sqlda_struct ** _sqlda, const PGresult 
 
 					set_data = false;
 
-					ecpg_sqlda_align_add_size(offset, sizeof(NumericDigit *), sizeof(numeric), &offset, &next_offset);
+					ecmdb_sqlda_align_add_size(offset, sizeof(NumericDigit *), sizeof(numeric), &offset, &next_offset);
 					sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 					sqlda->sqlvar[i].sqllen = sizeof(numeric);
 
@@ -535,7 +535,7 @@ ecpg_set_native_sqlda(int lineno, struct sqlda_struct ** _sqlda, const PGresult 
 
 					if (num->ndigits)
 					{
-						ecpg_sqlda_align_add_size(next_offset, sizeof(int), num->ndigits + 1, &offset, &next_offset);
+						ecmdb_sqlda_align_add_size(next_offset, sizeof(int), num->ndigits + 1, &offset, &next_offset);
 						memcpy((char *) sqlda + offset, num->buf, num->ndigits + 1);
 
 						((numeric *) sqlda->sqlvar[i].sqldata)->buf = (NumericDigit *) sqlda + offset;
@@ -547,17 +547,17 @@ ecpg_set_native_sqlda(int lineno, struct sqlda_struct ** _sqlda, const PGresult 
 					break;
 				}
 			case ECPGt_date:
-				ecpg_sqlda_align_add_size(offset, sizeof(date), sizeof(date), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(date), sizeof(date), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(date);
 				break;
 			case ECPGt_timestamp:
-				ecpg_sqlda_align_add_size(offset, sizeof(int64), sizeof(timestamp), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int64), sizeof(timestamp), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(timestamp);
 				break;
 			case ECPGt_interval:
-				ecpg_sqlda_align_add_size(offset, sizeof(int64), sizeof(interval), &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int64), sizeof(interval), &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = sizeof(interval);
 				break;
@@ -566,19 +566,19 @@ ecpg_set_native_sqlda(int lineno, struct sqlda_struct ** _sqlda, const PGresult 
 			case ECPGt_string:
 			default:
 				datalen = strlen(PQgetvalue(res, row, i)) + 1;
-				ecpg_sqlda_align_add_size(offset, sizeof(int), datalen, &offset, &next_offset);
+				ecmdb_sqlda_align_add_size(offset, sizeof(int), datalen, &offset, &next_offset);
 				sqlda->sqlvar[i].sqldata = (char *) sqlda + offset;
 				sqlda->sqlvar[i].sqllen = datalen;
 				break;
 		}
 
 		isnull = PQgetisnull(res, row, i);
-		ecpg_log("ecpg_set_native_sqlda on line %d row %d col %d %s\n", lineno, row, i, isnull ? "IS NULL" : "IS NOT NULL");
+		ecmdb_log("ecmdb_set_native_sqlda on line %d row %d col %d %s\n", lineno, row, i, isnull ? "IS NULL" : "IS NOT NULL");
 		sqlda->sqlvar[i].sqlind = isnull ? &value_is_null : &value_is_not_null;
 		if (!isnull)
 		{
 			if (set_data)
-				ecpg_get_data(res, row, i, lineno,
+				ecmdb_get_data(res, row, i, lineno,
 							  sqlda->sqlvar[i].sqltype, ECPGt_NO_INDICATOR,
 							  sqlda->sqlvar[i].sqldata, NULL, 0, 0, 0,
 							  ECPG_ARRAY_NONE, compat, false);

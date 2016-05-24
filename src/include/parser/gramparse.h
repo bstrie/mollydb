@@ -61,7 +61,7 @@ typedef struct base_yy_extra_type
  * and this is sufficiently performance-critical to make it seem worth
  * cheating a bit to use an inline macro.
  */
-#define pg_yyget_extra(yyscanner) (*((base_yy_extra_type **) (yyscanner)))
+#define mdb_yyget_extra(yyscanner) (*((base_yy_extra_type **) (yyscanner)))
 
 
 /* from parser.c */

@@ -296,7 +296,7 @@ DECLARE <replaceable class="parameter">name</replaceable> [ BINARY ] [ INSENSITI
 
    <para>
     You can see all available cursors by querying the <link
-    linkend="view-pg-cursors"><structname>pg_cursors</structname></link>
+    linkend="view-pg-cursors"><structname>mdb_cursors</structname></link>
     system view.
    </para>
  </refsect1>

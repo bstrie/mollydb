@@ -63,15 +63,15 @@ CREATE [ OR REPLACE ] [ TRUSTED ] [ PROCEDURAL ] LANGUAGE <replaceable class="pa
    There are two forms of the <command>CREATE LANGUAGE</command> command.
    In the first form, the user supplies just the name of the desired
    language, and the <productname>MollyDB</productname> server consults
-   the <link linkend="catalog-pg-pltemplate"><structname>pg_pltemplate</structname></link>
+   the <link linkend="catalog-pg-pltemplate"><structname>mdb_pltemplate</structname></link>
    system catalog to determine the correct parameters.  In the second form,
    the user supplies the language parameters along with the language name.
    The second form can be used to create a language that is not defined in
-   <structname>pg_pltemplate</>, but this approach is considered obsolescent.
+   <structname>mdb_pltemplate</>, but this approach is considered obsolescent.
   </para>
 
   <para>
-   When the server finds an entry in the <structname>pg_pltemplate</> catalog
+   When the server finds an entry in the <structname>mdb_pltemplate</> catalog
    for the given language name, it will use the catalog data even if the
    command includes language parameters.  This behavior simplifies loading of
    old dump files, which are likely to contain out-of-date information
@@ -83,11 +83,11 @@ CREATE [ OR REPLACE ] [ TRUSTED ] [ PROCEDURAL ] LANGUAGE <replaceable class="pa
    <productname>MollyDB</productname> superuser privilege to
    register a new language.  However, the owner of a database can register
    a new language within that database if the language is listed in
-   the <structname>pg_pltemplate</structname> catalog and is marked
+   the <structname>mdb_pltemplate</structname> catalog and is marked
    as allowed to be created by database owners (<structfield>tmpldbacreate</>
    is true).  The default is that trusted languages can be created
    by database owners, but this can be adjusted by superusers by modifying
-   the contents of <structname>pg_pltemplate</structname>.
+   the contents of <structname>mdb_pltemplate</structname>.
    The creator of a language becomes its owner and can later
    drop it, rename it, or assign it to a new owner.
   </para>
@@ -96,16 +96,16 @@ CREATE [ OR REPLACE ] [ TRUSTED ] [ PROCEDURAL ] LANGUAGE <replaceable class="pa
    <command>CREATE OR REPLACE LANGUAGE</command> will either create a
    new language, or replace an existing definition.  If the language
    already exists, its parameters are updated according to the values
-   specified or taken from <structname>pg_pltemplate</structname>,
+   specified or taken from <structname>mdb_pltemplate</structname>,
    but the language's ownership and permissions settings do not change,
    and any existing functions written in the language are assumed to still
    be valid.  In addition to the normal privilege requirements for creating
    a language, the user must be superuser or owner of the existing language.
    The <literal>REPLACE</> case is mainly meant to be used to
    ensure that the language exists.  If the language has a
-   <structname>pg_pltemplate</structname> entry then <literal>REPLACE</>
+   <structname>mdb_pltemplate</structname> entry then <literal>REPLACE</>
    will not actually change anything about an existing definition, except in
-   the unusual case where the <structname>pg_pltemplate</structname> entry
+   the unusual case where the <structname>mdb_pltemplate</structname> entry
    has been modified since the language was created.
   </para>
  </refsect1>
@@ -222,7 +222,7 @@ CREATE [ OR REPLACE ] [ TRUSTED ] [ PROCEDURAL ] LANGUAGE <replaceable class="pa
   <para>
    The <literal>TRUSTED</> option and the support function name(s) are
    ignored if the server has an entry for the specified language
-   name in <structname>pg_pltemplate</>.
+   name in <structname>mdb_pltemplate</>.
   </para>
  </refsect1>
 
@@ -241,7 +241,7 @@ CREATE [ OR REPLACE ] [ TRUSTED ] [ PROCEDURAL ] LANGUAGE <replaceable class="pa
   </para>
 
   <para>
-   The system catalog <classname>pg_language</classname> (see <xref
+   The system catalog <classname>mdb_language</classname> (see <xref
    linkend="catalog-pg-language">) records information about the
    currently installed languages.  Also, <command>createlang</command>
    has an option to list the installed languages.
@@ -265,7 +265,7 @@ CREATE [ OR REPLACE ] [ TRUSTED ] [ PROCEDURAL ] LANGUAGE <replaceable class="pa
    The call handler function, the inline handler function (if any),
    and the validator function (if any)
    must already exist if the server does not have an entry for the language
-   in <structname>pg_pltemplate</>.  But when there is an entry,
+   in <structname>mdb_pltemplate</>.  But when there is an entry,
    the functions need not already exist;
    they will be automatically defined if not present in the database.
    (This might result in <command>CREATE LANGUAGE</> failing, if the
@@ -296,7 +296,7 @@ CREATE LANGUAGE plperl;
   </para>
 
   <para>
-   For a language not known in the <structname>pg_pltemplate</> catalog, a
+   For a language not known in the <structname>mdb_pltemplate</> catalog, a
    sequence such as this is needed:
 <programlisting>
 CREATE FUNCTION plsample_call_handler() RETURNS language_handler

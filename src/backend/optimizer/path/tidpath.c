@@ -37,8 +37,8 @@
 #include "mollydb.h"
 
 #include "access/sysattr.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_type.h"
 #include "nodes/nodeFuncs.h"
 #include "optimizer/clauses.h"
 #include "optimizer/pathnode.h"

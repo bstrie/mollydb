@@ -153,7 +153,7 @@ libpqrcv_identify_system(TimeLineID *primary_tli)
 						   ntuples, nfields, 3, 1)));
 	}
 	primary_sysid = PQgetvalue(res, 0, 0);
-	*primary_tli = pg_atoi(PQgetvalue(res, 0, 1), 4, 0);
+	*primary_tli = mdb_atoi(PQgetvalue(res, 0, 1), 4, 0);
 
 	/*
 	 * Confirm that the system identifier of the primary is the same as ours.
@@ -249,7 +249,7 @@ libpqrcv_endstreaming(TimeLineID *next_tli)
 		if (PQnfields(res) < 2 || PQntuples(res) != 1)
 			ereport(ERROR,
 					(errmsg("unexpected result set after end-of-streaming")));
-		*next_tli = pg_atoi(PQgetvalue(res, 0, 0), sizeof(uint32), 0);
+		*next_tli = mdb_atoi(PQgetvalue(res, 0, 0), sizeof(uint32), 0);
 		PQclear(res);
 
 		/* the result set should be followed by CommandComplete */

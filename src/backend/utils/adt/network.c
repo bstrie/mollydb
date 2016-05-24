@@ -13,7 +13,7 @@
 #include <arpa/inet.h>
 
 #include "access/hash.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "libpq/ip.h"
 #include "libpq/libpq-be.h"
 #include "libpq/pqformat.h"
@@ -1177,7 +1177,7 @@ inet_client_addr(PG_FUNCTION_ARGS)
 
 	remote_host[0] = '\0';
 
-	ret = pg_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
+	ret = mdb_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
 							 remote_host, sizeof(remote_host),
 							 NULL, 0,
 							 NI_NUMERICHOST | NI_NUMERICSERV);
@@ -1216,7 +1216,7 @@ inet_client_port(PG_FUNCTION_ARGS)
 
 	remote_port[0] = '\0';
 
-	ret = pg_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
+	ret = mdb_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
 							 NULL, 0,
 							 remote_port, sizeof(remote_port),
 							 NI_NUMERICHOST | NI_NUMERICSERV);
@@ -1253,7 +1253,7 @@ inet_server_addr(PG_FUNCTION_ARGS)
 
 	local_host[0] = '\0';
 
-	ret = pg_getnameinfo_all(&port->laddr.addr, port->laddr.salen,
+	ret = mdb_getnameinfo_all(&port->laddr.addr, port->laddr.salen,
 							 local_host, sizeof(local_host),
 							 NULL, 0,
 							 NI_NUMERICHOST | NI_NUMERICSERV);
@@ -1292,7 +1292,7 @@ inet_server_port(PG_FUNCTION_ARGS)
 
 	local_port[0] = '\0';
 
-	ret = pg_getnameinfo_all(&port->laddr.addr, port->laddr.salen,
+	ret = mdb_getnameinfo_all(&port->laddr.addr, port->laddr.salen,
 							 NULL, 0,
 							 local_port, sizeof(local_port),
 							 NI_NUMERICHOST | NI_NUMERICSERV);

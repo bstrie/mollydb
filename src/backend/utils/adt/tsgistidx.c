@@ -17,7 +17,7 @@
 #include "access/gist.h"
 #include "access/tuptoaster.h"
 #include "tsearch/ts_utils.h"
-#include "utils/pg_crc.h"
+#include "utils/mdb_crc.h"
 
 
 #define SIGLENINT  31			/* >121 => key will toast, so it will not work
@@ -200,7 +200,7 @@ gtsvector_compress(PG_FUNCTION_ARGS)
 		len = val->size;
 		while (len--)
 		{
-			pg_crc32	c;
+			mdb_crc32	c;
 
 			INIT_LEGACY_CRC32(c);
 			COMP_LEGACY_CRC32(c, words + ptr->pos, ptr->len);
@@ -807,9 +807,9 @@ gtsvector_picksplit(PG_FUNCTION_ARGS)
 }
 
 /*
- * Formerly, gtsvector_consistent was declared in pg_proc.h with arguments
+ * Formerly, gtsvector_consistent was declared in mdb_proc.h with arguments
  * that did not match the documented conventions for GiST support functions.
- * We fixed that, but we still need a pg_proc entry with the old signature
+ * We fixed that, but we still need a mdb_proc entry with the old signature
  * to support reloading pre-9.6 contrib/tsearch2 opclass declarations.
  * This compatibility function should go away eventually.
  */

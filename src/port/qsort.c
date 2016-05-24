@@ -110,7 +110,7 @@ med3(char *a, char *b, char *c, int (*cmp) (const void *, const void *))
 }
 
 void
-pg_qsort(void *a, size_t n, size_t es, int (*cmp) (const void *, const void *))
+mdb_qsort(void *a, size_t n, size_t es, int (*cmp) (const void *, const void *))
 {
 	char	   *pa,
 			   *pb,
@@ -200,11 +200,11 @@ loop:SWAPINIT(a, es);
 	{
 		/* Recurse on left partition, then iterate on right partition */
 		if (d1 > es)
-			pg_qsort(a, d1 / es, es, cmp);
+			mdb_qsort(a, d1 / es, es, cmp);
 		if (d2 > es)
 		{
 			/* Iterate rather than recurse to save stack space */
-			/* pg_qsort(pn - d2, d2 / es, es, cmp); */
+			/* mdb_qsort(pn - d2, d2 / es, es, cmp); */
 			a = pn - d2;
 			n = d2 / es;
 			goto loop;
@@ -214,11 +214,11 @@ loop:SWAPINIT(a, es);
 	{
 		/* Recurse on right partition, then iterate on left partition */
 		if (d2 > es)
-			pg_qsort(pn - d2, d2 / es, es, cmp);
+			mdb_qsort(pn - d2, d2 / es, es, cmp);
 		if (d1 > es)
 		{
 			/* Iterate rather than recurse to save stack space */
-			/* pg_qsort(a, d1 / es, es, cmp); */
+			/* mdb_qsort(a, d1 / es, es, cmp); */
 			n = d1 / es;
 			goto loop;
 		}
@@ -229,7 +229,7 @@ loop:SWAPINIT(a, es);
  * qsort comparator wrapper for strcmp.
  */
 int
-pg_qsort_strcmp(const void *a, const void *b)
+mdb_qsort_strcmp(const void *a, const void *b)
 {
 	return strcmp(*(const char *const *) a, *(const char *const *) b);
 }

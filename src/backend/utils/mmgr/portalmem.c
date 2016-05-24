@@ -19,7 +19,7 @@
 #include "mollydb.h"
 
 #include "access/xact.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/portalcmds.h"
 #include "miscadmin.h"
 #include "utils/builtins.h"
@@ -1047,7 +1047,7 @@ AtSubCleanup_Portals(SubTransactionId mySubid)
 
 /* Find all available cursors */
 Datum
-pg_cursor(PG_FUNCTION_ARGS)
+mdb_cursor(PG_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -1074,7 +1074,7 @@ pg_cursor(PG_FUNCTION_ARGS)
 
 	/*
 	 * build tupdesc for result tuples. This must match the definition of the
-	 * pg_cursors view in system_views.sql
+	 * mdb_cursors view in system_views.sql
 	 */
 	tupdesc = CreateTemplateTupleDesc(6, false);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "name",

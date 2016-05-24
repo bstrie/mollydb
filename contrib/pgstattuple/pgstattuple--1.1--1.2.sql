@@ -33,7 +33,7 @@ CREATE FUNCTION pgstatindex(IN relname regclass,
 AS 'MODULE_PATHNAME', 'pgstatindexbyid'
 LANGUAGE C STRICT;
 
-CREATE FUNCTION pg_relpages(IN relname regclass)
+CREATE FUNCTION mdb_relpages(IN relname regclass)
 RETURNS BIGINT
-AS 'MODULE_PATHNAME', 'pg_relpagesbyid'
+AS 'MODULE_PATHNAME', 'mdb_relpagesbyid'
 LANGUAGE C STRICT;

@@ -85,7 +85,7 @@ proc listmodule {conn modname} {
     regsub -all {'}  $xname {''} xname
 
     set found 0
-    pg_select $conn "select * from pltcl_modules where modname = '$xname'" \
+    mdb_select $conn "select * from pltcl_modules where modname = '$xname'" \
     MOD {
         set found 1
 	break;
@@ -98,17 +98,17 @@ proc listmodule {conn modname} {
     }
 
     puts "Module $modname defines procedures:"
-    pg_select $conn "select funcname from pltcl_modfuncs \
+    mdb_select $conn "select funcname from pltcl_modfuncs \
 	    where modname = '$xname' order by funcname" FUNC {
         puts "    $FUNC(funcname)"
     }
     puts ""
 }
 
-set conn [eval pg_connect $dbname $options]
+set conn [eval mdb_connect $dbname $options]
 
 if {$i == $argc} {
-    pg_select $conn "select distinct modname from pltcl_modules	\
+    mdb_select $conn "select distinct modname from pltcl_modules	\
 		order by modname"	\
 		MOD {
         listmodule $conn $MOD(modname)
@@ -120,4 +120,4 @@ if {$i == $argc} {
     }
 }
 
-pg_disconnect $conn
+mdb_disconnect $conn

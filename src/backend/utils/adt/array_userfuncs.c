@@ -12,7 +12,7 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
 #include "utils/lsyscache.h"

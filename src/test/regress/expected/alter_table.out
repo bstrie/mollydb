@@ -157,8 +157,8 @@ reset enable_seqscan;
 reset enable_bitmapscan;
 DROP VIEW tmp_view_new;
 -- toast-like relation name
-alter table stud_emp rename to pg_toast_stud_emp;
-alter table pg_toast_stud_emp rename to stud_emp;
+alter table stud_emp rename to mdb_toast_stud_emp;
+alter table mdb_toast_stud_emp rename to stud_emp;
 -- renaming index should rename constraint as well
 ALTER TABLE onek ADD CONSTRAINT onek_unique1_constraint UNIQUE (unique1);
 ALTER INDEX onek_unique1_constraint RENAME TO onek_unique1_constraint_foo;
@@ -459,7 +459,7 @@ Check constraints:
     "nv_parent_d_check" CHECK (d >= '01-01-2001'::date AND d <= '12-31-2099'::date) NOT VALID
 Inherits: nv_parent
 
--- we leave nv_parent and children around to help test pg_dump logic
+-- we leave nv_parent and children around to help test mdb_dump logic
 -- Foreign key adding test with mixed types
 -- Note: these tables are TEMP to avoid name conflicts when this test
 -- is run in parallel with foreign_key.sql.
@@ -830,10 +830,10 @@ DETAIL:  Failing row contains (null, 1).
 drop table atacc1;
 -- alter table / alter column [set/drop] not null tests
 -- try altering system catalogs, should fail
-alter table pg_class alter column relname drop not null;
-ERROR:  permission denied: "pg_class" is a system catalog
-alter table pg_class alter relname set not null;
-ERROR:  permission denied: "pg_class" is a system catalog
+alter table mdb_class alter column relname drop not null;
+ERROR:  permission denied: "mdb_class" is a system catalog
+alter table mdb_class alter relname set not null;
+ERROR:  permission denied: "mdb_class" is a system catalog
 -- try altering non-existent table, should fail
 alter table non_existent alter column bar set not null;
 ERROR:  relation "non_existent" does not exist
@@ -961,8 +961,8 @@ drop view def_view_test;
 drop table def_test;
 -- alter table / drop column tests
 -- try altering system catalogs, should fail
-alter table pg_class drop column relname;
-ERROR:  permission denied: "pg_class" is a system catalog
+alter table mdb_class drop column relname;
+ERROR:  permission denied: "mdb_class" is a system catalog
 -- try altering non-existent table, should fail
 alter table nosuchtable drop column bar;
 ERROR:  relation "nosuchtable" does not exist
@@ -1432,7 +1432,7 @@ create table c1(age int) inherits(p1,p2);
 NOTICE:  merging multiple inherited definitions of column "name"
 create table gc1() inherits (c1);
 select relname, attname, attinhcount, attislocal
-from pg_class join pg_attribute on (pg_class.oid = pg_attribute.attrelid)
+from mdb_class join mdb_attribute on (mdb_class.oid = mdb_attribute.attrelid)
 where relname in ('p1','p2','c1','gc1') and attnum > 0 and not attisdropped
 order by relname, attnum;
  relname | attname | attinhcount | attislocal 
@@ -1475,7 +1475,7 @@ ERROR:  column "non_existing" of relation "dropcolumnexists" does not exist
 alter table dropColumnExists drop column if exists non_existing; --succeed
 NOTICE:  column "non_existing" of relation "dropcolumnexists" does not exist, skipping
 select relname, attname, attinhcount, attislocal
-from pg_class join pg_attribute on (pg_class.oid = pg_attribute.attrelid)
+from mdb_class join mdb_attribute on (mdb_class.oid = mdb_attribute.attrelid)
 where relname in ('p1','p2','c1','gc1') and attnum > 0 and not attisdropped
 order by relname, attnum;
  relname | attname | attinhcount | attislocal 
@@ -1501,7 +1501,7 @@ create table depth2() inherits (depth1);
 alter table depth0 add c text;
 NOTICE:  merging definition of column "c" for child "depth1"
 select attrelid::regclass, attname, attinhcount, attislocal
-from pg_attribute
+from mdb_attribute
 where attnum > 0 and attrelid::regclass in ('depth0', 'depth1', 'depth2')
 order by attrelid::regclass::text, attnum;
  attrelid | attname | attinhcount | attislocal 
@@ -1833,7 +1833,7 @@ alter table test_storage alter a set storage plain;
 alter table test_storage add b int default 0; -- rewrite table to remove its TOAST table
 alter table test_storage alter a set storage extended; -- re-add TOAST table
 select reltoastrelid <> 0 as has_toast_table
-from pg_class
+from mdb_class
 where oid = 'test_storage'::regclass;
  has_toast_table 
 -----------------
@@ -1864,7 +1864,7 @@ Check constraints:
 Inherits: test_inh_check
 
 select relname, conname, coninhcount, conislocal, connoinherit
-  from pg_constraint c, pg_class r
+  from mdb_constraint c, mdb_class r
   where relname like 'test_inh_check%' and c.conrelid = r.oid
   order by 1, 2;
        relname        |        conname         | coninhcount | conislocal | connoinherit 
@@ -1895,7 +1895,7 @@ Check constraints:
 Inherits: test_inh_check
 
 select relname, conname, coninhcount, conislocal, connoinherit
-  from pg_constraint c, pg_class r
+  from mdb_constraint c, mdb_class r
   where relname like 'test_inh_check%' and c.conrelid = r.oid
   order by 1, 2;
        relname        |        conname         | coninhcount | conislocal | connoinherit 
@@ -1935,7 +1935,7 @@ Check constraints:
 Inherits: test_inh_check
 
 select relname, conname, coninhcount, conislocal, connoinherit
-  from pg_constraint c, pg_class r
+  from mdb_constraint c, mdb_class r
   where relname like 'test_inh_check%' and c.conrelid = r.oid
   order by 1, 2;
        relname        |        conname         | coninhcount | conislocal | connoinherit 
@@ -1975,7 +1975,7 @@ Check constraints:
 Inherits: test_inh_check
 
 select relname, conname, coninhcount, conislocal, connoinherit
-  from pg_constraint c, pg_class r
+  from mdb_constraint c, mdb_class r
   where relname like 'test_inh_check%' and c.conrelid = r.oid
   order by 1, 2;
        relname        |        conname         | coninhcount | conislocal | connoinherit 
@@ -2024,14 +2024,14 @@ create type lockmodes as enum (
 drop view my_locks;
 ERROR:  view "my_locks" does not exist
 create or replace view my_locks as
-select case when c.relname like 'pg_toast%' then 'pg_toast' else c.relname end, max(mode::lockmodes) as max_lockmode
-from pg_locks l join pg_class c on l.relation = c.oid
+select case when c.relname like 'mdb_toast%' then 'mdb_toast' else c.relname end, max(mode::lockmodes) as max_lockmode
+from mdb_locks l join mdb_class c on l.relation = c.oid
 where virtualtransaction = (
         select virtualtransaction
-        from pg_locks
+        from mdb_locks
         where transactionid = txid_current()::integer)
 and locktype = 'relation'
-and relnamespace != (select oid from pg_namespace where nspname = 'pg_catalog')
+and relnamespace != (select oid from mdb_namespace where nspname = 'mdb_catalog')
 and c.relname != 'my_locks'
 group by c.relname;
 create table alterlock (f1 int primary key, f2 text);
@@ -2068,7 +2068,7 @@ select * from my_locks order by 1;
   relname  |       max_lockmode       
 -----------+--------------------------
  alterlock | ShareUpdateExclusiveLock
- pg_toast  | ShareUpdateExclusiveLock
+ mdb_toast  | ShareUpdateExclusiveLock
 (2 rows)
 
 commit;
@@ -2077,7 +2077,7 @@ select * from my_locks order by 1;
   relname  |       max_lockmode       
 -----------+--------------------------
  alterlock | ShareUpdateExclusiveLock
- pg_toast  | ShareUpdateExclusiveLock
+ mdb_toast  | ShareUpdateExclusiveLock
 (2 rows)
 
 commit;
@@ -2086,7 +2086,7 @@ select * from my_locks order by 1;
   relname  |       max_lockmode       
 -----------+--------------------------
  alterlock | ShareUpdateExclusiveLock
- pg_toast  | ShareUpdateExclusiveLock
+ mdb_toast  | ShareUpdateExclusiveLock
 (2 rows)
 
 commit;
@@ -2095,7 +2095,7 @@ select * from my_locks order by 1;
   relname  |       max_lockmode       
 -----------+--------------------------
  alterlock | ShareUpdateExclusiveLock
- pg_toast  | ShareUpdateExclusiveLock
+ mdb_toast  | ShareUpdateExclusiveLock
 (2 rows)
 
 commit;
@@ -2113,7 +2113,7 @@ select * from my_locks order by 1;
   relname  |       max_lockmode       
 -----------+--------------------------
  alterlock | ShareUpdateExclusiveLock
- pg_toast  | ShareUpdateExclusiveLock
+ mdb_toast  | ShareUpdateExclusiveLock
 (2 rows)
 
 commit;
@@ -2187,14 +2187,14 @@ select * from my_locks order by 1;
 
 rollback;
 create or replace view my_locks as
-select case when c.relname like 'pg_toast%' then 'pg_toast' else c.relname end, max(mode::lockmodes) as max_lockmode
-from pg_locks l join pg_class c on l.relation = c.oid
+select case when c.relname like 'mdb_toast%' then 'mdb_toast' else c.relname end, max(mode::lockmodes) as max_lockmode
+from mdb_locks l join mdb_class c on l.relation = c.oid
 where virtualtransaction = (
         select virtualtransaction
-        from pg_locks
+        from mdb_locks
         where transactionid = txid_current()::integer)
 and locktype = 'relation'
-and relnamespace != (select oid from pg_namespace where nspname = 'pg_catalog')
+and relnamespace != (select oid from mdb_namespace where nspname = 'mdb_catalog')
 and c.relname = 'my_locks'
 group by c.relname;
 -- raise exception
@@ -2532,7 +2532,7 @@ Inherits: test_tbl2
 
 DROP TABLE test_tbl2_subclass;
 -- This test isn't that interesting on its own, but the purpose is to leave
--- behind a table to test pg_upgrade with. The table has a composite type
+-- behind a table to test mdb_upgrade with. The table has a composite type
 -- column in it, and the composite type has a dropped attribute.
 CREATE TYPE test_type3 AS (a int);
 CREATE TABLE test_tbl3 (c) AS SELECT '(1)'::test_type3;
@@ -2641,14 +2641,14 @@ SELECT col_description('comment_test'::regclass, 1) as comment;
  Column 'id' on comment_test
 (1 row)
 
-SELECT indexrelid::regclass::text as index, obj_description(indexrelid, 'pg_class') as comment FROM pg_index where indrelid = 'comment_test'::regclass ORDER BY 1, 2;
+SELECT indexrelid::regclass::text as index, obj_description(indexrelid, 'mdb_class') as comment FROM mdb_index where indrelid = 'comment_test'::regclass ORDER BY 1, 2;
        index        |                    comment                    
 --------------------+-----------------------------------------------
  comment_test_index | Simple index on comment_test
  comment_test_pk    | Index backing the PRIMARY KEY of comment_test
 (2 rows)
 
-SELECT conname as constraint, obj_description(oid, 'pg_constraint') as comment FROM pg_constraint where conrelid = 'comment_test'::regclass ORDER BY 1, 2;
+SELECT conname as constraint, obj_description(oid, 'mdb_constraint') as comment FROM mdb_constraint where conrelid = 'comment_test'::regclass ORDER BY 1, 2;
            constraint            |                    comment                    
 ---------------------------------+-----------------------------------------------
  comment_test_pk                 | PRIMARY KEY constraint of comment_test
@@ -2672,14 +2672,14 @@ SELECT col_description('comment_test'::regclass, 1) as comment;
  Column 'id' on comment_test
 (1 row)
 
-SELECT indexrelid::regclass::text as index, obj_description(indexrelid, 'pg_class') as comment FROM pg_index where indrelid = 'comment_test'::regclass ORDER BY 1, 2;
+SELECT indexrelid::regclass::text as index, obj_description(indexrelid, 'mdb_class') as comment FROM mdb_index where indrelid = 'comment_test'::regclass ORDER BY 1, 2;
        index        |                    comment                    
 --------------------+-----------------------------------------------
  comment_test_index | Simple index on comment_test
  comment_test_pk    | Index backing the PRIMARY KEY of comment_test
 (2 rows)
 
-SELECT conname as constraint, obj_description(oid, 'pg_constraint') as comment FROM pg_constraint where conrelid = 'comment_test'::regclass ORDER BY 1, 2;
+SELECT conname as constraint, obj_description(oid, 'mdb_constraint') as comment FROM mdb_constraint where conrelid = 'comment_test'::regclass ORDER BY 1, 2;
            constraint            |                    comment                    
 ---------------------------------+-----------------------------------------------
  comment_test_pk                 | PRIMARY KEY constraint of comment_test
@@ -2694,17 +2694,17 @@ SELECT conname as constraint, obj_description(oid, 'pg_constraint') as comment F
 CREATE TEMP TABLE filenode_mapping AS
 SELECT
     oid, mapped_oid, reltablespace, relfilenode, relname
-FROM pg_class,
-    pg_filenode_relation(reltablespace, pg_relation_filenode(oid)) AS mapped_oid
+FROM mdb_class,
+    mdb_filenode_relation(reltablespace, mdb_relation_filenode(oid)) AS mapped_oid
 WHERE relkind IN ('r', 'i', 'S', 't', 'm') AND mapped_oid IS DISTINCT FROM oid;
-SELECT m.* FROM filenode_mapping m LEFT JOIN pg_class c ON c.oid = m.oid
+SELECT m.* FROM filenode_mapping m LEFT JOIN mdb_class c ON c.oid = m.oid
 WHERE c.oid IS NOT NULL OR m.mapped_oid IS NOT NULL;
  oid | mapped_oid | reltablespace | relfilenode | relname 
 -----+------------+---------------+-------------+---------
 (0 rows)
 
 -- Checks on creating and manipulation of user defined relations in
--- pg_catalog.
+-- mdb_catalog.
 --
 -- XXX: It would be useful to add checks around trying to manipulate
 -- catalog tables, but that might have ugly consequences when run
@@ -2715,18 +2715,18 @@ SHOW allow_system_table_mods;
  off
 (1 row)
 
--- disallowed because of search_path issues with pg_dump
-CREATE TABLE pg_catalog.new_system_table();
-ERROR:  permission denied to create "pg_catalog.new_system_table"
+-- disallowed because of search_path issues with mdb_dump
+CREATE TABLE mdb_catalog.new_system_table();
+ERROR:  permission denied to create "mdb_catalog.new_system_table"
 DETAIL:  System catalog modifications are currently disallowed.
 -- instead create in public first, move to catalog
 CREATE TABLE new_system_table(id serial primary key, othercol text);
-ALTER TABLE new_system_table SET SCHEMA pg_catalog;
--- XXX: it's currently impossible to move relations out of pg_catalog
+ALTER TABLE new_system_table SET SCHEMA mdb_catalog;
+-- XXX: it's currently impossible to move relations out of mdb_catalog
 ALTER TABLE new_system_table SET SCHEMA public;
-ERROR:  cannot remove dependency on schema pg_catalog because it is a system object
+ERROR:  cannot remove dependency on schema mdb_catalog because it is a system object
 -- move back, will be ignored -- already there
-ALTER TABLE new_system_table SET SCHEMA pg_catalog;
+ALTER TABLE new_system_table SET SCHEMA mdb_catalog;
 ALTER TABLE new_system_table RENAME TO old_system_table;
 CREATE INDEX old_system_table__othercol ON old_system_table (othercol);
 INSERT INTO old_system_table(othercol) VALUES ('somedata'), ('otherdata');
@@ -2739,11 +2739,11 @@ DROP TABLE old_system_table;
 -- set logged
 CREATE UNLOGGED TABLE unlogged1(f1 SERIAL PRIMARY KEY, f2 TEXT);
 -- check relpersistence of an unlogged table
-SELECT relname, relkind, relpersistence FROM pg_class WHERE relname ~ '^unlogged1'
+SELECT relname, relkind, relpersistence FROM mdb_class WHERE relname ~ '^unlogged1'
 UNION ALL
-SELECT 'toast table', t.relkind, t.relpersistence FROM pg_class r JOIN pg_class t ON t.oid = r.reltoastrelid WHERE r.relname ~ '^unlogged1'
+SELECT 'toast table', t.relkind, t.relpersistence FROM mdb_class r JOIN mdb_class t ON t.oid = r.reltoastrelid WHERE r.relname ~ '^unlogged1'
 UNION ALL
-SELECT 'toast index', ri.relkind, ri.relpersistence FROM pg_class r join pg_class t ON t.oid = r.reltoastrelid JOIN pg_index i ON i.indrelid = t.oid JOIN pg_class ri ON ri.oid = i.indexrelid WHERE r.relname ~ '^unlogged1'
+SELECT 'toast index', ri.relkind, ri.relpersistence FROM mdb_class r join mdb_class t ON t.oid = r.reltoastrelid JOIN mdb_index i ON i.indrelid = t.oid JOIN mdb_class ri ON ri.oid = i.indexrelid WHERE r.relname ~ '^unlogged1'
 ORDER BY relname;
      relname      | relkind | relpersistence 
 ------------------+---------+----------------
@@ -2761,11 +2761,11 @@ ALTER TABLE unlogged2 SET LOGGED; -- fails because a foreign key to an unlogged 
 ERROR:  could not change table "unlogged2" to logged because it references unlogged table "unlogged1"
 ALTER TABLE unlogged1 SET LOGGED;
 -- check relpersistence of an unlogged table after changing to permament
-SELECT relname, relkind, relpersistence FROM pg_class WHERE relname ~ '^unlogged1'
+SELECT relname, relkind, relpersistence FROM mdb_class WHERE relname ~ '^unlogged1'
 UNION ALL
-SELECT 'toast table', t.relkind, t.relpersistence FROM pg_class r JOIN pg_class t ON t.oid = r.reltoastrelid WHERE r.relname ~ '^unlogged1'
+SELECT 'toast table', t.relkind, t.relpersistence FROM mdb_class r JOIN mdb_class t ON t.oid = r.reltoastrelid WHERE r.relname ~ '^unlogged1'
 UNION ALL
-SELECT 'toast index', ri.relkind, ri.relpersistence FROM pg_class r join pg_class t ON t.oid = r.reltoastrelid JOIN pg_index i ON i.indrelid = t.oid JOIN pg_class ri ON ri.oid = i.indexrelid WHERE r.relname ~ '^unlogged1'
+SELECT 'toast index', ri.relkind, ri.relpersistence FROM mdb_class r join mdb_class t ON t.oid = r.reltoastrelid JOIN mdb_index i ON i.indrelid = t.oid JOIN mdb_class ri ON ri.oid = i.indexrelid WHERE r.relname ~ '^unlogged1'
 ORDER BY relname;
      relname      | relkind | relpersistence 
 ------------------+---------+----------------
@@ -2783,11 +2783,11 @@ DROP TABLE unlogged1;
 -- set unlogged
 CREATE TABLE logged1(f1 SERIAL PRIMARY KEY, f2 TEXT);
 -- check relpersistence of a permanent table
-SELECT relname, relkind, relpersistence FROM pg_class WHERE relname ~ '^logged1'
+SELECT relname, relkind, relpersistence FROM mdb_class WHERE relname ~ '^logged1'
 UNION ALL
-SELECT 'toast table', t.relkind, t.relpersistence FROM pg_class r JOIN pg_class t ON t.oid = r.reltoastrelid WHERE r.relname ~ '^logged1'
+SELECT 'toast table', t.relkind, t.relpersistence FROM mdb_class r JOIN mdb_class t ON t.oid = r.reltoastrelid WHERE r.relname ~ '^logged1'
 UNION ALL
-SELECT 'toast index', ri.relkind, ri.relpersistence FROM pg_class r join pg_class t ON t.oid = r.reltoastrelid JOIN pg_index i ON i.indrelid = t.oid JOIN pg_class ri ON ri.oid = i.indexrelid WHERE r.relname ~ '^logged1'
+SELECT 'toast index', ri.relkind, ri.relpersistence FROM mdb_class r join mdb_class t ON t.oid = r.reltoastrelid JOIN mdb_index i ON i.indrelid = t.oid JOIN mdb_class ri ON ri.oid = i.indexrelid WHERE r.relname ~ '^logged1'
 ORDER BY relname;
     relname     | relkind | relpersistence 
 ----------------+---------+----------------
@@ -2806,11 +2806,11 @@ ALTER TABLE logged3 SET UNLOGGED; -- skip self-referencing foreign key
 ALTER TABLE logged2 SET UNLOGGED;
 ALTER TABLE logged1 SET UNLOGGED;
 -- check relpersistence of a permanent table after changing to unlogged
-SELECT relname, relkind, relpersistence FROM pg_class WHERE relname ~ '^logged1'
+SELECT relname, relkind, relpersistence FROM mdb_class WHERE relname ~ '^logged1'
 UNION ALL
-SELECT 'toast table', t.relkind, t.relpersistence FROM pg_class r JOIN pg_class t ON t.oid = r.reltoastrelid WHERE r.relname ~ '^logged1'
+SELECT 'toast table', t.relkind, t.relpersistence FROM mdb_class r JOIN mdb_class t ON t.oid = r.reltoastrelid WHERE r.relname ~ '^logged1'
 UNION ALL
-SELECT 'toast index', ri.relkind, ri.relpersistence FROM pg_class r join pg_class t ON t.oid = r.reltoastrelid JOIN pg_index i ON i.indrelid = t.oid JOIN pg_class ri ON ri.oid = i.indexrelid WHERE r.relname ~ '^logged1'
+SELECT 'toast index', ri.relkind, ri.relpersistence FROM mdb_class r join mdb_class t ON t.oid = r.reltoastrelid JOIN mdb_index i ON i.indrelid = t.oid JOIN mdb_class ri ON ri.oid = i.indexrelid WHERE r.relname ~ '^logged1'
 ORDER BY relname;
     relname     | relkind | relpersistence 
 ----------------+---------+----------------

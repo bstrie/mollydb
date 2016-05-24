@@ -1,5 +1,5 @@
 # Local binaries
-/pg_regress
+/mdb_regress
 
 # Generated subdirectories
 /tmp_check/

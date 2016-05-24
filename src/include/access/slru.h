@@ -76,7 +76,7 @@ typedef struct SlruSharedData
 	/*
 	 * Optional array of WAL flush LSNs associated with entries in the SLRU
 	 * pages.  If not zero/NULL, we must flush WAL before writing pages (true
-	 * for pg_clog, false for multixact, pg_subtrans, pg_notify).  group_lsn[]
+	 * for mdb_clog, false for multixact, mdb_subtrans, mdb_notify).  group_lsn[]
 	 * has lsn_groups_per_page entries per buffer slot, each containing the
 	 * highest LSN known for a contiguous group of SLRU entries on that slot's
 	 * page.
@@ -120,8 +120,8 @@ typedef struct SlruCtlData
 	SlruShared	shared;
 
 	/*
-	 * This flag tells whether to fsync writes (true for pg_clog and multixact
-	 * stuff, false for pg_subtrans and pg_notify).
+	 * This flag tells whether to fsync writes (true for mdb_clog and multixact
+	 * stuff, false for mdb_subtrans and mdb_notify).
 	 */
 	bool		do_fsync;
 

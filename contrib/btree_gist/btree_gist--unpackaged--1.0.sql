@@ -390,47 +390,47 @@ LANGUAGE C IMMUTABLE STRICT;
 
 ALTER OPERATOR FAMILY gist_oid_ops USING gist ADD
 	OPERATOR	6	<> (oid, oid) ,
-	OPERATOR	15	<-> (oid, oid) FOR ORDER BY pg_catalog.oid_ops ,
+	OPERATOR	15	<-> (oid, oid) FOR ORDER BY mdb_catalog.oid_ops ,
 	FUNCTION	8 (oid, oid) gbt_oid_distance (internal, oid, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_int2_ops USING gist ADD
 	OPERATOR	6	<> (int2, int2) ,
-	OPERATOR	15	<-> (int2, int2) FOR ORDER BY pg_catalog.integer_ops ,
+	OPERATOR	15	<-> (int2, int2) FOR ORDER BY mdb_catalog.integer_ops ,
 	FUNCTION	8 (int2, int2) gbt_int2_distance (internal, int2, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_int4_ops USING gist ADD
 	OPERATOR	6	<> (int4, int4) ,
-	OPERATOR	15	<-> (int4, int4) FOR ORDER BY pg_catalog.integer_ops ,
+	OPERATOR	15	<-> (int4, int4) FOR ORDER BY mdb_catalog.integer_ops ,
 	FUNCTION	8 (int4, int4) gbt_int4_distance (internal, int4, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_int8_ops USING gist ADD
 	OPERATOR	6	<> (int8, int8) ,
-	OPERATOR	15	<-> (int8, int8) FOR ORDER BY pg_catalog.integer_ops ,
+	OPERATOR	15	<-> (int8, int8) FOR ORDER BY mdb_catalog.integer_ops ,
 	FUNCTION	8 (int8, int8) gbt_int8_distance (internal, int8, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_float4_ops USING gist ADD
 	OPERATOR	6	<> (float4, float4) ,
-	OPERATOR	15	<-> (float4, float4) FOR ORDER BY pg_catalog.float_ops ,
+	OPERATOR	15	<-> (float4, float4) FOR ORDER BY mdb_catalog.float_ops ,
 	FUNCTION	8 (float4, float4) gbt_float4_distance (internal, float4, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_float8_ops USING gist ADD
 	OPERATOR	6	<> (float8, float8) ,
-	OPERATOR	15	<-> (float8, float8) FOR ORDER BY pg_catalog.float_ops ,
+	OPERATOR	15	<-> (float8, float8) FOR ORDER BY mdb_catalog.float_ops ,
 	FUNCTION	8 (float8, float8) gbt_float8_distance (internal, float8, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_timestamp_ops USING gist ADD
 	OPERATOR	6	<> (timestamp, timestamp) ,
-	OPERATOR	15	<-> (timestamp, timestamp) FOR ORDER BY pg_catalog.interval_ops ,
+	OPERATOR	15	<-> (timestamp, timestamp) FOR ORDER BY mdb_catalog.interval_ops ,
 	FUNCTION	8 (timestamp, timestamp) gbt_ts_distance (internal, timestamp, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_timestamptz_ops USING gist ADD
 	OPERATOR	6	<> (timestamptz, timestamptz) ,
-	OPERATOR	15	<-> (timestamptz, timestamptz) FOR ORDER BY pg_catalog.interval_ops ,
+	OPERATOR	15	<-> (timestamptz, timestamptz) FOR ORDER BY mdb_catalog.interval_ops ,
 	FUNCTION	8 (timestamptz, timestamptz) gbt_tstz_distance (internal, timestamptz, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_time_ops USING gist ADD
 	OPERATOR	6	<> (time, time) ,
-	OPERATOR	15	<-> (time, time) FOR ORDER BY pg_catalog.interval_ops ,
+	OPERATOR	15	<-> (time, time) FOR ORDER BY mdb_catalog.interval_ops ,
 	FUNCTION	8 (time, time) gbt_time_distance (internal, time, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_timetz_ops USING gist ADD
@@ -438,17 +438,17 @@ ALTER OPERATOR FAMILY gist_timetz_ops USING gist ADD
 
 ALTER OPERATOR FAMILY gist_date_ops USING gist ADD
 	OPERATOR	6	<> (date, date) ,
-	OPERATOR	15	<-> (date, date) FOR ORDER BY pg_catalog.integer_ops ,
+	OPERATOR	15	<-> (date, date) FOR ORDER BY mdb_catalog.integer_ops ,
 	FUNCTION	8 (date, date) gbt_date_distance (internal, date, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_interval_ops USING gist ADD
 	OPERATOR	6	<> (interval, interval) ,
-	OPERATOR	15	<-> (interval, interval) FOR ORDER BY pg_catalog.interval_ops ,
+	OPERATOR	15	<-> (interval, interval) FOR ORDER BY mdb_catalog.interval_ops ,
 	FUNCTION	8 (interval, interval) gbt_intv_distance (internal, interval, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_cash_ops USING gist ADD
 	OPERATOR	6	<> (money, money) ,
-	OPERATOR	15	<-> (money, money) FOR ORDER BY pg_catalog.money_ops ,
+	OPERATOR	15	<-> (money, money) FOR ORDER BY mdb_catalog.money_ops ,
 	FUNCTION	8 (money, money) gbt_cash_distance (internal, money, int2, oid) ;
 
 ALTER OPERATOR FAMILY gist_macaddr_ops USING gist ADD

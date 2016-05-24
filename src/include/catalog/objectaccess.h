@@ -81,8 +81,8 @@ typedef struct
 	/*
 	 * This identifier is used when system catalog takes two IDs to identify a
 	 * particular tuple of the catalog. It is only used when the caller want
-	 * to identify an entry of pg_inherits, pg_db_role_setting or
-	 * pg_user_mapping. Elsewhere, InvalidOid should be set.
+	 * to identify an entry of mdb_inherits, mdb_db_role_setting or
+	 * mdb_user_mapping. Elsewhere, InvalidOid should be set.
 	 */
 	Oid			auxiliary_id;
 

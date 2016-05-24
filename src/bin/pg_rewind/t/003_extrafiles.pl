@@ -1,4 +1,4 @@
-# Test how pg_rewind reacts to extra files and directories in the data dirs.
+# Test how mdb_rewind reacts to extra files and directories in the data dirs.
 
 use strict;
 use warnings;
@@ -53,7 +53,7 @@ sub run_test
 	  "in master3";
 
 	RewindTest::promote_standby();
-	RewindTest::run_pg_rewind($test_mode);
+	RewindTest::run_mdb_rewind($test_mode);
 
 	# List files in the data directory after rewind.
 	my @paths;

@@ -118,7 +118,7 @@ newline			[\n]
 ","				{ return ','; }
 
 :{alnum}+		{
-					yylval->str = pg_strdup(yytext + 1);
+					yylval->str = mdb_strdup(yytext + 1);
 					return VARIABLE;
 				}
 {digit}+		{
@@ -134,7 +134,7 @@ newline			[\n]
 					return DOUBLE_CONST;
 				}
 {alpha}{alnum}*	{
-					yylval->str = pg_strdup(yytext);
+					yylval->str = mdb_strdup(yytext);
 					return FUNCTION;
 				}
 
@@ -152,7 +152,7 @@ newline			[\n]
 					 * change it while finding end of line
 					 */
 					expr_yyerror_more(yyscanner, "unexpected character",
-									  pg_strdup(yytext));
+									  mdb_strdup(yytext));
 					/* NOTREACHED, syntax_error calls exit() */
 					return 0;
 				}
@@ -335,7 +335,7 @@ expr_scanner_get_substring(PsqlScanState state,
 
 	Assert(slen >= 0);
 	Assert(end_offset <= strlen(state->scanbuf));
-	result = (char *) pg_malloc(slen + 1);
+	result = (char *) mdb_malloc(slen + 1);
 	memcpy(result, state->scanbuf + start_offset, slen);
 	result[slen] = '\0';
 

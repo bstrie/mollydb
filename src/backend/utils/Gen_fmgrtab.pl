@@ -2,7 +2,7 @@
 #-------------------------------------------------------------------------
 #
 # Gen_fmgrtab.pl
-#    Perl script that generates fmgroids.h and fmgrtab.c from pg_proc.h
+#    Perl script that generates fmgroids.h and fmgrtab.c from mdb_proc.h
 #
 # Portions Copyright (c) 1996-2016, MollyDB Global Development Group
 # Portions Copyright (c) 1994, Regents of the University of California
@@ -19,7 +19,7 @@ use strict;
 use warnings;
 
 # Collect arguments
-my $infile;    # pg_proc.h
+my $infile;    # mdb_proc.h
 my $output_path = '';
 while (@ARGV)
 {
@@ -47,15 +47,15 @@ if ($output_path ne '' && substr($output_path, -1) ne '/')
 # Read all the data from the include/catalog files.
 my $catalogs = Catalog::Catalogs($infile);
 
-# Collect the raw data from pg_proc.h.
+# Collect the raw data from mdb_proc.h.
 my @fmgr = ();
 my @attnames;
-foreach my $column (@{ $catalogs->{pg_proc}->{columns} })
+foreach my $column (@{ $catalogs->{mdb_proc}->{columns} })
 {
 	push @attnames, $column->{name};
 }
 
-my $data = $catalogs->{pg_proc}->{data};
+my $data = $catalogs->{mdb_proc}->{data};
 foreach my $row (@$data)
 {
 
@@ -118,13 +118,13 @@ qq|/*-------------------------------------------------------------------------
 #define FMGROIDS_H
 
 /*
- *	Constant macros for the OIDs of entries in pg_proc.
+ *	Constant macros for the OIDs of entries in mdb_proc.
  *
  *	NOTE: macros are named after the prosrc value, ie the actual C name
  *	of the implementing function, not the proname which may be overloaded.
  *	For example, we want to be able to assign different macro names to both
  *	char_text() and name_text() even though these both appear with proname
- *	'text'.  If the same C function appears in more than one pg_proc entry,
+ *	'text'.  If the same C function appears in more than one mdb_proc entry,
  *	its equivalent macro will be defined with the lowest OID among those
  *	entries.
  */
@@ -202,9 +202,9 @@ Catalog::RenameTempFile($tabfile,  $tmpext);
 sub usage
 {
 	die <<EOM;
-Usage: perl -I [directory of Catalog.pm] Gen_fmgrtab.pl [path to pg_proc.h]
+Usage: perl -I [directory of Catalog.pm] Gen_fmgrtab.pl [path to mdb_proc.h]
 
-Gen_fmgrtab.pl generates fmgroids.h and fmgrtab.c from pg_proc.h
+Gen_fmgrtab.pl generates fmgroids.h and fmgrtab.c from mdb_proc.h
 
 Report bugs to <mdb-bugs\@mollydb.org>.
 EOM

@@ -1,5 +1,5 @@
-# translation of pg_ctl.po to fr_fr
-# french message translation file for pg_ctl
+# translation of mdb_ctl.po to fr_fr
+# french message translation file for mdb_ctl
 #
 # Use these quotes: « %s »
 #
@@ -106,47 +106,47 @@ msgstr "le processus fils a quitté avec un statut %d non reconnu"
 msgid "could not get current working directory: %s\n"
 msgstr "n'a pas pu obtenir le répertoire de travail : %s\n"
 
-#: pg_ctl.c:263
+#: mdb_ctl.c:263
 #, c-format
 msgid "%s: directory \"%s\" does not exist\n"
 msgstr "%s : le répertoire « %s » n'existe pas\n"
 
-#: pg_ctl.c:266
+#: mdb_ctl.c:266
 #, c-format
 msgid "%s: could not access directory \"%s\": %s\n"
 msgstr "%s : n'a pas pu accéder au répertoire « %s » : %s\n"
 
-#: pg_ctl.c:280
+#: mdb_ctl.c:280
 #, c-format
 msgid "%s: directory \"%s\" is not a database cluster directory\n"
 msgstr "%s : le répertoire « %s » n'est pas un répertoire d'instance\n"
 
-#: pg_ctl.c:293
+#: mdb_ctl.c:293
 #, c-format
 msgid "%s: could not open PID file \"%s\": %s\n"
 msgstr "%s : n'a pas pu ouvrir le fichier de PID « %s » : %s\n"
 
-#: pg_ctl.c:302
+#: mdb_ctl.c:302
 #, c-format
 msgid "%s: the PID file \"%s\" is empty\n"
 msgstr "%s : le fichier PID « %s » est vide\n"
 
-#: pg_ctl.c:305
+#: mdb_ctl.c:305
 #, c-format
 msgid "%s: invalid data in PID file \"%s\"\n"
 msgstr "%s : données invalides dans le fichier de PID « %s »\n"
 
-#: pg_ctl.c:455 pg_ctl.c:483
+#: mdb_ctl.c:455 mdb_ctl.c:483
 #, c-format
 msgid "%s: could not start server: %s\n"
 msgstr "%s : n'a pas pu démarrer le serveur : %s\n"
 
-#: pg_ctl.c:507
+#: mdb_ctl.c:507
 #, c-format
 msgid "%s: could not start server: error code %lu\n"
 msgstr "%s : n'a pas pu démarrer le serveur : code d'erreur %lu\n"
 
-#: pg_ctl.c:584
+#: mdb_ctl.c:584
 #, c-format
 msgid ""
 "\n"
@@ -155,7 +155,7 @@ msgstr ""
 "\n"
 "%s : l'option -w n'est pas supportée lors du démarrage d'un serveur pré-9.1\n"
 
-#: pg_ctl.c:649
+#: mdb_ctl.c:649
 #, c-format
 msgid ""
 "\n"
@@ -165,24 +165,24 @@ msgstr ""
 "%s : l'option -w ne peut pas utiliser un chemin relatif vers le répertoire de\n"
 "la socket\n"
 
-#: pg_ctl.c:751
+#: mdb_ctl.c:751
 #, c-format
 msgid "%s: cannot set core file size limit; disallowed by hard limit\n"
 msgstr ""
 "%s : n'a pas pu initialiser la taille des fichiers core, ceci est interdit\n"
 "par une limite dure\n"
 
-#: pg_ctl.c:776
+#: mdb_ctl.c:776
 #, c-format
 msgid "%s: could not read file \"%s\"\n"
 msgstr "%s : n'a pas pu lire le fichier « %s »\n"
 
-#: pg_ctl.c:781
+#: mdb_ctl.c:781
 #, c-format
 msgid "%s: option file \"%s\" must have exactly one line\n"
 msgstr "%s : le fichier d'options « %s » ne doit comporter qu'une seule ligne\n"
 
-#: pg_ctl.c:832
+#: mdb_ctl.c:832
 #, c-format
 msgid ""
 "The program \"%s\" is needed by %s but was not found in the\n"
@@ -193,7 +193,7 @@ msgstr ""
 "dans le même répertoire que « %s ».\n"
 "Vérifiez votre installation.\n"
 
-#: pg_ctl.c:838
+#: mdb_ctl.c:838
 #, c-format
 msgid ""
 "The program \"%s\" was found by \"%s\"\n"
@@ -204,39 +204,39 @@ msgstr ""
 "que %s.\n"
 "Vérifiez votre installation.\n"
 
-#: pg_ctl.c:871
+#: mdb_ctl.c:871
 #, c-format
 msgid "%s: database system initialization failed\n"
 msgstr "%s : l'initialisation du système a échoué\n"
 
-#: pg_ctl.c:886
+#: mdb_ctl.c:886
 #, c-format
 msgid "%s: another server might be running; trying to start server anyway\n"
 msgstr ""
 "%s : un autre serveur semble en cours d'exécution ; le démarrage du serveur\n"
 "va toutefois être tenté\n"
 
-#: pg_ctl.c:924
+#: mdb_ctl.c:924
 msgid "waiting for server to start..."
 msgstr "en attente du démarrage du serveur..."
 
-#: pg_ctl.c:929 pg_ctl.c:1036 pg_ctl.c:1127
+#: mdb_ctl.c:929 mdb_ctl.c:1036 mdb_ctl.c:1127
 msgid " done\n"
 msgstr " effectué\n"
 
-#: pg_ctl.c:930
+#: mdb_ctl.c:930
 msgid "server started\n"
 msgstr "serveur démarré\n"
 
-#: pg_ctl.c:933 pg_ctl.c:937
+#: mdb_ctl.c:933 mdb_ctl.c:937
 msgid " stopped waiting\n"
 msgstr " attente arrêtée\n"
 
-#: pg_ctl.c:934
+#: mdb_ctl.c:934
 msgid "server is still starting up\n"
 msgstr "le serveur est toujours en cours de démarrage\n"
 
-#: pg_ctl.c:938
+#: mdb_ctl.c:938
 #, c-format
 msgid ""
 "%s: could not start server\n"
@@ -245,64 +245,64 @@ msgstr ""
 "%s : n'a pas pu démarrer le serveur\n"
 "Examinez le journal applicatif.\n"
 
-#: pg_ctl.c:944 pg_ctl.c:1028 pg_ctl.c:1118
+#: mdb_ctl.c:944 mdb_ctl.c:1028 mdb_ctl.c:1118
 msgid " failed\n"
 msgstr " a échoué\n"
 
-#: pg_ctl.c:945
+#: mdb_ctl.c:945
 #, c-format
 msgid "%s: could not wait for server because of misconfiguration\n"
 msgstr "%s : n'a pas pu attendre le serveur à cause d'une mauvaise configuration\n"
 
-#: pg_ctl.c:951
+#: mdb_ctl.c:951
 msgid "server starting\n"
 msgstr "serveur en cours de démarrage\n"
 
-#: pg_ctl.c:972 pg_ctl.c:1058 pg_ctl.c:1148 pg_ctl.c:1188
+#: mdb_ctl.c:972 mdb_ctl.c:1058 mdb_ctl.c:1148 mdb_ctl.c:1188
 #, c-format
 msgid "%s: PID file \"%s\" does not exist\n"
 msgstr "%s : le fichier de PID « %s » n'existe pas\n"
 
-#: pg_ctl.c:973 pg_ctl.c:1060 pg_ctl.c:1149 pg_ctl.c:1189
+#: mdb_ctl.c:973 mdb_ctl.c:1060 mdb_ctl.c:1149 mdb_ctl.c:1189
 msgid "Is server running?\n"
 msgstr "Le serveur est-il en cours d'exécution ?\n"
 
-#: pg_ctl.c:979
+#: mdb_ctl.c:979
 #, c-format
 msgid "%s: cannot stop server; single-user server is running (PID: %ld)\n"
 msgstr ""
 "%s : ne peut pas arrêter le serveur ; le serveur mono-utilisateur est en\n"
 "cours d'exécution (PID : %ld)\n"
 
-#: pg_ctl.c:987 pg_ctl.c:1082
+#: mdb_ctl.c:987 mdb_ctl.c:1082
 #, c-format
 msgid "%s: could not send stop signal (PID: %ld): %s\n"
 msgstr "%s : n'a pas pu envoyer le signal d'arrêt (PID : %ld) : %s\n"
 
-#: pg_ctl.c:994
+#: mdb_ctl.c:994
 msgid "server shutting down\n"
 msgstr "serveur en cours d'arrêt\n"
 
-#: pg_ctl.c:1009 pg_ctl.c:1097
+#: mdb_ctl.c:1009 mdb_ctl.c:1097
 msgid ""
 "WARNING: online backup mode is active\n"
-"Shutdown will not complete until pg_stop_backup() is called.\n"
+"Shutdown will not complete until mdb_stop_backup() is called.\n"
 "\n"
 msgstr ""
 "ATTENTION : le mode de sauvegarde en ligne est activé.\n"
-"L'arrêt ne surviendra qu'au moment où pg_stop_backup() sera appelé.\n"
+"L'arrêt ne surviendra qu'au moment où mdb_stop_backup() sera appelé.\n"
 "\n"
 
-#: pg_ctl.c:1013 pg_ctl.c:1101
+#: mdb_ctl.c:1013 mdb_ctl.c:1101
 msgid "waiting for server to shut down..."
 msgstr "en attente de l'arrêt du serveur..."
 
-#: pg_ctl.c:1030 pg_ctl.c:1120
+#: mdb_ctl.c:1030 mdb_ctl.c:1120
 #, c-format
 msgid "%s: server does not shut down\n"
 msgstr "%s : le serveur ne s'est pas arrêté\n"
 
-#: pg_ctl.c:1032 pg_ctl.c:1122
+#: mdb_ctl.c:1032 mdb_ctl.c:1122
 msgid ""
 "HINT: The \"-m fast\" option immediately disconnects sessions rather than\n"
 "waiting for session-initiated disconnection.\n"
@@ -310,190 +310,190 @@ msgstr ""
 "ASTUCE : l'option « -m fast » déconnecte immédiatement les sessions plutôt que\n"
 "d'attendre la déconnexion des sessions déjà présentes.\n"
 
-#: pg_ctl.c:1038 pg_ctl.c:1128
+#: mdb_ctl.c:1038 mdb_ctl.c:1128
 msgid "server stopped\n"
 msgstr "serveur arrêté\n"
 
-#: pg_ctl.c:1061 pg_ctl.c:1134
+#: mdb_ctl.c:1061 mdb_ctl.c:1134
 msgid "starting server anyway\n"
 msgstr "lancement du serveur malgré tout\n"
 
-#: pg_ctl.c:1070
+#: mdb_ctl.c:1070
 #, c-format
 msgid "%s: cannot restart server; single-user server is running (PID: %ld)\n"
 msgstr ""
 "%s : ne peut pas relancer le serveur ; le serveur mono-utilisateur est en\n"
 "cours d'exécution (PID : %ld)\n"
 
-#: pg_ctl.c:1073 pg_ctl.c:1158
+#: mdb_ctl.c:1073 mdb_ctl.c:1158
 msgid "Please terminate the single-user server and try again.\n"
 msgstr "Merci d'arrêter le serveur mono-utilisateur et de réessayer.\n"
 
-#: pg_ctl.c:1132
+#: mdb_ctl.c:1132
 #, c-format
 msgid "%s: old server process (PID: %ld) seems to be gone\n"
 msgstr "%s : l'ancien processus serveur (PID : %ld) semble être parti\n"
 
-#: pg_ctl.c:1155
+#: mdb_ctl.c:1155
 #, c-format
 msgid "%s: cannot reload server; single-user server is running (PID: %ld)\n"
 msgstr ""
 "%s : ne peut pas recharger le serveur ; le serveur mono-utilisateur est en\n"
 "cours d'exécution (PID : %ld)\n"
 
-#: pg_ctl.c:1164
+#: mdb_ctl.c:1164
 #, c-format
 msgid "%s: could not send reload signal (PID: %ld): %s\n"
 msgstr "%s : n'a pas pu envoyer le signal de rechargement (PID : %ld) : %s\n"
 
-#: pg_ctl.c:1169
+#: mdb_ctl.c:1169
 msgid "server signaled\n"
 msgstr "envoi d'un signal au serveur\n"
 
-#: pg_ctl.c:1195
+#: mdb_ctl.c:1195
 #, c-format
 msgid "%s: cannot promote server; single-user server is running (PID: %ld)\n"
 msgstr ""
 "%s : ne peut pas promouvoir le serveur ; le serveur mono-utilisateur est en\n"
 "cours d'exécution (PID : %ld)\n"
 
-#: pg_ctl.c:1204
+#: mdb_ctl.c:1204
 #, c-format
 msgid "%s: cannot promote server; server is not in standby mode\n"
 msgstr "%s : ne peut pas promouvoir le serveur ; le serveur n'est pas en standby\n"
 
-#: pg_ctl.c:1219
+#: mdb_ctl.c:1219
 #, c-format
 msgid "%s: could not create promote signal file \"%s\": %s\n"
 msgstr "%s : n'a pas pu créer le fichier « %s » signalant la promotion : %s\n"
 
-#: pg_ctl.c:1225
+#: mdb_ctl.c:1225
 #, c-format
 msgid "%s: could not write promote signal file \"%s\": %s\n"
 msgstr "%s : n'a pas pu écrire le fichier « %s » signalant la promotion : %s\n"
 
-#: pg_ctl.c:1233
+#: mdb_ctl.c:1233
 #, c-format
 msgid "%s: could not send promote signal (PID: %ld): %s\n"
 msgstr "%s : n'a pas pu envoyer le signal de promotion (PID : %ld) : %s\n"
 
-#: pg_ctl.c:1236
+#: mdb_ctl.c:1236
 #, c-format
 msgid "%s: could not remove promote signal file \"%s\": %s\n"
 msgstr "%s : n'a pas pu supprimer le fichier « %s » signalant la promotion : %s\n"
 
-#: pg_ctl.c:1241
+#: mdb_ctl.c:1241
 msgid "server promoting\n"
 msgstr "serveur en cours de promotion\n"
 
-#: pg_ctl.c:1288
+#: mdb_ctl.c:1288
 #, c-format
 msgid "%s: single-user server is running (PID: %ld)\n"
 msgstr "%s : le serveur mono-utilisateur est en cours d'exécution (PID : %ld)\n"
 
-#: pg_ctl.c:1301
+#: mdb_ctl.c:1301
 #, c-format
 msgid "%s: server is running (PID: %ld)\n"
 msgstr "%s : le serveur est en cours d'exécution (PID : %ld)\n"
 
-#: pg_ctl.c:1317
+#: mdb_ctl.c:1317
 #, c-format
 msgid "%s: no server running\n"
 msgstr "%s : aucun serveur en cours d'exécution\n"
 
-#: pg_ctl.c:1335
+#: mdb_ctl.c:1335
 #, c-format
 msgid "%s: could not send signal %d (PID: %ld): %s\n"
 msgstr "%s : n'a pas pu envoyer le signal %d (PID : %ld) : %s\n"
 
-#: pg_ctl.c:1392
+#: mdb_ctl.c:1392
 #, c-format
 msgid "%s: could not find own program executable\n"
 msgstr "%s : n'a pas pu trouver l'exécutable du programme\n"
 
-#: pg_ctl.c:1402
+#: mdb_ctl.c:1402
 #, c-format
 msgid "%s: could not find mollydb program executable\n"
 msgstr "%s : n'a pas pu trouver l'exécutable mollydb\n"
 
-#: pg_ctl.c:1486 pg_ctl.c:1520
+#: mdb_ctl.c:1486 mdb_ctl.c:1520
 #, c-format
 msgid "%s: could not open service manager\n"
 msgstr "%s : n'a pas pu ouvrir le gestionnaire de services\n"
 
-#: pg_ctl.c:1492
+#: mdb_ctl.c:1492
 #, c-format
 msgid "%s: service \"%s\" already registered\n"
 msgstr "%s : le service « %s » est déjà enregistré\n"
 
-#: pg_ctl.c:1503
+#: mdb_ctl.c:1503
 #, c-format
 msgid "%s: could not register service \"%s\": error code %lu\n"
 msgstr "%s : n'a pas pu enregistrer le service « %s » : code d'erreur %lu\n"
 
-#: pg_ctl.c:1526
+#: mdb_ctl.c:1526
 #, c-format
 msgid "%s: service \"%s\" not registered\n"
 msgstr "%s : le service « %s » n'est pas enregistré\n"
 
-#: pg_ctl.c:1533
+#: mdb_ctl.c:1533
 #, c-format
 msgid "%s: could not open service \"%s\": error code %lu\n"
 msgstr "%s :  n'a pas pu ouvrir le service « %s » : code d'erreur %lu\n"
 
-#: pg_ctl.c:1542
+#: mdb_ctl.c:1542
 #, c-format
 msgid "%s: could not unregister service \"%s\": error code %lu\n"
 msgstr "%s : n'a pas pu supprimer le service « %s » : code d'erreur %lu\n"
 
-#: pg_ctl.c:1629
+#: mdb_ctl.c:1629
 msgid "Waiting for server startup...\n"
 msgstr "En attente du démarrage du serveur...\n"
 
-#: pg_ctl.c:1632
+#: mdb_ctl.c:1632
 msgid "Timed out waiting for server startup\n"
 msgstr "Dépassement du délai pour le démarrage du serveur\n"
 
-#: pg_ctl.c:1636
+#: mdb_ctl.c:1636
 msgid "Server started and accepting connections\n"
 msgstr "Serveur lancé et acceptant les connexions\n"
 
-#: pg_ctl.c:1691
+#: mdb_ctl.c:1691
 #, c-format
 msgid "%s: could not start service \"%s\": error code %lu\n"
 msgstr "%s : n'a pas pu démarrer le service « %s » : code d'erreur %lu\n"
 
-#: pg_ctl.c:1919
+#: mdb_ctl.c:1919
 #, c-format
 msgid "%s: WARNING: cannot create restricted tokens on this platform\n"
 msgstr "%s : ATTENTION : ne peut pas crér les jetons restreints sur cette plateforme\n"
 
-#: pg_ctl.c:1934
+#: mdb_ctl.c:1934
 #, c-format
 msgid "%s: could not open process token: error code %lu\n"
 msgstr "%s : n'a pas pu ouvrir le jeton du processus : code d'erreur %lu\n"
 
-#: pg_ctl.c:1948
+#: mdb_ctl.c:1948
 #, c-format
 msgid "%s: could not allocate SIDs: error code %lu\n"
 msgstr "%s : n'a pas pu allouer les SID : code d'erreur %lu\n"
 
-#: pg_ctl.c:1968
+#: mdb_ctl.c:1968
 #, c-format
 msgid "%s: could not create restricted token: error code %lu\n"
 msgstr "%s : n'a pas pu créer le jeton restreint : code d'erreur %lu\n"
 
-#: pg_ctl.c:2002
+#: mdb_ctl.c:2002
 #, c-format
 msgid "%s: WARNING: could not locate all job object functions in system API\n"
 msgstr "%s : ATTENTION : n'a pas pu localiser toutes les fonctions objet de job dans l'API système\n"
 
-#: pg_ctl.c:2085
+#: mdb_ctl.c:2085
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "Essayer « %s --help » pour plus d'informations.\n"
 
-#: pg_ctl.c:2093
+#: mdb_ctl.c:2093
 #, c-format
 msgid ""
 "%s is a utility to initialize, start, stop, or control a MollyDB server.\n"
@@ -503,29 +503,29 @@ msgstr ""
 "MollyDB.\n"
 "\n"
 
-#: pg_ctl.c:2094
+#: mdb_ctl.c:2094
 #, c-format
 msgid "Usage:\n"
 msgstr "Usage :\n"
 
-#: pg_ctl.c:2095
+#: mdb_ctl.c:2095
 #, c-format
 msgid "  %s init[db]               [-D DATADIR] [-s] [-o \"OPTIONS\"]\n"
 msgstr "  %s init[db]   [-D RÉP_DONNÉES] [-s] [-o \"OPTIONS\"]\n"
 
-#: pg_ctl.c:2096
+#: mdb_ctl.c:2096
 #, c-format
 msgid "  %s start   [-w] [-t SECS] [-D DATADIR] [-s] [-l FILENAME] [-o \"OPTIONS\"]\n"
 msgstr ""
 "  %s start      [-w] [-t SECS] [-D RÉP_DONNÉES] [-s] [-l NOM_FICHIER]\n"
 "                [-o \"OPTIONS\"]\n"
 
-#: pg_ctl.c:2097
+#: mdb_ctl.c:2097
 #, c-format
 msgid "  %s stop    [-W] [-t SECS] [-D DATADIR] [-s] [-m SHUTDOWN-MODE]\n"
 msgstr "  %s stop       [-W] [-t SECS] [-D RÉP_DONNÉES] [-s] [-m MODE_ARRET]\n"
 
-#: pg_ctl.c:2098
+#: mdb_ctl.c:2098
 #, c-format
 msgid ""
 "  %s restart [-w] [-t SECS] [-D DATADIR] [-s] [-m SHUTDOWN-MODE]\n"
@@ -534,27 +534,27 @@ msgstr ""
 "  %s restart    [-w] [-t SECS] [-D RÉP_DONNÉES] [-s] [-m MODE_ARRET]\n"
 "                [-o \"OPTIONS\"]\n"
 
-#: pg_ctl.c:2100
+#: mdb_ctl.c:2100
 #, c-format
 msgid "  %s reload  [-D DATADIR] [-s]\n"
 msgstr "  %s reload     [-D RÉP_DONNÉES] [-s]\n"
 
-#: pg_ctl.c:2101
+#: mdb_ctl.c:2101
 #, c-format
 msgid "  %s status  [-D DATADIR]\n"
 msgstr "  %s status     [-D RÉP_DONNÉES]\n"
 
-#: pg_ctl.c:2102
+#: mdb_ctl.c:2102
 #, c-format
 msgid "  %s promote [-D DATADIR] [-s]\n"
 msgstr "  %s promote    [-D RÉP_DONNÉES] [-s]\n"
 
-#: pg_ctl.c:2103
+#: mdb_ctl.c:2103
 #, c-format
 msgid "  %s kill    SIGNALNAME PID\n"
 msgstr "  %s kill       SIGNAL ID_PROCESSUS\n"
 
-#: pg_ctl.c:2105
+#: mdb_ctl.c:2105
 #, c-format
 msgid ""
 "  %s register   [-N SERVICENAME] [-U USERNAME] [-P PASSWORD] [-D DATADIR]\n"
@@ -563,12 +563,12 @@ msgstr ""
 "  %s register   [-N NOM_SERVICE] [-U NOM_UTILISATEUR] [-P MOTDEPASSE]\n"
 "                [-D RÉP_DONNÉES] [-S TYPE_DÉMARRAGE] [-w] [-t SECS] [-o \"OPTIONS\"]\n"
 
-#: pg_ctl.c:2107
+#: mdb_ctl.c:2107
 #, c-format
 msgid "  %s unregister [-N SERVICENAME]\n"
 msgstr "  %s unregister [-N NOM_SERVICE]\n"
 
-#: pg_ctl.c:2110
+#: mdb_ctl.c:2110
 #, c-format
 msgid ""
 "\n"
@@ -577,53 +577,53 @@ msgstr ""
 "\n"
 "Options générales :\n"
 
-#: pg_ctl.c:2111
+#: mdb_ctl.c:2111
 #, c-format
 msgid "  -D, --pgdata=DATADIR   location of the database storage area\n"
 msgstr "  -D, --pgdata=RÉP_DONNÉES emplacement de stockage du cluster\n"
 
-#: pg_ctl.c:2113
+#: mdb_ctl.c:2113
 #, c-format
 msgid "  -e SOURCE              event source for logging when running as a service\n"
 msgstr ""
 "  -e SOURCE                source de l'événement pour la trace lors de\n"
 "                           l'exécution en tant que service\n"
 
-#: pg_ctl.c:2115
+#: mdb_ctl.c:2115
 #, c-format
 msgid "  -s, --silent           only print errors, no informational messages\n"
 msgstr ""
 "  -s, --silent             affiche uniquement les erreurs, aucun message\n"
 "                           d'informations\n"
 
-#: pg_ctl.c:2116
+#: mdb_ctl.c:2116
 #, c-format
 msgid "  -t, --timeout=SECS     seconds to wait when using -w option\n"
 msgstr ""
 "  -t, --timeout=SECS       durée en secondes à attendre lors de\n"
 "                           l'utilisation de l'option -w\n"
 
-#: pg_ctl.c:2117
+#: mdb_ctl.c:2117
 #, c-format
 msgid "  -V, --version          output version information, then exit\n"
 msgstr "  -V, --version              affiche la version puis quitte\n"
 
-#: pg_ctl.c:2118
+#: mdb_ctl.c:2118
 #, c-format
 msgid "  -w                     wait until operation completes\n"
 msgstr "  -w                       attend la fin de l'opération\n"
 
-#: pg_ctl.c:2119
+#: mdb_ctl.c:2119
 #, c-format
 msgid "  -W                     do not wait until operation completes\n"
 msgstr "  -W                       n'attend pas la fin de l'opération\n"
 
-#: pg_ctl.c:2120
+#: mdb_ctl.c:2120
 #, c-format
 msgid "  -?, --help             show this help, then exit\n"
 msgstr "  -?, --help                 affiche cette aide puis quitte\n"
 
-#: pg_ctl.c:2121
+#: mdb_ctl.c:2121
 #, c-format
 msgid ""
 "(The default is to wait for shutdown, but not for start or restart.)\n"
@@ -633,12 +633,12 @@ msgstr ""
 "redémarrage.)\n"
 "\n"
 
-#: pg_ctl.c:2122
+#: mdb_ctl.c:2122
 #, c-format
 msgid "If the -D option is omitted, the environment variable PGDATA is used.\n"
 msgstr "Si l'option -D est omise, la variable d'environnement PGDATA est utilisée.\n"
 
-#: pg_ctl.c:2124
+#: mdb_ctl.c:2124
 #, c-format
 msgid ""
 "\n"
@@ -647,24 +647,24 @@ msgstr ""
 "\n"
 "Options pour le démarrage ou le redémarrage :\n"
 
-#: pg_ctl.c:2126
+#: mdb_ctl.c:2126
 #, c-format
 msgid "  -c, --core-files       allow mollydb to produce core files\n"
 msgstr "  -c, --core-files         autorise mollydb à produire des fichiers core\n"
 
-#: pg_ctl.c:2128
+#: mdb_ctl.c:2128
 #, c-format
 msgid "  -c, --core-files       not applicable on this platform\n"
 msgstr "  -c, --core-files         non applicable à cette plateforme\n"
 
-#: pg_ctl.c:2130
+#: mdb_ctl.c:2130
 #, c-format
 msgid "  -l, --log=FILENAME     write (or append) server log to FILENAME\n"
 msgstr ""
 "  -l, --log=NOM_FICHIER    écrit (ou ajoute) le journal du serveur dans\n"
 "                           NOM_FICHIER\n"
 
-#: pg_ctl.c:2131
+#: mdb_ctl.c:2131
 #, c-format
 msgid ""
 "  -o OPTIONS             command line options to pass to mollydb\n"
@@ -674,12 +674,12 @@ msgstr ""
 "                           mollydb (exécutable du serveur MollyDB)\n"
 "                           ou à initdb\n"
 
-#: pg_ctl.c:2133
+#: mdb_ctl.c:2133
 #, c-format
 msgid "  -p PATH-TO-POSTGRES    normally not necessary\n"
 msgstr "  -p CHEMIN_POSTGRES       normalement pas nécessaire\n"
 
-#: pg_ctl.c:2134
+#: mdb_ctl.c:2134
 #, c-format
 msgid ""
 "\n"
@@ -688,14 +688,14 @@ msgstr ""
 "\n"
 "Options pour l'arrêt ou le redémarrage :\n"
 
-#: pg_ctl.c:2135
+#: mdb_ctl.c:2135
 #, c-format
 msgid "  -m, --mode=MODE        MODE can be \"smart\", \"fast\", or \"immediate\"\n"
 msgstr ""
 "  -m, --mode=MODE          MODE peut valoir « smart », « fast » ou\n"
 "                           « immediate »\n"
 
-#: pg_ctl.c:2137
+#: mdb_ctl.c:2137
 #, c-format
 msgid ""
 "\n"
@@ -704,24 +704,24 @@ msgstr ""
 "\n"
 "Les modes d'arrêt sont :\n"
 
-#: pg_ctl.c:2138
+#: mdb_ctl.c:2138
 #, c-format
 msgid "  smart       quit after all clients have disconnected\n"
 msgstr "  smart                    quitte après déconnexion de tous les clients\n"
 
-#: pg_ctl.c:2139
+#: mdb_ctl.c:2139
 #, c-format
 msgid "  fast        quit directly, with proper shutdown\n"
 msgstr "  fast                     quitte directement, et arrête correctement\n"
 
-#: pg_ctl.c:2140
+#: mdb_ctl.c:2140
 #, c-format
 msgid "  immediate   quit without complete shutdown; will lead to recovery on restart\n"
 msgstr ""
 "  immediate                quitte sans arrêt complet ; entraîne une\n"
 "                           restauration au démarrage suivant\n"
 
-#: pg_ctl.c:2142
+#: mdb_ctl.c:2142
 #, c-format
 msgid ""
 "\n"
@@ -730,7 +730,7 @@ msgstr ""
 "\n"
 "Signaux autorisés pour kill :\n"
 
-#: pg_ctl.c:2146
+#: mdb_ctl.c:2146
 #, c-format
 msgid ""
 "\n"
@@ -739,35 +739,35 @@ msgstr ""
 "\n"
 "Options d'enregistrement ou de dés-enregistrement :\n"
 
-#: pg_ctl.c:2147
+#: mdb_ctl.c:2147
 #, c-format
 msgid "  -N SERVICENAME  service name with which to register MollyDB server\n"
 msgstr ""
 "  -N NOM_SERVICE           nom du service utilisé pour l'enregistrement du\n"
 "                           serveur MollyDB\n"
 
-#: pg_ctl.c:2148
+#: mdb_ctl.c:2148
 #, c-format
 msgid "  -P PASSWORD     password of account to register MollyDB server\n"
 msgstr ""
 "  -P MOT_DE_PASSE          mot de passe du compte utilisé pour\n"
 "                           l'enregistrement du serveur MollyDB\n"
 
-#: pg_ctl.c:2149
+#: mdb_ctl.c:2149
 #, c-format
 msgid "  -U USERNAME     user name of account to register MollyDB server\n"
 msgstr ""
 "  -U NOM_UTILISATEUR       nom de l'utilisateur du compte utilisé pour\n"
 "                           l'enregistrement du serveur MollyDB\n"
 
-#: pg_ctl.c:2150
+#: mdb_ctl.c:2150
 #, c-format
 msgid "  -S START-TYPE   service start type to register MollyDB server\n"
 msgstr ""
 "  -S TYPE_DÉMARRAGE        type de démarrage du service pour enregistrer le\n"
 "                           serveur MollyDB\n"
 
-#: pg_ctl.c:2152
+#: mdb_ctl.c:2152
 #, c-format
 msgid ""
 "\n"
@@ -776,19 +776,19 @@ msgstr ""
 "\n"
 "Les types de démarrage sont :\n"
 
-#: pg_ctl.c:2153
+#: mdb_ctl.c:2153
 #, c-format
 msgid "  auto       start service automatically during system startup (default)\n"
 msgstr ""
 "  auto       démarre le service automatiquement lors du démarrage du système\n"
 "             (par défaut)\n"
 
-#: pg_ctl.c:2154
+#: mdb_ctl.c:2154
 #, c-format
 msgid "  demand     start service on demand\n"
 msgstr "  demand     démarre le service à la demande\n"
 
-#: pg_ctl.c:2157
+#: mdb_ctl.c:2157
 #, c-format
 msgid ""
 "\n"
@@ -797,27 +797,27 @@ msgstr ""
 "\n"
 "Rapporter les bogues à <mdb-bugs@mollydb.org>.\n"
 
-#: pg_ctl.c:2182
+#: mdb_ctl.c:2182
 #, c-format
 msgid "%s: unrecognized shutdown mode \"%s\"\n"
 msgstr "%s : mode d'arrêt non reconnu « %s »\n"
 
-#: pg_ctl.c:2214
+#: mdb_ctl.c:2214
 #, c-format
 msgid "%s: unrecognized signal name \"%s\"\n"
 msgstr "%s : signal non reconnu « %s »\n"
 
-#: pg_ctl.c:2231
+#: mdb_ctl.c:2231
 #, c-format
 msgid "%s: unrecognized start type \"%s\"\n"
 msgstr "%s : type de redémarrage « %s » non reconnu\n"
 
-#: pg_ctl.c:2286
+#: mdb_ctl.c:2286
 #, c-format
 msgid "%s: could not determine the data directory using command \"%s\"\n"
 msgstr "%s : n'a pas déterminer le répertoire des données en utilisant la commande « %s »\n"
 
-#: pg_ctl.c:2359
+#: mdb_ctl.c:2359
 #, c-format
 msgid ""
 "%s: cannot be run as root\n"
@@ -828,32 +828,32 @@ msgstr ""
 "Connectez-vous (par exemple en utilisant « su ») sous l'utilisateur (non\n"
 " privilégié) qui sera propriétaire du processus serveur.\n"
 
-#: pg_ctl.c:2442
+#: mdb_ctl.c:2442
 #, c-format
 msgid "%s: -S option not supported on this platform\n"
 msgstr "%s : option -S non supportée sur cette plateforme\n"
 
-#: pg_ctl.c:2481
+#: mdb_ctl.c:2481
 #, c-format
 msgid "%s: too many command-line arguments (first is \"%s\")\n"
 msgstr "%s : trop d'arguments en ligne de commande (le premier étant « %s »)\n"
 
-#: pg_ctl.c:2505
+#: mdb_ctl.c:2505
 #, c-format
 msgid "%s: missing arguments for kill mode\n"
 msgstr "%s : arguments manquant pour le mode kill\n"
 
-#: pg_ctl.c:2523
+#: mdb_ctl.c:2523
 #, c-format
 msgid "%s: unrecognized operation mode \"%s\"\n"
 msgstr "%s : mode d'opération « %s » non reconnu\n"
 
-#: pg_ctl.c:2533
+#: mdb_ctl.c:2533
 #, c-format
 msgid "%s: no operation specified\n"
 msgstr "%s : aucune opération indiquée\n"
 
-#: pg_ctl.c:2554
+#: mdb_ctl.c:2554
 #, c-format
 msgid "%s: no database directory specified and environment variable PGDATA unset\n"
 msgstr ""

@@ -80,7 +80,7 @@
  * Buffer tag identifies which disk block the buffer contains.
  *
  * Note: the BufferTag data must be sufficient to determine where to write the
- * block, without reference to pg_class or pg_tablespace entries.  It's
+ * block, without reference to mdb_class or mdb_tablespace entries.  It's
  * possible that the backend flushing the buffer doesn't even believe the
  * relation is visible yet (its xact may have started before the xact that
  * created the rel).  The storage manager must be able to cope anyway.
@@ -168,7 +168,7 @@ typedef struct buftag
  * We use this same struct for local buffer headers, but the locks are not
  * used and not all of the flag bits are useful either. To avoid unnecessary
  * overhead, manipulations of the state field should be done without actual
- * atomic operations (i.e. only pg_atomic_read/write).
+ * atomic operations (i.e. only mdb_atomic_read/write).
  *
  * Be careful to avoid increasing the size of the struct when adding or
  * reordering members.  Keeping it below 64 bytes (the most common CPU
@@ -180,7 +180,7 @@ typedef struct BufferDesc
 	int			buf_id;			/* buffer's index number (from 0) */
 
 	/* state of the tag, containing flags, refcount and usagecount */
-	pg_atomic_uint32 state;
+	mdb_atomic_uint32 state;
 
 	int			wait_backend_pid;		/* backend PID of pin-count waiter */
 	int			freeNext;		/* link in freelist chain */
@@ -242,8 +242,8 @@ extern PGDLLIMPORT LWLockMinimallyPadded *BufferIOLWLockArray;
 extern uint32 LockBufHdr(BufferDesc *desc);
 #define UnlockBufHdr(desc, s)	\
 	do {	\
-		pg_atomic_write_u32(&(desc)->state, (s) & (~BM_LOCKED)); \
-		pg_write_barrier(); \
+		mdb_atomic_write_u32(&(desc)->state, (s) & (~BM_LOCKED)); \
+		mdb_write_barrier(); \
 	} while (0)
 
 

@@ -56,7 +56,7 @@ static void LogAccessExclusiveLocks(int nlocks, xl_standby_lock *locks);
  * lock table entries for each transaction but its simpler just to create
  * one permanent entry and leave it there all the time. Locks are then
  * acquired and released as needed. Yes, this means you can see the
- * Startup process in pg_locks once we have run this.
+ * Startup process in mdb_locks once we have run this.
  */
 void
 InitRecoveryTransactionEnvironment(void)
@@ -168,11 +168,11 @@ WaitExceedsMaxStandbyDelay(void)
 	/*
 	 * Sleep a bit (this is essential to avoid busy-waiting).
 	 */
-	pg_usleep(standbyWait_us);
+	mdb_usleep(standbyWait_us);
 
 	/*
 	 * Progressively increase the sleep times, but not to more than 1s, since
-	 * pg_usleep isn't interruptable on some platforms.
+	 * mdb_usleep isn't interruptable on some platforms.
 	 */
 	standbyWait_us *= 2;
 	if (standbyWait_us > 1000000)
@@ -244,7 +244,7 @@ ResolveRecoveryConflictWithVirtualXIDs(VirtualTransactionId *waitlist,
 				 * an unresponsive backend when system is heavily loaded.
 				 */
 				if (pid != 0)
-					pg_usleep(5000L);
+					mdb_usleep(5000L);
 			}
 		}
 
@@ -334,7 +334,7 @@ ResolveRecoveryConflictWithDatabase(Oid dbid)
 		 * Wait awhile for them to die so that we avoid flooding an
 		 * unresponsive backend when system is heavily loaded.
 		 */
-		pg_usleep(10000);
+		mdb_usleep(10000);
 	}
 }
 

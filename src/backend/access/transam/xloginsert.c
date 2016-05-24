@@ -23,14 +23,14 @@
 #include "access/xlog.h"
 #include "access/xlog_internal.h"
 #include "access/xloginsert.h"
-#include "catalog/pg_control.h"
-#include "common/pg_lzcompress.h"
+#include "catalog/mdb_control.h"
+#include "common/mdb_lzcompress.h"
 #include "miscadmin.h"
 #include "replication/origin.h"
 #include "storage/bufmgr.h"
 #include "storage/proc.h"
 #include "utils/memutils.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 
 /* Buffer size required to store a compressed version of backup block image */
 #define PGLZ_MAX_BLCKSZ PGLZ_MAX_OUTPUT(BLCKSZ)
@@ -478,7 +478,7 @@ XLogRecordAssemble(RmgrId rmid, uint8 info,
 	XLogRecData *rdt;
 	uint32		total_len = 0;
 	int			block_id;
-	pg_crc32c	rdata_crc;
+	mdb_crc32c	rdata_crc;
 	registered_buffer *prev_regbuf = NULL;
 	XLogRecData *rdt_datas_last;
 	XLogRecord *rechdr;

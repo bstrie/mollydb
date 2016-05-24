@@ -20,7 +20,7 @@ PG_CPPFLAGS = -DREFINT_VERBOSE
 LDFLAGS_SL += -L$(top_builddir)/src/port -lpgport
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

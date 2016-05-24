@@ -1,16 +1,16 @@
 /*-------------------------------------------------------------------------
  *
- * pg_resetxlog.c
+ * mdb_resetxlog.c
  *	  A utility to "zero out" the xlog when it's corrupt beyond recovery.
- *	  Can also rebuild pg_control if needed.
+ *	  Can also rebuild mdb_control if needed.
  *
  * The theory of operation is fairly simple:
- *	  1. Read the existing pg_control (which will include the last
+ *	  1. Read the existing mdb_control (which will include the last
  *		 checkpoint record).  If it is an old format then update to
  *		 current format.
- *	  2. If pg_control is corrupt, attempt to intuit reasonable values,
+ *	  2. If mdb_control is corrupt, attempt to intuit reasonable values,
  *		 by scanning the old xlog if necessary.
- *	  3. Modify pg_control to reflect a "shutdown" state with a checkpoint
+ *	  3. Modify mdb_control to reflect a "shutdown" state with a checkpoint
  *		 record at the start of xlog.
  *	  4. Flush the existing xlog files and write a new segment with
  *		 just a checkpoint record in it.  The new segment is positioned
@@ -23,7 +23,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/bin/pg_resetxlog/pg_resetxlog.c
+ * src/bin/mdb_resetxlog/mdb_resetxlog.c
  *
  *-------------------------------------------------------------------------
  */
@@ -51,14 +51,14 @@
 #include "access/xlog.h"
 #include "access/xlog_internal.h"
 #include "catalog/catversion.h"
-#include "catalog/pg_control.h"
+#include "catalog/mdb_control.h"
 #include "common/fe_memutils.h"
 #include "common/restricted_token.h"
 #include "storage/large_object.h"
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 
 
-static ControlFileData ControlFile;		/* pg_control values */
+static ControlFileData ControlFile;		/* mdb_control values */
 static XLogSegNo newXlogSegNo;	/* new XLOG segment # */
 static bool guessed = false;	/* T if we had to guess at any values */
 static const char *progname;
@@ -96,7 +96,7 @@ main(int argc, char *argv[])
 	char	   *DataDir = NULL;
 	int			fd;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_resetxlog"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_resetxlog"));
 
 	progname = get_progname(argv[0]);
 
@@ -109,7 +109,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_resetxlog (MollyDB) " PG_VERSION);
+			puts("mdb_resetxlog (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -295,7 +295,7 @@ main(int argc, char *argv[])
 	}
 
 	/*
-	 * Don't allow pg_resetxlog to be run as root, to avoid overwriting the
+	 * Don't allow mdb_resetxlog to be run as root, to avoid overwriting the
 	 * ownership of files in the data directory. We need only check for root
 	 * -- any other user won't have sufficient permissions to modify files in
 	 * the data directory.
@@ -342,7 +342,7 @@ main(int argc, char *argv[])
 	}
 
 	/*
-	 * Attempt to read the existing pg_control file
+	 * Attempt to read the existing mdb_control file
 	 */
 	if (!ReadControlFile())
 		GuessControlValues();
@@ -430,7 +430,7 @@ main(int argc, char *argv[])
 	}
 
 	/*
-	 * Don't reset from a dirty pg_control without -f, either.
+	 * Don't reset from a dirty mdb_control without -f, either.
 	 */
 	if (ControlFile.state != DB_SHUTDOWNED && !force)
 	{
@@ -454,9 +454,9 @@ main(int argc, char *argv[])
 
 
 /*
- * Try to read the existing pg_control file.
+ * Try to read the existing mdb_control file.
  *
- * This routine is also responsible for updating old pg_control versions
+ * This routine is also responsible for updating old mdb_control versions
  * to the current format.  (Currently we don't do anything of the sort.)
  */
 static bool
@@ -465,14 +465,14 @@ ReadControlFile(void)
 	int			fd;
 	int			len;
 	char	   *buffer;
-	pg_crc32c	crc;
+	mdb_crc32c	crc;
 
 	if ((fd = open(XLOG_CONTROL_FILE, O_RDONLY | PG_BINARY, 0)) < 0)
 	{
 		/*
-		 * If pg_control is not there at all, or we can't read it, the odds
+		 * If mdb_control is not there at all, or we can't read it, the odds
 		 * are we've been handed a bad DataDir path, so give up. User can do
-		 * "touch pg_control" to force us to proceed.
+		 * "touch mdb_control" to force us to proceed.
 		 */
 		fprintf(stderr, _("%s: could not open file \"%s\" for reading: %s\n"),
 				progname, XLOG_CONTROL_FILE, strerror(errno));
@@ -485,7 +485,7 @@ ReadControlFile(void)
 	}
 
 	/* Use malloc to ensure we have a maxaligned buffer */
-	buffer = (char *) pg_malloc(PG_CONTROL_SIZE);
+	buffer = (char *) mdb_malloc(PG_CONTROL_SIZE);
 
 	len = read(fd, buffer, PG_CONTROL_SIZE);
 	if (len < 0)
@@ -497,7 +497,7 @@ ReadControlFile(void)
 	close(fd);
 
 	if (len >= sizeof(ControlFileData) &&
-	  ((ControlFileData *) buffer)->pg_control_version == PG_CONTROL_VERSION)
+	  ((ControlFileData *) buffer)->mdb_control_version == PG_CONTROL_VERSION)
 	{
 		/* Check the CRC. */
 		INIT_CRC32C(crc);
@@ -513,7 +513,7 @@ ReadControlFile(void)
 			return true;
 		}
 
-		fprintf(stderr, _("%s: pg_control exists but has invalid CRC; proceed with caution\n"),
+		fprintf(stderr, _("%s: mdb_control exists but has invalid CRC; proceed with caution\n"),
 				progname);
 		/* We will use the data anyway, but treat it as guessed. */
 		memcpy(&ControlFile, buffer, sizeof(ControlFile));
@@ -522,14 +522,14 @@ ReadControlFile(void)
 	}
 
 	/* Looks like it's a mess. */
-	fprintf(stderr, _("%s: pg_control exists but is broken or unknown version; ignoring it\n"),
+	fprintf(stderr, _("%s: mdb_control exists but is broken or unknown version; ignoring it\n"),
 			progname);
 	return false;
 }
 
 
 /*
- * Guess at pg_control values when we can't read the old ones.
+ * Guess at mdb_control values when we can't read the old ones.
  */
 static void
 GuessControlValues(void)
@@ -538,12 +538,12 @@ GuessControlValues(void)
 	struct timeval tv;
 
 	/*
-	 * Set up a completely default set of pg_control values.
+	 * Set up a completely default set of mdb_control values.
 	 */
 	guessed = true;
 	memset(&ControlFile, 0, sizeof(ControlFile));
 
-	ControlFile.pg_control_version = PG_CONTROL_VERSION;
+	ControlFile.mdb_control_version = PG_CONTROL_VERSION;
 	ControlFile.catalog_version_no = CATALOG_VERSION_NO;
 
 	/*
@@ -570,11 +570,11 @@ GuessControlValues(void)
 	ControlFile.checkPointCopy.oldestXidDB = InvalidOid;
 	ControlFile.checkPointCopy.oldestMulti = FirstMultiXactId;
 	ControlFile.checkPointCopy.oldestMultiDB = InvalidOid;
-	ControlFile.checkPointCopy.time = (pg_time_t) time(NULL);
+	ControlFile.checkPointCopy.time = (mdb_time_t) time(NULL);
 	ControlFile.checkPointCopy.oldestActiveXid = InvalidTransactionId;
 
 	ControlFile.state = DB_SHUTDOWNED;
-	ControlFile.time = (pg_time_t) time(NULL);
+	ControlFile.time = (mdb_time_t) time(NULL);
 	ControlFile.checkPoint = ControlFile.checkPointCopy.redo;
 	ControlFile.unloggedLSN = 1;
 
@@ -614,7 +614,7 @@ GuessControlValues(void)
 
 
 /*
- * Print the guessed pg_control values when we had to guess.
+ * Print the guessed mdb_control values when we had to guess.
  *
  * NB: this display should be just those fields that will not be
  * reset by RewriteControlFile().
@@ -625,9 +625,9 @@ PrintControlValues(bool guessed)
 	char		sysident_str[32];
 
 	if (guessed)
-		printf(_("Guessed pg_control values:\n\n"));
+		printf(_("Guessed mdb_control values:\n\n"));
 	else
-		printf(_("Current pg_control values:\n\n"));
+		printf(_("Current mdb_control values:\n\n"));
 
 	/*
 	 * Format system_identifier separately to keep platform-dependent format
@@ -636,8 +636,8 @@ PrintControlValues(bool guessed)
 	snprintf(sysident_str, sizeof(sysident_str), UINT64_FORMAT,
 			 ControlFile.system_identifier);
 
-	printf(_("pg_control version number:            %u\n"),
-		   ControlFile.pg_control_version);
+	printf(_("mdb_control version number:            %u\n"),
+		   ControlFile.mdb_control_version);
 	printf(_("Catalog version number:               %u\n"),
 		   ControlFile.catalog_version_no);
 	printf(_("Database system identifier:           %s\n"),
@@ -765,7 +765,7 @@ PrintNewControlValues(void)
 
 
 /*
- * Write out the new pg_control file.
+ * Write out the new mdb_control file.
  */
 static void
 RewriteControlFile(void)
@@ -779,10 +779,10 @@ RewriteControlFile(void)
 	 */
 	XLogSegNoOffsetToRecPtr(newXlogSegNo, SizeOfXLogLongPHD,
 							ControlFile.checkPointCopy.redo);
-	ControlFile.checkPointCopy.time = (pg_time_t) time(NULL);
+	ControlFile.checkPointCopy.time = (mdb_time_t) time(NULL);
 
 	ControlFile.state = DB_SHUTDOWNED;
-	ControlFile.time = (pg_time_t) time(NULL);
+	ControlFile.time = (mdb_time_t) time(NULL);
 	ControlFile.checkPoint = ControlFile.checkPointCopy.redo;
 	ControlFile.prevCheckPoint = 0;
 	ControlFile.minRecoveryPoint = 0;
@@ -815,11 +815,11 @@ RewriteControlFile(void)
 	FIN_CRC32C(ControlFile.crc);
 
 	/*
-	 * We write out PG_CONTROL_SIZE bytes into pg_control, zero-padding the
+	 * We write out PG_CONTROL_SIZE bytes into mdb_control, zero-padding the
 	 * excess over sizeof(ControlFileData).  This reduces the odds of
-	 * premature-EOF errors when reading pg_control.  We'll still fail when we
+	 * premature-EOF errors when reading mdb_control.  We'll still fail when we
 	 * check the contents of the file, but hopefully with a more specific
-	 * error than "couldn't read pg_control".
+	 * error than "couldn't read mdb_control".
 	 */
 	if (sizeof(ControlFileData) > PG_CONTROL_SIZE)
 	{
@@ -839,7 +839,7 @@ RewriteControlFile(void)
 			  S_IRUSR | S_IWUSR);
 	if (fd < 0)
 	{
-		fprintf(stderr, _("%s: could not create pg_control file: %s\n"),
+		fprintf(stderr, _("%s: could not create mdb_control file: %s\n"),
 				progname, strerror(errno));
 		exit(1);
 	}
@@ -850,7 +850,7 @@ RewriteControlFile(void)
 		/* if write didn't set errno, assume problem is no disk space */
 		if (errno == 0)
 			errno = ENOSPC;
-		fprintf(stderr, _("%s: could not write pg_control file: %s\n"),
+		fprintf(stderr, _("%s: could not write mdb_control file: %s\n"),
 				progname, strerror(errno));
 		exit(1);
 	}
@@ -883,14 +883,14 @@ FindEndOfXLOG(void)
 
 	/*
 	 * Initialize the max() computation using the last checkpoint address from
-	 * old pg_control.  Note that for the moment we are working with segment
+	 * old mdb_control.  Note that for the moment we are working with segment
 	 * numbering according to the old xlog seg size.
 	 */
 	segs_per_xlogid = (UINT64CONST(0x0000000100000000) / ControlFile.xlog_seg_size);
 	newXlogSegNo = ControlFile.checkPointCopy.redo / ControlFile.xlog_seg_size;
 
 	/*
-	 * Scan the pg_xlog directory to find existing WAL segment files. We
+	 * Scan the mdb_xlog directory to find existing WAL segment files. We
 	 * assume any present have been used; in most scenarios this should be
 	 * conservative, because of xlog.c's attempts to pre-create files.
 	 */
@@ -915,7 +915,7 @@ FindEndOfXLOG(void)
 			/*
 			 * Note: We don't use XLogFromFileName here, because we want to
 			 * use the segment size from the control file, not the size the
-			 * pg_resetxlog binary was compiled with
+			 * mdb_resetxlog binary was compiled with
 			 */
 			sscanf(xlde->d_name, "%08X%08X%08X", &tli, &log, &seg);
 			segno = ((uint64) log) * segs_per_xlogid + seg;
@@ -1069,14 +1069,14 @@ WriteEmptyXLOG(void)
 	XLogPageHeader page;
 	XLogLongPageHeader longpage;
 	XLogRecord *record;
-	pg_crc32c	crc;
+	mdb_crc32c	crc;
 	char		path[MAXPGPATH];
 	int			fd;
 	int			nbytes;
 	char	   *recptr;
 
 	/* Use malloc() to ensure buffer is MAXALIGNED */
-	buffer = (char *) pg_malloc(XLOG_BLCKSZ);
+	buffer = (char *) mdb_malloc(XLOG_BLCKSZ);
 	page = (XLogPageHeader) buffer;
 	memset(buffer, 0, XLOG_BLCKSZ);
 

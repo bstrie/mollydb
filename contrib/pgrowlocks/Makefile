@@ -8,7 +8,7 @@ DATA = pgrowlocks--1.1.sql pgrowlocks--1.0--1.1.sql pgrowlocks--unpackaged--1.0.
 PGFILEDESC = "pgrowlocks - display row locking information"
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

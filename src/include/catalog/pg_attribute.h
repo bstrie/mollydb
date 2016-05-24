@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_attribute.h
- *	  definition of the system "attribute" relation (pg_attribute)
+ * mdb_attribute.h
+ *	  definition of the system "attribute" relation (mdb_attribute)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_attribute.h
+ * src/include/catalog/mdb_attribute.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,8 +22,8 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_attribute definition.  cpp turns this into
- *		typedef struct FormData_pg_attribute
+ *		mdb_attribute definition.  cpp turns this into
+ *		typedef struct FormData_mdb_attribute
  *
  *		If you change the following, make sure you change the structs for
  *		system attributes in catalog/heap.c also.
@@ -33,13 +33,13 @@
 #define AttributeRelationId  1249
 #define AttributeRelation_Rowtype_Id  75
 
-CATALOG(pg_attribute,1249) BKI_BOOTSTRAP BKI_WITHOUT_OIDS BKI_ROWTYPE_OID(75) BKI_SCHEMA_MACRO
+CATALOG(mdb_attribute,1249) BKI_BOOTSTRAP BKI_WITHOUT_OIDS BKI_ROWTYPE_OID(75) BKI_SCHEMA_MACRO
 {
 	Oid			attrelid;		/* OID of relation containing this attribute */
 	NameData	attname;		/* name of attribute */
 
 	/*
-	 * atttypid is the OID of the instance in Catalog Class pg_type that
+	 * atttypid is the OID of the instance in Catalog Class mdb_type that
 	 * defines the data type of this attribute (e.g. int4).  Information in
 	 * that instance is redundant with the attlen, attbyval, and attalign
 	 * attributes of this instance, so they had better match or MollyDB will
@@ -57,7 +57,7 @@ CATALOG(pg_attribute,1249) BKI_BOOTSTRAP BKI_WITHOUT_OIDS BKI_ROWTYPE_OID(75) BK
 	int32		attstattarget;
 
 	/*
-	 * attlen is a copy of the typlen field from pg_type for this attribute.
+	 * attlen is a copy of the typlen field from mdb_type for this attribute.
 	 * See atttypid comments above.
 	 */
 	int16		attlen;
@@ -66,9 +66,9 @@ CATALOG(pg_attribute,1249) BKI_BOOTSTRAP BKI_WITHOUT_OIDS BKI_ROWTYPE_OID(75) BK
 	 * attnum is the "attribute number" for the attribute:	A value that
 	 * uniquely identifies this attribute within its class. For user
 	 * attributes, Attribute numbers are greater than 0 and not greater than
-	 * the number of attributes in the class. I.e. if the Class pg_class says
+	 * the number of attributes in the class. I.e. if the Class mdb_class says
 	 * that Class XYZ has 10 attributes, then the user attribute numbers in
-	 * Class pg_attribute must be 1-10.
+	 * Class mdb_attribute must be 1-10.
 	 *
 	 * System attributes have attribute numbers less than 0 that are unique
 	 * within the class, but not constrained to any particular range.
@@ -85,7 +85,7 @@ CATALOG(pg_attribute,1249) BKI_BOOTSTRAP BKI_WITHOUT_OIDS BKI_ROWTYPE_OID(75) BK
 
 	/*
 	 * fastgetattr() uses attcacheoff to cache byte offsets of attributes in
-	 * heap tuples.  The value actually stored in pg_attribute (-1) indicates
+	 * heap tuples.  The value actually stored in mdb_attribute (-1) indicates
 	 * no cached value.  But when we copy these tuples into a tuple
 	 * descriptor, we may then update attcacheoff in the copies. This speeds
 	 * up the attribute walking process.
@@ -101,7 +101,7 @@ CATALOG(pg_attribute,1249) BKI_BOOTSTRAP BKI_WITHOUT_OIDS BKI_ROWTYPE_OID(75) BK
 	int32		atttypmod;
 
 	/*
-	 * attbyval is a copy of the typbyval field from pg_type for this
+	 * attbyval is a copy of the typbyval field from mdb_type for this
 	 * attribute.  See atttypid comments above.
 	 */
 	bool		attbyval;
@@ -112,7 +112,7 @@ CATALOG(pg_attribute,1249) BKI_BOOTSTRAP BKI_WITHOUT_OIDS BKI_ROWTYPE_OID(75) BK
 	 * Possible values are
 	 *		'p': Value must be stored plain always
 	 *		'e': Value can be stored in "secondary" relation (if relation
-	 *			 has one, see pg_class.reltoastrelid)
+	 *			 has one, see mdb_class.reltoastrelid)
 	 *		'm': Value can be stored compressed inline
 	 *		'x': Value can be stored compressed inline or in "secondary"
 	 * Note that 'm' fields can also be moved out to secondary storage,
@@ -122,7 +122,7 @@ CATALOG(pg_attribute,1249) BKI_BOOTSTRAP BKI_WITHOUT_OIDS BKI_ROWTYPE_OID(75) BK
 	char		attstorage;
 
 	/*
-	 * attalign is a copy of the typalign field from pg_type for this
+	 * attalign is a copy of the typalign field from mdb_type for this
 	 * attribute.  See atttypid comments above.
 	 */
 	char		attalign;
@@ -165,57 +165,57 @@ CATALOG(pg_attribute,1249) BKI_BOOTSTRAP BKI_WITHOUT_OIDS BKI_ROWTYPE_OID(75) BK
 	/* Column-level FDW options */
 	text		attfdwoptions[1];
 #endif
-} FormData_pg_attribute;
+} FormData_mdb_attribute;
 
 /*
  * ATTRIBUTE_FIXED_PART_SIZE is the size of the fixed-layout,
- * guaranteed-not-null part of a pg_attribute row.  This is in fact as much
+ * guaranteed-not-null part of a mdb_attribute row.  This is in fact as much
  * of the row as gets copied into tuple descriptors, so don't expect you
  * can access fields beyond attcollation except in a real tuple!
  */
 #define ATTRIBUTE_FIXED_PART_SIZE \
-	(offsetof(FormData_pg_attribute,attcollation) + sizeof(Oid))
+	(offsetof(FormData_mdb_attribute,attcollation) + sizeof(Oid))
 
 /* ----------------
- *		Form_pg_attribute corresponds to a pointer to a tuple with
- *		the format of pg_attribute relation.
+ *		Form_mdb_attribute corresponds to a pointer to a tuple with
+ *		the format of mdb_attribute relation.
  * ----------------
  */
-typedef FormData_pg_attribute *Form_pg_attribute;
+typedef FormData_mdb_attribute *Form_mdb_attribute;
 
 /* ----------------
- *		compiler constants for pg_attribute
+ *		compiler constants for mdb_attribute
  * ----------------
  */
 
-#define Natts_pg_attribute				21
-#define Anum_pg_attribute_attrelid		1
-#define Anum_pg_attribute_attname		2
-#define Anum_pg_attribute_atttypid		3
-#define Anum_pg_attribute_attstattarget 4
-#define Anum_pg_attribute_attlen		5
-#define Anum_pg_attribute_attnum		6
-#define Anum_pg_attribute_attndims		7
-#define Anum_pg_attribute_attcacheoff	8
-#define Anum_pg_attribute_atttypmod		9
-#define Anum_pg_attribute_attbyval		10
-#define Anum_pg_attribute_attstorage	11
-#define Anum_pg_attribute_attalign		12
-#define Anum_pg_attribute_attnotnull	13
-#define Anum_pg_attribute_atthasdef		14
-#define Anum_pg_attribute_attisdropped	15
-#define Anum_pg_attribute_attislocal	16
-#define Anum_pg_attribute_attinhcount	17
-#define Anum_pg_attribute_attcollation	18
-#define Anum_pg_attribute_attacl		19
-#define Anum_pg_attribute_attoptions	20
-#define Anum_pg_attribute_attfdwoptions 21
+#define Natts_mdb_attribute				21
+#define Anum_mdb_attribute_attrelid		1
+#define Anum_mdb_attribute_attname		2
+#define Anum_mdb_attribute_atttypid		3
+#define Anum_mdb_attribute_attstattarget 4
+#define Anum_mdb_attribute_attlen		5
+#define Anum_mdb_attribute_attnum		6
+#define Anum_mdb_attribute_attndims		7
+#define Anum_mdb_attribute_attcacheoff	8
+#define Anum_mdb_attribute_atttypmod		9
+#define Anum_mdb_attribute_attbyval		10
+#define Anum_mdb_attribute_attstorage	11
+#define Anum_mdb_attribute_attalign		12
+#define Anum_mdb_attribute_attnotnull	13
+#define Anum_mdb_attribute_atthasdef		14
+#define Anum_mdb_attribute_attisdropped	15
+#define Anum_mdb_attribute_attislocal	16
+#define Anum_mdb_attribute_attinhcount	17
+#define Anum_mdb_attribute_attcollation	18
+#define Anum_mdb_attribute_attacl		19
+#define Anum_mdb_attribute_attoptions	20
+#define Anum_mdb_attribute_attfdwoptions 21
 
 
 /* ----------------
- *		initial contents of pg_attribute
+ *		initial contents of mdb_attribute
  *
- * The initial contents of pg_attribute are generated at compile time by
+ * The initial contents of mdb_attribute are generated at compile time by
  * genbki.pl.  Only "bootstrapped" relations need be included.
  * ----------------
  */

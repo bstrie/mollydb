@@ -3,7 +3,7 @@ ECPG: stmtClosePortalStmt block
 	{
 		if (INFORMIX_MODE)
 		{
-			if (pg_strcasecmp($1+strlen("close "), "database") == 0)
+			if (mdb_strcasecmp($1+strlen("close "), "database") == 0)
 			{
 				if (connection)
 					mmerror(PARSE_ERROR, ET_ERROR, "AT option not allowed in CLOSE DATABASE statement");
@@ -290,7 +290,7 @@ ECPG: DeclareCursorStmtDECLAREcursor_namecursor_optionsCURSORopt_holdFORSelectSt
 		struct cursor *ptr, *this;
 		char *cursor_marker = $2[0] == ':' ? mm_strdup("$0") : mm_strdup($2);
 		char *comment, *c1, *c2;
-		int (* strcmp_fn)(const char *, const char *) = (($2[0] == ':' || $2[0] == '"') ? strcmp : pg_strcasecmp);
+		int (* strcmp_fn)(const char *, const char *) = (($2[0] == ':' || $2[0] == '"') ? strcmp : mdb_strcasecmp);
 
 		for (ptr = cur; ptr != NULL; ptr = ptr->next)
 		{
@@ -351,7 +351,7 @@ ECPG: into_clauseINTOOptTempTableName block
 						FoundInto = 1;
 						$$= cat2_str(mm_strdup("into"), $2);
 					}
-	| ecpg_into { $$ = EMPTY; }
+	| ecmdb_into { $$ = EMPTY; }
 ECPG: table_refselect_with_parensopt_alias_clause addon
 	if ($2 == NULL)
 		mmerror(PARSE_ERROR, ET_ERROR, "subquery in FROM must have an alias");
@@ -408,29 +408,29 @@ ECPG: VariableShowStmtSHOWALL block
 		$$ = EMPTY;
 	}
 ECPG: FetchStmtMOVEfetch_args rule
-	| FETCH fetch_args ecpg_fetch_into
+	| FETCH fetch_args ecmdb_fetch_into
 	{
 		$$ = cat2_str(mm_strdup("fetch"), $2);
 	}
-	| FETCH FORWARD cursor_name opt_ecpg_fetch_into
+	| FETCH FORWARD cursor_name opt_ecmdb_fetch_into
 	{
 		char *cursor_marker = $3[0] == ':' ? mm_strdup("$0") : $3;
 		add_additional_variables($3, false);
 		$$ = cat_str(2, mm_strdup("fetch forward"), cursor_marker);
 	}
-	| FETCH FORWARD from_in cursor_name opt_ecpg_fetch_into
+	| FETCH FORWARD from_in cursor_name opt_ecmdb_fetch_into
 	{
 		char *cursor_marker = $4[0] == ':' ? mm_strdup("$0") : $4;
 		add_additional_variables($4, false);
 		$$ = cat_str(2, mm_strdup("fetch forward from"), cursor_marker);
 	}
-	| FETCH BACKWARD cursor_name opt_ecpg_fetch_into
+	| FETCH BACKWARD cursor_name opt_ecmdb_fetch_into
 	{
 		char *cursor_marker = $3[0] == ':' ? mm_strdup("$0") : $3;
 		add_additional_variables($3, false);
 		$$ = cat_str(2, mm_strdup("fetch backward"), cursor_marker);
 	}
-	| FETCH BACKWARD from_in cursor_name opt_ecpg_fetch_into
+	| FETCH BACKWARD from_in cursor_name opt_ecmdb_fetch_into
 	{
 		char *cursor_marker = $4[0] == ':' ? mm_strdup("$0") : $4;
 		add_additional_variables($4, false);

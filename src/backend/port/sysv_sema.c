@@ -26,7 +26,7 @@
 
 #include "miscadmin.h"
 #include "storage/ipc.h"
-#include "storage/pg_sema.h"
+#include "storage/mdb_sema.h"
 
 
 #ifndef HAVE_UNION_SEMUN

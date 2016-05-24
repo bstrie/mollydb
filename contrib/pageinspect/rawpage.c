@@ -18,12 +18,12 @@
 #include "access/htup_details.h"
 #include "catalog/catalog.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "miscadmin.h"
 #include "storage/bufmgr.h"
 #include "utils/builtins.h"
-#include "utils/pg_lsn.h"
+#include "utils/mdb_lsn.h"
 #include "utils/rel.h"
 
 PG_MODULE_MAGIC;
@@ -207,7 +207,7 @@ page_header(PG_FUNCTION_ARGS)
 
 	lsn = PageGetLSN(page);
 
-	/* pageinspect >= 1.2 uses pg_lsn instead of text for the LSN field. */
+	/* pageinspect >= 1.2 uses mdb_lsn instead of text for the LSN field. */
 	if (tupdesc->attrs[0]->atttypid == TEXTOID)
 	{
 		char		lsnchar[64];

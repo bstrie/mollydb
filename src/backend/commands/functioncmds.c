@@ -39,15 +39,15 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_aggregate.h"
-#include "catalog/pg_cast.h"
-#include "catalog/pg_language.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_proc_fn.h"
-#include "catalog/pg_transform.h"
-#include "catalog/pg_type.h"
-#include "catalog/pg_type_fn.h"
+#include "catalog/mdb_aggregate.h"
+#include "catalog/mdb_cast.h"
+#include "catalog/mdb_language.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_proc_fn.h"
+#include "catalog/mdb_transform.h"
+#include "catalog/mdb_type.h"
+#include "catalog/mdb_type_fn.h"
 #include "commands/alter.h"
 #include "commands/defrem.h"
 #include "commands/proclang.h"
@@ -91,7 +91,7 @@ compute_return_type(TypeName *returnType, Oid languageOid,
 
 	if (typtup)
 	{
-		if (!((Form_pg_type) GETSTRUCT(typtup))->typisdefined)
+		if (!((Form_mdb_type) GETSTRUCT(typtup))->typisdefined)
 		{
 			if (languageOid == SQLlanguageId)
 				ereport(ERROR,
@@ -141,7 +141,7 @@ compute_return_type(TypeName *returnType, Oid languageOid,
 				 errdetail("Creating a shell type definition.")));
 		namespaceId = QualifiedNameGetCreationNamespace(returnType->names,
 														&typname);
-		aclresult = pg_namespace_aclcheck(namespaceId, GetUserId(),
+		aclresult = mdb_namespace_aclcheck(namespaceId, GetUserId(),
 										  ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
@@ -151,7 +151,7 @@ compute_return_type(TypeName *returnType, Oid languageOid,
 		Assert(OidIsValid(rettype));
 	}
 
-	aclresult = pg_type_aclcheck(rettype, GetUserId(), ACL_USAGE);
+	aclresult = mdb_type_aclcheck(rettype, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error_type(aclresult, rettype);
 
@@ -230,7 +230,7 @@ interpret_function_parameter_list(List *parameters,
 		typtup = LookupTypeName(NULL, t, NULL, false);
 		if (typtup)
 		{
-			if (!((Form_pg_type) GETSTRUCT(typtup))->typisdefined)
+			if (!((Form_mdb_type) GETSTRUCT(typtup))->typisdefined)
 			{
 				/* As above, hard error if language is SQL */
 				if (languageOid == SQLlanguageId)
@@ -262,7 +262,7 @@ interpret_function_parameter_list(List *parameters,
 			toid = InvalidOid;	/* keep compiler quiet */
 		}
 
-		aclresult = pg_type_aclcheck(toid, GetUserId(), ACL_USAGE);
+		aclresult = mdb_type_aclcheck(toid, GetUserId(), ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error_type(aclresult, toid);
 
@@ -771,9 +771,9 @@ compute_attributes_with_style(List *parameters, bool *isStrict_p, char *volatili
 	{
 		DefElem    *param = (DefElem *) lfirst(pl);
 
-		if (pg_strcasecmp(param->defname, "isstrict") == 0)
+		if (mdb_strcasecmp(param->defname, "isstrict") == 0)
 			*isStrict_p = defGetBoolean(param);
-		else if (pg_strcasecmp(param->defname, "iscachable") == 0)
+		else if (mdb_strcasecmp(param->defname, "iscachable") == 0)
 		{
 			/* obsolete spelling of isImmutable */
 			if (defGetBoolean(param))
@@ -889,7 +889,7 @@ CreateFunction(CreateFunctionStmt *stmt, const char *queryString)
 	float4		procost;
 	float4		prorows;
 	HeapTuple	languageTuple;
-	Form_pg_language languageStruct;
+	Form_mdb_language languageStruct;
 	List	   *as_clause;
 	char		parallel;
 
@@ -898,7 +898,7 @@ CreateFunction(CreateFunctionStmt *stmt, const char *queryString)
 													&funcname);
 
 	/* Check we have creation rights in target namespace */
-	aclresult = pg_namespace_aclcheck(namespaceId, GetUserId(), ACL_CREATE);
+	aclresult = mdb_namespace_aclcheck(namespaceId, GetUserId(), ACL_CREATE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
 					   get_namespace_name(namespaceId));
@@ -931,14 +931,14 @@ CreateFunction(CreateFunctionStmt *stmt, const char *queryString)
 				  errhint("Use CREATE LANGUAGE to load the language into the database.") : 0)));
 
 	languageOid = HeapTupleGetOid(languageTuple);
-	languageStruct = (Form_pg_language) GETSTRUCT(languageTuple);
+	languageStruct = (Form_mdb_language) GETSTRUCT(languageTuple);
 
 	if (languageStruct->lanpltrusted)
 	{
 		/* if trusted language, need USAGE privilege */
 		AclResult	aclresult;
 
-		aclresult = pg_language_aclcheck(languageOid, GetUserId(), ACL_USAGE);
+		aclresult = mdb_language_aclcheck(languageOid, GetUserId(), ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_LANGUAGE,
 						   NameStr(languageStruct->lanname));
@@ -1052,7 +1052,7 @@ CreateFunction(CreateFunctionStmt *stmt, const char *queryString)
 
 	/*
 	 * Set default values for COST and ROWS depending on other parameters;
-	 * reject ROWS if it's not returnsSet.  NB: pg_dump knows these default
+	 * reject ROWS if it's not returnsSet.  NB: mdb_dump knows these default
 	 * values, keep it in sync if you change them.
 	 */
 	if (procost < 0)
@@ -1112,7 +1112,7 @@ CreateFunction(CreateFunctionStmt *stmt, const char *queryString)
  * Guts of function deletion.
  *
  * Note: this is also used for aggregate deletion, since the OIDs of
- * both functions and aggregates point to pg_proc.
+ * both functions and aggregates point to mdb_proc.
  */
 void
 RemoveFunctionById(Oid funcOid)
@@ -1122,7 +1122,7 @@ RemoveFunctionById(Oid funcOid)
 	bool		isagg;
 
 	/*
-	 * Delete the pg_proc tuple.
+	 * Delete the mdb_proc tuple.
 	 */
 	relation = heap_open(ProcedureRelationId, RowExclusiveLock);
 
@@ -1130,7 +1130,7 @@ RemoveFunctionById(Oid funcOid)
 	if (!HeapTupleIsValid(tup)) /* should not happen */
 		elog(ERROR, "cache lookup failed for function %u", funcOid);
 
-	isagg = ((Form_pg_proc) GETSTRUCT(tup))->proisagg;
+	isagg = ((Form_mdb_proc) GETSTRUCT(tup))->proisagg;
 
 	simple_heap_delete(relation, &tup->t_self);
 
@@ -1139,7 +1139,7 @@ RemoveFunctionById(Oid funcOid)
 	heap_close(relation, RowExclusiveLock);
 
 	/*
-	 * If there's a pg_aggregate tuple, delete that too.
+	 * If there's a mdb_aggregate tuple, delete that too.
 	 */
 	if (isagg)
 	{
@@ -1147,7 +1147,7 @@ RemoveFunctionById(Oid funcOid)
 
 		tup = SearchSysCache1(AGGFNOID, ObjectIdGetDatum(funcOid));
 		if (!HeapTupleIsValid(tup))		/* should not happen */
-			elog(ERROR, "cache lookup failed for pg_aggregate tuple for function %u", funcOid);
+			elog(ERROR, "cache lookup failed for mdb_aggregate tuple for function %u", funcOid);
 
 		simple_heap_delete(relation, &tup->t_self);
 
@@ -1167,7 +1167,7 @@ AlterFunction(AlterFunctionStmt *stmt)
 {
 	HeapTuple	tup;
 	Oid			funcOid;
-	Form_pg_proc procForm;
+	Form_mdb_proc procForm;
 	Relation	rel;
 	ListCell   *l;
 	DefElem    *volatility_item = NULL;
@@ -1190,10 +1190,10 @@ AlterFunction(AlterFunctionStmt *stmt)
 	if (!HeapTupleIsValid(tup)) /* should not happen */
 		elog(ERROR, "cache lookup failed for function %u", funcOid);
 
-	procForm = (Form_pg_proc) GETSTRUCT(tup);
+	procForm = (Form_mdb_proc) GETSTRUCT(tup);
 
 	/* Permission check: must own function */
-	if (!pg_proc_ownercheck(funcOid, GetUserId()))
+	if (!mdb_proc_ownercheck(funcOid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_PROC,
 					   NameListToString(stmt->func->funcname));
 
@@ -1259,12 +1259,12 @@ AlterFunction(AlterFunctionStmt *stmt)
 		Datum		datum;
 		bool		isnull;
 		ArrayType  *a;
-		Datum		repl_val[Natts_pg_proc];
-		bool		repl_null[Natts_pg_proc];
-		bool		repl_repl[Natts_pg_proc];
+		Datum		repl_val[Natts_mdb_proc];
+		bool		repl_null[Natts_mdb_proc];
+		bool		repl_repl[Natts_mdb_proc];
 
 		/* extract existing proconfig setting */
-		datum = SysCacheGetAttr(PROCOID, tup, Anum_pg_proc_proconfig, &isnull);
+		datum = SysCacheGetAttr(PROCOID, tup, Anum_mdb_proc_proconfig, &isnull);
 		a = isnull ? NULL : DatumGetArrayTypeP(datum);
 
 		/* update according to each SET or RESET item, left to right */
@@ -1272,17 +1272,17 @@ AlterFunction(AlterFunctionStmt *stmt)
 
 		/* update the tuple */
 		memset(repl_repl, false, sizeof(repl_repl));
-		repl_repl[Anum_pg_proc_proconfig - 1] = true;
+		repl_repl[Anum_mdb_proc_proconfig - 1] = true;
 
 		if (a == NULL)
 		{
-			repl_val[Anum_pg_proc_proconfig - 1] = (Datum) 0;
-			repl_null[Anum_pg_proc_proconfig - 1] = true;
+			repl_val[Anum_mdb_proc_proconfig - 1] = (Datum) 0;
+			repl_null[Anum_mdb_proc_proconfig - 1] = true;
 		}
 		else
 		{
-			repl_val[Anum_pg_proc_proconfig - 1] = PointerGetDatum(a);
-			repl_null[Anum_pg_proc_proconfig - 1] = false;
+			repl_val[Anum_mdb_proc_proconfig - 1] = PointerGetDatum(a);
+			repl_null[Anum_mdb_proc_proconfig - 1] = false;
 		}
 
 		tup = heap_modify_tuple(tup, RelationGetDescr(rel),
@@ -1315,16 +1315,16 @@ AlterFunction(AlterFunctionStmt *stmt)
 void
 SetFunctionReturnType(Oid funcOid, Oid newRetType)
 {
-	Relation	pg_proc_rel;
+	Relation	mdb_proc_rel;
 	HeapTuple	tup;
-	Form_pg_proc procForm;
+	Form_mdb_proc procForm;
 
-	pg_proc_rel = heap_open(ProcedureRelationId, RowExclusiveLock);
+	mdb_proc_rel = heap_open(ProcedureRelationId, RowExclusiveLock);
 
 	tup = SearchSysCacheCopy1(PROCOID, ObjectIdGetDatum(funcOid));
 	if (!HeapTupleIsValid(tup)) /* should not happen */
 		elog(ERROR, "cache lookup failed for function %u", funcOid);
-	procForm = (Form_pg_proc) GETSTRUCT(tup);
+	procForm = (Form_mdb_proc) GETSTRUCT(tup);
 
 	if (procForm->prorettype != OPAQUEOID)		/* caller messed up */
 		elog(ERROR, "function %u doesn't return OPAQUE", funcOid);
@@ -1333,11 +1333,11 @@ SetFunctionReturnType(Oid funcOid, Oid newRetType)
 	procForm->prorettype = newRetType;
 
 	/* update the catalog and its indexes */
-	simple_heap_update(pg_proc_rel, &tup->t_self, tup);
+	simple_heap_update(mdb_proc_rel, &tup->t_self, tup);
 
-	CatalogUpdateIndexes(pg_proc_rel, tup);
+	CatalogUpdateIndexes(mdb_proc_rel, tup);
 
-	heap_close(pg_proc_rel, RowExclusiveLock);
+	heap_close(mdb_proc_rel, RowExclusiveLock);
 }
 
 
@@ -1349,16 +1349,16 @@ SetFunctionReturnType(Oid funcOid, Oid newRetType)
 void
 SetFunctionArgType(Oid funcOid, int argIndex, Oid newArgType)
 {
-	Relation	pg_proc_rel;
+	Relation	mdb_proc_rel;
 	HeapTuple	tup;
-	Form_pg_proc procForm;
+	Form_mdb_proc procForm;
 
-	pg_proc_rel = heap_open(ProcedureRelationId, RowExclusiveLock);
+	mdb_proc_rel = heap_open(ProcedureRelationId, RowExclusiveLock);
 
 	tup = SearchSysCacheCopy1(PROCOID, ObjectIdGetDatum(funcOid));
 	if (!HeapTupleIsValid(tup)) /* should not happen */
 		elog(ERROR, "cache lookup failed for function %u", funcOid);
-	procForm = (Form_pg_proc) GETSTRUCT(tup);
+	procForm = (Form_mdb_proc) GETSTRUCT(tup);
 
 	if (argIndex < 0 || argIndex >= procForm->pronargs ||
 		procForm->proargtypes.values[argIndex] != OPAQUEOID)
@@ -1368,11 +1368,11 @@ SetFunctionArgType(Oid funcOid, int argIndex, Oid newArgType)
 	procForm->proargtypes.values[argIndex] = newArgType;
 
 	/* update the catalog and its indexes */
-	simple_heap_update(pg_proc_rel, &tup->t_self, tup);
+	simple_heap_update(mdb_proc_rel, &tup->t_self, tup);
 
-	CatalogUpdateIndexes(pg_proc_rel, tup);
+	CatalogUpdateIndexes(mdb_proc_rel, tup);
 
-	heap_close(pg_proc_rel, RowExclusiveLock);
+	heap_close(mdb_proc_rel, RowExclusiveLock);
 }
 
 
@@ -1394,8 +1394,8 @@ CreateCast(CreateCastStmt *stmt)
 	char		castmethod;
 	Relation	relation;
 	HeapTuple	tuple;
-	Datum		values[Natts_pg_cast];
-	bool		nulls[Natts_pg_cast];
+	Datum		values[Natts_mdb_cast];
+	bool		nulls[Natts_mdb_cast];
 	ObjectAddress myself,
 				referenced;
 	AclResult	aclresult;
@@ -1419,19 +1419,19 @@ CreateCast(CreateCastStmt *stmt)
 						TypeNameToString(stmt->targettype))));
 
 	/* Permission check */
-	if (!pg_type_ownercheck(sourcetypeid, GetUserId())
-		&& !pg_type_ownercheck(targettypeid, GetUserId()))
+	if (!mdb_type_ownercheck(sourcetypeid, GetUserId())
+		&& !mdb_type_ownercheck(targettypeid, GetUserId()))
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 				 errmsg("must be owner of type %s or type %s",
 						format_type_be(sourcetypeid),
 						format_type_be(targettypeid))));
 
-	aclresult = pg_type_aclcheck(sourcetypeid, GetUserId(), ACL_USAGE);
+	aclresult = mdb_type_aclcheck(sourcetypeid, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error_type(aclresult, sourcetypeid);
 
-	aclresult = pg_type_aclcheck(targettypeid, GetUserId(), ACL_USAGE);
+	aclresult = mdb_type_aclcheck(targettypeid, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error_type(aclresult, targettypeid);
 
@@ -1456,7 +1456,7 @@ CreateCast(CreateCastStmt *stmt)
 
 	if (castmethod == COERCION_METHOD_FUNCTION)
 	{
-		Form_pg_proc procstruct;
+		Form_mdb_proc procstruct;
 
 		funcid = LookupFuncNameTypeNames(stmt->func->funcname,
 										 stmt->func->funcargs,
@@ -1466,7 +1466,7 @@ CreateCast(CreateCastStmt *stmt)
 		if (!HeapTupleIsValid(tuple))
 			elog(ERROR, "cache lookup failed for function %u", funcid);
 
-		procstruct = (Form_pg_proc) GETSTRUCT(tuple);
+		procstruct = (Form_mdb_proc) GETSTRUCT(tuple);
 		nargs = procstruct->pronargs;
 		if (nargs < 1 || nargs > 3)
 			ereport(ERROR,
@@ -1644,11 +1644,11 @@ CreateCast(CreateCastStmt *stmt)
 						format_type_be(targettypeid))));
 
 	/* ready to go */
-	values[Anum_pg_cast_castsource - 1] = ObjectIdGetDatum(sourcetypeid);
-	values[Anum_pg_cast_casttarget - 1] = ObjectIdGetDatum(targettypeid);
-	values[Anum_pg_cast_castfunc - 1] = ObjectIdGetDatum(funcid);
-	values[Anum_pg_cast_castcontext - 1] = CharGetDatum(castcontext);
-	values[Anum_pg_cast_castmethod - 1] = CharGetDatum(castmethod);
+	values[Anum_mdb_cast_castsource - 1] = ObjectIdGetDatum(sourcetypeid);
+	values[Anum_mdb_cast_casttarget - 1] = ObjectIdGetDatum(targettypeid);
+	values[Anum_mdb_cast_castfunc - 1] = ObjectIdGetDatum(funcid);
+	values[Anum_mdb_cast_castcontext - 1] = CharGetDatum(castcontext);
+	values[Anum_mdb_cast_castmethod - 1] = CharGetDatum(castmethod);
 
 	MemSet(nulls, false, sizeof(nulls));
 
@@ -1748,7 +1748,7 @@ DropCastById(Oid castOid)
 
 
 static void
-check_transform_function(Form_pg_proc procstruct)
+check_transform_function(Form_mdb_proc procstruct)
 {
 	if (procstruct->provolatile == PROVOLATILE_VOLATILE)
 		ereport(ERROR,
@@ -1789,10 +1789,10 @@ CreateTransform(CreateTransformStmt *stmt)
 	Oid			fromsqlfuncid;
 	Oid			tosqlfuncid;
 	AclResult	aclresult;
-	Form_pg_proc procstruct;
-	Datum		values[Natts_pg_transform];
-	bool		nulls[Natts_pg_transform];
-	bool		replaces[Natts_pg_transform];
+	Form_mdb_proc procstruct;
+	Datum		values[Natts_mdb_transform];
+	bool		nulls[Natts_mdb_transform];
+	bool		replaces[Natts_mdb_transform];
 	Oid			transformid;
 	HeapTuple	tuple;
 	HeapTuple	newtuple;
@@ -1819,10 +1819,10 @@ CreateTransform(CreateTransformStmt *stmt)
 				 errmsg("data type %s is a domain",
 						TypeNameToString(stmt->type_name))));
 
-	if (!pg_type_ownercheck(typeid, GetUserId()))
+	if (!mdb_type_ownercheck(typeid, GetUserId()))
 		aclcheck_error_type(ACLCHECK_NOT_OWNER, typeid);
 
-	aclresult = pg_type_aclcheck(typeid, GetUserId(), ACL_USAGE);
+	aclresult = mdb_type_aclcheck(typeid, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error_type(aclresult, typeid);
 
@@ -1831,7 +1831,7 @@ CreateTransform(CreateTransformStmt *stmt)
 	 */
 	langid = get_language_oid(stmt->lang, false);
 
-	aclresult = pg_language_aclcheck(langid, GetUserId(), ACL_USAGE);
+	aclresult = mdb_language_aclcheck(langid, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_LANGUAGE, stmt->lang);
 
@@ -1842,17 +1842,17 @@ CreateTransform(CreateTransformStmt *stmt)
 	{
 		fromsqlfuncid = LookupFuncNameTypeNames(stmt->fromsql->funcname, stmt->fromsql->funcargs, false);
 
-		if (!pg_proc_ownercheck(fromsqlfuncid, GetUserId()))
+		if (!mdb_proc_ownercheck(fromsqlfuncid, GetUserId()))
 			aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_PROC, NameListToString(stmt->fromsql->funcname));
 
-		aclresult = pg_proc_aclcheck(fromsqlfuncid, GetUserId(), ACL_EXECUTE);
+		aclresult = mdb_proc_aclcheck(fromsqlfuncid, GetUserId(), ACL_EXECUTE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_PROC, NameListToString(stmt->fromsql->funcname));
 
 		tuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(fromsqlfuncid));
 		if (!HeapTupleIsValid(tuple))
 			elog(ERROR, "cache lookup failed for function %u", fromsqlfuncid);
-		procstruct = (Form_pg_proc) GETSTRUCT(tuple);
+		procstruct = (Form_mdb_proc) GETSTRUCT(tuple);
 		if (procstruct->prorettype != INTERNALOID)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_OBJECT_DEFINITION),
@@ -1867,17 +1867,17 @@ CreateTransform(CreateTransformStmt *stmt)
 	{
 		tosqlfuncid = LookupFuncNameTypeNames(stmt->tosql->funcname, stmt->tosql->funcargs, false);
 
-		if (!pg_proc_ownercheck(tosqlfuncid, GetUserId()))
+		if (!mdb_proc_ownercheck(tosqlfuncid, GetUserId()))
 			aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_PROC, NameListToString(stmt->tosql->funcname));
 
-		aclresult = pg_proc_aclcheck(tosqlfuncid, GetUserId(), ACL_EXECUTE);
+		aclresult = mdb_proc_aclcheck(tosqlfuncid, GetUserId(), ACL_EXECUTE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_PROC, NameListToString(stmt->tosql->funcname));
 
 		tuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(tosqlfuncid));
 		if (!HeapTupleIsValid(tuple))
 			elog(ERROR, "cache lookup failed for function %u", tosqlfuncid);
-		procstruct = (Form_pg_proc) GETSTRUCT(tuple);
+		procstruct = (Form_mdb_proc) GETSTRUCT(tuple);
 		if (procstruct->prorettype != typeid)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_OBJECT_DEFINITION),
@@ -1891,10 +1891,10 @@ CreateTransform(CreateTransformStmt *stmt)
 	/*
 	 * Ready to go
 	 */
-	values[Anum_pg_transform_trftype - 1] = ObjectIdGetDatum(typeid);
-	values[Anum_pg_transform_trflang - 1] = ObjectIdGetDatum(langid);
-	values[Anum_pg_transform_trffromsql - 1] = ObjectIdGetDatum(fromsqlfuncid);
-	values[Anum_pg_transform_trftosql - 1] = ObjectIdGetDatum(tosqlfuncid);
+	values[Anum_mdb_transform_trftype - 1] = ObjectIdGetDatum(typeid);
+	values[Anum_mdb_transform_trflang - 1] = ObjectIdGetDatum(langid);
+	values[Anum_mdb_transform_trffromsql - 1] = ObjectIdGetDatum(fromsqlfuncid);
+	values[Anum_mdb_transform_trftosql - 1] = ObjectIdGetDatum(tosqlfuncid);
 
 	MemSet(nulls, false, sizeof(nulls));
 
@@ -1913,8 +1913,8 @@ CreateTransform(CreateTransformStmt *stmt)
 					  stmt->lang)));
 
 		MemSet(replaces, false, sizeof(replaces));
-		replaces[Anum_pg_transform_trffromsql - 1] = true;
-		replaces[Anum_pg_transform_trftosql - 1] = true;
+		replaces[Anum_mdb_transform_trffromsql - 1] = true;
+		replaces[Anum_mdb_transform_trftosql - 1] = true;
 
 		newtuple = heap_modify_tuple(tuple, RelationGetDescr(relation), values, nulls, replaces);
 		simple_heap_update(relation, &newtuple->t_self, newtuple);
@@ -2070,7 +2070,7 @@ ExecuteDoStmt(DoStmt *stmt)
 	char	   *language;
 	Oid			laninline;
 	HeapTuple	languageTuple;
-	Form_pg_language languageStruct;
+	Form_mdb_language languageStruct;
 
 	/* Process options we got from gram.y */
 	foreach(arg, stmt->args)
@@ -2121,7 +2121,7 @@ ExecuteDoStmt(DoStmt *stmt)
 				  errhint("Use CREATE LANGUAGE to load the language into the database.") : 0)));
 
 	codeblock->langOid = HeapTupleGetOid(languageTuple);
-	languageStruct = (Form_pg_language) GETSTRUCT(languageTuple);
+	languageStruct = (Form_mdb_language) GETSTRUCT(languageTuple);
 	codeblock->langIsTrusted = languageStruct->lanpltrusted;
 
 	if (languageStruct->lanpltrusted)
@@ -2129,7 +2129,7 @@ ExecuteDoStmt(DoStmt *stmt)
 		/* if trusted language, need USAGE privilege */
 		AclResult	aclresult;
 
-		aclresult = pg_language_aclcheck(codeblock->langOid, GetUserId(),
+		aclresult = mdb_language_aclcheck(codeblock->langOid, GetUserId(),
 										 ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_LANGUAGE,

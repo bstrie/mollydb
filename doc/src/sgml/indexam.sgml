@@ -16,7 +16,7 @@
    technically as <firstterm>secondary indexes</>; that is, the index is
    physically separate from the table file that it describes.  Each index
    is stored as its own physical <firstterm>relation</> and so is described
-   by an entry in the <structname>pg_class</> catalog.  The contents of an
+   by an entry in the <structname>mdb_class</> catalog.  The contents of an
    index are entirely under the control of its index access method.  In
    practice, all index access methods divide indexes into standard-size
    pages so that they can use the regular storage manager and buffer manager
@@ -48,11 +48,11 @@
 
   <para>
    Each index access method is described by a row in the
-   <link linkend="catalog-pg-am"><structname>pg_am</structname></link>
-   system catalog.  The <structname>pg_am</structname> entry
+   <link linkend="catalog-pg-am"><structname>mdb_am</structname></link>
+   system catalog.  The <structname>mdb_am</structname> entry
    specifies a name and a <firstterm>handler function</> for the access
    method.  There is not currently any special support
-   for creating or deleting <structname>pg_am</structname> entries;
+   for creating or deleting <structname>mdb_am</structname> entries;
    anyone able to write a new access method is expected to be competent
    to insert an appropriate row for themselves.
   </para>
@@ -145,10 +145,10 @@ typedef struct IndexAmRoutine
    To be useful, an index access method must also have one or more
    <firstterm>operator families</> and
    <firstterm>operator classes</> defined in
-   <link linkend="catalog-pg-opfamily"><structname>pg_opfamily</structname></link>,
-   <link linkend="catalog-pg-opclass"><structname>pg_opclass</structname></link>,
-   <link linkend="catalog-pg-amop"><structname>pg_amop</structname></link>, and
-   <link linkend="catalog-pg-amproc"><structname>pg_amproc</structname></link>.
+   <link linkend="catalog-pg-opfamily"><structname>mdb_opfamily</structname></link>,
+   <link linkend="catalog-pg-opclass"><structname>mdb_opclass</structname></link>,
+   <link linkend="catalog-pg-amop"><structname>mdb_amop</structname></link>, and
+   <link linkend="catalog-pg-amproc"><structname>mdb_amproc</structname></link>.
    These entries allow the planner
    to determine what kinds of query qualifications can be used with
    indexes of this access method.  Operator families and classes are described
@@ -158,9 +158,9 @@ typedef struct IndexAmRoutine
 
   <para>
    An individual index is defined by a
-   <link linkend="catalog-pg-class"><structname>pg_class</structname></link>
+   <link linkend="catalog-pg-class"><structname>mdb_class</structname></link>
    entry that describes it as a physical relation, plus a
-   <link linkend="catalog-pg-index"><structname>pg_index</structname></link>
+   <link linkend="catalog-pg-index"><structname>mdb_index</structname></link>
    entry that shows the logical content of the index &mdash; that is, the set
    of index columns it has and the semantics of those columns, as captured by
    the associated operator classes.  The index columns (key values) can be
@@ -168,7 +168,7 @@ typedef struct IndexAmRoutine
    rows.  The index access method normally has no interest in where the index
    key values come from (it is always handed precomputed key values) but it
    will be very interested in the operator class information in
-   <structname>pg_index</structname>.  Both of these catalog entries can be
+   <structname>mdb_index</structname>.  Both of these catalog entries can be
    accessed as part of the <structname>Relation</> data structure that is
    passed to all operations on the index.
   </para>
@@ -332,7 +332,7 @@ amvacuumcleanup (IndexVacuumInfo *info,
    last <function>ambulkdelete</> call returned, or NULL if
    <function>ambulkdelete</> was not called because no tuples needed to be
    deleted.  If the result is not NULL it must be a palloc'd struct.
-   The statistics it contains will be used to update <structname>pg_class</>,
+   The statistics it contains will be used to update <structname>mdb_class</>,
    and will be reported by <command>VACUUM</> if <literal>VERBOSE</> is given.
    It is OK to return NULL if the index was not changed at all during the
    <command>VACUUM</command> operation, but otherwise correct stats should
@@ -398,7 +398,7 @@ amoptions (ArrayType *reloptions,
    error message if any of the options are unrecognized or have invalid
    values; when <parameter>validate</> is false, invalid entries should be
    silently ignored.  (<parameter>validate</> is false when loading options
-   already stored in <structname>pg_catalog</>; an invalid entry could only
+   already stored in <structname>mdb_catalog</>; an invalid entry could only
    be found if the access method has changed its rules for options, and in
    that case ignoring obsolete entries is appropriate.)
    It is OK to return NULL if default behavior is wanted.
@@ -1221,7 +1221,7 @@ cost_qual_eval(&amp;index_qual_cost, path-&gt;indexquals, root);
    <step>
     <para>
      Estimate the index correlation.  For a simple ordered index on a single
-     field, this can be retrieved from pg_statistic.  If the correlation
+     field, this can be retrieved from mdb_statistic.  If the correlation
      is not known, the conservative estimate is zero (no correlation).
     </para>
    </step>

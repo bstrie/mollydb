@@ -44,14 +44,14 @@ msgstr "사용자 이름 찾기 실패: 오류번호 %lu"
 #: createlang.c:89 createlang.c:119 createlang.c:174 createuser.c:168
 #: createuser.c:183 dropdb.c:94 dropdb.c:103 dropdb.c:111 droplang.c:88
 #: droplang.c:118 droplang.c:174 dropuser.c:89 dropuser.c:104 dropuser.c:115
-#: pg_isready.c:93 pg_isready.c:107 reindexdb.c:130 reindexdb.c:149
+#: mdb_isready.c:93 mdb_isready.c:107 reindexdb.c:130 reindexdb.c:149
 #: vacuumdb.c:209 vacuumdb.c:228
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "보다 자세한 사용법은 \"%s --help\"\n"
 
 #: clusterdb.c:127 createdb.c:136 createlang.c:117 createuser.c:181
-#: dropdb.c:109 droplang.c:116 dropuser.c:102 pg_isready.c:105 reindexdb.c:147
+#: dropdb.c:109 droplang.c:116 dropuser.c:102 mdb_isready.c:105 reindexdb.c:147
 #: vacuumdb.c:226
 #, c-format
 msgid "%s: too many command-line arguments (first is \"%s\")\n"
@@ -93,7 +93,7 @@ msgstr ""
 "\n"
 
 #: clusterdb.c:262 createdb.c:252 createlang.c:236 createuser.c:348
-#: dropdb.c:155 droplang.c:237 dropuser.c:156 pg_isready.c:222 reindexdb.c:392
+#: dropdb.c:155 droplang.c:237 dropuser.c:156 mdb_isready.c:222 reindexdb.c:392
 #: vacuumdb.c:975
 #, c-format
 msgid "Usage:\n"
@@ -105,7 +105,7 @@ msgid "  %s [OPTION]... [DBNAME]\n"
 msgstr "  %s [옵션]... [DB이름]\n"
 
 #: clusterdb.c:264 createdb.c:254 createlang.c:238 createuser.c:350
-#: dropdb.c:157 droplang.c:239 dropuser.c:158 pg_isready.c:225 reindexdb.c:394
+#: dropdb.c:157 droplang.c:239 dropuser.c:158 mdb_isready.c:225 reindexdb.c:394
 #: vacuumdb.c:977
 #, c-format
 msgid ""
@@ -160,7 +160,7 @@ msgid "  -?, --help                show this help, then exit\n"
 msgstr "  -?, --help                이 도움말을 보여주고 마침\n"
 
 #: clusterdb.c:273 createdb.c:265 createlang.c:244 createuser.c:374
-#: dropdb.c:163 droplang.c:245 dropuser.c:165 pg_isready.c:231 reindexdb.c:406
+#: dropdb.c:163 droplang.c:245 dropuser.c:165 mdb_isready.c:231 reindexdb.c:406
 #: vacuumdb.c:993
 #, c-format
 msgid ""
@@ -216,7 +216,7 @@ msgstr ""
 "보다 자세한 내용은 CLUSTER SQL 명령어 설명서를 참조하십시오.\n"
 
 #: clusterdb.c:281 createdb.c:273 createlang.c:250 createuser.c:380
-#: dropdb.c:170 droplang.c:251 dropuser.c:171 pg_isready.c:236 reindexdb.c:414
+#: dropdb.c:170 droplang.c:251 dropuser.c:171 mdb_isready.c:236 reindexdb.c:414
 #: vacuumdb.c:1001
 #, c-format
 msgid ""
@@ -754,42 +754,42 @@ msgid ""
 "  -U, --username=USERNAME   user name to connect as (not the one to drop)\n"
 msgstr "  -U, --username=USERNAME   이 작업을 진행할 DB에 접속할 사용자\n"
 
-#: pg_isready.c:142
+#: mdb_isready.c:142
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: pg_isready.c:150
+#: mdb_isready.c:150
 #, c-format
 msgid "%s: could not fetch default options\n"
 msgstr "%s: 기본 옵션 값을 가져올 수 없음\n"
 
-#: pg_isready.c:199
+#: mdb_isready.c:199
 #, c-format
 msgid "accepting connections\n"
 msgstr "접속을 받아드리는 중\n"
 
-#: pg_isready.c:202
+#: mdb_isready.c:202
 #, c-format
 msgid "rejecting connections\n"
 msgstr "접속을 거절하는 중\n"
 
-#: pg_isready.c:205
+#: mdb_isready.c:205
 #, c-format
 msgid "no response\n"
 msgstr ""
 
-#: pg_isready.c:208
+#: mdb_isready.c:208
 #, c-format
 msgid "no attempt\n"
 msgstr ""
 
-#: pg_isready.c:211
+#: mdb_isready.c:211
 #, c-format
 msgid "unknown\n"
 msgstr "알수없음\n"
 
-#: pg_isready.c:221
+#: mdb_isready.c:221
 #, c-format
 msgid ""
 "%s issues a connection check to a MollyDB database.\n"
@@ -798,50 +798,50 @@ msgstr ""
 "%s 프로그램은 MollyDB 데이터베이스 접속을 검사합니다.\n"
 "\n"
 
-#: pg_isready.c:223
+#: mdb_isready.c:223
 #, c-format
 msgid "  %s [OPTION]...\n"
 msgstr "  %s [옵션]...\n"
 
-#: pg_isready.c:226
+#: mdb_isready.c:226
 #, c-format
 msgid "  -d, --dbname=DBNAME      database name\n"
 msgstr "  -d, --dbname=DBNAME      데이터베이스 이름\n"
 
-#: pg_isready.c:227
+#: mdb_isready.c:227
 #, c-format
 msgid "  -q, --quiet              run quietly\n"
 msgstr "  -q, --quiet              조용히 실행함\n"
 
-#: pg_isready.c:228
+#: mdb_isready.c:228
 #, c-format
 msgid "  -V, --version            output version information, then exit\n"
 msgstr "  -V, --version            버전 정보를 보여주고 마침\n"
 
-#: pg_isready.c:229
+#: mdb_isready.c:229
 #, c-format
 msgid "  -?, --help               show this help, then exit\n"
 msgstr "  -?, --help               이 도움말을 보여주고 마침\n"
 
-#: pg_isready.c:232
+#: mdb_isready.c:232
 #, c-format
 msgid "  -h, --host=HOSTNAME      database server host or socket directory\n"
 msgstr ""
 "  -h, --host=HOSTNAME      접속할 데이터베이스 서버 또는 소켓 디렉터리\n"
 
-#: pg_isready.c:233
+#: mdb_isready.c:233
 #, c-format
 msgid "  -p, --port=PORT          database server port\n"
 msgstr "  -p, --port=PORT          데이터베이스 서버 포트\n"
 
-#: pg_isready.c:234
+#: mdb_isready.c:234
 #, c-format
 msgid ""
 "  -t, --timeout=SECS       seconds to wait when attempting connection, 0 "
 "disables (default: %s)\n"
 msgstr ""
 
-#: pg_isready.c:235
+#: mdb_isready.c:235
 #, c-format
 msgid "  -U, --username=USERNAME  user name to connect as\n"
 msgstr "  -U, --username=USERNAME  접속할 사용자이름\n"

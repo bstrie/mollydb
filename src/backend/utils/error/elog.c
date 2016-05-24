@@ -67,7 +67,7 @@
 #include "access/xact.h"
 #include "libpq/libpq.h"
 #include "libpq/pqformat.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "postmaster/postmaster.h"
 #include "postmaster/syslogger.h"
@@ -82,7 +82,7 @@
 #undef _
 #define _(x) err_gettext(x)
 
-static const char *err_gettext(const char *str) pg_attribute_format_arg(1);
+static const char *err_gettext(const char *str) mdb_attribute_format_arg(1);
 static void set_errdata_field(MemoryContextData *cxt, char **ptr, const char *str);
 
 /* Global variables */
@@ -1714,10 +1714,10 @@ ReThrowError(ErrorData *edata)
 }
 
 /*
- * pg_re_throw --- out-of-line implementation of PG_RE_THROW() macro
+ * mdb_re_throw --- out-of-line implementation of PG_RE_THROW() macro
  */
 void
-pg_re_throw(void)
+mdb_re_throw(void)
 {
 	/* If possible, throw the error to the next outer setjmp handler */
 	if (PG_exception_stack != NULL)
@@ -1767,7 +1767,7 @@ pg_re_throw(void)
 	}
 
 	/* Doesn't return ... */
-	ExceptionalCondition("pg_re_throw tried to return", "FailedAssertion",
+	ExceptionalCondition("mdb_re_throw tried to return", "FailedAssertion",
 						 __FILE__, __LINE__);
 }
 
@@ -1997,7 +1997,7 @@ write_syslog(int level, const char *line)
 			buf[buflen] = '\0';
 
 			/* trim to multibyte letter boundary */
-			buflen = pg_mbcliplen(buf, buflen, buflen);
+			buflen = mdb_mbcliplen(buf, buflen, buflen);
 			if (buflen <= 0)
 				return;
 			buf[buflen] = '\0';
@@ -2052,7 +2052,7 @@ GetACPEncoding(void)
 	static int	encoding = -2;
 
 	if (encoding == -2)
-		encoding = pg_codepage_to_encoding(GetACP());
+		encoding = mdb_codepage_to_encoding(GetACP());
 
 	return encoding;
 }
@@ -2199,7 +2199,7 @@ write_console(const char *line, int len)
 
 	/*
 	 * Conversion on non-win32 platforms is not implemented yet. It requires
-	 * non-throw version of pg_do_encoding_conversion(), that converts
+	 * non-throw version of mdb_do_encoding_conversion(), that converts
 	 * unconvertable characters to '?' without errors.
 	 */
 #endif
@@ -2218,7 +2218,7 @@ write_console(const char *line, int len)
 static void
 setup_formatted_log_time(void)
 {
-	pg_time_t	stamp_time;
+	mdb_time_t	stamp_time;
 	char		msbuf[8];
 
 	if (!saved_timeval_set)
@@ -2227,17 +2227,17 @@ setup_formatted_log_time(void)
 		saved_timeval_set = true;
 	}
 
-	stamp_time = (pg_time_t) saved_timeval.tv_sec;
+	stamp_time = (mdb_time_t) saved_timeval.tv_sec;
 
 	/*
 	 * Note: we expect that guc.c will ensure that log_timezone is set up (at
 	 * least with a minimal GMT value) before Log_line_prefix can become
 	 * nonempty or CSV mode can be selected.
 	 */
-	pg_strftime(formatted_log_time, FORMATTED_TS_LEN,
+	mdb_strftime(formatted_log_time, FORMATTED_TS_LEN,
 	/* leave room for milliseconds... */
 				"%Y-%m-%d %H:%M:%S     %Z",
-				pg_localtime(&stamp_time, log_timezone));
+				mdb_localtime(&stamp_time, log_timezone));
 
 	/* 'paste' milliseconds into place... */
 	sprintf(msbuf, ".%03d", (int) (saved_timeval.tv_usec / 1000));
@@ -2250,16 +2250,16 @@ setup_formatted_log_time(void)
 static void
 setup_formatted_start_time(void)
 {
-	pg_time_t	stamp_time = (pg_time_t) MyStartTime;
+	mdb_time_t	stamp_time = (mdb_time_t) MyStartTime;
 
 	/*
 	 * Note: we expect that guc.c will ensure that log_timezone is set up (at
 	 * least with a minimal GMT value) before Log_line_prefix can become
 	 * nonempty or CSV mode can be selected.
 	 */
-	pg_strftime(formatted_start_time, FORMATTED_TS_LEN,
+	mdb_strftime(formatted_start_time, FORMATTED_TS_LEN,
 				"%Y-%m-%d %H:%M:%S %Z",
-				pg_localtime(&stamp_time, log_timezone));
+				mdb_localtime(&stamp_time, log_timezone));
 }
 
 /*
@@ -2453,12 +2453,12 @@ log_line_prefix(StringInfo buf, ErrorData *edata)
 				break;
 			case 't':
 				{
-					pg_time_t	stamp_time = (pg_time_t) time(NULL);
+					mdb_time_t	stamp_time = (mdb_time_t) time(NULL);
 					char		strfbuf[128];
 
-					pg_strftime(strfbuf, sizeof(strfbuf),
+					mdb_strftime(strfbuf, sizeof(strfbuf),
 								"%Y-%m-%d %H:%M:%S %Z",
-								pg_localtime(&stamp_time, log_timezone));
+								mdb_localtime(&stamp_time, log_timezone));
 					if (padding != 0)
 						appendStringInfo(buf, "%*s", padding, strfbuf);
 					else

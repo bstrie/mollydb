@@ -1,5 +1,5 @@
 #include <winver.h>
-#include "pg_config.h"
+#include "mdb_config.h"
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION    9,6,0,0

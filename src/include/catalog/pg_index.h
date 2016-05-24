@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_index.h
- *	  definition of the system "index" relation (pg_index)
+ * mdb_index.h
+ *	  definition of the system "index" relation (mdb_index)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_index.h
+ * src/include/catalog/mdb_index.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,13 +22,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_index definition.  cpp turns this into
- *		typedef struct FormData_pg_index.
+ *		mdb_index definition.  cpp turns this into
+ *		typedef struct FormData_mdb_index.
  * ----------------
  */
 #define IndexRelationId  2610
 
-CATALOG(pg_index,2610) BKI_WITHOUT_OIDS BKI_SCHEMA_MACRO
+CATALOG(mdb_index,2610) BKI_WITHOUT_OIDS BKI_SCHEMA_MACRO
 {
 	Oid			indexrelid;		/* OID of the index */
 	Oid			indrelid;		/* OID of the relation it indexes */
@@ -51,45 +51,45 @@ CATALOG(pg_index,2610) BKI_WITHOUT_OIDS BKI_SCHEMA_MACRO
 	oidvector	indcollation;	/* collation identifiers */
 	oidvector	indclass;		/* opclass identifiers */
 	int2vector	indoption;		/* per-column flags (AM-specific meanings) */
-	pg_node_tree indexprs;		/* expression trees for index attributes that
+	mdb_node_tree indexprs;		/* expression trees for index attributes that
 								 * are not simple column references; one for
 								 * each zero entry in indkey[] */
-	pg_node_tree indpred;		/* expression tree for predicate, if a partial
+	mdb_node_tree indpred;		/* expression tree for predicate, if a partial
 								 * index; else NULL */
 #endif
-} FormData_pg_index;
+} FormData_mdb_index;
 
 /* ----------------
- *		Form_pg_index corresponds to a pointer to a tuple with
- *		the format of pg_index relation.
+ *		Form_mdb_index corresponds to a pointer to a tuple with
+ *		the format of mdb_index relation.
  * ----------------
  */
-typedef FormData_pg_index *Form_pg_index;
+typedef FormData_mdb_index *Form_mdb_index;
 
 /* ----------------
- *		compiler constants for pg_index
+ *		compiler constants for mdb_index
  * ----------------
  */
-#define Natts_pg_index					19
-#define Anum_pg_index_indexrelid		1
-#define Anum_pg_index_indrelid			2
-#define Anum_pg_index_indnatts			3
-#define Anum_pg_index_indisunique		4
-#define Anum_pg_index_indisprimary		5
-#define Anum_pg_index_indisexclusion	6
-#define Anum_pg_index_indimmediate		7
-#define Anum_pg_index_indisclustered	8
-#define Anum_pg_index_indisvalid		9
-#define Anum_pg_index_indcheckxmin		10
-#define Anum_pg_index_indisready		11
-#define Anum_pg_index_indislive			12
-#define Anum_pg_index_indisreplident	13
-#define Anum_pg_index_indkey			14
-#define Anum_pg_index_indcollation		15
-#define Anum_pg_index_indclass			16
-#define Anum_pg_index_indoption			17
-#define Anum_pg_index_indexprs			18
-#define Anum_pg_index_indpred			19
+#define Natts_mdb_index					19
+#define Anum_mdb_index_indexrelid		1
+#define Anum_mdb_index_indrelid			2
+#define Anum_mdb_index_indnatts			3
+#define Anum_mdb_index_indisunique		4
+#define Anum_mdb_index_indisprimary		5
+#define Anum_mdb_index_indisexclusion	6
+#define Anum_mdb_index_indimmediate		7
+#define Anum_mdb_index_indisclustered	8
+#define Anum_mdb_index_indisvalid		9
+#define Anum_mdb_index_indcheckxmin		10
+#define Anum_mdb_index_indisready		11
+#define Anum_mdb_index_indislive			12
+#define Anum_mdb_index_indisreplident	13
+#define Anum_mdb_index_indkey			14
+#define Anum_mdb_index_indcollation		15
+#define Anum_mdb_index_indclass			16
+#define Anum_mdb_index_indoption			17
+#define Anum_mdb_index_indexprs			18
+#define Anum_mdb_index_indpred			19
 
 /*
  * Index AMs that support ordered scans must support these two indoption

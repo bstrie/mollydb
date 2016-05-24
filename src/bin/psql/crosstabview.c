@@ -247,10 +247,10 @@ PrintResultsInCrosstab(const PGresult *res)
 	num_rows = piv_rows.count;
 
 	array_columns = (pivot_field *)
-		pg_malloc(sizeof(pivot_field) * num_columns);
+		mdb_malloc(sizeof(pivot_field) * num_columns);
 
 	array_rows = (pivot_field *)
-		pg_malloc(sizeof(pivot_field) * num_rows);
+		mdb_malloc(sizeof(pivot_field) * num_rows);
 
 	avlCollectFields(&piv_columns, piv_columns.root, array_columns, 0);
 	avlCollectFields(&piv_rows, piv_rows.root, array_rows, 0);
@@ -273,8 +273,8 @@ PrintResultsInCrosstab(const PGresult *res)
 error_return:
 	avlFree(&piv_columns, piv_columns.root);
 	avlFree(&piv_rows, piv_rows.root);
-	pg_free(array_columns);
-	pg_free(array_rows);
+	mdb_free(array_columns);
+	mdb_free(array_rows);
 
 	return retval;
 }
@@ -313,7 +313,7 @@ printCrosstab(const PGresult *results,
 	 * map associating each piv_columns[].rank to its index in piv_columns.
 	 * This avoids an O(N^2) loop later.
 	 */
-	horiz_map = (int *) pg_malloc(sizeof(int) * num_columns);
+	horiz_map = (int *) mdb_malloc(sizeof(int) * num_columns);
 	for (i = 0; i < num_columns; i++)
 		horiz_map[piv_columns[i].rank] = i;
 
@@ -332,7 +332,7 @@ printCrosstab(const PGresult *results,
 
 		printTableAddHeader(&cont, colname, false, col_align);
 	}
-	pg_free(horiz_map);
+	mdb_free(horiz_map);
 
 	/* Step 2: set row names in the first output column (vertical header) */
 	for (i = 0; i < num_rows; i++)
@@ -437,7 +437,7 @@ error:
 static void
 avlInit(avl_tree *tree)
 {
-	tree->end = (avl_node *) pg_malloc0(sizeof(avl_node));
+	tree->end = (avl_node *) mdb_malloc0(sizeof(avl_node));
 	tree->end->children[0] = tree->end->children[1] = tree->end;
 	tree->count = 0;
 	tree->root = tree->end;
@@ -450,20 +450,20 @@ avlFree(avl_tree *tree, avl_node *node)
 	if (node->children[0] != tree->end)
 	{
 		avlFree(tree, node->children[0]);
-		pg_free(node->children[0]);
+		mdb_free(node->children[0]);
 	}
 	if (node->children[1] != tree->end)
 	{
 		avlFree(tree, node->children[1]);
-		pg_free(node->children[1]);
+		mdb_free(node->children[1]);
 	}
 	if (node == tree->root)
 	{
 		/* free the root separately as it's not child of anything */
 		if (node != tree->end)
-			pg_free(node);
+			mdb_free(node);
 		/* free the tree->end struct only once and when all else is freed */
-		pg_free(tree->end);
+		mdb_free(tree->end);
 	}
 }
 
@@ -533,7 +533,7 @@ avlInsertNode(avl_tree *tree, avl_node **node, pivot_field field)
 	if (current == tree->end)
 	{
 		avl_node   *new_node = (avl_node *)
-		pg_malloc(sizeof(avl_node));
+		mdb_malloc(sizeof(avl_node));
 
 		new_node->height = 1;
 		new_node->field = field;
@@ -591,7 +591,7 @@ rankSort(int num_columns, pivot_field *piv_columns)
 								 * every header entry] */
 	int			i;
 
-	hmap = (int *) pg_malloc(sizeof(int) * num_columns * 2);
+	hmap = (int *) mdb_malloc(sizeof(int) * num_columns * 2);
 	for (i = 0; i < num_columns; i++)
 	{
 		char	   *val = piv_columns[i].sort_value;
@@ -620,7 +620,7 @@ rankSort(int num_columns, pivot_field *piv_columns)
 		piv_columns[hmap[i * 2 + 1]].rank = i;
 	}
 
-	pg_free(hmap);
+	mdb_free(hmap);
 }
 
 /*

@@ -18,12 +18,12 @@
 #include "access/htup_details.h"
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_conversion.h"
-#include "catalog/pg_conversion_fn.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_conversion.h"
+#include "catalog/mdb_conversion_fn.h"
+#include "catalog/mdb_type.h"
 #include "commands/alter.h"
 #include "commands/conversioncmds.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "parser/parse_func.h"
 #include "utils/builtins.h"
@@ -54,20 +54,20 @@ CreateConversionCommand(CreateConversionStmt *stmt)
 													&conversion_name);
 
 	/* Check we have creation rights in target namespace */
-	aclresult = pg_namespace_aclcheck(namespaceId, GetUserId(), ACL_CREATE);
+	aclresult = mdb_namespace_aclcheck(namespaceId, GetUserId(), ACL_CREATE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
 					   get_namespace_name(namespaceId));
 
 	/* Check the encoding names */
-	from_encoding = pg_char_to_encoding(from_encoding_name);
+	from_encoding = mdb_char_to_encoding(from_encoding_name);
 	if (from_encoding < 0)
 		ereport(ERROR,
 				(errcode(ERRCODE_UNDEFINED_OBJECT),
 				 errmsg("source encoding \"%s\" does not exist",
 						from_encoding_name)));
 
-	to_encoding = pg_char_to_encoding(to_encoding_name);
+	to_encoding = mdb_char_to_encoding(to_encoding_name);
 	if (to_encoding < 0)
 		ereport(ERROR,
 				(errcode(ERRCODE_UNDEFINED_OBJECT),
@@ -89,7 +89,7 @@ CreateConversionCommand(CreateConversionStmt *stmt)
 				 NameListToString(func_name), "void")));
 
 	/* Check we have EXECUTE rights for the function */
-	aclresult = pg_proc_aclcheck(funcoid, GetUserId(), ACL_EXECUTE);
+	aclresult = mdb_proc_aclcheck(funcoid, GetUserId(), ACL_EXECUTE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_PROC,
 					   NameListToString(func_name));

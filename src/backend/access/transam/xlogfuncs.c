@@ -22,7 +22,7 @@
 #include "access/xlog_internal.h"
 #include "access/xlogutils.h"
 #include "catalog/catalog.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "miscadmin.h"
 #include "replication/walreceiver.h"
@@ -31,7 +31,7 @@
 #include "utils/memutils.h"
 #include "utils/numeric.h"
 #include "utils/guc.h"
-#include "utils/pg_lsn.h"
+#include "utils/mdb_lsn.h"
 #include "utils/timestamp.h"
 #include "utils/tuplestore.h"
 #include "storage/fd.h"
@@ -53,13 +53,13 @@ static bool nonexclusive_backup_running = false;
 static void
 nonexclusive_base_backup_cleanup(int code, Datum arg)
 {
-	do_pg_abort_backup();
+	do_mdb_abort_backup();
 	ereport(WARNING,
-			(errmsg("aborting backup due to backend exiting before pg_stop_backup was called")));
+			(errmsg("aborting backup due to backend exiting before mdb_stop_backup was called")));
 }
 
 /*
- * pg_start_backup: set up for taking an on-line backup dump
+ * mdb_start_backup: set up for taking an on-line backup dump
  *
  * Essentially what this does is to create a backup label file in $PGDATA,
  * where it will be archived as part of the backup dump.  The label file
@@ -71,7 +71,7 @@ nonexclusive_base_backup_cleanup(int code, Datum arg)
  * GRANT system.
  */
 Datum
-pg_start_backup(PG_FUNCTION_ARGS)
+mdb_start_backup(PG_FUNCTION_ARGS)
 {
 	text	   *backupid = PG_GETARG_TEXT_P(0);
 	bool		fast = PG_GETARG_BOOL(1);
@@ -88,14 +88,14 @@ pg_start_backup(PG_FUNCTION_ARGS)
 				 errmsg("a backup is already in progress in this session")));
 
 	/* Make sure we can open the directory with tablespaces in it */
-	dir = AllocateDir("pg_tblspc");
+	dir = AllocateDir("mdb_tblspc");
 	if (!dir)
 		ereport(ERROR,
-				(errmsg("could not open directory \"%s\": %m", "pg_tblspc")));
+				(errmsg("could not open directory \"%s\": %m", "mdb_tblspc")));
 
 	if (exclusive)
 	{
-		startpoint = do_pg_start_backup(backupidstr, fast, NULL, NULL,
+		startpoint = do_mdb_start_backup(backupidstr, fast, NULL, NULL,
 										dir, NULL, NULL, false, true);
 		exclusive_backup_running = true;
 	}
@@ -105,14 +105,14 @@ pg_start_backup(PG_FUNCTION_ARGS)
 
 		/*
 		 * Label file and tablespace map file need to be long-lived, since they
-		 * are read in pg_stop_backup.
+		 * are read in mdb_stop_backup.
 		 */
 		oldcontext = MemoryContextSwitchTo(TopMemoryContext);
 		label_file = makeStringInfo();
 		tblspc_map_file = makeStringInfo();
 		MemoryContextSwitchTo(oldcontext);
 
-		startpoint = do_pg_start_backup(backupidstr, fast, NULL, label_file,
+		startpoint = do_mdb_start_backup(backupidstr, fast, NULL, label_file,
 										dir, NULL, tblspc_map_file, false, true);
 		nonexclusive_backup_running = true;
 
@@ -125,10 +125,10 @@ pg_start_backup(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_stop_backup: finish taking an on-line backup dump
+ * mdb_stop_backup: finish taking an on-line backup dump
  *
  * We write an end-of-backup WAL record, and remove the backup label file
- * created by pg_start_backup, creating a backup history file in pg_xlog
+ * created by mdb_start_backup, creating a backup history file in mdb_xlog
  * instead (whence it will immediately be archived). The backup history file
  * contains the same info found in the label file, plus the backup-end time
  * and WAL location. Before 9.0, the backup-end time was read from the backup
@@ -138,14 +138,14 @@ pg_start_backup(PG_FUNCTION_ARGS)
  * Note: different from CancelBackup which just cancels online backup mode.
  *
  * Note: this version is only called to stop an exclusive backup. The function
- *       pg_stop_backup_v2 (overloaded as pg_stop_backup in SQL) is called to
+ *       mdb_stop_backup_v2 (overloaded as mdb_stop_backup in SQL) is called to
  *       stop non-exclusive backups.
  *
  * Permission checking for this function is managed through the normal
  * GRANT system.
  */
 Datum
-pg_stop_backup(PG_FUNCTION_ARGS)
+mdb_stop_backup(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	stoppoint;
 
@@ -153,15 +153,15 @@ pg_stop_backup(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
 				 errmsg("non-exclusive backup in progress"),
-				 errhint("did you mean to use pg_stop_backup('f')?")));
+				 errhint("did you mean to use mdb_stop_backup('f')?")));
 
 	/*
 	 * Exclusive backups were typically started in a different connection,
 	 * so don't try to verify that exclusive_backup_running is set in this one.
 	 * Actual verification that an exclusive backup is in fact running is handled
-	 * inside do_pg_stop_backup.
+	 * inside do_mdb_stop_backup.
 	 */
-	stoppoint = do_pg_stop_backup(NULL, true, NULL);
+	stoppoint = do_mdb_stop_backup(NULL, true, NULL);
 
 	exclusive_backup_running = false;
 
@@ -170,9 +170,9 @@ pg_stop_backup(PG_FUNCTION_ARGS)
 
 
 /*
- * pg_stop_backup_v2: finish taking exclusive or nonexclusive on-line backup.
+ * mdb_stop_backup_v2: finish taking exclusive or nonexclusive on-line backup.
  *
- * Works the same as pg_stop_backup, except for non-exclusive backups it returns
+ * Works the same as mdb_stop_backup, except for non-exclusive backups it returns
  * the backup label and tablespace map files as text fields in as part of the
  * resultset.
  *
@@ -180,7 +180,7 @@ pg_stop_backup(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-pg_stop_backup_v2(PG_FUNCTION_ARGS)
+mdb_stop_backup_v2(PG_FUNCTION_ARGS)
 {
 	ReturnSetInfo  *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc		tupdesc;
@@ -227,13 +227,13 @@ pg_stop_backup_v2(PG_FUNCTION_ARGS)
 			ereport(ERROR,
 					(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
 					 errmsg("non-exclusive backup in progress"),
-					 errhint("did you mean to use pg_stop_backup('f')?")));
+					 errhint("did you mean to use mdb_stop_backup('f')?")));
 
 		/*
 		 * Stop the exclusive backup, and since we're in an exclusive backup
 		 * return NULL for both backup_label and tablespace_map.
 		 */
-		stoppoint = do_pg_stop_backup(NULL, true, NULL);
+		stoppoint = do_mdb_stop_backup(NULL, true, NULL);
 		exclusive_backup_running = false;
 
 		nulls[1] = true;
@@ -245,14 +245,14 @@ pg_stop_backup_v2(PG_FUNCTION_ARGS)
 			ereport(ERROR,
 					(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
 					 errmsg("non-exclusive backup is not in progress"),
-					 errhint("did you mean to use pg_stop_backup('t')?")));
+					 errhint("did you mean to use mdb_stop_backup('t')?")));
 
 		/*
 		 * Stop the non-exclusive backup. Return a copy of the backup
 		 * label and tablespace map so they can be written to disk by
 		 * the caller.
 		 */
-		stoppoint = do_pg_stop_backup(label_file->data, true, NULL);
+		stoppoint = do_mdb_stop_backup(label_file->data, true, NULL);
 		nonexclusive_backup_running = false;
 		cancel_before_shmem_exit(nonexclusive_base_backup_cleanup, (Datum) 0);
 
@@ -278,13 +278,13 @@ pg_stop_backup_v2(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_switch_xlog: switch to next xlog file
+ * mdb_switch_xlog: switch to next xlog file
  *
  * Permission checking for this function is managed through the normal
  * GRANT system.
  */
 Datum
-pg_switch_xlog(PG_FUNCTION_ARGS)
+mdb_switch_xlog(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	switchpoint;
 
@@ -303,13 +303,13 @@ pg_switch_xlog(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_create_restore_point: a named point for restore
+ * mdb_create_restore_point: a named point for restore
  *
  * Permission checking for this function is managed through the normal
  * GRANT system.
  */
 Datum
-pg_create_restore_point(PG_FUNCTION_ARGS)
+mdb_create_restore_point(PG_FUNCTION_ARGS)
 {
 	text	   *restore_name = PG_GETARG_TEXT_P(0);
 	char	   *restore_name_str;
@@ -343,14 +343,14 @@ pg_create_restore_point(PG_FUNCTION_ARGS)
 }
 
 /*
- * Report the current WAL write location (same format as pg_start_backup etc)
+ * Report the current WAL write location (same format as mdb_start_backup etc)
  *
  * This is useful for determining how much of WAL is visible to an external
  * archiving process.  Note that the data before this point is written out
  * to the kernel, but is not necessarily synced to disk.
  */
 Datum
-pg_current_xlog_location(PG_FUNCTION_ARGS)
+mdb_current_xlog_location(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	current_recptr;
 
@@ -366,12 +366,12 @@ pg_current_xlog_location(PG_FUNCTION_ARGS)
 }
 
 /*
- * Report the current WAL insert location (same format as pg_start_backup etc)
+ * Report the current WAL insert location (same format as mdb_start_backup etc)
  *
  * This function is mostly for debugging purposes.
  */
 Datum
-pg_current_xlog_insert_location(PG_FUNCTION_ARGS)
+mdb_current_xlog_insert_location(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	current_recptr;
 
@@ -387,12 +387,12 @@ pg_current_xlog_insert_location(PG_FUNCTION_ARGS)
 }
 
 /*
- * Report the current WAL flush location (same format as pg_start_backup etc)
+ * Report the current WAL flush location (same format as mdb_start_backup etc)
  *
  * This function is mostly for debugging purposes.
  */
 Datum
-pg_current_xlog_flush_location(PG_FUNCTION_ARGS)
+mdb_current_xlog_flush_location(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	current_recptr;
 
@@ -408,13 +408,13 @@ pg_current_xlog_flush_location(PG_FUNCTION_ARGS)
 }
 
 /*
- * Report the last WAL receive location (same format as pg_start_backup etc)
+ * Report the last WAL receive location (same format as mdb_start_backup etc)
  *
  * This is useful for determining how much of WAL is guaranteed to be received
  * and synced to disk by walreceiver.
  */
 Datum
-pg_last_xlog_receive_location(PG_FUNCTION_ARGS)
+mdb_last_xlog_receive_location(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	recptr;
 
@@ -427,13 +427,13 @@ pg_last_xlog_receive_location(PG_FUNCTION_ARGS)
 }
 
 /*
- * Report the last WAL replay location (same format as pg_start_backup etc)
+ * Report the last WAL replay location (same format as mdb_start_backup etc)
  *
  * This is useful for determining how much of WAL is visible to read-only
  * connections during recovery.
  */
 Datum
-pg_last_xlog_replay_location(PG_FUNCTION_ARGS)
+mdb_last_xlog_replay_location(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	recptr;
 
@@ -447,14 +447,14 @@ pg_last_xlog_replay_location(PG_FUNCTION_ARGS)
 
 /*
  * Compute an xlog file name and decimal byte offset given a WAL location,
- * such as is returned by pg_stop_backup() or pg_xlog_switch().
+ * such as is returned by mdb_stop_backup() or mdb_xlog_switch().
  *
  * Note that a location exactly at a segment boundary is taken to be in
  * the previous segment.  This is usually the right thing, since the
  * expected usage is to determine which xlog file(s) are ready to archive.
  */
 Datum
-pg_xlogfile_name_offset(PG_FUNCTION_ARGS)
+mdb_xlogfile_name_offset(PG_FUNCTION_ARGS)
 {
 	XLogSegNo	xlogsegno;
 	uint32		xrecoff;
@@ -470,11 +470,11 @@ pg_xlogfile_name_offset(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
 				 errmsg("recovery is in progress"),
-				 errhint("pg_xlogfile_name_offset() cannot be executed during recovery.")));
+				 errhint("mdb_xlogfile_name_offset() cannot be executed during recovery.")));
 
 	/*
 	 * Construct a tuple descriptor for the result row.  This must match this
-	 * function's pg_proc entry!
+	 * function's mdb_proc entry!
 	 */
 	resultTupleDesc = CreateTemplateTupleDesc(2, false);
 	TupleDescInitEntry(resultTupleDesc, (AttrNumber) 1, "file_name",
@@ -513,10 +513,10 @@ pg_xlogfile_name_offset(PG_FUNCTION_ARGS)
 
 /*
  * Compute an xlog file name given a WAL location,
- * such as is returned by pg_stop_backup() or pg_xlog_switch().
+ * such as is returned by mdb_stop_backup() or mdb_xlog_switch().
  */
 Datum
-pg_xlogfile_name(PG_FUNCTION_ARGS)
+mdb_xlogfile_name(PG_FUNCTION_ARGS)
 {
 	XLogSegNo	xlogsegno;
 	XLogRecPtr	locationpoint = PG_GETARG_LSN(0);
@@ -526,7 +526,7 @@ pg_xlogfile_name(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
 				 errmsg("recovery is in progress"),
-		 errhint("pg_xlogfile_name() cannot be executed during recovery.")));
+		 errhint("mdb_xlogfile_name() cannot be executed during recovery.")));
 
 	XLByteToPrevSeg(locationpoint, xlogsegno);
 	XLogFileName(xlogfilename, ThisTimeLineID, xlogsegno);
@@ -535,13 +535,13 @@ pg_xlogfile_name(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_xlog_replay_pause - pause recovery now
+ * mdb_xlog_replay_pause - pause recovery now
  *
  * Permission checking for this function is managed through the normal
  * GRANT system.
  */
 Datum
-pg_xlog_replay_pause(PG_FUNCTION_ARGS)
+mdb_xlog_replay_pause(PG_FUNCTION_ARGS)
 {
 	if (!RecoveryInProgress())
 		ereport(ERROR,
@@ -555,13 +555,13 @@ pg_xlog_replay_pause(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_xlog_replay_resume - resume recovery now
+ * mdb_xlog_replay_resume - resume recovery now
  *
  * Permission checking for this function is managed through the normal
  * GRANT system.
  */
 Datum
-pg_xlog_replay_resume(PG_FUNCTION_ARGS)
+mdb_xlog_replay_resume(PG_FUNCTION_ARGS)
 {
 	if (!RecoveryInProgress())
 		ereport(ERROR,
@@ -575,10 +575,10 @@ pg_xlog_replay_resume(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_is_xlog_replay_paused
+ * mdb_is_xlog_replay_paused
  */
 Datum
-pg_is_xlog_replay_paused(PG_FUNCTION_ARGS)
+mdb_is_xlog_replay_paused(PG_FUNCTION_ARGS)
 {
 	if (!RecoveryInProgress())
 		ereport(ERROR,
@@ -596,7 +596,7 @@ pg_is_xlog_replay_paused(PG_FUNCTION_ARGS)
  * returns NULL.
  */
 Datum
-pg_last_xact_replay_timestamp(PG_FUNCTION_ARGS)
+mdb_last_xact_replay_timestamp(PG_FUNCTION_ARGS)
 {
 	TimestampTz xtime;
 
@@ -611,7 +611,7 @@ pg_last_xact_replay_timestamp(PG_FUNCTION_ARGS)
  * Returns bool with current recovery mode, a global state.
  */
 Datum
-pg_is_in_recovery(PG_FUNCTION_ARGS)
+mdb_is_in_recovery(PG_FUNCTION_ARGS)
 {
 	PG_RETURN_BOOL(RecoveryInProgress());
 }
@@ -620,11 +620,11 @@ pg_is_in_recovery(PG_FUNCTION_ARGS)
  * Compute the difference in bytes between two WAL locations.
  */
 Datum
-pg_xlog_location_diff(PG_FUNCTION_ARGS)
+mdb_xlog_location_diff(PG_FUNCTION_ARGS)
 {
 	Datum		result;
 
-	result = DirectFunctionCall2(pg_lsn_mi,
+	result = DirectFunctionCall2(mdb_lsn_mi,
 								 PG_GETARG_DATUM(0),
 								 PG_GETARG_DATUM(1));
 
@@ -635,7 +635,7 @@ pg_xlog_location_diff(PG_FUNCTION_ARGS)
  * Returns bool with current on-line backup mode, a global state.
  */
 Datum
-pg_is_in_backup(PG_FUNCTION_ARGS)
+mdb_is_in_backup(PG_FUNCTION_ARGS)
 {
 	PG_RETURN_BOOL(BackupInProgress());
 }
@@ -647,7 +647,7 @@ pg_is_in_backup(PG_FUNCTION_ARGS)
  * returns NULL.
  */
 Datum
-pg_backup_start_time(PG_FUNCTION_ARGS)
+mdb_backup_start_time(PG_FUNCTION_ARGS)
 {
 	Datum		xtime;
 	FILE	   *lfp;

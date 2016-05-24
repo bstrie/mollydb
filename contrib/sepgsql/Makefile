@@ -8,10 +8,10 @@ PGFILEDESC = "semdb - SELinux integration"
 
 # Note: because we don't tell the Makefile there are any regression tests,
 # we have to clean those result files explicitly
-EXTRA_CLEAN = -r $(pg_regress_clean_files) tmp/ *.pp semdb-regtest.if semdb-regtest.fc
+EXTRA_CLEAN = -r $(mdb_regress_clean_files) tmp/ *.pp semdb-regtest.if semdb-regtest.fc
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

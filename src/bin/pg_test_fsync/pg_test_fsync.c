@@ -1,5 +1,5 @@
 /*
- *	pg_test_fsync.c
+ *	mdb_test_fsync.c
  *		tests all supported fsync() methods
  */
 
@@ -19,7 +19,7 @@
  * put the temp files in the local directory
  * unless the user specifies otherwise
  */
-#define FSYNC_FILENAME	"./pg_test_fsync.out"
+#define FSYNC_FILENAME	"./mdb_test_fsync.out"
 
 #define XLOG_BLCKSZ_K	(XLOG_BLCKSZ / 1024)
 
@@ -87,7 +87,7 @@ static DWORD WINAPI process_alarm(LPVOID param);
 static void signal_cleanup(int sig);
 
 #ifdef HAVE_FSYNC_WRITETHROUGH
-static int	pg_fsync_writethrough(int fd);
+static int	mdb_fsync_writethrough(int fd);
 #endif
 static void print_elapse(struct timeval start_t, struct timeval stop_t, int ops);
 static void die(const char *str);
@@ -153,7 +153,7 @@ handle_args(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_test_fsync (MollyDB) " PG_VERSION);
+			puts("mdb_test_fsync (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -336,7 +336,7 @@ test_sync(int writes_per_op)
 		for (writes = 0; writes < writes_per_op; writes++)
 			if (write(tmpfile, buf, XLOG_BLCKSZ) != XLOG_BLCKSZ)
 				die("write failed");
-		if (pg_fsync_writethrough(tmpfile) != 0)
+		if (mdb_fsync_writethrough(tmpfile) != 0)
 			die("fsync failed");
 		if (lseek(tmpfile, 0, SEEK_SET) == -1)
 			die("seek failed");
@@ -551,7 +551,7 @@ signal_cleanup(int signum)
 #ifdef HAVE_FSYNC_WRITETHROUGH
 
 static int
-pg_fsync_writethrough(int fd)
+mdb_fsync_writethrough(int fd)
 {
 #ifdef WIN32
 	return _commit(fd);

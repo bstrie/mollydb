@@ -20,7 +20,7 @@ REGRESS = init int2 int4 int8 float4 float8 cash oid timestamp timestamptz \
 SHLIB_LINK += $(filter -lm, $(LIBS))
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

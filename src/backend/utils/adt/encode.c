@@ -18,7 +18,7 @@
 #include "utils/builtins.h"
 
 
-struct pg_encoding
+struct mdb_encoding
 {
 	unsigned	(*encode_len) (const char *data, unsigned dlen);
 	unsigned	(*decode_len) (const char *data, unsigned dlen);
@@ -26,7 +26,7 @@ struct pg_encoding
 	unsigned	(*decode) (const char *data, unsigned dlen, char *res);
 };
 
-static const struct pg_encoding *pg_find_encoding(const char *name);
+static const struct mdb_encoding *mdb_find_encoding(const char *name);
 
 /*
  * SQL functions.
@@ -42,13 +42,13 @@ binary_encode(PG_FUNCTION_ARGS)
 	int			datalen,
 				resultlen,
 				res;
-	const struct pg_encoding *enc;
+	const struct mdb_encoding *enc;
 
 	datalen = VARSIZE(data) - VARHDRSZ;
 
 	namebuf = TextDatumGetCString(name);
 
-	enc = pg_find_encoding(namebuf);
+	enc = mdb_find_encoding(namebuf);
 	if (enc == NULL)
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -78,13 +78,13 @@ binary_decode(PG_FUNCTION_ARGS)
 	int			datalen,
 				resultlen,
 				res;
-	const struct pg_encoding *enc;
+	const struct mdb_encoding *enc;
 
 	datalen = VARSIZE(data) - VARHDRSZ;
 
 	namebuf = TextDatumGetCString(name);
 
-	enc = pg_find_encoding(namebuf);
+	enc = mdb_find_encoding(namebuf);
 	if (enc == NULL)
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -519,7 +519,7 @@ esc_dec_len(const char *src, unsigned srclen)
 static const struct
 {
 	const char *name;
-	struct pg_encoding enc;
+	struct mdb_encoding enc;
 }	enclist[] =
 
 {
@@ -549,13 +549,13 @@ static const struct
 	}
 };
 
-static const struct pg_encoding *
-pg_find_encoding(const char *name)
+static const struct mdb_encoding *
+mdb_find_encoding(const char *name)
 {
 	int			i;
 
 	for (i = 0; enclist[i].name; i++)
-		if (pg_strcasecmp(enclist[i].name, name) == 0)
+		if (mdb_strcasecmp(enclist[i].name, name) == 0)
 			return &enclist[i].enc;
 
 	return NULL;

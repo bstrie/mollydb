@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_regress --- regression test driver
+ * mdb_regress --- regression test driver
  *
  * This is a C implementation of the previous shell script for running
  * the regression tests, and should be mostly compatible with it.
@@ -11,12 +11,12 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/test/regress/pg_regress.c
+ * src/test/regress/mdb_regress.c
  *
  *-------------------------------------------------------------------------
  */
 
-#include "pg_regress.h"
+#include "mdb_regress.h"
 
 #include <ctype.h>
 #include <sys/stat.h>
@@ -33,7 +33,7 @@
 #include "common/username.h"
 #include "getopt_long.h"
 #include "libpq/pqcomm.h"		/* needed for UNIXSOCK_PATH() */
-#include "pg_config_paths.h"
+#include "mdb_config_paths.h"
 
 /* for resultmap we need a list of pairs of strings */
 typedef struct _resultmap
@@ -115,9 +115,9 @@ static int	fail_ignore_count = 0;
 static bool directory_exists(const char *dir);
 static void make_directory(const char *dir);
 
-static void header(const char *fmt,...) pg_attribute_printf(1, 2);
-static void status(const char *fmt,...) pg_attribute_printf(1, 2);
-static void psql_command(const char *database, const char *query,...) pg_attribute_printf(2, 3);
+static void header(const char *fmt,...) mdb_attribute_printf(1, 2);
+static void status(const char *fmt,...) mdb_attribute_printf(1, 2);
+static void psql_command(const char *database, const char *query,...) mdb_attribute_printf(2, 3);
 
 /*
  * allow core files if possible.
@@ -256,7 +256,7 @@ stop_postmaster(void)
 {
 	if (postmaster_running)
 	{
-		/* We use pg_ctl to issue the kill and wait for stop */
+		/* We use mdb_ctl to issue the kill and wait for stop */
 		char		buf[MAXPGPATH * 2];
 		int			r;
 
@@ -265,7 +265,7 @@ stop_postmaster(void)
 		fflush(stderr);
 
 		snprintf(buf, sizeof(buf),
-				 "\"%s%spg_ctl\" stop -D \"%s/data\" -s -m fast",
+				 "\"%s%smdb_ctl\" stop -D \"%s/data\" -s -m fast",
 				 bindir ? bindir : "",
 				 bindir ? "/" : "",
 				 temp_instance);
@@ -283,7 +283,7 @@ stop_postmaster(void)
 
 #ifdef HAVE_UNIX_SOCKETS
 /*
- * Remove the socket temporary directory.  pg_regress never waits for a
+ * Remove the socket temporary directory.  mdb_regress never waits for a
  * postmaster exit, so it is indeterminate whether the postmaster has yet to
  * unlink the socket and lock file.  Unlink them here so we can proceed to
  * remove the directory.  Ignore errors; leaking a temporary directory is
@@ -327,7 +327,7 @@ signal_remove_temp(int signum)
 static const char *
 make_temp_sockdir(void)
 {
-	char	   *template = strdup("/tmp/pg_regress-XXXXXX");
+	char	   *template = strdup("/tmp/mdb_regress-XXXXXX");
 
 	temp_sockdir = mkdtemp(template);
 	if (temp_sockdir == NULL)
@@ -495,7 +495,7 @@ convert_sourcefiles_in(char *source_subdir, char *dest_dir, char *dest_subdir, c
 	 * of that.  (We don't migrate that functionality in here because it'd be
 	 * harder to cope with platform-specific issues such as SELinux.)
 	 *
-	 * XXX it would be better if pg_regress.c had nothing at all to do with
+	 * XXX it would be better if mdb_regress.c had nothing at all to do with
 	 * testtablespace, and this were handled by a .BAT file or similar on
 	 * Windows.  See mdb-hackers discussion of 2008-01-18.
 	 */
@@ -721,7 +721,7 @@ doputenv(const char *var, const char *val)
 static void
 initialize_environment(void)
 {
-	putenv("PGAPPNAME=pg_regress");
+	putenv("PGAPPNAME=mdb_regress");
 
 	if (nolocale)
 	{
@@ -751,7 +751,7 @@ initialize_environment(void)
 	/*
 	 * Set translation-related settings to English; otherwise psql will
 	 * produce translated messages and produce diffs.  (XXX If we ever support
-	 * translation of pg_regress, this needs to be moved elsewhere, where psql
+	 * translation of mdb_regress, this needs to be moved elsewhere, where psql
 	 * is actually called.)
 	 */
 	unsetenv("LANGUAGE");
@@ -879,7 +879,7 @@ initialize_environment(void)
 #ifdef ENABLE_SSPI
 /*
  * Get account and domain/realm names for the current user.  This is based on
- * pg_SSPI_recvauth().  The returned strings use static storage.
+ * mdb_SSPI_recvauth().  The returned strings use static storage.
  */
 static void
 current_windows_user(const char **acct, const char **dom)
@@ -933,7 +933,7 @@ current_windows_user(const char **acct, const char **dom)
 }
 
 /*
- * Rewrite pg_hba.conf and pg_ident.conf to use SSPI authentication.  Permit
+ * Rewrite mdb_hba.conf and mdb_ident.conf to use SSPI authentication.  Permit
  * the current OS user to authenticate as the bootstrap superuser and as any
  * user named in a --create-role option.
  */
@@ -997,12 +997,12 @@ config_sspi_auth(const char *pgdata)
 		} \
 	} while (0)
 
-	res = snprintf(fname, sizeof(fname), "%s/pg_hba.conf", pgdata);
+	res = snprintf(fname, sizeof(fname), "%s/mdb_hba.conf", pgdata);
 	if (res < 0 || res >= sizeof(fname) - 1)
 	{
 		/*
 		 * Truncating this name is a fatal error, because we must not fail to
-		 * overwrite an original trust-authentication pg_hba.conf.
+		 * overwrite an original trust-authentication mdb_hba.conf.
 		 */
 		fprintf(stderr, _("%s: directory name too long\n"), progname);
 		exit(2);
@@ -1022,7 +1022,7 @@ config_sspi_auth(const char *pgdata)
 				 hba) >= 0);
 	CW(fclose(hba) == 0);
 
-	snprintf(fname, sizeof(fname), "%s/pg_ident.conf", pgdata);
+	snprintf(fname, sizeof(fname), "%s/mdb_ident.conf", pgdata);
 	ident = fopen(fname, "w");
 	if (ident == NULL)
 	{
@@ -2029,7 +2029,7 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 	char		buf2[MAXPGPATH * 4];
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_regress"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_regress"));
 
 	atexit(stop_postmaster);
 
@@ -2055,7 +2055,7 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 				help();
 				exit(0);
 			case 'V':
-				puts("pg_regress (MollyDB) " PG_VERSION);
+				puts("mdb_regress (MollyDB) " PG_VERSION);
 				exit(0);
 			case 1:
 
@@ -2184,7 +2184,7 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 
 	if (temp_instance)
 	{
-		FILE	   *pg_conf;
+		FILE	   *mdb_conf;
 		const char *env_wait;
 		int			wait_seconds;
 
@@ -2238,18 +2238,18 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 		 * actually needed by the prepared_xacts regression test.)
 		 */
 		snprintf(buf, sizeof(buf), "%s/data/mollydb.conf", temp_instance);
-		pg_conf = fopen(buf, "a");
-		if (pg_conf == NULL)
+		mdb_conf = fopen(buf, "a");
+		if (mdb_conf == NULL)
 		{
 			fprintf(stderr, _("\n%s: could not open \"%s\" for adding extra config: %s\n"), progname, buf, strerror(errno));
 			exit(2);
 		}
-		fputs("\n# Configuration added by pg_regress\n\n", pg_conf);
-		fputs("log_autovacuum_min_duration = 0\n", pg_conf);
-		fputs("log_checkpoints = on\n", pg_conf);
-		fputs("log_lock_waits = on\n", pg_conf);
-		fputs("log_temp_files = 128kB\n", pg_conf);
-		fputs("max_prepared_transactions = 2\n", pg_conf);
+		fputs("\n# Configuration added by mdb_regress\n\n", mdb_conf);
+		fputs("log_autovacuum_min_duration = 0\n", mdb_conf);
+		fputs("log_checkpoints = on\n", mdb_conf);
+		fputs("log_lock_waits = on\n", mdb_conf);
+		fputs("log_temp_files = 128kB\n", mdb_conf);
+		fputs("max_prepared_transactions = 2\n", mdb_conf);
 
 		for (sl = temp_configs; sl != NULL; sl = sl->next)
 		{
@@ -2264,11 +2264,11 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 				exit(2);
 			}
 			while (fgets(line_buf, sizeof(line_buf), extra_conf) != NULL)
-				fputs(line_buf, pg_conf);
+				fputs(line_buf, mdb_conf);
 			fclose(extra_conf);
 		}
 
-		fclose(pg_conf);
+		fclose(mdb_conf);
 
 #ifdef ENABLE_SSPI
 
@@ -2372,7 +2372,7 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 				exit(2);
 			}
 
-			pg_usleep(1000000L);
+			mdb_usleep(1000000L);
 		}
 		if (i >= wait_seconds)
 		{

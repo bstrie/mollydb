@@ -22,7 +22,7 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "executor/nodeFunctionscan.h"
 #include "funcapi.h"
 #include "nodes/nodeFuncs.h"

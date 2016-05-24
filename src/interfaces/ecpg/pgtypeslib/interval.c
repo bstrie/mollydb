@@ -29,10 +29,10 @@ strtoint(const char *nptr, char **endptr, int base)
 }
 
 /* copy&pasted from .../src/backend/utils/adt/datetime.c
- * and changesd struct pg_tm to struct tm
+ * and changesd struct mdb_tm to struct tm
  */
 static void
-AdjustFractSeconds(double frac, struct /* pg_ */ tm * tm, fsec_t *fsec, int scale)
+AdjustFractSeconds(double frac, struct /* mdb_ */ tm * tm, fsec_t *fsec, int scale)
 {
 	int			sec;
 
@@ -51,10 +51,10 @@ AdjustFractSeconds(double frac, struct /* pg_ */ tm * tm, fsec_t *fsec, int scal
 
 
 /* copy&pasted from .../src/backend/utils/adt/datetime.c
- * and changesd struct pg_tm to struct tm
+ * and changesd struct mdb_tm to struct tm
  */
 static void
-AdjustFractDays(double frac, struct /* pg_ */ tm * tm, fsec_t *fsec, int scale)
+AdjustFractDays(double frac, struct /* mdb_ */ tm * tm, fsec_t *fsec, int scale)
 {
 	int			extra_days;
 
@@ -104,10 +104,10 @@ ISO8601IntegerWidth(char *fieldstart)
 
 
 /* copy&pasted from .../src/backend/utils/adt/datetime.c
- * and changesd struct pg_tm to struct tm
+ * and changesd struct mdb_tm to struct tm
  */
 static inline void
-ClearPgTm(struct /* pg_ */ tm * tm, fsec_t *fsec)
+ClearPgTm(struct /* mdb_ */ tm * tm, fsec_t *fsec)
 {
 	tm->tm_year = 0;
 	tm->tm_mon = 0;
@@ -120,13 +120,13 @@ ClearPgTm(struct /* pg_ */ tm * tm, fsec_t *fsec)
 
 /* copy&pasted from .../src/backend/utils/adt/datetime.c
  *
- * * changesd struct pg_tm to struct tm
+ * * changesd struct mdb_tm to struct tm
  *
  * * Made the function static
  */
 static int
 DecodeISO8601Interval(char *str,
-					  int *dtype, struct /* pg_ */ tm * tm, fsec_t *fsec)
+					  int *dtype, struct /* mdb_ */ tm * tm, fsec_t *fsec)
 {
 	bool		datepart = true;
 	bool		havefield = false;
@@ -325,7 +325,7 @@ DecodeISO8601Interval(char *str,
 /* copy&pasted from .../src/backend/utils/adt/datetime.c
  * with 3 exceptions
  *
- *	* changesd struct pg_tm to struct tm
+ *	* changesd struct mdb_tm to struct tm
  *
  *	* ECPG code called this without a 'range' parameter
  *	  removed 'int range' from the argument list and
@@ -340,7 +340,7 @@ DecodeISO8601Interval(char *str,
  */
 int
 DecodeInterval(char **field, int *ftype, int nf,		/* int range, */
-			   int *dtype, struct /* pg_ */ tm * tm, fsec_t *fsec)
+			   int *dtype, struct /* mdb_ */ tm * tm, fsec_t *fsec)
 {
 	int			IntervalStyle = INTSTYLE_POSTGRES_VERBOSE;
 	int			range = INTERVAL_FULL_RANGE;
@@ -795,11 +795,11 @@ AppendSeconds(char *cp, int sec, fsec_t fsec, int precision, bool fillzeros)
 
 /* copy&pasted from .../src/backend/utils/adt/datetime.c
  *
- * Change pg_tm to tm
+ * Change mdb_tm to tm
  */
 
 int
-EncodeInterval(struct /* pg_ */ tm * tm, fsec_t fsec, int style, char *str)
+EncodeInterval(struct /* mdb_ */ tm * tm, fsec_t fsec, int style, char *str)
 {
 	char	   *cp = str;
 	int			year = tm->tm_year;

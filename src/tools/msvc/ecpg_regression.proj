@@ -22,7 +22,7 @@
   <OutputToDelete Include="$(TESTDIR)\**\*.exe" />
   <OutputToDelete Include="$(TESTDIR)\**\*.exe.manifest" />
   <OutputToDelete Include="$(TESTDIR)\**\*.obj" />
-  <OutputToDelete Include="$(TESTDIR)\**\*.c" Exclude="$(TESTDIR)\pg_regress_ecpg.c;$(TESTDIR)\expected\*.c" />
+  <OutputToDelete Include="$(TESTDIR)\**\*.c" Exclude="$(TESTDIR)\mdb_regress_ecpg.c;$(TESTDIR)\expected\*.c" />
  </ItemGroup>
 
  <Target Name="all" Inputs="@(Pgc)" Outputs="%(RelativeDir)%(Filename).exe">
@@ -51,7 +51,7 @@
 
   <!-- Run ECPG and the Visual C++ compiler on the files. Don't bother with dependency check between the steps -->
   <Exec WorkingDirectory="%(Pgc.RelativeDir)" Command="$(OUTDIR)ecpg\ecpg -I ../../include --regression $(ECPGPARAM) -o %(Pgc.Filename).c %(Pgc.Filename).pgc" />
-  <Exec WorkingDirectorY="%(Pgc.RelativeDir)" Command="cl /nologo %(Pgc.FileName).c /TC /MD$(DEBUGLIB) /DENABLE_THREAD_SAFETY /DWIN32 /DWIN32_ONLY_COMPILER /I. /I..\..\include /I..\..\..\libpq /I..\..\..\..\include /link /defaultlib:$(OUTDIR)libecpg\libecpg.lib /defaultlib:$(OUTDIR)libecpg_compat\libecpg_compat.lib /defaultlib:$(OUTDIR)libpgtypes\libpgtypes.lib" />
+  <Exec WorkingDirectorY="%(Pgc.RelativeDir)" Command="cl /nologo %(Pgc.FileName).c /TC /MD$(DEBUGLIB) /DENABLE_THREAD_SAFETY /DWIN32 /DWIN32_ONLY_COMPILER /I. /I..\..\include /I..\..\..\libpq /I..\..\..\..\include /link /defaultlib:$(OUTDIR)libecpg\libecpg.lib /defaultlib:$(OUTDIR)libecmdb_compat\libecmdb_compat.lib /defaultlib:$(OUTDIR)libpgtypes\libpgtypes.lib" />
  </Target>
 
  <!-- Clean up all output files -->

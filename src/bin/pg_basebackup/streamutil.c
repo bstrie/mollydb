@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * streamutil.c - utility functions for pg_basebackup and pg_receivelog
+ * streamutil.c - utility functions for mdb_basebackup and mdb_receivelog
  *
  * Author: Magnus Hagander <magnus@hagander.net>
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  src/bin/pg_basebackup/streamutil.c
+ *		  src/bin/mdb_basebackup/streamutil.c
  *-------------------------------------------------------------------------
  */
 
@@ -84,8 +84,8 @@ GetConnection(void)
 				argcount++;
 		}
 
-		keywords = pg_malloc0((argcount + 1) * sizeof(*keywords));
-		values = pg_malloc0((argcount + 1) * sizeof(*values));
+		keywords = mdb_malloc0((argcount + 1) * sizeof(*keywords));
+		values = mdb_malloc0((argcount + 1) * sizeof(*values));
 
 		for (conn_opt = conn_opts; conn_opt->keyword != NULL; conn_opt++)
 		{
@@ -99,8 +99,8 @@ GetConnection(void)
 	}
 	else
 	{
-		keywords = pg_malloc0((argcount + 1) * sizeof(*keywords));
-		values = pg_malloc0((argcount + 1) * sizeof(*values));
+		keywords = mdb_malloc0((argcount + 1) * sizeof(*keywords));
+		values = mdb_malloc0((argcount + 1) * sizeof(*values));
 	}
 
 	keywords[i] = "dbname";
@@ -270,7 +270,7 @@ RunIdentifySystem(PGconn *conn, char **sysid, TimeLineID *starttli,
 
 	/* Get system identifier */
 	if (sysid != NULL)
-		*sysid = pg_strdup(PQgetvalue(res, 0, 0));
+		*sysid = mdb_strdup(PQgetvalue(res, 0, 0));
 
 	/* Get timeline ID to start streaming from */
 	if (starttli != NULL)
@@ -307,7 +307,7 @@ RunIdentifySystem(PGconn *conn, char **sysid, TimeLineID *starttli,
 				return false;
 			}
 			if (!PQgetisnull(res, 0, 3))
-				*db_name = pg_strdup(PQgetvalue(res, 0, 3));
+				*db_name = mdb_strdup(PQgetvalue(res, 0, 3));
 		}
 	}
 

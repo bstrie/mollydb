@@ -396,7 +396,7 @@ create view agg_view1 as
     from (values (1,3,'foo'),(0,null,null),(2,2,'bar'),(3,1,'baz')) v(a,b,c);
 
 select * from agg_view1;
-select pg_get_viewdef('agg_view1'::regclass);
+select mdb_get_viewdef('agg_view1'::regclass);
 
 create or replace view agg_view1 as
   select aggfns(distinct a,b,c)
@@ -404,7 +404,7 @@ create or replace view agg_view1 as
          generate_series(1,3) i;
 
 select * from agg_view1;
-select pg_get_viewdef('agg_view1'::regclass);
+select mdb_get_viewdef('agg_view1'::regclass);
 
 create or replace view agg_view1 as
   select aggfns(distinct a,b,c order by b)
@@ -412,28 +412,28 @@ create or replace view agg_view1 as
          generate_series(1,3) i;
 
 select * from agg_view1;
-select pg_get_viewdef('agg_view1'::regclass);
+select mdb_get_viewdef('agg_view1'::regclass);
 
 create or replace view agg_view1 as
   select aggfns(a,b,c order by b+1)
     from (values (1,3,'foo'),(0,null,null),(2,2,'bar'),(3,1,'baz')) v(a,b,c);
 
 select * from agg_view1;
-select pg_get_viewdef('agg_view1'::regclass);
+select mdb_get_viewdef('agg_view1'::regclass);
 
 create or replace view agg_view1 as
   select aggfns(a,a,c order by b)
     from (values (1,3,'foo'),(0,null,null),(2,2,'bar'),(3,1,'baz')) v(a,b,c);
 
 select * from agg_view1;
-select pg_get_viewdef('agg_view1'::regclass);
+select mdb_get_viewdef('agg_view1'::regclass);
 
 create or replace view agg_view1 as
   select aggfns(a,b,c order by c using ~<~)
     from (values (1,3,'foo'),(0,null,null),(2,2,'bar'),(3,1,'baz')) v(a,b,c);
 
 select * from agg_view1;
-select pg_get_viewdef('agg_view1'::regclass);
+select mdb_get_viewdef('agg_view1'::regclass);
 
 create or replace view agg_view1 as
   select aggfns(distinct a,b,c order by a,c using ~<~,b)
@@ -441,7 +441,7 @@ create or replace view agg_view1 as
          generate_series(1,2) i;
 
 select * from agg_view1;
-select pg_get_viewdef('agg_view1'::regclass);
+select mdb_get_viewdef('agg_view1'::regclass);
 
 drop view agg_view1;
 
@@ -573,7 +573,7 @@ select percentile_disc(array[0.25,0.5,0.75]) within group (order by x)
 from unnest('{fred,jim,fred,jack,jill,fred,jill,jim,jim,sheila,jim,sheila}'::text[]) u(x);
 
 -- check collation propagates up in suitable cases:
-select pg_collation_for(percentile_disc(1) within group (order by x collate "POSIX"))
+select mdb_collation_for(percentile_disc(1) within group (order by x collate "POSIX"))
   from (values ('fred'),('jim')) v(x);
 
 -- ordered-set aggs created with CREATE AGGREGATE
@@ -614,7 +614,7 @@ select ten,
   from tenk1
  group by ten order by ten;
 
-select pg_get_viewdef('aggordview1');
+select mdb_get_viewdef('aggordview1');
 select * from aggordview1 order by ten;
 drop view aggordview1;
 

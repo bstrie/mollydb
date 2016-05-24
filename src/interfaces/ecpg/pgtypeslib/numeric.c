@@ -174,7 +174,7 @@ set_var_from_str(char *str, char **ptr, numeric *dest)
 		(*ptr)++;
 	}
 
-	if (pg_strncasecmp(*ptr, "NaN", 3) == 0)
+	if (mdb_strncasecmp(*ptr, "NaN", 3) == 0)
 	{
 		*ptr += 3;
 		dest->sign = NUMERIC_NAN;

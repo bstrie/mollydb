@@ -1,18 +1,18 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup_tar.c
+ * mdb_backup_tar.c
  *
  *	This file is copied from the 'files' format file, but dumps data into
  *	one temp file then sends it to the output TAR archive.
  *
  *	The tar format also includes a 'restore.sql' script which is there for
- *	the benefit of humans. This script is never used by pg_restore.
+ *	the benefit of humans. This script is never used by mdb_restore.
  *
  *	NOTE: If you untar the created 'tar' file, the resulting files are
  *	compatible with the 'directory' format. Please keep the two formats in
  *	sync.
  *
- *	See the headers to pg_backup_directory & pg_restore for more details.
+ *	See the headers to mdb_backup_directory & mdb_restore for more details.
  *
  * Copyright (c) 2000, Philip Warner
  *		Rights are granted to use this software in any way so long
@@ -23,15 +23,15 @@
  *
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/pg_backup_tar.c
+ *		src/bin/mdb_dump/mdb_backup_tar.c
  *
  *-------------------------------------------------------------------------
  */
 #include "mollydb_fe.h"
 
-#include "pg_backup_archiver.h"
-#include "pg_backup_tar.h"
-#include "pg_backup_utils.h"
+#include "mdb_backup_archiver.h"
+#include "mdb_backup_tar.h"
+#include "mdb_backup_utils.h"
 #include "pgtar.h"
 #include "fe_utils/string_utils.h"
 
@@ -109,7 +109,7 @@ static void tarClose(ArchiveHandle *AH, TAR_MEMBER *TH);
 #ifdef __NOT_USED__
 static char *tarGets(char *buf, size_t len, TAR_MEMBER *th);
 #endif
-static int	tarPrintf(ArchiveHandle *AH, TAR_MEMBER *th, const char *fmt,...) pg_attribute_printf(3, 4);
+static int	tarPrintf(ArchiveHandle *AH, TAR_MEMBER *th, const char *fmt,...) mdb_attribute_printf(3, 4);
 
 static void _tarAddFile(ArchiveHandle *AH, TAR_MEMBER *th);
 static TAR_MEMBER *_tarPositionTo(ArchiveHandle *AH, const char *filename);
@@ -161,14 +161,14 @@ InitArchiveFmt_Tar(ArchiveHandle *AH)
 	/*
 	 * Set up some special context used in compressing data.
 	 */
-	ctx = (lclContext *) pg_malloc0(sizeof(lclContext));
+	ctx = (lclContext *) mdb_malloc0(sizeof(lclContext));
 	AH->formatData = (void *) ctx;
 	ctx->filePos = 0;
 	ctx->isSpecialScript = 0;
 
 	/* Initialize LO buffering */
 	AH->lo_buf_size = LOBBUFSIZE;
-	AH->lo_buf = (void *) pg_malloc(LOBBUFSIZE);
+	AH->lo_buf = (void *) mdb_malloc(LOBBUFSIZE);
 
 	/*
 	 * Now open the tar file, and load the TOC if we're in read mode.
@@ -261,7 +261,7 @@ _ArchiveEntry(ArchiveHandle *AH, TocEntry *te)
 	lclTocEntry *ctx;
 	char		fn[K_STD_BUF_SIZE];
 
-	ctx = (lclTocEntry *) pg_malloc0(sizeof(lclTocEntry));
+	ctx = (lclTocEntry *) mdb_malloc0(sizeof(lclTocEntry));
 	if (te->dataDumper != NULL)
 	{
 #ifdef HAVE_LIBZ
@@ -272,7 +272,7 @@ _ArchiveEntry(ArchiveHandle *AH, TocEntry *te)
 #else
 		sprintf(fn, "%d.dat", te->dumpId);
 #endif
-		ctx->filename = pg_strdup(fn);
+		ctx->filename = mdb_strdup(fn);
 	}
 	else
 	{
@@ -300,7 +300,7 @@ _ReadExtraToc(ArchiveHandle *AH, TocEntry *te)
 
 	if (ctx == NULL)
 	{
-		ctx = (lclTocEntry *) pg_malloc0(sizeof(lclTocEntry));
+		ctx = (lclTocEntry *) mdb_malloc0(sizeof(lclTocEntry));
 		te->formatData = (void *) ctx;
 	}
 
@@ -375,7 +375,7 @@ tarOpen(ArchiveHandle *AH, const char *filename, char mode)
 	{
 		int			old_umask;
 
-		tm = pg_malloc0(sizeof(TAR_MEMBER));
+		tm = mdb_malloc0(sizeof(TAR_MEMBER));
 
 		/*
 		 * POSIX does not require, but permits, tmpfile() to restrict file
@@ -399,7 +399,7 @@ tarOpen(ArchiveHandle *AH, const char *filename, char mode)
 			char	   *name;
 			int			fd;
 
-			name = _tempnam(NULL, "pg_temp_");
+			name = _tempnam(NULL, "mdb_temp_");
 			if (name == NULL)
 				break;
 			fd = open(name, O_RDWR | O_CREAT | O_EXCL | O_BINARY |
@@ -438,7 +438,7 @@ tarOpen(ArchiveHandle *AH, const char *filename, char mode)
 #endif
 
 		tm->AH = AH;
-		tm->targetFile = pg_strdup(filename);
+		tm->targetFile = mdb_strdup(filename);
 	}
 
 	tm->mode = mode;
@@ -1021,7 +1021,7 @@ tarPrintf(ArchiveHandle *AH, TAR_MEMBER *th, const char *fmt,...)
 		va_list		args;
 
 		/* Allocate work buffer. */
-		p = (char *) pg_malloc(len);
+		p = (char *) mdb_malloc(len);
 
 		/* Try to format the data. */
 		va_start(args, fmt);
@@ -1059,7 +1059,7 @@ isValidTarHeader(char *header)
 	/* GNU tar format */
 	if (memcmp(&header[257], "ustar  \0", 8) == 0)
 		return true;
-	/* not-quite-POSIX format written by pre-9.3 pg_dump */
+	/* not-quite-POSIX format written by pre-9.3 mdb_dump */
 	if (memcmp(&header[257], "ustar00\0", 8) == 0)
 		return true;
 
@@ -1130,7 +1130,7 @@ static TAR_MEMBER *
 _tarPositionTo(ArchiveHandle *AH, const char *filename)
 {
 	lclContext *ctx = (lclContext *) AH->formatData;
-	TAR_MEMBER *th = pg_malloc0(sizeof(TAR_MEMBER));
+	TAR_MEMBER *th = mdb_malloc0(sizeof(TAR_MEMBER));
 	char		c;
 	char		header[512];
 	size_t		i,
@@ -1289,7 +1289,7 @@ _tarGetHeader(ArchiveHandle *AH, TAR_MEMBER *th)
 					  tag, sum, chk, posbuf);
 	}
 
-	th->targetFile = pg_strdup(tag);
+	th->targetFile = mdb_strdup(tag);
 	th->fileLen = len;
 
 	return 1;

@@ -15,7 +15,7 @@
 #include "miscadmin.h"
 #include "storage/dsm.h"
 #include "storage/ipc.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 
 HANDLE		UsedShmemSegID = INVALID_HANDLE_VALUE;
 void	   *UsedShmemSegAddr = NULL;

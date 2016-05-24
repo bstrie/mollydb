@@ -34,7 +34,7 @@ struct ttinfo
 
 struct lsinfo
 {								/* leap second information */
-	pg_time_t	ls_trans;		/* transition time */
+	mdb_time_t	ls_trans;		/* transition time */
 	int64		ls_corr;		/* correction to apply */
 };
 
@@ -46,7 +46,7 @@ struct state
 	int			charcnt;
 	bool		goback;
 	bool		goahead;
-	pg_time_t	ats[TZ_MAX_TIMES];
+	mdb_time_t	ats[TZ_MAX_TIMES];
 	unsigned char types[TZ_MAX_TIMES];
 	struct ttinfo ttis[TZ_MAX_TYPES];
 	char		chars[BIGGEST(BIGGEST(TZ_MAX_CHARS + 1, 3 /* sizeof gmt */ ),
@@ -56,7 +56,7 @@ struct state
 };
 
 
-struct pg_tz
+struct mdb_tz
 {
 	/* TZname contains the canonically-cased name of the timezone */
 	char		TZname[TZ_STRLEN_MAX + 1];
@@ -65,7 +65,7 @@ struct pg_tz
 
 
 /* in pgtz.c */
-extern int	pg_open_tzfile(const char *name, char *canonname);
+extern int	mdb_open_tzfile(const char *name, char *canonname);
 
 /* in localtime.c */
 extern int tzload(const char *name, char *canonname, struct state * sp,

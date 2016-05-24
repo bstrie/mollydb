@@ -20,7 +20,7 @@
 #include "access/sysattr.h"
 #include "catalog/heap.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
@@ -1031,7 +1031,7 @@ buildRelationAliases(TupleDesc tupdesc, Alias *alias, Alias *eref)
 
 	for (varattno = 0; varattno < maxattrs; varattno++)
 	{
-		Form_pg_attribute attr = tupdesc->attrs[varattno];
+		Form_mdb_attribute attr = tupdesc->attrs[varattno];
 		Value	   *attrname;
 
 		if (attr->attisdropped)
@@ -2357,7 +2357,7 @@ expandTupleDesc(TupleDesc tupdesc, Alias *eref, int count, int offset,
 	Assert(count <= tupdesc->natts);
 	for (varattno = 0; varattno < count; varattno++)
 	{
-		Form_pg_attribute attr = tupdesc->attrs[varattno];
+		Form_mdb_attribute attr = tupdesc->attrs[varattno];
 
 		if (attr->attisdropped)
 		{
@@ -2522,7 +2522,7 @@ get_rte_attribute_type(RangeTblEntry *rte, AttrNumber attnum,
 			{
 				/* Plain relation RTE --- get the attribute's type info */
 				HeapTuple	tp;
-				Form_pg_attribute att_tup;
+				Form_mdb_attribute att_tup;
 
 				tp = SearchSysCache2(ATTNUM,
 									 ObjectIdGetDatum(rte->relid),
@@ -2530,7 +2530,7 @@ get_rte_attribute_type(RangeTblEntry *rte, AttrNumber attnum,
 				if (!HeapTupleIsValid(tp))		/* shouldn't happen */
 					elog(ERROR, "cache lookup failed for attribute %d of relation %u",
 						 attnum, rte->relid);
-				att_tup = (Form_pg_attribute) GETSTRUCT(tp);
+				att_tup = (Form_mdb_attribute) GETSTRUCT(tp);
 
 				/*
 				 * If dropped column, pretend it ain't there.  See notes in
@@ -2588,7 +2588,7 @@ get_rte_attribute_type(RangeTblEntry *rte, AttrNumber attnum,
 						if (functypclass == TYPEFUNC_COMPOSITE)
 						{
 							/* Composite data type, e.g. a table's row type */
-							Form_pg_attribute att_tup;
+							Form_mdb_attribute att_tup;
 
 							Assert(tupdesc);
 							Assert(attnum <= tupdesc->natts);
@@ -2716,7 +2716,7 @@ get_rte_attribute_is_dropped(RangeTblEntry *rte, AttrNumber attnum)
 				 * Plain relation RTE --- get the attribute's catalog entry
 				 */
 				HeapTuple	tp;
-				Form_pg_attribute att_tup;
+				Form_mdb_attribute att_tup;
 
 				tp = SearchSysCache2(ATTNUM,
 									 ObjectIdGetDatum(rte->relid),
@@ -2724,7 +2724,7 @@ get_rte_attribute_is_dropped(RangeTblEntry *rte, AttrNumber attnum)
 				if (!HeapTupleIsValid(tp))		/* shouldn't happen */
 					elog(ERROR, "cache lookup failed for attribute %d of relation %u",
 						 attnum, rte->relid);
-				att_tup = (Form_pg_attribute) GETSTRUCT(tp);
+				att_tup = (Form_mdb_attribute) GETSTRUCT(tp);
 				result = att_tup->attisdropped;
 				ReleaseSysCache(tp);
 			}
@@ -2784,7 +2784,7 @@ get_rte_attribute_is_dropped(RangeTblEntry *rte, AttrNumber attnum)
 						if (functypclass == TYPEFUNC_COMPOSITE)
 						{
 							/* Composite data type, e.g. a table's row type */
-							Form_pg_attribute att_tup;
+							Form_mdb_attribute att_tup;
 
 							Assert(tupdesc);
 							Assert(attnum - atts_done <= tupdesc->natts);
@@ -2877,7 +2877,7 @@ attnameAttNum(Relation rd, const char *attname, bool sysColOK)
 
 	for (i = 0; i < rd->rd_rel->relnatts; i++)
 	{
-		Form_pg_attribute att = rd->rd_att->attrs[i];
+		Form_mdb_attribute att = rd->rd_att->attrs[i];
 
 		if (namestrcmp(&(att->attname), attname) == 0 && !att->attisdropped)
 			return i + 1;
@@ -2908,7 +2908,7 @@ attnameAttNum(Relation rd, const char *attname, bool sysColOK)
 static int
 specialAttNum(const char *attname)
 {
-	Form_pg_attribute sysatt;
+	Form_mdb_attribute sysatt;
 
 	sysatt = SystemAttributeByName(attname,
 								   true /* "oid" will be accepted */ );
@@ -2930,7 +2930,7 @@ attnumAttName(Relation rd, int attid)
 {
 	if (attid <= 0)
 	{
-		Form_pg_attribute sysatt;
+		Form_mdb_attribute sysatt;
 
 		sysatt = SystemAttributeDefinition(attid, rd->rd_rel->relhasoids);
 		return &sysatt->attname;
@@ -2952,7 +2952,7 @@ attnumTypeId(Relation rd, int attid)
 {
 	if (attid <= 0)
 	{
-		Form_pg_attribute sysatt;
+		Form_mdb_attribute sysatt;
 
 		sysatt = SystemAttributeDefinition(attid, rd->rd_rel->relhasoids);
 		return sysatt->atttypid;

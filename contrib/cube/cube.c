@@ -325,7 +325,7 @@ cube_out(PG_FUNCTION_ARGS)
 ** The GiST Consistent method for boxes
 ** Should return false if for all data items x below entry,
 ** the predicate x op query == FALSE, where op is the oper
-** corresponding to strategy in the pg_amop table.
+** corresponding to strategy in the mdb_amop table.
 */
 Datum
 g_cube_consistent(PG_FUNCTION_ARGS)

@@ -120,7 +120,7 @@ typedef struct
  * zero is a valid value for a checksum. If a checksum is not in use then
  * we leave the field unset. This will typically mean the field is zero
  * though non-zero values may also be present if databases have been
- * pg_upgraded from releases prior to 9.3, when the same byte offset was
+ * mdb_upgraded from releases prior to 9.3, when the same byte offset was
  * used to store the current timelineid when the page was last updated.
  * Note that there is no indication on a page as to whether the checksum
  * is valid or not, a deliberate design choice which avoids the problem

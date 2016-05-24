@@ -535,7 +535,7 @@ ExecBuildProjectionInfo(List *targetList,
 				isSimpleVar = true;		/* can't check type, assume OK */
 			else if (variable->varattno <= inputDesc->natts)
 			{
-				Form_pg_attribute attr;
+				Form_mdb_attribute attr;
 
 				attr = inputDesc->attrs[variable->varattno - 1];
 				if (!attr->attisdropped && variable->vartype == attr->atttypid)

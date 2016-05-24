@@ -15,7 +15,7 @@
  */
 #include "mollydb.h"
 
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 
 /*
@@ -1253,7 +1253,7 @@ list_copy_tail(const List *oldlist, int nskip)
  * Temporary compatibility functions
  *
  * In order to avoid warnings for these function definitions, we need
- * to include a prototype here as well as in pg_list.h. That's because
+ * to include a prototype here as well as in mdb_list.h. That's because
  * we don't enable list API compatibility in list.c, so we
  * don't see the prototypes for these functions.
  */

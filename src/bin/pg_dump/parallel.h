@@ -2,7 +2,7 @@
  *
  * parallel.h
  *
- *	Parallel support header file for the pg_dump archiver
+ *	Parallel support header file for the mdb_dump archiver
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -11,7 +11,7 @@
  *	result from its use.
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/parallel.h
+ *		src/bin/mdb_dump/parallel.h
  *
  *-------------------------------------------------------------------------
  */
@@ -19,7 +19,7 @@
 #ifndef PG_DUMP_PARALLEL_H
 #define PG_DUMP_PARALLEL_H
 
-#include "pg_backup_archiver.h"
+#include "mdb_backup_archiver.h"
 
 typedef enum
 {

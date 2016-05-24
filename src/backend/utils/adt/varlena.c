@@ -19,20 +19,20 @@
 
 #include "access/hash.h"
 #include "access/tuptoaster.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_type.h"
 #include "lib/hyperloglog.h"
 #include "libpq/md5.h"
 #include "libpq/pqformat.h"
 #include "miscadmin.h"
 #include "parser/scansup.h"
-#include "port/pg_bswap.h"
+#include "port/mdb_bswap.h"
 #include "regex/regex.h"
 #include "utils/builtins.h"
 #include "utils/bytea.h"
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 #include "utils/sortsupport.h"
 
 
@@ -47,8 +47,8 @@ typedef struct
 	bool		use_wchar;		/* T if multibyte encoding */
 	char	   *str1;			/* use these if not use_wchar */
 	char	   *str2;			/* note: these point to original texts */
-	pg_wchar   *wstr1;			/* use these if use_wchar */
-	pg_wchar   *wstr2;			/* note: these are palloc'd */
+	mdb_wchar   *wstr1;			/* use these if use_wchar */
+	mdb_wchar   *wstr2;			/* note: these are palloc'd */
 	int			len1;			/* string lengths in logical characters */
 	int			len2;
 	/* Skip table for Boyer-Moore-Horspool search algorithm: */
@@ -73,7 +73,7 @@ typedef struct
 	hyperLogLogState full_card; /* Full key cardinality state */
 	double		prop_card;		/* Required cardinality proportion */
 #ifdef HAVE_LOCALE_T
-	pg_locale_t locale;
+	mdb_locale_t locale;
 #endif
 } VarStringSortSupport;
 
@@ -183,7 +183,7 @@ char *
 text_to_cstring(const text *t)
 {
 	/* must cast away the const, unfortunately */
-	text	   *tunpacked = pg_detoast_datum_packed((struct varlena *) t);
+	text	   *tunpacked = mdb_detoast_datum_packed((struct varlena *) t);
 	int			len = VARSIZE_ANY_EXHDR(tunpacked);
 	char	   *result;
 
@@ -214,7 +214,7 @@ void
 text_to_cstring_buffer(const text *src, char *dst, size_t dst_len)
 {
 	/* must cast away the const, unfortunately */
-	text	   *srcunpacked = pg_detoast_datum_packed((struct varlena *) src);
+	text	   *srcunpacked = mdb_detoast_datum_packed((struct varlena *) src);
 	size_t		src_len = VARSIZE_ANY_EXHDR(srcunpacked);
 
 	if (dst_len > 0)
@@ -223,7 +223,7 @@ text_to_cstring_buffer(const text *src, char *dst, size_t dst_len)
 		if (dst_len >= src_len)
 			dst_len = src_len;
 		else	/* ensure truncation is encoding-safe */
-			dst_len = pg_mbcliplen(VARDATA_ANY(srcunpacked), src_len, dst_len);
+			dst_len = mdb_mbcliplen(VARDATA_ANY(srcunpacked), src_len, dst_len);
 		memcpy(dst, VARDATA_ANY(srcunpacked), dst_len);
 		dst[dst_len] = '\0';
 	}
@@ -641,13 +641,13 @@ static int32
 text_length(Datum str)
 {
 	/* fastpath when max encoding length is one */
-	if (pg_database_encoding_max_length() == 1)
+	if (mdb_database_encoding_max_length() == 1)
 		PG_RETURN_INT32(toast_raw_datum_size(str) - VARHDRSZ);
 	else
 	{
 		text	   *t = DatumGetTextPP(str);
 
-		PG_RETURN_INT32(pg_mbstrlen_with_len(VARDATA_ANY(t),
+		PG_RETURN_INT32(mdb_mbstrlen_with_len(VARDATA_ANY(t),
 											 VARSIZE_ANY_EXHDR(t)));
 	}
 }
@@ -735,7 +735,7 @@ text_catenate(text *t1, text *t2)
 static int
 charlen_to_bytelen(const char *p, int n)
 {
-	if (pg_database_encoding_max_length() == 1)
+	if (mdb_database_encoding_max_length() == 1)
 	{
 		/* Optimization for single-byte encodings */
 		return n;
@@ -745,7 +745,7 @@ charlen_to_bytelen(const char *p, int n)
 		const char *s;
 
 		for (s = p; n > 0; n--)
-			s += pg_mblen(s);
+			s += mdb_mblen(s);
 
 		return s - p;
 	}
@@ -814,7 +814,7 @@ text_substr_no_len(PG_FUNCTION_ARGS)
 static text *
 text_substring(Datum str, int32 start, int32 length, bool length_not_specified)
 {
-	int32		eml = pg_database_encoding_max_length();
+	int32		eml = mdb_database_encoding_max_length();
 	int32		S = start;		/* start position */
 	int32		S1;				/* adjusted start position */
 	int32		L1;				/* adjusted substring length */
@@ -945,7 +945,7 @@ text_substring(Datum str, int32 start, int32 length, bool length_not_specified)
 		}
 
 		/* Now we can get the actual length of the slice in MB characters */
-		slice_strlen = pg_mbstrlen_with_len(VARDATA_ANY(slice),
+		slice_strlen = mdb_mbstrlen_with_len(VARDATA_ANY(slice),
 											VARSIZE_ANY_EXHDR(slice));
 
 		/*
@@ -973,7 +973,7 @@ text_substring(Datum str, int32 start, int32 length, bool length_not_specified)
 		 */
 		p = VARDATA_ANY(slice);
 		for (i = 0; i < S1 - 1; i++)
-			p += pg_mblen(p);
+			p += mdb_mblen(p);
 
 		/* hang onto a pointer to our start position */
 		s = p;
@@ -983,7 +983,7 @@ text_substring(Datum str, int32 start, int32 length, bool length_not_specified)
 		 * length.
 		 */
 		for (i = S1; i < E1; i++)
-			p += pg_mblen(p);
+			p += mdb_mblen(p);
 
 		ret = (text *) palloc(VARHDRSZ + (p - s));
 		SET_VARSIZE(ret, VARHDRSZ + (p - s));
@@ -1122,7 +1122,7 @@ text_position_setup(text *t1, text *t2, TextPositionState *state)
 	int			len1 = VARSIZE_ANY_EXHDR(t1);
 	int			len2 = VARSIZE_ANY_EXHDR(t2);
 
-	if (pg_database_encoding_max_length() == 1)
+	if (mdb_database_encoding_max_length() == 1)
 	{
 		/* simple case - single byte encoding */
 		state->use_wchar = false;
@@ -1134,13 +1134,13 @@ text_position_setup(text *t1, text *t2, TextPositionState *state)
 	else
 	{
 		/* not as simple - multibyte encoding */
-		pg_wchar   *p1,
+		mdb_wchar   *p1,
 				   *p2;
 
-		p1 = (pg_wchar *) palloc((len1 + 1) * sizeof(pg_wchar));
-		len1 = pg_mb2wchar_with_len(VARDATA_ANY(t1), p1, len1);
-		p2 = (pg_wchar *) palloc((len2 + 1) * sizeof(pg_wchar));
-		len2 = pg_mb2wchar_with_len(VARDATA_ANY(t2), p2, len2);
+		p1 = (mdb_wchar *) palloc((len1 + 1) * sizeof(mdb_wchar));
+		len1 = mdb_mb2wchar_with_len(VARDATA_ANY(t1), p1, len1);
+		p2 = (mdb_wchar *) palloc((len2 + 1) * sizeof(mdb_wchar));
+		len2 = mdb_mb2wchar_with_len(VARDATA_ANY(t2), p2, len2);
 
 		state->use_wchar = true;
 		state->wstr1 = p1;
@@ -1220,7 +1220,7 @@ text_position_setup(text *t1, text *t2, TextPositionState *state)
 		}
 		else
 		{
-			const pg_wchar *wstr2 = state->wstr2;
+			const mdb_wchar *wstr2 = state->wstr2;
 
 			for (i = 0; i < last; i++)
 				state->skiptable[wstr2[i] & skiptablemask] = last - i;
@@ -1305,15 +1305,15 @@ text_position_next(int start_pos, TextPositionState *state)
 	else
 	{
 		/* The multibyte char version. This works exactly the same way. */
-		const pg_wchar *haystack = state->wstr1;
-		const pg_wchar *needle = state->wstr2;
-		const pg_wchar *haystack_end = &haystack[haystack_len];
-		const pg_wchar *hptr;
+		const mdb_wchar *haystack = state->wstr1;
+		const mdb_wchar *needle = state->wstr2;
+		const mdb_wchar *haystack_end = &haystack[haystack_len];
+		const mdb_wchar *hptr;
 
 		if (needle_len == 1)
 		{
 			/* No point in using B-M-H for a one-character needle */
-			pg_wchar	nchar = *needle;
+			mdb_wchar	nchar = *needle;
 
 			hptr = &haystack[start_pos];
 			while (hptr < haystack_end)
@@ -1325,15 +1325,15 @@ text_position_next(int start_pos, TextPositionState *state)
 		}
 		else
 		{
-			const pg_wchar *needle_last = &needle[needle_len - 1];
+			const mdb_wchar *needle_last = &needle[needle_len - 1];
 
 			/* Start at startpos plus the length of the needle */
 			hptr = &haystack[start_pos + needle_len - 1];
 			while (hptr < haystack_end)
 			{
 				/* Match the needle scanning *backward* */
-				const pg_wchar *nptr;
-				const pg_wchar *p;
+				const mdb_wchar *nptr;
+				const mdb_wchar *p;
 
 				nptr = needle_last;
 				p = hptr;
@@ -1404,7 +1404,7 @@ varstr_cmp(char *arg1, int len1, char *arg2, int len2, Oid collid)
 				   *a2p;
 
 #ifdef HAVE_LOCALE_T
-		pg_locale_t mylocale = 0;
+		mdb_locale_t mylocale = 0;
 #endif
 
 		if (collid != DEFAULT_COLLATION_OID)
@@ -1421,7 +1421,7 @@ varstr_cmp(char *arg1, int len1, char *arg2, int len2, Oid collid)
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
 #ifdef HAVE_LOCALE_T
-			mylocale = pg_newlocale_from_collation(collid);
+			mylocale = mdb_newlocale_from_collation(collid);
 #endif
 		}
 
@@ -1769,7 +1769,7 @@ varstr_sortsupport(SortSupport ssup, Oid collid, bool bpchar)
 	VarStringSortSupport *sss;
 
 #ifdef HAVE_LOCALE_T
-	pg_locale_t locale = 0;
+	mdb_locale_t locale = 0;
 #endif
 
 	/*
@@ -1826,7 +1826,7 @@ varstr_sortsupport(SortSupport ssup, Oid collid, bool bpchar)
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
 #ifdef HAVE_LOCALE_T
-			locale = pg_newlocale_from_collation(collid);
+			locale = mdb_newlocale_from_collation(collid);
 #endif
 		}
 	}
@@ -3037,7 +3037,7 @@ text_name(PG_FUNCTION_ARGS)
 
 	/* Truncate oversize input */
 	if (len >= NAMEDATALEN)
-		len = pg_mbcliplen(VARDATA_ANY(s), len, NAMEDATALEN - 1);
+		len = mdb_mbcliplen(VARDATA_ANY(s), len, NAMEDATALEN - 1);
 
 	/* We use palloc0 here to ensure result is zero-padded */
 	result = (Name) palloc0(NAMEDATALEN);
@@ -3638,7 +3638,7 @@ check_replace_text_has_escape_char(const text *replace_text)
 	const char *p = VARDATA_ANY(replace_text);
 	const char *p_end = p + VARSIZE_ANY_EXHDR(replace_text);
 
-	if (pg_database_encoding_max_length() == 1)
+	if (mdb_database_encoding_max_length() == 1)
 	{
 		for (; p < p_end; p++)
 		{
@@ -3648,7 +3648,7 @@ check_replace_text_has_escape_char(const text *replace_text)
 	}
 	else
 	{
-		for (; p < p_end; p += pg_mblen(p))
+		for (; p < p_end; p += mdb_mblen(p))
 		{
 			if (*p == '\\')
 				return true;
@@ -3672,7 +3672,7 @@ appendStringInfoRegexpSubstr(StringInfo str, text *replace_text,
 {
 	const char *p = VARDATA_ANY(replace_text);
 	const char *p_end = p + VARSIZE_ANY_EXHDR(replace_text);
-	int			eml = pg_database_encoding_max_length();
+	int			eml = mdb_database_encoding_max_length();
 
 	for (;;)
 	{
@@ -3688,7 +3688,7 @@ appendStringInfoRegexpSubstr(StringInfo str, text *replace_text,
 		}
 		else
 		{
-			for (; p < p_end && *p != '\\'; p += pg_mblen(p))
+			for (; p < p_end && *p != '\\'; p += mdb_mblen(p))
 				 /* nothing */ ;
 		}
 
@@ -3779,7 +3779,7 @@ replace_text_regexp(text *src_text, void *regexp,
 	int			src_text_len = VARSIZE_ANY_EXHDR(src_text);
 	StringInfoData buf;
 	regmatch_t	pmatch[REGEXP_REPLACE_BACKREF_CNT];
-	pg_wchar   *data;
+	mdb_wchar   *data;
 	size_t		data_len;
 	int			search_start;
 	int			data_pos;
@@ -3789,8 +3789,8 @@ replace_text_regexp(text *src_text, void *regexp,
 	initStringInfo(&buf);
 
 	/* Convert data string to wide characters. */
-	data = (pg_wchar *) palloc((src_text_len + 1) * sizeof(pg_wchar));
-	data_len = pg_mb2wchar_with_len(VARDATA_ANY(src_text), data, src_text_len);
+	data = (mdb_wchar *) palloc((src_text_len + 1) * sizeof(mdb_wchar));
+	data_len = mdb_mb2wchar_with_len(VARDATA_ANY(src_text), data, src_text_len);
 
 	/* Check whether replace_text has escape char. */
 	have_escape = check_replace_text_has_escape_char(replace_text);
@@ -3806,7 +3806,7 @@ replace_text_regexp(text *src_text, void *regexp,
 
 		CHECK_FOR_INTERRUPTS();
 
-		regexec_result = pg_regexec(re,
+		regexec_result = mdb_regexec(re,
 									data,
 									data_len,
 									search_start,
@@ -3823,7 +3823,7 @@ replace_text_regexp(text *src_text, void *regexp,
 			char		errMsg[100];
 
 			CHECK_FOR_INTERRUPTS();
-			pg_regerror(regexec_result, re, errMsg, sizeof(errMsg));
+			mdb_regerror(regexec_result, re, errMsg, sizeof(errMsg));
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_REGULAR_EXPRESSION),
 					 errmsg("regular expression failed: %s", errMsg)));
@@ -4176,7 +4176,7 @@ text_to_array_internal(PG_FUNCTION_ARGS)
 
 		while (inputstring_len > 0)
 		{
-			int			chunk_len = pg_mblen(start_ptr);
+			int			chunk_len = mdb_mblen(start_ptr);
 
 			CHECK_FOR_INTERRUPTS();
 
@@ -4434,7 +4434,7 @@ md5_text(PG_FUNCTION_ARGS)
 	len = VARSIZE_ANY_EXHDR(in_text);
 
 	/* get the hash result */
-	if (pg_md5_hash(VARDATA_ANY(in_text), len, hexsum) == false)
+	if (mdb_md5_hash(VARDATA_ANY(in_text), len, hexsum) == false)
 		ereport(ERROR,
 				(errcode(ERRCODE_OUT_OF_MEMORY),
 				 errmsg("out of memory")));
@@ -4455,7 +4455,7 @@ md5_bytea(PG_FUNCTION_ARGS)
 	char		hexsum[MD5_HASH_LEN + 1];
 
 	len = VARSIZE_ANY_EXHDR(in);
-	if (pg_md5_hash(VARDATA_ANY(in), len, hexsum) == false)
+	if (mdb_md5_hash(VARDATA_ANY(in), len, hexsum) == false)
 		ereport(ERROR,
 				(errcode(ERRCODE_OUT_OF_MEMORY),
 				 errmsg("out of memory")));
@@ -4469,7 +4469,7 @@ md5_bytea(PG_FUNCTION_ARGS)
  * Works on any data type
  */
 Datum
-pg_column_size(PG_FUNCTION_ARGS)
+mdb_column_size(PG_FUNCTION_ARGS)
 {
 	Datum		value = PG_GETARG_DATUM(0);
 	int32		result;
@@ -4722,8 +4722,8 @@ text_left(PG_FUNCTION_ARGS)
 	int			rlen;
 
 	if (n < 0)
-		n = pg_mbstrlen_with_len(p, len) + n;
-	rlen = pg_mbcharcliplen(p, len, n);
+		n = mdb_mbstrlen_with_len(p, len) + n;
+	rlen = mdb_mbcharcliplen(p, len, n);
 
 	PG_RETURN_TEXT_P(cstring_to_text_with_len(p, rlen));
 }
@@ -4744,8 +4744,8 @@ text_right(PG_FUNCTION_ARGS)
 	if (n < 0)
 		n = -n;
 	else
-		n = pg_mbstrlen_with_len(p, len) - n;
-	off = pg_mbcharcliplen(p, len, n);
+		n = mdb_mbstrlen_with_len(p, len) - n;
+	off = mdb_mbcharcliplen(p, len, n);
 
 	PG_RETURN_TEXT_P(cstring_to_text_with_len(p + off, len - off));
 }
@@ -4767,14 +4767,14 @@ text_reverse(PG_FUNCTION_ARGS)
 	dst = (char *) VARDATA(result) + len;
 	SET_VARSIZE(result, len + VARHDRSZ);
 
-	if (pg_database_encoding_max_length() > 1)
+	if (mdb_database_encoding_max_length() > 1)
 	{
 		/* multibyte version */
 		while (p < endp)
 		{
 			int			sz;
 
-			sz = pg_mblen(p);
+			sz = mdb_mblen(p);
 			dst -= sz;
 			memcpy(dst, p, sz);
 			p += sz;
@@ -4991,8 +4991,8 @@ text_format(PG_FUNCTION_ARGS)
 
 				str = OutputFunctionCall(&typoutputinfo_width, value);
 
-				/* pg_atoi will complain about bad data or overflow */
-				width = pg_atoi(str, sizeof(int), '\0');
+				/* mdb_atoi will complain about bad data or overflow */
+				width = mdb_atoi(str, sizeof(int), '\0');
 
 				pfree(str);
 			}
@@ -5288,7 +5288,7 @@ text_format_append_string(StringInfo buf, const char *str,
 	else if (flags & TEXT_FORMAT_FLAG_MINUS)
 		align_to_left = true;
 
-	len = pg_mbstrlen(str);
+	len = mdb_mbstrlen(str);
 	if (align_to_left)
 	{
 		/* left justify */

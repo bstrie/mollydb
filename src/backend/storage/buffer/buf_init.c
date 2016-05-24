@@ -133,7 +133,7 @@ InitBufferPool(void)
 
 			CLEAR_BUFFERTAG(buf->tag);
 
-			pg_atomic_init_u32(&buf->state, 0);
+			mdb_atomic_init_u32(&buf->state, 0);
 			buf->wait_backend_pid = 0;
 
 			buf->buf_id = i;

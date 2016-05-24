@@ -85,10 +85,10 @@ extern Datum database_to_xml(PG_FUNCTION_ARGS);
 extern Datum database_to_xmlschema(PG_FUNCTION_ARGS);
 extern Datum database_to_xml_and_xmlschema(PG_FUNCTION_ARGS);
 
-extern void pg_xml_init_library(void);
-extern PgXmlErrorContext *pg_xml_init(PgXmlStrictness strictness);
-extern void pg_xml_done(PgXmlErrorContext *errcxt, bool isError);
-extern bool pg_xml_error_occurred(PgXmlErrorContext *errcxt);
+extern void mdb_xml_init_library(void);
+extern PgXmlErrorContext *mdb_xml_init(PgXmlStrictness strictness);
+extern void mdb_xml_done(PgXmlErrorContext *errcxt, bool isError);
+extern bool mdb_xml_error_occurred(PgXmlErrorContext *errcxt);
 extern void xml_ereport(PgXmlErrorContext *errcxt, int level, int sqlcode,
 			const char *msg);
 

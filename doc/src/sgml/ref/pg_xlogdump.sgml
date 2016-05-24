@@ -1,27 +1,27 @@
 <!--
-doc/src/sgml/ref/pg_xlogdump.sgml
+doc/src/sgml/ref/mdb_xlogdump.sgml
 MollyDB documentation
 -->
 
 <refentry id="pgxlogdump">
  <indexterm zone="pgxlogdump">
-  <primary>pg_xlogdump</primary>
+  <primary>mdb_xlogdump</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle><application>pg_xlogdump</application></refentrytitle>
+  <refentrytitle><application>mdb_xlogdump</application></refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_xlogdump</refname>
+  <refname>mdb_xlogdump</refname>
   <refpurpose>Display a human-readable rendering of the write-ahead log of a <productname>MollyDB</productname> database cluster</refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_xlogdump</command>
+   <command>mdb_xlogdump</command>
    <arg rep="repeat" choice="opt"><option>option</option></arg>
    <arg choice="opt"><option>startseg</option>
     <arg choice="opt"><option>endseg</option></arg>
@@ -32,7 +32,7 @@ MollyDB documentation
  <refsect1 id="R1-APP-PGXLOGDUMP-1">
   <title>Description</title>
   <para>
-   <command>pg_xlogdump</command> displays the write-ahead log (WAL) and is mainly
+   <command>mdb_xlogdump</command> displays the write-ahead log (WAL) and is mainly
    useful for debugging or educational purposes.
   </para>
 
@@ -118,7 +118,7 @@ MollyDB documentation
       <listitem>
        <para>
         Directory in which to find log segment files.  The default is to search
-        for them in the <literal>pg_xlog</literal> subdirectory of the current
+        for them in the <literal>mdb_xlog</literal> subdirectory of the current
         directory.
        </para>
       </listitem>
@@ -164,7 +164,7 @@ MollyDB documentation
        <term><option>--version</></term>
        <listitem>
        <para>
-       Print the <application>pg_xlogdump</application> version and exit.
+       Print the <application>mdb_xlogdump</application> version and exit.
        </para>
        </listitem>
      </varlistentry>
@@ -196,7 +196,7 @@ MollyDB documentation
       <term><option>--help</></term>
        <listitem>
         <para>
-         Show help about <application>pg_xlogdump</application> command line
+         Show help about <application>mdb_xlogdump</application> command line
          arguments, and exit.
         </para>
        </listitem>
@@ -217,7 +217,7 @@ MollyDB documentation
   </para>
 
   <para>
-    <application>pg_xlogdump</> cannot read WAL files with suffix
+    <application>mdb_xlogdump</> cannot read WAL files with suffix
     <literal>.partial</>. If those files need to be read, <literal>.partial</>
     suffix needs to be removed from the file name.
   </para>

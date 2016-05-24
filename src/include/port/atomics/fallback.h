@@ -17,7 +17,7 @@
 #	error "should be included via atomics.h"
 #endif
 
-#ifndef pg_memory_barrier_impl
+#ifndef mdb_memory_barrier_impl
 /*
  * If we have no memory barrier implementation for this architecture, we
  * fall back to acquiring and releasing a spinlock.  This might, in turn,
@@ -31,11 +31,11 @@
  */
 #define PG_HAVE_MEMORY_BARRIER_EMULATION
 
-extern void pg_spinlock_barrier(void);
-#define pg_memory_barrier_impl pg_spinlock_barrier
+extern void mdb_spinlock_barrier(void);
+#define mdb_memory_barrier_impl mdb_spinlock_barrier
 #endif
 
-#ifndef pg_compiler_barrier_impl
+#ifndef mdb_compiler_barrier_impl
 /*
  * If the compiler/arch combination does not provide compiler barriers,
  * provide a fallback.  The fallback simply consists of a function call into
@@ -46,8 +46,8 @@ extern void pg_spinlock_barrier(void);
  * A native compiler barrier for sure is a lot faster than this...
  */
 #define PG_HAVE_COMPILER_BARRIER_EMULATION
-extern void pg_extern_compiler_barrier(void);
-#define pg_compiler_barrier_impl pg_extern_compiler_barrier
+extern void mdb_extern_compiler_barrier(void);
+#define mdb_compiler_barrier_impl mdb_extern_compiler_barrier
 #endif
 
 
@@ -67,7 +67,7 @@ extern void pg_extern_compiler_barrier(void);
 #define PG_HAVE_ATOMIC_FLAG_SIMULATION
 #define PG_HAVE_ATOMIC_FLAG_SUPPORT
 
-typedef struct pg_atomic_flag
+typedef struct mdb_atomic_flag
 {
 	/*
 	 * To avoid circular includes we can't use s_lock as a type here. Instead
@@ -80,7 +80,7 @@ typedef struct pg_atomic_flag
 #else
 	int			sema;
 #endif
-} pg_atomic_flag;
+} mdb_atomic_flag;
 
 #endif /* PG_HAVE_ATOMIC_FLAG_SUPPORT */
 
@@ -89,33 +89,33 @@ typedef struct pg_atomic_flag
 #define PG_HAVE_ATOMIC_U32_SIMULATION
 
 #define PG_HAVE_ATOMIC_U32_SUPPORT
-typedef struct pg_atomic_uint32
+typedef struct mdb_atomic_uint32
 {
-	/* Check pg_atomic_flag's definition above for an explanation */
+	/* Check mdb_atomic_flag's definition above for an explanation */
 #if defined(__hppa) || defined(__hppa__)	/* HP PA-RISC, GCC and HP compilers */
 	int			sema[4];
 #else
 	int			sema;
 #endif
 	volatile uint32 value;
-} pg_atomic_uint32;
+} mdb_atomic_uint32;
 
 #endif /* PG_HAVE_ATOMIC_U32_SUPPORT */
 
 #ifdef PG_HAVE_ATOMIC_FLAG_SIMULATION
 
 #define PG_HAVE_ATOMIC_INIT_FLAG
-extern void pg_atomic_init_flag_impl(volatile pg_atomic_flag *ptr);
+extern void mdb_atomic_init_flag_impl(volatile mdb_atomic_flag *ptr);
 
 #define PG_HAVE_ATOMIC_TEST_SET_FLAG
-extern bool pg_atomic_test_set_flag_impl(volatile pg_atomic_flag *ptr);
+extern bool mdb_atomic_test_set_flag_impl(volatile mdb_atomic_flag *ptr);
 
 #define PG_HAVE_ATOMIC_CLEAR_FLAG
-extern void pg_atomic_clear_flag_impl(volatile pg_atomic_flag *ptr);
+extern void mdb_atomic_clear_flag_impl(volatile mdb_atomic_flag *ptr);
 
 #define PG_HAVE_ATOMIC_UNLOCKED_TEST_FLAG
 static inline bool
-pg_atomic_unlocked_test_flag_impl(volatile pg_atomic_flag *ptr)
+mdb_atomic_unlocked_test_flag_impl(volatile mdb_atomic_flag *ptr)
 {
 	/*
 	 * Can't do this efficiently in the semaphore based implementation - we'd
@@ -131,13 +131,13 @@ pg_atomic_unlocked_test_flag_impl(volatile pg_atomic_flag *ptr)
 #ifdef PG_HAVE_ATOMIC_U32_SIMULATION
 
 #define PG_HAVE_ATOMIC_INIT_U32
-extern void pg_atomic_init_u32_impl(volatile pg_atomic_uint32 *ptr, uint32 val_);
+extern void mdb_atomic_init_u32_impl(volatile mdb_atomic_uint32 *ptr, uint32 val_);
 
 #define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
-extern bool pg_atomic_compare_exchange_u32_impl(volatile pg_atomic_uint32 *ptr,
+extern bool mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 												uint32 *expected, uint32 newval);
 
 #define PG_HAVE_ATOMIC_FETCH_ADD_U32
-extern uint32 pg_atomic_fetch_add_u32_impl(volatile pg_atomic_uint32 *ptr, int32 add_);
+extern uint32 mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_);
 
 #endif /* PG_HAVE_ATOMIC_U32_SIMULATION */

@@ -5,7 +5,7 @@
 #include "mollydb_fe.h"
 
 #include "extern.h"
-#include "ecpg_config.h"
+#include "ecmdb_config.h"
 #include <unistd.h>
 
 /* Location tracking support --- simpler than bison's default */
@@ -35,7 +35,7 @@
 int struct_level = 0;
 int braces_open; /* brace level counter */
 char *current_function;
-int ecpg_internal_var = 0;
+int ecmdb_internal_var = 0;
 char	*connection = NULL;
 char	*input_filename = NULL;
 
@@ -56,12 +56,12 @@ static char *ECPGstruct_sizeof = NULL;
 /* for forward declarations we have to store some data as well */
 static char *forward_name = NULL;
 
-struct ECPGtype ecpg_no_indicator = {ECPGt_NO_INDICATOR, NULL, NULL, NULL, {NULL}, 0};
-struct variable no_indicator = {"no_indicator", &ecpg_no_indicator, 0, NULL};
+struct ECPGtype ecmdb_no_indicator = {ECPGt_NO_INDICATOR, NULL, NULL, NULL, {NULL}, 0};
+struct variable no_indicator = {"no_indicator", &ecmdb_no_indicator, 0, NULL};
 
-static struct ECPGtype ecpg_query = {ECPGt_char_variable, NULL, NULL, NULL, {NULL}, 0};
+static struct ECPGtype ecmdb_query = {ECPGt_char_variable, NULL, NULL, NULL, {NULL}, 0};
 
-static void vmmerror(int error_code, enum errortype type, const char *error, va_list ap) pg_attribute_printf(3, 0);
+static void vmmerror(int error_code, enum errortype type, const char *error, va_list ap) mdb_attribute_printf(3, 0);
 
 /*
  * Handle parsing errors and warnings
@@ -271,7 +271,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 
 			/* change variable name to "ECPGget_var(<counter>)" */
 			original_var = ptr->variable->name;
-			sprintf(var_text, "%d))", ecpg_internal_var);
+			sprintf(var_text, "%d))", ecmdb_internal_var);
 
 			/* Don't emit ECPGset_var() calls for global variables */
 			if (ptr->variable->brace_level == 0)
@@ -292,7 +292,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 					 && atoi(ptr->variable->type->size) > 1)
 			{
 				newvar = new_variable(cat_str(4, mm_strdup("("),
-											  mm_strdup(ecpg_type_name(ptr->variable->type->u.element->type)),
+											  mm_strdup(ecmdb_type_name(ptr->variable->type->u.element->type)),
 											  mm_strdup(" *)(ECPGget_var("),
 											  mm_strdup(var_text)),
 									  ECPGmake_array_type(ECPGmake_simple_type(ptr->variable->type->u.element->type,
@@ -308,7 +308,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 					 && atoi(ptr->variable->type->size) > 1)
 			{
 				newvar = new_variable(cat_str(4, mm_strdup("("),
-											  mm_strdup(ecpg_type_name(ptr->variable->type->type)),
+											  mm_strdup(ecmdb_type_name(ptr->variable->type->type)),
 											  mm_strdup(" *)(ECPGget_var("),
 											  mm_strdup(var_text)),
 									  ECPGmake_simple_type(ptr->variable->type->type,
@@ -352,7 +352,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 				else
 				{
 					newvar = new_variable(cat_str(4, mm_strdup("("),
-												  mm_strdup(ecpg_type_name(ptr->variable->type->type)),
+												  mm_strdup(ecmdb_type_name(ptr->variable->type->type)),
 												  mm_strdup(" *)(ECPGget_var("),
 												  mm_strdup(var_text)),
 										  ECPGmake_array_type(ECPGmake_simple_type(ptr->variable->type->u.element->type,
@@ -366,7 +366,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 			else
 			{
 				newvar = new_variable(cat_str(4, mm_strdup("*("),
-											  mm_strdup(ecpg_type_name(ptr->variable->type->type)),
+											  mm_strdup(ecmdb_type_name(ptr->variable->type->type)),
 											  mm_strdup(" *)(ECPGget_var("),
 											  mm_strdup(var_text)),
 									  ECPGmake_simple_type(ptr->variable->type->type,
@@ -379,7 +379,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 			/* create call to "ECPGset_var(<counter>, <connection>, <pointer>. <line number>)" */
 			if (!skip_set_var)
 			{
-				sprintf(var_text, "%d, %s", ecpg_internal_var++, var_ptr ? "&(" : "(");
+				sprintf(var_text, "%d, %s", ecmdb_internal_var++, var_ptr ? "&(" : "(");
 				result = cat_str(5, result, mm_strdup("ECPGset_var("),
 								 mm_strdup(var_text), mm_strdup(original_var),
 								 mm_strdup("), __LINE__);\n"));
@@ -394,7 +394,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 			{
 				/* change variable name to "ECPGget_var(<counter>)" */
 				original_var = ptr->indicator->name;
-				sprintf(var_text, "%d))", ecpg_internal_var);
+				sprintf(var_text, "%d))", ecmdb_internal_var);
 				var_ptr = false;
 
 				if (ptr->indicator->type->type == ECPGt_struct
@@ -431,7 +431,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 					else
 					{
 						newind = new_variable(cat_str(4, mm_strdup("("),
-													  mm_strdup(ecpg_type_name(ptr->indicator->type->u.element->type)),
+													  mm_strdup(ecmdb_type_name(ptr->indicator->type->u.element->type)),
 													  mm_strdup(" *)(ECPGget_var("), mm_strdup(var_text)),
 											  ECPGmake_array_type(ECPGmake_simple_type(ptr->indicator->type->u.element->type,
 																					   ptr->indicator->type->u.element->size,
@@ -444,7 +444,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 				else if (atoi(ptr->indicator->type->size) > 1)
 				{
 					newind = new_variable(cat_str(4, mm_strdup("("),
-												  mm_strdup(ecpg_type_name(ptr->indicator->type->type)),
+												  mm_strdup(ecmdb_type_name(ptr->indicator->type->type)),
 												  mm_strdup(" *)(ECPGget_var("),
 												  mm_strdup(var_text)),
 										  ECPGmake_simple_type(ptr->indicator->type->type,
@@ -455,7 +455,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 				else
 				{
 					newind = new_variable(cat_str(4, mm_strdup("*("),
-												  mm_strdup(ecpg_type_name(ptr->indicator->type->type)),
+												  mm_strdup(ecmdb_type_name(ptr->indicator->type->type)),
 												  mm_strdup(" *)(ECPGget_var("),
 												  mm_strdup(var_text)),
 										  ECPGmake_simple_type(ptr->indicator->type->type,
@@ -466,7 +466,7 @@ adjust_outofscope_cursor_vars(struct cursor *cur)
 				}
 
 				/* create call to "ECPGset_var(<counter>, <pointer>. <line number>)" */
-				sprintf(var_text, "%d, %s", ecpg_internal_var++, var_ptr ? "&(" : "(");
+				sprintf(var_text, "%d, %s", ecmdb_internal_var++, var_ptr ? "&(" : "(");
 				result = cat_str(5, result, mm_strdup("ECPGset_var("),
 								 mm_strdup(var_text), mm_strdup(original_var),
 								 mm_strdup("), __LINE__);\n"));
@@ -494,7 +494,7 @@ add_additional_variables(char *name, bool insert)
 {
 	struct cursor *ptr;
 	struct arguments *p;
-	int (* strcmp_fn)(const char *, const char *) = ((name[0] == ':' || name[0] == '"') ? strcmp : pg_strcasecmp);
+	int (* strcmp_fn)(const char *, const char *) = ((name[0] == ':' || name[0] == '"') ? strcmp : mdb_strcasecmp);
 
 	for (ptr = cur; ptr != NULL; ptr=ptr->next)
 	{

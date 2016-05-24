@@ -137,13 +137,13 @@ main(int argc, char *argv[])
 		switch (c)
 		{
 			case 'h':
-				host = pg_strdup(optarg);
+				host = mdb_strdup(optarg);
 				break;
 			case 'p':
-				port = pg_strdup(optarg);
+				port = mdb_strdup(optarg);
 				break;
 			case 'U':
-				username = pg_strdup(optarg);
+				username = mdb_strdup(optarg);
 				break;
 			case 'w':
 				prompt_password = TRI_NO;
@@ -158,7 +158,7 @@ main(int argc, char *argv[])
 				quiet = true;
 				break;
 			case 'd':
-				dbname = pg_strdup(optarg);
+				dbname = mdb_strdup(optarg);
 				break;
 			case 'z':
 				vacopts.and_analyze = true;
@@ -200,7 +200,7 @@ main(int argc, char *argv[])
 				}
 				break;
 			case 2:
-				maintenance_db = pg_strdup(optarg);
+				maintenance_db = mdb_strdup(optarg);
 				break;
 			case 3:
 				analyze_in_stages = vacopts.analyze_only = true;
@@ -385,7 +385,7 @@ vacuum_one_database(const char *dbname, vacuumingOptions *vacopts,
 		initPQExpBuffer(&buf);
 
 		res = executeQuery(conn,
-			"SELECT c.relname, ns.nspname FROM pg_class c, pg_namespace ns\n"
+			"SELECT c.relname, ns.nspname FROM mdb_class c, mdb_namespace ns\n"
 			 " WHERE relkind IN (\'r\', \'m\') AND c.relnamespace = ns.oid\n"
 						   " ORDER BY c.relpages DESC;",
 						   progname, echo);
@@ -421,7 +421,7 @@ vacuum_one_database(const char *dbname, vacuumingOptions *vacopts,
 	 * for the first slot.  If not in parallel mode, the first slot in the
 	 * array contains the connection.
 	 */
-	slots = (ParallelSlot *) pg_malloc(sizeof(ParallelSlot) * concurrentCons);
+	slots = (ParallelSlot *) mdb_malloc(sizeof(ParallelSlot) * concurrentCons);
 	init_slot(slots, conn, progname);
 	if (parallel)
 	{
@@ -547,7 +547,7 @@ vacuum_all_databases(vacuumingOptions *vacopts,
 	conn = connectMaintenanceDatabase(maintenance_db, host, port,
 									  username, prompt_password, progname);
 	result = executeQuery(conn,
-			"SELECT datname FROM pg_database WHERE datallowconn ORDER BY 1;",
+			"SELECT datname FROM mdb_database WHERE datallowconn ORDER BY 1;",
 						  progname, echo);
 	PQfinish(conn);
 

@@ -371,8 +371,8 @@ typedef enum PredicateLockTargetType
 
 /*
  * This structure is used to quickly capture a copy of all predicate
- * locks.  This is currently used only by the pg_lock_status function,
- * which in turn is used by the pg_locks view.
+ * locks.  This is currently used only by the mdb_lock_status function,
+ * which in turn is used by the mdb_locks view.
  */
 typedef struct PredicateLockData
 {

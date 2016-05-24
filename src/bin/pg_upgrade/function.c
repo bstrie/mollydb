@@ -4,12 +4,12 @@
  *	server-side function support
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/function.c
+ *	src/bin/mdb_upgrade/function.c
  */
 
 #include "mollydb_fe.h"
 
-#include "pg_upgrade.h"
+#include "mdb_upgrade.h"
 
 #include "access/transam.h"
 
@@ -28,7 +28,7 @@ get_loadable_libraries(void)
 	int			dbnum;
 	bool		found_public_plpython_handler = false;
 
-	ress = (PGresult **) pg_malloc(old_cluster.dbarr.ndbs * sizeof(PGresult *));
+	ress = (PGresult **) mdb_malloc(old_cluster.dbarr.ndbs * sizeof(PGresult *));
 	totaltups = 0;
 
 	/* Fetch all library names, removing duplicates within each DB */
@@ -39,13 +39,13 @@ get_loadable_libraries(void)
 
 		/*
 		 * Fetch all libraries referenced in this DB.  We can't exclude the
-		 * "pg_catalog" schema because, while such functions are not
-		 * explicitly dumped by pg_dump, they do reference implicit objects
-		 * that pg_dump does dump, e.g. CREATE LANGUAGE plperl.
+		 * "mdb_catalog" schema because, while such functions are not
+		 * explicitly dumped by mdb_dump, they do reference implicit objects
+		 * that mdb_dump does dump, e.g. CREATE LANGUAGE plperl.
 		 */
 		ress[dbnum] = executeQueryOrDie(conn,
 										"SELECT DISTINCT probin "
-										"FROM	pg_catalog.pg_proc "
+										"FROM	mdb_catalog.mdb_proc "
 										"WHERE	prolang = 13 /* C */ AND "
 										"probin IS NOT NULL AND "
 										"oid >= %u;",
@@ -55,7 +55,7 @@ get_loadable_libraries(void)
 		/*
 		 * Systems that install plpython before 8.1 have
 		 * plpython_call_handler() defined in the "public" schema, causing
-		 * pg_dump to dump it.  However that function still references
+		 * mdb_dump to dump it.  However that function still references
 		 * "plpython" (no "2"), so it throws an error on restore.  This code
 		 * checks for the problem function, reports affected databases to the
 		 * user and explains how to remove them. 8.1 git commit:
@@ -69,28 +69,28 @@ get_loadable_libraries(void)
 
 			res = executeQueryOrDie(conn,
 									"SELECT 1 "
-						   "FROM	pg_catalog.pg_proc JOIN pg_namespace "
-							 "		ON pronamespace = pg_namespace.oid "
+						   "FROM	mdb_catalog.mdb_proc JOIN mdb_namespace "
+							 "		ON pronamespace = mdb_namespace.oid "
 							   "WHERE proname = 'plpython_call_handler' AND "
 									"nspname = 'public' AND "
 									"prolang = 13 /* C */ AND "
 									"probin = '$libdir/plpython' AND "
-									"pg_proc.oid >= %u;",
+									"mdb_proc.oid >= %u;",
 									FirstNormalObjectId);
 			if (PQntuples(res) > 0)
 			{
 				if (!found_public_plpython_handler)
 				{
-					pg_log(PG_WARNING,
+					mdb_log(PG_WARNING,
 						   "\nThe old cluster has a \"plpython_call_handler\" function defined\n"
 						   "in the \"public\" schema which is a duplicate of the one defined\n"
-						   "in the \"pg_catalog\" schema.  You can confirm this by executing\n"
+						   "in the \"mdb_catalog\" schema.  You can confirm this by executing\n"
 						   "in psql:\n"
 						   "\n"
 						   "    \\df *.plpython_call_handler\n"
 						   "\n"
 						   "The \"public\" schema version of this function was created by a\n"
-						   "pre-8.1 install of plpython, and must be removed for pg_upgrade\n"
+						   "pre-8.1 install of plpython, and must be removed for mdb_upgrade\n"
 						   "to complete because it references a now-obsolete \"plpython\"\n"
 						   "shared object file.  You can remove the \"public\" schema version\n"
 					   "of this function by running the following command:\n"
@@ -100,7 +100,7 @@ get_loadable_libraries(void)
 						   "in each affected database:\n"
 						   "\n");
 				}
-				pg_log(PG_WARNING, "    %s\n", active_db->db_name);
+				mdb_log(PG_WARNING, "    %s\n", active_db->db_name);
 				found_public_plpython_handler = true;
 			}
 			PQclear(res);
@@ -110,10 +110,10 @@ get_loadable_libraries(void)
 	}
 
 	if (found_public_plpython_handler)
-		pg_fatal("Remove the problem functions from the old cluster to continue.\n");
+		mdb_fatal("Remove the problem functions from the old cluster to continue.\n");
 
 	/* Allocate what's certainly enough space */
-	os_info.libraries = (char **) pg_malloc(totaltups * sizeof(char *));
+	os_info.libraries = (char **) mdb_malloc(totaltups * sizeof(char *));
 
 	/*
 	 * Now remove duplicates across DBs.  This is pretty inefficient code, but
@@ -143,7 +143,7 @@ get_loadable_libraries(void)
 				}
 			}
 			if (!dup)
-				os_info.libraries[totaltups++] = pg_strdup(lib);
+				os_info.libraries[totaltups++] = mdb_strdup(lib);
 		}
 
 		PQclear(res);
@@ -151,7 +151,7 @@ get_loadable_libraries(void)
 
 	os_info.num_libraries = totaltups;
 
-	pg_free(ress);
+	mdb_free(ress);
 }
 
 
@@ -191,7 +191,7 @@ check_loadable_libraries(void)
 		 * "plpython" in an old PG <= 9.1 cluster must look for "plpython2" in
 		 * the new cluster.
 		 *
-		 * For this case, we could check pg_pltemplate, but that only works
+		 * For this case, we could check mdb_pltemplate, but that only works
 		 * for languages, and does not help with function shared objects, so
 		 * we just do a general fix.
 		 */
@@ -213,7 +213,7 @@ check_loadable_libraries(void)
 			found = true;
 
 			if (script == NULL && (script = fopen_priv(output_path, "w")) == NULL)
-				pg_fatal("Could not open file \"%s\": %s\n",
+				mdb_fatal("Could not open file \"%s\": %s\n",
 						 output_path, getErrorText());
 			fprintf(script, "Could not load library \"%s\"\n%s\n",
 					lib,
@@ -228,8 +228,8 @@ check_loadable_libraries(void)
 	if (found)
 	{
 		fclose(script);
-		pg_log(PG_REPORT, "fatal\n");
-		pg_fatal("Your installation references loadable libraries that are missing from the\n"
+		mdb_log(PG_REPORT, "fatal\n");
+		mdb_fatal("Your installation references loadable libraries that are missing from the\n"
 				 "new installation.  You can add these libraries to the new installation,\n"
 				 "or remove the functions using them from the old installation.  A list of\n"
 				 "problem libraries is in the file:\n"

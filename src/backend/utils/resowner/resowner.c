@@ -94,11 +94,11 @@ typedef struct ResourceArray
  * is slower when there are a lot of locks belonging to other resource owners.
  *
  * MAX_RESOWNER_LOCKS is the size of the per-resource owner cache. It's
- * chosen based on some testing with pg_dump with a large schema. When the
- * tests were done (on 9.2), resource owners in a pg_dump run contained up
+ * chosen based on some testing with mdb_dump with a large schema. When the
+ * tests were done (on 9.2), resource owners in a mdb_dump run contained up
  * to 9 locks, regardless of the schema size, except for the top resource
  * owner which contained much more (overflowing the cache). 15 seems like a
- * nice round number that's somewhat higher than what pg_dump needs. Note that
+ * nice round number that's somewhat higher than what mdb_dump needs. Note that
  * making this number larger is not free - the bigger the cache, the slower
  * it is to release locks (in retail), when a resource owner holds many locks.
  */

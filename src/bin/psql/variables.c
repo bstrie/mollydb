@@ -49,7 +49,7 @@ CreateVariableSpace(void)
 {
 	struct _variable *ptr;
 
-	ptr = pg_malloc(sizeof *ptr);
+	ptr = mdb_malloc(sizeof *ptr);
 	ptr->name = NULL;
 	ptr->value = NULL;
 	ptr->assign_hook = NULL;
@@ -97,22 +97,22 @@ ParseVariableBool(const char *value, const char *name)
 
 	len = strlen(value);
 
-	if (pg_strncasecmp(value, "true", len) == 0)
+	if (mdb_strncasecmp(value, "true", len) == 0)
 		return true;
-	else if (pg_strncasecmp(value, "false", len) == 0)
+	else if (mdb_strncasecmp(value, "false", len) == 0)
 		return false;
-	else if (pg_strncasecmp(value, "yes", len) == 0)
+	else if (mdb_strncasecmp(value, "yes", len) == 0)
 		return true;
-	else if (pg_strncasecmp(value, "no", len) == 0)
+	else if (mdb_strncasecmp(value, "no", len) == 0)
 		return false;
 	/* 'o' is not unique enough */
-	else if (pg_strncasecmp(value, "on", (len > 2 ? len : 2)) == 0)
+	else if (mdb_strncasecmp(value, "on", (len > 2 ? len : 2)) == 0)
 		return true;
-	else if (pg_strncasecmp(value, "off", (len > 2 ? len : 2)) == 0)
+	else if (mdb_strncasecmp(value, "off", (len > 2 ? len : 2)) == 0)
 		return false;
-	else if (pg_strcasecmp(value, "1") == 0)
+	else if (mdb_strcasecmp(value, "1") == 0)
 		return true;
-	else if (pg_strcasecmp(value, "0") == 0)
+	else if (mdb_strcasecmp(value, "0") == 0)
 		return false;
 	else
 	{
@@ -208,7 +208,7 @@ SetVariable(VariableSpace space, const char *name, const char *value)
 			/* found entry, so update */
 			if (current->value)
 				free(current->value);
-			current->value = pg_strdup(value);
+			current->value = mdb_strdup(value);
 			if (current->assign_hook)
 				(*current->assign_hook) (current->value);
 			return true;
@@ -216,9 +216,9 @@ SetVariable(VariableSpace space, const char *name, const char *value)
 	}
 
 	/* not present, make new entry */
-	current = pg_malloc(sizeof *current);
-	current->name = pg_strdup(name);
-	current->value = pg_strdup(value);
+	current = mdb_malloc(sizeof *current);
+	current->name = mdb_strdup(name);
+	current->value = mdb_strdup(value);
 	current->assign_hook = NULL;
 	current->next = NULL;
 	previous->next = current;
@@ -254,8 +254,8 @@ SetVariableAssignHook(VariableSpace space, const char *name, VariableAssignHook 
 	}
 
 	/* not present, make new entry */
-	current = pg_malloc(sizeof *current);
-	current->name = pg_strdup(name);
+	current = mdb_malloc(sizeof *current);
+	current->name = mdb_strdup(name);
 	current->value = NULL;
 	current->assign_hook = hook;
 	current->next = NULL;

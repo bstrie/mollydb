@@ -1,25 +1,25 @@
 <!-- doc/src/sgml/pgbuffercache.sgml -->
 
-<sect1 id="pgbuffercache" xreflabel="pg_buffercache">
- <title>pg_buffercache</title>
+<sect1 id="pgbuffercache" xreflabel="mdb_buffercache">
+ <title>mdb_buffercache</title>
 
  <indexterm zone="pgbuffercache">
-  <primary>pg_buffercache</primary>
+  <primary>mdb_buffercache</primary>
  </indexterm>
 
  <para>
-  The <filename>pg_buffercache</filename> module provides a means for
+  The <filename>mdb_buffercache</filename> module provides a means for
   examining what's happening in the shared buffer cache in real time.
  </para>
 
  <indexterm>
-  <primary>pg_buffercache_pages</primary>
+  <primary>mdb_buffercache_pages</primary>
  </indexterm>
 
  <para>
-  The module provides a C function <function>pg_buffercache_pages</function>
+  The module provides a C function <function>mdb_buffercache_pages</function>
   that returns a set of records, plus a view
-  <structname>pg_buffercache</structname> that wraps the function for
+  <structname>mdb_buffercache</structname> that wraps the function for
   convenient use.
  </para>
 
@@ -29,14 +29,14 @@
  </para>
 
  <sect2>
-  <title>The <structname>pg_buffercache</structname> View</title>
+  <title>The <structname>mdb_buffercache</structname> View</title>
 
   <para>
    The definitions of the columns exposed by the view are shown in <xref linkend="pgbuffercache-columns">.
   </para>
 
   <table id="pgbuffercache-columns">
-   <title><structname>pg_buffercache</> Columns</title>
+   <title><structname>mdb_buffercache</> Columns</title>
 
    <tgroup cols="4">
     <thead>
@@ -59,21 +59,21 @@
      <row>
       <entry><structfield>relfilenode</structfield></entry>
       <entry><type>oid</type></entry>
-      <entry><literal>pg_class.relfilenode</literal></entry>
+      <entry><literal>mdb_class.relfilenode</literal></entry>
       <entry>Filenode number of the relation</entry>
      </row>
 
      <row>
       <entry><structfield>reltablespace</structfield></entry>
       <entry><type>oid</type></entry>
-      <entry><literal>pg_tablespace.oid</literal></entry>
+      <entry><literal>mdb_tablespace.oid</literal></entry>
       <entry>Tablespace OID of the relation</entry>
      </row>
 
      <row>
       <entry><structfield>reldatabase</structfield></entry>
       <entry><type>oid</type></entry>
-      <entry><literal>pg_database.oid</literal></entry>
+      <entry><literal>mdb_database.oid</literal></entry>
       <entry>Database OID of the relation</entry>
      </row>
 
@@ -126,15 +126,15 @@
   <para>
    Because the cache is shared by all the databases, there will normally be
    pages from relations not belonging to the current database.  This means
-   that there may not be matching join rows in <structname>pg_class</> for
+   that there may not be matching join rows in <structname>mdb_class</> for
    some rows, or that there could even be incorrect joins.  If you are
-   trying to join against <structname>pg_class</>, it's a good idea to
+   trying to join against <structname>mdb_class</>, it's a good idea to
    restrict the join to rows having <structfield>reldatabase</> equal to
    the current database's OID or zero.
   </para>
 
   <para>
-   When the <structname>pg_buffercache</> view is accessed, internal buffer
+   When the <structname>mdb_buffercache</> view is accessed, internal buffer
    manager locks are taken for long enough to copy all the buffer state
    data that the view will display.
    This ensures that the view produces a consistent set of results, while not
@@ -148,9 +148,9 @@
 
 <screen>
 regression=# SELECT c.relname, count(*) AS buffers
-             FROM pg_buffercache b INNER JOIN pg_class c
-             ON b.relfilenode = pg_relation_filenode(c.oid) AND
-                b.reldatabase IN (0, (SELECT oid FROM pg_database
+             FROM mdb_buffercache b INNER JOIN mdb_class c
+             ON b.relfilenode = mdb_relation_filenode(c.oid) AND
+                b.reldatabase IN (0, (SELECT oid FROM mdb_database
                                       WHERE datname = current_database()))
              GROUP BY c.relname
              ORDER BY 2 DESC
@@ -160,14 +160,14 @@ regression=# SELECT c.relname, count(*) AS buffers
 ---------------------------------+---------
  tenk2                           |     345
  tenk1                           |     141
- pg_proc                         |      46
- pg_class                        |      45
- pg_attribute                    |      43
- pg_class_relname_nsp_index      |      30
- pg_proc_proname_args_nsp_index  |      28
- pg_attribute_relid_attnam_index |      26
- pg_depend                       |      22
- pg_depend_reference_index       |      20
+ mdb_proc                         |      46
+ mdb_class                        |      45
+ mdb_attribute                    |      43
+ mdb_class_relname_nsp_index      |      30
+ mdb_proc_proname_args_nsp_index  |      28
+ mdb_attribute_relid_attnam_index |      26
+ mdb_depend                       |      22
+ mdb_depend_reference_index       |      20
 (10 rows)
 </screen>
  </sect2>

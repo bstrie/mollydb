@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_crc32c_sse42.c
+ * mdb_crc32c_sse42.c
  *	  Compute CRC-32C checksum using Intel SSE 4.2 instructions.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -8,18 +8,18 @@
  *
  *
  * IDENTIFICATION
- *	  src/port/pg_crc32c_sse42.c
+ *	  src/port/mdb_crc32c_sse42.c
  *
  *-------------------------------------------------------------------------
  */
 #include "c.h"
 
-#include "port/pg_crc32c.h"
+#include "port/mdb_crc32c.h"
 
 #include <nmmintrin.h>
 
-pg_crc32c
-pg_comp_crc32c_sse42(pg_crc32c crc, const void *data, size_t len)
+mdb_crc32c
+mdb_comp_crc32c_sse42(mdb_crc32c crc, const void *data, size_t len)
 {
 	const unsigned char *p = data;
 	const unsigned char *pend = p + len;

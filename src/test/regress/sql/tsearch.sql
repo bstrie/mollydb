@@ -9,32 +9,32 @@
 -- Find unexpected zero link entries
 
 SELECT oid, prsname
-FROM pg_ts_parser
+FROM mdb_ts_parser
 WHERE prsnamespace = 0 OR prsstart = 0 OR prstoken = 0 OR prsend = 0 OR
       -- prsheadline is optional
       prslextype = 0;
 
 SELECT oid, dictname
-FROM pg_ts_dict
+FROM mdb_ts_dict
 WHERE dictnamespace = 0 OR dictowner = 0 OR dicttemplate = 0;
 
 SELECT oid, tmplname
-FROM pg_ts_template
+FROM mdb_ts_template
 WHERE tmplnamespace = 0 OR tmpllexize = 0;  -- tmplinit is optional
 
 SELECT oid, cfgname
-FROM pg_ts_config
+FROM mdb_ts_config
 WHERE cfgnamespace = 0 OR cfgowner = 0 OR cfgparser = 0;
 
 SELECT mapcfg, maptokentype, mapseqno
-FROM pg_ts_config_map
+FROM mdb_ts_config_map
 WHERE mapcfg = 0 OR mapdict = 0;
 
--- Look for pg_ts_config_map entries that aren't one of parser's token types
+-- Look for mdb_ts_config_map entries that aren't one of parser's token types
 SELECT * FROM
   ( SELECT oid AS cfgid, (ts_token_type(cfgparser)).tokid AS tokid
-    FROM pg_ts_config ) AS tt
-RIGHT JOIN pg_ts_config_map AS m
+    FROM mdb_ts_config ) AS tt
+RIGHT JOIN mdb_ts_config_map AS m
     ON (tt.cfgid=m.mapcfg AND tt.tokid=m.maptokentype)
 WHERE
     tt.cfgid IS NULL OR tt.tokid IS NULL;
@@ -457,7 +457,7 @@ SELECT to_tsquery('SKIES & My | booKs');
 --trigger
 CREATE TRIGGER tsvectorupdate
 BEFORE UPDATE OR INSERT ON test_tsvector
-FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger(a, 'pg_catalog.english', t);
+FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger(a, 'mdb_catalog.english', t);
 
 SELECT count(*) FROM test_tsvector WHERE a @@ to_tsquery('345&qwerty');
 INSERT INTO test_tsvector (t) VALUES ('345 qwerty');

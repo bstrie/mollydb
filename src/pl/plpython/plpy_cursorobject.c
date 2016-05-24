@@ -9,7 +9,7 @@
 #include <limits.h>
 
 #include "access/xact.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "utils/memutils.h"
 
 #include "plpython.h"
@@ -132,7 +132,7 @@ PLy_cursor_query(const char *query)
 		SPIPlanPtr	plan;
 		Portal		portal;
 
-		pg_verifymbstr(query, strlen(query), false);
+		mdb_verifymbstr(query, strlen(query), false);
 
 		plan = SPI_prepare(query, 0, NULL);
 		if (plan == NULL)

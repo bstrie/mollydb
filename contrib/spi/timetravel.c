@@ -11,7 +11,7 @@
 
 #include <ctype.h>
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/trigger.h"
 #include "executor/spi.h"
 #include "miscadmin.h"
@@ -507,7 +507,7 @@ findTTStatus(char *name)
 	TTOffList  *pp;
 
 	for (pp = TTOff; pp; pp = pp->next)
-		if (pg_strcasecmp(name, pp->name) == 0)
+		if (mdb_strcasecmp(name, pp->name) == 0)
 			return 0;
 	return 1;
 }

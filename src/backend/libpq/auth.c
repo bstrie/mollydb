@@ -138,8 +138,8 @@ static int	CheckCertAuth(Port *port);
  * Kerberos and GSSAPI GUCs
  *----------------------------------------------------------------
  */
-char	   *pg_krb_server_keyfile;
-bool		pg_krb_caseins_users;
+char	   *mdb_krb_server_keyfile;
+bool		mdb_krb_caseins_users;
 
 
 /*----------------------------------------------------------------
@@ -153,7 +153,7 @@ bool		pg_krb_caseins_users;
 #include <gssapi/gssapi.h>
 #endif
 
-static int	pg_GSS_recvauth(Port *port);
+static int	mdb_GSS_recvauth(Port *port);
 #endif   /* ENABLE_GSS */
 
 
@@ -165,8 +165,8 @@ static int	pg_GSS_recvauth(Port *port);
 typedef SECURITY_STATUS
 			(WINAPI * QUERY_SECURITY_CONTEXT_TOKEN_FN) (
 													   PCtxtHandle, void **);
-static int	pg_SSPI_recvauth(Port *port);
-static int pg_SSPI_make_upn(char *accountname,
+static int	mdb_SSPI_recvauth(Port *port);
+static int mdb_SSPI_make_upn(char *accountname,
 				 size_t accountnamesize,
 				 char *domainname,
 				 size_t domainnamesize,
@@ -291,7 +291,7 @@ auth_failed(Port *port, int status, char *logdetail)
 			break;
 	}
 
-	cdetail = psprintf(_("Connection matched pg_hba.conf line %d: \"%s\""),
+	cdetail = psprintf(_("Connection matched mdb_hba.conf line %d: \"%s\""),
 					   port->hba->linenumber, port->hba->rawline);
 	if (logdetail)
 		logdetail = psprintf("%s\n%s", logdetail, cdetail);
@@ -335,7 +335,7 @@ ClientAuthentication(Port *port)
 	if (port->hba->clientcert)
 	{
 		/*
-		 * When we parse pg_hba.conf, we have already made sure that we have
+		 * When we parse mdb_hba.conf, we have already made sure that we have
 		 * been able to load a certificate store. Thus, if a certificate is
 		 * present on the client, it has been verified against our root
 		 * certificate store, and the connection would have been aborted
@@ -366,7 +366,7 @@ ClientAuthentication(Port *port)
 		case uaReject:
 
 			/*
-			 * An explicit "reject" entry in pg_hba.conf.  This report exposes
+			 * An explicit "reject" entry in mdb_hba.conf.  This report exposes
 			 * the fact that there's an explicit reject entry, which is
 			 * perhaps not so desirable from a security standpoint; but the
 			 * message for an implicit reject could confuse the DBA a lot when
@@ -378,7 +378,7 @@ ClientAuthentication(Port *port)
 			{
 				char		hostinfo[NI_MAXHOST];
 
-				pg_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
+				mdb_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
 								   hostinfo, sizeof(hostinfo),
 								   NULL, 0,
 								   NI_NUMERICHOST);
@@ -388,13 +388,13 @@ ClientAuthentication(Port *port)
 #ifdef USE_SSL
 					ereport(FATAL,
 					   (errcode(ERRCODE_INVALID_AUTHORIZATION_SPECIFICATION),
-						errmsg("pg_hba.conf rejects replication connection for host \"%s\", user \"%s\", %s",
+						errmsg("mdb_hba.conf rejects replication connection for host \"%s\", user \"%s\", %s",
 							   hostinfo, port->user_name,
 							port->ssl_in_use ? _("SSL on") : _("SSL off"))));
 #else
 					ereport(FATAL,
 					   (errcode(ERRCODE_INVALID_AUTHORIZATION_SPECIFICATION),
-						errmsg("pg_hba.conf rejects replication connection for host \"%s\", user \"%s\"",
+						errmsg("mdb_hba.conf rejects replication connection for host \"%s\", user \"%s\"",
 							   hostinfo, port->user_name)));
 #endif
 				}
@@ -403,14 +403,14 @@ ClientAuthentication(Port *port)
 #ifdef USE_SSL
 					ereport(FATAL,
 					   (errcode(ERRCODE_INVALID_AUTHORIZATION_SPECIFICATION),
-						errmsg("pg_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\", %s",
+						errmsg("mdb_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\", %s",
 							   hostinfo, port->user_name,
 							   port->database_name,
 							port->ssl_in_use ? _("SSL on") : _("SSL off"))));
 #else
 					ereport(FATAL,
 					   (errcode(ERRCODE_INVALID_AUTHORIZATION_SPECIFICATION),
-						errmsg("pg_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\"",
+						errmsg("mdb_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\"",
 							   hostinfo, port->user_name,
 							   port->database_name)));
 #endif
@@ -431,7 +431,7 @@ ClientAuthentication(Port *port)
 			{
 				char		hostinfo[NI_MAXHOST];
 
-				pg_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
+				mdb_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
 								   hostinfo, sizeof(hostinfo),
 								   NULL, 0,
 								   NI_NUMERICHOST);
@@ -462,14 +462,14 @@ ClientAuthentication(Port *port)
 #ifdef USE_SSL
 					ereport(FATAL,
 					   (errcode(ERRCODE_INVALID_AUTHORIZATION_SPECIFICATION),
-						errmsg("no pg_hba.conf entry for replication connection from host \"%s\", user \"%s\", %s",
+						errmsg("no mdb_hba.conf entry for replication connection from host \"%s\", user \"%s\", %s",
 							   hostinfo, port->user_name,
 							   port->ssl_in_use ? _("SSL on") : _("SSL off")),
 						HOSTNAME_LOOKUP_DETAIL(port)));
 #else
 					ereport(FATAL,
 					   (errcode(ERRCODE_INVALID_AUTHORIZATION_SPECIFICATION),
-						errmsg("no pg_hba.conf entry for replication connection from host \"%s\", user \"%s\"",
+						errmsg("no mdb_hba.conf entry for replication connection from host \"%s\", user \"%s\"",
 							   hostinfo, port->user_name),
 						HOSTNAME_LOOKUP_DETAIL(port)));
 #endif
@@ -479,7 +479,7 @@ ClientAuthentication(Port *port)
 #ifdef USE_SSL
 					ereport(FATAL,
 					   (errcode(ERRCODE_INVALID_AUTHORIZATION_SPECIFICATION),
-						errmsg("no pg_hba.conf entry for host \"%s\", user \"%s\", database \"%s\", %s",
+						errmsg("no mdb_hba.conf entry for host \"%s\", user \"%s\", database \"%s\", %s",
 							   hostinfo, port->user_name,
 							   port->database_name,
 							   port->ssl_in_use ? _("SSL on") : _("SSL off")),
@@ -487,7 +487,7 @@ ClientAuthentication(Port *port)
 #else
 					ereport(FATAL,
 					   (errcode(ERRCODE_INVALID_AUTHORIZATION_SPECIFICATION),
-						errmsg("no pg_hba.conf entry for host \"%s\", user \"%s\", database \"%s\"",
+						errmsg("no mdb_hba.conf entry for host \"%s\", user \"%s\", database \"%s\"",
 							   hostinfo, port->user_name,
 							   port->database_name),
 						HOSTNAME_LOOKUP_DETAIL(port)));
@@ -499,7 +499,7 @@ ClientAuthentication(Port *port)
 		case uaGSS:
 #ifdef ENABLE_GSS
 			sendAuthRequest(port, AUTH_REQ_GSS);
-			status = pg_GSS_recvauth(port);
+			status = mdb_GSS_recvauth(port);
 #else
 			Assert(false);
 #endif
@@ -508,7 +508,7 @@ ClientAuthentication(Port *port)
 		case uaSSPI:
 #ifdef ENABLE_SSPI
 			sendAuthRequest(port, AUTH_REQ_SSPI);
-			status = pg_SSPI_recvauth(port);
+			status = mdb_SSPI_recvauth(port);
 #else
 			Assert(false);
 #endif
@@ -755,7 +755,7 @@ static GSS_DLLIMP gss_OID GSS_C_NT_USER_NAME = &GSS_C_NT_USER_NAME_desc;
 
 
 static void
-pg_GSS_error(int severity, char *errmsg, OM_uint32 maj_stat, OM_uint32 min_stat)
+mdb_GSS_error(int severity, char *errmsg, OM_uint32 maj_stat, OM_uint32 min_stat)
 {
 	gss_buffer_desc gmsg;
 	OM_uint32	lmin_s,
@@ -800,7 +800,7 @@ pg_GSS_error(int severity, char *errmsg, OM_uint32 maj_stat, OM_uint32 min_stat)
 }
 
 static int
-pg_GSS_recvauth(Port *port)
+mdb_GSS_recvauth(Port *port)
 {
 	OM_uint32	maj_stat,
 				min_stat,
@@ -824,22 +824,22 @@ pg_GSS_recvauth(Port *port)
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("GSSAPI is not supported in protocol version 2")));
 
-	if (pg_krb_server_keyfile && strlen(pg_krb_server_keyfile) > 0)
+	if (mdb_krb_server_keyfile && strlen(mdb_krb_server_keyfile) > 0)
 	{
 		/*
 		 * Set default Kerberos keytab file for the Krb5 mechanism.
 		 *
-		 * setenv("KRB5_KTNAME", pg_krb_server_keyfile, 0); except setenv()
+		 * setenv("KRB5_KTNAME", mdb_krb_server_keyfile, 0); except setenv()
 		 * not always available.
 		 */
 		if (getenv("KRB5_KTNAME") == NULL)
 		{
-			size_t		kt_len = strlen(pg_krb_server_keyfile) + 14;
+			size_t		kt_len = strlen(mdb_krb_server_keyfile) + 14;
 			char	   *kt_path = malloc(kt_len);
 
 			if (!kt_path ||
 				snprintf(kt_path, kt_len, "KRB5_KTNAME=%s",
-						 pg_krb_server_keyfile) != kt_len - 2 ||
+						 mdb_krb_server_keyfile) != kt_len - 2 ||
 				putenv(kt_path) != 0)
 			{
 				ereport(LOG,
@@ -942,7 +942,7 @@ pg_GSS_recvauth(Port *port)
 		if (maj_stat != GSS_S_COMPLETE && maj_stat != GSS_S_CONTINUE_NEEDED)
 		{
 			gss_delete_sec_context(&lmin_s, &port->gss->ctx, GSS_C_NO_BUFFER);
-			pg_GSS_error(ERROR,
+			mdb_GSS_error(ERROR,
 					   gettext_noop("accepting GSS security context failed"),
 						 maj_stat, min_stat);
 		}
@@ -968,7 +968,7 @@ pg_GSS_recvauth(Port *port)
 	 */
 	maj_stat = gss_display_name(&min_stat, port->gss->name, &gbuf, NULL);
 	if (maj_stat != GSS_S_COMPLETE)
-		pg_GSS_error(ERROR,
+		mdb_GSS_error(ERROR,
 					 gettext_noop("retrieving GSS user name failed"),
 					 maj_stat, min_stat);
 
@@ -993,8 +993,8 @@ pg_GSS_recvauth(Port *port)
 			/*
 			 * Match the realm part of the name first
 			 */
-			if (pg_krb_caseins_users)
-				ret = pg_strcasecmp(port->hba->krb_realm, cp);
+			if (mdb_krb_caseins_users)
+				ret = mdb_strcasecmp(port->hba->krb_realm, cp);
 			else
 				ret = strcmp(port->hba->krb_realm, cp);
 
@@ -1019,7 +1019,7 @@ pg_GSS_recvauth(Port *port)
 	}
 
 	ret = check_usermap(port->hba->usermap, port->user_name, gbuf.value,
-						pg_krb_caseins_users);
+						mdb_krb_caseins_users);
 
 	gss_release_buffer(&lmin_s, &gbuf);
 
@@ -1034,7 +1034,7 @@ pg_GSS_recvauth(Port *port)
  */
 #ifdef ENABLE_SSPI
 static void
-pg_SSPI_error(int severity, const char *errmsg, SECURITY_STATUS r)
+mdb_SSPI_error(int severity, const char *errmsg, SECURITY_STATUS r)
 {
 	char		sysmsg[256];
 
@@ -1052,7 +1052,7 @@ pg_SSPI_error(int severity, const char *errmsg, SECURITY_STATUS r)
 }
 
 static int
-pg_SSPI_recvauth(Port *port)
+mdb_SSPI_recvauth(Port *port)
 {
 	int			mtype;
 	StringInfoData buf;
@@ -1103,7 +1103,7 @@ pg_SSPI_recvauth(Port *port)
 								 &sspicred,
 								 &expiry);
 	if (r != SEC_E_OK)
-		pg_SSPI_error(ERROR, _("could not acquire SSPI credentials"), r);
+		mdb_SSPI_error(ERROR, _("could not acquire SSPI credentials"), r);
 
 	/*
 	 * Loop through SSPI message exchange. This exchange can consist of
@@ -1192,7 +1192,7 @@ pg_SSPI_recvauth(Port *port)
 				free(sspictx);
 			}
 			FreeCredentialsHandle(&sspicred);
-			pg_SSPI_error(ERROR,
+			mdb_SSPI_error(ERROR,
 						  _("could not accept SSPI security context"), r);
 		}
 
@@ -1254,7 +1254,7 @@ pg_SSPI_recvauth(Port *port)
 	if (r != SEC_E_OK)
 	{
 		FreeLibrary(secur32);
-		pg_SSPI_error(ERROR,
+		mdb_SSPI_error(ERROR,
 					  _("could not get token from SSPI security context"), r);
 	}
 
@@ -1294,12 +1294,12 @@ pg_SSPI_recvauth(Port *port)
 
 	if (!port->hba->compat_realm)
 	{
-		int			status = pg_SSPI_make_upn(accountname, sizeof(accountname),
+		int			status = mdb_SSPI_make_upn(accountname, sizeof(accountname),
 											  domainname, sizeof(domainname),
 											  port->hba->upn_username);
 
 		if (status != STATUS_OK)
-			/* Error already reported from pg_SSPI_make_upn */
+			/* Error already reported from mdb_SSPI_make_upn */
 			return status;
 	}
 
@@ -1309,7 +1309,7 @@ pg_SSPI_recvauth(Port *port)
 	 */
 	if (port->hba->krb_realm && strlen(port->hba->krb_realm))
 	{
-		if (pg_strcasecmp(port->hba->krb_realm, domainname) != 0)
+		if (mdb_strcasecmp(port->hba->krb_realm, domainname) != 0)
 		{
 			elog(DEBUG2,
 				 "SSPI domain (%s) and configured domain (%s) don't match",
@@ -1344,7 +1344,7 @@ pg_SSPI_recvauth(Port *port)
  * and optionally the accountname with the Kerberos user name.
  */
 static int
-pg_SSPI_make_upn(char *accountname,
+mdb_SSPI_make_upn(char *accountname,
 				 size_t accountnamesize,
 				 char *domainname,
 				 size_t domainnamesize,
@@ -1474,14 +1474,14 @@ interpret_ident_response(const char *ident_response,
 			int			i;		/* Index into *response_type */
 
 			cursor++;			/* Go over colon */
-			while (pg_isblank(*cursor))
+			while (mdb_isblank(*cursor))
 				cursor++;		/* skip blanks */
 			i = 0;
-			while (*cursor != ':' && *cursor != '\r' && !pg_isblank(*cursor) &&
+			while (*cursor != ':' && *cursor != '\r' && !mdb_isblank(*cursor) &&
 				   i < (int) (sizeof(response_type) - 1))
 				response_type[i++] = *cursor++;
 			response_type[i] = '\0';
-			while (pg_isblank(*cursor))
+			while (mdb_isblank(*cursor))
 				cursor++;		/* skip blanks */
 			if (strcmp(response_type, "USERID") != 0)
 				return false;
@@ -1506,7 +1506,7 @@ interpret_ident_response(const char *ident_response,
 						int			i;	/* Index into *ident_user */
 
 						cursor++;		/* Go over colon */
-						while (pg_isblank(*cursor))
+						while (mdb_isblank(*cursor))
 							cursor++;	/* skip blanks */
 						/* Rest of line is user name.  Copy it over. */
 						i = 0;
@@ -1559,11 +1559,11 @@ ident_inet(hbaPort *port)
 	 * Might look a little weird to first convert it to text and then back to
 	 * sockaddr, but it's protocol independent.
 	 */
-	pg_getnameinfo_all(&remote_addr.addr, remote_addr.salen,
+	mdb_getnameinfo_all(&remote_addr.addr, remote_addr.salen,
 					   remote_addr_s, sizeof(remote_addr_s),
 					   remote_port, sizeof(remote_port),
 					   NI_NUMERICHOST | NI_NUMERICSERV);
-	pg_getnameinfo_all(&local_addr.addr, local_addr.salen,
+	mdb_getnameinfo_all(&local_addr.addr, local_addr.salen,
 					   local_addr_s, sizeof(local_addr_s),
 					   local_port, sizeof(local_port),
 					   NI_NUMERICHOST | NI_NUMERICSERV);
@@ -1577,7 +1577,7 @@ ident_inet(hbaPort *port)
 	hints.ai_canonname = NULL;
 	hints.ai_addr = NULL;
 	hints.ai_next = NULL;
-	rc = pg_getaddrinfo_all(remote_addr_s, ident_port, &hints, &ident_serv);
+	rc = mdb_getaddrinfo_all(remote_addr_s, ident_port, &hints, &ident_serv);
 	if (rc || !ident_serv)
 	{
 		/* we don't expect this to happen */
@@ -1593,7 +1593,7 @@ ident_inet(hbaPort *port)
 	hints.ai_canonname = NULL;
 	hints.ai_addr = NULL;
 	hints.ai_next = NULL;
-	rc = pg_getaddrinfo_all(local_addr_s, NULL, &hints, &la);
+	rc = mdb_getaddrinfo_all(local_addr_s, NULL, &hints, &la);
 	if (rc || !la)
 	{
 		/* we don't expect this to happen */
@@ -1690,9 +1690,9 @@ ident_inet_done:
 	if (sock_fd != PGINVALID_SOCKET)
 		closesocket(sock_fd);
 	if (ident_serv)
-		pg_freeaddrinfo_all(remote_addr.addr.ss_family, ident_serv);
+		mdb_freeaddrinfo_all(remote_addr.addr.ss_family, ident_serv);
 	if (la)
-		pg_freeaddrinfo_all(local_addr.addr.ss_family, la);
+		mdb_freeaddrinfo_all(local_addr.addr.ss_family, la);
 
 	if (ident_return)
 		/* Success! Check the usermap */
@@ -1873,13 +1873,13 @@ CheckPAMAuth(Port *port, char *user, char *password)
 	pam_handle_t *pamh = NULL;
 	char		hostinfo[NI_MAXHOST];
 
-	retval = pg_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
+	retval = mdb_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
 								hostinfo, sizeof(hostinfo), NULL, 0,
 								port->hba->pam_use_hostname ? 0 : NI_NUMERICHOST | NI_NUMERICSERV);
 	if (retval != 0)
 	{
 		ereport(WARNING,
-				(errmsg_internal("pg_getnameinfo_all() failed: %s",
+				(errmsg_internal("mdb_getnameinfo_all() failed: %s",
 								 gai_strerror(retval))));
 		return STATUS_ERROR;
 	}
@@ -1900,7 +1900,7 @@ CheckPAMAuth(Port *port, char *user, char *password)
 	pam_passw_conv.appdata_ptr = (char *) password;		/* from password above,
 														 * not allocated */
 
-	/* Optionally, one can set the service name in pg_hba.conf */
+	/* Optionally, one can set the service name in mdb_hba.conf */
 	if (port->hba->pamservice && port->hba->pamservice[0] != '\0')
 		retval = pam_start(port->hba->pamservice, "mdb@",
 						   &pam_passw_conv, &pamh);
@@ -2481,14 +2481,14 @@ CheckRADIUSAuth(Port *port)
 	hint.ai_family = AF_UNSPEC;
 	snprintf(portstr, sizeof(portstr), "%d", port->hba->radiusport);
 
-	r = pg_getaddrinfo_all(port->hba->radiusserver, portstr, &hint, &serveraddrs);
+	r = mdb_getaddrinfo_all(port->hba->radiusserver, portstr, &hint, &serveraddrs);
 	if (r || !serveraddrs)
 	{
 		ereport(LOG,
 				(errmsg("could not translate RADIUS server name \"%s\" to address: %s",
 						port->hba->radiusserver, gai_strerror(r))));
 		if (serveraddrs)
-			pg_freeaddrinfo_all(hint.ai_family, serveraddrs);
+			mdb_freeaddrinfo_all(hint.ai_family, serveraddrs);
 		return STATUS_ERROR;
 	}
 	/* XXX: add support for multiple returned addresses? */
@@ -2557,7 +2557,7 @@ CheckRADIUSAuth(Port *port)
 		/* .. and for subsequent iterations the result of the previous XOR (calculated below) */
 		md5trailer = encryptedpassword + i;
 
-		if (!pg_md5_binary(cryptvector, strlen(port->hba->radiussecret) + RADIUS_VECTOR_LENGTH, encryptedpassword + i))
+		if (!mdb_md5_binary(cryptvector, strlen(port->hba->radiussecret) + RADIUS_VECTOR_LENGTH, encryptedpassword + i))
 		{
 			ereport(LOG,
 					(errmsg("could not perform MD5 encryption of password")));
@@ -2586,7 +2586,7 @@ CheckRADIUSAuth(Port *port)
 	{
 		ereport(LOG,
 				(errmsg("could not create RADIUS socket: %m")));
-		pg_freeaddrinfo_all(hint.ai_family, serveraddrs);
+		mdb_freeaddrinfo_all(hint.ai_family, serveraddrs);
 		return STATUS_ERROR;
 	}
 
@@ -2608,7 +2608,7 @@ CheckRADIUSAuth(Port *port)
 		ereport(LOG,
 				(errmsg("could not bind local RADIUS socket: %m")));
 		closesocket(sock);
-		pg_freeaddrinfo_all(hint.ai_family, serveraddrs);
+		mdb_freeaddrinfo_all(hint.ai_family, serveraddrs);
 		return STATUS_ERROR;
 	}
 
@@ -2618,12 +2618,12 @@ CheckRADIUSAuth(Port *port)
 		ereport(LOG,
 				(errmsg("could not send RADIUS packet: %m")));
 		closesocket(sock);
-		pg_freeaddrinfo_all(hint.ai_family, serveraddrs);
+		mdb_freeaddrinfo_all(hint.ai_family, serveraddrs);
 		return STATUS_ERROR;
 	}
 
 	/* Don't need the server address anymore */
-	pg_freeaddrinfo_all(hint.ai_family, serveraddrs);
+	mdb_freeaddrinfo_all(hint.ai_family, serveraddrs);
 
 	/*
 	 * Figure out at what time we should time out. We can't just use a single
@@ -2756,7 +2756,7 @@ CheckRADIUSAuth(Port *port)
 			memcpy(cryptvector + RADIUS_HEADER_LENGTH, receive_buffer + RADIUS_HEADER_LENGTH, packetlength - RADIUS_HEADER_LENGTH);
 		memcpy(cryptvector + packetlength, port->hba->radiussecret, strlen(port->hba->radiussecret));
 
-		if (!pg_md5_binary(cryptvector,
+		if (!mdb_md5_binary(cryptvector,
 						   packetlength + strlen(port->hba->radiussecret),
 						   encryptedpassword))
 		{

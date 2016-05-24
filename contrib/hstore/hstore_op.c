@@ -5,7 +5,7 @@
 
 #include "access/hash.h"
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "utils/builtins.h"
 #include "utils/memutils.h"

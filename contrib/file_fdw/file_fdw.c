@@ -18,7 +18,7 @@
 #include "access/htup_details.h"
 #include "access/reloptions.h"
 #include "access/sysattr.h"
-#include "catalog/pg_foreign_table.h"
+#include "catalog/mdb_foreign_table.h"
 #include "commands/copy.h"
 #include "commands/defrem.h"
 #include "commands/explain.h"
@@ -387,7 +387,7 @@ fileGetOptions(Oid foreigntableid,
 }
 
 /*
- * Retrieve per-column generic options from pg_attribute and construct a list
+ * Retrieve per-column generic options from mdb_attribute and construct a list
  * of DefElems representing them.
  *
  * At the moment we only have "force_not_null", and "force_null",
@@ -413,7 +413,7 @@ get_file_fdw_attribute_options(Oid relid)
 	/* Retrieve FDW options for all user-defined attributes. */
 	for (attnum = 1; attnum <= natts; attnum++)
 	{
-		Form_pg_attribute attr = tupleDesc->attrs[attnum - 1];
+		Form_mdb_attribute attr = tupleDesc->attrs[attnum - 1];
 		List	   *options;
 		ListCell   *lc;
 
@@ -754,7 +754,7 @@ fileAnalyzeForeignTable(Relation relation,
 
 	/*
 	 * Convert size to pages.  Must return at least 1 so that we can tell
-	 * later on that pg_class.relpages is not default.
+	 * later on that mdb_class.relpages is not default.
 	 */
 	*totalpages = (stat_buf.st_size + (BLCKSZ - 1)) / BLCKSZ;
 	if (*totalpages < 1)
@@ -856,7 +856,7 @@ check_selective_binary_conversion(RelOptInfo *baserel,
 		/* Get user attributes. */
 		if (attnum > 0)
 		{
-			Form_pg_attribute attr = tupleDesc->attrs[attnum - 1];
+			Form_mdb_attribute attr = tupleDesc->attrs[attnum - 1];
 			char	   *attname = NameStr(attr->attname);
 
 			/* Skip dropped attributes (probably shouldn't see any here). */
@@ -870,7 +870,7 @@ check_selective_binary_conversion(RelOptInfo *baserel,
 	numattrs = 0;
 	for (i = 0; i < tupleDesc->natts; i++)
 	{
-		Form_pg_attribute attr = tupleDesc->attrs[i];
+		Form_mdb_attribute attr = tupleDesc->attrs[i];
 
 		if (attr->attisdropped)
 			continue;
@@ -933,7 +933,7 @@ estimate_size(PlannerInfo *root, RelOptInfo *baserel,
 	if (baserel->pages > 0)
 	{
 		/*
-		 * We have # of pages and # of tuples from pg_class (that is, from a
+		 * We have # of pages and # of tuples from mdb_class (that is, from a
 		 * previous ANALYZE), so compute a tuples-per-page estimate and scale
 		 * that by the current file size.
 		 */

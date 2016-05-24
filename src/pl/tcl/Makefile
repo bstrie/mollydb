@@ -84,19 +84,19 @@ uninstall-data:
 
 
 check: submake
-	$(pg_regress_check) $(REGRESS_OPTS) $(REGRESS)
+	$(mdb_regress_check) $(REGRESS_OPTS) $(REGRESS)
 
 installcheck: submake
-	$(pg_regress_installcheck) $(REGRESS_OPTS) $(REGRESS)
+	$(mdb_regress_installcheck) $(REGRESS_OPTS) $(REGRESS)
 
 .PHONY: submake
 submake:
-	$(MAKE) -C $(top_builddir)/src/test/regress pg_regress$(X)
+	$(MAKE) -C $(top_builddir)/src/test/regress mdb_regress$(X)
 
 # pltclerrcodes.h is in the distribution tarball, so don't clean it here.
 clean distclean: clean-lib
 	rm -f $(OBJS)
-	rm -rf $(pg_regress_clean_files)
+	rm -rf $(mdb_regress_clean_files)
 ifeq ($(PORTNAME), win32)
 	rm -f $(tclwithver).def
 endif

@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * pg_dump.h
- *	  Common header file for the pg_dump utility
+ * mdb_dump.h
+ *	  Common header file for the mdb_dump utility
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/bin/pg_dump/pg_dump.h
+ * src/bin/mdb_dump/mdb_dump.h
  *
  *-------------------------------------------------------------------------
  */
@@ -14,7 +14,7 @@
 #ifndef PG_DUMP_H
 #define PG_DUMP_H
 
-#include "pg_backup.h"
+#include "mdb_backup.h"
 
 
 #define oidcmp(x,y) ( ((x) < (y) ? -1 : ((x) > (y)) ?  1 : 0) )
@@ -27,7 +27,7 @@
  * The data structures used to store system catalog information.  Every
  * dumpable object is a subclass of DumpableObject.
  *
- * NOTE: the structures described here live for the entire pg_dump run;
+ * NOTE: the structures described here live for the entire mdb_dump run;
  * and in most cases we make a struct for every object we can find in the
  * catalogs, not only those we are actually going to dump.  Hence, it's
  * best to store a minimal amount of per-object info in these structs,
@@ -40,7 +40,7 @@
 
 typedef enum
 {
-	/* When modifying this enum, update priority tables in pg_dump_sort.c! */
+	/* When modifying this enum, update priority tables in mdb_dump_sort.c! */
 	DO_NAMESPACE,
 	DO_EXTENSION,
 	DO_TYPE,
@@ -97,7 +97,7 @@ typedef uint32 DumpComponents;	/* a bitmask of dump object components */
  * component types which require us to obtain a lock on the table
  *
  * Note that some components only require looking at the information
- * in the pg_catalog tables and, for those components, we do not need
+ * in the mdb_catalog tables and, for those components, we do not need
  * to lock the table.  Be careful here though- some components use
  * server-side functions which pull the latest information from
  * SysCache and in those cases we *do* need to lock the table.
@@ -105,14 +105,14 @@ typedef uint32 DumpComponents;	/* a bitmask of dump object components */
  * We do not need locks for the COMMENT and SECLABEL components as
  * those simply query their associated tables without using any
  * server-side functions.  We do not need locks for the ACL component
- * as we pull that information from pg_class without using any
+ * as we pull that information from mdb_class without using any
  * server-side functions that use SysCache.  The USERMAP component
  * is only relevant for FOREIGN SERVERs and not tables, so no sense
  * locking a table for that either (that can happen if we are going
  * to dump "ALL" components for a table).
  *
  * We DO need locks for DEFINITION, due to various server-side
- * functions that are used and POLICY due to pg_get_expr().  We set
+ * functions that are used and POLICY due to mdb_get_expr().  We set
  * this up to grab the lock except in the cases we know to be safe.
  */
 #define DUMP_COMPONENTS_REQUIRING_LOCK (\
@@ -160,7 +160,7 @@ typedef struct _typeInfo
 	DumpableObject dobj;
 
 	/*
-	 * Note: dobj.name is the pg_type.typname entry.  format_type() might
+	 * Note: dobj.name is the mdb_type.typname entry.  format_type() might
 	 * produce something different than typname
 	 */
 	char	   *rolname;		/* name of owner, or empty string */
@@ -283,7 +283,7 @@ typedef struct _tableInfo
 	/* these two are set only if table is a sequence owned by a column: */
 	Oid			owning_tab;		/* OID of table owning sequence */
 	int			owning_col;		/* attr # of column owning sequence */
-	int			relpages;		/* table's size in pages (from pg_class) */
+	int			relpages;		/* table's size in pages (from mdb_class) */
 
 	bool		interesting;	/* true if need to collect more data */
 	bool		postponed_def;	/* matview must be postponed into post-data */
@@ -555,7 +555,7 @@ typedef struct _policyInfo
 
 /*
  * We build an array of these with an entry for each object that is an
- * extension member according to pg_depend.
+ * extension member according to mdb_depend.
  */
 typedef struct _extensionMemberId
 {

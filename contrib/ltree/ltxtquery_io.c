@@ -61,7 +61,7 @@ gettoken_query(QPRS_STATE *state, int32 *val, int32 *lenval, char **strval, uint
 
 	for (;;)
 	{
-		charlen = pg_mblen(state->buf);
+		charlen = mdb_mblen(state->buf);
 
 		switch (state->state)
 		{

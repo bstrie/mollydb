@@ -1,12 +1,12 @@
 /*
- * pg_controldata
+ * mdb_controldata
  *
- * reads the data from $PGDATA/global/pg_control
+ * reads the data from $PGDATA/global/mdb_control
  *
  * copyright (c) Oliver Elphick <olly@lfix.co.uk>, 2001;
  * licence: BSD
  *
- * src/bin/pg_controldata/pg_controldata.c
+ * src/bin/mdb_controldata/mdb_controldata.c
  */
 
 /*
@@ -22,9 +22,9 @@
 
 #include "access/xlog.h"
 #include "access/xlog_internal.h"
-#include "catalog/pg_control.h"
+#include "catalog/mdb_control.h"
 #include "common/controldata_utils.h"
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 
 
 static void
@@ -97,7 +97,7 @@ main(int argc, char *argv[])
 	char		xlogfilename[MAXFNAMELEN];
 	int			c;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_controldata"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_controldata"));
 
 	progname = get_progname(argv[0]);
 
@@ -110,7 +110,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_controldata (MollyDB) " PG_VERSION);
+			puts("mdb_controldata (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -161,7 +161,7 @@ main(int argc, char *argv[])
 	 * This slightly-chintzy coding will work as long as the control file
 	 * timestamps are within the range of time_t; that should be the case in
 	 * all foreseeable circumstances, so we don't bother importing the
-	 * backend's timezone library into pg_controldata.
+	 * backend's timezone library into mdb_controldata.
 	 *
 	 * Use variable for format to suppress overly-anal-retentive gcc warning
 	 * about %c
@@ -187,15 +187,15 @@ main(int argc, char *argv[])
 	snprintf(sysident_str, sizeof(sysident_str), UINT64_FORMAT,
 			 ControlFile->system_identifier);
 
-	printf(_("pg_control version number:            %u\n"),
-		   ControlFile->pg_control_version);
+	printf(_("mdb_control version number:            %u\n"),
+		   ControlFile->mdb_control_version);
 	printf(_("Catalog version number:               %u\n"),
 		   ControlFile->catalog_version_no);
 	printf(_("Database system identifier:           %s\n"),
 		   sysident_str);
 	printf(_("Database cluster state:               %s\n"),
 		   dbState(ControlFile->state));
-	printf(_("pg_control last modified:             %s\n"),
+	printf(_("mdb_control last modified:             %s\n"),
 		   pgctime_str);
 	printf(_("Latest checkpoint location:           %X/%X\n"),
 		   (uint32) (ControlFile->checkPoint >> 32),

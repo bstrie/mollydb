@@ -30,10 +30,10 @@ written in the old style can be left in place indefinitely, to provide
 backward compatibility for user-written C functions.
 
 
-Changes In pg_proc (System Data About a Function)
+Changes In mdb_proc (System Data About a Function)
 -------------------------------------------------
 
-A new column "proisstrict" will be added to the system pg_proc table.
+A new column "proisstrict" will be added to the system mdb_proc table.
 This is a boolean value which will be TRUE if the function is "strict",
 that is it always returns NULL when any of its inputs are NULL.  The
 function manager will check this field and skip calling the function when
@@ -61,7 +61,7 @@ the same function over and over; the lookup overhead should be paid once
 per query, not once per tuple.)
 
 
-When a function is looked up in pg_proc, the result is represented as
+When a function is looked up in mdb_proc, the result is represented as
 
 typedef struct
 {
@@ -87,7 +87,7 @@ a function handler could set it to avoid making repeated lookups of its
 own when the same FmgrInfo is used repeatedly during a query.)  fn_nargs
 is the number of arguments expected by the function, fn_strict is its
 strictness flag, and fn_retset shows whether it returns a set; all of
-these values come from the function's pg_proc entry.  fn_stats is also
+these values come from the function's mdb_proc entry.  fn_stats is also
 set up to control whether or not to track runtime statistics for calling
 this function.
 
@@ -219,7 +219,7 @@ int4pl(PG_FUNCTION_ARGS)
 This is still more code than before, but it's fairly readable, and it's
 also amenable to machine processing --- for example, we could probably
 write a script that scans code like this and extracts argument and result
-type info for comparison to the pg_proc table.
+type info for comparison to the mdb_proc table.
 
 For the standard data types float4, float8, and int8, these macros should hide
 whether the types are pass-by-value or pass-by reference, by incorporating
@@ -375,8 +375,8 @@ necessary for the majority of functions because the core backend code
 releases temporary space periodically, so that memory leaked in function
 execution isn't a big problem.  However, as of 7.1 memory leaks in
 functions that are called by index searches will not be cleaned up until
-end of transaction.  Therefore, functions that are listed in pg_amop or
-pg_amproc should be careful not to leak detoasted copies, and so these
+end of transaction.  Therefore, functions that are listed in mdb_amop or
+mdb_amproc should be careful not to leak detoasted copies, and so these
 functions do need to use PG_FREE_IF_COPY() for toastable inputs.
 
 A function should never try to re-TOAST its result value; it should just
@@ -390,7 +390,7 @@ Functions Accepting or Returning Sets
 
 [ this section revised 29-Aug-2002 for 7.3 ]
 
-If a function is marked in pg_proc as returning a set, then it is called
+If a function is marked in mdb_proc as returning a set, then it is called
 with fcinfo->resultinfo pointing to a node of type ReturnSetInfo.  A
 function that desires to return a set should raise an error "called in
 context that does not accept a set result" if resultinfo is NULL or does
@@ -479,19 +479,19 @@ FmgrInfo itself.
 Telling the Difference Between Old- and New-Style Functions
 -----------------------------------------------------------
 
-During the conversion process, we carried two different pg_language
+During the conversion process, we carried two different mdb_language
 entries, "internal" and "newinternal", for internal functions.  The
 function manager used the language code to distinguish which calling
 convention to use.  (Old-style internal functions were supported via
 a function handler.)  As of Nov. 2000, no old-style internal functions
 remain, so we can drop support for them.  We will remove the old "internal"
-pg_language entry and rename "newinternal" to "internal".
+mdb_language entry and rename "newinternal" to "internal".
 
 The interim solution for dynamically-loaded compiled functions has been
-similar: two pg_language entries "C" and "newC".  This naming convention
+similar: two mdb_language entries "C" and "newC".  This naming convention
 is not desirable for the long run, and yet we cannot stop supporting
 old-style user functions.  Instead, it seems better to use just one
-pg_language entry "C", and require the dynamically-loaded library to
+mdb_language entry "C", and require the dynamically-loaded library to
 provide additional information that identifies new-style functions.
 This avoids compatibility problems --- for example, existing dump
 scripts will identify PL language handlers as being in language "C",
@@ -502,12 +502,12 @@ interface specification.
 Given a dynamically loaded function named "foo" (note that the name being
 considered here is the link-symbol name, not the SQL-level function name),
 the function manager will look for another function in the same dynamically
-loaded library named "pg_finfo_foo".  If this second function does not
+loaded library named "mdb_finfo_foo".  If this second function does not
 exist, then foo is assumed to be called old-style, thus ensuring backwards
 compatibility with existing libraries.  If the info function does exist,
 it is expected to have the signature
 
-	Pg_finfo_record * pg_finfo_foo (void);
+	Pg_finfo_record * mdb_finfo_foo (void);
 
 The info function will be called by the fmgr, and must return a pointer
 to a Pg_finfo_record struct.  (The returned struct will typically be a
@@ -546,7 +546,7 @@ foo ... LANGUAGE C regardless of whether it is old- or new-style.
 
 New-style dynamic functions will be invoked directly by fmgr, and will
 therefore have the same performance as internal functions after the initial
-pg_proc lookup overhead.  Old-style dynamic functions will be invoked via
+mdb_proc lookup overhead.  Old-style dynamic functions will be invoked via
 a handler, and will therefore have a small performance penalty.
 
 To allow old-style dynamic functions to work safely on toastable datatypes,

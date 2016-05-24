@@ -84,7 +84,7 @@ ExecCheckPlanOutput(Relation resultRel, List *targetList)
 	foreach(lc, targetList)
 	{
 		TargetEntry *tle = (TargetEntry *) lfirst(lc);
-		Form_pg_attribute attr;
+		Form_mdb_attribute attr;
 
 		if (tle->resjunk)
 			continue;			/* ignore junk tlist items */

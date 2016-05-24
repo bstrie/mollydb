@@ -113,7 +113,7 @@ CLEAN :
 	-@erase "$(OUTDIR)\libpq.res"
 	-@erase "$(OUTDIR)\$(OUTFILENAME).dll"
 	-@erase "$(OUTDIR)\$(OUTFILENAME).tds"
-	-@erase "$(INTDIR)\pg_config_paths.h"
+	-@erase "$(INTDIR)\mdb_config_paths.h"
 
 
 LIB32=tlib.exe
@@ -155,20 +155,20 @@ LIB32_OBJS= \
 	"$(INTDIR)\pthread-win32.obj"
 
 
-config: ..\..\include\pg_config.h ..\..\include\pg_config_ext.h ..\..\include\pg_config_os.h pg_config_paths.h
+config: ..\..\include\mdb_config.h ..\..\include\mdb_config_ext.h ..\..\include\mdb_config_os.h mdb_config_paths.h
 
-..\..\include\pg_config.h: ..\..\include\pg_config.h.win32
-	copy ..\..\include\pg_config.h.win32 ..\..\include\pg_config.h
+..\..\include\mdb_config.h: ..\..\include\mdb_config.h.win32
+	copy ..\..\include\mdb_config.h.win32 ..\..\include\mdb_config.h
 
-..\..\include\pg_config_ext.h: ..\..\include\pg_config_ext.h.win32
-	copy ..\..\include\pg_config_ext.h.win32 ..\..\include\pg_config_ext.h
+..\..\include\mdb_config_ext.h: ..\..\include\mdb_config_ext.h.win32
+	copy ..\..\include\mdb_config_ext.h.win32 ..\..\include\mdb_config_ext.h
 
-..\..\include\pg_config_os.h: ..\..\include\port\win32.h
-	copy ..\..\include\port\win32.h ..\..\include\pg_config_os.h
+..\..\include\mdb_config_os.h: ..\..\include\port\win32.h
+	copy ..\..\include\port\win32.h ..\..\include\mdb_config_os.h
 
 # Have to use \# so # isn't treated as a comment, but MSVC doesn't like this
-pg_config_paths.h: bcc32.mak
-	echo \#define SYSCONFDIR "" > pg_config_paths.h
+mdb_config_paths.h: bcc32.mak
+	echo \#define SYSCONFDIR "" > mdb_config_paths.h
 
 "$(OUTDIR)" :
 	@if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"

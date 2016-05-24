@@ -32,7 +32,7 @@
 #include "access/htup_details.h"
 #include "access/nbtree.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_am.h"
+#include "catalog/mdb_am.h"
 #include "funcapi.h"
 #include "miscadmin.h"
 #include "storage/bufmgr.h"
@@ -50,8 +50,8 @@
  */
 PG_FUNCTION_INFO_V1(pgstatindex);
 PG_FUNCTION_INFO_V1(pgstatindexbyid);
-PG_FUNCTION_INFO_V1(pg_relpages);
-PG_FUNCTION_INFO_V1(pg_relpagesbyid);
+PG_FUNCTION_INFO_V1(mdb_relpages);
+PG_FUNCTION_INFO_V1(mdb_relpagesbyid);
 PG_FUNCTION_INFO_V1(pgstatginindex);
 
 #define IS_INDEX(r) ((r)->rd_rel->relkind == RELKIND_INDEX)
@@ -286,16 +286,16 @@ pgstatindex_impl(Relation rel, FunctionCallInfo fcinfo)
 }
 
 /* --------------------------------------------------------
- * pg_relpages()
+ * mdb_relpages()
  *
  * Get the number of pages of the table/index.
  *
- * Usage: SELECT pg_relpages('t1');
- *		  SELECT pg_relpages('t1_pkey');
+ * Usage: SELECT mdb_relpages('t1');
+ *		  SELECT mdb_relpages('t1_pkey');
  * --------------------------------------------------------
  */
 Datum
-pg_relpages(PG_FUNCTION_ARGS)
+mdb_relpages(PG_FUNCTION_ARGS)
 {
 	text	   *relname = PG_GETARG_TEXT_P(0);
 	int64		relpages;
@@ -320,7 +320,7 @@ pg_relpages(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_relpagesbyid(PG_FUNCTION_ARGS)
+mdb_relpagesbyid(PG_FUNCTION_ARGS)
 {
 	Oid			relid = PG_GETARG_OID(0);
 	int64		relpages;

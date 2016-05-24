@@ -1202,7 +1202,7 @@ _bt_fix_scankey_strategy(ScanKey skey, int16 *indoption)
 
 	/*
 	 * We treat all btree operators as strict (even if they're not so marked
-	 * in pg_proc). This means that it is impossible for an operator condition
+	 * in mdb_proc). This means that it is impossible for an operator condition
 	 * with a NULL comparison constant to succeed, and we can reject it right
 	 * away.
 	 *

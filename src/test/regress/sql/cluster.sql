@@ -73,35 +73,35 @@ SELECT a,b,c,substring(d for 30), length(d) from clstr_tst;
 -- Verify that foreign key link still works
 INSERT INTO clstr_tst (b, c) VALUES (1111, 'this should fail');
 
-SELECT conname FROM pg_constraint WHERE conrelid = 'clstr_tst'::regclass
+SELECT conname FROM mdb_constraint WHERE conrelid = 'clstr_tst'::regclass
 ORDER BY 1;
 
 
 SELECT relname, relkind,
-    EXISTS(SELECT 1 FROM pg_class WHERE oid = c.reltoastrelid) AS hastoast
-FROM pg_class c WHERE relname LIKE 'clstr_tst%' ORDER BY relname;
+    EXISTS(SELECT 1 FROM mdb_class WHERE oid = c.reltoastrelid) AS hastoast
+FROM mdb_class c WHERE relname LIKE 'clstr_tst%' ORDER BY relname;
 
 -- Verify that indisclustered is correctly set
-SELECT pg_class.relname FROM pg_index, pg_class, pg_class AS pg_class_2
-WHERE pg_class.oid=indexrelid
-	AND indrelid=pg_class_2.oid
-	AND pg_class_2.relname = 'clstr_tst'
+SELECT mdb_class.relname FROM mdb_index, mdb_class, mdb_class AS mdb_class_2
+WHERE mdb_class.oid=indexrelid
+	AND indrelid=mdb_class_2.oid
+	AND mdb_class_2.relname = 'clstr_tst'
 	AND indisclustered;
 
 -- Try changing indisclustered
 ALTER TABLE clstr_tst CLUSTER ON clstr_tst_b_c;
-SELECT pg_class.relname FROM pg_index, pg_class, pg_class AS pg_class_2
-WHERE pg_class.oid=indexrelid
-	AND indrelid=pg_class_2.oid
-	AND pg_class_2.relname = 'clstr_tst'
+SELECT mdb_class.relname FROM mdb_index, mdb_class, mdb_class AS mdb_class_2
+WHERE mdb_class.oid=indexrelid
+	AND indrelid=mdb_class_2.oid
+	AND mdb_class_2.relname = 'clstr_tst'
 	AND indisclustered;
 
 -- Try turning off all clustering
 ALTER TABLE clstr_tst SET WITHOUT CLUSTER;
-SELECT pg_class.relname FROM pg_index, pg_class, pg_class AS pg_class_2
-WHERE pg_class.oid=indexrelid
-	AND indrelid=pg_class_2.oid
-	AND pg_class_2.relname = 'clstr_tst'
+SELECT mdb_class.relname FROM mdb_index, mdb_class, mdb_class AS mdb_class_2
+WHERE mdb_class.oid=indexrelid
+	AND indrelid=mdb_class_2.oid
+	AND mdb_class_2.relname = 'clstr_tst'
 	AND indisclustered;
 
 -- Verify that clustering all tables does in fact cluster the right ones

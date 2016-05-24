@@ -287,9 +287,9 @@ COPY main_table FROM stdin;
 DELETE FROM main_table WHERE a IN (123, 456);
 UPDATE main_table SET a = 50, b = 60;
 SELECT * FROM main_table ORDER BY a, b;
-SELECT pg_get_triggerdef(oid, true) FROM pg_trigger WHERE tgrelid = 'main_table'::regclass AND tgname = 'modified_a';
-SELECT pg_get_triggerdef(oid, false) FROM pg_trigger WHERE tgrelid = 'main_table'::regclass AND tgname = 'modified_a';
-SELECT pg_get_triggerdef(oid, true) FROM pg_trigger WHERE tgrelid = 'main_table'::regclass AND tgname = 'modified_any';
+SELECT mdb_get_triggerdef(oid, true) FROM mdb_trigger WHERE tgrelid = 'main_table'::regclass AND tgname = 'modified_a';
+SELECT mdb_get_triggerdef(oid, false) FROM mdb_trigger WHERE tgrelid = 'main_table'::regclass AND tgname = 'modified_a';
+SELECT mdb_get_triggerdef(oid, true) FROM mdb_trigger WHERE tgrelid = 'main_table'::regclass AND tgname = 'modified_any';
 DROP TRIGGER modified_a ON main_table;
 DROP TRIGGER modified_any ON main_table;
 DROP TRIGGER insert_a ON main_table;
@@ -312,7 +312,7 @@ FOR EACH STATEMENT EXECUTE PROCEDURE trigger_func('before_upd_a_stmt');
 CREATE TRIGGER after_upd_b_stmt_trig AFTER UPDATE OF b ON main_table
 FOR EACH STATEMENT EXECUTE PROCEDURE trigger_func('after_upd_b_stmt');
 
-SELECT pg_get_triggerdef(oid) FROM pg_trigger WHERE tgrelid = 'main_table'::regclass AND tgname = 'after_upd_a_b_row_trig';
+SELECT mdb_get_triggerdef(oid) FROM mdb_trigger WHERE tgrelid = 'main_table'::regclass AND tgname = 'after_upd_a_b_row_trig';
 
 UPDATE main_table SET a = 50;
 UPDATE main_table SET b = 10;
@@ -965,7 +965,7 @@ DROP TABLE city_table CASCADE;
 DROP TABLE country_table;
 
 
--- Test pg_trigger_depth()
+-- Test mdb_trigger_depth()
 
 create table depth_a (id int not null primary key);
 create table depth_b (id int not null primary key);
@@ -974,9 +974,9 @@ create table depth_c (id int not null primary key);
 create function depth_a_tf() returns trigger
   language plmdb as $$
 begin
-  raise notice '%: depth = %', tg_name, pg_trigger_depth();
+  raise notice '%: depth = %', tg_name, mdb_trigger_depth();
   insert into depth_b values (new.id);
-  raise notice '%: depth = %', tg_name, pg_trigger_depth();
+  raise notice '%: depth = %', tg_name, mdb_trigger_depth();
   return new;
 end;
 $$;
@@ -986,14 +986,14 @@ create trigger depth_a_tr before insert on depth_a
 create function depth_b_tf() returns trigger
   language plmdb as $$
 begin
-  raise notice '%: depth = %', tg_name, pg_trigger_depth();
+  raise notice '%: depth = %', tg_name, mdb_trigger_depth();
   begin
     execute 'insert into depth_c values (' || new.id::text || ')';
   exception
     when sqlstate 'U9999' then
-      raise notice 'SQLSTATE = U9999: depth = %', pg_trigger_depth();
+      raise notice 'SQLSTATE = U9999: depth = %', mdb_trigger_depth();
   end;
-  raise notice '%: depth = %', tg_name, pg_trigger_depth();
+  raise notice '%: depth = %', tg_name, mdb_trigger_depth();
   if new.id = 1 then
     execute 'insert into depth_c values (' || new.id::text || ')';
   end if;
@@ -1006,22 +1006,22 @@ create trigger depth_b_tr before insert on depth_b
 create function depth_c_tf() returns trigger
   language plmdb as $$
 begin
-  raise notice '%: depth = %', tg_name, pg_trigger_depth();
+  raise notice '%: depth = %', tg_name, mdb_trigger_depth();
   if new.id = 1 then
     raise exception sqlstate 'U9999';
   end if;
-  raise notice '%: depth = %', tg_name, pg_trigger_depth();
+  raise notice '%: depth = %', tg_name, mdb_trigger_depth();
   return new;
 end;
 $$;
 create trigger depth_c_tr before insert on depth_c
   for each row execute procedure depth_c_tf();
 
-select pg_trigger_depth();
+select mdb_trigger_depth();
 insert into depth_a values (1);
-select pg_trigger_depth();
+select mdb_trigger_depth();
 insert into depth_a values (2);
-select pg_trigger_depth();
+select mdb_trigger_depth();
 
 drop table depth_a, depth_b, depth_c;
 drop function depth_a_tf();

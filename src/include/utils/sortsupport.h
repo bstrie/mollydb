@@ -6,11 +6,11 @@
  * Traditionally, MollyDB has implemented sorting by repeatedly invoking
  * an SQL-callable comparison function "cmp(x, y) returns int" on pairs of
  * values to be compared, where the comparison function is the BTORDER_PROC
- * pg_amproc support function of the appropriate btree index opclass.
+ * mdb_amproc support function of the appropriate btree index opclass.
  *
  * This file defines alternative APIs that allow sorting to be performed with
  * reduced overhead.  To support lower-overhead sorting, a btree opclass may
- * provide a BTSORTSUPPORT_PROC pg_amproc entry, which must take a single
+ * provide a BTSORTSUPPORT_PROC mdb_amproc entry, which must take a single
  * argument of type internal and return void.  The argument is actually a
  * pointer to a SortSupportData struct, which is defined below.
  *
@@ -36,7 +36,7 @@
  * data can be stored using the ssup_extra field.  Any such data
  * should be allocated in the ssup_cxt memory context.
  *
- * Note: since pg_amproc functions are indexed by (lefttype, righttype)
+ * Note: since mdb_amproc functions are indexed by (lefttype, righttype)
  * it is possible to associate a BTSORTSUPPORT function with a cross-type
  * comparison.  This could sensibly be used to provide a fast comparator
  * function for such cases, but probably not any other acceleration method.

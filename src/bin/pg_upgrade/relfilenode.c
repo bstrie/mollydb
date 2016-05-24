@@ -4,15 +4,15 @@
  *	relfilenode functions
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/relfilenode.c
+ *	src/bin/mdb_upgrade/relfilenode.c
  */
 
 #include "mollydb_fe.h"
 
-#include "pg_upgrade.h"
+#include "mdb_upgrade.h"
 
 #include <sys/stat.h>
-#include "catalog/pg_class.h"
+#include "catalog/mdb_class.h"
 #include "access/transam.h"
 
 
@@ -30,7 +30,7 @@ void
 transfer_all_new_tablespaces(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 							 char *old_pgdata, char *new_pgdata)
 {
-	pg_log(PG_REPORT, "%s user relation files\n",
+	mdb_log(PG_REPORT, "%s user relation files\n",
 	  user_opts.transfer_mode == TRANSFER_MODE_LINK ? "Linking" : "Copying");
 
 	/*
@@ -105,7 +105,7 @@ transfer_all_new_dbs(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 		}
 
 		if (new_dbnum >= new_db_arr->ndbs)
-			pg_fatal("old database \"%s\" not found in the new cluster\n",
+			mdb_fatal("old database \"%s\" not found in the new cluster\n",
 					 old_db->db_name);
 
 		mappings = gen_db_file_maps(old_db, new_db, &n_maps, old_pgdata,
@@ -117,7 +117,7 @@ transfer_all_new_dbs(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 			transfer_single_new_db(mappings, n_maps, old_tablespace);
 		}
 		/* We allocate something even for n_maps == 0 */
-		pg_free(mappings);
+		mdb_free(mappings);
 	}
 
 	return;
@@ -227,7 +227,7 @@ transfer_relfile(FileNameMap *map, const char *type_suffix, bool vm_must_add_fro
 				if (errno == ENOENT)
 					return;
 				else
-					pg_fatal("error while checking for file existence \"%s.%s\" (\"%s\" to \"%s\"): %s\n",
+					mdb_fatal("error while checking for file existence \"%s.%s\" (\"%s\" to \"%s\"): %s\n",
 							 map->nspname, map->relname, old_file, new_file,
 							 getErrorText());
 			}
@@ -240,11 +240,11 @@ transfer_relfile(FileNameMap *map, const char *type_suffix, bool vm_must_add_fro
 		unlink(new_file);
 
 		/* Copying files might take some time, so give feedback. */
-		pg_log(PG_STATUS, "%s", old_file);
+		mdb_log(PG_STATUS, "%s", old_file);
 
 		if (user_opts.transfer_mode == TRANSFER_MODE_COPY)
 		{
-			pg_log(PG_VERBOSE, "copying \"%s\" to \"%s\"\n", old_file, new_file);
+			mdb_log(PG_VERBOSE, "copying \"%s\" to \"%s\"\n", old_file, new_file);
 
 			/* Rewrite visibility map if needed */
 			if (vm_must_add_frozenbit && (strcmp(type_suffix, "_vm") == 0))
@@ -253,12 +253,12 @@ transfer_relfile(FileNameMap *map, const char *type_suffix, bool vm_must_add_fro
 				msg = copyFile(old_file, new_file, true);
 
 			if (msg)
-				pg_fatal("error while copying relation \"%s.%s\" (\"%s\" to \"%s\"): %s\n",
+				mdb_fatal("error while copying relation \"%s.%s\" (\"%s\" to \"%s\"): %s\n",
 						 map->nspname, map->relname, old_file, new_file, msg);
 		}
 		else
 		{
-			pg_log(PG_VERBOSE, "linking \"%s\" to \"%s\"\n", old_file, new_file);
+			mdb_log(PG_VERBOSE, "linking \"%s\" to \"%s\"\n", old_file, new_file);
 
 			/* Rewrite visibility map if needed */
 			if (vm_must_add_frozenbit && (strcmp(type_suffix, "_vm") == 0))
@@ -267,7 +267,7 @@ transfer_relfile(FileNameMap *map, const char *type_suffix, bool vm_must_add_fro
 				msg = linkFile(old_file, new_file);
 
 			if (msg)
-				pg_fatal("error while creating link for relation \"%s.%s\" (\"%s\" to \"%s\"): %s\n",
+				mdb_fatal("error while creating link for relation \"%s.%s\" (\"%s\" to \"%s\"): %s\n",
 						 map->nspname, map->relname, old_file, new_file, msg);
 		}
 	}

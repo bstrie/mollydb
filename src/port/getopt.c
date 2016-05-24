@@ -32,7 +32,7 @@
 
 #include "c.h"
 
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)getopt.c	8.3 (Berkeley) 4/27/95";

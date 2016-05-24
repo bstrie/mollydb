@@ -16,9 +16,9 @@
 
 #include <math.h>
 
-#include "catalog/pg_aggregate.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_aggregate.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_type.h"
 #include "executor/executor.h"
 #include "miscadmin.h"
 #include "nodes/nodeFuncs.h"

@@ -1,16 +1,16 @@
 /*-------------------------------------------------------------------------
  *
- * pg_visibility.c
+ * mdb_visibility.c
  *	  display visibility map information and page-level visibility bits
  *
- *	  contrib/pg_visibility/pg_visibility.c
+ *	  contrib/mdb_visibility/mdb_visibility.c
  *-------------------------------------------------------------------------
  */
 #include "mollydb.h"
 
 #include "access/htup_details.h"
 #include "access/visibilitymap.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "miscadmin.h"
 #include "storage/bufmgr.h"
@@ -25,20 +25,20 @@ typedef struct vbits
 	uint8		bits[FLEXIBLE_ARRAY_MEMBER];
 } vbits;
 
-PG_FUNCTION_INFO_V1(pg_visibility_map);
-PG_FUNCTION_INFO_V1(pg_visibility_map_rel);
-PG_FUNCTION_INFO_V1(pg_visibility);
-PG_FUNCTION_INFO_V1(pg_visibility_rel);
-PG_FUNCTION_INFO_V1(pg_visibility_map_summary);
+PG_FUNCTION_INFO_V1(mdb_visibility_map);
+PG_FUNCTION_INFO_V1(mdb_visibility_map_rel);
+PG_FUNCTION_INFO_V1(mdb_visibility);
+PG_FUNCTION_INFO_V1(mdb_visibility_rel);
+PG_FUNCTION_INFO_V1(mdb_visibility_map_summary);
 
-static TupleDesc pg_visibility_tupdesc(bool include_blkno, bool include_pd);
+static TupleDesc mdb_visibility_tupdesc(bool include_blkno, bool include_pd);
 static vbits *collect_visibility_data(Oid relid, bool include_pd);
 
 /*
  * Visibility map information for a single block of a relation.
  */
 Datum
-pg_visibility_map(PG_FUNCTION_ARGS)
+mdb_visibility_map(PG_FUNCTION_ARGS)
 {
 	Oid			relid = PG_GETARG_OID(0);
 	int64		blkno = PG_GETARG_INT64(1);
@@ -56,7 +56,7 @@ pg_visibility_map(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("invalid block number")));
 
-	tupdesc = pg_visibility_tupdesc(false, false);
+	tupdesc = mdb_visibility_tupdesc(false, false);
 	MemSet(nulls, 0, sizeof(nulls));
 
 	mapbits = (int32) visibilitymap_get_status(rel, blkno, &vmbuffer);
@@ -75,7 +75,7 @@ pg_visibility_map(PG_FUNCTION_ARGS)
  * page-level information for the same block.
  */
 Datum
-pg_visibility(PG_FUNCTION_ARGS)
+mdb_visibility(PG_FUNCTION_ARGS)
 {
 	Oid			relid = PG_GETARG_OID(0);
 	int64		blkno = PG_GETARG_INT64(1);
@@ -95,7 +95,7 @@ pg_visibility(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("invalid block number")));
 
-	tupdesc = pg_visibility_tupdesc(false, true);
+	tupdesc = mdb_visibility_tupdesc(false, true);
 	MemSet(nulls, 0, sizeof(nulls));
 
 	mapbits = (int32) visibilitymap_get_status(rel, blkno, &vmbuffer);
@@ -121,7 +121,7 @@ pg_visibility(PG_FUNCTION_ARGS)
  * Visibility map information for every block in a relation.
  */
 Datum
-pg_visibility_map_rel(PG_FUNCTION_ARGS)
+mdb_visibility_map_rel(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	vbits	   *info;
@@ -133,7 +133,7 @@ pg_visibility_map_rel(PG_FUNCTION_ARGS)
 
 		funcctx = SRF_FIRSTCALL_INIT();
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
-		funcctx->tuple_desc = pg_visibility_tupdesc(true, false);
+		funcctx->tuple_desc = mdb_visibility_tupdesc(true, false);
 		funcctx->user_fctx = collect_visibility_data(relid, false);
 		MemoryContextSwitchTo(oldcontext);
 	}
@@ -165,7 +165,7 @@ pg_visibility_map_rel(PG_FUNCTION_ARGS)
  * level information for each block.
  */
 Datum
-pg_visibility_rel(PG_FUNCTION_ARGS)
+mdb_visibility_rel(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	vbits	   *info;
@@ -177,7 +177,7 @@ pg_visibility_rel(PG_FUNCTION_ARGS)
 
 		funcctx = SRF_FIRSTCALL_INIT();
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
-		funcctx->tuple_desc = pg_visibility_tupdesc(true, true);
+		funcctx->tuple_desc = mdb_visibility_tupdesc(true, true);
 		funcctx->user_fctx = collect_visibility_data(relid, true);
 		MemoryContextSwitchTo(oldcontext);
 	}
@@ -210,7 +210,7 @@ pg_visibility_rel(PG_FUNCTION_ARGS)
  * map for a particular relation.
  */
 Datum
-pg_visibility_map_summary(PG_FUNCTION_ARGS)
+mdb_visibility_map_summary(PG_FUNCTION_ARGS)
 {
 	Oid			relid = PG_GETARG_OID(0);
 	Relation	rel;
@@ -263,7 +263,7 @@ pg_visibility_map_summary(PG_FUNCTION_ARGS)
  * call.
  */
 static TupleDesc
-pg_visibility_tupdesc(bool include_blkno, bool include_pd)
+mdb_visibility_tupdesc(bool include_blkno, bool include_pd)
 {
 	TupleDesc	tupdesc;
 	AttrNumber	maxattr = 2;

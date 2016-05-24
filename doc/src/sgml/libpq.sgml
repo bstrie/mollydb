@@ -1361,7 +1361,7 @@ mollydb://%2Fvar%2Flib%2Fmollydb/dbname
       <listitem>
        <para>
         Service name to use for additional parameters.  It specifies a service
-        name in <filename>pg_service.conf</filename> that holds additional connection parameters.
+        name in <filename>mdb_service.conf</filename> that holds additional connection parameters.
         This allows applications to specify only a service name so connection parameters
         can be centrally maintained. See <xref linkend="libpq-pgservice">.
        </para>
@@ -3166,7 +3166,7 @@ Oid PQftable(const PGresult *res,
        <literal>InvalidOid</> is returned if the column number is out of range,
        or if the specified column is not a simple reference to a table column,
        or when using pre-3.0 protocol.
-       You can query the system table <literal>pg_class</literal> to determine
+       You can query the system table <literal>mdb_class</literal> to determine
        exactly which table is referenced.
       </para>
 
@@ -3252,10 +3252,10 @@ Oid PQftype(const PGresult *res,
       </para>
 
       <para>
-       You can query the system table <literal>pg_type</literal> to
+       You can query the system table <literal>mdb_type</literal> to
        obtain the names and properties of the various data types. The
        <acronym>OID</acronym>s of the built-in data types are defined
-       in the file <filename>src/include/catalog/pg_type.h</filename>
+       in the file <filename>src/include/catalog/mdb_type.h</filename>
        in the source tree.
       </para>
      </listitem>
@@ -5562,7 +5562,7 @@ int PQclientEncoding(const PGconn *<replaceable>conn</replaceable>);
       can use:
 
 <synopsis>
-char *pg_encoding_to_char(int <replaceable>encoding_id</replaceable>);
+char *mdb_encoding_to_char(int <replaceable>encoding_id</replaceable>);
 </synopsis>
      </para>
     </listitem>
@@ -6870,7 +6870,7 @@ myEventProc(PGEventId evtId, void *evtInfo, void *passThrough)
       </indexterm>
       <envar>PGSERVICEFILE</envar> specifies the name of the per-user
       connection service file.  If not set, it defaults
-      to <filename>~/.pg_service.conf</>
+      to <filename>~/.mdb_service.conf</>
       (see <xref linkend="libpq-pgservice">).
      </para>
     </listitem>
@@ -7090,7 +7090,7 @@ myEventProc(PGEventId evtId, void *evtInfo, void *passThrough)
        <primary><envar>PGSYSCONFDIR</envar></primary>
       </indexterm>
       <envar>PGSYSCONFDIR</envar> sets the directory containing the
-      <filename>pg_service.conf</> file and in a future version
+      <filename>mdb_service.conf</> file and in a future version
       possibly other system-wide configuration files.
      </para>
     </listitem>
@@ -7170,10 +7170,10 @@ myEventProc(PGEventId evtId, void *evtInfo, void *passThrough)
    <primary>connection service file</primary>
   </indexterm>
   <indexterm zone="libpq-pgservice">
-   <primary>pg_service.conf</primary>
+   <primary>mdb_service.conf</primary>
   </indexterm>
   <indexterm zone="libpq-pgservice">
-   <primary>.pg_service.conf</primary>
+   <primary>.mdb_service.conf</primary>
   </indexterm>
 
   <para>
@@ -7187,10 +7187,10 @@ myEventProc(PGEventId evtId, void *evtInfo, void *passThrough)
 
   <para>
    The connection service file can be a per-user service file
-   at <filename>~/.pg_service.conf</filename> or the location
+   at <filename>~/.mdb_service.conf</filename> or the location
    specified by the environment variable <envar>PGSERVICEFILE</envar>,
    or it can be a system-wide file
-   at <filename>`pg_config --sysconfdir`/pg_service.conf</filename> or in the directory
+   at <filename>`mdb_config --sysconfdir`/mdb_service.conf</filename> or in the directory
    specified by the environment variable
    <envar>PGSYSCONFDIR</envar>.  If service definitions with the same
    name exist in the user and the system file, the user file takes
@@ -7210,7 +7210,7 @@ port=5433
 user=admin
 </programlisting>
    An example file is provided at
-   <filename>share/pg_service.conf.sample</filename>.
+   <filename>share/mdb_service.conf.sample</filename>.
   </para>
  </sect1>
 
@@ -7233,9 +7233,9 @@ user=admin
 
   <para>
    LDAP connection parameter lookup uses the connection service file
-   <filename>pg_service.conf</filename> (see <xref
+   <filename>mdb_service.conf</filename> (see <xref
    linkend="libpq-pgservice">).  A line in a
-   <filename>pg_service.conf</filename> stanza that starts with
+   <filename>mdb_service.conf</filename> stanza that starts with
    <literal>ldap://</literal> will be recognized as an LDAP URL and an
    LDAP query will be performed. The result must be a list of
    <literal>keyword = value</literal> pairs which will be used to set
@@ -7250,7 +7250,7 @@ ldap://[<replaceable>hostname</replaceable>[:<replaceable>port</replaceable>]]/<
   </para>
 
   <para>
-   Processing of <filename>pg_service.conf</filename> is terminated after
+   Processing of <filename>mdb_service.conf</filename> is terminated after
    a successful LDAP lookup, but is continued if the LDAP server cannot
    be contacted.  This is to provide a fallback with further LDAP URL
    lines that point to different LDAP servers, classical <literal>keyword
@@ -7282,7 +7282,7 @@ ldap://ldap.mycompany.com/dc=mycompany,dc=com?description?one?(cn=mydatabase)
 
   <para>
    You can also mix regular service file entries with LDAP lookups.
-   A complete example for a stanza in <filename>pg_service.conf</filename>
+   A complete example for a stanza in <filename>mdb_service.conf</filename>
    would be:
 <programlisting>
 # only host and port are stored in LDAP, specify dbname and user explicitly
@@ -7894,11 +7894,11 @@ CPPFLAGS += -I/usr/local/mdb/include
       If there is any chance that your program might be compiled by
       other users then you should not hardcode the directory location
       like that.  Instead, you can run the utility
-      <command>pg_config</command><indexterm><primary>pg_config</><secondary
+      <command>mdb_config</command><indexterm><primary>mdb_config</><secondary
       sortas="libpq">with libpq</></> to find out where the header
       files are on the local system:
 <screen>
-<prompt>$</prompt> pg_config --includedir
+<prompt>$</prompt> mdb_config --includedir
 <computeroutput>/usr/local/include</computeroutput>
 </screen>
      </para>
@@ -7942,9 +7942,9 @@ cc -o testprog testprog1.o testprog2.o -L/usr/local/mdb/lib -lpq
 
      <para>
       You can find out the library directory using
-      <command>pg_config</command> as well:
+      <command>mdb_config</command> as well:
 <screen>
-<prompt>$</prompt> pg_config --libdir
+<prompt>$</prompt> mdb_config --libdir
 <computeroutput>/usr/local/mdb/lib</computeroutput>
 </screen>
      </para>
@@ -8045,7 +8045,7 @@ main(int argc, char **argv)
     /*
      * Our test case here involves using a cursor, for which we must be inside
      * a transaction block.  We could do the whole thing with a single
-     * PQexec() of "select * from pg_database", but that's too trivial to make
+     * PQexec() of "select * from mdb_database", but that's too trivial to make
      * a good example.
      */
 
@@ -8065,9 +8065,9 @@ main(int argc, char **argv)
     PQclear(res);
 
     /*
-     * Fetch rows from pg_database, the system catalog of databases
+     * Fetch rows from mdb_database, the system catalog of databases
      */
-    res = PQexec(conn, "DECLARE myportal CURSOR FOR select * from pg_database");
+    res = PQexec(conn, "DECLARE myportal CURSOR FOR select * from mdb_database");
     if (PQresultStatus(res) != PGRES_COMMAND_OK)
     {
         fprintf(stderr, "DECLARE CURSOR failed: %s", PQerrorMessage(conn));

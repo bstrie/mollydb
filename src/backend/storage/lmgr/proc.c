@@ -183,7 +183,7 @@ InitProcGlobal(void)
 	ProcGlobal->startupBufferPinWaitBufId = -1;
 	ProcGlobal->walwriterLatch = NULL;
 	ProcGlobal->checkpointerLatch = NULL;
-	pg_atomic_init_u32(&ProcGlobal->procArrayGroupFirst, INVALID_PGPROCNO);
+	mdb_atomic_init_u32(&ProcGlobal->procArrayGroupFirst, INVALID_PGPROCNO);
 
 	/*
 	 * Create and initialize all the PGPROC structures we'll need.  There are
@@ -400,7 +400,7 @@ InitProcess(void)
 	/* Initialize fields for group XID clearing. */
 	MyProc->procArrayGroupMember = false;
 	MyProc->procArrayGroupMemberXid = InvalidTransactionId;
-	pg_atomic_init_u32(&MyProc->procArrayGroupNext, INVALID_PGPROCNO);
+	mdb_atomic_init_u32(&MyProc->procArrayGroupNext, INVALID_PGPROCNO);
 
 	/* Check that group locking fields are in a proper initial state. */
 	Assert(MyProc->lockGroupLeader == NULL);
@@ -477,7 +477,7 @@ InitProcessPhase2(void)
  * Startup process however uses locks but never waits for them in the
  * normal backend sense. Startup process also takes part in sinval messaging
  * as a sendOnly process, so never reads messages from sinval queue. So
- * Startup process does have a VXID and does show up in pg_locks.
+ * Startup process does have a VXID and does show up in mdb_locks.
  */
 void
 InitAuxiliaryProcess(void)

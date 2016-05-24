@@ -19,7 +19,7 @@
 #include "mollydb.h"
 
 #include "access/reloptions.h"
-#include "catalog/pg_tablespace.h"
+#include "catalog/mdb_tablespace.h"
 #include "commands/tablespace.h"
 #include "miscadmin.h"
 #include "optimizer/cost.h"
@@ -43,9 +43,9 @@ typedef struct
 
 /*
  * InvalidateTableSpaceCacheCallback
- *		Flush all cache entries when pg_tablespace is updated.
+ *		Flush all cache entries when mdb_tablespace is updated.
  *
- * When pg_tablespace is updated, we must flush the cache entry at least
+ * When mdb_tablespace is updated, we must flush the cache entry at least
  * for that tablespace.  Currently, we just flush them all.  This is quick
  * and easy and doesn't cost much, since there shouldn't be terribly many
  * tablespaces, nor do we expect them to be frequently modified.
@@ -111,7 +111,7 @@ get_tablespace(Oid spcid)
 	TableSpaceOpts *opts;
 
 	/*
-	 * Since spcid is always from a pg_class tuple, InvalidOid implies the
+	 * Since spcid is always from a mdb_class tuple, InvalidOid implies the
 	 * default.
 	 */
 	if (spcid == InvalidOid)
@@ -143,7 +143,7 @@ get_tablespace(Oid spcid)
 
 		datum = SysCacheGetAttr(TABLESPACEOID,
 								tp,
-								Anum_pg_tablespace_spcoptions,
+								Anum_mdb_tablespace_spcoptions,
 								&isNull);
 		if (isNull)
 			opts = NULL;
@@ -159,7 +159,7 @@ get_tablespace(Oid spcid)
 
 	/*
 	 * Now create the cache entry.  It's important to do this only after
-	 * reading the pg_tablespace entry, since doing so could cause a cache
+	 * reading the mdb_tablespace entry, since doing so could cause a cache
 	 * flush.
 	 */
 	spc = (TableSpaceCacheEntry *) hash_search(TableSpaceCacheHash,

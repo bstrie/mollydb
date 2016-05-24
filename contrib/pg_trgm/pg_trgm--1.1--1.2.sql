@@ -1,7 +1,7 @@
-/* contrib/pg_trgm/pg_trgm--1.1--1.2.sql */
+/* contrib/mdb_trgm/mdb_trgm--1.1--1.2.sql */
 
 -- complain if script is sourced in psql, rather than via ALTER EXTENSION
-\echo Use "ALTER EXTENSION pg_trgm UPDATE TO '1.2'" to load this file. \quit
+\echo Use "ALTER EXTENSION mdb_trgm UPDATE TO '1.2'" to load this file. \quit
 
 CREATE FUNCTION word_similarity(text,text)
 RETURNS float4
@@ -11,12 +11,12 @@ LANGUAGE C STRICT IMMUTABLE;
 CREATE FUNCTION word_similarity_op(text,text)
 RETURNS bool
 AS 'MODULE_PATHNAME'
-LANGUAGE C STRICT STABLE;  -- stable because depends on pg_trgm.word_similarity_threshold
+LANGUAGE C STRICT STABLE;  -- stable because depends on mdb_trgm.word_similarity_threshold
 
 CREATE FUNCTION word_similarity_commutator_op(text,text)
 RETURNS bool
 AS 'MODULE_PATHNAME'
-LANGUAGE C STRICT STABLE;  -- stable because depends on pg_trgm.word_similarity_threshold
+LANGUAGE C STRICT STABLE;  -- stable because depends on mdb_trgm.word_similarity_threshold
 
 CREATE FUNCTION word_similarity_dist_op(text,text)
 RETURNS float4
@@ -67,7 +67,7 @@ LANGUAGE C IMMUTABLE STRICT;
 
 ALTER OPERATOR FAMILY gist_trgm_ops USING gist ADD
         OPERATOR        7       %> (text, text),
-        OPERATOR        8       <->> (text, text) FOR ORDER BY pg_catalog.float_ops;
+        OPERATOR        8       <->> (text, text) FOR ORDER BY mdb_catalog.float_ops;
 
 ALTER OPERATOR FAMILY gin_trgm_ops USING gin ADD
         OPERATOR        7       %> (text, text),

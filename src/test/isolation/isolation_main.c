@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * isolation_main --- pg_regress test launcher for isolation tests
+ * isolation_main --- mdb_regress test launcher for isolation tests
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -10,7 +10,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "pg_regress.h"
+#include "mdb_regress.h"
 
 char		saved_argv0[MAXPGPATH];
 char		isolation_exec[MAXPGPATH];
@@ -51,7 +51,7 @@ isolation_start_test(const char *testname,
 	/*
 	 * Look for files in the output dir first, consistent with a vpath search.
 	 * This is mainly to create more reasonable error messages if the file is
-	 * not found.  It also allows local test overrides when running pg_regress
+	 * not found.  It also allows local test overrides when running mdb_regress
 	 * outside of the source tree.
 	 */
 	snprintf(infile, sizeof(infile), "%s/specs/%s.spec",

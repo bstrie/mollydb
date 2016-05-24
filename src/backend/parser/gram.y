@@ -51,8 +51,8 @@
 
 #include "catalog/index.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_trigger.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_trigger.h"
 #include "commands/defrem.h"
 #include "commands/trigger.h"
 #include "nodes/makefuncs.h"
@@ -733,7 +733,7 @@ static Node *makeRecursiveViewSelect(char *relname, List *aliases, Node *query);
  */
 stmtblock:	stmtmulti
 			{
-				pg_yyget_extra(yyscanner)->parsetree = $1;
+				mdb_yyget_extra(yyscanner)->parsetree = $1;
 			}
 		;
 
@@ -6991,7 +6991,7 @@ aggr_arg:	func_arg
  * VARIADIC item, the ordered-args list must contain exactly one item that
  * is also VARIADIC with the same type.  This allows us to collapse the two
  * VARIADIC items into one, which is necessary to represent the aggregate in
- * pg_proc.  We check this at the grammar stage so that we can return a list
+ * mdb_proc.  We check this at the grammar stage so that we can return a list
  * in which the second VARIADIC item is already discarded, avoiding extra work
  * in cases such as DROP AGGREGATE.
  *
@@ -8950,7 +8950,7 @@ createdb_opt_name:
 		;
 
 /*
- *	Though the equals sign doesn't match other WITH options, pg_dump uses
+ *	Though the equals sign doesn't match other WITH options, mdb_dump uses
  *	equals for backward compatibility, and it doesn't seem worth removing it.
  */
 opt_equal:	'='										{}
@@ -12317,7 +12317,7 @@ func_expr_windowless:
 func_expr_common_subexpr:
 			COLLATION FOR '(' a_expr ')'
 				{
-					$$ = (Node *) makeFuncCall(SystemFuncName("pg_collation_for"),
+					$$ = (Node *) makeFuncCall(SystemFuncName("mdb_collation_for"),
 											   list_make1($4),
 											   @1);
 				}
@@ -12340,7 +12340,7 @@ func_expr_common_subexpr:
 					 *
 					 * The token location is attached to the run-time
 					 * typecast, not to the Const, for the convenience of
-					 * pg_stat_statements (which doesn't want these constructs
+					 * mdb_stat_statements (which doesn't want these constructs
 					 * to appear to be replaceable constants).
 					 */
 					Node *n;
@@ -13155,7 +13155,7 @@ substr_list:
 					/*
 					 * Since there are no cases where this syntax allows
 					 * a textual FOR value, we forcibly cast the argument
-					 * to int4.  The possible matches in pg_proc are
+					 * to int4.  The possible matches in mdb_proc are
 					 * substring(text,int4) and substring(text,text),
 					 * and we don't want the parser to choose the latter,
 					 * which it is likely to do if the second argument
@@ -14573,7 +14573,7 @@ makeSetOp(SetOperation op, bool all, Node *larg, Node *rarg)
 List *
 SystemFuncName(char *name)
 {
-	return list_make2(makeString("pg_catalog"), makeString(name));
+	return list_make2(makeString("mdb_catalog"), makeString(name));
 }
 
 /* SystemTypeName()
@@ -14585,7 +14585,7 @@ SystemFuncName(char *name)
 TypeName *
 SystemTypeName(char *name)
 {
-	return makeTypeNameFromNameList(list_make2(makeString("pg_catalog"),
+	return makeTypeNameFromNameList(list_make2(makeString("mdb_catalog"),
 											   makeString(name)));
 }
 

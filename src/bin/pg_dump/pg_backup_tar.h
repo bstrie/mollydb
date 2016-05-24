@@ -1,5 +1,5 @@
 /*
- * src/bin/pg_dump/pg_backup_tar.h
+ * src/bin/mdb_dump/mdb_backup_tar.h
  *
  * TAR Header (see "ustar interchange format" in POSIX 1003.1)
  *

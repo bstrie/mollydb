@@ -22,8 +22,8 @@
 	.skip   24
 	.align  4
 
-	.global pg_atomic_cas
-pg_atomic_cas:
+	.global mdb_atomic_cas
+mdb_atomic_cas:
 
 	! "cas" only works on sparcv9 and sparcv8plus chips, and
 	! requies a compiler targeting these CPUs.  It will fail
@@ -48,6 +48,6 @@ pg_atomic_cas:
 	mov     %o1,%o0
 	retl
 	nop
-	.type   pg_atomic_cas,2
-	.size   pg_atomic_cas,(.-pg_atomic_cas)
+	.type   mdb_atomic_cas,2
+	.size   mdb_atomic_cas,(.-mdb_atomic_cas)
 #endif

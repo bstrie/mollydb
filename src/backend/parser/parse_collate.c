@@ -40,8 +40,8 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_aggregate.h"
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_aggregate.h"
+#include "catalog/mdb_collation.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
 #include "parser/parse_collate.h"

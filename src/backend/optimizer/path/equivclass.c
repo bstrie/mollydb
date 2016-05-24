@@ -17,7 +17,7 @@
 #include "mollydb.h"
 
 #include "access/stratnum.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
 #include "optimizer/clauses.h"
@@ -398,7 +398,7 @@ process_equivalence(PlannerInfo *root, RestrictInfo *restrictinfo,
  * operators no relabeling is wanted (compare the behavior of parse_coerce.c).
  * Expressions coming in from quals will generally have the right type
  * already, but expressions coming from indexkeys may not (because they are
- * represented without any explicit relabel in pg_index), and the same problem
+ * represented without any explicit relabel in mdb_index), and the same problem
  * occurs for sort expressions (because the parser is likewise cavalier about
  * putting relabels on them).  Such cases will be binary-compatible with the
  * real operators, so adding a RelabelType is sufficient.

@@ -154,7 +154,7 @@ typedef struct Query
 	Node	   *setOperations;	/* set-operation tree if this is top level of
 								 * a UNION/INTERSECT/EXCEPT query */
 
-	List	   *constraintDeps; /* a list of pg_constraint OIDs that the query
+	List	   *constraintDeps; /* a list of mdb_constraint OIDs that the query
 								 * depends on to be semantically valid */
 
 	List	   *withCheckOptions;		/* a list of WithCheckOption's, which
@@ -712,7 +712,7 @@ typedef struct XmlSerialize
  *	  like outer joins and join-output-column aliasing.)  Other special
  *	  RTE types also exist, as indicated by RTEKind.
  *
- *	  Note that we consider RTE_RELATION to cover anything that has a pg_class
+ *	  Note that we consider RTE_RELATION to cover anything that has a mdb_class
  *	  entry.  relkind distinguishes the sub-cases.
  *
  *	  alias is an Alias node representing the AS alias-clause attached to the
@@ -800,7 +800,7 @@ typedef struct RangeTblEntry
 	 * Fields valid for a plain relation RTE (else zero):
 	 */
 	Oid			relid;			/* OID of the relation */
-	char		relkind;		/* relation kind (see pg_class.relkind) */
+	char		relkind;		/* relation kind (see mdb_class.relkind) */
 	struct TableSampleClause *tablesample;		/* sampling info, or NULL */
 
 	/*
@@ -1771,9 +1771,9 @@ typedef struct CreateStmt
  * node was created (by parsing, or by inheritance from an existing
  * relation).  We should never have both in the same node!
  *
- * FKCONSTR_ACTION_xxx values are stored into pg_constraint.confupdtype
- * and pg_constraint.confdeltype columns; FKCONSTR_MATCH_xxx values are
- * stored into pg_constraint.confmatchtype.  Changing the code values may
+ * FKCONSTR_ACTION_xxx values are stored into mdb_constraint.confupdtype
+ * and mdb_constraint.confdeltype columns; FKCONSTR_MATCH_xxx values are
+ * stored into mdb_constraint.confmatchtype.  Changing the code values may
  * require an initdb!
  *
  * If skip_validation is true then we skip checking that the existing rows
@@ -1855,8 +1855,8 @@ typedef struct Constraint
 	char		fk_matchtype;	/* FULL, PARTIAL, SIMPLE */
 	char		fk_upd_action;	/* ON UPDATE action */
 	char		fk_del_action;	/* ON DELETE action */
-	List	   *old_conpfeqop;	/* pg_constraint.conpfeqop of my former self */
-	Oid			old_pktable_oid;	/* pg_constraint.confrelid of my former self */
+	List	   *old_conpfeqop;	/* mdb_constraint.conpfeqop of my former self */
+	Oid			old_pktable_oid;	/* mdb_constraint.confrelid of my former self */
 
 	/* Fields used for constraints that allow a NOT VALID specification */
 	bool		skip_validation;	/* skip validation of existing rows? */
@@ -2095,9 +2095,9 @@ typedef struct CreateTrigStmt
 	List	   *funcname;		/* qual. name of function to call */
 	List	   *args;			/* list of (T_String) Values or NIL */
 	bool		row;			/* ROW/STATEMENT */
-	/* timing uses the TRIGGER_TYPE bits defined in catalog/pg_trigger.h */
+	/* timing uses the TRIGGER_TYPE bits defined in catalog/mdb_trigger.h */
 	int16		timing;			/* BEFORE, AFTER, or INSTEAD */
-	/* events uses the TRIGGER_TYPE bits defined in catalog/pg_trigger.h */
+	/* events uses the TRIGGER_TYPE bits defined in catalog/mdb_trigger.h */
 	int16		events;			/* "OR" of INSERT/UPDATE/DELETE/TRUNCATE */
 	List	   *columns;		/* column names, or NIL for all columns */
 	Node	   *whenClause;		/* qual expression, or NULL if none */
@@ -2424,7 +2424,7 @@ typedef struct FetchStmt
  *		Create Index Statement
  *
  * This represents creation of an index and/or an associated constraint.
- * If isconstraint is true, we should create a pg_constraint entry along
+ * If isconstraint is true, we should create a mdb_constraint entry along
  * with the index.  But if indexOid isn't InvalidOid, we are not creating an
  * index, just a UNIQUE/PKEY constraint using an existing index.  isconstraint
  * must always be true in this case, and the fields describing the index
@@ -2472,7 +2472,7 @@ typedef struct CreateFunctionStmt
 
 typedef enum FunctionParameterMode
 {
-	/* the assigned enum values appear in pg_proc, don't change 'em! */
+	/* the assigned enum values appear in mdb_proc, don't change 'em! */
 	FUNC_PARAM_IN = 'i',		/* input only */
 	FUNC_PARAM_OUT = 'o',		/* output only */
 	FUNC_PARAM_INOUT = 'b',		/* both */

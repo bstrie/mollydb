@@ -25,9 +25,9 @@
 #include "catalog/catalog.h"
 #include "catalog/index.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_inherits_fn.h"
-#include "catalog/pg_namespace.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_inherits_fn.h"
+#include "catalog/mdb_namespace.h"
 #include "commands/dbcommands.h"
 #include "commands/tablecmds.h"
 #include "commands/vacuum.h"
@@ -49,7 +49,7 @@
 #include "utils/guc.h"
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
-#include "utils/pg_rusage.h"
+#include "utils/mdb_rusage.h"
 #include "utils/sampling.h"
 #include "utils/sortsupport.h"
 #include "utils/syscache.h"
@@ -151,8 +151,8 @@ analyze_rel(Oid relid, RangeVar *relation, int options,
 	/*
 	 * Check permissions --- this should match vacuum's check!
 	 */
-	if (!(pg_class_ownercheck(RelationGetRelid(onerel), GetUserId()) ||
-		  (pg_database_ownercheck(MyDatabaseId, GetUserId()) && !onerel->rd_rel->relisshared)))
+	if (!(mdb_class_ownercheck(RelationGetRelid(onerel), GetUserId()) ||
+		  (mdb_database_ownercheck(MyDatabaseId, GetUserId()) && !onerel->rd_rel->relisshared)))
 	{
 		/* No need for a WARNING if we already complained during VACUUM */
 		if (!(options & VACOPT_VACUUM))
@@ -187,7 +187,7 @@ analyze_rel(Oid relid, RangeVar *relation, int options,
 	}
 
 	/*
-	 * We can ANALYZE any table except pg_statistic. See update_attstats
+	 * We can ANALYZE any table except mdb_statistic. See update_attstats
 	 */
 	if (RelationGetRelid(onerel) == StatisticRelationId)
 	{
@@ -267,7 +267,7 @@ analyze_rel(Oid relid, RangeVar *relation, int options,
 	/*
 	 * Close source relation now, but keep lock so that no one deletes it
 	 * before we commit.  (If someone did, they'd fail to clean up the entries
-	 * we made in pg_statistic.  Also, releasing the lock before commit would
+	 * we made in mdb_statistic.  Also, releasing the lock before commit would
 	 * expose us to concurrent-update failures in update_attstats.)
 	 */
 	relation_close(onerel, NoLock);
@@ -350,7 +350,7 @@ do_analyze_rel(Relation onerel, int options, VacuumParams *params,
 	/* measure elapsed time iff autovacuum logging requires it */
 	if (IsAutoVacuumWorkerProcess() && params->log_min_duration >= 0)
 	{
-		pg_rusage_init(&ru0);
+		mdb_rusage_init(&ru0);
 		if (params->log_min_duration > 0)
 			starttime = GetCurrentTimestamp();
 	}
@@ -548,9 +548,9 @@ do_analyze_rel(Relation onerel, int options, VacuumParams *params,
 		MemoryContextDelete(col_context);
 
 		/*
-		 * Emit the completed stats rows into pg_statistic, replacing any
+		 * Emit the completed stats rows into mdb_statistic, replacing any
 		 * previous statistics for the target columns.  (If there are stats in
-		 * pg_statistic for columns we didn't process, we leave them alone.)
+		 * mdb_statistic for columns we didn't process, we leave them alone.)
 		 */
 		update_attstats(RelationGetRelid(onerel), inh,
 						attr_cnt, vacattrstats);
@@ -565,7 +565,7 @@ do_analyze_rel(Relation onerel, int options, VacuumParams *params,
 	}
 
 	/*
-	 * Update pages/tuples stats in pg_class ... but not if we're doing
+	 * Update pages/tuples stats in mdb_class ... but not if we're doing
 	 * inherited stats.
 	 */
 	if (!inh)
@@ -652,7 +652,7 @@ do_analyze_rel(Relation onerel, int options, VacuumParams *params,
 							get_database_name(MyDatabaseId),
 							get_namespace_name(RelationGetNamespace(onerel)),
 							RelationGetRelationName(onerel),
-							pg_rusage_show(&ru0))));
+							mdb_rusage_show(&ru0))));
 	}
 
 	/* Roll back any GUC changes executed by index functions */
@@ -858,7 +858,7 @@ compute_index_stats(Relation onerel, double totalrows,
 static VacAttrStats *
 examine_attribute(Relation onerel, int attnum, Node *index_expr)
 {
-	Form_pg_attribute attr = onerel->rd_att->attrs[attnum - 1];
+	Form_mdb_attribute attr = onerel->rd_att->attrs[attnum - 1];
 	HeapTuple	typtuple;
 	VacAttrStats *stats;
 	int			i;
@@ -874,10 +874,10 @@ examine_attribute(Relation onerel, int attnum, Node *index_expr)
 
 	/*
 	 * Create the VacAttrStats struct.  Note that we only have a copy of the
-	 * fixed fields of the pg_attribute tuple.
+	 * fixed fields of the mdb_attribute tuple.
 	 */
 	stats = (VacAttrStats *) palloc0(sizeof(VacAttrStats));
-	stats->attr = (Form_pg_attribute) palloc(ATTRIBUTE_FIXED_PART_SIZE);
+	stats->attr = (Form_mdb_attribute) palloc(ATTRIBUTE_FIXED_PART_SIZE);
 	memcpy(stats->attr, attr, ATTRIBUTE_FIXED_PART_SIZE);
 
 	/*
@@ -904,7 +904,7 @@ examine_attribute(Relation onerel, int attnum, Node *index_expr)
 								   ObjectIdGetDatum(stats->attrtypid));
 	if (!HeapTupleIsValid(typtuple))
 		elog(ERROR, "cache lookup failed for type %u", stats->attrtypid);
-	stats->attrtype = (Form_pg_type) GETSTRUCT(typtuple);
+	stats->attrtype = (Form_mdb_type) GETSTRUCT(typtuple);
 	stats->anl_context = anl_context;
 	stats->tupattnum = attnum;
 
@@ -1279,7 +1279,7 @@ acquire_inherited_sample_rows(Relation onerel, int elevel,
 	 */
 	if (list_length(tableOIDs) < 2)
 	{
-		/* CCI because we already updated the pg_class row in this command */
+		/* CCI because we already updated the mdb_class row in this command */
 		CommandCounterIncrement();
 		SetRelationHasSubclass(RelationGetRelid(onerel), false);
 		ereport(elevel,
@@ -1458,20 +1458,20 @@ acquire_inherited_sample_rows(Relation onerel, int elevel,
 /*
  *	update_attstats() -- update attribute statistics for one relation
  *
- *		Statistics are stored in several places: the pg_class row for the
+ *		Statistics are stored in several places: the mdb_class row for the
  *		relation has stats about the whole relation, and there is a
- *		pg_statistic row for each (non-system) attribute that has ever
- *		been analyzed.  The pg_class values are updated by VACUUM, not here.
+ *		mdb_statistic row for each (non-system) attribute that has ever
+ *		been analyzed.  The mdb_class values are updated by VACUUM, not here.
  *
- *		pg_statistic rows are just added or updated normally.  This means
- *		that pg_statistic will probably contain some deleted rows at the
+ *		mdb_statistic rows are just added or updated normally.  This means
+ *		that mdb_statistic will probably contain some deleted rows at the
  *		completion of a vacuum cycle, unless it happens to get vacuumed last.
  *
- *		To keep things simple, we punt for pg_statistic, and don't try
- *		to compute or store rows for pg_statistic itself in pg_statistic.
+ *		To keep things simple, we punt for mdb_statistic, and don't try
+ *		to compute or store rows for mdb_statistic itself in mdb_statistic.
  *		This could possibly be made to work, but it's not worth the trouble.
  *		Note analyze_rel() has seen to it that we won't come here when
- *		vacuuming pg_statistic itself.
+ *		vacuuming mdb_statistic itself.
  *
  *		Note: there would be a race condition here if two backends could
  *		ANALYZE the same table concurrently.  Presently, we lock that out
@@ -1496,40 +1496,40 @@ update_attstats(Oid relid, bool inh, int natts, VacAttrStats **vacattrstats)
 		int			i,
 					k,
 					n;
-		Datum		values[Natts_pg_statistic];
-		bool		nulls[Natts_pg_statistic];
-		bool		replaces[Natts_pg_statistic];
+		Datum		values[Natts_mdb_statistic];
+		bool		nulls[Natts_mdb_statistic];
+		bool		replaces[Natts_mdb_statistic];
 
 		/* Ignore attr if we weren't able to collect stats */
 		if (!stats->stats_valid)
 			continue;
 
 		/*
-		 * Construct a new pg_statistic tuple
+		 * Construct a new mdb_statistic tuple
 		 */
-		for (i = 0; i < Natts_pg_statistic; ++i)
+		for (i = 0; i < Natts_mdb_statistic; ++i)
 		{
 			nulls[i] = false;
 			replaces[i] = true;
 		}
 
-		values[Anum_pg_statistic_starelid - 1] = ObjectIdGetDatum(relid);
-		values[Anum_pg_statistic_staattnum - 1] = Int16GetDatum(stats->attr->attnum);
-		values[Anum_pg_statistic_stainherit - 1] = BoolGetDatum(inh);
-		values[Anum_pg_statistic_stanullfrac - 1] = Float4GetDatum(stats->stanullfrac);
-		values[Anum_pg_statistic_stawidth - 1] = Int32GetDatum(stats->stawidth);
-		values[Anum_pg_statistic_stadistinct - 1] = Float4GetDatum(stats->stadistinct);
-		i = Anum_pg_statistic_stakind1 - 1;
+		values[Anum_mdb_statistic_starelid - 1] = ObjectIdGetDatum(relid);
+		values[Anum_mdb_statistic_staattnum - 1] = Int16GetDatum(stats->attr->attnum);
+		values[Anum_mdb_statistic_stainherit - 1] = BoolGetDatum(inh);
+		values[Anum_mdb_statistic_stanullfrac - 1] = Float4GetDatum(stats->stanullfrac);
+		values[Anum_mdb_statistic_stawidth - 1] = Int32GetDatum(stats->stawidth);
+		values[Anum_mdb_statistic_stadistinct - 1] = Float4GetDatum(stats->stadistinct);
+		i = Anum_mdb_statistic_stakind1 - 1;
 		for (k = 0; k < STATISTIC_NUM_SLOTS; k++)
 		{
 			values[i++] = Int16GetDatum(stats->stakind[k]);		/* stakindN */
 		}
-		i = Anum_pg_statistic_staop1 - 1;
+		i = Anum_mdb_statistic_staop1 - 1;
 		for (k = 0; k < STATISTIC_NUM_SLOTS; k++)
 		{
 			values[i++] = ObjectIdGetDatum(stats->staop[k]);	/* staopN */
 		}
-		i = Anum_pg_statistic_stanumbers1 - 1;
+		i = Anum_mdb_statistic_stanumbers1 - 1;
 		for (k = 0; k < STATISTIC_NUM_SLOTS; k++)
 		{
 			int			nnum = stats->numnumbers[k];
@@ -1553,7 +1553,7 @@ update_attstats(Oid relid, bool inh, int natts, VacAttrStats **vacattrstats)
 				values[i++] = (Datum) 0;
 			}
 		}
-		i = Anum_pg_statistic_stavalues1 - 1;
+		i = Anum_mdb_statistic_stavalues1 - 1;
 		for (k = 0; k < STATISTIC_NUM_SLOTS; k++)
 		{
 			if (stats->numvalues[k] > 0)
@@ -1575,7 +1575,7 @@ update_attstats(Oid relid, bool inh, int natts, VacAttrStats **vacattrstats)
 			}
 		}
 
-		/* Is there already a pg_statistic tuple for this attribute? */
+		/* Is there already a mdb_statistic tuple for this attribute? */
 		oldtup = SearchSysCache3(STATRELATTINH,
 								 ObjectIdGetDatum(relid),
 								 Int16GetDatum(stats->attr->attnum),
@@ -1646,7 +1646,7 @@ ind_fetch_func(VacAttrStatsP stats, int rownum, bool *isNull)
  *
  * Code below this point represents the "standard" type-specific statistics
  * analysis algorithms.  This code can be replaced on a per-data-type basis
- * by setting a nonzero value in pg_type.typanalyze.
+ * by setting a nonzero value in mdb_type.typanalyze.
  *
  *==========================================================================
  */
@@ -1654,7 +1654,7 @@ ind_fetch_func(VacAttrStatsP stats, int rownum, bool *isNull)
 
 /*
  * To avoid consuming too much memory during analysis and/or too much space
- * in the resulting pg_statistic rows, we ignore varlena datums that are wider
+ * in the resulting mdb_statistic rows, we ignore varlena datums that are wider
  * than WIDTH_THRESHOLD (after detoasting!).  This is legitimate for MCV
  * and distinct-value calculations since a wide value is unlikely to be
  * duplicated at all, much less be a most-common value.  For the same reason,
@@ -1717,7 +1717,7 @@ static int	compare_mcvs(const void *a, const void *b);
 bool
 std_typanalyze(VacAttrStats *stats)
 {
-	Form_pg_attribute attr = stats->attr;
+	Form_mdb_attribute attr = stats->attr;
 	Oid			ltopr;
 	Oid			eqopr;
 	StdAnalyzeData *mystats;

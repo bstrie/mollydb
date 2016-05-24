@@ -41,17 +41,17 @@
 #include "catalog/heap.h"
 #include "catalog/index.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_attrdef.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_constraint.h"
-#include "catalog/pg_constraint_fn.h"
-#include "catalog/pg_foreign_table.h"
-#include "catalog/pg_inherits.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_statistic.h"
-#include "catalog/pg_tablespace.h"
-#include "catalog/pg_type.h"
-#include "catalog/pg_type_fn.h"
+#include "catalog/mdb_attrdef.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_constraint.h"
+#include "catalog/mdb_constraint_fn.h"
+#include "catalog/mdb_foreign_table.h"
+#include "catalog/mdb_inherits.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_statistic.h"
+#include "catalog/mdb_tablespace.h"
+#include "catalog/mdb_type.h"
+#include "catalog/mdb_type_fn.h"
 #include "catalog/storage.h"
 #include "catalog/storage_xlog.h"
 #include "commands/tablecmds.h"
@@ -77,11 +77,11 @@
 #include "utils/tqual.h"
 
 
-/* Potentially set by pg_upgrade_support functions */
-Oid			binary_upgrade_next_heap_pg_class_oid = InvalidOid;
-Oid			binary_upgrade_next_toast_pg_class_oid = InvalidOid;
+/* Potentially set by mdb_upgrade_support functions */
+Oid			binary_upgrade_next_heap_mdb_class_oid = InvalidOid;
+Oid			binary_upgrade_next_toast_mdb_class_oid = InvalidOid;
 
-static void AddNewRelationTuple(Relation pg_class_desc,
+static void AddNewRelationTuple(Relation mdb_class_desc,
 					Relation new_rel_desc,
 					Oid new_rel_oid,
 					Oid new_type_oid,
@@ -135,37 +135,37 @@ static List *insert_ordered_unique_oid(List *list, Oid datum);
  * fixed-size portion of the structure anyway.
  */
 
-static FormData_pg_attribute a1 = {
+static FormData_mdb_attribute a1 = {
 	0, {"ctid"}, TIDOID, 0, sizeof(ItemPointerData),
 	SelfItemPointerAttributeNumber, 0, -1, -1,
 	false, 'p', 's', true, false, false, true, 0
 };
 
-static FormData_pg_attribute a2 = {
+static FormData_mdb_attribute a2 = {
 	0, {"oid"}, OIDOID, 0, sizeof(Oid),
 	ObjectIdAttributeNumber, 0, -1, -1,
 	true, 'p', 'i', true, false, false, true, 0
 };
 
-static FormData_pg_attribute a3 = {
+static FormData_mdb_attribute a3 = {
 	0, {"xmin"}, XIDOID, 0, sizeof(TransactionId),
 	MinTransactionIdAttributeNumber, 0, -1, -1,
 	true, 'p', 'i', true, false, false, true, 0
 };
 
-static FormData_pg_attribute a4 = {
+static FormData_mdb_attribute a4 = {
 	0, {"cmin"}, CIDOID, 0, sizeof(CommandId),
 	MinCommandIdAttributeNumber, 0, -1, -1,
 	true, 'p', 'i', true, false, false, true, 0
 };
 
-static FormData_pg_attribute a5 = {
+static FormData_mdb_attribute a5 = {
 	0, {"xmax"}, XIDOID, 0, sizeof(TransactionId),
 	MaxTransactionIdAttributeNumber, 0, -1, -1,
 	true, 'p', 'i', true, false, false, true, 0
 };
 
-static FormData_pg_attribute a6 = {
+static FormData_mdb_attribute a6 = {
 	0, {"cmax"}, CIDOID, 0, sizeof(CommandId),
 	MaxCommandIdAttributeNumber, 0, -1, -1,
 	true, 'p', 'i', true, false, false, true, 0
@@ -177,20 +177,20 @@ static FormData_pg_attribute a6 = {
  * table of a particular class/type. In any case table is still the word
  * used in SQL.
  */
-static FormData_pg_attribute a7 = {
+static FormData_mdb_attribute a7 = {
 	0, {"tableoid"}, OIDOID, 0, sizeof(Oid),
 	TableOidAttributeNumber, 0, -1, -1,
 	true, 'p', 'i', true, false, false, true, 0
 };
 
-static const Form_pg_attribute SysAtt[] = {&a1, &a2, &a3, &a4, &a5, &a6, &a7};
+static const Form_mdb_attribute SysAtt[] = {&a1, &a2, &a3, &a4, &a5, &a6, &a7};
 
 /*
- * This function returns a Form_pg_attribute pointer for a system attribute.
+ * This function returns a Form_mdb_attribute pointer for a system attribute.
  * Note that we elog if the presented attno is invalid, which would only
  * happen if there's a problem upstream.
  */
-Form_pg_attribute
+Form_mdb_attribute
 SystemAttributeDefinition(AttrNumber attno, bool relhasoids)
 {
 	if (attno >= 0 || attno < -(int) lengthof(SysAtt))
@@ -201,17 +201,17 @@ SystemAttributeDefinition(AttrNumber attno, bool relhasoids)
 }
 
 /*
- * If the given name is a system attribute name, return a Form_pg_attribute
+ * If the given name is a system attribute name, return a Form_mdb_attribute
  * pointer for a prototype definition.  If not, return NULL.
  */
-Form_pg_attribute
+Form_mdb_attribute
 SystemAttributeByName(const char *attname, bool relhasoids)
 {
 	int			j;
 
 	for (j = 0; j < (int) lengthof(SysAtt); j++)
 	{
-		Form_pg_attribute att = SysAtt[j];
+		Form_mdb_attribute att = SysAtt[j];
 
 		if (relhasoids || att->attnum != ObjectIdAttributeNumber)
 		{
@@ -260,11 +260,11 @@ heap_create(const char *relname,
 	Assert(OidIsValid(relid));
 
 	/*
-	 * Don't allow creating relations in pg_catalog directly, even though it
+	 * Don't allow creating relations in mdb_catalog directly, even though it
 	 * is allowed to move user defined relations there. Semantics with search
-	 * paths including pg_catalog are too confusing for now.
+	 * paths including mdb_catalog are too confusing for now.
 	 *
-	 * But allow creating indexes on relations in pg_catalog even if
+	 * But allow creating indexes on relations in mdb_catalog even if
 	 * allow_system_table_mods = off, upper layers already guarantee it's on a
 	 * user defined relation, not a system one.
 	 */
@@ -320,10 +320,10 @@ heap_create(const char *relname,
 		relfilenode = relid;
 
 	/*
-	 * Never allow a pg_class entry to explicitly specify the database's
+	 * Never allow a mdb_class entry to explicitly specify the database's
 	 * default tablespace in reltablespace; force it to zero instead. This
 	 * ensures that if the database is cloned with a different default
-	 * tablespace, the pg_class entry will still match where CREATE DATABASE
+	 * tablespace, the mdb_class entry will still match where CREATE DATABASE
 	 * will put the physically copied relation.
 	 *
 	 * Yes, this is a bit of a hack.
@@ -368,7 +368,7 @@ heap_create(const char *relname,
  *		1) CheckAttributeNamesTypes() is used to make certain the tuple
  *		   descriptor contains a valid set of attribute names and types
  *
- *		2) pg_class is opened and get_relname_relid()
+ *		2) mdb_class is opened and get_relname_relid()
  *		   performs a scan to ensure that no relation with the
  *		   same name already exists.
  *
@@ -378,10 +378,10 @@ heap_create(const char *relname,
  *		   to the new relation.
  *
  *		5) AddNewRelationTuple() is called to register the
- *		   relation in pg_class.
+ *		   relation in mdb_class.
  *
  *		6) AddNewAttributeTuples() is called to register the
- *		   new relation's schema in pg_attribute.
+ *		   new relation's schema in mdb_attribute.
  *
  *		7) StoreConstraints is called ()		- vadim 08/22/97
  *
@@ -501,8 +501,8 @@ CheckAttributeType(const char *attname,
 	{
 		/*
 		 * Refuse any attempt to create a pseudo-type column, except for a
-		 * special hack for pg_statistic: allow ANYARRAY when modifying system
-		 * catalogs (this allows creating pg_statistic and cloning it during
+		 * special hack for mdb_statistic: allow ANYARRAY when modifying system
+		 * catalogs (this allows creating mdb_statistic and cloning it during
 		 * VACUUM FULL)
 		 */
 		if (atttypid != ANYARRAYOID || !allow_system_table_mods)
@@ -549,7 +549,7 @@ CheckAttributeType(const char *attname,
 
 		for (i = 0; i < tupdesc->natts; i++)
 		{
-			Form_pg_attribute attr = tupdesc->attrs[i];
+			Form_mdb_attribute attr = tupdesc->attrs[i];
 
 			if (attr->attisdropped)
 				continue;
@@ -587,9 +587,9 @@ CheckAttributeType(const char *attname,
 
 /*
  * InsertPgAttributeTuple
- *		Construct and insert a new tuple in pg_attribute.
+ *		Construct and insert a new tuple in mdb_attribute.
  *
- * Caller has already opened and locked pg_attribute.  new_attribute is the
+ * Caller has already opened and locked mdb_attribute.  new_attribute is the
  * attribute to insert (but we ignore attacl and attoptions, which are always
  * initialized to NULL).
  *
@@ -598,51 +598,51 @@ CheckAttributeType(const char *attname,
  * inserting multiple attributes, because it's a tad more expensive.)
  */
 void
-InsertPgAttributeTuple(Relation pg_attribute_rel,
-					   Form_pg_attribute new_attribute,
+InsertPgAttributeTuple(Relation mdb_attribute_rel,
+					   Form_mdb_attribute new_attribute,
 					   CatalogIndexState indstate)
 {
-	Datum		values[Natts_pg_attribute];
-	bool		nulls[Natts_pg_attribute];
+	Datum		values[Natts_mdb_attribute];
+	bool		nulls[Natts_mdb_attribute];
 	HeapTuple	tup;
 
 	/* This is a tad tedious, but way cleaner than what we used to do... */
 	memset(values, 0, sizeof(values));
 	memset(nulls, false, sizeof(nulls));
 
-	values[Anum_pg_attribute_attrelid - 1] = ObjectIdGetDatum(new_attribute->attrelid);
-	values[Anum_pg_attribute_attname - 1] = NameGetDatum(&new_attribute->attname);
-	values[Anum_pg_attribute_atttypid - 1] = ObjectIdGetDatum(new_attribute->atttypid);
-	values[Anum_pg_attribute_attstattarget - 1] = Int32GetDatum(new_attribute->attstattarget);
-	values[Anum_pg_attribute_attlen - 1] = Int16GetDatum(new_attribute->attlen);
-	values[Anum_pg_attribute_attnum - 1] = Int16GetDatum(new_attribute->attnum);
-	values[Anum_pg_attribute_attndims - 1] = Int32GetDatum(new_attribute->attndims);
-	values[Anum_pg_attribute_attcacheoff - 1] = Int32GetDatum(new_attribute->attcacheoff);
-	values[Anum_pg_attribute_atttypmod - 1] = Int32GetDatum(new_attribute->atttypmod);
-	values[Anum_pg_attribute_attbyval - 1] = BoolGetDatum(new_attribute->attbyval);
-	values[Anum_pg_attribute_attstorage - 1] = CharGetDatum(new_attribute->attstorage);
-	values[Anum_pg_attribute_attalign - 1] = CharGetDatum(new_attribute->attalign);
-	values[Anum_pg_attribute_attnotnull - 1] = BoolGetDatum(new_attribute->attnotnull);
-	values[Anum_pg_attribute_atthasdef - 1] = BoolGetDatum(new_attribute->atthasdef);
-	values[Anum_pg_attribute_attisdropped - 1] = BoolGetDatum(new_attribute->attisdropped);
-	values[Anum_pg_attribute_attislocal - 1] = BoolGetDatum(new_attribute->attislocal);
-	values[Anum_pg_attribute_attinhcount - 1] = Int32GetDatum(new_attribute->attinhcount);
-	values[Anum_pg_attribute_attcollation - 1] = ObjectIdGetDatum(new_attribute->attcollation);
+	values[Anum_mdb_attribute_attrelid - 1] = ObjectIdGetDatum(new_attribute->attrelid);
+	values[Anum_mdb_attribute_attname - 1] = NameGetDatum(&new_attribute->attname);
+	values[Anum_mdb_attribute_atttypid - 1] = ObjectIdGetDatum(new_attribute->atttypid);
+	values[Anum_mdb_attribute_attstattarget - 1] = Int32GetDatum(new_attribute->attstattarget);
+	values[Anum_mdb_attribute_attlen - 1] = Int16GetDatum(new_attribute->attlen);
+	values[Anum_mdb_attribute_attnum - 1] = Int16GetDatum(new_attribute->attnum);
+	values[Anum_mdb_attribute_attndims - 1] = Int32GetDatum(new_attribute->attndims);
+	values[Anum_mdb_attribute_attcacheoff - 1] = Int32GetDatum(new_attribute->attcacheoff);
+	values[Anum_mdb_attribute_atttypmod - 1] = Int32GetDatum(new_attribute->atttypmod);
+	values[Anum_mdb_attribute_attbyval - 1] = BoolGetDatum(new_attribute->attbyval);
+	values[Anum_mdb_attribute_attstorage - 1] = CharGetDatum(new_attribute->attstorage);
+	values[Anum_mdb_attribute_attalign - 1] = CharGetDatum(new_attribute->attalign);
+	values[Anum_mdb_attribute_attnotnull - 1] = BoolGetDatum(new_attribute->attnotnull);
+	values[Anum_mdb_attribute_atthasdef - 1] = BoolGetDatum(new_attribute->atthasdef);
+	values[Anum_mdb_attribute_attisdropped - 1] = BoolGetDatum(new_attribute->attisdropped);
+	values[Anum_mdb_attribute_attislocal - 1] = BoolGetDatum(new_attribute->attislocal);
+	values[Anum_mdb_attribute_attinhcount - 1] = Int32GetDatum(new_attribute->attinhcount);
+	values[Anum_mdb_attribute_attcollation - 1] = ObjectIdGetDatum(new_attribute->attcollation);
 
 	/* start out with empty permissions and empty options */
-	nulls[Anum_pg_attribute_attacl - 1] = true;
-	nulls[Anum_pg_attribute_attoptions - 1] = true;
-	nulls[Anum_pg_attribute_attfdwoptions - 1] = true;
+	nulls[Anum_mdb_attribute_attacl - 1] = true;
+	nulls[Anum_mdb_attribute_attoptions - 1] = true;
+	nulls[Anum_mdb_attribute_attfdwoptions - 1] = true;
 
-	tup = heap_form_tuple(RelationGetDescr(pg_attribute_rel), values, nulls);
+	tup = heap_form_tuple(RelationGetDescr(mdb_attribute_rel), values, nulls);
 
 	/* finally insert the new tuple, update the indexes, and clean up */
-	simple_heap_insert(pg_attribute_rel, tup);
+	simple_heap_insert(mdb_attribute_rel, tup);
 
 	if (indstate != NULL)
 		CatalogIndexInsert(indstate, tup);
 	else
-		CatalogUpdateIndexes(pg_attribute_rel, tup);
+		CatalogUpdateIndexes(mdb_attribute_rel, tup);
 
 	heap_freetuple(tup);
 }
@@ -651,7 +651,7 @@ InsertPgAttributeTuple(Relation pg_attribute_rel,
  *		AddNewAttributeTuples
  *
  *		this registers the new relation's schema by adding
- *		tuples to pg_attribute.
+ *		tuples to mdb_attribute.
  * --------------------------------
  */
 static void
@@ -661,7 +661,7 @@ AddNewAttributeTuples(Oid new_rel_oid,
 					  bool oidislocal,
 					  int oidinhcount)
 {
-	Form_pg_attribute attr;
+	Form_mdb_attribute attr;
 	int			i;
 	Relation	rel;
 	CatalogIndexState indstate;
@@ -670,7 +670,7 @@ AddNewAttributeTuples(Oid new_rel_oid,
 				referenced;
 
 	/*
-	 * open pg_attribute and its indexes.
+	 * open mdb_attribute and its indexes.
 	 */
 	rel = heap_open(AttributeRelationId, RowExclusiveLock);
 
@@ -720,14 +720,14 @@ AddNewAttributeTuples(Oid new_rel_oid,
 	{
 		for (i = 0; i < (int) lengthof(SysAtt); i++)
 		{
-			FormData_pg_attribute attStruct;
+			FormData_mdb_attribute attStruct;
 
 			/* skip OID where appropriate */
 			if (!tupdesc->tdhasoid &&
 				SysAtt[i]->attnum == ObjectIdAttributeNumber)
 				continue;
 
-			memcpy(&attStruct, (char *) SysAtt[i], sizeof(FormData_pg_attribute));
+			memcpy(&attStruct, (char *) SysAtt[i], sizeof(FormData_mdb_attribute));
 
 			/* Fill in the correct relation OID in the copied tuple */
 			attStruct.attrelid = new_rel_oid;
@@ -754,9 +754,9 @@ AddNewAttributeTuples(Oid new_rel_oid,
 /* --------------------------------
  *		InsertPgClassTuple
  *
- *		Construct and insert a new tuple in pg_class.
+ *		Construct and insert a new tuple in mdb_class.
  *
- * Caller has already opened and locked pg_class.
+ * Caller has already opened and locked mdb_class.
  * Tuple data is taken from new_rel_desc->rd_rel, except for the
  * variable-width fields which are not present in a cached reldesc.
  * relacl and reloptions are passed in Datum form (to avoid having
@@ -765,60 +765,60 @@ AddNewAttributeTuples(Oid new_rel_oid,
  * --------------------------------
  */
 void
-InsertPgClassTuple(Relation pg_class_desc,
+InsertPgClassTuple(Relation mdb_class_desc,
 				   Relation new_rel_desc,
 				   Oid new_rel_oid,
 				   Datum relacl,
 				   Datum reloptions)
 {
-	Form_pg_class rd_rel = new_rel_desc->rd_rel;
-	Datum		values[Natts_pg_class];
-	bool		nulls[Natts_pg_class];
+	Form_mdb_class rd_rel = new_rel_desc->rd_rel;
+	Datum		values[Natts_mdb_class];
+	bool		nulls[Natts_mdb_class];
 	HeapTuple	tup;
 
 	/* This is a tad tedious, but way cleaner than what we used to do... */
 	memset(values, 0, sizeof(values));
 	memset(nulls, false, sizeof(nulls));
 
-	values[Anum_pg_class_relname - 1] = NameGetDatum(&rd_rel->relname);
-	values[Anum_pg_class_relnamespace - 1] = ObjectIdGetDatum(rd_rel->relnamespace);
-	values[Anum_pg_class_reltype - 1] = ObjectIdGetDatum(rd_rel->reltype);
-	values[Anum_pg_class_reloftype - 1] = ObjectIdGetDatum(rd_rel->reloftype);
-	values[Anum_pg_class_relowner - 1] = ObjectIdGetDatum(rd_rel->relowner);
-	values[Anum_pg_class_relam - 1] = ObjectIdGetDatum(rd_rel->relam);
-	values[Anum_pg_class_relfilenode - 1] = ObjectIdGetDatum(rd_rel->relfilenode);
-	values[Anum_pg_class_reltablespace - 1] = ObjectIdGetDatum(rd_rel->reltablespace);
-	values[Anum_pg_class_relpages - 1] = Int32GetDatum(rd_rel->relpages);
-	values[Anum_pg_class_reltuples - 1] = Float4GetDatum(rd_rel->reltuples);
-	values[Anum_pg_class_relallvisible - 1] = Int32GetDatum(rd_rel->relallvisible);
-	values[Anum_pg_class_reltoastrelid - 1] = ObjectIdGetDatum(rd_rel->reltoastrelid);
-	values[Anum_pg_class_relhasindex - 1] = BoolGetDatum(rd_rel->relhasindex);
-	values[Anum_pg_class_relisshared - 1] = BoolGetDatum(rd_rel->relisshared);
-	values[Anum_pg_class_relpersistence - 1] = CharGetDatum(rd_rel->relpersistence);
-	values[Anum_pg_class_relkind - 1] = CharGetDatum(rd_rel->relkind);
-	values[Anum_pg_class_relnatts - 1] = Int16GetDatum(rd_rel->relnatts);
-	values[Anum_pg_class_relchecks - 1] = Int16GetDatum(rd_rel->relchecks);
-	values[Anum_pg_class_relhasoids - 1] = BoolGetDatum(rd_rel->relhasoids);
-	values[Anum_pg_class_relhaspkey - 1] = BoolGetDatum(rd_rel->relhaspkey);
-	values[Anum_pg_class_relhasrules - 1] = BoolGetDatum(rd_rel->relhasrules);
-	values[Anum_pg_class_relhastriggers - 1] = BoolGetDatum(rd_rel->relhastriggers);
-	values[Anum_pg_class_relrowsecurity - 1] = BoolGetDatum(rd_rel->relrowsecurity);
-	values[Anum_pg_class_relforcerowsecurity - 1] = BoolGetDatum(rd_rel->relforcerowsecurity);
-	values[Anum_pg_class_relhassubclass - 1] = BoolGetDatum(rd_rel->relhassubclass);
-	values[Anum_pg_class_relispopulated - 1] = BoolGetDatum(rd_rel->relispopulated);
-	values[Anum_pg_class_relreplident - 1] = CharGetDatum(rd_rel->relreplident);
-	values[Anum_pg_class_relfrozenxid - 1] = TransactionIdGetDatum(rd_rel->relfrozenxid);
-	values[Anum_pg_class_relminmxid - 1] = MultiXactIdGetDatum(rd_rel->relminmxid);
+	values[Anum_mdb_class_relname - 1] = NameGetDatum(&rd_rel->relname);
+	values[Anum_mdb_class_relnamespace - 1] = ObjectIdGetDatum(rd_rel->relnamespace);
+	values[Anum_mdb_class_reltype - 1] = ObjectIdGetDatum(rd_rel->reltype);
+	values[Anum_mdb_class_reloftype - 1] = ObjectIdGetDatum(rd_rel->reloftype);
+	values[Anum_mdb_class_relowner - 1] = ObjectIdGetDatum(rd_rel->relowner);
+	values[Anum_mdb_class_relam - 1] = ObjectIdGetDatum(rd_rel->relam);
+	values[Anum_mdb_class_relfilenode - 1] = ObjectIdGetDatum(rd_rel->relfilenode);
+	values[Anum_mdb_class_reltablespace - 1] = ObjectIdGetDatum(rd_rel->reltablespace);
+	values[Anum_mdb_class_relpages - 1] = Int32GetDatum(rd_rel->relpages);
+	values[Anum_mdb_class_reltuples - 1] = Float4GetDatum(rd_rel->reltuples);
+	values[Anum_mdb_class_relallvisible - 1] = Int32GetDatum(rd_rel->relallvisible);
+	values[Anum_mdb_class_reltoastrelid - 1] = ObjectIdGetDatum(rd_rel->reltoastrelid);
+	values[Anum_mdb_class_relhasindex - 1] = BoolGetDatum(rd_rel->relhasindex);
+	values[Anum_mdb_class_relisshared - 1] = BoolGetDatum(rd_rel->relisshared);
+	values[Anum_mdb_class_relpersistence - 1] = CharGetDatum(rd_rel->relpersistence);
+	values[Anum_mdb_class_relkind - 1] = CharGetDatum(rd_rel->relkind);
+	values[Anum_mdb_class_relnatts - 1] = Int16GetDatum(rd_rel->relnatts);
+	values[Anum_mdb_class_relchecks - 1] = Int16GetDatum(rd_rel->relchecks);
+	values[Anum_mdb_class_relhasoids - 1] = BoolGetDatum(rd_rel->relhasoids);
+	values[Anum_mdb_class_relhaspkey - 1] = BoolGetDatum(rd_rel->relhaspkey);
+	values[Anum_mdb_class_relhasrules - 1] = BoolGetDatum(rd_rel->relhasrules);
+	values[Anum_mdb_class_relhastriggers - 1] = BoolGetDatum(rd_rel->relhastriggers);
+	values[Anum_mdb_class_relrowsecurity - 1] = BoolGetDatum(rd_rel->relrowsecurity);
+	values[Anum_mdb_class_relforcerowsecurity - 1] = BoolGetDatum(rd_rel->relforcerowsecurity);
+	values[Anum_mdb_class_relhassubclass - 1] = BoolGetDatum(rd_rel->relhassubclass);
+	values[Anum_mdb_class_relispopulated - 1] = BoolGetDatum(rd_rel->relispopulated);
+	values[Anum_mdb_class_relreplident - 1] = CharGetDatum(rd_rel->relreplident);
+	values[Anum_mdb_class_relfrozenxid - 1] = TransactionIdGetDatum(rd_rel->relfrozenxid);
+	values[Anum_mdb_class_relminmxid - 1] = MultiXactIdGetDatum(rd_rel->relminmxid);
 	if (relacl != (Datum) 0)
-		values[Anum_pg_class_relacl - 1] = relacl;
+		values[Anum_mdb_class_relacl - 1] = relacl;
 	else
-		nulls[Anum_pg_class_relacl - 1] = true;
+		nulls[Anum_mdb_class_relacl - 1] = true;
 	if (reloptions != (Datum) 0)
-		values[Anum_pg_class_reloptions - 1] = reloptions;
+		values[Anum_mdb_class_reloptions - 1] = reloptions;
 	else
-		nulls[Anum_pg_class_reloptions - 1] = true;
+		nulls[Anum_mdb_class_reloptions - 1] = true;
 
-	tup = heap_form_tuple(RelationGetDescr(pg_class_desc), values, nulls);
+	tup = heap_form_tuple(RelationGetDescr(mdb_class_desc), values, nulls);
 
 	/*
 	 * The new tuple must have the oid already chosen for the rel.  Sure would
@@ -827,9 +827,9 @@ InsertPgClassTuple(Relation pg_class_desc,
 	HeapTupleSetOid(tup, new_rel_oid);
 
 	/* finally insert the new tuple, update the indexes, and clean up */
-	simple_heap_insert(pg_class_desc, tup);
+	simple_heap_insert(mdb_class_desc, tup);
 
-	CatalogUpdateIndexes(pg_class_desc, tup);
+	CatalogUpdateIndexes(mdb_class_desc, tup);
 
 	heap_freetuple(tup);
 }
@@ -838,11 +838,11 @@ InsertPgClassTuple(Relation pg_class_desc,
  *		AddNewRelationTuple
  *
  *		this registers the new relation in the catalogs by
- *		adding a tuple to pg_class.
+ *		adding a tuple to mdb_class.
  * --------------------------------
  */
 static void
-AddNewRelationTuple(Relation pg_class_desc,
+AddNewRelationTuple(Relation mdb_class_desc,
 					Relation new_rel_desc,
 					Oid new_rel_oid,
 					Oid new_type_oid,
@@ -852,7 +852,7 @@ AddNewRelationTuple(Relation pg_class_desc,
 					Datum relacl,
 					Datum reloptions)
 {
-	Form_pg_class new_rel_reltup;
+	Form_mdb_class new_rel_reltup;
 
 	/*
 	 * first we update some of the information in our uncataloged relation's
@@ -926,7 +926,7 @@ AddNewRelationTuple(Relation pg_class_desc,
 	new_rel_desc->rd_att->tdtypeid = new_type_oid;
 
 	/* Now build and insert the tuple */
-	InsertPgClassTuple(pg_class_desc, new_rel_desc, new_rel_oid,
+	InsertPgClassTuple(mdb_class_desc, new_rel_desc, new_rel_oid,
 					   relacl, reloptions);
 }
 
@@ -1009,7 +1009,7 @@ AddNewRelationType(const char *typeName,
  *	is_internal: is this a system-generated catalog?
  *
  * Output parameters:
- *	typaddress: if not null, gets the object address of the new pg_type entry
+ *	typaddress: if not null, gets the object address of the new mdb_type entry
  *
  * Returns the OID of the new relation
  * --------------------------------
@@ -1037,7 +1037,7 @@ heap_create_with_catalog(const char *relname,
 						 bool is_internal,
 						 ObjectAddress *typaddress)
 {
-	Relation	pg_class_desc;
+	Relation	mdb_class_desc;
 	Relation	new_rel_desc;
 	Acl		   *relacl;
 	Oid			existing_relid;
@@ -1046,7 +1046,7 @@ heap_create_with_catalog(const char *relname,
 	ObjectAddress new_type_addr;
 	Oid			new_array_oid = InvalidOid;
 
-	pg_class_desc = heap_open(RelationRelationId, RowExclusiveLock);
+	mdb_class_desc = heap_open(RelationRelationId, RowExclusiveLock);
 
 	/*
 	 * sanity checks
@@ -1086,43 +1086,43 @@ heap_create_with_catalog(const char *relname,
 	}
 
 	/*
-	 * Shared relations must be in pg_global (last-ditch check)
+	 * Shared relations must be in mdb_global (last-ditch check)
 	 */
 	if (shared_relation && reltablespace != GLOBALTABLESPACE_OID)
-		elog(ERROR, "shared relations must be placed in pg_global tablespace");
+		elog(ERROR, "shared relations must be placed in mdb_global tablespace");
 
 	/*
 	 * Allocate an OID for the relation, unless we were told what to use.
 	 *
 	 * The OID will be the relfilenode as well, so make sure it doesn't
-	 * collide with either pg_class OIDs or existing physical files.
+	 * collide with either mdb_class OIDs or existing physical files.
 	 */
 	if (!OidIsValid(relid))
 	{
-		/* Use binary-upgrade override for pg_class.oid/relfilenode? */
+		/* Use binary-upgrade override for mdb_class.oid/relfilenode? */
 		if (IsBinaryUpgrade &&
 			(relkind == RELKIND_RELATION || relkind == RELKIND_SEQUENCE ||
 			 relkind == RELKIND_VIEW || relkind == RELKIND_MATVIEW ||
 			 relkind == RELKIND_COMPOSITE_TYPE || relkind == RELKIND_FOREIGN_TABLE))
 		{
-			if (!OidIsValid(binary_upgrade_next_heap_pg_class_oid))
+			if (!OidIsValid(binary_upgrade_next_heap_mdb_class_oid))
 				ereport(ERROR,
 						(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-						 errmsg("pg_class heap OID value not set when in binary upgrade mode")));
+						 errmsg("mdb_class heap OID value not set when in binary upgrade mode")));
 
-			relid = binary_upgrade_next_heap_pg_class_oid;
-			binary_upgrade_next_heap_pg_class_oid = InvalidOid;
+			relid = binary_upgrade_next_heap_mdb_class_oid;
+			binary_upgrade_next_heap_mdb_class_oid = InvalidOid;
 		}
 		/* There might be no TOAST table, so we have to test for it. */
 		else if (IsBinaryUpgrade &&
-				 OidIsValid(binary_upgrade_next_toast_pg_class_oid) &&
+				 OidIsValid(binary_upgrade_next_toast_mdb_class_oid) &&
 				 relkind == RELKIND_TOASTVALUE)
 		{
-			relid = binary_upgrade_next_toast_pg_class_oid;
-			binary_upgrade_next_toast_pg_class_oid = InvalidOid;
+			relid = binary_upgrade_next_toast_mdb_class_oid;
+			binary_upgrade_next_toast_mdb_class_oid = InvalidOid;
 		}
 		else
-			relid = GetNewRelFileNode(reltablespace, pg_class_desc,
+			relid = GetNewRelFileNode(reltablespace, mdb_class_desc,
 									  relpersistence);
 	}
 
@@ -1250,13 +1250,13 @@ heap_create_with_catalog(const char *relname,
 	}
 
 	/*
-	 * now create an entry in pg_class for the relation.
+	 * now create an entry in mdb_class for the relation.
 	 *
 	 * NOTE: we could get a unique-index failure here, in case someone else is
 	 * creating the same relation name in parallel but hadn't committed yet
 	 * when we checked for a duplicate name above.
 	 */
-	AddNewRelationTuple(pg_class_desc,
+	AddNewRelationTuple(mdb_class_desc,
 						new_rel_desc,
 						relid,
 						new_type_oid,
@@ -1267,7 +1267,7 @@ heap_create_with_catalog(const char *relname,
 						reloptions);
 
 	/*
-	 * now add tuples to pg_attribute for the attributes in our new relation.
+	 * now add tuples to mdb_attribute for the attributes in our new relation.
 	 */
 	AddNewAttributeTuples(relid, new_rel_desc->rd_att, relkind,
 						  oidislocal, oidinhcount);
@@ -1277,7 +1277,7 @@ heap_create_with_catalog(const char *relname,
 	 * namespace is.  Also make a dependency link to its owner, as well as
 	 * dependencies for any roles mentioned in the default ACL.
 	 *
-	 * For composite types, these dependencies are tracked for the pg_type
+	 * For composite types, these dependencies are tracked for the mdb_type
 	 * entry, so we needn't record them here.  Likewise, TOAST tables don't
 	 * need a namespace dependency (they live in a pinned namespace) nor an
 	 * owner dependency (they depend indirectly through the parent table), nor
@@ -1362,7 +1362,7 @@ heap_create_with_catalog(const char *relname,
 	 * the OID of the newly created relation.
 	 */
 	heap_close(new_rel_desc, NoLock);	/* do not unlock till end of xact */
-	heap_close(pg_class_desc, RowExclusiveLock);
+	heap_close(mdb_class_desc, RowExclusiveLock);
 
 	return relid;
 }
@@ -1390,7 +1390,7 @@ heap_create_init_fork(Relation rel)
  * Formerly, this routine checked for child relations and aborted the
  * deletion if any were found.  Now we rely on the dependency mechanism
  * to check for or delete child relations.  By the time we get here,
- * there are no children and we need only remove any pg_inherits rows
+ * there are no children and we need only remove any mdb_inherits rows
  * linking this relation to its parent(s).
  */
 static void
@@ -1404,7 +1404,7 @@ RelationRemoveInheritance(Oid relid)
 	catalogRelation = heap_open(InheritsRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&key,
-				Anum_pg_inherits_inhrelid,
+				Anum_mdb_inherits_inhrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 
@@ -1421,7 +1421,7 @@ RelationRemoveInheritance(Oid relid)
 /*
  *		DeleteRelationTuple
  *
- * Remove pg_class row for the given relid.
+ * Remove mdb_class row for the given relid.
  *
  * Note: this is shared by relation deletion and index deletion.  It's
  * not intended for use anyplace else.
@@ -1429,28 +1429,28 @@ RelationRemoveInheritance(Oid relid)
 void
 DeleteRelationTuple(Oid relid)
 {
-	Relation	pg_class_desc;
+	Relation	mdb_class_desc;
 	HeapTuple	tup;
 
-	/* Grab an appropriate lock on the pg_class relation */
-	pg_class_desc = heap_open(RelationRelationId, RowExclusiveLock);
+	/* Grab an appropriate lock on the mdb_class relation */
+	mdb_class_desc = heap_open(RelationRelationId, RowExclusiveLock);
 
 	tup = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tup))
 		elog(ERROR, "cache lookup failed for relation %u", relid);
 
-	/* delete the relation tuple from pg_class, and finish up */
-	simple_heap_delete(pg_class_desc, &tup->t_self);
+	/* delete the relation tuple from mdb_class, and finish up */
+	simple_heap_delete(mdb_class_desc, &tup->t_self);
 
 	ReleaseSysCache(tup);
 
-	heap_close(pg_class_desc, RowExclusiveLock);
+	heap_close(mdb_class_desc, RowExclusiveLock);
 }
 
 /*
  *		DeleteAttributeTuples
  *
- * Remove pg_attribute rows for the given relid.
+ * Remove mdb_attribute rows for the given relid.
  *
  * Note: this is shared by relation deletion and index deletion.  It's
  * not intended for use anyplace else.
@@ -1463,12 +1463,12 @@ DeleteAttributeTuples(Oid relid)
 	ScanKeyData key[1];
 	HeapTuple	atttup;
 
-	/* Grab an appropriate lock on the pg_attribute relation */
+	/* Grab an appropriate lock on the mdb_attribute relation */
 	attrel = heap_open(AttributeRelationId, RowExclusiveLock);
 
 	/* Use the index to scan only attributes of the target relation */
 	ScanKeyInit(&key[0],
-				Anum_pg_attribute_attrelid,
+				Anum_mdb_attribute_attrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 
@@ -1487,10 +1487,10 @@ DeleteAttributeTuples(Oid relid)
 /*
  *		DeleteSystemAttributeTuples
  *
- * Remove pg_attribute rows for system columns of the given relid.
+ * Remove mdb_attribute rows for system columns of the given relid.
  *
  * Note: this is only used when converting a table to a view.  Views don't
- * have system columns, so we should remove them from pg_attribute.
+ * have system columns, so we should remove them from mdb_attribute.
  */
 void
 DeleteSystemAttributeTuples(Oid relid)
@@ -1500,16 +1500,16 @@ DeleteSystemAttributeTuples(Oid relid)
 	ScanKeyData key[2];
 	HeapTuple	atttup;
 
-	/* Grab an appropriate lock on the pg_attribute relation */
+	/* Grab an appropriate lock on the mdb_attribute relation */
 	attrel = heap_open(AttributeRelationId, RowExclusiveLock);
 
 	/* Use the index to scan only system attributes of the target relation */
 	ScanKeyInit(&key[0],
-				Anum_pg_attribute_attrelid,
+				Anum_mdb_attribute_attrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 	ScanKeyInit(&key[1],
-				Anum_pg_attribute_attnum,
+				Anum_mdb_attribute_attnum,
 				BTLessEqualStrategyNumber, F_INT2LE,
 				Int16GetDatum(0));
 
@@ -1529,8 +1529,8 @@ DeleteSystemAttributeTuples(Oid relid)
  *		RemoveAttributeById
  *
  * This is the guts of ALTER TABLE DROP COLUMN: actually mark the attribute
- * deleted in pg_attribute.  We also remove pg_statistic entries for it.
- * (Everything else needed, such as getting rid of any pg_attrdef entry,
+ * deleted in mdb_attribute.  We also remove mdb_statistic entries for it.
+ * (Everything else needed, such as getting rid of any mdb_attrdef entry,
  * is handled by dependency.c.)
  */
 void
@@ -1539,7 +1539,7 @@ RemoveAttributeById(Oid relid, AttrNumber attnum)
 	Relation	rel;
 	Relation	attr_rel;
 	HeapTuple	tuple;
-	Form_pg_attribute attStruct;
+	Form_mdb_attribute attStruct;
 	char		newattname[NAMEDATALEN];
 
 	/*
@@ -1559,7 +1559,7 @@ RemoveAttributeById(Oid relid, AttrNumber attnum)
 	if (!HeapTupleIsValid(tuple))		/* shouldn't happen */
 		elog(ERROR, "cache lookup failed for attribute %d of relation %u",
 			 attnum, relid);
-	attStruct = (Form_pg_attribute) GETSTRUCT(tuple);
+	attStruct = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 	if (attnum < 0)
 	{
@@ -1605,7 +1605,7 @@ RemoveAttributeById(Oid relid, AttrNumber attnum)
 	}
 
 	/*
-	 * Because updating the pg_attribute row will trigger a relcache flush for
+	 * Because updating the mdb_attribute row will trigger a relcache flush for
 	 * the target relation, we need not do anything else to notify other
 	 * backends of the change.
 	 */
@@ -1637,11 +1637,11 @@ RemoveAttrDefault(Oid relid, AttrNumber attnum,
 	attrdef_rel = heap_open(AttrDefaultRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&scankeys[0],
-				Anum_pg_attrdef_adrelid,
+				Anum_mdb_attrdef_adrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 	ScanKeyInit(&scankeys[1],
-				Anum_pg_attrdef_adnum,
+				Anum_mdb_attrdef_adnum,
 				BTEqualStrategyNumber, F_INT2EQ,
 				Int16GetDatum(attnum));
 
@@ -1674,7 +1674,7 @@ RemoveAttrDefault(Oid relid, AttrNumber attnum,
 /*
  *		RemoveAttrDefaultById
  *
- * Remove a pg_attrdef entry specified by OID.  This is the guts of
+ * Remove a mdb_attrdef entry specified by OID.  This is the guts of
  * attribute-default removal.  Note it should be called via performDeletion,
  * not directly.
  */
@@ -1690,10 +1690,10 @@ RemoveAttrDefaultById(Oid attrdefId)
 	Oid			myrelid;
 	AttrNumber	myattnum;
 
-	/* Grab an appropriate lock on the pg_attrdef relation */
+	/* Grab an appropriate lock on the mdb_attrdef relation */
 	attrdef_rel = heap_open(AttrDefaultRelationId, RowExclusiveLock);
 
-	/* Find the pg_attrdef tuple */
+	/* Find the mdb_attrdef tuple */
 	ScanKeyInit(&scankeys[0],
 				ObjectIdAttributeNumber,
 				BTEqualStrategyNumber, F_OIDEQ,
@@ -1706,19 +1706,19 @@ RemoveAttrDefaultById(Oid attrdefId)
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "could not find tuple for attrdef %u", attrdefId);
 
-	myrelid = ((Form_pg_attrdef) GETSTRUCT(tuple))->adrelid;
-	myattnum = ((Form_pg_attrdef) GETSTRUCT(tuple))->adnum;
+	myrelid = ((Form_mdb_attrdef) GETSTRUCT(tuple))->adrelid;
+	myattnum = ((Form_mdb_attrdef) GETSTRUCT(tuple))->adnum;
 
 	/* Get an exclusive lock on the relation owning the attribute */
 	myrel = relation_open(myrelid, AccessExclusiveLock);
 
-	/* Now we can delete the pg_attrdef row */
+	/* Now we can delete the mdb_attrdef row */
 	simple_heap_delete(attrdef_rel, &tuple->t_self);
 
 	systable_endscan(scan);
 	heap_close(attrdef_rel, RowExclusiveLock);
 
-	/* Fix the pg_attribute row */
+	/* Fix the mdb_attribute row */
 	attr_rel = heap_open(AttributeRelationId, RowExclusiveLock);
 
 	tuple = SearchSysCacheCopy2(ATTNUM,
@@ -1728,7 +1728,7 @@ RemoveAttrDefaultById(Oid attrdefId)
 		elog(ERROR, "cache lookup failed for attribute %d of relation %u",
 			 myattnum, myrelid);
 
-	((Form_pg_attribute) GETSTRUCT(tuple))->atthasdef = false;
+	((Form_mdb_attribute) GETSTRUCT(tuple))->atthasdef = false;
 
 	simple_heap_update(attr_rel, &tuple->t_self, tuple);
 
@@ -1736,7 +1736,7 @@ RemoveAttrDefaultById(Oid attrdefId)
 	CatalogUpdateIndexes(attr_rel, tuple);
 
 	/*
-	 * Our update of the pg_attribute row will force a relcache rebuild, so
+	 * Our update of the mdb_attribute row will force a relcache rebuild, so
 	 * there's nothing else to do here.
 	 */
 	heap_close(attr_rel, RowExclusiveLock);
@@ -1749,7 +1749,7 @@ RemoveAttrDefaultById(Oid attrdefId)
  * heap_drop_with_catalog	- removes specified relation from catalogs
  *
  * Note that this routine is not responsible for dropping objects that are
- * linked to the pg_class entry via dependencies (for example, indexes and
+ * linked to the mdb_class entry via dependencies (for example, indexes and
  * constraints).  Those are deleted by the dependency-tracing logic in
  * dependency.c before control gets here.  In general, therefore, this routine
  * should never be called directly; go through performDeletion() instead.
@@ -1780,7 +1780,7 @@ heap_drop_with_catalog(Oid relid)
 	CheckTableForSerializableConflictIn(rel);
 
 	/*
-	 * Delete pg_foreign_table tuple first.
+	 * Delete mdb_foreign_table tuple first.
 	 */
 	if (rel->rd_rel->relkind == RELKIND_FOREIGN_TABLE)
 	{
@@ -1855,7 +1855,7 @@ heap_drop_with_catalog(Oid relid)
 /*
  * Store a default expression for column attnum of relation rel.
  *
- * Returns the OID of the new pg_attrdef tuple.
+ * Returns the OID of the new mdb_attrdef tuple.
  */
 Oid
 StoreAttrDefault(Relation rel, AttrNumber attnum,
@@ -1869,7 +1869,7 @@ StoreAttrDefault(Relation rel, AttrNumber attnum,
 	static bool nulls[4] = {false, false, false, false};
 	Relation	attrrel;
 	HeapTuple	atttup;
-	Form_pg_attribute attStruct;
+	Form_mdb_attribute attStruct;
 	Oid			attrdefOid;
 	ObjectAddress colobject,
 				defobject;
@@ -1888,12 +1888,12 @@ StoreAttrDefault(Relation rel, AttrNumber attnum,
 							   false, false);
 
 	/*
-	 * Make the pg_attrdef entry.
+	 * Make the mdb_attrdef entry.
 	 */
-	values[Anum_pg_attrdef_adrelid - 1] = RelationGetRelid(rel);
-	values[Anum_pg_attrdef_adnum - 1] = attnum;
-	values[Anum_pg_attrdef_adbin - 1] = CStringGetTextDatum(adbin);
-	values[Anum_pg_attrdef_adsrc - 1] = CStringGetTextDatum(adsrc);
+	values[Anum_mdb_attrdef_adrelid - 1] = RelationGetRelid(rel);
+	values[Anum_mdb_attrdef_adnum - 1] = attnum;
+	values[Anum_mdb_attrdef_adbin - 1] = CStringGetTextDatum(adbin);
+	values[Anum_mdb_attrdef_adsrc - 1] = CStringGetTextDatum(adsrc);
 
 	adrel = heap_open(AttrDefaultRelationId, RowExclusiveLock);
 
@@ -1909,14 +1909,14 @@ StoreAttrDefault(Relation rel, AttrNumber attnum,
 	heap_close(adrel, RowExclusiveLock);
 
 	/* now can free some of the stuff allocated above */
-	pfree(DatumGetPointer(values[Anum_pg_attrdef_adbin - 1]));
-	pfree(DatumGetPointer(values[Anum_pg_attrdef_adsrc - 1]));
+	pfree(DatumGetPointer(values[Anum_mdb_attrdef_adbin - 1]));
+	pfree(DatumGetPointer(values[Anum_mdb_attrdef_adsrc - 1]));
 	heap_freetuple(tuple);
 	pfree(adbin);
 	pfree(adsrc);
 
 	/*
-	 * Update the pg_attribute entry for the column to show that a default
+	 * Update the mdb_attribute entry for the column to show that a default
 	 * exists.
 	 */
 	attrrel = heap_open(AttributeRelationId, RowExclusiveLock);
@@ -1926,7 +1926,7 @@ StoreAttrDefault(Relation rel, AttrNumber attnum,
 	if (!HeapTupleIsValid(atttup))
 		elog(ERROR, "cache lookup failed for attribute %d of relation %u",
 			 attnum, RelationGetRelid(rel));
-	attStruct = (Form_pg_attribute) GETSTRUCT(atttup);
+	attStruct = (Form_mdb_attribute) GETSTRUCT(atttup);
 	if (!attStruct->atthasdef)
 	{
 		attStruct->atthasdef = true;
@@ -1938,7 +1938,7 @@ StoreAttrDefault(Relation rel, AttrNumber attnum,
 	heap_freetuple(atttup);
 
 	/*
-	 * Make a dependency so that the pg_attrdef entry goes away if the column
+	 * Make a dependency so that the mdb_attrdef entry goes away if the column
 	 * (or whole table) is deleted.
 	 */
 	colobject.classId = RelationRelationId;
@@ -1970,7 +1970,7 @@ StoreAttrDefault(Relation rel, AttrNumber attnum,
  * Store a check-constraint expression for the given relation.
  *
  * Caller is responsible for updating the count of constraints
- * in the pg_class entry for the relation.
+ * in the mdb_class entry for the relation.
  *
  * The OID of the new constraint is returned.
  */
@@ -2091,7 +2091,7 @@ StoreConstraints(Relation rel, List *cooked_constraints, bool is_internal)
 
 	/*
 	 * Deparsing of constraint expressions will fail unless the just-created
-	 * pg_attribute tuples for this relation are made visible.  So, bump the
+	 * mdb_attribute tuples for this relation are made visible.  So, bump the
 	 * command counter.  CAUTION: this will cause a relcache entry rebuild.
 	 */
 	CommandCounterIncrement();
@@ -2198,7 +2198,7 @@ AddRelationNewConstraints(Relation rel,
 	foreach(cell, newColDefaults)
 	{
 		RawColumnDefault *colDef = (RawColumnDefault *) lfirst(cell);
-		Form_pg_attribute atp = rel->rd_att->attrs[colDef->attnum - 1];
+		Form_mdb_attribute atp = rel->rd_att->attrs[colDef->attnum - 1];
 		Oid			defOid;
 
 		expr = cookDefault(pstate, colDef->raw_default,
@@ -2207,7 +2207,7 @@ AddRelationNewConstraints(Relation rel,
 
 		/*
 		 * If the expression is just a NULL constant, we do not bother to make
-		 * an explicit pg_attrdef entry, since the default behavior is
+		 * an explicit mdb_attrdef entry, since the default behavior is
 		 * equivalent.
 		 *
 		 * Note a nonobvious property of this test: if the column is of a
@@ -2365,9 +2365,9 @@ AddRelationNewConstraints(Relation rel,
 	}
 
 	/*
-	 * Update the count of constraints in the relation's pg_class tuple. We do
+	 * Update the count of constraints in the relation's mdb_class tuple. We do
 	 * this even if there was no change, in order to ensure that an SI update
-	 * message is sent out for the pg_class tuple, which will force other
+	 * message is sent out for the mdb_class tuple, which will force other
 	 * backends to rebuild their relcache entries for the rel. (This is
 	 * critical if we added defaults but not constraints.)
 	 */
@@ -2397,18 +2397,18 @@ MergeWithExistingConstraint(Relation rel, char *ccname, Node *expr,
 	ScanKeyData skey[2];
 	HeapTuple	tup;
 
-	/* Search for a pg_constraint entry with same name and relation */
+	/* Search for a mdb_constraint entry with same name and relation */
 	conDesc = heap_open(ConstraintRelationId, RowExclusiveLock);
 
 	found = false;
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_constraint_conname,
+				Anum_mdb_constraint_conname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(ccname));
 
 	ScanKeyInit(&skey[1],
-				Anum_pg_constraint_connamespace,
+				Anum_mdb_constraint_connamespace,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetNamespace(rel)));
 
@@ -2417,7 +2417,7 @@ MergeWithExistingConstraint(Relation rel, char *ccname, Node *expr,
 
 	while (HeapTupleIsValid(tup = systable_getnext(conscan)))
 	{
-		Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(tup);
+		Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(tup);
 
 		if (con->conrelid == RelationGetRelid(rel))
 		{
@@ -2428,7 +2428,7 @@ MergeWithExistingConstraint(Relation rel, char *ccname, Node *expr,
 				bool		isnull;
 
 				val = fastgetattr(tup,
-								  Anum_pg_constraint_conbin,
+								  Anum_mdb_constraint_conbin,
 								  conDesc->rd_att, &isnull);
 				if (isnull)
 					elog(ERROR, "null conbin for rel %s",
@@ -2443,7 +2443,7 @@ MergeWithExistingConstraint(Relation rel, char *ccname, Node *expr,
 					   ccname, RelationGetRelationName(rel))));
 
 			tup = heap_copytuple(tup);
-			con = (Form_pg_constraint) GETSTRUCT(tup);
+			con = (Form_mdb_constraint) GETSTRUCT(tup);
 
 			/* If the constraint is "no inherit" then cannot merge */
 			if (con->connoinherit)
@@ -2478,12 +2478,12 @@ MergeWithExistingConstraint(Relation rel, char *ccname, Node *expr,
 }
 
 /*
- * Update the count of constraints in the relation's pg_class tuple.
+ * Update the count of constraints in the relation's mdb_class tuple.
  *
  * Caller had better hold exclusive lock on the relation.
  *
  * An important side effect is that a SI update message will be sent out for
- * the pg_class tuple, which will force other backends to rebuild their
+ * the mdb_class tuple, which will force other backends to rebuild their
  * relcache entries for the rel.  Also, this backend will rebuild its
  * own relcache entry at the next CommandCounterIncrement.
  */
@@ -2492,7 +2492,7 @@ SetRelationNumChecks(Relation rel, int numchecks)
 {
 	Relation	relrel;
 	HeapTuple	reltup;
-	Form_pg_class relStruct;
+	Form_mdb_class relStruct;
 
 	relrel = heap_open(RelationRelationId, RowExclusiveLock);
 	reltup = SearchSysCacheCopy1(RELOID,
@@ -2500,7 +2500,7 @@ SetRelationNumChecks(Relation rel, int numchecks)
 	if (!HeapTupleIsValid(reltup))
 		elog(ERROR, "cache lookup failed for relation %u",
 			 RelationGetRelid(rel));
-	relStruct = (Form_pg_class) GETSTRUCT(reltup);
+	relStruct = (Form_mdb_class) GETSTRUCT(reltup);
 
 	if (relStruct->relchecks != numchecks)
 	{
@@ -2646,7 +2646,7 @@ cookConstraint(ParseState *pstate,
 
 
 /*
- * RemoveStatistics --- remove entries in pg_statistic for a rel or column
+ * RemoveStatistics --- remove entries in mdb_statistic for a rel or column
  *
  * If attnum is zero, remove all entries for rel; else remove only the one(s)
  * for that column.
@@ -2663,7 +2663,7 @@ RemoveStatistics(Oid relid, AttrNumber attnum)
 	pgstatistic = heap_open(StatisticRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_statistic_starelid,
+				Anum_mdb_statistic_starelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 
@@ -2672,7 +2672,7 @@ RemoveStatistics(Oid relid, AttrNumber attnum)
 	else
 	{
 		ScanKeyInit(&key[1],
-					Anum_pg_statistic_staattnum,
+					Anum_mdb_statistic_staattnum,
 					BTEqualStrategyNumber, F_INT2EQ,
 					Int16GetDatum(attnum));
 		nkeys = 2;
@@ -2845,7 +2845,7 @@ heap_truncate_check_FKs(List *relations, bool tempTables)
 		return;
 
 	/*
-	 * Otherwise, must scan pg_constraint.  We make one pass with all the
+	 * Otherwise, must scan mdb_constraint.  We make one pass with all the
 	 * relations considered; if this finds nothing, then all is well.
 	 */
 	dependents = heap_truncate_find_FKs(oids);
@@ -2857,7 +2857,7 @@ heap_truncate_check_FKs(List *relations, bool tempTables)
 	 * pair of relations to complain about.  This is pretty slow, but
 	 * performance shouldn't matter much in a failure path.  The reason for
 	 * doing things this way is to ensure that the message produced is not
-	 * dependent on chance row locations within pg_constraint.
+	 * dependent on chance row locations within mdb_constraint.
 	 */
 	foreach(cell, oids)
 	{
@@ -2903,7 +2903,7 @@ heap_truncate_check_FKs(List *relations, bool tempTables)
  * no duplicates, does *not* include any rels that were already in the input
  * list, and is sorted in OID order.  (The last property is enforced mainly
  * to guarantee consistent behavior in the regression tests; we don't want
- * behavior to change depending on chance locations of rows in pg_constraint.)
+ * behavior to change depending on chance locations of rows in mdb_constraint.)
  *
  * Note: caller should already have appropriate lock on all rels mentioned
  * in relationIds.  Since adding or dropping an FK requires exclusive lock
@@ -2918,7 +2918,7 @@ heap_truncate_find_FKs(List *relationIds)
 	HeapTuple	tuple;
 
 	/*
-	 * Must scan pg_constraint.  Right now, it is a seqscan because there is
+	 * Must scan mdb_constraint.  Right now, it is a seqscan because there is
 	 * no available index on confrelid.
 	 */
 	fkeyRel = heap_open(ConstraintRelationId, AccessShareLock);
@@ -2928,7 +2928,7 @@ heap_truncate_find_FKs(List *relationIds)
 
 	while (HeapTupleIsValid(tuple = systable_getnext(fkeyScan)))
 	{
-		Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(tuple);
+		Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(tuple);
 
 		/* Not a foreign key */
 		if (con->contype != CONSTRAINT_FOREIGN)

@@ -1,5 +1,5 @@
-# pg_freespacemap extension
+# mdb_freespacemap extension
 comment = 'examine the free space map (FSM)'
 default_version = '1.0'
-module_pathname = '$libdir/pg_freespacemap'
+module_pathname = '$libdir/mdb_freespacemap'
 relocatable = true

@@ -47,7 +47,7 @@ findwrd(char *in, char **end, uint16 *flags)
 
 	/* Skip leading spaces */
 	while (*in && t_isspace(in))
-		in += pg_mblen(in);
+		in += mdb_mblen(in);
 
 	/* Return NULL on empty lines */
 	if (*in == '\0')
@@ -62,7 +62,7 @@ findwrd(char *in, char **end, uint16 *flags)
 	while (*in && !t_isspace(in))
 	{
 		lastchar = in;
-		in += pg_mblen(in);
+		in += mdb_mblen(in);
 	}
 
 	if (in - lastchar == 1 && t_iseq(lastchar, '*') && flags)
@@ -107,9 +107,9 @@ dsynonym_init(PG_FUNCTION_ARGS)
 	{
 		DefElem    *defel = (DefElem *) lfirst(l);
 
-		if (pg_strcasecmp("Synonyms", defel->defname) == 0)
+		if (mdb_strcasecmp("Synonyms", defel->defname) == 0)
 			filename = defGetString(defel);
-		else if (pg_strcasecmp("CaseSensitive", defel->defname) == 0)
+		else if (mdb_strcasecmp("CaseSensitive", defel->defname) == 0)
 			case_sensitive = defGetBoolean(defel);
 		else
 			ereport(ERROR,

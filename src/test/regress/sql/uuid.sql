@@ -63,7 +63,7 @@ CREATE UNIQUE INDEX guid1_unique_BTREE ON guid1 USING BTREE (guid_field);
 INSERT INTO guid1(guid_field) VALUES('11111111-1111-1111-1111-111111111111');
 
 -- check to see whether the new indexes are actually there
-SELECT count(*) FROM pg_class WHERE relkind='i' AND relname LIKE 'guid%';
+SELECT count(*) FROM mdb_class WHERE relkind='i' AND relname LIKE 'guid%';
 
 -- populating the test tables with additional records
 INSERT INTO guid1(guid_field) VALUES('44444444-4444-4444-4444-444444444444');

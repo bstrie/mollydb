@@ -9,7 +9,7 @@
  */
 #include "mollydb_fe.h"
 
-#include "pg_rewind.h"
+#include "mdb_rewind.h"
 
 #include "access/timeline.h"
 #include "access/xlog_internal.h"
@@ -93,7 +93,7 @@ rewind_parseTimeLineHistory(char *buffer, TimeLineID targetTLI, int *nentries)
 		lasttli = tli;
 
 		nlines++;
-		entries = pg_realloc(entries, nlines * sizeof(TimeLineHistoryEntry));
+		entries = mdb_realloc(entries, nlines * sizeof(TimeLineHistoryEntry));
 
 		entry = &entries[nlines - 1];
 		entry->tli = tli;
@@ -117,9 +117,9 @@ rewind_parseTimeLineHistory(char *buffer, TimeLineID targetTLI, int *nentries)
 	 */
 	nlines++;
 	if (entries)
-		entries = pg_realloc(entries, nlines * sizeof(TimeLineHistoryEntry));
+		entries = mdb_realloc(entries, nlines * sizeof(TimeLineHistoryEntry));
 	else
-		entries = pg_malloc(1 * sizeof(TimeLineHistoryEntry));
+		entries = mdb_malloc(1 * sizeof(TimeLineHistoryEntry));
 
 	entry = &entries[nlines - 1];
 	entry->tli = targetTLI;

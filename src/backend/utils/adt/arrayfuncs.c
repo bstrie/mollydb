@@ -21,7 +21,7 @@
 #include <math.h>
 
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "libpq/pqformat.h"
 #include "utils/array.h"
@@ -399,8 +399,8 @@ array_in(PG_FUNCTION_ARGS)
 	retval->dataoffset = dataoffset;
 
 	/*
-	 * This comes from the array's pg_type.typelem (which points to the base
-	 * data type's pg_type.oid) and stores system oids in user tables. This
+	 * This comes from the array's mdb_type.typelem (which points to the base
+	 * data type's mdb_type.oid) and stores system oids in user tables. This
 	 * oid must be preserved by binary upgrades.
 	 */
 	retval->elemtype = element_type;
@@ -893,7 +893,7 @@ ReadArrayStr(char *arrayStr,
 							origStr)));
 
 		if (Array_nulls && !hasquoting &&
-			pg_strcasecmp(itemstart, "NULL") == 0)
+			mdb_strcasecmp(itemstart, "NULL") == 0)
 		{
 			/* it's a NULL item */
 			values[i] = InputFunctionCall(inputproc, NULL,
@@ -1131,7 +1131,7 @@ array_out(PG_FUNCTION_ARGS)
 			/* count data plus backslashes; detect chars needing quotes */
 			if (values[i][0] == '\0')
 				needquote = true;		/* force quotes for empty string */
-			else if (pg_strcasecmp(values[i], "NULL") == 0)
+			else if (mdb_strcasecmp(values[i], "NULL") == 0)
 				needquote = true;		/* force quotes for literal NULL */
 			else
 				needquote = false;
@@ -1793,10 +1793,10 @@ array_cardinality(PG_FUNCTION_ARGS)
  *	arraydatum: the array object (mustn't be NULL)
  *	nSubscripts: number of subscripts supplied
  *	indx[]: the subscript values
- *	arraytyplen: pg_type.typlen for the array type
- *	elmlen: pg_type.typlen for the array's element type
- *	elmbyval: pg_type.typbyval for the array's element type
- *	elmalign: pg_type.typalign for the array's element type
+ *	arraytyplen: mdb_type.typlen for the array type
+ *	elmlen: mdb_type.typlen for the array's element type
+ *	elmbyval: mdb_type.typbyval for the array's element type
+ *	elmalign: mdb_type.typalign for the array's element type
  *
  * Outputs:
  *	The return value is the element Datum.
@@ -1997,10 +1997,10 @@ array_get_element_expanded(Datum arraydatum,
  *	lowerIndx[]: the lower subscript values
  *	upperProvided[]: true for provided upper subscript values
  *	lowerProvided[]: true for provided lower subscript values
- *	arraytyplen: pg_type.typlen for the array type
- *	elmlen: pg_type.typlen for the array's element type
- *	elmbyval: pg_type.typbyval for the array's element type
- *	elmalign: pg_type.typalign for the array's element type
+ *	arraytyplen: mdb_type.typlen for the array type
+ *	elmlen: mdb_type.typlen for the array's element type
+ *	elmbyval: mdb_type.typbyval for the array's element type
+ *	elmalign: mdb_type.typalign for the array's element type
  *
  * Outputs:
  *	The return value is the new array Datum (it's never NULL)
@@ -2163,10 +2163,10 @@ array_get_slice(Datum arraydatum,
  *	indx[]: the subscript values
  *	dataValue: the datum to be inserted at the given position
  *	isNull: whether dataValue is NULL
- *	arraytyplen: pg_type.typlen for the array type
- *	elmlen: pg_type.typlen for the array's element type
- *	elmbyval: pg_type.typbyval for the array's element type
- *	elmalign: pg_type.typalign for the array's element type
+ *	arraytyplen: mdb_type.typlen for the array type
+ *	elmlen: mdb_type.typlen for the array's element type
+ *	elmbyval: mdb_type.typbyval for the array's element type
+ *	elmalign: mdb_type.typalign for the array's element type
  *
  * Result:
  *		  A new array is returned, just like the old except for the one
@@ -2719,10 +2719,10 @@ array_set_element_expanded(Datum arraydatum,
  *	lowerProvided[]: true for provided lower subscript values
  *	srcArrayDatum: the source for the inserted values
  *	isNull: indicates whether srcArrayDatum is NULL
- *	arraytyplen: pg_type.typlen for the array type
- *	elmlen: pg_type.typlen for the array's element type
- *	elmbyval: pg_type.typbyval for the array's element type
- *	elmalign: pg_type.typalign for the array's element type
+ *	arraytyplen: mdb_type.typlen for the array type
+ *	elmlen: mdb_type.typlen for the array's element type
+ *	elmbyval: mdb_type.typbyval for the array's element type
+ *	elmalign: mdb_type.typalign for the array's element type
  *
  * Result:
  *		  A new array is returned, just like the old except for the

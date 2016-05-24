@@ -15,11 +15,11 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_cast.h"
-#include "catalog/pg_class.h"
-#include "catalog/pg_inherits_fn.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_cast.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_inherits_fn.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
 #include "parser/parse_coerce.h"
@@ -141,7 +141,7 @@ coerce_to_target_type(ParseState *pstate, Node *expr, Oid exprtype,
  * must call coerce_type_typmod as well, if a typmod constraint is wanted.
  * (But if the target type is a domain, it may internally contain a
  * typmod constraint, which will be applied inside coerce_to_domain.)
- * In some cases pg_cast specifies a type coercion function that also
+ * In some cases mdb_cast specifies a type coercion function that also
  * applies length conversion, and in those cases only, the result will
  * already be properly coerced to the specified typmod.
  *
@@ -286,7 +286,7 @@ coerce_type(ParseState *pstate, Node *node,
 		/*
 		 * We use the original literal's location regardless of the position
 		 * of the coercion.  This is a change from pre-9.2 behavior, meant to
-		 * simplify life for pg_stat_statements.
+		 * simplify life for mdb_stat_statements.
 		 */
 		newcon->location = con->location;
 
@@ -561,7 +561,7 @@ can_coerce_type(int nargs, Oid *input_typeids, Oid *target_typeids,
 			continue;
 
 		/*
-		 * If pg_cast shows that we can coerce, accept.  This test now covers
+		 * If mdb_cast shows that we can coerce, accept.  This test now covers
 		 * both binary-compatible and coercion-function cases.
 		 */
 		pathtype = find_coercion_pathway(targetTypeId, inputTypeId, ccontext,
@@ -789,7 +789,7 @@ hide_coercion_node(Node *node)
 
 /*
  * build_coercion_expression()
- *		Construct an expression tree for applying a pg_cast entry.
+ *		Construct an expression tree for applying a mdb_cast entry.
  *
  * This is used for both type-coercion and length-coercion operations,
  * since there is no difference in terms of the calling convention.
@@ -807,12 +807,12 @@ build_coercion_expression(Node *node,
 	if (OidIsValid(funcId))
 	{
 		HeapTuple	tp;
-		Form_pg_proc procstruct;
+		Form_mdb_proc procstruct;
 
 		tp = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcId));
 		if (!HeapTupleIsValid(tp))
 			elog(ERROR, "cache lookup failed for function %u", funcId);
-		procstruct = (Form_pg_proc) GETSTRUCT(tp);
+		procstruct = (Form_mdb_proc) GETSTRUCT(tp);
 
 		/*
 		 * These Asserts essentially check that function is a legal coercion
@@ -1569,12 +1569,12 @@ check_generic_type_consistency(Oid *actual_arg_types,
  * aggregate's declaration with the underlying transfn.)
  *
  * A special case is that we could see ANYARRAY as an actual_arg_type even
- * when allow_poly is false (this is possible only because pg_statistic has
+ * when allow_poly is false (this is possible only because mdb_statistic has
  * columns shown as anyarray in the catalogs).  We allow this to match a
  * declared ANYARRAY argument, but only if there is no ANYELEMENT argument
  * or result (since we can't determine a specific element type to match to
  * ANYELEMENT).  Note this means that functions taking ANYARRAY had better
- * behave sanely if applied to the pg_statistic columns; they can't just
+ * behave sanely if applied to the mdb_statistic columns; they can't just
  * assume that successive inputs are of the same actual element type.
  */
 Oid
@@ -2026,21 +2026,21 @@ IsPreferredType(TYPCATEGORY category, Oid type)
  *
  * As of 7.3, binary coercibility isn't hardwired into the code anymore.
  * We consider two types binary-coercible if there is an implicitly
- * invokable, no-function-needed pg_cast entry.  Also, a domain is always
+ * invokable, no-function-needed mdb_cast entry.  Also, a domain is always
  * binary-coercible to its base type, though *not* vice versa (in the other
  * direction, one must apply domain constraint checks before accepting the
  * value as legitimate).  We also need to special-case various polymorphic
  * types.
  *
  * This function replaces IsBinaryCompatible(), which was an inherently
- * symmetric test.  Since the pg_cast entries aren't necessarily symmetric,
+ * symmetric test.  Since the mdb_cast entries aren't necessarily symmetric,
  * the order of the operands is now significant.
  */
 bool
 IsBinaryCoercible(Oid srctype, Oid targettype)
 {
 	HeapTuple	tuple;
-	Form_pg_cast castForm;
+	Form_mdb_cast castForm;
 	bool		result;
 
 	/* Fast path if same type */
@@ -2089,13 +2089,13 @@ IsBinaryCoercible(Oid srctype, Oid targettype)
 		if (is_complex_array(srctype))
 			return true;
 
-	/* Else look in pg_cast */
+	/* Else look in mdb_cast */
 	tuple = SearchSysCache2(CASTSOURCETARGET,
 							ObjectIdGetDatum(srctype),
 							ObjectIdGetDatum(targettype));
 	if (!HeapTupleIsValid(tuple))
 		return false;			/* no cast */
-	castForm = (Form_pg_cast) GETSTRUCT(tuple);
+	castForm = (Form_mdb_cast) GETSTRUCT(tuple);
 
 	result = (castForm->castmethod == COERCION_METHOD_BINARY &&
 			  castForm->castcontext == COERCION_CODE_IMPLICIT);
@@ -2153,14 +2153,14 @@ find_coercion_pathway(Oid targetTypeId, Oid sourceTypeId,
 	if (sourceTypeId == targetTypeId)
 		return COERCION_PATH_RELABELTYPE;
 
-	/* Look in pg_cast */
+	/* Look in mdb_cast */
 	tuple = SearchSysCache2(CASTSOURCETARGET,
 							ObjectIdGetDatum(sourceTypeId),
 							ObjectIdGetDatum(targetTypeId));
 
 	if (HeapTupleIsValid(tuple))
 	{
-		Form_pg_cast castForm = (Form_pg_cast) GETSTRUCT(tuple);
+		Form_mdb_cast castForm = (Form_mdb_cast) GETSTRUCT(tuple);
 		CoercionContext castcontext;
 
 		/* convert char value for castcontext to CoercionContext enum */
@@ -2209,7 +2209,7 @@ find_coercion_pathway(Oid targetTypeId, Oid sourceTypeId,
 	else
 	{
 		/*
-		 * If there's no pg_cast entry, perhaps we are dealing with a pair of
+		 * If there's no mdb_cast entry, perhaps we are dealing with a pair of
 		 * array types.  If so, and if the element types have a suitable cast,
 		 * report that we can coerce with an ArrayCoerceExpr.
 		 *
@@ -2255,7 +2255,7 @@ find_coercion_pathway(Oid targetTypeId, Oid sourceTypeId,
 		 * using I/O functions.  We allow assignment casts to string types and
 		 * explicit casts from string types to be handled this way. (The
 		 * CoerceViaIO mechanism is a lot more general than that, but this is
-		 * all we want to allow in the absence of a pg_cast entry.) It would
+		 * all we want to allow in the absence of a mdb_cast entry.) It would
 		 * probably be better to insist on explicit casts in both directions,
 		 * but this is a compromise to preserve something of the pre-8.3
 		 * behavior that many types had implicit (yipes!) casts to text.
@@ -2278,7 +2278,7 @@ find_coercion_pathway(Oid targetTypeId, Oid sourceTypeId,
 /*
  * find_typmod_coercion_function -- does the given type need length coercion?
  *
- * If the target type possesses a pg_cast function from itself to itself,
+ * If the target type possesses a mdb_cast function from itself to itself,
  * it must need length coercion.
  *
  * "bpchar" (ie, char(N)) and "numeric" are examples of such types.
@@ -2300,14 +2300,14 @@ find_typmod_coercion_function(Oid typeId,
 {
 	CoercionPathType result;
 	Type		targetType;
-	Form_pg_type typeForm;
+	Form_mdb_type typeForm;
 	HeapTuple	tuple;
 
 	*funcid = InvalidOid;
 	result = COERCION_PATH_FUNC;
 
 	targetType = typeidType(typeId);
-	typeForm = (Form_pg_type) GETSTRUCT(targetType);
+	typeForm = (Form_mdb_type) GETSTRUCT(targetType);
 
 	/* Check for a varlena array type */
 	if (typeForm->typelem != InvalidOid && typeForm->typlen == -1)
@@ -2318,14 +2318,14 @@ find_typmod_coercion_function(Oid typeId,
 	}
 	ReleaseSysCache(targetType);
 
-	/* Look in pg_cast */
+	/* Look in mdb_cast */
 	tuple = SearchSysCache2(CASTSOURCETARGET,
 							ObjectIdGetDatum(typeId),
 							ObjectIdGetDatum(typeId));
 
 	if (HeapTupleIsValid(tuple))
 	{
-		Form_pg_cast castForm = (Form_pg_cast) GETSTRUCT(tuple);
+		Form_mdb_cast castForm = (Form_mdb_cast) GETSTRUCT(tuple);
 
 		*funcid = castForm->castfunc;
 		ReleaseSysCache(tuple);
@@ -2367,13 +2367,13 @@ typeIsOfTypedTable(Oid reltypeId, Oid reloftypeId)
 	if (relid)
 	{
 		HeapTuple	tp;
-		Form_pg_class reltup;
+		Form_mdb_class reltup;
 
 		tp = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 		if (!HeapTupleIsValid(tp))
 			elog(ERROR, "cache lookup failed for relation %u", relid);
 
-		reltup = (Form_pg_class) GETSTRUCT(tp);
+		reltup = (Form_mdb_class) GETSTRUCT(tp);
 		if (reltup->reloftype == reloftypeId)
 			result = true;
 

@@ -678,7 +678,7 @@ CLOSE foo12;
 -- leave some cursors open, to test that auto-close works.
 -- record this in the system view as well (don't query the time field there
 -- however)
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors ORDER BY 1;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors ORDER BY 1;
  name  |                               statement                               | is_holdable | is_binary | is_scrollable 
 -------+-----------------------------------------------------------------------+-------------+-----------+---------------
  foo13 | DECLARE foo13 SCROLL CURSOR FOR SELECT * FROM tenk1 ORDER BY unique2; | f           | f         | t
@@ -695,7 +695,7 @@ SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors OR
 (11 rows)
 
 END;
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
  name | statement | is_holdable | is_binary | is_scrollable 
 ------+-----------+-------------+-----------+---------------
 (0 rows)
@@ -718,7 +718,7 @@ END;
 --
 -- Cursors outside transaction blocks
 --
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
  name | statement | is_holdable | is_binary | is_scrollable 
 ------+-----------+-------------+-----------+---------------
 (0 rows)
@@ -756,7 +756,7 @@ FETCH ABSOLUTE -1 FROM foo25;
     2968 |    9999 |   0 |    0 |   8 |      8 |      68 |      968 |         968 |      2968 |     2968 | 136 |  137 | EKAAAA   | PUOAAA   | VVVVxx
 (1 row)
 
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
  name  |                           statement                            | is_holdable | is_binary | is_scrollable 
 -------+----------------------------------------------------------------+-------------+-----------+---------------
  foo25 | DECLARE foo25 SCROLL CURSOR WITH HOLD FOR SELECT * FROM tenk2; | t           | f         | t
@@ -842,16 +842,16 @@ fetch all from c2;
 
 drop function count_tt1_v();
 drop function count_tt1_s();
--- Create a cursor with the BINARY option and check the pg_cursors view
+-- Create a cursor with the BINARY option and check the mdb_cursors view
 BEGIN;
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
  name |                              statement                               | is_holdable | is_binary | is_scrollable 
 ------+----------------------------------------------------------------------+-------------+-----------+---------------
  c2   | declare c2 cursor with hold for select count_tt1_v(), count_tt1_s(); | t           | f         | f
 (1 row)
 
 DECLARE bc BINARY CURSOR FOR SELECT * FROM tenk1;
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors ORDER BY 1;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors ORDER BY 1;
  name |                              statement                               | is_holdable | is_binary | is_scrollable 
 ------+----------------------------------------------------------------------+-------------+-----------+---------------
  bc   | DECLARE bc BINARY CURSOR FOR SELECT * FROM tenk1;                    | f           | t         | t
@@ -860,9 +860,9 @@ SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors OR
 
 ROLLBACK;
 -- We should not see the portal that is created internally to
--- implement EXECUTE in pg_cursors
+-- implement EXECUTE in mdb_cursors
 PREPARE cprep AS
-  SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+  SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
 EXECUTE cprep;
  name |                              statement                               | is_holdable | is_binary | is_scrollable 
 ------+----------------------------------------------------------------------+-------------+-----------+---------------
@@ -870,14 +870,14 @@ EXECUTE cprep;
 (1 row)
 
 -- test CLOSE ALL;
-SELECT name FROM pg_cursors ORDER BY 1;
+SELECT name FROM mdb_cursors ORDER BY 1;
  name 
 ------
  c2
 (1 row)
 
 CLOSE ALL;
-SELECT name FROM pg_cursors ORDER BY 1;
+SELECT name FROM mdb_cursors ORDER BY 1;
  name 
 ------
 (0 rows)
@@ -885,7 +885,7 @@ SELECT name FROM pg_cursors ORDER BY 1;
 BEGIN;
 DECLARE foo1 CURSOR WITH HOLD FOR SELECT 1;
 DECLARE foo2 CURSOR WITHOUT HOLD FOR SELECT 1;
-SELECT name FROM pg_cursors ORDER BY 1;
+SELECT name FROM mdb_cursors ORDER BY 1;
  name 
 ------
  foo1
@@ -893,7 +893,7 @@ SELECT name FROM pg_cursors ORDER BY 1;
 (2 rows)
 
 CLOSE ALL;
-SELECT name FROM pg_cursors ORDER BY 1;
+SELECT name FROM mdb_cursors ORDER BY 1;
  name 
 ------
 (0 rows)

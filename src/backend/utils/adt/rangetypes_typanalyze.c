@@ -24,7 +24,7 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_operator.h"
+#include "catalog/mdb_operator.h"
 #include "commands/vacuum.h"
 #include "utils/builtins.h"
 #include "utils/lsyscache.h"
@@ -43,7 +43,7 @@ range_typanalyze(PG_FUNCTION_ARGS)
 {
 	VacAttrStats *stats = (VacAttrStats *) PG_GETARG_POINTER(0);
 	TypeCacheEntry *typcache;
-	Form_pg_attribute attr = stats->attr;
+	Form_mdb_attribute attr = stats->attr;
 
 	/* Get information about range type; note column might be a domain */
 	typcache = range_get_typcache(fcinfo, getBaseType(stats->attrtypid));

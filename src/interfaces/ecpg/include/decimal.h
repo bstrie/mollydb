@@ -3,7 +3,7 @@
 #ifndef _ECPG_DECIMAL_H
 #define _ECPG_DECIMAL_H
 
-#include <ecpg_informix.h>
+#include <ecmdb_informix.h>
 
 /* source created by ecpg which defines this */
 #ifndef _ECPGLIB_H

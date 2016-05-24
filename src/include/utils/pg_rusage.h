@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_rusage.h
+ * mdb_rusage.h
  *	  header file for resource usage measurement support routines
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/utils/pg_rusage.h
+ * src/include/utils/mdb_rusage.h
  *
  *-------------------------------------------------------------------------
  */
@@ -23,7 +23,7 @@
 #endif
 
 
-/* State structure for pg_rusage_init/pg_rusage_show */
+/* State structure for mdb_rusage_init/mdb_rusage_show */
 typedef struct PGRUsage
 {
 	struct timeval tv;
@@ -31,7 +31,7 @@ typedef struct PGRUsage
 } PGRUsage;
 
 
-extern void pg_rusage_init(PGRUsage *ru0);
-extern const char *pg_rusage_show(const PGRUsage *ru0);
+extern void mdb_rusage_init(PGRUsage *ru0);
+extern const char *mdb_rusage_show(const PGRUsage *ru0);
 
 #endif   /* PG_RUSAGE_H */

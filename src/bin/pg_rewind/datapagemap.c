@@ -52,7 +52,7 @@ datapagemap_add(datapagemap_t *map, BlockNumber blkno)
 		newsize = offset + 1;
 		newsize += 10;
 
-		map->bitmap = pg_realloc(map->bitmap, newsize);
+		map->bitmap = mdb_realloc(map->bitmap, newsize);
 
 		/* zero out the newly allocated region */
 		memset(&map->bitmap[oldsize], 0, newsize - oldsize);
@@ -68,7 +68,7 @@ datapagemap_add(datapagemap_t *map, BlockNumber blkno)
  * Start iterating through all entries in the page map.
  *
  * After datapagemap_iterate, call datapagemap_next to return the entries,
- * until it returns false. After you're done, use pg_free() to destroy the
+ * until it returns false. After you're done, use mdb_free() to destroy the
  * iterator.
  */
 datapagemap_iterator_t *
@@ -76,7 +76,7 @@ datapagemap_iterate(datapagemap_t *map)
 {
 	datapagemap_iterator_t *iter;
 
-	iter = pg_malloc(sizeof(datapagemap_iterator_t));
+	iter = mdb_malloc(sizeof(datapagemap_iterator_t));
 	iter->map = map;
 	iter->nextblkno = 0;
 
@@ -121,7 +121,7 @@ datapagemap_print(datapagemap_t *map)
 
 	iter = datapagemap_iterate(map);
 	while (datapagemap_next(iter, &blocknum))
-		pg_log(PG_DEBUG, "  block %u\n", blocknum);
+		mdb_log(PG_DEBUG, "  block %u\n", blocknum);
 
-	pg_free(iter);
+	mdb_free(iter);
 }

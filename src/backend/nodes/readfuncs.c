@@ -48,7 +48,7 @@
 #define READ_LOCALS_NO_FIELDS(nodeTypeName) \
 	nodeTypeName *local_node = makeNode(nodeTypeName)
 
-/* And a few guys need only the pg_strtok support fields */
+/* And a few guys need only the mdb_strtok support fields */
 #define READ_TEMP_LOCALS()	\
 	char	   *token;		\
 	int			length
@@ -60,95 +60,95 @@
 
 /* Read an integer field (anything written as ":fldname %d") */
 #define READ_INT_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	local_node->fldname = atoi(token)
 
 /* Read an unsigned integer field (anything written as ":fldname %u") */
 #define READ_UINT_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	local_node->fldname = atoui(token)
 
 /* Read an long integer field (anything written as ":fldname %ld") */
 #define READ_LONG_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	local_node->fldname = atol(token)
 
 /* Read an OID field (don't hard-wire assumption that OID is same as uint) */
 #define READ_OID_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	local_node->fldname = atooid(token)
 
 /* Read a char field (ie, one ascii character) */
 #define READ_CHAR_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	local_node->fldname = token[0]
 
 /* Read an enumerated-type field that was written as an integer code */
 #define READ_ENUM_FIELD(fldname, enumtype) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	local_node->fldname = (enumtype) atoi(token)
 
 /* Read a float field */
 #define READ_FLOAT_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	local_node->fldname = atof(token)
 
 /* Read a boolean field */
 #define READ_BOOL_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	local_node->fldname = strtobool(token)
 
 /* Read a character-string field */
 #define READ_STRING_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	local_node->fldname = nullable_string(token, length)
 
 /* Read a parse location field (and throw away the value, per notes above) */
 #define READ_LOCATION_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
-	token = pg_strtok(&length);		/* get field value */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* get field value */ \
 	(void) token;				/* in case not used elsewhere */ \
 	local_node->fldname = -1	/* set field to "unknown" */
 
 /* Read a Node field */
 #define READ_NODE_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
 	(void) token;				/* in case not used elsewhere */ \
 	local_node->fldname = nodeRead(NULL, 0)
 
 /* Read a bitmapset field */
 #define READ_BITMAPSET_FIELD(fldname) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
 	(void) token;				/* in case not used elsewhere */ \
 	local_node->fldname = _readBitmapset()
 
 /* Read an attribute number array */
 #define READ_ATTRNUMBER_ARRAY(fldname, len) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
 	local_node->fldname = readAttrNumberCols(len);
 
 /* Read an oid array */
 #define READ_OID_ARRAY(fldname, len) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
 	local_node->fldname = readOidCols(len);
 
 /* Read an int array */
 #define READ_INT_ARRAY(fldname, len) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
 	local_node->fldname = readIntCols(len);
 
 /* Read a bool array */
 #define READ_BOOL_ARRAY(fldname, len) \
-	token = pg_strtok(&length);		/* skip :fldname */ \
+	token = mdb_strtok(&length);		/* skip :fldname */ \
 	local_node->fldname = readBoolCols(len);
 
 /* Routine exit */
@@ -182,13 +182,13 @@ _readBitmapset(void)
 
 	READ_TEMP_LOCALS();
 
-	token = pg_strtok(&length);
+	token = mdb_strtok(&length);
 	if (token == NULL)
 		elog(ERROR, "incomplete Bitmapset structure");
 	if (length != 1 || token[0] != '(')
 		elog(ERROR, "unrecognized token: \"%.*s\"", length, token);
 
-	token = pg_strtok(&length);
+	token = mdb_strtok(&length);
 	if (token == NULL)
 		elog(ERROR, "incomplete Bitmapset structure");
 	if (length != 1 || token[0] != 'b')
@@ -199,7 +199,7 @@ _readBitmapset(void)
 		int			val;
 		char	   *endptr;
 
-		token = pg_strtok(&length);
+		token = mdb_strtok(&length);
 		if (token == NULL)
 			elog(ERROR, "unterminated Bitmapset structure");
 		if (length == 1 && token[0] == ')')
@@ -509,9 +509,9 @@ _readConst(void)
 	READ_BOOL_FIELD(constisnull);
 	READ_LOCATION_FIELD(location);
 
-	token = pg_strtok(&length); /* skip :constvalue */
+	token = mdb_strtok(&length); /* skip :constvalue */
 	if (local_node->constisnull)
-		token = pg_strtok(&length);		/* skip "<>" */
+		token = mdb_strtok(&length);		/* skip "<>" */
 	else
 		local_node->constvalue = readDatum(local_node->constbyval);
 
@@ -748,8 +748,8 @@ _readBoolExpr(void)
 	READ_LOCALS(BoolExpr);
 
 	/* do-it-yourself enum representation */
-	token = pg_strtok(&length); /* skip :boolop */
-	token = pg_strtok(&length); /* get field value */
+	token = mdb_strtok(&length); /* skip :boolop */
+	token = mdb_strtok(&length); /* get field value */
 	if (strncmp(token, "and", 3) == 0)
 		local_node->boolop = AND_EXPR;
 	else if (strncmp(token, "or", 2) == 0)
@@ -1836,8 +1836,8 @@ _readCustomScan(void)
 	READ_BITMAPSET_FIELD(custom_relids);
 
 	/* Lookup CustomScanMethods by CustomName */
-	token = pg_strtok(&length);		/* skip methods: */
-	token = pg_strtok(&length);		/* CustomName */
+	token = mdb_strtok(&length);		/* skip methods: */
+	token = mdb_strtok(&length);		/* CustomName */
 	custom_name = nullable_string(token, length);
 	methods = GetCustomScanMethods(custom_name, false);
 	local_node->methods = methods;
@@ -2230,8 +2230,8 @@ _readExtensibleNode(void)
 	const char	   *extnodename;
 	READ_TEMP_LOCALS();
 
-	token = pg_strtok(&length);		/* skip: extnodename */
-	token = pg_strtok(&length);		/* get extnodename */
+	token = mdb_strtok(&length);		/* skip: extnodename */
+	token = mdb_strtok(&length);		/* get extnodename */
 
 	extnodename = nullable_string(token, length);
 	if (!extnodename)
@@ -2254,7 +2254,7 @@ _readExtensibleNode(void)
  * Given a character string representing a node tree, parseNodeString creates
  * the internal node structure.
  *
- * The string to be read must already have been loaded into pg_strtok().
+ * The string to be read must already have been loaded into mdb_strtok().
  */
 Node *
 parseNodeString(void)
@@ -2263,7 +2263,7 @@ parseNodeString(void)
 
 	READ_TEMP_LOCALS();
 
-	token = pg_strtok(&length);
+	token = mdb_strtok(&length);
 
 #define MATCH(tokname, namelen) \
 	(length == namelen && memcmp(token, tokname, namelen) == 0)
@@ -2508,10 +2508,10 @@ readDatum(bool typbyval)
 	/*
 	 * read the actual length of the value
 	 */
-	token = pg_strtok(&tokenLength);
+	token = mdb_strtok(&tokenLength);
 	length = atoui(token);
 
-	token = pg_strtok(&tokenLength);	/* read the '[' */
+	token = mdb_strtok(&tokenLength);	/* read the '[' */
 	if (token == NULL || token[0] != '[')
 		elog(ERROR, "expected \"[\" to start datum, but got \"%s\"; length = %zu",
 			 token ? (const char *) token : "[NULL]", length);
@@ -2524,7 +2524,7 @@ readDatum(bool typbyval)
 		s = (char *) (&res);
 		for (i = 0; i < (Size) sizeof(Datum); i++)
 		{
-			token = pg_strtok(&tokenLength);
+			token = mdb_strtok(&tokenLength);
 			s[i] = (char) atoi(token);
 		}
 	}
@@ -2535,13 +2535,13 @@ readDatum(bool typbyval)
 		s = (char *) palloc(length);
 		for (i = 0; i < length; i++)
 		{
-			token = pg_strtok(&tokenLength);
+			token = mdb_strtok(&tokenLength);
 			s[i] = (char) atoi(token);
 		}
 		res = PointerGetDatum(s);
 	}
 
-	token = pg_strtok(&tokenLength);	/* read the ']' */
+	token = mdb_strtok(&tokenLength);	/* read the ']' */
 	if (token == NULL || token[0] != ']')
 		elog(ERROR, "expected \"]\" to end datum, but got \"%s\"; length = %zu",
 			 token ? (const char *) token : "[NULL]", length);
@@ -2566,7 +2566,7 @@ readAttrNumberCols(int numCols)
 	attr_vals = (AttrNumber *) palloc(numCols * sizeof(AttrNumber));
 	for (i = 0; i < numCols; i++)
 	{
-		token = pg_strtok(&tokenLength);
+		token = mdb_strtok(&tokenLength);
 		attr_vals[i] = atoi(token);
 	}
 
@@ -2590,7 +2590,7 @@ readOidCols(int numCols)
 	oid_vals = (Oid *) palloc(numCols * sizeof(Oid));
 	for (i = 0; i < numCols; i++)
 	{
-		token = pg_strtok(&tokenLength);
+		token = mdb_strtok(&tokenLength);
 		oid_vals[i] = atooid(token);
 	}
 
@@ -2614,7 +2614,7 @@ readIntCols(int numCols)
 	int_vals = (int *) palloc(numCols * sizeof(int));
 	for (i = 0; i < numCols; i++)
 	{
-		token = pg_strtok(&tokenLength);
+		token = mdb_strtok(&tokenLength);
 		int_vals[i] = atoi(token);
 	}
 
@@ -2638,7 +2638,7 @@ readBoolCols(int numCols)
 	bool_vals = (bool *) palloc(numCols * sizeof(bool));
 	for (i = 0; i < numCols; i++)
 	{
-		token = pg_strtok(&tokenLength);
+		token = mdb_strtok(&tokenLength);
 		bool_vals[i] = strtobool(token);
 	}
 

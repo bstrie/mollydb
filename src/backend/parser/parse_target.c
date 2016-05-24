@@ -14,7 +14,7 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/dbcommands.h"
 #include "funcapi.h"
 #include "miscadmin.h"
@@ -897,7 +897,7 @@ checkInsertTargets(ParseState *pstate, List *cols, List **attrnos)
 		/*
 		 * Generate default column list for INSERT.
 		 */
-		Form_pg_attribute *attr = pstate->p_target_relation->rd_att->attrs;
+		Form_mdb_attribute *attr = pstate->p_target_relation->rd_att->attrs;
 		int			numcol = pstate->p_target_relation->rd_rel->relnatts;
 		int			i;
 
@@ -1345,7 +1345,7 @@ ExpandRowReference(ParseState *pstate, Node *expr,
 	numAttrs = tupleDesc->natts;
 	for (i = 0; i < numAttrs; i++)
 	{
-		Form_pg_attribute att = tupleDesc->attrs[i];
+		Form_mdb_attribute att = tupleDesc->attrs[i];
 		FieldSelect *fselect;
 
 		if (att->attisdropped)

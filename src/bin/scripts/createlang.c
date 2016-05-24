@@ -65,13 +65,13 @@ main(int argc, char *argv[])
 				listlangs = true;
 				break;
 			case 'h':
-				host = pg_strdup(optarg);
+				host = mdb_strdup(optarg);
 				break;
 			case 'p':
-				port = pg_strdup(optarg);
+				port = mdb_strdup(optarg);
 				break;
 			case 'U':
-				username = pg_strdup(optarg);
+				username = mdb_strdup(optarg);
 				break;
 			case 'w':
 				prompt_password = TRI_NO;
@@ -80,7 +80,7 @@ main(int argc, char *argv[])
 				prompt_password = TRI_YES;
 				break;
 			case 'd':
-				dbname = pg_strdup(optarg);
+				dbname = mdb_strdup(optarg);
 				break;
 			case 'e':
 				echo = true;
@@ -145,7 +145,7 @@ main(int argc, char *argv[])
 
 		printfPQExpBuffer(&sql, "SELECT lanname as \"%s\", "
 				"(CASE WHEN lanpltrusted THEN '%s' ELSE '%s' END) as \"%s\" "
-						  "FROM pg_catalog.pg_language WHERE lanispl;",
+						  "FROM mdb_catalog.mdb_language WHERE lanispl;",
 						  gettext_noop("Name"),
 						  gettext_noop("yes"), gettext_noop("no"),
 						  gettext_noop("Trusted?"));
@@ -187,7 +187,7 @@ main(int argc, char *argv[])
 	 * Make sure the language isn't already installed
 	 */
 	printfPQExpBuffer(&sql,
-			  "SELECT oid FROM pg_catalog.pg_language WHERE lanname = '%s';",
+			  "SELECT oid FROM mdb_catalog.mdb_language WHERE lanname = '%s';",
 					  langname);
 	result = executeQuery(conn, sql.data, progname, echo);
 	if (PQntuples(result) > 0)

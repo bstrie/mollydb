@@ -22,8 +22,8 @@
 #include "access/tuptoaster.h"
 #include "access/valid.h"
 #include "access/xact.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_type.h"
 #include "miscadmin.h"
 #ifdef CATCACHE_STATS
 #include "storage/ipc.h"		/* for on_proc_exit */
@@ -934,7 +934,7 @@ CatalogCacheInitializeCache(CatCache *cache)
 
 		if (cache->cc_key[i] > 0)
 		{
-			Form_pg_attribute attr = tupdesc->attrs[cache->cc_key[i] - 1];
+			Form_mdb_attribute attr = tupdesc->attrs[cache->cc_key[i] - 1];
 
 			keytype = attr->atttypid;
 			/* cache key columns should always be NOT NULL */
@@ -988,7 +988,7 @@ CatalogCacheInitializeCache(CatCache *cache)
  * One reason to call this routine is to ensure that the relcache has
  * created entries for all the catalogs and indexes referenced by catcaches.
  * Therefore, provide an option to open the index as well as fixing the
- * cache itself.  An exception is the indexes on pg_am, which we don't use
+ * cache itself.  An exception is the indexes on mdb_am, which we don't use
  * (cf. IndexScanOK).
  */
 void
@@ -1016,7 +1016,7 @@ InitCatCachePhase2(CatCache *cache, bool touch_index)
 		 * While we've got the index open, let's check that it's unique (and
 		 * not just deferrable-unique, thank you very much).  This is just to
 		 * catch thinkos in definitions of new catcaches, so we don't worry
-		 * about the pg_am indexes not getting tested.
+		 * about the mdb_am indexes not getting tested.
 		 */
 		Assert(idesc->rd_index->indisunique &&
 			   idesc->rd_index->indimmediate);
@@ -1039,7 +1039,7 @@ InitCatCachePhase2(CatCache *cache, bool touch_index)
  *		criticalRelcachesBuilt), we don't have to worry anymore.
  *
  *		Similarly, during backend startup we have to be able to use the
- *		pg_authid and pg_auth_members syscaches for authentication even if
+ *		mdb_authid and mdb_auth_members syscaches for authentication even if
  *		we don't yet have relcache entries for those catalogs' indexes.
  */
 static bool
@@ -1052,7 +1052,7 @@ IndexScanOK(CatCache *cache, ScanKey cur_skey)
 			/*
 			 * Rather than tracking exactly which indexes have to be loaded
 			 * before we can use indexscans (which changes from time to time),
-			 * just force all pg_index searches to be heap scans until we've
+			 * just force all mdb_index searches to be heap scans until we've
 			 * built the critical relcaches.
 			 */
 			if (!criticalRelcachesBuilt)
@@ -1063,7 +1063,7 @@ IndexScanOK(CatCache *cache, ScanKey cur_skey)
 		case AMNAME:
 
 			/*
-			 * Always do heap scans in pg_am, because it's so small there's
+			 * Always do heap scans in mdb_am, because it's so small there's
 			 * not much point in an indexscan anyway.  We *must* do this when
 			 * initially building critical relcache entries, but we might as
 			 * well just always do it.

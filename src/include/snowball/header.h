@@ -6,7 +6,7 @@
  * The Snowball stemmer modules do #include "header.h", and think they
  * are including snowball/libstemmer/header.h.  We adjust the CPPFLAGS
  * so that this file is found instead, and thereby we can modify the
- * headers they see.  The main point here is to ensure that pg_config.h
+ * headers they see.  The main point here is to ensure that mdb_config.h
  * is included before any system headers such as <stdio.h>; without that,
  * we have portability issues on some platforms due to variation in
  * largefile options across different modules in the backend.

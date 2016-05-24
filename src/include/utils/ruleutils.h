@@ -15,13 +15,13 @@
 
 #include "nodes/nodes.h"
 #include "nodes/parsenodes.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 
-extern char *pg_get_indexdef_string(Oid indexrelid);
-extern char *pg_get_indexdef_columns(Oid indexrelid, bool pretty);
+extern char *mdb_get_indexdef_string(Oid indexrelid);
+extern char *mdb_get_indexdef_columns(Oid indexrelid, bool pretty);
 
-extern char *pg_get_constraintdef_command(Oid constraintId);
+extern char *mdb_get_constraintdef_command(Oid constraintId);
 extern char *deparse_expression(Node *expr, List *dpcontext,
 				   bool forceprefix, bool showimplicit);
 extern List *deparse_context_for(const char *aliasname, Oid relid);

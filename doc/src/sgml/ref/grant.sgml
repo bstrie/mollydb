@@ -301,7 +301,7 @@ GRANT <replaceable class="PARAMETER">role_name</replaceable> [, ...] TO <replace
       <para>
        Allows the user to connect to the specified database.  This
        privilege is checked at connection startup (in addition to checking
-       any restrictions imposed by <filename>pg_hba.conf</>).
+       any restrictions imposed by <filename>mdb_hba.conf</>).
       </para>
      </listitem>
     </varlistentry>

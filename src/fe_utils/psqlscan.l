@@ -533,7 +533,7 @@ other			.
 				}
 
 {dolqdelim}		{
-					cur_state->dolqstart = pg_strdup(yytext);
+					cur_state->dolqstart = mdb_strdup(yytext);
 					BEGIN(xdolq);
 					ECHO;
 				}
@@ -894,7 +894,7 @@ psql_scan_create(const PsqlScanCallbacks *callbacks)
 {
 	PsqlScanState state;
 
-	state = (PsqlScanStateData *) pg_malloc0(sizeof(PsqlScanStateData));
+	state = (PsqlScanStateData *) mdb_malloc0(sizeof(PsqlScanStateData));
 
 	state->callbacks = callbacks;
 
@@ -945,7 +945,7 @@ psql_scan_setup(PsqlScanState state,
 
 	/* Do we need to hack the character set encoding? */
 	state->encoding = encoding;
-	state->safe_encoding = pg_valid_server_encoding_id(encoding);
+	state->safe_encoding = mdb_valid_server_encoding_id(encoding);
 
 	/* Save standard-strings flag as well */
 	state->std_strings = std_strings;
@@ -1194,14 +1194,14 @@ psqlscan_push_new_buffer(PsqlScanState state, const char *newstr,
 {
 	StackElem  *stackelem;
 
-	stackelem = (StackElem *) pg_malloc(sizeof(StackElem));
+	stackelem = (StackElem *) mdb_malloc(sizeof(StackElem));
 
 	/*
 	 * In current usage, the passed varname points at the current flex input
 	 * buffer; we must copy it before calling psqlscan_prepare_buffer()
 	 * because that will change the buffer state.
 	 */
-	stackelem->varname = varname ? pg_strdup(varname) : NULL;
+	stackelem->varname = varname ? mdb_strdup(varname) : NULL;
 
 	stackelem->buf = psqlscan_prepare_buffer(state, newstr, strlen(newstr),
 											 &stackelem->bufstring);
@@ -1213,7 +1213,7 @@ psqlscan_push_new_buffer(PsqlScanState state, const char *newstr,
 	}
 	else
 	{
-		stackelem->origstring = pg_strdup(newstr);
+		stackelem->origstring = mdb_strdup(newstr);
 		state->refline = stackelem->origstring;
 	}
 	stackelem->next = state->buffer_stack;
@@ -1297,7 +1297,7 @@ psqlscan_prepare_buffer(PsqlScanState state, const char *txt, int len,
 	char	   *newtxt;
 
 	/* Flex wants two \0 characters after the actual data */
-	newtxt = pg_malloc(len + 2);
+	newtxt = mdb_malloc(len + 2);
 	*txtcopy = newtxt;
 	newtxt[len] = newtxt[len + 1] = YY_END_OF_BUFFER_CHAR;
 
@@ -1366,7 +1366,7 @@ psqlscan_emit(PsqlScanState state, const char *txt, int len)
 char *
 psqlscan_extract_substring(PsqlScanState state, const char *txt, int len)
 {
-	char	   *result = (char *) pg_malloc(len + 1);
+	char	   *result = (char *) mdb_malloc(len + 1);
 
 	if (state->safe_encoding)
 		memcpy(result, txt, len);

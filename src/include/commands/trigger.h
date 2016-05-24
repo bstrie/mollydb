@@ -44,7 +44,7 @@ typedef struct TriggerData
  *
  * Note that we assume different event types (INSERT/DELETE/UPDATE/TRUNCATE)
  * can't be OR'd together in a single TriggerEvent.  This is unlike the
- * situation for pg_trigger rows, so pg_trigger.tgtype uses a different
+ * situation for mdb_trigger rows, so mdb_trigger.tgtype uses a different
  * representation!
  */
 #define TRIGGER_EVENT_INSERT			0x00000000
@@ -102,7 +102,7 @@ extern PGDLLIMPORT int SessionReplicationRole;
 
 /*
  * States at which a trigger can be fired. These are the
- * possible values for pg_trigger.tgenabled.
+ * possible values for mdb_trigger.tgenabled.
  */
 #define TRIGGER_FIRES_ON_ORIGIN				'O'
 #define TRIGGER_FIRES_ALWAYS				'A'
@@ -210,6 +210,6 @@ extern bool RI_Initial_Check(Trigger *trigger,
 
 extern int	RI_FKey_trigger_type(Oid tgfoid);
 
-extern Datum pg_trigger_depth(PG_FUNCTION_ARGS);
+extern Datum mdb_trigger_depth(PG_FUNCTION_ARGS);
 
 #endif   /* TRIGGER_H */

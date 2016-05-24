@@ -1024,26 +1024,26 @@ CREATE INDEX ON matview(col1);
 CREATE VIEW view AS SELECT col2 FROM table2;
 CREATE TABLE reindex_before AS
 SELECT oid, relname, relfilenode, relkind, reltoastrelid
-	FROM pg_class
-	where relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'schema_to_reindex');
+	FROM mdb_class
+	where relnamespace = (SELECT oid FROM mdb_namespace WHERE nspname = 'schema_to_reindex');
 INSERT INTO reindex_before
-SELECT oid, 'pg_toast_TABLE', relfilenode, relkind, reltoastrelid
-FROM pg_class WHERE oid IN
+SELECT oid, 'mdb_toast_TABLE', relfilenode, relkind, reltoastrelid
+FROM mdb_class WHERE oid IN
 	(SELECT reltoastrelid FROM reindex_before WHERE reltoastrelid > 0);
 INSERT INTO reindex_before
-SELECT oid, 'pg_toast_TABLE_index', relfilenode, relkind, reltoastrelid
-FROM pg_class where oid in
-	(select indexrelid from pg_index where indrelid in
+SELECT oid, 'mdb_toast_TABLE_index', relfilenode, relkind, reltoastrelid
+FROM mdb_class where oid in
+	(select indexrelid from mdb_index where indrelid in
 		(select reltoastrelid from reindex_before where reltoastrelid > 0));
 REINDEX SCHEMA schema_to_reindex;
 CREATE TABLE reindex_after AS SELECT oid, relname, relfilenode, relkind
-	FROM pg_class
-	where relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'schema_to_reindex');
+	FROM mdb_class
+	where relnamespace = (SELECT oid FROM mdb_namespace WHERE nspname = 'schema_to_reindex');
 SELECT  b.relname,
         b.relkind,
         CASE WHEN a.relfilenode = b.relfilenode THEN 'relfilenode is unchanged'
         ELSE 'relfilenode has changed' END
-  FROM reindex_before b JOIN pg_class a ON b.oid = a.oid
+  FROM reindex_before b JOIN mdb_class a ON b.oid = a.oid
   ORDER BY 1;
 REINDEX SCHEMA schema_to_reindex;
 BEGIN;

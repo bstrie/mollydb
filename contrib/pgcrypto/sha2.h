@@ -39,15 +39,15 @@
 #define _SHA2_H
 
 /* avoid conflict with OpenSSL */
-#define SHA256_Init pg_SHA256_Init
-#define SHA256_Update pg_SHA256_Update
-#define SHA256_Final pg_SHA256_Final
-#define SHA384_Init pg_SHA384_Init
-#define SHA384_Update pg_SHA384_Update
-#define SHA384_Final pg_SHA384_Final
-#define SHA512_Init pg_SHA512_Init
-#define SHA512_Update pg_SHA512_Update
-#define SHA512_Final pg_SHA512_Final
+#define SHA256_Init mdb_SHA256_Init
+#define SHA256_Update mdb_SHA256_Update
+#define SHA256_Final mdb_SHA256_Final
+#define SHA384_Init mdb_SHA384_Init
+#define SHA384_Update mdb_SHA384_Update
+#define SHA384_Final mdb_SHA384_Final
+#define SHA512_Init mdb_SHA512_Init
+#define SHA512_Update mdb_SHA512_Update
+#define SHA512_Final mdb_SHA512_Final
 
 /*** SHA-224/256/384/512 Various Length Definitions ***********************/
 #define SHA224_BLOCK_LENGTH		64

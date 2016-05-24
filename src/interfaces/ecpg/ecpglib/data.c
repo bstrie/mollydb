@@ -97,19 +97,19 @@ get_float8_nan(void)
 static bool
 check_special_value(char *ptr, double *retval, char **endptr)
 {
-	if (pg_strncasecmp(ptr, "NaN", 3) == 0)
+	if (mdb_strncasecmp(ptr, "NaN", 3) == 0)
 	{
 		*retval = get_float8_nan();
 		*endptr = ptr + 3;
 		return true;
 	}
-	else if (pg_strncasecmp(ptr, "Infinity", 8) == 0)
+	else if (mdb_strncasecmp(ptr, "Infinity", 8) == 0)
 	{
 		*retval = get_float8_infinity();
 		*endptr = ptr + 8;
 		return true;
 	}
-	else if (pg_strncasecmp(ptr, "-Infinity", 9) == 0)
+	else if (mdb_strncasecmp(ptr, "-Infinity", 9) == 0)
 	{
 		*retval = -get_float8_infinity();
 		*endptr = ptr + 9;
@@ -120,7 +120,7 @@ check_special_value(char *ptr, double *retval, char **endptr)
 }
 
 bool
-ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
+ecmdb_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 			  enum ECPGttype type, enum ECPGttype ind_type,
 			  char *var, char *ind, long varcharsize, long offset,
 			  long ind_offset, enum ARRAY_TYPE isarray, enum COMPAT_MODE compat, bool force_indicator)
@@ -134,7 +134,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 
 	if (sqlca == NULL)
 	{
-		ecpg_raise(lineno, ECPG_OUT_OF_MEMORY,
+		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
 				   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
 		return (false);
 	}
@@ -143,12 +143,12 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 	 * If we are running in a regression test, do not log the offset variable,
 	 * it depends on the machine's alignment.
 	 */
-	if (ecpg_internal_regression_mode)
+	if (ecmdb_internal_regression_mode)
 		log_offset = -1;
 	else
 		log_offset = offset;
 
-	ecpg_log("ecpg_get_data on line %d: RESULT: %s offset: %ld; array: %s\n", lineno, pval ? (binary ? "BINARY" : pval) : "EMPTY", log_offset, ECPG_IS_ARRAY(isarray) ? "yes" : "no");
+	ecmdb_log("ecmdb_get_data on line %d: RESULT: %s offset: %ld; array: %s\n", lineno, pval ? (binary ? "BINARY" : pval) : "EMPTY", log_offset, ECPG_IS_ARRAY(isarray) ? "yes" : "no");
 
 	/* pval is a pointer to the value */
 	if (!pval)
@@ -157,7 +157,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 		 * This should never happen because we already checked that we found
 		 * at least one tuple, but let's play it safe.
 		 */
-		ecpg_raise(lineno, ECPG_NOT_FOUND, ECPG_SQLSTATE_NO_DATA, NULL);
+		ecmdb_raise(lineno, ECPG_NOT_FOUND, ECPG_SQLSTATE_NO_DATA, NULL);
 		return (false);
 	}
 
@@ -203,7 +203,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 				}
 				else
 				{
-					ecpg_raise(lineno, ECPG_MISSING_INDICATOR,
+					ecmdb_raise(lineno, ECPG_MISSING_INDICATOR,
 							 ECPG_SQLSTATE_NULL_VALUE_NO_INDICATOR_PARAMETER,
 							   NULL);
 					return (false);
@@ -211,9 +211,9 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 			}
 			break;
 		default:
-			ecpg_raise(lineno, ECPG_UNSUPPORTED,
+			ecmdb_raise(lineno, ECPG_UNSUPPORTED,
 					   ECPG_SQLSTATE_ECPG_INTERNAL_ERROR,
-					   ecpg_type_name(ind_type));
+					   ecmdb_type_name(ind_type));
 			return (false);
 			break;
 	}
@@ -226,7 +226,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 	{
 		if (*pval != '{')
 		{
-			ecpg_raise(lineno, ECPG_DATA_NOT_ARRAY,
+			ecmdb_raise(lineno, ECPG_DATA_NOT_ARRAY,
 					   ECPG_SQLSTATE_DATATYPE_MISMATCH, NULL);
 			return (false);
 		}
@@ -307,7 +307,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 					res = strtol(pval, &scan_length, 10);
 					if (garbage_left(isarray, scan_length, compat))
 					{
-						ecpg_raise(lineno, ECPG_INT_FORMAT,
+						ecmdb_raise(lineno, ECPG_INT_FORMAT,
 								   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 						return (false);
 					}
@@ -336,7 +336,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 					ures = strtoul(pval, &scan_length, 10);
 					if (garbage_left(isarray, scan_length, compat))
 					{
-						ecpg_raise(lineno, ECPG_UINT_FORMAT,
+						ecmdb_raise(lineno, ECPG_UINT_FORMAT,
 								   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 						return (false);
 					}
@@ -365,7 +365,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 					*((long long int *) (var + offset * act_tuple)) = strtoll(pval, &scan_length, 10);
 					if (garbage_left(isarray, scan_length, compat))
 					{
-						ecpg_raise(lineno, ECPG_INT_FORMAT, ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
+						ecmdb_raise(lineno, ECPG_INT_FORMAT, ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 						return (false);
 					}
 					pval = scan_length;
@@ -378,7 +378,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 					if ((isarray && *scan_length != ',' && *scan_length != '}')
 						|| (!isarray && !(INFORMIX_MODE(compat) && *scan_length == '.') && *scan_length != '\0' && *scan_length != ' '))		/* Garbage left */
 					{
-						ecpg_raise(lineno, ECPG_UINT_FORMAT, ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
+						ecmdb_raise(lineno, ECPG_UINT_FORMAT, ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 						return (false);
 					}
 					pval = scan_length;
@@ -400,7 +400,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 
 					if (garbage_left(isarray, scan_length, compat))
 					{
-						ecpg_raise(lineno, ECPG_FLOAT_FORMAT,
+						ecmdb_raise(lineno, ECPG_FLOAT_FORMAT,
 								   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 						return (false);
 					}
@@ -439,7 +439,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 						break;
 					}
 
-					ecpg_raise(lineno, ECPG_CONVERT_BOOL,
+					ecmdb_raise(lineno, ECPG_CONVERT_BOOL,
 							   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 					return (false);
 					break;
@@ -568,7 +568,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 					/* did we get an error? */
 					if (nres == NULL)
 					{
-						ecpg_log("ecpg_get_data on line %d: RESULT %s; errno %d\n",
+						ecmdb_log("ecmdb_get_data on line %d: RESULT %s; errno %d\n",
 								 lineno, pval, errno);
 
 						if (INFORMIX_MODE(compat))
@@ -582,14 +582,14 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 								ECPGset_noind_null(ECPGt_numeric, nres);
 							else
 							{
-								ecpg_raise(lineno, ECPG_OUT_OF_MEMORY,
+								ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
 									 ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
 								return (false);
 							}
 						}
 						else
 						{
-							ecpg_raise(lineno, ECPG_NUMERIC_FORMAT,
+							ecmdb_raise(lineno, ECPG_NUMERIC_FORMAT,
 									   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 							return (false);
 						}
@@ -599,7 +599,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 						if (!isarray && garbage_left(isarray, scan_length, compat))
 						{
 							free(nres);
-							ecpg_raise(lineno, ECPG_NUMERIC_FORMAT,
+							ecmdb_raise(lineno, ECPG_NUMERIC_FORMAT,
 									   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 							return (false);
 						}
@@ -627,7 +627,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 					/* did we get an error? */
 					if (ires == NULL)
 					{
-						ecpg_log("ecpg_get_data on line %d: RESULT %s; errno %d\n",
+						ecmdb_log("ecmdb_get_data on line %d: RESULT %s; errno %d\n",
 								 lineno, pval, errno);
 
 						if (INFORMIX_MODE(compat))
@@ -636,7 +636,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 							 * Informix wants its own NULL value here instead
 							 * of an error
 							 */
-							ires = (interval *) ecpg_alloc(sizeof(interval), lineno);
+							ires = (interval *) ecmdb_alloc(sizeof(interval), lineno);
 							if (!ires)
 								return (false);
 
@@ -644,7 +644,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 						}
 						else
 						{
-							ecpg_raise(lineno, ECPG_INTERVAL_FORMAT,
+							ecmdb_raise(lineno, ECPG_INTERVAL_FORMAT,
 									   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 							return (false);
 						}
@@ -657,7 +657,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 						if (!isarray && garbage_left(isarray, scan_length, compat))
 						{
 							free(ires);
-							ecpg_raise(lineno, ECPG_INTERVAL_FORMAT,
+							ecmdb_raise(lineno, ECPG_INTERVAL_FORMAT,
 									   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 							return (false);
 						}
@@ -681,7 +681,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 					/* did we get an error? */
 					if (errno != 0)
 					{
-						ecpg_log("ecpg_get_data on line %d: RESULT %s; errno %d\n",
+						ecmdb_log("ecmdb_get_data on line %d: RESULT %s; errno %d\n",
 								 lineno, pval, errno);
 
 						if (INFORMIX_MODE(compat))
@@ -694,7 +694,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 						}
 						else
 						{
-							ecpg_raise(lineno, ECPG_DATE_FORMAT,
+							ecmdb_raise(lineno, ECPG_DATE_FORMAT,
 									   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 							return (false);
 						}
@@ -706,7 +706,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 
 						if (!isarray && garbage_left(isarray, scan_length, compat))
 						{
-							ecpg_raise(lineno, ECPG_DATE_FORMAT,
+							ecmdb_raise(lineno, ECPG_DATE_FORMAT,
 									   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 							return (false);
 						}
@@ -729,7 +729,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 					/* did we get an error? */
 					if (errno != 0)
 					{
-						ecpg_log("ecpg_get_data on line %d: RESULT %s; errno %d\n",
+						ecmdb_log("ecmdb_get_data on line %d: RESULT %s; errno %d\n",
 								 lineno, pval, errno);
 
 						if (INFORMIX_MODE(compat))
@@ -742,7 +742,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 						}
 						else
 						{
-							ecpg_raise(lineno, ECPG_TIMESTAMP_FORMAT,
+							ecmdb_raise(lineno, ECPG_TIMESTAMP_FORMAT,
 									   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 							return (false);
 						}
@@ -754,7 +754,7 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 
 						if (!isarray && garbage_left(isarray, scan_length, compat))
 						{
-							ecpg_raise(lineno, ECPG_TIMESTAMP_FORMAT,
+							ecmdb_raise(lineno, ECPG_TIMESTAMP_FORMAT,
 									   ECPG_SQLSTATE_DATATYPE_MISMATCH, pval);
 							return (false);
 						}
@@ -765,9 +765,9 @@ ecpg_get_data(const PGresult *results, int act_tuple, int act_field, int lineno,
 					break;
 
 				default:
-					ecpg_raise(lineno, ECPG_UNSUPPORTED,
+					ecmdb_raise(lineno, ECPG_UNSUPPORTED,
 							   ECPG_SQLSTATE_ECPG_INTERNAL_ERROR,
-							   ecpg_type_name(type));
+							   ecmdb_type_name(type));
 					return (false);
 					break;
 			}

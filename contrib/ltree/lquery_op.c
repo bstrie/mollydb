@@ -7,7 +7,7 @@
 
 #include <ctype.h>
 
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "utils/formatting.h"
 #include "ltree.h"
 
@@ -35,14 +35,14 @@ getlexeme(char *start, char *end, int *len)
 	char	   *ptr;
 	int			charlen;
 
-	while (start < end && (charlen = pg_mblen(start)) == 1 && t_iseq(start, '_'))
+	while (start < end && (charlen = mdb_mblen(start)) == 1 && t_iseq(start, '_'))
 		start += charlen;
 
 	ptr = start;
 	if (ptr >= end)
 		return NULL;
 
-	while (ptr < end && !((charlen = pg_mblen(ptr)) == 1 && t_iseq(ptr, '_')))
+	while (ptr < end && !((charlen = mdb_mblen(ptr)) == 1 && t_iseq(ptr, '_')))
 		ptr += charlen;
 
 	*len = ptr - start;

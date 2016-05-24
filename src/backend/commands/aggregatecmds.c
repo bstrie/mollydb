@@ -26,9 +26,9 @@
 #include "access/htup_details.h"
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_aggregate.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_aggregate.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "commands/alter.h"
 #include "commands/defrem.h"
 #include "miscadmin.h"
@@ -99,7 +99,7 @@ DefineAggregate(List *name, List *args, bool oldstyle, List *parameters,
 	aggNamespace = QualifiedNameGetCreationNamespace(name, &aggName);
 
 	/* Check we have creation rights in target namespace */
-	aclresult = pg_namespace_aclcheck(aggNamespace, GetUserId(), ACL_CREATE);
+	aclresult = mdb_namespace_aclcheck(aggNamespace, GetUserId(), ACL_CREATE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
 					   get_namespace_name(aggNamespace));
@@ -125,33 +125,33 @@ DefineAggregate(List *name, List *args, bool oldstyle, List *parameters,
 		 * sfunc1, stype1, and initcond1 are accepted as obsolete spellings
 		 * for sfunc, stype, initcond.
 		 */
-		if (pg_strcasecmp(defel->defname, "sfunc") == 0)
+		if (mdb_strcasecmp(defel->defname, "sfunc") == 0)
 			transfuncName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "sfunc1") == 0)
+		else if (mdb_strcasecmp(defel->defname, "sfunc1") == 0)
 			transfuncName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "finalfunc") == 0)
+		else if (mdb_strcasecmp(defel->defname, "finalfunc") == 0)
 			finalfuncName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "combinefunc") == 0)
+		else if (mdb_strcasecmp(defel->defname, "combinefunc") == 0)
 			combinefuncName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "serialfunc") == 0)
+		else if (mdb_strcasecmp(defel->defname, "serialfunc") == 0)
 			serialfuncName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "deserialfunc") == 0)
+		else if (mdb_strcasecmp(defel->defname, "deserialfunc") == 0)
 			deserialfuncName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "msfunc") == 0)
+		else if (mdb_strcasecmp(defel->defname, "msfunc") == 0)
 			mtransfuncName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "minvfunc") == 0)
+		else if (mdb_strcasecmp(defel->defname, "minvfunc") == 0)
 			minvtransfuncName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "mfinalfunc") == 0)
+		else if (mdb_strcasecmp(defel->defname, "mfinalfunc") == 0)
 			mfinalfuncName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "finalfunc_extra") == 0)
+		else if (mdb_strcasecmp(defel->defname, "finalfunc_extra") == 0)
 			finalfuncExtraArgs = defGetBoolean(defel);
-		else if (pg_strcasecmp(defel->defname, "mfinalfunc_extra") == 0)
+		else if (mdb_strcasecmp(defel->defname, "mfinalfunc_extra") == 0)
 			mfinalfuncExtraArgs = defGetBoolean(defel);
-		else if (pg_strcasecmp(defel->defname, "sortop") == 0)
+		else if (mdb_strcasecmp(defel->defname, "sortop") == 0)
 			sortoperatorName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "basetype") == 0)
+		else if (mdb_strcasecmp(defel->defname, "basetype") == 0)
 			baseType = defGetTypeName(defel);
-		else if (pg_strcasecmp(defel->defname, "hypothetical") == 0)
+		else if (mdb_strcasecmp(defel->defname, "hypothetical") == 0)
 		{
 			if (defGetBoolean(defel))
 			{
@@ -162,25 +162,25 @@ DefineAggregate(List *name, List *args, bool oldstyle, List *parameters,
 				aggKind = AGGKIND_HYPOTHETICAL;
 			}
 		}
-		else if (pg_strcasecmp(defel->defname, "stype") == 0)
+		else if (mdb_strcasecmp(defel->defname, "stype") == 0)
 			transType = defGetTypeName(defel);
-		else if (pg_strcasecmp(defel->defname, "serialtype") == 0)
+		else if (mdb_strcasecmp(defel->defname, "serialtype") == 0)
 			serialType = defGetTypeName(defel);
-		else if (pg_strcasecmp(defel->defname, "stype1") == 0)
+		else if (mdb_strcasecmp(defel->defname, "stype1") == 0)
 			transType = defGetTypeName(defel);
-		else if (pg_strcasecmp(defel->defname, "sspace") == 0)
+		else if (mdb_strcasecmp(defel->defname, "sspace") == 0)
 			transSpace = defGetInt32(defel);
-		else if (pg_strcasecmp(defel->defname, "mstype") == 0)
+		else if (mdb_strcasecmp(defel->defname, "mstype") == 0)
 			mtransType = defGetTypeName(defel);
-		else if (pg_strcasecmp(defel->defname, "msspace") == 0)
+		else if (mdb_strcasecmp(defel->defname, "msspace") == 0)
 			mtransSpace = defGetInt32(defel);
-		else if (pg_strcasecmp(defel->defname, "initcond") == 0)
+		else if (mdb_strcasecmp(defel->defname, "initcond") == 0)
 			initval = defGetString(defel);
-		else if (pg_strcasecmp(defel->defname, "initcond1") == 0)
+		else if (mdb_strcasecmp(defel->defname, "initcond1") == 0)
 			initval = defGetString(defel);
-		else if (pg_strcasecmp(defel->defname, "minitcond") == 0)
+		else if (mdb_strcasecmp(defel->defname, "minitcond") == 0)
 			minitval = defGetString(defel);
-		else if (pg_strcasecmp(defel->defname, "parallel") == 0)
+		else if (mdb_strcasecmp(defel->defname, "parallel") == 0)
 			parallel = defGetString(defel);
 		else
 			ereport(WARNING,
@@ -260,7 +260,7 @@ DefineAggregate(List *name, List *args, bool oldstyle, List *parameters,
 					(errcode(ERRCODE_INVALID_FUNCTION_DEFINITION),
 					 errmsg("aggregate input type must be specified")));
 
-		if (pg_strcasecmp(TypeNameToString(baseType), "ANY") == 0)
+		if (mdb_strcasecmp(TypeNameToString(baseType), "ANY") == 0)
 		{
 			numArgs = 0;
 			aggArgTypes[0] = InvalidOid;
@@ -455,11 +455,11 @@ DefineAggregate(List *name, List *args, bool oldstyle, List *parameters,
 
 	if (parallel)
 	{
-		if (pg_strcasecmp(parallel, "safe") == 0)
+		if (mdb_strcasecmp(parallel, "safe") == 0)
 			proparallel = PROPARALLEL_SAFE;
-		else if (pg_strcasecmp(parallel, "restricted") == 0)
+		else if (mdb_strcasecmp(parallel, "restricted") == 0)
 			proparallel = PROPARALLEL_RESTRICTED;
-		else if (pg_strcasecmp(parallel, "unsafe") == 0)
+		else if (mdb_strcasecmp(parallel, "unsafe") == 0)
 			proparallel = PROPARALLEL_UNSAFE;
 		else
 			ereport(ERROR,

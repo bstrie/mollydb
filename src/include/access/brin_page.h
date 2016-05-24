@@ -33,7 +33,7 @@ typedef struct BrinSpecialSpace
 
 /*
  * Make the page type be the last half-word in the page, for consumption by
- * pg_filedump and similar utilities.  We don't really care much about the
+ * mdb_filedump and similar utilities.  We don't really care much about the
  * position of the "flags" half-word, but it's simpler to apply a consistent
  * rule to both.
  *

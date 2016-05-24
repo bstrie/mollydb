@@ -4,7 +4,7 @@ pgindent
 This can format all MollyDB *.c and *.h files, but excludes *.y, and
 *.l files.
 
-1) Install pg_bsd_indent (see below for details).
+1) Install mdb_bsd_indent (see below for details).
 
 2) Install entab (src/tools/entab/).
 
@@ -49,12 +49,12 @@ This can format all MollyDB *.c and *.h files, but excludes *.y, and
 	> run configure
 	# stop is only necessary if it's going to install in a location with an
 	# already running server
-	pg_ctl stop
+	mdb_ctl stop
 	run configure
 	make -C src install
 	make -C contrib install
 	run initdb
-	pg_ctl start
+	mdb_ctl start
 	make installcheck-world
 
 10) Remove Perl backup files after testing (*.bak)
@@ -64,7 +64,7 @@ This can format all MollyDB *.c and *.h files, but excludes *.y, and
 BSD indent
 ----------
 
-We have standardized on NetBSD's indent, and renamed it pg_bsd_indent.
+We have standardized on NetBSD's indent, and renamed it mdb_bsd_indent.
 We have fixed a few bugs which requre the NetBSD source to be patched
 with indent.bsd.patch patch.  A fully patched version is available at
 ftp://ftp.mollydb.org/pub/dev.

@@ -4,13 +4,13 @@
  *	file system operations
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/file.c
+ *	src/bin/mdb_upgrade/file.c
  */
 
 #include "mollydb_fe.h"
 
 #include "access/visibilitymap.h"
-#include "pg_upgrade.h"
+#include "mdb_upgrade.h"
 #include "storage/bufpage.h"
 #include "storage/checksum.h"
 #include "storage/checksum_impl.h"
@@ -59,7 +59,7 @@ copyFile(const char *src, const char *dst, bool force)
 const char *
 linkFile(const char *src, const char *dst)
 {
-	if (pg_link_file(src, dst) == -1)
+	if (mdb_link_file(src, dst) == -1)
 		return getErrorText();
 	else
 		return NULL;
@@ -98,7 +98,7 @@ copy_file(const char *srcfile, const char *dstfile, bool force)
 		return -1;
 	}
 
-	buffer = (char *) pg_malloc(COPY_BUF_SIZE);
+	buffer = (char *) mdb_malloc(COPY_BUF_SIZE);
 
 	/* perform data copying i.e read src source, write to destination */
 	while (true)
@@ -128,7 +128,7 @@ copy_file(const char *srcfile, const char *dstfile, bool force)
 		}
 	}
 
-	pg_free(buffer);
+	mdb_free(buffer);
 
 	if (src_fd != 0)
 		close(src_fd);
@@ -270,7 +270,7 @@ rewriteVisibilityMap(const char *fromfile, const char *tofile, bool force)
 			if (old_cluster.controldata.data_checksum_version != 0 &&
 				new_cluster.controldata.data_checksum_version != 0)
 				((PageHeader) new_vmbuf)->pd_checksum =
-					pg_checksum_page(new_vmbuf, new_blkno);
+					mdb_checksum_page(new_vmbuf, new_blkno);
 
 			if (write(dst_fd, new_vmbuf, BLCKSZ) != BLCKSZ)
 			{
@@ -302,9 +302,9 @@ check_hard_link(void)
 	snprintf(new_link_file, sizeof(new_link_file), "%s/PG_VERSION.linktest", new_cluster.pgdata);
 	unlink(new_link_file);		/* might fail */
 
-	if (pg_link_file(existing_file, new_link_file) == -1)
+	if (mdb_link_file(existing_file, new_link_file) == -1)
 	{
-		pg_fatal("Could not create hard link between old and new data directories: %s\n"
+		mdb_fatal("Could not create hard link between old and new data directories: %s\n"
 				 "In link mode the old and new data directories must be on the same file system volume.\n",
 				 getErrorText());
 	}

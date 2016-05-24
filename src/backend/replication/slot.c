@@ -20,7 +20,7 @@
  * on standbys (to support cascading setups).  The requirement that slots be
  * usable on standbys precludes storing them in the system catalogs.
  *
- * Each replication slot gets its own directory inside the $PGDATA/pg_replslot
+ * Each replication slot gets its own directory inside the $PGDATA/mdb_replslot
  * directory. Inside that directory the state file will contain the slot's
  * own data. Additional data can be stored alongside that file if required.
  * While the server is running, the state data is also cached in memory for
@@ -57,7 +57,7 @@ typedef struct ReplicationSlotOnDisk
 
 	/* data not covered by checksum */
 	uint32		magic;
-	pg_crc32c	checksum;
+	mdb_crc32c	checksum;
 
 	/* data covered by checksum */
 	uint32		version;
@@ -432,8 +432,8 @@ ReplicationSlotDropAcquired(void)
 	LWLockAcquire(ReplicationSlotAllocationLock, LW_EXCLUSIVE);
 
 	/* Generate pathnames. */
-	sprintf(path, "pg_replslot/%s", NameStr(slot->data.name));
-	sprintf(tmppath, "pg_replslot/%s.tmp", NameStr(slot->data.name));
+	sprintf(path, "mdb_replslot/%s", NameStr(slot->data.name));
+	sprintf(tmppath, "mdb_replslot/%s.tmp", NameStr(slot->data.name));
 
 	/*
 	 * Rename the slot directory on disk, so that we'll no longer recognize
@@ -454,7 +454,7 @@ ReplicationSlotDropAcquired(void)
 		 */
 		START_CRIT_SECTION();
 		fsync_fname(tmppath, true);
-		fsync_fname("pg_replslot", true);
+		fsync_fname("mdb_replslot", true);
 		END_CRIT_SECTION();
 	}
 	else
@@ -518,7 +518,7 @@ ReplicationSlotSave(void)
 
 	Assert(MyReplicationSlot != NULL);
 
-	sprintf(path, "pg_replslot/%s", NameStr(MyReplicationSlot->data.name));
+	sprintf(path, "mdb_replslot/%s", NameStr(MyReplicationSlot->data.name));
 	SaveSlotToPath(MyReplicationSlot, path, ERROR);
 }
 
@@ -867,7 +867,7 @@ CheckPointReplicationSlots(void)
 			continue;
 
 		/* save the slot to disk, locking is handled in SaveSlotToPath() */
-		sprintf(path, "pg_replslot/%s", NameStr(s->data.name));
+		sprintf(path, "mdb_replslot/%s", NameStr(s->data.name));
 		SaveSlotToPath(s, path, LOG);
 	}
 	LWLockRelease(ReplicationSlotAllocationLock);
@@ -886,8 +886,8 @@ StartupReplicationSlots(void)
 	elog(DEBUG1, "starting up replication slots");
 
 	/* restore all slots by iterating over all on-disk entries */
-	replication_dir = AllocateDir("pg_replslot");
-	while ((replication_de = ReadDir(replication_dir, "pg_replslot")) != NULL)
+	replication_dir = AllocateDir("mdb_replslot");
+	while ((replication_de = ReadDir(replication_dir, "mdb_replslot")) != NULL)
 	{
 		struct stat statbuf;
 		char		path[MAXPGPATH];
@@ -896,14 +896,14 @@ StartupReplicationSlots(void)
 			strcmp(replication_de->d_name, "..") == 0)
 			continue;
 
-		snprintf(path, MAXPGPATH, "pg_replslot/%s", replication_de->d_name);
+		snprintf(path, MAXPGPATH, "mdb_replslot/%s", replication_de->d_name);
 
 		/* we're only creating directories here, skip if it's not our's */
 		if (lstat(path, &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
 			continue;
 
 		/* we crashed while a slot was being setup or deleted, clean up */
-		if (pg_str_endswith(replication_de->d_name, ".tmp"))
+		if (mdb_str_endswith(replication_de->d_name, ".tmp"))
 		{
 			if (!rmtree(path, true))
 			{
@@ -912,7 +912,7 @@ StartupReplicationSlots(void)
 						 errmsg("could not remove directory \"%s\"", path)));
 				continue;
 			}
-			fsync_fname("pg_replslot", true);
+			fsync_fname("mdb_replslot", true);
 			continue;
 		}
 
@@ -950,8 +950,8 @@ CreateSlotOnDisk(ReplicationSlot *slot)
 	 * takes out the lock, if we'd take the lock here, we'd deadlock.
 	 */
 
-	sprintf(path, "pg_replslot/%s", NameStr(slot->data.name));
-	sprintf(tmppath, "pg_replslot/%s.tmp", NameStr(slot->data.name));
+	sprintf(path, "mdb_replslot/%s", NameStr(slot->data.name));
+	sprintf(tmppath, "mdb_replslot/%s.tmp", NameStr(slot->data.name));
 
 	/*
 	 * It's just barely possible that some previous effort to create or drop a
@@ -989,7 +989,7 @@ CreateSlotOnDisk(ReplicationSlot *slot)
 	START_CRIT_SECTION();
 
 	fsync_fname(path, true);
-	fsync_fname("pg_replslot", true);
+	fsync_fname("mdb_replslot", true);
 
 	END_CRIT_SECTION();
 }
@@ -1066,7 +1066,7 @@ SaveSlotToPath(ReplicationSlot *slot, const char *dir, int elevel)
 	}
 
 	/* fsync the temporary file */
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 	{
 		int			save_errno = errno;
 
@@ -1096,7 +1096,7 @@ SaveSlotToPath(ReplicationSlot *slot, const char *dir, int elevel)
 
 	fsync_fname(path, false);
 	fsync_fname(dir, true);
-	fsync_fname("pg_replslot", true);
+	fsync_fname("mdb_replslot", true);
 
 	END_CRIT_SECTION();
 
@@ -1124,18 +1124,18 @@ RestoreSlotFromDisk(const char *name)
 	int			fd;
 	bool		restored = false;
 	int			readBytes;
-	pg_crc32c	checksum;
+	mdb_crc32c	checksum;
 
 	/* no need to lock here, no concurrent access allowed yet */
 
 	/* delete temp file if it exists */
-	sprintf(path, "pg_replslot/%s/state.tmp", name);
+	sprintf(path, "mdb_replslot/%s/state.tmp", name);
 	if (unlink(path) < 0 && errno != ENOENT)
 		ereport(PANIC,
 				(errcode_for_file_access(),
 				 errmsg("could not remove file \"%s\": %m", path)));
 
-	sprintf(path, "pg_replslot/%s/state", name);
+	sprintf(path, "mdb_replslot/%s/state", name);
 
 	elog(DEBUG1, "restoring replication slot from \"%s\"", path);
 
@@ -1154,7 +1154,7 @@ RestoreSlotFromDisk(const char *name)
 	 * Sync state file before we're reading from it. We might have crashed
 	 * while it wasn't synced yet and we shouldn't continue on that basis.
 	 */
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 	{
 		CloseTransientFile(fd);
 		ereport(PANIC,
@@ -1240,7 +1240,7 @@ RestoreSlotFromDisk(const char *name)
 	 */
 	if (cp.slotdata.persistency != RS_PERSISTENT)
 	{
-		sprintf(path, "pg_replslot/%s", name);
+		sprintf(path, "mdb_replslot/%s", name);
 
 		if (!rmtree(path, true))
 		{
@@ -1248,7 +1248,7 @@ RestoreSlotFromDisk(const char *name)
 					(errcode_for_file_access(),
 					 errmsg("could not remove directory \"%s\"", path)));
 		}
-		fsync_fname("pg_replslot", true);
+		fsync_fname("mdb_replslot", true);
 		return;
 	}
 

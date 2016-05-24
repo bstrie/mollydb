@@ -110,7 +110,7 @@ gets_interactive(const char *prompt, PQExpBuffer query_buf)
  * Append the line to the history buffer, making sure there is a trailing '\n'
  */
 void
-pg_append_history(const char *s, PQExpBuffer history_buf)
+mdb_append_history(const char *s, PQExpBuffer history_buf)
 {
 #ifdef USE_READLINE
 	if (useHistory && s)
@@ -129,10 +129,10 @@ pg_append_history(const char *s, PQExpBuffer history_buf)
  *
  * Note: we write nothing if history_buf is empty, so extra calls to this
  * function don't hurt.  There must have been at least one line added by
- * pg_append_history before we'll do anything.
+ * mdb_append_history before we'll do anything.
  */
 void
-pg_send_history(PQExpBuffer history_buf)
+mdb_send_history(PQExpBuffer history_buf)
 {
 #ifdef USE_READLINE
 	static char *prev_hist = NULL;
@@ -159,7 +159,7 @@ pg_send_history(PQExpBuffer history_buf)
 			/* Save each previous line for ignoredups processing */
 			if (prev_hist)
 				free(prev_hist);
-			prev_hist = pg_strdup(s);
+			prev_hist = mdb_strdup(s);
 			/* And send it to readline */
 			add_history(s);
 			/* Count lines added to history for use later */
@@ -232,12 +232,12 @@ gets_fromFile(FILE *source)
 		if (buffer->data[buffer->len - 1] == '\n')
 		{
 			buffer->data[buffer->len - 1] = '\0';
-			return pg_strdup(buffer->data);
+			return mdb_strdup(buffer->data);
 		}
 	}
 
 	if (buffer->len > 0)		/* EOF after reading some bufferload(s) */
-		return pg_strdup(buffer->data);
+		return mdb_strdup(buffer->data);
 
 	/* EOF, so return null */
 	return NULL;
@@ -379,7 +379,7 @@ initializeInput(int flags)
 		}
 		else
 		{
-			psql_history = pg_strdup(histfile);
+			psql_history = mdb_strdup(histfile);
 			expand_tilde(&psql_history);
 		}
 

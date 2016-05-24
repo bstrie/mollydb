@@ -40,37 +40,37 @@ SET search_path TO information_schema;
  */
 
 /* Expand any 1-D array into a set with integers 1..N */
-CREATE FUNCTION _pg_expandarray(IN anyarray, OUT x anyelement, OUT n int)
+CREATE FUNCTION _mdb_expandarray(IN anyarray, OUT x anyelement, OUT n int)
     RETURNS SETOF RECORD
     LANGUAGE sql STRICT IMMUTABLE
-    AS 'select $1[s], s - pg_catalog.array_lower($1,1) + 1
-        from pg_catalog.generate_series(pg_catalog.array_lower($1,1),
-                                        pg_catalog.array_upper($1,1),
+    AS 'select $1[s], s - mdb_catalog.array_lower($1,1) + 1
+        from mdb_catalog.generate_series(mdb_catalog.array_lower($1,1),
+                                        mdb_catalog.array_upper($1,1),
                                         1) as g(s)';
 
-CREATE FUNCTION _pg_keysequal(smallint[], smallint[]) RETURNS boolean
+CREATE FUNCTION _mdb_keysequal(smallint[], smallint[]) RETURNS boolean
     LANGUAGE sql IMMUTABLE  -- intentionally not STRICT, to allow inlining
-    AS 'select $1 operator(pg_catalog.<@) $2 and $2 operator(pg_catalog.<@) $1';
+    AS 'select $1 operator(mdb_catalog.<@) $2 and $2 operator(mdb_catalog.<@) $1';
 
 /* Given an index's OID and an underlying-table column number, return the
  * column's position in the index (NULL if not there) */
-CREATE FUNCTION _pg_index_position(oid, smallint) RETURNS int
+CREATE FUNCTION _mdb_index_position(oid, smallint) RETURNS int
     LANGUAGE sql STRICT STABLE
     AS $$
 SELECT (ss.a).n FROM
-  (SELECT information_schema._pg_expandarray(indkey) AS a
-   FROM pg_catalog.pg_index WHERE indexrelid = $1) ss
+  (SELECT information_schema._mdb_expandarray(indkey) AS a
+   FROM mdb_catalog.mdb_index WHERE indexrelid = $1) ss
   WHERE (ss.a).x = $2;
 $$;
 
-CREATE FUNCTION _pg_truetypid(pg_attribute, pg_type) RETURNS oid
+CREATE FUNCTION _mdb_truetypid(mdb_attribute, mdb_type) RETURNS oid
     LANGUAGE sql
     IMMUTABLE
     RETURNS NULL ON NULL INPUT
     AS
 $$SELECT CASE WHEN $2.typtype = 'd' THEN $2.typbasetype ELSE $1.atttypid END$$;
 
-CREATE FUNCTION _pg_truetypmod(pg_attribute, pg_type) RETURNS int4
+CREATE FUNCTION _mdb_truetypmod(mdb_attribute, mdb_type) RETURNS int4
     LANGUAGE sql
     IMMUTABLE
     RETURNS NULL ON NULL INPUT
@@ -79,7 +79,7 @@ $$SELECT CASE WHEN $2.typtype = 'd' THEN $2.typtypmod ELSE $1.atttypmod END$$;
 
 -- these functions encapsulate knowledge about the encoding of typmod:
 
-CREATE FUNCTION _pg_char_max_length(typid oid, typmod int4) RETURNS integer
+CREATE FUNCTION _mdb_char_max_length(typid oid, typmod int4) RETURNS integer
     LANGUAGE sql
     IMMUTABLE
     RETURNS NULL ON NULL INPUT
@@ -94,7 +94,7 @@ $$SELECT
        ELSE null
   END$$;
 
-CREATE FUNCTION _pg_char_octet_length(typid oid, typmod int4) RETURNS integer
+CREATE FUNCTION _mdb_char_octet_length(typid oid, typmod int4) RETURNS integer
     LANGUAGE sql
     IMMUTABLE
     RETURNS NULL ON NULL INPUT
@@ -103,13 +103,13 @@ $$SELECT
   CASE WHEN $1 IN (25, 1042, 1043) /* text, char, varchar */
        THEN CASE WHEN $2 = -1 /* default typmod */
                  THEN CAST(2^30 AS integer)
-                 ELSE information_schema._pg_char_max_length($1, $2) *
-                      pg_catalog.pg_encoding_max_length((SELECT encoding FROM pg_catalog.pg_database WHERE datname = pg_catalog.current_database()))
+                 ELSE information_schema._mdb_char_max_length($1, $2) *
+                      mdb_catalog.mdb_encoding_max_length((SELECT encoding FROM mdb_catalog.mdb_database WHERE datname = mdb_catalog.current_database()))
             END
        ELSE null
   END$$;
 
-CREATE FUNCTION _pg_numeric_precision(typid oid, typmod int4) RETURNS integer
+CREATE FUNCTION _mdb_numeric_precision(typid oid, typmod int4) RETURNS integer
     LANGUAGE sql
     IMMUTABLE
     RETURNS NULL ON NULL INPUT
@@ -129,7 +129,7 @@ $$SELECT
          ELSE null
   END$$;
 
-CREATE FUNCTION _pg_numeric_precision_radix(typid oid, typmod int4) RETURNS integer
+CREATE FUNCTION _mdb_numeric_precision_radix(typid oid, typmod int4) RETURNS integer
     LANGUAGE sql
     IMMUTABLE
     RETURNS NULL ON NULL INPUT
@@ -140,7 +140,7 @@ $$SELECT
        ELSE null
   END$$;
 
-CREATE FUNCTION _pg_numeric_scale(typid oid, typmod int4) RETURNS integer
+CREATE FUNCTION _mdb_numeric_scale(typid oid, typmod int4) RETURNS integer
     LANGUAGE sql
     IMMUTABLE
     RETURNS NULL ON NULL INPUT
@@ -155,7 +155,7 @@ $$SELECT
        ELSE null
   END$$;
 
-CREATE FUNCTION _pg_datetime_precision(typid oid, typmod int4) RETURNS integer
+CREATE FUNCTION _mdb_datetime_precision(typid oid, typmod int4) RETURNS integer
     LANGUAGE sql
     IMMUTABLE
     RETURNS NULL ON NULL INPUT
@@ -170,7 +170,7 @@ $$SELECT
        ELSE null
   END$$;
 
-CREATE FUNCTION _pg_interval_type(typid oid, mod int4) RETURNS text
+CREATE FUNCTION _mdb_interval_type(typid oid, mod int4) RETURNS text
     LANGUAGE sql
     IMMUTABLE
     RETURNS NULL ON NULL INPUT
@@ -250,10 +250,10 @@ CREATE VIEW applicable_roles AS
     SELECT CAST(a.rolname AS sql_identifier) AS grantee,
            CAST(b.rolname AS sql_identifier) AS role_name,
            CAST(CASE WHEN m.admin_option THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_grantable
-    FROM pg_auth_members m
-         JOIN pg_authid a ON (m.member = a.oid)
-         JOIN pg_authid b ON (m.roleid = b.oid)
-    WHERE pg_has_role(a.oid, 'USAGE');
+    FROM mdb_auth_members m
+         JOIN mdb_authid a ON (m.member = a.oid)
+         JOIN mdb_authid b ON (m.roleid = b.oid)
+    WHERE mdb_has_role(a.oid, 'USAGE');
 
 GRANT SELECT ON applicable_roles TO PUBLIC;
 
@@ -290,25 +290,25 @@ CREATE VIEW attributes AS
            CAST(c.relname AS sql_identifier) AS udt_name,
            CAST(a.attname AS sql_identifier) AS attribute_name,
            CAST(a.attnum AS cardinal_number) AS ordinal_position,
-           CAST(pg_get_expr(ad.adbin, ad.adrelid) AS character_data) AS attribute_default,
+           CAST(mdb_get_expr(ad.adbin, ad.adrelid) AS character_data) AS attribute_default,
            CAST(CASE WHEN a.attnotnull OR (t.typtype = 'd' AND t.typnotnull) THEN 'NO' ELSE 'YES' END
              AS yes_or_no)
              AS is_nullable, -- This column was apparently removed between SQL:2003 and SQL:2008.
 
            CAST(
              CASE WHEN t.typelem <> 0 AND t.typlen = -1 THEN 'ARRAY'
-                  WHEN nt.nspname = 'pg_catalog' THEN format_type(a.atttypid, null)
+                  WHEN nt.nspname = 'mdb_catalog' THEN format_type(a.atttypid, null)
                   ELSE 'USER-DEFINED' END
              AS character_data)
              AS data_type,
 
            CAST(
-             _pg_char_max_length(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_char_max_length(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS character_maximum_length,
 
            CAST(
-             _pg_char_octet_length(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_char_octet_length(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS character_octet_length,
 
@@ -321,27 +321,27 @@ CREATE VIEW attributes AS
            CAST(co.collname AS sql_identifier) AS collation_name,
 
            CAST(
-             _pg_numeric_precision(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_numeric_precision(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS numeric_precision,
 
            CAST(
-             _pg_numeric_precision_radix(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_numeric_precision_radix(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS numeric_precision_radix,
 
            CAST(
-             _pg_numeric_scale(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_numeric_scale(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS numeric_scale,
 
            CAST(
-             _pg_datetime_precision(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_datetime_precision(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS datetime_precision,
 
            CAST(
-             _pg_interval_type(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_interval_type(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS character_data)
              AS interval_type,
            CAST(null AS cardinal_number) AS interval_precision,
@@ -358,15 +358,15 @@ CREATE VIEW attributes AS
            CAST(a.attnum AS sql_identifier) AS dtd_identifier,
            CAST('NO' AS yes_or_no) AS is_derived_reference_attribute
 
-    FROM (pg_attribute a LEFT JOIN pg_attrdef ad ON attrelid = adrelid AND attnum = adnum)
-         JOIN (pg_class c JOIN pg_namespace nc ON (c.relnamespace = nc.oid)) ON a.attrelid = c.oid
-         JOIN (pg_type t JOIN pg_namespace nt ON (t.typnamespace = nt.oid)) ON a.atttypid = t.oid
-         LEFT JOIN (pg_collation co JOIN pg_namespace nco ON (co.collnamespace = nco.oid))
-           ON a.attcollation = co.oid AND (nco.nspname, co.collname) <> ('pg_catalog', 'default')
+    FROM (mdb_attribute a LEFT JOIN mdb_attrdef ad ON attrelid = adrelid AND attnum = adnum)
+         JOIN (mdb_class c JOIN mdb_namespace nc ON (c.relnamespace = nc.oid)) ON a.attrelid = c.oid
+         JOIN (mdb_type t JOIN mdb_namespace nt ON (t.typnamespace = nt.oid)) ON a.atttypid = t.oid
+         LEFT JOIN (mdb_collation co JOIN mdb_namespace nco ON (co.collnamespace = nco.oid))
+           ON a.attcollation = co.oid AND (nco.nspname, co.collname) <> ('mdb_catalog', 'default')
 
     WHERE a.attnum > 0 AND NOT a.attisdropped
           AND c.relkind in ('c')
-          AND (pg_has_role(c.relowner, 'USAGE')
+          AND (mdb_has_role(c.relowner, 'USAGE')
                OR has_type_privilege(c.reltype, 'USAGE'));
 
 GRANT SELECT ON attributes TO PUBLIC;
@@ -386,8 +386,8 @@ CREATE VIEW character_sets AS
            CAST(current_database() AS sql_identifier) AS default_collate_catalog,
            CAST(nc.nspname AS sql_identifier) AS default_collate_schema,
            CAST(c.collname AS sql_identifier) AS default_collate_name
-    FROM pg_database d
-         LEFT JOIN (pg_collation c JOIN pg_namespace nc ON (c.collnamespace = nc.oid))
+    FROM mdb_database d
+         LEFT JOIN (mdb_collation c JOIN mdb_namespace nc ON (c.collnamespace = nc.oid))
              ON (datcollate = collcollate AND datctype = collctype)
     WHERE d.datname = current_database()
     ORDER BY char_length(c.collname) DESC, c.collname ASC -- prefer full/canonical name
@@ -408,15 +408,15 @@ CREATE VIEW check_constraint_routine_usage AS
            CAST(current_database() AS sql_identifier) AS specific_catalog,
            CAST(np.nspname AS sql_identifier) AS specific_schema,
            CAST(p.proname || '_' || CAST(p.oid AS text) AS sql_identifier) AS specific_name
-    FROM pg_namespace nc, pg_constraint c, pg_depend d, pg_proc p, pg_namespace np
+    FROM mdb_namespace nc, mdb_constraint c, mdb_depend d, mdb_proc p, mdb_namespace np
     WHERE nc.oid = c.connamespace
       AND c.contype = 'c'
       AND c.oid = d.objid
-      AND d.classid = 'pg_catalog.pg_constraint'::regclass
+      AND d.classid = 'mdb_catalog.mdb_constraint'::regclass
       AND d.refobjid = p.oid
-      AND d.refclassid = 'pg_catalog.pg_proc'::regclass
+      AND d.refclassid = 'mdb_catalog.mdb_proc'::regclass
       AND p.pronamespace = np.oid
-      AND pg_has_role(p.proowner, 'USAGE');
+      AND mdb_has_role(p.proowner, 'USAGE');
 
 GRANT SELECT ON check_constraint_routine_usage TO PUBLIC;
 
@@ -430,13 +430,13 @@ CREATE VIEW check_constraints AS
     SELECT CAST(current_database() AS sql_identifier) AS constraint_catalog,
            CAST(rs.nspname AS sql_identifier) AS constraint_schema,
            CAST(con.conname AS sql_identifier) AS constraint_name,
-           CAST(substring(pg_get_constraintdef(con.oid) from 7) AS character_data)
+           CAST(substring(mdb_get_constraintdef(con.oid) from 7) AS character_data)
              AS check_clause
-    FROM pg_constraint con
-           LEFT OUTER JOIN pg_namespace rs ON (rs.oid = con.connamespace)
-           LEFT OUTER JOIN pg_class c ON (c.oid = con.conrelid)
-           LEFT OUTER JOIN pg_type t ON (t.oid = con.contypid)
-    WHERE pg_has_role(coalesce(c.relowner, t.typowner), 'USAGE')
+    FROM mdb_constraint con
+           LEFT OUTER JOIN mdb_namespace rs ON (rs.oid = con.connamespace)
+           LEFT OUTER JOIN mdb_class c ON (c.oid = con.conrelid)
+           LEFT OUTER JOIN mdb_type t ON (t.oid = con.contypid)
+    WHERE mdb_has_role(coalesce(c.relowner, t.typowner), 'USAGE')
       AND con.contype = 'c'
 
     UNION
@@ -447,14 +447,14 @@ CREATE VIEW check_constraints AS
            CAST(CAST(n.oid AS text) || '_' || CAST(r.oid AS text) || '_' || CAST(a.attnum AS text) || '_not_null' AS sql_identifier) AS constraint_name, -- XXX
            CAST(a.attname || ' IS NOT NULL' AS character_data)
              AS check_clause
-    FROM pg_namespace n, pg_class r, pg_attribute a
+    FROM mdb_namespace n, mdb_class r, mdb_attribute a
     WHERE n.oid = r.relnamespace
       AND r.oid = a.attrelid
       AND a.attnum > 0
       AND NOT a.attisdropped
       AND a.attnotnull
       AND r.relkind = 'r'
-      AND pg_has_role(r.relowner, 'USAGE');
+      AND mdb_has_role(r.relowner, 'USAGE');
 
 GRANT SELECT ON check_constraints TO PUBLIC;
 
@@ -469,9 +469,9 @@ CREATE VIEW collations AS
            CAST(nc.nspname AS sql_identifier) AS collation_schema,
            CAST(c.collname AS sql_identifier) AS collation_name,
            CAST('NO PAD' AS character_data) AS pad_attribute
-    FROM pg_collation c, pg_namespace nc
+    FROM mdb_collation c, mdb_namespace nc
     WHERE c.collnamespace = nc.oid
-          AND collencoding IN (-1, (SELECT encoding FROM pg_database WHERE datname = current_database()));
+          AND collencoding IN (-1, (SELECT encoding FROM mdb_database WHERE datname = current_database()));
 
 GRANT SELECT ON collations TO PUBLIC;
 
@@ -488,9 +488,9 @@ CREATE VIEW collation_character_set_applicability AS
            CAST(null AS sql_identifier) AS character_set_catalog,
            CAST(null AS sql_identifier) AS character_set_schema,
            CAST(getdatabaseencoding() AS sql_identifier) AS character_set_name
-    FROM pg_collation c, pg_namespace nc
+    FROM mdb_collation c, mdb_namespace nc
     WHERE c.collnamespace = nc.oid
-          AND collencoding IN (-1, (SELECT encoding FROM pg_database WHERE datname = current_database()));
+          AND collencoding IN (-1, (SELECT encoding FROM mdb_database WHERE datname = current_database()));
 
 GRANT SELECT ON collation_character_set_applicability TO PUBLIC;
 
@@ -517,8 +517,8 @@ CREATE VIEW column_domain_usage AS
            CAST(c.relname AS sql_identifier) AS table_name,
            CAST(a.attname AS sql_identifier) AS column_name
 
-    FROM pg_type t, pg_namespace nt, pg_class c, pg_namespace nc,
-         pg_attribute a
+    FROM mdb_type t, mdb_namespace nt, mdb_class c, mdb_namespace nc,
+         mdb_attribute a
 
     WHERE t.typnamespace = nt.oid
           AND c.relnamespace = nc.oid
@@ -528,7 +528,7 @@ CREATE VIEW column_domain_usage AS
           AND c.relkind IN ('r', 'v', 'f')
           AND a.attnum > 0
           AND NOT a.attisdropped
-          AND pg_has_role(t.typowner, 'USAGE');
+          AND mdb_has_role(t.typowner, 'USAGE');
 
 GRANT SELECT ON column_domain_usage TO PUBLIC;
 
@@ -549,7 +549,7 @@ CREATE VIEW column_privileges AS
            CAST(
              CASE WHEN
                   -- object owner always has grant options
-                  pg_has_role(x.grantee, x.relowner, 'USAGE')
+                  mdb_has_role(x.grantee, x.relowner, 'USAGE')
                   OR x.grantable
                   THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_grantable
 
@@ -563,10 +563,10 @@ CREATE VIEW column_privileges AS
                   pr_c.grantable,
                   pr_c.relowner
            FROM (SELECT oid, relname, relnamespace, relowner, (aclexplode(coalesce(relacl, acldefault('r', relowner)))).*
-                 FROM pg_class
+                 FROM mdb_class
                  WHERE relkind IN ('r', 'v', 'f')
                 ) pr_c (oid, relname, relnamespace, relowner, grantor, grantee, prtype, grantable),
-                pg_attribute a
+                mdb_attribute a
            WHERE a.attrelid = pr_c.oid
                  AND a.attnum > 0
                  AND NOT a.attisdropped
@@ -580,18 +580,18 @@ CREATE VIEW column_privileges AS
                   pr_a.grantable,
                   c.relowner
            FROM (SELECT attrelid, attname, (aclexplode(coalesce(attacl, acldefault('c', relowner)))).*
-                 FROM pg_attribute a JOIN pg_class cc ON (a.attrelid = cc.oid)
+                 FROM mdb_attribute a JOIN mdb_class cc ON (a.attrelid = cc.oid)
                  WHERE attnum > 0
                        AND NOT attisdropped
                 ) pr_a (attrelid, attname, grantor, grantee, prtype, grantable),
-                pg_class c
+                mdb_class c
            WHERE pr_a.attrelid = c.oid
                  AND relkind IN ('r', 'v', 'f')
          ) x,
-         pg_namespace nc,
-         pg_authid u_grantor,
+         mdb_namespace nc,
+         mdb_authid u_grantor,
          (
-           SELECT oid, rolname FROM pg_authid
+           SELECT oid, rolname FROM mdb_authid
            UNION ALL
            SELECT 0::oid, 'PUBLIC'
          ) AS grantee (oid, rolname)
@@ -600,8 +600,8 @@ CREATE VIEW column_privileges AS
           AND x.grantee = grantee.oid
           AND x.grantor = u_grantor.oid
           AND x.prtype IN ('INSERT', 'SELECT', 'UPDATE', 'REFERENCES')
-          AND (pg_has_role(u_grantor.oid, 'USAGE')
-               OR pg_has_role(grantee.oid, 'USAGE')
+          AND (mdb_has_role(u_grantor.oid, 'USAGE')
+               OR mdb_has_role(grantee.oid, 'USAGE')
                OR grantee.rolname = 'PUBLIC');
 
 GRANT SELECT ON column_privileges TO PUBLIC;
@@ -621,16 +621,16 @@ CREATE VIEW column_udt_usage AS
            CAST(c.relname AS sql_identifier) AS table_name,
            CAST(a.attname AS sql_identifier) AS column_name
 
-    FROM pg_attribute a, pg_class c, pg_namespace nc,
-         (pg_type t JOIN pg_namespace nt ON (t.typnamespace = nt.oid))
-           LEFT JOIN (pg_type bt JOIN pg_namespace nbt ON (bt.typnamespace = nbt.oid))
+    FROM mdb_attribute a, mdb_class c, mdb_namespace nc,
+         (mdb_type t JOIN mdb_namespace nt ON (t.typnamespace = nt.oid))
+           LEFT JOIN (mdb_type bt JOIN mdb_namespace nbt ON (bt.typnamespace = nbt.oid))
            ON (t.typtype = 'd' AND t.typbasetype = bt.oid)
 
     WHERE a.attrelid = c.oid
           AND a.atttypid = t.oid
           AND nc.oid = c.relnamespace
           AND a.attnum > 0 AND NOT a.attisdropped AND c.relkind in ('r', 'v', 'f')
-          AND pg_has_role(coalesce(bt.typowner, t.typowner), 'USAGE');
+          AND mdb_has_role(coalesce(bt.typowner, t.typowner), 'USAGE');
 
 GRANT SELECT ON column_udt_usage TO PUBLIC;
 
@@ -646,7 +646,7 @@ CREATE VIEW columns AS
            CAST(c.relname AS sql_identifier) AS table_name,
            CAST(a.attname AS sql_identifier) AS column_name,
            CAST(a.attnum AS cardinal_number) AS ordinal_position,
-           CAST(pg_get_expr(ad.adbin, ad.adrelid) AS character_data) AS column_default,
+           CAST(mdb_get_expr(ad.adbin, ad.adrelid) AS character_data) AS column_default,
            CAST(CASE WHEN a.attnotnull OR (t.typtype = 'd' AND t.typnotnull) THEN 'NO' ELSE 'YES' END
              AS yes_or_no)
              AS is_nullable,
@@ -654,48 +654,48 @@ CREATE VIEW columns AS
            CAST(
              CASE WHEN t.typtype = 'd' THEN
                CASE WHEN bt.typelem <> 0 AND bt.typlen = -1 THEN 'ARRAY'
-                    WHEN nbt.nspname = 'pg_catalog' THEN format_type(t.typbasetype, null)
+                    WHEN nbt.nspname = 'mdb_catalog' THEN format_type(t.typbasetype, null)
                     ELSE 'USER-DEFINED' END
              ELSE
                CASE WHEN t.typelem <> 0 AND t.typlen = -1 THEN 'ARRAY'
-                    WHEN nt.nspname = 'pg_catalog' THEN format_type(a.atttypid, null)
+                    WHEN nt.nspname = 'mdb_catalog' THEN format_type(a.atttypid, null)
                     ELSE 'USER-DEFINED' END
              END
              AS character_data)
              AS data_type,
 
            CAST(
-             _pg_char_max_length(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_char_max_length(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS character_maximum_length,
 
            CAST(
-             _pg_char_octet_length(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_char_octet_length(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS character_octet_length,
 
            CAST(
-             _pg_numeric_precision(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_numeric_precision(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS numeric_precision,
 
            CAST(
-             _pg_numeric_precision_radix(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_numeric_precision_radix(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS numeric_precision_radix,
 
            CAST(
-             _pg_numeric_scale(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_numeric_scale(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS numeric_scale,
 
            CAST(
-             _pg_datetime_precision(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_datetime_precision(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS cardinal_number)
              AS datetime_precision,
 
            CAST(
-             _pg_interval_type(_pg_truetypid(a, t), _pg_truetypmod(a, t))
+             _mdb_interval_type(_mdb_truetypid(a, t), _mdb_truetypmod(a, t))
              AS character_data)
              AS interval_type,
            CAST(null AS cardinal_number) AS interval_precision,
@@ -740,22 +740,22 @@ CREATE VIEW columns AS
 
            CAST(CASE WHEN c.relkind = 'r' OR
                           (c.relkind IN ('v', 'f') AND
-                           pg_column_is_updatable(c.oid, a.attnum, false))
+                           mdb_column_is_updatable(c.oid, a.attnum, false))
                 THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_updatable
 
-    FROM (pg_attribute a LEFT JOIN pg_attrdef ad ON attrelid = adrelid AND attnum = adnum)
-         JOIN (pg_class c JOIN pg_namespace nc ON (c.relnamespace = nc.oid)) ON a.attrelid = c.oid
-         JOIN (pg_type t JOIN pg_namespace nt ON (t.typnamespace = nt.oid)) ON a.atttypid = t.oid
-         LEFT JOIN (pg_type bt JOIN pg_namespace nbt ON (bt.typnamespace = nbt.oid))
+    FROM (mdb_attribute a LEFT JOIN mdb_attrdef ad ON attrelid = adrelid AND attnum = adnum)
+         JOIN (mdb_class c JOIN mdb_namespace nc ON (c.relnamespace = nc.oid)) ON a.attrelid = c.oid
+         JOIN (mdb_type t JOIN mdb_namespace nt ON (t.typnamespace = nt.oid)) ON a.atttypid = t.oid
+         LEFT JOIN (mdb_type bt JOIN mdb_namespace nbt ON (bt.typnamespace = nbt.oid))
            ON (t.typtype = 'd' AND t.typbasetype = bt.oid)
-         LEFT JOIN (pg_collation co JOIN pg_namespace nco ON (co.collnamespace = nco.oid))
-           ON a.attcollation = co.oid AND (nco.nspname, co.collname) <> ('pg_catalog', 'default')
+         LEFT JOIN (mdb_collation co JOIN mdb_namespace nco ON (co.collnamespace = nco.oid))
+           ON a.attcollation = co.oid AND (nco.nspname, co.collname) <> ('mdb_catalog', 'default')
 
-    WHERE (NOT pg_is_other_temp_schema(nc.oid))
+    WHERE (NOT mdb_is_other_temp_schema(nc.oid))
 
           AND a.attnum > 0 AND NOT a.attisdropped AND c.relkind in ('r', 'v', 'f')
 
-          AND (pg_has_role(c.relowner, 'USAGE')
+          AND (mdb_has_role(c.relowner, 'USAGE')
                OR has_column_privilege(c.oid, a.attnum,
                                        'SELECT, INSERT, UPDATE, REFERENCES'));
 
@@ -779,13 +779,13 @@ CREATE VIEW constraint_column_usage AS
     FROM (
         /* check constraints */
         SELECT DISTINCT nr.nspname, r.relname, r.relowner, a.attname, nc.nspname, c.conname
-          FROM pg_namespace nr, pg_class r, pg_attribute a, pg_depend d, pg_namespace nc, pg_constraint c
+          FROM mdb_namespace nr, mdb_class r, mdb_attribute a, mdb_depend d, mdb_namespace nc, mdb_constraint c
           WHERE nr.oid = r.relnamespace
             AND r.oid = a.attrelid
-            AND d.refclassid = 'pg_catalog.pg_class'::regclass
+            AND d.refclassid = 'mdb_catalog.mdb_class'::regclass
             AND d.refobjid = r.oid
             AND d.refobjsubid = a.attnum
-            AND d.classid = 'pg_catalog.pg_constraint'::regclass
+            AND d.classid = 'mdb_catalog.mdb_constraint'::regclass
             AND d.objid = c.oid
             AND c.connamespace = nc.oid
             AND c.contype = 'c'
@@ -796,8 +796,8 @@ CREATE VIEW constraint_column_usage AS
 
         /* unique/primary key/foreign key constraints */
         SELECT nr.nspname, r.relname, r.relowner, a.attname, nc.nspname, c.conname
-          FROM pg_namespace nr, pg_class r, pg_attribute a, pg_namespace nc,
-               pg_constraint c
+          FROM mdb_namespace nr, mdb_class r, mdb_attribute a, mdb_namespace nc,
+               mdb_constraint c
           WHERE nr.oid = r.relnamespace
             AND r.oid = a.attrelid
             AND nc.oid = c.connamespace
@@ -809,7 +809,7 @@ CREATE VIEW constraint_column_usage AS
 
       ) AS x (tblschema, tblname, tblowner, colname, cstrschema, cstrname)
 
-    WHERE pg_has_role(x.tblowner, 'USAGE');
+    WHERE mdb_has_role(x.tblowner, 'USAGE');
 
 GRANT SELECT ON constraint_column_usage TO PUBLIC;
 
@@ -835,14 +835,14 @@ CREATE VIEW constraint_table_usage AS
            CAST(nc.nspname AS sql_identifier) AS constraint_schema,
            CAST(c.conname AS sql_identifier) AS constraint_name
 
-    FROM pg_constraint c, pg_namespace nc,
-         pg_class r, pg_namespace nr
+    FROM mdb_constraint c, mdb_namespace nc,
+         mdb_class r, mdb_namespace nr
 
     WHERE c.connamespace = nc.oid AND r.relnamespace = nr.oid
           AND ( (c.contype = 'f' AND c.confrelid = r.oid)
              OR (c.contype IN ('p', 'u') AND c.conrelid = r.oid) )
           AND r.relkind = 'r'
-          AND pg_has_role(r.relowner, 'USAGE');
+          AND mdb_has_role(r.relowner, 'USAGE');
 
 GRANT SELECT ON constraint_table_usage TO PUBLIC;
 
@@ -882,11 +882,11 @@ CREATE VIEW domain_constraints AS
              AS yes_or_no) AS is_deferrable,
            CAST(CASE WHEN condeferred THEN 'YES' ELSE 'NO' END
              AS yes_or_no) AS initially_deferred
-    FROM pg_namespace rs, pg_namespace n, pg_constraint con, pg_type t
+    FROM mdb_namespace rs, mdb_namespace n, mdb_constraint con, mdb_type t
     WHERE rs.oid = con.connamespace
           AND n.oid = t.typnamespace
           AND t.oid = con.contypid
-          AND (pg_has_role(t.typowner, 'USAGE')
+          AND (mdb_has_role(t.typowner, 'USAGE')
                OR has_type_privilege(t.oid, 'USAGE'));
 
 GRANT SELECT ON domain_constraints TO PUBLIC;
@@ -905,14 +905,14 @@ CREATE VIEW domain_udt_usage AS
            CAST(nt.nspname AS sql_identifier) AS domain_schema,
            CAST(t.typname AS sql_identifier) AS domain_name
 
-    FROM pg_type t, pg_namespace nt,
-         pg_type bt, pg_namespace nbt
+    FROM mdb_type t, mdb_namespace nt,
+         mdb_type bt, mdb_namespace nbt
 
     WHERE t.typnamespace = nt.oid
           AND t.typbasetype = bt.oid
           AND bt.typnamespace = nbt.oid
           AND t.typtype = 'd'
-          AND pg_has_role(bt.typowner, 'USAGE');
+          AND mdb_has_role(bt.typowner, 'USAGE');
 
 GRANT SELECT ON domain_udt_usage TO PUBLIC;
 
@@ -929,18 +929,18 @@ CREATE VIEW domains AS
 
            CAST(
              CASE WHEN t.typelem <> 0 AND t.typlen = -1 THEN 'ARRAY'
-                  WHEN nbt.nspname = 'pg_catalog' THEN format_type(t.typbasetype, null)
+                  WHEN nbt.nspname = 'mdb_catalog' THEN format_type(t.typbasetype, null)
                   ELSE 'USER-DEFINED' END
              AS character_data)
              AS data_type,
 
            CAST(
-             _pg_char_max_length(t.typbasetype, t.typtypmod)
+             _mdb_char_max_length(t.typbasetype, t.typtypmod)
              AS cardinal_number)
              AS character_maximum_length,
 
            CAST(
-             _pg_char_octet_length(t.typbasetype, t.typtypmod)
+             _mdb_char_octet_length(t.typbasetype, t.typtypmod)
              AS cardinal_number)
              AS character_octet_length,
 
@@ -953,27 +953,27 @@ CREATE VIEW domains AS
            CAST(co.collname AS sql_identifier) AS collation_name,
 
            CAST(
-             _pg_numeric_precision(t.typbasetype, t.typtypmod)
+             _mdb_numeric_precision(t.typbasetype, t.typtypmod)
              AS cardinal_number)
              AS numeric_precision,
 
            CAST(
-             _pg_numeric_precision_radix(t.typbasetype, t.typtypmod)
+             _mdb_numeric_precision_radix(t.typbasetype, t.typtypmod)
              AS cardinal_number)
              AS numeric_precision_radix,
 
            CAST(
-             _pg_numeric_scale(t.typbasetype, t.typtypmod)
+             _mdb_numeric_scale(t.typbasetype, t.typtypmod)
              AS cardinal_number)
              AS numeric_scale,
 
            CAST(
-             _pg_datetime_precision(t.typbasetype, t.typtypmod)
+             _mdb_datetime_precision(t.typbasetype, t.typtypmod)
              AS cardinal_number)
              AS datetime_precision,
 
            CAST(
-             _pg_interval_type(t.typbasetype, t.typtypmod)
+             _mdb_interval_type(t.typbasetype, t.typtypmod)
              AS character_data)
              AS interval_type,
            CAST(null AS cardinal_number) AS interval_precision,
@@ -991,13 +991,13 @@ CREATE VIEW domains AS
            CAST(null AS cardinal_number) AS maximum_cardinality,
            CAST(1 AS sql_identifier) AS dtd_identifier
 
-    FROM (pg_type t JOIN pg_namespace nt ON t.typnamespace = nt.oid)
-         JOIN (pg_type bt JOIN pg_namespace nbt ON bt.typnamespace = nbt.oid)
+    FROM (mdb_type t JOIN mdb_namespace nt ON t.typnamespace = nt.oid)
+         JOIN (mdb_type bt JOIN mdb_namespace nbt ON bt.typnamespace = nbt.oid)
            ON (t.typbasetype = bt.oid AND t.typtype = 'd')
-         LEFT JOIN (pg_collation co JOIN pg_namespace nco ON (co.collnamespace = nco.oid))
-           ON t.typcollation = co.oid AND (nco.nspname, co.collname) <> ('pg_catalog', 'default')
+         LEFT JOIN (mdb_collation co JOIN mdb_namespace nco ON (co.collnamespace = nco.oid))
+           ON t.typcollation = co.oid AND (nco.nspname, co.collname) <> ('mdb_catalog', 'default')
 
-    WHERE (pg_has_role(t.typowner, 'USAGE')
+    WHERE (mdb_has_role(t.typowner, 'USAGE')
            OR has_type_privilege(t.oid, 'USAGE'));
 
 GRANT SELECT ON domains TO PUBLIC;
@@ -1013,8 +1013,8 @@ GRANT SELECT ON domains TO PUBLIC;
 
 CREATE VIEW enabled_roles AS
     SELECT CAST(a.rolname AS sql_identifier) AS role_name
-    FROM pg_authid a
-    WHERE pg_has_role(a.oid, 'USAGE');
+    FROM mdb_authid a
+    WHERE mdb_has_role(a.oid, 'USAGE');
 
 GRANT SELECT ON enabled_roles TO PUBLIC;
 
@@ -1042,28 +1042,28 @@ CREATE VIEW key_column_usage AS
            CAST(a.attname AS sql_identifier) AS column_name,
            CAST((ss.x).n AS cardinal_number) AS ordinal_position,
            CAST(CASE WHEN contype = 'f' THEN
-                       _pg_index_position(ss.conindid, ss.confkey[(ss.x).n])
+                       _mdb_index_position(ss.conindid, ss.confkey[(ss.x).n])
                      ELSE NULL
                 END AS cardinal_number)
              AS position_in_unique_constraint
-    FROM pg_attribute a,
+    FROM mdb_attribute a,
          (SELECT r.oid AS roid, r.relname, r.relowner,
                  nc.nspname AS nc_nspname, nr.nspname AS nr_nspname,
                  c.oid AS coid, c.conname, c.contype, c.conindid,
                  c.confkey, c.confrelid,
-                 _pg_expandarray(c.conkey) AS x
-          FROM pg_namespace nr, pg_class r, pg_namespace nc,
-               pg_constraint c
+                 _mdb_expandarray(c.conkey) AS x
+          FROM mdb_namespace nr, mdb_class r, mdb_namespace nc,
+               mdb_constraint c
           WHERE nr.oid = r.relnamespace
                 AND r.oid = c.conrelid
                 AND nc.oid = c.connamespace
                 AND c.contype IN ('p', 'u', 'f')
                 AND r.relkind = 'r'
-                AND (NOT pg_is_other_temp_schema(nr.oid)) ) AS ss
+                AND (NOT mdb_is_other_temp_schema(nr.oid)) ) AS ss
     WHERE ss.roid = a.attrelid
           AND a.attnum = (ss.x).x
           AND NOT a.attisdropped
-          AND (pg_has_role(relowner, 'USAGE')
+          AND (mdb_has_role(relowner, 'USAGE')
                OR has_column_privilege(roid, a.attnum,
                                        'SELECT, INSERT, UPDATE, REFERENCES'));
 
@@ -1117,7 +1117,7 @@ CREATE VIEW parameters AS
            CAST(NULLIF(proargnames[(ss.x).n], '') AS sql_identifier) AS parameter_name,
            CAST(
              CASE WHEN t.typelem <> 0 AND t.typlen = -1 THEN 'ARRAY'
-                  WHEN nt.nspname = 'pg_catalog' THEN format_type(t.oid, null)
+                  WHEN nt.nspname = 'mdb_catalog' THEN format_type(t.oid, null)
                   ELSE 'USER-DEFINED' END AS character_data)
              AS data_type,
            CAST(null AS cardinal_number) AS character_maximum_length,
@@ -1143,18 +1143,18 @@ CREATE VIEW parameters AS
            CAST(null AS cardinal_number) AS maximum_cardinality,
            CAST((ss.x).n AS sql_identifier) AS dtd_identifier,
            CAST(
-             CASE WHEN pg_has_role(proowner, 'USAGE')
-                  THEN pg_get_function_arg_default(p_oid, (ss.x).n)
+             CASE WHEN mdb_has_role(proowner, 'USAGE')
+                  THEN mdb_get_function_arg_default(p_oid, (ss.x).n)
                   ELSE NULL END
              AS character_data) AS parameter_default
 
-    FROM pg_type t, pg_namespace nt,
+    FROM mdb_type t, mdb_namespace nt,
          (SELECT n.nspname AS n_nspname, p.proname, p.oid AS p_oid, p.proowner,
                  p.proargnames, p.proargmodes,
-                 _pg_expandarray(coalesce(p.proallargtypes, p.proargtypes::oid[])) AS x
-          FROM pg_namespace n, pg_proc p
+                 _mdb_expandarray(coalesce(p.proallargtypes, p.proargtypes::oid[])) AS x
+          FROM mdb_namespace n, mdb_proc p
           WHERE n.oid = p.pronamespace
-                AND (pg_has_role(p.proowner, 'USAGE') OR
+                AND (mdb_has_role(p.proowner, 'USAGE') OR
                      has_function_privilege(p.oid, 'EXECUTE'))) AS ss
     WHERE t.oid = (ss.x).x AND t.typnamespace = nt.oid;
 
@@ -1215,23 +1215,23 @@ CREATE VIEW referential_constraints AS
                                   WHEN 'a' THEN 'NO ACTION' END
              AS character_data) AS delete_rule
 
-    FROM (pg_namespace ncon
-          INNER JOIN pg_constraint con ON ncon.oid = con.connamespace
-          INNER JOIN pg_class c ON con.conrelid = c.oid AND con.contype = 'f')
-         LEFT JOIN pg_depend d1  -- find constraint's dependency on an index
-          ON d1.objid = con.oid AND d1.classid = 'pg_constraint'::regclass
-             AND d1.refclassid = 'pg_class'::regclass AND d1.refobjsubid = 0
-         LEFT JOIN pg_depend d2  -- find pkey/unique constraint for that index
-          ON d2.refclassid = 'pg_constraint'::regclass
-             AND d2.classid = 'pg_class'::regclass
+    FROM (mdb_namespace ncon
+          INNER JOIN mdb_constraint con ON ncon.oid = con.connamespace
+          INNER JOIN mdb_class c ON con.conrelid = c.oid AND con.contype = 'f')
+         LEFT JOIN mdb_depend d1  -- find constraint's dependency on an index
+          ON d1.objid = con.oid AND d1.classid = 'mdb_constraint'::regclass
+             AND d1.refclassid = 'mdb_class'::regclass AND d1.refobjsubid = 0
+         LEFT JOIN mdb_depend d2  -- find pkey/unique constraint for that index
+          ON d2.refclassid = 'mdb_constraint'::regclass
+             AND d2.classid = 'mdb_class'::regclass
              AND d2.objid = d1.refobjid AND d2.objsubid = 0
              AND d2.deptype = 'i'
-         LEFT JOIN pg_constraint pkc ON pkc.oid = d2.refobjid
+         LEFT JOIN mdb_constraint pkc ON pkc.oid = d2.refobjid
             AND pkc.contype IN ('p', 'u')
             AND pkc.conrelid = con.confrelid
-         LEFT JOIN pg_namespace npkc ON pkc.connamespace = npkc.oid
+         LEFT JOIN mdb_namespace npkc ON pkc.connamespace = npkc.oid
 
-    WHERE pg_has_role(c.relowner, 'USAGE')
+    WHERE mdb_has_role(c.relowner, 'USAGE')
           -- SELECT privilege omitted, per SQL standard
           OR has_table_privilege(c.oid, 'INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
           OR has_any_column_privilege(c.oid, 'INSERT, UPDATE, REFERENCES') ;
@@ -1315,17 +1315,17 @@ CREATE VIEW routine_privileges AS
            CAST(
              CASE WHEN
                   -- object owner always has grant options
-                  pg_has_role(grantee.oid, p.proowner, 'USAGE')
+                  mdb_has_role(grantee.oid, p.proowner, 'USAGE')
                   OR p.grantable
                   THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_grantable
 
     FROM (
-            SELECT oid, proname, proowner, pronamespace, (aclexplode(coalesce(proacl, acldefault('f', proowner)))).* FROM pg_proc
+            SELECT oid, proname, proowner, pronamespace, (aclexplode(coalesce(proacl, acldefault('f', proowner)))).* FROM mdb_proc
          ) p (oid, proname, proowner, pronamespace, grantor, grantee, prtype, grantable),
-         pg_namespace n,
-         pg_authid u_grantor,
+         mdb_namespace n,
+         mdb_authid u_grantor,
          (
-           SELECT oid, rolname FROM pg_authid
+           SELECT oid, rolname FROM mdb_authid
            UNION ALL
            SELECT 0::oid, 'PUBLIC'
          ) AS grantee (oid, rolname)
@@ -1334,8 +1334,8 @@ CREATE VIEW routine_privileges AS
           AND grantee.oid = p.grantee
           AND u_grantor.oid = p.grantor
           AND p.prtype IN ('EXECUTE')
-          AND (pg_has_role(u_grantor.oid, 'USAGE')
-               OR pg_has_role(grantee.oid, 'USAGE')
+          AND (mdb_has_role(u_grantor.oid, 'USAGE')
+               OR mdb_has_role(grantee.oid, 'USAGE')
                OR grantee.rolname = 'PUBLIC');
 
 GRANT SELECT ON routine_privileges TO PUBLIC;
@@ -1410,7 +1410,7 @@ CREATE VIEW routines AS
 
            CAST(
              CASE WHEN t.typelem <> 0 AND t.typlen = -1 THEN 'ARRAY'
-                  WHEN nt.nspname = 'pg_catalog' THEN format_type(t.oid, null)
+                  WHEN nt.nspname = 'mdb_catalog' THEN format_type(t.oid, null)
                   ELSE 'USER-DEFINED' END AS character_data)
              AS data_type,
            CAST(null AS cardinal_number) AS character_maximum_length,
@@ -1439,7 +1439,7 @@ CREATE VIEW routines AS
            CAST(CASE WHEN l.lanname = 'sql' THEN 'SQL' ELSE 'EXTERNAL' END AS character_data)
              AS routine_body,
            CAST(
-             CASE WHEN pg_has_role(p.proowner, 'USAGE') THEN p.prosrc ELSE null END
+             CASE WHEN mdb_has_role(p.proowner, 'USAGE') THEN p.prosrc ELSE null END
              AS character_data) AS routine_definition,
            CAST(
              CASE WHEN l.lanname = 'c' THEN p.prosrc ELSE null END
@@ -1490,12 +1490,12 @@ CREATE VIEW routines AS
            CAST(null AS cardinal_number) AS result_cast_maximum_cardinality,
            CAST(null AS sql_identifier) AS result_cast_dtd_identifier
 
-    FROM pg_namespace n, pg_proc p, pg_language l,
-         pg_type t, pg_namespace nt
+    FROM mdb_namespace n, mdb_proc p, mdb_language l,
+         mdb_type t, mdb_namespace nt
 
     WHERE n.oid = p.pronamespace AND p.prolang = l.oid
           AND p.prorettype = t.oid AND t.typnamespace = nt.oid
-          AND (pg_has_role(p.proowner, 'USAGE')
+          AND (mdb_has_role(p.proowner, 'USAGE')
                OR has_function_privilege(p.oid, 'EXECUTE'));
 
 GRANT SELECT ON routines TO PUBLIC;
@@ -1514,9 +1514,9 @@ CREATE VIEW schemata AS
            CAST(null AS sql_identifier) AS default_character_set_schema,
            CAST(null AS sql_identifier) AS default_character_set_name,
            CAST(null AS character_data) AS sql_path
-    FROM pg_namespace n, pg_authid u
+    FROM mdb_namespace n, mdb_authid u
     WHERE n.nspowner = u.oid
-          AND (pg_has_role(n.nspowner, 'USAGE')
+          AND (mdb_has_role(n.nspowner, 'USAGE')
                OR has_schema_privilege(n.oid, 'CREATE, USAGE'));
 
 GRANT SELECT ON schemata TO PUBLIC;
@@ -1540,11 +1540,11 @@ CREATE VIEW sequences AS
            CAST(p.maximum_value AS character_data) AS maximum_value,
            CAST(p.increment AS character_data) AS increment,
            CAST(CASE WHEN p.cycle_option THEN 'YES' ELSE 'NO' END AS yes_or_no) AS cycle_option
-    FROM pg_namespace nc, pg_class c, LATERAL pg_sequence_parameters(c.oid) p
+    FROM mdb_namespace nc, mdb_class c, LATERAL mdb_sequence_parameters(c.oid) p
     WHERE c.relnamespace = nc.oid
           AND c.relkind = 'S'
-          AND (NOT pg_is_other_temp_schema(nc.oid))
-          AND (pg_has_role(c.relowner, 'USAGE')
+          AND (NOT mdb_is_other_temp_schema(nc.oid))
+          AND (mdb_has_role(c.relowner, 'USAGE')
                OR has_sequence_privilege(c.oid, 'SELECT, UPDATE, USAGE') );
 
 GRANT SELECT ON sequences TO PUBLIC;
@@ -1715,7 +1715,7 @@ INSERT INTO sql_sizing VALUES (25004, 'MAXIMUM SESSION USER LENGTH', 63, NULL);
 INSERT INTO sql_sizing VALUES (25005, 'MAXIMUM SYSTEM USER LENGTH', 63, NULL);
 
 UPDATE sql_sizing
-    SET supported_value = (SELECT typlen-1 FROM pg_catalog.pg_type WHERE typname = 'name'),
+    SET supported_value = (SELECT typlen-1 FROM mdb_catalog.mdb_type WHERE typname = 'name'),
         comments = 'Might be less, depending on character set.'
     WHERE supported_value = 63;
 
@@ -1765,17 +1765,17 @@ CREATE VIEW table_constraints AS
            CAST(CASE WHEN c.condeferred THEN 'YES' ELSE 'NO' END AS yes_or_no)
              AS initially_deferred
 
-    FROM pg_namespace nc,
-         pg_namespace nr,
-         pg_constraint c,
-         pg_class r
+    FROM mdb_namespace nc,
+         mdb_namespace nr,
+         mdb_constraint c,
+         mdb_class r
 
     WHERE nc.oid = c.connamespace AND nr.oid = r.relnamespace
           AND c.conrelid = r.oid
           AND c.contype NOT IN ('t', 'x')  -- ignore nonstandard constraints
           AND r.relkind = 'r'
-          AND (NOT pg_is_other_temp_schema(nr.oid))
-          AND (pg_has_role(r.relowner, 'USAGE')
+          AND (NOT mdb_is_other_temp_schema(nr.oid))
+          AND (mdb_has_role(r.relowner, 'USAGE')
                -- SELECT privilege omitted, per SQL standard
                OR has_table_privilege(r.oid, 'INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
                OR has_any_column_privilege(r.oid, 'INSERT, UPDATE, REFERENCES') )
@@ -1794,9 +1794,9 @@ CREATE VIEW table_constraints AS
            CAST('NO' AS yes_or_no) AS is_deferrable,
            CAST('NO' AS yes_or_no) AS initially_deferred
 
-    FROM pg_namespace nr,
-         pg_class r,
-         pg_attribute a
+    FROM mdb_namespace nr,
+         mdb_class r,
+         mdb_attribute a
 
     WHERE nr.oid = r.relnamespace
           AND r.oid = a.attrelid
@@ -1804,8 +1804,8 @@ CREATE VIEW table_constraints AS
           AND a.attnum > 0
           AND NOT a.attisdropped
           AND r.relkind = 'r'
-          AND (NOT pg_is_other_temp_schema(nr.oid))
-          AND (pg_has_role(r.relowner, 'USAGE')
+          AND (NOT mdb_is_other_temp_schema(nr.oid))
+          AND (mdb_has_role(r.relowner, 'USAGE')
                -- SELECT privilege omitted, per SQL standard
                OR has_table_privilege(r.oid, 'INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
                OR has_any_column_privilege(r.oid, 'INSERT, UPDATE, REFERENCES') );
@@ -1836,18 +1836,18 @@ CREATE VIEW table_privileges AS
            CAST(
              CASE WHEN
                   -- object owner always has grant options
-                  pg_has_role(grantee.oid, c.relowner, 'USAGE')
+                  mdb_has_role(grantee.oid, c.relowner, 'USAGE')
                   OR c.grantable
                   THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_grantable,
            CAST(CASE WHEN c.prtype = 'SELECT' THEN 'YES' ELSE 'NO' END AS yes_or_no) AS with_hierarchy
 
     FROM (
-            SELECT oid, relname, relnamespace, relkind, relowner, (aclexplode(coalesce(relacl, acldefault('r', relowner)))).* FROM pg_class
+            SELECT oid, relname, relnamespace, relkind, relowner, (aclexplode(coalesce(relacl, acldefault('r', relowner)))).* FROM mdb_class
          ) AS c (oid, relname, relnamespace, relkind, relowner, grantor, grantee, prtype, grantable),
-         pg_namespace nc,
-         pg_authid u_grantor,
+         mdb_namespace nc,
+         mdb_authid u_grantor,
          (
-           SELECT oid, rolname FROM pg_authid
+           SELECT oid, rolname FROM mdb_authid
            UNION ALL
            SELECT 0::oid, 'PUBLIC'
          ) AS grantee (oid, rolname)
@@ -1857,8 +1857,8 @@ CREATE VIEW table_privileges AS
           AND c.grantee = grantee.oid
           AND c.grantor = u_grantor.oid
           AND c.prtype IN ('INSERT', 'SELECT', 'UPDATE', 'DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER')
-          AND (pg_has_role(u_grantor.oid, 'USAGE')
-               OR pg_has_role(grantee.oid, 'USAGE')
+          AND (mdb_has_role(u_grantor.oid, 'USAGE')
+               OR mdb_has_role(grantee.oid, 'USAGE')
                OR grantee.rolname = 'PUBLIC');
 
 GRANT SELECT ON table_privileges TO PUBLIC;
@@ -1896,7 +1896,7 @@ CREATE VIEW tables AS
            CAST(c.relname AS sql_identifier) AS table_name,
 
            CAST(
-             CASE WHEN nc.oid = pg_my_temp_schema() THEN 'LOCAL TEMPORARY'
+             CASE WHEN nc.oid = mdb_my_temp_schema() THEN 'LOCAL TEMPORARY'
                   WHEN c.relkind = 'r' THEN 'BASE TABLE'
                   WHEN c.relkind = 'v' THEN 'VIEW'
                   WHEN c.relkind = 'f' THEN 'FOREIGN TABLE'
@@ -1913,18 +1913,18 @@ CREATE VIEW tables AS
            CAST(CASE WHEN c.relkind = 'r' OR
                           (c.relkind IN ('v', 'f') AND
                            -- 1 << CMD_INSERT
-                           pg_relation_is_updatable(c.oid, false) & 8 = 8)
+                           mdb_relation_is_updatable(c.oid, false) & 8 = 8)
                 THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_insertable_into,
 
            CAST(CASE WHEN t.typname IS NOT NULL THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_typed,
            CAST(null AS character_data) AS commit_action
 
-    FROM pg_namespace nc JOIN pg_class c ON (nc.oid = c.relnamespace)
-           LEFT JOIN (pg_type t JOIN pg_namespace nt ON (t.typnamespace = nt.oid)) ON (c.reloftype = t.oid)
+    FROM mdb_namespace nc JOIN mdb_class c ON (nc.oid = c.relnamespace)
+           LEFT JOIN (mdb_type t JOIN mdb_namespace nt ON (t.typnamespace = nt.oid)) ON (c.reloftype = t.oid)
 
     WHERE c.relkind IN ('r', 'v', 'f')
-          AND (NOT pg_is_other_temp_schema(nc.oid))
-          AND (pg_has_role(c.relowner, 'USAGE')
+          AND (NOT mdb_is_other_temp_schema(nc.oid))
+          AND (mdb_has_role(c.relowner, 'USAGE')
                OR has_table_privilege(c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
                OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE, REFERENCES') );
 
@@ -1945,11 +1945,11 @@ CREATE VIEW transforms AS
            CAST(p.proname || '_' || CAST(p.oid AS text) AS sql_identifier) AS specific_name,
            CAST(l.lanname AS sql_identifier) AS group_name,
            CAST('FROM SQL' AS character_data) AS transform_type
-    FROM pg_type t JOIN pg_transform x ON t.oid = x.trftype
-         JOIN pg_language l ON x.trflang = l.oid
-         JOIN pg_proc p ON x.trffromsql = p.oid
-         JOIN pg_namespace nt ON t.typnamespace = nt.oid
-         JOIN pg_namespace np ON p.pronamespace = np.oid
+    FROM mdb_type t JOIN mdb_transform x ON t.oid = x.trftype
+         JOIN mdb_language l ON x.trflang = l.oid
+         JOIN mdb_proc p ON x.trffromsql = p.oid
+         JOIN mdb_namespace nt ON t.typnamespace = nt.oid
+         JOIN mdb_namespace np ON p.pronamespace = np.oid
 
   UNION
 
@@ -1961,11 +1961,11 @@ CREATE VIEW transforms AS
            CAST(p.proname || '_' || CAST(p.oid AS text) AS sql_identifier) AS specific_name,
            CAST(l.lanname AS sql_identifier) AS group_name,
            CAST('TO SQL' AS character_data) AS transform_type
-    FROM pg_type t JOIN pg_transform x ON t.oid = x.trftype
-         JOIN pg_language l ON x.trflang = l.oid
-         JOIN pg_proc p ON x.trftosql = p.oid
-         JOIN pg_namespace nt ON t.typnamespace = nt.oid
-         JOIN pg_namespace np ON p.pronamespace = np.oid
+    FROM mdb_type t JOIN mdb_transform x ON t.oid = x.trftype
+         JOIN mdb_language l ON x.trflang = l.oid
+         JOIN mdb_proc p ON x.trftosql = p.oid
+         JOIN mdb_namespace nt ON t.typnamespace = nt.oid
+         JOIN mdb_namespace np ON p.pronamespace = np.oid
 
   ORDER BY udt_catalog, udt_schema, udt_name, group_name, transform_type  -- some sensible grouping for interactive use
 ;
@@ -1993,18 +1993,18 @@ CREATE VIEW triggered_update_columns AS
            CAST(c.relname AS sql_identifier) AS event_object_table,
            CAST(a.attname AS sql_identifier) AS event_object_column
 
-    FROM pg_namespace n, pg_class c, pg_trigger t,
+    FROM mdb_namespace n, mdb_class c, mdb_trigger t,
          (SELECT tgoid, (ta0.tgat).x AS tgattnum, (ta0.tgat).n AS tgattpos
-          FROM (SELECT oid AS tgoid, information_schema._pg_expandarray(tgattr) AS tgat FROM pg_trigger) AS ta0) AS ta,
-         pg_attribute a
+          FROM (SELECT oid AS tgoid, information_schema._mdb_expandarray(tgattr) AS tgat FROM mdb_trigger) AS ta0) AS ta,
+         mdb_attribute a
 
     WHERE n.oid = c.relnamespace
           AND c.oid = t.tgrelid
           AND t.oid = ta.tgoid
           AND (a.attrelid, a.attnum) = (t.tgrelid, ta.tgattnum)
           AND NOT t.tgisinternal
-          AND (NOT pg_is_other_temp_schema(n.oid))
-          AND (pg_has_role(c.relowner, 'USAGE')
+          AND (NOT mdb_is_other_temp_schema(n.oid))
+          AND (mdb_has_role(c.relowner, 'USAGE')
                -- SELECT privilege omitted, per SQL standard
                OR has_column_privilege(c.oid, a.attnum, 'INSERT, UPDATE, REFERENCES') );
 
@@ -2067,13 +2067,13 @@ CREATE VIEW triggers AS
            CAST(null AS cardinal_number) AS action_order,
            -- XXX strange hacks follow
            CAST(
-             CASE WHEN pg_has_role(c.relowner, 'USAGE')
-               THEN (SELECT m[1] FROM regexp_matches(pg_get_triggerdef(t.oid), E'.{35,} WHEN \\((.+)\\) EXECUTE PROCEDURE') AS rm(m) LIMIT 1)
+             CASE WHEN mdb_has_role(c.relowner, 'USAGE')
+               THEN (SELECT m[1] FROM regexp_matches(mdb_get_triggerdef(t.oid), E'.{35,} WHEN \\((.+)\\) EXECUTE PROCEDURE') AS rm(m) LIMIT 1)
                ELSE null END
              AS character_data) AS action_condition,
            CAST(
-             substring(pg_get_triggerdef(t.oid) from
-                       position('EXECUTE PROCEDURE' in substring(pg_get_triggerdef(t.oid) from 48)) + 47)
+             substring(mdb_get_triggerdef(t.oid) from
+                       position('EXECUTE PROCEDURE' in substring(mdb_get_triggerdef(t.oid) from 48)) + 47)
              AS character_data) AS action_statement,
            CAST(
              -- hard-wired reference to TRIGGER_TYPE_ROW
@@ -2089,7 +2089,7 @@ CREATE VIEW triggers AS
            CAST(null AS sql_identifier) AS action_reference_new_row,
            CAST(null AS time_stamp) AS created
 
-    FROM pg_namespace n, pg_class c, pg_trigger t,
+    FROM mdb_namespace n, mdb_class c, mdb_trigger t,
          -- hard-wired refs to TRIGGER_TYPE_INSERT, TRIGGER_TYPE_DELETE,
          -- TRIGGER_TYPE_UPDATE; we intentionally omit TRIGGER_TYPE_TRUNCATE
          (VALUES (4, 'INSERT'),
@@ -2100,8 +2100,8 @@ CREATE VIEW triggers AS
           AND c.oid = t.tgrelid
           AND t.tgtype & em.num <> 0
           AND NOT t.tgisinternal
-          AND (NOT pg_is_other_temp_schema(n.oid))
-          AND (pg_has_role(c.relowner, 'USAGE')
+          AND (NOT mdb_is_other_temp_schema(n.oid))
+          AND (mdb_has_role(c.relowner, 'USAGE')
                -- SELECT privilege omitted, per SQL standard
                OR has_table_privilege(c.oid, 'INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
                OR has_any_column_privilege(c.oid, 'INSERT, UPDATE, REFERENCES') );
@@ -2124,17 +2124,17 @@ CREATE VIEW udt_privileges AS
            CAST(
              CASE WHEN
                   -- object owner always has grant options
-                  pg_has_role(grantee.oid, t.typowner, 'USAGE')
+                  mdb_has_role(grantee.oid, t.typowner, 'USAGE')
                   OR t.grantable
                   THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_grantable
 
     FROM (
-            SELECT oid, typname, typnamespace, typtype, typowner, (aclexplode(coalesce(typacl, acldefault('T', typowner)))).* FROM pg_type
+            SELECT oid, typname, typnamespace, typtype, typowner, (aclexplode(coalesce(typacl, acldefault('T', typowner)))).* FROM mdb_type
          ) AS t (oid, typname, typnamespace, typtype, typowner, grantor, grantee, prtype, grantable),
-         pg_namespace n,
-         pg_authid u_grantor,
+         mdb_namespace n,
+         mdb_authid u_grantor,
          (
-           SELECT oid, rolname FROM pg_authid
+           SELECT oid, rolname FROM mdb_authid
            UNION ALL
            SELECT 0::oid, 'PUBLIC'
          ) AS grantee (oid, rolname)
@@ -2144,8 +2144,8 @@ CREATE VIEW udt_privileges AS
           AND t.grantee = grantee.oid
           AND t.grantor = u_grantor.oid
           AND t.prtype IN ('USAGE')
-          AND (pg_has_role(u_grantor.oid, 'USAGE')
-               OR pg_has_role(grantee.oid, 'USAGE')
+          AND (mdb_has_role(u_grantor.oid, 'USAGE')
+               OR mdb_has_role(grantee.oid, 'USAGE')
                OR grantee.rolname = 'PUBLIC');
 
 GRANT SELECT ON udt_privileges TO PUBLIC;
@@ -2189,13 +2189,13 @@ CREATE VIEW usage_privileges AS
            CAST('USAGE' AS character_data) AS privilege_type,
            CAST('NO' AS yes_or_no) AS is_grantable
 
-    FROM pg_authid u,
-         pg_namespace n,
-         pg_collation c
+    FROM mdb_authid u,
+         mdb_namespace n,
+         mdb_collation c
 
     WHERE u.oid = c.collowner
           AND c.collnamespace = n.oid
-          AND collencoding IN (-1, (SELECT encoding FROM pg_database WHERE datname = current_database()))
+          AND collencoding IN (-1, (SELECT encoding FROM mdb_database WHERE datname = current_database()))
 
     UNION ALL
 
@@ -2210,17 +2210,17 @@ CREATE VIEW usage_privileges AS
            CAST(
              CASE WHEN
                   -- object owner always has grant options
-                  pg_has_role(grantee.oid, t.typowner, 'USAGE')
+                  mdb_has_role(grantee.oid, t.typowner, 'USAGE')
                   OR t.grantable
                   THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_grantable
 
     FROM (
-            SELECT oid, typname, typnamespace, typtype, typowner, (aclexplode(coalesce(typacl, acldefault('T', typowner)))).* FROM pg_type
+            SELECT oid, typname, typnamespace, typtype, typowner, (aclexplode(coalesce(typacl, acldefault('T', typowner)))).* FROM mdb_type
          ) AS t (oid, typname, typnamespace, typtype, typowner, grantor, grantee, prtype, grantable),
-         pg_namespace n,
-         pg_authid u_grantor,
+         mdb_namespace n,
+         mdb_authid u_grantor,
          (
-           SELECT oid, rolname FROM pg_authid
+           SELECT oid, rolname FROM mdb_authid
            UNION ALL
            SELECT 0::oid, 'PUBLIC'
          ) AS grantee (oid, rolname)
@@ -2230,8 +2230,8 @@ CREATE VIEW usage_privileges AS
           AND t.grantee = grantee.oid
           AND t.grantor = u_grantor.oid
           AND t.prtype IN ('USAGE')
-          AND (pg_has_role(u_grantor.oid, 'USAGE')
-               OR pg_has_role(grantee.oid, 'USAGE')
+          AND (mdb_has_role(u_grantor.oid, 'USAGE')
+               OR mdb_has_role(grantee.oid, 'USAGE')
                OR grantee.rolname = 'PUBLIC')
 
     UNION ALL
@@ -2247,16 +2247,16 @@ CREATE VIEW usage_privileges AS
            CAST(
              CASE WHEN
                   -- object owner always has grant options
-                  pg_has_role(grantee.oid, fdw.fdwowner, 'USAGE')
+                  mdb_has_role(grantee.oid, fdw.fdwowner, 'USAGE')
                   OR fdw.grantable
                   THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_grantable
 
     FROM (
-            SELECT fdwname, fdwowner, (aclexplode(coalesce(fdwacl, acldefault('F', fdwowner)))).* FROM pg_foreign_data_wrapper
+            SELECT fdwname, fdwowner, (aclexplode(coalesce(fdwacl, acldefault('F', fdwowner)))).* FROM mdb_foreign_data_wrapper
          ) AS fdw (fdwname, fdwowner, grantor, grantee, prtype, grantable),
-         pg_authid u_grantor,
+         mdb_authid u_grantor,
          (
-           SELECT oid, rolname FROM pg_authid
+           SELECT oid, rolname FROM mdb_authid
            UNION ALL
            SELECT 0::oid, 'PUBLIC'
          ) AS grantee (oid, rolname)
@@ -2264,8 +2264,8 @@ CREATE VIEW usage_privileges AS
     WHERE u_grantor.oid = fdw.grantor
           AND grantee.oid = fdw.grantee
           AND fdw.prtype IN ('USAGE')
-          AND (pg_has_role(u_grantor.oid, 'USAGE')
-               OR pg_has_role(grantee.oid, 'USAGE')
+          AND (mdb_has_role(u_grantor.oid, 'USAGE')
+               OR mdb_has_role(grantee.oid, 'USAGE')
                OR grantee.rolname = 'PUBLIC')
 
     UNION ALL
@@ -2281,16 +2281,16 @@ CREATE VIEW usage_privileges AS
            CAST(
              CASE WHEN
                   -- object owner always has grant options
-                  pg_has_role(grantee.oid, srv.srvowner, 'USAGE')
+                  mdb_has_role(grantee.oid, srv.srvowner, 'USAGE')
                   OR srv.grantable
                   THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_grantable
 
     FROM (
-            SELECT srvname, srvowner, (aclexplode(coalesce(srvacl, acldefault('S', srvowner)))).* FROM pg_foreign_server
+            SELECT srvname, srvowner, (aclexplode(coalesce(srvacl, acldefault('S', srvowner)))).* FROM mdb_foreign_server
          ) AS srv (srvname, srvowner, grantor, grantee, prtype, grantable),
-         pg_authid u_grantor,
+         mdb_authid u_grantor,
          (
-           SELECT oid, rolname FROM pg_authid
+           SELECT oid, rolname FROM mdb_authid
            UNION ALL
            SELECT 0::oid, 'PUBLIC'
          ) AS grantee (oid, rolname)
@@ -2298,8 +2298,8 @@ CREATE VIEW usage_privileges AS
     WHERE u_grantor.oid = srv.grantor
           AND grantee.oid = srv.grantee
           AND srv.prtype IN ('USAGE')
-          AND (pg_has_role(u_grantor.oid, 'USAGE')
-               OR pg_has_role(grantee.oid, 'USAGE')
+          AND (mdb_has_role(u_grantor.oid, 'USAGE')
+               OR mdb_has_role(grantee.oid, 'USAGE')
                OR grantee.rolname = 'PUBLIC')
 
     UNION ALL
@@ -2315,17 +2315,17 @@ CREATE VIEW usage_privileges AS
            CAST(
              CASE WHEN
                   -- object owner always has grant options
-                  pg_has_role(grantee.oid, c.relowner, 'USAGE')
+                  mdb_has_role(grantee.oid, c.relowner, 'USAGE')
                   OR c.grantable
                   THEN 'YES' ELSE 'NO' END AS yes_or_no) AS is_grantable
 
     FROM (
-            SELECT oid, relname, relnamespace, relkind, relowner, (aclexplode(coalesce(relacl, acldefault('r', relowner)))).* FROM pg_class
+            SELECT oid, relname, relnamespace, relkind, relowner, (aclexplode(coalesce(relacl, acldefault('r', relowner)))).* FROM mdb_class
          ) AS c (oid, relname, relnamespace, relkind, relowner, grantor, grantee, prtype, grantable),
-         pg_namespace n,
-         pg_authid u_grantor,
+         mdb_namespace n,
+         mdb_authid u_grantor,
          (
-           SELECT oid, rolname FROM pg_authid
+           SELECT oid, rolname FROM mdb_authid
            UNION ALL
            SELECT 0::oid, 'PUBLIC'
          ) AS grantee (oid, rolname)
@@ -2335,8 +2335,8 @@ CREATE VIEW usage_privileges AS
           AND c.grantee = grantee.oid
           AND c.grantor = u_grantor.oid
           AND c.prtype IN ('USAGE')
-          AND (pg_has_role(u_grantor.oid, 'USAGE')
-               OR pg_has_role(grantee.oid, 'USAGE')
+          AND (mdb_has_role(u_grantor.oid, 'USAGE')
+               OR mdb_has_role(grantee.oid, 'USAGE')
                OR grantee.rolname = 'PUBLIC');
 
 GRANT SELECT ON usage_privileges TO PUBLIC;
@@ -2399,12 +2399,12 @@ CREATE VIEW user_defined_types AS
            CAST(null AS sql_identifier) AS source_dtd_identifier,
            CAST(null AS sql_identifier) AS ref_dtd_identifier
 
-    FROM pg_namespace n, pg_class c, pg_type t
+    FROM mdb_namespace n, mdb_class c, mdb_type t
 
     WHERE n.oid = c.relnamespace
           AND t.typrelid = c.oid
           AND c.relkind = 'c'
-          AND (pg_has_role(t.typowner, 'USAGE')
+          AND (mdb_has_role(t.typowner, 'USAGE')
                OR has_type_privilege(t.oid, 'USAGE'));
 
 GRANT SELECT ON user_defined_types TO PUBLIC;
@@ -2425,26 +2425,26 @@ CREATE VIEW view_column_usage AS
            CAST(t.relname AS sql_identifier) AS table_name,
            CAST(a.attname AS sql_identifier) AS column_name
 
-    FROM pg_namespace nv, pg_class v, pg_depend dv,
-         pg_depend dt, pg_class t, pg_namespace nt,
-         pg_attribute a
+    FROM mdb_namespace nv, mdb_class v, mdb_depend dv,
+         mdb_depend dt, mdb_class t, mdb_namespace nt,
+         mdb_attribute a
 
     WHERE nv.oid = v.relnamespace
           AND v.relkind = 'v'
           AND v.oid = dv.refobjid
-          AND dv.refclassid = 'pg_catalog.pg_class'::regclass
-          AND dv.classid = 'pg_catalog.pg_rewrite'::regclass
+          AND dv.refclassid = 'mdb_catalog.mdb_class'::regclass
+          AND dv.classid = 'mdb_catalog.mdb_rewrite'::regclass
           AND dv.deptype = 'i'
           AND dv.objid = dt.objid
           AND dv.refobjid <> dt.refobjid
-          AND dt.classid = 'pg_catalog.pg_rewrite'::regclass
-          AND dt.refclassid = 'pg_catalog.pg_class'::regclass
+          AND dt.classid = 'mdb_catalog.mdb_rewrite'::regclass
+          AND dt.refclassid = 'mdb_catalog.mdb_class'::regclass
           AND dt.refobjid = t.oid
           AND t.relnamespace = nt.oid
           AND t.relkind IN ('r', 'v', 'f')
           AND t.oid = a.attrelid
           AND dt.refobjsubid = a.attnum
-          AND pg_has_role(t.relowner, 'USAGE');
+          AND mdb_has_role(t.relowner, 'USAGE');
 
 GRANT SELECT ON view_column_usage TO PUBLIC;
 
@@ -2471,21 +2471,21 @@ CREATE VIEW view_routine_usage AS
            CAST(np.nspname AS sql_identifier) AS specific_schema,
            CAST(p.proname || '_' || CAST(p.oid AS text)  AS sql_identifier) AS specific_name
 
-    FROM pg_namespace nv, pg_class v, pg_depend dv,
-         pg_depend dp, pg_proc p, pg_namespace np
+    FROM mdb_namespace nv, mdb_class v, mdb_depend dv,
+         mdb_depend dp, mdb_proc p, mdb_namespace np
 
     WHERE nv.oid = v.relnamespace
           AND v.relkind = 'v'
           AND v.oid = dv.refobjid
-          AND dv.refclassid = 'pg_catalog.pg_class'::regclass
-          AND dv.classid = 'pg_catalog.pg_rewrite'::regclass
+          AND dv.refclassid = 'mdb_catalog.mdb_class'::regclass
+          AND dv.classid = 'mdb_catalog.mdb_rewrite'::regclass
           AND dv.deptype = 'i'
           AND dv.objid = dp.objid
-          AND dp.classid = 'pg_catalog.pg_rewrite'::regclass
-          AND dp.refclassid = 'pg_catalog.pg_proc'::regclass
+          AND dp.classid = 'mdb_catalog.mdb_rewrite'::regclass
+          AND dp.refclassid = 'mdb_catalog.mdb_proc'::regclass
           AND dp.refobjid = p.oid
           AND p.pronamespace = np.oid
-          AND pg_has_role(p.proowner, 'USAGE');
+          AND mdb_has_role(p.proowner, 'USAGE');
 
 GRANT SELECT ON view_routine_usage TO PUBLIC;
 
@@ -2504,23 +2504,23 @@ CREATE VIEW view_table_usage AS
            CAST(nt.nspname AS sql_identifier) AS table_schema,
            CAST(t.relname AS sql_identifier) AS table_name
 
-    FROM pg_namespace nv, pg_class v, pg_depend dv,
-         pg_depend dt, pg_class t, pg_namespace nt
+    FROM mdb_namespace nv, mdb_class v, mdb_depend dv,
+         mdb_depend dt, mdb_class t, mdb_namespace nt
 
     WHERE nv.oid = v.relnamespace
           AND v.relkind = 'v'
           AND v.oid = dv.refobjid
-          AND dv.refclassid = 'pg_catalog.pg_class'::regclass
-          AND dv.classid = 'pg_catalog.pg_rewrite'::regclass
+          AND dv.refclassid = 'mdb_catalog.mdb_class'::regclass
+          AND dv.classid = 'mdb_catalog.mdb_rewrite'::regclass
           AND dv.deptype = 'i'
           AND dv.objid = dt.objid
           AND dv.refobjid <> dt.refobjid
-          AND dt.classid = 'pg_catalog.pg_rewrite'::regclass
-          AND dt.refclassid = 'pg_catalog.pg_class'::regclass
+          AND dt.classid = 'mdb_catalog.mdb_rewrite'::regclass
+          AND dt.refclassid = 'mdb_catalog.mdb_class'::regclass
           AND dt.refobjid = t.oid
           AND t.relnamespace = nt.oid
           AND t.relkind IN ('r', 'v', 'f')
-          AND pg_has_role(t.relowner, 'USAGE');
+          AND mdb_has_role(t.relowner, 'USAGE');
 
 GRANT SELECT ON view_table_usage TO PUBLIC;
 
@@ -2536,8 +2536,8 @@ CREATE VIEW views AS
            CAST(c.relname AS sql_identifier) AS table_name,
 
            CAST(
-             CASE WHEN pg_has_role(c.relowner, 'USAGE')
-                  THEN pg_get_viewdef(c.oid)
+             CASE WHEN mdb_has_role(c.relowner, 'USAGE')
+                  THEN mdb_get_viewdef(c.oid)
                   ELSE null END
              AS character_data) AS view_definition,
 
@@ -2551,40 +2551,40 @@ CREATE VIEW views AS
 
            CAST(
              -- (1 << CMD_UPDATE) + (1 << CMD_DELETE)
-             CASE WHEN pg_relation_is_updatable(c.oid, false) & 20 = 20
+             CASE WHEN mdb_relation_is_updatable(c.oid, false) & 20 = 20
                   THEN 'YES' ELSE 'NO' END
              AS yes_or_no) AS is_updatable,
 
            CAST(
              -- 1 << CMD_INSERT
-             CASE WHEN pg_relation_is_updatable(c.oid, false) & 8 = 8
+             CASE WHEN mdb_relation_is_updatable(c.oid, false) & 8 = 8
                   THEN 'YES' ELSE 'NO' END
              AS yes_or_no) AS is_insertable_into,
 
            CAST(
              -- TRIGGER_TYPE_ROW + TRIGGER_TYPE_INSTEAD + TRIGGER_TYPE_UPDATE
-             CASE WHEN EXISTS (SELECT 1 FROM pg_trigger WHERE tgrelid = c.oid AND tgtype & 81 = 81)
+             CASE WHEN EXISTS (SELECT 1 FROM mdb_trigger WHERE tgrelid = c.oid AND tgtype & 81 = 81)
                   THEN 'YES' ELSE 'NO' END
            AS yes_or_no) AS is_trigger_updatable,
 
            CAST(
              -- TRIGGER_TYPE_ROW + TRIGGER_TYPE_INSTEAD + TRIGGER_TYPE_DELETE
-             CASE WHEN EXISTS (SELECT 1 FROM pg_trigger WHERE tgrelid = c.oid AND tgtype & 73 = 73)
+             CASE WHEN EXISTS (SELECT 1 FROM mdb_trigger WHERE tgrelid = c.oid AND tgtype & 73 = 73)
                   THEN 'YES' ELSE 'NO' END
            AS yes_or_no) AS is_trigger_deletable,
 
            CAST(
              -- TRIGGER_TYPE_ROW + TRIGGER_TYPE_INSTEAD + TRIGGER_TYPE_INSERT
-             CASE WHEN EXISTS (SELECT 1 FROM pg_trigger WHERE tgrelid = c.oid AND tgtype & 69 = 69)
+             CASE WHEN EXISTS (SELECT 1 FROM mdb_trigger WHERE tgrelid = c.oid AND tgtype & 69 = 69)
                   THEN 'YES' ELSE 'NO' END
            AS yes_or_no) AS is_trigger_insertable_into
 
-    FROM pg_namespace nc, pg_class c
+    FROM mdb_namespace nc, mdb_class c
 
     WHERE c.relnamespace = nc.oid
           AND c.relkind = 'v'
-          AND (NOT pg_is_other_temp_schema(nc.oid))
-          AND (pg_has_role(c.relowner, 'USAGE')
+          AND (NOT mdb_is_other_temp_schema(nc.oid))
+          AND (mdb_has_role(c.relowner, 'USAGE')
                OR has_table_privilege(c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
                OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE, REFERENCES') );
 
@@ -2633,7 +2633,7 @@ CREATE VIEW element_types AS
            CAST(x.objtype AS character_data) AS object_type,
            CAST(x.objdtdid AS sql_identifier) AS collection_type_identifier,
            CAST(
-             CASE WHEN nbt.nspname = 'pg_catalog' THEN format_type(bt.oid, null)
+             CASE WHEN nbt.nspname = 'mdb_catalog' THEN format_type(bt.oid, null)
                   ELSE 'USER-DEFINED' END AS character_data) AS data_type,
 
            CAST(null AS cardinal_number) AS character_maximum_length,
@@ -2664,13 +2664,13 @@ CREATE VIEW element_types AS
            CAST(null AS cardinal_number) AS maximum_cardinality,
            CAST('a' || CAST(x.objdtdid AS text) AS sql_identifier) AS dtd_identifier
 
-    FROM pg_namespace n, pg_type at, pg_namespace nbt, pg_type bt,
+    FROM mdb_namespace n, mdb_type at, mdb_namespace nbt, mdb_type bt,
          (
            /* columns, attributes */
            SELECT c.relnamespace, CAST(c.relname AS sql_identifier),
                   CASE WHEN c.relkind = 'c' THEN 'USER-DEFINED TYPE'::text ELSE 'TABLE'::text END,
                   a.attnum, a.atttypid, a.attcollation
-           FROM pg_class c, pg_attribute a
+           FROM mdb_class c, mdb_attribute a
            WHERE c.oid = a.attrelid
                  AND c.relkind IN ('r', 'v', 'f', 'c')
                  AND attnum > 0 AND NOT attisdropped
@@ -2680,7 +2680,7 @@ CREATE VIEW element_types AS
            /* domains */
            SELECT t.typnamespace, CAST(t.typname AS sql_identifier),
                   'DOMAIN'::text, 1, t.typbasetype, t.typcollation
-           FROM pg_type t
+           FROM mdb_type t
            WHERE t.typtype = 'd'
 
            UNION ALL
@@ -2689,19 +2689,19 @@ CREATE VIEW element_types AS
            SELECT pronamespace, CAST(proname || '_' || CAST(oid AS text) AS sql_identifier),
                   'ROUTINE'::text, (ss.x).n, (ss.x).x, 0
            FROM (SELECT p.pronamespace, p.proname, p.oid,
-                        _pg_expandarray(coalesce(p.proallargtypes, p.proargtypes::oid[])) AS x
-                 FROM pg_proc p) AS ss
+                        _mdb_expandarray(coalesce(p.proallargtypes, p.proargtypes::oid[])) AS x
+                 FROM mdb_proc p) AS ss
 
            UNION ALL
 
            /* result types */
            SELECT p.pronamespace, CAST(p.proname || '_' || CAST(p.oid AS text) AS sql_identifier),
                   'ROUTINE'::text, 0, p.prorettype, 0
-           FROM pg_proc p
+           FROM mdb_proc p
 
          ) AS x (objschema, objname, objtype, objdtdid, objtypeid, objcollation)
-         LEFT JOIN (pg_collation co JOIN pg_namespace nco ON (co.collnamespace = nco.oid))
-           ON x.objcollation = co.oid AND (nco.nspname, co.collname) <> ('pg_catalog', 'default')
+         LEFT JOIN (mdb_collation co JOIN mdb_namespace nco ON (co.collnamespace = nco.oid))
+           ON x.objcollation = co.oid AND (nco.nspname, co.collname) <> ('mdb_catalog', 'default')
 
     WHERE n.oid = x.objschema
           AND at.oid = x.objtypeid
@@ -2720,15 +2720,15 @@ GRANT SELECT ON element_types TO PUBLIC;
 -- (still SQL:2008; there is no SQL:2011 SQL/MED)
 
 /* Base view for foreign table columns */
-CREATE VIEW _pg_foreign_table_columns AS
+CREATE VIEW _mdb_foreign_table_columns AS
     SELECT n.nspname,
            c.relname,
            a.attname,
            a.attfdwoptions
-    FROM pg_foreign_table t, pg_authid u, pg_namespace n, pg_class c,
-         pg_attribute a
+    FROM mdb_foreign_table t, mdb_authid u, mdb_namespace n, mdb_class c,
+         mdb_attribute a
     WHERE u.oid = c.relowner
-          AND (pg_has_role(c.relowner, 'USAGE')
+          AND (mdb_has_role(c.relowner, 'USAGE')
                OR has_column_privilege(c.oid, a.attnum, 'SELECT, INSERT, UPDATE, REFERENCES'))
           AND n.oid = c.relnamespace
           AND c.oid = t.ftrelid
@@ -2745,15 +2745,15 @@ CREATE VIEW column_options AS
            c.nspname AS table_schema,
            c.relname AS table_name,
            c.attname AS column_name,
-           CAST((pg_options_to_table(c.attfdwoptions)).option_name AS sql_identifier) AS option_name,
-           CAST((pg_options_to_table(c.attfdwoptions)).option_value AS character_data) AS option_value
-    FROM _pg_foreign_table_columns c;
+           CAST((mdb_options_to_table(c.attfdwoptions)).option_name AS sql_identifier) AS option_name,
+           CAST((mdb_options_to_table(c.attfdwoptions)).option_value AS character_data) AS option_value
+    FROM _mdb_foreign_table_columns c;
 
 GRANT SELECT ON column_options TO PUBLIC;
 
 
 /* Base view for foreign-data wrappers */
-CREATE VIEW _pg_foreign_data_wrappers AS
+CREATE VIEW _mdb_foreign_data_wrappers AS
     SELECT w.oid,
            w.fdwowner,
            w.fdwoptions,
@@ -2761,9 +2761,9 @@ CREATE VIEW _pg_foreign_data_wrappers AS
            CAST(fdwname AS sql_identifier) AS foreign_data_wrapper_name,
            CAST(u.rolname AS sql_identifier) AS authorization_identifier,
            CAST('c' AS character_data) AS foreign_data_wrapper_language
-    FROM pg_foreign_data_wrapper w, pg_authid u
+    FROM mdb_foreign_data_wrapper w, mdb_authid u
     WHERE u.oid = w.fdwowner
-          AND (pg_has_role(fdwowner, 'USAGE')
+          AND (mdb_has_role(fdwowner, 'USAGE')
                OR has_foreign_data_wrapper_privilege(w.oid, 'USAGE'));
 
 
@@ -2774,9 +2774,9 @@ CREATE VIEW _pg_foreign_data_wrappers AS
 CREATE VIEW foreign_data_wrapper_options AS
     SELECT foreign_data_wrapper_catalog,
            foreign_data_wrapper_name,
-           CAST((pg_options_to_table(w.fdwoptions)).option_name AS sql_identifier) AS option_name,
-           CAST((pg_options_to_table(w.fdwoptions)).option_value AS character_data) AS option_value
-    FROM _pg_foreign_data_wrappers w;
+           CAST((mdb_options_to_table(w.fdwoptions)).option_name AS sql_identifier) AS option_name,
+           CAST((mdb_options_to_table(w.fdwoptions)).option_value AS character_data) AS option_value
+    FROM _mdb_foreign_data_wrappers w;
 
 GRANT SELECT ON foreign_data_wrapper_options TO PUBLIC;
 
@@ -2791,13 +2791,13 @@ CREATE VIEW foreign_data_wrappers AS
            authorization_identifier,
            CAST(NULL AS character_data) AS library_name,
            foreign_data_wrapper_language
-    FROM _pg_foreign_data_wrappers w;
+    FROM _mdb_foreign_data_wrappers w;
 
 GRANT SELECT ON foreign_data_wrappers TO PUBLIC;
 
 
 /* Base view for foreign servers */
-CREATE VIEW _pg_foreign_servers AS
+CREATE VIEW _mdb_foreign_servers AS
     SELECT s.oid,
            s.srvoptions,
            CAST(current_database() AS sql_identifier) AS foreign_server_catalog,
@@ -2807,10 +2807,10 @@ CREATE VIEW _pg_foreign_servers AS
            CAST(srvtype AS character_data) AS foreign_server_type,
            CAST(srvversion AS character_data) AS foreign_server_version,
            CAST(u.rolname AS sql_identifier) AS authorization_identifier
-    FROM pg_foreign_server s, pg_foreign_data_wrapper w, pg_authid u
+    FROM mdb_foreign_server s, mdb_foreign_data_wrapper w, mdb_authid u
     WHERE w.oid = s.srvfdw
           AND u.oid = s.srvowner
-          AND (pg_has_role(s.srvowner, 'USAGE')
+          AND (mdb_has_role(s.srvowner, 'USAGE')
                OR has_server_privilege(s.oid, 'USAGE'));
 
 
@@ -2821,9 +2821,9 @@ CREATE VIEW _pg_foreign_servers AS
 CREATE VIEW foreign_server_options AS
     SELECT foreign_server_catalog,
            foreign_server_name,
-           CAST((pg_options_to_table(s.srvoptions)).option_name AS sql_identifier) AS option_name,
-           CAST((pg_options_to_table(s.srvoptions)).option_value AS character_data) AS option_value
-    FROM _pg_foreign_servers s;
+           CAST((mdb_options_to_table(s.srvoptions)).option_name AS sql_identifier) AS option_name,
+           CAST((mdb_options_to_table(s.srvoptions)).option_value AS character_data) AS option_value
+    FROM _mdb_foreign_servers s;
 
 GRANT SELECT ON TABLE foreign_server_options TO PUBLIC;
 
@@ -2840,13 +2840,13 @@ CREATE VIEW foreign_servers AS
            foreign_server_type,
            foreign_server_version,
            authorization_identifier
-    FROM _pg_foreign_servers;
+    FROM _mdb_foreign_servers;
 
 GRANT SELECT ON foreign_servers TO PUBLIC;
 
 
 /* Base view for foreign tables */
-CREATE VIEW _pg_foreign_tables AS
+CREATE VIEW _mdb_foreign_tables AS
     SELECT
            CAST(current_database() AS sql_identifier) AS foreign_table_catalog,
            n.nspname AS foreign_table_schema,
@@ -2855,11 +2855,11 @@ CREATE VIEW _pg_foreign_tables AS
            CAST(current_database() AS sql_identifier) AS foreign_server_catalog,
            CAST(srvname AS sql_identifier) AS foreign_server_name,
            CAST(u.rolname AS sql_identifier) AS authorization_identifier
-    FROM pg_foreign_table t, pg_foreign_server s, pg_foreign_data_wrapper w,
-         pg_authid u, pg_namespace n, pg_class c
+    FROM mdb_foreign_table t, mdb_foreign_server s, mdb_foreign_data_wrapper w,
+         mdb_authid u, mdb_namespace n, mdb_class c
     WHERE w.oid = s.srvfdw
           AND u.oid = c.relowner
-          AND (pg_has_role(c.relowner, 'USAGE')
+          AND (mdb_has_role(c.relowner, 'USAGE')
                OR has_table_privilege(c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
                OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE, REFERENCES'))
           AND n.oid = c.relnamespace
@@ -2876,9 +2876,9 @@ CREATE VIEW foreign_table_options AS
     SELECT foreign_table_catalog,
            foreign_table_schema,
            foreign_table_name,
-           CAST((pg_options_to_table(t.ftoptions)).option_name AS sql_identifier) AS option_name,
-           CAST((pg_options_to_table(t.ftoptions)).option_value AS character_data) AS option_value
-    FROM _pg_foreign_tables t;
+           CAST((mdb_options_to_table(t.ftoptions)).option_name AS sql_identifier) AS option_name,
+           CAST((mdb_options_to_table(t.ftoptions)).option_value AS character_data) AS option_value
+    FROM _mdb_foreign_tables t;
 
 GRANT SELECT ON TABLE foreign_table_options TO PUBLIC;
 
@@ -2893,14 +2893,14 @@ CREATE VIEW foreign_tables AS
            foreign_table_name,
            foreign_server_catalog,
            foreign_server_name
-    FROM _pg_foreign_tables;
+    FROM _mdb_foreign_tables;
 
 GRANT SELECT ON foreign_tables TO PUBLIC;
 
 
 
 /* Base view for user mappings */
-CREATE VIEW _pg_user_mappings AS
+CREATE VIEW _mdb_user_mappings AS
     SELECT um.oid,
            um.umoptions,
            um.umuser,
@@ -2908,8 +2908,8 @@ CREATE VIEW _pg_user_mappings AS
            s.foreign_server_catalog,
            s.foreign_server_name,
            s.authorization_identifier AS srvowner
-    FROM pg_user_mapping um LEFT JOIN pg_authid u ON (u.oid = um.umuser),
-         _pg_foreign_servers s
+    FROM mdb_user_mapping um LEFT JOIN mdb_authid u ON (u.oid = um.umuser),
+         _mdb_foreign_servers s
     WHERE s.oid = um.umserver;
 
 
@@ -2921,12 +2921,12 @@ CREATE VIEW user_mapping_options AS
     SELECT authorization_identifier,
            foreign_server_catalog,
            foreign_server_name,
-           CAST((pg_options_to_table(um.umoptions)).option_name AS sql_identifier) AS option_name,
+           CAST((mdb_options_to_table(um.umoptions)).option_name AS sql_identifier) AS option_name,
            CAST(CASE WHEN (umuser <> 0 AND authorization_identifier = current_user)
-                       OR (umuser = 0 AND pg_has_role(srvowner, 'USAGE'))
-                       OR (SELECT rolsuper FROM pg_authid WHERE rolname = current_user) THEN (pg_options_to_table(um.umoptions)).option_value
+                       OR (umuser = 0 AND mdb_has_role(srvowner, 'USAGE'))
+                       OR (SELECT rolsuper FROM mdb_authid WHERE rolname = current_user) THEN (mdb_options_to_table(um.umoptions)).option_value
                      ELSE NULL END AS character_data) AS option_value
-    FROM _pg_user_mappings um;
+    FROM _mdb_user_mappings um;
 
 GRANT SELECT ON user_mapping_options TO PUBLIC;
 
@@ -2939,6 +2939,6 @@ CREATE VIEW user_mappings AS
     SELECT authorization_identifier,
            foreign_server_catalog,
            foreign_server_name
-    FROM _pg_user_mappings;
+    FROM _mdb_user_mappings;
 
 GRANT SELECT ON user_mappings TO PUBLIC;

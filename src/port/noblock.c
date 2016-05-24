@@ -18,7 +18,7 @@
 
 
 bool
-pg_set_noblock(pgsocket sock)
+mdb_set_noblock(pgsocket sock)
 {
 #if !defined(WIN32)
 	return (fcntl(sock, F_SETFL, O_NONBLOCK) != -1);
@@ -32,7 +32,7 @@ pg_set_noblock(pgsocket sock)
 
 
 bool
-pg_set_block(pgsocket sock)
+mdb_set_block(pgsocket sock)
 {
 #if !defined(WIN32)
 	int			flags;

@@ -3,5 +3,5 @@ comment = 'PL/Python3U untrusted procedural language'
 default_version = '1.0'
 module_pathname = '$libdir/plpython3'
 relocatable = false
-schema = pg_catalog
+schema = mdb_catalog
 superuser = true

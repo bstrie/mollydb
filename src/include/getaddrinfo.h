@@ -8,7 +8,7 @@
  * policy is needed because on some platforms a manually installed libbind.a
  * may provide getaddrinfo(), yet the system headers may not provide the
  * struct definitions needed to call it.  To avoid conflict with the libbind
- * definition in such cases, we rename our routines to pg_xxx() via macros.
+ * definition in such cases, we rename our routines to mdb_xxx() via macros.
  *
  * This code will also work on platforms where struct addrinfo is defined
  * in the system headers but no getaddrinfo() can be located.
@@ -135,22 +135,22 @@ struct addrinfo
 #ifdef getaddrinfo
 #undef getaddrinfo
 #endif
-#define getaddrinfo pg_getaddrinfo
+#define getaddrinfo mdb_getaddrinfo
 
 #ifdef freeaddrinfo
 #undef freeaddrinfo
 #endif
-#define freeaddrinfo pg_freeaddrinfo
+#define freeaddrinfo mdb_freeaddrinfo
 
 #ifdef gai_strerror
 #undef gai_strerror
 #endif
-#define gai_strerror pg_gai_strerror
+#define gai_strerror mdb_gai_strerror
 
 #ifdef getnameinfo
 #undef getnameinfo
 #endif
-#define getnameinfo pg_getnameinfo
+#define getnameinfo mdb_getnameinfo
 
 extern int getaddrinfo(const char *node, const char *service,
 			const struct addrinfo * hints, struct addrinfo ** res);

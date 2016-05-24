@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
- * pg_opclass.h
- *	  definition of the system "opclass" relation (pg_opclass)
+ * mdb_opclass.h
+ *	  definition of the system "opclass" relation (mdb_opclass)
  *	  along with the relation's initial contents.
  *
  * The primary key for this table is <opcmethod, opcname, opcnamespace> ---
@@ -28,7 +28,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_opclass.h
+ * src/include/catalog/mdb_opclass.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -42,13 +42,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_opclass definition.  cpp turns this into
- *		typedef struct FormData_pg_opclass
+ *		mdb_opclass definition.  cpp turns this into
+ *		typedef struct FormData_mdb_opclass
  * ----------------
  */
 #define OperatorClassRelationId  2616
 
-CATALOG(pg_opclass,2616)
+CATALOG(mdb_opclass,2616)
 {
 	Oid			opcmethod;		/* index access method opclass is for */
 	NameData	opcname;		/* name of this opclass */
@@ -58,31 +58,31 @@ CATALOG(pg_opclass,2616)
 	Oid			opcintype;		/* type of data indexed by opclass */
 	bool		opcdefault;		/* T if opclass is default for opcintype */
 	Oid			opckeytype;		/* type of data in index, or InvalidOid */
-} FormData_pg_opclass;
+} FormData_mdb_opclass;
 
 /* ----------------
- *		Form_pg_opclass corresponds to a pointer to a tuple with
- *		the format of pg_opclass relation.
+ *		Form_mdb_opclass corresponds to a pointer to a tuple with
+ *		the format of mdb_opclass relation.
  * ----------------
  */
-typedef FormData_pg_opclass *Form_pg_opclass;
+typedef FormData_mdb_opclass *Form_mdb_opclass;
 
 /* ----------------
- *		compiler constants for pg_opclass
+ *		compiler constants for mdb_opclass
  * ----------------
  */
-#define Natts_pg_opclass				8
-#define Anum_pg_opclass_opcmethod		1
-#define Anum_pg_opclass_opcname			2
-#define Anum_pg_opclass_opcnamespace	3
-#define Anum_pg_opclass_opcowner		4
-#define Anum_pg_opclass_opcfamily		5
-#define Anum_pg_opclass_opcintype		6
-#define Anum_pg_opclass_opcdefault		7
-#define Anum_pg_opclass_opckeytype		8
+#define Natts_mdb_opclass				8
+#define Anum_mdb_opclass_opcmethod		1
+#define Anum_mdb_opclass_opcname			2
+#define Anum_mdb_opclass_opcnamespace	3
+#define Anum_mdb_opclass_opcowner		4
+#define Anum_mdb_opclass_opcfamily		5
+#define Anum_mdb_opclass_opcintype		6
+#define Anum_mdb_opclass_opcdefault		7
+#define Anum_mdb_opclass_opckeytype		8
 
 /* ----------------
- *		initial contents of pg_opclass
+ *		initial contents of mdb_opclass
  *
  * Note: we hard-wire an OID only for a few entries that have to be explicitly
  * referenced in the C code or in built-in catalog entries.  The rest get OIDs
@@ -215,8 +215,8 @@ DATA(insert (	2742	_reltime_ops		PGNSP PGUID 2745  1024 t 703 ));
 DATA(insert (	2742	_tinterval_ops		PGNSP PGUID 2745  1025 t 704 ));
 DATA(insert (	403		uuid_ops			PGNSP PGUID 2968  2950 t 0 ));
 DATA(insert (	405		uuid_ops			PGNSP PGUID 2969  2950 t 0 ));
-DATA(insert (	403		pg_lsn_ops			PGNSP PGUID 3253  3220 t 0 ));
-DATA(insert (	405		pg_lsn_ops			PGNSP PGUID 3254  3220 t 0 ));
+DATA(insert (	403		mdb_lsn_ops			PGNSP PGUID 3253  3220 t 0 ));
+DATA(insert (	405		mdb_lsn_ops			PGNSP PGUID 3254  3220 t 0 ));
 DATA(insert (	403		enum_ops			PGNSP PGUID 3522  3500 t 0 ));
 DATA(insert (	405		enum_ops			PGNSP PGUID 3523  3500 t 0 ));
 DATA(insert (	403		tsvector_ops		PGNSP PGUID 3626  3614 t 0 ));
@@ -268,7 +268,7 @@ DATA(insert (	3580	numeric_minmax_ops		PGNSP PGUID 4055  1700 t 1700 ));
 /* no brin opclass for record, anyarray */
 DATA(insert (	3580	uuid_minmax_ops			PGNSP PGUID 4081  2950 t 2950 ));
 DATA(insert (	3580	range_inclusion_ops		PGNSP PGUID 4103  3831 t 3831 ));
-DATA(insert (	3580	pg_lsn_minmax_ops		PGNSP PGUID 4082  3220 t 3220 ));
+DATA(insert (	3580	mdb_lsn_minmax_ops		PGNSP PGUID 4082  3220 t 3220 ));
 /* no brin opclass for enum, tsvector, tsquery, jsonb */
 DATA(insert (	3580	box_inclusion_ops		PGNSP PGUID 4104   603 t 603 ));
 /* no brin opclass for the geometric types except box */

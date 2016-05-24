@@ -190,8 +190,8 @@ CREATE TEMPORARY VIEW vsubdepartment AS
 SELECT * FROM vsubdepartment ORDER BY name;
 
 -- Check reverse listing
-SELECT pg_get_viewdef('vsubdepartment'::regclass);
-SELECT pg_get_viewdef('vsubdepartment'::regclass, true);
+SELECT mdb_get_viewdef('vsubdepartment'::regclass);
+SELECT mdb_get_viewdef('vsubdepartment'::regclass, true);
 
 -- Another reverse-listing example
 CREATE VIEW sums_1_100 AS

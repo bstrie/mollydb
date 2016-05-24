@@ -130,24 +130,24 @@ insert into whereami values ('temp');
 create function public.whoami() returns text
   as $$select 'public'::text$$ language sql;
 
-create function pg_temp.whoami() returns text
+create function mdb_temp.whoami() returns text
   as $$select 'temp'::text$$ language sql;
 
--- default should have pg_temp implicitly first, but only for tables
+-- default should have mdb_temp implicitly first, but only for tables
 select * from whereami;
 select whoami();
 
 -- can list temp first explicitly, but it still doesn't affect functions
-set search_path = pg_temp, public;
+set search_path = mdb_temp, public;
 select * from whereami;
 select whoami();
 
 -- or put it last for security
-set search_path = public, pg_temp;
+set search_path = public, mdb_temp;
 select * from whereami;
 select whoami();
 
 -- you can invoke a temp function explicitly, though
-select pg_temp.whoami();
+select mdb_temp.whoami();
 
 drop table public.whereami;

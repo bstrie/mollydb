@@ -17,14 +17,14 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "access/xlog_internal.h"		/* for pg_start/stop_backup */
+#include "access/xlog_internal.h"		/* for mdb_start/stop_backup */
 #include "catalog/catalog.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "lib/stringinfo.h"
 #include "libpq/libpq.h"
 #include "libpq/pqformat.h"
 #include "miscadmin.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 #include "pgtar.h"
 #include "pgstat.h"
 #include "replication/basebackup.h"
@@ -101,7 +101,7 @@ static int64 throttled_last;
 static void
 base_backup_cleanup(int code, Datum arg)
 {
-	do_pg_abort_backup();
+	do_mdb_abort_backup();
 }
 
 /*
@@ -129,16 +129,16 @@ perform_base_backup(basebackup_options *opt, DIR *tblspcdir)
 	labelfile = makeStringInfo();
 	tblspc_map_file = makeStringInfo();
 
-	startptr = do_pg_start_backup(opt->label, opt->fastcheckpoint, &starttli,
+	startptr = do_mdb_start_backup(opt->label, opt->fastcheckpoint, &starttli,
 								  labelfile, tblspcdir, &tablespaces,
 								  tblspc_map_file,
 								  opt->progress, opt->sendtblspcmapfile);
 
 	/*
-	 * Once do_pg_start_backup has been called, ensure that any failure causes
+	 * Once do_mdb_start_backup has been called, ensure that any failure causes
 	 * us to abort the backup so we don't "leak" a backup counter. For this
-	 * reason, *all* functionality between do_pg_start_backup() and
-	 * do_pg_stop_backup() should be inside the error cleanup block!
+	 * reason, *all* functionality between do_mdb_start_backup() and
+	 * do_mdb_stop_backup() should be inside the error cleanup block!
 	 */
 
 	PG_ENSURE_ERROR_CLEANUP(base_backup_cleanup, (Datum) 0);
@@ -223,7 +223,7 @@ perform_base_backup(basebackup_options *opt, DIR *tblspcdir)
 				else
 					sendDir(".", 1, false, tablespaces, true);
 
-				/* ... and pg_control after everything else. */
+				/* ... and mdb_control after everything else. */
 				if (lstat(XLOG_CONTROL_FILE, &statbuf) != 0)
 					ereport(ERROR,
 							(errcode_for_file_access(),
@@ -250,7 +250,7 @@ perform_base_backup(basebackup_options *opt, DIR *tblspcdir)
 	}
 	PG_END_ENSURE_ERROR_CLEANUP(base_backup_cleanup, (Datum) 0);
 
-	endptr = do_pg_stop_backup(labelfile->data, !opt->nowait, &endtli);
+	endptr = do_mdb_stop_backup(labelfile->data, !opt->nowait, &endtli);
 
 	if (opt->includewal)
 	{
@@ -276,7 +276,7 @@ perform_base_backup(basebackup_options *opt, DIR *tblspcdir)
 		TimeLineID	tli;
 
 		/*
-		 * I'd rather not worry about timelines here, so scan pg_xlog and
+		 * I'd rather not worry about timelines here, so scan mdb_xlog and
 		 * include all WAL files in the range between 'startptr' and 'endptr',
 		 * regardless of the timeline the file is stamped with. If there are
 		 * some spurious WAL files belonging to timelines that don't belong in
@@ -289,11 +289,11 @@ perform_base_backup(basebackup_options *opt, DIR *tblspcdir)
 		XLByteToPrevSeg(endptr, endsegno);
 		XLogFileName(lastoff, ThisTimeLineID, endsegno);
 
-		dir = AllocateDir("pg_xlog");
+		dir = AllocateDir("mdb_xlog");
 		if (!dir)
 			ereport(ERROR,
-				 (errmsg("could not open directory \"%s\": %m", "pg_xlog")));
-		while ((de = ReadDir(dir, "pg_xlog")) != NULL)
+				 (errmsg("could not open directory \"%s\": %m", "mdb_xlog")));
+		while ((de = ReadDir(dir, "mdb_xlog")) != NULL)
 		{
 			/* Does it look like a WAL segment, and is it in the range? */
 			if (IsXLogFileName(de->d_name) &&
@@ -331,7 +331,7 @@ perform_base_backup(basebackup_options *opt, DIR *tblspcdir)
 		qsort(walFiles, nWalFiles, sizeof(char *), compareWalFileNames);
 
 		/*
-		 * There must be at least one xlog file in the pg_xlog directory,
+		 * There must be at least one xlog file in the mdb_xlog directory,
 		 * since we are doing backup-including-xlog.
 		 */
 		if (nWalFiles < 1)
@@ -605,7 +605,7 @@ parse_basebackup_options(List *options, basebackup_options *opt)
 /*
  * SendBaseBackup() - send a complete base backup.
  *
- * The function will put the system into backup mode like pg_start_backup()
+ * The function will put the system into backup mode like mdb_start_backup()
  * does, so that the backup is consistent even though we read directly from
  * the filesystem, bypassing the buffer cache.
  */
@@ -629,10 +629,10 @@ SendBaseBackup(BaseBackupCmd *cmd)
 	}
 
 	/* Make sure we can open the directory with tablespaces in it */
-	dir = AllocateDir("pg_tblspc");
+	dir = AllocateDir("mdb_tblspc");
 	if (!dir)
 		ereport(ERROR,
-				(errmsg("could not open directory \"%s\": %m", "pg_tblspc")));
+				(errmsg("could not open directory \"%s\": %m", "mdb_tblspc")));
 
 	perform_base_backup(&opt, dir);
 
@@ -911,7 +911,7 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 
 		/*
 		 * If there's a backup_label or tablespace_map file, it belongs to a
-		 * backup started by the user with pg_start_backup(). It is *not*
+		 * backup started by the user with mdb_start_backup(). It is *not*
 		 * correct for this backup, our backup_label/tablespace_map is
 		 * injected into the tar separately.
 		 */
@@ -924,9 +924,9 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 		/*
 		 * Check if the postmaster has signaled us to exit, and abort with an
 		 * error in that case. The error handler further up will call
-		 * do_pg_abort_backup() for us. Also check that if the backup was
+		 * do_mdb_abort_backup() for us. Also check that if the backup was
 		 * started while still in recovery, the server wasn't promoted.
-		 * dp_pg_stop_backup() will check that too, but it's better to stop
+		 * dp_mdb_stop_backup() will check that too, but it's better to stop
 		 * the backup early than continue to the end and fail there.
 		 */
 		CHECK_FOR_INTERRUPTS();
@@ -945,8 +945,8 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 			strcmp(pathbuf, "./postmaster.opts") == 0)
 			continue;
 
-		/* Skip pg_control here to back up it last */
-		if (strcmp(pathbuf, "./global/pg_control") == 0)
+		/* Skip mdb_control here to back up it last */
+		if (strcmp(pathbuf, "./global/mdb_control") == 0)
 			continue;
 
 		if (lstat(pathbuf, &statbuf) != 0)
@@ -976,10 +976,10 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 		}
 
 		/*
-		 * Skip pg_replslot, not useful to copy. But include it as an empty
+		 * Skip mdb_replslot, not useful to copy. But include it as an empty
 		 * directory anyway, so we get permissions right.
 		 */
-		if (strcmp(de->d_name, "pg_replslot") == 0)
+		if (strcmp(de->d_name, "mdb_replslot") == 0)
 		{
 			if (!sizeonly)
 				_tarWriteHeader(pathbuf + basepathlen + 1, NULL, &statbuf);
@@ -988,15 +988,15 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 		}
 
 		/*
-		 * We can skip pg_xlog, the WAL segments need to be fetched from the
+		 * We can skip mdb_xlog, the WAL segments need to be fetched from the
 		 * WAL archive anyway. But include it as an empty directory anyway, so
 		 * we get permissions right.
 		 */
-		if (strcmp(pathbuf, "./pg_xlog") == 0)
+		if (strcmp(pathbuf, "./mdb_xlog") == 0)
 		{
 			if (!sizeonly)
 			{
-				/* If pg_xlog is a symlink, write it as a directory anyway */
+				/* If mdb_xlog is a symlink, write it as a directory anyway */
 #ifndef WIN32
 				if (S_ISLNK(statbuf.st_mode))
 #else
@@ -1012,14 +1012,14 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 			 * statbuf from above ...).
 			 */
 			if (!sizeonly)
-				_tarWriteHeader("./pg_xlog/archive_status", NULL, &statbuf);
+				_tarWriteHeader("./mdb_xlog/archive_status", NULL, &statbuf);
 			size += 512;		/* Size of the header just added */
 
-			continue;			/* don't recurse into pg_xlog */
+			continue;			/* don't recurse into mdb_xlog */
 		}
 
-		/* Allow symbolic links in pg_tblspc only */
-		if (strcmp(path, "./pg_tblspc") == 0 &&
+		/* Allow symbolic links in mdb_tblspc only */
+		if (strcmp(path, "./mdb_tblspc") == 0 &&
 #ifndef WIN32
 			S_ISLNK(statbuf.st_mode)
 #else
@@ -1096,9 +1096,9 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 			}
 
 			/*
-			 * skip sending directories inside pg_tblspc, if not required.
+			 * skip sending directories inside mdb_tblspc, if not required.
 			 */
-			if (strcmp(pathbuf, "./pg_tblspc") == 0 && !sendtblspclinks)
+			if (strcmp(pathbuf, "./mdb_tblspc") == 0 && !sendtblspclinks)
 				skip_this_dir = true;
 
 			if (!skip_this_dir)
@@ -1130,7 +1130,7 @@ sendDir(char *path, int basepathlen, bool sizeonly, List *tablespaces,
 /*****
  * Functions for handling tar file format
  *
- * Copied from pg_dump, but modified to work with libpq for sending
+ * Copied from mdb_dump, but modified to work with libpq for sending
  */
 
 

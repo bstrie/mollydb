@@ -8,9 +8,9 @@
 
 #include "access/htup_details.h"
 #include "access/transam.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "parser/parse_type.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
@@ -130,7 +130,7 @@ PLy_input_tuple_funcs(PLyTypeInfo *arg, TupleDesc desc)
 	{
 		HeapTuple	relTup;
 
-		/* Get the pg_class tuple corresponding to the type of the input */
+		/* Get the mdb_class tuple corresponding to the type of the input */
 		arg->typ_relid = typeidTypeRelid(desc->tdtypeid);
 		relTup = SearchSysCache1(RELOID, ObjectIdGetDatum(arg->typ_relid));
 		if (!HeapTupleIsValid(relTup))
@@ -202,7 +202,7 @@ PLy_output_tuple_funcs(PLyTypeInfo *arg, TupleDesc desc)
 	{
 		HeapTuple	relTup;
 
-		/* Get the pg_class tuple corresponding to the type of the output */
+		/* Get the mdb_class tuple corresponding to the type of the output */
 		arg->typ_relid = typeidTypeRelid(desc->tdtypeid);
 		relTup = SearchSysCache1(RELOID, ObjectIdGetDatum(arg->typ_relid));
 		if (!HeapTupleIsValid(relTup))
@@ -358,7 +358,7 @@ PLyObject_ToCompositeDatum(PLyTypeInfo *info, TupleDesc desc, PyObject *plrv)
 static void
 PLy_output_datum_func2(PLyObToDatum *arg, MemoryContext arg_mcxt, HeapTuple typeTup, Oid langid, List *trftypes)
 {
-	Form_pg_type typeStruct = (Form_pg_type) GETSTRUCT(typeTup);
+	Form_mdb_type typeStruct = (Form_mdb_type) GETSTRUCT(typeTup);
 	Oid			element_type;
 	Oid			base_type;
 	Oid			funcid;
@@ -430,7 +430,7 @@ PLy_output_datum_func2(PLyObToDatum *arg, MemoryContext arg_mcxt, HeapTuple type
 static void
 PLy_input_datum_func2(PLyDatumToOb *arg, MemoryContext arg_mcxt, Oid typeOid, HeapTuple typeTup, Oid langid, List *trftypes)
 {
-	Form_pg_type typeStruct = (Form_pg_type) GETSTRUCT(typeTup);
+	Form_mdb_type typeStruct = (Form_mdb_type) GETSTRUCT(typeTup);
 	Oid			element_type;
 	Oid			base_type;
 	Oid			funcid;
@@ -833,7 +833,7 @@ PLyObject_AsString(PyObject *plrv)
 				 errmsg("could not convert Python object into cstring: Python string representation appears to contain null bytes")));
 	else if (slen > plen)
 		elog(ERROR, "could not convert Python object into cstring: Python string longer than reported length");
-	pg_verifymbstr(plrv_sc, slen, false);
+	mdb_verifymbstr(plrv_sc, slen, false);
 
 	return plrv_sc;
 }

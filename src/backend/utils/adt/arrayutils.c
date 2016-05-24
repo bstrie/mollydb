@@ -15,7 +15,7 @@
 
 #include "mollydb.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
 #include "utils/memutils.h"
@@ -226,7 +226,7 @@ ArrayGetIntegerTypmods(ArrayType *arr, int *n)
 	result = (int32 *) palloc(*n * sizeof(int32));
 
 	for (i = 0; i < *n; i++)
-		result[i] = pg_atoi(DatumGetCString(elem_values[i]),
+		result[i] = mdb_atoi(DatumGetCString(elem_values[i]),
 							sizeof(int32), '\0');
 
 	pfree(elem_values);

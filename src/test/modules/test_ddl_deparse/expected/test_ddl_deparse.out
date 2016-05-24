@@ -9,7 +9,7 @@ DECLARE
 	objtype text;
 	tag text;
 BEGIN
-	FOR r IN SELECT * FROM pg_event_trigger_ddl_commands()
+	FOR r IN SELECT * FROM mdb_event_trigger_ddl_commands()
 	LOOP
 		-- verify that tags match
 		tag = get_command_tag(r.command);

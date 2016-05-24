@@ -71,22 +71,22 @@ ResetUnloggedRelations(int op)
 	oldctx = MemoryContextSwitchTo(tmpctx);
 
 	/*
-	 * First process unlogged files in pg_default ($PGDATA/base)
+	 * First process unlogged files in mdb_default ($PGDATA/base)
 	 */
 	ResetUnloggedRelationsInTablespaceDir("base", op);
 
 	/*
 	 * Cycle through directories for all non-default tablespaces.
 	 */
-	spc_dir = AllocateDir("pg_tblspc");
+	spc_dir = AllocateDir("mdb_tblspc");
 
-	while ((spc_de = ReadDir(spc_dir, "pg_tblspc")) != NULL)
+	while ((spc_de = ReadDir(spc_dir, "mdb_tblspc")) != NULL)
 	{
 		if (strcmp(spc_de->d_name, ".") == 0 ||
 			strcmp(spc_de->d_name, "..") == 0)
 			continue;
 
-		snprintf(temp_path, sizeof(temp_path), "pg_tblspc/%s/%s",
+		snprintf(temp_path, sizeof(temp_path), "mdb_tblspc/%s/%s",
 				 spc_de->d_name, TABLESPACE_VERSION_DIRECTORY);
 		ResetUnloggedRelationsInTablespaceDir(temp_path, op);
 	}
@@ -341,7 +341,7 @@ ResetUnloggedRelationsInDbspaceDir(const char *dbspacedirname, int op)
 		FreeDir(dbspace_dir);
 
 		/*
-		 * copy_file() above has already called pg_flush_data() on the files
+		 * copy_file() above has already called mdb_flush_data() on the files
 		 * it created. Now we need to fsync those files, because a checkpoint
 		 * won't do it for us while we're in recovery. We do this in a
 		 * separate pass to allow the kernel to perform all the flushes

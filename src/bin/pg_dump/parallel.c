@@ -2,7 +2,7 @@
  *
  * parallel.c
  *
- *	Parallel support for the pg_dump archiver
+ *	Parallel support for the mdb_dump archiver
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -11,7 +11,7 @@
  *	result from its use.
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/parallel.c
+ *		src/bin/mdb_dump/parallel.c
  *
  *-------------------------------------------------------------------------
  */
@@ -19,7 +19,7 @@
 #include "mollydb_fe.h"
 
 #include "parallel.h"
-#include "pg_backup_utils.h"
+#include "mdb_backup_utils.h"
 #include "fe_utils/string_utils.h"
 
 #ifndef WIN32
@@ -78,7 +78,7 @@ static const char *modulename = gettext_noop("parallel archiver");
 
 static ParallelSlot *GetMyPSlot(ParallelState *pstate);
 static void parallel_msg_master(ParallelSlot *slot, const char *modulename,
-					const char *fmt, va_list ap) pg_attribute_printf(3, 0);
+					const char *fmt, va_list ap) mdb_attribute_printf(3, 0);
 static void archive_close_connection(int code, void *arg);
 static void ShutdownWorkersHard(ParallelState *pstate);
 static void WaitForTerminatingWorkers(ParallelState *pstate);
@@ -270,7 +270,7 @@ getThreadLocalPQExpBuffer(void)
 }
 
 /*
- * pg_dump and pg_restore register the Archive pointer for the exit handler
+ * mdb_dump and mdb_restore register the Archive pointer for the exit handler
  * (called from exit_horribly). This function mainly exists so that we can
  * keep shutdown_info in file scope only.
  */
@@ -392,7 +392,7 @@ WaitForTerminatingWorkers(ParallelState *pstate)
 #else
 		uintptr_t	hThread;
 		DWORD		ret;
-		uintptr_t  *lpHandles = pg_malloc(sizeof(HANDLE) * pstate->numWorkers);
+		uintptr_t  *lpHandles = mdb_malloc(sizeof(HANDLE) * pstate->numWorkers);
 		int			nrun = 0;
 
 		for (j = 0; j < pstate->numWorkers; j++)
@@ -487,7 +487,7 @@ ParallelBackupStart(ArchiveHandle *AH)
 	/* Ensure stdio state is quiesced before forking */
 	fflush(NULL);
 
-	pstate = (ParallelState *) pg_malloc(sizeof(ParallelState));
+	pstate = (ParallelState *) mdb_malloc(sizeof(ParallelState));
 
 	pstate->numWorkers = AH->public.numWorkers;
 	pstate->parallelSlot = NULL;
@@ -495,7 +495,7 @@ ParallelBackupStart(ArchiveHandle *AH)
 	if (AH->public.numWorkers == 1)
 		return pstate;
 
-	pstate->parallelSlot = (ParallelSlot *) pg_malloc(slotSize);
+	pstate->parallelSlot = (ParallelSlot *) mdb_malloc(slotSize);
 	memset((void *) pstate->parallelSlot, 0, slotSize);
 
 	/*
@@ -531,12 +531,12 @@ ParallelBackupStart(ArchiveHandle *AH)
 						  strerror(errno));
 
 		pstate->parallelSlot[i].workerStatus = WRKR_IDLE;
-		pstate->parallelSlot[i].args = (ParallelArgs *) pg_malloc(sizeof(ParallelArgs));
+		pstate->parallelSlot[i].args = (ParallelArgs *) mdb_malloc(sizeof(ParallelArgs));
 		pstate->parallelSlot[i].args->AH = NULL;
 		pstate->parallelSlot[i].args->te = NULL;
 #ifdef WIN32
 		/* Allocate a new structure for every worker */
-		wi = (WorkerInfo *) pg_malloc(sizeof(WorkerInfo));
+		wi = (WorkerInfo *) mdb_malloc(sizeof(WorkerInfo));
 
 		wi->worker = i;
 		wi->AH = AH;
@@ -806,11 +806,11 @@ lockTableNoWait(ArchiveHandle *AH, TocEntry *te)
 	Assert(strcmp(te->desc, "BLOBS") != 0);
 
 	appendPQExpBuffer(query,
-					  "SELECT pg_namespace.nspname,"
-					  "       pg_class.relname "
-					  "  FROM pg_class "
-					"  JOIN pg_namespace on pg_namespace.oid = relnamespace "
-					  " WHERE pg_class.oid = %u", te->catalogId.oid);
+					  "SELECT mdb_namespace.nspname,"
+					  "       mdb_class.relname "
+					  "  FROM mdb_class "
+					"  JOIN mdb_namespace on mdb_namespace.oid = relnamespace "
+					  " WHERE mdb_class.oid = %u", te->catalogId.oid);
 
 	res = PQexec(AH->connection, query->data);
 
@@ -835,7 +835,7 @@ lockTableNoWait(ArchiveHandle *AH, TocEntry *te)
 		exit_horribly(modulename,
 					  "could not obtain lock on relation \"%s\"\n"
 		"This usually means that someone requested an ACCESS EXCLUSIVE lock "
-			  "on the table after the pg_dump parent process had gotten the "
+			  "on the table after the mdb_dump parent process had gotten the "
 					  "initial ACCESS SHARE lock on the table.\n", qualId);
 
 	PQclear(res);
@@ -887,7 +887,7 @@ WaitForCommands(ArchiveHandle *AH, int pipefd[2])
 				lockTableNoWait(AH, te);
 
 			/*
-			 * The message we return here has been pg_malloc()ed and we are
+			 * The message we return here has been mdb_malloc()ed and we are
 			 * responsible for free()ing it.
 			 */
 			str = (AH->WorkerJobDumpPtr) (AH, te);
@@ -907,7 +907,7 @@ WaitForCommands(ArchiveHandle *AH, int pipefd[2])
 			Assert(te != NULL);
 
 			/*
-			 * The message we return here has been pg_malloc()ed and we are
+			 * The message we return here has been mdb_malloc()ed and we are
 			 * responsible for free()ing it.
 			 */
 			str = (AH->WorkerJobRestorePtr) (AH, te);
@@ -920,7 +920,7 @@ WaitForCommands(ArchiveHandle *AH, int pipefd[2])
 					   "unrecognized command on communication channel: %s\n",
 						  command);
 
-		/* command was pg_malloc'd and we are responsible for free()ing it. */
+		/* command was mdb_malloc'd and we are responsible for free()ing it. */
 		free(command);
 	}
 }
@@ -988,7 +988,7 @@ ListenToWorkers(ArchiveHandle *AH, ParallelState *pstate, bool do_wait)
 	else
 		exit_horribly(modulename, "invalid message received from worker: %s\n", msg);
 
-	/* both Unix and Win32 return pg_malloc()ed space, so we free it */
+	/* both Unix and Win32 return mdb_malloc()ed space, so we free it */
 	free(msg);
 }
 
@@ -1275,7 +1275,7 @@ readMessageFromPipe(int fd)
 	 * keeping internal states for different file descriptors.
 	 */
 	bufsize = 64;				/* could be any number */
-	msg = (char *) pg_malloc(bufsize);
+	msg = (char *) mdb_malloc(bufsize);
 
 	msgsize = 0;
 	for (;;)
@@ -1297,7 +1297,7 @@ readMessageFromPipe(int fd)
 		{
 			/* could be any number */
 			bufsize += 16;
-			msg = (char *) pg_realloc(msg, bufsize);
+			msg = (char *) mdb_realloc(msg, bufsize);
 		}
 	}
 
@@ -1305,7 +1305,7 @@ readMessageFromPipe(int fd)
 	 * Worker has closed the connection, make sure to clean up before return
 	 * since we are not returning msg (but did allocate it).
 	 */
-	pg_free(msg);
+	mdb_free(msg);
 
 	return NULL;
 }

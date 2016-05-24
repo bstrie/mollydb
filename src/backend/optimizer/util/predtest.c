@@ -15,8 +15,8 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "executor/executor.h"
 #include "miscadmin.h"
 #include "optimizer/clauses.h"
@@ -1659,7 +1659,7 @@ operator_same_subexprs_proof(Oid pred_op, Oid clause_op, bool refute_it)
 /*
  * We use a lookaside table to cache the result of btree proof operator
  * lookups, since the actual lookup is pretty expensive and doesn't change
- * for any given pair of operators (at least as long as pg_amop doesn't
+ * for any given pair of operators (at least as long as mdb_amop doesn't
  * change).  A single hash entry stores both implication and refutation
  * results for a given pair of operators; but note we may have determined
  * only one of those sets of results as yet.
@@ -1718,7 +1718,7 @@ lookup_proof_cache(Oid pred_op, Oid clause_op, bool refute_it)
 		OprProofCacheHash = hash_create("Btree proof lookup cache", 256,
 										&ctl, HASH_ELEM | HASH_BLOBS);
 
-		/* Arrange to flush cache on pg_amop changes */
+		/* Arrange to flush cache on mdb_amop changes */
 		CacheRegisterSyscacheCallback(AMOPOPID,
 									  InvalidateOprProofCacheCallBack,
 									  (Datum) 0);
@@ -1934,7 +1934,7 @@ get_btree_test_op(Oid pred_op, Oid clause_op, bool refute_it)
 
 
 /*
- * Callback for pg_amop inval events
+ * Callback for mdb_amop inval events
  */
 static void
 InvalidateOprProofCacheCallBack(Datum arg, int cacheid, uint32 hashvalue)

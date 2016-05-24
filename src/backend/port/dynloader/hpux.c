@@ -26,7 +26,7 @@
 #include "utils/dynamic_loader.h"
 
 void *
-pg_dlopen(char *filename)
+mdb_dlopen(char *filename)
 {
 	/*
 	 * Use BIND_IMMEDIATE so that undefined symbols cause a failure return
@@ -41,7 +41,7 @@ pg_dlopen(char *filename)
 }
 
 PGFunction
-pg_dlsym(void *handle, char *funcname)
+mdb_dlsym(void *handle, char *funcname)
 {
 	PGFunction	f;
 
@@ -51,13 +51,13 @@ pg_dlsym(void *handle, char *funcname)
 }
 
 void
-pg_dlclose(void *handle)
+mdb_dlclose(void *handle)
 {
 	shl_unload((shl_t) handle);
 }
 
 char *
-pg_dlerror(void)
+mdb_dlerror(void)
 {
 	static char errmsg[] = "shl_load failed";
 

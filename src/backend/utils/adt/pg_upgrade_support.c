@@ -1,33 +1,33 @@
 /*
- *	pg_upgrade_support.c
+ *	mdb_upgrade_support.c
  *
  *	server-side functions to set backend global variables
  *	to control oid and relfilenode assignment, and do other special
- *	hacks needed for pg_upgrade.
+ *	hacks needed for mdb_upgrade.
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/backend/utils/adt/pg_upgrade_support.c
+ *	src/backend/utils/adt/mdb_upgrade_support.c
  */
 
 #include "mollydb.h"
 
 #include "catalog/binary_upgrade.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/extension.h"
 #include "miscadmin.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
 
 
-Datum		binary_upgrade_set_next_pg_type_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_array_pg_type_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_toast_pg_type_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_heap_pg_class_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_index_pg_class_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_toast_pg_class_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_pg_enum_oid(PG_FUNCTION_ARGS);
-Datum		binary_upgrade_set_next_pg_authid_oid(PG_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_mdb_type_oid(PG_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_array_mdb_type_oid(PG_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_toast_mdb_type_oid(PG_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_heap_mdb_class_oid(PG_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_index_mdb_class_oid(PG_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_toast_mdb_class_oid(PG_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_mdb_enum_oid(PG_FUNCTION_ARGS);
+Datum		binary_upgrade_set_next_mdb_authid_oid(PG_FUNCTION_ARGS);
 Datum		binary_upgrade_create_empty_extension(PG_FUNCTION_ARGS);
 Datum		binary_upgrade_set_record_init_privs(PG_FUNCTION_ARGS);
 
@@ -41,89 +41,89 @@ do {															\
 } while (0)
 
 Datum
-binary_upgrade_set_next_pg_type_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_mdb_type_oid(PG_FUNCTION_ARGS)
 {
 	Oid			typoid = PG_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
-	binary_upgrade_next_pg_type_oid = typoid;
+	binary_upgrade_next_mdb_type_oid = typoid;
 
 	PG_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_array_pg_type_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_array_mdb_type_oid(PG_FUNCTION_ARGS)
 {
 	Oid			typoid = PG_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
-	binary_upgrade_next_array_pg_type_oid = typoid;
+	binary_upgrade_next_array_mdb_type_oid = typoid;
 
 	PG_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_toast_pg_type_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_toast_mdb_type_oid(PG_FUNCTION_ARGS)
 {
 	Oid			typoid = PG_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
-	binary_upgrade_next_toast_pg_type_oid = typoid;
+	binary_upgrade_next_toast_mdb_type_oid = typoid;
 
 	PG_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_heap_pg_class_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_heap_mdb_class_oid(PG_FUNCTION_ARGS)
 {
 	Oid			reloid = PG_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
-	binary_upgrade_next_heap_pg_class_oid = reloid;
+	binary_upgrade_next_heap_mdb_class_oid = reloid;
 
 	PG_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_index_pg_class_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_index_mdb_class_oid(PG_FUNCTION_ARGS)
 {
 	Oid			reloid = PG_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
-	binary_upgrade_next_index_pg_class_oid = reloid;
+	binary_upgrade_next_index_mdb_class_oid = reloid;
 
 	PG_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_toast_pg_class_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_toast_mdb_class_oid(PG_FUNCTION_ARGS)
 {
 	Oid			reloid = PG_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
-	binary_upgrade_next_toast_pg_class_oid = reloid;
+	binary_upgrade_next_toast_mdb_class_oid = reloid;
 
 	PG_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_pg_enum_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_mdb_enum_oid(PG_FUNCTION_ARGS)
 {
 	Oid			enumoid = PG_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
-	binary_upgrade_next_pg_enum_oid = enumoid;
+	binary_upgrade_next_mdb_enum_oid = enumoid;
 
 	PG_RETURN_VOID();
 }
 
 Datum
-binary_upgrade_set_next_pg_authid_oid(PG_FUNCTION_ARGS)
+binary_upgrade_set_next_mdb_authid_oid(PG_FUNCTION_ARGS)
 {
 	Oid			authoid = PG_GETARG_OID(0);
 
 	CHECK_IS_BINARY_UPGRADE;
-	binary_upgrade_next_pg_authid_oid = authoid;
+	binary_upgrade_next_mdb_authid_oid = authoid;
 	PG_RETURN_VOID();
 }
 

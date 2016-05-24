@@ -187,7 +187,7 @@
       </row>
 
       <row>
-       <entry><type>pg_lsn</type></entry>
+       <entry><type>mdb_lsn</type></entry>
        <entry></entry>
        <entry><productname>MollyDB</productname> Log Sequence Number</entry>
       </row>
@@ -2416,7 +2416,7 @@ January 8 04:05:06 1999 PST
        <para>
         A full time zone name, for example <literal>America/New_York</>.
         The recognized time zone names are listed in the
-        <literal>pg_timezone_names</literal> view (see <xref
+        <literal>mdb_timezone_names</literal> view (see <xref
         linkend="view-pg-timezone-names">).
         <productname>MollyDB</productname> uses the widely-used IANA
         time zone data for this purpose, so the same time zone
@@ -2429,7 +2429,7 @@ January 8 04:05:06 1999 PST
         specification merely defines a particular offset from UTC, in
         contrast to full time zone names which can imply a set of daylight
         savings transition-date rules as well.  The recognized abbreviations
-        are listed in the <literal>pg_timezone_abbrevs</> view (see <xref
+        are listed in the <literal>mdb_timezone_abbrevs</> view (see <xref
         linkend="view-pg-timezone-abbrevs">).  You cannot set the
         configuration parameters <xref linkend="guc-timezone"> or
         <xref linkend="guc-log-timezone"> to a time
@@ -3088,7 +3088,7 @@ SELECT person.name, holidays.num_weeks FROM person, holidays
     <para>
      The translations from internal enum values to textual labels are
      kept in the system catalog
-     <link linkend="catalog-pg-enum"><structname>pg_enum</structname></link>.
+     <link linkend="catalog-pg-enum"><structname>mdb_enum</structname></link>.
      Querying this catalog directly can be useful.
     </para>
 
@@ -4375,15 +4375,15 @@ SET xmloption TO { DOCUMENT | CONTENT };
     to accept and display symbolic names for system objects, rather than
     the raw numeric value that type <type>oid</> would use.  The alias
     types allow simplified lookup of OID values for objects.  For example,
-    to examine the <structname>pg_attribute</> rows related to a table
+    to examine the <structname>mdb_attribute</> rows related to a table
     <literal>mytable</>, one could write:
 <programlisting>
-SELECT * FROM pg_attribute WHERE attrelid = 'mytable'::regclass;
+SELECT * FROM mdb_attribute WHERE attrelid = 'mytable'::regclass;
 </programlisting>
     rather than:
 <programlisting>
-SELECT * FROM pg_attribute
-  WHERE attrelid = (SELECT oid FROM pg_class WHERE relname = 'mytable');
+SELECT * FROM mdb_attribute
+  WHERE attrelid = (SELECT oid FROM mdb_class WHERE relname = 'mytable');
 </programlisting>
     While that doesn't look all that bad by itself, it's still oversimplified.
     A far more complicated sub-select would be needed to
@@ -4418,70 +4418,70 @@ SELECT * FROM pg_attribute
 
        <row>
         <entry><type>regproc</></entry>
-        <entry><structname>pg_proc</></entry>
+        <entry><structname>mdb_proc</></entry>
         <entry>function name</entry>
         <entry><literal>sum</></entry>
        </row>
 
        <row>
         <entry><type>regprocedure</></entry>
-        <entry><structname>pg_proc</></entry>
+        <entry><structname>mdb_proc</></entry>
         <entry>function with argument types</entry>
         <entry><literal>sum(int4)</></entry>
        </row>
 
        <row>
         <entry><type>regoper</></entry>
-        <entry><structname>pg_operator</></entry>
+        <entry><structname>mdb_operator</></entry>
         <entry>operator name</entry>
         <entry><literal>+</></entry>
        </row>
 
        <row>
         <entry><type>regoperator</></entry>
-        <entry><structname>pg_operator</></entry>
+        <entry><structname>mdb_operator</></entry>
         <entry>operator with argument types</entry>
         <entry><literal>*(integer,integer)</> or <literal>-(NONE,integer)</></entry>
        </row>
 
        <row>
         <entry><type>regclass</></entry>
-        <entry><structname>pg_class</></entry>
+        <entry><structname>mdb_class</></entry>
         <entry>relation name</entry>
-        <entry><literal>pg_type</></entry>
+        <entry><literal>mdb_type</></entry>
        </row>
 
        <row>
         <entry><type>regtype</></entry>
-        <entry><structname>pg_type</></entry>
+        <entry><structname>mdb_type</></entry>
         <entry>data type name</entry>
         <entry><literal>integer</></entry>
        </row>
 
        <row>
         <entry><type>regrole</></entry>
-        <entry><structname>pg_authid</></entry>
+        <entry><structname>mdb_authid</></entry>
         <entry>role name</entry>
         <entry><literal>smithee</></entry>
        </row>
 
        <row>
         <entry><type>regnamespace</></entry>
-        <entry><structname>pg_namespace</></entry>
+        <entry><structname>mdb_namespace</></entry>
         <entry>namespace name</entry>
-        <entry><literal>pg_catalog</></entry>
+        <entry><literal>mdb_catalog</></entry>
        </row>
 
        <row>
         <entry><type>regconfig</></entry>
-        <entry><structname>pg_ts_config</></entry>
+        <entry><structname>mdb_ts_config</></entry>
         <entry>text search configuration</entry>
         <entry><literal>english</></entry>
        </row>
 
        <row>
         <entry><type>regdictionary</></entry>
-        <entry><structname>pg_ts_dict</></entry>
+        <entry><structname>mdb_ts_dict</></entry>
         <entry>text search dictionary</entry>
         <entry><literal>simple</></entry>
        </row>
@@ -4552,14 +4552,14 @@ SELECT * FROM pg_attribute
   </sect1>
 
   <sect1 id="datatype-pg-lsn">
-   <title><acronym>pg_lsn Type</acronym></title>
+   <title><acronym>mdb_lsn Type</acronym></title>
 
    <indexterm zone="datatype-pg-lsn">
-    <primary>pg_lsn</primary>
+    <primary>mdb_lsn</primary>
    </indexterm>
 
    <para>
-    The <type>pg_lsn</type> data type can be used to store LSN (Log Sequence
+    The <type>mdb_lsn</type> data type can be used to store LSN (Log Sequence
     Number) data which is a pointer to a location in the XLOG. This type is a
     representation of <type>XLogRecPtr</type> and an internal system type of
     <productname>MollyDB</productname>.
@@ -4569,7 +4569,7 @@ SELECT * FROM pg_attribute
     Internally, an LSN is a 64-bit integer, representing a byte position in
     the write-ahead log stream.  It is printed as two hexadecimal numbers of
     up to 8 digits each, separated by a slash; for example,
-    <literal>16/B374D848</>.  The <type>pg_lsn</type> type supports the
+    <literal>16/B374D848</>.  The <type>mdb_lsn</type> type supports the
     standard comparison operators, like <literal>=</literal> and
     <literal>&gt;</literal>.  Two LSNs can be subtracted using the
     <literal>-</literal> operator; the result is the number of bytes separating
@@ -4621,7 +4621,7 @@ SELECT * FROM pg_attribute
    </indexterm>
 
    <indexterm zone="datatype-pseudo">
-    <primary>pg_ddl_command</primary>
+    <primary>mdb_ddl_command</primary>
    </indexterm>
 
    <indexterm zone="datatype-pseudo">
@@ -4760,7 +4760,7 @@ SELECT * FROM pg_attribute
        </row>
 
        <row>
-        <entry><type>pg_ddl_command</></entry>
+        <entry><type>mdb_ddl_command</></entry>
         <entry>Identifies a representation of DDL commands that is available to event triggers.</entry>
        </row>
 

@@ -1,5 +1,5 @@
 /* ----------
- * pg_lzcompress.c -
+ * mdb_lzcompress.c -
  *
  *		This is an implementation of LZ compression for MollyDB.
  *		It uses a simple history table and generates 2-3 byte tags
@@ -168,7 +168,7 @@
  *
  * Copyright (c) 1999-2016, MollyDB Global Development Group
  *
- * src/common/pg_lzcompress.c
+ * src/common/mdb_lzcompress.c
  * ----------
  */
 #ifndef FRONTEND
@@ -179,7 +179,7 @@
 
 #include <limits.h>
 
-#include "common/pg_lzcompress.h"
+#include "common/mdb_lzcompress.h"
 
 
 /* ----------

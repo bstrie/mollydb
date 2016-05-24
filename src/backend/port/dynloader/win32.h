@@ -6,10 +6,10 @@
 
 #include "utils/dynamic_loader.h"		/* pgrminclude ignore */
 
-#define pg_dlopen(f)	dlopen((f), 1)
-#define pg_dlsym		dlsym
-#define pg_dlclose		dlclose
-#define pg_dlerror		dlerror
+#define mdb_dlopen(f)	dlopen((f), 1)
+#define mdb_dlsym		dlsym
+#define mdb_dlclose		dlclose
+#define mdb_dlerror		dlerror
 
 char	   *dlerror(void);
 int			dlclose(void *handle);

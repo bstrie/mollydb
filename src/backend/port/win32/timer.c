@@ -33,7 +33,7 @@ static HANDLE timerThreadHandle = INVALID_HANDLE_VALUE;
 
 /* Timer management thread */
 static DWORD WINAPI
-pg_timer_thread(LPVOID param)
+mdb_timer_thread(LPVOID param)
 {
 	DWORD		waittime;
 
@@ -65,7 +65,7 @@ pg_timer_thread(LPVOID param)
 		else if (r == WAIT_TIMEOUT)
 		{
 			/* Timeout expired, signal SIGALRM and turn it off */
-			pg_queue_signal(SIGALRM);
+			mdb_queue_signal(SIGALRM);
 			waittime = INFINITE;
 		}
 		else
@@ -102,7 +102,7 @@ setitimer(int which, const struct itimerval * value, struct itimerval * ovalue)
 
 		InitializeCriticalSection(&timerCommArea.crit_sec);
 
-		timerThreadHandle = CreateThread(NULL, 0, pg_timer_thread, NULL, 0, NULL);
+		timerThreadHandle = CreateThread(NULL, 0, mdb_timer_thread, NULL, 0, NULL);
 		if (timerThreadHandle == INVALID_HANDLE_VALUE)
 			ereport(FATAL,
 			(errmsg_internal("could not create timer thread: error code %lu",

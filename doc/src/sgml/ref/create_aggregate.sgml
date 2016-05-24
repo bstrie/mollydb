@@ -675,7 +675,7 @@ SELECT col FROM tab ORDER BY col USING sortop LIMIT 1;
     then there can be only one aggregated parameter and it must also
     be <literal>VARIADIC "any"</>.  (In the representation used in the
     system catalogs, these two parameters are merged into a single
-    <literal>VARIADIC "any"</> item, since <structname>pg_proc</> cannot
+    <literal>VARIADIC "any"</> item, since <structname>mdb_proc</> cannot
     represent functions with more than one <literal>VARIADIC</> parameter.)
     If the aggregate is a hypothetical-set aggregate, the direct arguments
     that match the <literal>VARIADIC "any"</> parameter are the hypothetical

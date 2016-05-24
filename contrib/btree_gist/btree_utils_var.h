@@ -7,7 +7,7 @@
 #include "btree_gist.h"
 
 #include "access/gist.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 /* Variable length key */
 typedef bytea GBT_VARKEY;
@@ -28,7 +28,7 @@ typedef struct
 	/* Attribs */
 
 	enum gbtree_type t;			/* data type */
-	int32		eml;			/* cached pg_database_encoding_max_length (0:
+	int32		eml;			/* cached mdb_database_encoding_max_length (0:
 								 * undefined) */
 	bool		trnc;			/* truncate (=compress) key */
 

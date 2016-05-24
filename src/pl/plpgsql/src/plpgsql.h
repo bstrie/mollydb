@@ -188,11 +188,11 @@ typedef struct
 	char	   *typname;		/* (simple) name of the type */
 	Oid			typoid;			/* OID of the data type */
 	int			ttype;			/* PLPGSQL_TTYPE_ code */
-	int16		typlen;			/* stuff copied from its pg_type entry */
+	int16		typlen;			/* stuff copied from its mdb_type entry */
 	bool		typbyval;
 	char		typtype;
 	Oid			typrelid;
-	Oid			collation;		/* from pg_type, but can be overridden */
+	Oid			collation;		/* from mdb_type, but can be overridden */
 	bool		typisarray;		/* is "true" array, or domain over one */
 	int32		atttypmod;		/* typmod (taken from someplace else) */
 } PLpgSQL_type;
@@ -1045,7 +1045,7 @@ extern int	plmdb_peek(void);
 extern void plmdb_peek2(int *tok1_p, int *tok2_p, int *tok1_loc,
 			  int *tok2_loc);
 extern int	plmdb_scanner_errposition(int location);
-extern void plmdb_yyerror(const char *message) pg_attribute_noreturn();
+extern void plmdb_yyerror(const char *message) mdb_attribute_noreturn();
 extern int	plmdb_location_to_lineno(int location);
 extern int	plmdb_latest_lineno(void);
 extern void plmdb_scanner_init(const char *str);

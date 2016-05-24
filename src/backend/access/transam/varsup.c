@@ -166,7 +166,7 @@ GetNewTransactionId(bool isSubXact)
 	 * XID before we zero the page.  Fortunately, a page of the commit log
 	 * holds 32K or more transactions, so we don't have to do this very often.
 	 *
-	 * Extend pg_subtrans and pg_commit_ts too.
+	 * Extend mdb_subtrans and mdb_commit_ts too.
 	 */
 	ExtendCLOG(xid);
 	ExtendCommitTs(xid);
@@ -203,9 +203,9 @@ GetNewTransactionId(bool isSubXact)
 	 *
 	 * If there's no room to fit a subtransaction XID into PGPROC, set the
 	 * cache-overflowed flag instead.  This forces readers to look in
-	 * pg_subtrans to map subtransaction XIDs up to top-level XIDs. There is a
+	 * mdb_subtrans to map subtransaction XIDs up to top-level XIDs. There is a
 	 * race-condition window, in that the new XID will not appear as running
-	 * until its parent link has been placed into pg_subtrans. However, that
+	 * until its parent link has been placed into mdb_subtrans. However, that
 	 * will happen before anyone could possibly have a reason to inquire about
 	 * the status of the XID, so it seems OK.  (Snapshots taken during this
 	 * window *will* include the parent XID, so they will deliver the correct
@@ -399,7 +399,7 @@ SetTransactionIdLimit(TransactionId oldest_datfrozenxid, Oid oldest_datoid)
  *
  * We primarily check whether oldestXidDB is valid.  The cases we have in
  * mind are that that database was dropped, or the field was reset to zero
- * by pg_resetxlog.  In either case we should force recalculation of the
+ * by mdb_resetxlog.  In either case we should force recalculation of the
  * wrap limit.  Also do it if oldestXid is old enough to be forcing
  * autovacuums or other actions; this ensures we update our state as soon
  * as possible once extra overhead is being incurred.

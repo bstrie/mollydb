@@ -11,10 +11,10 @@
  */
 #include "mollydb.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "utils/ascii.h"
 
-static void pg_to_ascii(unsigned char *src, unsigned char *src_end,
+static void mdb_to_ascii(unsigned char *src, unsigned char *src_end,
 			unsigned char *dest, int enc);
 static text *encode_to_ascii(text *data, int enc);
 
@@ -24,7 +24,7 @@ static text *encode_to_ascii(text *data, int enc);
  * ----------
  */
 static void
-pg_to_ascii(unsigned char *src, unsigned char *src_end, unsigned char *dest, int enc)
+mdb_to_ascii(unsigned char *src, unsigned char *src_end, unsigned char *dest, int enc)
 {
 	unsigned char *x;
 	const unsigned char *ascii;
@@ -73,7 +73,7 @@ pg_to_ascii(unsigned char *src, unsigned char *src_end, unsigned char *dest, int
 		ereport(ERROR,
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("encoding conversion from %s to ASCII not supported",
-						pg_encoding_to_char(enc))));
+						mdb_encoding_to_char(enc))));
 		return;					/* keep compiler quiet */
 	}
 
@@ -101,7 +101,7 @@ pg_to_ascii(unsigned char *src, unsigned char *src_end, unsigned char *dest, int
 static text *
 encode_to_ascii(text *data, int enc)
 {
-	pg_to_ascii((unsigned char *) VARDATA(data),		/* src */
+	mdb_to_ascii((unsigned char *) VARDATA(data),		/* src */
 				(unsigned char *) (data) + VARSIZE(data),		/* src end */
 				(unsigned char *) VARDATA(data),		/* dest */
 				enc);			/* encoding */
@@ -118,7 +118,7 @@ to_ascii_encname(PG_FUNCTION_ARGS)
 {
 	text	   *data = PG_GETARG_TEXT_P_COPY(0);
 	char	   *encname = NameStr(*PG_GETARG_NAME(1));
-	int			enc = pg_char_to_encoding(encname);
+	int			enc = mdb_char_to_encoding(encname);
 
 	if (enc < 0)
 		ereport(ERROR,

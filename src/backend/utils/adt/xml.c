@@ -69,14 +69,14 @@
 
 #include "access/htup_details.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/dbcommands.h"
 #include "executor/executor.h"
 #include "executor/spi.h"
 #include "fmgr.h"
 #include "lib/stringinfo.h"
 #include "libpq/pqformat.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "nodes/execnodes.h"
 #include "nodes/nodeFuncs.h"
@@ -103,15 +103,15 @@ int			xmloption;
 struct PgXmlErrorContext
 {
 	int			magic;
-	/* strictness argument passed to pg_xml_init */
+	/* strictness argument passed to mdb_xml_init */
 	PgXmlStrictness strictness;
 	/* current error status and accumulated message, if any */
 	bool		err_occurred;
 	StringInfoData err_buf;
-	/* previous libxml error handling state (saved by pg_xml_init) */
+	/* previous libxml error handling state (saved by mdb_xml_init) */
 	xmlStructuredErrorFunc saved_errfunc;
 	void	   *saved_errcxt;
-	/* previous libxml entity handler (saved by pg_xml_init) */
+	/* previous libxml entity handler (saved by mdb_xml_init) */
 	xmlExternalEntityLoader saved_entityfunc;
 };
 
@@ -138,7 +138,7 @@ static xmlChar *xml_text2xmlChar(text *in);
 static int parse_xml_decl(const xmlChar *str, size_t *lenp,
 			   xmlChar **version, xmlChar **encoding, int *standalone);
 static bool print_xml_decl(StringInfo buf, const xmlChar *version,
-			   pg_enc encoding, int standalone);
+			   mdb_enc encoding, int standalone);
 static xmlDocPtr xml_parse(text *data, XmlOptionType xmloption_arg,
 		  bool preserve_whitespace, int encoding);
 static text *xml_xmlnodetoxmltype(xmlNodePtr cur, PgXmlErrorContext *xmlerrcxt);
@@ -184,7 +184,7 @@ static void SPI_sql_row_to_xmlelement(uint64 rownum, StringInfo result,
 static int
 xmlChar_to_encoding(const xmlChar *encoding_name)
 {
-	int			encoding = pg_char_to_encoding((const char *) encoding_name);
+	int			encoding = mdb_char_to_encoding((const char *) encoding_name);
 
 	if (encoding < 0)
 		ereport(ERROR,
@@ -239,7 +239,7 @@ xml_in(PG_FUNCTION_ARGS)
  * representation.
  */
 static char *
-xml_out_internal(xmltype *x, pg_enc target_encoding)
+xml_out_internal(xmltype *x, mdb_enc target_encoding)
 {
 	char	   *str = text_to_cstring((text *) x);
 
@@ -346,7 +346,7 @@ xml_recv(PG_FUNCTION_ARGS)
 	xmlFreeDoc(doc);
 
 	/* Now that we know what we're dealing with, convert to server encoding */
-	newstr = pg_any_to_server(str, nbytes, encoding);
+	newstr = mdb_any_to_server(str, nbytes, encoding);
 
 	if (newstr != str)
 	{
@@ -374,7 +374,7 @@ xml_send(PG_FUNCTION_ARGS)
 	 * xml_out_internal doesn't convert the encoding, it just prints the right
 	 * declaration. pq_sendtext will do the conversion.
 	 */
-	outval = xml_out_internal(x, pg_get_client_encoding());
+	outval = xml_out_internal(x, mdb_get_client_encoding());
 
 	pq_begintypsend(&buf);
 	pq_sendtext(&buf, outval, strlen(outval));
@@ -631,7 +631,7 @@ xmlelement(XmlExprState *xmlExpr, ExprContext *econtext)
 	}
 
 	/* now safe to run libxml */
-	xmlerrcxt = pg_xml_init(PG_XML_STRICTNESS_ALL);
+	xmlerrcxt = mdb_xml_init(PG_XML_STRICTNESS_ALL);
 
 	PG_TRY();
 	{
@@ -679,7 +679,7 @@ xmlelement(XmlExprState *xmlExpr, ExprContext *econtext)
 		if (buf)
 			xmlBufferFree(buf);
 
-		pg_xml_done(xmlerrcxt, true);
+		mdb_xml_done(xmlerrcxt, true);
 
 		PG_RE_THROW();
 	}
@@ -687,7 +687,7 @@ xmlelement(XmlExprState *xmlExpr, ExprContext *econtext)
 
 	xmlBufferFree(buf);
 
-	pg_xml_done(xmlerrcxt, false);
+	mdb_xml_done(xmlerrcxt, false);
 
 	return result;
 #else
@@ -722,7 +722,7 @@ xmlpi(char *target, text *arg, bool arg_is_null, bool *result_is_null)
 	xmltype    *result;
 	StringInfoData buf;
 
-	if (pg_strcasecmp(target, "xml") == 0)
+	if (mdb_strcasecmp(target, "xml") == 0)
 		ereport(ERROR,
 				(errcode(ERRCODE_SYNTAX_ERROR), /* really */
 				 errmsg("invalid XML processing instruction"),
@@ -882,7 +882,7 @@ xml_is_document(xmltype *arg)
 #ifdef USE_LIBXML
 
 /*
- * pg_xml_init_library --- set up for use of libxml
+ * mdb_xml_init_library --- set up for use of libxml
  *
  * This should be called by each function that is about to use libxml
  * facilities but doesn't require error handling.  It initializes libxml
@@ -893,7 +893,7 @@ xml_is_document(xmltype *arg)
  * check)
  */
 void
-pg_xml_init_library(void)
+mdb_xml_init_library(void)
 {
 	static bool first_time = true;
 
@@ -924,28 +924,28 @@ pg_xml_init_library(void)
 }
 
 /*
- * pg_xml_init --- set up for use of libxml and register an error handler
+ * mdb_xml_init --- set up for use of libxml and register an error handler
  *
  * This should be called by each function that is about to use libxml
  * facilities and requires error handling.  It initializes libxml with
- * pg_xml_init_library() and establishes our libxml error handler.
+ * mdb_xml_init_library() and establishes our libxml error handler.
  *
  * strictness determines which errors are reported and which are ignored.
  *
  * Calls to this function MUST be followed by a PG_TRY block that guarantees
- * that pg_xml_done() is called during either normal or error exit.
+ * that mdb_xml_done() is called during either normal or error exit.
  *
  * This is exported for use by contrib/xml2, as well as other code that might
  * wish to share use of this module's libxml error handler.
  */
 PgXmlErrorContext *
-pg_xml_init(PgXmlStrictness strictness)
+mdb_xml_init(PgXmlStrictness strictness)
 {
 	PgXmlErrorContext *errcxt;
 	void	   *new_errcxt;
 
 	/* Do one-time setup if needed */
-	pg_xml_init_library();
+	mdb_xml_init_library();
 
 	/* Create error handling context structure */
 	errcxt = (PgXmlErrorContext *) palloc(sizeof(PgXmlErrorContext));
@@ -975,13 +975,13 @@ pg_xml_init(PgXmlStrictness strictness)
 	 * Verify that xmlSetStructuredErrorFunc set the context variable we
 	 * expected it to.  If not, the error context pointer we just saved is not
 	 * the correct thing to restore, and since that leaves us without a way to
-	 * restore the context in pg_xml_done, we must fail.
+	 * restore the context in mdb_xml_done, we must fail.
 	 *
 	 * The only known situation in which this test fails is if we compile with
 	 * headers from a libxml2 that doesn't track the structured error context
 	 * separately (< 2.7.4), but at runtime use a version that does, or vice
 	 * versa.  The libxml2 authors did not treat that change as constituting
-	 * an ABI break, so the LIBXML_TEST_VERSION test in pg_xml_init_library
+	 * an ABI break, so the LIBXML_TEST_VERSION test in mdb_xml_init_library
 	 * fails to protect us from this.
 	 */
 
@@ -1011,16 +1011,16 @@ pg_xml_init(PgXmlStrictness strictness)
 
 
 /*
- * pg_xml_done --- restore previous libxml error handling
+ * mdb_xml_done --- restore previous libxml error handling
  *
  * Resets libxml's global error-handling state to what it was before
- * pg_xml_init() was called.
+ * mdb_xml_init() was called.
  *
  * This routine verifies that all pending errors have been dealt with
  * (in assert-enabled builds, anyway).
  */
 void
-pg_xml_done(PgXmlErrorContext *errcxt, bool isError)
+mdb_xml_done(PgXmlErrorContext *errcxt, bool isError)
 {
 	void	   *cur_errcxt;
 
@@ -1065,10 +1065,10 @@ pg_xml_done(PgXmlErrorContext *errcxt, bool isError)
 
 
 /*
- * pg_xml_error_occurred() --- test the error flag
+ * mdb_xml_error_occurred() --- test the error flag
  */
 bool
-pg_xml_error_occurred(PgXmlErrorContext *errcxt)
+mdb_xml_error_occurred(PgXmlErrorContext *errcxt)
 {
 	return errcxt->err_occurred;
 }
@@ -1133,9 +1133,9 @@ parse_xml_decl(const xmlChar *str, size_t *lenp,
 	 * Only initialize libxml.  We don't need error handling here, but we do
 	 * need to make sure libxml is initialized before calling any of its
 	 * functions.  Note that this is safe (and a no-op) if caller has already
-	 * done pg_xml_init().
+	 * done mdb_xml_init().
 	 */
-	pg_xml_init_library();
+	mdb_xml_init_library();
 
 	/* Initialize output arguments to "not present" */
 	if (version)
@@ -1287,7 +1287,7 @@ finished:
  */
 static bool
 print_xml_decl(StringInfo buf, const xmlChar *version,
-			   pg_enc encoding, int standalone)
+			   mdb_enc encoding, int standalone)
 {
 	if ((version && strcmp((const char *) version, PG_XML_DEFAULT_VERSION) != 0)
 		|| (encoding && encoding != PG_UTF8)
@@ -1307,7 +1307,7 @@ print_xml_decl(StringInfo buf, const xmlChar *version,
 			 * instead of LATIN1 etc.); needs field experience
 			 */
 			appendStringInfo(buf, " encoding=\"%s\"",
-							 pg_encoding_to_char(encoding));
+							 mdb_encoding_to_char(encoding));
 		}
 
 		if (standalone == 1)
@@ -1346,13 +1346,13 @@ xml_parse(text *data, XmlOptionType xmloption_arg, bool preserve_whitespace,
 	len = VARSIZE(data) - VARHDRSZ;		/* will be useful later */
 	string = xml_text2xmlChar(data);
 
-	utf8string = pg_do_encoding_conversion(string,
+	utf8string = mdb_do_encoding_conversion(string,
 										   len,
 										   encoding,
 										   PG_UTF8);
 
 	/* Start up libxml and its parser */
-	xmlerrcxt = pg_xml_init(PG_XML_STRICTNESS_WELLFORMED);
+	xmlerrcxt = mdb_xml_init(PG_XML_STRICTNESS_WELLFORMED);
 
 	/* Use a TRY block to ensure we clean up correctly */
 	PG_TRY();
@@ -1419,7 +1419,7 @@ xml_parse(text *data, XmlOptionType xmloption_arg, bool preserve_whitespace,
 		if (ctxt != NULL)
 			xmlFreeParserCtxt(ctxt);
 
-		pg_xml_done(xmlerrcxt, true);
+		mdb_xml_done(xmlerrcxt, true);
 
 		PG_RE_THROW();
 	}
@@ -1427,7 +1427,7 @@ xml_parse(text *data, XmlOptionType xmloption_arg, bool preserve_whitespace,
 
 	xmlFreeParserCtxt(ctxt);
 
-	pg_xml_done(xmlerrcxt, false);
+	mdb_xml_done(xmlerrcxt, false);
 
 	return doc;
 }
@@ -1525,7 +1525,7 @@ xmlPgEntityLoader(const char *URL, const char *ID,
  * detail.
  *
  * This is exported for modules that want to share the core libxml error
- * handler.  Note that pg_xml_init() *must* have been called previously.
+ * handler.  Note that mdb_xml_init() *must* have been called previously.
  */
 void
 xml_ereport(PgXmlErrorContext *errcxt, int level, int sqlcode, const char *msg)
@@ -1789,17 +1789,17 @@ appendStringInfoLineSeparator(StringInfo str)
 /*
  * Convert one char in the current server encoding to a Unicode codepoint.
  */
-static pg_wchar
+static mdb_wchar
 sqlchar_to_unicode(char *s)
 {
 	char	   *utf8string;
-	pg_wchar	ret[2];			/* need space for trailing zero */
+	mdb_wchar	ret[2];			/* need space for trailing zero */
 
 	/* note we're not assuming s is null-terminated */
-	utf8string = pg_server_to_any(s, pg_mblen(s), PG_UTF8);
+	utf8string = mdb_server_to_any(s, mdb_mblen(s), PG_UTF8);
 
-	pg_encoding_mb2wchar_with_len(PG_UTF8, utf8string, ret,
-								  pg_encoding_mblen(PG_UTF8, utf8string));
+	mdb_encoding_mb2wchar_with_len(PG_UTF8, utf8string, ret,
+								  mdb_encoding_mblen(PG_UTF8, utf8string));
 
 	if (utf8string != s)
 		pfree(utf8string);
@@ -1809,7 +1809,7 @@ sqlchar_to_unicode(char *s)
 
 
 static bool
-is_valid_xml_namefirst(pg_wchar c)
+is_valid_xml_namefirst(mdb_wchar c)
 {
 	/* (Letter | '_' | ':') */
 	return (xmlIsBaseCharQ(c) || xmlIsIdeographicQ(c)
@@ -1818,7 +1818,7 @@ is_valid_xml_namefirst(pg_wchar c)
 
 
 static bool
-is_valid_xml_namechar(pg_wchar c)
+is_valid_xml_namechar(mdb_wchar c)
 {
 	/* Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender */
 	return (xmlIsBaseCharQ(c) || xmlIsIdeographicQ(c)
@@ -1849,14 +1849,14 @@ map_sql_identifier_to_xml_name(char *ident, bool fully_escaped,
 
 	initStringInfo(&buf);
 
-	for (p = ident; *p; p += pg_mblen(p))
+	for (p = ident; *p; p += mdb_mblen(p))
 	{
 		if (*p == ':' && (p == ident || fully_escaped))
 			appendStringInfoString(&buf, "_x003A_");
 		else if (*p == '_' && *(p + 1) == 'x')
 			appendStringInfoString(&buf, "_x005F_");
 		else if (fully_escaped && p == ident &&
-				 pg_strncasecmp(p, "xml", 3) == 0)
+				 mdb_strncasecmp(p, "xml", 3) == 0)
 		{
 			if (*p == 'x')
 				appendStringInfoString(&buf, "_x0078_");
@@ -1867,14 +1867,14 @@ map_sql_identifier_to_xml_name(char *ident, bool fully_escaped,
 			appendStringInfoString(&buf, "_x002E_");
 		else
 		{
-			pg_wchar	u = sqlchar_to_unicode(p);
+			mdb_wchar	u = sqlchar_to_unicode(p);
 
 			if ((p == ident)
 				? !is_valid_xml_namefirst(u)
 				: !is_valid_xml_namechar(u))
 				appendStringInfo(&buf, "_x%04X_", (unsigned int) u);
 			else
-				appendBinaryStringInfo(&buf, p, pg_mblen(p));
+				appendBinaryStringInfo(&buf, p, mdb_mblen(p));
 		}
 	}
 
@@ -1890,7 +1890,7 @@ map_sql_identifier_to_xml_name(char *ident, bool fully_escaped,
  * Map a Unicode codepoint into the current server encoding.
  */
 static char *
-unicode_to_sqlchar(pg_wchar c)
+unicode_to_sqlchar(mdb_wchar c)
 {
 	char		utf8string[8];	/* need room for trailing zero */
 	char	   *result;
@@ -1898,8 +1898,8 @@ unicode_to_sqlchar(pg_wchar c)
 	memset(utf8string, 0, sizeof(utf8string));
 	unicode_to_utf8(c, (unsigned char *) utf8string);
 
-	result = pg_any_to_server(utf8string, strlen(utf8string), PG_UTF8);
-	/* if pg_any_to_server didn't strdup, we must */
+	result = mdb_any_to_server(utf8string, strlen(utf8string), PG_UTF8);
+	/* if mdb_any_to_server didn't strdup, we must */
 	if (result == utf8string)
 		result = pstrdup(result);
 	return result;
@@ -1917,7 +1917,7 @@ map_xml_name_to_sql_identifier(char *name)
 
 	initStringInfo(&buf);
 
-	for (p = name; *p; p += pg_mblen(p))
+	for (p = name; *p; p += mdb_mblen(p))
 	{
 		if (*p == '_' && *(p + 1) == 'x'
 			&& isxdigit((unsigned char) *(p + 2))
@@ -1933,7 +1933,7 @@ map_xml_name_to_sql_identifier(char *name)
 			p += 6;
 		}
 		else
-			appendBinaryStringInfo(&buf, p, pg_mblen(p));
+			appendBinaryStringInfo(&buf, p, mdb_mblen(p));
 	}
 
 	return buf.data;
@@ -2018,7 +2018,7 @@ map_sql_value_to_xml_value(Datum value, Oid type, bool xml_escape_strings)
 			case DATEOID:
 				{
 					DateADT		date;
-					struct pg_tm tm;
+					struct mdb_tm tm;
 					char		buf[MAXDATELEN + 1];
 
 					date = DatumGetDateADT(value);
@@ -2038,7 +2038,7 @@ map_sql_value_to_xml_value(Datum value, Oid type, bool xml_escape_strings)
 			case TIMESTAMPOID:
 				{
 					Timestamp	timestamp;
-					struct pg_tm tm;
+					struct mdb_tm tm;
 					fsec_t		fsec;
 					char		buf[MAXDATELEN + 1];
 
@@ -2063,7 +2063,7 @@ map_sql_value_to_xml_value(Datum value, Oid type, bool xml_escape_strings)
 			case TIMESTAMPTZOID:
 				{
 					TimestampTz timestamp;
-					struct pg_tm tm;
+					struct mdb_tm tm;
 					int			tz;
 					fsec_t		fsec;
 					const char *tzn = NULL;
@@ -2096,7 +2096,7 @@ map_sql_value_to_xml_value(Datum value, Oid type, bool xml_escape_strings)
 					volatile xmlTextWriterPtr writer = NULL;
 					char	   *result;
 
-					xmlerrcxt = pg_xml_init(PG_XML_STRICTNESS_ALL);
+					xmlerrcxt = mdb_xml_init(PG_XML_STRICTNESS_ALL);
 
 					PG_TRY();
 					{
@@ -2129,7 +2129,7 @@ map_sql_value_to_xml_value(Datum value, Oid type, bool xml_escape_strings)
 						if (buf)
 							xmlBufferFree(buf);
 
-						pg_xml_done(xmlerrcxt, true);
+						mdb_xml_done(xmlerrcxt, true);
 
 						PG_RE_THROW();
 					}
@@ -2137,7 +2137,7 @@ map_sql_value_to_xml_value(Datum value, Oid type, bool xml_escape_strings)
 
 					xmlBufferFree(buf);
 
-					pg_xml_done(xmlerrcxt, false);
+					mdb_xml_done(xmlerrcxt, false);
 
 					return result;
 				}
@@ -2288,7 +2288,7 @@ schema_get_xml_visible_tables(Oid nspid)
 	StringInfoData query;
 
 	initStringInfo(&query);
-	appendStringInfo(&query, "SELECT oid FROM pg_catalog.pg_class WHERE relnamespace = %u AND relkind IN ('r', 'm', 'v') AND pg_catalog.has_table_privilege (oid, 'SELECT') ORDER BY relname;", nspid);
+	appendStringInfo(&query, "SELECT oid FROM mdb_catalog.mdb_class WHERE relnamespace = %u AND relkind IN ('r', 'm', 'v') AND mdb_catalog.has_table_privilege (oid, 'SELECT') ORDER BY relname;", nspid);
 
 	return query_to_oid_list(query.data);
 }
@@ -2298,9 +2298,9 @@ schema_get_xml_visible_tables(Oid nspid)
  * Including the system schemas is probably not useful for a database
  * mapping.
  */
-#define XML_VISIBLE_SCHEMAS_EXCLUDE "(nspname ~ '^pg_' OR nspname = 'information_schema')"
+#define XML_VISIBLE_SCHEMAS_EXCLUDE "(nspname ~ '^mdb_' OR nspname = 'information_schema')"
 
-#define XML_VISIBLE_SCHEMAS "SELECT oid FROM pg_catalog.pg_namespace WHERE pg_catalog.has_schema_privilege (oid, 'USAGE') AND NOT " XML_VISIBLE_SCHEMAS_EXCLUDE
+#define XML_VISIBLE_SCHEMAS "SELECT oid FROM mdb_catalog.mdb_namespace WHERE mdb_catalog.has_schema_privilege (oid, 'USAGE') AND NOT " XML_VISIBLE_SCHEMAS_EXCLUDE
 
 
 static List *
@@ -2314,7 +2314,7 @@ static List *
 database_get_xml_visible_tables(void)
 {
 	/* At the moment there is no order required here. */
-	return query_to_oid_list("SELECT oid FROM pg_catalog.pg_class WHERE relkind IN ('r', 'm', 'v') AND pg_catalog.has_table_privilege (pg_class.oid, 'SELECT') AND relnamespace IN (" XML_VISIBLE_SCHEMAS ");");
+	return query_to_oid_list("SELECT oid FROM mdb_catalog.mdb_class WHERE relkind IN ('r', 'm', 'v') AND mdb_catalog.has_table_privilege (mdb_class.oid, 'SELECT') AND relnamespace IN (" XML_VISIBLE_SCHEMAS ");");
 }
 
 
@@ -2979,12 +2979,12 @@ map_sql_table_to_xmlschema(TupleDesc tupdesc, Oid relid, bool nulls,
 	if (OidIsValid(relid))
 	{
 		HeapTuple	tuple;
-		Form_pg_class reltuple;
+		Form_mdb_class reltuple;
 
 		tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 		if (!HeapTupleIsValid(tuple))
 			elog(ERROR, "cache lookup failed for relation %u", relid);
-		reltuple = (Form_pg_class) GETSTRUCT(tuple);
+		reltuple = (Form_mdb_class) GETSTRUCT(tuple);
 
 		xmltn = map_sql_identifier_to_xml_name(NameStr(reltuple->relname),
 											   true, false);
@@ -3277,12 +3277,12 @@ map_sql_type_to_xml_name(Oid typeoid, int typmod)
 		default:
 			{
 				HeapTuple	tuple;
-				Form_pg_type typtuple;
+				Form_mdb_type typtuple;
 
 				tuple = SearchSysCache1(TYPEOID, ObjectIdGetDatum(typeoid));
 				if (!HeapTupleIsValid(tuple))
 					elog(ERROR, "cache lookup failed for type %u", typeoid);
-				typtuple = (Form_pg_type) GETSTRUCT(tuple);
+				typtuple = (Form_mdb_type) GETSTRUCT(tuple);
 
 				appendStringInfoString(&result,
 									   map_multipart_sql_identifier_to_xml_name((typtuple->typtype == TYPTYPE_DOMAIN) ? "Domain" : "UDT",
@@ -3827,7 +3827,7 @@ xpath_internal(text *xpath_expr_text, xmltype *data, ArrayType *namespaces,
 	memcpy(xpath_expr, VARDATA(xpath_expr_text), xpath_len);
 	xpath_expr[xpath_len] = '\0';
 
-	xmlerrcxt = pg_xml_init(PG_XML_STRICTNESS_ALL);
+	xmlerrcxt = mdb_xml_init(PG_XML_STRICTNESS_ALL);
 
 	PG_TRY();
 	{
@@ -3916,7 +3916,7 @@ xpath_internal(text *xpath_expr_text, xmltype *data, ArrayType *namespaces,
 		if (ctxt)
 			xmlFreeParserCtxt(ctxt);
 
-		pg_xml_done(xmlerrcxt, true);
+		mdb_xml_done(xmlerrcxt, true);
 
 		PG_RE_THROW();
 	}
@@ -3928,7 +3928,7 @@ xpath_internal(text *xpath_expr_text, xmltype *data, ArrayType *namespaces,
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt(ctxt);
 
-	pg_xml_done(xmlerrcxt, false);
+	mdb_xml_done(xmlerrcxt, false);
 }
 #endif   /* USE_LIBXML */
 

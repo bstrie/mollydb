@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * pg_wchar.h
+ * mdb_wchar.h
  *	  multibyte-character support
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/mb/pg_wchar.h
+ * src/include/mb/mdb_wchar.h
  *
  *	NOTES
  *		This is used both by the backend and by libpq, but should not be
@@ -20,9 +20,9 @@
 #define PG_WCHAR_H
 
 /*
- * The pg_wchar type
+ * The mdb_wchar type
  */
-typedef unsigned int pg_wchar;
+typedef unsigned int mdb_wchar;
 
 /*
  * Maximum byte length of multibyte characters in any backend encoding
@@ -220,8 +220,8 @@ typedef unsigned int pg_wchar;
  * MollyDB encoding identifiers
  *
  * WARNING: the order of this enum must be same as order of entries
- *			in the pg_enc2name_tbl[] array (in mb/encnames.c), and
- *			in the pg_wchar_table[] array (in mb/wchar.c)!
+ *			in the mdb_enc2name_tbl[] array (in mb/encnames.c), and
+ *			in the mdb_wchar_table[] array (in mb/wchar.c)!
  *
  *			If you add some encoding don't forget to check
  *			PG_ENCODING_BE_LAST macro.
@@ -233,7 +233,7 @@ typedef unsigned int pg_wchar;
  * encoding IDs are effectively part of libpq's ABI as far as 8.2 initdb and
  * psql are concerned.
  */
-typedef enum pg_enc
+typedef enum mdb_enc
 {
 	PG_SQL_ASCII = 0,			/* SQL/ASCII */
 	PG_EUC_JP,					/* EUC for Japanese */
@@ -282,12 +282,12 @@ typedef enum pg_enc
 	PG_SHIFT_JIS_2004,			/* Shift-JIS-2004 */
 	_PG_LAST_ENCODING_			/* mark only */
 
-} pg_enc;
+} mdb_enc;
 
 #define PG_ENCODING_BE_LAST PG_KOI8U
 
 /*
- * Please use these tests before access to pg_encconv_tbl[]
+ * Please use these tests before access to mdb_encconv_tbl[]
  * or to other places...
  */
 #define PG_VALID_BE_ENCODING(_enc) \
@@ -308,38 +308,38 @@ typedef enum pg_enc
  * before accessing a table entry!
  *
  * if (PG_VALID_ENCODING(encoding))
- *		pg_enc2name_tbl[ encoding ];
+ *		mdb_enc2name_tbl[ encoding ];
  */
-typedef struct pg_enc2name
+typedef struct mdb_enc2name
 {
 	const char *name;
-	pg_enc		encoding;
+	mdb_enc		encoding;
 #ifdef WIN32
 	unsigned	codepage;		/* codepage for WIN32 */
 #endif
-} pg_enc2name;
+} mdb_enc2name;
 
-extern const pg_enc2name pg_enc2name_tbl[];
+extern const mdb_enc2name mdb_enc2name_tbl[];
 
 /*
  * Encoding names for gettext
  */
-typedef struct pg_enc2gettext
+typedef struct mdb_enc2gettext
 {
-	pg_enc		encoding;
+	mdb_enc		encoding;
 	const char *name;
-} pg_enc2gettext;
+} mdb_enc2gettext;
 
-extern const pg_enc2gettext pg_enc2gettext_tbl[];
+extern const mdb_enc2gettext mdb_enc2gettext_tbl[];
 
 /*
- * pg_wchar stuff
+ * mdb_wchar stuff
  */
 typedef int (*mb2wchar_with_len_converter) (const unsigned char *from,
-														pg_wchar *to,
+														mdb_wchar *to,
 														int len);
 
-typedef int (*wchar2mb_with_len_converter) (const pg_wchar *from,
+typedef int (*wchar2mb_with_len_converter) (const mdb_wchar *from,
 														unsigned char *to,
 														int len);
 
@@ -361,9 +361,9 @@ typedef struct
 	mbdisplaylen_converter dsplen;		/* get display width of a char */
 	mbverifier	mbverify;		/* verify multibyte sequence */
 	int			maxmblen;		/* max bytes for a char in this encoding */
-} pg_wchar_tbl;
+} mdb_wchar_tbl;
 
-extern const pg_wchar_tbl pg_wchar_table[];
+extern const mdb_wchar_tbl mdb_wchar_table[];
 
 /*
  * Data structures for conversions between UTF-8 and other encodings
@@ -381,7 +381,7 @@ typedef struct
 {
 	uint32		utf;			/* UTF-8 */
 	uint32		code;			/* local code */
-} pg_utf_to_local;
+} mdb_utf_to_local;
 
 /*
  * local code to UTF-8 conversion map
@@ -390,7 +390,7 @@ typedef struct
 {
 	uint32		code;			/* local code */
 	uint32		utf;			/* UTF-8 */
-} pg_local_to_utf;
+} mdb_local_to_utf;
 
 /*
  * UTF-8 to local code conversion map (for combined characters)
@@ -400,7 +400,7 @@ typedef struct
 	uint32		utf1;			/* UTF-8 code 1 */
 	uint32		utf2;			/* UTF-8 code 2 */
 	uint32		code;			/* local code */
-} pg_utf_to_local_combined;
+} mdb_utf_to_local_combined;
 
 /*
  * local code to UTF-8 conversion map (for combined characters)
@@ -410,7 +410,7 @@ typedef struct
 	uint32		code;			/* local code */
 	uint32		utf1;			/* UTF-8 code 1 */
 	uint32		utf2;			/* UTF-8 code 2 */
-} pg_local_to_utf_combined;
+} mdb_local_to_utf_combined;
 
 /*
  * callback function for algorithmic encoding conversions (in either direction)
@@ -437,48 +437,48 @@ typedef uint32 (*utf_local_conversion_func) (uint32 code);
  * These functions are considered part of libpq's exported API and
  * are also declared in libpq-fe.h.
  */
-extern int	pg_char_to_encoding(const char *name);
-extern const char *pg_encoding_to_char(int encoding);
-extern int	pg_valid_server_encoding_id(int encoding);
+extern int	mdb_char_to_encoding(const char *name);
+extern const char *mdb_encoding_to_char(int encoding);
+extern int	mdb_valid_server_encoding_id(int encoding);
 
 /*
  * Remaining functions are not considered part of libpq's API, though many
  * of them do exist inside libpq.
  */
-extern int	pg_mb2wchar(const char *from, pg_wchar *to);
-extern int	pg_mb2wchar_with_len(const char *from, pg_wchar *to, int len);
-extern int pg_encoding_mb2wchar_with_len(int encoding,
-							  const char *from, pg_wchar *to, int len);
-extern int	pg_wchar2mb(const pg_wchar *from, char *to);
-extern int	pg_wchar2mb_with_len(const pg_wchar *from, char *to, int len);
-extern int pg_encoding_wchar2mb_with_len(int encoding,
-							  const pg_wchar *from, char *to, int len);
-extern int	pg_char_and_wchar_strcmp(const char *s1, const pg_wchar *s2);
-extern int	pg_wchar_strncmp(const pg_wchar *s1, const pg_wchar *s2, size_t n);
-extern int	pg_char_and_wchar_strncmp(const char *s1, const pg_wchar *s2, size_t n);
-extern size_t pg_wchar_strlen(const pg_wchar *wstr);
-extern int	pg_mblen(const char *mbstr);
-extern int	pg_dsplen(const char *mbstr);
-extern int	pg_encoding_mblen(int encoding, const char *mbstr);
-extern int	pg_encoding_dsplen(int encoding, const char *mbstr);
-extern int	pg_encoding_verifymb(int encoding, const char *mbstr, int len);
-extern int	pg_mule_mblen(const unsigned char *mbstr);
-extern int	pg_mic_mblen(const unsigned char *mbstr);
-extern int	pg_mbstrlen(const char *mbstr);
-extern int	pg_mbstrlen_with_len(const char *mbstr, int len);
-extern int	pg_mbcliplen(const char *mbstr, int len, int limit);
-extern int pg_encoding_mbcliplen(int encoding, const char *mbstr,
+extern int	mdb_mb2wchar(const char *from, mdb_wchar *to);
+extern int	mdb_mb2wchar_with_len(const char *from, mdb_wchar *to, int len);
+extern int mdb_encoding_mb2wchar_with_len(int encoding,
+							  const char *from, mdb_wchar *to, int len);
+extern int	mdb_wchar2mb(const mdb_wchar *from, char *to);
+extern int	mdb_wchar2mb_with_len(const mdb_wchar *from, char *to, int len);
+extern int mdb_encoding_wchar2mb_with_len(int encoding,
+							  const mdb_wchar *from, char *to, int len);
+extern int	mdb_char_and_wchar_strcmp(const char *s1, const mdb_wchar *s2);
+extern int	mdb_wchar_strncmp(const mdb_wchar *s1, const mdb_wchar *s2, size_t n);
+extern int	mdb_char_and_wchar_strncmp(const char *s1, const mdb_wchar *s2, size_t n);
+extern size_t mdb_wchar_strlen(const mdb_wchar *wstr);
+extern int	mdb_mblen(const char *mbstr);
+extern int	mdb_dsplen(const char *mbstr);
+extern int	mdb_encoding_mblen(int encoding, const char *mbstr);
+extern int	mdb_encoding_dsplen(int encoding, const char *mbstr);
+extern int	mdb_encoding_verifymb(int encoding, const char *mbstr, int len);
+extern int	mdb_mule_mblen(const unsigned char *mbstr);
+extern int	mdb_mic_mblen(const unsigned char *mbstr);
+extern int	mdb_mbstrlen(const char *mbstr);
+extern int	mdb_mbstrlen_with_len(const char *mbstr, int len);
+extern int	mdb_mbcliplen(const char *mbstr, int len, int limit);
+extern int mdb_encoding_mbcliplen(int encoding, const char *mbstr,
 					  int len, int limit);
-extern int	pg_mbcharcliplen(const char *mbstr, int len, int imit);
-extern int	pg_encoding_max_length(int encoding);
-extern int	pg_database_encoding_max_length(void);
-extern mbcharacter_incrementer pg_database_encoding_character_incrementer(void);
+extern int	mdb_mbcharcliplen(const char *mbstr, int len, int imit);
+extern int	mdb_encoding_max_length(int encoding);
+extern int	mdb_database_encoding_max_length(void);
+extern mbcharacter_incrementer mdb_database_encoding_character_incrementer(void);
 
 extern int	PrepareClientEncoding(int encoding);
 extern int	SetClientEncoding(int encoding);
 extern void InitializeClientEncoding(void);
-extern int	pg_get_client_encoding(void);
-extern const char *pg_get_client_encoding_name(void);
+extern int	mdb_get_client_encoding(void);
+extern const char *mdb_get_client_encoding_name(void);
 
 extern void SetDatabaseEncoding(int encoding);
 extern int	GetDatabaseEncoding(void);
@@ -487,44 +487,44 @@ extern void SetMessageEncoding(int encoding);
 extern int	GetMessageEncoding(void);
 
 #ifdef ENABLE_NLS
-extern int	pg_bind_textdomain_codeset(const char *domainname);
+extern int	mdb_bind_textdomain_codeset(const char *domainname);
 #endif
 
-extern int	pg_valid_client_encoding(const char *name);
-extern int	pg_valid_server_encoding(const char *name);
+extern int	mdb_valid_client_encoding(const char *name);
+extern int	mdb_valid_server_encoding(const char *name);
 
-extern unsigned char *unicode_to_utf8(pg_wchar c, unsigned char *utf8string);
-extern pg_wchar utf8_to_unicode(const unsigned char *c);
-extern int	pg_utf_mblen(const unsigned char *);
-extern unsigned char *pg_do_encoding_conversion(unsigned char *src, int len,
+extern unsigned char *unicode_to_utf8(mdb_wchar c, unsigned char *utf8string);
+extern mdb_wchar utf8_to_unicode(const unsigned char *c);
+extern int	mdb_utf_mblen(const unsigned char *);
+extern unsigned char *mdb_do_encoding_conversion(unsigned char *src, int len,
 						  int src_encoding,
 						  int dest_encoding);
 
-extern char *pg_client_to_server(const char *s, int len);
-extern char *pg_server_to_client(const char *s, int len);
-extern char *pg_any_to_server(const char *s, int len, int encoding);
-extern char *pg_server_to_any(const char *s, int len, int encoding);
+extern char *mdb_client_to_server(const char *s, int len);
+extern char *mdb_server_to_client(const char *s, int len);
+extern char *mdb_any_to_server(const char *s, int len, int encoding);
+extern char *mdb_server_to_any(const char *s, int len, int encoding);
 
 extern unsigned short BIG5toCNS(unsigned short big5, unsigned char *lc);
 extern unsigned short CNStoBIG5(unsigned short cns, unsigned char lc);
 
 extern void UtfToLocal(const unsigned char *utf, int len,
 		   unsigned char *iso,
-		   const pg_utf_to_local *map, int mapsize,
-		   const pg_utf_to_local_combined *cmap, int cmapsize,
+		   const mdb_utf_to_local *map, int mapsize,
+		   const mdb_utf_to_local_combined *cmap, int cmapsize,
 		   utf_local_conversion_func conv_func,
 		   int encoding);
 extern void LocalToUtf(const unsigned char *iso, int len,
 		   unsigned char *utf,
-		   const pg_local_to_utf *map, int mapsize,
-		   const pg_local_to_utf_combined *cmap, int cmapsize,
+		   const mdb_local_to_utf *map, int mapsize,
+		   const mdb_local_to_utf_combined *cmap, int cmapsize,
 		   utf_local_conversion_func conv_func,
 		   int encoding);
 
-extern bool pg_verifymbstr(const char *mbstr, int len, bool noError);
-extern bool pg_verify_mbstr(int encoding, const char *mbstr, int len,
+extern bool mdb_verifymbstr(const char *mbstr, int len, bool noError);
+extern bool mdb_verify_mbstr(int encoding, const char *mbstr, int len,
 				bool noError);
-extern int pg_verify_mbstr_len(int encoding, const char *mbstr, int len,
+extern int mdb_verify_mbstr_len(int encoding, const char *mbstr, int len,
 					bool noError);
 
 extern void check_encoding_conversion_args(int src_encoding,
@@ -533,14 +533,14 @@ extern void check_encoding_conversion_args(int src_encoding,
 							   int expected_src_encoding,
 							   int expected_dest_encoding);
 
-extern void report_invalid_encoding(int encoding, const char *mbstr, int len) pg_attribute_noreturn();
+extern void report_invalid_encoding(int encoding, const char *mbstr, int len) mdb_attribute_noreturn();
 extern void report_untranslatable_char(int src_encoding, int dest_encoding,
-						 const char *mbstr, int len) pg_attribute_noreturn();
+						 const char *mbstr, int len) mdb_attribute_noreturn();
 
 extern void local2local(const unsigned char *l, unsigned char *p, int len,
 			int src_encoding, int dest_encoding, const unsigned char *tab);
-extern void pg_ascii2mic(const unsigned char *l, unsigned char *p, int len);
-extern void pg_mic2ascii(const unsigned char *mic, unsigned char *p, int len);
+extern void mdb_ascii2mic(const unsigned char *l, unsigned char *p, int len);
+extern void mdb_mic2ascii(const unsigned char *mic, unsigned char *p, int len);
 extern void latin2mic(const unsigned char *l, unsigned char *p, int len,
 		  int lc, int encoding);
 extern void mic2latin(const unsigned char *mic, unsigned char *p, int len,
@@ -552,7 +552,7 @@ extern void mic2latin_with_table(const unsigned char *mic, unsigned char *p,
 					 int len, int lc, int encoding,
 					 const unsigned char *tab);
 
-extern bool pg_utf8_islegal(const unsigned char *source, int length);
+extern bool mdb_utf8_islegal(const unsigned char *source, int length);
 
 #ifdef WIN32
 extern WCHAR *pgwin32_message_to_UTF16(const char *str, int len, int *utf16len);

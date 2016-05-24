@@ -1,6 +1,6 @@
 -- predictability
 SET synchronous_commit = on;
-SELECT 'init' FROM pg_create_logical_replication_slot('regression_slot', 'test_decoding');
+SELECT 'init' FROM mdb_create_logical_replication_slot('regression_slot', 'test_decoding');
 
 CREATE TABLE test_prepared1(id int);
 CREATE TABLE test_prepared2(id int);
@@ -45,6 +45,6 @@ DROP TABLE test_prepared1;
 DROP TABLE test_prepared2;
 
 -- show results
-SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1');
+SELECT data FROM mdb_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1');
 
-SELECT pg_drop_replication_slot('regression_slot');
+SELECT mdb_drop_replication_slot('regression_slot');

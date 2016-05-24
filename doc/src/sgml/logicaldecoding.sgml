@@ -56,20 +56,20 @@
 
 <programlisting>
 mollydb=# -- Create a slot named 'regression_slot' using the output plugin 'test_decoding'
-mollydb=# SELECT * FROM pg_create_logical_replication_slot('regression_slot', 'test_decoding');
+mollydb=# SELECT * FROM mdb_create_logical_replication_slot('regression_slot', 'test_decoding');
     slot_name    | xlog_position
 -----------------+---------------
  regression_slot | 0/16B1970
 (1 row)
 
-mollydb=# SELECT slot_name, plugin, slot_type, database, active, restart_lsn, confirmed_flush_lsn FROM pg_replication_slots;
+mollydb=# SELECT slot_name, plugin, slot_type, database, active, restart_lsn, confirmed_flush_lsn FROM mdb_replication_slots;
     slot_name    |    plugin     | slot_type | database | active | restart_lsn | confirmed_flush_lsn
 -----------------+---------------+-----------+----------+--------+-------------+-----------------
  regression_slot | test_decoding | logical   | mollydb | f      | 0/16A4408   | 0/16A4440
 (1 row)
 
 mollydb=# -- There are no changes to see yet
-mollydb=# SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL);
+mollydb=# SELECT * FROM mdb_logical_slot_get_changes('regression_slot', NULL, NULL);
  location | xid | data
 ----------+-----+------
 (0 rows)
@@ -78,7 +78,7 @@ mollydb=# CREATE TABLE data(id serial primary key, data text);
 CREATE TABLE
 
 mollydb=# -- DDL isn't replicated, so all you'll see is the transaction
-mollydb=# SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL);
+mollydb=# SELECT * FROM mdb_logical_slot_get_changes('regression_slot', NULL, NULL);
  location  | xid |    data
 -----------+-----+------------
  0/16D5D48 | 688 | BEGIN 688
@@ -87,7 +87,7 @@ mollydb=# SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NUL
 
 mollydb=# -- Once changes are read, they're consumed and not emitted
 mollydb=# -- in a subsequent call:
-mollydb=# SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL);
+mollydb=# SELECT * FROM mdb_logical_slot_get_changes('regression_slot', NULL, NULL);
  location | xid | data
 ----------+-----+------
 (0 rows)
@@ -97,7 +97,7 @@ mollydb=# INSERT INTO data(data) VALUES('1');
 mollydb=# INSERT INTO data(data) VALUES('2');
 mollydb=# COMMIT;
 
-mollydb=# SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL);
+mollydb=# SELECT * FROM mdb_logical_slot_get_changes('regression_slot', NULL, NULL);
  location  | xid |                     data
 -----------+-----+-----------------------------------------------
  0/16E0478 | 689 | BEGIN 689
@@ -109,7 +109,7 @@ mollydb=# SELECT * FROM pg_logical_slot_get_changes('regression_slot', NULL, NUL
 mollydb=# INSERT INTO data(data) VALUES('3');
 
 mollydb=# -- You can also peek ahead in the change stream without consuming changes
-mollydb=# SELECT * FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL);
+mollydb=# SELECT * FROM mdb_logical_slot_peek_changes('regression_slot', NULL, NULL);
  location  | xid |                     data
 -----------+-----+-----------------------------------------------
  0/16E09C0 | 690 | BEGIN 690
@@ -117,8 +117,8 @@ mollydb=# SELECT * FROM pg_logical_slot_peek_changes('regression_slot', NULL, NU
  0/16E0B90 | 690 | COMMIT 690
 (3 rows)
 
-mollydb=# -- The next call to pg_logical_slot_peek_changes() returns the same changes again
-mollydb=# SELECT * FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL);
+mollydb=# -- The next call to mdb_logical_slot_peek_changes() returns the same changes again
+mollydb=# SELECT * FROM mdb_logical_slot_peek_changes('regression_slot', NULL, NULL);
  location  | xid |                     data
 -----------+-----+-----------------------------------------------
  0/16E09C0 | 690 | BEGIN 690
@@ -127,7 +127,7 @@ mollydb=# SELECT * FROM pg_logical_slot_peek_changes('regression_slot', NULL, NU
 (3 rows)
 
 mollydb=# -- options can be passed to output plugin, to influence the formatting
-mollydb=# SELECT * FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'include-timestamp', 'on');
+mollydb=# SELECT * FROM mdb_logical_slot_peek_changes('regression_slot', NULL, NULL, 'include-timestamp', 'on');
  location  | xid |                     data
 -----------+-----+-----------------------------------------------
  0/16E09C0 | 690 | BEGIN 690
@@ -137,8 +137,8 @@ mollydb=# SELECT * FROM pg_logical_slot_peek_changes('regression_slot', NULL, NU
 
 mollydb=# -- Remember to destroy a slot you no longer need to stop it consuming
 mollydb=# -- server resources:
-mollydb=# SELECT pg_drop_replication_slot('regression_slot');
- pg_drop_replication_slot
+mollydb=# SELECT mdb_drop_replication_slot('regression_slot');
+ mdb_drop_replication_slot
 -----------------------
 
 (1 row)
@@ -155,8 +155,8 @@ mollydb=# SELECT pg_drop_replication_slot('regression_slot');
     an additional connection.
    </para>
 <programlisting>
-$ pg_recvlogical -d mollydb --slot test --create-slot
-$ pg_recvlogical -d mollydb --slot test --start -f -
+$ mdb_recvlogical -d mollydb --slot test --create-slot
+$ mdb_recvlogical -d mollydb --slot test --start -f -
 <keycombo action="simul"><keycap>Control</><keycap>Z</></>
 $ psql -d mollydb -c "INSERT INTO data(data) VALUES('4');"
 $ fg
@@ -164,7 +164,7 @@ BEGIN 693
 table public.data: INSERT: id[integer]:4 data[text]:'4'
 COMMIT 693
 <keycombo action="simul"><keycap>Control</><keycap>C</></>
-$ pg_recvlogical -d mollydb --slot test --drop-slot
+$ mdb_recvlogical -d mollydb --slot test --drop-slot
 </programlisting>
   </sect1>
 
@@ -324,9 +324,9 @@ $ pg_recvlogical -d mollydb --slot test --drop-slot
    <title>System Catalogs Related to Logical Decoding</title>
 
    <para>
-    The <link linkend="view-pg-replication-slots"><structname>pg_replication_slots</structname></link>
+    The <link linkend="view-pg-replication-slots"><structname>mdb_replication_slots</structname></link>
     view and the
-    <link linkend="monitoring-stats-views-table"><structname>pg_stat_replication</structname></link>
+    <link linkend="monitoring-stats-views-table"><structname>mdb_stat_replication</structname></link>
     view provide information about the current state of replication slots and
     streaming replication connections respectively. These views apply to both physical and
     logical replication.
@@ -386,7 +386,7 @@ typedef void (*LogicalOutputPluginInit)(struct OutputPluginCallbacks *cb);
      backend's normal infrastructure, including calling output functions. Read
      only access to relations is permitted as long as only relations are
      accessed that either have been created by <command>initdb</command> in
-     the <literal>pg_catalog</literal> schema, or have been marked as user
+     the <literal>mdb_catalog</literal> schema, or have been marked as user
      provided catalog tables using
 <programlisting>
 ALTER TABLE user_catalog_table SET (user_catalog_table = true);
@@ -440,7 +440,7 @@ CREATE TABLE another_catalog_table(data text) WITH (user_catalog_table = true);
      <para>
       Only transactions that have already safely been flushed to disk will be
       decoded. That can lead to a <command>COMMIT</command> not immediately being decoded in a
-      directly following <literal>pg_logical_slot_get_changes()</literal>
+      directly following <literal>mdb_logical_slot_get_changes()</literal>
       when <varname>synchronous_commit</varname> is set
       to <literal>off</literal>.
      </para>

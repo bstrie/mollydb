@@ -3,7 +3,7 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/sequence.h"
 #include "commands/trigger.h"
 #include "executor/spi.h"

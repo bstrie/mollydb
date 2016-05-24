@@ -15,7 +15,7 @@ OH, me, I'm Terry Mackintosh <terry@terrym.com>
 */
 #include "mollydb.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "executor/spi.h"
 #include "commands/trigger.h"
 #include "utils/rel.h"

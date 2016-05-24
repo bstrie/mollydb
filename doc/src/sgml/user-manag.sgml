@@ -87,10 +87,10 @@ dropuser <replaceable>name</replaceable>
   </para>
 
   <para>
-   To determine the set of existing roles, examine the <structname>pg_roles</>
+   To determine the set of existing roles, examine the <structname>mdb_roles</>
    system catalog, for example
 <synopsis>
-SELECT rolname FROM pg_roles;
+SELECT rolname FROM mdb_roles;
 </synopsis>
    The <xref linkend="app-psql"> program's <literal>\du</> meta-command
    is also useful for listing the existing roles.
@@ -516,7 +516,7 @@ DROP ROLE doomed_role;
      </thead>
      <tbody>
       <row>
-       <entry>pg_signal_backend</entry>
+       <entry>mdb_signal_backend</entry>
        <entry>Send signals to other backends (eg: cancel query, terminate).</entry>
       </row>
      </tbody>
@@ -528,7 +528,7 @@ DROP ROLE doomed_role;
    command:
 
 <programlisting>
-GRANT pg_signal_backend TO admin_user;
+GRANT mdb_signal_backend TO admin_user;
 </programlisting>
   </para>
 

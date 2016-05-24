@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * config_info.c
- *		Common code for pg_config output
+ *		Common code for mdb_config output
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

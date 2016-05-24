@@ -4,7 +4,7 @@
  *
  * Data structures for simple lists of OIDs and strings.  The support for
  * these is very primitive compared to the backend's List facilities, but
- * it's all we need in, eg, pg_dump.
+ * it's all we need in, eg, mdb_dump.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -27,7 +27,7 @@ simple_oid_list_append(SimpleOidList *list, Oid val)
 {
 	SimpleOidListCell *cell;
 
-	cell = (SimpleOidListCell *) pg_malloc(sizeof(SimpleOidListCell));
+	cell = (SimpleOidListCell *) mdb_malloc(sizeof(SimpleOidListCell));
 	cell->next = NULL;
 	cell->val = val;
 
@@ -65,7 +65,7 @@ simple_string_list_append(SimpleStringList *list, const char *val)
 	SimpleStringListCell *cell;
 
 	cell = (SimpleStringListCell *)
-		pg_malloc(offsetof(SimpleStringListCell, val) +strlen(val) + 1);
+		mdb_malloc(offsetof(SimpleStringListCell, val) +strlen(val) + 1);
 
 	cell->next = NULL;
 	cell->touched = false;

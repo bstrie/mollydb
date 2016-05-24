@@ -13,7 +13,7 @@
 #ifndef OBJECTADDRESS_H
 #define OBJECTADDRESS_H
 
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 #include "storage/lockdefs.h"
 #include "utils/acl.h"
 #include "utils/relcache.h"
@@ -23,7 +23,7 @@
  */
 typedef struct ObjectAddress
 {
-	Oid			classId;		/* Class Id from pg_class */
+	Oid			classId;		/* Class Id from mdb_class */
 	Oid			objectId;		/* OID of the object */
 	int32		objectSubId;	/* Subitem within object (eg column), or 0 */
 } ObjectAddress;

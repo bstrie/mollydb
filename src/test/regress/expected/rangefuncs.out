@@ -1,4 +1,4 @@
-SELECT name, setting FROM pg_settings WHERE name LIKE 'enable%';
+SELECT name, setting FROM mdb_settings WHERE name LIKE 'enable%';
          name          | setting 
 -----------------------+---------
  enable_bitmapscan     | on
@@ -85,7 +85,7 @@ select * from vw_ord;
  1 | 1 | 11 |   1
 (1 row)
 
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
                              definition                              
 ---------------------------------------------------------------------
   SELECT v.n,                                                       +
@@ -112,7 +112,7 @@ select * from vw_ord;
  1 | 1 | 11 | 2 | 22 |   1
 (1 row)
 
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
                                           definition                                           
 -----------------------------------------------------------------------------------------------
   SELECT v.n,                                                                                 +
@@ -163,7 +163,7 @@ select * from vw_ord;
  20 | bar |    
 (2 rows)
 
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
                                        definition                                       
 ----------------------------------------------------------------------------------------
   SELECT z.a,                                                                          +
@@ -181,7 +181,7 @@ select * from vw_ord;
  20 | bar |    
 (2 rows)
 
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
                                        definition                                       
 ----------------------------------------------------------------------------------------
   SELECT z.a,                                                                          +
@@ -199,7 +199,7 @@ select * from vw_ord;
  20 | bar | 2
 (2 rows)
 
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
                                                       definition                                                      
 ----------------------------------------------------------------------------------------------------------------------
   SELECT z.a,                                                                                                        +
@@ -683,8 +683,8 @@ select * from vw_foo;
    |   |     | 1 | 2 | Ed  |   | 2
 (2 rows)
 
-select pg_get_viewdef('vw_foo');
-                                                                    pg_get_viewdef                                                                    
+select mdb_get_viewdef('vw_foo');
+                                                                    mdb_get_viewdef                                                                    
 ------------------------------------------------------------------------------------------------------------------------------------------------------
   SELECT t1.a,                                                                                                                                       +
      t1.b,                                                                                                                                           +

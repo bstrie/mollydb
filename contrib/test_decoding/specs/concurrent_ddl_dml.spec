@@ -10,13 +10,13 @@ teardown
 {
     DROP TABLE tbl1;
     DROP TABLE tbl2;
-    SELECT 'stop' FROM pg_drop_replication_slot('isolation_slot');
+    SELECT 'stop' FROM mdb_drop_replication_slot('isolation_slot');
 }
 
 session "s1"
 setup { SET synchronous_commit=on; }
 
-step "s1_init" { SELECT 'init' FROM pg_create_logical_replication_slot('isolation_slot', 'test_decoding'); }
+step "s1_init" { SELECT 'init' FROM mdb_create_logical_replication_slot('isolation_slot', 'test_decoding'); }
 step "s1_begin" { BEGIN; }
 step "s1_insert_tbl1" { INSERT INTO tbl1 (val1, val2) VALUES (1, 1); }
 step "s1_insert_tbl1_3col" { INSERT INTO tbl1 (val1, val2, val3) VALUES (1, 1, 1); }
@@ -53,7 +53,7 @@ step "s2_alter_tbl2_3rd_char" { ALTER TABLE tbl2 ALTER COLUMN val3 TYPE characte
 step "s2_alter_tbl2_3rd_text" { ALTER TABLE tbl2 ALTER COLUMN val3 TYPE text; }
 step "s2_alter_tbl2_3rd_int" { ALTER TABLE tbl2 ALTER COLUMN val3 TYPE int USING val3::integer; }
 
-step "s2_get_changes" { SELECT regexp_replace(data, 'temp_\d+', 'temp') AS data FROM pg_logical_slot_get_changes('isolation_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1'); }
+step "s2_get_changes" { SELECT regexp_replace(data, 'temp_\d+', 'temp') AS data FROM mdb_logical_slot_get_changes('isolation_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1'); }
 
 
 

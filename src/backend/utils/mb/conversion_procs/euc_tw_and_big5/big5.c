@@ -13,7 +13,7 @@
 /* can be used in either frontend or backend */
 #include "mollydb_fe.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 typedef struct
 {

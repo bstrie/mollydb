@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_lsn.c
- *	  Operations for the pg_lsn datatype.
+ * mdb_lsn.c
+ *	  Operations for the mdb_lsn datatype.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
- *	  src/backend/utils/adt/pg_lsn.c
+ *	  src/backend/utils/adt/mdb_lsn.c
  *
  *-------------------------------------------------------------------------
  */
@@ -17,7 +17,7 @@
 #include "funcapi.h"
 #include "libpq/pqformat.h"
 #include "utils/builtins.h"
-#include "utils/pg_lsn.h"
+#include "utils/mdb_lsn.h"
 
 #define MAXPG_LSNLEN			17
 #define MAXPG_LSNCOMPONENT	8
@@ -27,7 +27,7 @@
  *---------------------------------------------------------*/
 
 Datum
-pg_lsn_in(PG_FUNCTION_ARGS)
+mdb_lsn_in(PG_FUNCTION_ARGS)
 {
 	char	   *str = PG_GETARG_CSTRING(0);
 	int			len1,
@@ -41,12 +41,12 @@ pg_lsn_in(PG_FUNCTION_ARGS)
 	if (len1 < 1 || len1 > MAXPG_LSNCOMPONENT || str[len1] != '/')
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-			   errmsg("invalid input syntax for type pg_lsn: \"%s\"", str)));
+			   errmsg("invalid input syntax for type mdb_lsn: \"%s\"", str)));
 	len2 = strspn(str + len1 + 1, "0123456789abcdefABCDEF");
 	if (len2 < 1 || len2 > MAXPG_LSNCOMPONENT || str[len1 + 1 + len2] != '\0')
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-			   errmsg("invalid input syntax for type pg_lsn: \"%s\"", str)));
+			   errmsg("invalid input syntax for type mdb_lsn: \"%s\"", str)));
 
 	/* Decode result. */
 	id = (uint32) strtoul(str, NULL, 16);
@@ -57,7 +57,7 @@ pg_lsn_in(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_lsn_out(PG_FUNCTION_ARGS)
+mdb_lsn_out(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	lsn = PG_GETARG_LSN(0);
 	char		buf[MAXPG_LSNLEN + 1];
@@ -75,7 +75,7 @@ pg_lsn_out(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_lsn_recv(PG_FUNCTION_ARGS)
+mdb_lsn_recv(PG_FUNCTION_ARGS)
 {
 	StringInfo	buf = (StringInfo) PG_GETARG_POINTER(0);
 	XLogRecPtr	result;
@@ -85,7 +85,7 @@ pg_lsn_recv(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_lsn_send(PG_FUNCTION_ARGS)
+mdb_lsn_send(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	lsn = PG_GETARG_LSN(0);
 	StringInfoData buf;
@@ -101,7 +101,7 @@ pg_lsn_send(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-pg_lsn_eq(PG_FUNCTION_ARGS)
+mdb_lsn_eq(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
 	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
@@ -110,7 +110,7 @@ pg_lsn_eq(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_lsn_ne(PG_FUNCTION_ARGS)
+mdb_lsn_ne(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
 	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
@@ -119,7 +119,7 @@ pg_lsn_ne(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_lsn_lt(PG_FUNCTION_ARGS)
+mdb_lsn_lt(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
 	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
@@ -128,7 +128,7 @@ pg_lsn_lt(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_lsn_gt(PG_FUNCTION_ARGS)
+mdb_lsn_gt(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
 	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
@@ -137,7 +137,7 @@ pg_lsn_gt(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_lsn_le(PG_FUNCTION_ARGS)
+mdb_lsn_le(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
 	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
@@ -146,7 +146,7 @@ pg_lsn_le(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_lsn_ge(PG_FUNCTION_ARGS)
+mdb_lsn_ge(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
 	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);
@@ -156,7 +156,7 @@ pg_lsn_ge(PG_FUNCTION_ARGS)
 
 /* btree index opclass support */
 Datum
-pg_lsn_cmp(PG_FUNCTION_ARGS)
+mdb_lsn_cmp(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	a = PG_GETARG_LSN(0);
 	XLogRecPtr	b = PG_GETARG_LSN(1);
@@ -171,7 +171,7 @@ pg_lsn_cmp(PG_FUNCTION_ARGS)
 
 /* hash index opclass support */
 Datum
-pg_lsn_hash(PG_FUNCTION_ARGS)
+mdb_lsn_hash(PG_FUNCTION_ARGS)
 {
 	/* We can use hashint8 directly */
 	return hashint8(fcinfo);
@@ -183,7 +183,7 @@ pg_lsn_hash(PG_FUNCTION_ARGS)
  *---------------------------------------------------------*/
 
 Datum
-pg_lsn_mi(PG_FUNCTION_ARGS)
+mdb_lsn_mi(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	lsn1 = PG_GETARG_LSN(0);
 	XLogRecPtr	lsn2 = PG_GETARG_LSN(1);

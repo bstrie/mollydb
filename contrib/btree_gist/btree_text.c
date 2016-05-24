@@ -103,7 +103,7 @@ gbt_text_compress(PG_FUNCTION_ARGS)
 
 	if (tinfo.eml == 0)
 	{
-		tinfo.eml = pg_database_encoding_max_length();
+		tinfo.eml = mdb_database_encoding_max_length();
 	}
 
 	PG_RETURN_POINTER(gbt_var_compress(entry, &tinfo));
@@ -117,7 +117,7 @@ gbt_bpchar_compress(PG_FUNCTION_ARGS)
 
 	if (tinfo.eml == 0)
 	{
-		tinfo.eml = pg_database_encoding_max_length();
+		tinfo.eml = mdb_database_encoding_max_length();
 	}
 
 	if (entry->leafkey)
@@ -157,7 +157,7 @@ gbt_text_consistent(PG_FUNCTION_ARGS)
 
 	if (tinfo.eml == 0)
 	{
-		tinfo.eml = pg_database_encoding_max_length();
+		tinfo.eml = mdb_database_encoding_max_length();
 	}
 
 	retval = gbt_var_consistent(&r, query, strategy, PG_GET_COLLATION(),
@@ -186,7 +186,7 @@ gbt_bpchar_consistent(PG_FUNCTION_ARGS)
 
 	if (tinfo.eml == 0)
 	{
-		tinfo.eml = pg_database_encoding_max_length();
+		tinfo.eml = mdb_database_encoding_max_length();
 	}
 
 	retval = gbt_var_consistent(&r, trim, strategy, PG_GET_COLLATION(),

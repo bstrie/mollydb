@@ -198,7 +198,7 @@ shm_toc_insert(shm_toc *toc, uint64 key, void *address)
 	 * updating the number of entries, we make it safe to read the TOC
 	 * unlocked.
 	 */
-	pg_write_barrier();
+	mdb_write_barrier();
 
 	vtoc->toc_nentry++;
 
@@ -222,7 +222,7 @@ shm_toc_lookup(shm_toc *toc, uint64 key)
 
 	/* Read the number of entries before we examine any entry. */
 	nentry = toc->toc_nentry;
-	pg_read_barrier();
+	mdb_read_barrier();
 
 	/* Now search for a matching entry. */
 	for (i = 0; i < nentry; ++i)

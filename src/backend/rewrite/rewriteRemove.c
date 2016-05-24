@@ -21,7 +21,7 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_rewrite.h"
+#include "catalog/mdb_rewrite.h"
 #include "miscadmin.h"
 #include "rewrite/rewriteRemove.h"
 #include "utils/acl.h"
@@ -45,7 +45,7 @@ RemoveRewriteRuleById(Oid ruleOid)
 	Oid			eventRelationOid;
 
 	/*
-	 * Open the pg_rewrite relation.
+	 * Open the mdb_rewrite relation.
 	 */
 	RewriteRelation = heap_open(RewriteRelationId, RowExclusiveLock);
 
@@ -70,11 +70,11 @@ RemoveRewriteRuleById(Oid ruleOid)
 	 * going on that might depend on this rule.  (Note: a weaker lock would
 	 * suffice if it's not an ON SELECT rule.)
 	 */
-	eventRelationOid = ((Form_pg_rewrite) GETSTRUCT(tuple))->ev_class;
+	eventRelationOid = ((Form_mdb_rewrite) GETSTRUCT(tuple))->ev_class;
 	event_relation = heap_open(eventRelationOid, AccessExclusiveLock);
 
 	/*
-	 * Now delete the pg_rewrite tuple for the rule
+	 * Now delete the mdb_rewrite tuple for the rule
 	 */
 	simple_heap_delete(RewriteRelation, &tuple->t_self);
 

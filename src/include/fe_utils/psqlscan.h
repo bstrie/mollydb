@@ -59,7 +59,7 @@ typedef struct PsqlScanCallbacks
 #if defined(__GNUC__) && __GNUC__ < 4
 	void		(*write_error) (const char *fmt,...);
 #else
-	void		(*write_error) (const char *fmt,...) pg_attribute_printf(1, 2);
+	void		(*write_error) (const char *fmt,...) mdb_attribute_printf(1, 2);
 #endif
 } PsqlScanCallbacks;
 

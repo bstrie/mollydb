@@ -35,7 +35,7 @@
 #include <math.h>
 
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "executor/spi.h"
 #include "funcapi.h"
 #include "lib/stringinfo.h"
@@ -1552,9 +1552,9 @@ static bool
 compatCrosstabTupleDescs(TupleDesc ret_tupdesc, TupleDesc sql_tupdesc)
 {
 	int			i;
-	Form_pg_attribute ret_attr;
+	Form_mdb_attribute ret_attr;
 	Oid			ret_atttypid;
-	Form_pg_attribute sql_attr;
+	Form_mdb_attribute sql_attr;
 	Oid			sql_atttypid;
 
 	if (ret_tupdesc->natts < 2 ||

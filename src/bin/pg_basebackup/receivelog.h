@@ -5,7 +5,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  src/bin/pg_basebackup/receivelog.h
+ *		  src/bin/mdb_basebackup/receivelog.h
  *-------------------------------------------------------------------------
  */
 

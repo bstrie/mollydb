@@ -14,7 +14,7 @@
 #include "mollydb.h"
 
 #include "access/hash.h"
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "miscadmin.h"
 #include "utils/builtins.h"
 #include "utils/jsonb.h"

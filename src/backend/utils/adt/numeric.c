@@ -27,7 +27,7 @@
 #include <math.h>
 
 #include "access/hash.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "lib/hyperloglog.h"
 #include "libpq/pqformat.h"
@@ -109,7 +109,7 @@ typedef int16 NumericDigit;
  * it is a NaN.  We currently always store a NaN using just two bytes (i.e.
  * only n_header), but previous releases used only the NumericLong format,
  * so we might find 4-byte NaNs on disk if a database has been migrated using
- * pg_upgrade.  In either case, when the high bits indicate a NaN, the
+ * mdb_upgrade.  In either case, when the high bits indicate a NaN, the
  * remaining bits are never examined.  Currently, we always initialize these
  * to zero, but it might be possible to use them for some other purpose in
  * the future.
@@ -528,7 +528,7 @@ numeric_in(PG_FUNCTION_ARGS)
 	/*
 	 * Check for NaN
 	 */
-	if (pg_strncasecmp(cp, "NaN", 3) == 0)
+	if (mdb_strncasecmp(cp, "NaN", 3) == 0)
 	{
 		res = make_result(&const_nan);
 

@@ -25,20 +25,20 @@
 
 #include <machine/sys/inline.h>
 
-#define pg_compiler_barrier_impl()	_Asm_sched_fence()
+#define mdb_compiler_barrier_impl()	_Asm_sched_fence()
 
 #if defined(HAVE_ATOMICS)
 
 /* IA64 always has 32/64 bit atomics */
 
 #define PG_HAVE_ATOMIC_U32_SUPPORT
-typedef struct pg_atomic_uint32
+typedef struct mdb_atomic_uint32
 {
 	volatile uint32 value;
-} pg_atomic_uint32;
+} mdb_atomic_uint32;
 
 #define PG_HAVE_ATOMIC_U64_SUPPORT
-typedef struct pg_atomic_uint64
+typedef struct mdb_atomic_uint64
 {
 	/*
 	 * Alignment is guaranteed to be 64bit. Search for "Well-behaved
@@ -47,7 +47,7 @@ typedef struct pg_atomic_uint64
 	 * include.
 	 */
 	volatile uint64 value;
-} pg_atomic_uint64;
+} mdb_atomic_uint64;
 
 
 #define MINOR_FENCE (_Asm_fence) (_UP_CALL_FENCE | _UP_SYS_FENCE | \
@@ -55,7 +55,7 @@ typedef struct pg_atomic_uint64
 
 #define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
 static inline bool
-pg_atomic_compare_exchange_u32_impl(volatile pg_atomic_uint32 *ptr,
+mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 									uint32 *expected, uint32 newval)
 {
 	bool	ret;
@@ -83,7 +83,7 @@ pg_atomic_compare_exchange_u32_impl(volatile pg_atomic_uint32 *ptr,
 
 #define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
 static inline bool
-pg_atomic_compare_exchange_u64_impl(volatile pg_atomic_uint64 *ptr,
+mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 									uint64 *expected, uint64 newval)
 {
 	bool	ret;

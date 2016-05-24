@@ -19,7 +19,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "pg_rewind.h"
+#include "mdb_rewind.h"
 #include "datapagemap.h"
 #include "fetch.h"
 #include "file_ops.h"
@@ -28,7 +28,7 @@
 
 #include "libpq-fe.h"
 #include "catalog/catalog.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 
 static PGconn *conn = NULL;
 
@@ -52,10 +52,10 @@ libpqConnect(const char *connstr)
 
 	conn = PQconnectdb(connstr);
 	if (PQstatus(conn) == CONNECTION_BAD)
-		pg_fatal("could not connect to server: %s",
+		mdb_fatal("could not connect to server: %s",
 				 PQerrorMessage(conn));
 
-	pg_log(PG_PROGRESS, "connected to server\n");
+	mdb_log(PG_PROGRESS, "connected to server\n");
 
 	/*
 	 * Check that the server is not in hot standby mode. There is no
@@ -63,25 +63,25 @@ libpqConnect(const char *connstr)
 	 * currently because we use a temporary table. Better to check for it
 	 * explicitly than error out, for a better error message.
 	 */
-	str = run_simple_query("SELECT pg_is_in_recovery()");
+	str = run_simple_query("SELECT mdb_is_in_recovery()");
 	if (strcmp(str, "f") != 0)
-		pg_fatal("source server must not be in recovery mode\n");
-	pg_free(str);
+		mdb_fatal("source server must not be in recovery mode\n");
+	mdb_free(str);
 
 	/*
 	 * Also check that full_page_writes is enabled.  We can get torn pages if
-	 * a page is modified while we read it with pg_read_binary_file(), and we
+	 * a page is modified while we read it with mdb_read_binary_file(), and we
 	 * rely on full page images to fix them.
 	 */
 	str = run_simple_query("SHOW full_page_writes");
 	if (strcmp(str, "on") != 0)
-		pg_fatal("full_page_writes must be enabled in the source server\n");
-	pg_free(str);
+		mdb_fatal("full_page_writes must be enabled in the source server\n");
+	mdb_free(str);
 }
 
 /*
  * Runs a query that returns a single value.
- * The result should be pg_free'd after use.
+ * The result should be mdb_free'd after use.
  */
 static char *
 run_simple_query(const char *sql)
@@ -92,14 +92,14 @@ run_simple_query(const char *sql)
 	res = PQexec(conn, sql);
 
 	if (PQresultStatus(res) != PGRES_TUPLES_OK)
-		pg_fatal("error running query (%s) in source server: %s",
+		mdb_fatal("error running query (%s) in source server: %s",
 				 sql, PQresultErrorMessage(res));
 
 	/* sanity check the result set */
 	if (PQnfields(res) != 1 || PQntuples(res) != 1 || PQgetisnull(res, 0, 0))
-		pg_fatal("unexpected result set from query\n");
+		mdb_fatal("unexpected result set from query\n");
 
-	result = pg_strdup(PQgetvalue(res, 0, 0));
+	result = mdb_strdup(PQgetvalue(res, 0, 0));
 
 	PQclear(res);
 
@@ -107,7 +107,7 @@ run_simple_query(const char *sql)
 }
 
 /*
- * Calls pg_current_xlog_insert_location() function
+ * Calls mdb_current_xlog_insert_location() function
  */
 XLogRecPtr
 libpqGetCurrentXlogInsertLocation(void)
@@ -117,14 +117,14 @@ libpqGetCurrentXlogInsertLocation(void)
 	uint32		lo;
 	char	   *val;
 
-	val = run_simple_query("SELECT pg_current_xlog_insert_location()");
+	val = run_simple_query("SELECT mdb_current_xlog_insert_location()");
 
 	if (sscanf(val, "%X/%X", &hi, &lo) != 2)
-		pg_fatal("unrecognized result \"%s\" for current WAL insert location\n", val);
+		mdb_fatal("unrecognized result \"%s\" for current WAL insert location\n", val);
 
 	result = ((uint64) hi) << 32 | lo;
 
-	pg_free(val);
+	mdb_free(val);
 
 	return result;
 }
@@ -143,7 +143,7 @@ libpqProcessFileList(void)
 	 * Create a recursive directory listing of the whole data directory.
 	 *
 	 * The WITH RECURSIVE part does most of the work. The second part gets the
-	 * targets of the symlinks in pg_tblspc directory.
+	 * targets of the symlinks in mdb_tblspc directory.
 	 *
 	 * XXX: There is no backend function to get a symbolic link's target in
 	 * general, so if the admin has put any custom symbolic links in the data
@@ -152,30 +152,30 @@ libpqProcessFileList(void)
 	sql =
 		"WITH RECURSIVE files (path, filename, size, isdir) AS (\n"
 		"  SELECT '' AS path, filename, size, isdir FROM\n"
-		"  (SELECT pg_ls_dir('.', true, false) AS filename) AS fn,\n"
-		"        pg_stat_file(fn.filename, true) AS this\n"
+		"  (SELECT mdb_ls_dir('.', true, false) AS filename) AS fn,\n"
+		"        mdb_stat_file(fn.filename, true) AS this\n"
 		"  UNION ALL\n"
 		"  SELECT parent.path || parent.filename || '/' AS path,\n"
 		"         fn, this.size, this.isdir\n"
 		"  FROM files AS parent,\n"
-		"       pg_ls_dir(parent.path || parent.filename, true, false) AS fn,\n"
-		"       pg_stat_file(parent.path || parent.filename || '/' || fn, true) AS this\n"
+		"       mdb_ls_dir(parent.path || parent.filename, true, false) AS fn,\n"
+		"       mdb_stat_file(parent.path || parent.filename || '/' || fn, true) AS this\n"
 		"       WHERE parent.isdir = 't'\n"
 		")\n"
 		"SELECT path || filename, size, isdir,\n"
-		"       pg_tablespace_location(pg_tablespace.oid) AS link_target\n"
+		"       mdb_tablespace_location(mdb_tablespace.oid) AS link_target\n"
 		"FROM files\n"
-		"LEFT OUTER JOIN pg_tablespace ON files.path = 'pg_tblspc/'\n"
+		"LEFT OUTER JOIN mdb_tablespace ON files.path = 'mdb_tblspc/'\n"
 		"                             AND oid::text = files.filename\n";
 	res = PQexec(conn, sql);
 
 	if (PQresultStatus(res) != PGRES_TUPLES_OK)
-		pg_fatal("could not fetch file list: %s",
+		mdb_fatal("could not fetch file list: %s",
 				 PQresultErrorMessage(res));
 
 	/* sanity check the result set */
 	if (PQnfields(res) != 4)
-		pg_fatal("unexpected result set while fetching file list\n");
+		mdb_fatal("unexpected result set while fetching file list\n");
 
 	/* Read result to local variables */
 	for (i = 0; i < PQntuples(res); i++)
@@ -223,12 +223,12 @@ receiveFileChunks(const char *sql)
 	PGresult   *res;
 
 	if (PQsendQueryParams(conn, sql, 0, NULL, NULL, NULL, NULL, 1) != 1)
-		pg_fatal("could not send query: %s", PQerrorMessage(conn));
+		mdb_fatal("could not send query: %s", PQerrorMessage(conn));
 
-	pg_log(PG_DEBUG, "getting file chunks\n");
+	mdb_log(PG_DEBUG, "getting file chunks\n");
 
 	if (PQsetSingleRowMode(conn) != 1)
-		pg_fatal("could not set libpq connection to single row mode\n");
+		mdb_fatal("could not set libpq connection to single row mode\n");
 
 	while ((res = PQgetResult(conn)) != NULL)
 	{
@@ -248,19 +248,19 @@ receiveFileChunks(const char *sql)
 				continue;		/* final zero-row result */
 
 			default:
-				pg_fatal("unexpected result while fetching remote files: %s",
+				mdb_fatal("unexpected result while fetching remote files: %s",
 						 PQresultErrorMessage(res));
 		}
 
 		/* sanity check the result set */
 		if (PQnfields(res) != 3 || PQntuples(res) != 1)
-			pg_fatal("unexpected result set size while fetching remote files\n");
+			mdb_fatal("unexpected result set size while fetching remote files\n");
 
 		if (PQftype(res, 0) != TEXTOID &&
 			PQftype(res, 1) != INT4OID &&
 			PQftype(res, 2) != BYTEAOID)
 		{
-			pg_fatal("unexpected data types in result set while fetching remote files: %u %u %u\n",
+			mdb_fatal("unexpected data types in result set while fetching remote files: %u %u %u\n",
 					 PQftype(res, 0), PQftype(res, 1), PQftype(res, 2));
 		}
 
@@ -268,17 +268,17 @@ receiveFileChunks(const char *sql)
 			PQfformat(res, 1) != 1 &&
 			PQfformat(res, 2) != 1)
 		{
-			pg_fatal("unexpected result format while fetching remote files\n");
+			mdb_fatal("unexpected result format while fetching remote files\n");
 		}
 
 		if (PQgetisnull(res, 0, 0) ||
 			PQgetisnull(res, 0, 1))
 		{
-			pg_fatal("unexpected null values in result while fetching remote files\n");
+			mdb_fatal("unexpected null values in result while fetching remote files\n");
 		}
 
 		if (PQgetlength(res, 0, 1) != sizeof(int32))
-			pg_fatal("unexpected result length while fetching remote files\n");
+			mdb_fatal("unexpected result length while fetching remote files\n");
 
 		/* Read result set to local variables */
 		memcpy(&chunkoff, PQgetvalue(res, 0, 1), sizeof(int32));
@@ -286,7 +286,7 @@ receiveFileChunks(const char *sql)
 		chunksize = PQgetlength(res, 0, 2);
 
 		filenamelen = PQgetlength(res, 0, 0);
-		filename = pg_malloc(filenamelen + 1);
+		filename = mdb_malloc(filenamelen + 1);
 		memcpy(filename, PQgetvalue(res, 0, 0), filenamelen);
 		filename[filenamelen] = '\0';
 
@@ -299,22 +299,22 @@ receiveFileChunks(const char *sql)
 		 */
 		if (PQgetisnull(res, 0, 2))
 		{
-			pg_log(PG_DEBUG,
+			mdb_log(PG_DEBUG,
 			  "received null value for chunk for file \"%s\", file has been deleted\n",
 				   filename);
-			pg_free(filename);
+			mdb_free(filename);
 			PQclear(res);
 			continue;
 		}
 
-		pg_log(PG_DEBUG, "received chunk for file \"%s\", offset %d, size %d\n",
+		mdb_log(PG_DEBUG, "received chunk for file \"%s\", offset %d, size %d\n",
 			   filename, chunkoff, chunksize);
 
 		open_target_file(filename, false);
 
 		write_target_range(chunk, chunkoff, chunksize);
 
-		pg_free(filename);
+		mdb_free(filename);
 
 		PQclear(res);
 	}
@@ -332,27 +332,27 @@ libpqGetFile(const char *filename, size_t *filesize)
 	const char *paramValues[1];
 
 	paramValues[0] = filename;
-	res = PQexecParams(conn, "SELECT pg_read_binary_file($1)",
+	res = PQexecParams(conn, "SELECT mdb_read_binary_file($1)",
 					   1, NULL, paramValues, NULL, NULL, 1);
 
 	if (PQresultStatus(res) != PGRES_TUPLES_OK)
-		pg_fatal("could not fetch remote file \"%s\": %s",
+		mdb_fatal("could not fetch remote file \"%s\": %s",
 				 filename, PQresultErrorMessage(res));
 
 	/* sanity check the result set */
 	if (PQntuples(res) != 1 || PQgetisnull(res, 0, 0))
-		pg_fatal("unexpected result set while fetching remote file \"%s\"\n",
+		mdb_fatal("unexpected result set while fetching remote file \"%s\"\n",
 				 filename);
 
 	/* Read result to local variables */
 	len = PQgetlength(res, 0, 0);
-	result = pg_malloc(len + 1);
+	result = mdb_malloc(len + 1);
 	memcpy(result, PQgetvalue(res, 0, 0), len);
 	result[len] = '\0';
 
 	PQclear(res);
 
-	pg_log(PG_DEBUG, "fetched file \"%s\", length %d\n", filename, len);
+	mdb_log(PG_DEBUG, "fetched file \"%s\", length %d\n", filename, len);
 
 	if (filesize)
 		*filesize = len;
@@ -384,7 +384,7 @@ fetch_file_range(const char *path, unsigned int begin, unsigned int end)
 		snprintf(linebuf, sizeof(linebuf), "%s\t%u\t%u\n", path, begin, len);
 
 		if (PQputCopyData(conn, linebuf, strlen(linebuf)) != 1)
-			pg_fatal("could not send COPY data: %s",
+			mdb_fatal("could not send COPY data: %s",
 					 PQerrorMessage(conn));
 
 		begin += len;
@@ -410,7 +410,7 @@ libpq_executeFileMap(filemap_t *map)
 	res = PQexec(conn, sql);
 
 	if (PQresultStatus(res) != PGRES_COMMAND_OK)
-		pg_fatal("could not create temporary table: %s",
+		mdb_fatal("could not create temporary table: %s",
 				 PQresultErrorMessage(res));
 	PQclear(res);
 
@@ -418,7 +418,7 @@ libpq_executeFileMap(filemap_t *map)
 	res = PQexec(conn, sql);
 
 	if (PQresultStatus(res) != PGRES_COPY_IN)
-		pg_fatal("could not send file list: %s",
+		mdb_fatal("could not send file list: %s",
 				 PQresultErrorMessage(res));
 	PQclear(res);
 
@@ -460,13 +460,13 @@ libpq_executeFileMap(filemap_t *map)
 	}
 
 	if (PQputCopyEnd(conn, NULL) != 1)
-		pg_fatal("could not send end-of-COPY: %s",
+		mdb_fatal("could not send end-of-COPY: %s",
 				 PQerrorMessage(conn));
 
 	while ((res = PQgetResult(conn)) != NULL)
 	{
 		if (PQresultStatus(res) != PGRES_COMMAND_OK)
-			pg_fatal("unexpected result while sending file list: %s",
+			mdb_fatal("unexpected result while sending file list: %s",
 					 PQresultErrorMessage(res));
 		PQclear(res);
 	}
@@ -477,7 +477,7 @@ libpq_executeFileMap(filemap_t *map)
 	 */
 	sql =
 		"SELECT path, begin, \n"
-		"  pg_read_binary_file(path, begin, len, true) AS chunk\n"
+		"  mdb_read_binary_file(path, begin, len, true) AS chunk\n"
 		"FROM fetchchunks\n";
 
 	receiveFileChunks(sql);
@@ -497,5 +497,5 @@ execute_pagemap(datapagemap_t *pagemap, const char *path)
 
 		fetch_file_range(path, offset, offset + BLCKSZ);
 	}
-	pg_free(iter);
+	mdb_free(iter);
 }

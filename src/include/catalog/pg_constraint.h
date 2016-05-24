@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_constraint.h
- *	  definition of the system "constraint" relation (pg_constraint)
+ * mdb_constraint.h
+ *	  definition of the system "constraint" relation (mdb_constraint)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_constraint.h
+ * src/include/catalog/mdb_constraint.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,13 +22,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_constraint definition.  cpp turns this into
- *		typedef struct FormData_pg_constraint
+ *		mdb_constraint definition.  cpp turns this into
+ *		typedef struct FormData_mdb_constraint
  * ----------------
  */
 #define ConstraintRelationId  2606
 
-CATALOG(pg_constraint,2606)
+CATALOG(mdb_constraint,2606)
 {
 	/*
 	 * conname + connamespace is deliberately not unique; we allow, for
@@ -54,7 +54,7 @@ CATALOG(pg_constraint,2606)
 	Oid			conrelid;		/* relation this constraint constrains */
 
 	/*
-	 * contypid links to the pg_type row for a domain if this is a domain
+	 * contypid links to the mdb_type row for a domain if this is a domain
 	 * constraint.  Otherwise it's 0.
 	 *
 	 * For SQL-style global ASSERTIONs, both conrelid and contypid would be
@@ -130,54 +130,54 @@ CATALOG(pg_constraint,2606)
 	/*
 	 * If a check constraint, nodeToString representation of expression
 	 */
-	pg_node_tree conbin;
+	mdb_node_tree conbin;
 
 	/*
 	 * If a check constraint, source-text representation of expression
 	 */
 	text		consrc;
 #endif
-} FormData_pg_constraint;
+} FormData_mdb_constraint;
 
 /* ----------------
- *		Form_pg_constraint corresponds to a pointer to a tuple with
- *		the format of pg_constraint relation.
+ *		Form_mdb_constraint corresponds to a pointer to a tuple with
+ *		the format of mdb_constraint relation.
  * ----------------
  */
-typedef FormData_pg_constraint *Form_pg_constraint;
+typedef FormData_mdb_constraint *Form_mdb_constraint;
 
 /* ----------------
- *		compiler constants for pg_constraint
+ *		compiler constants for mdb_constraint
  * ----------------
  */
-#define Natts_pg_constraint					24
-#define Anum_pg_constraint_conname			1
-#define Anum_pg_constraint_connamespace		2
-#define Anum_pg_constraint_contype			3
-#define Anum_pg_constraint_condeferrable	4
-#define Anum_pg_constraint_condeferred		5
-#define Anum_pg_constraint_convalidated		6
-#define Anum_pg_constraint_conrelid			7
-#define Anum_pg_constraint_contypid			8
-#define Anum_pg_constraint_conindid			9
-#define Anum_pg_constraint_confrelid		10
-#define Anum_pg_constraint_confupdtype		11
-#define Anum_pg_constraint_confdeltype		12
-#define Anum_pg_constraint_confmatchtype	13
-#define Anum_pg_constraint_conislocal		14
-#define Anum_pg_constraint_coninhcount		15
-#define Anum_pg_constraint_connoinherit		16
-#define Anum_pg_constraint_conkey			17
-#define Anum_pg_constraint_confkey			18
-#define Anum_pg_constraint_conpfeqop		19
-#define Anum_pg_constraint_conppeqop		20
-#define Anum_pg_constraint_conffeqop		21
-#define Anum_pg_constraint_conexclop		22
-#define Anum_pg_constraint_conbin			23
-#define Anum_pg_constraint_consrc			24
+#define Natts_mdb_constraint					24
+#define Anum_mdb_constraint_conname			1
+#define Anum_mdb_constraint_connamespace		2
+#define Anum_mdb_constraint_contype			3
+#define Anum_mdb_constraint_condeferrable	4
+#define Anum_mdb_constraint_condeferred		5
+#define Anum_mdb_constraint_convalidated		6
+#define Anum_mdb_constraint_conrelid			7
+#define Anum_mdb_constraint_contypid			8
+#define Anum_mdb_constraint_conindid			9
+#define Anum_mdb_constraint_confrelid		10
+#define Anum_mdb_constraint_confupdtype		11
+#define Anum_mdb_constraint_confdeltype		12
+#define Anum_mdb_constraint_confmatchtype	13
+#define Anum_mdb_constraint_conislocal		14
+#define Anum_mdb_constraint_coninhcount		15
+#define Anum_mdb_constraint_connoinherit		16
+#define Anum_mdb_constraint_conkey			17
+#define Anum_mdb_constraint_confkey			18
+#define Anum_mdb_constraint_conpfeqop		19
+#define Anum_mdb_constraint_conppeqop		20
+#define Anum_mdb_constraint_conffeqop		21
+#define Anum_mdb_constraint_conexclop		22
+#define Anum_mdb_constraint_conbin			23
+#define Anum_mdb_constraint_consrc			24
 
 /* ----------------
- *		initial contents of pg_constraint
+ *		initial contents of mdb_constraint
  * ----------------
  */
 

@@ -1,8 +1,8 @@
 /*-------------------------------------------------------------------------
  *
  * reloptions.h
- *	  Core support for relation and tablespace options (pg_class.reloptions
- *	  and pg_tablespace.spcoptions)
+ *	  Core support for relation and tablespace options (mdb_class.reloptions
+ *	  and mdb_tablespace.spcoptions)
  *
  * Note: the functions dealing with text-array reloptions values declare
  * them as Datum, not ArrayType *, to avoid needing to include array.h
@@ -22,7 +22,7 @@
 #include "access/amapi.h"
 #include "access/htup.h"
 #include "access/tupdesc.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 #include "storage/lock.h"
 
 /* types supported by reloptions */
@@ -165,7 +165,7 @@ typedef struct
  *	code block.
  */
 #define HAVE_RELOPTION(optname, option) \
-	(pg_strncasecmp(option.gen->name, optname, option.gen->namelen + 1) == 0)
+	(mdb_strncasecmp(option.gen->name, optname, option.gen->namelen + 1) == 0)
 
 #define HANDLE_INT_RELOPTION(optname, var, option, wasset)		\
 	do {														\

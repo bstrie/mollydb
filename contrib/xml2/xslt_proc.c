@@ -158,7 +158,7 @@ xslt_process(PG_FUNCTION_ARGS)
 			xmlFreeDoc(doctree);
 		xsltCleanupGlobals();
 
-		pg_xml_done(xmlerrcxt, true);
+		mdb_xml_done(xmlerrcxt, true);
 
 		PG_RE_THROW();
 	}
@@ -171,7 +171,7 @@ xslt_process(PG_FUNCTION_ARGS)
 	xmlFreeDoc(doctree);
 	xsltCleanupGlobals();
 
-	pg_xml_done(xmlerrcxt, false);
+	mdb_xml_done(xmlerrcxt, false);
 
 	/* XXX this is pretty dubious, really ought to throw error instead */
 	if (resstat < 0)

@@ -28,7 +28,7 @@
 #include "utils/cash.h"
 #include "utils/int8.h"
 #include "utils/numeric.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 
 
 /*************************************************************************
@@ -973,7 +973,7 @@ cash_words(PG_FUNCTION_ARGS)
 	strcat(buf, m0 == 1 ? " cent" : " cents");
 
 	/* capitalize output */
-	buf[0] = pg_toupper((unsigned char) buf[0]);
+	buf[0] = mdb_toupper((unsigned char) buf[0]);
 
 	/* return as text datum */
 	PG_RETURN_TEXT_P(cstring_to_text(buf));

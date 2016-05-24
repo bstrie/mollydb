@@ -1,5 +1,5 @@
-/pg_basebackup
-/pg_receivexlog
-/pg_recvlogical
+/mdb_basebackup
+/mdb_receivexlog
+/mdb_recvlogical
 
 /tmp_check/

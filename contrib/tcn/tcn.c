@@ -120,7 +120,7 @@ triggered_change_notification(PG_FUNCTION_ARGS)
 
 	/*
 	 * Get the list of index OIDs for the table from the relcache, and look up
-	 * each one in the pg_index syscache until we find one marked primary key
+	 * each one in the mdb_index syscache until we find one marked primary key
 	 * (hopefully there isn't more than one such).
 	 */
 	indexoidlist = RelationGetIndexList(rel);
@@ -129,12 +129,12 @@ triggered_change_notification(PG_FUNCTION_ARGS)
 	{
 		Oid			indexoid = lfirst_oid(indexoidscan);
 		HeapTuple	indexTuple;
-		Form_pg_index index;
+		Form_mdb_index index;
 
 		indexTuple = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(indexoid));
 		if (!HeapTupleIsValid(indexTuple))		/* should not happen */
 			elog(ERROR, "cache lookup failed for index %u", indexoid);
-		index = (Form_pg_index) GETSTRUCT(indexTuple);
+		index = (Form_mdb_index) GETSTRUCT(indexTuple);
 		/* we're only interested if it is the primary key and valid */
 		if (index->indisprimary && IndexIsValid(index))
 		{

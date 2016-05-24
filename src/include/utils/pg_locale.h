@@ -2,7 +2,7 @@
  *
  * MollyDB locale utilities
  *
- * src/include/utils/pg_locale.h
+ * src/include/utils/mdb_locale.h
  *
  * Copyright (c) 2002-2016, MollyDB Global Development Group
  *
@@ -43,7 +43,7 @@ extern bool check_locale_time(char **newval, void **extra, GucSource source);
 extern void assign_locale_time(const char *newval, void *extra);
 
 extern bool check_locale(int category, const char *locale, char **canonname);
-extern char *pg_perm_setlocale(int category, const char *locale);
+extern char *mdb_perm_setlocale(int category, const char *locale);
 extern void check_strxfrm_bug(void);
 
 extern bool lc_collate_is_c(Oid collation);
@@ -62,23 +62,23 @@ extern void cache_locale_time(void);
  * We define our own wrapper around locale_t so we can keep the same
  * function signatures for all builds, while not having to create a
  * fake version of the standard type locale_t in the global namespace.
- * The fake version of pg_locale_t can be checked for truth; that's
+ * The fake version of mdb_locale_t can be checked for truth; that's
  * about all it will be needed for.
  */
 #ifdef HAVE_LOCALE_T
-typedef locale_t pg_locale_t;
+typedef locale_t mdb_locale_t;
 #else
-typedef int pg_locale_t;
+typedef int mdb_locale_t;
 #endif
 
-extern pg_locale_t pg_newlocale_from_collation(Oid collid);
+extern mdb_locale_t mdb_newlocale_from_collation(Oid collid);
 
-/* These functions convert from/to libc's wchar_t, *not* pg_wchar_t */
+/* These functions convert from/to libc's wchar_t, *not* mdb_wchar_t */
 #ifdef USE_WIDE_UPPER_LOWER
 extern size_t wchar2char(char *to, const wchar_t *from, size_t tolen,
-		   pg_locale_t locale);
+		   mdb_locale_t locale);
 extern size_t char2wchar(wchar_t *to, size_t tolen,
-		   const char *from, size_t fromlen, pg_locale_t locale);
+		   const char *from, size_t fromlen, mdb_locale_t locale);
 #endif
 
 #endif   /* _PG_LOCALE_ */

@@ -87,9 +87,9 @@ open SHDESCR, '>', $shdescrfile . $tmpext
 # NB: make sure that the files used here are known to be part of the .bki
 # file's dependencies by src/backend/catalog/Makefile.
 my $BOOTSTRAP_SUPERUSERID =
-  find_defined_symbol('pg_authid.h', 'BOOTSTRAP_SUPERUSERID');
+  find_defined_symbol('mdb_authid.h', 'BOOTSTRAP_SUPERUSERID');
 my $PG_CATALOG_NAMESPACE =
-  find_defined_symbol('pg_namespace.h', 'PG_CATALOG_NAMESPACE');
+  find_defined_symbol('mdb_namespace.h', 'PG_CATALOG_NAMESPACE');
 
 # Read all the input header files into internal data structures
 my $catalogs = Catalog::Catalogs(@input_files);
@@ -100,7 +100,7 @@ my $catalogs = Catalog::Catalogs(@input_files);
 print BKI "# MollyDB $major_version\n";
 
 # vars to hold data needed for schemapg.h
-my %schemapg_entries;
+my %schemamdb_entries;
 my @tables_needing_macros;
 our @types;
 
@@ -164,8 +164,8 @@ foreach my $catname (@{ $catalogs->{names} })
 			$row->{bki_values} =~ s/\bPGUID\b/$BOOTSTRAP_SUPERUSERID/g;
 			$row->{bki_values} =~ s/\bPGNSP\b/$PG_CATALOG_NAMESPACE/g;
 
-			# Save pg_type info for pg_attribute processing below
-			if ($catname eq 'pg_type')
+			# Save mdb_type info for mdb_attribute processing below
+			if ($catname eq 'mdb_type')
 			{
 				my %type;
 				$type{oid} = $row->{oid};
@@ -190,12 +190,12 @@ foreach my $catname (@{ $catalogs->{names} })
 			}
 		}
 	}
-	if ($catname eq 'pg_attribute')
+	if ($catname eq 'mdb_attribute')
 	{
 
-		# For pg_attribute.h, we generate DATA entries ourselves.
-		# NB: pg_type.h must come before pg_attribute.h in the input list
-		# of catalog names, since we use info from pg_type.h here.
+		# For mdb_attribute.h, we generate DATA entries ourselves.
+		# NB: mdb_type.h must come before mdb_attribute.h in the input list
+		# of catalog names, since we use info from mdb_type.h here.
 		foreach my $table_name (@{ $catalogs->{names} })
 		{
 			my $table = $catalogs->{$table_name};
@@ -204,7 +204,7 @@ foreach my $catname (@{ $catalogs->{names} })
 			# entries, so skip if the relation isn't to be in schemapg.h.
 			next if $table->{schema_macro} ne 'True';
 
-			$schemapg_entries{$table_name} = [];
+			$schemamdb_entries{$table_name} = [];
 			push @tables_needing_macros, $table_name;
 			my $is_bootstrap = $table->{bootstrap};
 
@@ -228,9 +228,9 @@ foreach my $catname (@{ $catalogs->{names} })
 
 				# Store schemapg entries for later.
 				$row =
-				  emit_schemapg_row($row,
+				  emit_schemamdb_row($row,
 					grep { $bki_attr{$_}{type} eq 'bool' } @attnames);
-				push @{ $schemapg_entries{$table_name} }, '{ '
+				push @{ $schemamdb_entries{$table_name} }, '{ '
 				  . join(
 					', ',             grep { defined $_ }
 					  map $row->{$_}, @attnames) . ' }';
@@ -270,7 +270,7 @@ foreach my $catname (@{ $catalogs->{names} })
 	print BKI "close $catname\n";
 }
 
-# Any information needed for the BKI that is not contained in a pg_*.h header
+# Any information needed for the BKI that is not contained in a mdb_*.h header
 # (i.e., not contained in a header with a CATALOG() statement) comes here
 
 # Write out declare toast/index statements
@@ -292,7 +292,7 @@ print SCHEMAPG <<EOM;
 /*-------------------------------------------------------------------------
  *
  * schemapg.h
- *    Schema_pg_xxx macros for use by relcache.c
+ *    Schema_mdb_xxx macros for use by relcache.c
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -314,7 +314,7 @@ EOM
 foreach my $table_name (@tables_needing_macros)
 {
 	print SCHEMAPG "\n#define Schema_$table_name \\\n";
-	print SCHEMAPG join ", \\\n", @{ $schemapg_entries{$table_name} };
+	print SCHEMAPG join ", \\\n", @{ $schemamdb_entries{$table_name} };
 	print SCHEMAPG "\n";
 }
 
@@ -340,7 +340,7 @@ exit 0;
 
 # Given a system catalog name and a reference to a key-value pair corresponding
 # to the name and type of a column, generate a reference to a hash that
-# represents a pg_attribute entry.  We must also be told whether preceding
+# represents a mdb_attribute entry.  We must also be told whether preceding
 # columns were all not-null.
 sub emit_pgattr_row
 {
@@ -353,13 +353,13 @@ sub emit_pgattr_row
 	$row{attname}  = $attname;
 
 	# Adjust type name for arrays: foo[] becomes _foo
-	# so we can look it up in pg_type
+	# so we can look it up in mdb_type
 	if ($atttype =~ /(.+)\[\]$/)
 	{
 		$atttype = '_' . $1;
 	}
 
-	# Copy the type data from pg_type, and add some type-dependent items
+	# Copy the type data from mdb_type, and add some type-dependent items
 	foreach my $type (@types)
 	{
 		if (defined $type->{typname} && $type->{typname} eq $atttype)
@@ -404,7 +404,7 @@ sub emit_pgattr_row
 		}
 	}
 
-	# Add in default values for pg_attribute
+	# Add in default values for mdb_attribute
 	my %PGATTR_DEFAULTS = (
 		attcacheoff   => '-1',
 		atttypmod     => '-1',
@@ -418,7 +418,7 @@ sub emit_pgattr_row
 	return { %PGATTR_DEFAULTS, %row };
 }
 
-# Write a pg_attribute entry to mollydb.bki
+# Write a mdb_attribute entry to mollydb.bki
 sub bki_insert
 {
 	my $row        = shift;
@@ -428,9 +428,9 @@ sub bki_insert
 	printf BKI "insert %s( %s)\n", $oid, $bki_values;
 }
 
-# The field values of a Schema_pg_xxx declaration are similar, but not
+# The field values of a Schema_mdb_xxx declaration are similar, but not
 # quite identical, to the corresponding values in mollydb.bki.
-sub emit_schemapg_row
+sub emit_schemamdb_row
 {
 	my $row        = shift;
 	my @bool_attrs = @_;

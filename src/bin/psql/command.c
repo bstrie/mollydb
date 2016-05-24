@@ -172,10 +172,10 @@ read_connect_arg(PsqlScanState scan_state)
 
 	/*
 	 * Ideally we should treat the arguments as SQL identifiers.  But for
-	 * backwards compatibility with 7.2 and older pg_dump files, we have to
+	 * backwards compatibility with 7.2 and older mdb_dump files, we have to
 	 * take unquoted arguments verbatim (don't downcase them). For now,
 	 * double-quoted arguments may be stripped of double quotes (as if SQL
-	 * identifiers).  By 7.4 or so, pg_dump files can be expected to
+	 * identifiers).  By 7.4 or so, mdb_dump files can be expected to
 	 * double-quote all mixed-case \connect arguments, and then we can get rid
 	 * of OT_SQLIDHACK.
 	 */
@@ -352,7 +352,7 @@ exec_command(const char *cmd,
 	}
 
 	/* \copy */
-	else if (pg_strcasecmp(cmd, "copy") == 0)
+	else if (mdb_strcasecmp(cmd, "copy") == 0)
 	{
 		char	   *opt = psql_scan_slash_option(scan_state,
 												 OT_WHOLE_LINE, NULL, false);
@@ -667,7 +667,7 @@ exec_command(const char *cmd,
 			{
 				/*
 				 * lineno "1" should correspond to the first line of the
-				 * function body.  We expect that pg_get_functiondef() will
+				 * function body.  We expect that mdb_get_functiondef() will
 				 * emit that on a line beginning with "AS ", and that there
 				 * can be no such line before the real start of the function
 				 * body.  Increment lineno by the number of lines before that
@@ -816,7 +816,7 @@ exec_command(const char *cmd,
 		if (!encoding)
 		{
 			/* show encoding */
-			puts(pg_encoding_to_char(pset.encoding));
+			puts(mdb_encoding_to_char(pset.encoding));
 		}
 		else
 		{
@@ -829,7 +829,7 @@ exec_command(const char *cmd,
 				pset.encoding = PQclientEncoding(pset.db);
 				pset.popt.topt.encoding = pset.encoding;
 				SetVariable(pset.vars, "ENCODING",
-							pg_encoding_to_char(pset.encoding));
+							mdb_encoding_to_char(pset.encoding));
 			}
 			free(encoding);
 		}
@@ -878,7 +878,7 @@ exec_command(const char *cmd,
 		else
 		{
 			expand_tilde(&fname);
-			pset.gfname = pg_strdup(fname);
+			pset.gfname = mdb_strdup(fname);
 		}
 		free(fname);
 		status = PSQL_CMD_SEND;
@@ -902,7 +902,7 @@ exec_command(const char *cmd,
 		else
 		{
 			/* we must set a non-NULL prefix to trigger storing */
-			pset.gset_prefix = pg_strdup("");
+			pset.gset_prefix = mdb_strdup("");
 		}
 		/* gset_prefix is freed later */
 		status = PSQL_CMD_SEND;
@@ -1268,13 +1268,13 @@ exec_command(const char *cmd,
 
 			opt = psql_scan_slash_option(scan_state,
 										 OT_NORMAL, NULL, false);
-			newval = pg_strdup(opt ? opt : "");
+			newval = mdb_strdup(opt ? opt : "");
 			free(opt);
 
 			while ((opt = psql_scan_slash_option(scan_state,
 												 OT_NORMAL, NULL, false)))
 			{
-				newval = pg_realloc(newval, strlen(newval) + strlen(opt) + 1);
+				newval = mdb_realloc(newval, strlen(newval) + strlen(opt) + 1);
 				strcat(newval, opt);
 				free(opt);
 			}
@@ -1391,7 +1391,7 @@ exec_command(const char *cmd,
 			{
 				/*
 				 * lineno "1" should correspond to the first line of the
-				 * function body.  We expect that pg_get_functiondef() will
+				 * function body.  We expect that mdb_get_functiondef() will
 				 * emit that on a line beginning with "AS ", and that there
 				 * can be no such line before the real start of the function
 				 * body.
@@ -1829,7 +1829,7 @@ do_connect(char *dbname, char *user, char *host, char *port)
 	{
 		password = PQpass(o_conn);
 		if (password && *password)
-			password = pg_strdup(password);
+			password = mdb_strdup(password);
 		else
 			password = NULL;
 	}
@@ -1837,8 +1837,8 @@ do_connect(char *dbname, char *user, char *host, char *port)
 	while (true)
 	{
 #define PARAMS_ARRAY_SIZE	8
-		const char **keywords = pg_malloc(PARAMS_ARRAY_SIZE * sizeof(*keywords));
-		const char **values = pg_malloc(PARAMS_ARRAY_SIZE * sizeof(*values));
+		const char **keywords = mdb_malloc(PARAMS_ARRAY_SIZE * sizeof(*keywords));
+		const char **values = mdb_malloc(PARAMS_ARRAY_SIZE * sizeof(*values));
 		int			paramnum = 0;
 
 		keywords[0] = "dbname";
@@ -1866,12 +1866,12 @@ do_connect(char *dbname, char *user, char *host, char *port)
 
 		n_conn = PQconnectdbParams(keywords, values, true);
 
-		pg_free(keywords);
-		pg_free(values);
+		mdb_free(keywords);
+		mdb_free(values);
 
 		/* We can immediately discard the password -- no longer needed */
 		if (password)
-			pg_free(password);
+			mdb_free(password);
 
 		if (PQstatus(n_conn) == CONNECTION_OK)
 			break;
@@ -2068,7 +2068,7 @@ SyncVariables(void)
 	SetVariable(pset.vars, "USER", PQuser(pset.db));
 	SetVariable(pset.vars, "HOST", PQhost(pset.db));
 	SetVariable(pset.vars, "PORT", PQport(pset.db));
-	SetVariable(pset.vars, "ENCODING", pg_encoding_to_char(pset.encoding));
+	SetVariable(pset.vars, "ENCODING", mdb_encoding_to_char(pset.encoding));
 
 	/* send stuff to it, too */
 	PQsetErrorVerbosity(pset.db, pset.verbosity);
@@ -2435,9 +2435,9 @@ static bool
 set_unicode_line_style(const char *value, size_t vallen,
 					   unicode_linestyle *linestyle)
 {
-	if (pg_strncasecmp("single", value, vallen) == 0)
+	if (mdb_strncasecmp("single", value, vallen) == 0)
 		*linestyle = UNICODE_LINESTYLE_SINGLE;
-	else if (pg_strncasecmp("double", value, vallen) == 0)
+	else if (mdb_strncasecmp("double", value, vallen) == 0)
 		*linestyle = UNICODE_LINESTYLE_DOUBLE;
 	else
 		return false;
@@ -2478,21 +2478,21 @@ do_pset(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 	{
 		if (!value)
 			;
-		else if (pg_strncasecmp("unaligned", value, vallen) == 0)
+		else if (mdb_strncasecmp("unaligned", value, vallen) == 0)
 			popt->topt.format = PRINT_UNALIGNED;
-		else if (pg_strncasecmp("aligned", value, vallen) == 0)
+		else if (mdb_strncasecmp("aligned", value, vallen) == 0)
 			popt->topt.format = PRINT_ALIGNED;
-		else if (pg_strncasecmp("wrapped", value, vallen) == 0)
+		else if (mdb_strncasecmp("wrapped", value, vallen) == 0)
 			popt->topt.format = PRINT_WRAPPED;
-		else if (pg_strncasecmp("html", value, vallen) == 0)
+		else if (mdb_strncasecmp("html", value, vallen) == 0)
 			popt->topt.format = PRINT_HTML;
-		else if (pg_strncasecmp("asciidoc", value, vallen) == 0)
+		else if (mdb_strncasecmp("asciidoc", value, vallen) == 0)
 			popt->topt.format = PRINT_ASCIIDOC;
-		else if (pg_strncasecmp("latex", value, vallen) == 0)
+		else if (mdb_strncasecmp("latex", value, vallen) == 0)
 			popt->topt.format = PRINT_LATEX;
-		else if (pg_strncasecmp("latex-longtable", value, vallen) == 0)
+		else if (mdb_strncasecmp("latex-longtable", value, vallen) == 0)
 			popt->topt.format = PRINT_LATEX_LONGTABLE;
-		else if (pg_strncasecmp("troff-ms", value, vallen) == 0)
+		else if (mdb_strncasecmp("troff-ms", value, vallen) == 0)
 			popt->topt.format = PRINT_TROFF_MS;
 		else
 		{
@@ -2507,12 +2507,12 @@ do_pset(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 	{
 		if (!value)
 			;
-		else if (pg_strncasecmp("ascii", value, vallen) == 0)
-			popt->topt.line_style = &pg_asciiformat;
-		else if (pg_strncasecmp("old-ascii", value, vallen) == 0)
-			popt->topt.line_style = &pg_asciiformat_old;
-		else if (pg_strncasecmp("unicode", value, vallen) == 0)
-			popt->topt.line_style = &pg_utf8format;
+		else if (mdb_strncasecmp("ascii", value, vallen) == 0)
+			popt->topt.line_style = &mdb_asciiformat;
+		else if (mdb_strncasecmp("old-ascii", value, vallen) == 0)
+			popt->topt.line_style = &mdb_asciiformat_old;
+		else if (mdb_strncasecmp("unicode", value, vallen) == 0)
+			popt->topt.line_style = &mdb_utf8format;
 		else
 		{
 			psql_error("\\pset: allowed line styles are ascii, old-ascii, unicode\n");
@@ -2579,7 +2579,7 @@ do_pset(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 			 strcmp(param, "expanded") == 0 ||
 			 strcmp(param, "vertical") == 0)
 	{
-		if (value && pg_strcasecmp(value, "auto") == 0)
+		if (value && mdb_strcasecmp(value, "auto") == 0)
 			popt->topt.expanded = 2;
 		else if (value)
 			popt->topt.expanded = ParseVariableBool(value, param);
@@ -2602,7 +2602,7 @@ do_pset(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 		if (value)
 		{
 			free(popt->nullPrint);
-			popt->nullPrint = pg_strdup(value);
+			popt->nullPrint = mdb_strdup(value);
 		}
 	}
 
@@ -2612,7 +2612,7 @@ do_pset(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 		if (value)
 		{
 			free(popt->topt.fieldSep.separator);
-			popt->topt.fieldSep.separator = pg_strdup(value);
+			popt->topt.fieldSep.separator = mdb_strdup(value);
 			popt->topt.fieldSep.separator_zero = false;
 		}
 	}
@@ -2630,7 +2630,7 @@ do_pset(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 		if (value)
 		{
 			free(popt->topt.recordSep.separator);
-			popt->topt.recordSep.separator = pg_strdup(value);
+			popt->topt.recordSep.separator = mdb_strdup(value);
 			popt->topt.recordSep.separator_zero = false;
 		}
 	}
@@ -2658,7 +2658,7 @@ do_pset(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 		if (!value)
 			popt->title = NULL;
 		else
-			popt->title = pg_strdup(value);
+			popt->title = mdb_strdup(value);
 	}
 
 	/* set HTML table tag options */
@@ -2668,13 +2668,13 @@ do_pset(const char *param, const char *value, printQueryOpt *popt, bool quiet)
 		if (!value)
 			popt->topt.tableAttr = NULL;
 		else
-			popt->topt.tableAttr = pg_strdup(value);
+			popt->topt.tableAttr = mdb_strdup(value);
 	}
 
 	/* toggle use of pager */
 	else if (strcmp(param, "pager") == 0)
 	{
-		if (value && pg_strcasecmp(value, "always") == 0)
+		if (value && mdb_strcasecmp(value, "always") == 0)
 			popt->topt.pager = 2;
 		else if (value)
 		{
@@ -2910,7 +2910,7 @@ pset_bool_string(bool val)
 static char *
 pset_quoted_string(const char *str)
 {
-	char	   *ret = pg_malloc(strlen(str) * 2 + 3);
+	char	   *ret = mdb_malloc(strlen(str) * 2 + 3);
 	char	   *r = ret;
 
 	*r++ = '\'';
@@ -3086,7 +3086,7 @@ do_watch(PQExpBuffer query_buf, double sleep)
 	 */
 	user_title = myopt.title;
 	title_len = (user_title ? strlen(user_title) : 0) + 100;
-	title = pg_malloc(title_len);
+	title = mdb_malloc(title_len);
 
 	for (;;)
 	{
@@ -3135,7 +3135,7 @@ do_watch(PQExpBuffer query_buf, double sleep)
 		/*
 		 * Enable 'watch' cancellations and wait a while before running the
 		 * query again.  Break the sleep into short intervals (at most 1s)
-		 * since pg_usleep isn't interruptible on some platforms.
+		 * since mdb_usleep isn't interruptible on some platforms.
 		 */
 		sigint_interrupt_enabled = true;
 		i = sleep_ms;
@@ -3143,7 +3143,7 @@ do_watch(PQExpBuffer query_buf, double sleep)
 		{
 			long		s = Min(i, 1000L);
 
-			pg_usleep(s * 1000L);
+			mdb_usleep(s * 1000L);
 			if (cancel_pressed)
 				break;
 			i -= s;
@@ -3151,7 +3151,7 @@ do_watch(PQExpBuffer query_buf, double sleep)
 		sigint_interrupt_enabled = false;
 	}
 
-	pg_free(title);
+	mdb_free(title);
 	return (res >= 0);
 }
 
@@ -3210,7 +3210,7 @@ lookup_object_oid(EditableObjectType obj_type, const char *desc,
 			 */
 			appendPQExpBufferStr(query, "SELECT ");
 			appendStringLiteralConn(query, desc, pset.db);
-			appendPQExpBuffer(query, "::pg_catalog.%s::pg_catalog.oid",
+			appendPQExpBuffer(query, "::mdb_catalog.%s::mdb_catalog.oid",
 							  strchr(desc, '(') ? "regprocedure" : "regproc");
 			break;
 
@@ -3223,7 +3223,7 @@ lookup_object_oid(EditableObjectType obj_type, const char *desc,
 			 */
 			appendPQExpBufferStr(query, "SELECT ");
 			appendStringLiteralConn(query, desc, pset.db);
-			appendPQExpBuffer(query, "::pg_catalog.regclass::pg_catalog.oid");
+			appendPQExpBuffer(query, "::mdb_catalog.regclass::mdb_catalog.oid");
 			break;
 	}
 
@@ -3263,14 +3263,14 @@ get_create_object_cmd(EditableObjectType obj_type, Oid oid,
 	{
 		case EditableFunction:
 			printfPQExpBuffer(query,
-							  "SELECT pg_catalog.pg_get_functiondef(%u)",
+							  "SELECT mdb_catalog.mdb_get_functiondef(%u)",
 							  oid);
 			break;
 
 		case EditableView:
 
 			/*
-			 * pg_get_viewdef() just prints the query, so we must prepend
+			 * mdb_get_viewdef() just prints the query, so we must prepend
 			 * CREATE for ourselves.  We must fully qualify the view name to
 			 * ensure the right view gets replaced.  Also, check relation kind
 			 * to be sure it's a view.
@@ -3278,7 +3278,7 @@ get_create_object_cmd(EditableObjectType obj_type, Oid oid,
 			 * Starting with 9.2, views may have reloptions (security_barrier)
 			 * and from 9.4 onwards they may also have WITH [LOCAL|CASCADED]
 			 * CHECK OPTION.  These are not part of the view definition
-			 * returned by pg_get_viewdef() and so need to be retrieved
+			 * returned by mdb_get_viewdef() and so need to be retrieved
 			 * separately.  Materialized views (introduced in 9.3) may have
 			 * arbitrary storage parameter reloptions.
 			 */
@@ -3286,12 +3286,12 @@ get_create_object_cmd(EditableObjectType obj_type, Oid oid,
 			{
 				printfPQExpBuffer(query,
 								  "SELECT nspname, relname, relkind, "
-								  "pg_catalog.pg_get_viewdef(c.oid, true), "
+								  "mdb_catalog.mdb_get_viewdef(c.oid, true), "
 								  "array_remove(array_remove(c.reloptions,'check_option=local'),'check_option=cascaded') AS reloptions, "
 								  "CASE WHEN 'check_option=local' = ANY (c.reloptions) THEN 'LOCAL'::text "
 								  "WHEN 'check_option=cascaded' = ANY (c.reloptions) THEN 'CASCADED'::text ELSE NULL END AS checkoption "
-								  "FROM pg_catalog.pg_class c "
-								  "LEFT JOIN pg_catalog.pg_namespace n "
+								  "FROM mdb_catalog.mdb_class c "
+								  "LEFT JOIN mdb_catalog.mdb_namespace n "
 								"ON c.relnamespace = n.oid WHERE c.oid = %u",
 								  oid);
 			}
@@ -3299,11 +3299,11 @@ get_create_object_cmd(EditableObjectType obj_type, Oid oid,
 			{
 				printfPQExpBuffer(query,
 								  "SELECT nspname, relname, relkind, "
-								  "pg_catalog.pg_get_viewdef(c.oid, true), "
+								  "mdb_catalog.mdb_get_viewdef(c.oid, true), "
 								  "c.reloptions AS reloptions, "
 								  "NULL AS checkoption "
-								  "FROM pg_catalog.pg_class c "
-								  "LEFT JOIN pg_catalog.pg_namespace n "
+								  "FROM mdb_catalog.mdb_class c "
+								  "LEFT JOIN mdb_catalog.mdb_namespace n "
 								"ON c.relnamespace = n.oid WHERE c.oid = %u",
 								  oid);
 			}
@@ -3311,11 +3311,11 @@ get_create_object_cmd(EditableObjectType obj_type, Oid oid,
 			{
 				printfPQExpBuffer(query,
 								  "SELECT nspname, relname, relkind, "
-								  "pg_catalog.pg_get_viewdef(c.oid, true), "
+								  "mdb_catalog.mdb_get_viewdef(c.oid, true), "
 								  "NULL AS reloptions, "
 								  "NULL AS checkoption "
-								  "FROM pg_catalog.pg_class c "
-								  "LEFT JOIN pg_catalog.pg_namespace n "
+								  "FROM mdb_catalog.mdb_class c "
+								  "LEFT JOIN mdb_catalog.mdb_namespace n "
 								"ON c.relnamespace = n.oid WHERE c.oid = %u",
 								  oid);
 			}
@@ -3385,10 +3385,10 @@ get_create_object_cmd(EditableObjectType obj_type, Oid oid,
 						appendPQExpBufferStr(buf, ")");
 					}
 
-					/* View definition from pg_get_viewdef (a SELECT query) */
+					/* View definition from mdb_get_viewdef (a SELECT query) */
 					appendPQExpBuffer(buf, " AS\n%s", viewdef);
 
-					/* Get rid of the semicolon that pg_get_viewdef appends */
+					/* Get rid of the semicolon that mdb_get_viewdef appends */
 					if (buf->len > 0 && buf->data[buf->len - 1] == ';')
 						buf->data[--(buf->len)] = '\0';
 

@@ -4,7 +4,7 @@
 #include <ecpgerrno.h>
 #include <sqlca.h>
 /* Needed for informix compatibility */
-#include <ecpg_informix.h>
+#include <ecmdb_informix.h>
 /* End of automatic include section */
 #define ECPGdebug(X,Y) ECPGdebug((X)+100,(Y))
 

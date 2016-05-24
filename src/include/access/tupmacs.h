@@ -21,7 +21,7 @@
 #define att_isnull(ATT, BITS) (!((BITS)[(ATT) >> 3] & (1 << ((ATT) & 0x07))))
 
 /*
- * Given a Form_pg_attribute and a pointer into a tuple's data area,
+ * Given a Form_mdb_attribute and a pointer into a tuple's data area,
  * return the correct value or pointer.
  *
  * We return a Datum value in all cases.  If the attribute has "byval" false,
@@ -37,7 +37,7 @@
 #define fetchatt(A,T) fetch_att(T, (A)->attbyval, (A)->attlen)
 
 /*
- * Same, but work from byval/len parameters rather than Form_pg_attribute.
+ * Same, but work from byval/len parameters rather than Form_mdb_attribute.
  */
 #if SIZEOF_DATUM == 8
 

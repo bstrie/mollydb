@@ -577,7 +577,7 @@ DEALLOCATE st5;
 
 -- System columns, except ctid, should not be sent to remote
 EXPLAIN (VERBOSE, COSTS false)
-SELECT * FROM ft1 t1 WHERE t1.tableoid = 'pg_class'::regclass LIMIT 1;
+SELECT * FROM ft1 t1 WHERE t1.tableoid = 'mdb_class'::regclass LIMIT 1;
 SELECT * FROM ft1 t1 WHERE t1.tableoid = 'ft1'::regclass LIMIT 1;
 EXPLAIN (VERBOSE, COSTS false)
 SELECT tableoid::regclass, * FROM ft1 t1 LIMIT 1;
@@ -791,7 +791,7 @@ ALTER FOREIGN TABLE ft1 DROP CONSTRAINT ft1_c2negative;
 create table loc1 (f1 serial, f2 text);
 create foreign table rem1 (f1 serial, f2 text)
   server loopback options(table_name 'loc1');
-select pg_catalog.setval('rem1_f1_seq', 10, false);
+select mdb_catalog.setval('rem1_f1_seq', 10, false);
 insert into loc1(f2) values('hi');
 insert into rem1(f2) values('hi remote');
 insert into loc1(f2) values('bye');
@@ -1306,38 +1306,38 @@ BEGIN;
 CREATE SERVER fetch101 FOREIGN DATA WRAPPER mollydb_fdw OPTIONS( fetch_size '101' );
 
 SELECT count(*)
-FROM pg_foreign_server
+FROM mdb_foreign_server
 WHERE srvname = 'fetch101'
 AND srvoptions @> array['fetch_size=101'];
 
 ALTER SERVER fetch101 OPTIONS( SET fetch_size '202' );
 
 SELECT count(*)
-FROM pg_foreign_server
+FROM mdb_foreign_server
 WHERE srvname = 'fetch101'
 AND srvoptions @> array['fetch_size=101'];
 
 SELECT count(*)
-FROM pg_foreign_server
+FROM mdb_foreign_server
 WHERE srvname = 'fetch101'
 AND srvoptions @> array['fetch_size=202'];
 
 CREATE FOREIGN TABLE table30000 ( x int ) SERVER fetch101 OPTIONS ( fetch_size '30000' );
 
 SELECT COUNT(*)
-FROM pg_foreign_table
+FROM mdb_foreign_table
 WHERE ftrelid = 'table30000'::regclass
 AND ftoptions @> array['fetch_size=30000'];
 
 ALTER FOREIGN TABLE table30000 OPTIONS ( SET fetch_size '60000');
 
 SELECT COUNT(*)
-FROM pg_foreign_table
+FROM mdb_foreign_table
 WHERE ftrelid = 'table30000'::regclass
 AND ftoptions @> array['fetch_size=30000'];
 
 SELECT COUNT(*)
-FROM pg_foreign_table
+FROM mdb_foreign_table
 WHERE ftrelid = 'table30000'::regclass
 AND ftoptions @> array['fetch_size=60000'];
 

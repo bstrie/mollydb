@@ -166,10 +166,10 @@ static struct sset *pickss(struct vars *, struct dfa *, chr *, chr *);
 
 
 /*
- * pg_regexec - match regular expression
+ * mdb_regexec - match regular expression
  */
 int
-pg_regexec(regex_t *re,
+mdb_regexec(regex_t *re,
 		   const chr *string,
 		   size_t len,
 		   size_t search_start,
@@ -198,7 +198,7 @@ pg_regexec(regex_t *re,
 		return REG_MIXED;
 
 	/* Initialize locale-dependent support */
-	pg_set_regex_collation(re->re_collation);
+	mdb_set_regex_collation(re->re_collation);
 
 	/* setup */
 	v->re = re;
@@ -331,7 +331,7 @@ cleanup:
  * getsubdfa - create or re-fetch the DFA for a tree subre node
  *
  * We only need to create the DFA once per overall regex execution.
- * The DFA will be freed by the cleanup step in pg_regexec().
+ * The DFA will be freed by the cleanup step in mdb_regexec().
  */
 static struct dfa *
 getsubdfa(struct vars * v,

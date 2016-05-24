@@ -13,16 +13,16 @@
  * files within a tablespace into database-specific subdirectories.
  *
  * To support file access via the information given in RelFileNode, we
- * maintain a symbolic-link map in $PGDATA/pg_tblspc. The symlinks are
+ * maintain a symbolic-link map in $PGDATA/mdb_tblspc. The symlinks are
  * named by tablespace OIDs and point to the actual tablespace directories.
  * There is also a per-cluster version directory in each tablespace.
  * Thus the full path to an arbitrary file is
- *			$PGDATA/pg_tblspc/spcoid/PG_MAJORVER_CATVER/dboid/relfilenode
+ *			$PGDATA/mdb_tblspc/spcoid/PG_MAJORVER_CATVER/dboid/relfilenode
  * e.g.
- *			$PGDATA/pg_tblspc/20981/PG_9.0_201002161/719849/83292814
+ *			$PGDATA/mdb_tblspc/20981/PG_9.0_201002161/719849/83292814
  *
- * There are two tablespaces created at initdb time: pg_global (for shared
- * tables) and pg_default (for everything else).  For backwards compatibility
+ * There are two tablespaces created at initdb time: mdb_global (for shared
+ * tables) and mdb_default (for everything else).  For backwards compatibility
  * and to remain functional on platforms without symlinks, these tablespaces
  * are accessed specially: they are respectively
  *			$PGDATA/global/relfilenode
@@ -30,7 +30,7 @@
  *
  * To allow CREATE DATABASE to give a new database a default tablespace
  * that's different from the template database's default, we make the
- * provision that a zero in pg_class.reltablespace means the database's
+ * provision that a zero in mdb_class.reltablespace means the database's
  * default tablespace.  Without this, CREATE DATABASE would have to go in
  * and munge the system catalogs of the new database.
  *
@@ -63,8 +63,8 @@
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_tablespace.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_tablespace.h"
 #include "commands/comment.h"
 #include "commands/seclabel.h"
 #include "commands/tablecmds.h"
@@ -234,8 +234,8 @@ CreateTableSpace(CreateTableSpaceStmt *stmt)
 {
 #ifdef HAVE_SYMLINK
 	Relation	rel;
-	Datum		values[Natts_pg_tablespace];
-	bool		nulls[Natts_pg_tablespace];
+	Datum		values[Natts_mdb_tablespace];
+	bool		nulls[Natts_mdb_tablespace];
 	HeapTuple	tuple;
 	Oid			tablespaceoid;
 	char	   *location;
@@ -295,7 +295,7 @@ CreateTableSpace(CreateTableSpaceStmt *stmt)
 				 errmsg("tablespace location should not be inside the data directory")));
 
 	/*
-	 * Disallow creation of tablespaces named "pg_xxx"; we reserve this
+	 * Disallow creation of tablespaces named "mdb_xxx"; we reserve this
 	 * namespace for system purposes.
 	 */
 	if (!allowSystemTableMods && IsReservedName(stmt->tablespacename))
@@ -303,7 +303,7 @@ CreateTableSpace(CreateTableSpaceStmt *stmt)
 				(errcode(ERRCODE_RESERVED_NAME),
 				 errmsg("unacceptable tablespace name \"%s\"",
 						stmt->tablespacename),
-		errdetail("The prefix \"pg_\" is reserved for system tablespaces.")));
+		errdetail("The prefix \"mdb_\" is reserved for system tablespaces.")));
 
 	/*
 	 * Check that there is no other tablespace by this name.  (The unique
@@ -317,7 +317,7 @@ CreateTableSpace(CreateTableSpaceStmt *stmt)
 						stmt->tablespacename)));
 
 	/*
-	 * Insert tuple into pg_tablespace.  The purpose of doing this first is to
+	 * Insert tuple into mdb_tablespace.  The purpose of doing this first is to
 	 * lock the proposed tablename against other would-be creators. The
 	 * insertion will roll back if we find problems below.
 	 */
@@ -325,11 +325,11 @@ CreateTableSpace(CreateTableSpaceStmt *stmt)
 
 	MemSet(nulls, false, sizeof(nulls));
 
-	values[Anum_pg_tablespace_spcname - 1] =
+	values[Anum_mdb_tablespace_spcname - 1] =
 		DirectFunctionCall1(namein, CStringGetDatum(stmt->tablespacename));
-	values[Anum_pg_tablespace_spcowner - 1] =
+	values[Anum_mdb_tablespace_spcowner - 1] =
 		ObjectIdGetDatum(ownerId);
-	nulls[Anum_pg_tablespace_spcacl - 1] = true;
+	nulls[Anum_mdb_tablespace_spcacl - 1] = true;
 
 	/* Generate new proposed spcoptions (text array) */
 	newOptions = transformRelOptions((Datum) 0,
@@ -337,9 +337,9 @@ CreateTableSpace(CreateTableSpaceStmt *stmt)
 									 NULL, NULL, false, false);
 	(void) tablespace_reloptions(newOptions, true);
 	if (newOptions != (Datum) 0)
-		values[Anum_pg_tablespace_spcoptions - 1] = newOptions;
+		values[Anum_mdb_tablespace_spcoptions - 1] = newOptions;
 	else
-		nulls[Anum_pg_tablespace_spcoptions - 1] = true;
+		nulls[Anum_mdb_tablespace_spcoptions - 1] = true;
 
 	tuple = heap_form_tuple(rel->rd_att, values, nulls);
 
@@ -381,7 +381,7 @@ CreateTableSpace(CreateTableSpaceStmt *stmt)
 
 	pfree(location);
 
-	/* We keep the lock on pg_tablespace until commit */
+	/* We keep the lock on mdb_tablespace until commit */
 	heap_close(rel, NoLock);
 
 	return tablespaceoid;
@@ -415,7 +415,7 @@ DropTableSpace(DropTableSpaceStmt *stmt)
 	rel = heap_open(TableSpaceRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&entry[0],
-				Anum_pg_tablespace_spcname,
+				Anum_mdb_tablespace_spcname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(tablespacename));
 	scandesc = heap_beginscan_catalog(rel, 1, entry);
@@ -445,7 +445,7 @@ DropTableSpace(DropTableSpaceStmt *stmt)
 	tablespaceoid = HeapTupleGetOid(tuple);
 
 	/* Must be tablespace owner */
-	if (!pg_tablespace_ownercheck(tablespaceoid, GetUserId()))
+	if (!mdb_tablespace_ownercheck(tablespaceoid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_TABLESPACE,
 					   tablespacename);
 
@@ -459,7 +459,7 @@ DropTableSpace(DropTableSpaceStmt *stmt)
 	InvokeObjectDropHook(TableSpaceRelationId, tablespaceoid, 0);
 
 	/*
-	 * Remove the pg_tablespace tuple (this will roll back if we fail below)
+	 * Remove the mdb_tablespace tuple (this will roll back if we fail below)
 	 */
 	simple_heap_delete(rel, &tuple->t_self);
 
@@ -545,7 +545,7 @@ DropTableSpace(DropTableSpaceStmt *stmt)
 	 */
 	LWLockRelease(TablespaceCreateLock);
 
-	/* We keep the lock on pg_tablespace until commit */
+	/* We keep the lock on mdb_tablespace until commit */
 	heap_close(rel, NoLock);
 #else							/* !HAVE_SYMLINK */
 	ereport(ERROR,
@@ -558,7 +558,7 @@ DropTableSpace(DropTableSpaceStmt *stmt)
 /*
  * create_tablespace_directories
  *
- *	Attempt to create filesystem infrastructure linking $PGDATA/pg_tblspc/
+ *	Attempt to create filesystem infrastructure linking $PGDATA/mdb_tblspc/
  *	to the specified directory
  */
 static void
@@ -568,7 +568,7 @@ create_tablespace_directories(const char *location, const Oid tablespaceoid)
 	char	   *location_with_version_dir;
 	struct stat st;
 
-	linkloc = psprintf("pg_tblspc/%u", tablespaceoid);
+	linkloc = psprintf("mdb_tblspc/%u", tablespaceoid);
 	location_with_version_dir = psprintf("%s/%s", location,
 										 TABLESPACE_VERSION_DIRECTORY);
 
@@ -669,7 +669,7 @@ destroy_tablespace_directories(Oid tablespaceoid, bool redo)
 	char	   *subfile;
 	struct stat st;
 
-	linkloc_with_version_dir = psprintf("pg_tblspc/%u/%s", tablespaceoid,
+	linkloc_with_version_dir = psprintf("mdb_tblspc/%u/%s", tablespaceoid,
 										TABLESPACE_VERSION_DIRECTORY);
 
 	/*
@@ -853,7 +853,7 @@ directory_is_empty(const char *path)
 /*
  *	remove_tablespace_symlink
  *
- * This function removes symlinks in pg_tblspc.  On Windows, junction points
+ * This function removes symlinks in mdb_tblspc.  On Windows, junction points
  * act like directories so we must be able to apply rmdir.  This function
  * works like the symlink removal code in destroy_tablespace_directories,
  * except that failure to remove is always an ERROR.  But if the file doesn't
@@ -917,14 +917,14 @@ RenameTableSpace(const char *oldname, const char *newname)
 	HeapScanDesc scan;
 	HeapTuple	tup;
 	HeapTuple	newtuple;
-	Form_pg_tablespace newform;
+	Form_mdb_tablespace newform;
 	ObjectAddress address;
 
-	/* Search pg_tablespace */
+	/* Search mdb_tablespace */
 	rel = heap_open(TableSpaceRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&entry[0],
-				Anum_pg_tablespace_spcname,
+				Anum_mdb_tablespace_spcname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(oldname));
 	scan = heap_beginscan_catalog(rel, 1, entry);
@@ -937,12 +937,12 @@ RenameTableSpace(const char *oldname, const char *newname)
 
 	tspId = HeapTupleGetOid(tup);
 	newtuple = heap_copytuple(tup);
-	newform = (Form_pg_tablespace) GETSTRUCT(newtuple);
+	newform = (Form_mdb_tablespace) GETSTRUCT(newtuple);
 
 	heap_endscan(scan);
 
 	/* Must be owner */
-	if (!pg_tablespace_ownercheck(HeapTupleGetOid(newtuple), GetUserId()))
+	if (!mdb_tablespace_ownercheck(HeapTupleGetOid(newtuple), GetUserId()))
 		aclcheck_error(ACLCHECK_NO_PRIV, ACL_KIND_TABLESPACE, oldname);
 
 	/* Validate new name */
@@ -950,11 +950,11 @@ RenameTableSpace(const char *oldname, const char *newname)
 		ereport(ERROR,
 				(errcode(ERRCODE_RESERVED_NAME),
 				 errmsg("unacceptable tablespace name \"%s\"", newname),
-		errdetail("The prefix \"pg_\" is reserved for system tablespaces.")));
+		errdetail("The prefix \"mdb_\" is reserved for system tablespaces.")));
 
 	/* Make sure the new name doesn't exist */
 	ScanKeyInit(&entry[0],
-				Anum_pg_tablespace_spcname,
+				Anum_mdb_tablespace_spcname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(newname));
 	scan = heap_beginscan_catalog(rel, 1, entry);
@@ -995,17 +995,17 @@ AlterTableSpaceOptions(AlterTableSpaceOptionsStmt *stmt)
 	Oid			tablespaceoid;
 	Datum		datum;
 	Datum		newOptions;
-	Datum		repl_val[Natts_pg_tablespace];
+	Datum		repl_val[Natts_mdb_tablespace];
 	bool		isnull;
-	bool		repl_null[Natts_pg_tablespace];
-	bool		repl_repl[Natts_pg_tablespace];
+	bool		repl_null[Natts_mdb_tablespace];
+	bool		repl_repl[Natts_mdb_tablespace];
 	HeapTuple	newtuple;
 
-	/* Search pg_tablespace */
+	/* Search mdb_tablespace */
 	rel = heap_open(TableSpaceRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&entry[0],
-				Anum_pg_tablespace_spcname,
+				Anum_mdb_tablespace_spcname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(stmt->tablespacename));
 	scandesc = heap_beginscan_catalog(rel, 1, entry);
@@ -1019,12 +1019,12 @@ AlterTableSpaceOptions(AlterTableSpaceOptionsStmt *stmt)
 	tablespaceoid = HeapTupleGetOid(tup);
 
 	/* Must be owner of the existing object */
-	if (!pg_tablespace_ownercheck(HeapTupleGetOid(tup), GetUserId()))
+	if (!mdb_tablespace_ownercheck(HeapTupleGetOid(tup), GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_TABLESPACE,
 					   stmt->tablespacename);
 
 	/* Generate new proposed spcoptions (text array) */
-	datum = heap_getattr(tup, Anum_pg_tablespace_spcoptions,
+	datum = heap_getattr(tup, Anum_mdb_tablespace_spcoptions,
 						 RelationGetDescr(rel), &isnull);
 	newOptions = transformRelOptions(isnull ? (Datum) 0 : datum,
 									 stmt->options, NULL, NULL, false,
@@ -1035,10 +1035,10 @@ AlterTableSpaceOptions(AlterTableSpaceOptionsStmt *stmt)
 	memset(repl_null, false, sizeof(repl_null));
 	memset(repl_repl, false, sizeof(repl_repl));
 	if (newOptions != (Datum) 0)
-		repl_val[Anum_pg_tablespace_spcoptions - 1] = newOptions;
+		repl_val[Anum_mdb_tablespace_spcoptions - 1] = newOptions;
 	else
-		repl_null[Anum_pg_tablespace_spcoptions - 1] = true;
-	repl_repl[Anum_pg_tablespace_spcoptions - 1] = true;
+		repl_null[Anum_mdb_tablespace_spcoptions - 1] = true;
+	repl_repl[Anum_mdb_tablespace_spcoptions - 1] = true;
 	newtuple = heap_modify_tuple(tup, RelationGetDescr(rel), repl_val,
 								 repl_null, repl_repl);
 
@@ -1231,7 +1231,7 @@ check_temp_tablespaces(char **newval, void **extra, GucSource source)
 			}
 
 			/* Check permissions, similarly complaining only if interactive */
-			aclresult = pg_tablespace_aclcheck(curoid, GetUserId(),
+			aclresult = mdb_tablespace_aclcheck(curoid, GetUserId(),
 											   ACL_CREATE);
 			if (aclresult != ACLCHECK_OK)
 			{
@@ -1359,7 +1359,7 @@ PrepareTempTablespaces(void)
 		}
 
 		/* Check permissions similarly */
-		aclresult = pg_tablespace_aclcheck(curoid, GetUserId(),
+		aclresult = mdb_tablespace_aclcheck(curoid, GetUserId(),
 										   ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			continue;
@@ -1390,14 +1390,14 @@ get_tablespace_oid(const char *tablespacename, bool missing_ok)
 	ScanKeyData entry[1];
 
 	/*
-	 * Search pg_tablespace.  We use a heapscan here even though there is an
-	 * index on name, on the theory that pg_tablespace will usually have just
+	 * Search mdb_tablespace.  We use a heapscan here even though there is an
+	 * index on name, on the theory that mdb_tablespace will usually have just
 	 * a few entries and so an indexed lookup is a waste of effort.
 	 */
 	rel = heap_open(TableSpaceRelationId, AccessShareLock);
 
 	ScanKeyInit(&entry[0],
-				Anum_pg_tablespace_spcname,
+				Anum_mdb_tablespace_spcname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(tablespacename));
 	scandesc = heap_beginscan_catalog(rel, 1, entry);
@@ -1436,8 +1436,8 @@ get_tablespace_name(Oid spc_oid)
 	ScanKeyData entry[1];
 
 	/*
-	 * Search pg_tablespace.  We use a heapscan here even though there is an
-	 * index on oid, on the theory that pg_tablespace will usually have just a
+	 * Search mdb_tablespace.  We use a heapscan here even though there is an
+	 * index on oid, on the theory that mdb_tablespace will usually have just a
 	 * few entries and so an indexed lookup is a waste of effort.
 	 */
 	rel = heap_open(TableSpaceRelationId, AccessShareLock);
@@ -1451,7 +1451,7 @@ get_tablespace_name(Oid spc_oid)
 
 	/* We assume that there can be at most one matching tuple */
 	if (HeapTupleIsValid(tuple))
-		result = pstrdup(NameStr(((Form_pg_tablespace) GETSTRUCT(tuple))->spcname));
+		result = pstrdup(NameStr(((Form_mdb_tablespace) GETSTRUCT(tuple))->spcname));
 	else
 		result = NULL;
 

@@ -190,7 +190,7 @@ thesaurusRead(char *filename, DictThesaurus *d)
 
 		/* is it a comment? */
 		while (*ptr && t_isspace(ptr))
-			ptr += pg_mblen(ptr);
+			ptr += mdb_mblen(ptr);
 
 		if (t_iseq(ptr, '#') || *ptr == '\0' ||
 			t_iseq(ptr, '\n') || t_iseq(ptr, '\r'))
@@ -236,13 +236,13 @@ thesaurusRead(char *filename, DictThesaurus *d)
 				{
 					useasis = true;
 					state = TR_INSUBS;
-					beginwrd = ptr + pg_mblen(ptr);
+					beginwrd = ptr + mdb_mblen(ptr);
 				}
 				else if (t_iseq(ptr, '\\'))
 				{
 					useasis = false;
 					state = TR_INSUBS;
-					beginwrd = ptr + pg_mblen(ptr);
+					beginwrd = ptr + mdb_mblen(ptr);
 				}
 				else if (!t_isspace(ptr))
 				{
@@ -266,7 +266,7 @@ thesaurusRead(char *filename, DictThesaurus *d)
 			else
 				elog(ERROR, "unrecognized thesaurus state: %d", state);
 
-			ptr += pg_mblen(ptr);
+			ptr += mdb_mblen(ptr);
 		}
 
 		if (state == TR_INSUBS)
@@ -615,7 +615,7 @@ thesaurus_init(PG_FUNCTION_ARGS)
 	{
 		DefElem    *defel = (DefElem *) lfirst(l);
 
-		if (pg_strcasecmp("DictFile", defel->defname) == 0)
+		if (mdb_strcasecmp("DictFile", defel->defname) == 0)
 		{
 			if (fileloaded)
 				ereport(ERROR,
@@ -624,7 +624,7 @@ thesaurus_init(PG_FUNCTION_ARGS)
 			thesaurusRead(defGetString(defel), d);
 			fileloaded = true;
 		}
-		else if (pg_strcasecmp("Dictionary", defel->defname) == 0)
+		else if (mdb_strcasecmp("Dictionary", defel->defname) == 0)
 		{
 			if (subdictname)
 				ereport(ERROR,

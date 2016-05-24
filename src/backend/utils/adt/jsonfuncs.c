@@ -17,11 +17,11 @@
 #include <limits.h>
 
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "fmgr.h"
 #include "funcapi.h"
 #include "lib/stringinfo.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
@@ -393,7 +393,7 @@ json_object_keys(PG_FUNCTION_ARGS)
 		sem->object_field_start = okeys_object_field_start;
 		/* remainder are all NULL, courtesy of palloc0 above */
 
-		pg_parse_json(lex, sem);
+		mdb_parse_json(lex, sem);
 		/* keys are now in state->result */
 
 		pfree(lex->strval->data);
@@ -844,7 +844,7 @@ get_worker(text *json,
 		sem->array_element_end = get_array_element_end;
 	}
 
-	pg_parse_json(lex, sem);
+	mdb_parse_json(lex, sem);
 
 	return state->tresult;
 }
@@ -1357,7 +1357,7 @@ json_array_length(PG_FUNCTION_ARGS)
 	sem->scalar = alen_scalar;
 	sem->array_element_start = alen_array_element_start;
 
-	pg_parse_json(lex, sem);
+	mdb_parse_json(lex, sem);
 
 	PG_RETURN_INT32(state->count);
 }
@@ -1645,7 +1645,7 @@ each_worker(FunctionCallInfo fcinfo, bool as_text)
 										   ALLOCSET_DEFAULT_INITSIZE,
 										   ALLOCSET_DEFAULT_MAXSIZE);
 
-	pg_parse_json(lex, sem);
+	mdb_parse_json(lex, sem);
 
 	MemoryContextDelete(state->tmp_cxt);
 
@@ -1966,7 +1966,7 @@ elements_worker(FunctionCallInfo fcinfo, const char *funcname, bool as_text)
 										   ALLOCSET_DEFAULT_INITSIZE,
 										   ALLOCSET_DEFAULT_MAXSIZE);
 
-	pg_parse_json(lex, sem);
+	mdb_parse_json(lex, sem);
 
 	MemoryContextDelete(state->tmp_cxt);
 
@@ -2411,7 +2411,7 @@ get_json_object_as_hash(text *json, const char *funcname)
 	sem->object_field_start = hash_object_field_start;
 	sem->object_field_end = hash_object_field_end;
 
-	pg_parse_json(lex, sem);
+	mdb_parse_json(lex, sem);
 
 	return tab;
 }
@@ -2793,7 +2793,7 @@ populate_recordset_worker(FunctionCallInfo fcinfo, const char *funcname,
 
 		state->lex = lex;
 
-		pg_parse_json(lex, sem);
+		mdb_parse_json(lex, sem);
 	}
 	else
 	{
@@ -3222,7 +3222,7 @@ json_strip_nulls(PG_FUNCTION_ARGS)
 	sem->array_element_start = sn_array_element_start;
 	sem->object_field_start = sn_object_field_start;
 
-	pg_parse_json(lex, sem);
+	mdb_parse_json(lex, sem);
 
 	PG_RETURN_TEXT_P(cstring_to_text_with_len(state->strval->data,
 											  state->strval->len));

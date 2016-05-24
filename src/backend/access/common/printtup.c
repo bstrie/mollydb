@@ -189,7 +189,7 @@ printtup_startup(DestReceiver *self, int operation, TupleDesc typeinfo)
 void
 SendRowDescriptionMessage(TupleDesc typeinfo, List *targetlist, int16 *formats)
 {
-	Form_pg_attribute *attrs = typeinfo->attrs;
+	Form_mdb_attribute *attrs = typeinfo->attrs;
 	int			natts = typeinfo->natts;
 	int			proto = PG_PROTOCOL_MAJOR(FrontendProtocol);
 	int			i;
@@ -490,7 +490,7 @@ printtup_destroy(DestReceiver *self)
  */
 static void
 printatt(unsigned attributeId,
-		 Form_pg_attribute attributeP,
+		 Form_mdb_attribute attributeP,
 		 char *value)
 {
 	printf("\t%2d: %s%s%s%s\t(typeid = %u, len = %d, typmod = %d, byval = %c)\n",
@@ -513,7 +513,7 @@ void
 debugStartup(DestReceiver *self, int operation, TupleDesc typeinfo)
 {
 	int			natts = typeinfo->natts;
-	Form_pg_attribute *attinfo = typeinfo->attrs;
+	Form_mdb_attribute *attinfo = typeinfo->attrs;
 	int			i;
 
 	/*

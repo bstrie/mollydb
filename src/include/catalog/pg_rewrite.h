@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
- * pg_rewrite.h
- *	  definition of the system "rewrite-rule" relation (pg_rewrite)
+ * mdb_rewrite.h
+ *	  definition of the system "rewrite-rule" relation (mdb_rewrite)
  *	  along with the relation's initial contents.
  *
  * As of MollyDB 7.3, the primary key for this table is <ev_class, rulename>
@@ -11,7 +11,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_rewrite.h
+ * src/include/catalog/mdb_rewrite.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -25,13 +25,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_rewrite definition.  cpp turns this into
- *		typedef struct FormData_pg_rewrite
+ *		mdb_rewrite definition.  cpp turns this into
+ *		typedef struct FormData_mdb_rewrite
  * ----------------
  */
 #define RewriteRelationId  2618
 
-CATALOG(pg_rewrite,2618)
+CATALOG(mdb_rewrite,2618)
 {
 	NameData	rulename;
 	Oid			ev_class;
@@ -40,29 +40,29 @@ CATALOG(pg_rewrite,2618)
 	bool		is_instead;
 
 #ifdef CATALOG_VARLEN			/* variable-length fields start here */
-	pg_node_tree ev_qual;
-	pg_node_tree ev_action;
+	mdb_node_tree ev_qual;
+	mdb_node_tree ev_action;
 #endif
-} FormData_pg_rewrite;
+} FormData_mdb_rewrite;
 
 /* ----------------
- *		Form_pg_rewrite corresponds to a pointer to a tuple with
- *		the format of pg_rewrite relation.
+ *		Form_mdb_rewrite corresponds to a pointer to a tuple with
+ *		the format of mdb_rewrite relation.
  * ----------------
  */
-typedef FormData_pg_rewrite *Form_pg_rewrite;
+typedef FormData_mdb_rewrite *Form_mdb_rewrite;
 
 /* ----------------
- *		compiler constants for pg_rewrite
+ *		compiler constants for mdb_rewrite
  * ----------------
  */
-#define Natts_pg_rewrite				7
-#define Anum_pg_rewrite_rulename		1
-#define Anum_pg_rewrite_ev_class		2
-#define Anum_pg_rewrite_ev_type			3
-#define Anum_pg_rewrite_ev_enabled		4
-#define Anum_pg_rewrite_is_instead		5
-#define Anum_pg_rewrite_ev_qual			6
-#define Anum_pg_rewrite_ev_action		7
+#define Natts_mdb_rewrite				7
+#define Anum_mdb_rewrite_rulename		1
+#define Anum_mdb_rewrite_ev_class		2
+#define Anum_mdb_rewrite_ev_type			3
+#define Anum_mdb_rewrite_ev_enabled		4
+#define Anum_mdb_rewrite_is_instead		5
+#define Anum_mdb_rewrite_ev_qual			6
+#define Anum_mdb_rewrite_ev_action		7
 
 #endif   /* PG_REWRITE_H */

@@ -40,7 +40,7 @@ FILES IN src/include/nodes/
 	relation.h	- planner internal nodes
 	execnodes.h	- executor nodes
 	memnodes.h	- memory nodes
-	pg_list.h	- generic list
+	mdb_list.h	- generic list
 
 
 Steps to Add a Node

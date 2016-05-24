@@ -35,7 +35,7 @@
 #include "access/tuptoaster.h"
 #include "access/xact.h"
 #include "catalog/catalog.h"
-#include "common/pg_lzcompress.h"
+#include "common/mdb_lzcompress.h"
 #include "miscadmin.h"
 #include "utils/expandeddatum.h"
 #include "utils/fmgroids.h"
@@ -462,7 +462,7 @@ void
 toast_delete(Relation rel, HeapTuple oldtup)
 {
 	TupleDesc	tupleDesc;
-	Form_pg_attribute *att;
+	Form_mdb_attribute *att;
 	int			numAttrs;
 	int			i;
 	Datum		toast_values[MaxHeapAttributeNumber];
@@ -536,7 +536,7 @@ toast_insert_or_update(Relation rel, HeapTuple newtup, HeapTuple oldtup,
 {
 	HeapTuple	result_tuple;
 	TupleDesc	tupleDesc;
-	Form_pg_attribute *att;
+	Form_mdb_attribute *att;
 	int			numAttrs;
 	int			i;
 
@@ -1082,7 +1082,7 @@ HeapTuple
 toast_flatten_tuple(HeapTuple tup, TupleDesc tupleDesc)
 {
 	HeapTuple	new_tuple;
-	Form_pg_attribute *att = tupleDesc->attrs;
+	Form_mdb_attribute *att = tupleDesc->attrs;
 	int			numAttrs = tupleDesc->natts;
 	int			i;
 	Datum		toast_values[MaxTupleAttributeNumber];
@@ -1191,7 +1191,7 @@ toast_flatten_tuple_to_datum(HeapTupleHeader tup,
 	int32		new_data_len;
 	int32		new_tuple_len;
 	HeapTupleData tmptup;
-	Form_pg_attribute *att = tupleDesc->attrs;
+	Form_mdb_attribute *att = tupleDesc->attrs;
 	int			numAttrs = tupleDesc->natts;
 	int			i;
 	bool		has_nulls = false;

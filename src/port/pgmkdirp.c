@@ -36,7 +36,7 @@
 
 
 /*
- * pg_mkdir_p --- create a directory and, if necessary, parent directories
+ * mdb_mkdir_p --- create a directory and, if necessary, parent directories
  *
  * This is equivalent to "mkdir -p" except we don't complain if the target
  * directory already exists.
@@ -54,7 +54,7 @@
  * directory level we had problems with.
  */
 int
-pg_mkdir_p(char *path, int omode)
+mdb_mkdir_p(char *path, int omode)
 {
 	struct stat sb;
 	mode_t		numask,

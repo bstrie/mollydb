@@ -14,7 +14,7 @@ REGRESS_OPTS = --dlpath=$(top_builddir)/src/test/regress
 EXTRA_CLEAN = sql/paths.sql expected/paths.out
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

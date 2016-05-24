@@ -14,7 +14,7 @@
 #include <ctype.h>
 #include <unistd.h>
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 
 /* ----------
@@ -29,13 +29,13 @@
  * Karel Zak, Aug 2001
  * ----------
  */
-typedef struct pg_encname
+typedef struct mdb_encname
 {
 	const char *name;
-	pg_enc		encoding;
-} pg_encname;
+	mdb_enc		encoding;
+} mdb_encname;
 
-static const pg_encname pg_encname_tbl[] =
+static const mdb_encname mdb_encname_tbl[] =
 {
 	{
 		"abc", PG_WIN1258
@@ -296,7 +296,7 @@ static const pg_encname pg_encname_tbl[] =
 
 /* ----------
  * These are "official" encoding names.
- * XXX must be sorted by the same order as enum pg_enc (in mb/pg_wchar.h)
+ * XXX must be sorted by the same order as enum mdb_enc (in mb/mdb_wchar.h)
  * ----------
  */
 #ifndef WIN32
@@ -304,7 +304,7 @@ static const pg_encname pg_encname_tbl[] =
 #else
 #define DEF_ENC2NAME(name, codepage) { #name, PG_##name, codepage }
 #endif
-const pg_enc2name pg_enc2name_tbl[] =
+const mdb_enc2name mdb_enc2name_tbl[] =
 {
 	DEF_ENC2NAME(SQL_ASCII, 0),
 	DEF_ENC2NAME(EUC_JP, 20932),
@@ -356,7 +356,7 @@ const pg_enc2name pg_enc2name_tbl[] =
  * This covers all encodings except MULE_INTERNAL, which is alien to gettext.
  * ----------
  */
-const pg_enc2gettext pg_enc2gettext_tbl[] =
+const mdb_enc2gettext mdb_enc2gettext_tbl[] =
 {
 	{PG_SQL_ASCII, "US-ASCII"},
 	{PG_UTF8, "UTF-8"},
@@ -408,11 +408,11 @@ const pg_enc2gettext pg_enc2gettext_tbl[] =
  * ----------
  */
 int
-pg_valid_client_encoding(const char *name)
+mdb_valid_client_encoding(const char *name)
 {
 	int			enc;
 
-	if ((enc = pg_char_to_encoding(name)) < 0)
+	if ((enc = mdb_char_to_encoding(name)) < 0)
 		return -1;
 
 	if (!PG_VALID_FE_ENCODING(enc))
@@ -422,11 +422,11 @@ pg_valid_client_encoding(const char *name)
 }
 
 int
-pg_valid_server_encoding(const char *name)
+mdb_valid_server_encoding(const char *name)
 {
 	int			enc;
 
-	if ((enc = pg_char_to_encoding(name)) < 0)
+	if ((enc = mdb_char_to_encoding(name)) < 0)
 		return -1;
 
 	if (!PG_VALID_BE_ENCODING(enc))
@@ -436,7 +436,7 @@ pg_valid_server_encoding(const char *name)
 }
 
 int
-pg_valid_server_encoding_id(int encoding)
+mdb_valid_server_encoding_id(int encoding)
 {
 	return PG_VALID_BE_ENCODING(encoding);
 }
@@ -472,10 +472,10 @@ clean_encoding_name(const char *key, char *newkey)
  * ----------
  */
 int
-pg_char_to_encoding(const char *name)
+mdb_char_to_encoding(const char *name)
 {
-	unsigned int nel = lengthof(pg_encname_tbl);
-	const pg_encname *base = pg_encname_tbl,
+	unsigned int nel = lengthof(mdb_encname_tbl);
+	const mdb_encname *base = mdb_encname_tbl,
 			   *last = base + nel - 1,
 			   *position;
 	int			result;
@@ -523,16 +523,16 @@ PG_char_to_encoding(PG_FUNCTION_ARGS)
 {
 	Name		s = PG_GETARG_NAME(0);
 
-	PG_RETURN_INT32(pg_char_to_encoding(NameStr(*s)));
+	PG_RETURN_INT32(mdb_char_to_encoding(NameStr(*s)));
 }
 #endif
 
 const char *
-pg_encoding_to_char(int encoding)
+mdb_encoding_to_char(int encoding)
 {
 	if (PG_VALID_ENCODING(encoding))
 	{
-		const pg_enc2name *p = &pg_enc2name_tbl[encoding];
+		const mdb_enc2name *p = &mdb_enc2name_tbl[encoding];
 
 		Assert(encoding == p->encoding);
 		return p->name;
@@ -545,7 +545,7 @@ Datum
 PG_encoding_to_char(PG_FUNCTION_ARGS)
 {
 	int32		encoding = PG_GETARG_INT32(0);
-	const char *encoding_name = pg_encoding_to_char(encoding);
+	const char *encoding_name = mdb_encoding_to_char(encoding);
 
 	return DirectFunctionCall1(namein, CStringGetDatum(encoding_name));
 }

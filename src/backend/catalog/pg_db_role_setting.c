@@ -1,12 +1,12 @@
 /*
- * pg_db_role_setting.c
- *		Routines to support manipulation of the pg_db_role_setting relation
+ * mdb_db_role_setting.c
+ *		Routines to support manipulation of the mdb_db_role_setting relation
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
- *		src/backend/catalog/pg_db_role_setting.c
+ *		src/backend/catalog/mdb_db_role_setting.c
  */
 #include "mollydb.h"
 
@@ -15,7 +15,7 @@
 #include "access/htup_details.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_db_role_setting.h"
+#include "catalog/mdb_db_role_setting.h"
 #include "utils/fmgroids.h"
 #include "utils/rel.h"
 #include "utils/tqual.h"
@@ -35,11 +35,11 @@ AlterSetting(Oid databaseid, Oid roleid, VariableSetStmt *setstmt)
 
 	rel = heap_open(DbRoleSettingRelationId, RowExclusiveLock);
 	ScanKeyInit(&scankey[0],
-				Anum_pg_db_role_setting_setdatabase,
+				Anum_mdb_db_role_setting_setdatabase,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(databaseid));
 	ScanKeyInit(&scankey[1],
-				Anum_pg_db_role_setting_setrole,
+				Anum_mdb_db_role_setting_setrole,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(roleid));
 	scan = systable_beginscan(rel, DbRoleSettingDatidRolidIndexId, true,
@@ -52,10 +52,10 @@ AlterSetting(Oid databaseid, Oid roleid, VariableSetStmt *setstmt)
 	 * - in RESET ALL, request GUC to reset the settings array and update the
 	 * catalog if there's anything left, delete it otherwise
 	 *
-	 * - in other commands, if there's a tuple in pg_db_role_setting, update
+	 * - in other commands, if there's a tuple in mdb_db_role_setting, update
 	 * it; if it ends up empty, delete it
 	 *
-	 * - otherwise, insert a new pg_db_role_setting tuple, but only if the
+	 * - otherwise, insert a new mdb_db_role_setting tuple, but only if the
 	 * command is not RESET
 	 */
 	if (setstmt->kind == VAR_RESET_ALL)
@@ -66,7 +66,7 @@ AlterSetting(Oid databaseid, Oid roleid, VariableSetStmt *setstmt)
 			Datum		datum;
 			bool		isnull;
 
-			datum = heap_getattr(tuple, Anum_pg_db_role_setting_setconfig,
+			datum = heap_getattr(tuple, Anum_mdb_db_role_setting_setconfig,
 								 RelationGetDescr(rel), &isnull);
 
 			if (!isnull)
@@ -74,17 +74,17 @@ AlterSetting(Oid databaseid, Oid roleid, VariableSetStmt *setstmt)
 
 			if (new)
 			{
-				Datum		repl_val[Natts_pg_db_role_setting];
-				bool		repl_null[Natts_pg_db_role_setting];
-				bool		repl_repl[Natts_pg_db_role_setting];
+				Datum		repl_val[Natts_mdb_db_role_setting];
+				bool		repl_null[Natts_mdb_db_role_setting];
+				bool		repl_repl[Natts_mdb_db_role_setting];
 				HeapTuple	newtuple;
 
 				memset(repl_repl, false, sizeof(repl_repl));
 
-				repl_val[Anum_pg_db_role_setting_setconfig - 1] =
+				repl_val[Anum_mdb_db_role_setting_setconfig - 1] =
 					PointerGetDatum(new);
-				repl_repl[Anum_pg_db_role_setting_setconfig - 1] = true;
-				repl_null[Anum_pg_db_role_setting_setconfig - 1] = false;
+				repl_repl[Anum_mdb_db_role_setting_setconfig - 1] = true;
+				repl_null[Anum_mdb_db_role_setting_setconfig - 1] = false;
 
 				newtuple = heap_modify_tuple(tuple, RelationGetDescr(rel),
 											 repl_val, repl_null, repl_repl);
@@ -99,20 +99,20 @@ AlterSetting(Oid databaseid, Oid roleid, VariableSetStmt *setstmt)
 	}
 	else if (HeapTupleIsValid(tuple))
 	{
-		Datum		repl_val[Natts_pg_db_role_setting];
-		bool		repl_null[Natts_pg_db_role_setting];
-		bool		repl_repl[Natts_pg_db_role_setting];
+		Datum		repl_val[Natts_mdb_db_role_setting];
+		bool		repl_null[Natts_mdb_db_role_setting];
+		bool		repl_repl[Natts_mdb_db_role_setting];
 		HeapTuple	newtuple;
 		Datum		datum;
 		bool		isnull;
 		ArrayType  *a;
 
 		memset(repl_repl, false, sizeof(repl_repl));
-		repl_repl[Anum_pg_db_role_setting_setconfig - 1] = true;
-		repl_null[Anum_pg_db_role_setting_setconfig - 1] = false;
+		repl_repl[Anum_mdb_db_role_setting_setconfig - 1] = true;
+		repl_null[Anum_mdb_db_role_setting_setconfig - 1] = false;
 
 		/* Extract old value of setconfig */
-		datum = heap_getattr(tuple, Anum_pg_db_role_setting_setconfig,
+		datum = heap_getattr(tuple, Anum_mdb_db_role_setting_setconfig,
 							 RelationGetDescr(rel), &isnull);
 		a = isnull ? NULL : DatumGetArrayTypeP(datum);
 
@@ -124,7 +124,7 @@ AlterSetting(Oid databaseid, Oid roleid, VariableSetStmt *setstmt)
 
 		if (a)
 		{
-			repl_val[Anum_pg_db_role_setting_setconfig - 1] =
+			repl_val[Anum_mdb_db_role_setting_setconfig - 1] =
 				PointerGetDatum(a);
 
 			newtuple = heap_modify_tuple(tuple, RelationGetDescr(rel),
@@ -141,18 +141,18 @@ AlterSetting(Oid databaseid, Oid roleid, VariableSetStmt *setstmt)
 	{
 		/* non-null valuestr means it's not RESET, so insert a new tuple */
 		HeapTuple	newtuple;
-		Datum		values[Natts_pg_db_role_setting];
-		bool		nulls[Natts_pg_db_role_setting];
+		Datum		values[Natts_mdb_db_role_setting];
+		bool		nulls[Natts_mdb_db_role_setting];
 		ArrayType  *a;
 
 		memset(nulls, false, sizeof(nulls));
 
 		a = GUCArrayAdd(NULL, setstmt->name, valuestr);
 
-		values[Anum_pg_db_role_setting_setdatabase - 1] =
+		values[Anum_mdb_db_role_setting_setdatabase - 1] =
 			ObjectIdGetDatum(databaseid);
-		values[Anum_pg_db_role_setting_setrole - 1] = ObjectIdGetDatum(roleid);
-		values[Anum_pg_db_role_setting_setconfig - 1] = PointerGetDatum(a);
+		values[Anum_mdb_db_role_setting_setrole - 1] = ObjectIdGetDatum(roleid);
+		values[Anum_mdb_db_role_setting_setconfig - 1] = PointerGetDatum(a);
 		newtuple = heap_form_tuple(RelationGetDescr(rel), values, nulls);
 
 		simple_heap_insert(rel, newtuple);
@@ -166,7 +166,7 @@ AlterSetting(Oid databaseid, Oid roleid, VariableSetStmt *setstmt)
 
 	systable_endscan(scan);
 
-	/* Close pg_db_role_setting, but keep lock till commit */
+	/* Close mdb_db_role_setting, but keep lock till commit */
 	heap_close(rel, NoLock);
 }
 
@@ -189,7 +189,7 @@ DropSetting(Oid databaseid, Oid roleid)
 	if (OidIsValid(databaseid))
 	{
 		ScanKeyInit(&keys[numkeys],
-					Anum_pg_db_role_setting_setdatabase,
+					Anum_mdb_db_role_setting_setdatabase,
 					BTEqualStrategyNumber,
 					F_OIDEQ,
 					ObjectIdGetDatum(databaseid));
@@ -198,7 +198,7 @@ DropSetting(Oid databaseid, Oid roleid)
 	if (OidIsValid(roleid))
 	{
 		ScanKeyInit(&keys[numkeys],
-					Anum_pg_db_role_setting_setrole,
+					Anum_mdb_db_role_setting_setrole,
 					BTEqualStrategyNumber,
 					F_OIDEQ,
 					ObjectIdGetDatum(roleid));
@@ -216,10 +216,10 @@ DropSetting(Oid databaseid, Oid roleid)
 }
 
 /*
- * Scan pg_db_role_setting looking for applicable settings, and load them on
+ * Scan mdb_db_role_setting looking for applicable settings, and load them on
  * the current process.
  *
- * relsetting is pg_db_role_setting, already opened and locked.
+ * relsetting is mdb_db_role_setting, already opened and locked.
  *
  * Note: we only consider setting for the exact databaseid/roleid combination.
  * This probably needs to be called more than once, with InvalidOid passed as
@@ -234,12 +234,12 @@ ApplySetting(Snapshot snapshot, Oid databaseid, Oid roleid,
 	HeapTuple	tup;
 
 	ScanKeyInit(&keys[0],
-				Anum_pg_db_role_setting_setdatabase,
+				Anum_mdb_db_role_setting_setdatabase,
 				BTEqualStrategyNumber,
 				F_OIDEQ,
 				ObjectIdGetDatum(databaseid));
 	ScanKeyInit(&keys[1],
-				Anum_pg_db_role_setting_setrole,
+				Anum_mdb_db_role_setting_setrole,
 				BTEqualStrategyNumber,
 				F_OIDEQ,
 				ObjectIdGetDatum(roleid));
@@ -251,7 +251,7 @@ ApplySetting(Snapshot snapshot, Oid databaseid, Oid roleid,
 		bool		isnull;
 		Datum		datum;
 
-		datum = heap_getattr(tup, Anum_pg_db_role_setting_setconfig,
+		datum = heap_getattr(tup, Anum_mdb_db_role_setting_setconfig,
 							 RelationGetDescr(relsetting), &isnull);
 		if (!isnull)
 		{
@@ -259,7 +259,7 @@ ApplySetting(Snapshot snapshot, Oid databaseid, Oid roleid,
 
 			/*
 			 * We process all the options at SUSET level.  We assume that the
-			 * right to insert an option into pg_db_role_setting was checked
+			 * right to insert an option into mdb_db_role_setting was checked
 			 * when it was inserted.
 			 */
 			ProcessGUCArray(a, PGC_SUSET, source, GUC_ACTION_SET);

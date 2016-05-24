@@ -792,7 +792,7 @@ CREATE TYPE <replaceable class="parameter">name</replaceable>
    this in case of maximum-length names or collisions with user type names
    that begin with underscore.  Writing code that depends on this convention
    is therefore deprecated.  Instead, use
-   <structname>pg_type</>.<structfield>typarray</> to locate the array type
+   <structname>mdb_type</>.<structfield>typarray</> to locate the array type
    associated with a given type.
   </para>
 

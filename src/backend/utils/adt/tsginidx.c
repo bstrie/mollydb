@@ -355,7 +355,7 @@ gin_tsquery_triconsistent(PG_FUNCTION_ARGS)
 
 /*
  * Formerly, gin_extract_tsvector had only two arguments.  Now it has three,
- * but we still need a pg_proc entry with two args to support reloading
+ * but we still need a mdb_proc entry with two args to support reloading
  * pre-9.1 contrib/tsearch2 opclass declarations.  This compatibility
  * function should go away eventually.  (Note: you might say "hey, but the
  * code above is only *using* two args, so let's just declare it that way".

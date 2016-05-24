@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_language.h
- *	  definition of the system "language" relation (pg_language)
+ * mdb_language.h
+ *	  definition of the system "language" relation (mdb_language)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_language.h
+ * src/include/catalog/mdb_language.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,13 +22,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_language definition.  cpp turns this into
- *		typedef struct FormData_pg_language
+ *		mdb_language definition.  cpp turns this into
+ *		typedef struct FormData_mdb_language
  * ----------------
  */
 #define LanguageRelationId	2612
 
-CATALOG(pg_language,2612)
+CATALOG(mdb_language,2612)
 {
 	NameData	lanname;		/* Language name */
 	Oid			lanowner;		/* Language's owner */
@@ -41,31 +41,31 @@ CATALOG(pg_language,2612)
 #ifdef CATALOG_VARLEN			/* variable-length fields start here */
 	aclitem		lanacl[1];		/* Access privileges */
 #endif
-} FormData_pg_language;
+} FormData_mdb_language;
 
 /* ----------------
- *		Form_pg_language corresponds to a pointer to a tuple with
- *		the format of pg_language relation.
+ *		Form_mdb_language corresponds to a pointer to a tuple with
+ *		the format of mdb_language relation.
  * ----------------
  */
-typedef FormData_pg_language *Form_pg_language;
+typedef FormData_mdb_language *Form_mdb_language;
 
 /* ----------------
- *		compiler constants for pg_language
+ *		compiler constants for mdb_language
  * ----------------
  */
-#define Natts_pg_language				8
-#define Anum_pg_language_lanname		1
-#define Anum_pg_language_lanowner		2
-#define Anum_pg_language_lanispl		3
-#define Anum_pg_language_lanpltrusted	4
-#define Anum_pg_language_lanplcallfoid	5
-#define Anum_pg_language_laninline		6
-#define Anum_pg_language_lanvalidator	7
-#define Anum_pg_language_lanacl			8
+#define Natts_mdb_language				8
+#define Anum_mdb_language_lanname		1
+#define Anum_mdb_language_lanowner		2
+#define Anum_mdb_language_lanispl		3
+#define Anum_mdb_language_lanpltrusted	4
+#define Anum_mdb_language_lanplcallfoid	5
+#define Anum_mdb_language_laninline		6
+#define Anum_mdb_language_lanvalidator	7
+#define Anum_mdb_language_lanacl			8
 
 /* ----------------
- *		initial contents of pg_language
+ *		initial contents of mdb_language
  * ----------------
  */
 

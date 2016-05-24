@@ -8,15 +8,15 @@ setup
 teardown
 {
     DROP TABLE do_write;
-    SELECT 'stop' FROM pg_drop_replication_slot('isolation_slot');
+    SELECT 'stop' FROM mdb_drop_replication_slot('isolation_slot');
 }
 
 
 session "s1"
 setup { SET synchronous_commit=on; }
 
-step "s1init" {SELECT 'init' FROM pg_create_logical_replication_slot('isolation_slot', 'test_decoding');}
-step "s1start" {SELECT data FROM pg_logical_slot_get_changes('isolation_slot', NULL, NULL, 'include-xids', 'false');}
+step "s1init" {SELECT 'init' FROM mdb_create_logical_replication_slot('isolation_slot', 'test_decoding');}
+step "s1start" {SELECT data FROM mdb_logical_slot_get_changes('isolation_slot', NULL, NULL, 'include-xids', 'false');}
 step "s1insert" { INSERT INTO do_write DEFAULT VALUES; }
 step "s1checkpoint" { CHECKPOINT; }
 step "s1alter" { ALTER TABLE do_write ADD COLUMN addedbys1 int; }

@@ -20,7 +20,7 @@
  * tables since the data we decode is wholly contained in the WAL
  * records. Also, our snapshots need to be different in comparison to normal
  * MVCC ones because in contrast to those we cannot fully rely on the clog and
- * pg_subtrans for information about committed transactions because they might
+ * mdb_subtrans for information about committed transactions because they might
  * commit in the future from the POV of the WAL entry we're currently
  * decoding. This definition has the advantage that we only need to prevent
  * removal of catalog rows, while normal table's rows can still be
@@ -966,7 +966,7 @@ SnapBuildCommitTxn(SnapBuild *builder, XLogRecPtr lsn, TransactionId xid,
 	 * made catalog changes.
 	 *
 	 * This has the positive benefit that we afterwards have enough
-	 * information to build an exportable snapshot that's usable by pg_dump et
+	 * information to build an exportable snapshot that's usable by mdb_dump et
 	 * al.
 	 */
 	if (builder->state < SNAPBUILD_CONSISTENT)
@@ -1406,11 +1406,11 @@ typedef struct SnapBuildOnDisk
 
 	/* data not covered by checksum */
 	uint32		magic;
-	pg_crc32c	checksum;
+	mdb_crc32c	checksum;
 
 	/* data covered by checksum */
 
-	/* version, in case we want to support pg_upgrade */
+	/* version, in case we want to support mdb_upgrade */
 	uint32		version;
 	/* how large is the on disk data, excluding the constant sized part */
 	uint32		length;
@@ -1475,10 +1475,10 @@ SnapBuildSerialize(SnapBuild *builder, XLogRecPtr lsn)
 	/*
 	 * We identify snapshots by the LSN they are valid for. We don't need to
 	 * include timelines in the name as each LSN maps to exactly one timeline
-	 * unless the user used pg_resetxlog or similar. If a user did so, there's
+	 * unless the user used mdb_resetxlog or similar. If a user did so, there's
 	 * no hope continuing to decode anyway.
 	 */
-	sprintf(path, "pg_logical/snapshots/%X-%X.snap",
+	sprintf(path, "mdb_logical/snapshots/%X-%X.snap",
 			(uint32) (lsn >> 32), (uint32) lsn);
 
 	/*
@@ -1504,7 +1504,7 @@ SnapBuildSerialize(SnapBuild *builder, XLogRecPtr lsn)
 		 * be safely on disk.
 		 */
 		fsync_fname(path, false);
-		fsync_fname("pg_logical/snapshots", true);
+		fsync_fname("mdb_logical/snapshots", true);
 
 		builder->last_serialized_snapshot = lsn;
 		goto out;
@@ -1520,7 +1520,7 @@ SnapBuildSerialize(SnapBuild *builder, XLogRecPtr lsn)
 	elog(DEBUG1, "serializing snapshot to %s", path);
 
 	/* to make sure only we will write to this tempfile, include pid */
-	sprintf(tmppath, "pg_logical/snapshots/%X-%X.snap.%u.tmp",
+	sprintf(tmppath, "mdb_logical/snapshots/%X-%X.snap.%u.tmp",
 			(uint32) (lsn >> 32), (uint32) lsn, MyProcPid);
 
 	/*
@@ -1599,7 +1599,7 @@ SnapBuildSerialize(SnapBuild *builder, XLogRecPtr lsn)
 	 * some noticeable overhead since it's performed synchronously during
 	 * decoding?
 	 */
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 	{
 		CloseTransientFile(fd);
 		ereport(ERROR,
@@ -1608,7 +1608,7 @@ SnapBuildSerialize(SnapBuild *builder, XLogRecPtr lsn)
 	}
 	CloseTransientFile(fd);
 
-	fsync_fname("pg_logical/snapshots", true);
+	fsync_fname("mdb_logical/snapshots", true);
 
 	/*
 	 * We may overwrite the work from some other backend, but that's ok, our
@@ -1624,7 +1624,7 @@ SnapBuildSerialize(SnapBuild *builder, XLogRecPtr lsn)
 
 	/* make sure we persist */
 	fsync_fname(path, false);
-	fsync_fname("pg_logical/snapshots", true);
+	fsync_fname("mdb_logical/snapshots", true);
 
 	/*
 	 * Now there's no way we can loose the dumped state anymore, remember this
@@ -1649,13 +1649,13 @@ SnapBuildRestore(SnapBuild *builder, XLogRecPtr lsn)
 	char		path[MAXPGPATH];
 	Size		sz;
 	int			readBytes;
-	pg_crc32c	checksum;
+	mdb_crc32c	checksum;
 
 	/* no point in loading a snapshot if we're already there */
 	if (builder->state == SNAPBUILD_CONSISTENT)
 		return false;
 
-	sprintf(path, "pg_logical/snapshots/%X-%X.snap",
+	sprintf(path, "mdb_logical/snapshots/%X-%X.snap",
 			(uint32) (lsn >> 32), (uint32) lsn);
 
 	fd = OpenTransientFile(path, O_RDONLY | PG_BINARY, 0);
@@ -1676,7 +1676,7 @@ SnapBuildRestore(SnapBuild *builder, XLogRecPtr lsn)
 	 * ----
 	 */
 	fsync_fname(path, false);
-	fsync_fname("pg_logical/snapshots", true);
+	fsync_fname("mdb_logical/snapshots", true);
 
 
 	/* read statically sized portion of snapshot */
@@ -1855,8 +1855,8 @@ CheckPointSnapBuild(void)
 	if (redo < cutoff)
 		cutoff = redo;
 
-	snap_dir = AllocateDir("pg_logical/snapshots");
-	while ((snap_de = ReadDir(snap_dir, "pg_logical/snapshots")) != NULL)
+	snap_dir = AllocateDir("mdb_logical/snapshots");
+	while ((snap_de = ReadDir(snap_dir, "mdb_logical/snapshots")) != NULL)
 	{
 		uint32		hi;
 		uint32		lo;
@@ -1867,7 +1867,7 @@ CheckPointSnapBuild(void)
 			strcmp(snap_de->d_name, "..") == 0)
 			continue;
 
-		snprintf(path, MAXPGPATH, "pg_logical/snapshots/%s", snap_de->d_name);
+		snprintf(path, MAXPGPATH, "mdb_logical/snapshots/%s", snap_de->d_name);
 
 		if (lstat(path, &statbuf) == 0 && !S_ISREG(statbuf.st_mode))
 		{

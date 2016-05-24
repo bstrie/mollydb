@@ -4,20 +4,20 @@
  *	utility functions
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/util.c
+ *	src/bin/mdb_upgrade/util.c
  */
 
 #include "mollydb_fe.h"
 
 #include "common/username.h"
-#include "pg_upgrade.h"
+#include "mdb_upgrade.h"
 
 #include <signal.h>
 
 
 LogOpts		log_opts;
 
-static void pg_log_v(eLogType type, const char *fmt, va_list ap) pg_attribute_printf(2, 0);
+static void mdb_log_v(eLogType type, const char *fmt, va_list ap) mdb_attribute_printf(2, 0);
 
 
 /*
@@ -35,7 +35,7 @@ report_status(eLogType type, const char *fmt,...)
 	vsnprintf(message, sizeof(message), fmt, args);
 	va_end(args);
 
-	pg_log(type, "%s\n", message);
+	mdb_log(type, "%s\n", message);
 }
 
 
@@ -64,7 +64,7 @@ end_progress_output(void)
  *		if(( message = flarbFiles(fileCount)) == NULL)
  *		  report_status(PG_REPORT, "ok" );
  *		else
- *		  pg_log(PG_FATAL, "failed - %s\n", message );
+ *		  mdb_log(PG_FATAL, "failed - %s\n", message );
  */
 void
 prep_status(const char *fmt,...)
@@ -77,15 +77,15 @@ prep_status(const char *fmt,...)
 	va_end(args);
 
 	if (strlen(message) > 0 && message[strlen(message) - 1] == '\n')
-		pg_log(PG_REPORT, "%s", message);
+		mdb_log(PG_REPORT, "%s", message);
 	else
 		/* trim strings that don't end in a newline */
-		pg_log(PG_REPORT, "%-*s", MESSAGE_WIDTH, message);
+		mdb_log(PG_REPORT, "%-*s", MESSAGE_WIDTH, message);
 }
 
 
 static void
-pg_log_v(eLogType type, const char *fmt, va_list ap)
+mdb_log_v(eLogType type, const char *fmt, va_list ap)
 {
 	char		message[QUERY_ALLOC];
 
@@ -145,23 +145,23 @@ pg_log_v(eLogType type, const char *fmt, va_list ap)
 
 
 void
-pg_log(eLogType type, const char *fmt,...)
+mdb_log(eLogType type, const char *fmt,...)
 {
 	va_list		args;
 
 	va_start(args, fmt);
-	pg_log_v(type, fmt, args);
+	mdb_log_v(type, fmt, args);
 	va_end(args);
 }
 
 
 void
-pg_fatal(const char *fmt,...)
+mdb_fatal(const char *fmt,...)
 {
 	va_list		args;
 
 	va_start(args, fmt);
-	pg_log_v(PG_FATAL, fmt, args);
+	mdb_log_v(PG_FATAL, fmt, args);
 	va_end(args);
 	printf("Failure, exiting\n");
 	exit(1);
@@ -181,13 +181,13 @@ check_ok(void)
  * quote_identifier()
  *		Properly double-quote a SQL identifier.
  *
- * The result should be pg_free'd, but most callers don't bother because
+ * The result should be mdb_free'd, but most callers don't bother because
  * memory leakage is not a big deal in this program.
  */
 char *
 quote_identifier(const char *s)
 {
-	char	   *result = pg_malloc(strlen(s) * 2 + 3);
+	char	   *result = mdb_malloc(strlen(s) * 2 + 3);
 	char	   *r = result;
 
 	*r++ = '"';
@@ -223,10 +223,10 @@ get_user_info(char **user_name_p)
 
 	user_name = get_user_name(&errstr);
 	if (!user_name)
-		pg_fatal("%s\n", errstr);
+		mdb_fatal("%s\n", errstr);
 
 	/* make a copy */
-	*user_name_p = pg_strdup(user_name);
+	*user_name_p = mdb_strdup(user_name);
 
 	return user_id;
 }
@@ -243,7 +243,7 @@ getErrorText(void)
 #ifdef WIN32
 	_dosmaperr(GetLastError());
 #endif
-	return pg_strdup(strerror(errno));
+	return mdb_strdup(strerror(errno));
 }
 
 
@@ -260,13 +260,13 @@ str2uint(const char *str)
 
 
 /*
- *	pg_putenv()
+ *	mdb_putenv()
  *
  *	This is like putenv(), but takes two arguments.
  *	It also does unsetenv() if val is NULL.
  */
 void
-pg_putenv(const char *var, const char *val)
+mdb_putenv(const char *var, const char *val)
 {
 	if (val)
 	{

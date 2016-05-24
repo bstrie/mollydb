@@ -118,7 +118,7 @@ hashline_number(void)
 	return EMPTY;
 }
 
-static char *ecpg_statement_type_name[] = {
+static char *ecmdb_statement_type_name[] = {
 	"ECPGst_normal",
 	"ECPGst_execute",
 	"ECPGst_exec_immediate",
@@ -131,7 +131,7 @@ output_statement(char *stmt, int whenever_mode, enum ECPG_statement_type st)
 	fprintf(yyout, "{ ECPGdo(__LINE__, %d, %d, %s, %d, ", compat, force_indicator, connection ? connection : "NULL", questionmarks);
 	if (st == ECPGst_execute || st == ECPGst_exec_immediate)
 	{
-		fprintf(yyout, "%s, %s, ", ecpg_statement_type_name[st], stmt);
+		fprintf(yyout, "%s, %s, ", ecmdb_statement_type_name[st], stmt);
 	}
 	else
 	{

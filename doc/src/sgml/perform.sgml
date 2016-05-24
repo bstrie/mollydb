@@ -177,7 +177,7 @@ EXPLAIN SELECT * FROM tenk1;
     These numbers are derived very straightforwardly.  If you do:
 
 <programlisting>
-SELECT relpages, reltuples FROM pg_class WHERE relname = 'tenk1';
+SELECT relpages, reltuples FROM mdb_class WHERE relname = 'tenk1';
 </programlisting>
 
     you will find that <classname>tenk1</classname> has 358 disk
@@ -917,14 +917,14 @@ EXPLAIN ANALYZE SELECT * FROM tenk1 WHERE unique1 &lt; 100 AND unique2 &gt; 9000
    One component of the statistics is the total number of entries in
    each table and index, as well as the number of disk blocks occupied
    by each table and index.  This information is kept in the table
-   <link linkend="catalog-pg-class"><structname>pg_class</structname></link>,
+   <link linkend="catalog-pg-class"><structname>mdb_class</structname></link>,
    in the columns <structfield>reltuples</structfield> and
    <structfield>relpages</structfield>.  We can look at it with
    queries similar to this one:
 
 <screen>
 SELECT relname, relkind, reltuples, relpages
-FROM pg_class
+FROM mdb_class
 WHERE relname LIKE 'tenk1%';
 
        relname        | relkind | reltuples | relpages
@@ -953,13 +953,13 @@ WHERE relname LIKE 'tenk1%';
    <structfield>reltuples</structfield> count on the basis of the part
    of the table it did scan, resulting in an approximate value.
    In any case, the planner
-   will scale the values it finds in <structname>pg_class</structname>
+   will scale the values it finds in <structname>mdb_class</structname>
    to match the current physical table size, thus obtaining a closer
    approximation.
   </para>
 
   <indexterm>
-   <primary>pg_statistic</primary>
+   <primary>mdb_statistic</primary>
   </indexterm>
 
   <para>
@@ -970,35 +970,35 @@ WHERE relname LIKE 'tenk1%';
    the fraction of rows that match each condition in the
    <literal>WHERE</> clause.  The information used for this task is
    stored in the
-   <link linkend="catalog-pg-statistic"><structname>pg_statistic</structname></link>
-   system catalog.  Entries in <structname>pg_statistic</structname>
+   <link linkend="catalog-pg-statistic"><structname>mdb_statistic</structname></link>
+   system catalog.  Entries in <structname>mdb_statistic</structname>
    are updated by the <command>ANALYZE</> and <command>VACUUM
    ANALYZE</> commands, and are always approximate even when freshly
    updated.
   </para>
 
   <indexterm>
-   <primary>pg_stats</primary>
+   <primary>mdb_stats</primary>
   </indexterm>
 
   <para>
-   Rather than look at <structname>pg_statistic</structname> directly,
+   Rather than look at <structname>mdb_statistic</structname> directly,
    it's better to look at its view
-   <link linkend="view-pg-stats"><structname>pg_stats</structname></link>
-   when examining the statistics manually.  <structname>pg_stats</structname>
+   <link linkend="view-pg-stats"><structname>mdb_stats</structname></link>
+   when examining the statistics manually.  <structname>mdb_stats</structname>
    is designed to be more easily readable.  Furthermore,
-   <structname>pg_stats</structname> is readable by all, whereas
-   <structname>pg_statistic</structname> is only readable by a superuser.
+   <structname>mdb_stats</structname> is readable by all, whereas
+   <structname>mdb_statistic</structname> is only readable by a superuser.
    (This prevents unprivileged users from learning something about
    the contents of other people's tables from the statistics.  The
-   <structname>pg_stats</structname> view is restricted to show only
+   <structname>mdb_stats</structname> view is restricted to show only
    rows about tables that the current user can read.)
    For example, we might do:
 
 <screen>
 SELECT attname, inherited, n_distinct,
        array_to_string(most_common_vals, E'\n') as most_common_vals
-FROM pg_stats
+FROM mdb_stats
 WHERE tablename = 'road';
 
  attname | inherited | n_distinct |          most_common_vals
@@ -1024,7 +1024,7 @@ WHERE tablename = 'road';
   </para>
 
   <para>
-   The amount of information stored in <structname>pg_statistic</structname>
+   The amount of information stored in <structname>mdb_statistic</structname>
    by <command>ANALYZE</>, in particular the maximum number of entries in the
    <structfield>most_common_vals</> and <structfield>histogram_bounds</>
    arrays for each column, can be set on a
@@ -1034,7 +1034,7 @@ WHERE tablename = 'road';
    The default limit is presently 100 entries.  Raising the limit
    might allow more accurate planner estimates to be made, particularly for
    columns with irregular data distributions, at the price of consuming
-   more space in <structname>pg_statistic</structname> and slightly more
+   more space in <structname>mdb_statistic</structname> and slightly more
    time to compute the estimates.  Conversely, a lower limit might be
    sufficient for columns with simple data distributions.
   </para>
@@ -1453,21 +1453,21 @@ SELECT * FROM x, y, a, b, c WHERE something AND somethingelse;
   </sect2>
 
   <sect2 id="populate-pg-dump">
-   <title>Some Notes About <application>pg_dump</></title>
+   <title>Some Notes About <application>mdb_dump</></title>
 
    <para>
-    Dump scripts generated by <application>pg_dump</> automatically apply
+    Dump scripts generated by <application>mdb_dump</> automatically apply
     several, but not all, of the above guidelines.  To reload a
-    <application>pg_dump</> dump as quickly as possible, you need to
+    <application>mdb_dump</> dump as quickly as possible, you need to
     do a few extra things manually.  (Note that these points apply while
     <emphasis>restoring</> a dump, not while <emphasis>creating</> it.
     The same points apply whether loading a text dump with
-    <application>psql</> or using <application>pg_restore</> to load
-    from a <application>pg_dump</> archive file.)
+    <application>psql</> or using <application>mdb_restore</> to load
+    from a <application>mdb_dump</> archive file.)
    </para>
 
    <para>
-    By default, <application>pg_dump</> uses <command>COPY</>, and when
+    By default, <application>mdb_dump</> uses <command>COPY</>, and when
     it is generating a complete schema-and-data dump, it is careful to
     load data before creating indexes and foreign keys.  So in this case
     several guidelines are handled automatically.  What is left
@@ -1494,7 +1494,7 @@ SELECT * FROM x, y, a, b, c WHERE something AND somethingelse;
      <listitem>
       <para>
        Experiment with the parallel dump and restore modes of both
-       <application>pg_dump</> and <application>pg_restore</> and find the
+       <application>mdb_dump</> and <application>mdb_restore</> and find the
        optimal number of concurrent jobs to use. Dumping and restoring in
        parallel by means of the <option>-j</> option should give you a
        significantly higher performance over the serial mode.
@@ -1505,7 +1505,7 @@ SELECT * FROM x, y, a, b, c WHERE something AND somethingelse;
        Consider whether the whole dump should be restored as a single
        transaction.  To do that, pass the <option>-1</> or
        <option>--single-transaction</> command-line option to
-       <application>psql</> or <application>pg_restore</>. When using this
+       <application>psql</> or <application>mdb_restore</>. When using this
        mode, even the smallest of errors will rollback the entire restore,
        possibly discarding many hours of processing.  Depending on how
        interrelated the data is, that might seem preferable to manual cleanup,
@@ -1516,7 +1516,7 @@ SELECT * FROM x, y, a, b, c WHERE something AND somethingelse;
      <listitem>
       <para>
        If multiple CPUs are available in the database server, consider using
-       <application>pg_restore</>'s <option>--jobs</> option.  This
+       <application>mdb_restore</>'s <option>--jobs</> option.  This
        allows concurrent data loading and index creation.
       </para>
      </listitem>
@@ -1612,7 +1612,7 @@ SELECT * FROM x, y, a, b, c WHERE something AND somethingelse;
        Increase <xref linkend="guc-max-wal-size"> and <xref
        linkend="guc-checkpoint-timeout"> ; this reduces the frequency
        of checkpoints, but increases the storage requirements of
-       <filename>/pg_xlog</>.
+       <filename>/mdb_xlog</>.
       </para>
      </listitem>
 

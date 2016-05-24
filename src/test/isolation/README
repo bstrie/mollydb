@@ -6,7 +6,7 @@ Isolation tests
 This directory contains a set of tests for concurrent behaviors in
 MollyDB.  These tests require running multiple interacting transactions,
 which requires management of multiple concurrent connections, and therefore
-can't be tested using the normal pg_regress program.  The name "isolation"
+can't be tested using the normal mdb_regress program.  The name "isolation"
 comes from the fact that the original motivation was to test the
 serializable isolation level; but tests for other sorts of concurrent
 behaviors have been added as well.
@@ -16,7 +16,7 @@ expected by libpq.  (You can set PGPORT and so forth in your environment
 to control this.)  Then run
     make installcheck
 To run just specific test(s), you can do something like
-    ./pg_isolation_regress fk-contention fk-deadlock
+    ./mdb_isolation_regress fk-contention fk-deadlock
 (look into the specs/ subdirectory to see the available tests).
 
 The prepared-transactions test requires the server's
@@ -35,9 +35,9 @@ and executes a test specified by a spec file. A libpq connection string
 specifies the server and database to connect to; defaults derived from
 environment variables are used otherwise.
 
-pg_isolation_regress is a tool similar to pg_regress, but instead of using
+mdb_isolation_regress is a tool similar to mdb_regress, but instead of using
 psql to execute a test, it uses isolationtester.  It accepts all the same
-command-line arguments as pg_regress.
+command-line arguments as mdb_regress.
 
 
 Test specification
@@ -114,5 +114,5 @@ permutations should be avoided because they can make the isolation tests take
 a very long time to run, and they serve no useful testing purpose.
 
 Note that isolationtester recognizes that a command has blocked by looking
-to see if it is shown as waiting in the pg_locks view; therefore, only
+to see if it is shown as waiting in the mdb_locks view; therefore, only
 blocks on heavyweight locks will be detected.

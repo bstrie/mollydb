@@ -70,7 +70,7 @@
       A page image obtained with <function>get_raw_page</function> should be
       passed as argument.  For example:
 <screen>
-test=# SELECT * FROM page_header(get_raw_page('pg_class', 0));
+test=# SELECT * FROM page_header(get_raw_page('mdb_class', 0));
     lsn    | checksum | flags  | lower | upper | special | pagesize | version | prune_xid
 -----------+----------+--------+-------+-------+---------+----------+---------+-----------
  0/24A1B50 |        1 |      1 |   232 |   368 |    8192 |     8192 |       4 |         0
@@ -102,7 +102,7 @@ test=# SELECT * FROM page_header(get_raw_page('pg_class', 0));
       A heap page image obtained with <function>get_raw_page</function> should
       be passed as argument.  For example:
 <screen>
-test=# SELECT * FROM heap_page_items(get_raw_page('pg_class', 0));
+test=# SELECT * FROM heap_page_items(get_raw_page('mdb_class', 0));
 </screen>
       See <filename>src/include/storage/itemid.h</> and
       <filename>src/include/access/htup_details.h</> for explanations of the fields
@@ -123,7 +123,7 @@ test=# SELECT * FROM heap_page_items(get_raw_page('pg_class', 0));
       <function>tuple_data_split</function> splits tuple data into attributes
       in the same way as backend internals.
 <screen>
-test=# SELECT tuple_data_split('pg_class'::regclass, t_data, t_infomask, t_infomask2, t_bits) FROM heap_page_items(get_raw_page('pg_class', 0));
+test=# SELECT tuple_data_split('mdb_class'::regclass, t_data, t_infomask, t_infomask2, t_bits) FROM heap_page_items(get_raw_page('mdb_class', 0));
 </screen>
       This function should be called with the same arguments as the return
       attributes of <function>heap_page_items</function>.
@@ -155,7 +155,7 @@ test=# SELECT tuple_data_split('pg_class'::regclass, t_data, t_infomask, t_infom
       A heap page image obtained with <function>get_raw_page</function> should
       be passed as argument.  For example:
 <screen>
-test=# SELECT * FROM heap_page_item_attrs(get_raw_page('pg_class', 0), 'pg_class'::regclass);
+test=# SELECT * FROM heap_page_item_attrs(get_raw_page('mdb_class', 0), 'mdb_class'::regclass);
 </screen>
      </para>
     </listitem>
@@ -174,7 +174,7 @@ test=# SELECT * FROM heap_page_item_attrs(get_raw_page('pg_class', 0), 'pg_class
       <function>bt_metap</function> returns information about a B-tree
       index's metapage.  For example:
 <screen>
-test=# SELECT * FROM bt_metap('pg_cast_oid_index');
+test=# SELECT * FROM bt_metap('mdb_cast_oid_index');
 -[ RECORD 1 ]-----
 magic     | 340322
 version   | 2
@@ -200,7 +200,7 @@ fastlevel | 0
       <function>bt_page_stats</function> returns summary information about
       single pages of B-tree indexes.  For example:
 <screen>
-test=# SELECT * FROM bt_page_stats('pg_cast_oid_index', 1);
+test=# SELECT * FROM bt_page_stats('mdb_cast_oid_index', 1);
 -[ RECORD 1 ]-+-----
 blkno         | 1
 type          | l
@@ -231,7 +231,7 @@ btpo_flags    | 3
       <function>bt_page_items</function> returns detailed information about
       all of the items on a B-tree index page.  For example:
 <screen>
-test=# SELECT * FROM bt_page_items('pg_cast_oid_index', 1);
+test=# SELECT * FROM bt_page_items('mdb_cast_oid_index', 1);
  itemoffset |  ctid   | itemlen | nulls | vars |    data
 ------------+---------+---------+-------+------+-------------
           1 | (0,1)   |      12 | f     | f    | 23 27 00 00

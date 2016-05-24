@@ -41,12 +41,12 @@
 
 
 /*
- * pg_regfree - free an RE (generic function, punts to RE-specific function)
+ * mdb_regfree - free an RE (generic function, punts to RE-specific function)
  *
  * Ignoring invocation with NULL is a convenience.
  */
 void
-pg_regfree(regex_t *re)
+mdb_regfree(regex_t *re)
 {
 	if (re == NULL)
 		return;

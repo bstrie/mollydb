@@ -3488,7 +3488,7 @@ exception when others then
   get stacked diagnostics
         _sqlstate = returned_sqlstate,
         _message = message_text,
-        _context = pg_exception_context;
+        _context = mdb_exception_context;
   raise notice 'sqlstate: %, message: %, context: [%]',
     _sqlstate, _message, replace(_context, E'\n', ' <- ');
 end;
@@ -3505,8 +3505,8 @@ begin
 exception when others then
   get stacked diagnostics
         _message = message_text,
-        _detail = pg_exception_detail,
-        _hint = pg_exception_hint;
+        _detail = mdb_exception_detail,
+        _hint = mdb_exception_hint;
   raise notice 'message: %, detail: %, hint: %', _message, _detail, _hint;
 end;
 $$ language plmdb;
@@ -3521,8 +3521,8 @@ declare _detail text;
 begin
   get stacked diagnostics
         _message = message_text,
-        _detail = pg_exception_detail,
-        _hint = pg_exception_hint;
+        _detail = mdb_exception_detail,
+        _hint = mdb_exception_hint;
   raise notice 'message: %, detail: %, hint: %', _message, _detail, _hint;
 end;
 $$ language plmdb;
@@ -3568,7 +3568,7 @@ exception when others then
   get stacked diagnostics
         _column_name = column_name,
         _constraint_name = constraint_name,
-        _datatype_name = pg_datatype_name,
+        _datatype_name = mdb_datatype_name,
         _table_name = table_name,
         _schema_name = schema_name;
   raise notice 'column %, constraint %, type %, table %, schema %',
@@ -3837,7 +3837,7 @@ $$ select recurse($1) limit 1; $$ language sql;
 select recurse(10);
 
 create function error1(text) returns text language sql as
-$$ SELECT relname::text FROM pg_class c WHERE c.oid = $1::regclass $$;
+$$ SELECT relname::text FROM mdb_class c WHERE c.oid = $1::regclass $$;
 
 create function error2(p_name_table text) returns text language plmdb as $$
 begin
@@ -4242,10 +4242,10 @@ create function inner_func(int)
 returns int as $$
 declare _context text;
 begin
-  get diagnostics _context = pg_context;
+  get diagnostics _context = mdb_context;
   raise notice '***%***', _context;
   -- lets do it again, just for fun..
-  get diagnostics _context = pg_context;
+  get diagnostics _context = mdb_context;
   raise notice '***%***', _context;
   raise notice 'lets make sure we didnt break anything';
   return 2 * $1;
@@ -4295,12 +4295,12 @@ begin
     perform sx / 0;
   exception
     when division_by_zero then
-      get diagnostics _context = pg_context;
+      get diagnostics _context = mdb_context;
       raise notice '***%***', _context;
   end;
 
   -- lets do it again, just for fun..
-  get diagnostics _context = pg_context;
+  get diagnostics _context = mdb_context;
   raise notice '***%***', _context;
   raise notice 'lets make sure we didnt break anything';
   return 2 * $1;

@@ -32,7 +32,7 @@
  * attempt, not during inv_open(), so we have other bits to remember that.
  *
  * NOTE: before 7.1, we also had to store references to the separate table
- * and index of a specific large object.  Now they all live in pg_largeobject
+ * and index of a specific large object.  Now they all live in mdb_largeobject
  * and are accessed via a common relation descriptor.
  *----------
  */
@@ -61,7 +61,7 @@ typedef struct LargeObjectDesc
  * up when a page-tuple is updated.  Note that the value is deliberately
  * chosen large enough to trigger the tuple toaster, so that we will
  * attempt to compress page tuples in-line.  (But they won't be moved off
- * unless the user creates a toast-table for pg_largeobject...)
+ * unless the user creates a toast-table for mdb_largeobject...)
  *
  * Also, it seems to be a smart move to make the page size be a power of 2,
  * since clients will often be written to send data in power-of-2 blocks.
@@ -73,7 +73,7 @@ typedef struct LargeObjectDesc
 
 /*
  * Maximum length in bytes for a large object.  To make this larger, we'd
- * have to widen pg_largeobject.pageno as well as various internal variables.
+ * have to widen mdb_largeobject.pageno as well as various internal variables.
  */
 #define MAX_LARGE_OBJECT_SIZE	((int64) INT_MAX * LOBLKSIZE)
 

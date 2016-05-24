@@ -421,7 +421,7 @@ security_barrier_replace_vars_walker(Node *node,
 			/* Not in the subquery targetlist, so add it. Get its name. */
 			if (var->varattno < 0)
 			{
-				Form_pg_attribute att_tup;
+				Form_mdb_attribute att_tup;
 
 				att_tup = SystemAttributeDefinition(var->varattno,
 										   context->rel->rd_rel->relhasoids);
@@ -433,7 +433,7 @@ security_barrier_replace_vars_walker(Node *node,
 			}
 			else if (var->varattno <= context->rel->rd_att->natts)
 			{
-				Form_pg_attribute att_tup;
+				Form_mdb_attribute att_tup;
 
 				att_tup = context->rel->rd_att->attrs[var->varattno - 1];
 				attname = NameStr(att_tup->attname);

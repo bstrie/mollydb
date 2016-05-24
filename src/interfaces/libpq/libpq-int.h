@@ -132,7 +132,7 @@ typedef struct pgresParamDesc
  * to store a null string separately for each one).
  */
 
-#define NULL_LEN		(-1)	/* pg_result len for NULL value */
+#define NULL_LEN		(-1)	/* mdb_result len for NULL value */
 
 typedef struct pgresAttValue
 {
@@ -166,7 +166,7 @@ typedef struct PGEvent
 	bool		resultInitialized;		/* T if RESULTCREATE/COPY succeeded */
 } PGEvent;
 
-struct pg_result
+struct mdb_result
 {
 	int			ntups;
 	int			numAttributes;
@@ -296,7 +296,7 @@ typedef struct pgDataValue
  * PGconn stores all the state data associated with a single connection
  * to a backend.
  */
-struct pg_conn
+struct mdb_conn
 {
 	/* Saved values of connection options */
 	char	   *pghost;			/* the machine on which the server is running */
@@ -473,7 +473,7 @@ struct pg_conn
  * data is required to safely cancel a connection running on a different
  * thread.
  */
-struct pg_cancel
+struct mdb_cancel
 {
 	SockAddr	raddr;			/* Remote address */
 	int			be_pid;			/* PID of backend --- needed for cancels */
@@ -521,7 +521,7 @@ extern int pqPacketSend(PGconn *conn, char pack_type,
 extern bool pqGetHomeDirectory(char *buf, int bufsize);
 
 #ifdef ENABLE_THREAD_SAFETY
-extern pgthreadlock_t pg_g_threadlock;
+extern pgthreadlock_t mdb_g_threadlock;
 
 #define PGTHREAD_ERROR(msg) \
 	do { \
@@ -530,8 +530,8 @@ extern pgthreadlock_t pg_g_threadlock;
 	} while (0)
 
 
-#define pglock_thread()		pg_g_threadlock(true)
-#define pgunlock_thread()	pg_g_threadlock(false)
+#define pglock_thread()		mdb_g_threadlock(true)
+#define pgunlock_thread()	mdb_g_threadlock(false)
 #else
 #define pglock_thread()		((void) 0)
 #define pgunlock_thread()	((void) 0)
@@ -546,7 +546,7 @@ extern char *pqResultStrdup(PGresult *res, const char *str);
 extern void pqClearAsyncResult(PGconn *conn);
 extern void pqSaveErrorResult(PGconn *conn);
 extern PGresult *pqPrepareAsyncResult(PGconn *conn);
-extern void pqInternalNotice(const PGNoticeHooks *hooks, const char *fmt,...) pg_attribute_printf(2, 3);
+extern void pqInternalNotice(const PGNoticeHooks *hooks, const char *fmt,...) mdb_attribute_printf(2, 3);
 extern void pqSaveMessageField(PGresult *res, char code,
 				   const char *value);
 extern void pqSaveParameterStatus(PGconn *conn, const char *name,
@@ -651,8 +651,8 @@ extern ssize_t pgtls_write(PGconn *conn, const void *ptr, size_t len);
 #define pqIsnonblocking(conn)	((conn)->nonblocking)
 
 #ifdef ENABLE_NLS
-extern char *libpq_gettext(const char *msgid) pg_attribute_format_arg(1);
-extern char *libpq_ngettext(const char *msgid, const char *msgid_plural, unsigned long n) pg_attribute_format_arg(1) pg_attribute_format_arg(2);
+extern char *libpq_gettext(const char *msgid) mdb_attribute_format_arg(1);
+extern char *libpq_ngettext(const char *msgid, const char *msgid_plural, unsigned long n) mdb_attribute_format_arg(1) mdb_attribute_format_arg(2);
 #else
 #define libpq_gettext(x) (x)
 #define libpq_ngettext(s, p, n) ((n) == 1 ? (s) : (p))

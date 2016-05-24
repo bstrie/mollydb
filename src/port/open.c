@@ -103,7 +103,7 @@ pgwin32_open(const char *fileName, int fileFlags,...)
 		if (err == ERROR_SHARING_VIOLATION ||
 			err == ERROR_LOCK_VIOLATION)
 		{
-			pg_usleep(100000);
+			mdb_usleep(100000);
 			loops++;
 
 #ifndef FRONTEND

@@ -21,10 +21,10 @@
 #include "catalog/heap.h"
 #include "catalog/index.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_type.h"
 #include "catalog/toasting.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
@@ -33,8 +33,8 @@
 #include "utils/rel.h"
 #include "utils/syscache.h"
 
-/* Potentially set by pg_upgrade_support functions */
-Oid			binary_upgrade_next_toast_pg_type_oid = InvalidOid;
+/* Potentially set by mdb_upgrade_support functions */
+Oid			binary_upgrade_next_toast_mdb_type_oid = InvalidOid;
 
 static void CheckAndCreateToastTable(Oid relOid, Datum reloptions,
 						 LOCKMODE lockmode, bool check);
@@ -149,7 +149,7 @@ create_toast_table(Relation rel, Oid toastOid, Oid toastIndexOid,
 	 * Toast table is shared if and only if its parent is.
 	 *
 	 * We cannot allow toasting a shared relation after initdb (because
-	 * there's no way to mark it toasted in other databases' pg_class).
+	 * there's no way to mark it toasted in other databases' mdb_class).
 	 */
 	shared_relation = rel->rd_rel->relisshared;
 	if (shared_relation && !IsBootstrapProcessingMode())
@@ -179,7 +179,7 @@ create_toast_table(Relation rel, Oid toastOid, Oid toastIndexOid,
 	{
 		/*
 		 * In binary-upgrade mode, create a TOAST table if and only if
-		 * pg_upgrade told us to (ie, a TOAST table OID has been provided).
+		 * mdb_upgrade told us to (ie, a TOAST table OID has been provided).
 		 *
 		 * This indicates that the old cluster had a TOAST table for the
 		 * current table.  We must create a TOAST table to receive the old
@@ -195,8 +195,8 @@ create_toast_table(Relation rel, Oid toastOid, Oid toastIndexOid,
 		 * problem that it might take up an OID that will conflict with some
 		 * old-cluster table we haven't seen yet.
 		 */
-		if (!OidIsValid(binary_upgrade_next_toast_pg_class_oid) ||
-			!OidIsValid(binary_upgrade_next_toast_pg_type_oid))
+		if (!OidIsValid(binary_upgrade_next_toast_mdb_class_oid) ||
+			!OidIsValid(binary_upgrade_next_toast_mdb_type_oid))
 			return false;
 	}
 
@@ -211,9 +211,9 @@ create_toast_table(Relation rel, Oid toastOid, Oid toastIndexOid,
 	 * Create the toast table and its index
 	 */
 	snprintf(toast_relname, sizeof(toast_relname),
-			 "pg_toast_%u", relOid);
+			 "mdb_toast_%u", relOid);
 	snprintf(toast_idxname, sizeof(toast_idxname),
-			 "pg_toast_%u_index", relOid);
+			 "mdb_toast_%u_index", relOid);
 
 	/* this is pretty painful...  need a tuple descriptor */
 	tupdesc = CreateTemplateTupleDesc(3, false);
@@ -240,7 +240,7 @@ create_toast_table(Relation rel, Oid toastOid, Oid toastIndexOid,
 	tupdesc->attrs[2]->attstorage = 'p';
 
 	/*
-	 * Toast tables for regular relations go in pg_toast; those for temp
+	 * Toast tables for regular relations go in mdb_toast; those for temp
 	 * relations go into the per-backend temp-toast-table namespace.
 	 */
 	if (isTempOrTempToastNamespace(rel->rd_rel->relnamespace))
@@ -249,14 +249,14 @@ create_toast_table(Relation rel, Oid toastOid, Oid toastIndexOid,
 		namespaceid = PG_TOAST_NAMESPACE;
 
 	/*
-	 * Use binary-upgrade override for pg_type.oid, if supplied.  We might be
+	 * Use binary-upgrade override for mdb_type.oid, if supplied.  We might be
 	 * in the post-schema-restore phase where we are doing ALTER TABLE to
 	 * create TOAST tables that didn't exist in the old cluster.
 	 */
-	if (IsBinaryUpgrade && OidIsValid(binary_upgrade_next_toast_pg_type_oid))
+	if (IsBinaryUpgrade && OidIsValid(binary_upgrade_next_toast_mdb_type_oid))
 	{
-		toast_typid = binary_upgrade_next_toast_pg_type_oid;
-		binary_upgrade_next_toast_pg_type_oid = InvalidOid;
+		toast_typid = binary_upgrade_next_toast_mdb_type_oid;
+		binary_upgrade_next_toast_mdb_type_oid = InvalidOid;
 	}
 
 	toast_relid = heap_create_with_catalog(toast_relname,
@@ -337,7 +337,7 @@ create_toast_table(Relation rel, Oid toastOid, Oid toastIndexOid,
 	heap_close(toast_rel, NoLock);
 
 	/*
-	 * Store the toast table's OID in the parent relation's pg_class row
+	 * Store the toast table's OID in the parent relation's mdb_class row
 	 */
 	class_rel = heap_open(RelationRelationId, RowExclusiveLock);
 
@@ -345,7 +345,7 @@ create_toast_table(Relation rel, Oid toastOid, Oid toastIndexOid,
 	if (!HeapTupleIsValid(reltup))
 		elog(ERROR, "cache lookup failed for relation %u", relOid);
 
-	((Form_pg_class) GETSTRUCT(reltup))->reltoastrelid = toast_relid;
+	((Form_mdb_class) GETSTRUCT(reltup))->reltoastrelid = toast_relid;
 
 	if (!IsBootstrapProcessingMode())
 	{
@@ -403,7 +403,7 @@ needs_toast_table(Relation rel)
 	bool		maxlength_unknown = false;
 	bool		has_toastable_attrs = false;
 	TupleDesc	tupdesc;
-	Form_pg_attribute *att;
+	Form_mdb_attribute *att;
 	int32		tuple_length;
 	int			i;
 

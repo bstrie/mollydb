@@ -42,11 +42,11 @@ dintdict_init(PG_FUNCTION_ARGS)
 	{
 		DefElem    *defel = (DefElem *) lfirst(l);
 
-		if (pg_strcasecmp(defel->defname, "MAXLEN") == 0)
+		if (mdb_strcasecmp(defel->defname, "MAXLEN") == 0)
 		{
 			d->maxlen = atoi(defGetString(defel));
 		}
-		else if (pg_strcasecmp(defel->defname, "REJECTLONG") == 0)
+		else if (mdb_strcasecmp(defel->defname, "REJECTLONG") == 0)
 		{
 			d->rejectlong = defGetBoolean(defel);
 		}

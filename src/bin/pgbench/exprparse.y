@@ -82,7 +82,7 @@ expr: '(' expr ')'			{ $$ = $2; }
 	| function '(' elist ')' { $$ = make_func(yyscanner, $1, $3); }
 	;
 
-function: FUNCTION			{ $$ = find_func(yyscanner, $1); pg_free($1); }
+function: FUNCTION			{ $$ = find_func(yyscanner, $1); mdb_free($1); }
 	;
 
 %%
@@ -90,7 +90,7 @@ function: FUNCTION			{ $$ = find_func(yyscanner, $1); pg_free($1); }
 static PgBenchExpr *
 make_integer_constant(int64 ival)
 {
-	PgBenchExpr *expr = pg_malloc(sizeof(PgBenchExpr));
+	PgBenchExpr *expr = mdb_malloc(sizeof(PgBenchExpr));
 
 	expr->etype = ENODE_CONSTANT;
 	expr->u.constant.type = PGBT_INT;
@@ -101,7 +101,7 @@ make_integer_constant(int64 ival)
 static PgBenchExpr *
 make_double_constant(double dval)
 {
-	PgBenchExpr *expr = pg_malloc(sizeof(PgBenchExpr));
+	PgBenchExpr *expr = mdb_malloc(sizeof(PgBenchExpr));
 
 	expr->etype = ENODE_CONSTANT;
 	expr->u.constant.type = PGBT_DOUBLE;
@@ -112,7 +112,7 @@ make_double_constant(double dval)
 static PgBenchExpr *
 make_variable(char *varname)
 {
-	PgBenchExpr *expr = pg_malloc(sizeof(PgBenchExpr));
+	PgBenchExpr *expr = mdb_malloc(sizeof(PgBenchExpr));
 
 	expr->etype = ENODE_VARIABLE;
 	expr->u.variable.varname = varname;
@@ -210,7 +210,7 @@ find_func(yyscan_t yyscanner, const char *fname)
 
 	while (PGBENCH_FUNCTIONS[i].fname)
 	{
-		if (pg_strcasecmp(fname, PGBENCH_FUNCTIONS[i].fname) == 0)
+		if (mdb_strcasecmp(fname, PGBENCH_FUNCTIONS[i].fname) == 0)
 			return i;
 		i++;
 	}
@@ -229,12 +229,12 @@ make_elist(PgBenchExpr *expr, PgBenchExprList *list)
 
 	if (list == NULL)
 	{
-		list = pg_malloc(sizeof(PgBenchExprList));
+		list = mdb_malloc(sizeof(PgBenchExprList));
 		list->head = NULL;
 		list->tail = NULL;
 	}
 
-	cons = pg_malloc(sizeof(PgBenchExprLink));
+	cons = mdb_malloc(sizeof(PgBenchExprLink));
 	cons->expr = expr;
 	cons->next = NULL;
 
@@ -265,7 +265,7 @@ elist_length(PgBenchExprList *list)
 static PgBenchExpr *
 make_func(yyscan_t yyscanner, int fnumber, PgBenchExprList *args)
 {
-	PgBenchExpr *expr = pg_malloc(sizeof(PgBenchExpr));
+	PgBenchExpr *expr = mdb_malloc(sizeof(PgBenchExpr));
 
 	Assert(fnumber >= 0);
 
@@ -286,7 +286,7 @@ make_func(yyscan_t yyscanner, int fnumber, PgBenchExprList *args)
 	/* only the link is used, the head/tail is not useful anymore */
 	expr->u.function.args = args != NULL ? args->head : NULL;
 	if (args)
-		pg_free(args);
+		mdb_free(args);
 
 	return expr;
 }

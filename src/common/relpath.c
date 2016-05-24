@@ -19,7 +19,7 @@
 #endif
 
 #include "catalog/catalog.h"
-#include "catalog/pg_tablespace.h"
+#include "catalog/mdb_tablespace.h"
 #include "common/relpath.h"
 #include "storage/backendid.h"
 
@@ -29,7 +29,7 @@
  *
  * If you add a new entry, remember to update the errhint in
  * forkname_to_number() below, and update the SGML documentation for
- * pg_relation_size().
+ * mdb_relation_size().
  */
 const char *const forkNames[] = {
 	"main",						/* MAIN_FORKNUM */
@@ -121,7 +121,7 @@ GetDatabasePath(Oid dbNode, Oid spcNode)
 	else
 	{
 		/* All other tablespaces are accessed via symlinks */
-		return psprintf("pg_tblspc/%u/%s/%u",
+		return psprintf("mdb_tblspc/%u/%s/%u",
 						spcNode, TABLESPACE_VERSION_DIRECTORY, dbNode);
 	}
 }
@@ -182,24 +182,24 @@ GetRelationPath(Oid dbNode, Oid spcNode, Oid relNode,
 		if (backendId == InvalidBackendId)
 		{
 			if (forkNumber != MAIN_FORKNUM)
-				path = psprintf("pg_tblspc/%u/%s/%u/%u_%s",
+				path = psprintf("mdb_tblspc/%u/%s/%u/%u_%s",
 								spcNode, TABLESPACE_VERSION_DIRECTORY,
 								dbNode, relNode,
 								forkNames[forkNumber]);
 			else
-				path = psprintf("pg_tblspc/%u/%s/%u/%u",
+				path = psprintf("mdb_tblspc/%u/%s/%u/%u",
 								spcNode, TABLESPACE_VERSION_DIRECTORY,
 								dbNode, relNode);
 		}
 		else
 		{
 			if (forkNumber != MAIN_FORKNUM)
-				path = psprintf("pg_tblspc/%u/%s/%u/t%d_%u_%s",
+				path = psprintf("mdb_tblspc/%u/%s/%u/t%d_%u_%s",
 								spcNode, TABLESPACE_VERSION_DIRECTORY,
 								dbNode, backendId, relNode,
 								forkNames[forkNumber]);
 			else
-				path = psprintf("pg_tblspc/%u/%s/%u/t%d_%u",
+				path = psprintf("mdb_tblspc/%u/%s/%u/t%d_%u",
 								spcNode, TABLESPACE_VERSION_DIRECTORY,
 								dbNode, backendId, relNode);
 		}

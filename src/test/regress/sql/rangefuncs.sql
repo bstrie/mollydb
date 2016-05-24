@@ -1,4 +1,4 @@
-SELECT name, setting FROM pg_settings WHERE name LIKE 'enable%';
+SELECT name, setting FROM mdb_settings WHERE name LIKE 'enable%';
 
 CREATE TABLE foo2(fooid int, f2 int);
 INSERT INTO foo2 VALUES(1, 11);
@@ -20,14 +20,14 @@ select row_to_json(s.*) from generate_series(11,14) with ordinality s;
 -- ordinality vs. views
 create temporary view vw_ord as select * from (values (1)) v(n) join foot(1) with ordinality as z(a,b,ord) on (n=ord);
 select * from vw_ord;
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
 drop view vw_ord;
 
 -- multiple functions
 select * from rows from(foot(1),foot(2)) with ordinality as z(a,b,c,d,ord);
 create temporary view vw_ord as select * from (values (1)) v(n) join rows from(foot(1),foot(2)) with ordinality as z(a,b,c,d,ord) on (n=ord);
 select * from vw_ord;
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
 drop view vw_ord;
 
 -- expansions of unnest()
@@ -37,15 +37,15 @@ select * from rows from(unnest(array[10,20],array['foo','bar'],array[1.0])) with
 select * from rows from(unnest(array[10,20],array['foo','bar']), generate_series(101,102)) with ordinality as z(a,b,c,ord);
 create temporary view vw_ord as select * from unnest(array[10,20],array['foo','bar'],array[1.0]) as z(a,b,c);
 select * from vw_ord;
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
 drop view vw_ord;
 create temporary view vw_ord as select * from rows from(unnest(array[10,20],array['foo','bar'],array[1.0])) as z(a,b,c);
 select * from vw_ord;
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
 drop view vw_ord;
 create temporary view vw_ord as select * from rows from(unnest(array[10,20],array['foo','bar']), generate_series(1,2)) as z(a,b,c);
 select * from vw_ord;
-select definition from pg_views where viewname='vw_ord';
+select definition from mdb_views where viewname='vw_ord';
 drop view vw_ord;
 
 -- ordinality and multiple functions vs. rewind and reverse scan
@@ -213,7 +213,7 @@ create temporary view vw_foo as
                       getfoo1(1))
                 with ordinality as t1(a,b,c,d,e,f,g,n);
 select * from vw_foo;
-select pg_get_viewdef('vw_foo');
+select mdb_get_viewdef('vw_foo');
 drop view vw_foo;
 
 DROP FUNCTION getfoo1(int);

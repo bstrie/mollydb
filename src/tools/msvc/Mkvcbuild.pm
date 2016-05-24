@@ -32,8 +32,8 @@ my $libpq;
 # Set of variables for modules in contrib/ and src/test/modules/
 my $contrib_defines = { 'refint' => 'REFINT_VERBOSE' };
 my @contrib_uselibpq = ('dblink', 'oid2name', 'mollydb_fdw', 'vacuumlo');
-my @contrib_uselibpgport   = ('oid2name', 'pg_standby', 'vacuumlo');
-my @contrib_uselibpgcommon = ('oid2name', 'pg_standby', 'vacuumlo');
+my @contrib_uselibpgport   = ('oid2name', 'mdb_standby', 'vacuumlo');
+my @contrib_uselibpgcommon = ('oid2name', 'mdb_standby', 'vacuumlo');
 my $contrib_extralibs      = undef;
 my $contrib_extraincludes =
   { 'tsearch2' => ['contrib/tsearch2'], 'dblink' => ['src/backend'] };
@@ -43,22 +43,22 @@ my $contrib_extrasource = {
 my @contrib_excludes = (
 	'commit_ts',       'hstore_plperl',    'hstore_plpython', 'intagg',
 	'ltree_plpython',  'pgcrypto',         'semdb',         'brin',
-	'test_extensions', 'test_pg_dump', 'snapshot_too_old');
+	'test_extensions', 'test_mdb_dump', 'snapshot_too_old');
 
 # Set of variables for frontend modules
 my $frontend_defines = { 'initdb' => 'FRONTEND' };
-my @frontend_uselibpq = ('pg_ctl', 'pg_upgrade', 'pgbench', 'psql');
+my @frontend_uselibpq = ('mdb_ctl', 'mdb_upgrade', 'pgbench', 'psql');
 my @frontend_uselibpgport = (
-	'pg_archivecleanup', 'pg_test_fsync',
-	'pg_test_timing',    'pg_upgrade',
-	'pg_xlogdump',       'pgbench');
+	'mdb_archivecleanup', 'mdb_test_fsync',
+	'mdb_test_timing',    'mdb_upgrade',
+	'mdb_xlogdump',       'pgbench');
 my @frontend_uselibpgcommon = (
-	'pg_archivecleanup', 'pg_test_fsync',
-	'pg_test_timing',    'pg_upgrade',
-	'pg_xlogdump',       'pgbench');
+	'mdb_archivecleanup', 'mdb_test_fsync',
+	'mdb_test_timing',    'mdb_upgrade',
+	'mdb_xlogdump',       'pgbench');
 my $frontend_extralibs = {
 	'initdb'     => ['ws2_32.lib'],
-	'pg_restore' => ['ws2_32.lib'],
+	'mdb_restore' => ['ws2_32.lib'],
 	'pgbench'    => ['ws2_32.lib'],
 	'psql'       => ['ws2_32.lib'] };
 my $frontend_extraincludes = {
@@ -69,8 +69,8 @@ my $frontend_extrasource = {
 	'pgbench' =>
 	  [ 'src/bin/pgbench/exprscan.l', 'src/bin/pgbench/exprparse.y' ] };
 my @frontend_excludes = (
-	'pgevent',     'pg_basebackup', 'pg_rewind', 'pg_dump',
-	'pg_xlogdump', 'scripts');
+	'pgevent',     'mdb_basebackup', 'mdb_rewind', 'mdb_dump',
+	'mdb_xlogdump', 'scripts');
 
 sub mkvcbuild
 {
@@ -97,18 +97,18 @@ sub mkvcbuild
 
 	if ($vsVersion >= '9.00')
 	{
-		push(@pgportfiles, 'pg_crc32c_choose.c');
-		push(@pgportfiles, 'pg_crc32c_sse42.c');
-		push(@pgportfiles, 'pg_crc32c_sb8.c');
+		push(@pgportfiles, 'mdb_crc32c_choose.c');
+		push(@pgportfiles, 'mdb_crc32c_sse42.c');
+		push(@pgportfiles, 'mdb_crc32c_sb8.c');
 	}
 	else
 	{
-		push(@pgportfiles, 'pg_crc32c_sb8.c');
+		push(@pgportfiles, 'mdb_crc32c_sb8.c');
 	}
 
 	our @pgcommonallfiles = qw(
 	  config_info.c controldata_utils.c exec.c keywords.c
-	  pg_lzcompress.c pgfnames.c psprintf.c relpath.c rmtree.c
+	  mdb_lzcompress.c pgfnames.c psprintf.c relpath.c rmtree.c
 	  string.c username.c wait_error.c);
 
 	our @pgcommonfrontendfiles = (
@@ -140,9 +140,9 @@ sub mkvcbuild
 	$mollydb->ReplaceFile(
 		'src/backend/port/dynloader.c',
 		'src/backend/port/dynloader/win32.c');
-	$mollydb->ReplaceFile('src/backend/port/pg_sema.c',
+	$mollydb->ReplaceFile('src/backend/port/mdb_sema.c',
 		'src/backend/port/win32_sema.c');
-	$mollydb->ReplaceFile('src/backend/port/pg_shmem.c',
+	$mollydb->ReplaceFile('src/backend/port/mdb_shmem.c',
 		'src/backend/port/win32_shmem.c');
 	$mollydb->AddFiles('src/port',   @pgportfiles);
 	$mollydb->AddFiles('src/common', @pgcommonbkndfiles);
@@ -250,7 +250,7 @@ sub mkvcbuild
 	$libecpg->AddReference($libpq, $pgtypes, $libpgport);
 
 	my $libecpgcompat = $solution->AddProject(
-		'libecpg_compat', 'dll',
+		'libecmdb_compat', 'dll',
 		'interfaces',     'src/interfaces/ecpg/compatlib');
 	$libecpgcompat->AddDefine('FRONTEND');
 	$libecpgcompat->AddIncludeDir('src/interfaces/ecpg/include');
@@ -271,9 +271,9 @@ sub mkvcbuild
 	$ecpg->AddReference($libpgcommon, $libpgport);
 
 	my $pgregress_ecpg =
-	  $solution->AddProject('pg_regress_ecpg', 'exe', 'misc');
-	$pgregress_ecpg->AddFile('src/interfaces/ecpg/test/pg_regress_ecpg.c');
-	$pgregress_ecpg->AddFile('src/test/regress/pg_regress.c');
+	  $solution->AddProject('mdb_regress_ecpg', 'exe', 'misc');
+	$pgregress_ecpg->AddFile('src/interfaces/ecpg/test/mdb_regress_ecpg.c');
+	$pgregress_ecpg->AddFile('src/test/regress/mdb_regress.c');
 	$pgregress_ecpg->AddIncludeDir('src/port');
 	$pgregress_ecpg->AddIncludeDir('src/test/regress');
 	$pgregress_ecpg->AddDefine('HOST_TUPLE="i686-pc-win32vc"');
@@ -297,9 +297,9 @@ sub mkvcbuild
 	$isolation_tester->AddReference($libpq, $libpgcommon, $libpgport);
 
 	my $pgregress_isolation =
-	  $solution->AddProject('pg_isolation_regress', 'exe', 'misc');
+	  $solution->AddProject('mdb_isolation_regress', 'exe', 'misc');
 	$pgregress_isolation->AddFile('src/test/isolation/isolation_main.c');
-	$pgregress_isolation->AddFile('src/test/regress/pg_regress.c');
+	$pgregress_isolation->AddFile('src/test/regress/mdb_regress.c');
 	$pgregress_isolation->AddIncludeDir('src/port');
 	$pgregress_isolation->AddIncludeDir('src/test/regress');
 	$pgregress_isolation->AddDefine('HOST_TUPLE="i686-pc-win32vc"');
@@ -318,22 +318,22 @@ sub mkvcbuild
 		AddSimpleFrontend($d);
 	}
 
-	my $pgbasebackup = AddSimpleFrontend('pg_basebackup', 1);
-	$pgbasebackup->AddFile('src/bin/pg_basebackup/pg_basebackup.c');
+	my $pgbasebackup = AddSimpleFrontend('mdb_basebackup', 1);
+	$pgbasebackup->AddFile('src/bin/mdb_basebackup/mdb_basebackup.c');
 	$pgbasebackup->AddLibrary('ws2_32.lib');
 
-	my $pgreceivexlog = AddSimpleFrontend('pg_basebackup', 1);
-	$pgreceivexlog->{name} = 'pg_receivexlog';
-	$pgreceivexlog->AddFile('src/bin/pg_basebackup/pg_receivexlog.c');
+	my $pgreceivexlog = AddSimpleFrontend('mdb_basebackup', 1);
+	$pgreceivexlog->{name} = 'mdb_receivexlog';
+	$pgreceivexlog->AddFile('src/bin/mdb_basebackup/mdb_receivexlog.c');
 	$pgreceivexlog->AddLibrary('ws2_32.lib');
 
-	my $pgrecvlogical = AddSimpleFrontend('pg_basebackup', 1);
-	$pgrecvlogical->{name} = 'pg_recvlogical';
-	$pgrecvlogical->AddFile('src/bin/pg_basebackup/pg_recvlogical.c');
+	my $pgrecvlogical = AddSimpleFrontend('mdb_basebackup', 1);
+	$pgrecvlogical->{name} = 'mdb_recvlogical';
+	$pgrecvlogical->AddFile('src/bin/mdb_basebackup/mdb_recvlogical.c');
 	$pgrecvlogical->AddLibrary('ws2_32.lib');
 
-	my $pgrewind = AddSimpleFrontend('pg_rewind', 1);
-	$pgrewind->{name} = 'pg_rewind';
+	my $pgrewind = AddSimpleFrontend('mdb_rewind', 1);
+	$pgrewind->{name} = 'mdb_rewind';
 	$pgrewind->AddFile('src/backend/access/transam/xlogreader.c');
 	$pgrewind->AddLibrary('ws2_32.lib');
 	$pgrewind->AddDefine('FRONTEND');
@@ -346,32 +346,32 @@ sub mkvcbuild
 	$pgevent->UseDef('src/bin/pgevent/pgevent.def');
 	$pgevent->DisableLinkerWarnings('4104');
 
-	my $pgdump = AddSimpleFrontend('pg_dump', 1);
+	my $pgdump = AddSimpleFrontend('mdb_dump', 1);
 	$pgdump->AddIncludeDir('src/backend');
-	$pgdump->AddFile('src/bin/pg_dump/pg_dump.c');
-	$pgdump->AddFile('src/bin/pg_dump/common.c');
-	$pgdump->AddFile('src/bin/pg_dump/pg_dump_sort.c');
+	$pgdump->AddFile('src/bin/mdb_dump/mdb_dump.c');
+	$pgdump->AddFile('src/bin/mdb_dump/common.c');
+	$pgdump->AddFile('src/bin/mdb_dump/mdb_dump_sort.c');
 	$pgdump->AddLibrary('ws2_32.lib');
 
-	my $pgdumpall = AddSimpleFrontend('pg_dump', 1);
+	my $pgdumpall = AddSimpleFrontend('mdb_dump', 1);
 
-	# pg_dumpall doesn't use the files in the Makefile's $(OBJS), unlike
-	# pg_dump and pg_restore.
+	# mdb_dumpall doesn't use the files in the Makefile's $(OBJS), unlike
+	# mdb_dump and mdb_restore.
 	# So remove their sources from the object, keeping the other setup that
 	# AddSimpleFrontend() has done.
-	my @nodumpall = grep { m!src/bin/pg_dump/.*\.c$! }
+	my @nodumpall = grep { m!src/bin/mdb_dump/.*\.c$! }
 	  keys %{ $pgdumpall->{files} };
 	delete @{ $pgdumpall->{files} }{@nodumpall};
-	$pgdumpall->{name} = 'pg_dumpall';
+	$pgdumpall->{name} = 'mdb_dumpall';
 	$pgdumpall->AddIncludeDir('src/backend');
-	$pgdumpall->AddFile('src/bin/pg_dump/pg_dumpall.c');
-	$pgdumpall->AddFile('src/bin/pg_dump/dumputils.c');
+	$pgdumpall->AddFile('src/bin/mdb_dump/mdb_dumpall.c');
+	$pgdumpall->AddFile('src/bin/mdb_dump/dumputils.c');
 	$pgdumpall->AddLibrary('ws2_32.lib');
 
-	my $pgrestore = AddSimpleFrontend('pg_dump', 1);
-	$pgrestore->{name} = 'pg_restore';
+	my $pgrestore = AddSimpleFrontend('mdb_dump', 1);
+	$pgrestore->{name} = 'mdb_restore';
 	$pgrestore->AddIncludeDir('src/backend');
-	$pgrestore->AddFile('src/bin/pg_dump/pg_restore.c');
+	$pgrestore->AddFile('src/bin/mdb_dump/mdb_restore.c');
 	$pgrestore->AddLibrary('ws2_32.lib');
 
 	my $zic = $solution->AddProject('zic', 'exe', 'utils');
@@ -637,24 +637,24 @@ sub mkvcbuild
 	$regress->AddDirResourceFile('src/test/regress');
 	$regress->AddReference($mollydb);
 
-	my $pgregress = $solution->AddProject('pg_regress', 'exe', 'misc');
-	$pgregress->AddFile('src/test/regress/pg_regress.c');
-	$pgregress->AddFile('src/test/regress/pg_regress_main.c');
+	my $pgregress = $solution->AddProject('mdb_regress', 'exe', 'misc');
+	$pgregress->AddFile('src/test/regress/mdb_regress.c');
+	$pgregress->AddFile('src/test/regress/mdb_regress_main.c');
 	$pgregress->AddIncludeDir('src/port');
 	$pgregress->AddDefine('HOST_TUPLE="i686-pc-win32vc"');
 	$pgregress->AddLibrary('ws2_32.lib');
 	$pgregress->AddDirResourceFile('src/test/regress');
 	$pgregress->AddReference($libpgcommon, $libpgport);
 
-	# fix up pg_xlogdump once it's been set up
+	# fix up mdb_xlogdump once it's been set up
 	# files symlinked on Unix are copied on windows
-	my $pg_xlogdump = AddSimpleFrontend('pg_xlogdump');
-	$pg_xlogdump->AddDefine('FRONTEND');
+	my $mdb_xlogdump = AddSimpleFrontend('mdb_xlogdump');
+	$mdb_xlogdump->AddDefine('FRONTEND');
 	foreach my $xf (glob('src/backend/access/rmgrdesc/*desc.c'))
 	{
-		$pg_xlogdump->AddFile($xf);
+		$mdb_xlogdump->AddFile($xf);
 	}
-	$pg_xlogdump->AddFile('src/backend/access/transam/xlogreader.c');
+	$mdb_xlogdump->AddFile('src/backend/access/transam/xlogreader.c');
 
 	$solution->Save();
 	return $solution->{vcver};

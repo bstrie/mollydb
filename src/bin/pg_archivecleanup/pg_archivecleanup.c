@@ -1,7 +1,7 @@
 /*
- * src/bin/pg_archivecleanup/pg_archivecleanup.c
+ * src/bin/mdb_archivecleanup/mdb_archivecleanup.c
  *
- * pg_archivecleanup.c
+ * mdb_archivecleanup.c
  *
  * Production-ready example of an archive_cleanup_command
  * used to clean an archive when using standby_mode = on in 9.0
@@ -19,7 +19,7 @@
 #include <signal.h>
 #include <sys/time.h>
 
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 
 #include "access/xlog_internal.h"
 
@@ -271,13 +271,13 @@ usage(void)
 	printf("  -?, --help     show this help, then exit\n");
 	printf("\n"
 		   "For use as archive_cleanup_command in recovery.conf when standby_mode = on:\n"
-		   "  archive_cleanup_command = 'pg_archivecleanup [OPTION]... ARCHIVELOCATION %%r'\n"
+		   "  archive_cleanup_command = 'mdb_archivecleanup [OPTION]... ARCHIVELOCATION %%r'\n"
 		   "e.g.\n"
-		   "  archive_cleanup_command = 'pg_archivecleanup /mnt/server/archiverdir %%r'\n");
+		   "  archive_cleanup_command = 'mdb_archivecleanup /mnt/server/archiverdir %%r'\n");
 	printf("\n"
 		   "Or for use as a standalone archive cleaner:\n"
 		   "e.g.\n"
-		   "  pg_archivecleanup /mnt/server/archiverdir 000000010000000000000010.00000020.backup\n");
+		   "  mdb_archivecleanup /mnt/server/archiverdir 000000010000000000000010.00000020.backup\n");
 	printf("\nReport bugs to <mdb-bugs@mollydb.org>.\n");
 }
 
@@ -298,7 +298,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_archivecleanup (MollyDB) " PG_VERSION);
+			puts("mdb_archivecleanup (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

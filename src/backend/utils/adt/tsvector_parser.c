@@ -51,7 +51,7 @@ init_tsvector_parser(char *input, bool oprisdelim, bool is_tsquery)
 	state->bufstart = input;
 	state->len = 32;
 	state->word = (char *) palloc(state->len);
-	state->eml = pg_database_encoding_max_length();
+	state->eml = mdb_database_encoding_max_length();
 	state->oprisdelim = oprisdelim;
 	state->is_tsquery = is_tsquery;
 
@@ -91,7 +91,7 @@ do { \
 
 /* phrase operator begins with '<' */
 #define ISOPERATOR(x) \
-	( pg_mblen(x) == 1 && ( *(x) == '!' ||	\
+	( mdb_mblen(x) == 1 && ( *(x) == '!' ||	\
 							*(x) == '&' ||	\
 							*(x) == '|' ||	\
 							*(x) == '(' ||	\
@@ -195,7 +195,7 @@ gettoken_tsvector(TSVectorParseState state,
 			else if (!t_isspace(state->prsbuf))
 			{
 				COPYCHAR(curpos, state->prsbuf);
-				curpos += pg_mblen(state->prsbuf);
+				curpos += mdb_mblen(state->prsbuf);
 				statecode = WAITENDWORD;
 			}
 		}
@@ -210,7 +210,7 @@ gettoken_tsvector(TSVectorParseState state,
 			{
 				RESIZEPRSBUF;
 				COPYCHAR(curpos, state->prsbuf);
-				curpos += pg_mblen(state->prsbuf);
+				curpos += mdb_mblen(state->prsbuf);
 				Assert(oldstate != 0);
 				statecode = oldstate;
 			}
@@ -245,7 +245,7 @@ gettoken_tsvector(TSVectorParseState state,
 			{
 				RESIZEPRSBUF;
 				COPYCHAR(curpos, state->prsbuf);
-				curpos += pg_mblen(state->prsbuf);
+				curpos += mdb_mblen(state->prsbuf);
 			}
 		}
 		else if (statecode == WAITENDCMPLX)
@@ -265,7 +265,7 @@ gettoken_tsvector(TSVectorParseState state,
 			{
 				RESIZEPRSBUF;
 				COPYCHAR(curpos, state->prsbuf);
-				curpos += pg_mblen(state->prsbuf);
+				curpos += mdb_mblen(state->prsbuf);
 			}
 		}
 		else if (statecode == WAITCHARCMPLX)
@@ -274,7 +274,7 @@ gettoken_tsvector(TSVectorParseState state,
 			{
 				RESIZEPRSBUF;
 				COPYCHAR(curpos, state->prsbuf);
-				curpos += pg_mblen(state->prsbuf);
+				curpos += mdb_mblen(state->prsbuf);
 				statecode = WAITENDCMPLX;
 			}
 			else
@@ -285,7 +285,7 @@ gettoken_tsvector(TSVectorParseState state,
 					PRSSYNTAXERROR;
 				if (state->oprisdelim)
 				{
-					/* state->prsbuf+=pg_mblen(state->prsbuf); */
+					/* state->prsbuf+=mdb_mblen(state->prsbuf); */
 					RETURN_TOKEN;
 				}
 				else
@@ -368,6 +368,6 @@ gettoken_tsvector(TSVectorParseState state,
 				 statecode);
 
 		/* get next char */
-		state->prsbuf += pg_mblen(state->prsbuf);
+		state->prsbuf += mdb_mblen(state->prsbuf);
 	}
 }

@@ -31,8 +31,8 @@
 #include "access/transam.h"
 #include "access/xact.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_database.h"
-#include "catalog/pg_namespace.h"
+#include "catalog/mdb_database.h"
+#include "catalog/mdb_namespace.h"
 #include "commands/cluster.h"
 #include "commands/vacuum.h"
 #include "miscadmin.h"
@@ -349,7 +349,7 @@ vacuum(int options, RangeVar *relation, Oid relid, VacuumParams *params,
 	if ((options & VACOPT_VACUUM) && !IsAutoVacuumWorkerProcess())
 	{
 		/*
-		 * Update pg_database.datfrozenxid, and truncate pg_clog if possible.
+		 * Update mdb_database.datfrozenxid, and truncate mdb_clog if possible.
 		 * (autovacuum.c does this for itself.)
 		 */
 		vac_update_datfrozenxid();
@@ -408,7 +408,7 @@ get_rel_oids(Oid relid, const RangeVar *vacrel)
 	{
 		/*
 		 * Process all plain relations and materialized views listed in
-		 * pg_class
+		 * mdb_class
 		 */
 		Relation	pgclass;
 		HeapScanDesc scan;
@@ -420,7 +420,7 @@ get_rel_oids(Oid relid, const RangeVar *vacrel)
 
 		while ((tuple = heap_getnext(scan, ForwardScanDirection)) != NULL)
 		{
-			Form_pg_class classForm = (Form_pg_class) GETSTRUCT(tuple);
+			Form_mdb_class classForm = (Form_mdb_class) GETSTRUCT(tuple);
 
 			if (classForm->relkind != RELKIND_RELATION &&
 				classForm->relkind != RELKIND_MATVIEW)
@@ -633,13 +633,13 @@ vacuum_set_xid_limits(Relation rel,
 }
 
 /*
- * vac_estimate_reltuples() -- estimate the new value for pg_class.reltuples
+ * vac_estimate_reltuples() -- estimate the new value for mdb_class.reltuples
  *
  *		If we scanned the whole relation then we should just use the count of
  *		live tuples seen; but if we did not, we should not trust the count
  *		unreservedly, especially not in VACUUM, which may have scanned a quite
  *		nonrandom subset of the table.  When we have only partial information,
- *		we take the old value of pg_class.reltuples as a measurement of the
+ *		we take the old value of mdb_class.reltuples as a measurement of the
  *		tuple density in the unscanned pages.
  *
  *		This routine is shared by VACUUM and ANALYZE.
@@ -663,7 +663,7 @@ vac_estimate_reltuples(Relation relation, bool is_analyze,
 
 	/*
 	 * If scanned_pages is zero but total_pages isn't, keep the existing value
-	 * of reltuples.  (Note: callers should avoid updating the pg_class
+	 * of reltuples.  (Note: callers should avoid updating the mdb_class
 	 * statistics in this situation, since no new information has been
 	 * provided.)
 	 */
@@ -710,23 +710,23 @@ vac_estimate_reltuples(Relation relation, bool is_analyze,
 /*
  *	vac_update_relstats() -- update statistics for one relation
  *
- *		Update the whole-relation statistics that are kept in its pg_class
+ *		Update the whole-relation statistics that are kept in its mdb_class
  *		row.  There are additional stats that will be updated if we are
  *		doing ANALYZE, but we always update these stats.  This routine works
- *		for both index and heap relation entries in pg_class.
+ *		for both index and heap relation entries in mdb_class.
  *
  *		We violate transaction semantics here by overwriting the rel's
- *		existing pg_class tuple with the new values.  This is reasonably
+ *		existing mdb_class tuple with the new values.  This is reasonably
  *		safe as long as we're sure that the new values are correct whether or
  *		not this transaction commits.  The reason for doing this is that if
- *		we updated these tuples in the usual way, vacuuming pg_class itself
+ *		we updated these tuples in the usual way, vacuuming mdb_class itself
  *		wouldn't work very well --- by the time we got done with a vacuum
- *		cycle, most of the tuples in pg_class would've been obsoleted.  Of
+ *		cycle, most of the tuples in mdb_class would've been obsoleted.  Of
  *		course, this only works for fixed-size not-null columns, but these are.
  *
  *		Another reason for doing it this way is that when we are in a lazy
  *		VACUUM and have PROC_IN_VACUUM set, we mustn't do any regular updates.
- *		Somebody vacuuming pg_class might think they could delete a tuple
+ *		Somebody vacuuming mdb_class might think they could delete a tuple
  *		marked with xmin = our xid.
  *
  *		In addition to fundamentally nontransactional statistics such as
@@ -755,7 +755,7 @@ vac_update_relstats(Relation relation,
 	Oid			relid = RelationGetRelid(relation);
 	Relation	rd;
 	HeapTuple	ctup;
-	Form_pg_class pgcform;
+	Form_mdb_class pgcform;
 	bool		dirty;
 
 	rd = heap_open(RelationRelationId, RowExclusiveLock);
@@ -763,9 +763,9 @@ vac_update_relstats(Relation relation,
 	/* Fetch a copy of the tuple to scribble on */
 	ctup = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(ctup))
-		elog(ERROR, "pg_class entry for relid %u vanished during vacuuming",
+		elog(ERROR, "mdb_class entry for relid %u vanished during vacuuming",
 			 relid);
-	pgcform = (Form_pg_class) GETSTRUCT(ctup);
+	pgcform = (Form_mdb_class) GETSTRUCT(ctup);
 
 	/* Apply statistical updates, if any, to copied tuple */
 
@@ -864,19 +864,19 @@ vac_update_relstats(Relation relation,
 
 
 /*
- *	vac_update_datfrozenxid() -- update pg_database.datfrozenxid for our DB
+ *	vac_update_datfrozenxid() -- update mdb_database.datfrozenxid for our DB
  *
- *		Update pg_database's datfrozenxid entry for our database to be the
- *		minimum of the pg_class.relfrozenxid values.
+ *		Update mdb_database's datfrozenxid entry for our database to be the
+ *		minimum of the mdb_class.relfrozenxid values.
  *
  *		Similarly, update our datminmxid to be the minimum of the
- *		pg_class.relminmxid values.
+ *		mdb_class.relminmxid values.
  *
- *		If we are able to advance either pg_database value, also try to
- *		truncate pg_clog and pg_multixact.
+ *		If we are able to advance either mdb_database value, also try to
+ *		truncate mdb_clog and mdb_multixact.
  *
  *		We violate transaction semantics here by overwriting the database's
- *		existing pg_database tuple with the new values.  This is reasonably
+ *		existing mdb_database tuple with the new values.  This is reasonably
  *		safe since the new values are correct whether or not this transaction
  *		commits.  As with vac_update_relstats, this avoids leaving dead tuples
  *		behind after a VACUUM.
@@ -885,7 +885,7 @@ void
 vac_update_datfrozenxid(void)
 {
 	HeapTuple	tuple;
-	Form_pg_database dbform;
+	Form_mdb_database dbform;
 	Relation	relation;
 	SysScanDesc scan;
 	HeapTuple	classTup;
@@ -899,14 +899,14 @@ vac_update_datfrozenxid(void)
 	/*
 	 * Initialize the "min" calculation with GetOldestXmin, which is a
 	 * reasonable approximation to the minimum relfrozenxid for not-yet-
-	 * committed pg_class entries for new tables; see AddNewRelationTuple().
+	 * committed mdb_class entries for new tables; see AddNewRelationTuple().
 	 * So we cannot produce a wrong minimum by starting with this.
 	 */
 	newFrozenXid = GetOldestXmin(NULL, true);
 
 	/*
 	 * Similarly, initialize the MultiXact "min" with the value that would be
-	 * used on pg_class for new tables.  See AddNewRelationTuple().
+	 * used on mdb_class for new tables.  See AddNewRelationTuple().
 	 */
 	newMinMulti = GetOldestMultiXactId();
 
@@ -919,7 +919,7 @@ vac_update_datfrozenxid(void)
 	lastSaneMinMulti = ReadNextMultiXactId();
 
 	/*
-	 * We must seqscan pg_class to find the minimum Xid, because there is no
+	 * We must seqscan mdb_class to find the minimum Xid, because there is no
 	 * index that can help us here.
 	 */
 	relation = heap_open(RelationRelationId, AccessShareLock);
@@ -929,7 +929,7 @@ vac_update_datfrozenxid(void)
 
 	while ((classTup = systable_getnext(scan)) != NULL)
 	{
-		Form_pg_class classForm = (Form_pg_class) GETSTRUCT(classTup);
+		Form_mdb_class classForm = (Form_mdb_class) GETSTRUCT(classTup);
 
 		/*
 		 * Only consider relations able to hold unfrozen XIDs (anything else
@@ -946,7 +946,7 @@ vac_update_datfrozenxid(void)
 		/*
 		 * If things are working properly, no relation should have a
 		 * relfrozenxid or relminmxid that is "in the future".  However, such
-		 * cases have been known to arise due to bugs in pg_upgrade.  If we
+		 * cases have been known to arise due to bugs in mdb_upgrade.  If we
 		 * see any entries that are "in the future", chicken out and don't do
 		 * anything.  This ensures we won't truncate clog before those
 		 * relations have been scanned and cleaned up.
@@ -965,7 +965,7 @@ vac_update_datfrozenxid(void)
 			newMinMulti = classForm->relminmxid;
 	}
 
-	/* we're done with pg_class */
+	/* we're done with mdb_class */
 	systable_endscan(scan);
 	heap_close(relation, AccessShareLock);
 
@@ -976,14 +976,14 @@ vac_update_datfrozenxid(void)
 	Assert(TransactionIdIsNormal(newFrozenXid));
 	Assert(MultiXactIdIsValid(newMinMulti));
 
-	/* Now fetch the pg_database tuple we need to update. */
+	/* Now fetch the mdb_database tuple we need to update. */
 	relation = heap_open(DatabaseRelationId, RowExclusiveLock);
 
 	/* Fetch a copy of the tuple to scribble on */
 	tuple = SearchSysCacheCopy1(DATABASEOID, ObjectIdGetDatum(MyDatabaseId));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "could not find tuple for database %u", MyDatabaseId);
-	dbform = (Form_pg_database) GETSTRUCT(tuple);
+	dbform = (Form_mdb_database) GETSTRUCT(tuple);
 
 	/*
 	 * As in vac_update_relstats(), we ordinarily don't want to let
@@ -1019,7 +1019,7 @@ vac_update_datfrozenxid(void)
 
 	/*
 	 * If we were able to advance datfrozenxid or datminmxid, see if we can
-	 * truncate pg_clog and/or pg_multixact.  Also do it if the shared
+	 * truncate mdb_clog and/or mdb_multixact.  Also do it if the shared
 	 * XID-wrap-limit info is stale, since this action will update that too.
 	 */
 	if (dirty || ForceTransactionIdLimitUpdate())
@@ -1031,13 +1031,13 @@ vac_update_datfrozenxid(void)
 /*
  *	vac_truncate_clog() -- attempt to truncate the commit log
  *
- *		Scan pg_database to determine the system-wide oldest datfrozenxid,
- *		and use it to truncate the transaction commit log (pg_clog).
+ *		Scan mdb_database to determine the system-wide oldest datfrozenxid,
+ *		and use it to truncate the transaction commit log (mdb_clog).
  *		Also update the XID wrap limit info maintained by varsup.c.
  *		Likewise for datminmxid.
  *
  *		The passed frozenXID and minMulti are the updated values for my own
- *		pg_database entry. They're used to initialize the "min" calculations.
+ *		mdb_database entry. They're used to initialize the "min" calculations.
  *		The caller also passes the "last sane" XID and MXID, since it has
  *		those at hand already.
  *
@@ -1065,7 +1065,7 @@ vac_truncate_clog(TransactionId frozenXID,
 	minmulti_datoid = MyDatabaseId;
 
 	/*
-	 * Scan pg_database to compute the minimum datfrozenxid/datminmxid
+	 * Scan mdb_database to compute the minimum datfrozenxid/datminmxid
 	 *
 	 * Note: we need not worry about a race condition with new entries being
 	 * inserted by CREATE DATABASE.  Any such entry will have a copy of some
@@ -1073,7 +1073,7 @@ vac_truncate_clog(TransactionId frozenXID,
 	 * of the interlock against copying a DB containing an active backend.
 	 * Hence the new entry will not reduce the minimum.  Also, if two VACUUMs
 	 * concurrently modify the datfrozenxid's of different databases, the
-	 * worst possible outcome is that pg_clog is not truncated as aggressively
+	 * worst possible outcome is that mdb_clog is not truncated as aggressively
 	 * as it could be.
 	 */
 	relation = heap_open(DatabaseRelationId, AccessShareLock);
@@ -1082,7 +1082,7 @@ vac_truncate_clog(TransactionId frozenXID,
 
 	while ((tuple = heap_getnext(scan, ForwardScanDirection)) != NULL)
 	{
-		Form_pg_database dbform = (Form_pg_database) GETSTRUCT(tuple);
+		Form_mdb_database dbform = (Form_mdb_database) GETSTRUCT(tuple);
 
 		Assert(TransactionIdIsNormal(dbform->datfrozenxid));
 		Assert(MultiXactIdIsValid(dbform->datminmxid));
@@ -1090,7 +1090,7 @@ vac_truncate_clog(TransactionId frozenXID,
 		/*
 		 * If things are working properly, no database should have a
 		 * datfrozenxid or datminmxid that is "in the future".  However, such
-		 * cases have been known to arise due to bugs in pg_upgrade.  If we
+		 * cases have been known to arise due to bugs in mdb_upgrade.  If we
 		 * see any entries that are "in the future", chicken out and don't do
 		 * anything.  This ensures we won't truncate clog before those
 		 * databases have been scanned and cleaned up.  (We will issue the
@@ -1266,13 +1266,13 @@ vacuum_rel(Oid relid, RangeVar *relation, int options, VacuumParams *params)
 	 *
 	 * We allow the user to vacuum a table if he is superuser, the table
 	 * owner, or the database owner (but in the latter case, only if it's not
-	 * a shared relation).  pg_class_ownercheck includes the superuser case.
+	 * a shared relation).  mdb_class_ownercheck includes the superuser case.
 	 *
 	 * Note we choose to treat permissions failure as a WARNING and keep
 	 * trying to vacuum the rest of the DB --- is this appropriate?
 	 */
-	if (!(pg_class_ownercheck(RelationGetRelid(onerel), GetUserId()) ||
-		  (pg_database_ownercheck(MyDatabaseId, GetUserId()) && !onerel->rd_rel->relisshared)))
+	if (!(mdb_class_ownercheck(RelationGetRelid(onerel), GetUserId()) ||
+		  (mdb_database_ownercheck(MyDatabaseId, GetUserId()) && !onerel->rd_rel->relisshared)))
 	{
 		if (onerel->rd_rel->relisshared)
 			ereport(WARNING,
@@ -1503,7 +1503,7 @@ vacuum_delay_point(void)
 		if (msec > VacuumCostDelay * 4)
 			msec = VacuumCostDelay * 4;
 
-		pg_usleep(msec * 1000L);
+		mdb_usleep(msec * 1000L);
 
 		VacuumCostBalance = 0;
 

@@ -134,13 +134,13 @@ CREATE TEMPORARY SEQUENCE seq1_temp;
 CREATE VIEW v9 AS SELECT seq1.is_called FROM seq1;
 CREATE VIEW v13_temp AS SELECT seq1_temp.is_called FROM seq1_temp;
 
-SELECT relname FROM pg_class
+SELECT relname FROM mdb_class
     WHERE relname LIKE 'v_'
-    AND relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'temp_view_test')
+    AND relnamespace = (SELECT oid FROM mdb_namespace WHERE nspname = 'temp_view_test')
     ORDER BY relname;
-SELECT relname FROM pg_class
+SELECT relname FROM mdb_class
     WHERE relname LIKE 'v%'
-    AND relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname LIKE 'pg_temp%')
+    AND relnamespace IN (SELECT oid FROM mdb_namespace WHERE nspname LIKE 'mdb_temp%')
     ORDER BY relname;
 
 CREATE SCHEMA testviewschm2;
@@ -159,13 +159,13 @@ CREATE VIEW temporal3 AS SELECT * FROM t1 LEFT JOIN tt ON t1.num = tt.num2;
 CREATE VIEW nontemp4 AS SELECT * FROM t1 LEFT JOIN t2 ON t1.num = t2.num2 AND t2.value = 'xxx';
 CREATE VIEW temporal4 AS SELECT * FROM t1 LEFT JOIN tt ON t1.num = tt.num2 AND tt.value = 'xxx';
 
-SELECT relname FROM pg_class
+SELECT relname FROM mdb_class
     WHERE relname LIKE 'nontemp%'
-    AND relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'testviewschm2')
+    AND relnamespace = (SELECT oid FROM mdb_namespace WHERE nspname = 'testviewschm2')
     ORDER BY relname;
-SELECT relname FROM pg_class
+SELECT relname FROM mdb_class
     WHERE relname LIKE 'temporal%'
-    AND relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname LIKE 'pg_temp%')
+    AND relnamespace IN (SELECT oid FROM mdb_namespace WHERE nspname LIKE 'mdb_temp%')
     ORDER BY relname;
 
 CREATE TABLE tbl1 ( a int, b int);
@@ -179,8 +179,8 @@ CREATE   VIEW  pubview AS SELECT * FROM tbl1 WHERE tbl1.a
 BETWEEN (SELECT d FROM tbl2 WHERE c = 1) AND (SELECT e FROM tbl3 WHERE f = 2)
 AND EXISTS (SELECT g FROM tbl4 LEFT JOIN tbl3 ON tbl4.h = tbl3.f);
 
-SELECT count(*) FROM pg_class where relname = 'pubview'
-AND relnamespace IN (SELECT OID FROM pg_namespace WHERE nspname = 'testviewschm2');
+SELECT count(*) FROM mdb_class where relname = 'pubview'
+AND relnamespace IN (SELECT OID FROM mdb_namespace WHERE nspname = 'testviewschm2');
 
 --Should be in temp object schema
 CREATE   VIEW  mytempview AS SELECT * FROM tbl1 WHERE tbl1.a
@@ -188,8 +188,8 @@ BETWEEN (SELECT d FROM tbl2 WHERE c = 1) AND (SELECT e FROM tbl3 WHERE f = 2)
 AND EXISTS (SELECT g FROM tbl4 LEFT JOIN tbl3 ON tbl4.h = tbl3.f)
 AND NOT EXISTS (SELECT g FROM tbl4 LEFT JOIN tmptbl ON tbl4.h = tmptbl.j);
 
-SELECT count(*) FROM pg_class where relname LIKE 'mytempview'
-And relnamespace IN (SELECT OID FROM pg_namespace WHERE nspname LIKE 'pg_temp%');
+SELECT count(*) FROM mdb_class where relname LIKE 'mytempview'
+And relnamespace IN (SELECT OID FROM mdb_namespace WHERE nspname LIKE 'mdb_temp%');
 
 --
 -- CREATE VIEW and WITH(...) clause
@@ -206,7 +206,7 @@ CREATE VIEW mysecview5 WITH (security_barrier=100)	-- Error
        AS SELECT * FROM tbl1 WHERE a > 100;
 CREATE VIEW mysecview6 WITH (invalid_option)		-- Error
        AS SELECT * FROM tbl1 WHERE a < 100;
-SELECT relname, relkind, reloptions FROM pg_class
+SELECT relname, relkind, reloptions FROM mdb_class
        WHERE oid in ('mysecview1'::regclass, 'mysecview2'::regclass,
                      'mysecview3'::regclass, 'mysecview4'::regclass)
        ORDER BY relname;
@@ -219,7 +219,7 @@ CREATE OR REPLACE VIEW mysecview3 WITH (security_barrier=true)
        AS SELECT * FROM tbl1 WHERE a < 256;
 CREATE OR REPLACE VIEW mysecview4 WITH (security_barrier=false)
        AS SELECT * FROM tbl1 WHERE a <> 256;
-SELECT relname, relkind, reloptions FROM pg_class
+SELECT relname, relkind, reloptions FROM mdb_class
        WHERE oid in ('mysecview1'::regclass, 'mysecview2'::regclass,
                      'mysecview3'::regclass, 'mysecview4'::regclass)
        ORDER BY relname;
@@ -298,56 +298,56 @@ create view v2 as select * from tt2 join tt3 using (b,c) join tt4 using (b);
 create view v2a as select * from (tt2 join tt3 using (b,c) join tt4 using (b)) j;
 create view v3 as select * from tt2 join tt3 using (b,c) full join tt4 using (b);
 
-select pg_get_viewdef('v1', true);
-select pg_get_viewdef('v1a', true);
-select pg_get_viewdef('v2', true);
-select pg_get_viewdef('v2a', true);
-select pg_get_viewdef('v3', true);
+select mdb_get_viewdef('v1', true);
+select mdb_get_viewdef('v1a', true);
+select mdb_get_viewdef('v2', true);
+select mdb_get_viewdef('v2a', true);
+select mdb_get_viewdef('v3', true);
 
 alter table tt2 add column d int;
 alter table tt2 add column e int;
 
-select pg_get_viewdef('v1', true);
-select pg_get_viewdef('v1a', true);
-select pg_get_viewdef('v2', true);
-select pg_get_viewdef('v2a', true);
-select pg_get_viewdef('v3', true);
+select mdb_get_viewdef('v1', true);
+select mdb_get_viewdef('v1a', true);
+select mdb_get_viewdef('v2', true);
+select mdb_get_viewdef('v2a', true);
+select mdb_get_viewdef('v3', true);
 
 alter table tt3 rename c to d;
 
-select pg_get_viewdef('v1', true);
-select pg_get_viewdef('v1a', true);
-select pg_get_viewdef('v2', true);
-select pg_get_viewdef('v2a', true);
-select pg_get_viewdef('v3', true);
+select mdb_get_viewdef('v1', true);
+select mdb_get_viewdef('v1a', true);
+select mdb_get_viewdef('v2', true);
+select mdb_get_viewdef('v2a', true);
+select mdb_get_viewdef('v3', true);
 
 alter table tt3 add column c int;
 alter table tt3 add column e int;
 
-select pg_get_viewdef('v1', true);
-select pg_get_viewdef('v1a', true);
-select pg_get_viewdef('v2', true);
-select pg_get_viewdef('v2a', true);
-select pg_get_viewdef('v3', true);
+select mdb_get_viewdef('v1', true);
+select mdb_get_viewdef('v1a', true);
+select mdb_get_viewdef('v2', true);
+select mdb_get_viewdef('v2a', true);
+select mdb_get_viewdef('v3', true);
 
 alter table tt2 drop column d;
 
-select pg_get_viewdef('v1', true);
-select pg_get_viewdef('v1a', true);
-select pg_get_viewdef('v2', true);
-select pg_get_viewdef('v2a', true);
-select pg_get_viewdef('v3', true);
+select mdb_get_viewdef('v1', true);
+select mdb_get_viewdef('v1a', true);
+select mdb_get_viewdef('v2', true);
+select mdb_get_viewdef('v2a', true);
+select mdb_get_viewdef('v3', true);
 
 create table tt5 (a int, b int);
 create table tt6 (c int, d int);
 create view vv1 as select * from (tt5 cross join tt6) j(aa,bb,cc,dd);
-select pg_get_viewdef('vv1', true);
+select mdb_get_viewdef('vv1', true);
 alter table tt5 add column c int;
-select pg_get_viewdef('vv1', true);
+select mdb_get_viewdef('vv1', true);
 alter table tt5 add column cc int;
-select pg_get_viewdef('vv1', true);
+select mdb_get_viewdef('vv1', true);
 alter table tt5 drop column c;
-select pg_get_viewdef('vv1', true);
+select mdb_get_viewdef('vv1', true);
 
 -- Unnamed FULL JOIN USING is lots of fun too
 
@@ -360,7 +360,7 @@ select * from (values(1,2,3,4,5)) v(a,b,c,d,e)
 union all
 select * from tt7 full join tt8 using (x), tt8 tt8x;
 
-select pg_get_viewdef('vv2', true);
+select mdb_get_viewdef('vv2', true);
 
 create view vv3 as
 select * from (values(1,2,3,4,5,6)) v(a,b,c,x,e,f)
@@ -369,7 +369,7 @@ select * from
   tt7 full join tt8 using (x),
   tt7 tt7x full join tt8 tt8x using (x);
 
-select pg_get_viewdef('vv3', true);
+select mdb_get_viewdef('vv3', true);
 
 create view vv4 as
 select * from (values(1,2,3,4,5,6,7)) v(a,b,c,x,e,f,g)
@@ -378,16 +378,16 @@ select * from
   tt7 full join tt8 using (x),
   tt7 tt7x full join tt8 tt8x using (x) full join tt8 tt8y using (x);
 
-select pg_get_viewdef('vv4', true);
+select mdb_get_viewdef('vv4', true);
 
 alter table tt7 add column zz int;
 alter table tt7 add column z int;
 alter table tt7 drop column zz;
 alter table tt8 add column z2 int;
 
-select pg_get_viewdef('vv2', true);
-select pg_get_viewdef('vv3', true);
-select pg_get_viewdef('vv4', true);
+select mdb_get_viewdef('vv2', true);
+select mdb_get_viewdef('vv3', true);
+select mdb_get_viewdef('vv4', true);
 
 -- Implicit coercions in a JOIN USING create issues similar to FULL JOIN
 
@@ -400,7 +400,7 @@ select * from (values(now(),2,3,now(),5)) v(a,b,c,d,e)
 union all
 select * from tt7a left join tt8a using (x), tt8a tt8ax;
 
-select pg_get_viewdef('vv2a', true);
+select mdb_get_viewdef('vv2a', true);
 
 --
 -- Also check dropping a column that existed when the view was made
@@ -411,11 +411,11 @@ create table tt10 (x int, z int);
 
 create view vv5 as select x,y,z from tt9 join tt10 using(x);
 
-select pg_get_viewdef('vv5', true);
+select mdb_get_viewdef('vv5', true);
 
 alter table tt9 drop column xx;
 
-select pg_get_viewdef('vv5', true);
+select mdb_get_viewdef('vv5', true);
 
 --
 -- Another corner case is that we might add a column to a table below a
@@ -429,11 +429,11 @@ create table tt13 (z int, q int);
 create view vv6 as select x,y,z,q from
   (tt11 join tt12 using(x)) join tt13 using(z);
 
-select pg_get_viewdef('vv6', true);
+select mdb_get_viewdef('vv6', true);
 
 alter table tt11 add column z int;
 
-select pg_get_viewdef('vv6', true);
+select mdb_get_viewdef('vv6', true);
 
 --
 -- Check some cases involving dropped columns in a function's rowtype result
@@ -459,14 +459,14 @@ language plmdb;
 
 create view tt14v as select t.* from tt14f() t;
 
-select pg_get_viewdef('tt14v', true);
+select mdb_get_viewdef('tt14v', true);
 select * from tt14v;
 
 -- this perhaps should be rejected, but it isn't:
 alter table tt14t drop column f3;
 
 -- f3 is still in the view but will read as nulls
-select pg_get_viewdef('tt14v', true);
+select mdb_get_viewdef('tt14v', true);
 select * from tt14v;
 
 -- check display of whole-row variables in some corner cases
@@ -474,17 +474,17 @@ select * from tt14v;
 create type nestedcomposite as (x int8_tbl);
 create view tt15v as select row(i)::nestedcomposite from int8_tbl i;
 select * from tt15v;
-select pg_get_viewdef('tt15v', true);
+select mdb_get_viewdef('tt15v', true);
 select row(i.*::int8_tbl)::nestedcomposite from int8_tbl i;
 
 create view tt16v as select * from int8_tbl i, lateral(values(i)) ss;
 select * from tt16v;
-select pg_get_viewdef('tt16v', true);
+select mdb_get_viewdef('tt16v', true);
 select * from int8_tbl i, lateral(values(i.*::int8_tbl)) ss;
 
 create view tt17v as select * from int8_tbl i where i in (values(i));
 select * from tt17v;
-select pg_get_viewdef('tt17v', true);
+select mdb_get_viewdef('tt17v', true);
 select * from int8_tbl i where i.* in (values(i.*::int8_tbl));
 
 -- check unique-ification of overlength names
@@ -493,7 +493,7 @@ create view tt18v as
   select * from int8_tbl xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxy
   union all
   select * from int8_tbl xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxz;
-select pg_get_viewdef('tt18v', true);
+select mdb_get_viewdef('tt18v', true);
 explain (costs off) select * from tt18v;
 
 -- check display of ScalarArrayOp with a sub-select
@@ -505,7 +505,7 @@ select 'foo'::text = any((select array['abc','def','foo']::text[])::text[]);
 create view tt19v as
 select 'foo'::text = any(array['abc','def','foo']::text[]) c1,
        'foo'::text = any((select array['abc','def','foo']::text[])::text[]) c2;
-select pg_get_viewdef('tt19v', true);
+select mdb_get_viewdef('tt19v', true);
 
 -- clean up all the random objects we made above
 set client_min_messages = warning;

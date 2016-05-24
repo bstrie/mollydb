@@ -2620,7 +2620,7 @@ _equalRoleSpec(const RoleSpec *a, const RoleSpec *b)
 }
 
 /*
- * Stuff from pg_list.h
+ * Stuff from mdb_list.h
  */
 
 static bool

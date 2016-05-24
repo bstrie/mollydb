@@ -1,9 +1,9 @@
 package RewindTest;
 
-# Test driver for pg_rewind. Each test consists of a cycle where a new cluster
+# Test driver for mdb_rewind. Each test consists of a cycle where a new cluster
 # is first created with initdb, and a streaming replication standby is set up
 # to follow the master. Then the master is shut down and the standby is
-# promoted, and finally pg_rewind is used to rewind the old master, using the
+# promoted, and finally mdb_rewind is used to rewind the old master, using the
 # standby as the source.
 #
 # To run a test, the test script (in t/ subdirectory) calls the functions
@@ -13,14 +13,14 @@ package RewindTest;
 #
 # 2. start_master - starts the master server
 #
-# 3. create_standby - runs pg_basebackup to initialize a standby server, and
+# 3. create_standby - runs mdb_basebackup to initialize a standby server, and
 #    sets it up to follow the master.
 #
-# 4. promote_standby - runs "pg_ctl promote" to promote the standby server.
+# 4. promote_standby - runs "mdb_ctl promote" to promote the standby server.
 # The old master keeps running.
 #
-# 5. run_pg_rewind - stops the old master (if it's still running) and runs
-# pg_rewind to synchronize it with the now-promoted standby server.
+# 5. run_mdb_rewind - stops the old master (if it's still running) and runs
+# mdb_rewind to synchronize it with the now-promoted standby server.
 #
 # 6. clean_rewind_test - stops both servers used in the test, if they're
 # still running.
@@ -56,7 +56,7 @@ our @EXPORT = qw(
   start_master
   create_standby
   promote_standby
-  run_pg_rewind
+  run_mdb_rewind
   clean_rewind_test
 );
 
@@ -155,7 +155,7 @@ sub promote_standby
 
 	# Wait for the standby to receive and write all WAL.
 	my $wal_received_query =
-"SELECT pg_current_xlog_location() = write_location FROM pg_stat_replication WHERE application_name = 'rewind_standby';";
+"SELECT mdb_current_xlog_location() = write_location FROM mdb_stat_replication WHERE application_name = 'rewind_standby';";
 	$node_master->poll_query_until('mollydb', $wal_received_query)
 	  or die "Timed out while waiting for standby to receive and write WAL";
 
@@ -164,19 +164,19 @@ sub promote_standby
 	# out of recovery mode, and is ready to accept read-write connections.
 	$node_standby->promote;
 	$node_standby->poll_query_until('mollydb',
-		"SELECT NOT pg_is_in_recovery()")
+		"SELECT NOT mdb_is_in_recovery()")
 	  or die "Timed out while waiting for promotion of standby";
 
-	# Force a checkpoint after the promotion. pg_rewind looks at the control
+	# Force a checkpoint after the promotion. mdb_rewind looks at the control
 	# file to determine what timeline the server is on, and that isn't updated
 	# immediately at promotion, but only at the next checkpoint. When running
-	# pg_rewind in remote mode, it's possible that we complete the test steps
-	# after promotion so quickly that when pg_rewind runs, the standby has not
+	# mdb_rewind in remote mode, it's possible that we complete the test steps
+	# after promotion so quickly that when mdb_rewind runs, the standby has not
 	# performed a checkpoint after promotion yet.
 	standby_psql("checkpoint");
 }
 
-sub run_pg_rewind
+sub run_mdb_rewind
 {
 	my $test_mode       = shift;
 	my $master_pgdata   = $node_master->data_dir;
@@ -190,7 +190,7 @@ sub run_pg_rewind
 	# At this point, the rewind processing is ready to run.
 	# We now have a very simple scenario with a few diverged WAL record.
 	# The real testing begins really now with a bifurcation of the possible
-	# scenarios that pg_rewind supports.
+	# scenarios that mdb_rewind supports.
 
 	# Keep a temporary mollydb.conf for master node or it would be
 	# overwritten during the rewind.
@@ -198,7 +198,7 @@ sub run_pg_rewind
 		"$master_pgdata/mollydb.conf",
 		"$tmp_folder/master-mollydb.conf.tmp");
 
-	# Now run pg_rewind
+	# Now run mdb_rewind
 	if ($test_mode eq "local")
 	{
 
@@ -206,21 +206,21 @@ sub run_pg_rewind
 		# Stop the master and be ready to perform the rewind
 		$node_standby->stop;
 		command_ok(
-			[   'pg_rewind',
+			[   'mdb_rewind',
 				"--debug",
 				"--source-pgdata=$standby_pgdata",
 				"--target-pgdata=$master_pgdata" ],
-			'pg_rewind local');
+			'mdb_rewind local');
 	}
 	elsif ($test_mode eq "remote")
 	{
 
 		# Do rewind using a remote connection as source
 		command_ok(
-			[   'pg_rewind',       "--debug",
+			[   'mdb_rewind',       "--debug",
 				"--source-server", $standby_connstr,
 				"--target-pgdata=$master_pgdata" ],
-			'pg_rewind remote');
+			'mdb_rewind remote');
 	}
 	else
 	{

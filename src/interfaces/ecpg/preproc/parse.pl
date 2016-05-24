@@ -34,11 +34,11 @@ my ($line,      $non_term_id);
 # some token have to be replaced by other symbols
 # either in the rule
 my %replace_token = (
-	'BCONST' => 'ecpg_bconst',
-	'FCONST' => 'ecpg_fconst',
-	'Sconst' => 'ecpg_sconst',
-	'IDENT'  => 'ecpg_ident',
-	'PARAM'  => 'ecpg_param',);
+	'BCONST' => 'ecmdb_bconst',
+	'FCONST' => 'ecmdb_fconst',
+	'Sconst' => 'ecmdb_sconst',
+	'IDENT'  => 'ecmdb_ident',
+	'PARAM'  => 'ecmdb_param',);
 
 # or in the block
 my %replace_string = (
@@ -91,14 +91,14 @@ my %replace_line = (
 	'fetch_argsFORWARDopt_from_incursor_name'      => 'ignore',
 	'fetch_argsBACKWARDopt_from_incursor_name'     => 'ignore',
 	"opt_array_boundsopt_array_bounds'['Iconst']'" => 'ignore',
-	'VariableShowStmtSHOWvar_name' => 'SHOW var_name ecpg_into',
-	'VariableShowStmtSHOWTIMEZONE' => 'SHOW TIME ZONE ecpg_into',
+	'VariableShowStmtSHOWvar_name' => 'SHOW var_name ecmdb_into',
+	'VariableShowStmtSHOWTIMEZONE' => 'SHOW TIME ZONE ecmdb_into',
 	'VariableShowStmtSHOWTRANSACTIONISOLATIONLEVEL' =>
-	  'SHOW TRANSACTION ISOLATION LEVEL ecpg_into',
+	  'SHOW TRANSACTION ISOLATION LEVEL ecmdb_into',
 	'VariableShowStmtSHOWSESSIONAUTHORIZATION' =>
-	  'SHOW SESSION AUTHORIZATION ecpg_into',
+	  'SHOW SESSION AUTHORIZATION ecmdb_into',
 	'returning_clauseRETURNINGtarget_list' =>
-	  'RETURNING target_list ecpg_into',
+	  'RETURNING target_list ecmdb_into',
 	'ExecuteStmtEXECUTEnameexecute_param_clause' =>
 	  'EXECUTE prepared_name execute_param_clause execute_rest',
 'ExecuteStmtCREATEOptTempTABLEcreate_as_targetASEXECUTEnameexecute_param_clause'

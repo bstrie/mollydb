@@ -453,7 +453,7 @@ subrange(struct vars * v,
  *
  * Note: subcolors that are created during execution of this function
  * will not be given a useful value of firstchr; it'll be left as CHR_MIN.
- * For the current usage of firstchr in pg_regprefix, this does not matter
+ * For the current usage of firstchr in mdb_regprefix, this does not matter
  * because such subcolors won't occur in the common prefix of a regex.
  */
 static void

@@ -123,7 +123,7 @@ CLEAN :
 	-@erase "$(OUTDIR)\$(OUTFILENAME)dll.exp"
 	-@erase "$(OUTDIR)\$(OUTFILENAME).dll.manifest"
 	-@erase "$(OUTDIR)\*.idb"
-	-@erase pg_config_paths.h"
+	-@erase mdb_config_paths.h"
 !IFDEF USE_OPENSSL
 	-@erase "$(INTDIR)\fe-secure-openssl.obj"
 !ENDIF
@@ -172,19 +172,19 @@ LIB32_OBJS= \
 !ENDIF
 
 
-config: ..\..\include\pg_config.h ..\..\include\pg_config_ext.h pg_config_paths.h  ..\..\include\pg_config_os.h
+config: ..\..\include\mdb_config.h ..\..\include\mdb_config_ext.h mdb_config_paths.h  ..\..\include\mdb_config_os.h
 
-..\..\include\pg_config.h: ..\..\include\pg_config.h.win32
-	copy ..\..\include\pg_config.h.win32 ..\..\include\pg_config.h
+..\..\include\mdb_config.h: ..\..\include\mdb_config.h.win32
+	copy ..\..\include\mdb_config.h.win32 ..\..\include\mdb_config.h
 
-..\..\include\pg_config_ext.h: ..\..\include\pg_config_ext.h.win32
-	copy ..\..\include\pg_config_ext.h.win32 ..\..\include\pg_config_ext.h
+..\..\include\mdb_config_ext.h: ..\..\include\mdb_config_ext.h.win32
+	copy ..\..\include\mdb_config_ext.h.win32 ..\..\include\mdb_config_ext.h
 
-..\..\include\pg_config_os.h:
-	copy ..\..\include\port\win32.h ..\..\include\pg_config_os.h
+..\..\include\mdb_config_os.h:
+	copy ..\..\include\port\win32.h ..\..\include\mdb_config_os.h
 
-pg_config_paths.h: win32.mak
-	echo #define SYSCONFDIR "" > pg_config_paths.h
+mdb_config_paths.h: win32.mak
+	echo #define SYSCONFDIR "" > mdb_config_paths.h
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"

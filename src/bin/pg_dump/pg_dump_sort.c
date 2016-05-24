@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_dump_sort.c
+ * mdb_dump_sort.c
  *	  Sort the items of a dump into a safe order for dumping
  *
  *
@@ -9,15 +9,15 @@
  *
  *
  * IDENTIFICATION
- *	  src/bin/pg_dump/pg_dump_sort.c
+ *	  src/bin/mdb_dump/mdb_dump_sort.c
  *
  *-------------------------------------------------------------------------
  */
 #include "mollydb_fe.h"
 
-#include "pg_backup_archiver.h"
-#include "pg_backup_utils.h"
-#include "pg_dump.h"
+#include "mdb_backup_archiver.h"
+#include "mdb_backup_utils.h"
+#include "mdb_dump.h"
 
 /* translator: this is a module name */
 static const char *modulename = gettext_noop("sorter");
@@ -32,7 +32,7 @@ static const char *modulename = gettext_noop("sorter");
  * happen here, so the rather bogus priorities for them don't matter.
  *
  * NOTE: object-type priorities must match the section assignments made in
- * pg_dump.c; that is, PRE_DATA objects must sort before DO_PRE_DATA_BOUNDARY,
+ * mdb_dump.c; that is, PRE_DATA objects must sort before DO_PRE_DATA_BOUNDARY,
  * POST_DATA objects must sort after DO_POST_DATA_BOUNDARY, and DATA objects
  * must sort between them.
  */
@@ -83,7 +83,7 @@ static const int oldObjectTypePriority[] =
  * Objects are sorted by type, and within a type by name.
  *
  * NOTE: object-type priorities must match the section assignments made in
- * pg_dump.c; that is, PRE_DATA objects must sort before DO_PRE_DATA_BOUNDARY,
+ * mdb_dump.c; that is, PRE_DATA objects must sort before DO_PRE_DATA_BOUNDARY,
  * POST_DATA objects must sort after DO_POST_DATA_BOUNDARY, and DATA objects
  * must sort between them.
  */
@@ -400,7 +400,7 @@ sortDumpableObjects(DumpableObject **objs, int numObjs,
 	preDataBoundId = preBoundaryId;
 	postDataBoundId = postBoundaryId;
 
-	ordering = (DumpableObject **) pg_malloc(numObjs * sizeof(DumpableObject *));
+	ordering = (DumpableObject **) mdb_malloc(numObjs * sizeof(DumpableObject *));
 	while (!TopoSort(objs, numObjs, ordering, &nOrdering))
 		findDependencyLoops(ordering, nOrdering, numObjs);
 
@@ -471,7 +471,7 @@ TopoSort(DumpableObject **objs,
 		return true;
 
 	/* Create workspace for the above-described heap */
-	pendingHeap = (int *) pg_malloc(numObjs * sizeof(int));
+	pendingHeap = (int *) mdb_malloc(numObjs * sizeof(int));
 
 	/*
 	 * Scan the constraints, and for each item in the input, generate a count
@@ -480,9 +480,9 @@ TopoSort(DumpableObject **objs,
 	 * We also make a map showing the input-order index of the item with
 	 * dumpId j.
 	 */
-	beforeConstraints = (int *) pg_malloc((maxDumpId + 1) * sizeof(int));
+	beforeConstraints = (int *) mdb_malloc((maxDumpId + 1) * sizeof(int));
 	memset(beforeConstraints, 0, (maxDumpId + 1) * sizeof(int));
-	idMap = (int *) pg_malloc((maxDumpId + 1) * sizeof(int));
+	idMap = (int *) mdb_malloc((maxDumpId + 1) * sizeof(int));
 	for (i = 0; i < numObjs; i++)
 	{
 		obj = objs[i];
@@ -686,9 +686,9 @@ findDependencyLoops(DumpableObject **objs, int nObjs, int totObjs)
 	bool		fixedloop;
 	int			i;
 
-	processed = (bool *) pg_malloc0((getMaxDumpId() + 1) * sizeof(bool));
-	searchFailed = (DumpId *) pg_malloc0((getMaxDumpId() + 1) * sizeof(DumpId));
-	workspace = (DumpableObject **) pg_malloc(totObjs * sizeof(DumpableObject *));
+	processed = (bool *) mdb_malloc0((getMaxDumpId() + 1) * sizeof(bool));
+	searchFailed = (DumpId *) mdb_malloc0((getMaxDumpId() + 1) * sizeof(DumpId));
+	workspace = (DumpableObject **) mdb_malloc(totObjs * sizeof(DumpableObject *));
 	fixedloop = false;
 
 	for (i = 0; i < nObjs; i++)

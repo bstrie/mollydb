@@ -1,5 +1,5 @@
 /*
- *	pg_test_timing.c
+ *	mdb_test_timing.c
  *		tests overhead of timing calls and their monotonicity:	that
  *		they always move forward
  */
@@ -56,7 +56,7 @@ handle_args(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_test_timing (MollyDB) " PG_VERSION);
+			puts("mdb_test_timing (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

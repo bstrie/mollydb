@@ -1,7 +1,7 @@
 #ifndef PL_PERL_HELPERS_H
 #define PL_PERL_HELPERS_H
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 /*
  * convert from utf8 to database encoding
@@ -13,7 +13,7 @@ utf_u2e(char *utf8_str, size_t len)
 {
 	char	   *ret;
 
-	ret = pg_any_to_server(utf8_str, len, PG_UTF8);
+	ret = mdb_any_to_server(utf8_str, len, PG_UTF8);
 
 	/* ensure we have a copy even if no conversion happened */
 	if (ret == utf8_str)
@@ -32,7 +32,7 @@ utf_e2u(const char *str)
 {
 	char	   *ret;
 
-	ret = pg_server_to_any(str, strlen(str), PG_UTF8);
+	ret = mdb_server_to_any(str, strlen(str), PG_UTF8);
 
 	/* ensure we have a copy even if no conversion happened */
 	if (ret == str)

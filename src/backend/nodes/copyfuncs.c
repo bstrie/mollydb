@@ -4157,7 +4157,7 @@ _copyAlterPolicyStmt(const AlterPolicyStmt *from)
 }
 
 /* ****************************************************************
- *					pg_list.h copy functions
+ *					mdb_list.h copy functions
  * ****************************************************************
  */
 

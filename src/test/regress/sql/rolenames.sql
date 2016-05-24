@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION chkrolattr()
  RETURNS TABLE ("role" name, rolekeyword text, canlogin bool, replication bool)
  AS $$
 SELECT r.rolname, v.keyword, r.rolcanlogin, r.rolreplication
- FROM pg_roles r
+ FROM mdb_roles r
  JOIN (VALUES(CURRENT_USER, 'current_user'),
              (SESSION_USER, 'session_user'),
              ('current_user', '-'),
@@ -19,9 +19,9 @@ CREATE OR REPLACE FUNCTION chksetconfig()
  AS $$
 SELECT COALESCE(d.datname, 'ALL'), COALESCE(r.rolname, 'ALL'),
 	   COALESCE(v.keyword, '-'), s.setconfig
- FROM pg_db_role_setting s
- LEFT JOIN pg_roles r ON (r.oid = s.setrole)
- LEFT JOIN pg_database d ON (d.oid = s.setdatabase)
+ FROM mdb_db_role_setting s
+ LEFT JOIN mdb_roles r ON (r.oid = s.setrole)
+ LEFT JOIN mdb_database d ON (d.oid = s.setdatabase)
  LEFT JOIN (VALUES(CURRENT_USER, 'current_user'),
              (SESSION_USER, 'session_user'))
       AS v(uname, keyword)
@@ -34,9 +34,9 @@ CREATE OR REPLACE FUNCTION chkumapping()
  RETURNS TABLE (umname name, umserver name, umoptions text[])
  AS $$
 SELECT r.rolname, s.srvname, m.umoptions
- FROM pg_user_mapping m
- LEFT JOIN pg_roles r ON (r.oid = m.umuser)
- JOIN pg_foreign_server s ON (s.oid = m.umserver)
+ FROM mdb_user_mapping m
+ LEFT JOIN mdb_roles r ON (r.oid = m.umuser)
+ JOIN mdb_foreign_server s ON (s.oid = m.umserver)
  ORDER BY 2;
 $$ LANGUAGE SQL;
 
@@ -57,10 +57,10 @@ CREATE ROLE "public"; -- error
 CREATE ROLE none; -- error
 CREATE ROLE "none"; -- error
 
-CREATE ROLE pg_abc; -- error
-CREATE ROLE "pg_abc"; -- error
-CREATE ROLE pg_abcdef; -- error
-CREATE ROLE "pg_abcdef"; -- error
+CREATE ROLE mdb_abc; -- error
+CREATE ROLE "mdb_abc"; -- error
+CREATE ROLE mdb_abcdef; -- error
+CREATE ROLE "mdb_abcdef"; -- error
 
 CREATE ROLE testrol0 SUPERUSER LOGIN;
 CREATE ROLE testrolx SUPERUSER LOGIN;
@@ -191,8 +191,8 @@ CREATE SCHEMA newschema6 AUTHORIZATION "public"; -- error
 CREATE SCHEMA newschema6 AUTHORIZATION NONE; -- error
 CREATE SCHEMA newschema6 AUTHORIZATION nonexistent; -- error
 
-SELECT n.nspname, r.rolname FROM pg_namespace n
- JOIN pg_roles r ON (r.oid = n.nspowner)
+SELECT n.nspname, r.rolname FROM mdb_namespace n
+ JOIN mdb_roles r ON (r.oid = n.nspowner)
  WHERE n.nspname LIKE 'newschema_' ORDER BY 1;
 
 CREATE SCHEMA IF NOT EXISTS newschema1 AUTHORIZATION CURRENT_USER;
@@ -208,8 +208,8 @@ CREATE SCHEMA IF NOT EXISTS newschema6 AUTHORIZATION "public"; -- error
 CREATE SCHEMA IF NOT EXISTS newschema6 AUTHORIZATION NONE; -- error
 CREATE SCHEMA IF NOT EXISTS newschema6 AUTHORIZATION nonexistent; -- error
 
-SELECT n.nspname, r.rolname FROM pg_namespace n
- JOIN pg_roles r ON (r.oid = n.nspowner)
+SELECT n.nspname, r.rolname FROM mdb_namespace n
+ JOIN mdb_roles r ON (r.oid = n.nspowner)
  WHERE n.nspname LIKE 'newschema_' ORDER BY 1;
 
 -- ALTER TABLE OWNER TO
@@ -240,7 +240,7 @@ ALTER TABLE testtab6 OWNER TO "public"; -- error
 ALTER TABLE testtab6 OWNER TO nonexistent; -- error
 
 SELECT c.relname, r.rolname
- FROM pg_class c JOIN pg_roles r ON (r.oid = c.relowner)
+ FROM mdb_class c JOIN mdb_roles r ON (r.oid = c.relowner)
  WHERE relname LIKE 'testtab_'
  ORDER BY 1;
 
@@ -278,7 +278,7 @@ ALTER AGGREGATE testagg5(int2) OWNER TO "public"; -- error
 ALTER AGGREGATE testagg5(int2) OWNER TO nonexistent; -- error
 
 SELECT p.proname, r.rolname
- FROM pg_proc p JOIN pg_roles r ON (r.oid = p.proowner)
+ FROM mdb_proc p JOIN mdb_roles r ON (r.oid = p.proowner)
  WHERE proname LIKE 'testagg_'
  ORDER BY 1;
 
@@ -381,15 +381,15 @@ DROP USER MAPPING IF EXISTS FOR CURRENT_ROLE SERVER sv9; --error
 DROP USER MAPPING IF EXISTS FOR nonexistent SERVER sv9;  -- error
 
 -- GRANT/REVOKE
-GRANT testrol0 TO pg_signal_backend; -- success
+GRANT testrol0 TO mdb_signal_backend; -- success
 
-SET ROLE pg_signal_backend; --success
+SET ROLE mdb_signal_backend; --success
 RESET ROLE;
-CREATE SCHEMA test_schema AUTHORIZATION pg_signal_backend; --success
+CREATE SCHEMA test_schema AUTHORIZATION mdb_signal_backend; --success
 SET ROLE testrol2;
 
-UPDATE pg_proc SET proacl = null WHERE proname LIKE 'testagg_';
-SELECT proname, proacl FROM pg_proc WHERE proname LIKE 'testagg_';
+UPDATE mdb_proc SET proacl = null WHERE proname LIKE 'testagg_';
+SELECT proname, proacl FROM mdb_proc WHERE proname LIKE 'testagg_';
 
 REVOKE ALL PRIVILEGES ON FUNCTION testagg1(int2) FROM PUBLIC;
 REVOKE ALL PRIVILEGES ON FUNCTION testagg2(int2) FROM PUBLIC;
@@ -410,14 +410,14 @@ GRANT ALL PRIVILEGES ON FUNCTION testagg7(int2) TO "public";
 GRANT ALL PRIVILEGES ON FUNCTION testagg8(int2)
 	   TO current_user, public, testrolx;
 
-SELECT proname, proacl FROM pg_proc WHERE proname LIKE 'testagg_';
+SELECT proname, proacl FROM mdb_proc WHERE proname LIKE 'testagg_';
 
 GRANT ALL PRIVILEGES ON FUNCTION testagg9(int2) TO CURRENT_ROLE; --error
 GRANT ALL PRIVILEGES ON FUNCTION testagg9(int2) TO USER; --error
 GRANT ALL PRIVILEGES ON FUNCTION testagg9(int2) TO NONE; --error
 GRANT ALL PRIVILEGES ON FUNCTION testagg9(int2) TO "none"; --error
 
-SELECT proname, proacl FROM pg_proc WHERE proname LIKE 'testagg_';
+SELECT proname, proacl FROM mdb_proc WHERE proname LIKE 'testagg_';
 
 REVOKE ALL PRIVILEGES ON FUNCTION testagg1(int2) FROM PUBLIC;
 REVOKE ALL PRIVILEGES ON FUNCTION testagg2(int2) FROM CURRENT_USER;
@@ -429,14 +429,14 @@ REVOKE ALL PRIVILEGES ON FUNCTION testagg7(int2) FROM "public";
 REVOKE ALL PRIVILEGES ON FUNCTION testagg8(int2)
 	   FROM current_user, public, testrolx;
 
-SELECT proname, proacl FROM pg_proc WHERE proname LIKE 'testagg_';
+SELECT proname, proacl FROM mdb_proc WHERE proname LIKE 'testagg_';
 
 REVOKE ALL PRIVILEGES ON FUNCTION testagg9(int2) FROM CURRENT_ROLE; --error
 REVOKE ALL PRIVILEGES ON FUNCTION testagg9(int2) FROM USER; --error
 REVOKE ALL PRIVILEGES ON FUNCTION testagg9(int2) FROM NONE; --error
 REVOKE ALL PRIVILEGES ON FUNCTION testagg9(int2) FROM "none"; --error
 
-SELECT proname, proacl FROM pg_proc WHERE proname LIKE 'testagg_';
+SELECT proname, proacl FROM mdb_proc WHERE proname LIKE 'testagg_';
 
 -- clean up
 \c

@@ -20,7 +20,7 @@
 #include <crypt.h>
 #endif
 
-#include "catalog/pg_authid.h"
+#include "catalog/mdb_authid.h"
 #include "libpq/crypt.h"
 #include "libpq/md5.h"
 #include "miscadmin.h"
@@ -47,7 +47,7 @@ md5_crypt_verify(const Port *port, const char *role, char *client_pass,
 	Datum		datum;
 	bool		isnull;
 
-	/* Get role info from pg_authid */
+	/* Get role info from mdb_authid */
 	roleTup = SearchSysCache1(AUTHNAME, PointerGetDatum(role));
 	if (!HeapTupleIsValid(roleTup))
 	{
@@ -57,7 +57,7 @@ md5_crypt_verify(const Port *port, const char *role, char *client_pass,
 	}
 
 	datum = SysCacheGetAttr(AUTHNAME, roleTup,
-							Anum_pg_authid_rolpassword, &isnull);
+							Anum_mdb_authid_rolpassword, &isnull);
 	if (isnull)
 	{
 		ReleaseSysCache(roleTup);
@@ -68,7 +68,7 @@ md5_crypt_verify(const Port *port, const char *role, char *client_pass,
 	shadow_pass = TextDatumGetCString(datum);
 
 	datum = SysCacheGetAttr(AUTHNAME, roleTup,
-							Anum_pg_authid_rolvaliduntil, &isnull);
+							Anum_mdb_authid_rolvaliduntil, &isnull);
 	if (!isnull)
 		vuntil = DatumGetTimestampTz(datum);
 
@@ -84,7 +84,7 @@ md5_crypt_verify(const Port *port, const char *role, char *client_pass,
 	/*
 	 * Compare with the encrypted or plain password depending on the
 	 * authentication method being used for this connection.  (We do not
-	 * bother setting logdetail for pg_md5_encrypt failure: the only possible
+	 * bother setting logdetail for mdb_md5_encrypt failure: the only possible
 	 * error is out-of-memory, which is unlikely, and if it did happen adding
 	 * a psprintf call would only make things worse.)
 	 */
@@ -95,7 +95,7 @@ md5_crypt_verify(const Port *port, const char *role, char *client_pass,
 			if (isMD5(shadow_pass))
 			{
 				/* stored password already encrypted, only do salt */
-				if (!pg_md5_encrypt(shadow_pass + strlen("md5"),
+				if (!mdb_md5_encrypt(shadow_pass + strlen("md5"),
 									port->md5Salt,
 									sizeof(port->md5Salt), crypt_pwd))
 				{
@@ -108,7 +108,7 @@ md5_crypt_verify(const Port *port, const char *role, char *client_pass,
 				/* stored password is plain, double-encrypt */
 				char	   *crypt_pwd2 = palloc(MD5_PASSWD_LEN + 1);
 
-				if (!pg_md5_encrypt(shadow_pass,
+				if (!mdb_md5_encrypt(shadow_pass,
 									port->user_name,
 									strlen(port->user_name),
 									crypt_pwd2))
@@ -117,7 +117,7 @@ md5_crypt_verify(const Port *port, const char *role, char *client_pass,
 					pfree(crypt_pwd2);
 					return STATUS_ERROR;
 				}
-				if (!pg_md5_encrypt(crypt_pwd2 + strlen("md5"),
+				if (!mdb_md5_encrypt(crypt_pwd2 + strlen("md5"),
 									port->md5Salt,
 									sizeof(port->md5Salt),
 									crypt_pwd))
@@ -134,7 +134,7 @@ md5_crypt_verify(const Port *port, const char *role, char *client_pass,
 			{
 				/* Encrypt user-supplied password to match stored MD5 */
 				crypt_client_pass = palloc(MD5_PASSWD_LEN + 1);
-				if (!pg_md5_encrypt(client_pass,
+				if (!mdb_md5_encrypt(client_pass,
 									port->user_name,
 									strlen(port->user_name),
 									crypt_client_pass))

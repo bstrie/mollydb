@@ -25,7 +25,7 @@
 #include "libpq-fe.h"
 #include "libpq-int.h"
 #include "fe-auth.h"
-#include "pg_config_paths.h"
+#include "mdb_config_paths.h"
 
 #ifdef WIN32
 #include "win32.h"
@@ -73,7 +73,7 @@ static int ldapServiceLookup(const char *purl, PQconninfoOption *options,
 #endif
 
 #include "libpq/ip.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 #ifndef FD_CLOEXEC
 #define FD_CLOEXEC 1
@@ -123,7 +123,7 @@ static int ldapServiceLookup(const char *purl, PQconninfoOption *options,
  *
  * The value for the username is treated specially in conninfo_add_defaults.
  * If the value is not obtained any other way, the username is determined
- * by pg_fe_getauthname().
+ * by mdb_fe_getauthname().
  *
  * The Label and Disp-Char entries are provided for applications that
  * want to use PQconndefaults() to create a generic database connection
@@ -178,35 +178,35 @@ static const internalPQconninfoOption PQconninfoOptions[] = {
 
 	{"user", "PGUSER", NULL, NULL,
 		"Database-User", "", 20,
-	offsetof(struct pg_conn, pguser)},
+	offsetof(struct mdb_conn, pguser)},
 
 	{"password", "PGPASSWORD", NULL, NULL,
 		"Database-Password", "*", 20,
-	offsetof(struct pg_conn, pgpass)},
+	offsetof(struct mdb_conn, pgpass)},
 
 	{"connect_timeout", "PGCONNECT_TIMEOUT", NULL, NULL,
 		"Connect-timeout", "", 10,		/* strlen(INT32_MAX) == 10 */
-	offsetof(struct pg_conn, connect_timeout)},
+	offsetof(struct mdb_conn, connect_timeout)},
 
 	{"dbname", "PGDATABASE", NULL, NULL,
 		"Database-Name", "", 20,
-	offsetof(struct pg_conn, dbName)},
+	offsetof(struct mdb_conn, dbName)},
 
 	{"host", "PGHOST", NULL, NULL,
 		"Database-Host", "", 40,
-	offsetof(struct pg_conn, pghost)},
+	offsetof(struct mdb_conn, pghost)},
 
 	{"hostaddr", "PGHOSTADDR", NULL, NULL,
 		"Database-Host-IP-Address", "", 45,
-	offsetof(struct pg_conn, pghostaddr)},
+	offsetof(struct mdb_conn, pghostaddr)},
 
 	{"port", "PGPORT", DEF_PGPORT_STR, NULL,
 		"Database-Port", "", 6,
-	offsetof(struct pg_conn, pgport)},
+	offsetof(struct mdb_conn, pgport)},
 
 	{"client_encoding", "PGCLIENTENCODING", NULL, NULL,
 		"Client-Encoding", "", 10,
-	offsetof(struct pg_conn, client_encoding_initial)},
+	offsetof(struct mdb_conn, client_encoding_initial)},
 
 	/*
 	 * "tty" is no longer used either, but keep it present for backwards
@@ -214,35 +214,35 @@ static const internalPQconninfoOption PQconninfoOptions[] = {
 	 */
 	{"tty", "PGTTY", DefaultTty, NULL,
 		"Backend-Debug-TTY", "D", 40,
-	offsetof(struct pg_conn, pgtty)},
+	offsetof(struct mdb_conn, pgtty)},
 
 	{"options", "PGOPTIONS", DefaultOption, NULL,
 		"Backend-Debug-Options", "D", 40,
-	offsetof(struct pg_conn, pgoptions)},
+	offsetof(struct mdb_conn, pgoptions)},
 
 	{"application_name", "PGAPPNAME", NULL, NULL,
 		"Application-Name", "", 64,
-	offsetof(struct pg_conn, appname)},
+	offsetof(struct mdb_conn, appname)},
 
 	{"fallback_application_name", NULL, NULL, NULL,
 		"Fallback-Application-Name", "", 64,
-	offsetof(struct pg_conn, fbappname)},
+	offsetof(struct mdb_conn, fbappname)},
 
 	{"keepalives", NULL, NULL, NULL,
 		"TCP-Keepalives", "", 1,	/* should be just '0' or '1' */
-	offsetof(struct pg_conn, keepalives)},
+	offsetof(struct mdb_conn, keepalives)},
 
 	{"keepalives_idle", NULL, NULL, NULL,
 		"TCP-Keepalives-Idle", "", 10,	/* strlen(INT32_MAX) == 10 */
-	offsetof(struct pg_conn, keepalives_idle)},
+	offsetof(struct mdb_conn, keepalives_idle)},
 
 	{"keepalives_interval", NULL, NULL, NULL,
 		"TCP-Keepalives-Interval", "", 10,		/* strlen(INT32_MAX) == 10 */
-	offsetof(struct pg_conn, keepalives_interval)},
+	offsetof(struct mdb_conn, keepalives_interval)},
 
 	{"keepalives_count", NULL, NULL, NULL,
 		"TCP-Keepalives-Count", "", 10, /* strlen(INT32_MAX) == 10 */
-	offsetof(struct pg_conn, keepalives_count)},
+	offsetof(struct mdb_conn, keepalives_count)},
 
 	/*
 	 * ssl options are allowed even without client SSL support because the
@@ -252,37 +252,37 @@ static const internalPQconninfoOption PQconninfoOptions[] = {
 	 */
 	{"sslmode", "PGSSLMODE", DefaultSSLMode, NULL,
 		"SSL-Mode", "", 12,		/* sizeof("verify-full") == 12 */
-	offsetof(struct pg_conn, sslmode)},
+	offsetof(struct mdb_conn, sslmode)},
 
 	{"sslcompression", "PGSSLCOMPRESSION", "1", NULL,
 		"SSL-Compression", "", 1,
-	offsetof(struct pg_conn, sslcompression)},
+	offsetof(struct mdb_conn, sslcompression)},
 
 	{"sslcert", "PGSSLCERT", NULL, NULL,
 		"SSL-Client-Cert", "", 64,
-	offsetof(struct pg_conn, sslcert)},
+	offsetof(struct mdb_conn, sslcert)},
 
 	{"sslkey", "PGSSLKEY", NULL, NULL,
 		"SSL-Client-Key", "", 64,
-	offsetof(struct pg_conn, sslkey)},
+	offsetof(struct mdb_conn, sslkey)},
 
 	{"sslrootcert", "PGSSLROOTCERT", NULL, NULL,
 		"SSL-Root-Certificate", "", 64,
-	offsetof(struct pg_conn, sslrootcert)},
+	offsetof(struct mdb_conn, sslrootcert)},
 
 	{"sslcrl", "PGSSLCRL", NULL, NULL,
 		"SSL-Revocation-List", "", 64,
-	offsetof(struct pg_conn, sslcrl)},
+	offsetof(struct mdb_conn, sslcrl)},
 
 	{"requirepeer", "PGREQUIREPEER", NULL, NULL,
 		"Require-Peer", "", 10,
-	offsetof(struct pg_conn, requirepeer)},
+	offsetof(struct mdb_conn, requirepeer)},
 
 #if defined(ENABLE_GSS) || defined(ENABLE_SSPI)
 	/* Kerberos and GSSAPI authentication support specifying the service name */
 	{"krbsrvname", "PGKRBSRVNAME", PG_KRB_SRVNAM, NULL,
 		"Kerberos-service-name", "", 20,
-	offsetof(struct pg_conn, krbsrvname)},
+	offsetof(struct mdb_conn, krbsrvname)},
 #endif
 
 #if defined(ENABLE_GSS) && defined(ENABLE_SSPI)
@@ -293,12 +293,12 @@ static const internalPQconninfoOption PQconninfoOptions[] = {
 	 */
 	{"gsslib", "PGGSSLIB", NULL, NULL,
 		"GSS-library", "", 7,	/* sizeof("gssapi") = 7 */
-	offsetof(struct pg_conn, gsslib)},
+	offsetof(struct mdb_conn, gsslib)},
 #endif
 
 	{"replication", NULL, NULL, NULL,
 		"Replication", "D", 5,
-	offsetof(struct pg_conn, replication)},
+	offsetof(struct mdb_conn, replication)},
 
 	/* Terminating entry --- MUST BE LAST */
 	{NULL, NULL, NULL, NULL,
@@ -377,12 +377,12 @@ static char *pwdfMatchesString(char *buf, char *token);
 static char *PasswordFromFile(char *hostname, char *port, char *dbname,
 				 char *username);
 static bool getPgPassFilename(char *pgpassfile);
-static void dot_pg_pass_warning(PGconn *conn);
+static void dot_mdb_pass_warning(PGconn *conn);
 static void default_threadlock(int acquire);
 
 
 /* global variable because fe-auth.c needs to access it */
-pgthreadlock_t pg_g_threadlock = default_threadlock;
+pgthreadlock_t mdb_g_threadlock = default_threadlock;
 
 
 /*
@@ -772,14 +772,14 @@ connectOptions2(PGconn *conn)
 {
 	/*
 	 * If user name was not given, fetch it.  (Most likely, the fetch will
-	 * fail, since the only way we get here is if pg_fe_getauthname() failed
+	 * fail, since the only way we get here is if mdb_fe_getauthname() failed
 	 * during conninfo_add_defaults().  But now we want an error message.)
 	 */
 	if (conn->pguser == NULL || conn->pguser[0] == '\0')
 	{
 		if (conn->pguser)
 			free(conn->pguser);
-		conn->pguser = pg_fe_getauthname(&conn->errorMessage);
+		conn->pguser = mdb_fe_getauthname(&conn->errorMessage);
 		if (!conn->pguser)
 		{
 			conn->status = CONNECTION_BAD;
@@ -884,7 +884,7 @@ connectOptions2(PGconn *conn)
 		strcmp(conn->client_encoding_initial, "auto") == 0)
 	{
 		free(conn->client_encoding_initial);
-		conn->client_encoding_initial = strdup(pg_encoding_to_char(pg_get_encoding_from_locale(NULL, true)));
+		conn->client_encoding_initial = strdup(mdb_encoding_to_char(mdb_get_encoding_from_locale(NULL, true)));
 		if (!conn->client_encoding_initial)
 			goto oom_error;
 	}
@@ -1126,7 +1126,7 @@ connectFailureMessage(PGconn *conn, int errorno)
 	{
 		char		service[NI_MAXHOST];
 
-		pg_getnameinfo_all(&conn->raddr.addr, conn->raddr.salen,
+		mdb_getnameinfo_all(&conn->raddr.addr, conn->raddr.salen,
 						   NULL, 0,
 						   service, sizeof(service),
 						   NI_NUMERICSERV);
@@ -1408,7 +1408,7 @@ connectDBStart(PGconn *conn)
 	conn->outCount = 0;
 
 	/*
-	 * Determine the parameters to pass to pg_getaddrinfo_all.
+	 * Determine the parameters to pass to mdb_getaddrinfo_all.
 	 */
 
 	/* Initialize hint structure */
@@ -1469,8 +1469,8 @@ connectDBStart(PGconn *conn)
 #endif   /* HAVE_UNIX_SOCKETS */
 	}
 
-	/* Use pg_getaddrinfo_all() to resolve the address */
-	ret = pg_getaddrinfo_all(node, portstr, &hint, &addrs);
+	/* Use mdb_getaddrinfo_all() to resolve the address */
+	ret = mdb_getaddrinfo_all(node, portstr, &hint, &addrs);
 	if (ret || !addrs)
 	{
 		if (node)
@@ -1482,7 +1482,7 @@ connectDBStart(PGconn *conn)
 							  libpq_gettext("could not translate Unix-domain socket path \"%s\" to address: %s\n"),
 							  portstr, gai_strerror(ret));
 		if (addrs)
-			pg_freeaddrinfo_all(hint.ai_family, addrs);
+			mdb_freeaddrinfo_all(hint.ai_family, addrs);
 		conn->options_valid = false;
 		goto connect_errReturn;
 	}
@@ -1699,7 +1699,7 @@ keep_going:						/* We will come back to here until there is
 			{
 				/*
 				 * Try to initiate a connection to one of the addresses
-				 * returned by pg_getaddrinfo_all().  conn->addr_cur is the
+				 * returned by mdb_getaddrinfo_all().  conn->addr_cur is the
 				 * next one to try. We fail when we run out of addresses.
 				 */
 				while (conn->addr_cur != NULL)
@@ -1743,7 +1743,7 @@ keep_going:						/* We will come back to here until there is
 							continue;
 						}
 					}
-					if (!pg_set_noblock(conn->sock))
+					if (!mdb_set_noblock(conn->sock))
 					{
 						appendPQExpBuffer(&conn->errorMessage,
 										  libpq_gettext("could not set socket to nonblocking mode: %s\n"),
@@ -2498,7 +2498,7 @@ keep_going:						/* We will come back to here until there is
 				 * avoid the Kerberos code doing a hostname look-up.
 				 */
 
-				if (pg_fe_sendauth(areq, conn) != STATUS_OK)
+				if (mdb_fe_sendauth(areq, conn) != STATUS_OK)
 				{
 					conn->errorMessage.len = strlen(conn->errorMessage.data);
 					goto error_return;
@@ -2506,7 +2506,7 @@ keep_going:						/* We will come back to here until there is
 				conn->errorMessage.len = strlen(conn->errorMessage.data);
 
 				/*
-				 * Just make sure that any data sent by pg_fe_sendauth is
+				 * Just make sure that any data sent by mdb_fe_sendauth is
 				 * flushed out.  Although this theoretically could block, it
 				 * really shouldn't since we don't send large auth responses.
 				 */
@@ -2600,7 +2600,7 @@ keep_going:						/* We will come back to here until there is
 				}
 
 				/* We can release the address list now. */
-				pg_freeaddrinfo_all(conn->addrlist_family, conn->addrlist);
+				mdb_freeaddrinfo_all(conn->addrlist_family, conn->addrlist);
 				conn->addrlist = NULL;
 				conn->addr_cur = NULL;
 
@@ -2661,7 +2661,7 @@ keep_going:						/* We will come back to here until there is
 
 error_return:
 
-	dot_pg_pass_warning(conn);
+	dot_mdb_pass_warning(conn);
 
 	/*
 	 * We used to close the socket at this point, but that makes it awkward
@@ -2727,7 +2727,7 @@ internal_ping(PGconn *conn)
 
 	/*
 	 * Report PQPING_REJECT if server says it's not accepting connections. (We
-	 * distinguish this case mainly for the convenience of pg_ctl.)
+	 * distinguish this case mainly for the convenience of mdb_ctl.)
 	 */
 	if (strcmp(conn->last_sqlstate, ERRCODE_CANNOT_CONNECT_NOW) == 0)
 		return PQPING_REJECT;
@@ -2983,7 +2983,7 @@ closePGconn(PGconn *conn)
 	conn->asyncStatus = PGASYNC_IDLE;
 	pqClearAsyncResult(conn);	/* deallocate result */
 	resetPQExpBuffer(&conn->errorMessage);
-	pg_freeaddrinfo_all(conn->addrlist_family, conn->addrlist);
+	mdb_freeaddrinfo_all(conn->addrlist_family, conn->addrlist);
 	conn->addrlist = NULL;
 	conn->addr_cur = NULL;
 	notify = conn->notifyHead;
@@ -3491,7 +3491,7 @@ ldapServiceLookup(const char *purl, PQconninfoOption *options,
 	 * component.
 	 */
 
-	if (pg_strncasecmp(url, LDAP_URL, strlen(LDAP_URL)) != 0)
+	if (mdb_strncasecmp(url, LDAP_URL, strlen(LDAP_URL)) != 0)
 	{
 		printfPQExpBuffer(errorMessage,
 						  libpq_gettext("invalid LDAP URL \"%s\": scheme must be ldap://\n"), purl);
@@ -3579,11 +3579,11 @@ ldapServiceLookup(const char *purl, PQconninfoOption *options,
 	}
 
 	/* set scope */
-	if (pg_strcasecmp(scopestr, "base") == 0)
+	if (mdb_strcasecmp(scopestr, "base") == 0)
 		scope = LDAP_SCOPE_BASE;
-	else if (pg_strcasecmp(scopestr, "one") == 0)
+	else if (mdb_strcasecmp(scopestr, "one") == 0)
 		scope = LDAP_SCOPE_ONELEVEL;
-	else if (pg_strcasecmp(scopestr, "sub") == 0)
+	else if (mdb_strcasecmp(scopestr, "sub") == 0)
 		scope = LDAP_SCOPE_SUBTREE;
 	else
 	{
@@ -3923,7 +3923,7 @@ parseServiceInfo(PQconninfoOption *options, PQExpBuffer errorMessage)
 			printfPQExpBuffer(errorMessage, libpq_gettext("could not get home directory to locate service definition file"));
 			return 1;
 		}
-		snprintf(serviceFile, MAXPGPATH, "%s/%s", homedir, ".pg_service.conf");
+		snprintf(serviceFile, MAXPGPATH, "%s/%s", homedir, ".mdb_service.conf");
 		errno = 0;
 		if (stat(serviceFile, &stat_buf) != 0 && errno == ENOENT)
 			goto next_file;
@@ -3939,7 +3939,7 @@ next_file:
 	 * This could be used by any application so we can't use the binary
 	 * location to find our config files.
 	 */
-	snprintf(serviceFile, MAXPGPATH, "%s/pg_service.conf",
+	snprintf(serviceFile, MAXPGPATH, "%s/mdb_service.conf",
 			 getenv("PGSYSCONFDIR") ? getenv("PGSYSCONFDIR") : SYSCONFDIR);
 	errno = 0;
 	if (stat(serviceFile, &stat_buf) != 0 && errno == ENOENT)
@@ -4649,7 +4649,7 @@ conninfo_add_defaults(PQconninfoOption *options, PQExpBuffer errorMessage)
 		}
 
 		/*
-		 * Special handling for "user" option.  Note that if pg_fe_getauthname
+		 * Special handling for "user" option.  Note that if mdb_fe_getauthname
 		 * fails, we just leave the value as NULL; there's no need for this to
 		 * be an error condition if the caller provides a user name.  The only
 		 * reason we do this now at all is so that callers of PQconndefaults
@@ -4657,7 +4657,7 @@ conninfo_add_defaults(PQconninfoOption *options, PQExpBuffer errorMessage)
 		 */
 		if (strcmp(option->keyword, "user") == 0)
 		{
-			option->val = pg_fe_getauthname(NULL);
+			option->val = mdb_fe_getauthname(NULL);
 			continue;
 		}
 	}
@@ -5521,7 +5521,7 @@ PQsetClientEncoding(PGconn *conn, const char *encoding)
 
 	/* Resolve special "auto" value from the locale */
 	if (strcmp(encoding, "auto") == 0)
-		encoding = pg_encoding_to_char(pg_get_encoding_from_locale(NULL, true));
+		encoding = mdb_encoding_to_char(mdb_get_encoding_from_locale(NULL, true));
 
 	/* check query buffer overflow */
 	if (sizeof(qbuf) < (sizeof(query) + strlen(encoding)))
@@ -5844,7 +5844,7 @@ getPgPassFilename(char *pgpassfile)
  *	password is wrong.
  */
 static void
-dot_pg_pass_warning(PGconn *conn)
+dot_mdb_pass_warning(PGconn *conn)
 {
 	/* If it was 'invalid authorization', add .pgpass mention */
 	/* only works with >= 9.0 servers */
@@ -5940,12 +5940,12 @@ default_threadlock(int acquire)
 pgthreadlock_t
 PQregisterThreadLock(pgthreadlock_t newhandler)
 {
-	pgthreadlock_t prev = pg_g_threadlock;
+	pgthreadlock_t prev = mdb_g_threadlock;
 
 	if (newhandler)
-		pg_g_threadlock = newhandler;
+		mdb_g_threadlock = newhandler;
 	else
-		pg_g_threadlock = default_threadlock;
+		mdb_g_threadlock = default_threadlock;
 
 	return prev;
 }

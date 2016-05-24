@@ -36,8 +36,8 @@
 #include "access/xlogreader.h"
 #include "access/xlogutils.h"
 #include "catalog/catversion.h"
-#include "catalog/pg_control.h"
-#include "catalog/pg_database.h"
+#include "catalog/mdb_control.h"
+#include "catalog/mdb_database.h"
 #include "commands/tablespace.h"
 #include "miscadmin.h"
 #include "pgstat.h"
@@ -71,7 +71,7 @@
 #include "utils/relmapper.h"
 #include "utils/snapmgr.h"
 #include "utils/timestamp.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 
 extern uint32 bootstrap_data_checksum_version;
 
@@ -234,9 +234,9 @@ static int	LocalXLogInsertAllowed = -1;
  * valid in the startup process.
  *
  * When ArchiveRecoveryRequested is true, but InArchiveRecovery is false, we're
- * currently performing crash recovery using only XLOG files in pg_xlog, but
+ * currently performing crash recovery using only XLOG files in mdb_xlog, but
  * will switch to using offline XLOG archives as soon as we reach the end of
- * WAL in pg_xlog.
+ * WAL in mdb_xlog.
 */
 bool		ArchiveRecoveryRequested = false;
 bool		InArchiveRecovery = false;
@@ -500,7 +500,7 @@ typedef struct XLogCtlInsert
 	bool		fullPageWrites;
 
 	/*
-	 * exclusiveBackup is true if a backup started with pg_start_backup() is
+	 * exclusiveBackup is true if a backup started with mdb_start_backup() is
 	 * in progress, and nonExclusiveBackups is a counter indicating the number
 	 * of streaming base backups currently in progress. forcePageWrites is set
 	 * to true when either of these is non-zero. lastBackupStart is the latest
@@ -540,7 +540,7 @@ typedef struct XLogCtlData
 	slock_t		ulsn_lck;
 
 	/* Time of last xlog segment switch. Protected by WALWriteLock. */
-	pg_time_t	lastSegSwitchTime;
+	mdb_time_t	lastSegSwitchTime;
 
 	/*
 	 * Protected by info_lck and WALWriteLock (you must hold either lock to
@@ -657,7 +657,7 @@ static XLogCtlData *XLogCtl = NULL;
 static WALInsertLockPadded *WALInsertLocks = NULL;
 
 /*
- * We maintain an image of pg_control in shared memory.
+ * We maintain an image of mdb_control in shared memory.
  */
 static ControlFileData *ControlFile = NULL;
 
@@ -699,12 +699,12 @@ typedef enum
 {
 	XLOG_FROM_ANY = 0,			/* request to read WAL from any source */
 	XLOG_FROM_ARCHIVE,			/* restored using restore_command */
-	XLOG_FROM_PG_XLOG,			/* existing file in pg_xlog */
+	XLOG_FROM_PG_XLOG,			/* existing file in mdb_xlog */
 	XLOG_FROM_STREAM			/* streamed from master */
 } XLogSource;
 
 /* human-readable names for XLogSources, for debugging output */
-static const char *xlogSourceNames[] = {"any", "archive", "pg_xlog", "stream"};
+static const char *xlogSourceNames[] = {"any", "archive", "mdb_xlog", "stream"};
 
 /*
  * openLogFile is -1 or a kernel FD for an open log file segment.
@@ -836,14 +836,14 @@ static XLogRecord *ReadCheckpointRecord(XLogReaderState *xlogreader,
 static bool rescanLatestTimeLine(void);
 static void WriteControlFile(void);
 static void ReadControlFile(void);
-static char *str_time(pg_time_t tnow);
+static char *str_time(mdb_time_t tnow);
 static bool CheckForStandbyTrigger(void);
 
 #ifdef WAL_DEBUG
 static void xlog_outrec(StringInfo buf, XLogReaderState *record);
 #endif
 static void xlog_outdesc(StringInfo buf, XLogReaderState *record);
-static void pg_start_backup_callback(int code, Datum arg);
+static void mdb_start_backup_callback(int code, Datum arg);
 static bool read_backup_label(XLogRecPtr *checkPointLoc,
 				  bool *backupEndRequired, bool *backupFromStandby);
 static bool read_tablespace_map(List **tablespaces);
@@ -896,7 +896,7 @@ XLogRecPtr
 XLogInsertRecord(XLogRecData *rdata, XLogRecPtr fpw_lsn)
 {
 	XLogCtlInsert *Insert = &XLogCtl->Insert;
-	pg_crc32c	rdata_crc;
+	mdb_crc32c	rdata_crc;
 	bool		inserted;
 	XLogRecord *rechdr = (XLogRecord *) rdata->data;
 	bool		isLogSwitch = (rechdr->xl_rmid == RM_XLOG_ID &&
@@ -1706,7 +1706,7 @@ GetXLogBuffer(XLogRecPtr ptr)
 		 * Make sure the initialization of the page is visible to us, and
 		 * won't arrive later to overwrite the WAL data we write on the page.
 		 */
-		pg_memory_barrier();
+		mdb_memory_barrier();
 	}
 
 	/*
@@ -2000,7 +2000,7 @@ AdvanceXLInsertBuffer(XLogRecPtr upto, bool opportunistic)
 		 * before the xlblocks update. GetXLogBuffer() reads xlblocks without
 		 * holding a lock.
 		 */
-		pg_write_barrier();
+		mdb_write_barrier();
 
 		*((volatile XLogRecPtr *) &XLogCtl->xlblocks[nextidx]) = NewPageEndPtr;
 
@@ -2327,7 +2327,7 @@ XLogWrite(XLogwrtRqst WriteRqst, bool flexible)
 				if (XLogArchivingActive())
 					XLogArchiveNotifySeg(openLogSegNo);
 
-				XLogCtl->lastSegSwitchTime = (pg_time_t) time(NULL);
+				XLogCtl->lastSegSwitchTime = (mdb_time_t) time(NULL);
 
 				/*
 				 * Request a checkpoint if we've consumed too much xlog since
@@ -2673,7 +2673,7 @@ XLogFlush(XLogRecPtr record)
 		if (CommitDelay > 0 && enableFsync &&
 			MinimumActiveBackends(CommitSiblings))
 		{
-			pg_usleep(CommitDelay);
+			mdb_usleep(CommitDelay);
 
 			/*
 			 * Re-check how far we can now flush the WAL. It's generally not
@@ -3052,7 +3052,7 @@ XLogFileInit(XLogSegNo logsegno, bool *use_existent, bool use_lock)
 		}
 	}
 
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 	{
 		close(fd);
 		ereport(ERROR,
@@ -3216,7 +3216,7 @@ XLogFileCopy(XLogSegNo destsegno, TimeLineID srcTLI, XLogSegNo srcsegno,
 		}
 	}
 
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 		ereport(ERROR,
 				(errcode_for_file_access(),
 				 errmsg("could not fsync file \"%s\": %m", tmppath)));
@@ -3344,7 +3344,7 @@ XLogFileOpen(XLogSegNo segno)
  * Open a logfile segment for reading (during recovery).
  *
  * If source == XLOG_FROM_ARCHIVE, the segment is retrieved from archive.
- * Otherwise, it's assumed to be already available in pg_xlog.
+ * Otherwise, it's assumed to be already available in mdb_xlog.
  */
 static int
 XLogFileRead(XLogSegNo segno, int emode, TimeLineID tli,
@@ -3392,7 +3392,7 @@ XLogFileRead(XLogSegNo segno, int emode, TimeLineID tli,
 		KeepFileRestoredFromArchive(path, xlogfname);
 
 		/*
-		 * Set path to point at the new file in pg_xlog.
+		 * Set path to point at the new file in mdb_xlog.
 		 */
 		snprintf(path, MAXPGPATH, XLOGDIR "/%s", xlogfname);
 	}
@@ -3692,10 +3692,10 @@ RemoveOldXlogFiles(XLogSegNo segno, XLogRecPtr PriorRedoPtr, XLogRecPtr endptr)
  *
  * This is called during recovery, whenever we switch to follow a new
  * timeline, and at the end of recovery when we create a new timeline. We
- * wouldn't otherwise care about extra WAL files lying in pg_xlog, but they
+ * wouldn't otherwise care about extra WAL files lying in mdb_xlog, but they
  * might be leftover pre-allocated or recycled WAL segments on the old timeline
  * that we haven't used yet, and contain garbage. If we just leave them in
- * pg_xlog, they will eventually be archived, and we can't let that happen.
+ * mdb_xlog, they will eventually be archived, and we can't let that happen.
  * Files that belong to our timeline history are valid, because we have
  * successfully replayed them, but from others we can't be sure.
  *
@@ -3788,7 +3788,7 @@ RemoveXlogFile(const char *segname, XLogRecPtr PriorRedoPtr, XLogRecPtr endptr)
 
 	/*
 	 * Before deleting the file, see if it can be recycled as a future log
-	 * segment. Only recycle normal files, pg_standby for example can create
+	 * segment. Only recycle normal files, mdb_standby for example can create
 	 * symbolic links pointing to a separate archive directory.
 	 */
 	if (endlogSegNo <= recycleSegNo &&
@@ -3852,15 +3852,15 @@ RemoveXlogFile(const char *segname, XLogRecPtr PriorRedoPtr, XLogRecPtr endptr)
 }
 
 /*
- * Verify whether pg_xlog and pg_xlog/archive_status exist.
+ * Verify whether mdb_xlog and mdb_xlog/archive_status exist.
  * If the latter does not exist, recreate it.
  *
  * It is not the goal of this function to verify the contents of these
  * directories, but to help in cases where someone has performed a cluster
- * copy for PITR purposes but omitted pg_xlog from the copy.
+ * copy for PITR purposes but omitted mdb_xlog from the copy.
  *
- * We could also recreate pg_xlog if it doesn't exist, but a deliberate
- * policy decision was made not to.  It is fairly common for pg_xlog to be
+ * We could also recreate mdb_xlog if it doesn't exist, but a deliberate
+ * policy decision was made not to.  It is fairly common for mdb_xlog to be
  * a symlink, and if that was the DBA's intent then automatically making a
  * plain directory would result in degraded performance with no notice.
  */
@@ -3870,7 +3870,7 @@ ValidateXLOGDirectoryStructure(void)
 	char		path[MAXPGPATH];
 	struct stat stat_buf;
 
-	/* Check for pg_xlog; if it doesn't exist, error out */
+	/* Check for mdb_xlog; if it doesn't exist, error out */
 	if (stat(XLOGDIR, &stat_buf) != 0 ||
 		!S_ISDIR(stat_buf.st_mode))
 		ereport(FATAL,
@@ -4026,11 +4026,11 @@ ReadRecord(XLogReaderState *xlogreader, XLogRecPtr RecPtr, int emode,
 			 * If archive recovery was requested, but we were still doing
 			 * crash recovery, switch to archive recovery and retry using the
 			 * offline archive. We have now replayed all the valid WAL in
-			 * pg_xlog, so we are presumably now consistent.
+			 * mdb_xlog, so we are presumably now consistent.
 			 *
 			 * We require that there's at least some valid WAL present in
-			 * pg_xlog, however (!fetch_ckpt). We could recover using the WAL
-			 * from the archive, even if pg_xlog is completely empty, but we'd
+			 * mdb_xlog, however (!fetch_ckpt). We could recover using the WAL
+			 * from the archive, even if mdb_xlog is completely empty, but we'd
 			 * have no idea how far we'd have to replay to reach consistency.
 			 * So err on the safe side and give up.
 			 */
@@ -4038,7 +4038,7 @@ ReadRecord(XLogReaderState *xlogreader, XLogRecPtr RecPtr, int emode,
 				!fetching_ckpt)
 			{
 				ereport(DEBUG1,
-						(errmsg_internal("reached end of WAL in pg_xlog, entering archive recovery")));
+						(errmsg_internal("reached end of WAL in mdb_xlog, entering archive recovery")));
 				InArchiveRecovery = true;
 				if (StandbyModeRequested)
 					StandbyMode = true;
@@ -4155,7 +4155,7 @@ rescanLatestTimeLine(void)
 
 	/*
 	 * As in StartupXLOG(), try to ensure we have all the history files
-	 * between the old target and new target in pg_xlog.
+	 * between the old target and new target in mdb_xlog.
 	 */
 	restoreTimeLineHistoryFiles(oldtarget + 1, newtarget);
 
@@ -4167,15 +4167,15 @@ rescanLatestTimeLine(void)
 }
 
 /*
- * I/O routines for pg_control
+ * I/O routines for mdb_control
  *
  * *ControlFile is a buffer in shared memory that holds an image of the
- * contents of pg_control.  WriteControlFile() initializes pg_control
+ * contents of mdb_control.  WriteControlFile() initializes mdb_control
  * given a preloaded buffer, ReadControlFile() loads the buffer from
- * the pg_control file (during postmaster or standalone-backend startup),
- * and UpdateControlFile() rewrites pg_control after we modify xlog state.
+ * the mdb_control file (during postmaster or standalone-backend startup),
+ * and UpdateControlFile() rewrites mdb_control after we modify xlog state.
  *
- * For simplicity, WriteControlFile() initializes the fields of pg_control
+ * For simplicity, WriteControlFile() initializes the fields of mdb_control
  * that are related to checking backend/database compatibility, and
  * ReadControlFile() verifies they are correct.  We could split out the
  * I/O and compatibility-check functions, but there seems no need currently.
@@ -4189,7 +4189,7 @@ WriteControlFile(void)
 	/*
 	 * Initialize version and compatibility-check fields
 	 */
-	ControlFile->pg_control_version = PG_CONTROL_VERSION;
+	ControlFile->mdb_control_version = PG_CONTROL_VERSION;
 	ControlFile->catalog_version_no = CATALOG_VERSION_NO;
 
 	ControlFile->maxAlign = MAXIMUM_ALIGNOF;
@@ -4222,11 +4222,11 @@ WriteControlFile(void)
 	FIN_CRC32C(ControlFile->crc);
 
 	/*
-	 * We write out PG_CONTROL_SIZE bytes into pg_control, zero-padding the
+	 * We write out PG_CONTROL_SIZE bytes into mdb_control, zero-padding the
 	 * excess over sizeof(ControlFileData).  This reduces the odds of
-	 * premature-EOF errors when reading pg_control.  We'll still fail when we
+	 * premature-EOF errors when reading mdb_control.  We'll still fail when we
 	 * check the contents of the file, but hopefully with a more specific
-	 * error than "couldn't read pg_control".
+	 * error than "couldn't read mdb_control".
 	 */
 	if (sizeof(ControlFileData) > PG_CONTROL_SIZE)
 		elog(PANIC, "sizeof(ControlFileData) is larger than PG_CONTROL_SIZE; fix either one");
@@ -4254,7 +4254,7 @@ WriteControlFile(void)
 				 errmsg("could not write to control file: %m")));
 	}
 
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 		ereport(PANIC,
 				(errcode_for_file_access(),
 				 errmsg("could not fsync control file: %m")));
@@ -4268,7 +4268,7 @@ WriteControlFile(void)
 static void
 ReadControlFile(void)
 {
-	pg_crc32c	crc;
+	mdb_crc32c	crc;
 	int			fd;
 
 	/*
@@ -4291,27 +4291,27 @@ ReadControlFile(void)
 	close(fd);
 
 	/*
-	 * Check for expected pg_control format version.  If this is wrong, the
+	 * Check for expected mdb_control format version.  If this is wrong, the
 	 * CRC check will likely fail because we'll be checking the wrong number
 	 * of bytes.  Complaining about wrong version will probably be more
 	 * enlightening than complaining about wrong CRC.
 	 */
 
-	if (ControlFile->pg_control_version != PG_CONTROL_VERSION && ControlFile->pg_control_version % 65536 == 0 && ControlFile->pg_control_version / 65536 != 0)
+	if (ControlFile->mdb_control_version != PG_CONTROL_VERSION && ControlFile->mdb_control_version % 65536 == 0 && ControlFile->mdb_control_version / 65536 != 0)
 		ereport(FATAL,
 				(errmsg("database files are incompatible with server"),
 				 errdetail("The database cluster was initialized with PG_CONTROL_VERSION %d (0x%08x),"
 		 " but the server was compiled with PG_CONTROL_VERSION %d (0x%08x).",
-			ControlFile->pg_control_version, ControlFile->pg_control_version,
+			ControlFile->mdb_control_version, ControlFile->mdb_control_version,
 						   PG_CONTROL_VERSION, PG_CONTROL_VERSION),
 				 errhint("This could be a problem of mismatched byte ordering.  It looks like you need to initdb.")));
 
-	if (ControlFile->pg_control_version != PG_CONTROL_VERSION)
+	if (ControlFile->mdb_control_version != PG_CONTROL_VERSION)
 		ereport(FATAL,
 				(errmsg("database files are incompatible with server"),
 				 errdetail("The database cluster was initialized with PG_CONTROL_VERSION %d,"
 				  " but the server was compiled with PG_CONTROL_VERSION %d.",
-						ControlFile->pg_control_version, PG_CONTROL_VERSION),
+						ControlFile->mdb_control_version, PG_CONTROL_VERSION),
 				 errhint("It looks like you need to initdb.")));
 
 	/* Now check the CRC. */
@@ -4490,7 +4490,7 @@ UpdateControlFile(void)
 				 errmsg("could not write to control file: %m")));
 	}
 
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 		ereport(PANIC,
 				(errcode_for_file_access(),
 				 errmsg("could not fsync control file: %m")));
@@ -4743,7 +4743,7 @@ XLOGShmemInit(void)
 	InitSharedLatch(&XLogCtl->recoveryWakeupLatch);
 
 	/*
-	 * If we are not in bootstrap mode, pg_control should already exist. Read
+	 * If we are not in bootstrap mode, mdb_control should already exist. Read
 	 * and validate it immediately (see comments in ReadControlFile() for the
 	 * reasons why).
 	 */
@@ -4752,7 +4752,7 @@ XLOGShmemInit(void)
 }
 
 /*
- * This func must be called ONCE on system install.  It creates pg_control
+ * This func must be called ONCE on system install.  It creates mdb_control
  * and the initial XLOG segment.
  */
 void
@@ -4767,7 +4767,7 @@ BootStrapXLOG(void)
 	bool		use_existent;
 	uint64		sysidentifier;
 	struct timeval tv;
-	pg_crc32c	crc;
+	mdb_crc32c	crc;
 
 	/*
 	 * Select a hopefully-unique system identifier code for this installation.
@@ -4816,7 +4816,7 @@ BootStrapXLOG(void)
 	checkPoint.oldestMultiDB = TemplateDbOid;
 	checkPoint.oldestCommitTsXid = InvalidTransactionId;
 	checkPoint.newestCommitTsXid = InvalidTransactionId;
-	checkPoint.time = (pg_time_t) time(NULL);
+	checkPoint.time = (mdb_time_t) time(NULL);
 	checkPoint.oldestActiveXid = InvalidTransactionId;
 
 	ShmemVariableCache->nextXid = checkPoint.nextXid;
@@ -4875,7 +4875,7 @@ BootStrapXLOG(void)
 			  errmsg("could not write bootstrap transaction log file: %m")));
 	}
 
-	if (pg_fsync(openLogFile) != 0)
+	if (mdb_fsync(openLogFile) != 0)
 		ereport(PANIC,
 				(errcode_for_file_access(),
 			  errmsg("could not fsync bootstrap transaction log file: %m")));
@@ -4887,10 +4887,10 @@ BootStrapXLOG(void)
 
 	openLogFile = -1;
 
-	/* Now create pg_control */
+	/* Now create mdb_control */
 
 	memset(ControlFile, 0, sizeof(ControlFileData));
-	/* Initialize pg_control status fields */
+	/* Initialize mdb_control status fields */
 	ControlFile->system_identifier = sysidentifier;
 	ControlFile->state = DB_SHUTDOWNED;
 	ControlFile->time = checkPoint.time;
@@ -4922,13 +4922,13 @@ BootStrapXLOG(void)
 }
 
 static char *
-str_time(pg_time_t tnow)
+str_time(mdb_time_t tnow)
 {
 	static char buf[128];
 
-	pg_strftime(buf, sizeof(buf),
+	mdb_strftime(buf, sizeof(buf),
 				"%Y-%m-%d %H:%M:%S %Z",
-				pg_localtime(&tnow, log_timezone));
+				mdb_localtime(&tnow, log_timezone));
 
 	return buf;
 }
@@ -5170,7 +5170,7 @@ readRecoveryCommandFile(void)
 			ereport(WARNING,
 					(errmsg("recovery command file \"%s\" specified neither primary_conninfo nor restore_command",
 							RECOVERY_COMMAND_FILE),
-					 errhint("The database server will regularly poll the pg_xlog subdirectory to check for files placed there.")));
+					 errhint("The database server will regularly poll the mdb_xlog subdirectory to check for files placed there.")));
 	}
 	else
 	{
@@ -5213,7 +5213,7 @@ readRecoveryCommandFile(void)
 		}
 		else
 		{
-			/* We start the "latest" search from pg_control's timeline */
+			/* We start the "latest" search from mdb_control's timeline */
 			recoveryTargetTLI = findNewestTimeLine(recoveryTargetTLI);
 			recoveryTargetIsLatest = true;
 		}
@@ -5629,7 +5629,7 @@ recoveryStopsAfter(XLogReaderState *record)
 /*
  * Wait until shared recoveryPause flag is cleared.
  *
- * XXX Could also be done with shared latch, avoiding the pg_usleep loop.
+ * XXX Could also be done with shared latch, avoiding the mdb_usleep loop.
  * Probably not worth the trouble though.  This state shouldn't be one that
  * anyone cares about server power consumption in.
  */
@@ -5642,11 +5642,11 @@ recoveryPausesHere(void)
 
 	ereport(LOG,
 			(errmsg("recovery has paused"),
-			 errhint("Execute pg_xlog_replay_resume() to continue.")));
+			 errhint("Execute mdb_xlog_replay_resume() to continue.")));
 
 	while (RecoveryIsPaused())
 	{
-		pg_usleep(1000000L);	/* 1000 ms */
+		mdb_usleep(1000000L);	/* 1000 ms */
 		HandleStartupProcInterrupts();
 	}
 }
@@ -5982,11 +5982,11 @@ StartupXLOG(void)
 	/* This is just to allow attaching to startup process with a debugger */
 #ifdef XLOG_REPLAY_DELAY
 	if (ControlFile->state != DB_SHUTDOWNED)
-		pg_usleep(60000000L);
+		mdb_usleep(60000000L);
 #endif
 
 	/*
-	 * Verify that pg_xlog and pg_xlog/archive_status exist.  In cases where
+	 * Verify that mdb_xlog and mdb_xlog/archive_status exist.  In cases where
 	 * someone has performed a copy for PITR, these directories may have been
 	 * excluded and need to be re-created.
 	 */
@@ -6006,7 +6006,7 @@ StartupXLOG(void)
 
 	/*
 	 * Initialize on the assumption we want to recover to the latest timeline
-	 * that's active according to pg_control.
+	 * that's active according to mdb_control.
 	 */
 	if (ControlFile->minRecoveryPointTLI >
 		ControlFile->checkPointCopy.ThisTimeLineID)
@@ -6086,7 +6086,7 @@ StartupXLOG(void)
 
 		/*
 		 * When a backup_label file is present, we want to roll forward from
-		 * the checkpoint it identifies, rather than using pg_control.
+		 * the checkpoint it identifies, rather than using mdb_control.
 		 */
 		record = ReadCheckpointRecord(xlogreader, checkPointLoc, 0, true);
 		if (record != NULL)
@@ -6130,7 +6130,7 @@ StartupXLOG(void)
 				tablespaceinfo *ti = lfirst(lc);
 				char	   *linkloc;
 
-				linkloc = psprintf("pg_tblspc/%s", ti->oid);
+				linkloc = psprintf("mdb_tblspc/%s", ti->oid);
 
 				/*
 				 * Remove the existing symlink if any and Create the symlink
@@ -6190,11 +6190,11 @@ StartupXLOG(void)
 		 * know how far we need to replay the WAL before we reach consistency.
 		 * This can happen for example if a base backup is taken from a
 		 * running server using an atomic filesystem snapshot, without calling
-		 * pg_start/stop_backup. Or if you just kill a running master server
+		 * mdb_start/stop_backup. Or if you just kill a running master server
 		 * and put it into archive recovery by creating a recovery.conf file.
 		 *
 		 * Our strategy in that case is to perform crash recovery first,
-		 * replaying all the WAL present in pg_xlog, and only enter archive
+		 * replaying all the WAL present in mdb_xlog, and only enter archive
 		 * recovery after that.
 		 *
 		 * But usually we already know how far we need to replay the WAL (up
@@ -6214,7 +6214,7 @@ StartupXLOG(void)
 
 		/*
 		 * Get the last valid checkpoint record.  If the latest one according
-		 * to pg_control is broken, try the next-to-last one.
+		 * to mdb_control is broken, try the next-to-last one.
 		 */
 		checkPointLoc = ControlFile->checkPoint;
 		RedoStartLSN = ControlFile->checkPointCopy.redo;
@@ -6260,7 +6260,7 @@ StartupXLOG(void)
 	 * in place if the database had been cleanly shut down, but it seems
 	 * safest to just remove them always and let them be rebuilt during the
 	 * first backend startup.  These files needs to be removed from all
-	 * directories including pg_tblspc, however the symlinks are created only
+	 * directories including mdb_tblspc, however the symlinks are created only
 	 * after reading tablespace_map file in case of archive recovery from
 	 * backup, so needs to clear old relcache files here after creating
 	 * symlinks.
@@ -6398,7 +6398,7 @@ StartupXLOG(void)
 
 	/*
 	 * Copy any missing timeline history files between 'now' and the recovery
-	 * target timeline from archive to pg_xlog. While we don't need those
+	 * target timeline from archive to mdb_xlog. While we don't need those
 	 * files ourselves - the history file of the recovery target timeline
 	 * covers all the previous timelines in the history too - a cascading
 	 * standby server might be interested in them. Or, if you archive the WAL
@@ -6445,9 +6445,9 @@ StartupXLOG(void)
 		int			rmid;
 
 		/*
-		 * Update pg_control to show that we are recovering and to show the
+		 * Update mdb_control to show that we are recovering and to show the
 		 * selected checkpoint as the place we are starting from. We also mark
-		 * pg_control with any minimum recovery stop point obtained from a
+		 * mdb_control with any minimum recovery stop point obtained from a
 		 * backup history file.
 		 */
 		dbstate_at_startup = ControlFile->state;
@@ -6485,7 +6485,7 @@ StartupXLOG(void)
 		 * Also set backupEndPoint and use minRecoveryPoint as the backup end
 		 * location if we're starting recovery from a base backup which was
 		 * taken from a standby. In this case, the database system status in
-		 * pg_control must indicate that the database was already in recovery.
+		 * mdb_control must indicate that the database was already in recovery.
 		 * Usually that will be DB_IN_ARCHIVE_RECOVERY but also can be
 		 * DB_SHUTDOWNED_IN_RECOVERY if recovery previously was interrupted
 		 * before reaching this point; e.g. because restore_command or
@@ -6510,7 +6510,7 @@ StartupXLOG(void)
 				ControlFile->backupEndPoint = ControlFile->minRecoveryPoint;
 			}
 		}
-		ControlFile->time = (pg_time_t) time(NULL);
+		ControlFile->time = (mdb_time_t) time(NULL);
 		/* No need to hold ControlFileLock yet, we aren't up far enough */
 		UpdateControlFile();
 
@@ -6525,7 +6525,7 @@ StartupXLOG(void)
 
 		/*
 		 * If there was a backup label file, it's done its job and the info
-		 * has now been propagated into pg_control.  We must get rid of the
+		 * has now been propagated into mdb_control.  We must get rid of the
 		 * label file so that if we crash during recovery, we'll pick up at
 		 * the latest recovery restartpoint instead of going all the way back
 		 * to the backup start point.  It seems prudent though to just rename
@@ -7019,7 +7019,7 @@ StartupXLOG(void)
 	/*
 	 * We are now done reading the xlog from stream. Turn off streaming
 	 * recovery to force fetching the files (which would be required at end of
-	 * recovery, e.g., timeline history file) from archive or pg_xlog.
+	 * recovery, e.g., timeline history file) from archive or mdb_xlog.
 	 */
 	StandbyMode = false;
 
@@ -7054,7 +7054,7 @@ StartupXLOG(void)
 		 * Ran off end of WAL before reaching end-of-backup WAL record, or
 		 * minRecoveryPoint. That's usually a bad sign, indicating that you
 		 * tried to recover from an online backup but never called
-		 * pg_stop_backup(), or you didn't archive all the WAL up to that
+		 * mdb_stop_backup(), or you didn't archive all the WAL up to that
 		 * point. However, this also happens in crash recovery, if the system
 		 * crashes while an online backup is in progress. We must not treat
 		 * that as an error, or the database will refuse to start up.
@@ -7068,7 +7068,7 @@ StartupXLOG(void)
 			else if (!XLogRecPtrIsInvalid(ControlFile->backupStartPoint))
 				ereport(FATAL,
 						(errmsg("WAL ends before end of online backup"),
-						 errhint("Online backup started with pg_start_backup() must be ended with pg_stop_backup(), and all WAL up to that point must be available at recovery.")));
+						 errhint("Online backup started with mdb_start_backup() must be ended with mdb_stop_backup(), and all WAL up to that point must be available at recovery.")));
 			else
 				ereport(FATAL,
 					  (errmsg("WAL ends before consistent recovery point")));
@@ -7301,7 +7301,7 @@ StartupXLOG(void)
 		 * As a compromise, we rename the last segment with the .partial
 		 * suffix, and archive it. Archive recovery will never try to read
 		 * .partial segments, so they will normally go unused. But in the odd
-		 * PITR case, the administrator can copy them manually to the pg_xlog
+		 * PITR case, the administrator can copy them manually to the mdb_xlog
 		 * directory (removing the suffix). They can be useful in debugging,
 		 * too.
 		 *
@@ -7353,12 +7353,12 @@ StartupXLOG(void)
 
 	LWLockAcquire(ControlFileLock, LW_EXCLUSIVE);
 	ControlFile->state = DB_IN_PRODUCTION;
-	ControlFile->time = (pg_time_t) time(NULL);
+	ControlFile->time = (mdb_time_t) time(NULL);
 	UpdateControlFile();
 	LWLockRelease(ControlFileLock);
 
 	/* start the archive_timeout timer running */
-	XLogCtl->lastSegSwitchTime = (pg_time_t) time(NULL);
+	XLogCtl->lastSegSwitchTime = (mdb_time_t) time(NULL);
 
 	/* also initialize latestCompletedXid, to nextXid - 1 */
 	LWLockAcquire(ProcArrayLock, LW_EXCLUSIVE);
@@ -7469,7 +7469,7 @@ CheckRecoveryConsistency(void)
 		ControlFile->backupEndPoint <= lastReplayedEndRecPtr)
 	{
 		/*
-		 * We have reached the end of base backup, as indicated by pg_control.
+		 * We have reached the end of base backup, as indicated by mdb_control.
 		 * The data on disk is now consistent. Reset backupStartPoint and
 		 * backupEndPoint, and update minRecoveryPoint to make sure we don't
 		 * allow starting up at an earlier point even if recovery is stopped
@@ -7576,7 +7576,7 @@ RecoveryInProgress(void)
 			 * RedoRecPtr after SharedRecoveryInProgress (for machines with
 			 * weak memory ordering).
 			 */
-			pg_memory_barrier();
+			mdb_memory_barrier();
 			InitXLOGAccess();
 		}
 
@@ -7903,10 +7903,10 @@ GetFlushRecPtr(void)
 /*
  * Get the time of the last xlog segment switch
  */
-pg_time_t
+mdb_time_t
 GetLastSegSwitchTime(void)
 {
-	pg_time_t	result;
+	mdb_time_t	result;
 
 	/* Need WALWriteLock, but shared lock is sufficient */
 	LWLockAcquire(WALWriteLock, LW_SHARED);
@@ -8214,7 +8214,7 @@ CreateCheckPoint(int flags)
 	{
 		LWLockAcquire(ControlFileLock, LW_EXCLUSIVE);
 		ControlFile->state = DB_SHUTDOWNING;
-		ControlFile->time = (pg_time_t) time(NULL);
+		ControlFile->time = (mdb_time_t) time(NULL);
 		UpdateControlFile();
 		LWLockRelease(ControlFileLock);
 	}
@@ -8228,7 +8228,7 @@ CreateCheckPoint(int flags)
 
 	/* Begin filling in the checkpoint WAL record */
 	MemSet(&checkPoint, 0, sizeof(checkPoint));
-	checkPoint.time = (pg_time_t) time(NULL);
+	checkPoint.time = (mdb_time_t) time(NULL);
 
 	/*
 	 * For Hot Standby, derive the oldestActiveXid before we fix the redo
@@ -8396,7 +8396,7 @@ CreateCheckPoint(int flags)
 	 * that are currently in commit critical sections.  If an xact inserted
 	 * its commit record into XLOG just before the REDO point, then a crash
 	 * restart from the REDO point would not replay that record, which means
-	 * that our flushing had better include the xact's update of pg_clog.  So
+	 * that our flushing had better include the xact's update of mdb_clog.  So
 	 * we wait till he's out of his commit critical section before proceeding.
 	 * See notes in RecordTransactionCommit().
 	 *
@@ -8420,7 +8420,7 @@ CreateCheckPoint(int flags)
 	{
 		do
 		{
-			pg_usleep(10000L);	/* wait for 10 msec */
+			mdb_usleep(10000L);	/* wait for 10 msec */
 		} while (HaveVirtualXIDsDelayingChkpt(vxids, nvxids));
 	}
 	pfree(vxids);
@@ -8489,7 +8489,7 @@ CreateCheckPoint(int flags)
 	ControlFile->prevCheckPoint = ControlFile->checkPoint;
 	ControlFile->checkPoint = ProcLastRecPtr;
 	ControlFile->checkPointCopy = checkPoint;
-	ControlFile->time = (pg_time_t) time(NULL);
+	ControlFile->time = (mdb_time_t) time(NULL);
 	/* crash recovery should always recover to the end of WAL */
 	ControlFile->minRecoveryPoint = InvalidXLogRecPtr;
 	ControlFile->minRecoveryPointTLI = 0;
@@ -8548,9 +8548,9 @@ CreateCheckPoint(int flags)
 		PreallocXlogFiles(recptr);
 
 	/*
-	 * Truncate pg_subtrans if possible.  We can throw away all data before
+	 * Truncate mdb_subtrans if possible.  We can throw away all data before
 	 * the oldest XMIN of any running transaction.  No future transaction will
-	 * attempt to reference any pg_subtrans entry older than that (see Asserts
+	 * attempt to reference any mdb_subtrans entry older than that (see Asserts
 	 * in subtrans.c).  During recovery, though, we mustn't do this because
 	 * StartupSUBTRANS hasn't been called yet.
 	 */
@@ -8610,7 +8610,7 @@ CreateEndOfRecoveryRecord(void)
 	 * changes to this point.
 	 */
 	LWLockAcquire(ControlFileLock, LW_EXCLUSIVE);
-	ControlFile->time = (pg_time_t) time(NULL);
+	ControlFile->time = (mdb_time_t) time(NULL);
 	ControlFile->minRecoveryPoint = recptr;
 	ControlFile->minRecoveryPointTLI = ThisTimeLineID;
 	UpdateControlFile();
@@ -8755,7 +8755,7 @@ CreateRestartPoint(int flags)
 		{
 			LWLockAcquire(ControlFileLock, LW_EXCLUSIVE);
 			ControlFile->state = DB_SHUTDOWNED_IN_RECOVERY;
-			ControlFile->time = (pg_time_t) time(NULL);
+			ControlFile->time = (mdb_time_t) time(NULL);
 			UpdateControlFile();
 			LWLockRelease(ControlFileLock);
 		}
@@ -8803,7 +8803,7 @@ CreateRestartPoint(int flags)
 	PriorRedoPtr = ControlFile->checkPointCopy.redo;
 
 	/*
-	 * Update pg_control, using current time.  Check that it still shows
+	 * Update mdb_control, using current time.  Check that it still shows
 	 * IN_ARCHIVE_RECOVERY state and an older checkpoint, else do nothing;
 	 * this is a quick hack to make sure nothing really bad happens if somehow
 	 * we get here after the end-of-recovery checkpoint.
@@ -8815,7 +8815,7 @@ CreateRestartPoint(int flags)
 		ControlFile->prevCheckPoint = ControlFile->checkPoint;
 		ControlFile->checkPoint = lastCheckPointRecPtr;
 		ControlFile->checkPointCopy = lastCheckPoint;
-		ControlFile->time = (pg_time_t) time(NULL);
+		ControlFile->time = (mdb_time_t) time(NULL);
 		if (flags & CHECKPOINT_IS_SHUTDOWN)
 			ControlFile->state = DB_SHUTDOWNED_IN_RECOVERY;
 		UpdateControlFile();
@@ -8887,9 +8887,9 @@ CreateRestartPoint(int flags)
 	}
 
 	/*
-	 * Truncate pg_subtrans if possible.  We can throw away all data before
+	 * Truncate mdb_subtrans if possible.  We can throw away all data before
 	 * the oldest XMIN of any running transaction.  No future transaction will
-	 * attempt to reference any pg_subtrans entry older than that (see Asserts
+	 * attempt to reference any mdb_subtrans entry older than that (see Asserts
 	 * in subtrans.c).  When hot standby is disabled, though, we mustn't do
 	 * this because StartupSUBTRANS hasn't been called yet.
 	 */
@@ -9042,7 +9042,7 @@ XLogRestorePoint(const char *rpName)
 
 /*
  * Check if any of the GUC parameters that are critical for hot standby
- * have changed, and update the value in pg_control file if necessary.
+ * have changed, and update the value in mdb_control file if necessary.
  */
 static void
 XLogReportParameters(void)
@@ -9059,7 +9059,7 @@ XLogReportParameters(void)
 		 * The change in number of backend slots doesn't need to be WAL-logged
 		 * if archiving is not enabled, as you can't start archive recovery
 		 * with wal_level=minimal anyway. We don't really care about the
-		 * values in pg_control either if wal_level=minimal, but seems better
+		 * values in mdb_control either if wal_level=minimal, but seems better
 		 * to keep them up-to-date to avoid confusion.
 		 */
 		if (wal_level != ControlFile->wal_level || XLogIsNeeded())
@@ -9201,7 +9201,7 @@ checkTimeLineSwitch(XLogRecPtr lsn, TimeLineID newTLI, TimeLineID prevTLI)
 /*
  * XLOG resource manager's routines
  *
- * Definitions of info values are in include/catalog/pg_control.h, though
+ * Definitions of info values are in include/catalog/mdb_control.h, though
  * not all record types are related to control file updates.
  */
 void
@@ -9434,7 +9434,7 @@ xlog_redo(XLogReaderState *record)
 		{
 			/*
 			 * We have reached the end of base backup, the point where
-			 * pg_stop_backup() was done. The data on disk is now consistent.
+			 * mdb_stop_backup() was done. The data on disk is now consistent.
 			 * Reset backupStartPoint, and update minRecoveryPoint to make
 			 * sure we don't allow starting up at an earlier point even if
 			 * recovery is stopped and restarted soon after this.
@@ -9459,7 +9459,7 @@ xlog_redo(XLogReaderState *record)
 	{
 		xl_parameter_change xlrec;
 
-		/* Update our copy of the parameters in pg_control */
+		/* Update our copy of the parameters in mdb_control */
 		memcpy(&xlrec, XLogRecGetData(record), sizeof(xl_parameter_change));
 
 		LWLockAcquire(ControlFileLock, LW_EXCLUSIVE);
@@ -9502,7 +9502,7 @@ xlog_redo(XLogReaderState *record)
 
 		/*
 		 * Update the LSN of the last replayed XLOG_FPW_CHANGE record so that
-		 * do_pg_start_backup() and do_pg_stop_backup() can check whether
+		 * do_mdb_start_backup() and do_mdb_stop_backup() can check whether
 		 * full_page_writes has been disabled during online backup.
 		 */
 		if (!fpw)
@@ -9658,7 +9658,7 @@ assign_xlog_sync_method(int new_sync_method, void *extra)
 		 */
 		if (openLogFile >= 0)
 		{
-			if (pg_fsync(openLogFile) != 0)
+			if (mdb_fsync(openLogFile) != 0)
 				ereport(PANIC,
 						(errcode_for_file_access(),
 						 errmsg("could not fsync log segment %s: %m",
@@ -9682,7 +9682,7 @@ issue_xlog_fsync(int fd, XLogSegNo segno)
 	switch (sync_method)
 	{
 		case SYNC_METHOD_FSYNC:
-			if (pg_fsync_no_writethrough(fd) != 0)
+			if (mdb_fsync_no_writethrough(fd) != 0)
 				ereport(PANIC,
 						(errcode_for_file_access(),
 						 errmsg("could not fsync log file %s: %m",
@@ -9690,7 +9690,7 @@ issue_xlog_fsync(int fd, XLogSegNo segno)
 			break;
 #ifdef HAVE_FSYNC_WRITETHROUGH
 		case SYNC_METHOD_FSYNC_WRITETHROUGH:
-			if (pg_fsync_writethrough(fd) != 0)
+			if (mdb_fsync_writethrough(fd) != 0)
 				ereport(PANIC,
 						(errcode_for_file_access(),
 					  errmsg("could not fsync write-through log file %s: %m",
@@ -9699,7 +9699,7 @@ issue_xlog_fsync(int fd, XLogSegNo segno)
 #endif
 #ifdef HAVE_FDATASYNC
 		case SYNC_METHOD_FDATASYNC:
-			if (pg_fdatasync(fd) != 0)
+			if (mdb_fdatasync(fd) != 0)
 				ereport(PANIC,
 						(errcode_for_file_access(),
 						 errmsg("could not fdatasync log file %s: %m",
@@ -9729,15 +9729,15 @@ XLogFileNameP(TimeLineID tli, XLogSegNo segno)
 }
 
 /*
- * do_pg_start_backup is the workhorse of the user-visible pg_start_backup()
+ * do_mdb_start_backup is the workhorse of the user-visible mdb_start_backup()
  * function. It creates the necessary starting checkpoint and constructs the
  * backup label file.
  *
  * There are two kind of backups: exclusive and non-exclusive. An exclusive
- * backup is started with pg_start_backup(), and there can be only one active
+ * backup is started with mdb_start_backup(), and there can be only one active
  * at a time. The backup and tablespace map files of an exclusive backup are
  * written to $PGDATA/backup_label and $PGDATA/tablespace_map, and they are
- * removed by pg_stop_backup().
+ * removed by mdb_stop_backup().
  *
  * A non-exclusive backup is used for the streaming base backups (see
  * src/backend/replication/basebackup.c). The difference to exclusive backups
@@ -9761,13 +9761,13 @@ XLogFileNameP(TimeLineID tli, XLogSegNo segno)
  * backup, and the corresponding timeline ID in *starttli_p.
  *
  * Every successfully started non-exclusive backup must be stopped by calling
- * do_pg_stop_backup() or do_pg_abort_backup().
+ * do_mdb_stop_backup() or do_mdb_abort_backup().
  *
  * It is the responsibility of the caller of this function to verify the
  * permissions of the calling user!
  */
 XLogRecPtr
-do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
+do_mdb_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 				   StringInfo labelfile, DIR *tblspcdir, List **tablespaces,
 				   StringInfo tblspcmapfile, bool infotbssize,
 				   bool needtblspcmapfile)
@@ -9777,7 +9777,7 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 	XLogRecPtr	checkpointloc;
 	XLogRecPtr	startpoint;
 	TimeLineID	starttli;
-	pg_time_t	stamp_time;
+	mdb_time_t	stamp_time;
 	char		strfbuf[128];
 	char		xlogfilename[MAXFNAMELEN];
 	XLogSegNo	_logSegNo;
@@ -9841,7 +9841,7 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 			ereport(ERROR,
 					(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
 					 errmsg("a backup is already in progress"),
-					 errhint("Run pg_stop_backup() and try again.")));
+					 errhint("Run mdb_stop_backup() and try again.")));
 		}
 		XLogCtl->Insert.exclusiveBackup = true;
 	}
@@ -9851,7 +9851,7 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 	WALInsertLockRelease();
 
 	/* Ensure we release forcePageWrites if fail below */
-	PG_ENSURE_ERROR_CLEANUP(pg_start_backup_callback, (Datum) BoolGetDatum(exclusive));
+	PG_ENSURE_ERROR_CLEANUP(mdb_start_backup_callback, (Datum) BoolGetDatum(exclusive));
 	{
 		bool		gotUniqueStartpoint = false;
 		struct dirent *de;
@@ -9862,11 +9862,11 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 		 * Force an XLOG file switch before the checkpoint, to ensure that the
 		 * WAL segment the checkpoint is written to doesn't contain pages with
 		 * old timeline IDs.  That would otherwise happen if you called
-		 * pg_start_backup() right after restoring from a PITR archive: the
+		 * mdb_start_backup() right after restoring from a PITR archive: the
 		 * first WAL segment containing the startup checkpoint has pages in
 		 * the beginning with the old timeline ID.  That can cause trouble at
 		 * recovery: we won't have a history file covering the old timeline if
-		 * pg_xlog directory was not included in the base backup and the WAL
+		 * mdb_xlog directory was not included in the base backup and the WAL
 		 * archive was cleared too before starting the backup.
 		 *
 		 * This also ensures that we have emitted a WAL page header that has
@@ -9897,7 +9897,7 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 			 * means that two successive backup runs can have same checkpoint
 			 * positions.
 			 *
-			 * Since the fact that we are executing do_pg_start_backup()
+			 * Since the fact that we are executing do_mdb_start_backup()
 			 * during recovery means that checkpointer is running, we can use
 			 * RequestCheckpoint() to establish a restartpoint.
 			 *
@@ -9985,7 +9985,7 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 		datadirpathlen = strlen(DataDir);
 
 		/* Collect information about all tablespaces */
-		while ((de = ReadDir(tblspcdir, "pg_tblspc")) != NULL)
+		while ((de = ReadDir(tblspcdir, "mdb_tblspc")) != NULL)
 		{
 			char		fullpath[MAXPGPATH];
 			char		linkpath[MAXPGPATH];
@@ -9998,7 +9998,7 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 			if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
 				continue;
 
-			snprintf(fullpath, sizeof(fullpath), "pg_tblspc/%s", de->d_name);
+			snprintf(fullpath, sizeof(fullpath), "mdb_tblspc/%s", de->d_name);
 
 #if defined(HAVE_READLINK) || defined(WIN32)
 			rllen = readlink(fullpath, linkpath, sizeof(linkpath));
@@ -10076,16 +10076,16 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 			labelfile = makeStringInfo();
 
 		/* Use the log timezone here, not the session timezone */
-		stamp_time = (pg_time_t) time(NULL);
-		pg_strftime(strfbuf, sizeof(strfbuf),
+		stamp_time = (mdb_time_t) time(NULL);
+		mdb_strftime(strfbuf, sizeof(strfbuf),
 					"%Y-%m-%d %H:%M:%S %Z",
-					pg_localtime(&stamp_time, log_timezone));
+					mdb_localtime(&stamp_time, log_timezone));
 		appendStringInfo(labelfile, "START WAL LOCATION: %X/%X (file %s)\n",
 			 (uint32) (startpoint >> 32), (uint32) startpoint, xlogfilename);
 		appendStringInfo(labelfile, "CHECKPOINT LOCATION: %X/%X\n",
 					 (uint32) (checkpointloc >> 32), (uint32) checkpointloc);
 		appendStringInfo(labelfile, "BACKUP METHOD: %s\n",
-						 exclusive ? "pg_start_backup" : "streamed");
+						 exclusive ? "mdb_start_backup" : "streamed");
 		appendStringInfo(labelfile, "BACKUP FROM: %s\n",
 						 backup_started_in_recovery ? "standby" : "master");
 		appendStringInfo(labelfile, "START TIME: %s\n", strfbuf);
@@ -10125,7 +10125,7 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 								BACKUP_LABEL_FILE)));
 			if (fwrite(labelfile->data, labelfile->len, 1, fp) != 1 ||
 				fflush(fp) != 0 ||
-				pg_fsync(fileno(fp)) != 0 ||
+				mdb_fsync(fileno(fp)) != 0 ||
 				ferror(fp) ||
 				FreeFile(fp))
 				ereport(ERROR,
@@ -10163,7 +10163,7 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 									TABLESPACE_MAP)));
 				if (fwrite(tblspcmapfile->data, tblspcmapfile->len, 1, fp) != 1 ||
 					fflush(fp) != 0 ||
-					pg_fsync(fileno(fp)) != 0 ||
+					mdb_fsync(fileno(fp)) != 0 ||
 					ferror(fp) ||
 					FreeFile(fp))
 					ereport(ERROR,
@@ -10177,7 +10177,7 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 			pfree(tblspcmapfile);
 		}
 	}
-	PG_END_ENSURE_ERROR_CLEANUP(pg_start_backup_callback, (Datum) BoolGetDatum(exclusive));
+	PG_END_ENSURE_ERROR_CLEANUP(mdb_start_backup_callback, (Datum) BoolGetDatum(exclusive));
 
 	/*
 	 * We're done.  As a convenience, return the starting WAL location.
@@ -10187,9 +10187,9 @@ do_pg_start_backup(const char *backupidstr, bool fast, TimeLineID *starttli_p,
 	return startpoint;
 }
 
-/* Error cleanup callback for pg_start_backup */
+/* Error cleanup callback for mdb_start_backup */
 static void
-pg_start_backup_callback(int code, Datum arg)
+mdb_start_backup_callback(int code, Datum arg)
 {
 	bool		exclusive = DatumGetBool(arg);
 
@@ -10215,7 +10215,7 @@ pg_start_backup_callback(int code, Datum arg)
 }
 
 /*
- * do_pg_stop_backup is the workhorse of the user-visible pg_stop_backup()
+ * do_mdb_stop_backup is the workhorse of the user-visible mdb_stop_backup()
  * function.
 
  * If labelfile is NULL, this stops an exclusive backup. Otherwise this stops
@@ -10228,14 +10228,14 @@ pg_start_backup_callback(int code, Datum arg)
  * permissions of the calling user!
  */
 XLogRecPtr
-do_pg_stop_backup(char *labelfile, bool waitforarchive, TimeLineID *stoptli_p)
+do_mdb_stop_backup(char *labelfile, bool waitforarchive, TimeLineID *stoptli_p)
 {
 	bool		exclusive = (labelfile == NULL);
 	bool		backup_started_in_recovery = false;
 	XLogRecPtr	startpoint;
 	XLogRecPtr	stoppoint;
 	TimeLineID	stoptli;
-	pg_time_t	stamp_time;
+	mdb_time_t	stamp_time;
 	char		strfbuf[128];
 	char		histfilepath[MAXPGPATH];
 	char		startxlogfilename[MAXFNAMELEN];
@@ -10294,10 +10294,10 @@ do_pg_stop_backup(char *labelfile, bool waitforarchive, TimeLineID *stoptli_p)
 	else
 	{
 		/*
-		 * The user-visible pg_start/stop_backup() functions that operate on
+		 * The user-visible mdb_start/stop_backup() functions that operate on
 		 * exclusive backups can be called at any time, but for non-exclusive
-		 * backups, it is expected that each do_pg_start_backup() call is
-		 * matched by exactly one do_pg_stop_backup() call.
+		 * backups, it is expected that each do_mdb_start_backup() call is
+		 * matched by exactly one do_mdb_stop_backup() call.
 		 */
 		Assert(XLogCtl->Insert.nonExclusiveBackups > 0);
 		XLogCtl->Insert.nonExclusiveBackups--;
@@ -10396,11 +10396,11 @@ do_pg_stop_backup(char *labelfile, bool waitforarchive, TimeLineID *stoptli_p)
 
 	/*
 	 * During recovery, we don't write an end-of-backup record. We assume that
-	 * pg_control was backed up last and its minimum recovery point can be
+	 * mdb_control was backed up last and its minimum recovery point can be
 	 * available as the backup end location. Since we don't have an
-	 * end-of-backup record, we use the pg_control value to check whether
+	 * end-of-backup record, we use the mdb_control value to check whether
 	 * we've reached the end of backup when starting recovery from this
-	 * backup. We have no way of checking if pg_control wasn't backed up last
+	 * backup. We have no way of checking if mdb_control wasn't backed up last
 	 * however.
 	 *
 	 * We don't force a switch to new WAL file and wait for all the required
@@ -10412,7 +10412,7 @@ do_pg_stop_backup(char *labelfile, bool waitforarchive, TimeLineID *stoptli_p)
 	 * We return the current minimum recovery point as the backup end
 	 * location. Note that it can be greater than the exact backup end
 	 * location if the minimum recovery point is updated after the backup of
-	 * pg_control. This is harmless for current uses.
+	 * mdb_control. This is harmless for current uses.
 	 *
 	 * XXX currently a backup history file is for informational and debug
 	 * purposes only. It's not essential for an online backup. Furthermore,
@@ -10471,10 +10471,10 @@ do_pg_stop_backup(char *labelfile, bool waitforarchive, TimeLineID *stoptli_p)
 	XLogFileName(stopxlogfilename, ThisTimeLineID, _logSegNo);
 
 	/* Use the log timezone here, not the session timezone */
-	stamp_time = (pg_time_t) time(NULL);
-	pg_strftime(strfbuf, sizeof(strfbuf),
+	stamp_time = (mdb_time_t) time(NULL);
+	mdb_strftime(strfbuf, sizeof(strfbuf),
 				"%Y-%m-%d %H:%M:%S %Z",
-				pg_localtime(&stamp_time, log_timezone));
+				mdb_localtime(&stamp_time, log_timezone));
 
 	/*
 	 * Write the backup history file
@@ -10513,7 +10513,7 @@ do_pg_stop_backup(char *labelfile, bool waitforarchive, TimeLineID *stoptli_p)
 	 * archived before returning. If archiving isn't enabled, the required WAL
 	 * needs to be transported via streaming replication (hopefully with
 	 * wal_keep_segments set high enough), or some more exotic mechanism like
-	 * polling and copying files from pg_xlog with script. We have no
+	 * polling and copying files from mdb_xlog with script. We have no
 	 * knowledge of those mechanisms, so it's up to the user to ensure that he
 	 * gets all the required WAL.
 	 *
@@ -10547,26 +10547,26 @@ do_pg_stop_backup(char *labelfile, bool waitforarchive, TimeLineID *stoptli_p)
 			if (!reported_waiting && waits > 5)
 			{
 				ereport(NOTICE,
-						(errmsg("pg_stop_backup cleanup done, waiting for required WAL segments to be archived")));
+						(errmsg("mdb_stop_backup cleanup done, waiting for required WAL segments to be archived")));
 				reported_waiting = true;
 			}
 
-			pg_usleep(1000000L);
+			mdb_usleep(1000000L);
 
 			if (++waits >= seconds_before_warning)
 			{
 				seconds_before_warning *= 2;	/* This wraps in >10 years... */
 				ereport(WARNING,
-						(errmsg("pg_stop_backup still waiting for all required WAL segments to be archived (%d seconds elapsed)",
+						(errmsg("mdb_stop_backup still waiting for all required WAL segments to be archived (%d seconds elapsed)",
 								waits),
 						 errhint("Check that your archive_command is executing properly.  "
-								 "pg_stop_backup can be canceled safely, "
+								 "mdb_stop_backup can be canceled safely, "
 								 "but the database backup will not be usable without all the WAL segments.")));
 			}
 		}
 
 		ereport(NOTICE,
-				(errmsg("pg_stop_backup complete, all required WAL segments have been archived")));
+				(errmsg("mdb_stop_backup complete, all required WAL segments have been archived")));
 	}
 	else if (waitforarchive)
 		ereport(NOTICE,
@@ -10582,18 +10582,18 @@ do_pg_stop_backup(char *labelfile, bool waitforarchive, TimeLineID *stoptli_p)
 
 
 /*
- * do_pg_abort_backup: abort a running backup
+ * do_mdb_abort_backup: abort a running backup
  *
- * This does just the most basic steps of do_pg_stop_backup(), by taking the
+ * This does just the most basic steps of do_mdb_stop_backup(), by taking the
  * system out of backup mode, thus making it a lot more safe to call from
  * an error handler.
  *
  * NB: This is only for aborting a non-exclusive backup that doesn't write
- * backup_label. A backup started with pg_start_backup() needs to be finished
- * with pg_stop_backup().
+ * backup_label. A backup started with mdb_start_backup() needs to be finished
+ * with mdb_stop_backup().
  */
 void
-do_pg_abort_backup(void)
+do_mdb_abort_backup(void)
 {
 	WALInsertLockAcquireExclusive();
 	Assert(XLogCtl->Insert.nonExclusiveBackups > 0);
@@ -10675,8 +10675,8 @@ GetOldestRestartPoint(XLogRecPtr *oldrecptr, TimeLineID *oldtli)
  *
  * If we see a backup_label during recovery, we assume that we are recovering
  * from a backup dump file, and we therefore roll forward from the checkpoint
- * identified by the label file, NOT what pg_control says.  This avoids the
- * problem that pg_control might have been archived one or more checkpoints
+ * identified by the label file, NOT what mdb_control says.  This avoids the
+ * problem that mdb_control might have been archived one or more checkpoints
  * later than the start of the dump, and so if we rely on it as the start
  * point, we will fail to restore a consistent database state.
  *
@@ -10885,7 +10885,7 @@ BackupInProgress(void)
  * "tablespace_map.old".
  *
  * Note that this will render an online backup in progress
- * useless. To correctly finish an online backup, pg_stop_backup must be
+ * useless. To correctly finish an online backup, mdb_stop_backup must be
  * called.
  */
 void
@@ -11103,9 +11103,9 @@ next_record_is_invalid:
  * Open the WAL segment containing WAL position 'RecPtr'.
  *
  * The segment can be fetched via restore_command, or via walreceiver having
- * streamed the record, or it can already be present in pg_xlog. Checking
- * pg_xlog is mainly for crash recovery, but it will be polled in standby mode
- * too, in case someone copies a new segment directly to pg_xlog. That is not
+ * streamed the record, or it can already be present in mdb_xlog. Checking
+ * mdb_xlog is mainly for crash recovery, but it will be polled in standby mode
+ * too, in case someone copies a new segment directly to mdb_xlog. That is not
  * documented or recommended, though.
  *
  * If 'fetching_ckpt' is true, we're fetching a checkpoint record, and should
@@ -11135,8 +11135,8 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 	/*-------
 	 * Standby mode is implemented by a state machine:
 	 *
-	 * 1. Read from either archive or pg_xlog (XLOG_FROM_ARCHIVE), or just
-	 *	  pg_xlog (XLOG_FROM_XLOG)
+	 * 1. Read from either archive or mdb_xlog (XLOG_FROM_ARCHIVE), or just
+	 *	  mdb_xlog (XLOG_FROM_XLOG)
 	 * 2. Check trigger file
 	 * 3. Read from primary server via walreceiver (XLOG_FROM_STREAM)
 	 * 4. Rescan timelines
@@ -11177,7 +11177,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 					 * Check to see if the trigger file exists. Note that we
 					 * do this only after failure, so when you create the
 					 * trigger file, we still finish replaying as much as we
-					 * can from archive and pg_xlog before failover.
+					 * can from archive and mdb_xlog before failover.
 					 */
 					if (StandbyMode && CheckForStandbyTrigger())
 					{
@@ -11187,7 +11187,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 
 					/*
 					 * Not in standby mode, and we've now tried the archive
-					 * and pg_xlog.
+					 * and mdb_xlog.
 					 */
 					if (!StandbyMode)
 						return false;
@@ -11247,7 +11247,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 					 * little chance that the problem will just go away, but
 					 * PANIC is not good for availability either, especially
 					 * in hot standby mode. So, we treat that the same as
-					 * disconnection, and retry from archive/pg_xlog again.
+					 * disconnection, and retry from archive/mdb_xlog again.
 					 * The WAL in the archive should be identical to what was
 					 * streamed, so it's unlikely that it helps, but one can
 					 * hope...
@@ -11311,8 +11311,8 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 		else if (currentSource == XLOG_FROM_PG_XLOG)
 		{
 			/*
-			 * We just successfully read a file in pg_xlog. We prefer files in
-			 * the archive over ones in pg_xlog, so try the next file again
+			 * We just successfully read a file in mdb_xlog. We prefer files in
+			 * the archive over ones in mdb_xlog, so try the next file again
 			 * from the archive first.
 			 */
 			if (InArchiveRecovery)
@@ -11346,7 +11346,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 
 				/*
 				 * Try to restore the file from archive, or read an existing
-				 * file from pg_xlog.
+				 * file from mdb_xlog.
 				 */
 				readFile = XLogFileReadAnyTLI(readSegNo, DEBUG2,
 						 currentSource == XLOG_FROM_ARCHIVE ? XLOG_FROM_ANY :
@@ -11355,7 +11355,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 					return true;	/* success! */
 
 				/*
-				 * Nope, not found in archive or pg_xlog.
+				 * Nope, not found in archive or mdb_xlog.
 				 */
 				lastSourceFailed = true;
 				break;
@@ -11411,7 +11411,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 						 * not open already.  Also read the timeline history
 						 * file if we haven't initialized timeline history
 						 * yet; it should be streamed over and present in
-						 * pg_xlog by now.  Use XLOG_FROM_STREAM so that
+						 * mdb_xlog by now.  Use XLOG_FROM_STREAM so that
 						 * source info is set correctly and XLogReceiptTime
 						 * isn't changed.
 						 */
@@ -11443,10 +11443,10 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
 						/*
 						 * Note that we don't "return false" immediately here.
 						 * After being triggered, we still want to replay all
-						 * the WAL that was already streamed. It's in pg_xlog
+						 * the WAL that was already streamed. It's in mdb_xlog
 						 * now, so we just treat this as a failure, and the
 						 * state machine will move on to replay the streamed
-						 * WAL from pg_xlog, and then recheck the trigger and
+						 * WAL from mdb_xlog, and then recheck the trigger and
 						 * exit replay.
 						 */
 						lastSourceFailed = true;
@@ -11486,7 +11486,7 @@ WaitForWALToBecomeAvailable(XLogRecPtr RecPtr, bool randAccess,
  * or legitimate end-of-WAL situation.   Generally, we use it as-is, but if
  * we're retrying the exact same record that we've tried previously, only
  * complain the first time to keep the noise down.  However, we only do when
- * reading from pg_xlog, because we don't expect any invalid records in archive
+ * reading from mdb_xlog, because we don't expect any invalid records in archive
  * or in records streamed from master. Files in the archive should be complete,
  * and we should never hit the end of WAL because we stop and wait for more WAL
  * to arrive before replaying it.

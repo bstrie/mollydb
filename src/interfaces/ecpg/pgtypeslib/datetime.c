@@ -515,7 +515,7 @@ PGTYPESdate_defmt_asc(date * d, const char *fmt, char *str)
 
 		/* convert the whole string to lower case */
 		for (i = 0; str_copy[i]; i++)
-			str_copy[i] = (char) pg_tolower((unsigned char) str_copy[i]);
+			str_copy[i] = (char) mdb_tolower((unsigned char) str_copy[i]);
 	}
 
 	/* look for numerical tokens */
@@ -584,7 +584,7 @@ PGTYPESdate_defmt_asc(date * d, const char *fmt, char *str)
 		{
 			for (j = 0; j < PGTYPES_DATE_MONTH_MAXLENGTH; j++)
 			{
-				month_lower_tmp[j] = (char) pg_tolower((unsigned char) list[i][j]);
+				month_lower_tmp[j] = (char) mdb_tolower((unsigned char) list[i][j]);
 				if (!month_lower_tmp[j])
 				{
 					/* properly terminated */

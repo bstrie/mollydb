@@ -69,7 +69,7 @@ CREATE TABLESPACE <replaceable class="parameter">tablespace_name</replaceable>
       <listitem>
        <para>
         The name of a tablespace to be created.  The name cannot
-        begin with <literal>pg_</literal>, as such names
+        begin with <literal>mdb_</literal>, as such names
         are reserved for system tablespaces.
        </para>
       </listitem>

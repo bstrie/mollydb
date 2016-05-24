@@ -1,5 +1,5 @@
 /*
- * contrib/pg_trgm/trgm_gin.c
+ * contrib/mdb_trgm/trgm_gin.c
  */
 #include "mollydb.h"
 

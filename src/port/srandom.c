@@ -21,5 +21,5 @@
 void
 srandom(unsigned int seed)
 {
-	pg_srand48((long int) seed);
+	mdb_srand48((long int) seed);
 }

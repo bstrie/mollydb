@@ -222,7 +222,7 @@ BackgroundWriterMain(void)
 		 * to be repeated, and we don't want to be filling the error logs as
 		 * fast as we can.
 		 */
-		pg_usleep(1000000L);
+		mdb_usleep(1000000L);
 
 		/*
 		 * Close all open files after any error.  This is helpful on Windows,

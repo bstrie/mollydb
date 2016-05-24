@@ -381,7 +381,7 @@ static void doLog(TState *thread, CState *st, instr_time *now,
 	  StatsData *agg, bool skipped, double latency, double lag);
 static void processXactStats(TState *thread, CState *st, instr_time *now,
 				 bool skipped, StatsData *agg);
-static void pgbench_error(const char *fmt,...) pg_attribute_printf(1, 2);
+static void pgbench_error(const char *fmt,...) mdb_attribute_printf(1, 2);
 static void addScript(ParsedScript script);
 static void *threadRun(void *arg);
 static void setalarm(int seconds);
@@ -555,12 +555,12 @@ getrand(TState *thread, int64 min, int64 max)
 	 * Odd coding is so that min and max have approximately the same chance of
 	 * being selected as do numbers between them.
 	 *
-	 * pg_erand48() is thread-safe and concurrent, which is why we use it
+	 * mdb_erand48() is thread-safe and concurrent, which is why we use it
 	 * rather than random(), which in glibc is non-reentrant, and therefore
 	 * protected by a mutex, and therefore a bottleneck on machines with many
 	 * CPUs.
 	 */
-	return min + (int64) ((max - min + 1) * pg_erand48(thread->random_state));
+	return min + (int64) ((max - min + 1) * mdb_erand48(thread->random_state));
 }
 
 /*
@@ -579,7 +579,7 @@ getExponentialRand(TState *thread, int64 min, int64 max, double parameter)
 	Assert(parameter > 0.0);
 	cut = exp(-parameter);
 	/* erand in [0, 1), uniform in (0, 1] */
-	uniform = 1.0 - pg_erand48(thread->random_state);
+	uniform = 1.0 - mdb_erand48(thread->random_state);
 
 	/*
 	 * inner expression in (cut, 1] (if parameter > 0), rand in [0, 1)
@@ -615,13 +615,13 @@ getGaussianRand(TState *thread, int64 min, int64 max, double parameter)
 	do
 	{
 		/*
-		 * pg_erand48 generates [0,1), but for the basic version of the
+		 * mdb_erand48 generates [0,1), but for the basic version of the
 		 * Box-Muller transform the two uniformly distributed random numbers
 		 * are expected in (0, 1] (see
 		 * http://en.wikipedia.org/wiki/Box_muller)
 		 */
-		double		rand1 = 1.0 - pg_erand48(thread->random_state);
-		double		rand2 = 1.0 - pg_erand48(thread->random_state);
+		double		rand1 = 1.0 - mdb_erand48(thread->random_state);
+		double		rand2 = 1.0 - mdb_erand48(thread->random_state);
 
 		/* Box-Muller basic form transform */
 		double		var_sqrt = sqrt(-2.0 * log(rand1));
@@ -657,7 +657,7 @@ getPoissonRand(TState *thread, int64 center)
 	double		uniform;
 
 	/* erand in [0, 1), uniform in (0, 1] */
-	uniform = 1.0 - pg_erand48(thread->random_state);
+	uniform = 1.0 - mdb_erand48(thread->random_state);
 
 	return (int64) (-log(uniform) * ((double) center) + 0.5);
 }
@@ -909,7 +909,7 @@ getVariable(CState *st, char *name)
 		snprintf(stringform, sizeof(stringform),
 				 "%.*g", DBL_DIG, var->num_value.u.dval);
 	}
-	var->value = pg_strdup(stringform);
+	var->value = mdb_strdup(stringform);
 	return var->value;
 }
 
@@ -986,16 +986,16 @@ lookupCreateVariable(CState *st, const char *context, char *name)
 
 		/* Create variable at the end of the array */
 		if (st->variables)
-			newvars = (Variable *) pg_realloc(st->variables,
+			newvars = (Variable *) mdb_realloc(st->variables,
 									(st->nvariables + 1) * sizeof(Variable));
 		else
-			newvars = (Variable *) pg_malloc(sizeof(Variable));
+			newvars = (Variable *) mdb_malloc(sizeof(Variable));
 
 		st->variables = newvars;
 
 		var = &newvars[st->nvariables];
 
-		var->name = pg_strdup(name);
+		var->name = mdb_strdup(name);
 		var->value = NULL;
 		/* caller is expected to initialize remaining fields */
 
@@ -1020,7 +1020,7 @@ putVariable(CState *st, const char *context, char *name, const char *value)
 		return false;
 
 	/* dup then free, in case value is pointing at this variable */
-	val = pg_strdup(value);
+	val = mdb_strdup(value);
 
 	if (var->value)
 		free(var->value);
@@ -1075,7 +1075,7 @@ parseVariable(const char *sql, int *eaten)
 	if (i == 1)
 		return NULL;
 
-	name = pg_malloc(i);
+	name = mdb_malloc(i);
 	memcpy(name, &sql[1], i - 1);
 	name[i - 1] = '\0';
 
@@ -1092,7 +1092,7 @@ replaceVariable(char **sql, char *param, int len, char *value)
 	{
 		size_t		offset = param - *sql;
 
-		*sql = pg_realloc(*sql, strlen(*sql) - len + valueln + 1);
+		*sql = mdb_realloc(*sql, strlen(*sql) - len + valueln + 1);
 		param = *sql + offset;
 	}
 
@@ -1994,7 +1994,7 @@ top:
 		{
 			char	   *sql;
 
-			sql = pg_strdup(command->argv[0]);
+			sql = mdb_strdup(command->argv[0]);
 			sql = assignVariables(st, sql);
 
 			if (debug)
@@ -2075,7 +2075,7 @@ top:
 			fprintf(stderr, "\n");
 		}
 
-		if (pg_strcasecmp(argv[0], "set") == 0)
+		if (mdb_strcasecmp(argv[0], "set") == 0)
 		{
 			PgBenchExpr *expr = commands[st->state]->expr;
 			PgBenchValue	result;
@@ -2094,7 +2094,7 @@ top:
 
 			st->listen = true;
 		}
-		else if (pg_strcasecmp(argv[0], "sleep") == 0)
+		else if (mdb_strcasecmp(argv[0], "sleep") == 0)
 		{
 			char	   *var;
 			int			usec;
@@ -2116,9 +2116,9 @@ top:
 
 			if (argc > 2)
 			{
-				if (pg_strcasecmp(argv[2], "ms") == 0)
+				if (mdb_strcasecmp(argv[2], "ms") == 0)
 					usec *= 1000;
-				else if (pg_strcasecmp(argv[2], "s") == 0)
+				else if (mdb_strcasecmp(argv[2], "s") == 0)
 					usec *= 1000000;
 			}
 			else
@@ -2130,7 +2130,7 @@ top:
 
 			st->listen = true;
 		}
-		else if (pg_strcasecmp(argv[0], "setshell") == 0)
+		else if (mdb_strcasecmp(argv[0], "setshell") == 0)
 		{
 			bool		ret = runShellCommand(st, argv[1], argv + 2, argc - 2);
 
@@ -2144,7 +2144,7 @@ top:
 			else	/* succeeded */
 				st->listen = true;
 		}
-		else if (pg_strcasecmp(argv[0], "shell") == 0)
+		else if (mdb_strcasecmp(argv[0], "shell") == 0)
 		{
 			bool		ret = runShellCommand(st, NULL, argv + 1, argc - 1);
 
@@ -2182,7 +2182,7 @@ doLog(TState *thread, CState *st, instr_time *now,
 	 * to the random sample.
 	 */
 	if (sample_rate != 0.0 &&
-		pg_erand48(thread->random_state) > sample_rate)
+		mdb_erand48(thread->random_state) > sample_rate)
 		return;
 
 	/* should we aggregate the results or not? */
@@ -2596,7 +2596,7 @@ parseQuery(Command *cmd, const char *raw_sql)
 	char	   *sql,
 			   *p;
 
-	sql = pg_strdup(raw_sql);
+	sql = mdb_strdup(raw_sql);
 	cmd->argc = 1;
 
 	p = sql;
@@ -2619,7 +2619,7 @@ parseQuery(Command *cmd, const char *raw_sql)
 		if (cmd->argc >= MAX_ARGS)
 		{
 			fprintf(stderr, "statement has too many arguments (maximum is %d): %s\n", MAX_ARGS - 1, raw_sql);
-			pg_free(name);
+			mdb_free(name);
 			return false;
 		}
 
@@ -2724,7 +2724,7 @@ process_sql_command(PQExpBuffer buf, const char *source)
 		return NULL;
 
 	/* Allocate and initialize Command structure */
-	my_command = (Command *) pg_malloc0(sizeof(Command));
+	my_command = (Command *) mdb_malloc0(sizeof(Command));
 	my_command->command_num = num_commands++;
 	my_command->type = SQL_COMMAND;
 	my_command->argc = 0;
@@ -2737,17 +2737,17 @@ process_sql_command(PQExpBuffer buf, const char *source)
 	nlpos = strchr(p, '\n');
 	if (nlpos)
 	{
-		my_command->line = pg_malloc(nlpos - p + 1);
+		my_command->line = mdb_malloc(nlpos - p + 1);
 		memcpy(my_command->line, p, nlpos - p);
 		my_command->line[nlpos - p] = '\0';
 	}
 	else
-		my_command->line = pg_strdup(p);
+		my_command->line = mdb_strdup(p);
 
 	switch (querymode)
 	{
 		case QUERY_SIMPLE:
-			my_command->argv[0] = pg_strdup(p);
+			my_command->argv[0] = mdb_strdup(p);
 			my_command->argc++;
 			break;
 		case QUERY_EXTENDED:
@@ -2793,7 +2793,7 @@ process_backslash_command(PsqlScanState sstate, const char *source)
 	}
 
 	/* Allocate and initialize Command structure */
-	my_command = (Command *) pg_malloc0(sizeof(Command));
+	my_command = (Command *) mdb_malloc0(sizeof(Command));
 	my_command->command_num = num_commands++;
 	my_command->type = META_COMMAND;
 	my_command->argc = 0;
@@ -2802,10 +2802,10 @@ process_backslash_command(PsqlScanState sstate, const char *source)
 	/* Save first word (command name) */
 	j = 0;
 	offsets[j] = word_offset;
-	my_command->argv[j++] = pg_strdup(word_buf.data);
+	my_command->argv[j++] = mdb_strdup(word_buf.data);
 	my_command->argc++;
 
-	if (pg_strcasecmp(my_command->argv[0], "set") == 0)
+	if (mdb_strcasecmp(my_command->argv[0], "set") == 0)
 	{
 		/* For \set, collect var name, then lex the expression. */
 		yyscan_t	yyscanner;
@@ -2815,7 +2815,7 @@ process_backslash_command(PsqlScanState sstate, const char *source)
 						 "missing argument", NULL, -1);
 
 		offsets[j] = word_offset;
-		my_command->argv[j++] = pg_strdup(word_buf.data);
+		my_command->argv[j++] = mdb_strdup(word_buf.data);
 		my_command->argc++;
 
 		yyscanner = expr_scanner_init(sstate, source, lineno, start_offset,
@@ -2852,7 +2852,7 @@ process_backslash_command(PsqlScanState sstate, const char *source)
 						 "too many arguments", NULL, -1);
 
 		offsets[j] = word_offset;
-		my_command->argv[j++] = pg_strdup(word_buf.data);
+		my_command->argv[j++] = mdb_strdup(word_buf.data);
 		my_command->argc++;
 	}
 
@@ -2864,7 +2864,7 @@ process_backslash_command(PsqlScanState sstate, const char *source)
 												  start_offset,
 												  end_offset);
 
-	if (pg_strcasecmp(my_command->argv[0], "sleep") == 0)
+	if (mdb_strcasecmp(my_command->argv[0], "sleep") == 0)
 	{
 		if (my_command->argc < 2)
 			syntax_error(source, lineno, my_command->line, my_command->argv[0],
@@ -2897,21 +2897,21 @@ process_backslash_command(PsqlScanState sstate, const char *source)
 
 		if (my_command->argc == 3)
 		{
-			if (pg_strcasecmp(my_command->argv[2], "us") != 0 &&
-				pg_strcasecmp(my_command->argv[2], "ms") != 0 &&
-				pg_strcasecmp(my_command->argv[2], "s") != 0)
+			if (mdb_strcasecmp(my_command->argv[2], "us") != 0 &&
+				mdb_strcasecmp(my_command->argv[2], "ms") != 0 &&
+				mdb_strcasecmp(my_command->argv[2], "s") != 0)
 				syntax_error(source, lineno, my_command->line, my_command->argv[0],
 							 "unrecognized time unit, must be us, ms or s",
 							 my_command->argv[2], offsets[2] - start_offset);
 		}
 	}
-	else if (pg_strcasecmp(my_command->argv[0], "setshell") == 0)
+	else if (mdb_strcasecmp(my_command->argv[0], "setshell") == 0)
 	{
 		if (my_command->argc < 3)
 			syntax_error(source, lineno, my_command->line, my_command->argv[0],
 						 "missing argument", NULL, -1);
 	}
-	else if (pg_strcasecmp(my_command->argv[0], "shell") == 0)
+	else if (mdb_strcasecmp(my_command->argv[0], "shell") == 0)
 	{
 		if (my_command->argc < 2)
 			syntax_error(source, lineno, my_command->line, my_command->argv[0],
@@ -2947,7 +2947,7 @@ ParseScript(const char *script, const char *desc, int weight)
 	/* Initialize all fields of ps */
 	ps.desc = desc;
 	ps.weight = weight;
-	ps.commands = (Command **) pg_malloc(sizeof(Command *) * alloc_num);
+	ps.commands = (Command **) mdb_malloc(sizeof(Command *) * alloc_num);
 	initStats(&ps.stats, 0.0);
 
 	/* Prepare to parse script */
@@ -2989,7 +2989,7 @@ ParseScript(const char *script, const char *desc, int weight)
 			{
 				alloc_num += COMMANDS_ALLOC_NUM;
 				ps.commands = (Command **)
-					pg_realloc(ps.commands, sizeof(Command *) * alloc_num);
+					mdb_realloc(ps.commands, sizeof(Command *) * alloc_num);
 			}
 		}
 
@@ -3006,7 +3006,7 @@ ParseScript(const char *script, const char *desc, int weight)
 				{
 					alloc_num += COMMANDS_ALLOC_NUM;
 					ps.commands = (Command **)
-						pg_realloc(ps.commands, sizeof(Command *) * alloc_num);
+						mdb_realloc(ps.commands, sizeof(Command *) * alloc_num);
 				}
 			}
 		}
@@ -3038,7 +3038,7 @@ read_file_contents(FILE *fd)
 	size_t		buflen = BUFSIZ;
 	size_t		used = 0;
 
-	buf = (char *) pg_malloc(buflen);
+	buf = (char *) mdb_malloc(buflen);
 
 	for (;;)
 	{
@@ -3051,7 +3051,7 @@ read_file_contents(FILE *fd)
 			break;
 		/* Enlarge buf so we can read some more */
 		buflen += BUFSIZ;
-		buf = (char *) pg_realloc(buf, buflen);
+		buf = (char *) mdb_realloc(buf, buflen);
 	}
 	/* There is surely room for a terminator */
 	buf[used] = '\0';
@@ -3167,7 +3167,7 @@ parseScriptWeight(const char *option, char **script)
 		char	   *badp;
 
 		/* generate the script name */
-		*script = pg_malloc(namelen + 1);
+		*script = mdb_malloc(namelen + 1);
 		strncpy(*script, option, namelen);
 		(*script)[namelen] = '\0';
 
@@ -3190,7 +3190,7 @@ parseScriptWeight(const char *option, char **script)
 	}
 	else
 	{
-		*script = pg_strdup(option);
+		*script = mdb_strdup(option);
 		weight = 1;
 	}
 
@@ -3448,7 +3448,7 @@ main(int argc, char **argv)
 	else if ((env = getenv("PGUSER")) != NULL && *env != '\0')
 		login = env;
 
-	state = (CState *) pg_malloc(sizeof(CState));
+	state = (CState *) mdb_malloc(sizeof(CState));
 	memset(state, 0, sizeof(CState));
 
 	while ((c = getopt_long(argc, argv, "ih:nvp:dqb:SNc:j:Crs:t:T:U:lf:D:F:M:P:R:L:", long_options, &optindex)) != -1)
@@ -3461,7 +3461,7 @@ main(int argc, char **argv)
 				is_init_mode++;
 				break;
 			case 'h':
-				pghost = pg_strdup(optarg);
+				pghost = mdb_strdup(optarg);
 				break;
 			case 'n':
 				is_no_vacuum++;
@@ -3470,7 +3470,7 @@ main(int argc, char **argv)
 				do_vacuum_accounts++;
 				break;
 			case 'p':
-				pgport = pg_strdup(optarg);
+				pgport = mdb_strdup(optarg);
 				break;
 			case 'd':
 				debug++;
@@ -3568,7 +3568,7 @@ main(int argc, char **argv)
 				}
 				break;
 			case 'U':
-				login = pg_strdup(optarg);
+				login = mdb_strdup(optarg);
 				break;
 			case 'l':
 				benchmarking_option_set = true;
@@ -3698,11 +3698,11 @@ main(int argc, char **argv)
 				break;
 			case 2:				/* tablespace */
 				initialization_option_set = true;
-				tablespace = pg_strdup(optarg);
+				tablespace = mdb_strdup(optarg);
 				break;
 			case 3:				/* index-tablespace */
 				initialization_option_set = true;
-				index_tablespace = pg_strdup(optarg);
+				index_tablespace = mdb_strdup(optarg);
 				break;
 			case 4:
 				benchmarking_option_set = true;
@@ -3849,7 +3849,7 @@ main(int argc, char **argv)
 
 	if (nclients > 1)
 	{
-		state = (CState *) pg_realloc(state, sizeof(CState) * nclients);
+		state = (CState *) mdb_realloc(state, sizeof(CState) * nclients);
 		memset(state + 1, 0, sizeof(CState) * (nclients - 1));
 
 		/* copy any -D switch values to all clients */
@@ -3983,7 +3983,7 @@ main(int argc, char **argv)
 	srandom((unsigned int) INSTR_TIME_GET_MICROSEC(start_time));
 
 	/* set up thread data structures */
-	threads = (TState *) pg_malloc(sizeof(TState) * nthreads);
+	threads = (TState *) mdb_malloc(sizeof(TState) * nthreads);
 	nclients_dealt = 0;
 
 	for (i = 0; i < nthreads; i++)
@@ -4514,7 +4514,7 @@ pthread_create(pthread_t *thread,
 	int			save_errno;
 	win32_pthread *th;
 
-	th = (win32_pthread *) pg_malloc(sizeof(win32_pthread));
+	th = (win32_pthread *) mdb_malloc(sizeof(win32_pthread));
 	th->routine = start_routine;
 	th->arg = arg;
 	th->result = NULL;

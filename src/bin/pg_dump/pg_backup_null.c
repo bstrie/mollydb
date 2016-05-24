@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup_null.c
+ * mdb_backup_null.c
  *
  *	Implementation of an archive that is never saved; it is used by
- *	pg_dump to output a plain text SQL script instead of saving
+ *	mdb_dump to output a plain text SQL script instead of saving
  *	a real archive.
  *
- *	See the headers to pg_restore for more details.
+ *	See the headers to mdb_restore for more details.
  *
  * Copyright (c) 2000, Philip Warner
  *		Rights are granted to use this software in any way so long
@@ -17,14 +17,14 @@
  *
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/pg_backup_null.c
+ *		src/bin/mdb_dump/mdb_backup_null.c
  *
  *-------------------------------------------------------------------------
  */
 #include "mollydb_fe.h"
 
-#include "pg_backup_archiver.h"
-#include "pg_backup_utils.h"
+#include "mdb_backup_archiver.h"
+#include "mdb_backup_utils.h"
 #include "fe_utils/string_utils.h"
 
 #include "libpq/libpq-fs.h"
@@ -66,7 +66,7 @@ InitArchiveFmt_Null(ArchiveHandle *AH)
 
 	/* Initialize LO buffering */
 	AH->lo_buf_size = LOBBUFSIZE;
-	AH->lo_buf = (void *) pg_malloc(LOBBUFSIZE);
+	AH->lo_buf = (void *) mdb_malloc(LOBBUFSIZE);
 
 	/*
 	 * Now prevent reading...
@@ -106,7 +106,7 @@ _WriteBlobData(ArchiveHandle *AH, const void *data, size_t dLen)
 							  dLen,
 							  AH);
 
-		ahprintf(AH, "SELECT pg_catalog.lowrite(0, %s);\n", buf->data);
+		ahprintf(AH, "SELECT mdb_catalog.lowrite(0, %s);\n", buf->data);
 
 		destroyPQExpBuffer(buf);
 	}
@@ -154,10 +154,10 @@ _StartBlob(ArchiveHandle *AH, TocEntry *te, Oid oid)
 		DropBlobIfExists(AH, oid);
 
 	if (old_blob_style)
-		ahprintf(AH, "SELECT pg_catalog.lo_open(pg_catalog.lo_create('%u'), %d);\n",
+		ahprintf(AH, "SELECT mdb_catalog.lo_open(mdb_catalog.lo_create('%u'), %d);\n",
 				 oid, INV_WRITE);
 	else
-		ahprintf(AH, "SELECT pg_catalog.lo_open('%u', %d);\n",
+		ahprintf(AH, "SELECT mdb_catalog.lo_open('%u', %d);\n",
 				 oid, INV_WRITE);
 
 	AH->WriteDataPtr = _WriteBlobData;
@@ -173,7 +173,7 @@ _EndBlob(ArchiveHandle *AH, TocEntry *te, Oid oid)
 {
 	AH->WriteDataPtr = _WriteData;
 
-	ahprintf(AH, "SELECT pg_catalog.lo_close(0);\n\n");
+	ahprintf(AH, "SELECT mdb_catalog.lo_close(0);\n\n");
 }
 
 /*

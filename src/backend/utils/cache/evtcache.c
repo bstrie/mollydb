@@ -16,9 +16,9 @@
 #include "access/genam.h"
 #include "access/heapam.h"
 #include "access/htup_details.h"
-#include "catalog/pg_event_trigger.h"
+#include "catalog/mdb_event_trigger.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/trigger.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
@@ -128,20 +128,20 @@ BuildEventTriggerCache(void)
 						HASH_ELEM | HASH_BLOBS | HASH_CONTEXT);
 
 	/*
-	 * Prepare to scan pg_event_trigger in name order.
+	 * Prepare to scan mdb_event_trigger in name order.
 	 */
 	rel = relation_open(EventTriggerRelationId, AccessShareLock);
 	irel = index_open(EventTriggerNameIndexId, AccessShareLock);
 	scan = systable_beginscan_ordered(rel, irel, NULL, 0, NULL);
 
 	/*
-	 * Build a cache item for each pg_event_trigger tuple, and append each one
+	 * Build a cache item for each mdb_event_trigger tuple, and append each one
 	 * to the appropriate cache entry.
 	 */
 	for (;;)
 	{
 		HeapTuple	tup;
-		Form_pg_event_trigger form;
+		Form_mdb_event_trigger form;
 		char	   *evtevent;
 		EventTriggerEvent event;
 		EventTriggerCacheItem *item;
@@ -156,7 +156,7 @@ BuildEventTriggerCache(void)
 			break;
 
 		/* Skip trigger if disabled. */
-		form = (Form_pg_event_trigger) GETSTRUCT(tup);
+		form = (Form_mdb_event_trigger) GETSTRUCT(tup);
 		if (form->evtenabled == TRIGGER_DISABLED)
 			continue;
 
@@ -179,12 +179,12 @@ BuildEventTriggerCache(void)
 		item->enabled = form->evtenabled;
 
 		/* Decode and sort tags array. */
-		evttags = heap_getattr(tup, Anum_pg_event_trigger_evttags,
+		evttags = heap_getattr(tup, Anum_mdb_event_trigger_evttags,
 							   RelationGetDescr(rel), &evttags_isnull);
 		if (!evttags_isnull)
 		{
 			item->ntags = DecodeTextArrayToCString(evttags, &item->tag);
-			qsort(item->tag, item->ntags, sizeof(char *), pg_qsort_strcmp);
+			qsort(item->tag, item->ntags, sizeof(char *), mdb_qsort_strcmp);
 		}
 
 		/* Add to cache entry. */
@@ -195,7 +195,7 @@ BuildEventTriggerCache(void)
 			entry->triggerlist = list_make1(item);
 	}
 
-	/* Done with pg_event_trigger scan. */
+	/* Done with mdb_event_trigger scan. */
 	systable_endscan_ordered(scan);
 	index_close(irel, AccessShareLock);
 	relation_close(rel, AccessShareLock);
@@ -246,7 +246,7 @@ DecodeTextArrayToCString(Datum array, char ***cstringp)
 }
 
 /*
- * Flush all cache entries when pg_event_trigger is updated.
+ * Flush all cache entries when mdb_event_trigger is updated.
  *
  * This should be rare enough that we don't need to be very granular about
  * it, so we just blow away everything, which also avoids the possibility of

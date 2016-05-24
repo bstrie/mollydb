@@ -19,7 +19,7 @@
  *	an error if the symbol is not defined.
  */
 #include "catalog/catversion.h" /* pgrminclude ignore */
-#include "catalog/pg_class.h"
+#include "catalog/mdb_class.h"
 #include "utils/relcache.h"
 
 #define OIDCHARS		10		/* max chars printed by %u */
@@ -31,9 +31,9 @@ extern bool IsSystemRelation(Relation relation);
 extern bool IsToastRelation(Relation relation);
 extern bool IsCatalogRelation(Relation relation);
 
-extern bool IsSystemClass(Oid relid, Form_pg_class reltuple);
-extern bool IsToastClass(Form_pg_class reltuple);
-extern bool IsCatalogClass(Oid relid, Form_pg_class reltuple);
+extern bool IsSystemClass(Oid relid, Form_mdb_class reltuple);
+extern bool IsToastClass(Form_mdb_class reltuple);
+extern bool IsCatalogClass(Oid relid, Form_mdb_class reltuple);
 
 extern bool IsSystemNamespace(Oid namespaceId);
 extern bool IsToastNamespace(Oid namespaceId);
@@ -45,7 +45,7 @@ extern bool IsSharedRelation(Oid relationId);
 extern Oid	GetNewOid(Relation relation);
 extern Oid GetNewOidWithIndex(Relation relation, Oid indexId,
 				   AttrNumber oidcolumn);
-extern Oid GetNewRelFileNode(Oid reltablespace, Relation pg_class,
+extern Oid GetNewRelFileNode(Oid reltablespace, Relation mdb_class,
 				  char relpersistence);
 
 #endif   /* CATALOG_H */

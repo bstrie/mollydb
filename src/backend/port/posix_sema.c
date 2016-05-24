@@ -23,7 +23,7 @@
 
 #include "miscadmin.h"
 #include "storage/ipc.h"
-#include "storage/pg_sema.h"
+#include "storage/mdb_sema.h"
 
 
 #ifdef USE_NAMED_POSIX_SEMAPHORES

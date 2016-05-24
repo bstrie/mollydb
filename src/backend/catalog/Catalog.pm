@@ -138,7 +138,7 @@ sub Catalogs
 				$catname = $1;
 				$catalog{relation_oid} = $2;
 
-				# Store pg_* catalog names in the same order we receive them
+				# Store mdb_* catalog names in the same order we receive them
 				push @{ $catalogs{names} }, $catname;
 
 				$catalog{bootstrap} = /BKI_BOOTSTRAP/ ? ' bootstrap' : '';

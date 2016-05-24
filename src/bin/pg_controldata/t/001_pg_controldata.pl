@@ -4,15 +4,15 @@ use MollyDBNode;
 use TestLib;
 use Test::More tests => 13;
 
-program_help_ok('pg_controldata');
-program_version_ok('pg_controldata');
-program_options_handling_ok('pg_controldata');
-command_fails(['pg_controldata'], 'pg_controldata without arguments fails');
-command_fails([ 'pg_controldata', 'nonexistent' ],
-	'pg_controldata with nonexistent directory fails');
+program_help_ok('mdb_controldata');
+program_version_ok('mdb_controldata');
+program_options_handling_ok('mdb_controldata');
+command_fails(['mdb_controldata'], 'mdb_controldata without arguments fails');
+command_fails([ 'mdb_controldata', 'nonexistent' ],
+	'mdb_controldata with nonexistent directory fails');
 
 my $node = get_new_node('main');
 $node->init;
 
-command_like([ 'pg_controldata', $node->data_dir ],
-	qr/checkpoint/, 'pg_controldata produces output');
+command_like([ 'mdb_controldata', $node->data_dir ],
+	qr/checkpoint/, 'mdb_controldata produces output');

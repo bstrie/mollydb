@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_receivexlog.c - receive streaming transaction log data and write it
+ * mdb_receivexlog.c - receive streaming transaction log data and write it
  *					  to a local file.
  *
  * Author: Magnus Hagander <magnus@hagander.net>
@@ -8,7 +8,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  src/bin/pg_basebackup/pg_receivexlog.c
+ *		  src/bin/mdb_basebackup/mdb_receivexlog.c
  *-------------------------------------------------------------------------
  */
 
@@ -389,7 +389,7 @@ main(int argc, char **argv)
 	char	   *db_name;
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_basebackup"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_basebackup"));
 
 	if (argc > 1)
 	{
@@ -401,7 +401,7 @@ main(int argc, char **argv)
 		else if (strcmp(argv[1], "-V") == 0 ||
 				 strcmp(argv[1], "--version") == 0)
 		{
-			puts("pg_receivexlog (MollyDB) " PG_VERSION);
+			puts("mdb_receivexlog (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -412,13 +412,13 @@ main(int argc, char **argv)
 		switch (c)
 		{
 			case 'D':
-				basedir = pg_strdup(optarg);
+				basedir = mdb_strdup(optarg);
 				break;
 			case 'd':
-				connection_string = pg_strdup(optarg);
+				connection_string = mdb_strdup(optarg);
 				break;
 			case 'h':
-				dbhost = pg_strdup(optarg);
+				dbhost = mdb_strdup(optarg);
 				break;
 			case 'p':
 				if (atoi(optarg) <= 0)
@@ -427,10 +427,10 @@ main(int argc, char **argv)
 							progname, optarg);
 					exit(1);
 				}
-				dbport = pg_strdup(optarg);
+				dbport = mdb_strdup(optarg);
 				break;
 			case 'U':
-				dbuser = pg_strdup(optarg);
+				dbuser = mdb_strdup(optarg);
 				break;
 			case 'w':
 				dbgetpassword = -1;
@@ -448,7 +448,7 @@ main(int argc, char **argv)
 				}
 				break;
 			case 'S':
-				replication_slot = pg_strdup(optarg);
+				replication_slot = mdb_strdup(optarg);
 				break;
 			case 'n':
 				noloop = 1;
@@ -620,7 +620,7 @@ main(int argc, char **argv)
 			/* translator: check source for value for %d */
 					_("%s: disconnected; waiting %d seconds to try again\n"),
 					progname, RECONNECT_SLEEP_TIME);
-			pg_usleep(RECONNECT_SLEEP_TIME * 1000000);
+			mdb_usleep(RECONNECT_SLEEP_TIME * 1000000);
 		}
 	}
 }

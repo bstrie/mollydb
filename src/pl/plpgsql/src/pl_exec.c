@@ -20,8 +20,8 @@
 #include "access/htup_details.h"
 #include "access/transam.h"
 #include "access/tupconvert.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "executor/spi.h"
 #include "funcapi.h"
 #include "miscadmin.h"
@@ -92,7 +92,7 @@ static SimpleEcontextStackEntry *simple_econtext_stack = NULL;
  *
  * Once built, the compiled expression trees (cast_expr fields) survive for
  * the life of the session.  At some point it might be worth invalidating
- * those after pg_cast changes, but for the moment we don't bother.
+ * those after mdb_cast changes, but for the moment we don't bother.
  *
  * The evaluation state trees (cast_exprstate) are managed in the same way as
  * simple expressions (i.e., we assume cast expressions are always simple).

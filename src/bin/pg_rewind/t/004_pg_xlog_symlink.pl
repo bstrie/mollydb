@@ -1,5 +1,5 @@
 #
-# Test pg_rewind when the target's pg_xlog directory is a symlink.
+# Test mdb_rewind when the target's mdb_xlog directory is a symlink.
 #
 use strict;
 use warnings;
@@ -30,10 +30,10 @@ sub run_test
 
 	my $test_master_datadir = $node_master->data_dir;
 
-	# turn pg_xlog into a symlink
-	print("moving $test_master_datadir/pg_xlog to $master_xlogdir\n");
-	move("$test_master_datadir/pg_xlog", $master_xlogdir) or die;
-	symlink($master_xlogdir, "$test_master_datadir/pg_xlog") or die;
+	# turn mdb_xlog into a symlink
+	print("moving $test_master_datadir/mdb_xlog to $master_xlogdir\n");
+	move("$test_master_datadir/mdb_xlog", $master_xlogdir) or die;
+	symlink($master_xlogdir, "$test_master_datadir/mdb_xlog") or die;
 
 	RewindTest::start_master();
 
@@ -61,7 +61,7 @@ sub run_test
 	# old master.
 	standby_psql("INSERT INTO tbl1 VALUES ('in standby, after promotion')");
 
-	RewindTest::run_pg_rewind($test_mode);
+	RewindTest::run_mdb_rewind($test_mode);
 
 	check_query(
 		'SELECT * FROM tbl1',

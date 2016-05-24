@@ -849,10 +849,10 @@ typedef unsigned int slock_t;
 typedef unsigned char slock_t;
 #endif
 
-extern slock_t pg_atomic_cas(volatile slock_t *lock, slock_t with,
+extern slock_t mdb_atomic_cas(volatile slock_t *lock, slock_t with,
 									  slock_t cmp);
 
-#define TAS(a) (pg_atomic_cas((a), 1, 0) != 0)
+#define TAS(a) (mdb_atomic_cas((a), 1, 0) != 0)
 #endif
 
 

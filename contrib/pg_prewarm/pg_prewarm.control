@@ -1,5 +1,5 @@
-# pg_prewarm extension
+# mdb_prewarm extension
 comment = 'prewarm relation data'
 default_version = '1.0'
-module_pathname = '$libdir/pg_prewarm'
+module_pathname = '$libdir/mdb_prewarm'
 relocatable = true

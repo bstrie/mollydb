@@ -531,7 +531,7 @@ SELECT * FROM test1 ORDER BY a || b COLLATE "fr_FR";
     If the operating system provides support for using multiple locales
     within a single program (<function>newlocale</> and related functions),
     then when a database cluster is initialized, <command>initdb</command>
-    populates the system catalog <literal>pg_collation</literal> with
+    populates the system catalog <literal>mdb_collation</literal> with
     collations based on all the locales it finds on the operating
     system at the time.  For example, the operating system might
     provide a locale named <literal>de_DE.utf8</literal>.
@@ -560,7 +560,7 @@ SELECT * FROM test1 ORDER BY a || b COLLATE "fr_FR";
    <para>
     Within any particular database, only collations that use that
     database's encoding are of interest.  Other entries in
-    <literal>pg_collation</literal> are ignored.  Thus, a stripped collation
+    <literal>mdb_collation</literal> are ignored.  Thus, a stripped collation
     name such as <literal>de_DE</literal> can be considered unique
     within a given database even though it would not be unique globally.
     Use of the stripped collation names is recommended, since it will
@@ -634,7 +634,7 @@ SELECT a COLLATE "C" &lt; b COLLATE "POSIX" FROM test1;
          <entry>Server?</entry>
          <!--
           The Bytes/Char field is populated by looking at the values returned
-          by pg_wchar_table.mblen function for each encoding.
+          by mdb_wchar_table.mblen function for each encoding.
          -->
          <entry>Bytes/Char</entry>
          <entry>Aliases</entry>
@@ -1049,7 +1049,7 @@ CREATE DATABASE korean WITH ENCODING 'EUC_KR' LC_COLLATE='ko_KR.euckr' LC_CTYPE=
 
     <para>
      The encoding for a database is stored in the system catalog
-     <literal>pg_database</literal>.  You can see it by using the
+     <literal>mdb_database</literal>.  You can see it by using the
      <command>psql</command> <option>-l</option> option or the
      <command>\l</command> command.
 
@@ -1099,7 +1099,7 @@ $ <userinput>psql -l</userinput>
      <productname>MollyDB</productname> supports automatic
      character set conversion between server and client for certain
      character set combinations. The conversion information is stored in the
-     <literal>pg_conversion</> system catalog.  <productname>MollyDB</>
+     <literal>mdb_conversion</> system catalog.  <productname>MollyDB</>
      comes with some predefined conversions, as shown in <xref
      linkend="multibyte-translation-table">. You can create a new
      conversion using the SQL command <command>CREATE CONVERSION</command>.

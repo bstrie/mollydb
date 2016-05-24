@@ -1,11 +1,11 @@
-# German message translation file for pg_rewind
+# German message translation file for mdb_rewind
 # Copyright (C) 2015-2016 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 # Peter Eisentraut <peter_e@gmx.net>, 2015-2016.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_rewind (MollyDB) 9.6\n"
+"Project-Id-Version: mdb_rewind (MollyDB) 9.6\n"
 "Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-03 19:14+0000\n"
 "PO-Revision-Date: 2016-05-03 22:38-0400\n"
@@ -422,7 +422,7 @@ msgstr ""
 "WAL-Eintrag modifiziert eine Relation, aber Typ des Eintrags wurde nicht erkannt\n"
 "lsn: %X/%X, rmgr: %s, info: %02X\n"
 
-#: pg_rewind.c:64
+#: mdb_rewind.c:64
 #, c-format
 msgid ""
 "%s resynchronizes a MollyDB cluster with another copy of the cluster.\n"
@@ -431,7 +431,7 @@ msgstr ""
 "%s resynchronisiert einen MollyDB-Cluster mit einer Kopie des Clusters.\n"
 "\n"
 
-#: pg_rewind.c:65
+#: mdb_rewind.c:65
 #, c-format
 msgid ""
 "Usage:\n"
@@ -442,54 +442,54 @@ msgstr ""
 "  %s [OPTION]...\n"
 "\n"
 
-#: pg_rewind.c:66
+#: mdb_rewind.c:66
 #, c-format
 msgid "Options:\n"
 msgstr "Optionen:\n"
 
-#: pg_rewind.c:67
+#: mdb_rewind.c:67
 #, c-format
 msgid "  -D, --target-pgdata=DIRECTORY  existing data directory to modify\n"
 msgstr "  -D, --target-pgdata=VERZ       bestehendes zu modifizierendes Datenverzeichnis\n"
 
-#: pg_rewind.c:68
+#: mdb_rewind.c:68
 #, c-format
 msgid "      --source-pgdata=DIRECTORY  source data directory to synchronize with\n"
 msgstr ""
 "      --source-pgdata=VERZ       Quelldatenverzeichnis, mit dem synchronisiert\n"
 "                                 werden soll\n"
 
-#: pg_rewind.c:69
+#: mdb_rewind.c:69
 #, c-format
 msgid "      --source-server=CONNSTR    source server to synchronize with\n"
 msgstr "      --source-server=VERB       Quellserver, mit dem synchronisiert werden soll\n"
 
-#: pg_rewind.c:70
+#: mdb_rewind.c:70
 #, c-format
 msgid "  -n, --dry-run                  stop before modifying anything\n"
 msgstr "  -n, --dry-run                  anhalten, bevor etwas geändert wird\n"
 
-#: pg_rewind.c:71
+#: mdb_rewind.c:71
 #, c-format
 msgid "  -P, --progress                 write progress messages\n"
 msgstr "  -P, --progress                 Fortschrittsmeldungen ausgeben\n"
 
-#: pg_rewind.c:72
+#: mdb_rewind.c:72
 #, c-format
 msgid "      --debug                    write a lot of debug messages\n"
 msgstr "      --debug                    viele Debug-Meldungen ausgeben\n"
 
-#: pg_rewind.c:73
+#: mdb_rewind.c:73
 #, c-format
 msgid "  -V, --version                  output version information, then exit\n"
 msgstr "  -V, --version                  Versionsinformationen anzeigen, dann beenden\n"
 
-#: pg_rewind.c:74
+#: mdb_rewind.c:74
 #, c-format
 msgid "  -?, --help                     show this help, then exit\n"
 msgstr "  -?, --help                     diese Hilfe anzeigen, dann beenden\n"
 
-#: pg_rewind.c:75
+#: mdb_rewind.c:75
 #, c-format
 msgid ""
 "\n"
@@ -498,77 +498,77 @@ msgstr ""
 "\n"
 "Berichten Sie Fehler an <mdb-bugs@mollydb.org>.\n"
 
-#: pg_rewind.c:130 pg_rewind.c:161 pg_rewind.c:168 pg_rewind.c:176
+#: mdb_rewind.c:130 mdb_rewind.c:161 mdb_rewind.c:168 mdb_rewind.c:176
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "Versuchen Sie „%s --help“ für weitere Informationen.\n"
 
-#: pg_rewind.c:160
+#: mdb_rewind.c:160
 #, c-format
 msgid "%s: no source specified (--source-pgdata or --source-server)\n"
 msgstr "%s: keine Quelle angegeben (--source-pgdata oder --source-server)\n"
 
-#: pg_rewind.c:167
+#: mdb_rewind.c:167
 #, c-format
 msgid "%s: no target data directory specified (--target-pgdata)\n"
 msgstr "%s: kein Zielverzeichnis angegeben (--target-pgdata)\n"
 
-#: pg_rewind.c:174
+#: mdb_rewind.c:174
 #, c-format
 msgid "%s: too many command-line arguments (first is \"%s\")\n"
 msgstr "%s: zu viele Kommandozeilenargumente (das erste ist „%s“)\n"
 
-#: pg_rewind.c:189
+#: mdb_rewind.c:189
 #, c-format
 msgid "cannot be executed by \"root\"\n"
 msgstr "kann nicht von „root“ ausgeführt werden\n"
 
-#: pg_rewind.c:190
+#: mdb_rewind.c:190
 #, c-format
 msgid "You must run %s as the MollyDB superuser.\n"
 msgstr "Sie müssen %s als MollyDB-Superuser ausführen.\n"
 
-#: pg_rewind.c:221
+#: mdb_rewind.c:221
 #, c-format
 msgid "source and target cluster are on the same timeline\n"
 msgstr "Quell- und Ziel-Cluster sind auf der gleichen Zeitleiste\n"
 
-#: pg_rewind.c:227
+#: mdb_rewind.c:227
 #, c-format
 msgid "servers diverged at WAL position %X/%X on timeline %u\n"
 msgstr "Server divergierten bei WAL-Position %X/%X auf Zeitleiste %u\n"
 
-#: pg_rewind.c:264
+#: mdb_rewind.c:264
 #, c-format
 msgid "no rewind required\n"
 msgstr "kein Rückspulen nötig\n"
 
-#: pg_rewind.c:271
+#: mdb_rewind.c:271
 #, c-format
 msgid "rewinding from last common checkpoint at %X/%X on timeline %u\n"
 msgstr "Rückspulen ab letztem gemeinsamen Checkpoint bei %X/%X auf Zeitleiste %u\n"
 
-#: pg_rewind.c:279
+#: mdb_rewind.c:279
 #, c-format
 msgid "reading source file list\n"
 msgstr "lese Quelldateiliste\n"
 
-#: pg_rewind.c:281
+#: mdb_rewind.c:281
 #, c-format
 msgid "reading target file list\n"
 msgstr "lese Zieldateiliste\n"
 
-#: pg_rewind.c:291
+#: mdb_rewind.c:291
 #, c-format
 msgid "reading WAL in target\n"
 msgstr "lese WAL im Ziel-Cluster\n"
 
-#: pg_rewind.c:308
+#: mdb_rewind.c:308
 #, c-format
 msgid "need to copy %lu MB (total source directory size is %lu MB)\n"
 msgstr "%lu MB müssen kopiert werden (Gesamtgröße des Quellverzeichnisses ist %lu MB)\n"
 
-#: pg_rewind.c:325
+#: mdb_rewind.c:325
 #, c-format
 msgid ""
 "\n"
@@ -577,83 +577,83 @@ msgstr ""
 "\n"
 "erzeuge Backup-Label und aktualisiere Kontrolldatei\n"
 
-#: pg_rewind.c:353
+#: mdb_rewind.c:353
 #, c-format
 msgid "syncing target data directory\n"
 msgstr "synchronisiere Zieldatenverzeichnis\n"
 
-#: pg_rewind.c:356
+#: mdb_rewind.c:356
 #, c-format
 msgid "Done!\n"
 msgstr "Fertig!\n"
 
-#: pg_rewind.c:368
+#: mdb_rewind.c:368
 #, c-format
 msgid "source and target clusters are from different systems\n"
 msgstr "Quell- und Ziel-Cluster sind von verschiedenen Systemen\n"
 
-#: pg_rewind.c:376
+#: mdb_rewind.c:376
 #, c-format
-msgid "clusters are not compatible with this version of pg_rewind\n"
-msgstr "die Cluster sind nicht mit dieser Version von pg_rewind kompatibel\n"
+msgid "clusters are not compatible with this version of mdb_rewind\n"
+msgstr "die Cluster sind nicht mit dieser Version von mdb_rewind kompatibel\n"
 
-#: pg_rewind.c:386
+#: mdb_rewind.c:386
 #, c-format
 msgid "target server needs to use either data checksums or \"wal_log_hints = on\"\n"
 msgstr "Zielserver muss entweder Datenprüfsummen oder „wal_log_hints = on“ verwenden\n"
 
-#: pg_rewind.c:397
+#: mdb_rewind.c:397
 #, c-format
 msgid "target server must be shut down cleanly\n"
 msgstr "Zielserver muss sauber heruntergefahren worden sein\n"
 
-#: pg_rewind.c:407
+#: mdb_rewind.c:407
 #, c-format
 msgid "source data directory must be shut down cleanly\n"
 msgstr "Quelldatenverzeichnis muss sauber heruntergefahren worden sein\n"
 
-#: pg_rewind.c:462
+#: mdb_rewind.c:462
 #, c-format
 msgid "Invalid control file"
 msgstr "Ungültige Kontrolldatei"
 
-#: pg_rewind.c:473
+#: mdb_rewind.c:473
 #, c-format
 msgid "Source timeline history:\n"
 msgstr "Verlauf der Quellzeitleiste:\n"
 
-#: pg_rewind.c:475
+#: mdb_rewind.c:475
 #, c-format
 msgid "Target timeline history:\n"
 msgstr "Verlauf der Zielzeitleiste:\n"
 
 #. translator: %d is a timeline number, others are LSN positions
-#: pg_rewind.c:489
+#: mdb_rewind.c:489
 #, c-format
 msgid "%d: %X/%X - %X/%X\n"
 msgstr "%d: %X/%X - %X/%X\n"
 
-#: pg_rewind.c:547
+#: mdb_rewind.c:547
 #, c-format
 msgid "could not find common ancestor of the source and target cluster's timelines\n"
 msgstr "konnte keinen gemeinsamen Anfangspunkt in den Zeitleisten von Quell- und Ziel-Cluster finden\n"
 
-#: pg_rewind.c:588
+#: mdb_rewind.c:588
 #, c-format
 msgid "backup label buffer too small\n"
 msgstr "Puffer für Backup-Label ist zu klein\n"
 
-#: pg_rewind.c:611
+#: mdb_rewind.c:611
 #, c-format
 msgid "unexpected control file CRC\n"
 msgstr "unerwartete CRC in Kontrolldatei\n"
 
-#: pg_rewind.c:621
+#: mdb_rewind.c:621
 #, c-format
 msgid "unexpected control file size %d, expected %d\n"
 msgstr "unerwartete Kontrolldateigröße %d, erwartet wurde %d\n"
 
-#: pg_rewind.c:688
+#: mdb_rewind.c:688
 #, c-format
 msgid ""
 "The program \"initdb\" is needed by %s but was \n"
@@ -664,7 +664,7 @@ msgstr ""
 "selben Verzeichnis wie „%s“ gefunden.\n"
 "Prüfen Sie Ihre Installation.\n"
 
-#: pg_rewind.c:692
+#: mdb_rewind.c:692
 #, c-format
 msgid ""
 "The program \"initdb\" was found by \"%s\"\n"
@@ -675,7 +675,7 @@ msgstr ""
 "aber es hatte nicht die gleiche Version wie %s.\n"
 "Prüfen Sie Ihre Installation.\n"
 
-#: pg_rewind.c:710
+#: mdb_rewind.c:710
 #, c-format
 msgid "sync of target directory failed\n"
 msgstr "Synchronisieren des Zielverzeichnisses fehlgeschlagen\n"
@@ -772,8 +772,8 @@ msgstr "ungültige Info-Bits %04X in Logsegment %s, Offset %u"
 
 #: xlogreader.c:782
 #, c-format
-msgid "WAL file is from different database system: WAL file database system identifier is %s, pg_control database system identifier is %s"
-msgstr "WAL-Datei ist von einem anderen Datenbanksystem: Datenbanksystemidentifikator in WAL-Datei ist %s, Datenbanksystemidentifikator in pg_control ist %s"
+msgid "WAL file is from different database system: WAL file database system identifier is %s, mdb_control database system identifier is %s"
+msgstr "WAL-Datei ist von einem anderen Datenbanksystem: Datenbanksystemidentifikator in WAL-Datei ist %s, Datenbanksystemidentifikator in mdb_control ist %s"
 
 #: xlogreader.c:789
 #, c-format

@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_aggregate.c
- *	  routines to support manipulation of the pg_aggregate relation
+ * mdb_aggregate.c
+ *	  routines to support manipulation of the mdb_aggregate relation
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_aggregate.c
+ *	  src/backend/catalog/mdb_aggregate.c
  *
  *-------------------------------------------------------------------------
  */
@@ -18,12 +18,12 @@
 #include "access/htup_details.h"
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_aggregate.h"
-#include "catalog/pg_language.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_proc_fn.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_aggregate.h"
+#include "catalog/mdb_language.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_proc_fn.h"
+#include "catalog/mdb_type.h"
 #include "miscadmin.h"
 #include "parser/parse_coerce.h"
 #include "parser/parse_func.h"
@@ -77,9 +77,9 @@ AggregateCreate(const char *aggName,
 {
 	Relation	aggdesc;
 	HeapTuple	tup;
-	bool		nulls[Natts_pg_aggregate];
-	Datum		values[Natts_pg_aggregate];
-	Form_pg_proc proc;
+	bool		nulls[Natts_mdb_aggregate];
+	Datum		values[Natts_mdb_aggregate];
+	Form_mdb_proc proc;
 	Oid			transfn;
 	Oid			finalfn = InvalidOid;	/* can be omitted */
 	Oid			combinefn = InvalidOid;	/* can be omitted */
@@ -117,7 +117,7 @@ AggregateCreate(const char *aggName,
 
 	/*
 	 * Aggregates can have at most FUNC_MAX_ARGS-1 args, else the transfn
-	 * and/or finalfn will be unrepresentable in pg_proc.  We must check now
+	 * and/or finalfn will be unrepresentable in mdb_proc.  We must check now
 	 * to protect fixed-size arrays here and possibly in called functions.
 	 */
 	if (numArgs < 0 || numArgs > FUNC_MAX_ARGS - 1)
@@ -250,7 +250,7 @@ AggregateCreate(const char *aggName,
 	tup = SearchSysCache1(PROCOID, ObjectIdGetDatum(transfn));
 	if (!HeapTupleIsValid(tup))
 		elog(ERROR, "cache lookup failed for function %u", transfn);
-	proc = (Form_pg_proc) GETSTRUCT(tup);
+	proc = (Form_mdb_proc) GETSTRUCT(tup);
 
 	/*
 	 * If the transfn is strict and the initval is NULL, make sure first input
@@ -294,7 +294,7 @@ AggregateCreate(const char *aggName,
 		tup = SearchSysCache1(PROCOID, ObjectIdGetDatum(mtransfn));
 		if (!HeapTupleIsValid(tup))
 			elog(ERROR, "cache lookup failed for function %u", mtransfn);
-		proc = (Form_pg_proc) GETSTRUCT(tup);
+		proc = (Form_mdb_proc) GETSTRUCT(tup);
 
 		/*
 		 * If the mtransfn is strict and the minitval is NULL, check first
@@ -339,7 +339,7 @@ AggregateCreate(const char *aggName,
 		tup = SearchSysCache1(PROCOID, ObjectIdGetDatum(minvtransfn));
 		if (!HeapTupleIsValid(tup))
 			elog(ERROR, "cache lookup failed for function %u", minvtransfn);
-		proc = (Form_pg_proc) GETSTRUCT(tup);
+		proc = (Form_mdb_proc) GETSTRUCT(tup);
 
 		/*
 		 * We require the strictness settings of the forward and inverse
@@ -579,29 +579,29 @@ AggregateCreate(const char *aggName,
 	 */
 	for (i = 0; i < numArgs; i++)
 	{
-		aclresult = pg_type_aclcheck(aggArgTypes[i], GetUserId(), ACL_USAGE);
+		aclresult = mdb_type_aclcheck(aggArgTypes[i], GetUserId(), ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error_type(aclresult, aggArgTypes[i]);
 	}
 
-	aclresult = pg_type_aclcheck(aggTransType, GetUserId(), ACL_USAGE);
+	aclresult = mdb_type_aclcheck(aggTransType, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error_type(aclresult, aggTransType);
 
 	if (OidIsValid(aggmTransType))
 	{
-		aclresult = pg_type_aclcheck(aggmTransType, GetUserId(), ACL_USAGE);
+		aclresult = mdb_type_aclcheck(aggmTransType, GetUserId(), ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error_type(aclresult, aggmTransType);
 	}
 
-	aclresult = pg_type_aclcheck(finaltype, GetUserId(), ACL_USAGE);
+	aclresult = mdb_type_aclcheck(finaltype, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error_type(aclresult, finaltype);
 
 
 	/*
-	 * Everything looks okay.  Try to create the pg_proc entry for the
+	 * Everything looks okay.  Try to create the mdb_proc entry for the
 	 * aggregate.  (This could fail if there's already a conflicting entry.)
 	 */
 
@@ -636,42 +636,42 @@ AggregateCreate(const char *aggName,
 	procOid = myself.objectId;
 
 	/*
-	 * Okay to create the pg_aggregate entry.
+	 * Okay to create the mdb_aggregate entry.
 	 */
 
 	/* initialize nulls and values */
-	for (i = 0; i < Natts_pg_aggregate; i++)
+	for (i = 0; i < Natts_mdb_aggregate; i++)
 	{
 		nulls[i] = false;
 		values[i] = (Datum) NULL;
 	}
-	values[Anum_pg_aggregate_aggfnoid - 1] = ObjectIdGetDatum(procOid);
-	values[Anum_pg_aggregate_aggkind - 1] = CharGetDatum(aggKind);
-	values[Anum_pg_aggregate_aggnumdirectargs - 1] = Int16GetDatum(numDirectArgs);
-	values[Anum_pg_aggregate_aggtransfn - 1] = ObjectIdGetDatum(transfn);
-	values[Anum_pg_aggregate_aggfinalfn - 1] = ObjectIdGetDatum(finalfn);
-	values[Anum_pg_aggregate_aggcombinefn - 1] = ObjectIdGetDatum(combinefn);
-	values[Anum_pg_aggregate_aggserialfn - 1] = ObjectIdGetDatum(serialfn);
-	values[Anum_pg_aggregate_aggdeserialfn - 1] = ObjectIdGetDatum(deserialfn);
-	values[Anum_pg_aggregate_aggmtransfn - 1] = ObjectIdGetDatum(mtransfn);
-	values[Anum_pg_aggregate_aggminvtransfn - 1] = ObjectIdGetDatum(minvtransfn);
-	values[Anum_pg_aggregate_aggmfinalfn - 1] = ObjectIdGetDatum(mfinalfn);
-	values[Anum_pg_aggregate_aggfinalextra - 1] = BoolGetDatum(finalfnExtraArgs);
-	values[Anum_pg_aggregate_aggmfinalextra - 1] = BoolGetDatum(mfinalfnExtraArgs);
-	values[Anum_pg_aggregate_aggsortop - 1] = ObjectIdGetDatum(sortop);
-	values[Anum_pg_aggregate_aggtranstype - 1] = ObjectIdGetDatum(aggTransType);
-	values[Anum_pg_aggregate_aggserialtype - 1] = ObjectIdGetDatum(aggSerialType);
-	values[Anum_pg_aggregate_aggtransspace - 1] = Int32GetDatum(aggTransSpace);
-	values[Anum_pg_aggregate_aggmtranstype - 1] = ObjectIdGetDatum(aggmTransType);
-	values[Anum_pg_aggregate_aggmtransspace - 1] = Int32GetDatum(aggmTransSpace);
+	values[Anum_mdb_aggregate_aggfnoid - 1] = ObjectIdGetDatum(procOid);
+	values[Anum_mdb_aggregate_aggkind - 1] = CharGetDatum(aggKind);
+	values[Anum_mdb_aggregate_aggnumdirectargs - 1] = Int16GetDatum(numDirectArgs);
+	values[Anum_mdb_aggregate_aggtransfn - 1] = ObjectIdGetDatum(transfn);
+	values[Anum_mdb_aggregate_aggfinalfn - 1] = ObjectIdGetDatum(finalfn);
+	values[Anum_mdb_aggregate_aggcombinefn - 1] = ObjectIdGetDatum(combinefn);
+	values[Anum_mdb_aggregate_aggserialfn - 1] = ObjectIdGetDatum(serialfn);
+	values[Anum_mdb_aggregate_aggdeserialfn - 1] = ObjectIdGetDatum(deserialfn);
+	values[Anum_mdb_aggregate_aggmtransfn - 1] = ObjectIdGetDatum(mtransfn);
+	values[Anum_mdb_aggregate_aggminvtransfn - 1] = ObjectIdGetDatum(minvtransfn);
+	values[Anum_mdb_aggregate_aggmfinalfn - 1] = ObjectIdGetDatum(mfinalfn);
+	values[Anum_mdb_aggregate_aggfinalextra - 1] = BoolGetDatum(finalfnExtraArgs);
+	values[Anum_mdb_aggregate_aggmfinalextra - 1] = BoolGetDatum(mfinalfnExtraArgs);
+	values[Anum_mdb_aggregate_aggsortop - 1] = ObjectIdGetDatum(sortop);
+	values[Anum_mdb_aggregate_aggtranstype - 1] = ObjectIdGetDatum(aggTransType);
+	values[Anum_mdb_aggregate_aggserialtype - 1] = ObjectIdGetDatum(aggSerialType);
+	values[Anum_mdb_aggregate_aggtransspace - 1] = Int32GetDatum(aggTransSpace);
+	values[Anum_mdb_aggregate_aggmtranstype - 1] = ObjectIdGetDatum(aggmTransType);
+	values[Anum_mdb_aggregate_aggmtransspace - 1] = Int32GetDatum(aggmTransSpace);
 	if (agginitval)
-		values[Anum_pg_aggregate_agginitval - 1] = CStringGetTextDatum(agginitval);
+		values[Anum_mdb_aggregate_agginitval - 1] = CStringGetTextDatum(agginitval);
 	else
-		nulls[Anum_pg_aggregate_agginitval - 1] = true;
+		nulls[Anum_mdb_aggregate_agginitval - 1] = true;
 	if (aggminitval)
-		values[Anum_pg_aggregate_aggminitval - 1] = CStringGetTextDatum(aggminitval);
+		values[Anum_mdb_aggregate_aggminitval - 1] = CStringGetTextDatum(aggminitval);
 	else
-		nulls[Anum_pg_aggregate_aggminitval - 1] = true;
+		nulls[Anum_mdb_aggregate_aggminitval - 1] = true;
 
 	aggdesc = heap_open(AggregateRelationId, RowExclusiveLock);
 	tupDesc = aggdesc->rd_att;
@@ -864,7 +864,7 @@ lookup_agg_function(List *fnName,
 	}
 
 	/* Check aggregate creator has permission to call the function */
-	aclresult = pg_proc_aclcheck(fnOid, GetUserId(), ACL_EXECUTE);
+	aclresult = mdb_proc_aclcheck(fnOid, GetUserId(), ACL_EXECUTE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_PROC, get_func_name(fnOid));
 

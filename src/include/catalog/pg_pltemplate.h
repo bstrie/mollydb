@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_pltemplate.h
- *	  definition of the system "PL template" relation (pg_pltemplate)
+ * mdb_pltemplate.h
+ *	  definition of the system "PL template" relation (mdb_pltemplate)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_pltemplate.h
+ * src/include/catalog/mdb_pltemplate.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,13 +22,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_pltemplate definition.  cpp turns this into
- *		typedef struct FormData_pg_pltemplate
+ *		mdb_pltemplate definition.  cpp turns this into
+ *		typedef struct FormData_mdb_pltemplate
  * ----------------
  */
 #define PLTemplateRelationId	1136
 
-CATALOG(pg_pltemplate,1136) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
+CATALOG(mdb_pltemplate,1136) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
 {
 	NameData	tmplname;		/* name of PL */
 	bool		tmpltrusted;	/* PL is trusted? */
@@ -42,32 +42,32 @@ CATALOG(pg_pltemplate,1136) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
 	text tmpllibrary BKI_FORCE_NOT_NULL;		/* path of shared library */
 	aclitem		tmplacl[1];		/* access privileges for template */
 #endif
-} FormData_pg_pltemplate;
+} FormData_mdb_pltemplate;
 
 /* ----------------
- *		Form_pg_pltemplate corresponds to a pointer to a row with
- *		the format of pg_pltemplate relation.
+ *		Form_mdb_pltemplate corresponds to a pointer to a row with
+ *		the format of mdb_pltemplate relation.
  * ----------------
  */
-typedef FormData_pg_pltemplate *Form_pg_pltemplate;
+typedef FormData_mdb_pltemplate *Form_mdb_pltemplate;
 
 /* ----------------
- *		compiler constants for pg_pltemplate
+ *		compiler constants for mdb_pltemplate
  * ----------------
  */
-#define Natts_pg_pltemplate					8
-#define Anum_pg_pltemplate_tmplname			1
-#define Anum_pg_pltemplate_tmpltrusted		2
-#define Anum_pg_pltemplate_tmpldbacreate	3
-#define Anum_pg_pltemplate_tmplhandler		4
-#define Anum_pg_pltemplate_tmplinline		5
-#define Anum_pg_pltemplate_tmplvalidator	6
-#define Anum_pg_pltemplate_tmpllibrary		7
-#define Anum_pg_pltemplate_tmplacl			8
+#define Natts_mdb_pltemplate					8
+#define Anum_mdb_pltemplate_tmplname			1
+#define Anum_mdb_pltemplate_tmpltrusted		2
+#define Anum_mdb_pltemplate_tmpldbacreate	3
+#define Anum_mdb_pltemplate_tmplhandler		4
+#define Anum_mdb_pltemplate_tmplinline		5
+#define Anum_mdb_pltemplate_tmplvalidator	6
+#define Anum_mdb_pltemplate_tmpllibrary		7
+#define Anum_mdb_pltemplate_tmplacl			8
 
 
 /* ----------------
- *		initial contents of pg_pltemplate
+ *		initial contents of mdb_pltemplate
  * ----------------
  */
 

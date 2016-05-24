@@ -16,16 +16,16 @@ SET enable_indexonlyscan TO off;
 
 -- wait to let any prior tests finish dumping out stats;
 -- else our messages might get lost due to contention
-SELECT pg_sleep_for('2 seconds');
+SELECT mdb_sleep_for('2 seconds');
 
 -- save counters
 CREATE TEMP TABLE prevstats AS
 SELECT t.seq_scan, t.seq_tup_read, t.idx_scan, t.idx_tup_fetch,
        (b.heap_blks_read + b.heap_blks_hit) AS heap_blks,
        (b.idx_blks_read + b.idx_blks_hit) AS idx_blks,
-       pg_stat_get_snapshot_timestamp() as snap_ts
-  FROM pg_catalog.pg_stat_user_tables AS t,
-       pg_catalog.pg_statio_user_tables AS b
+       mdb_stat_get_snapshot_timestamp() as snap_ts
+  FROM mdb_catalog.mdb_stat_user_tables AS t,
+       mdb_catalog.mdb_statio_user_tables AS b
  WHERE t.relname='tenk2' AND b.relname='tenk2';
 
 -- function to wait for counters to advance
@@ -46,25 +46,25 @@ begin
 
     -- check to see if seqscan has been sensed
     SELECT (st.seq_scan >= pr.seq_scan + 1) INTO updated1
-      FROM pg_stat_user_tables AS st, pg_class AS cl, prevstats AS pr
+      FROM mdb_stat_user_tables AS st, mdb_class AS cl, prevstats AS pr
      WHERE st.relname='tenk2' AND cl.relname='tenk2';
 
     -- check to see if indexscan has been sensed
     SELECT (st.idx_scan >= pr.idx_scan + 1) INTO updated2
-      FROM pg_stat_user_tables AS st, pg_class AS cl, prevstats AS pr
+      FROM mdb_stat_user_tables AS st, mdb_class AS cl, prevstats AS pr
      WHERE st.relname='tenk2' AND cl.relname='tenk2';
 
     -- check to see if updates have been sensed
     SELECT (n_tup_ins > 0) INTO updated3
-      FROM pg_stat_user_tables WHERE relname='trunc_stats_test';
+      FROM mdb_stat_user_tables WHERE relname='trunc_stats_test';
 
     exit when updated1 and updated2 and updated3;
 
     -- wait a little
-    perform pg_sleep(0.1);
+    perform mdb_sleep(0.1);
 
     -- reset stats snapshot so we can test again
-    perform pg_stat_clear_snapshot();
+    perform mdb_stat_clear_snapshot();
 
   end loop;
 
@@ -139,29 +139,29 @@ SELECT count(*) FROM tenk2 WHERE unique1 = 1;
 
 -- force the rate-limiting logic in pgstat_report_stat() to time out
 -- and send a message
-SELECT pg_sleep(1.0);
+SELECT mdb_sleep(1.0);
 
 -- wait for stats collector to update
 SELECT wait_for_stats();
 
 -- check effects
 SELECT relname, n_tup_ins, n_tup_upd, n_tup_del, n_live_tup, n_dead_tup
-  FROM pg_stat_user_tables
+  FROM mdb_stat_user_tables
  WHERE relname like 'trunc_stats_test%' order by relname;
 
 SELECT st.seq_scan >= pr.seq_scan + 1,
        st.seq_tup_read >= pr.seq_tup_read + cl.reltuples,
        st.idx_scan >= pr.idx_scan + 1,
        st.idx_tup_fetch >= pr.idx_tup_fetch + 1
-  FROM pg_stat_user_tables AS st, pg_class AS cl, prevstats AS pr
+  FROM mdb_stat_user_tables AS st, mdb_class AS cl, prevstats AS pr
  WHERE st.relname='tenk2' AND cl.relname='tenk2';
 
 SELECT st.heap_blks_read + st.heap_blks_hit >= pr.heap_blks + cl.relpages,
        st.idx_blks_read + st.idx_blks_hit >= pr.idx_blks + 1
-  FROM pg_statio_user_tables AS st, pg_class AS cl, prevstats AS pr
+  FROM mdb_statio_user_tables AS st, mdb_class AS cl, prevstats AS pr
  WHERE st.relname='tenk2' AND cl.relname='tenk2';
 
-SELECT pr.snap_ts < pg_stat_get_snapshot_timestamp() as snapshot_newer
+SELECT pr.snap_ts < mdb_stat_get_snapshot_timestamp() as snapshot_newer
 FROM prevstats AS pr;
 
 DROP TABLE trunc_stats_test, trunc_stats_test1, trunc_stats_test2, trunc_stats_test3, trunc_stats_test4;

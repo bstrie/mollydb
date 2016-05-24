@@ -517,13 +517,13 @@ helpSQL(const char *topic, unsigned short int pager)
 			/* Count newlines for pager */
 			for (i = 0; QL_HELP[i].cmd; i++)
 			{
-				if (pg_strncasecmp(topic, QL_HELP[i].cmd, len) == 0 ||
+				if (mdb_strncasecmp(topic, QL_HELP[i].cmd, len) == 0 ||
 					strcmp(topic, "*") == 0)
 				{
 					nl_count += 5 + QL_HELP[i].nl_count;
 
 					/* If we have an exact match, exit.  Fixes \h SELECT */
-					if (pg_strcasecmp(topic, QL_HELP[i].cmd) == 0)
+					if (mdb_strcasecmp(topic, QL_HELP[i].cmd) == 0)
 						break;
 				}
 			}
@@ -533,7 +533,7 @@ helpSQL(const char *topic, unsigned short int pager)
 
 			for (i = 0; QL_HELP[i].cmd; i++)
 			{
-				if (pg_strncasecmp(topic, QL_HELP[i].cmd, len) == 0 ||
+				if (mdb_strncasecmp(topic, QL_HELP[i].cmd, len) == 0 ||
 					strcmp(topic, "*") == 0)
 				{
 					PQExpBufferData buffer;
@@ -548,7 +548,7 @@ helpSQL(const char *topic, unsigned short int pager)
 							_(QL_HELP[i].help),
 							buffer.data);
 					/* If we have an exact match, exit.  Fixes \h SELECT */
-					if (pg_strcasecmp(topic, QL_HELP[i].cmd) == 0)
+					if (mdb_strcasecmp(topic, QL_HELP[i].cmd) == 0)
 						break;
 				}
 			}

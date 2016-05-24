@@ -38,7 +38,7 @@
 #include "access/xact.h"
 #include "access/xlog.h"
 #include "miscadmin.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "pgstat.h"
 #include "storage/proc.h"
 #include "storage/procarray.h"
@@ -2409,7 +2409,7 @@ ReleaseLockIfHeld(LOCALLOCK *locallock, bool sessionLock)
  *
  * If the caller knows what those locks are, it can pass them as an array.
  * That speeds up the call significantly, when a lot of locks are held
- * (e.g pg_dump with a large schema).  Otherwise, pass NULL for locallocks,
+ * (e.g mdb_dump with a large schema).  Otherwise, pass NULL for locallocks,
  * and we'll traverse through our hash table to find them.
  */
 void

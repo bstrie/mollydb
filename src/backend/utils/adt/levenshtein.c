@@ -106,8 +106,8 @@ varstr_levenshtein(const char *source, int slen,
 #endif
 
 	/* Convert string lengths (in bytes) to lengths in characters */
-	m = pg_mbstrlen_with_len(source, slen);
-	n = pg_mbstrlen_with_len(target, tlen);
+	m = mdb_mbstrlen_with_len(source, slen);
+	n = mdb_mbstrlen_with_len(target, tlen);
 
 	/*
 	 * We can transform an empty s into t with n insertions, or a non-empty t
@@ -184,7 +184,7 @@ varstr_levenshtein(const char *source, int slen,
 #endif
 
 	/*
-	 * In order to avoid calling pg_mblen() repeatedly on each character in s,
+	 * In order to avoid calling mdb_mblen() repeatedly on each character in s,
 	 * we cache all the lengths before starting the main loop -- but if all
 	 * the characters in both strings are single byte, then we skip this and
 	 * use a fast-path in the main loop.  If only one string contains
@@ -199,7 +199,7 @@ varstr_levenshtein(const char *source, int slen,
 		s_char_len = (int *) palloc((m + 1) * sizeof(int));
 		for (i = 0; i < m; ++i)
 		{
-			s_char_len[i] = pg_mblen(cp);
+			s_char_len[i] = mdb_mblen(cp);
 			cp += s_char_len[i];
 		}
 		s_char_len[i] = 0;
@@ -225,7 +225,7 @@ varstr_levenshtein(const char *source, int slen,
 	{
 		int		   *temp;
 		const char *x = source;
-		int			y_char_len = n != tlen + 1 ? pg_mblen(y) : 1;
+		int			y_char_len = n != tlen + 1 ? mdb_mblen(y) : 1;
 
 #ifdef LEVENSHTEIN_LESS_EQUAL
 

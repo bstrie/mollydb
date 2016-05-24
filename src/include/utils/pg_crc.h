@@ -1,5 +1,5 @@
 /*
- * pg_crc.h
+ * mdb_crc.h
  *
  * MollyDB CRC support
  *
@@ -24,17 +24,17 @@
  * EQ_<variant>(c1, c2)
  *		Check for equality of two CRCs.
  *
- * The CRC-32C variant is in port/pg_crc32c.h.
+ * The CRC-32C variant is in port/mdb_crc32c.h.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/utils/pg_crc.h
+ * src/include/utils/mdb_crc.h
  */
 #ifndef PG_CRC_H
 #define PG_CRC_H
 
-typedef uint32 pg_crc32;
+typedef uint32 mdb_crc32;
 
 /*
  * CRC-32, the same used e.g. in Ethernet.
@@ -46,7 +46,7 @@ typedef uint32 pg_crc32;
 #define INIT_TRADITIONAL_CRC32(crc) ((crc) = 0xFFFFFFFF)
 #define FIN_TRADITIONAL_CRC32(crc)	((crc) ^= 0xFFFFFFFF)
 #define COMP_TRADITIONAL_CRC32(crc, data, len)	\
-	COMP_CRC32_NORMAL_TABLE(crc, data, len, pg_crc32_table)
+	COMP_CRC32_NORMAL_TABLE(crc, data, len, mdb_crc32_table)
 #define EQ_TRADITIONAL_CRC32(c1, c2) ((c1) == (c2))
 
 /* Sarwate's algorithm, for use with a "normal" lookup table */
@@ -73,13 +73,13 @@ do {															  \
  * algorithm actually are.
  *
  * We still need to carry this around because it is used in a few on-disk
- * structures that need to be pg_upgradeable. It should not be used in new
+ * structures that need to be mdb_upgradeable. It should not be used in new
  * code.
  */
 #define INIT_LEGACY_CRC32(crc) ((crc) = 0xFFFFFFFF)
 #define FIN_LEGACY_CRC32(crc)	((crc) ^= 0xFFFFFFFF)
 #define COMP_LEGACY_CRC32(crc, data, len)	\
-	COMP_CRC32_REFLECTED_TABLE(crc, data, len, pg_crc32_table)
+	COMP_CRC32_REFLECTED_TABLE(crc, data, len, mdb_crc32_table)
 #define EQ_LEGACY_CRC32(c1, c2) ((c1) == (c2))
 
 /*
@@ -102,6 +102,6 @@ do {															  \
  * Constant table for the CRC-32 polynomials. The same table is used by both
  * the normal and traditional variants.
  */
-extern PGDLLIMPORT const uint32 pg_crc32_table[256];
+extern PGDLLIMPORT const uint32 mdb_crc32_table[256];
 
 #endif   /* PG_CRC_H */

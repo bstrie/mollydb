@@ -3236,10 +3236,10 @@ msgstr "Saisissez « \\q » pour quitter %s.\n"
 #: mainloop.c:190
 msgid ""
 "The input is a MollyDB custom-format dump.\n"
-"Use the pg_restore command-line client to restore this dump to a database.\n"
+"Use the mdb_restore command-line client to restore this dump to a database.\n"
 msgstr ""
 "Les données en entrée proviennent d'une sauvegarde MollyDB au format custom.\n"
-"Utilisez l'outil en ligne de commande pg_restore pour restaurer cette sauvegarde dans une base de données.\n"
+"Utilisez l'outil en ligne de commande mdb_restore pour restaurer cette sauvegarde dans une base de données.\n"
 
 #: mainloop.c:210
 msgid "You are using psql, the command-line interface to MollyDB."
@@ -7467,8 +7467,8 @@ msgstr ""
 #~ msgid "  \\l[+]                  list all databases\n"
 #~ msgstr "  \\l[+]                affiche la liste des bases de données\n"
 
-#~ msgid "%s: pg_strdup: cannot duplicate null pointer (internal error)\n"
-#~ msgstr "%s : pg_strdup : ne peut pas dupliquer le pointeur null (erreur interne)\n"
+#~ msgid "%s: mdb_strdup: cannot duplicate null pointer (internal error)\n"
+#~ msgstr "%s : mdb_strdup : ne peut pas dupliquer le pointeur null (erreur interne)\n"
 
 #~ msgid "could not change directory to \"%s\""
 #~ msgstr "n'a pas pu accéder au répertoire « %s »"

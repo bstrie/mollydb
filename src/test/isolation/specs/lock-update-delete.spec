@@ -33,16 +33,16 @@ teardown
 
 session "s1"
 # obtain lock on the tuple, traversing its update chain
-step "s1l"	{ SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; }
+step "s1l"	{ SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; }
 
 session "s2"
-setup		{ SELECT pg_advisory_lock(0); }
+setup		{ SELECT mdb_advisory_lock(0); }
 step "s2b"	{ BEGIN; }
 step "s2u"	{ UPDATE foo SET value = 2 WHERE key = 1; }
 step "s2_blocker1"	{ DELETE FROM foo; }
 step "s2_blocker2"	{ UPDATE foo SET key = 2 WHERE key = 1; }
 step "s2_blocker3"	{ UPDATE foo SET value = 2 WHERE key = 1; }
-step "s2_unlock" { SELECT pg_advisory_unlock(0); }
+step "s2_unlock" { SELECT mdb_advisory_unlock(0); }
 step "s2c"	{ COMMIT; }
 step "s2r"	{ ROLLBACK; }
 

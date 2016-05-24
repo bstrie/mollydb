@@ -272,10 +272,10 @@ pq_parse_errornotice(StringInfo msg, ErrorData *edata)
 				edata->hint = pstrdup(value);
 				break;
 			case PG_DIAG_STATEMENT_POSITION:
-				edata->cursorpos = pg_atoi(value, sizeof(int), '\0');
+				edata->cursorpos = mdb_atoi(value, sizeof(int), '\0');
 				break;
 			case PG_DIAG_INTERNAL_POSITION:
-				edata->internalpos = pg_atoi(value, sizeof(int), '\0');
+				edata->internalpos = mdb_atoi(value, sizeof(int), '\0');
 				break;
 			case PG_DIAG_INTERNAL_QUERY:
 				edata->internalquery = pstrdup(value);
@@ -302,7 +302,7 @@ pq_parse_errornotice(StringInfo msg, ErrorData *edata)
 				edata->filename = pstrdup(value);
 				break;
 			case PG_DIAG_SOURCE_LINE:
-				edata->lineno = pg_atoi(value, sizeof(int), '\0');
+				edata->lineno = mdb_atoi(value, sizeof(int), '\0');
 				break;
 			case PG_DIAG_SOURCE_FUNCTION:
 				edata->funcname = pstrdup(value);

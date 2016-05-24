@@ -3276,7 +3276,7 @@ cost_qual_eval_walker(Node *node, cost_qual_eval_context *context)
 
 	/*
 	 * For each operator or function node in the given tree, we charge the
-	 * estimated execution cost given by pg_proc.procost (remember to multiply
+	 * estimated execution cost given by mdb_proc.procost (remember to multiply
 	 * this by cpu_operator_cost).
 	 *
 	 * Vars and Consts are charged zero, and so are boolean operators (AND,

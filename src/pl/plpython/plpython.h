@@ -133,11 +133,11 @@ typedef int Py_ssize_t;
 #undef vsnprintf
 #endif
 #ifdef __GNUC__
-#define vsnprintf(...)	pg_vsnprintf(__VA_ARGS__)
-#define snprintf(...)	pg_snprintf(__VA_ARGS__)
+#define vsnprintf(...)	mdb_vsnprintf(__VA_ARGS__)
+#define snprintf(...)	mdb_snprintf(__VA_ARGS__)
 #else
-#define vsnprintf				pg_vsnprintf
-#define snprintf				pg_snprintf
+#define vsnprintf				mdb_vsnprintf
+#define snprintf				mdb_snprintf
 #endif   /* __GNUC__ */
 #endif   /* USE_REPL_SNPRINTF */
 

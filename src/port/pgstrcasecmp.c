@@ -33,7 +33,7 @@
  * Case-independent comparison of two null-terminated strings.
  */
 int
-pg_strcasecmp(const char *s1, const char *s2)
+mdb_strcasecmp(const char *s1, const char *s2)
 {
 	for (;;)
 	{
@@ -66,7 +66,7 @@ pg_strcasecmp(const char *s1, const char *s2)
  * At most n bytes will be examined from each string.
  */
 int
-pg_strncasecmp(const char *s1, const char *s2, size_t n)
+mdb_strncasecmp(const char *s1, const char *s2, size_t n)
 {
 	while (n-- > 0)
 	{
@@ -102,7 +102,7 @@ pg_strncasecmp(const char *s1, const char *s2, size_t n)
  * a bit bogus for multibyte character sets.
  */
 unsigned char
-pg_toupper(unsigned char ch)
+mdb_toupper(unsigned char ch)
 {
 	if (ch >= 'a' && ch <= 'z')
 		ch += 'A' - 'a';
@@ -119,7 +119,7 @@ pg_toupper(unsigned char ch)
  * a bit bogus for multibyte character sets.
  */
 unsigned char
-pg_tolower(unsigned char ch)
+mdb_tolower(unsigned char ch)
 {
 	if (ch >= 'A' && ch <= 'Z')
 		ch += 'a' - 'A';
@@ -132,7 +132,7 @@ pg_tolower(unsigned char ch)
  * Fold a character to upper case, following C/POSIX locale rules.
  */
 unsigned char
-pg_ascii_toupper(unsigned char ch)
+mdb_ascii_toupper(unsigned char ch)
 {
 	if (ch >= 'a' && ch <= 'z')
 		ch += 'A' - 'a';
@@ -143,7 +143,7 @@ pg_ascii_toupper(unsigned char ch)
  * Fold a character to lower case, following C/POSIX locale rules.
  */
 unsigned char
-pg_ascii_tolower(unsigned char ch)
+mdb_ascii_tolower(unsigned char ch)
 {
 	if (ch >= 'A' && ch <= 'Z')
 		ch += 'a' - 'A';

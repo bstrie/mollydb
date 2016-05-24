@@ -26,7 +26,7 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "executor/tqueue.h"
 #include "funcapi.h"
 #include "lib/stringinfo.h"
@@ -415,7 +415,7 @@ tqueueSendTypmodInfo(TQueueDestReceiver * tqueue, int typmod,
 						   sizeof(bool));
 	for (i = 0; i < tupledesc->natts; ++i)
 		appendBinaryStringInfo(&buf, (char *) tupledesc->attrs[i],
-							   sizeof(FormData_pg_attribute));
+							   sizeof(FormData_mdb_attribute));
 
 	/* Send control message. */
 	shm_mq_send(tqueue->handle, buf.len, buf.data, false);
@@ -822,7 +822,7 @@ TupleQueueHandleControlMessage(TupleQueueReader *reader, Size nbytes,
 	char	   *buf = data;
 	int			rc = 0;
 	int			i;
-	Form_pg_attribute *attrs;
+	Form_mdb_attribute *attrs;
 	MemoryContext oldcontext;
 	TupleDesc	tupledesc;
 	RecordTypemodMap *mapent;
@@ -842,12 +842,12 @@ TupleQueueHandleControlMessage(TupleQueueReader *reader, Size nbytes,
 
 	/* Extract attribute details. */
 	oldcontext = MemoryContextSwitchTo(CurTransactionContext);
-	attrs = palloc(natts * sizeof(Form_pg_attribute));
+	attrs = palloc(natts * sizeof(Form_mdb_attribute));
 	for (i = 0; i < natts; ++i)
 	{
-		attrs[i] = palloc(sizeof(FormData_pg_attribute));
-		memcpy(attrs[i], &buf[rc], sizeof(FormData_pg_attribute));
-		rc += sizeof(FormData_pg_attribute);
+		attrs[i] = palloc(sizeof(FormData_mdb_attribute));
+		memcpy(attrs[i], &buf[rc], sizeof(FormData_mdb_attribute));
+		rc += sizeof(FormData_mdb_attribute);
 	}
 	MemoryContextSwitchTo(oldcontext);
 
@@ -899,7 +899,7 @@ BuildRemapInfo(TupleDesc tupledesc)
 	remapinfo->natts = tupledesc->natts;
 	for (i = 0; i < tupledesc->natts; ++i)
 	{
-		Form_pg_attribute attr = tupledesc->attrs[i];
+		Form_mdb_attribute attr = tupledesc->attrs[i];
 
 		if (attr->attisdropped)
 		{
@@ -942,7 +942,7 @@ GetRemapClass(Oid typeid)
 	for (;;)
 	{
 		HeapTuple	tup;
-		Form_pg_type typ;
+		Form_mdb_type typ;
 
 		/* Simple cases. */
 		if (typeid == RECORDOID)
@@ -960,7 +960,7 @@ GetRemapClass(Oid typeid)
 		tup = SearchSysCache1(TYPEOID, ObjectIdGetDatum(typeid));
 		if (!HeapTupleIsValid(tup))
 			elog(ERROR, "cache lookup failed for type %u", typeid);
-		typ = (Form_pg_type) GETSTRUCT(tup);
+		typ = (Form_mdb_type) GETSTRUCT(tup);
 
 		/* Look through domains to underlying base type. */
 		if (typ->typtype == TYPTYPE_DOMAIN)

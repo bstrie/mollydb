@@ -107,8 +107,8 @@ drop domain domainchar4arr restrict;
 create domain dia as int[];
 select '{1,2,3}'::dia;
 select array_dims('{1,2,3}'::dia);
-select pg_typeof('{1,2,3}'::dia);
-select pg_typeof('{1,2,3}'::dia || 42); -- should be int[] not dia
+select mdb_typeof('{1,2,3}'::dia);
+select mdb_typeof('{1,2,3}'::dia || 42); -- should be int[] not dia
 drop domain dia;
 
 create domain dnotnull varchar(15) NOT NULL;

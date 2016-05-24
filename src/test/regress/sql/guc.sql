@@ -1,4 +1,4 @@
--- pg_regress should ensure that this default value applies; however
+-- mdb_regress should ensure that this default value applies; however
 -- we can't rely on any specific default value of vacuum_cost_delay
 SHOW datestyle;
 
@@ -135,7 +135,7 @@ SELECT '2006-08-13 12:34:56'::timestamptz;
 
 --
 -- Test RESET.  We use datestyle because the reset value is forced by
--- pg_regress, so it doesn't depend on the installation's configuration.
+-- mdb_regress, so it doesn't depend on the installation's configuration.
 --
 SET datestyle = iso, ymd;
 SHOW datestyle;
@@ -148,9 +148,9 @@ SELECT '2006-08-13 12:34:56'::timestamptz;
 -- Test DISCARD TEMP
 --
 CREATE TEMP TABLE reset_test ( data text ) ON COMMIT DELETE ROWS;
-SELECT relname FROM pg_class WHERE relname = 'reset_test';
+SELECT relname FROM mdb_class WHERE relname = 'reset_test';
 DISCARD TEMP;
-SELECT relname FROM pg_class WHERE relname = 'reset_test';
+SELECT relname FROM mdb_class WHERE relname = 'reset_test';
 
 --
 -- Test DISCARD ALL
@@ -165,25 +165,25 @@ CREATE TEMP TABLE tmp_foo (data text) ON COMMIT DELETE ROWS;
 CREATE ROLE temp_reset_user;
 SET SESSION AUTHORIZATION temp_reset_user;
 -- look changes
-SELECT pg_listening_channels();
-SELECT name FROM pg_prepared_statements;
-SELECT name FROM pg_cursors;
+SELECT mdb_listening_channels();
+SELECT name FROM mdb_prepared_statements;
+SELECT name FROM mdb_cursors;
 SHOW vacuum_cost_delay;
-SELECT relname from pg_class where relname = 'tmp_foo';
+SELECT relname from mdb_class where relname = 'tmp_foo';
 SELECT current_user = 'temp_reset_user';
 -- discard everything
 DISCARD ALL;
 -- look again
-SELECT pg_listening_channels();
-SELECT name FROM pg_prepared_statements;
-SELECT name FROM pg_cursors;
+SELECT mdb_listening_channels();
+SELECT name FROM mdb_prepared_statements;
+SELECT name FROM mdb_cursors;
 SHOW vacuum_cost_delay;
-SELECT relname from pg_class where relname = 'tmp_foo';
+SELECT relname from mdb_class where relname = 'tmp_foo';
 SELECT current_user = 'temp_reset_user';
 DROP ROLE temp_reset_user;
 
 --
--- search_path should react to changes in pg_namespace
+-- search_path should react to changes in mdb_namespace
 --
 
 set search_path = foo, public, not_there_initially;
@@ -273,7 +273,7 @@ select current_setting('nosuch.setting', true);
 
 -- Normally, CREATE FUNCTION should complain about invalid values in
 -- function SET options; but not if check_function_bodies is off,
--- because that creates ordering hazards for pg_dump
+-- because that creates ordering hazards for mdb_dump
 
 create function func_with_bad_set() returns int as $$ select 1 $$
 language sql

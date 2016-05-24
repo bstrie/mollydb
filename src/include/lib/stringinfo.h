@@ -92,7 +92,7 @@ extern void resetStringInfo(StringInfo str);
  * to str if necessary.  This is sort of like a combination of sprintf and
  * strcat.
  */
-extern void appendStringInfo(StringInfo str, const char *fmt,...) pg_attribute_printf(2, 3);
+extern void appendStringInfo(StringInfo str, const char *fmt,...) mdb_attribute_printf(2, 3);
 
 /*------------------------
  * appendStringInfoVA
@@ -103,7 +103,7 @@ extern void appendStringInfo(StringInfo str, const char *fmt,...) pg_attribute_p
  * pass the return value to enlargeStringInfo() before trying again; see
  * appendStringInfo for standard usage pattern.
  */
-extern int	appendStringInfoVA(StringInfo str, const char *fmt, va_list args) pg_attribute_printf(2, 0);
+extern int	appendStringInfoVA(StringInfo str, const char *fmt, va_list args) mdb_attribute_printf(2, 0);
 
 /*------------------------
  * appendStringInfoString

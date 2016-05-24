@@ -87,8 +87,8 @@
     <varlistentry>
      <term><option>-S</option></term>
      <listitem><para>include system objects (those in
-      <option>information_schema</option>, <option>pg_toast</option>
-      and <option>pg_catalog</option> schemas)
+      <option>information_schema</option>, <option>mdb_toast</option>
+      and <option>mdb_catalog</option> schemas)
      </para></listitem>
     </varlistentry>
 
@@ -207,17 +207,17 @@ $ oid2name
 All databases:
     Oid  Database Name  Tablespace
 ----------------------------------
-  17228       alvherre  pg_default
-  17255     regression  pg_default
-  17227      template0  pg_default
-      1      template1  pg_default
+  17228       alvherre  mdb_default
+  17255     regression  mdb_default
+  17227      template0  mdb_default
+      1      template1  mdb_default
 
 $ oid2name -s
 All tablespaces:
      Oid  Tablespace Name
 -------------------------
-    1663       pg_default
-    1664        pg_global
+    1663       mdb_default
+    1664        mdb_global
   155151         fastdisk
   155152          bigdisk
 
@@ -257,8 +257,8 @@ $ oid2name -d alvherre -t accounts -f 1155291 -x
 From database "alvherre":
   Filenode     Table Name      Oid  Schema  Tablespace
 ------------------------------------------------------
-    155173       accounts   155173  public  pg_default
-   1155291  accounts_pkey  1155291  public  pg_default
+    155173       accounts   155173  public  mdb_default
+   1155291  accounts_pkey  1155291  public  mdb_default
 
 $ # show disk space for every db object
 $ du [0-9]* |
@@ -278,17 +278,17 @@ $ du [0-9]* | sort -rn | while read SIZE FN
 > done
 133466             155173    accounts
 17561            1155291  accounts_pkey
-1177              16717  pg_proc_proname_args_nsp_index
+1177              16717  mdb_proc_proname_args_nsp_index
 ...
 
-$ # If you want to see what's in tablespaces, use the pg_tblspc directory
-$ cd $PGDATA/pg_tblspc
+$ # If you want to see what's in tablespaces, use the mdb_tblspc directory
+$ cd $PGDATA/mdb_tblspc
 $ oid2name -s
 All tablespaces:
      Oid  Tablespace Name
 -------------------------
-    1663       pg_default
-    1664        pg_global
+    1663       mdb_default
+    1664        mdb_global
   155151         fastdisk
   155152          bigdisk
 
@@ -301,10 +301,10 @@ $ oid2name
 All databases:
     Oid  Database Name  Tablespace
 ----------------------------------
-  17228       alvherre  pg_default
-  17255     regression  pg_default
-  17227      template0  pg_default
-      1      template1  pg_default
+  17228       alvherre  mdb_default
+  17255     regression  mdb_default
+  17227      template0  mdb_default
+      1      template1  mdb_default
 
 $ # Let's see what objects does this database have in the tablespace.
 $ cd 155151/17228

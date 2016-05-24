@@ -63,7 +63,7 @@ ALTER TABLESPACE <replaceable>name</replaceable> RESET ( <replaceable class="PAR
     <listitem>
      <para>
       The new name of the tablespace.  The new name cannot
-      begin with <literal>pg_</literal>, as such names
+      begin with <literal>mdb_</literal>, as such names
       are reserved for system tablespaces.
      </para>
     </listitem>

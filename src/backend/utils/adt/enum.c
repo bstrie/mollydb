@@ -17,7 +17,7 @@
 #include "access/heapam.h"
 #include "access/htup_details.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_enum.h"
+#include "catalog/mdb_enum.h"
 #include "libpq/pqformat.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
@@ -60,7 +60,7 @@ enum_in(PG_FUNCTION_ARGS)
 						name)));
 
 	/*
-	 * This comes from pg_enum.oid and stores system oids in user tables. This
+	 * This comes from mdb_enum.oid and stores system oids in user tables. This
 	 * oid must be preserved by binary upgrades.
 	 */
 	enumoid = HeapTupleGetOid(tup);
@@ -76,7 +76,7 @@ enum_out(PG_FUNCTION_ARGS)
 	Oid			enumval = PG_GETARG_OID(0);
 	char	   *result;
 	HeapTuple	tup;
-	Form_pg_enum en;
+	Form_mdb_enum en;
 
 	tup = SearchSysCache1(ENUMOID, ObjectIdGetDatum(enumval));
 	if (!HeapTupleIsValid(tup))
@@ -84,7 +84,7 @@ enum_out(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_BINARY_REPRESENTATION),
 				 errmsg("invalid internal value for enum: %u",
 						enumval)));
-	en = (Form_pg_enum) GETSTRUCT(tup);
+	en = (Form_mdb_enum) GETSTRUCT(tup);
 
 	result = pstrdup(NameStr(en->enumlabel));
 
@@ -139,7 +139,7 @@ enum_send(PG_FUNCTION_ARGS)
 	Oid			enumval = PG_GETARG_OID(0);
 	StringInfoData buf;
 	HeapTuple	tup;
-	Form_pg_enum en;
+	Form_mdb_enum en;
 
 	tup = SearchSysCache1(ENUMOID, ObjectIdGetDatum(enumval));
 	if (!HeapTupleIsValid(tup))
@@ -147,7 +147,7 @@ enum_send(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INVALID_BINARY_REPRESENTATION),
 				 errmsg("invalid internal value for enum: %u",
 						enumval)));
-	en = (Form_pg_enum) GETSTRUCT(tup);
+	en = (Form_mdb_enum) GETSTRUCT(tup);
 
 	pq_begintypsend(&buf);
 	pq_sendtext(&buf, NameStr(en->enumlabel), strlen(NameStr(en->enumlabel)));
@@ -187,7 +187,7 @@ enum_cmp_internal(Oid arg1, Oid arg2, FunctionCallInfo fcinfo)
 	if (tcache == NULL)
 	{
 		HeapTuple	enum_tup;
-		Form_pg_enum en;
+		Form_mdb_enum en;
 		Oid			typeoid;
 
 		/* Get the OID of the enum type containing arg1 */
@@ -197,7 +197,7 @@ enum_cmp_internal(Oid arg1, Oid arg2, FunctionCallInfo fcinfo)
 					(errcode(ERRCODE_INVALID_BINARY_REPRESENTATION),
 					 errmsg("invalid internal value for enum: %u",
 							arg1)));
-		en = (Form_pg_enum) GETSTRUCT(enum_tup);
+		en = (Form_mdb_enum) GETSTRUCT(enum_tup);
 		typeoid = en->enumtypid;
 		ReleaseSysCache(enum_tup);
 		/* Now locate and remember the typcache entry */
@@ -311,12 +311,12 @@ enum_endpoint(Oid enumtypoid, ScanDirection direction)
 	Oid			minmax;
 
 	/*
-	 * Find the first/last enum member using pg_enum_typid_sortorder_index.
+	 * Find the first/last enum member using mdb_enum_typid_sortorder_index.
 	 * Note we must not use the syscache.  See comments for RenumberEnumType
-	 * in catalog/pg_enum.c for more info.
+	 * in catalog/mdb_enum.c for more info.
 	 */
 	ScanKeyInit(&skey,
-				Anum_pg_enum_enumtypid,
+				Anum_mdb_enum_enumtypid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(enumtypoid));
 
@@ -463,12 +463,12 @@ enum_range_internal(Oid enumtypoid, Oid lower, Oid upper)
 	bool		left_found;
 
 	/*
-	 * Scan the enum members in order using pg_enum_typid_sortorder_index.
+	 * Scan the enum members in order using mdb_enum_typid_sortorder_index.
 	 * Note we must not use the syscache.  See comments for RenumberEnumType
-	 * in catalog/pg_enum.c for more info.
+	 * in catalog/mdb_enum.c for more info.
 	 */
 	ScanKeyInit(&skey,
-				Anum_pg_enum_enumtypid,
+				Anum_mdb_enum_enumtypid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(enumtypoid));
 

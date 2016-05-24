@@ -19,11 +19,11 @@
 
 #include "access/stratnum.h"
 #include "access/sysattr.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_opfamily.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_opfamily.h"
+#include "catalog/mdb_type.h"
 #include "nodes/makefuncs.h"
 #include "optimizer/clauses.h"
 #include "optimizer/cost.h"
@@ -36,7 +36,7 @@
 #include "utils/builtins.h"
 #include "utils/bytea.h"
 #include "utils/lsyscache.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 #include "utils/selfuncs.h"
 
 

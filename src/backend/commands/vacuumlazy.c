@@ -59,7 +59,7 @@
 #include "storage/lmgr.h"
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
-#include "utils/pg_rusage.h"
+#include "utils/mdb_rusage.h"
 #include "utils/timestamp.h"
 #include "utils/tqual.h"
 
@@ -103,13 +103,13 @@ typedef struct LVRelStats
 	/* hasindex = true means two-pass strategy; false means one-pass */
 	bool		hasindex;
 	/* Overall statistics about rel */
-	BlockNumber old_rel_pages;	/* previous value of pg_class.relpages */
+	BlockNumber old_rel_pages;	/* previous value of mdb_class.relpages */
 	BlockNumber rel_pages;		/* total number of pages */
 	BlockNumber scanned_pages;	/* number of pages we examined */
 	BlockNumber pinskipped_pages;		/* # of pages we skipped due to a pin */
 	BlockNumber frozenskipped_pages;	/* # of frozen pages we skipped */
 	double		scanned_tuples; /* counts only tuples on scanned pages */
-	double		old_rel_tuples; /* previous value of pg_class.reltuples */
+	double		old_rel_tuples; /* previous value of mdb_class.reltuples */
 	double		new_rel_tuples; /* new estimated total # of tuples */
 	double		new_dead_tuples;	/* new estimated total # of dead tuples */
 	BlockNumber pages_removed;
@@ -200,7 +200,7 @@ lazy_vacuum_rel(Relation onerel, int options, VacuumParams *params,
 	/* measure elapsed time iff autovacuum logging requires it */
 	if (IsAutoVacuumWorkerProcess() && params->log_min_duration >= 0)
 	{
-		pg_rusage_init(&ru0);
+		mdb_rusage_init(&ru0);
 		starttime = GetCurrentTimestamp();
 	}
 
@@ -281,7 +281,7 @@ lazy_vacuum_rel(Relation onerel, int options, VacuumParams *params,
 	FreeSpaceMapVacuum(onerel);
 
 	/*
-	 * Update statistics in pg_class.
+	 * Update statistics in mdb_class.
 	 *
 	 * A corner case here is that if we scanned no pages at all because every
 	 * page is all-visible, we should not update relpages/reltuples, because
@@ -382,7 +382,7 @@ lazy_vacuum_rel(Relation onerel, int options, VacuumParams *params,
 							 VacuumPageDirty);
 			appendStringInfo(&buf, _("avg read rate: %.3f MB/s, avg write rate: %.3f MB/s\n"),
 							 read_rate, write_rate);
-			appendStringInfo(&buf, _("system usage: %s"), pg_rusage_show(&ru0));
+			appendStringInfo(&buf, _("system usage: %s"), mdb_rusage_show(&ru0));
 
 			ereport(LOG,
 					(errmsg_internal("%s", buf.data)));
@@ -469,7 +469,7 @@ lazy_scan_heap(Relation onerel, LVRelStats *vacrelstats,
 	};
 	int64		initprog_val[3];
 
-	pg_rusage_init(&ru0);
+	mdb_rusage_init(&ru0);
 
 	relname = RelationGetRelationName(onerel);
 	ereport(elevel,
@@ -1236,7 +1236,7 @@ lazy_scan_heap(Relation onerel, LVRelStats *vacrelstats,
 	vacrelstats->tuples_deleted = tups_vacuumed;
 	vacrelstats->new_dead_tuples = nkeep;
 
-	/* now we can compute the new value for pg_class.reltuples */
+	/* now we can compute the new value for mdb_class.reltuples */
 	vacrelstats->new_rel_tuples = vac_estimate_reltuples(onerel, false,
 														 nblocks,
 												  vacrelstats->scanned_pages,
@@ -1321,7 +1321,7 @@ lazy_scan_heap(Relation onerel, LVRelStats *vacrelstats,
 									empty_pages),
 					 empty_pages);
 	appendStringInfo(&buf, _("%s."),
-					 pg_rusage_show(&ru0));
+					 mdb_rusage_show(&ru0));
 
 	ereport(elevel,
 			(errmsg("\"%s\": found %.0f removable, %.0f nonremovable row versions in %u out of %u pages",
@@ -1352,7 +1352,7 @@ lazy_vacuum_heap(Relation onerel, LVRelStats *vacrelstats)
 	PGRUsage	ru0;
 	Buffer		vmbuffer = InvalidBuffer;
 
-	pg_rusage_init(&ru0);
+	mdb_rusage_init(&ru0);
 	npages = 0;
 
 	tupindex = 0;
@@ -1397,7 +1397,7 @@ lazy_vacuum_heap(Relation onerel, LVRelStats *vacrelstats)
 					RelationGetRelationName(onerel),
 					tupindex, npages),
 			 errdetail("%s.",
-					   pg_rusage_show(&ru0))));
+					   mdb_rusage_show(&ru0))));
 }
 
 /*
@@ -1568,7 +1568,7 @@ lazy_vacuum_index(Relation indrel,
 	IndexVacuumInfo ivinfo;
 	PGRUsage	ru0;
 
-	pg_rusage_init(&ru0);
+	mdb_rusage_init(&ru0);
 
 	ivinfo.index = indrel;
 	ivinfo.analyze_only = false;
@@ -1585,7 +1585,7 @@ lazy_vacuum_index(Relation indrel,
 			(errmsg("scanned index \"%s\" to remove %d row versions",
 					RelationGetRelationName(indrel),
 					vacrelstats->num_dead_tuples),
-			 errdetail("%s.", pg_rusage_show(&ru0))));
+			 errdetail("%s.", mdb_rusage_show(&ru0))));
 }
 
 /*
@@ -1599,7 +1599,7 @@ lazy_cleanup_index(Relation indrel,
 	IndexVacuumInfo ivinfo;
 	PGRUsage	ru0;
 
-	pg_rusage_init(&ru0);
+	mdb_rusage_init(&ru0);
 
 	ivinfo.index = indrel;
 	ivinfo.analyze_only = false;
@@ -1614,7 +1614,7 @@ lazy_cleanup_index(Relation indrel,
 		return;
 
 	/*
-	 * Now update statistics in pg_class, but only if the index says the count
+	 * Now update statistics in mdb_class, but only if the index says the count
 	 * is accurate.
 	 */
 	if (!stats->estimated_count)
@@ -1637,7 +1637,7 @@ lazy_cleanup_index(Relation indrel,
 					   "%s.",
 					   stats->tuples_removed,
 					   stats->pages_deleted, stats->pages_free,
-					   pg_rusage_show(&ru0))));
+					   mdb_rusage_show(&ru0))));
 
 	pfree(stats);
 }
@@ -1678,7 +1678,7 @@ lazy_truncate_heap(Relation onerel, LVRelStats *vacrelstats)
 	PGRUsage	ru0;
 	int			lock_retry;
 
-	pg_rusage_init(&ru0);
+	mdb_rusage_init(&ru0);
 
 	/* Report that we are now truncating */
 	pgstat_progress_update_param(PROGRESS_VACUUM_PHASE,
@@ -1723,7 +1723,7 @@ lazy_truncate_heap(Relation onerel, LVRelStats *vacrelstats)
 				return;
 			}
 
-			pg_usleep(VACUUM_TRUNCATE_LOCK_WAIT_INTERVAL);
+			mdb_usleep(VACUUM_TRUNCATE_LOCK_WAIT_INTERVAL);
 		}
 
 		/*
@@ -1787,7 +1787,7 @@ lazy_truncate_heap(Relation onerel, LVRelStats *vacrelstats)
 						RelationGetRelationName(onerel),
 						old_rel_pages, new_rel_pages),
 				 errdetail("%s.",
-						   pg_rusage_show(&ru0))));
+						   mdb_rusage_show(&ru0))));
 		old_rel_pages = new_rel_pages;
 	} while (new_rel_pages > vacrelstats->nonempty_pages &&
 			 vacrelstats->lock_waiter_detected);

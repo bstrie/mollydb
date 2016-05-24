@@ -9,9 +9,9 @@
  *
  * To bring up mollydb on a platform/compiler at the very least
  * implementations for the following operations should be provided:
- * * pg_compiler_barrier(), pg_write_barrier(), pg_read_barrier()
- * * pg_atomic_compare_exchange_u32(), pg_atomic_fetch_add_u32()
- * * pg_atomic_test_set_flag(), pg_atomic_init_flag(), pg_atomic_clear_flag()
+ * * mdb_compiler_barrier(), mdb_write_barrier(), mdb_read_barrier()
+ * * mdb_atomic_compare_exchange_u32(), mdb_atomic_fetch_add_u32()
+ * * mdb_atomic_test_set_flag(), mdb_atomic_init_flag(), mdb_atomic_clear_flag()
  *
  * There exist generic, hardware independent, implementations for several
  * compilers which might be sufficient, although possibly not optimal, for a
@@ -81,8 +81,8 @@
  * Provide architecture independent implementations of the atomic
  * facilities. At the very least compiler barriers should be provided, but a
  * full implementation of
- * * pg_compiler_barrier(), pg_write_barrier(), pg_read_barrier()
- * * pg_atomic_compare_exchange_u32(), pg_atomic_fetch_add_u32()
+ * * mdb_compiler_barrier(), mdb_write_barrier(), mdb_read_barrier()
+ * * mdb_atomic_compare_exchange_u32(), mdb_atomic_fetch_add_u32()
  * using compiler intrinsics are a good idea.
  */
 /*
@@ -109,8 +109,8 @@
 #endif
 
 /*
- * Provide a full fallback of the pg_*_barrier(), pg_atomic**_flag and
- * pg_atomic_*_u32 APIs for platforms without sufficient spinlock and/or
+ * Provide a full fallback of the mdb_*_barrier(), mdb_atomic**_flag and
+ * mdb_atomic_*_u32 APIs for platforms without sufficient spinlock and/or
  * atomics support. In the case of spinlock backed atomics the emulation is
  * expected to be efficient, although less so than native atomics support.
  */
@@ -124,7 +124,7 @@
 
 
 /*
- * pg_compiler_barrier - prevent the compiler from moving code across
+ * mdb_compiler_barrier - prevent the compiler from moving code across
  *
  * A compiler barrier need not (and preferably should not) emit any actual
  * machine code, but must act as an optimization fence: the compiler must not
@@ -132,10 +132,10 @@
  * CPU may still reorder loads or stores at runtime, if the architecture's
  * memory model permits this.
  */
-#define pg_compiler_barrier()	pg_compiler_barrier_impl()
+#define mdb_compiler_barrier()	mdb_compiler_barrier_impl()
 
 /*
- * pg_memory_barrier - prevent the CPU from reordering memory access
+ * mdb_memory_barrier - prevent the CPU from reordering memory access
  *
  * A memory barrier must act as a compiler barrier, and in addition must
  * guarantee that all loads and stores issued prior to the barrier are
@@ -144,10 +144,10 @@
  * architectures) this requires issuing some sort of memory fencing
  * instruction.
  */
-#define pg_memory_barrier() pg_memory_barrier_impl()
+#define mdb_memory_barrier() mdb_memory_barrier_impl()
 
 /*
- * pg_(read|write)_barrier - prevent the CPU from reordering memory access
+ * mdb_(read|write)_barrier - prevent the CPU from reordering memory access
  *
  * A read barrier must act as a compiler barrier, and in addition must
  * guarantee that any loads issued prior to the barrier are completed before
@@ -157,88 +157,88 @@
  * barrier.  In practice, on machines with strong memory ordering, read and
  * write barriers may require nothing more than a compiler barrier.
  */
-#define pg_read_barrier()	pg_read_barrier_impl()
-#define pg_write_barrier()	pg_write_barrier_impl()
+#define mdb_read_barrier()	mdb_read_barrier_impl()
+#define mdb_write_barrier()	mdb_write_barrier_impl()
 
 /*
  * Spinloop delay - Allow CPU to relax in busy loops
  */
-#define pg_spin_delay() pg_spin_delay_impl()
+#define mdb_spin_delay() mdb_spin_delay_impl()
 
 /*
- * pg_atomic_init_flag - initialize atomic flag.
+ * mdb_atomic_init_flag - initialize atomic flag.
  *
  * No barrier semantics.
  */
 static inline void
-pg_atomic_init_flag(volatile pg_atomic_flag *ptr)
+mdb_atomic_init_flag(volatile mdb_atomic_flag *ptr)
 {
 	AssertPointerAlignment(ptr, sizeof(*ptr));
 
-	pg_atomic_init_flag_impl(ptr);
+	mdb_atomic_init_flag_impl(ptr);
 }
 
 /*
- * pg_atomic_test_and_set_flag - TAS()
+ * mdb_atomic_test_and_set_flag - TAS()
  *
  * Returns true if the flag has successfully been set, false otherwise.
  *
  * Acquire (including read barrier) semantics.
  */
 static inline bool
-pg_atomic_test_set_flag(volatile pg_atomic_flag *ptr)
+mdb_atomic_test_set_flag(volatile mdb_atomic_flag *ptr)
 {
 	AssertPointerAlignment(ptr, sizeof(*ptr));
 
-	return pg_atomic_test_set_flag_impl(ptr);
+	return mdb_atomic_test_set_flag_impl(ptr);
 }
 
 /*
- * pg_atomic_unlocked_test_flag - Check if the lock is free
+ * mdb_atomic_unlocked_test_flag - Check if the lock is free
  *
  * Returns true if the flag currently is not set, false otherwise.
  *
  * No barrier semantics.
  */
 static inline bool
-pg_atomic_unlocked_test_flag(volatile pg_atomic_flag *ptr)
+mdb_atomic_unlocked_test_flag(volatile mdb_atomic_flag *ptr)
 {
 	AssertPointerAlignment(ptr, sizeof(*ptr));
 
-	return pg_atomic_unlocked_test_flag_impl(ptr);
+	return mdb_atomic_unlocked_test_flag_impl(ptr);
 }
 
 /*
- * pg_atomic_clear_flag - release lock set by TAS()
+ * mdb_atomic_clear_flag - release lock set by TAS()
  *
  * Release (including write barrier) semantics.
  */
 static inline void
-pg_atomic_clear_flag(volatile pg_atomic_flag *ptr)
+mdb_atomic_clear_flag(volatile mdb_atomic_flag *ptr)
 {
 	AssertPointerAlignment(ptr, sizeof(*ptr));
 
-	pg_atomic_clear_flag_impl(ptr);
+	mdb_atomic_clear_flag_impl(ptr);
 }
 
 
 /*
- * pg_atomic_init_u32 - initialize atomic variable
+ * mdb_atomic_init_u32 - initialize atomic variable
  *
  * Has to be done before any concurrent usage..
  *
  * No barrier semantics.
  */
 static inline void
-pg_atomic_init_u32(volatile pg_atomic_uint32 *ptr, uint32 val)
+mdb_atomic_init_u32(volatile mdb_atomic_uint32 *ptr, uint32 val)
 {
 	AssertPointerAlignment(ptr, 4);
 
-	pg_atomic_init_u32_impl(ptr, val);
+	mdb_atomic_init_u32_impl(ptr, val);
 }
 
 /*
- * pg_atomic_read_u32 - unlocked read from atomic variable.
+ * mdb_atomic_read_u32 - unlocked read from atomic variable.
  *
  * The read is guaranteed to return a value as it has been written by this or
  * another process at some point in the past. There's however no cache
@@ -248,14 +248,14 @@ pg_atomic_init_u32(volatile pg_atomic_uint32 *ptr, uint32 val)
  * No barrier semantics.
  */
 static inline uint32
-pg_atomic_read_u32(volatile pg_atomic_uint32 *ptr)
+mdb_atomic_read_u32(volatile mdb_atomic_uint32 *ptr)
 {
 	AssertPointerAlignment(ptr, 4);
-	return pg_atomic_read_u32_impl(ptr);
+	return mdb_atomic_read_u32_impl(ptr);
 }
 
 /*
- * pg_atomic_write_u32 - unlocked write to atomic variable.
+ * mdb_atomic_write_u32 - unlocked write to atomic variable.
  *
  * The write is guaranteed to succeed as a whole, i.e. it's not possible to
  * observe a partial write for any reader.
@@ -263,30 +263,30 @@ pg_atomic_read_u32(volatile pg_atomic_uint32 *ptr)
  * No barrier semantics.
  */
 static inline void
-pg_atomic_write_u32(volatile pg_atomic_uint32 *ptr, uint32 val)
+mdb_atomic_write_u32(volatile mdb_atomic_uint32 *ptr, uint32 val)
 {
 	AssertPointerAlignment(ptr, 4);
 
-	pg_atomic_write_u32_impl(ptr, val);
+	mdb_atomic_write_u32_impl(ptr, val);
 }
 
 /*
- * pg_atomic_exchange_u32 - exchange newval with current value
+ * mdb_atomic_exchange_u32 - exchange newval with current value
  *
  * Returns the old value of 'ptr' before the swap.
  *
  * Full barrier semantics.
  */
 static inline uint32
-pg_atomic_exchange_u32(volatile pg_atomic_uint32 *ptr, uint32 newval)
+mdb_atomic_exchange_u32(volatile mdb_atomic_uint32 *ptr, uint32 newval)
 {
 	AssertPointerAlignment(ptr, 4);
 
-	return pg_atomic_exchange_u32_impl(ptr, newval);
+	return mdb_atomic_exchange_u32_impl(ptr, newval);
 }
 
 /*
- * pg_atomic_compare_exchange_u32 - CAS operation
+ * mdb_atomic_compare_exchange_u32 - CAS operation
  *
  * Atomically compare the current value of ptr with *expected and store newval
  * iff ptr and *expected have the same value. The current value of *ptr will
@@ -297,31 +297,31 @@ pg_atomic_exchange_u32(volatile pg_atomic_uint32 *ptr, uint32 newval)
  * Full barrier semantics.
  */
 static inline bool
-pg_atomic_compare_exchange_u32(volatile pg_atomic_uint32 *ptr,
+mdb_atomic_compare_exchange_u32(volatile mdb_atomic_uint32 *ptr,
 							   uint32 *expected, uint32 newval)
 {
 	AssertPointerAlignment(ptr, 4);
 	AssertPointerAlignment(expected, 4);
 
-	return pg_atomic_compare_exchange_u32_impl(ptr, expected, newval);
+	return mdb_atomic_compare_exchange_u32_impl(ptr, expected, newval);
 }
 
 /*
- * pg_atomic_fetch_add_u32 - atomically add to variable
+ * mdb_atomic_fetch_add_u32 - atomically add to variable
  *
  * Returns the value of ptr before the arithmetic operation.
  *
  * Full barrier semantics.
  */
 static inline uint32
-pg_atomic_fetch_add_u32(volatile pg_atomic_uint32 *ptr, int32 add_)
+mdb_atomic_fetch_add_u32(volatile mdb_atomic_uint32 *ptr, int32 add_)
 {
 	AssertPointerAlignment(ptr, 4);
-	return pg_atomic_fetch_add_u32_impl(ptr, add_);
+	return mdb_atomic_fetch_add_u32_impl(ptr, add_);
 }
 
 /*
- * pg_atomic_fetch_sub_u32 - atomically subtract from variable
+ * mdb_atomic_fetch_sub_u32 - atomically subtract from variable
  *
  * Returns the value of ptr before the arithmetic operation. Note that sub_
  * may not be INT_MIN due to platform limitations.
@@ -329,57 +329,57 @@ pg_atomic_fetch_add_u32(volatile pg_atomic_uint32 *ptr, int32 add_)
  * Full barrier semantics.
  */
 static inline uint32
-pg_atomic_fetch_sub_u32(volatile pg_atomic_uint32 *ptr, int32 sub_)
+mdb_atomic_fetch_sub_u32(volatile mdb_atomic_uint32 *ptr, int32 sub_)
 {
 	AssertPointerAlignment(ptr, 4);
 	Assert(sub_ != INT_MIN);
-	return pg_atomic_fetch_sub_u32_impl(ptr, sub_);
+	return mdb_atomic_fetch_sub_u32_impl(ptr, sub_);
 }
 
 /*
- * pg_atomic_fetch_and_u32 - atomically bit-and and_ with variable
+ * mdb_atomic_fetch_and_u32 - atomically bit-and and_ with variable
  *
  * Returns the value of ptr before the arithmetic operation.
  *
  * Full barrier semantics.
  */
 static inline uint32
-pg_atomic_fetch_and_u32(volatile pg_atomic_uint32 *ptr, uint32 and_)
+mdb_atomic_fetch_and_u32(volatile mdb_atomic_uint32 *ptr, uint32 and_)
 {
 	AssertPointerAlignment(ptr, 4);
-	return pg_atomic_fetch_and_u32_impl(ptr, and_);
+	return mdb_atomic_fetch_and_u32_impl(ptr, and_);
 }
 
 /*
- * pg_atomic_fetch_or_u32 - atomically bit-or or_ with variable
+ * mdb_atomic_fetch_or_u32 - atomically bit-or or_ with variable
  *
  * Returns the value of ptr before the arithmetic operation.
  *
  * Full barrier semantics.
  */
 static inline uint32
-pg_atomic_fetch_or_u32(volatile pg_atomic_uint32 *ptr, uint32 or_)
+mdb_atomic_fetch_or_u32(volatile mdb_atomic_uint32 *ptr, uint32 or_)
 {
 	AssertPointerAlignment(ptr, 4);
-	return pg_atomic_fetch_or_u32_impl(ptr, or_);
+	return mdb_atomic_fetch_or_u32_impl(ptr, or_);
 }
 
 /*
- * pg_atomic_add_fetch_u32 - atomically add to variable
+ * mdb_atomic_add_fetch_u32 - atomically add to variable
  *
  * Returns the value of ptr after the arithmetic operation.
  *
  * Full barrier semantics.
  */
 static inline uint32
-pg_atomic_add_fetch_u32(volatile pg_atomic_uint32 *ptr, int32 add_)
+mdb_atomic_add_fetch_u32(volatile mdb_atomic_uint32 *ptr, int32 add_)
 {
 	AssertPointerAlignment(ptr, 4);
-	return pg_atomic_add_fetch_u32_impl(ptr, add_);
+	return mdb_atomic_add_fetch_u32_impl(ptr, add_);
 }
 
 /*
- * pg_atomic_sub_fetch_u32 - atomically subtract from variable
+ * mdb_atomic_sub_fetch_u32 - atomically subtract from variable
  *
  * Returns the value of ptr after the arithmetic operation. Note that sub_ may
  * not be INT_MIN due to platform limitations.
@@ -387,11 +387,11 @@ pg_atomic_add_fetch_u32(volatile pg_atomic_uint32 *ptr, int32 add_)
  * Full barrier semantics.
  */
 static inline uint32
-pg_atomic_sub_fetch_u32(volatile pg_atomic_uint32 *ptr, int32 sub_)
+mdb_atomic_sub_fetch_u32(volatile mdb_atomic_uint32 *ptr, int32 sub_)
 {
 	AssertPointerAlignment(ptr, 4);
 	Assert(sub_ != INT_MIN);
-	return pg_atomic_sub_fetch_u32_impl(ptr, sub_);
+	return mdb_atomic_sub_fetch_u32_impl(ptr, sub_);
 }
 
 /* ----
@@ -403,86 +403,86 @@ pg_atomic_sub_fetch_u32(volatile pg_atomic_uint32 *ptr, int32 sub_)
 #ifdef PG_HAVE_ATOMIC_U64_SUPPORT
 
 static inline void
-pg_atomic_init_u64(volatile pg_atomic_uint64 *ptr, uint64 val)
+mdb_atomic_init_u64(volatile mdb_atomic_uint64 *ptr, uint64 val)
 {
 	AssertPointerAlignment(ptr, 8);
 
-	pg_atomic_init_u64_impl(ptr, val);
+	mdb_atomic_init_u64_impl(ptr, val);
 }
 
 static inline uint64
-pg_atomic_read_u64(volatile pg_atomic_uint64 *ptr)
+mdb_atomic_read_u64(volatile mdb_atomic_uint64 *ptr)
 {
 	AssertPointerAlignment(ptr, 8);
-	return pg_atomic_read_u64_impl(ptr);
+	return mdb_atomic_read_u64_impl(ptr);
 }
 
 static inline void
-pg_atomic_write_u64(volatile pg_atomic_uint64 *ptr, uint64 val)
+mdb_atomic_write_u64(volatile mdb_atomic_uint64 *ptr, uint64 val)
 {
 	AssertPointerAlignment(ptr, 8);
-	pg_atomic_write_u64_impl(ptr, val);
+	mdb_atomic_write_u64_impl(ptr, val);
 }
 
 static inline uint64
-pg_atomic_exchange_u64(volatile pg_atomic_uint64 *ptr, uint64 newval)
+mdb_atomic_exchange_u64(volatile mdb_atomic_uint64 *ptr, uint64 newval)
 {
 	AssertPointerAlignment(ptr, 8);
 
-	return pg_atomic_exchange_u64_impl(ptr, newval);
+	return mdb_atomic_exchange_u64_impl(ptr, newval);
 }
 
 static inline bool
-pg_atomic_compare_exchange_u64(volatile pg_atomic_uint64 *ptr,
+mdb_atomic_compare_exchange_u64(volatile mdb_atomic_uint64 *ptr,
 							   uint64 *expected, uint64 newval)
 {
 	AssertPointerAlignment(ptr, 8);
 	AssertPointerAlignment(expected, 8);
-	return pg_atomic_compare_exchange_u64_impl(ptr, expected, newval);
+	return mdb_atomic_compare_exchange_u64_impl(ptr, expected, newval);
 }
 
 static inline uint64
-pg_atomic_fetch_add_u64(volatile pg_atomic_uint64 *ptr, int64 add_)
+mdb_atomic_fetch_add_u64(volatile mdb_atomic_uint64 *ptr, int64 add_)
 {
 	AssertPointerAlignment(ptr, 8);
-	return pg_atomic_fetch_add_u64_impl(ptr, add_);
+	return mdb_atomic_fetch_add_u64_impl(ptr, add_);
 }
 
 static inline uint64
-pg_atomic_fetch_sub_u64(volatile pg_atomic_uint64 *ptr, int64 sub_)
-{
-	AssertPointerAlignment(ptr, 8);
-	Assert(sub_ != PG_INT64_MIN);
-	return pg_atomic_fetch_sub_u64_impl(ptr, sub_);
-}
-
-static inline uint64
-pg_atomic_fetch_and_u64(volatile pg_atomic_uint64 *ptr, uint64 and_)
-{
-	AssertPointerAlignment(ptr, 8);
-	return pg_atomic_fetch_and_u64_impl(ptr, and_);
-}
-
-static inline uint64
-pg_atomic_fetch_or_u64(volatile pg_atomic_uint64 *ptr, uint64 or_)
-{
-	AssertPointerAlignment(ptr, 8);
-	return pg_atomic_fetch_or_u64_impl(ptr, or_);
-}
-
-static inline uint64
-pg_atomic_add_fetch_u64(volatile pg_atomic_uint64 *ptr, int64 add_)
-{
-	AssertPointerAlignment(ptr, 8);
-	return pg_atomic_add_fetch_u64_impl(ptr, add_);
-}
-
-static inline uint64
-pg_atomic_sub_fetch_u64(volatile pg_atomic_uint64 *ptr, int64 sub_)
+mdb_atomic_fetch_sub_u64(volatile mdb_atomic_uint64 *ptr, int64 sub_)
 {
 	AssertPointerAlignment(ptr, 8);
 	Assert(sub_ != PG_INT64_MIN);
-	return pg_atomic_sub_fetch_u64_impl(ptr, sub_);
+	return mdb_atomic_fetch_sub_u64_impl(ptr, sub_);
+}
+
+static inline uint64
+mdb_atomic_fetch_and_u64(volatile mdb_atomic_uint64 *ptr, uint64 and_)
+{
+	AssertPointerAlignment(ptr, 8);
+	return mdb_atomic_fetch_and_u64_impl(ptr, and_);
+}
+
+static inline uint64
+mdb_atomic_fetch_or_u64(volatile mdb_atomic_uint64 *ptr, uint64 or_)
+{
+	AssertPointerAlignment(ptr, 8);
+	return mdb_atomic_fetch_or_u64_impl(ptr, or_);
+}
+
+static inline uint64
+mdb_atomic_add_fetch_u64(volatile mdb_atomic_uint64 *ptr, int64 add_)
+{
+	AssertPointerAlignment(ptr, 8);
+	return mdb_atomic_add_fetch_u64_impl(ptr, add_);
+}
+
+static inline uint64
+mdb_atomic_sub_fetch_u64(volatile mdb_atomic_uint64 *ptr, int64 sub_)
+{
+	AssertPointerAlignment(ptr, 8);
+	Assert(sub_ != PG_INT64_MIN);
+	return mdb_atomic_sub_fetch_u64_impl(ptr, sub_);
 }
 
 #endif   /* PG_HAVE_64_BIT_ATOMICS */

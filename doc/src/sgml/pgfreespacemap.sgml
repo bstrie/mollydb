@@ -1,16 +1,16 @@
 <!-- doc/src/sgml/pgfreespacemap.sgml -->
 
-<sect1 id="pgfreespacemap" xreflabel="pg_freespacemap">
- <title>pg_freespacemap</title>
+<sect1 id="pgfreespacemap" xreflabel="mdb_freespacemap">
+ <title>mdb_freespacemap</title>
 
  <indexterm zone="pgfreespacemap">
-  <primary>pg_freespacemap</primary>
+  <primary>mdb_freespacemap</primary>
  </indexterm>
 
  <para>
-  The <filename>pg_freespacemap</> module provides a means for examining the
+  The <filename>mdb_freespacemap</> module provides a means for examining the
   free space map (FSM). It provides a function called
-  <function>pg_freespace</function>, or two overloaded functions, to be
+  <function>mdb_freespace</function>, or two overloaded functions, to be
   precise. The functions show the value recorded in the free space map for
   a given page, or for all pages in the relation.
  </para>
@@ -26,9 +26,9 @@
   <variablelist>
    <varlistentry>
     <term>
-     <function>pg_freespace(rel regclass IN, blkno bigint IN) returns int2</function>
+     <function>mdb_freespace(rel regclass IN, blkno bigint IN) returns int2</function>
      <indexterm>
-      <primary>pg_freespace</primary>
+      <primary>mdb_freespace</primary>
      </indexterm>
     </term>
 
@@ -43,7 +43,7 @@
 
    <varlistentry>
     <term>
-     <function>pg_freespace(rel regclass IN, blkno OUT bigint, avail OUT int2)</function>
+     <function>mdb_freespace(rel regclass IN, blkno OUT bigint, avail OUT int2)</function>
     </term>
 
     <listitem>
@@ -80,7 +80,7 @@
   <title>Sample Output</title>
 
 <screen>
-mollydb=# SELECT * FROM pg_freespace('foo');
+mollydb=# SELECT * FROM mdb_freespace('foo');
  blkno | avail 
 -------+-------
      0 |     0
@@ -105,8 +105,8 @@ mollydb=# SELECT * FROM pg_freespace('foo');
     19 |  3648
 (20 rows)
 
-mollydb=# SELECT * FROM pg_freespace('foo', 7);
- pg_freespace 
+mollydb=# SELECT * FROM mdb_freespace('foo', 7);
+ mdb_freespace 
 --------------
          1216
 (1 row)

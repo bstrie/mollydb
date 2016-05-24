@@ -1,27 +1,27 @@
 <!--
-doc/src/sgml/ref/pg_recvlogical.sgml
+doc/src/sgml/ref/mdb_recvlogical.sgml
 MollyDB documentation
 -->
 
 <refentry id="app-pgrecvlogical">
  <indexterm zone="app-pgrecvlogical">
-  <primary>pg_recvlogical</primary>
+  <primary>mdb_recvlogical</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle><application>pg_recvlogical</application></refentrytitle>
+  <refentrytitle><application>mdb_recvlogical</application></refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_recvlogical</refname>
+  <refname>mdb_recvlogical</refname>
   <refpurpose>control <productname>MollyDB</productname> logical decoding streams</refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_recvlogical</command>
+   <command>mdb_recvlogical</command>
    <arg rep="repeat" choice="opt"><replaceable>option</replaceable></arg>
   </cmdsynopsis>
  </refsynopsisdiv>
@@ -29,7 +29,7 @@ MollyDB documentation
  <refsect1>
   <title>Description</title>
   <para>
-   <command>pg_recvlogical</command> controls logical decoding replication
+   <command>mdb_recvlogical</command> controls logical decoding replication
    slots and streams data from such replication slots.
   </para>
 
@@ -121,7 +121,7 @@ MollyDB documentation
       <term><option>--fsync-interval=<replaceable>interval_seconds</replaceable></option></term>
       <listitem>
        <para>
-        Specifies how often <application>pg_recvlogical</application> should
+        Specifies how often <application>mdb_recvlogical</application> should
         issue <function>fsync()</function> calls to ensure the output file is
         safely flushed to disk.
        </para>
@@ -309,15 +309,15 @@ MollyDB documentation
        <term><option>--password</option></term>
        <listitem>
         <para>
-         Force <application>pg_recvlogical</application> to prompt for a
+         Force <application>mdb_recvlogical</application> to prompt for a
          password before connecting to a database.
         </para>
 
         <para>
          This option is never essential, since
-         <application>pg_recvlogical</application> will automatically prompt
+         <application>mdb_recvlogical</application> will automatically prompt
          for a password if the server demands password authentication.
-         However, <application>pg_recvlogical</application> will waste a
+         However, <application>mdb_recvlogical</application> will waste a
          connection attempt finding out that the server wants a password.
          In some cases it is worth typing <option>-W</> to avoid the extra
          connection attempt.
@@ -336,7 +336,7 @@ MollyDB documentation
        <term><option>--version</></term>
        <listitem>
        <para>
-        Print the <application>pg_recvlogical</application> version and exit.
+        Print the <application>mdb_recvlogical</application> version and exit.
        </para>
        </listitem>
      </varlistentry>
@@ -346,7 +346,7 @@ MollyDB documentation
       <term><option>--help</></term>
        <listitem>
         <para>
-         Show help about <application>pg_recvlogical</application> command line
+         Show help about <application>mdb_recvlogical</application> command line
          arguments, and exit.
         </para>
        </listitem>

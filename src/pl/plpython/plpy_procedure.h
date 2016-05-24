@@ -37,7 +37,7 @@ typedef struct PLyProcedure
 	char	  **argnames;		/* Argument names */
 	PLyTypeInfo args[FUNC_MAX_ARGS];
 	int			nargs;
-	Oid			langid;			/* OID of plpython pg_language entry */
+	Oid			langid;			/* OID of plpython mdb_language entry */
 	List	   *trftypes;		/* OID list of transform types */
 	PyObject   *code;			/* compiled procedure code */
 	PyObject   *statics;		/* data saved across calls, local scope */

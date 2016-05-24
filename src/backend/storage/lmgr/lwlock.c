@@ -78,7 +78,7 @@
 
 #include "miscadmin.h"
 #include "pgstat.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "postmaster/postmaster.h"
 #include "replication/slot.h"
 #include "storage/ipc.h"
@@ -134,7 +134,7 @@ static LWLockTranche PredicateLockManagerLWLockTranche;
 /*
  * We use this structure to keep track of locked LWLocks for release
  * during error recovery.  Normally, only a few will be held at once, but
- * occasionally the number can be much higher; for example, the pg_buffercache
+ * occasionally the number can be much higher; for example, the mdb_buffercache
  * extension locks all buffer partitions simultaneously.
  */
 #define MAX_SIMUL_LWLOCKS	200
@@ -200,7 +200,7 @@ PRINT_LWDEBUG(const char *where, LWLock *lock, LWLockMode mode)
 	/* hide statement & context here, otherwise the log is just too verbose */
 	if (Trace_lwlocks)
 	{
-		uint32		state = pg_atomic_read_u32(&lock->state);
+		uint32		state = mdb_atomic_read_u32(&lock->state);
 		int			id = T_ID(lock);
 
 		if (lock->tranche == 0 && id < NUM_INDIVIDUAL_LWLOCKS)
@@ -213,7 +213,7 @@ PRINT_LWDEBUG(const char *where, LWLock *lock, LWLockMode mode)
 							(state & LW_VAL_EXCLUSIVE) != 0,
 							state & LW_SHARED_MASK,
 							(state & LW_FLAG_HAS_WAITERS) != 0,
-							pg_atomic_read_u32(&lock->nwaiters),
+							mdb_atomic_read_u32(&lock->nwaiters),
 							(state & LW_FLAG_RELEASE_OK) != 0)));
 		else
 			ereport(LOG,
@@ -225,7 +225,7 @@ PRINT_LWDEBUG(const char *where, LWLock *lock, LWLockMode mode)
 							(state & LW_VAL_EXCLUSIVE) != 0,
 							state & LW_SHARED_MASK,
 							(state & LW_FLAG_HAS_WAITERS) != 0,
-							pg_atomic_read_u32(&lock->nwaiters),
+							mdb_atomic_read_u32(&lock->nwaiters),
 							(state & LW_FLAG_RELEASE_OK) != 0)));
 	}
 }
@@ -712,9 +712,9 @@ RequestNamedLWLockTranche(const char *tranche_name, int num_lwlocks)
 void
 LWLockInitialize(LWLock *lock, int tranche_id)
 {
-	pg_atomic_init_u32(&lock->state, LW_FLAG_RELEASE_OK);
+	mdb_atomic_init_u32(&lock->state, LW_FLAG_RELEASE_OK);
 #ifdef LOCK_DEBUG
-	pg_atomic_init_u32(&lock->nwaiters, 0);
+	mdb_atomic_init_u32(&lock->nwaiters, 0);
 #endif
 	lock->tranche = tranche_id;
 	dlist_init(&lock->waiters);
@@ -790,7 +790,7 @@ LWLockAttemptLock(LWLock *lock, LWLockMode mode)
 	 * Read once outside the loop, later iterations will get the newer value
 	 * via compare & exchange.
 	 */
-	old_state = pg_atomic_read_u32(&lock->state);
+	old_state = mdb_atomic_read_u32(&lock->state);
 
 	/* loop until we've determined whether we could acquire the lock or not */
 	while (true)
@@ -823,7 +823,7 @@ LWLockAttemptLock(LWLock *lock, LWLockMode mode)
 		 *
 		 * Retry if the value changed since we last looked at it.
 		 */
-		if (pg_atomic_compare_exchange_u32(&lock->state,
+		if (mdb_atomic_compare_exchange_u32(&lock->state,
 										   &old_state, desired_state))
 		{
 			if (lock_free)
@@ -839,7 +839,7 @@ LWLockAttemptLock(LWLock *lock, LWLockMode mode)
 				return true;	/* someobdy else has the lock */
 		}
 	}
-	pg_unreachable();
+	mdb_unreachable();
 }
 
 /*
@@ -864,7 +864,7 @@ LWLockWaitListLock(LWLock *lock)
 	while (true)
 	{
 		/* always try once to acquire lock directly */
-		old_state = pg_atomic_fetch_or_u32(&lock->state, LW_FLAG_LOCKED);
+		old_state = mdb_atomic_fetch_or_u32(&lock->state, LW_FLAG_LOCKED);
 		if (!(old_state & LW_FLAG_LOCKED))
 			break;				/* got lock */
 
@@ -877,7 +877,7 @@ LWLockWaitListLock(LWLock *lock)
 			while (old_state & LW_FLAG_LOCKED)
 			{
 				perform_spin_delay(&delayStatus);
-				old_state = pg_atomic_read_u32(&lock->state);
+				old_state = mdb_atomic_read_u32(&lock->state);
 			}
 #ifdef LWLOCK_STATS
 			delays += delayStatus.delays;
@@ -907,7 +907,7 @@ LWLockWaitListUnlock(LWLock *lock)
 {
 	uint32 old_state PG_USED_FOR_ASSERTS_ONLY;
 
-	old_state = pg_atomic_fetch_and_u32(&lock->state, ~LW_FLAG_LOCKED);
+	old_state = mdb_atomic_fetch_and_u32(&lock->state, ~LW_FLAG_LOCKED);
 
 	Assert(old_state & LW_FLAG_LOCKED);
 }
@@ -963,14 +963,14 @@ LWLockWakeup(LWLock *lock)
 			break;
 	}
 
-	Assert(dlist_is_empty(&wakeup) || pg_atomic_read_u32(&lock->state) & LW_FLAG_HAS_WAITERS);
+	Assert(dlist_is_empty(&wakeup) || mdb_atomic_read_u32(&lock->state) & LW_FLAG_HAS_WAITERS);
 
 	/* unset required flags, and release lock, in one fell swoop */
 	{
 		uint32		old_state;
 		uint32		desired_state;
 
-		old_state = pg_atomic_read_u32(&lock->state);
+		old_state = mdb_atomic_read_u32(&lock->state);
 		while (true)
 		{
 			desired_state = old_state;
@@ -987,7 +987,7 @@ LWLockWakeup(LWLock *lock)
 
 			desired_state &= ~LW_FLAG_LOCKED;	/* release lock */
 
-			if (pg_atomic_compare_exchange_u32(&lock->state, &old_state,
+			if (mdb_atomic_compare_exchange_u32(&lock->state, &old_state,
 											   desired_state))
 				break;
 		}
@@ -1011,7 +1011,7 @@ LWLockWakeup(LWLock *lock)
 		 * The barrier pairs with the LWLockWaitListLock() when enqueing for
 		 * another lock.
 		 */
-		pg_write_barrier();
+		mdb_write_barrier();
 		waiter->lwWaiting = false;
 		PGSemaphoreUnlock(&waiter->sem);
 	}
@@ -1039,7 +1039,7 @@ LWLockQueueSelf(LWLock *lock, LWLockMode mode)
 	LWLockWaitListLock(lock);
 
 	/* setting the flag is protected by the spinlock */
-	pg_atomic_fetch_or_u32(&lock->state, LW_FLAG_HAS_WAITERS);
+	mdb_atomic_fetch_or_u32(&lock->state, LW_FLAG_HAS_WAITERS);
 
 	MyProc->lwWaiting = true;
 	MyProc->lwWaitMode = mode;
@@ -1054,7 +1054,7 @@ LWLockQueueSelf(LWLock *lock, LWLockMode mode)
 	LWLockWaitListUnlock(lock);
 
 #ifdef LOCK_DEBUG
-	pg_atomic_fetch_add_u32(&lock->nwaiters, 1);
+	mdb_atomic_fetch_add_u32(&lock->nwaiters, 1);
 #endif
 
 }
@@ -1099,9 +1099,9 @@ LWLockDequeueSelf(LWLock *lock)
 	}
 
 	if (dlist_is_empty(&lock->waiters) &&
-		(pg_atomic_read_u32(&lock->state) & LW_FLAG_HAS_WAITERS) != 0)
+		(mdb_atomic_read_u32(&lock->state) & LW_FLAG_HAS_WAITERS) != 0)
 	{
-		pg_atomic_fetch_and_u32(&lock->state, ~LW_FLAG_HAS_WAITERS);
+		mdb_atomic_fetch_and_u32(&lock->state, ~LW_FLAG_HAS_WAITERS);
 	}
 
 	/* XXX: combine with fetch_and above? */
@@ -1123,7 +1123,7 @@ LWLockDequeueSelf(LWLock *lock)
 		 * Reset releaseOk if somebody woke us before we removed ourselves -
 		 * they'll have set it to false.
 		 */
-		pg_atomic_fetch_or_u32(&lock->state, LW_FLAG_RELEASE_OK);
+		mdb_atomic_fetch_or_u32(&lock->state, LW_FLAG_RELEASE_OK);
 
 		/*
 		 * Now wait for the scheduled wakeup, otherwise our ->lwWaiting would
@@ -1148,7 +1148,7 @@ LWLockDequeueSelf(LWLock *lock)
 #ifdef LOCK_DEBUG
 	{
 		/* not waiting anymore */
-		uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = pg_atomic_fetch_sub_u32(&lock->nwaiters, 1);
+		uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
 
 		Assert(nwaiters < MAX_BACKENDS);
 	}
@@ -1293,12 +1293,12 @@ LWLockAcquire(LWLock *lock, LWLockMode mode)
 		}
 
 		/* Retrying, allow LWLockRelease to release waiters again. */
-		pg_atomic_fetch_or_u32(&lock->state, LW_FLAG_RELEASE_OK);
+		mdb_atomic_fetch_or_u32(&lock->state, LW_FLAG_RELEASE_OK);
 
 #ifdef LOCK_DEBUG
 		{
 			/* not waiting anymore */
-			uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = pg_atomic_fetch_sub_u32(&lock->nwaiters, 1);
+			uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
 
 			Assert(nwaiters < MAX_BACKENDS);
 		}
@@ -1456,7 +1456,7 @@ LWLockAcquireOrWait(LWLock *lock, LWLockMode mode)
 #ifdef LOCK_DEBUG
 			{
 				/* not waiting anymore */
-				uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = pg_atomic_fetch_sub_u32(&lock->nwaiters, 1);
+				uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
 
 				Assert(nwaiters < MAX_BACKENDS);
 			}
@@ -1530,7 +1530,7 @@ LWLockConflictsWithVar(LWLock *lock,
 	 * barrier here as far as the current usage is concerned.  But that might
 	 * not be safe in general.
 	 */
-	mustwait = (pg_atomic_read_u32(&lock->state) & LW_VAL_EXCLUSIVE) != 0;
+	mustwait = (mdb_atomic_read_u32(&lock->state) & LW_VAL_EXCLUSIVE) != 0;
 
 	if (!mustwait)
 	{
@@ -1623,7 +1623,7 @@ LWLockWaitForVar(LWLock *lock, uint64 *valptr, uint64 oldval, uint64 *newval)
 		 * Set RELEASE_OK flag, to make sure we get woken up as soon as the
 		 * lock is released.
 		 */
-		pg_atomic_fetch_or_u32(&lock->state, LW_FLAG_RELEASE_OK);
+		mdb_atomic_fetch_or_u32(&lock->state, LW_FLAG_RELEASE_OK);
 
 		/*
 		 * We're now guaranteed to be woken up if necessary. Recheck the lock
@@ -1674,7 +1674,7 @@ LWLockWaitForVar(LWLock *lock, uint64 *valptr, uint64 oldval, uint64 *newval)
 #ifdef LOCK_DEBUG
 		{
 			/* not waiting anymore */
-			uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = pg_atomic_fetch_sub_u32(&lock->nwaiters, 1);
+			uint32 nwaiters PG_USED_FOR_ASSERTS_ONLY = mdb_atomic_fetch_sub_u32(&lock->nwaiters, 1);
 
 			Assert(nwaiters < MAX_BACKENDS);
 		}
@@ -1728,7 +1728,7 @@ LWLockUpdateVar(LWLock *lock, uint64 *valptr, uint64 val)
 
 	LWLockWaitListLock(lock);
 
-	Assert(pg_atomic_read_u32(&lock->state) & LW_VAL_EXCLUSIVE);
+	Assert(mdb_atomic_read_u32(&lock->state) & LW_VAL_EXCLUSIVE);
 
 	/* Update the lock's value */
 	*valptr = val;
@@ -1760,7 +1760,7 @@ LWLockUpdateVar(LWLock *lock, uint64 *valptr, uint64 val)
 
 		dlist_delete(&waiter->lwWaitLink);
 		/* check comment in LWLockWakeup() about this barrier */
-		pg_write_barrier();
+		mdb_write_barrier();
 		waiter->lwWaiting = false;
 		PGSemaphoreUnlock(&waiter->sem);
 	}
@@ -1803,9 +1803,9 @@ LWLockRelease(LWLock *lock)
 	 * others, even if we still have to wakeup other waiters.
 	 */
 	if (mode == LW_EXCLUSIVE)
-		oldstate = pg_atomic_sub_fetch_u32(&lock->state, LW_VAL_EXCLUSIVE);
+		oldstate = mdb_atomic_sub_fetch_u32(&lock->state, LW_VAL_EXCLUSIVE);
 	else
-		oldstate = pg_atomic_sub_fetch_u32(&lock->state, LW_VAL_SHARED);
+		oldstate = mdb_atomic_sub_fetch_u32(&lock->state, LW_VAL_SHARED);
 
 	/* nobody else can have that kind of lock */
 	Assert(!(oldstate & LW_VAL_EXCLUSIVE));

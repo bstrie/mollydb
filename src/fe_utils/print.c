@@ -33,7 +33,7 @@
 
 #include "fe_utils/print.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "fe_utils/mbprint.h"
 
 
@@ -57,7 +57,7 @@ static char default_footer[100];
 static printTableFooter default_footer_cell = {default_footer, NULL};
 
 /* Line style control structures */
-const printTextFormat pg_asciiformat =
+const printTextFormat mdb_asciiformat =
 {
 	"ascii",
 	{
@@ -78,7 +78,7 @@ const printTextFormat pg_asciiformat =
 	true
 };
 
-const printTextFormat pg_asciiformat_old =
+const printTextFormat mdb_asciiformat_old =
 {
 	"old-ascii",
 	{
@@ -100,7 +100,7 @@ const printTextFormat pg_asciiformat_old =
 };
 
 /* Default unicode linestyle format */
-printTextFormat pg_utf8format;
+printTextFormat mdb_utf8format;
 
 typedef struct unicodeStyleRowFormat
 {
@@ -259,10 +259,10 @@ format_numeric_locale(const char *my_str)
 	 * check is essential to avoid mangling already-localized "money" values.
 	 */
 	if (strspn(my_str, "0123456789+-.eE") != strlen(my_str))
-		return pg_strdup(my_str);
+		return mdb_strdup(my_str);
 
 	new_len = strlen(my_str) + additional_numeric_locale_len(my_str);
-	new_str = pg_malloc(new_len + 1);
+	new_str = mdb_malloc(new_len + 1);
 	new_str_pos = 0;
 	int_len = integer_digits(my_str);
 
@@ -626,18 +626,18 @@ print_aligned_text(const printTableContent *cont, FILE *fout, bool is_pager)
 	if (cont->ncolumns > 0)
 	{
 		col_count = cont->ncolumns;
-		width_header = pg_malloc0(col_count * sizeof(*width_header));
-		width_average = pg_malloc0(col_count * sizeof(*width_average));
-		max_width = pg_malloc0(col_count * sizeof(*max_width));
-		width_wrap = pg_malloc0(col_count * sizeof(*width_wrap));
-		max_nl_lines = pg_malloc0(col_count * sizeof(*max_nl_lines));
-		curr_nl_line = pg_malloc0(col_count * sizeof(*curr_nl_line));
-		col_lineptrs = pg_malloc0(col_count * sizeof(*col_lineptrs));
-		max_bytes = pg_malloc0(col_count * sizeof(*max_bytes));
-		format_buf = pg_malloc0(col_count * sizeof(*format_buf));
-		header_done = pg_malloc0(col_count * sizeof(*header_done));
-		bytes_output = pg_malloc0(col_count * sizeof(*bytes_output));
-		wrap = pg_malloc0(col_count * sizeof(*wrap));
+		width_header = mdb_malloc0(col_count * sizeof(*width_header));
+		width_average = mdb_malloc0(col_count * sizeof(*width_average));
+		max_width = mdb_malloc0(col_count * sizeof(*max_width));
+		width_wrap = mdb_malloc0(col_count * sizeof(*width_wrap));
+		max_nl_lines = mdb_malloc0(col_count * sizeof(*max_nl_lines));
+		curr_nl_line = mdb_malloc0(col_count * sizeof(*curr_nl_line));
+		col_lineptrs = mdb_malloc0(col_count * sizeof(*col_lineptrs));
+		max_bytes = mdb_malloc0(col_count * sizeof(*max_bytes));
+		format_buf = mdb_malloc0(col_count * sizeof(*format_buf));
+		header_done = mdb_malloc0(col_count * sizeof(*header_done));
+		bytes_output = mdb_malloc0(col_count * sizeof(*bytes_output));
+		wrap = mdb_malloc0(col_count * sizeof(*wrap));
 	}
 	else
 	{
@@ -662,7 +662,7 @@ print_aligned_text(const printTableContent *cont, FILE *fout, bool is_pager)
 					nl_lines,
 					bytes_required;
 
-		pg_wcssize((const unsigned char *) cont->headers[i], strlen(cont->headers[i]),
+		mdb_wcssize((const unsigned char *) cont->headers[i], strlen(cont->headers[i]),
 				   encoding, &width, &nl_lines, &bytes_required);
 		if (width > max_width[i])
 			max_width[i] = width;
@@ -686,7 +686,7 @@ print_aligned_text(const printTableContent *cont, FILE *fout, bool is_pager)
 					nl_lines,
 					bytes_required;
 
-		pg_wcssize((const unsigned char *) *ptr, strlen(*ptr), encoding,
+		mdb_wcssize((const unsigned char *) *ptr, strlen(*ptr), encoding,
 				   &width, &nl_lines, &bytes_required);
 
 		if (width > max_width[i % col_count])
@@ -733,10 +733,10 @@ print_aligned_text(const printTableContent *cont, FILE *fout, bool is_pager)
 	for (i = 0; i < col_count; i++)
 	{
 		/* Add entry for ptr == NULL array termination */
-		col_lineptrs[i] = pg_malloc0((max_nl_lines[i] + 1) *
+		col_lineptrs[i] = mdb_malloc0((max_nl_lines[i] + 1) *
 									 sizeof(**col_lineptrs));
 
-		format_buf[i] = pg_malloc(max_bytes[i] + 1);
+		format_buf[i] = mdb_malloc(max_bytes[i] + 1);
 
 		col_lineptrs[i]->ptr = format_buf[i];
 	}
@@ -847,7 +847,7 @@ print_aligned_text(const printTableContent *cont, FILE *fout, bool is_pager)
 						nl_lines,
 						bytes_required;
 
-			pg_wcssize((const unsigned char *) *ptr, strlen(*ptr), encoding,
+			mdb_wcssize((const unsigned char *) *ptr, strlen(*ptr), encoding,
 					   &width, &nl_lines, &bytes_required);
 
 			/*
@@ -886,7 +886,7 @@ print_aligned_text(const printTableContent *cont, FILE *fout, bool is_pager)
 			int			width,
 						height;
 
-			pg_wcssize((const unsigned char *) cont->title, strlen(cont->title),
+			mdb_wcssize((const unsigned char *) cont->title, strlen(cont->title),
 					   encoding, &width, &height, NULL);
 			if (width >= width_total)
 				/* Aligned */
@@ -908,7 +908,7 @@ print_aligned_text(const printTableContent *cont, FILE *fout, bool is_pager)
 									   PRINT_RULE_TOP, format, fout);
 
 			for (i = 0; i < col_count; i++)
-				pg_wcsformat((const unsigned char *) cont->headers[i],
+				mdb_wcsformat((const unsigned char *) cont->headers[i],
 							 strlen(cont->headers[i]), encoding,
 							 col_lineptrs[i], max_nl_lines[i]);
 
@@ -979,7 +979,7 @@ print_aligned_text(const printTableContent *cont, FILE *fout, bool is_pager)
 		 */
 		for (j = 0; j < col_count; j++)
 		{
-			pg_wcsformat((const unsigned char *) ptr[j], strlen(ptr[j]), encoding,
+			mdb_wcsformat((const unsigned char *) ptr[j], strlen(ptr[j]), encoding,
 						 col_lineptrs[j], max_nl_lines[j]);
 			curr_nl_line[j] = 0;
 		}
@@ -1294,7 +1294,7 @@ print_aligned_vertical(const printTableContent *cont,
 					height,
 					fs;
 
-		pg_wcssize((const unsigned char *) cont->headers[i], strlen(cont->headers[i]),
+		mdb_wcssize((const unsigned char *) cont->headers[i], strlen(cont->headers[i]),
 				   encoding, &width, &height, &fs);
 		if (width > hwidth)
 			hwidth = width;
@@ -1314,7 +1314,7 @@ print_aligned_vertical(const printTableContent *cont,
 					height,
 					fs;
 
-		pg_wcssize((const unsigned char *) *ptr, strlen(*ptr), encoding,
+		mdb_wcssize((const unsigned char *) *ptr, strlen(*ptr), encoding,
 				   &width, &height, &fs);
 		if (width > dwidth)
 			dwidth = width;
@@ -1331,11 +1331,11 @@ print_aligned_vertical(const printTableContent *cont,
 	 * We now have all the information we need to setup the formatting
 	 * structures
 	 */
-	dlineptr = pg_malloc((sizeof(*dlineptr)) * (dheight + 1));
-	hlineptr = pg_malloc((sizeof(*hlineptr)) * (hheight + 1));
+	dlineptr = mdb_malloc((sizeof(*dlineptr)) * (dheight + 1));
+	hlineptr = mdb_malloc((sizeof(*hlineptr)) * (hheight + 1));
 
-	dlineptr->ptr = pg_malloc(dformatsize);
-	hlineptr->ptr = pg_malloc(hformatsize);
+	dlineptr->ptr = mdb_malloc(dformatsize);
+	hlineptr->ptr = mdb_malloc(hformatsize);
 
 	if (cont->opt->start_table)
 	{
@@ -1396,7 +1396,7 @@ print_aligned_vertical(const printTableContent *cont,
 			swidth = 3;
 
 			/* We might need a column for left header newline markers, too */
-			if (hmultiline && (format == &pg_asciiformat_old))
+			if (hmultiline && (format == &mdb_asciiformat_old))
 				swidth++;
 		}
 		else
@@ -1412,7 +1412,7 @@ print_aligned_vertical(const printTableContent *cont,
 
 		/* Reserve a column for data newline indicators, too, if needed */
 		if (dmultiline &&
-			opt_border < 2 && format != &pg_asciiformat_old)
+			opt_border < 2 && format != &mdb_asciiformat_old)
 			swidth++;
 
 		/* Determine width required for record header lines */
@@ -1478,7 +1478,7 @@ print_aligned_vertical(const printTableContent *cont,
 			 * newline/wrap marker column, do so and recompute.
 			 */
 			if (newdwidth < dwidth && !dmultiline &&
-				opt_border < 2 && format != &pg_asciiformat_old)
+				opt_border < 2 && format != &mdb_asciiformat_old)
 			{
 				dmultiline = true;
 				swidth++;
@@ -1516,7 +1516,7 @@ print_aligned_vertical(const printTableContent *cont,
 
 			if ((opt_border < 2) &&
 				(hmultiline) &&
-				(format == &pg_asciiformat_old))
+				(format == &mdb_asciiformat_old))
 				lhwidth++;		/* for newline indicators */
 
 			if (!opt_tuples_only)
@@ -1528,11 +1528,11 @@ print_aligned_vertical(const printTableContent *cont,
 		}
 
 		/* Format the header */
-		pg_wcsformat((const unsigned char *) cont->headers[i % cont->ncolumns],
+		mdb_wcsformat((const unsigned char *) cont->headers[i % cont->ncolumns],
 					 strlen(cont->headers[i % cont->ncolumns]),
 					 encoding, hlineptr, hheight);
 		/* Format the data */
-		pg_wcsformat((const unsigned char *) *ptr, strlen(*ptr), encoding,
+		mdb_wcsformat((const unsigned char *) *ptr, strlen(*ptr), encoding,
 					 dlineptr, dheight);
 
 		/*
@@ -1559,7 +1559,7 @@ print_aligned_vertical(const printTableContent *cont,
 				 * Left spacer or new line indicator
 				 */
 				if ((opt_border == 2) ||
-					(hmultiline && (format == &pg_asciiformat_old)))
+					(hmultiline && (format == &mdb_asciiformat_old)))
 					fputs(hline ? format->header_nl_left : " ", fout);
 
 				/*
@@ -1583,7 +1583,7 @@ print_aligned_vertical(const printTableContent *cont,
 				{
 					/* More lines after this one due to a newline */
 					if ((opt_border > 0) ||
-						(hmultiline && (format != &pg_asciiformat_old)))
+						(hmultiline && (format != &mdb_asciiformat_old)))
 						fputs(format->header_nl_right, fout);
 					hline++;
 				}
@@ -1591,7 +1591,7 @@ print_aligned_vertical(const printTableContent *cont,
 				{
 					/* This was the last line of the header */
 					if ((opt_border > 0) ||
-						(hmultiline && (format != &pg_asciiformat_old)))
+						(hmultiline && (format != &mdb_asciiformat_old)))
 						fputs(" ", fout);
 					hcomplete = 1;
 				}
@@ -1602,11 +1602,11 @@ print_aligned_vertical(const printTableContent *cont,
 
 				if ((opt_border < 2) &&
 					(hmultiline) &&
-					(format == &pg_asciiformat_old))
+					(format == &mdb_asciiformat_old))
 					swidth++;
 
 				if ((opt_border == 0) &&
-					(format != &pg_asciiformat_old) &&
+					(format != &mdb_asciiformat_old) &&
 					(hmultiline))
 					swidth++;
 
@@ -1654,7 +1654,7 @@ print_aligned_vertical(const printTableContent *cont,
 				{
 					/* continuing a wrapped column */
 					if ((opt_border > 1) ||
-						(dmultiline && (format != &pg_asciiformat_old)))
+						(dmultiline && (format != &mdb_asciiformat_old)))
 					{
 						if (swidth > 0)
 							fprintf(fout, "%*s", swidth, " ");
@@ -1665,7 +1665,7 @@ print_aligned_vertical(const printTableContent *cont,
 				{
 					/* reached a newline in the column */
 					if ((opt_border > 1) ||
-						(dmultiline && (format != &pg_asciiformat_old)))
+						(dmultiline && (format != &mdb_asciiformat_old)))
 					{
 						if (swidth > 0)
 							fprintf(fout, "%*s", swidth, " ");
@@ -2929,14 +2929,14 @@ printTableInit(printTableContent *const content, const printTableOpt *opt,
 	content->ncolumns = ncolumns;
 	content->nrows = nrows;
 
-	content->headers = pg_malloc0((ncolumns + 1) * sizeof(*content->headers));
+	content->headers = mdb_malloc0((ncolumns + 1) * sizeof(*content->headers));
 
-	content->cells = pg_malloc0((ncolumns * nrows + 1) * sizeof(*content->cells));
+	content->cells = mdb_malloc0((ncolumns * nrows + 1) * sizeof(*content->cells));
 
 	content->cellmustfree = NULL;
 	content->footers = NULL;
 
-	content->aligns = pg_malloc0((ncolumns + 1) * sizeof(*content->align));
+	content->aligns = mdb_malloc0((ncolumns + 1) * sizeof(*content->align));
 
 	content->header = content->headers;
 	content->cell = content->cells;
@@ -3025,7 +3025,7 @@ printTableAddCell(printTableContent *const content, char *cell,
 	{
 		if (content->cellmustfree == NULL)
 			content->cellmustfree =
-				pg_malloc0((content->ncolumns * content->nrows + 1) * sizeof(bool));
+				mdb_malloc0((content->ncolumns * content->nrows + 1) * sizeof(bool));
 
 		content->cellmustfree[content->cellsadded] = true;
 	}
@@ -3050,8 +3050,8 @@ printTableAddFooter(printTableContent *const content, const char *footer)
 {
 	printTableFooter *f;
 
-	f = pg_malloc0(sizeof(*f));
-	f->data = pg_strdup(footer);
+	f = mdb_malloc0(sizeof(*f));
+	f->data = mdb_strdup(footer);
 
 	if (content->footers == NULL)
 		content->footers = f;
@@ -3076,7 +3076,7 @@ printTableSetFooter(printTableContent *const content, const char *footer)
 	if (content->footers != NULL)
 	{
 		free(content->footer->data);
-		content->footer->data = pg_strdup(footer);
+		content->footer->data = mdb_strdup(footer);
 	}
 	else
 		printTableAddFooter(content, footer);
@@ -3374,7 +3374,7 @@ setDecimalLocale(void)
 
 	/* Don't accept an empty decimal_point string */
 	if (*extlconv->decimal_point)
-		decimal_point = pg_strdup(extlconv->decimal_point);
+		decimal_point = mdb_strdup(extlconv->decimal_point);
 	else
 		decimal_point = ".";	/* SQL output standard */
 
@@ -3392,7 +3392,7 @@ setDecimalLocale(void)
 	/* Don't accept an empty thousands_sep string, either */
 	/* similar code exists in formatting.c */
 	if (*extlconv->thousands_sep)
-		thousands_sep = pg_strdup(extlconv->thousands_sep);
+		thousands_sep = mdb_strdup(extlconv->thousands_sep);
 	/* Make sure thousands separator doesn't match decimal point symbol. */
 	else if (strcmp(decimal_point, ",") != 0)
 		thousands_sep = ",";
@@ -3412,13 +3412,13 @@ get_line_style(const printTableOpt *opt)
 	if (opt->line_style != NULL)
 		return opt->line_style;
 	else
-		return &pg_asciiformat;
+		return &mdb_asciiformat;
 }
 
 void
 refresh_utf8format(const printTableOpt *opt)
 {
-	printTextFormat *popt = &pg_utf8format;
+	printTextFormat *popt = &mdb_utf8format;
 
 	const unicodeStyleBorderFormat *border;
 	const unicodeStyleRowFormat *header;

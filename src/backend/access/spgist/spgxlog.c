@@ -966,7 +966,7 @@ spgRedoVacuumRedirect(XLogReaderState *record)
 }
 
 void
-spg_redo(XLogReaderState *record)
+smdb_redo(XLogReaderState *record)
 {
 	uint8		info = XLogRecGetInfo(record) & ~XLR_INFO_MASK;
 	MemoryContext oldCxt;
@@ -1002,7 +1002,7 @@ spg_redo(XLogReaderState *record)
 			spgRedoVacuumRedirect(record);
 			break;
 		default:
-			elog(PANIC, "spg_redo: unknown op code %u", info);
+			elog(PANIC, "smdb_redo: unknown op code %u", info);
 	}
 
 	MemoryContextSwitchTo(oldCxt);
@@ -1010,7 +1010,7 @@ spg_redo(XLogReaderState *record)
 }
 
 void
-spg_xlog_startup(void)
+smdb_xlog_startup(void)
 {
 	opCtx = AllocSetContextCreate(CurrentMemoryContext,
 								  "SP-GiST temporary context",
@@ -1020,7 +1020,7 @@ spg_xlog_startup(void)
 }
 
 void
-spg_xlog_cleanup(void)
+smdb_xlog_cleanup(void)
 {
 	MemoryContextDelete(opCtx);
 	opCtx = NULL;

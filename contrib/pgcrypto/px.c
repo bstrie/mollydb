@@ -113,7 +113,7 @@ px_resolve_alias(const PX_Alias *list, const char *name)
 {
 	while (list->name)
 	{
-		if (pg_strcasecmp(list->alias, name) == 0)
+		if (mdb_strcasecmp(list->alias, name) == 0)
 			return list->name;
 		list++;
 	}

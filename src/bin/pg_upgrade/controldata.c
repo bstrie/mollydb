@@ -4,30 +4,30 @@
  *	controldata functions
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/controldata.c
+ *	src/bin/mdb_upgrade/controldata.c
  */
 
 #include "mollydb_fe.h"
 
-#include "pg_upgrade.h"
+#include "mdb_upgrade.h"
 
 #include <ctype.h>
 
 /*
  * get_control_data()
  *
- * gets pg_control information in "ctrl". Assumes that bindir and
+ * gets mdb_control information in "ctrl". Assumes that bindir and
  * datadir are valid absolute paths to mollydb bin and pgdata
- * directories respectively *and* pg_resetxlog is version compatible
- * with datadir. The main purpose of this function is to get pg_control
+ * directories respectively *and* mdb_resetxlog is version compatible
+ * with datadir. The main purpose of this function is to get mdb_control
  * data in a version independent manner.
  *
- * The approach taken here is to invoke pg_resetxlog with -n option
+ * The approach taken here is to invoke mdb_resetxlog with -n option
  * and then pipe its output. With little string parsing we get the
- * pg_control data.  pg_resetxlog cannot be run while the server is running
- * so we use pg_controldata;  pg_controldata doesn't provide all the fields
+ * mdb_control data.  mdb_resetxlog cannot be run while the server is running
+ * so we use mdb_controldata;  mdb_controldata doesn't provide all the fields
  * we need to actually perform the upgrade, but it provides enough for
- * check mode.  We do not implement pg_resetxlog -n because it is hard to
+ * check mode.  We do not implement mdb_resetxlog -n because it is hard to
  * return valid xid data for a running server.
  */
 void
@@ -73,53 +73,53 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 
 
 	/*
-	 * Because we test the pg_resetxlog output as strings, it has to be in
-	 * English.  Copied from pg_regress.c.
+	 * Because we test the mdb_resetxlog output as strings, it has to be in
+	 * English.  Copied from mdb_regress.c.
 	 */
 	if (getenv("LC_COLLATE"))
-		lc_collate = pg_strdup(getenv("LC_COLLATE"));
+		lc_collate = mdb_strdup(getenv("LC_COLLATE"));
 	if (getenv("LC_CTYPE"))
-		lc_ctype = pg_strdup(getenv("LC_CTYPE"));
+		lc_ctype = mdb_strdup(getenv("LC_CTYPE"));
 	if (getenv("LC_MONETARY"))
-		lc_monetary = pg_strdup(getenv("LC_MONETARY"));
+		lc_monetary = mdb_strdup(getenv("LC_MONETARY"));
 	if (getenv("LC_NUMERIC"))
-		lc_numeric = pg_strdup(getenv("LC_NUMERIC"));
+		lc_numeric = mdb_strdup(getenv("LC_NUMERIC"));
 	if (getenv("LC_TIME"))
-		lc_time = pg_strdup(getenv("LC_TIME"));
+		lc_time = mdb_strdup(getenv("LC_TIME"));
 	if (getenv("LANG"))
-		lang = pg_strdup(getenv("LANG"));
+		lang = mdb_strdup(getenv("LANG"));
 	if (getenv("LANGUAGE"))
-		language = pg_strdup(getenv("LANGUAGE"));
+		language = mdb_strdup(getenv("LANGUAGE"));
 	if (getenv("LC_ALL"))
-		lc_all = pg_strdup(getenv("LC_ALL"));
+		lc_all = mdb_strdup(getenv("LC_ALL"));
 	if (getenv("LC_MESSAGES"))
-		lc_messages = pg_strdup(getenv("LC_MESSAGES"));
+		lc_messages = mdb_strdup(getenv("LC_MESSAGES"));
 
-	pg_putenv("LC_COLLATE", NULL);
-	pg_putenv("LC_CTYPE", NULL);
-	pg_putenv("LC_MONETARY", NULL);
-	pg_putenv("LC_NUMERIC", NULL);
-	pg_putenv("LC_TIME", NULL);
-	pg_putenv("LANG",
+	mdb_putenv("LC_COLLATE", NULL);
+	mdb_putenv("LC_CTYPE", NULL);
+	mdb_putenv("LC_MONETARY", NULL);
+	mdb_putenv("LC_NUMERIC", NULL);
+	mdb_putenv("LC_TIME", NULL);
+	mdb_putenv("LANG",
 #ifndef WIN32
 			  NULL);
 #else
 	/* On Windows the default locale cannot be English, so force it */
 			  "en");
 #endif
-	pg_putenv("LANGUAGE", NULL);
-	pg_putenv("LC_ALL", NULL);
-	pg_putenv("LC_MESSAGES", "C");
+	mdb_putenv("LANGUAGE", NULL);
+	mdb_putenv("LC_ALL", NULL);
+	mdb_putenv("LC_MESSAGES", "C");
 
 	snprintf(cmd, sizeof(cmd), "\"%s/%s \"%s\"",
 			 cluster->bindir,
-			 live_check ? "pg_controldata\"" : "pg_resetxlog\" -n",
+			 live_check ? "mdb_controldata\"" : "mdb_resetxlog\" -n",
 			 cluster->pgdata);
 	fflush(stdout);
 	fflush(stderr);
 
 	if ((output = popen(cmd, "r")) == NULL)
-		pg_fatal("Could not get control data using %s: %s\n",
+		mdb_fatal("Could not get control data using %s: %s\n",
 				 cmd, getErrorText());
 
 	/* Only in <= 9.2 */
@@ -132,14 +132,14 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 	/* we have the result of cmd in "output". so parse it line by line now */
 	while (fgets(bufin, sizeof(bufin), output))
 	{
-		pg_log(PG_VERBOSE, "%s", bufin);
+		mdb_log(PG_VERBOSE, "%s", bufin);
 
-		if ((p = strstr(bufin, "pg_control version number:")) != NULL)
+		if ((p = strstr(bufin, "mdb_control version number:")) != NULL)
 		{
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: pg_resetxlog problem\n", __LINE__);
+				mdb_fatal("%d: mdb_resetxlog problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.ctrl_ver = str2uint(p);
@@ -149,7 +149,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.cat_ver = str2uint(p);
@@ -159,7 +159,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			tli = str2uint(p);
@@ -170,7 +170,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			logid = str2uint(p);
@@ -181,7 +181,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			segno = str2uint(p);
@@ -192,7 +192,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.chkpnt_nxtepoch = str2uint(p);
@@ -200,7 +200,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			/*
 			 * Delimiter changed from '/' to ':' in 9.6.  We don't test for
 			 * the catalog version of the change because the catalog version
-			 * is pulled from pg_controldata too, and it isn't worth adding
+			 * is pulled from mdb_controldata too, and it isn't worth adding
 			 * an order dependency for this --- we just check the string.
 			 */
 			if (strchr(p, '/') != NULL)
@@ -211,7 +211,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 				p = NULL;
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove '/' or ':' char */
 			cluster->controldata.chkpnt_nxtxid = str2uint(p);
@@ -222,7 +222,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.chkpnt_nxtoid = str2uint(p);
@@ -233,7 +233,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.chkpnt_nxtmulti = str2uint(p);
@@ -244,7 +244,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.chkpnt_oldstMulti = str2uint(p);
@@ -255,7 +255,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.chkpnt_nxtmxoff = str2uint(p);
@@ -266,14 +266,14 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			/* Skip the colon and any whitespace after it */
 			p = strchr(p, ':');
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 			p = strpbrk(p, "01234567890ABCDEF");
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			/* Make sure it looks like a valid WAL file name */
 			if (strspn(p, "0123456789ABCDEF") != 24)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			strlcpy(cluster->controldata.nextxlogfile, p, 25);
 			got_nextxlogfile = true;
@@ -283,7 +283,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			/* used later for contrib check */
@@ -295,7 +295,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.align = str2uint(p);
@@ -306,7 +306,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.blocksz = str2uint(p);
@@ -317,7 +317,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.largesz = str2uint(p);
@@ -328,7 +328,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.walsz = str2uint(p);
@@ -339,7 +339,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.walseg = str2uint(p);
@@ -350,7 +350,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.ident = str2uint(p);
@@ -361,7 +361,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.index = str2uint(p);
@@ -372,7 +372,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.toast = str2uint(p);
@@ -383,7 +383,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.large_object = str2uint(p);
@@ -394,7 +394,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			cluster->controldata.date_is_int = strstr(p, "64-bit integers") != NULL;
@@ -405,7 +405,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 			p = strchr(p, ':');
 
 			if (p == NULL || strlen(p) <= 1)
-				pg_fatal("%d: controldata retrieval problem\n", __LINE__);
+				mdb_fatal("%d: controldata retrieval problem\n", __LINE__);
 
 			p++;				/* remove ':' char */
 			/* used later for contrib check */
@@ -419,28 +419,28 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 	/*
 	 * Restore environment variables
 	 */
-	pg_putenv("LC_COLLATE", lc_collate);
-	pg_putenv("LC_CTYPE", lc_ctype);
-	pg_putenv("LC_MONETARY", lc_monetary);
-	pg_putenv("LC_NUMERIC", lc_numeric);
-	pg_putenv("LC_TIME", lc_time);
-	pg_putenv("LANG", lang);
-	pg_putenv("LANGUAGE", language);
-	pg_putenv("LC_ALL", lc_all);
-	pg_putenv("LC_MESSAGES", lc_messages);
+	mdb_putenv("LC_COLLATE", lc_collate);
+	mdb_putenv("LC_CTYPE", lc_ctype);
+	mdb_putenv("LC_MONETARY", lc_monetary);
+	mdb_putenv("LC_NUMERIC", lc_numeric);
+	mdb_putenv("LC_TIME", lc_time);
+	mdb_putenv("LANG", lang);
+	mdb_putenv("LANGUAGE", language);
+	mdb_putenv("LC_ALL", lc_all);
+	mdb_putenv("LC_MESSAGES", lc_messages);
 
-	pg_free(lc_collate);
-	pg_free(lc_ctype);
-	pg_free(lc_monetary);
-	pg_free(lc_numeric);
-	pg_free(lc_time);
-	pg_free(lang);
-	pg_free(language);
-	pg_free(lc_all);
-	pg_free(lc_messages);
+	mdb_free(lc_collate);
+	mdb_free(lc_ctype);
+	mdb_free(lc_monetary);
+	mdb_free(lc_numeric);
+	mdb_free(lc_time);
+	mdb_free(lang);
+	mdb_free(language);
+	mdb_free(lc_all);
+	mdb_free(lc_messages);
 
 	/*
-	 * Before 9.3, pg_resetxlog reported the xlogid and segno of the first log
+	 * Before 9.3, mdb_resetxlog reported the xlogid and segno of the first log
 	 * file after reset as separate lines. Starting with 9.3, it reports the
 	 * WAL file name. If the old cluster is older than 9.3, we construct the
 	 * WAL file name from the xlogid and segno.
@@ -455,7 +455,7 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 		}
 	}
 
-	/* verify that we got all the mandatory pg_control data */
+	/* verify that we got all the mandatory mdb_control data */
 	if (!got_xid || !got_oid ||
 		!got_multi ||
 		(!got_oldestmulti &&
@@ -468,68 +468,68 @@ get_control_data(ClusterInfo *cluster, bool live_check)
 		 cluster->controldata.ctrl_ver >= LARGE_OBJECT_SIZE_PG_CONTROL_VER) ||
 		!got_date_is_int || !got_data_checksum_version)
 	{
-		pg_log(PG_REPORT,
+		mdb_log(PG_REPORT,
 			   "The %s cluster lacks some required control information:\n",
 			   CLUSTER_NAME(cluster));
 
 		if (!got_xid)
-			pg_log(PG_REPORT, "  checkpoint next XID\n");
+			mdb_log(PG_REPORT, "  checkpoint next XID\n");
 
 		if (!got_oid)
-			pg_log(PG_REPORT, "  latest checkpoint next OID\n");
+			mdb_log(PG_REPORT, "  latest checkpoint next OID\n");
 
 		if (!got_multi)
-			pg_log(PG_REPORT, "  latest checkpoint next MultiXactId\n");
+			mdb_log(PG_REPORT, "  latest checkpoint next MultiXactId\n");
 
 		if (!got_oldestmulti &&
 			cluster->controldata.cat_ver >= MULTIXACT_FORMATCHANGE_CAT_VER)
-			pg_log(PG_REPORT, "  latest checkpoint oldest MultiXactId\n");
+			mdb_log(PG_REPORT, "  latest checkpoint oldest MultiXactId\n");
 
 		if (!got_mxoff)
-			pg_log(PG_REPORT, "  latest checkpoint next MultiXactOffset\n");
+			mdb_log(PG_REPORT, "  latest checkpoint next MultiXactOffset\n");
 
 		if (!live_check && !got_nextxlogfile)
-			pg_log(PG_REPORT, "  first WAL segment after reset\n");
+			mdb_log(PG_REPORT, "  first WAL segment after reset\n");
 
 		if (!got_float8_pass_by_value)
-			pg_log(PG_REPORT, "  float8 argument passing method\n");
+			mdb_log(PG_REPORT, "  float8 argument passing method\n");
 
 		if (!got_align)
-			pg_log(PG_REPORT, "  maximum alignment\n");
+			mdb_log(PG_REPORT, "  maximum alignment\n");
 
 		if (!got_blocksz)
-			pg_log(PG_REPORT, "  block size\n");
+			mdb_log(PG_REPORT, "  block size\n");
 
 		if (!got_largesz)
-			pg_log(PG_REPORT, "  large relation segment size\n");
+			mdb_log(PG_REPORT, "  large relation segment size\n");
 
 		if (!got_walsz)
-			pg_log(PG_REPORT, "  WAL block size\n");
+			mdb_log(PG_REPORT, "  WAL block size\n");
 
 		if (!got_walseg)
-			pg_log(PG_REPORT, "  WAL segment size\n");
+			mdb_log(PG_REPORT, "  WAL segment size\n");
 
 		if (!got_ident)
-			pg_log(PG_REPORT, "  maximum identifier length\n");
+			mdb_log(PG_REPORT, "  maximum identifier length\n");
 
 		if (!got_index)
-			pg_log(PG_REPORT, "  maximum number of indexed columns\n");
+			mdb_log(PG_REPORT, "  maximum number of indexed columns\n");
 
 		if (!got_toast)
-			pg_log(PG_REPORT, "  maximum TOAST chunk size\n");
+			mdb_log(PG_REPORT, "  maximum TOAST chunk size\n");
 
 		if (!got_large_object &&
 			cluster->controldata.ctrl_ver >= LARGE_OBJECT_SIZE_PG_CONTROL_VER)
-			pg_log(PG_REPORT, "  large-object chunk size\n");
+			mdb_log(PG_REPORT, "  large-object chunk size\n");
 
 		if (!got_date_is_int)
-			pg_log(PG_REPORT, "  dates/times are integers?\n");
+			mdb_log(PG_REPORT, "  dates/times are integers?\n");
 
 		/* value added in MollyDB 9.3 */
 		if (!got_data_checksum_version)
-			pg_log(PG_REPORT, "  data checksum version\n");
+			mdb_log(PG_REPORT, "  data checksum version\n");
 
-		pg_fatal("Cannot continue without required control information, terminating\n");
+		mdb_fatal("Cannot continue without required control information, terminating\n");
 	}
 }
 
@@ -544,37 +544,37 @@ check_control_data(ControlData *oldctrl,
 				   ControlData *newctrl)
 {
 	if (oldctrl->align == 0 || oldctrl->align != newctrl->align)
-		pg_fatal("old and new pg_controldata alignments are invalid or do not match\n"
+		mdb_fatal("old and new mdb_controldata alignments are invalid or do not match\n"
 			   "Likely one cluster is a 32-bit install, the other 64-bit\n");
 
 	if (oldctrl->blocksz == 0 || oldctrl->blocksz != newctrl->blocksz)
-		pg_fatal("old and new pg_controldata block sizes are invalid or do not match\n");
+		mdb_fatal("old and new mdb_controldata block sizes are invalid or do not match\n");
 
 	if (oldctrl->largesz == 0 || oldctrl->largesz != newctrl->largesz)
-		pg_fatal("old and new pg_controldata maximum relation segment sizes are invalid or do not match\n");
+		mdb_fatal("old and new mdb_controldata maximum relation segment sizes are invalid or do not match\n");
 
 	if (oldctrl->walsz == 0 || oldctrl->walsz != newctrl->walsz)
-		pg_fatal("old and new pg_controldata WAL block sizes are invalid or do not match\n");
+		mdb_fatal("old and new mdb_controldata WAL block sizes are invalid or do not match\n");
 
 	if (oldctrl->walseg == 0 || oldctrl->walseg != newctrl->walseg)
-		pg_fatal("old and new pg_controldata WAL segment sizes are invalid or do not match\n");
+		mdb_fatal("old and new mdb_controldata WAL segment sizes are invalid or do not match\n");
 
 	if (oldctrl->ident == 0 || oldctrl->ident != newctrl->ident)
-		pg_fatal("old and new pg_controldata maximum identifier lengths are invalid or do not match\n");
+		mdb_fatal("old and new mdb_controldata maximum identifier lengths are invalid or do not match\n");
 
 	if (oldctrl->index == 0 || oldctrl->index != newctrl->index)
-		pg_fatal("old and new pg_controldata maximum indexed columns are invalid or do not match\n");
+		mdb_fatal("old and new mdb_controldata maximum indexed columns are invalid or do not match\n");
 
 	if (oldctrl->toast == 0 || oldctrl->toast != newctrl->toast)
-		pg_fatal("old and new pg_controldata maximum TOAST chunk sizes are invalid or do not match\n");
+		mdb_fatal("old and new mdb_controldata maximum TOAST chunk sizes are invalid or do not match\n");
 
 	/* large_object added in 9.5, so it might not exist in the old cluster */
 	if (oldctrl->large_object != 0 &&
 		oldctrl->large_object != newctrl->large_object)
-		pg_fatal("old and new pg_controldata large-object chunk sizes are invalid or do not match\n");
+		mdb_fatal("old and new mdb_controldata large-object chunk sizes are invalid or do not match\n");
 
 	if (oldctrl->date_is_int != newctrl->date_is_int)
-		pg_fatal("old and new pg_controldata date/time storage types do not match\n");
+		mdb_fatal("old and new mdb_controldata date/time storage types do not match\n");
 
 	/*
 	 * float8_pass_by_value does not need to match, but is used in
@@ -587,12 +587,12 @@ check_control_data(ControlData *oldctrl,
 	 */
 	if (oldctrl->data_checksum_version == 0 &&
 		newctrl->data_checksum_version != 0)
-		pg_fatal("old cluster does not use data checksums but the new one does\n");
+		mdb_fatal("old cluster does not use data checksums but the new one does\n");
 	else if (oldctrl->data_checksum_version != 0 &&
 			 newctrl->data_checksum_version == 0)
-		pg_fatal("old cluster uses data checksums but the new one does not\n");
+		mdb_fatal("old cluster uses data checksums but the new one does not\n");
 	else if (oldctrl->data_checksum_version != newctrl->data_checksum_version)
-		pg_fatal("old and new cluster pg_controldata checksum versions do not match\n");
+		mdb_fatal("old and new cluster mdb_controldata checksum versions do not match\n");
 }
 
 
@@ -602,18 +602,18 @@ disable_old_cluster(void)
 	char		old_path[MAXPGPATH],
 				new_path[MAXPGPATH];
 
-	/* rename pg_control so old server cannot be accidentally started */
-	prep_status("Adding \".old\" suffix to old global/pg_control");
+	/* rename mdb_control so old server cannot be accidentally started */
+	prep_status("Adding \".old\" suffix to old global/mdb_control");
 
-	snprintf(old_path, sizeof(old_path), "%s/global/pg_control", old_cluster.pgdata);
-	snprintf(new_path, sizeof(new_path), "%s/global/pg_control.old", old_cluster.pgdata);
-	if (pg_mv_file(old_path, new_path) != 0)
-		pg_fatal("Unable to rename %s to %s.\n", old_path, new_path);
+	snprintf(old_path, sizeof(old_path), "%s/global/mdb_control", old_cluster.pgdata);
+	snprintf(new_path, sizeof(new_path), "%s/global/mdb_control.old", old_cluster.pgdata);
+	if (mdb_mv_file(old_path, new_path) != 0)
+		mdb_fatal("Unable to rename %s to %s.\n", old_path, new_path);
 	check_ok();
 
-	pg_log(PG_REPORT, "\n"
+	mdb_log(PG_REPORT, "\n"
 		   "If you want to start the old cluster, you will need to remove\n"
-		   "the \".old\" suffix from %s/global/pg_control.old.\n"
+		   "the \".old\" suffix from %s/global/mdb_control.old.\n"
 		 "Because \"link\" mode was used, the old cluster cannot be safely\n"
 	"started once the new cluster has been started.\n\n", old_cluster.pgdata);
 }

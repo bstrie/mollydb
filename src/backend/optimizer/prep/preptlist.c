@@ -40,7 +40,7 @@
 
 #include "access/heapam.h"
 #include "access/sysattr.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "nodes/makefuncs.h"
 #include "optimizer/prep.h"
 #include "optimizer/tlist.h"
@@ -248,7 +248,7 @@ expand_targetlist(List *tlist, int command_type,
 
 	for (attrno = 1; attrno <= numattrs; attrno++)
 	{
-		Form_pg_attribute att_tup = rel->rd_att->attrs[attrno - 1];
+		Form_mdb_attribute att_tup = rel->rd_att->attrs[attrno - 1];
 		TargetEntry *new_tle = NULL;
 
 		if (tlist_item != NULL)

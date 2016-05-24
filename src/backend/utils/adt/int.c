@@ -31,7 +31,7 @@
 #include <ctype.h>
 #include <limits.h>
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "libpq/pqformat.h"
 #include "utils/array.h"
@@ -62,7 +62,7 @@ int2in(PG_FUNCTION_ARGS)
 {
 	char	   *num = PG_GETARG_CSTRING(0);
 
-	PG_RETURN_INT16(pg_atoi(num, sizeof(int16), '\0'));
+	PG_RETURN_INT16(mdb_atoi(num, sizeof(int16), '\0'));
 }
 
 /*
@@ -74,7 +74,7 @@ int2out(PG_FUNCTION_ARGS)
 	int16		arg1 = PG_GETARG_INT16(0);
 	char	   *result = (char *) palloc(7);	/* sign, 5 digits, '\0' */
 
-	pg_itoa(arg1, result);
+	mdb_itoa(arg1, result);
 	PG_RETURN_CSTRING(result);
 }
 
@@ -150,7 +150,7 @@ int2vectorin(PG_FUNCTION_ARGS)
 			intString++;
 		if (*intString == '\0')
 			break;
-		result->values[n] = pg_atoi(intString, sizeof(int16), ' ');
+		result->values[n] = mdb_atoi(intString, sizeof(int16), ' ');
 		while (*intString && !isspace((unsigned char) *intString))
 			intString++;
 	}
@@ -189,7 +189,7 @@ int2vectorout(PG_FUNCTION_ARGS)
 	{
 		if (num != 0)
 			*rp++ = ' ';
-		pg_itoa(int2Array->values[num], rp);
+		mdb_itoa(int2Array->values[num], rp);
 		while (*++rp != '\0')
 			;
 	}
@@ -282,7 +282,7 @@ int4in(PG_FUNCTION_ARGS)
 {
 	char	   *num = PG_GETARG_CSTRING(0);
 
-	PG_RETURN_INT32(pg_atoi(num, sizeof(int32), '\0'));
+	PG_RETURN_INT32(mdb_atoi(num, sizeof(int32), '\0'));
 }
 
 /*
@@ -294,7 +294,7 @@ int4out(PG_FUNCTION_ARGS)
 	int32		arg1 = PG_GETARG_INT32(0);
 	char	   *result = (char *) palloc(12);	/* sign, 10 digits, '\0' */
 
-	pg_ltoa(arg1, result);
+	mdb_ltoa(arg1, result);
 	PG_RETURN_CSTRING(result);
 }
 

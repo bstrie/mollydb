@@ -17,7 +17,7 @@ extern uint64 fetch_size;
 extern uint64 fetch_done;
 
 /*
- * Enumeration to denote pg_log modes
+ * Enumeration to denote mdb_log modes
  */
 typedef enum
 {
@@ -27,8 +27,8 @@ typedef enum
 	PG_FATAL
 } eLogType;
 
-extern void pg_log(eLogType type, const char *fmt,...) pg_attribute_printf(2, 3);
-extern void pg_fatal(const char *fmt,...) pg_attribute_printf(1, 2) pg_attribute_noreturn();
+extern void mdb_log(eLogType type, const char *fmt,...) mdb_attribute_printf(2, 3);
+extern void mdb_fatal(const char *fmt,...) mdb_attribute_printf(1, 2) mdb_attribute_noreturn();
 
 extern void progress_report(bool force);
 

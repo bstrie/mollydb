@@ -222,7 +222,7 @@ should use this new function and no longer do implicit conversion to use the old
 <step id="op-resol-select" performance="required">
 <para>
 Select the operators to be considered from the
-<classname>pg_operator</classname> system catalog.  If a non-schema-qualified
+<classname>mdb_operator</classname> system catalog.  If a non-schema-qualified
 operator name was used (the usual case), the operators
 considered are those with the matching name and argument count that are
 visible in the current search path (see <xref linkend="ddl-schemas-path">).
@@ -561,7 +561,7 @@ usable in all the same cases as a similarly-named operator on the base type.
 <step performance="required">
 <para>
 Select the functions to be considered from the
-<classname>pg_proc</classname> system catalog.  If a non-schema-qualified
+<classname>mdb_proc</classname> system catalog.  If a non-schema-qualified
 function name was used, the functions
 considered are those with the matching name and argument count that are
 visible in the current search path (see <xref linkend="ddl-schemas-path">).
@@ -790,7 +790,7 @@ SELECT substr(CAST (varchar '1234' AS text), 3);
 <para>
 <note>
 <para>
-The parser learns from the <structname>pg_cast</> catalog that
+The parser learns from the <structname>mdb_cast</> catalog that
 <type>text</type> and <type>varchar</type>
 are binary-compatible, meaning that one can be passed to a function that
 accepts the other without doing any physical conversion.  Therefore, no
@@ -846,7 +846,7 @@ Check for an exact match with the target.
 <para>
 Otherwise, try to convert the expression to the target type.  This is possible
 if an <firstterm>assignment cast</> between the two types is registered in the
-<structname>pg_cast</> catalog (see <xref linkend="sql-createcast">).
+<structname>mdb_cast</> catalog (see <xref linkend="sql-createcast">).
 Alternatively, if the expression is an unknown-type literal, the contents of
 the literal string will be fed to the input conversion routine for the target
 type.
@@ -857,7 +857,7 @@ type.
 <para>
 Check to see if there is a sizing cast for the target type.  A sizing
 cast is a cast from that type to itself.  If one is found in the
-<structname>pg_cast</> catalog, apply it to the expression before storing
+<structname>mdb_cast</> catalog, apply it to the expression before storing
 into the destination column.  The implementation function for such a cast
 always takes an extra parameter of type <type>integer</type>, which receives
 the destination column's <structfield>atttypmod</> value (typically its

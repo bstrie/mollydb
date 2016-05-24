@@ -1,11 +1,11 @@
 /*-------------------------------------------------------------------------
  *
- * pg_amproc.h
- *	  definition of the system "amproc" relation (pg_amproc)
+ * mdb_amproc.h
+ *	  definition of the system "amproc" relation (mdb_amproc)
  *	  along with the relation's initial contents.
  *
  * The amproc table identifies support procedures associated with index
- * operator families and classes.  These procedures can't be listed in pg_amop
+ * operator families and classes.  These procedures can't be listed in mdb_amop
  * since they are not the implementation of any indexable operator.
  *
  * The primary key for this table is <amprocfamily, amproclefttype,
@@ -22,7 +22,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_amproc.h
+ * src/include/catalog/mdb_amproc.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -36,41 +36,41 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_amproc definition.  cpp turns this into
- *		typedef struct FormData_pg_amproc
+ *		mdb_amproc definition.  cpp turns this into
+ *		typedef struct FormData_mdb_amproc
  * ----------------
  */
 #define AccessMethodProcedureRelationId  2603
 
-CATALOG(pg_amproc,2603)
+CATALOG(mdb_amproc,2603)
 {
 	Oid			amprocfamily;	/* the index opfamily this entry is for */
 	Oid			amproclefttype; /* procedure's left input data type */
 	Oid			amprocrighttype;	/* procedure's right input data type */
 	int16		amprocnum;		/* support procedure index */
 	regproc		amproc;			/* OID of the proc */
-} FormData_pg_amproc;
+} FormData_mdb_amproc;
 
 /* ----------------
- *		Form_pg_amproc corresponds to a pointer to a tuple with
- *		the format of pg_amproc relation.
+ *		Form_mdb_amproc corresponds to a pointer to a tuple with
+ *		the format of mdb_amproc relation.
  * ----------------
  */
-typedef FormData_pg_amproc *Form_pg_amproc;
+typedef FormData_mdb_amproc *Form_mdb_amproc;
 
 /* ----------------
- *		compiler constants for pg_amproc
+ *		compiler constants for mdb_amproc
  * ----------------
  */
-#define Natts_pg_amproc					5
-#define Anum_pg_amproc_amprocfamily		1
-#define Anum_pg_amproc_amproclefttype	2
-#define Anum_pg_amproc_amprocrighttype	3
-#define Anum_pg_amproc_amprocnum		4
-#define Anum_pg_amproc_amproc			5
+#define Natts_mdb_amproc					5
+#define Anum_mdb_amproc_amprocfamily		1
+#define Anum_mdb_amproc_amproclefttype	2
+#define Anum_mdb_amproc_amprocrighttype	3
+#define Anum_mdb_amproc_amprocnum		4
+#define Anum_mdb_amproc_amproc			5
 
 /* ----------------
- *		initial contents of pg_amproc
+ *		initial contents of mdb_amproc
  * ----------------
  */
 
@@ -657,7 +657,7 @@ DATA(insert (	4103  3831	3831  4  4108 ));
 DATA(insert (	4103  3831	3831  11 4057 ));
 DATA(insert (	4103  3831	3831  13 3859 ));
 DATA(insert (	4103  3831	3831  14 3850 ));
-/* minmax pg_lsn */
+/* minmax mdb_lsn */
 DATA(insert (	4082  3220	3220  1  3383 ));
 DATA(insert (	4082  3220	3220  2  3384 ));
 DATA(insert (	4082  3220	3220  3  3385 ));

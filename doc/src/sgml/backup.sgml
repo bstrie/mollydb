@@ -35,20 +35,20 @@
    <xref linkend="app-pgdump"> for this purpose. The basic usage of this
    command is:
 <synopsis>
-pg_dump <replaceable class="parameter">dbname</replaceable> &gt; <replaceable class="parameter">outfile</replaceable>
+mdb_dump <replaceable class="parameter">dbname</replaceable> &gt; <replaceable class="parameter">outfile</replaceable>
 </synopsis>
-   As you see, <application>pg_dump</> writes its result to the
+   As you see, <application>mdb_dump</> writes its result to the
    standard output. We will see below how this can be useful.
-   While the above command creates a text file, <application>pg_dump</>
+   While the above command creates a text file, <application>mdb_dump</>
    can create files in other formats that allow for parallelism and more
    fine-grained control of object restoration.
   </para>
 
   <para>
-   <application>pg_dump</> is a regular <productname>MollyDB</>
+   <application>mdb_dump</> is a regular <productname>MollyDB</>
    client application (albeit a particularly clever one). This means
    that you can perform this backup procedure from any remote host that has
-   access to the database. But remember that <application>pg_dump</>
+   access to the database. But remember that <application>mdb_dump</>
    does not operate with special permissions. In particular, it must
    have read access to all tables that you want to back up, so in order
    to back up the entire database you almost always have to run it as a
@@ -60,7 +60,7 @@ pg_dump <replaceable class="parameter">dbname</replaceable> &gt; <replaceable cl
   </para>
 
   <para>
-   To specify which database server <application>pg_dump</> should
+   To specify which database server <application>mdb_dump</> should
    contact, use the command line options <option>-h
    <replaceable>host</></> and <option>-p <replaceable>port</></>. The
    default host is the local host or whatever your
@@ -73,29 +73,29 @@ pg_dump <replaceable class="parameter">dbname</replaceable> &gt; <replaceable cl
 
   <para>
    Like any other <productname>MollyDB</> client application,
-   <application>pg_dump</> will by default connect with the database
+   <application>mdb_dump</> will by default connect with the database
    user name that is equal to the current operating system user name. To override
    this, either specify the <option>-U</option> option or set the
    environment variable <envar>PGUSER</envar>. Remember that
-   <application>pg_dump</> connections are subject to the normal
+   <application>mdb_dump</> connections are subject to the normal
    client authentication mechanisms (which are described in <xref
    linkend="client-authentication">).
   </para>
 
   <para>
-   An important advantage of <application>pg_dump</> over the other backup
-   methods described later is that <application>pg_dump</>'s output can
+   An important advantage of <application>mdb_dump</> over the other backup
+   methods described later is that <application>mdb_dump</>'s output can
    generally be re-loaded into newer versions of <productname>MollyDB</>,
    whereas file-level backups and continuous archiving are both extremely
-   server-version-specific.  <application>pg_dump</> is also the only method
+   server-version-specific.  <application>mdb_dump</> is also the only method
    that will work when transferring a database to a different machine
    architecture, such as going from a 32-bit to a 64-bit server.
   </para>
 
   <para>
-   Dumps created by <application>pg_dump</> are internally consistent,
+   Dumps created by <application>mdb_dump</> are internally consistent,
    meaning, the dump represents a snapshot of the database at the time
-   <application>pg_dump</> began running. <application>pg_dump</> does not
+   <application>mdb_dump</> began running. <application>mdb_dump</> does not
    block other operations on the database while it is working.
    (Exceptions are those operations that need to operate with an
    exclusive lock, such as most forms of <command>ALTER TABLE</command>.)
@@ -105,20 +105,20 @@ pg_dump <replaceable class="parameter">dbname</replaceable> &gt; <replaceable cl
    <title>Restoring the Dump</title>
 
    <para>
-    Text files created by <application>pg_dump</> are intended to
+    Text files created by <application>mdb_dump</> are intended to
     be read in by the <application>psql</application> program. The
     general command form to restore a dump is
 <synopsis>
 psql <replaceable class="parameter">dbname</replaceable> &lt; <replaceable class="parameter">infile</replaceable>
 </synopsis>
     where <replaceable class="parameter">infile</replaceable> is the
-    file output by the <application>pg_dump</> command. The database <replaceable
+    file output by the <application>mdb_dump</> command. The database <replaceable
     class="parameter">dbname</replaceable> will not be created by this
     command, so you must create it yourself from <literal>template0</>
     before executing <application>psql</> (e.g., with
     <literal>createdb -T template0 <replaceable
     class="parameter">dbname</></literal>).  <application>psql</>
-    supports options similar to <application>pg_dump</> for specifying
+    supports options similar to <application>mdb_dump</> for specifying
     the database server to connect to and the user name to use. See
     the <xref linkend="app-psql"> reference page for more information.
     Non-text file dumps are restored using the <xref
@@ -156,20 +156,20 @@ psql --set ON_ERROR_STOP=on dbname &lt; infile
    </para>
 
    <para>
-    The ability of <application>pg_dump</> and <application>psql</> to
+    The ability of <application>mdb_dump</> and <application>psql</> to
     write to or read from pipes makes it possible to dump a database
     directly from one server to another, for example:
 <programlisting>
-pg_dump -h <replaceable>host1</> <replaceable>dbname</> | psql -h <replaceable>host2</> <replaceable>dbname</>
+mdb_dump -h <replaceable>host1</> <replaceable>dbname</> | psql -h <replaceable>host2</> <replaceable>dbname</>
 </programlisting>
    </para>
 
    <important>
     <para>
-     The dumps produced by <application>pg_dump</> are relative to
+     The dumps produced by <application>mdb_dump</> are relative to
      <literal>template0</>. This means that any languages, procedures,
      etc. added via <literal>template1</> will also be dumped by
-     <application>pg_dump</>. As a result, when restoring, if you are
+     <application>mdb_dump</>. As a result, when restoring, if you are
      using a customized <literal>template1</>, you must create the
      empty database from <literal>template0</>, as in the example
      above.
@@ -189,19 +189,19 @@ pg_dump -h <replaceable>host1</> <replaceable>dbname</> | psql -h <replaceable>h
   </sect2>
 
   <sect2 id="backup-dump-all">
-   <title>Using <application>pg_dumpall</></title>
+   <title>Using <application>mdb_dumpall</></title>
 
    <para>
-    <application>pg_dump</> dumps only a single database at a time,
+    <application>mdb_dump</> dumps only a single database at a time,
     and it does not dump information about roles or tablespaces
     (because those are cluster-wide rather than per-database).
     To support convenient dumping of the entire contents of a database
     cluster, the <xref linkend="app-pg-dumpall"> program is provided.
-    <application>pg_dumpall</> backs up each database in a given
+    <application>mdb_dumpall</> backs up each database in a given
     cluster, and also preserves cluster-wide data such as role and
     tablespace definitions. The basic usage of this command is:
 <synopsis>
-pg_dumpall &gt; <replaceable>outfile</>
+mdb_dumpall &gt; <replaceable>outfile</>
 </synopsis>
     The resulting dump can be restored with <application>psql</>:
 <synopsis>
@@ -210,25 +210,25 @@ psql -f <replaceable class="parameter">infile</replaceable> mollydb
     (Actually, you can specify any existing database name to start from,
     but if you are loading into an empty cluster then <literal>mollydb</>
     should usually be used.)  It is always necessary to have
-    database superuser access when restoring a <application>pg_dumpall</>
+    database superuser access when restoring a <application>mdb_dumpall</>
     dump, as that is required to restore the role and tablespace information.
     If you use tablespaces, make sure that the tablespace paths in the
     dump are appropriate for the new installation.
    </para>
 
    <para>
-    <application>pg_dumpall</> works by emitting commands to re-create
+    <application>mdb_dumpall</> works by emitting commands to re-create
     roles, tablespaces, and empty databases, then invoking
-    <application>pg_dump</> for each database.  This means that while
+    <application>mdb_dump</> for each database.  This means that while
     each database will be internally consistent, the snapshots of
     different databases are not synchronized.
    </para>
 
    <para>
     Cluster-wide data can be dumped alone using the
-    <application>pg_dumpall</> <option>--globals-only</> option.
+    <application>mdb_dumpall</> <option>--globals-only</> option.
     This is necessary to fully backup the cluster if running the
-    <application>pg_dump</> command on individual databases.
+    <application>mdb_dump</> command on individual databases.
    </para>
   </sect2>
 
@@ -237,8 +237,8 @@ psql -f <replaceable class="parameter">infile</replaceable> mollydb
 
    <para>
     Some operating systems have maximum file size limits that cause
-    problems when creating large <application>pg_dump</> output files.
-    Fortunately, <application>pg_dump</> can write to the standard
+    problems when creating large <application>mdb_dump</> output files.
+    Fortunately, <application>mdb_dump</> can write to the standard
     output, so you can use standard Unix tools to work around this
     potential problem.  There are several possible methods:
    </para>
@@ -250,7 +250,7 @@ psql -f <replaceable class="parameter">infile</replaceable> mollydb
      <application>gzip</application>:
 
 <programlisting>
-pg_dump <replaceable class="parameter">dbname</replaceable> | gzip &gt; <replaceable class="parameter">filename</replaceable>.gz
+mdb_dump <replaceable class="parameter">dbname</replaceable> | gzip &gt; <replaceable class="parameter">filename</replaceable>.gz
 </programlisting>
 
      Reload with:
@@ -276,7 +276,7 @@ cat <replaceable class="parameter">filename</replaceable>.gz | gunzip | psql <re
      make chunks of 1 megabyte:
 
 <programlisting>
-pg_dump <replaceable class="parameter">dbname</replaceable> | split -b 1m - <replaceable class="parameter">filename</replaceable>
+mdb_dump <replaceable class="parameter">dbname</replaceable> | split -b 1m - <replaceable class="parameter">filename</replaceable>
 </programlisting>
 
      Reload with:
@@ -288,7 +288,7 @@ cat <replaceable class="parameter">filename</replaceable>* | psql <replaceable c
    </formalpara>
 
    <formalpara>
-    <title>Use <application>pg_dump</>'s custom dump format.</title>
+    <title>Use <application>mdb_dump</>'s custom dump format.</title>
     <para>
      If <productname>MollyDB</productname> was built on a system with the
      <application>zlib</> compression library installed, the custom dump
@@ -298,14 +298,14 @@ cat <replaceable class="parameter">filename</replaceable>* | psql <replaceable c
      following command dumps a database using the custom dump format:
 
 <programlisting>
-pg_dump -Fc <replaceable class="parameter">dbname</replaceable> &gt; <replaceable class="parameter">filename</replaceable>
+mdb_dump -Fc <replaceable class="parameter">dbname</replaceable> &gt; <replaceable class="parameter">filename</replaceable>
 </programlisting>
 
      A custom-format dump is not a script for <application>psql</>, but
-     instead must be restored with <application>pg_restore</>, for example:
+     instead must be restored with <application>mdb_restore</>, for example:
 
 <programlisting>
-pg_restore -d <replaceable class="parameter">dbname</replaceable> <replaceable class="parameter">filename</replaceable>
+mdb_restore -d <replaceable class="parameter">dbname</replaceable> <replaceable class="parameter">filename</replaceable>
 </programlisting>
 
      See the <xref linkend="app-pgdump"> and <xref
@@ -319,21 +319,21 @@ pg_restore -d <replaceable class="parameter">dbname</replaceable> <replaceable c
    </para>
 
    <formalpara>
-    <title>Use <application>pg_dump</>'s parallel dump feature.</title>
+    <title>Use <application>mdb_dump</>'s parallel dump feature.</title>
     <para>
      To speed up the dump of a large database, you can use
-     <application>pg_dump</application>'s parallel mode. This will dump
+     <application>mdb_dump</application>'s parallel mode. This will dump
      multiple tables at the same time. You can control the degree of
      parallelism with the <command>-j</command> parameter. Parallel dumps
      are only supported for the "directory" archive format.
 
 <programlisting>
-pg_dump -j <replaceable class="parameter">num</replaceable> -F d -f <replaceable class="parameter">out.dir</replaceable> <replaceable class="parameter">dbname</replaceable>
+mdb_dump -j <replaceable class="parameter">num</replaceable> -F d -f <replaceable class="parameter">out.dir</replaceable> <replaceable class="parameter">dbname</replaceable>
 </programlisting>
 
-     You can use <command>pg_restore -j</command> to restore a dump in parallel.
+     You can use <command>mdb_restore -j</command> to restore a dump in parallel.
      This will work for any archive of either the "custom" or the "directory"
-     archive mode, whether or not it has been created with <command>pg_dump -j</command>.
+     archive mode, whether or not it has been created with <command>mdb_dump -j</command>.
     </para>
    </formalpara>
   </sect2>
@@ -356,7 +356,7 @@ tar -cf backup.tar /usr/local/mdb/data
 
   <para>
    There are two restrictions, however, which make this method
-   impractical, or at least inferior to the <application>pg_dump</>
+   impractical, or at least inferior to the <application>mdb_dump</>
    method:
 
    <orderedlist>
@@ -382,10 +382,10 @@ tar -cf backup.tar /usr/local/mdb/data
       directories. This will <emphasis>not</> work because the
       information contained in these files is not usable without
       the commit log files,
-      <filename>pg_clog/*</filename>, which contain the commit status of
+      <filename>mdb_clog/*</filename>, which contain the commit status of
       all transactions. A table file is only usable with this
       information. Of course it is also impossible to restore only a
-      table and the associated <filename>pg_clog</filename> data
+      table and the associated <filename>mdb_clog</filename> data
       because that would render all other tables in the database
       cluster useless.  So file system backups only work for complete
       backup and restoration of an entire database cluster.
@@ -449,7 +449,7 @@ tar -cf backup.tar /usr/local/mdb/data
 
   <para>
    Note that a file system backup will typically be larger
-   than an SQL dump. (<application>pg_dump</application> does not need to dump
+   than an SQL dump. (<application>mdb_dump</application> does not need to dump
    the contents of indexes for example, just the commands to recreate
    them.)  However, taking a file system backup might be faster.
   </para>
@@ -472,7 +472,7 @@ tar -cf backup.tar /usr/local/mdb/data
 
   <para>
    At all times, <productname>MollyDB</> maintains a
-   <firstterm>write ahead log</> (WAL) in the <filename>pg_xlog/</>
+   <firstterm>write ahead log</> (WAL) in the <filename>mdb_xlog/</>
    subdirectory of the cluster's data directory. The log records
    every change made to the database's data files.  This log exists
    primarily for crash-safety purposes: if the system crashes, the
@@ -527,8 +527,8 @@ tar -cf backup.tar /usr/local/mdb/data
 
   <note>
    <para>
-    <application>pg_dump</application> and
-    <application>pg_dumpall</application> do not produce file-system-level
+    <application>mdb_dump</application> and
+    <application>mdb_dumpall</application> do not produce file-system-level
     backups and cannot be used as part of a continuous-archiving solution.
     Such dumps are <emphasis>logical</> and do not contain enough
     information to be used by WAL replay.
@@ -616,7 +616,7 @@ archive_command = 'copy "%p" "C:\\server\\archivedir\\%f"'  # Windows
     <literal>%p</> and <literal>%f</> parameters have been replaced,
     the actual command executed might look like this:
 <programlisting>
-test ! -f /mnt/server/archivedir/00000001000000A900000065 &amp;&amp; cp pg_xlog/00000001000000A900000065 /mnt/server/archivedir/00000001000000A900000065
+test ! -f /mnt/server/archivedir/00000001000000A900000065 &amp;&amp; cp mdb_xlog/00000001000000A900000065 /mnt/server/archivedir/00000001000000A900000065
 </programlisting>
     A similar command will be generated for each new file to be archived.
    </para>
@@ -668,9 +668,9 @@ test ! -f /mnt/server/archivedir/00000001000000A900000065 &amp;&amp; cp pg_xlog/
     fills, nothing further can be archived until the tape is swapped.
     You should ensure that any error condition or request to a human operator
     is reported appropriately so that the situation can be
-    resolved reasonably quickly. The <filename>pg_xlog/</> directory will
+    resolved reasonably quickly. The <filename>mdb_xlog/</> directory will
     continue to fill with WAL segment files until the situation is resolved.
-    (If the file system containing <filename>pg_xlog/</> fills up,
+    (If the file system containing <filename>mdb_xlog/</> fills up,
     <productname>MollyDB</> will do a PANIC shutdown.  No committed
     transactions will be lost, but the database will remain offline until
     you free some space.)
@@ -682,7 +682,7 @@ test ! -f /mnt/server/archivedir/00000001000000A900000065 &amp;&amp; cp pg_xlog/
     operation continues even if the archiving process falls a little behind.
     If archiving falls significantly behind, this will increase the amount of
     data that would be lost in the event of a disaster. It will also mean that
-    the <filename>pg_xlog/</> directory will contain large numbers of
+    the <filename>mdb_xlog/</> directory will contain large numbers of
     not-yet-archived segment files, which could eventually exceed available
     disk space. You are advised to monitor the archiving process to ensure that
     it is working as you intend.
@@ -700,8 +700,8 @@ test ! -f /mnt/server/archivedir/00000001000000A900000065 &amp;&amp; cp pg_xlog/
     Note that although WAL archiving will allow you to restore any
     modifications made to the data in your <productname>MollyDB</> database,
     it will not restore changes made to configuration files (that is,
-    <filename>mollydb.conf</>, <filename>pg_hba.conf</> and
-    <filename>pg_ident.conf</>), since those are edited manually rather
+    <filename>mollydb.conf</>, <filename>mdb_hba.conf</> and
+    <filename>mdb_ident.conf</>), since those are edited manually rather
     than through SQL operations.
     You might wish to keep the configuration files in a location that will
     be backed up by your regular file system backup procedures.  See
@@ -726,7 +726,7 @@ test ! -f /mnt/server/archivedir/00000001000000A900000065 &amp;&amp; cp pg_xlog/
 
    <para>
     Also, you can force a segment switch manually with
-    <function>pg_switch_xlog</> if you want to ensure that a
+    <function>mdb_switch_xlog</> if you want to ensure that a
     just-finished transaction is archived as soon as possible.  Other utility
     functions related to WAL management are listed in <xref
     linkend="functions-admin-backup-table">.
@@ -743,7 +743,7 @@ test ! -f /mnt/server/archivedir/00000001000000A900000065 &amp;&amp; cp pg_xlog/
     configuration file reload.  If you wish to temporarily stop archiving,
     one way to do it is to set <varname>archive_command</> to the empty
     string (<literal>''</>).
-    This will cause WAL files to accumulate in <filename>pg_xlog/</> until a
+    This will cause WAL files to accumulate in <filename>mdb_xlog/</> until a
     working <varname>archive_command</> is re-established.
    </para>
   </sect2>
@@ -842,19 +842,19 @@ test ! -f /mnt/server/archivedir/00000001000000A900000065 &amp;&amp; cp pg_xlog/
    <listitem>
     <para>
      Connect to the server (it does not matter which database) as a user with
-     rights to run pg_start_backup (superuser, or a user who has been granted
+     rights to run mdb_start_backup (superuser, or a user who has been granted
      EXECUTE on the function) and issue the command:
 <programlisting>
-SELECT pg_start_backup('label', false, false);
+SELECT mdb_start_backup('label', false, false);
 </programlisting>
      where <literal>label</> is any string you want to use to uniquely
      identify this backup operation. The connection
-     calling <function>pg_start_backup</> must be maintained until the end of
+     calling <function>mdb_start_backup</> must be maintained until the end of
      the backup, or the backup will be automatically aborted.
     </para>
 
     <para>
-     By default, <function>pg_start_backup</> can take a long time to finish.
+     By default, <function>mdb_start_backup</> can take a long time to finish.
      This is because it performs a checkpoint, and the I/O
      required for the checkpoint will be spread out over a significant
      period of time, by default half your inter-checkpoint interval
@@ -867,15 +867,15 @@ SELECT pg_start_backup('label', false, false);
 
     <para>
      The third parameter being <literal>false</> tells
-     <function>pg_start_backup</> to initiate a non-exclusive base backup.
+     <function>mdb_start_backup</> to initiate a non-exclusive base backup.
     </para>
    </listitem>
    <listitem>
     <para>
      Perform the backup, using any convenient file-system-backup tool
      such as <application>tar</> or <application>cpio</> (not
-     <application>pg_dump</application> or
-     <application>pg_dumpall</application>).  It is neither
+     <application>mdb_dump</application> or
+     <application>mdb_dumpall</application>).  It is neither
      necessary nor desirable to stop normal operation of the database
      while you do this. See section
      <xref linkend="backup-lowlevel-base-backup-data"> for things to
@@ -886,7 +886,7 @@ SELECT pg_start_backup('label', false, false);
     <para>
      In the same connection as before, issue the command:
 <programlisting>
-SELECT * FROM pg_stop_backup(false);
+SELECT * FROM mdb_stop_backup(false);
 </programlisting>
      This terminates the backup mode and performs an automatic switch to
      the next WAL segment.  The reason for the switch is to arrange for
@@ -894,7 +894,7 @@ SELECT * FROM pg_stop_backup(false);
      ready to archive.
     </para>
     <para>
-     The <function>pg_stop_backup</> will return one row with three
+     The <function>mdb_stop_backup</> will return one row with three
      values. The second of these fields should be written to a file named
      <filename>backup_label</> in the root directory of the backup. The
      third field should be written to a file named
@@ -905,10 +905,10 @@ SELECT * FROM pg_stop_backup(false);
    <listitem>
     <para>
      Once the WAL segment files active during the backup are archived, you are
-     done.  The file identified by <function>pg_stop_backup</>'s first return
+     done.  The file identified by <function>mdb_stop_backup</>'s first return
      value is the last segment that is required to form a complete set of
      backup files.  If <varname>archive_mode</> is enabled,
-     <function>pg_stop_backup</> does not return until the last segment has
+     <function>mdb_stop_backup</> does not return until the last segment has
      been archived.
      Archiving of these files happens automatically since you have
      already configured <varname>archive_command</>. In most cases this
@@ -918,9 +918,9 @@ SELECT * FROM pg_stop_backup(false);
      because of failures of the archive command, it will keep retrying
      until the archive succeeds and the backup is complete.
      If you wish to place a time limit on the execution of
-     <function>pg_stop_backup</>, set an appropriate
+     <function>mdb_stop_backup</>, set an appropriate
      <varname>statement_timeout</varname> value, but make note that if
-     <function>pg_stop_backup</> terminates because of this your backup
+     <function>mdb_stop_backup</> terminates because of this your backup
      may not be valid.
     </para>
    </listitem>
@@ -947,25 +947,25 @@ SELECT * FROM pg_stop_backup(false);
    <listitem>
     <para>
      Connect to the server (it does not matter which database) as a user with
-     rights to run pg_start_backup (superuser, or a user who has been granted
+     rights to run mdb_start_backup (superuser, or a user who has been granted
      EXECUTE on the function) and issue the command:
 <programlisting>
-SELECT pg_start_backup('label');
+SELECT mdb_start_backup('label');
 </programlisting>
      where <literal>label</> is any string you want to use to uniquely
      identify this backup operation.
-     <function>pg_start_backup</> creates a <firstterm>backup label</> file,
+     <function>mdb_start_backup</> creates a <firstterm>backup label</> file,
      called <filename>backup_label</>, in the cluster directory with
      information about your backup, including the start time and label string.
      The function also creates a <firstterm>tablespace map</> file,
      called <filename>tablespace_map</>, in the cluster directory with
-     information about tablespace symbolic links in <filename>pg_tblspc/</> if
+     information about tablespace symbolic links in <filename>mdb_tblspc/</> if
      one or more such link is present.  Both files are critical to the
      integrity of the backup, should you need to restore from it.
     </para>
 
     <para>
-     By default, <function>pg_start_backup</> can take a long time to finish.
+     By default, <function>mdb_start_backup</> can take a long time to finish.
      This is because it performs a checkpoint, and the I/O
      required for the checkpoint will be spread out over a significant
      period of time, by default half your inter-checkpoint interval
@@ -975,7 +975,7 @@ SELECT pg_start_backup('label');
      processing.  If you want to start the backup as soon as
      possible, use:
 <programlisting>
-SELECT pg_start_backup('label', true);
+SELECT mdb_start_backup('label', true);
 </programlisting>
      This forces the checkpoint to be done as quickly as possible.
     </para>
@@ -984,8 +984,8 @@ SELECT pg_start_backup('label', true);
     <para>
      Perform the backup, using any convenient file-system-backup tool
      such as <application>tar</> or <application>cpio</> (not
-     <application>pg_dump</application> or
-     <application>pg_dumpall</application>).  It is neither
+     <application>mdb_dump</application> or
+     <application>mdb_dumpall</application>).  It is neither
      necessary nor desirable to stop normal operation of the database
      while you do this. See section
      <xref linkend="backup-lowlevel-base-backup-data"> for things to
@@ -995,10 +995,10 @@ SELECT pg_start_backup('label', true);
    <listitem>
     <para>
      Again connect to the database as a user with rights to run
-     pg_stop_backup (superuser, or a user who has been granted EXECUTE on
+     mdb_stop_backup (superuser, or a user who has been granted EXECUTE on
      the function), and issue the command:
 <programlisting>
-SELECT pg_stop_backup();
+SELECT mdb_stop_backup();
 </programlisting>
      This terminates the backup mode and performs an automatic switch to
      the next WAL segment.  The reason for the switch is to arrange for
@@ -1009,10 +1009,10 @@ SELECT pg_stop_backup();
    <listitem>
     <para>
      Once the WAL segment files active during the backup are archived, you are
-     done.  The file identified by <function>pg_stop_backup</>'s result is
+     done.  The file identified by <function>mdb_stop_backup</>'s result is
      the last segment that is required to form a complete set of backup files.
      If <varname>archive_mode</> is enabled,
-     <function>pg_stop_backup</> does not return until the last segment has
+     <function>mdb_stop_backup</> does not return until the last segment has
      been archived.
      Archiving of these files happens automatically since you have
      already configured <varname>archive_command</>. In most cases this
@@ -1022,9 +1022,9 @@ SELECT pg_stop_backup();
      because of failures of the archive command, it will keep retrying
      until the archive succeeds and the backup is complete.
      If you wish to place a time limit on the execution of
-     <function>pg_stop_backup</>, set an appropriate
+     <function>mdb_stop_backup</>, set an appropriate
      <varname>statement_timeout</varname> value, but make note that if
-     <function>pg_stop_backup</> terminates because of this your backup
+     <function>mdb_stop_backup</> terminates because of this your backup
      may not be valid.
     </para>
    </listitem>
@@ -1062,21 +1062,21 @@ SELECT pg_stop_backup();
 
    <para>
     You should, however, omit from the backup the files within the
-    cluster's <filename>pg_xlog/</> subdirectory.  This
+    cluster's <filename>mdb_xlog/</> subdirectory.  This
     slight adjustment is worthwhile because it reduces the risk
     of mistakes when restoring.  This is easy to arrange if
-    <filename>pg_xlog/</> is a symbolic link pointing to someplace outside
+    <filename>mdb_xlog/</> is a symbolic link pointing to someplace outside
     the cluster directory, which is a common setup anyway for performance
     reasons.  You might also want to exclude <filename>postmaster.pid</>
     and <filename>postmaster.opts</>, which record information
     about the running <application>postmaster</>, not about the
     <application>postmaster</> which will eventually use this backup.
-    (These files can confuse <application>pg_ctl</>.)
+    (These files can confuse <application>mdb_ctl</>.)
    </para>
 
    <para>
     It is often a good idea to also omit from the backup the files
-    within the cluster's <filename>pg_replslot/</> directory, so that
+    within the cluster's <filename>mdb_replslot/</> directory, so that
     replication slots that exist on the master do not become part of the
     backup.  Otherwise, the subsequent use of the backup to create a standby
     may result in indefinite retention of WAL files on the standby, and
@@ -1091,13 +1091,13 @@ SELECT pg_stop_backup();
 
    <para>
     The backup label
-    file includes the label string you gave to <function>pg_start_backup</>,
-    as well as the time at which <function>pg_start_backup</> was run, and
+    file includes the label string you gave to <function>mdb_start_backup</>,
+    as well as the time at which <function>mdb_start_backup</> was run, and
     the name of the starting WAL file.  In case of confusion it is therefore
     possible to look inside a backup file and determine exactly which
     backup session the dump file came from.  The tablespace map file includes
     the symbolic link names as they exist in the directory
-    <filename>pg_tblspc/</> and the full path of each symbolic link.
+    <filename>mdb_tblspc/</> and the full path of each symbolic link.
     These files are not merely for your information; their presence and
     contents are critical to the proper operation of the system's recovery
     process.
@@ -1106,7 +1106,7 @@ SELECT pg_stop_backup();
    <para>
     It is also possible to make a backup while the server is
     stopped.  In this case, you obviously cannot use
-    <function>pg_start_backup</> or <function>pg_stop_backup</>, and
+    <function>mdb_start_backup</> or <function>mdb_stop_backup</>, and
     you will therefore be left to your own devices to keep track of which
     backup is which and how far back the associated WAL files go.
     It is generally better to follow the continuous archiving procedure above.
@@ -1133,7 +1133,7 @@ SELECT pg_stop_backup();
      location in case you need them later. Note that this precaution will
      require that you have enough free space on your system to hold two
      copies of your existing database. If you do not have enough space,
-     you should at least save the contents of the cluster's <filename>pg_xlog</>
+     you should at least save the contents of the cluster's <filename>mdb_xlog</>
      subdirectory, as it might contain logs which
      were not archived before the system went down.
     </para>
@@ -1150,15 +1150,15 @@ SELECT pg_stop_backup();
      are restored with the right ownership (the database system user, not
      <literal>root</>!) and with the right permissions.  If you are using
      tablespaces,
-     you should verify that the symbolic links in <filename>pg_tblspc/</>
+     you should verify that the symbolic links in <filename>mdb_tblspc/</>
      were correctly restored.
     </para>
    </listitem>
    <listitem>
     <para>
-     Remove any files present in <filename>pg_xlog/</>; these came from the
+     Remove any files present in <filename>mdb_xlog/</>; these came from the
      file system backup and are therefore probably obsolete rather than current.
-     If you didn't archive <filename>pg_xlog/</> at all, then recreate
+     If you didn't archive <filename>mdb_xlog/</> at all, then recreate
      it with proper permissions,
      being careful to ensure that you re-establish it as a symbolic link
      if you had it set up that way before.
@@ -1167,7 +1167,7 @@ SELECT pg_stop_backup();
    <listitem>
     <para>
      If you have unarchived WAL segment files that you saved in step 2,
-     copy them into <filename>pg_xlog/</>.  (It is best to copy them,
+     copy them into <filename>mdb_xlog/</>.  (It is best to copy them,
      not move them, so you still have the unmodified files if a
      problem occurs and you have to start over.)
     </para>
@@ -1176,7 +1176,7 @@ SELECT pg_stop_backup();
     <para>
      Create a recovery command file <filename>recovery.conf</> in the cluster
      data directory (see <xref linkend="recovery-config">). You might
-     also want to temporarily modify <filename>pg_hba.conf</> to prevent
+     also want to temporarily modify <filename>mdb_hba.conf</> to prevent
      ordinary users from connecting until you are sure the recovery was successful.
     </para>
    </listitem>
@@ -1196,7 +1196,7 @@ SELECT pg_stop_backup();
     <para>
      Inspect the contents of the database to ensure you have recovered to
      the desired state.  If not, return to step 1.  If all is well,
-     allow your users to connect by restoring <filename>pg_hba.conf</> to normal.
+     allow your users to connect by restoring <filename>mdb_hba.conf</> to normal.
     </para>
    </listitem>
   </orderedlist>
@@ -1249,9 +1249,9 @@ restore_command = 'cp /mnt/server/archivedir/%f %p'
 
    <para>
     WAL segments that cannot be found in the archive will be sought in
-    <filename>pg_xlog/</>; this allows use of recent un-archived segments.
+    <filename>mdb_xlog/</>; this allows use of recent un-archived segments.
     However, segments that are available from the archive will be used in
-    preference to files in <filename>pg_xlog/</>.
+    preference to files in <filename>mdb_xlog/</>.
    </para>
 
    <para>
@@ -1281,7 +1281,7 @@ restore_command = 'cp /mnt/server/archivedir/%f %p'
    <note>
      <para>
       The stop point must be after the ending time of the base backup, i.e.,
-      the end time of <function>pg_stop_backup</>.  You cannot use a base backup
+      the end time of <function>mdb_stop_backup</>.  You cannot use a base backup
       to recover to a time when that backup was in progress.  (To
       recover to such a time, you must go back to your previous base backup
       and roll forward from there.)
@@ -1299,7 +1299,7 @@ restore_command = 'cp /mnt/server/archivedir/%f %p'
     be restarted and it will restart almost from where it failed.
     Recovery restart works much like checkpointing in normal operation:
     the server periodically forces all its state to disk, and then updates
-    the <filename>pg_control</> file to indicate that the already-processed
+    the <filename>mdb_control</> file to indicate that the already-processed
     WAL data need not be scanned again.
    </para>
 
@@ -1387,8 +1387,8 @@ restore_command = 'cp /mnt/server/archivedir/%f %p'
       It is possible to use <productname>MollyDB</>'s backup facilities to
       produce standalone hot backups. These are backups that cannot be used
       for point-in-time recovery, yet are typically much faster to backup and
-      restore than <application>pg_dump</> dumps.  (They are also much larger
-      than <application>pg_dump</> dumps, so in some cases the speed advantage
+      restore than <application>mdb_dump</> dumps.  (They are also much larger
+      than <application>mdb_dump</> dumps, so in some cases the speed advantage
       might be negated.)
      </para>
 
@@ -1422,9 +1422,9 @@ archive_command = 'test ! -f /var/lib/mdb/backup_in_progress || (test ! -f /var/
       following:
 <programlisting>
 touch /var/lib/mdb/backup_in_progress
-psql -c "select pg_start_backup('hot_backup');"
+psql -c "select mdb_start_backup('hot_backup');"
 tar -cf /var/lib/mdb/backup.tar /var/lib/mdb/data/
-psql -c "select pg_stop_backup();"
+psql -c "select mdb_stop_backup();"
 rm /var/lib/mdb/backup_in_progress
 tar -rf /var/lib/mdb/backup.tar /var/lib/mdb/archive/
 </programlisting>

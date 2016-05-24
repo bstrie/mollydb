@@ -416,7 +416,7 @@ dblink(text sql [, bool fail_on_error]) returns setof record
 
 <programlisting>
 SELECT *
-    FROM dblink('dbname=mydb', 'select proname, prosrc from pg_proc')
+    FROM dblink('dbname=mydb', 'select proname, prosrc from mdb_proc')
       AS t1(proname name, prosrc text)
     WHERE proname LIKE 'bytea%';
 </programlisting>
@@ -448,12 +448,12 @@ SELECT *
     instead of having to spell it out in every query.  For example,
 
 <programlisting>
-CREATE VIEW myremote_pg_proc AS
+CREATE VIEW myremote_mdb_proc AS
   SELECT *
-    FROM dblink('dbname=mollydb', 'select proname, prosrc from pg_proc')
+    FROM dblink('dbname=mollydb', 'select proname, prosrc from mdb_proc')
     AS t1(proname name, prosrc text);
 
-SELECT * FROM myremote_pg_proc WHERE proname LIKE 'bytea%';
+SELECT * FROM myremote_mdb_proc WHERE proname LIKE 'bytea%';
 </programlisting></para>
   </refsect1>
 
@@ -461,7 +461,7 @@ SELECT * FROM myremote_pg_proc WHERE proname LIKE 'bytea%';
    <title>Examples</title>
 
 <screen>
-SELECT * FROM dblink('dbname=mollydb', 'select proname, prosrc from pg_proc')
+SELECT * FROM dblink('dbname=mollydb', 'select proname, prosrc from mdb_proc')
   AS t1(proname name, prosrc text) WHERE proname LIKE 'bytea%';
   proname   |   prosrc
 ------------+------------
@@ -485,7 +485,7 @@ SELECT dblink_connect('dbname=mollydb');
  OK
 (1 row)
 
-SELECT * FROM dblink('select proname, prosrc from pg_proc')
+SELECT * FROM dblink('select proname, prosrc from mdb_proc')
   AS t1(proname name, prosrc text) WHERE proname LIKE 'bytea%';
   proname   |   prosrc
 ------------+------------
@@ -509,7 +509,7 @@ SELECT dblink_connect('myconn', 'dbname=regression');
  OK
 (1 row)
 
-SELECT * FROM dblink('myconn', 'select proname, prosrc from pg_proc')
+SELECT * FROM dblink('myconn', 'select proname, prosrc from mdb_proc')
   AS t1(proname name, prosrc text) WHERE proname LIKE 'bytea%';
   proname   |   prosrc
 ------------+------------
@@ -657,7 +657,7 @@ SELECT dblink_exec('myconn', 'insert into foo values(21,''z'',''{"a0","b0","c0"}
  INSERT 6432584 1
 (1 row)
 
-SELECT dblink_exec('myconn', 'insert into pg_class values (''foo'')',false);
+SELECT dblink_exec('myconn', 'insert into mdb_class values (''foo'')',false);
 NOTICE:  sql error
 DETAIL:  ERROR:  null value in column "relnamespace" violates not-null constraint
 
@@ -729,7 +729,7 @@ dblink_open(text connname, text cursorname, text sql [, bool fail_on_error]) ret
      <listitem>
       <para>
        The <command>SELECT</> statement that you wish to execute in the remote
-       database, for example <literal>select * from pg_class</>.
+       database, for example <literal>select * from mdb_class</>.
       </para>
      </listitem>
     </varlistentry>
@@ -784,7 +784,7 @@ SELECT dblink_connect('dbname=mollydb');
  OK
 (1 row)
 
-SELECT dblink_open('foo', 'select proname, prosrc from pg_proc');
+SELECT dblink_open('foo', 'select proname, prosrc from mdb_proc');
  dblink_open
 -------------
  OK
@@ -905,7 +905,7 @@ SELECT dblink_connect('dbname=mollydb');
  OK
 (1 row)
 
-SELECT dblink_open('foo', 'select proname, prosrc from pg_proc where proname like ''bytea%''');
+SELECT dblink_open('foo', 'select proname, prosrc from mdb_proc where proname like ''bytea%''');
  dblink_open
 -------------
  OK
@@ -1042,7 +1042,7 @@ SELECT dblink_connect('dbname=mollydb');
  OK
 (1 row)
 
-SELECT dblink_open('foo', 'select proname, prosrc from pg_proc');
+SELECT dblink_open('foo', 'select proname, prosrc from mdb_proc');
  dblink_open
 -------------
  OK
@@ -1223,7 +1223,7 @@ dblink_send_query(text connname, text sql) returns int
      <listitem>
       <para>
        The SQL statement that you wish to execute in the remote database,
-       for example <literal>select * from pg_class</>.
+       for example <literal>select * from mdb_class</>.
       </para>
      </listitem>
     </varlistentry>

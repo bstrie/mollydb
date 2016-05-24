@@ -313,7 +313,7 @@ SELECT jsonb_build_object('a',1,'b',1.2,'c',true,'d',null,'e',json '{"x": 3, "y"
 SELECT jsonb_build_object(
        'a', jsonb_build_object('b',false,'c',99),
        'd', jsonb_build_object('e',array[9,8,7]::int[],
-           'f', (select row_to_json(r) from ( select relkind, oid::regclass as name from pg_class where relname = 'pg_class') r)));
+           'f', (select row_to_json(r) from ( select relkind, oid::regclass as name from mdb_class where relname = 'mdb_class') r)));
 
 
 -- empty objects/arrays
@@ -751,10 +751,10 @@ select '{"c": 1}'::jsonb || '["a", "b"]';
 
 select '{}'::jsonb || '{"cq":"l", "b":"g", "fg":false}';
 
-select pg_column_size('{}'::jsonb || '{}'::jsonb) = pg_column_size('{}'::jsonb);
-select pg_column_size('{"aa":1}'::jsonb || '{"b":2}'::jsonb) = pg_column_size('{"aa":1, "b":2}'::jsonb);
-select pg_column_size('{"aa":1, "b":2}'::jsonb || '{}'::jsonb) = pg_column_size('{"aa":1, "b":2}'::jsonb);
-select pg_column_size('{}'::jsonb || '{"aa":1, "b":2}'::jsonb) = pg_column_size('{"aa":1, "b":2}'::jsonb);
+select mdb_column_size('{}'::jsonb || '{}'::jsonb) = mdb_column_size('{}'::jsonb);
+select mdb_column_size('{"aa":1}'::jsonb || '{"b":2}'::jsonb) = mdb_column_size('{"aa":1, "b":2}'::jsonb);
+select mdb_column_size('{"aa":1, "b":2}'::jsonb || '{}'::jsonb) = mdb_column_size('{"aa":1, "b":2}'::jsonb);
+select mdb_column_size('{}'::jsonb || '{"aa":1, "b":2}'::jsonb) = mdb_column_size('{"aa":1, "b":2}'::jsonb);
 
 select jsonb_delete('{"a":1 , "b":2, "c":3}'::jsonb, 'a');
 select jsonb_delete('{"a":null , "b":2, "c":3}'::jsonb, 'a');
@@ -766,7 +766,7 @@ select '{"a":null , "b":2, "c":3}'::jsonb - 'a';
 select '{"a":1 , "b":2, "c":3}'::jsonb - 'b';
 select '{"a":1 , "b":2, "c":3}'::jsonb - 'c';
 select '{"a":1 , "b":2, "c":3}'::jsonb - 'd';
-select pg_column_size('{"a":1 , "b":2, "c":3}'::jsonb - 'b') = pg_column_size('{"a":1, "b":2}'::jsonb);
+select mdb_column_size('{"a":1 , "b":2, "c":3}'::jsonb - 'b') = mdb_column_size('{"a":1, "b":2}'::jsonb);
 
 select '["a","b","c"]'::jsonb - 3;
 select '["a","b","c"]'::jsonb - 2;

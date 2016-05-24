@@ -36,7 +36,7 @@ typedef struct
 	 * this isn't a concrete buffer - we only ever increase the value. So, to
 	 * get an actual buffer, it needs to be used modulo NBuffers.
 	 */
-	pg_atomic_uint32 nextVictimBuffer;
+	mdb_atomic_uint32 nextVictimBuffer;
 
 	int			firstFreeBuffer;	/* Head of list of unused buffers */
 	int			lastFreeBuffer; /* Tail of list of unused buffers */
@@ -51,7 +51,7 @@ typedef struct
 	 * overflow during a single bgwriter cycle.
 	 */
 	uint32		completePasses; /* Complete cycles of the clock sweep */
-	pg_atomic_uint32 numBufferAllocs;	/* Buffers allocated since last reset */
+	mdb_atomic_uint32 numBufferAllocs;	/* Buffers allocated since last reset */
 
 	/*
 	 * Bgworker process to be notified upon activity or -1 if none. See
@@ -120,7 +120,7 @@ ClockSweepTick(void)
 	 * apparent order.
 	 */
 	victim =
-		pg_atomic_fetch_add_u32(&StrategyControl->nextVictimBuffer, 1);
+		mdb_atomic_fetch_add_u32(&StrategyControl->nextVictimBuffer, 1);
 
 	if (victim >= NBuffers)
 	{
@@ -157,7 +157,7 @@ ClockSweepTick(void)
 
 				wrapped = expected % NBuffers;
 
-				success = pg_atomic_compare_exchange_u32(&StrategyControl->nextVictimBuffer,
+				success = mdb_atomic_compare_exchange_u32(&StrategyControl->nextVictimBuffer,
 														 &expected, wrapped);
 				if (success)
 					StrategyControl->completePasses++;
@@ -230,7 +230,7 @@ StrategyGetBuffer(BufferAccessStrategy strategy, uint32 *buf_state)
 	 * the rate of buffer consumption.  Note that buffers recycled by a
 	 * strategy object are intentionally not counted here.
 	 */
-	pg_atomic_fetch_add_u32(&StrategyControl->numBufferAllocs, 1);
+	mdb_atomic_fetch_add_u32(&StrategyControl->numBufferAllocs, 1);
 
 	/*
 	 * First check, without acquiring the lock, whether there's buffers in the
@@ -381,7 +381,7 @@ StrategySyncStart(uint32 *complete_passes, uint32 *num_buf_alloc)
 	int			result;
 
 	SpinLockAcquire(&StrategyControl->buffer_strategy_lock);
-	nextVictimBuffer = pg_atomic_read_u32(&StrategyControl->nextVictimBuffer);
+	nextVictimBuffer = mdb_atomic_read_u32(&StrategyControl->nextVictimBuffer);
 	result = nextVictimBuffer % NBuffers;
 
 	if (complete_passes)
@@ -397,7 +397,7 @@ StrategySyncStart(uint32 *complete_passes, uint32 *num_buf_alloc)
 
 	if (num_buf_alloc)
 	{
-		*num_buf_alloc = pg_atomic_exchange_u32(&StrategyControl->numBufferAllocs, 0);
+		*num_buf_alloc = mdb_atomic_exchange_u32(&StrategyControl->numBufferAllocs, 0);
 	}
 	SpinLockRelease(&StrategyControl->buffer_strategy_lock);
 	return result;
@@ -496,11 +496,11 @@ StrategyInitialize(bool init)
 		StrategyControl->lastFreeBuffer = NBuffers - 1;
 
 		/* Initialize the clock sweep pointer */
-		pg_atomic_init_u32(&StrategyControl->nextVictimBuffer, 0);
+		mdb_atomic_init_u32(&StrategyControl->nextVictimBuffer, 0);
 
 		/* Clear statistics */
 		StrategyControl->completePasses = 0;
-		pg_atomic_init_u32(&StrategyControl->numBufferAllocs, 0);
+		mdb_atomic_init_u32(&StrategyControl->numBufferAllocs, 0);
 
 		/* No pending notification */
 		StrategyControl->bgwprocno = -1;

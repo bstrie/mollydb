@@ -3,7 +3,7 @@
  * subtrans.c
  *		MollyDB subtransaction-log manager
  *
- * The pg_subtrans manager is a pg_clog-like manager that stores the parent
+ * The mdb_subtrans manager is a mdb_clog-like manager that stores the parent
  * transaction Id for each transaction.  It is a fundamental part of the
  * nested transactions implementation.  A main transaction has a parent
  * of InvalidTransactionId, and each subtransaction has its immediate parent.
@@ -11,8 +11,8 @@
  * opposite direction.
  *
  * This code is based on clog.c, but the robustness requirements
- * are completely different from pg_clog, because we only need to remember
- * pg_subtrans information for currently-open transactions.  Thus, there is
+ * are completely different from mdb_clog, because we only need to remember
+ * mdb_subtrans information for currently-open transactions.  Thus, there is
  * no need to preserve data over a crash and restart.
  *
  * There are no XLOG interactions since we do not care about preserving
@@ -31,7 +31,7 @@
 #include "access/slru.h"
 #include "access/subtrans.h"
 #include "access/transam.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "utils/snapmgr.h"
 
 
@@ -180,7 +180,7 @@ SUBTRANSShmemInit(void)
 {
 	SubTransCtl->PagePrecedes = SubTransPagePrecedes;
 	SimpleLruInit(SubTransCtl, "subtrans", NUM_SUBTRANS_BUFFERS, 0,
-				  SubtransControlLock, "pg_subtrans",
+				  SubtransControlLock, "mdb_subtrans",
 				  LWTRANCHE_SUBTRANS_BUFFERS);
 	/* Override default assumption that writes should be fsync'd */
 	SubTransCtl->do_fsync = false;
@@ -241,7 +241,7 @@ StartupSUBTRANS(TransactionId oldestActiveXID)
 	int			endPage;
 
 	/*
-	 * Since we don't expect pg_subtrans to be valid across crashes, we
+	 * Since we don't expect mdb_subtrans to be valid across crashes, we
 	 * initialize the currently-active page(s) to zeroes during startup.
 	 * Whenever we advance into a new page, ExtendSUBTRANS will likewise zero
 	 * the new page without regard to whatever was previously on disk.

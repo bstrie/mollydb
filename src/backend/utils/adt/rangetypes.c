@@ -1472,7 +1472,7 @@ tstzrange_subdiff(PG_FUNCTION_ARGS)
  *----------------------------------------------------------
  * SUPPORT FUNCTIONS
  *
- *	 These functions aren't in pg_proc, but are useful for
+ *	 These functions aren't in mdb_proc, but are useful for
  *	 defining new generic range functions in C.
  *----------------------------------------------------------
  */
@@ -1999,7 +1999,7 @@ range_parse(const char *string, char *flags, char **lbound_str,
 		ptr++;
 
 	/* check for empty range */
-	if (pg_strncasecmp(ptr, RANGE_EMPTY_LITERAL,
+	if (mdb_strncasecmp(ptr, RANGE_EMPTY_LITERAL,
 					   strlen(RANGE_EMPTY_LITERAL)) == 0)
 	{
 		*flags = RANGE_EMPTY;

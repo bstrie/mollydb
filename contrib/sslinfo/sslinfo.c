@@ -158,7 +158,7 @@ ASN1_STRING_to_text(ASN1_STRING *str)
 	nullterm = '\0';
 	BIO_write(membuf, &nullterm, 1);
 	size = BIO_get_mem_data(membuf, &sp);
-	dp = pg_any_to_server(sp, size - 1, PG_UTF8);
+	dp = mdb_any_to_server(sp, size - 1, PG_UTF8);
 	result = cstring_to_text(dp);
 	if (dp != sp)
 		pfree(dp);
@@ -334,7 +334,7 @@ X509_NAME_to_text(X509_NAME *name)
 	nullterm = '\0';
 	BIO_write(membuf, &nullterm, 1);
 	size = BIO_get_mem_data(membuf, &sp);
-	dp = pg_any_to_server(sp, size - 1, PG_UTF8);
+	dp = mdb_any_to_server(sp, size - 1, PG_UTF8);
 	result = cstring_to_text(dp);
 	if (dp != sp)
 		pfree(dp);

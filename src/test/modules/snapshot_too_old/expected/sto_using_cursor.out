@@ -6,8 +6,8 @@ step s1f1: FETCH FIRST FROM cursor1;
 c              
 
 1              
-step s1sleep: SELECT setting, pg_sleep(6) FROM pg_settings WHERE name = 'old_snapshot_threshold';
-setting        pg_sleep       
+step s1sleep: SELECT setting, mdb_sleep(6) FROM mdb_settings WHERE name = 'old_snapshot_threshold';
+setting        mdb_sleep       
 
 0                             
 step s1f2: FETCH FIRST FROM cursor1;
@@ -22,8 +22,8 @@ step s1f1: FETCH FIRST FROM cursor1;
 c              
 
 1              
-step s1sleep: SELECT setting, pg_sleep(6) FROM pg_settings WHERE name = 'old_snapshot_threshold';
-setting        pg_sleep       
+step s1sleep: SELECT setting, mdb_sleep(6) FROM mdb_settings WHERE name = 'old_snapshot_threshold';
+setting        mdb_sleep       
 
 0                             
 step s2u: UPDATE sto1 SET c = 1001 WHERE c = 1;
@@ -37,8 +37,8 @@ c
 
 1              
 step s2u: UPDATE sto1 SET c = 1001 WHERE c = 1;
-step s1sleep: SELECT setting, pg_sleep(6) FROM pg_settings WHERE name = 'old_snapshot_threshold';
-setting        pg_sleep       
+step s1sleep: SELECT setting, mdb_sleep(6) FROM mdb_settings WHERE name = 'old_snapshot_threshold';
+setting        mdb_sleep       
 
 0                             
 step s1f2: FETCH FIRST FROM cursor1;
@@ -51,8 +51,8 @@ step s1f1: FETCH FIRST FROM cursor1;
 c              
 
 1              
-step s1sleep: SELECT setting, pg_sleep(6) FROM pg_settings WHERE name = 'old_snapshot_threshold';
-setting        pg_sleep       
+step s1sleep: SELECT setting, mdb_sleep(6) FROM mdb_settings WHERE name = 'old_snapshot_threshold';
+setting        mdb_sleep       
 
 0                             
 step s1f2: FETCH FIRST FROM cursor1;
@@ -65,8 +65,8 @@ step s1f1: FETCH FIRST FROM cursor1;
 c              
 
 2              
-step s1sleep: SELECT setting, pg_sleep(6) FROM pg_settings WHERE name = 'old_snapshot_threshold';
-setting        pg_sleep       
+step s1sleep: SELECT setting, mdb_sleep(6) FROM mdb_settings WHERE name = 'old_snapshot_threshold';
+setting        mdb_sleep       
 
 0                             
 step s1f2: FETCH FIRST FROM cursor1;

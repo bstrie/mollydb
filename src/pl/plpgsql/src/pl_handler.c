@@ -16,8 +16,8 @@
 #include "plmdb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "miscadmin.h"
 #include "utils/builtins.h"
@@ -64,9 +64,9 @@ plmdb_extra_checks_check_hook(char **newvalue, void **extra, GucSource source)
 	int			extrachecks = 0;
 	int		   *myextra;
 
-	if (pg_strcasecmp(*newvalue, "all") == 0)
+	if (mdb_strcasecmp(*newvalue, "all") == 0)
 		extrachecks = PLPGSQL_XCHECK_ALL;
-	else if (pg_strcasecmp(*newvalue, "none") == 0)
+	else if (mdb_strcasecmp(*newvalue, "none") == 0)
 		extrachecks = PLPGSQL_XCHECK_NONE;
 	else
 	{
@@ -87,9 +87,9 @@ plmdb_extra_checks_check_hook(char **newvalue, void **extra, GucSource source)
 		{
 			char	   *tok = (char *) lfirst(l);
 
-			if (pg_strcasecmp(tok, "shadowed_variables") == 0)
+			if (mdb_strcasecmp(tok, "shadowed_variables") == 0)
 				extrachecks |= PLPGSQL_XCHECK_SHADOWVAR;
-			else if (pg_strcasecmp(tok, "all") == 0 || pg_strcasecmp(tok, "none") == 0)
+			else if (mdb_strcasecmp(tok, "all") == 0 || mdb_strcasecmp(tok, "none") == 0)
 			{
 				GUC_check_errdetail("Key word \"%s\" cannot be combined with other key words.", tok);
 				pfree(rawstring);
@@ -143,7 +143,7 @@ _PG_init(void)
 	if (inited)
 		return;
 
-	pg_bindtextdomain(TEXTDOMAIN);
+	mdb_bindtextdomain(TEXTDOMAIN);
 
 	DefineCustomEnumVariable("plmdb.variable_conflict",
 							 gettext_noop("Sets handling of conflicts between PL/pgSQL variable names and table column names."),
@@ -394,7 +394,7 @@ plmdb_validator(PG_FUNCTION_ARGS)
 {
 	Oid			funcoid = PG_GETARG_OID(0);
 	HeapTuple	tuple;
-	Form_pg_proc proc;
+	Form_mdb_proc proc;
 	char		functyptype;
 	int			numargs;
 	Oid		   *argtypes;
@@ -407,11 +407,11 @@ plmdb_validator(PG_FUNCTION_ARGS)
 	if (!CheckFunctionValidatorAccess(fcinfo->flinfo->fn_oid, funcoid))
 		PG_RETURN_VOID();
 
-	/* Get the new function's pg_proc entry */
+	/* Get the new function's mdb_proc entry */
 	tuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcoid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for function %u", funcoid);
-	proc = (Form_pg_proc) GETSTRUCT(tuple);
+	proc = (Form_mdb_proc) GETSTRUCT(tuple);
 
 	functyptype = get_typtype(proc->prorettype);
 

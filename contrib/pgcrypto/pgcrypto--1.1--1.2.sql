@@ -5,7 +5,7 @@
 
 CREATE FUNCTION armor(bytea, text[], text[])
 RETURNS text
-AS 'MODULE_PATHNAME', 'pg_armor'
+AS 'MODULE_PATHNAME', 'mdb_armor'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION pgp_armor_headers(text, key OUT text, value OUT text)

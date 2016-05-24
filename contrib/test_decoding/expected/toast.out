@@ -2,7 +2,7 @@
 SET synchronous_commit = on;
 DROP TABLE IF EXISTS xpto;
 NOTICE:  table "xpto" does not exist, skipping
-SELECT 'init' FROM pg_create_logical_replication_slot('regression_slot', 'test_decoding');
+SELECT 'init' FROM mdb_create_logical_replication_slot('regression_slot', 'test_decoding');
  ?column? 
 ----------
  init
@@ -52,7 +52,7 @@ CREATE TABLE toasted_copy (
 );
 ALTER TABLE toasted_copy ALTER COLUMN data SET STORAGE EXTERNAL;
 \copy toasted_copy FROM STDIN
-SELECT substr(data, 1, 200) FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1');
+SELECT substr(data, 1, 200) FROM mdb_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1');
                                                                                                   substr                                                                                                  
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  BEGIN
@@ -306,7 +306,7 @@ ALTER TABLE toasted_several ALTER COLUMN toasted_key SET STORAGE EXTERNAL;
 ALTER TABLE toasted_several ALTER COLUMN toasted_col1 SET STORAGE EXTERNAL;
 ALTER TABLE toasted_several ALTER COLUMN toasted_col2 SET STORAGE EXTERNAL;
 INSERT INTO toasted_several(toasted_key) VALUES(repeat('9876543210', 2000));
-SELECT regexp_replace(data, '^(.{100}).*(.{100})$', '\1..\2') FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1');
+SELECT regexp_replace(data, '^(.{100}).*(.{100})$', '\1..\2') FROM mdb_logical_slot_peek_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1');
                                                                                                regexp_replace                                                                                               
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  BEGIN
@@ -317,7 +317,7 @@ SELECT regexp_replace(data, '^(.{100}).*(.{100})$', '\1..\2') FROM pg_logical_sl
 -- test update of a toasted key without changing it
 UPDATE toasted_several SET toasted_col1 = toasted_key;
 UPDATE toasted_several SET toasted_col2 = toasted_col1;
-SELECT regexp_replace(data, '^(.{100}).*(.{100})$', '\1..\2') FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1');
+SELECT regexp_replace(data, '^(.{100}).*(.{100})$', '\1..\2') FROM mdb_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1');
                                                                                                regexp_replace                                                                                               
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  BEGIN
@@ -340,7 +340,7 @@ UPDATE toasted_several SET toasted_col1 = toasted_col2 WHERE id = 1;
 DELETE FROM toasted_several WHERE id = 1;
 COMMIT;
 DROP TABLE toasted_several;
-SELECT regexp_replace(data, '^(.{100}).*(.{100})$', '\1..\2') FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1')
+SELECT regexp_replace(data, '^(.{100}).*(.{100})$', '\1..\2') FROM mdb_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-xids', '0', 'skip-empty-xacts', '1')
 WHERE data NOT LIKE '%INSERT: %';
                                                                                                regexp_replace                                                                                               
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -350,8 +350,8 @@ WHERE data NOT LIKE '%INSERT: %';
  COMMIT
 (4 rows)
 
-SELECT pg_drop_replication_slot('regression_slot');
- pg_drop_replication_slot 
+SELECT mdb_drop_replication_slot('regression_slot');
+ mdb_drop_replication_slot 
 --------------------------
  
 (1 row)

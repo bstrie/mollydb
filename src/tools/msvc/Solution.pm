@@ -143,19 +143,19 @@ sub GenerateFiles
 	confess "Unable to parse configure.in for all variables!"
 	  if ($self->{strver} eq '' || $self->{numver} eq '');
 
-	if (IsNewer("src/include/pg_config_os.h", "src/include/port/win32.h"))
+	if (IsNewer("src/include/mdb_config_os.h", "src/include/port/win32.h"))
 	{
-		print "Copying pg_config_os.h...\n";
-		copyFile("src/include/port/win32.h", "src/include/pg_config_os.h");
+		print "Copying mdb_config_os.h...\n";
+		copyFile("src/include/port/win32.h", "src/include/mdb_config_os.h");
 	}
 
-	if (IsNewer("src/include/pg_config.h", "src/include/pg_config.h.win32"))
+	if (IsNewer("src/include/mdb_config.h", "src/include/mdb_config.h.win32"))
 	{
-		print "Generating pg_config.h...\n";
-		open(I, "src/include/pg_config.h.win32")
-		  || confess "Could not open pg_config.h.win32\n";
-		open(O, ">src/include/pg_config.h")
-		  || confess "Could not write to pg_config.h\n";
+		print "Generating mdb_config.h...\n";
+		open(I, "src/include/mdb_config.h.win32")
+		  || confess "Could not open mdb_config.h.win32\n";
+		open(O, ">src/include/mdb_config.h")
+		  || confess "Could not write to mdb_config.h\n";
 		my $extraver = $self->{options}->{extraver};
 		$extraver = '' unless defined $extraver;
 		while (<I>)
@@ -242,13 +242,13 @@ s{PG_VERSION_STR "[^"]+"}{__STRINGIFY(x) #x\n#define __STRINGIFY2(z) __STRINGIFY
 	}
 
 	if (IsNewer(
-			"src/include/pg_config_ext.h",
-			"src/include/pg_config_ext.h.win32"))
+			"src/include/mdb_config_ext.h",
+			"src/include/mdb_config_ext.h.win32"))
 	{
-		print "Copying pg_config_ext.h...\n";
+		print "Copying mdb_config_ext.h...\n";
 		copyFile(
-			"src/include/pg_config_ext.h.win32",
-			"src/include/pg_config_ext.h");
+			"src/include/mdb_config_ext.h.win32",
+			"src/include/mdb_config_ext.h");
 	}
 
 	$self->GenerateDefFile(
@@ -269,12 +269,12 @@ s{PG_VERSION_STR "[^"]+"}{__STRINGIFY(x) #x\n#define __STRINGIFY2(z) __STRINGIFY
 		"LIBPGTYPES");
 
 	if (IsNewer(
-			'src/backend/utils/fmgrtab.c', 'src/include/catalog/pg_proc.h'))
+			'src/backend/utils/fmgrtab.c', 'src/include/catalog/mdb_proc.h'))
 	{
 		print "Generating fmgrtab.c and fmgroids.h...\n";
 		chdir('src/backend/utils');
 		system(
-"perl -I ../catalog Gen_fmgrtab.pl ../../../src/include/catalog/pg_proc.h");
+"perl -I ../catalog Gen_fmgrtab.pl ../../../src/include/catalog/mdb_proc.h");
 		chdir('../../..');
 	}
 	if (IsNewer(
@@ -411,12 +411,12 @@ s{PG_VERSION_STR "[^"]+"}{__STRINGIFY(x) #x\n#define __STRINGIFY2(z) __STRINGIFY
 	}
 
 	if (IsNewer(
-			'src/interfaces/ecpg/include/ecpg_config.h',
-			'src/interfaces/ecpg/include/ecpg_config.h.in'))
+			'src/interfaces/ecpg/include/ecmdb_config.h',
+			'src/interfaces/ecpg/include/ecmdb_config.h.in'))
 	{
-		print "Generating ecpg_config.h...\n";
-		open(O, '>', 'src/interfaces/ecpg/include/ecpg_config.h')
-		  || confess "Could not open ecpg_config.h";
+		print "Generating ecmdb_config.h...\n";
+		open(O, '>', 'src/interfaces/ecpg/include/ecmdb_config.h')
+		  || confess "Could not open ecmdb_config.h";
 		print O <<EOF;
 #if (_MSC_VER > 1200)
 #define HAVE_LONG_LONG_INT_64
@@ -428,11 +428,11 @@ EOF
 		close(O);
 	}
 
-	unless (-f "src/port/pg_config_paths.h")
+	unless (-f "src/port/mdb_config_paths.h")
 	{
-		print "Generating pg_config_paths.h...\n";
-		open(O, '>', 'src/port/pg_config_paths.h')
-		  || confess "Could not open pg_config_paths.h";
+		print "Generating mdb_config_paths.h...\n";
+		open(O, '>', 'src/port/mdb_config_paths.h')
+		  || confess "Could not open mdb_config_paths.h";
 		print O <<EOF;
 #define PGBINDIR "/bin"
 #define PGSHAREDIR "/share"

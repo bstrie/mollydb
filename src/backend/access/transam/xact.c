@@ -62,7 +62,7 @@
 #include "utils/snapmgr.h"
 #include "utils/timeout.h"
 #include "utils/timestamp.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 
 
 /*
@@ -544,7 +544,7 @@ AssignTransactionId(TransactionState s)
 		log_unknown_top = true;
 
 	/*
-	 * Generate a new Xid and record it in PG_PROC and pg_subtrans.
+	 * Generate a new Xid and record it in PG_PROC and mdb_subtrans.
 	 *
 	 * NB: we must make the subtrans entry BEFORE the Xid appears anywhere in
 	 * shared storage other than PG_PROC; because if there's no room for it in
@@ -1210,8 +1210,8 @@ RecordTransactionCommit(void)
 		/*
 		 * Mark ourselves as within our "commit critical section".  This
 		 * forces any concurrent checkpoint to wait until we've updated
-		 * pg_clog.  Without this, it is possible for the checkpoint to set
-		 * REDO after the XLOG record but fail to flush the pg_clog update to
+		 * mdb_clog.  Without this, it is possible for the checkpoint to set
+		 * REDO after the XLOG record but fail to flush the mdb_clog update to
 		 * disk, leading to loss of the transaction commit if the system
 		 * crashes a little later.
 		 *
@@ -2037,7 +2037,7 @@ CommitTransaction(void)
 	if (!is_parallel_worker)
 	{
 		/*
-		 * We need to mark our XIDs as committed in pg_clog.  This is where we
+		 * We need to mark our XIDs as committed in mdb_clog.  This is where we
 		 * durably commit.
 		 */
 		latestXid = RecordTransactionCommit();
@@ -2267,7 +2267,7 @@ PrepareTransaction(void)
 				 errmsg("cannot PREPARE a transaction that has operated on temporary tables")));
 
 	/*
-	 * Likewise, don't allow PREPARE after pg_export_snapshot.  This could be
+	 * Likewise, don't allow PREPARE after mdb_export_snapshot.  This could be
 	 * supported if we added cleanup logic to twophase.c, but for now it
 	 * doesn't seem worth the trouble.
 	 */
@@ -2543,7 +2543,7 @@ AbortTransaction(void)
 	AtAbort_Twophase();
 
 	/*
-	 * Advertise the fact that we aborted in pg_clog (assuming that we got as
+	 * Advertise the fact that we aborted in mdb_clog (assuming that we got as
 	 * far as assigning an XID to advertise).  But if we're inside a parallel
 	 * worker, skip this; the user backend must be the one to write the abort
 	 * record.
@@ -4629,7 +4629,7 @@ AbortSubTransaction(void)
 								s->parent->subTransactionId);
 		AtSubAbort_Notify();
 
-		/* Advertise the fact that we aborted in pg_clog. */
+		/* Advertise the fact that we aborted in mdb_clog. */
 		(void) RecordTransactionAbort(true);
 
 		/* Post-abort cleanup */
@@ -5375,7 +5375,7 @@ xact_redo_commit(xl_xact_parsed_commit *parsed,
 	if (standbyState == STANDBY_DISABLED)
 	{
 		/*
-		 * Mark the transaction committed in pg_clog.
+		 * Mark the transaction committed in mdb_clog.
 		 */
 		TransactionIdCommitTree(xid, parsed->nsubxacts, parsed->subxacts);
 	}
@@ -5393,7 +5393,7 @@ xact_redo_commit(xl_xact_parsed_commit *parsed,
 		RecordKnownAssignedTransactionIds(max_xid);
 
 		/*
-		 * Mark the transaction committed in pg_clog. We use async commit
+		 * Mark the transaction committed in mdb_clog. We use async commit
 		 * protocol during recovery to provide information on database
 		 * consistency for when users try to set hint bits. It is important
 		 * that we do not set hint bits until the minRecoveryPoint is past
@@ -5474,7 +5474,7 @@ xact_redo_commit(xl_xact_parsed_commit *parsed,
 	 * in normal operation. For example, in CREATE DATABASE, we copy all files
 	 * from the template database, and then commit the transaction. If we
 	 * crash after all the files have been copied but before the commit, you
-	 * have files in the data directory without an entry in pg_database. To
+	 * have files in the data directory without an entry in mdb_database. To
 	 * minimize the window for that, we use ForceSyncCommit() to rush the
 	 * commit record to disk as quick as possible. We have the same window
 	 * during recovery, and forcing an XLogFlush() (which updates
@@ -5530,7 +5530,7 @@ xact_redo_abort(xl_xact_parsed_abort *parsed, TransactionId xid)
 
 	if (standbyState == STANDBY_DISABLED)
 	{
-		/* Mark the transaction aborted in pg_clog, no need for async stuff */
+		/* Mark the transaction aborted in mdb_clog, no need for async stuff */
 		TransactionIdAbortTree(xid, parsed->nsubxacts, parsed->subxacts);
 	}
 	else
@@ -5546,7 +5546,7 @@ xact_redo_abort(xl_xact_parsed_abort *parsed, TransactionId xid)
 		 */
 		RecordKnownAssignedTransactionIds(max_xid);
 
-		/* Mark the transaction aborted in pg_clog, no need for async stuff */
+		/* Mark the transaction aborted in mdb_clog, no need for async stuff */
 		TransactionIdAbortTree(xid, parsed->nsubxacts, parsed->subxacts);
 
 		/*

@@ -30,8 +30,8 @@ command_fails(
 	'relative xlog directory not allowed');
 
 command_fails(
-	[ 'initdb', '-U', 'pg_test', $datadir ],
-	'role names cannot begin with "pg_"');
+	[ 'initdb', '-U', 'mdb_test', $datadir ],
+	'role names cannot begin with "mdb_"');
 
 mkdir $datadir;
 command_ok([ 'initdb', '-N', '-T', 'german', '-X', $xlogdir, $datadir ],

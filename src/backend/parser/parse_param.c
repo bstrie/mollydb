@@ -26,7 +26,7 @@
 
 #include <limits.h>
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "nodes/nodeFuncs.h"
 #include "parser/parse_param.h"
 #include "utils/builtins.h"

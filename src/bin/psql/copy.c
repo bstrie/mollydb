@@ -100,9 +100,9 @@ parse_slash_copy(const char *args)
 		return NULL;
 	}
 
-	result = pg_malloc0(sizeof(struct copy_options));
+	result = mdb_malloc0(sizeof(struct copy_options));
 
-	result->before_tofrom = pg_strdup("");		/* initialize for appending */
+	result->before_tofrom = mdb_strdup("");		/* initialize for appending */
 
 	token = strtokx(args, whitespace, ".,()", "\"",
 					0, false, false, pset.encoding);
@@ -110,7 +110,7 @@ parse_slash_copy(const char *args)
 		goto error;
 
 	/* The following can be removed when we drop 7.3 syntax support */
-	if (pg_strcasecmp(token, "binary") == 0)
+	if (mdb_strcasecmp(token, "binary") == 0)
 	{
 		xstrcat(&result->before_tofrom, token);
 		token = strtokx(NULL, whitespace, ".,()", "\"",
@@ -187,9 +187,9 @@ parse_slash_copy(const char *args)
 			goto error;
 	}
 
-	if (pg_strcasecmp(token, "from") == 0)
+	if (mdb_strcasecmp(token, "from") == 0)
 		result->from = true;
-	else if (pg_strcasecmp(token, "to") == 0)
+	else if (mdb_strcasecmp(token, "to") == 0)
 		result->from = false;
 	else
 		goto error;
@@ -200,7 +200,7 @@ parse_slash_copy(const char *args)
 	if (!token)
 		goto error;
 
-	if (pg_strcasecmp(token, "program") == 0)
+	if (mdb_strcasecmp(token, "program") == 0)
 	{
 		int			toklen;
 
@@ -220,15 +220,15 @@ parse_slash_copy(const char *args)
 		strip_quotes(token, '\'', 0, pset.encoding);
 
 		result->program = true;
-		result->file = pg_strdup(token);
+		result->file = mdb_strdup(token);
 	}
-	else if (pg_strcasecmp(token, "stdin") == 0 ||
-			 pg_strcasecmp(token, "stdout") == 0)
+	else if (mdb_strcasecmp(token, "stdin") == 0 ||
+			 mdb_strcasecmp(token, "stdout") == 0)
 	{
 		result->file = NULL;
 	}
-	else if (pg_strcasecmp(token, "pstdin") == 0 ||
-			 pg_strcasecmp(token, "pstdout") == 0)
+	else if (mdb_strcasecmp(token, "pstdin") == 0 ||
+			 mdb_strcasecmp(token, "pstdout") == 0)
 	{
 		result->psql_inout = true;
 		result->file = NULL;
@@ -237,7 +237,7 @@ parse_slash_copy(const char *args)
 	{
 		/* filename can be optionally quoted */
 		strip_quotes(token, '\'', 0, pset.encoding);
-		result->file = pg_strdup(token);
+		result->file = mdb_strdup(token);
 		expand_tilde(&result->file);
 	}
 
@@ -245,7 +245,7 @@ parse_slash_copy(const char *args)
 	token = strtokx(NULL, "", NULL, NULL,
 					0, false, false, pset.encoding);
 	if (token)
-		result->after_tofrom = pg_strdup(token);
+		result->after_tofrom = mdb_strdup(token);
 
 	return result;
 

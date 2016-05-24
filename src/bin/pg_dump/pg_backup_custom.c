@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup_custom.c
+ * mdb_backup_custom.c
  *
  *	Implements the custom output format.
  *
  *	The comments with the routined in this code are a good place to
  *	understand how to write a new format.
  *
- *	See the headers to pg_restore for more details.
+ *	See the headers to mdb_restore for more details.
  *
  * Copyright (c) 2000, Philip Warner
  *		Rights are granted to use this software in any way so long
@@ -19,7 +19,7 @@
  *
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/pg_backup_custom.c
+ *		src/bin/mdb_dump/mdb_backup_custom.c
  *
  *-------------------------------------------------------------------------
  */
@@ -27,7 +27,7 @@
 
 #include "compress_io.h"
 #include "parallel.h"
-#include "pg_backup_utils.h"
+#include "mdb_backup_utils.h"
 
 /*--------
  * Routines in the format interface
@@ -97,7 +97,7 @@ static const char *modulename = gettext_noop("custom archiver");
 
 /*
  *	Init routine required by ALL formats. This is a global routine
- *	and should be declared in pg_backup_archiver.h
+ *	and should be declared in mdb_backup_archiver.h
  *
  *	It's task is to create any extra archive context (using AH->formatData),
  *	and to initialize the supported function pointers.
@@ -141,12 +141,12 @@ InitArchiveFmt_Custom(ArchiveHandle *AH)
 	AH->WorkerJobRestorePtr = _WorkerJobRestoreCustom;
 
 	/* Set up a private area. */
-	ctx = (lclContext *) pg_malloc0(sizeof(lclContext));
+	ctx = (lclContext *) mdb_malloc0(sizeof(lclContext));
 	AH->formatData = (void *) ctx;
 
 	/* Initialize LO buffering */
 	AH->lo_buf_size = LOBBUFSIZE;
-	AH->lo_buf = (void *) pg_malloc(LOBBUFSIZE);
+	AH->lo_buf = (void *) mdb_malloc(LOBBUFSIZE);
 
 	ctx->filePos = 0;
 
@@ -210,7 +210,7 @@ _ArchiveEntry(ArchiveHandle *AH, TocEntry *te)
 {
 	lclTocEntry *ctx;
 
-	ctx = (lclTocEntry *) pg_malloc0(sizeof(lclTocEntry));
+	ctx = (lclTocEntry *) mdb_malloc0(sizeof(lclTocEntry));
 	if (te->dataDumper)
 		ctx->dataState = K_OFFSET_POS_NOT_SET;
 	else
@@ -251,7 +251,7 @@ _ReadExtraToc(ArchiveHandle *AH, TocEntry *te)
 
 	if (ctx == NULL)
 	{
-		ctx = (lclTocEntry *) pg_malloc0(sizeof(lclTocEntry));
+		ctx = (lclTocEntry *) mdb_malloc0(sizeof(lclTocEntry));
 		te->formatData = (void *) ctx;
 	}
 
@@ -578,7 +578,7 @@ _skipData(ArchiveHandle *AH)
 		{
 			if (buf)
 				free(buf);
-			buf = (char *) pg_malloc(blkLen);
+			buf = (char *) mdb_malloc(blkLen);
 			buflen = blkLen;
 		}
 		if ((cnt = fread(buf, 1, blkLen, AH->FH)) != blkLen)
@@ -714,8 +714,8 @@ _CloseArchive(ArchiveHandle *AH)
 
 		/*
 		 * If possible, re-write the TOC in order to update the data offset
-		 * information.  This is not essential, as pg_restore can cope in most
-		 * cases without it; but it can make pg_restore significantly faster
+		 * information.  This is not essential, as mdb_restore can cope in most
+		 * cases without it; but it can make mdb_restore significantly faster
 		 * in some situations (especially parallel restore).
 		 */
 		if (ctx->hasSeek &&
@@ -783,7 +783,7 @@ _Clone(ArchiveHandle *AH)
 {
 	lclContext *ctx = (lclContext *) AH->formatData;
 
-	AH->formatData = (lclContext *) pg_malloc(sizeof(lclContext));
+	AH->formatData = (lclContext *) mdb_malloc(sizeof(lclContext));
 	memcpy(AH->formatData, ctx, sizeof(lclContext));
 	ctx = (lclContext *) AH->formatData;
 
@@ -819,7 +819,7 @@ _WorkerJobRestoreCustom(ArchiveHandle *AH, TocEntry *te)
 	 * instead of static because we work with threads on windows
 	 */
 	const int	buflen = 64;
-	char	   *buf = (char *) pg_malloc(buflen);
+	char	   *buf = (char *) mdb_malloc(buflen);
 	ParallelArgs pargs;
 	int			status;
 
@@ -932,7 +932,7 @@ _readBlockHeader(ArchiveHandle *AH, int *type, int *id)
 	 * inside ReadInt rather than returning EOF.  It doesn't seem worth
 	 * jumping through hoops to deal with that case better, because no such
 	 * files are likely to exist in the wild: only some 7.1 development
-	 * versions of pg_dump ever generated such files.
+	 * versions of mdb_dump ever generated such files.
 	 */
 	if (AH->version < K_VERS_1_3)
 		*type = BLK_DATA;
@@ -985,7 +985,7 @@ _CustomReadFunc(ArchiveHandle *AH, char **buf, size_t *buflen)
 	if (blkLen > *buflen)
 	{
 		free(*buf);
-		*buf = (char *) pg_malloc(blkLen);
+		*buf = (char *) mdb_malloc(blkLen);
 		*buflen = blkLen;
 	}
 

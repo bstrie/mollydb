@@ -21,7 +21,7 @@ $node_standby_1->init_from_backup($node_master, $backup_name,
 $node_standby_1->start;
 
 # Take backup of standby 1 (not mandatory, but useful to check if
-# pg_basebackup works on a standby).
+# mdb_basebackup works on a standby).
 $node_standby_1->backup($backup_name);
 
 # Create second standby node linking to standby 1
@@ -38,11 +38,11 @@ $node_master->safe_psql('mollydb',
 my $applname_1 = $node_standby_1->name;
 my $applname_2 = $node_standby_2->name;
 my $caughtup_query =
-"SELECT pg_current_xlog_location() <= write_location FROM pg_stat_replication WHERE application_name = '$applname_1';";
+"SELECT mdb_current_xlog_location() <= write_location FROM mdb_stat_replication WHERE application_name = '$applname_1';";
 $node_master->poll_query_until('mollydb', $caughtup_query)
   or die "Timed out while waiting for standby 1 to catch up";
 $caughtup_query =
-"SELECT pg_last_xlog_replay_location() <= write_location FROM pg_stat_replication WHERE application_name = '$applname_2';";
+"SELECT mdb_last_xlog_replay_location() <= write_location FROM mdb_stat_replication WHERE application_name = '$applname_2';";
 $node_standby_1->poll_query_until('mollydb', $caughtup_query)
   or die "Timed out while waiting for standby 2 to catch up";
 

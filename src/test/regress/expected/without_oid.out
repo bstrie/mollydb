@@ -49,7 +49,7 @@ LINE 1: SELECT count(oid) FROM wo;
 VACUUM ANALYZE wi;
 VACUUM ANALYZE wo;
 SELECT min(relpages) < max(relpages), min(reltuples) - max(reltuples)
-  FROM pg_class
+  FROM mdb_class
  WHERE relname IN ('wi', 'wo');
  ?column? | ?column? 
 ----------+----------

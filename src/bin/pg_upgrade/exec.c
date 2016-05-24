@@ -4,17 +4,17 @@
  *	execution functions
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/exec.c
+ *	src/bin/mdb_upgrade/exec.c
  */
 
 #include "mollydb_fe.h"
 
-#include "pg_upgrade.h"
+#include "mdb_upgrade.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
 
-static void check_data_dir(const char *pg_data);
+static void check_data_dir(const char *mdb_data);
 static void check_bin_dir(ClusterInfo *cluster);
 static void validate_exec(const char *dir, const char *cmdName);
 
@@ -33,7 +33,7 @@ static int	win32_check_directory_write_permissions(void);
  * successfully, exec_prog() returns true.
  *
  * If the command fails, an error message is saved to the specified log_file.
- * If throw_error is true, this raises a PG_FATAL error and pg_upgrade
+ * If throw_error is true, this raises a PG_FATAL error and mdb_upgrade
  * terminates; otherwise it is just reported as PG_REPORT and exec_prog()
  * returns false.
  *
@@ -64,13 +64,13 @@ exec_prog(const char *log_file, const char *opt_log_file,
 	written += vsnprintf(cmd + written, MAXCMDLEN - written, fmt, ap);
 	va_end(ap);
 	if (written >= MAXCMDLEN)
-		pg_fatal("command too long\n");
+		mdb_fatal("command too long\n");
 	written += snprintf(cmd + written, MAXCMDLEN - written,
 						" >> \"%s\" 2>&1", log_file);
 	if (written >= MAXCMDLEN)
-		pg_fatal("command too long\n");
+		mdb_fatal("command too long\n");
 
-	pg_log(PG_VERBOSE, "%s\n", cmd);
+	mdb_log(PG_VERBOSE, "%s\n", cmd);
 
 #ifdef WIN32
 
@@ -92,8 +92,8 @@ exec_prog(const char *log_file, const char *opt_log_file,
 #ifdef WIN32
 	{
 		/*
-		 * "pg_ctl -w stop" might have reported that the server has stopped
-		 * because the postmaster.pid file has been removed, but "pg_ctl -w
+		 * "mdb_ctl -w stop" might have reported that the server has stopped
+		 * because the postmaster.pid file has been removed, but "mdb_ctl -w
 		 * start" might still be in the process of closing and might still be
 		 * holding its stdout and -l log file descriptors open.  Therefore,
 		 * try to open the log file a few more times.
@@ -102,14 +102,14 @@ exec_prog(const char *log_file, const char *opt_log_file,
 
 		for (iter = 0; iter < 4 && log == NULL; iter++)
 		{
-			pg_usleep(1000000); /* 1 sec */
+			mdb_usleep(1000000); /* 1 sec */
 			log = fopen(log_file, "a");
 		}
 	}
 #endif
 
 	if (log == NULL)
-		pg_fatal("cannot write to log file %s\n", log_file);
+		mdb_fatal("cannot write to log file %s\n", log_file);
 
 #ifdef WIN32
 	/* Are we printing "command:" before its output? */
@@ -141,14 +141,14 @@ exec_prog(const char *log_file, const char *opt_log_file,
 		report_status(PG_REPORT, "\n*failure*");
 		fflush(stdout);
 
-		pg_log(PG_VERBOSE, "There were problems executing \"%s\"\n", cmd);
+		mdb_log(PG_VERBOSE, "There were problems executing \"%s\"\n", cmd);
 		if (opt_log_file)
-			pg_log(throw_error ? PG_FATAL : PG_REPORT,
+			mdb_log(throw_error ? PG_FATAL : PG_REPORT,
 				   "Consult the last few lines of \"%s\" or \"%s\" for\n"
 				   "the probable cause of the failure.\n",
 				   log_file, opt_log_file);
 		else
-			pg_log(throw_error ? PG_FATAL : PG_REPORT,
+			mdb_log(throw_error ? PG_FATAL : PG_REPORT,
 				   "Consult the last few lines of \"%s\" for\n"
 				   "the probable cause of the failure.\n",
 				   log_file);
@@ -157,14 +157,14 @@ exec_prog(const char *log_file, const char *opt_log_file,
 #ifndef WIN32
 
 	/*
-	 * We can't do this on Windows because it will keep the "pg_ctl start"
+	 * We can't do this on Windows because it will keep the "mdb_ctl start"
 	 * output filename open until the server stops, so we do the \n\n above on
-	 * that platform.  We use a unique filename for "pg_ctl start" that is
+	 * that platform.  We use a unique filename for "mdb_ctl start" that is
 	 * never reused while the server is running, so it works fine.  We could
 	 * log these commands to a third file, but that just adds complexity.
 	 */
 	if ((log = fopen(log_file, "a")) == NULL)
-		pg_fatal("cannot write to log file %s\n", log_file);
+		mdb_fatal("cannot write to log file %s\n", log_file);
 	fprintf(log, "\n\n");
 	fclose(log);
 #endif
@@ -190,7 +190,7 @@ pid_lock_file_exists(const char *datadir)
 	{
 		/* ENOTDIR means we will throw a more useful error later */
 		if (errno != ENOENT && errno != ENOTDIR)
-			pg_fatal("could not open file \"%s\" for reading: %s\n",
+			mdb_fatal("could not open file \"%s\" for reading: %s\n",
 					 path, getErrorText());
 
 		return false;
@@ -217,7 +217,7 @@ verify_directories(void)
 #else
 	if (win32_check_directory_write_permissions() != 0)
 #endif
-		pg_fatal("You must have read and write access in the current directory.\n");
+		mdb_fatal("You must have read and write access in the current directory.\n");
 
 	check_bin_dir(&old_cluster);
 	check_data_dir(old_cluster.pgdata);
@@ -262,15 +262,15 @@ win32_check_directory_write_permissions(void)
  *
  */
 static void
-check_data_dir(const char *pg_data)
+check_data_dir(const char *mdb_data)
 {
 	char		subDirName[MAXPGPATH];
 	int			subdirnum;
 
 	/* start check with top-most directory */
-	const char *requiredSubdirs[] = {"", "base", "global", "pg_clog",
-		"pg_multixact", "pg_subtrans", "pg_tblspc", "pg_twophase",
-	"pg_xlog"};
+	const char *requiredSubdirs[] = {"", "base", "global", "mdb_clog",
+		"mdb_multixact", "mdb_subtrans", "mdb_tblspc", "mdb_twophase",
+	"mdb_xlog"};
 
 	for (subdirnum = 0;
 		 subdirnum < sizeof(requiredSubdirs) / sizeof(requiredSubdirs[0]);
@@ -278,7 +278,7 @@ check_data_dir(const char *pg_data)
 	{
 		struct stat statBuf;
 
-		snprintf(subDirName, sizeof(subDirName), "%s%s%s", pg_data,
+		snprintf(subDirName, sizeof(subDirName), "%s%s%s", mdb_data,
 		/* Win32 can't stat() a directory with a trailing slash. */
 				 *requiredSubdirs[subdirnum] ? "/" : "",
 				 requiredSubdirs[subdirnum]);
@@ -315,14 +315,14 @@ check_bin_dir(ClusterInfo *cluster)
 					  cluster->bindir);
 
 	validate_exec(cluster->bindir, "mollydb");
-	validate_exec(cluster->bindir, "pg_ctl");
-	validate_exec(cluster->bindir, "pg_resetxlog");
+	validate_exec(cluster->bindir, "mdb_ctl");
+	validate_exec(cluster->bindir, "mdb_resetxlog");
 	if (cluster == &new_cluster)
 	{
 		/* these are only needed in the new cluster */
 		validate_exec(cluster->bindir, "psql");
-		validate_exec(cluster->bindir, "pg_dump");
-		validate_exec(cluster->bindir, "pg_dumpall");
+		validate_exec(cluster->bindir, "mdb_dump");
+		validate_exec(cluster->bindir, "mdb_dumpall");
 	}
 }
 
@@ -343,7 +343,7 @@ validate_exec(const char *dir, const char *cmdName)
 #ifdef WIN32
 	/* Windows requires a .exe suffix for stat() */
 	if (strlen(path) <= strlen(EXE_EXT) ||
-		pg_strcasecmp(path + strlen(path) - strlen(EXE_EXT), EXE_EXT) != 0)
+		mdb_strcasecmp(path + strlen(path) - strlen(EXE_EXT), EXE_EXT) != 0)
 		strlcat(path, EXE_EXT, sizeof(path));
 #endif
 
@@ -351,10 +351,10 @@ validate_exec(const char *dir, const char *cmdName)
 	 * Ensure that the file exists and is a regular file.
 	 */
 	if (stat(path, &buf) < 0)
-		pg_fatal("check for \"%s\" failed: %s\n",
+		mdb_fatal("check for \"%s\" failed: %s\n",
 				 path, getErrorText());
 	else if (!S_ISREG(buf.st_mode))
-		pg_fatal("check for \"%s\" failed: not an executable file\n",
+		mdb_fatal("check for \"%s\" failed: not an executable file\n",
 				 path);
 
 	/*
@@ -366,7 +366,7 @@ validate_exec(const char *dir, const char *cmdName)
 #else
 	if ((buf.st_mode & S_IRUSR) == 0)
 #endif
-		pg_fatal("check for \"%s\" failed: cannot read file (permission denied)\n",
+		mdb_fatal("check for \"%s\" failed: cannot read file (permission denied)\n",
 				 path);
 
 #ifndef WIN32
@@ -374,6 +374,6 @@ validate_exec(const char *dir, const char *cmdName)
 #else
 	if ((buf.st_mode & S_IXUSR) == 0)
 #endif
-		pg_fatal("check for \"%s\" failed: cannot execute (permission denied)\n",
+		mdb_fatal("check for \"%s\" failed: cannot execute (permission denied)\n",
 				 path);
 }

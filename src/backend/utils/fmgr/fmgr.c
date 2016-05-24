@@ -16,8 +16,8 @@
 #include "mollydb.h"
 
 #include "access/tuptoaster.h"
-#include "catalog/pg_language.h"
-#include "catalog/pg_proc.h"
+#include "catalog/mdb_language.h"
+#include "catalog/mdb_proc.h"
 #include "executor/functions.h"
 #include "executor/spi.h"
 #include "lib/stringinfo.h"
@@ -182,7 +182,7 @@ fmgr_info_cxt_security(Oid functionId, FmgrInfo *finfo, MemoryContext mcxt,
 {
 	const FmgrBuiltin *fbp;
 	HeapTuple	procedureTuple;
-	Form_pg_proc procedureStruct;
+	Form_mdb_proc procedureStruct;
 	Datum		prosrcdatum;
 	bool		isnull;
 	char	   *prosrc;
@@ -200,7 +200,7 @@ fmgr_info_cxt_security(Oid functionId, FmgrInfo *finfo, MemoryContext mcxt,
 	if ((fbp = fmgr_isbuiltin(functionId)) != NULL)
 	{
 		/*
-		 * Fast path for builtin functions: don't bother consulting pg_proc
+		 * Fast path for builtin functions: don't bother consulting mdb_proc
 		 */
 		finfo->fn_nargs = fbp->nargs;
 		finfo->fn_strict = fbp->strict;
@@ -211,11 +211,11 @@ fmgr_info_cxt_security(Oid functionId, FmgrInfo *finfo, MemoryContext mcxt,
 		return;
 	}
 
-	/* Otherwise we need the pg_proc entry */
+	/* Otherwise we need the mdb_proc entry */
 	procedureTuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(functionId));
 	if (!HeapTupleIsValid(procedureTuple))
 		elog(ERROR, "cache lookup failed for function %u", functionId);
-	procedureStruct = (Form_pg_proc) GETSTRUCT(procedureTuple);
+	procedureStruct = (Form_mdb_proc) GETSTRUCT(procedureTuple);
 
 	finfo->fn_nargs = procedureStruct->pronargs;
 	finfo->fn_strict = procedureStruct->proisstrict;
@@ -237,7 +237,7 @@ fmgr_info_cxt_security(Oid functionId, FmgrInfo *finfo, MemoryContext mcxt,
 	 */
 	if (!ignore_security &&
 		(procedureStruct->prosecdef ||
-		 !heap_attisnull(procedureTuple, Anum_pg_proc_proconfig) ||
+		 !heap_attisnull(procedureTuple, Anum_mdb_proc_proconfig) ||
 		 FmgrHookIsNeeded(functionId)))
 	{
 		finfo->fn_addr = fmgr_security_definer;
@@ -261,7 +261,7 @@ fmgr_info_cxt_security(Oid functionId, FmgrInfo *finfo, MemoryContext mcxt,
 			 * the same as the name of the alias!)
 			 */
 			prosrcdatum = SysCacheGetAttr(PROCOID, procedureTuple,
-										  Anum_pg_proc_prosrc, &isnull);
+										  Anum_mdb_proc_prosrc, &isnull);
 			if (isnull)
 				elog(ERROR, "null prosrc");
 			prosrc = TextDatumGetCString(prosrcdatum);
@@ -305,7 +305,7 @@ fmgr_info_cxt_security(Oid functionId, FmgrInfo *finfo, MemoryContext mcxt,
 static void
 fmgr_info_C_lang(Oid functionId, FmgrInfo *finfo, HeapTuple procedureTuple)
 {
-	Form_pg_proc procedureStruct = (Form_pg_proc) GETSTRUCT(procedureTuple);
+	Form_mdb_proc procedureStruct = (Form_mdb_proc) GETSTRUCT(procedureTuple);
 	CFuncHashTabEntry *hashentry;
 	PGFunction	user_fn;
 	const Pg_finfo_record *inforec;
@@ -336,13 +336,13 @@ fmgr_info_C_lang(Oid functionId, FmgrInfo *finfo, HeapTuple procedureTuple)
 		 * for C-language functions.
 		 */
 		prosrcattr = SysCacheGetAttr(PROCOID, procedureTuple,
-									 Anum_pg_proc_prosrc, &isnull);
+									 Anum_mdb_proc_prosrc, &isnull);
 		if (isnull)
 			elog(ERROR, "null prosrc for C function %u", functionId);
 		prosrcstring = TextDatumGetCString(prosrcattr);
 
 		probinattr = SysCacheGetAttr(PROCOID, procedureTuple,
-									 Anum_pg_proc_probin, &isnull);
+									 Anum_mdb_proc_probin, &isnull);
 		if (isnull)
 			elog(ERROR, "null probin for C function %u", functionId);
 		probinstring = TextDatumGetCString(probinattr);
@@ -396,16 +396,16 @@ fmgr_info_C_lang(Oid functionId, FmgrInfo *finfo, HeapTuple procedureTuple)
 static void
 fmgr_info_other_lang(Oid functionId, FmgrInfo *finfo, HeapTuple procedureTuple)
 {
-	Form_pg_proc procedureStruct = (Form_pg_proc) GETSTRUCT(procedureTuple);
+	Form_mdb_proc procedureStruct = (Form_mdb_proc) GETSTRUCT(procedureTuple);
 	Oid			language = procedureStruct->prolang;
 	HeapTuple	languageTuple;
-	Form_pg_language languageStruct;
+	Form_mdb_language languageStruct;
 	FmgrInfo	plfinfo;
 
 	languageTuple = SearchSysCache1(LANGOID, ObjectIdGetDatum(language));
 	if (!HeapTupleIsValid(languageTuple))
 		elog(ERROR, "cache lookup failed for language %u", language);
-	languageStruct = (Form_pg_language) GETSTRUCT(languageTuple);
+	languageStruct = (Form_mdb_language) GETSTRUCT(languageTuple);
 
 	/*
 	 * Look up the language's call handler function, ignoring any attributes
@@ -439,7 +439,7 @@ fmgr_info_other_lang(Oid functionId, FmgrInfo *finfo, HeapTuple procedureTuple)
  *
  * This function is broken out of fmgr_info_C_lang so that fmgr_c_validator
  * can validate the information record for a function not yet entered into
- * pg_proc.
+ * mdb_proc.
  */
 const Pg_finfo_record *
 fetch_finfo_record(void *filehandle, char *funcname)
@@ -449,7 +449,7 @@ fetch_finfo_record(void *filehandle, char *funcname)
 	const Pg_finfo_record *inforec;
 	static Pg_finfo_record default_inforec = {0};
 
-	infofuncname = psprintf("pg_finfo_%s", funcname);
+	infofuncname = psprintf("mdb_finfo_%s", funcname);
 
 	/* Try to look up the info function */
 	infofunc = (PGFInfoFunction) lookup_external_function(filehandle,
@@ -873,7 +873,7 @@ struct fmgr_security_definer_cache
 /*
  * Function handler for security-definer/proconfig/plugin-hooked functions.
  * We extract the OID of the actual function and do a fmgr lookup again.
- * Then we fetch the pg_proc row and copy the owner ID and proconfig fields.
+ * Then we fetch the mdb_proc row and copy the owner ID and proconfig fields.
  * (All this info is cached for the duration of the current query.)
  * To execute a call, we temporarily replace the flinfo with the cached
  * and looked-up one, while keeping the outer fcinfo (which contains all
@@ -894,7 +894,7 @@ fmgr_security_definer(PG_FUNCTION_ARGS)
 	if (!fcinfo->flinfo->fn_extra)
 	{
 		HeapTuple	tuple;
-		Form_pg_proc procedureStruct;
+		Form_mdb_proc procedureStruct;
 		Datum		datum;
 		bool		isnull;
 		MemoryContext oldcxt;
@@ -911,12 +911,12 @@ fmgr_security_definer(PG_FUNCTION_ARGS)
 		if (!HeapTupleIsValid(tuple))
 			elog(ERROR, "cache lookup failed for function %u",
 				 fcinfo->flinfo->fn_oid);
-		procedureStruct = (Form_pg_proc) GETSTRUCT(tuple);
+		procedureStruct = (Form_mdb_proc) GETSTRUCT(tuple);
 
 		if (procedureStruct->prosecdef)
 			fcache->userid = procedureStruct->proowner;
 
-		datum = SysCacheGetAttr(PROCOID, tuple, Anum_pg_proc_proconfig,
+		datum = SysCacheGetAttr(PROCOID, tuple, Anum_mdb_proc_proconfig,
 								&isnull);
 		if (!isnull)
 		{
@@ -2232,7 +2232,7 @@ DatumGetFloat8(Datum X)
  */
 
 struct varlena *
-pg_detoast_datum(struct varlena * datum)
+mdb_detoast_datum(struct varlena * datum)
 {
 	if (VARATT_IS_EXTENDED(datum))
 		return heap_tuple_untoast_attr(datum);
@@ -2241,7 +2241,7 @@ pg_detoast_datum(struct varlena * datum)
 }
 
 struct varlena *
-pg_detoast_datum_copy(struct varlena * datum)
+mdb_detoast_datum_copy(struct varlena * datum)
 {
 	if (VARATT_IS_EXTENDED(datum))
 		return heap_tuple_untoast_attr(datum);
@@ -2257,14 +2257,14 @@ pg_detoast_datum_copy(struct varlena * datum)
 }
 
 struct varlena *
-pg_detoast_datum_slice(struct varlena * datum, int32 first, int32 count)
+mdb_detoast_datum_slice(struct varlena * datum, int32 first, int32 count)
 {
 	/* Only get the specified portion from the toast rel */
 	return heap_tuple_untoast_attr_slice(datum, first, count);
 }
 
 struct varlena *
-pg_detoast_datum_packed(struct varlena * datum)
+mdb_detoast_datum_packed(struct varlena * datum)
 {
 	if (VARATT_IS_COMPRESSED(datum) || VARATT_IS_EXTERNAL(datum))
 		return heap_tuple_untoast_attr(datum);
@@ -2506,24 +2506,24 @@ CheckFunctionValidatorAccess(Oid validatorOid, Oid functionOid)
 {
 	HeapTuple	procTup;
 	HeapTuple	langTup;
-	Form_pg_proc procStruct;
-	Form_pg_language langStruct;
+	Form_mdb_proc procStruct;
+	Form_mdb_language langStruct;
 	AclResult	aclresult;
 
-	/* Get the function's pg_proc entry */
+	/* Get the function's mdb_proc entry */
 	procTup = SearchSysCache1(PROCOID, ObjectIdGetDatum(functionOid));
 	if (!HeapTupleIsValid(procTup))
 		elog(ERROR, "cache lookup failed for function %u", functionOid);
-	procStruct = (Form_pg_proc) GETSTRUCT(procTup);
+	procStruct = (Form_mdb_proc) GETSTRUCT(procTup);
 
 	/*
-	 * Fetch pg_language entry to know if this is the correct validation
-	 * function for that pg_proc entry.
+	 * Fetch mdb_language entry to know if this is the correct validation
+	 * function for that mdb_proc entry.
 	 */
 	langTup = SearchSysCache1(LANGOID, ObjectIdGetDatum(procStruct->prolang));
 	if (!HeapTupleIsValid(langTup))
 		elog(ERROR, "cache lookup failed for language %u", procStruct->prolang);
-	langStruct = (Form_pg_language) GETSTRUCT(langTup);
+	langStruct = (Form_mdb_language) GETSTRUCT(langTup);
 
 	if (langStruct->lanvalidator != validatorOid)
 		ereport(ERROR,
@@ -2533,7 +2533,7 @@ CheckFunctionValidatorAccess(Oid validatorOid, Oid functionOid)
 						langStruct->lanvalidator)));
 
 	/* first validate that we have permissions to use the language */
-	aclresult = pg_language_aclcheck(procStruct->prolang, GetUserId(),
+	aclresult = mdb_language_aclcheck(procStruct->prolang, GetUserId(),
 									 ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_LANGUAGE,
@@ -2544,7 +2544,7 @@ CheckFunctionValidatorAccess(Oid validatorOid, Oid functionOid)
 	 * execute it, there should be no possible side-effect of
 	 * compiling/validation that execution can't have.
 	 */
-	aclresult = pg_proc_aclcheck(functionOid, GetUserId(), ACL_EXECUTE);
+	aclresult = mdb_proc_aclcheck(functionOid, GetUserId(), ACL_EXECUTE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_PROC, NameStr(procStruct->proname));
 

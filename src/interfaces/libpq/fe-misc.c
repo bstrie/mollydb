@@ -55,8 +55,8 @@
 
 #include "libpq-fe.h"
 #include "libpq-int.h"
-#include "mb/pg_wchar.h"
-#include "pg_config_paths.h"
+#include "mb/mdb_wchar.h"
+#include "mdb_config_paths.h"
 
 
 static int	pqPutMsgBytes(const void *buf, size_t len, PGconn *conn);
@@ -1186,7 +1186,7 @@ pqSocketPoll(int sock, int forRead, int forWrite, time_t end_time)
 int
 PQmblen(const char *s, int encoding)
 {
-	return pg_encoding_mblen(encoding, s);
+	return mdb_encoding_mblen(encoding, s);
 }
 
 /*
@@ -1196,7 +1196,7 @@ PQmblen(const char *s, int encoding)
 int
 PQdsplen(const char *s, int encoding)
 {
-	return pg_encoding_dsplen(encoding, s);
+	return mdb_encoding_dsplen(encoding, s);
 }
 
 /*
@@ -1211,7 +1211,7 @@ PQenv2encoding(void)
 	str = getenv("PGCLIENTENCODING");
 	if (str && *str != '\0')
 	{
-		encoding = pg_char_to_encoding(str);
+		encoding = mdb_char_to_encoding(str);
 		if (encoding < 0)
 			encoding = PG_SQL_ASCII;
 	}

@@ -17,7 +17,7 @@
 #include "parser/parse_node.h"
 
 
-/* Type categories (see TYPCATEGORY_xxx symbols in catalog/pg_type.h) */
+/* Type categories (see TYPCATEGORY_xxx symbols in catalog/mdb_type.h) */
 typedef char TYPCATEGORY;
 
 /* Result codes for find_coercion_pathway */

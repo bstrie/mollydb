@@ -24,7 +24,7 @@
   interface, might be:
 
 <programlisting>
-mollydb=# SELECT * FROM pg_logical_slot_get_changes('test_slot', NULL, NULL, 'include-xids', '0');
+mollydb=# SELECT * FROM mdb_logical_slot_get_changes('test_slot', NULL, NULL, 'include-xids', '0');
  location  | xid |                       data
 -----------+-----+--------------------------------------------------
  0/16D30F8 | 691 | BEGIN

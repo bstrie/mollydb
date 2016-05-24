@@ -1,6 +1,6 @@
 /*
  * This file contains stuff needed to be as compatible to Informix as possible.
- * src/interfaces/ecpg/include/ecpg_informix.h
+ * src/interfaces/ecpg/include/ecmdb_informix.h
  */
 #ifndef _ECPG_INFORMIX_H
 #define _ECPG_INFORMIX_H

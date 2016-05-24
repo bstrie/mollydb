@@ -196,7 +196,7 @@ CREATE AGGREGATE myavg (numeric)
 
 -- Ensure all these functions made it into the catalog
 SELECT aggfnoid,aggtransfn,aggcombinefn,aggtranstype,aggserialfn,aggdeserialfn,aggserialtype
-FROM pg_aggregate
+FROM mdb_aggregate
 WHERE aggfnoid = 'myavg'::REGPROC;
 
 DROP AGGREGATE myavg (numeric);

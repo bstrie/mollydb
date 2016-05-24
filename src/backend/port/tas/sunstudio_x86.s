@@ -21,13 +21,13 @@
 	.code64
 #endif
 
-	.globl pg_atomic_cas
-	.type pg_atomic_cas, @function
+	.globl mdb_atomic_cas
+	.type mdb_atomic_cas, @function
 
 	.section .text, "ax"
 	.align 16
 
-pg_atomic_cas:
+mdb_atomic_cas:
 #if defined(__amd64)
 	movl       %edx,%eax
 	lock
@@ -40,4 +40,4 @@ pg_atomic_cas:
 	cmpxchgl %ecx, (%edx)
 #endif
 	ret
-	.size pg_atomic_cas, . - pg_atomic_cas
+	.size mdb_atomic_cas, . - mdb_atomic_cas

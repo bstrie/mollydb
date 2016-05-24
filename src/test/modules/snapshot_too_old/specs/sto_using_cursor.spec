@@ -29,7 +29,7 @@ session "s1"
 setup			{ BEGIN ISOLATION LEVEL REPEATABLE READ; }
 step "s1decl"	{ DECLARE cursor1 CURSOR FOR SELECT c FROM sto1; }
 step "s1f1"		{ FETCH FIRST FROM cursor1; }
-step "s1sleep"	{ SELECT setting, pg_sleep(6) FROM pg_settings WHERE name = 'old_snapshot_threshold'; }
+step "s1sleep"	{ SELECT setting, mdb_sleep(6) FROM mdb_settings WHERE name = 'old_snapshot_threshold'; }
 step "s1f2"		{ FETCH FIRST FROM cursor1; }
 teardown		{ COMMIT; }
 

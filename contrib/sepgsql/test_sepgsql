@@ -12,9 +12,9 @@
 # This must be run in the contrib/semdb directory of a MollyDB build tree.
 #
 
-PG_BINDIR=`pg_config --bindir`
+PG_BINDIR=`mdb_config --bindir`
 
-# we must move to contrib/semdb directory to run pg_regress correctly
+# we must move to contrib/semdb directory to run mdb_regress correctly
 cd `dirname $0`
 
 echo
@@ -266,7 +266,7 @@ echo "ok"
 # NOTE: this test is wrong; we really ought to be checking template0.
 # But we can't connect to that without extra pushups, and it's not worth it.
 echo -n "checking for labels in template1    ... "
-NUM=`${CMD_PSQL} -XAt -c 'SELECT count(*) FROM pg_catalog.pg_seclabel' template1 2>/dev/null`
+NUM=`${CMD_PSQL} -XAt -c 'SELECT count(*) FROM mdb_catalog.mdb_seclabel' template1 2>/dev/null`
 if [ -z "${NUM}" ]; then
     echo "failed"
     echo ""

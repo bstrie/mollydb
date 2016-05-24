@@ -32,16 +32,16 @@
 #endif
 
 #include "access/htup_details.h"
-#include "catalog/pg_authid.h"
+#include "catalog/mdb_authid.h"
 #include "libpq/libpq.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "postmaster/autovacuum.h"
 #include "postmaster/postmaster.h"
 #include "storage/fd.h"
 #include "storage/ipc.h"
 #include "storage/latch.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "storage/proc.h"
 #include "storage/procarray.h"
 #include "utils/builtins.h"
@@ -183,7 +183,7 @@ InitPostmasterChild(void)
 	 * make sure stderr is in binary mode before anything can possibly be
 	 * written to it, in case it's actually the syslogger pipe, so the pipe
 	 * chunking protocol isn't disturbed. Non-logpipe data gets translated on
-	 * redirection (e.g. via pg_ctl -l) anyway.
+	 * redirection (e.g. via mdb_ctl -l) anyway.
 	 */
 #ifdef WIN32
 	_setmode(fileno(stderr), _O_BINARY);
@@ -468,7 +468,7 @@ has_rolreplication(Oid roleid)
 	utup = SearchSysCache1(AUTHOID, ObjectIdGetDatum(roleid));
 	if (HeapTupleIsValid(utup))
 	{
-		result = ((Form_pg_authid) GETSTRUCT(utup))->rolreplication;
+		result = ((Form_mdb_authid) GETSTRUCT(utup))->rolreplication;
 		ReleaseSysCache(utup);
 	}
 	return result;
@@ -481,7 +481,7 @@ void
 InitializeSessionUserId(const char *rolename, Oid roleid)
 {
 	HeapTuple	roleTup;
-	Form_pg_authid rform;
+	Form_mdb_authid rform;
 	char 	*rname;
 
 	/*
@@ -510,7 +510,7 @@ InitializeSessionUserId(const char *rolename, Oid roleid)
 					 errmsg("role with OID %u does not exist", roleid)));
 	}
 
-	rform = (Form_pg_authid) GETSTRUCT(roleTup);
+	rform = (Form_mdb_authid) GETSTRUCT(roleTup);
 	roleid = HeapTupleGetOid(roleTup);
 	rname = NameStr(rform->rolname);
 
@@ -526,7 +526,7 @@ InitializeSessionUserId(const char *rolename, Oid roleid)
 
 	/*
 	 * These next checks are not enforced when in standalone mode, so that
-	 * there is a way to recover from sillinesses like "UPDATE pg_authid SET
+	 * there is a way to recover from sillinesses like "UPDATE mdb_authid SET
 	 * rolcanlogin = false;".
 	 */
 	if (IsUnderPostmaster)
@@ -703,7 +703,7 @@ GetUserNameFromId(Oid roleid, bool noerr)
 	}
 	else
 	{
-		result = pstrdup(NameStr(((Form_pg_authid) GETSTRUCT(tuple))->rolname));
+		result = pstrdup(NameStr(((Form_mdb_authid) GETSTRUCT(tuple))->rolname));
 		ReleaseSysCache(tuple);
 	}
 	return result;
@@ -786,15 +786,15 @@ CreateLockFile(const char *filename, bool amPostmaster,
 	 * likelihood that a reboot will assign exactly the same PID as we had in
 	 * the previous reboot, or one that's only one or two counts larger and
 	 * hence the lockfile's PID now refers to an ancestor shell process.  We
-	 * allow pg_ctl to pass down its parent shell PID (our grandparent PID)
+	 * allow mdb_ctl to pass down its parent shell PID (our grandparent PID)
 	 * via the environment variable PG_GRANDPARENT_PID; this is so that
-	 * launching the postmaster via pg_ctl can be just as reliable as
+	 * launching the postmaster via mdb_ctl can be just as reliable as
 	 * launching it directly.  There is no provision for detecting
 	 * further-removed ancestor processes, but if the init script is written
 	 * carefully then all but the immediate parent shell will be root-owned
 	 * processes and so the kill test will fail with EPERM.  Note that we
 	 * cannot get a false negative this way, because an existing postmaster
-	 * would surely never launch a competing postmaster or pg_ctl process
+	 * would surely never launch a competing postmaster or mdb_ctl process
 	 * directly.
 	 */
 	my_pid = getpid();
@@ -1021,7 +1021,7 @@ CreateLockFile(const char *filename, bool amPostmaster,
 				(errcode_for_file_access(),
 				 errmsg("could not write lock file \"%s\": %m", filename)));
 	}
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 	{
 		int			save_errno = errno;
 
@@ -1230,7 +1230,7 @@ AddToDataDirLockFile(int target_line, const char *str)
 		close(fd);
 		return;
 	}
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 	{
 		ereport(LOG,
 				(errcode_for_file_access(),
@@ -1485,7 +1485,7 @@ process_session_preload_libraries(void)
 }
 
 void
-pg_bindtextdomain(const char *domain)
+mdb_bindtextdomain(const char *domain)
 {
 #ifdef ENABLE_NLS
 	if (my_exec_path[0] != '\0')
@@ -1494,7 +1494,7 @@ pg_bindtextdomain(const char *domain)
 
 		get_locale_path(my_exec_path, locale_path);
 		bindtextdomain(domain, locale_path);
-		pg_bind_textdomain_codeset(domain);
+		mdb_bind_textdomain_codeset(domain);
 	}
 #endif
 }

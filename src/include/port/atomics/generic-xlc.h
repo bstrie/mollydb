@@ -19,25 +19,25 @@
 #if defined(HAVE_ATOMICS)
 
 #define PG_HAVE_ATOMIC_U32_SUPPORT
-typedef struct pg_atomic_uint32
+typedef struct mdb_atomic_uint32
 {
 	volatile uint32 value;
-} pg_atomic_uint32;
+} mdb_atomic_uint32;
 
 
 /* 64bit atomics are only supported in 64bit mode */
 #ifdef __64BIT__
 #define PG_HAVE_ATOMIC_U64_SUPPORT
-typedef struct pg_atomic_uint64
+typedef struct mdb_atomic_uint64
 {
-	volatile uint64 value pg_attribute_aligned(8);
-} pg_atomic_uint64;
+	volatile uint64 value mdb_attribute_aligned(8);
+} mdb_atomic_uint64;
 
 #endif /* __64BIT__ */
 
 #define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
 static inline bool
-pg_atomic_compare_exchange_u32_impl(volatile pg_atomic_uint32 *ptr,
+mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 									uint32 *expected, uint32 newval)
 {
 	bool		ret;
@@ -71,7 +71,7 @@ pg_atomic_compare_exchange_u32_impl(volatile pg_atomic_uint32 *ptr,
 
 #define PG_HAVE_ATOMIC_FETCH_ADD_U32
 static inline uint32
-pg_atomic_fetch_add_u32_impl(volatile pg_atomic_uint32 *ptr, int32 add_)
+mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_)
 {
 	/*
 	 * __fetch_and_add() emits a leading "sync" and trailing "isync", thereby
@@ -84,7 +84,7 @@ pg_atomic_fetch_add_u32_impl(volatile pg_atomic_uint32 *ptr, int32 add_)
 
 #define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
 static inline bool
-pg_atomic_compare_exchange_u64_impl(volatile pg_atomic_uint64 *ptr,
+mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 									uint64 *expected, uint64 newval)
 {
 	bool		ret;
@@ -101,7 +101,7 @@ pg_atomic_compare_exchange_u64_impl(volatile pg_atomic_uint64 *ptr,
 
 #define PG_HAVE_ATOMIC_FETCH_ADD_U64
 static inline uint64
-pg_atomic_fetch_add_u64_impl(volatile pg_atomic_uint64 *ptr, int64 add_)
+mdb_atomic_fetch_add_u64_impl(volatile mdb_atomic_uint64 *ptr, int64 add_)
 {
 	return __fetch_and_addlp((volatile long *)&ptr->value, add_);
 }

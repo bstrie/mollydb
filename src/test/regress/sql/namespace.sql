@@ -14,8 +14,8 @@ CREATE SCHEMA test_schema_1
        );
 
 -- verify that the objects were created
-SELECT COUNT(*) FROM pg_class WHERE relnamespace =
-    (SELECT oid FROM pg_namespace WHERE nspname = 'test_schema_1');
+SELECT COUNT(*) FROM mdb_class WHERE relnamespace =
+    (SELECT oid FROM mdb_namespace WHERE nspname = 'test_schema_1');
 
 INSERT INTO test_schema_1.abc DEFAULT VALUES;
 INSERT INTO test_schema_1.abc DEFAULT VALUES;
@@ -25,8 +25,8 @@ SELECT * FROM test_schema_1.abc;
 SELECT * FROM test_schema_1.abc_view;
 
 ALTER SCHEMA test_schema_1 RENAME TO test_schema_renamed;
-SELECT COUNT(*) FROM pg_class WHERE relnamespace =
-    (SELECT oid FROM pg_namespace WHERE nspname = 'test_schema_1');
+SELECT COUNT(*) FROM mdb_class WHERE relnamespace =
+    (SELECT oid FROM mdb_namespace WHERE nspname = 'test_schema_1');
 
 -- test IF NOT EXISTS cases
 CREATE SCHEMA test_schema_renamed; -- fail, already exists
@@ -40,5 +40,5 @@ CREATE SCHEMA IF NOT EXISTS test_schema_renamed -- fail, disallowed
 DROP SCHEMA test_schema_renamed CASCADE;
 
 -- verify that the objects were dropped
-SELECT COUNT(*) FROM pg_class WHERE relnamespace =
-    (SELECT oid FROM pg_namespace WHERE nspname = 'test_schema_renamed');
+SELECT COUNT(*) FROM mdb_class WHERE relnamespace =
+    (SELECT oid FROM mdb_namespace WHERE nspname = 'test_schema_renamed');

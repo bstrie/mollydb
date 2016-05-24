@@ -96,11 +96,11 @@ connection_target: opt_database_name opt_server opt_port
 		{
 			$$ = $1;
 		}
-		| ecpg_sconst
+		| ecmdb_sconst
 		{
 			/* We can only process double quoted strings not single quotes ones,
 			 * so we change the quotes.
-			 * Note, that the rule for ecpg_sconst adds these single quotes. */
+			 * Note, that the rule for ecmdb_sconst adds these single quotes. */
 			$1[0] = '\"';
 			$1[strlen($1)-1] = '\"';
 			$$ = $1;
@@ -111,7 +111,7 @@ opt_database_name: database_name		{ $$ = $1; }
 		| /*EMPTY*/			{ $$ = EMPTY; }
 		;
 
-db_prefix: ecpg_ident cvariable
+db_prefix: ecmdb_ident cvariable
 		{
 			if (strcmp($2, "mollydb") != 0 && strcmp($2, "mollydb") != 0)
 				mmerror(PARSE_ERROR, ET_ERROR, "expected \"mollydb\", found \"%s\"", $2);
@@ -170,7 +170,7 @@ user_name: RoleId
 			else
 				$$ = make3_str(mm_strdup("\""), $1, mm_strdup("\""));
 		}
-		| ecpg_sconst
+		| ecmdb_sconst
 		{
 			if ($1[0] == '\"')
 				$$ = $1;
@@ -260,7 +260,7 @@ opt_opt_value: /*EMPTY*/
 			{ $$ = EMPTY; }
 		| '=' Iconst
 			{ $$ = make2_str(mm_strdup("="), $2); }
-		| '=' ecpg_ident
+		| '=' ecmdb_ident
 			{ $$ = make2_str(mm_strdup("="), $2); }
 		| '=' civar
 			{ $$ = make2_str(mm_strdup("="), $2); }
@@ -291,7 +291,7 @@ ECPGCursorStmt:  DECLARE cursor_name cursor_options CURSOR opt_hold FOR prepared
 		{
 			struct cursor *ptr, *this;
 			char *cursor_marker = $2[0] == ':' ? mm_strdup("$0") : mm_strdup($2);
-			int (* strcmp_fn)(const char *, const char *) = (($2[0] == ':' || $2[0] == '"') ? strcmp : pg_strcasecmp);
+			int (* strcmp_fn)(const char *, const char *) = (($2[0] == ':' || $2[0] == '"') ? strcmp : mdb_strcasecmp);
 			struct variable *thisquery = (struct variable *)mm_alloc(sizeof(struct variable));
 			const char *con = connection ? connection : "NULL";
 			char *comment;
@@ -319,7 +319,7 @@ ECPGCursorStmt:  DECLARE cursor_name cursor_options CURSOR opt_hold FOR prepared
 			this->argsresult = NULL;
 			this->argsresult_oos = NULL;
 
-			thisquery->type = &ecpg_query;
+			thisquery->type = &ecmdb_query;
 			thisquery->brace_level = 0;
 			thisquery->next = NULL;
 			thisquery->name = (char *) mm_alloc(sizeof("ECPGprepared_statement(, , __LINE__)") + strlen(con) + strlen($7));
@@ -369,7 +369,7 @@ opt_scale:	',' NumericOnly	{ $$ = $2; }
 		| /* EMPTY */	{ $$ = EMPTY; }
 		;
 
-ecpg_interval:	opt_interval	{ $$ = $1; }
+ecmdb_interval:	opt_interval	{ $$ = $1; }
 		| YEAR_P TO MINUTE_P	{ $$ = mm_strdup("year to minute"); }
 		| YEAR_P TO SECOND_P	{ $$ = mm_strdup("year to second"); }
 		| DAY_P TO DAY_P		{ $$ = mm_strdup("day to day"); }
@@ -480,7 +480,7 @@ storage_modifier : S_CONST	{ $$ = mm_strdup("const"); }
 var_type:	simple_type
 		{
 			$$.type_enum = $1;
-			$$.type_str = mm_strdup(ecpg_type_name($1));
+			$$.type_str = mm_strdup(ecmdb_type_name($1));
 			$$.type_dimension = mm_strdup("-1");
 			$$.type_index = mm_strdup("-1");
 			$$.type_sizeof = NULL;
@@ -533,7 +533,7 @@ var_type:	simple_type
 			$$.type_index = mm_strdup("-1");
 			$$.type_sizeof = NULL;
 		}
-		| ECPGColLabelCommon ecpg_interval
+		| ECPGColLabelCommon ecmdb_interval
 		{
 			if (strlen($2) != 0 && strcmp ($1, "datetime") != 0 && strcmp ($1, "interval") != 0)
 				mmerror (PARSE_ERROR, ET_ERROR, "interval specification not allowed here");
@@ -949,7 +949,7 @@ opt_pointer: /*EMPTY*/				{ $$ = EMPTY; }
 /*
  * We try to simulate the correct DECLARE syntax here so we get dynamic SQL
  */
-ECPGDeclare: DECLARE STATEMENT ecpg_ident
+ECPGDeclare: DECLARE STATEMENT ecmdb_ident
 		{
 			/* this is only supported for compatibility */
 			$$ = cat_str(3, mm_strdup("/* declare statement"), $3, mm_strdup("*/"));
@@ -989,7 +989,7 @@ ECPGFree:	SQL_FREE cursor_name	{ $$ = $2; }
 /*
  * open is an open cursor, at the moment this has to be removed
  */
-ECPGOpen: SQL_OPEN cursor_name opt_ecpg_using
+ECPGOpen: SQL_OPEN cursor_name opt_ecmdb_using
 		{
 			if ($2[0] == ':')
 				remove_variable_from_list(&argsinsert, find_variable($2 + 1));
@@ -997,11 +997,11 @@ ECPGOpen: SQL_OPEN cursor_name opt_ecpg_using
 		}
 		;
 
-opt_ecpg_using: /*EMPTY*/	{ $$ = EMPTY; }
-		| ecpg_using		{ $$ = $1; }
+opt_ecmdb_using: /*EMPTY*/	{ $$ = EMPTY; }
+		| ecmdb_using		{ $$ = $1; }
 		;
 
-ecpg_using:	USING using_list	{ $$ = EMPTY; }
+ecmdb_using:	USING using_list	{ $$ = EMPTY; }
 		| using_descriptor		{ $$ = $1; }
 		;
 
@@ -1052,12 +1052,12 @@ UsingValue: UsingConst
 UsingConst: Iconst			{ $$ = $1; }
 		| '+' Iconst		{ $$ = cat_str(2, mm_strdup("+"), $2); }
 		| '-' Iconst		{ $$ = cat_str(2, mm_strdup("-"), $2); }
-		| ecpg_fconst		{ $$ = $1; }
-		| '+' ecpg_fconst	{ $$ = cat_str(2, mm_strdup("+"), $2); }
-		| '-' ecpg_fconst	{ $$ = cat_str(2, mm_strdup("-"), $2); }
-		| ecpg_sconst		{ $$ = $1; }
-		| ecpg_bconst		{ $$ = $1; }
-		| ecpg_xconst		{ $$ = $1; }
+		| ecmdb_fconst		{ $$ = $1; }
+		| '+' ecmdb_fconst	{ $$ = cat_str(2, mm_strdup("+"), $2); }
+		| '-' ecmdb_fconst	{ $$ = cat_str(2, mm_strdup("-"), $2); }
+		| ecmdb_sconst		{ $$ = $1; }
+		| ecmdb_bconst		{ $$ = $1; }
+		| ecmdb_xconst		{ $$ = $1; }
 		;
 
 /*
@@ -1211,7 +1211,7 @@ ECPGSetDescItem: descriptor_item '=' AllConstVar
 		}
 		;
 
-AllConstVar: ecpg_fconst
+AllConstVar: ecmdb_fconst
 		{
 			char *length = mm_alloc(sizeof(int) * CHAR_BIT * 10 / 3);
 
@@ -1225,7 +1225,7 @@ AllConstVar: ecpg_fconst
 			$$ = $1;
 		}
 
-		| '-' ecpg_fconst
+		| '-' ecmdb_fconst
 		{
 			char *length = mm_alloc(sizeof(int) * CHAR_BIT * 10 / 3);
 			char *var = cat2_str(mm_strdup("-"), $2);
@@ -1245,7 +1245,7 @@ AllConstVar: ecpg_fconst
 			$$ = var;
 		}
 
-		| ecpg_sconst
+		| ecmdb_sconst
 		{
 			char *length = mm_alloc(sizeof(int) * CHAR_BIT * 10 / 3);
 			char *var = $1 + 1;
@@ -1521,7 +1521,7 @@ ECPGTypeName:  SQL_BOOL				{ $$ = mm_strdup("bool"); }
 symbol: ColLabel					{ $$ = $1; }
 		;
 
-ECPGColId: ecpg_ident				{ $$ = $1; }
+ECPGColId: ecmdb_ident				{ $$ = $1; }
 		| unreserved_keyword		{ $$ = $1; }
 		| col_name_keyword			{ $$ = $1; }
 		| ECPGunreserved_interval	{ $$ = $1; }
@@ -1541,7 +1541,7 @@ ECPGColId: ecpg_ident				{ $$ = $1; }
 
 /* Column identifier --- names that can be column, table, etc names.
  */
-ColId:	ecpg_ident					{ $$ = $1; }
+ColId:	ecmdb_ident					{ $$ = $1; }
 		| all_unreserved_keyword	{ $$ = $1; }
 		| col_name_keyword			{ $$ = $1; }
 		| ECPGKeywords				{ $$ = $1; }
@@ -1552,7 +1552,7 @@ ColId:	ecpg_ident					{ $$ = $1; }
 
 /* Type/function identifier --- names that can be type or function names.
  */
-type_function_name:	ecpg_ident		{ $$ = $1; }
+type_function_name:	ecmdb_ident		{ $$ = $1; }
 		| all_unreserved_keyword	{ $$ = $1; }
 		| type_func_name_keyword	{ $$ = $1; }
 		| ECPGKeywords				{ $$ = $1; }
@@ -1583,7 +1583,7 @@ ECPGColLabel:  ECPGColLabelCommon	{ $$ = $1; }
 		| CONNECTION				{ $$ = mm_strdup("connection"); }
 		;
 
-ECPGColLabelCommon:  ecpg_ident		{ $$ = $1; }
+ECPGColLabelCommon:  ecmdb_ident		{ $$ = $1; }
 		| col_name_keyword			{ $$ = $1; }
 		| type_func_name_keyword	{ $$ = $1; }
 		| ECPGKeywords_vanames		{ $$ = $1; }
@@ -1712,13 +1712,13 @@ cvariable:	CVARIABLE
 		}
 		;
 
-ecpg_param:	PARAM		{ $$ = make_name(); } ;
+ecmdb_param:	PARAM		{ $$ = make_name(); } ;
 
-ecpg_bconst:	BCONST		{ $$ = make_name(); } ;
+ecmdb_bconst:	BCONST		{ $$ = make_name(); } ;
 
-ecpg_fconst:	FCONST		{ $$ = make_name(); } ;
+ecmdb_fconst:	FCONST		{ $$ = make_name(); } ;
 
-ecpg_sconst:
+ecmdb_sconst:
 		SCONST
 		{
 			/* could have been input as '' or $$ */
@@ -1753,9 +1753,9 @@ ecpg_sconst:
 		| DOLCONST	{ $$ = $1; }
 		;
 
-ecpg_xconst:	XCONST		{ $$ = make_name(); } ;
+ecmdb_xconst:	XCONST		{ $$ = make_name(); } ;
 
-ecpg_ident:	IDENT		{ $$ = make_name(); }
+ecmdb_ident:	IDENT		{ $$ = make_name(); }
 		| CSTRING	{ $$ = make3_str(mm_strdup("\""), $1, mm_strdup("\"")); }
 		| UIDENT	{ $$ = $1; }
 		;
@@ -1796,10 +1796,10 @@ c_thing:	c_anything		{ $$ = $1; }
 		|	';'		{ $$ = mm_strdup(";"); }
 		;
 
-c_anything:  ecpg_ident				{ $$ = $1; }
+c_anything:  ecmdb_ident				{ $$ = $1; }
 		| Iconst			{ $$ = $1; }
-		| ecpg_fconst			{ $$ = $1; }
-		| ecpg_sconst			{ $$ = $1; }
+		| ecmdb_fconst			{ $$ = $1; }
+		| ecmdb_sconst			{ $$ = $1; }
 		| '*'				{ $$ = mm_strdup("*"); }
 		| '+'				{ $$ = mm_strdup("+"); }
 		| '-'				{ $$ = mm_strdup("-"); }
@@ -1867,9 +1867,9 @@ Iresult:        Iconst				{ $$ = $1; }
                 | Iresult '*' Iresult		{ $$ = cat_str(3, $1, mm_strdup("*"), $3); }
                 | Iresult '/' Iresult		{ $$ = cat_str(3, $1, mm_strdup("/"), $3); }
                 | Iresult '%' Iresult		{ $$ = cat_str(3, $1, mm_strdup("%"), $3); }
-                | ecpg_sconst			{ $$ = $1; }
+                | ecmdb_sconst			{ $$ = $1; }
                 | ColId				{ $$ = $1; }
-		| ColId '(' var_type ')'        { if (pg_strcasecmp($1, "sizeof") != 0)
+		| ColId '(' var_type ')'        { if (mdb_strcasecmp($1, "sizeof") != 0)
 							mmerror(PARSE_ERROR, ET_ERROR, "operator not allowed in variable definition");
 						  else
 							$$ = cat_str(4, $1, mm_strdup("("), $3.type_str, mm_strdup(")"));
@@ -1877,17 +1877,17 @@ Iresult:        Iconst				{ $$ = $1; }
                 ;
 
 execute_rest: /* EMPTY */	{ $$ = EMPTY; }
-	| ecpg_using ecpg_into  { $$ = EMPTY; }
-	| ecpg_into ecpg_using  { $$ = EMPTY; }
-	| ecpg_using			{ $$ = EMPTY; }
-	| ecpg_into				{ $$ = EMPTY; }
+	| ecmdb_using ecmdb_into  { $$ = EMPTY; }
+	| ecmdb_into ecmdb_using  { $$ = EMPTY; }
+	| ecmdb_using			{ $$ = EMPTY; }
+	| ecmdb_into				{ $$ = EMPTY; }
 	;
 
-ecpg_into: INTO into_list	{ $$ = EMPTY; }
+ecmdb_into: INTO into_list	{ $$ = EMPTY; }
 	| into_descriptor		{ $$ = $1; }
 	;
 
-ecpg_fetch_into: ecpg_into	{ $$ = $1; }
+ecmdb_fetch_into: ecmdb_into	{ $$ = $1; }
 	| using_descriptor
 	{
 		struct variable *var;
@@ -1899,8 +1899,8 @@ ecpg_fetch_into: ecpg_into	{ $$ = $1; }
 	}
 	;
 
-opt_ecpg_fetch_into:	/* EMPTY */	{ $$ = EMPTY; }
-	| ecpg_fetch_into		{ $$ = $1; }
+opt_ecmdb_fetch_into:	/* EMPTY */	{ $$ = EMPTY; }
+	| ecmdb_fetch_into		{ $$ = $1; }
 	;
 
 %%

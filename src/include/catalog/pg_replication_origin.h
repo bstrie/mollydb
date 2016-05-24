@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * pg_replication_origin.h
+ * mdb_replication_origin.h
  *	  Persistent replication origin registry
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_replication_origin.h
+ * src/include/catalog/mdb_replication_origin.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -21,13 +21,13 @@
 #include "access/xlogdefs.h"
 
 /* ----------------
- *		pg_replication_origin.  cpp turns this into
- *		typedef struct FormData_pg_replication_origin
+ *		mdb_replication_origin.  cpp turns this into
+ *		typedef struct FormData_mdb_replication_origin
  * ----------------
  */
 #define ReplicationOriginRelationId 6000
 
-CATALOG(pg_replication_origin,6000) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
+CATALOG(mdb_replication_origin,6000) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
 {
 	/*
 	 * Locally known id that get included into WAL.
@@ -50,20 +50,20 @@ CATALOG(pg_replication_origin,6000) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
 
 #ifdef CATALOG_VARLEN			/* further variable-length fields */
 #endif
-} FormData_pg_replication_origin;
+} FormData_mdb_replication_origin;
 
-typedef FormData_pg_replication_origin *Form_pg_replication_origin;
+typedef FormData_mdb_replication_origin *Form_mdb_replication_origin;
 
 /* ----------------
- *		compiler constants for pg_replication_origin
+ *		compiler constants for mdb_replication_origin
  * ----------------
  */
-#define Natts_pg_replication_origin					2
-#define Anum_pg_replication_origin_roident			1
-#define Anum_pg_replication_origin_roname			2
+#define Natts_mdb_replication_origin					2
+#define Anum_mdb_replication_origin_roident			1
+#define Anum_mdb_replication_origin_roname			2
 
 /* ----------------
- *		pg_replication_origin has no initial contents
+ *		mdb_replication_origin has no initial contents
  * ----------------
  */
 

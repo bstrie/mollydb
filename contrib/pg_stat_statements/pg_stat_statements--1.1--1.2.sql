@@ -1,18 +1,18 @@
-/* contrib/pg_stat_statements/pg_stat_statements--1.1--1.2.sql */
+/* contrib/mdb_stat_statements/mdb_stat_statements--1.1--1.2.sql */
 
 -- complain if script is sourced in psql, rather than via ALTER EXTENSION
-\echo Use "ALTER EXTENSION pg_stat_statements UPDATE TO '1.2'" to load this file. \quit
+\echo Use "ALTER EXTENSION mdb_stat_statements UPDATE TO '1.2'" to load this file. \quit
 
 /* First we have to remove them from the extension */
-ALTER EXTENSION pg_stat_statements DROP VIEW pg_stat_statements;
-ALTER EXTENSION pg_stat_statements DROP FUNCTION pg_stat_statements();
+ALTER EXTENSION mdb_stat_statements DROP VIEW mdb_stat_statements;
+ALTER EXTENSION mdb_stat_statements DROP FUNCTION mdb_stat_statements();
 
 /* Then we can drop them */
-DROP VIEW pg_stat_statements;
-DROP FUNCTION pg_stat_statements();
+DROP VIEW mdb_stat_statements;
+DROP FUNCTION mdb_stat_statements();
 
 /* Now redefine */
-CREATE FUNCTION pg_stat_statements(IN showtext boolean,
+CREATE FUNCTION mdb_stat_statements(IN showtext boolean,
     OUT userid oid,
     OUT dbid oid,
     OUT queryid bigint,
@@ -34,10 +34,10 @@ CREATE FUNCTION pg_stat_statements(IN showtext boolean,
     OUT blk_write_time float8
 )
 RETURNS SETOF record
-AS 'MODULE_PATHNAME', 'pg_stat_statements_1_2'
+AS 'MODULE_PATHNAME', 'mdb_stat_statements_1_2'
 LANGUAGE C STRICT VOLATILE;
 
-CREATE VIEW pg_stat_statements AS
-  SELECT * FROM pg_stat_statements(true);
+CREATE VIEW mdb_stat_statements AS
+  SELECT * FROM mdb_stat_statements(true);
 
-GRANT SELECT ON pg_stat_statements TO PUBLIC;
+GRANT SELECT ON mdb_stat_statements TO PUBLIC;

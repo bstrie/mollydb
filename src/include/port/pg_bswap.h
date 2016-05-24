@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_bswap.h
+ * mdb_bswap.h
  *	  Byte swapping.
  *
  * Macros for reversing the byte order of 32-bit and 64-bit unsigned integers.
@@ -14,7 +14,7 @@
  *
  * Copyright (c) 2015-2016, MollyDB Global Development Group
  *
- * src/include/port/pg_bswap.h
+ * src/include/port/mdb_bswap.h
  *
  *-------------------------------------------------------------------------
  */

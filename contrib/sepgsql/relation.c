@@ -16,9 +16,9 @@
 #include "access/sysattr.h"
 #include "catalog/indexing.h"
 #include "catalog/dependency.h"
-#include "catalog/pg_attribute.h"
-#include "catalog/pg_class.h"
-#include "catalog/pg_namespace.h"
+#include "catalog/mdb_attribute.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_namespace.h"
 #include "commands/seclabel.h"
 #include "lib/stringinfo.h"
 #include "utils/builtins.h"
@@ -52,7 +52,7 @@ semdb_attribute_post_create(Oid relOid, AttrNumber attnum)
 	char	   *tcontext;
 	char	   *ncontext;
 	ObjectAddress object;
-	Form_pg_attribute attForm;
+	Form_mdb_attribute attForm;
 	StringInfoData audit_name;
 
 	/*
@@ -69,11 +69,11 @@ semdb_attribute_post_create(Oid relOid, AttrNumber attnum)
 	rel = heap_open(AttributeRelationId, AccessShareLock);
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_attribute_attrelid,
+				Anum_mdb_attribute_attrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relOid));
 	ScanKeyInit(&skey[1],
-				Anum_pg_attribute_attnum,
+				Anum_mdb_attribute_attnum,
 				BTEqualStrategyNumber, F_INT2EQ,
 				Int16GetDatum(attnum));
 
@@ -85,7 +85,7 @@ semdb_attribute_post_create(Oid relOid, AttrNumber attnum)
 		elog(ERROR, "catalog lookup failed for column %d of relation %u",
 			 attnum, relOid);
 
-	attForm = (Form_pg_attribute) GETSTRUCT(tuple);
+	attForm = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 	scontext = semdb_get_client_label();
 	tcontext = semdb_get_label(RelationRelationId, relOid, 0);
@@ -241,7 +241,7 @@ semdb_relation_post_create(Oid relOid)
 	ScanKeyData skey;
 	SysScanDesc sscan;
 	HeapTuple	tuple;
-	Form_pg_class classForm;
+	Form_mdb_class classForm;
 	ObjectAddress object;
 	uint16		tclass;
 	char	   *scontext;		/* subject */
@@ -252,7 +252,7 @@ semdb_relation_post_create(Oid relOid)
 	StringInfoData audit_name;
 
 	/*
-	 * Fetch catalog record of the new relation. Because pg_class entry is not
+	 * Fetch catalog record of the new relation. Because mdb_class entry is not
 	 * visible right now, we need to scan the catalog using SnapshotSelf.
 	 */
 	rel = heap_open(RelationRelationId, AccessShareLock);
@@ -269,7 +269,7 @@ semdb_relation_post_create(Oid relOid)
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "catalog lookup failed for relation %u", relOid);
 
-	classForm = (Form_pg_class) GETSTRUCT(tuple);
+	classForm = (Form_mdb_class) GETSTRUCT(tuple);
 
 	/* ignore indexes on toast tables */
 	if (classForm->relkind == RELKIND_INDEX &&
@@ -350,12 +350,12 @@ semdb_relation_post_create(Oid relOid)
 		ScanKeyData akey;
 		SysScanDesc ascan;
 		HeapTuple	atup;
-		Form_pg_attribute attForm;
+		Form_mdb_attribute attForm;
 
 		arel = heap_open(AttributeRelationId, AccessShareLock);
 
 		ScanKeyInit(&akey,
-					Anum_pg_attribute_attrelid,
+					Anum_mdb_attribute_attrelid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(relOid));
 
@@ -364,7 +364,7 @@ semdb_relation_post_create(Oid relOid)
 
 		while (HeapTupleIsValid(atup = systable_getnext(ascan)))
 		{
-			attForm = (Form_pg_attribute) GETSTRUCT(atup);
+			attForm = (Form_mdb_attribute) GETSTRUCT(atup);
 
 			resetStringInfo(&audit_name);
 			appendStringInfo(&audit_name, "%s.%s.%s",
@@ -481,7 +481,7 @@ semdb_relation_drop(Oid relOid)
 	 */
 	if (relkind == RELKIND_RELATION)
 	{
-		Form_pg_attribute attForm;
+		Form_mdb_attribute attForm;
 		CatCList   *attrList;
 		HeapTuple	atttup;
 		int			i;
@@ -490,7 +490,7 @@ semdb_relation_drop(Oid relOid)
 		for (i = 0; i < attrList->n_members; i++)
 		{
 			atttup = &attrList->members[i]->tuple;
-			attForm = (Form_pg_attribute) GETSTRUCT(atttup);
+			attForm = (Form_mdb_attribute) GETSTRUCT(atttup);
 
 			if (attForm->attisdropped)
 				continue;
@@ -576,8 +576,8 @@ semdb_relation_setattr(Oid relOid)
 	SysScanDesc sscan;
 	HeapTuple	oldtup;
 	HeapTuple	newtup;
-	Form_pg_class oldform;
-	Form_pg_class newform;
+	Form_mdb_class oldform;
+	Form_mdb_class newform;
 	ObjectAddress object;
 	char	   *audit_name;
 	uint16_t	tclass;
@@ -618,7 +618,7 @@ semdb_relation_setattr(Oid relOid)
 	newtup = systable_getnext(sscan);
 	if (!HeapTupleIsValid(newtup))
 		elog(ERROR, "catalog lookup failed for relation %u", relOid);
-	newform = (Form_pg_class) GETSTRUCT(newtup);
+	newform = (Form_mdb_class) GETSTRUCT(newtup);
 
 	/*
 	 * Fetch older catalog
@@ -626,7 +626,7 @@ semdb_relation_setattr(Oid relOid)
 	oldtup = SearchSysCache1(RELOID, ObjectIdGetDatum(relOid));
 	if (!HeapTupleIsValid(oldtup))
 		elog(ERROR, "cache lookup failed for relation %u", relOid);
-	oldform = (Form_pg_class) GETSTRUCT(oldtup);
+	oldform = (Form_mdb_class) GETSTRUCT(oldtup);
 
 	/*
 	 * Does this ALTER command takes operation to namespace?
@@ -668,7 +668,7 @@ semdb_relation_setattr(Oid relOid)
  * semdb_relation_setattr_extra
  *
  * It checks permission of the relation being referenced by extra attributes,
- * such as pg_index entries. Like core MollyDB, semdb also does not deal
+ * such as mdb_index entries. Like core MollyDB, semdb also does not deal
  * with such entries as individual "objects", thus, modification of these
  * entries shall be considered as setting an attribute of the underlying
  * relation.
@@ -723,7 +723,7 @@ semdb_index_modify(Oid indexOid)
 	semdb_relation_setattr_extra(catalog,
 								   IndexRelidIndexId,
 								   indexOid,
-								   Anum_pg_index_indrelid,
-								   Anum_pg_index_indexrelid);
+								   Anum_mdb_index_indrelid,
+								   Anum_mdb_index_indexrelid);
 	heap_close(catalog, AccessShareLock);
 }

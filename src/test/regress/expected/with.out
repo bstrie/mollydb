@@ -299,8 +299,8 @@ SELECT * FROM vsubdepartment ORDER BY name;
 (5 rows)
 
 -- Check reverse listing
-SELECT pg_get_viewdef('vsubdepartment'::regclass);
-                pg_get_viewdef                 
+SELECT mdb_get_viewdef('vsubdepartment'::regclass);
+                mdb_get_viewdef                 
 -----------------------------------------------
   WITH RECURSIVE subdepartment AS (           +
           SELECT department.id,               +
@@ -322,8 +322,8 @@ SELECT pg_get_viewdef('vsubdepartment'::regclass);
     FROM subdepartment;
 (1 row)
 
-SELECT pg_get_viewdef('vsubdepartment'::regclass, true);
-               pg_get_viewdef                
+SELECT mdb_get_viewdef('vsubdepartment'::regclass, true);
+               mdb_get_viewdef                
 ---------------------------------------------
   WITH RECURSIVE subdepartment AS (         +
           SELECT department.id,             +

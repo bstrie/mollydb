@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_conversion.c
- *	  routines to support manipulation of the pg_conversion relation
+ * mdb_conversion.c
+ *	  routines to support manipulation of the mdb_conversion relation
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_conversion.c
+ *	  src/backend/catalog/mdb_conversion.c
  *
  *-------------------------------------------------------------------------
  */
@@ -20,11 +20,11 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_conversion.h"
-#include "catalog/pg_conversion_fn.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_proc.h"
-#include "mb/pg_wchar.h"
+#include "catalog/mdb_conversion.h"
+#include "catalog/mdb_conversion_fn.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_proc.h"
+#include "mb/mdb_wchar.h"
 #include "utils/builtins.h"
 #include "utils/catcache.h"
 #include "utils/fmgroids.h"
@@ -35,7 +35,7 @@
 /*
  * ConversionCreate
  *
- * Add a new tuple to pg_conversion.
+ * Add a new tuple to mdb_conversion.
  */
 ObjectAddress
 ConversionCreate(const char *conname, Oid connamespace,
@@ -47,8 +47,8 @@ ConversionCreate(const char *conname, Oid connamespace,
 	Relation	rel;
 	TupleDesc	tupDesc;
 	HeapTuple	tup;
-	bool		nulls[Natts_pg_conversion];
-	Datum		values[Natts_pg_conversion];
+	bool		nulls[Natts_mdb_conversion];
+	Datum		values[Natts_mdb_conversion];
 	NameData	cname;
 	ObjectAddress myself,
 				referenced;
@@ -77,16 +77,16 @@ ConversionCreate(const char *conname, Oid connamespace,
 			ereport(ERROR,
 					(errcode(ERRCODE_DUPLICATE_OBJECT),
 					 errmsg("default conversion for %s to %s already exists",
-							pg_encoding_to_char(conforencoding),
-							pg_encoding_to_char(contoencoding))));
+							mdb_encoding_to_char(conforencoding),
+							mdb_encoding_to_char(contoencoding))));
 	}
 
-	/* open pg_conversion */
+	/* open mdb_conversion */
 	rel = heap_open(ConversionRelationId, RowExclusiveLock);
 	tupDesc = rel->rd_att;
 
 	/* initialize nulls and values */
-	for (i = 0; i < Natts_pg_conversion; i++)
+	for (i = 0; i < Natts_mdb_conversion; i++)
 	{
 		nulls[i] = false;
 		values[i] = (Datum) NULL;
@@ -94,13 +94,13 @@ ConversionCreate(const char *conname, Oid connamespace,
 
 	/* form a tuple */
 	namestrcpy(&cname, conname);
-	values[Anum_pg_conversion_conname - 1] = NameGetDatum(&cname);
-	values[Anum_pg_conversion_connamespace - 1] = ObjectIdGetDatum(connamespace);
-	values[Anum_pg_conversion_conowner - 1] = ObjectIdGetDatum(conowner);
-	values[Anum_pg_conversion_conforencoding - 1] = Int32GetDatum(conforencoding);
-	values[Anum_pg_conversion_contoencoding - 1] = Int32GetDatum(contoencoding);
-	values[Anum_pg_conversion_conproc - 1] = ObjectIdGetDatum(conproc);
-	values[Anum_pg_conversion_condefault - 1] = BoolGetDatum(def);
+	values[Anum_mdb_conversion_conname - 1] = NameGetDatum(&cname);
+	values[Anum_mdb_conversion_connamespace - 1] = ObjectIdGetDatum(connamespace);
+	values[Anum_mdb_conversion_conowner - 1] = ObjectIdGetDatum(conowner);
+	values[Anum_mdb_conversion_conforencoding - 1] = Int32GetDatum(conforencoding);
+	values[Anum_mdb_conversion_contoencoding - 1] = Int32GetDatum(contoencoding);
+	values[Anum_mdb_conversion_conproc - 1] = ObjectIdGetDatum(conproc);
+	values[Anum_mdb_conversion_condefault - 1] = BoolGetDatum(def);
 
 	tup = heap_form_tuple(tupDesc, values, nulls);
 
@@ -145,7 +145,7 @@ ConversionCreate(const char *conname, Oid connamespace,
 /*
  * RemoveConversionById
  *
- * Remove a tuple from pg_conversion by Oid. This function is solely
+ * Remove a tuple from mdb_conversion by Oid. This function is solely
  * called inside catalog/dependency.c
  */
 void
@@ -161,7 +161,7 @@ RemoveConversionById(Oid conversionOid)
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(conversionOid));
 
-	/* open pg_conversion */
+	/* open mdb_conversion */
 	rel = heap_open(ConversionRelationId, RowExclusiveLock);
 
 	scan = heap_beginscan_catalog(rel, 1, &scanKeyData);
@@ -189,7 +189,7 @@ FindDefaultConversion(Oid name_space, int32 for_encoding, int32 to_encoding)
 {
 	CatCList   *catlist;
 	HeapTuple	tuple;
-	Form_pg_conversion body;
+	Form_mdb_conversion body;
 	Oid			proc = InvalidOid;
 	int			i;
 
@@ -201,7 +201,7 @@ FindDefaultConversion(Oid name_space, int32 for_encoding, int32 to_encoding)
 	for (i = 0; i < catlist->n_members; i++)
 	{
 		tuple = &catlist->members[i]->tuple;
-		body = (Form_pg_conversion) GETSTRUCT(tuple);
+		body = (Form_mdb_conversion) GETSTRUCT(tuple);
 		if (body->condefault)
 		{
 			proc = body->conproc;

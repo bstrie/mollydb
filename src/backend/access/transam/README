@@ -45,7 +45,7 @@ done automatically by CommitTransactionCommand after each query inside a
 transaction block, but some utility functions also do it internally to allow
 some operations (usually in the system catalogs) to be seen by future
 operations in the same utility command.  (For example, in DefineRelation it is
-done after creating the heap so the pg_class row is visible, to be able to
+done after creating the heap so the mdb_class row is visible, to be able to
 lock it.)
 
 
@@ -198,7 +198,7 @@ parent.  This maintains the invariant that child transactions have XIDs later
 than their parents, which is assumed in a number of places.
 
 The subsidiary actions of obtaining a lock on the XID and entering it into
-pg_subtrans and PG_PROC are done at the time it is assigned.
+mdb_subtrans and PG_PROC are done at the time it is assigned.
 
 A transaction that has no XID still needs to be identified for various
 purposes, notably holding locks.  For this purpose we assign a "virtual
@@ -331,17 +331,17 @@ of the xid fields is atomic, so assuming it for xmin as well is no extra
 risk.
 
 
-pg_clog and pg_subtrans
+mdb_clog and mdb_subtrans
 -----------------------
 
-pg_clog and pg_subtrans are permanent (on-disk) storage of transaction related
+mdb_clog and mdb_subtrans are permanent (on-disk) storage of transaction related
 information.  There is a limited number of pages of each kept in memory, so
 in many cases there is no need to actually read from disk.  However, if
 there's a long running transaction or a backend sitting idle with an open
 transaction, it may be necessary to be able to read and write this information
 from disk.  They also allow information to be permanent across server restarts.
 
-pg_clog records the commit status for each transaction that has been assigned
+mdb_clog records the commit status for each transaction that has been assigned
 an XID.  A transaction can be in progress, committed, aborted, or
 "sub-committed".  This last state means that it's a subtransaction that's no
 longer running, but its parent has not updated its state yet.  It is not
@@ -367,24 +367,24 @@ allow unlimited transaction nesting depth, so any particular subtransaction's
 commit state is dependent on the commit status of each and every ancestor
 transaction.
 
-The "subtransaction parent" (pg_subtrans) mechanism records, for each
+The "subtransaction parent" (mdb_subtrans) mechanism records, for each
 transaction with an XID, the TransactionId of its parent transaction.  This
 information is stored as soon as the subtransaction is assigned an XID.
-Top-level transactions do not have a parent, so they leave their pg_subtrans
+Top-level transactions do not have a parent, so they leave their mdb_subtrans
 entries set to the default value of zero (InvalidTransactionId).
 
-pg_subtrans is used to check whether the transaction in question is still
+mdb_subtrans is used to check whether the transaction in question is still
 running --- the main Xid of a transaction is recorded in the PGXACT struct,
 but since we allow arbitrary nesting of subtransactions, we can't fit all Xids
 in shared memory, so we have to store them on disk.  Note, however, that for
 each transaction we keep a "cache" of Xids that are known to be part of the
-transaction tree, so we can skip looking at pg_subtrans unless we know the
+transaction tree, so we can skip looking at mdb_subtrans unless we know the
 cache has been overflowed.  See storage/ipc/procarray.c for the gory details.
 
-slru.c is the supporting mechanism for both pg_clog and pg_subtrans.  It
+slru.c is the supporting mechanism for both mdb_clog and mdb_subtrans.  It
 implements the LRU policy for in-memory buffer pages.  The high-level routines
-for pg_clog are implemented in transam.c, while the low-level functions are in
-clog.c.  pg_subtrans is contained completely in subtrans.c.
+for mdb_clog are implemented in transam.c, while the low-level functions are in
+clog.c.  mdb_subtrans is contained completely in subtrans.c.
 
 
 Write-Ahead Log Coding
@@ -681,7 +681,7 @@ there is a window where we have created the file but not yet written any
 WAL about it to disk.  If we crash during this window, the file remains
 on disk as an "orphan".  It would be possible to clean up such orphans
 by having database restart search for files that don't have any committed
-entry in pg_class, but that currently isn't done because of the possibility
+entry in mdb_class, but that currently isn't done because of the possibility
 of deleting data that is useful for forensic analysis of the crash.
 Orphan files are harmless --- at worst they waste a bit of disk space ---
 because we check for on-disk collisions when allocating new relfilenode

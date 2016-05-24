@@ -13,7 +13,7 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "storage/fd.h"
 #include "tsearch/ts_locale.h"
 #include "tsearch/ts_public.h"
@@ -26,10 +26,10 @@ static void tsearch_readline_callback(void *arg);
 int
 t_isdigit(const char *ptr)
 {
-	int			clen = pg_mblen(ptr);
+	int			clen = mdb_mblen(ptr);
 	wchar_t		character[2];
 	Oid			collation = DEFAULT_COLLATION_OID;		/* TODO */
-	pg_locale_t mylocale = 0;	/* TODO */
+	mdb_locale_t mylocale = 0;	/* TODO */
 
 	if (clen == 1 || lc_ctype_is_c(collation))
 		return isdigit(TOUCHAR(ptr));
@@ -42,10 +42,10 @@ t_isdigit(const char *ptr)
 int
 t_isspace(const char *ptr)
 {
-	int			clen = pg_mblen(ptr);
+	int			clen = mdb_mblen(ptr);
 	wchar_t		character[2];
 	Oid			collation = DEFAULT_COLLATION_OID;		/* TODO */
-	pg_locale_t mylocale = 0;	/* TODO */
+	mdb_locale_t mylocale = 0;	/* TODO */
 
 	if (clen == 1 || lc_ctype_is_c(collation))
 		return isspace(TOUCHAR(ptr));
@@ -58,10 +58,10 @@ t_isspace(const char *ptr)
 int
 t_isalpha(const char *ptr)
 {
-	int			clen = pg_mblen(ptr);
+	int			clen = mdb_mblen(ptr);
 	wchar_t		character[2];
 	Oid			collation = DEFAULT_COLLATION_OID;		/* TODO */
-	pg_locale_t mylocale = 0;	/* TODO */
+	mdb_locale_t mylocale = 0;	/* TODO */
 
 	if (clen == 1 || lc_ctype_is_c(collation))
 		return isalpha(TOUCHAR(ptr));
@@ -74,10 +74,10 @@ t_isalpha(const char *ptr)
 int
 t_isprint(const char *ptr)
 {
-	int			clen = pg_mblen(ptr);
+	int			clen = mdb_mblen(ptr);
 	wchar_t		character[2];
 	Oid			collation = DEFAULT_COLLATION_OID;		/* TODO */
-	pg_locale_t mylocale = 0;	/* TODO */
+	mdb_locale_t mylocale = 0;	/* TODO */
 
 	if (clen == 1 || lc_ctype_is_c(collation))
 		return isprint(TOUCHAR(ptr));
@@ -206,10 +206,10 @@ t_readline(FILE *fp)
 	len = strlen(buf);
 
 	/* Make sure the input is valid UTF-8 */
-	(void) pg_verify_mbstr(PG_UTF8, buf, len, false);
+	(void) mdb_verify_mbstr(PG_UTF8, buf, len, false);
 
 	/* And convert */
-	recoded = pg_any_to_server(buf, len, PG_UTF8);
+	recoded = mdb_any_to_server(buf, len, PG_UTF8);
 	if (recoded == buf)
 	{
 		/*
@@ -247,7 +247,7 @@ lowerstr_with_len(const char *str, int len)
 
 #ifdef USE_WIDE_UPPER_LOWER
 	Oid			collation = DEFAULT_COLLATION_OID;		/* TODO */
-	pg_locale_t mylocale = 0;	/* TODO */
+	mdb_locale_t mylocale = 0;	/* TODO */
 #endif
 
 	if (len == 0)
@@ -261,7 +261,7 @@ lowerstr_with_len(const char *str, int len)
 	 * Also, for a C locale there is no need to process as multibyte. From
 	 * backend/utils/adt/oracle_compat.c Teodor
 	 */
-	if (pg_database_encoding_max_length() > 1 && !lc_ctype_is_c(collation))
+	if (mdb_database_encoding_max_length() > 1 && !lc_ctype_is_c(collation))
 	{
 		wchar_t    *wstr,
 				   *wptr;
@@ -286,7 +286,7 @@ lowerstr_with_len(const char *str, int len)
 		/*
 		 * Alloc result string for worst case + '\0'
 		 */
-		len = pg_database_encoding_max_length() * wlen + 1;
+		len = mdb_database_encoding_max_length() * wlen + 1;
 		out = (char *) palloc(len);
 
 		wlen = wchar2char(out, wstr, len, mylocale);

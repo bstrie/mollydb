@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_list.h
+ * mdb_list.h
  *	  interface for MollyDB generic linked list package
  *
  * This package implements singly-linked homogeneous lists.
@@ -30,7 +30,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/nodes/pg_list.h
+ * src/include/nodes/mdb_list.h
  *
  *-------------------------------------------------------------------------
  */
@@ -253,7 +253,7 @@ extern List *list_copy_tail(const List *list, int nskip);
  * macros are provided that reduce the impact of the list API changes
  * as far as possible. Until client code has been rewritten to use the
  * new list API, the ENABLE_LIST_COMPAT symbol can be defined before
- * including pg_list.h
+ * including mdb_list.h
  */
 #ifdef ENABLE_LIST_COMPAT
 

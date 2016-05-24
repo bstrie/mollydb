@@ -17,19 +17,19 @@ CREATE FOREIGN DATA WRAPPER dummy;
 COMMENT ON FOREIGN DATA WRAPPER dummy IS 'useless';
 CREATE FOREIGN DATA WRAPPER mollydb VALIDATOR mollydb_fdw_validator;
 -- At this point we should have 2 built-in wrappers and no servers.
-SELECT fdwname, fdwhandler::regproc, fdwvalidator::regproc, fdwoptions FROM pg_foreign_data_wrapper ORDER BY 1, 2, 3;
+SELECT fdwname, fdwhandler::regproc, fdwvalidator::regproc, fdwoptions FROM mdb_foreign_data_wrapper ORDER BY 1, 2, 3;
   fdwname   | fdwhandler |       fdwvalidator       | fdwoptions 
 ------------+------------+--------------------------+------------
  dummy      | -          | -                        | 
  mollydb | -          | mollydb_fdw_validator | 
 (2 rows)
 
-SELECT srvname, srvoptions FROM pg_foreign_server;
+SELECT srvname, srvoptions FROM mdb_foreign_server;
  srvname | srvoptions 
 ---------+------------
 (0 rows)
 
-SELECT * FROM pg_user_mapping;
+SELECT * FROM mdb_user_mapping;
  umuser | umserver | umoptions 
 --------+----------+-----------
 (0 rows)
@@ -1002,7 +1002,7 @@ SELECT * FROM information_schema.user_mapping_options ORDER BY 1, 2, 3, 4;
 RESET ROLE;
 -- has_foreign_data_wrapper_privilege
 SELECT has_foreign_data_wrapper_privilege('regress_test_role',
-    (SELECT oid FROM pg_foreign_data_wrapper WHERE fdwname='foo'), 'USAGE');
+    (SELECT oid FROM mdb_foreign_data_wrapper WHERE fdwname='foo'), 'USAGE');
  has_foreign_data_wrapper_privilege 
 ------------------------------------
  t
@@ -1015,22 +1015,22 @@ SELECT has_foreign_data_wrapper_privilege('regress_test_role', 'foo', 'USAGE');
 (1 row)
 
 SELECT has_foreign_data_wrapper_privilege(
-    (SELECT oid FROM pg_roles WHERE rolname='regress_test_role'),
-    (SELECT oid FROM pg_foreign_data_wrapper WHERE fdwname='foo'), 'USAGE');
+    (SELECT oid FROM mdb_roles WHERE rolname='regress_test_role'),
+    (SELECT oid FROM mdb_foreign_data_wrapper WHERE fdwname='foo'), 'USAGE');
  has_foreign_data_wrapper_privilege 
 ------------------------------------
  t
 (1 row)
 
 SELECT has_foreign_data_wrapper_privilege(
-    (SELECT oid FROM pg_foreign_data_wrapper WHERE fdwname='foo'), 'USAGE');
+    (SELECT oid FROM mdb_foreign_data_wrapper WHERE fdwname='foo'), 'USAGE');
  has_foreign_data_wrapper_privilege 
 ------------------------------------
  t
 (1 row)
 
 SELECT has_foreign_data_wrapper_privilege(
-    (SELECT oid FROM pg_roles WHERE rolname='regress_test_role'), 'foo', 'USAGE');
+    (SELECT oid FROM mdb_roles WHERE rolname='regress_test_role'), 'foo', 'USAGE');
  has_foreign_data_wrapper_privilege 
 ------------------------------------
  t
@@ -1051,7 +1051,7 @@ SELECT has_foreign_data_wrapper_privilege('regress_test_role', 'foo', 'USAGE');
 
 -- has_server_privilege
 SELECT has_server_privilege('regress_test_role',
-    (SELECT oid FROM pg_foreign_server WHERE srvname='s8'), 'USAGE');
+    (SELECT oid FROM mdb_foreign_server WHERE srvname='s8'), 'USAGE');
  has_server_privilege 
 ----------------------
  f
@@ -1064,22 +1064,22 @@ SELECT has_server_privilege('regress_test_role', 's8', 'USAGE');
 (1 row)
 
 SELECT has_server_privilege(
-    (SELECT oid FROM pg_roles WHERE rolname='regress_test_role'),
-    (SELECT oid FROM pg_foreign_server WHERE srvname='s8'), 'USAGE');
+    (SELECT oid FROM mdb_roles WHERE rolname='regress_test_role'),
+    (SELECT oid FROM mdb_foreign_server WHERE srvname='s8'), 'USAGE');
  has_server_privilege 
 ----------------------
  f
 (1 row)
 
 SELECT has_server_privilege(
-    (SELECT oid FROM pg_foreign_server WHERE srvname='s8'), 'USAGE');
+    (SELECT oid FROM mdb_foreign_server WHERE srvname='s8'), 'USAGE');
  has_server_privilege 
 ----------------------
  t
 (1 row)
 
 SELECT has_server_privilege(
-    (SELECT oid FROM pg_roles WHERE rolname='regress_test_role'), 's8', 'USAGE');
+    (SELECT oid FROM mdb_roles WHERE rolname='regress_test_role'), 's8', 'USAGE');
  has_server_privilege 
 ----------------------
  f
@@ -1492,7 +1492,7 @@ ALTER TABLE pt1 ADD CONSTRAINT pt1chk1 CHECK (c1 > 0) NO INHERIT;
 ALTER TABLE pt1 ADD CONSTRAINT pt1chk2 CHECK (c2 <> '');
 -- connoinherit should be true for NO INHERIT constraint
 SELECT relname, conname, contype, conislocal, coninhcount, connoinherit
-  FROM pg_class AS pc JOIN pg_constraint AS pgc ON (conrelid = pc.oid)
+  FROM mdb_class AS pc JOIN mdb_constraint AS pgc ON (conrelid = pc.oid)
   WHERE pc.relname = 'pt1'
   ORDER BY 1,2;
  relname | conname | contype | conislocal | coninhcount | connoinherit 
@@ -1785,17 +1785,17 @@ NOTICE:  drop cascades to server s0
 \c
 DROP ROLE foreign_data_user;
 -- At this point we should have no wrappers, no servers, and no mappings.
-SELECT fdwname, fdwhandler, fdwvalidator, fdwoptions FROM pg_foreign_data_wrapper;
+SELECT fdwname, fdwhandler, fdwvalidator, fdwoptions FROM mdb_foreign_data_wrapper;
  fdwname | fdwhandler | fdwvalidator | fdwoptions 
 ---------+------------+--------------+------------
 (0 rows)
 
-SELECT srvname, srvoptions FROM pg_foreign_server;
+SELECT srvname, srvoptions FROM mdb_foreign_server;
  srvname | srvoptions 
 ---------+------------
 (0 rows)
 
-SELECT * FROM pg_user_mapping;
+SELECT * FROM mdb_user_mapping;
  umuser | umserver | umoptions 
 --------+----------+-----------
 (0 rows)

@@ -14,10 +14,10 @@
 
 #include "access/htup_details.h"
 #include "access/reloptions.h"
-#include "catalog/pg_foreign_data_wrapper.h"
-#include "catalog/pg_foreign_server.h"
-#include "catalog/pg_foreign_table.h"
-#include "catalog/pg_user_mapping.h"
+#include "catalog/mdb_foreign_data_wrapper.h"
+#include "catalog/mdb_foreign_server.h"
+#include "catalog/mdb_foreign_table.h"
+#include "catalog/mdb_user_mapping.h"
 #include "foreign/fdwapi.h"
 #include "foreign/foreign.h"
 #include "lib/stringinfo.h"
@@ -28,7 +28,7 @@
 #include "utils/syscache.h"
 
 
-extern Datum pg_options_to_table(PG_FUNCTION_ARGS);
+extern Datum mdb_options_to_table(PG_FUNCTION_ARGS);
 extern Datum mollydb_fdw_validator(PG_FUNCTION_ARGS);
 
 static HeapTuple find_user_mapping(Oid userid, Oid serverid, bool missing_ok);
@@ -39,7 +39,7 @@ static HeapTuple find_user_mapping(Oid userid, Oid serverid, bool missing_ok);
 ForeignDataWrapper *
 GetForeignDataWrapper(Oid fdwid)
 {
-	Form_pg_foreign_data_wrapper fdwform;
+	Form_mdb_foreign_data_wrapper fdwform;
 	ForeignDataWrapper *fdw;
 	Datum		datum;
 	HeapTuple	tp;
@@ -50,7 +50,7 @@ GetForeignDataWrapper(Oid fdwid)
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for foreign-data wrapper %u", fdwid);
 
-	fdwform = (Form_pg_foreign_data_wrapper) GETSTRUCT(tp);
+	fdwform = (Form_mdb_foreign_data_wrapper) GETSTRUCT(tp);
 
 	fdw = (ForeignDataWrapper *) palloc(sizeof(ForeignDataWrapper));
 	fdw->fdwid = fdwid;
@@ -62,7 +62,7 @@ GetForeignDataWrapper(Oid fdwid)
 	/* Extract the fdwoptions */
 	datum = SysCacheGetAttr(FOREIGNDATAWRAPPEROID,
 							tp,
-							Anum_pg_foreign_data_wrapper_fdwoptions,
+							Anum_mdb_foreign_data_wrapper_fdwoptions,
 							&isnull);
 	if (isnull)
 		fdw->options = NIL;
@@ -97,7 +97,7 @@ GetForeignDataWrapperByName(const char *fdwname, bool missing_ok)
 ForeignServer *
 GetForeignServer(Oid serverid)
 {
-	Form_pg_foreign_server serverform;
+	Form_mdb_foreign_server serverform;
 	ForeignServer *server;
 	HeapTuple	tp;
 	Datum		datum;
@@ -108,7 +108,7 @@ GetForeignServer(Oid serverid)
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for foreign server %u", serverid);
 
-	serverform = (Form_pg_foreign_server) GETSTRUCT(tp);
+	serverform = (Form_mdb_foreign_server) GETSTRUCT(tp);
 
 	server = (ForeignServer *) palloc(sizeof(ForeignServer));
 	server->serverid = serverid;
@@ -119,21 +119,21 @@ GetForeignServer(Oid serverid)
 	/* Extract server type */
 	datum = SysCacheGetAttr(FOREIGNSERVEROID,
 							tp,
-							Anum_pg_foreign_server_srvtype,
+							Anum_mdb_foreign_server_srvtype,
 							&isnull);
 	server->servertype = isnull ? NULL : TextDatumGetCString(datum);
 
 	/* Extract server version */
 	datum = SysCacheGetAttr(FOREIGNSERVEROID,
 							tp,
-							Anum_pg_foreign_server_srvversion,
+							Anum_mdb_foreign_server_srvversion,
 							&isnull);
 	server->serverversion = isnull ? NULL : TextDatumGetCString(datum);
 
 	/* Extract the srvoptions */
 	datum = SysCacheGetAttr(FOREIGNSERVEROID,
 							tp,
-							Anum_pg_foreign_server_srvoptions,
+							Anum_mdb_foreign_server_srvoptions,
 							&isnull);
 	if (isnull)
 		server->options = NIL;
@@ -181,7 +181,7 @@ GetUserMappingById(Oid umid)
 	/* Extract the umuser */
 	datum = SysCacheGetAttr(USERMAPPINGOID,
 							tp,
-							Anum_pg_user_mapping_umuser,
+							Anum_mdb_user_mapping_umuser,
 							&isnull);
 	Assert(!isnull);
 	um->userid = DatumGetObjectId(datum);
@@ -189,7 +189,7 @@ GetUserMappingById(Oid umid)
 	/* Extract the umserver */
 	datum = SysCacheGetAttr(USERMAPPINGOID,
 							tp,
-							Anum_pg_user_mapping_umserver,
+							Anum_mdb_user_mapping_umserver,
 							&isnull);
 	Assert(!isnull);
 	um->serverid = DatumGetObjectId(datum);
@@ -197,7 +197,7 @@ GetUserMappingById(Oid umid)
 	/* Extract the umoptions */
 	datum = SysCacheGetAttr(USERMAPPINGOID,
 							tp,
-							Anum_pg_user_mapping_umoptions,
+							Anum_mdb_user_mapping_umoptions,
 							&isnull);
 	if (isnull)
 		um->options = NIL;
@@ -233,7 +233,7 @@ GetUserMapping(Oid userid, Oid serverid)
 	/* Extract the umoptions */
 	datum = SysCacheGetAttr(USERMAPPINGUSERSERVER,
 							tp,
-							Anum_pg_user_mapping_umoptions,
+							Anum_mdb_user_mapping_umoptions,
 							&isnull);
 	if (isnull)
 		um->options = NIL;
@@ -325,7 +325,7 @@ find_user_mapping(Oid userid, Oid serverid, bool missing_ok)
 ForeignTable *
 GetForeignTable(Oid relid)
 {
-	Form_pg_foreign_table tableform;
+	Form_mdb_foreign_table tableform;
 	ForeignTable *ft;
 	HeapTuple	tp;
 	Datum		datum;
@@ -334,7 +334,7 @@ GetForeignTable(Oid relid)
 	tp = SearchSysCache1(FOREIGNTABLEREL, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for foreign table %u", relid);
-	tableform = (Form_pg_foreign_table) GETSTRUCT(tp);
+	tableform = (Form_mdb_foreign_table) GETSTRUCT(tp);
 
 	ft = (ForeignTable *) palloc(sizeof(ForeignTable));
 	ft->relid = relid;
@@ -343,7 +343,7 @@ GetForeignTable(Oid relid)
 	/* Extract the ftoptions */
 	datum = SysCacheGetAttr(FOREIGNTABLEREL,
 							tp,
-							Anum_pg_foreign_table_ftoptions,
+							Anum_mdb_foreign_table_ftoptions,
 							&isnull);
 	if (isnull)
 		ft->options = NIL;
@@ -376,7 +376,7 @@ GetForeignColumnOptions(Oid relid, AttrNumber attnum)
 			 attnum, relid);
 	datum = SysCacheGetAttr(ATTNUM,
 							tp,
-							Anum_pg_attribute_attfdwoptions,
+							Anum_mdb_attribute_attfdwoptions,
 							&isnull);
 	if (isnull)
 		options = NIL;
@@ -418,13 +418,13 @@ Oid
 GetForeignServerIdByRelId(Oid relid)
 {
 	HeapTuple	tp;
-	Form_pg_foreign_table tableform;
+	Form_mdb_foreign_table tableform;
 	Oid			serverid;
 
 	tp = SearchSysCache1(FOREIGNTABLEREL, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for foreign table %u", relid);
-	tableform = (Form_pg_foreign_table) GETSTRUCT(tp);
+	tableform = (Form_mdb_foreign_table) GETSTRUCT(tp);
 	serverid = tableform->ftserver;
 	ReleaseSysCache(tp);
 
@@ -440,8 +440,8 @@ FdwRoutine *
 GetFdwRoutineByServerId(Oid serverid)
 {
 	HeapTuple	tp;
-	Form_pg_foreign_data_wrapper fdwform;
-	Form_pg_foreign_server serverform;
+	Form_mdb_foreign_data_wrapper fdwform;
+	Form_mdb_foreign_server serverform;
 	Oid			fdwid;
 	Oid			fdwhandler;
 
@@ -449,7 +449,7 @@ GetFdwRoutineByServerId(Oid serverid)
 	tp = SearchSysCache1(FOREIGNSERVEROID, ObjectIdGetDatum(serverid));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for foreign server %u", serverid);
-	serverform = (Form_pg_foreign_server) GETSTRUCT(tp);
+	serverform = (Form_mdb_foreign_server) GETSTRUCT(tp);
 	fdwid = serverform->srvfdw;
 	ReleaseSysCache(tp);
 
@@ -457,7 +457,7 @@ GetFdwRoutineByServerId(Oid serverid)
 	tp = SearchSysCache1(FOREIGNDATAWRAPPEROID, ObjectIdGetDatum(fdwid));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for foreign-data wrapper %u", fdwid);
-	fdwform = (Form_pg_foreign_data_wrapper) GETSTRUCT(tp);
+	fdwform = (Form_mdb_foreign_data_wrapper) GETSTRUCT(tp);
 	fdwhandler = fdwform->fdwhandler;
 
 	/* Complain if FDW has been set to NO HANDLER. */
@@ -642,10 +642,10 @@ deflist_to_tuplestore(ReturnSetInfo *rsinfo, List *options)
 
 /*
  * Convert options array to name/value table.  Useful for information
- * schema and pg_dump.
+ * schema and mdb_dump.
  */
 Datum
-pg_options_to_table(PG_FUNCTION_ARGS)
+mdb_options_to_table(PG_FUNCTION_ARGS)
 {
 	Datum		array = PG_GETARG_DATUM(0);
 

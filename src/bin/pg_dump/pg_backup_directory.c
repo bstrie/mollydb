@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup_directory.c
+ * mdb_backup_directory.c
  *
  *	A directory format dump is a directory, which contains a "toc.dat" file
  *	for the TOC, and a separate file for each data entry, named "<oid>.dat".
@@ -8,7 +8,7 @@
  *	and there's a plain-text TOC file for them called "blobs.toc". If
  *	compression is used, each data file is individually compressed and the
  *	".gz" suffix is added to the filenames. The TOC files are never
- *	compressed by pg_dump, however they are accepted with the .gz suffix too,
+ *	compressed by mdb_dump, however they are accepted with the .gz suffix too,
  *	in case the user has manually compressed them with 'gzip'.
  *
  *	NOTE: This format is identical to the files written in the tar file in
@@ -28,7 +28,7 @@
  *	result from it's use.
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/pg_backup_directory.c
+ *		src/bin/mdb_dump/mdb_backup_directory.c
  *
  *-------------------------------------------------------------------------
  */
@@ -36,7 +36,7 @@
 
 #include "compress_io.h"
 #include "parallel.h"
-#include "pg_backup_utils.h"
+#include "mdb_backup_utils.h"
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -100,7 +100,7 @@ static void setFilePath(ArchiveHandle *AH, char *buf,
 
 /*
  *	Init routine required by ALL formats. This is a global routine
- *	and should be declared in pg_backup_archiver.h
+ *	and should be declared in mdb_backup_archiver.h
  *
  *	Its task is to create any extra archive context (using AH->formatData),
  *	and to initialize the supported function pointers.
@@ -144,7 +144,7 @@ InitArchiveFmt_Directory(ArchiveHandle *AH)
 	AH->MasterEndParallelItemPtr = _MasterEndParallelItem;
 
 	/* Set up our private context */
-	ctx = (lclContext *) pg_malloc0(sizeof(lclContext));
+	ctx = (lclContext *) mdb_malloc0(sizeof(lclContext));
 	AH->formatData = (void *) ctx;
 
 	ctx->dataFH = NULL;
@@ -152,7 +152,7 @@ InitArchiveFmt_Directory(ArchiveHandle *AH)
 
 	/* Initialize LO buffering */
 	AH->lo_buf_size = LOBBUFSIZE;
-	AH->lo_buf = (void *) pg_malloc(LOBBUFSIZE);
+	AH->lo_buf = (void *) mdb_malloc(LOBBUFSIZE);
 
 	/*
 	 * Now open the TOC file
@@ -244,14 +244,14 @@ _ArchiveEntry(ArchiveHandle *AH, TocEntry *te)
 	lclTocEntry *tctx;
 	char		fn[MAXPGPATH];
 
-	tctx = (lclTocEntry *) pg_malloc0(sizeof(lclTocEntry));
+	tctx = (lclTocEntry *) mdb_malloc0(sizeof(lclTocEntry));
 	if (te->dataDumper)
 	{
 		snprintf(fn, MAXPGPATH, "%d.dat", te->dumpId);
-		tctx->filename = pg_strdup(fn);
+		tctx->filename = mdb_strdup(fn);
 	}
 	else if (strcmp(te->desc, "BLOBS") == 0)
-		tctx->filename = pg_strdup("blobs.toc");
+		tctx->filename = mdb_strdup("blobs.toc");
 	else
 		tctx->filename = NULL;
 
@@ -293,7 +293,7 @@ _ReadExtraToc(ArchiveHandle *AH, TocEntry *te)
 
 	if (tctx == NULL)
 	{
-		tctx = (lclTocEntry *) pg_malloc0(sizeof(lclTocEntry));
+		tctx = (lclTocEntry *) mdb_malloc0(sizeof(lclTocEntry));
 		te->formatData = (void *) tctx;
 	}
 
@@ -402,7 +402,7 @@ _PrintFileData(ArchiveHandle *AH, char *filename)
 		exit_horribly(modulename, "could not open input file \"%s\": %s\n",
 					  filename, strerror(errno));
 
-	buf = pg_malloc(ZLIB_OUT_SIZE);
+	buf = mdb_malloc(ZLIB_OUT_SIZE);
 	buflen = ZLIB_OUT_SIZE;
 
 	while ((cnt = cfread(buf, buflen, cfp)))
@@ -732,7 +732,7 @@ _Clone(ArchiveHandle *AH)
 {
 	lclContext *ctx = (lclContext *) AH->formatData;
 
-	AH->formatData = (lclContext *) pg_malloc(sizeof(lclContext));
+	AH->formatData = (lclContext *) mdb_malloc(sizeof(lclContext));
 	memcpy(AH->formatData, ctx, sizeof(lclContext));
 	ctx = (lclContext *) AH->formatData;
 
@@ -798,7 +798,7 @@ _WorkerJobDumpDirectory(ArchiveHandle *AH, TocEntry *te)
 	 * instead of static because we work with threads on windows
 	 */
 	const int	buflen = 64;
-	char	   *buf = (char *) pg_malloc(buflen);
+	char	   *buf = (char *) mdb_malloc(buflen);
 	lclTocEntry *tctx = (lclTocEntry *) te->formatData;
 
 	/* This should never happen */
@@ -829,7 +829,7 @@ _WorkerJobRestoreDirectory(ArchiveHandle *AH, TocEntry *te)
 	 * instead of static because we work with threads on windows
 	 */
 	const int	buflen = 64;
-	char	   *buf = (char *) pg_malloc(buflen);
+	char	   *buf = (char *) mdb_malloc(buflen);
 	ParallelArgs pargs;
 	int			status;
 

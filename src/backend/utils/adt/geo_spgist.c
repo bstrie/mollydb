@@ -75,7 +75,7 @@
 
 #include "access/spgist.h"
 #include "access/stratnum.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "utils/builtins.h"
 #include "utils/geo_decls.h"
 
@@ -354,7 +354,7 @@ overAbove4D(RectBox *rect_box, RangeBox *query)
  * SP-GiST config function
  */
 Datum
-spg_box_quad_config(PG_FUNCTION_ARGS)
+smdb_box_quad_config(PG_FUNCTION_ARGS)
 {
 	spgConfigOut *cfg = (spgConfigOut *) PG_GETARG_POINTER(1);
 
@@ -370,7 +370,7 @@ spg_box_quad_config(PG_FUNCTION_ARGS)
  * SP-GiST choose function
  */
 Datum
-spg_box_quad_choose(PG_FUNCTION_ARGS)
+smdb_box_quad_choose(PG_FUNCTION_ARGS)
 {
 	spgChooseIn *in = (spgChooseIn *) PG_GETARG_POINTER(0);
 	spgChooseOut *out = (spgChooseOut *) PG_GETARG_POINTER(1);
@@ -394,7 +394,7 @@ spg_box_quad_choose(PG_FUNCTION_ARGS)
  * point as the median of the coordinates of the boxes.
  */
 Datum
-spg_box_quad_picksplit(PG_FUNCTION_ARGS)
+smdb_box_quad_picksplit(PG_FUNCTION_ARGS)
 {
 	spgPickSplitIn	*in = (spgPickSplitIn *) PG_GETARG_POINTER(0);
 	spgPickSplitOut	*out = (spgPickSplitOut *) PG_GETARG_POINTER(1);
@@ -461,7 +461,7 @@ spg_box_quad_picksplit(PG_FUNCTION_ARGS)
  * SP-GiST inner consistent function
  */
 Datum
-spg_box_quad_inner_consistent(PG_FUNCTION_ARGS)
+smdb_box_quad_inner_consistent(PG_FUNCTION_ARGS)
 {
 	spgInnerConsistentIn *in = (spgInnerConsistentIn *) PG_GETARG_POINTER(0);
 	spgInnerConsistentOut *out = (spgInnerConsistentOut *) PG_GETARG_POINTER(1);
@@ -604,7 +604,7 @@ spg_box_quad_inner_consistent(PG_FUNCTION_ARGS)
  * SP-GiST inner consistent function
  */
 Datum
-spg_box_quad_leaf_consistent(PG_FUNCTION_ARGS)
+smdb_box_quad_leaf_consistent(PG_FUNCTION_ARGS)
 {
 	spgLeafConsistentIn *in = (spgLeafConsistentIn *) PG_GETARG_POINTER(0);
 	spgLeafConsistentOut *out = (spgLeafConsistentOut *) PG_GETARG_POINTER(1);

@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
- * regc_pg_locale.c
- *	  ctype functions adapted to work on pg_wchar (a/k/a chr),
+ * regc_mdb_locale.c
+ *	  ctype functions adapted to work on mdb_wchar (a/k/a chr),
  *	  and functions to cache the results of wholesale ctype probing.
  *
  * This file is #included by regcomp.c; it's not meant to compile standalone.
@@ -10,13 +10,13 @@
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
- *	  src/backend/regex/regc_pg_locale.c
+ *	  src/backend/regex/regc_mdb_locale.c
  *
  *-------------------------------------------------------------------------
  */
 
-#include "catalog/pg_collation.h"
-#include "utils/pg_locale.h"
+#include "catalog/mdb_collation.h"
+#include "utils/mdb_locale.h"
 
 /*
  * To provide as much functionality as possible on a variety of platforms,
@@ -35,14 +35,14 @@
  * wchar_t is only 16 bits wide, so we have to punt for codepoints > 0xFFFF.
  *
  * 2b. In all other encodings, or on machines that lack <wctype.h>, we use
- * the <ctype.h> functions for pg_wchar values up to 255, and punt for values
+ * the <ctype.h> functions for mdb_wchar values up to 255, and punt for values
  * above that.  This is only 100% correct in single-byte encodings such as
  * LATINn.  However, non-Unicode multibyte encodings are mostly Far Eastern
  * character sets for which the properties being tested here aren't very
  * relevant for higher code values anyway.  The difficulty with using the
  * <wctype.h> functions with non-Unicode multibyte encodings is that we can
  * have no certainty that the platform's wchar_t representation matches
- * what we do in pg_wchar conversions.
+ * what we do in mdb_wchar conversions.
  *
  * 3. Other collations are only supported on platforms that HAVE_LOCALE_T.
  * Here, we use the locale_t-extended forms of the <wctype.h> and <ctype.h>
@@ -59,7 +59,7 @@
  * structure; but that would require somewhat invasive changes in the regex
  * library, and right now there's no real benefit to be gained from that.
  *
- * NB: the coding here assumes pg_wchar is an unsigned type.
+ * NB: the coding here assumes mdb_wchar is an unsigned type.
  */
 
 typedef enum
@@ -71,9 +71,9 @@ typedef enum
 	PG_REGEX_LOCALE_1BYTE_L		/* Use locale_t <ctype.h> functions */
 } PG_Locale_Strategy;
 
-static PG_Locale_Strategy pg_regex_strategy;
-static pg_locale_t pg_regex_locale;
-static Oid	pg_regex_collation;
+static PG_Locale_Strategy mdb_regex_strategy;
+static mdb_locale_t mdb_regex_locale;
+static Oid	mdb_regex_collation;
 
 /*
  * Hard-wired character properties for C locale
@@ -88,7 +88,7 @@ static Oid	pg_regex_collation;
 #define PG_ISPUNCT	0x40
 #define PG_ISSPACE	0x80
 
-static const unsigned char pg_char_properties[128] = {
+static const unsigned char mdb_char_properties[128] = {
 	 /* NUL */ 0,
 	 /* ^A */ 0,
 	 /* ^B */ 0,
@@ -221,34 +221,34 @@ static const unsigned char pg_char_properties[128] = {
 
 
 /*
- * pg_set_regex_collation: set collation for these functions to obey
+ * mdb_set_regex_collation: set collation for these functions to obey
  *
  * This is called when beginning compilation or execution of a regexp.
  * Since there's no need for re-entrancy of regexp operations, it's okay
  * to store the results in static variables.
  */
 void
-pg_set_regex_collation(Oid collation)
+mdb_set_regex_collation(Oid collation)
 {
 	if (lc_ctype_is_c(collation))
 	{
 		/* C/POSIX collations use this path regardless of database encoding */
-		pg_regex_strategy = PG_REGEX_LOCALE_C;
-		pg_regex_locale = 0;
-		pg_regex_collation = C_COLLATION_OID;
+		mdb_regex_strategy = PG_REGEX_LOCALE_C;
+		mdb_regex_locale = 0;
+		mdb_regex_collation = C_COLLATION_OID;
 	}
 	else
 	{
 		if (collation == DEFAULT_COLLATION_OID)
-			pg_regex_locale = 0;
+			mdb_regex_locale = 0;
 		else if (OidIsValid(collation))
 		{
 			/*
-			 * NB: pg_newlocale_from_collation will fail if not HAVE_LOCALE_T;
-			 * the case of pg_regex_locale != 0 but not HAVE_LOCALE_T does not
+			 * NB: mdb_newlocale_from_collation will fail if not HAVE_LOCALE_T;
+			 * the case of mdb_regex_locale != 0 but not HAVE_LOCALE_T does not
 			 * have to be considered below.
 			 */
-			pg_regex_locale = pg_newlocale_from_collation(collation);
+			mdb_regex_locale = mdb_newlocale_from_collation(collation);
 		}
 		else
 		{
@@ -265,51 +265,51 @@ pg_set_regex_collation(Oid collation)
 #ifdef USE_WIDE_UPPER_LOWER
 		if (GetDatabaseEncoding() == PG_UTF8)
 		{
-			if (pg_regex_locale)
-				pg_regex_strategy = PG_REGEX_LOCALE_WIDE_L;
+			if (mdb_regex_locale)
+				mdb_regex_strategy = PG_REGEX_LOCALE_WIDE_L;
 			else
-				pg_regex_strategy = PG_REGEX_LOCALE_WIDE;
+				mdb_regex_strategy = PG_REGEX_LOCALE_WIDE;
 		}
 		else
 #endif   /* USE_WIDE_UPPER_LOWER */
 		{
-			if (pg_regex_locale)
-				pg_regex_strategy = PG_REGEX_LOCALE_1BYTE_L;
+			if (mdb_regex_locale)
+				mdb_regex_strategy = PG_REGEX_LOCALE_1BYTE_L;
 			else
-				pg_regex_strategy = PG_REGEX_LOCALE_1BYTE;
+				mdb_regex_strategy = PG_REGEX_LOCALE_1BYTE;
 		}
 
-		pg_regex_collation = collation;
+		mdb_regex_collation = collation;
 	}
 }
 
 static int
-pg_wc_isdigit(pg_wchar c)
+mdb_wc_isdigit(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			return (c <= (pg_wchar) 127 &&
-					(pg_char_properties[c] & PG_ISDIGIT));
+			return (c <= (mdb_wchar) 127 &&
+					(mdb_char_properties[c] & PG_ISDIGIT));
 		case PG_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswdigit((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
-			return (c <= (pg_wchar) UCHAR_MAX &&
+			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isdigit((unsigned char) c));
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return iswdigit_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return iswdigit_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			return (c <= (pg_wchar) UCHAR_MAX &&
-					isdigit_l((unsigned char) c, pg_regex_locale));
+			return (c <= (mdb_wchar) UCHAR_MAX &&
+					isdigit_l((unsigned char) c, mdb_regex_locale));
 #endif
 			break;
 	}
@@ -317,32 +317,32 @@ pg_wc_isdigit(pg_wchar c)
 }
 
 static int
-pg_wc_isalpha(pg_wchar c)
+mdb_wc_isalpha(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			return (c <= (pg_wchar) 127 &&
-					(pg_char_properties[c] & PG_ISALPHA));
+			return (c <= (mdb_wchar) 127 &&
+					(mdb_char_properties[c] & PG_ISALPHA));
 		case PG_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswalpha((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
-			return (c <= (pg_wchar) UCHAR_MAX &&
+			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isalpha((unsigned char) c));
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return iswalpha_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return iswalpha_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			return (c <= (pg_wchar) UCHAR_MAX &&
-					isalpha_l((unsigned char) c, pg_regex_locale));
+			return (c <= (mdb_wchar) UCHAR_MAX &&
+					isalpha_l((unsigned char) c, mdb_regex_locale));
 #endif
 			break;
 	}
@@ -350,32 +350,32 @@ pg_wc_isalpha(pg_wchar c)
 }
 
 static int
-pg_wc_isalnum(pg_wchar c)
+mdb_wc_isalnum(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			return (c <= (pg_wchar) 127 &&
-					(pg_char_properties[c] & PG_ISALNUM));
+			return (c <= (mdb_wchar) 127 &&
+					(mdb_char_properties[c] & PG_ISALNUM));
 		case PG_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswalnum((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
-			return (c <= (pg_wchar) UCHAR_MAX &&
+			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isalnum((unsigned char) c));
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return iswalnum_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return iswalnum_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			return (c <= (pg_wchar) UCHAR_MAX &&
-					isalnum_l((unsigned char) c, pg_regex_locale));
+			return (c <= (mdb_wchar) UCHAR_MAX &&
+					isalnum_l((unsigned char) c, mdb_regex_locale));
 #endif
 			break;
 	}
@@ -383,32 +383,32 @@ pg_wc_isalnum(pg_wchar c)
 }
 
 static int
-pg_wc_isupper(pg_wchar c)
+mdb_wc_isupper(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			return (c <= (pg_wchar) 127 &&
-					(pg_char_properties[c] & PG_ISUPPER));
+			return (c <= (mdb_wchar) 127 &&
+					(mdb_char_properties[c] & PG_ISUPPER));
 		case PG_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswupper((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
-			return (c <= (pg_wchar) UCHAR_MAX &&
+			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isupper((unsigned char) c));
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return iswupper_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return iswupper_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			return (c <= (pg_wchar) UCHAR_MAX &&
-					isupper_l((unsigned char) c, pg_regex_locale));
+			return (c <= (mdb_wchar) UCHAR_MAX &&
+					isupper_l((unsigned char) c, mdb_regex_locale));
 #endif
 			break;
 	}
@@ -416,32 +416,32 @@ pg_wc_isupper(pg_wchar c)
 }
 
 static int
-pg_wc_islower(pg_wchar c)
+mdb_wc_islower(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			return (c <= (pg_wchar) 127 &&
-					(pg_char_properties[c] & PG_ISLOWER));
+			return (c <= (mdb_wchar) 127 &&
+					(mdb_char_properties[c] & PG_ISLOWER));
 		case PG_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswlower((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
-			return (c <= (pg_wchar) UCHAR_MAX &&
+			return (c <= (mdb_wchar) UCHAR_MAX &&
 					islower((unsigned char) c));
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return iswlower_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return iswlower_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			return (c <= (pg_wchar) UCHAR_MAX &&
-					islower_l((unsigned char) c, pg_regex_locale));
+			return (c <= (mdb_wchar) UCHAR_MAX &&
+					islower_l((unsigned char) c, mdb_regex_locale));
 #endif
 			break;
 	}
@@ -449,32 +449,32 @@ pg_wc_islower(pg_wchar c)
 }
 
 static int
-pg_wc_isgraph(pg_wchar c)
+mdb_wc_isgraph(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			return (c <= (pg_wchar) 127 &&
-					(pg_char_properties[c] & PG_ISGRAPH));
+			return (c <= (mdb_wchar) 127 &&
+					(mdb_char_properties[c] & PG_ISGRAPH));
 		case PG_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswgraph((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
-			return (c <= (pg_wchar) UCHAR_MAX &&
+			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isgraph((unsigned char) c));
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return iswgraph_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return iswgraph_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			return (c <= (pg_wchar) UCHAR_MAX &&
-					isgraph_l((unsigned char) c, pg_regex_locale));
+			return (c <= (mdb_wchar) UCHAR_MAX &&
+					isgraph_l((unsigned char) c, mdb_regex_locale));
 #endif
 			break;
 	}
@@ -482,32 +482,32 @@ pg_wc_isgraph(pg_wchar c)
 }
 
 static int
-pg_wc_isprint(pg_wchar c)
+mdb_wc_isprint(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			return (c <= (pg_wchar) 127 &&
-					(pg_char_properties[c] & PG_ISPRINT));
+			return (c <= (mdb_wchar) 127 &&
+					(mdb_char_properties[c] & PG_ISPRINT));
 		case PG_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswprint((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
-			return (c <= (pg_wchar) UCHAR_MAX &&
+			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isprint((unsigned char) c));
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return iswprint_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return iswprint_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			return (c <= (pg_wchar) UCHAR_MAX &&
-					isprint_l((unsigned char) c, pg_regex_locale));
+			return (c <= (mdb_wchar) UCHAR_MAX &&
+					isprint_l((unsigned char) c, mdb_regex_locale));
 #endif
 			break;
 	}
@@ -515,32 +515,32 @@ pg_wc_isprint(pg_wchar c)
 }
 
 static int
-pg_wc_ispunct(pg_wchar c)
+mdb_wc_ispunct(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			return (c <= (pg_wchar) 127 &&
-					(pg_char_properties[c] & PG_ISPUNCT));
+			return (c <= (mdb_wchar) 127 &&
+					(mdb_char_properties[c] & PG_ISPUNCT));
 		case PG_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswpunct((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
-			return (c <= (pg_wchar) UCHAR_MAX &&
+			return (c <= (mdb_wchar) UCHAR_MAX &&
 					ispunct((unsigned char) c));
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return iswpunct_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return iswpunct_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			return (c <= (pg_wchar) UCHAR_MAX &&
-					ispunct_l((unsigned char) c, pg_regex_locale));
+			return (c <= (mdb_wchar) UCHAR_MAX &&
+					ispunct_l((unsigned char) c, mdb_regex_locale));
 #endif
 			break;
 	}
@@ -548,114 +548,114 @@ pg_wc_ispunct(pg_wchar c)
 }
 
 static int
-pg_wc_isspace(pg_wchar c)
+mdb_wc_isspace(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			return (c <= (pg_wchar) 127 &&
-					(pg_char_properties[c] & PG_ISSPACE));
+			return (c <= (mdb_wchar) 127 &&
+					(mdb_char_properties[c] & PG_ISSPACE));
 		case PG_REGEX_LOCALE_WIDE:
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return iswspace((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
-			return (c <= (pg_wchar) UCHAR_MAX &&
+			return (c <= (mdb_wchar) UCHAR_MAX &&
 					isspace((unsigned char) c));
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return iswspace_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return iswspace_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			return (c <= (pg_wchar) UCHAR_MAX &&
-					isspace_l((unsigned char) c, pg_regex_locale));
+			return (c <= (mdb_wchar) UCHAR_MAX &&
+					isspace_l((unsigned char) c, mdb_regex_locale));
 #endif
 			break;
 	}
 	return 0;					/* can't get here, but keep compiler quiet */
 }
 
-static pg_wchar
-pg_wc_toupper(pg_wchar c)
+static mdb_wchar
+mdb_wc_toupper(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			if (c <= (pg_wchar) 127)
-				return pg_ascii_toupper((unsigned char) c);
+			if (c <= (mdb_wchar) 127)
+				return mdb_ascii_toupper((unsigned char) c);
 			return c;
 		case PG_REGEX_LOCALE_WIDE:
 			/* force C behavior for ASCII characters, per comments above */
-			if (c <= (pg_wchar) 127)
-				return pg_ascii_toupper((unsigned char) c);
+			if (c <= (mdb_wchar) 127)
+				return mdb_ascii_toupper((unsigned char) c);
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return towupper((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
 			/* force C behavior for ASCII characters, per comments above */
-			if (c <= (pg_wchar) 127)
-				return pg_ascii_toupper((unsigned char) c);
-			if (c <= (pg_wchar) UCHAR_MAX)
+			if (c <= (mdb_wchar) 127)
+				return mdb_ascii_toupper((unsigned char) c);
+			if (c <= (mdb_wchar) UCHAR_MAX)
 				return toupper((unsigned char) c);
 			return c;
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return towupper_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return towupper_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			if (c <= (pg_wchar) UCHAR_MAX)
-				return toupper_l((unsigned char) c, pg_regex_locale);
+			if (c <= (mdb_wchar) UCHAR_MAX)
+				return toupper_l((unsigned char) c, mdb_regex_locale);
 #endif
 			return c;
 	}
 	return 0;					/* can't get here, but keep compiler quiet */
 }
 
-static pg_wchar
-pg_wc_tolower(pg_wchar c)
+static mdb_wchar
+mdb_wc_tolower(mdb_wchar c)
 {
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			if (c <= (pg_wchar) 127)
-				return pg_ascii_tolower((unsigned char) c);
+			if (c <= (mdb_wchar) 127)
+				return mdb_ascii_tolower((unsigned char) c);
 			return c;
 		case PG_REGEX_LOCALE_WIDE:
 			/* force C behavior for ASCII characters, per comments above */
-			if (c <= (pg_wchar) 127)
-				return pg_ascii_tolower((unsigned char) c);
+			if (c <= (mdb_wchar) 127)
+				return mdb_ascii_tolower((unsigned char) c);
 #ifdef USE_WIDE_UPPER_LOWER
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
 				return towlower((wint_t) c);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE:
 			/* force C behavior for ASCII characters, per comments above */
-			if (c <= (pg_wchar) 127)
-				return pg_ascii_tolower((unsigned char) c);
-			if (c <= (pg_wchar) UCHAR_MAX)
+			if (c <= (mdb_wchar) 127)
+				return mdb_ascii_tolower((unsigned char) c);
+			if (c <= (mdb_wchar) UCHAR_MAX)
 				return tolower((unsigned char) c);
 			return c;
 		case PG_REGEX_LOCALE_WIDE_L:
 #if defined(HAVE_LOCALE_T) && defined(USE_WIDE_UPPER_LOWER)
-			if (sizeof(wchar_t) >= 4 || c <= (pg_wchar) 0xFFFF)
-				return towlower_l((wint_t) c, pg_regex_locale);
+			if (sizeof(wchar_t) >= 4 || c <= (mdb_wchar) 0xFFFF)
+				return towlower_l((wint_t) c, mdb_regex_locale);
 #endif
 			/* FALL THRU */
 		case PG_REGEX_LOCALE_1BYTE_L:
 #ifdef HAVE_LOCALE_T
-			if (c <= (pg_wchar) UCHAR_MAX)
-				return tolower_l((unsigned char) c, pg_regex_locale);
+			if (c <= (mdb_wchar) UCHAR_MAX)
+				return tolower_l((unsigned char) c, mdb_regex_locale);
 #endif
 			return c;
 	}
@@ -676,23 +676,23 @@ pg_wc_tolower(pg_wchar c)
  * the main regex code expects us to return a failure indication instead.
  */
 
-typedef int (*pg_wc_probefunc) (pg_wchar c);
+typedef int (*mdb_wc_probefunc) (mdb_wchar c);
 
-typedef struct pg_ctype_cache
+typedef struct mdb_ctype_cache
 {
-	pg_wc_probefunc probefunc;	/* pg_wc_isalpha or a sibling */
+	mdb_wc_probefunc probefunc;	/* mdb_wc_isalpha or a sibling */
 	Oid			collation;		/* collation this entry is for */
 	struct cvec cv;				/* cache entry contents */
-	struct pg_ctype_cache *next;	/* chain link */
-} pg_ctype_cache;
+	struct mdb_ctype_cache *next;	/* chain link */
+} mdb_ctype_cache;
 
-static pg_ctype_cache *pg_ctype_cache_list = NULL;
+static mdb_ctype_cache *mdb_ctype_cache_list = NULL;
 
 /*
  * Add a chr or range to pcc->cv; return false if run out of memory
  */
 static bool
-store_match(pg_ctype_cache *pcc, pg_wchar chr1, int nchrs)
+store_match(mdb_ctype_cache *pcc, mdb_wchar chr1, int nchrs)
 {
 	chr		   *newchrs;
 
@@ -729,39 +729,39 @@ store_match(pg_ctype_cache *pcc, pg_wchar chr1, int nchrs)
 }
 
 /*
- * Given a probe function (e.g., pg_wc_isalpha) get a struct cvec for all
+ * Given a probe function (e.g., mdb_wc_isalpha) get a struct cvec for all
  * chrs satisfying the probe function.  The active collation is the one
- * previously set by pg_set_regex_collation.  Return NULL if out of memory.
+ * previously set by mdb_set_regex_collation.  Return NULL if out of memory.
  *
  * Note that the result must not be freed or modified by caller.
  */
 static struct cvec *
-pg_ctype_get_cache(pg_wc_probefunc probefunc)
+mdb_ctype_get_cache(mdb_wc_probefunc probefunc)
 {
-	pg_ctype_cache *pcc;
-	pg_wchar	max_chr;
-	pg_wchar	cur_chr;
+	mdb_ctype_cache *pcc;
+	mdb_wchar	max_chr;
+	mdb_wchar	cur_chr;
 	int			nmatches;
 	chr		   *newchrs;
 
 	/*
 	 * Do we already have the answer cached?
 	 */
-	for (pcc = pg_ctype_cache_list; pcc != NULL; pcc = pcc->next)
+	for (pcc = mdb_ctype_cache_list; pcc != NULL; pcc = pcc->next)
 	{
 		if (pcc->probefunc == probefunc &&
-			pcc->collation == pg_regex_collation)
+			pcc->collation == mdb_regex_collation)
 			return &pcc->cv;
 	}
 
 	/*
 	 * Nope, so initialize some workspace ...
 	 */
-	pcc = (pg_ctype_cache *) malloc(sizeof(pg_ctype_cache));
+	pcc = (mdb_ctype_cache *) malloc(sizeof(mdb_ctype_cache));
 	if (pcc == NULL)
 		return NULL;
 	pcc->probefunc = probefunc;
-	pcc->collation = pg_regex_collation;
+	pcc->collation = mdb_regex_collation;
 	pcc->cv.nchrs = 0;
 	pcc->cv.chrspace = 128;
 	pcc->cv.chrs = (chr *) malloc(pcc->cv.chrspace * sizeof(chr));
@@ -783,18 +783,18 @@ pg_ctype_get_cache(pg_wc_probefunc probefunc)
 	 * up to 255.  These limits are interrelated with restrictions discussed
 	 * at the head of this file.
 	 */
-	switch (pg_regex_strategy)
+	switch (mdb_regex_strategy)
 	{
 		case PG_REGEX_LOCALE_C:
-			max_chr = (pg_wchar) 127;
+			max_chr = (mdb_wchar) 127;
 			break;
 		case PG_REGEX_LOCALE_WIDE:
 		case PG_REGEX_LOCALE_WIDE_L:
-			max_chr = (pg_wchar) 0x7FF;
+			max_chr = (mdb_wchar) 0x7FF;
 			break;
 		case PG_REGEX_LOCALE_1BYTE:
 		case PG_REGEX_LOCALE_1BYTE_L:
-			max_chr = (pg_wchar) UCHAR_MAX;
+			max_chr = (mdb_wchar) UCHAR_MAX;
 			break;
 		default:
 			max_chr = 0;		/* can't get here, but keep compiler quiet */
@@ -859,8 +859,8 @@ pg_ctype_get_cache(pg_wc_probefunc probefunc)
 	/*
 	 * Success, link it into cache chain
 	 */
-	pcc->next = pg_ctype_cache_list;
-	pg_ctype_cache_list = pcc;
+	pcc->next = mdb_ctype_cache_list;
+	mdb_ctype_cache_list = pcc;
 
 	return &pcc->cv;
 

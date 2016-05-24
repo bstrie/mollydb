@@ -11,11 +11,11 @@ top_builddir = ../../..
 include $(top_builddir)/src/Makefile.global
 
 OBJS = catalog.o dependency.o heap.o index.o indexing.o namespace.o aclchk.o \
-       objectaccess.o objectaddress.o pg_aggregate.o pg_collation.o \
-       pg_constraint.o pg_conversion.o \
-       pg_depend.o pg_enum.o pg_inherits.o pg_largeobject.o pg_namespace.o \
-       pg_operator.o pg_proc.o pg_range.o pg_db_role_setting.o pg_shdepend.o \
-       pg_type.o storage.o toasting.o
+       objectaccess.o objectaddress.o mdb_aggregate.o mdb_collation.o \
+       mdb_constraint.o mdb_conversion.o \
+       mdb_depend.o mdb_enum.o mdb_inherits.o mdb_largeobject.o mdb_namespace.o \
+       mdb_operator.o mdb_proc.o mdb_range.o mdb_db_role_setting.o mdb_shdepend.o \
+       mdb_type.o storage.o toasting.o
 
 BKIFILES = mollydb.bki mollydb.description mollydb.shdescription
 
@@ -28,20 +28,20 @@ all: $(BKIFILES) schemapg.h
 # indexing.h had better be last, and toasting.h just before it.
 
 POSTGRES_BKI_SRCS = $(addprefix $(top_srcdir)/src/include/catalog/,\
-	pg_proc.h pg_type.h pg_attribute.h pg_class.h \
-	pg_attrdef.h pg_constraint.h pg_inherits.h pg_index.h pg_operator.h \
-	pg_opfamily.h pg_opclass.h pg_am.h pg_amop.h pg_amproc.h \
-	pg_language.h pg_largeobject_metadata.h pg_largeobject.h pg_aggregate.h \
-	pg_statistic.h pg_rewrite.h pg_trigger.h pg_event_trigger.h pg_description.h \
-	pg_cast.h pg_enum.h pg_namespace.h pg_conversion.h pg_depend.h \
-	pg_database.h pg_db_role_setting.h pg_tablespace.h pg_pltemplate.h \
-	pg_authid.h pg_auth_members.h pg_shdepend.h pg_shdescription.h \
-	pg_ts_config.h pg_ts_config_map.h pg_ts_dict.h \
-	pg_ts_parser.h pg_ts_template.h pg_extension.h \
-	pg_foreign_data_wrapper.h pg_foreign_server.h pg_user_mapping.h \
-	pg_foreign_table.h pg_policy.h pg_replication_origin.h \
-	pg_default_acl.h pg_init_privs.h pg_seclabel.h pg_shseclabel.h \
-	pg_collation.h pg_range.h pg_transform.h \
+	mdb_proc.h mdb_type.h mdb_attribute.h mdb_class.h \
+	mdb_attrdef.h mdb_constraint.h mdb_inherits.h mdb_index.h mdb_operator.h \
+	mdb_opfamily.h mdb_opclass.h mdb_am.h mdb_amop.h mdb_amproc.h \
+	mdb_language.h mdb_largeobject_metadata.h mdb_largeobject.h mdb_aggregate.h \
+	mdb_statistic.h mdb_rewrite.h mdb_trigger.h mdb_event_trigger.h mdb_description.h \
+	mdb_cast.h mdb_enum.h mdb_namespace.h mdb_conversion.h mdb_depend.h \
+	mdb_database.h mdb_db_role_setting.h mdb_tablespace.h mdb_pltemplate.h \
+	mdb_authid.h mdb_auth_members.h mdb_shdepend.h mdb_shdescription.h \
+	mdb_ts_config.h mdb_ts_config_map.h mdb_ts_dict.h \
+	mdb_ts_parser.h mdb_ts_template.h mdb_extension.h \
+	mdb_foreign_data_wrapper.h mdb_foreign_server.h mdb_user_mapping.h \
+	mdb_foreign_table.h mdb_policy.h mdb_replication_origin.h \
+	mdb_default_acl.h mdb_init_privs.h mdb_seclabel.h mdb_shseclabel.h \
+	mdb_collation.h mdb_range.h mdb_transform.h \
 	toasting.h indexing.h \
     )
 
@@ -49,7 +49,7 @@ POSTGRES_BKI_SRCS = $(addprefix $(top_srcdir)/src/include/catalog/,\
 catalogdir = $(top_srcdir)/src/backend/catalog
 
 # locations of headers that genbki.pl needs to read
-pg_includes = -I$(top_srcdir)/src/include/catalog -I$(top_builddir)/src/include/catalog
+mdb_includes = -I$(top_srcdir)/src/include/catalog -I$(top_builddir)/src/include/catalog
 
 # see explanation in ../parser/Makefile
 mollydb.description: mollydb.bki ;
@@ -65,7 +65,7 @@ schemapg.h: mollydb.bki ;
 # changes.
 mollydb.bki: genbki.pl Catalog.pm $(POSTGRES_BKI_SRCS) $(top_srcdir)/configure $(top_srcdir)/src/include/catalog/duplicate_oids
 	cd $(top_srcdir)/src/include/catalog && $(PERL) ./duplicate_oids
-	$(PERL) -I $(catalogdir) $< $(pg_includes) --set-version=$(MAJORVERSION) $(POSTGRES_BKI_SRCS)
+	$(PERL) -I $(catalogdir) $< $(mdb_includes) --set-version=$(MAJORVERSION) $(POSTGRES_BKI_SRCS)
 
 .PHONY: install-data
 install-data: $(BKIFILES) installdirs

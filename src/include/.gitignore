@@ -1,6 +1,6 @@
 /stamp-h
 /stamp-ext-h
-/pg_config.h
-/pg_config_ext.h
-/pg_config_os.h
+/mdb_config.h
+/mdb_config_ext.h
+/mdb_config_os.h
 /dynloader.h

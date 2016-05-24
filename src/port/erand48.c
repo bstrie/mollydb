@@ -2,7 +2,7 @@
  *
  * erand48.c
  *
- * This file supplies pg_erand48(), pg_lrand48(), and pg_srand48(), which
+ * This file supplies mdb_erand48(), mdb_lrand48(), and mdb_srand48(), which
  * are just like erand48(), lrand48(), and srand48() except that we use
  * our own implementation rather than the one provided by the operating
  * system.  We used to test for an operating system version rather than
@@ -76,7 +76,7 @@ _dorand48(unsigned short xseed[3])
 
 
 double
-pg_erand48(unsigned short xseed[3])
+mdb_erand48(unsigned short xseed[3])
 {
 	_dorand48(xseed);
 	return ldexp((double) xseed[0], -48) +
@@ -85,14 +85,14 @@ pg_erand48(unsigned short xseed[3])
 }
 
 long
-pg_lrand48(void)
+mdb_lrand48(void)
 {
 	_dorand48(_rand48_seed);
 	return ((long) _rand48_seed[2] << 15) + ((long) _rand48_seed[1] >> 1);
 }
 
 void
-pg_srand48(long seed)
+mdb_srand48(long seed)
 {
 	_rand48_seed[0] = RAND48_SEED_0;
 	_rand48_seed[1] = (unsigned short) seed;

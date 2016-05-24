@@ -14,8 +14,8 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_collation.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_type.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
 #include "nodes/execnodes.h"

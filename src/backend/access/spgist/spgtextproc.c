@@ -40,11 +40,11 @@
 #include "mollydb.h"
 
 #include "access/spgist.h"
-#include "catalog/pg_type.h"
-#include "mb/pg_wchar.h"
+#include "catalog/mdb_type.h"
+#include "mb/mdb_wchar.h"
 #include "utils/builtins.h"
 #include "utils/datum.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 
 
 /*
@@ -76,7 +76,7 @@ typedef struct spgNodePtr
 
 
 Datum
-spg_text_config(PG_FUNCTION_ARGS)
+smdb_text_config(PG_FUNCTION_ARGS)
 {
 	/* spgConfigIn *cfgin = (spgConfigIn *) PG_GETARG_POINTER(0); */
 	spgConfigOut *cfg = (spgConfigOut *) PG_GETARG_POINTER(1);
@@ -164,7 +164,7 @@ searchChar(Datum *nodeLabels, int nNodes, int16 c, int *i)
 }
 
 Datum
-spg_text_choose(PG_FUNCTION_ARGS)
+smdb_text_choose(PG_FUNCTION_ARGS)
 {
 	spgChooseIn *in = (spgChooseIn *) PG_GETARG_POINTER(0);
 	spgChooseOut *out = (spgChooseOut *) PG_GETARG_POINTER(1);
@@ -305,7 +305,7 @@ cmpNodePtr(const void *a, const void *b)
 }
 
 Datum
-spg_text_picksplit(PG_FUNCTION_ARGS)
+smdb_text_picksplit(PG_FUNCTION_ARGS)
 {
 	spgPickSplitIn *in = (spgPickSplitIn *) PG_GETARG_POINTER(0);
 	spgPickSplitOut *out = (spgPickSplitOut *) PG_GETARG_POINTER(1);
@@ -398,7 +398,7 @@ spg_text_picksplit(PG_FUNCTION_ARGS)
 }
 
 Datum
-spg_text_inner_consistent(PG_FUNCTION_ARGS)
+smdb_text_inner_consistent(PG_FUNCTION_ARGS)
 {
 	spgInnerConsistentIn *in = (spgInnerConsistentIn *) PG_GETARG_POINTER(0);
 	spgInnerConsistentOut *out = (spgInnerConsistentOut *) PG_GETARG_POINTER(1);
@@ -542,7 +542,7 @@ spg_text_inner_consistent(PG_FUNCTION_ARGS)
 }
 
 Datum
-spg_text_leaf_consistent(PG_FUNCTION_ARGS)
+smdb_text_leaf_consistent(PG_FUNCTION_ARGS)
 {
 	spgLeafConsistentIn *in = (spgLeafConsistentIn *) PG_GETARG_POINTER(0);
 	spgLeafConsistentOut *out = (spgLeafConsistentOut *) PG_GETARG_POINTER(1);
@@ -601,7 +601,7 @@ spg_text_leaf_consistent(PG_FUNCTION_ARGS)
 			strategy -= 10;
 
 			/* If asserts enabled, verify encoding of reconstructed string */
-			Assert(pg_verifymbstr(fullValue, fullLen, false));
+			Assert(mdb_verifymbstr(fullValue, fullLen, false));
 
 			r = varstr_cmp(fullValue, Min(queryLen, fullLen),
 						   VARDATA_ANY(query), Min(queryLen, fullLen),

@@ -1,11 +1,11 @@
-# LANGUAGE message translation file for pg_rewind
+# LANGUAGE message translation file for mdb_rewind
 # Copyright (C) 2015 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_rewind (MollyDB) 9.5\n"
+"Project-Id-Version: mdb_rewind (MollyDB) 9.5\n"
 "Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:44+0000\n"
 "PO-Revision-Date: 2016-01-03 23:28-0500\n"
@@ -417,7 +417,7 @@ msgstr ""
 "WAL记录修改了一个关系，但是记录类型无法识别\n"
 "lsn: %X/%X, rmgr: %s, info: %02X\n"
 
-#: pg_rewind.c:59
+#: mdb_rewind.c:59
 #, c-format
 msgid ""
 "%s resynchronizes a MollyDB cluster with another copy of the cluster.\n"
@@ -426,7 +426,7 @@ msgstr ""
 "%s用一个MollyDB集簇的另一个拷贝重新同步了该集簇。\n"
 "\n"
 
-#: pg_rewind.c:60
+#: mdb_rewind.c:60
 #, c-format
 msgid ""
 "Usage:\n"
@@ -437,54 +437,54 @@ msgstr ""
 "  %s [选项]...\n"
 "\n"
 
-#: pg_rewind.c:61
+#: mdb_rewind.c:61
 #, c-format
 msgid "Options:\n"
 msgstr "选项:\n"
 
-#: pg_rewind.c:62
+#: mdb_rewind.c:62
 #, c-format
 msgid "  -D, --target-pgdata=DIRECTORY  existing data directory to modify\n"
 msgstr "  -D, --target-pgdata=DIRECTORY  已有的要修改的数据目录\n"
 
-#: pg_rewind.c:63
+#: mdb_rewind.c:63
 #, c-format
 msgid ""
 "      --source-pgdata=DIRECTORY  source data directory to synchronize with\n"
 msgstr "      --source-pgdata=DIRECTORY  要与之同步的源数据目录\n"
 
-#: pg_rewind.c:64
+#: mdb_rewind.c:64
 #, c-format
 msgid "      --source-server=CONNSTR    source server to synchronize with\n"
 msgstr "      --source-server=CONNSTR    要与之同步的源服务器\n"
 
-#: pg_rewind.c:65
+#: mdb_rewind.c:65
 #, c-format
 msgid "  -n, --dry-run                  stop before modifying anything\n"
 msgstr "  -n, --dry-run                  在修改任何东西之前停止\n"
 
-#: pg_rewind.c:66
+#: mdb_rewind.c:66
 #, c-format
 msgid "  -P, --progress                 write progress messages\n"
 msgstr "  -P, --progress                 写出进度消息\n"
 
-#: pg_rewind.c:67
+#: mdb_rewind.c:67
 #, c-format
 msgid "      --debug                    write a lot of debug messages\n"
 msgstr "      --debug                    写出很多调试消息\n"
 
-#: pg_rewind.c:68
+#: mdb_rewind.c:68
 #, c-format
 msgid ""
 "  -V, --version                  output version information, then exit\n"
 msgstr "  -V, --version                  输出版本信息，然后退出\n"
 
-#: pg_rewind.c:69
+#: mdb_rewind.c:69
 #, c-format
 msgid "  -?, --help                     show this help, then exit\n"
 msgstr "  -?, --help                     显示本帮助，然后退出\n"
 
-#: pg_rewind.c:70
+#: mdb_rewind.c:70
 #, c-format
 msgid ""
 "\n"
@@ -493,77 +493,77 @@ msgstr ""
 "\n"
 "报告错误至 <pgql-bugs@mollydb.org>.\n"
 
-#: pg_rewind.c:125 pg_rewind.c:156 pg_rewind.c:163 pg_rewind.c:171
+#: mdb_rewind.c:125 mdb_rewind.c:156 mdb_rewind.c:163 mdb_rewind.c:171
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "请用 \"%s --help\" 获取更多的信息.\n"
 
-#: pg_rewind.c:155
+#: mdb_rewind.c:155
 #, c-format
 msgid "%s: no source specified (--source-pgdata or --source-server)\n"
 msgstr "%s：没有指定源 (--source-pgdata 或者 --source-server)\n"
 
-#: pg_rewind.c:162
+#: mdb_rewind.c:162
 #, c-format
 msgid "%s: no target data directory specified (--target-pgdata)\n"
 msgstr "%s：没有指定目标数据目录 (--target-pgdata)\n"
 
-#: pg_rewind.c:169
+#: mdb_rewind.c:169
 #, c-format
 msgid "%s: too many command-line arguments (first is \"%s\")\n"
 msgstr "%s: 命令行参数太多 (第一个是 \"%s\")\n"
 
-#: pg_rewind.c:184
+#: mdb_rewind.c:184
 #, c-format
 msgid "cannot be executed by \"root\"\n"
 msgstr "不能由\"root\"执行\n"
 
-#: pg_rewind.c:185
+#: mdb_rewind.c:185
 #, c-format
 msgid "You must run %s as the MollyDB superuser.\n"
 msgstr "您现在作为MollyDB超级用户运行%s.\n"
 
-#: pg_rewind.c:215
+#: mdb_rewind.c:215
 #, c-format
 msgid "source and target cluster are on the same timeline\n"
 msgstr "源集簇和目标集簇处于同一时间线\n"
 
-#: pg_rewind.c:218
+#: mdb_rewind.c:218
 #, c-format
 msgid "servers diverged at WAL position %X/%X on timeline %u\n"
 msgstr "服务器在时间线%3$u上的WAL位置%1$X/%2$X处发生了分歧\n"
 
-#: pg_rewind.c:253
+#: mdb_rewind.c:253
 #, c-format
 msgid "no rewind required\n"
 msgstr "不需要倒带（rewind）\n"
 
-#: pg_rewind.c:259
+#: mdb_rewind.c:259
 #, c-format
 msgid "rewinding from last common checkpoint at %X/%X on timeline %u\n"
 msgstr "从时间线%3$u上%1$X/%2$X处的最后一个普通检查点倒带\n"
 
-#: pg_rewind.c:267
+#: mdb_rewind.c:267
 #, c-format
 msgid "reading source file list\n"
 msgstr "读取源文件列表\n"
 
-#: pg_rewind.c:269
+#: mdb_rewind.c:269
 #, c-format
 msgid "reading target file list\n"
 msgstr "读取目标文件列表\n"
 
-#: pg_rewind.c:279
+#: mdb_rewind.c:279
 #, c-format
 msgid "reading WAL in target\n"
 msgstr "读取目标中的WAL\n"
 
-#: pg_rewind.c:296
+#: mdb_rewind.c:296
 #, c-format
 msgid "need to copy %lu MB (total source directory size is %lu MB)\n"
 msgstr "需要复制 %lu MB（整个源目录的大小是 %lu MB）\n"
 
-#: pg_rewind.c:313
+#: mdb_rewind.c:313
 #, c-format
 msgid ""
 "\n"
@@ -572,54 +572,54 @@ msgstr ""
 "\n"
 "正在创建备份标签并且更新控制文件\n"
 
-#: pg_rewind.c:341
+#: mdb_rewind.c:341
 #, c-format
 msgid "Done!\n"
 msgstr "完成！\n"
 
-#: pg_rewind.c:353
+#: mdb_rewind.c:353
 #, c-format
 msgid "source and target clusters are from different systems\n"
 msgstr "源集簇和目标集簇来自不同的系统\n"
 
-#: pg_rewind.c:361
+#: mdb_rewind.c:361
 #, c-format
-msgid "clusters are not compatible with this version of pg_rewind\n"
-msgstr "集簇与这个pg_rewind的版本不兼容\n"
+msgid "clusters are not compatible with this version of mdb_rewind\n"
+msgstr "集簇与这个mdb_rewind的版本不兼容\n"
 
-#: pg_rewind.c:371
+#: mdb_rewind.c:371
 #, c-format
 msgid ""
 "target server needs to use either data checksums or \"wal_log_hints = on\"\n"
 msgstr "目标服务器需要使用数据校验和或者让\"wal_log_hints = on\"\n"
 
-#: pg_rewind.c:381
+#: mdb_rewind.c:381
 #, c-format
 msgid "target server must be shut down cleanly\n"
 msgstr "目标服务器必须被干净地关闭\n"
 
-#: pg_rewind.c:389
+#: mdb_rewind.c:389
 #, c-format
 msgid "source data directory must be shut down cleanly\n"
 msgstr "源数据目录必须被干净地关闭\n"
 
-#: pg_rewind.c:456
+#: mdb_rewind.c:456
 #, c-format
 msgid ""
 "could not find common ancestor of the source and target cluster's timelines\n"
 msgstr "无法找到源集簇和目标集簇的时间线的共同祖先\n"
 
-#: pg_rewind.c:496
+#: mdb_rewind.c:496
 #, c-format
 msgid "backup label buffer too small\n"
 msgstr "备份标签缓冲太小\n"
 
-#: pg_rewind.c:518
+#: mdb_rewind.c:518
 #, c-format
 msgid "unexpected control file CRC\n"
 msgstr "意料之外的控制文件CRC\n"
 
-#: pg_rewind.c:528
+#: mdb_rewind.c:528
 #, c-format
 msgid "unexpected control file size %d, expected %d\n"
 msgstr "意料之外的控制文件大小%d，应该是%d\n"
@@ -718,9 +718,9 @@ msgstr "在日志段%2$s的偏移量%3$u处有无效的info位%1$04X"
 #, c-format
 msgid ""
 "WAL file is from different database system: WAL file database system "
-"identifier is %s, pg_control database system identifier is %s"
+"identifier is %s, mdb_control database system identifier is %s"
 msgstr ""
-"WAL文件来自于不同的数据库系统：WAL文件数据库系统标识符是%s，pg_control数据库"
+"WAL文件来自于不同的数据库系统：WAL文件数据库系统标识符是%s，mdb_control数据库"
 "系统标识符是%s"
 
 #: xlogreader.c:758

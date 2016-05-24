@@ -11,8 +11,8 @@ VACUUM;
 \a\t
 
 SELECT relname, relhasindex
-   FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = relnamespace
-   WHERE relkind = 'r' AND (nspname ~ '^pg_temp_') IS NOT TRUE
+   FROM mdb_class c LEFT JOIN mdb_namespace n ON n.oid = relnamespace
+   WHERE relkind = 'r' AND (nspname ~ '^mdb_temp_') IS NOT TRUE
    ORDER BY relname;
 
 -- restore normal output mode
@@ -25,9 +25,9 @@ SELECT relname, relhasindex
 -- We exclude non-system tables from the check by looking at nspname.
 --
 SELECT relname, nspname
-FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = relnamespace
+FROM mdb_class c LEFT JOIN mdb_namespace n ON n.oid = relnamespace
 WHERE relhasoids
-    AND ((nspname ~ '^pg_') IS NOT FALSE)
-    AND NOT EXISTS (SELECT 1 FROM pg_index i WHERE indrelid = c.oid
+    AND ((nspname ~ '^mdb_') IS NOT FALSE)
+    AND NOT EXISTS (SELECT 1 FROM mdb_index i WHERE indrelid = c.oid
                     AND indkey[0] = -2 AND indnatts = 1
                     AND indisunique AND indimmediate);

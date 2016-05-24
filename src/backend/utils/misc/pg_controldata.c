@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_controldata.c
+ * mdb_controldata.c
  *
  * Routines to expose the contents of the control data file via
  * a set of SQL functions.
@@ -9,7 +9,7 @@
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
- *	  src/backend/utils/misc/pg_controldata.c
+ *	  src/backend/utils/misc/mdb_controldata.c
  *-------------------------------------------------------------------------
  */
 
@@ -19,15 +19,15 @@
 #include "miscadmin.h"
 #include "access/htup_details.h"
 #include "access/xlog_internal.h"
-#include "catalog/pg_control.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_control.h"
+#include "catalog/mdb_type.h"
 #include "common/controldata_utils.h"
 #include "utils/builtins.h"
-#include "utils/pg_lsn.h"
+#include "utils/mdb_lsn.h"
 #include "utils/timestamp.h"
 
 Datum
-pg_control_system(PG_FUNCTION_ARGS)
+mdb_control_system(PG_FUNCTION_ARGS)
 {
 	Datum				values[4];
 	bool				nulls[4];
@@ -37,23 +37,23 @@ pg_control_system(PG_FUNCTION_ARGS)
 
 	/*
 	 * Construct a tuple descriptor for the result row.  This must match this
-	 * function's pg_proc entry!
+	 * function's mdb_proc entry!
 	 */
 	tupdesc = CreateTemplateTupleDesc(4, false);
-	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "pg_control_version",
+	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "mdb_control_version",
 					   INT4OID, -1, 0);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 2, "catalog_version_no",
 					   INT4OID, -1, 0);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 3, "system_identifier",
 					   INT8OID, -1, 0);
-	TupleDescInitEntry(tupdesc, (AttrNumber) 4, "pg_control_last_modified",
+	TupleDescInitEntry(tupdesc, (AttrNumber) 4, "mdb_control_last_modified",
 					   TIMESTAMPTZOID, -1, 0);
 	tupdesc = BlessTupleDesc(tupdesc);
 
 	/* read the control file */
 	ControlFile = get_controlfile(DataDir, NULL);
 
-	values[0] = Int32GetDatum(ControlFile->pg_control_version);
+	values[0] = Int32GetDatum(ControlFile->mdb_control_version);
 	nulls[0] = false;
 
 	values[1] = Int32GetDatum(ControlFile->catalog_version_no);
@@ -71,7 +71,7 @@ pg_control_system(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_control_checkpoint(PG_FUNCTION_ARGS)
+mdb_control_checkpoint(PG_FUNCTION_ARGS)
 {
 	Datum				values[19];
 	bool				nulls[19];
@@ -83,7 +83,7 @@ pg_control_checkpoint(PG_FUNCTION_ARGS)
 
 	/*
 	 * Construct a tuple descriptor for the result row.  This must match this
-	 * function's pg_proc entry!
+	 * function's mdb_proc entry!
 	 */
 	tupdesc = CreateTemplateTupleDesc(19, false);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "checkpoint_location",
@@ -203,7 +203,7 @@ pg_control_checkpoint(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_control_recovery(PG_FUNCTION_ARGS)
+mdb_control_recovery(PG_FUNCTION_ARGS)
 {
 	Datum				values[5];
 	bool				nulls[5];
@@ -213,7 +213,7 @@ pg_control_recovery(PG_FUNCTION_ARGS)
 
 	/*
 	 * Construct a tuple descriptor for the result row.  This must match this
-	 * function's pg_proc entry!
+	 * function's mdb_proc entry!
 	 */
 	tupdesc = CreateTemplateTupleDesc(5, false);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "min_recovery_end_location",
@@ -252,7 +252,7 @@ pg_control_recovery(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_control_init(PG_FUNCTION_ARGS)
+mdb_control_init(PG_FUNCTION_ARGS)
 {
 	Datum				values[13];
 	bool				nulls[13];
@@ -262,7 +262,7 @@ pg_control_init(PG_FUNCTION_ARGS)
 
 	/*
 	 * Construct a tuple descriptor for the result row.  This must match this
-	 * function's pg_proc entry!
+	 * function's mdb_proc entry!
 	 */
 	tupdesc = CreateTemplateTupleDesc(13, false);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "max_data_alignment",

@@ -27,7 +27,7 @@
 typedef struct xl_relmap_update
 {
 	Oid			dbid;			/* database ID, or 0 for shared map */
-	Oid			tsid;			/* database's tablespace, or pg_global */
+	Oid			tsid;			/* database's tablespace, or mdb_global */
 	int32		nbytes;			/* size of relmap data */
 	char		data[FLEXIBLE_ARRAY_MEMBER];
 } xl_relmap_update;

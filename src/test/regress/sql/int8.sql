@@ -176,7 +176,7 @@ SELECT CAST('36854775807.0'::float4 AS int8);
 SELECT CAST('922337203685477580700.0'::float8 AS int8);
 
 SELECT CAST(q1 AS oid) FROM INT8_TBL;
-SELECT oid::int8 FROM pg_class WHERE relname = 'pg_class';
+SELECT oid::int8 FROM mdb_class WHERE relname = 'mdb_class';
 
 
 -- bit operations

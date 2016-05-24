@@ -15,7 +15,7 @@
 #include "miscadmin.h"
 #include "access/htup_details.h"
 #include "access/transam.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "libpq/pqformat.h"
 #include "parser/parse_coerce.h"
 #include "utils/builtins.h"
@@ -242,7 +242,7 @@ jsonb_from_cstring(char *json, int len)
 	sem.scalar = jsonb_in_scalar;
 	sem.object_field_start = jsonb_in_object_field_start;
 
-	pg_parse_json(lex, &sem);
+	mdb_parse_json(lex, &sem);
 
 	/* after parsing, the item member has the composed jsonb structure */
 	PG_RETURN_POINTER(JsonbValueToJsonb(state.res));
@@ -786,7 +786,7 @@ datum_to_jsonb(Datum val, bool is_null, JsonbInState *result,
 			case JSONBTYPE_DATE:
 				{
 					DateADT		date;
-					struct pg_tm tm;
+					struct mdb_tm tm;
 					char		buf[MAXDATELEN + 1];
 
 					date = DatumGetDateADT(val);
@@ -807,7 +807,7 @@ datum_to_jsonb(Datum val, bool is_null, JsonbInState *result,
 			case JSONBTYPE_TIMESTAMP:
 				{
 					Timestamp	timestamp;
-					struct pg_tm tm;
+					struct mdb_tm tm;
 					fsec_t		fsec;
 					char		buf[MAXDATELEN + 1];
 
@@ -829,7 +829,7 @@ datum_to_jsonb(Datum val, bool is_null, JsonbInState *result,
 			case JSONBTYPE_TIMESTAMPTZ:
 				{
 					TimestampTz timestamp;
-					struct pg_tm tm;
+					struct mdb_tm tm;
 					int			tz;
 					fsec_t		fsec;
 					const char *tzn = NULL;
@@ -871,7 +871,7 @@ datum_to_jsonb(Datum val, bool is_null, JsonbInState *result,
 					sem.scalar = jsonb_in_scalar;
 					sem.object_field_start = jsonb_in_object_field_start;
 
-					pg_parse_json(lex, &sem);
+					mdb_parse_json(lex, &sem);
 
 				}
 				break;

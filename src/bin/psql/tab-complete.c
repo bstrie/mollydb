@@ -78,7 +78,7 @@ typedef struct SchemaQuery
 {
 	/*
 	 * Name of catalog or catalogs to be queried, with alias, eg.
-	 * "pg_catalog.pg_class c".  Note that "pg_namespace n" will be added.
+	 * "mdb_catalog.mdb_class c".  Note that "mdb_namespace n" will be added.
 	 */
 	const char *catname;
 
@@ -92,19 +92,19 @@ typedef struct SchemaQuery
 
 	/*
 	 * Visibility condition --- which rows are visible without schema
-	 * qualification?  For example, "pg_catalog.pg_table_is_visible(c.oid)".
+	 * qualification?  For example, "mdb_catalog.mdb_table_is_visible(c.oid)".
 	 */
 	const char *viscondition;
 
 	/*
-	 * Namespace --- name of field to join to pg_namespace.oid. For example,
+	 * Namespace --- name of field to join to mdb_namespace.oid. For example,
 	 * "c.relnamespace".
 	 */
 	const char *namespace;
 
 	/*
 	 * Result --- the appropriately-quoted name to return, in the case of an
-	 * unqualified name.  For example, "pg_catalog.quote_ident(c.relname)".
+	 * unqualified name.  For example, "mdb_catalog.quote_ident(c.relname)".
 	 */
 	const char *result;
 
@@ -318,137 +318,137 @@ do { \
 
 static const SchemaQuery Query_for_list_of_aggregates = {
 	/* catname */
-	"pg_catalog.pg_proc p",
+	"mdb_catalog.mdb_proc p",
 	/* selcondition */
 	"p.proisagg",
 	/* viscondition */
-	"pg_catalog.pg_function_is_visible(p.oid)",
+	"mdb_catalog.mdb_function_is_visible(p.oid)",
 	/* namespace */
 	"p.pronamespace",
 	/* result */
-	"pg_catalog.quote_ident(p.proname)",
+	"mdb_catalog.quote_ident(p.proname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_datatypes = {
 	/* catname */
-	"pg_catalog.pg_type t",
+	"mdb_catalog.mdb_type t",
 	/* selcondition --- ignore table rowtypes and array types */
 	"(t.typrelid = 0 "
-	" OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid)) "
+	" OR (SELECT c.relkind = 'c' FROM mdb_catalog.mdb_class c WHERE c.oid = t.typrelid)) "
 	"AND t.typname !~ '^_'",
 	/* viscondition */
-	"pg_catalog.pg_type_is_visible(t.oid)",
+	"mdb_catalog.mdb_type_is_visible(t.oid)",
 	/* namespace */
 	"t.typnamespace",
 	/* result */
-	"pg_catalog.format_type(t.oid, NULL)",
+	"mdb_catalog.format_type(t.oid, NULL)",
 	/* qualresult */
-	"pg_catalog.quote_ident(t.typname)"
+	"mdb_catalog.quote_ident(t.typname)"
 };
 
 static const SchemaQuery Query_for_list_of_domains = {
 	/* catname */
-	"pg_catalog.pg_type t",
+	"mdb_catalog.mdb_type t",
 	/* selcondition */
 	"t.typtype = 'd'",
 	/* viscondition */
-	"pg_catalog.pg_type_is_visible(t.oid)",
+	"mdb_catalog.mdb_type_is_visible(t.oid)",
 	/* namespace */
 	"t.typnamespace",
 	/* result */
-	"pg_catalog.quote_ident(t.typname)",
+	"mdb_catalog.quote_ident(t.typname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_functions = {
 	/* catname */
-	"pg_catalog.pg_proc p",
+	"mdb_catalog.mdb_proc p",
 	/* selcondition */
 	NULL,
 	/* viscondition */
-	"pg_catalog.pg_function_is_visible(p.oid)",
+	"mdb_catalog.mdb_function_is_visible(p.oid)",
 	/* namespace */
 	"p.pronamespace",
 	/* result */
-	"pg_catalog.quote_ident(p.proname)",
+	"mdb_catalog.quote_ident(p.proname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_indexes = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('i')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_sequences = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('S')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_foreign_tables = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('f')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_tables = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('r')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_constraints_with_schema = {
 	/* catname */
-	"pg_catalog.pg_constraint c",
+	"mdb_catalog.mdb_constraint c",
 	/* selcondition */
 	"c.conrelid <> 0",
 	/* viscondition */
-	"true",						/* there is no pg_constraint_is_visible */
+	"true",						/* there is no mdb_constraint_is_visible */
 	/* namespace */
 	"c.connamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.conname)",
+	"mdb_catalog.quote_ident(c.conname)",
 	/* qualresult */
 	NULL
 };
@@ -456,105 +456,105 @@ static const SchemaQuery Query_for_list_of_constraints_with_schema = {
 /* Relations supporting INSERT, UPDATE or DELETE */
 static const SchemaQuery Query_for_list_of_updatables = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('r', 'f', 'v')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_relations = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	NULL,
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_tsvmf = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('r', 'S', 'v', 'm', 'f')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_tmf = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('r', 'm', 'f')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_tm = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('r', 'm')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_views = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('v')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
 
 static const SchemaQuery Query_for_list_of_matviews = {
 	/* catname */
-	"pg_catalog.pg_class c",
+	"mdb_catalog.mdb_class c",
 	/* selcondition */
 	"c.relkind IN ('m')",
 	/* viscondition */
-	"pg_catalog.pg_table_is_visible(c.oid)",
+	"mdb_catalog.mdb_table_is_visible(c.oid)",
 	/* namespace */
 	"c.relnamespace",
 	/* result */
-	"pg_catalog.quote_ident(c.relname)",
+	"mdb_catalog.quote_ident(c.relname)",
 	/* qualresult */
 	NULL
 };
@@ -575,66 +575,66 @@ static const SchemaQuery Query_for_list_of_matviews = {
  */
 
 #define Query_for_list_of_attributes \
-"SELECT pg_catalog.quote_ident(attname) "\
-"  FROM pg_catalog.pg_attribute a, pg_catalog.pg_class c "\
+"SELECT mdb_catalog.quote_ident(attname) "\
+"  FROM mdb_catalog.mdb_attribute a, mdb_catalog.mdb_class c "\
 " WHERE c.oid = a.attrelid "\
 "   AND a.attnum > 0 "\
 "   AND NOT a.attisdropped "\
-"   AND substring(pg_catalog.quote_ident(attname),1,%d)='%s' "\
-"   AND (pg_catalog.quote_ident(relname)='%s' "\
+"   AND substring(mdb_catalog.quote_ident(attname),1,%d)='%s' "\
+"   AND (mdb_catalog.quote_ident(relname)='%s' "\
 "        OR '\"' || relname || '\"'='%s') "\
-"   AND pg_catalog.pg_table_is_visible(c.oid)"
+"   AND mdb_catalog.mdb_table_is_visible(c.oid)"
 
 #define Query_for_list_of_attributes_with_schema \
-"SELECT pg_catalog.quote_ident(attname) "\
-"  FROM pg_catalog.pg_attribute a, pg_catalog.pg_class c, pg_catalog.pg_namespace n "\
+"SELECT mdb_catalog.quote_ident(attname) "\
+"  FROM mdb_catalog.mdb_attribute a, mdb_catalog.mdb_class c, mdb_catalog.mdb_namespace n "\
 " WHERE c.oid = a.attrelid "\
 "   AND n.oid = c.relnamespace "\
 "   AND a.attnum > 0 "\
 "   AND NOT a.attisdropped "\
-"   AND substring(pg_catalog.quote_ident(attname),1,%d)='%s' "\
-"   AND (pg_catalog.quote_ident(relname)='%s' "\
+"   AND substring(mdb_catalog.quote_ident(attname),1,%d)='%s' "\
+"   AND (mdb_catalog.quote_ident(relname)='%s' "\
 "        OR '\"' || relname || '\"' ='%s') "\
-"   AND (pg_catalog.quote_ident(nspname)='%s' "\
+"   AND (mdb_catalog.quote_ident(nspname)='%s' "\
 "        OR '\"' || nspname || '\"' ='%s') "
 
 #define Query_for_list_of_template_databases \
-"SELECT pg_catalog.quote_ident(datname) FROM pg_catalog.pg_database "\
-" WHERE substring(pg_catalog.quote_ident(datname),1,%d)='%s' AND datistemplate"
+"SELECT mdb_catalog.quote_ident(datname) FROM mdb_catalog.mdb_database "\
+" WHERE substring(mdb_catalog.quote_ident(datname),1,%d)='%s' AND datistemplate"
 
 #define Query_for_list_of_databases \
-"SELECT pg_catalog.quote_ident(datname) FROM pg_catalog.pg_database "\
-" WHERE substring(pg_catalog.quote_ident(datname),1,%d)='%s'"
+"SELECT mdb_catalog.quote_ident(datname) FROM mdb_catalog.mdb_database "\
+" WHERE substring(mdb_catalog.quote_ident(datname),1,%d)='%s'"
 
 #define Query_for_list_of_tablespaces \
-"SELECT pg_catalog.quote_ident(spcname) FROM pg_catalog.pg_tablespace "\
-" WHERE substring(pg_catalog.quote_ident(spcname),1,%d)='%s'"
+"SELECT mdb_catalog.quote_ident(spcname) FROM mdb_catalog.mdb_tablespace "\
+" WHERE substring(mdb_catalog.quote_ident(spcname),1,%d)='%s'"
 
 #define Query_for_list_of_encodings \
-" SELECT DISTINCT pg_catalog.pg_encoding_to_char(conforencoding) "\
-"   FROM pg_catalog.pg_conversion "\
-"  WHERE substring(pg_catalog.pg_encoding_to_char(conforencoding),1,%d)=UPPER('%s')"
+" SELECT DISTINCT mdb_catalog.mdb_encoding_to_char(conforencoding) "\
+"   FROM mdb_catalog.mdb_conversion "\
+"  WHERE substring(mdb_catalog.mdb_encoding_to_char(conforencoding),1,%d)=UPPER('%s')"
 
 #define Query_for_list_of_languages \
-"SELECT pg_catalog.quote_ident(lanname) "\
-"  FROM pg_catalog.pg_language "\
+"SELECT mdb_catalog.quote_ident(lanname) "\
+"  FROM mdb_catalog.mdb_language "\
 " WHERE lanname != 'internal' "\
-"   AND substring(pg_catalog.quote_ident(lanname),1,%d)='%s'"
+"   AND substring(mdb_catalog.quote_ident(lanname),1,%d)='%s'"
 
 #define Query_for_list_of_schemas \
-"SELECT pg_catalog.quote_ident(nspname) FROM pg_catalog.pg_namespace "\
-" WHERE substring(pg_catalog.quote_ident(nspname),1,%d)='%s'"
+"SELECT mdb_catalog.quote_ident(nspname) FROM mdb_catalog.mdb_namespace "\
+" WHERE substring(mdb_catalog.quote_ident(nspname),1,%d)='%s'"
 
 #define Query_for_list_of_alter_system_set_vars \
 "SELECT name FROM "\
-" (SELECT pg_catalog.lower(name) AS name FROM pg_catalog.pg_settings "\
+" (SELECT mdb_catalog.lower(name) AS name FROM mdb_catalog.mdb_settings "\
 "  WHERE context != 'internal') ss "\
 " WHERE substring(name,1,%d)='%s'"\
 " UNION ALL SELECT 'all' ss"
 
 #define Query_for_list_of_set_vars \
 "SELECT name FROM "\
-" (SELECT pg_catalog.lower(name) AS name FROM pg_catalog.pg_settings "\
+" (SELECT mdb_catalog.lower(name) AS name FROM mdb_catalog.mdb_settings "\
 "  WHERE context IN ('user', 'superuser') "\
 "  UNION ALL SELECT 'constraints' "\
 "  UNION ALL SELECT 'transaction' "\
@@ -646,218 +646,218 @@ static const SchemaQuery Query_for_list_of_matviews = {
 
 #define Query_for_list_of_show_vars \
 "SELECT name FROM "\
-" (SELECT pg_catalog.lower(name) AS name FROM pg_catalog.pg_settings "\
+" (SELECT mdb_catalog.lower(name) AS name FROM mdb_catalog.mdb_settings "\
 "  UNION ALL SELECT 'session authorization' "\
 "  UNION ALL SELECT 'all') ss "\
 " WHERE substring(name,1,%d)='%s'"
 
 #define Query_for_list_of_roles \
-" SELECT pg_catalog.quote_ident(rolname) "\
-"   FROM pg_catalog.pg_roles "\
-"  WHERE substring(pg_catalog.quote_ident(rolname),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(rolname) "\
+"   FROM mdb_catalog.mdb_roles "\
+"  WHERE substring(mdb_catalog.quote_ident(rolname),1,%d)='%s'"
 
 #define Query_for_list_of_grant_roles \
-" SELECT pg_catalog.quote_ident(rolname) "\
-"   FROM pg_catalog.pg_roles "\
-"  WHERE substring(pg_catalog.quote_ident(rolname),1,%d)='%s'"\
+" SELECT mdb_catalog.quote_ident(rolname) "\
+"   FROM mdb_catalog.mdb_roles "\
+"  WHERE substring(mdb_catalog.quote_ident(rolname),1,%d)='%s'"\
 " UNION ALL SELECT 'PUBLIC'"\
 " UNION ALL SELECT 'CURRENT_USER'"\
 " UNION ALL SELECT 'SESSION_USER'"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_table_owning_index \
-"SELECT pg_catalog.quote_ident(c1.relname) "\
-"  FROM pg_catalog.pg_class c1, pg_catalog.pg_class c2, pg_catalog.pg_index i"\
+"SELECT mdb_catalog.quote_ident(c1.relname) "\
+"  FROM mdb_catalog.mdb_class c1, mdb_catalog.mdb_class c2, mdb_catalog.mdb_index i"\
 " WHERE c1.oid=i.indrelid and i.indexrelid=c2.oid"\
-"       and (%d = pg_catalog.length('%s'))"\
-"       and pg_catalog.quote_ident(c2.relname)='%s'"\
-"       and pg_catalog.pg_table_is_visible(c2.oid)"
+"       and (%d = mdb_catalog.length('%s'))"\
+"       and mdb_catalog.quote_ident(c2.relname)='%s'"\
+"       and mdb_catalog.mdb_table_is_visible(c2.oid)"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_index_of_table \
-"SELECT pg_catalog.quote_ident(c2.relname) "\
-"  FROM pg_catalog.pg_class c1, pg_catalog.pg_class c2, pg_catalog.pg_index i"\
+"SELECT mdb_catalog.quote_ident(c2.relname) "\
+"  FROM mdb_catalog.mdb_class c1, mdb_catalog.mdb_class c2, mdb_catalog.mdb_index i"\
 " WHERE c1.oid=i.indrelid and i.indexrelid=c2.oid"\
-"       and (%d = pg_catalog.length('%s'))"\
-"       and pg_catalog.quote_ident(c1.relname)='%s'"\
-"       and pg_catalog.pg_table_is_visible(c2.oid)"
+"       and (%d = mdb_catalog.length('%s'))"\
+"       and mdb_catalog.quote_ident(c1.relname)='%s'"\
+"       and mdb_catalog.mdb_table_is_visible(c2.oid)"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_constraint_of_table \
-"SELECT pg_catalog.quote_ident(conname) "\
-"  FROM pg_catalog.pg_class c1, pg_catalog.pg_constraint con "\
-" WHERE c1.oid=conrelid and (%d = pg_catalog.length('%s'))"\
-"       and pg_catalog.quote_ident(c1.relname)='%s'"\
-"       and pg_catalog.pg_table_is_visible(c1.oid)"
+"SELECT mdb_catalog.quote_ident(conname) "\
+"  FROM mdb_catalog.mdb_class c1, mdb_catalog.mdb_constraint con "\
+" WHERE c1.oid=conrelid and (%d = mdb_catalog.length('%s'))"\
+"       and mdb_catalog.quote_ident(c1.relname)='%s'"\
+"       and mdb_catalog.mdb_table_is_visible(c1.oid)"
 
 #define Query_for_all_table_constraints \
-"SELECT pg_catalog.quote_ident(conname) "\
-"  FROM pg_catalog.pg_constraint c "\
+"SELECT mdb_catalog.quote_ident(conname) "\
+"  FROM mdb_catalog.mdb_constraint c "\
 " WHERE c.conrelid <> 0 "
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_constraint_of_type \
-"SELECT pg_catalog.quote_ident(conname) "\
-"  FROM pg_catalog.pg_type t, pg_catalog.pg_constraint con "\
-" WHERE t.oid=contypid and (%d = pg_catalog.length('%s'))"\
-"       and pg_catalog.quote_ident(t.typname)='%s'"\
-"       and pg_catalog.pg_type_is_visible(t.oid)"
+"SELECT mdb_catalog.quote_ident(conname) "\
+"  FROM mdb_catalog.mdb_type t, mdb_catalog.mdb_constraint con "\
+" WHERE t.oid=contypid and (%d = mdb_catalog.length('%s'))"\
+"       and mdb_catalog.quote_ident(t.typname)='%s'"\
+"       and mdb_catalog.mdb_type_is_visible(t.oid)"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_list_of_tables_for_constraint \
-"SELECT pg_catalog.quote_ident(relname) "\
-"  FROM pg_catalog.pg_class"\
-" WHERE (%d = pg_catalog.length('%s'))"\
+"SELECT mdb_catalog.quote_ident(relname) "\
+"  FROM mdb_catalog.mdb_class"\
+" WHERE (%d = mdb_catalog.length('%s'))"\
 "   AND oid IN "\
-"       (SELECT conrelid FROM pg_catalog.pg_constraint "\
-"         WHERE pg_catalog.quote_ident(conname)='%s')"
+"       (SELECT conrelid FROM mdb_catalog.mdb_constraint "\
+"         WHERE mdb_catalog.quote_ident(conname)='%s')"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_rule_of_table \
-"SELECT pg_catalog.quote_ident(rulename) "\
-"  FROM pg_catalog.pg_class c1, pg_catalog.pg_rewrite "\
-" WHERE c1.oid=ev_class and (%d = pg_catalog.length('%s'))"\
-"       and pg_catalog.quote_ident(c1.relname)='%s'"\
-"       and pg_catalog.pg_table_is_visible(c1.oid)"
+"SELECT mdb_catalog.quote_ident(rulename) "\
+"  FROM mdb_catalog.mdb_class c1, mdb_catalog.mdb_rewrite "\
+" WHERE c1.oid=ev_class and (%d = mdb_catalog.length('%s'))"\
+"       and mdb_catalog.quote_ident(c1.relname)='%s'"\
+"       and mdb_catalog.mdb_table_is_visible(c1.oid)"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_list_of_tables_for_rule \
-"SELECT pg_catalog.quote_ident(relname) "\
-"  FROM pg_catalog.pg_class"\
-" WHERE (%d = pg_catalog.length('%s'))"\
+"SELECT mdb_catalog.quote_ident(relname) "\
+"  FROM mdb_catalog.mdb_class"\
+" WHERE (%d = mdb_catalog.length('%s'))"\
 "   AND oid IN "\
-"       (SELECT ev_class FROM pg_catalog.pg_rewrite "\
-"         WHERE pg_catalog.quote_ident(rulename)='%s')"
+"       (SELECT ev_class FROM mdb_catalog.mdb_rewrite "\
+"         WHERE mdb_catalog.quote_ident(rulename)='%s')"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_trigger_of_table \
-"SELECT pg_catalog.quote_ident(tgname) "\
-"  FROM pg_catalog.pg_class c1, pg_catalog.pg_trigger "\
-" WHERE c1.oid=tgrelid and (%d = pg_catalog.length('%s'))"\
-"       and pg_catalog.quote_ident(c1.relname)='%s'"\
-"       and pg_catalog.pg_table_is_visible(c1.oid)"\
+"SELECT mdb_catalog.quote_ident(tgname) "\
+"  FROM mdb_catalog.mdb_class c1, mdb_catalog.mdb_trigger "\
+" WHERE c1.oid=tgrelid and (%d = mdb_catalog.length('%s'))"\
+"       and mdb_catalog.quote_ident(c1.relname)='%s'"\
+"       and mdb_catalog.mdb_table_is_visible(c1.oid)"\
 "       and not tgisinternal"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_list_of_tables_for_trigger \
-"SELECT pg_catalog.quote_ident(relname) "\
-"  FROM pg_catalog.pg_class"\
-" WHERE (%d = pg_catalog.length('%s'))"\
+"SELECT mdb_catalog.quote_ident(relname) "\
+"  FROM mdb_catalog.mdb_class"\
+" WHERE (%d = mdb_catalog.length('%s'))"\
 "   AND oid IN "\
-"       (SELECT tgrelid FROM pg_catalog.pg_trigger "\
-"         WHERE pg_catalog.quote_ident(tgname)='%s')"
+"       (SELECT tgrelid FROM mdb_catalog.mdb_trigger "\
+"         WHERE mdb_catalog.quote_ident(tgname)='%s')"
 
 #define Query_for_list_of_ts_configurations \
-"SELECT pg_catalog.quote_ident(cfgname) FROM pg_catalog.pg_ts_config "\
-" WHERE substring(pg_catalog.quote_ident(cfgname),1,%d)='%s'"
+"SELECT mdb_catalog.quote_ident(cfgname) FROM mdb_catalog.mdb_ts_config "\
+" WHERE substring(mdb_catalog.quote_ident(cfgname),1,%d)='%s'"
 
 #define Query_for_list_of_ts_dictionaries \
-"SELECT pg_catalog.quote_ident(dictname) FROM pg_catalog.pg_ts_dict "\
-" WHERE substring(pg_catalog.quote_ident(dictname),1,%d)='%s'"
+"SELECT mdb_catalog.quote_ident(dictname) FROM mdb_catalog.mdb_ts_dict "\
+" WHERE substring(mdb_catalog.quote_ident(dictname),1,%d)='%s'"
 
 #define Query_for_list_of_ts_parsers \
-"SELECT pg_catalog.quote_ident(prsname) FROM pg_catalog.pg_ts_parser "\
-" WHERE substring(pg_catalog.quote_ident(prsname),1,%d)='%s'"
+"SELECT mdb_catalog.quote_ident(prsname) FROM mdb_catalog.mdb_ts_parser "\
+" WHERE substring(mdb_catalog.quote_ident(prsname),1,%d)='%s'"
 
 #define Query_for_list_of_ts_templates \
-"SELECT pg_catalog.quote_ident(tmplname) FROM pg_catalog.pg_ts_template "\
-" WHERE substring(pg_catalog.quote_ident(tmplname),1,%d)='%s'"
+"SELECT mdb_catalog.quote_ident(tmplname) FROM mdb_catalog.mdb_ts_template "\
+" WHERE substring(mdb_catalog.quote_ident(tmplname),1,%d)='%s'"
 
 #define Query_for_list_of_fdws \
-" SELECT pg_catalog.quote_ident(fdwname) "\
-"   FROM pg_catalog.pg_foreign_data_wrapper "\
-"  WHERE substring(pg_catalog.quote_ident(fdwname),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(fdwname) "\
+"   FROM mdb_catalog.mdb_foreign_data_wrapper "\
+"  WHERE substring(mdb_catalog.quote_ident(fdwname),1,%d)='%s'"
 
 #define Query_for_list_of_servers \
-" SELECT pg_catalog.quote_ident(srvname) "\
-"   FROM pg_catalog.pg_foreign_server "\
-"  WHERE substring(pg_catalog.quote_ident(srvname),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(srvname) "\
+"   FROM mdb_catalog.mdb_foreign_server "\
+"  WHERE substring(mdb_catalog.quote_ident(srvname),1,%d)='%s'"
 
 #define Query_for_list_of_user_mappings \
-" SELECT pg_catalog.quote_ident(usename) "\
-"   FROM pg_catalog.pg_user_mappings "\
-"  WHERE substring(pg_catalog.quote_ident(usename),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(usename) "\
+"   FROM mdb_catalog.mdb_user_mappings "\
+"  WHERE substring(mdb_catalog.quote_ident(usename),1,%d)='%s'"
 
 #define Query_for_list_of_access_methods \
-" SELECT pg_catalog.quote_ident(amname) "\
-"   FROM pg_catalog.pg_am "\
-"  WHERE substring(pg_catalog.quote_ident(amname),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(amname) "\
+"   FROM mdb_catalog.mdb_am "\
+"  WHERE substring(mdb_catalog.quote_ident(amname),1,%d)='%s'"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_list_of_arguments \
-"SELECT pg_catalog.oidvectortypes(proargtypes)||')' "\
-"  FROM pg_catalog.pg_proc "\
-" WHERE (%d = pg_catalog.length('%s'))"\
-"   AND (pg_catalog.quote_ident(proname)='%s'"\
+"SELECT mdb_catalog.oidvectortypes(proargtypes)||')' "\
+"  FROM mdb_catalog.mdb_proc "\
+" WHERE (%d = mdb_catalog.length('%s'))"\
+"   AND (mdb_catalog.quote_ident(proname)='%s'"\
 "        OR '\"' || proname || '\"'='%s') "\
-"   AND (pg_catalog.pg_function_is_visible(pg_proc.oid))"
+"   AND (mdb_catalog.mdb_function_is_visible(mdb_proc.oid))"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_list_of_arguments_with_schema \
-"SELECT pg_catalog.oidvectortypes(proargtypes)||')' "\
-"  FROM pg_catalog.pg_proc p, pg_catalog.pg_namespace n "\
-" WHERE (%d = pg_catalog.length('%s'))"\
+"SELECT mdb_catalog.oidvectortypes(proargtypes)||')' "\
+"  FROM mdb_catalog.mdb_proc p, mdb_catalog.mdb_namespace n "\
+" WHERE (%d = mdb_catalog.length('%s'))"\
 "   AND n.oid = p.pronamespace "\
-"   AND (pg_catalog.quote_ident(proname)='%s' "\
+"   AND (mdb_catalog.quote_ident(proname)='%s' "\
 "        OR '\"' || proname || '\"' ='%s') "\
-"   AND (pg_catalog.quote_ident(nspname)='%s' "\
+"   AND (mdb_catalog.quote_ident(nspname)='%s' "\
 "        OR '\"' || nspname || '\"' ='%s') "
 
 #define Query_for_list_of_extensions \
-" SELECT pg_catalog.quote_ident(extname) "\
-"   FROM pg_catalog.pg_extension "\
-"  WHERE substring(pg_catalog.quote_ident(extname),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(extname) "\
+"   FROM mdb_catalog.mdb_extension "\
+"  WHERE substring(mdb_catalog.quote_ident(extname),1,%d)='%s'"
 
 #define Query_for_list_of_available_extensions \
-" SELECT pg_catalog.quote_ident(name) "\
-"   FROM pg_catalog.pg_available_extensions "\
-"  WHERE substring(pg_catalog.quote_ident(name),1,%d)='%s' AND installed_version IS NULL"
+" SELECT mdb_catalog.quote_ident(name) "\
+"   FROM mdb_catalog.mdb_available_extensions "\
+"  WHERE substring(mdb_catalog.quote_ident(name),1,%d)='%s' AND installed_version IS NULL"
 
 /* the silly-looking length condition is just to eat up the current word */
 #define Query_for_list_of_available_extension_versions \
-" SELECT pg_catalog.quote_ident(version) "\
-"   FROM pg_catalog.pg_available_extension_versions "\
-"  WHERE (%d = pg_catalog.length('%s'))"\
-"    AND pg_catalog.quote_ident(name)='%s'"
+" SELECT mdb_catalog.quote_ident(version) "\
+"   FROM mdb_catalog.mdb_available_extension_versions "\
+"  WHERE (%d = mdb_catalog.length('%s'))"\
+"    AND mdb_catalog.quote_ident(name)='%s'"
 
 #define Query_for_list_of_prepared_statements \
-" SELECT pg_catalog.quote_ident(name) "\
-"   FROM pg_catalog.pg_prepared_statements "\
-"  WHERE substring(pg_catalog.quote_ident(name),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(name) "\
+"   FROM mdb_catalog.mdb_prepared_statements "\
+"  WHERE substring(mdb_catalog.quote_ident(name),1,%d)='%s'"
 
 #define Query_for_list_of_event_triggers \
-" SELECT pg_catalog.quote_ident(evtname) "\
-"   FROM pg_catalog.pg_event_trigger "\
-"  WHERE substring(pg_catalog.quote_ident(evtname),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(evtname) "\
+"   FROM mdb_catalog.mdb_event_trigger "\
+"  WHERE substring(mdb_catalog.quote_ident(evtname),1,%d)='%s'"
 
 #define Query_for_list_of_tablesample_methods \
-" SELECT pg_catalog.quote_ident(proname) "\
-"   FROM pg_catalog.pg_proc "\
-"  WHERE prorettype = 'pg_catalog.tsm_handler'::pg_catalog.regtype AND "\
-"        proargtypes[0] = 'pg_catalog.internal'::pg_catalog.regtype AND "\
-"        substring(pg_catalog.quote_ident(proname),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(proname) "\
+"   FROM mdb_catalog.mdb_proc "\
+"  WHERE prorettype = 'mdb_catalog.tsm_handler'::mdb_catalog.regtype AND "\
+"        proargtypes[0] = 'mdb_catalog.internal'::mdb_catalog.regtype AND "\
+"        substring(mdb_catalog.quote_ident(proname),1,%d)='%s'"
 
 #define Query_for_list_of_policies \
-" SELECT pg_catalog.quote_ident(polname) "\
-"   FROM pg_catalog.pg_policy "\
-"  WHERE substring(pg_catalog.quote_ident(polname),1,%d)='%s'"
+" SELECT mdb_catalog.quote_ident(polname) "\
+"   FROM mdb_catalog.mdb_policy "\
+"  WHERE substring(mdb_catalog.quote_ident(polname),1,%d)='%s'"
 
 #define Query_for_list_of_tables_for_policy \
-"SELECT pg_catalog.quote_ident(relname) "\
-"  FROM pg_catalog.pg_class"\
-" WHERE (%d = pg_catalog.length('%s'))"\
+"SELECT mdb_catalog.quote_ident(relname) "\
+"  FROM mdb_catalog.mdb_class"\
+" WHERE (%d = mdb_catalog.length('%s'))"\
 "   AND oid IN "\
-"       (SELECT polrelid FROM pg_catalog.pg_policy "\
-"         WHERE pg_catalog.quote_ident(polname)='%s')"
+"       (SELECT polrelid FROM mdb_catalog.mdb_policy "\
+"         WHERE mdb_catalog.quote_ident(polname)='%s')"
 
 #define Query_for_enum \
 " SELECT name FROM ( "\
-"   SELECT pg_catalog.quote_ident(pg_catalog.unnest(enumvals)) AS name "\
-"     FROM pg_catalog.pg_settings "\
-"    WHERE pg_catalog.lower(name)=pg_catalog.lower('%s') "\
+"   SELECT mdb_catalog.quote_ident(mdb_catalog.unnest(enumvals)) AS name "\
+"     FROM mdb_catalog.mdb_settings "\
+"    WHERE mdb_catalog.lower(name)=mdb_catalog.lower('%s') "\
 "    UNION ALL " \
 "   SELECT 'DEFAULT' ) ss "\
-"  WHERE pg_catalog.substring(name,1,%%d)='%%s'"
+"  WHERE mdb_catalog.substring(name,1,%%d)='%%s'"
 
 /*
  * This is a list of all "things" in Pgsql, which can show up after CREATE or
@@ -881,14 +881,14 @@ static const mdb_thing_t words_after_create[] = {
 	{"AGGREGATE", NULL, &Query_for_list_of_aggregates},
 	{"CAST", NULL, NULL},		/* Casts have complex structures for names, so
 								 * skip it */
-	{"COLLATION", "SELECT pg_catalog.quote_ident(collname) FROM pg_catalog.pg_collation WHERE collencoding IN (-1, pg_catalog.pg_char_to_encoding(pg_catalog.getdatabaseencoding())) AND substring(pg_catalog.quote_ident(collname),1,%d)='%s'"},
+	{"COLLATION", "SELECT mdb_catalog.quote_ident(collname) FROM mdb_catalog.mdb_collation WHERE collencoding IN (-1, mdb_catalog.mdb_char_to_encoding(mdb_catalog.getdatabaseencoding())) AND substring(mdb_catalog.quote_ident(collname),1,%d)='%s'"},
 
 	/*
 	 * CREATE CONSTRAINT TRIGGER is not supported here because it is designed
-	 * to be used only by pg_dump.
+	 * to be used only by mdb_dump.
 	 */
 	{"CONFIGURATION", Query_for_list_of_ts_configurations, NULL, THING_NO_SHOW},
-	{"CONVERSION", "SELECT pg_catalog.quote_ident(conname) FROM pg_catalog.pg_conversion WHERE substring(pg_catalog.quote_ident(conname),1,%d)='%s'"},
+	{"CONVERSION", "SELECT mdb_catalog.quote_ident(conname) FROM mdb_catalog.mdb_conversion WHERE substring(mdb_catalog.quote_ident(conname),1,%d)='%s'"},
 	{"DATABASE", Query_for_list_of_databases},
 	{"DICTIONARY", Query_for_list_of_ts_dictionaries, NULL, THING_NO_SHOW},
 	{"DOMAIN", NULL, &Query_for_list_of_domains},
@@ -907,7 +907,7 @@ static const mdb_thing_t words_after_create[] = {
 	{"PARSER", Query_for_list_of_ts_parsers, NULL, THING_NO_SHOW},
 	{"POLICY", NULL, NULL},
 	{"ROLE", Query_for_list_of_roles},
-	{"RULE", "SELECT pg_catalog.quote_ident(rulename) FROM pg_catalog.pg_rules WHERE substring(pg_catalog.quote_ident(rulename),1,%d)='%s'"},
+	{"RULE", "SELECT mdb_catalog.quote_ident(rulename) FROM mdb_catalog.mdb_rules WHERE substring(mdb_catalog.quote_ident(rulename),1,%d)='%s'"},
 	{"SCHEMA", Query_for_list_of_schemas},
 	{"SEQUENCE", NULL, &Query_for_list_of_sequences},
 	{"SERVER", Query_for_list_of_servers},
@@ -916,7 +916,7 @@ static const mdb_thing_t words_after_create[] = {
 	{"TEMP", NULL, NULL, THING_NO_DROP},		/* for CREATE TEMP TABLE ... */
 	{"TEMPLATE", Query_for_list_of_ts_templates, NULL, THING_NO_SHOW},
 	{"TEXT SEARCH", NULL, NULL},
-	{"TRIGGER", "SELECT pg_catalog.quote_ident(tgname) FROM pg_catalog.pg_trigger WHERE substring(pg_catalog.quote_ident(tgname),1,%d)='%s' AND NOT tgisinternal"},
+	{"TRIGGER", "SELECT mdb_catalog.quote_ident(tgname) FROM mdb_catalog.mdb_trigger WHERE substring(mdb_catalog.quote_ident(tgname),1,%d)='%s' AND NOT tgisinternal"},
 	{"TYPE", NULL, &Query_for_list_of_datatypes},
 	{"UNIQUE", NULL, NULL, THING_NO_DROP},		/* for CREATE UNIQUE INDEX ... */
 	{"UNLOGGED", NULL, NULL, THING_NO_DROP},	/* for CREATE UNLOGGED TABLE
@@ -945,7 +945,7 @@ static char **complete_from_variables(const char *text,
 					const char *prefix, const char *suffix, bool need_value);
 static char *complete_from_files(const char *text, int state);
 
-static char *pg_strdup_keyword_case(const char *s, const char *ref);
+static char *mdb_strdup_keyword_case(const char *s, const char *ref);
 static char *escape_string(const char *text);
 static PGresult *exec_query(const char *query);
 
@@ -1030,7 +1030,7 @@ word_matches_internal(const char *pattern,
 			if (wordlen >= patternlen &&
 				(case_sensitive ?
 				 strncmp(word, pattern, patternlen) == 0 :
-				 pg_strncasecmp(word, pattern, patternlen) == 0))
+				 mdb_strncasecmp(word, pattern, patternlen) == 0))
 				return true;
 		}
 		else
@@ -1040,7 +1040,7 @@ word_matches_internal(const char *pattern,
 			if (wordlen == patternlen &&
 				(case_sensitive ?
 				 strncmp(word, pattern, wordlen) == 0 :
-				 pg_strncasecmp(word, pattern, wordlen) == 0))
+				 mdb_strncasecmp(word, pattern, wordlen) == 0))
 				return true;
 		}
 		/* Out of alternatives? */
@@ -2622,7 +2622,7 @@ psql_completion(const char *text, int start, int end)
 
 /* NOTIFY --- can be inside EXPLAIN, RULE, etc */
 	else if (TailMatches1("NOTIFY"))
-		COMPLETE_WITH_QUERY("SELECT pg_catalog.quote_ident(channel) FROM pg_catalog.pg_listening_channels() AS channel WHERE substring(pg_catalog.quote_ident(channel),1,%d)='%s'");
+		COMPLETE_WITH_QUERY("SELECT mdb_catalog.quote_ident(channel) FROM mdb_catalog.mdb_listening_channels() AS channel WHERE substring(mdb_catalog.quote_ident(channel),1,%d)='%s'");
 
 /* OPTIONS */
 	else if (TailMatches1("OPTIONS"))
@@ -2827,7 +2827,7 @@ psql_completion(const char *text, int start, int end)
 
 /* UNLISTEN */
 	else if (Matches1("UNLISTEN"))
-		COMPLETE_WITH_QUERY("SELECT pg_catalog.quote_ident(channel) FROM pg_catalog.pg_listening_channels() AS channel WHERE substring(pg_catalog.quote_ident(channel),1,%d)='%s' UNION SELECT '*'");
+		COMPLETE_WITH_QUERY("SELECT mdb_catalog.quote_ident(channel) FROM mdb_catalog.mdb_listening_channels() AS channel WHERE substring(mdb_catalog.quote_ident(channel),1,%d)='%s' UNION SELECT '*'");
 
 /* UPDATE --- can be inside EXPLAIN, RULE, etc */
 	/* If prev. word is UPDATE suggest a list of tables */
@@ -3077,7 +3077,7 @@ psql_completion(const char *text, int start, int end)
 
 		for (i = 0; words_after_create[i].name; i++)
 		{
-			if (pg_strcasecmp(prev_wd, words_after_create[i].name) == 0)
+			if (mdb_strcasecmp(prev_wd, words_after_create[i].name) == 0)
 			{
 				if (words_after_create[i].query)
 					COMPLETE_WITH_QUERY(words_after_create[i].query);
@@ -3146,9 +3146,9 @@ create_or_drop_command_generator(const char *text, int state, bits32 excluded)
 	/* find something that matches */
 	while ((name = words_after_create[list_index++].name))
 	{
-		if ((pg_strncasecmp(name, text, string_length) == 0) &&
+		if ((mdb_strncasecmp(name, text, string_length) == 0) &&
 			!(words_after_create[list_index - 1].flags & excluded))
-			return pg_strdup_keyword_case(name, text);
+			return mdb_strdup_keyword_case(name, text);
 	}
 	/* if nothing matches, return NULL */
 	return NULL;
@@ -3280,17 +3280,17 @@ _complete_from_query(int is_schema_query, const char *text, int state)
 
 			/*
 			 * When fetching relation names, suppress system catalogs unless
-			 * the input-so-far begins with "pg_".  This is a compromise
+			 * the input-so-far begins with "mdb_".  This is a compromise
 			 * between not offering system catalogs for completion at all, and
 			 * having them swamp the result when the input is just "p".
 			 */
 			if (strcmp(completion_squery->catname,
-					   "pg_catalog.pg_class c") == 0 &&
-				strncmp(text, "pg_", 3) !=0)
+					   "mdb_catalog.mdb_class c") == 0 &&
+				strncmp(text, "mdb_", 3) !=0)
 			{
 				appendPQExpBufferStr(&query_buffer,
 									 " AND c.relnamespace <> (SELECT oid FROM"
-				   " pg_catalog.pg_namespace WHERE nspname = 'pg_catalog')");
+				   " mdb_catalog.mdb_namespace WHERE nspname = 'mdb_catalog')");
 			}
 
 			/*
@@ -3298,15 +3298,15 @@ _complete_from_query(int is_schema_query, const char *text, int state)
 			 * one potential match among schema names.
 			 */
 			appendPQExpBuffer(&query_buffer, "\nUNION\n"
-						   "SELECT pg_catalog.quote_ident(n.nspname) || '.' "
-							  "FROM pg_catalog.pg_namespace n "
-							  "WHERE substring(pg_catalog.quote_ident(n.nspname) || '.',1,%d)='%s'",
+						   "SELECT mdb_catalog.quote_ident(n.nspname) || '.' "
+							  "FROM mdb_catalog.mdb_namespace n "
+							  "WHERE substring(mdb_catalog.quote_ident(n.nspname) || '.',1,%d)='%s'",
 							  char_length, e_text);
 			appendPQExpBuffer(&query_buffer,
-							  " AND (SELECT pg_catalog.count(*)"
-							  " FROM pg_catalog.pg_namespace"
-			" WHERE substring(pg_catalog.quote_ident(nspname) || '.',1,%d) ="
-							  " substring('%s',1,pg_catalog.length(pg_catalog.quote_ident(nspname))+1)) > 1",
+							  " AND (SELECT mdb_catalog.count(*)"
+							  " FROM mdb_catalog.mdb_namespace"
+			" WHERE substring(mdb_catalog.quote_ident(nspname) || '.',1,%d) ="
+							  " substring('%s',1,mdb_catalog.length(mdb_catalog.quote_ident(nspname))+1)) > 1",
 							  char_length, e_text);
 
 			/*
@@ -3314,8 +3314,8 @@ _complete_from_query(int is_schema_query, const char *text, int state)
 			 * one schema matching the input-so-far.
 			 */
 			appendPQExpBuffer(&query_buffer, "\nUNION\n"
-					 "SELECT pg_catalog.quote_ident(n.nspname) || '.' || %s "
-							  "FROM %s, pg_catalog.pg_namespace n "
+					 "SELECT mdb_catalog.quote_ident(n.nspname) || '.' || %s "
+							  "FROM %s, mdb_catalog.mdb_namespace n "
 							  "WHERE %s = n.oid AND ",
 							  qualresult,
 							  completion_squery->catname,
@@ -3323,7 +3323,7 @@ _complete_from_query(int is_schema_query, const char *text, int state)
 			if (completion_squery->selcondition)
 				appendPQExpBuffer(&query_buffer, "%s AND ",
 								  completion_squery->selcondition);
-			appendPQExpBuffer(&query_buffer, "substring(pg_catalog.quote_ident(n.nspname) || '.' || %s,1,%d)='%s'",
+			appendPQExpBuffer(&query_buffer, "substring(mdb_catalog.quote_ident(n.nspname) || '.' || %s,1,%d)='%s'",
 							  qualresult,
 							  char_length, e_text);
 
@@ -3332,14 +3332,14 @@ _complete_from_query(int is_schema_query, const char *text, int state)
 			 * speed up the query
 			 */
 			appendPQExpBuffer(&query_buffer,
-			" AND substring(pg_catalog.quote_ident(n.nspname) || '.',1,%d) ="
-							  " substring('%s',1,pg_catalog.length(pg_catalog.quote_ident(n.nspname))+1)",
+			" AND substring(mdb_catalog.quote_ident(n.nspname) || '.',1,%d) ="
+							  " substring('%s',1,mdb_catalog.length(mdb_catalog.quote_ident(n.nspname))+1)",
 							  char_length, e_text);
 			appendPQExpBuffer(&query_buffer,
-							  " AND (SELECT pg_catalog.count(*)"
-							  " FROM pg_catalog.pg_namespace"
-			" WHERE substring(pg_catalog.quote_ident(nspname) || '.',1,%d) ="
-							  " substring('%s',1,pg_catalog.length(pg_catalog.quote_ident(nspname))+1)) = 1",
+							  " AND (SELECT mdb_catalog.count(*)"
+							  " FROM mdb_catalog.mdb_namespace"
+			" WHERE substring(mdb_catalog.quote_ident(nspname) || '.',1,%d) ="
+							  " substring('%s',1,mdb_catalog.length(mdb_catalog.quote_ident(nspname))+1)) = 1",
 							  char_length, e_text);
 
 			/* If an addon query was provided, use it */
@@ -3376,8 +3376,8 @@ _complete_from_query(int is_schema_query, const char *text, int state)
 
 		while (list_index < PQntuples(result) &&
 			   (item = PQgetvalue(result, list_index++, 0)))
-			if (pg_strncasecmp(text, item, byte_length) == 0)
-				return pg_strdup(item);
+			if (mdb_strncasecmp(text, item, byte_length) == 0)
+				return mdb_strdup(item);
 	}
 
 	/* If nothing matches, free the db structure and return null */
@@ -3419,21 +3419,21 @@ complete_from_list(const char *text, int state)
 		if (casesensitive && strncmp(text, item, string_length) == 0)
 		{
 			matches++;
-			return pg_strdup(item);
+			return mdb_strdup(item);
 		}
 
 		/* Second pass is case insensitive, don't bother counting matches */
-		if (!casesensitive && pg_strncasecmp(text, item, string_length) == 0)
+		if (!casesensitive && mdb_strncasecmp(text, item, string_length) == 0)
 		{
 			if (completion_case_sensitive)
-				return pg_strdup(item);
+				return mdb_strdup(item);
 			else
 
 				/*
 				 * If case insensitive matching was requested initially,
 				 * adjust the case according to setting.
 				 */
-				return pg_strdup_keyword_case(item, text);
+				return mdb_strdup_keyword_case(item, text);
 		}
 	}
 
@@ -3468,14 +3468,14 @@ complete_from_const(const char *text, int state)
 	if (state == 0)
 	{
 		if (completion_case_sensitive)
-			return pg_strdup(completion_charp);
+			return mdb_strdup(completion_charp);
 		else
 
 			/*
 			 * If case insensitive matching was requested initially, adjust
 			 * the case according to setting.
 			 */
-			return pg_strdup_keyword_case(completion_charp, text);
+			return mdb_strdup_keyword_case(completion_charp, text);
 	}
 	else
 		return NULL;
@@ -3494,7 +3494,7 @@ append_variable_names(char ***varnames, int *nvars,
 	if (*nvars >= *maxvars)
 	{
 		*maxvars *= 2;
-		*varnames = (char **) pg_realloc(*varnames,
+		*varnames = (char **) mdb_realloc(*varnames,
 										 ((*maxvars) + 1) * sizeof(char *));
 	}
 
@@ -3528,7 +3528,7 @@ complete_from_variables(const char *text, const char *prefix, const char *suffix
 		"USER", "VERBOSITY", NULL
 	};
 
-	varnames = (char **) pg_malloc((maxvars + 1) * sizeof(char *));
+	varnames = (char **) mdb_malloc((maxvars + 1) * sizeof(char *));
 
 	if (!need_value)
 	{
@@ -3612,17 +3612,17 @@ complete_from_files(const char *text, int state)
 
 
 /*
- * Make a pg_strdup copy of s and convert the case according to
+ * Make a mdb_strdup copy of s and convert the case according to
  * COMP_KEYWORD_CASE setting, using ref as the text that was already entered.
  */
 static char *
-pg_strdup_keyword_case(const char *s, const char *ref)
+mdb_strdup_keyword_case(const char *s, const char *ref)
 {
 	char	   *ret,
 			   *p;
 	unsigned char first = ref[0];
 
-	ret = pg_strdup(s);
+	ret = mdb_strdup(s);
 
 	if (pset.comp_case == PSQL_COMP_CASE_LOWER ||
 		((pset.comp_case == PSQL_COMP_CASE_PRESERVE_LOWER ||
@@ -3630,12 +3630,12 @@ pg_strdup_keyword_case(const char *s, const char *ref)
 		(pset.comp_case == PSQL_COMP_CASE_PRESERVE_LOWER && !isalpha(first)))
 	{
 		for (p = ret; *p; p++)
-			*p = pg_tolower((unsigned char) *p);
+			*p = mdb_tolower((unsigned char) *p);
 	}
 	else
 	{
 		for (p = ret; *p; p++)
-			*p = pg_toupper((unsigned char) *p);
+			*p = mdb_toupper((unsigned char) *p);
 	}
 
 	return ret;
@@ -3655,7 +3655,7 @@ escape_string(const char *text)
 
 	text_length = strlen(text);
 
-	result = pg_malloc(text_length * 2 + 1);
+	result = mdb_malloc(text_length * 2 + 1);
 	PQescapeStringConn(pset.db, result, text, text_length, NULL);
 
 	return result;
@@ -3718,7 +3718,7 @@ get_previous_words(int point, char **buffer, int *nwords)
 	if (tab_completion_query_buf && tab_completion_query_buf->len > 0)
 	{
 		i = tab_completion_query_buf->len;
-		buf = pg_malloc(point + i + 2);
+		buf = mdb_malloc(point + i + 2);
 		memcpy(buf, tab_completion_query_buf->data, i);
 		buf[i++] = '\n';
 		memcpy(buf + i, rl_line_buffer, point);
@@ -3737,8 +3737,8 @@ get_previous_words(int point, char **buffer, int *nwords)
 	 * This is usually much more space than we need, but it's cheaper than
 	 * doing a separate malloc() for each word.
 	 */
-	previous_words = (char **) pg_malloc(point * sizeof(char *));
-	*buffer = outptr = (char *) pg_malloc(point * 2);
+	previous_words = (char **) mdb_malloc(point * sizeof(char *));
+	*buffer = outptr = (char *) mdb_malloc(point * 2);
 
 	/*
 	 * First we look for a non-word char before the current point.  (This is
@@ -3840,8 +3840,8 @@ get_guctype(const char *varname)
 
 	initPQExpBuffer(&query_buffer);
 	appendPQExpBuffer(&query_buffer,
-					  "SELECT vartype FROM pg_catalog.pg_settings "
-					  "WHERE pg_catalog.lower(name) = pg_catalog.lower('%s')",
+					  "SELECT vartype FROM mdb_catalog.mdb_settings "
+					  "WHERE mdb_catalog.lower(name) = mdb_catalog.lower('%s')",
 					  e_varname);
 
 	result = exec_query(query_buffer.data);
@@ -3849,7 +3849,7 @@ get_guctype(const char *varname)
 	free(e_varname);
 
 	if (PQresultStatus(result) == PGRES_TUPLES_OK && PQntuples(result) > 0)
-		guctype = pg_strdup(PQgetvalue(result, 0, 0));
+		guctype = mdb_strdup(PQgetvalue(result, 0, 0));
 
 	PQclear(result);
 
@@ -3872,7 +3872,7 @@ quote_file_name(char *text, int match_type, char *quote_pointer)
 	(void) quote_pointer;		/* not used */
 
 	length = strlen(text) +(match_type == SINGLE_MATCH ? 3 : 2);
-	s = pg_malloc(length);
+	s = mdb_malloc(length);
 	s[0] = '\'';
 	strcpy(s + 1, text);
 	if (match_type == SINGLE_MATCH)
@@ -3888,10 +3888,10 @@ dequote_file_name(char *text, char quote_char)
 	size_t		length;
 
 	if (!quote_char)
-		return pg_strdup(text);
+		return mdb_strdup(text);
 
 	length = strlen(text);
-	s = pg_malloc(length - 2 + 1);
+	s = mdb_malloc(length - 2 + 1);
 	strlcpy(s, text +1, length - 2 + 1);
 
 	return s;

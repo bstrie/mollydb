@@ -33,7 +33,7 @@ static char tzdirpath[MAXPGPATH];
  * In this file, tzdirpath is assumed to be set up by select_default_timezone.
  */
 static const char *
-pg_TZDIR(void)
+mdb_TZDIR(void)
 {
 #ifndef SYSTEMTZDIR
 	/* normal case: timezone stuff is under our share dir */
@@ -61,14 +61,14 @@ pg_TZDIR(void)
  * This is redundant but kept for compatibility with the backend code.
  */
 int
-pg_open_tzfile(const char *name, char *canonname)
+mdb_open_tzfile(const char *name, char *canonname)
 {
 	char		fullname[MAXPGPATH];
 
 	if (canonname)
 		strlcpy(canonname, name, TZ_STRLEN_MAX + 1);
 
-	strlcpy(fullname, pg_TZDIR(), sizeof(fullname));
+	strlcpy(fullname, mdb_TZDIR(), sizeof(fullname));
 	if (strlen(fullname) + 1 + strlen(name) >= MAXPGPATH)
 		return -1;				/* not gonna fit */
 	strcat(fullname, "/");
@@ -83,19 +83,19 @@ pg_open_tzfile(const char *name, char *canonname)
  * Load a timezone definition.
  * Does not verify that the timezone is acceptable!
  *
- * This corresponds to the backend's pg_tzset(), except that we only support
+ * This corresponds to the backend's mdb_tzset(), except that we only support
  * one loaded timezone at a time.
  */
-static pg_tz *
-pg_load_tz(const char *name)
+static mdb_tz *
+mdb_load_tz(const char *name)
 {
-	static pg_tz tz;
+	static mdb_tz tz;
 
 	if (strlen(name) > TZ_STRLEN_MAX)
 		return NULL;			/* not going to fit */
 
 	/*
-	 * "GMT" is always sent to tzparse(); see comments for pg_tzset().
+	 * "GMT" is always sent to tzparse(); see comments for mdb_tzset().
 	 */
 	if (strcmp(name, "GMT") == 0)
 	{
@@ -171,7 +171,7 @@ get_timezone_offset(struct tm * tm)
 }
 
 /*
- * Convenience subroutine to convert y/m/d to time_t (NOT pg_time_t)
+ * Convenience subroutine to convert y/m/d to time_t (NOT mdb_time_t)
  */
 static time_t
 build_time_t(int year, int month, int day)
@@ -190,7 +190,7 @@ build_time_t(int year, int month, int day)
  * Does a system tm value match one we computed ourselves?
  */
 static bool
-compare_tm(struct tm * s, struct pg_tm * p)
+compare_tm(struct tm * s, struct mdb_tm * p)
 {
 	if (s->tm_sec != p->tm_sec ||
 		s->tm_min != p->tm_min ||
@@ -220,19 +220,19 @@ static int
 score_timezone(const char *tzname, struct tztry * tt)
 {
 	int			i;
-	pg_time_t	pgtt;
+	mdb_time_t	pgtt;
 	struct tm  *systm;
-	struct pg_tm *pgtm;
+	struct mdb_tm *pgtm;
 	char		cbuf[TZ_STRLEN_MAX + 1];
-	pg_tz	   *tz;
+	mdb_tz	   *tz;
 
 	/* Load timezone definition */
-	tz = pg_load_tz(tzname);
+	tz = mdb_load_tz(tzname);
 	if (!tz)
 		return -1;				/* unrecognized zone name */
 
 	/* Reject if leap seconds involved */
-	if (!pg_tz_acceptable(tz))
+	if (!mdb_tz_acceptable(tz))
 	{
 #ifdef DEBUG_IDENTIFY_TIMEZONE
 		fprintf(stderr, "Reject TZ \"%s\": uses leap seconds\n", tzname);
@@ -243,8 +243,8 @@ score_timezone(const char *tzname, struct tztry * tt)
 	/* Check for match at all the test times */
 	for (i = 0; i < tt->n_test_times; i++)
 	{
-		pgtt = (pg_time_t) (tt->test_times[i]);
-		pgtm = pg_localtime(&pgtt, tz);
+		pgtt = (mdb_time_t) (tt->test_times[i]);
+		pgtm = mdb_localtime(&pgtt, tz);
 		if (!pgtm)
 			return -1;			/* probably shouldn't happen */
 		systm = localtime(&(tt->test_times[i]));
@@ -375,7 +375,7 @@ identify_system_timezone(void)
 	}
 
 	/* Search for the best-matching timezone file */
-	strlcpy(tmptzdir, pg_TZDIR(), sizeof(tmptzdir));
+	strlcpy(tmptzdir, mdb_TZDIR(), sizeof(tmptzdir));
 	bestscore = -1;
 	resultbuf[0] = '\0';
 	scan_available_timezones(tmptzdir, tmptzdir + strlen(tmptzdir) + 1,
@@ -1174,16 +1174,16 @@ identify_system_timezone(void)
 static bool
 validate_zone(const char *tzname)
 {
-	pg_tz	   *tz;
+	mdb_tz	   *tz;
 
 	if (!tzname || !tzname[0])
 		return false;
 
-	tz = pg_load_tz(tzname);
+	tz = mdb_load_tz(tzname);
 	if (!tz)
 		return false;
 
-	if (!pg_tz_acceptable(tz))
+	if (!mdb_tz_acceptable(tz))
 		return false;
 
 	return true;

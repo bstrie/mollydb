@@ -49,10 +49,10 @@ typedef int (*PFN) (const char *name, void **res);
 static void *find_provider(text *name, PFN pf, char *desc, int silent);
 
 /* SQL function: hash(bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(pg_digest);
+PG_FUNCTION_INFO_V1(mdb_digest);
 
 Datum
-pg_digest(PG_FUNCTION_ARGS)
+mdb_digest(PG_FUNCTION_ARGS)
 {
 	bytea	   *arg;
 	text	   *name;
@@ -85,10 +85,10 @@ pg_digest(PG_FUNCTION_ARGS)
 }
 
 /* SQL function: hmac(data:bytea, key:bytea, type:text) returns bytea */
-PG_FUNCTION_INFO_V1(pg_hmac);
+PG_FUNCTION_INFO_V1(mdb_hmac);
 
 Datum
-pg_hmac(PG_FUNCTION_ARGS)
+mdb_hmac(PG_FUNCTION_ARGS)
 {
 	bytea	   *arg;
 	bytea	   *key;
@@ -127,11 +127,11 @@ pg_hmac(PG_FUNCTION_ARGS)
 }
 
 
-/* SQL function: pg_gen_salt(text) returns text */
-PG_FUNCTION_INFO_V1(pg_gen_salt);
+/* SQL function: mdb_gen_salt(text) returns text */
+PG_FUNCTION_INFO_V1(mdb_gen_salt);
 
 Datum
-pg_gen_salt(PG_FUNCTION_ARGS)
+mdb_gen_salt(PG_FUNCTION_ARGS)
 {
 	text	   *arg0 = PG_GETARG_TEXT_PP(0);
 	int			len;
@@ -149,11 +149,11 @@ pg_gen_salt(PG_FUNCTION_ARGS)
 	PG_RETURN_TEXT_P(cstring_to_text_with_len(buf, len));
 }
 
-/* SQL function: pg_gen_salt(text, int4) returns text */
-PG_FUNCTION_INFO_V1(pg_gen_salt_rounds);
+/* SQL function: mdb_gen_salt(text, int4) returns text */
+PG_FUNCTION_INFO_V1(mdb_gen_salt_rounds);
 
 Datum
-pg_gen_salt_rounds(PG_FUNCTION_ARGS)
+mdb_gen_salt_rounds(PG_FUNCTION_ARGS)
 {
 	text	   *arg0 = PG_GETARG_TEXT_PP(0);
 	int			rounds = PG_GETARG_INT32(1);
@@ -172,11 +172,11 @@ pg_gen_salt_rounds(PG_FUNCTION_ARGS)
 	PG_RETURN_TEXT_P(cstring_to_text_with_len(buf, len));
 }
 
-/* SQL function: pg_crypt(psw:text, salt:text) returns text */
-PG_FUNCTION_INFO_V1(pg_crypt);
+/* SQL function: mdb_crypt(psw:text, salt:text) returns text */
+PG_FUNCTION_INFO_V1(mdb_crypt);
 
 Datum
-pg_crypt(PG_FUNCTION_ARGS)
+mdb_crypt(PG_FUNCTION_ARGS)
 {
 	text	   *arg0 = PG_GETARG_TEXT_PP(0);
 	text	   *arg1 = PG_GETARG_TEXT_PP(1);
@@ -211,11 +211,11 @@ pg_crypt(PG_FUNCTION_ARGS)
 	PG_RETURN_TEXT_P(res);
 }
 
-/* SQL function: pg_encrypt(bytea, bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(pg_encrypt);
+/* SQL function: mdb_encrypt(bytea, bytea, text) returns bytea */
+PG_FUNCTION_INFO_V1(mdb_encrypt);
 
 Datum
-pg_encrypt(PG_FUNCTION_ARGS)
+mdb_encrypt(PG_FUNCTION_ARGS)
 {
 	int			err;
 	bytea	   *data,
@@ -260,11 +260,11 @@ pg_encrypt(PG_FUNCTION_ARGS)
 	PG_RETURN_BYTEA_P(res);
 }
 
-/* SQL function: pg_decrypt(bytea, bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(pg_decrypt);
+/* SQL function: mdb_decrypt(bytea, bytea, text) returns bytea */
+PG_FUNCTION_INFO_V1(mdb_decrypt);
 
 Datum
-pg_decrypt(PG_FUNCTION_ARGS)
+mdb_decrypt(PG_FUNCTION_ARGS)
 {
 	int			err;
 	bytea	   *data,
@@ -308,11 +308,11 @@ pg_decrypt(PG_FUNCTION_ARGS)
 	PG_RETURN_BYTEA_P(res);
 }
 
-/* SQL function: pg_encrypt_iv(bytea, bytea, bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(pg_encrypt_iv);
+/* SQL function: mdb_encrypt_iv(bytea, bytea, bytea, text) returns bytea */
+PG_FUNCTION_INFO_V1(mdb_encrypt_iv);
 
 Datum
-pg_encrypt_iv(PG_FUNCTION_ARGS)
+mdb_encrypt_iv(PG_FUNCTION_ARGS)
 {
 	int			err;
 	bytea	   *data,
@@ -362,11 +362,11 @@ pg_encrypt_iv(PG_FUNCTION_ARGS)
 	PG_RETURN_BYTEA_P(res);
 }
 
-/* SQL function: pg_decrypt_iv(bytea, bytea, bytea, text) returns bytea */
-PG_FUNCTION_INFO_V1(pg_decrypt_iv);
+/* SQL function: mdb_decrypt_iv(bytea, bytea, bytea, text) returns bytea */
+PG_FUNCTION_INFO_V1(mdb_decrypt_iv);
 
 Datum
-pg_decrypt_iv(PG_FUNCTION_ARGS)
+mdb_decrypt_iv(PG_FUNCTION_ARGS)
 {
 	int			err;
 	bytea	   *data,
@@ -416,11 +416,11 @@ pg_decrypt_iv(PG_FUNCTION_ARGS)
 	PG_RETURN_BYTEA_P(res);
 }
 
-/* SQL function: pg_random_bytes(int4) returns bytea */
-PG_FUNCTION_INFO_V1(pg_random_bytes);
+/* SQL function: mdb_random_bytes(int4) returns bytea */
+PG_FUNCTION_INFO_V1(mdb_random_bytes);
 
 Datum
-pg_random_bytes(PG_FUNCTION_ARGS)
+mdb_random_bytes(PG_FUNCTION_ARGS)
 {
 	int			err;
 	int			len = PG_GETARG_INT32(0);
@@ -445,10 +445,10 @@ pg_random_bytes(PG_FUNCTION_ARGS)
 }
 
 /* SQL function: gen_random_uuid() returns uuid */
-PG_FUNCTION_INFO_V1(pg_random_uuid);
+PG_FUNCTION_INFO_V1(mdb_random_uuid);
 
 Datum
-pg_random_uuid(PG_FUNCTION_ARGS)
+mdb_random_uuid(PG_FUNCTION_ARGS)
 {
 	uint8	   *buf = (uint8 *) palloc(UUID_LEN);
 	int			err;
@@ -467,7 +467,7 @@ pg_random_uuid(PG_FUNCTION_ARGS)
 	buf[6] = (buf[6] & 0x0f) | 0x40;	/* "version" field */
 	buf[8] = (buf[8] & 0x3f) | 0x80;	/* "variant" field */
 
-	PG_RETURN_UUID_P((pg_uuid_t *) buf);
+	PG_RETURN_UUID_P((mdb_uuid_t *) buf);
 }
 
 static void *

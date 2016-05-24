@@ -16,7 +16,7 @@
 
 #include "access/xlog.h"
 #include "access/xlog_internal.h"
-#include "catalog/pg_control.h"
+#include "catalog/mdb_control.h"
 #include "utils/guc.h"
 #include "utils/timestamp.h"
 

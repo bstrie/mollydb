@@ -119,7 +119,7 @@ ALTER TABLE regtest_table SET (fillfactor = 75);
 ALTER TABLE regtest_table RESET (fillfactor);
 ALTER TABLE regtest_table_2 NO INHERIT regtest_table;   -- not supported
 ALTER TABLE regtest_table_2 INHERIT regtest_table;      -- not supported
-ALTER TABLE regtest_table SET TABLESPACE pg_default;
+ALTER TABLE regtest_table SET TABLESPACE mdb_default;
 
 ALTER VIEW regtest_view SET (security_barrier);
 

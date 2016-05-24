@@ -4,12 +4,12 @@
  *	dump functions
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/dump.c
+ *	src/bin/mdb_upgrade/dump.c
  */
 
 #include "mollydb_fe.h"
 
-#include "pg_upgrade.h"
+#include "mdb_upgrade.h"
 
 #include <sys/types.h>
 
@@ -22,9 +22,9 @@ generate_old_dump(void)
 
 	prep_status("Creating dump of global objects");
 
-	/* run new pg_dumpall binary for globals */
+	/* run new mdb_dumpall binary for globals */
 	exec_prog(UTILITY_LOG_FILE, NULL, true,
-			  "\"%s/pg_dumpall\" %s --globals-only --quote-all-identifiers "
+			  "\"%s/mdb_dumpall\" %s --globals-only --quote-all-identifiers "
 			  "--binary-upgrade %s -f %s",
 			  new_cluster.bindir, cluster_conn_opts(&old_cluster),
 			  log_opts.verbose ? "--verbose" : "",
@@ -47,12 +47,12 @@ generate_old_dump(void)
 					log_file_name[MAXPGPATH];
 		DbInfo	   *old_db = &old_cluster.dbarr.dbs[dbnum];
 
-		pg_log(PG_STATUS, "%s", old_db->db_name);
+		mdb_log(PG_STATUS, "%s", old_db->db_name);
 		snprintf(sql_file_name, sizeof(sql_file_name), DB_DUMP_FILE_MASK, old_db->db_oid);
 		snprintf(log_file_name, sizeof(log_file_name), DB_DUMP_LOG_FILE_MASK, old_db->db_oid);
 
 		parallel_exec_prog(log_file_name, NULL,
-				   "\"%s/pg_dump\" %s --schema-only --quote-all-identifiers "
+				   "\"%s/mdb_dump\" %s --schema-only --quote-all-identifiers "
 				  "--binary-upgrade --format=custom %s --file=\"%s\" \"%s\"",
 						 new_cluster.bindir, cluster_conn_opts(&old_cluster),
 						   log_opts.verbose ? "--verbose" : "",

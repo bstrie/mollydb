@@ -191,7 +191,7 @@ seg_upper(PG_FUNCTION_ARGS)
 ** The GiST Consistent method for segments
 ** Should return false if for all data items x below entry,
 ** the predicate x op query == FALSE, where op is the oper
-** corresponding to strategy in the pg_amop table.
+** corresponding to strategy in the mdb_amop table.
 */
 bool
 gseg_consistent(GISTENTRY *entry,

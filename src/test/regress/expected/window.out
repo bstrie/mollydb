@@ -950,8 +950,8 @@ SELECT * FROM v_window;
  10 |       19
 (10 rows)
 
-SELECT pg_get_viewdef('v_window');
-                                    pg_get_viewdef                                     
+SELECT mdb_get_viewdef('v_window');
+                                    mdb_get_viewdef                                     
 ---------------------------------------------------------------------------------------
   SELECT i.i,                                                                         +
      sum(i.i) OVER (ORDER BY i.i ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS sum_rows+

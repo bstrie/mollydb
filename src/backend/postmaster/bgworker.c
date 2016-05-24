@@ -23,7 +23,7 @@
 #include "storage/ipc.h"
 #include "storage/latch.h"
 #include "storage/lwlock.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "storage/pmsignal.h"
 #include "storage/proc.h"
 #include "storage/procsignal.h"
@@ -229,7 +229,7 @@ BackgroundWorkerStateChange(void)
 		 * Make sure we don't see the in_use flag before the updated slot
 		 * contents.
 		 */
-		pg_read_barrier();
+		mdb_read_barrier();
 
 		/* See whether we already know about this worker. */
 		rw = FindRegisteredWorkerBySlotNumber(slotno);
@@ -269,7 +269,7 @@ BackgroundWorkerStateChange(void)
 			 * bgw_notify_pid completes before the store to in_use.
 			 */
 			notify_pid = slot->worker.bgw_notify_pid;
-			pg_memory_barrier();
+			mdb_memory_barrier();
 			slot->pid = 0;
 			slot->in_use = false;
 			if (notify_pid != 0)
@@ -610,7 +610,7 @@ StartBackgroundWorker(void)
 
 	/* Apply PostAuthDelay */
 	if (PostAuthDelay > 0)
-		pg_usleep(PostAuthDelay * 1000000L);
+		mdb_usleep(PostAuthDelay * 1000000L);
 
 	/*
 	 * Set up signal handlers.
@@ -861,7 +861,7 @@ RegisterDynamicBackgroundWorker(BackgroundWorker *worker,
 			 * Make sure postmaster doesn't see the slot as in use before it
 			 * sees the new contents.
 			 */
-			pg_write_barrier();
+			mdb_write_barrier();
 
 			slot->in_use = true;
 			success = true;

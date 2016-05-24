@@ -19,7 +19,7 @@ teardown
 
 session "s1"
 step "noseq" { SET enable_seqscan = false; }
-step "chkiso" { SELECT (setting in ('read committed','read uncommitted')) AS is_read_committed FROM pg_settings WHERE name = 'default_transaction_isolation'; }
+step "chkiso" { SELECT (setting in ('read committed','read uncommitted')) AS is_read_committed FROM mdb_settings WHERE name = 'default_transaction_isolation'; }
 step "prepi" { PREPARE getrow_idx AS SELECT * FROM test_dc WHERE data=34 ORDER BY id,data; }
 step "preps" { PREPARE getrow_seq AS SELECT * FROM test_dc WHERE data::text=34::text ORDER BY id,data; }
 step "begin" { BEGIN; }

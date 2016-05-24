@@ -239,7 +239,7 @@ make_pathkey_from_sortop(PlannerInfo *root,
 				collation;
 	int16		strategy;
 
-	/* Find the operator in pg_amop --- failure shouldn't happen */
+	/* Find the operator in mdb_amop --- failure shouldn't happen */
 	if (!get_ordering_op_properties(ordering_op,
 									&opfamily, &opcintype, &strategy))
 		elog(ERROR, "operator %u is not a valid ordering operator",
@@ -523,7 +523,7 @@ build_expression_pathkey(PlannerInfo *root,
 	int16		strategy;
 	PathKey    *cpathkey;
 
-	/* Find the operator in pg_amop --- failure shouldn't happen */
+	/* Find the operator in mdb_amop --- failure shouldn't happen */
 	if (!get_ordering_op_properties(opno,
 									&opfamily, &opcintype, &strategy))
 		elog(ERROR, "operator %u is not a valid ordering operator",

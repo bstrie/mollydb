@@ -10,7 +10,7 @@
 #
 #   [variable assignments, see below]
 #
-#   PG_CONFIG = pg_config
+#   PG_CONFIG = mdb_config
 #   PGXS := $(shell $(PG_CONFIG) --pgxs)
 #   include $(PGXS)
 #
@@ -39,13 +39,13 @@
 #   SCRIPTS_built -- script files (not binaries) to install into $PREFIX/bin,
 #     which need to be built first
 #   REGRESS -- list of regression test cases (without suffix)
-#   REGRESS_OPTS -- additional switches to pass to pg_regress
+#   REGRESS_OPTS -- additional switches to pass to mdb_regress
 #   EXTRA_CLEAN -- extra files to remove in 'make clean'
 #   PG_CPPFLAGS -- will be added to CPPFLAGS
 #   PG_LIBS -- will be added to PROGRAM link line
 #   SHLIB_LINK -- will be added to MODULE_big link line
-#   PG_CONFIG -- path to pg_config program for the MollyDB installation
-#     to build against (typically just "pg_config" to use the first one in
+#   PG_CONFIG -- path to mdb_config program for the MollyDB installation
+#     to build against (typically just "mdb_config" to use the first one in
 #     your PATH)
 #
 # Better look at some of the existing uses for examples...
@@ -221,7 +221,7 @@ ifdef EXTRA_CLEAN
 endif
 ifdef REGRESS
 # things created by various check targets
-	rm -rf $(pg_regress_clean_files)
+	rm -rf $(mdb_regress_clean_files)
 ifeq ($(PORTNAME), win)
 	rm -f regress.def
 endif
@@ -264,12 +264,12 @@ endif # VPATH
 .PHONY: submake
 submake:
 ifndef PGXS
-	$(MAKE) -C $(top_builddir)/src/test/regress pg_regress$(X)
+	$(MAKE) -C $(top_builddir)/src/test/regress mdb_regress$(X)
 endif
 
 # against installed postmaster
 installcheck: submake $(REGRESS_PREP)
-	$(pg_regress_installcheck) $(REGRESS_OPTS) $(REGRESS)
+	$(mdb_regress_installcheck) $(REGRESS_OPTS) $(REGRESS)
 
 ifdef PGXS
 check:
@@ -277,7 +277,7 @@ check:
 	@echo 'Do "$(MAKE) install", then "$(MAKE) installcheck" instead.'
 else
 check: submake $(REGRESS_PREP)
-	$(pg_regress_check) $(REGRESS_OPTS) $(REGRESS)
+	$(mdb_regress_check) $(REGRESS_OPTS) $(REGRESS)
 
 temp-install: EXTRA_INSTALL+=$(subdir)
 endif

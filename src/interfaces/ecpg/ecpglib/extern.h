@@ -8,7 +8,7 @@
 #include "sqlca.h"
 #include "sqlda-native.h"
 #include "sqlda-compat.h"
-#include "ecpg_config.h"
+#include "ecmdb_config.h"
 #ifndef CHAR_BIT
 #include <limits.h>
 #endif
@@ -18,7 +18,7 @@ enum COMPAT_MODE
 	ECPG_COMPAT_PGSQL = 0, ECPG_COMPAT_INFORMIX, ECPG_COMPAT_INFORMIX_SE
 };
 
-extern bool ecpg_internal_regression_mode;
+extern bool ecmdb_internal_regression_mode;
 
 #define INFORMIX_MODE(X) ((X) == ECPG_COMPAT_INFORMIX || (X) == ECPG_COMPAT_INFORMIX_SE)
 
@@ -136,63 +136,63 @@ extern struct var_list *ivlist;
 
 /* Here are some methods used by the lib. */
 
-bool		ecpg_add_mem(void *ptr, int lineno);
+bool		ecmdb_add_mem(void *ptr, int lineno);
 
-bool ecpg_get_data(const PGresult *, int, int, int, enum ECPGttype type,
+bool ecmdb_get_data(const PGresult *, int, int, int, enum ECPGttype type,
 			  enum ECPGttype, char *, char *, long, long, long,
 			  enum ARRAY_TYPE, enum COMPAT_MODE, bool);
 
 #ifdef ENABLE_THREAD_SAFETY
-void		ecpg_pthreads_init(void);
+void		ecmdb_pthreads_init(void);
 #endif
-struct connection *ecpg_get_connection(const char *);
-char	   *ecpg_alloc(long, int);
-char	   *ecpg_auto_alloc(long, int);
-char	   *ecpg_realloc(void *, long, int);
-void		ecpg_free(void *);
-bool		ecpg_init(const struct connection *, const char *, const int);
-char	   *ecpg_strdup(const char *, int);
-const char *ecpg_type_name(enum ECPGttype);
-int			ecpg_dynamic_type(Oid);
+struct connection *ecmdb_get_connection(const char *);
+char	   *ecmdb_alloc(long, int);
+char	   *ecmdb_auto_alloc(long, int);
+char	   *ecmdb_realloc(void *, long, int);
+void		ecmdb_free(void *);
+bool		ecmdb_init(const struct connection *, const char *, const int);
+char	   *ecmdb_strdup(const char *, int);
+const char *ecmdb_type_name(enum ECPGttype);
+int			ecmdb_dynamic_type(Oid);
 int			sqlda_dynamic_type(Oid, enum COMPAT_MODE);
-void		ecpg_free_auto_mem(void);
-void		ecpg_clear_auto_mem(void);
+void		ecmdb_free_auto_mem(void);
+void		ecmdb_clear_auto_mem(void);
 
 struct descriptor *ecpggetdescp(int, char *);
 
-struct descriptor *ecpg_find_desc(int line, const char *name);
+struct descriptor *ecmdb_find_desc(int line, const char *name);
 
-struct prepared_statement *ecpg_find_prepared_statement(const char *,
+struct prepared_statement *ecmdb_find_prepared_statement(const char *,
 						  struct connection *, struct prepared_statement **);
 
-bool ecpg_store_result(const PGresult *results, int act_field,
+bool ecmdb_store_result(const PGresult *results, int act_field,
 				  const struct statement * stmt, struct variable * var);
-bool		ecpg_store_input(const int, const bool, const struct variable *, char **, bool);
-void		ecpg_free_params(struct statement * stmt, bool print);
-bool ecpg_do_prologue(int, const int, const int, const char *, const bool,
+bool		ecmdb_store_input(const int, const bool, const struct variable *, char **, bool);
+void		ecmdb_free_params(struct statement * stmt, bool print);
+bool ecmdb_do_prologue(int, const int, const int, const char *, const bool,
 				 enum ECPG_statement_type, const char *, va_list,
 				 struct statement **);
-bool		ecpg_build_params(struct statement *);
-bool		ecpg_autostart_transaction(struct statement * stmt);
-bool		ecpg_execute(struct statement * stmt);
-bool		ecpg_process_output(struct statement *, bool);
-void		ecpg_do_epilogue(struct statement *);
-bool ecpg_do(const int, const int, const int, const char *, const bool,
+bool		ecmdb_build_params(struct statement *);
+bool		ecmdb_autostart_transaction(struct statement * stmt);
+bool		ecmdb_execute(struct statement * stmt);
+bool		ecmdb_process_output(struct statement *, bool);
+void		ecmdb_do_epilogue(struct statement *);
+bool ecmdb_do(const int, const int, const int, const char *, const bool,
 		const int, const char *, va_list);
 
-bool		ecpg_check_PQresult(PGresult *, int, PGconn *, enum COMPAT_MODE);
-void		ecpg_raise(int line, int code, const char *sqlstate, const char *str);
-void		ecpg_raise_backend(int line, PGresult *result, PGconn *conn, int compat);
-char	   *ecpg_prepared(const char *, struct connection *);
-bool		ecpg_deallocate_all_conn(int lineno, enum COMPAT_MODE c, struct connection * conn);
-void		ecpg_log(const char *format,...) pg_attribute_printf(1, 2);
-bool		ecpg_auto_prepare(int, const char *, const int, char **, const char *);
-void		ecpg_init_sqlca(struct sqlca_t * sqlca);
+bool		ecmdb_check_PQresult(PGresult *, int, PGconn *, enum COMPAT_MODE);
+void		ecmdb_raise(int line, int code, const char *sqlstate, const char *str);
+void		ecmdb_raise_backend(int line, PGresult *result, PGconn *conn, int compat);
+char	   *ecmdb_prepared(const char *, struct connection *);
+bool		ecmdb_deallocate_all_conn(int lineno, enum COMPAT_MODE c, struct connection * conn);
+void		ecmdb_log(const char *format,...) mdb_attribute_printf(1, 2);
+bool		ecmdb_auto_prepare(int, const char *, const int, char **, const char *);
+void		ecmdb_init_sqlca(struct sqlca_t * sqlca);
 
-struct sqlda_compat *ecpg_build_compat_sqlda(int, PGresult *, int, enum COMPAT_MODE);
-void		ecpg_set_compat_sqlda(int, struct sqlda_compat **, const PGresult *, int, enum COMPAT_MODE);
-struct sqlda_struct *ecpg_build_native_sqlda(int, PGresult *, int, enum COMPAT_MODE);
-void		ecpg_set_native_sqlda(int, struct sqlda_struct **, const PGresult *, int, enum COMPAT_MODE);
+struct sqlda_compat *ecmdb_build_compat_sqlda(int, PGresult *, int, enum COMPAT_MODE);
+void		ecmdb_set_compat_sqlda(int, struct sqlda_compat **, const PGresult *, int, enum COMPAT_MODE);
+struct sqlda_struct *ecmdb_build_native_sqlda(int, PGresult *, int, enum COMPAT_MODE);
+void		ecmdb_set_native_sqlda(int, struct sqlda_struct **, const PGresult *, int, enum COMPAT_MODE);
 
 /* SQLSTATE values generated or processed by ecpglib (intentionally
  * not exported -- users should refer to the codes directly) */

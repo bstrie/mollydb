@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_regress_ecpg --- regression test driver for ecpg
+ * mdb_regress_ecpg --- regression test driver for ecpg
  *
  * This is a C implementation of the previous shell script for running
  * the regression tests, and should be mostly compatible with it.
@@ -11,16 +11,16 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/interfaces/ecpg/test/pg_regress_ecpg.c
+ * src/interfaces/ecpg/test/mdb_regress_ecpg.c
  *
  *-------------------------------------------------------------------------
  */
 
-#include "pg_regress.h"
+#include "mdb_regress.h"
 
 #define LINEBUFSIZE 300
 static void
-ecpg_filter(const char *sourcefile, const char *outfile)
+ecmdb_filter(const char *sourcefile, const char *outfile)
 {
 	/*
 	 * Create a filtered copy of sourcefile, replacing #line x
@@ -76,7 +76,7 @@ ecpg_filter(const char *sourcefile, const char *outfile)
  */
 
 static PID_TYPE
-ecpg_start_test(const char *testname,
+ecmdb_start_test(const char *testname,
 				_stringlist **resultfiles,
 				_stringlist **expectfiles,
 				_stringlist **tags)
@@ -131,7 +131,7 @@ ecpg_start_test(const char *testname,
 	add_stringlist_item(tags, "source");
 
 	snprintf(insource, sizeof(insource), "%s.c", testname);
-	ecpg_filter(insource, outfile_source);
+	ecmdb_filter(insource, outfile_source);
 
 	snprintf(inprg, sizeof(inprg), "%s/%s", inputdir, testname);
 
@@ -158,7 +158,7 @@ ecpg_start_test(const char *testname,
 }
 
 static void
-ecpg_init(int argc, char *argv[])
+ecmdb_init(int argc, char *argv[])
 {
 	/* nothing to do here at the moment */
 }
@@ -166,5 +166,5 @@ ecpg_init(int argc, char *argv[])
 int
 main(int argc, char *argv[])
 {
-	return regression_main(argc, argv, ecpg_init, ecpg_start_test);
+	return regression_main(argc, argv, ecmdb_init, ecmdb_start_test);
 }

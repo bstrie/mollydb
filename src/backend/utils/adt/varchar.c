@@ -17,12 +17,12 @@
 
 #include "access/hash.h"
 #include "access/tuptoaster.h"
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "libpq/pqformat.h"
 #include "nodes/nodeFuncs.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 
 /* common code for bpchartypmodin and varchartypmodin */
@@ -134,11 +134,11 @@ bpchar_input(const char *s, size_t len, int32 atttypmod)
 		size_t		charlen;	/* number of CHARACTERS in the input */
 
 		maxlen = atttypmod - VARHDRSZ;
-		charlen = pg_mbstrlen_with_len(s, len);
+		charlen = mdb_mbstrlen_with_len(s, len);
 		if (charlen > maxlen)
 		{
 			/* Verify that extra characters are spaces, and clip them off */
-			size_t		mbmaxlen = pg_mbcharcliplen(s, len, maxlen);
+			size_t		mbmaxlen = mdb_mbcharcliplen(s, len, maxlen);
 			size_t		j;
 
 			/*
@@ -285,7 +285,7 @@ bpchar(PG_FUNCTION_ARGS)
 	len = VARSIZE_ANY_EXHDR(source);
 	s = VARDATA_ANY(source);
 
-	charlen = pg_mbstrlen_with_len(s, len);
+	charlen = mdb_mbstrlen_with_len(s, len);
 
 	/* No work if supplied data matches typmod already */
 	if (charlen == maxlen)
@@ -296,7 +296,7 @@ bpchar(PG_FUNCTION_ARGS)
 		/* Verify that extra characters are spaces, and clip them off */
 		size_t		maxmblen;
 
-		maxmblen = pg_mbcharcliplen(s, len, maxlen);
+		maxmblen = mdb_mbcharcliplen(s, len, maxlen);
 
 		if (!isExplicit)
 		{
@@ -375,7 +375,7 @@ bpchar_name(PG_FUNCTION_ARGS)
 
 	/* Truncate oversize input */
 	if (len >= NAMEDATALEN)
-		len = pg_mbcliplen(s_data, len, NAMEDATALEN - 1);
+		len = mdb_mbcliplen(s_data, len, NAMEDATALEN - 1);
 
 	/* Remove trailing blanks */
 	while (len > 0)
@@ -458,7 +458,7 @@ varchar_input(const char *s, size_t len, int32 atttypmod)
 	if (atttypmod >= (int32) VARHDRSZ && len > maxlen)
 	{
 		/* Verify that extra characters are spaces, and clip them off */
-		size_t		mbmaxlen = pg_mbcharcliplen(s, len, maxlen);
+		size_t		mbmaxlen = mdb_mbcharcliplen(s, len, maxlen);
 		size_t		j;
 
 		for (j = mbmaxlen; j < len; j++)
@@ -612,7 +612,7 @@ varchar(PG_FUNCTION_ARGS)
 	/* only reach here if string is too long... */
 
 	/* truncate multibyte string preserving multibyte boundary */
-	maxmblen = pg_mbcharcliplen(s_data, len, maxlen);
+	maxmblen = mdb_mbcharcliplen(s_data, len, maxlen);
 
 	if (!isExplicit)
 	{
@@ -683,8 +683,8 @@ bpcharlen(PG_FUNCTION_ARGS)
 	len = bcTruelen(arg);
 
 	/* in multibyte encoding, convert to number of characters */
-	if (pg_database_encoding_max_length() != 1)
-		len = pg_mbstrlen_with_len(VARDATA_ANY(arg), len);
+	if (mdb_database_encoding_max_length() != 1)
+		len = mdb_mbstrlen_with_len(VARDATA_ANY(arg), len);
 
 	PG_RETURN_INT32(len);
 }

@@ -1,7 +1,7 @@
 /* -------------------------------------------------------------------------
  *
- * pg_seclabel.h
- *	  definition of the system "security label" relation (pg_seclabel)
+ * mdb_seclabel.h
+ *	  definition of the system "security label" relation (mdb_seclabel)
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -14,13 +14,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_seclabel definition.  cpp turns this into
- *		typedef struct FormData_pg_seclabel
+ *		mdb_seclabel definition.  cpp turns this into
+ *		typedef struct FormData_mdb_seclabel
  * ----------------
  */
 #define SecLabelRelationId		3596
 
-CATALOG(pg_seclabel,3596) BKI_WITHOUT_OIDS
+CATALOG(mdb_seclabel,3596) BKI_WITHOUT_OIDS
 {
 	Oid			objoid;			/* OID of the object itself */
 	Oid			classoid;		/* OID of table containing the object */
@@ -30,17 +30,17 @@ CATALOG(pg_seclabel,3596) BKI_WITHOUT_OIDS
 	text provider BKI_FORCE_NOT_NULL;	/* name of label provider */
 	text label	BKI_FORCE_NOT_NULL;		/* security label of the object */
 #endif
-} FormData_pg_seclabel;
+} FormData_mdb_seclabel;
 
 /* ----------------
- *		compiler constants for pg_seclabel
+ *		compiler constants for mdb_seclabel
  * ----------------
  */
-#define Natts_pg_seclabel			5
-#define Anum_pg_seclabel_objoid		1
-#define Anum_pg_seclabel_classoid	2
-#define Anum_pg_seclabel_objsubid	3
-#define Anum_pg_seclabel_provider	4
-#define Anum_pg_seclabel_label		5
+#define Natts_mdb_seclabel			5
+#define Anum_mdb_seclabel_objoid		1
+#define Anum_mdb_seclabel_classoid	2
+#define Anum_mdb_seclabel_objsubid	3
+#define Anum_mdb_seclabel_provider	4
+#define Anum_mdb_seclabel_label		5
 
 #endif   /* PG_SECLABEL_H */

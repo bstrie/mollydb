@@ -235,7 +235,7 @@ uuid_generate_internal(int mode, const uuid_t *ns, const char *name, int len)
 
 
 static Datum
-uuid_generate_v35_internal(int mode, pg_uuid_t *ns, text *name)
+uuid_generate_v35_internal(int mode, mdb_uuid_t *ns, text *name)
 {
 	uuid_t	   *ns_uuid = get_cached_uuid_t(1);
 
@@ -498,7 +498,7 @@ uuid_generate_v1mc(PG_FUNCTION_ARGS)
 Datum
 uuid_generate_v3(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *ns = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *ns = PG_GETARG_UUID_P(0);
 	text	   *name = PG_GETARG_TEXT_P(1);
 
 #ifdef HAVE_UUID_OSSP
@@ -520,7 +520,7 @@ uuid_generate_v4(PG_FUNCTION_ARGS)
 Datum
 uuid_generate_v5(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *ns = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *ns = PG_GETARG_UUID_P(0);
 	text	   *name = PG_GETARG_TEXT_P(1);
 
 #ifdef HAVE_UUID_OSSP

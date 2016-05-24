@@ -20,7 +20,7 @@
 #include "libpq-fe.h"
 #include "libpq-int.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 #ifdef WIN32
 #include "win32.h"
@@ -963,7 +963,7 @@ pqSaveParameterStatus(PGconn *conn, const char *name, const char *value)
 	 */
 	if (strcmp(name, "client_encoding") == 0)
 	{
-		conn->client_encoding = pg_char_to_encoding(value);
+		conn->client_encoding = mdb_char_to_encoding(value);
 		/* if we don't recognize the encoding name, fall back to SQL_ASCII */
 		if (conn->client_encoding < 0)
 			conn->client_encoding = PG_SQL_ASCII;
@@ -2790,7 +2790,7 @@ PQfnumber(const PGresult *res, const char *field_name)
 	{
 		char		c = *iptr;
 
-		if (c == '"' || c != pg_tolower((unsigned char) c))
+		if (c == '"' || c != mdb_tolower((unsigned char) c))
 		{
 			all_lower = false;
 			break;
@@ -2839,7 +2839,7 @@ PQfnumber(const PGresult *res, const char *field_name)
 			in_quotes = true;
 		else
 		{
-			c = pg_tolower((unsigned char) c);
+			c = mdb_tolower((unsigned char) c);
 			*optr++ = c;
 		}
 	}
@@ -3251,7 +3251,7 @@ PQescapeStringInternal(PGconn *conn,
 		}
 
 		/* Slow path for possible multibyte characters */
-		len = pg_encoding_mblen(encoding, source);
+		len = mdb_encoding_mblen(encoding, source);
 
 		/* Copy the character */
 		for (i = 0; i < len; i++)
@@ -3354,7 +3354,7 @@ PQescapeInternal(PGconn *conn, const char *str, size_t len, bool as_ident)
 			int			charlen;
 
 			/* Slow path for possible multibyte characters */
-			charlen = pg_encoding_mblen(conn->client_encoding, s);
+			charlen = mdb_encoding_mblen(conn->client_encoding, s);
 
 			/* Multibyte character overruns allowable length. */
 			if ((s - str) + charlen > len || memchr(s, 0, charlen) != NULL)
@@ -3427,7 +3427,7 @@ PQescapeInternal(PGconn *conn, const char *str, size_t len, bool as_ident)
 				*rp++ = *s;
 			else
 			{
-				int			i = pg_encoding_mblen(conn->client_encoding, s);
+				int			i = mdb_encoding_mblen(conn->client_encoding, s);
 
 				while (1)
 				{

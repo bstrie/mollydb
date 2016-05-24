@@ -79,14 +79,14 @@ msgstr "formato de salida no válido (error interno): %d"
 #: createlang.c:89 createlang.c:119 createlang.c:174 createuser.c:169
 #: createuser.c:184 dropdb.c:94 dropdb.c:103 dropdb.c:111 droplang.c:88
 #: droplang.c:118 droplang.c:174 dropuser.c:89 dropuser.c:104 dropuser.c:115
-#: pg_isready.c:93 pg_isready.c:107 reindexdb.c:131 reindexdb.c:150
+#: mdb_isready.c:93 mdb_isready.c:107 reindexdb.c:131 reindexdb.c:150
 #: vacuumdb.c:209 vacuumdb.c:228
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "Use «%s --help» para mayor información.\n"
 
 #: clusterdb.c:127 createdb.c:136 createlang.c:117 createuser.c:182
-#: dropdb.c:109 droplang.c:116 dropuser.c:102 pg_isready.c:105 reindexdb.c:148
+#: dropdb.c:109 droplang.c:116 dropuser.c:102 mdb_isready.c:105 reindexdb.c:148
 #: vacuumdb.c:226
 #, c-format
 msgid "%s: too many command-line arguments (first is \"%s\")\n"
@@ -135,7 +135,7 @@ msgstr ""
 "\n"
 
 #: clusterdb.c:262 createdb.c:252 createlang.c:236 createuser.c:349
-#: dropdb.c:155 droplang.c:237 dropuser.c:156 pg_isready.c:222 reindexdb.c:393
+#: dropdb.c:155 droplang.c:237 dropuser.c:156 mdb_isready.c:222 reindexdb.c:393
 #: vacuumdb.c:939
 #, c-format
 msgid "Usage:\n"
@@ -147,7 +147,7 @@ msgid "  %s [OPTION]... [DBNAME]\n"
 msgstr "  %s [OPCIÓN]... [BASE-DE-DATOS]\n"
 
 #: clusterdb.c:264 createdb.c:254 createlang.c:238 createuser.c:351
-#: dropdb.c:157 droplang.c:239 dropuser.c:158 pg_isready.c:225 reindexdb.c:395
+#: dropdb.c:157 droplang.c:239 dropuser.c:158 mdb_isready.c:225 reindexdb.c:395
 #: vacuumdb.c:941
 #, c-format
 msgid ""
@@ -201,7 +201,7 @@ msgid "  -?, --help                show this help, then exit\n"
 msgstr "  -?, --help                mostrar esta ayuda y salir\n"
 
 #: clusterdb.c:273 createdb.c:265 createlang.c:244 createuser.c:375
-#: dropdb.c:163 droplang.c:245 dropuser.c:165 pg_isready.c:231 reindexdb.c:407
+#: dropdb.c:163 droplang.c:245 dropuser.c:165 mdb_isready.c:231 reindexdb.c:407
 #: vacuumdb.c:957
 #, c-format
 msgid ""
@@ -256,7 +256,7 @@ msgstr ""
 "Lea la descripción de la orden CLUSTER de SQL para obtener mayores detalles.\n"
 
 #: clusterdb.c:281 createdb.c:273 createlang.c:250 createuser.c:381
-#: dropdb.c:170 droplang.c:251 dropuser.c:171 pg_isready.c:236 reindexdb.c:415
+#: dropdb.c:170 droplang.c:251 dropuser.c:171 mdb_isready.c:236 reindexdb.c:415
 #: vacuumdb.c:965
 #, c-format
 msgid ""
@@ -799,42 +799,42 @@ msgstr ""
 "  -U, --username=USUARIO    nombre del usuario con el cual conectarse\n"
 "                            (no el usuario a eliminar)\n"
 
-#: pg_isready.c:142
+#: mdb_isready.c:142
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: pg_isready.c:150
+#: mdb_isready.c:150
 #, c-format
 msgid "%s: could not fetch default options\n"
 msgstr "%s: no se pudo extraer las opciones por omisión\n"
 
-#: pg_isready.c:199
+#: mdb_isready.c:199
 #, c-format
 msgid "accepting connections\n"
 msgstr "aceptando conexiones\n"
 
-#: pg_isready.c:202
+#: mdb_isready.c:202
 #, c-format
 msgid "rejecting connections\n"
 msgstr "rechazando conexiones\n"
 
-#: pg_isready.c:205
+#: mdb_isready.c:205
 #, c-format
 msgid "no response\n"
 msgstr "sin respuesta\n"
 
-#: pg_isready.c:208
+#: mdb_isready.c:208
 #, c-format
 msgid "no attempt\n"
 msgstr "sin intentos\n"
 
-#: pg_isready.c:211
+#: mdb_isready.c:211
 #, c-format
 msgid "unknown\n"
 msgstr "desconocido\n"
 
-#: pg_isready.c:221
+#: mdb_isready.c:221
 #, c-format
 msgid ""
 "%s issues a connection check to a MollyDB database.\n"
@@ -843,49 +843,49 @@ msgstr ""
 "%s emite una prueba de conexión a una base de datos MollyDB.\n"
 "\n"
 
-#: pg_isready.c:223
+#: mdb_isready.c:223
 #, c-format
 msgid "  %s [OPTION]...\n"
 msgstr "  %s [OPCIÓN]...\n"
 
-#: pg_isready.c:226
+#: mdb_isready.c:226
 #, c-format
 msgid "  -d, --dbname=DBNAME      database name\n"
 msgstr "  -d, --dbname=DBNAME      nombre de la base de datos\n"
 
-#: pg_isready.c:227
+#: mdb_isready.c:227
 #, c-format
 msgid "  -q, --quiet              run quietly\n"
 msgstr "  -q, --quiet              ejecutar de forma silenciosa\n"
 
-#: pg_isready.c:228
+#: mdb_isready.c:228
 #, c-format
 msgid "  -V, --version            output version information, then exit\n"
 msgstr "  -V, --version            mostrar información de versión y salir\n"
 
-#: pg_isready.c:229
+#: mdb_isready.c:229
 #, c-format
 msgid "  -?, --help               show this help, then exit\n"
 msgstr "  -?, --help               mostrar esta ayuda y salir\n"
 
-#: pg_isready.c:232
+#: mdb_isready.c:232
 #, c-format
 msgid "  -h, --host=HOSTNAME      database server host or socket directory\n"
 msgstr "  -h, --host=ANFITRIÓN     nombre del servidor o directorio del socket\n"
 
-#: pg_isready.c:233
+#: mdb_isready.c:233
 #, c-format
 msgid "  -p, --port=PORT          database server port\n"
 msgstr "  -p, --port=PUERTO        puerto del servidor\n"
 
-#: pg_isready.c:234
+#: mdb_isready.c:234
 #, c-format
 msgid "  -t, --timeout=SECS       seconds to wait when attempting connection, 0 disables (default: %s)\n"
 msgstr ""
 "  -t, --timeout=SEGUNDOS   segundos a esperar al intentar conectarse\n"
 "                           0 lo deshabilita (por omisión: %s)\n"
 
-#: pg_isready.c:235
+#: mdb_isready.c:235
 #, c-format
 msgid "  -U, --username=USERNAME  user name to connect as\n"
 msgstr "  -U, --username=USUARIO   nombre de usuario para la conexión\n"

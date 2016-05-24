@@ -1,42 +1,42 @@
 /*
- *	pg_upgrade.c
+ *	mdb_upgrade.c
  *
  *	main source file
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/pg_upgrade.c
+ *	src/bin/mdb_upgrade/mdb_upgrade.c
  */
 
 /*
  *	To simplify the upgrade process, we force certain system values to be
  *	identical between old and new clusters:
  *
- *	We control all assignments of pg_class.oid (and relfilenode) so toast
+ *	We control all assignments of mdb_class.oid (and relfilenode) so toast
  *	oids are the same between old and new clusters.  This is important
  *	because toast oids are stored as toast pointers in user tables.
  *
- *	While pg_class.oid and pg_class.relfilenode are initially the same
+ *	While mdb_class.oid and mdb_class.relfilenode are initially the same
  *	in a cluster, they can diverge due to CLUSTER, REINDEX, or VACUUM
- *	FULL.  In the new cluster, pg_class.oid and pg_class.relfilenode will
- *	be the same and will match the old pg_class.oid value.  Because of
- *	this, old/new pg_class.relfilenode values will not match if CLUSTER,
+ *	FULL.  In the new cluster, mdb_class.oid and mdb_class.relfilenode will
+ *	be the same and will match the old mdb_class.oid value.  Because of
+ *	this, old/new mdb_class.relfilenode values will not match if CLUSTER,
  *	REINDEX, or VACUUM FULL have been performed in the old cluster.
  *
- *	We control all assignments of pg_type.oid because these oids are stored
+ *	We control all assignments of mdb_type.oid because these oids are stored
  *	in user composite type values.
  *
- *	We control all assignments of pg_enum.oid because these oids are stored
+ *	We control all assignments of mdb_enum.oid because these oids are stored
  *	in user tables as enum values.
  *
- *	We control all assignments of pg_authid.oid because these oids are stored
- *	in pg_largeobject_metadata.
+ *	We control all assignments of mdb_authid.oid because these oids are stored
+ *	in mdb_largeobject_metadata.
  */
 
 
 
 #include "mollydb_fe.h"
 
-#include "pg_upgrade.h"
+#include "mdb_upgrade.h"
 #include "common/restricted_token.h"
 
 #ifdef HAVE_LANGINFO_H
@@ -58,7 +58,7 @@ OSInfo		os_info;
 char	   *output_files[] = {
 	SERVER_LOG_FILE,
 #ifdef WIN32
-	/* unique file for pg_ctl start */
+	/* unique file for mdb_ctl start */
 	SERVER_START_LOG_FILE,
 #endif
 	UTILITY_LOG_FILE,
@@ -101,8 +101,8 @@ main(int argc, char **argv)
 	check_new_cluster();
 	report_clusters_compatible();
 
-	pg_log(PG_REPORT, "\nPerforming Upgrade\n");
-	pg_log(PG_REPORT, "------------------\n");
+	mdb_log(PG_REPORT, "\nPerforming Upgrade\n");
+	mdb_log(PG_REPORT, "------------------\n");
 
 	prepare_new_cluster();
 
@@ -145,7 +145,7 @@ main(int argc, char **argv)
 	 */
 	prep_status("Setting next OID for new cluster");
 	exec_prog(UTILITY_LOG_FILE, NULL, true,
-			  "\"%s/pg_resetxlog\" -o %u \"%s\"",
+			  "\"%s/mdb_resetxlog\" -o %u \"%s\"",
 			  new_cluster.bindir, old_cluster.controldata.chkpnt_nxtoid,
 			  new_cluster.pgdata);
 	check_ok();
@@ -161,14 +161,14 @@ main(int argc, char **argv)
 
 	issue_warnings();
 
-	pg_log(PG_REPORT, "\nUpgrade Complete\n");
-	pg_log(PG_REPORT, "----------------\n");
+	mdb_log(PG_REPORT, "\nUpgrade Complete\n");
+	mdb_log(PG_REPORT, "----------------\n");
 
 	output_completion_banner(analyze_script_file_name,
 							 deletion_script_file_name);
 
-	pg_free(analyze_script_file_name);
-	pg_free(deletion_script_file_name);
+	mdb_free(analyze_script_file_name);
+	mdb_free(deletion_script_file_name);
 
 	cleanup();
 
@@ -205,7 +205,7 @@ setup(char *argv0, bool *live_check)
 		else
 		{
 			if (!user_opts.check)
-				pg_fatal("There seems to be a postmaster servicing the old cluster.\n"
+				mdb_fatal("There seems to be a postmaster servicing the old cluster.\n"
 						 "Please shutdown that postmaster and try again.\n");
 			else
 				*live_check = true;
@@ -218,18 +218,18 @@ setup(char *argv0, bool *live_check)
 		if (start_postmaster(&new_cluster, false))
 			stop_postmaster(false);
 		else
-			pg_fatal("There seems to be a postmaster servicing the new cluster.\n"
+			mdb_fatal("There seems to be a postmaster servicing the new cluster.\n"
 					 "Please shutdown that postmaster and try again.\n");
 	}
 
-	/* get path to pg_upgrade executable */
+	/* get path to mdb_upgrade executable */
 	if (find_my_exec(argv0, exec_path) < 0)
-		pg_fatal("Could not get path name to pg_upgrade: %s\n", getErrorText());
+		mdb_fatal("Could not get path name to mdb_upgrade: %s\n", getErrorText());
 
 	/* Trim off program name and keep just path */
 	*last_dir_separator(exec_path) = '\0';
 	canonicalize_path(exec_path);
-	os_info.exec_path = pg_strdup(exec_path);
+	os_info.exec_path = mdb_strdup(exec_path);
 }
 
 
@@ -249,7 +249,7 @@ prepare_new_cluster(void)
 	check_ok();
 
 	/*
-	 * We do freeze after analyze so pg_statistic is also frozen. template0 is
+	 * We do freeze after analyze so mdb_statistic is also frozen. template0 is
 	 * not frozen here, but data rows were frozen by initdb, and we set its
 	 * datfrozenxid, relfrozenxids, and relminmxid later to match the new xid
 	 * counter later.
@@ -279,7 +279,7 @@ prepare_new_databases(void)
 	/*
 	 * We have to create the databases first so we can install support
 	 * functions in all the other databases.  Ideally we could create the
-	 * support functions in template1 but pg_dumpall creates database using
+	 * support functions in template1 but mdb_dumpall creates database using
 	 * the template0 template.
 	 */
 	exec_prog(UTILITY_LOG_FILE, NULL, true,
@@ -306,17 +306,17 @@ create_new_objects(void)
 					log_file_name[MAXPGPATH];
 		DbInfo	   *old_db = &old_cluster.dbarr.dbs[dbnum];
 
-		pg_log(PG_STATUS, "%s", old_db->db_name);
+		mdb_log(PG_STATUS, "%s", old_db->db_name);
 		snprintf(sql_file_name, sizeof(sql_file_name), DB_DUMP_FILE_MASK, old_db->db_oid);
 		snprintf(log_file_name, sizeof(log_file_name), DB_DUMP_LOG_FILE_MASK, old_db->db_oid);
 
 		/*
-		 * pg_dump only produces its output at the end, so there is little
+		 * mdb_dump only produces its output at the end, so there is little
 		 * parallelism if using the pipe.
 		 */
 		parallel_exec_prog(log_file_name,
 						   NULL,
-						   "\"%s/pg_restore\" %s --exit-on-error --verbose --dbname \"%s\" \"%s\"",
+						   "\"%s/mdb_restore\" %s --exit-on-error --verbose --dbname \"%s\" \"%s\"",
 						   new_cluster.bindir,
 						   cluster_conn_opts(&new_cluster),
 						   old_db->db_name,
@@ -353,7 +353,7 @@ remove_new_subdir(char *subdir, bool rmtopdir)
 
 	snprintf(new_path, sizeof(new_path), "%s/%s", new_cluster.pgdata, subdir);
 	if (!rmtree(new_path, rmtopdir))
-		pg_fatal("could not delete directory \"%s\"\n", new_path);
+		mdb_fatal("could not delete directory \"%s\"\n", new_path);
 
 	check_ok();
 }
@@ -390,21 +390,21 @@ static void
 copy_clog_xlog_xid(void)
 {
 	/* copy old commit logs to new data dir */
-	copy_subdir_files("pg_clog");
+	copy_subdir_files("mdb_clog");
 
 	/* set the next transaction id and epoch of the new cluster */
 	prep_status("Setting next transaction ID and epoch for new cluster");
 	exec_prog(UTILITY_LOG_FILE, NULL, true,
-			  "\"%s/pg_resetxlog\" -f -x %u \"%s\"",
+			  "\"%s/mdb_resetxlog\" -f -x %u \"%s\"",
 			  new_cluster.bindir, old_cluster.controldata.chkpnt_nxtxid,
 			  new_cluster.pgdata);
 	exec_prog(UTILITY_LOG_FILE, NULL, true,
-			  "\"%s/pg_resetxlog\" -f -e %u \"%s\"",
+			  "\"%s/mdb_resetxlog\" -f -e %u \"%s\"",
 			  new_cluster.bindir, old_cluster.controldata.chkpnt_nxtepoch,
 			  new_cluster.pgdata);
 	/* must reset commit timestamp limits also */
 	exec_prog(UTILITY_LOG_FILE, NULL, true,
-			  "\"%s/pg_resetxlog\" -f -c %u,%u \"%s\"",
+			  "\"%s/mdb_resetxlog\" -f -c %u,%u \"%s\"",
 			  new_cluster.bindir,
 			  old_cluster.controldata.chkpnt_nxtxid,
 			  old_cluster.controldata.chkpnt_nxtxid,
@@ -413,15 +413,15 @@ copy_clog_xlog_xid(void)
 
 	/*
 	 * If the old server is before the MULTIXACT_FORMATCHANGE_CAT_VER change
-	 * (see pg_upgrade.h) and the new server is after, then we don't copy
-	 * pg_multixact files, but we need to reset pg_control so that the new
+	 * (see mdb_upgrade.h) and the new server is after, then we don't copy
+	 * mdb_multixact files, but we need to reset mdb_control so that the new
 	 * server doesn't attempt to read multis older than the cutoff value.
 	 */
 	if (old_cluster.controldata.cat_ver >= MULTIXACT_FORMATCHANGE_CAT_VER &&
 		new_cluster.controldata.cat_ver >= MULTIXACT_FORMATCHANGE_CAT_VER)
 	{
-		copy_subdir_files("pg_multixact/offsets");
-		copy_subdir_files("pg_multixact/members");
+		copy_subdir_files("mdb_multixact/offsets");
+		copy_subdir_files("mdb_multixact/members");
 
 		prep_status("Setting next multixact ID and offset for new cluster");
 
@@ -430,7 +430,7 @@ copy_clog_xlog_xid(void)
 		 * counters here and the oldest multi present on system.
 		 */
 		exec_prog(UTILITY_LOG_FILE, NULL, true,
-				  "\"%s/pg_resetxlog\" -O %u -m %u,%u \"%s\"",
+				  "\"%s/mdb_resetxlog\" -O %u -m %u,%u \"%s\"",
 				  new_cluster.bindir,
 				  old_cluster.controldata.chkpnt_nxtmxoff,
 				  old_cluster.controldata.chkpnt_nxtmulti,
@@ -445,7 +445,7 @@ copy_clog_xlog_xid(void)
 		 * the new multi-xid value.  "members" starts at zero so no need to
 		 * remove it.
 		 */
-		remove_new_subdir("pg_multixact/offsets", false);
+		remove_new_subdir("mdb_multixact/offsets", false);
 
 		prep_status("Setting oldest multixact ID on new cluster");
 
@@ -458,7 +458,7 @@ copy_clog_xlog_xid(void)
 		 * next=MaxMultiXactId, but multixact.c can cope with that just fine.
 		 */
 		exec_prog(UTILITY_LOG_FILE, NULL, true,
-				  "\"%s/pg_resetxlog\" -m %u,%u \"%s\"",
+				  "\"%s/mdb_resetxlog\" -m %u,%u \"%s\"",
 				  new_cluster.bindir,
 				  old_cluster.controldata.chkpnt_nxtmulti + 1,
 				  old_cluster.controldata.chkpnt_nxtmulti,
@@ -470,7 +470,7 @@ copy_clog_xlog_xid(void)
 	prep_status("Resetting WAL archives");
 	exec_prog(UTILITY_LOG_FILE, NULL, true,
 	/* use timeline 1 to match controldata and no WAL history file */
-			  "\"%s/pg_resetxlog\" -l 00000001%s \"%s\"", new_cluster.bindir,
+			  "\"%s/mdb_resetxlog\" -l 00000001%s \"%s\"", new_cluster.bindir,
 			  old_cluster.controldata.nextxlogfile + 8,
 			  new_cluster.pgdata);
 	check_ok();
@@ -483,7 +483,7 @@ copy_clog_xlog_xid(void)
  *	We have frozen all xids, so set datfrozenxid, relfrozenxid, and
  *	relminmxid to be the old cluster's xid counter, which we just set
  *	in the new cluster.  User-table frozenxid and minmxid values will
- *	be set by pg_dump --binary-upgrade, but objects not set by the pg_dump
+ *	be set by mdb_dump --binary-upgrade, but objects not set by the mdb_dump
  *	must have proper frozen counters.
  */
 static
@@ -506,22 +506,22 @@ set_frozenxids(bool minmxid_only)
 	conn_template1 = connectToServer(&new_cluster, "template1");
 
 	if (!minmxid_only)
-		/* set pg_database.datfrozenxid */
+		/* set mdb_database.datfrozenxid */
 		PQclear(executeQueryOrDie(conn_template1,
-								  "UPDATE pg_catalog.pg_database "
+								  "UPDATE mdb_catalog.mdb_database "
 								  "SET	datfrozenxid = '%u'",
 								  old_cluster.controldata.chkpnt_nxtxid));
 
-	/* set pg_database.datminmxid */
+	/* set mdb_database.datminmxid */
 	PQclear(executeQueryOrDie(conn_template1,
-							  "UPDATE pg_catalog.pg_database "
+							  "UPDATE mdb_catalog.mdb_database "
 							  "SET	datminmxid = '%u'",
 							  old_cluster.controldata.chkpnt_nxtmulti));
 
 	/* get database names */
 	dbres = executeQueryOrDie(conn_template1,
 							  "SELECT	datname, datallowconn "
-							  "FROM	pg_catalog.pg_database");
+							  "FROM	mdb_catalog.mdb_database");
 
 	i_datname = PQfnumber(dbres, "datname");
 	i_datallowconn = PQfnumber(dbres, "datallowconn");
@@ -547,17 +547,17 @@ set_frozenxids(bool minmxid_only)
 		conn = connectToServer(&new_cluster, datname);
 
 		if (!minmxid_only)
-			/* set pg_class.relfrozenxid */
+			/* set mdb_class.relfrozenxid */
 			PQclear(executeQueryOrDie(conn,
-									  "UPDATE	pg_catalog.pg_class "
+									  "UPDATE	mdb_catalog.mdb_class "
 									  "SET	relfrozenxid = '%u' "
 			/* only heap, materialized view, and TOAST are vacuumed */
 									  "WHERE	relkind IN ('r', 'm', 't')",
 									  old_cluster.controldata.chkpnt_nxtxid));
 
-		/* set pg_class.relminmxid */
+		/* set mdb_class.relminmxid */
 		PQclear(executeQueryOrDie(conn,
-								  "UPDATE	pg_catalog.pg_class "
+								  "UPDATE	mdb_catalog.mdb_class "
 								  "SET	relminmxid = '%u' "
 		/* only heap, materialized view, and TOAST are vacuumed */
 								  "WHERE	relkind IN ('r', 'm', 't')",

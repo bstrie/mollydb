@@ -1,9 +1,9 @@
 /* ----------
- * pg_lzcompress.h -
+ * mdb_lzcompress.h -
  *
  *	Definitions for the builtin LZ compressor
  *
- * src/include/common/pg_lzcompress.h
+ * src/include/common/mdb_lzcompress.h
  * ----------
  */
 

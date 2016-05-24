@@ -7,7 +7,7 @@
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
- *	   src/bin/pg_dump/compress_io.h
+ *	   src/bin/mdb_dump/compress_io.h
  *
  *-------------------------------------------------------------------------
  */
@@ -15,7 +15,7 @@
 #ifndef __COMPRESS_IO__
 #define __COMPRESS_IO__
 
-#include "pg_backup_archiver.h"
+#include "mdb_backup_archiver.h"
 
 /* Initial buffer sizes used in zlib compression. */
 #define ZLIB_OUT_SIZE	4096

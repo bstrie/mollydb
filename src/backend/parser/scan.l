@@ -37,7 +37,7 @@
 #include "parser/gramparse.h"
 #include "parser/parser.h"		/* only needed for GUC variables */
 #include "parser/scansup.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 }
 
 %{
@@ -94,10 +94,10 @@ static char *litbufdup(core_yyscan_t yyscanner);
 static char *litbuf_udeescape(unsigned char escape, core_yyscan_t yyscanner);
 static unsigned char unescape_single_char(unsigned char c, core_yyscan_t yyscanner);
 static int	process_integer_literal(const char *token, YYSTYPE *lval);
-static bool is_utf16_surrogate_first(pg_wchar c);
-static bool is_utf16_surrogate_second(pg_wchar c);
-static pg_wchar surrogate_pair_to_codepoint(pg_wchar first, pg_wchar second);
-static void addunicode(pg_wchar c, yyscan_t yyscanner);
+static bool is_utf16_surrogate_first(mdb_wchar c);
+static bool is_utf16_surrogate_second(mdb_wchar c);
+static mdb_wchar surrogate_pair_to_codepoint(mdb_wchar first, mdb_wchar second);
+static void addunicode(mdb_wchar c, yyscan_t yyscanner);
 static bool check_uescapechar(unsigned char escape);
 
 #define yyerror(msg)  scanner_yyerror(msg, yyscanner)
@@ -545,7 +545,7 @@ other			.
 					 * made invalid by unescaping any chars.
 					 */
 					if (yyextra->saw_non_ascii)
-						pg_verifymbstr(yyextra->literalbuf,
+						mdb_verifymbstr(yyextra->literalbuf,
 									   yyextra->literallen,
 									   false);
 					yylval->str = litbufdup(yyscanner);
@@ -593,7 +593,7 @@ other			.
 					addlit(yytext, yyleng, yyscanner);
 				}
 <xe>{xeunicode} {
-					pg_wchar	c = strtoul(yytext + 2, NULL, 16);
+					mdb_wchar	c = strtoul(yytext + 2, NULL, 16);
 
 					check_escape_warning(yyscanner);
 
@@ -608,7 +608,7 @@ other			.
 						addunicode(c, yyscanner);
 				}
 <xeu>{xeunicode} {
-					pg_wchar	c = strtoul(yytext + 2, NULL, 16);
+					mdb_wchar	c = strtoul(yytext + 2, NULL, 16);
 
 					if (!is_utf16_surrogate_second(c))
 						yyerror("invalid Unicode surrogate pair");
@@ -634,7 +634,7 @@ other			.
 					{
 						if (yyextra->backslash_quote == BACKSLASH_QUOTE_OFF ||
 							(yyextra->backslash_quote == BACKSLASH_QUOTE_SAFE_ENCODING &&
-							 PG_ENCODING_IS_CLIENT_ONLY(pg_get_client_encoding())))
+							 PG_ENCODING_IS_CLIENT_ONLY(mdb_get_client_encoding())))
 							ereport(ERROR,
 									(errcode(ERRCODE_NONSTANDARD_USE_OF_ESCAPE_CHARACTER),
 									 errmsg("unsafe use of \\' in a string literal"),
@@ -1048,7 +1048,7 @@ scanner_errposition(int location, core_yyscan_t yyscanner)
 		return 0;				/* no-op if location is unknown */
 
 	/* Convert byte offset to character number */
-	pos = pg_mbstrlen_with_len(yyextra->scanbuf, location) + 1;
+	pos = mdb_mbstrlen_with_len(yyextra->scanbuf, location) + 1;
 	/* And pass it to the ereport mechanism */
 	return errposition(pos);
 }
@@ -1241,7 +1241,7 @@ hexval(unsigned char c)
 }
 
 static void
-check_unicode_value(pg_wchar c, char *loc, core_yyscan_t yyscanner)
+check_unicode_value(mdb_wchar c, char *loc, core_yyscan_t yyscanner)
 {
 	if (GetDatabaseEncoding() == PG_UTF8)
 		return;
@@ -1254,25 +1254,25 @@ check_unicode_value(pg_wchar c, char *loc, core_yyscan_t yyscanner)
 }
 
 static bool
-is_utf16_surrogate_first(pg_wchar c)
+is_utf16_surrogate_first(mdb_wchar c)
 {
 	return (c >= 0xD800 && c <= 0xDBFF);
 }
 
 static bool
-is_utf16_surrogate_second(pg_wchar c)
+is_utf16_surrogate_second(mdb_wchar c)
 {
 	return (c >= 0xDC00 && c <= 0xDFFF);
 }
 
-static pg_wchar
-surrogate_pair_to_codepoint(pg_wchar first, pg_wchar second)
+static mdb_wchar
+surrogate_pair_to_codepoint(mdb_wchar first, mdb_wchar second)
 {
 	return ((first & 0x3FF) << 10) + 0x10000 + (second & 0x3FF);
 }
 
 static void
-addunicode(pg_wchar c, core_yyscan_t yyscanner)
+addunicode(mdb_wchar c, core_yyscan_t yyscanner)
 {
 	char		buf[8];
 
@@ -1285,7 +1285,7 @@ addunicode(pg_wchar c, core_yyscan_t yyscanner)
 		yyextra->saw_non_ascii = true;
 	}
 	unicode_to_utf8(c, (unsigned char *) buf);
-	addlit(buf, pg_mblen(buf), yyscanner);
+	addlit(buf, mdb_mblen(buf), yyscanner);
 }
 
 /* is 'escape' acceptable as Unicode escape character (UESCAPE syntax) ? */
@@ -1312,7 +1312,7 @@ litbuf_udeescape(unsigned char escape, core_yyscan_t yyscanner)
 	char	   *litbuf,
 			   *in,
 			   *out;
-	pg_wchar	pair_first = 0;
+	mdb_wchar	pair_first = 0;
 
 	/* Make literalbuf null-terminated to simplify the scanning loop */
 	litbuf = yyextra->literalbuf;
@@ -1345,7 +1345,7 @@ litbuf_udeescape(unsigned char escape, core_yyscan_t yyscanner)
 					 isxdigit((unsigned char) in[3]) &&
 					 isxdigit((unsigned char) in[4]))
 			{
-				pg_wchar	unicode;
+				mdb_wchar	unicode;
 
 				unicode = (hexval(in[1]) << 12) +
 					(hexval(in[2]) << 8) +
@@ -1373,7 +1373,7 @@ litbuf_udeescape(unsigned char escape, core_yyscan_t yyscanner)
 				else
 				{
 					unicode_to_utf8(unicode, (unsigned char *) out);
-					out += pg_mblen(out);
+					out += mdb_mblen(out);
 				}
 				in += 5;
 			}
@@ -1385,7 +1385,7 @@ litbuf_udeescape(unsigned char escape, core_yyscan_t yyscanner)
 					 isxdigit((unsigned char) in[6]) &&
 					 isxdigit((unsigned char) in[7]))
 			{
-				pg_wchar	unicode;
+				mdb_wchar	unicode;
 
 				unicode = (hexval(in[2]) << 20) +
 					(hexval(in[3]) << 16) +
@@ -1415,7 +1415,7 @@ litbuf_udeescape(unsigned char escape, core_yyscan_t yyscanner)
 				else
 				{
 					unicode_to_utf8(unicode, (unsigned char *) out);
-					out += pg_mblen(out);
+					out += mdb_mblen(out);
 				}
 				in += 8;
 			}
@@ -1439,11 +1439,11 @@ litbuf_udeescape(unsigned char escape, core_yyscan_t yyscanner)
 	*out = '\0';
 
 	/*
-	 * We could skip pg_verifymbstr if we didn't process any non-7-bit-ASCII
+	 * We could skip mdb_verifymbstr if we didn't process any non-7-bit-ASCII
 	 * codes; but it's probably not worth the trouble, since this isn't likely
 	 * to be a performance-critical path.
 	 */
-	pg_verifymbstr(new, out - new, false);
+	mdb_verifymbstr(new, out - new, false);
 	return new;
 }
 

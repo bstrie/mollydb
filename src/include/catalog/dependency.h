@@ -19,7 +19,7 @@
 
 /*
  * Precise semantics of a dependency relationship are specified by the
- * DependencyType code (which is stored in a "char" field in pg_depend,
+ * DependencyType code (which is stored in a "char" field in mdb_depend,
  * so we assign ASCII-code values to the enumeration members).
  *
  * In all cases, a dependency relationship indicates that the referenced
@@ -47,17 +47,17 @@
  * propagated through to drop the dependent object whether CASCADE is
  * specified or not.
  * Example: a trigger that's created to enforce a foreign-key constraint
- * is made internally dependent on the constraint's pg_constraint entry.
+ * is made internally dependent on the constraint's mdb_constraint entry.
  *
  * DEPENDENCY_EXTENSION ('e'): the dependent object is a member of the
  * extension that is the referenced object.  The dependent object can be
  * dropped only via DROP EXTENSION on the referenced object.  Functionally
  * this dependency type acts the same as an internal dependency, but it's
- * kept separate for clarity and to simplify pg_dump.
+ * kept separate for clarity and to simplify mdb_dump.
  *
  * DEPENDENCY_AUTO_EXTENSION ('x'): the dependent object is not a member
  * of the extension that is the referenced object (and so should not be
- * ignored by pg_dump), but cannot function without the extension and
+ * ignored by mdb_dump), but cannot function without the extension and
  * should be dropped when the extension itself is.  The dependent object
  * may be dropped on its own as well.
  *
@@ -82,30 +82,30 @@ typedef enum DependencyType
 
 /*
  * There is also a SharedDependencyType enum type that determines the exact
- * semantics of an entry in pg_shdepend.  Just like regular dependency entries,
- * any pg_shdepend entry means that the referenced object cannot be dropped
+ * semantics of an entry in mdb_shdepend.  Just like regular dependency entries,
+ * any mdb_shdepend entry means that the referenced object cannot be dropped
  * unless the dependent object is dropped at the same time.  There are some
  * additional rules however:
  *
  * (a) For a SHARED_DEPENDENCY_PIN entry, there is no dependent object --
  * rather, the referenced object is an essential part of the system.  This
  * applies to the initdb-created superuser.  Entries of this type are only
- * created by initdb; objects in this category don't need further pg_shdepend
+ * created by initdb; objects in this category don't need further mdb_shdepend
  * entries if more objects come to depend on them.
  *
  * (b) a SHARED_DEPENDENCY_OWNER entry means that the referenced object is
  * the role owning the dependent object.  The referenced object must be
- * a pg_authid entry.
+ * a mdb_authid entry.
  *
  * (c) a SHARED_DEPENDENCY_ACL entry means that the referenced object is
  * a role mentioned in the ACL field of the dependent object.  The referenced
- * object must be a pg_authid entry.  (SHARED_DEPENDENCY_ACL entries are not
+ * object must be a mdb_authid entry.  (SHARED_DEPENDENCY_ACL entries are not
  * created for the owner of an object; hence two objects may be linked by
  * one or the other, but not both, of these dependency types.)
  *
  * (d) a SHARED_DEPENDENCY_POLICY entry means that the referenced object is
  * a role mentioned in a policy object.  The referenced object must be a
- * pg_authid entry.
+ * mdb_authid entry.
  *
  * SHARED_DEPENDENCY_INVALID is a value used as a parameter in internal
  * routines, and is not valid in the catalog itself.
@@ -124,44 +124,44 @@ typedef struct ObjectAddresses ObjectAddresses;
 
 /*
  * This enum covers all system catalogs whose OIDs can appear in
- * pg_depend.classId or pg_shdepend.classId.  Keep object_classes[] in sync.
+ * mdb_depend.classId or mdb_shdepend.classId.  Keep object_classes[] in sync.
  */
 typedef enum ObjectClass
 {
-	OCLASS_CLASS,				/* pg_class */
-	OCLASS_PROC,				/* pg_proc */
-	OCLASS_TYPE,				/* pg_type */
-	OCLASS_CAST,				/* pg_cast */
-	OCLASS_COLLATION,			/* pg_collation */
-	OCLASS_CONSTRAINT,			/* pg_constraint */
-	OCLASS_CONVERSION,			/* pg_conversion */
-	OCLASS_DEFAULT,				/* pg_attrdef */
-	OCLASS_LANGUAGE,			/* pg_language */
-	OCLASS_LARGEOBJECT,			/* pg_largeobject */
-	OCLASS_OPERATOR,			/* pg_operator */
-	OCLASS_OPCLASS,				/* pg_opclass */
-	OCLASS_OPFAMILY,			/* pg_opfamily */
-	OCLASS_AM,					/* pg_am */
-	OCLASS_AMOP,				/* pg_amop */
-	OCLASS_AMPROC,				/* pg_amproc */
-	OCLASS_REWRITE,				/* pg_rewrite */
-	OCLASS_TRIGGER,				/* pg_trigger */
-	OCLASS_SCHEMA,				/* pg_namespace */
-	OCLASS_TSPARSER,			/* pg_ts_parser */
-	OCLASS_TSDICT,				/* pg_ts_dict */
-	OCLASS_TSTEMPLATE,			/* pg_ts_template */
-	OCLASS_TSCONFIG,			/* pg_ts_config */
-	OCLASS_ROLE,				/* pg_authid */
-	OCLASS_DATABASE,			/* pg_database */
-	OCLASS_TBLSPACE,			/* pg_tablespace */
-	OCLASS_FDW,					/* pg_foreign_data_wrapper */
-	OCLASS_FOREIGN_SERVER,		/* pg_foreign_server */
-	OCLASS_USER_MAPPING,		/* pg_user_mapping */
-	OCLASS_DEFACL,				/* pg_default_acl */
-	OCLASS_EXTENSION,			/* pg_extension */
-	OCLASS_EVENT_TRIGGER,		/* pg_event_trigger */
-	OCLASS_POLICY,				/* pg_policy */
-	OCLASS_TRANSFORM			/* pg_transform */
+	OCLASS_CLASS,				/* mdb_class */
+	OCLASS_PROC,				/* mdb_proc */
+	OCLASS_TYPE,				/* mdb_type */
+	OCLASS_CAST,				/* mdb_cast */
+	OCLASS_COLLATION,			/* mdb_collation */
+	OCLASS_CONSTRAINT,			/* mdb_constraint */
+	OCLASS_CONVERSION,			/* mdb_conversion */
+	OCLASS_DEFAULT,				/* mdb_attrdef */
+	OCLASS_LANGUAGE,			/* mdb_language */
+	OCLASS_LARGEOBJECT,			/* mdb_largeobject */
+	OCLASS_OPERATOR,			/* mdb_operator */
+	OCLASS_OPCLASS,				/* mdb_opclass */
+	OCLASS_OPFAMILY,			/* mdb_opfamily */
+	OCLASS_AM,					/* mdb_am */
+	OCLASS_AMOP,				/* mdb_amop */
+	OCLASS_AMPROC,				/* mdb_amproc */
+	OCLASS_REWRITE,				/* mdb_rewrite */
+	OCLASS_TRIGGER,				/* mdb_trigger */
+	OCLASS_SCHEMA,				/* mdb_namespace */
+	OCLASS_TSPARSER,			/* mdb_ts_parser */
+	OCLASS_TSDICT,				/* mdb_ts_dict */
+	OCLASS_TSTEMPLATE,			/* mdb_ts_template */
+	OCLASS_TSCONFIG,			/* mdb_ts_config */
+	OCLASS_ROLE,				/* mdb_authid */
+	OCLASS_DATABASE,			/* mdb_database */
+	OCLASS_TBLSPACE,			/* mdb_tablespace */
+	OCLASS_FDW,					/* mdb_foreign_data_wrapper */
+	OCLASS_FOREIGN_SERVER,		/* mdb_foreign_server */
+	OCLASS_USER_MAPPING,		/* mdb_user_mapping */
+	OCLASS_DEFACL,				/* mdb_default_acl */
+	OCLASS_EXTENSION,			/* mdb_extension */
+	OCLASS_EVENT_TRIGGER,		/* mdb_event_trigger */
+	OCLASS_POLICY,				/* mdb_policy */
+	OCLASS_TRANSFORM			/* mdb_transform */
 } ObjectClass;
 
 #define LAST_OCLASS		OCLASS_TRANSFORM
@@ -206,7 +206,7 @@ extern void record_object_address_dependencies(const ObjectAddress *depender,
 
 extern void free_object_addresses(ObjectAddresses *addrs);
 
-/* in pg_depend.c */
+/* in mdb_depend.c */
 
 extern void recordDependencyOn(const ObjectAddress *depender,
 				   const ObjectAddress *referenced,
@@ -242,7 +242,7 @@ extern Oid	get_constraint_index(Oid constraintId);
 
 extern Oid	get_index_constraint(Oid indexId);
 
-/* in pg_shdepend.c */
+/* in mdb_shdepend.c */
 
 extern void recordSharedDependencyOn(ObjectAddress *depender,
 						 ObjectAddress *referenced,

@@ -82,15 +82,15 @@
 #include <wctype.h>
 #endif
 
-#include "catalog/pg_collation.h"
-#include "mb/pg_wchar.h"
+#include "catalog/mdb_collation.h"
+#include "mb/mdb_wchar.h"
 #include "utils/builtins.h"
 #include "utils/date.h"
 #include "utils/datetime.h"
 #include "utils/formatting.h"
 #include "utils/int8.h"
 #include "utils/numeric.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 
 /* ----------
  * Routines type
@@ -450,7 +450,7 @@ typedef struct
  */
 typedef struct TmToChar
 {
-	struct pg_tm tm;			/* classic 'tm' struct */
+	struct mdb_tm tm;			/* classic 'tm' struct */
 	fsec_t		fsec;			/* fractional seconds */
 	const char *tzn;			/* timezone */
 } TmToChar;
@@ -971,7 +971,7 @@ static int	from_char_parse_int(int *dest, char **src, FormatNode *node);
 static int	seq_search(char *name, const char *const * array, int type, int max, int *len);
 static int	from_char_seq_search(int *dest, char **src, const char *const * array, int type, int max, FormatNode *node);
 static void do_to_timestamp(text *date_txt, text *fmt,
-				struct pg_tm * tm, fsec_t *fsec);
+				struct mdb_tm * tm, fsec_t *fsec);
 static char *fill_str(char *str, int c, int max);
 static FormatNode *NUM_cache(int len, NUMDesc *Num, text *pars_str, bool *shouldFree);
 static char *int_to_roman(int number);
@@ -1492,9 +1492,9 @@ str_tolower(const char *buff, size_t nbytes, Oid collid)
 		result = asc_tolower(buff, nbytes);
 	}
 #ifdef USE_WIDE_UPPER_LOWER
-	else if (pg_database_encoding_max_length() > 1)
+	else if (mdb_database_encoding_max_length() > 1)
 	{
-		pg_locale_t mylocale = 0;
+		mdb_locale_t mylocale = 0;
 		wchar_t    *workspace;
 		size_t		curr_char;
 		size_t		result_size;
@@ -1512,7 +1512,7 @@ str_tolower(const char *buff, size_t nbytes, Oid collid)
 						 errmsg("could not determine which collation to use for lower() function"),
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
-			mylocale = pg_newlocale_from_collation(collid);
+			mylocale = mdb_newlocale_from_collation(collid);
 		}
 
 		/* Overflow paranoia */
@@ -1537,7 +1537,7 @@ str_tolower(const char *buff, size_t nbytes, Oid collid)
 		}
 
 		/* Make result large enough; case change might change number of bytes */
-		result_size = curr_char * pg_database_encoding_max_length() + 1;
+		result_size = curr_char * mdb_database_encoding_max_length() + 1;
 		result = palloc(result_size);
 
 		wchar2char(result, workspace, result_size, mylocale);
@@ -1547,7 +1547,7 @@ str_tolower(const char *buff, size_t nbytes, Oid collid)
 	else
 	{
 #ifdef HAVE_LOCALE_T
-		pg_locale_t mylocale = 0;
+		mdb_locale_t mylocale = 0;
 #endif
 		char	   *p;
 
@@ -1565,7 +1565,7 @@ str_tolower(const char *buff, size_t nbytes, Oid collid)
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
 #ifdef HAVE_LOCALE_T
-			mylocale = pg_newlocale_from_collation(collid);
+			mylocale = mdb_newlocale_from_collation(collid);
 #endif
 		}
 
@@ -1585,7 +1585,7 @@ str_tolower(const char *buff, size_t nbytes, Oid collid)
 				*p = tolower_l((unsigned char) *p, mylocale);
 			else
 #endif
-				*p = pg_tolower((unsigned char) *p);
+				*p = mdb_tolower((unsigned char) *p);
 		}
 	}
 
@@ -1612,9 +1612,9 @@ str_toupper(const char *buff, size_t nbytes, Oid collid)
 		result = asc_toupper(buff, nbytes);
 	}
 #ifdef USE_WIDE_UPPER_LOWER
-	else if (pg_database_encoding_max_length() > 1)
+	else if (mdb_database_encoding_max_length() > 1)
 	{
-		pg_locale_t mylocale = 0;
+		mdb_locale_t mylocale = 0;
 		wchar_t    *workspace;
 		size_t		curr_char;
 		size_t		result_size;
@@ -1632,7 +1632,7 @@ str_toupper(const char *buff, size_t nbytes, Oid collid)
 						 errmsg("could not determine which collation to use for upper() function"),
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
-			mylocale = pg_newlocale_from_collation(collid);
+			mylocale = mdb_newlocale_from_collation(collid);
 		}
 
 		/* Overflow paranoia */
@@ -1657,7 +1657,7 @@ str_toupper(const char *buff, size_t nbytes, Oid collid)
 		}
 
 		/* Make result large enough; case change might change number of bytes */
-		result_size = curr_char * pg_database_encoding_max_length() + 1;
+		result_size = curr_char * mdb_database_encoding_max_length() + 1;
 		result = palloc(result_size);
 
 		wchar2char(result, workspace, result_size, mylocale);
@@ -1667,7 +1667,7 @@ str_toupper(const char *buff, size_t nbytes, Oid collid)
 	else
 	{
 #ifdef HAVE_LOCALE_T
-		pg_locale_t mylocale = 0;
+		mdb_locale_t mylocale = 0;
 #endif
 		char	   *p;
 
@@ -1685,7 +1685,7 @@ str_toupper(const char *buff, size_t nbytes, Oid collid)
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
 #ifdef HAVE_LOCALE_T
-			mylocale = pg_newlocale_from_collation(collid);
+			mylocale = mdb_newlocale_from_collation(collid);
 #endif
 		}
 
@@ -1705,7 +1705,7 @@ str_toupper(const char *buff, size_t nbytes, Oid collid)
 				*p = toupper_l((unsigned char) *p, mylocale);
 			else
 #endif
-				*p = pg_toupper((unsigned char) *p);
+				*p = mdb_toupper((unsigned char) *p);
 		}
 	}
 
@@ -1733,9 +1733,9 @@ str_initcap(const char *buff, size_t nbytes, Oid collid)
 		result = asc_initcap(buff, nbytes);
 	}
 #ifdef USE_WIDE_UPPER_LOWER
-	else if (pg_database_encoding_max_length() > 1)
+	else if (mdb_database_encoding_max_length() > 1)
 	{
-		pg_locale_t mylocale = 0;
+		mdb_locale_t mylocale = 0;
 		wchar_t    *workspace;
 		size_t		curr_char;
 		size_t		result_size;
@@ -1753,7 +1753,7 @@ str_initcap(const char *buff, size_t nbytes, Oid collid)
 						 errmsg("could not determine which collation to use for initcap() function"),
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
-			mylocale = pg_newlocale_from_collation(collid);
+			mylocale = mdb_newlocale_from_collation(collid);
 		}
 
 		/* Overflow paranoia */
@@ -1790,7 +1790,7 @@ str_initcap(const char *buff, size_t nbytes, Oid collid)
 		}
 
 		/* Make result large enough; case change might change number of bytes */
-		result_size = curr_char * pg_database_encoding_max_length() + 1;
+		result_size = curr_char * mdb_database_encoding_max_length() + 1;
 		result = palloc(result_size);
 
 		wchar2char(result, workspace, result_size, mylocale);
@@ -1800,7 +1800,7 @@ str_initcap(const char *buff, size_t nbytes, Oid collid)
 	else
 	{
 #ifdef HAVE_LOCALE_T
-		pg_locale_t mylocale = 0;
+		mdb_locale_t mylocale = 0;
 #endif
 		char	   *p;
 
@@ -1818,7 +1818,7 @@ str_initcap(const char *buff, size_t nbytes, Oid collid)
 						 errhint("Use the COLLATE clause to set the collation explicitly.")));
 			}
 #ifdef HAVE_LOCALE_T
-			mylocale = pg_newlocale_from_collation(collid);
+			mylocale = mdb_newlocale_from_collation(collid);
 #endif
 		}
 
@@ -1846,9 +1846,9 @@ str_initcap(const char *buff, size_t nbytes, Oid collid)
 #endif
 			{
 				if (wasalnum)
-					*p = pg_tolower((unsigned char) *p);
+					*p = mdb_tolower((unsigned char) *p);
 				else
-					*p = pg_toupper((unsigned char) *p);
+					*p = mdb_toupper((unsigned char) *p);
 				wasalnum = isalnum((unsigned char) *p);
 			}
 		}
@@ -1875,7 +1875,7 @@ asc_tolower(const char *buff, size_t nbytes)
 	result = pnstrdup(buff, nbytes);
 
 	for (p = result; *p; p++)
-		*p = pg_ascii_tolower((unsigned char) *p);
+		*p = mdb_ascii_tolower((unsigned char) *p);
 
 	return result;
 }
@@ -1898,7 +1898,7 @@ asc_toupper(const char *buff, size_t nbytes)
 	result = pnstrdup(buff, nbytes);
 
 	for (p = result; *p; p++)
-		*p = pg_ascii_toupper((unsigned char) *p);
+		*p = mdb_ascii_toupper((unsigned char) *p);
 
 	return result;
 }
@@ -1926,9 +1926,9 @@ asc_initcap(const char *buff, size_t nbytes)
 		char		c;
 
 		if (wasalnum)
-			*p = c = pg_ascii_tolower((unsigned char) *p);
+			*p = c = mdb_ascii_tolower((unsigned char) *p);
 		else
-			*p = c = pg_ascii_toupper((unsigned char) *p);
+			*p = c = mdb_ascii_toupper((unsigned char) *p);
 		/* we don't trust isalnum() here */
 		wasalnum = ((c >= 'A' && c <= 'Z') ||
 					(c >= 'a' && c <= 'z') ||
@@ -2272,9 +2272,9 @@ seq_search(char *name, const char *const * array, int type, int max, int *len)
 
 	/* set first char */
 	if (type == ONE_UPPER || type == ALL_UPPER)
-		*name = pg_toupper((unsigned char) *name);
+		*name = mdb_toupper((unsigned char) *name);
 	else if (type == ALL_LOWER)
-		*name = pg_tolower((unsigned char) *name);
+		*name = mdb_tolower((unsigned char) *name);
 
 	for (last = 0, a = array; *a != NULL; a++)
 	{
@@ -2306,9 +2306,9 @@ seq_search(char *name, const char *const * array, int type, int max, int *len)
 			if (i > last)
 			{
 				if (type == ONE_UPPER || type == ALL_LOWER)
-					*n = pg_tolower((unsigned char) *n);
+					*n = mdb_tolower((unsigned char) *n);
 				else if (type == ALL_UPPER)
-					*n = pg_toupper((unsigned char) *n);
+					*n = mdb_toupper((unsigned char) *n);
 				last = i;
 			}
 
@@ -2369,7 +2369,7 @@ DCH_to_char(FormatNode *node, bool is_interval, TmToChar *in, char *out, Oid col
 {
 	FormatNode *n;
 	char	   *s;
-	struct pg_tm *tm = &in->tm;
+	struct mdb_tm *tm = &in->tm;
 	int			i;
 
 	/* cache localized days and months */
@@ -3389,7 +3389,7 @@ timestamp_to_char(PG_FUNCTION_ARGS)
 	text	   *fmt = PG_GETARG_TEXT_P(1),
 			   *res;
 	TmToChar	tmtc;
-	struct pg_tm *tm;
+	struct mdb_tm *tm;
 	int			thisdate;
 
 	if ((VARSIZE(fmt) - VARHDRSZ) <= 0 || TIMESTAMP_NOT_FINITE(dt))
@@ -3421,7 +3421,7 @@ timestamptz_to_char(PG_FUNCTION_ARGS)
 			   *res;
 	TmToChar	tmtc;
 	int			tz;
-	struct pg_tm *tm;
+	struct mdb_tm *tm;
 	int			thisdate;
 
 	if ((VARSIZE(fmt) - VARHDRSZ) <= 0 || TIMESTAMP_NOT_FINITE(dt))
@@ -3457,7 +3457,7 @@ interval_to_char(PG_FUNCTION_ARGS)
 	text	   *fmt = PG_GETARG_TEXT_P(1),
 			   *res;
 	TmToChar	tmtc;
-	struct pg_tm *tm;
+	struct mdb_tm *tm;
 
 	if ((VARSIZE(fmt) - VARHDRSZ) <= 0)
 		PG_RETURN_NULL();
@@ -3491,7 +3491,7 @@ to_timestamp(PG_FUNCTION_ARGS)
 	text	   *fmt = PG_GETARG_TEXT_P(1);
 	Timestamp	result;
 	int			tz;
-	struct pg_tm tm;
+	struct mdb_tm tm;
 	fsec_t		fsec;
 
 	do_to_timestamp(date_txt, fmt, &tm, &fsec);
@@ -3517,7 +3517,7 @@ to_date(PG_FUNCTION_ARGS)
 	text	   *date_txt = PG_GETARG_TEXT_P(0);
 	text	   *fmt = PG_GETARG_TEXT_P(1);
 	DateADT		result;
-	struct pg_tm tm;
+	struct mdb_tm tm;
 	fsec_t		fsec;
 
 	do_to_timestamp(date_txt, fmt, &tm, &fsec);
@@ -3544,7 +3544,7 @@ to_date(PG_FUNCTION_ARGS)
 /*
  * do_to_timestamp: shared code for to_timestamp and to_date
  *
- * Parse the 'date_txt' according to 'fmt', return results as a struct pg_tm
+ * Parse the 'date_txt' according to 'fmt', return results as a struct mdb_tm
  * and fractional seconds.
  *
  * We parse 'fmt' into a list of FormatNodes, which is then passed to
@@ -3559,7 +3559,7 @@ to_date(PG_FUNCTION_ARGS)
  */
 static void
 do_to_timestamp(text *date_txt, text *fmt,
-				struct pg_tm * tm, fsec_t *fsec)
+				struct mdb_tm * tm, fsec_t *fsec)
 {
 	FormatNode *format;
 	TmFromChar	tmfc;

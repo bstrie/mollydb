@@ -1209,8 +1209,8 @@ msgstr "pemulihan file perintah  « %s » tidak ditentukan primary_conninfo ni r
 
 #: access/transam/xlog.c:4361
 #, c-format
-msgid "The database server will regularly poll the pg_xlog subdirectory to check for files placed there."
-msgstr "sever database akan memilih subdirektori 'pg_xlog' secara teratur untuk memeriksa dimana file berada."
+msgid "The database server will regularly poll the mdb_xlog subdirectory to check for files placed there."
+msgstr "sever database akan memilih subdirektori 'mdb_xlog' secara teratur untuk memeriksa dimana file berada."
 
 #: access/transam/xlog.c:4367
 #, c-format
@@ -1259,8 +1259,8 @@ msgstr "pemulihan berhenti"
 
 #: access/transam/xlog.c:4669
 #, c-format
-msgid "Execute pg_xlog_replay_resume() to continue."
-msgstr "Menjalankan pg_xlog_replay_resume() untuk melanjutan."
+msgid "Execute mdb_xlog_replay_resume() to continue."
+msgstr "Menjalankan mdb_xlog_replay_resume() untuk melanjutan."
 
 #: access/transam/xlog.c:4799
 #, c-format
@@ -1519,8 +1519,8 @@ msgstr "Semua WAL dihasilkan ketika online backup diambil harus tersedia di pemu
 
 #: access/transam/xlog.c:5804
 #, c-format
-msgid "Online backup started with pg_start_backup() must be ended with pg_stop_backup(), and all WAL up to that point must be available at recovery."
-msgstr "online backup dimulai dengan pg_start_backup() harus diakhiri dengan pg_stop_backup() dan semua WAL sampai titik ini harus tersediadi pemulihan"
+msgid "Online backup started with mdb_start_backup() must be ended with mdb_stop_backup(), and all WAL up to that point must be available at recovery."
+msgstr "online backup dimulai dengan mdb_start_backup() harus diakhiri dengan mdb_stop_backup() dan semua WAL sampai titik ini harus tersediadi pemulihan"
 
 #: access/transam/xlog.c:5807
 #, c-format
@@ -1724,8 +1724,8 @@ msgstr "backup sedang berlangsung"
 
 #: access/transam/xlog.c:8545
 #, c-format
-msgid "Run pg_stop_backup() and try again."
-msgstr "Menjalankan pg_stop_backup() dan memcoba lagi."
+msgid "Run mdb_stop_backup() and try again."
+msgstr "Menjalankan mdb_stop_backup() dan memcoba lagi."
 
 #: access/transam/xlog.c:8639
 #, c-format
@@ -1784,23 +1784,23 @@ msgstr "WAL dihasilkan dengan full_page_writes=off diulang selama online backup"
 
 #: access/transam/xlog.c:9106
 #, c-format
-msgid "pg_stop_backup cleanup done, waiting for required WAL segments to be archived"
-msgstr "pg_stop_backup pembersihan selesai, menunggu bagian WAL yang diperlukan untuk diarsipkan "
+msgid "mdb_stop_backup cleanup done, waiting for required WAL segments to be archived"
+msgstr "mdb_stop_backup pembersihan selesai, menunggu bagian WAL yang diperlukan untuk diarsipkan "
 
 #: access/transam/xlog.c:9116
 #, c-format
-msgid "pg_stop_backup still waiting for all required WAL segments to be archived (%d seconds elapsed)"
-msgstr "pg_stop_backup masih menunggu semua bagian WAL yang diperlukan untuk diarsipkan  (%d detik berlalu)"
+msgid "mdb_stop_backup still waiting for all required WAL segments to be archived (%d seconds elapsed)"
+msgstr "mdb_stop_backup masih menunggu semua bagian WAL yang diperlukan untuk diarsipkan  (%d detik berlalu)"
 
 #: access/transam/xlog.c:9118
 #, c-format
-msgid "Check that your archive_command is executing properly.  pg_stop_backup can be canceled safely, but the database backup will not be usable without all the WAL segments."
-msgstr "Periksa bahwa archive_command anda dijalankan dengan baik. pg_stop_backup dapat dibatalkan dengan aman, tapi cadangan database tidak dapat digunalan tanpa semua bagian WAL"
+msgid "Check that your archive_command is executing properly.  mdb_stop_backup can be canceled safely, but the database backup will not be usable without all the WAL segments."
+msgstr "Periksa bahwa archive_command anda dijalankan dengan baik. mdb_stop_backup dapat dibatalkan dengan aman, tapi cadangan database tidak dapat digunalan tanpa semua bagian WAL"
 
 #: access/transam/xlog.c:9125
 #, c-format
-msgid "pg_stop_backup complete, all required WAL segments have been archived"
-msgstr "pg_stop_backup selesai, semua bagianWAL telah di arsipkan"
+msgid "mdb_stop_backup complete, all required WAL segments have been archived"
+msgstr "mdb_stop_backup selesai, semua bagianWAL telah di arsipkan"
 
 #: access/transam/xlog.c:9129
 #, c-format
@@ -1911,8 +1911,8 @@ msgstr "nilai terlalu panjang untuk titik pemgembalian point (maksimal %d karakt
 
 #: access/transam/xlogfuncs.c:300
 #, c-format
-msgid "pg_xlogfile_name_offset() cannot be executed during recovery."
-msgstr "pg_xlogfile_name_offset() tidak dapat dijalankan selama proses pemulihan."
+msgid "mdb_xlogfile_name_offset() cannot be executed during recovery."
+msgstr "mdb_xlogfile_name_offset() tidak dapat dijalankan selama proses pemulihan."
 
 #: access/transam/xlogfuncs.c:312 access/transam/xlogfuncs.c:383 access/transam/xlogfuncs.c:540 access/transam/xlogfuncs.c:546
 #, c-format
@@ -1921,8 +1921,8 @@ msgstr "tidak dapat menguraikan file log transaksi « %s »"
 
 #: access/transam/xlogfuncs.c:374
 #, c-format
-msgid "pg_xlogfile_name() cannot be executed during recovery."
-msgstr "pg_xlogfile_name() tidak dapat menjalankan selama proses pemulihan."
+msgid "mdb_xlogfile_name() cannot be executed during recovery."
+msgstr "mdb_xlogfile_name() tidak dapat menjalankan selama proses pemulihan."
 
 #: access/transam/xlogfuncs.c:402 access/transam/xlogfuncs.c:424 access/transam/xlogfuncs.c:446
 #, c-format
@@ -2074,7 +2074,7 @@ msgstr "tipe hak %s tidak valid untuk server asing"
 msgid "column privileges are only valid for relations"
 msgstr "hak kolom hanya valid untuk relasi"
 
-#: catalog/aclchk.c:688 catalog/aclchk.c:3901 catalog/aclchk.c:4678 catalog/objectaddress.c:575 catalog/pg_largeobject.c:113 storage/large_object/inv_api.c:266
+#: catalog/aclchk.c:688 catalog/aclchk.c:3901 catalog/aclchk.c:4678 catalog/objectaddress.c:575 catalog/mdb_largeobject.c:113 storage/large_object/inv_api.c:266
 #, c-format
 msgid "large object %u does not exist"
 msgstr "« Large Object »  %u tidak ada"
@@ -2484,7 +2484,7 @@ msgstr "tidak dapat melakukan drop %s karena memerlukan %s"
 msgid "You can drop %s instead."
 msgstr "Anda tetap bisa melakukan drop %s ."
 
-#: catalog/dependency.c:790 catalog/pg_shdepend.c:571
+#: catalog/dependency.c:790 catalog/mdb_shdepend.c:571
 #, c-format
 msgid "cannot drop %s because it is required by the database system"
 msgstr "tidak dapat melakukan drop %s karena ini diperlukan oleh sistem database"
@@ -2504,7 +2504,7 @@ msgstr "%s tergantung dalam %s"
 msgid "drop cascades to %s"
 msgstr "DROP cascade ke %s"
 
-#: catalog/dependency.c:956 catalog/pg_shdepend.c:682
+#: catalog/dependency.c:956 catalog/mdb_shdepend.c:682
 #, c-format
 msgid ""
 "\n"
@@ -2598,7 +2598,7 @@ msgstr "tipe campuran %s tidak dapat membuat anggota itu sendiri"
 msgid "no collation was derived for column \"%s\" with collatable type %s"
 msgstr "tidak ada 'collation' yang ditunjukan untuk kolom « %s » dengan tipe 'collationnable' %s"
 
-#: catalog/heap.c:574 commands/createas.c:344 commands/indexcmds.c:1091 commands/view.c:96 regex/regc_pg_locale.c:262 utils/adt/formatting.c:1515 utils/adt/formatting.c:1567 utils/adt/formatting.c:1635 utils/adt/formatting.c:1687 utils/adt/formatting.c:1756 utils/adt/formatting.c:1820 utils/adt/like.c:212 utils/adt/selfuncs.c:5221 utils/adt/varlena.c:1381
+#: catalog/heap.c:574 commands/createas.c:344 commands/indexcmds.c:1091 commands/view.c:96 regex/regc_mdb_locale.c:262 utils/adt/formatting.c:1515 utils/adt/formatting.c:1567 utils/adt/formatting.c:1635 utils/adt/formatting.c:1687 utils/adt/formatting.c:1756 utils/adt/formatting.c:1820 utils/adt/like.c:212 utils/adt/selfuncs.c:5221 utils/adt/varlena.c:1381
 #, c-format
 msgid "Use the COLLATE clause to set the collation explicitly."
 msgstr "gunakan klausa COLLATE untuk mengatur 'collation' secara eksplisit."
@@ -2608,7 +2608,7 @@ msgstr "gunakan klausa COLLATE untuk mengatur 'collation' secara eksplisit."
 msgid "relation \"%s\" already exists"
 msgstr "relasi « %s » sudah ada"
 
-#: catalog/heap.c:1063 catalog/pg_type.c:402 catalog/pg_type.c:705 commands/typecmds.c:237 commands/typecmds.c:737 commands/typecmds.c:1088 commands/typecmds.c:1306 commands/typecmds.c:2058
+#: catalog/heap.c:1063 catalog/mdb_type.c:402 catalog/mdb_type.c:705 commands/typecmds.c:237 commands/typecmds.c:737 commands/typecmds.c:1088 commands/typecmds.c:1306 commands/typecmds.c:2058
 #, c-format
 msgid "type \"%s\" already exists"
 msgstr "tipe « %s » sudah ada"
@@ -2623,7 +2623,7 @@ msgstr "relasi memiiki tipe terkait dari nama yang sama, anda harus menggunakan 
 msgid "check constraint \"%s\" already exists"
 msgstr "memeriksa 'constraint' « %s » sudah ada"
 
-#: catalog/heap.c:2402 catalog/pg_constraint.c:650 commands/tablecmds.c:5620
+#: catalog/heap.c:2402 catalog/mdb_constraint.c:650 commands/tablecmds.c:5620
 #, c-format
 msgid "constraint \"%s\" for relation \"%s\" already exists"
 msgstr "contraint « %s » untuk relation « %s » sudah ada"
@@ -3183,314 +3183,314 @@ msgstr "relasi %s"
 msgid "operator family %s for access method %s"
 msgstr "Jenis operator %s cara untuk mengakses %s"
 
-#: catalog/pg_aggregate.c:102
+#: catalog/mdb_aggregate.c:102
 #, c-format
 msgid "cannot determine transition data type"
 msgstr "tidak dapat menentukan transisi tipe data"
 
-#: catalog/pg_aggregate.c:103
+#: catalog/mdb_aggregate.c:103
 #, c-format
 msgid "An aggregate using a polymorphic transition type must have at least one polymorphic argument."
 msgstr "aggregate yang menggunakan tipe transisi polymorphic harus memiliki paling sedikit satu polymotphic argumen"
 
-#: catalog/pg_aggregate.c:126
+#: catalog/mdb_aggregate.c:126
 #, c-format
 msgid "return type of transition function %s is not %s"
 msgstr "mengembalikan tipe dari funsi transisi %s bukan %s"
 
-#: catalog/pg_aggregate.c:146
+#: catalog/mdb_aggregate.c:146
 #, c-format
 msgid "must not omit initial value when transition function is strict and transition type is not compatible with input type"
 msgstr "tidak harus menghilangkan nilai awal ketika fungsi transisi tepat dan jenis transisi tidak kompatibel dengan jenis input"
 
-#: catalog/pg_aggregate.c:177 catalog/pg_proc.c:241 catalog/pg_proc.c:248
+#: catalog/mdb_aggregate.c:177 catalog/mdb_proc.c:241 catalog/mdb_proc.c:248
 #, c-format
 msgid "cannot determine result data type"
 msgstr "tidak dapat menentukan hasil dari tipe data"
 
-#: catalog/pg_aggregate.c:178
+#: catalog/mdb_aggregate.c:178
 #, c-format
 msgid "An aggregate returning a polymorphic type must have at least one polymorphic argument."
 msgstr "Aggregate yang mengembalikan tipe polymorphic harus memiliki setidaknya satu argumen polymorphic."
 
-#: catalog/pg_aggregate.c:190 catalog/pg_proc.c:254
+#: catalog/mdb_aggregate.c:190 catalog/mdb_proc.c:254
 #, c-format
 msgid "unsafe use of pseudo-type \"internal\""
 msgstr "penggunaan pseudo-types yang tidak aman « INTERNAL »"
 
-#: catalog/pg_aggregate.c:191 catalog/pg_proc.c:255
+#: catalog/mdb_aggregate.c:191 catalog/mdb_proc.c:255
 #, c-format
 msgid "A function returning \"internal\" must have at least one \"internal\" argument."
 msgstr "funsi yang mengembalikan  « internal »  harus memiliki setidaknya satu argumen « internal »."
 
-#: catalog/pg_aggregate.c:199
+#: catalog/mdb_aggregate.c:199
 #, c-format
 msgid "sort operator can only be specified for single-argument aggregates"
 msgstr "jenis operator hanya dapat ditentukan untuk aggregate yang single-argument"
 
-#: catalog/pg_aggregate.c:356 commands/typecmds.c:1655 commands/typecmds.c:1706 commands/typecmds.c:1737 commands/typecmds.c:1760 commands/typecmds.c:1781 commands/typecmds.c:1808 commands/typecmds.c:1835 commands/typecmds.c:1912 commands/typecmds.c:1954 parser/parse_func.c:290 parser/parse_func.c:301 parser/parse_func.c:1554
+#: catalog/mdb_aggregate.c:356 commands/typecmds.c:1655 commands/typecmds.c:1706 commands/typecmds.c:1737 commands/typecmds.c:1760 commands/typecmds.c:1781 commands/typecmds.c:1808 commands/typecmds.c:1835 commands/typecmds.c:1912 commands/typecmds.c:1954 parser/parse_func.c:290 parser/parse_func.c:301 parser/parse_func.c:1554
 #, c-format
 msgid "function %s does not exist"
 msgstr "fungsi %s tidak ada"
 
-#: catalog/pg_aggregate.c:362
+#: catalog/mdb_aggregate.c:362
 #, c-format
 msgid "function %s returns a set"
 msgstr "fungsi %s kembali diatur"
 
-#: catalog/pg_aggregate.c:387
+#: catalog/mdb_aggregate.c:387
 #, c-format
 msgid "function %s requires run-time type coercion"
 msgstr "fungsi %s memerlukan tipe run-time paksaan"
 
-#: catalog/pg_collation.c:77
+#: catalog/mdb_collation.c:77
 #, c-format
 msgid "collation \"%s\" for encoding \"%s\" already exists"
 msgstr "collation « %s » untuk encoding « %s » sudah ada"
 
-#: catalog/pg_collation.c:91
+#: catalog/mdb_collation.c:91
 #, c-format
 msgid "collation \"%s\" already exists"
 msgstr "collation « %s » sudah ada"
 
-#: catalog/pg_constraint.c:659
+#: catalog/mdb_constraint.c:659
 #, c-format
 msgid "constraint \"%s\" for domain %s already exists"
 msgstr "contraint « %s » untuk domain %s sudah ada"
 
-#: catalog/pg_constraint.c:811
+#: catalog/mdb_constraint.c:811
 #, c-format
 msgid "table \"%s\" has multiple constraints named \"%s\""
 msgstr "tabel « %s » memiliki beberapa constraint yang bernama « %s »"
 
-#: catalog/pg_constraint.c:823
+#: catalog/mdb_constraint.c:823
 #, c-format
 msgid "constraint \"%s\" for table \"%s\" does not exist"
 msgstr "contraint « %s » untuk tabel « %s » tidak ada"
 
-#: catalog/pg_constraint.c:869
+#: catalog/mdb_constraint.c:869
 #, c-format
 msgid "domain \"%s\" has multiple constraints named \"%s\""
 msgstr "domain « %s » memiliki beberapa constraint yang bernama « %s »"
 
-#: catalog/pg_constraint.c:881
+#: catalog/mdb_constraint.c:881
 #, c-format
 msgid "constraint \"%s\" for domain \"%s\" does not exist"
 msgstr "contraint « %s » untuk domain « %s » tidak ada"
 
-#: catalog/pg_conversion.c:67
+#: catalog/mdb_conversion.c:67
 #, c-format
 msgid "conversion \"%s\" already exists"
 msgstr "konversi « %s » sudah ada"
 
-#: catalog/pg_conversion.c:80
+#: catalog/mdb_conversion.c:80
 #, c-format
 msgid "default conversion for %s to %s already exists"
 msgstr "konversi default untuk %s ke %s sudah ada"
 
-#: catalog/pg_depend.c:165 commands/extension.c:2930
+#: catalog/mdb_depend.c:165 commands/extension.c:2930
 #, c-format
 msgid "%s is already a member of extension \"%s\""
 msgstr "%s ektensi anggota sudah ada « %s »"
 
-#: catalog/pg_depend.c:324
+#: catalog/mdb_depend.c:324
 #, c-format
 msgid "cannot remove dependency on %s because it is a system object"
 msgstr "tidak dapat mengahapus keterkaitan %s karena ini adalah sistem objek"
 
-#: catalog/pg_enum.c:114 catalog/pg_enum.c:201
+#: catalog/mdb_enum.c:114 catalog/mdb_enum.c:201
 #, c-format
 msgid "invalid enum label \"%s\""
 msgstr "label enum tidak valid « %s »"
 
-#: catalog/pg_enum.c:115 catalog/pg_enum.c:202
+#: catalog/mdb_enum.c:115 catalog/mdb_enum.c:202
 #, c-format
 msgid "Labels must be %d characters or less."
 msgstr "label harus  %d karakter atau kurang"
 
-#: catalog/pg_enum.c:230
+#: catalog/mdb_enum.c:230
 #, c-format
 msgid "enum label \"%s\" already exists, skipping"
 msgstr "label enum  « %s » sudah ada, skipping"
 
-#: catalog/pg_enum.c:237
+#: catalog/mdb_enum.c:237
 #, c-format
 msgid "enum label \"%s\" already exists"
 msgstr "label enum « %s » sudah ada"
 
-#: catalog/pg_enum.c:292
+#: catalog/mdb_enum.c:292
 #, c-format
 msgid "\"%s\" is not an existing enum label"
 msgstr "« %s » bukan label enum yang keluar"
 
-#: catalog/pg_enum.c:353
+#: catalog/mdb_enum.c:353
 #, c-format
 msgid "ALTER TYPE ADD BEFORE/AFTER is incompatible with binary upgrade"
 msgstr "ALTER TYPE ADD BEFORE/AFTER tidak kompatibel dengan biner 'upgrade'"
 
-#: catalog/pg_namespace.c:61 commands/schemacmds.c:220
+#: catalog/mdb_namespace.c:61 commands/schemacmds.c:220
 #, c-format
 msgid "schema \"%s\" already exists"
 msgstr "skema « %s » sudah ada"
 
-#: catalog/pg_operator.c:222 catalog/pg_operator.c:362
+#: catalog/mdb_operator.c:222 catalog/mdb_operator.c:362
 #, c-format
 msgid "\"%s\" is not a valid operator name"
 msgstr "« %s » bukan operator nama yang valid"
 
-#: catalog/pg_operator.c:371
+#: catalog/mdb_operator.c:371
 #, c-format
 msgid "only binary operators can have commutators"
 msgstr "hanya operator biner yang dapat memiliki 'communtators'"
 
-#: catalog/pg_operator.c:375
+#: catalog/mdb_operator.c:375
 #, c-format
 msgid "only binary operators can have join selectivity"
 msgstr "hanya operator biner yang memiliki 'join selectivity'"
 
-#: catalog/pg_operator.c:379
+#: catalog/mdb_operator.c:379
 #, c-format
 msgid "only binary operators can merge join"
 msgstr "hanya operator biner yang dapat menggabukankan 'join'"
 
-#: catalog/pg_operator.c:383
+#: catalog/mdb_operator.c:383
 #, c-format
 msgid "only binary operators can hash"
 msgstr "hanya operator bisan yang bisa melakukan hash"
 
-#: catalog/pg_operator.c:394
+#: catalog/mdb_operator.c:394
 #, c-format
 msgid "only boolean operators can have negators"
 msgstr "hanya operator boolean yang memiliki 'negators'"
 
-#: catalog/pg_operator.c:398
+#: catalog/mdb_operator.c:398
 #, c-format
 msgid "only boolean operators can have restriction selectivity"
 msgstr "hanya boolean operator yang memiliki 'restriction selectivity'"
 
-#: catalog/pg_operator.c:402
+#: catalog/mdb_operator.c:402
 #, c-format
 msgid "only boolean operators can have join selectivity"
 msgstr "hanya operator boolean yang memiliki 'join selectivity'"
 
-#: catalog/pg_operator.c:406
+#: catalog/mdb_operator.c:406
 #, c-format
 msgid "only boolean operators can merge join"
 msgstr "hanya operatot boolean yang memiliki 'merge join'"
 
-#: catalog/pg_operator.c:410
+#: catalog/mdb_operator.c:410
 #, c-format
 msgid "only boolean operators can hash"
 msgstr "hanya operator boolean yang bisa melakukan hash"
 
-#: catalog/pg_operator.c:422
+#: catalog/mdb_operator.c:422
 #, c-format
 msgid "operator %s already exists"
 msgstr "operator %s sudah ada"
 
-#: catalog/pg_operator.c:615
+#: catalog/mdb_operator.c:615
 #, c-format
 msgid "operator cannot be its own negator or sort operator"
 msgstr "Operator tidak menjadi nagator atau jenis operator"
 
-#: catalog/pg_proc.c:129 parser/parse_func.c:1599 parser/parse_func.c:1639
+#: catalog/mdb_proc.c:129 parser/parse_func.c:1599 parser/parse_func.c:1639
 #, c-format
 msgid "functions cannot have more than %d argument"
 msgid_plural "functions cannot have more than %d arguments"
 msgstr[0] "funsi tidak bisa memiliki lebih dari %d argument"
 msgstr[1] "fungsi tidak bisa memiliki lebih dari %d argument"
 
-#: catalog/pg_proc.c:242
+#: catalog/mdb_proc.c:242
 #, c-format
 msgid "A function returning a polymorphic type must have at least one polymorphic argument."
 msgstr "pengembalian funsi tipe polymorphic harus memiliki setidaknya satu polymorphic argumen"
 
-#: catalog/pg_proc.c:249
+#: catalog/mdb_proc.c:249
 #, c-format
 msgid "A function returning \"anyrange\" must have at least one \"anyrange\" argument."
 msgstr "pengembalian fungsi « anyrange » hanya memiliki setidaknya satu « anyrange » argument."
 
-#: catalog/pg_proc.c:267
+#: catalog/mdb_proc.c:267
 #, c-format
 msgid "\"%s\" is already an attribute of type %s"
 msgstr "« %s » sudah ada attribut dari tipe %s"
 
-#: catalog/pg_proc.c:393
+#: catalog/mdb_proc.c:393
 #, c-format
 msgid "function \"%s\" already exists with same argument types"
 msgstr "fungsi « %s » sudah ada dengan tipe argument yang sama"
 
-#: catalog/pg_proc.c:407 catalog/pg_proc.c:430
+#: catalog/mdb_proc.c:407 catalog/mdb_proc.c:430
 #, c-format
 msgid "cannot change return type of existing function"
 msgstr "tidak dapat merubah tipe dari fungsi keluar"
 
-#: catalog/pg_proc.c:408 catalog/pg_proc.c:432 catalog/pg_proc.c:475 catalog/pg_proc.c:499 catalog/pg_proc.c:526
+#: catalog/mdb_proc.c:408 catalog/mdb_proc.c:432 catalog/mdb_proc.c:475 catalog/mdb_proc.c:499 catalog/mdb_proc.c:526
 #, c-format
 msgid "Use DROP FUNCTION %s first."
 msgstr "pertama gunakan DROP FUNCTION %s."
 
-#: catalog/pg_proc.c:431
+#: catalog/mdb_proc.c:431
 #, c-format
 msgid "Row type defined by OUT parameters is different."
 msgstr "tipe baris didefinisikan oleh parameter OUT yang berbeda"
 
-#: catalog/pg_proc.c:473
+#: catalog/mdb_proc.c:473
 #, c-format
 msgid "cannot change name of input parameter \"%s\""
 msgstr "tidak dapat merubah nama dari parameter input « %s »"
 
-#: catalog/pg_proc.c:498
+#: catalog/mdb_proc.c:498
 #, c-format
 msgid "cannot remove parameter defaults from existing function"
 msgstr "tidak dapat menghapus parameter default dari fungsi keluar"
 
-#: catalog/pg_proc.c:525
+#: catalog/mdb_proc.c:525
 #, c-format
 msgid "cannot change data type of existing parameter default value"
 msgstr "tidak dapat merubah tipe data dari keluaran nilai parameter default "
 
-#: catalog/pg_proc.c:538
+#: catalog/mdb_proc.c:538
 #, c-format
 msgid "function \"%s\" is an aggregate function"
 msgstr "fungsi « %s » adalah fungsi aggregate"
 
-#: catalog/pg_proc.c:543
+#: catalog/mdb_proc.c:543
 #, c-format
 msgid "function \"%s\" is not an aggregate function"
 msgstr "fungsi « %s » bukan sebuah fungsi aggregate"
 
-#: catalog/pg_proc.c:551
+#: catalog/mdb_proc.c:551
 #, c-format
 msgid "function \"%s\" is a window function"
 msgstr "fungsi « %s » adalah fungsi window"
 
-#: catalog/pg_proc.c:556
+#: catalog/mdb_proc.c:556
 #, c-format
 msgid "function \"%s\" is not a window function"
 msgstr "fungsi « %s » bukan fungsi window"
 
-#: catalog/pg_proc.c:746
+#: catalog/mdb_proc.c:746
 #, c-format
 msgid "there is no built-in function named \"%s\""
 msgstr "tidak ada funsi built-in yang bernama « %s »"
 
-#: catalog/pg_proc.c:844
+#: catalog/mdb_proc.c:844
 #, c-format
 msgid "SQL functions cannot return type %s"
 msgstr "fungsi  SQL tidak dapat mengembalikan tipe %s"
 
-#: catalog/pg_proc.c:859
+#: catalog/mdb_proc.c:859
 #, c-format
 msgid "SQL functions cannot have arguments of type %s"
 msgstr "Fungsi SQL tidak memiliki argument dari tipe %s"
 
-#: catalog/pg_proc.c:945 executor/functions.c:1419
+#: catalog/mdb_proc.c:945 executor/functions.c:1419
 #, c-format
 msgid "SQL function \"%s\""
 msgstr "fungsi SQL « %s »"
 
-#: catalog/pg_shdepend.c:689
+#: catalog/mdb_shdepend.c:689
 #, c-format
 msgid ""
 "\n"
@@ -3507,75 +3507,75 @@ msgstr[1] ""
 "dan objek pada %d database lain  (lihat log server untuk\n"
 "melihat daftar)"
 
-#: catalog/pg_shdepend.c:1001
+#: catalog/mdb_shdepend.c:1001
 #, c-format
 msgid "role %u was concurrently dropped"
 msgstr "role %u telah didrop bersamaan"
 
-#: catalog/pg_shdepend.c:1020
+#: catalog/mdb_shdepend.c:1020
 #, c-format
 msgid "tablespace %u was concurrently dropped"
 msgstr "tablespace %u telah didrop bersamaan"
 
-#: catalog/pg_shdepend.c:1035
+#: catalog/mdb_shdepend.c:1035
 #, c-format
 msgid "database %u was concurrently dropped"
 msgstr "database %u telah didrop bermasaan"
 
-#: catalog/pg_shdepend.c:1079
+#: catalog/mdb_shdepend.c:1079
 #, c-format
 msgid "owner of %s"
 msgstr "pemilik dari %s"
 
-#: catalog/pg_shdepend.c:1081
+#: catalog/mdb_shdepend.c:1081
 #, c-format
 msgid "privileges for %s"
 msgstr "hak untuk « %s »"
 
 #. translator: %s will always be "database %s"
-#: catalog/pg_shdepend.c:1089
+#: catalog/mdb_shdepend.c:1089
 #, c-format
 msgid "%d object in %s"
 msgid_plural "%d objects in %s"
 msgstr[0] "%d object pada %s"
 msgstr[1] "%d objek pada %s"
 
-#: catalog/pg_shdepend.c:1200
+#: catalog/mdb_shdepend.c:1200
 #, c-format
 msgid "cannot drop objects owned by %s because they are required by the database system"
 msgstr "tidak dapat menghapus pemilik objek  oleh %s karena itu diperlukan oleh sistem database"
 
-#: catalog/pg_shdepend.c:1303
+#: catalog/mdb_shdepend.c:1303
 #, c-format
 msgid "cannot reassign ownership of objects owned by %s because they are required by the database system"
 msgstr "tidak dapat  menetepkan ulah kepemilikan dari objek yang dimiliki oleh %s karen itu diperlukan  oleh sistem database"
 
-#: catalog/pg_type.c:243
+#: catalog/mdb_type.c:243
 #, c-format
 msgid "invalid type internal size %d"
 msgstr "ukuran tipe internal tidak valid %d"
 
-#: catalog/pg_type.c:259 catalog/pg_type.c:267 catalog/pg_type.c:275 catalog/pg_type.c:284
+#: catalog/mdb_type.c:259 catalog/mdb_type.c:267 catalog/mdb_type.c:275 catalog/mdb_type.c:284
 #, c-format
 msgid "alignment \"%c\" is invalid for passed-by-value type of size %d"
 msgstr "'alignement' « %c » tidak valid untuk tipe 'passed-by-value' dari ukuran %d"
 
-#: catalog/pg_type.c:291
+#: catalog/mdb_type.c:291
 #, c-format
 msgid "internal size %d is invalid for passed-by-value type"
 msgstr "ukuran internal %d tidak valid unutk tipe passed-by-value"
 
-#: catalog/pg_type.c:300 catalog/pg_type.c:306
+#: catalog/mdb_type.c:300 catalog/mdb_type.c:306
 #, c-format
 msgid "alignment \"%c\" is invalid for variable-length type"
 msgstr "alignement « %c » tidak valid untuk tipe 'variable-lenght'"
 
-#: catalog/pg_type.c:314
+#: catalog/mdb_type.c:314
 #, c-format
 msgid "fixed-size types must have storage PLAIN"
 msgstr "tipe 'fixed-size' harus memiliki tempat penyimpan PLAIN"
 
-#: catalog/pg_type.c:772
+#: catalog/mdb_type.c:772
 #, c-format
 msgid "could not form array type name for type \"%s\""
 msgstr "tidak dapat membentuk nama tipe array untuk tipe  %s"
@@ -4450,8 +4450,8 @@ msgstr "Gunakan LC_CTYPE  yang sama sebagai pada database template atau gunakan 
 
 #: commands/dbcommands.c:395 commands/dbcommands.c:1095
 #, c-format
-msgid "pg_global cannot be used as default tablespace"
-msgstr "pg_global tidak dapat digunakan sebagai tablespace default"
+msgid "mdb_global cannot be used as default tablespace"
+msgstr "mdb_global tidak dapat digunakan sebagai tablespace default"
 
 #: commands/dbcommands.c:421
 #, c-format
@@ -4961,8 +4961,8 @@ msgstr "tidak dapat mendrop ektensi « %s » karena sedang diubah"
 
 #: commands/extension.c:2073
 #, c-format
-msgid "pg_extension_config_dump() can only be called from an SQL script executed by CREATE EXTENSION"
-msgstr "pg_extension_config_dump() hanya dapat dipanggil dari script SQL yang diekseskusi oleh CREATE EXTENSION"
+msgid "mdb_extension_config_dump() can only be called from an SQL script executed by CREATE EXTENSION"
+msgstr "mdb_extension_config_dump() hanya dapat dipanggil dari script SQL yang diekseskusi oleh CREATE EXTENSION"
 
 #: commands/extension.c:2085
 #, c-format
@@ -5386,8 +5386,8 @@ msgstr "tidak dapat membuat indek dalam tabel sementara dari sesi yang lain"
 
 #: commands/indexcmds.c:446 commands/tablecmds.c:521 commands/tablecmds.c:8809
 #, c-format
-msgid "only shared relations can be placed in pg_global tablespace"
-msgstr "hanya relasi yang dishare yang bisa ditempatkan pada tablespace pg_global"
+msgid "only shared relations can be placed in mdb_global tablespace"
+msgstr "hanya relasi yang dishare yang bisa ditempatkan pada tablespace mdb_global"
 
 #: commands/indexcmds.c:479
 #, c-format
@@ -5781,8 +5781,8 @@ msgstr "persiapan pernyataan « %s » tidak ada"
 
 #: commands/proclang.c:86
 #, c-format
-msgid "using pg_pltemplate information instead of CREATE LANGUAGE parameters"
-msgstr "tetap menggunakan informasi pg_pltemplate CREATE LANGUAGE parameter"
+msgid "using mdb_pltemplate information instead of CREATE LANGUAGE parameters"
+msgstr "tetap menggunakan informasi mdb_pltemplate CREATE LANGUAGE parameter"
 
 #: commands/proclang.c:96
 #, c-format
@@ -5801,8 +5801,8 @@ msgstr "bahasa tidak didukung « %s »"
 
 #: commands/proclang.c:244
 #, c-format
-msgid "The supported languages are listed in the pg_pltemplate system catalog."
-msgstr "Bahasa yang didukung tercantum dalam katalog sistem pg_pltemplate."
+msgid "The supported languages are listed in the mdb_pltemplate system catalog."
+msgstr "Bahasa yang didukung tercantum dalam katalog sistem mdb_pltemplate."
 
 #: commands/proclang.c:252
 #, c-format
@@ -5821,8 +5821,8 @@ msgstr "nama schema « %s » tidak dapat disetujui"
 
 #: commands/schemacmds.c:85 commands/schemacmds.c:237
 #, c-format
-msgid "The prefix \"pg_\" is reserved for system schemas."
-msgstr "Prefix « pg_ » sudah dicadangkan untuk sistem schema."
+msgid "The prefix \"mdb_\" is reserved for system schemas."
+msgstr "Prefix « mdb_ » sudah dicadangkan untuk sistem schema."
 
 #: commands/schemacmds.c:99
 #, c-format
@@ -6771,8 +6771,8 @@ msgstr "nama tablespace tidak disetujui « %s »"
 
 #: commands/tablespace.c:293 commands/tablespace.c:861
 #, c-format
-msgid "The prefix \"pg_\" is reserved for system tablespaces."
-msgstr "Prefix « pg_ » sudah dicadangkan untuk sistem tablespace."
+msgid "The prefix \"mdb_\" is reserved for system tablespaces."
+msgstr "Prefix « mdb_ » sudah dicadangkan untuk sistem tablespace."
 
 #: commands/tablespace.c:303 commands/tablespace.c:873
 #, c-format
@@ -8753,8 +8753,8 @@ msgstr ""
 
 #: libpq/auth.c:304
 #, c-format
-msgid "Connection matched pg_hba.conf line %d: \"%s\""
-msgstr "koneksi telah cocok  %d denga baris pg_hba.conf : « %s »"
+msgid "Connection matched mdb_hba.conf line %d: \"%s\""
+msgstr "koneksi telah cocok  %d denga baris mdb_hba.conf : « %s »"
 
 #: libpq/auth.c:359
 #, c-format
@@ -8763,9 +8763,9 @@ msgstr "koneksi membutuhkan sebuah setifikat yang valid dari client"
 
 #: libpq/auth.c:401
 #, c-format
-msgid "pg_hba.conf rejects replication connection for host \"%s\", user \"%s\", %s"
+msgid "mdb_hba.conf rejects replication connection for host \"%s\", user \"%s\", %s"
 msgstr ""
-"pg_hba.conf terjadi kesalahan repikasi koneksi untuk host  « %s »,\n"
+"mdb_hba.conf terjadi kesalahan repikasi koneksi untuk host  « %s »,\n"
 "pengguna « %s », %s"
 
 #: libpq/auth.c:403 libpq/auth.c:419 libpq/auth.c:467 libpq/auth.c:485
@@ -8778,23 +8778,23 @@ msgstr "SSL hidup"
 
 #: libpq/auth.c:407
 #, c-format
-msgid "pg_hba.conf rejects replication connection for host \"%s\", user \"%s\""
+msgid "mdb_hba.conf rejects replication connection for host \"%s\", user \"%s\""
 msgstr ""
-"pg_hba.conf terjadi kesalahan replikasi koneksi untuk host « %s »,\n"
+"mdb_hba.conf terjadi kesalahan replikasi koneksi untuk host « %s »,\n"
 "pengguna « %s »"
 
 #: libpq/auth.c:416
 #, c-format
-msgid "pg_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\", %s"
+msgid "mdb_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\", %s"
 msgstr ""
-"pg_hba.conf terjadi kesalahan koneksi untuk host « %s », pengguna « %s », dasar\n"
+"mdb_hba.conf terjadi kesalahan koneksi untuk host « %s », pengguna « %s », dasar\n"
 "data « %s », %s"
 
 #: libpq/auth.c:423
 #, c-format
-msgid "pg_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\""
+msgid "mdb_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\""
 msgstr ""
-"pg_hba.conf terjadi kesalahan untuk host « %s », pengguna « %s », dasar\n"
+"mdb_hba.conf terjadi kesalahan untuk host « %s », pengguna « %s », dasar\n"
 "data « %s »"
 
 #: libpq/auth.c:452
@@ -8814,30 +8814,30 @@ msgstr "Clent menyelesaikan IP address untuk « %s », dilihat terlebih dahulu y
 
 #: libpq/auth.c:465
 #, c-format
-msgid "no pg_hba.conf entry for replication connection from host \"%s\", user \"%s\", %s"
+msgid "no mdb_hba.conf entry for replication connection from host \"%s\", user \"%s\", %s"
 msgstr ""
-"tidak ada entry dari pg_hba.conf untuk replikasi coneksi dari \n"
+"tidak ada entry dari mdb_hba.conf untuk replikasi coneksi dari \n"
 "host « %s », pengguna « %s », %s"
 
 #: libpq/auth.c:472
 #, c-format
-msgid "no pg_hba.conf entry for replication connection from host \"%s\", user \"%s\""
+msgid "no mdb_hba.conf entry for replication connection from host \"%s\", user \"%s\""
 msgstr ""
-"tidak ada entry pg_hba.conf replikasi coneksi dari \n"
+"tidak ada entry mdb_hba.conf replikasi coneksi dari \n"
 "host « %s », pengguna « %s »"
 
 #: libpq/auth.c:482
 #, c-format
-msgid "no pg_hba.conf entry for host \"%s\", user \"%s\", database \"%s\", %s"
+msgid "no mdb_hba.conf entry for host \"%s\", user \"%s\", database \"%s\", %s"
 msgstr ""
-"tidak ada entry pg_hba.conf untuk host« %s », pengguna « %s »,\n"
+"tidak ada entry mdb_hba.conf untuk host« %s », pengguna « %s »,\n"
 "database « %s », %s"
 
 #: libpq/auth.c:490
 #, c-format
-msgid "no pg_hba.conf entry for host \"%s\", user \"%s\", database \"%s\""
+msgid "no mdb_hba.conf entry for host \"%s\", user \"%s\", database \"%s\""
 msgstr ""
-"tidak ada entry pg_hba.conf untuk host « %s », pengguna « %s »,\n"
+"tidak ada entry mdb_hba.conf untuk host « %s », pengguna « %s »,\n"
 "database « %s »"
 
 #: libpq/auth.c:542 libpq/hba.c:1206
@@ -11613,27 +11613,27 @@ msgstr "CREATE menentukan skema (%s) yang berbeda dengan yang dibuat (%s)"
 msgid "identifier \"%s\" will be truncated to \"%s\""
 msgstr "identifier « %s » akan dipotong menjadi « %s »"
 
-#: port/pg_latch.c:336 port/unix_latch.c:336
+#: port/mdb_latch.c:336 port/unix_latch.c:336
 #, c-format
 msgid "poll() failed: %m"
 msgstr "poll() gagal : %m"
 
-#: port/pg_latch.c:423 port/unix_latch.c:423 replication/libpqwalreceiver/libpqwalreceiver.c:356
+#: port/mdb_latch.c:423 port/unix_latch.c:423 replication/libpqwalreceiver/libpqwalreceiver.c:356
 #, c-format
 msgid "select() failed: %m"
 msgstr "select() gagal : %m"
 
-#: port/pg_sema.c:113 port/sysv_sema.c:113
+#: port/mdb_sema.c:113 port/sysv_sema.c:113
 #, c-format
 msgid "could not create semaphores: %m"
 msgstr "tidak dapat membuat sempahore: %m"
 
-#: port/pg_sema.c:114 port/sysv_sema.c:114
+#: port/mdb_sema.c:114 port/sysv_sema.c:114
 #, c-format
 msgid "Failed system call was semget(%lu, %d, 0%o)."
 msgstr "Pemanggilan sistem gagal semget(%lu, %d, 0%o)."
 
-#: port/pg_sema.c:118 port/sysv_sema.c:118
+#: port/mdb_sema.c:118 port/sysv_sema.c:118
 #, c-format
 msgid ""
 "This error does *not* mean that you have run out of disk space.  It occurs when either the system limit for the maximum number of semaphore sets (SEMMNI), or the system wide maximum number of semaphores (SEMMNS), would be exceeded.  You need to raise the respective kernel parameter.  Alternatively, reduce MollyDB's consumption of semaphores by reducing its max_connections parameter.\n"
@@ -11642,22 +11642,22 @@ msgstr ""
 "Kesalahan ini *tidak* berarti anda kehabisan disk space. Hal ini muncul ketika melebihi batasan system untuk jumlah maksimum himpunan semaphore (SEMMNI), atau maksimum jumlah semaphore keseluruhan system (SEMMNS). Anda perlu untuk meningkatkan parameter kernel yang berhubungan. Cara lain, kurangi konsumsi semaphore MollyDB dengan mengurangi parameter max_connection.  Dokumentasi MollyDB mengandung "
 "lebih banyak informasi tentang mengkonfigurasi system anda untuk MollyDB."
 
-#: port/pg_sema.c:148 port/sysv_sema.c:148
+#: port/mdb_sema.c:148 port/sysv_sema.c:148
 #, c-format
 msgid "You possibly need to raise your kernel's SEMVMX value to be at least %d.  Look into the MollyDB documentation for details."
 msgstr "Anda perlu untuk meningkatkan nilai SEMVMX kernel setidaknya %d. Lihat dokumentasi MollyDB untuk detilnya."
 
-#: port/pg_shmem.c:163 port/sysv_shmem.c:163
+#: port/mdb_shmem.c:163 port/sysv_shmem.c:163
 #, c-format
 msgid "could not create shared memory segment: %m"
 msgstr "tidak dapat membuat segmen shared memory: %m"
 
-#: port/pg_shmem.c:164 port/sysv_shmem.c:164
+#: port/mdb_shmem.c:164 port/sysv_shmem.c:164
 #, c-format
 msgid "Failed system call was shmget(key=%lu, size=%lu, 0%o)."
 msgstr "Pemanggilan sistem yang gagal adalah shmget(key=%lu, ukuran=%lu, 0%o)."
 
-#: port/pg_shmem.c:168 port/sysv_shmem.c:168
+#: port/mdb_shmem.c:168 port/sysv_shmem.c:168
 #, c-format
 msgid ""
 "This error usually means that MollyDB's request for a shared memory segment exceeded your kernel's SHMMAX parameter, or possibly that it is less than your kernel's SHMMIN parameter.\n"
@@ -11666,7 +11666,7 @@ msgstr ""
 "Kesalahan ini biasanya berarti request MollyDB terhadap segmen shared memory melebihi parameter SHMMAX kernel anda, atau mungkin saja lebih kecil dari parameter SHMMIN kernel anda.\n"
 "Dokumentasi MollyDB mengandung lebih banyak informasi tentang konfigurasi shared memory."
 
-#: port/pg_shmem.c:175 port/sysv_shmem.c:175
+#: port/mdb_shmem.c:175 port/sysv_shmem.c:175
 #, c-format
 msgid ""
 "This error usually means that MollyDB's request for a shared memory segment exceeded your kernel's SHMALL parameter.  You might need to reconfigure the kernel with larger SHMALL.\n"
@@ -11675,7 +11675,7 @@ msgstr ""
 "Kesalahan ini biasanya berarti request MollyDB terhadap segmen shared memory melebihi parameter SHMMALL kernel anda, atau mungkin saja lebih kecil dari parameter SHMALL kernel anda.\n"
 "Dokumentasi MollyDB mengandung lebih banyak informasi tentang konfigurasi shared memory."
 
-#: port/pg_shmem.c:181 port/sysv_shmem.c:181
+#: port/mdb_shmem.c:181 port/sysv_shmem.c:181
 #, c-format
 msgid ""
 "This error does *not* mean that you have run out of disk space.  It occurs either if all available shared memory IDs have been taken, in which case you need to raise the SHMMNI parameter in your kernel, or because the system's overall limit for shared memory has been reached.\n"
@@ -11684,17 +11684,17 @@ msgstr ""
 "Kesalahan ini *tidak* berarti anda kehabisan disk space. Hal ini muncul ketika ID shared memory telah seluruhnya diambil, dimana anda perlu untuk meningkatkan parameter SHMMNI kernel anda, atau karena telah menemui batasan shared memory sistem secara keseluruhan \n"
 "Dokumentasi MollyDB mengandung lebih banyak informasi tentang mengkonfigurasi system anda untuk MollyDB."
 
-#: port/pg_shmem.c:419 port/sysv_shmem.c:419
+#: port/mdb_shmem.c:419 port/sysv_shmem.c:419
 #, c-format
 msgid "could not map anonymous shared memory: %m"
 msgstr "tidak dapat memetakan shared memory anonim: %m"
 
-#: port/pg_shmem.c:421 port/sysv_shmem.c:421
+#: port/mdb_shmem.c:421 port/sysv_shmem.c:421
 #, c-format
 msgid "This error usually means that MollyDB's request for a shared memory segment exceeded available memory or swap space. To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections."
 msgstr "Kesalahan ini biasanya berarti request MollyDB untuk segmen shared memory melebihi memory yang tersedia atau swap space. Untuk mengurangi ukuran yang diminta (saat ini %lu bytes), kurangilah penggunaan shared memory, mungkin dengan mengurangi shared_buffer atau max_connections."
 
-#: port/pg_shmem.c:508 port/sysv_shmem.c:508
+#: port/mdb_shmem.c:508 port/sysv_shmem.c:508
 #, c-format
 msgid "could not stat data directory \"%s\": %m"
 msgstr "tidak dapat melakukan stat pada direktori data « %s » : %m"
@@ -12173,8 +12173,8 @@ msgstr "log output selanjutnya akan menuju ke log destinasi « %s »."
 
 #: postmaster/postmaster.c:1217 utils/init/postinit.c:199
 #, c-format
-msgid "could not load pg_hba.conf"
-msgstr "tidak dapat membuat pg_hba.conf"
+msgid "could not load mdb_hba.conf"
+msgstr "tidak dapat membuat mdb_hba.conf"
 
 #: postmaster/postmaster.c:1293
 #, c-format
@@ -12309,13 +12309,13 @@ msgstr "menerima SIGHUP, memuat ulang file konfigurasi"
 
 #: postmaster/postmaster.c:2317
 #, c-format
-msgid "pg_hba.conf not reloaded"
-msgstr "pg_hba.conf tidak memuat ulang"
+msgid "mdb_hba.conf not reloaded"
+msgstr "mdb_hba.conf tidak memuat ulang"
 
 #: postmaster/postmaster.c:2321
 #, c-format
-msgid "pg_ident.conf not reloaded"
-msgstr "pg_ident.conf tidak memuat ulang"
+msgid "mdb_ident.conf not reloaded"
+msgstr "mdb_ident.conf tidak memuat ulang"
 
 #: postmaster/postmaster.c:2362
 #, c-format
@@ -12667,7 +12667,7 @@ msgstr "tidak dapat membuka file log « %s »: %m"
 msgid "disabling automatic rotation (use SIGHUP to re-enable)"
 msgstr "menonaktifkan rotasi otomatis (gunakan SIGHUP untuk mengaktifkan kembali)"
 
-#: regex/regc_pg_locale.c:261
+#: regex/regc_mdb_locale.c:261
 #, c-format
 msgid "could not determine which collation to use for regular expression"
 msgstr "tidak dapat menetukan yang digunakan untuk pemeriksaan ekspresi reguler"
@@ -15958,32 +15958,32 @@ msgstr "karakter yang diminta terlalu besar untuk encoding: %d"
 msgid "null character not permitted"
 msgstr "karakter NULL tidak diperbolehkan"
 
-#: utils/adt/pg_locale.c:1026
+#: utils/adt/mdb_locale.c:1026
 #, c-format
 msgid "could not create locale \"%s\": %m"
 msgstr "tidak dapat membuat lokalisasi « %s » : %m"
 
-#: utils/adt/pg_locale.c:1029
+#: utils/adt/mdb_locale.c:1029
 #, c-format
 msgid "The operating system could not find any locale data for the locale name \"%s\"."
 msgstr "Sistem operasi tidak dapat menemukan data lokalisasi untuk nama lokalisasi « %s »."
 
-#: utils/adt/pg_locale.c:1116
+#: utils/adt/mdb_locale.c:1116
 #, c-format
 msgid "collations with different collate and ctype values are not supported on this platform"
 msgstr "collation dengan collate yang berbeda dan nilai ctype tidak didukung pada platform ini"
 
-#: utils/adt/pg_locale.c:1131
+#: utils/adt/mdb_locale.c:1131
 #, c-format
 msgid "nondefault collations are not supported on this platform"
 msgstr "collation tidak defaul tidak didukung pada paltform ini"
 
-#: utils/adt/pg_locale.c:1302
+#: utils/adt/mdb_locale.c:1302
 #, c-format
 msgid "invalid multibyte character for locale"
 msgstr "karakter multibyte tidak valid untuk lokalisasi"
 
-#: utils/adt/pg_locale.c:1303
+#: utils/adt/mdb_locale.c:1303
 #, c-format
 msgid "The server's LC_CTYPE locale is probably incompatible with the database encoding."
 msgstr "Lokalisasi LC_CTYPE server mungkin tidak sesuai dengan encoding database."
@@ -16105,8 +16105,8 @@ msgstr "tidak dapat menampilkan nilai dengan tipe shell"
 
 #: utils/adt/pseudotypes.c:525 utils/adt/pseudotypes.c:549
 #, c-format
-msgid "cannot accept a value of type pg_node_tree"
-msgstr "tidak dapat menerima nilai dengan tipe pg_node_tree"
+msgid "cannot accept a value of type mdb_node_tree"
+msgstr "tidak dapat menerima nilai dengan tipe mdb_node_tree"
 
 #: utils/adt/rangetypes.c:396
 #, c-format
@@ -16260,8 +16260,8 @@ msgstr "fungsi « %s » harus dipicu untuk DELETE"
 
 #: utils/adt/ri_triggers.c:2751
 #, c-format
-msgid "no pg_constraint entry for trigger \"%s\" on table \"%s\""
-msgstr "tidak ada entry pg_constraint untuk trigger « %s » pada table « %s »"
+msgid "no mdb_constraint entry for trigger \"%s\" on table \"%s\""
+msgstr "tidak ada entry mdb_constraint untuk trigger « %s » pada table « %s »"
 
 #: utils/adt/ri_triggers.c:2753
 #, c-format
@@ -17397,8 +17397,8 @@ msgstr "koneksi terautorisasi: user=%s, database=%s"
 
 #: utils/init/postinit.c:269
 #, c-format
-msgid "database \"%s\" has disappeared from pg_database"
-msgstr "database « %s » telah hilang dari pg_database"
+msgid "database \"%s\" has disappeared from mdb_database"
+msgstr "database « %s » telah hilang dari mdb_database"
 
 #: utils/init/postinit.c:271
 #, c-format
@@ -18525,8 +18525,8 @@ msgid "Zero logs all files. The default is -1 (turning this feature off)."
 msgstr "log kosong untuk semua file. Defaultnya -1 (mematikan fitur ini)."
 
 #: utils/misc/guc.c:2445
-msgid "Sets the size reserved for pg_stat_activity.query, in bytes."
-msgstr "Mengatur ukuran yang disediakan untuk pg_stat_activity.query, dalam byte."
+msgid "Sets the size reserved for mdb_stat_activity.query, in bytes."
+msgstr "Mengatur ukuran yang disediakan untuk mdb_stat_activity.query, dalam byte."
 
 #: utils/misc/guc.c:2464
 msgid "Sets the planner's estimate of the cost of a sequentially fetched disk page."

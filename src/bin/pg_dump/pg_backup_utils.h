@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup_utils.h
- *	Utility routines shared by pg_dump and pg_restore.
+ * mdb_backup_utils.h
+ *	Utility routines shared by mdb_dump and mdb_restore.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/bin/pg_dump/pg_backup_utils.h
+ * src/bin/mdb_dump/mdb_backup_utils.h
  *
  *-------------------------------------------------------------------------
  */
@@ -28,11 +28,11 @@ typedef void (*on_exit_nicely_callback) (int code, void *arg);
 extern const char *progname;
 
 extern void set_dump_section(const char *arg, int *dumpSections);
-extern void write_msg(const char *modulename, const char *fmt,...) pg_attribute_printf(2, 3);
-extern void vwrite_msg(const char *modulename, const char *fmt, va_list ap) pg_attribute_printf(2, 0);
+extern void write_msg(const char *modulename, const char *fmt,...) mdb_attribute_printf(2, 3);
+extern void vwrite_msg(const char *modulename, const char *fmt, va_list ap) mdb_attribute_printf(2, 0);
 extern void on_exit_nicely(on_exit_nicely_callback function, void *arg);
-extern void exit_nicely(int code) pg_attribute_noreturn();
+extern void exit_nicely(int code) mdb_attribute_noreturn();
 
-extern void exit_horribly(const char *modulename, const char *fmt,...) pg_attribute_printf(2, 3) pg_attribute_noreturn();
+extern void exit_horribly(const char *modulename, const char *fmt,...) mdb_attribute_printf(2, 3) mdb_attribute_noreturn();
 
 #endif   /* PG_BACKUP_UTILS_H */

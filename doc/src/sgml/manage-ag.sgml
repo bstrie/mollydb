@@ -26,7 +26,7 @@
    (<quote>database objects</quote>).  Generally, every database
    object (tables, functions, etc.) belongs to one and only one
    database.  (However there are a few system catalogs, for example
-   <literal>pg_database</>, that belong to a whole cluster and
+   <literal>mdb_database</>, that belong to a whole cluster and
    are accessible from each database within the cluster.)  More
    accurately, a database is a collection of schemas and the schemas
    contain the tables, functions, etc.  So the full hierarchy is:
@@ -58,9 +58,9 @@
    <command>DROP DATABASE</> command
    (see <xref linkend="manage-ag-dropdb">).
    To determine the set of existing databases, examine the
-   <structname>pg_database</> system catalog, for example
+   <structname>mdb_database</> system catalog, for example
 <synopsis>
-SELECT datname FROM pg_database;
+SELECT datname FROM mdb_database;
 </synopsis>
    The <xref linkend="app-psql"> program's <literal>\l</> meta-command
    and <option>-l</> command-line option are also useful for listing the
@@ -202,7 +202,7 @@ createdb -O <replaceable>rolename</> <replaceable>dbname</>
    of <literal>template1</>, you can create a <quote>virgin</> user
    database that contains none of the site-local additions in
    <literal>template1</>.  This is particularly handy when restoring a
-   <literal>pg_dump</> dump: the dump script should be restored in a
+   <literal>mdb_dump</> dump: the dump script should be restored in a
    virgin database to ensure that one recreates the correct contents
    of the dumped database, without conflicting with objects that
    might have been added to <literal>template1</> later on.
@@ -243,7 +243,7 @@ createdb -T template0 <replaceable>dbname</>
   </para>
 
   <para>
-   Two useful flags exist in <literal>pg_database</literal><indexterm><primary>pg_database</></> for each
+   Two useful flags exist in <literal>mdb_database</literal><indexterm><primary>mdb_database</></> for each
    database: the columns <literal>datistemplate</literal> and
    <literal>datallowconn</literal>.  <literal>datistemplate</literal>
    can be set to indicate that a database is intended as a template for
@@ -267,7 +267,7 @@ createdb -T template0 <replaceable>dbname</>
     <literal>template0</> without any ill effects.  This course of action
     might be advisable if one has carelessly added a bunch of junk in
     <literal>template1</>. (To delete <literal>template1</literal>,
-    it must have <literal>pg_database.datistemplate = false</>.)
+    it must have <literal>mdb_database.datistemplate = false</>.)
    </para>
 
    <para>
@@ -473,8 +473,8 @@ CREATE TABLE foo(i int);
   <para>
    Two tablespaces are automatically created when the database cluster
    is initialized.  The
-   <literal>pg_global</> tablespace is used for shared system catalogs. The
-   <literal>pg_default</> tablespace is the default tablespace of the
+   <literal>mdb_global</> tablespace is used for shared system catalogs. The
+   <literal>mdb_default</> tablespace is the default tablespace of the
    <literal>template1</> and <literal>template0</> databases (and, therefore,
    will be the default tablespace for other databases as well, unless
    overridden by a <literal>TABLESPACE</> clause in <command>CREATE
@@ -496,10 +496,10 @@ CREATE TABLE foo(i int);
 
   <para>
    To determine the set of existing tablespaces, examine the
-   <link linkend="catalog-pg-tablespace"><structname>pg_tablespace</structname>
+   <link linkend="catalog-pg-tablespace"><structname>mdb_tablespace</structname>
    </link> system catalog, for example
 <synopsis>
-SELECT spcname FROM pg_tablespace;
+SELECT spcname FROM mdb_tablespace;
 </synopsis>
    The <xref linkend="app-psql"> program's <literal>\db</> meta-command
    is also useful for listing the existing tablespaces.
@@ -513,13 +513,13 @@ SELECT spcname FROM pg_tablespace;
   </para>
 
   <para>
-   The directory <filename>$PGDATA/pg_tblspc</> contains symbolic links that
+   The directory <filename>$PGDATA/mdb_tblspc</> contains symbolic links that
    point to each of the non-built-in tablespaces defined in the cluster.
    Although not recommended, it is possible to adjust the tablespace
    layout by hand by redefining these links. Under no circumstances perform
    this operation while the server is running. Note that in MollyDB 9.1
-   and earlier you will also need to update the <structname>pg_tablespace</>
-   catalog with the new locations. (If you do not, <literal>pg_dump</> will
+   and earlier you will also need to update the <structname>mdb_tablespace</>
+   catalog with the new locations. (If you do not, <literal>mdb_dump</> will
    continue to output the old tablespace locations.)
   </para>
 

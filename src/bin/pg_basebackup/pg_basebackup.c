@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_basebackup.c - receive a base backup using streaming replication protocol
+ * mdb_basebackup.c - receive a base backup using streaming replication protocol
  *
  * Author: Magnus Hagander <magnus@hagander.net>
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  src/bin/pg_basebackup/pg_basebackup.c
+ *		  src/bin/mdb_basebackup/mdb_basebackup.c
  *-------------------------------------------------------------------------
  */
 
@@ -56,7 +56,7 @@ static char *basedir = NULL;
 static TablespaceList tablespace_dirs = {NULL, NULL};
 static char *xlog_dir = "";
 static char format = 'p';		/* p(lain)/t(ar) */
-static char *label = "pg_basebackup base backup";
+static char *label = "mdb_basebackup base backup";
 static bool showprogress = false;
 static int	verbose = 0;
 static int	compresslevel = 0;
@@ -65,7 +65,7 @@ static bool streamwal = false;
 static bool fastcheckpoint = false;
 static bool writerecoveryconf = false;
 static int	standby_message_timeout = 10 * 1000;		/* 10 sec = default */
-static pg_time_t last_progress_report = 0;
+static mdb_time_t last_progress_report = 0;
 static int32 maxrate = 0;		/* no limit by default */
 
 
@@ -141,7 +141,7 @@ disconnect_and_exit(int code)
 static void
 tablespace_list_append(const char *arg)
 {
-	TablespaceListCell *cell = (TablespaceListCell *) pg_malloc0(sizeof(TablespaceListCell));
+	TablespaceListCell *cell = (TablespaceListCell *) mdb_malloc0(sizeof(TablespaceListCell));
 	char	   *dst;
 	char	   *dst_ptr;
 	const char *arg_ptr;
@@ -411,7 +411,7 @@ StartLogStreamer(char *startpos, uint32 timeline, char *sysidentifier)
 				lo;
 	char		statusdir[MAXPGPATH];
 
-	param = pg_malloc0(sizeof(logstreamer_param));
+	param = mdb_malloc0(sizeof(logstreamer_param));
 	param->timeline = timeline;
 	param->sysidentifier = sysidentifier;
 
@@ -444,17 +444,17 @@ StartLogStreamer(char *startpos, uint32 timeline, char *sysidentifier)
 		/* Error message already written in GetConnection() */
 		exit(1);
 
-	snprintf(param->xlogdir, sizeof(param->xlogdir), "%s/pg_xlog", basedir);
+	snprintf(param->xlogdir, sizeof(param->xlogdir), "%s/mdb_xlog", basedir);
 
 	/*
-	 * Create pg_xlog/archive_status (and thus pg_xlog) so we can write to
-	 * basedir/pg_xlog as the directory entry in the tar file may arrive
+	 * Create mdb_xlog/archive_status (and thus mdb_xlog) so we can write to
+	 * basedir/mdb_xlog as the directory entry in the tar file may arrive
 	 * later.
 	 */
-	snprintf(statusdir, sizeof(statusdir), "%s/pg_xlog/archive_status",
+	snprintf(statusdir, sizeof(statusdir), "%s/mdb_xlog/archive_status",
 			 basedir);
 
-	if (pg_mkdir_p(statusdir, S_IRWXU) != 0 && errno != EEXIST)
+	if (mdb_mkdir_p(statusdir, S_IRWXU) != 0 && errno != EEXIST)
 	{
 		fprintf(stderr,
 				_("%s: could not create directory \"%s\": %s\n"),
@@ -502,14 +502,14 @@ StartLogStreamer(char *startpos, uint32 timeline, char *sysidentifier)
 static void
 verify_dir_is_empty_or_create(char *dirname)
 {
-	switch (pg_check_dir(dirname))
+	switch (mdb_check_dir(dirname))
 	{
 		case 0:
 
 			/*
 			 * Does not exist, so create
 			 */
-			if (pg_mkdir_p(dirname, S_IRWXU) == -1)
+			if (mdb_mkdir_p(dirname, S_IRWXU) == -1)
 			{
 				fprintf(stderr,
 						_("%s: could not create directory \"%s\": %s\n"),
@@ -559,7 +559,7 @@ progress_report(int tablespacenum, const char *filename, bool force)
 	int			percent;
 	char		totaldone_str[32];
 	char		totalsize_str[32];
-	pg_time_t	now;
+	mdb_time_t	now;
 
 	if (!showprogress)
 		return;
@@ -1248,15 +1248,15 @@ ReceiveAndUnpackTarFile(PGconn *conn, PGresult *res, int rownum)
 					if (mkdir(filename, S_IRWXU) != 0)
 					{
 						/*
-						 * When streaming WAL, pg_xlog will have been created
+						 * When streaming WAL, mdb_xlog will have been created
 						 * by the wal receiver process. Also, when transaction
-						 * log directory location was specified, pg_xlog has
+						 * log directory location was specified, mdb_xlog has
 						 * already been created as a symbolic link before
 						 * starting the actual backup. So just ignore creation
 						 * failures on related directories.
 						 */
-						if (!((pg_str_endswith(filename, "/pg_xlog") ||
-							 pg_str_endswith(filename, "/archive_status")) &&
+						if (!((mdb_str_endswith(filename, "/mdb_xlog") ||
+							 mdb_str_endswith(filename, "/archive_status")) &&
 							  errno == EEXIST))
 						{
 							fprintf(stderr,
@@ -1277,11 +1277,11 @@ ReceiveAndUnpackTarFile(PGconn *conn, PGresult *res, int rownum)
 					/*
 					 * Symbolic link
 					 *
-					 * It's most likely a link in pg_tblspc directory, to the
+					 * It's most likely a link in mdb_tblspc directory, to the
 					 * location of a tablespace. Apply any tablespace mapping
 					 * given on the command line (--tablespace-mapping). (We
 					 * blindly apply the mapping without checking that the
-					 * link really is inside pg_tblspc. We don't expect there
+					 * link really is inside mdb_tblspc. We don't expect there
 					 * to be other symlinks in a data directory, but if there
 					 * are, you can call it an undocumented feature that you
 					 * can map them too.)
@@ -1428,16 +1428,16 @@ escapeConnectionParameter(const char *src)
 	}
 
 	if (*src == '\0')
-		return pg_strdup("''");
+		return mdb_strdup("''");
 
 	if (!need_quotes && !need_escaping)
-		return pg_strdup(src);	/* no quoting or escaping needed */
+		return mdb_strdup(src);	/* no quoting or escaping needed */
 
 	/*
 	 * Allocate a buffer large enough for the worst case that all the source
 	 * characters need to be escaped, plus quotes.
 	 */
-	dstbuf = pg_malloc(strlen(src) * 2 + 2 + 1);
+	dstbuf = mdb_malloc(strlen(src) * 2 + 2 + 1);
 
 	dst = dstbuf;
 	if (need_quotes)
@@ -1971,7 +1971,7 @@ main(int argc, char **argv)
 	int			option_index;
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_basebackup"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_basebackup"));
 
 	if (argc > 1)
 	{
@@ -1983,7 +1983,7 @@ main(int argc, char **argv)
 		else if (strcmp(argv[1], "-V") == 0
 				 || strcmp(argv[1], "--version") == 0)
 		{
-			puts("pg_basebackup (MollyDB) " PG_VERSION);
+			puts("mdb_basebackup (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -1994,7 +1994,7 @@ main(int argc, char **argv)
 		switch (c)
 		{
 			case 'D':
-				basedir = pg_strdup(optarg);
+				basedir = mdb_strdup(optarg);
 				break;
 			case 'F':
 				if (strcmp(optarg, "p") == 0 || strcmp(optarg, "plain") == 0)
@@ -2016,7 +2016,7 @@ main(int argc, char **argv)
 				writerecoveryconf = true;
 				break;
 			case 'S':
-				replication_slot = pg_strdup(optarg);
+				replication_slot = mdb_strdup(optarg);
 				break;
 			case 'T':
 				tablespace_list_append(optarg);
@@ -2058,10 +2058,10 @@ main(int argc, char **argv)
 				}
 				break;
 			case 1:
-				xlog_dir = pg_strdup(optarg);
+				xlog_dir = mdb_strdup(optarg);
 				break;
 			case 'l':
-				label = pg_strdup(optarg);
+				label = mdb_strdup(optarg);
 				break;
 			case 'z':
 #ifdef HAVE_LIBZ
@@ -2080,9 +2080,9 @@ main(int argc, char **argv)
 				}
 				break;
 			case 'c':
-				if (pg_strcasecmp(optarg, "fast") == 0)
+				if (mdb_strcasecmp(optarg, "fast") == 0)
 					fastcheckpoint = true;
-				else if (pg_strcasecmp(optarg, "spread") == 0)
+				else if (mdb_strcasecmp(optarg, "spread") == 0)
 					fastcheckpoint = false;
 				else
 				{
@@ -2092,16 +2092,16 @@ main(int argc, char **argv)
 				}
 				break;
 			case 'd':
-				connection_string = pg_strdup(optarg);
+				connection_string = mdb_strdup(optarg);
 				break;
 			case 'h':
-				dbhost = pg_strdup(optarg);
+				dbhost = mdb_strdup(optarg);
 				break;
 			case 'p':
-				dbport = pg_strdup(optarg);
+				dbport = mdb_strdup(optarg);
 				break;
 			case 'U':
-				dbuser = pg_strdup(optarg);
+				dbuser = mdb_strdup(optarg);
 				break;
 			case 'w':
 				dbgetpassword = -1;
@@ -2242,7 +2242,7 @@ main(int argc, char **argv)
 		verify_dir_is_empty_or_create(xlog_dir);
 
 		/* form name of the place where the symlink must go */
-		linkloc = psprintf("%s/pg_xlog", basedir);
+		linkloc = psprintf("%s/mdb_xlog", basedir);
 
 #ifdef HAVE_SYMLINK
 		if (symlink(xlog_dir, linkloc) != 0)

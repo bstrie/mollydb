@@ -8,7 +8,7 @@
  * a system catalog relation, or adds, deletes, or modifies standard
  * catalog entries in such a way that an updated backend wouldn't work
  * with an old database (or vice versa), the catalog version number
- * should be changed.  The version number stored in pg_control by initdb
+ * should be changed.  The version number stored in mdb_control by initdb
  * is checked against the version number compiled into the backend at
  * startup time, so that a backend can refuse to run in an incompatible
  * database.

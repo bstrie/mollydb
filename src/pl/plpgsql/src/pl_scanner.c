@@ -15,7 +15,7 @@
  */
 #include "plmdb.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "parser/scanner.h"
 
 #include "pl_gram.h"			/* must be after parser/scanner.h */
@@ -141,11 +141,11 @@ static const ScanKeyword unreserved_keywords[] = {
 	PG_KEYWORD("open", K_OPEN, UNRESERVED_KEYWORD)
 	PG_KEYWORD("option", K_OPTION, UNRESERVED_KEYWORD)
 	PG_KEYWORD("perform", K_PERFORM, UNRESERVED_KEYWORD)
-	PG_KEYWORD("pg_context", K_PG_CONTEXT, UNRESERVED_KEYWORD)
-	PG_KEYWORD("pg_datatype_name", K_PG_DATATYPE_NAME, UNRESERVED_KEYWORD)
-	PG_KEYWORD("pg_exception_context", K_PG_EXCEPTION_CONTEXT, UNRESERVED_KEYWORD)
-	PG_KEYWORD("pg_exception_detail", K_PG_EXCEPTION_DETAIL, UNRESERVED_KEYWORD)
-	PG_KEYWORD("pg_exception_hint", K_PG_EXCEPTION_HINT, UNRESERVED_KEYWORD)
+	PG_KEYWORD("mdb_context", K_PG_CONTEXT, UNRESERVED_KEYWORD)
+	PG_KEYWORD("mdb_datatype_name", K_PG_DATATYPE_NAME, UNRESERVED_KEYWORD)
+	PG_KEYWORD("mdb_exception_context", K_PG_EXCEPTION_CONTEXT, UNRESERVED_KEYWORD)
+	PG_KEYWORD("mdb_exception_detail", K_PG_EXCEPTION_DETAIL, UNRESERVED_KEYWORD)
+	PG_KEYWORD("mdb_exception_hint", K_PG_EXCEPTION_HINT, UNRESERVED_KEYWORD)
 	PG_KEYWORD("print_strict_params", K_PRINT_STRICT_PARAMS, UNRESERVED_KEYWORD)
 	PG_KEYWORD("prior", K_PRIOR, UNRESERVED_KEYWORD)
 	PG_KEYWORD("query", K_QUERY, UNRESERVED_KEYWORD)
@@ -590,7 +590,7 @@ plmdb_scanner_errposition(int location)
 		return 0;				/* no-op if location is unknown */
 
 	/* Convert byte offset to character number */
-	pos = pg_mbstrlen_with_len(scanorig, location) + 1;
+	pos = mdb_mbstrlen_with_len(scanorig, location) + 1;
 	/* And pass it to the ereport mechanism */
 	(void) internalerrposition(pos);
 	/* Also pass the function body string */

@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_opfamily.h
- *	  definition of the system "opfamily" relation (pg_opfamily)
+ * mdb_opfamily.h
+ *	  definition of the system "opfamily" relation (mdb_opfamily)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_opfamily.h
+ * src/include/catalog/mdb_opfamily.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,39 +22,39 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_opfamily definition. cpp turns this into
- *		typedef struct FormData_pg_opfamily
+ *		mdb_opfamily definition. cpp turns this into
+ *		typedef struct FormData_mdb_opfamily
  * ----------------
  */
 #define OperatorFamilyRelationId  2753
 
-CATALOG(pg_opfamily,2753)
+CATALOG(mdb_opfamily,2753)
 {
 	Oid			opfmethod;		/* index access method opfamily is for */
 	NameData	opfname;		/* name of this opfamily */
 	Oid			opfnamespace;	/* namespace of this opfamily */
 	Oid			opfowner;		/* opfamily owner */
-} FormData_pg_opfamily;
+} FormData_mdb_opfamily;
 
 /* ----------------
- *		Form_pg_opfamily corresponds to a pointer to a tuple with
- *		the format of pg_opfamily relation.
+ *		Form_mdb_opfamily corresponds to a pointer to a tuple with
+ *		the format of mdb_opfamily relation.
  * ----------------
  */
-typedef FormData_pg_opfamily *Form_pg_opfamily;
+typedef FormData_mdb_opfamily *Form_mdb_opfamily;
 
 /* ----------------
- *		compiler constants for pg_opfamily
+ *		compiler constants for mdb_opfamily
  * ----------------
  */
-#define Natts_pg_opfamily				4
-#define Anum_pg_opfamily_opfmethod		1
-#define Anum_pg_opfamily_opfname		2
-#define Anum_pg_opfamily_opfnamespace	3
-#define Anum_pg_opfamily_opfowner		4
+#define Natts_mdb_opfamily				4
+#define Anum_mdb_opfamily_opfmethod		1
+#define Anum_mdb_opfamily_opfname		2
+#define Anum_mdb_opfamily_opfnamespace	3
+#define Anum_mdb_opfamily_opfowner		4
 
 /* ----------------
- *		initial contents of pg_opfamily
+ *		initial contents of mdb_opfamily
  * ----------------
  */
 
@@ -134,8 +134,8 @@ DATA(insert OID = 1029 (	783		point_ops		PGNSP PGUID ));
 DATA(insert OID = 2745 (	2742	array_ops		PGNSP PGUID ));
 DATA(insert OID = 2968 (	403		uuid_ops		PGNSP PGUID ));
 DATA(insert OID = 2969 (	405		uuid_ops		PGNSP PGUID ));
-DATA(insert OID = 3253 (	403		pg_lsn_ops		PGNSP PGUID ));
-DATA(insert OID = 3254 (	405		pg_lsn_ops		PGNSP PGUID ));
+DATA(insert OID = 3253 (	403		mdb_lsn_ops		PGNSP PGUID ));
+DATA(insert OID = 3254 (	405		mdb_lsn_ops		PGNSP PGUID ));
 DATA(insert OID = 3522 (	403		enum_ops		PGNSP PGUID ));
 DATA(insert OID = 3523 (	405		enum_ops		PGNSP PGUID ));
 DATA(insert OID = 3626 (	403		tsvector_ops	PGNSP PGUID ));
@@ -180,7 +180,7 @@ DATA(insert OID = 4079 (	3580	bit_minmax_ops			PGNSP PGUID ));
 DATA(insert OID = 4080 (	3580	varbit_minmax_ops		PGNSP PGUID ));
 DATA(insert OID = 4081 (	3580	uuid_minmax_ops			PGNSP PGUID ));
 DATA(insert OID = 4103 (	3580	range_inclusion_ops		PGNSP PGUID ));
-DATA(insert OID = 4082 (	3580	pg_lsn_minmax_ops		PGNSP PGUID ));
+DATA(insert OID = 4082 (	3580	mdb_lsn_minmax_ops		PGNSP PGUID ));
 DATA(insert OID = 4104 (	3580	box_inclusion_ops		PGNSP PGUID ));
 DATA(insert OID = 5000 (	4000	box_ops		PGNSP PGUID ));
 

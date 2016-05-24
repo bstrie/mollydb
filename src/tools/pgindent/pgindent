@@ -11,7 +11,7 @@ use File::Temp;
 use IO::Handle;
 use Getopt::Long;
 
-# Update for pg_bsd_indent version
+# Update for mdb_bsd_indent version
 my $INDENT_VERSION = "1.3";
 my $devnull        = File::Spec->devnull;
 
@@ -42,7 +42,7 @@ $typedefs_file ||= shift if @ARGV && $ARGV[0] !~ /\.[ch]$/;
 $typedefs_file ||= $ENV{PGTYPEDEFS};
 
 # build mode sets PGINDENT and PGENTAB
-$indent ||= $ENV{PGINDENT} || $ENV{INDENT} || "pg_bsd_indent";
+$indent ||= $ENV{PGINDENT} || $ENV{INDENT} || "mdb_bsd_indent";
 my $entab = $ENV{PGENTAB} || "entab";
 
 # no non-option arguments given. so do everything in the current directory
@@ -462,23 +462,23 @@ sub run_build
 
 	$ENV{PGTYPEDEFS} = abs_path('tmp_typedefs.list');
 
-	my $pg_bsd_indent_url =
-	    "ftp://ftp.mollydb.org/pub/dev/pg_bsd_indent-"
+	my $mdb_bsd_indent_url =
+	    "ftp://ftp.mollydb.org/pub/dev/mdb_bsd_indent-"
 	  . $INDENT_VERSION
 	  . ".tar.gz";
 
-	$rv = getstore($pg_bsd_indent_url, "pg_bsd_indent.tgz");
+	$rv = getstore($mdb_bsd_indent_url, "mdb_bsd_indent.tgz");
 
-	die "cannot fetch BSD indent tarfile from $pg_bsd_indent_url\n"
+	die "cannot fetch BSD indent tarfile from $mdb_bsd_indent_url\n"
 	  unless is_success($rv);
 
 	# XXX add error checking here
 
-	system("tar -z -xf pg_bsd_indent.tgz");
-	chdir "pg_bsd_indent";
+	system("tar -z -xf mdb_bsd_indent.tgz");
+	chdir "mdb_bsd_indent";
 	system("make > $devnull 2>&1");
 
-	$ENV{PGINDENT} = abs_path('pg_bsd_indent');
+	$ENV{PGINDENT} = abs_path('mdb_bsd_indent');
 
 	chdir "../../entab";
 	system("make > $devnull 2>&1");

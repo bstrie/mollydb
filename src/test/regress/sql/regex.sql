@@ -61,15 +61,15 @@ select 'xyy' ~ '(?<![xy])yy+';
 select 'zyy' ~ '(?<![xy])yy+';
 
 -- Test conversion of regex patterns to indexable conditions
-explain (costs off) select * from pg_proc where proname ~ 'abc';
-explain (costs off) select * from pg_proc where proname ~ '^abc';
-explain (costs off) select * from pg_proc where proname ~ '^abc$';
-explain (costs off) select * from pg_proc where proname ~ '^abcd*e';
-explain (costs off) select * from pg_proc where proname ~ '^abc+d';
-explain (costs off) select * from pg_proc where proname ~ '^(abc)(def)';
-explain (costs off) select * from pg_proc where proname ~ '^(abc)$';
-explain (costs off) select * from pg_proc where proname ~ '^(abc)?d';
-explain (costs off) select * from pg_proc where proname ~ '^abcd(x|(?=\w\w)q)';
+explain (costs off) select * from mdb_proc where proname ~ 'abc';
+explain (costs off) select * from mdb_proc where proname ~ '^abc';
+explain (costs off) select * from mdb_proc where proname ~ '^abc$';
+explain (costs off) select * from mdb_proc where proname ~ '^abcd*e';
+explain (costs off) select * from mdb_proc where proname ~ '^abc+d';
+explain (costs off) select * from mdb_proc where proname ~ '^(abc)(def)';
+explain (costs off) select * from mdb_proc where proname ~ '^(abc)$';
+explain (costs off) select * from mdb_proc where proname ~ '^(abc)?d';
+explain (costs off) select * from mdb_proc where proname ~ '^abcd(x|(?=\w\w)q)';
 
 -- Test for infinite loop in pullback() (CVE-2007-4772)
 select 'a' ~ '($|^)*';

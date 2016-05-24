@@ -1,6 +1,6 @@
-diff -c -r bsd_indent/Makefile pg_bsd_indent/Makefile
+diff -c -r bsd_indent/Makefile mdb_bsd_indent/Makefile
 *** bsd_indent/Makefile	Wed Oct 26 17:13:34 2011
---- pg_bsd_indent/Makefile	Wed Oct 12 12:17:12 2011
+--- mdb_bsd_indent/Makefile	Wed Oct 12 12:17:12 2011
 ***************
 *** 2,10 ****
   # Makefile
@@ -16,7 +16,7 @@ diff -c -r bsd_indent/Makefile pg_bsd_indent/Makefile
   # Makefile
   #
   #
-! TARGET = pg_bsd_indent
+! TARGET = mdb_bsd_indent
   XFLAGS = -Wall -D__RCSID="static char *rcsid=" -D__COPYRIGHT="static char *copyright="
 ! CFLAGS = -O
   LIBS = 
@@ -37,9 +37,9 @@ diff -c -r bsd_indent/Makefile pg_bsd_indent/Makefile
   
 ! install: $(TARGET)
   	install -s -o bin -g bin $(TARGET) /usr/local/bin
-diff -c -r bsd_indent/README pg_bsd_indent/README
+diff -c -r bsd_indent/README mdb_bsd_indent/README
 *** bsd_indent/README	Wed Oct 26 17:13:34 2011
---- pg_bsd_indent/README	Mon Nov 14 19:30:24 2005
+--- mdb_bsd_indent/README	Mon Nov 14 19:30:24 2005
 ***************
 *** 1,3 ****
 --- 1,13 ----
@@ -56,9 +56,9 @@ diff -c -r bsd_indent/README pg_bsd_indent/README
   This is the C indenter, it originally came from the University of Illinois
   via some distribution tape for PDP-11 Unix.  It has subsequently been
   hacked upon by James Gosling @ CMU.  It isn't very pretty, and really needs
-diff -c -r bsd_indent/args.c pg_bsd_indent/args.c
+diff -c -r bsd_indent/args.c mdb_bsd_indent/args.c
 *** bsd_indent/args.c	Wed Oct 26 17:13:34 2011
---- pg_bsd_indent/args.c	Wed Oct 26 17:16:56 2011
+--- mdb_bsd_indent/args.c	Wed Oct 26 17:16:56 2011
 ***************
 *** 83,88 ****
 --- 83,90 ----
@@ -115,7 +115,7 @@ diff -c -r bsd_indent/args.c pg_bsd_indent/args.c
 + 
 + 		case VERSION:
 + 			{
-+ 				printf("pg_bsd_indent %s\n", INDENT_PG_VERSION);
++ 				printf("mdb_bsd_indent %s\n", INDENT_PG_VERSION);
 + 				exit(0);
 + 			}
 + 			break;
@@ -150,12 +150,12 @@ diff -c -r bsd_indent/args.c pg_bsd_indent/args.c
 + 	}
 + 	fclose(file);
 + }
-Only in pg_bsd_indent: args.o
-Only in pg_bsd_indent: indent.bsd.patch
-Only in pg_bsd_indent: indent.o
-diff -c -r bsd_indent/indent_globs.h pg_bsd_indent/indent_globs.h
+Only in mdb_bsd_indent: args.o
+Only in mdb_bsd_indent: indent.bsd.patch
+Only in mdb_bsd_indent: indent.o
+diff -c -r bsd_indent/indent_globs.h mdb_bsd_indent/indent_globs.h
 *** bsd_indent/indent_globs.h	Wed Oct 26 17:13:34 2011
---- pg_bsd_indent/indent_globs.h	Mon Nov 14 19:30:24 2005
+--- mdb_bsd_indent/indent_globs.h	Mon Nov 14 19:30:24 2005
 ***************
 *** 239,245 ****
           scomf,			/* Same line comment font */
@@ -177,10 +177,10 @@ diff -c -r bsd_indent/indent_globs.h pg_bsd_indent/indent_globs.h
   
   EXTERN struct parser_state {
   	int     last_token;
-Only in pg_bsd_indent: io.o
-diff -c -r bsd_indent/lexi.c pg_bsd_indent/lexi.c
+Only in mdb_bsd_indent: io.o
+diff -c -r bsd_indent/lexi.c mdb_bsd_indent/lexi.c
 *** bsd_indent/lexi.c	Wed Oct 26 17:13:34 2011
---- pg_bsd_indent/lexi.c	Mon Nov 14 19:30:24 2005
+--- mdb_bsd_indent/lexi.c	Mon Nov 14 19:30:24 2005
 ***************
 *** 93,99 ****
   	int     rwcode;
@@ -220,10 +220,10 @@ diff -c -r bsd_indent/lexi.c pg_bsd_indent/lexi.c
   	p->rwd = key;
   	p->rwcode = val;
   	p[1].rwd = 0;
-Only in pg_bsd_indent: lexi.o
-diff -c -r bsd_indent/parse.c pg_bsd_indent/parse.c
+Only in mdb_bsd_indent: lexi.o
+diff -c -r bsd_indent/parse.c mdb_bsd_indent/parse.c
 *** bsd_indent/parse.c	Wed Oct 26 17:13:34 2011
---- pg_bsd_indent/parse.c	Mon Nov 14 19:30:24 2005
+--- mdb_bsd_indent/parse.c	Mon Nov 14 19:30:24 2005
 ***************
 *** 231,236 ****
 --- 231,241 ----
@@ -238,10 +238,10 @@ diff -c -r bsd_indent/parse.c pg_bsd_indent/parse.c
   	reduce();		/* see if any reduction can be done */
   
   #ifdef debug
-Only in pg_bsd_indent: parse.o
-diff -c -r bsd_indent/pr_comment.c pg_bsd_indent/pr_comment.c
+Only in mdb_bsd_indent: parse.o
+diff -c -r bsd_indent/pr_comment.c mdb_bsd_indent/pr_comment.c
 *** bsd_indent/pr_comment.c	Wed Oct 26 17:13:34 2011
---- pg_bsd_indent/pr_comment.c	Mon Nov 14 19:30:24 2005
+--- mdb_bsd_indent/pr_comment.c	Mon Nov 14 19:30:24 2005
 ***************
 *** 148,154 ****
   		ps.box_com = true;
@@ -285,4 +285,4 @@ diff -c -r bsd_indent/pr_comment.c pg_bsd_indent/pr_comment.c
   			} else
   				if (++buf_ptr >= buf_end)
   					fill_buffer();
-Only in pg_bsd_indent: pr_comment.o
+Only in mdb_bsd_indent: pr_comment.o

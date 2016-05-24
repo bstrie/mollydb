@@ -32,7 +32,7 @@
 #include "portability/mem.h"
 #include "storage/dsm.h"
 #include "storage/ipc.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "utils/guc.h"
 
 

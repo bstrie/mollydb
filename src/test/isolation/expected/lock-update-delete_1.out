@@ -1,15 +1,15 @@
 Parsed test spec with 2 sessions
 
 starting permutation: s2b s1l s2u s2_blocker1 s2_unlock s2c
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker1: DELETE FROM foo;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s2c: COMMIT;
@@ -17,15 +17,15 @@ step s1l: <... completed>
 error in steps s2c s1l: ERROR:  could not serialize access due to concurrent update
 
 starting permutation: s2b s1l s2u s2_blocker2 s2_unlock s2c
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker2: UPDATE foo SET key = 2 WHERE key = 1;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s2c: COMMIT;
@@ -33,15 +33,15 @@ step s1l: <... completed>
 error in steps s2c s1l: ERROR:  could not serialize access due to concurrent update
 
 starting permutation: s2b s1l s2u s2_blocker3 s2_unlock s2c
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker3: UPDATE foo SET value = 2 WHERE key = 1;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s1l: <... completed>
@@ -51,15 +51,15 @@ key            value
 step s2c: COMMIT;
 
 starting permutation: s2b s1l s2u s2_blocker1 s2_unlock s2r
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker1: DELETE FROM foo;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s2r: ROLLBACK;
@@ -69,15 +69,15 @@ key            value
 1              1              
 
 starting permutation: s2b s1l s2u s2_blocker2 s2_unlock s2r
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker2: UPDATE foo SET key = 2 WHERE key = 1;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s2r: ROLLBACK;
@@ -87,15 +87,15 @@ key            value
 1              1              
 
 starting permutation: s2b s1l s2u s2_blocker3 s2_unlock s2r
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker3: UPDATE foo SET value = 2 WHERE key = 1;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s1l: <... completed>
@@ -105,64 +105,64 @@ key            value
 step s2r: ROLLBACK;
 
 starting permutation: s2b s1l s2u s2_blocker1 s2c s2_unlock
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker1: DELETE FROM foo;
 step s2c: COMMIT;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s1l: <... completed>
 error in steps s2_unlock s1l: ERROR:  could not serialize access due to concurrent update
 
 starting permutation: s2b s1l s2u s2_blocker2 s2c s2_unlock
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker2: UPDATE foo SET key = 2 WHERE key = 1;
 step s2c: COMMIT;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s1l: <... completed>
 error in steps s2_unlock s1l: ERROR:  could not serialize access due to concurrent update
 
 starting permutation: s2b s1l s2u s2_blocker3 s2c s2_unlock
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker3: UPDATE foo SET value = 2 WHERE key = 1;
 step s2c: COMMIT;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s1l: <... completed>
 error in steps s2_unlock s1l: ERROR:  could not serialize access due to concurrent update
 
 starting permutation: s2b s1l s2u s2_blocker1 s2r s2_unlock
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker1: DELETE FROM foo;
 step s2r: ROLLBACK;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s1l: <... completed>
@@ -171,16 +171,16 @@ key            value
 1              1              
 
 starting permutation: s2b s1l s2u s2_blocker2 s2r s2_unlock
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker2: UPDATE foo SET key = 2 WHERE key = 1;
 step s2r: ROLLBACK;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s1l: <... completed>
@@ -189,16 +189,16 @@ key            value
 1              1              
 
 starting permutation: s2b s1l s2u s2_blocker3 s2r s2_unlock
-pg_advisory_lock
+mdb_advisory_lock
 
                
 step s2b: BEGIN;
-step s1l: SELECT * FROM foo WHERE pg_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
+step s1l: SELECT * FROM foo WHERE mdb_advisory_xact_lock(0) IS NOT NULL AND key = 1 FOR KEY SHARE; <waiting ...>
 step s2u: UPDATE foo SET value = 2 WHERE key = 1;
 step s2_blocker3: UPDATE foo SET value = 2 WHERE key = 1;
 step s2r: ROLLBACK;
-step s2_unlock: SELECT pg_advisory_unlock(0);
-pg_advisory_unlock
+step s2_unlock: SELECT mdb_advisory_unlock(0);
+mdb_advisory_unlock
 
 t              
 step s1l: <... completed>

@@ -19,7 +19,7 @@
 #include "access/sysattr.h"
 #include "access/xact.h"
 #include "catalog/heap.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/trigger.h"
 #include "executor/executor.h"
 #include "executor/spi_priv.h"
@@ -824,7 +824,7 @@ int
 SPI_fnumber(TupleDesc tupdesc, const char *fname)
 {
 	int			res;
-	Form_pg_attribute sysatt;
+	Form_mdb_attribute sysatt;
 
 	for (res = 0; res < tupdesc->natts; res++)
 	{
@@ -843,7 +843,7 @@ SPI_fnumber(TupleDesc tupdesc, const char *fname)
 char *
 SPI_fname(TupleDesc tupdesc, int fnumber)
 {
-	Form_pg_attribute att;
+	Form_mdb_attribute att;
 
 	SPI_result = 0;
 
@@ -939,7 +939,7 @@ SPI_gettype(TupleDesc tupdesc, int fnumber)
 		return NULL;
 	}
 
-	result = pstrdup(NameStr(((Form_pg_type) GETSTRUCT(typeTuple))->typname));
+	result = pstrdup(NameStr(((Form_mdb_type) GETSTRUCT(typeTuple))->typname));
 	ReleaseSysCache(typeTuple);
 	return result;
 }
@@ -1846,7 +1846,7 @@ _SPI_prepare_plan(const char *src, SPIPlanPtr plan)
 	/*
 	 * Parse the request string into a list of raw parse trees.
 	 */
-	raw_parsetree_list = pg_parse_query(src);
+	raw_parsetree_list = mdb_parse_query(src);
 
 	/*
 	 * Do parse analysis and rule rewrite for each raw parsetree, storing the
@@ -1875,14 +1875,14 @@ _SPI_prepare_plan(const char *src, SPIPlanPtr plan)
 		if (plan->parserSetup != NULL)
 		{
 			Assert(plan->nargs == 0);
-			stmt_list = pg_analyze_and_rewrite_params(parsetree,
+			stmt_list = mdb_analyze_and_rewrite_params(parsetree,
 													  src,
 													  plan->parserSetup,
 													  plan->parserSetupArg);
 		}
 		else
 		{
-			stmt_list = pg_analyze_and_rewrite(parsetree,
+			stmt_list = mdb_analyze_and_rewrite(parsetree,
 											   src,
 											   plan->argtypes,
 											   plan->nargs);
@@ -1949,7 +1949,7 @@ _SPI_prepare_oneshot_plan(const char *src, SPIPlanPtr plan)
 	/*
 	 * Parse the request string into a list of raw parse trees.
 	 */
-	raw_parsetree_list = pg_parse_query(src);
+	raw_parsetree_list = mdb_parse_query(src);
 
 	/*
 	 * Construct plancache entries, but don't do parse analysis yet.
@@ -2071,14 +2071,14 @@ _SPI_execute_plan(SPIPlanPtr plan, ParamListInfo paramLI,
 			else if (plan->parserSetup != NULL)
 			{
 				Assert(plan->nargs == 0);
-				stmt_list = pg_analyze_and_rewrite_params(parsetree,
+				stmt_list = mdb_analyze_and_rewrite_params(parsetree,
 														  src,
 														  plan->parserSetup,
 													   plan->parserSetupArg);
 			}
 			else
 			{
-				stmt_list = pg_analyze_and_rewrite(parsetree,
+				stmt_list = mdb_analyze_and_rewrite(parsetree,
 												   src,
 												   plan->argtypes,
 												   plan->nargs);
@@ -2221,7 +2221,7 @@ _SPI_execute_plan(SPIPlanPtr plan, ParamListInfo paramLI,
 
 					if (strncmp(completionTag, "SELECT ", 7) == 0)
 						_SPI_current->processed =
-							pg_strtouint64(completionTag + 7, NULL, 10);
+							mdb_strtouint64(completionTag + 7, NULL, 10);
 					else
 					{
 						/* Must be an IF NOT EXISTS that did nothing */
@@ -2239,7 +2239,7 @@ _SPI_execute_plan(SPIPlanPtr plan, ParamListInfo paramLI,
 				else if (IsA(stmt, CopyStmt))
 				{
 					Assert(strncmp(completionTag, "COPY ", 5) == 0);
-					_SPI_current->processed = pg_strtouint64(completionTag + 5,
+					_SPI_current->processed = mdb_strtouint64(completionTag + 5,
 															 NULL, 10);
 				}
 			}

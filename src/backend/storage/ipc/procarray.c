@@ -388,7 +388,7 @@ ProcArrayRemove(PGPROC *proc, TransactionId latestXid)
  * ProcArrayEndTransaction -- mark a transaction as no longer running
  *
  * This is used interchangeably for commit and abort cases.  The transaction
- * commit/abort must already be reported to WAL and pg_clog.
+ * commit/abort must already be reported to WAL and mdb_clog.
  *
  * proc is currently always MyProc, but we pass it explicitly for flexibility.
  * latestXid is the latest Xid among the transaction's main XID and
@@ -501,10 +501,10 @@ ProcArrayGroupClearXid(PGPROC *proc, TransactionId latestXid)
 	proc->procArrayGroupMemberXid = latestXid;
 	while (true)
 	{
-		nextidx = pg_atomic_read_u32(&procglobal->procArrayGroupFirst);
-		pg_atomic_write_u32(&proc->procArrayGroupNext, nextidx);
+		nextidx = mdb_atomic_read_u32(&procglobal->procArrayGroupFirst);
+		mdb_atomic_write_u32(&proc->procArrayGroupNext, nextidx);
 
-		if (pg_atomic_compare_exchange_u32(&procglobal->procArrayGroupFirst,
+		if (mdb_atomic_compare_exchange_u32(&procglobal->procArrayGroupFirst,
 										   &nextidx,
 										   (uint32) proc->pgprocno))
 			break;
@@ -528,7 +528,7 @@ ProcArrayGroupClearXid(PGPROC *proc, TransactionId latestXid)
 			extraWaits++;
 		}
 
-		Assert(pg_atomic_read_u32(&proc->procArrayGroupNext) == INVALID_PGPROCNO);
+		Assert(mdb_atomic_read_u32(&proc->procArrayGroupNext) == INVALID_PGPROCNO);
 
 		/* Fix semaphore count for any absorbed wakeups */
 		while (extraWaits-- > 0)
@@ -546,8 +546,8 @@ ProcArrayGroupClearXid(PGPROC *proc, TransactionId latestXid)
 	 */
 	while (true)
 	{
-		nextidx = pg_atomic_read_u32(&procglobal->procArrayGroupFirst);
-		if (pg_atomic_compare_exchange_u32(&procglobal->procArrayGroupFirst,
+		nextidx = mdb_atomic_read_u32(&procglobal->procArrayGroupFirst);
+		if (mdb_atomic_compare_exchange_u32(&procglobal->procArrayGroupFirst,
 										   &nextidx,
 										   INVALID_PGPROCNO))
 			break;
@@ -565,7 +565,7 @@ ProcArrayGroupClearXid(PGPROC *proc, TransactionId latestXid)
 		ProcArrayEndTransactionInternal(proc, pgxact, proc->procArrayGroupMemberXid);
 
 		/* Move to next proc in list. */
-		nextidx = pg_atomic_read_u32(&proc->procArrayGroupNext);
+		nextidx = mdb_atomic_read_u32(&proc->procArrayGroupNext);
 	}
 
 	/* We're done with the lock now. */
@@ -582,11 +582,11 @@ ProcArrayGroupClearXid(PGPROC *proc, TransactionId latestXid)
 	{
 		PGPROC	*proc = &allProcs[wakeidx];
 
-		wakeidx = pg_atomic_read_u32(&proc->procArrayGroupNext);
-		pg_atomic_write_u32(&proc->procArrayGroupNext, INVALID_PGPROCNO);
+		wakeidx = mdb_atomic_read_u32(&proc->procArrayGroupNext);
+		mdb_atomic_write_u32(&proc->procArrayGroupNext, INVALID_PGPROCNO);
 
 		/* ensure all previous writes are visible before follower continues. */
-		pg_write_barrier();
+		mdb_write_barrier();
 
 		proc->procArrayGroupMember = false;
 
@@ -935,7 +935,7 @@ ProcArrayApplyXidAssignment(TransactionId topxid,
 	RecordKnownAssignedTransactionIds(max_xid);
 
 	/*
-	 * Notice that we update pg_subtrans with the top-level xid, rather than
+	 * Notice that we update mdb_subtrans with the top-level xid, rather than
 	 * the parent xid. This is a difference between normal processing and
 	 * recovery, yet is still correct in all cases. The reason is that
 	 * subtransaction commit is not marked in clog until commit processing, so
@@ -1152,7 +1152,7 @@ TransactionIdIsInProgress(TransactionId xid)
 		}
 
 		/*
-		 * If the KnownAssignedXids overflowed, we have to check pg_subtrans
+		 * If the KnownAssignedXids overflowed, we have to check mdb_subtrans
 		 * too.  Fetch all xids from KnownAssignedXids that are lower than
 		 * xid, since if xid is a subtransaction its parent will always have a
 		 * lower value.  Note we will collect both main and subXIDs here, but
@@ -1166,7 +1166,7 @@ TransactionIdIsInProgress(TransactionId xid)
 
 	/*
 	 * If none of the relevant caches overflowed, we know the Xid is not
-	 * running without even looking at pg_subtrans.
+	 * running without even looking at mdb_subtrans.
 	 */
 	if (nxids == 0)
 	{
@@ -1175,12 +1175,12 @@ TransactionIdIsInProgress(TransactionId xid)
 	}
 
 	/*
-	 * Step 4: have to check pg_subtrans.
+	 * Step 4: have to check mdb_subtrans.
 	 *
 	 * At this point, we know it's either a subtransaction of one of the Xids
 	 * in xids[], or it's not running.  If it's an already-failed
 	 * subtransaction, we want to say "not running" even though its parent may
-	 * still be running.  So first, check pg_clog to see if it's been aborted.
+	 * still be running.  So first, check mdb_clog to see if it's been aborted.
 	 */
 	xc_slow_answer_inc();
 
@@ -1276,7 +1276,7 @@ TransactionIdIsActive(TransactionId xid)
  * ignore concurrently running lazy VACUUMs because (a) they must be working
  * on other tables, and (b) they don't need to do snapshot-based lookups.
  *
- * This is also used to determine where to truncate pg_subtrans.  For that
+ * This is also used to determine where to truncate mdb_subtrans.  For that
  * backends in all databases have to be considered, so rel = NULL has to be
  * passed in.
  *
@@ -2902,7 +2902,7 @@ CountOtherDBBackends(Oid databaseId, int *nbackends, int *nprepared)
 			(void) kill(autovac_pids[index], SIGTERM);	/* ignore any error */
 
 		/* sleep, then try again */
-		pg_usleep(100 * 1000L); /* 100ms */
+		mdb_usleep(100 * 1000L); /* 100ms */
 	}
 
 	return true;				/* timed out, still conflicts */
@@ -3081,14 +3081,14 @@ DisplayXidCache(void)
  * KnownAssignedXids list.  In backends, this is copied into snapshots in
  * GetSnapshotData(), taking advantage of the fact that XidInMVCCSnapshot()
  * doesn't care about the distinction either.  Subtransaction XIDs are
- * effectively treated as top-level XIDs and in the typical case pg_subtrans
+ * effectively treated as top-level XIDs and in the typical case mdb_subtrans
  * links are *not* maintained (which does not affect visibility).
  *
  * We have room in KnownAssignedXids and in snapshots to hold maxProcs *
  * (1 + PGPROC_MAX_CACHED_SUBXIDS) XIDs, so every master transaction must
  * report its subtransaction XIDs in a WAL XLOG_XACT_ASSIGNMENT record at
  * least every PGPROC_MAX_CACHED_SUBXIDS.  When we receive one of these
- * records, we mark the subXIDs as children of the top XID in pg_subtrans,
+ * records, we mark the subXIDs as children of the top XID in mdb_subtrans,
  * and then remove them from KnownAssignedXids.  This prevents overflow of
  * KnownAssignedXids and snapshots, at the cost that status checks for these
  * subXIDs will take a slower path through TransactionIdIsInProgress().

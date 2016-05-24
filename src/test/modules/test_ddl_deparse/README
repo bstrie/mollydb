@@ -1,4 +1,4 @@
-test_ddl_deparse is an example of how to use the pg_ddl_command datatype.
+test_ddl_deparse is an example of how to use the mdb_ddl_command datatype.
 It is not intended to do anything useful on its own; rather, it is a
 demonstration of how to use the datatype, and to provide some unit tests for
 it.

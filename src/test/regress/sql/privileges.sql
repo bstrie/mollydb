@@ -17,7 +17,7 @@ DROP ROLE IF EXISTS regressuser4;
 DROP ROLE IF EXISTS regressuser5;
 DROP ROLE IF EXISTS regressuser6;
 
-SELECT lo_unlink(oid) FROM pg_largeobject_metadata;
+SELECT lo_unlink(oid) FROM mdb_largeobject_metadata;
 
 RESET client_min_messages;
 
@@ -515,103 +515,103 @@ TRUNCATE atest3; -- fail
 -- has_table_privilege function
 
 -- bad-input checks
-select has_table_privilege(NULL,'pg_authid','select');
-select has_table_privilege('pg_shad','select');
-select has_table_privilege('nosuchuser','pg_authid','select');
-select has_table_privilege('pg_authid','sel');
-select has_table_privilege(-999999,'pg_authid','update');
+select has_table_privilege(NULL,'mdb_authid','select');
+select has_table_privilege('mdb_shad','select');
+select has_table_privilege('nosuchuser','mdb_authid','select');
+select has_table_privilege('mdb_authid','sel');
+select has_table_privilege(-999999,'mdb_authid','update');
 select has_table_privilege(1,'select');
 
 -- superuser
 \c -
 
-select has_table_privilege(current_user,'pg_authid','select');
-select has_table_privilege(current_user,'pg_authid','insert');
+select has_table_privilege(current_user,'mdb_authid','select');
+select has_table_privilege(current_user,'mdb_authid','insert');
 
-select has_table_privilege(t2.oid,'pg_authid','update')
-from (select oid from pg_roles where rolname = current_user) as t2;
-select has_table_privilege(t2.oid,'pg_authid','delete')
-from (select oid from pg_roles where rolname = current_user) as t2;
+select has_table_privilege(t2.oid,'mdb_authid','update')
+from (select oid from mdb_roles where rolname = current_user) as t2;
+select has_table_privilege(t2.oid,'mdb_authid','delete')
+from (select oid from mdb_roles where rolname = current_user) as t2;
 
 -- 'rule' privilege no longer exists, but for backwards compatibility
 -- has_table_privilege still recognizes the keyword and says FALSE
 select has_table_privilege(current_user,t1.oid,'rule')
-from (select oid from pg_class where relname = 'pg_authid') as t1;
+from (select oid from mdb_class where relname = 'mdb_authid') as t1;
 select has_table_privilege(current_user,t1.oid,'references')
-from (select oid from pg_class where relname = 'pg_authid') as t1;
+from (select oid from mdb_class where relname = 'mdb_authid') as t1;
 
 select has_table_privilege(t2.oid,t1.oid,'select')
-from (select oid from pg_class where relname = 'pg_authid') as t1,
-  (select oid from pg_roles where rolname = current_user) as t2;
+from (select oid from mdb_class where relname = 'mdb_authid') as t1,
+  (select oid from mdb_roles where rolname = current_user) as t2;
 select has_table_privilege(t2.oid,t1.oid,'insert')
-from (select oid from pg_class where relname = 'pg_authid') as t1,
-  (select oid from pg_roles where rolname = current_user) as t2;
+from (select oid from mdb_class where relname = 'mdb_authid') as t1,
+  (select oid from mdb_roles where rolname = current_user) as t2;
 
-select has_table_privilege('pg_authid','update');
-select has_table_privilege('pg_authid','delete');
-select has_table_privilege('pg_authid','truncate');
+select has_table_privilege('mdb_authid','update');
+select has_table_privilege('mdb_authid','delete');
+select has_table_privilege('mdb_authid','truncate');
 
 select has_table_privilege(t1.oid,'select')
-from (select oid from pg_class where relname = 'pg_authid') as t1;
+from (select oid from mdb_class where relname = 'mdb_authid') as t1;
 select has_table_privilege(t1.oid,'trigger')
-from (select oid from pg_class where relname = 'pg_authid') as t1;
+from (select oid from mdb_class where relname = 'mdb_authid') as t1;
 
 -- non-superuser
 SET SESSION AUTHORIZATION regressuser3;
 
-select has_table_privilege(current_user,'pg_class','select');
-select has_table_privilege(current_user,'pg_class','insert');
+select has_table_privilege(current_user,'mdb_class','select');
+select has_table_privilege(current_user,'mdb_class','insert');
 
-select has_table_privilege(t2.oid,'pg_class','update')
-from (select oid from pg_roles where rolname = current_user) as t2;
-select has_table_privilege(t2.oid,'pg_class','delete')
-from (select oid from pg_roles where rolname = current_user) as t2;
+select has_table_privilege(t2.oid,'mdb_class','update')
+from (select oid from mdb_roles where rolname = current_user) as t2;
+select has_table_privilege(t2.oid,'mdb_class','delete')
+from (select oid from mdb_roles where rolname = current_user) as t2;
 
 select has_table_privilege(current_user,t1.oid,'references')
-from (select oid from pg_class where relname = 'pg_class') as t1;
+from (select oid from mdb_class where relname = 'mdb_class') as t1;
 
 select has_table_privilege(t2.oid,t1.oid,'select')
-from (select oid from pg_class where relname = 'pg_class') as t1,
-  (select oid from pg_roles where rolname = current_user) as t2;
+from (select oid from mdb_class where relname = 'mdb_class') as t1,
+  (select oid from mdb_roles where rolname = current_user) as t2;
 select has_table_privilege(t2.oid,t1.oid,'insert')
-from (select oid from pg_class where relname = 'pg_class') as t1,
-  (select oid from pg_roles where rolname = current_user) as t2;
+from (select oid from mdb_class where relname = 'mdb_class') as t1,
+  (select oid from mdb_roles where rolname = current_user) as t2;
 
-select has_table_privilege('pg_class','update');
-select has_table_privilege('pg_class','delete');
-select has_table_privilege('pg_class','truncate');
+select has_table_privilege('mdb_class','update');
+select has_table_privilege('mdb_class','delete');
+select has_table_privilege('mdb_class','truncate');
 
 select has_table_privilege(t1.oid,'select')
-from (select oid from pg_class where relname = 'pg_class') as t1;
+from (select oid from mdb_class where relname = 'mdb_class') as t1;
 select has_table_privilege(t1.oid,'trigger')
-from (select oid from pg_class where relname = 'pg_class') as t1;
+from (select oid from mdb_class where relname = 'mdb_class') as t1;
 
 select has_table_privilege(current_user,'atest1','select');
 select has_table_privilege(current_user,'atest1','insert');
 
 select has_table_privilege(t2.oid,'atest1','update')
-from (select oid from pg_roles where rolname = current_user) as t2;
+from (select oid from mdb_roles where rolname = current_user) as t2;
 select has_table_privilege(t2.oid,'atest1','delete')
-from (select oid from pg_roles where rolname = current_user) as t2;
+from (select oid from mdb_roles where rolname = current_user) as t2;
 
 select has_table_privilege(current_user,t1.oid,'references')
-from (select oid from pg_class where relname = 'atest1') as t1;
+from (select oid from mdb_class where relname = 'atest1') as t1;
 
 select has_table_privilege(t2.oid,t1.oid,'select')
-from (select oid from pg_class where relname = 'atest1') as t1,
-  (select oid from pg_roles where rolname = current_user) as t2;
+from (select oid from mdb_class where relname = 'atest1') as t1,
+  (select oid from mdb_roles where rolname = current_user) as t2;
 select has_table_privilege(t2.oid,t1.oid,'insert')
-from (select oid from pg_class where relname = 'atest1') as t1,
-  (select oid from pg_roles where rolname = current_user) as t2;
+from (select oid from mdb_class where relname = 'atest1') as t1,
+  (select oid from mdb_roles where rolname = current_user) as t2;
 
 select has_table_privilege('atest1','update');
 select has_table_privilege('atest1','delete');
 select has_table_privilege('atest1','truncate');
 
 select has_table_privilege(t1.oid,'select')
-from (select oid from pg_class where relname = 'atest1') as t1;
+from (select oid from mdb_class where relname = 'atest1') as t1;
 select has_table_privilege(t1.oid,'trigger')
-from (select oid from pg_class where relname = 'atest1') as t1;
+from (select oid from mdb_class where relname = 'atest1') as t1;
 
 
 -- Grant options
@@ -729,7 +729,7 @@ SELECT lo_unlink(2002);
 
 \c -
 -- confirm ACL setting
-SELECT oid, pg_get_userbyid(lomowner) ownername, lomacl FROM pg_largeobject_metadata;
+SELECT oid, mdb_get_userbyid(lomowner) ownername, lomacl FROM mdb_largeobject_metadata;
 
 SET SESSION AUTHORIZATION regressuser3;
 
@@ -761,12 +761,12 @@ SELECT lo_truncate(lo_open(1002, x'20000'::int), 10);
 SELECT lo_unlink(1002);
 SELECT lo_export(1001, '/dev/null');			-- to be denied
 
--- don't allow unpriv users to access pg_largeobject contents
+-- don't allow unpriv users to access mdb_largeobject contents
 \c -
-SELECT * FROM pg_largeobject LIMIT 0;
+SELECT * FROM mdb_largeobject LIMIT 0;
 
 SET SESSION AUTHORIZATION regressuser1;
-SELECT * FROM pg_largeobject LIMIT 0;			-- to be denied
+SELECT * FROM mdb_largeobject LIMIT 0;			-- to be denied
 
 -- test default ACLs
 \c -
@@ -840,13 +840,13 @@ DROP DOMAIN testns.testdomain1;
 RESET ROLE;
 
 SELECT count(*)
-  FROM pg_default_acl d LEFT JOIN pg_namespace n ON defaclnamespace = n.oid
+  FROM mdb_default_acl d LEFT JOIN mdb_namespace n ON defaclnamespace = n.oid
   WHERE nspname = 'testns';
 
 DROP SCHEMA testns CASCADE;
 
 SELECT d.*     -- check that entries went away
-  FROM pg_default_acl d LEFT JOIN pg_namespace n ON defaclnamespace = n.oid
+  FROM mdb_default_acl d LEFT JOIN mdb_namespace n ON defaclnamespace = n.oid
   WHERE nspname IS NULL AND defaclnamespace != 0;
 
 
@@ -891,11 +891,11 @@ CREATE ROLE schemauser2 superuser login;
 SET SESSION ROLE schemauser1;
 CREATE SCHEMA testns;
 
-SELECT nspname, rolname FROM pg_namespace, pg_roles WHERE pg_namespace.nspname = 'testns' AND pg_namespace.nspowner = pg_roles.oid;
+SELECT nspname, rolname FROM mdb_namespace, mdb_roles WHERE mdb_namespace.nspname = 'testns' AND mdb_namespace.nspowner = mdb_roles.oid;
 
 ALTER SCHEMA testns OWNER TO schemauser2;
 ALTER ROLE schemauser2 RENAME TO schemauser_renamed;
-SELECT nspname, rolname FROM pg_namespace, pg_roles WHERE pg_namespace.nspname = 'testns' AND pg_namespace.nspowner = pg_roles.oid;
+SELECT nspname, rolname FROM mdb_namespace, mdb_roles WHERE mdb_namespace.nspname = 'testns' AND mdb_namespace.nspowner = mdb_roles.oid;
 
 set session role schemauser_renamed;
 SET client_min_messages TO 'warning';
@@ -960,7 +960,7 @@ DROP TABLE atestc;
 DROP TABLE atestp1;
 DROP TABLE atestp2;
 
-SELECT lo_unlink(oid) FROM pg_largeobject_metadata;
+SELECT lo_unlink(oid) FROM mdb_largeobject_metadata;
 
 DROP GROUP regressgroup1;
 DROP GROUP regressgroup2;

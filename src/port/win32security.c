@@ -28,7 +28,7 @@ static BOOL pgwin32_get_dynamic_tokeninfo(HANDLE token,
  * message.
  */
 static
-pg_attribute_printf(1, 2)
+mdb_attribute_printf(1, 2)
 void
 log_error(const char *fmt,...)
 {

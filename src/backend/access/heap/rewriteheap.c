@@ -1001,7 +1001,7 @@ logical_rewrite_log_mapping(RewriteState state, TransactionId xid,
 			dboid = MyDatabaseId;
 
 		snprintf(path, MAXPGPATH,
-				 "pg_logical/mappings/" LOGICAL_REWRITE_FORMAT,
+				 "mdb_logical/mappings/" LOGICAL_REWRITE_FORMAT,
 				 dboid, relid,
 				 (uint32) (state->rs_begin_lsn >> 32),
 				 (uint32) state->rs_begin_lsn,
@@ -1125,7 +1125,7 @@ heap_xlog_logical_rewrite(XLogReaderState *r)
 	xlrec = (xl_heap_rewrite_mapping *) XLogRecGetData(r);
 
 	snprintf(path, MAXPGPATH,
-			 "pg_logical/mappings/" LOGICAL_REWRITE_FORMAT,
+			 "mdb_logical/mappings/" LOGICAL_REWRITE_FORMAT,
 			 xlrec->mapped_db, xlrec->mapped_rel,
 			 (uint32) (xlrec->start_lsn >> 32),
 			 (uint32) xlrec->start_lsn,
@@ -1171,7 +1171,7 @@ heap_xlog_logical_rewrite(XLogReaderState *r)
 	 * do this for the last write to a file, but the required bookkeeping
 	 * doesn't seem worth the trouble.
 	 */
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 		ereport(ERROR,
 				(errcode_for_file_access(),
 				 errmsg("could not fsync file \"%s\": %m", path)));
@@ -1211,8 +1211,8 @@ CheckPointLogicalRewriteHeap(void)
 	if (cutoff != InvalidXLogRecPtr && redo < cutoff)
 		cutoff = redo;
 
-	mappings_dir = AllocateDir("pg_logical/mappings");
-	while ((mapping_de = ReadDir(mappings_dir, "pg_logical/mappings")) != NULL)
+	mappings_dir = AllocateDir("mdb_logical/mappings");
+	while ((mapping_de = ReadDir(mappings_dir, "mdb_logical/mappings")) != NULL)
 	{
 		struct stat statbuf;
 		Oid			dboid;
@@ -1227,7 +1227,7 @@ CheckPointLogicalRewriteHeap(void)
 			strcmp(mapping_de->d_name, "..") == 0)
 			continue;
 
-		snprintf(path, MAXPGPATH, "pg_logical/mappings/%s", mapping_de->d_name);
+		snprintf(path, MAXPGPATH, "mdb_logical/mappings/%s", mapping_de->d_name);
 		if (lstat(path, &statbuf) == 0 && !S_ISREG(statbuf.st_mode))
 			continue;
 
@@ -1268,7 +1268,7 @@ CheckPointLogicalRewriteHeap(void)
 			 * changed or have only been created since the checkpoint's start,
 			 * but it's currently not deemed worth the effort.
 			 */
-			else if (pg_fsync(fd) != 0)
+			else if (mdb_fsync(fd) != 0)
 				ereport(ERROR,
 						(errcode_for_file_access(),
 						 errmsg("could not fsync file \"%s\": %m", path)));

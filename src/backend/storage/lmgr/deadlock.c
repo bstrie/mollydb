@@ -26,7 +26,7 @@
 #include "mollydb.h"
 
 #include "miscadmin.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "pgstat.h"
 #include "storage/lmgr.h"
 #include "storage/proc.h"

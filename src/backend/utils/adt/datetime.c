@@ -21,7 +21,7 @@
 
 #include "access/htup_details.h"
 #include "access/xact.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "miscadmin.h"
 #include "nodes/nodeFuncs.h"
@@ -34,15 +34,15 @@
 
 static int DecodeNumber(int flen, char *field, bool haveTextMonth,
 			 int fmask, int *tmask,
-			 struct pg_tm * tm, fsec_t *fsec, bool *is2digits);
+			 struct mdb_tm * tm, fsec_t *fsec, bool *is2digits);
 static int DecodeNumberField(int len, char *str,
 				  int fmask, int *tmask,
-				  struct pg_tm * tm, fsec_t *fsec, bool *is2digits);
+				  struct mdb_tm * tm, fsec_t *fsec, bool *is2digits);
 static int DecodeTime(char *str, int fmask, int range,
-		   int *tmask, struct pg_tm * tm, fsec_t *fsec);
+		   int *tmask, struct mdb_tm * tm, fsec_t *fsec);
 static const datetkn *datebsearch(const char *key, const datetkn *base, int nel);
 static int DecodeDate(char *str, int fmask, int *tmask, bool *is2digits,
-		   struct pg_tm * tm);
+		   struct mdb_tm * tm);
 
 #ifndef HAVE_INT64_TIMESTAMP
 static char *TrimTrailingZeros(char *str);
@@ -50,15 +50,15 @@ static char *TrimTrailingZeros(char *str);
 
 static char *AppendSeconds(char *cp, int sec, fsec_t fsec,
 			  int precision, bool fillzeros);
-static void AdjustFractSeconds(double frac, struct pg_tm * tm, fsec_t *fsec,
+static void AdjustFractSeconds(double frac, struct mdb_tm * tm, fsec_t *fsec,
 				   int scale);
-static void AdjustFractDays(double frac, struct pg_tm * tm, fsec_t *fsec,
+static void AdjustFractDays(double frac, struct mdb_tm * tm, fsec_t *fsec,
 				int scale);
-static int DetermineTimeZoneOffsetInternal(struct pg_tm * tm, pg_tz *tzp,
-								pg_time_t *tp);
-static int DetermineTimeZoneAbbrevOffsetInternal(pg_time_t t, const char *abbr,
-									  pg_tz *tzp, int *isdst);
-static pg_tz *FetchDynamicTimeZone(TimeZoneAbbrevTable *tbl, const datetkn *tp);
+static int DetermineTimeZoneOffsetInternal(struct mdb_tm * tm, mdb_tz *tzp,
+								mdb_time_t *tp);
+static int DetermineTimeZoneAbbrevOffsetInternal(mdb_time_t t, const char *abbr,
+									  mdb_tz *tzp, int *isdst);
+static mdb_tz *FetchDynamicTimeZone(TimeZoneAbbrevTable *tbl, const datetkn *tp);
 
 
 const int	day_tab[2][13] =
@@ -368,10 +368,10 @@ j2day(int date)
 /*
  * GetCurrentDateTime()
  *
- * Get the transaction start time ("now()") broken down as a struct pg_tm.
+ * Get the transaction start time ("now()") broken down as a struct mdb_tm.
  */
 void
-GetCurrentDateTime(struct pg_tm * tm)
+GetCurrentDateTime(struct mdb_tm * tm)
 {
 	int			tz;
 	fsec_t		fsec;
@@ -384,11 +384,11 @@ GetCurrentDateTime(struct pg_tm * tm)
 /*
  * GetCurrentTimeUsec()
  *
- * Get the transaction start time ("now()") broken down as a struct pg_tm,
+ * Get the transaction start time ("now()") broken down as a struct mdb_tm,
  * including fractional seconds and timezone offset.
  */
 void
-GetCurrentTimeUsec(struct pg_tm * tm, fsec_t *fsec, int *tzp)
+GetCurrentTimeUsec(struct mdb_tm * tm, fsec_t *fsec, int *tzp)
 {
 	int			tz;
 
@@ -442,9 +442,9 @@ AppendSeconds(char *cp, int sec, fsec_t fsec, int precision, bool fillzeros)
 	/* fsec_t is just an int32 */
 
 	if (fillzeros)
-		cp = pg_ltostr_zeropad(cp, Abs(sec), 2);
+		cp = mdb_ltostr_zeropad(cp, Abs(sec), 2);
 	else
-		cp = pg_ltostr(cp, Abs(sec));
+		cp = mdb_ltostr(cp, Abs(sec));
 
 	if (fsec != 0)
 	{
@@ -479,11 +479,11 @@ AppendSeconds(char *cp, int sec, fsec_t fsec, int precision, bool fillzeros)
 
 		/*
 		 * If we still have a non-zero value then precision must have not been
-		 * enough to print the number.  We punt the problem to pg_ltostr(),
+		 * enough to print the number.  We punt the problem to mdb_ltostr(),
 		 * which will generate a correct answer in the minimum valid width.
 		 */
 		if (value)
-			return pg_ltostr(cp, Abs(fsec));
+			return mdb_ltostr(cp, Abs(fsec));
 
 		return end;
 	}
@@ -495,9 +495,9 @@ AppendSeconds(char *cp, int sec, fsec_t fsec, int precision, bool fillzeros)
 	if (fsec == 0)
 	{
 		if (fillzeros)
-			return pg_ltostr_zeropad(cp, Abs(sec), 2);
+			return mdb_ltostr_zeropad(cp, Abs(sec), 2);
 		else
-			return pg_ltostr(cp, Abs(sec));
+			return mdb_ltostr(cp, Abs(sec));
 	}
 	else
 	{
@@ -518,7 +518,7 @@ AppendSeconds(char *cp, int sec, fsec_t fsec, int precision, bool fillzeros)
  * there; callers are responsible for NUL terminating str themselves.
  */
 static char *
-AppendTimestampSeconds(char *cp, struct pg_tm * tm, fsec_t fsec)
+AppendTimestampSeconds(char *cp, struct mdb_tm * tm, fsec_t fsec)
 {
 	/*
 	 * In float mode, don't print fractional seconds before 1 AD, since it's
@@ -536,7 +536,7 @@ AppendTimestampSeconds(char *cp, struct pg_tm * tm, fsec_t fsec)
  * We assume the input frac is less than 1 so overflow is not an issue.
  */
 static void
-AdjustFractSeconds(double frac, struct pg_tm * tm, fsec_t *fsec, int scale)
+AdjustFractSeconds(double frac, struct mdb_tm * tm, fsec_t *fsec, int scale)
 {
 	int			sec;
 
@@ -555,7 +555,7 @@ AdjustFractSeconds(double frac, struct pg_tm * tm, fsec_t *fsec, int scale)
 
 /* As above, but initial scale produces days */
 static void
-AdjustFractDays(double frac, struct pg_tm * tm, fsec_t *fsec, int scale)
+AdjustFractDays(double frac, struct mdb_tm * tm, fsec_t *fsec, int scale)
 {
 	int			extra_days;
 
@@ -705,7 +705,7 @@ ParseDateTime(const char *timestr, char *workbuf, size_t buflen,
 				{
 					ftype[nf] = DTK_DATE;
 					while (isalnum((unsigned char) *cp) || *cp == delim)
-						APPEND_CHAR(bufp, bufend, pg_tolower((unsigned char) *cp++));
+						APPEND_CHAR(bufp, bufend, mdb_tolower((unsigned char) *cp++));
 				}
 			}
 
@@ -734,9 +734,9 @@ ParseDateTime(const char *timestr, char *workbuf, size_t buflen,
 			bool		is_date;
 
 			ftype[nf] = DTK_STRING;
-			APPEND_CHAR(bufp, bufend, pg_tolower((unsigned char) *cp++));
+			APPEND_CHAR(bufp, bufend, mdb_tolower((unsigned char) *cp++));
 			while (isalpha((unsigned char) *cp))
-				APPEND_CHAR(bufp, bufend, pg_tolower((unsigned char) *cp++));
+				APPEND_CHAR(bufp, bufend, mdb_tolower((unsigned char) *cp++));
 
 			/*
 			 * Dates can have embedded '-', '/', or '.' separators.  It could
@@ -761,7 +761,7 @@ ParseDateTime(const char *timestr, char *workbuf, size_t buflen,
 				ftype[nf] = DTK_DATE;
 				do
 				{
-					APPEND_CHAR(bufp, bufend, pg_tolower((unsigned char) *cp++));
+					APPEND_CHAR(bufp, bufend, mdb_tolower((unsigned char) *cp++));
 				} while (*cp == '+' || *cp == '-' ||
 						 *cp == '/' || *cp == '_' ||
 						 *cp == '.' || *cp == ':' ||
@@ -789,9 +789,9 @@ ParseDateTime(const char *timestr, char *workbuf, size_t buflen,
 			else if (isalpha((unsigned char) *cp))
 			{
 				ftype[nf] = DTK_SPECIAL;
-				APPEND_CHAR(bufp, bufend, pg_tolower((unsigned char) *cp++));
+				APPEND_CHAR(bufp, bufend, mdb_tolower((unsigned char) *cp++));
 				while (isalpha((unsigned char) *cp))
-					APPEND_CHAR(bufp, bufend, pg_tolower((unsigned char) *cp++));
+					APPEND_CHAR(bufp, bufend, mdb_tolower((unsigned char) *cp++));
 			}
 			/* otherwise something wrong... */
 			else
@@ -838,13 +838,13 @@ ParseDateTime(const char *timestr, char *workbuf, size_t buflen,
  * Use the system-provided functions to get the current time zone
  * if not specified in the input string.
  *
- * If the date is outside the range of pg_time_t (in practice that could only
- * happen if pg_time_t is just 32 bits), then assume UTC time zone - thomas
+ * If the date is outside the range of mdb_time_t (in practice that could only
+ * happen if mdb_time_t is just 32 bits), then assume UTC time zone - thomas
  * 1997-05-27
  */
 int
 DecodeDateTime(char **field, int *ftype, int nf,
-			   int *dtype, struct pg_tm * tm, fsec_t *fsec, int *tzp)
+			   int *dtype, struct mdb_tm * tm, fsec_t *fsec, int *tzp)
 {
 	int			fmask = 0,
 				tmask,
@@ -858,11 +858,11 @@ DecodeDateTime(char **field, int *ftype, int nf,
 	bool		isjulian = FALSE;
 	bool		is2digits = FALSE;
 	bool		bc = FALSE;
-	pg_tz	   *namedTz = NULL;
-	pg_tz	   *abbrevTz = NULL;
-	pg_tz	   *valtz;
+	mdb_tz	   *namedTz = NULL;
+	mdb_tz	   *abbrevTz = NULL;
+	mdb_tz	   *valtz;
 	char	   *abbrev = NULL;
-	struct pg_tm cur_tm;
+	struct mdb_tm cur_tm;
 
 	/*
 	 * We'll insist on at least all of the date fields, but initialize the
@@ -981,7 +981,7 @@ DecodeDateTime(char **field, int *ftype, int nf,
 					}
 					else
 					{
-						namedTz = pg_tzset(field[i]);
+						namedTz = mdb_tzset(field[i]);
 						if (!namedTz)
 						{
 							/*
@@ -1435,7 +1435,7 @@ DecodeDateTime(char **field, int *ftype, int nf,
 						 * Before giving up and declaring error, check to see
 						 * if it is an all-alpha timezone name.
 						 */
-						namedTz = pg_tzset(field[i]);
+						namedTz = mdb_tzset(field[i]);
 						if (!namedTz)
 							return DTERR_BAD_FORMAT;
 						/* we'll apply the zone setting below */
@@ -1525,10 +1525,10 @@ DecodeDateTime(char **field, int *ftype, int nf,
 
 /* DetermineTimeZoneOffset()
  *
- * Given a struct pg_tm in which tm_year, tm_mon, tm_mday, tm_hour, tm_min,
+ * Given a struct mdb_tm in which tm_year, tm_mon, tm_mday, tm_hour, tm_min,
  * and tm_sec fields are set, and a zic-style time zone definition, determine
  * the applicable GMT offset and daylight-savings status at that time.
- * Set the struct pg_tm's tm_isdst field accordingly, and return the GMT
+ * Set the struct mdb_tm's tm_isdst field accordingly, and return the GMT
  * offset as the function result.
  *
  * Note: if the date is out of the range we can deal with, we return zero
@@ -1536,9 +1536,9 @@ DecodeDateTime(char **field, int *ftype, int nf,
  * though probably some higher-level code will.
  */
 int
-DetermineTimeZoneOffset(struct pg_tm * tm, pg_tz *tzp)
+DetermineTimeZoneOffset(struct mdb_tm * tm, mdb_tz *tzp)
 {
-	pg_time_t	t;
+	mdb_time_t	t;
 
 	return DetermineTimeZoneOffsetInternal(tm, tzp, &t);
 }
@@ -1558,11 +1558,11 @@ DetermineTimeZoneOffset(struct pg_tm * tm, pg_tz *tzp)
  * of mktime(), anyway.
  */
 static int
-DetermineTimeZoneOffsetInternal(struct pg_tm * tm, pg_tz *tzp, pg_time_t *tp)
+DetermineTimeZoneOffsetInternal(struct mdb_tm * tm, mdb_tz *tzp, mdb_time_t *tp)
 {
 	int			date,
 				sec;
-	pg_time_t	day,
+	mdb_time_t	day,
 				mytime,
 				prevtime,
 				boundary,
@@ -1575,16 +1575,16 @@ DetermineTimeZoneOffsetInternal(struct pg_tm * tm, pg_tz *tzp, pg_time_t *tp)
 	int			res;
 
 	/*
-	 * First, generate the pg_time_t value corresponding to the given
+	 * First, generate the mdb_time_t value corresponding to the given
 	 * y/m/d/h/m/s taken as GMT time.  If this overflows, punt and decide the
 	 * timezone is GMT.  (For a valid Julian date, integer overflow should be
-	 * impossible with 64-bit pg_time_t, but let's check for safety.)
+	 * impossible with 64-bit mdb_time_t, but let's check for safety.)
 	 */
 	if (!IS_VALID_JULIAN(tm->tm_year, tm->tm_mon, tm->tm_mday))
 		goto overflow;
 	date = date2j(tm->tm_year, tm->tm_mon, tm->tm_mday) - UNIX_EPOCH_JDATE;
 
-	day = ((pg_time_t) date) * SECS_PER_DAY;
+	day = ((mdb_time_t) date) * SECS_PER_DAY;
 	if (day / SECS_PER_DAY != date)
 		goto overflow;
 	sec = tm->tm_sec + (tm->tm_min + tm->tm_hour * MINS_PER_HOUR) * SECS_PER_MINUTE;
@@ -1603,7 +1603,7 @@ DetermineTimeZoneOffsetInternal(struct pg_tm * tm, pg_tz *tzp, pg_time_t *tp)
 	if (mytime < 0 && prevtime > 0)
 		goto overflow;
 
-	res = pg_next_dst_boundary(&prevtime,
+	res = mdb_next_dst_boundary(&prevtime,
 							   &before_gmtoff, &before_isdst,
 							   &boundary,
 							   &after_gmtoff, &after_isdst,
@@ -1620,7 +1620,7 @@ DetermineTimeZoneOffsetInternal(struct pg_tm * tm, pg_tz *tzp, pg_time_t *tp)
 	}
 
 	/*
-	 * Form the candidate pg_time_t values with local-time adjustment
+	 * Form the candidate mdb_time_t values with local-time adjustment
 	 */
 	beforetime = mytime - before_gmtoff;
 	if ((before_gmtoff > 0 &&
@@ -1691,9 +1691,9 @@ overflow:
  * GMT offset even when the zone was then in DS or standard time respectively.
  */
 int
-DetermineTimeZoneAbbrevOffset(struct pg_tm * tm, const char *abbr, pg_tz *tzp)
+DetermineTimeZoneAbbrevOffset(struct mdb_tm * tm, const char *abbr, mdb_tz *tzp)
 {
-	pg_time_t	t;
+	mdb_time_t	t;
 
 	/*
 	 * Compute the UTC time we want to probe at.  (In event of overflow, we'll
@@ -1712,9 +1712,9 @@ DetermineTimeZoneAbbrevOffset(struct pg_tm * tm, const char *abbr, pg_tz *tzp)
  */
 int
 DetermineTimeZoneAbbrevOffsetTS(TimestampTz ts, const char *abbr,
-								pg_tz *tzp, int *isdst)
+								mdb_tz *tzp, int *isdst)
 {
-	pg_time_t	t = timestamptz_to_time_t(ts);
+	mdb_time_t	t = timestamptz_to_time_t(ts);
 
 	return DetermineTimeZoneAbbrevOffsetInternal(t, abbr, tzp, isdst);
 }
@@ -1722,12 +1722,12 @@ DetermineTimeZoneAbbrevOffsetTS(TimestampTz ts, const char *abbr,
 
 /* DetermineTimeZoneAbbrevOffsetInternal()
  *
- * Workhorse for above two functions: work from a pg_time_t probe instant.
+ * Workhorse for above two functions: work from a mdb_time_t probe instant.
  * DST status is returned into *isdst.
  */
 static int
-DetermineTimeZoneAbbrevOffsetInternal(pg_time_t t, const char *abbr,
-									  pg_tz *tzp, int *isdst)
+DetermineTimeZoneAbbrevOffsetInternal(mdb_time_t t, const char *abbr,
+									  mdb_tz *tzp, int *isdst)
 {
 	char		upabbr[TZ_STRLEN_MAX + 1];
 	unsigned char *p;
@@ -1736,10 +1736,10 @@ DetermineTimeZoneAbbrevOffsetInternal(pg_time_t t, const char *abbr,
 	/* We need to force the abbrev to upper case */
 	strlcpy(upabbr, abbr, sizeof(upabbr));
 	for (p = (unsigned char *) upabbr; *p; p++)
-		*p = pg_toupper(*p);
+		*p = mdb_toupper(*p);
 
 	/* Look up the abbrev's meaning at this time in this zone */
-	if (!pg_interpret_timezone_abbrev(upabbr,
+	if (!mdb_interpret_timezone_abbrev(upabbr,
 									  &t,
 									  &gmtoff,
 									  isdst,
@@ -1747,7 +1747,7 @@ DetermineTimeZoneAbbrevOffsetInternal(pg_time_t t, const char *abbr,
 		ereport(ERROR,
 				(errcode(ERRCODE_CONFIG_FILE_ERROR),
 				 errmsg("time zone abbreviation \"%s\" is not used in time zone \"%s\"",
-						abbr, pg_get_timezone_name(tzp))));
+						abbr, mdb_get_timezone_name(tzp))));
 
 	/* Change sign to agree with DetermineTimeZoneOffset() */
 	return (int) -gmtoff;
@@ -1768,7 +1768,7 @@ DetermineTimeZoneAbbrevOffsetInternal(pg_time_t t, const char *abbr,
  */
 int
 DecodeTimeOnly(char **field, int *ftype, int nf,
-			   int *dtype, struct pg_tm * tm, fsec_t *fsec, int *tzp)
+			   int *dtype, struct mdb_tm * tm, fsec_t *fsec, int *tzp)
 {
 	int			fmask = 0,
 				tmask,
@@ -1781,10 +1781,10 @@ DecodeTimeOnly(char **field, int *ftype, int nf,
 	bool		is2digits = FALSE;
 	bool		bc = FALSE;
 	int			mer = HR24;
-	pg_tz	   *namedTz = NULL;
-	pg_tz	   *abbrevTz = NULL;
+	mdb_tz	   *namedTz = NULL;
+	mdb_tz	   *abbrevTz = NULL;
 	char	   *abbrev = NULL;
-	pg_tz	   *valtz;
+	mdb_tz	   *valtz;
 
 	*dtype = DTK_TIME;
 	tm->tm_hour = 0;
@@ -1861,7 +1861,7 @@ DecodeTimeOnly(char **field, int *ftype, int nf,
 					}
 					else
 					{
-						namedTz = pg_tzset(field[i]);
+						namedTz = mdb_tzset(field[i]);
 						if (!namedTz)
 						{
 							/*
@@ -2252,7 +2252,7 @@ DecodeTimeOnly(char **field, int *ftype, int nf,
 						 * Before giving up and declaring error, check to see
 						 * if it is an all-alpha timezone name.
 						 */
-						namedTz = pg_tzset(field[i]);
+						namedTz = mdb_tzset(field[i]);
 						if (!namedTz)
 							return DTERR_BAD_FORMAT;
 						/* we'll apply the zone setting below */
@@ -2319,7 +2319,7 @@ DecodeTimeOnly(char **field, int *ftype, int nf,
 			return DTERR_BAD_FORMAT;
 
 		/* if non-DST zone, we do not need to know the date */
-		if (pg_get_timezone_offset(namedTz, &gmtoff))
+		if (mdb_get_timezone_offset(namedTz, &gmtoff))
 		{
 			*tzp = -(int) gmtoff;
 		}
@@ -2337,7 +2337,7 @@ DecodeTimeOnly(char **field, int *ftype, int nf,
 	 */
 	if (abbrevTz != NULL)
 	{
-		struct pg_tm tt,
+		struct mdb_tm tt,
 				   *tmp = &tt;
 
 		/*
@@ -2364,7 +2364,7 @@ DecodeTimeOnly(char **field, int *ftype, int nf,
 	/* timezone not specified? then use session timezone */
 	if (tzp != NULL && !(fmask & DTK_M(TZ)))
 	{
-		struct pg_tm tt,
+		struct mdb_tm tt,
 				   *tmp = &tt;
 
 		/*
@@ -2403,7 +2403,7 @@ DecodeTimeOnly(char **field, int *ftype, int nf,
  */
 static int
 DecodeDate(char *str, int fmask, int *tmask, bool *is2digits,
-		   struct pg_tm * tm)
+		   struct mdb_tm * tm)
 {
 	fsec_t		fsec;
 	int			nf = 0;
@@ -2513,7 +2513,7 @@ DecodeDate(char *str, int fmask, int *tmask, bool *is2digits,
  */
 int
 ValidateDate(int fmask, bool isjulian, bool is2digits, bool bc,
-			 struct pg_tm * tm)
+			 struct mdb_tm * tm)
 {
 	if (fmask & DTK_M(YEAR))
 	{
@@ -2592,7 +2592,7 @@ ValidateDate(int fmask, bool isjulian, bool is2digits, bool bc,
  */
 static int
 DecodeTime(char *str, int fmask, int range,
-		   int *tmask, struct pg_tm * tm, fsec_t *fsec)
+		   int *tmask, struct mdb_tm * tm, fsec_t *fsec)
 {
 	char	   *cp;
 	int			dterr;
@@ -2675,7 +2675,7 @@ DecodeTime(char *str, int fmask, int range,
  */
 static int
 DecodeNumber(int flen, char *str, bool haveTextMonth, int fmask,
-			 int *tmask, struct pg_tm * tm, fsec_t *fsec, bool *is2digits)
+			 int *tmask, struct mdb_tm * tm, fsec_t *fsec, bool *is2digits)
 {
 	int			val;
 	char	   *cp;
@@ -2860,7 +2860,7 @@ DecodeNumber(int flen, char *str, bool haveTextMonth, int fmask,
  */
 static int
 DecodeNumberField(int len, char *str, int fmask,
-				int *tmask, struct pg_tm * tm, fsec_t *fsec, bool *is2digits)
+				int *tmask, struct mdb_tm * tm, fsec_t *fsec, bool *is2digits)
 {
 	char	   *cp;
 
@@ -3029,7 +3029,7 @@ DecodeTimezone(char *str, int *tzp)
  */
 int
 DecodeTimezoneAbbrev(int field, char *lowtoken,
-					 int *offset, pg_tz **tz)
+					 int *offset, mdb_tz **tz)
 {
 	int			type;
 	const datetkn *tp;
@@ -3112,10 +3112,10 @@ DecodeSpecial(int field, char *lowtoken, int *val)
 
 /* ClearPgTM
  *
- * Zero out a pg_tm and associated fsec_t
+ * Zero out a mdb_tm and associated fsec_t
  */
 static inline void
-ClearPgTm(struct pg_tm * tm, fsec_t *fsec)
+ClearPgTm(struct mdb_tm * tm, fsec_t *fsec)
 {
 	tm->tm_year = 0;
 	tm->tm_mon = 0;
@@ -3140,7 +3140,7 @@ ClearPgTm(struct pg_tm * tm, fsec_t *fsec)
  */
 int
 DecodeInterval(char **field, int *ftype, int nf, int range,
-			   int *dtype, struct pg_tm * tm, fsec_t *fsec)
+			   int *dtype, struct mdb_tm * tm, fsec_t *fsec)
 {
 	bool		is_before = FALSE;
 	char	   *cp;
@@ -3582,7 +3582,7 @@ ISO8601IntegerWidth(char *fieldstart)
  */
 int
 DecodeISO8601Interval(char *str,
-					  int *dtype, struct pg_tm * tm, fsec_t *fsec)
+					  int *dtype, struct mdb_tm * tm, fsec_t *fsec)
 {
 	bool		datepart = true;
 	bool		havefield = false;
@@ -3923,20 +3923,20 @@ EncodeTimezone(char *str, int tz, int style)
 
 	if (sec != 0)
 	{
-		str = pg_ltostr_zeropad(str, hour, 2);
+		str = mdb_ltostr_zeropad(str, hour, 2);
 		*str++ = ':';
-		str = pg_ltostr_zeropad(str, min, 2);
+		str = mdb_ltostr_zeropad(str, min, 2);
 		*str++ = ':';
-		str = pg_ltostr_zeropad(str, sec, 2);
+		str = mdb_ltostr_zeropad(str, sec, 2);
 	}
 	else if (min != 0 || style == USE_XSD_DATES)
 	{
-		str = pg_ltostr_zeropad(str, hour, 2);
+		str = mdb_ltostr_zeropad(str, hour, 2);
 		*str++ = ':';
-		str = pg_ltostr_zeropad(str, min, 2);
+		str = mdb_ltostr_zeropad(str, min, 2);
 	}
 	else
-		str = pg_ltostr_zeropad(str, hour, 2);
+		str = mdb_ltostr_zeropad(str, hour, 2);
 	return str;
 }
 
@@ -3944,7 +3944,7 @@ EncodeTimezone(char *str, int tz, int style)
  * Encode date as local time.
  */
 void
-EncodeDateOnly(struct pg_tm * tm, int style, char *str)
+EncodeDateOnly(struct mdb_tm * tm, int style, char *str)
 {
 	Assert(tm->tm_mon >= 1 && tm->tm_mon <= MONTHS_PER_YEAR);
 
@@ -3953,40 +3953,40 @@ EncodeDateOnly(struct pg_tm * tm, int style, char *str)
 		case USE_ISO_DATES:
 		case USE_XSD_DATES:
 			/* compatible with ISO date formats */
-			str = pg_ltostr_zeropad(str,
+			str = mdb_ltostr_zeropad(str,
 					(tm->tm_year > 0) ? tm->tm_year : -(tm->tm_year - 1), 4);
 			*str++ = '-';
-			str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 			*str++ = '-';
-			str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 			break;
 
 		case USE_SQL_DATES:
 			/* compatible with Oracle/Ingres date formats */
 			if (DateOrder == DATEORDER_DMY)
 			{
-				str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 				*str++ = '/';
-				str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 			}
 			else
 			{
-				str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 				*str++ = '/';
-				str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 			}
 			*str++ = '/';
-			str = pg_ltostr_zeropad(str,
+			str = mdb_ltostr_zeropad(str,
 					(tm->tm_year > 0) ? tm->tm_year : -(tm->tm_year - 1), 4);
 			break;
 
 		case USE_GERMAN_DATES:
 			/* German-style date format */
-			str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 			*str++ = '.';
-			str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 			*str++ = '.';
-			str = pg_ltostr_zeropad(str,
+			str = mdb_ltostr_zeropad(str,
 					(tm->tm_year > 0) ? tm->tm_year : -(tm->tm_year - 1), 4);
 			break;
 
@@ -3995,18 +3995,18 @@ EncodeDateOnly(struct pg_tm * tm, int style, char *str)
 			/* traditional date-only style for MollyDB */
 			if (DateOrder == DATEORDER_DMY)
 			{
-				str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 				*str++ = '-';
-				str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 			}
 			else
 			{
-				str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 				*str++ = '-';
-				str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 			}
 			*str++ = '-';
-			str = pg_ltostr_zeropad(str,
+			str = mdb_ltostr_zeropad(str,
 					(tm->tm_year > 0) ? tm->tm_year : -(tm->tm_year - 1), 4);
 			break;
 	}
@@ -4029,11 +4029,11 @@ EncodeDateOnly(struct pg_tm * tm, int style, char *str)
  * output.
  */
 void
-EncodeTimeOnly(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, int style, char *str)
+EncodeTimeOnly(struct mdb_tm * tm, fsec_t fsec, bool print_tz, int tz, int style, char *str)
 {
-	str = pg_ltostr_zeropad(str, tm->tm_hour, 2);
+	str = mdb_ltostr_zeropad(str, tm->tm_hour, 2);
 	*str++ = ':';
-	str = pg_ltostr_zeropad(str, tm->tm_min, 2);
+	str = mdb_ltostr_zeropad(str, tm->tm_min, 2);
 	*str++ = ':';
 	str = AppendSeconds(str, tm->tm_sec, fsec, MAX_TIME_PRECISION, true);
 	if (print_tz)
@@ -4059,7 +4059,7 @@ EncodeTimeOnly(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, int style,
  *	XSD - yyyy-mm-ddThh:mm:ss.ss+/-tz
  */
 void
-EncodeDateTime(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, const char *tzn, int style, char *str)
+EncodeDateTime(struct mdb_tm * tm, fsec_t fsec, bool print_tz, int tz, const char *tzn, int style, char *str)
 {
 	int			day;
 
@@ -4076,16 +4076,16 @@ EncodeDateTime(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, const char
 		case USE_ISO_DATES:
 		case USE_XSD_DATES:
 			/* Compatible with ISO-8601 date formats */
-			str = pg_ltostr_zeropad(str,
+			str = mdb_ltostr_zeropad(str,
 					(tm->tm_year > 0) ? tm->tm_year : -(tm->tm_year - 1), 4);
 			*str++ = '-';
-			str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 			*str++ = '-';
-			str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 			*str++ = (style == USE_ISO_DATES) ? ' ' : 'T';
-			str = pg_ltostr_zeropad(str, tm->tm_hour, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_hour, 2);
 			*str++ = ':';
-			str = pg_ltostr_zeropad(str, tm->tm_min, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_min, 2);
 			*str++ = ':';
 			str = AppendTimestampSeconds(str, tm, fsec);
 			if (print_tz)
@@ -4096,23 +4096,23 @@ EncodeDateTime(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, const char
 			/* Compatible with Oracle/Ingres date formats */
 			if (DateOrder == DATEORDER_DMY)
 			{
-				str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 				*str++ = '/';
-				str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 			}
 			else
 			{
-				str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 				*str++ = '/';
-				str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 			}
 			*str++ = '/';
-			str = pg_ltostr_zeropad(str,
+			str = mdb_ltostr_zeropad(str,
 					(tm->tm_year > 0) ? tm->tm_year : -(tm->tm_year - 1), 4);
 			*str++ = ' ';
-			str = pg_ltostr_zeropad(str, tm->tm_hour, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_hour, 2);
 			*str++ = ':';
-			str = pg_ltostr_zeropad(str, tm->tm_min, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_min, 2);
 			*str++ = ':';
 			str = AppendTimestampSeconds(str, tm, fsec);
 
@@ -4135,16 +4135,16 @@ EncodeDateTime(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, const char
 
 		case USE_GERMAN_DATES:
 			/* German variant on European style */
-			str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 			*str++ = '.';
-			str = pg_ltostr_zeropad(str, tm->tm_mon, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_mon, 2);
 			*str++ = '.';
-			str = pg_ltostr_zeropad(str,
+			str = mdb_ltostr_zeropad(str,
 					(tm->tm_year > 0) ? tm->tm_year : -(tm->tm_year - 1), 4);
 			*str++ = ' ';
-			str = pg_ltostr_zeropad(str, tm->tm_hour, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_hour, 2);
 			*str++ = ':';
-			str = pg_ltostr_zeropad(str, tm->tm_min, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_min, 2);
 			*str++ = ':';
 			str = AppendTimestampSeconds(str, tm, fsec);
 
@@ -4170,7 +4170,7 @@ EncodeDateTime(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, const char
 			*str++ = ' ';
 			if (DateOrder == DATEORDER_DMY)
 			{
-				str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 				*str++ = ' ';
 				memcpy(str, months[tm->tm_mon - 1], 3);
 				str += 3;
@@ -4180,16 +4180,16 @@ EncodeDateTime(struct pg_tm * tm, fsec_t fsec, bool print_tz, int tz, const char
 				memcpy(str, months[tm->tm_mon - 1], 3);
 				str += 3;
 				*str++ = ' ';
-				str = pg_ltostr_zeropad(str, tm->tm_mday, 2);
+				str = mdb_ltostr_zeropad(str, tm->tm_mday, 2);
 			}
 			*str++ = ' ';
-			str = pg_ltostr_zeropad(str, tm->tm_hour, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_hour, 2);
 			*str++ = ':';
-			str = pg_ltostr_zeropad(str, tm->tm_min, 2);
+			str = mdb_ltostr_zeropad(str, tm->tm_min, 2);
 			*str++ = ':';
 			str = AppendTimestampSeconds(str, tm, fsec);
 			*str++ = ' ';
-			str = pg_ltostr_zeropad(str,
+			str = mdb_ltostr_zeropad(str,
 					(tm->tm_year > 0) ? tm->tm_year : -(tm->tm_year - 1), 4);
 
 			if (print_tz)
@@ -4301,7 +4301,7 @@ AddVerboseIntPart(char *cp, int value, const char *units,
  * "day-time literal"s (that look like ('4 5:6:7')
  */
 void
-EncodeInterval(struct pg_tm * tm, fsec_t fsec, int style, char *str)
+EncodeInterval(struct mdb_tm * tm, fsec_t fsec, int style, char *str)
 {
 	char	   *cp = str;
 	int			year = tm->tm_year;
@@ -4672,9 +4672,9 @@ InstallTimeZoneAbbrevs(TimeZoneAbbrevTable *tbl)
 }
 
 /*
- * Helper subroutine to locate pg_tz timezone for a dynamic abbreviation.
+ * Helper subroutine to locate mdb_tz timezone for a dynamic abbreviation.
  */
-static pg_tz *
+static mdb_tz *
 FetchDynamicTimeZone(TimeZoneAbbrevTable *tbl, const datetkn *tp)
 {
 	DynamicZoneAbbrev *dtza;
@@ -4688,7 +4688,7 @@ FetchDynamicTimeZone(TimeZoneAbbrevTable *tbl, const datetkn *tp)
 	/* Look up the underlying zone if we haven't already */
 	if (dtza->tz == NULL)
 	{
-		dtza->tz = pg_tzset(dtza->zone);
+		dtza->tz = mdb_tzset(dtza->zone);
 
 		/*
 		 * Ideally we'd let the caller ereport instead of doing it here, but
@@ -4711,7 +4711,7 @@ FetchDynamicTimeZone(TimeZoneAbbrevTable *tbl, const datetkn *tp)
  * and returns a set of (abbrev, utc_offset, is_dst).
  */
 Datum
-pg_timezone_abbrevs(PG_FUNCTION_ARGS)
+mdb_timezone_abbrevs(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	int		   *pindex;
@@ -4724,7 +4724,7 @@ pg_timezone_abbrevs(PG_FUNCTION_ARGS)
 	int			gmtoffset;
 	bool		is_dst;
 	unsigned char *p;
-	struct pg_tm tm;
+	struct mdb_tm tm;
 	Interval   *resInterval;
 
 	/* stuff done only on the first call of the function */
@@ -4748,7 +4748,7 @@ pg_timezone_abbrevs(PG_FUNCTION_ARGS)
 
 		/*
 		 * build tupdesc for result tuples. This must match this function's
-		 * pg_proc entry!
+		 * mdb_proc entry!
 		 */
 		tupdesc = CreateTemplateTupleDesc(3, false);
 		TupleDescInitEntry(tupdesc, (AttrNumber) 1, "abbrev",
@@ -4785,7 +4785,7 @@ pg_timezone_abbrevs(PG_FUNCTION_ARGS)
 		case DYNTZ:
 			{
 				/* Determine the current meaning of the abbrev */
-				pg_tz	   *tzp;
+				mdb_tz	   *tzp;
 				TimestampTz now;
 				int			isdst;
 
@@ -4813,12 +4813,12 @@ pg_timezone_abbrevs(PG_FUNCTION_ARGS)
 	 */
 	strlcpy(buffer, tp->token, sizeof(buffer));
 	for (p = (unsigned char *) buffer; *p; p++)
-		*p = pg_toupper(*p);
+		*p = mdb_toupper(*p);
 
 	values[0] = CStringGetTextDatum(buffer);
 
 	/* Convert offset (in seconds) to an interval */
-	MemSet(&tm, 0, sizeof(struct pg_tm));
+	MemSet(&tm, 0, sizeof(struct mdb_tm));
 	tm.tm_sec = gmtoffset;
 	resInterval = (Interval *) palloc(sizeof(Interval));
 	tm2interval(&tm, 0, resInterval);
@@ -4839,22 +4839,22 @@ pg_timezone_abbrevs(PG_FUNCTION_ARGS)
  * and returns a set of (name, abbrev, utc_offset, is_dst).
  */
 Datum
-pg_timezone_names(PG_FUNCTION_ARGS)
+mdb_timezone_names(PG_FUNCTION_ARGS)
 {
 	MemoryContext oldcontext;
 	FuncCallContext *funcctx;
-	pg_tzenum  *tzenum;
-	pg_tz	   *tz;
+	mdb_tzenum  *tzenum;
+	mdb_tz	   *tz;
 	Datum		result;
 	HeapTuple	tuple;
 	Datum		values[4];
 	bool		nulls[4];
 	int			tzoff;
-	struct pg_tm tm;
+	struct mdb_tm tm;
 	fsec_t		fsec;
 	const char *tzn;
 	Interval   *resInterval;
-	struct pg_tm itm;
+	struct mdb_tm itm;
 
 	/* stuff done only on the first call of the function */
 	if (SRF_IS_FIRSTCALL())
@@ -4870,12 +4870,12 @@ pg_timezone_names(PG_FUNCTION_ARGS)
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		/* initialize timezone scanning code */
-		tzenum = pg_tzenumerate_start();
+		tzenum = mdb_tzenumerate_start();
 		funcctx->user_fctx = (void *) tzenum;
 
 		/*
 		 * build tupdesc for result tuples. This must match this function's
-		 * pg_proc entry!
+		 * mdb_proc entry!
 		 */
 		tupdesc = CreateTemplateTupleDesc(4, false);
 		TupleDescInitEntry(tupdesc, (AttrNumber) 1, "name",
@@ -4893,18 +4893,18 @@ pg_timezone_names(PG_FUNCTION_ARGS)
 
 	/* stuff done on every call of the function */
 	funcctx = SRF_PERCALL_SETUP();
-	tzenum = (pg_tzenum *) funcctx->user_fctx;
+	tzenum = (mdb_tzenum *) funcctx->user_fctx;
 
 	/* search for another zone to display */
 	for (;;)
 	{
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
-		tz = pg_tzenumerate_next(tzenum);
+		tz = mdb_tzenumerate_next(tzenum);
 		MemoryContextSwitchTo(oldcontext);
 
 		if (!tz)
 		{
-			pg_tzenumerate_end(tzenum);
+			mdb_tzenumerate_end(tzenum);
 			funcctx->user_fctx = NULL;
 			SRF_RETURN_DONE(funcctx);
 		}
@@ -4924,10 +4924,10 @@ pg_timezone_names(PG_FUNCTION_ARGS)
 
 	MemSet(nulls, 0, sizeof(nulls));
 
-	values[0] = CStringGetTextDatum(pg_get_timezone_name(tz));
+	values[0] = CStringGetTextDatum(mdb_get_timezone_name(tz));
 	values[1] = CStringGetTextDatum(tzn ? tzn : "");
 
-	MemSet(&itm, 0, sizeof(struct pg_tm));
+	MemSet(&itm, 0, sizeof(struct mdb_tm));
 	itm.tm_sec = -tzoff;
 	resInterval = (Interval *) palloc(sizeof(Interval));
 	tm2interval(&itm, 0, resInterval);

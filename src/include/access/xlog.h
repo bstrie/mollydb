@@ -17,7 +17,7 @@
 #include "access/xlogreader.h"
 #include "datatype/timestamp.h"
 #include "lib/stringinfo.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 #include "storage/fd.h"
 
 
@@ -275,13 +275,13 @@ extern void assign_checkpoint_completion_target(double newval, void *extra);
 /*
  * Starting/stopping a base backup
  */
-extern XLogRecPtr do_pg_start_backup(const char *backupidstr, bool fast,
+extern XLogRecPtr do_mdb_start_backup(const char *backupidstr, bool fast,
 				   TimeLineID *starttli_p, StringInfo labelfile, DIR *tblspcdir,
 				   List **tablespaces, StringInfo tblspcmapfile, bool infotbssize,
 				   bool needtblspcmapfile);
-extern XLogRecPtr do_pg_stop_backup(char *labelfile, bool waitforarchive,
+extern XLogRecPtr do_mdb_stop_backup(char *labelfile, bool waitforarchive,
 				  TimeLineID *stoptli_p);
-extern void do_pg_abort_backup(void);
+extern void do_mdb_abort_backup(void);
 
 /* File path names (all relative to $PGDATA) */
 #define BACKUP_LABEL_FILE		"backup_label"

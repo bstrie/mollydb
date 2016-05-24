@@ -1,9 +1,9 @@
-# translation of pg_config-ro.po to Română
+# translation of mdb_config-ro.po to Română
 #
 # Alin Vaida <alin.vaida@gmail.com>, 2004, 2005, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_config-ro\n"
+"Project-Id-Version: mdb_config-ro\n"
 "Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2010-09-02 18:00+0000\n"
 "PO-Revision-Date: 2013-09-05 23:01-0400\n"
@@ -17,20 +17,20 @@ msgstr ""
 "X-Poedit-Language: Romanian\n"
 "X-Poedit-Country: ROMANIA\n"
 
-#: pg_config.c:243
-#: pg_config.c:259
-#: pg_config.c:275
-#: pg_config.c:291
-#: pg_config.c:307
-#: pg_config.c:323
-#: pg_config.c:339
-#: pg_config.c:355
-#: pg_config.c:371
+#: mdb_config.c:243
+#: mdb_config.c:259
+#: mdb_config.c:275
+#: mdb_config.c:291
+#: mdb_config.c:307
+#: mdb_config.c:323
+#: mdb_config.c:339
+#: mdb_config.c:355
+#: mdb_config.c:371
 #, c-format
 msgid "not recorded\n"
 msgstr "ne-înregistrat\n"
 
-#: pg_config.c:428
+#: mdb_config.c:428
 #, c-format
 msgid ""
 "\n"
@@ -41,12 +41,12 @@ msgstr ""
 "%s: furnizează informaţii despre versiunea de MollyDB instalată\n"
 "\n"
 
-#: pg_config.c:429
+#: mdb_config.c:429
 #, c-format
 msgid "Usage:\n"
 msgstr "Utilizare:\n"
 
-#: pg_config.c:430
+#: mdb_config.c:430
 #, c-format
 msgid ""
 "  %s [OPTION]...\n"
@@ -55,79 +55,79 @@ msgstr ""
 "  %s [OPȚIUNE]...\n"
 "\n"
 
-#: pg_config.c:431
+#: mdb_config.c:431
 #, c-format
 msgid "Options:\n"
 msgstr "Opţiuni:\n"
 
-#: pg_config.c:432
+#: mdb_config.c:432
 #, c-format
 msgid "  --bindir              show location of user executables\n"
 msgstr "  --bindir              afişează locaţia fişierelor executabile\n"
 
-#: pg_config.c:433
+#: mdb_config.c:433
 #, c-format
 msgid "  --docdir              show location of documentation files\n"
 msgstr "  --docdir              afişează locaţia documentaţiei\n"
 
-#: pg_config.c:434
+#: mdb_config.c:434
 #, c-format
 msgid "  --htmldir             show location of HTML documentation files\n"
 msgstr "  --docdir              afişează locaţia documentaţiei HTML\n"
 
-#: pg_config.c:435
+#: mdb_config.c:435
 #, c-format
 msgid ""
 "  --includedir          show location of C header files of the client\n"
 "                        interfaces\n"
 msgstr "  --includedir          afişează locaţia fişierelor header C ale interfeţelor client\n"
 
-#: pg_config.c:437
+#: mdb_config.c:437
 #, c-format
 msgid "  --pkgincludedir       show location of other C header files\n"
 msgstr "  --pkgincludedir       afişează locaţia celorlalte fişiere header C\n"
 
-#: pg_config.c:438
+#: mdb_config.c:438
 #, c-format
 msgid "  --includedir-server   show location of C header files for the server\n"
 msgstr "  --includedir-server   afişează locaţia fişierelor header C pentru server\n"
 
-#: pg_config.c:439
+#: mdb_config.c:439
 #, c-format
 msgid "  --libdir              show location of object code libraries\n"
 msgstr "  --libdir              afişează locaţia bibliotecilor de cod obiect\n"
 
-#: pg_config.c:440
+#: mdb_config.c:440
 #, c-format
 msgid "  --pkglibdir           show location of dynamically loadable modules\n"
 msgstr "  --pkglibdir           afişează locaţia modulelor încărcabile dinamic\n"
 
-#: pg_config.c:441
+#: mdb_config.c:441
 #, c-format
 msgid "  --localedir           show location of locale support files\n"
 msgstr "  --localedir           afişează locaţia fişierelor de suport pentru localizare\n"
 
-#: pg_config.c:442
+#: mdb_config.c:442
 #, c-format
 msgid "  --mandir              show location of manual pages\n"
 msgstr "  --mandir              afişează locaţia paginilor de manual\n"
 
-#: pg_config.c:443
+#: mdb_config.c:443
 #, c-format
 msgid "  --sharedir            show location of architecture-independent support files\n"
 msgstr "  --sharedir            afişează locaţia fişierelor de suport independent de arhitectură\n"
 
-#: pg_config.c:444
+#: mdb_config.c:444
 #, c-format
 msgid "  --sysconfdir          show location of system-wide configuration files\n"
 msgstr "  --sysconfdir          afişează locaţia fişierelor de configurare pentru întreg sistemul\n"
 
-#: pg_config.c:445
+#: mdb_config.c:445
 #, c-format
 msgid "  --pgxs                show location of extension makefile\n"
 msgstr "  --pgxs                afişează locaţia fişierului makefile pentru extensii\n"
 
-#: pg_config.c:446
+#: mdb_config.c:446
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
@@ -136,59 +136,59 @@ msgstr ""
 "  --configure           afişează opţiunile cu care a fost rulat scriptul \"configure\"\n"
 "                        la compilarea MollyDB\n"
 
-#: pg_config.c:448
+#: mdb_config.c:448
 #, c-format
 msgid "  --cc                  show CC value used when MollyDB was built\n"
 msgstr "  --cc                  afişează valoarea CC folosită la compilarea MollyDB\n"
 
-#: pg_config.c:449
+#: mdb_config.c:449
 #, c-format
 msgid "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
 msgstr "  --cppflags            afişează valoarea CPPFLAGS folosită la compilarea MollyDB\n"
 
-#: pg_config.c:450
+#: mdb_config.c:450
 #, c-format
 msgid "  --cflags              show CFLAGS value used when MollyDB was built\n"
 msgstr "  --cflags              afişează valoarea CFLAGS folosită la compilarea MollyDB\n"
 
-#: pg_config.c:451
+#: mdb_config.c:451
 #, c-format
 msgid "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
 msgstr "  --cflags_sl           afişează valoarea CFLAGS_SL folosită la compilarea MollyDB\n"
 
-#: pg_config.c:452
+#: mdb_config.c:452
 #, c-format
 msgid "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
 msgstr "  --ldflags             afişează valoarea LDFLAGS folosită la compilarea MollyDB\n"
 
-#: pg_config.c:453
+#: mdb_config.c:453
 #, c-format
 msgid "  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was built\n"
 msgstr "  --ldflags_sl          afişează valoarea LDFLAGS_SL folosită la compilarea MollyDB\n"
 
-#: pg_config.c:454
+#: mdb_config.c:454
 #, c-format
 msgid "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was built\n"
 msgstr "  --ldflags_sl          afişează valoarea LDFLAGS_SL folosită la compilarea MollyDB\n"
 
-#: pg_config.c:455
+#: mdb_config.c:455
 #, c-format
 msgid "  --libs                show LIBS value used when MollyDB was built\n"
 msgstr "  --libs                afişează valoarea LIBS folosită la compilarea MollyDB\n"
 
-#: pg_config.c:456
+#: mdb_config.c:456
 #, c-format
 msgid "  --version             show the MollyDB version\n"
 msgstr "  --version             afişează versiunea MollyDB\n"
 
-#: pg_config.c:457
+#: mdb_config.c:457
 #, c-format
 msgid "  --help                show this help, then exit\n"
 msgstr ""
 "  --help                afişează acest ajutor, apoi iese\n"
 "\n"
 
-#: pg_config.c:458
+#: mdb_config.c:458
 #, c-format
 msgid ""
 "\n"
@@ -199,22 +199,22 @@ msgstr ""
 "Fără argumente, afişează toate elementele cunoscute\n"
 "\n"
 
-#: pg_config.c:459
+#: mdb_config.c:459
 #, c-format
 msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr "Raportaţi erorile la <mdb-bugs@mollydb.org>.\n"
 
-#: pg_config.c:465
+#: mdb_config.c:465
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "Încercaţi \"%s --help\" pentru mai multe informaţii.\n"
 
-#: pg_config.c:504
+#: mdb_config.c:504
 #, c-format
 msgid "%s: could not find own program executable\n"
 msgstr "%s: imposibil de găsit propriul program executabil\n"
 
-#: pg_config.c:527
+#: mdb_config.c:527
 #, c-format
 msgid "%s: invalid argument: %s\n"
 msgstr "%s: argument incorect: %s\n"

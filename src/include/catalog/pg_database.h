@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_database.h
- *	  definition of the system "database" relation (pg_database)
+ * mdb_database.h
+ *	  definition of the system "database" relation (mdb_database)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_database.h
+ * src/include/catalog/mdb_database.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,14 +22,14 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_database definition.  cpp turns this into
- *		typedef struct FormData_pg_database
+ *		mdb_database definition.  cpp turns this into
+ *		typedef struct FormData_mdb_database
  * ----------------
  */
 #define DatabaseRelationId	1262
 #define DatabaseRelation_Rowtype_Id  1248
 
-CATALOG(pg_database,1262) BKI_SHARED_RELATION BKI_ROWTYPE_OID(1248) BKI_SCHEMA_MACRO
+CATALOG(mdb_database,1262) BKI_SHARED_RELATION BKI_ROWTYPE_OID(1248) BKI_SCHEMA_MACRO
 {
 	NameData	datname;		/* database name */
 	Oid			datdba;			/* owner of database */
@@ -47,33 +47,33 @@ CATALOG(pg_database,1262) BKI_SHARED_RELATION BKI_ROWTYPE_OID(1248) BKI_SCHEMA_M
 #ifdef CATALOG_VARLEN			/* variable-length fields start here */
 	aclitem		datacl[1];		/* access permissions */
 #endif
-} FormData_pg_database;
+} FormData_mdb_database;
 
 /* ----------------
- *		Form_pg_database corresponds to a pointer to a tuple with
- *		the format of pg_database relation.
+ *		Form_mdb_database corresponds to a pointer to a tuple with
+ *		the format of mdb_database relation.
  * ----------------
  */
-typedef FormData_pg_database *Form_pg_database;
+typedef FormData_mdb_database *Form_mdb_database;
 
 /* ----------------
- *		compiler constants for pg_database
+ *		compiler constants for mdb_database
  * ----------------
  */
-#define Natts_pg_database				13
-#define Anum_pg_database_datname		1
-#define Anum_pg_database_datdba			2
-#define Anum_pg_database_encoding		3
-#define Anum_pg_database_datcollate		4
-#define Anum_pg_database_datctype		5
-#define Anum_pg_database_datistemplate	6
-#define Anum_pg_database_datallowconn	7
-#define Anum_pg_database_datconnlimit	8
-#define Anum_pg_database_datlastsysoid	9
-#define Anum_pg_database_datfrozenxid	10
-#define Anum_pg_database_datminmxid		11
-#define Anum_pg_database_dattablespace	12
-#define Anum_pg_database_datacl			13
+#define Natts_mdb_database				13
+#define Anum_mdb_database_datname		1
+#define Anum_mdb_database_datdba			2
+#define Anum_mdb_database_encoding		3
+#define Anum_mdb_database_datcollate		4
+#define Anum_mdb_database_datctype		5
+#define Anum_mdb_database_datistemplate	6
+#define Anum_mdb_database_datallowconn	7
+#define Anum_mdb_database_datconnlimit	8
+#define Anum_mdb_database_datlastsysoid	9
+#define Anum_mdb_database_datfrozenxid	10
+#define Anum_mdb_database_datminmxid		11
+#define Anum_mdb_database_dattablespace	12
+#define Anum_mdb_database_datacl			13
 
 DATA(insert OID = 1 (  template1 PGUID ENCODING "LC_COLLATE" "LC_CTYPE" t t -1 0 0 1 1663 _null_));
 SHDESCR("default template for new databases");

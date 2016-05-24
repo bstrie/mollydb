@@ -76,7 +76,7 @@
 
     <listitem>
      <para>
-      Prevent possible crashes in <function>pg_get_expr()</> by disallowing
+      Prevent possible crashes in <function>mdb_get_expr()</> by disallowing
       it from being called with an argument that is not one of the system
       catalog columns it's intended to be used with
       (Heikki Linnakangas, Tom Lane)
@@ -467,7 +467,7 @@
 
     <listitem>
      <para>
-      When reading <filename>pg_hba.conf</> and related files, do not treat
+      When reading <filename>mdb_hba.conf</> and related files, do not treat
       <literal>@something</> as a file inclusion request if the <literal>@</>
       appears inside quote marks; also, never treat <literal>@</> by itself
       as a file inclusion request (Tom)
@@ -485,7 +485,7 @@
     <listitem>
      <para>
       Prevent infinite loop on some platforms if a directory is named as
-      an inclusion target in <filename>pg_hba.conf</> and related files
+      an inclusion target in <filename>mdb_hba.conf</> and related files
       (Tom)
      </para>
     </listitem>
@@ -821,7 +821,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to not go into an infinite loop if
+      Fix <application>mdb_ctl</> to not go into an infinite loop if
       <filename>mollydb.conf</> is empty (Jeff Davis)
      </para>
     </listitem>
@@ -1122,7 +1122,7 @@
 
     <listitem>
      <para>
-      Fix recent breakage of <literal>pg_ctl restart</> (Tom)
+      Fix recent breakage of <literal>mdb_ctl restart</> (Tom)
      </para>
     </listitem>
 
@@ -1247,14 +1247,14 @@
 
     <listitem>
      <para>
-      Improve <application>pg_dump</> and <application>pg_restore</>'s
+      Improve <application>mdb_dump</> and <application>mdb_restore</>'s
       error reporting after failure to send a SQL command (Tom)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to properly preserve postmaster
+      Fix <application>mdb_ctl</> to properly preserve postmaster
       command-line arguments across a <literal>restart</> (Bruce)
      </para>
     </listitem>
@@ -1304,7 +1304,7 @@
 
     <listitem>
      <para>
-      Make <function>pg_get_ruledef()</> parenthesize negative constants (Tom)
+      Make <function>mdb_get_ruledef()</> parenthesize negative constants (Tom)
      </para>
 
      <para>
@@ -1315,7 +1315,7 @@
       another recent patch to cause
       <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
-      <application>pg_dump</> output failing to reload, it is being treated
+      <application>mdb_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
       output is actually incorrect are 8.3.1 and 8.2.7.
      </para>
@@ -1476,7 +1476,7 @@
      <para>
       A side effect of the fix is that a transaction that has executed
       a not-yet-committed <command>LISTEN</> command will not see any
-      row in <structname>pg_listener</> for the <command>LISTEN</>,
+      row in <structname>mdb_listener</> for the <command>LISTEN</>,
       should it choose to look; formerly it would have.  This behavior
       was never documented one way or the other, but it is possible that
       some applications depend on the old behavior.
@@ -1509,12 +1509,12 @@
 
     <listitem>
      <para>
-      Fix <application>pg_ctl</> to correctly extract the postmaster's port
+      Fix <application>mdb_ctl</> to correctly extract the postmaster's port
       number from command-line options (Itagaki Takahiro, Tom)
      </para>
 
      <para>
-      Previously, <literal>pg_ctl start -w</> could try to contact the
+      Previously, <literal>mdb_ctl start -w</> could try to contact the
       postmaster on the wrong port, leading to bogus reports of startup
       failure.
      </para>
@@ -1727,7 +1727,7 @@
 
     <listitem>
      <para>
-      Fix <application>pg_dump</> to correctly handle inheritance child tables
+      Fix <application>mdb_dump</> to correctly handle inheritance child tables
       that have default expressions different from their parent's (Tom)
      </para>
     </listitem>
@@ -2411,7 +2411,7 @@ created in 8.0.4, 7.4.9, and 7.3.11 releases.
 </para></listitem>
 
 <listitem><para>Fix race condition that could lead to <quote>file already
-exists</> errors during pg_clog and pg_subtrans file creation
+exists</> errors during mdb_clog and mdb_subtrans file creation
 (Tom)</para></listitem>
 
 <listitem><para>Fix cases that could lead to crashes if a cache-invalidation
@@ -2428,11 +2428,11 @@ constraints in the proper order (Nakano Yoshihisa)</para></listitem>
 <listitem><para>Fixes to allow restoring dumps that have cross-schema
 references to custom operators or operator classes (Tom)</para></listitem>
 
-<listitem><para>Allow <application>pg_restore</> to continue properly after a
+<listitem><para>Allow <application>mdb_restore</> to continue properly after a
 <command>COPY</> failure; formerly it tried to treat the remaining
 <command>COPY</> data as SQL commands (Stephen Frost)</para></listitem>
 
-<listitem><para>Fix <application>pg_ctl</> <literal>unregister</> crash
+<listitem><para>Fix <application>mdb_ctl</> <literal>unregister</> crash
 when the  data directory is not specified (Magnus)</para></listitem>
 
 <listitem><para>Fix <application>ecpg</> crash on AMD64 and PPC
@@ -2610,7 +2610,7 @@ includes <literal>%i</></para></listitem>
 <listitem><para>Fix <application>psql</> performance issue with long scripts
 on Windows (Merlin Moncure)</para></listitem>
 
-<listitem><para>Fix missing updates of <filename>pg_group</> flat
+<listitem><para>Fix missing updates of <filename>mdb_group</> flat
 file</para></listitem>
 
 <listitem><para>Fix longstanding planning error for outer joins</para>
@@ -2622,7 +2622,7 @@ only supported with merge-joinable join conditions</>.</para></listitem>
 <para>This avoids confusing startup scripts that expect the pid file to appear
 quickly.</para></listitem>
 
-<listitem><para>Prevent core dump in <application>pg_autovacuum</> when a
+<listitem><para>Prevent core dump in <application>mdb_autovacuum</> when a
 table has been dropped</para></listitem>
 
 <listitem><para>Fix problems with whole-row references (<literal>foo.*</>)
@@ -2712,15 +2712,15 @@ files during postmaster startup</para></listitem>
 <listitem><para>Improve random-number generation on Windows</para></listitem>
 <listitem><para>Make <literal>psql -f filename</> return a nonzero exit code
 when opening the file fails</para></listitem>
-<listitem><para>Change <application>pg_dump</> to handle inherited check
+<listitem><para>Change <application>mdb_dump</> to handle inherited check
 constraints more reliably</para></listitem>
-<listitem><para>Fix password prompting in <application>pg_restore</> on
+<listitem><para>Fix password prompting in <application>mdb_restore</> on
 Windows</para></listitem>
 <listitem><para>Fix PL/pgSQL to handle <literal>var := var</> correctly when
 the variable is of pass-by-reference type</para></listitem>
 <listitem><para>Fix PL/Perl <literal>%_SHARED</> so it's actually
 shared</para></listitem>
-<listitem><para>Fix <filename>contrib/pg_autovacuum</> to allow sleep
+<listitem><para>Fix <filename>contrib/mdb_autovacuum</> to allow sleep
 intervals over 2000 sec</para></listitem>
 <listitem><para>Update <filename>contrib/tsearch2</> to use current Snowball
 code</para></listitem>
@@ -2825,7 +2825,7 @@ the fix corrects the sort order of column values.
 This error only occurred when the
 <literal>--enable-integer-datetimes</> configuration switch had been used.
 </para></listitem>
-<listitem><para>Fix pg_dump to dump trigger names containing <literal>%</>
+<listitem><para>Fix mdb_dump to dump trigger names containing <literal>%</>
 correctly (Neil)</para></listitem>
 <listitem><para>Still more 64-bit fixes for
 <filename>contrib/intagg</></para></listitem>
@@ -2835,10 +2835,10 @@ correctly (Neil)</para></listitem>
 <listitem><para>Fix Borland makefile for libpq</para></listitem>
 <listitem><para>Fix <filename>contrib/btree_gist</> for <type>timetz</> type
 (Teodor)</para></listitem>
-<listitem><para>Make <command>pg_ctl</> check the PID found in
+<listitem><para>Make <command>mdb_ctl</> check the PID found in
 <filename>postmaster.pid</> to see if it is still a live
 process</para></listitem>
-<listitem><para>Fix <command>pg_dump</>/<command>pg_restore</> problems caused
+<listitem><para>Fix <command>mdb_dump</>/<command>mdb_restore</> problems caused
 by addition of dump timestamps</para></listitem>
 <listitem><para>Fix interaction between materializing holdable cursors and
 firing deferred triggers during transaction commit</para></listitem>
@@ -2942,11 +2942,11 @@ SET WITHOUT OIDS</> (Tom)</para></listitem>
 (Neil)</para></listitem>
 <listitem><para>Fix <command>ALTER LANGUAGE RENAME</> (Tom)</para></listitem>
 <listitem><para>Document the Windows-only <literal>register</> and
-<literal>unregister</> options of <application>pg_ctl</> (Magnus)</para></listitem>
+<literal>unregister</> options of <application>mdb_ctl</> (Magnus)</para></listitem>
 <listitem><para>Ensure operations done during backend shutdown are counted by
 statistics collector</para>
 <para>
-This is expected to resolve reports of <application>pg_autovacuum</>
+This is expected to resolve reports of <application>mdb_autovacuum</>
 not vacuuming the system catalogs often enough &mdash; it was not being
 told about catalog deletions caused by temporary table removal during
 backend exit.
@@ -3064,10 +3064,10 @@ closes cursors created since the savepoint</para></listitem>
 <listitem><para>Fix inadequate backend stack size on Windows</para></listitem>
 <listitem><para>Avoid SHGetSpecialFolderPath() on Windows
 (Magnus)</para></listitem>
-<listitem><para>Fix some problems in running pg_autovacuum as a Windows
+<listitem><para>Fix some problems in running mdb_autovacuum as a Windows
 service (Dave Page)</para></listitem>
 <listitem><para>Multiple minor bug fixes in
-pg_dump/pg_restore</para></listitem>
+mdb_dump/mdb_restore</para></listitem>
 <listitem><para>Fix ecpg segfault with named structs used in
 typedefs (Michael)</para></listitem>
 </itemizedlist>
@@ -3244,7 +3244,7 @@ typedefs (Michael)</para></listitem>
    <title>Migration to Version 8.0</title>
 
    <para>
-    A dump/restore using <application>pg_dump</application> is
+    A dump/restore using <application>mdb_dump</application> is
     required for those wishing to migrate data from any previous
     release.
    </para>
@@ -3772,20 +3772,20 @@ typedefs (Michael)</para></listitem>
       <para>
        Make quoting of <literal>sameuser</>, <literal>samegroup</>, and
        <literal>all</> remove special meaning of these terms in
-       <filename>pg_hba.conf</> (Andrew)
+       <filename>mdb_hba.conf</> (Andrew)
       </para>
      </listitem>
 
      <listitem>
       <para>
        Use clearer IPv6 name <literal>::1/128</> for
-       <literal>localhost</> in default <filename>pg_hba.conf</> (Andrew)
+       <literal>localhost</> in default <filename>mdb_hba.conf</> (Andrew)
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Use CIDR format in <filename>pg_hba.conf</> examples (Andrew)
+       Use CIDR format in <filename>mdb_hba.conf</> examples (Andrew)
       </para>
      </listitem>
 
@@ -4242,7 +4242,7 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       Add <function>pg_get_serial_sequence()</> to return a
+       Add <function>mdb_get_serial_sequence()</> to return a
        <type>SERIAL</> column's sequence name (Christopher)
       </para>
       <para>
@@ -4384,11 +4384,11 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       New <application>pg_ctl</> <option>kill</> option for Windows (Andrew)
+       New <application>mdb_ctl</> <option>kill</> option for Windows (Andrew)
       </para>
       <para>
        Windows does not have a <literal>kill</> command to send signals to
-       backends so this capability was added to <application>pg_ctl</>.
+       backends so this capability was added to <application>mdb_ctl</>.
       </para>
      </listitem>
 
@@ -4415,7 +4415,7 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       Add <option>register</> command to <application>pg_ctl</> to
+       Add <option>register</> command to <application>mdb_ctl</> to
        register Windows operating system service (Dave Page)
       </para>
      </listitem>
@@ -4961,13 +4961,13 @@ typedefs (Michael)</para></listitem>
 
 
    <sect3>
-    <title><application>pg_dump</> Changes</title>
+    <title><application>mdb_dump</> Changes</title>
     <itemizedlist>
 
      <listitem>
       <para>
        Use dependency information to improve the reliability of
-       <application>pg_dump</> (Tom)
+       <application>mdb_dump</> (Tom)
       </para>
       <para>
        This should solve the longstanding problems with related objects
@@ -4977,7 +4977,7 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       Have <application>pg_dump</> output objects in alphabetical order if possible (Tom)
+       Have <application>mdb_dump</> output objects in alphabetical order if possible (Tom)
       </para>
       <para>
        This should make it easier to identify changes between
@@ -4987,48 +4987,48 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       Allow <application>pg_restore</> to ignore some SQL errors (Fabien Coelho)
+       Allow <application>mdb_restore</> to ignore some SQL errors (Fabien Coelho)
       </para>
       <para>
-       This makes <application>pg_restore</>'s behavior similar to the
-       results of feeding a <application>pg_dump</> output script to
+       This makes <application>mdb_restore</>'s behavior similar to the
+       results of feeding a <application>mdb_dump</> output script to
        <application>psql</>. In most cases, ignoring errors and plowing
-       ahead is the most useful thing to do. Also added was a pg_restore
+       ahead is the most useful thing to do. Also added was a mdb_restore
        option to give the old behavior of exiting on an error.
       </para>
      </listitem>
 
      <listitem>
       <para>
-       <application>pg_restore</> <option>-l</> display now includes
+       <application>mdb_restore</> <option>-l</> display now includes
        objects' schema names
       </para>
      </listitem>
 
      <listitem>
       <para>
-       New begin/end markers in <application>pg_dump</> text output (Bruce)
+       New begin/end markers in <application>mdb_dump</> text output (Bruce)
       </para>
      </listitem>
 
      <listitem>
       <para>
        Add start/stop times for
-       <application>pg_dump</>/<application>pg_dumpall</> in verbose mode
+       <application>mdb_dump</>/<application>mdb_dumpall</> in verbose mode
        (Bruce)
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Allow most <application>pg_dump</> options in
-       <application>pg_dumpall</> (Christopher)
+       Allow most <application>mdb_dump</> options in
+       <application>mdb_dumpall</> (Christopher)
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Have <application>pg_dump</> use <command>ALTER OWNER</> rather
+       Have <application>mdb_dump</> use <command>ALTER OWNER</> rather
        than <command>SET SESSION AUTHORIZATION</> by default
        (Christopher)
       </para>
@@ -5242,14 +5242,14 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       Remove <application>pg_encoding</application>; not needed
+       Remove <application>mdb_encoding</application>; not needed
        anymore
       </para>
      </listitem>
 
      <listitem>
       <para>
-       Remove <application>pg_id</application>; not needed anymore
+       Remove <application>mdb_id</application>; not needed anymore
       </para>
      </listitem>
 
@@ -5391,7 +5391,7 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       Allow <filename>contrib/pg_autovacuum</> to run as a Windows service (Dave Page)
+       Allow <filename>contrib/mdb_autovacuum</> to run as a Windows service (Dave Page)
       </para>
      </listitem>
 
@@ -5403,7 +5403,7 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       Removed <filename>contrib/pg_logger</>: obsoleted by integrated logging
+       Removed <filename>contrib/mdb_logger</>: obsoleted by integrated logging
        subprocess
       </para>
      </listitem>

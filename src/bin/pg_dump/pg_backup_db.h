@@ -1,14 +1,14 @@
 /*
- *	Definitions for pg_backup_db.c
+ *	Definitions for mdb_backup_db.c
  *
  *	IDENTIFICATION
- *		src/bin/pg_dump/pg_backup_db.h
+ *		src/bin/mdb_dump/mdb_backup_db.h
  */
 
 #ifndef PG_BACKUP_DB_H
 #define PG_BACKUP_DB_H
 
-#include "pg_backup.h"
+#include "mdb_backup.h"
 
 
 extern int	ExecuteSqlCommandBuf(Archive *AHX, const char *buf, size_t bufLen);

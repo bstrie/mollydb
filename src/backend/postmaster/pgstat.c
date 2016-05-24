@@ -8,7 +8,7 @@
  *
  *			- Add some automatic call for pgstat vacuuming.
  *
- *			- Add a pgstat config column to pg_database, so this
+ *			- Add a pgstat config column to mdb_database, so this
  *			  entire thing can be enabled/disabled on a per db basis.
  *
  *	Copyright (c) 2001-2016, MollyDB Global Development Group
@@ -36,15 +36,15 @@
 #include "access/transam.h"
 #include "access/twophase_rmgr.h"
 #include "access/xact.h"
-#include "catalog/pg_database.h"
-#include "catalog/pg_proc.h"
+#include "catalog/mdb_database.h"
+#include "catalog/mdb_proc.h"
 #include "lib/ilist.h"
 #include "libpq/ip.h"
 #include "libpq/libpq.h"
 #include "libpq/pqsignal.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "postmaster/autovacuum.h"
 #include "postmaster/fork_process.h"
 #include "postmaster/postmaster.h"
@@ -54,7 +54,7 @@
 #include "storage/ipc.h"
 #include "storage/latch.h"
 #include "storage/lmgr.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "storage/procsignal.h"
 #include "storage/sinvaladt.h"
 #include "utils/ascii.h"
@@ -251,7 +251,7 @@ static instr_time total_func_time;
 static pid_t pgstat_forkexec(void);
 #endif
 
-NON_EXEC_STATIC void PgstatCollectorMain(int argc, char *argv[]) pg_attribute_noreturn();
+NON_EXEC_STATIC void PgstatCollectorMain(int argc, char *argv[]) mdb_attribute_noreturn();
 static void pgstat_exit(SIGNAL_ARGS);
 static void pgstat_beshutdown_hook(int code, Datum arg);
 static void pgstat_sighup_handler(SIGNAL_ARGS);
@@ -349,7 +349,7 @@ pgstat_init(void)
 	hints.ai_addr = NULL;
 	hints.ai_canonname = NULL;
 	hints.ai_next = NULL;
-	ret = pg_getaddrinfo_all("localhost", NULL, &hints, &addrs);
+	ret = mdb_getaddrinfo_all("localhost", NULL, &hints, &addrs);
 	if (ret || !addrs)
 	{
 		ereport(LOG,
@@ -359,7 +359,7 @@ pgstat_init(void)
 	}
 
 	/*
-	 * On some platforms, pg_getaddrinfo_all() may return multiple addresses
+	 * On some platforms, mdb_getaddrinfo_all() may return multiple addresses
 	 * only one of which will actually work (eg, both IPv6 and IPv4 addresses
 	 * when kernel will reject IPv6).  Worse, the failure may occur at the
 	 * bind() or perhaps even connect() stage.  So we must loop through the
@@ -530,7 +530,7 @@ retry2:
 	 * falls behind, statistics messages will be discarded; backends won't
 	 * block waiting to send messages to the collector.
 	 */
-	if (!pg_set_noblock(pgStatSock))
+	if (!mdb_set_noblock(pgStatSock))
 	{
 		ereport(LOG,
 				(errcode_for_socket_access(),
@@ -538,7 +538,7 @@ retry2:
 		goto startup_failed;
 	}
 
-	pg_freeaddrinfo_all(hints.ai_family, addrs);
+	mdb_freeaddrinfo_all(hints.ai_family, addrs);
 
 	return;
 
@@ -547,7 +547,7 @@ startup_failed:
 	  (errmsg("disabling statistics collector for lack of working socket")));
 
 	if (addrs)
-		pg_freeaddrinfo_all(hints.ai_family, addrs);
+		mdb_freeaddrinfo_all(hints.ai_family, addrs);
 
 	if (pgStatSock != PGINVALID_SOCKET)
 		closesocket(pgStatSock);
@@ -960,7 +960,7 @@ pgstat_vacuum_stat(void)
 	backend_read_statsfile();
 
 	/*
-	 * Read pg_database and make a list of OIDs of all existing databases
+	 * Read mdb_database and make a list of OIDs of all existing databases
 	 */
 	htab = pgstat_collect_oids(DatabaseRelationId);
 
@@ -2668,7 +2668,7 @@ pgstat_bestart(void)
 	/*
 	 * We may not have a MyProcPort (eg, if this is the autovacuum process).
 	 * If so, use all-zeroes client address, which is dealt with specially in
-	 * pg_stat_get_backend_client_addr and pg_stat_get_backend_client_port.
+	 * mdb_stat_get_backend_client_addr and mdb_stat_get_backend_client_port.
 	 */
 	if (MyProcPort)
 		memcpy(&clientaddr, &MyProcPort->raddr, sizeof(clientaddr));
@@ -2756,7 +2756,7 @@ pgstat_beshutdown_hook(int code, Datum arg)
 	/*
 	 * If we got as far as discovering our own database ID, we can report what
 	 * we did to the collector.  Otherwise, we'd be sending an invalid
-	 * database ID, so forget it.  (This means that accesses to pg_database
+	 * database ID, so forget it.  (This means that accesses to mdb_database
 	 * during failed backend starts might never get counted.)
 	 */
 	if (OidIsValid(MyDatabaseId))
@@ -2830,7 +2830,7 @@ pgstat_report_activity(BackendState state, const char *cmd_str)
 	start_timestamp = GetCurrentStatementStartTimestamp();
 	if (cmd_str != NULL)
 	{
-		len = pg_mbcliplen(cmd_str, strlen(cmd_str),
+		len = mdb_mbcliplen(cmd_str, strlen(cmd_str),
 						   pgstat_track_activity_query_size - 1);
 	}
 	current_timestamp = GetCurrentTimestamp();
@@ -2965,7 +2965,7 @@ pgstat_report_appname(const char *appname)
 		return;
 
 	/* This should be unnecessary if GUC did its job, but be safe */
-	len = pg_mbcliplen(appname, strlen(appname), NAMEDATALEN - 1);
+	len = mdb_mbcliplen(appname, strlen(appname), NAMEDATALEN - 1);
 
 	/*
 	 * Update my status entry, following the protocol of bumping
@@ -3215,7 +3215,7 @@ pgstat_get_wait_event(uint32 wait_event_info)
  *	but the very worst consequence is to return a pointer to a string
  *	that's been changed, so we won't worry too much.)
  *
- *	Note: return strings for special cases match pg_stat_get_backend_activity.
+ *	Note: return strings for special cases match mdb_stat_get_backend_activity.
  * ----------
  */
 const char *
@@ -3555,7 +3555,7 @@ PgstatCollectorMain(int argc, char *argv[])
 			 * since the socket is set to non-blocking mode.
 			 *
 			 * XXX On Windows, we have to force pgwin32_recv to cooperate,
-			 * despite the previous use of pg_set_noblock() on the socket.
+			 * despite the previous use of mdb_set_noblock() on the socket.
 			 * This is extremely broken and should be fixed someday.
 			 */
 #ifdef WIN32
@@ -4760,7 +4760,7 @@ backend_read_statsfile(void)
 		if ((count % PGSTAT_INQ_LOOP_COUNT) == 0)
 			pgstat_send_inquiry(cur_ts, min_ts, MyDatabaseId);
 
-		pg_usleep(PGSTAT_RETRY_DELAY * 1000L);
+		mdb_usleep(PGSTAT_RETRY_DELAY * 1000L);
 	}
 
 	if (count >= PGSTAT_POLL_LOOP_COUNT)

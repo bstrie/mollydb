@@ -14,16 +14,16 @@
 #ifndef BINARY_UPGRADE_H
 #define BINARY_UPGRADE_H
 
-extern PGDLLIMPORT Oid binary_upgrade_next_pg_type_oid;
-extern PGDLLIMPORT Oid binary_upgrade_next_array_pg_type_oid;
-extern PGDLLIMPORT Oid binary_upgrade_next_toast_pg_type_oid;
+extern PGDLLIMPORT Oid binary_upgrade_next_mdb_type_oid;
+extern PGDLLIMPORT Oid binary_upgrade_next_array_mdb_type_oid;
+extern PGDLLIMPORT Oid binary_upgrade_next_toast_mdb_type_oid;
 
-extern PGDLLIMPORT Oid binary_upgrade_next_heap_pg_class_oid;
-extern PGDLLIMPORT Oid binary_upgrade_next_index_pg_class_oid;
-extern PGDLLIMPORT Oid binary_upgrade_next_toast_pg_class_oid;
+extern PGDLLIMPORT Oid binary_upgrade_next_heap_mdb_class_oid;
+extern PGDLLIMPORT Oid binary_upgrade_next_index_mdb_class_oid;
+extern PGDLLIMPORT Oid binary_upgrade_next_toast_mdb_class_oid;
 
-extern PGDLLIMPORT Oid binary_upgrade_next_pg_enum_oid;
-extern PGDLLIMPORT Oid binary_upgrade_next_pg_authid_oid;
+extern PGDLLIMPORT Oid binary_upgrade_next_mdb_enum_oid;
+extern PGDLLIMPORT Oid binary_upgrade_next_mdb_authid_oid;
 
 extern PGDLLIMPORT bool binary_upgrade_record_init_privs;
 

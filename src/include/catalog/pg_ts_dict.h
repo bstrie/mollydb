@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_ts_dict.h
+ * mdb_ts_dict.h
  *	definition of dictionaries for tsearch
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_ts_dict.h
+ * src/include/catalog/mdb_ts_dict.h
  *
  * NOTES
  *		the genbki.pl script reads this file and generates .bki
@@ -24,13 +24,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_ts_dict definition.  cpp turns this into
- *		typedef struct FormData_pg_ts_dict
+ *		mdb_ts_dict definition.  cpp turns this into
+ *		typedef struct FormData_mdb_ts_dict
  * ----------------
  */
 #define TSDictionaryRelationId	3600
 
-CATALOG(pg_ts_dict,3600)
+CATALOG(mdb_ts_dict,3600)
 {
 	NameData	dictname;		/* dictionary name */
 	Oid			dictnamespace;	/* name space */
@@ -40,23 +40,23 @@ CATALOG(pg_ts_dict,3600)
 #ifdef CATALOG_VARLEN			/* variable-length fields start here */
 	text		dictinitoption; /* options passed to dict_init() */
 #endif
-} FormData_pg_ts_dict;
+} FormData_mdb_ts_dict;
 
-typedef FormData_pg_ts_dict *Form_pg_ts_dict;
+typedef FormData_mdb_ts_dict *Form_mdb_ts_dict;
 
 /* ----------------
- *		compiler constants for pg_ts_dict
+ *		compiler constants for mdb_ts_dict
  * ----------------
  */
-#define Natts_pg_ts_dict				5
-#define Anum_pg_ts_dict_dictname		1
-#define Anum_pg_ts_dict_dictnamespace	2
-#define Anum_pg_ts_dict_dictowner		3
-#define Anum_pg_ts_dict_dicttemplate	4
-#define Anum_pg_ts_dict_dictinitoption	5
+#define Natts_mdb_ts_dict				5
+#define Anum_mdb_ts_dict_dictname		1
+#define Anum_mdb_ts_dict_dictnamespace	2
+#define Anum_mdb_ts_dict_dictowner		3
+#define Anum_mdb_ts_dict_dicttemplate	4
+#define Anum_mdb_ts_dict_dictinitoption	5
 
 /* ----------------
- *		initial contents of pg_ts_dict
+ *		initial contents of mdb_ts_dict
  * ----------------
  */
 

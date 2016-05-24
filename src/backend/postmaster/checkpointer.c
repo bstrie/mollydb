@@ -158,12 +158,12 @@ static volatile sig_atomic_t shutdown_requested = false;
 static bool ckpt_active = false;
 
 /* these values are valid when ckpt_active is true: */
-static pg_time_t ckpt_start_time;
+static mdb_time_t ckpt_start_time;
 static XLogRecPtr ckpt_start_recptr;
 static double ckpt_cached_elapsed;
 
-static pg_time_t last_checkpoint_time;
-static pg_time_t last_xlog_switch_time;
+static mdb_time_t last_checkpoint_time;
+static mdb_time_t last_xlog_switch_time;
 
 /* Prototypes for private functions */
 
@@ -229,7 +229,7 @@ CheckpointerMain(void)
 	/*
 	 * Initialize so that first time-driven event happens at the correct time.
 	 */
-	last_checkpoint_time = last_xlog_switch_time = (pg_time_t) time(NULL);
+	last_checkpoint_time = last_xlog_switch_time = (mdb_time_t) time(NULL);
 
 	/*
 	 * Create a resource owner to keep track of our resources (currently only
@@ -315,7 +315,7 @@ CheckpointerMain(void)
 		 * to be repeated, and we don't want to be filling the error logs as
 		 * fast as we can.
 		 */
-		pg_usleep(1000000L);
+		mdb_usleep(1000000L);
 
 		/*
 		 * Close all open files after any error.  This is helpful on Windows,
@@ -352,7 +352,7 @@ CheckpointerMain(void)
 	{
 		bool		do_checkpoint = false;
 		int			flags = 0;
-		pg_time_t	now;
+		mdb_time_t	now;
 		int			elapsed_secs;
 		int			cur_timeout;
 		int			rc;
@@ -408,7 +408,7 @@ CheckpointerMain(void)
 		 * occurs without an external request, but we set the CAUSE_TIME flag
 		 * bit even if there is also an external request.
 		 */
-		now = (pg_time_t) time(NULL);
+		now = (mdb_time_t) time(NULL);
 		elapsed_secs = now - last_checkpoint_time;
 		if (elapsed_secs >= CheckPointTimeout)
 		{
@@ -543,7 +543,7 @@ CheckpointerMain(void)
 		 * Sleep until we are signaled or it's time for another checkpoint or
 		 * xlog file switch.
 		 */
-		now = (pg_time_t) time(NULL);
+		now = (mdb_time_t) time(NULL);
 		elapsed_secs = now - last_checkpoint_time;
 		if (elapsed_secs >= CheckPointTimeout)
 			continue;			/* no sleep for us ... */
@@ -579,13 +579,13 @@ CheckpointerMain(void)
 static void
 CheckArchiveTimeout(void)
 {
-	pg_time_t	now;
-	pg_time_t	last_time;
+	mdb_time_t	now;
+	mdb_time_t	last_time;
 
 	if (XLogArchiveTimeout <= 0 || RecoveryInProgress())
 		return;
 
-	now = (pg_time_t) time(NULL);
+	now = (mdb_time_t) time(NULL);
 
 	/* First we do a quick check using possibly-stale local state. */
 	if ((int) (now - last_xlog_switch_time) < XLogArchiveTimeout)
@@ -701,7 +701,7 @@ CheckpointWriteDelay(int flags, double progress)
 		 * Checkpointer and bgwriter are no longer related so take the Big
 		 * Sleep.
 		 */
-		pg_usleep(100000L);
+		mdb_usleep(100000L);
 	}
 	else if (--absorb_counter <= 0)
 	{
@@ -781,7 +781,7 @@ IsCheckpointOnSchedule(double progress)
 	 * Check progress against time elapsed and checkpoint_timeout.
 	 */
 	gettimeofday(&now, NULL);
-	elapsed_time = ((double) ((pg_time_t) now.tv_sec - ckpt_start_time) +
+	elapsed_time = ((double) ((mdb_time_t) now.tv_sec - ckpt_start_time) +
 					now.tv_usec / 1000000.0) / CheckPointTimeout;
 
 	if (progress < elapsed_time)
@@ -1024,7 +1024,7 @@ RequestCheckpoint(int flags)
 			break;				/* signal sent successfully */
 
 		CHECK_FOR_INTERRUPTS();
-		pg_usleep(100000L);		/* wait 0.1 sec, then retry */
+		mdb_usleep(100000L);		/* wait 0.1 sec, then retry */
 	}
 
 	/*
@@ -1047,7 +1047,7 @@ RequestCheckpoint(int flags)
 				break;
 
 			CHECK_FOR_INTERRUPTS();
-			pg_usleep(100000L);
+			mdb_usleep(100000L);
 		}
 
 		/*
@@ -1066,7 +1066,7 @@ RequestCheckpoint(int flags)
 				break;
 
 			CHECK_FOR_INTERRUPTS();
-			pg_usleep(100000L);
+			mdb_usleep(100000L);
 		}
 
 		if (new_failed != old_failed)

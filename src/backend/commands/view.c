@@ -46,8 +46,8 @@ void
 validateWithCheckOption(char *value)
 {
 	if (value == NULL ||
-		(pg_strcasecmp(value, "local") != 0 &&
-		 pg_strcasecmp(value, "cascaded") != 0))
+		(mdb_strcasecmp(value, "local") != 0 &&
+		 mdb_strcasecmp(value, "cascaded") != 0))
 	{
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -183,7 +183,7 @@ DefineVirtualRelation(RangeVar *relation, List *tlist, bool replace,
 		atcmds = lappend(atcmds, atcmd);
 
 		/*
-		 * If new attributes have been added, we must add pg_attribute entries
+		 * If new attributes have been added, we must add mdb_attribute entries
 		 * for them.  It is convenient (although overkill) to use the ALTER
 		 * TABLE ADD COLUMN infrastructure for this.
 		 */
@@ -265,8 +265,8 @@ checkViewTupleDesc(TupleDesc newdesc, TupleDesc olddesc)
 
 	for (i = 0; i < olddesc->natts; i++)
 	{
-		Form_pg_attribute newattr = newdesc->attrs[i];
-		Form_pg_attribute oldattr = olddesc->attrs[i];
+		Form_mdb_attribute newattr = newdesc->attrs[i];
+		Form_mdb_attribute oldattr = olddesc->attrs[i];
 
 		/* XXX msg not right, but we don't support DROP COL on view anyway */
 		if (newattr->attisdropped != oldattr->attisdropped)
@@ -462,7 +462,7 @@ DefineView(ViewStmt *stmt, const char *queryString)
 	{
 		DefElem    *defel = (DefElem *) lfirst(cell);
 
-		if (pg_strcasecmp(defel->defname, "check_option") == 0)
+		if (mdb_strcasecmp(defel->defname, "check_option") == 0)
 			check_option = true;
 	}
 

@@ -185,7 +185,7 @@
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
- *	  contrib/pg_trgm/trgm_regexp.c
+ *	  contrib/mdb_trgm/trgm_regexp.c
  *
  *-------------------------------------------------------------------------
  */
@@ -237,7 +237,7 @@ const float4 penalties[8] = {
 	0.0f						/* "   " (impossible) */
 };
 
-/* Struct representing a single pg_wchar, converted back to multibyte form */
+/* Struct representing a single mdb_wchar, converted back to multibyte form */
 typedef struct
 {
 	char		bytes[MAX_MULTIBYTE_CHAR_LEN];
@@ -475,7 +475,7 @@ static TRGM *createTrgmNFAInternal(regex_t *regex, TrgmPackedGraph **graph,
 static void RE_compile(regex_t *regex, text *text_re,
 		   int cflags, Oid collation);
 static void getColorInfo(regex_t *regex, TrgmNFA *trgmNFA);
-static bool convertPgWchar(pg_wchar c, trgm_mb_char *result);
+static bool convertPgWchar(mdb_wchar c, trgm_mb_char *result);
 static void transformGraph(TrgmNFA *trgmNFA);
 static void processState(TrgmNFA *trgmNFA, TrgmState *state);
 static void addKey(TrgmNFA *trgmNFA, TrgmState *state, TrgmStateKey *key);
@@ -545,7 +545,7 @@ createTrgmNFA(text *text_re, Oid collation,
 
 	/*
 	 * Since the regexp library allocates its internal data structures with
-	 * malloc, we need to use a PG_TRY block to ensure that pg_regfree() gets
+	 * malloc, we need to use a PG_TRY block to ensure that mdb_regfree() gets
 	 * done even if there's an error.
 	 */
 	PG_TRY();
@@ -554,12 +554,12 @@ createTrgmNFA(text *text_re, Oid collation,
 	}
 	PG_CATCH();
 	{
-		pg_regfree(&regex);
+		mdb_regfree(&regex);
 		PG_RE_THROW();
 	}
 	PG_END_TRY();
 
-	pg_regfree(&regex);
+	mdb_regfree(&regex);
 
 	/* Clean up all the cruft we created */
 	MemoryContextSwitchTo(oldcontext);
@@ -723,26 +723,26 @@ trigramsMatchGraph(TrgmPackedGraph *graph, bool *check)
 
 /*
  * Compile regex string into struct at *regex.
- * NB: pg_regfree must be applied to regex if this completes successfully.
+ * NB: mdb_regfree must be applied to regex if this completes successfully.
  */
 static void
 RE_compile(regex_t *regex, text *text_re, int cflags, Oid collation)
 {
 	int			text_re_len = VARSIZE_ANY_EXHDR(text_re);
 	char	   *text_re_val = VARDATA_ANY(text_re);
-	pg_wchar   *pattern;
+	mdb_wchar   *pattern;
 	int			pattern_len;
 	int			regcomp_result;
 	char		errMsg[100];
 
 	/* Convert pattern string to wide characters */
-	pattern = (pg_wchar *) palloc((text_re_len + 1) * sizeof(pg_wchar));
-	pattern_len = pg_mb2wchar_with_len(text_re_val,
+	pattern = (mdb_wchar *) palloc((text_re_len + 1) * sizeof(mdb_wchar));
+	pattern_len = mdb_mb2wchar_with_len(text_re_val,
 									   pattern,
 									   text_re_len);
 
 	/* Compile regex */
-	regcomp_result = pg_regcomp(regex,
+	regcomp_result = mdb_regcomp(regex,
 								pattern,
 								pattern_len,
 								cflags,
@@ -752,8 +752,8 @@ RE_compile(regex_t *regex, text *text_re, int cflags, Oid collation)
 
 	if (regcomp_result != REG_OKAY)
 	{
-		/* re didn't compile (no need for pg_regfree, if so) */
-		pg_regerror(regcomp_result, regex, errMsg, sizeof(errMsg));
+		/* re didn't compile (no need for mdb_regfree, if so) */
+		mdb_regerror(regcomp_result, regex, errMsg, sizeof(errMsg));
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_REGULAR_EXPRESSION),
 				 errmsg("invalid regular expression: %s", errMsg)));
@@ -772,7 +772,7 @@ RE_compile(regex_t *regex, text *text_re, int cflags, Oid collation)
 static void
 getColorInfo(regex_t *regex, TrgmNFA *trgmNFA)
 {
-	int			colorsCount = pg_reg_getnumcolors(regex);
+	int			colorsCount = mdb_reg_getnumcolors(regex);
 	int			i;
 
 	trgmNFA->ncolors = colorsCount;
@@ -785,8 +785,8 @@ getColorInfo(regex_t *regex, TrgmNFA *trgmNFA)
 	for (i = 0; i < colorsCount; i++)
 	{
 		TrgmColorInfo *colorInfo = &trgmNFA->colorInfo[i];
-		int			charsCount = pg_reg_getnumcharacters(regex, i);
-		pg_wchar   *chars;
+		int			charsCount = mdb_reg_getnumcharacters(regex, i);
+		mdb_wchar   *chars;
 		int			j;
 
 		if (charsCount < 0 || charsCount > COLOR_COUNT_LIMIT)
@@ -803,14 +803,14 @@ getColorInfo(regex_t *regex, TrgmNFA *trgmNFA)
 		colorInfo->wordCharsCount = 0;
 
 		/* Extract all the chars in this color */
-		chars = (pg_wchar *) palloc(sizeof(pg_wchar) * charsCount);
-		pg_reg_getcharacters(regex, i, chars, charsCount);
+		chars = (mdb_wchar *) palloc(sizeof(mdb_wchar) * charsCount);
+		mdb_reg_getcharacters(regex, i, chars, charsCount);
 
 		/*
 		 * Convert characters back to multibyte form, and save only those that
 		 * are word characters.  Set "containsNonWord" if any non-word
 		 * character.  (Note: it'd probably be nicer to keep the chars in
-		 * pg_wchar format for now, but ISWORDCHR wants to see multibyte.)
+		 * mdb_wchar format for now, but ISWORDCHR wants to see multibyte.)
 		 */
 		for (j = 0; j < charsCount; j++)
 		{
@@ -829,11 +829,11 @@ getColorInfo(regex_t *regex, TrgmNFA *trgmNFA)
 }
 
 /*
- * Convert pg_wchar to multibyte format.
+ * Convert mdb_wchar to multibyte format.
  * Returns false if the character should be ignored completely.
  */
 static bool
-convertPgWchar(pg_wchar c, trgm_mb_char *result)
+convertPgWchar(mdb_wchar c, trgm_mb_char *result)
 {
 	/* "s" has enough space for a multibyte character and a trailing NUL */
 	char		s[MAX_MULTIBYTE_CHAR_LEN + 1];
@@ -848,7 +848,7 @@ convertPgWchar(pg_wchar c, trgm_mb_char *result)
 
 	/* Do the conversion, making sure the result is NUL-terminated */
 	memset(s, 0, sizeof(s));
-	pg_wchar2mb_with_len(&c, s, 1);
+	mdb_wchar2mb_with_len(&c, s, 1);
 
 	/*
 	 * In IGNORECASE mode, we can ignore uppercase characters.  We assume that
@@ -858,7 +858,7 @@ convertPgWchar(pg_wchar c, trgm_mb_char *result)
 	 *
 	 * XXX this code is dependent on the assumption that lowerstr() works the
 	 * same as the regex engine's internal case folding machinery.  Might be
-	 * wiser to expose pg_wc_tolower and test whether c == pg_wc_tolower(c).
+	 * wiser to expose mdb_wc_tolower and test whether c == mdb_wc_tolower(c).
 	 * On the other hand, the trigrams in the index were created using
 	 * lowerstr(), so we're probably screwed if there's any incompatibility
 	 * anyway.
@@ -924,7 +924,7 @@ transformGraph(TrgmNFA *trgmNFA)
 	MemSet(&initkey, 0, sizeof(initkey));
 	initkey.prefix.colors[0] = COLOR_UNKNOWN;
 	initkey.prefix.colors[1] = COLOR_UNKNOWN;
-	initkey.nstate = pg_reg_getinitialstate(trgmNFA->regex);
+	initkey.nstate = mdb_reg_getinitialstate(trgmNFA->regex);
 
 	initstate = getState(trgmNFA, &initkey);
 	initstate->init = true;
@@ -1059,7 +1059,7 @@ addKey(TrgmNFA *trgmNFA, TrgmState *state, TrgmStateKey *key)
 	state->enterKeys = lappend(state->enterKeys, key);
 
 	/* If state is now known final, mark it and we're done */
-	if (key->nstate == pg_reg_getfinalstate(trgmNFA->regex))
+	if (key->nstate == mdb_reg_getfinalstate(trgmNFA->regex))
 	{
 		state->fin = true;
 		return;
@@ -1069,15 +1069,15 @@ addKey(TrgmNFA *trgmNFA, TrgmState *state, TrgmStateKey *key)
 	 * Loop through all outgoing arcs of the corresponding state in the
 	 * original NFA.
 	 */
-	arcsCount = pg_reg_getnumoutarcs(trgmNFA->regex, key->nstate);
+	arcsCount = mdb_reg_getnumoutarcs(trgmNFA->regex, key->nstate);
 	arcs = (regex_arc_t *) palloc(sizeof(regex_arc_t) * arcsCount);
-	pg_reg_getoutarcs(trgmNFA->regex, key->nstate, arcs, arcsCount);
+	mdb_reg_getoutarcs(trgmNFA->regex, key->nstate, arcs, arcsCount);
 
 	for (i = 0; i < arcsCount; i++)
 	{
 		regex_arc_t *arc = &arcs[i];
 
-		if (pg_reg_colorisbegin(trgmNFA->regex, arc->co))
+		if (mdb_reg_colorisbegin(trgmNFA->regex, arc->co))
 		{
 			/*
 			 * Start of line/string (^).  Trigram extraction treats start of
@@ -1092,7 +1092,7 @@ addKey(TrgmNFA *trgmNFA, TrgmState *state, TrgmStateKey *key)
 			/* Add enter key to this state */
 			addKeyToQueue(trgmNFA, &destKey);
 		}
-		else if (pg_reg_colorisend(trgmNFA->regex, arc->co))
+		else if (mdb_reg_colorisend(trgmNFA->regex, arc->co))
 		{
 			/*
 			 * End of line/string ($).  We must consider this arc as a
@@ -1213,9 +1213,9 @@ addArcs(TrgmNFA *trgmNFA, TrgmState *state)
 	{
 		TrgmStateKey *key = (TrgmStateKey *) lfirst(cell);
 
-		arcsCount = pg_reg_getnumoutarcs(trgmNFA->regex, key->nstate);
+		arcsCount = mdb_reg_getnumoutarcs(trgmNFA->regex, key->nstate);
 		arcs = (regex_arc_t *) palloc(sizeof(regex_arc_t) * arcsCount);
-		pg_reg_getoutarcs(trgmNFA->regex, key->nstate, arcs, arcsCount);
+		mdb_reg_getoutarcs(trgmNFA->regex, key->nstate, arcs, arcsCount);
 
 		for (i = 0; i < arcsCount; i++)
 		{
@@ -2013,7 +2013,7 @@ static void
 printSourceNFA(regex_t *regex, TrgmColorInfo *colors, int ncolors)
 {
 	StringInfoData buf;
-	int			nstates = pg_reg_getnumstates(regex);
+	int			nstates = mdb_reg_getnumstates(regex);
 	int			state;
 	int			i;
 
@@ -2028,13 +2028,13 @@ printSourceNFA(regex_t *regex, TrgmColorInfo *colors, int ncolors)
 					arcsCount;
 
 		appendStringInfo(&buf, "s%d", state);
-		if (pg_reg_getfinalstate(regex) == state)
+		if (mdb_reg_getfinalstate(regex) == state)
 			appendStringInfoString(&buf, " [shape = doublecircle]");
 		appendStringInfoString(&buf, ";\n");
 
-		arcsCount = pg_reg_getnumoutarcs(regex, state);
+		arcsCount = mdb_reg_getnumoutarcs(regex, state);
 		arcs = (regex_arc_t *) palloc(sizeof(regex_arc_t) * arcsCount);
-		pg_reg_getoutarcs(regex, state, arcs, arcsCount);
+		mdb_reg_getoutarcs(regex, state, arcs, arcsCount);
 
 		for (i = 0; i < arcsCount; i++)
 		{
@@ -2047,7 +2047,7 @@ printSourceNFA(regex_t *regex, TrgmColorInfo *colors, int ncolors)
 
 	appendStringInfoString(&buf, " node [shape = point ]; initial;\n");
 	appendStringInfo(&buf, " initial -> s%d;\n",
-					 pg_reg_getinitialstate(regex));
+					 mdb_reg_getinitialstate(regex));
 
 	/* Print colors */
 	appendStringInfoString(&buf, " { rank = sink;\n");

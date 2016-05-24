@@ -147,7 +147,7 @@ static void dopr(PrintfTarget *target, const char *format, va_list args);
 
 
 int
-pg_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
+mdb_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
 {
 	PrintfTarget target;
 
@@ -164,19 +164,19 @@ pg_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
 }
 
 int
-pg_snprintf(char *str, size_t count, const char *fmt,...)
+mdb_snprintf(char *str, size_t count, const char *fmt,...)
 {
 	int			len;
 	va_list		args;
 
 	va_start(args, fmt);
-	len = pg_vsnprintf(str, count, fmt, args);
+	len = mdb_vsnprintf(str, count, fmt, args);
 	va_end(args);
 	return len;
 }
 
 static int
-pg_vsprintf(char *str, const char *fmt, va_list args)
+mdb_vsprintf(char *str, const char *fmt, va_list args)
 {
 	PrintfTarget target;
 
@@ -193,19 +193,19 @@ pg_vsprintf(char *str, const char *fmt, va_list args)
 }
 
 int
-pg_sprintf(char *str, const char *fmt,...)
+mdb_sprintf(char *str, const char *fmt,...)
 {
 	int			len;
 	va_list		args;
 
 	va_start(args, fmt);
-	len = pg_vsprintf(str, fmt, args);
+	len = mdb_vsprintf(str, fmt, args);
 	va_end(args);
 	return len;
 }
 
 int
-pg_vfprintf(FILE *stream, const char *fmt, va_list args)
+mdb_vfprintf(FILE *stream, const char *fmt, va_list args)
 {
 	PrintfTarget target;
 	char		buffer[1024];	/* size is arbitrary */
@@ -227,25 +227,25 @@ pg_vfprintf(FILE *stream, const char *fmt, va_list args)
 }
 
 int
-pg_fprintf(FILE *stream, const char *fmt,...)
+mdb_fprintf(FILE *stream, const char *fmt,...)
 {
 	int			len;
 	va_list		args;
 
 	va_start(args, fmt);
-	len = pg_vfprintf(stream, fmt, args);
+	len = mdb_vfprintf(stream, fmt, args);
 	va_end(args);
 	return len;
 }
 
 int
-pg_printf(const char *fmt,...)
+mdb_printf(const char *fmt,...)
 {
 	int			len;
 	va_list		args;
 
 	va_start(args, fmt);
-	len = pg_vfprintf(stdout, fmt, args);
+	len = mdb_vfprintf(stdout, fmt, args);
 	va_end(args);
 	return len;
 }
@@ -791,7 +791,7 @@ bad_format:
 }
 
 static size_t
-pg_strnlen(const char *str, size_t maxlen)
+mdb_strnlen(const char *str, size_t maxlen)
 {
 	const char *p = str;
 
@@ -812,7 +812,7 @@ fmtstr(char *value, int leftjust, int minlen, int maxwidth,
 	 * than that.
 	 */
 	if (pointflag)
-		vallen = pg_strnlen(value, maxwidth);
+		vallen = mdb_strnlen(value, maxwidth);
 	else
 		vallen = strlen(value);
 

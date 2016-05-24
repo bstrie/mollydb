@@ -14,8 +14,8 @@
  * Now, a short varlena (up to 126 data bytes) is reduced to a 1-byte header
  * and we don't align it.  To hide this from datatype-specific functions that
  * don't want to deal with it, such a datum is considered "toasted" and will
- * be expanded back to the normal 4-byte-header format by pg_detoast_datum.
- * (In performance-critical code paths we can use pg_detoast_datum_packed
+ * be expanded back to the normal 4-byte-header format by mdb_detoast_datum.
+ * (In performance-critical code paths we can use mdb_detoast_datum_packed
  * and the appropriate access macros to avoid that overhead.)  Note that this
  * conversion is performed directly in heap_form_tuple, without invoking
  * tuptoaster.c.
@@ -24,7 +24,7 @@
  * that have been put into a tuple but never sent to disk.  Hopefully there
  * are few such places.
  *
- * Varlenas still have alignment 'i' (or 'd') in pg_type/pg_attribute, since
+ * Varlenas still have alignment 'i' (or 'd') in mdb_type/mdb_attribute, since
  * that's the normal requirement for the untoasted format.  But we ignore that
  * for the 1-byte-header format.  This means that the actual start position
  * of a varlena datum may vary depending on which format it has.  To determine
@@ -89,12 +89,12 @@ heap_compute_data_size(TupleDesc tupleDesc,
 	Size		data_length = 0;
 	int			i;
 	int			numberOfAttributes = tupleDesc->natts;
-	Form_pg_attribute *att = tupleDesc->attrs;
+	Form_mdb_attribute *att = tupleDesc->attrs;
 
 	for (i = 0; i < numberOfAttributes; i++)
 	{
 		Datum		val;
-		Form_pg_attribute atti;
+		Form_mdb_attribute atti;
 
 		if (isnull[i])
 			continue;
@@ -152,7 +152,7 @@ heap_fill_tuple(TupleDesc tupleDesc,
 	int			bitmask;
 	int			i;
 	int			numberOfAttributes = tupleDesc->natts;
-	Form_pg_attribute *att = tupleDesc->attrs;
+	Form_mdb_attribute *att = tupleDesc->attrs;
 
 #ifdef USE_ASSERT_CHECKING
 	char	   *start = data;
@@ -354,7 +354,7 @@ nocachegetattr(HeapTuple tuple,
 			   TupleDesc tupleDesc)
 {
 	HeapTupleHeader tup = tuple->t_data;
-	Form_pg_attribute *att = tupleDesc->attrs;
+	Form_mdb_attribute *att = tupleDesc->attrs;
 	char	   *tp;				/* ptr to data part of tuple */
 	bits8	   *bp = tup->t_bits;		/* ptr to null bitmap in tuple */
 	bool		slow = false;	/* do we have to walk attrs? */
@@ -869,7 +869,7 @@ heap_deform_tuple(HeapTuple tuple, TupleDesc tupleDesc,
 {
 	HeapTupleHeader tup = tuple->t_data;
 	bool		hasnulls = HeapTupleHasNulls(tuple);
-	Form_pg_attribute *att = tupleDesc->attrs;
+	Form_mdb_attribute *att = tupleDesc->attrs;
 	int			tdesc_natts = tupleDesc->natts;
 	int			natts;			/* number of atts to extract */
 	int			attnum;
@@ -893,7 +893,7 @@ heap_deform_tuple(HeapTuple tuple, TupleDesc tupleDesc,
 
 	for (attnum = 0; attnum < natts; attnum++)
 	{
-		Form_pg_attribute thisatt = att[attnum];
+		Form_mdb_attribute thisatt = att[attnum];
 
 		if (hasnulls && att_isnull(attnum, bp))
 		{
@@ -973,7 +973,7 @@ slot_deform_tuple(TupleTableSlot *slot, int natts)
 	bool	   *isnull = slot->tts_isnull;
 	HeapTupleHeader tup = tuple->t_data;
 	bool		hasnulls = HeapTupleHasNulls(tuple);
-	Form_pg_attribute *att = tupleDesc->attrs;
+	Form_mdb_attribute *att = tupleDesc->attrs;
 	int			attnum;
 	char	   *tp;				/* ptr to tuple data */
 	long		off;			/* offset in tuple data */
@@ -1002,7 +1002,7 @@ slot_deform_tuple(TupleTableSlot *slot, int natts)
 
 	for (; attnum < natts; attnum++)
 	{
-		Form_pg_attribute thisatt = att[attnum];
+		Form_mdb_attribute thisatt = att[attnum];
 
 		if (hasnulls && att_isnull(attnum, bp))
 		{

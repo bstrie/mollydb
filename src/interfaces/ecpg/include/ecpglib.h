@@ -13,9 +13,9 @@
 #include <string.h>
 
 #ifdef ENABLE_NLS
-extern char *ecpg_gettext(const char *msgid) pg_attribute_format_arg(1);
+extern char *ecmdb_gettext(const char *msgid) mdb_attribute_format_arg(1);
 #else
-#define ecpg_gettext(x) (x)
+#define ecmdb_gettext(x) (x)
 #endif
 
 #ifndef __cplusplus
@@ -90,7 +90,7 @@ void	   *ECPGget_var(int number);
 void		ECPGfree_auto_mem(void);
 
 #ifdef ENABLE_THREAD_SAFETY
-void		ecpg_pthreads_init(void);
+void		ecmdb_pthreads_init(void);
 #endif
 
 #ifdef __cplusplus

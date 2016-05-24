@@ -1856,7 +1856,7 @@ Tue Oct 26 21:40:57 CEST 1999
          column of <structname>my_table</>:
 <programlisting>
 =&gt; <userinput>SELECT format('create index on my_table(%I)', attname)</>
--&gt; <userinput>FROM pg_attribute</>
+-&gt; <userinput>FROM mdb_attribute</>
 -&gt; <userinput>WHERE attrelid = 'my_table'::regclass AND attnum &gt; 0</>
 -&gt; <userinput>ORDER BY attnum</>
 -&gt; <userinput>\gexec</>
@@ -2886,7 +2886,7 @@ testdb=&gt; <userinput>\setenv LESS -imx4F</userinput>
 
    <indexterm>
     <primary>patterns</primary>
-    <secondary>in psql and pg_dump</secondary>
+    <secondary>in psql and mdb_dump</secondary>
    </indexterm>
 
   <para>
@@ -3915,7 +3915,7 @@ PSQL_EDITOR_LINENUMBER_ARG='--line '
     <para>
      The system-wide startup file is named <filename>psqlrc</filename> and is
      sought in the installation's <quote>system configuration</> directory,
-     which is most reliably identified by running <literal>pg_config
+     which is most reliably identified by running <literal>mdb_config
      --sysconfdir</>.  By default this directory will be <filename>../etc/</>
      relative to the directory containing
      the <productname>MollyDB</productname> executables.  The name of this

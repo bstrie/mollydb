@@ -66,7 +66,7 @@ typedef struct GISTPageOpaqueData
 typedef GISTPageOpaqueData *GISTPageOpaque;
 
 /*
- * The page ID is for the convenience of pg_filedump and similar utilities,
+ * The page ID is for the convenience of mdb_filedump and similar utilities,
  * which otherwise would have a hard time telling pages of different index
  * types apart.  It should be the last 2 bytes on the page.  This is more or
  * less "free" due to alignment considerations.

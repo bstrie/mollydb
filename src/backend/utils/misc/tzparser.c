@@ -80,7 +80,7 @@ validateTzEntry(tzEntry *tzentry)
 	 * Convert abbrev to lowercase (must match datetime.c's conversion)
 	 */
 	for (p = (unsigned char *) tzentry->abbrev; *p; p++)
-		*p = pg_tolower(*p);
+		*p = mdb_tolower(*p);
 
 	return true;
 }
@@ -136,7 +136,7 @@ splitTzLine(const char *filename, int lineno, char *line, tzEntry *tzentry)
 		}
 
 		is_dst = strtok(NULL, WHITESPACE);
-		if (is_dst && pg_strcasecmp(is_dst, "D") == 0)
+		if (is_dst && mdb_strcasecmp(is_dst, "D") == 0)
 		{
 			tzentry->is_dst = true;
 			remain = strtok(NULL, WHITESPACE);
@@ -388,7 +388,7 @@ ParseTzFile(const char *filename, int depth,
 		if (*line == '#')		/* comment line */
 			continue;
 
-		if (pg_strncasecmp(line, "@INCLUDE", strlen("@INCLUDE")) == 0)
+		if (mdb_strncasecmp(line, "@INCLUDE", strlen("@INCLUDE")) == 0)
 		{
 			/* pstrdup so we can use filename in result data structure */
 			char	   *includeFile = pstrdup(line + strlen("@INCLUDE"));
@@ -407,7 +407,7 @@ ParseTzFile(const char *filename, int depth,
 			continue;
 		}
 
-		if (pg_strncasecmp(line, "@OVERRIDE", strlen("@OVERRIDE")) == 0)
+		if (mdb_strncasecmp(line, "@OVERRIDE", strlen("@OVERRIDE")) == 0)
 		{
 			override = true;
 			continue;

@@ -63,7 +63,7 @@ index_form_tuple(TupleDesc tupleDescriptor,
 #ifdef TOAST_INDEX_HACK
 	for (i = 0; i < numberOfAttributes; i++)
 	{
-		Form_pg_attribute att = tupleDescriptor->attrs[i];
+		Form_mdb_attribute att = tupleDescriptor->attrs[i];
 
 		untoasted_values[i] = values[i];
 		untoasted_free[i] = false;
@@ -209,7 +209,7 @@ nocache_index_getattr(IndexTuple tup,
 					  int attnum,
 					  TupleDesc tupleDesc)
 {
-	Form_pg_attribute *att = tupleDesc->attrs;
+	Form_mdb_attribute *att = tupleDesc->attrs;
 	char	   *tp;				/* ptr to data part of tuple */
 	bits8	   *bp = NULL;		/* ptr to null bitmap in tuple */
 	bool		slow = false;	/* do we have to walk attrs? */

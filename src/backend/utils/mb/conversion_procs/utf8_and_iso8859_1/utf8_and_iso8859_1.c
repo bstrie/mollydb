@@ -13,7 +13,7 @@
 
 #include "mollydb.h"
 #include "fmgr.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 PG_MODULE_MAGIC;
 
@@ -86,9 +86,9 @@ utf8_to_iso8859_1(PG_FUNCTION_ARGS)
 		}
 		else
 		{
-			int			l = pg_utf_mblen(src);
+			int			l = mdb_utf_mblen(src);
 
-			if (l > len || !pg_utf8_islegal(src, l))
+			if (l > len || !mdb_utf8_islegal(src, l))
 				report_invalid_encoding(PG_UTF8, (const char *) src, len);
 			if (l != 2)
 				report_untranslatable_char(PG_UTF8, PG_LATIN1,

@@ -5,7 +5,7 @@
  *	  contains the user-level large object application interface routines.
  *
  *
- * Note: we access pg_largeobject.data using its C struct declaration.
+ * Note: we access mdb_largeobject.data using its C struct declaration.
  * This is safe because it immediately follows pageno which is an int4 field,
  * and therefore the data field will always be 4-byte aligned, even if it
  * is in the short 1-byte-header format.  We have to detoast it since it's
@@ -40,8 +40,8 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_largeobject.h"
-#include "catalog/pg_largeobject_metadata.h"
+#include "catalog/mdb_largeobject.h"
+#include "catalog/mdb_largeobject_metadata.h"
 #include "libpq/libpq-fs.h"
 #include "miscadmin.h"
 #include "storage/large_object.h"
@@ -52,8 +52,8 @@
 
 
 /*
- * All accesses to pg_largeobject and its index make use of a single Relation
- * reference, so that we only need to open pg_relation once per transaction.
+ * All accesses to mdb_largeobject and its index make use of a single Relation
+ * reference, so that we only need to open mdb_relation once per transaction.
  * To avoid problems when the first such reference occurs inside a
  * subtransaction, we execute a slightly klugy maneuver to assign ownership of
  * the Relation reference to TopTransactionResourceOwner.
@@ -63,7 +63,7 @@ static Relation lo_index_r = NULL;
 
 
 /*
- * Open pg_largeobject and its index, if not already done in current xact
+ * Open mdb_largeobject and its index, if not already done in current xact
  */
 static void
 open_lo_relation(void)
@@ -137,13 +137,13 @@ close_lo_relation(bool isCommit)
 
 
 /*
- * Same as pg_largeobject.c's LargeObjectExists(), except snapshot to
+ * Same as mdb_largeobject.c's LargeObjectExists(), except snapshot to
  * read with can be specified.
  */
 static bool
 myLargeObjectExists(Oid loid, Snapshot snapshot)
 {
-	Relation	pg_lo_meta;
+	Relation	mdb_lo_meta;
 	ScanKeyData skey[1];
 	SysScanDesc sd;
 	HeapTuple	tuple;
@@ -154,10 +154,10 @@ myLargeObjectExists(Oid loid, Snapshot snapshot)
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(loid));
 
-	pg_lo_meta = heap_open(LargeObjectMetadataRelationId,
+	mdb_lo_meta = heap_open(LargeObjectMetadataRelationId,
 						   AccessShareLock);
 
-	sd = systable_beginscan(pg_lo_meta,
+	sd = systable_beginscan(mdb_lo_meta,
 							LargeObjectMetadataOidIndexId, true,
 							snapshot, 1, skey);
 
@@ -167,19 +167,19 @@ myLargeObjectExists(Oid loid, Snapshot snapshot)
 
 	systable_endscan(sd);
 
-	heap_close(pg_lo_meta, AccessShareLock);
+	heap_close(mdb_lo_meta, AccessShareLock);
 
 	return retval;
 }
 
 
 /*
- * Extract data field from a pg_largeobject tuple, detoasting if needed
+ * Extract data field from a mdb_largeobject tuple, detoasting if needed
  * and verifying that the length is sane.  Returns data pointer (a bytea *),
  * data length, and an indication of whether to pfree the data pointer.
  */
 static void
-getdatafield(Form_pg_largeobject tuple,
+getdatafield(Form_mdb_largeobject tuple,
 			 bytea **pdatafield,
 			 int *plen,
 			 bool *pfreeit)
@@ -200,7 +200,7 @@ getdatafield(Form_pg_largeobject tuple,
 	if (len < 0 || len > LOBLKSIZE)
 		ereport(ERROR,
 				(errcode(ERRCODE_DATA_CORRUPTED),
-				 errmsg("pg_largeobject entry for OID %u, page %d has invalid data field size %d",
+				 errmsg("mdb_largeobject entry for OID %u, page %d has invalid data field size %d",
 						tuple->loid, tuple->pageno, len)));
 	*pdatafield = datafield;
 	*plen = len;
@@ -236,8 +236,8 @@ inv_create(Oid lobjId)
 	 * The reason why we use LargeObjectRelationId instead of
 	 * LargeObjectMetadataRelationId here is to provide backward compatibility
 	 * to the applications which utilize a knowledge about internal layout of
-	 * system catalogs. OID of pg_largeobject_metadata and loid of
-	 * pg_largeobject are same value, so there are no actual differences here.
+	 * system catalogs. OID of mdb_largeobject_metadata and loid of
+	 * mdb_largeobject are same value, so there are no actual differences here.
 	 */
 	recordDependencyOnOwner(LargeObjectRelationId,
 							lobjId_new, GetUserId());
@@ -373,7 +373,7 @@ inv_getsize(LargeObjectDesc *obj_desc)
 	open_lo_relation();
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_largeobject_loid,
+				Anum_mdb_largeobject_loid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(obj_desc->id));
 
@@ -381,7 +381,7 @@ inv_getsize(LargeObjectDesc *obj_desc)
 									obj_desc->snapshot, 1, skey);
 
 	/*
-	 * Because the pg_largeobject index is on both loid and pageno, but we
+	 * Because the mdb_largeobject index is on both loid and pageno, but we
 	 * constrain only loid, a backwards scan should visit all pages of the
 	 * large object in reverse pageno order.  So, it's sufficient to examine
 	 * the first valid tuple (== last valid page).
@@ -389,14 +389,14 @@ inv_getsize(LargeObjectDesc *obj_desc)
 	tuple = systable_getnext_ordered(sd, BackwardScanDirection);
 	if (HeapTupleIsValid(tuple))
 	{
-		Form_pg_largeobject data;
+		Form_mdb_largeobject data;
 		bytea	   *datafield;
 		int			len;
 		bool		pfreeit;
 
 		if (HeapTupleHasNulls(tuple))	/* paranoia */
-			elog(ERROR, "null field found in pg_largeobject");
-		data = (Form_pg_largeobject) GETSTRUCT(tuple);
+			elog(ERROR, "null field found in mdb_largeobject");
+		data = (Form_mdb_largeobject) GETSTRUCT(tuple);
 		getdatafield(data, &datafield, &len, &pfreeit);
 		lastbyte = (uint64) data->pageno * LOBLKSIZE + len;
 		if (pfreeit)
@@ -482,12 +482,12 @@ inv_read(LargeObjectDesc *obj_desc, char *buf, int nbytes)
 	open_lo_relation();
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_largeobject_loid,
+				Anum_mdb_largeobject_loid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(obj_desc->id));
 
 	ScanKeyInit(&skey[1],
-				Anum_pg_largeobject_pageno,
+				Anum_mdb_largeobject_pageno,
 				BTGreaterEqualStrategyNumber, F_INT4GE,
 				Int32GetDatum(pageno));
 
@@ -496,13 +496,13 @@ inv_read(LargeObjectDesc *obj_desc, char *buf, int nbytes)
 
 	while ((tuple = systable_getnext_ordered(sd, ForwardScanDirection)) != NULL)
 	{
-		Form_pg_largeobject data;
+		Form_mdb_largeobject data;
 		bytea	   *datafield;
 		bool		pfreeit;
 
 		if (HeapTupleHasNulls(tuple))	/* paranoia */
-			elog(ERROR, "null field found in pg_largeobject");
-		data = (Form_pg_largeobject) GETSTRUCT(tuple);
+			elog(ERROR, "null field found in mdb_largeobject");
+		data = (Form_mdb_largeobject) GETSTRUCT(tuple);
 
 		/*
 		 * We expect the indexscan will deliver pages in order.  However,
@@ -558,7 +558,7 @@ inv_write(LargeObjectDesc *obj_desc, const char *buf, int nbytes)
 	ScanKeyData skey[2];
 	SysScanDesc sd;
 	HeapTuple	oldtuple;
-	Form_pg_largeobject olddata;
+	Form_mdb_largeobject olddata;
 	bool		neednextpage;
 	bytea	   *datafield;
 	bool		pfreeit;
@@ -572,9 +572,9 @@ inv_write(LargeObjectDesc *obj_desc, const char *buf, int nbytes)
 	}			workbuf;
 	char	   *workb = VARDATA(&workbuf.hdr);
 	HeapTuple	newtup;
-	Datum		values[Natts_pg_largeobject];
-	bool		nulls[Natts_pg_largeobject];
-	bool		replace[Natts_pg_largeobject];
+	Datum		values[Natts_mdb_largeobject];
+	bool		nulls[Natts_mdb_largeobject];
+	bool		replace[Natts_mdb_largeobject];
 	CatalogIndexState indstate;
 
 	Assert(PointerIsValid(obj_desc));
@@ -598,12 +598,12 @@ inv_write(LargeObjectDesc *obj_desc, const char *buf, int nbytes)
 	indstate = CatalogOpenIndexes(lo_heap_r);
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_largeobject_loid,
+				Anum_mdb_largeobject_loid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(obj_desc->id));
 
 	ScanKeyInit(&skey[1],
-				Anum_pg_largeobject_pageno,
+				Anum_mdb_largeobject_pageno,
 				BTGreaterEqualStrategyNumber, F_INT4GE,
 				Int32GetDatum(pageno));
 
@@ -625,8 +625,8 @@ inv_write(LargeObjectDesc *obj_desc, const char *buf, int nbytes)
 			if ((oldtuple = systable_getnext_ordered(sd, ForwardScanDirection)) != NULL)
 			{
 				if (HeapTupleHasNulls(oldtuple))		/* paranoia */
-					elog(ERROR, "null field found in pg_largeobject");
-				olddata = (Form_pg_largeobject) GETSTRUCT(oldtuple);
+					elog(ERROR, "null field found in mdb_largeobject");
+				olddata = (Form_mdb_largeobject) GETSTRUCT(oldtuple);
 				Assert(olddata->pageno >= pageno);
 			}
 			neednextpage = false;
@@ -674,8 +674,8 @@ inv_write(LargeObjectDesc *obj_desc, const char *buf, int nbytes)
 			memset(values, 0, sizeof(values));
 			memset(nulls, false, sizeof(nulls));
 			memset(replace, false, sizeof(replace));
-			values[Anum_pg_largeobject_data - 1] = PointerGetDatum(&workbuf);
-			replace[Anum_pg_largeobject_data - 1] = true;
+			values[Anum_mdb_largeobject_data - 1] = PointerGetDatum(&workbuf);
+			replace[Anum_mdb_largeobject_data - 1] = true;
 			newtup = heap_modify_tuple(oldtuple, RelationGetDescr(lo_heap_r),
 									   values, nulls, replace);
 			simple_heap_update(lo_heap_r, &newtup->t_self, newtup);
@@ -717,9 +717,9 @@ inv_write(LargeObjectDesc *obj_desc, const char *buf, int nbytes)
 			 */
 			memset(values, 0, sizeof(values));
 			memset(nulls, false, sizeof(nulls));
-			values[Anum_pg_largeobject_loid - 1] = ObjectIdGetDatum(obj_desc->id);
-			values[Anum_pg_largeobject_pageno - 1] = Int32GetDatum(pageno);
-			values[Anum_pg_largeobject_data - 1] = PointerGetDatum(&workbuf);
+			values[Anum_mdb_largeobject_loid - 1] = ObjectIdGetDatum(obj_desc->id);
+			values[Anum_mdb_largeobject_pageno - 1] = Int32GetDatum(pageno);
+			values[Anum_mdb_largeobject_data - 1] = PointerGetDatum(&workbuf);
 			newtup = heap_form_tuple(lo_heap_r->rd_att, values, nulls);
 			simple_heap_insert(lo_heap_r, newtup);
 			CatalogIndexInsert(indstate, newtup);
@@ -749,7 +749,7 @@ inv_truncate(LargeObjectDesc *obj_desc, int64 len)
 	ScanKeyData skey[2];
 	SysScanDesc sd;
 	HeapTuple	oldtuple;
-	Form_pg_largeobject olddata;
+	Form_mdb_largeobject olddata;
 	union
 	{
 		bytea		hdr;
@@ -760,9 +760,9 @@ inv_truncate(LargeObjectDesc *obj_desc, int64 len)
 	}			workbuf;
 	char	   *workb = VARDATA(&workbuf.hdr);
 	HeapTuple	newtup;
-	Datum		values[Natts_pg_largeobject];
-	bool		nulls[Natts_pg_largeobject];
-	bool		replace[Natts_pg_largeobject];
+	Datum		values[Natts_mdb_largeobject];
+	bool		nulls[Natts_mdb_largeobject];
+	bool		replace[Natts_mdb_largeobject];
 	CatalogIndexState indstate;
 
 	Assert(PointerIsValid(obj_desc));
@@ -788,12 +788,12 @@ inv_truncate(LargeObjectDesc *obj_desc, int64 len)
 	 * Set up to find all pages with desired loid and pageno >= target
 	 */
 	ScanKeyInit(&skey[0],
-				Anum_pg_largeobject_loid,
+				Anum_mdb_largeobject_loid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(obj_desc->id));
 
 	ScanKeyInit(&skey[1],
-				Anum_pg_largeobject_pageno,
+				Anum_mdb_largeobject_pageno,
 				BTGreaterEqualStrategyNumber, F_INT4GE,
 				Int32GetDatum(pageno));
 
@@ -808,8 +808,8 @@ inv_truncate(LargeObjectDesc *obj_desc, int64 len)
 	if ((oldtuple = systable_getnext_ordered(sd, ForwardScanDirection)) != NULL)
 	{
 		if (HeapTupleHasNulls(oldtuple))		/* paranoia */
-			elog(ERROR, "null field found in pg_largeobject");
-		olddata = (Form_pg_largeobject) GETSTRUCT(oldtuple);
+			elog(ERROR, "null field found in mdb_largeobject");
+		olddata = (Form_mdb_largeobject) GETSTRUCT(oldtuple);
 		Assert(olddata->pageno >= pageno);
 	}
 
@@ -846,8 +846,8 @@ inv_truncate(LargeObjectDesc *obj_desc, int64 len)
 		memset(values, 0, sizeof(values));
 		memset(nulls, false, sizeof(nulls));
 		memset(replace, false, sizeof(replace));
-		values[Anum_pg_largeobject_data - 1] = PointerGetDatum(&workbuf);
-		replace[Anum_pg_largeobject_data - 1] = true;
+		values[Anum_mdb_largeobject_data - 1] = PointerGetDatum(&workbuf);
+		replace[Anum_mdb_largeobject_data - 1] = true;
 		newtup = heap_modify_tuple(oldtuple, RelationGetDescr(lo_heap_r),
 								   values, nulls, replace);
 		simple_heap_update(lo_heap_r, &newtup->t_self, newtup);
@@ -884,9 +884,9 @@ inv_truncate(LargeObjectDesc *obj_desc, int64 len)
 		 */
 		memset(values, 0, sizeof(values));
 		memset(nulls, false, sizeof(nulls));
-		values[Anum_pg_largeobject_loid - 1] = ObjectIdGetDatum(obj_desc->id);
-		values[Anum_pg_largeobject_pageno - 1] = Int32GetDatum(pageno);
-		values[Anum_pg_largeobject_data - 1] = PointerGetDatum(&workbuf);
+		values[Anum_mdb_largeobject_loid - 1] = ObjectIdGetDatum(obj_desc->id);
+		values[Anum_mdb_largeobject_pageno - 1] = Int32GetDatum(pageno);
+		values[Anum_mdb_largeobject_data - 1] = PointerGetDatum(&workbuf);
 		newtup = heap_form_tuple(lo_heap_r->rd_att, values, nulls);
 		simple_heap_insert(lo_heap_r, newtup);
 		CatalogIndexInsert(indstate, newtup);

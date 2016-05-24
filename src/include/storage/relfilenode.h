@@ -25,14 +25,14 @@
  * file, and each fork can be divided into multiple segments. See md.c.
  *
  * spcNode identifies the tablespace of the relation.  It corresponds to
- * pg_tablespace.oid.
+ * mdb_tablespace.oid.
  *
  * dbNode identifies the database of the relation.  It is zero for
  * "shared" relations (those common to all databases of a cluster).
- * Nonzero dbNode values correspond to pg_database.oid.
+ * Nonzero dbNode values correspond to mdb_database.oid.
  *
  * relNode identifies the specific relation.  relNode corresponds to
- * pg_class.relfilenode (NOT pg_class.oid, because we need to be able
+ * mdb_class.relfilenode (NOT mdb_class.oid, because we need to be able
  * to assign new physical files to relations in some situations).
  * Notice that relNode is only unique within a database in a particular
  * tablespace.
@@ -40,13 +40,13 @@
  * Note: spcNode must be GLOBALTABLESPACE_OID if and only if dbNode is
  * zero.  We support shared relations only in the "global" tablespace.
  *
- * Note: in pg_class we allow reltablespace == 0 to denote that the
+ * Note: in mdb_class we allow reltablespace == 0 to denote that the
  * relation is stored in its database's "default" tablespace (as
- * identified by pg_database.dattablespace).  However this shorthand
+ * identified by mdb_database.dattablespace).  However this shorthand
  * is NOT allowed in RelFileNode structs --- the real tablespace ID
  * must be supplied when setting spcNode.
  *
- * Note: in pg_class, relfilenode can be zero to denote that the relation
+ * Note: in mdb_class, relfilenode can be zero to denote that the relation
  * is a "mapped" relation, whose current true filenode number is available
  * from relmapper.c.  Again, this case is NOT allowed in RelFileNodes.
  *

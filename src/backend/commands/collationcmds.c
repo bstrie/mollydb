@@ -20,17 +20,17 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_collation_fn.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_collation_fn.h"
 #include "commands/alter.h"
 #include "commands/collationcmds.h"
 #include "commands/dbcommands.h"
 #include "commands/defrem.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "utils/builtins.h"
 #include "utils/lsyscache.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 #include "utils/rel.h"
 #include "utils/syscache.h"
 
@@ -55,7 +55,7 @@ DefineCollation(List *names, List *parameters)
 
 	collNamespace = QualifiedNameGetCreationNamespace(names, &collName);
 
-	aclresult = pg_namespace_aclcheck(collNamespace, GetUserId(), ACL_CREATE);
+	aclresult = mdb_namespace_aclcheck(collNamespace, GetUserId(), ACL_CREATE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
 					   get_namespace_name(collNamespace));
@@ -65,13 +65,13 @@ DefineCollation(List *names, List *parameters)
 		DefElem    *defel = (DefElem *) lfirst(pl);
 		DefElem   **defelp;
 
-		if (pg_strcasecmp(defel->defname, "from") == 0)
+		if (mdb_strcasecmp(defel->defname, "from") == 0)
 			defelp = &fromEl;
-		else if (pg_strcasecmp(defel->defname, "locale") == 0)
+		else if (mdb_strcasecmp(defel->defname, "locale") == 0)
 			defelp = &localeEl;
-		else if (pg_strcasecmp(defel->defname, "lc_collate") == 0)
+		else if (mdb_strcasecmp(defel->defname, "lc_collate") == 0)
 			defelp = &lccollateEl;
-		else if (pg_strcasecmp(defel->defname, "lc_ctype") == 0)
+		else if (mdb_strcasecmp(defel->defname, "lc_ctype") == 0)
 			defelp = &lcctypeEl;
 		else
 		{
@@ -101,8 +101,8 @@ DefineCollation(List *names, List *parameters)
 		if (!HeapTupleIsValid(tp))
 			elog(ERROR, "cache lookup failed for collation %u", collid);
 
-		collcollate = pstrdup(NameStr(((Form_pg_collation) GETSTRUCT(tp))->collcollate));
-		collctype = pstrdup(NameStr(((Form_pg_collation) GETSTRUCT(tp))->collctype));
+		collcollate = pstrdup(NameStr(((Form_mdb_collation) GETSTRUCT(tp))->collcollate));
+		collctype = pstrdup(NameStr(((Form_mdb_collation) GETSTRUCT(tp))->collctype));
 
 		ReleaseSysCache(tp);
 	}
@@ -142,7 +142,7 @@ DefineCollation(List *names, List *parameters)
 
 	/* check that the locales can be loaded */
 	CommandCounterIncrement();
-	(void) pg_newlocale_from_collation(newoid);
+	(void) mdb_newlocale_from_collation(newoid);
 
 	return address;
 }

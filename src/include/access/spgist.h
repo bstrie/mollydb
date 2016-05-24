@@ -33,7 +33,7 @@
 #define SPGISTNProc						5
 
 /*
- * Argument structs for spg_config method
+ * Argument structs for smdb_config method
  */
 typedef struct spgConfigIn
 {
@@ -49,7 +49,7 @@ typedef struct spgConfigOut
 } spgConfigOut;
 
 /*
- * Argument structs for spg_choose method
+ * Argument structs for smdb_choose method
  */
 typedef struct spgChooseIn
 {
@@ -103,7 +103,7 @@ typedef struct spgChooseOut
 } spgChooseOut;
 
 /*
- * Argument structs for spg_picksplit method
+ * Argument structs for smdb_picksplit method
  */
 typedef struct spgPickSplitIn
 {
@@ -125,7 +125,7 @@ typedef struct spgPickSplitOut
 } spgPickSplitOut;
 
 /*
- * Argument structs for spg_inner_consistent method
+ * Argument structs for smdb_inner_consistent method
  */
 typedef struct spgInnerConsistentIn
 {
@@ -156,7 +156,7 @@ typedef struct spgInnerConsistentOut
 } spgInnerConsistentOut;
 
 /*
- * Argument structs for spg_leaf_consistent method
+ * Argument structs for smdb_leaf_consistent method
  */
 typedef struct spgLeafConsistentIn
 {
@@ -211,10 +211,10 @@ extern IndexBulkDeleteResult *spgvacuumcleanup(IndexVacuumInfo *info,
 extern bool spgvalidate(Oid opclassoid);
 
 /* spgxlog.c */
-extern void spg_redo(XLogReaderState *record);
-extern void spg_desc(StringInfo buf, XLogReaderState *record);
-extern const char *spg_identify(uint8 info);
-extern void spg_xlog_startup(void);
-extern void spg_xlog_cleanup(void);
+extern void smdb_redo(XLogReaderState *record);
+extern void smdb_desc(StringInfo buf, XLogReaderState *record);
+extern const char *smdb_identify(uint8 info);
+extern void smdb_xlog_startup(void);
+extern void smdb_xlog_cleanup(void);
 
 #endif   /* SPGIST_H */

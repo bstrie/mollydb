@@ -432,7 +432,7 @@ msgstr "查詢 \"%s\" 不是 SELECT"
 msgid "block label must be placed before DECLARE, not after"
 msgstr "區塊標籤必須在 DECLARE 之前而非之後"
 
-# catalog/pg_proc.c:487
+# catalog/mdb_proc.c:487
 #: gram.y:450
 #, c-format
 msgid "collations are not supported by type %s"

@@ -14,8 +14,8 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_statistic.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_statistic.h"
+#include "catalog/mdb_type.h"
 #include "miscadmin.h"
 #include "nodes/nodes.h"
 #include "tsearch/ts_type.h"
@@ -161,13 +161,13 @@ tsquerysel(VariableStatData *vardata, Datum constval)
 
 	if (HeapTupleIsValid(vardata->statsTuple))
 	{
-		Form_pg_statistic stats;
+		Form_mdb_statistic stats;
 		Datum	   *values;
 		int			nvalues;
 		float4	   *numbers;
 		int			nnumbers;
 
-		stats = (Form_pg_statistic) GETSTRUCT(vardata->statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata->statsTuple);
 
 		/* MCELEM will be an array of TEXT elements for a tsvector column */
 		if (get_attstatsslot(vardata->statsTuple,
@@ -207,7 +207,7 @@ tsquerysel(VariableStatData *vardata, Datum constval)
 }
 
 /*
- * Extract data from the pg_statistic arrays into useful format.
+ * Extract data from the mdb_statistic arrays into useful format.
  */
 static Selectivity
 mcelem_tsquery_selec(TSQuery query, Datum *mcelem, int nmcelem,

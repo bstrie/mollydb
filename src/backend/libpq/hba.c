@@ -25,7 +25,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "libpq/ip.h"
 #include "libpq/libpq.h"
 #include "postmaster/postmaster.h"
@@ -105,7 +105,7 @@ static bool parse_hba_auth_opt(char *name, char *val, HbaLine *hbaline,
  * so provide our own version.
  */
 bool
-pg_isblank(const char c)
+mdb_isblank(const char c)
 {
 	return c == ' ' || c == '\t' || c == '\r';
 }
@@ -153,7 +153,7 @@ next_token(char **lineptr, char *buf, int bufsz, bool *initial_quote,
 	*terminating_comma = false;
 
 	/* Move over initial whitespace and commas */
-	while ((c = (*(*lineptr)++)) != '\0' && (pg_isblank(c) || c == ','))
+	while ((c = (*(*lineptr)++)) != '\0' && (mdb_isblank(c) || c == ','))
 		;
 
 	if (c == '\0' || c == '\n')
@@ -167,7 +167,7 @@ next_token(char **lineptr, char *buf, int bufsz, bool *initial_quote,
 	 * or unquoted whitespace.
 	 */
 	while (c != '\0' && c != '\n' &&
-		   (!pg_isblank(c) || in_quote))
+		   (!mdb_isblank(c) || in_quote))
 	{
 		/* skip comments to EOL */
 		if (c == '#' && !in_quote)
@@ -575,10 +575,10 @@ hostname_match(const char *pattern, const char *actual_hostname)
 		if (hlen < plen)
 			return false;
 
-		return (pg_strcasecmp(pattern, actual_hostname + (hlen - plen)) == 0);
+		return (mdb_strcasecmp(pattern, actual_hostname + (hlen - plen)) == 0);
 	}
 	else
-		return (pg_strcasecmp(pattern, actual_hostname) == 0);
+		return (mdb_strcasecmp(pattern, actual_hostname) == 0);
 }
 
 /*
@@ -601,7 +601,7 @@ check_hostname(hbaPort *port, const char *hostname)
 	{
 		char		remote_hostname[NI_MAXHOST];
 
-		ret = pg_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
+		ret = mdb_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
 								 remote_hostname, sizeof(remote_hostname),
 								 NULL, 0,
 								 NI_NAMEREQD);
@@ -616,7 +616,7 @@ check_hostname(hbaPort *port, const char *hostname)
 		port->remote_hostname = pstrdup(remote_hostname);
 	}
 
-	/* Now see if remote host name matches this pg_hba line */
+	/* Now see if remote host name matches this mdb_hba line */
 	if (!hostname_match(hostname, port->remote_hostname))
 		return false;
 
@@ -666,7 +666,7 @@ check_hostname(hbaPort *port, const char *hostname)
 		freeaddrinfo(gai_result);
 
 	if (!found)
-		elog(DEBUG2, "pg_hba.conf host name \"%s\" rejected because address resolution did not return a match with IP address of client",
+		elog(DEBUG2, "mdb_hba.conf host name \"%s\" rejected because address resolution did not return a match with IP address of client",
 			 hostname);
 
 	port->remote_hostname_resolv = found ? +1 : -1;
@@ -681,7 +681,7 @@ static bool
 check_ip(SockAddr *raddr, struct sockaddr * addr, struct sockaddr * mask)
 {
 	if (raddr->addr.ss_family == addr->sa_family &&
-		pg_range_sockaddr(&raddr->addr,
+		mdb_range_sockaddr(&raddr->addr,
 						  (struct sockaddr_storage *) addr,
 						  (struct sockaddr_storage *) mask))
 		return true;
@@ -689,7 +689,7 @@ check_ip(SockAddr *raddr, struct sockaddr * addr, struct sockaddr * mask)
 }
 
 /*
- * pg_foreach_ifaddr callback: does client addr match this machine interface?
+ * mdb_foreach_ifaddr callback: does client addr match this machine interface?
  */
 static void
 check_network_callback(struct sockaddr * addr, struct sockaddr * netmask,
@@ -705,7 +705,7 @@ check_network_callback(struct sockaddr * addr, struct sockaddr * netmask,
 	if (cn->method == ipCmpSameHost)
 	{
 		/* Make an all-ones netmask of appropriate length for family */
-		pg_sockaddr_cidr_mask(&mask, NULL, addr->sa_family);
+		mdb_sockaddr_cidr_mask(&mask, NULL, addr->sa_family);
 		cn->result = check_ip(cn->raddr, addr, (struct sockaddr *) & mask);
 	}
 	else
@@ -716,7 +716,7 @@ check_network_callback(struct sockaddr * addr, struct sockaddr * netmask,
 }
 
 /*
- * Use pg_foreach_ifaddr to check a samehost or samenet match
+ * Use mdb_foreach_ifaddr to check a samehost or samenet match
  */
 static bool
 check_same_host_or_net(SockAddr *raddr, IPCompareMethod method)
@@ -728,7 +728,7 @@ check_same_host_or_net(SockAddr *raddr, IPCompareMethod method)
 	cn.result = false;
 
 	errno = 0;
-	if (pg_foreach_ifaddr(check_network_callback, &cn) < 0)
+	if (mdb_foreach_ifaddr(check_network_callback, &cn) < 0)
 	{
 		elog(LOG, "error enumerating network interfaces: %m");
 		return false;
@@ -1017,7 +1017,7 @@ parse_hba_line(List *line, int line_num, char *raw_line)
 			hints.ai_addr = NULL;
 			hints.ai_next = NULL;
 
-			ret = pg_getaddrinfo_all(str, NULL, &hints, &gai_result);
+			ret = mdb_getaddrinfo_all(str, NULL, &hints, &gai_result);
 			if (ret == 0 && gai_result)
 				memcpy(&parsedline->addr, gai_result->ai_addr,
 					   gai_result->ai_addrlen);
@@ -1032,11 +1032,11 @@ parse_hba_line(List *line, int line_num, char *raw_line)
 						 errcontext("line %d of configuration file \"%s\"",
 									line_num, HbaFileName)));
 				if (gai_result)
-					pg_freeaddrinfo_all(hints.ai_family, gai_result);
+					mdb_freeaddrinfo_all(hints.ai_family, gai_result);
 				return NULL;
 			}
 
-			pg_freeaddrinfo_all(hints.ai_family, gai_result);
+			mdb_freeaddrinfo_all(hints.ai_family, gai_result);
 
 			/* Get the netmask */
 			if (cidr_slash)
@@ -1052,7 +1052,7 @@ parse_hba_line(List *line, int line_num, char *raw_line)
 					return NULL;
 				}
 
-				if (pg_sockaddr_cidr_mask(&parsedline->mask, cidr_slash + 1,
+				if (mdb_sockaddr_cidr_mask(&parsedline->mask, cidr_slash + 1,
 										  parsedline->addr.ss_family) < 0)
 				{
 					ereport(LOG,
@@ -1092,7 +1092,7 @@ parse_hba_line(List *line, int line_num, char *raw_line)
 				}
 				token = linitial(tokens);
 
-				ret = pg_getaddrinfo_all(token->string, NULL,
+				ret = mdb_getaddrinfo_all(token->string, NULL,
 										 &hints, &gai_result);
 				if (ret || !gai_result)
 				{
@@ -1103,13 +1103,13 @@ parse_hba_line(List *line, int line_num, char *raw_line)
 						   errcontext("line %d of configuration file \"%s\"",
 									  line_num, HbaFileName)));
 					if (gai_result)
-						pg_freeaddrinfo_all(hints.ai_family, gai_result);
+						mdb_freeaddrinfo_all(hints.ai_family, gai_result);
 					return NULL;
 				}
 
 				memcpy(&parsedline->mask, gai_result->ai_addr,
 					   gai_result->ai_addrlen);
-				pg_freeaddrinfo_all(hints.ai_family, gai_result);
+				mdb_freeaddrinfo_all(hints.ai_family, gai_result);
 
 				if (parsedline->addr.ss_family != parsedline->mask.ss_family)
 				{
@@ -1287,7 +1287,7 @@ parse_hba_line(List *line, int line_num, char *raw_line)
 	 * capability around for backwards compatibility, but we might want to
 	 * remove it at some point in the future.  Users who still need to strip
 	 * the realm off would be better served by using an appropriate regex in a
-	 * pg_ident.conf mapping.
+	 * mdb_ident.conf mapping.
 	 */
 	if (parsedline->auth_method == uaGSS ||
 		parsedline->auth_method == uaSSPI)
@@ -1626,7 +1626,7 @@ parse_hba_auth_opt(char *name, char *val, HbaLine *hbaline, int line_num)
 		hints.ai_socktype = SOCK_DGRAM;
 		hints.ai_family = AF_UNSPEC;
 
-		ret = pg_getaddrinfo_all(val, NULL, &hints, &gai_result);
+		ret = mdb_getaddrinfo_all(val, NULL, &hints, &gai_result);
 		if (ret || !gai_result)
 		{
 			ereport(LOG,
@@ -1636,10 +1636,10 @@ parse_hba_auth_opt(char *name, char *val, HbaLine *hbaline, int line_num)
 					 errcontext("line %d of configuration file \"%s\"",
 								line_num, HbaFileName)));
 			if (gai_result)
-				pg_freeaddrinfo_all(hints.ai_family, gai_result);
+				mdb_freeaddrinfo_all(hints.ai_family, gai_result);
 			return false;
 		}
-		pg_freeaddrinfo_all(hints.ai_family, gai_result);
+		mdb_freeaddrinfo_all(hints.ai_family, gai_result);
 		hbaline->radiusserver = pstrdup(val);
 	}
 	else if (strcmp(name, "radiusport") == 0)
@@ -1928,7 +1928,7 @@ parse_ident_line(List *line, int line_number)
 	tokens = lfirst(field);
 	IDENT_MULTI_VALUE(tokens);
 	token = linitial(tokens);
-	parsedline->pg_role = pstrdup(token->string);
+	parsedline->mdb_role = pstrdup(token->string);
 
 	if (parsedline->ident_user[0] == '/')
 	{
@@ -1937,19 +1937,19 @@ parse_ident_line(List *line, int line_number)
 		 * expression. Pre-compile it.
 		 */
 		int			r;
-		pg_wchar   *wstr;
+		mdb_wchar   *wstr;
 		int			wlen;
 
-		wstr = palloc((strlen(parsedline->ident_user + 1) + 1) * sizeof(pg_wchar));
-		wlen = pg_mb2wchar_with_len(parsedline->ident_user + 1,
+		wstr = palloc((strlen(parsedline->ident_user + 1) + 1) * sizeof(mdb_wchar));
+		wlen = mdb_mb2wchar_with_len(parsedline->ident_user + 1,
 									wstr, strlen(parsedline->ident_user + 1));
 
-		r = pg_regcomp(&parsedline->re, wstr, wlen, REG_ADVANCED, C_COLLATION_OID);
+		r = mdb_regcomp(&parsedline->re, wstr, wlen, REG_ADVANCED, C_COLLATION_OID);
 		if (r)
 		{
 			char		errstr[100];
 
-			pg_regerror(r, &parsedline->re, errstr, sizeof(errstr));
+			mdb_regerror(r, &parsedline->re, errstr, sizeof(errstr));
 			ereport(LOG,
 					(errcode(ERRCODE_INVALID_REGULAR_EXPRESSION),
 					 errmsg("invalid regular expression \"%s\": %s",
@@ -1967,12 +1967,12 @@ parse_ident_line(List *line, int line_number)
 /*
  *	Process one line from the parsed ident config lines.
  *
- *	Compare input parsed ident line to the needed map, pg_role and ident_user.
+ *	Compare input parsed ident line to the needed map, mdb_role and ident_user.
  *	*found_p and *error_p are set according to our results.
  */
 static void
 check_ident_usermap(IdentLine *identLine, const char *usermap_name,
-					const char *pg_role, const char *ident_user,
+					const char *mdb_role, const char *ident_user,
 					bool case_insensitive, bool *found_p, bool *error_p)
 {
 	*found_p = false;
@@ -1993,15 +1993,15 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
 		 */
 		int			r;
 		regmatch_t	matches[2];
-		pg_wchar   *wstr;
+		mdb_wchar   *wstr;
 		int			wlen;
 		char	   *ofs;
 		char	   *regexp_pgrole;
 
-		wstr = palloc((strlen(ident_user) + 1) * sizeof(pg_wchar));
-		wlen = pg_mb2wchar_with_len(ident_user, wstr, strlen(ident_user));
+		wstr = palloc((strlen(ident_user) + 1) * sizeof(mdb_wchar));
+		wlen = mdb_mb2wchar_with_len(ident_user, wstr, strlen(ident_user));
 
-		r = pg_regexec(&identLine->re, wstr, wlen, 0, NULL, 2, matches, 0);
+		r = mdb_regexec(&identLine->re, wstr, wlen, 0, NULL, 2, matches, 0);
 		if (r)
 		{
 			char		errstr[100];
@@ -2009,7 +2009,7 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
 			if (r != REG_NOMATCH)
 			{
 				/* REG_NOMATCH is not an error, everything else is */
-				pg_regerror(r, &identLine->re, errstr, sizeof(errstr));
+				mdb_regerror(r, &identLine->re, errstr, sizeof(errstr));
 				ereport(LOG,
 						(errcode(ERRCODE_INVALID_REGULAR_EXPRESSION),
 					 errmsg("regular expression match for \"%s\" failed: %s",
@@ -2022,7 +2022,7 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
 		}
 		pfree(wstr);
 
-		if ((ofs = strstr(identLine->pg_role, "\\1")) != NULL)
+		if ((ofs = strstr(identLine->mdb_role, "\\1")) != NULL)
 		{
 			int			offset;
 
@@ -2032,7 +2032,7 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
 				ereport(LOG,
 						(errcode(ERRCODE_INVALID_REGULAR_EXPRESSION),
 						 errmsg("regular expression \"%s\" has no subexpressions as requested by backreference in \"%s\"",
-							identLine->ident_user + 1, identLine->pg_role)));
+							identLine->ident_user + 1, identLine->mdb_role)));
 				*error_p = true;
 				return;
 			}
@@ -2041,9 +2041,9 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
 			 * length: original length minus length of \1 plus length of match
 			 * plus null terminator
 			 */
-			regexp_pgrole = palloc0(strlen(identLine->pg_role) - 2 + (matches[1].rm_eo - matches[1].rm_so) + 1);
-			offset = ofs - identLine->pg_role;
-			memcpy(regexp_pgrole, identLine->pg_role, offset);
+			regexp_pgrole = palloc0(strlen(identLine->mdb_role) - 2 + (matches[1].rm_eo - matches[1].rm_so) + 1);
+			offset = ofs - identLine->mdb_role;
+			memcpy(regexp_pgrole, identLine->mdb_role, offset);
 			memcpy(regexp_pgrole + offset,
 				   ident_user + matches[1].rm_so,
 				   matches[1].rm_eo - matches[1].rm_so);
@@ -2052,7 +2052,7 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
 		else
 		{
 			/* no substitution, so copy the match */
-			regexp_pgrole = pstrdup(identLine->pg_role);
+			regexp_pgrole = pstrdup(identLine->mdb_role);
 		}
 
 		/*
@@ -2061,12 +2061,12 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
 		 */
 		if (case_insensitive)
 		{
-			if (pg_strcasecmp(regexp_pgrole, pg_role) == 0)
+			if (mdb_strcasecmp(regexp_pgrole, mdb_role) == 0)
 				*found_p = true;
 		}
 		else
 		{
-			if (strcmp(regexp_pgrole, pg_role) == 0)
+			if (strcmp(regexp_pgrole, mdb_role) == 0)
 				*found_p = true;
 		}
 		pfree(regexp_pgrole);
@@ -2078,13 +2078,13 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
 		/* Not regular expression, so make complete match */
 		if (case_insensitive)
 		{
-			if (pg_strcasecmp(identLine->pg_role, pg_role) == 0 &&
-				pg_strcasecmp(identLine->ident_user, ident_user) == 0)
+			if (mdb_strcasecmp(identLine->mdb_role, mdb_role) == 0 &&
+				mdb_strcasecmp(identLine->ident_user, ident_user) == 0)
 				*found_p = true;
 		}
 		else
 		{
-			if (strcmp(identLine->pg_role, pg_role) == 0 &&
+			if (strcmp(identLine->mdb_role, mdb_role) == 0 &&
 				strcmp(identLine->ident_user, ident_user) == 0)
 				*found_p = true;
 		}
@@ -2097,18 +2097,18 @@ check_ident_usermap(IdentLine *identLine, const char *usermap_name,
  *	Scan the (pre-parsed) ident usermap file line by line, looking for a match
  *
  *	See if the user with ident username "auth_user" is allowed to act
- *	as MollyDB user "pg_role" according to usermap "usermap_name".
+ *	as MollyDB user "mdb_role" according to usermap "usermap_name".
  *
  *	Special case: Usermap NULL, equivalent to what was previously called
  *	"sameuser" or "samerole", means don't look in the usermap file.
- *	That's an implied map wherein "pg_role" must be identical to
+ *	That's an implied map wherein "mdb_role" must be identical to
  *	"auth_user" in order to be authorized.
  *
  *	Iff authorized, return STATUS_OK, otherwise return STATUS_ERROR.
  */
 int
 check_usermap(const char *usermap_name,
-			  const char *pg_role,
+			  const char *mdb_role,
 			  const char *auth_user,
 			  bool case_insensitive)
 {
@@ -2119,17 +2119,17 @@ check_usermap(const char *usermap_name,
 	{
 		if (case_insensitive)
 		{
-			if (pg_strcasecmp(pg_role, auth_user) == 0)
+			if (mdb_strcasecmp(mdb_role, auth_user) == 0)
 				return STATUS_OK;
 		}
 		else
 		{
-			if (strcmp(pg_role, auth_user) == 0)
+			if (strcmp(mdb_role, auth_user) == 0)
 				return STATUS_OK;
 		}
 		ereport(LOG,
 				(errmsg("provided user name (%s) and authenticated user name (%s) do not match",
-						pg_role, auth_user)));
+						mdb_role, auth_user)));
 		return STATUS_ERROR;
 	}
 	else
@@ -2139,7 +2139,7 @@ check_usermap(const char *usermap_name,
 		foreach(line_cell, parsed_ident_lines)
 		{
 			check_ident_usermap(lfirst(line_cell), usermap_name,
-								pg_role, auth_user, case_insensitive,
+								mdb_role, auth_user, case_insensitive,
 								&found_entry, &error);
 			if (found_entry || error)
 				break;
@@ -2149,7 +2149,7 @@ check_usermap(const char *usermap_name,
 	{
 		ereport(LOG,
 				(errmsg("no match in usermap \"%s\" for user \"%s\" authenticated as \"%s\"",
-						usermap_name, pg_role, auth_user)));
+						usermap_name, mdb_role, auth_user)));
 	}
 	return found_entry ? STATUS_OK : STATUS_ERROR;
 }
@@ -2211,7 +2211,7 @@ load_ident(void)
 			{
 				newline = (IdentLine *) lfirst(parsed_line_cell);
 				if (newline->ident_user[0] == '/')
-					pg_regfree(&newline->re);
+					mdb_regfree(&newline->re);
 			}
 			MemoryContextReset(ident_context);
 			new_parsed_lines = NIL;
@@ -2239,7 +2239,7 @@ load_ident(void)
 		{
 			newline = (IdentLine *) lfirst(parsed_line_cell);
 			if (newline->ident_user[0] == '/')
-				pg_regfree(&newline->re);
+				mdb_regfree(&newline->re);
 		}
 		MemoryContextDelete(ident_context);
 		return false;
@@ -2252,7 +2252,7 @@ load_ident(void)
 		{
 			newline = (IdentLine *) lfirst(parsed_line_cell);
 			if (newline->ident_user[0] == '/')
-				pg_regfree(&newline->re);
+				mdb_regfree(&newline->re);
 		}
 	}
 	if (parsed_ident_context != NULL)

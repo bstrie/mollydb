@@ -1,27 +1,27 @@
 <!--
-doc/src/sgml/ref/pg_resetxlog.sgml
+doc/src/sgml/ref/mdb_resetxlog.sgml
 MollyDB documentation
 -->
 
 <refentry id="APP-PGRESETXLOG">
  <indexterm zone="app-pgresetxlog">
-  <primary>pg_resetxlog</primary>
+  <primary>mdb_resetxlog</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle><application>pg_resetxlog</application></refentrytitle>
+  <refentrytitle><application>mdb_resetxlog</application></refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_resetxlog</refname>
+  <refname>mdb_resetxlog</refname>
   <refpurpose>reset the write-ahead log and other control information of a <productname>MollyDB</productname> database cluster</refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_resetxlog</command>
+   <command>mdb_resetxlog</command>
    <arg choice="opt"><option>-f</option></arg>
    <arg choice="opt"><option>-n</option></arg>
    <arg rep="repeat"><replaceable>option</replaceable></arg>
@@ -32,9 +32,9 @@ MollyDB documentation
  <refsect1 id="R1-APP-PGRESETXLOG-1">
   <title>Description</title>
   <para>
-   <command>pg_resetxlog</command> clears the write-ahead log (WAL) and
+   <command>mdb_resetxlog</command> clears the write-ahead log (WAL) and
    optionally resets some other control information stored in the
-   <filename>pg_control</> file.  This function is sometimes needed
+   <filename>mdb_control</> file.  This function is sometimes needed
    if these files have become corrupted.  It should be used only as a
    last resort, when the server will not start due to such corruption.
   </para>
@@ -51,13 +51,13 @@ MollyDB documentation
    This utility can only be run by the user who installed the server, because
    it requires read/write access to the data directory.
    For safety reasons, you must specify the data directory on the command line.
-   <command>pg_resetxlog</command> does not use the environment variable
+   <command>mdb_resetxlog</command> does not use the environment variable
    <envar>PGDATA</>.
   </para>
 
   <para>
-   If <command>pg_resetxlog</command> complains that it cannot determine
-   valid data for <filename>pg_control</>, you can force it to proceed anyway
+   If <command>mdb_resetxlog</command> complains that it cannot determine
+   valid data for <filename>mdb_control</>, you can force it to proceed anyway
    by specifying the <option>-f</> (force) option.  In this case plausible
    values will be substituted for the missing data.  Most of the fields can be
    expected to match, but manual assistance might be needed for the next OID,
@@ -80,8 +80,8 @@ MollyDB documentation
     <term><option>-f</option></term>
     <listitem>
      <para>
-      Force <command>pg_resetxlog</command> to proceed even if it cannot determine
-      valid data for <filename>pg_control</>, as explained above.
+      Force <command>mdb_resetxlog</command> to proceed even if it cannot determine
+      valid data for <filename>mdb_control</>, as explained above.
      </para>
     </listitem>
    </varlistentry>
@@ -91,10 +91,10 @@ MollyDB documentation
     <listitem>
      <para>
       The <option>-n</> (no operation) option instructs
-      <command>pg_resetxlog</command> to print the values reconstructed from
-      <filename>pg_control</> and values about to be changed, and then exit
+      <command>mdb_resetxlog</command> to print the values reconstructed from
+      <filename>mdb_control</> and values about to be changed, and then exit
       without modifying anything. This is mainly a debugging tool, but can be
-      useful as a sanity check before allowing <command>pg_resetxlog</command>
+      useful as a sanity check before allowing <command>mdb_resetxlog</command>
       to proceed for real.
      </para>
     </listitem>
@@ -115,8 +115,8 @@ MollyDB documentation
 
   <para>
    The following options are only needed when
-   <command>pg_resetxlog</command> is unable to determine appropriate values
-   by reading <filename>pg_control</>.  Safe values can be determined as
+   <command>mdb_resetxlog</command> is unable to determine appropriate values
+   by reading <filename>mdb_control</>.  Safe values can be determined as
    described below.  For values that take numeric arguments, hexadecimal
    values can be specified by using the prefix <literal>0x</literal>.
   </para>
@@ -134,7 +134,7 @@ MollyDB documentation
       A safe value for the oldest transaction ID for which the commit time can
       be retrieved (first part) can be determined by looking
       for the numerically smallest file name in the directory
-      <filename>pg_commit_ts</> under the data directory.  Conversely, a safe
+      <filename>mdb_commit_ts</> under the data directory.  Conversely, a safe
       value for the newest transaction ID for which the commit time can be
       retrieved (second part) can be determined by looking for the numerically
       greatest file name in the same directory.  The file names are in
@@ -152,7 +152,7 @@ MollyDB documentation
 
      <para>
       The transaction ID epoch is not actually stored anywhere in the database
-      except in the field that is set by <command>pg_resetxlog</command>,
+      except in the field that is set by <command>mdb_resetxlog</command>,
       so any value will work so far as the database itself is concerned.
       You might need to adjust this value to ensure that replication
       systems such as <application>Slony-I</> and
@@ -173,22 +173,22 @@ MollyDB documentation
      <para>
       The WAL starting address should be
       larger than any WAL segment file name currently existing in
-      the directory <filename>pg_xlog</> under the data directory.
+      the directory <filename>mdb_xlog</> under the data directory.
       These names are also in hexadecimal and have three parts.  The first
       part is the <quote>timeline ID</> and should usually be kept the same.
       For example, if <filename>00000001000000320000004A</> is the
-      largest entry in <filename>pg_xlog</>, use <literal>-l 00000001000000320000004B</> or higher.
+      largest entry in <filename>mdb_xlog</>, use <literal>-l 00000001000000320000004B</> or higher.
      </para>
 
      <note>
       <para>
-       <command>pg_resetxlog</command> itself looks at the files in
-       <filename>pg_xlog</> and chooses a default <option>-l</> setting
+       <command>mdb_resetxlog</command> itself looks at the files in
+       <filename>mdb_xlog</> and chooses a default <option>-l</> setting
        beyond the last existing file name.  Therefore, manual adjustment of
        <option>-l</> should only be needed if you are aware of WAL segment
-       files that are not currently present in <filename>pg_xlog</>, such as
+       files that are not currently present in <filename>mdb_xlog</>, such as
        entries in an offline archive; or if the contents of
-       <filename>pg_xlog</> have been lost entirely.
+       <filename>mdb_xlog</> have been lost entirely.
       </para>
      </note>
     </listitem>
@@ -204,7 +204,7 @@ MollyDB documentation
      <para>
       A safe value for the next multitransaction ID (first part) can be
       determined by looking for the numerically largest file name in the
-      directory <filename>pg_multixact/offsets</> under the data directory,
+      directory <filename>mdb_multixact/offsets</> under the data directory,
       adding one, and then multiplying by 65536 (0x10000).  Conversely, a safe
       value for the oldest multitransaction ID (second part of
       <option>-m</>) can be determined by looking for the numerically smallest
@@ -239,7 +239,7 @@ MollyDB documentation
 
      <para>
       A safe value can be determined by looking for the numerically largest
-      file name in the directory <filename>pg_multixact/members</> under the
+      file name in the directory <filename>mdb_multixact/members</> under the
       data directory, adding one, and then multiplying by 52352 (0xCC80).
       The file names are in hexadecimal.  There is no simple recipe such as
       the ones for other options of appending zeroes.
@@ -256,12 +256,12 @@ MollyDB documentation
 
      <para>
       A safe value can be determined by looking for the numerically largest
-      file name in the directory <filename>pg_clog</> under the data directory,
+      file name in the directory <filename>mdb_clog</> under the data directory,
       adding one,
       and then multiplying by 1048576 (0x100000).  Note that the file names are in
       hexadecimal.  It is usually easiest to specify the option value in
       hexadecimal too. For example, if <filename>0011</> is the largest entry
-      in <filename>pg_clog</>, <literal>-x 0x1200000</> will work (five
+      in <filename>mdb_clog</>, <literal>-x 0x1200000</> will work (five
       trailing zeroes provide the proper multiplier).
      </para>
     </listitem>
@@ -274,11 +274,11 @@ MollyDB documentation
 
   <para>
    This command must not be used when the server is
-   running.  <command>pg_resetxlog</command> will refuse to start up if
+   running.  <command>mdb_resetxlog</command> will refuse to start up if
    it finds a server lock file in the data directory.  If the
    server crashed then a lock file might have been left
    behind; in that case you can remove the lock file to allow
-   <command>pg_resetxlog</command> to run.  But before you do
+   <command>mdb_resetxlog</command> to run.  But before you do
    so, make doubly certain that there is no server process still alive.
   </para>
  </refsect1>

@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_ts_parser.h
+ * mdb_ts_parser.h
  *	definition of parsers for tsearch
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_ts_parser.h
+ * src/include/catalog/mdb_ts_parser.h
  *
  * NOTES
  *		the genbki.pl script reads this file and generates .bki
@@ -24,13 +24,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_ts_parser definition.  cpp turns this into
- *		typedef struct FormData_pg_ts_parser
+ *		mdb_ts_parser definition.  cpp turns this into
+ *		typedef struct FormData_mdb_ts_parser
  * ----------------
  */
 #define TSParserRelationId	3601
 
-CATALOG(pg_ts_parser,3601)
+CATALOG(mdb_ts_parser,3601)
 {
 	NameData	prsname;		/* parser's name */
 	Oid			prsnamespace;	/* name space */
@@ -39,25 +39,25 @@ CATALOG(pg_ts_parser,3601)
 	regproc		prsend;			/* finalize parsing session */
 	regproc		prsheadline;	/* return data for headline creation */
 	regproc		prslextype;		/* return descriptions of lexeme's types */
-} FormData_pg_ts_parser;
+} FormData_mdb_ts_parser;
 
-typedef FormData_pg_ts_parser *Form_pg_ts_parser;
+typedef FormData_mdb_ts_parser *Form_mdb_ts_parser;
 
 /* ----------------
- *		compiler constants for pg_ts_parser
+ *		compiler constants for mdb_ts_parser
  * ----------------
  */
-#define Natts_pg_ts_parser					7
-#define Anum_pg_ts_parser_prsname			1
-#define Anum_pg_ts_parser_prsnamespace		2
-#define Anum_pg_ts_parser_prsstart			3
-#define Anum_pg_ts_parser_prstoken			4
-#define Anum_pg_ts_parser_prsend			5
-#define Anum_pg_ts_parser_prsheadline		6
-#define Anum_pg_ts_parser_prslextype		7
+#define Natts_mdb_ts_parser					7
+#define Anum_mdb_ts_parser_prsname			1
+#define Anum_mdb_ts_parser_prsnamespace		2
+#define Anum_mdb_ts_parser_prsstart			3
+#define Anum_mdb_ts_parser_prstoken			4
+#define Anum_mdb_ts_parser_prsend			5
+#define Anum_mdb_ts_parser_prsheadline		6
+#define Anum_mdb_ts_parser_prslextype		7
 
 /* ----------------
- *		initial contents of pg_ts_parser
+ *		initial contents of mdb_ts_parser
  * ----------------
  */
 

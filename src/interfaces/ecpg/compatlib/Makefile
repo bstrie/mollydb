@@ -14,7 +14,7 @@ top_builddir = ../../../..
 include $(top_builddir)/src/Makefile.global
 
 PGFILEDESC = "ECPG compat - compatibility library for ECPG"
-NAME= ecpg_compat
+NAME= ecmdb_compat
 SO_MAJOR_VERSION= 3
 SO_MINOR_VERSION= 8
 

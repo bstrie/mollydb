@@ -21,7 +21,7 @@
 #include "catalog/catalog.h"
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_operator.h"
+#include "catalog/mdb_operator.h"
 #include "commands/cluster.h"
 #include "commands/matview.h"
 #include "commands/tablecmds.h"
@@ -87,7 +87,7 @@ SetMatViewPopulatedState(Relation relation, bool newstate)
 	Assert(relation->rd_rel->relkind == RELKIND_MATVIEW);
 
 	/*
-	 * Update relation's pg_class entry.  Crucial side-effect: other backends
+	 * Update relation's mdb_class entry.  Crucial side-effect: other backends
 	 * (and this one too!) are sent SI message to make them rebuild relcache
 	 * entries.
 	 */
@@ -98,7 +98,7 @@ SetMatViewPopulatedState(Relation relation, bool newstate)
 		elog(ERROR, "cache lookup failed for relation %u",
 			 RelationGetRelid(relation));
 
-	((Form_pg_class) GETSTRUCT(tuple))->relispopulated = newstate;
+	((Form_mdb_class) GETSTRUCT(tuple))->relispopulated = newstate;
 
 	simple_heap_update(pgrel, &tuple->t_self, tuple);
 
@@ -108,7 +108,7 @@ SetMatViewPopulatedState(Relation relation, bool newstate)
 	heap_close(pgrel, RowExclusiveLock);
 
 	/*
-	 * Advance command counter to make the updated pg_class row locally
+	 * Advance command counter to make the updated mdb_class row locally
 	 * visible.
 	 */
 	CommandCounterIncrement();
@@ -231,7 +231,7 @@ ExecRefreshMatView(RefreshMatViewStmt *stmt, const char *queryString,
 		{
 			Oid			indexoid = lfirst_oid(indexoidscan);
 			Relation	indexRel;
-			Form_pg_index	indexStruct;
+			Form_mdb_index	indexStruct;
 
 			indexRel = index_open(indexoid, AccessShareLock);
 			indexStruct = indexRel->rd_index;
@@ -388,7 +388,7 @@ refresh_matview_datafill(DestReceiver *dest, Query *query,
 	CHECK_FOR_INTERRUPTS();
 
 	/* Plan the query which will generate data for the refresh. */
-	plan = pg_plan_query(query, 0, NULL);
+	plan = mdb_plan_query(query, 0, NULL);
 
 	/*
 	 * Use a snapshot with an updated command ID to ensure this query sees
@@ -539,12 +539,12 @@ static void
 mv_GenerateOper(StringInfo buf, Oid opoid)
 {
 	HeapTuple	opertup;
-	Form_pg_operator operform;
+	Form_mdb_operator operform;
 
 	opertup = SearchSysCache1(OPEROID, ObjectIdGetDatum(opoid));
 	if (!HeapTupleIsValid(opertup))
 		elog(ERROR, "cache lookup failed for operator %u", opoid);
-	operform = (Form_pg_operator) GETSTRUCT(opertup);
+	operform = (Form_mdb_operator) GETSTRUCT(opertup);
 	Assert(operform->oprkind == 'b');
 
 	appendStringInfo(buf, "OPERATOR(%s.%s)",
@@ -636,8 +636,8 @@ refresh_by_match_merge(Oid matviewOid, Oid tempOid, Oid relowner,
 					 "SELECT newdata FROM %s newdata "
 					 "WHERE newdata IS NOT NULL AND EXISTS "
 					 "(SELECT * FROM %s newdata2 WHERE newdata2 IS NOT NULL "
-					 "AND newdata2 OPERATOR(pg_catalog.*=) newdata "
-					 "AND newdata2.ctid OPERATOR(pg_catalog.<>) "
+					 "AND newdata2 OPERATOR(mdb_catalog.*=) newdata "
+					 "AND newdata2.ctid OPERATOR(mdb_catalog.<>) "
 					 "newdata.ctid) LIMIT 1",
 					 tempname, tempname);
 	if (SPI_execute(querybuf.data, false, 1) != SPI_OK_SELECT)
@@ -672,7 +672,7 @@ refresh_by_match_merge(Oid matviewOid, Oid tempOid, Oid relowner,
 
 	/*
 	 * Get the list of index OIDs for the table from the relcache, and look up
-	 * each one in the pg_index syscache.  We will test for equality on all
+	 * each one in the mdb_index syscache.  We will test for equality on all
 	 * columns present in all unique indexes which only reference columns and
 	 * include all rows.
 	 */
@@ -684,7 +684,7 @@ refresh_by_match_merge(Oid matviewOid, Oid tempOid, Oid relowner,
 	{
 		Oid			indexoid = lfirst_oid(indexoidscan);
 		Relation	indexRel;
-		Form_pg_index indexStruct;
+		Form_mdb_index indexStruct;
 
 		indexRel = index_open(indexoid, RowExclusiveLock);
 		indexStruct = indexRel->rd_index;
@@ -750,7 +750,7 @@ refresh_by_match_merge(Oid matviewOid, Oid tempOid, Oid relowner,
 	Assert(foundUniqueIndex);
 
 	appendStringInfoString(&querybuf,
-						   " AND newdata OPERATOR(pg_catalog.*=) mv) "
+						   " AND newdata OPERATOR(mdb_catalog.*=) mv) "
 						   "WHERE newdata IS NULL OR mv IS NULL "
 						   "ORDER BY tid");
 
@@ -777,7 +777,7 @@ refresh_by_match_merge(Oid matviewOid, Oid tempOid, Oid relowner,
 	/* Deletes must come before inserts; do them first. */
 	resetStringInfo(&querybuf);
 	appendStringInfo(&querybuf,
-				   "DELETE FROM %s mv WHERE ctid OPERATOR(pg_catalog.=) ANY "
+				   "DELETE FROM %s mv WHERE ctid OPERATOR(mdb_catalog.=) ANY "
 					 "(SELECT diff.tid FROM %s diff "
 					 "WHERE diff.tid IS NOT NULL "
 					 "AND diff.newdata IS NULL)",

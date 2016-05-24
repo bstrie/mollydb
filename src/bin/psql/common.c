@@ -157,11 +157,11 @@ psql_get_variable(const char *varname, bool escape, bool as_ident)
 		 * Rather than complicate the lexer's API with a notion of which
 		 * free() routine to use, just pay the price of an extra strdup().
 		 */
-		result = pg_strdup(escaped_value);
+		result = mdb_strdup(escaped_value);
 		PQfreemem(escaped_value);
 	}
 	else
-		result = pg_strdup(value);
+		result = mdb_strdup(value);
 
 	return result;
 }
@@ -1204,7 +1204,7 @@ SendQuery(const char *query)
 		}
 		else
 		{
-			results = PQexec(pset.db, "SAVEPOINT pg_psql_temporary_savepoint");
+			results = PQexec(pset.db, "SAVEPOINT mdb_psql_temporary_savepoint");
 			if (PQresultStatus(results) != PGRES_COMMAND_OK)
 			{
 				psql_error("%s", PQerrorMessage(pset.db));
@@ -1266,7 +1266,7 @@ SendQuery(const char *query)
 		{
 			case PQTRANS_INERROR:
 				/* We always rollback on an error */
-				svptcmd = "ROLLBACK TO pg_psql_temporary_savepoint";
+				svptcmd = "ROLLBACK TO mdb_psql_temporary_savepoint";
 				break;
 
 			case PQTRANS_IDLE:
@@ -1287,7 +1287,7 @@ SendQuery(const char *query)
 					 strcmp(PQcmdStatus(results), "ROLLBACK") == 0))
 					svptcmd = NULL;
 				else
-					svptcmd = "RELEASE pg_psql_temporary_savepoint";
+					svptcmd = "RELEASE mdb_psql_temporary_savepoint";
 				break;
 
 			case PQTRANS_ACTIVE:
@@ -1335,7 +1335,7 @@ SendQuery(const char *query)
 		pset.encoding = PQclientEncoding(pset.db);
 		pset.popt.topt.encoding = pset.encoding;
 		SetVariable(pset.vars, "ENCODING",
-					pg_encoding_to_char(pset.encoding));
+					mdb_encoding_to_char(pset.encoding));
 	}
 
 	PrintNotifications();
@@ -1365,7 +1365,7 @@ sendquery_cleanup:
 	pset.crosstab_flag = false;
 	for (i = 0; i < lengthof(pset.ctv_args); i++)
 	{
-		pg_free(pset.ctv_args[i]);
+		mdb_free(pset.ctv_args[i]);
 		pset.ctv_args[i] = NULL;
 	}
 
@@ -1708,19 +1708,19 @@ command_no_begin(const char *query)
 	 * (We assume that START must be START TRANSACTION, since there is
 	 * presently no other "START foo" command.)
 	 */
-	if (wordlen == 5 && pg_strncasecmp(query, "abort", 5) == 0)
+	if (wordlen == 5 && mdb_strncasecmp(query, "abort", 5) == 0)
 		return true;
-	if (wordlen == 5 && pg_strncasecmp(query, "begin", 5) == 0)
+	if (wordlen == 5 && mdb_strncasecmp(query, "begin", 5) == 0)
 		return true;
-	if (wordlen == 5 && pg_strncasecmp(query, "start", 5) == 0)
+	if (wordlen == 5 && mdb_strncasecmp(query, "start", 5) == 0)
 		return true;
-	if (wordlen == 6 && pg_strncasecmp(query, "commit", 6) == 0)
+	if (wordlen == 6 && mdb_strncasecmp(query, "commit", 6) == 0)
 		return true;
-	if (wordlen == 3 && pg_strncasecmp(query, "end", 3) == 0)
+	if (wordlen == 3 && mdb_strncasecmp(query, "end", 3) == 0)
 		return true;
-	if (wordlen == 8 && pg_strncasecmp(query, "rollback", 8) == 0)
+	if (wordlen == 8 && mdb_strncasecmp(query, "rollback", 8) == 0)
 		return true;
-	if (wordlen == 7 && pg_strncasecmp(query, "prepare", 7) == 0)
+	if (wordlen == 7 && mdb_strncasecmp(query, "prepare", 7) == 0)
 	{
 		/* PREPARE TRANSACTION is a TC command, PREPARE foo is not */
 		query += wordlen;
@@ -1731,7 +1731,7 @@ command_no_begin(const char *query)
 		while (isalpha((unsigned char) query[wordlen]))
 			wordlen += PQmblen(&query[wordlen], pset.encoding);
 
-		if (wordlen == 11 && pg_strncasecmp(query, "transaction", 11) == 0)
+		if (wordlen == 11 && mdb_strncasecmp(query, "transaction", 11) == 0)
 			return true;
 		return false;
 	}
@@ -1741,9 +1741,9 @@ command_no_begin(const char *query)
 	 * here should be exactly those that call PreventTransactionChain() in the
 	 * backend.
 	 */
-	if (wordlen == 6 && pg_strncasecmp(query, "vacuum", 6) == 0)
+	if (wordlen == 6 && mdb_strncasecmp(query, "vacuum", 6) == 0)
 		return true;
-	if (wordlen == 7 && pg_strncasecmp(query, "cluster", 7) == 0)
+	if (wordlen == 7 && mdb_strncasecmp(query, "cluster", 7) == 0)
 	{
 		/* CLUSTER with any arguments is allowed in transactions */
 		query += wordlen;
@@ -1755,7 +1755,7 @@ command_no_begin(const char *query)
 		return true;			/* it's CLUSTER without arguments */
 	}
 
-	if (wordlen == 6 && pg_strncasecmp(query, "create", 6) == 0)
+	if (wordlen == 6 && mdb_strncasecmp(query, "create", 6) == 0)
 	{
 		query += wordlen;
 
@@ -1765,13 +1765,13 @@ command_no_begin(const char *query)
 		while (isalpha((unsigned char) query[wordlen]))
 			wordlen += PQmblen(&query[wordlen], pset.encoding);
 
-		if (wordlen == 8 && pg_strncasecmp(query, "database", 8) == 0)
+		if (wordlen == 8 && mdb_strncasecmp(query, "database", 8) == 0)
 			return true;
-		if (wordlen == 10 && pg_strncasecmp(query, "tablespace", 10) == 0)
+		if (wordlen == 10 && mdb_strncasecmp(query, "tablespace", 10) == 0)
 			return true;
 
 		/* CREATE [UNIQUE] INDEX CONCURRENTLY isn't allowed in xacts */
-		if (wordlen == 6 && pg_strncasecmp(query, "unique", 6) == 0)
+		if (wordlen == 6 && mdb_strncasecmp(query, "unique", 6) == 0)
 		{
 			query += wordlen;
 
@@ -1782,7 +1782,7 @@ command_no_begin(const char *query)
 				wordlen += PQmblen(&query[wordlen], pset.encoding);
 		}
 
-		if (wordlen == 5 && pg_strncasecmp(query, "index", 5) == 0)
+		if (wordlen == 5 && mdb_strncasecmp(query, "index", 5) == 0)
 		{
 			query += wordlen;
 
@@ -1792,14 +1792,14 @@ command_no_begin(const char *query)
 			while (isalpha((unsigned char) query[wordlen]))
 				wordlen += PQmblen(&query[wordlen], pset.encoding);
 
-			if (wordlen == 12 && pg_strncasecmp(query, "concurrently", 12) == 0)
+			if (wordlen == 12 && mdb_strncasecmp(query, "concurrently", 12) == 0)
 				return true;
 		}
 
 		return false;
 	}
 
-	if (wordlen == 5 && pg_strncasecmp(query, "alter", 5) == 0)
+	if (wordlen == 5 && mdb_strncasecmp(query, "alter", 5) == 0)
 	{
 		query += wordlen;
 
@@ -1810,7 +1810,7 @@ command_no_begin(const char *query)
 			wordlen += PQmblen(&query[wordlen], pset.encoding);
 
 		/* ALTER SYSTEM isn't allowed in xacts */
-		if (wordlen == 6 && pg_strncasecmp(query, "system", 6) == 0)
+		if (wordlen == 6 && mdb_strncasecmp(query, "system", 6) == 0)
 			return true;
 
 		return false;
@@ -1821,8 +1821,8 @@ command_no_begin(const char *query)
 	 * aren't really valid commands so we don't care much. The other four
 	 * possible matches are correct.
 	 */
-	if ((wordlen == 4 && pg_strncasecmp(query, "drop", 4) == 0) ||
-		(wordlen == 7 && pg_strncasecmp(query, "reindex", 7) == 0))
+	if ((wordlen == 4 && mdb_strncasecmp(query, "drop", 4) == 0) ||
+		(wordlen == 7 && mdb_strncasecmp(query, "reindex", 7) == 0))
 	{
 		query += wordlen;
 
@@ -1832,15 +1832,15 @@ command_no_begin(const char *query)
 		while (isalpha((unsigned char) query[wordlen]))
 			wordlen += PQmblen(&query[wordlen], pset.encoding);
 
-		if (wordlen == 8 && pg_strncasecmp(query, "database", 8) == 0)
+		if (wordlen == 8 && mdb_strncasecmp(query, "database", 8) == 0)
 			return true;
-		if (wordlen == 6 && pg_strncasecmp(query, "system", 6) == 0)
+		if (wordlen == 6 && mdb_strncasecmp(query, "system", 6) == 0)
 			return true;
-		if (wordlen == 10 && pg_strncasecmp(query, "tablespace", 10) == 0)
+		if (wordlen == 10 && mdb_strncasecmp(query, "tablespace", 10) == 0)
 			return true;
 
 		/* DROP INDEX CONCURRENTLY isn't allowed in xacts */
-		if (wordlen == 5 && pg_strncasecmp(query, "index", 5) == 0)
+		if (wordlen == 5 && mdb_strncasecmp(query, "index", 5) == 0)
 		{
 			query += wordlen;
 
@@ -1850,7 +1850,7 @@ command_no_begin(const char *query)
 			while (isalpha((unsigned char) query[wordlen]))
 				wordlen += PQmblen(&query[wordlen], pset.encoding);
 
-			if (wordlen == 12 && pg_strncasecmp(query, "concurrently", 12) == 0)
+			if (wordlen == 12 && mdb_strncasecmp(query, "concurrently", 12) == 0)
 				return true;
 
 			return false;
@@ -1860,7 +1860,7 @@ command_no_begin(const char *query)
 	}
 
 	/* DISCARD ALL isn't allowed in xacts, but other variants are allowed. */
-	if (wordlen == 7 && pg_strncasecmp(query, "discard", 7) == 0)
+	if (wordlen == 7 && mdb_strncasecmp(query, "discard", 7) == 0)
 	{
 		query += wordlen;
 
@@ -1870,7 +1870,7 @@ command_no_begin(const char *query)
 		while (isalpha((unsigned char) query[wordlen]))
 			wordlen += PQmblen(&query[wordlen], pset.encoding);
 
-		if (wordlen == 3 && pg_strncasecmp(query, "all", 3) == 0)
+		if (wordlen == 3 && mdb_strncasecmp(query, "all", 3) == 0)
 			return true;
 		return false;
 	}
@@ -1906,10 +1906,10 @@ is_select_command(const char *query)
 	while (isalpha((unsigned char) query[wordlen]))
 		wordlen += PQmblen(&query[wordlen], pset.encoding);
 
-	if (wordlen == 6 && pg_strncasecmp(query, "select", 6) == 0)
+	if (wordlen == 6 && mdb_strncasecmp(query, "select", 6) == 0)
 		return true;
 
-	if (wordlen == 6 && pg_strncasecmp(query, "values", 6) == 0)
+	if (wordlen == 6 && mdb_strncasecmp(query, "values", 6) == 0)
 		return true;
 
 	return false;

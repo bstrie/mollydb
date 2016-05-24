@@ -75,7 +75,7 @@ SECURITY LABEL ON DOMAIN dummy_seclabel_domain IS 'classified';		-- OK
 CREATE SCHEMA dummy_seclabel_test;
 SECURITY LABEL ON SCHEMA dummy_seclabel_test IS 'unclassified';		-- OK
 
-SELECT objtype, objname, provider, label FROM pg_seclabels
+SELECT objtype, objname, provider, label FROM mdb_seclabels
 	ORDER BY objtype, objname;
 
 -- check for event trigger

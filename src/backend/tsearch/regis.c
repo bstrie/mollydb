@@ -64,7 +64,7 @@ RS_isRegis(const char *str)
 		}
 		else
 			elog(ERROR, "internal error in RS_isRegis: state %d", state);
-		c += pg_mblen(c);
+		c += mdb_mblen(c);
 	}
 
 	return (state == RS_IN_WAIT);
@@ -104,7 +104,7 @@ RS_compile(Regis *r, bool issuffix, const char *str)
 					ptr = r->node = newRegisNode(NULL, len);
 				COPYCHAR(ptr->data, c);
 				ptr->type = RSF_ONEOF;
-				ptr->len = pg_mblen(c);
+				ptr->len = mdb_mblen(c);
 			}
 			else if (t_iseq(c, '['))
 			{
@@ -128,7 +128,7 @@ RS_compile(Regis *r, bool issuffix, const char *str)
 			else if (t_isalpha(c))
 			{
 				COPYCHAR(ptr->data, c);
-				ptr->len = pg_mblen(c);
+				ptr->len = mdb_mblen(c);
 				state = RS_IN_ONEOF_IN;
 			}
 			else	/* shouldn't get here */
@@ -139,7 +139,7 @@ RS_compile(Regis *r, bool issuffix, const char *str)
 			if (t_isalpha(c))
 			{
 				COPYCHAR(ptr->data + ptr->len, c);
-				ptr->len += pg_mblen(c);
+				ptr->len += mdb_mblen(c);
 			}
 			else if (t_iseq(c, ']'))
 				state = RS_IN_WAIT;
@@ -148,7 +148,7 @@ RS_compile(Regis *r, bool issuffix, const char *str)
 		}
 		else
 			elog(ERROR, "internal error in RS_compile: state %d", state);
-		c += pg_mblen(c);
+		c += mdb_mblen(c);
 	}
 
 	if (state != RS_IN_WAIT)	/* shouldn't get here */
@@ -188,10 +188,10 @@ mb_strchr(char *str, char *c)
 	char	   *ptr = str;
 	bool		res = false;
 
-	clen = pg_mblen(c);
+	clen = mdb_mblen(c);
 	while (*ptr && !res)
 	{
-		plen = pg_mblen(ptr);
+		plen = mdb_mblen(ptr);
 		if (plen == clen)
 		{
 			i = plen;
@@ -224,7 +224,7 @@ RS_execute(Regis *r, char *str)
 	while (*c)
 	{
 		len++;
-		c += pg_mblen(c);
+		c += mdb_mblen(c);
 	}
 
 	if (len < r->nchar)
@@ -235,7 +235,7 @@ RS_execute(Regis *r, char *str)
 	{
 		len -= r->nchar;
 		while (len-- > 0)
-			c += pg_mblen(c);
+			c += mdb_mblen(c);
 	}
 
 
@@ -255,7 +255,7 @@ RS_execute(Regis *r, char *str)
 				elog(ERROR, "unrecognized regis node type: %d", ptr->type);
 		}
 		ptr = ptr->next;
-		c += pg_mblen(c);
+		c += mdb_mblen(c);
 	}
 
 	return true;

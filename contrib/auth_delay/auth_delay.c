@@ -43,7 +43,7 @@ auth_delay_checks(Port *port, int status)
 	 */
 	if (status != STATUS_OK)
 	{
-		pg_usleep(1000L * auth_delay_milliseconds);
+		mdb_usleep(1000L * auth_delay_milliseconds);
 	}
 }
 

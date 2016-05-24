@@ -28,12 +28,12 @@
  * caller to notice changes and cope with them.
  *
  * Currently, we track exactly the dependencies of plans on relations and
- * user-defined functions.  On relcache invalidation events or pg_proc
+ * user-defined functions.  On relcache invalidation events or mdb_proc
  * syscache invalidation events, we invalidate just those plans that depend
  * on the particular object being modified.  (Note: this scheme assumes
  * that any table modification that requires replanning will generate a
  * relcache inval event.)  We also watch for inval events on certain other
- * system catalogs, such as pg_namespace; but for them, our response is
+ * system catalogs, such as mdb_namespace; but for them, our response is
  * just to invalidate all plans.  We expect updates on those catalogs to
  * be infrequent enough that more-detailed tracking is not worth the effort.
  *
@@ -709,12 +709,12 @@ RevalidateCachedQuery(CachedPlanSource *plansource)
 	if (rawtree == NULL)
 		tlist = NIL;
 	else if (plansource->parserSetup != NULL)
-		tlist = pg_analyze_and_rewrite_params(rawtree,
+		tlist = mdb_analyze_and_rewrite_params(rawtree,
 											  plansource->query_string,
 											  plansource->parserSetup,
 											  plansource->parserSetupArg);
 	else
-		tlist = pg_analyze_and_rewrite(rawtree,
+		tlist = mdb_analyze_and_rewrite(rawtree,
 									   plansource->query_string,
 									   plansource->param_types,
 									   plansource->num_params);
@@ -956,7 +956,7 @@ BuildCachedPlan(CachedPlanSource *plansource, List *qlist,
 	/*
 	 * Generate the plan.
 	 */
-	plist = pg_plan_queries(qlist, plansource->cursor_options, boundParams);
+	plist = mdb_plan_queries(qlist, plansource->cursor_options, boundParams);
 
 	/* Clean up SPI state */
 	SPI_pop_conditional(spi_pushed);

@@ -40,7 +40,7 @@
 
 #include <ctype.h>
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "utils/builtins.h"
 
 PG_MODULE_MAGIC;

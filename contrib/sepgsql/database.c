@@ -15,7 +15,7 @@
 #include "access/htup_details.h"
 #include "access/sysattr.h"
 #include "catalog/dependency.h"
-#include "catalog/pg_database.h"
+#include "catalog/mdb_database.h"
 #include "catalog/indexing.h"
 #include "commands/dbcommands.h"
 #include "commands/seclabel.h"
@@ -40,11 +40,11 @@ semdb_database_post_create(Oid databaseId, const char *dtemplate)
 	char	   *tcontext;
 	char	   *ncontext;
 	ObjectAddress object;
-	Form_pg_database datForm;
+	Form_mdb_database datForm;
 	StringInfoData audit_name;
 
 	/*
-	 * Oid of the source database is not saved in pg_database catalog, so we
+	 * Oid of the source database is not saved in mdb_database catalog, so we
 	 * collect its identifier using contextual information. If NULL, its
 	 * default is "template1" according to createdb().
 	 */
@@ -90,7 +90,7 @@ semdb_database_post_create(Oid databaseId, const char *dtemplate)
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "catalog lookup failed for database %u", databaseId);
 
-	datForm = (Form_pg_database) GETSTRUCT(tuple);
+	datForm = (Form_mdb_database) GETSTRUCT(tuple);
 
 	ncontext = semdb_compute_create(semdb_get_client_label(),
 									  tcontext,

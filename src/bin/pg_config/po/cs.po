@@ -1,11 +1,11 @@
-# Czech message translation file for pg_config
+# Czech message translation file for mdb_config
 # Copyright (C) 2012 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 #
 # Tomas Vondra <tv@fuzzy.cz>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_config-cs (MollyDB 9.3)\n"
+"Project-Id-Version: mdb_config-cs (MollyDB 9.3)\n"
 "Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-03-17 18:46+0000\n"
 "PO-Revision-Date: 2013-04-28 19:26+0200\n"
@@ -53,14 +53,14 @@ msgstr "nelze číst symbolický link \"%s\""
 msgid "pclose failed: %s"
 msgstr "volání pclose selhalo: %s"
 
-#: pg_config.c:243 pg_config.c:259 pg_config.c:275 pg_config.c:291
-#: pg_config.c:307 pg_config.c:323 pg_config.c:339 pg_config.c:355
-#: pg_config.c:371
+#: mdb_config.c:243 mdb_config.c:259 mdb_config.c:275 mdb_config.c:291
+#: mdb_config.c:307 mdb_config.c:323 mdb_config.c:339 mdb_config.c:355
+#: mdb_config.c:371
 #, c-format
 msgid "not recorded\n"
 msgstr "nezaznamenáno\n"
 
-#: pg_config.c:428
+#: mdb_config.c:428
 #, c-format
 msgid ""
 "\n"
@@ -71,12 +71,12 @@ msgstr ""
 "%s poskytuje informace o nainstalované verzi MollyDB.\n"
 "\n"
 
-#: pg_config.c:429
+#: mdb_config.c:429
 #, c-format
 msgid "Usage:\n"
 msgstr "Použití:\n"
 
-#: pg_config.c:430
+#: mdb_config.c:430
 #, c-format
 msgid ""
 "  %s [OPTION]...\n"
@@ -85,27 +85,27 @@ msgstr ""
 "  %s [PŘEPÍNAČ]...\n"
 "\n"
 
-#: pg_config.c:431
+#: mdb_config.c:431
 #, c-format
 msgid "Options:\n"
 msgstr "Přepínače:\n"
 
-#: pg_config.c:432
+#: mdb_config.c:432
 #, c-format
 msgid "  --bindir              show location of user executables\n"
 msgstr "  --bindir              ukáže umístění spustitelných souborů\n"
 
-#: pg_config.c:433
+#: mdb_config.c:433
 #, c-format
 msgid "  --docdir              show location of documentation files\n"
 msgstr "  --docdir              ukáže umístění souborů s dokumentací\n"
 
-#: pg_config.c:434
+#: mdb_config.c:434
 #, c-format
 msgid "  --htmldir             show location of HTML documentation files\n"
 msgstr "  --htmldir             ukáže umístění souborl s HTML dokumentací\n"
 
-#: pg_config.c:435
+#: mdb_config.c:435
 #, c-format
 msgid ""
 "  --includedir          show location of C header files of the client\n"
@@ -114,41 +114,41 @@ msgstr ""
 "  --includedir         ukáže umístění C hlavičkových souborů klientských\n"
 "                        rozhraní\n"
 
-#: pg_config.c:437
+#: mdb_config.c:437
 #, c-format
 msgid "  --pkgincludedir       show location of other C header files\n"
 msgstr ""
 "  --pkgincludedir       ukáže umístění dalších C hlavičkových souborů\n"
 
-#: pg_config.c:438
+#: mdb_config.c:438
 #, c-format
 msgid ""
 "  --includedir-server   show location of C header files for the server\n"
 msgstr ""
 "  --includedir-server   ukáže umístění C hlavičkových souborů pro server\n"
 
-#: pg_config.c:439
+#: mdb_config.c:439
 #, c-format
 msgid "  --libdir              show location of object code libraries\n"
 msgstr "  --libdir              ukáže umístění knihoven\n"
 
-#: pg_config.c:440
+#: mdb_config.c:440
 #, c-format
 msgid "  --pkglibdir           show location of dynamically loadable modules\n"
 msgstr "  --pkglibdir           ukáže umístění dynamicky zaváděných modulů\n"
 
-#: pg_config.c:441
+#: mdb_config.c:441
 #, c-format
 msgid "  --localedir           show location of locale support files\n"
 msgstr "  --localedir           ukáže umístění souborů pro podporu locale\n"
 
-#: pg_config.c:442
+#: mdb_config.c:442
 #, c-format
 msgid "  --mandir              show location of manual pages\n"
 msgstr ""
 "  --mandir              ukáže umístění souborů s manuálovými stránkami\n"
 
-#: pg_config.c:443
+#: mdb_config.c:443
 #, c-format
 msgid ""
 "  --sharedir            show location of architecture-independent support "
@@ -157,7 +157,7 @@ msgstr ""
 "  --sharedir            ukáže umístění podpůrných souborů nezávislých na "
 "architektuře\n"
 
-#: pg_config.c:444
+#: mdb_config.c:444
 #, c-format
 msgid ""
 "  --sysconfdir          show location of system-wide configuration files\n"
@@ -165,13 +165,13 @@ msgstr ""
 "  --sysconfdir          ukáže umístění konfiguračních souborů platných pro "
 "celý systém\n"
 
-#: pg_config.c:445
+#: mdb_config.c:445
 #, c-format
 msgid "  --pgxs                show location of extension makefile\n"
 msgstr ""
 "  --pgxs                ukáže umístění makefile souboru pro rozšíření\n"
 
-#: pg_config.c:446
+#: mdb_config.c:446
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
@@ -180,13 +180,13 @@ msgstr ""
 "  --configure           ukáže přepínače použité pro \"configure\" skript ke\n"
 "                        kompilaci MollyDB\n"
 
-#: pg_config.c:448
+#: mdb_config.c:448
 #, c-format
 msgid "  --cc                  show CC value used when MollyDB was built\n"
 msgstr ""
 "  --cc                  ukáže hodnotu CC použitou při buildu MollyDB\n"
 
-#: pg_config.c:449
+#: mdb_config.c:449
 #, c-format
 msgid ""
 "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
@@ -194,14 +194,14 @@ msgstr ""
 "  --cppflags            ukáže hodnotu CPPFLAGS použitou při buildu "
 "MollyDB\n"
 
-#: pg_config.c:450
+#: mdb_config.c:450
 #, c-format
 msgid ""
 "  --cflags              show CFLAGS value used when MollyDB was built\n"
 msgstr ""
 "  --cflags              ukáže hodnotu CFLAGS použitou při buildu MollyDB\n"
 
-#: pg_config.c:451
+#: mdb_config.c:451
 #, c-format
 msgid ""
 "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
@@ -209,7 +209,7 @@ msgstr ""
 "  --cflags_sl           ukáže hodnotu CFLAGS_SL použitou při buildu "
 "MollyDB\n"
 
-#: pg_config.c:452
+#: mdb_config.c:452
 #, c-format
 msgid ""
 "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
@@ -217,7 +217,7 @@ msgstr ""
 "  --ldflags             ukáže hodnotu LDFLAGS použitou při buildu "
 "MollyDB\n"
 
-#: pg_config.c:453
+#: mdb_config.c:453
 #, c-format
 msgid ""
 "  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was "
@@ -226,7 +226,7 @@ msgstr ""
 "  --ldflags_ex          ukáže hodnotu LDFLAGS_EX použitou při buildu "
 "MollyDB\n"
 
-#: pg_config.c:454
+#: mdb_config.c:454
 #, c-format
 msgid ""
 "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was "
@@ -235,24 +235,24 @@ msgstr ""
 "  --ldflags_sl          ukáže hodnotu LDFLAGS_SL použitou při buildu "
 "MollyDB\n"
 
-#: pg_config.c:455
+#: mdb_config.c:455
 #, c-format
 msgid ""
 "  --libs                show LIBS value used when MollyDB was built\n"
 msgstr ""
 "  --libs                ukáže hodnotu LIBS použitou při buildu MollyDB\n"
 
-#: pg_config.c:456
+#: mdb_config.c:456
 #, c-format
 msgid "  --version             show the MollyDB version\n"
 msgstr "  --version             ukáže verzi MollyDB\n"
 
-#: pg_config.c:457
+#: mdb_config.c:457
 #, c-format
 msgid "  -?, --help            show this help, then exit\n"
 msgstr "  -?, --help            ukáže tuto nápovědu, a skončí\n"
 
-#: pg_config.c:458
+#: mdb_config.c:458
 #, c-format
 msgid ""
 "\n"
@@ -263,22 +263,22 @@ msgstr ""
 "Bez argumentů jsou vypsány všechny známé položky.\n"
 "\n"
 
-#: pg_config.c:459
+#: mdb_config.c:459
 #, c-format
 msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr "Oznámení o chybách zasílejte na <mdb-bugs@mollydb.org>.\n"
 
-#: pg_config.c:465
+#: mdb_config.c:465
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "Zkuste \"%s --help\" pro více informací.\n"
 
-#: pg_config.c:504
+#: mdb_config.c:504
 #, c-format
 msgid "%s: could not find own program executable\n"
 msgstr "%s: nelze najít vlastní spustitelný soubor\n"
 
-#: pg_config.c:527
+#: mdb_config.c:527
 #, c-format
 msgid "%s: invalid argument: %s\n"
 msgstr "%s: neplatný parametr: %s\n"

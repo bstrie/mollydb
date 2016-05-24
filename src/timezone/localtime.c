@@ -50,8 +50,8 @@ static const char wildabbr[] = WILDABBR;
 static const char gmt[] = "GMT";
 
 /* The minimum and maximum finite time values.  This assumes no padding.  */
-static const pg_time_t time_t_min = MINVAL(pg_time_t, TYPE_BIT(pg_time_t));
-static const pg_time_t time_t_max = MAXVAL(pg_time_t, TYPE_BIT(pg_time_t));
+static const mdb_time_t time_t_min = MINVAL(mdb_time_t, TYPE_BIT(mdb_time_t));
+static const mdb_time_t time_t_max = MAXVAL(mdb_time_t, TYPE_BIT(mdb_time_t));
 
 /*
  * The DST rules to use if TZ has no rules and we can't load TZDEFRULES.
@@ -84,11 +84,11 @@ struct rule
  * Prototypes for static functions.
  */
 
-static struct pg_tm *gmtsub(pg_time_t const *, int32, struct pg_tm *);
+static struct mdb_tm *gmtsub(mdb_time_t const *, int32, struct mdb_tm *);
 static bool increment_overflow(int *, int);
-static bool increment_overflow_time(pg_time_t *, int32);
-static struct pg_tm *timesub(pg_time_t const *, int32, struct state const *,
-		struct pg_tm *);
+static bool increment_overflow_time(mdb_time_t *, int32);
+static struct mdb_tm *timesub(mdb_time_t const *, int32, struct state const *,
+		struct mdb_tm *);
 static bool typesequiv(struct state const *, int, int);
 
 
@@ -100,7 +100,7 @@ static bool typesequiv(struct state const *, int, int);
  * Thanks to Paul Eggert for noting this.
  */
 
-static struct pg_tm tm;
+static struct mdb_tm tm;
 
 /* Initialize *S to a value based on GMTOFF, ISDST, and ABBRIND.  */
 static void
@@ -166,9 +166,9 @@ detzcode64(const char *codep)
 }
 
 static bool
-differ_by_repeat(const pg_time_t t1, const pg_time_t t0)
+differ_by_repeat(const mdb_time_t t1, const mdb_time_t t0)
 {
-	if (TYPE_BIT(pg_time_t) -TYPE_SIGNED(pg_time_t) <SECSPERREPEAT_BITS)
+	if (TYPE_BIT(mdb_time_t) -TYPE_SIGNED(mdb_time_t) <SECSPERREPEAT_BITS)
 		return 0;
 	return t1 - t0 == SECSPERREPEAT;
 }
@@ -229,9 +229,9 @@ tzloadbody(char const * name, char *canonname, struct state * sp, bool doextend,
 	if (name[0] == ':')
 		++name;
 
-	fid = pg_open_tzfile(name, canonname);
+	fid = mdb_open_tzfile(name, canonname);
 	if (fid < 0)
-		return ENOENT;			/* pg_open_tzfile may not set errno */
+		return ENOENT;			/* mdb_open_tzfile may not set errno */
 
 	nread = read(fid, up->buf, sizeof up->buf);
 	if (nread < tzheadsize)
@@ -276,7 +276,7 @@ tzloadbody(char const * name, char *canonname, struct state * sp, bool doextend,
 		sp->charcnt = charcnt;
 
 		/*
-		 * Read transitions, discarding those out of pg_time_t range. But
+		 * Read transitions, discarding those out of mdb_time_t range. But
 		 * pretend the last transition before time_t_min occurred at
 		 * time_t_min.
 		 */
@@ -289,8 +289,8 @@ tzloadbody(char const * name, char *canonname, struct state * sp, bool doextend,
 			sp->types[i] = at <= time_t_max;
 			if (sp->types[i])
 			{
-				pg_time_t	attime
-				= ((TYPE_SIGNED(pg_time_t) ? at < time_t_min : at < 0)
+				mdb_time_t	attime
+				= ((TYPE_SIGNED(mdb_time_t) ? at < time_t_min : at < 0)
 				   ? time_t_min : at);
 
 				if (timecnt && attime <= sp->ats[timecnt - 1])
@@ -338,7 +338,7 @@ tzloadbody(char const * name, char *canonname, struct state * sp, bool doextend,
 			sp->chars[i] = *p++;
 		sp->chars[i] = '\0';	/* ensure '\0' at end */
 
-		/* Read leap seconds, discarding those out of pg_time_t range.  */
+		/* Read leap seconds, discarding those out of mdb_time_t range.  */
 		leapcnt = 0;
 		for (i = 0; i < sp->leapcnt; ++i)
 		{
@@ -348,8 +348,8 @@ tzloadbody(char const * name, char *canonname, struct state * sp, bool doextend,
 			p += stored + 4;
 			if (tr <= time_t_max)
 			{
-				pg_time_t	trans
-				= ((TYPE_SIGNED(pg_time_t) ? tr < time_t_min : tr < 0)
+				mdb_time_t	trans
+				= ((TYPE_SIGNED(mdb_time_t) ? tr < time_t_min : tr < 0)
 				   ? time_t_min : tr);
 
 				if (leapcnt && trans <= sp->lsis[leapcnt - 1].ls_trans)
@@ -885,7 +885,7 @@ tzparse(const char *name, struct state * sp, bool lastditch)
 		/*
 		 * This is intentionally somewhat different from the IANA code.  We do
 		 * not want to invoke tzload() in the lastditch case: we can't assume
-		 * pg_open_tzfile() is sane yet, and we don't care about leap seconds
+		 * mdb_open_tzfile() is sane yet, and we don't care about leap seconds
 		 * anyway.
 		 */
 		stdlen = strlen(name);	/* length of standard zone name */
@@ -965,7 +965,7 @@ tzparse(const char *name, struct state * sp, bool lastditch)
 			int			year;
 			int			yearlim;
 			int			timecnt;
-			pg_time_t	janfirst;
+			mdb_time_t	janfirst;
 
 			++name;
 			if ((name = getrule(name, &start)) == NULL)
@@ -1162,23 +1162,23 @@ gmtload(struct state * sp)
  * freely called. (And no, the PANS doesn't require the above behavior,
  * but it *is* desirable.)
  */
-static struct pg_tm *
-localsub(struct state const * sp, pg_time_t const * timep,
-		 struct pg_tm * tmp)
+static struct mdb_tm *
+localsub(struct state const * sp, mdb_time_t const * timep,
+		 struct mdb_tm * tmp)
 {
 	const struct ttinfo *ttisp;
 	int			i;
-	struct pg_tm *result;
-	const pg_time_t t = *timep;
+	struct mdb_tm *result;
+	const mdb_time_t t = *timep;
 
 	if (sp == NULL)
 		return gmtsub(timep, 0, tmp);
 	if ((sp->goback && t < sp->ats[0]) ||
 		(sp->goahead && t > sp->ats[sp->timecnt - 1]))
 	{
-		pg_time_t	newt = t;
-		pg_time_t	seconds;
-		pg_time_t	years;
+		mdb_time_t	newt = t;
+		mdb_time_t	seconds;
+		mdb_time_t	years;
 
 		if (t < sp->ats[0])
 			seconds = sp->ats[0] - t;
@@ -1242,8 +1242,8 @@ localsub(struct state const * sp, pg_time_t const * timep,
 }
 
 
-struct pg_tm *
-pg_localtime(const pg_time_t *timep, const pg_tz *tz)
+struct mdb_tm *
+mdb_localtime(const mdb_time_t *timep, const mdb_tz *tz)
 {
 	return localsub(&tz->state, timep, &tm);
 }
@@ -1254,10 +1254,10 @@ pg_localtime(const pg_time_t *timep, const pg_tz *tz)
  *
  * Except we have a private "struct state" for GMT, so no sp is passed in.
  */
-static struct pg_tm *
-gmtsub(pg_time_t const * timep, int32 offset, struct pg_tm * tmp)
+static struct mdb_tm *
+gmtsub(mdb_time_t const * timep, int32 offset, struct mdb_tm * tmp)
 {
-	struct pg_tm *result;
+	struct mdb_tm *result;
 
 	/* GMT timezone state data is kept here */
 	static struct state gmtmem;
@@ -1284,8 +1284,8 @@ gmtsub(pg_time_t const * timep, int32 offset, struct pg_tm * tmp)
 	return result;
 }
 
-struct pg_tm *
-pg_gmtime(const pg_time_t *timep)
+struct mdb_tm *
+mdb_gmtime(const mdb_time_t *timep)
 {
 	return gmtsub(timep, 0, &tm);
 }
@@ -1301,12 +1301,12 @@ leaps_thru_end_of(const int y)
 		-(leaps_thru_end_of(-(y + 1)) + 1);
 }
 
-static struct pg_tm *
-timesub(const pg_time_t *timep, int32 offset,
-		const struct state * sp, struct pg_tm * tmp)
+static struct mdb_tm *
+timesub(const mdb_time_t *timep, int32 offset,
+		const struct state * sp, struct mdb_tm * tmp)
 {
 	const struct lsinfo *lp;
-	pg_time_t	tdays;
+	mdb_time_t	tdays;
 	int			idays;			/* unsigned would be so 2003 */
 	int64		rem;
 	int			y;
@@ -1348,12 +1348,12 @@ timesub(const pg_time_t *timep, int32 offset,
 	while (tdays < 0 || tdays >= year_lengths[isleap(y)])
 	{
 		int			newy;
-		pg_time_t	tdelta;
+		mdb_time_t	tdelta;
 		int			idelta;
 		int			leapdays;
 
 		tdelta = tdays / DAYSPERLYEAR;
-		if (!((!TYPE_SIGNED(pg_time_t) ||INT_MIN <= tdelta)
+		if (!((!TYPE_SIGNED(mdb_time_t) ||INT_MIN <= tdelta)
 			  && tdelta <= INT_MAX))
 			goto out_of_range;
 		idelta = tdelta;
@@ -1364,7 +1364,7 @@ timesub(const pg_time_t *timep, int32 offset,
 			goto out_of_range;
 		leapdays = leaps_thru_end_of(newy - 1) -
 			leaps_thru_end_of(y - 1);
-		tdays -= ((pg_time_t) newy - y) * DAYSPERNYEAR;
+		tdays -= ((mdb_time_t) newy - y) * DAYSPERNYEAR;
 		tdays -= leapdays;
 		y = newy;
 	}
@@ -1458,7 +1458,7 @@ increment_overflow(int *ip, int j)
 }
 
 static bool
-increment_overflow_time(pg_time_t *tp, int32 j)
+increment_overflow_time(mdb_time_t *tp, int32 j)
 {
 	/*----------
 	 * This is like
@@ -1467,7 +1467,7 @@ increment_overflow_time(pg_time_t *tp, int32 j)
 	 *----------
 	 */
 	if (!(j < 0
-		  ? (TYPE_SIGNED(pg_time_t) ? time_t_min - j <= *tp : -1 - j < *tp)
+		  ? (TYPE_SIGNED(mdb_time_t) ? time_t_min - j <= *tp : -1 - j < *tp)
 		  : *tp <= time_t_max - j))
 		return true;
 	*tp += j;
@@ -1479,7 +1479,7 @@ increment_overflow_time(pg_time_t *tp, int32 j)
  *
  * *timep and *tz are input arguments, the other parameters are output values.
  *
- * When the function result is 1, *boundary is set to the pg_time_t
+ * When the function result is 1, *boundary is set to the mdb_time_t
  * representation of the next DST transition time after *timep,
  * *before_gmtoff and *before_isdst are set to the GMT offset and isdst
  * state prevailing just before that boundary (in particular, the state
@@ -1495,19 +1495,19 @@ increment_overflow_time(pg_time_t *tp, int32 j)
  * occur in our current implementation).
  */
 int
-pg_next_dst_boundary(const pg_time_t *timep,
+mdb_next_dst_boundary(const mdb_time_t *timep,
 					 long int *before_gmtoff,
 					 int *before_isdst,
-					 pg_time_t *boundary,
+					 mdb_time_t *boundary,
 					 long int *after_gmtoff,
 					 int *after_isdst,
-					 const pg_tz *tz)
+					 const mdb_tz *tz)
 {
 	const struct state *sp;
 	const struct ttinfo *ttisp;
 	int			i;
 	int			j;
-	const pg_time_t t = *timep;
+	const mdb_time_t t = *timep;
 
 	sp = &tz->state;
 	if (sp->timecnt == 0)
@@ -1529,9 +1529,9 @@ pg_next_dst_boundary(const pg_time_t *timep,
 		(sp->goahead && t > sp->ats[sp->timecnt - 1]))
 	{
 		/* For values outside the transition table, extrapolate */
-		pg_time_t	newt = t;
-		pg_time_t	seconds;
-		pg_time_t	tcycles;
+		mdb_time_t	newt = t;
+		mdb_time_t	seconds;
+		mdb_time_t	tcycles;
 		int64		icycles;
 		int			result;
 
@@ -1556,7 +1556,7 @@ pg_next_dst_boundary(const pg_time_t *timep,
 			newt > sp->ats[sp->timecnt - 1])
 			return -1;			/* "cannot happen" */
 
-		result = pg_next_dst_boundary(&newt, before_gmtoff,
+		result = mdb_next_dst_boundary(&newt, before_gmtoff,
 									  before_isdst,
 									  boundary,
 									  after_gmtoff,
@@ -1642,11 +1642,11 @@ pg_next_dst_boundary(const pg_time_t *timep,
  * Note: abbrev is matched case-sensitively; it should be all-upper-case.
  */
 bool
-pg_interpret_timezone_abbrev(const char *abbrev,
-							 const pg_time_t *timep,
+mdb_interpret_timezone_abbrev(const char *abbrev,
+							 const mdb_time_t *timep,
 							 long int *gmtoff,
 							 int *isdst,
-							 const pg_tz *tz)
+							 const mdb_tz *tz)
 {
 	const struct state *sp;
 	const char *abbrs;
@@ -1654,7 +1654,7 @@ pg_interpret_timezone_abbrev(const char *abbrev,
 	int			abbrind;
 	int			cutoff;
 	int			i;
-	const pg_time_t t = *timep;
+	const mdb_time_t t = *timep;
 
 	sp = &tz->state;
 
@@ -1676,7 +1676,7 @@ pg_interpret_timezone_abbrev(const char *abbrev,
 		return false;			/* not there! */
 
 	/*
-	 * Unlike pg_next_dst_boundary, we needn't sweat about extrapolation
+	 * Unlike mdb_next_dst_boundary, we needn't sweat about extrapolation
 	 * (goback/goahead zones).  Finding the newest or oldest meaning of the
 	 * abbreviation should get us what we want, since extrapolation would just
 	 * be repeating the newest or oldest meanings.
@@ -1736,7 +1736,7 @@ pg_interpret_timezone_abbrev(const char *abbrev,
  * into *gmtoff and return true, else return false.
  */
 bool
-pg_get_timezone_offset(const pg_tz *tz, long int *gmtoff)
+mdb_get_timezone_offset(const mdb_tz *tz, long int *gmtoff)
 {
 	/*
 	 * The zone could have more than one ttinfo, if it's historically used
@@ -1760,7 +1760,7 @@ pg_get_timezone_offset(const pg_tz *tz, long int *gmtoff)
  * Return the name of the current timezone
  */
 const char *
-pg_get_timezone_name(pg_tz *tz)
+mdb_get_timezone_name(mdb_tz *tz)
 {
 	if (tz)
 		return tz->TZname;
@@ -1775,18 +1775,18 @@ pg_get_timezone_name(pg_tz *tz)
  * date/time arithmetic.
  */
 bool
-pg_tz_acceptable(pg_tz *tz)
+mdb_tz_acceptable(mdb_tz *tz)
 {
-	struct pg_tm *tt;
-	pg_time_t	time2000;
+	struct mdb_tm *tt;
+	mdb_time_t	time2000;
 
 	/*
-	 * To detect leap-second timekeeping, run pg_localtime for what should be
+	 * To detect leap-second timekeeping, run mdb_localtime for what should be
 	 * GMT midnight, 2000-01-01.  Insist that the tm_sec value be zero; any
 	 * other result has to be due to leap seconds.
 	 */
 	time2000 = (POSTGRES_EPOCH_JDATE - UNIX_EPOCH_JDATE) * SECS_PER_DAY;
-	tt = pg_localtime(&time2000, tz);
+	tt = mdb_localtime(&time2000, tz);
 	if (!tt || tt->tm_sec != 0)
 		return false;
 

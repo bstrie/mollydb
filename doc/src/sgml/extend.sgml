@@ -317,7 +317,7 @@
     understand that the objects of the extension go together.  You can
     drop all the objects with a single <xref linkend="sql-dropextension">
     command (no need to maintain a separate <quote>uninstall</> script).
-    Even more useful, <application>pg_dump</> knows that it should not
+    Even more useful, <application>mdb_dump</> knows that it should not
     dump the individual member objects of the extension &mdash; it will
     just include a <command>CREATE EXTENSION</> command in dumps, instead.
     This vastly simplifies migration to a new version of the extension
@@ -332,7 +332,7 @@
     Also, while you can change the definition of an extension member object
     (for example, via <command>CREATE OR REPLACE FUNCTION</command> for a
     function), bear in mind that the modified definition will not be dumped
-    by <application>pg_dump</>.  Such a change is usually only sensible if
+    by <application>mdb_dump</>.  Such a change is usually only sensible if
     you concurrently make the same change in the extension's script file.
     (But there are special provisions for tables containing configuration
     data; see below.)
@@ -343,8 +343,8 @@
     extension via <command>GRANT</command> and <command>REVOKE</command>
     statements.  The final set of privileges for each object (if any are set)
     will be stored in the
-    <link linkend="catalog-pg-init-privs"><structname>pg_init_privs</structname></link>
-    system catalog.  When <application>pg_dump</> is used, the
+    <link linkend="catalog-pg-init-privs"><structname>mdb_init_privs</structname></link>
+    system catalog.  When <application>mdb_dump</> is used, the
     <command>CREATE EXTENSION</> command will be included in the dump, followed
     by the set of <command>GRANT</command> and <command>REVOKE</command>
     statements necessary to set the privileges on the objects to what they were
@@ -356,7 +356,7 @@
     issuing <command>CREATE POLICY</command> or <command>SECURITY LABEL</command>
     statements.  These are expected to be set after the extension has been
     created.  All RLS policies and security labels on extension objects will be
-    included in dumps created by <application>pg_dump</>.
+    included in dumps created by <application>mdb_dump</>.
    </para>
 
    <para>
@@ -686,29 +686,29 @@ SET LOCAL search_path TO @extschema@;
      might be added or changed by the user after installation of the
      extension.  Ordinarily, if a table is part of an extension, neither
      the table's definition nor its content will be dumped by
-     <application>pg_dump</>.  But that behavior is undesirable for a
+     <application>mdb_dump</>.  But that behavior is undesirable for a
      configuration table; any data changes made by the user need to be
      included in dumps, or the extension will behave differently after a dump
      and reload.
     </para>
 
    <indexterm>
-    <primary>pg_extension_config_dump</primary>
+    <primary>mdb_extension_config_dump</primary>
    </indexterm>
 
     <para>
      To solve this problem, an extension's script file can mark a table
      or a sequence it has created as a configuration relation, which will
-     cause <application>pg_dump</> to include the table's or the sequence's
+     cause <application>mdb_dump</> to include the table's or the sequence's
      contents (not its definition) in dumps.  To do that, call the function
-     <function>pg_extension_config_dump(regclass, text)</> after creating the
+     <function>mdb_extension_config_dump(regclass, text)</> after creating the
      table or the sequence, for example
 <programlisting>
 CREATE TABLE my_config (key text, value text);
 CREATE SEQUENCE my_config_seq;
 
-SELECT pg_catalog.pg_extension_config_dump('my_config', '');
-SELECT pg_catalog.pg_extension_config_dump('my_config_seq', '');
+SELECT mdb_catalog.mdb_extension_config_dump('my_config', '');
+SELECT mdb_catalog.mdb_extension_config_dump('my_config_seq', '');
 </programlisting>
      Any number of tables or sequences can be marked this way. Sequences
      associated with <type>serial</> or <type>bigserial</> columns can
@@ -716,25 +716,25 @@ SELECT pg_catalog.pg_extension_config_dump('my_config_seq', '');
     </para>
 
     <para>
-     When the second argument of <function>pg_extension_config_dump</> is
+     When the second argument of <function>mdb_extension_config_dump</> is
      an empty string, the entire contents of the table are dumped by
-     <application>pg_dump</>.  This is usually only correct if the table
+     <application>mdb_dump</>.  This is usually only correct if the table
      is initially empty as created by the extension script.  If there is
      a mixture of initial data and user-provided data in the table,
-     the second argument of <function>pg_extension_config_dump</> provides
+     the second argument of <function>mdb_extension_config_dump</> provides
      a <literal>WHERE</> condition that selects the data to be dumped.
      For example, you might do
 <programlisting>
 CREATE TABLE my_config (key text, value text, standard_entry boolean);
 
-SELECT pg_catalog.pg_extension_config_dump('my_config', 'WHERE NOT standard_entry');
+SELECT mdb_catalog.mdb_extension_config_dump('my_config', 'WHERE NOT standard_entry');
 </programlisting>
      and then make sure that <structfield>standard_entry</> is true only
      in the rows created by the extension's script.
     </para>
 
     <para>
-     For sequences, the second argument of <function>pg_extension_config_dump</>
+     For sequences, the second argument of <function>mdb_extension_config_dump</>
      has no effect.
     </para>
 
@@ -746,7 +746,7 @@ SELECT pg_catalog.pg_extension_config_dump('my_config', 'WHERE NOT standard_entr
 
     <para>
      You can alter the filter condition associated with a configuration table
-     by calling <function>pg_extension_config_dump</> again.  (This would
+     by calling <function>mdb_extension_config_dump</> again.  (This would
      typically be useful in an extension update script.)  The only way to mark
      a table as no longer a configuration table is to dissociate it from the
      extension with <command>ALTER EXTENSION ... DROP TABLE</>.
@@ -754,7 +754,7 @@ SELECT pg_catalog.pg_extension_config_dump('my_config', 'WHERE NOT standard_entr
 
     <para>
      Note that foreign key relationships between these tables will dictate the
-     order in which the tables are dumped out by pg_dump.  Specifically, pg_dump
+     order in which the tables are dumped out by mdb_dump.  Specifically, mdb_dump
      will attempt to dump the referenced-by table before the referencing table.
      As the foreign key relationships are set up at CREATE EXTENSION time (prior
      to data being loaded into the tables) circular dependencies are not
@@ -865,7 +865,7 @@ SELECT pg_catalog.pg_extension_config_dump('my_config', 'WHERE NOT standard_entr
     <para>
      To check for unexpected update paths, use this command:
 <programlisting>
-SELECT * FROM pg_extension_update_paths('<replaceable>extension_name</>');
+SELECT * FROM mdb_extension_update_paths('<replaceable>extension_name</>');
 </programlisting>
      This shows each pair of distinct known version names for the specified
      extension, together with the update path sequence that would be taken to
@@ -935,7 +935,7 @@ relocatable = true
 EXTENSION = pair
 DATA = pair--1.0.sql
 
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 </programlisting>
@@ -943,7 +943,7 @@ include $(PGXS)
      This makefile relies on <acronym>PGXS</acronym>, which is described
      in <xref linkend="extend-pgxs">.  The command <literal>make install</>
      will install the control and script files into the correct
-     directory as reported by <application>pg_config</>.
+     directory as reported by <application>mdb_config</>.
     </para>
 
     <para>
@@ -993,7 +993,7 @@ EXTENSION = isbn_issn
 DATA = isbn_issn--1.0.sql
 DOCS = README.isbn_issn
 
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 </programlisting>
@@ -1139,7 +1139,7 @@ include $(PGXS)
       <term><varname>REGRESS_OPTS</varname></term>
       <listitem>
        <para>
-        additional switches to pass to <application>pg_regress</>
+        additional switches to pass to <application>mdb_regress</>
        </para>
       </listitem>
      </varlistentry>
@@ -1184,9 +1184,9 @@ include $(PGXS)
       <term><varname>PG_CONFIG</varname></term>
       <listitem>
        <para>
-        path to <application>pg_config</> program for the
+        path to <application>mdb_config</> program for the
         <productname>MollyDB</productname> installation to build against
-        (typically just <literal>pg_config</> to use the first one in your
+        (typically just <literal>mdb_config</> to use the first one in your
         <varname>PATH</>)
        </para>
       </listitem>
@@ -1201,10 +1201,10 @@ include $(PGXS)
     install</literal> to install your module.  By default, the extension is
     compiled and installed for the
     <productname>MollyDB</productname> installation that
-    corresponds to the first <command>pg_config</command> program
+    corresponds to the first <command>mdb_config</command> program
     found in your <varname>PATH</>.  You can use a different installation by
     setting <varname>PG_CONFIG</varname> to point to its
-    <command>pg_config</command> program, either within the makefile
+    <command>mdb_config</command> program, either within the makefile
     or on the <literal>make</literal> command line.
    </para>
 

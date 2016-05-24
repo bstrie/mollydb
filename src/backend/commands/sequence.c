@@ -24,7 +24,7 @@
 #include "catalog/dependency.h"
 #include "catalog/namespace.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/defrem.h"
 #include "commands/sequence.h"
 #include "commands/tablecmds.h"
@@ -66,7 +66,7 @@ typedef struct sequence_magic
  */
 typedef struct SeqTableData
 {
-	Oid			relid;			/* pg_class OID of this sequence (hash key) */
+	Oid			relid;			/* mdb_class OID of this sequence (hash key) */
 	Oid			filenode;		/* last seen relfilenode of this sequence */
 	LocalTransactionId lxid;	/* xact in which we last did a seq op */
 	bool		last_valid;		/* do we have a valid "last" value? */
@@ -92,10 +92,10 @@ static int64 nextval_internal(Oid relid);
 static Relation open_share_lock(SeqTable seq);
 static void create_seq_hashtable(void);
 static void init_sequence(Oid relid, SeqTable *p_elm, Relation *p_rel);
-static Form_pg_sequence read_seq_tuple(SeqTable elm, Relation rel,
+static Form_mdb_sequence read_seq_tuple(SeqTable elm, Relation rel,
 			   Buffer *buf, HeapTuple seqtuple);
 static void init_params(List *options, bool isInit,
-			Form_pg_sequence new, List **owned_by);
+			Form_mdb_sequence new, List **owned_by);
 static void do_setval(Oid relid, int64 next, bool iscalled);
 static void process_owned_by(Relation seqrel, List *owned_by);
 
@@ -107,7 +107,7 @@ static void process_owned_by(Relation seqrel, List *owned_by);
 ObjectAddress
 DefineSequence(CreateSeqStmt *seq)
 {
-	FormData_pg_sequence new;
+	FormData_mdb_sequence new;
 	List	   *owned_by;
 	CreateStmt *stmt = makeNode(CreateStmt);
 	Oid			seqoid;
@@ -271,7 +271,7 @@ ResetSequence(Oid seq_relid)
 {
 	Relation	seq_rel;
 	SeqTable	elm;
-	Form_pg_sequence seq;
+	Form_mdb_sequence seq;
 	Buffer		buf;
 	HeapTupleData seqtuple;
 	HeapTuple	tuple;
@@ -296,7 +296,7 @@ ResetSequence(Oid seq_relid)
 	 * Modify the copied tuple to execute the restart (compare the RESTART
 	 * action in AlterSequence)
 	 */
-	seq = (Form_pg_sequence) GETSTRUCT(tuple);
+	seq = (Form_mdb_sequence) GETSTRUCT(tuple);
 	seq->last_value = seq->start_value;
 	seq->is_called = false;
 	seq->log_cnt = 0;
@@ -411,8 +411,8 @@ AlterSequence(AlterSeqStmt *stmt)
 	Relation	seqrel;
 	Buffer		buf;
 	HeapTupleData seqtuple;
-	Form_pg_sequence seq;
-	FormData_pg_sequence new;
+	Form_mdb_sequence seq;
+	FormData_mdb_sequence new;
 	List	   *owned_by;
 	ObjectAddress address;
 
@@ -429,7 +429,7 @@ AlterSequence(AlterSeqStmt *stmt)
 	init_sequence(relid, &elm, &seqrel);
 
 	/* allow ALTER to sequence owner only */
-	if (!pg_class_ownercheck(relid, GetUserId()))
+	if (!mdb_class_ownercheck(relid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 					   stmt->sequence->relname);
 
@@ -437,7 +437,7 @@ AlterSequence(AlterSeqStmt *stmt)
 	seq = read_seq_tuple(elm, seqrel, &buf, &seqtuple);
 
 	/* Copy old values of options into workspace */
-	memcpy(&new, seq, sizeof(FormData_pg_sequence));
+	memcpy(&new, seq, sizeof(FormData_mdb_sequence));
 
 	/* Check and set new values */
 	init_params(stmt->options, false, &new, &owned_by);
@@ -453,7 +453,7 @@ AlterSequence(AlterSeqStmt *stmt)
 	/* Now okay to update the on-disk tuple */
 	START_CRIT_SECTION();
 
-	memcpy(seq, &new, sizeof(FormData_pg_sequence));
+	memcpy(seq, &new, sizeof(FormData_mdb_sequence));
 
 	MarkBufferDirty(buf);
 
@@ -496,7 +496,7 @@ AlterSequence(AlterSeqStmt *stmt)
 
 
 /*
- * Note: nextval with a text argument is no longer exported as a pg_proc
+ * Note: nextval with a text argument is no longer exported as a mdb_proc
  * entry, but we keep it around to ease porting of C code that may have
  * called the function directly.
  */
@@ -538,7 +538,7 @@ nextval_internal(Oid relid)
 	Buffer		buf;
 	Page		page;
 	HeapTupleData seqtuple;
-	Form_pg_sequence seq;
+	Form_mdb_sequence seq;
 	int64		incby,
 				maxv,
 				minv,
@@ -554,7 +554,7 @@ nextval_internal(Oid relid)
 	/* open and AccessShareLock sequence */
 	init_sequence(relid, &elm, &seqrel);
 
-	if (pg_class_aclcheck(elm->relid, GetUserId(),
+	if (mdb_class_aclcheck(elm->relid, GetUserId(),
 						  ACL_USAGE | ACL_UPDATE) != ACLCHECK_OK)
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
@@ -779,7 +779,7 @@ currval_oid(PG_FUNCTION_ARGS)
 	/* open and AccessShareLock sequence */
 	init_sequence(relid, &elm, &seqrel);
 
-	if (pg_class_aclcheck(elm->relid, GetUserId(),
+	if (mdb_class_aclcheck(elm->relid, GetUserId(),
 						  ACL_SELECT | ACL_USAGE) != ACLCHECK_OK)
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
@@ -821,7 +821,7 @@ lastval(PG_FUNCTION_ARGS)
 	/* nextval() must have already been called for this sequence */
 	Assert(last_used_seq->last_valid);
 
-	if (pg_class_aclcheck(last_used_seq->relid, GetUserId(),
+	if (mdb_class_aclcheck(last_used_seq->relid, GetUserId(),
 						  ACL_SELECT | ACL_USAGE) != ACLCHECK_OK)
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
@@ -838,11 +838,11 @@ lastval(PG_FUNCTION_ARGS)
  * Main internal procedure that handles 2 & 3 arg forms of SETVAL.
  *
  * Note that the 3 arg version (which sets the is_called flag) is
- * only for use in pg_dump, and setting the is_called flag may not
+ * only for use in mdb_dump, and setting the is_called flag may not
  * work if multiple users are attached to the database and referencing
- * the sequence (unlikely if pg_dump is restoring it).
+ * the sequence (unlikely if mdb_dump is restoring it).
  *
- * It is necessary to have the 3 arg version so that pg_dump can
+ * It is necessary to have the 3 arg version so that mdb_dump can
  * restore the state of a sequence exactly during data-only restores -
  * it is the only way to clear the is_called flag in an existing
  * sequence.
@@ -854,12 +854,12 @@ do_setval(Oid relid, int64 next, bool iscalled)
 	Relation	seqrel;
 	Buffer		buf;
 	HeapTupleData seqtuple;
-	Form_pg_sequence seq;
+	Form_mdb_sequence seq;
 
 	/* open and AccessShareLock sequence */
 	init_sequence(relid, &elm, &seqrel);
 
-	if (pg_class_aclcheck(elm->relid, GetUserId(), ACL_UPDATE) != ACLCHECK_OK)
+	if (mdb_class_aclcheck(elm->relid, GetUserId(), ACL_UPDATE) != ACLCHECK_OK)
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 				 errmsg("permission denied for sequence %s",
@@ -1104,13 +1104,13 @@ init_sequence(Oid relid, SeqTable *p_elm, Relation *p_rel)
  *
  * Function's return value points to the data payload of the tuple
  */
-static Form_pg_sequence
+static Form_mdb_sequence
 read_seq_tuple(SeqTable elm, Relation rel, Buffer *buf, HeapTuple seqtuple)
 {
 	Page		page;
 	ItemId		lp;
 	sequence_magic *sm;
-	Form_pg_sequence seq;
+	Form_mdb_sequence seq;
 
 	*buf = ReadBuffer(rel, 0);
 	LockBuffer(*buf, BUFFER_LOCK_EXCLUSIVE);
@@ -1146,7 +1146,7 @@ read_seq_tuple(SeqTable elm, Relation rel, Buffer *buf, HeapTuple seqtuple)
 		MarkBufferDirtyHint(*buf, true);
 	}
 
-	seq = (Form_pg_sequence) GETSTRUCT(seqtuple);
+	seq = (Form_mdb_sequence) GETSTRUCT(seqtuple);
 
 	/* this is a handy place to update our copy of the increment */
 	elm->increment = seq->increment_by;
@@ -1164,7 +1164,7 @@ read_seq_tuple(SeqTable elm, Relation rel, Buffer *buf, HeapTuple seqtuple)
  */
 static void
 init_params(List *options, bool isInit,
-			Form_pg_sequence new, List **owned_by)
+			Form_mdb_sequence new, List **owned_by)
 {
 	DefElem    *start_value = NULL;
 	DefElem    *restart_value = NULL;
@@ -1493,7 +1493,7 @@ process_owned_by(Relation seqrel, List *owned_by)
 	}
 
 	/*
-	 * OK, we are ready to update pg_depend.  First remove any existing AUTO
+	 * OK, we are ready to update mdb_depend.  First remove any existing AUTO
 	 * dependencies for the sequence, then optionally add a new one.
 	 */
 	markSequenceUnowned(RelationGetRelid(seqrel));
@@ -1522,7 +1522,7 @@ process_owned_by(Relation seqrel, List *owned_by)
  * Return sequence parameters, for use by information schema
  */
 Datum
-pg_sequence_parameters(PG_FUNCTION_ARGS)
+mdb_sequence_parameters(PG_FUNCTION_ARGS)
 {
 	Oid			relid = PG_GETARG_OID(0);
 	TupleDesc	tupdesc;
@@ -1532,12 +1532,12 @@ pg_sequence_parameters(PG_FUNCTION_ARGS)
 	Relation	seqrel;
 	Buffer		buf;
 	HeapTupleData seqtuple;
-	Form_pg_sequence seq;
+	Form_mdb_sequence seq;
 
 	/* open and AccessShareLock sequence */
 	init_sequence(relid, &elm, &seqrel);
 
-	if (pg_class_aclcheck(relid, GetUserId(), ACL_SELECT | ACL_UPDATE | ACL_USAGE) != ACLCHECK_OK)
+	if (mdb_class_aclcheck(relid, GetUserId(), ACL_SELECT | ACL_UPDATE | ACL_USAGE) != ACLCHECK_OK)
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 				 errmsg("permission denied for sequence %s",

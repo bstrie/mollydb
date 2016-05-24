@@ -121,7 +121,7 @@ MollyDB documentation
       <listitem>
        <para>
         This option specifies the authentication method for local users used
-        in <filename>pg_hba.conf</> (<literal>host</literal>
+        in <filename>mdb_hba.conf</> (<literal>host</literal>
         and <literal>local</literal> lines).  Do not use <literal>trust</>
         unless you trust all local users on your system.  <literal>trust</> is
         the default for ease of installation.
@@ -134,7 +134,7 @@ MollyDB documentation
       <listitem>
        <para>
         This option specifies the authentication method for local users via
-        TCP/IP connections used in <filename>pg_hba.conf</>
+        TCP/IP connections used in <filename>mdb_hba.conf</>
         (<literal>host</literal> lines).
        </para>
       </listitem>
@@ -145,7 +145,7 @@ MollyDB documentation
       <listitem>
        <para>
         This option specifies the authentication method for local users via
-        Unix-domain socket connections used in <filename>pg_hba.conf</>
+        Unix-domain socket connections used in <filename>mdb_hba.conf</>
         (<literal>local</literal> lines).
        </para>
       </listitem>
@@ -440,7 +440,7 @@ MollyDB documentation
 
   <para>
    <command>initdb</command> can also be invoked via
-   <command>pg_ctl initdb</command>.
+   <command>mdb_ctl initdb</command>.
   </para>
  </refsect1>
 

@@ -29,7 +29,7 @@
 #ifndef HAVE_DLOPEN
 
 void *
-pg_dlopen(char *filename)
+mdb_dlopen(char *filename)
 {
 #ifndef HAVE_DLD_H
 	elog(ERROR, "dynamic load not supported");
@@ -39,7 +39,7 @@ pg_dlopen(char *filename)
 
 	/*
 	 * initializes the dynamic loader with the executable's pathname. (only
-	 * needs to do this the first time pg_dlopen is called.)
+	 * needs to do this the first time mdb_dlopen is called.)
 	 */
 	if (!dl_initialized)
 	{
@@ -101,7 +101,7 @@ pg_dlopen(char *filename)
 }
 
 PGFunction
-pg_dlsym(void *handle, char *funcname)
+mdb_dlsym(void *handle, char *funcname)
 {
 #ifndef HAVE_DLD_H
 	return NULL;
@@ -111,7 +111,7 @@ pg_dlsym(void *handle, char *funcname)
 }
 
 void
-pg_dlclose(void *handle)
+mdb_dlclose(void *handle)
 {
 #ifndef HAVE_DLD_H
 #else
@@ -121,7 +121,7 @@ pg_dlclose(void *handle)
 }
 
 char *
-pg_dlerror(void)
+mdb_dlerror(void)
 {
 #ifndef HAVE_DLD_H
 	return "dynaloader unspported";

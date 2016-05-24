@@ -75,9 +75,9 @@ INSERT INTO t3 VALUES (1, 'sss'), (2, 'ttt'), (3, 'uuu');
 CREATE TABLE t4 (m int, n text);
 INSERT INTO t4 VALUES (1,'mmm'), (2,'nnn'), (3,'ooo');
 
-SELECT objtype, objname, label FROM pg_seclabels
+SELECT objtype, objname, label FROM mdb_seclabels
     WHERE provider = 'selinux' AND objtype = 'table' AND objname in ('t1', 't2', 't3');
-SELECT objtype, objname, label FROM pg_seclabels
+SELECT objtype, objname, label FROM mdb_seclabels
     WHERE provider = 'selinux' AND objtype = 'column' AND (objname like 't3.%' OR objname like 't4.%');
 
 --

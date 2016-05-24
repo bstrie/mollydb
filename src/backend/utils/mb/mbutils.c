@@ -18,7 +18,7 @@
  * If the source and destination encodings are the same, the source string
  * is returned without any verification; it's assumed to be valid data.
  * If that might not be the case, the caller is responsible for validating
- * the string using a separate call to pg_verify_mbstr().  Whenever the
+ * the string using a separate call to mdb_verify_mbstr().  Whenever the
  * source and destination encodings are different, the functions ensure that
  * the result is validly encoded according to the destination encoding.
  *
@@ -36,7 +36,7 @@
 
 #include "access/xact.h"
 #include "catalog/namespace.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "utils/builtins.h"
 #include "utils/memutils.h"
 #include "utils/syscache.h"
@@ -81,9 +81,9 @@ static FmgrInfo *ToClientConvProc = NULL;
 /*
  * These variables track the currently-selected encodings.
  */
-static const pg_enc2name *ClientEncoding = &pg_enc2name_tbl[PG_SQL_ASCII];
-static const pg_enc2name *DatabaseEncoding = &pg_enc2name_tbl[PG_SQL_ASCII];
-static const pg_enc2name *MessageEncoding = &pg_enc2name_tbl[PG_SQL_ASCII];
+static const mdb_enc2name *ClientEncoding = &mdb_enc2name_tbl[PG_SQL_ASCII];
+static const mdb_enc2name *DatabaseEncoding = &mdb_enc2name_tbl[PG_SQL_ASCII];
+static const mdb_enc2name *MessageEncoding = &mdb_enc2name_tbl[PG_SQL_ASCII];
 
 /*
  * During backend startup we can't set client encoding because we (a)
@@ -139,7 +139,7 @@ PrepareClientEncoding(int encoding)
 		 * If we're in a live transaction, it's safe to access the catalogs,
 		 * so look up the functions.  We repeat the lookup even if the info is
 		 * already cached, so that we can react to changes in the contents of
-		 * pg_conversion.
+		 * mdb_conversion.
 		 */
 		Oid			to_server_proc,
 					to_client_proc;
@@ -236,7 +236,7 @@ SetClientEncoding(int encoding)
 		current_server_encoding == PG_SQL_ASCII ||
 		encoding == PG_SQL_ASCII)
 	{
-		ClientEncoding = &pg_enc2name_tbl[encoding];
+		ClientEncoding = &mdb_enc2name_tbl[encoding];
 		ToServerConvProc = NULL;
 		ToClientConvProc = NULL;
 		return 0;
@@ -262,7 +262,7 @@ SetClientEncoding(int encoding)
 			if (!found)
 			{
 				/* Found newest entry, so set up */
-				ClientEncoding = &pg_enc2name_tbl[encoding];
+				ClientEncoding = &mdb_enc2name_tbl[encoding];
 				ToServerConvProc = &convinfo->to_server_info;
 				ToClientConvProc = &convinfo->to_client_info;
 				found = true;
@@ -305,7 +305,7 @@ InitializeClientEncoding(void)
 		ereport(FATAL,
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("conversion between %s and %s is not supported",
-						pg_enc2name_tbl[pending_client_encoding].name,
+						mdb_enc2name_tbl[pending_client_encoding].name,
 						GetDatabaseEncodingName())));
 	}
 }
@@ -314,7 +314,7 @@ InitializeClientEncoding(void)
  * returns the current client encoding
  */
 int
-pg_get_client_encoding(void)
+mdb_get_client_encoding(void)
 {
 	return ClientEncoding->encoding;
 }
@@ -323,7 +323,7 @@ pg_get_client_encoding(void)
  * returns the current client encoding name
  */
 const char *
-pg_get_client_encoding_name(void)
+mdb_get_client_encoding_name(void)
 {
 	return ClientEncoding->name;
 }
@@ -334,7 +334,7 @@ pg_get_client_encoding_name(void)
  * See the notes about string conversion functions at the top of this file.
  */
 unsigned char *
-pg_do_encoding_conversion(unsigned char *src, int len,
+mdb_do_encoding_conversion(unsigned char *src, int len,
 						  int src_encoding, int dest_encoding)
 {
 	unsigned char *result;
@@ -352,7 +352,7 @@ pg_do_encoding_conversion(unsigned char *src, int len,
 	if (src_encoding == PG_SQL_ASCII)
 	{
 		/* No conversion is possible, but we must validate the result */
-		(void) pg_verify_mbstr(dest_encoding, (const char *) src, len, false);
+		(void) mdb_verify_mbstr(dest_encoding, (const char *) src, len, false);
 		return src;
 	}
 
@@ -364,8 +364,8 @@ pg_do_encoding_conversion(unsigned char *src, int len,
 		ereport(ERROR,
 				(errcode(ERRCODE_UNDEFINED_FUNCTION),
 				 errmsg("default conversion function for encoding \"%s\" to \"%s\" does not exist",
-						pg_encoding_to_char(src_encoding),
-						pg_encoding_to_char(dest_encoding))));
+						mdb_encoding_to_char(src_encoding),
+						mdb_encoding_to_char(dest_encoding))));
 
 	/*
 	 * Allocate space for conversion result, being wary of integer overflow
@@ -394,7 +394,7 @@ pg_do_encoding_conversion(unsigned char *src, int len,
  *
  * BYTEA convert_to(TEXT string, NAME encoding_name) */
 Datum
-pg_convert_to(PG_FUNCTION_ARGS)
+mdb_convert_to(PG_FUNCTION_ARGS)
 {
 	Datum		string = PG_GETARG_DATUM(0);
 	Datum		dest_encoding_name = PG_GETARG_DATUM(1);
@@ -403,11 +403,11 @@ pg_convert_to(PG_FUNCTION_ARGS)
 	Datum		result;
 
 	/*
-	 * pg_convert expects a bytea as its first argument. We're passing it a
+	 * mdb_convert expects a bytea as its first argument. We're passing it a
 	 * text argument here, relying on the fact that they are both in fact
 	 * varlena types, and thus structurally identical.
 	 */
-	result = DirectFunctionCall3(pg_convert, string,
+	result = DirectFunctionCall3(mdb_convert, string,
 								 src_encoding_name, dest_encoding_name);
 
 	PG_RETURN_DATUM(result);
@@ -419,7 +419,7 @@ pg_convert_to(PG_FUNCTION_ARGS)
  *
  * TEXT convert_from(BYTEA string, NAME encoding_name) */
 Datum
-pg_convert_from(PG_FUNCTION_ARGS)
+mdb_convert_from(PG_FUNCTION_ARGS)
 {
 	Datum		string = PG_GETARG_DATUM(0);
 	Datum		src_encoding_name = PG_GETARG_DATUM(1);
@@ -427,14 +427,14 @@ pg_convert_from(PG_FUNCTION_ARGS)
 									CStringGetDatum(DatabaseEncoding->name));
 	Datum		result;
 
-	result = DirectFunctionCall3(pg_convert, string,
+	result = DirectFunctionCall3(mdb_convert, string,
 								 src_encoding_name, dest_encoding_name);
 
 	/*
-	 * pg_convert returns a bytea, which we in turn return as text, relying on
+	 * mdb_convert returns a bytea, which we in turn return as text, relying on
 	 * the fact that they are both in fact varlena types, and thus
 	 * structurally identical. Although not all bytea values are valid text,
-	 * in this case it will be because we've told pg_convert to return one
+	 * in this case it will be because we've told mdb_convert to return one
 	 * that is valid as text in the current database encoding.
 	 */
 	PG_RETURN_DATUM(result);
@@ -446,13 +446,13 @@ pg_convert_from(PG_FUNCTION_ARGS)
  * BYTEA convert(BYTEA string, NAME src_encoding_name, NAME dest_encoding_name)
  */
 Datum
-pg_convert(PG_FUNCTION_ARGS)
+mdb_convert(PG_FUNCTION_ARGS)
 {
 	bytea	   *string = PG_GETARG_BYTEA_PP(0);
 	char	   *src_encoding_name = NameStr(*PG_GETARG_NAME(1));
-	int			src_encoding = pg_char_to_encoding(src_encoding_name);
+	int			src_encoding = mdb_char_to_encoding(src_encoding_name);
 	char	   *dest_encoding_name = NameStr(*PG_GETARG_NAME(2));
-	int			dest_encoding = pg_char_to_encoding(dest_encoding_name);
+	int			dest_encoding = mdb_char_to_encoding(dest_encoding_name);
 	const char *src_str;
 	char	   *dest_str;
 	bytea	   *retval;
@@ -472,10 +472,10 @@ pg_convert(PG_FUNCTION_ARGS)
 	/* make sure that source string is valid */
 	len = VARSIZE_ANY_EXHDR(string);
 	src_str = VARDATA_ANY(string);
-	pg_verify_mbstr_len(src_encoding, src_str, len, false);
+	mdb_verify_mbstr_len(src_encoding, src_str, len, false);
 
 	/* perform conversion */
-	dest_str = (char *) pg_do_encoding_conversion((unsigned char *) src_str,
+	dest_str = (char *) mdb_do_encoding_conversion((unsigned char *) src_str,
 												  len,
 												  src_encoding,
 												  dest_encoding);
@@ -512,7 +512,7 @@ length_in_encoding(PG_FUNCTION_ARGS)
 {
 	bytea	   *string = PG_GETARG_BYTEA_PP(0);
 	char	   *src_encoding_name = NameStr(*PG_GETARG_NAME(1));
-	int			src_encoding = pg_char_to_encoding(src_encoding_name);
+	int			src_encoding = mdb_char_to_encoding(src_encoding_name);
 	const char *src_str;
 	int			len;
 	int			retval;
@@ -526,7 +526,7 @@ length_in_encoding(PG_FUNCTION_ARGS)
 	len = VARSIZE_ANY_EXHDR(string);
 	src_str = VARDATA_ANY(string);
 
-	retval = pg_verify_mbstr_len(src_encoding, src_str, len, false);
+	retval = mdb_verify_mbstr_len(src_encoding, src_str, len, false);
 
 	PG_RETURN_INT32(retval);
 }
@@ -537,12 +537,12 @@ length_in_encoding(PG_FUNCTION_ARGS)
  * Note encoding is specified numerically, not by name as above.
  */
 Datum
-pg_encoding_max_length_sql(PG_FUNCTION_ARGS)
+mdb_encoding_max_length_sql(PG_FUNCTION_ARGS)
 {
 	int			encoding = PG_GETARG_INT32(0);
 
 	if (PG_VALID_ENCODING(encoding))
-		PG_RETURN_INT32(pg_wchar_table[encoding].maxmblen);
+		PG_RETURN_INT32(mdb_wchar_table[encoding].maxmblen);
 	else
 		PG_RETURN_NULL();
 }
@@ -553,9 +553,9 @@ pg_encoding_max_length_sql(PG_FUNCTION_ARGS)
  * See the notes about string conversion functions at the top of this file.
  */
 char *
-pg_client_to_server(const char *s, int len)
+mdb_client_to_server(const char *s, int len)
 {
-	return pg_any_to_server(s, len, ClientEncoding->encoding);
+	return mdb_any_to_server(s, len, ClientEncoding->encoding);
 }
 
 /*
@@ -569,7 +569,7 @@ pg_client_to_server(const char *s, int len)
  * want to just assume validity.
  */
 char *
-pg_any_to_server(const char *s, int len, int encoding)
+mdb_any_to_server(const char *s, int len, int encoding)
 {
 	if (len <= 0)
 		return (char *) s;		/* empty string is always valid */
@@ -580,7 +580,7 @@ pg_any_to_server(const char *s, int len, int encoding)
 		/*
 		 * No conversion is needed, but we must still validate the data.
 		 */
-		(void) pg_verify_mbstr(DatabaseEncoding->encoding, s, len, false);
+		(void) mdb_verify_mbstr(DatabaseEncoding->encoding, s, len, false);
 		return (char *) s;
 	}
 
@@ -596,7 +596,7 @@ pg_any_to_server(const char *s, int len, int encoding)
 		 * rejecting the data if it contains any non-ASCII characters.
 		 */
 		if (PG_VALID_BE_ENCODING(encoding))
-			(void) pg_verify_mbstr(encoding, s, len, false);
+			(void) mdb_verify_mbstr(encoding, s, len, false);
 		else
 		{
 			int			i;
@@ -607,7 +607,7 @@ pg_any_to_server(const char *s, int len, int encoding)
 					ereport(ERROR,
 							(errcode(ERRCODE_CHARACTER_NOT_IN_REPERTOIRE),
 					 errmsg("invalid byte value for encoding \"%s\": 0x%02x",
-							pg_enc2name_tbl[PG_SQL_ASCII].name,
+							mdb_enc2name_tbl[PG_SQL_ASCII].name,
 							(unsigned char) s[i])));
 			}
 		}
@@ -619,7 +619,7 @@ pg_any_to_server(const char *s, int len, int encoding)
 		return perform_default_encoding_conversion(s, len, true);
 
 	/* General case ... will not work outside transactions */
-	return (char *) pg_do_encoding_conversion((unsigned char *) s,
+	return (char *) mdb_do_encoding_conversion((unsigned char *) s,
 											  len,
 											  encoding,
 											  DatabaseEncoding->encoding);
@@ -631,9 +631,9 @@ pg_any_to_server(const char *s, int len, int encoding)
  * See the notes about string conversion functions at the top of this file.
  */
 char *
-pg_server_to_client(const char *s, int len)
+mdb_server_to_client(const char *s, int len)
 {
-	return pg_server_to_any(s, len, ClientEncoding->encoding);
+	return mdb_server_to_any(s, len, ClientEncoding->encoding);
 }
 
 /*
@@ -642,7 +642,7 @@ pg_server_to_client(const char *s, int len)
  * See the notes about string conversion functions at the top of this file.
  */
 char *
-pg_server_to_any(const char *s, int len, int encoding)
+mdb_server_to_any(const char *s, int len, int encoding)
 {
 	if (len <= 0)
 		return (char *) s;		/* empty string is always valid */
@@ -654,7 +654,7 @@ pg_server_to_any(const char *s, int len, int encoding)
 	if (DatabaseEncoding->encoding == PG_SQL_ASCII)
 	{
 		/* No conversion is possible, but we must validate the result */
-		(void) pg_verify_mbstr(encoding, s, len, false);
+		(void) mdb_verify_mbstr(encoding, s, len, false);
 		return (char *) s;
 	}
 
@@ -663,7 +663,7 @@ pg_server_to_any(const char *s, int len, int encoding)
 		return perform_default_encoding_conversion(s, len, false);
 
 	/* General case ... will not work outside transactions */
-	return (char *) pg_do_encoding_conversion((unsigned char *) s,
+	return (char *) mdb_do_encoding_conversion((unsigned char *) s,
 											  len,
 											  DatabaseEncoding->encoding,
 											  encoding);
@@ -724,75 +724,75 @@ perform_default_encoding_conversion(const char *src, int len,
 
 /* convert a multibyte string to a wchar */
 int
-pg_mb2wchar(const char *from, pg_wchar *to)
+mdb_mb2wchar(const char *from, mdb_wchar *to)
 {
-	return (*pg_wchar_table[DatabaseEncoding->encoding].mb2wchar_with_len) ((const unsigned char *) from, to, strlen(from));
+	return (*mdb_wchar_table[DatabaseEncoding->encoding].mb2wchar_with_len) ((const unsigned char *) from, to, strlen(from));
 }
 
 /* convert a multibyte string to a wchar with a limited length */
 int
-pg_mb2wchar_with_len(const char *from, pg_wchar *to, int len)
+mdb_mb2wchar_with_len(const char *from, mdb_wchar *to, int len)
 {
-	return (*pg_wchar_table[DatabaseEncoding->encoding].mb2wchar_with_len) ((const unsigned char *) from, to, len);
+	return (*mdb_wchar_table[DatabaseEncoding->encoding].mb2wchar_with_len) ((const unsigned char *) from, to, len);
 }
 
 /* same, with any encoding */
 int
-pg_encoding_mb2wchar_with_len(int encoding,
-							  const char *from, pg_wchar *to, int len)
+mdb_encoding_mb2wchar_with_len(int encoding,
+							  const char *from, mdb_wchar *to, int len)
 {
-	return (*pg_wchar_table[encoding].mb2wchar_with_len) ((const unsigned char *) from, to, len);
+	return (*mdb_wchar_table[encoding].mb2wchar_with_len) ((const unsigned char *) from, to, len);
 }
 
 /* convert a wchar string to a multibyte */
 int
-pg_wchar2mb(const pg_wchar *from, char *to)
+mdb_wchar2mb(const mdb_wchar *from, char *to)
 {
-	return (*pg_wchar_table[DatabaseEncoding->encoding].wchar2mb_with_len) (from, (unsigned char *) to, pg_wchar_strlen(from));
+	return (*mdb_wchar_table[DatabaseEncoding->encoding].wchar2mb_with_len) (from, (unsigned char *) to, mdb_wchar_strlen(from));
 }
 
 /* convert a wchar string to a multibyte with a limited length */
 int
-pg_wchar2mb_with_len(const pg_wchar *from, char *to, int len)
+mdb_wchar2mb_with_len(const mdb_wchar *from, char *to, int len)
 {
-	return (*pg_wchar_table[DatabaseEncoding->encoding].wchar2mb_with_len) (from, (unsigned char *) to, len);
+	return (*mdb_wchar_table[DatabaseEncoding->encoding].wchar2mb_with_len) (from, (unsigned char *) to, len);
 }
 
 /* same, with any encoding */
 int
-pg_encoding_wchar2mb_with_len(int encoding,
-							  const pg_wchar *from, char *to, int len)
+mdb_encoding_wchar2mb_with_len(int encoding,
+							  const mdb_wchar *from, char *to, int len)
 {
-	return (*pg_wchar_table[encoding].wchar2mb_with_len) (from, (unsigned char *) to, len);
+	return (*mdb_wchar_table[encoding].wchar2mb_with_len) (from, (unsigned char *) to, len);
 }
 
 /* returns the byte length of a multibyte character */
 int
-pg_mblen(const char *mbstr)
+mdb_mblen(const char *mbstr)
 {
-	return ((*pg_wchar_table[DatabaseEncoding->encoding].mblen) ((const unsigned char *) mbstr));
+	return ((*mdb_wchar_table[DatabaseEncoding->encoding].mblen) ((const unsigned char *) mbstr));
 }
 
 /* returns the display length of a multibyte character */
 int
-pg_dsplen(const char *mbstr)
+mdb_dsplen(const char *mbstr)
 {
-	return ((*pg_wchar_table[DatabaseEncoding->encoding].dsplen) ((const unsigned char *) mbstr));
+	return ((*mdb_wchar_table[DatabaseEncoding->encoding].dsplen) ((const unsigned char *) mbstr));
 }
 
 /* returns the length (counted in wchars) of a multibyte string */
 int
-pg_mbstrlen(const char *mbstr)
+mdb_mbstrlen(const char *mbstr)
 {
 	int			len = 0;
 
 	/* optimization for single byte encoding */
-	if (pg_database_encoding_max_length() == 1)
+	if (mdb_database_encoding_max_length() == 1)
 		return strlen(mbstr);
 
 	while (*mbstr)
 	{
-		mbstr += pg_mblen(mbstr);
+		mbstr += mdb_mblen(mbstr);
 		len++;
 	}
 	return len;
@@ -802,17 +802,17 @@ pg_mbstrlen(const char *mbstr)
  * (not necessarily NULL terminated)
  */
 int
-pg_mbstrlen_with_len(const char *mbstr, int limit)
+mdb_mbstrlen_with_len(const char *mbstr, int limit)
 {
 	int			len = 0;
 
 	/* optimization for single byte encoding */
-	if (pg_database_encoding_max_length() == 1)
+	if (mdb_database_encoding_max_length() == 1)
 		return limit;
 
 	while (limit > 0 && *mbstr)
 	{
-		int			l = pg_mblen(mbstr);
+		int			l = mdb_mblen(mbstr);
 
 		limit -= l;
 		mbstr += l;
@@ -828,17 +828,17 @@ pg_mbstrlen_with_len(const char *mbstr, int limit)
  * this function does not break multibyte character boundary.
  */
 int
-pg_mbcliplen(const char *mbstr, int len, int limit)
+mdb_mbcliplen(const char *mbstr, int len, int limit)
 {
-	return pg_encoding_mbcliplen(DatabaseEncoding->encoding, mbstr,
+	return mdb_encoding_mbcliplen(DatabaseEncoding->encoding, mbstr,
 								 len, limit);
 }
 
 /*
- * pg_mbcliplen with specified encoding
+ * mdb_mbcliplen with specified encoding
  */
 int
-pg_encoding_mbcliplen(int encoding, const char *mbstr,
+mdb_encoding_mbcliplen(int encoding, const char *mbstr,
 					  int len, int limit)
 {
 	mblen_converter mblen_fn;
@@ -846,10 +846,10 @@ pg_encoding_mbcliplen(int encoding, const char *mbstr,
 	int			l;
 
 	/* optimization for single byte encoding */
-	if (pg_encoding_max_length(encoding) == 1)
+	if (mdb_encoding_max_length(encoding) == 1)
 		return cliplen(mbstr, len, limit);
 
-	mblen_fn = pg_wchar_table[encoding].mblen;
+	mblen_fn = mdb_wchar_table[encoding].mblen;
 
 	while (len > 0 && *mbstr)
 	{
@@ -866,23 +866,23 @@ pg_encoding_mbcliplen(int encoding, const char *mbstr,
 }
 
 /*
- * Similar to pg_mbcliplen except the limit parameter specifies the
+ * Similar to mdb_mbcliplen except the limit parameter specifies the
  * character length, not the byte length.
  */
 int
-pg_mbcharcliplen(const char *mbstr, int len, int limit)
+mdb_mbcharcliplen(const char *mbstr, int len, int limit)
 {
 	int			clen = 0;
 	int			nch = 0;
 	int			l;
 
 	/* optimization for single byte encoding */
-	if (pg_database_encoding_max_length() == 1)
+	if (mdb_database_encoding_max_length() == 1)
 		return cliplen(mbstr, len, limit);
 
 	while (len > 0 && *mbstr)
 	{
-		l = pg_mblen(mbstr);
+		l = mdb_mblen(mbstr);
 		nch++;
 		if (nch > limit)
 			break;
@@ -911,7 +911,7 @@ SetDatabaseEncoding(int encoding)
 	if (!PG_VALID_BE_ENCODING(encoding))
 		elog(ERROR, "invalid database encoding: %d", encoding);
 
-	DatabaseEncoding = &pg_enc2name_tbl[encoding];
+	DatabaseEncoding = &mdb_enc2name_tbl[encoding];
 	Assert(DatabaseEncoding->encoding == encoding);
 }
 
@@ -921,28 +921,28 @@ SetMessageEncoding(int encoding)
 	/* Some calls happen before we can elog()! */
 	Assert(PG_VALID_ENCODING(encoding));
 
-	MessageEncoding = &pg_enc2name_tbl[encoding];
+	MessageEncoding = &mdb_enc2name_tbl[encoding];
 	Assert(MessageEncoding->encoding == encoding);
 }
 
 #ifdef ENABLE_NLS
 /*
- * Make one bind_textdomain_codeset() call, translating a pg_enc to a gettext
+ * Make one bind_textdomain_codeset() call, translating a mdb_enc to a gettext
  * codeset.  Fails for MULE_INTERNAL, an encoding unknown to gettext; can also
  * fail for gettext-internal causes like out-of-memory.
  */
 static bool
-raw_pg_bind_textdomain_codeset(const char *domainname, int encoding)
+raw_mdb_bind_textdomain_codeset(const char *domainname, int encoding)
 {
 	bool		elog_ok = (CurrentMemoryContext != NULL);
 	int			i;
 
-	for (i = 0; pg_enc2gettext_tbl[i].name != NULL; i++)
+	for (i = 0; mdb_enc2gettext_tbl[i].name != NULL; i++)
 	{
-		if (pg_enc2gettext_tbl[i].encoding == encoding)
+		if (mdb_enc2gettext_tbl[i].encoding == encoding)
 		{
 			if (bind_textdomain_codeset(domainname,
-										pg_enc2gettext_tbl[i].name) != NULL)
+										mdb_enc2gettext_tbl[i].name) != NULL)
 				return true;
 
 			if (elog_ok)
@@ -977,7 +977,7 @@ raw_pg_bind_textdomain_codeset(const char *domainname, int encoding)
  * This function is called before elog() and palloc() are usable.
  */
 int
-pg_bind_textdomain_codeset(const char *domainname)
+mdb_bind_textdomain_codeset(const char *domainname)
 {
 	bool		elog_ok = (CurrentMemoryContext != NULL);
 	int			encoding = GetDatabaseEncoding();
@@ -986,18 +986,18 @@ pg_bind_textdomain_codeset(const char *domainname)
 #ifndef WIN32
 	const char *ctype = setlocale(LC_CTYPE, NULL);
 
-	if (pg_strcasecmp(ctype, "C") == 0 || pg_strcasecmp(ctype, "POSIX") == 0)
+	if (mdb_strcasecmp(ctype, "C") == 0 || mdb_strcasecmp(ctype, "POSIX") == 0)
 #endif
 		if (encoding != PG_SQL_ASCII &&
-			raw_pg_bind_textdomain_codeset(domainname, encoding))
+			raw_mdb_bind_textdomain_codeset(domainname, encoding))
 			return encoding;
 
-	new_msgenc = pg_get_encoding_from_locale(NULL, elog_ok);
+	new_msgenc = mdb_get_encoding_from_locale(NULL, elog_ok);
 	if (new_msgenc < 0)
 		new_msgenc = PG_SQL_ASCII;
 
 #ifdef WIN32
-	if (!raw_pg_bind_textdomain_codeset(domainname, new_msgenc))
+	if (!raw_mdb_bind_textdomain_codeset(domainname, new_msgenc))
 		/* On failure, the old message encoding remains valid. */
 		return GetMessageEncoding();
 #endif
@@ -1030,7 +1030,7 @@ getdatabaseencoding(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_client_encoding(PG_FUNCTION_ARGS)
+mdb_client_encoding(PG_FUNCTION_ARGS)
 {
 	return DirectFunctionCall1(namein, CStringGetDatum(ClientEncoding->name));
 }
@@ -1059,7 +1059,7 @@ pgwin32_message_to_UTF16(const char *str, int len, int *utf16len)
 	int			dstlen;
 	UINT		codepage;
 
-	codepage = pg_enc2name_tbl[GetMessageEncoding()].codepage;
+	codepage = mdb_enc2name_tbl[GetMessageEncoding()].codepage;
 
 	/*
 	 * Use MultiByteToWideChar directly if there is a corresponding codepage,
@@ -1077,12 +1077,12 @@ pgwin32_message_to_UTF16(const char *str, int len, int *utf16len)
 		char	   *utf8;
 
 		/*
-		 * XXX pg_do_encoding_conversion() requires a transaction.  In the
+		 * XXX mdb_do_encoding_conversion() requires a transaction.  In the
 		 * absence of one, hope for the input to be valid UTF8.
 		 */
 		if (IsTransactionState())
 		{
-			utf8 = (char *) pg_do_encoding_conversion((unsigned char *) str,
+			utf8 = (char *) mdb_do_encoding_conversion((unsigned char *) str,
 													  len,
 													  GetMessageEncoding(),
 													  PG_UTF8);

@@ -14,7 +14,7 @@
 
 #include "access/htup_details.h"
 #include "access/xact.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "miscadmin.h"
 #include "storage/predicate_internals.h"
@@ -43,7 +43,7 @@ static const char *const PredicateLockTagTypeNames[] = {
 	"tuple"
 };
 
-/* Working status for pg_lock_status */
+/* Working status for mdb_lock_status */
 typedef struct
 {
 	LockData   *lockData;		/* state data from lmgr */
@@ -52,13 +52,13 @@ typedef struct
 	int			predLockIdx;	/* current index for pred lock */
 } PG_Lock_Status;
 
-/* Number of columns in pg_locks output */
+/* Number of columns in mdb_locks output */
 #define NUM_LOCK_STATUS_COLUMNS		15
 
 /*
  * VXIDGetDatum - Construct a text representation of a VXID
  *
- * This is currently only used in pg_lock_status, so we put it here.
+ * This is currently only used in mdb_lock_status, so we put it here.
  */
 static Datum
 VXIDGetDatum(BackendId bid, LocalTransactionId lxid)
@@ -76,10 +76,10 @@ VXIDGetDatum(BackendId bid, LocalTransactionId lxid)
 
 
 /*
- * pg_lock_status - produce a view with one row per held or awaited lock mode
+ * mdb_lock_status - produce a view with one row per held or awaited lock mode
  */
 Datum
-pg_lock_status(PG_FUNCTION_ARGS)
+mdb_lock_status(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	PG_Lock_Status *mystatus;
@@ -100,7 +100,7 @@ pg_lock_status(PG_FUNCTION_ARGS)
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		/* build tupdesc for result tuples */
-		/* this had better match function's declaration in pg_proc.h */
+		/* this had better match function's declaration in mdb_proc.h */
 		tupdesc = CreateTemplateTupleDesc(NUM_LOCK_STATUS_COLUMNS, false);
 		TupleDescInitEntry(tupdesc, (AttrNumber) 1, "locktype",
 						   TEXTOID, -1, 0);
@@ -396,7 +396,7 @@ pg_lock_status(PG_FUNCTION_ARGS)
 
 
 /*
- * pg_blocking_pids - produce an array of the PIDs blocking given PID
+ * mdb_blocking_pids - produce an array of the PIDs blocking given PID
  *
  * The reported PIDs are those that hold a lock conflicting with blocked_pid's
  * current request (hard block), or are requesting such a lock and are ahead
@@ -405,7 +405,7 @@ pg_lock_status(PG_FUNCTION_ARGS)
  * In parallel-query cases, we report all PIDs blocking any member of the
  * given PID's lock group, and the reported PIDs are those of the blocking
  * PIDs' lock group leaders.  This allows callers to compare the result to
- * lists of clients' pg_backend_pid() results even during a parallel query.
+ * lists of clients' mdb_backend_pid() results even during a parallel query.
  *
  * Parallel query makes it possible for there to be duplicate PIDs in the
  * result (either because multiple waiters are blocked by same PID, or
@@ -415,7 +415,7 @@ pg_lock_status(PG_FUNCTION_ARGS)
  * We need not consider predicate locks here, since those don't block anything.
  */
 Datum
-pg_blocking_pids(PG_FUNCTION_ARGS)
+mdb_blocking_pids(PG_FUNCTION_ARGS)
 {
 	int			blocked_pid = PG_GETARG_INT32(0);
 	Datum	   *arrayelems;
@@ -546,10 +546,10 @@ PreventAdvisoryLocksInParallelMode(void)
 }
 
 /*
- * pg_advisory_lock(int8) - acquire exclusive lock on an int8 key
+ * mdb_advisory_lock(int8) - acquire exclusive lock on an int8 key
  */
 Datum
-pg_advisory_lock_int8(PG_FUNCTION_ARGS)
+mdb_advisory_lock_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -563,11 +563,11 @@ pg_advisory_lock_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_xact_lock(int8) - acquire xact scoped
+ * mdb_advisory_xact_lock(int8) - acquire xact scoped
  * exclusive lock on an int8 key
  */
 Datum
-pg_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
+mdb_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -581,10 +581,10 @@ pg_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_lock_shared(int8) - acquire share lock on an int8 key
+ * mdb_advisory_lock_shared(int8) - acquire share lock on an int8 key
  */
 Datum
-pg_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
+mdb_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -598,11 +598,11 @@ pg_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_xact_lock_shared(int8) - acquire xact scoped
+ * mdb_advisory_xact_lock_shared(int8) - acquire xact scoped
  * share lock on an int8 key
  */
 Datum
-pg_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
+mdb_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -616,12 +616,12 @@ pg_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_try_advisory_lock(int8) - acquire exclusive lock on an int8 key, no wait
+ * mdb_try_advisory_lock(int8) - acquire exclusive lock on an int8 key, no wait
  *
  * Returns true if successful, false if lock not available
  */
 Datum
-pg_try_advisory_lock_int8(PG_FUNCTION_ARGS)
+mdb_try_advisory_lock_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -636,13 +636,13 @@ pg_try_advisory_lock_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_try_advisory_xact_lock(int8) - acquire xact scoped
+ * mdb_try_advisory_xact_lock(int8) - acquire xact scoped
  * exclusive lock on an int8 key, no wait
  *
  * Returns true if successful, false if lock not available
  */
 Datum
-pg_try_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
+mdb_try_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -657,12 +657,12 @@ pg_try_advisory_xact_lock_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_try_advisory_lock_shared(int8) - acquire share lock on an int8 key, no wait
+ * mdb_try_advisory_lock_shared(int8) - acquire share lock on an int8 key, no wait
  *
  * Returns true if successful, false if lock not available
  */
 Datum
-pg_try_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
+mdb_try_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -677,13 +677,13 @@ pg_try_advisory_lock_shared_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_try_advisory_xact_lock_shared(int8) - acquire xact scoped
+ * mdb_try_advisory_xact_lock_shared(int8) - acquire xact scoped
  * share lock on an int8 key, no wait
  *
  * Returns true if successful, false if lock not available
  */
 Datum
-pg_try_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
+mdb_try_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -698,12 +698,12 @@ pg_try_advisory_xact_lock_shared_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_unlock(int8) - release exclusive lock on an int8 key
+ * mdb_advisory_unlock(int8) - release exclusive lock on an int8 key
  *
  * Returns true if successful, false if lock was not held
 */
 Datum
-pg_advisory_unlock_int8(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -718,12 +718,12 @@ pg_advisory_unlock_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_unlock_shared(int8) - release share lock on an int8 key
+ * mdb_advisory_unlock_shared(int8) - release share lock on an int8 key
  *
  * Returns true if successful, false if lock was not held
  */
 Datum
-pg_advisory_unlock_shared_int8(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_shared_int8(PG_FUNCTION_ARGS)
 {
 	int64		key = PG_GETARG_INT64(0);
 	LOCKTAG		tag;
@@ -738,10 +738,10 @@ pg_advisory_unlock_shared_int8(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_lock(int4, int4) - acquire exclusive lock on 2 int4 keys
+ * mdb_advisory_lock(int4, int4) - acquire exclusive lock on 2 int4 keys
  */
 Datum
-pg_advisory_lock_int4(PG_FUNCTION_ARGS)
+mdb_advisory_lock_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -756,11 +756,11 @@ pg_advisory_lock_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_xact_lock(int4, int4) - acquire xact scoped
+ * mdb_advisory_xact_lock(int4, int4) - acquire xact scoped
  * exclusive lock on 2 int4 keys
  */
 Datum
-pg_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
+mdb_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -775,10 +775,10 @@ pg_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_lock_shared(int4, int4) - acquire share lock on 2 int4 keys
+ * mdb_advisory_lock_shared(int4, int4) - acquire share lock on 2 int4 keys
  */
 Datum
-pg_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
+mdb_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -793,11 +793,11 @@ pg_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_xact_lock_shared(int4, int4) - acquire xact scoped
+ * mdb_advisory_xact_lock_shared(int4, int4) - acquire xact scoped
  * share lock on 2 int4 keys
  */
 Datum
-pg_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
+mdb_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -812,12 +812,12 @@ pg_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_try_advisory_lock(int4, int4) - acquire exclusive lock on 2 int4 keys, no wait
+ * mdb_try_advisory_lock(int4, int4) - acquire exclusive lock on 2 int4 keys, no wait
  *
  * Returns true if successful, false if lock not available
  */
 Datum
-pg_try_advisory_lock_int4(PG_FUNCTION_ARGS)
+mdb_try_advisory_lock_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -833,13 +833,13 @@ pg_try_advisory_lock_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_try_advisory_xact_lock(int4, int4) - acquire xact scoped
+ * mdb_try_advisory_xact_lock(int4, int4) - acquire xact scoped
  * exclusive lock on 2 int4 keys, no wait
  *
  * Returns true if successful, false if lock not available
  */
 Datum
-pg_try_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
+mdb_try_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -855,12 +855,12 @@ pg_try_advisory_xact_lock_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_try_advisory_lock_shared(int4, int4) - acquire share lock on 2 int4 keys, no wait
+ * mdb_try_advisory_lock_shared(int4, int4) - acquire share lock on 2 int4 keys, no wait
  *
  * Returns true if successful, false if lock not available
  */
 Datum
-pg_try_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
+mdb_try_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -876,13 +876,13 @@ pg_try_advisory_lock_shared_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_try_advisory_xact_lock_shared(int4, int4) - acquire xact scoped
+ * mdb_try_advisory_xact_lock_shared(int4, int4) - acquire xact scoped
  * share lock on 2 int4 keys, no wait
  *
  * Returns true if successful, false if lock not available
  */
 Datum
-pg_try_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
+mdb_try_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -898,12 +898,12 @@ pg_try_advisory_xact_lock_shared_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_unlock(int4, int4) - release exclusive lock on 2 int4 keys
+ * mdb_advisory_unlock(int4, int4) - release exclusive lock on 2 int4 keys
  *
  * Returns true if successful, false if lock was not held
 */
 Datum
-pg_advisory_unlock_int4(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -919,12 +919,12 @@ pg_advisory_unlock_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_unlock_shared(int4, int4) - release share lock on 2 int4 keys
+ * mdb_advisory_unlock_shared(int4, int4) - release share lock on 2 int4 keys
  *
  * Returns true if successful, false if lock was not held
  */
 Datum
-pg_advisory_unlock_shared_int4(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_shared_int4(PG_FUNCTION_ARGS)
 {
 	int32		key1 = PG_GETARG_INT32(0);
 	int32		key2 = PG_GETARG_INT32(1);
@@ -940,10 +940,10 @@ pg_advisory_unlock_shared_int4(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_advisory_unlock_all() - release all advisory locks
+ * mdb_advisory_unlock_all() - release all advisory locks
  */
 Datum
-pg_advisory_unlock_all(PG_FUNCTION_ARGS)
+mdb_advisory_unlock_all(PG_FUNCTION_ARGS)
 {
 	LockReleaseSession(USER_LOCKMETHOD);
 

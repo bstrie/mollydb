@@ -75,7 +75,7 @@
 #include "access/xact.h"
 #include "access/xlog.h"
 #include "catalog/catalog.h"
-#include "catalog/pg_tablespace.h"
+#include "catalog/mdb_tablespace.h"
 #include "pgstat.h"
 #include "portability/mem.h"
 #include "storage/fd.h"
@@ -84,7 +84,7 @@
 #include "utils/resowner_private.h"
 
 
-/* Define PG_FLUSH_DATA_WORKS if we have an implementation for pg_flush_data */
+/* Define PG_FLUSH_DATA_WORKS if we have an implementation for mdb_flush_data */
 #if defined(HAVE_SYNC_FILE_RANGE)
 #define PG_FLUSH_DATA_WORKS 1
 #elif !defined(WIN32) && defined(MS_ASYNC)
@@ -320,27 +320,27 @@ static int	fsync_parent_path(const char *fname, int elevel);
 
 
 /*
- * pg_fsync --- do fsync with or without writethrough
+ * mdb_fsync --- do fsync with or without writethrough
  */
 int
-pg_fsync(int fd)
+mdb_fsync(int fd)
 {
 	/* #if is to skip the sync_method test if there's no need for it */
 #if defined(HAVE_FSYNC_WRITETHROUGH) && !defined(FSYNC_WRITETHROUGH_IS_FSYNC)
 	if (sync_method == SYNC_METHOD_FSYNC_WRITETHROUGH)
-		return pg_fsync_writethrough(fd);
+		return mdb_fsync_writethrough(fd);
 	else
 #endif
-		return pg_fsync_no_writethrough(fd);
+		return mdb_fsync_no_writethrough(fd);
 }
 
 
 /*
- * pg_fsync_no_writethrough --- same as fsync except does nothing if
+ * mdb_fsync_no_writethrough --- same as fsync except does nothing if
  *	enableFsync is off
  */
 int
-pg_fsync_no_writethrough(int fd)
+mdb_fsync_no_writethrough(int fd)
 {
 	if (enableFsync)
 		return fsync(fd);
@@ -349,10 +349,10 @@ pg_fsync_no_writethrough(int fd)
 }
 
 /*
- * pg_fsync_writethrough
+ * mdb_fsync_writethrough
  */
 int
-pg_fsync_writethrough(int fd)
+mdb_fsync_writethrough(int fd)
 {
 	if (enableFsync)
 	{
@@ -370,12 +370,12 @@ pg_fsync_writethrough(int fd)
 }
 
 /*
- * pg_fdatasync --- same as fdatasync except does nothing if enableFsync is off
+ * mdb_fdatasync --- same as fdatasync except does nothing if enableFsync is off
  *
  * Not all platforms have fdatasync; treat as fsync if not available.
  */
 int
-pg_fdatasync(int fd)
+mdb_fdatasync(int fd)
 {
 	if (enableFsync)
 	{
@@ -390,14 +390,14 @@ pg_fdatasync(int fd)
 }
 
 /*
- * pg_flush_data --- advise OS that the described dirty data should be flushed
+ * mdb_flush_data --- advise OS that the described dirty data should be flushed
  *
  * offset of 0 with nbytes 0 means that the entire file should be flushed;
  * in this case, this function may have side-effects on the file's
  * seek position!
  */
 void
-pg_flush_data(int fd, off_t offset, off_t nbytes)
+mdb_flush_data(int fd, off_t offset, off_t nbytes)
 {
 	/*
 	 * Right now file flushing is primarily used to avoid making later
@@ -610,7 +610,7 @@ durable_rename(const char *oldfile, const char *newfile, int elevel)
 	}
 	else
 	{
-		if (pg_fsync(fd) != 0)
+		if (mdb_fsync(fd) != 0)
 		{
 			int			save_errno;
 
@@ -1317,7 +1317,7 @@ OpenTemporaryFile(bool interXact)
 	/*
 	 * If not, or if tablespace is bad, create in database's default
 	 * tablespace.  MyDatabaseTableSpace should normally be set before we get
-	 * here, but just in case it isn't, fall back to pg_default tablespace.
+	 * here, but just in case it isn't, fall back to mdb_default tablespace.
 	 */
 	if (file <= 0)
 		file = OpenTemporaryFileInTablespace(MyDatabaseTableSpace ?
@@ -1358,7 +1358,7 @@ OpenTemporaryFileInTablespace(Oid tblspcOid, bool rejectError)
 	/*
 	 * Identify the tempfile directory for this tablespace.
 	 *
-	 * If someone tries to specify pg_global, use pg_default instead.
+	 * If someone tries to specify mdb_global, use mdb_default instead.
 	 */
 	if (tblspcOid == DEFAULTTABLESPACE_OID ||
 		tblspcOid == GLOBALTABLESPACE_OID)
@@ -1370,7 +1370,7 @@ OpenTemporaryFileInTablespace(Oid tblspcOid, bool rejectError)
 	else
 	{
 		/* All other tablespaces are accessed via symlinks */
-		snprintf(tempdirpath, sizeof(tempdirpath), "pg_tblspc/%u/%s/%s",
+		snprintf(tempdirpath, sizeof(tempdirpath), "mdb_tblspc/%u/%s/%s",
 				 tblspcOid, TABLESPACE_VERSION_DIRECTORY, PG_TEMP_FILES_DIR);
 	}
 
@@ -1549,7 +1549,7 @@ FileWriteback(File file, off_t offset, off_t nbytes)
 			   (int64) offset, (int64) nbytes));
 
 	/*
-	 * Caution: do not call pg_flush_data with nbytes = 0, it could trash the
+	 * Caution: do not call mdb_flush_data with nbytes = 0, it could trash the
 	 * file's seek position.  We prefer to define that as a no-op here.
 	 */
 	if (nbytes <= 0)
@@ -1559,7 +1559,7 @@ FileWriteback(File file, off_t offset, off_t nbytes)
 	if (returnCode < 0)
 		return;
 
-	pg_flush_data(VfdCache[file].fd, offset, nbytes);
+	mdb_flush_data(VfdCache[file].fd, offset, nbytes);
 }
 
 int
@@ -1598,7 +1598,7 @@ retry:
 		switch (error)
 		{
 			case ERROR_NO_SYSTEM_RESOURCES:
-				pg_usleep(1000L);
+				mdb_usleep(1000L);
 				errno = EINTR;
 				break;
 			default:
@@ -1693,7 +1693,7 @@ retry:
 		switch (error)
 		{
 			case ERROR_NO_SYSTEM_RESOURCES:
-				pg_usleep(1000L);
+				mdb_usleep(1000L);
 				errno = EINTR;
 				break;
 			default:
@@ -1726,7 +1726,7 @@ FileSync(File file)
 	if (returnCode < 0)
 		return returnCode;
 
-	return pg_fsync(VfdCache[file].fd);
+	return mdb_fsync(VfdCache[file].fd);
 }
 
 off_t
@@ -2582,7 +2582,7 @@ RemovePgTempFiles(void)
 	struct dirent *spc_de;
 
 	/*
-	 * First process temp files in pg_default ($PGDATA/base)
+	 * First process temp files in mdb_default ($PGDATA/base)
 	 */
 	snprintf(temp_path, sizeof(temp_path), "base/%s", PG_TEMP_FILES_DIR);
 	RemovePgTempFilesInDir(temp_path);
@@ -2591,19 +2591,19 @@ RemovePgTempFiles(void)
 	/*
 	 * Cycle through temp directories for all non-default tablespaces.
 	 */
-	spc_dir = AllocateDir("pg_tblspc");
+	spc_dir = AllocateDir("mdb_tblspc");
 
-	while ((spc_de = ReadDir(spc_dir, "pg_tblspc")) != NULL)
+	while ((spc_de = ReadDir(spc_dir, "mdb_tblspc")) != NULL)
 	{
 		if (strcmp(spc_de->d_name, ".") == 0 ||
 			strcmp(spc_de->d_name, "..") == 0)
 			continue;
 
-		snprintf(temp_path, sizeof(temp_path), "pg_tblspc/%s/%s/%s",
+		snprintf(temp_path, sizeof(temp_path), "mdb_tblspc/%s/%s/%s",
 			spc_de->d_name, TABLESPACE_VERSION_DIRECTORY, PG_TEMP_FILES_DIR);
 		RemovePgTempFilesInDir(temp_path);
 
-		snprintf(temp_path, sizeof(temp_path), "pg_tblspc/%s/%s",
+		snprintf(temp_path, sizeof(temp_path), "mdb_tblspc/%s/%s",
 				 spc_de->d_name, TABLESPACE_VERSION_DIRECTORY);
 		RemovePgTempRelationFiles(temp_path);
 	}
@@ -2787,7 +2787,7 @@ looks_like_temp_rel_name(const char *name)
  * Issue fsync recursively on PGDATA and all its contents.
  *
  * We fsync regular files and directories wherever they are, but we
- * follow symlinks only for pg_xlog and immediately under pg_tblspc.
+ * follow symlinks only for mdb_xlog and immediately under mdb_tblspc.
  * Other symlinks are presumed to point at files we're not responsible
  * for fsyncing, and might not have privileges to write at all.
  *
@@ -2811,7 +2811,7 @@ SyncDataDirectory(void)
 		return;
 
 	/*
-	 * If pg_xlog is a symlink, we'll need to recurse into it separately,
+	 * If mdb_xlog is a symlink, we'll need to recurse into it separately,
 	 * because the first walkdir below will ignore it.
 	 */
 	xlog_is_symlink = false;
@@ -2820,16 +2820,16 @@ SyncDataDirectory(void)
 	{
 		struct stat st;
 
-		if (lstat("pg_xlog", &st) < 0)
+		if (lstat("mdb_xlog", &st) < 0)
 			ereport(LOG,
 					(errcode_for_file_access(),
 					 errmsg("could not stat file \"%s\": %m",
-							"pg_xlog")));
+							"mdb_xlog")));
 		else if (S_ISLNK(st.st_mode))
 			xlog_is_symlink = true;
 	}
 #else
-	if (pgwin32_is_junction("pg_xlog"))
+	if (pgwin32_is_junction("mdb_xlog"))
 		xlog_is_symlink = true;
 #endif
 
@@ -2841,23 +2841,23 @@ SyncDataDirectory(void)
 #ifdef PG_FLUSH_DATA_WORKS
 	walkdir(".", pre_sync_fname, false, DEBUG1);
 	if (xlog_is_symlink)
-		walkdir("pg_xlog", pre_sync_fname, false, DEBUG1);
-	walkdir("pg_tblspc", pre_sync_fname, true, DEBUG1);
+		walkdir("mdb_xlog", pre_sync_fname, false, DEBUG1);
+	walkdir("mdb_tblspc", pre_sync_fname, true, DEBUG1);
 #endif
 
 	/*
 	 * Now we do the fsync()s in the same order.
 	 *
 	 * The main call ignores symlinks, so in addition to specially processing
-	 * pg_xlog if it's a symlink, pg_tblspc has to be visited separately with
+	 * mdb_xlog if it's a symlink, mdb_tblspc has to be visited separately with
 	 * process_symlinks = true.  Note that if there are any plain directories
-	 * in pg_tblspc, they'll get fsync'd twice.  That's not an expected case
+	 * in mdb_tblspc, they'll get fsync'd twice.  That's not an expected case
 	 * so we don't worry about optimizing it.
 	 */
 	walkdir(".", datadir_fsync_fname, false, LOG);
 	if (xlog_is_symlink)
-		walkdir("pg_xlog", datadir_fsync_fname, false, LOG);
-	walkdir("pg_tblspc", datadir_fsync_fname, true, LOG);
+		walkdir("mdb_xlog", datadir_fsync_fname, false, LOG);
+	walkdir("mdb_tblspc", datadir_fsync_fname, true, LOG);
 }
 
 /*
@@ -2966,10 +2966,10 @@ pre_sync_fname(const char *fname, bool isdir, int elevel)
 	}
 
 	/*
-	 * pg_flush_data() ignores errors, which is ok because this is only a
+	 * mdb_flush_data() ignores errors, which is ok because this is only a
 	 * hint.
 	 */
-	pg_flush_data(fd, 0, 0);
+	mdb_flush_data(fd, 0, 0);
 
 	(void) CloseTransientFile(fd);
 }
@@ -3032,7 +3032,7 @@ fsync_fname_ext(const char *fname, bool isdir, bool ignore_perm, int elevel)
 		return -1;
 	}
 
-	returncode = pg_fsync(fd);
+	returncode = mdb_fsync(fd);
 
 	/*
 	 * Some OSes don't allow us to fsync directories at all, so we can ignore

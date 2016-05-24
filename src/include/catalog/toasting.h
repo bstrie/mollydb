@@ -46,23 +46,23 @@ extern void BootstrapToastTable(char *relName,
  */
 
 /* normal catalogs */
-DECLARE_TOAST(pg_attrdef, 2830, 2831);
-DECLARE_TOAST(pg_constraint, 2832, 2833);
-DECLARE_TOAST(pg_description, 2834, 2835);
-DECLARE_TOAST(pg_proc, 2836, 2837);
-DECLARE_TOAST(pg_rewrite, 2838, 2839);
-DECLARE_TOAST(pg_seclabel, 3598, 3599);
-DECLARE_TOAST(pg_statistic, 2840, 2841);
-DECLARE_TOAST(pg_trigger, 2336, 2337);
+DECLARE_TOAST(mdb_attrdef, 2830, 2831);
+DECLARE_TOAST(mdb_constraint, 2832, 2833);
+DECLARE_TOAST(mdb_description, 2834, 2835);
+DECLARE_TOAST(mdb_proc, 2836, 2837);
+DECLARE_TOAST(mdb_rewrite, 2838, 2839);
+DECLARE_TOAST(mdb_seclabel, 3598, 3599);
+DECLARE_TOAST(mdb_statistic, 2840, 2841);
+DECLARE_TOAST(mdb_trigger, 2336, 2337);
 
 /* shared catalogs */
-DECLARE_TOAST(pg_shdescription, 2846, 2847);
+DECLARE_TOAST(mdb_shdescription, 2846, 2847);
 #define PgShdescriptionToastTable 2846
 #define PgShdescriptionToastIndex 2847
-DECLARE_TOAST(pg_db_role_setting, 2966, 2967);
+DECLARE_TOAST(mdb_db_role_setting, 2966, 2967);
 #define PgDbRoleSettingToastTable 2966
 #define PgDbRoleSettingToastIndex 2967
-DECLARE_TOAST(pg_shseclabel, 4060, 4061);
+DECLARE_TOAST(mdb_shseclabel, 4060, 4061);
 #define PgShseclabelToastTable 4060
 #define PgShseclabelToastIndex 4061
 

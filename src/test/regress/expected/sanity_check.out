@@ -8,8 +8,8 @@ VACUUM;
 -- temporarily disable fancy output, so catalog changes create less diff noise
 \a\t
 SELECT relname, relhasindex
-   FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = relnamespace
-   WHERE relkind = 'r' AND (nspname ~ '^pg_temp_') IS NOT TRUE
+   FROM mdb_class c LEFT JOIN mdb_namespace n ON n.oid = relnamespace
+   WHERE relkind = 'r' AND (nspname ~ '^mdb_temp_') IS NOT TRUE
    ORDER BY relname;
 a|f
 a_star|f
@@ -84,61 +84,61 @@ onek|t
 onek2|t
 path_tbl|f
 person|f
-pg_aggregate|t
-pg_am|t
-pg_amop|t
-pg_amproc|t
-pg_attrdef|t
-pg_attribute|t
-pg_auth_members|t
-pg_authid|t
-pg_cast|t
-pg_class|t
-pg_collation|t
-pg_constraint|t
-pg_conversion|t
-pg_database|t
-pg_db_role_setting|t
-pg_default_acl|t
-pg_depend|t
-pg_description|t
-pg_enum|t
-pg_event_trigger|t
-pg_extension|t
-pg_foreign_data_wrapper|t
-pg_foreign_server|t
-pg_foreign_table|t
-pg_index|t
-pg_inherits|t
-pg_init_privs|t
-pg_language|t
-pg_largeobject|t
-pg_largeobject_metadata|t
-pg_namespace|t
-pg_opclass|t
-pg_operator|t
-pg_opfamily|t
-pg_pltemplate|t
-pg_policy|t
-pg_proc|t
-pg_range|t
-pg_replication_origin|t
-pg_rewrite|t
-pg_seclabel|t
-pg_shdepend|t
-pg_shdescription|t
-pg_shseclabel|t
-pg_statistic|t
-pg_tablespace|t
-pg_transform|t
-pg_trigger|t
-pg_ts_config|t
-pg_ts_config_map|t
-pg_ts_dict|t
-pg_ts_parser|t
-pg_ts_template|t
-pg_type|t
-pg_user_mapping|t
+mdb_aggregate|t
+mdb_am|t
+mdb_amop|t
+mdb_amproc|t
+mdb_attrdef|t
+mdb_attribute|t
+mdb_auth_members|t
+mdb_authid|t
+mdb_cast|t
+mdb_class|t
+mdb_collation|t
+mdb_constraint|t
+mdb_conversion|t
+mdb_database|t
+mdb_db_role_setting|t
+mdb_default_acl|t
+mdb_depend|t
+mdb_description|t
+mdb_enum|t
+mdb_event_trigger|t
+mdb_extension|t
+mdb_foreign_data_wrapper|t
+mdb_foreign_server|t
+mdb_foreign_table|t
+mdb_index|t
+mdb_inherits|t
+mdb_init_privs|t
+mdb_language|t
+mdb_largeobject|t
+mdb_largeobject_metadata|t
+mdb_namespace|t
+mdb_opclass|t
+mdb_operator|t
+mdb_opfamily|t
+mdb_pltemplate|t
+mdb_policy|t
+mdb_proc|t
+mdb_range|t
+mdb_replication_origin|t
+mdb_rewrite|t
+mdb_seclabel|t
+mdb_shdepend|t
+mdb_shdescription|t
+mdb_shseclabel|t
+mdb_statistic|t
+mdb_tablespace|t
+mdb_transform|t
+mdb_trigger|t
+mdb_ts_config|t
+mdb_ts_config_map|t
+mdb_ts_dict|t
+mdb_ts_parser|t
+mdb_ts_template|t
+mdb_type|t
+mdb_user_mapping|t
 point_tbl|t
 polygon_tbl|t
 quad_point_tbl|t
@@ -181,10 +181,10 @@ varchar_tbl|f
 -- We exclude non-system tables from the check by looking at nspname.
 --
 SELECT relname, nspname
-FROM pg_class c LEFT JOIN pg_namespace n ON n.oid = relnamespace
+FROM mdb_class c LEFT JOIN mdb_namespace n ON n.oid = relnamespace
 WHERE relhasoids
-    AND ((nspname ~ '^pg_') IS NOT FALSE)
-    AND NOT EXISTS (SELECT 1 FROM pg_index i WHERE indrelid = c.oid
+    AND ((nspname ~ '^mdb_') IS NOT FALSE)
+    AND NOT EXISTS (SELECT 1 FROM mdb_index i WHERE indrelid = c.oid
                     AND indkey[0] = -2 AND indnatts = 1
                     AND indisunique AND indimmediate);
  relname | nspname 

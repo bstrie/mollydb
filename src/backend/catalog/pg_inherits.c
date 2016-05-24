@@ -1,19 +1,19 @@
 /*-------------------------------------------------------------------------
  *
- * pg_inherits.c
- *	  routines to support manipulation of the pg_inherits relation
+ * mdb_inherits.c
+ *	  routines to support manipulation of the mdb_inherits relation
  *
  * Note: currently, this module only contains inquiry functions; the actual
- * creation and deletion of pg_inherits entries is done in tablecmds.c.
+ * creation and deletion of mdb_inherits entries is done in tablecmds.c.
  * Perhaps someday that code should be moved here, but it'd have to be
- * disentangled from other stuff such as pg_depend updates.
+ * disentangled from other stuff such as mdb_depend updates.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_inherits.c
+ *	  src/backend/catalog/mdb_inherits.c
  *
  *-------------------------------------------------------------------------
  */
@@ -23,8 +23,8 @@
 #include "access/heapam.h"
 #include "access/htup_details.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_inherits.h"
-#include "catalog/pg_inherits_fn.h"
+#include "catalog/mdb_inherits.h"
+#include "catalog/mdb_inherits_fn.h"
 #include "parser/parse_type.h"
 #include "storage/lmgr.h"
 #include "utils/fmgroids.h"
@@ -60,14 +60,14 @@ find_inheritance_children(Oid parentrelId, LOCKMODE lockmode)
 				i;
 
 	/*
-	 * Can skip the scan if pg_class shows the relation has never had a
+	 * Can skip the scan if mdb_class shows the relation has never had a
 	 * subclass.
 	 */
 	if (!has_subclass(parentrelId))
 		return NIL;
 
 	/*
-	 * Scan pg_inherits and build a working array of subclass OIDs.
+	 * Scan mdb_inherits and build a working array of subclass OIDs.
 	 */
 	maxoids = 32;
 	oidarr = (Oid *) palloc(maxoids * sizeof(Oid));
@@ -76,7 +76,7 @@ find_inheritance_children(Oid parentrelId, LOCKMODE lockmode)
 	relation = heap_open(InheritsRelationId, AccessShareLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_inherits_inhparent,
+				Anum_mdb_inherits_inhparent,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(parentrelId));
 
@@ -85,7 +85,7 @@ find_inheritance_children(Oid parentrelId, LOCKMODE lockmode)
 
 	while ((inheritsTuple = systable_getnext(scan)) != NULL)
 	{
-		inhrelid = ((Form_pg_inherits) GETSTRUCT(inheritsTuple))->inhrelid;
+		inhrelid = ((Form_mdb_inherits) GETSTRUCT(inheritsTuple))->inhrelid;
 		if (numoids >= maxoids)
 		{
 			maxoids *= 2;
@@ -229,14 +229,14 @@ find_all_inheritors(Oid parentrelId, LOCKMODE lockmode, List **numparents)
  * In the current implementation, has_subclass returns whether a
  * particular class *might* have a subclass. It will not return the
  * correct result if a class had a subclass which was later dropped.
- * This is because relhassubclass in pg_class is not updated immediately
+ * This is because relhassubclass in mdb_class is not updated immediately
  * when a subclass is dropped, primarily because of concurrency concerns.
  *
  * Currently has_subclass is only used as an efficiency hack to skip
  * unnecessary inheritance searches, so this is OK.  Note that ANALYZE
  * on a childless table will clean up the obsolete relhassubclass flag.
  *
- * Although this doesn't actually touch pg_inherits, it seems reasonable
+ * Although this doesn't actually touch mdb_inherits, it seems reasonable
  * to keep it here since it's normally used with the other routines here.
  */
 bool
@@ -249,7 +249,7 @@ has_subclass(Oid relationId)
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", relationId);
 
-	result = ((Form_pg_class) GETSTRUCT(tuple))->relhassubclass;
+	result = ((Form_mdb_class) GETSTRUCT(tuple))->relhassubclass;
 	ReleaseSysCache(tuple);
 	return result;
 }
@@ -306,7 +306,7 @@ typeInheritsFrom(Oid subclassTypeId, Oid superclassTypeId)
 		/*
 		 * If we've seen this relid already, skip it.  This avoids extra work
 		 * in multiple-inheritance scenarios, and also protects us from an
-		 * infinite loop in case there is a cycle in pg_inherits (though
+		 * infinite loop in case there is a cycle in mdb_inherits (though
 		 * theoretically that shouldn't happen).
 		 */
 		if (list_member_oid(visited, this_relid))
@@ -320,7 +320,7 @@ typeInheritsFrom(Oid subclassTypeId, Oid superclassTypeId)
 		visited = lappend_oid(visited, this_relid);
 
 		ScanKeyInit(&skey,
-					Anum_pg_inherits_inhrelid,
+					Anum_mdb_inherits_inhrelid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(this_relid));
 
@@ -329,7 +329,7 @@ typeInheritsFrom(Oid subclassTypeId, Oid superclassTypeId)
 
 		while ((inhtup = systable_getnext(inhscan)) != NULL)
 		{
-			Form_pg_inherits inh = (Form_pg_inherits) GETSTRUCT(inhtup);
+			Form_mdb_inherits inh = (Form_mdb_inherits) GETSTRUCT(inhtup);
 			Oid			inhparent = inh->inhparent;
 
 			/* If this is the target superclass, we're done */

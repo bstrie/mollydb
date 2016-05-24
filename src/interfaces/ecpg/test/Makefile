@@ -40,23 +40,23 @@ clean distclean maintainer-clean:
 	$(MAKE) -C compat_informix $@
 	$(MAKE) -C thread $@
 	rm -rf tmp_check results log
-	rm -f pg_regress regression.diffs regression.out pg_regress_ecpg.o $(WIN32RES)
+	rm -f mdb_regress regression.diffs regression.out mdb_regress_ecpg.o $(WIN32RES)
 
 # Build regression test driver
 
-all: pg_regress$(X)
+all: mdb_regress$(X)
 
-pg_regress$(X): pg_regress_ecpg.o $(WIN32RES) $(top_builddir)/src/test/regress/pg_regress.o
+mdb_regress$(X): mdb_regress_ecpg.o $(WIN32RES) $(top_builddir)/src/test/regress/mdb_regress.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) $^ $(LIBS) -o $@
 
-$(top_builddir)/src/test/regress/pg_regress.o:
+$(top_builddir)/src/test/regress/mdb_regress.o:
 	$(MAKE) -C $(dir $@) $(notdir $@)
 
 # dependencies ensure that path changes propagate
-pg_regress_ecpg.o: pg_regress_ecpg.c $(top_builddir)/src/port/pg_config_paths.h
+mdb_regress_ecpg.o: mdb_regress_ecpg.c $(top_builddir)/src/port/mdb_config_paths.h
 
-$(top_builddir)/src/port/pg_config_paths.h: $(top_builddir)/src/Makefile.global
-	$(MAKE) -C $(top_builddir)/src/port pg_config_paths.h
+$(top_builddir)/src/port/mdb_config_paths.h: $(top_builddir)/src/Makefile.global
+	$(MAKE) -C $(top_builddir)/src/port mdb_config_paths.h
 
 # When doing a VPATH build, copy over the .pgc, .stdout and .stderr
 # files so that the driver script can find them.  We have to use an
@@ -78,11 +78,11 @@ endif
 REGRESS_OPTS = --dbname=regress1,connectdb --create-role=connectuser,connectdb $(EXTRA_REGRESS_OPTS)
 
 check: all
-	$(with_temp_install) ./pg_regress $(REGRESS_OPTS) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(pg_regress_locale_flags) $(THREAD) --schedule=$(srcdir)/ecpg_schedule
+	$(with_temp_install) ./mdb_regress $(REGRESS_OPTS) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(mdb_regress_locale_flags) $(THREAD) --schedule=$(srcdir)/ecmdb_schedule
 
 # the same options, but with --listen-on-tcp
 checktcp: all
-	$(with_temp_install) ./pg_regress $(REGRESS_OPTS) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(pg_regress_locale_flags) $(THREAD) --schedule=$(srcdir)/ecpg_schedule_tcp --host=localhost
+	$(with_temp_install) ./mdb_regress $(REGRESS_OPTS) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(mdb_regress_locale_flags) $(THREAD) --schedule=$(srcdir)/ecmdb_schedule_tcp --host=localhost
 
 installcheck: all
-	./pg_regress $(REGRESS_OPTS) --bindir='$(bindir)' $(pg_regress_locale_flags) $(THREAD) --schedule=$(srcdir)/ecpg_schedule
+	./mdb_regress $(REGRESS_OPTS) --bindir='$(bindir)' $(mdb_regress_locale_flags) $(THREAD) --schedule=$(srcdir)/ecmdb_schedule

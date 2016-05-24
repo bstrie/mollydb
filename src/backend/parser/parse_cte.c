@@ -14,8 +14,8 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_collation.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_type.h"
 #include "nodes/nodeFuncs.h"
 #include "parser/analyze.h"
 #include "parser/parse_cte.h"

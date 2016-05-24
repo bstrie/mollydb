@@ -5,10 +5,10 @@
 
 -- These domains are just to catch schema-qualified references to the
 -- old data types.
-CREATE DOMAIN tsvector AS pg_catalog.tsvector;
-CREATE DOMAIN tsquery AS pg_catalog.tsquery;
-CREATE DOMAIN gtsvector AS pg_catalog.gtsvector;
-CREATE DOMAIN gtsq AS pg_catalog.text;
+CREATE DOMAIN tsvector AS mdb_catalog.tsvector;
+CREATE DOMAIN tsquery AS mdb_catalog.tsquery;
+CREATE DOMAIN gtsvector AS mdb_catalog.gtsvector;
+CREATE DOMAIN gtsq AS mdb_catalog.text;
 
 --dict interface
 CREATE FUNCTION lexize(oid, text)
@@ -440,19 +440,19 @@ create type tsdebug as (
 
 CREATE FUNCTION _get_parser_from_curcfg()
 RETURNS text as
-$$select prsname::text from pg_catalog.pg_ts_parser p join pg_ts_config c on cfgparser = p.oid where c.oid = show_curcfg();$$
+$$select prsname::text from mdb_catalog.mdb_ts_parser p join mdb_ts_config c on cfgparser = p.oid where c.oid = show_curcfg();$$
 LANGUAGE SQL RETURNS NULL ON NULL INPUT IMMUTABLE;
 
 CREATE FUNCTION ts_debug(text)
 RETURNS setof tsdebug as $$
 select
-        (select c.cfgname::text from pg_catalog.pg_ts_config as c
+        (select c.cfgname::text from mdb_catalog.mdb_ts_config as c
          where c.oid = show_curcfg()),
         t.alias as tok_type,
         t.descr as description,
         p.token,
-        ARRAY ( SELECT m.mapdict::pg_catalog.regdictionary::pg_catalog.text
-                FROM pg_catalog.pg_ts_config_map AS m
+        ARRAY ( SELECT m.mapdict::mdb_catalog.regdictionary::mdb_catalog.text
+                FROM mdb_catalog.mdb_ts_config_map AS m
                 WHERE m.mapcfg = show_curcfg() AND m.maptokentype = p.tokid
                 ORDER BY m.mapseqno )
         AS dict_name,

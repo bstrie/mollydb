@@ -181,7 +181,7 @@ ExecOpenIndices(ResultRelInfo *resultRelInfo, bool speculative)
 	resultRelInfo->ri_IndexRelationInfo = indexInfoArray;
 
 	/*
-	 * For each index, open the index relation and save pg_index info. We
+	 * For each index, open the index relation and save mdb_index info. We
 	 * acquire RowExclusiveLock, signifying we will update the index.
 	 *
 	 * Note: we do this even if the index is not IndexIsReady; it's not worth
@@ -196,7 +196,7 @@ ExecOpenIndices(ResultRelInfo *resultRelInfo, bool speculative)
 
 		indexDesc = index_open(indexOid, RowExclusiveLock);
 
-		/* extract index key information from the index's pg_index info */
+		/* extract index key information from the index's mdb_index info */
 		ii = BuildIndexInfo(indexDesc);
 
 		/*

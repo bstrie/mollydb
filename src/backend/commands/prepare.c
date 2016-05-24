@@ -17,7 +17,7 @@
 #include "mollydb.h"
 
 #include "access/xact.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/createas.h"
 #include "commands/prepare.h"
 #include "miscadmin.h"
@@ -223,7 +223,7 @@ ExecuteQuery(ExecuteStmt *stmt, IntoClause *intoClause,
 
 	/* Create a new portal to run the query in */
 	portal = CreateNewPortal();
-	/* Don't display the portal in pg_cursors, it is for internal use only */
+	/* Don't display the portal in mdb_cursors, it is for internal use only */
 	portal->visible = false;
 
 	/* Copy the plan's saved query string into the portal's memory */
@@ -687,7 +687,7 @@ ExplainExecuteQuery(ExecuteStmt *execstmt, IntoClause *into, ExplainState *es,
  * returns a set of (name, statement, prepare_time, param_types, from_sql).
  */
 Datum
-pg_prepared_statement(PG_FUNCTION_ARGS)
+mdb_prepared_statement(PG_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -712,7 +712,7 @@ pg_prepared_statement(PG_FUNCTION_ARGS)
 
 	/*
 	 * build tupdesc for result tuples. This must match the definition of the
-	 * pg_prepared_statements view in system_views.sql
+	 * mdb_prepared_statements view in system_views.sql
 	 */
 	tupdesc = CreateTemplateTupleDesc(5, false);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "name",

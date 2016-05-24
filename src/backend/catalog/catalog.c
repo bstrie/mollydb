@@ -26,17 +26,17 @@
 #include "catalog/catalog.h"
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_auth_members.h"
-#include "catalog/pg_authid.h"
-#include "catalog/pg_database.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_pltemplate.h"
-#include "catalog/pg_db_role_setting.h"
-#include "catalog/pg_replication_origin.h"
-#include "catalog/pg_shdepend.h"
-#include "catalog/pg_shdescription.h"
-#include "catalog/pg_shseclabel.h"
-#include "catalog/pg_tablespace.h"
+#include "catalog/mdb_auth_members.h"
+#include "catalog/mdb_authid.h"
+#include "catalog/mdb_database.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_pltemplate.h"
+#include "catalog/mdb_db_role_setting.h"
+#include "catalog/mdb_replication_origin.h"
+#include "catalog/mdb_shdepend.h"
+#include "catalog/mdb_shdescription.h"
+#include "catalog/mdb_shseclabel.h"
+#include "catalog/mdb_tablespace.h"
 #include "catalog/toasting.h"
 #include "miscadmin.h"
 #include "storage/fd.h"
@@ -48,8 +48,8 @@
 /*
  * IsSystemRelation
  *		True iff the relation is either a system catalog or toast table.
- *		By a system catalog, we mean one that created in the pg_catalog schema
- *		during initdb.  User-created relations in pg_catalog don't count as
+ *		By a system catalog, we mean one that created in the mdb_catalog schema
+ *		during initdb.  User-created relations in mdb_catalog don't count as
  *		system catalogs.
  *
  *		NB: TOAST relations are considered system relations by this test
@@ -65,12 +65,12 @@ IsSystemRelation(Relation relation)
 
 /*
  * IsSystemClass
- *		Like the above, but takes a Form_pg_class as argument.
+ *		Like the above, but takes a Form_mdb_class as argument.
  *		Used when we do not want to open the relation and have to
- *		search pg_class directly.
+ *		search mdb_class directly.
  */
 bool
-IsSystemClass(Oid relid, Form_pg_class reltuple)
+IsSystemClass(Oid relid, Form_mdb_class reltuple)
 {
 	return IsToastClass(reltuple) || IsCatalogClass(relid, reltuple);
 }
@@ -79,8 +79,8 @@ IsSystemClass(Oid relid, Form_pg_class reltuple)
  * IsCatalogRelation
  *		True iff the relation is a system catalog, or the toast table for
  *		a system catalog.  By a system catalog, we mean one that created
- *		in the pg_catalog schema during initdb.  As with IsSystemRelation(),
- *		user-created relations in pg_catalog don't count as system catalogs.
+ *		in the mdb_catalog schema during initdb.  As with IsSystemRelation(),
+ *		user-created relations in mdb_catalog don't count as system catalogs.
  *
  *		Note that IsSystemRelation() returns true for ALL toast relations,
  *		but this function returns true only for toast relations of system
@@ -99,12 +99,12 @@ IsCatalogRelation(Relation relation)
  * Check IsCatalogRelation() for details.
  */
 bool
-IsCatalogClass(Oid relid, Form_pg_class reltuple)
+IsCatalogClass(Oid relid, Form_mdb_class reltuple)
 {
 	Oid			relnamespace = reltuple->relnamespace;
 
 	/*
-	 * Never consider relations outside pg_catalog/pg_toast to be catalog
+	 * Never consider relations outside mdb_catalog/mdb_toast to be catalog
 	 * relations.
 	 */
 	if (!IsSystemNamespace(relnamespace) && !IsToastNamespace(relnamespace))
@@ -114,12 +114,12 @@ IsCatalogClass(Oid relid, Form_pg_class reltuple)
 	 * Check whether the oid was assigned during initdb, when creating the
 	 * initial template database. Minus the relations in information_schema
 	 * excluded above, these are integral part of the system.
-	 * We could instead check whether the relation is pinned in pg_depend, but
+	 * We could instead check whether the relation is pinned in mdb_depend, but
 	 * this is noticeably cheaper and doesn't require catalog access.
 	 *
 	 * This test is safe since even an oid wraparound will preserve this
 	 * property (c.f. GetNewObjectId()) and it has the advantage that it works
-	 * correctly even if a user decides to create a relation in the pg_catalog
+	 * correctly even if a user decides to create a relation in the mdb_catalog
 	 * namespace.
 	 * ----
 	 */
@@ -138,12 +138,12 @@ IsToastRelation(Relation relation)
 
 /*
  * IsToastClass
- *		Like the above, but takes a Form_pg_class as argument.
+ *		Like the above, but takes a Form_mdb_class as argument.
  *		Used when we do not want to open the relation and have to
- *		search pg_class directly.
+ *		search mdb_class directly.
  */
 bool
-IsToastClass(Form_pg_class reltuple)
+IsToastClass(Form_mdb_class reltuple)
 {
 	Oid			relnamespace = reltuple->relnamespace;
 
@@ -152,10 +152,10 @@ IsToastClass(Form_pg_class reltuple)
 
 /*
  * IsSystemNamespace
- *		True iff namespace is pg_catalog.
+ *		True iff namespace is mdb_catalog.
  *
  * NOTE: the reason this isn't a macro is to avoid having to include
- * catalog/pg_namespace.h in a lot of places.
+ * catalog/mdb_namespace.h in a lot of places.
  */
 bool
 IsSystemNamespace(Oid namespaceId)
@@ -165,7 +165,7 @@ IsSystemNamespace(Oid namespaceId)
 
 /*
  * IsToastNamespace
- *		True iff namespace is pg_toast or my temporary-toast-table namespace.
+ *		True iff namespace is mdb_toast or my temporary-toast-table namespace.
  *
  * Note: this will return false for temporary-toast-table namespaces belonging
  * to other backends.  Those are treated the same as other backends' regular
@@ -181,9 +181,9 @@ IsToastNamespace(Oid namespaceId)
 
 /*
  * IsReservedName
- *		True iff name starts with the pg_ prefix.
+ *		True iff name starts with the mdb_ prefix.
  *
- *		For some classes of objects, the prefix pg_ is reserved for
+ *		For some classes of objects, the prefix mdb_ is reserved for
  *		system objects only.  As of 8.0, this was only true for
  *		schema and tablespace names.  With 9.6, this is also true
  *		for roles.
@@ -207,8 +207,8 @@ IsReservedName(const char *name)
  * locktag for a relation and lock it before examining its catalog entry.
  * Since we now have MVCC catalog access, the race conditions that made that
  * a hard requirement are gone, so we could look at relaxing this restriction.
- * However, if we scanned the pg_class entry to find relisshared, and only
- * then locked the relation, pg_class could get updated in the meantime,
+ * However, if we scanned the mdb_class entry to find relisshared, and only
+ * then locked the relation, mdb_class could get updated in the meantime,
  * forcing us to scan the relation again, which would definitely be complex
  * and might have undesirable performance consequences.  Fortunately, the set
  * of shared relations is fairly static, so a hand-maintained list of their
@@ -368,9 +368,9 @@ GetNewOidWithIndex(Relation relation, Oid indexId, AttrNumber oidcolumn)
  *		database of the given tablespace.
  *
  * If the relfilenode will also be used as the relation's OID, pass the
- * opened pg_class catalog, and this routine will guarantee that the result
- * is also an unused OID within pg_class.  If the result is to be used only
- * as a relfilenode for an existing relation, pass NULL for pg_class.
+ * opened mdb_class catalog, and this routine will guarantee that the result
+ * is also an unused OID within mdb_class.  If the result is to be used only
+ * as a relfilenode for an existing relation, pass NULL for mdb_class.
  *
  * As with GetNewOid, there is some theoretical risk of a race condition,
  * but it doesn't seem worth worrying about.
@@ -379,7 +379,7 @@ GetNewOidWithIndex(Relation relation, Oid indexId, AttrNumber oidcolumn)
  * created by bootstrap have preassigned OIDs, so there's no need.
  */
 Oid
-GetNewRelFileNode(Oid reltablespace, Relation pg_class, char relpersistence)
+GetNewRelFileNode(Oid reltablespace, Relation mdb_class, char relpersistence)
 {
 	RelFileNodeBackend rnode;
 	char	   *rpath;
@@ -417,8 +417,8 @@ GetNewRelFileNode(Oid reltablespace, Relation pg_class, char relpersistence)
 		CHECK_FOR_INTERRUPTS();
 
 		/* Generate the OID */
-		if (pg_class)
-			rnode.node.relNode = GetNewOid(pg_class);
+		if (mdb_class)
+			rnode.node.relNode = GetNewOid(mdb_class);
 		else
 			rnode.node.relNode = GetNewObjectId();
 

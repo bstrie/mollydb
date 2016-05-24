@@ -56,6 +56,6 @@ RESET enable_indexscan;
 
 -- Run amvalidator function on our opclasses
 SELECT opcname, amvalidate(opc.oid)
-FROM pg_opclass opc JOIN pg_am am ON am.oid = opcmethod
+FROM mdb_opclass opc JOIN mdb_am am ON am.oid = opcmethod
 WHERE amname = 'bloom'
 ORDER BY 1;

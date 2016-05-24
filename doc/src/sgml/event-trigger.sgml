@@ -55,7 +55,7 @@
     The <literal>ddl_command_end</> event occurs just after the execution of
     this same set of commands.  To obtain more details on the <acronym>DDL</>
     operations that took place, use the set-returning function
-    <literal>pg_event_trigger_ddl_commands()</> from the
+    <literal>mdb_event_trigger_ddl_commands()</> from the
     <literal>ddl_command_end</> event trigger code (see
     <xref linkend="functions-event-triggers">).  Note that the trigger fires
     after the actions have taken place (but before the transaction commits),
@@ -66,7 +66,7 @@
     The <literal>sql_drop</> event occurs just before the
     <literal>ddl_command_end</> event trigger for any operation that drops
     database objects.  To list the objects that have been dropped, use the
-    set-returning function <literal>pg_event_trigger_dropped_objects()</> from the
+    set-returning function <literal>mdb_event_trigger_dropped_objects()</> from the
     <literal>sql_drop</> event trigger code (see
     <xref linkend="functions-event-triggers">). Note that
     the trigger is executed after the objects have been deleted from the
@@ -1085,18 +1085,18 @@ $$
 ---   unless they have more than 100 blocks
 ---
 DECLARE
-  table_oid oid := pg_event_trigger_table_rewrite_oid();
+  table_oid oid := mdb_event_trigger_table_rewrite_oid();
   current_hour integer := extract('hour' from current_time);
   pages integer;
   max_pages integer := 100;
 BEGIN
-  IF pg_event_trigger_table_rewrite_oid() = 'public.foo'::regclass
+  IF mdb_event_trigger_table_rewrite_oid() = 'public.foo'::regclass
   THEN
         RAISE EXCEPTION 'you''re not allowed to rewrite the table %',
                         table_oid::regclass;
   END IF;
 
-  SELECT INTO pages relpages FROM pg_class WHERE oid = table_oid;
+  SELECT INTO pages relpages FROM mdb_class WHERE oid = table_oid;
   IF pages > max_pages
   THEN
         RAISE EXCEPTION 'rewrites only allowed for table with less than % pages',

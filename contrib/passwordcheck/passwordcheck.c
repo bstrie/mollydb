@@ -74,7 +74,7 @@ check_password(const char *username,
 			 *
 			 * We only check for username = password.
 			 */
-			if (!pg_md5_encrypt(username, username, namelen, encrypted))
+			if (!mdb_md5_encrypt(username, username, namelen, encrypted))
 				elog(ERROR, "password encryption failed");
 			if (strcmp(password, encrypted) == 0)
 				ereport(ERROR,

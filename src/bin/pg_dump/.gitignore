@@ -1,5 +1,5 @@
-/pg_dump
-/pg_dumpall
-/pg_restore
+/mdb_dump
+/mdb_dumpall
+/mdb_restore
 
 /tmp_check/

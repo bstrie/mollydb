@@ -18,7 +18,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "miscadmin.h"
 #include "postmaster/syslogger.h"
@@ -40,10 +40,10 @@
 
 PG_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(pg_file_write);
-PG_FUNCTION_INFO_V1(pg_file_rename);
-PG_FUNCTION_INFO_V1(pg_file_unlink);
-PG_FUNCTION_INFO_V1(pg_logdir_ls);
+PG_FUNCTION_INFO_V1(mdb_file_write);
+PG_FUNCTION_INFO_V1(mdb_file_rename);
+PG_FUNCTION_INFO_V1(mdb_file_unlink);
+PG_FUNCTION_INFO_V1(mdb_logdir_ls);
 
 typedef struct
 {
@@ -115,7 +115,7 @@ requireSuperuser(void)
  */
 
 Datum
-pg_file_write(PG_FUNCTION_ARGS)
+mdb_file_write(PG_FUNCTION_ARGS)
 {
 	FILE	   *f;
 	char	   *filename;
@@ -163,7 +163,7 @@ pg_file_write(PG_FUNCTION_ARGS)
 
 
 Datum
-pg_file_rename(PG_FUNCTION_ARGS)
+mdb_file_rename(PG_FUNCTION_ARGS)
 {
 	char	   *fn1,
 			   *fn2,
@@ -253,7 +253,7 @@ pg_file_rename(PG_FUNCTION_ARGS)
 
 
 Datum
-pg_file_unlink(PG_FUNCTION_ARGS)
+mdb_file_unlink(PG_FUNCTION_ARGS)
 {
 	char	   *filename;
 
@@ -284,7 +284,7 @@ pg_file_unlink(PG_FUNCTION_ARGS)
 
 
 Datum
-pg_logdir_ls(PG_FUNCTION_ARGS)
+mdb_logdir_ls(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	struct dirent *de;
@@ -346,7 +346,7 @@ pg_logdir_ls(PG_FUNCTION_ARGS)
 					ftype[MAXDATEFIELDS];
 		fsec_t		fsec;
 		int			tz = 0;
-		struct pg_tm date;
+		struct mdb_tm date;
 
 		/*
 		 * Default format: mollydb-YYYY-MM-DD_HHMMSS.log

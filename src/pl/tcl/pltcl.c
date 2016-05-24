@@ -15,13 +15,13 @@
 
 #include "access/htup_details.h"
 #include "access/xact.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "commands/event_trigger.h"
 #include "commands/trigger.h"
 #include "executor/spi.h"
 #include "fmgr.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
 #include "parser/parse_type.h"
@@ -68,13 +68,13 @@ PG_MODULE_MAGIC;
 static inline char *
 utf_u2e(const char *src)
 {
-	return pg_any_to_server(src, strlen(src), PG_UTF8);
+	return mdb_any_to_server(src, strlen(src), PG_UTF8);
 }
 
 static inline char *
 utf_e2u(const char *src)
 {
-	return pg_server_to_any(src, strlen(src), PG_UTF8);
+	return mdb_server_to_any(src, strlen(src), PG_UTF8);
 }
 
 #define UTF_BEGIN \
@@ -347,7 +347,7 @@ _PG_init(void)
 	if (pltcl_pm_init_done)
 		return;
 
-	pg_bindtextdomain(TEXTDOMAIN);
+	mdb_bindtextdomain(TEXTDOMAIN);
 
 #ifdef WIN32
 	/* Required on win32 to prevent error loading init.tcl */
@@ -1244,17 +1244,17 @@ compile_pltcl_function(Oid fn_oid, Oid tgreloid,
 					   bool is_event_trigger, bool pltrusted)
 {
 	HeapTuple	procTup;
-	Form_pg_proc procStruct;
+	Form_mdb_proc procStruct;
 	pltcl_proc_key proc_key;
 	pltcl_proc_ptr *proc_ptr;
 	bool		found;
 	pltcl_proc_desc *prodesc;
 
-	/* We'll need the pg_proc tuple in any case... */
+	/* We'll need the mdb_proc tuple in any case... */
 	procTup = SearchSysCache1(PROCOID, ObjectIdGetDatum(fn_oid));
 	if (!HeapTupleIsValid(procTup))
 		elog(ERROR, "cache lookup failed for function %u", fn_oid);
-	procStruct = (Form_pg_proc) GETSTRUCT(procTup);
+	procStruct = (Form_mdb_proc) GETSTRUCT(procTup);
 
 	/* Try to find function in pltcl_proc_htab */
 	proc_key.proc_id = fn_oid;
@@ -1272,7 +1272,7 @@ compile_pltcl_function(Oid fn_oid, Oid tgreloid,
 	/************************************************************
 	 * If it's present, must check whether it's still up to date.
 	 * This is needed because CREATE OR REPLACE FUNCTION can modify the
-	 * function's pg_proc entry without changing its OID.
+	 * function's mdb_proc entry without changing its OID.
 	 ************************************************************/
 	if (prodesc != NULL)
 	{
@@ -1301,7 +1301,7 @@ compile_pltcl_function(Oid fn_oid, Oid tgreloid,
 		bool		is_trigger = OidIsValid(tgreloid);
 		char		internal_proname[128];
 		HeapTuple	typeTup;
-		Form_pg_type typeStruct;
+		Form_mdb_type typeStruct;
 		Tcl_DString proc_internal_def;
 		Tcl_DString proc_internal_body;
 		char		proc_internal_args[33 * FUNC_MAX_ARGS];
@@ -1375,7 +1375,7 @@ compile_pltcl_function(Oid fn_oid, Oid tgreloid,
 				elog(ERROR, "cache lookup failed for type %u",
 					 procStruct->prorettype);
 			}
-			typeStruct = (Form_pg_type) GETSTRUCT(typeTup);
+			typeStruct = (Form_mdb_type) GETSTRUCT(typeTup);
 
 			/* Disallow pseudotype result, except VOID */
 			if (typeStruct->typtype == TYPTYPE_PSEUDO)
@@ -1440,7 +1440,7 @@ compile_pltcl_function(Oid fn_oid, Oid tgreloid,
 					elog(ERROR, "cache lookup failed for type %u",
 						 procStruct->proargtypes.values[i]);
 				}
-				typeStruct = (Form_pg_type) GETSTRUCT(typeTup);
+				typeStruct = (Form_mdb_type) GETSTRUCT(typeTup);
 
 				/* Disallow pseudotype argument */
 				if (typeStruct->typtype == TYPTYPE_PSEUDO)
@@ -1546,7 +1546,7 @@ compile_pltcl_function(Oid fn_oid, Oid tgreloid,
 		 * Add user's function definition to proc body
 		 ************************************************************/
 		prosrcdatum = SysCacheGetAttr(PROCOID, procTup,
-									  Anum_pg_proc_prosrc, &isnull);
+									  Anum_mdb_proc_prosrc, &isnull);
 		if (isnull)
 			elog(ERROR, "null prosrc");
 		proc_source = TextDatumGetCString(prosrcdatum);

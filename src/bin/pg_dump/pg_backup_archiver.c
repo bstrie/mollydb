@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup_archiver.c
+ * mdb_backup_archiver.c
  *
  *	Private implementation of the archiver routines.
  *
- *	See the headers to pg_restore for more details.
+ *	See the headers to mdb_restore for more details.
  *
  * Copyright (c) 2000, Philip Warner
  *	Rights are granted to use this software in any way so long
@@ -15,16 +15,16 @@
  *
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/pg_backup_archiver.c
+ *		src/bin/mdb_dump/mdb_backup_archiver.c
  *
  *-------------------------------------------------------------------------
  */
 #include "mollydb_fe.h"
 
 #include "parallel.h"
-#include "pg_backup_archiver.h"
-#include "pg_backup_db.h"
-#include "pg_backup_utils.h"
+#include "mdb_backup_archiver.h"
+#include "mdb_backup_db.h"
+#include "mdb_backup_utils.h"
 #include "dumputils.h"
 #include "fe_utils/string_utils.h"
 
@@ -118,7 +118,7 @@ static void StrictNamesCheck(RestoreOptions *ropt);
 DumpOptions *
 NewDumpOptions(void)
 {
-	DumpOptions *opts = (DumpOptions *) pg_malloc(sizeof(DumpOptions));
+	DumpOptions *opts = (DumpOptions *) mdb_malloc(sizeof(DumpOptions));
 
 	InitDumpOptions(opts);
 	return opts;
@@ -145,7 +145,7 @@ dumpOptionsFromRestoreOptions(RestoreOptions *ropt)
 {
 	DumpOptions *dopt = NewDumpOptions();
 
-	/* this is the inverse of what's at the end of pg_dump.c's main() */
+	/* this is the inverse of what's at the end of mdb_dump.c's main() */
 	dopt->outputClean = ropt->dropSchema;
 	dopt->dataOnly = ropt->dataOnly;
 	dopt->schemaOnly = ropt->schemaOnly;
@@ -180,8 +180,8 @@ dumpOptionsFromRestoreOptions(RestoreOptions *ropt)
  */
 
 /*
- * The dump worker setup needs lots of knowledge of the internals of pg_dump,
- * so It's defined in pg_dump.c and passed into OpenArchive. The restore worker
+ * The dump worker setup needs lots of knowledge of the internals of mdb_dump,
+ * so It's defined in mdb_dump.c and passed into OpenArchive. The restore worker
  * setup doesn't need to know anything much, so it's defined here.
  */
 static void
@@ -265,7 +265,7 @@ ProcessArchiveRestoreOptions(Archive *AHX)
 		 * When writing an archive, we also take this opportunity to check
 		 * that we have generated the entries in a sane order that respects
 		 * the section divisions.  When reading, don't complain, since buggy
-		 * old versions of pg_dump might generate out-of-order archives.
+		 * old versions of mdb_dump might generate out-of-order archives.
 		 */
 		if (AH->mode != archModeRead)
 		{
@@ -338,7 +338,7 @@ RestoreArchive(Archive *AHX)
 
 		/* Doesn't work if the archive represents dependencies as OIDs */
 		if (AH->version < K_VERS_1_8)
-			exit_horribly(modulename, "parallel restore is not supported with archives made by pre-8.0 pg_dump\n");
+			exit_horribly(modulename, "parallel restore is not supported with archives made by pre-8.0 mdb_dump\n");
 
 		/*
 		 * It's also not gonna work if we can't reopen the input file, so
@@ -437,7 +437,7 @@ RestoreArchive(Archive *AHX)
 		ahprintf(AH, "-- Dumped from database version %s\n",
 				 AH->archiveRemoteVersion);
 	if (AH->archiveDumpVersion)
-		ahprintf(AH, "-- Dumped by pg_dump version %s\n",
+		ahprintf(AH, "-- Dumped by mdb_dump version %s\n",
 				 AH->archiveDumpVersion);
 
 	ahprintf(AH, "\n");
@@ -525,7 +525,7 @@ RestoreArchive(Archive *AHX)
 						{
 							char		buffer[40];
 							char	   *mark;
-							char	   *dropStmt = pg_strdup(te->dropStmt);
+							char	   *dropStmt = mdb_strdup(te->dropStmt);
 							char	   *dropStmtPtr = dropStmt;
 							PQExpBuffer ftStmt = createPQExpBuffer();
 
@@ -576,7 +576,7 @@ RestoreArchive(Archive *AHX)
 
 							destroyPQExpBuffer(ftStmt);
 
-							pg_free(dropStmtPtr);
+							mdb_free(dropStmtPtr);
 						}
 					}
 				}
@@ -592,7 +592,7 @@ RestoreArchive(Archive *AHX)
 		 * re-establish the search_path setting when needed (after creating
 		 * the schema).
 		 *
-		 * If we treated users as pg_dump'able objects then we'd need to reset
+		 * If we treated users as mdb_dump'able objects then we'd need to reset
 		 * currUser here too.
 		 */
 		if (AH->currSchema)
@@ -773,7 +773,7 @@ restore_toc_entry(ArchiveHandle *AH, TocEntry *te, bool is_parallel)
 		{
 			ahlog(AH, 1, "connecting to new database \"%s\"\n", te->tag);
 			_reconnectToDB(AH, te->tag);
-			ropt->dbname = pg_strdup(te->tag);
+			ropt->dbname = mdb_strdup(te->tag);
 		}
 	}
 
@@ -801,7 +801,7 @@ restore_toc_entry(ArchiveHandle *AH, TocEntry *te, bool is_parallel)
 				{
 					ahlog(AH, 1, "processing %s\n", te->desc);
 
-					_selectOutputSchema(AH, "pg_catalog");
+					_selectOutputSchema(AH, "mdb_catalog");
 
 					/* Send BLOB COMMENTS data to ExecuteSimpleCommands() */
 					if (strcmp(te->desc, "BLOB COMMENTS") == 0)
@@ -901,7 +901,7 @@ NewRestoreOptions(void)
 {
 	RestoreOptions *opts;
 
-	opts = (RestoreOptions *) pg_malloc0(sizeof(RestoreOptions));
+	opts = (RestoreOptions *) mdb_malloc0(sizeof(RestoreOptions));
 
 	/* set any fields that shouldn't default to zeroes */
 	opts->format = archUnknown;
@@ -1007,7 +1007,7 @@ ArchiveEntry(Archive *AHX,
 	ArchiveHandle *AH = (ArchiveHandle *) AHX;
 	TocEntry   *newToc;
 
-	newToc = (TocEntry *) pg_malloc0(sizeof(TocEntry));
+	newToc = (TocEntry *) mdb_malloc0(sizeof(TocEntry));
 
 	AH->tocCount++;
 	if (dumpId > AH->maxDumpId)
@@ -1022,19 +1022,19 @@ ArchiveEntry(Archive *AHX,
 	newToc->dumpId = dumpId;
 	newToc->section = section;
 
-	newToc->tag = pg_strdup(tag);
-	newToc->namespace = namespace ? pg_strdup(namespace) : NULL;
-	newToc->tablespace = tablespace ? pg_strdup(tablespace) : NULL;
-	newToc->owner = pg_strdup(owner);
+	newToc->tag = mdb_strdup(tag);
+	newToc->namespace = namespace ? mdb_strdup(namespace) : NULL;
+	newToc->tablespace = tablespace ? mdb_strdup(tablespace) : NULL;
+	newToc->owner = mdb_strdup(owner);
 	newToc->withOids = withOids;
-	newToc->desc = pg_strdup(desc);
-	newToc->defn = pg_strdup(defn);
-	newToc->dropStmt = pg_strdup(dropStmt);
-	newToc->copyStmt = copyStmt ? pg_strdup(copyStmt) : NULL;
+	newToc->desc = mdb_strdup(desc);
+	newToc->defn = mdb_strdup(defn);
+	newToc->dropStmt = mdb_strdup(dropStmt);
+	newToc->copyStmt = copyStmt ? mdb_strdup(copyStmt) : NULL;
 
 	if (nDeps > 0)
 	{
-		newToc->dependencies = (DumpId *) pg_malloc(nDeps * sizeof(DumpId));
+		newToc->dependencies = (DumpId *) mdb_malloc(nDeps * sizeof(DumpId));
 		memcpy(newToc->dependencies, deps, nDeps * sizeof(DumpId));
 		newToc->nDeps = nDeps;
 	}
@@ -1101,7 +1101,7 @@ PrintTOCSummary(Archive *AHX)
 		ahprintf(AH, ";     Dumped from database version: %s\n",
 				 AH->archiveRemoteVersion);
 	if (AH->archiveDumpVersion)
-		ahprintf(AH, ";     Dumped by pg_dump version: %s\n",
+		ahprintf(AH, ";     Dumped by mdb_dump version: %s\n",
 				 AH->archiveDumpVersion);
 
 	ahprintf(AH, ";\n;\n; Selected TOC Entries:\n;\n");
@@ -1249,10 +1249,10 @@ StartRestoreBlob(ArchiveHandle *AH, Oid oid, bool drop)
 	else
 	{
 		if (old_blob_style)
-			ahprintf(AH, "SELECT pg_catalog.lo_open(pg_catalog.lo_create('%u'), %d);\n",
+			ahprintf(AH, "SELECT mdb_catalog.lo_open(mdb_catalog.lo_create('%u'), %d);\n",
 					 oid, INV_WRITE);
 		else
-			ahprintf(AH, "SELECT pg_catalog.lo_open('%u', %d);\n",
+			ahprintf(AH, "SELECT mdb_catalog.lo_open('%u', %d);\n",
 					 oid, INV_WRITE);
 	}
 
@@ -1277,7 +1277,7 @@ EndRestoreBlob(ArchiveHandle *AH, Oid oid)
 	}
 	else
 	{
-		ahprintf(AH, "SELECT pg_catalog.lo_close(0);\n\n");
+		ahprintf(AH, "SELECT mdb_catalog.lo_close(0);\n\n");
 	}
 }
 
@@ -1295,7 +1295,7 @@ SortTocFromFile(Archive *AHX)
 	bool		incomplete_line;
 
 	/* Allocate space for the 'wanted' array, and init it */
-	ropt->idWanted = (bool *) pg_malloc(sizeof(bool) * AH->maxDumpId);
+	ropt->idWanted = (bool *) mdb_malloc(sizeof(bool) * AH->maxDumpId);
 	memset(ropt->idWanted, 0, sizeof(bool) * AH->maxDumpId);
 
 	/* Setup the file */
@@ -1400,7 +1400,7 @@ archprintf(Archive *AH, const char *fmt,...)
 		va_list		args;
 
 		/* Allocate work buffer. */
-		p = (char *) pg_malloc(len);
+		p = (char *) mdb_malloc(len);
 
 		/* Try to format the data. */
 		va_start(args, fmt);
@@ -1533,7 +1533,7 @@ ahprintf(ArchiveHandle *AH, const char *fmt,...)
 		va_list		args;
 
 		/* Allocate work buffer. */
-		p = (char *) pg_malloc(len);
+		p = (char *) mdb_malloc(len);
 
 		/* Try to format the data. */
 		va_start(args, fmt);
@@ -1608,7 +1608,7 @@ dump_lo_buf(ArchiveHandle *AH)
 
 		/* Hack: turn off writingBlob so ahwrite doesn't recurse to here */
 		AH->writingBlob = 0;
-		ahprintf(AH, "SELECT pg_catalog.lowrite(0, %s);\n", buf->data);
+		ahprintf(AH, "SELECT mdb_catalog.lowrite(0, %s);\n", buf->data);
 		AH->writingBlob = 1;
 
 		destroyPQExpBuffer(buf);
@@ -1768,8 +1768,8 @@ buildTocEntryArrays(ArchiveHandle *AH)
 	DumpId		maxDumpId = AH->maxDumpId;
 	TocEntry   *te;
 
-	AH->tocsByDumpId = (TocEntry **) pg_malloc0((maxDumpId + 1) * sizeof(TocEntry *));
-	AH->tableDataId = (DumpId *) pg_malloc0((maxDumpId + 1) * sizeof(DumpId));
+	AH->tocsByDumpId = (TocEntry **) mdb_malloc0((maxDumpId + 1) * sizeof(TocEntry *));
+	AH->tableDataId = (DumpId *) mdb_malloc0((maxDumpId + 1) * sizeof(DumpId));
 
 	for (te = AH->toc->next; te != AH->toc; te = te->next)
 	{
@@ -1996,7 +1996,7 @@ ReadStr(ArchiveHandle *AH)
 		buf = NULL;
 	else
 	{
-		buf = (char *) pg_malloc(l + 1);
+		buf = (char *) mdb_malloc(l + 1);
 		(*AH->ReadBufPtr) (AH, (void *) buf, l);
 
 		buf[l] = '\0';
@@ -2021,7 +2021,7 @@ _discoverArchiveFormat(ArchiveHandle *AH)
 		free(AH->lookahead);
 
 	AH->lookaheadSize = 512;
-	AH->lookahead = pg_malloc0(512);
+	AH->lookahead = mdb_malloc0(512);
 	AH->lookaheadLen = 0;
 	AH->lookaheadPos = 0;
 
@@ -2218,7 +2218,7 @@ _allocAH(const char *FileSpec, const ArchiveFormat fmt,
 	write_msg(modulename, "allocating AH for %s, format %d\n", FileSpec, fmt);
 #endif
 
-	AH = (ArchiveHandle *) pg_malloc0(sizeof(ArchiveHandle));
+	AH = (ArchiveHandle *) mdb_malloc0(sizeof(ArchiveHandle));
 
 	/* AH->debugLevel = 100; */
 
@@ -2245,12 +2245,12 @@ _allocAH(const char *FileSpec, const ArchiveFormat fmt,
 	AH->offSize = sizeof(pgoff_t);
 	if (FileSpec)
 	{
-		AH->fSpec = pg_strdup(FileSpec);
+		AH->fSpec = mdb_strdup(FileSpec);
 
 		/*
 		 * Not used; maybe later....
 		 *
-		 * AH->workDir = pg_strdup(FileSpec); for(i=strlen(FileSpec) ; i > 0 ;
+		 * AH->workDir = mdb_strdup(FileSpec); for(i=strlen(FileSpec) ; i > 0 ;
 		 * i--) if (AH->workDir[i-1] == '/')
 		 */
 	}
@@ -2262,7 +2262,7 @@ _allocAH(const char *FileSpec, const ArchiveFormat fmt,
 	AH->currTablespace = NULL;	/* ditto */
 	AH->currWithOids = -1;		/* force SET */
 
-	AH->toc = (TocEntry *) pg_malloc0(sizeof(TocEntry));
+	AH->toc = (TocEntry *) mdb_malloc0(sizeof(TocEntry));
 
 	AH->toc->next = AH->toc;
 	AH->toc->prev = AH->toc;
@@ -2461,7 +2461,7 @@ ReadToc(ArchiveHandle *AH)
 
 	for (i = 0; i < AH->tocCount; i++)
 	{
-		te = (TocEntry *) pg_malloc0(sizeof(TocEntry));
+		te = (TocEntry *) mdb_malloc0(sizeof(TocEntry));
 		te->dumpId = ReadInt(AH);
 
 		if (te->dumpId > AH->maxDumpId)
@@ -2497,7 +2497,7 @@ ReadToc(ArchiveHandle *AH)
 		else
 		{
 			/*
-			 * Rules for pre-8.4 archives wherein pg_dump hasn't classified
+			 * Rules for pre-8.4 archives wherein mdb_dump hasn't classified
 			 * the entries into sections.  This list need not cover entry
 			 * types added later than 8.4.
 			 */
@@ -2547,7 +2547,7 @@ ReadToc(ArchiveHandle *AH)
 		if (AH->version >= K_VERS_1_5)
 		{
 			depSize = 100;
-			deps = (DumpId *) pg_malloc(sizeof(DumpId) * depSize);
+			deps = (DumpId *) mdb_malloc(sizeof(DumpId) * depSize);
 			depIdx = 0;
 			for (;;)
 			{
@@ -2557,7 +2557,7 @@ ReadToc(ArchiveHandle *AH)
 				if (depIdx >= depSize)
 				{
 					depSize *= 2;
-					deps = (DumpId *) pg_realloc(deps, sizeof(DumpId) * depSize);
+					deps = (DumpId *) mdb_realloc(deps, sizeof(DumpId) * depSize);
 				}
 				sscanf(tmp, "%d", &deps[depIdx]);
 				free(tmp);
@@ -2566,7 +2566,7 @@ ReadToc(ArchiveHandle *AH)
 
 			if (depIdx > 0)		/* We have a non-null entry */
 			{
-				deps = (DumpId *) pg_realloc(deps, sizeof(DumpId) * depIdx);
+				deps = (DumpId *) mdb_realloc(deps, sizeof(DumpId) * depIdx);
 				te->dependencies = deps;
 				te->nDeps = depIdx;
 			}
@@ -2607,7 +2607,7 @@ static void
 processEncodingEntry(ArchiveHandle *AH, TocEntry *te)
 {
 	/* te->defn should have the form SET client_encoding = 'foo'; */
-	char	   *defn = pg_strdup(te->defn);
+	char	   *defn = mdb_strdup(te->defn);
 	char	   *ptr1;
 	char	   *ptr2 = NULL;
 	int			encoding;
@@ -2618,7 +2618,7 @@ processEncodingEntry(ArchiveHandle *AH, TocEntry *te)
 	if (ptr2)
 	{
 		*ptr2 = '\0';
-		encoding = pg_char_to_encoding(ptr1);
+		encoding = mdb_char_to_encoding(ptr1);
 		if (encoding < 0)
 			exit_horribly(modulename, "unrecognized encoding \"%s\"\n",
 						  ptr1);
@@ -2861,7 +2861,7 @@ _doSetFixedOutputState(ArchiveHandle *AH)
 
 	/* Select the correct character set encoding */
 	ahprintf(AH, "SET client_encoding = '%s';\n",
-			 pg_encoding_to_char(AH->public.encoding));
+			 mdb_encoding_to_char(AH->public.encoding));
 
 	/* Select the correct string literal syntax */
 	ahprintf(AH, "SET standard_conforming_strings = %s;\n",
@@ -3028,7 +3028,7 @@ _becomeUser(ArchiveHandle *AH, const char *user)
 	 */
 	if (AH->currUser)
 		free(AH->currUser);
-	AH->currUser = pg_strdup(user);
+	AH->currUser = mdb_strdup(user);
 }
 
 /*
@@ -3078,8 +3078,8 @@ _selectOutputSchema(ArchiveHandle *AH, const char *schemaName)
 
 	appendPQExpBuffer(qry, "SET search_path = %s",
 					  fmtId(schemaName));
-	if (strcmp(schemaName, "pg_catalog") != 0)
-		appendPQExpBufferStr(qry, ", pg_catalog");
+	if (strcmp(schemaName, "mdb_catalog") != 0)
+		appendPQExpBufferStr(qry, ", mdb_catalog");
 
 	if (RestoringToDB(AH))
 	{
@@ -3099,7 +3099,7 @@ _selectOutputSchema(ArchiveHandle *AH, const char *schemaName)
 
 	if (AH->currSchema)
 		free(AH->currSchema);
-	AH->currSchema = pg_strdup(schemaName);
+	AH->currSchema = mdb_strdup(schemaName);
 
 	destroyPQExpBuffer(qry);
 }
@@ -3161,7 +3161,7 @@ _selectTablespace(ArchiveHandle *AH, const char *tablespace)
 
 	if (AH->currTablespace)
 		free(AH->currTablespace);
-	AH->currTablespace = pg_strdup(want);
+	AH->currTablespace = mdb_strdup(want);
 
 	destroyPQExpBuffer(qry);
 }
@@ -3221,7 +3221,7 @@ _getObjectDescription(PQExpBuffer buf, TocEntry *te, ArchiveHandle *AH)
 		strcmp(type, "OPERATOR FAMILY") == 0)
 	{
 		/* Chop "DROP " off the front and make a modifiable copy */
-		char	   *first = pg_strdup(te->dropStmt + 5);
+		char	   *first = mdb_strdup(te->dropStmt + 5);
 		char	   *last;
 
 		/* point to last character in string */
@@ -3323,11 +3323,11 @@ _printTocEntry(ArchiveHandle *AH, TocEntry *te, bool isData, bool acl_pass)
 		if (te->namespace)
 			sanitized_schema = replace_line_endings(te->namespace);
 		else
-			sanitized_schema = pg_strdup("-");
+			sanitized_schema = mdb_strdup("-");
 		if (!ropt->noOwner)
 			sanitized_owner = replace_line_endings(te->owner);
 		else
-			sanitized_owner = pg_strdup("-");
+			sanitized_owner = mdb_strdup("-");
 
 		ahprintf(AH, "-- %sName: %s; Type: %s; Schema: %s; Owner: %s",
 				 pfx, sanitized_name, te->desc, sanitized_schema,
@@ -3355,7 +3355,7 @@ _printTocEntry(ArchiveHandle *AH, TocEntry *te, bool isData, bool acl_pass)
 	/*
 	 * Actually print the definition.
 	 *
-	 * Really crude hack for suppressing AUTHORIZATION clause that old pg_dump
+	 * Really crude hack for suppressing AUTHORIZATION clause that old mdb_dump
 	 * versions put into CREATE SCHEMA.  We have to do this when --no-owner
 	 * mode is selected.  This is ugly, but I see no other good way ...
 	 */
@@ -3452,7 +3452,7 @@ replace_line_endings(const char *str)
 	char	   *result;
 	char	   *s;
 
-	result = pg_strdup(str);
+	result = mdb_strdup(str);
 
 	for (s = result; *s != '\0'; s++)
 	{
@@ -3667,7 +3667,7 @@ restore_toc_entries_prefork(ArchiveHandle *AH)
 	 * Do all the early stuff in a single connection in the parent. There's no
 	 * great point in running it in parallel, in fact it will actually run
 	 * faster in a single connection because we avoid all the connection and
-	 * setup overhead.  Also, pre-9.2 pg_dump versions were not very good
+	 * setup overhead.  Also, pre-9.2 mdb_dump versions were not very good
 	 * about showing all the dependencies of SECTION_PRE_DATA items, so we do
 	 * not risk trying to process them out-of-order.
 	 *
@@ -4168,7 +4168,7 @@ fix_dependencies(ArchiveHandle *AH)
 	repoint_table_dependencies(AH);
 
 	/*
-	 * Pre-8.4 versions of pg_dump neglected to set up a dependency from BLOB
+	 * Pre-8.4 versions of mdb_dump neglected to set up a dependency from BLOB
 	 * COMMENTS to BLOBS.  Cope.  (We assume there's only one BLOBS and only
 	 * one BLOB COMMENTS in such files.)
 	 */
@@ -4184,7 +4184,7 @@ fix_dependencies(ArchiveHandle *AH)
 				{
 					if (strcmp(te2->desc, "BLOBS") == 0)
 					{
-						te->dependencies = (DumpId *) pg_malloc(sizeof(DumpId));
+						te->dependencies = (DumpId *) mdb_malloc(sizeof(DumpId));
 						te->dependencies[0] = te2->dumpId;
 						te->nDeps++;
 						te->depCount++;
@@ -4227,7 +4227,7 @@ fix_dependencies(ArchiveHandle *AH)
 	for (te = AH->toc->next; te != AH->toc; te = te->next)
 	{
 		if (te->nRevDeps > 0)
-			te->revDeps = (DumpId *) pg_malloc(te->nRevDeps * sizeof(DumpId));
+			te->revDeps = (DumpId *) mdb_malloc(te->nRevDeps * sizeof(DumpId));
 		te->nRevDeps = 0;
 	}
 
@@ -4324,7 +4324,7 @@ identify_locking_dependencies(ArchiveHandle *AH, TocEntry *te)
 	 * difference between a dependency on a table and a dependency on its
 	 * data, so that closer analysis would be needed here.
 	 */
-	lockids = (DumpId *) pg_malloc(te->nDeps * sizeof(DumpId));
+	lockids = (DumpId *) mdb_malloc(te->nDeps * sizeof(DumpId));
 	nlockids = 0;
 	for (i = 0; i < te->nDeps; i++)
 	{
@@ -4342,7 +4342,7 @@ identify_locking_dependencies(ArchiveHandle *AH, TocEntry *te)
 		return;
 	}
 
-	te->lockDeps = pg_realloc(lockids, nlockids * sizeof(DumpId));
+	te->lockDeps = mdb_realloc(lockids, nlockids * sizeof(DumpId));
 	te->nLockDeps = nlockids;
 }
 
@@ -4418,7 +4418,7 @@ CloneArchive(ArchiveHandle *AH)
 	ArchiveHandle *clone;
 
 	/* Make a "flat" copy */
-	clone = (ArchiveHandle *) pg_malloc(sizeof(ArchiveHandle));
+	clone = (ArchiveHandle *) mdb_malloc(sizeof(ArchiveHandle));
 	memcpy(clone, AH, sizeof(ArchiveHandle));
 
 	/* Handle format-independent fields */
@@ -4433,7 +4433,7 @@ CloneArchive(ArchiveHandle *AH)
 
 	/* savedPassword must be local in case we change it while connecting */
 	if (clone->savedPassword)
-		clone->savedPassword = pg_strdup(clone->savedPassword);
+		clone->savedPassword = mdb_strdup(clone->savedPassword);
 
 	/* clone has its own error count, too */
 	clone->public.n_errors = 0;
@@ -4474,14 +4474,14 @@ CloneArchive(ArchiveHandle *AH)
 		pghost = PQhost(AH->connection);
 		pgport = PQport(AH->connection);
 		username = PQuser(AH->connection);
-		encname = pg_encoding_to_char(AH->public.encoding);
+		encname = mdb_encoding_to_char(AH->public.encoding);
 
 		/* this also sets clone->connection */
 		ConnectDatabase((Archive *) clone, dbname, pghost, pgport, username, TRI_NO);
 
 		/*
 		 * Set the same encoding, whatever we set here is what we got from
-		 * pg_encoding_to_char(), so we really shouldn't run into an error
+		 * mdb_encoding_to_char(), so we really shouldn't run into an error
 		 * setting that very same value. Also see the comment in
 		 * SetupConnection().
 		 */

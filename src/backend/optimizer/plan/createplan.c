@@ -21,7 +21,7 @@
 
 #include "access/stratnum.h"
 #include "access/sysattr.h"
-#include "catalog/pg_class.h"
+#include "catalog/mdb_class.h"
 #include "foreign/fdwapi.h"
 #include "miscadmin.h"
 #include "nodes/extensible.h"

@@ -35,7 +35,7 @@
 #include <unistd.h>
 #endif
 
-#include "pg_config_paths.h"
+#include "mdb_config_paths.h"
 
 
 #ifndef WIN32
@@ -475,7 +475,7 @@ get_progname(const char *argv0)
 #if defined(__CYGWIN__) || defined(WIN32)
 	/* strip ".exe" suffix, regardless of case */
 	if (strlen(progname) > sizeof(EXE) - 1 &&
-	pg_strcasecmp(progname + strlen(progname) - (sizeof(EXE) - 1), EXE) == 0)
+	mdb_strcasecmp(progname + strlen(progname) - (sizeof(EXE) - 1), EXE) == 0)
 		progname[strlen(progname) - (sizeof(EXE) - 1)] = '\0';
 #endif
 
@@ -497,7 +497,7 @@ dir_strcmp(const char *s1, const char *s2)
 			*s1 != *s2
 #else
 		/* On windows, paths are case-insensitive */
-			pg_tolower((unsigned char) *s1) != pg_tolower((unsigned char) *s2)
+			mdb_tolower((unsigned char) *s1) != mdb_tolower((unsigned char) *s2)
 #endif
 			&& !(IS_DIR_SEP(*s1) && IS_DIR_SEP(*s2)))
 			return (int) *s1 - (int) *s2;

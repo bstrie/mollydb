@@ -197,7 +197,7 @@ pq_init(void)
 	 * infinite recursion.
 	 */
 #ifndef WIN32
-	if (!pg_set_noblock(MyProcPort->sock))
+	if (!mdb_set_noblock(MyProcPort->sock))
 		ereport(COMMERROR,
 				(errmsg("could not set socket to nonblocking mode: %m")));
 #endif
@@ -229,7 +229,7 @@ socket_comm_reset(void)
 /* --------------------------------
  *		socket_close - shutdown libpq at backend exit
  *
- * This is the one pg_on_exit_callback in place during BackendInitialize().
+ * This is the one mdb_on_exit_callback in place during BackendInitialize().
  * That function's unusual signal handling constrains that this callback be
  * safe to run at any instant.
  * --------------------------------
@@ -246,7 +246,7 @@ socket_close(int code, Datum arg)
 
 		/*
 		 * Shutdown GSSAPI layer.  This section does nothing when interrupting
-		 * BackendInitialize(), because pg_GSS_recvauth() makes first use of
+		 * BackendInitialize(), because mdb_GSS_recvauth() makes first use of
 		 * "ctx" and "cred".
 		 */
 		if (MyProcPort->gss->ctx != GSS_C_NO_CONTEXT)
@@ -367,7 +367,7 @@ StreamServerPort(int family, char *hostName, unsigned short portNumber,
 		service = portNumberStr;
 	}
 
-	ret = pg_getaddrinfo_all(hostName, service, &hint, &addrs);
+	ret = mdb_getaddrinfo_all(hostName, service, &hint, &addrs);
 	if (ret || !addrs)
 	{
 		if (hostName)
@@ -379,7 +379,7 @@ StreamServerPort(int family, char *hostName, unsigned short portNumber,
 				 (errmsg("could not translate service \"%s\" to address: %s",
 						 service, gai_strerror(ret))));
 		if (addrs)
-			pg_freeaddrinfo_all(hint.ai_family, addrs);
+			mdb_freeaddrinfo_all(hint.ai_family, addrs);
 		return STATUS_ERROR;
 	}
 
@@ -544,7 +544,7 @@ StreamServerPort(int family, char *hostName, unsigned short portNumber,
 		added++;
 	}
 
-	pg_freeaddrinfo_all(hint.ai_family, addrs);
+	mdb_freeaddrinfo_all(hint.ai_family, addrs);
 
 	if (!added)
 		return STATUS_ERROR;
@@ -680,7 +680,7 @@ StreamConnection(pgsocket server_fd, Port *port)
 		 * (The most likely reason for failure is being out of kernel file
 		 * table slots; we can do little except hope some will get freed up.)
 		 */
-		pg_usleep(100000L);		/* wait 0.1 sec */
+		mdb_usleep(100000L);		/* wait 0.1 sec */
 		return STATUS_ERROR;
 	}
 

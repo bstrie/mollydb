@@ -35,7 +35,7 @@
 /*
  * Add your own defines, if needed, here.
  */
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 /*
  * interface types etc.
@@ -158,7 +158,7 @@ typedef struct
 /* two specials for debugging and testing */
 #define REG_ATOI	101			/* convert error-code name to number */
 #define REG_ITOA	102			/* convert error-code number to name */
-/* non-error result codes for pg_regprefix */
+/* non-error result codes for mdb_regprefix */
 #define REG_PREFIX	(-1)		/* identified a common prefix */
 #define REG_EXACT	(-2)		/* identified an exact match */
 
@@ -167,11 +167,11 @@ typedef struct
 /*
  * the prototypes for exported functions
  */
-extern int	pg_regcomp(regex_t *, const pg_wchar *, size_t, int, Oid);
-extern int	pg_regexec(regex_t *, const pg_wchar *, size_t, size_t, rm_detail_t *, size_t, regmatch_t[], int);
-extern int	pg_regprefix(regex_t *, pg_wchar **, size_t *);
-extern void pg_regfree(regex_t *);
-extern size_t pg_regerror(int, const regex_t *, char *, size_t);
-extern void pg_set_regex_collation(Oid collation);
+extern int	mdb_regcomp(regex_t *, const mdb_wchar *, size_t, int, Oid);
+extern int	mdb_regexec(regex_t *, const mdb_wchar *, size_t, size_t, rm_detail_t *, size_t, regmatch_t[], int);
+extern int	mdb_regprefix(regex_t *, mdb_wchar **, size_t *);
+extern void mdb_regfree(regex_t *);
+extern size_t mdb_regerror(int, const regex_t *, char *, size_t);
+extern void mdb_set_regex_collation(Oid collation);
 
 #endif   /* _REGEX_H_ */

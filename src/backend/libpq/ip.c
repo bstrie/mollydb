@@ -58,10 +58,10 @@ static int getnameinfo_unix(const struct sockaddr_un * sa, int salen,
 
 
 /*
- *	pg_getaddrinfo_all - get address info for Unix, IPv4 and IPv6 sockets
+ *	mdb_getaddrinfo_all - get address info for Unix, IPv4 and IPv6 sockets
  */
 int
-pg_getaddrinfo_all(const char *hostname, const char *servname,
+mdb_getaddrinfo_all(const char *hostname, const char *servname,
 				   const struct addrinfo * hintp, struct addrinfo ** result)
 {
 	int			rc;
@@ -83,7 +83,7 @@ pg_getaddrinfo_all(const char *hostname, const char *servname,
 
 
 /*
- *	pg_freeaddrinfo_all - free addrinfo structures for IPv4, IPv6, or Unix
+ *	mdb_freeaddrinfo_all - free addrinfo structures for IPv4, IPv6, or Unix
  *
  * Note: the ai_family field of the original hint structure must be passed
  * so that we can tell whether the addrinfo struct was built by the system's
@@ -92,12 +92,12 @@ pg_getaddrinfo_all(const char *hostname, const char *servname,
  * not safe to look at ai_family in the addrinfo itself.
  */
 void
-pg_freeaddrinfo_all(int hint_ai_family, struct addrinfo * ai)
+mdb_freeaddrinfo_all(int hint_ai_family, struct addrinfo * ai)
 {
 #ifdef HAVE_UNIX_SOCKETS
 	if (hint_ai_family == AF_UNIX)
 	{
-		/* struct was built by getaddrinfo_unix (see pg_getaddrinfo_all) */
+		/* struct was built by getaddrinfo_unix (see mdb_getaddrinfo_all) */
 		while (ai != NULL)
 		{
 			struct addrinfo *p = ai;
@@ -118,7 +118,7 @@ pg_freeaddrinfo_all(int hint_ai_family, struct addrinfo * ai)
 
 
 /*
- *	pg_getnameinfo_all - get name info for Unix, IPv4 and IPv6 sockets
+ *	mdb_getnameinfo_all - get name info for Unix, IPv4 and IPv6 sockets
  *
  * The API of this routine differs from the standard getnameinfo() definition
  * in two ways: first, the addr parameter is declared as sockaddr_storage
@@ -126,7 +126,7 @@ pg_freeaddrinfo_all(int hint_ai_family, struct addrinfo * ai)
  * guaranteed to be filled with something even on failure return.
  */
 int
-pg_getnameinfo_all(const struct sockaddr_storage * addr, int salen,
+mdb_getnameinfo_all(const struct sockaddr_storage * addr, int salen,
 				   char *node, int nodelen,
 				   char *service, int servicelen,
 				   int flags)
@@ -267,13 +267,13 @@ getnameinfo_unix(const struct sockaddr_un * sa, int salen,
 
 
 /*
- * pg_range_sockaddr - is addr within the subnet specified by netaddr/netmask ?
+ * mdb_range_sockaddr - is addr within the subnet specified by netaddr/netmask ?
  *
  * Note: caller must already have verified that all three addresses are
  * in the same address family; and AF_UNIX addresses are not supported.
  */
 int
-pg_range_sockaddr(const struct sockaddr_storage * addr,
+mdb_range_sockaddr(const struct sockaddr_storage * addr,
 				  const struct sockaddr_storage * netaddr,
 				  const struct sockaddr_storage * netmask)
 {
@@ -325,7 +325,7 @@ range_sockaddr_AF_INET6(const struct sockaddr_in6 * addr,
 #endif   /* HAVE_IPV6 */
 
 /*
- *	pg_sockaddr_cidr_mask - make a network mask of the appropriate family
+ *	mdb_sockaddr_cidr_mask - make a network mask of the appropriate family
  *	  and required number of significant bits
  *
  * numbits can be null, in which case the mask is fully set.
@@ -335,7 +335,7 @@ range_sockaddr_AF_INET6(const struct sockaddr_in6 * addr,
  * Return value is 0 if okay, -1 if not.
  */
 int
-pg_sockaddr_cidr_mask(struct sockaddr_storage * mask, char *numbits, int family)
+mdb_sockaddr_cidr_mask(struct sockaddr_storage * mask, char *numbits, int family)
 {
 	long		bits;
 	char	   *endptr;
@@ -444,7 +444,7 @@ run_ifaddr_callback(PgIfAddrCallback callback, void *cb_data,
 	/* If mask is invalid, generate our own fully-set mask */
 	if (!mask)
 	{
-		pg_sockaddr_cidr_mask(&fullmask, NULL, addr->sa_family);
+		mdb_sockaddr_cidr_mask(&fullmask, NULL, addr->sa_family);
 		mask = (struct sockaddr *) & fullmask;
 	}
 
@@ -463,7 +463,7 @@ run_ifaddr_callback(PgIfAddrCallback callback, void *cb_data,
  * This version is for Win32.  Uses the Winsock 2 functions (ie: ws2_32.dll)
  */
 int
-pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
+mdb_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
 {
 	INTERFACE_INFO *ptr,
 			   *ii = NULL;
@@ -528,7 +528,7 @@ pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
  * BSDs, AIX, and modern Linux.
  */
 int
-pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
+mdb_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
 {
 	struct ifaddrs *ifa,
 			   *l;
@@ -577,7 +577,7 @@ pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
  * This version uses ioctl(SIOCGLIFCONF).
  */
 int
-pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
+mdb_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
 {
 	struct lifconf lifc;
 	struct lifreq *lifr,
@@ -705,7 +705,7 @@ pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
  * This version uses ioctl(SIOCGIFCONF).
  */
 int
-pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
+mdb_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
 {
 	struct ifconf ifc;
 	struct ifreq *ifr,
@@ -781,7 +781,7 @@ pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
  * interface addresses.  Just return the standard loopback addresses.
  */
 int
-pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
+mdb_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
 {
 	struct sockaddr_in addr;
 	struct sockaddr_storage mask;
@@ -795,7 +795,7 @@ pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = ntohl(0x7f000001);
 	memset(&mask, 0, sizeof(mask));
-	pg_sockaddr_cidr_mask(&mask, "8", AF_INET);
+	mdb_sockaddr_cidr_mask(&mask, "8", AF_INET);
 	run_ifaddr_callback(callback, cb_data,
 						(struct sockaddr *) & addr,
 						(struct sockaddr *) & mask);
@@ -806,7 +806,7 @@ pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data)
 	addr6.sin6_family = AF_INET6;
 	addr6.sin6_addr.s6_addr[15] = 1;
 	memset(&mask, 0, sizeof(mask));
-	pg_sockaddr_cidr_mask(&mask, "128", AF_INET6);
+	mdb_sockaddr_cidr_mask(&mask, "128", AF_INET6);
 	run_ifaddr_callback(callback, cb_data,
 						(struct sockaddr *) & addr6,
 						(struct sockaddr *) & mask);

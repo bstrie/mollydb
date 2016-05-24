@@ -1564,7 +1564,7 @@ mollydbPlanForeignModify(PlannerInfo *root,
 
 		for (attnum = 1; attnum <= tupdesc->natts; attnum++)
 		{
-			Form_pg_attribute attr = tupdesc->attrs[attnum - 1];
+			Form_mdb_attribute attr = tupdesc->attrs[attnum - 1];
 
 			if (!attr->attisdropped)
 				targetAttrs = lappend_int(targetAttrs, attnum);
@@ -1739,7 +1739,7 @@ mollydbBeginForeignModify(ModifyTableState *mtstate,
 		foreach(lc, fmstate->target_attrs)
 		{
 			int			attnum = lfirst_int(lc);
-			Form_pg_attribute attr = RelationGetDescr(rel)->attrs[attnum - 1];
+			Form_mdb_attribute attr = RelationGetDescr(rel)->attrs[attnum - 1];
 
 			Assert(!attr->attisdropped);
 
@@ -2987,7 +2987,7 @@ set_transmission_modes(void)
 	int			nestlevel = NewGUCNestLevel();
 
 	/*
-	 * The values set here should match what pg_dump does.  See also
+	 * The values set here should match what mdb_dump does.  See also
 	 * configure_remote_session in connection.c.
 	 */
 	if (DateStyle != USE_ISO_DATES)
@@ -3735,7 +3735,7 @@ mollydbImportForeignSchema(ImportForeignSchemaStmt *stmt, Oid serverOid)
 	PG_TRY();
 	{
 		/* Check that the schema really exists */
-		appendStringInfoString(&buf, "SELECT 1 FROM pg_catalog.pg_namespace WHERE nspname = ");
+		appendStringInfoString(&buf, "SELECT 1 FROM mdb_catalog.mdb_namespace WHERE nspname = ");
 		deparseStringLiteral(&buf, stmt->remote_schema);
 
 		res = pgfdw_exec_query(conn, buf.data);
@@ -3761,7 +3761,7 @@ mollydbImportForeignSchema(ImportForeignSchemaStmt *stmt, Oid serverOid)
 		 * first place.)
 		 *
 		 * Note: because we run the connection with search_path restricted to
-		 * pg_catalog, the format_type() and pg_get_expr() outputs will always
+		 * mdb_catalog, the format_type() and mdb_get_expr() outputs will always
 		 * include a schema name for types/functions in other schemas, which
 		 * is what we want.
 		 */
@@ -3771,20 +3771,20 @@ mollydbImportForeignSchema(ImportForeignSchemaStmt *stmt, Oid serverOid)
 								   "  attname, "
 								   "  format_type(atttypid, atttypmod), "
 								   "  attnotnull, "
-								   "  pg_get_expr(adbin, adrelid), "
+								   "  mdb_get_expr(adbin, adrelid), "
 								   "  collname, "
 								   "  collnsp.nspname "
-								   "FROM pg_class c "
-								   "  JOIN pg_namespace n ON "
+								   "FROM mdb_class c "
+								   "  JOIN mdb_namespace n ON "
 								   "    relnamespace = n.oid "
-								   "  LEFT JOIN pg_attribute a ON "
+								   "  LEFT JOIN mdb_attribute a ON "
 								   "    attrelid = c.oid AND attnum > 0 "
 								   "      AND NOT attisdropped "
-								   "  LEFT JOIN pg_attrdef ad ON "
+								   "  LEFT JOIN mdb_attrdef ad ON "
 								   "    adrelid = c.oid AND adnum = attnum "
-								   "  LEFT JOIN pg_collation coll ON "
+								   "  LEFT JOIN mdb_collation coll ON "
 								   "    coll.oid = attcollation "
-								   "  LEFT JOIN pg_namespace collnsp ON "
+								   "  LEFT JOIN mdb_namespace collnsp ON "
 								   "    collnsp.oid = collnamespace ");
 		else
 			appendStringInfoString(&buf,
@@ -3792,15 +3792,15 @@ mollydbImportForeignSchema(ImportForeignSchemaStmt *stmt, Oid serverOid)
 								   "  attname, "
 								   "  format_type(atttypid, atttypmod), "
 								   "  attnotnull, "
-								   "  pg_get_expr(adbin, adrelid), "
+								   "  mdb_get_expr(adbin, adrelid), "
 								   "  NULL, NULL "
-								   "FROM pg_class c "
-								   "  JOIN pg_namespace n ON "
+								   "FROM mdb_class c "
+								   "  JOIN mdb_namespace n ON "
 								   "    relnamespace = n.oid "
-								   "  LEFT JOIN pg_attribute a ON "
+								   "  LEFT JOIN mdb_attribute a ON "
 								   "    attrelid = c.oid AND attnum > 0 "
 								   "      AND NOT attisdropped "
-								   "  LEFT JOIN pg_attrdef ad ON "
+								   "  LEFT JOIN mdb_attrdef ad ON "
 								   "    adrelid = c.oid AND adnum = attnum ");
 
 		appendStringInfoString(&buf,

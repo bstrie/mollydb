@@ -13,7 +13,7 @@
 
 #include "mollydb.h"
 #include "fmgr.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "../../Unicode/uhc_to_utf8.map"
 #include "../../Unicode/utf8_to_uhc.map"
 

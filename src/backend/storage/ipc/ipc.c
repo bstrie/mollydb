@@ -67,7 +67,7 @@ static void proc_exit_prepare(int code);
 
 struct ONEXIT
 {
-	pg_on_exit_callback function;
+	mdb_on_exit_callback function;
 	Datum		arg;
 };
 
@@ -289,7 +289,7 @@ atexit_callback(void)
  * ----------------------------------------------------------------
  */
 void
-on_proc_exit(pg_on_exit_callback function, Datum arg)
+on_proc_exit(mdb_on_exit_callback function, Datum arg)
 {
 	if (on_proc_exit_index >= MAX_ON_EXITS)
 		ereport(FATAL,
@@ -317,7 +317,7 @@ on_proc_exit(pg_on_exit_callback function, Datum arg)
  * ----------------------------------------------------------------
  */
 void
-before_shmem_exit(pg_on_exit_callback function, Datum arg)
+before_shmem_exit(mdb_on_exit_callback function, Datum arg)
 {
 	if (before_shmem_exit_index >= MAX_ON_EXITS)
 		ereport(FATAL,
@@ -345,7 +345,7 @@ before_shmem_exit(pg_on_exit_callback function, Datum arg)
  * ----------------------------------------------------------------
  */
 void
-on_shmem_exit(pg_on_exit_callback function, Datum arg)
+on_shmem_exit(mdb_on_exit_callback function, Datum arg)
 {
 	if (on_shmem_exit_index >= MAX_ON_EXITS)
 		ereport(FATAL,
@@ -374,7 +374,7 @@ on_shmem_exit(pg_on_exit_callback function, Datum arg)
  * ----------------------------------------------------------------
  */
 void
-cancel_before_shmem_exit(pg_on_exit_callback function, Datum arg)
+cancel_before_shmem_exit(mdb_on_exit_callback function, Datum arg)
 {
 	if (before_shmem_exit_index > 0 &&
 		before_shmem_exit_list[before_shmem_exit_index - 1].function

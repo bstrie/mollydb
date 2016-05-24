@@ -28,10 +28,10 @@ REGRESS = test_ddl_deparse \
 	defprivs \
 	matviews
 
-EXTRA_INSTALL = contrib/pg_stat_statements
+EXTRA_INSTALL = contrib/mdb_stat_statements
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

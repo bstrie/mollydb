@@ -9,7 +9,7 @@
  * So the XLogRecord typedef and associated stuff appear in xlogrecord.h.
  *
  * Note: This file must be includable in both frontend and backend contexts,
- * to allow stand-alone tools like pg_receivexlog to deal with WAL files.
+ * to allow stand-alone tools like mdb_receivexlog to deal with WAL files.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -64,7 +64,7 @@ typedef XLogPageHeaderData *XLogPageHeader;
 typedef struct XLogLongPageHeaderData
 {
 	XLogPageHeaderData std;		/* standard header fields */
-	uint64		xlp_sysid;		/* system identifier from pg_control */
+	uint64		xlp_sysid;		/* system identifier from mdb_control */
 	uint32		xlp_seg_size;	/* just as a cross-check */
 	uint32		xlp_xlog_blcksz;	/* just as a cross-check */
 } XLogLongPageHeaderData;
@@ -128,8 +128,8 @@ typedef XLogLongPageHeaderData *XLogLongPageHeader;
 /*
  * The XLog directory and control file (relative to $PGDATA)
  */
-#define XLOGDIR				"pg_xlog"
-#define XLOG_CONTROL_FILE	"global/pg_control"
+#define XLOGDIR				"mdb_xlog"
+#define XLOG_CONTROL_FILE	"global/mdb_control"
 
 /*
  * These macros encapsulate knowledge about the exact layout of XLog file
@@ -153,7 +153,7 @@ typedef XLogLongPageHeaderData *XLogLongPageHeader;
 	 strspn(fname, "0123456789ABCDEF") == XLOG_FNAME_LEN)
 
 /*
- * XLOG segment with .partial suffix.  Used by pg_receivexlog and at end of
+ * XLOG segment with .partial suffix.  Used by mdb_receivexlog and at end of
  * archive recovery, when we want to archive a WAL segment but it might not
  * be complete yet.
  */
@@ -283,7 +283,7 @@ extern const RmgrData RmgrTable[];
 /*
  * Exported to support xlog switching from checkpointer
  */
-extern pg_time_t GetLastSegSwitchTime(void);
+extern mdb_time_t GetLastSegSwitchTime(void);
 extern XLogRecPtr RequestXLogSwitch(void);
 
 extern void GetOldestRestartPoint(XLogRecPtr *oldrecptr, TimeLineID *oldtli);

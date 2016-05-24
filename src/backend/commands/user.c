@@ -21,10 +21,10 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_auth_members.h"
-#include "catalog/pg_authid.h"
-#include "catalog/pg_database.h"
-#include "catalog/pg_db_role_setting.h"
+#include "catalog/mdb_auth_members.h"
+#include "catalog/mdb_authid.h"
+#include "catalog/mdb_database.h"
+#include "catalog/mdb_db_role_setting.h"
 #include "commands/comment.h"
 #include "commands/dbcommands.h"
 #include "commands/seclabel.h"
@@ -39,8 +39,8 @@
 #include "utils/timestamp.h"
 #include "utils/tqual.h"
 
-/* Potentially set by pg_upgrade_support functions */
-Oid			binary_upgrade_next_pg_authid_oid = InvalidOid;
+/* Potentially set by mdb_upgrade_support functions */
+Oid			binary_upgrade_next_mdb_authid_oid = InvalidOid;
 
 
 /* GUC parameter */
@@ -71,11 +71,11 @@ have_createrole_privilege(void)
 Oid
 CreateRole(CreateRoleStmt *stmt)
 {
-	Relation	pg_authid_rel;
-	TupleDesc	pg_authid_dsc;
+	Relation	mdb_authid_rel;
+	TupleDesc	mdb_authid_dsc;
 	HeapTuple	tuple;
-	Datum		new_record[Natts_pg_authid];
-	bool		new_record_nulls[Natts_pg_authid];
+	Datum		new_record[Natts_mdb_authid];
+	bool		new_record_nulls[Natts_mdb_authid];
 	Oid			roleid;
 	ListCell   *item;
 	ListCell   *option;
@@ -314,21 +314,21 @@ CreateRole(CreateRoleStmt *stmt)
 
 	/*
 	 * Check that the user is not trying to create a role in the reserved
-	 * "pg_" namespace.
+	 * "mdb_" namespace.
 	 */
 	if (IsReservedName(stmt->role))
 		ereport(ERROR,
 				(errcode(ERRCODE_RESERVED_NAME),
 				 errmsg("role name \"%s\" is reserved",
 					 stmt->role),
-				 errdetail("Role names starting with \"pg_\" are reserved.")));
+				 errdetail("Role names starting with \"mdb_\" are reserved.")));
 
 	/*
-	 * Check the pg_authid relation to be certain the role doesn't already
+	 * Check the mdb_authid relation to be certain the role doesn't already
 	 * exist.
 	 */
-	pg_authid_rel = heap_open(AuthIdRelationId, RowExclusiveLock);
-	pg_authid_dsc = RelationGetDescr(pg_authid_rel);
+	mdb_authid_rel = heap_open(AuthIdRelationId, RowExclusiveLock);
+	mdb_authid_dsc = RelationGetDescr(mdb_authid_rel);
 
 	if (OidIsValid(get_role_oid(stmt->role, true)))
 		ereport(ERROR,
@@ -367,61 +367,61 @@ CreateRole(CreateRoleStmt *stmt)
 	MemSet(new_record, 0, sizeof(new_record));
 	MemSet(new_record_nulls, false, sizeof(new_record_nulls));
 
-	new_record[Anum_pg_authid_rolname - 1] =
+	new_record[Anum_mdb_authid_rolname - 1] =
 		DirectFunctionCall1(namein, CStringGetDatum(stmt->role));
 
-	new_record[Anum_pg_authid_rolsuper - 1] = BoolGetDatum(issuper);
-	new_record[Anum_pg_authid_rolinherit - 1] = BoolGetDatum(inherit);
-	new_record[Anum_pg_authid_rolcreaterole - 1] = BoolGetDatum(createrole);
-	new_record[Anum_pg_authid_rolcreatedb - 1] = BoolGetDatum(createdb);
-	new_record[Anum_pg_authid_rolcanlogin - 1] = BoolGetDatum(canlogin);
-	new_record[Anum_pg_authid_rolreplication - 1] = BoolGetDatum(isreplication);
-	new_record[Anum_pg_authid_rolconnlimit - 1] = Int32GetDatum(connlimit);
+	new_record[Anum_mdb_authid_rolsuper - 1] = BoolGetDatum(issuper);
+	new_record[Anum_mdb_authid_rolinherit - 1] = BoolGetDatum(inherit);
+	new_record[Anum_mdb_authid_rolcreaterole - 1] = BoolGetDatum(createrole);
+	new_record[Anum_mdb_authid_rolcreatedb - 1] = BoolGetDatum(createdb);
+	new_record[Anum_mdb_authid_rolcanlogin - 1] = BoolGetDatum(canlogin);
+	new_record[Anum_mdb_authid_rolreplication - 1] = BoolGetDatum(isreplication);
+	new_record[Anum_mdb_authid_rolconnlimit - 1] = Int32GetDatum(connlimit);
 
 	if (password)
 	{
 		if (!encrypt_password || isMD5(password))
-			new_record[Anum_pg_authid_rolpassword - 1] =
+			new_record[Anum_mdb_authid_rolpassword - 1] =
 				CStringGetTextDatum(password);
 		else
 		{
-			if (!pg_md5_encrypt(password, stmt->role, strlen(stmt->role),
+			if (!mdb_md5_encrypt(password, stmt->role, strlen(stmt->role),
 								encrypted_password))
 				elog(ERROR, "password encryption failed");
-			new_record[Anum_pg_authid_rolpassword - 1] =
+			new_record[Anum_mdb_authid_rolpassword - 1] =
 				CStringGetTextDatum(encrypted_password);
 		}
 	}
 	else
-		new_record_nulls[Anum_pg_authid_rolpassword - 1] = true;
+		new_record_nulls[Anum_mdb_authid_rolpassword - 1] = true;
 
-	new_record[Anum_pg_authid_rolvaliduntil - 1] = validUntil_datum;
-	new_record_nulls[Anum_pg_authid_rolvaliduntil - 1] = validUntil_null;
+	new_record[Anum_mdb_authid_rolvaliduntil - 1] = validUntil_datum;
+	new_record_nulls[Anum_mdb_authid_rolvaliduntil - 1] = validUntil_null;
 
-	new_record[Anum_pg_authid_rolbypassrls - 1] = BoolGetDatum(bypassrls);
+	new_record[Anum_mdb_authid_rolbypassrls - 1] = BoolGetDatum(bypassrls);
 
-	tuple = heap_form_tuple(pg_authid_dsc, new_record, new_record_nulls);
+	tuple = heap_form_tuple(mdb_authid_dsc, new_record, new_record_nulls);
 
 	/*
-	 * pg_largeobject_metadata contains pg_authid.oid's, so we use the
+	 * mdb_largeobject_metadata contains mdb_authid.oid's, so we use the
 	 * binary-upgrade override.
 	 */
 	if (IsBinaryUpgrade)
 	{
-		if (!OidIsValid(binary_upgrade_next_pg_authid_oid))
+		if (!OidIsValid(binary_upgrade_next_mdb_authid_oid))
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-					 errmsg("pg_authid OID value not set when in binary upgrade mode")));
+					 errmsg("mdb_authid OID value not set when in binary upgrade mode")));
 
-		HeapTupleSetOid(tuple, binary_upgrade_next_pg_authid_oid);
-		binary_upgrade_next_pg_authid_oid = InvalidOid;
+		HeapTupleSetOid(tuple, binary_upgrade_next_mdb_authid_oid);
+		binary_upgrade_next_mdb_authid_oid = InvalidOid;
 	}
 
 	/*
-	 * Insert new record in the pg_authid table
+	 * Insert new record in the mdb_authid table
 	 */
-	roleid = simple_heap_insert(pg_authid_rel, tuple);
-	CatalogUpdateIndexes(pg_authid_rel, tuple);
+	roleid = simple_heap_insert(mdb_authid_rel, tuple);
+	CatalogUpdateIndexes(mdb_authid_rel, tuple);
 
 	/*
 	 * Advance command counter so we can see new record; else tests in
@@ -438,7 +438,7 @@ CreateRole(CreateRoleStmt *stmt)
 		RoleSpec   *oldrole = lfirst(item);
 		HeapTuple	oldroletup = get_rolespec_tuple((Node *) oldrole);
 		Oid			oldroleid = HeapTupleGetOid(oldroletup);
-		char	   *oldrolename = NameStr(((Form_pg_authid) GETSTRUCT(oldroletup))->rolname);
+		char	   *oldrolename = NameStr(((Form_mdb_authid) GETSTRUCT(oldroletup))->rolname);
 
 		AddRoleMems(oldrolename, oldroleid,
 					list_make1(makeString(stmt->role)),
@@ -463,9 +463,9 @@ CreateRole(CreateRoleStmt *stmt)
 	InvokeObjectPostCreateHook(AuthIdRelationId, roleid, 0);
 
 	/*
-	 * Close pg_authid, but keep lock till commit.
+	 * Close mdb_authid, but keep lock till commit.
 	 */
-	heap_close(pg_authid_rel, NoLock);
+	heap_close(mdb_authid_rel, NoLock);
 
 	return roleid;
 }
@@ -481,14 +481,14 @@ CreateRole(CreateRoleStmt *stmt)
 Oid
 AlterRole(AlterRoleStmt *stmt)
 {
-	Datum		new_record[Natts_pg_authid];
-	bool		new_record_nulls[Natts_pg_authid];
-	bool		new_record_repl[Natts_pg_authid];
-	Relation	pg_authid_rel;
-	TupleDesc	pg_authid_dsc;
+	Datum		new_record[Natts_mdb_authid];
+	bool		new_record_nulls[Natts_mdb_authid];
+	bool		new_record_repl[Natts_mdb_authid];
+	Relation	mdb_authid_rel;
+	TupleDesc	mdb_authid_dsc;
 	HeapTuple	tuple,
 				new_tuple;
-	Form_pg_authid authform;
+	Form_mdb_authid authform;
 	ListCell   *option;
 	char	   *rolename = NULL;
 	char	   *password = NULL;	/* user password */
@@ -657,13 +657,13 @@ AlterRole(AlterRoleStmt *stmt)
 		bypassrls = intVal(dbypassRLS->arg);
 
 	/*
-	 * Scan the pg_authid relation to be certain the user exists.
+	 * Scan the mdb_authid relation to be certain the user exists.
 	 */
-	pg_authid_rel = heap_open(AuthIdRelationId, RowExclusiveLock);
-	pg_authid_dsc = RelationGetDescr(pg_authid_rel);
+	mdb_authid_rel = heap_open(AuthIdRelationId, RowExclusiveLock);
+	mdb_authid_dsc = RelationGetDescr(mdb_authid_rel);
 
 	tuple = get_rolespec_tuple(stmt->role);
-	authform = (Form_pg_authid) GETSTRUCT(tuple);
+	authform = (Form_mdb_authid) GETSTRUCT(tuple);
 	rolename = pstrdup(NameStr(authform->rolname));
 	roleid = HeapTupleGetOid(tuple);
 
@@ -722,7 +722,7 @@ AlterRole(AlterRoleStmt *stmt)
 	{
 		/* fetch existing setting in case hook needs it */
 		validUntil_datum = SysCacheGetAttr(AUTHNAME, tuple,
-										   Anum_pg_authid_rolvaliduntil,
+										   Anum_mdb_authid_rolvaliduntil,
 										   &validUntil_null);
 	}
 
@@ -748,87 +748,87 @@ AlterRole(AlterRoleStmt *stmt)
 	 */
 	if (issuper >= 0)
 	{
-		new_record[Anum_pg_authid_rolsuper - 1] = BoolGetDatum(issuper > 0);
-		new_record_repl[Anum_pg_authid_rolsuper - 1] = true;
+		new_record[Anum_mdb_authid_rolsuper - 1] = BoolGetDatum(issuper > 0);
+		new_record_repl[Anum_mdb_authid_rolsuper - 1] = true;
 	}
 
 	if (inherit >= 0)
 	{
-		new_record[Anum_pg_authid_rolinherit - 1] = BoolGetDatum(inherit > 0);
-		new_record_repl[Anum_pg_authid_rolinherit - 1] = true;
+		new_record[Anum_mdb_authid_rolinherit - 1] = BoolGetDatum(inherit > 0);
+		new_record_repl[Anum_mdb_authid_rolinherit - 1] = true;
 	}
 
 	if (createrole >= 0)
 	{
-		new_record[Anum_pg_authid_rolcreaterole - 1] = BoolGetDatum(createrole > 0);
-		new_record_repl[Anum_pg_authid_rolcreaterole - 1] = true;
+		new_record[Anum_mdb_authid_rolcreaterole - 1] = BoolGetDatum(createrole > 0);
+		new_record_repl[Anum_mdb_authid_rolcreaterole - 1] = true;
 	}
 
 	if (createdb >= 0)
 	{
-		new_record[Anum_pg_authid_rolcreatedb - 1] = BoolGetDatum(createdb > 0);
-		new_record_repl[Anum_pg_authid_rolcreatedb - 1] = true;
+		new_record[Anum_mdb_authid_rolcreatedb - 1] = BoolGetDatum(createdb > 0);
+		new_record_repl[Anum_mdb_authid_rolcreatedb - 1] = true;
 	}
 
 	if (canlogin >= 0)
 	{
-		new_record[Anum_pg_authid_rolcanlogin - 1] = BoolGetDatum(canlogin > 0);
-		new_record_repl[Anum_pg_authid_rolcanlogin - 1] = true;
+		new_record[Anum_mdb_authid_rolcanlogin - 1] = BoolGetDatum(canlogin > 0);
+		new_record_repl[Anum_mdb_authid_rolcanlogin - 1] = true;
 	}
 
 	if (isreplication >= 0)
 	{
-		new_record[Anum_pg_authid_rolreplication - 1] = BoolGetDatum(isreplication > 0);
-		new_record_repl[Anum_pg_authid_rolreplication - 1] = true;
+		new_record[Anum_mdb_authid_rolreplication - 1] = BoolGetDatum(isreplication > 0);
+		new_record_repl[Anum_mdb_authid_rolreplication - 1] = true;
 	}
 
 	if (dconnlimit)
 	{
-		new_record[Anum_pg_authid_rolconnlimit - 1] = Int32GetDatum(connlimit);
-		new_record_repl[Anum_pg_authid_rolconnlimit - 1] = true;
+		new_record[Anum_mdb_authid_rolconnlimit - 1] = Int32GetDatum(connlimit);
+		new_record_repl[Anum_mdb_authid_rolconnlimit - 1] = true;
 	}
 
 	/* password */
 	if (password)
 	{
 		if (!encrypt_password || isMD5(password))
-			new_record[Anum_pg_authid_rolpassword - 1] =
+			new_record[Anum_mdb_authid_rolpassword - 1] =
 				CStringGetTextDatum(password);
 		else
 		{
-			if (!pg_md5_encrypt(password, rolename, strlen(rolename),
+			if (!mdb_md5_encrypt(password, rolename, strlen(rolename),
 								encrypted_password))
 				elog(ERROR, "password encryption failed");
-			new_record[Anum_pg_authid_rolpassword - 1] =
+			new_record[Anum_mdb_authid_rolpassword - 1] =
 				CStringGetTextDatum(encrypted_password);
 		}
-		new_record_repl[Anum_pg_authid_rolpassword - 1] = true;
+		new_record_repl[Anum_mdb_authid_rolpassword - 1] = true;
 	}
 
 	/* unset password */
 	if (dpassword && dpassword->arg == NULL)
 	{
-		new_record_repl[Anum_pg_authid_rolpassword - 1] = true;
-		new_record_nulls[Anum_pg_authid_rolpassword - 1] = true;
+		new_record_repl[Anum_mdb_authid_rolpassword - 1] = true;
+		new_record_nulls[Anum_mdb_authid_rolpassword - 1] = true;
 	}
 
 	/* valid until */
-	new_record[Anum_pg_authid_rolvaliduntil - 1] = validUntil_datum;
-	new_record_nulls[Anum_pg_authid_rolvaliduntil - 1] = validUntil_null;
-	new_record_repl[Anum_pg_authid_rolvaliduntil - 1] = true;
+	new_record[Anum_mdb_authid_rolvaliduntil - 1] = validUntil_datum;
+	new_record_nulls[Anum_mdb_authid_rolvaliduntil - 1] = validUntil_null;
+	new_record_repl[Anum_mdb_authid_rolvaliduntil - 1] = true;
 
 	if (bypassrls >= 0)
 	{
-		new_record[Anum_pg_authid_rolbypassrls - 1] = BoolGetDatum(bypassrls > 0);
-		new_record_repl[Anum_pg_authid_rolbypassrls - 1] = true;
+		new_record[Anum_mdb_authid_rolbypassrls - 1] = BoolGetDatum(bypassrls > 0);
+		new_record_repl[Anum_mdb_authid_rolbypassrls - 1] = true;
 	}
 
-	new_tuple = heap_modify_tuple(tuple, pg_authid_dsc, new_record,
+	new_tuple = heap_modify_tuple(tuple, mdb_authid_dsc, new_record,
 								  new_record_nulls, new_record_repl);
-	simple_heap_update(pg_authid_rel, &tuple->t_self, new_tuple);
+	simple_heap_update(mdb_authid_rel, &tuple->t_self, new_tuple);
 
 	/* Update indexes */
-	CatalogUpdateIndexes(pg_authid_rel, new_tuple);
+	CatalogUpdateIndexes(mdb_authid_rel, new_tuple);
 
 	InvokeObjectPostAlterHook(AuthIdRelationId, roleid, 0);
 
@@ -852,9 +852,9 @@ AlterRole(AlterRoleStmt *stmt)
 					false);
 
 	/*
-	 * Close pg_authid, but keep lock till commit.
+	 * Close mdb_authid, but keep lock till commit.
 	 */
-	heap_close(pg_authid_rel, NoLock);
+	heap_close(mdb_authid_rel, NoLock);
 
 	return roleid;
 }
@@ -888,7 +888,7 @@ AlterRoleSet(AlterRoleSetStmt *stmt)
 		 * To mess with a superuser you gotta be superuser; else you need
 		 * createrole, or just want to change your own settings
 		 */
-		if (((Form_pg_authid) GETSTRUCT(roletuple))->rolsuper)
+		if (((Form_mdb_authid) GETSTRUCT(roletuple))->rolsuper)
 		{
 			if (!superuser())
 				ereport(ERROR,
@@ -919,7 +919,7 @@ AlterRoleSet(AlterRoleSetStmt *stmt)
 			 * If no role is specified, then this is effectively the same as
 			 * ALTER DATABASE ... SET, so use the same permission check.
 			 */
-			if (!pg_database_ownercheck(databaseid, GetUserId()))
+			if (!mdb_database_ownercheck(databaseid, GetUserId()))
 				aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_DATABASE,
 							   stmt->database);
 		}
@@ -946,8 +946,8 @@ AlterRoleSet(AlterRoleSetStmt *stmt)
 void
 DropRole(DropRoleStmt *stmt)
 {
-	Relation	pg_authid_rel,
-				pg_auth_members_rel;
+	Relation	mdb_authid_rel,
+				mdb_auth_members_rel;
 	ListCell   *item;
 
 	if (!have_createrole_privilege())
@@ -956,11 +956,11 @@ DropRole(DropRoleStmt *stmt)
 				 errmsg("permission denied to drop role")));
 
 	/*
-	 * Scan the pg_authid relation to find the Oid of the role(s) to be
+	 * Scan the mdb_authid relation to find the Oid of the role(s) to be
 	 * deleted.
 	 */
-	pg_authid_rel = heap_open(AuthIdRelationId, RowExclusiveLock);
-	pg_auth_members_rel = heap_open(AuthMemRelationId, RowExclusiveLock);
+	mdb_authid_rel = heap_open(AuthIdRelationId, RowExclusiveLock);
+	mdb_auth_members_rel = heap_open(AuthMemRelationId, RowExclusiveLock);
 
 	foreach(item, stmt->roles)
 	{
@@ -1019,7 +1019,7 @@ DropRole(DropRoleStmt *stmt)
 		 * roles but not superuser roles.  This is mainly to avoid the
 		 * scenario where you accidentally drop the last superuser.
 		 */
-		if (((Form_pg_authid) GETSTRUCT(tuple))->rolsuper &&
+		if (((Form_mdb_authid) GETSTRUCT(tuple))->rolsuper &&
 			!superuser())
 			ereport(ERROR,
 					(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
@@ -1034,7 +1034,7 @@ DropRole(DropRoleStmt *stmt)
 		 */
 		LockSharedObject(AuthIdRelationId, roleid, 0, AccessExclusiveLock);
 
-		/* Check for pg_shdepend entries depending on this role */
+		/* Check for mdb_shdepend entries depending on this role */
 		if (checkSharedDependencies(AuthIdRelationId, roleid,
 									&detail, &detail_log))
 			ereport(ERROR,
@@ -1045,44 +1045,44 @@ DropRole(DropRoleStmt *stmt)
 					 errdetail_log("%s", detail_log)));
 
 		/*
-		 * Remove the role from the pg_authid table
+		 * Remove the role from the mdb_authid table
 		 */
-		simple_heap_delete(pg_authid_rel, &tuple->t_self);
+		simple_heap_delete(mdb_authid_rel, &tuple->t_self);
 
 		ReleaseSysCache(tuple);
 
 		/*
-		 * Remove role from the pg_auth_members table.  We have to remove all
+		 * Remove role from the mdb_auth_members table.  We have to remove all
 		 * tuples that show it as either a role or a member.
 		 *
 		 * XXX what about grantor entries?	Maybe we should do one heap scan.
 		 */
 		ScanKeyInit(&scankey,
-					Anum_pg_auth_members_roleid,
+					Anum_mdb_auth_members_roleid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(roleid));
 
-		sscan = systable_beginscan(pg_auth_members_rel, AuthMemRoleMemIndexId,
+		sscan = systable_beginscan(mdb_auth_members_rel, AuthMemRoleMemIndexId,
 								   true, NULL, 1, &scankey);
 
 		while (HeapTupleIsValid(tmp_tuple = systable_getnext(sscan)))
 		{
-			simple_heap_delete(pg_auth_members_rel, &tmp_tuple->t_self);
+			simple_heap_delete(mdb_auth_members_rel, &tmp_tuple->t_self);
 		}
 
 		systable_endscan(sscan);
 
 		ScanKeyInit(&scankey,
-					Anum_pg_auth_members_member,
+					Anum_mdb_auth_members_member,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(roleid));
 
-		sscan = systable_beginscan(pg_auth_members_rel, AuthMemMemRoleIndexId,
+		sscan = systable_beginscan(mdb_auth_members_rel, AuthMemMemRoleIndexId,
 								   true, NULL, 1, &scankey);
 
 		while (HeapTupleIsValid(tmp_tuple = systable_getnext(sscan)))
 		{
-			simple_heap_delete(pg_auth_members_rel, &tmp_tuple->t_self);
+			simple_heap_delete(mdb_auth_members_rel, &tmp_tuple->t_self);
 		}
 
 		systable_endscan(sscan);
@@ -1102,7 +1102,7 @@ DropRole(DropRoleStmt *stmt)
 		 * Advance command counter so that later iterations of this loop will
 		 * see the changes already made.  This is essential if, for example,
 		 * we are trying to drop both a role and one of its direct members ---
-		 * we'll get an error if we try to delete the linking pg_auth_members
+		 * we'll get an error if we try to delete the linking mdb_auth_members
 		 * tuple twice.  (We do not need a CCI between the two delete loops
 		 * above, because it's not allowed for a role to directly contain
 		 * itself.)
@@ -1113,8 +1113,8 @@ DropRole(DropRoleStmt *stmt)
 	/*
 	 * Now we can clean up; but keep locks until commit.
 	 */
-	heap_close(pg_auth_members_rel, NoLock);
-	heap_close(pg_authid_rel, NoLock);
+	heap_close(mdb_auth_members_rel, NoLock);
+	heap_close(mdb_authid_rel, NoLock);
 }
 
 /*
@@ -1129,13 +1129,13 @@ RenameRole(const char *oldname, const char *newname)
 	Relation	rel;
 	Datum		datum;
 	bool		isnull;
-	Datum		repl_val[Natts_pg_authid];
-	bool		repl_null[Natts_pg_authid];
-	bool		repl_repl[Natts_pg_authid];
+	Datum		repl_val[Natts_mdb_authid];
+	bool		repl_null[Natts_mdb_authid];
+	bool		repl_repl[Natts_mdb_authid];
 	int			i;
 	Oid			roleid;
 	ObjectAddress address;
-	Form_pg_authid authform;
+	Form_mdb_authid authform;
 
 	rel = heap_open(AuthIdRelationId, RowExclusiveLock);
 	dsc = RelationGetDescr(rel);
@@ -1155,7 +1155,7 @@ RenameRole(const char *oldname, const char *newname)
 	 */
 
 	roleid = HeapTupleGetOid(oldtuple);
-	authform = (Form_pg_authid) GETSTRUCT(oldtuple);
+	authform = (Form_mdb_authid) GETSTRUCT(oldtuple);
 
 	if (roleid == GetSessionUserId())
 		ereport(ERROR,
@@ -1168,21 +1168,21 @@ RenameRole(const char *oldname, const char *newname)
 
 	/*
 	 * Check that the user is not trying to rename a system role and
-	 * not trying to rename a role into the reserved "pg_" namespace.
+	 * not trying to rename a role into the reserved "mdb_" namespace.
 	 */
 	if (IsReservedName(NameStr(authform->rolname)))
 		ereport(ERROR,
 				(errcode(ERRCODE_RESERVED_NAME),
 				 errmsg("role name \"%s\" is reserved",
 					 NameStr(authform->rolname)),
-				 errdetail("Role names starting with \"pg_\" are reserved.")));
+				 errdetail("Role names starting with \"mdb_\" are reserved.")));
 
 	if (IsReservedName(newname))
 		ereport(ERROR,
 				(errcode(ERRCODE_RESERVED_NAME),
 				 errmsg("role name \"%s\" is reserved",
 					 newname),
-				 errdetail("Role names starting with \"pg_\" are reserved.")));
+				 errdetail("Role names starting with \"mdb_\" are reserved.")));
 
 	/* make sure the new name doesn't exist */
 	if (SearchSysCacheExists1(AUTHNAME, CStringGetDatum(newname)))
@@ -1193,7 +1193,7 @@ RenameRole(const char *oldname, const char *newname)
 	/*
 	 * createrole is enough privilege unless you want to mess with a superuser
 	 */
-	if (((Form_pg_authid) GETSTRUCT(oldtuple))->rolsuper)
+	if (((Form_mdb_authid) GETSTRUCT(oldtuple))->rolsuper)
 	{
 		if (!superuser())
 			ereport(ERROR,
@@ -1209,21 +1209,21 @@ RenameRole(const char *oldname, const char *newname)
 	}
 
 	/* OK, construct the modified tuple */
-	for (i = 0; i < Natts_pg_authid; i++)
+	for (i = 0; i < Natts_mdb_authid; i++)
 		repl_repl[i] = false;
 
-	repl_repl[Anum_pg_authid_rolname - 1] = true;
-	repl_val[Anum_pg_authid_rolname - 1] = DirectFunctionCall1(namein,
+	repl_repl[Anum_mdb_authid_rolname - 1] = true;
+	repl_val[Anum_mdb_authid_rolname - 1] = DirectFunctionCall1(namein,
 												   CStringGetDatum(newname));
-	repl_null[Anum_pg_authid_rolname - 1] = false;
+	repl_null[Anum_mdb_authid_rolname - 1] = false;
 
-	datum = heap_getattr(oldtuple, Anum_pg_authid_rolpassword, dsc, &isnull);
+	datum = heap_getattr(oldtuple, Anum_mdb_authid_rolpassword, dsc, &isnull);
 
 	if (!isnull && isMD5(TextDatumGetCString(datum)))
 	{
 		/* MD5 uses the username as salt, so just clear it on a rename */
-		repl_repl[Anum_pg_authid_rolpassword - 1] = true;
-		repl_null[Anum_pg_authid_rolpassword - 1] = true;
+		repl_repl[Anum_mdb_authid_rolpassword - 1] = true;
+		repl_null[Anum_mdb_authid_rolpassword - 1] = true;
 
 		ereport(NOTICE,
 				(errmsg("MD5 password cleared because of role rename")));
@@ -1241,7 +1241,7 @@ RenameRole(const char *oldname, const char *newname)
 	ReleaseSysCache(oldtuple);
 
 	/*
-	 * Close pg_authid, but keep lock till commit.
+	 * Close mdb_authid, but keep lock till commit.
 	 */
 	heap_close(rel, NoLock);
 
@@ -1256,7 +1256,7 @@ RenameRole(const char *oldname, const char *newname)
 void
 GrantRole(GrantRoleStmt *stmt)
 {
-	Relation	pg_authid_rel;
+	Relation	mdb_authid_rel;
 	Oid			grantor;
 	List	   *grantee_ids;
 	ListCell   *item;
@@ -1268,8 +1268,8 @@ GrantRole(GrantRoleStmt *stmt)
 
 	grantee_ids = roleSpecsToIds(stmt->grantee_roles);
 
-	/* AccessShareLock is enough since we aren't modifying pg_authid */
-	pg_authid_rel = heap_open(AuthIdRelationId, AccessShareLock);
+	/* AccessShareLock is enough since we aren't modifying mdb_authid */
+	mdb_authid_rel = heap_open(AuthIdRelationId, AccessShareLock);
 
 	/*
 	 * Step through all of the granted roles and add/remove entries for the
@@ -1302,9 +1302,9 @@ GrantRole(GrantRoleStmt *stmt)
 	}
 
 	/*
-	 * Close pg_authid, but keep lock till commit.
+	 * Close mdb_authid, but keep lock till commit.
 	 */
-	heap_close(pg_authid_rel, NoLock);
+	heap_close(mdb_authid_rel, NoLock);
 }
 
 /*
@@ -1409,8 +1409,8 @@ AddRoleMems(const char *rolename, Oid roleid,
 			List *memberSpecs, List *memberIds,
 			Oid grantorId, bool admin_opt)
 {
-	Relation	pg_authmem_rel;
-	TupleDesc	pg_authmem_dsc;
+	Relation	mdb_authmem_rel;
+	TupleDesc	mdb_authmem_dsc;
 	ListCell   *specitem;
 	ListCell   *iditem;
 
@@ -1456,8 +1456,8 @@ AddRoleMems(const char *rolename, Oid roleid,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 				 errmsg("must be superuser to set grantor")));
 
-	pg_authmem_rel = heap_open(AuthMemRelationId, RowExclusiveLock);
-	pg_authmem_dsc = RelationGetDescr(pg_authmem_rel);
+	mdb_authmem_rel = heap_open(AuthMemRelationId, RowExclusiveLock);
+	mdb_authmem_dsc = RelationGetDescr(mdb_authmem_rel);
 
 	forboth(specitem, memberSpecs, iditem, memberIds)
 	{
@@ -1465,9 +1465,9 @@ AddRoleMems(const char *rolename, Oid roleid,
 		Oid			memberid = lfirst_oid(iditem);
 		HeapTuple	authmem_tuple;
 		HeapTuple	tuple;
-		Datum		new_record[Natts_pg_auth_members];
-		bool		new_record_nulls[Natts_pg_auth_members];
-		bool		new_record_repl[Natts_pg_auth_members];
+		Datum		new_record[Natts_mdb_auth_members];
+		bool		new_record_nulls[Natts_mdb_auth_members];
+		bool		new_record_repl[Natts_mdb_auth_members];
 
 		/*
 		 * Refuse creation of membership loops, including the trivial case
@@ -1491,7 +1491,7 @@ AddRoleMems(const char *rolename, Oid roleid,
 										ObjectIdGetDatum(memberid));
 		if (HeapTupleIsValid(authmem_tuple) &&
 			(!admin_opt ||
-			 ((Form_pg_auth_members) GETSTRUCT(authmem_tuple))->admin_option))
+			 ((Form_mdb_auth_members) GETSTRUCT(authmem_tuple))->admin_option))
 		{
 			ereport(NOTICE,
 					(errmsg("role \"%s\" is already a member of role \"%s\"",
@@ -1505,28 +1505,28 @@ AddRoleMems(const char *rolename, Oid roleid,
 		MemSet(new_record_nulls, false, sizeof(new_record_nulls));
 		MemSet(new_record_repl, false, sizeof(new_record_repl));
 
-		new_record[Anum_pg_auth_members_roleid - 1] = ObjectIdGetDatum(roleid);
-		new_record[Anum_pg_auth_members_member - 1] = ObjectIdGetDatum(memberid);
-		new_record[Anum_pg_auth_members_grantor - 1] = ObjectIdGetDatum(grantorId);
-		new_record[Anum_pg_auth_members_admin_option - 1] = BoolGetDatum(admin_opt);
+		new_record[Anum_mdb_auth_members_roleid - 1] = ObjectIdGetDatum(roleid);
+		new_record[Anum_mdb_auth_members_member - 1] = ObjectIdGetDatum(memberid);
+		new_record[Anum_mdb_auth_members_grantor - 1] = ObjectIdGetDatum(grantorId);
+		new_record[Anum_mdb_auth_members_admin_option - 1] = BoolGetDatum(admin_opt);
 
 		if (HeapTupleIsValid(authmem_tuple))
 		{
-			new_record_repl[Anum_pg_auth_members_grantor - 1] = true;
-			new_record_repl[Anum_pg_auth_members_admin_option - 1] = true;
-			tuple = heap_modify_tuple(authmem_tuple, pg_authmem_dsc,
+			new_record_repl[Anum_mdb_auth_members_grantor - 1] = true;
+			new_record_repl[Anum_mdb_auth_members_admin_option - 1] = true;
+			tuple = heap_modify_tuple(authmem_tuple, mdb_authmem_dsc,
 									  new_record,
 									  new_record_nulls, new_record_repl);
-			simple_heap_update(pg_authmem_rel, &tuple->t_self, tuple);
-			CatalogUpdateIndexes(pg_authmem_rel, tuple);
+			simple_heap_update(mdb_authmem_rel, &tuple->t_self, tuple);
+			CatalogUpdateIndexes(mdb_authmem_rel, tuple);
 			ReleaseSysCache(authmem_tuple);
 		}
 		else
 		{
-			tuple = heap_form_tuple(pg_authmem_dsc,
+			tuple = heap_form_tuple(mdb_authmem_dsc,
 									new_record, new_record_nulls);
-			simple_heap_insert(pg_authmem_rel, tuple);
-			CatalogUpdateIndexes(pg_authmem_rel, tuple);
+			simple_heap_insert(mdb_authmem_rel, tuple);
+			CatalogUpdateIndexes(mdb_authmem_rel, tuple);
 		}
 
 		/* CCI after each change, in case there are duplicates in list */
@@ -1534,9 +1534,9 @@ AddRoleMems(const char *rolename, Oid roleid,
 	}
 
 	/*
-	 * Close pg_authmem, but keep lock till commit.
+	 * Close mdb_authmem, but keep lock till commit.
 	 */
-	heap_close(pg_authmem_rel, NoLock);
+	heap_close(mdb_authmem_rel, NoLock);
 }
 
 /*
@@ -1555,8 +1555,8 @@ DelRoleMems(const char *rolename, Oid roleid,
 			List *memberSpecs, List *memberIds,
 			bool admin_opt)
 {
-	Relation	pg_authmem_rel;
-	TupleDesc	pg_authmem_dsc;
+	Relation	mdb_authmem_rel;
+	TupleDesc	mdb_authmem_dsc;
 	ListCell   *specitem;
 	ListCell   *iditem;
 
@@ -1587,8 +1587,8 @@ DelRoleMems(const char *rolename, Oid roleid,
 							rolename)));
 	}
 
-	pg_authmem_rel = heap_open(AuthMemRelationId, RowExclusiveLock);
-	pg_authmem_dsc = RelationGetDescr(pg_authmem_rel);
+	mdb_authmem_rel = heap_open(AuthMemRelationId, RowExclusiveLock);
+	mdb_authmem_dsc = RelationGetDescr(mdb_authmem_rel);
 
 	forboth(specitem, memberSpecs, iditem, memberIds)
 	{
@@ -1613,29 +1613,29 @@ DelRoleMems(const char *rolename, Oid roleid,
 		if (!admin_opt)
 		{
 			/* Remove the entry altogether */
-			simple_heap_delete(pg_authmem_rel, &authmem_tuple->t_self);
+			simple_heap_delete(mdb_authmem_rel, &authmem_tuple->t_self);
 		}
 		else
 		{
 			/* Just turn off the admin option */
 			HeapTuple	tuple;
-			Datum		new_record[Natts_pg_auth_members];
-			bool		new_record_nulls[Natts_pg_auth_members];
-			bool		new_record_repl[Natts_pg_auth_members];
+			Datum		new_record[Natts_mdb_auth_members];
+			bool		new_record_nulls[Natts_mdb_auth_members];
+			bool		new_record_repl[Natts_mdb_auth_members];
 
 			/* Build a tuple to update with */
 			MemSet(new_record, 0, sizeof(new_record));
 			MemSet(new_record_nulls, false, sizeof(new_record_nulls));
 			MemSet(new_record_repl, false, sizeof(new_record_repl));
 
-			new_record[Anum_pg_auth_members_admin_option - 1] = BoolGetDatum(false);
-			new_record_repl[Anum_pg_auth_members_admin_option - 1] = true;
+			new_record[Anum_mdb_auth_members_admin_option - 1] = BoolGetDatum(false);
+			new_record_repl[Anum_mdb_auth_members_admin_option - 1] = true;
 
-			tuple = heap_modify_tuple(authmem_tuple, pg_authmem_dsc,
+			tuple = heap_modify_tuple(authmem_tuple, mdb_authmem_dsc,
 									  new_record,
 									  new_record_nulls, new_record_repl);
-			simple_heap_update(pg_authmem_rel, &tuple->t_self, tuple);
-			CatalogUpdateIndexes(pg_authmem_rel, tuple);
+			simple_heap_update(mdb_authmem_rel, &tuple->t_self, tuple);
+			CatalogUpdateIndexes(mdb_authmem_rel, tuple);
 		}
 
 		ReleaseSysCache(authmem_tuple);
@@ -1645,7 +1645,7 @@ DelRoleMems(const char *rolename, Oid roleid,
 	}
 
 	/*
-	 * Close pg_authmem, but keep lock till commit.
+	 * Close mdb_authmem, but keep lock till commit.
 	 */
-	heap_close(pg_authmem_rel, NoLock);
+	heap_close(mdb_authmem_rel, NoLock);
 }

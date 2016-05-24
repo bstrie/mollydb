@@ -8,7 +8,7 @@
 
 #line 1 "prep.pgc"
 #include <stdlib.h>
-#include "ecpg_config.h"
+#include "ecmdb_config.h"
 
 #ifndef ENABLE_THREAD_SAFETY
 int

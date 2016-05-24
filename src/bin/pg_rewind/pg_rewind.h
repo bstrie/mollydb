@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_rewind.h
+ * mdb_rewind.h
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

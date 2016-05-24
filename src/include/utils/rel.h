@@ -16,8 +16,8 @@
 
 #include "access/tupdesc.h"
 #include "access/xlog.h"
-#include "catalog/pg_class.h"
-#include "catalog/pg_index.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_index.h"
 #include "fmgr.h"
 #include "nodes/bitmapset.h"
 #include "rewrite/prs2lock.h"
@@ -80,7 +80,7 @@ typedef struct RelationData
 	SubTransactionId rd_newRelfilenodeSubid;	/* new relfilenode assigned in
 												 * current xact */
 
-	Form_pg_class rd_rel;		/* RELATION tuple */
+	Form_mdb_class rd_rel;		/* RELATION tuple */
 	TupleDesc	rd_att;			/* tuple descriptor */
 	Oid			rd_id;			/* relation's object id */
 	LockInfoData rd_lockInfo;	/* lock mgr's info for locking relation */
@@ -108,12 +108,12 @@ typedef struct RelationData
 	 * Note that you can NOT look into rd_rel for this data.  NULL means "use
 	 * defaults".
 	 */
-	bytea	   *rd_options;		/* parsed pg_class.reloptions */
+	bytea	   *rd_options;		/* parsed mdb_class.reloptions */
 
 	/* These are non-NULL only for an index relation: */
-	Form_pg_index rd_index;		/* pg_index tuple describing this index */
+	Form_mdb_index rd_index;		/* mdb_index tuple describing this index */
 	/* use "struct" here to avoid needing to include htup.h: */
-	struct HeapTupleData *rd_indextuple;		/* all of pg_index tuple */
+	struct HeapTupleData *rd_indextuple;		/* all of mdb_index tuple */
 
 	/*
 	 * index access support info (used only for an index relation)
@@ -327,7 +327,7 @@ typedef struct ViewOptions
 
 /*
  * RelationGetForm
- *		Returns pg_class tuple for a relation.
+ *		Returns mdb_class tuple for a relation.
  *
  * Note:
  *		Assumes relation descriptor is valid.

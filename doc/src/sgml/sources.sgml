@@ -309,7 +309,7 @@ ereport(ERROR,
      specifies a table constraint whose name, table name, and schema name
      should be included as auxiliary fields in the error report.  Indexes
      should be considered to be constraints for this purpose, whether or
-     not they have an associated <structname>pg_constraint</> entry.  Be
+     not they have an associated <structname>mdb_constraint</> entry.  Be
      careful to pass the underlying heap relation, not the index itself, as
      <literal>rel</>.
     </para>
@@ -709,7 +709,7 @@ BETTER: could not open file %s (I/O failure)
     not helpful information.  If the error text doesn't make as much sense
     without the function name, reword it.
 <programlisting>
-BAD:    pg_atoi: error in "z": cannot parse "z"
+BAD:    mdb_atoi: error in "z": cannot parse "z"
 BETTER: invalid input syntax for integer: "z"
 </programlisting>
    </para>

@@ -325,7 +325,7 @@ be_tls_init(void)
 		/*
 		 * Always ask for SSL client cert, but don't fail if it's not
 		 * presented.  We might fail such connections later, depending on what
-		 * we find in pg_hba.conf.
+		 * we find in mdb_hba.conf.
 		 */
 		SSL_CTX_set_verify(SSL_context,
 						   (SSL_VERIFY_PEER |
@@ -1114,7 +1114,7 @@ X509_NAME_to_cstring(X509_NAME *name)
 	nullterm = '\0';
 	BIO_write(membuf, &nullterm, 1);
 	size = BIO_get_mem_data(membuf, &sp);
-	dp = pg_any_to_server(sp, size - 1, PG_UTF8);
+	dp = mdb_any_to_server(sp, size - 1, PG_UTF8);
 
 	result = pstrdup(dp);
 	if (dp != sp)

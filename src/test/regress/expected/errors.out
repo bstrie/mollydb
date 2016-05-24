@@ -11,7 +11,7 @@ select 1;
 --
 -- UNSUPPORTED STUFF
 -- doesn't work
--- notify pg_class
+-- notify mdb_class
 --
 --
 -- SELECT
@@ -26,29 +26,29 @@ ERROR:  relation "nonesuch" does not exist
 LINE 1: select * from nonesuch;
                       ^
 -- bad name in target list
-select nonesuch from pg_database;
+select nonesuch from mdb_database;
 ERROR:  column "nonesuch" does not exist
-LINE 1: select nonesuch from pg_database;
+LINE 1: select nonesuch from mdb_database;
                ^
 -- empty distinct list isn't OK
-select distinct from pg_database;
+select distinct from mdb_database;
 ERROR:  syntax error at or near "from"
-LINE 1: select distinct from pg_database;
+LINE 1: select distinct from mdb_database;
                         ^
 -- bad attribute name on lhs of operator
-select * from pg_database where nonesuch = pg_database.datname;
+select * from mdb_database where nonesuch = mdb_database.datname;
 ERROR:  column "nonesuch" does not exist
-LINE 1: select * from pg_database where nonesuch = pg_database.datna...
+LINE 1: select * from mdb_database where nonesuch = mdb_database.datna...
                                         ^
 -- bad attribute name on rhs of operator
-select * from pg_database where pg_database.datname = nonesuch;
+select * from mdb_database where mdb_database.datname = nonesuch;
 ERROR:  column "nonesuch" does not exist
-LINE 1: ...ect * from pg_database where pg_database.datname = nonesuch;
+LINE 1: ...ect * from mdb_database where mdb_database.datname = nonesuch;
                                                               ^
 -- bad attribute name in select distinct on
-select distinct on (foobar) * from pg_database;
+select distinct on (foobar) * from mdb_database;
 ERROR:  column "foobar" does not exist
-LINE 1: select distinct on (foobar) * from pg_database;
+LINE 1: select distinct on (foobar) * from mdb_database;
                             ^
 --
 -- DELETE

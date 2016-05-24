@@ -161,7 +161,7 @@ get_restricted_token(const char *progname)
 
 		ZeroMemory(&pi, sizeof(pi));
 
-		cmdline = pg_strdup(GetCommandLine());
+		cmdline = mdb_strdup(GetCommandLine());
 
 		putenv("PG_RESTRICT_EXEC=1");
 

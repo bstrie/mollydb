@@ -1,14 +1,14 @@
 <!-- doc/src/sgml/pgvisibility.sgml -->
 
-<sect1 id="pgvisibility" xreflabel="pg_visibility">
- <title>pg_visibility</title>
+<sect1 id="pgvisibility" xreflabel="mdb_visibility">
+ <title>mdb_visibility</title>
 
  <indexterm zone="pgvisibility">
-  <primary>pg_visibility</primary>
+  <primary>mdb_visibility</primary>
  </indexterm>
 
  <para>
-  The <filename>pg_visibility</> module provides a means for examining the
+  The <filename>mdb_visibility</> module provides a means for examining the
   visibility map (VM) and page-level visibility information.
  </para>
 
@@ -24,7 +24,7 @@
   within the data page itself rather than a separate data structure.  These
   will normally agree, but the page-level bit can sometimes be set while the
   visibility map bit is clear after a crash recovery; or they can disagree
-  because of a change which occurs after <literal>pg_visibility</> examines
+  because of a change which occurs after <literal>mdb_visibility</> examines
   the visibility map and before it examines the data page.
  </para>
 
@@ -40,7 +40,7 @@
 
   <variablelist>
    <varlistentry>
-    <term><function>pg_visibility_map(regclass, blkno bigint, all_visible OUT boolean, all_frozen OUT boolean) returns record</function></term>
+    <term><function>mdb_visibility_map(regclass, blkno bigint, all_visible OUT boolean, all_frozen OUT boolean) returns record</function></term>
     <listitem>
      <para>
       Returns the all-visible and all-frozen bits in the visibility map for
@@ -50,7 +50,7 @@
    </varlistentry>
 
    <varlistentry>
-    <term><function>pg_visibility(regclass, blkno bigint, all_visible OUT boolean, all_frozen OUT boolean, pd_all_visible OUT boolean) returns record</function></term>
+    <term><function>mdb_visibility(regclass, blkno bigint, all_visible OUT boolean, all_frozen OUT boolean, pd_all_visible OUT boolean) returns record</function></term>
     <listitem>
      <para>
       Returns the all-visible and all-frozen bits in the visibility map for
@@ -61,7 +61,7 @@
    </varlistentry>
 
    <varlistentry>
-    <term><function>pg_visibility_map(regclass, blkno OUT bigint, all_visible OUT boolean, all_frozen OUT boolean) returns record</function></term>
+    <term><function>mdb_visibility_map(regclass, blkno OUT bigint, all_visible OUT boolean, all_frozen OUT boolean) returns record</function></term>
     <listitem>
      <para>
       Returns the all-visible and all-frozen bits in the visibility map for
@@ -71,7 +71,7 @@
    </varlistentry>
 
    <varlistentry>
-    <term><function>pg_visibility(regclass, blkno OUT bigint, all_visible OUT boolean, all_frozen OUT boolean, pd_all_visible OUT boolean) returns record</function></term>
+    <term><function>mdb_visibility(regclass, blkno OUT bigint, all_visible OUT boolean, all_frozen OUT boolean, pd_all_visible OUT boolean) returns record</function></term>
 
     <listitem>
      <para>
@@ -83,7 +83,7 @@
    </varlistentry>
 
    <varlistentry>
-    <term><function>pg_visibility_map_summary(regclass, all_visible OUT bigint, all_frozen OUT bigint) returns record</function></term>
+    <term><function>mdb_visibility_map_summary(regclass, all_visible OUT bigint, all_frozen OUT bigint) returns record</function></term>
 
     <listitem>
      <para>

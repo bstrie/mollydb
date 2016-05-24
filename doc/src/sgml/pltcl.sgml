@@ -307,11 +307,11 @@ $$ LANGUAGE pltcl;
         query returns no rows.  (This case can be detected by checking the
         result of <function>spi_exec</function>.)  For example:
 <programlisting>
-spi_exec "SELECT count(*) AS cnt FROM pg_proc"
+spi_exec "SELECT count(*) AS cnt FROM mdb_proc"
 </programlisting>
 
         will set the Tcl variable <literal>$cnt</> to the number of rows in
-        the <structname>pg_proc</> system catalog.
+        the <structname>mdb_proc</> system catalog.
        </para>
        <para>
         If the optional <replaceable>loop-body</> argument is given, it is
@@ -321,12 +321,12 @@ spi_exec "SELECT count(*) AS cnt FROM pg_proc"
         are stored into Tcl variables before each iteration.  For example:
 
 <programlisting>
-spi_exec -array C "SELECT * FROM pg_class" {
+spi_exec -array C "SELECT * FROM mdb_class" {
     elog DEBUG "have table $C(relname)"
 }
 </programlisting>
 
-        will print a log message for every row of <literal>pg_class</>.  This
+        will print a log message for every row of <literal>mdb_class</>.  This
         feature works similarly to other Tcl looping constructs; in
         particular <literal>continue</> and <literal>break</> work in the
         usual way inside the loop body.
@@ -901,7 +901,7 @@ if {[catch { spi_exec $sql_command }]} {
      differ. Tcl, however, requires all procedure names to be distinct.
      PL/Tcl deals with this by making the internal Tcl procedure names contain
      the object
-     ID of the function from the system table <structname>pg_proc</> as part of their name. Thus,
+     ID of the function from the system table <structname>mdb_proc</> as part of their name. Thus,
      <productname>MollyDB</productname> functions with the same name
      and different argument types will be different Tcl procedures, too.  This
      is not normally a concern for a PL/Tcl programmer, but it might be visible

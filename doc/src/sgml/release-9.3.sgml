@@ -102,19 +102,19 @@
 
     <listitem>
      <para>
-      Make <application>pg_regress</> use a startup timeout from the
+      Make <application>mdb_regress</> use a startup timeout from the
       <envar>PGCTLTIMEOUT</> environment variable, if that's set (Tom Lane)
      </para>
 
      <para>
       This is for consistency with a behavior recently added
-      to <application>pg_ctl</>; it eases automated testing on slow machines.
+      to <application>mdb_ctl</>; it eases automated testing on slow machines.
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix <application>pg_upgrade</> to correctly restore extension
+      Fix <application>mdb_upgrade</> to correctly restore extension
       membership for operator families containing only one operator class
       (Tom Lane)
      </para>
@@ -122,19 +122,19 @@
      <para>
       In such a case, the operator family was restored into the new database,
       but it was no longer marked as part of the extension.  This had no
-      immediate ill effects, but would cause later <application>pg_dump</>
+      immediate ill effects, but would cause later <application>mdb_dump</>
       runs to emit output that would cause (harmless) errors on restore.
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix <application>pg_upgrade</> to not fail when new-cluster TOAST rules
+      Fix <application>mdb_upgrade</> to not fail when new-cluster TOAST rules
       differ from old (Tom Lane)
      </para>
 
      <para>
-      <application>pg_upgrade</> had special-case code to handle the
+      <application>mdb_upgrade</> had special-case code to handle the
       situation where the new <productname>MollyDB</> version thinks that
       a table should have a TOAST table while the old version did not.  That
       code was broken, so remove it, and instead do nothing in such cases;
@@ -289,7 +289,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Correctly handle cases where <literal>pg_subtrans</> is close to XID
+      Correctly handle cases where <literal>mdb_subtrans</> is close to XID
       wraparound during server startup (Jeff Janes)
      </para>
     </listitem>
@@ -361,7 +361,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Make <application>pg_ctl</> accept a wait timeout from the
+      Make <application>mdb_ctl</> accept a wait timeout from the
       <envar>PGCTLTIMEOUT</> environment variable, if none is specified on
       the command line (Noah Misch)
      </para>
@@ -376,12 +376,12 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
     <listitem>
      <para>
       Fix incorrect test for Windows service status
-      in <application>pg_ctl</> (Manuel Mathar)
+      in <application>mdb_ctl</> (Manuel Mathar)
      </para>
 
      <para>
       The previous set of minor releases attempted to
-      fix <application>pg_ctl</> to properly determine whether to send log
+      fix <application>mdb_ctl</> to properly determine whether to send log
       messages to Window's Event Log, but got the test backwards.
      </para>
     </listitem>
@@ -395,7 +395,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>, skip creating a deletion script when
+      In <application>mdb_upgrade</>, skip creating a deletion script when
       the new data directory is inside the old data directory (Bruce
       Momjian)
      </para>
@@ -772,20 +772,20 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      In <literal>pg_ctl start -w</>, test child process status directly
+      In <literal>mdb_ctl start -w</>, test child process status directly
       rather than relying on heuristics (Tom Lane, Michael Paquier)
      </para>
 
      <para>
-      Previously, <application>pg_ctl</> relied on an assumption that the new
+      Previously, <application>mdb_ctl</> relied on an assumption that the new
       postmaster would always create <filename>postmaster.pid</> within five
       seconds.  But that can fail on heavily-loaded systems,
-      causing <application>pg_ctl</> to report incorrectly that the
+      causing <application>mdb_ctl</> to report incorrectly that the
       postmaster failed to start.
      </para>
 
      <para>
-      Except on Windows, this change also means that a <literal>pg_ctl start
+      Except on Windows, this change also means that a <literal>mdb_ctl start
       -w</> done immediately after another such command will now reliably
       fail, whereas previously it would report success if done within two
       seconds of the first command.
@@ -794,12 +794,12 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      In <literal>pg_ctl start -w</>, don't attempt to use a wildcard listen
+      In <literal>mdb_ctl start -w</>, don't attempt to use a wildcard listen
       address to connect to the postmaster (Kondo Yuta)
      </para>
 
      <para>
-      On Windows, <application>pg_ctl</> would fail to detect postmaster
+      On Windows, <application>mdb_ctl</> would fail to detect postmaster
       startup if <varname>listen_addresses</> is set to <literal>0.0.0.0</>
       or <literal>::</>, because it would try to use that value verbatim as
       the address to connect to, which doesn't work.  Instead assume
@@ -810,7 +810,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      In <application>pg_ctl</> on Windows, check service status to decide
+      In <application>mdb_ctl</> on Windows, check service status to decide
       where to send output, rather than checking if standard output is a
       terminal (Michael Paquier)
      </para>
@@ -818,7 +818,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      In <application>pg_dump</> and <application>pg_basebackup</>, adopt
+      In <application>mdb_dump</> and <application>mdb_basebackup</>, adopt
       the GNU convention for handling tar-archive members exceeding 8GB
       (Tom Lane)
      </para>
@@ -827,9 +827,9 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
       The POSIX standard for <literal>tar</> file format does not allow
       archive member files to exceed 8GB, but most modern implementations
       of <application>tar</> support an extension that fixes that.  Adopt
-      this extension so that <application>pg_dump</> with <option>-Ft</> no
+      this extension so that <application>mdb_dump</> with <option>-Ft</> no
       longer fails on tables with more than 8GB of data, and so
-      that <application>pg_basebackup</> can handle files larger than 8GB.
+      that <application>mdb_basebackup</> can handle files larger than 8GB.
       In addition, fix some portability issues that could cause failures for
       members between 4GB and 8GB on some platforms.  Potentially these
       problems could cause unrecoverable data loss due to unreadable backup
@@ -839,29 +839,29 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Fix assorted corner-case bugs in <application>pg_dump</>'s processing
+      Fix assorted corner-case bugs in <application>mdb_dump</>'s processing
       of extension member objects (Tom Lane)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Make <application>pg_dump</> mark a view's triggers as needing to be
+      Make <application>mdb_dump</> mark a view's triggers as needing to be
       processed after its rule, to prevent possible failure during
-      parallel <application>pg_restore</> (Tom Lane)
+      parallel <application>mdb_restore</> (Tom Lane)
      </para>
     </listitem>
 
     <listitem>
      <para>
       Ensure that relation option values are properly quoted
-      in <application>pg_dump</> (Kouhei Sutou, Tom Lane)
+      in <application>mdb_dump</> (Kouhei Sutou, Tom Lane)
      </para>
 
      <para>
       A reloption value that isn't a simple identifier or number could lead
       to dump/reload failures due to syntax errors in CREATE statements
-      issued by <application>pg_dump</>.  This is not an issue with any
+      issued by <application>mdb_dump</>.  This is not an issue with any
       reloption currently supported by core <productname>MollyDB</>, but
       extensions could allow reloptions that cause the problem.
      </para>
@@ -869,14 +869,14 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Avoid repeated password prompts during parallel <application>pg_dump</>
+      Avoid repeated password prompts during parallel <application>mdb_dump</>
       (Zeus Kronion)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix <application>pg_upgrade</>'s file-copying code to handle errors
+      Fix <application>mdb_upgrade</>'s file-copying code to handle errors
       properly on Windows (Bruce Momjian)
      </para>
     </listitem>
@@ -892,7 +892,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
     <listitem>
      <para>
       Fix failure to localize messages emitted
-      by <application>pg_receivexlog</> and <application>pg_recvlogical</>
+      by <application>mdb_receivexlog</> and <application>mdb_recvlogical</>
       (Ioseph Kim)
      </para>
     </listitem>
@@ -907,7 +907,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
       In principle, both versions of <application>PL/Python</> can be used in
       the same database, though not in the same session (because the two
       versions of <application>libpython</> cannot safely be used concurrently).
-      However, <application>pg_restore</> and <application>pg_upgrade</> both
+      However, <application>mdb_restore</> and <application>mdb_upgrade</> both
       do things that can fall foul of the same-session restriction.  Work
       around that by changing the timing of the check.
      </para>
@@ -1162,7 +1162,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
      <para>
       An oversight in a patch in the most recent minor releases
-      caused <structname>pg_trigger_tgrelid_tgname_index</> to be omitted
+      caused <structname>mdb_trigger_tgrelid_tgname_index</> to be omitted
       from the init file.  Subsequent sessions detected this, then deemed the
       init file to be broken and silently ignored it, resulting in a
       significant degradation in session startup time.  In addition to fixing
@@ -1192,7 +1192,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
      </para>
 
      <para>
-      This was seen primarily when restoring <application>pg_dump</> output
+      This was seen primarily when restoring <application>mdb_dump</> output
       for databases with many thousands of tables.
      </para>
     </listitem>
@@ -1392,7 +1392,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
      <para>
       This avoids race-condition failures if an external script attempts to
-      start a new postmaster as soon as <literal>pg_ctl stop</> returns.
+      start a new postmaster as soon as <literal>mdb_ctl stop</> returns.
      </para>
     </listitem>
 
@@ -1561,7 +1561,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Make <application>pg_dump</> handle inherited <literal>NOT VALID</>
+      Make <application>mdb_dump</> handle inherited <literal>NOT VALID</>
       check constraints correctly (Tom Lane)
      </para>
     </listitem>
@@ -1569,13 +1569,13 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
     <listitem>
      <para>
       Fix selection of default <application>zlib</> compression level
-      in <application>pg_dump</>'s directory output format (Andrew Dunstan)
+      in <application>mdb_dump</>'s directory output format (Andrew Dunstan)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Ensure that temporary files created during a <application>pg_dump</>
+      Ensure that temporary files created during a <application>mdb_dump</>
       run with <acronym>tar</>-format output are not world-readable (Michael
       Paquier)
      </para>
@@ -1583,7 +1583,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Fix <application>pg_dump</> and <application>pg_upgrade</> to support
+      Fix <application>mdb_dump</> and <application>mdb_upgrade</> to support
       cases where the <literal>mollydb</> or <literal>template1</> database
       is in a non-default tablespace (Marti Raudsepp, Bruce Momjian)
      </para>
@@ -1591,7 +1591,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Fix <application>pg_dump</> to handle object privileges sanely when
+      Fix <application>mdb_dump</> to handle object privileges sanely when
       dumping from a server too old to have a particular privilege type
       (Tom Lane)
      </para>
@@ -1599,7 +1599,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
      <para>
       When dumping data types from pre-9.2 servers, and when dumping
       functions or procedural languages from pre-7.3
-      servers, <application>pg_dump</> would
+      servers, <application>mdb_dump</> would
       produce <command>GRANT</>/<command>REVOKE</> commands that revoked the
       owner's grantable privileges and instead granted all privileges
       to <literal>PUBLIC</>.  Since the privileges involved are
@@ -1612,18 +1612,18 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Fix <application>pg_dump</> to dump shell types (Tom Lane)
+      Fix <application>mdb_dump</> to dump shell types (Tom Lane)
      </para>
 
      <para>
       Shell types (that is, not-yet-fully-defined types) aren't useful for
-      much, but nonetheless <application>pg_dump</> should dump them.
+      much, but nonetheless <application>mdb_dump</> should dump them.
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix assorted minor memory leaks in <application>pg_dump</> and other
+      Fix assorted minor memory leaks in <application>mdb_dump</> and other
       client-side programs (Michael Paquier)
      </para>
     </listitem>
@@ -1725,7 +1725,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
    <para>
     However, if you are upgrading an installation that was previously
-    upgraded using a <application>pg_upgrade</> version between 9.3.0 and
+    upgraded using a <application>mdb_upgrade</> version between 9.3.0 and
     9.3.4 inclusive, see the first changelog entry below.
    </para>
 
@@ -1754,14 +1754,14 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
       recovery, when the database may not be in a consistent state.  This
       could result in failure to restart after a crash, or failure to start
       up a secondary server.  The lingering effects of a previously-fixed
-      bug in <application>pg_upgrade</> could also cause such a failure, in
-      installations that had used <application>pg_upgrade</> versions
+      bug in <application>mdb_upgrade</> could also cause such a failure, in
+      installations that had used <application>mdb_upgrade</> versions
       between 9.3.0 and 9.3.4.
      </para>
 
      <para>
-      The <application>pg_upgrade</> bug in question was that it would
-      set <literal>oldestMultiXid</> to 1 in <filename>pg_control</> even
+      The <application>mdb_upgrade</> bug in question was that it would
+      set <literal>oldestMultiXid</> to 1 in <filename>mdb_control</> even
       if the true value should be higher.  With the fixes introduced in
       this release, such a situation will result in immediate emergency
       autovacuuming until a correct <literal>oldestMultiXid</> value can be
@@ -1772,21 +1772,21 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
       <orderedlist>
        <listitem>
         <para>
-         Check whether <application>pg_controldata</> reports <quote>Latest
+         Check whether <application>mdb_controldata</> reports <quote>Latest
          checkpoint's oldestMultiXid</> to be 1.  If not, there's nothing
          to do.
         </para>
        </listitem>
        <listitem>
         <para>
-         Look in <filename>PGDATA/pg_multixact/offsets</> to see if there's a
+         Look in <filename>PGDATA/mdb_multixact/offsets</> to see if there's a
          file named <filename>0000</>.  If there is, there's nothing to do.
         </para>
        </listitem>
        <listitem>
         <para>
          Otherwise, for each table that has
-         <structname>pg_class</>.<structfield>relminmxid</> equal to 1,
+         <structname>mdb_class</>.<structfield>relminmxid</> equal to 1,
          <command>VACUUM</> that table with
          both <xref linkend="guc-vacuum-multixact-freeze-min-age">
          and <xref linkend="guc-vacuum-multixact-freeze-table-age"> set to
@@ -1910,7 +1910,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Fix <function>pg_get_functiondef()</> to show
+      Fix <function>mdb_get_functiondef()</> to show
       functions' <literal>LEAKPROOF</> property, if set (Jeevan Chalke)
      </para>
     </listitem>
@@ -2063,7 +2063,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
      <para>
       Under certain usage patterns, the existing defenses against this might
-      be insufficient, allowing <filename>pg_multixact/members</> files to be
+      be insufficient, allowing <filename>mdb_multixact/members</> files to be
       removed too early, resulting in data loss.
       The fix for this includes modifying the server to fail transactions
       that would result in overwriting old multixact member ID data, and
@@ -2316,7 +2316,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
     <listitem>
      <para>
-      Remove code for matching IPv4 <filename>pg_hba.conf</> entries to
+      Remove code for matching IPv4 <filename>mdb_hba.conf</> entries to
       IPv4-in-IPv6 addresses (Tom Lane)
      </para>
 
@@ -2329,7 +2329,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
       crashes on some systems, so let's just remove it rather than fix it.
       (Had we chosen to fix it, that would make for a subtle and potentially
       security-sensitive change in the effective meaning of
-      IPv4 <filename>pg_hba.conf</> entries, which does not seem like a good
+      IPv4 <filename>mdb_hba.conf</> entries, which does not seem like a good
       thing to do in minor releases.)
      </para>
     </listitem>
@@ -2342,7 +2342,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
      <para>
       This avoids a possible startup failure
-      in <application>pg_receivexlog</>.
+      in <application>mdb_receivexlog</>.
      </para>
     </listitem>
 
@@ -2350,7 +2350,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
      <para>
       While shutting down service on Windows, periodically send status
       updates to the Service Control Manager to prevent it from killing the
-      service too soon; and ensure that <application>pg_ctl</> will wait for
+      service too soon; and ensure that <application>mdb_ctl</> will wait for
       shutdown (Krystian Bigaj)
      </para>
     </listitem>
@@ -2420,14 +2420,14 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
     <listitem>
      <para>
-      Fix <application>pg_dump</>'s rule for deciding which casts are
+      Fix <application>mdb_dump</>'s rule for deciding which casts are
       system-provided casts that should not be dumped (Tom Lane)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      In <application>pg_dump</>, fix failure to honor <literal>-Z</>
+      In <application>mdb_dump</>, fix failure to honor <literal>-Z</>
       compression level option together with <literal>-Fd</>
       (Michael Paquier)
      </para>
@@ -2435,7 +2435,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
     <listitem>
      <para>
-      Make <application>pg_dump</> consider foreign key relationships
+      Make <application>mdb_dump</> consider foreign key relationships
       between extension configuration tables while choosing dump order
       (Gilles Darold, Michael Paquier, Stephen Frost)
      </para>
@@ -2448,7 +2448,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
     <listitem>
      <para>
-      Avoid possible <application>pg_dump</> failure when concurrent sessions
+      Avoid possible <application>mdb_dump</> failure when concurrent sessions
       are creating and dropping temporary functions (Tom Lane)
      </para>
     </listitem>
@@ -2462,7 +2462,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>, force timeline 1 in the new cluster
+      In <application>mdb_upgrade</>, force timeline 1 in the new cluster
       (Bruce Momjian)
      </para>
 
@@ -2474,7 +2474,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>, check for improperly non-connectable
+      In <application>mdb_upgrade</>, check for improperly non-connectable
       databases before proceeding
       (Bruce Momjian)
      </para>
@@ -2482,7 +2482,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>, quote directory paths
+      In <application>mdb_upgrade</>, quote directory paths
       properly in the generated <literal>delete_old_cluster</> script
       (Bruce Momjian)
      </para>
@@ -2490,7 +2490,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>, preserve database-level freezing info
+      In <application>mdb_upgrade</>, preserve database-level freezing info
       properly
       (Bruce Momjian)
      </para>
@@ -2503,7 +2503,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
     <listitem>
      <para>
-      Run <application>pg_upgrade</> and <application>pg_resetxlog</> with
+      Run <application>mdb_upgrade</> and <application>mdb_resetxlog</> with
       restricted privileges on Windows, so that they don't fail when run by
       an administrator (Muhammad Asif Naeem)
      </para>
@@ -2512,7 +2512,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
     <listitem>
      <para>
       Improve handling of <function>readdir()</> failures when scanning
-      directories in <application>initdb</> and <application>pg_basebackup</>
+      directories in <application>initdb</> and <application>mdb_basebackup</>
       (Marco Nenciarini)
      </para>
     </listitem>
@@ -2847,7 +2847,7 @@ Branch: REL9_0_STABLE [73f950fc8] 2014-10-30 13:03:39 -0400
      <para>
       If the failing transaction had earlier removed the last index, rule, or
       trigger from the table, the table would be left in a corrupted state
-      with the relevant <structname>pg_class</> flags not set though they
+      with the relevant <structname>mdb_class</> flags not set though they
       should be.
      </para>
     </listitem>
@@ -3813,7 +3813,7 @@ Branch: REL9_3_STABLE [bb1e2426b] 2015-01-05 19:27:09 -0500
 
     <listitem>
      <para>
-      Fix <application>pg_dump</> to handle comments on event triggers
+      Fix <application>mdb_dump</> to handle comments on event triggers
       without failing (Tom Lane)
      </para>
     </listitem>
@@ -3827,7 +3827,7 @@ Branch: REL9_3_STABLE [cc609c46f] 2015-01-30 09:01:36 -0600
 
     <listitem>
      <para>
-      Allow parallel <application>pg_dump</> to
+      Allow parallel <application>mdb_dump</> to
       use <option>--serializable-deferrable</> (Kevin Grittner)
      </para>
     </listitem>
@@ -3841,7 +3841,7 @@ Branch: REL9_1_STABLE [40c333c39] 2014-07-25 19:48:54 -0400
 
     <listitem>
      <para>
-      Improve performance of <application>pg_dump</> when the database
+      Improve performance of <application>mdb_dump</> when the database
       contains many instances of multiple dependency paths between the same
       two objects (Tom Lane)
      </para>
@@ -3855,7 +3855,7 @@ Branch: REL9_2_STABLE [3c5ce5102] 2014-11-13 18:19:35 -0500
 
     <listitem>
      <para>
-      Fix <application>pg_dumpall</> to restore its ability to dump from
+      Fix <application>mdb_dumpall</> to restore its ability to dump from
       pre-8.1 servers (Gilles Darold)
      </para>
     </listitem>
@@ -3885,7 +3885,7 @@ Branch: REL9_0_STABLE [31021e7ba] 2014-10-17 12:49:15 -0400
 
     <listitem>
      <para>
-      Fix core dump in <literal>pg_dump --binary-upgrade</> on zero-column
+      Fix core dump in <literal>mdb_dump --binary-upgrade</> on zero-column
       composite type (Rushabh Lathia)
      </para>
     </listitem>
@@ -3898,7 +3898,7 @@ Branch: REL9_3_STABLE [26a4e0ed7] 2014-11-15 01:21:11 +0100
     <listitem>
      <para>
       Fix failure to fsync tables in nondefault tablespaces
-      during <application>pg_upgrade</> (Abhijit Menon-Sen, Andres Freund)
+      during <application>mdb_upgrade</> (Abhijit Menon-Sen, Andres Freund)
      </para>
 
      <para>
@@ -3914,7 +3914,7 @@ Branch: REL9_3_STABLE [fca9f349b] 2014-08-07 14:56:13 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>, cope with cases where the new cluster
+      In <application>mdb_upgrade</>, cope with cases where the new cluster
       creates a TOAST table for a table that didn't previously have one
       (Bruce Momjian)
      </para>
@@ -3931,7 +3931,7 @@ Branch: REL9_3_STABLE [24ae44914] 2014-08-04 11:45:45 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>, don't try to
+      In <application>mdb_upgrade</>, don't try to
       set <literal>autovacuum_multixact_freeze_max_age</> for the old cluster
       (Bruce Momjian)
      </para>
@@ -3949,7 +3949,7 @@ Branch: REL9_3_STABLE [5724f491d] 2014-09-11 18:39:46 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>, preserve the transaction ID epoch
+      In <application>mdb_upgrade</>, preserve the transaction ID epoch
       (Bruce Momjian)
      </para>
 
@@ -3970,7 +3970,7 @@ Branch: REL9_1_STABLE [2a0bfa4d6] 2015-01-03 20:54:13 +0100
 
     <listitem>
      <para>
-      Prevent WAL files created by <literal>pg_basebackup -x/-X</> from
+      Prevent WAL files created by <literal>mdb_basebackup -x/-X</> from
       being archived again when the standby is promoted (Andres Freund)
      </para>
     </listitem>
@@ -3982,7 +3982,7 @@ Branch: REL9_3_STABLE [9747a9898] 2014-08-02 15:19:45 +0900
 
     <listitem>
      <para>
-      Fix memory leak in <application>pg_receivexlog</> (Fujii Masao)
+      Fix memory leak in <application>mdb_receivexlog</> (Fujii Masao)
      </para>
     </listitem>
 
@@ -3993,7 +3993,7 @@ Branch: REL9_3_STABLE [39217ce41] 2014-08-02 14:59:10 +0900
 
     <listitem>
      <para>
-      Fix unintended suppression of <application>pg_receivexlog</> verbose
+      Fix unintended suppression of <application>mdb_receivexlog</> verbose
       messages (Fujii Masao)
      </para>
     </listitem>
@@ -4097,7 +4097,7 @@ Branch: REL9_1_STABLE [a855c90a7] 2014-11-19 12:26:06 -0500
 
     <listitem>
      <para>
-      Fix file descriptor leak in <filename>contrib/pg_test_fsync</>
+      Fix file descriptor leak in <filename>contrib/mdb_test_fsync</>
       (Jeff Janes)
      </para>
 
@@ -4314,7 +4314,7 @@ Branch: REL9_0_STABLE [338ff75fc] 2015-01-19 23:44:33 -0500
 
     <listitem>
      <para>
-      Make <application>pg_regress</> remove any temporary installation it
+      Make <application>mdb_regress</> remove any temporary installation it
       created upon successful exit (Tom Lane)
      </para>
 
@@ -4457,7 +4457,7 @@ Branch: REL9_0_STABLE [b6391f587] 2014-10-04 14:18:43 -0400
 
    <para>
     However, this release corrects a logic error
-    in <application>pg_upgrade</>, as well as an index corruption problem in
+    in <application>mdb_upgrade</>, as well as an index corruption problem in
     some GiST indexes.  See the first two changelog entries below to find out
     whether your installation has been affected and what steps you should take
     if so.
@@ -4484,21 +4484,21 @@ Branch: REL9_3_STABLE [cc5841809] 2014-06-24 16:11:06 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>, remove <filename>pg_multixact</> files
+      In <application>mdb_upgrade</>, remove <filename>mdb_multixact</> files
       left behind by <application>initdb</> (Bruce Momjian)
      </para>
 
      <para>
-      If you used a pre-9.3.5 version of <application>pg_upgrade</> to
+      If you used a pre-9.3.5 version of <application>mdb_upgrade</> to
       upgrade a database cluster to 9.3, it might have left behind a file
-      <filename>$PGDATA/pg_multixact/offsets/0000</> that should not be
+      <filename>$PGDATA/mdb_multixact/offsets/0000</> that should not be
       there and will eventually cause problems in <command>VACUUM</>.
       <emphasis>However, in common cases this file is actually valid and
       must not be removed.</emphasis>
       To determine whether your installation has this problem, run this
       query as superuser, in any database of the cluster:
 <programlisting>
-WITH list(file) AS (SELECT * FROM pg_ls_dir('pg_multixact/offsets'))
+WITH list(file) AS (SELECT * FROM mdb_ls_dir('mdb_multixact/offsets'))
 SELECT EXISTS (SELECT * FROM list WHERE file = '0000') AND
        NOT EXISTS (SELECT * FROM list WHERE file = '0001') AND
        NOT EXISTS (SELECT * FROM list WHERE file = 'FFFF') AND
@@ -4506,7 +4506,7 @@ SELECT EXISTS (SELECT * FROM list WHERE file = '0000') AND
        AS file_0000_removal_required;
 </programlisting>
       If this query returns <literal>t</>, manually remove the file
-      <filename>$PGDATA/pg_multixact/offsets/0000</>.
+      <filename>$PGDATA/mdb_multixact/offsets/0000</>.
       Do nothing if the query returns <literal>f</>.
      </para>
     </listitem>
@@ -4616,7 +4616,7 @@ Branch: REL9_3_STABLE [167a2535f] 2014-06-09 15:17:23 -0400
 
     <listitem>
      <para>
-      Fix wraparound handling for <filename>pg_multixact/members</>
+      Fix wraparound handling for <filename>mdb_multixact/members</>
       (&Aacute;lvaro Herrera)
      </para>
     </listitem>
@@ -4630,12 +4630,12 @@ Branch: REL9_3_STABLE [9a28c3752] 2014-06-27 14:43:52 -0400
 
     <listitem>
      <para>
-      Truncate <structname>pg_multixact</> during checkpoints, not
+      Truncate <structname>mdb_multixact</> during checkpoints, not
       during <command>VACUUM</> (&Aacute;lvaro Herrera)
      </para>
 
      <para>
-      This change ensures that <structname>pg_multixact</> segments can't be
+      This change ensures that <structname>mdb_multixact</> segments can't be
       removed if they'd still be needed during WAL replay after a crash.
      </para>
     </listitem>
@@ -4968,7 +4968,7 @@ Branch: REL8_4_STABLE [82fbd88a7] 2014-04-24 13:30:14 -0400
 
     <listitem>
      <para>
-      Clear <structname>pg_stat_activity</>.<structfield>xact_start</>
+      Clear <structname>mdb_stat_activity</>.<structfield>xact_start</>
       during <command>PREPARE TRANSACTION</> (Andres Freund)
      </para>
 
@@ -5006,7 +5006,7 @@ Branch: REL9_3_STABLE [e86cfc4bb] 2014-06-27 14:43:45 -0400
 
     <listitem>
      <para>
-      Prevent <structname>pg_class</>.<structfield>relminmxid</> values from
+      Prevent <structname>mdb_class</>.<structfield>relminmxid</> values from
       going backwards during <command>VACUUM FULL</> (&Aacute;lvaro Herrera)
      </para>
     </listitem>
@@ -5097,7 +5097,7 @@ Branch: REL9_1_STABLE [b7a424371] 2014-04-02 17:11:34 -0400
 
     <listitem>
      <para>
-      Fix client host name lookup when processing <filename>pg_hba.conf</>
+      Fix client host name lookup when processing <filename>mdb_hba.conf</>
       entries that specify host names instead of IP addresses (Tom Lane)
      </para>
 
@@ -5125,7 +5125,7 @@ Branch: REL9_2_STABLE [6d25eb314] 2014-04-04 22:03:42 -0400
      <para>
       The prohibition on starting the server as root does not need to extend
       to these operations, and relaxing it prevents failure
-      of <application>pg_ctl</> in some scenarios.
+      of <application>mdb_ctl</> in some scenarios.
      </para>
     </listitem>
 
@@ -5236,7 +5236,7 @@ Branch: REL8_4_STABLE [e3f273ff6] 2014-04-30 10:39:03 +0300
 
      <para>
       This oversight could cause <application>initdb</>
-      and <application>pg_upgrade</> to fail on Windows, if the installation
+      and <application>mdb_upgrade</> to fail on Windows, if the installation
       path contained both spaces and <literal>@</> signs.
      </para>
     </listitem>
@@ -5340,13 +5340,13 @@ Branch: REL9_3_STABLE [3080bbaa9] 2014-03-29 17:34:03 -0400
 
     <listitem>
      <para>
-      Fix <application>pg_dump</> to cope with a materialized view that
+      Fix <application>mdb_dump</> to cope with a materialized view that
       depends on a table's primary key (Tom Lane)
      </para>
 
      <para>
       This occurs if the view's query relies on functional dependency to
-      abbreviate a <literal>GROUP BY</> list.  <application>pg_dump</> got
+      abbreviate a <literal>GROUP BY</> list.  <application>mdb_dump</> got
       sufficiently confused that it dumped the materialized view as a
       regular view.
      </para>
@@ -5360,7 +5360,7 @@ Branch: REL9_3_STABLE [63817f86b] 2014-03-18 10:38:38 -0400
 
     <listitem>
      <para>
-      Fix parsing of <application>pg_dumpall</>'s <option>-i</> switch
+      Fix parsing of <application>mdb_dumpall</>'s <option>-i</> switch
       (Tom Lane)
      </para>
     </listitem>
@@ -5378,13 +5378,13 @@ Branch: REL8_4_STABLE [6adddac8a] 2014-06-12 20:14:55 -0400
 
     <listitem>
      <para>
-      Fix <application>pg_restore</>'s processing of old-style large object
+      Fix <application>mdb_restore</>'s processing of old-style large object
       comments (Tom Lane)
      </para>
 
      <para>
       A direct-to-database restore from an archive file generated by a
-      pre-9.0 version of <application>pg_dump</> would usually fail if the
+      pre-9.0 version of <application>mdb_dump</> would usually fail if the
       archive contained more than a few comments for large objects.
      </para>
     </listitem>
@@ -5399,7 +5399,7 @@ Branch: REL9_2_STABLE [759c9fb63] 2014-07-07 13:24:08 -0400
 
     <listitem>
      <para>
-      Fix <application>pg_upgrade</> for cases where the new server creates
+      Fix <application>mdb_upgrade</> for cases where the new server creates
       a TOAST table but the old version did not (Bruce Momjian)
      </para>
 
@@ -5423,9 +5423,9 @@ Branch: REL9_3_STABLE [e7984cca0] 2014-07-21 11:42:05 -0400
 
     <listitem>
      <para>
-      In <application>pg_upgrade</>,
-      preserve <structname>pg_database</>.<structfield>datminmxid</>
-      and <structname>pg_class</>.<structfield>relminmxid</> values from the
+      In <application>mdb_upgrade</>,
+      preserve <structname>mdb_database</>.<structfield>datminmxid</>
+      and <structname>mdb_class</>.<structfield>relminmxid</> values from the
       old cluster, or insert reasonable values when upgrading from pre-9.3;
       also defend against unreasonable values in the core server
       (Bruce Momjian, &Aacute;lvaro Herrera, Tom Lane)
@@ -5745,7 +5745,7 @@ Branch: REL8_4_STABLE [f043bddfe] 2014-03-06 19:31:22 -0500
      </para>
 
      <para>
-      This oversight resulted in <application>pg_dump</> unexpectedly
+      This oversight resulted in <application>mdb_dump</> unexpectedly
       acquiring <literal>RowExclusiveLock</> locks on tables mentioned as
       the targets of <literal>INSERT</>/<literal>UPDATE</>/<literal>DELETE</>
       commands in rules.  While usually harmless, that could interfere with
@@ -5845,7 +5845,7 @@ Branch: REL9_1_STABLE [65e8dbb18] 2014-03-17 20:42:35 +0900
     <listitem>
      <para>
       Fix <application>walsender</>'s failure to shut down cleanly when client
-      is <application>pg_receivexlog</> (Fujii Masao)
+      is <application>mdb_receivexlog</> (Fujii Masao)
      </para>
     </listitem>
 
@@ -6420,7 +6420,7 @@ Branch: REL9_3_STABLE [03db79459] 2014-01-02 18:17:07 -0300
     <listitem>
      <para>
       Handle wraparound correctly during extension or truncation
-      of <filename>pg_multixact/members</>
+      of <filename>mdb_multixact/members</>
       (Andres Freund, &Aacute;lvaro Herrera)
      </para>
     </listitem>
@@ -6433,7 +6433,7 @@ Branch: REL9_3_STABLE [948a3dfbb] 2014-01-02 18:17:29 -0300
 
     <listitem>
      <para>
-      Fix handling of 5-digit filenames in <filename>pg_multixact/members</>
+      Fix handling of 5-digit filenames in <filename>mdb_multixact/members</>
       (&Aacute;lvaro Herrera)
      </para>
 
@@ -6484,7 +6484,7 @@ Branch: REL9_3_STABLE [762bd379a] 2014-02-14 15:18:34 +0200
      <para>
       During archive recovery, prefer highest timeline number when WAL
       segments with the same ID are present in both the archive
-      and <filename>pg_xlog/</> (Kyotaro Horiguchi)
+      and <filename>mdb_xlog/</> (Kyotaro Horiguchi)
      </para>
 
      <para>
@@ -7092,8 +7092,8 @@ Branch: REL9_1_STABLE [026a91f86] 2014-01-07 18:00:36 +0100
 
     <listitem>
      <para>
-      Fix placement of permissions checks in <function>pg_start_backup()</>
-      and <function>pg_stop_backup()</> (Andres Freund, Magnus Hagander)
+      Fix placement of permissions checks in <function>mdb_start_backup()</>
+      and <function>mdb_stop_backup()</> (Andres Freund, Magnus Hagander)
      </para>
 
      <para>
@@ -7207,7 +7207,7 @@ Branch: REL9_2_STABLE [0ae288d2d] 2014-02-12 14:51:00 +0100
 
     <listitem>
      <para>
-      Ensure <application>pg_basebackup</>'s background process is killed
+      Ensure <application>mdb_basebackup</>'s background process is killed
       when exiting its foreground process (Magnus Hagander)
      </para>
     </listitem>
@@ -7223,7 +7223,7 @@ Branch: REL9_1_STABLE [c6e5c4dd1] 2014-02-09 12:09:55 +0100
     <listitem>
      <para>
       Fix possible incorrect printing of filenames
-      in <application>pg_basebackup</>'s verbose mode (Magnus Hagander)
+      in <application>mdb_basebackup</>'s verbose mode (Magnus Hagander)
      </para>
     </listitem>
 
@@ -7335,7 +7335,7 @@ Branch: REL9_2_STABLE [27ab1eb7e] 2014-01-21 16:34:35 -0500
 
     <listitem>
      <para>
-      Fix <filename>contrib/pg_stat_statement</>'s handling
+      Fix <filename>contrib/mdb_stat_statement</>'s handling
       of <literal>CURRENT_DATE</> and related constructs (Kyotaro
       Horiguchi)
      </para>
@@ -7579,7 +7579,7 @@ Branch: REL8_4_STABLE [c0c2d62ac] 2014-02-14 21:59:56 -0500
 
     <listitem>
      <para>
-      Fix initialization of <filename>pg_clog</> and <filename>pg_subtrans</>
+      Fix initialization of <filename>mdb_clog</> and <filename>mdb_subtrans</>
       during hot standby startup (Andres Freund, Heikki Linnakangas)
      </para>
 
@@ -7641,7 +7641,7 @@ Branch: REL8_4_STABLE [c0c2d62ac] 2014-02-14 21:59:56 -0500
 
     <listitem>
      <para>
-      Truncate <filename>pg_multixact</> contents during WAL replay
+      Truncate <filename>mdb_multixact</> contents during WAL replay
       (Andres Freund)
      </para>
 
@@ -7874,7 +7874,7 @@ SELECT ... FROM tab1 x CROSS JOIN (tab2 x CROSS JOIN tab3 y) z
 
     <listitem>
      <para>
-      Properly quote generated command lines in <application>pg_ctl</>
+      Properly quote generated command lines in <application>mdb_ctl</>
       (Naoya Anzai and Tom Lane)
      </para>
 
@@ -7885,7 +7885,7 @@ SELECT ... FROM tab1 x CROSS JOIN (tab2 x CROSS JOIN tab3 y) z
 
     <listitem>
      <para>
-      Fix <application>pg_dumpall</> to work when a source database
+      Fix <application>mdb_dumpall</> to work when a source database
       sets <link
       linkend="guc-default-transaction-read-only"><varname>default_transaction_read_only</></link>
       via <command>ALTER DATABASE SET</> (Kevin Grittner)
@@ -7898,19 +7898,19 @@ SELECT ... FROM tab1 x CROSS JOIN (tab2 x CROSS JOIN tab3 y) z
 
     <listitem>
      <para>
-      Fix <application>pg_isready</> to handle its <option>-d</> option
+      Fix <application>mdb_isready</> to handle its <option>-d</> option
       properly (Fabr&iacute;zio de Royes Mello and Fujii Masao)
      </para>
     </listitem>
 
     <listitem>
      <para>
-      Fix parsing of WAL file names in <application>pg_receivexlog</>
+      Fix parsing of WAL file names in <application>mdb_receivexlog</>
       (Heikki Linnakangas)
      </para>
 
      <para>
-      This error made <application>pg_receivexlog</> unable to restart
+      This error made <application>mdb_receivexlog</> unable to restart
       streaming after stopping, once at least 4 GB of WAL had been written.
      </para>
     </listitem>
@@ -7918,7 +7918,7 @@ SELECT ... FROM tab1 x CROSS JOIN (tab2 x CROSS JOIN tab3 y) z
     <listitem>
      <para>
       Report out-of-disk-space failures properly
-      in <application>pg_upgrade</> (Peter Eisentraut)
+      in <application>mdb_upgrade</> (Peter Eisentraut)
      </para>
     </listitem>
 
@@ -8036,7 +8036,7 @@ ALTER EXTENSION hstore UPDATE;
 
     <listitem>
      <para>
-      Fix timeline handling bugs in <application>pg_receivexlog</>
+      Fix timeline handling bugs in <application>mdb_receivexlog</>
       (Heikki Linnakangas, Andrew Gierth)
      </para>
     </listitem>
@@ -8166,8 +8166,8 @@ ALTER EXTENSION hstore UPDATE;
 
    <para>
     A dump/restore using <link
-    linkend="APP-PG-DUMPALL"><application>pg_dumpall</></link>, or use
-    of <link linkend="pgupgrade"><application>pg_upgrade</></link>, is
+    linkend="APP-PG-DUMPALL"><application>mdb_dumpall</></link>, or use
+    of <link linkend="pgupgrade"><application>mdb_upgrade</></link>, is
     required for those wishing to migrate data from any previous release.
    </para>
 
@@ -8322,7 +8322,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         In <link
-        linkend="catalog-pg-constraint"><structname>pg_constraint.confmatchtype</></link>,
+        linkend="catalog-pg-constraint"><structname>mdb_constraint.confmatchtype</></link>,
         store the default foreign key match type (non-<literal>FULL</>,
         non-<literal>PARTIAL</>) as <literal>s</> for <quote>simple</>
         (Tom Lane)
@@ -8532,7 +8532,7 @@ ALTER EXTENSION hstore UPDATE;
        <para>
         This speeds up lock bookkeeping at statement completion in
         multi-statement transactions that hold many locks; it is particularly
-        useful for <application>pg_dump</>.
+        useful for <application>mdb_dump</>.
        </para>
       </listitem>
 
@@ -8544,7 +8544,7 @@ ALTER EXTENSION hstore UPDATE;
 
        <para>
         This speeds up sessions that create many tables in successive
-        small transactions, such as a <application>pg_restore</> run.
+        small transactions, such as a <application>mdb_restore</> run.
        </para>
       </listitem>
 
@@ -8626,7 +8626,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         When an authentication failure occurs, log the relevant
-        <link linkend="auth-pg-hba-conf"><filename>pg_hba.conf</></link>
+        <link linkend="auth-pg-hba-conf"><filename>mdb_hba.conf</></link>
         line, to ease debugging of unintended failures
         (Magnus Hagander)
        </para>
@@ -8662,12 +8662,12 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Parse and load <link
-        linkend="auth-username-maps"><filename>pg_ident.conf</></link>
+        linkend="auth-username-maps"><filename>mdb_ident.conf</></link>
         once, not during each connection (Amit Kapila)
        </para>
 
        <para>
-        This is similar to how <filename>pg_hba.conf</> is processed.
+        This is similar to how <filename>mdb_hba.conf</> is processed.
        </para>
       </listitem>
 
@@ -8771,9 +8771,9 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Add <acronym>SQL</> functions <link
-        linkend="functions-admin-backup"><function>pg_is_in_backup()</></link>
+        linkend="functions-admin-backup"><function>mdb_is_in_backup()</></link>
         and <link
-        linkend="functions-admin-backup"><function>pg_backup_start_time()</></link>
+        linkend="functions-admin-backup"><function>mdb_backup_start_time()</></link>
         (Gilles Darold)
        </para>
 
@@ -8800,7 +8800,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Add the last checkpoint's redo location to <link
-        linkend="APP-PGCONTROLDATA"><application>pg_controldata</></link>'s
+        linkend="APP-PGCONTROLDATA"><application>mdb_controldata</></link>'s
         output (Fujii Masao)
        </para>
 
@@ -8813,7 +8813,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Allow tools like <link
-        linkend="app-pgreceivexlog"><application>pg_receivexlog</></link>
+        linkend="app-pgreceivexlog"><application>mdb_receivexlog</></link>
         to run on computers with different architectures (Heikki
         Linnakangas)
        </para>
@@ -8829,7 +8829,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Make <link
-        linkend="app-pgbasebackup"><application>pg_basebackup</></link>
+        linkend="app-pgbasebackup"><application>mdb_basebackup</></link>
         <option>--write-recovery-conf</> output a
         minimal <filename>recovery.conf</> file (Zolt&aacute;n
         B&ouml;sz&ouml;rm&eacute;nyi, Magnus Hagander)
@@ -8843,9 +8843,9 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Allow <link
-        linkend="app-pgreceivexlog"><application>pg_receivexlog</></link>
+        linkend="app-pgreceivexlog"><application>mdb_receivexlog</></link>
         and <link
-        linkend="app-pgbasebackup"><application>pg_basebackup</></link>
+        linkend="app-pgbasebackup"><application>mdb_basebackup</></link>
         <option>--xlog-method</> to handle streaming timeline switches
         (Heikki Linnakangas)
        </para>
@@ -9252,14 +9252,14 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Cause <link
-        linkend="functions-info-catalog-table"><function>pg_get_viewdef()</></link>
+        linkend="functions-info-catalog-table"><function>mdb_get_viewdef()</></link>
         to start a new line by default after each <literal>SELECT</> target
         list entry and <literal>FROM</> entry (Marko Tiikkaja)
        </para>
 
        <para>
         This reduces line length in view printing, for instance in <link
-        linkend="APP-PGDUMP"><application>pg_dump</></link> output.
+        linkend="APP-PGDUMP"><application>mdb_dump</></link> output.
        </para>
       </listitem>
 
@@ -9418,7 +9418,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Add command-line utility <link
-        linkend="app-pg-isready"><application>pg_isready</></link> to
+        linkend="app-pg-isready"><application>mdb_isready</></link> to
         check if the server is ready to accept connections (Phil Sorber)
        </para>
       </listitem>
@@ -9426,7 +9426,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Support multiple <option>--table</> arguments for <link
-        linkend="APP-PGRESTORE"><application>pg_restore</></link>,
+        linkend="APP-PGRESTORE"><application>mdb_restore</></link>,
         <link linkend="APP-CLUSTERDB"><application>clusterdb</></link>,
         <link linkend="APP-REINDEXDB"><application>reindexdb</></link>,
         and <link linkend="APP-VACUUMDB"><application>vacuumdb</></link>
@@ -9435,7 +9435,7 @@ ALTER EXTENSION hstore UPDATE;
 
        <para>
         This is similar to the way <link
-        linkend="APP-PGDUMP"><application>pg_dump</></link>'s
+        linkend="APP-PGDUMP"><application>mdb_dump</></link>'s
         <option>--table</> option works.
        </para>
       </listitem>
@@ -9443,10 +9443,10 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Add <option>--dbname</> option to <link
-        linkend="APP-PG-DUMPALL"><application>pg_dumpall</></link>, <link
-        linkend="app-pgbasebackup"><application>pg_basebackup</></link>, and
+        linkend="APP-PG-DUMPALL"><application>mdb_dumpall</></link>, <link
+        linkend="app-pgbasebackup"><application>mdb_basebackup</></link>, and
         <link
-        linkend="app-pgreceivexlog"><application>pg_receivexlog</></link>
+        linkend="app-pgreceivexlog"><application>mdb_receivexlog</></link>
         to allow specifying a connection string (Amit Kapila)
        </para>
       </listitem>
@@ -9619,34 +9619,34 @@ ALTER EXTENSION hstore UPDATE;
     </sect4>
 
     <sect4>
-     <title><link linkend="APP-PGDUMP"><application>pg_dump</></link></title>
+     <title><link linkend="APP-PGDUMP"><application>mdb_dump</></link></title>
 
      <itemizedlist>
 
       <listitem>
        <para>
-        Add <application>pg_dump</> <option>--jobs</> option to dump tables in
+        Add <application>mdb_dump</> <option>--jobs</> option to dump tables in
         parallel (Joachim Wieland)
        </para>
       </listitem>
 
       <listitem>
        <para>
-        Make <application>pg_dump</> output functions in a more predictable
+        Make <application>mdb_dump</> output functions in a more predictable
         order (Joel Jacobson)
        </para>
       </listitem>
 
       <listitem>
        <para>
-        Fix tar files emitted by <application>pg_dump</>
+        Fix tar files emitted by <application>mdb_dump</>
         to be <acronym>POSIX</> conformant (Brian Weaver, Tom Lane)
        </para>
       </listitem>
 
       <listitem>
        <para>
-        Add <option>--dbname</> option to <application>pg_dump</>, for
+        Add <option>--dbname</> option to <application>mdb_dump</>, for
         consistency with other client commands (Heikki Linnakangas)
        </para>
 
@@ -9683,7 +9683,7 @@ ALTER EXTENSION hstore UPDATE;
 
        <para>
         This is used by <link
-        linkend="pgupgrade"><application>pg_upgrade</></link>.
+        linkend="pgupgrade"><application>mdb_upgrade</></link>.
        </para>
       </listitem>
 
@@ -9722,7 +9722,7 @@ ALTER EXTENSION hstore UPDATE;
 
       <listitem>
        <para>
-        Create libpgcommon and move <function>pg_malloc()</> and other
+        Create libpgcommon and move <function>mdb_malloc()</> and other
         functions there (&Aacute;lvaro Herrera, Andres Freund)
        </para>
 
@@ -9883,7 +9883,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Add function <link
-        linkend="functions-info-catalog-table"><function>pg_identify_object()</></link>
+        linkend="functions-info-catalog-table"><function>mdb_identify_object()</></link>
         to produce a machine-readable description of a database object
         (&Aacute;lvaro Herrera)
        </para>
@@ -9983,7 +9983,7 @@ ALTER EXTENSION hstore UPDATE;
 
       <listitem>
        <para>
-        Add <link linkend="pgxlogdump"><application>pg_xlogdump</></link>
+        Add <link linkend="pgxlogdump"><application>mdb_xlogdump</></link>
         contrib program (Andres Freund)
        </para>
       </listitem>
@@ -9991,21 +9991,21 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Add support for indexing of regular-expression searches in
-        <link linkend="pgtrgm"><productname>pg_trgm</></link>
+        <link linkend="pgtrgm"><productname>mdb_trgm</></link>
         (Alexander Korotkov)
        </para>
       </listitem>
 
       <listitem>
        <para>
-        Improve <link linkend="pgtrgm"><productname>pg_trgm</></link>'s
+        Improve <link linkend="pgtrgm"><productname>mdb_trgm</></link>'s
         handling of multibyte characters (Tom Lane)
        </para>
 
        <para>
         On a platform that does not have the wcstombs() or towlower() library
         functions, this could result in an incompatible change in the contents
-        of <productname>pg_trgm</> indexes for non-ASCII data.  In such cases,
+        of <productname>mdb_trgm</> indexes for non-ASCII data.  In such cases,
         <command>REINDEX</> those indexes to ensure correct search results.
        </para>
       </listitem>
@@ -10030,7 +10030,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Improve output of <link
-        linkend="pgtesttiming"><application>pg_test_timing</></link>
+        linkend="pgtesttiming"><application>mdb_test_timing</></link>
         (Bruce Momjian)
        </para>
       </listitem>
@@ -10038,7 +10038,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Improve output of <link
-        linkend="pgtestfsync"><application>pg_test_fsync</></link>
+        linkend="pgtestfsync"><application>mdb_test_fsync</></link>
         (Peter Geoghegan)
        </para>
       </listitem>
@@ -10060,13 +10060,13 @@ ALTER EXTENSION hstore UPDATE;
     </itemizedlist>
 
     <sect4>
-     <title><link linkend="pgupgrade"><application>pg_upgrade</></link></title>
+     <title><link linkend="pgupgrade"><application>mdb_upgrade</></link></title>
 
      <itemizedlist>
 
       <listitem>
        <para>
-        Allow <application>pg_upgrade</> to do dumps and restores in
+        Allow <application>mdb_upgrade</> to do dumps and restores in
         parallel (Bruce Momjian, Andrew Dunstan)
        </para>
 
@@ -10079,7 +10079,7 @@ ALTER EXTENSION hstore UPDATE;
 
       <listitem>
        <para>
-        Make <application>pg_upgrade</> create Unix-domain sockets in
+        Make <application>mdb_upgrade</> create Unix-domain sockets in
         the current directory (Bruce Momjian, Tom Lane)
        </para>
 
@@ -10091,7 +10091,7 @@ ALTER EXTENSION hstore UPDATE;
 
       <listitem>
        <para>
-        Make <application>pg_upgrade</> <option>--check</> mode properly
+        Make <application>mdb_upgrade</> <option>--check</> mode properly
         detect the location of non-default socket directories (Bruce
         Momjian, Tom Lane)
        </para>
@@ -10099,21 +10099,21 @@ ALTER EXTENSION hstore UPDATE;
 
       <listitem>
        <para>
-        Improve performance of <application>pg_upgrade</> for databases
+        Improve performance of <application>mdb_upgrade</> for databases
         with many tables (Bruce Momjian)
        </para>
       </listitem>
 
       <listitem>
        <para>
-        Improve <application>pg_upgrade</>'s logs by showing
+        Improve <application>mdb_upgrade</>'s logs by showing
         executed commands (&Aacute;lvaro Herrera)
        </para>
       </listitem>
 
       <listitem>
        <para>
-        Improve <application>pg_upgrade</>'s status display during
+        Improve <application>mdb_upgrade</>'s status display during
         copy/link (Bruce Momjian)
        </para>
       </listitem>

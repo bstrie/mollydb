@@ -26,12 +26,12 @@
  * Paths for the statistics files (relative to installation's $PGDATA).
  * ----------
  */
-#define PGSTAT_STAT_PERMANENT_DIRECTORY		"pg_stat"
-#define PGSTAT_STAT_PERMANENT_FILENAME		"pg_stat/global.stat"
-#define PGSTAT_STAT_PERMANENT_TMPFILE		"pg_stat/global.tmp"
+#define PGSTAT_STAT_PERMANENT_DIRECTORY		"mdb_stat"
+#define PGSTAT_STAT_PERMANENT_FILENAME		"mdb_stat/global.stat"
+#define PGSTAT_STAT_PERMANENT_TMPFILE		"mdb_stat/global.tmp"
 
 /* Default directory to store temporary statistics data in */
-#define PG_STAT_TMP_DIR		"pg_stat_tmp"
+#define PG_STAT_TMP_DIR		"mdb_stat_tmp"
 
 /* Values for track_functions GUC variable --- order is significant! */
 typedef enum TrackFunctionsLevel
@@ -831,12 +831,12 @@ typedef struct PgBackendStatus
 #define pgstat_increment_changecount_before(beentry)	\
 	do {	\
 		beentry->st_changecount++;	\
-		pg_write_barrier(); \
+		mdb_write_barrier(); \
 	} while (0)
 
 #define pgstat_increment_changecount_after(beentry) \
 	do {	\
-		pg_write_barrier(); \
+		mdb_write_barrier(); \
 		beentry->st_changecount++;	\
 		Assert((beentry->st_changecount & 1) == 0); \
 	} while (0)
@@ -844,12 +844,12 @@ typedef struct PgBackendStatus
 #define pgstat_save_changecount_before(beentry, save_changecount)	\
 	do {	\
 		save_changecount = beentry->st_changecount; \
-		pg_read_barrier();	\
+		mdb_read_barrier();	\
 	} while (0)
 
 #define pgstat_save_changecount_after(beentry, save_changecount)	\
 	do {	\
-		pg_read_barrier();	\
+		mdb_read_barrier();	\
 		save_changecount = beentry->st_changecount; \
 	} while (0)
 
@@ -934,7 +934,7 @@ extern void pgstat_reset_all(void);
 extern void allow_immediate_pgstat_restart(void);
 
 #ifdef EXEC_BACKEND
-extern void PgstatCollectorMain(int argc, char *argv[]) pg_attribute_noreturn();
+extern void PgstatCollectorMain(int argc, char *argv[]) mdb_attribute_noreturn();
 #endif
 
 

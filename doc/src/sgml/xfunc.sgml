@@ -1667,7 +1667,7 @@ CREATE FUNCTION square_root(double precision) RETURNS double precision
     This simplifies version upgrades if the new installation is at a
     different location.  The actual directory that
     <literal>$libdir</literal> stands for can be found out with the
-    command <literal>pg_config --pkglibdir</literal>.
+    command <literal>mdb_config --pkglibdir</literal>.
    </para>
 
    <para>
@@ -2495,8 +2495,8 @@ concat_text(PG_FUNCTION_ARGS)
      <itemizedlist>
       <listitem>
        <para>
-        Use <literal>pg_config
-        --includedir-server</literal><indexterm><primary>pg_config</><secondary>with user-defined C functions</></>
+        Use <literal>mdb_config
+        --includedir-server</literal><indexterm><primary>mdb_config</><secondary>with user-defined C functions</></>
         to find out where the <productname>MollyDB</> server header
         files are installed on your system (or the system that your
         users will be running on).
@@ -3294,7 +3294,7 @@ CREATE FUNCTION make_array(anyelement) RETURNS anyarray
      To define such function-specific optimizations, write a
      <firstterm>transform function</> and place its OID in the
      <structfield>protransform</> field of the primary function's
-     <structname>pg_proc</> entry.  The transform function must have the SQL
+     <structname>mdb_proc</> entry.  The transform function must have the SQL
      signature <literal>protransform(internal) RETURNS internal</>.  The
      argument, actually <type>FuncExpr *</>, is a dummy node representing a
      call to the primary function.  If the transform function's study of the

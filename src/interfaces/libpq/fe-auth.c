@@ -15,8 +15,8 @@
 /*
  * INTERFACE ROUTINES
  *	   frontend (client) routines:
- *		pg_fe_sendauth			send authentication information
- *		pg_fe_getauthname		get user's name according to the client side
+ *		mdb_fe_sendauth			send authentication information
+ *		mdb_fe_getauthname		get user's name according to the client side
  *								of the authentication system
  */
 
@@ -63,7 +63,7 @@ static GSS_DLLIMP gss_OID GSS_C_NT_HOSTBASED_SERVICE = &GSS_C_NT_HOSTBASED_SERVI
  * Fetch all errors of a specific type and append to "str".
  */
 static void
-pg_GSS_error_int(PQExpBuffer str, const char *mprefix,
+mdb_GSS_error_int(PQExpBuffer str, const char *mprefix,
 				 OM_uint32 stat, int type)
 {
 	OM_uint32	lmin_s;
@@ -83,23 +83,23 @@ pg_GSS_error_int(PQExpBuffer str, const char *mprefix,
  * GSSAPI errors contain two parts; put both into conn->errorMessage.
  */
 static void
-pg_GSS_error(const char *mprefix, PGconn *conn,
+mdb_GSS_error(const char *mprefix, PGconn *conn,
 			 OM_uint32 maj_stat, OM_uint32 min_stat)
 {
 	resetPQExpBuffer(&conn->errorMessage);
 
 	/* Fetch major error codes */
-	pg_GSS_error_int(&conn->errorMessage, mprefix, maj_stat, GSS_C_GSS_CODE);
+	mdb_GSS_error_int(&conn->errorMessage, mprefix, maj_stat, GSS_C_GSS_CODE);
 
 	/* Add the minor codes as well */
-	pg_GSS_error_int(&conn->errorMessage, mprefix, min_stat, GSS_C_MECH_CODE);
+	mdb_GSS_error_int(&conn->errorMessage, mprefix, min_stat, GSS_C_MECH_CODE);
 }
 
 /*
  * Continue GSS authentication with next token as needed.
  */
 static int
-pg_GSS_continue(PGconn *conn)
+mdb_GSS_continue(PGconn *conn)
 {
 	OM_uint32	maj_stat,
 				min_stat,
@@ -145,7 +145,7 @@ pg_GSS_continue(PGconn *conn)
 
 	if (maj_stat != GSS_S_COMPLETE && maj_stat != GSS_S_CONTINUE_NEEDED)
 	{
-		pg_GSS_error(libpq_gettext("GSSAPI continuation error"),
+		mdb_GSS_error(libpq_gettext("GSSAPI continuation error"),
 					 conn,
 					 maj_stat, min_stat);
 		gss_release_name(&lmin_s, &conn->gtarg_nam);
@@ -164,7 +164,7 @@ pg_GSS_continue(PGconn *conn)
  * Send initial GSS authentication token
  */
 static int
-pg_GSS_startup(PGconn *conn)
+mdb_GSS_startup(PGconn *conn)
 {
 	OM_uint32	maj_stat,
 				min_stat;
@@ -207,7 +207,7 @@ pg_GSS_startup(PGconn *conn)
 
 	if (maj_stat != GSS_S_COMPLETE)
 	{
-		pg_GSS_error(libpq_gettext("GSSAPI name import error"),
+		mdb_GSS_error(libpq_gettext("GSSAPI name import error"),
 					 conn,
 					 maj_stat, min_stat);
 		return STATUS_ERROR;
@@ -219,7 +219,7 @@ pg_GSS_startup(PGconn *conn)
 	 */
 	conn->gctx = GSS_C_NO_CONTEXT;
 
-	return pg_GSS_continue(conn);
+	return mdb_GSS_continue(conn);
 }
 #endif   /* ENABLE_GSS */
 
@@ -230,7 +230,7 @@ pg_GSS_startup(PGconn *conn)
  */
 
 static void
-pg_SSPI_error(PGconn *conn, const char *mprefix, SECURITY_STATUS r)
+mdb_SSPI_error(PGconn *conn, const char *mprefix, SECURITY_STATUS r)
 {
 	char		sysmsg[256];
 
@@ -249,7 +249,7 @@ pg_SSPI_error(PGconn *conn, const char *mprefix, SECURITY_STATUS r)
  * Continue SSPI authentication with next token as needed.
  */
 static int
-pg_SSPI_continue(PGconn *conn)
+mdb_SSPI_continue(PGconn *conn)
 {
 	SECURITY_STATUS r;
 	CtxtHandle	newContext;
@@ -295,7 +295,7 @@ pg_SSPI_continue(PGconn *conn)
 
 	if (r != SEC_E_OK && r != SEC_I_CONTINUE_NEEDED)
 	{
-		pg_SSPI_error(conn, libpq_gettext("SSPI continuation error"), r);
+		mdb_SSPI_error(conn, libpq_gettext("SSPI continuation error"), r);
 
 		return STATUS_ERROR;
 	}
@@ -367,7 +367,7 @@ pg_SSPI_continue(PGconn *conn)
  * which supports both kerberos and NTLM, but is not compatible with Unix.
  */
 static int
-pg_SSPI_startup(PGconn *conn, int use_negotiate)
+mdb_SSPI_startup(PGconn *conn, int use_negotiate)
 {
 	SECURITY_STATUS r;
 	TimeStamp	expire;
@@ -395,7 +395,7 @@ pg_SSPI_startup(PGconn *conn, int use_negotiate)
 								 &expire);
 	if (r != SEC_E_OK)
 	{
-		pg_SSPI_error(conn, libpq_gettext("could not acquire SSPI credentials"), r);
+		mdb_SSPI_error(conn, libpq_gettext("could not acquire SSPI credentials"), r);
 		free(conn->sspicred);
 		conn->sspicred = NULL;
 		return STATUS_ERROR;
@@ -422,11 +422,11 @@ pg_SSPI_startup(PGconn *conn, int use_negotiate)
 
 	/*
 	 * Indicate that we're in SSPI authentication mode to make sure that
-	 * pg_SSPI_continue is called next time in the negotiation.
+	 * mdb_SSPI_continue is called next time in the negotiation.
 	 */
 	conn->usesspi = 1;
 
-	return pg_SSPI_continue(conn);
+	return mdb_SSPI_continue(conn);
 }
 #endif   /* ENABLE_SSPI */
 
@@ -440,7 +440,7 @@ pg_SSPI_startup(PGconn *conn, int use_negotiate)
  * getpeereid() function isn't provided by libc).
  */
 static int
-pg_local_sendauth(PGconn *conn)
+mdb_local_sendauth(PGconn *conn)
 {
 #ifdef HAVE_STRUCT_CMSGCRED
 	char		buf;
@@ -479,7 +479,7 @@ pg_local_sendauth(PGconn *conn)
 		char		sebuf[256];
 
 		printfPQExpBuffer(&conn->errorMessage,
-						  "pg_local_sendauth: sendmsg: %s\n",
+						  "mdb_local_sendauth: sendmsg: %s\n",
 						  pqStrerror(errno, sebuf, sizeof(sebuf)));
 		return STATUS_ERROR;
 	}
@@ -492,7 +492,7 @@ pg_local_sendauth(PGconn *conn)
 }
 
 static int
-pg_password_sendauth(PGconn *conn, const char *password, AuthRequest areq)
+mdb_password_sendauth(PGconn *conn, const char *password, AuthRequest areq)
 {
 	int			ret;
 	char	   *crypt_pwd = NULL;
@@ -516,13 +516,13 @@ pg_password_sendauth(PGconn *conn, const char *password, AuthRequest areq)
 				}
 
 				crypt_pwd2 = crypt_pwd + MD5_PASSWD_LEN + 1;
-				if (!pg_md5_encrypt(password, conn->pguser,
+				if (!mdb_md5_encrypt(password, conn->pguser,
 									strlen(conn->pguser), crypt_pwd2))
 				{
 					free(crypt_pwd);
 					return STATUS_ERROR;
 				}
-				if (!pg_md5_encrypt(crypt_pwd2 + strlen("md5"), conn->md5Salt,
+				if (!mdb_md5_encrypt(crypt_pwd2 + strlen("md5"), conn->md5Salt,
 									sizeof(conn->md5Salt), crypt_pwd))
 				{
 					free(crypt_pwd);
@@ -549,11 +549,11 @@ pg_password_sendauth(PGconn *conn, const char *password, AuthRequest areq)
 }
 
 /*
- * pg_fe_sendauth
+ * mdb_fe_sendauth
  *		client demux routine for outgoing authentication information
  */
 int
-pg_fe_sendauth(AuthRequest areq, PGconn *conn)
+mdb_fe_sendauth(AuthRequest areq, PGconn *conn)
 {
 	switch (areq)
 	{
@@ -590,14 +590,14 @@ pg_fe_sendauth(AuthRequest areq, PGconn *conn)
 				 * protocol, we use AUTH_REQ_SSPI.
 				 */
 #if defined(ENABLE_GSS) && defined(ENABLE_SSPI)
-				if (conn->gsslib && (pg_strcasecmp(conn->gsslib, "gssapi") == 0))
-					r = pg_GSS_startup(conn);
+				if (conn->gsslib && (mdb_strcasecmp(conn->gsslib, "gssapi") == 0))
+					r = mdb_GSS_startup(conn);
 				else
-					r = pg_SSPI_startup(conn, 0);
+					r = mdb_SSPI_startup(conn, 0);
 #elif defined(ENABLE_GSS) && !defined(ENABLE_SSPI)
-				r = pg_GSS_startup(conn);
+				r = mdb_GSS_startup(conn);
 #elif !defined(ENABLE_GSS) && defined(ENABLE_SSPI)
-				r = pg_SSPI_startup(conn, 0);
+				r = mdb_SSPI_startup(conn, 0);
 #endif
 				if (r != STATUS_OK)
 				{
@@ -616,13 +616,13 @@ pg_fe_sendauth(AuthRequest areq, PGconn *conn)
 				pglock_thread();
 #if defined(ENABLE_GSS) && defined(ENABLE_SSPI)
 				if (conn->usesspi)
-					r = pg_SSPI_continue(conn);
+					r = mdb_SSPI_continue(conn);
 				else
-					r = pg_GSS_continue(conn);
+					r = mdb_GSS_continue(conn);
 #elif defined(ENABLE_GSS) && !defined(ENABLE_SSPI)
-				r = pg_GSS_continue(conn);
+				r = mdb_GSS_continue(conn);
 #elif !defined(ENABLE_GSS) && defined(ENABLE_SSPI)
-				r = pg_SSPI_continue(conn);
+				r = mdb_SSPI_continue(conn);
 #endif
 				if (r != STATUS_OK)
 				{
@@ -647,11 +647,11 @@ pg_fe_sendauth(AuthRequest areq, PGconn *conn)
 
 			/*
 			 * SSPI has it's own startup message so libpq can decide which
-			 * method to use. Indicate to pg_SSPI_startup that we want SSPI
+			 * method to use. Indicate to mdb_SSPI_startup that we want SSPI
 			 * negotiation instead of Kerberos.
 			 */
 			pglock_thread();
-			if (pg_SSPI_startup(conn, 1) != STATUS_OK)
+			if (mdb_SSPI_startup(conn, 1) != STATUS_OK)
 			{
 				/* Error message already filled in. */
 				pgunlock_thread();
@@ -690,7 +690,7 @@ pg_fe_sendauth(AuthRequest areq, PGconn *conn)
 								  PQnoPasswordSupplied);
 				return STATUS_ERROR;
 			}
-			if (pg_password_sendauth(conn, conn->pgpass, areq) != STATUS_OK)
+			if (mdb_password_sendauth(conn, conn->pgpass, areq) != STATUS_OK)
 			{
 				printfPQExpBuffer(&conn->errorMessage,
 					 "fe_sendauth: error sending password authentication\n");
@@ -699,7 +699,7 @@ pg_fe_sendauth(AuthRequest areq, PGconn *conn)
 			break;
 
 		case AUTH_REQ_SCM_CREDS:
-			if (pg_local_sendauth(conn) != STATUS_OK)
+			if (mdb_local_sendauth(conn) != STATUS_OK)
 				return STATUS_ERROR;
 			break;
 
@@ -714,14 +714,14 @@ pg_fe_sendauth(AuthRequest areq, PGconn *conn)
 
 
 /*
- * pg_fe_getauthname
+ * mdb_fe_getauthname
  *
  * Returns a pointer to malloc'd space containing whatever name the user
  * has authenticated to the system.  If there is an error, return NULL,
  * and put a suitable error message in *errorMessage if that's not NULL.
  */
 char *
-pg_fe_getauthname(PQExpBuffer errorMessage)
+mdb_fe_getauthname(PQExpBuffer errorMessage)
 {
 	char	   *result = NULL;
 	const char *name = NULL;
@@ -793,7 +793,7 @@ pg_fe_getauthname(PQExpBuffer errorMessage)
  * commands like ALTER USER joe PASSWORD 'pwd'.  The password need not
  * be sent in cleartext if it is encrypted on the client side.  This is
  * good because it ensures the cleartext password won't end up in logs,
- * pg_stat displays, etc.  We export the function so that clients won't
+ * mdb_stat displays, etc.  We export the function so that clients won't
  * be dependent on low-level details like whether the enceyption is MD5
  * or something else.
  *
@@ -813,7 +813,7 @@ PQencryptPassword(const char *passwd, const char *user)
 	if (!crypt_pwd)
 		return NULL;
 
-	if (!pg_md5_encrypt(passwd, user, strlen(user), crypt_pwd))
+	if (!mdb_md5_encrypt(passwd, user, strlen(user), crypt_pwd))
 	{
 		free(crypt_pwd);
 		return NULL;

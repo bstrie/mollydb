@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# src/bin/pg_upgrade/test.sh
+# src/bin/mdb_upgrade/test.sh
 #
-# Test driver for pg_upgrade.  Initializes a new database cluster,
-# runs the regression tests (to put in some data), runs pg_dumpall,
-# runs pg_upgrade, runs pg_dumpall again, compares the dumps.
+# Test driver for mdb_upgrade.  Initializes a new database cluster,
+# runs the regression tests (to put in some data), runs mdb_dumpall,
+# runs mdb_upgrade, runs mdb_dumpall again, compares the dumps.
 #
 # Portions Copyright (c) 1996-2016, MollyDB Global Development Group
 # Portions Copyright (c) 1994, Regents of the University of California
@@ -13,7 +13,7 @@ set -e
 
 : ${MAKE=make}
 
-# Guard against parallel make issues (see comments in pg_regress.c)
+# Guard against parallel make issues (see comments in mdb_regress.c)
 unset MAKEFLAGS
 unset MAKELEVEL
 
@@ -25,7 +25,7 @@ standard_initdb() {
 	then
 		cat "$TEMP_CONFIG" >> "$PGDATA/mollydb.conf"
 	fi
-	../../test/regress/pg_regress --config-auth "$PGDATA"
+	../../test/regress/mdb_regress --config-auth "$PGDATA"
 }
 
 # Establish how the server will listen for connections
@@ -39,16 +39,16 @@ case $testhost in
 	*)
 		LISTEN_ADDRESSES=""
 		# Select a socket directory.  The algorithm is from the "configure"
-		# script; the outcome mimics pg_regress.c:make_temp_sockdir().
+		# script; the outcome mimics mdb_regress.c:make_temp_sockdir().
 		PGHOST=$PG_REGRESS_SOCK_DIR
 		if [ "x$PGHOST" = x ]; then
 			{
 				dir=`(umask 077 &&
-					  mktemp -d /tmp/pg_upgrade_check-XXXXXX) 2>/dev/null` &&
+					  mktemp -d /tmp/mdb_upgrade_check-XXXXXX) 2>/dev/null` &&
 				[ -d "$dir" ]
 			} ||
 			{
-				dir=/tmp/pg_upgrade_check-$$-$RANDOM
+				dir=/tmp/mdb_upgrade_check-$$-$RANDOM
 				(umask 077 && mkdir "$dir")
 			} ||
 			{
@@ -76,7 +76,7 @@ if [ "$1" = '--install' ]; then
 
 	"$MAKE" -s -C ../.. install DESTDIR="$temp_install"
 
-	# platform-specific magic to find the shared libraries; see pg_regress.c
+	# platform-specific magic to find the shared libraries; see mdb_regress.c
 	LD_LIBRARY_PATH=$libdir:$LD_LIBRARY_PATH
 	export LD_LIBRARY_PATH
 	DYLD_LIBRARY_PATH=$libdir:$DYLD_LIBRARY_PATH
@@ -113,7 +113,7 @@ rm -rf "$logdir"
 mkdir "$logdir"
 
 # Clear out any environment vars that might cause libpq to connect to
-# the wrong postmaster (cf pg_regress.c)
+# the wrong postmaster (cf mdb_regress.c)
 #
 # Some shells, such as NetBSD's, return non-zero from unset if the variable
 # is already unset. Since we are operating under 'set -e', this causes the
@@ -126,8 +126,8 @@ PGREQUIRESSL="";      unset PGREQUIRESSL
 PGCONNECT_TIMEOUT=""; unset PGCONNECT_TIMEOUT
 PGHOSTADDR="";        unset PGHOSTADDR
 
-# Select a non-conflicting port number, similarly to pg_regress.c
-PG_VERSION_NUM=`grep '#define PG_VERSION_NUM' "$newsrc"/src/include/pg_config.h | awk '{print $3}'`
+# Select a non-conflicting port number, similarly to mdb_regress.c
+PG_VERSION_NUM=`grep '#define PG_VERSION_NUM' "$newsrc"/src/include/mdb_config.h | awk '{print $3}'`
 PGPORT=`expr $PG_VERSION_NUM % 16384 + 49152`
 export PGPORT
 
@@ -152,21 +152,21 @@ export EXTRA_REGRESS_OPTS
 set -x
 
 standard_initdb "$oldbindir"/initdb
-"$oldbindir"/pg_ctl start -l "$logdir/postmaster1.log" -o "$POSTMASTER_OPTS" -w
+"$oldbindir"/mdb_ctl start -l "$logdir/postmaster1.log" -o "$POSTMASTER_OPTS" -w
 if "$MAKE" -C "$oldsrc" installcheck; then
-	pg_dumpall -f "$temp_root"/dump1.sql || pg_dumpall1_status=$?
+	mdb_dumpall -f "$temp_root"/dump1.sql || mdb_dumpall1_status=$?
 	if [ "$newsrc" != "$oldsrc" ]; then
 		oldpgversion=`psql -X -A -t -d regression -c "SHOW server_version_num"`
 		fix_sql=""
 		case $oldpgversion in
 			804??)
-				fix_sql="UPDATE pg_proc SET probin = replace(probin::text, '$oldsrc', '$newsrc')::bytea WHERE probin LIKE '$oldsrc%'; DROP FUNCTION public.myfunc(integer);"
+				fix_sql="UPDATE mdb_proc SET probin = replace(probin::text, '$oldsrc', '$newsrc')::bytea WHERE probin LIKE '$oldsrc%'; DROP FUNCTION public.myfunc(integer);"
 				;;
 			900??)
-				fix_sql="SET bytea_output TO escape; UPDATE pg_proc SET probin = replace(probin::text, '$oldsrc', '$newsrc')::bytea WHERE probin LIKE '$oldsrc%';"
+				fix_sql="SET bytea_output TO escape; UPDATE mdb_proc SET probin = replace(probin::text, '$oldsrc', '$newsrc')::bytea WHERE probin LIKE '$oldsrc%';"
 				;;
 			901??)
-				fix_sql="UPDATE pg_proc SET probin = replace(probin, '$oldsrc', '$newsrc') WHERE probin LIKE '$oldsrc%';"
+				fix_sql="UPDATE mdb_proc SET probin = replace(probin, '$oldsrc', '$newsrc') WHERE probin LIKE '$oldsrc%';"
 				;;
 		esac
 		psql -X -d regression -c "$fix_sql;" || psql_fix_sql_status=$?
@@ -177,15 +177,15 @@ if "$MAKE" -C "$oldsrc" installcheck; then
 else
 	make_installcheck_status=$?
 fi
-"$oldbindir"/pg_ctl -m fast stop
+"$oldbindir"/mdb_ctl -m fast stop
 if [ -n "$make_installcheck_status" ]; then
 	exit 1
 fi
 if [ -n "$psql_fix_sql_status" ]; then
 	exit 1
 fi
-if [ -n "$pg_dumpall1_status" ]; then
-	echo "pg_dumpall of pre-upgrade database cluster failed"
+if [ -n "$mdb_dumpall1_status" ]; then
+	echo "mdb_dumpall of pre-upgrade database cluster failed"
 	exit 1
 fi
 
@@ -193,24 +193,24 @@ PGDATA=$BASE_PGDATA
 
 standard_initdb 'initdb'
 
-pg_upgrade $PG_UPGRADE_OPTS -d "${PGDATA}.old" -D "${PGDATA}" -b "$oldbindir" -B "$bindir" -p "$PGPORT" -P "$PGPORT"
+mdb_upgrade $PG_UPGRADE_OPTS -d "${PGDATA}.old" -D "${PGDATA}" -b "$oldbindir" -B "$bindir" -p "$PGPORT" -P "$PGPORT"
 
-pg_ctl start -l "$logdir/postmaster2.log" -o "$POSTMASTER_OPTS" -w
+mdb_ctl start -l "$logdir/postmaster2.log" -o "$POSTMASTER_OPTS" -w
 
 case $testhost in
 	MINGW*)	cmd /c analyze_new_cluster.bat ;;
 	*)		sh ./analyze_new_cluster.sh ;;
 esac
 
-pg_dumpall -f "$temp_root"/dump2.sql || pg_dumpall2_status=$?
-pg_ctl -m fast stop
+mdb_dumpall -f "$temp_root"/dump2.sql || mdb_dumpall2_status=$?
+mdb_ctl -m fast stop
 
 # no need to echo commands anymore
 set +x
 echo
 
-if [ -n "$pg_dumpall2_status" ]; then
-	echo "pg_dumpall of post-upgrade database cluster failed"
+if [ -n "$mdb_dumpall2_status" ]; then
+	echo "mdb_dumpall of post-upgrade database cluster failed"
 	exit 1
 fi
 

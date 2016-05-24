@@ -141,13 +141,13 @@ defGetBoolean(DefElem *def)
 				 * The set of strings accepted here should match up with the
 				 * grammar's opt_boolean production.
 				 */
-				if (pg_strcasecmp(sval, "true") == 0)
+				if (mdb_strcasecmp(sval, "true") == 0)
 					return true;
-				if (pg_strcasecmp(sval, "false") == 0)
+				if (mdb_strcasecmp(sval, "false") == 0)
 					return false;
-				if (pg_strcasecmp(sval, "on") == 0)
+				if (mdb_strcasecmp(sval, "on") == 0)
 					return true;
-				if (pg_strcasecmp(sval, "off") == 0)
+				if (mdb_strcasecmp(sval, "off") == 0)
 					return false;
 			}
 			break;
@@ -298,12 +298,12 @@ defGetTypeLength(DefElem *def)
 							def->defname)));
 			break;
 		case T_String:
-			if (pg_strcasecmp(strVal(def->arg), "variable") == 0)
+			if (mdb_strcasecmp(strVal(def->arg), "variable") == 0)
 				return -1;		/* variable length */
 			break;
 		case T_TypeName:
 			/* cope if grammar chooses to believe "variable" is a typename */
-			if (pg_strcasecmp(TypeNameToString((TypeName *) def->arg),
+			if (mdb_strcasecmp(TypeNameToString((TypeName *) def->arg),
 							  "variable") == 0)
 				return -1;		/* variable length */
 			break;

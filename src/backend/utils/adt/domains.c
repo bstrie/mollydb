@@ -31,7 +31,7 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "executor/executor.h"
 #include "lib/stringinfo.h"
 #include "utils/builtins.h"
@@ -349,12 +349,12 @@ int
 errdatatype(Oid datatypeOid)
 {
 	HeapTuple	tup;
-	Form_pg_type typtup;
+	Form_mdb_type typtup;
 
 	tup = SearchSysCache1(TYPEOID, ObjectIdGetDatum(datatypeOid));
 	if (!HeapTupleIsValid(tup))
 		elog(ERROR, "cache lookup failed for type %u", datatypeOid);
-	typtup = (Form_pg_type) GETSTRUCT(tup);
+	typtup = (Form_mdb_type) GETSTRUCT(tup);
 
 	err_generic_string(PG_DIAG_SCHEMA_NAME,
 					   get_namespace_name(typtup->typnamespace));

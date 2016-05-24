@@ -21,9 +21,9 @@
 #include "mollydb.h"
 
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "libpq/pqformat.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
@@ -53,7 +53,7 @@ namein(PG_FUNCTION_ARGS)
 
 	/* Truncate oversize input */
 	if (len >= NAMEDATALEN)
-		len = pg_mbcliplen(s, len, NAMEDATALEN - 1);
+		len = mdb_mbcliplen(s, len, NAMEDATALEN - 1);
 
 	/* We use palloc0 here to ensure result is zero-padded */
 	result = (Name) palloc0(NAMEDATALEN);

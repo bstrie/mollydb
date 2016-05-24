@@ -87,7 +87,7 @@ gbt_intv_dist(const void *a, const void *b)
 
 /*
  * INTERVALSIZE should be the actual size-on-disk of an Interval, as shown
- * in pg_type.  This might be less than sizeof(Interval) if the compiler
+ * in mdb_type.  This might be less than sizeof(Interval) if the compiler
  * insists on adding alignment padding at the end of the struct.  (Note:
  * this concern is obsolete with the current definition of Interval, but
  * was real before a separate "day" field was added to it.)

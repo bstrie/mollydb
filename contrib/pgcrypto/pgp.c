@@ -107,7 +107,7 @@ pgp_get_digest_code(const char *name)
 	const struct digest_info *i;
 
 	for (i = digest_list; i->name; i++)
-		if (pg_strcasecmp(i->name, name) == 0)
+		if (mdb_strcasecmp(i->name, name) == 0)
 			return i->code;
 	return PXE_PGP_UNSUPPORTED_HASH;
 }
@@ -118,7 +118,7 @@ pgp_get_cipher_code(const char *name)
 	const struct cipher_info *i;
 
 	for (i = cipher_list; i->name; i++)
-		if (pg_strcasecmp(i->name, name) == 0)
+		if (mdb_strcasecmp(i->name, name) == 0)
 			return i->code;
 	return PXE_PGP_UNSUPPORTED_CIPHER;
 }

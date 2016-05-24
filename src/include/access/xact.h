@@ -16,7 +16,7 @@
 
 #include "access/xlogreader.h"
 #include "lib/stringinfo.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 #include "storage/relfilenode.h"
 #include "storage/sinval.h"
 #include "utils/datetime.h"

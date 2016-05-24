@@ -8,7 +8,7 @@
  *	  "virtual" tuples to reduce data-copying overhead.
  *
  *	  Routines dealing with the type information for tuples. Currently,
- *	  the type information for a tuple is an array of FormData_pg_attribute.
+ *	  the type information for a tuple is an array of FormData_mdb_attribute.
  *	  This information is needed by routines manipulating tuples
  *	  (getattribute, formtuple, etc.).
  *
@@ -84,7 +84,7 @@
 #include "access/htup_details.h"
 #include "access/tuptoaster.h"
 #include "funcapi.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "nodes/nodeFuncs.h"
 #include "storage/bufmgr.h"
 #include "utils/builtins.h"
@@ -844,7 +844,7 @@ ExecMakeSlotContentsReadOnly(TupleTableSlot *slot)
 	 */
 	if (slot->tts_tuple == NULL)
 	{
-		Form_pg_attribute *att = slot->tts_tupleDescriptor->attrs;
+		Form_mdb_attribute *att = slot->tts_tupleDescriptor->attrs;
 		int			attnum;
 
 		for (attnum = 0; attnum < slot->tts_nvalid; attnum++)
@@ -1042,7 +1042,7 @@ ExecTypeSetColNames(TupleDesc typeInfo, List *namesList)
 	foreach(lc, namesList)
 	{
 		char	   *cname = strVal(lfirst(lc));
-		Form_pg_attribute attr;
+		Form_mdb_attribute attr;
 
 		/* Guard against too-long names list */
 		if (colno >= typeInfo->natts)

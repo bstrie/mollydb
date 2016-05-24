@@ -5,7 +5,7 @@ OBJS = auto_explain.o $(WIN32RES)
 PGFILEDESC = "auto_explain - logging facility for execution plans"
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

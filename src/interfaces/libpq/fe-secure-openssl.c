@@ -487,7 +487,7 @@ wildcard_certificate_match(const char *pattern, const char *string)
 		/* If pattern is longer than the string, we can never match */
 		return 0;
 
-	if (pg_strcasecmp(pattern + 1, string + lenstr - lenpat + 1) != 0)
+	if (mdb_strcasecmp(pattern + 1, string + lenstr - lenpat + 1) != 0)
 
 		/*
 		 * If string does not end in pattern (minus the wildcard), we don't
@@ -566,7 +566,7 @@ verify_peer_name_matches_certificate_name(PGconn *conn, ASN1_STRING *name_entry,
 		return -1;
 	}
 
-	if (pg_strcasecmp(name, conn->pghost) == 0)
+	if (mdb_strcasecmp(name, conn->pghost) == 0)
 	{
 		/* Exact name match */
 		result = 1;

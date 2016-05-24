@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_config.c
- *		Expose same output as pg_config except as an SRF
+ * mdb_config.c
+ *		Expose same output as mdb_config except as an SRF
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
- *	  src/backend/utils/misc/pg_config.c
+ *	  src/backend/utils/misc/mdb_config.c
  *
  *-------------------------------------------------------------------------
  */
@@ -16,14 +16,14 @@
 
 #include "funcapi.h"
 #include "miscadmin.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "common/config_info.h"
 #include "utils/builtins.h"
 #include "utils/elog.h"
 #include "port.h"
 
 Datum
-pg_config(PG_FUNCTION_ARGS)
+mdb_config(PG_FUNCTION_ARGS)
 {
 	ReturnSetInfo	   *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	Tuplestorestate	   *tupstore;

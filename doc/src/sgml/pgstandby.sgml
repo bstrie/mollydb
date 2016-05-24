@@ -2,23 +2,23 @@
 
 <refentry id="pgstandby">
  <indexterm zone="pgstandby">
-  <primary>pg_standby</primary>
+  <primary>mdb_standby</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle><application>pg_standby</application></refentrytitle>
+  <refentrytitle><application>mdb_standby</application></refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_standby</refname>
+  <refname>mdb_standby</refname>
   <refpurpose>supports the creation of a <productname>MollyDB</productname> warm standby server</refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_standby</command>
+   <command>mdb_standby</command>
    <arg rep="repeat"><replaceable>option</replaceable></arg>
    <arg choice="plain"><replaceable>archivelocation</replaceable></arg>
    <arg choice="plain"><replaceable>nextwalfile</replaceable></arg>
@@ -31,13 +31,13 @@
   <title>Description</title>
 
  <para>
-  <application>pg_standby</> supports creation of a <quote>warm standby</>
+  <application>mdb_standby</> supports creation of a <quote>warm standby</>
   database server.  It is designed to be a production-ready program, as well
   as a customizable template should you require specific modifications.
  </para>
 
  <para>
-  <application>pg_standby</> is designed to be a waiting
+  <application>mdb_standby</> is designed to be a waiting
   <varname>restore_command</>, which is needed to turn a standard
   archive recovery into a warm standby operation.  Other
   configuration is required as well, all of which is described in the main
@@ -46,10 +46,10 @@
 
   <para>
    To configure a standby
-   server to use <application>pg_standby</>, put this into its
+   server to use <application>mdb_standby</>, put this into its
    <filename>recovery.conf</filename> configuration file:
 <programlisting>
-restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
+restore_command = 'mdb_standby <replaceable>archiveDir</> %f %p %r'
 </programlisting>
    where <replaceable>archiveDir</> is the directory from which WAL segment
    files should be restored.
@@ -65,7 +65,7 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
    <replaceable>archivelocation</> is intended as a long-term WAL archive area.
   </para>
   <para>
-   <application>pg_standby</application> assumes that
+   <application>mdb_standby</application> assumes that
    <replaceable>archivelocation</> is a directory readable by the
    server-owning user.  If <replaceable>restartwalfile</> (or <literal>-k</>)
    is specified,
@@ -97,7 +97,7 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
        in the archive that have not yet been applied will be ignored, and
        all transactions in those files are lost. To trigger a fast failover,
        create a trigger file and write the word <literal>fast</> into it.
-       <application>pg_standby</> can also be configured to execute a fast
+       <application>mdb_standby</> can also be configured to execute a fast
        failover automatically if no new WAL file appears within a defined
        interval.
       </para>
@@ -112,7 +112,7 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
   <title>Options</title>
 
    <para>
-    <application>pg_standby</application> accepts the following command-line arguments:
+    <application>mdb_standby</application> accepts the following command-line arguments:
 
     <variablelist>
 
@@ -203,7 +203,7 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
       <term><option>--version</></term>
       <listitem>
        <para>
-        Print the <application>pg_standby</application> version and exit.
+        Print the <application>mdb_standby</application> version and exit.
        </para>
       </listitem>
      </varlistentry>
@@ -226,7 +226,7 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
       <term><option>--help</></term>
       <listitem>
        <para>
-        Show help about <application>pg_standby</application> command line
+        Show help about <application>mdb_standby</application> command line
         arguments, and exit.
        </para>
       </listitem>
@@ -240,12 +240,12 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
   <title>Notes</title>
 
   <para>
-   <application>pg_standby</application> is designed to work with
+   <application>mdb_standby</application> is designed to work with
    <productname>MollyDB</> 8.2 and later.
   </para>
   <para>
    <productname>MollyDB</> 8.3 provides the <literal>%r</literal> macro,
-   which is designed to let <application>pg_standby</application> know the
+   which is designed to let <application>mdb_standby</application> know the
    last file it needs to keep.  With <productname>MollyDB</> 8.2, the
    <literal>-k</literal> option must be used if archive cleanup is
    required.  This option remains available in 8.3, but its use is deprecated.
@@ -257,7 +257,7 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
   </para>
 
   <para>
-   <application>pg_standby</application> is written in C and has an
+   <application>mdb_standby</application> is written in C and has an
    easy-to-modify source code, with specifically designated sections to modify
    for your own needs
   </para>
@@ -271,7 +271,7 @@ restore_command = 'pg_standby <replaceable>archiveDir</> %f %p %r'
 <programlisting>
 archive_command = 'cp %p .../archive/%f'
 
-restore_command = 'pg_standby -d -s 2 -t /tmp/mdb.trigger.5442 .../archive %f %p %r 2>>standby.log'
+restore_command = 'mdb_standby -d -s 2 -t /tmp/mdb.trigger.5442 .../archive %f %p %r 2>>standby.log'
 
 recovery_end_command = 'rm -f /tmp/mdb.trigger.5442'
 </programlisting>
@@ -315,7 +315,7 @@ recovery_end_command = 'rm -f /tmp/mdb.trigger.5442'
 <programlisting>
 archive_command = 'copy %p ...\\archive\\%f'
 
-restore_command = 'pg_standby -d -s 5 -t C:\mdb.trigger.5442 ...\archive %f %p %r 2>>standby.log'
+restore_command = 'mdb_standby -d -s 5 -t C:\mdb.trigger.5442 ...\archive %f %p %r 2>>standby.log'
 
 recovery_end_command = 'del C:\mdb.trigger.5442'
 </programlisting>
@@ -362,8 +362,8 @@ recovery_end_command = 'del C:\mdb.trigger.5442'
   <para>
    The <literal>copy</> command on Windows sets the final file size
    before the file is completely copied, which would ordinarily confuse
-   <application>pg_standby</application>.  Therefore
-   <application>pg_standby</application> waits <literal>sleeptime</>
+   <application>mdb_standby</application>.  Therefore
+   <application>mdb_standby</application> waits <literal>sleeptime</>
    seconds once it sees the proper file size.  GNUWin32's <literal>cp</>
    sets the file size only after the file copy is complete.
   </para>

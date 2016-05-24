@@ -137,13 +137,13 @@ TransactionIdDidCommit(TransactionId transactionId)
 	/*
 	 * If it's marked subcommitted, we have to check the parent recursively.
 	 * However, if it's older than TransactionXmin, we can't look at
-	 * pg_subtrans; instead assume that the parent crashed without cleaning up
+	 * mdb_subtrans; instead assume that the parent crashed without cleaning up
 	 * its children.
 	 *
 	 * Originally we Assert'ed that the result of SubTransGetParent was not
 	 * zero. However with the introduction of prepared transactions, there can
 	 * be a window just after database startup where we do not have complete
-	 * knowledge in pg_subtrans of the transactions after TransactionXmin.
+	 * knowledge in mdb_subtrans of the transactions after TransactionXmin.
 	 * StartupSUBTRANS() has ensured that any missing information will be
 	 * zeroed.  Since this case should not happen under normal conditions, it
 	 * seems reasonable to emit a WARNING for it.
@@ -157,7 +157,7 @@ TransactionIdDidCommit(TransactionId transactionId)
 		parentXid = SubTransGetParent(transactionId);
 		if (!TransactionIdIsValid(parentXid))
 		{
-			elog(WARNING, "no pg_subtrans entry for subcommitted XID %u",
+			elog(WARNING, "no mdb_subtrans entry for subcommitted XID %u",
 				 transactionId);
 			return false;
 		}
@@ -193,7 +193,7 @@ TransactionIdDidAbort(TransactionId transactionId)
 	/*
 	 * If it's marked subcommitted, we have to check the parent recursively.
 	 * However, if it's older than TransactionXmin, we can't look at
-	 * pg_subtrans; instead assume that the parent crashed without cleaning up
+	 * mdb_subtrans; instead assume that the parent crashed without cleaning up
 	 * its children.
 	 */
 	if (xidstatus == TRANSACTION_STATUS_SUB_COMMITTED)
@@ -206,7 +206,7 @@ TransactionIdDidAbort(TransactionId transactionId)
 		if (!TransactionIdIsValid(parentXid))
 		{
 			/* see notes in TransactionIdDidCommit */
-			elog(WARNING, "no pg_subtrans entry for subcommitted XID %u",
+			elog(WARNING, "no mdb_subtrans entry for subcommitted XID %u",
 				 transactionId);
 			return true;
 		}
@@ -224,7 +224,7 @@ TransactionIdDidAbort(TransactionId transactionId)
  *		True iff transaction associated with the identifier is currently
  *		known to have either committed or aborted.
  *
- * This does NOT look into pg_clog but merely probes our local cache
+ * This does NOT look into mdb_clog but merely probes our local cache
  * (and so it's not named TransactionIdDidComplete, which would be the
  * appropriate name for a function that worked that way).  The intended
  * use is just to short-circuit TransactionIdIsInProgress calls when doing

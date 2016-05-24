@@ -269,7 +269,7 @@ SELECT setseed(<replaceable>value</replaceable>);
    The function <function>set_config</function> provides equivalent
    functionality; see <xref linkend="functions-admin">.
    Also, it is possible to UPDATE the
-   <link linkend="view-pg-settings"><structname>pg_settings</structname></link>
+   <link linkend="view-pg-settings"><structname>mdb_settings</structname></link>
    system view to perform the equivalent of <command>SET</>.
   </para>
  </refsect1>

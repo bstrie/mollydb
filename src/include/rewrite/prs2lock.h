@@ -14,7 +14,7 @@
 #define PRS2LOCK_H
 
 #include "access/attnum.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 /*
  * RewriteRule -

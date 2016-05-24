@@ -11,8 +11,8 @@ CREATE TABLE TIMESTAMP_TBL (d1 timestamp(2) without time zone);
 -- block is entered exactly at local midnight; then 'now' and 'today' have
 -- the same values and the counts will come out different.
 INSERT INTO TIMESTAMP_TBL VALUES ('now');
-SELECT pg_sleep(0.1);
- pg_sleep 
+SELECT mdb_sleep(0.1);
+ mdb_sleep 
 ----------
  
 (1 row)
@@ -54,15 +54,15 @@ DELETE FROM TIMESTAMP_TBL;
 -- verify uniform transaction time within transaction block
 BEGIN;
 INSERT INTO TIMESTAMP_TBL VALUES ('now');
-SELECT pg_sleep(0.1);
- pg_sleep 
+SELECT mdb_sleep(0.1);
+ mdb_sleep 
 ----------
  
 (1 row)
 
 INSERT INTO TIMESTAMP_TBL VALUES ('now');
-SELECT pg_sleep(0.1);
- pg_sleep 
+SELECT mdb_sleep(0.1);
+ mdb_sleep 
 ----------
  
 (1 row)

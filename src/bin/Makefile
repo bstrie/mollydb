@@ -15,18 +15,18 @@ include $(top_builddir)/src/Makefile.global
 
 SUBDIRS = \
 	initdb \
-	pg_archivecleanup \
-	pg_basebackup \
-	pg_config \
-	pg_controldata \
-	pg_ctl \
-	pg_dump \
-	pg_resetxlog \
-	pg_rewind \
-	pg_test_fsync \
-	pg_test_timing \
-	pg_upgrade \
-	pg_xlogdump \
+	mdb_archivecleanup \
+	mdb_basebackup \
+	mdb_config \
+	mdb_controldata \
+	mdb_ctl \
+	mdb_dump \
+	mdb_resetxlog \
+	mdb_rewind \
+	mdb_test_fsync \
+	mdb_test_timing \
+	mdb_upgrade \
+	mdb_xlogdump \
 	pgbench \
 	psql \
 	scripts

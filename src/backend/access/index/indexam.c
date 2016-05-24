@@ -670,8 +670,8 @@ index_can_return(Relation indexRelation, int attno)
  *
  *		Index access methods typically require support routines that are
  *		not directly the implementation of any WHERE-clause query operator
- *		and so cannot be kept in pg_amop.  Instead, such routines are kept
- *		in pg_amproc.  These registered procedure OIDs are assigned numbers
+ *		and so cannot be kept in mdb_amop.  Instead, such routines are kept
+ *		in mdb_amproc.  These registered procedure OIDs are assigned numbers
  *		according to a convention established by the access method.
  *		The general index code doesn't know anything about the routines
  *		involved; it just builds an ordered list of them for

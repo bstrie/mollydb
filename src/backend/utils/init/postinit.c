@@ -27,13 +27,13 @@
 #include "catalog/catalog.h"
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_authid.h"
-#include "catalog/pg_database.h"
-#include "catalog/pg_db_role_setting.h"
-#include "catalog/pg_tablespace.h"
+#include "catalog/mdb_authid.h"
+#include "catalog/mdb_database.h"
+#include "catalog/mdb_db_role_setting.h"
+#include "catalog/mdb_tablespace.h"
 #include "libpq/auth.h"
 #include "libpq/libpq-be.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "pgstat.h"
 #include "postmaster/autovacuum.h"
@@ -53,7 +53,7 @@
 #include "utils/fmgroids.h"
 #include "utils/guc.h"
 #include "utils/memutils.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 #include "utils/portal.h"
 #include "utils/ps_status.h"
 #include "utils/snapmgr.h"
@@ -80,13 +80,13 @@ static void process_settings(Oid databaseid, Oid roleid);
 
 
 /*
- * GetDatabaseTuple -- fetch the pg_database row for a database
+ * GetDatabaseTuple -- fetch the mdb_database row for a database
  *
  * This is used during backend startup when we don't yet have any access to
- * system catalogs in general.  In the worst case, we can seqscan pg_database
+ * system catalogs in general.  In the worst case, we can seqscan mdb_database
  * using nothing but the hard-wired descriptor that relcache.c creates for
- * pg_database.  In more typical cases, relcache.c was able to load
- * descriptors for both pg_database and its indexes from the shared relcache
+ * mdb_database.  In more typical cases, relcache.c was able to load
+ * descriptors for both mdb_database and its indexes from the shared relcache
  * cache file, and so we can do an indexscan.  criticalSharedRelcachesBuilt
  * tells whether we got the cached descriptors.
  */
@@ -102,12 +102,12 @@ GetDatabaseTuple(const char *dbname)
 	 * form a scan key
 	 */
 	ScanKeyInit(&key[0],
-				Anum_pg_database_datname,
+				Anum_mdb_database_datname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(dbname));
 
 	/*
-	 * Open pg_database and fetch a tuple.  Force heap scan if we haven't yet
+	 * Open mdb_database and fetch a tuple.  Force heap scan if we haven't yet
 	 * built the critical shared relcache entries (i.e., we're starting up
 	 * without a shared relcache cache file).
 	 */
@@ -150,7 +150,7 @@ GetDatabaseTupleByOid(Oid dboid)
 				ObjectIdGetDatum(dboid));
 
 	/*
-	 * Open pg_database and fetch a tuple.  Force heap scan if we haven't yet
+	 * Open mdb_database and fetch a tuple.  Force heap scan if we haven't yet
 	 * built the critical shared relcache entries (i.e., we're starting up
 	 * without a shared relcache cache file).
 	 */
@@ -186,7 +186,7 @@ PerformAuthentication(Port *port)
 	ClientAuthInProgress = true;	/* limit visibility of log messages */
 
 	/*
-	 * In EXEC_BACKEND case, we didn't inherit the contents of pg_hba.conf
+	 * In EXEC_BACKEND case, we didn't inherit the contents of mdb_hba.conf
 	 * etcetera from the postmaster, and have to load them ourselves.
 	 *
 	 * FIXME: [fork/exec] Ugh.  Is there a way around this overhead?
@@ -211,7 +211,7 @@ PerformAuthentication(Port *port)
 		 * since there is no way to connect to the database in this case.
 		 */
 		ereport(FATAL,
-				(errmsg("could not load pg_hba.conf")));
+				(errmsg("could not load mdb_hba.conf")));
 	}
 
 	if (!load_ident())
@@ -281,27 +281,27 @@ PerformAuthentication(Port *port)
 
 
 /*
- * CheckMyDatabase -- fetch information from the pg_database entry for our DB
+ * CheckMyDatabase -- fetch information from the mdb_database entry for our DB
  */
 static void
 CheckMyDatabase(const char *name, bool am_superuser)
 {
 	HeapTuple	tup;
-	Form_pg_database dbform;
+	Form_mdb_database dbform;
 	char	   *collate;
 	char	   *ctype;
 
-	/* Fetch our pg_database row normally, via syscache */
+	/* Fetch our mdb_database row normally, via syscache */
 	tup = SearchSysCache1(DATABASEOID, ObjectIdGetDatum(MyDatabaseId));
 	if (!HeapTupleIsValid(tup))
 		elog(ERROR, "cache lookup failed for database %u", MyDatabaseId);
-	dbform = (Form_pg_database) GETSTRUCT(tup);
+	dbform = (Form_mdb_database) GETSTRUCT(tup);
 
 	/* This recheck is strictly paranoia */
 	if (strcmp(name, NameStr(dbform->datname)) != 0)
 		ereport(FATAL,
 				(errcode(ERRCODE_UNDEFINED_DATABASE),
-				 errmsg("database \"%s\" has disappeared from pg_database",
+				 errmsg("database \"%s\" has disappeared from mdb_database",
 						name),
 				 errdetail("Database OID %u now seems to belong to \"%s\".",
 						   MyDatabaseId, NameStr(dbform->datname))));
@@ -311,7 +311,7 @@ CheckMyDatabase(const char *name, bool am_superuser)
 	 *
 	 * These checks are not enforced when in standalone mode, so that there is
 	 * a way to recover from disabling all access to all databases, for
-	 * example "UPDATE pg_database SET datallowconn = false;".
+	 * example "UPDATE mdb_database SET datallowconn = false;".
 	 *
 	 * We do not enforce them for autovacuum worker processes either.
 	 */
@@ -332,7 +332,7 @@ CheckMyDatabase(const char *name, bool am_superuser)
 		 * and save a few cycles.)
 		 */
 		if (!am_superuser &&
-			pg_database_aclcheck(MyDatabaseId, GetUserId(),
+			mdb_database_aclcheck(MyDatabaseId, GetUserId(),
 								 ACL_CONNECT) != ACLCHECK_OK)
 			ereport(FATAL,
 					(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
@@ -360,7 +360,7 @@ CheckMyDatabase(const char *name, bool am_superuser)
 
 	/*
 	 * OK, we're golden.  Next to-do item is to save the encoding info out of
-	 * the pg_database tuple.
+	 * the mdb_database tuple.
 	 */
 	SetDatabaseEncoding(dbform->encoding);
 	/* Record it as a GUC internal option, too */
@@ -374,14 +374,14 @@ CheckMyDatabase(const char *name, bool am_superuser)
 	collate = NameStr(dbform->datcollate);
 	ctype = NameStr(dbform->datctype);
 
-	if (pg_perm_setlocale(LC_COLLATE, collate) == NULL)
+	if (mdb_perm_setlocale(LC_COLLATE, collate) == NULL)
 		ereport(FATAL,
 			(errmsg("database locale is incompatible with operating system"),
 			 errdetail("The database was initialized with LC_COLLATE \"%s\", "
 					   " which is not recognized by setlocale().", collate),
 			 errhint("Recreate the database with another locale or install the missing locale.")));
 
-	if (pg_perm_setlocale(LC_CTYPE, ctype) == NULL)
+	if (mdb_perm_setlocale(LC_CTYPE, ctype) == NULL)
 		ereport(FATAL,
 			(errmsg("database locale is incompatible with operating system"),
 			 errdetail("The database was initialized with LC_CTYPE \"%s\", "
@@ -424,7 +424,7 @@ InitCommunication(void)
 
 
 /*
- * pg_split_opts -- split a string of options and append it to an argv array
+ * mdb_split_opts -- split a string of options and append it to an argv array
  *
  * The caller is responsible for ensuring the argv array is large enough.  The
  * maximum possible number of arguments added by this routine is
@@ -434,7 +434,7 @@ InitCommunication(void)
  * backslashes, with \\ representing a literal backslash.
  */
 void
-pg_split_opts(char **argv, int *argcp, const char *optstr)
+mdb_split_opts(char **argv, int *argcp, const char *optstr)
 {
 	StringInfoData s;
 
@@ -545,7 +545,7 @@ BaseInit(void)
  *
  * In bootstrap mode no parameters are used.  The autovacuum launcher process
  * doesn't use any parameters either, because it only goes far enough to be
- * able to read pg_database; it doesn't connect to any particular database.
+ * able to read mdb_database; it doesn't connect to any particular database.
  * In walsender mode only username is used.
  *
  * As of MollyDB 8.2, we expect InitProcess() was already called, so we
@@ -650,7 +650,7 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 
 	/*
 	 * Load relcache entries for the shared system catalogs.  This must create
-	 * at least entries for pg_database and catalogs used for authentication.
+	 * at least entries for mdb_database and catalogs used for authentication.
 	 */
 	RelationCacheInitializePhase2();
 
@@ -804,7 +804,7 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 
 		/* Apply PostAuthDelay as soon as we've read all options */
 		if (PostAuthDelay > 0)
-			pg_usleep(PostAuthDelay * 1000000L);
+			mdb_usleep(PostAuthDelay * 1000000L);
 
 		/* initialize client encoding */
 		InitializeClientEncoding();
@@ -823,7 +823,7 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 	 * But note we won't actually try to touch the database just yet.
 	 *
 	 * We take a shortcut in the bootstrap case, otherwise we have to look up
-	 * the db's entry in pg_database.
+	 * the db's entry in mdb_database.
 	 */
 	if (bootstrap)
 	{
@@ -833,14 +833,14 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 	else if (in_dbname != NULL)
 	{
 		HeapTuple	tuple;
-		Form_pg_database dbform;
+		Form_mdb_database dbform;
 
 		tuple = GetDatabaseTuple(in_dbname);
 		if (!HeapTupleIsValid(tuple))
 			ereport(FATAL,
 					(errcode(ERRCODE_UNDEFINED_DATABASE),
 					 errmsg("database \"%s\" does not exist", in_dbname)));
-		dbform = (Form_pg_database) GETSTRUCT(tuple);
+		dbform = (Form_mdb_database) GETSTRUCT(tuple);
 		MyDatabaseId = HeapTupleGetOid(tuple);
 		MyDatabaseTableSpace = dbform->dattablespace;
 		/* take database name from the caller, just for paranoia */
@@ -850,14 +850,14 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 	{
 		/* caller specified database by OID */
 		HeapTuple	tuple;
-		Form_pg_database dbform;
+		Form_mdb_database dbform;
 
 		tuple = GetDatabaseTupleByOid(dboid);
 		if (!HeapTupleIsValid(tuple))
 			ereport(FATAL,
 					(errcode(ERRCODE_UNDEFINED_DATABASE),
 					 errmsg("database %u does not exist", dboid)));
-		dbform = (Form_pg_database) GETSTRUCT(tuple);
+		dbform = (Form_mdb_database) GETSTRUCT(tuple);
 		MyDatabaseId = HeapTupleGetOid(tuple);
 		MyDatabaseTableSpace = dbform->dattablespace;
 		Assert(MyDatabaseId == dboid);
@@ -883,7 +883,7 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 	 * Now, take a writer's lock on the database we are trying to connect to.
 	 * If there is a concurrently running DROP DATABASE on that database, this
 	 * will block us until it finishes (and has committed its update of
-	 * pg_database).
+	 * mdb_database).
 	 *
 	 * Note that the lock is not held long, only until the end of this startup
 	 * transaction.  This is OK since we will advertise our use of the
@@ -919,15 +919,15 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 	MyProc->databaseId = MyDatabaseId;
 
 	/*
-	 * We established a catalog snapshot while reading pg_authid and/or
-	 * pg_database; but until we have set up MyDatabaseId, we won't react to
+	 * We established a catalog snapshot while reading mdb_authid and/or
+	 * mdb_database; but until we have set up MyDatabaseId, we won't react to
 	 * incoming sinval messages for unshared catalogs, so we won't realize it
 	 * if the snapshot has been invalidated.  Assume it's no good anymore.
 	 */
 	InvalidateCatalogSnapshot();
 
 	/*
-	 * Recheck pg_database to make sure the target database hasn't gone away.
+	 * Recheck mdb_database to make sure the target database hasn't gone away.
 	 * If there was a concurrent DROP DATABASE, this ensures we will die
 	 * cleanly without creating a mess.
 	 */
@@ -938,7 +938,7 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 		tuple = GetDatabaseTuple(dbname);
 		if (!HeapTupleIsValid(tuple) ||
 			MyDatabaseId != HeapTupleGetOid(tuple) ||
-			MyDatabaseTableSpace != ((Form_pg_database) GETSTRUCT(tuple))->dattablespace)
+			MyDatabaseTableSpace != ((Form_mdb_database) GETSTRUCT(tuple))->dattablespace)
 			ereport(FATAL,
 					(errcode(ERRCODE_UNDEFINED_DATABASE),
 					 errmsg("database \"%s\" does not exist", dbname),
@@ -986,7 +986,7 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 	initialize_acl();
 
 	/*
-	 * Re-read the pg_database row for our database, check permissions and set
+	 * Re-read the mdb_database row for our database, check permissions and set
 	 * up database-specific GUC settings.  We can't do this until all the
 	 * database-access infrastructure is up.  (Also, it wants to know if the
 	 * user is a superuser, so the above stuff has to happen first.)
@@ -1002,12 +1002,12 @@ InitMollyDB(const char *in_dbname, Oid dboid, const char *username,
 	if (MyProcPort != NULL)
 		process_startup_options(MyProcPort, am_superuser);
 
-	/* Process pg_db_role_setting options */
+	/* Process mdb_db_role_setting options */
 	process_settings(MyDatabaseId, GetSessionUserId());
 
 	/* Apply PostAuthDelay as soon as we've read all options */
 	if (PostAuthDelay > 0)
-		pg_usleep(PostAuthDelay * 1000000L);
+		mdb_usleep(PostAuthDelay * 1000000L);
 
 	/*
 	 * Initialize various default states that can't be set up until we've
@@ -1050,7 +1050,7 @@ process_startup_options(Port *port, bool am_superuser)
 		/*
 		 * The maximum possible number of commandline arguments that could
 		 * come from port->cmdline_options is (strlen + 1) / 2; see
-		 * pg_split_opts().
+		 * mdb_split_opts().
 		 */
 		char	  **av;
 		int			maxac;
@@ -1063,7 +1063,7 @@ process_startup_options(Port *port, bool am_superuser)
 
 		av[ac++] = "mollydb";
 
-		pg_split_opts(av, &ac, port->cmdline_options);
+		mdb_split_opts(av, &ac, port->cmdline_options);
 
 		av[ac] = NULL;
 
@@ -1093,7 +1093,7 @@ process_startup_options(Port *port, bool am_superuser)
 }
 
 /*
- * Load GUC settings from pg_db_role_setting.
+ * Load GUC settings from mdb_db_role_setting.
  *
  * We try specific settings for the database/role combination, as well as
  * general for this database and for this user.
@@ -1195,17 +1195,17 @@ IdleInTransactionSessionTimeoutHandler(void)
 static bool
 ThereIsAtLeastOneRole(void)
 {
-	Relation	pg_authid_rel;
+	Relation	mdb_authid_rel;
 	HeapScanDesc scan;
 	bool		result;
 
-	pg_authid_rel = heap_open(AuthIdRelationId, AccessShareLock);
+	mdb_authid_rel = heap_open(AuthIdRelationId, AccessShareLock);
 
-	scan = heap_beginscan_catalog(pg_authid_rel, 0, NULL);
+	scan = heap_beginscan_catalog(mdb_authid_rel, 0, NULL);
 	result = (heap_getnext(scan, ForwardScanDirection) != NULL);
 
 	heap_endscan(scan);
-	heap_close(pg_authid_rel, AccessShareLock);
+	heap_close(mdb_authid_rel, AccessShareLock);
 
 	return result;
 }

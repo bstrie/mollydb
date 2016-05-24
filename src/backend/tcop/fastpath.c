@@ -23,10 +23,10 @@
 #include "access/htup_details.h"
 #include "access/xact.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_proc.h"
+#include "catalog/mdb_proc.h"
 #include "libpq/libpq.h"
 #include "libpq/pqformat.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "tcop/fastpath.h"
 #include "tcop/tcopprot.h"
@@ -51,7 +51,7 @@ struct fp_info
 {
 	Oid			funcid;
 	FmgrInfo	flinfo;			/* function lookup info for funcid */
-	Oid			namespace;		/* other stuff from pg_proc */
+	Oid			namespace;		/* other stuff from mdb_proc */
 	Oid			rettype;
 	Oid			argtypes[FUNC_MAX_ARGS];
 	char		fname[NAMEDATALEN];		/* function name for logging */
@@ -198,7 +198,7 @@ static void
 fetch_fp_info(Oid func_id, struct fp_info * fip)
 {
 	HeapTuple	func_htp;
-	Form_pg_proc pp;
+	Form_mdb_proc pp;
 
 	Assert(OidIsValid(func_id));
 	Assert(fip != NULL);
@@ -221,7 +221,7 @@ fetch_fp_info(Oid func_id, struct fp_info * fip)
 		ereport(ERROR,
 				(errcode(ERRCODE_UNDEFINED_FUNCTION),
 				 errmsg("function with OID %u does not exist", func_id)));
-	pp = (Form_pg_proc) GETSTRUCT(func_htp);
+	pp = (Form_mdb_proc) GETSTRUCT(func_htp);
 
 	/* watch out for catalog entries with more than FUNC_MAX_ARGS args */
 	if (pp->pronargs > FUNC_MAX_ARGS)
@@ -325,13 +325,13 @@ HandleFunctionRequest(StringInfo msgBuf)
 	 * Check permission to access and call function.  Since we didn't go
 	 * through a normal name lookup, we need to check schema usage too.
 	 */
-	aclresult = pg_namespace_aclcheck(fip->namespace, GetUserId(), ACL_USAGE);
+	aclresult = mdb_namespace_aclcheck(fip->namespace, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
 					   get_namespace_name(fip->namespace));
 	InvokeNamespaceSearchHook(fip->namespace, true);
 
-	aclresult = pg_proc_aclcheck(fid, GetUserId(), ACL_EXECUTE);
+	aclresult = mdb_proc_aclcheck(fid, GetUserId(), ACL_EXECUTE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_PROC,
 					   get_func_name(fid));
@@ -506,7 +506,7 @@ parse_fcall_arguments(StringInfo msgBuf, struct fp_info * fip,
 			if (argsize == -1)
 				pstring = NULL;
 			else
-				pstring = pg_client_to_server(abuf.data, argsize);
+				pstring = mdb_client_to_server(abuf.data, argsize);
 
 			fcinfo->arg[i] = OidInputFunctionCall(typinput, pstring,
 												  typioparam, -1);

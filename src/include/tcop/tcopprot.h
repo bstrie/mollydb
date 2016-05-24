@@ -46,25 +46,25 @@ typedef enum
 
 extern int	log_statement;
 
-extern List *pg_parse_query(const char *query_string);
-extern List *pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
+extern List *mdb_parse_query(const char *query_string);
+extern List *mdb_analyze_and_rewrite(Node *parsetree, const char *query_string,
 					   Oid *paramTypes, int numParams);
-extern List *pg_analyze_and_rewrite_params(Node *parsetree,
+extern List *mdb_analyze_and_rewrite_params(Node *parsetree,
 							  const char *query_string,
 							  ParserSetupHook parserSetup,
 							  void *parserSetupArg);
-extern PlannedStmt *pg_plan_query(Query *querytree, int cursorOptions,
+extern PlannedStmt *mdb_plan_query(Query *querytree, int cursorOptions,
 			  ParamListInfo boundParams);
-extern List *pg_plan_queries(List *querytrees, int cursorOptions,
+extern List *mdb_plan_queries(List *querytrees, int cursorOptions,
 				ParamListInfo boundParams);
 
 extern bool check_max_stack_depth(int *newval, void **extra, GucSource source);
 extern void assign_max_stack_depth(int newval, void *extra);
 
 extern void die(SIGNAL_ARGS);
-extern void quickdie(SIGNAL_ARGS) pg_attribute_noreturn();
+extern void quickdie(SIGNAL_ARGS) mdb_attribute_noreturn();
 extern void StatementCancelHandler(SIGNAL_ARGS);
-extern void FloatExceptionHandler(SIGNAL_ARGS) pg_attribute_noreturn();
+extern void FloatExceptionHandler(SIGNAL_ARGS) mdb_attribute_noreturn();
 extern void RecoveryConflictInterrupt(ProcSignalReason reason); /* called from SIGUSR1
 																 * handler */
 extern void ProcessClientReadInterrupt(bool blocked);
@@ -74,7 +74,7 @@ extern void process_mollydb_switches(int argc, char *argv[],
 						  GucContext ctx, const char **dbname);
 extern void MollyDBMain(int argc, char *argv[],
 			 const char *dbname,
-			 const char *username) pg_attribute_noreturn();
+			 const char *username) mdb_attribute_noreturn();
 extern long get_stack_depth_rlimit(void);
 extern void ResetUsage(void);
 extern void ShowUsage(const char *title);

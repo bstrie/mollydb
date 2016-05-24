@@ -48,7 +48,7 @@ extern int	dynamic_shared_memory_type;
  * This is used by all implementations for crash recovery and by the mmap
  * implementation for storage.
  */
-#define PG_DYNSHMEM_DIR					"pg_dynshmem"
+#define PG_DYNSHMEM_DIR					"mdb_dynshmem"
 #define PG_DYNSHMEM_MMAP_FILE_PREFIX	"mmap."
 
 /* A "name" for a dynamic shared memory segment. */

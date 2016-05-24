@@ -30,9 +30,9 @@ CREATE FUNCTION pgstatindex(IN relname text,
 AS 'MODULE_PATHNAME', 'pgstatindex'
 LANGUAGE C STRICT;
 
-CREATE FUNCTION pg_relpages(IN relname text)
+CREATE FUNCTION mdb_relpages(IN relname text)
 RETURNS BIGINT
-AS 'MODULE_PATHNAME', 'pg_relpages'
+AS 'MODULE_PATHNAME', 'mdb_relpages'
 LANGUAGE C STRICT;
 
 /* New stuff in 1.1 begins here */
@@ -73,9 +73,9 @@ CREATE FUNCTION pgstatindex(IN relname regclass,
 AS 'MODULE_PATHNAME', 'pgstatindexbyid'
 LANGUAGE C STRICT;
 
-CREATE FUNCTION pg_relpages(IN relname regclass)
+CREATE FUNCTION mdb_relpages(IN relname regclass)
 RETURNS BIGINT
-AS 'MODULE_PATHNAME', 'pg_relpagesbyid'
+AS 'MODULE_PATHNAME', 'mdb_relpagesbyid'
 LANGUAGE C STRICT;
 
 /* New stuff in 1.3 begins here */

@@ -50,7 +50,7 @@
 #define FPge(A,B)				((A) >= (B))
 #endif
 
-#define HYPOT(A, B)				pg_hypot(A, B)
+#define HYPOT(A, B)				mdb_hypot(A, B)
 
 /*---------------------------------------------------------------------
  * Point - (x,y)
@@ -202,7 +202,7 @@ extern Datum point_div(PG_FUNCTION_ARGS);
 /* private routines */
 extern double point_dt(Point *pt1, Point *pt2);
 extern double point_sl(Point *pt1, Point *pt2);
-extern double pg_hypot(double x, double y);
+extern double mdb_hypot(double x, double y);
 
 /* public lseg routines */
 extern Datum lseg_in(PG_FUNCTION_ARGS);
@@ -427,11 +427,11 @@ extern Datum gist_point_distance(PG_FUNCTION_ARGS);
 extern Datum gist_point_fetch(PG_FUNCTION_ARGS);
 
 /* utils/adt/geo_spgist.c */
-Datum spg_box_quad_config(PG_FUNCTION_ARGS);
-Datum spg_box_quad_choose(PG_FUNCTION_ARGS);
-Datum spg_box_quad_picksplit(PG_FUNCTION_ARGS);
-Datum spg_box_quad_inner_consistent(PG_FUNCTION_ARGS);
-Datum spg_box_quad_leaf_consistent(PG_FUNCTION_ARGS);
+Datum smdb_box_quad_config(PG_FUNCTION_ARGS);
+Datum smdb_box_quad_choose(PG_FUNCTION_ARGS);
+Datum smdb_box_quad_picksplit(PG_FUNCTION_ARGS);
+Datum smdb_box_quad_inner_consistent(PG_FUNCTION_ARGS);
+Datum smdb_box_quad_leaf_consistent(PG_FUNCTION_ARGS);
 
 /* geo_selfuncs.c */
 extern Datum areasel(PG_FUNCTION_ARGS);

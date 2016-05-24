@@ -144,8 +144,8 @@ su - mollydb
       used by default. If you don't want to use it then you must
       specify the <option>--without-zlib</option> option to
       <filename>configure</filename>. Using this option disables
-      support for compressed archives in <application>pg_dump</> and
-      <application>pg_restore</>.
+      support for compressed archives in <application>mdb_dump</> and
+      <application>mdb_restore</>.
      </para>
     </listitem>
    </itemizedlist>
@@ -1149,8 +1149,8 @@ su - mollydb
           <primary>zlib</primary>
          </indexterm>
          Prevents use of the <application>Zlib</> library.  This disables
-         support for compressed archives in <application>pg_dump</application>
-         and <application>pg_restore</application>.
+         support for compressed archives in <application>mdb_dump</application>
+         and <application>mdb_restore</application>.
          This option is only intended for those rare systems where this
          library is not available.
         </para>
@@ -1865,7 +1865,7 @@ mollydb$ <userinput>/usr/local/mdb/bin/initdb -D /usr/local/mdb/data</>
    <step>
     <para>
      At this point, if you did not use the <command>initdb</> <literal>-A</>
-     option, you might want to modify <filename>pg_hba.conf</> to control
+     option, you might want to modify <filename>mdb_hba.conf</> to control
      local access to the server before you start it.  The default is to
      trust all local users.
     </para>
@@ -2153,7 +2153,7 @@ kill `cat /usr/local/mdb/data/postmaster.pid`
     <para>
      MollyDB relies on the system's <function>getaddrinfo</> function
      to parse IP addresses in <varname>listen_addresses</>,
-     <filename>pg_hba.conf</>, etc.  Older versions of AIX have assorted
+     <filename>mdb_hba.conf</>, etc.  Older versions of AIX have assorted
      bugs in this function.  If you have problems related to these settings,
      updating to the appropriate AIX fix level shown above
      should take care of it.

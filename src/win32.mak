@@ -11,9 +11,9 @@ NULL=nul
 
 ALL:
    cd include
-   if not exist pg_config.h copy pg_config.h.win32 pg_config.h
-   if not exist pg_config_ext.h copy pg_config_ext.h.win32 pg_config_ext.h
-   if not exist pg_config_os.h copy port\win32.h pg_config_os.h
+   if not exist mdb_config.h copy mdb_config.h.win32 mdb_config.h
+   if not exist mdb_config_ext.h copy mdb_config_ext.h.win32 mdb_config_ext.h
+   if not exist mdb_config_os.h copy port\win32.h mdb_config_os.h
    cd ..
    cd interfaces\libpq
    nmake /f win32.mak $(MAKEMACRO)
@@ -28,5 +28,5 @@ CLEAN:
 
 DISTCLEAN: CLEAN
    cd include
-   del pg_config.h pg_config_ext.h pg_config_os.h
+   del mdb_config.h mdb_config_ext.h mdb_config_os.h
    cd ..

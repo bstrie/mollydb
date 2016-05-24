@@ -35,9 +35,9 @@
 
    <para>
     All large objects are stored in a single system table named <link
-    linkend="catalog-pg-largeobject"><structname>pg_largeobject</structname></link>.
+    linkend="catalog-pg-largeobject"><structname>mdb_largeobject</structname></link>.
     Each large object also has an entry in the system table <link
-    linkend="catalog-pg-largeobject-metadata"><structname>pg_largeobject_metadata</structname></link>.
+    linkend="catalog-pg-largeobject-metadata"><structname>mdb_largeobject_metadata</structname></link>.
     Large objects can be created, modified, and deleted using a read/write API
     that is similar to standard operations on files.
    </para>
@@ -378,7 +378,7 @@ int lo_lseek(PGconn *conn, int fd, int offset, int whence);
      When dealing with large objects that might exceed 2GB in size,
      instead use
 <synopsis>
-pg_int64 lo_lseek64(PGconn *conn, int fd, pg_int64 offset, int whence);
+mdb_int64 lo_lseek64(PGconn *conn, int fd, mdb_int64 offset, int whence);
 </synopsis>
      This function has the same behavior
      as <function>lo_lseek</function>, but it can accept an
@@ -414,7 +414,7 @@ int lo_tell(PGconn *conn, int fd);
      When dealing with large objects that might exceed 2GB in size,
      instead use
 <synopsis>
-pg_int64 lo_tell64(PGconn *conn, int fd);
+mdb_int64 lo_tell64(PGconn *conn, int fd);
 </synopsis>
      This function has the same behavior
      as <function>lo_tell</function>, but it can deliver a result larger
@@ -465,7 +465,7 @@ int lo_truncate(PGcon *conn, int fd, size_t len);
      When dealing with large objects that might exceed 2GB in size,
      instead use
 <synopsis>
-int lo_truncate64(PGcon *conn, int fd, pg_int64 len);
+int lo_truncate64(PGcon *conn, int fd, mdb_int64 len);
 </synopsis>
      This function has the same
      behavior as <function>lo_truncate</function>, but it can accept a

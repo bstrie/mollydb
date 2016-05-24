@@ -15,7 +15,7 @@
  * handle this reference as an internally-tracked registration, so that this
  * module is entirely lower-level than ResourceOwners.
  *
- * Likewise, any snapshots that have been exported by pg_export_snapshot
+ * Likewise, any snapshots that have been exported by mdb_export_snapshot
  * have regd_count = 1 and are counted in RegisteredSnapshots, but are not
  * tracked by any resource owner.
  *
@@ -210,7 +210,7 @@ bool		FirstSnapshotSet = false;
 static Snapshot FirstXactSnapshot = NULL;
 
 /* Define pathname of exported-snapshot files */
-#define SNAPSHOT_EXPORT_DIR "pg_snapshots"
+#define SNAPSHOT_EXPORT_DIR "mdb_snapshots"
 #define XactExportFilePath(path, xid, num, suffix) \
 	snprintf(path, sizeof(path), SNAPSHOT_EXPORT_DIR "/%08X-%d%s", \
 			 xid, num, suffix)
@@ -1206,7 +1206,7 @@ ExportSnapshot(Snapshot snapshot)
 						pathtmp, path)));
 
 	/*
-	 * The basename of the file is what we return from pg_export_snapshot().
+	 * The basename of the file is what we return from mdb_export_snapshot().
 	 * It's already in path in a textual format and we know that the path
 	 * starts with SNAPSHOT_EXPORT_DIR.  Skip over the prefix and the slash
 	 * and pstrdup it so as not to return the address of a local variable.
@@ -1215,11 +1215,11 @@ ExportSnapshot(Snapshot snapshot)
 }
 
 /*
- * pg_export_snapshot
+ * mdb_export_snapshot
  *		SQL-callable wrapper for ExportSnapshot.
  */
 Datum
-pg_export_snapshot(PG_FUNCTION_ARGS)
+mdb_export_snapshot(PG_FUNCTION_ARGS)
 {
 	char	   *snapshotName;
 

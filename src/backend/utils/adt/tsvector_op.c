@@ -16,11 +16,11 @@
 
 #include "access/htup_details.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/trigger.h"
 #include "executor/spi.h"
 #include "funcapi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "parser/parse_coerce.h"
 #include "tsearch/ts_utils.h"
@@ -1987,7 +1987,7 @@ ts_stat_sql(MemoryContext persistentContext, text *txt, text *ws)
 		buf = VARDATA(ws);
 		while (buf - VARDATA(ws) < VARSIZE(ws) - VARHDRSZ)
 		{
-			if (pg_mblen(buf) == 1)
+			if (mdb_mblen(buf) == 1)
 			{
 				switch (*buf)
 				{
@@ -2011,7 +2011,7 @@ ts_stat_sql(MemoryContext persistentContext, text *txt, text *ws)
 						stat->weight |= 0;
 				}
 			}
-			buf += pg_mblen(buf);
+			buf += mdb_mblen(buf);
 		}
 	}
 

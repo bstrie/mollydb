@@ -18,7 +18,7 @@
 #include "access/itup.h"
 #include "access/sdir.h"
 #include "access/xlogreader.h"
-#include "catalog/pg_index.h"
+#include "catalog/mdb_index.h"
 #include "lib/stringinfo.h"
 #include "storage/bufmgr.h"
 
@@ -78,7 +78,7 @@ typedef BTPageOpaqueData *BTPageOpaque;
 
 /*
  * The max allowed value of a cycle ID is a bit less than 64K.  This is
- * for convenience of pg_filedump and similar utilities: we want to use
+ * for convenience of mdb_filedump and similar utilities: we want to use
  * the last 2 bytes of special space as an index type indicator, and
  * restricting cycle ID lets btree use that space for vacuum cycle IDs
  * while still allowing index type to be identified.

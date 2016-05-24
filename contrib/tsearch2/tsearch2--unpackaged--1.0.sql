@@ -104,41 +104,41 @@ ALTER EXTENSION tsearch2 ADD operator class @extschema@.tsquery_ops using btree;
 
 -- tsearch2 relies on the core functions gin_extract_tsvector,
 -- gin_extract_tsquery, and gin_tsquery_consistent, which changed signature in
--- 9.1.  To support upgrading, pg_catalog contains entries for these functions
+-- 9.1.  To support upgrading, mdb_catalog contains entries for these functions
 -- with both the old and new signatures, and the former is what would have
 -- been added to our opclass during initial restore of a 9.0 dump script.
--- Avert your eyes while we hack the pg_amproc entries to make them link to
+-- Avert your eyes while we hack the mdb_amproc entries to make them link to
 -- the new forms ...
 
-UPDATE pg_catalog.pg_amproc
-SET amproc = 'pg_catalog.gin_extract_tsvector(pg_catalog.tsvector,internal,internal)'::pg_catalog.regprocedure
+UPDATE mdb_catalog.mdb_amproc
+SET amproc = 'mdb_catalog.gin_extract_tsvector(mdb_catalog.tsvector,internal,internal)'::mdb_catalog.regprocedure
 WHERE amprocfamily =
-  (SELECT oid FROM pg_catalog.pg_opfamily WHERE opfname = 'gin_tsvector_ops' AND
-     opfnamespace = (SELECT oid FROM pg_catalog.pg_namespace
+  (SELECT oid FROM mdb_catalog.mdb_opfamily WHERE opfname = 'gin_tsvector_ops' AND
+     opfnamespace = (SELECT oid FROM mdb_catalog.mdb_namespace
                      WHERE nspname = '@extschema@'))
-  AND amproclefttype = 'pg_catalog.tsvector'::pg_catalog.regtype
-  AND amprocrighttype = 'pg_catalog.tsvector'::pg_catalog.regtype
+  AND amproclefttype = 'mdb_catalog.tsvector'::mdb_catalog.regtype
+  AND amprocrighttype = 'mdb_catalog.tsvector'::mdb_catalog.regtype
   AND amprocnum = 2
-  AND amproc = 'pg_catalog.gin_extract_tsvector(pg_catalog.tsvector,internal)'::pg_catalog.regprocedure;
+  AND amproc = 'mdb_catalog.gin_extract_tsvector(mdb_catalog.tsvector,internal)'::mdb_catalog.regprocedure;
 
-UPDATE pg_catalog.pg_amproc
-SET amproc = 'pg_catalog.gin_extract_tsquery(pg_catalog.tsquery,internal,smallint,internal,internal,internal,internal)'::pg_catalog.regprocedure
+UPDATE mdb_catalog.mdb_amproc
+SET amproc = 'mdb_catalog.gin_extract_tsquery(mdb_catalog.tsquery,internal,smallint,internal,internal,internal,internal)'::mdb_catalog.regprocedure
 WHERE amprocfamily =
-  (SELECT oid FROM pg_catalog.pg_opfamily WHERE opfname = 'gin_tsvector_ops' AND
-     opfnamespace = (SELECT oid FROM pg_catalog.pg_namespace
+  (SELECT oid FROM mdb_catalog.mdb_opfamily WHERE opfname = 'gin_tsvector_ops' AND
+     opfnamespace = (SELECT oid FROM mdb_catalog.mdb_namespace
                      WHERE nspname = '@extschema@'))
-  AND amproclefttype = 'pg_catalog.tsvector'::pg_catalog.regtype
-  AND amprocrighttype = 'pg_catalog.tsvector'::pg_catalog.regtype
+  AND amproclefttype = 'mdb_catalog.tsvector'::mdb_catalog.regtype
+  AND amprocrighttype = 'mdb_catalog.tsvector'::mdb_catalog.regtype
   AND amprocnum = 3
-  AND amproc = 'pg_catalog.gin_extract_tsquery(pg_catalog.tsquery,internal,smallint,internal,internal)'::pg_catalog.regprocedure;
+  AND amproc = 'mdb_catalog.gin_extract_tsquery(mdb_catalog.tsquery,internal,smallint,internal,internal)'::mdb_catalog.regprocedure;
 
-UPDATE pg_catalog.pg_amproc
-SET amproc = 'pg_catalog.gin_tsquery_consistent(internal,smallint,pg_catalog.tsquery,integer,internal,internal,internal,internal)'::pg_catalog.regprocedure
+UPDATE mdb_catalog.mdb_amproc
+SET amproc = 'mdb_catalog.gin_tsquery_consistent(internal,smallint,mdb_catalog.tsquery,integer,internal,internal,internal,internal)'::mdb_catalog.regprocedure
 WHERE amprocfamily =
-  (SELECT oid FROM pg_catalog.pg_opfamily WHERE opfname = 'gin_tsvector_ops' AND
-     opfnamespace = (SELECT oid FROM pg_catalog.pg_namespace
+  (SELECT oid FROM mdb_catalog.mdb_opfamily WHERE opfname = 'gin_tsvector_ops' AND
+     opfnamespace = (SELECT oid FROM mdb_catalog.mdb_namespace
                      WHERE nspname = '@extschema@'))
-  AND amproclefttype = 'pg_catalog.tsvector'::pg_catalog.regtype
-  AND amprocrighttype = 'pg_catalog.tsvector'::pg_catalog.regtype
+  AND amproclefttype = 'mdb_catalog.tsvector'::mdb_catalog.regtype
+  AND amprocrighttype = 'mdb_catalog.tsvector'::mdb_catalog.regtype
   AND amprocnum = 4
-  AND amproc = 'pg_catalog.gin_tsquery_consistent(internal,smallint,pg_catalog.tsquery,integer,internal,internal)'::pg_catalog.regprocedure;
+  AND amproc = 'mdb_catalog.gin_tsquery_consistent(internal,smallint,mdb_catalog.tsquery,integer,internal,internal)'::mdb_catalog.regprocedure;

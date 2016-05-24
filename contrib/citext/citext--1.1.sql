@@ -441,49 +441,49 @@ CREATE OPERATOR !~~* (
 --
 
 CREATE FUNCTION regexp_matches( citext, citext ) RETURNS SETOF TEXT[] AS $$
-    SELECT pg_catalog.regexp_matches( $1::pg_catalog.text, $2::pg_catalog.text, 'i' );
+    SELECT mdb_catalog.regexp_matches( $1::mdb_catalog.text, $2::mdb_catalog.text, 'i' );
 $$ LANGUAGE SQL IMMUTABLE STRICT ROWS 1;
 
 CREATE FUNCTION regexp_matches( citext, citext, text ) RETURNS SETOF TEXT[] AS $$
-    SELECT pg_catalog.regexp_matches( $1::pg_catalog.text, $2::pg_catalog.text, CASE WHEN pg_catalog.strpos($3, 'c') = 0 THEN  $3 || 'i' ELSE $3 END );
+    SELECT mdb_catalog.regexp_matches( $1::mdb_catalog.text, $2::mdb_catalog.text, CASE WHEN mdb_catalog.strpos($3, 'c') = 0 THEN  $3 || 'i' ELSE $3 END );
 $$ LANGUAGE SQL IMMUTABLE STRICT ROWS 10;
 
 CREATE FUNCTION regexp_replace( citext, citext, text ) returns TEXT AS $$
-    SELECT pg_catalog.regexp_replace( $1::pg_catalog.text, $2::pg_catalog.text, $3, 'i');
+    SELECT mdb_catalog.regexp_replace( $1::mdb_catalog.text, $2::mdb_catalog.text, $3, 'i');
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 CREATE FUNCTION regexp_replace( citext, citext, text, text ) returns TEXT AS $$
-    SELECT pg_catalog.regexp_replace( $1::pg_catalog.text, $2::pg_catalog.text, $3, CASE WHEN pg_catalog.strpos($4, 'c') = 0 THEN  $4 || 'i' ELSE $4 END);
+    SELECT mdb_catalog.regexp_replace( $1::mdb_catalog.text, $2::mdb_catalog.text, $3, CASE WHEN mdb_catalog.strpos($4, 'c') = 0 THEN  $4 || 'i' ELSE $4 END);
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 CREATE FUNCTION regexp_split_to_array( citext, citext ) RETURNS TEXT[] AS $$
-    SELECT pg_catalog.regexp_split_to_array( $1::pg_catalog.text, $2::pg_catalog.text, 'i' );
+    SELECT mdb_catalog.regexp_split_to_array( $1::mdb_catalog.text, $2::mdb_catalog.text, 'i' );
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 CREATE FUNCTION regexp_split_to_array( citext, citext, text ) RETURNS TEXT[] AS $$
-    SELECT pg_catalog.regexp_split_to_array( $1::pg_catalog.text, $2::pg_catalog.text, CASE WHEN pg_catalog.strpos($3, 'c') = 0 THEN  $3 || 'i' ELSE $3 END );
+    SELECT mdb_catalog.regexp_split_to_array( $1::mdb_catalog.text, $2::mdb_catalog.text, CASE WHEN mdb_catalog.strpos($3, 'c') = 0 THEN  $3 || 'i' ELSE $3 END );
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 CREATE FUNCTION regexp_split_to_table( citext, citext ) RETURNS SETOF TEXT AS $$
-    SELECT pg_catalog.regexp_split_to_table( $1::pg_catalog.text, $2::pg_catalog.text, 'i' );
+    SELECT mdb_catalog.regexp_split_to_table( $1::mdb_catalog.text, $2::mdb_catalog.text, 'i' );
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 CREATE FUNCTION regexp_split_to_table( citext, citext, text ) RETURNS SETOF TEXT AS $$
-    SELECT pg_catalog.regexp_split_to_table( $1::pg_catalog.text, $2::pg_catalog.text, CASE WHEN pg_catalog.strpos($3, 'c') = 0 THEN  $3 || 'i' ELSE $3 END );
+    SELECT mdb_catalog.regexp_split_to_table( $1::mdb_catalog.text, $2::mdb_catalog.text, CASE WHEN mdb_catalog.strpos($3, 'c') = 0 THEN  $3 || 'i' ELSE $3 END );
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 CREATE FUNCTION strpos( citext, citext ) RETURNS INT AS $$
-    SELECT pg_catalog.strpos( pg_catalog.lower( $1::pg_catalog.text ), pg_catalog.lower( $2::pg_catalog.text ) );
+    SELECT mdb_catalog.strpos( mdb_catalog.lower( $1::mdb_catalog.text ), mdb_catalog.lower( $2::mdb_catalog.text ) );
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 CREATE FUNCTION replace( citext, citext, citext ) RETURNS TEXT AS $$
-    SELECT pg_catalog.regexp_replace( $1::pg_catalog.text, pg_catalog.regexp_replace($2::pg_catalog.text, '([^a-zA-Z_0-9])', E'\\\\\\1', 'g'), $3::pg_catalog.text, 'gi' );
+    SELECT mdb_catalog.regexp_replace( $1::mdb_catalog.text, mdb_catalog.regexp_replace($2::mdb_catalog.text, '([^a-zA-Z_0-9])', E'\\\\\\1', 'g'), $3::mdb_catalog.text, 'gi' );
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 CREATE FUNCTION split_part( citext, citext, int ) RETURNS TEXT AS $$
-    SELECT (pg_catalog.regexp_split_to_array( $1::pg_catalog.text, pg_catalog.regexp_replace($2::pg_catalog.text, '([^a-zA-Z_0-9])', E'\\\\\\1', 'g'), 'i'))[$3];
+    SELECT (mdb_catalog.regexp_split_to_array( $1::mdb_catalog.text, mdb_catalog.regexp_replace($2::mdb_catalog.text, '([^a-zA-Z_0-9])', E'\\\\\\1', 'g'), 'i'))[$3];
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 CREATE FUNCTION translate( citext, citext, text ) RETURNS TEXT AS $$
-    SELECT pg_catalog.translate( pg_catalog.translate( $1::pg_catalog.text, pg_catalog.lower($2::pg_catalog.text), $3), pg_catalog.upper($2::pg_catalog.text), $3);
+    SELECT mdb_catalog.translate( mdb_catalog.translate( $1::mdb_catalog.text, mdb_catalog.lower($2::mdb_catalog.text), $3), mdb_catalog.upper($2::mdb_catalog.text), $3);
 $$ LANGUAGE SQL IMMUTABLE STRICT;

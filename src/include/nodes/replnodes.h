@@ -15,7 +15,7 @@
 #define REPLNODES_H
 
 #include "access/xlogdefs.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 typedef enum ReplicationKind
 {

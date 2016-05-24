@@ -15,7 +15,7 @@ NOTICE:  installing required extension "test_ext2"
 NOTICE:  installing required extension "test_ext3"
 NOTICE:  installing required extension "test_ext5"
 NOTICE:  installing required extension "test_ext4"
-SELECT extname, nspname, extversion, extrelocatable FROM pg_extension e, pg_namespace n WHERE extname LIKE 'test_ext%' AND e.extnamespace = n.oid ORDER BY 1;
+SELECT extname, nspname, extversion, extrelocatable FROM mdb_extension e, mdb_namespace n WHERE extname LIKE 'test_ext%' AND e.extnamespace = n.oid ORDER BY 1;
   extname  |  nspname  | extversion | extrelocatable 
 -----------+-----------+------------+----------------
  test_ext1 | test_ext1 | 1.0        | f

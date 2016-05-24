@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_range.h
- *	  definition of the system "range" relation (pg_range)
+ * mdb_range.h
+ *	  definition of the system "range" relation (mdb_range)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_range.h
+ * src/include/catalog/mdb_range.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -25,13 +25,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_range definition.  cpp turns this into
- *		typedef struct FormData_pg_range
+ *		mdb_range definition.  cpp turns this into
+ *		typedef struct FormData_mdb_range
  * ----------------
  */
 #define RangeRelationId 3541
 
-CATALOG(pg_range,3541) BKI_WITHOUT_OIDS
+CATALOG(mdb_range,3541) BKI_WITHOUT_OIDS
 {
 	Oid			rngtypid;		/* OID of owning range type */
 	Oid			rngsubtype;		/* OID of range's element type (subtype) */
@@ -39,30 +39,30 @@ CATALOG(pg_range,3541) BKI_WITHOUT_OIDS
 	Oid			rngsubopc;		/* subtype's btree opclass */
 	regproc		rngcanonical;	/* canonicalize range, or 0 */
 	regproc		rngsubdiff;		/* subtype difference as a float8, or 0 */
-} FormData_pg_range;
+} FormData_mdb_range;
 
 /* ----------------
- *		Form_pg_range corresponds to a pointer to a tuple with
- *		the format of pg_range relation.
+ *		Form_mdb_range corresponds to a pointer to a tuple with
+ *		the format of mdb_range relation.
  * ----------------
  */
-typedef FormData_pg_range *Form_pg_range;
+typedef FormData_mdb_range *Form_mdb_range;
 
 /* ----------------
- *		compiler constants for pg_range
+ *		compiler constants for mdb_range
  * ----------------
  */
-#define Natts_pg_range					6
-#define Anum_pg_range_rngtypid			1
-#define Anum_pg_range_rngsubtype		2
-#define Anum_pg_range_rngcollation		3
-#define Anum_pg_range_rngsubopc			4
-#define Anum_pg_range_rngcanonical		5
-#define Anum_pg_range_rngsubdiff		6
+#define Natts_mdb_range					6
+#define Anum_mdb_range_rngtypid			1
+#define Anum_mdb_range_rngsubtype		2
+#define Anum_mdb_range_rngcollation		3
+#define Anum_mdb_range_rngsubopc			4
+#define Anum_mdb_range_rngcanonical		5
+#define Anum_mdb_range_rngsubdiff		6
 
 
 /* ----------------
- *		initial contents of pg_range
+ *		initial contents of mdb_range
  * ----------------
  */
 DATA(insert ( 3904 23	0 1978 int4range_canonical int4range_subdiff));
@@ -74,7 +74,7 @@ DATA(insert ( 3926 20	0 3124 int8range_canonical int8range_subdiff));
 
 
 /*
- * prototypes for functions in pg_range.c
+ * prototypes for functions in mdb_range.c
  */
 
 extern void RangeCreate(Oid rangeTypeOid, Oid rangeSubType, Oid rangeCollation,

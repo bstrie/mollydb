@@ -35,7 +35,7 @@ o C関数の呼び出し形式
   ソース文字列の長さ(5番目の引数で指定されます．単位はNULLターミネート
   を含まないバイト数です)とは一致しないからです．
 
-  エンコーディングIDはinclude/mb/pg_wchar.hのtypedef enum pg_encで定義
+  エンコーディングIDはinclude/mb/mdb_wchar.hのtypedef enum mdb_encで定義
   されています．
 
 o 関数の登録とコンパイル

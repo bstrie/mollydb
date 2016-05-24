@@ -14,7 +14,7 @@
 #ifndef EVTCACHE_H
 #define EVTCACHE_H
 
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 typedef enum
 {

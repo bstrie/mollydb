@@ -14,7 +14,7 @@
 #include "mollydb.h"
 
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/trigger.h"
 #include "tsearch/ts_utils.h"
 #include "utils/builtins.h"
@@ -86,7 +86,7 @@ PG_FUNCTION_INFO_V1(tsa_rewrite_finish);
  * List of unsupported functions
  *
  * The parser and dictionary functions are defined only so that the former
- * contents of pg_ts_parser and pg_ts_dict can be loaded into the system,
+ * contents of mdb_ts_parser and mdb_ts_dict can be loaded into the system,
  * for ease of reference while creating the new tsearch configuration.
  */
 
@@ -536,6 +536,6 @@ static Oid
 GetCurrentParser(void)
 {
 	if (current_parser_oid == InvalidOid)
-		current_parser_oid = get_ts_parser_oid(stringToQualifiedNameList("pg_catalog.default"), false);
+		current_parser_oid = get_ts_parser_oid(stringToQualifiedNameList("mdb_catalog.default"), false);
 	return current_parser_oid;
 }

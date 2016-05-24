@@ -63,13 +63,13 @@
 #include "catalog/catalog.h"
 #include "common/restricted_token.h"
 #include "common/username.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "getaddrinfo.h"
 #include "getopt_long.h"
 #include "miscadmin.h"
 
 
-/* Define PG_FLUSH_DATA_WORKS if we have an implementation for pg_flush_data */
+/* Define PG_FLUSH_DATA_WORKS if we have an implementation for mdb_flush_data */
 #if defined(HAVE_SYNC_FILE_RANGE)
 #define PG_FLUSH_DATA_WORKS 1
 #elif defined(USE_POSIX_FADVISE) && defined(POSIX_FADV_DONTNEED)
@@ -121,7 +121,7 @@ static const char *const auth_methods_local[] = {
 static char *share_path = NULL;
 
 /* values to be obtained from arguments */
-static char *pg_data = "";
+static char *mdb_data = "";
 static char *encoding = "";
 static char *locale = "";
 static char *lc_collate = "";
@@ -195,31 +195,31 @@ static char *authwarning = NULL;
  * (no quoting to worry about).
  */
 static const char *boot_options = "-F";
-static const char *backend_options = "--single -F -O -j -c search_path=pg_catalog -c exit_on_error=true";
+static const char *backend_options = "--single -F -O -j -c search_path=mdb_catalog -c exit_on_error=true";
 
 static const char *const subdirs[] = {
 	"global",
-	"pg_xlog/archive_status",
-	"pg_clog",
-	"pg_commit_ts",
-	"pg_dynshmem",
-	"pg_notify",
-	"pg_serial",
-	"pg_snapshots",
-	"pg_subtrans",
-	"pg_twophase",
-	"pg_multixact",
-	"pg_multixact/members",
-	"pg_multixact/offsets",
+	"mdb_xlog/archive_status",
+	"mdb_clog",
+	"mdb_commit_ts",
+	"mdb_dynshmem",
+	"mdb_notify",
+	"mdb_serial",
+	"mdb_snapshots",
+	"mdb_subtrans",
+	"mdb_twophase",
+	"mdb_multixact",
+	"mdb_multixact/members",
+	"mdb_multixact/offsets",
 	"base",
 	"base/1",
-	"pg_replslot",
-	"pg_tblspc",
-	"pg_stat",
-	"pg_stat_tmp",
-	"pg_logical",
-	"pg_logical/snapshots",
-	"pg_logical/mappings"
+	"mdb_replslot",
+	"mdb_tblspc",
+	"mdb_stat",
+	"mdb_stat_tmp",
+	"mdb_logical",
+	"mdb_logical/snapshots",
+	"mdb_logical/mappings"
 };
 
 
@@ -372,7 +372,7 @@ replace_token(char **lines, const char *token, const char *replacement)
 	for (i = 0; lines[i]; i++)
 		numlines++;
 
-	result = (char **) pg_malloc(numlines * sizeof(char *));
+	result = (char **) mdb_malloc(numlines * sizeof(char *));
 
 	toklen = strlen(token);
 	replen = strlen(replacement);
@@ -393,7 +393,7 @@ replace_token(char **lines, const char *token, const char *replacement)
 
 		/* if we get here a change is needed - set up new line */
 
-		newline = (char *) pg_malloc(strlen(lines[i]) + diff + 1);
+		newline = (char *) mdb_malloc(strlen(lines[i]) + diff + 1);
 
 		pre = where - lines[i];
 
@@ -427,7 +427,7 @@ filter_lines_with_token(char **lines, const char *token)
 	for (i = 0; lines[i]; i++)
 		numlines++;
 
-	result = (char **) pg_malloc(numlines * sizeof(char *));
+	result = (char **) mdb_malloc(numlines * sizeof(char *));
 
 	for (src = 0, dst = 0; src < numlines; src++)
 	{
@@ -482,14 +482,14 @@ readfile(const char *path)
 		maxlength = linelen;
 
 	/* set up the result and the line buffer */
-	result = (char **) pg_malloc((nlines + 1) * sizeof(char *));
-	buffer = (char *) pg_malloc(maxlength + 1);
+	result = (char **) mdb_malloc((nlines + 1) * sizeof(char *));
+	buffer = (char *) mdb_malloc(maxlength + 1);
 
 	/* now reprocess the file and store the lines */
 	rewind(infile);
 	n = 0;
 	while (fgets(buffer, maxlength + 1, infile) != NULL && n < nlines)
-		result[n++] = pg_strdup(buffer);
+		result[n++] = mdb_strdup(buffer);
 
 	fclose(infile);
 	free(buffer);
@@ -634,7 +634,7 @@ pre_sync_fname(const char *fname, bool isdir)
 	}
 
 	/*
-	 * We do what pg_flush_data() would do in the backend: prefer to use
+	 * We do what mdb_flush_data() would do in the backend: prefer to use
 	 * sync_file_range, but fall back to posix_fadvise.  We ignore errors
 	 * because this is only a hint.
 	 */
@@ -735,8 +735,8 @@ exit_nicely(void)
 		if (made_new_pgdata)
 		{
 			fprintf(stderr, _("%s: removing data directory \"%s\"\n"),
-					progname, pg_data);
-			if (!rmtree(pg_data, true))
+					progname, mdb_data);
+			if (!rmtree(mdb_data, true))
 				fprintf(stderr, _("%s: failed to remove data directory\n"),
 						progname);
 		}
@@ -744,8 +744,8 @@ exit_nicely(void)
 		{
 			fprintf(stderr,
 					_("%s: removing contents of data directory \"%s\"\n"),
-					progname, pg_data);
-			if (!rmtree(pg_data, false))
+					progname, mdb_data);
+			if (!rmtree(mdb_data, false))
 				fprintf(stderr, _("%s: failed to remove contents of data directory\n"),
 						progname);
 		}
@@ -774,7 +774,7 @@ exit_nicely(void)
 		if (made_new_pgdata || found_existing_pgdata)
 			fprintf(stderr,
 			  _("%s: data directory \"%s\" not removed at user's request\n"),
-					progname, pg_data);
+					progname, mdb_data);
 
 		if (made_new_xlogdir || found_existing_xlogdir)
 			fprintf(stderr,
@@ -810,7 +810,7 @@ get_id(void)
 
 	username = get_user_name_or_exit(progname);
 
-	return pg_strdup(username);
+	return mdb_strdup(username);
 }
 
 static char *
@@ -819,7 +819,7 @@ encodingid_to_string(int enc)
 	char		result[20];
 
 	sprintf(result, "%d", enc);
-	return pg_strdup(result);
+	return mdb_strdup(result);
 }
 
 /*
@@ -832,7 +832,7 @@ get_encoding_id(char *encoding_name)
 
 	if (encoding_name && *encoding_name)
 	{
-		if ((enc = pg_valid_server_encoding(encoding_name)) >= 0)
+		if ((enc = mdb_valid_server_encoding(encoding_name)) >= 0)
 			return encodingid_to_string(enc);
 	}
 	fprintf(stderr, _("%s: \"%s\" is not a valid server encoding name\n"),
@@ -909,10 +909,10 @@ find_matching_ts_config(const char *lc_type)
 	 * Just for paranoia, we also stop at '.' or '@'.
 	 */
 	if (lc_type == NULL)
-		langname = pg_strdup("");
+		langname = mdb_strdup("");
 	else
 	{
-		ptr = langname = pg_strdup(lc_type);
+		ptr = langname = mdb_strdup(lc_type);
 		while (*ptr &&
 			   *ptr != '_' && *ptr != '-' && *ptr != '.' && *ptr != '@')
 			ptr++;
@@ -921,7 +921,7 @@ find_matching_ts_config(const char *lc_type)
 
 	for (i = 0; tsearch_config_languages[i].tsconfname; i++)
 	{
-		if (pg_strcasecmp(tsearch_config_languages[i].langname, langname) == 0)
+		if (mdb_strcasecmp(tsearch_config_languages[i].langname, langname) == 0)
 		{
 			free(langname);
 			return tsearch_config_languages[i].tsconfname;
@@ -993,9 +993,9 @@ write_version_file(char *extrapath)
 	char	   *path;
 
 	if (extrapath == NULL)
-		path = psprintf("%s/PG_VERSION", pg_data);
+		path = psprintf("%s/PG_VERSION", mdb_data);
 	else
-		path = psprintf("%s/%s/PG_VERSION", pg_data, extrapath);
+		path = psprintf("%s/%s/PG_VERSION", mdb_data, extrapath);
 
 	if ((version_file = fopen(path, PG_BINARY_W)) == NULL)
 	{
@@ -1023,7 +1023,7 @@ set_null_conf(void)
 	FILE	   *conf_file;
 	char	   *path;
 
-	path = psprintf("%s/mollydb.conf", pg_data);
+	path = psprintf("%s/mollydb.conf", mdb_data);
 	conf_file = fopen(path, PG_BINARY_W);
 	if (conf_file == NULL)
 	{
@@ -1264,10 +1264,10 @@ setup_config(void)
 	conflines = replace_token(conflines, "#datestyle = 'iso, mdy'", repltok);
 
 	snprintf(repltok, sizeof(repltok),
-			 "default_text_search_config = 'pg_catalog.%s'",
+			 "default_text_search_config = 'mdb_catalog.%s'",
 			 escape_quotes(default_text_search_config));
 	conflines = replace_token(conflines,
-						 "#default_text_search_config = 'pg_catalog.simple'",
+						 "#default_text_search_config = 'mdb_catalog.simple'",
 							  repltok);
 
 	default_timezone = select_default_timezone(share_path);
@@ -1292,7 +1292,7 @@ setup_config(void)
 							  "#effective_io_concurrency = 0");
 #endif
 
-	snprintf(path, sizeof(path), "%s/mollydb.conf", pg_data);
+	snprintf(path, sizeof(path), "%s/mollydb.conf", mdb_data);
 
 	writefile(path, conflines);
 	if (chmod(path, S_IRUSR | S_IWUSR) != 0)
@@ -1308,11 +1308,11 @@ setup_config(void)
 	 * file will override the value of parameters that exists before parse of
 	 * this file.
 	 */
-	autoconflines[0] = pg_strdup("# Do not edit this file manually!\n");
-	autoconflines[1] = pg_strdup("# It will be overwritten by the ALTER SYSTEM command.\n");
+	autoconflines[0] = mdb_strdup("# Do not edit this file manually!\n");
+	autoconflines[1] = mdb_strdup("# It will be overwritten by the ALTER SYSTEM command.\n");
 	autoconflines[2] = NULL;
 
-	sprintf(path, "%s/mollydb.auto.conf", pg_data);
+	sprintf(path, "%s/mollydb.auto.conf", mdb_data);
 
 	writefile(path, autoconflines);
 	if (chmod(path, S_IRUSR | S_IWUSR) != 0)
@@ -1325,7 +1325,7 @@ setup_config(void)
 	free(conflines);
 
 
-	/* pg_hba.conf */
+	/* mdb_hba.conf */
 
 	conflines = readfile(hba_file);
 
@@ -1339,7 +1339,7 @@ setup_config(void)
 
 	/*
 	 * Probe to see if there is really any platform support for IPv6, and
-	 * comment out the relevant pg_hba line if not.  This avoids runtime
+	 * comment out the relevant mdb_hba line if not.  This avoids runtime
 	 * warnings if getaddrinfo doesn't actually cope with IPv6.  Particularly
 	 * useful on Windows, where executables built on a machine with IPv6 may
 	 * have to run on a machine without.
@@ -1396,7 +1396,7 @@ setup_config(void)
 							  "@default_username@",
 							  username);
 
-	snprintf(path, sizeof(path), "%s/pg_hba.conf", pg_data);
+	snprintf(path, sizeof(path), "%s/mdb_hba.conf", mdb_data);
 
 	writefile(path, conflines);
 	if (chmod(path, S_IRUSR | S_IWUSR) != 0)
@@ -1408,11 +1408,11 @@ setup_config(void)
 
 	free(conflines);
 
-	/* pg_ident.conf */
+	/* mdb_ident.conf */
 
 	conflines = readfile(ident_file);
 
-	snprintf(path, sizeof(path), "%s/pg_ident.conf", pg_data);
+	snprintf(path, sizeof(path), "%s/mdb_ident.conf", mdb_data);
 
 	writefile(path, conflines);
 	if (chmod(path, S_IRUSR | S_IWUSR) != 0)
@@ -1496,10 +1496,10 @@ bootstrap_template1(void)
 	 * there doesn't seem to be any compelling reason to do that.
 	 */
 	snprintf(cmd, sizeof(cmd), "LC_COLLATE=%s", lc_collate);
-	putenv(pg_strdup(cmd));
+	putenv(mdb_strdup(cmd));
 
 	snprintf(cmd, sizeof(cmd), "LC_CTYPE=%s", lc_ctype);
-	putenv(pg_strdup(cmd));
+	putenv(mdb_strdup(cmd));
 
 	unsetenv("LC_ALL");
 
@@ -1534,16 +1534,16 @@ static void
 setup_auth(FILE *cmdfd)
 {
 	const char *const * line;
-	static const char *const pg_authid_setup[] = {
+	static const char *const mdb_authid_setup[] = {
 		/*
 		 * The authid table shouldn't be readable except through views, to
 		 * ensure passwords are not publicly visible.
 		 */
-		"REVOKE ALL on pg_authid FROM public;\n\n",
+		"REVOKE ALL on mdb_authid FROM public;\n\n",
 		NULL
 	};
 
-	for (line = pg_authid_setup; *line != NULL; line++)
+	for (line = mdb_authid_setup; *line != NULL; line++)
 		PG_CMD_PUTS(*line);
 }
 
@@ -1606,7 +1606,7 @@ get_set_pwd(FILE *cmdfd)
 		while (i > 0 && (pwdbuf[i - 1] == '\r' || pwdbuf[i - 1] == '\n'))
 			pwdbuf[--i] = '\0';
 
-		pwd1 = pg_strdup(pwdbuf);
+		pwd1 = mdb_strdup(pwdbuf);
 
 	}
 
@@ -1617,15 +1617,15 @@ get_set_pwd(FILE *cmdfd)
 }
 
 /*
- * set up pg_depend
+ * set up mdb_depend
  */
 static void
 setup_depend(FILE *cmdfd)
 {
 	const char *const * line;
-	static const char *const pg_depend_setup[] = {
+	static const char *const mdb_depend_setup[] = {
 		/*
-		 * Make PIN entries in pg_depend for all objects made so far in the
+		 * Make PIN entries in mdb_depend for all objects made so far in the
 		 * tables that the dependency code handles.  This is overkill (the
 		 * system doesn't really depend on having every last weird datatype,
 		 * for instance) but generating only the minimum required set of
@@ -1638,65 +1638,65 @@ setup_depend(FILE *cmdfd)
 		 * First delete any already-made entries; PINs override all else, and
 		 * must be the only entries for their objects.
 		 */
-		"DELETE FROM pg_depend;\n\n",
-		"VACUUM pg_depend;\n\n",
-		"DELETE FROM pg_shdepend;\n\n",
-		"VACUUM pg_shdepend;\n\n",
+		"DELETE FROM mdb_depend;\n\n",
+		"VACUUM mdb_depend;\n\n",
+		"DELETE FROM mdb_shdepend;\n\n",
+		"VACUUM mdb_shdepend;\n\n",
 
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_class;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_proc;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_type;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_cast;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_constraint;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_attrdef;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_language;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_operator;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_opclass;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_opfamily;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_am;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_amop;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_amproc;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_rewrite;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_trigger;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_class;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_proc;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_type;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_cast;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_constraint;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_attrdef;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_language;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_operator;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_opclass;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_opfamily;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_am;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_amop;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_amproc;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_rewrite;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_trigger;\n\n",
 
 		/*
 		 * restriction here to avoid pinning the public namespace
 		 */
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_namespace "
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_namespace "
 		"    WHERE nspname LIKE 'pg%';\n\n",
 
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_ts_parser;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_ts_dict;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_ts_template;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_ts_config;\n\n",
-		"INSERT INTO pg_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
-		" FROM pg_collation;\n\n",
-		"INSERT INTO pg_shdepend SELECT 0,0,0,0, tableoid,oid, 'p' "
-		" FROM pg_authid;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_ts_parser;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_ts_dict;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_ts_template;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_ts_config;\n\n",
+		"INSERT INTO mdb_depend SELECT 0,0,0, tableoid,oid,0, 'p' "
+		" FROM mdb_collation;\n\n",
+		"INSERT INTO mdb_shdepend SELECT 0,0,0,0, tableoid,oid, 'p' "
+		" FROM mdb_authid;\n\n",
 		NULL
 	};
 
-	for (line = pg_depend_setup; *line != NULL; line++)
+	for (line = mdb_depend_setup; *line != NULL; line++)
 		PG_CMD_PUTS(*line);
 }
 
@@ -1726,52 +1726,52 @@ setup_sysviews(FILE *cmdfd)
 static void
 setup_description(FILE *cmdfd)
 {
-	PG_CMD_PUTS("CREATE TEMP TABLE tmp_pg_description ( "
+	PG_CMD_PUTS("CREATE TEMP TABLE tmp_mdb_description ( "
 				"	objoid oid, "
 				"	classname name, "
 				"	objsubid int4, "
 				"	description text) WITHOUT OIDS;\n\n");
 
-	PG_CMD_PRINTF1("COPY tmp_pg_description FROM E'%s';\n\n",
+	PG_CMD_PRINTF1("COPY tmp_mdb_description FROM E'%s';\n\n",
 				   escape_quotes(desc_file));
 
-	PG_CMD_PUTS("INSERT INTO pg_description "
+	PG_CMD_PUTS("INSERT INTO mdb_description "
 				" SELECT t.objoid, c.oid, t.objsubid, t.description "
-				"  FROM tmp_pg_description t, pg_class c "
+				"  FROM tmp_mdb_description t, mdb_class c "
 				"    WHERE c.relname = t.classname;\n\n");
 
-	PG_CMD_PUTS("CREATE TEMP TABLE tmp_pg_shdescription ( "
+	PG_CMD_PUTS("CREATE TEMP TABLE tmp_mdb_shdescription ( "
 				" objoid oid, "
 				" classname name, "
 				" description text) WITHOUT OIDS;\n\n");
 
-	PG_CMD_PRINTF1("COPY tmp_pg_shdescription FROM E'%s';\n\n",
+	PG_CMD_PRINTF1("COPY tmp_mdb_shdescription FROM E'%s';\n\n",
 				   escape_quotes(shdesc_file));
 
-	PG_CMD_PUTS("INSERT INTO pg_shdescription "
+	PG_CMD_PUTS("INSERT INTO mdb_shdescription "
 				" SELECT t.objoid, c.oid, t.description "
-				"  FROM tmp_pg_shdescription t, pg_class c "
+				"  FROM tmp_mdb_shdescription t, mdb_class c "
 				"   WHERE c.relname = t.classname;\n\n");
 
 	/* Create default descriptions for operator implementation functions */
 	PG_CMD_PUTS("WITH funcdescs AS ( "
 				"SELECT p.oid as p_oid, oprname, "
-			  "coalesce(obj_description(o.oid, 'pg_operator'),'') as opdesc "
-				"FROM pg_proc p JOIN pg_operator o ON oprcode = p.oid ) "
-				"INSERT INTO pg_description "
-				"  SELECT p_oid, 'pg_proc'::regclass, 0, "
+			  "coalesce(obj_description(o.oid, 'mdb_operator'),'') as opdesc "
+				"FROM mdb_proc p JOIN mdb_operator o ON oprcode = p.oid ) "
+				"INSERT INTO mdb_description "
+				"  SELECT p_oid, 'mdb_proc'::regclass, 0, "
 				"    'implementation of ' || oprname || ' operator' "
 				"  FROM funcdescs "
 				"  WHERE opdesc NOT LIKE 'deprecated%' AND "
-				"  NOT EXISTS (SELECT 1 FROM pg_description "
-		"    WHERE objoid = p_oid AND classoid = 'pg_proc'::regclass);\n\n");
+				"  NOT EXISTS (SELECT 1 FROM mdb_description "
+		"    WHERE objoid = p_oid AND classoid = 'mdb_proc'::regclass);\n\n");
 
 	/*
 	 * Even though the tables are temp, drop them explicitly so they don't get
 	 * copied into template0/mollydb databases.
 	 */
-	PG_CMD_PUTS("DROP TABLE tmp_pg_description;\n\n");
-	PG_CMD_PUTS("DROP TABLE tmp_pg_shdescription;\n\n");
+	PG_CMD_PUTS("DROP TABLE tmp_mdb_description;\n\n");
+	PG_CMD_PUTS("DROP TABLE tmp_mdb_shdescription;\n\n");
 }
 
 #ifdef HAVE_LOCALE_T
@@ -1811,7 +1811,7 @@ normalize_locale_name(char *new, const char *old)
 #endif   /* HAVE_LOCALE_T */
 
 /*
- * populate pg_collation
+ * populate mdb_collation
  */
 static void
 setup_collation(FILE *cmdfd)
@@ -1826,7 +1826,7 @@ setup_collation(FILE *cmdfd)
 	if (!locale_a_handle)
 		return;					/* complaint already printed */
 
-	PG_CMD_PUTS("CREATE TEMP TABLE tmp_pg_collation ( "
+	PG_CMD_PUTS("CREATE TEMP TABLE tmp_mdb_collation ( "
 				"	collname name, "
 				"	locale name, "
 				"	encoding int) WITHOUT OIDS;\n\n");
@@ -1874,10 +1874,10 @@ setup_collation(FILE *cmdfd)
 			continue;
 		}
 
-		enc = pg_get_encoding_from_locale(localebuf, debug);
+		enc = mdb_get_encoding_from_locale(localebuf, debug);
 		if (enc < 0)
 		{
-			/* error message printed by pg_get_encoding_from_locale() */
+			/* error message printed by mdb_get_encoding_from_locale() */
 			continue;
 		}
 		if (!PG_VALID_BE_ENCODING(enc))
@@ -1889,7 +1889,7 @@ setup_collation(FILE *cmdfd)
 
 		quoted_locale = escape_quotes(localebuf);
 
-		PG_CMD_PRINTF3("INSERT INTO tmp_pg_collation VALUES (E'%s', E'%s', %d);\n\n",
+		PG_CMD_PRINTF3("INSERT INTO tmp_mdb_collation VALUES (E'%s', E'%s', %d);\n\n",
 					   quoted_locale, quoted_locale, enc);
 
 		/*
@@ -1901,7 +1901,7 @@ setup_collation(FILE *cmdfd)
 		{
 			char	   *quoted_alias = escape_quotes(alias);
 
-			PG_CMD_PRINTF3("INSERT INTO tmp_pg_collation VALUES (E'%s', E'%s', %d);\n\n",
+			PG_CMD_PRINTF3("INSERT INTO tmp_mdb_collation VALUES (E'%s', E'%s', %d);\n\n",
 						   quoted_alias, quoted_locale, enc);
 			free(quoted_alias);
 		}
@@ -1909,7 +1909,7 @@ setup_collation(FILE *cmdfd)
 	}
 
 	/* Add an SQL-standard name */
-	PG_CMD_PRINTF1("INSERT INTO tmp_pg_collation VALUES ('ucs_basic', 'C', %d);\n\n", PG_UTF8);
+	PG_CMD_PRINTF1("INSERT INTO tmp_mdb_collation VALUES ('ucs_basic', 'C', %d);\n\n", PG_UTF8);
 
 	/*
 	 * When copying collations to the final location, eliminate aliases that
@@ -1919,24 +1919,24 @@ setup_collation(FILE *cmdfd)
 	 * Prefer the alias that matches the OS locale name, else the first locale
 	 * name by sort order (arbitrary choice to be deterministic).
 	 *
-	 * Also, eliminate any aliases that conflict with pg_collation's
+	 * Also, eliminate any aliases that conflict with mdb_collation's
 	 * hard-wired entries for "C" etc.
 	 */
-	PG_CMD_PUTS("INSERT INTO pg_collation (collname, collnamespace, collowner, collencoding, collcollate, collctype) "
+	PG_CMD_PUTS("INSERT INTO mdb_collation (collname, collnamespace, collowner, collencoding, collcollate, collctype) "
 				" SELECT DISTINCT ON (collname, encoding)"
 				"   collname, "
-				"   (SELECT oid FROM pg_namespace WHERE nspname = 'pg_catalog') AS collnamespace, "
-				"   (SELECT relowner FROM pg_class WHERE relname = 'pg_collation') AS collowner, "
+				"   (SELECT oid FROM mdb_namespace WHERE nspname = 'mdb_catalog') AS collnamespace, "
+				"   (SELECT relowner FROM mdb_class WHERE relname = 'mdb_collation') AS collowner, "
 				"   encoding, locale, locale "
-				"  FROM tmp_pg_collation"
-				"  WHERE NOT EXISTS (SELECT 1 FROM pg_collation WHERE collname = tmp_pg_collation.collname)"
+				"  FROM tmp_mdb_collation"
+				"  WHERE NOT EXISTS (SELECT 1 FROM mdb_collation WHERE collname = tmp_mdb_collation.collname)"
 	 "  ORDER BY collname, encoding, (collname = locale) DESC, locale;\n\n");
 
 	/*
 	 * Even though the table is temp, drop it explicitly so it doesn't get
 	 * copied into template0/mollydb databases.
 	 */
-	PG_CMD_PUTS("DROP TABLE tmp_pg_collation;\n\n");
+	PG_CMD_PUTS("DROP TABLE tmp_mdb_collation;\n\n");
 
 	pclose(locale_a_handle);
 
@@ -1998,10 +1998,10 @@ setup_dictionary(FILE *cmdfd)
  * make sure we don't overwrite privilege sets that have already been
  * set (NOT NULL).
  *
- * Also populate pg_init_privs to save what the privileges are at init
- * time.  This is used by pg_dump to allow users to change privileges
+ * Also populate mdb_init_privs to save what the privileges are at init
+ * time.  This is used by mdb_dump to allow users to change privileges
  * on catalog objects and to have those privilege changes preserved
- * across dump/reload and pg_upgrade.
+ * across dump/reload and mdb_upgrade.
  */
 static void
 setup_privileges(FILE *cmdfd)
@@ -2009,152 +2009,152 @@ setup_privileges(FILE *cmdfd)
 	char	  **line;
 	char	  **priv_lines;
 	static char *privileges_setup[] = {
-		"UPDATE pg_class "
+		"UPDATE mdb_class "
 		"  SET relacl = (SELECT array_agg(a.acl) FROM "
 		" (SELECT E'=r/\"$POSTGRES_SUPERUSERNAME\"' as acl "
-		"  UNION SELECT unnest(pg_catalog.acldefault("
+		"  UNION SELECT unnest(mdb_catalog.acldefault("
 		"    CASE WHEN relkind = 'S' THEN 's' ELSE 'r' END::\"char\",10::oid))"
 		" ) as a) "
 		"  WHERE relkind IN ('r', 'v', 'm', 'S') AND relacl IS NULL;\n\n",
-		"GRANT USAGE ON SCHEMA pg_catalog TO PUBLIC;\n\n",
+		"GRANT USAGE ON SCHEMA mdb_catalog TO PUBLIC;\n\n",
 		"GRANT CREATE, USAGE ON SCHEMA public TO PUBLIC;\n\n",
-		"REVOKE ALL ON pg_largeobject FROM PUBLIC;\n\n",
-		"INSERT INTO pg_init_privs "
+		"REVOKE ALL ON mdb_largeobject FROM PUBLIC;\n\n",
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class WHERE relname = 'pg_class'),"
+		"        (SELECT oid FROM mdb_class WHERE relname = 'mdb_class'),"
 		"        0,"
 		"        relacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_class"
+		"        mdb_class"
 		"    WHERE"
 		"        relacl IS NOT NULL"
 		"        AND relkind IN ('r', 'v', 'm', 'S');",
-		"INSERT INTO pg_init_privs "
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
-		"        pg_class.oid,"
-		"        (SELECT oid FROM pg_class WHERE relname = 'pg_class'),"
-		"        pg_attribute.attnum,"
-		"        pg_attribute.attacl,"
+		"        mdb_class.oid,"
+		"        (SELECT oid FROM mdb_class WHERE relname = 'mdb_class'),"
+		"        mdb_attribute.attnum,"
+		"        mdb_attribute.attacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_class"
-		"        JOIN pg_attribute ON (pg_class.oid = pg_attribute.attrelid)"
+		"        mdb_class"
+		"        JOIN mdb_attribute ON (mdb_class.oid = mdb_attribute.attrelid)"
 		"    WHERE"
-		"        pg_attribute.attacl IS NOT NULL"
-		"        AND pg_class.relkind IN ('r', 'v', 'm', 'S');",
-		"INSERT INTO pg_init_privs "
+		"        mdb_attribute.attacl IS NOT NULL"
+		"        AND mdb_class.relkind IN ('r', 'v', 'm', 'S');",
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class WHERE relname = 'pg_proc'),"
+		"        (SELECT oid FROM mdb_class WHERE relname = 'mdb_proc'),"
 		"        0,"
 		"        proacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_proc"
+		"        mdb_proc"
 		"    WHERE"
 		"        proacl IS NOT NULL;",
-		"INSERT INTO pg_init_privs "
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class WHERE relname = 'pg_type'),"
+		"        (SELECT oid FROM mdb_class WHERE relname = 'mdb_type'),"
 		"        0,"
 		"        typacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_type"
+		"        mdb_type"
 		"    WHERE"
 		"        typacl IS NOT NULL;",
-		"INSERT INTO pg_init_privs "
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class WHERE relname = 'pg_language'),"
+		"        (SELECT oid FROM mdb_class WHERE relname = 'mdb_language'),"
 		"        0,"
 		"        lanacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_language"
+		"        mdb_language"
 		"    WHERE"
 		"        lanacl IS NOT NULL;",
-		"INSERT INTO pg_init_privs "
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class WHERE "
-		"		  relname = 'pg_largeobject_metadata'),"
+		"        (SELECT oid FROM mdb_class WHERE "
+		"		  relname = 'mdb_largeobject_metadata'),"
 		"        0,"
 		"        lomacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_largeobject_metadata"
+		"        mdb_largeobject_metadata"
 		"    WHERE"
 		"        lomacl IS NOT NULL;",
-		"INSERT INTO pg_init_privs "
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class WHERE relname = 'pg_namespace'),"
+		"        (SELECT oid FROM mdb_class WHERE relname = 'mdb_namespace'),"
 		"        0,"
 		"        nspacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_namespace"
+		"        mdb_namespace"
 		"    WHERE"
 		"        nspacl IS NOT NULL;",
-		"INSERT INTO pg_init_privs "
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class WHERE relname = 'pg_database'),"
+		"        (SELECT oid FROM mdb_class WHERE relname = 'mdb_database'),"
 		"        0,"
 		"        datacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_database"
+		"        mdb_database"
 		"    WHERE"
 		"        datacl IS NOT NULL;",
-		"INSERT INTO pg_init_privs "
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class WHERE relname = 'pg_tablespace'),"
+		"        (SELECT oid FROM mdb_class WHERE relname = 'mdb_tablespace'),"
 		"        0,"
 		"        spcacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_tablespace"
+		"        mdb_tablespace"
 		"    WHERE"
 		"        spcacl IS NOT NULL;",
-		"INSERT INTO pg_init_privs "
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class WHERE "
-		"		  relname = 'pg_foreign_data_wrapper'),"
+		"        (SELECT oid FROM mdb_class WHERE "
+		"		  relname = 'mdb_foreign_data_wrapper'),"
 		"        0,"
 		"        fdwacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_foreign_data_wrapper"
+		"        mdb_foreign_data_wrapper"
 		"    WHERE"
 		"        fdwacl IS NOT NULL;",
-		"INSERT INTO pg_init_privs "
+		"INSERT INTO mdb_init_privs "
 		"  (objoid, classoid, objsubid, initprivs, privtype)"
 		"    SELECT"
 		"        oid,"
-		"        (SELECT oid FROM pg_class "
-		"		  WHERE relname = 'pg_foreign_server'),"
+		"        (SELECT oid FROM mdb_class "
+		"		  WHERE relname = 'mdb_foreign_server'),"
 		"        0,"
 		"        srvacl,"
 		"        'i'"
 		"    FROM"
-		"        pg_foreign_server"
+		"        mdb_foreign_server"
 		"    WHERE"
 		"        srvacl IS NOT NULL;",
 		NULL
@@ -2178,7 +2178,7 @@ set_info_version(void)
 				minor = 0,
 				micro = 0;
 	char	   *endptr;
-	char	   *vstr = pg_strdup(PG_VERSION);
+	char	   *vstr = mdb_strdup(PG_VERSION);
 	char	   *ptr;
 
 	ptr = vstr + (strlen(vstr) - 1);
@@ -2257,8 +2257,8 @@ make_template0(FILE *cmdfd)
 		/*
 		 * We use the OID of template0 to determine lastsysoid
 		 */
-		"UPDATE pg_database SET datlastsysoid = "
-		"    (SELECT oid FROM pg_database "
+		"UPDATE mdb_database SET datlastsysoid = "
+		"    (SELECT oid FROM mdb_database "
 		"    WHERE datname = 'template0');\n\n",
 
 		/*
@@ -2272,9 +2272,9 @@ make_template0(FILE *cmdfd)
 		"COMMENT ON DATABASE template0 IS 'unmodifiable empty database';\n\n",
 
 		/*
-		 * Finally vacuum to clean up dead rows in pg_database
+		 * Finally vacuum to clean up dead rows in mdb_database
 		 */
-		"VACUUM pg_database;\n\n",
+		"VACUUM mdb_database;\n\n",
 		NULL
 	};
 
@@ -2303,7 +2303,7 @@ make_mollydb(FILE *cmdfd)
  * Issue fsync recursively on PGDATA and all its contents.
  *
  * We fsync regular files and directories wherever they are, but we
- * follow symlinks only for pg_xlog and immediately under pg_tblspc.
+ * follow symlinks only for mdb_xlog and immediately under mdb_tblspc.
  * Other symlinks are presumed to point at files we're not responsible
  * for fsyncing, and might not have privileges to write at all.
  *
@@ -2313,17 +2313,17 @@ static void
 fsync_pgdata(void)
 {
 	bool		xlog_is_symlink;
-	char		pg_xlog[MAXPGPATH];
-	char		pg_tblspc[MAXPGPATH];
+	char		mdb_xlog[MAXPGPATH];
+	char		mdb_tblspc[MAXPGPATH];
 
 	fputs(_("syncing data to disk ... "), stdout);
 	fflush(stdout);
 
-	snprintf(pg_xlog, MAXPGPATH, "%s/pg_xlog", pg_data);
-	snprintf(pg_tblspc, MAXPGPATH, "%s/pg_tblspc", pg_data);
+	snprintf(mdb_xlog, MAXPGPATH, "%s/mdb_xlog", mdb_data);
+	snprintf(mdb_tblspc, MAXPGPATH, "%s/mdb_tblspc", mdb_data);
 
 	/*
-	 * If pg_xlog is a symlink, we'll need to recurse into it separately,
+	 * If mdb_xlog is a symlink, we'll need to recurse into it separately,
 	 * because the first walkdir below will ignore it.
 	 */
 	xlog_is_symlink = false;
@@ -2332,14 +2332,14 @@ fsync_pgdata(void)
 	{
 		struct stat st;
 
-		if (lstat(pg_xlog, &st) < 0)
+		if (lstat(mdb_xlog, &st) < 0)
 			fprintf(stderr, _("%s: could not stat file \"%s\": %s\n"),
-					progname, pg_xlog, strerror(errno));
+					progname, mdb_xlog, strerror(errno));
 		else if (S_ISLNK(st.st_mode))
 			xlog_is_symlink = true;
 	}
 #else
-	if (pgwin32_is_junction(pg_xlog))
+	if (pgwin32_is_junction(mdb_xlog))
 		xlog_is_symlink = true;
 #endif
 
@@ -2348,25 +2348,25 @@ fsync_pgdata(void)
 	 * directory and its contents.
 	 */
 #ifdef PG_FLUSH_DATA_WORKS
-	walkdir(pg_data, pre_sync_fname, false);
+	walkdir(mdb_data, pre_sync_fname, false);
 	if (xlog_is_symlink)
-		walkdir(pg_xlog, pre_sync_fname, false);
-	walkdir(pg_tblspc, pre_sync_fname, true);
+		walkdir(mdb_xlog, pre_sync_fname, false);
+	walkdir(mdb_tblspc, pre_sync_fname, true);
 #endif
 
 	/*
 	 * Now we do the fsync()s in the same order.
 	 *
 	 * The main call ignores symlinks, so in addition to specially processing
-	 * pg_xlog if it's a symlink, pg_tblspc has to be visited separately with
+	 * mdb_xlog if it's a symlink, mdb_tblspc has to be visited separately with
 	 * process_symlinks = true.  Note that if there are any plain directories
-	 * in pg_tblspc, they'll get fsync'd twice.  That's not an expected case
+	 * in mdb_tblspc, they'll get fsync'd twice.  That's not an expected case
 	 * so we don't worry about optimizing it.
 	 */
-	walkdir(pg_data, fsync_fname_ext, false);
+	walkdir(mdb_data, fsync_fname_ext, false);
 	if (xlog_is_symlink)
-		walkdir(pg_xlog, fsync_fname_ext, false);
-	walkdir(pg_tblspc, fsync_fname_ext, true);
+		walkdir(mdb_xlog, fsync_fname_ext, false);
+	walkdir(mdb_tblspc, fsync_fname_ext, true);
 
 	check_ok();
 }
@@ -2456,7 +2456,7 @@ locale_date_order(const char *locale)
 	save = setlocale(LC_TIME, NULL);
 	if (!save)
 		return result;
-	save = pg_strdup(save);
+	save = mdb_strdup(save);
 
 	setlocale(LC_TIME, locale);
 
@@ -2520,14 +2520,14 @@ check_locale_name(int category, const char *locale, char **canonname)
 	}
 
 	/* save may be pointing at a modifiable scratch variable, so copy it. */
-	save = pg_strdup(save);
+	save = mdb_strdup(save);
 
 	/* set the locale with setlocale, to see if it accepts it. */
 	res = setlocale(category, locale);
 
 	/* save canonical name if requested. */
 	if (res && canonname)
-		*canonname = pg_strdup(res);
+		*canonname = mdb_strdup(res);
 
 	/* restore old value. */
 	if (!setlocale(category, save))
@@ -2571,7 +2571,7 @@ check_locale_encoding(const char *locale, int user_enc)
 {
 	int			locale_enc;
 
-	locale_enc = pg_get_encoding_from_locale(locale, true);
+	locale_enc = mdb_get_encoding_from_locale(locale, true);
 
 	/* See notes in createdb() to understand these tests */
 	if (!(locale_enc == user_enc ||
@@ -2589,8 +2589,8 @@ check_locale_encoding(const char *locale, int user_enc)
 			"misbehavior in various character string processing functions.\n"
 			   "Rerun %s and either do not specify an encoding explicitly,\n"
 				  "or choose a matching combination.\n"),
-				pg_encoding_to_char(user_enc),
-				pg_encoding_to_char(locale_enc),
+				mdb_encoding_to_char(user_enc),
+				mdb_encoding_to_char(locale_enc),
 				progname);
 		return false;
 	}
@@ -2699,7 +2699,7 @@ check_authmethod_unspecified(const char **authmethod)
 	if (*authmethod == NULL || strlen(*authmethod) == 0)
 	{
 		authwarning = _("\nWARNING: enabling \"trust\" authentication for local connections\n"
-						"You can change this by editing pg_hba.conf or using the option -A, or\n"
+						"You can change this by editing mdb_hba.conf or using the option -A, or\n"
 			"--auth-local and --auth-host, the next time you run initdb.\n");
 		*authmethod = "trust";
 	}
@@ -2750,13 +2750,13 @@ setup_pgdata(void)
 	char	   *pgdata_get_env,
 			   *pgdata_set_env;
 
-	if (strlen(pg_data) == 0)
+	if (strlen(mdb_data) == 0)
 	{
 		pgdata_get_env = getenv("PGDATA");
 		if (pgdata_get_env && strlen(pgdata_get_env))
 		{
 			/* PGDATA found */
-			pg_data = pg_strdup(pgdata_get_env);
+			mdb_data = mdb_strdup(pgdata_get_env);
 		}
 		else
 		{
@@ -2770,8 +2770,8 @@ setup_pgdata(void)
 		}
 	}
 
-	pgdata_native = pg_strdup(pg_data);
-	canonicalize_path(pg_data);
+	pgdata_native = mdb_strdup(mdb_data);
+	canonicalize_path(mdb_data);
 
 	/*
 	 * we have to set PGDATA for mollydb rather than pass it on the command
@@ -2779,7 +2779,7 @@ setup_pgdata(void)
 	 * need quotes otherwise on Windows because paths there are most likely to
 	 * have embedded spaces.
 	 */
-	pgdata_set_env = psprintf("PGDATA=%s", pg_data);
+	pgdata_set_env = psprintf("PGDATA=%s", mdb_data);
 	putenv(pgdata_set_env);
 }
 
@@ -2820,7 +2820,7 @@ setup_bin_paths(const char *argv0)
 
 	if (!share_path)
 	{
-		share_path = pg_malloc(MAXPGPATH);
+		share_path = mdb_malloc(MAXPGPATH);
 		get_share_path(backend_exec, share_path);
 	}
 	else if (!is_absolute_path(share_path))
@@ -2866,7 +2866,7 @@ setup_locale_encoding(void)
 	{
 		int			ctype_enc;
 
-		ctype_enc = pg_get_encoding_from_locale(lc_ctype, true);
+		ctype_enc = mdb_get_encoding_from_locale(lc_ctype, true);
 
 		if (ctype_enc == -1)
 		{
@@ -2878,7 +2878,7 @@ setup_locale_encoding(void)
 					progname);
 			exit(1);
 		}
-		else if (!pg_valid_server_encoding_id(ctype_enc))
+		else if (!mdb_valid_server_encoding_id(ctype_enc))
 		{
 			/*
 			 * We recognized it, but it's not a legal server encoding. On
@@ -2888,18 +2888,18 @@ setup_locale_encoding(void)
 #ifdef WIN32
 			printf(_("Encoding \"%s\" implied by locale is not allowed as a server-side encoding.\n"
 			"The default database encoding will be set to \"%s\" instead.\n"),
-				   pg_encoding_to_char(ctype_enc),
-				   pg_encoding_to_char(PG_UTF8));
+				   mdb_encoding_to_char(ctype_enc),
+				   mdb_encoding_to_char(PG_UTF8));
 			ctype_enc = PG_UTF8;
 			encodingid = encodingid_to_string(ctype_enc);
 #else
 			fprintf(stderr,
 			   _("%s: locale \"%s\" requires unsupported encoding \"%s\"\n"),
-					progname, lc_ctype, pg_encoding_to_char(ctype_enc));
+					progname, lc_ctype, mdb_encoding_to_char(ctype_enc));
 			fprintf(stderr,
 			  _("Encoding \"%s\" is not allowed as a server-side encoding.\n"
 				"Rerun %s with a different locale selection.\n"),
-					pg_encoding_to_char(ctype_enc), progname);
+					mdb_encoding_to_char(ctype_enc), progname);
 			exit(1);
 #endif
 		}
@@ -2907,7 +2907,7 @@ setup_locale_encoding(void)
 		{
 			encodingid = encodingid_to_string(ctype_enc);
 			printf(_("The default database encoding has accordingly been set to \"%s\".\n"),
-				   pg_encoding_to_char(ctype_enc));
+				   mdb_encoding_to_char(ctype_enc));
 		}
 	}
 	else
@@ -2927,8 +2927,8 @@ setup_data_file_paths(void)
 	set_input(&bki_file, "mollydb.bki");
 	set_input(&desc_file, "mollydb.description");
 	set_input(&shdesc_file, "mollydb.shdescription");
-	set_input(&hba_file, "pg_hba.conf.sample");
-	set_input(&ident_file, "pg_ident.conf.sample");
+	set_input(&hba_file, "mdb_hba.conf.sample");
+	set_input(&ident_file, "mdb_ident.conf.sample");
 	set_input(&conf_file, "mollydb.conf.sample");
 	set_input(&conversion_file, "conversion_create.sql");
 	set_input(&dictionary_file, "snowball_create.sql");
@@ -2946,7 +2946,7 @@ setup_data_file_paths(void)
 				"POSTGRESQL_CONF_SAMPLE=%s\n"
 				"PG_HBA_SAMPLE=%s\nPG_IDENT_SAMPLE=%s\n",
 				PG_VERSION,
-				pg_data, share_path, bin_path,
+				mdb_data, share_path, bin_path,
 				username, bki_file,
 				desc_file, shdesc_file,
 				conf_file,
@@ -3038,18 +3038,18 @@ create_data_directory(void)
 {
 	int			ret;
 
-	switch ((ret = pg_check_dir(pg_data)))
+	switch ((ret = mdb_check_dir(mdb_data)))
 	{
 		case 0:
 			/* PGDATA not there, must create it */
 			printf(_("creating directory %s ... "),
-				   pg_data);
+				   mdb_data);
 			fflush(stdout);
 
-			if (pg_mkdir_p(pg_data, S_IRWXU) != 0)
+			if (mdb_mkdir_p(mdb_data, S_IRWXU) != 0)
 			{
 				fprintf(stderr, _("%s: could not create directory \"%s\": %s\n"),
-						progname, pg_data, strerror(errno));
+						progname, mdb_data, strerror(errno));
 				exit_nicely();
 			}
 			else
@@ -3061,13 +3061,13 @@ create_data_directory(void)
 		case 1:
 			/* Present but empty, fix permissions and use it */
 			printf(_("fixing permissions on existing directory %s ... "),
-				   pg_data);
+				   mdb_data);
 			fflush(stdout);
 
-			if (chmod(pg_data, S_IRWXU) != 0)
+			if (chmod(mdb_data, S_IRWXU) != 0)
 			{
 				fprintf(stderr, _("%s: could not change permissions of directory \"%s\": %s\n"),
-						progname, pg_data, strerror(errno));
+						progname, mdb_data, strerror(errno));
 				exit_nicely();
 			}
 			else
@@ -3082,7 +3082,7 @@ create_data_directory(void)
 			/* Present and not empty */
 			fprintf(stderr,
 					_("%s: directory \"%s\" exists but is not empty\n"),
-					progname, pg_data);
+					progname, mdb_data);
 			if (ret != 4)
 				warn_on_mount_point(ret);
 			else
@@ -3090,13 +3090,13 @@ create_data_directory(void)
 						_("If you want to create a new database system, either remove or empty\n"
 						  "the directory \"%s\" or run %s\n"
 						  "with an argument other than \"%s\".\n"),
-						pg_data, progname, pg_data);
+						mdb_data, progname, mdb_data);
 			exit(1);			/* no further message needed */
 
 		default:
 			/* Trouble accessing directory */
 			fprintf(stderr, _("%s: could not access directory \"%s\": %s\n"),
-					progname, pg_data, strerror(errno));
+					progname, mdb_data, strerror(errno));
 			exit_nicely();
 	}
 }
@@ -3109,7 +3109,7 @@ create_xlog_or_symlink(void)
 	char	   *subdirloc;
 
 	/* form name of the place for the subdirectory or symlink */
-	subdirloc = psprintf("%s/pg_xlog", pg_data);
+	subdirloc = psprintf("%s/mdb_xlog", mdb_data);
 
 	if (strcmp(xlog_dir, "") != 0)
 	{
@@ -3124,7 +3124,7 @@ create_xlog_or_symlink(void)
 		}
 
 		/* check if the specified xlog directory exists/is empty */
-		switch ((ret = pg_check_dir(xlog_dir)))
+		switch ((ret = mdb_check_dir(xlog_dir)))
 		{
 			case 0:
 				/* xlog directory not there, must create it */
@@ -3132,7 +3132,7 @@ create_xlog_or_symlink(void)
 					   xlog_dir);
 				fflush(stdout);
 
-				if (pg_mkdir_p(xlog_dir, S_IRWXU) != 0)
+				if (mdb_mkdir_p(xlog_dir, S_IRWXU) != 0)
 				{
 					fprintf(stderr, _("%s: could not create directory \"%s\": %s\n"),
 							progname, xlog_dir, strerror(errno));
@@ -3242,7 +3242,7 @@ initialize_data_directory(void)
 
 	create_xlog_or_symlink();
 
-	/* Create required subdirectories (other than pg_xlog) */
+	/* Create required subdirectories (other than mdb_xlog) */
 	printf(_("creating subdirectories ... "));
 	fflush(stdout);
 
@@ -3250,11 +3250,11 @@ initialize_data_directory(void)
 	{
 		char	   *path;
 
-		path = psprintf("%s/%s", pg_data, subdirs[i]);
+		path = psprintf("%s/%s", mdb_data, subdirs[i]);
 
 		/*
 		 * The parent directory already exists, so we only need mkdir() not
-		 * pg_mkdir_p() here, which avoids some failure modes; cf bug #13853.
+		 * mdb_mkdir_p() here, which avoids some failure modes; cf bug #13853.
 		 */
 		if (mkdir(path, S_IRWXU) < 0)
 		{
@@ -3409,7 +3409,7 @@ main(int argc, char *argv[])
 		switch (c)
 		{
 			case 'A':
-				authmethodlocal = authmethodhost = pg_strdup(optarg);
+				authmethodlocal = authmethodhost = mdb_strdup(optarg);
 
 				/*
 				 * When ident is specified, use peer for local connections.
@@ -3422,22 +3422,22 @@ main(int argc, char *argv[])
 					authmethodhost = "ident";
 				break;
 			case 10:
-				authmethodlocal = pg_strdup(optarg);
+				authmethodlocal = mdb_strdup(optarg);
 				break;
 			case 11:
-				authmethodhost = pg_strdup(optarg);
+				authmethodhost = mdb_strdup(optarg);
 				break;
 			case 'D':
-				pg_data = pg_strdup(optarg);
+				mdb_data = mdb_strdup(optarg);
 				break;
 			case 'E':
-				encoding = pg_strdup(optarg);
+				encoding = mdb_strdup(optarg);
 				break;
 			case 'W':
 				pwprompt = true;
 				break;
 			case 'U':
-				username = pg_strdup(optarg);
+				username = mdb_strdup(optarg);
 				break;
 			case 'd':
 				debug = true;
@@ -3457,43 +3457,43 @@ main(int argc, char *argv[])
 				data_checksums = true;
 				break;
 			case 'L':
-				share_path = pg_strdup(optarg);
+				share_path = mdb_strdup(optarg);
 				break;
 			case 1:
-				locale = pg_strdup(optarg);
+				locale = mdb_strdup(optarg);
 				break;
 			case 2:
-				lc_collate = pg_strdup(optarg);
+				lc_collate = mdb_strdup(optarg);
 				break;
 			case 3:
-				lc_ctype = pg_strdup(optarg);
+				lc_ctype = mdb_strdup(optarg);
 				break;
 			case 4:
-				lc_monetary = pg_strdup(optarg);
+				lc_monetary = mdb_strdup(optarg);
 				break;
 			case 5:
-				lc_numeric = pg_strdup(optarg);
+				lc_numeric = mdb_strdup(optarg);
 				break;
 			case 6:
-				lc_time = pg_strdup(optarg);
+				lc_time = mdb_strdup(optarg);
 				break;
 			case 7:
-				lc_messages = pg_strdup(optarg);
+				lc_messages = mdb_strdup(optarg);
 				break;
 			case 8:
 				locale = "C";
 				break;
 			case 9:
-				pwfilename = pg_strdup(optarg);
+				pwfilename = mdb_strdup(optarg);
 				break;
 			case 's':
 				show_setting = true;
 				break;
 			case 'T':
-				default_text_search_config = pg_strdup(optarg);
+				default_text_search_config = mdb_strdup(optarg);
 				break;
 			case 'X':
-				xlog_dir = pg_strdup(optarg);
+				xlog_dir = mdb_strdup(optarg);
 				break;
 			default:
 				/* getopt_long already emitted a complaint */
@@ -3508,9 +3508,9 @@ main(int argc, char *argv[])
 	 * Non-option argument specifies data directory as long as it wasn't
 	 * already specified with -D / --pgdata
 	 */
-	if (optind < argc && strlen(pg_data) == 0)
+	if (optind < argc && strlen(mdb_data) == 0)
 	{
-		pg_data = pg_strdup(argv[optind]);
+		mdb_data = mdb_strdup(argv[optind]);
 		optind++;
 	}
 
@@ -3529,10 +3529,10 @@ main(int argc, char *argv[])
 		setup_pgdata();
 
 		/* must check that directory is readable */
-		if (pg_check_dir(pg_data) <= 0)
+		if (mdb_check_dir(mdb_data) <= 0)
 		{
 			fprintf(stderr, _("%s: could not access directory \"%s\": %s\n"),
-					progname, pg_data, strerror(errno));
+					progname, mdb_data, strerror(errno));
 			exit_nicely();
 		}
 
@@ -3564,9 +3564,9 @@ main(int argc, char *argv[])
 	if (strlen(username) == 0)
 		username = effective_user;
 
-	if (strncmp(username, "pg_", 3) == 0)
+	if (strncmp(username, "mdb_", 3) == 0)
 	{
-		fprintf(stderr, _("%s: superuser name \"%s\" is disallowed; role names cannot begin with \"pg_\"\n"), progname, username);
+		fprintf(stderr, _("%s: superuser name \"%s\" is disallowed; role names cannot begin with \"mdb_\"\n"), progname, username);
 		exit(1);
 	}
 
@@ -3607,7 +3607,7 @@ main(int argc, char *argv[])
 	get_parent_directory(bin_dir);
 
 	printf(_("\nSuccess. You can now start the database server using:\n\n"
-			 "    %s%s%spg_ctl%s -D %s%s%s -l logfile start\n\n"),
+			 "    %s%s%smdb_ctl%s -D %s%s%s -l logfile start\n\n"),
 	   QUOTE_PATH, bin_dir, (strlen(bin_dir) > 0) ? DIR_SEP : "", QUOTE_PATH,
 		   QUOTE_PATH, pgdata_native, QUOTE_PATH);
 

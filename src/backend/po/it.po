@@ -90,12 +90,12 @@ msgstr "l'ordine dei byte non combacia"
 #, c-format
 msgid ""
 "WARNING: possible byte ordering mismatch\n"
-"The byte ordering used to store the pg_control file might not match the one\n"
+"The byte ordering used to store the mdb_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, and\n"
 "the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "ATTENZIONE: l'ordine dei byte non sembra combaciare\n"
-"L'ordine dei byte usato per salvare il file di pg_control potrebbe non\n"
+"L'ordine dei byte usato per salvare il file di mdb_control potrebbe non\n"
 "combaciare con quello usato da questo programma. In questo caso i risultati\n"
 "seguenti sarebbero errati e l'installazione di MollyDB sarebbe incompatibile\n"
 "con questa directory dati.\n"
@@ -2014,8 +2014,8 @@ msgstr "il file dei comandi di ripristino \"%s\" non specifica né primary_conni
 
 #: access/transam/xlog.c:5173
 #, c-format
-msgid "The database server will regularly poll the pg_xlog subdirectory to check for files placed there."
-msgstr "Il server database ispezionerà regolarmente la sottodirectory pg_xlog per controllare se vi vengono aggiunti dei file."
+msgid "The database server will regularly poll the mdb_xlog subdirectory to check for files placed there."
+msgstr "Il server database ispezionerà regolarmente la sottodirectory mdb_xlog per controllare se vi vengono aggiunti dei file."
 
 #: access/transam/xlog.c:5179
 #, c-format
@@ -2069,8 +2069,8 @@ msgstr "ripristino in pausa"
 
 #: access/transam/xlog.c:5645
 #, c-format
-msgid "Execute pg_xlog_replay_resume() to continue."
-msgstr "Esegui pg_xlog_replay_resume() per continuare."
+msgid "Execute mdb_xlog_replay_resume() to continue."
+msgstr "Esegui mdb_xlog_replay_resume() per continuare."
 
 #: access/transam/xlog.c:5852
 #, c-format
@@ -2319,8 +2319,8 @@ msgstr "Tutti i file WAL generati mentre il backup online veniva effettuato devo
 
 #: access/transam/xlog.c:7071
 #, c-format
-msgid "Online backup started with pg_start_backup() must be ended with pg_stop_backup(), and all WAL up to that point must be available at recovery."
-msgstr "Un backup online iniziato con pg_start_backup() deve essere terminato con pg_stop_backup(), e tutti i file WAL fino a quel punto devono essere disponibili per il ripristino."
+msgid "Online backup started with mdb_start_backup() must be ended with mdb_stop_backup(), and all WAL up to that point must be available at recovery."
+msgstr "Un backup online iniziato con mdb_start_backup() deve essere terminato con mdb_stop_backup(), e tutti i file WAL fino a quel punto devono essere disponibili per il ripristino."
 
 #: access/transam/xlog.c:7074
 #, c-format
@@ -2520,8 +2520,8 @@ msgstr "c'è già un backup in corso"
 
 #: access/transam/xlog.c:9844
 #, c-format
-msgid "Run pg_stop_backup() and try again."
-msgstr "Esegui pg_stop_backup() e prova di nuovo."
+msgid "Run mdb_stop_backup() and try again."
+msgstr "Esegui mdb_stop_backup() e prova di nuovo."
 
 #: access/transam/xlog.c:9939
 #, c-format
@@ -2611,23 +2611,23 @@ msgstr "un WAL generato con full_page_writes=off è stato riprodotto durante il 
 
 #: access/transam/xlog.c:10550
 #, c-format
-msgid "pg_stop_backup cleanup done, waiting for required WAL segments to be archived"
-msgstr "pulizia di pg_stop_backup effettuata, in attesa che i segmenti WAL richiesti vengano archiviati"
+msgid "mdb_stop_backup cleanup done, waiting for required WAL segments to be archived"
+msgstr "pulizia di mdb_stop_backup effettuata, in attesa che i segmenti WAL richiesti vengano archiviati"
 
 #: access/transam/xlog.c:10560
 #, c-format
-msgid "pg_stop_backup still waiting for all required WAL segments to be archived (%d seconds elapsed)"
-msgstr "pg_stop_backup è ancora in attesa che tutti i segmenti WAL richiesti siano stati archiviati (sono passati %d secondi)"
+msgid "mdb_stop_backup still waiting for all required WAL segments to be archived (%d seconds elapsed)"
+msgstr "mdb_stop_backup è ancora in attesa che tutti i segmenti WAL richiesti siano stati archiviati (sono passati %d secondi)"
 
 #: access/transam/xlog.c:10562
 #, c-format
-msgid "Check that your archive_command is executing properly.  pg_stop_backup can be canceled safely, but the database backup will not be usable without all the WAL segments."
-msgstr "Controlla che il tuo archive_command venga eseguito correttamente. pg_stop_backup può essere interrotto in sicurezza ma il backup del database non sarà utilizzabile senza tutti i segmenti WAL."
+msgid "Check that your archive_command is executing properly.  mdb_stop_backup can be canceled safely, but the database backup will not be usable without all the WAL segments."
+msgstr "Controlla che il tuo archive_command venga eseguito correttamente. mdb_stop_backup può essere interrotto in sicurezza ma il backup del database non sarà utilizzabile senza tutti i segmenti WAL."
 
 #: access/transam/xlog.c:10569
 #, c-format
-msgid "pg_stop_backup complete, all required WAL segments have been archived"
-msgstr "pg_stop_backup completo, tutti i segmenti WAL richiesti sono stati archiviati"
+msgid "mdb_stop_backup complete, all required WAL segments have been archived"
+msgstr "mdb_stop_backup completo, tutti i segmenti WAL richiesti sono stati archiviati"
 
 #: access/transam/xlog.c:10573
 #, c-format
@@ -2734,8 +2734,8 @@ msgstr "scrittura del file di stato dell'archivio \"%s\" fallita: %m"
 
 #: access/transam/xlogfuncs.c:58
 #, c-format
-msgid "aborting backup due to backend exiting before pg_stop_backup was called"
-msgstr "interruzione del backup perché il backend è terminato prima della chiamata di pg_stop_backup"
+msgid "aborting backup due to backend exiting before mdb_stop_backup was called"
+msgstr "interruzione del backup perché il backend è terminato prima della chiamata di mdb_stop_backup"
 
 #: access/transam/xlogfuncs.c:88
 #, c-format
@@ -2759,8 +2759,8 @@ msgstr "il backup in corso non è esclusivo"
 
 #: access/transam/xlogfuncs.c:156 access/transam/xlogfuncs.c:230
 #, c-format
-msgid "did you mean to use pg_stop_backup('f')?"
-msgstr "forse intendevi usare pg_stop_backup('f')?"
+msgid "did you mean to use mdb_stop_backup('f')?"
+msgstr "forse intendevi usare mdb_stop_backup('f')?"
 
 #: access/transam/xlogfuncs.c:200 commands/event_trigger.c:1449
 #: commands/event_trigger.c:2000 commands/extension.c:1728
@@ -2784,7 +2784,7 @@ msgstr "la funzione che restituisce insiemi è chiamata in un contesto che non p
 #: foreign/foreign.c:603 replication/logical/logicalfuncs.c:179
 #: replication/logical/origin.c:1395 replication/slotfuncs.c:193
 #: replication/walsender.c:2765 utils/adt/pgstatfuncs.c:556
-#: utils/adt/pgstatfuncs.c:657 utils/misc/guc.c:8428 utils/misc/pg_config.c:44
+#: utils/adt/pgstatfuncs.c:657 utils/misc/guc.c:8428 utils/misc/mdb_config.c:44
 #: utils/mmgr/portalmem.c:1068
 #, c-format
 msgid "materialize mode required, but it is not allowed in this context"
@@ -2797,8 +2797,8 @@ msgstr "non c'è un backup non esclusivo in corso"
 
 #: access/transam/xlogfuncs.c:248
 #, c-format
-msgid "did you mean to use pg_stop_backup('t')?"
-msgstr "forse intendevi usare pg_stop_backup('t')?"
+msgid "did you mean to use mdb_stop_backup('t')?"
+msgstr "forse intendevi usare mdb_stop_backup('t')?"
 
 #: access/transam/xlogfuncs.c:327
 #, c-format
@@ -2812,13 +2812,13 @@ msgstr "il valore è troppo lungo per un punto di ripristino (massimo %d caratte
 
 #: access/transam/xlogfuncs.c:473
 #, c-format
-msgid "pg_xlogfile_name_offset() cannot be executed during recovery."
-msgstr "pg_xlogfile_name_offset() non può essere eseguito durante il recupero."
+msgid "mdb_xlogfile_name_offset() cannot be executed during recovery."
+msgstr "mdb_xlogfile_name_offset() non può essere eseguito durante il recupero."
 
 #: access/transam/xlogfuncs.c:529
 #, c-format
-msgid "pg_xlogfile_name() cannot be executed during recovery."
-msgstr "pg_xlogfile_name() non può essere eseguito durante il recupero."
+msgid "mdb_xlogfile_name() cannot be executed during recovery."
+msgstr "mdb_xlogfile_name() non può essere eseguito durante il recupero."
 
 #: access/transam/xlogfuncs.c:549 access/transam/xlogfuncs.c:569
 #: access/transam/xlogfuncs.c:586
@@ -2889,8 +2889,8 @@ msgstr "bit di info %04X non validi nel segmento di log %s, offset %u"
 
 #: access/transam/xlogreader.c:782
 #, c-format
-msgid "WAL file is from different database system: WAL file database system identifier is %s, pg_control database system identifier is %s"
-msgstr "il file di WAL è di un database diverso: l'identificativo del file di WAL del database è %s, l'identificativo di pg_control del database è %s"
+msgid "WAL file is from different database system: WAL file database system identifier is %s, mdb_control database system identifier is %s"
+msgstr "il file di WAL è di un database diverso: l'identificativo del file di WAL del database è %s, l'identificativo di mdb_control del database è %s"
 
 #: access/transam/xlogreader.c:789
 #, c-format
@@ -3104,7 +3104,7 @@ msgid "column privileges are only valid for relations"
 msgstr "i privilegi della colonna sono validi solo per le relazioni"
 
 #: catalog/aclchk.c:690 catalog/aclchk.c:3921 catalog/aclchk.c:4698
-#: catalog/objectaddress.c:873 catalog/pg_largeobject.c:113
+#: catalog/objectaddress.c:873 catalog/mdb_largeobject.c:113
 #: storage/large_object/inv_api.c:291
 #, c-format
 msgid "large object %u does not exist"
@@ -3539,7 +3539,7 @@ msgstr "non è possibile eliminare %s perché %s lo richiede"
 msgid "You can drop %s instead."
 msgstr "È invece possibile eliminare %s."
 
-#: catalog/dependency.c:811 catalog/pg_shdepend.c:576
+#: catalog/dependency.c:811 catalog/mdb_shdepend.c:576
 #, c-format
 msgid "cannot drop %s because it is required by the database system"
 msgstr "non è possibile eliminare %s perché richiesto dal sistema database"
@@ -3559,7 +3559,7 @@ msgstr "%s dipende da %s"
 msgid "drop cascades to %s"
 msgstr "l'eliminazione elimina anche %s in cascata"
 
-#: catalog/dependency.c:977 catalog/pg_shdepend.c:687
+#: catalog/dependency.c:977 catalog/mdb_shdepend.c:687
 #, c-format
 msgid ""
 "\n"
@@ -3654,7 +3654,7 @@ msgid "no collation was derived for column \"%s\" with collatable type %s"
 msgstr "nessun ordinamento è stato derivato per la colonna \"%s\" con tipo ordinabile %s"
 
 #: catalog/heap.c:585 commands/createas.c:375 commands/indexcmds.c:1132
-#: commands/view.c:116 regex/regc_pg_locale.c:262 utils/adt/formatting.c:1514
+#: commands/view.c:116 regex/regc_mdb_locale.c:262 utils/adt/formatting.c:1514
 #: utils/adt/formatting.c:1566 utils/adt/formatting.c:1634
 #: utils/adt/formatting.c:1686 utils/adt/formatting.c:1755
 #: utils/adt/formatting.c:1819 utils/adt/like.c:213 utils/adt/selfuncs.c:5330
@@ -3668,7 +3668,7 @@ msgstr "Usa la clausola COLLATE per impostare esplicitamente l'ordinamento."
 msgid "relation \"%s\" already exists"
 msgstr "la relazione \"%s\" esiste già"
 
-#: catalog/heap.c:1082 catalog/pg_type.c:412 catalog/pg_type.c:722
+#: catalog/heap.c:1082 catalog/mdb_type.c:412 catalog/mdb_type.c:722
 #: commands/typecmds.c:237 commands/typecmds.c:784 commands/typecmds.c:1135
 #: commands/typecmds.c:1357 commands/typecmds.c:2113
 #, c-format
@@ -3682,15 +3682,15 @@ msgstr "Una relazione ha un tipo associato con lo stesso nome, quindi devi usare
 
 #: catalog/heap.c:1111
 #, c-format
-msgid "pg_class heap OID value not set when in binary upgrade mode"
-msgstr "valore OID heap pg_class non impostato in modalità di aggiornamento binaria"
+msgid "mdb_class heap OID value not set when in binary upgrade mode"
+msgstr "valore OID heap mdb_class non impostato in modalità di aggiornamento binaria"
 
 #: catalog/heap.c:2289
 #, c-format
 msgid "check constraint \"%s\" already exists"
 msgstr "il vincolo di controllo \"%s\" esiste già"
 
-#: catalog/heap.c:2442 catalog/pg_constraint.c:654 commands/tablecmds.c:6070
+#: catalog/heap.c:2442 catalog/mdb_constraint.c:654 commands/tablecmds.c:6070
 #, c-format
 msgid "constraint \"%s\" for relation \"%s\" already exists"
 msgstr "il vincolo \"%s\" per la relazione \"%s\" esiste già"
@@ -3790,8 +3790,8 @@ msgstr "la relazione \"%s\" esiste già, saltata"
 
 #: catalog/index.c:820
 #, c-format
-msgid "pg_class index OID value not set when in binary upgrade mode"
-msgstr "valore OID indice pg_class non impostato in modalità di aggiornamento binaria"
+msgid "mdb_class index OID value not set when in binary upgrade mode"
+msgstr "valore OID indice mdb_class non impostato in modalità di aggiornamento binaria"
 
 #: catalog/index.c:1422
 #, c-format
@@ -4393,109 +4393,109 @@ msgstr "relazione %s"
 msgid "operator family %s for access method %s"
 msgstr "famiglia di operatori %s per il metodo d'accesso %s"
 
-#: catalog/pg_aggregate.c:126
+#: catalog/mdb_aggregate.c:126
 #, c-format
 msgid "aggregates cannot have more than %d argument"
 msgid_plural "aggregates cannot have more than %d arguments"
 msgstr[0] "gli aggregati non possono avere più di %d argomento"
 msgstr[1] "gli aggregati non possono avere più di %d argomenti"
 
-#: catalog/pg_aggregate.c:149 catalog/pg_aggregate.c:159
+#: catalog/mdb_aggregate.c:149 catalog/mdb_aggregate.c:159
 #, c-format
 msgid "cannot determine transition data type"
 msgstr "non è possibile determinare il tipo di dati della transizione"
 
-#: catalog/pg_aggregate.c:150 catalog/pg_aggregate.c:160
+#: catalog/mdb_aggregate.c:150 catalog/mdb_aggregate.c:160
 #, c-format
 msgid "An aggregate using a polymorphic transition type must have at least one polymorphic argument."
 msgstr "Un aggregato che usa un tipo di transizione polimorfico deve avere almeno un argomento polimorfico."
 
-#: catalog/pg_aggregate.c:173
+#: catalog/mdb_aggregate.c:173
 #, c-format
 msgid "a variadic ordered-set aggregate must use VARIADIC type ANY"
 msgstr "un aggregato variadico su insieme ordinato deve usare il tipo VARIADIC ANY"
 
-#: catalog/pg_aggregate.c:199
+#: catalog/mdb_aggregate.c:199
 #, c-format
 msgid "a hypothetical-set aggregate must have direct arguments matching its aggregated arguments"
 msgstr "gli argomenti diretti di un aggregato su insieme ipotetico devono combaciare con gli argomenti aggregati"
 
-#: catalog/pg_aggregate.c:246 catalog/pg_aggregate.c:290
+#: catalog/mdb_aggregate.c:246 catalog/mdb_aggregate.c:290
 #, c-format
 msgid "return type of transition function %s is not %s"
 msgstr "il tipo restituito dalla funzione di transizione %s non è %s"
 
-#: catalog/pg_aggregate.c:266 catalog/pg_aggregate.c:309
+#: catalog/mdb_aggregate.c:266 catalog/mdb_aggregate.c:309
 #, c-format
 msgid "must not omit initial value when transition function is strict and transition type is not compatible with input type"
 msgstr "non si può omettere initval quando la funzione di transizione è strict e il tipo di transizione non è compatibile col tipo in input"
 
-#: catalog/pg_aggregate.c:335
+#: catalog/mdb_aggregate.c:335
 #, c-format
 msgid "return type of inverse transition function %s is not %s"
 msgstr "il tipo restituito dalla funzione di transizione inversa %s non è %s"
 
-#: catalog/pg_aggregate.c:352 executor/nodeWindowAgg.c:2305
+#: catalog/mdb_aggregate.c:352 executor/nodeWindowAgg.c:2305
 #, c-format
 msgid "strictness of aggregate's forward and inverse transition functions must match"
 msgstr "le ristrettezze della trasformazione diretta ed inversa di un aggregato devono combaciare"
 
-#: catalog/pg_aggregate.c:396 catalog/pg_aggregate.c:547
+#: catalog/mdb_aggregate.c:396 catalog/mdb_aggregate.c:547
 #, c-format
 msgid "final function with extra arguments must not be declared STRICT"
 msgstr "la funzione finale con argomenti aggiuntivi non deve essere dichiarata STRICT"
 
-#: catalog/pg_aggregate.c:426
+#: catalog/mdb_aggregate.c:426
 #, c-format
 msgid "return type of combine function %s is not %s"
 msgstr "il tipo restituito dalla funzione di combinazione %s non è %s"
 
-#: catalog/pg_aggregate.c:437
+#: catalog/mdb_aggregate.c:437
 #, c-format
 msgid "combine function with \"%s\" transition type must not be declared STRICT"
 msgstr "una funzione di combinazione con \"%s\" tipi di transizione non può essere dichiarata STRICT"
 
-#: catalog/pg_aggregate.c:457
+#: catalog/mdb_aggregate.c:457
 #, c-format
 msgid "return type of serialization function %s is not %s"
 msgstr "il tipo restituito dalla funzione di serializzazione %s non è %s"
 
-#: catalog/pg_aggregate.c:477
+#: catalog/mdb_aggregate.c:477
 #, c-format
 msgid "return type of deserialization function %s is not %s"
 msgstr "il tipo restituito dalla funzione di deserializzazione %s non è %s"
 
-#: catalog/pg_aggregate.c:493 catalog/pg_proc.c:246 catalog/pg_proc.c:253
+#: catalog/mdb_aggregate.c:493 catalog/mdb_proc.c:246 catalog/mdb_proc.c:253
 #, c-format
 msgid "cannot determine result data type"
 msgstr "non è possibile determinare il tipo di dati del risultato"
 
-#: catalog/pg_aggregate.c:494
+#: catalog/mdb_aggregate.c:494
 #, c-format
 msgid "An aggregate returning a polymorphic type must have at least one polymorphic argument."
 msgstr "Una funzione di aggregazione che restituisce un tipo polimorfico deve avere almeno un argomento polimorfico."
 
-#: catalog/pg_aggregate.c:506 catalog/pg_proc.c:259
+#: catalog/mdb_aggregate.c:506 catalog/mdb_proc.c:259
 #, c-format
 msgid "unsafe use of pseudo-type \"internal\""
 msgstr "uso dello pseudo-tipo \"internal\" non sicuro"
 
-#: catalog/pg_aggregate.c:507 catalog/pg_proc.c:260
+#: catalog/mdb_aggregate.c:507 catalog/mdb_proc.c:260
 #, c-format
 msgid "A function returning \"internal\" must have at least one \"internal\" argument."
 msgstr "Una funzione che restituisce \"internal\" deve avere almeno un argomento \"internal\"."
 
-#: catalog/pg_aggregate.c:560
+#: catalog/mdb_aggregate.c:560
 #, c-format
 msgid "moving-aggregate implementation returns type %s, but plain implementation returns type %s"
 msgstr "l'implementazione dell'aggregazione mobile restituisce il tipo %s ma l'implementazione semplice resituisce il tipo %s"
 
-#: catalog/pg_aggregate.c:571
+#: catalog/mdb_aggregate.c:571
 #, c-format
 msgid "sort operator can only be specified for single-argument aggregates"
 msgstr "l'operatore di ordinamento può essere specificato sono per aggregati con un solo argomento"
 
-#: catalog/pg_aggregate.c:816 commands/typecmds.c:1705
+#: catalog/mdb_aggregate.c:816 commands/typecmds.c:1705
 #: commands/typecmds.c:1756 commands/typecmds.c:1787 commands/typecmds.c:1810
 #: commands/typecmds.c:1831 commands/typecmds.c:1858 commands/typecmds.c:1885
 #: commands/typecmds.c:1962 commands/typecmds.c:2004 parser/parse_func.c:364
@@ -4505,275 +4505,275 @@ msgstr "l'operatore di ordinamento può essere specificato sono per aggregati co
 msgid "function %s does not exist"
 msgstr "la funzione %s non esiste"
 
-#: catalog/pg_aggregate.c:822
+#: catalog/mdb_aggregate.c:822
 #, c-format
 msgid "function %s returns a set"
 msgstr "la funzione %s restituisce un insieme"
 
-#: catalog/pg_aggregate.c:837
+#: catalog/mdb_aggregate.c:837
 #, c-format
 msgid "function %s must accept VARIADIC ANY to be used in this aggregate"
 msgstr "la funzione %s deve accettare VARIADIC ANY per essere usata in questo aggregato"
 
-#: catalog/pg_aggregate.c:861
+#: catalog/mdb_aggregate.c:861
 #, c-format
 msgid "function %s requires run-time type coercion"
 msgstr "la funzione %s richiede una coercizione di tipo a run-time"
 
-#: catalog/pg_collation.c:77
+#: catalog/mdb_collation.c:77
 #, c-format
 msgid "collation \"%s\" for encoding \"%s\" already exists"
 msgstr "l'ordinamento \"%s\" per la codifica \"%s\" esiste già"
 
-#: catalog/pg_collation.c:91
+#: catalog/mdb_collation.c:91
 #, c-format
 msgid "collation \"%s\" already exists"
 msgstr "l'ordinamento \"%s\" esiste già"
 
-#: catalog/pg_constraint.c:663
+#: catalog/mdb_constraint.c:663
 #, c-format
 msgid "constraint \"%s\" for domain %s already exists"
 msgstr "il vincolo \"%s\" per il dominio %s esiste già"
 
-#: catalog/pg_constraint.c:797
+#: catalog/mdb_constraint.c:797
 #, c-format
 msgid "table \"%s\" has multiple constraints named \"%s\""
 msgstr "la tabella \"%s\" ha più di un vincolo di nome \"%s\""
 
-#: catalog/pg_constraint.c:809
+#: catalog/mdb_constraint.c:809
 #, c-format
 msgid "constraint \"%s\" for table \"%s\" does not exist"
 msgstr "il vincolo \"%s\" per la tabella \"%s\" non esiste"
 
-#: catalog/pg_constraint.c:855
+#: catalog/mdb_constraint.c:855
 #, c-format
 msgid "domain \"%s\" has multiple constraints named \"%s\""
 msgstr "il dominio \"%s\" ha più di un vincolo di nome \"%s\""
 
-#: catalog/pg_constraint.c:867
+#: catalog/mdb_constraint.c:867
 #, c-format
 msgid "constraint \"%s\" for domain \"%s\" does not exist"
 msgstr "il vincolo \"%s\" per la il dominio \"%s\" non esiste"
 
-#: catalog/pg_conversion.c:66
+#: catalog/mdb_conversion.c:66
 #, c-format
 msgid "conversion \"%s\" already exists"
 msgstr "la conversione \"%s\" esiste già"
 
-#: catalog/pg_conversion.c:79
+#: catalog/mdb_conversion.c:79
 #, c-format
 msgid "default conversion for %s to %s already exists"
 msgstr "la conversione predefinita da %s a %s esiste già"
 
-#: catalog/pg_depend.c:165 commands/extension.c:3028
+#: catalog/mdb_depend.c:165 commands/extension.c:3028
 #, c-format
 msgid "%s is already a member of extension \"%s\""
 msgstr "%s fa già parte dell'estensione \"%s\""
 
-#: catalog/pg_depend.c:324
+#: catalog/mdb_depend.c:324
 #, c-format
 msgid "cannot remove dependency on %s because it is a system object"
 msgstr "non è possibile rimuovere la dipendenza da %s perché è un oggetto di sistema"
 
-#: catalog/pg_enum.c:115 catalog/pg_enum.c:202
+#: catalog/mdb_enum.c:115 catalog/mdb_enum.c:202
 #, c-format
 msgid "invalid enum label \"%s\""
 msgstr "etichetta enumerata non valida \"%s\""
 
-#: catalog/pg_enum.c:116 catalog/pg_enum.c:203
+#: catalog/mdb_enum.c:116 catalog/mdb_enum.c:203
 #, c-format
 msgid "Labels must be %d characters or less."
 msgstr "Le etichette devono essere lunghe %d caratteri o meno."
 
-#: catalog/pg_enum.c:231
+#: catalog/mdb_enum.c:231
 #, c-format
 msgid "enum label \"%s\" already exists, skipping"
 msgstr "l'etichetta di enum \"%s\" esiste già, saltata"
 
-#: catalog/pg_enum.c:238
+#: catalog/mdb_enum.c:238
 #, c-format
 msgid "enum label \"%s\" already exists"
 msgstr "l'etichetta di enum \"%s\" esiste già"
 
-#: catalog/pg_enum.c:293
+#: catalog/mdb_enum.c:293
 #, c-format
 msgid "\"%s\" is not an existing enum label"
 msgstr "\"%s\" non è un'etichetta enumerata esistente"
 
-#: catalog/pg_enum.c:349
+#: catalog/mdb_enum.c:349
 #, c-format
-msgid "pg_enum OID value not set when in binary upgrade mode"
-msgstr "valore di OID di pg_enum non impostato in modalità di aggiornamento binario"
+msgid "mdb_enum OID value not set when in binary upgrade mode"
+msgstr "valore di OID di mdb_enum non impostato in modalità di aggiornamento binario"
 
-#: catalog/pg_enum.c:359
+#: catalog/mdb_enum.c:359
 #, c-format
 msgid "ALTER TYPE ADD BEFORE/AFTER is incompatible with binary upgrade"
 msgstr "ALTER TYPE ADD BEFORE/AFTER non è compatibile con gli aggiornamenti binari"
 
-#: catalog/pg_namespace.c:61 commands/schemacmds.c:250
+#: catalog/mdb_namespace.c:61 commands/schemacmds.c:250
 #, c-format
 msgid "schema \"%s\" already exists"
 msgstr "lo schema \"%s\" esiste già"
 
-#: catalog/pg_operator.c:219 catalog/pg_operator.c:360
+#: catalog/mdb_operator.c:219 catalog/mdb_operator.c:360
 #, c-format
 msgid "\"%s\" is not a valid operator name"
 msgstr "\"%s\" non è un nome di operatore valido"
 
-#: catalog/pg_operator.c:369
+#: catalog/mdb_operator.c:369
 #, c-format
 msgid "only binary operators can have commutators"
 msgstr "solo gli operatori binari possono avere commutatori"
 
-#: catalog/pg_operator.c:373 commands/operatorcmds.c:485
+#: catalog/mdb_operator.c:373 commands/operatorcmds.c:485
 #, c-format
 msgid "only binary operators can have join selectivity"
 msgstr "solo gli operatori binari possono avere selettività di unione"
 
-#: catalog/pg_operator.c:377
+#: catalog/mdb_operator.c:377
 #, c-format
 msgid "only binary operators can merge join"
 msgstr "solo gli operatori binari possono fare dei merge-join"
 
-#: catalog/pg_operator.c:381
+#: catalog/mdb_operator.c:381
 #, c-format
 msgid "only binary operators can hash"
 msgstr "solo gli operatori binari possono supportare l'hash"
 
-#: catalog/pg_operator.c:392
+#: catalog/mdb_operator.c:392
 #, c-format
 msgid "only boolean operators can have negators"
 msgstr "solo gli operatori booleani possono avere un negatore"
 
-#: catalog/pg_operator.c:396 commands/operatorcmds.c:493
+#: catalog/mdb_operator.c:396 commands/operatorcmds.c:493
 #, c-format
 msgid "only boolean operators can have restriction selectivity"
 msgstr "solo gli operatori booleani possono avere restrizione di selettività"
 
-#: catalog/pg_operator.c:400 commands/operatorcmds.c:497
+#: catalog/mdb_operator.c:400 commands/operatorcmds.c:497
 #, c-format
 msgid "only boolean operators can have join selectivity"
 msgstr "solo gli operatori booleani possono avere selettività di unione"
 
-#: catalog/pg_operator.c:404
+#: catalog/mdb_operator.c:404
 #, c-format
 msgid "only boolean operators can merge join"
 msgstr "solo gli operatori booleani possono fare dei merge-join"
 
-#: catalog/pg_operator.c:408
+#: catalog/mdb_operator.c:408
 #, c-format
 msgid "only boolean operators can hash"
 msgstr "solo gli operatori booleani possono supportare l'hash"
 
-#: catalog/pg_operator.c:420
+#: catalog/mdb_operator.c:420
 #, c-format
 msgid "operator %s already exists"
 msgstr "l'operatore %s esiste già "
 
-#: catalog/pg_operator.c:617
+#: catalog/mdb_operator.c:617
 #, c-format
 msgid "operator cannot be its own negator or sort operator"
 msgstr "l'operatore non può negare o ordinare se stesso"
 
-#: catalog/pg_proc.c:134 parser/parse_func.c:1945 parser/parse_func.c:1985
+#: catalog/mdb_proc.c:134 parser/parse_func.c:1945 parser/parse_func.c:1985
 #, c-format
 msgid "functions cannot have more than %d argument"
 msgid_plural "functions cannot have more than %d arguments"
 msgstr[0] "le funzioni non possono avere più di %d argomento"
 msgstr[1] "le funzioni non possono avere più di %d argomenti"
 
-#: catalog/pg_proc.c:247
+#: catalog/mdb_proc.c:247
 #, c-format
 msgid "A function returning a polymorphic type must have at least one polymorphic argument."
 msgstr "Una funzione che restituisce un tipo polimorfico deve avere almeno un argomento polimorfico."
 
-#: catalog/pg_proc.c:254
+#: catalog/mdb_proc.c:254
 #, c-format
 msgid "A function returning \"anyrange\" must have at least one \"anyrange\" argument."
 msgstr "Una funzione che restituisce \"anyrange\" deve avere almeno un argomento \"anyrange\"."
 
-#: catalog/pg_proc.c:272
+#: catalog/mdb_proc.c:272
 #, c-format
 msgid "\"%s\" is already an attribute of type %s"
 msgstr "\"%s\" è già un attributo del tipo %s"
 
-#: catalog/pg_proc.c:403
+#: catalog/mdb_proc.c:403
 #, c-format
 msgid "function \"%s\" already exists with same argument types"
 msgstr "la funzione \"%s\" esiste già, con gli stessi tipi di argomenti"
 
-#: catalog/pg_proc.c:417 catalog/pg_proc.c:440
+#: catalog/mdb_proc.c:417 catalog/mdb_proc.c:440
 #, c-format
 msgid "cannot change return type of existing function"
 msgstr "non è possibile cambiare il tipo restituito da una funzione esistente"
 
-#: catalog/pg_proc.c:418 catalog/pg_proc.c:442 catalog/pg_proc.c:485
-#: catalog/pg_proc.c:509 catalog/pg_proc.c:536
+#: catalog/mdb_proc.c:418 catalog/mdb_proc.c:442 catalog/mdb_proc.c:485
+#: catalog/mdb_proc.c:509 catalog/mdb_proc.c:536
 #, c-format
 msgid "Use DROP FUNCTION %s first."
 msgstr "Usa prima DROP FUNCTION %s."
 
-#: catalog/pg_proc.c:441
+#: catalog/mdb_proc.c:441
 #, c-format
 msgid "Row type defined by OUT parameters is different."
 msgstr "Il tipo della riga definito dai parametri di OUT è diverso."
 
-#: catalog/pg_proc.c:483
+#: catalog/mdb_proc.c:483
 #, c-format
 msgid "cannot change name of input parameter \"%s\""
 msgstr "non è possibile cambiare nome del parametro di ingresso \"%s\""
 
-#: catalog/pg_proc.c:508
+#: catalog/mdb_proc.c:508
 #, c-format
 msgid "cannot remove parameter defaults from existing function"
 msgstr "non è possibile rimuovere i valori predefiniti dei parametri da funzioni esistenti"
 
-#: catalog/pg_proc.c:535
+#: catalog/mdb_proc.c:535
 #, c-format
 msgid "cannot change data type of existing parameter default value"
 msgstr "non è possibile cambiare tipo di dati dei valori predefiniti di parametri esistenti"
 
-#: catalog/pg_proc.c:548
+#: catalog/mdb_proc.c:548
 #, c-format
 msgid "function \"%s\" is an aggregate function"
 msgstr "la funzione \"%s\" è una funzione di aggregazione"
 
-#: catalog/pg_proc.c:553
+#: catalog/mdb_proc.c:553
 #, c-format
 msgid "function \"%s\" is not an aggregate function"
 msgstr "la funzione \"%s\" non è una funzione di aggregazione"
 
-#: catalog/pg_proc.c:561
+#: catalog/mdb_proc.c:561
 #, c-format
 msgid "function \"%s\" is a window function"
 msgstr "la funzione \"%s\" è una funzione finestra"
 
-#: catalog/pg_proc.c:566
+#: catalog/mdb_proc.c:566
 #, c-format
 msgid "function \"%s\" is not a window function"
 msgstr "la funzione \"%s\" non è una funzione finestra"
 
-#: catalog/pg_proc.c:774
+#: catalog/mdb_proc.c:774
 #, c-format
 msgid "there is no built-in function named \"%s\""
 msgstr "non c'è nessuna funzione predefinita chiamata \"%s\""
 
-#: catalog/pg_proc.c:872
+#: catalog/mdb_proc.c:872
 #, c-format
 msgid "SQL functions cannot return type %s"
 msgstr "Le funzioni SQL non possono restituire il tipo %s"
 
-#: catalog/pg_proc.c:887
+#: catalog/mdb_proc.c:887
 #, c-format
 msgid "SQL functions cannot have arguments of type %s"
 msgstr "le funzioni SQL non possono avere argomenti di tipo %s"
 
-#: catalog/pg_proc.c:973 executor/functions.c:1424
+#: catalog/mdb_proc.c:973 executor/functions.c:1424
 #, c-format
 msgid "SQL function \"%s\""
 msgstr "funzione SQL \"%s\""
 
-#: catalog/pg_shdepend.c:694
+#: catalog/mdb_shdepend.c:694
 #, c-format
 msgid ""
 "\n"
@@ -4788,86 +4788,86 @@ msgstr[1] ""
 "\n"
 "ed oggetti in %d altri database (guarda il log per la lista)"
 
-#: catalog/pg_shdepend.c:1006
+#: catalog/mdb_shdepend.c:1006
 #, c-format
 msgid "role %u was concurrently dropped"
 msgstr "la regola %u è stata eliminata concorrentemente"
 
-#: catalog/pg_shdepend.c:1025
+#: catalog/mdb_shdepend.c:1025
 #, c-format
 msgid "tablespace %u was concurrently dropped"
 msgstr "Il tablespace %u è stato eliminato concorrentemente"
 
-#: catalog/pg_shdepend.c:1040
+#: catalog/mdb_shdepend.c:1040
 #, c-format
 msgid "database %u was concurrently dropped"
 msgstr "Il database %u è stato eliminato concorrentemente"
 
-#: catalog/pg_shdepend.c:1085
+#: catalog/mdb_shdepend.c:1085
 #, c-format
 msgid "owner of %s"
 msgstr "proprietario di %s"
 
-#: catalog/pg_shdepend.c:1087
+#: catalog/mdb_shdepend.c:1087
 #, c-format
 msgid "privileges for %s"
 msgstr "privilegi per %s"
 
-#: catalog/pg_shdepend.c:1089
+#: catalog/mdb_shdepend.c:1089
 #, c-format
 msgid "target of %s"
 msgstr "destinazione di %s"
 
 #. translator: %s will always be "database %s"
-#: catalog/pg_shdepend.c:1097
+#: catalog/mdb_shdepend.c:1097
 #, c-format
 msgid "%d object in %s"
 msgid_plural "%d objects in %s"
 msgstr[0] "%d oggetto nel %s"
 msgstr[1] "%d oggetti nel %s"
 
-#: catalog/pg_shdepend.c:1208
+#: catalog/mdb_shdepend.c:1208
 #, c-format
 msgid "cannot drop objects owned by %s because they are required by the database system"
 msgstr "non è possibile eliminare oggetti di proprietà di %s perché richiesti dal database"
 
-#: catalog/pg_shdepend.c:1323
+#: catalog/mdb_shdepend.c:1323
 #, c-format
 msgid "cannot reassign ownership of objects owned by %s because they are required by the database system"
 msgstr "non è possibile modificare il proprietario degli oggetti di proprietà di %s perché richiesti dal database"
 
-#: catalog/pg_type.c:136 catalog/pg_type.c:454
+#: catalog/mdb_type.c:136 catalog/mdb_type.c:454
 #, c-format
-msgid "pg_type OID value not set when in binary upgrade mode"
-msgstr "valore di OID di pg_type non impostato in modalità di aggiornamento binaria"
+msgid "mdb_type OID value not set when in binary upgrade mode"
+msgstr "valore di OID di mdb_type non impostato in modalità di aggiornamento binaria"
 
-#: catalog/pg_type.c:253
+#: catalog/mdb_type.c:253
 #, c-format
 msgid "invalid type internal size %d"
 msgstr "dimensione interna del tipo %d non valida"
 
-#: catalog/pg_type.c:269 catalog/pg_type.c:277 catalog/pg_type.c:285
-#: catalog/pg_type.c:294
+#: catalog/mdb_type.c:269 catalog/mdb_type.c:277 catalog/mdb_type.c:285
+#: catalog/mdb_type.c:294
 #, c-format
 msgid "alignment \"%c\" is invalid for passed-by-value type of size %d"
 msgstr "l'allineamento \"%c\" non è valido per tipi passati per valore di grandezza %d"
 
-#: catalog/pg_type.c:301
+#: catalog/mdb_type.c:301
 #, c-format
 msgid "internal size %d is invalid for passed-by-value type"
 msgstr "la dimensione interna %d non è valida per tipi passati per valore"
 
-#: catalog/pg_type.c:310 catalog/pg_type.c:316
+#: catalog/mdb_type.c:310 catalog/mdb_type.c:316
 #, c-format
 msgid "alignment \"%c\" is invalid for variable-length type"
 msgstr "l'allineamento \"%c\" non è valido per il tipi a lunghezza variabile"
 
-#: catalog/pg_type.c:324
+#: catalog/mdb_type.c:324
 #, c-format
 msgid "fixed-size types must have storage PLAIN"
 msgstr "i tipi a dimensione fissa devono avere immagazzinamento PLAIN"
 
-#: catalog/pg_type.c:789
+#: catalog/mdb_type.c:789
 #, c-format
 msgid "could not form array type name for type \"%s\""
 msgstr "creazione del nome per il tipo array del tipo \"%s\" fallita"
@@ -5937,8 +5937,8 @@ msgstr "Usa lo stesso LC_CTYPE del modello di database, o usa template0 come mod
 
 #: commands/dbcommands.c:419 commands/dbcommands.c:1113
 #, c-format
-msgid "pg_global cannot be used as default tablespace"
-msgstr "pg_global non può essere usato come tablespace predefinito"
+msgid "mdb_global cannot be used as default tablespace"
+msgstr "mdb_global non può essere usato come tablespace predefinito"
 
 #: commands/dbcommands.c:445
 #, c-format
@@ -6505,8 +6505,8 @@ msgstr "non è possibile eliminare l'estensione \"%s\" perché sta venendo modif
 
 #: commands/extension.c:2151
 #, c-format
-msgid "pg_extension_config_dump() can only be called from an SQL script executed by CREATE EXTENSION"
-msgstr "pg_extension_config_dump() può essere richiamata solo da uno script SQL eseguito da CREATE EXTENSION"
+msgid "mdb_extension_config_dump() can only be called from an SQL script executed by CREATE EXTENSION"
+msgstr "mdb_extension_config_dump() può essere richiamata solo da uno script SQL eseguito da CREATE EXTENSION"
 
 #: commands/extension.c:2163
 #, c-format
@@ -7006,8 +7006,8 @@ msgstr "non è possibile creare indici su tabelle temporanee di altre sessioni"
 
 #: commands/indexcmds.c:454 commands/tablecmds.c:545 commands/tablecmds.c:9599
 #, c-format
-msgid "only shared relations can be placed in pg_global tablespace"
-msgstr "solo le relazioni condivise possono essere poste nel tablespace pg_global"
+msgid "only shared relations can be placed in mdb_global tablespace"
+msgstr "solo le relazioni condivise possono essere poste nel tablespace mdb_global"
 
 #: commands/indexcmds.c:487
 #, c-format
@@ -7483,8 +7483,8 @@ msgstr "l'istruzione preparata \"%s\" non esiste"
 
 #: commands/proclang.c:87
 #, c-format
-msgid "using pg_pltemplate information instead of CREATE LANGUAGE parameters"
-msgstr "vengono usate le informazioni di pg_pltemplate invece dei parametri di CREATE LANGUAGE"
+msgid "using mdb_pltemplate information instead of CREATE LANGUAGE parameters"
+msgstr "vengono usate le informazioni di mdb_pltemplate invece dei parametri di CREATE LANGUAGE"
 
 #: commands/proclang.c:97
 #, c-format
@@ -7498,8 +7498,8 @@ msgstr "linguaggio non supportato \"%s\""
 
 #: commands/proclang.c:254
 #, c-format
-msgid "The supported languages are listed in the pg_pltemplate system catalog."
-msgstr "I linguaggi supportati sono elencate nel catalogo di sistema pg_pltemplate"
+msgid "The supported languages are listed in the mdb_pltemplate system catalog."
+msgstr "I linguaggi supportati sono elencate nel catalogo di sistema mdb_pltemplate"
 
 #: commands/proclang.c:262
 #, c-format
@@ -7518,8 +7518,8 @@ msgstr "nome dello schema \"%s\" non accettabile"
 
 #: commands/schemacmds.c:104 commands/schemacmds.c:267
 #, c-format
-msgid "The prefix \"pg_\" is reserved for system schemas."
-msgstr "Il prefisso \"pg_\" è riservato agli schemi di sistema."
+msgid "The prefix \"mdb_\" is reserved for system schemas."
+msgstr "Il prefisso \"mdb_\" è riservato agli schemi di sistema."
 
 #: commands/schemacmds.c:118
 #, c-format
@@ -8367,8 +8367,8 @@ msgstr "solo tabelle, indici e viste materializzate esistono nei tablespace"
 
 #: commands/tablecmds.c:9757
 #, c-format
-msgid "cannot move relations in to or out of pg_global tablespace"
-msgstr "non è possibile spostare relazioni dentro o fuori il tablespace pg_global"
+msgid "cannot move relations in to or out of mdb_global tablespace"
+msgstr "non è possibile spostare relazioni dentro o fuori il tablespace mdb_global"
 
 #: commands/tablecmds.c:9848
 #, c-format
@@ -8594,8 +8594,8 @@ msgstr "il nome del tablespace \"%s\" non è accettabile"
 
 #: commands/tablespace.c:310 commands/tablespace.c:957
 #, c-format
-msgid "The prefix \"pg_\" is reserved for system tablespaces."
-msgstr "Il prefisso \"pg_\" è riservato per i tablespace di sistema."
+msgid "The prefix \"mdb_\" is reserved for system tablespaces."
+msgstr "Il prefisso \"mdb_\" è riservato per i tablespace di sistema."
 
 #: commands/tablespace.c:320 commands/tablespace.c:969
 #, c-format
@@ -9150,8 +9150,8 @@ msgstr "la funzione di differenza sottotipo %s deve essere immutabile"
 
 #: commands/typecmds.c:2044
 #, c-format
-msgid "pg_type array OID value not set when in binary upgrade mode"
-msgstr "valore di OID array di pg_type non impostato in modalità di aggiornamento binaria"
+msgid "mdb_type array OID value not set when in binary upgrade mode"
+msgstr "valore di OID array di mdb_type non impostato in modalità di aggiornamento binaria"
 
 #: commands/typecmds.c:2348
 #, c-format
@@ -9251,8 +9251,8 @@ msgstr "il nome di ruolo \"%s\" è riservato"
 
 #: commands/user.c:324 commands/user.c:1178 commands/user.c:1185
 #, c-format
-msgid "Role names starting with \"pg_\" are reserved."
-msgstr "I nomi di ruoli che iniziano con \"pg_\" sono riservati."
+msgid "Role names starting with \"mdb_\" are reserved."
+msgstr "I nomi di ruoli che iniziano con \"mdb_\" sono riservati."
 
 #: commands/user.c:336 commands/user.c:1191
 #, c-format
@@ -9261,8 +9261,8 @@ msgstr "il ruolo \"%s\" esiste già"
 
 #: commands/user.c:414
 #, c-format
-msgid "pg_authid OID value not set when in binary upgrade mode"
-msgstr "valore di OID di pg_authid non impostato in modalità di aggiornamento binaria"
+msgid "mdb_authid OID value not set when in binary upgrade mode"
+msgstr "valore di OID di mdb_authid non impostato in modalità di aggiornamento binaria"
 
 #: commands/user.c:679 commands/user.c:896 commands/user.c:1443
 #: commands/user.c:1589
@@ -10450,8 +10450,8 @@ msgstr "autenticazione fallita per l'utente \"%s\": metodo di autenticazione non
 
 #: libpq/auth.c:294
 #, c-format
-msgid "Connection matched pg_hba.conf line %d: \"%s\""
-msgstr "La connessione si abbina con la riga %d di pg_hba.log: \"%s\""
+msgid "Connection matched mdb_hba.conf line %d: \"%s\""
+msgstr "La connessione si abbina con la riga %d di mdb_hba.log: \"%s\""
 
 #: libpq/auth.c:349
 #, c-format
@@ -10460,8 +10460,8 @@ msgstr "la connessione richiede un certificato valido per il client"
 
 #: libpq/auth.c:391
 #, c-format
-msgid "pg_hba.conf rejects replication connection for host \"%s\", user \"%s\", %s"
-msgstr "pg_hba.conf rifiuta connessioni di replica per l'host \"%s\", utente \"%s\", %s"
+msgid "mdb_hba.conf rejects replication connection for host \"%s\", user \"%s\", %s"
+msgstr "mdb_hba.conf rifiuta connessioni di replica per l'host \"%s\", utente \"%s\", %s"
 
 #: libpq/auth.c:393 libpq/auth.c:409 libpq/auth.c:467 libpq/auth.c:485
 msgid "SSL off"
@@ -10473,18 +10473,18 @@ msgstr "SSL abilitato"
 
 #: libpq/auth.c:397
 #, c-format
-msgid "pg_hba.conf rejects replication connection for host \"%s\", user \"%s\""
-msgstr "pg_hba.conf rifiuta connessioni di replica per l'host \"%s\", utente \"%s\""
+msgid "mdb_hba.conf rejects replication connection for host \"%s\", user \"%s\""
+msgstr "mdb_hba.conf rifiuta connessioni di replica per l'host \"%s\", utente \"%s\""
 
 #: libpq/auth.c:406
 #, c-format
-msgid "pg_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\", %s"
-msgstr "pg_hba.conf rifiuta connessioni per l'host \"%s\", utente \"%s\", database \"%s\", %s"
+msgid "mdb_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\", %s"
+msgstr "mdb_hba.conf rifiuta connessioni per l'host \"%s\", utente \"%s\", database \"%s\", %s"
 
 #: libpq/auth.c:413
 #, c-format
-msgid "pg_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\""
-msgstr "pg_hba.conf rifiuta connessioni per l'host \"%s\", user \"%s\", database \"%s\""
+msgid "mdb_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\""
+msgstr "mdb_hba.conf rifiuta connessioni per l'host \"%s\", user \"%s\", database \"%s\""
 
 #: libpq/auth.c:442
 #, c-format
@@ -10513,23 +10513,23 @@ msgstr "Risoluzione dell'indirizzo IP del client in nome host non riuscita: %s."
 
 #: libpq/auth.c:465
 #, c-format
-msgid "no pg_hba.conf entry for replication connection from host \"%s\", user \"%s\", %s"
-msgstr "nessuna voce in pg_hba.conf per connessioni di replica da host \"%s\", utente \"%s\", database \"%s\""
+msgid "no mdb_hba.conf entry for replication connection from host \"%s\", user \"%s\", %s"
+msgstr "nessuna voce in mdb_hba.conf per connessioni di replica da host \"%s\", utente \"%s\", database \"%s\""
 
 #: libpq/auth.c:472
 #, c-format
-msgid "no pg_hba.conf entry for replication connection from host \"%s\", user \"%s\""
-msgstr "nessuna voce in pg_hba.conf per connessioni di replica da host \"%s\", user \"%s\""
+msgid "no mdb_hba.conf entry for replication connection from host \"%s\", user \"%s\""
+msgstr "nessuna voce in mdb_hba.conf per connessioni di replica da host \"%s\", user \"%s\""
 
 #: libpq/auth.c:482
 #, c-format
-msgid "no pg_hba.conf entry for host \"%s\", user \"%s\", database \"%s\", %s"
-msgstr "nessuna voce in pg_hba.conf per l'host \"%s\", utente \"%s\", database \"%s\", %s"
+msgid "no mdb_hba.conf entry for host \"%s\", user \"%s\", database \"%s\", %s"
+msgstr "nessuna voce in mdb_hba.conf per l'host \"%s\", utente \"%s\", database \"%s\", %s"
 
 #: libpq/auth.c:490
 #, c-format
-msgid "no pg_hba.conf entry for host \"%s\", user \"%s\", database \"%s\""
-msgstr "nessuna voce in pg_hba.conf per l'host \"%s\", utente \"%s\", database \"%s\""
+msgid "no mdb_hba.conf entry for host \"%s\", user \"%s\", database \"%s\""
+msgstr "nessuna voce in mdb_hba.conf per l'host \"%s\", utente \"%s\", database \"%s\""
 
 #: libpq/auth.c:533 libpq/hba.c:1180
 #, c-format
@@ -13711,17 +13711,17 @@ msgstr "CREATE specifica uno schema (%s) differente da quello che sta venendo cr
 msgid "identifier \"%s\" will be truncated to \"%s\""
 msgstr "l'identificativo \"%s\" sarà troncato a \"%s\""
 
-#: port/pg_sema.c:113 port/sysv_sema.c:113
+#: port/mdb_sema.c:113 port/sysv_sema.c:113
 #, c-format
 msgid "could not create semaphores: %m"
 msgstr "creazione dei semafori fallita: %m"
 
-#: port/pg_sema.c:114 port/sysv_sema.c:114
+#: port/mdb_sema.c:114 port/sysv_sema.c:114
 #, c-format
 msgid "Failed system call was semget(%lu, %d, 0%o)."
 msgstr "La chiamata di sistema fallita era semget(%lu, %d, 0%o)."
 
-#: port/pg_sema.c:118 port/sysv_sema.c:118
+#: port/mdb_sema.c:118 port/sysv_sema.c:118
 #, c-format
 msgid ""
 "This error does *not* mean that you have run out of disk space.  It occurs when either the system limit for the maximum number of semaphore sets (SEMMNI), or the system wide maximum number of semaphores (SEMMNS), would be exceeded.  You need to raise the respective kernel parameter.  Alternatively, reduce MollyDB's consumption of semaphores by reducing its max_connections parameter.\n"
@@ -13730,22 +13730,22 @@ msgstr ""
 "Questo errore *non* significa che è finito lo spazio su disco. Può succedere quando il limite di sistema per il massimo numero di semafori impostati (SEMMNI), oppure il massimo numero di semafori di sistema (SEMMNS), verrebbe superato. È necessario aumentare i rispettivi parametri del kernel. Alternativamente, riduci l'utilizzo di semafori di MollyDB riducendo il parametro max_connections.\n"
 "La documentazione di MollyDB contiene più informazioni su come configurare il tuo sistema per MollyDB."
 
-#: port/pg_sema.c:148 port/sysv_sema.c:148
+#: port/mdb_sema.c:148 port/sysv_sema.c:148
 #, c-format
 msgid "You possibly need to raise your kernel's SEMVMX value to be at least %d.  Look into the MollyDB documentation for details."
 msgstr "Potresti dover aumentare il valore SEMVMX del tuo kernel ad almeno %d. Consulta la documentazione di MollyDB per ulteriori dettagli."
 
-#: port/pg_shmem.c:141 port/sysv_shmem.c:141
+#: port/mdb_shmem.c:141 port/sysv_shmem.c:141
 #, c-format
 msgid "could not create shared memory segment: %m"
 msgstr "creazione del segmento di memoria condivisa fallita: %m"
 
-#: port/pg_shmem.c:142 port/sysv_shmem.c:142
+#: port/mdb_shmem.c:142 port/sysv_shmem.c:142
 #, c-format
 msgid "Failed system call was shmget(key=%lu, size=%zu, 0%o)."
 msgstr "La chiamata di sistema fallita era shmget(key=%lu, size=%zu, 0%o)."
 
-#: port/pg_shmem.c:146 port/sysv_shmem.c:146
+#: port/mdb_shmem.c:146 port/sysv_shmem.c:146
 #, c-format
 msgid ""
 "This error usually means that MollyDB's request for a shared memory segment exceeded your kernel's SHMMAX parameter, or possibly that it is less than your kernel's SHMMIN parameter.\n"
@@ -13754,7 +13754,7 @@ msgstr ""
 "Questo errore di solito vuol dire che la richiesta di MollyDB di un segmento di memoria condivisa eccede il valore del parametro SHMMAX del tuo kernel, o anche che sia inferiore del parametro SHMMIN.\n"
 "La documentazione di MollyDB contiene ulteriori informazioni sulla configurazione della memoria condivisa."
 
-#: port/pg_shmem.c:153 port/sysv_shmem.c:153
+#: port/mdb_shmem.c:153 port/sysv_shmem.c:153
 #, c-format
 msgid ""
 "This error usually means that MollyDB's request for a shared memory segment exceeded your kernel's SHMALL parameter.  You might need to reconfigure the kernel with larger SHMALL.\n"
@@ -13763,7 +13763,7 @@ msgstr ""
 "Questo errore di solito vuol dire che la richiesta di MollyDB di un segmento di memoria condivisa eccede il valore del parametro SHMALL del tuo kernel. Potresti dover riconfigurare il kernel con uno SHMALL più grande.\n"
 "La documentazione di MollyDB contiene ulteriori informazioni sulla configurazione della memoria condivisa."
 
-#: port/pg_shmem.c:159 port/sysv_shmem.c:159
+#: port/mdb_shmem.c:159 port/sysv_shmem.c:159
 #, c-format
 msgid ""
 "This error does *not* mean that you have run out of disk space.  It occurs either if all available shared memory IDs have been taken, in which case you need to raise the SHMMNI parameter in your kernel, or because the system's overall limit for shared memory has been reached.\n"
@@ -13772,27 +13772,27 @@ msgstr ""
 "Questo errore *non* significa che è finito lo spazio su disco. Può succedere se tutti gli ID di memoria condivisa sono stati presi, nel cui caso è necessario aumentare il parametro SHMMNI del tuo kernel, oppure perché il limite globale la memoria condivisa di sistema è stato raggiunto.\n"
 "La documentazione di MollyDB contiene ulteriori informazioni sulla configurazione della memoria condivisa."
 
-#: port/pg_shmem.c:340 port/sysv_shmem.c:340
+#: port/mdb_shmem.c:340 port/sysv_shmem.c:340
 #, c-format
 msgid "huge TLB pages not supported on this platform"
 msgstr "pagine TLB huge non supportate su questa piattaforma"
 
-#: port/pg_shmem.c:390 port/sysv_shmem.c:390
+#: port/mdb_shmem.c:390 port/sysv_shmem.c:390
 #, c-format
 msgid "could not map anonymous shared memory: %m"
 msgstr "mappatura della memoria condivisa anonima fallita: %m"
 
-#: port/pg_shmem.c:392 port/sysv_shmem.c:392
+#: port/mdb_shmem.c:392 port/sysv_shmem.c:392
 #, c-format
 msgid "This error usually means that MollyDB's request for a shared memory segment exceeded available memory, swap space, or huge pages. To reduce the request size (currently %zu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections."
 msgstr "Questo errore di solito vuol dire che la richiesta di MollyDB di un segmento di memoria condivisa supera la memoria disponibile, lo spazio di swap o le pagine huge. Per ridurre la dimensione richiesta (attualmente %zu byte), riduci l'utilizzo di memoria condivisa di MollyDB, ad esempio riducendo shared_buffers o max_connections."
 
-#: port/pg_shmem.c:439 port/sysv_shmem.c:439 port/win32_shmem.c:134
+#: port/mdb_shmem.c:439 port/sysv_shmem.c:439 port/win32_shmem.c:134
 #, c-format
 msgid "huge pages not supported on this platform"
 msgstr "pagine huge non supportate su questa piattaforma"
 
-#: port/pg_shmem.c:553 port/sysv_shmem.c:553
+#: port/mdb_shmem.c:553 port/sysv_shmem.c:553
 #, c-format
 msgid "could not stat data directory \"%s\": %m"
 msgstr "non è stato possibile ottenere informazioni sulla directory dati \"%s\": %m"
@@ -14320,8 +14320,8 @@ msgstr "L'output dei prossimi log andrà su \"%s\"."
 
 #: postmaster/postmaster.c:1250 utils/init/postinit.c:214
 #, c-format
-msgid "could not load pg_hba.conf"
-msgstr "caricamento di pg_hba.conf fallito"
+msgid "could not load mdb_hba.conf"
+msgstr "caricamento di mdb_hba.conf fallito"
 
 #: postmaster/postmaster.c:1276
 #, c-format
@@ -14478,13 +14478,13 @@ msgstr "SIGHUP ricevuto, sto ricaricando i file di configurazione"
 
 #: postmaster/postmaster.c:2496
 #, c-format
-msgid "pg_hba.conf not reloaded"
-msgstr "pg_hba.conf non è stato ricaricato"
+msgid "mdb_hba.conf not reloaded"
+msgstr "mdb_hba.conf non è stato ricaricato"
 
 #: postmaster/postmaster.c:2500
 #, c-format
-msgid "pg_ident.conf not reloaded"
-msgstr "pg_ident.conf non è stato ricaricato"
+msgid "mdb_ident.conf not reloaded"
+msgstr "mdb_ident.conf non è stato ricaricato"
 
 #: postmaster/postmaster.c:2541
 #, c-format
@@ -14807,7 +14807,7 @@ msgstr "apertura del file di log \"%s\" fallita: %m"
 msgid "disabling automatic rotation (use SIGHUP to re-enable)"
 msgstr "rotazione automatica disabilitata (usa SIGHUP per abilitarla di nuovo)"
 
-#: regex/regc_pg_locale.c:261
+#: regex/regc_mdb_locale.c:261
 #, c-format
 msgid "could not determine which collation to use for regular expression"
 msgstr "non è stato possibile determinare quale ordinamento usare per le espressioni regolari"
@@ -16133,8 +16133,8 @@ msgstr "La transazione utente ha causato un deadlock del buffer con il ripristin
 
 #: storage/large_object/inv_api.c:203
 #, c-format
-msgid "pg_largeobject entry for OID %u, page %d has invalid data field size %d"
-msgstr "elemento pg_largeobject per OID %u, pagina %d ha la dimensione del campo dati errata %d"
+msgid "mdb_largeobject entry for OID %u, page %d has invalid data field size %d"
+msgstr "elemento mdb_largeobject per OID %u, pagina %d ha la dimensione del campo dati errata %d"
 
 #: storage/large_object/inv_api.c:284
 #, c-format
@@ -18751,8 +18751,8 @@ msgstr "solo un superutente può annullare la query di un superutente"
 
 #: utils/adt/misc.c:295
 #, c-format
-msgid "must be a member of the role whose query is being canceled or member of pg_signal_backend"
-msgstr "occorre essere un membro del ruolo la cui query deve essere annullata o membro di pg_signal_backend"
+msgid "must be a member of the role whose query is being canceled or member of mdb_signal_backend"
+msgstr "occorre essere un membro del ruolo la cui query deve essere annullata o membro di mdb_signal_backend"
 
 #: utils/adt/misc.c:314
 #, c-format
@@ -18761,8 +18761,8 @@ msgstr "solo un superutente può terminare il processo di un superutente"
 
 #: utils/adt/misc.c:319
 #, c-format
-msgid "must be a member of the role whose process is being terminated or member of pg_signal_backend"
-msgstr "occorre essere un membro del ruolo la cui processo deve essere terminato o membro di pg_signal_backend"
+msgid "must be a member of the role whose process is being terminated or member of mdb_signal_backend"
+msgstr "occorre essere un membro del ruolo la cui processo deve essere terminato o membro di mdb_signal_backend"
 
 #: utils/adt/misc.c:336
 #, c-format
@@ -19073,47 +19073,47 @@ msgstr "non sono consentiti caratteri nulli"
 msgid "percentile value %g is not between 0 and 1"
 msgstr "il valore percentile %g non è tra 0 e 1"
 
-#: utils/adt/pg_locale.c:917
+#: utils/adt/mdb_locale.c:917
 #, c-format
 msgid "Apply system library package updates."
 msgstr "Applica gli aggiornamenti ai pacchetti di sistema."
 
-#: utils/adt/pg_locale.c:1122
+#: utils/adt/mdb_locale.c:1122
 #, c-format
 msgid "could not create locale \"%s\": %m"
 msgstr "creazione del locale \"%s\" fallita: %m"
 
-#: utils/adt/pg_locale.c:1125
+#: utils/adt/mdb_locale.c:1125
 #, c-format
 msgid "The operating system could not find any locale data for the locale name \"%s\"."
 msgstr "Il sistema operativo non ha trovato dati di locale per il locale di nome \"%s\"."
 
-#: utils/adt/pg_locale.c:1212
+#: utils/adt/mdb_locale.c:1212
 #, c-format
 msgid "collations with different collate and ctype values are not supported on this platform"
 msgstr "le collazioni con tipi diversi di ordinamento e ctype non sono supportati su questa piattaforma"
 
-#: utils/adt/pg_locale.c:1227
+#: utils/adt/mdb_locale.c:1227
 #, c-format
 msgid "nondefault collations are not supported on this platform"
 msgstr "le collazioni non predefinite non sono supportate su questa piattaforma"
 
-#: utils/adt/pg_locale.c:1398
+#: utils/adt/mdb_locale.c:1398
 #, c-format
 msgid "invalid multibyte character for locale"
 msgstr "carattere multibyte non valido per il locale"
 
-#: utils/adt/pg_locale.c:1399
+#: utils/adt/mdb_locale.c:1399
 #, c-format
 msgid "The server's LC_CTYPE locale is probably incompatible with the database encoding."
 msgstr "Il locale LC_CTYPE del server probabilmente non è compatibile con la codifica del database."
 
-#: utils/adt/pg_lsn.c:44 utils/adt/pg_lsn.c:49
+#: utils/adt/mdb_lsn.c:44 utils/adt/mdb_lsn.c:49
 #, c-format
-msgid "invalid input syntax for type pg_lsn: \"%s\""
-msgstr "sintassi di input non valida per il tipo pg_lsn: \"%s\""
+msgid "invalid input syntax for type mdb_lsn: \"%s\""
+msgstr "sintassi di input non valida per il tipo mdb_lsn: \"%s\""
 
-#: utils/adt/pg_upgrade_support.c:40
+#: utils/adt/mdb_upgrade_support.c:40
 #, c-format
 msgid "function can only be called when server is in binary upgrade mode"
 msgstr "la funzione può essere richiamata solo quando il server è in modalità di aggiornamento binario"
@@ -19446,8 +19446,8 @@ msgstr "la funzione \"%s\" deve essere eseguita per una DELETE"
 
 #: utils/adt/ri_triggers.c:2769
 #, c-format
-msgid "no pg_constraint entry for trigger \"%s\" on table \"%s\""
-msgstr "non ci sono elementi pg_constraint per il trigger \"%s\" sulla tabella \"%s\""
+msgid "no mdb_constraint entry for trigger \"%s\" on table \"%s\""
+msgstr "non ci sono elementi mdb_constraint per il trigger \"%s\" sulla tabella \"%s\""
 
 #: utils/adt/ri_triggers.c:2771
 #, c-format
@@ -20710,8 +20710,8 @@ msgstr "connessione autorizzata: utente=%s database=%s"
 
 #: utils/init/postinit.c:304
 #, c-format
-msgid "database \"%s\" has disappeared from pg_database"
-msgstr "il database \"%s\" è scomparso da database pg_database"
+msgid "database \"%s\" has disappeared from mdb_database"
+msgstr "il database \"%s\" è scomparso da database mdb_database"
 
 #: utils/init/postinit.c:306
 #, c-format
@@ -21965,8 +21965,8 @@ msgid "Zero logs all files. The default is -1 (turning this feature off)."
 msgstr "Il valore 0 (zero) fa registrare tutti i file. Il default è -1 (che disabilita la registrazione)."
 
 #: utils/misc/guc.c:2785
-msgid "Sets the size reserved for pg_stat_activity.query, in bytes."
-msgstr "Imposta la dimensione in byte riservata a pg_stat_activity.query."
+msgid "Sets the size reserved for mdb_stat_activity.query, in bytes."
+msgstr "Imposta la dimensione in byte riservata a mdb_stat_activity.query."
 
 #: utils/misc/guc.c:2800
 msgid "Sets the maximum size of the pending list for GIN index."
@@ -22376,8 +22376,8 @@ msgstr "%s: accesso alla directory \"%s\" fallito: %s\n"
 
 #: utils/misc/guc.c:4606
 #, c-format
-msgid "Run initdb or pg_basebackup to initialize a MollyDB data directory.\n"
-msgstr "Esegui initdb o pg_basebackup per inizializzare una directory di dati MollyDB.\n"
+msgid "Run initdb or mdb_basebackup to initialize a MollyDB data directory.\n"
+msgstr "Esegui initdb o mdb_basebackup per inizializzare una directory di dati MollyDB.\n"
 
 #: utils/misc/guc.c:4626
 #, c-format
@@ -22568,7 +22568,7 @@ msgstr "Non è possibile abilitare \"log_statement_stats\" quando \"log_parser_s
 msgid "internal error: unrecognized run-time parameter type\n"
 msgstr "errore interno: tipo di parametro sconosciuto\n"
 
-#: utils/misc/pg_config.c:61
+#: utils/misc/mdb_config.c:61
 #, c-format
 msgid "query-specified return tuple and function return type are not compatible"
 msgstr "la tupla che la query specifica e il tipo restituito dalla funzione non sono compatibili"

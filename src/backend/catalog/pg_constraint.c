@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_constraint.c
- *	  routines to support manipulation of the pg_constraint relation
+ * mdb_constraint.c
+ *	  routines to support manipulation of the mdb_constraint relation
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_constraint.c
+ *	  src/backend/catalog/mdb_constraint.c
  *
  *-------------------------------------------------------------------------
  */
@@ -21,10 +21,10 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_constraint.h"
-#include "catalog/pg_constraint_fn.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_constraint.h"
+#include "catalog/mdb_constraint_fn.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_type.h"
 #include "commands/defrem.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
@@ -78,8 +78,8 @@ CreateConstraintEntry(const char *constraintName,
 	Relation	conDesc;
 	Oid			conOid;
 	HeapTuple	tup;
-	bool		nulls[Natts_pg_constraint];
-	Datum		values[Natts_pg_constraint];
+	bool		nulls[Natts_mdb_constraint];
+	Datum		values[Natts_mdb_constraint];
 	ArrayType  *conkeyArray;
 	ArrayType  *confkeyArray;
 	ArrayType  *conpfeqopArray;
@@ -155,74 +155,74 @@ CreateConstraintEntry(const char *constraintName,
 		conexclopArray = NULL;
 
 	/* initialize nulls and values */
-	for (i = 0; i < Natts_pg_constraint; i++)
+	for (i = 0; i < Natts_mdb_constraint; i++)
 	{
 		nulls[i] = false;
 		values[i] = (Datum) NULL;
 	}
 
-	values[Anum_pg_constraint_conname - 1] = NameGetDatum(&cname);
-	values[Anum_pg_constraint_connamespace - 1] = ObjectIdGetDatum(constraintNamespace);
-	values[Anum_pg_constraint_contype - 1] = CharGetDatum(constraintType);
-	values[Anum_pg_constraint_condeferrable - 1] = BoolGetDatum(isDeferrable);
-	values[Anum_pg_constraint_condeferred - 1] = BoolGetDatum(isDeferred);
-	values[Anum_pg_constraint_convalidated - 1] = BoolGetDatum(isValidated);
-	values[Anum_pg_constraint_conrelid - 1] = ObjectIdGetDatum(relId);
-	values[Anum_pg_constraint_contypid - 1] = ObjectIdGetDatum(domainId);
-	values[Anum_pg_constraint_conindid - 1] = ObjectIdGetDatum(indexRelId);
-	values[Anum_pg_constraint_confrelid - 1] = ObjectIdGetDatum(foreignRelId);
-	values[Anum_pg_constraint_confupdtype - 1] = CharGetDatum(foreignUpdateType);
-	values[Anum_pg_constraint_confdeltype - 1] = CharGetDatum(foreignDeleteType);
-	values[Anum_pg_constraint_confmatchtype - 1] = CharGetDatum(foreignMatchType);
-	values[Anum_pg_constraint_conislocal - 1] = BoolGetDatum(conIsLocal);
-	values[Anum_pg_constraint_coninhcount - 1] = Int32GetDatum(conInhCount);
-	values[Anum_pg_constraint_connoinherit - 1] = BoolGetDatum(conNoInherit);
+	values[Anum_mdb_constraint_conname - 1] = NameGetDatum(&cname);
+	values[Anum_mdb_constraint_connamespace - 1] = ObjectIdGetDatum(constraintNamespace);
+	values[Anum_mdb_constraint_contype - 1] = CharGetDatum(constraintType);
+	values[Anum_mdb_constraint_condeferrable - 1] = BoolGetDatum(isDeferrable);
+	values[Anum_mdb_constraint_condeferred - 1] = BoolGetDatum(isDeferred);
+	values[Anum_mdb_constraint_convalidated - 1] = BoolGetDatum(isValidated);
+	values[Anum_mdb_constraint_conrelid - 1] = ObjectIdGetDatum(relId);
+	values[Anum_mdb_constraint_contypid - 1] = ObjectIdGetDatum(domainId);
+	values[Anum_mdb_constraint_conindid - 1] = ObjectIdGetDatum(indexRelId);
+	values[Anum_mdb_constraint_confrelid - 1] = ObjectIdGetDatum(foreignRelId);
+	values[Anum_mdb_constraint_confupdtype - 1] = CharGetDatum(foreignUpdateType);
+	values[Anum_mdb_constraint_confdeltype - 1] = CharGetDatum(foreignDeleteType);
+	values[Anum_mdb_constraint_confmatchtype - 1] = CharGetDatum(foreignMatchType);
+	values[Anum_mdb_constraint_conislocal - 1] = BoolGetDatum(conIsLocal);
+	values[Anum_mdb_constraint_coninhcount - 1] = Int32GetDatum(conInhCount);
+	values[Anum_mdb_constraint_connoinherit - 1] = BoolGetDatum(conNoInherit);
 
 	if (conkeyArray)
-		values[Anum_pg_constraint_conkey - 1] = PointerGetDatum(conkeyArray);
+		values[Anum_mdb_constraint_conkey - 1] = PointerGetDatum(conkeyArray);
 	else
-		nulls[Anum_pg_constraint_conkey - 1] = true;
+		nulls[Anum_mdb_constraint_conkey - 1] = true;
 
 	if (confkeyArray)
-		values[Anum_pg_constraint_confkey - 1] = PointerGetDatum(confkeyArray);
+		values[Anum_mdb_constraint_confkey - 1] = PointerGetDatum(confkeyArray);
 	else
-		nulls[Anum_pg_constraint_confkey - 1] = true;
+		nulls[Anum_mdb_constraint_confkey - 1] = true;
 
 	if (conpfeqopArray)
-		values[Anum_pg_constraint_conpfeqop - 1] = PointerGetDatum(conpfeqopArray);
+		values[Anum_mdb_constraint_conpfeqop - 1] = PointerGetDatum(conpfeqopArray);
 	else
-		nulls[Anum_pg_constraint_conpfeqop - 1] = true;
+		nulls[Anum_mdb_constraint_conpfeqop - 1] = true;
 
 	if (conppeqopArray)
-		values[Anum_pg_constraint_conppeqop - 1] = PointerGetDatum(conppeqopArray);
+		values[Anum_mdb_constraint_conppeqop - 1] = PointerGetDatum(conppeqopArray);
 	else
-		nulls[Anum_pg_constraint_conppeqop - 1] = true;
+		nulls[Anum_mdb_constraint_conppeqop - 1] = true;
 
 	if (conffeqopArray)
-		values[Anum_pg_constraint_conffeqop - 1] = PointerGetDatum(conffeqopArray);
+		values[Anum_mdb_constraint_conffeqop - 1] = PointerGetDatum(conffeqopArray);
 	else
-		nulls[Anum_pg_constraint_conffeqop - 1] = true;
+		nulls[Anum_mdb_constraint_conffeqop - 1] = true;
 
 	if (conexclopArray)
-		values[Anum_pg_constraint_conexclop - 1] = PointerGetDatum(conexclopArray);
+		values[Anum_mdb_constraint_conexclop - 1] = PointerGetDatum(conexclopArray);
 	else
-		nulls[Anum_pg_constraint_conexclop - 1] = true;
+		nulls[Anum_mdb_constraint_conexclop - 1] = true;
 
 	/*
 	 * initialize the binary form of the check constraint.
 	 */
 	if (conBin)
-		values[Anum_pg_constraint_conbin - 1] = CStringGetTextDatum(conBin);
+		values[Anum_mdb_constraint_conbin - 1] = CStringGetTextDatum(conBin);
 	else
-		nulls[Anum_pg_constraint_conbin - 1] = true;
+		nulls[Anum_mdb_constraint_conbin - 1] = true;
 
 	/*
 	 * initialize the text form of the check constraint
 	 */
 	if (conSrc)
-		values[Anum_pg_constraint_consrc - 1] = CStringGetTextDatum(conSrc);
+		values[Anum_mdb_constraint_consrc - 1] = CStringGetTextDatum(conSrc);
 	else
-		nulls[Anum_pg_constraint_consrc - 1] = true;
+		nulls[Anum_mdb_constraint_consrc - 1] = true;
 
 	tup = heap_form_tuple(RelationGetDescr(conDesc), values, nulls);
 
@@ -406,12 +406,12 @@ ConstraintNameIsUsed(ConstraintCategory conCat, Oid objId,
 	found = false;
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_constraint_conname,
+				Anum_mdb_constraint_conname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(conname));
 
 	ScanKeyInit(&skey[1],
-				Anum_pg_constraint_connamespace,
+				Anum_mdb_constraint_connamespace,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(objNamespace));
 
@@ -420,7 +420,7 @@ ConstraintNameIsUsed(ConstraintCategory conCat, Oid objId,
 
 	while (HeapTupleIsValid(tup = systable_getnext(conscan)))
 	{
-		Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(tup);
+		Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(tup);
 
 		if (conCat == CONSTRAINT_RELATION && con->conrelid == objId)
 		{
@@ -500,12 +500,12 @@ ChooseConstraintName(const char *name1, const char *name2,
 		if (!found)
 		{
 			ScanKeyInit(&skey[0],
-						Anum_pg_constraint_conname,
+						Anum_mdb_constraint_conname,
 						BTEqualStrategyNumber, F_NAMEEQ,
 						CStringGetDatum(conname));
 
 			ScanKeyInit(&skey[1],
-						Anum_pg_constraint_connamespace,
+						Anum_mdb_constraint_connamespace,
 						BTEqualStrategyNumber, F_OIDEQ,
 						ObjectIdGetDatum(namespaceid));
 
@@ -538,14 +538,14 @@ RemoveConstraintById(Oid conId)
 {
 	Relation	conDesc;
 	HeapTuple	tup;
-	Form_pg_constraint con;
+	Form_mdb_constraint con;
 
 	conDesc = heap_open(ConstraintRelationId, RowExclusiveLock);
 
 	tup = SearchSysCache1(CONSTROID, ObjectIdGetDatum(conId));
 	if (!HeapTupleIsValid(tup)) /* should not happen */
 		elog(ERROR, "cache lookup failed for constraint %u", conId);
-	con = (Form_pg_constraint) GETSTRUCT(tup);
+	con = (Form_mdb_constraint) GETSTRUCT(tup);
 
 	/*
 	 * Special processing depending on what the constraint is for.
@@ -569,7 +569,7 @@ RemoveConstraintById(Oid conId)
 		{
 			Relation	pgrel;
 			HeapTuple	relTup;
-			Form_pg_class classForm;
+			Form_mdb_class classForm;
 
 			pgrel = heap_open(RelationRelationId, RowExclusiveLock);
 			relTup = SearchSysCacheCopy1(RELOID,
@@ -577,7 +577,7 @@ RemoveConstraintById(Oid conId)
 			if (!HeapTupleIsValid(relTup))
 				elog(ERROR, "cache lookup failed for relation %u",
 					 con->conrelid);
-			classForm = (Form_pg_class) GETSTRUCT(relTup);
+			classForm = (Form_mdb_class) GETSTRUCT(relTup);
 
 			if (classForm->relchecks == 0)		/* should not happen */
 				elog(ERROR, "relation \"%s\" has relchecks = 0",
@@ -631,14 +631,14 @@ RenameConstraintById(Oid conId, const char *newname)
 {
 	Relation	conDesc;
 	HeapTuple	tuple;
-	Form_pg_constraint con;
+	Form_mdb_constraint con;
 
 	conDesc = heap_open(ConstraintRelationId, RowExclusiveLock);
 
 	tuple = SearchSysCacheCopy1(CONSTROID, ObjectIdGetDatum(conId));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for constraint %u", conId);
-	con = (Form_pg_constraint) GETSTRUCT(tuple);
+	con = (Form_mdb_constraint) GETSTRUCT(tuple);
 
 	/*
 	 * We need to check whether the name is already in use --- note that there
@@ -698,7 +698,7 @@ AlterConstraintNamespaces(Oid ownerId, Oid oldNspId,
 	if (isType)
 	{
 		ScanKeyInit(&key[0],
-					Anum_pg_constraint_contypid,
+					Anum_mdb_constraint_contypid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(ownerId));
 
@@ -708,7 +708,7 @@ AlterConstraintNamespaces(Oid ownerId, Oid oldNspId,
 	else
 	{
 		ScanKeyInit(&key[0],
-					Anum_pg_constraint_conrelid,
+					Anum_mdb_constraint_conrelid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(ownerId));
 
@@ -718,7 +718,7 @@ AlterConstraintNamespaces(Oid ownerId, Oid oldNspId,
 
 	while (HeapTupleIsValid((tup = systable_getnext(scan))))
 	{
-		Form_pg_constraint conform = (Form_pg_constraint) GETSTRUCT(tup);
+		Form_mdb_constraint conform = (Form_mdb_constraint) GETSTRUCT(tup);
 		ObjectAddress thisobj;
 
 		thisobj.classId = ConstraintRelationId;
@@ -732,7 +732,7 @@ AlterConstraintNamespaces(Oid ownerId, Oid oldNspId,
 		if (conform->connamespace == oldNspId && oldNspId != newNspId)
 		{
 			tup = heap_copytuple(tup);
-			conform = (Form_pg_constraint) GETSTRUCT(tup);
+			conform = (Form_mdb_constraint) GETSTRUCT(tup);
 
 			conform->connamespace = newNspId;
 
@@ -764,30 +764,30 @@ AlterConstraintNamespaces(Oid ownerId, Oid oldNspId,
 Oid
 get_relation_constraint_oid(Oid relid, const char *conname, bool missing_ok)
 {
-	Relation	pg_constraint;
+	Relation	mdb_constraint;
 	HeapTuple	tuple;
 	SysScanDesc scan;
 	ScanKeyData skey[1];
 	Oid			conOid = InvalidOid;
 
 	/*
-	 * Fetch the constraint tuple from pg_constraint.  There may be more than
+	 * Fetch the constraint tuple from mdb_constraint.  There may be more than
 	 * one match, because constraints are not required to have unique names;
 	 * if so, error out.
 	 */
-	pg_constraint = heap_open(ConstraintRelationId, AccessShareLock);
+	mdb_constraint = heap_open(ConstraintRelationId, AccessShareLock);
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_constraint_conrelid,
+				Anum_mdb_constraint_conrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 
-	scan = systable_beginscan(pg_constraint, ConstraintRelidIndexId, true,
+	scan = systable_beginscan(mdb_constraint, ConstraintRelidIndexId, true,
 							  NULL, 1, skey);
 
 	while (HeapTupleIsValid(tuple = systable_getnext(scan)))
 	{
-		Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(tuple);
+		Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(tuple);
 
 		if (strcmp(NameStr(con->conname), conname) == 0)
 		{
@@ -809,7 +809,7 @@ get_relation_constraint_oid(Oid relid, const char *conname, bool missing_ok)
 				 errmsg("constraint \"%s\" for table \"%s\" does not exist",
 						conname, get_rel_name(relid))));
 
-	heap_close(pg_constraint, AccessShareLock);
+	heap_close(mdb_constraint, AccessShareLock);
 
 	return conOid;
 }
@@ -822,30 +822,30 @@ get_relation_constraint_oid(Oid relid, const char *conname, bool missing_ok)
 Oid
 get_domain_constraint_oid(Oid typid, const char *conname, bool missing_ok)
 {
-	Relation	pg_constraint;
+	Relation	mdb_constraint;
 	HeapTuple	tuple;
 	SysScanDesc scan;
 	ScanKeyData skey[1];
 	Oid			conOid = InvalidOid;
 
 	/*
-	 * Fetch the constraint tuple from pg_constraint.  There may be more than
+	 * Fetch the constraint tuple from mdb_constraint.  There may be more than
 	 * one match, because constraints are not required to have unique names;
 	 * if so, error out.
 	 */
-	pg_constraint = heap_open(ConstraintRelationId, AccessShareLock);
+	mdb_constraint = heap_open(ConstraintRelationId, AccessShareLock);
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_constraint_contypid,
+				Anum_mdb_constraint_contypid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(typid));
 
-	scan = systable_beginscan(pg_constraint, ConstraintTypidIndexId, true,
+	scan = systable_beginscan(mdb_constraint, ConstraintTypidIndexId, true,
 							  NULL, 1, skey);
 
 	while (HeapTupleIsValid(tuple = systable_getnext(scan)))
 	{
-		Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(tuple);
+		Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(tuple);
 
 		if (strcmp(NameStr(con->conname), conname) == 0)
 		{
@@ -867,7 +867,7 @@ get_domain_constraint_oid(Oid typid, const char *conname, bool missing_ok)
 				 errmsg("constraint \"%s\" for domain \"%s\" does not exist",
 						conname, format_type_be(typid))));
 
-	heap_close(pg_constraint, AccessShareLock);
+	heap_close(mdb_constraint, AccessShareLock);
 
 	return conOid;
 }
@@ -890,7 +890,7 @@ Bitmapset *
 get_primary_key_attnos(Oid relid, bool deferrableOk, Oid *constraintOid)
 {
 	Bitmapset  *pkattnos = NULL;
-	Relation	pg_constraint;
+	Relation	mdb_constraint;
 	HeapTuple	tuple;
 	SysScanDesc scan;
 	ScanKeyData skey[1];
@@ -898,20 +898,20 @@ get_primary_key_attnos(Oid relid, bool deferrableOk, Oid *constraintOid)
 	/* Set *constraintOid, to avoid complaints about uninitialized vars */
 	*constraintOid = InvalidOid;
 
-	/* Scan pg_constraint for constraints of the target rel */
-	pg_constraint = heap_open(ConstraintRelationId, AccessShareLock);
+	/* Scan mdb_constraint for constraints of the target rel */
+	mdb_constraint = heap_open(ConstraintRelationId, AccessShareLock);
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_constraint_conrelid,
+				Anum_mdb_constraint_conrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 
-	scan = systable_beginscan(pg_constraint, ConstraintRelidIndexId, true,
+	scan = systable_beginscan(mdb_constraint, ConstraintRelidIndexId, true,
 							  NULL, 1, skey);
 
 	while (HeapTupleIsValid(tuple = systable_getnext(scan)))
 	{
-		Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(tuple);
+		Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(tuple);
 		Datum		adatum;
 		bool		isNull;
 		ArrayType  *arr;
@@ -932,8 +932,8 @@ get_primary_key_attnos(Oid relid, bool deferrableOk, Oid *constraintOid)
 			break;
 
 		/* Extract the conkey array, ie, attnums of PK's columns */
-		adatum = heap_getattr(tuple, Anum_pg_constraint_conkey,
-							  RelationGetDescr(pg_constraint), &isNull);
+		adatum = heap_getattr(tuple, Anum_mdb_constraint_conkey,
+							  RelationGetDescr(mdb_constraint), &isNull);
 		if (isNull)
 			elog(ERROR, "null conkey for constraint %u",
 				 HeapTupleGetOid(tuple));
@@ -960,14 +960,14 @@ get_primary_key_attnos(Oid relid, bool deferrableOk, Oid *constraintOid)
 
 	systable_endscan(scan);
 
-	heap_close(pg_constraint, AccessShareLock);
+	heap_close(mdb_constraint, AccessShareLock);
 
 	return pkattnos;
 }
 
 /*
  * Determine whether a relation can be proven functionally dependent on
- * a set of grouping columns.  If so, return TRUE and add the pg_constraint
+ * a set of grouping columns.  If so, return TRUE and add the mdb_constraint
  * OIDs of the constraints needed for the proof to the *constraintDeps list.
  *
  * grouping_columns is a list of grouping expressions, in which columns of
@@ -978,7 +978,7 @@ get_primary_key_attnos(Oid relid, bool deferrableOk, Oid *constraintOid)
  * if all their columns are known not null, but there's a problem: we need
  * to be able to represent the not-null-ness as part of the constraints added
  * to *constraintDeps.  FIXME whenever not-null constraints get represented
- * in pg_constraint.
+ * in mdb_constraint.
  */
 bool
 check_functional_grouping(Oid relid,

@@ -44,7 +44,7 @@
 #include "storage/fd.h"
 #include "storage/ipc.h"
 #include "storage/latch.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "storage/pmsignal.h"
 #include "utils/guc.h"
 #include "utils/ps_status.h"
@@ -86,7 +86,7 @@ static volatile sig_atomic_t ready_to_stop = false;
 static pid_t pgarch_forkexec(void);
 #endif
 
-NON_EXEC_STATIC void PgArchiverMain(int argc, char *argv[]) pg_attribute_noreturn();
+NON_EXEC_STATIC void PgArchiverMain(int argc, char *argv[]) mdb_attribute_noreturn();
 static void pgarch_exit(SIGNAL_ARGS);
 static void ArchSigHupHandler(SIGNAL_ARGS);
 static void ArchSigTermHandler(SIGNAL_ARGS);
@@ -317,7 +317,7 @@ pgarch_waken_stop(SIGNAL_ARGS)
 static void
 pgarch_MainLoop(void)
 {
-	pg_time_t	last_copy_time = 0;
+	mdb_time_t	last_copy_time = 0;
 	bool		time_to_stop;
 
 	/*
@@ -380,7 +380,7 @@ pgarch_MainLoop(void)
 		 */
 		if (!time_to_stop)		/* Don't wait during last iteration */
 		{
-			pg_time_t	curtime = (pg_time_t) time(NULL);
+			mdb_time_t	curtime = (mdb_time_t) time(NULL);
 			int			timeout;
 
 			timeout = PGARCH_AUTOWAKE_INTERVAL - (curtime - last_copy_time);
@@ -485,7 +485,7 @@ pgarch_ArchiverCopyLoop(void)
 									xlog)));
 					return;		/* give up archiving for now */
 				}
-				pg_usleep(1000000L);	/* wait a bit before retrying */
+				mdb_usleep(1000000L);	/* wait a bit before retrying */
 			}
 		}
 	}

@@ -525,7 +525,7 @@ created in 7.3.11 release.
 </para></listitem>
 
 <listitem><para>Fix race condition that could lead to <quote>file already
-exists</> errors during pg_clog file creation
+exists</> errors during mdb_clog file creation
 (Tom)</para></listitem>
 
 <listitem><para>Fix to allow restoring dumps that have cross-schema
@@ -640,7 +640,7 @@ corruption.</para>
 <para>This bug sometimes caused a bogus error <quote>RIGHT JOIN is
 only supported with merge-joinable join conditions</>.</para></listitem>
 
-<listitem><para>Prevent core dump in <application>pg_autovacuum</> when a
+<listitem><para>Prevent core dump in <application>mdb_autovacuum</> when a
 table has been dropped</para></listitem>
 
 </itemizedlist>
@@ -744,7 +744,7 @@ the variable is of pass-by-reference type</para></listitem>
 
 <programlisting>
 BEGIN;
-UPDATE pg_proc SET proargtypes[3] = 'internal'::regtype
+UPDATE mdb_proc SET proargtypes[3] = 'internal'::regtype
 WHERE pronamespace = 11 AND pronargs = 5
      AND proargtypes[2] = 'cstring'::regtype;
 -- The command should report having updated 90 rows;
@@ -762,7 +762,7 @@ COMMIT;
     as any other database, but fixing <literal>template0</> requires
     additional steps.  First, from any database issue:
 <programlisting>
-UPDATE pg_database SET datallowconn = true WHERE datname = 'template0';
+UPDATE mdb_database SET datallowconn = true WHERE datname = 'template0';
 </programlisting>
      Next connect to <literal>template0</> and perform the above repair
      procedure.  Finally, do:
@@ -770,7 +770,7 @@ UPDATE pg_database SET datallowconn = true WHERE datname = 'template0';
 -- re-freeze template0:
 VACUUM FREEZE;
 -- and protect it against future alterations:
-UPDATE pg_database SET datallowconn = false WHERE datname = 'template0';
+UPDATE mdb_database SET datallowconn = false WHERE datname = 'template0';
 </programlisting>
    </para>
   </sect2>
@@ -810,7 +810,7 @@ This error only occurred when the
 </para></listitem>
 <listitem><para>Additional buffer overrun checks in plmdb
 (Neil)</para></listitem>
-<listitem><para>Fix pg_dump to dump trigger names containing <literal>%</>
+<listitem><para>Fix mdb_dump to dump trigger names containing <literal>%</>
 correctly (Neil)</para></listitem>
 <listitem><para>Prevent <function>to_char(interval)</> from dumping core for
 month-related formats</para></listitem>
@@ -917,7 +917,7 @@ it as a potential-data-loss bug.
 Very large left joins using a hash join plan could fail to output unmatched
 left-side rows given just the right data distribution.
 </para></listitem>
-<listitem><para>Disallow running pg_ctl as root</para>
+<listitem><para>Disallow running mdb_ctl as root</para>
 <para>
 This is to guard against any possible security issues.
 </para></listitem>
@@ -965,7 +965,7 @@ restart.  This is a serious bug that has existed
 since <productname>MollyDB</productname> 7.1.
 </para></listitem>
 <listitem><para>Remove asymmetrical word processing in tsearch (Teodor)</para></listitem>
-<listitem><para>Properly schema-qualify function names when pg_dump'ing a CAST</para></listitem>
+<listitem><para>Properly schema-qualify function names when mdb_dump'ing a CAST</para></listitem>
 </itemizedlist>
 
  </sect2>
@@ -1016,7 +1016,7 @@ an external value for CFLAGS is supplied</para>
 <para>
 On some platforms, building with -fstrict-aliasing causes bugs.
 </para></listitem>
-<listitem><para>Make pg_restore handle 64-bit off_t correctly</para>
+<listitem><para>Make mdb_restore handle 64-bit off_t correctly</para>
 <para>
 This bug prevented proper restoration from archive files exceeding 4 GB.
 </para></listitem>
@@ -1069,9 +1069,9 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Added missing SPI_finish() calls to dblink's get_tuple_of_interest() (Joe)</para></listitem>
 <listitem><para>Fix for possible foreign key violation when rule rewrites INSERT (Jan)</para></listitem>
 <listitem><para>Support qualified type names in PL/Tcl's spi_prepare command (Jan)</para></listitem>
-<listitem><para>Make pg_dump handle a procedural language handler located in pg_catalog</para></listitem>
-<listitem><para>Make pg_dump handle cases where a custom opclass is in another schema</para></listitem>
-<listitem><para>Make pg_dump dump binary-compatible casts correctly (Jan)</para></listitem>
+<listitem><para>Make mdb_dump handle a procedural language handler located in mdb_catalog</para></listitem>
+<listitem><para>Make mdb_dump handle cases where a custom opclass is in another schema</para></listitem>
+<listitem><para>Make mdb_dump dump binary-compatible casts correctly (Jan)</para></listitem>
 <listitem><para>Fix insertion of expressions containing subqueries into rule bodies</para></listitem>
 <listitem><para>Fix incorrect argument processing in clusterdb script (Anand Ranganathan)</para></listitem>
 <listitem><para>Fix problems with dropped columns in plpython triggers</para></listitem>
@@ -1116,7 +1116,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Repair breakage in timestamp-to-date conversion for dates before 2000</para></listitem>
 <listitem><para>Prevent rare possibility of server startup failure (Tom)</para></listitem>
 <listitem><para>Fix bugs in interval-to-time conversion (Tom)</para></listitem>
-<listitem><para>Add constraint names in a few places in pg_dump (Rod)</para></listitem>
+<listitem><para>Add constraint names in a few places in mdb_dump (Rod)</para></listitem>
 <listitem><para>Improve performance of functions with many parameters (Tom)</para></listitem>
 <listitem><para>Fix to_ascii() buffer overruns (Tom)</para></listitem>
 <listitem><para>Prevent restore of database comments from throwing an error (Tom)</para></listitem>
@@ -1166,7 +1166,7 @@ operations on bytea columns (Joe)</para></listitem>
 <type> TIME</type>, or <type>INTERVAL</type> precision too large</para></listitem>
 <listitem><para>Fix <function>abstime-to-time</function> cast function (fix is
       not applied unless you <application>initdb</application>)</para></listitem>
-<listitem><para>Fix <application>pg_proc</application> entry for
+<listitem><para>Fix <application>mdb_proc</application> entry for
      <type>timestampt_izone</type> (fix is not applied unless you
        <application>initdb</application>)</para></listitem>
 <listitem><para>Make <function>EXTRACT(EPOCH FROM timestamp without time zone)</function> treat input as local time</para></listitem>
@@ -1181,7 +1181,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Foreign-key clauses were parsed but ignored in
       <command>ALTER TABLE ADD COLUMN</command></para></listitem>
 <listitem><para>Fix createlang script breakage for case where handler function already exists</para></listitem>
-<listitem><para>Fix misbehavior on zero-column tables in <application>pg_dump</application>, COPY, ANALYZE, other places</para></listitem>
+<listitem><para>Fix misbehavior on zero-column tables in <application>mdb_dump</application>, COPY, ANALYZE, other places</para></listitem>
 <listitem><para>Fix misbehavior of <function>func_error()</function> on type names containing '%'</para></listitem>
 <listitem><para>Fix misbehavior of <function>replace()</function> on strings containing '%'</para></listitem>
 <listitem><para>Regular-expression patterns containing certain multibyte characters failed</para></listitem>
@@ -1205,7 +1205,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Service shutdown request at proper time if it arrives while still starting up</para></listitem>
 <listitem><para>Fix left-links in temporary indexes (could make backwards scans miss entries)</para></listitem>
 <listitem><para>Fix incorrect handling of client_encoding setting in mollydb.conf (Tatsuo)</para></listitem>
-<listitem><para>Fix failure to respond to <command>pg_ctl stop -m fast</command> after Async_NotifyHandler runs</para></listitem>
+<listitem><para>Fix failure to respond to <command>mdb_ctl stop -m fast</command> after Async_NotifyHandler runs</para></listitem>
 <listitem><para>Fix SPI for case where rule contains multiple statements of the same type</para></listitem>
 <listitem><para>Fix problem with checking for wrong type of access privilege in rule query</para></listitem>
 <listitem><para>Fix problem with <command>EXCEPT</command> in <command>CREATE RULE</command></para></listitem>
@@ -1216,13 +1216,13 @@ operations on bytea columns (Joe)</para></listitem>
       and <command> DROP CAST</command></para></listitem>
 <listitem><para>Accept <function>SETOF type[]</function>, which formerly had to
       be written <function>SETOF _type</function></para></listitem>
-<listitem><para>Fix <application>pg_dump</application> core dump in some cases with procedural languages</para></listitem>
-<listitem><para>Force ISO datestyle in <application>pg_dump</application> output, for portability (Oliver)</para></listitem>
-<listitem><para><application>pg_dump</application> failed to handle error return
+<listitem><para>Fix <application>mdb_dump</application> core dump in some cases with procedural languages</para></listitem>
+<listitem><para>Force ISO datestyle in <application>mdb_dump</application> output, for portability (Oliver)</para></listitem>
+<listitem><para><application>mdb_dump</application> failed to handle error return
       from <function>lo_read</function> (Oleg Drokin)</para></listitem>
-<listitem><para><application>pg_dumpall</application> failed with groups having no members (Nick Eskelinen)</para></listitem>
-<listitem><para><application>pg_dumpall</application> failed to recognize --globals-only switch</para></listitem>
-<listitem><para>pg_restore failed to restore blobs if -X disable-triggers is specified</para></listitem>
+<listitem><para><application>mdb_dumpall</application> failed with groups having no members (Nick Eskelinen)</para></listitem>
+<listitem><para><application>mdb_dumpall</application> failed to recognize --globals-only switch</para></listitem>
+<listitem><para>mdb_restore failed to restore blobs if -X disable-triggers is specified</para></listitem>
 <listitem><para>Repair intrafunction memory leak in plmdb</para></listitem>
 <listitem><para>pltcl's <command>elog</command> command dumped core if given wrong parameters (Ian Harding)</para></listitem>
 <listitem><para>plpython used wrong value of <envar>atttypmod</envar> (Brad McLean)</para></listitem>
@@ -1264,13 +1264,13 @@ operations on bytea columns (Joe)</para></listitem>
 
 <itemizedlist>
 <listitem><para>Restore creation of OID column in CREATE TABLE AS / SELECT INTO</para></listitem>
-<listitem><para>Fix <application>pg_dump</> core dump when dumping views having comments</para></listitem>
+<listitem><para>Fix <application>mdb_dump</> core dump when dumping views having comments</para></listitem>
 <listitem><para>Dump DEFERRABLE/INITIALLY DEFERRED constraints properly</para></listitem>
 <listitem><para>Fix UPDATE when child table's column numbering differs from parent</para></listitem>
 <listitem><para>Increase default value of max_fsm_relations</para></listitem>
 <listitem><para>Fix problem when fetching backwards in a cursor for a single-row query</para></listitem>
 <listitem><para>Make backward fetch work properly with cursor on SELECT DISTINCT query</para></listitem>
-<listitem><para>Fix problems with loading <application>pg_dump</> files containing contrib/lo usage</para></listitem>
+<listitem><para>Fix problems with loading <application>mdb_dump</> files containing contrib/lo usage</para></listitem>
 <listitem><para>Fix problem with all-numeric user names</para></listitem>
 <listitem><para>Fix possible memory leak and core dump during disconnect in libpgtcl</para></listitem>
 <listitem><para>Make plpython's spi_execute command handle nulls properly (Andrew Bosma)</para></listitem>
@@ -1282,7 +1282,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Reduce MAX_TIME_PRECISION from 13 to 10 in floating-point case</para></listitem>
 <listitem><para>Correctly case-fold variable names in per-database and per-user settings</para></listitem>
 <listitem><para>Fix coredump in plmdb's RETURN NEXT when SELECT into record returns no rows</para></listitem>
-<listitem><para>Fix outdated use of pg_type.typprtlen in python client interface</para></listitem>
+<listitem><para>Fix outdated use of mdb_type.typprtlen in python client interface</para></listitem>
 <listitem><para>Correctly handle fractional seconds in timestamps in JDBC driver</para></listitem>
 <listitem><para>Improve performance of getImportedKeys() in JDBC</para></listitem>
 <listitem><para>Make shared-library symlinks work standardly on HPUX (Giles)</para></listitem>
@@ -1328,17 +1328,17 @@ operations on bytea columns (Joe)</para></listitem>
 
 <itemizedlist>
 <listitem><para>Fix a core dump of COPY TO when client/server encodings don't match (Tom)</para></listitem>
-<listitem><para>Allow <application>pg_dump</> to work with pre-7.2 servers (Philip)</para></listitem>
+<listitem><para>Allow <application>mdb_dump</> to work with pre-7.2 servers (Philip)</para></listitem>
 <listitem><para>contrib/adddepend fixes (Tom)</para></listitem>
 <listitem><para>Fix problem with deletion of per-user/per-database config settings (Tom)</para></listitem>
 <listitem><para>contrib/vacuumlo fix (Tom)</para></listitem>
-<listitem><para>Allow 'password' encryption even when pg_shadow contains MD5 passwords (Bruce)</para></listitem>
+<listitem><para>Allow 'password' encryption even when mdb_shadow contains MD5 passwords (Bruce)</para></listitem>
 <listitem><para>contrib/dbmirror fix (Steven Singer)</para></listitem>
 <listitem><para>Optimizer fixes (Tom)</para></listitem>
 <listitem><para>contrib/tsearch fixes (Teodor Sigaev, Magnus)</para></listitem>
 <listitem><para>Allow locale names to be mixed case (Nicolai Tufar)</para></listitem>
 <listitem><para>Increment libpq library's major version number (Bruce)</para></listitem>
-<listitem><para>pg_hba.conf error reporting fixes (Bruce, Neil)</para></listitem>
+<listitem><para>mdb_hba.conf error reporting fixes (Bruce, Neil)</para></listitem>
 <listitem><para>Add SCO Openserver 5.0.4 as a supported platform (Bruce)</para></listitem>
 <listitem><para>Prevent EXPLAIN from crashing server (Tom)</para></listitem>
 <listitem><para>SSL fixes (Nathan Mueller)</para></listitem>
@@ -1484,7 +1484,7 @@ operations on bytea columns (Joe)</para></listitem>
   <title>Migration to Version 7.3</title>
 
   <para>
-   A dump/restore using <application>pg_dump</> is required for those
+   A dump/restore using <application>mdb_dump</> is required for those
    wishing to migrate data from any previous release. If your
    application examines the system catalogs, additional changes will
    be required due to the introduction of schemas in 7.3; for more
@@ -1505,7 +1505,7 @@ operations on bytea columns (Joe)</para></listitem>
 
    <listitem>
     <para>
-     <filename>pg_hba.conf</filename> now has a column for the user
+     <filename>mdb_hba.conf</filename> now has a column for the user
      name and additional features.  Existing files need to be
      adjusted.
     </para>
@@ -1594,7 +1594,7 @@ operations on bytea columns (Joe)</para></listitem>
   <sect3>
    <title>Server Operation</title>
 <itemizedlist>
-<listitem><para>Add pg_locks view to show locks (Neil)</para></listitem>
+<listitem><para>Add mdb_locks view to show locks (Neil)</para></listitem>
 <listitem><para>Security fixes for password negotiation memory allocation (Neil)</para></listitem>
 <listitem><para>Remove support for version 0 FE/BE protocol (<productname>MollyDB</productname> 6.2 and earlier) (Tom)</para></listitem>
 <listitem><para>Reserve the last few backend slots for superusers, add parameter superuser_reserved_connections to control this (Nigel J. Andrews)</para></listitem>
@@ -1640,17 +1640,17 @@ operations on bytea columns (Joe)</para></listitem>
    <title>Server Configuration</title>
 <itemizedlist>
 <listitem><para>Server log messages now tagged with LOG, not DEBUG (Bruce)</para></listitem>
-<listitem><para>Add user column to pg_hba.conf (Bruce)</para></listitem>
+<listitem><para>Add user column to mdb_hba.conf (Bruce)</para></listitem>
 <listitem><para>Have log_connections output two lines in log file (Tom)</para></listitem>
 <listitem><para>Remove debug_level from mollydb.conf, now server_min_messages (Bruce)</para></listitem>
 <listitem><para>New ALTER DATABASE/USER ... SET command for per-user/database initialization (Peter)</para></listitem>
 <listitem><para>New parameters server_min_messages and client_min_messages to control which messages are sent to the server logs or client applications (Bruce)</para></listitem>
-<listitem><para>Allow pg_hba.conf to specify lists of users/databases separated by commas, group names prepended with +, and file names prepended with @ (Bruce)</para></listitem>
-<listitem><para>Remove secondary password file capability and pg_password utility (Bruce)</para></listitem>
+<listitem><para>Allow mdb_hba.conf to specify lists of users/databases separated by commas, group names prepended with +, and file names prepended with @ (Bruce)</para></listitem>
+<listitem><para>Remove secondary password file capability and mdb_password utility (Bruce)</para></listitem>
 <listitem><para>Add variable db_user_namespace for database-local user names (Bruce)</para></listitem>
 <listitem><para>SSL improvements (Bear Giles)</para></listitem>
 <listitem><para>Make encryption of stored passwords the default (Bruce)</para></listitem>
-<listitem><para>Allow pg_statistics to be reset by calling pg_stat_reset() (Christopher)</para></listitem>
+<listitem><para>Allow mdb_statistics to be reset by calling mdb_stat_reset() (Christopher)</para></listitem>
 <listitem><para>Add log_duration parameter (Bruce)</para></listitem>
 <listitem><para>Rename debug_print_query to log_statement (Bruce)</para></listitem>
 <listitem><para>Rename show_query_stats to show_statement_stats (Bruce)</para></listitem>
@@ -1724,7 +1724,7 @@ operations on bytea columns (Joe)</para></listitem>
 <itemizedlist>
 <listitem><para>Have COPY TO output embedded carriage returns and newlines as \r and \n (Tom)</para></listitem>
 <listitem><para>Allow DELIMITER in COPY FROM to be 8-bit clean (Tatsuo)</para></listitem>
-<listitem><para>Make <application>pg_dump</> use ALTER TABLE ADD PRIMARY KEY, for performance (Neil)</para></listitem>
+<listitem><para>Make <application>mdb_dump</> use ALTER TABLE ADD PRIMARY KEY, for performance (Neil)</para></listitem>
 <listitem><para>Disable brackets in multistatement rules (Bruce)</para></listitem>
 <listitem><para>Disable VACUUM from being called inside a function (Bruce)</para></listitem>
 <listitem><para>Allow dropdb and other scripts to use identifiers with spaces (Bruce)</para></listitem>
@@ -1736,7 +1736,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Add 'SET LOCAL var = value' to set configuration variables for a single transaction (Tom)</para></listitem>
 <listitem><para>Allow ANALYZE to run in a transaction (Bruce)</para></listitem>
 <listitem><para>Improve COPY syntax using new WITH clauses, keep backward compatibility (Bruce)</para></listitem>
-<listitem><para>Fix <application>pg_dump</> to consistently output tags in non-ASCII dumps (Bruce)</para></listitem>
+<listitem><para>Fix <application>mdb_dump</> to consistently output tags in non-ASCII dumps (Bruce)</para></listitem>
 <listitem><para>Make foreign key constraints clearer in dump file (Rod)</para></listitem>
 <listitem><para>Add COMMENT ON CONSTRAINT (Rod)</para></listitem>
 <listitem><para>Allow COPY TO/FROM to specify column names (Brent Verner)</para></listitem>
@@ -1744,14 +1744,14 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Have SHOW output a query result (Joe)</para></listitem>
 <listitem><para>Generate failure on short COPY lines rather than pad NULLs (Neil)</para></listitem>
 <listitem><para>Fix CLUSTER to preserve all table attributes (Alvaro Herrera)</para></listitem>
-<listitem><para>New pg_settings table to view/modify GUC settings (Joe)</para></listitem>
-<listitem><para>Add smart quoting, portability improvements to <application>pg_dump</> output (Peter)</para></listitem>
+<listitem><para>New mdb_settings table to view/modify GUC settings (Joe)</para></listitem>
+<listitem><para>Add smart quoting, portability improvements to <application>mdb_dump</> output (Peter)</para></listitem>
 <listitem><para>Dump serial columns out as SERIAL (Tom)</para></listitem>
-<listitem><para>Enable large file support, &gt;2G for <application>pg_dump</> (Peter, Philip Warner, Bruce)</para></listitem>
+<listitem><para>Enable large file support, &gt;2G for <application>mdb_dump</> (Peter, Philip Warner, Bruce)</para></listitem>
 <listitem><para>Disallow TRUNCATE on tables that are involved in referential constraints (Rod)</para></listitem>
 <listitem><para>Have TRUNCATE also auto-truncate the toast table of the relation (Tom)</para></listitem>
 <listitem><para>Add clusterdb utility that will auto-cluster an entire database based on previous CLUSTER operations (Alvaro Herrera)</para></listitem>
-<listitem><para>Overhaul pg_dumpall (Peter)</para></listitem>
+<listitem><para>Overhaul mdb_dumpall (Peter)</para></listitem>
 <listitem><para>Allow REINDEX of TOAST tables (Tom)</para></listitem>
 <listitem><para>Implemented START TRANSACTION, per SQL99 (Neil)</para></listitem>
 <listitem><para>Fix rare index corruption when a page split affects bulk delete (Tom)</para></listitem>
@@ -1787,7 +1787,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Add CREATE/DROP CAST (Peter)</para></listitem>
 <listitem><para>Add IS DISTINCT FROM operator (Thomas)</para></listitem>
 <listitem><para>Add SQL99 TREAT() function, synonym for CAST() (Thomas)</para></listitem>
-<listitem><para>Add pg_backend_pid() to output backend pid (Bruce)</para></listitem>
+<listitem><para>Add mdb_backend_pid() to output backend pid (Bruce)</para></listitem>
 <listitem><para>Add IS OF / IS NOT OF type predicate (Thomas)</para></listitem>
 <listitem><para>Allow bit string constants without fully-specified length (Thomas)</para></listitem>
 <listitem><para>Allow conversion between 8-byte integers and bit strings (Thomas)</para></listitem>
@@ -1816,9 +1816,9 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Enable multibyte support by default (Tatsuo)</para></listitem>
 <listitem><para>Add GB18030 multibyte support (Bill Huang)</para></listitem>
 <listitem><para>Add CREATE/DROP CONVERSION, allowing loadable encodings (Tatsuo, Kaori)</para></listitem>
-<listitem><para>Add pg_conversion table (Tatsuo)</para></listitem>
+<listitem><para>Add mdb_conversion table (Tatsuo)</para></listitem>
 <listitem><para>Add SQL99 CONVERT() function (Tatsuo)</para></listitem>
-<listitem><para>pg_dumpall, pg_controldata, and pg_resetxlog now national-language aware (Peter)</para></listitem>
+<listitem><para>mdb_dumpall, mdb_controldata, and mdb_resetxlog now national-language aware (Peter)</para></listitem>
 <listitem><para>New and updated translations</para></listitem>
 </itemizedlist>
   </sect3>
@@ -1895,7 +1895,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Move src/interfaces/libpgeasy to http://gborg.mollydb.org (Marc, Bruce)</para></listitem>
 <listitem><para>Move src/interfaces/perl5 to http://gborg.mollydb.org (Marc, Bruce)</para></listitem>
 <listitem><para>Remove src/bin/pgaccess from main tree, now at http://www.pgaccess.org (Bruce)</para></listitem>
-<listitem><para>Add pg_on_connection_loss command to libpgtcl (Gerhard Hintermayer, Tom)</para></listitem>
+<listitem><para>Add mdb_on_connection_loss command to libpgtcl (Gerhard Hintermayer, Tom)</para></listitem>
 </itemizedlist>
   </sect3>
 
@@ -1926,12 +1926,12 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Improve loadable module linking to use RTLD_NOW (Tom)</para></listitem>
 <listitem><para>New error levels WARNING, INFO, LOG, DEBUG[1-5] (Bruce)</para></listitem>
 <listitem><para>New src/port directory holds replaced libc functions (Peter, Bruce)</para></listitem>
-<listitem><para>New pg_namespace system catalog for schemas (Tom)</para></listitem>
-<listitem><para>Add pg_class.relnamespace for schemas (Tom)</para></listitem>
-<listitem><para>Add pg_type.typnamespace for schemas (Tom)</para></listitem>
-<listitem><para>Add pg_proc.pronamespace for schemas (Tom)</para></listitem>
-<listitem><para>Restructure aggregates to have pg_proc entries (Tom)</para></listitem>
-<listitem><para>System relations now have their own namespace, pg_* test not required (Fernando Nasser)</para></listitem>
+<listitem><para>New mdb_namespace system catalog for schemas (Tom)</para></listitem>
+<listitem><para>Add mdb_class.relnamespace for schemas (Tom)</para></listitem>
+<listitem><para>Add mdb_type.typnamespace for schemas (Tom)</para></listitem>
+<listitem><para>Add mdb_proc.pronamespace for schemas (Tom)</para></listitem>
+<listitem><para>Restructure aggregates to have mdb_proc entries (Tom)</para></listitem>
+<listitem><para>System relations now have their own namespace, mdb_* test not required (Fernando Nasser)</para></listitem>
 <listitem><para>Rename TOAST index names to be *_index rather than *_idx (Neil)</para></listitem>
 <listitem><para>Add namespaces for operators, opclasses (Tom)</para></listitem>
 <listitem><para>Add additional checks to server control file (Thomas)</para></listitem>
@@ -1948,7 +1948,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Clean up use of sprintf in favor of snprintf() (Neil, Jukka Holappa)</para></listitem>
 <listitem><para>Remove OPAQUE and create specific subtypes (Tom)</para></listitem>
 <listitem><para>Cleanups in array internal handling (Joe, Tom)</para></listitem>
-<listitem><para>Disallow pg_atoi('') (Bruce)</para></listitem>
+<listitem><para>Disallow mdb_atoi('') (Bruce)</para></listitem>
 <listitem><para>Remove parameter wal_files because WAL files are now recycled (Bruce)</para></listitem>
 <listitem><para>Add version numbers to heap pages (Tom)</para></listitem>
 </itemizedlist>
@@ -1975,7 +1975,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Improve /contrib/pgbench (Neil)</para></listitem>
 <listitem><para>Add /contrib/tablefunc table function examples (Joe)</para></listitem>
 <listitem><para>Add /contrib/ltree data type for tree structures (Teodor Sigaev, Oleg Bartunov)</para></listitem>
-<listitem><para>Move /contrib/pg_controldata, pg_resetxlog into main tree (Bruce)</para></listitem>
+<listitem><para>Move /contrib/mdb_controldata, mdb_resetxlog into main tree (Bruce)</para></listitem>
 <listitem><para>Fixes to /contrib/cube (Bruno Wolff)</para></listitem>
 <listitem><para>Improve /contrib/fulltextindex (Christopher)</para></listitem>
 </itemizedlist>
@@ -2024,7 +2024,7 @@ There are no known cases of it having caused more than an Assert failure.
 <type>TIME WITH TIME ZONE</> values</para></listitem>
 <listitem><para>Additional buffer overrun checks in plmdb
 (Neil)</para></listitem>
-<listitem><para>Fix pg_dump to dump index names and trigger names containing
+<listitem><para>Fix mdb_dump to dump index names and trigger names containing
 <literal>%</> correctly (Neil)</para></listitem>
 <listitem><para>Prevent <function>to_char(interval)</> from dumping core for
 month-related formats</para></listitem>
@@ -2119,7 +2119,7 @@ it as a potential-data-loss bug.
 Very large left joins using a hash join plan could fail to output unmatched
 left-side rows given just the right data distribution.
 </para></listitem>
-<listitem><para>Disallow running pg_ctl as root</para>
+<listitem><para>Disallow running mdb_ctl as root</para>
 <para>
 This is to guard against any possible security issues.
 </para></listitem>
@@ -2170,8 +2170,8 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>Fix corner case for btree search in parallel with first root page split</para></listitem>
 <listitem><para>Fix buffer overrun in <function>to_ascii</function> (Guido Notari)</para></listitem>
 <listitem><para>Fix core dump in deadlock detection on machines where char is unsigned</para></listitem>
-<listitem><para>Fix failure to respond to <command>pg_ctl stop -m fast</command> after Async_NotifyHandler runs</para></listitem>
-<listitem><para>Repair memory leaks in pg_dump</para></listitem>
+<listitem><para>Fix failure to respond to <command>mdb_ctl stop -m fast</command> after Async_NotifyHandler runs</para></listitem>
+<listitem><para>Repair memory leaks in mdb_dump</para></listitem>
 <listitem><para>Avoid conflict with system definition of <function>isblank()</function> function or macro</para></listitem>
 </itemizedlist>
  </sect2>
@@ -2205,9 +2205,9 @@ since <productname>MollyDB</productname> 7.1.
 <itemizedlist>
 <listitem><para>Fix some additional cases of VACUUM "No one parent tuple was found" error</para></listitem>
 <listitem><para>Prevent VACUUM from being called inside a function  (Bruce)</para></listitem>
-<listitem><para>Ensure pg_clog updates are sync'd to disk before marking checkpoint complete</para></listitem>
+<listitem><para>Ensure mdb_clog updates are sync'd to disk before marking checkpoint complete</para></listitem>
 <listitem><para>Avoid integer overflow during large hash joins</para></listitem>
-<listitem><para>Make GROUP commands work when pg_group.grolist is large enough to be toasted</para></listitem>
+<listitem><para>Make GROUP commands work when mdb_group.grolist is large enough to be toasted</para></listitem>
 <listitem><para>Fix errors in datetime tables; some timezone names weren't being recognized</para></listitem>
 <listitem><para>Fix integer overflows in circle_poly(), path_encode(), path_add()  (Neil)</para></listitem>
 <listitem><para>Repair long-standing logic errors in lseg_eq(), lseg_ne(), lseg_center()</para></listitem>
@@ -2247,7 +2247,7 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>Handle pre-1970 date values in newer versions of glibc (Tom)</para></listitem>
 <listitem><para>Fix possible hang during server shutdown</para></listitem>
 <listitem><para>Prevent spinlock hangs on SMP PPC machines (Tomoyuki Niijima)</para></listitem>
-<listitem><para>Fix <application>pg_dump</> to properly dump FULL JOIN USING (Tom)</para></listitem>
+<listitem><para>Fix <application>mdb_dump</> to properly dump FULL JOIN USING (Tom)</para></listitem>
 </itemizedlist>
  </sect2>
 </sect1>
@@ -2281,14 +2281,14 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>Allow EXECUTE of "CREATE TABLE AS ... SELECT" in PL/pgSQL (Tom)</para></listitem>
 <listitem><para>Fix for compressed transaction log id wraparound (Tom)</para></listitem>
 <listitem><para>Fix PQescapeBytea/PQunescapeBytea so that they handle bytes &gt; 0x7f (Tatsuo)</para></listitem>
-<listitem><para>Fix for psql and <application>pg_dump</> crashing when invoked with non-existent long options (Tatsuo)</para></listitem>
+<listitem><para>Fix for psql and <application>mdb_dump</> crashing when invoked with non-existent long options (Tatsuo)</para></listitem>
 <listitem><para>Fix crash when invoking geometric operators (Tom)</para></listitem>
 <listitem><para>Allow OPEN cursor(args) (Tom)</para></listitem>
 <listitem><para>Fix for rtree_gist index build (Teodor)</para></listitem>
 <listitem><para>Fix for dumping user-defined aggregates (Tom)</para></listitem>
 <listitem><para>contrib/intarray fixes (Oleg)</para></listitem>
 <listitem><para>Fix for complex UNION/EXCEPT/INTERSECT queries using parens (Tom)</para></listitem>
-<listitem><para>Fix to pg_convert (Tatsuo)</para></listitem>
+<listitem><para>Fix to mdb_convert (Tatsuo)</para></listitem>
 <listitem><para>Fix for crash with long DATA strings (Thomas, Neil)</para></listitem>
 <listitem><para>Fix for repeat(), lpad(), rpad() and long strings (Neil)</para></listitem>
 </itemizedlist>
@@ -2443,7 +2443,7 @@ since <productname>MollyDB</productname> 7.1.
   <title>Migration to Version 7.2</title>
 
   <para>
-   A dump/restore using <command>pg_dump</command> is required for
+   A dump/restore using <command>mdb_dump</command> is required for
    those wishing to migrate data from any previous release.
   </para>
 
@@ -2472,7 +2472,7 @@ since <productname>MollyDB</productname> 7.1.
 
    <listitem>
     <para>
-     The <filename>pg_hba.conf</> and <filename>pg_ident.conf</>
+     The <filename>mdb_hba.conf</> and <filename>mdb_ident.conf</>
      configuration is now only reloaded after receiving a
      <systemitem>SIGHUP</> signal, not with each connection.
     </para>
@@ -2520,7 +2520,7 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>Delete orphaned temporary files on postmaster startup (Bruce)</para></listitem>
 <listitem><para>Added unique indexes to some system tables (Tom)</para></listitem>
 <listitem><para>System table operator reorganization (Oleg Bartunov, Teodor Sigaev, Tom)</para></listitem>
-<listitem><para>Renamed pg_log to pg_clog (Tom)</para></listitem>
+<listitem><para>Renamed mdb_log to mdb_clog (Tom)</para></listitem>
 <listitem><para>Enable SIGTERM, SIGQUIT to kill backends (Jan)</para></listitem>
 <listitem><para>Removed compile-time limit on number of backends (Tom)</para></listitem>
 <listitem><para>Better cleanup for semaphore resource failure (Tatsuo, Tom)</para></listitem>
@@ -2535,7 +2535,7 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>Measure transaction times in milliseconds (Thomas)</para></listitem>
 <listitem><para>Fix TID sequential scans (Hiroshi)</para></listitem>
 <listitem><para>Superuser ID now fixed at 1 (Peter E)</para></listitem>
-<listitem><para>New pg_ctl "reload" option (Tom)</para></listitem>
+<listitem><para>New mdb_ctl "reload" option (Tom)</para></listitem>
 </itemizedlist>
   </sect3>
 
@@ -2565,7 +2565,7 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>Allow non-superuser to vacuum database (Tom)</para></listitem>
 <listitem><para>New SET SESSION AUTHORIZATION command (Peter E)</para></listitem>
 <listitem><para>Fix bug in privilege modifications on newly created tables (Tom)</para></listitem>
-<listitem><para>Disallow access to pg_statistic for non-superuser, add user-accessible views (Tom)</para></listitem>
+<listitem><para>Disallow access to mdb_statistic for non-superuser, add user-accessible views (Tom)</para></listitem>
 </itemizedlist>
   </sect3>
 
@@ -2577,7 +2577,7 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>Add a password authentication method that uses MD5 encryption (Bruce)</para></listitem>
 <listitem><para>Allow encryption of stored passwords using MD5 (Bruce)</para></listitem>
 <listitem><para>PAM authentication (Dominic J. Eidson)</para></listitem>
-<listitem><para>Load pg_hba.conf and pg_ident.conf only on startup and SIGHUP (Bruce)</para></listitem>
+<listitem><para>Load mdb_hba.conf and mdb_ident.conf only on startup and SIGHUP (Bruce)</para></listitem>
 </itemizedlist>
   </sect3>
 
@@ -2666,8 +2666,8 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>Bytea now supports concatenation</para></listitem>
 <listitem><para>New bytea functions: position, substring, trim, btrim, and length</para></listitem>
 <listitem><para>New encode() function mode, "escaped", converts minimally escaped bytea to/from text</para></listitem>
-<listitem><para>Add pg_database_encoding_max_length() (Tatsuo)</para></listitem>
-<listitem><para>Add pg_client_encoding() function (Tatsuo)</para></listitem>
+<listitem><para>Add mdb_database_encoding_max_length() (Tatsuo)</para></listitem>
+<listitem><para>Add mdb_client_encoding() function (Tatsuo)</para></listitem>
 <listitem><para>now() returns time with millisecond precision (Thomas)</para></listitem>
 <listitem><para>New TIMESTAMP WITHOUT TIMEZONE data type (Thomas)</para></listitem>
 <listitem><para>Add ISO date/time specification with "T", yyyy-mm-ddThh:mm:ss (Thomas)</para></listitem>
@@ -2693,7 +2693,7 @@ since <productname>MollyDB</productname> 7.1.
   <sect3>
    <title>Internationalization</title>
 <itemizedlist>
-<listitem><para>National language support in psql, <application>pg_dump</>, libpq, and server (Peter E)</para></listitem>
+<listitem><para>National language support in psql, <application>mdb_dump</>, libpq, and server (Peter E)</para></listitem>
 <listitem><para>Message translations in Chinese (simplified, traditional), Czech, French, German, Hungarian, Russian, Swedish (Peter E, Serguei A. Mokhov, Karel Zak, Weiping He, Zhenbang Wei, Kovacs Zoltan)</para></listitem>
 <listitem><para>Make trim, ltrim, rtrim, btrim, lpad, rpad, translate multibyte aware (Tatsuo)</para></listitem>
 <listitem><para>Add LATIN5,6,7,8,9,10 support (Tatsuo)</para></listitem>
@@ -2839,7 +2839,7 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>Python fix fetchone() (Gerhard Haring)</para></listitem>
 <listitem><para>Use UTF, Unicode in Tcl where appropriate (Vsevolod Lobko, Reinhard Max)</para></listitem>
 <listitem><para>Add Tcl COPY TO/FROM (ljb)</para></listitem>
-<listitem><para>Prevent output of default index op class in <application>pg_dump</> (Tom)</para></listitem>
+<listitem><para>Prevent output of default index op class in <application>mdb_dump</> (Tom)</para></listitem>
 <listitem><para>Fix libpgeasy memory leak (Bruce)</para></listitem>
 </itemizedlist>
   </sect3>
@@ -2857,7 +2857,7 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>AIX fixes (Tatsuo, Andreas)</para></listitem>
 <listitem><para>Fix parallel make (Peter E)</para></listitem>
 <listitem><para>Install SQL language manual pages into OS-specific directories (Peter E)</para></listitem>
-<listitem><para>Rename config.h to pg_config.h (Peter E)</para></listitem>
+<listitem><para>Rename config.h to mdb_config.h (Peter E)</para></listitem>
 <listitem><para>Reorganize installation layout of header files (Peter E)</para></listitem>
 </itemizedlist>
   </sect3>
@@ -2890,8 +2890,8 @@ since <productname>MollyDB</productname> 7.1.
 <listitem><para>contrib/fulltextindex fixes (Christopher Kings-Lynne)</para></listitem>
 <listitem><para>New contrib/fuzzystrmatch with levenshtein and metaphone, soundex merged (Joe Conway)</para></listitem>
 <listitem><para>Add contrib/intarray boolean queries, binary search, fixes (Oleg Bartunov)</para></listitem>
-<listitem><para>New pg_upgrade utility (Bruce)</para></listitem>
-<listitem><para>Add new pg_resetxlog options (Bruce, Tom)</para></listitem>
+<listitem><para>New mdb_upgrade utility (Bruce)</para></listitem>
+<listitem><para>Add new mdb_resetxlog options (Bruce, Tom)</para></listitem>
 </itemizedlist>
   </sect3>
  </sect2>
@@ -2925,7 +2925,7 @@ Multiaction rule fix (Tom)
 PL/pgSQL memory allocation fix (Jan)
 VACUUM buffer fix (Tom)
 Regression test fixes (Tom)
-pg_dump fixes for GRANT/REVOKE/comments on views, user-defined types (Tom)
+mdb_dump fixes for GRANT/REVOKE/comments on views, user-defined types (Tom)
 Fix subselects with DISTINCT ON or LIMIT (Tom)
 BeOS fix
 Disable COPY TO/FROM a view (Tom)
@@ -2967,7 +2967,7 @@ Fix PL/pgSQL SELECTs when returning no rows
 Fix for psql backslash core dump
 Referential integrity privilege fix
 Optimizer fixes
-pg_dump cleanups
+mdb_dump cleanups
 </programlisting>
    </para>
   </sect2>
@@ -3002,8 +3002,8 @@ pg_dump cleanups
    <para>
 <programlisting>
 Fix for numeric MODULO operator (Tom)
-pg_dump fixes (Philip)
-pg_dump can dump 7.0 databases (Philip)
+mdb_dump fixes (Philip)
+mdb_dump can dump 7.0 databases (Philip)
 readline 4.2 fixes (Peter E)
 JOIN fixes (Tom)
 AIX, MSWIN, VAX, N32K fixes (Tom)
@@ -3011,7 +3011,7 @@ Multibytes fixes (Tom)
 Unicode fixes (Tatsuo)
 Optimizer improvements (Tom)
 Fix for whole rows in functions (Tom)
-Fix for pg_ctl and option strings with spaces (Peter E)
+Fix for mdb_ctl and option strings with spaces (Peter E)
 ODBC fixes (Hiroshi)
 EXTRACT can now take string argument (Thomas)
 Python fixes (Darcy)
@@ -3118,7 +3118,7 @@ Subqueries in FROM are now supported.
    <title>Migration to Version 7.1</title>
 
    <para>
-       A dump/restore using pg_dump is required for those wishing to migrate
+       A dump/restore using mdb_dump is required for those wishing to migrate
        data from any previous release.
    </para>
   </sect2>
@@ -3157,14 +3157,14 @@ Allow UNION/INTERSECT/EXCEPT to be used with ALL, subqueries, views,
 Fix parser failures during aborted transactions (Tom)
 Allow temporary relations to properly clean up indexes (Bruce)
 Fix VACUUM problem with moving rows in same page (Tom)
-Modify pg_dump to better handle user-defined items in template1 (Philip)
+Modify mdb_dump to better handle user-defined items in template1 (Philip)
 Allow LIMIT in VIEW (Tom)
 Require cursor FETCH to honor LIMIT (Tom)
 Allow PRIMARY/FOREIGN Key definitions on inherited columns (Stephan)
 Allow ORDER BY, LIMIT in subqueries (Tom)
 Allow UNION in CREATE RULE (Tom)
 Make ALTER/DROP TABLE rollback-able (Vadim, Tom)
-Store initdb collation in pg_control so collation cannot be changed (Tom)
+Store initdb collation in mdb_control so collation cannot be changed (Tom)
 Fix INSERT...SELECT with rules (Tom)
 Fix FOR UPDATE inside views and subselects (Tom)
 Fix OVERLAPS operators conform to SQL92 spec regarding NULLs (Tom)
@@ -3199,9 +3199,9 @@ ODBC cleanups/improvements (Nick Gorham, Stephan Szabo, Zoltan Kovacs,
    Michael Fork)
 Allow renaming of temp tables (Tom)
 Overhaul memory manager contexts (Tom)
-pg_dumpall uses CREATE USER or CREATE GROUP rather using COPY (Peter E)
-Overhaul pg_dump (Philip Warner)
-Allow pg_hba.conf secondary password file to specify only username (Peter E)
+mdb_dumpall uses CREATE USER or CREATE GROUP rather using COPY (Peter E)
+Overhaul mdb_dump (Philip Warner)
+Allow mdb_hba.conf secondary password file to specify only username (Peter E)
 Allow TEMPORARY or TEMP key word when creating temporary tables (Bruce)
 New memory leak checker (Karel)
 New SET SESSION CHARACTERISTICS (Thomas)
@@ -3211,15 +3211,15 @@ New ALTER TABLE ADD CONSTRAINT (Stephan)
 Use NUMERIC accumulators for INTEGER aggregates (Tom)
 Overhaul aggregate code (Tom)
 New VARIANCE and STDDEV() aggregates
-Improve dependency ordering of pg_dump (Philip)
-New pg_restore command (Philip)
-New pg_dump tar output option (Philip)
-New pg_dump of large objects  (Philip)
+Improve dependency ordering of mdb_dump (Philip)
+New mdb_restore command (Philip)
+New mdb_dump tar output option (Philip)
+New mdb_dump of large objects  (Philip)
 New ESCAPE option to LIKE (Thomas)
 New case-insensitive LIKE - ILIKE (Thomas)
 Allow functional indexes to use binary-compatible type (Tom)
 Allow SQL functions to be used in more contexts (Tom)
-New pg_config utility (Peter E)
+New mdb_config utility (Peter E)
 New PL/pgSQL EXECUTE command which allows dynamic SQL and utility statements
    (Jan)
 New PL/pgSQL GET DIAGNOSTICS statement for SPI value access (Jan)
@@ -3228,13 +3228,13 @@ New ALTER TABLE table OWNER TO user command (Mark Hollomon)
 Allow subselects in FROM, i.e. FROM (SELECT ...) [AS] alias (Tom)
 Update PyGreSQL to version 3.1 (D'Arcy)
 Store tables as files named by OID (Vadim)
-New SQL function setval(seq,val,bool) for use in pg_dump (Philip)
+New SQL function setval(seq,val,bool) for use in mdb_dump (Philip)
 Require DROP VIEW to remove views, no DROP TABLE (Mark)
 Allow DROP VIEW view1, view2 (Mark)
 Allow multiple objects in DROP INDEX, DROP RULE, and DROP TYPE (Tom)
 Allow automatic conversion to/from Unicode (Tatsuo, Eiji)
 New /contrib/pgcrypto hashing functions (Marko Kreen)
-New pg_dumpall --globals-only option (Peter E)
+New mdb_dumpall --globals-only option (Peter E)
 New CHECKPOINT command for WAL which creates new WAL log file (Vadim)
 New AT TIME ZONE syntax (Thomas)
 Allow location of Unix domain socket to be configurable (David J. MacKenzie)
@@ -3248,8 +3248,8 @@ New file format for COPY BINARY (Tom)
 New /contrib/oid2name to map numeric files to table names (B Palmer)
 New "idle in transaction" ps status message (Marc)
 Update to pgaccess 0.98.7 (Constantin Teodorescu)
-pg_ctl now defaults to -w (wait) on shutdown, new -l (log) option
-Add rudimentary dependency checking to pg_dump (Philip)
+mdb_ctl now defaults to -w (wait) on shutdown, new -l (log) option
+Add rudimentary dependency checking to mdb_dump (Philip)
 
 Types
 -----
@@ -3290,7 +3290,7 @@ AIX fixes (Andreas)
 QNX fixes (Maurizio)
 New heap_open(), heap_openr() API (Tom)
 Remove colon and semi-colon operators (Thomas)
-New pg_class.relkind value for views (Mark Hollomon)
+New mdb_class.relkind value for views (Mark Hollomon)
 Rename ichar() to chr() (Karel)
 New documentation for btrim(), ascii(), chr(), repeat() (Karel)
 Fixes for NT/Cygwin (Pete Forman)
@@ -3309,9 +3309,9 @@ New template0 database that contains no user additions (Tom)
 New /contrib/cube and /contrib/seg GIST sample code (Gene Selkov)
 Allow NetBSD's libedit instead of readline (Peter)
 Improved assembly language source code format (Bruce)
-New contrib/pg_logger
+New contrib/mdb_logger
 New --template option to createdb
-New contrib/pg_control utility (Oliver)
+New contrib/mdb_control utility (Oliver)
 New FreeBSD tools ipc_check, start-scripts/freebsd
 </programlisting>
    </para>
@@ -3369,7 +3369,7 @@ Fix for bug where storage manager accesses items beyond end of file
 Fix to include kernel errno message in all smgr elog messages (Tom)
 Fix for '.' not in PATH at build time (SL Baur)
 Fix for out-of-file-descriptors error (Tom)
-Fix to make pg_dump dump 'iscachable' flag for functions (Tom)
+Fix to make mdb_dump dump 'iscachable' flag for functions (Tom)
 Fix for subselect in targetlist of Append node (Tom)
 Fix for mergejoin plans (Tom)
 Fix TRUNCATE failure on relations with indexes (Tom)
@@ -3464,12 +3464,12 @@ IRIX fixes (David Kaelbling)
 QNX fixes (Andreas Kardos)
 Reduce COPY IN lock level (Tom)
 Change libpqeasy to use PQconnectdb() style parameters (Bruce)
-Fix pg_dump to handle OID indexes (Tom)
+Fix mdb_dump to handle OID indexes (Tom)
 Fix small memory leak (Tom)
 Solaris fix for createdb/dropdb (Tatsuo)
 Fix for non-blocking connections (Alfred Perlstein)
 Fix improper recovery after RENAME TABLE failures (Tom)
-Copy pg_ident.conf.sample into /lib directory in install (Bruce)
+Copy mdb_ident.conf.sample into /lib directory in install (Bruce)
 Add SJIS UDC (NEC selection IBM kanji) support (Eiji Tokuya)
 Fix too long syslog message (Tatsuo)
 Fix problem with quoted indexes that are too long (Tom)
@@ -3561,11 +3561,11 @@ ecpg changes (Michael)
    <title>Migration to Version 7.0</title>
 
    <para>
-    A dump/restore using <application>pg_dump</application>
+    A dump/restore using <application>mdb_dump</application>
     is required for those wishing to migrate data from any
     previous release of <productname>MollyDB</productname>.
     For those upgrading from 6.5.*, you can instead use
-    <application>pg_upgrade</application> to upgrade to this
+    <application>mdb_upgrade</application> to upgrade to this
     release; however, a full dump/reload installation is always the
     most robust method for upgrades.
    </para>
@@ -3644,11 +3644,11 @@ Improve propagating system table changes to other backends (Tom)
 Improve propagating user table changes to other backends (Tom)
 Fix handling of temp tables in complex situations (Bruce, Tom)
 Allow table locking at table open, improving concurrent reliability (Tom)
-Properly quote sequence names in pg_dump (Ross J. Reedstrom)
+Properly quote sequence names in mdb_dump (Ross J. Reedstrom)
 Prevent DROP DATABASE while others accessing
 Prevent any rows from being returned by GROUP BY if no rows processed (Tom)
 Fix SELECT COUNT(1) FROM table WHERE ...' if no rows matching WHERE (Tom)
-Fix pg_upgrade so it works for MVCC (Tom)
+Fix mdb_upgrade so it works for MVCC (Tom)
 Fix for SELECT ... WHERE x IN (SELECT ... HAVING SUM(x) &gt; 1) (Tom)
 Fix for "f1 datetime DEFAULT 'now'"  (Tom)
 Fix problems with CURRENT_DATE used in DEFAULT (Tom)
@@ -3657,9 +3657,9 @@ Improve recovery after failed disk writes, disk full (Hiroshi)
 Fix cases where table is mentioned in FROM but not joined (Tom)
 Allow HAVING clause without aggregate functions (Tom)
 Fix for "--" comment and no trailing newline, as seen in perl interface
-Improve pg_dump failure error reports (Bruce)
+Improve mdb_dump failure error reports (Bruce)
 Allow sorts and hashes to exceed 2GB file sizes (Tom)
-Fix for pg_dump dumping of inherited rules (Tom)
+Fix for mdb_dump dumping of inherited rules (Tom)
 Fix for NULL handling comparisons (Tom)
 Fix inconsistent state caused by failed CREATE/DROP commands (Hiroshi)
 Fix for dbname with dash
@@ -3669,7 +3669,7 @@ Fix for "Unable to identify an operator =$" problem
 Fix ODBC so no segfault if CommLog and Debug enabled (Dirk Niggemann)
 Fix for recursive exit call (Massimo)
 Fix for extra-long timezones (Jeroen van Vianen)
-Make pg_dump preserve primary key information (Peter E)
+Make mdb_dump preserve primary key information (Peter E)
 Prevent databases with single quotes (Peter E)
 Prevent DROP DATABASE inside  transaction (Peter E)
 ecpg memory leak fixes (Stephen Birch)
@@ -3698,9 +3698,9 @@ Fix UNION with LIMIT
 Fix CREATE TABLE x AS SELECT 1 UNION SELECT 2
 Fix CREATE TABLE test(col char(2) DEFAULT user)
 Fix mismatched types in CREATE TABLE ... DEFAULT
-Fix SELECT * FROM pg_class where oid in (0,-1)
-Fix SELECT COUNT('asdf') FROM pg_class WHERE oid=12
-Prevent user who can create databases can modifying pg_database table (Peter E)
+Fix SELECT * FROM mdb_class where oid in (0,-1)
+Fix SELECT COUNT('asdf') FROM mdb_class WHERE oid=12
+Prevent user who can create databases can modifying mdb_database table (Peter E)
 Fix btree to give a useful elog when key &gt; 1/2 (page - overhead) (Tom)
 Fix INSERT of 0.0 into DECIMAL(4,4) field (Tom)
 
@@ -3739,7 +3739,7 @@ New parallel regression test (Jan)
 Change backend-side COPY to write files with permissions 644 not 666 (Tom)
 Force permissions on PGDATA directory to be secure, even if it exists (Tom)
 Added psql LASTOID variable to return last inserted oid (Peter E)
-Allow concurrent vacuum and remove pg_vlock vacuum lock file (Tom)
+Allow concurrent vacuum and remove mdb_vlock vacuum lock file (Tom)
 Add privilege check for vacuum (Peter E)
 New libpq functions to allow asynchronous connections: PQconnectStart(),
   PQconnectPoll(), PQresetStart(), PQresetPoll(), PQsetenvStart(),
@@ -3752,7 +3752,7 @@ Major psql overhaul (Peter E)
 Add const to libpq interface (Peter E)
 New libpq function PQoidValue (Peter E)
 Show specific non-aggregate causing problem with GROUP BY (Tom)
-Make changes to pg_shadow recreate pg_pwd file (Peter E)
+Make changes to mdb_shadow recreate mdb_pwd file (Peter E)
 Add aggregate(DISTINCT ...) (Tom)
 Allow flag to control COPY input/output of NULLs (Peter E)
 Make mollydb user have a password by default (Peter E)
@@ -3762,7 +3762,7 @@ Vacuumdb script now supports --all option (Peter E)
 ecpg new portable FETCH syntax
 Add ecpg EXEC SQL IFDEF, EXEC SQL IFNDEF, EXEC SQL ELSE, EXEC SQL ELIF
        and EXEC SQL ENDIF directives
-Add pg_ctl script to control backend start-up (Tatsuo)
+Add mdb_ctl script to control backend start-up (Tatsuo)
 Add postmaster.opts.default file to store start-up flags (Tatsuo)
 Allow --with-mb=SQL_ASCII
 Increase maximum number of index keys to 16 (Bruce)
@@ -3774,8 +3774,8 @@ Disallow dropping a user who owns a database (Peter E)
 Change initdb option --with-mb to --enable-multibyte
 Add option for initdb to prompts for superuser password (Peter E)
 Allow complex type casts like col::numeric(9,2) and col::int2::float8 (Tom)
-Updated user interfaces on initdb, initlocation, pg_dump, ipcclean (Peter E)
-New pg_char_to_encoding() and pg_encoding_to_char() functions (Tatsuo)
+Updated user interfaces on initdb, initlocation, mdb_dump, ipcclean (Peter E)
+New mdb_char_to_encoding() and mdb_encoding_to_char() functions (Tatsuo)
 libpq non-blocking mode (Alfred Perlstein)
 Improve conversion of types in casts that don't specify a length
 New plperl internal programming language (Mark Hollomon)
@@ -3819,10 +3819,10 @@ Allow UPDATE table SET fld = (SELECT ...) (Tom)
 SET command options no longer require quotes
 Update pgaccess to 0.98.6
 New SET SEED command
-New pg_options.sample file
+New mdb_options.sample file
 New SET FSYNC command (Massimo)
-Allow pg_descriptions when creating tables
-Allow pg_descriptions when creating types, columns, and functions
+Allow mdb_descriptions when creating tables
+Allow mdb_descriptions when creating types, columns, and functions
 Allow psql \copy to allow delimiters (Peter E)
 Allow psql to print nulls as distinct from "" [null] (Peter E)
 
@@ -3893,7 +3893,7 @@ Faster sorting by calling fewer functions (Tom)
 Create system indexes to match all system caches (Bruce, Hiroshi)
 Make system caches use system indexes (Bruce)
 Make all system indexes unique (Bruce)
-Improve pg_statistics management for VACUUM speed improvement (Tom)
+Improve mdb_statistics management for VACUUM speed improvement (Tom)
 Flush backend cache less frequently (Tom, Hiroshi)
 COPY now reuses previous memory allocation, improving performance (Tom)
 Improve optimization cost estimation (Tom)
@@ -4029,7 +4029,7 @@ Fix for timestamp(datetime)
 Rule deparsing bugfixes(Tom)
 Fix quoting problems in mkMakefile.tcldefs.sh.in and mkMakefile.tkdefs.sh.in(Tom)
 This is to re-use space on index pages freed by vacuum(Vadim)
-document -x for pg_dump(Bruce)
+document -x for mdb_dump(Bruce)
 Fix for unary operators in rule deparser(Tom)
 Comment out FileUnlink of excess segments during mdtruncate()(Tom)
 IRIX linking fix from Yu Cao &gt;yucao@falcon.kla-tencor.com&lt;
@@ -4083,7 +4083,7 @@ Fix to prevent too large row from being created(Bruce)
 plmdb fixes
 Allow port numbers 32k - 64k(Bruce)
 Add ^ precedence(Bruce)
-Rename sort files called pg_temp to pg_sorttemp(Bruce)
+Rename sort files called mdb_temp to mdb_sorttemp(Bruce)
 Fix for microseconds in time values(Tom)
 Tutorial source cleanup
 New linux_m68k port
@@ -4129,7 +4129,7 @@ Add Win1250 (Czech) support (Pavel Behal)
        MVCC uses the natural multiversion nature of
        <productname>MollyDB</productname> to allow readers to
        continue reading consistent data during writer activity.
-       Writers continue to use the compact pg_log transaction system.
+       Writers continue to use the compact mdb_log transaction system.
        This is all performed without having to allocate a lock for
        every row like traditional database systems.  So, basically,
        we no longer are restricted by simple table-level locking; we
@@ -4140,11 +4140,11 @@ Add Win1250 (Czech) support (Pavel Behal)
 
     <varlistentry>
      <term>
-      Hot backups from <application>pg_dump</application>
+      Hot backups from <application>mdb_dump</application>
      </term>
      <listitem>
       <para>
-       <application>pg_dump</application> takes advantage of the new
+       <application>mdb_dump</application> takes advantage of the new
        MVCC features to give a consistent database dump/backup while
        the database stays online and available for queries.
       </para>
@@ -4258,10 +4258,10 @@ Add Win1250 (Czech) support (Pavel Behal)
    <title>Migration to Version 6.5</title>
 
    <para>
-    A dump/restore using <application>pg_dump</application>
+    A dump/restore using <application>mdb_dump</application>
     is required for those wishing to migrate data from any
     previous release of <productname>MollyDB</productname>.
-    <application>pg_upgrade</application> can <emphasis>not</emphasis>
+    <application>mdb_upgrade</application> can <emphasis>not</emphasis>
     be used to upgrade to this release because the on-disk structure
     of the tables has changed compared to previous releases.
    </para>
@@ -4335,7 +4335,7 @@ Bug Fixes
 Fix text&lt;-&gt;float8 and text&lt;-&gt;float4 conversion functions(Thomas)
 Fix for creating tables with mixed-case constraints(Billy)
 Change exp()/pow() behavior to generate error on underflow/overflow(Jan)
-Fix bug in pg_dump -z
+Fix bug in mdb_dump -z
 Memory overrun cleanups(Tatsuo)
 Fix for lo_import crash(Tatsuo)
 Adjust handling of data type names to suppress double quotes(Thomas)
@@ -4345,7 +4345,7 @@ Fixes for aggregates and PL/mdb(Hiroshi)
 Fix for subquery crash(Vadim)
 Fix for libpq function PQfnumber and case-insensitive names(Bahman Rafatjoo)
 Fix for large object write-in-middle, no extra block, memory consumption(Tatsuo)
-Fix for pg_dump -d or -D and  quote special characters in INSERT
+Fix for mdb_dump -d or -D and  quote special characters in INSERT
 Repair serious problems with dynahash(Tom)
 Fix INET/CIDR portability problems
 Fix problem with selectivity error in ALTER TABLE ADD COLUMN(Bruce)
@@ -4377,13 +4377,13 @@ Fix for subselect is compared inside an expression(Jan)
 Fix handling of error reporting while returning rows(Tom)
 Fix problems with reference to array types(Tom,Jan)
 Prevent UPDATE SET oid(Jan)
-Fix pg_dump so -t option can handle case-sensitive tablenames
+Fix mdb_dump so -t option can handle case-sensitive tablenames
 Fixes for GROUP BY in special cases(Tom, Jan)
 Fix for memory leak in failed queries(Tom)
 DEFAULT now supports mixed-case identifiers(Tom)
 Fix for multisegment uses of DROP/RENAME table, indexes(Ole Gjerde)
-Disable use of pg_dump with both -o and -d options(Bruce)
-Allow pg_dump to properly dump group privileges(Bruce)
+Disable use of mdb_dump with both -o and -d options(Bruce)
+Allow mdb_dump to properly dump group privileges(Bruce)
 Fix GROUP BY in INSERT INTO table SELECT * FROM table2(Jan)
 Fix for computations in views(Jan)
 Fix for aggregates on array indexes(Tom)
@@ -4398,7 +4398,7 @@ Add "vacuumdb" utility
 Speed up libpq by allocating memory better(Tom)
 EXPLAIN all indexes used(Tom)
 Implement CASE, COALESCE, NULLIF  expression(Thomas)
-New pg_dump table output format(Constantin)
+New mdb_dump table output format(Constantin)
 Add string min()/max() functions(Thomas)
 Extend new type coercion techniques to aggregates(Thomas)
 New moddatetime contrib(Terry)
@@ -4420,8 +4420,8 @@ Improved handling of backend connections(Magnus)
 New options ELOG_TIMESTAMPS and USE_SYSLOG options for log files(Massimo)
 New TCL_ARRAYS option(Massimo)
 New INTERSECT and EXCEPT(Stefan)
-New pg_index.indisprimary for primary key tracking(D'Arcy)
-New pg_dump option to allow dropping of tables before creation(Brook)
+New mdb_index.indisprimary for primary key tracking(D'Arcy)
+New mdb_dump option to allow dropping of tables before creation(Brook)
 Speedup of row output routines(Tom)
 New READ COMMITTED isolation level(Vadim)
 New TEMP tables/indexes(Bruce)
@@ -4460,20 +4460,20 @@ Support for arrays of char() and varchar() fields(Massimo)
 Overhaul of hash code to increase reliability and performance(Tom)
 Update to PyGreSQL 2.4(D'Arcy)
 Changed debug options so -d4 and -d5 produce different node displays(Jan)
-New pg_options: pretty_plan, pretty_parse, pretty_rewritten(Jan)
+New mdb_options: pretty_plan, pretty_parse, pretty_rewritten(Jan)
 Better optimization statistics for system table access(Tom)
 Better handling of non-default block sizes(Massimo)
 Improve GEQO optimizer memory consumption(Tom)
 UNION now supports ORDER BY of columns not in target list(Jan)
 Major libpq++ improvements(Vince Vielhaber)
-pg_dump now uses -z(ACL's) as default(Bruce)
+mdb_dump now uses -z(ACL's) as default(Bruce)
 backend cache, memory speedups(Tom)
-have pg_dump do everything in one snapshot transaction(Vadim)
-fix for large object memory leakage, fix for pg_dumping(Tom)
+have mdb_dump do everything in one snapshot transaction(Vadim)
+fix for large object memory leakage, fix for mdb_dumping(Tom)
 INET type now respects netmask for comparisons
 Make VACUUM ANALYZE only use a readlock(Vadim)
 Allow VIEWs on UNIONS(Jan)
-pg_dump now can generate consistent snapshots on active databases(Vadim)
+mdb_dump now can generate consistent snapshots on active databases(Vadim)
 
 Source Tree Changes
 -------------------
@@ -4559,14 +4559,14 @@ A dump/restore is <emphasis>not</emphasis> required for those running
 
 <para>
 <programlisting>
-Add pg_dump -N flag to force double quotes around identifiers.  This is
+Add mdb_dump -N flag to force double quotes around identifiers.  This is
        the default(Thomas)
 Fix for NOT in where clause causing crash(Bruce)
 EXPLAIN VERBOSE coredump fix(Vadim)
 Fix shared-library problems on Linux
 Fix test for table existence to allow mixed-case and whitespace in
        the table name(Thomas)
-Fix a couple of pg_dump bugs
+Fix a couple of mdb_dump bugs
 Configure matches template/.similar entries better(Tom)
 Change builtin function names from SPI_* to spi_*
 OR WHERE clause fix(Vadim)
@@ -4575,7 +4575,7 @@ contrib/linux/mollydb.init.csh/sh fix(Thomas)
 libpq memory overrun fix
 SunOS fixes(Tom)
 Change exp() behavior to generate error on underflow(Thomas)
-pg_dump fixes for memory leak, inheritance constraints, layout change
+mdb_dump fixes for memory leak, inheritance constraints, layout change
 update pgaccess to 0.93
 Fix prototype for 64-bit platforms
 Multibyte fixes(Tatsuo)
@@ -4684,8 +4684,8 @@ been.
 <title>Migration to Version 6.4</title>
 
 <para>
-A dump/restore using <application>pg_dump</application>
-or <application>pg_dumpall</application>
+A dump/restore using <application>mdb_dump</application>
+or <application>mdb_dumpall</application>
 is required for those wishing to migrate data from any
 previous release of <productname>MollyDB</productname>.
 </para>
@@ -4713,7 +4713,7 @@ Change owner from oid to int4 type(Bruce)
 Fix a bug in the oracle compatibility functions btrim() ltrim() and rtrim()
 Fix for shared invalidation cache overflow(Massimo)
 Prevent file descriptor leaks in failed COPY's(Bruce)
-Fix memory leak in libpgtcl's pg_select(Constantin)
+Fix memory leak in libpgtcl's mdb_select(Constantin)
 Fix problems with username/passwords over 8 characters(Tom)
 Fix problems with handling of asynchronous NOTIFY in backend(Tom)
 Fix of many bad system table entries(Tom)
@@ -4752,7 +4752,7 @@ Add capabilities for automatic type conversion(Thomas)
 Cleanups for large objects, so file is truncated on open(Peter)
 Readline cleanups(Tom)
 Allow psql  \f \ to make spaces as delimiter(Bruce)
-Pass pg_attribute.atttypmod to the frontend for column field lengths(Tom,Bruce)
+Pass mdb_attribute.atttypmod to the frontend for column field lengths(Tom,Bruce)
 Msql compatibility library in /contrib(Aldrin)
 Remove the requirement that ORDER/GROUP BY clause identifiers be
 included in the target list(David)
@@ -4765,9 +4765,9 @@ Make lo_unlink take oid param, not int4
 New DISABLE_COMPLEX_MACRO for compilers that cannot handle our macros(Bruce)
 Libpgtcl now handles NOTIFY as a Tcl event, need not send dummy queries(Tom)
 libpgtcl cleanups(Tom)
-Add -error option to libpgtcl's pg_result command(Tom)
+Add -error option to libpgtcl's mdb_result command(Tom)
 New locale patch, see docs/README/locale(Oleg)
-Fix for pg_dump so CONSTRAINT and CHECK syntax is correct(ccb)
+Fix for mdb_dump so CONSTRAINT and CHECK syntax is correct(ccb)
 New contrib/lo code for large object orphan removal(Peter)
 New psql command "SET CLIENT_ENCODING TO 'encoding'" for multibytes
 feature, see /doc/README.mb(Tatsuo)
@@ -4776,7 +4776,7 @@ libpq can now be compiled on Windows(Magnus)
 Add PQsetdbLogin() in libpq
 New 8-byte integer type, checked by configure for OS support(Thomas)
 Better support for quoted table/column names(Thomas)
-Surround table and column names with double-quotes in pg_dump(Thomas)
+Surround table and column names with double-quotes in mdb_dump(Thomas)
 PQreset() now works with passwords(Tom)
 Handle case of GROUP BY target list column number out of range(David)
 Allow UNION in subselects
@@ -4784,7 +4784,7 @@ Add auto-size to screen to \d? commands(Bruce)
 Use UNION to show all \d? results in one query(Bruce)
 Add \d? field search feature(Bruce)
 Pg_dump issues fewer \connect requests(Tom)
-Make pg_dump -z flag work better, document it in manual page(Tom)
+Make mdb_dump -z flag work better, document it in manual page(Tom)
 Add HAVING clause with full support for subselects and unions(Stephan)
 Full text indexing routines in contrib/fulltextindex(Maarten)
 Transaction ids now stored in shared memory(Vadim)
@@ -4799,7 +4799,7 @@ Explain VERBOSE prints the plan, and now pretty-prints the plan to
 the postmaster log file(Bruce)
 Add indexes display to \d command(Bruce)
 Allow GROUP BY on functions(David)
-New pg_class.relkind for large objects(Bruce)
+New mdb_class.relkind for large objects(Bruce)
 New way to send libpq NOTICE messages to a different location(Tom)
 New \w write command to psql(Bruce)
 New /contrib/findoidjoins scans oid columns to find join relationships(Bruce)
@@ -4818,7 +4818,7 @@ New rewrite system fixes many problems with rules and views(Jan)
        * Rules and views inherit the privileges of the creator
        * No rules at the column level
        * No UPDATE NEW/OLD rules
-       * New pg_tables, pg_indexes, pg_rules and pg_views system views
+       * New mdb_tables, mdb_indexes, mdb_rules and mdb_views system views
        * Only a single action on SELECT rules
        * Total rewrite overhaul, perhaps for 6.5
        * handle subselects
@@ -4841,7 +4841,7 @@ Identifiers are now truncated to 31 characters internally(Bruce)
 Createuser options now available on the command line
 Code for 64-bit integer supported added, configure tested, int8 type(Thomas)
 Prevent file descriptor leaf from failed COPY(Bruce)
-New pg_upgrade command(Bruce)
+New mdb_upgrade command(Bruce)
 Updated /contrib directories(Massimo)
 New CREATE TABLE DEFAULT VALUES statement available(Thomas)
 New INSERT INTO TABLE DEFAULT VALUES statement available(Thomas)
@@ -4849,11 +4849,11 @@ New DECLARE and FETCH feature(Thomas)
 libpq's internal structures now not exported(Tom)
 Allow up to 8 key indexes(Bruce)
 Remove ARCHIVE key word, that is no longer used(Thomas)
-pg_dump -n flag to suppress quotes around identifiers
+mdb_dump -n flag to suppress quotes around identifiers
 disable system columns for views(Jan)
 new INET and CIDR types for network addresses(TomH, Paul)
 no more double quotes in psql output
-pg_dump now dumps views(Terry)
+mdb_dump now dumps views(Terry)
 new SET QUERY_LIMIT(Tatsuo,Jan)
 
 Source Tree Changes
@@ -4943,7 +4943,7 @@ refer to the installation and migration instructions for version 6.3.
 Configure detection improvements for tcl/tk(Brook Milligan, Alvin)
 Manual page improvements(Bruce)
 BETWEEN and LIKE fix(Thomas)
-fix for psql \connect used by pg_dump(Oliver Elphick)
+fix for psql \connect used by mdb_dump(Oliver Elphick)
 New odbc driver
 pgaccess, version 0.86
 qsort removed, now uses libc version, cleanups(Jeroen)
@@ -5018,16 +5018,16 @@ refer to the installation and migration instructions for version 6.3.
    <para>
 <programlisting>
 ecpg cleanup/fixes, now version 1.1(Michael Meskes)
-pg_user cleanup(Bruce)
-large object fix for pg_dump and tclsh (alvin)
+mdb_user cleanup(Bruce)
+large object fix for mdb_dump and tclsh (alvin)
 LIKE fix for multiple adjacent underscores
 fix for redefining builtin functions(Thomas)
 ultrix4 cleanup
-upgrade to pg_access 0.83
+upgrade to mdb_access 0.83
 updated CLUSTER manual page
 multibyte character set support, see doc/README.mb(Tatsuo)
 configure --with-pgport fix
-pg_ident fix
+mdb_ident fix
 big-endian fix for backend communications(Kataoka)
 SUBSTR() and substring() fix(Jan)
 several jdbc fixes(Peter)
@@ -5123,8 +5123,8 @@ Better identify tcl and tk libs and includes(Bruce)
   <para>
    Second, 6.3 uses Unix domain sockets rather than TCP/IP by default.  To
    enable connections from other machines, you have to use the new
-   postmaster -i option, and of course edit <filename>pg_hba.conf</filename>.  Also, for this
-   reason, the format of <filename>pg_hba.conf</filename> has changed.
+   postmaster -i option, and of course edit <filename>mdb_hba.conf</filename>.  Also, for this
+   reason, the format of <filename>mdb_hba.conf</filename> has changed.
   </para>
   <para>
    Third, <type>char()</type> fields will now allow faster access than <type>varchar()</type> or
@@ -5139,10 +5139,10 @@ Better identify tcl and tk libs and includes(Bruce)
    We now have passwords definable independent of any Unix file.  There are
    new SQL USER commands.
    See the <citetitle>Administrator's Guide</citetitle> for more
-   information.  There is a new table, pg_shadow, which is used to store
+   information.  There is a new table, mdb_shadow, which is used to store
    user information and user passwords, and it by default only SELECT-able
-   by the <systemitem>mollydb</systemitem> super-user.  pg_user is now a view of pg_shadow, and is
-   SELECT-able by PUBLIC.  You should keep using pg_user in your
+   by the <systemitem>mollydb</systemitem> super-user.  mdb_user is now a view of mdb_shadow, and is
+   SELECT-able by PUBLIC.  You should keep using mdb_user in your
    application without changes.
   </para>
   <para>
@@ -5180,8 +5180,8 @@ Better identify tcl and tk libs and includes(Bruce)
    <title>Migration to Version 6.3</title>
 
    <para>
-    A dump/restore using <application>pg_dump</application>
-    or <application>pg_dumpall</application>
+    A dump/restore using <application>mdb_dump</application>
+    or <application>mdb_dumpall</application>
     is required for those wishing to migrate data from any
     previous release of <productname>MollyDB</productname>.
    </para>
@@ -5254,7 +5254,7 @@ Free memory allocated for a user query inside transaction block after
        this query is done, was turned off in &lt;= 6.2.1(Vadim)
 New SQL statement CREATE PROCEDURAL LANGUAGE(Jan)
 New <productname>MollyDB</productname> Procedural Language (PL) backend interface(Jan)
-Rename pg_dump -H option to -h(Bruce)
+Rename mdb_dump -H option to -h(Bruce)
 Add Java support for passwords, European dates(Peter)
 Use indexes for LIKE and ~, !~ operations(Bruce)
 Add hash functions for datetime and timespan(Thomas)
@@ -5271,7 +5271,7 @@ Add PGDATESTYLE environment variable to frontend and backend initialization(Thom
 Add PGTZ, PGCOSTHEAP, PGCOSTINDEX, PGRPLANS, PGGEQO
        frontend library initialization environment variables(Thomas)
 Regression tests time zone automatically set with "setenv PGTZ PST8PDT"(Thomas)
-Add pg_description table for info on tables, columns, operators, types, and
+Add mdb_description table for info on tables, columns, operators, types, and
        aggregates(Bruce)
 Increase 16 char limit on system table/index names to 32 characters(Bruce)
 Rename system indexes(Bruce)
@@ -5282,7 +5282,7 @@ Validate numeric input more carefully for delta times(Thomas)
 Implement day of year as possible input to date_part()(Thomas)
 Define timespan_finite() and text_timespan() functions(Thomas)
 Remove archive stuff(Bruce)
-Allow for a pg_password authentication database that is separate from
+Allow for a mdb_password authentication database that is separate from
        the system password file(Todd)
 Dump ACLs, GRANT, REVOKE privileges(Matt)
 Define text, varchar, and bpchar string length functions(Thomas)
@@ -5307,12 +5307,12 @@ Update of contrib stuff(Massimo)
 Add Unix socket support to DBD::Pg(Goran)
 New python interface (PyGreSQL 2.0)(D'Arcy)
 New frontend/backend protocol has a version number, network byte order(Phil)
-Security features in pg_hba.conf enhanced and documented, many cleanups(Phil)
+Security features in mdb_hba.conf enhanced and documented, many cleanups(Phil)
 CHAR() now faster access than VARCHAR() or TEXT
 ecpg embedded SQL preprocessor
 Reduce system column overhead(Vadmin)
-Remove pg_time table(Vadim)
-Add pg_type attribute to identify types that need length (bpchar, varchar)
+Remove mdb_time table(Vadim)
+Add mdb_type attribute to identify types that need length (bpchar, varchar)
 Add report of offending line when COPY command fails
 Allow VIEW privileges to be set separately from the underlying tables.
        For security, use GRANT/REVOKE on views as appropriate(Jan)
@@ -5346,7 +5346,7 @@ Change elog(WARN) to elog(ERROR)(Bruce)
 FAQ for FreeBSD(Marc)
 Bring in the PostODBC source tree as part of our standard distribution(Marc)
 A minor patch for HP/UX 10 vs 9(Stan)
-New pg_attribute.atttypmod for type-specific info like varchar length(Bruce)
+New mdb_attribute.atttypmod for type-specific info like varchar length(Bruce)
 UnixWare patches(Billy)
 New i386 'lock' for spinlock asm(Billy)
 Support for multiplexed backends is removed
@@ -5413,7 +5413,7 @@ Another way to avoid dump/reload is to use the following SQL command
 from <command>psql</command> to update the existing system table:
 
 <programlisting>
-update pg_aggregate set aggfinalfn = 'cash_div_flt8'
+update mdb_aggregate set aggfinalfn = 'cash_div_flt8'
  where aggname = 'avg' and aggbasetype = 790;
 </programlisting>
 </para>
@@ -5464,7 +5464,7 @@ This migration requires a complete dump of the 6.1 database and a
 restore of the database in 6.2.
 </para>
 <para>
-Note that the <command>pg_dump</command> and <command>pg_dumpall</command> utility from 6.2 should be used
+Note that the <command>mdb_dump</command> and <command>mdb_dumpall</command> utility from 6.2 should be used
 to dump the 6.1 database.
 </para>
 </sect2>
@@ -5485,7 +5485,7 @@ because the COPY output format was improved from the 1.02 release.
 <programlisting>
 Bug Fixes
 ---------
-Fix problems with pg_dump for inheritance, sequences, archive tables(Bruce)
+Fix problems with mdb_dump for inheritance, sequences, archive tables(Bruce)
 Fix compile errors on overflow due to shifts, unsigned, and bad prototypes
         from Solaris(Diab Jerius)
 Fix bugs in geometric line arithmetic (bad intersection calculations)(Thomas)
@@ -5496,7 +5496,7 @@ Check for zero divides(Michael Reifenberg)
 Fix very old bug which made rows changed/inserted by a command
        visible to the command itself (so we had multiple update of
        updated rows, etc.)(Vadim)
-Fix for SELECT null, 'fail' FROM pg_am (Patrick)
+Fix for SELECT null, 'fail' FROM mdb_am (Patrick)
 SELECT NULL as EMPTY_FIELD now allowed(Patrick)
 Remove un-needed signal stuff from contrib/pginterface
 Fix OR (where x != 1 or x isnull didn't return rows with x NULL) (Vadim)
@@ -5505,14 +5505,14 @@ Fix handling of functions with non-attribute first argument in
        WHERE clauses (Vadim)
 Fix GROUP BY when order of entries is different from order
        in target list (Vadim)
-Fix pg_dump for aggregates without sfunc1 (Vadim)
+Fix mdb_dump for aggregates without sfunc1 (Vadim)
 
 Enhancements
 ------------
 Default genetic optimizer GEQO parameter is now 8(Bruce)
 Allow use parameters in target list having aggregates in functions(Vadim)
 Added JDBC driver as an interface(Adrian &amp; Peter)
-pg_password utility
+mdb_password utility
 Return number of rows inserted/affected by INSERT/UPDATE/DELETE etc.(Vadim)
 Triggers implemented with CREATE TRIGGER (SQL3)(Vadim)
 SPI (Server Programming Interface) allows execution of queries inside
@@ -5570,7 +5570,7 @@ Fix c++ copy example code(Thomas)
 Add -o to psql manual page(Bruce)
 Prevent relname unallocated string length from being copied into database(Bruce)
 Cleanup for NAMEDATALEN use(Bruce)
-Fix pg_proc names over 15 chars in output(Bruce)
+Fix mdb_proc names over 15 chars in output(Bruce)
 Add strNcpy() function(Bruce)
 remove some (void) casts that are unnecessary(Bruce)
 new interfaces directory(Marc)
@@ -5579,8 +5579,8 @@ Make functions static where possible(Bruce)
 enclose unused functions in #ifdef NOT_USED(Bruce)
 Remove call to difftime() in timestamp support to fix SunOS(Bruce &amp; Thomas)
 Changes for Digital Unix
-Portability fix for pg_dumpall(Bruce)
-Rename pg_attribute.attnvals to attdispersion(Bruce)
+Portability fix for mdb_dumpall(Bruce)
+Rename mdb_attribute.attnvals to attdispersion(Bruce)
 "intro/unix" manual page now "pgintro"(Bruce)
 "built-in" manual page now "pgbuiltin"(Bruce)
 "drop" manual page now "drop_table"(Bruce)
@@ -5620,7 +5620,7 @@ Refer to the release notes for 6.1 for more details.
    <para>
 <programlisting>
 fix for SET with options (Thomas)
-allow pg_dump/pg_dumpall to preserve ownership of all tables/objects(Bruce)
+allow mdb_dump/mdb_dumpall to preserve ownership of all tables/objects(Bruce)
 new psql \connect option allows changing usernames without changing databases
 fix for initdb --debug option(Yoshihiko Ichikawa))
 lextest cleanup(Bruce)
@@ -5635,7 +5635,7 @@ fix memory leak in psql when using \g(Bruce)
 major fix for endian handling of communication to server(Thomas, Tatsuo)
 Fix for Solaris assembler and include files(Yoshihiko Ichikawa)
 allow underscores in usernames(Bruce)
-pg_dumpall now returns proper status, portability fix(Bruce)
+mdb_dumpall now returns proper status, portability fix(Bruce)
 </programlisting>
    </para>
   </sect2>
@@ -5742,7 +5742,7 @@ fix storage manager memmory leaks (Vadim)
 fix btree duplicates handling (Vadim)
 fix deleted rows reincarnation caused by vacuum (Vadim)
 fix SELECT varchar()/char() INTO TABLE made zero-length fields(Bruce)
-many psql, pg_dump, and libpq memory leaks fixed using Purify (Igor)
+many psql, mdb_dump, and libpq memory leaks fixed using Purify (Igor)
 
 Enhancements
 ------------
@@ -5780,7 +5780,7 @@ new datestyle variable(Thomas,Vadim,Martin)
 more comparison operators for sorting types(Thomas)
 new conversion functions(Thomas)
 new more compact btree format(Vadim)
-allow pg_dumpall to preserve database ownership(Bruce)
+allow mdb_dumpall to preserve database ownership(Bruce)
 new SET GEQO=# and R_PLANS variable(Vadim)
 old (!GEQO) optimizer can use right-sided plans (Vadim)
 typechecking improvement in SQL parser(Bruce)
@@ -5857,7 +5857,7 @@ Array fixes
 Fix array over-runs of memory writes(Kurt)
 Fix elusive btree range/non-range bug(Dan)
 Fix for hash indexes on some types like time and date
-Fix for pg_log size explosion
+Fix for mdb_log size explosion
 Fix permissions on lo_export()(Bruce)
 Fix uninitialized reads of memory(Kurt)
 Fixed ALTER TABLE ... char(3) bug(Bruce)
@@ -5897,7 +5897,7 @@ Allow libpq to distinguish between text value '' and null(Bruce)
 Allow non-mollydb users with createdb privs to destroydb's
 Allow restriction on who can create C functions(Bryan)
 Allow restriction on who can do backend COPY(Bryan)
-Can shrink tables, pg_time and pg_log(Vadim &amp; Erich)
+Can shrink tables, mdb_time and mdb_log(Vadim &amp; Erich)
 Change debug level 2 to print queries only, changed debug heading layout(Bruce)
 Change default decimal constant representation from float4 to float8(Bruce)
 European date format now set when postmaster is started
@@ -6032,7 +6032,7 @@ not a cause for concern.
 <title>Dump/Reload Procedure</title>
 
 <para>
-If you are trying to reload a pg_dump or text-mode, <literal>copy tablename to
+If you are trying to reload a mdb_dump or text-mode, <literal>copy tablename to
 stdout</literal> generated with a previous version, you will need to run the
 attached <command>sed</command> script on the ASCII file before loading it into the
 database.  The old format used '.' as end-of-data, while '\.' is now the
@@ -6070,7 +6070,7 @@ Source code maintenance and development
 Enhancements
  * psql (and underlying libpq library) now has many more options for
    formatting output, including HTML
- * pg_dump now output the schema and/or the data, with many fixes to
+ * mdb_dump now output the schema and/or the data, with many fixes to
    enhance completeness.
  * psql used in place of monitor in administration shell scripts.
    monitor to be deprecated in next release.
@@ -6159,8 +6159,8 @@ Decide whether you want to use Host based authentication.
 <substeps>
 <step>
 <para>
-If you do, you must create a file name <literal>pg_hba</literal> in your top-level data
-   directory (typically the value of your <envar>$PGDATA</envar>).  <filename>src/libpq/pg_hba</filename>
+If you do, you must create a file name <literal>mdb_hba</literal> in your top-level data
+   directory (typically the value of your <envar>$PGDATA</envar>).  <filename>src/libpq/mdb_hba</filename>
    shows an example syntax.
 </para>
 </step>
@@ -6293,14 +6293,14 @@ Enhancements:
    attribute names, etc.)  This replaces the old char16 type.   The
    of name is set by the NAMEDATALEN #define in src/Makefile.global
  * a readable reference manual that describes the query language.
- * added host-based access control.  A configuration file ($PGDATA/pg_hba)
+ * added host-based access control.  A configuration file ($PGDATA/mdb_hba)
    is used to hold the configuration data.  If host-based access control
    is not desired, comment out HBA=1 in src/Makefile.global.
  * changed regex handling to be uniform use of Henry Spencer's regex code
    regardless of platform.  The regex code is included in the distribution
  * added functions and operators for case-insensitive regular expressions.
    The operators are ~* and !~*.
- * pg_dump uses COPY instead of SELECT loop for better performance
+ * mdb_dump uses COPY instead of SELECT loop for better performance
 
 Bug fixes:
  * fixed an optimizer bug that was causing core dumps when
@@ -6342,7 +6342,7 @@ Enhancements:
    delimiters can be any single-character string.
  *  IRIX 5.3 port has been added.
    Thanks to Paul Walmsley and others.
- *  updated pg_dump to work with new libpq
+ *  updated mdb_dump to work with new libpq
  *  \d has been added psql
    Thanks to Keith Parks
  *  regexp performance for architectures that use POSIX regex has been
@@ -6354,7 +6354,7 @@ Enhancements:
 Bug fixes:
  *  arbitrary userids can be specified in the createuser script
  *  \c to connect to other databases in psql now works.
- *  bad pg_proc entry for float4inc() is fixed
+ *  bad mdb_proc entry for float4inc() is fixed
  *  users with usecreatedb field set can now create databases without
    having to be usesuper
  *  remove access control entries when the entry no longer has any
@@ -6397,7 +6397,7 @@ Incompatible changes:
    stored!
  * LIBPQ has been totally revamped so that frontend applications
    can connect to multiple backends
- * the usesysid field in pg_user has been changed from int2 to int4 to
+ * the usesysid field in mdb_user has been changed from int2 to int4 to
    allow wider range of Unix user ids.
  * the netbsd/freebsd/bsd o/s ports have been consolidated into a
    single BSD44_derived port.  (thanks to Alistair Crooks)
@@ -6464,11 +6464,11 @@ Other changes and enhancements:
    visible to the user.
 
 libpgtcl changes:
- * The -oid option has been added to the "pg_result" tcl command.
-   pg_result -oid returns oid of the last row inserted.   If the
-   last command was not an INSERT, then pg_result -oid returns "".
- * the large object interface is available as pg_lo* tcl commands:
-   pg_lo_open, pg_lo_close, pg_lo_creat, etc.
+ * The -oid option has been added to the "mdb_result" tcl command.
+   mdb_result -oid returns oid of the last row inserted.   If the
+   last command was not an INSERT, then mdb_result -oid returns "".
+ * the large object interface is available as mdb_lo* tcl commands:
+   mdb_lo_open, mdb_lo_close, mdb_lo_creat, etc.
 
 Portability enhancements and New Ports:
  * flex/lex problems have been cleared up.  Now, you should be able to use
@@ -6513,7 +6513,7 @@ Incompatible changes:
 
 New tools:
  * pgperl - a Perl (4.036) interface to MollyDB95
- * pg_dump - a utility for dumping out a mollydb database into a
+ * mdb_dump - a utility for dumping out a mollydb database into a
         script file containing query commands. The script files are in an ASCII
         format and can be used to reconstruct the database, even on other
         machines and other architectures. (Also good for converting

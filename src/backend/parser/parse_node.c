@@ -16,8 +16,8 @@
 
 #include "access/heapam.h"
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
-#include "mb/pg_wchar.h"
+#include "catalog/mdb_type.h"
+#include "mb/mdb_wchar.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
 #include "parser/parsetree.h"
@@ -116,7 +116,7 @@ parser_errposition(ParseState *pstate, int location)
 	if (pstate == NULL || pstate->p_sourcetext == NULL)
 		return 0;
 	/* Convert offset to character number */
-	pos = pg_mbstrlen_with_len(pstate->p_sourcetext, location) + 1;
+	pos = mdb_mbstrlen_with_len(pstate->p_sourcetext, location) + 1;
 	/* And pass it to the ereport mechanism */
 	return errposition(pos);
 }
@@ -215,7 +215,7 @@ transformArrayType(Oid *arrayType, int32 *arrayTypmod)
 	Oid			origArrayType = *arrayType;
 	Oid			elementType;
 	HeapTuple	type_tuple_array;
-	Form_pg_type type_struct_array;
+	Form_mdb_type type_struct_array;
 
 	/*
 	 * If the input is a domain, smash to base type, and extract the actual
@@ -242,7 +242,7 @@ transformArrayType(Oid *arrayType, int32 *arrayTypmod)
 	type_tuple_array = SearchSysCache1(TYPEOID, ObjectIdGetDatum(*arrayType));
 	if (!HeapTupleIsValid(type_tuple_array))
 		elog(ERROR, "cache lookup failed for type %u", *arrayType);
-	type_struct_array = (Form_pg_type) GETSTRUCT(type_tuple_array);
+	type_struct_array = (Form_mdb_type) GETSTRUCT(type_tuple_array);
 
 	/* needn't check typisdefined since this will fail anyway */
 

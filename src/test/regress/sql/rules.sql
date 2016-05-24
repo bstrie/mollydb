@@ -775,9 +775,9 @@ drop table cchild;
 -- temporarily disable fancy output, so view changes create less diff noise
 \a\t
 
-SELECT viewname, definition FROM pg_views WHERE schemaname <> 'information_schema' ORDER BY viewname;
+SELECT viewname, definition FROM mdb_views WHERE schemaname <> 'information_schema' ORDER BY viewname;
 
-SELECT tablename, rulename, definition FROM pg_rules
+SELECT tablename, rulename, definition FROM mdb_rules
 	ORDER BY tablename, rulename;
 
 -- restore normal output mode
@@ -881,7 +881,7 @@ drop rule "_RETURN" on fooview;
 drop view fooview;
 
 --
--- test conversion of table to view (needed to load some pg_dump files)
+-- test conversion of table to view (needed to load some mdb_dump files)
 --
 
 create table fooview (x int, y text);
@@ -894,7 +894,7 @@ select * from fooview;
 select xmin, * from fooview;  -- fail, views don't have such a column
 
 select reltoastrelid, relkind, relfrozenxid
-  from pg_class where oid = 'fooview'::regclass;
+  from mdb_class where oid = 'fooview'::regclass;
 
 drop view fooview;
 
@@ -969,11 +969,11 @@ select * from only t1_2;
 
 reset constraint_exclusion;
 
--- test various flavors of pg_get_viewdef()
+-- test various flavors of mdb_get_viewdef()
 
-select pg_get_viewdef('shoe'::regclass) as unpretty;
-select pg_get_viewdef('shoe'::regclass,true) as pretty;
-select pg_get_viewdef('shoe'::regclass,0) as prettier;
+select mdb_get_viewdef('shoe'::regclass) as unpretty;
+select mdb_get_viewdef('shoe'::regclass,true) as pretty;
+select mdb_get_viewdef('shoe'::regclass,0) as prettier;
 
 --
 -- check multi-row VALUES in rules
@@ -1071,13 +1071,13 @@ CREATE RULE hat_nosert AS ON INSERT TO hats
         ON CONFLICT (hat_name COLLATE "C" bpchar_pattern_ops) WHERE hat_color = 'green'
         DO NOTHING
         RETURNING *;
-SELECT definition FROM pg_rules WHERE tablename = 'hats' ORDER BY rulename;
+SELECT definition FROM mdb_rules WHERE tablename = 'hats' ORDER BY rulename;
 
 -- Works (projects row)
 INSERT INTO hats VALUES ('h7', 'black') RETURNING *;
 -- Works (does nothing)
 INSERT INTO hats VALUES ('h7', 'black') RETURNING *;
-SELECT tablename, rulename, definition FROM pg_rules
+SELECT tablename, rulename, definition FROM mdb_rules
 	WHERE tablename = 'hats';
 DROP RULE hat_nosert ON hats;
 
@@ -1090,7 +1090,7 @@ CREATE RULE hat_nosert_all AS ON INSERT TO hats
         ON CONFLICT
         DO NOTHING
         RETURNING *;
-SELECT definition FROM pg_rules WHERE tablename = 'hats' ORDER BY rulename;
+SELECT definition FROM mdb_rules WHERE tablename = 'hats' ORDER BY rulename;
 DROP RULE hat_nosert_all ON hats;
 
 -- Works (does nothing)
@@ -1107,7 +1107,7 @@ CREATE RULE hat_upsert AS ON INSERT TO hats
            SET hat_name = hat_data.hat_name, hat_color = excluded.hat_color
            WHERE excluded.hat_color <>  'forbidden' AND hat_data.* != excluded.*
         RETURNING *;
-SELECT definition FROM pg_rules WHERE tablename = 'hats' ORDER BY rulename;
+SELECT definition FROM mdb_rules WHERE tablename = 'hats' ORDER BY rulename;
 
 -- Works (does upsert)
 INSERT INTO hats VALUES ('h8', 'black') RETURNING *;
@@ -1116,7 +1116,7 @@ INSERT INTO hats VALUES ('h8', 'white') RETURNING *;
 SELECT * FROM hat_data WHERE hat_name = 'h8';
 INSERT INTO hats VALUES ('h8', 'forbidden') RETURNING *;
 SELECT * FROM hat_data WHERE hat_name = 'h8';
-SELECT tablename, rulename, definition FROM pg_rules
+SELECT tablename, rulename, definition FROM mdb_rules
 	WHERE tablename = 'hats';
 -- ensure explain works for on insert conflict rules
 explain (costs off) INSERT INTO hats VALUES ('h8', 'forbidden') RETURNING *;

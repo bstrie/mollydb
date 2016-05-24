@@ -4,14 +4,14 @@
  *
  * Portions Copyright (c) 2002-2016, MollyDB Global Development Group
  *
- * src/backend/utils/adt/pg_locale.c
+ * src/backend/utils/adt/mdb_locale.c
  *
  *-----------------------------------------------------------------------
  */
 
 /*----------
  * Here is how the locale stuff is handled: LC_COLLATE and LC_CTYPE
- * are fixed at CREATE DATABASE time, stored in pg_database, and cannot
+ * are fixed at CREATE DATABASE time, stored in mdb_database, and cannot
  * be changed. Thus, the effects of strcoll(), strxfrm(), isupper(),
  * toupper(), etc. are always in the same fixed locale.
  *
@@ -55,12 +55,12 @@
 #include <time.h>
 
 #include "access/htup_details.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_control.h"
-#include "mb/pg_wchar.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_control.h"
+#include "mb/mdb_wchar.h"
 #include "utils/hsearch.h"
 #include "utils/memutils.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 #include "utils/syscache.h"
 
 #ifdef WIN32
@@ -113,11 +113,11 @@ static char lc_time_envbuf[LC_ENV_BUFSIZE];
 
 typedef struct
 {
-	Oid			collid;			/* hash key: pg_collation OID */
+	Oid			collid;			/* hash key: mdb_collation OID */
 	bool		collate_is_c;	/* is collation's LC_COLLATE C? */
 	bool		ctype_is_c;		/* is collation's LC_CTYPE C? */
 	bool		flags_valid;	/* true if above flags are valid */
-	pg_locale_t locale;			/* locale_t struct, or 0 if not valid */
+	mdb_locale_t locale;			/* locale_t struct, or 0 if not valid */
 } collation_cache_entry;
 
 static HTAB *collation_cache = NULL;
@@ -129,7 +129,7 @@ static char *IsoLocaleName(const char *);		/* MSVC specific */
 
 
 /*
- * pg_perm_setlocale
+ * mdb_perm_setlocale
  *
  * This wraps the libc function setlocale(), with two additions.  First, when
  * changing LC_CTYPE, update gettext's encoding for the current message
@@ -143,7 +143,7 @@ static char *IsoLocaleName(const char *);		/* MSVC specific */
  * Perl for making this kluge necessary.)
  */
 char *
-pg_perm_setlocale(int category, const char *locale)
+mdb_perm_setlocale(int category, const char *locale)
 {
 	char	   *result;
 	const char *envvar;
@@ -176,7 +176,7 @@ pg_perm_setlocale(int category, const char *locale)
 
 	/*
 	 * Use the right encoding in translated messages.  Under ENABLE_NLS, let
-	 * pg_bind_textdomain_codeset() figure it out.  Under !ENABLE_NLS, message
+	 * mdb_bind_textdomain_codeset() figure it out.  Under !ENABLE_NLS, message
 	 * format strings are ASCII, but database-encoding strings may enter the
 	 * message via %s.  This makes the overall message encoding equal to the
 	 * database encoding.
@@ -190,7 +190,7 @@ pg_perm_setlocale(int category, const char *locale)
 		result = save_lc_ctype;
 
 #ifdef ENABLE_NLS
-		SetMessageEncoding(pg_bind_textdomain_codeset(textdomain(NULL)));
+		SetMessageEncoding(mdb_bind_textdomain_codeset(textdomain(NULL)));
 #else
 		SetMessageEncoding(GetDatabaseEncoding());
 #endif
@@ -296,7 +296,7 @@ check_locale(int category, const char *locale, char **canonname)
  *
  * Note: we accept value = "" as selecting the postmaster's environment
  * value, whatever it was (so long as the environment setting is legal).
- * This will have been locked down by an earlier call to pg_perm_setlocale.
+ * This will have been locked down by an earlier call to mdb_perm_setlocale.
  */
 bool
 check_locale_monetary(char **newval, void **extra, GucSource source)
@@ -375,7 +375,7 @@ assign_locale_messages(const char *newval, void *extra)
 	 * We ignore failure, as per comment above.
 	 */
 #ifdef LC_MESSAGES
-	(void) pg_perm_setlocale(LC_MESSAGES, newval);
+	(void) mdb_perm_setlocale(LC_MESSAGES, newval);
 #endif
 }
 
@@ -421,7 +421,7 @@ db_encoding_strdup(int encoding, const char *str)
 	char	   *mstr;
 
 	/* convert the string to the database encoding */
-	pstr = pg_any_to_server(str, strlen(str), encoding);
+	pstr = mdb_any_to_server(str, strlen(str), encoding);
 	mstr = strdup(pstr);
 	if (pstr != str)
 		pfree(pstr);
@@ -506,7 +506,7 @@ PGLC_localeconv(void)
 	/* Get formatting information for numeric */
 	setlocale(LC_NUMERIC, locale_numeric);
 	extlconv = localeconv();
-	encoding = pg_get_encoding_from_locale(locale_numeric, true);
+	encoding = mdb_get_encoding_from_locale(locale_numeric, true);
 
 	decimal_point = db_encoding_strdup(encoding, extlconv->decimal_point);
 	thousands_sep = db_encoding_strdup(encoding, extlconv->thousands_sep);
@@ -520,7 +520,7 @@ PGLC_localeconv(void)
 	/* Get formatting information for monetary */
 	setlocale(LC_MONETARY, locale_monetary);
 	extlconv = localeconv();
-	encoding = pg_get_encoding_from_locale(locale_monetary, true);
+	encoding = mdb_get_encoding_from_locale(locale_monetary, true);
 
 	/*
 	 * Must copy all values since restoring internal settings may overwrite
@@ -584,7 +584,7 @@ PGLC_localeconv(void)
  *
  * Note that this only affects the calls to strftime() in this file, which are
  * used to get the locale-aware strings. Other parts of the backend use
- * pg_strftime(), which isn't locale-aware and does not need to be replaced.
+ * mdb_strftime(), which isn't locale-aware and does not need to be replaced.
  */
 static size_t
 strftime_win32(char *dst, size_t dstlen,
@@ -620,7 +620,7 @@ strftime_win32(char *dst, size_t dstlen,
 	dst[len] = '\0';
 	if (GetDatabaseEncoding() != PG_UTF8)
 	{
-		char	   *convstr = pg_any_to_server(dst, len, PG_UTF8);
+		char	   *convstr = mdb_any_to_server(dst, len, PG_UTF8);
 
 		if (convstr != dst)
 		{
@@ -797,8 +797,8 @@ IsoLocaleName(const char *winlocname)
 	static char iso_lc_messages[32];
 	_locale_t	loct = NULL;
 
-	if (pg_strcasecmp("c", winlocname) == 0 ||
-		pg_strcasecmp("posix", winlocname) == 0)
+	if (mdb_strcasecmp("c", winlocname) == 0 ||
+		mdb_strcasecmp("posix", winlocname) == 0)
 	{
 		strcpy(iso_lc_messages, "C");
 		return iso_lc_messages;
@@ -870,7 +870,7 @@ IsoLocaleName(const char *winlocname)
  * presence will not change during the life of a particular postmaster.  Given
  * those assumptions, call this no less than once per postmaster startup per
  * LC_COLLATE setting used.  No known-affected system offers strxfrm_l(), so
- * there is no need to consider pg_collation locales.
+ * there is no need to consider mdb_collation locales.
  */
 void
 check_strxfrm_bug(void)
@@ -926,9 +926,9 @@ check_strxfrm_bug(void)
  * For the built-in C and POSIX collations, we can know that without even
  * doing a cache lookup, but we want to support aliases for C/POSIX too.
  * For the "default" collation, there are separate static cache variables,
- * since consulting the pg_collation catalog doesn't tell us what we need.
+ * since consulting the mdb_collation catalog doesn't tell us what we need.
  *
- * Also, if a pg_locale_t has been requested for a collation, we cache that
+ * Also, if a mdb_locale_t has been requested for a collation, we cache that
  * for the life of a backend.
  *
  * Note that some code relies on the flags not reporting false negatives
@@ -978,14 +978,14 @@ lookup_collation_cache(Oid collation, bool set_flags)
 	{
 		/* Attempt to set the flags */
 		HeapTuple	tp;
-		Form_pg_collation collform;
+		Form_mdb_collation collform;
 		const char *collcollate;
 		const char *collctype;
 
 		tp = SearchSysCache1(COLLOID, ObjectIdGetDatum(collation));
 		if (!HeapTupleIsValid(tp))
 			elog(ERROR, "cache lookup failed for collation %u", collation);
-		collform = (Form_pg_collation) GETSTRUCT(tp);
+		collform = (Form_mdb_collation) GETSTRUCT(tp);
 
 		collcollate = NameStr(collform->collcollate);
 		collctype = NameStr(collform->collctype);
@@ -1049,7 +1049,7 @@ lc_collate_is_c(Oid collation)
 		return true;
 
 	/*
-	 * Otherwise, we have to consult pg_collation, but we cache that.
+	 * Otherwise, we have to consult mdb_collation, but we cache that.
 	 */
 	return (lookup_collation_cache(collation, true))->collate_is_c;
 }
@@ -1099,7 +1099,7 @@ lc_ctype_is_c(Oid collation)
 		return true;
 
 	/*
-	 * Otherwise, we have to consult pg_collation, but we cache that.
+	 * Otherwise, we have to consult mdb_collation, but we cache that.
 	 */
 	return (lookup_collation_cache(collation, true))->ctype_is_c;
 }
@@ -1144,8 +1144,8 @@ report_newlocale_failure(const char *localename)
  * might only need one of them.  Since this is called only once per session,
  * it shouldn't cost much.
  */
-pg_locale_t
-pg_newlocale_from_collation(Oid collid)
+mdb_locale_t
+mdb_newlocale_from_collation(Oid collid)
 {
 	collation_cache_entry *cache_entry;
 
@@ -1154,7 +1154,7 @@ pg_newlocale_from_collation(Oid collid)
 
 	/* Return 0 for "default" collation, just in case caller forgets */
 	if (collid == DEFAULT_COLLATION_OID)
-		return (pg_locale_t) 0;
+		return (mdb_locale_t) 0;
 
 	cache_entry = lookup_collation_cache(collid, false);
 
@@ -1163,7 +1163,7 @@ pg_newlocale_from_collation(Oid collid)
 		/* We haven't computed this yet in this session, so do it */
 #ifdef HAVE_LOCALE_T
 		HeapTuple	tp;
-		Form_pg_collation collform;
+		Form_mdb_collation collform;
 		const char *collcollate;
 		const char *collctype;
 		locale_t	result;
@@ -1171,7 +1171,7 @@ pg_newlocale_from_collation(Oid collid)
 		tp = SearchSysCache1(COLLOID, ObjectIdGetDatum(collid));
 		if (!HeapTupleIsValid(tp))
 			elog(ERROR, "cache lookup failed for collation %u", collid);
-		collform = (Form_pg_collation) GETSTRUCT(tp);
+		collform = (Form_mdb_collation) GETSTRUCT(tp);
 
 		collcollate = NameStr(collform->collcollate);
 		collctype = NameStr(collform->collctype);
@@ -1204,7 +1204,7 @@ pg_newlocale_from_collation(Oid collid)
 
 			/*
 			 * XXX The _create_locale() API doesn't appear to support this.
-			 * Could perhaps be worked around by changing pg_locale_t to
+			 * Could perhaps be worked around by changing mdb_locale_t to
 			 * contain two separate fields.
 			 */
 			ereport(ERROR,
@@ -1233,7 +1233,7 @@ pg_newlocale_from_collation(Oid collid)
 
 
 /*
- * These functions convert from/to libc's wchar_t, *not* pg_wchar_t.
+ * These functions convert from/to libc's wchar_t, *not* mdb_wchar_t.
  * Therefore we keep them here rather than with the mbutils code.
  */
 
@@ -1247,7 +1247,7 @@ pg_newlocale_from_collation(Oid collid)
  * zero-terminated.  The output will be zero-terminated iff there is room.
  */
 size_t
-wchar2char(char *to, const wchar_t *from, size_t tolen, pg_locale_t locale)
+wchar2char(char *to, const wchar_t *from, size_t tolen, mdb_locale_t locale)
 {
 	size_t		result;
 
@@ -1277,7 +1277,7 @@ wchar2char(char *to, const wchar_t *from, size_t tolen, pg_locale_t locale)
 	}
 	else
 #endif   /* WIN32 */
-	if (locale == (pg_locale_t) 0)
+	if (locale == (mdb_locale_t) 0)
 	{
 		/* Use wcstombs directly for the default locale */
 		result = wcstombs(to, from, tolen);
@@ -1317,7 +1317,7 @@ wchar2char(char *to, const wchar_t *from, size_t tolen, pg_locale_t locale)
  */
 size_t
 char2wchar(wchar_t *to, size_t tolen, const char *from, size_t fromlen,
-		   pg_locale_t locale)
+		   mdb_locale_t locale)
 {
 	size_t		result;
 
@@ -1352,7 +1352,7 @@ char2wchar(wchar_t *to, size_t tolen, const char *from, size_t fromlen,
 		/* mbstowcs requires ending '\0' */
 		char	   *str = pnstrdup(from, fromlen);
 
-		if (locale == (pg_locale_t) 0)
+		if (locale == (mdb_locale_t) 0)
 		{
 			/* Use mbstowcs directly for the default locale */
 			result = mbstowcs(to, str, tolen);
@@ -1385,13 +1385,13 @@ char2wchar(wchar_t *to, size_t tolen, const char *from, size_t fromlen,
 	{
 		/*
 		 * Invalid multibyte character encountered.  We try to give a useful
-		 * error message by letting pg_verifymbstr check the string.  But it's
+		 * error message by letting mdb_verifymbstr check the string.  But it's
 		 * possible that the string is OK to us, and not OK to mbstowcs ---
 		 * this suggests that the LC_CTYPE locale is different from the
 		 * database encoding.  Give a generic error message if verifymbstr
 		 * can't find anything wrong.
 		 */
-		pg_verifymbstr(from, fromlen, false);	/* might not return */
+		mdb_verifymbstr(from, fromlen, false);	/* might not return */
 		/* but if it does ... */
 		ereport(ERROR,
 				(errcode(ERRCODE_CHARACTER_NOT_IN_REPERTOIRE),

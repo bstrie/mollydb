@@ -1,27 +1,27 @@
 <!--
-doc/src/sgml/ref/pg_isready.sgml
+doc/src/sgml/ref/mdb_isready.sgml
 MollyDB documentation
 -->
 
 <refentry id="app-pg-isready">
  <indexterm zone="app-pg-isready">
-  <primary>pg_isready</primary>
+  <primary>mdb_isready</primary>
  </indexterm>
 
  <refmeta>
-  <refentrytitle><application>pg_isready</application></refentrytitle>
+  <refentrytitle><application>mdb_isready</application></refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo>Application</refmiscinfo>
  </refmeta>
 
  <refnamediv>
-  <refname>pg_isready</refname>
+  <refname>mdb_isready</refname>
   <refpurpose>check the connection status of a <productname>MollyDB</productname> server</refpurpose>
  </refnamediv>
 
  <refsynopsisdiv>
   <cmdsynopsis>
-   <command>pg_isready</command>
+   <command>mdb_isready</command>
    <arg rep="repeat"><replaceable>connection-option</replaceable></arg>
    <arg rep="repeat"><replaceable>option</replaceable></arg>
   </cmdsynopsis>
@@ -31,7 +31,7 @@ MollyDB documentation
  <refsect1 id="app-pg-isready-description">
   <title>Description</title>
   <para>
-   <application>pg_isready</application> is a utility for checking the connection
+   <application>mdb_isready</application> is a utility for checking the connection
    status of a <productname>MollyDB</productname> database server. The exit
    status specifies the result of the connection check.
   </para>
@@ -125,7 +125,7 @@ MollyDB documentation
       <term><option>--version</></term>
        <listitem>
         <para>
-         Print the <application>pg_isready</application> version and exit.
+         Print the <application>mdb_isready</application> version and exit.
         </para>
        </listitem>
      </varlistentry>
@@ -135,7 +135,7 @@ MollyDB documentation
       <term><option>--help</></term>
       <listitem>
        <para>
-        Show help about <application>pg_isready</application> command line
+        Show help about <application>mdb_isready</application> command line
         arguments, and exit.
        </para>
       </listitem>
@@ -147,7 +147,7 @@ MollyDB documentation
   <title>Exit Status</title>
 
   <para>
-   <application>pg_isready</application> returns <literal>0</literal> to the shell if the server
+   <application>mdb_isready</application> returns <literal>0</literal> to the shell if the server
    is accepting connections normally, <literal>1</literal> if the server is rejecting
    connections (for example during startup), <literal>2</literal> if there was no response to the
    connection attempt, and <literal>3</literal> if no attempt was made (for example due to invalid
@@ -159,7 +159,7 @@ MollyDB documentation
   <title>Environment</title>
 
   <para>
-   <command>pg_isready</command>, like most other <productname>MollyDB</>
+   <command>mdb_isready</command>, like most other <productname>MollyDB</>
    utilities,
    also uses the environment variables supported by <application>libpq</>
    (see <xref linkend="libpq-envars">).
@@ -182,7 +182,7 @@ MollyDB documentation
   <para>
    Standard Usage:
 <screen>
-<prompt>$</prompt> <userinput>pg_isready</userinput>
+<prompt>$</prompt> <userinput>mdb_isready</userinput>
 <computeroutput>/tmp:5432 - accepting connections</computeroutput>
 <prompt>$</prompt> <userinput>echo $?</userinput>
 <computeroutput>0</computeroutput>
@@ -192,7 +192,7 @@ MollyDB documentation
   <para>
    Running with connection parameters to a <productname>MollyDB</productname> cluster in startup:
 <screen>
-<prompt>$ </prompt><userinput>pg_isready -h localhost -p 5433</userinput>
+<prompt>$ </prompt><userinput>mdb_isready -h localhost -p 5433</userinput>
 <computeroutput>localhost:5433 - rejecting connections</computeroutput>
 <prompt>$</prompt> <userinput>echo $?</userinput>
 <computeroutput>1</computeroutput>
@@ -202,7 +202,7 @@ MollyDB documentation
   <para>
    Running with connection parameters to a non-responsive <productname>MollyDB</productname> cluster:
 <screen>
-<prompt>$ </prompt><userinput>pg_isready -h someremotehost</userinput>
+<prompt>$ </prompt><userinput>mdb_isready -h someremotehost</userinput>
 <computeroutput>someremotehost:5432 - no response</computeroutput>
 <prompt>$</prompt> <userinput>echo $?</userinput>
 <computeroutput>2</computeroutput>

@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_am.h
- *	  definition of the system "access method" relation (pg_am)
+ * mdb_am.h
+ *	  definition of the system "access method" relation (mdb_am)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_am.h
+ * src/include/catalog/mdb_am.h
  *
  * NOTES
  *		the genbki.pl script reads this file and generates .bki
@@ -25,34 +25,34 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_am definition.  cpp turns this into
- *		typedef struct FormData_pg_am
+ *		mdb_am definition.  cpp turns this into
+ *		typedef struct FormData_mdb_am
  * ----------------
  */
 #define AccessMethodRelationId	2601
 
-CATALOG(pg_am,2601)
+CATALOG(mdb_am,2601)
 {
 	NameData	amname;			/* access method name */
 	regproc		amhandler;		/* handler function */
 	char		amtype;			/* see AMTYPE_xxx constants below */
-} FormData_pg_am;
+} FormData_mdb_am;
 
 /* ----------------
- *		Form_pg_am corresponds to a pointer to a tuple with
- *		the format of pg_am relation.
+ *		Form_mdb_am corresponds to a pointer to a tuple with
+ *		the format of mdb_am relation.
  * ----------------
  */
-typedef FormData_pg_am *Form_pg_am;
+typedef FormData_mdb_am *Form_mdb_am;
 
 /* ----------------
- *		compiler constants for pg_am
+ *		compiler constants for mdb_am
  * ----------------
  */
-#define Natts_pg_am						3
-#define Anum_pg_am_amname				1
-#define Anum_pg_am_amhandler			2
-#define Anum_pg_am_amtype				3
+#define Natts_mdb_am						3
+#define Anum_mdb_am_amname				1
+#define Anum_mdb_am_amhandler			2
+#define Anum_mdb_am_amtype				3
 
 /* ----------------
  *		compiler constant for amtype
@@ -61,7 +61,7 @@ typedef FormData_pg_am *Form_pg_am;
 #define AMTYPE_INDEX					'i'		/* index access method */
 
 /* ----------------
- *		initial contents of pg_am
+ *		initial contents of mdb_am
  * ----------------
  */
 

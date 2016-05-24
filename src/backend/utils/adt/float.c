@@ -19,7 +19,7 @@
 #include <math.h>
 #include <limits.h>
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "libpq/pqformat.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
@@ -264,37 +264,37 @@ float4in(PG_FUNCTION_ARGS)
 		 * forms of NaN, but we consider these forms unportable and don't try
 		 * to support them.  You can use 'em if your strtod() takes 'em.
 		 */
-		if (pg_strncasecmp(num, "NaN", 3) == 0)
+		if (mdb_strncasecmp(num, "NaN", 3) == 0)
 		{
 			val = get_float4_nan();
 			endptr = num + 3;
 		}
-		else if (pg_strncasecmp(num, "Infinity", 8) == 0)
+		else if (mdb_strncasecmp(num, "Infinity", 8) == 0)
 		{
 			val = get_float4_infinity();
 			endptr = num + 8;
 		}
-		else if (pg_strncasecmp(num, "+Infinity", 9) == 0)
+		else if (mdb_strncasecmp(num, "+Infinity", 9) == 0)
 		{
 			val = get_float4_infinity();
 			endptr = num + 9;
 		}
-		else if (pg_strncasecmp(num, "-Infinity", 9) == 0)
+		else if (mdb_strncasecmp(num, "-Infinity", 9) == 0)
 		{
 			val = -get_float4_infinity();
 			endptr = num + 9;
 		}
-		else if (pg_strncasecmp(num, "inf", 3) == 0)
+		else if (mdb_strncasecmp(num, "inf", 3) == 0)
 		{
 			val = get_float4_infinity();
 			endptr = num + 3;
 		}
-		else if (pg_strncasecmp(num, "+inf", 4) == 0)
+		else if (mdb_strncasecmp(num, "+inf", 4) == 0)
 		{
 			val = get_float4_infinity();
 			endptr = num + 4;
 		}
-		else if (pg_strncasecmp(num, "-inf", 4) == 0)
+		else if (mdb_strncasecmp(num, "-inf", 4) == 0)
 		{
 			val = -get_float4_infinity();
 			endptr = num + 4;
@@ -481,37 +481,37 @@ float8in_internal(char *num, char **endptr_p,
 		 * forms of NaN, but we consider these forms unportable and don't try
 		 * to support them.  You can use 'em if your strtod() takes 'em.
 		 */
-		if (pg_strncasecmp(num, "NaN", 3) == 0)
+		if (mdb_strncasecmp(num, "NaN", 3) == 0)
 		{
 			val = get_float8_nan();
 			endptr = num + 3;
 		}
-		else if (pg_strncasecmp(num, "Infinity", 8) == 0)
+		else if (mdb_strncasecmp(num, "Infinity", 8) == 0)
 		{
 			val = get_float8_infinity();
 			endptr = num + 8;
 		}
-		else if (pg_strncasecmp(num, "+Infinity", 9) == 0)
+		else if (mdb_strncasecmp(num, "+Infinity", 9) == 0)
 		{
 			val = get_float8_infinity();
 			endptr = num + 9;
 		}
-		else if (pg_strncasecmp(num, "-Infinity", 9) == 0)
+		else if (mdb_strncasecmp(num, "-Infinity", 9) == 0)
 		{
 			val = -get_float8_infinity();
 			endptr = num + 9;
 		}
-		else if (pg_strncasecmp(num, "inf", 3) == 0)
+		else if (mdb_strncasecmp(num, "inf", 3) == 0)
 		{
 			val = get_float8_infinity();
 			endptr = num + 3;
 		}
-		else if (pg_strncasecmp(num, "+inf", 4) == 0)
+		else if (mdb_strncasecmp(num, "+inf", 4) == 0)
 		{
 			val = get_float8_infinity();
 			endptr = num + 4;
 		}
-		else if (pg_strncasecmp(num, "-inf", 4) == 0)
+		else if (mdb_strncasecmp(num, "-inf", 4) == 0)
 		{
 			val = -get_float8_infinity();
 			endptr = num + 4;

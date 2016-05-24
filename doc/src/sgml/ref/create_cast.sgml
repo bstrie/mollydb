@@ -353,12 +353,12 @@ SELECT CAST ( 2 AS numeric ) + 4.0;
     request without having matched it to an actual function.
     If a function call <replaceable>name</>(<replaceable>x</>) does not
     exactly match any existing function, but <replaceable>name</> is the name
-    of a data type and <structname>pg_cast</> provides a binary-coercible cast
+    of a data type and <structname>mdb_cast</> provides a binary-coercible cast
     to this type from the type of <replaceable>x</>, then the call will be
     construed as a binary-coercible cast.  This exception is made so that
     binary-coercible casts can be invoked using functional syntax, even
     though they lack any function.  Likewise, if there is no
-    <structname>pg_cast</> entry but the cast would be to or from a string
+    <structname>mdb_cast</> entry but the cast would be to or from a string
     type, the call will be construed as an I/O conversion cast.  This
     exception allows I/O conversion casts to be invoked using functional
     syntax.

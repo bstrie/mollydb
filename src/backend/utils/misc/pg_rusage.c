@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_rusage.c
+ * mdb_rusage.c
  *	  Resource usage measurement support routines.
  *
  *
@@ -9,7 +9,7 @@
  *
  *
  * IDENTIFICATION
- *	  src/backend/utils/misc/pg_rusage.c
+ *	  src/backend/utils/misc/mdb_rusage.c
  *
  *-------------------------------------------------------------------------
  */
@@ -17,14 +17,14 @@
 
 #include <unistd.h>
 
-#include "utils/pg_rusage.h"
+#include "utils/mdb_rusage.h"
 
 
 /*
  * Initialize usage snapshot.
  */
 void
-pg_rusage_init(PGRUsage *ru0)
+mdb_rusage_init(PGRUsage *ru0)
 {
 	getrusage(RUSAGE_SELF, &ru0->ru);
 	gettimeofday(&ru0->tv, NULL);
@@ -37,12 +37,12 @@ pg_rusage_init(PGRUsage *ru0)
  * threadable...
  */
 const char *
-pg_rusage_show(const PGRUsage *ru0)
+mdb_rusage_show(const PGRUsage *ru0)
 {
 	static char result[100];
 	PGRUsage	ru1;
 
-	pg_rusage_init(&ru1);
+	mdb_rusage_init(&ru1);
 
 	if (ru1.tv.tv_usec < ru0->tv.tv_usec)
 	{

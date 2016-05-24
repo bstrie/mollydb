@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "ecpg_config.h"
+#include "ecmdb_config.h"
 
 #ifndef ENABLE_THREAD_SAFETY
 int
@@ -48,7 +48,7 @@ static void* fn(void* arg)
 	EXEC SQL SET AUTOCOMMIT TO ON;
 	for (i = 1; i <= REPEATS; ++i)
 	{
-		EXEC SQL SELECT relname INTO :r FROM pg_class WHERE relname = 'pg_class';
+		EXEC SQL SELECT relname INTO :r FROM mdb_class WHERE relname = 'mdb_class';
 		free(r);
 		r = NULL;
 	}

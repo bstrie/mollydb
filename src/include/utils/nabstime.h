@@ -29,7 +29,7 @@
 
 /*
  * Although time_t generally is a long int on 64 bit systems, these two
- * types must be 4 bytes, because that's what pg_type.h assumes. They
+ * types must be 4 bytes, because that's what mdb_type.h assumes. They
  * should be yanked (long) before 2038 and be replaced by timestamp and
  * interval.
  */
@@ -161,6 +161,6 @@ extern Datum timeofday(PG_FUNCTION_ARGS);
 
 /* non-fmgr-callable support routines */
 extern AbsoluteTime GetCurrentAbsoluteTime(void);
-extern void abstime2tm(AbsoluteTime time, int *tzp, struct pg_tm * tm, char **tzn);
+extern void abstime2tm(AbsoluteTime time, int *tzp, struct mdb_tm * tm, char **tzn);
 
 #endif   /* NABSTIME_H */

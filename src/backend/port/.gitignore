@@ -1,4 +1,4 @@
 /dynloader.c
-/pg_sema.c
-/pg_shmem.c
+/mdb_sema.c
+/mdb_shmem.c
 /tas.s

@@ -98,14 +98,14 @@
 #include "access/transam.h"
 #include "access/xlog.h"
 #include "bootstrap/bootstrap.h"
-#include "catalog/pg_control.h"
+#include "catalog/mdb_control.h"
 #include "lib/ilist.h"
 #include "libpq/auth.h"
 #include "libpq/ip.h"
 #include "libpq/libpq.h"
 #include "libpq/pqsignal.h"
 #include "miscadmin.h"
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 #include "pgstat.h"
 #include "postmaster/autovacuum.h"
 #include "postmaster/bgworker_internals.h"
@@ -116,7 +116,7 @@
 #include "replication/walsender.h"
 #include "storage/fd.h"
 #include "storage/ipc.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "storage/pmsignal.h"
 #include "storage/proc.h"
 #include "tcop/tcopprot.h"
@@ -394,8 +394,8 @@ static void LogChildExit(int lev, const char *procname,
 			 int pid, int exitstatus);
 static void PostmasterStateMachine(void);
 static void BackendInitialize(Port *port);
-static void BackendRun(Port *port) pg_attribute_noreturn();
-static void ExitPostmaster(int status) pg_attribute_noreturn();
+static void BackendRun(Port *port) mdb_attribute_noreturn();
+static void ExitPostmaster(int status) mdb_attribute_noreturn();
 static int	ServerLoop(void);
 static int	BackendStartup(Port *port);
 static int	ProcessStartupPacket(Port *port, bool SSLdone);
@@ -497,7 +497,7 @@ typedef struct
 	pid_t		PostmasterPid;
 	TimestampTz PgStartTime;
 	TimestampTz PgReloadTime;
-	pg_time_t	first_syslogger_file_time;
+	mdb_time_t	first_syslogger_file_time;
 	bool		redirection_done;
 	bool		IsBinaryUpgrade;
 	int			max_safe_fds;
@@ -1188,7 +1188,7 @@ PostmasterMain(int argc, char *argv[])
 	 *
 	 * This removal of files is usually unnecessary because they
 	 * can exist only during a few moments during a standby
-	 * promotion. However there is a race condition: if pg_ctl promote
+	 * promotion. However there is a race condition: if mdb_ctl promote
 	 * is executed and creates the files during a promotion,
 	 * the files can stay around even after the server is brought up
 	 * to new master. Then, if new standby starts by using the backup
@@ -1247,7 +1247,7 @@ PostmasterMain(int argc, char *argv[])
 		 * since there is no way to connect to the database in this case.
 		 */
 		ereport(FATAL,
-				(errmsg("could not load pg_hba.conf")));
+				(errmsg("could not load mdb_hba.conf")));
 	}
 	if (!load_ident())
 	{
@@ -1478,10 +1478,10 @@ checkDataDir(void)
 				 errdetail("Permissions should be u=rwx (0700).")));
 #endif
 
-	/* Look for PG_VERSION before looking for pg_control */
+	/* Look for PG_VERSION before looking for mdb_control */
 	ValidatePgVersion(DataDir);
 
-	snprintf(path, sizeof(path), "%s/global/pg_control", DataDir);
+	snprintf(path, sizeof(path), "%s/global/mdb_control", DataDir);
 
 	fp = AllocateFile(path, PG_BINARY_R);
 	if (fp == NULL)
@@ -1636,7 +1636,7 @@ ServerLoop(void)
 		{
 			PG_SETMASK(&UnBlockSig);
 
-			pg_usleep(100000L); /* 100 msec seems reasonable */
+			mdb_usleep(100000L); /* 100 msec seems reasonable */
 			selres = 0;
 
 			PG_SETMASK(&BlockSig);
@@ -2156,7 +2156,7 @@ retry1:
 	/*
 	 * If we're going to reject the connection due to database state, say so
 	 * now instead of wasting cycles on an authentication exchange. (This also
-	 * allows a pg_ping utility to be written.)
+	 * allows a mdb_ping utility to be written.)
 	 */
 	switch (port->canAcceptConnections)
 	{
@@ -2346,7 +2346,7 @@ ConnCreate(int serverFd)
 	 */
 #ifndef EXEC_BACKEND
 #if defined(ENABLE_GSS) || defined(ENABLE_SSPI)
-	port->gss = (pg_gssinfo *) calloc(1, sizeof(pg_gssinfo));
+	port->gss = (mdb_gssinfo *) calloc(1, sizeof(mdb_gssinfo));
 	if (!port->gss)
 	{
 		ereport(LOG,
@@ -2493,11 +2493,11 @@ SIGHUP_handler(SIGNAL_ARGS)
 		/* Reload authentication config files too */
 		if (!load_hba())
 			ereport(WARNING,
-					(errmsg("pg_hba.conf not reloaded")));
+					(errmsg("mdb_hba.conf not reloaded")));
 
 		if (!load_ident())
 			ereport(WARNING,
-					(errmsg("pg_ident.conf not reloaded")));
+					(errmsg("mdb_ident.conf not reloaded")));
 
 #ifdef EXEC_BACKEND
 		/* Update the starting-point file for future children */
@@ -3989,7 +3989,7 @@ report_fork_failure_to_client(Port *port, int errnum)
 			 strerror(errnum));
 
 	/* Set port to non-blocking.  Don't do send() if this fails */
-	if (!pg_set_noblock(port->sock))
+	if (!mdb_set_noblock(port->sock))
 		return;
 
 	/* We'll retry after EINTR, but ignore all other failures */
@@ -4030,7 +4030,7 @@ BackendInitialize(Port *port)
 	 * is not honored until after authentication.)
 	 */
 	if (PreAuthDelay > 0)
-		pg_usleep(PreAuthDelay * 1000000L);
+		mdb_usleep(PreAuthDelay * 1000000L);
 
 	/* This flag will remain set until InitMollyDB finishes authentication */
 	ClientAuthInProgress = true;	/* limit visibility of log messages */
@@ -4056,7 +4056,7 @@ BackendInitialize(Port *port)
 	 * postmaster cannot shutdown the database FAST or IMMED cleanly if a
 	 * buggy client fails to send the packet promptly.  XXX it follows that
 	 * the remainder of this function must tolerate losing control at any
-	 * instant.  Likewise, any pg_on_exit_callback registered before or during
+	 * instant.  Likewise, any mdb_on_exit_callback registered before or during
 	 * this function must be prepared to execute at any instant between here
 	 * and the end of this function.  Furthermore, affected callbacks execute
 	 * partially or not at all when a second exit-inducing signal arrives
@@ -4075,12 +4075,12 @@ BackendInitialize(Port *port)
 	 */
 	remote_host[0] = '\0';
 	remote_port[0] = '\0';
-	if ((ret = pg_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
+	if ((ret = mdb_getnameinfo_all(&port->raddr.addr, port->raddr.salen,
 								  remote_host, sizeof(remote_host),
 								  remote_port, sizeof(remote_port),
 				 (log_hostname ? 0 : NI_NUMERICHOST) | NI_NUMERICSERV)) != 0)
 		ereport(WARNING,
-				(errmsg_internal("pg_getnameinfo_all() failed: %s",
+				(errmsg_internal("mdb_getnameinfo_all() failed: %s",
 								 gai_strerror(ret))));
 	if (remote_port[0] == '\0')
 		snprintf(remote_ps_data, sizeof(remote_ps_data), "%s", remote_host);
@@ -4216,7 +4216,7 @@ BackendRun(Port *port)
 	 *
 	 * The maximum possible number of commandline arguments that could come
 	 * from ExtraOptions is (strlen(ExtraOptions) + 1) / 2; see
-	 * pg_split_opts().
+	 * mdb_split_opts().
 	 */
 	maxac = 2;					/* for fixed args supplied below */
 	maxac += (strlen(ExtraOptions) + 1) / 2;
@@ -4231,7 +4231,7 @@ BackendRun(Port *port)
 	 * Pass any backend switches specified with -o on the postmaster's own
 	 * command line.  We assume these are secure.
 	 */
-	pg_split_opts(av, &ac, ExtraOptions);
+	mdb_split_opts(av, &ac, ExtraOptions);
 
 	av[ac] = NULL;
 
@@ -4637,7 +4637,7 @@ SubPostmasterMain(int argc, char *argv[])
 	 * for the non-exec case.
 	 */
 #if defined(ENABLE_GSS) || defined(ENABLE_SSPI)
-	port.gss = (pg_gssinfo *) calloc(1, sizeof(pg_gssinfo));
+	port.gss = (mdb_gssinfo *) calloc(1, sizeof(mdb_gssinfo));
 	if (!port.gss)
 		ereport(FATAL,
 				(errcode(ERRCODE_OUT_OF_MEMORY),
@@ -5758,7 +5758,7 @@ extern slock_t *ProcStructLock;
 extern PGPROC *AuxiliaryProcs;
 extern PMSignalData *PMSignalState;
 extern pgsocket pgStatSock;
-extern pg_time_t first_syslogger_file_time;
+extern mdb_time_t first_syslogger_file_time;
 
 #ifndef WIN32
 #define write_inheritable_socket(dest, src, childpid) ((*(dest) = (src)), true)
@@ -6183,7 +6183,7 @@ pgwin32_deadchild_callback(PVOID lpParameter, BOOLEAN TimerOrWaitFired)
 	free(childinfo);
 
 	/* Queue SIGCHLD signal */
-	pg_queue_signal(SIGCHLD);
+	mdb_queue_signal(SIGCHLD);
 }
 #endif   /* WIN32 */
 

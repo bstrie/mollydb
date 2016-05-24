@@ -286,7 +286,7 @@ typedef enum NodeTag
 	T_Null,
 
 	/*
-	 * TAGS FOR LIST NODES (pg_list.h)
+	 * TAGS FOR LIST NODES (mdb_list.h)
 	 */
 	T_List,
 	T_IntList,

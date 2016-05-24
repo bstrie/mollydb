@@ -148,7 +148,7 @@ explain (costs off)
 CREATE VIEW gstest_view AS select a, b, grouping(a,b), sum(c), count(*), max(c)
   from gstest2 group by rollup ((a,b,c),(c,d));
 
-select pg_get_viewdef('gstest_view'::regclass, true);
+select mdb_get_viewdef('gstest_view'::regclass, true);
 
 -- Nested queries with 3 or more levels of nesting
 select(select (select grouping(a,b) from (values (1)) v2(c)) from (values (1,2)) v1(a,b) group by (a,b)) from (values(6,7)) v3(e,f) GROUP BY ROLLUP(e,f);

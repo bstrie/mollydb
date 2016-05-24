@@ -162,7 +162,7 @@ ExecCreateTableAs(CreateTableAsStmt *stmt, const char *queryString,
 	Assert(query->commandType == CMD_SELECT);
 
 	/* plan the query */
-	plan = pg_plan_query(query, 0, params);
+	plan = mdb_plan_query(query, 0, params);
 
 	/*
 	 * Use a snapshot with an updated command ID to ensure this query sees
@@ -326,7 +326,7 @@ intorel_startup(DestReceiver *self, int operation, TupleDesc typeinfo)
 	lc = list_head(into->colNames);
 	for (attnum = 0; attnum < typeinfo->natts; attnum++)
 	{
-		Form_pg_attribute attribute = typeinfo->attrs[attnum];
+		Form_mdb_attribute attribute = typeinfo->attrs[attnum];
 		ColumnDef  *col = makeNode(ColumnDef);
 		TypeName   *coltype = makeNode(TypeName);
 

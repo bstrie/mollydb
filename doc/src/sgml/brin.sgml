@@ -304,8 +304,8 @@
      </entry>
     </row>
     <row>
-     <entry><literal>pg_lsn_minmax_ops</literal></entry>
-     <entry><type>pg_lsn</type></entry>
+     <entry><literal>mdb_lsn_minmax_ops</literal></entry>
+     <entry><type>mdb_lsn</type></entry>
      <entry>
       <literal>&lt;</literal>
       <literal>&lt;=</literal>

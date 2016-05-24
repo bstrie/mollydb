@@ -40,7 +40,7 @@
 #include "access/nbtree.h"
 #include "access/tupconvert.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "executor/execdebug.h"
 #include "executor/nodeSubplan.h"
 #include "funcapi.h"
@@ -640,7 +640,7 @@ ExecEvalScalarVar(ExprState *exprstate, ExprContext *econtext,
 	if (attnum > 0)
 	{
 		TupleDesc	slot_tupdesc = slot->tts_tupleDescriptor;
-		Form_pg_attribute attr;
+		Form_mdb_attribute attr;
 
 		if (attnum > slot_tupdesc->natts)		/* should never happen */
 			elog(ERROR, "attribute number %d exceeds number of columns %d",
@@ -857,8 +857,8 @@ ExecEvalWholeRowVar(WholeRowVarExprState *wrvstate, ExprContext *econtext,
 
 		for (i = 0; i < var_tupdesc->natts; i++)
 		{
-			Form_pg_attribute vattr = var_tupdesc->attrs[i];
-			Form_pg_attribute sattr = slot_tupdesc->attrs[i];
+			Form_mdb_attribute vattr = var_tupdesc->attrs[i];
+			Form_mdb_attribute sattr = slot_tupdesc->attrs[i];
 
 			if (vattr->atttypid == sattr->atttypid)
 				continue;		/* no worries */
@@ -1054,8 +1054,8 @@ ExecEvalWholeRowSlow(WholeRowVarExprState *wrvstate, ExprContext *econtext,
 	/* Check to see if any dropped attributes are non-null */
 	for (i = 0; i < var_tupdesc->natts; i++)
 	{
-		Form_pg_attribute vattr = var_tupdesc->attrs[i];
-		Form_pg_attribute sattr = tupleDesc->attrs[i];
+		Form_mdb_attribute vattr = var_tupdesc->attrs[i];
+		Form_mdb_attribute sattr = tupleDesc->attrs[i];
 
 		if (!vattr->attisdropped)
 			continue;			/* already checked non-dropped cols */
@@ -1327,7 +1327,7 @@ init_fcache(Oid foid, Oid input_collation, FuncExprState *fcache,
 	AclResult	aclresult;
 
 	/* Check permission to call function */
-	aclresult = pg_proc_aclcheck(foid, GetUserId(), ACL_EXECUTE);
+	aclresult = mdb_proc_aclcheck(foid, GetUserId(), ACL_EXECUTE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_PROC, get_func_name(foid));
 	InvokeFunctionExecuteHook(foid);
@@ -1336,7 +1336,7 @@ init_fcache(Oid foid, Oid input_collation, FuncExprState *fcache,
 	 * Safety check on nargs.  Under normal circumstances this should never
 	 * fail, as parser should check sooner.  But possibly it might fail if
 	 * server has been compiled with FUNC_MAX_ARGS smaller than some functions
-	 * declared in pg_proc?
+	 * declared in mdb_proc?
 	 */
 	if (list_length(fcache->args) > FUNC_MAX_ARGS)
 		ereport(ERROR,
@@ -1643,8 +1643,8 @@ tupledesc_match(TupleDesc dst_tupdesc, TupleDesc src_tupdesc)
 
 	for (i = 0; i < dst_tupdesc->natts; i++)
 	{
-		Form_pg_attribute dattr = dst_tupdesc->attrs[i];
-		Form_pg_attribute sattr = src_tupdesc->attrs[i];
+		Form_mdb_attribute dattr = dst_tupdesc->attrs[i];
+		Form_mdb_attribute sattr = src_tupdesc->attrs[i];
 
 		if (IsBinaryCoercible(sattr->atttypid, dattr->atttypid))
 			continue;			/* no worries */
@@ -4092,7 +4092,7 @@ ExecEvalFieldSelect(FieldSelectState *fstate,
 	Oid			tupType;
 	int32		tupTypmod;
 	TupleDesc	tupDesc;
-	Form_pg_attribute attr;
+	Form_mdb_attribute attr;
 	HeapTupleData tmptup;
 
 	tupDatum = ExecEvalExpr(fstate->arg, econtext, isNull, isDone);
@@ -4341,7 +4341,7 @@ ExecEvalArrayCoerceExpr(ArrayCoerceExprState *astate,
 		AclResult	aclresult;
 
 		/* Check permission to call function */
-		aclresult = pg_proc_aclcheck(acoerce->elemfuncid, GetUserId(),
+		aclresult = mdb_proc_aclcheck(acoerce->elemfuncid, GetUserId(),
 									 ACL_EXECUTE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_PROC,
@@ -4880,7 +4880,7 @@ ExecInitExpr(Expr *node, PlanState *parent)
 			{
 				RowExpr    *rowexpr = (RowExpr *) node;
 				RowExprState *rstate = makeNode(RowExprState);
-				Form_pg_attribute *attrs;
+				Form_mdb_attribute *attrs;
 				List	   *outlist = NIL;
 				ListCell   *l;
 				int			i;

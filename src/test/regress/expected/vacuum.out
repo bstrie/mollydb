@@ -62,7 +62,7 @@ CREATE TABLE vaccluster (i INT PRIMARY KEY);
 ALTER TABLE vaccluster CLUSTER ON vaccluster_pkey;
 CLUSTER vaccluster;
 CREATE FUNCTION do_analyze() RETURNS VOID VOLATILE LANGUAGE SQL
-	AS 'ANALYZE pg_am';
+	AS 'ANALYZE mdb_am';
 CREATE FUNCTION wrap_do_analyze(c INT) RETURNS INT IMMUTABLE LANGUAGE SQL
 	AS 'SELECT $1 FROM do_analyze()';
 CREATE INDEX ON vaccluster(wrap_do_analyze(i));
@@ -71,9 +71,9 @@ ANALYZE vaccluster;
 ERROR:  ANALYZE cannot be executed from VACUUM or ANALYZE
 CONTEXT:  SQL function "do_analyze" statement 1
 SQL function "wrap_do_analyze" statement 1
-VACUUM FULL pg_am;
-VACUUM FULL pg_class;
-VACUUM FULL pg_database;
+VACUUM FULL mdb_am;
+VACUUM FULL mdb_class;
+VACUUM FULL mdb_database;
 VACUUM FULL vaccluster;
 ERROR:  ANALYZE cannot be executed from VACUUM or ANALYZE
 CONTEXT:  SQL function "do_analyze" statement 1

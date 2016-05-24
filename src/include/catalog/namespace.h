@@ -43,7 +43,7 @@ typedef struct _FuncCandidateList
 typedef struct OverrideSearchPath
 {
 	List	   *schemas;		/* OIDs of explicitly named schemas */
-	bool		addCatalog;		/* implicitly prepend pg_catalog? */
+	bool		addCatalog;		/* implicitly prepend mdb_catalog? */
 	bool		addTemp;		/* implicitly prepend temp schema? */
 } OverrideSearchPath;
 

@@ -30,14 +30,14 @@ msgstr "null ポインタを複製できません（内部エラー）。\n"
 #: createlang.c:89 createlang.c:119 createlang.c:172 createuser.c:163
 #: createuser.c:178 dropdb.c:94 dropdb.c:103 dropdb.c:111 droplang.c:88
 #: droplang.c:118 droplang.c:172 dropuser.c:89 dropuser.c:104 dropuser.c:115
-#: pg_isready.c:92 pg_isready.c:106 reindexdb.c:120 reindexdb.c:139
+#: mdb_isready.c:92 mdb_isready.c:106 reindexdb.c:120 reindexdb.c:139
 #: vacuumdb.c:134 vacuumdb.c:154
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "詳細は\"%s --help\"を実行してください。\n"
 
 #: clusterdb.c:127 createdb.c:136 createlang.c:117 createuser.c:176
-#: dropdb.c:109 droplang.c:116 dropuser.c:102 pg_isready.c:104 reindexdb.c:137
+#: dropdb.c:109 droplang.c:116 dropuser.c:102 mdb_isready.c:104 reindexdb.c:137
 #: vacuumdb.c:152
 #, c-format
 msgid "%s: too many command-line arguments (first is \"%s\")\n"
@@ -77,7 +77,7 @@ msgid ""
 msgstr "%sはデータベース内で事前にクラスタ化されているすべてのテーブルをクラスタ化します\n"
 
 #: clusterdb.c:262 createdb.c:252 createlang.c:234 createuser.c:329
-#: dropdb.c:155 droplang.c:235 dropuser.c:156 pg_isready.c:210 reindexdb.c:342
+#: dropdb.c:155 droplang.c:235 dropuser.c:156 mdb_isready.c:210 reindexdb.c:342
 #: vacuumdb.c:358
 #, c-format
 msgid "Usage:\n"
@@ -89,7 +89,7 @@ msgid "  %s [OPTION]... [DBNAME]\n"
 msgstr "  %s [オプション]... [データベース名]\n"
 
 #: clusterdb.c:264 createdb.c:254 createlang.c:236 createuser.c:331
-#: dropdb.c:157 droplang.c:237 dropuser.c:158 pg_isready.c:213 reindexdb.c:344
+#: dropdb.c:157 droplang.c:237 dropuser.c:158 mdb_isready.c:213 reindexdb.c:344
 #: vacuumdb.c:360
 #, c-format
 msgid ""
@@ -144,7 +144,7 @@ msgid "  -?, --help                show this help, then exit\n"
 msgstr "  -?, --help                このヘルプを表示し、終了します\n"
 
 #: clusterdb.c:273 createdb.c:265 createlang.c:242 createuser.c:354
-#: dropdb.c:163 droplang.c:243 dropuser.c:165 pg_isready.c:219 reindexdb.c:354
+#: dropdb.c:163 droplang.c:243 dropuser.c:165 mdb_isready.c:219 reindexdb.c:354
 #: vacuumdb.c:373
 #, c-format
 msgid ""
@@ -199,7 +199,7 @@ msgstr ""
 "詳細は SQL コマンドの CLUSTER の説明を参照してください。\n"
 
 #: clusterdb.c:281 createdb.c:273 createlang.c:248 createuser.c:360
-#: dropdb.c:170 droplang.c:249 dropuser.c:171 pg_isready.c:224 reindexdb.c:362
+#: dropdb.c:170 droplang.c:249 dropuser.c:171 mdb_isready.c:224 reindexdb.c:362
 #: vacuumdb.c:381
 #, c-format
 msgid ""
@@ -719,18 +719,18 @@ msgstr "  --if-exists             ユーザが指定しない場合にエラー�
 msgid "  -U, --username=USERNAME   user name to connect as (not the one to drop)\n"
 msgstr "  -U, --username=ユーザ名   このユーザとして接続（削除対象ユーザではありません）\n"
 
-#: pg_isready.c:138
+#: mdb_isready.c:138
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: pg_isready.c:146
+#: mdb_isready.c:146
 #, c-format
 #| msgid "could not set default_with_oids: %s"
 msgid "%s: could not fetch default options\n"
 msgstr "%s: デフォルトのオプションを取り出すことができませんでした\n"
 
-#: pg_isready.c:209
+#: mdb_isready.c:209
 #, c-format
 #| msgid ""
 #| "%s creates a MollyDB database.\n"
@@ -740,51 +740,51 @@ msgid ""
 "\n"
 msgstr "%sはMollyDBデータベースに対して接続検査を発行します\n\n"
 
-#: pg_isready.c:211
+#: mdb_isready.c:211
 #, c-format
 msgid "  %s [OPTION]...\n"
 msgstr "  %s [OPTION]...\n"
 
-#: pg_isready.c:214
+#: mdb_isready.c:214
 #, c-format
 #| msgid "  -d, --dbname=DBNAME      database to dump\n"
 msgid "  -d, --dbname=DBNAME      database name\n"
 msgstr "  -d, --dbname=データベース名  データベース名\n"
 
-#: pg_isready.c:215
+#: mdb_isready.c:215
 #, c-format
 #| msgid "  -q, --quiet               don't write any messages\n"
 msgid "  -q, --quiet              run quietly\n"
 msgstr "  -q, --quiet               メッセージを出力せずに実行する\n"
 
-#: pg_isready.c:216
+#: mdb_isready.c:216
 #, c-format
 msgid "  -V, --version            output version information, then exit\n"
 msgstr "  -V, --version             バージョン情報を表示し、終了します\n"
 
-#: pg_isready.c:217
+#: mdb_isready.c:217
 #, c-format
 msgid "  -?, --help               show this help, then exit\n"
 msgstr "  -?, --help                このヘルプを表示し、終了します\n"
 
-#: pg_isready.c:220
+#: mdb_isready.c:220
 #, c-format
 msgid "  -h, --host=HOSTNAME      database server host or socket directory\n"
 msgstr "  -h, --host=HOSTNAME      データベースサーバのホストまたはソケットディレクトリです\n"
 
-#: pg_isready.c:221
+#: mdb_isready.c:221
 #, c-format
 #| msgid "  -p, --port=PORT           database server port\n"
 msgid "  -p, --port=PORT          database server port\n"
 msgstr "  -p, --port=ポート番号     データベースサーバのポート番号\n"
 
-#: pg_isready.c:222
+#: mdb_isready.c:222
 #, c-format
 #| msgid "  -t, --timeout=SECS     seconds to wait when using -w option\n"
 msgid "  -t, --timeout=SECS       seconds to wait when attempting connection, 0 disables (default: %s)\n"
 msgstr "  -t, --timeout=SECS     接続試行時に待機する秒数。ゼロは無効にします（デフォルト: %s）\n"
 
-#: pg_isready.c:223
+#: mdb_isready.c:223
 #, c-format
 #| msgid "  -U, --username=USERNAME   user name to connect as\n"
 msgid "  -U, --username=USERNAME  user name to connect as\n"
@@ -1036,8 +1036,8 @@ msgstr ""
 #~ msgid "  --help                    show this help, then exit\n"
 #~ msgstr "  --help                    ヘルプを表示して終了します\n"
 
-#~ msgid "pg_strdup: cannot duplicate null pointer (internal error)\n"
-#~ msgstr "pg_strdup: null ポインタを複製できません（内部エラー）。\n"
+#~ msgid "mdb_strdup: cannot duplicate null pointer (internal error)\n"
+#~ msgstr "mdb_strdup: null ポインタを複製できません（内部エラー）。\n"
 
 #~ msgid "  --version                 output version information, then exit\n"
 #~ msgstr "  --version                バージョン情報を表示して終了します\n"

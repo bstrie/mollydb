@@ -1,8 +1,8 @@
 -- should fail, return type mismatch
 create event trigger regress_event_trigger
    on ddl_command_start
-   execute procedure pg_backend_pid();
-ERROR:  function pg_backend_pid must return type event_trigger
+   execute procedure mdb_backend_pid();
+ERROR:  function mdb_backend_pid must return type event_trigger
 -- OK
 create function test_event_trigger() returns event_trigger as $$
 BEGIN
@@ -185,13 +185,13 @@ LANGUAGE plmdb AS $$
 DECLARE
 	obj record;
 BEGIN
-	PERFORM 1 FROM pg_tables WHERE tablename = 'undroppable_objs';
+	PERFORM 1 FROM mdb_tables WHERE tablename = 'undroppable_objs';
 	IF NOT FOUND THEN
 		RAISE NOTICE 'table undroppable_objs not found, skipping';
 		RETURN;
 	END IF;
 	FOR obj IN
-		SELECT * FROM pg_event_trigger_dropped_objects() JOIN
+		SELECT * FROM mdb_event_trigger_dropped_objects() JOIN
 			undroppable_objs USING (object_type, object_identity)
 	LOOP
 		RAISE EXCEPTION 'object % of type % cannot be dropped',
@@ -206,7 +206,7 @@ LANGUAGE plmdb AS $$
 DECLARE
     obj record;
 BEGIN
-    FOR obj IN SELECT * FROM pg_event_trigger_dropped_objects()
+    FOR obj IN SELECT * FROM mdb_event_trigger_dropped_objects()
     LOOP
         IF obj.object_type = 'table' THEN
                 EXECUTE format('DROP TABLE IF EXISTS audit_tbls.%I',
@@ -271,7 +271,7 @@ NOTICE:  table "audit_tbls_schema_two_table_three" does not exist, skipping
 NOTICE:  table "schema_one_table_one" does not exist, skipping
 NOTICE:  table "schema_one_table two" does not exist, skipping
 NOTICE:  table "schema_one_table_three" does not exist, skipping
-SELECT * FROM dropped_objects WHERE schema IS NULL OR schema <> 'pg_toast';
+SELECT * FROM dropped_objects WHERE schema IS NULL OR schema <> 'mdb_toast';
      type     |   schema   |               object                
 --------------+------------+-------------------------------------
  table column | schema_one | schema_one.table_one.a
@@ -318,7 +318,7 @@ CREATE OR REPLACE FUNCTION event_trigger_report_dropped()
 AS $$
 DECLARE r record;
 BEGIN
-    FOR r IN SELECT * from pg_event_trigger_dropped_objects()
+    FOR r IN SELECT * from mdb_event_trigger_dropped_objects()
     LOOP
     IF NOT r.normal AND NOT r.original THEN
         CONTINUE;
@@ -353,11 +353,11 @@ NOTICE:  NORMAL: orig=f normal=t istemp=f type=sequence identity=evttrig.one_col
 NOTICE:  NORMAL: orig=f normal=t istemp=f type=default value identity=for evttrig.one.col_a name={evttrig,one,col_a} args={}
 NOTICE:  NORMAL: orig=f normal=t istemp=f type=table identity=evttrig.two name={evttrig,two} args={}
 DROP TABLE a_temp_tbl;
-NOTICE:  NORMAL: orig=t normal=f istemp=t type=table identity=pg_temp.a_temp_tbl name={pg_temp,a_temp_tbl} args={}
+NOTICE:  NORMAL: orig=t normal=f istemp=t type=table identity=mdb_temp.a_temp_tbl name={mdb_temp,a_temp_tbl} args={}
 DROP EVENT TRIGGER regress_event_trigger_report_dropped;
 -- only allowed from within an event trigger function, should fail
-select pg_event_trigger_table_rewrite_oid();
-ERROR:  pg_event_trigger_table_rewrite_oid() can only be called in a table_rewrite event trigger function
+select mdb_event_trigger_table_rewrite_oid();
+ERROR:  mdb_event_trigger_table_rewrite_oid() can only be called in a table_rewrite event trigger function
 -- test Table Rewrite Event Trigger
 CREATE OR REPLACE FUNCTION test_evtrig_no_rewrite() RETURNS event_trigger
 LANGUAGE plmdb AS $$
@@ -381,8 +381,8 @@ CREATE OR REPLACE FUNCTION test_evtrig_no_rewrite() RETURNS event_trigger
 LANGUAGE plmdb AS $$
 BEGIN
   RAISE NOTICE 'Table ''%'' is being rewritten (reason = %)',
-               pg_event_trigger_table_rewrite_oid()::regclass,
-               pg_event_trigger_table_rewrite_reason();
+               mdb_event_trigger_table_rewrite_oid()::regclass,
+               mdb_event_trigger_table_rewrite_reason();
 END;
 $$;
 alter table rewriteme
@@ -398,7 +398,7 @@ CREATE OR REPLACE FUNCTION test_evtrig_no_rewrite() RETURNS event_trigger
 LANGUAGE plmdb AS $$
 BEGIN
   RAISE NOTICE 'Table is being rewritten (reason = %)',
-               pg_event_trigger_table_rewrite_reason();
+               mdb_event_trigger_table_rewrite_reason();
 END;
 $$;
 create type rewritetype as (a int);

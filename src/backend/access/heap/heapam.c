@@ -1108,7 +1108,7 @@ fastgetattr(HeapTuple tup, int attnum, TupleDesc tupleDesc,
  *
  *		An error is raised if the relation does not exist.
  *
- *		NB: a "relation" is anything with a pg_class entry.  The caller is
+ *		NB: a "relation" is anything with a mdb_class entry.  The caller is
  *		expected to check whether the relkind is something it can handle.
  * ----------------
  */
@@ -4231,7 +4231,7 @@ heap_tuple_attr_equals(TupleDesc tupdesc, int attrnum,
 				value2;
 	bool		isnull1,
 				isnull2;
-	Form_pg_attribute att;
+	Form_mdb_attribute att;
 
 	/*
 	 * If it's a whole-tuple reference, say "not equal".  It's not really
@@ -5232,9 +5232,9 @@ l5:
 
 		/*
 		 * A multixact together with LOCK_ONLY set but neither lock bit set
-		 * (i.e. a pg_upgraded share locked tuple) cannot possibly be running
+		 * (i.e. a mdb_upgraded share locked tuple) cannot possibly be running
 		 * anymore.  This check is critical for databases upgraded by
-		 * pg_upgrade; both MultiXactIdIsRunning and MultiXactIdExpand assume
+		 * mdb_upgrade; both MultiXactIdIsRunning and MultiXactIdExpand assume
 		 * that such multis are never passed.
 		 */
 		if (!(old_infomask & HEAP_LOCK_MASK) &&
@@ -5331,7 +5331,7 @@ l5:
 			{
 				/*
 				 * LOCK_ONLY can be present alone only when a page has been
-				 * upgraded by pg_upgrade.  But in that case,
+				 * upgraded by mdb_upgrade.  But in that case,
 				 * TransactionIdIsInProgress() should have returned false.  We
 				 * assume it's no longer locked in this case.
 				 */
@@ -5652,7 +5652,7 @@ l4:
 					else
 					{
 						/*
-						 * LOCK_ONLY present alone (a pg_upgraded tuple marked
+						 * LOCK_ONLY present alone (a mdb_upgraded tuple marked
 						 * as share-locked in the old cluster) shouldn't be
 						 * seen in the middle of an update chain.
 						 */
@@ -6178,7 +6178,7 @@ FreezeMultiXactId(MultiXactId multi, uint16 t_infomask,
 		 * preserve it.
 		 *
 		 * Don't assert MultiXactIdIsRunning if the multi came from a
-		 * pg_upgrade'd share-locked tuple, though, as doing that causes an
+		 * mdb_upgrade'd share-locked tuple, though, as doing that causes an
 		 * error to be raised unnecessarily.
 		 */
 		Assert((!(t_infomask & HEAP_LOCK_MASK) &&
@@ -6564,8 +6564,8 @@ heap_prepare_freeze_tuple(HeapTupleHeader tuple, TransactionId cutoff_xid,
  * Note: it might seem we could make the changes without exclusive lock, since
  * TransactionId read/write is assumed atomic anyway.  However there is a race
  * condition: someone who just fetched an old XID that we overwrite here could
- * conceivably not finish checking the XID against pg_clog before we finish
- * the VACUUM and perhaps truncate off the part of pg_clog he needs.  Getting
+ * conceivably not finish checking the XID against mdb_clog before we finish
+ * the VACUUM and perhaps truncate off the part of mdb_clog he needs.  Getting
  * exclusive lock ensures no other backend is in process of checking the
  * tuple status.  Also, getting exclusive lock makes it safe to adjust the
  * infomask bits.
@@ -6634,7 +6634,7 @@ GetMultiXactIdHintBits(MultiXactId multi, uint16 *new_infomask,
 
 	/*
 	 * We only use this in multis we just created, so they cannot be values
-	 * pre-pg_upgrade.
+	 * pre-mdb_upgrade.
 	 */
 	nmembers = GetMultiXactIdMembers(multi, &members, false, false);
 
@@ -6713,7 +6713,7 @@ MultiXactIdGetUpdateXid(TransactionId xmax, uint16 t_infomask)
 
 	/*
 	 * Since we know the LOCK_ONLY bit is not set, this cannot be a multi from
-	 * pre-pg_upgrade.
+	 * pre-mdb_upgrade.
 	 */
 	nmembers = GetMultiXactIdMembers(xmax, &members, false, false);
 

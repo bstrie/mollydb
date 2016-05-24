@@ -13,7 +13,7 @@ DATA = mollydb_fdw--1.0.sql
 REGRESS = mollydb_fdw
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

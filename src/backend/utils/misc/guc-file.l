@@ -14,7 +14,7 @@
 #include <ctype.h>
 #include <unistd.h>
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "storage/fd.h"
 #include "utils/guc.h"
@@ -162,7 +162,7 @@ ProcessConfigFile(GucContext context)
 
 /*
  * This function handles both actual config file (re)loads and execution of
- * show_all_file_settings() (i.e., the pg_file_settings view).  In the latter
+ * show_all_file_settings() (i.e., the mdb_file_settings view).  In the latter
  * case we don't apply any of the settings, but we make all the usual validity
  * checks, and we return the ConfigVariable list so that it can be printed out
  * by show_all_file_settings().
@@ -407,7 +407,7 @@ ProcessConfigFileInternal(GucContext context, bool applySettings, int elevel)
 	if (context == PGC_SIGHUP && applySettings)
 	{
 		InitializeGUCOptionsFromEnvironment();
-		pg_timezone_abbrev_initialize();
+		mdb_timezone_abbrev_initialize();
 		/* this selects SQL_ASCII in processes not connected to a database */
 		SetConfigOption("client_encoding", GetDatabaseEncodingName(),
 						PGC_BACKEND, PGC_S_DYNAMIC_DEFAULT);
@@ -1015,7 +1015,7 @@ ParseConfigDirectory(const char *includedir,
 	{
 		int			i;
 
-		qsort(filenames, num_filenames, sizeof(char *), pg_qsort_strcmp);
+		qsort(filenames, num_filenames, sizeof(char *), mdb_qsort_strcmp);
 		for (i = 0; i < num_filenames; i++)
 		{
 			if (!ParseConfigFile(filenames[i], true,

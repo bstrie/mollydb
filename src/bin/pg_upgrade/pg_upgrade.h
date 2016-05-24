@@ -1,8 +1,8 @@
 /*
- *	pg_upgrade.h
+ *	mdb_upgrade.h
  *
  *	Copyright (c) 2010-2016, MollyDB Global Development Group
- *	src/bin/pg_upgrade/pg_upgrade.h
+ *	src/bin/mdb_upgrade/mdb_upgrade.h
  */
 
 #include <unistd.h>
@@ -29,26 +29,26 @@
 #define GET_MAJOR_VERSION(v)	((v) / 100)
 
 /* contains both global db information and CREATE DATABASE commands */
-#define GLOBALS_DUMP_FILE	"pg_upgrade_dump_globals.sql"
-#define DB_DUMP_FILE_MASK	"pg_upgrade_dump_%u.custom"
+#define GLOBALS_DUMP_FILE	"mdb_upgrade_dump_globals.sql"
+#define DB_DUMP_FILE_MASK	"mdb_upgrade_dump_%u.custom"
 
-#define DB_DUMP_LOG_FILE_MASK	"pg_upgrade_dump_%u.log"
-#define SERVER_LOG_FILE		"pg_upgrade_server.log"
-#define UTILITY_LOG_FILE	"pg_upgrade_utility.log"
-#define INTERNAL_LOG_FILE	"pg_upgrade_internal.log"
+#define DB_DUMP_LOG_FILE_MASK	"mdb_upgrade_dump_%u.log"
+#define SERVER_LOG_FILE		"mdb_upgrade_server.log"
+#define UTILITY_LOG_FILE	"mdb_upgrade_utility.log"
+#define INTERNAL_LOG_FILE	"mdb_upgrade_internal.log"
 
 extern char *output_files[];
 
 /*
  * WIN32 files do not accept writes from multiple processes
  *
- * On Win32, we can't send both pg_upgrade output and command output to the
+ * On Win32, we can't send both mdb_upgrade output and command output to the
  * same file because we get the error: "The process cannot access the file
- * because it is being used by another process." so send the pg_ctl
+ * because it is being used by another process." so send the mdb_ctl
  * command-line output to a new file, rather than into the server log file.
  * Ideally we could use UTILITY_LOG_FILE for this, but some Windows platforms
- * keep the pg_ctl output file open by the running postmaster, even after
- * pg_ctl exits.
+ * keep the mdb_ctl output file open by the running postmaster, even after
+ * mdb_ctl exits.
  *
  * We could use the Windows pgwin32_open() flags to allow shared file
  * writes but is unclear how all other tools would use those flags, so
@@ -59,10 +59,10 @@ extern char *output_files[];
 #define SERVER_START_LOG_FILE	SERVER_LOG_FILE
 #define SERVER_STOP_LOG_FILE	SERVER_LOG_FILE
 #else
-#define SERVER_START_LOG_FILE	"pg_upgrade_server_start.log"
+#define SERVER_START_LOG_FILE	"mdb_upgrade_server_start.log"
 /*
- *	"pg_ctl start" keeps SERVER_START_LOG_FILE and SERVER_LOG_FILE open
- *	while the server is running, so we use UTILITY_LOG_FILE for "pg_ctl
+ *	"mdb_ctl start" keeps SERVER_START_LOG_FILE and SERVER_LOG_FILE open
+ *	while the server is running, so we use UTILITY_LOG_FILE for "mdb_ctl
  *	stop".
  */
 #define SERVER_STOP_LOG_FILE	UTILITY_LOG_FILE
@@ -70,8 +70,8 @@ extern char *output_files[];
 
 
 #ifndef WIN32
-#define pg_mv_file			rename
-#define pg_link_file		link
+#define mdb_mv_file			rename
+#define mdb_link_file		link
 #define PATH_SEPARATOR		'/'
 #define PATH_QUOTE	'\''
 #define RM_CMD				"rm -f"
@@ -81,8 +81,8 @@ extern char *output_files[];
 #define ECHO_QUOTE	"'"
 #define ECHO_BLANK	""
 #else
-#define pg_mv_file			pgrename
-#define pg_link_file		win32_pghardlink
+#define mdb_mv_file			pgrename
+#define mdb_link_file		win32_pghardlink
 #define PATH_SEPARATOR		'\\'
 #define PATH_QUOTE	'"'
 #define RM_CMD				"DEL /q"
@@ -114,15 +114,15 @@ extern char *output_files[];
  */
 #define VISIBILITY_MAP_FROZEN_BIT_CAT_VER 201603011
 /*
- * pg_multixact format changed in 9.3 commit 0ac5ad5134f2769ccbaefec73844f85,
+ * mdb_multixact format changed in 9.3 commit 0ac5ad5134f2769ccbaefec73844f85,
  * ("Improve concurrency of foreign key locking") which also updated catalog
- * version to this value.  pg_upgrade behavior depends on whether old and new
+ * version to this value.  mdb_upgrade behavior depends on whether old and new
  * server versions are both newer than this, or only the new one is.
  */
 #define MULTIXACT_FORMATCHANGE_CAT_VER 201301231
 
 /*
- * large object chunk size added to pg_controldata,
+ * large object chunk size added to mdb_controldata,
  * commit 5f93c37805e7485488480916b4585e098d3cc883
  */
 #define LARGE_OBJECT_SIZE_PG_CONTROL_VER 942
@@ -168,7 +168,7 @@ typedef struct
 	Oid			new_db_oid;
 
 	/*
-	 * old/new relfilenodes might differ for pg_largeobject(_metadata) indexes
+	 * old/new relfilenodes might differ for mdb_largeobject(_metadata) indexes
 	 * due to VACUUM FULL or REINDEX.  Other relfilenodes are preserved.
 	 */
 	Oid			old_relfilenode;
@@ -200,9 +200,9 @@ typedef struct
 } DbInfoArr;
 
 /*
- * The following structure is used to hold pg_control information.
+ * The following structure is used to hold mdb_control information.
  * Rather than using the backend's control structure we use our own
- * structure to avoid pg_control version issues between releases.
+ * structure to avoid mdb_control version issues between releases.
  */
 typedef struct
 {
@@ -239,7 +239,7 @@ typedef enum
 } transferMode;
 
 /*
- * Enumeration to denote pg_log modes
+ * Enumeration to denote mdb_log modes
  */
 typedef enum
 {
@@ -261,19 +261,19 @@ typedef long pgpid_t;
  */
 typedef struct
 {
-	ControlData controldata;	/* pg_control information */
+	ControlData controldata;	/* mdb_control information */
 	DbInfoArr	dbarr;			/* dbinfos array */
 	char	   *pgdata;			/* pathname for cluster's $PGDATA directory */
 	char	   *pgconfig;		/* pathname for cluster's config file
 								 * directory */
 	char	   *bindir;			/* pathname for cluster's executable directory */
-	char	   *pgopts;			/* options to pass to the server, like pg_ctl
+	char	   *pgopts;			/* options to pass to the server, like mdb_ctl
 								 * -o */
 	char	   *sockdir;		/* directory for Unix Domain socket, if any */
 	unsigned short port;		/* port number where postmaster is waiting */
 	uint32		major_version;	/* PG_VERSION of cluster */
 	char		major_version_str[64];	/* string PG_VERSION of cluster */
-	uint32		bin_version;	/* version returned from pg_ctl */
+	uint32		bin_version;	/* version returned from mdb_ctl */
 	const char *tablespace_suffix;		/* directory specification */
 } ClusterInfo;
 
@@ -360,7 +360,7 @@ void		generate_old_dump(void);
 #define EXEC_PSQL_ARGS "--echo-queries --set ON_ERROR_STOP=on --no-psqlrc --dbname=template1"
 
 bool exec_prog(const char *log_file, const char *opt_log_file,
-		  bool throw_error, const char *fmt,...) pg_attribute_printf(4, 5);
+		  bool throw_error, const char *fmt,...) mdb_attribute_printf(4, 5);
 void		verify_directories(void);
 bool		pid_lock_file_exists(const char *datadir);
 
@@ -397,7 +397,7 @@ void		get_sock_dir(ClusterInfo *cluster, bool live_check);
 
 /* relfilenode.c */
 
-void		get_pg_database_relfilenode(ClusterInfo *cluster);
+void		get_mdb_database_relfilenode(ClusterInfo *cluster);
 void transfer_all_new_tablespaces(DbInfoArr *old_db_arr,
 				  DbInfoArr *new_db_arr, char *old_pgdata, char *new_pgdata);
 void transfer_all_new_dbs(DbInfoArr *old_db_arr,
@@ -412,7 +412,7 @@ void		init_tablespaces(void);
 /* server.c */
 
 PGconn	   *connectToServer(ClusterInfo *cluster, const char *db_name);
-PGresult   *executeQueryOrDie(PGconn *conn, const char *fmt,...) pg_attribute_printf(2, 3);
+PGresult   *executeQueryOrDie(PGconn *conn, const char *fmt,...) mdb_attribute_printf(2, 3);
 
 char	   *cluster_conn_opts(ClusterInfo *cluster);
 
@@ -427,26 +427,26 @@ void		check_pghost_envvar(void);
 char	   *quote_identifier(const char *s);
 int			get_user_info(char **user_name_p);
 void		check_ok(void);
-void		report_status(eLogType type, const char *fmt,...) pg_attribute_printf(2, 3);
-void		pg_log(eLogType type, const char *fmt,...) pg_attribute_printf(2, 3);
-void		pg_fatal(const char *fmt,...) pg_attribute_printf(1, 2) pg_attribute_noreturn();
+void		report_status(eLogType type, const char *fmt,...) mdb_attribute_printf(2, 3);
+void		mdb_log(eLogType type, const char *fmt,...) mdb_attribute_printf(2, 3);
+void		mdb_fatal(const char *fmt,...) mdb_attribute_printf(1, 2) mdb_attribute_noreturn();
 void		end_progress_output(void);
-void		prep_status(const char *fmt,...) pg_attribute_printf(1, 2);
+void		prep_status(const char *fmt,...) mdb_attribute_printf(1, 2);
 void		check_ok(void);
 const char *getErrorText(void);
 unsigned int str2uint(const char *str);
-void		pg_putenv(const char *var, const char *val);
+void		mdb_putenv(const char *var, const char *val);
 
 
 /* version.c */
 
-void new_9_0_populate_pg_largeobject_metadata(ClusterInfo *cluster,
+void new_9_0_populate_mdb_largeobject_metadata(ClusterInfo *cluster,
 										 bool check_mode);
 void		old_9_3_check_for_line_data_type_usage(ClusterInfo *cluster);
 
 /* parallel.c */
 void parallel_exec_prog(const char *log_file, const char *opt_log_file,
-				   const char *fmt,...) pg_attribute_printf(3, 4);
+				   const char *fmt,...) mdb_attribute_printf(3, 4);
 void parallel_transfer_all_new_dbs(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 							  char *old_pgdata, char *new_pgdata,
 							  char *old_tablespace);

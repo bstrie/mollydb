@@ -92,7 +92,7 @@
  * macro.
  *
  * If elevel >= ERROR, the call will not return; we try to inform the compiler
- * of that via pg_unreachable().  However, no useful optimization effect is
+ * of that via mdb_unreachable().  However, no useful optimization effect is
  * obtained unless the compiler sees elevel as a compile-time constant, else
  * we're just adding code bloat.  So, if __builtin_constant_p is available,
  * use that to cause the second if() to vanish completely for non-constant
@@ -106,7 +106,7 @@
 		if (errstart(elevel, __FILE__, __LINE__, PG_FUNCNAME_MACRO, domain)) \
 			errfinish rest; \
 		if (__builtin_constant_p(elevel) && (elevel) >= ERROR) \
-			pg_unreachable(); \
+			mdb_unreachable(); \
 	} while(0)
 #else							/* !HAVE__BUILTIN_CONSTANT_P */
 #define ereport_domain(elevel, domain, rest)	\
@@ -115,7 +115,7 @@
 		if (errstart(elevel_, __FILE__, __LINE__, PG_FUNCNAME_MACRO, domain)) \
 			errfinish rest; \
 		if (elevel_ >= ERROR) \
-			pg_unreachable(); \
+			mdb_unreachable(); \
 	} while(0)
 #endif   /* HAVE__BUILTIN_CONSTANT_P */
 
@@ -133,25 +133,25 @@ extern int	errcode(int sqlerrcode);
 extern int	errcode_for_file_access(void);
 extern int	errcode_for_socket_access(void);
 
-extern int	errmsg(const char *fmt,...) pg_attribute_printf(1, 2);
-extern int	errmsg_internal(const char *fmt,...) pg_attribute_printf(1, 2);
+extern int	errmsg(const char *fmt,...) mdb_attribute_printf(1, 2);
+extern int	errmsg_internal(const char *fmt,...) mdb_attribute_printf(1, 2);
 
 extern int errmsg_plural(const char *fmt_singular, const char *fmt_plural,
-	unsigned long n,...) pg_attribute_printf(1, 4) pg_attribute_printf(2, 4);
+	unsigned long n,...) mdb_attribute_printf(1, 4) mdb_attribute_printf(2, 4);
 
-extern int	errdetail(const char *fmt,...) pg_attribute_printf(1, 2);
-extern int	errdetail_internal(const char *fmt,...) pg_attribute_printf(1, 2);
+extern int	errdetail(const char *fmt,...) mdb_attribute_printf(1, 2);
+extern int	errdetail_internal(const char *fmt,...) mdb_attribute_printf(1, 2);
 
-extern int	errdetail_log(const char *fmt,...) pg_attribute_printf(1, 2);
+extern int	errdetail_log(const char *fmt,...) mdb_attribute_printf(1, 2);
 
 extern int errdetail_log_plural(const char *fmt_singular,
 					 const char *fmt_plural,
-	unsigned long n,...) pg_attribute_printf(1, 4) pg_attribute_printf(2, 4);
+	unsigned long n,...) mdb_attribute_printf(1, 4) mdb_attribute_printf(2, 4);
 
 extern int errdetail_plural(const char *fmt_singular, const char *fmt_plural,
-	unsigned long n,...) pg_attribute_printf(1, 4) pg_attribute_printf(2, 4);
+	unsigned long n,...) mdb_attribute_printf(1, 4) mdb_attribute_printf(2, 4);
 
-extern int	errhint(const char *fmt,...) pg_attribute_printf(1, 2);
+extern int	errhint(const char *fmt,...) mdb_attribute_printf(1, 2);
 
 /*
  * errcontext() is typically called in error context callback functions, not
@@ -165,7 +165,7 @@ extern int	errhint(const char *fmt,...) pg_attribute_printf(1, 2);
 
 extern int	set_errcontext_domain(const char *domain);
 
-extern int	errcontext_msg(const char *fmt,...) pg_attribute_printf(1, 2);
+extern int	errcontext_msg(const char *fmt,...) mdb_attribute_printf(1, 2);
 
 extern int	errhidestmt(bool hide_stmt);
 extern int	errhidecontext(bool hide_ctx);
@@ -201,7 +201,7 @@ extern int	getinternalerrposition(void);
 		elog_start(__FILE__, __LINE__, PG_FUNCNAME_MACRO); \
 		elog_finish(elevel, __VA_ARGS__); \
 		if (__builtin_constant_p(elevel) && (elevel) >= ERROR) \
-			pg_unreachable(); \
+			mdb_unreachable(); \
 	} while(0)
 #else							/* !HAVE__BUILTIN_CONSTANT_P */
 #define elog(elevel, ...)  \
@@ -211,7 +211,7 @@ extern int	getinternalerrposition(void);
 		elevel_ = (elevel); \
 		elog_finish(elevel_, __VA_ARGS__); \
 		if (elevel_ >= ERROR) \
-			pg_unreachable(); \
+			mdb_unreachable(); \
 	} while(0)
 #endif   /* HAVE__BUILTIN_CONSTANT_P */
 #else							/* !HAVE__VA_ARGS */
@@ -221,13 +221,13 @@ extern int	getinternalerrposition(void);
 #endif   /* HAVE__VA_ARGS */
 
 extern void elog_start(const char *filename, int lineno, const char *funcname);
-extern void elog_finish(int elevel, const char *fmt,...) pg_attribute_printf(2, 3);
+extern void elog_finish(int elevel, const char *fmt,...) mdb_attribute_printf(2, 3);
 
 
 /* Support for constructing error strings separately from ereport() calls */
 
 extern void pre_format_elog_string(int errnumber, const char *domain);
-extern char *format_elog_string(const char *fmt,...) pg_attribute_printf(1, 2);
+extern char *format_elog_string(const char *fmt,...) mdb_attribute_printf(1, 2);
 
 
 /* Support for attaching context information to error reports */
@@ -303,15 +303,15 @@ extern PGDLLIMPORT ErrorContextCallback *error_context_stack;
 	} while (0)
 
 /*
- * Some compilers understand pg_attribute_noreturn(); for other compilers,
- * insert pg_unreachable() so that the compiler gets the point.
+ * Some compilers understand mdb_attribute_noreturn(); for other compilers,
+ * insert mdb_unreachable() so that the compiler gets the point.
  */
 #ifdef HAVE_PG_ATTRIBUTE_NORETURN
 #define PG_RE_THROW()  \
-	pg_re_throw()
+	mdb_re_throw()
 #else
 #define PG_RE_THROW()  \
-	(pg_re_throw(), pg_unreachable())
+	(mdb_re_throw(), mdb_unreachable())
 #endif
 
 extern PGDLLIMPORT sigjmp_buf *PG_exception_stack;
@@ -363,9 +363,9 @@ extern void EmitErrorReport(void);
 extern ErrorData *CopyErrorData(void);
 extern void FreeErrorData(ErrorData *edata);
 extern void FlushErrorState(void);
-extern void ReThrowError(ErrorData *edata) pg_attribute_noreturn();
+extern void ReThrowError(ErrorData *edata) mdb_attribute_noreturn();
 extern void ThrowErrorData(ErrorData *edata);
-extern void pg_re_throw(void) pg_attribute_noreturn();
+extern void mdb_re_throw(void) mdb_attribute_noreturn();
 
 extern char *GetErrorContextStack(void);
 
@@ -410,6 +410,6 @@ extern void set_syslog_parameters(const char *ident, int facility);
  * not available). Used before ereport/elog can be used
  * safely (memory context, GUC load etc)
  */
-extern void write_stderr(const char *fmt,...) pg_attribute_printf(1, 2);
+extern void write_stderr(const char *fmt,...) mdb_attribute_printf(1, 2);
 
 #endif   /* ELOG_H */

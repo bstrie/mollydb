@@ -40,7 +40,7 @@ dsimple_init(PG_FUNCTION_ARGS)
 	{
 		DefElem    *defel = (DefElem *) lfirst(l);
 
-		if (pg_strcasecmp("StopWords", defel->defname) == 0)
+		if (mdb_strcasecmp("StopWords", defel->defname) == 0)
 		{
 			if (stoploaded)
 				ereport(ERROR,
@@ -49,7 +49,7 @@ dsimple_init(PG_FUNCTION_ARGS)
 			readstoplist(defGetString(defel), &d->stoplist, lowerstr);
 			stoploaded = true;
 		}
-		else if (pg_strcasecmp("Accept", defel->defname) == 0)
+		else if (mdb_strcasecmp("Accept", defel->defname) == 0)
 		{
 			if (acceptloaded)
 				ereport(ERROR,

@@ -26,7 +26,7 @@
  * what encoding the locale name itself is supposed to be in, when you
  * haven't yet set a locale. Also, it causes problems when the cluster
  * contains databases with different encodings, as the locale name is stored
- * in the pg_database system catalog. To work around that, when setlocale()
+ * in the mdb_database system catalog. To work around that, when setlocale()
  * returns that locale name, map it to a pure-ASCII alias for the same
  * locale.
  *-------------------------------------------------------------------------

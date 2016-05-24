@@ -1,11 +1,11 @@
 /* ----------
- *	pg_trace.h
+ *	mdb_trace.h
  *
  *	Definitions for the MollyDB tracing framework
  *
  *	Copyright (c) 2006-2016, MollyDB Global Development Group
  *
- *	src/include/pg_trace.h
+ *	src/include/mdb_trace.h
  * ----------
  */
 

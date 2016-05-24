@@ -88,7 +88,7 @@ configure_args = @configure_args@
 #
 # In a PGXS build, we cannot use the values inserted into Makefile.global
 # by configure, since the installation tree may have been relocated.
-# Instead get the path values from pg_config.
+# Instead get the path values from mdb_config.
 
 ifndef PGXS
 
@@ -150,7 +150,7 @@ else # PGXS case
 
 # Extension makefiles should set PG_CONFIG, but older ones might not
 ifndef PG_CONFIG
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 endif
 
 bindir := $(shell $(PG_CONFIG) --bindir)
@@ -353,12 +353,12 @@ ifeq ($(enable_tap_tests),yes)
 
 define prove_installcheck
 rm -rf $(CURDIR)/tmp_check/log
-cd $(srcdir) && TESTDIR='$(CURDIR)' PATH="$(bindir):$$PATH" PGPORT='6$(DEF_PGPORT)' top_builddir='$(CURDIR)/$(top_builddir)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
+cd $(srcdir) && TESTDIR='$(CURDIR)' PATH="$(bindir):$$PATH" PGPORT='6$(DEF_PGPORT)' top_builddir='$(CURDIR)/$(top_builddir)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/mdb_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
 endef
 
 define prove_check
 rm -rf $(CURDIR)/tmp_check/log
-cd $(srcdir) && TESTDIR='$(CURDIR)' $(with_temp_install) PGPORT='6$(DEF_PGPORT)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/pg_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
+cd $(srcdir) && TESTDIR='$(CURDIR)' $(with_temp_install) PGPORT='6$(DEF_PGPORT)' PG_REGRESS='$(CURDIR)/$(top_builddir)/src/test/regress/mdb_regress' $(PROVE) $(PG_PROVE_FLAGS) $(PROVE_FLAGS) t/*.pl
 endef
 
 else
@@ -535,15 +535,15 @@ ifdef TEMP_CONFIG
 TEMP_CONF += --temp-config=$(TEMP_CONFIG)
 endif
 
-pg_regress_locale_flags = $(if $(ENCODING),--encoding=$(ENCODING)) $(NOLOCALE)
+mdb_regress_locale_flags = $(if $(ENCODING),--encoding=$(ENCODING)) $(NOLOCALE)
 
-pg_regress_check = $(with_temp_install) $(top_builddir)/src/test/regress/pg_regress --inputdir=$(srcdir) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
-pg_regress_installcheck = $(top_builddir)/src/test/regress/pg_regress --inputdir=$(srcdir) --bindir='$(bindir)' $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+mdb_regress_check = $(with_temp_install) $(top_builddir)/src/test/regress/mdb_regress --inputdir=$(srcdir) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(mdb_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+mdb_regress_installcheck = $(top_builddir)/src/test/regress/mdb_regress --inputdir=$(srcdir) --bindir='$(bindir)' $(mdb_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 
-pg_regress_clean_files = results/ regression.diffs regression.out tmp_check/ log/
+mdb_regress_clean_files = results/ regression.diffs regression.out tmp_check/ log/
 
-pg_isolation_regress_check = $(with_temp_install) $(top_builddir)/src/test/isolation/pg_isolation_regress --inputdir=$(srcdir) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
-pg_isolation_regress_installcheck = $(top_builddir)/src/test/isolation/pg_isolation_regress --inputdir=$(srcdir) $(pg_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+mdb_isolation_regress_check = $(with_temp_install) $(top_builddir)/src/test/isolation/mdb_isolation_regress --inputdir=$(srcdir) --temp-instance=./tmp_check $(TEMP_CONF) --bindir= $(mdb_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
+mdb_isolation_regress_installcheck = $(top_builddir)/src/test/isolation/mdb_isolation_regress --inputdir=$(srcdir) $(mdb_regress_locale_flags) $(EXTRA_REGRESS_OPTS)
 
 ##########################################################################
 #
@@ -649,33 +649,33 @@ ifndef PGXS
 $(top_builddir)/src/Makefile.global: $(top_srcdir)/src/Makefile.global.in $(top_builddir)/config.status
 	cd $(top_builddir) && ./config.status src/Makefile.global
 
-# Remake pg_config.h from pg_config.h.in if the latter changed.
-# config.status will not change the timestamp on pg_config.h if it
+# Remake mdb_config.h from mdb_config.h.in if the latter changed.
+# config.status will not change the timestamp on mdb_config.h if it
 # doesn't change, so as to avoid recompiling the entire tree
 # unnecessarily. Therefore we make config.status update a timestamp file
 # stamp-h every time it runs, so that we don't trigger this rule every time.
-# (We do trigger the null rule for stamp-h to pg_config.h every time; so it's
+# (We do trigger the null rule for stamp-h to mdb_config.h every time; so it's
 # important for that rule to be empty!)
 #
 # Of course you need to turn on dependency tracking to get any
-# dependencies on pg_config.h.
-$(top_builddir)/src/include/pg_config.h: $(top_builddir)/src/include/stamp-h ;
+# dependencies on mdb_config.h.
+$(top_builddir)/src/include/mdb_config.h: $(top_builddir)/src/include/stamp-h ;
 
-$(top_builddir)/src/include/stamp-h: $(top_srcdir)/src/include/pg_config.h.in $(top_builddir)/config.status
-	cd $(top_builddir) && ./config.status src/include/pg_config.h
+$(top_builddir)/src/include/stamp-h: $(top_srcdir)/src/include/mdb_config.h.in $(top_builddir)/config.status
+	cd $(top_builddir) && ./config.status src/include/mdb_config.h
 
-# Also remake pg_config_ext.h from pg_config_ext.h.in, same logic as above.
-$(top_builddir)/src/include/pg_config_ext.h: $(top_builddir)/src/include/stamp-ext-h ;
+# Also remake mdb_config_ext.h from mdb_config_ext.h.in, same logic as above.
+$(top_builddir)/src/include/mdb_config_ext.h: $(top_builddir)/src/include/stamp-ext-h ;
 
-$(top_builddir)/src/include/stamp-ext-h: $(top_srcdir)/src/include/pg_config_ext.h.in $(top_builddir)/config.status
-	cd $(top_builddir) && ./config.status src/include/pg_config_ext.h
+$(top_builddir)/src/include/stamp-ext-h: $(top_srcdir)/src/include/mdb_config_ext.h.in $(top_builddir)/config.status
+	cd $(top_builddir) && ./config.status src/include/mdb_config_ext.h
 
-# Also remake ecpg_config.h from ecpg_config.h.in if the latter changed, same
+# Also remake ecmdb_config.h from ecmdb_config.h.in if the latter changed, same
 # logic as above.
-$(top_builddir)/src/interfaces/ecpg/include/ecpg_config.h: $(top_builddir)/src/interfaces/ecpg/include/stamp-h ;
+$(top_builddir)/src/interfaces/ecpg/include/ecmdb_config.h: $(top_builddir)/src/interfaces/ecpg/include/stamp-h ;
 
- $(top_builddir)/src/interfaces/ecpg/include/stamp-h: $(top_builddir)/src/interfaces/ecpg/include/ecpg_config.h.in $(top_builddir)/config.status
-	cd $(top_builddir) && ./config.status src/interfaces/ecpg/include/ecpg_config.h
+ $(top_builddir)/src/interfaces/ecpg/include/stamp-h: $(top_builddir)/src/interfaces/ecpg/include/ecmdb_config.h.in $(top_builddir)/config.status
+	cd $(top_builddir) && ./config.status src/interfaces/ecpg/include/ecmdb_config.h
 
 # When configure changes, rerun configure with the same options as
 # last time. To change configure, you need to run autoconf manually.

@@ -19,7 +19,7 @@
 /* System includes */
 #include "fmgr.h"
 
-extern void *pg_dlopen(char *filename);
-extern PGFunction pg_dlsym(void *handle, char *funcname);
-extern void pg_dlclose(void *handle);
-extern char *pg_dlerror(void);
+extern void *mdb_dlopen(char *filename);
+extern PGFunction mdb_dlsym(void *handle, char *funcname);
+extern void mdb_dlclose(void *handle);
+extern char *mdb_dlerror(void);

@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_sema.h
+ * mdb_sema.h
  *	  Platform-independent API for semaphores.
  *
  * MollyDB requires counting semaphores (the kind that keep track of
@@ -13,7 +13,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/storage/pg_sema.h
+ * src/include/storage/mdb_sema.h
  *
  *-------------------------------------------------------------------------
  */
@@ -28,7 +28,7 @@
  * in shared memory (to support implementations where the data changes during
  * lock/unlock).
  *
- * pg_config.h must define exactly one of the USE_xxx_SEMAPHORES symbols.
+ * mdb_config.h must define exactly one of the USE_xxx_SEMAPHORES symbols.
  */
 
 #ifdef USE_NAMED_POSIX_SEMAPHORES

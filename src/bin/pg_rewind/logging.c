@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "pg_rewind.h"
+#include "mdb_rewind.h"
 #include "logging.h"
 
 #include "pgtime.h"
@@ -21,16 +21,16 @@
 uint64		fetch_size;
 uint64		fetch_done;
 
-static pg_time_t last_progress_report = 0;
+static mdb_time_t last_progress_report = 0;
 
 #define QUERY_ALLOC			8192
 
 #define MESSAGE_WIDTH		60
 
 static
-pg_attribute_printf(2, 0)
+mdb_attribute_printf(2, 0)
 void
-pg_log_v(eLogType type, const char *fmt, va_list ap)
+mdb_log_v(eLogType type, const char *fmt, va_list ap)
 {
 	char		message[QUERY_ALLOC];
 
@@ -66,12 +66,12 @@ pg_log_v(eLogType type, const char *fmt, va_list ap)
 
 
 void
-pg_log(eLogType type, const char *fmt,...)
+mdb_log(eLogType type, const char *fmt,...)
 {
 	va_list		args;
 
 	va_start(args, fmt);
-	pg_log_v(type, fmt, args);
+	mdb_log_v(type, fmt, args);
 	va_end(args);
 }
 
@@ -80,14 +80,14 @@ pg_log(eLogType type, const char *fmt,...)
  * Print an error message, and exit.
  */
 void
-pg_fatal(const char *fmt,...)
+mdb_fatal(const char *fmt,...)
 {
 	va_list		args;
 
 	va_start(args, fmt);
-	pg_log_v(PG_FATAL, fmt, args);
+	mdb_log_v(PG_FATAL, fmt, args);
 	va_end(args);
-	/* should not get here, pg_log_v() exited already */
+	/* should not get here, mdb_log_v() exited already */
 	exit(1);
 }
 
@@ -104,7 +104,7 @@ progress_report(bool force)
 	int			percent;
 	char		fetch_done_str[32];
 	char		fetch_size_str[32];
-	pg_time_t	now;
+	mdb_time_t	now;
 
 	if (!showprogress)
 		return;
@@ -137,7 +137,7 @@ progress_report(bool force)
 	snprintf(fetch_size_str, sizeof(fetch_size_str), INT64_FORMAT,
 			 fetch_size / 1024);
 
-	pg_log(PG_PROGRESS, "%*s/%s kB (%d%%) copied",
+	mdb_log(PG_PROGRESS, "%*s/%s kB (%d%%) copied",
 		   (int) strlen(fetch_size_str), fetch_done_str, fetch_size_str,
 		   percent);
 	printf("\r");

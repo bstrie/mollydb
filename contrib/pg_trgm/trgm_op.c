@@ -1,5 +1,5 @@
 /*
- * contrib/pg_trgm/trgm_op.c
+ * contrib/mdb_trgm/trgm_op.c
  */
 #include "mollydb.h"
 
@@ -7,11 +7,11 @@
 
 #include "trgm.h"
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "tsearch/ts_locale.h"
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
-#include "utils/pg_crc.h"
+#include "utils/mdb_crc.h"
 
 PG_MODULE_MAGIC;
 
@@ -47,7 +47,7 @@ void
 _PG_init(void)
 {
 	/* Define custom GUC variables. */
-	DefineCustomRealVariable("pg_trgm.similarity_threshold",
+	DefineCustomRealVariable("mdb_trgm.similarity_threshold",
 							"Sets the threshold used by the %% operator.",
 							"Valid range is 0.0 .. 1.0.",
 							&similarity_threshold,
@@ -59,7 +59,7 @@ _PG_init(void)
 							NULL,
 							NULL,
 							NULL);
-	DefineCustomRealVariable("pg_trgm.word_similarity_threshold",
+	DefineCustomRealVariable("mdb_trgm.word_similarity_threshold",
 							"Sets the threshold used by the <%% operator.",
 							"Valid range is 0.0 .. 1.0.",
 							&word_similarity_threshold,
@@ -75,7 +75,7 @@ _PG_init(void)
 
 /*
  * Deprecated function.
- * Use "pg_trgm.similarity_threshold" GUC variable instead of this function.
+ * Use "mdb_trgm.similarity_threshold" GUC variable instead of this function.
  */
 Datum
 set_limit(PG_FUNCTION_ARGS)
@@ -89,7 +89,7 @@ set_limit(PG_FUNCTION_ARGS)
 
 	nlimit_str = OidOutputFunctionCall(func_out_oid, Float4GetDatum(nlimit));
 
-	SetConfigOption("pg_trgm.similarity_threshold", nlimit_str,
+	SetConfigOption("mdb_trgm.similarity_threshold", nlimit_str,
 					PGC_USERSET, PGC_S_SESSION);
 
 	PG_RETURN_FLOAT4(similarity_threshold);
@@ -97,7 +97,7 @@ set_limit(PG_FUNCTION_ARGS)
 
 /*
  * Deprecated function.
- * Use "pg_trgm.similarity_threshold" GUC variable instead of this function.
+ * Use "mdb_trgm.similarity_threshold" GUC variable instead of this function.
  */
 Datum
 show_limit(PG_FUNCTION_ARGS)
@@ -141,7 +141,7 @@ find_word(char *str, int lenstr, char **endword, int *charlen)
 	char	   *beginword = str;
 
 	while (beginword - str < lenstr && !ISWORDCHR(beginword))
-		beginword += pg_mblen(beginword);
+		beginword += mdb_mblen(beginword);
 
 	if (beginword - str >= lenstr)
 		return NULL;
@@ -150,7 +150,7 @@ find_word(char *str, int lenstr, char **endword, int *charlen)
 	*charlen = 0;
 	while (*endword - str < lenstr && ISWORDCHR(*endword))
 	{
-		*endword += pg_mblen(*endword);
+		*endword += mdb_mblen(*endword);
 		(*charlen)++;
 	}
 
@@ -171,7 +171,7 @@ compact_trigram(trgm *tptr, char *str, int bytelen)
 	}
 	else
 	{
-		pg_crc32	crc;
+		mdb_crc32	crc;
 
 		INIT_LEGACY_CRC32(crc);
 		COMP_LEGACY_CRC32(crc, str, bytelen);
@@ -198,9 +198,9 @@ make_trigrams(trgm *tptr, char *str, int bytelen, int charlen)
 	if (bytelen > charlen)
 	{
 		/* Find multibyte character boundaries and apply compact_trigram */
-		int			lenfirst = pg_mblen(str),
-					lenmiddle = pg_mblen(str + lenfirst),
-					lenlast = pg_mblen(str + lenfirst + lenmiddle);
+		int			lenfirst = mdb_mblen(str),
+					lenmiddle = mdb_mblen(str + lenfirst),
+					lenlast = mdb_mblen(str + lenfirst + lenmiddle);
 
 		while ((ptr - str) + lenfirst + lenmiddle + lenlast <= bytelen)
 		{
@@ -211,7 +211,7 @@ make_trigrams(trgm *tptr, char *str, int bytelen, int charlen)
 
 			lenfirst = lenmiddle;
 			lenmiddle = lenlast;
-			lenlast = pg_mblen(ptr + lenfirst + lenmiddle);
+			lenlast = mdb_mblen(ptr + lenfirst + lenmiddle);
 		}
 	}
 	else
@@ -254,7 +254,7 @@ generate_trgm_only(trgm *trg, char *str, int slen)
 	tptr = trg;
 
 	/* Allocate a buffer for case-folded, blank-padded words */
-	buf = (char *) palloc(slen * pg_database_encoding_max_length() + 4);
+	buf = (char *) palloc(slen * mdb_database_encoding_max_length() + 4);
 
 	if (LPADDING > 0)
 	{
@@ -304,7 +304,7 @@ static void
 protect_out_of_mem(int slen)
 {
 	if ((Size) (slen / 2) >= (MaxAllocSize / (sizeof(trgm) * 3)) ||
-		(Size) slen >= (MaxAllocSize / pg_database_encoding_max_length()))
+		(Size) slen >= (MaxAllocSize / mdb_database_encoding_max_length()))
 		ereport(ERROR,
 				(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 				 errmsg("out of memory")));
@@ -490,7 +490,7 @@ iterate_word_similarity(int *trg2indexes,
 				}
 				/*
 				 * if we only check that word similarity is greater than
-				 * pg_trgm.word_similarity_threshold we do not need to calculate
+				 * mdb_trgm.word_similarity_threshold we do not need to calculate
 				 * a maximum similarity.
 				 */
 				if (check_only && smlr_cur >= word_similarity_threshold)
@@ -508,7 +508,7 @@ iterate_word_similarity(int *trg2indexes,
 			smlr_max = Max(smlr_max, smlr_cur);
 			/*
 			 * if we only check that word similarity is greater than
-			 * pg_trgm.word_similarity_threshold we do not need to calculate a
+			 * mdb_trgm.word_similarity_threshold we do not need to calculate a
 			 * maximum similarity
 			 */
 			if (check_only && smlr_max >= word_similarity_threshold)
@@ -680,7 +680,7 @@ get_wildcard_part(const char *str, int lenstr,
 			else
 				in_leading_wildcard_meta = false;
 		}
-		beginword += pg_mblen(beginword);
+		beginword += mdb_mblen(beginword);
 	}
 
 	/*
@@ -715,7 +715,7 @@ get_wildcard_part(const char *str, int lenstr,
 	endword = beginword;
 	while (endword - str < lenstr)
 	{
-		clen = pg_mblen(endword);
+		clen = mdb_mblen(endword);
 		if (in_escape)
 		{
 			if (ISWORDCHR(endword))
@@ -885,9 +885,9 @@ show_trgm(PG_FUNCTION_ARGS)
 
 	for (i = 0, ptr = GETARR(trg); i < ARRNELEM(trg); i++, ptr++)
 	{
-		text	   *item = (text *) palloc(VARHDRSZ + Max(12, pg_database_encoding_max_length() * 3));
+		text	   *item = (text *) palloc(VARHDRSZ + Max(12, mdb_database_encoding_max_length() * 3));
 
-		if (pg_database_encoding_max_length() > 1 && !ISPRINTABLETRGM(ptr))
+		if (mdb_database_encoding_max_length() > 1 && !ISPRINTABLETRGM(ptr))
 		{
 			snprintf(VARDATA(item), 12, "0x%06x", trgm2int(ptr));
 			SET_VARSIZE(item, VARHDRSZ + strlen(VARDATA(item)));

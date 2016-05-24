@@ -24,7 +24,7 @@ CREATE TABLE brintest (byteacol bytea,
 	numericcol numeric,
 	uuidcol uuid,
 	int4rangecol int4range,
-	lsncol pg_lsn,
+	lsncol mdb_lsn,
 	boxcol box
 ) WITH (fillfactor=10);
 
@@ -54,7 +54,7 @@ INSERT INTO brintest SELECT
 	tenthous::numeric(36,30) * fivethous * even / (hundred + 1),
 	format('%s%s-%s-%s-%s-%s%s%s', to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'))::uuid,
 	int4range(thousand, twothousand),
-	format('%s/%s%s', odd, even, tenthous)::pg_lsn,
+	format('%s/%s%s', odd, even, tenthous)::mdb_lsn,
 	box(point(odd, even), point(thousand, twothousand))
 FROM tenk1 ORDER BY unique2 LIMIT 100;
 
@@ -276,7 +276,7 @@ INSERT INTO brinopers VALUES
 	 '{@>}',
 	 '{1500}',
 	 '{22}'),
-	('lsncol', 'pg_lsn',
+	('lsncol', 'mdb_lsn',
 	 '{>, >=, =, <=, <, IS, IS NOT}',
 	 '{0/1200, 0/1200, 44/455222, 198/1999799, 198/1999799, NULL, NULL}',
 	 '{100, 100, 1, 100, 100, 25, 100}'),
@@ -408,7 +408,7 @@ INSERT INTO brintest SELECT
 	tenthous::numeric(36,30) * fivethous * even / (hundred + 1),
 	format('%s%s-%s-%s-%s-%s%s%s', to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'), to_char(tenthous, 'FM0000'))::uuid,
 	int4range(thousand, twothousand),
-	format('%s/%s%s', odd, even, tenthous)::pg_lsn,
+	format('%s/%s%s', odd, even, tenthous)::mdb_lsn,
 	box(point(odd, even), point(thousand, twothousand))
 FROM tenk1 ORDER BY unique2 LIMIT 5 OFFSET 5;
 

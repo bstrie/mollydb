@@ -9,7 +9,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/pg_config_manual.h
+ * src/include/mdb_config_manual.h
  *------------------------------------------------------------------------
  */
 
@@ -27,7 +27,7 @@
  *
  * The minimum value is 8 (GIN indexes use 8-argument support functions).
  * The maximum possible value is around 600 (limited by index tuple size in
- * pg_proc's index; BLCKSZ larger than 8K would allow more).  Values larger
+ * mdb_proc's index; BLCKSZ larger than 8K would allow more).  Values larger
  * than needed will waste memory and processing time, but do not directly
  * cost disk space.
  *

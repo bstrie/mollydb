@@ -21,7 +21,7 @@
 #include "storage/relfilenode.h"
 
 
-typedef struct FormData_pg_sequence
+typedef struct FormData_mdb_sequence
 {
 	NameData	sequence_name;
 	int64		last_value;
@@ -33,9 +33,9 @@ typedef struct FormData_pg_sequence
 	int64		log_cnt;
 	bool		is_cycled;
 	bool		is_called;
-} FormData_pg_sequence;
+} FormData_mdb_sequence;
 
-typedef FormData_pg_sequence *Form_pg_sequence;
+typedef FormData_mdb_sequence *Form_mdb_sequence;
 
 /*
  * Columns of a sequence relation
@@ -71,7 +71,7 @@ extern Datum setval_oid(PG_FUNCTION_ARGS);
 extern Datum setval3_oid(PG_FUNCTION_ARGS);
 extern Datum lastval(PG_FUNCTION_ARGS);
 
-extern Datum pg_sequence_parameters(PG_FUNCTION_ARGS);
+extern Datum mdb_sequence_parameters(PG_FUNCTION_ARGS);
 
 extern ObjectAddress DefineSequence(CreateSeqStmt *stmt);
 extern ObjectAddress AlterSequence(AlterSeqStmt *stmt);

@@ -96,14 +96,14 @@
   <para>
    Alternatively, you can run <command>initdb</command> via
    the <xref linkend="app-pg-ctl">
-   program<indexterm><primary>pg_ctl</></> like so:
+   program<indexterm><primary>mdb_ctl</></> like so:
 <screen>
-<prompt>$</> <userinput>pg_ctl -D /usr/local/mdb/data initdb</userinput>
+<prompt>$</> <userinput>mdb_ctl -D /usr/local/mdb/data initdb</userinput>
 </screen>
    This may be more intuitive if you are
-   using <command>pg_ctl</command> for starting and stopping the
+   using <command>mdb_ctl</command> for starting and stopping the
    server (see <xref linkend="server-start">), so
-   that <command>pg_ctl</command> would be the sole command you use
+   that <command>mdb_ctl</command> would be the sole command you use
    for managing the database server instance.
   </para>
 
@@ -153,7 +153,7 @@ mollydb$ <userinput>initdb -D /usr/local/mdb/data</userinput>
    </indexterm>
    Also, specify <option>-A md5</> or
    <option>-A password</> so that the default <literal>trust</> authentication
-   mode is not used; or modify the generated <filename>pg_hba.conf</filename>
+   mode is not used; or modify the generated <filename>mdb_hba.conf</filename>
    file after running <command>initdb</command>, but
    <emphasis>before</> you start the server for the first time. (Other
    reasonable approaches include using <literal>peer</literal> authentication
@@ -199,7 +199,7 @@ mollydb$ <userinput>initdb -D /usr/local/mdb/data</userinput>
     directory that is owned by the <productname>MollyDB</productname>
     user, and then create the data directory within that.  This avoids
     permissions problems, particularly for operations such
-    as <application>pg_upgrade</>, and it also ensures clean failures if
+    as <application>mdb_upgrade</>, and it also ensures clean failures if
     the secondary volume is taken offline.
    </para>
 
@@ -289,14 +289,14 @@ $ <userinput>mollydb -D /usr/local/mdb/data &gt;logfile 2&gt;&amp;1 &amp;</useri
   <para>
    This shell syntax can get tedious quickly.  Therefore the wrapper
    program
-   <xref linkend="app-pg-ctl"><indexterm><primary>pg_ctl</primary></indexterm>
+   <xref linkend="app-pg-ctl"><indexterm><primary>mdb_ctl</primary></indexterm>
    is provided to simplify some tasks.  For example:
 <programlisting>
-pg_ctl start -l logfile
+mdb_ctl start -l logfile
 </programlisting>
    will start the server in the background and put the output into the
    named log file. The <option>-D</option> option has the same meaning
-   here as for <command>mollydb</command>. <command>pg_ctl</command>
+   here as for <command>mollydb</command>. <command>mdb_ctl</command>
    is also capable of stopping the server.
   </para>
 
@@ -324,7 +324,7 @@ pg_ctl start -l logfile
    probably should form your commands using
    <literal>su mollydb -c '...'</literal>.  For example:
 <programlisting>
-su mollydb -c 'pg_ctl start -D /usr/local/mdb/data -l serverlog'
+su mollydb -c 'mdb_ctl start -D /usr/local/mdb/data -l serverlog'
 </programlisting>
   </para>
 
@@ -349,8 +349,8 @@ su mollydb -c 'pg_ctl start -D /usr/local/mdb/data -l serverlog'
       to the file <filename>/etc/rc.local</filename>:
       <indexterm><primary>OpenBSD</><secondary>start script</secondary></>
 <programlisting>
-if [ -x /usr/local/mdb/bin/pg_ctl -a -x /usr/local/mdb/bin/mollydb ]; then
-    su -l mollydb -c '/usr/local/mdb/bin/pg_ctl start -s -l /var/mollydb/log -D /usr/local/mdb/data'
+if [ -x /usr/local/mdb/bin/mdb_ctl -a -x /usr/local/mdb/bin/mollydb ]; then
+    su -l mollydb -c '/usr/local/mdb/bin/mdb_ctl start -s -l /var/mollydb/log -D /usr/local/mdb/data'
     echo -n ' mollydb'
 fi
 </programlisting>
@@ -362,7 +362,7 @@ fi
       On <productname>Linux</productname> systems either add
       <indexterm><primary>Linux</><secondary>start script</secondary></>
 <programlisting>
-/usr/local/mdb/bin/pg_ctl start -l logfile -D /usr/local/mdb/data
+/usr/local/mdb/bin/mdb_ctl start -l logfile -D /usr/local/mdb/data
 </programlisting>
       to <filename>/etc/rc.d/rc.local</filename>
       or <filename>/etc/rc.local</filename> or look at the file
@@ -423,7 +423,7 @@ WantedBy=multi-user.target
       the following line:
       <indexterm><primary>Solaris</><secondary>start script</secondary></>
 <programlisting>
-su - mollydb -c "/usr/local/mdb/bin/pg_ctl start -l logfile -D /usr/local/mdb/data"
+su - mollydb -c "/usr/local/mdb/bin/mdb_ctl start -l logfile -D /usr/local/mdb/data"
 </programlisting>
       Then, create a symbolic link to it in <filename>/etc/rc3.d</> as
       <filename>S99mollydb</>.
@@ -1567,7 +1567,7 @@ $ <userinput>kill -INT `head -1 /usr/local/mdb/data/postmaster.pid`</userinput>
 
   <para>
    To terminate an individual session while allowing other sessions to
-   continue, use <function>pg_terminate_backend()</> (see <xref
+   continue, use <function>mdb_terminate_backend()</> (see <xref
    linkend="functions-admin-signal-table">) or send a
    <systemitem>SIGTERM</> signal to the child process associated with
    the session.
@@ -1687,13 +1687,13 @@ $ <userinput>kill -INT `head -1 /usr/local/mdb/data/postmaster.pid`</userinput>
   </variablelist>
 
   <sect2 id="upgrading-via-pgdumpall">
-   <title>Upgrading Data via <application>pg_dumpall</></title>
+   <title>Upgrading Data via <application>mdb_dumpall</></title>
 
    <para>
     One upgrade method is to dump data from one major version of
     <productname>MollyDB</> and reload it in another &mdash;  to do
     this, you must use a <emphasis>logical</> backup tool like
-    <application>pg_dumpall</>; file system
+    <application>mdb_dumpall</>; file system
     level backup methods will not work. (There are checks in place that prevent
     you from using a data directory with an incompatible version of
     <productname>MollyDB</productname>, so no great harm can be done by
@@ -1701,8 +1701,8 @@ $ <userinput>kill -INT `head -1 /usr/local/mdb/data/postmaster.pid`</userinput>
    </para>
 
    <para>
-    It is recommended that you use the <application>pg_dump</> and
-    <application>pg_dumpall</> programs from the <emphasis>newer</>
+    It is recommended that you use the <application>mdb_dump</> and
+    <application>mdb_dumpall</> programs from the <emphasis>newer</>
     version of
     <productname>MollyDB</>, to take advantage of enhancements
     that might have been made in these programs.  Current releases of the
@@ -1722,7 +1722,7 @@ $ <userinput>kill -INT `head -1 /usr/local/mdb/data/postmaster.pid`</userinput>
       If making a backup, make sure that your database is not being updated.
       This does not affect the integrity of the backup, but the changed
       data would of course not be included. If necessary, edit the
-      permissions in the file <filename>/usr/local/mdb/data/pg_hba.conf</>
+      permissions in the file <filename>/usr/local/mdb/data/mdb_hba.conf</>
       (or equivalent) to disallow access from everyone except you.
       See <xref linkend="client-authentication"> for additional information on
       access control.
@@ -1730,21 +1730,21 @@ $ <userinput>kill -INT `head -1 /usr/local/mdb/data/postmaster.pid`</userinput>
 
      <para>
       <indexterm>
-       <primary>pg_dumpall</primary>
+       <primary>mdb_dumpall</primary>
        <secondary>use during upgrade</secondary>
       </indexterm>
 
       To back up your database installation, type:
 <screen>
-<userinput>pg_dumpall &gt; <replaceable>outputfile</></userinput>
+<userinput>mdb_dumpall &gt; <replaceable>outputfile</></userinput>
 </screen>
      </para>
 
      <para>
-      To make the backup, you can use the <application>pg_dumpall</application>
+      To make the backup, you can use the <application>mdb_dumpall</application>
       command from the version you are currently running;  see <xref
       linkend="backup-dump-all"> for more details.  For best
-      results, however, try to use the <application>pg_dumpall</application>
+      results, however, try to use the <application>mdb_dumpall</application>
       command from <productname>MollyDB</productname> &version;,
       since this version contains bug fixes and improvements over older
       versions.  While this advice might seem idiosyncratic since you
@@ -1760,7 +1760,7 @@ $ <userinput>kill -INT `head -1 /usr/local/mdb/data/postmaster.pid`</userinput>
      <para>
       Shut down the old server:
 <screen>
-<userinput>pg_ctl stop</>
+<userinput>mdb_ctl stop</>
 </screen>
       On systems that have <productname>MollyDB</> started at boot time,
       there is probably a start-up file that will accomplish the same thing. For
@@ -1811,7 +1811,7 @@ $ <userinput>kill -INT `head -1 /usr/local/mdb/data/postmaster.pid`</userinput>
 
     <step>
      <para>
-      Restore your previous <filename>pg_hba.conf</> and any
+      Restore your previous <filename>mdb_hba.conf</> and any
       <filename>mollydb.conf</> modifications.
      </para>
     </step>
@@ -1843,7 +1843,7 @@ $ <userinput>kill -INT `head -1 /usr/local/mdb/data/postmaster.pid`</userinput>
     in parallel, on different ports. Then you can use something like:
 
 <programlisting>
-pg_dumpall -p 5432 | psql -d mollydb -p 5433
+mdb_dumpall -p 5432 | psql -d mollydb -p 5433
 </programlisting>
     to transfer your data.
    </para>
@@ -1851,15 +1851,15 @@ pg_dumpall -p 5432 | psql -d mollydb -p 5433
   </sect2>
 
   <sect2 id="upgrading-via-pg-upgrade">
-   <title>Upgrading Data via <application>pg_upgrade</></title>
+   <title>Upgrading Data via <application>mdb_upgrade</></title>
 
    <para>
     The <xref linkend="pgupgrade"> module allows an installation to
     be migrated in-place from one major <productname>MollyDB</>
     version to another.  Upgrades can be performed in minutes,
     particularly with <option>--link</> mode.  It requires steps similar to
-    <application>pg_dumpall</> above, e.g.  starting/stopping the server,
-    running <application>initdb</>.  The <application>pg_upgrade</> <link
+    <application>mdb_dumpall</> above, e.g.  starting/stopping the server,
+    running <application>initdb</>.  The <application>mdb_upgrade</> <link
     linkend="pgupgrade">documentation</> outlines the necessary steps.
    </para>
 
@@ -2035,7 +2035,7 @@ pg_dumpall -p 5432 | psql -d mollydb -p 5433
      <para>
       SSL connections encrypt all data sent across the network: the
       password, the queries, and the data returned. The
-      <filename>pg_hba.conf</> file allows administrators to specify
+      <filename>mdb_hba.conf</> file allows administrators to specify
       which hosts can use non-encrypted connections (<literal>host</>)
       and which require SSL-encrypted connections
       (<literal>hostssl</>). Also, clients can specify that they
@@ -2188,7 +2188,7 @@ pg_dumpall -p 5432 | psql -d mollydb -p 5433
    <filename>mollydb.conf</filename> to <literal>root.crt</literal>,
    and set the <literal>clientcert</literal> parameter
    to 1 on the appropriate <literal>hostssl</> line(s) in
-   <filename>pg_hba.conf</>.
+   <filename>mdb_hba.conf</>.
    A certificate will then be requested from the client during
    SSL connection startup.  (See <xref linkend="libpq-ssl"> for a
    description of how to set up certificates on the client.)  The server will
@@ -2205,7 +2205,7 @@ pg_dumpall -p 5432 | psql -d mollydb -p 5433
   </para>
 
   <para>
-   The <literal>clientcert</literal> option in <filename>pg_hba.conf</> is
+   The <literal>clientcert</literal> option in <filename>mdb_hba.conf</> is
    available for all authentication methods, but only for rows specified as
    <literal>hostssl</>.  When <literal>clientcert</literal> is not specified
    or is set to 0, the server will still verify presented client

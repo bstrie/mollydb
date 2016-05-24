@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
- * pg_amop.h
- *	  definition of the system "amop" relation (pg_amop)
+ * mdb_amop.h
+ *	  definition of the system "amop" relation (mdb_amop)
  *	  along with the relation's initial contents.
  *
  * The amop table identifies the operators associated with each index operator
@@ -33,7 +33,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_amop.h
+ * src/include/catalog/mdb_amop.h
  *
  * NOTES
  *	 the genbki.pl script reads this file and generates .bki
@@ -47,51 +47,51 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_amop definition.  cpp turns this into
- *		typedef struct FormData_pg_amop
+ *		mdb_amop definition.  cpp turns this into
+ *		typedef struct FormData_mdb_amop
  * ----------------
  */
 #define AccessMethodOperatorRelationId	2602
 
-CATALOG(pg_amop,2602)
+CATALOG(mdb_amop,2602)
 {
 	Oid			amopfamily;		/* the index opfamily this entry is for */
 	Oid			amoplefttype;	/* operator's left input data type */
 	Oid			amoprighttype;	/* operator's right input data type */
 	int16		amopstrategy;	/* operator strategy number */
 	char		amoppurpose;	/* is operator for 's'earch or 'o'rdering? */
-	Oid			amopopr;		/* the operator's pg_operator OID */
+	Oid			amopopr;		/* the operator's mdb_operator OID */
 	Oid			amopmethod;		/* the index access method this entry is for */
 	Oid			amopsortfamily; /* ordering opfamily OID, or 0 if search op */
-} FormData_pg_amop;
+} FormData_mdb_amop;
 
 /* allowed values of amoppurpose: */
 #define AMOP_SEARCH		's'		/* operator is for search */
 #define AMOP_ORDER		'o'		/* operator is for ordering */
 
 /* ----------------
- *		Form_pg_amop corresponds to a pointer to a tuple with
- *		the format of pg_amop relation.
+ *		Form_mdb_amop corresponds to a pointer to a tuple with
+ *		the format of mdb_amop relation.
  * ----------------
  */
-typedef FormData_pg_amop *Form_pg_amop;
+typedef FormData_mdb_amop *Form_mdb_amop;
 
 /* ----------------
- *		compiler constants for pg_amop
+ *		compiler constants for mdb_amop
  * ----------------
  */
-#define Natts_pg_amop					8
-#define Anum_pg_amop_amopfamily			1
-#define Anum_pg_amop_amoplefttype		2
-#define Anum_pg_amop_amoprighttype		3
-#define Anum_pg_amop_amopstrategy		4
-#define Anum_pg_amop_amoppurpose		5
-#define Anum_pg_amop_amopopr			6
-#define Anum_pg_amop_amopmethod			7
-#define Anum_pg_amop_amopsortfamily		8
+#define Natts_mdb_amop					8
+#define Anum_mdb_amop_amopfamily			1
+#define Anum_mdb_amop_amoplefttype		2
+#define Anum_mdb_amop_amoprighttype		3
+#define Anum_mdb_amop_amopstrategy		4
+#define Anum_mdb_amop_amoppurpose		5
+#define Anum_mdb_amop_amopopr			6
+#define Anum_mdb_amop_amopmethod			7
+#define Anum_mdb_amop_amopsortfamily		8
 
 /* ----------------
- *		initial contents of pg_amop
+ *		initial contents of mdb_amop
  * ----------------
  */
 
@@ -513,7 +513,7 @@ DATA(insert (	2968  2950 2950 4 s 2977	403 0 ));
 DATA(insert (	2968  2950 2950 5 s 2975	403 0 ));
 
 /*
- * btree pg_lsn_ops
+ * btree mdb_lsn_ops
  */
 
 DATA(insert (	3253  3220 3220 1 s 3224	403 0 ));
@@ -591,7 +591,7 @@ DATA(insert (	2231   1042 1042 1 s 1054 405 0 ));
 DATA(insert (	2235   1033 1033 1 s  974 405 0 ));
 /* uuid_ops */
 DATA(insert (	2969   2950 2950 1 s 2972 405 0 ));
-/* pg_lsn_ops */
+/* mdb_lsn_ops */
 DATA(insert (	3254   3220 3220 1 s 3222 405 0 ));
 /* numeric_ops */
 DATA(insert (	1998   1700 1700 1 s 1752 405 0 ));
@@ -1110,7 +1110,7 @@ DATA(insert (	4103   3831 3831 20 s	  3884	  3580 0 ));
 DATA(insert (	4103   3831 3831 21 s	  3885	  3580 0 ));
 DATA(insert (	4103   3831 3831 22 s	  3887	  3580 0 ));
 DATA(insert (	4103   3831 3831 23 s	  3886	  3580 0 ));
-/* minmax pg_lsn */
+/* minmax mdb_lsn */
 DATA(insert (	4082   3220 3220 1 s	  3224	  3580 0 ));
 DATA(insert (	4082   3220 3220 2 s	  3226	  3580 0 ));
 DATA(insert (	4082   3220 3220 3 s	  3222	  3580 0 ));

@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_type_fn.h
- *	 prototypes for functions in catalog/pg_type.c
+ * mdb_type_fn.h
+ *	 prototypes for functions in catalog/mdb_type.c
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_type_fn.h
+ * src/include/catalog/mdb_type_fn.h
  *
  *-------------------------------------------------------------------------
  */

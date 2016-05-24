@@ -196,18 +196,18 @@ static void addrange(struct cvec *, chr, chr);
 static struct cvec *getcvec(struct vars *, int, int);
 static void freecvec(struct cvec *);
 
-/* === regc_pg_locale.c === */
-static int	pg_wc_isdigit(pg_wchar c);
-static int	pg_wc_isalpha(pg_wchar c);
-static int	pg_wc_isalnum(pg_wchar c);
-static int	pg_wc_isupper(pg_wchar c);
-static int	pg_wc_islower(pg_wchar c);
-static int	pg_wc_isgraph(pg_wchar c);
-static int	pg_wc_isprint(pg_wchar c);
-static int	pg_wc_ispunct(pg_wchar c);
-static int	pg_wc_isspace(pg_wchar c);
-static pg_wchar pg_wc_toupper(pg_wchar c);
-static pg_wchar pg_wc_tolower(pg_wchar c);
+/* === regc_mdb_locale.c === */
+static int	mdb_wc_isdigit(mdb_wchar c);
+static int	mdb_wc_isalpha(mdb_wchar c);
+static int	mdb_wc_isalnum(mdb_wchar c);
+static int	mdb_wc_isupper(mdb_wchar c);
+static int	mdb_wc_islower(mdb_wchar c);
+static int	mdb_wc_isgraph(mdb_wchar c);
+static int	mdb_wc_isprint(mdb_wchar c);
+static int	mdb_wc_ispunct(mdb_wchar c);
+static int	mdb_wc_isspace(mdb_wchar c);
+static mdb_wchar mdb_wc_toupper(mdb_wchar c);
+static mdb_wchar mdb_wc_tolower(mdb_wchar c);
 
 /* === regc_locale.c === */
 static celt element(struct vars *, const chr *, const chr *);
@@ -305,13 +305,13 @@ static const struct fns functions = {
 
 
 /*
- * pg_regcomp - compile regular expression
+ * mdb_regcomp - compile regular expression
  *
- * Note: on failure, no resources remain allocated, so pg_regfree()
+ * Note: on failure, no resources remain allocated, so mdb_regfree()
  * need not be applied to re.
  */
 int
-pg_regcomp(regex_t *re,
+mdb_regcomp(regex_t *re,
 		   const chr *string,
 		   size_t len,
 		   int flags,
@@ -342,7 +342,7 @@ pg_regcomp(regex_t *re,
 		return REG_INVARG;
 
 	/* Initialize locale-dependent support */
-	pg_set_regex_collation(collation);
+	mdb_set_regex_collation(collation);
 
 	/* initial setup (after which freev() is callable) */
 	v->re = re;
@@ -2219,5 +2219,5 @@ stid(struct subre * t,
 #include "regc_color.c"
 #include "regc_nfa.c"
 #include "regc_cvec.c"
-#include "regc_pg_locale.c"
+#include "regc_mdb_locale.c"
 #include "regc_locale.c"

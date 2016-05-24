@@ -39,9 +39,9 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_operator_fn.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_operator_fn.h"
+#include "catalog/mdb_type.h"
 #include "commands/alter.h"
 #include "commands/defrem.h"
 #include "miscadmin.h"
@@ -93,7 +93,7 @@ DefineOperator(List *names, List *parameters)
 	oprNamespace = QualifiedNameGetCreationNamespace(names, &oprName);
 
 	/* Check we have creation rights in target namespace */
-	aclresult = pg_namespace_aclcheck(oprNamespace, GetUserId(), ACL_CREATE);
+	aclresult = mdb_namespace_aclcheck(oprNamespace, GetUserId(), ACL_CREATE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
 					   get_namespace_name(oprNamespace));
@@ -105,7 +105,7 @@ DefineOperator(List *names, List *parameters)
 	{
 		DefElem    *defel = (DefElem *) lfirst(pl);
 
-		if (pg_strcasecmp(defel->defname, "leftarg") == 0)
+		if (mdb_strcasecmp(defel->defname, "leftarg") == 0)
 		{
 			typeName1 = defGetTypeName(defel);
 			if (typeName1->setof)
@@ -113,7 +113,7 @@ DefineOperator(List *names, List *parameters)
 						(errcode(ERRCODE_INVALID_FUNCTION_DEFINITION),
 					errmsg("SETOF type not allowed for operator argument")));
 		}
-		else if (pg_strcasecmp(defel->defname, "rightarg") == 0)
+		else if (mdb_strcasecmp(defel->defname, "rightarg") == 0)
 		{
 			typeName2 = defGetTypeName(defel);
 			if (typeName2->setof)
@@ -121,28 +121,28 @@ DefineOperator(List *names, List *parameters)
 						(errcode(ERRCODE_INVALID_FUNCTION_DEFINITION),
 					errmsg("SETOF type not allowed for operator argument")));
 		}
-		else if (pg_strcasecmp(defel->defname, "procedure") == 0)
+		else if (mdb_strcasecmp(defel->defname, "procedure") == 0)
 			functionName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "commutator") == 0)
+		else if (mdb_strcasecmp(defel->defname, "commutator") == 0)
 			commutatorName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "negator") == 0)
+		else if (mdb_strcasecmp(defel->defname, "negator") == 0)
 			negatorName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "restrict") == 0)
+		else if (mdb_strcasecmp(defel->defname, "restrict") == 0)
 			restrictionName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "join") == 0)
+		else if (mdb_strcasecmp(defel->defname, "join") == 0)
 			joinName = defGetQualifiedName(defel);
-		else if (pg_strcasecmp(defel->defname, "hashes") == 0)
+		else if (mdb_strcasecmp(defel->defname, "hashes") == 0)
 			canHash = defGetBoolean(defel);
-		else if (pg_strcasecmp(defel->defname, "merges") == 0)
+		else if (mdb_strcasecmp(defel->defname, "merges") == 0)
 			canMerge = defGetBoolean(defel);
 		/* These obsolete options are taken as meaning canMerge */
-		else if (pg_strcasecmp(defel->defname, "sort1") == 0)
+		else if (mdb_strcasecmp(defel->defname, "sort1") == 0)
 			canMerge = true;
-		else if (pg_strcasecmp(defel->defname, "sort2") == 0)
+		else if (mdb_strcasecmp(defel->defname, "sort2") == 0)
 			canMerge = true;
-		else if (pg_strcasecmp(defel->defname, "ltcmp") == 0)
+		else if (mdb_strcasecmp(defel->defname, "ltcmp") == 0)
 			canMerge = true;
-		else if (pg_strcasecmp(defel->defname, "gtcmp") == 0)
+		else if (mdb_strcasecmp(defel->defname, "gtcmp") == 0)
 			canMerge = true;
 		else
 		{
@@ -175,14 +175,14 @@ DefineOperator(List *names, List *parameters)
 
 	if (typeName1)
 	{
-		aclresult = pg_type_aclcheck(typeId1, GetUserId(), ACL_USAGE);
+		aclresult = mdb_type_aclcheck(typeId1, GetUserId(), ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error_type(aclresult, typeId1);
 	}
 
 	if (typeName2)
 	{
-		aclresult = pg_type_aclcheck(typeId2, GetUserId(), ACL_USAGE);
+		aclresult = mdb_type_aclcheck(typeId2, GetUserId(), ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error_type(aclresult, typeId2);
 	}
@@ -213,13 +213,13 @@ DefineOperator(List *names, List *parameters)
 	 * necessary, since EXECUTE will be checked at any attempted use of the
 	 * operator, but it seems like a good idea anyway.
 	 */
-	aclresult = pg_proc_aclcheck(functionOid, GetUserId(), ACL_EXECUTE);
+	aclresult = mdb_proc_aclcheck(functionOid, GetUserId(), ACL_EXECUTE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_PROC,
 					   NameListToString(functionName));
 
 	rettype = get_func_rettype(functionOid);
-	aclresult = pg_type_aclcheck(rettype, GetUserId(), ACL_USAGE);
+	aclresult = mdb_type_aclcheck(rettype, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error_type(aclresult, rettype);
 
@@ -279,7 +279,7 @@ ValidateRestrictionEstimator(List *restrictionName)
 						NameListToString(restrictionName), "float8")));
 
 	/* Require EXECUTE rights for the estimator */
-	aclresult = pg_proc_aclcheck(restrictionOid, GetUserId(), ACL_EXECUTE);
+	aclresult = mdb_proc_aclcheck(restrictionOid, GetUserId(), ACL_EXECUTE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_PROC,
 					   NameListToString(restrictionName));
@@ -325,7 +325,7 @@ ValidateJoinEstimator(List *joinName)
 					NameListToString(joinName), "float8")));
 
 	/* Require EXECUTE rights for the estimator */
-	aclresult = pg_proc_aclcheck(joinOid, GetUserId(), ACL_EXECUTE);
+	aclresult = mdb_proc_aclcheck(joinOid, GetUserId(), ACL_EXECUTE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_PROC,
 					   NameListToString(joinName));
@@ -341,14 +341,14 @@ RemoveOperatorById(Oid operOid)
 {
 	Relation	relation;
 	HeapTuple	tup;
-	Form_pg_operator op;
+	Form_mdb_operator op;
 
 	relation = heap_open(OperatorRelationId, RowExclusiveLock);
 
 	tup = SearchSysCache1(OPEROID, ObjectIdGetDatum(operOid));
 	if (!HeapTupleIsValid(tup)) /* should not happen */
 		elog(ERROR, "cache lookup failed for operator %u", operOid);
-	op = (Form_pg_operator) GETSTRUCT(tup);
+	op = (Form_mdb_operator) GETSTRUCT(tup);
 
 	/*
 	 * Reset links from commutator and negator, if any.  In case of a
@@ -388,12 +388,12 @@ AlterOperator(AlterOperatorStmt *stmt)
 	Oid			oprId;
 	Relation	catalog;
 	HeapTuple	tup;
-	Form_pg_operator oprForm;
+	Form_mdb_operator oprForm;
 	int			i;
 	ListCell   *pl;
-	Datum		values[Natts_pg_operator];
-	bool		nulls[Natts_pg_operator];
-	bool		replaces[Natts_pg_operator];
+	Datum		values[Natts_mdb_operator];
+	bool		nulls[Natts_mdb_operator];
+	bool		replaces[Natts_mdb_operator];
 	List	   *restrictionName = NIL;	/* optional restrict. sel. procedure */
 	bool		updateRestriction = false;
 	Oid			restrictionOid;
@@ -410,7 +410,7 @@ AlterOperator(AlterOperatorStmt *stmt)
 	tup = SearchSysCacheCopy1(OPEROID, ObjectIdGetDatum(oprId));
 	if (tup == NULL)
 		elog(ERROR, "cache lookup failed for operator %u", oprId);
-	oprForm = (Form_pg_operator) GETSTRUCT(tup);
+	oprForm = (Form_mdb_operator) GETSTRUCT(tup);
 
 	/* Process options */
 	foreach(pl, stmt->options)
@@ -423,12 +423,12 @@ AlterOperator(AlterOperatorStmt *stmt)
 		else
 			param = defGetQualifiedName(defel);
 
-		if (pg_strcasecmp(defel->defname, "restrict") == 0)
+		if (mdb_strcasecmp(defel->defname, "restrict") == 0)
 		{
 			restrictionName = param;
 			updateRestriction = true;
 		}
-		else if (pg_strcasecmp(defel->defname, "join") == 0)
+		else if (mdb_strcasecmp(defel->defname, "join") == 0)
 		{
 			joinName = param;
 			updateJoin = true;
@@ -438,13 +438,13 @@ AlterOperator(AlterOperatorStmt *stmt)
 		 * The rest of the options that CREATE accepts cannot be changed.
 		 * Check for them so that we can give a meaningful error message.
 		 */
-		else if (pg_strcasecmp(defel->defname, "leftarg") == 0 ||
-				 pg_strcasecmp(defel->defname, "rightarg") == 0 ||
-				 pg_strcasecmp(defel->defname, "procedure") == 0 ||
-				 pg_strcasecmp(defel->defname, "commutator") == 0 ||
-				 pg_strcasecmp(defel->defname, "negator") == 0 ||
-				 pg_strcasecmp(defel->defname, "hashes") == 0 ||
-				 pg_strcasecmp(defel->defname, "merges") == 0)
+		else if (mdb_strcasecmp(defel->defname, "leftarg") == 0 ||
+				 mdb_strcasecmp(defel->defname, "rightarg") == 0 ||
+				 mdb_strcasecmp(defel->defname, "procedure") == 0 ||
+				 mdb_strcasecmp(defel->defname, "commutator") == 0 ||
+				 mdb_strcasecmp(defel->defname, "negator") == 0 ||
+				 mdb_strcasecmp(defel->defname, "hashes") == 0 ||
+				 mdb_strcasecmp(defel->defname, "merges") == 0)
 		{
 			ereport(ERROR,
 					(errcode(ERRCODE_SYNTAX_ERROR),
@@ -459,7 +459,7 @@ AlterOperator(AlterOperatorStmt *stmt)
 	}
 
 	/* Check permissions. Must be owner. */
-	if (!pg_oper_ownercheck(oprId, GetUserId()))
+	if (!mdb_oper_ownercheck(oprId, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_OPER,
 					   NameStr(oprForm->oprname));
 
@@ -498,7 +498,7 @@ AlterOperator(AlterOperatorStmt *stmt)
 	}
 
 	/* Update the tuple */
-	for (i = 0; i < Natts_pg_operator; ++i)
+	for (i = 0; i < Natts_mdb_operator; ++i)
 	{
 		values[i] = (Datum) 0;
 		replaces[i] = false;
@@ -506,13 +506,13 @@ AlterOperator(AlterOperatorStmt *stmt)
 	}
 	if (updateRestriction)
 	{
-		replaces[Anum_pg_operator_oprrest - 1] = true;
-		values[Anum_pg_operator_oprrest - 1] = restrictionOid;
+		replaces[Anum_mdb_operator_oprrest - 1] = true;
+		values[Anum_mdb_operator_oprrest - 1] = restrictionOid;
 	}
 	if (updateJoin)
 	{
-		replaces[Anum_pg_operator_oprjoin - 1] = true;
-		values[Anum_pg_operator_oprjoin - 1] = joinOid;
+		replaces[Anum_mdb_operator_oprjoin - 1] = true;
+		values[Anum_mdb_operator_oprjoin - 1] = joinOid;
 	}
 
 	tup = heap_modify_tuple(tup, RelationGetDescr(catalog),

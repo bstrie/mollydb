@@ -4,7 +4,7 @@
  *
  * Data structures for simple lists of OIDs and strings.  The support for
  * these is very primitive compared to the backend's List facilities, but
- * it's all we need in, eg, pg_dump.
+ * it's all we need in, eg, mdb_dump.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

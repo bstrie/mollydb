@@ -49,14 +49,14 @@ find_word(char *in, char **end)
 
 	*end = NULL;
 	while (*in && t_isspace(in))
-		in += pg_mblen(in);
+		in += mdb_mblen(in);
 
 	if (!*in || *in == '#')
 		return NULL;
 	start = in;
 
 	while (*in && !t_isspace(in))
-		in += pg_mblen(in);
+		in += mdb_mblen(in);
 
 	*end = in;
 
@@ -157,23 +157,23 @@ dxsyn_init(PG_FUNCTION_ARGS)
 	{
 		DefElem    *defel = (DefElem *) lfirst(l);
 
-		if (pg_strcasecmp(defel->defname, "MATCHORIG") == 0)
+		if (mdb_strcasecmp(defel->defname, "MATCHORIG") == 0)
 		{
 			d->matchorig = defGetBoolean(defel);
 		}
-		else if (pg_strcasecmp(defel->defname, "KEEPORIG") == 0)
+		else if (mdb_strcasecmp(defel->defname, "KEEPORIG") == 0)
 		{
 			d->keeporig = defGetBoolean(defel);
 		}
-		else if (pg_strcasecmp(defel->defname, "MATCHSYNONYMS") == 0)
+		else if (mdb_strcasecmp(defel->defname, "MATCHSYNONYMS") == 0)
 		{
 			d->matchsynonyms = defGetBoolean(defel);
 		}
-		else if (pg_strcasecmp(defel->defname, "KEEPSYNONYMS") == 0)
+		else if (mdb_strcasecmp(defel->defname, "KEEPSYNONYMS") == 0)
 		{
 			d->keepsynonyms = defGetBoolean(defel);
 		}
-		else if (pg_strcasecmp(defel->defname, "RULES") == 0)
+		else if (mdb_strcasecmp(defel->defname, "RULES") == 0)
 		{
 			/* we can't read the rules before parsing all options! */
 			filename = defGetString(defel);

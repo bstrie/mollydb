@@ -40,14 +40,14 @@
 #include "access/reloptions.h"
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_foreign_server.h"
-#include "catalog/pg_type.h"
-#include "catalog/pg_user_mapping.h"
+#include "catalog/mdb_foreign_server.h"
+#include "catalog/mdb_type.h"
+#include "catalog/mdb_user_mapping.h"
 #include "executor/spi.h"
 #include "foreign/foreign.h"
 #include "funcapi.h"
 #include "lib/stringinfo.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "parser/scansup.h"
 #include "utils/acl.h"
@@ -2041,10 +2041,10 @@ get_pkey_attnames(Relation rel, int16 *numatts)
 
 	tupdesc = rel->rd_att;
 
-	/* Prepare to scan pg_index for entries having indrelid = this rel. */
+	/* Prepare to scan mdb_index for entries having indrelid = this rel. */
 	indexRelation = heap_open(IndexRelationId, AccessShareLock);
 	ScanKeyInit(&skey,
-				Anum_pg_index_indrelid,
+				Anum_mdb_index_indrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 
@@ -2053,7 +2053,7 @@ get_pkey_attnames(Relation rel, int16 *numatts)
 
 	while (HeapTupleIsValid(indexTuple = systable_getnext(scan)))
 	{
-		Form_pg_index index = (Form_pg_index) GETSTRUCT(indexTuple);
+		Form_mdb_index index = (Form_mdb_index) GETSTRUCT(indexTuple);
 
 		/* we're only interested if it is the primary key */
 		if (index->indisprimary)
@@ -2488,7 +2488,7 @@ get_rel_from_relname(text *relname_text, LOCKMODE lockmode, AclMode aclmode)
 	relvar = makeRangeVarFromNameList(textToQualifiedNameList(relname_text));
 	rel = heap_openrv(relvar, lockmode);
 
-	aclresult = pg_class_aclcheck(RelationGetRelid(rel), GetUserId(),
+	aclresult = mdb_class_aclcheck(RelationGetRelid(rel), GetUserId(),
 								  aclmode);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_CLASS,
@@ -2667,11 +2667,11 @@ static void
 dblink_res_error(const char *conname, PGresult *res, const char *dblink_context_msg, bool fail)
 {
 	int			level;
-	char	   *pg_diag_sqlstate = PQresultErrorField(res, PG_DIAG_SQLSTATE);
-	char	   *pg_diag_message_primary = PQresultErrorField(res, PG_DIAG_MESSAGE_PRIMARY);
-	char	   *pg_diag_message_detail = PQresultErrorField(res, PG_DIAG_MESSAGE_DETAIL);
-	char	   *pg_diag_message_hint = PQresultErrorField(res, PG_DIAG_MESSAGE_HINT);
-	char	   *pg_diag_context = PQresultErrorField(res, PG_DIAG_CONTEXT);
+	char	   *mdb_diag_sqlstate = PQresultErrorField(res, PG_DIAG_SQLSTATE);
+	char	   *mdb_diag_message_primary = PQresultErrorField(res, PG_DIAG_MESSAGE_PRIMARY);
+	char	   *mdb_diag_message_detail = PQresultErrorField(res, PG_DIAG_MESSAGE_DETAIL);
+	char	   *mdb_diag_message_hint = PQresultErrorField(res, PG_DIAG_MESSAGE_HINT);
+	char	   *mdb_diag_context = PQresultErrorField(res, PG_DIAG_CONTEXT);
 	int			sqlstate;
 	char	   *message_primary;
 	char	   *message_detail;
@@ -2684,19 +2684,19 @@ dblink_res_error(const char *conname, PGresult *res, const char *dblink_context_
 	else
 		level = NOTICE;
 
-	if (pg_diag_sqlstate)
-		sqlstate = MAKE_SQLSTATE(pg_diag_sqlstate[0],
-								 pg_diag_sqlstate[1],
-								 pg_diag_sqlstate[2],
-								 pg_diag_sqlstate[3],
-								 pg_diag_sqlstate[4]);
+	if (mdb_diag_sqlstate)
+		sqlstate = MAKE_SQLSTATE(mdb_diag_sqlstate[0],
+								 mdb_diag_sqlstate[1],
+								 mdb_diag_sqlstate[2],
+								 mdb_diag_sqlstate[3],
+								 mdb_diag_sqlstate[4]);
 	else
 		sqlstate = ERRCODE_CONNECTION_FAILURE;
 
-	xpstrdup(message_primary, pg_diag_message_primary);
-	xpstrdup(message_detail, pg_diag_message_detail);
-	xpstrdup(message_hint, pg_diag_message_hint);
-	xpstrdup(message_context, pg_diag_context);
+	xpstrdup(message_primary, mdb_diag_message_primary);
+	xpstrdup(message_detail, mdb_diag_message_detail);
+	xpstrdup(message_hint, mdb_diag_message_hint);
+	xpstrdup(message_context, mdb_diag_context);
 
 	if (res)
 		PQclear(res);
@@ -2744,7 +2744,7 @@ get_connect_string(const char *servername)
 		fdw = GetForeignDataWrapper(fdwid);
 
 		/* Check permissions, user must have usage on the server. */
-		aclresult = pg_foreign_server_aclcheck(serverid, userid, ACL_USAGE);
+		aclresult = mdb_foreign_server_aclcheck(serverid, userid, ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_FOREIGN_SERVER, foreign_server->servername);
 

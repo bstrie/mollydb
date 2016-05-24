@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_db_role_setting.h
+ * mdb_db_role_setting.h
  *	definition of configuration settings
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_db_role_setting.h
+ * src/include/catalog/mdb_db_role_setting.h
  *
  * NOTES
  *		the genbki.pl script reads this file and generates .bki
@@ -26,13 +26,13 @@
 #include "utils/snapshot.h"
 
 /* ----------------
- *		pg_db_role_setting definition.  cpp turns this into
- *		typedef struct FormData_pg_db_role_setting
+ *		mdb_db_role_setting definition.  cpp turns this into
+ *		typedef struct FormData_mdb_db_role_setting
  * ----------------
  */
 #define DbRoleSettingRelationId 2964
 
-CATALOG(pg_db_role_setting,2964) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
+CATALOG(mdb_db_role_setting,2964) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
 {
 	Oid			setdatabase;	/* database */
 	Oid			setrole;		/* role */
@@ -40,26 +40,26 @@ CATALOG(pg_db_role_setting,2964) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
 #ifdef CATALOG_VARLEN			/* variable-length fields start here */
 	text		setconfig[1];	/* GUC settings to apply at login */
 #endif
-} FormData_pg_db_role_setting;
+} FormData_mdb_db_role_setting;
 
-typedef FormData_pg_db_role_setting *Form_pg_db_role_setting;
+typedef FormData_mdb_db_role_setting *Form_mdb_db_role_setting;
 
 /* ----------------
- *		compiler constants for pg_db_role_setting
+ *		compiler constants for mdb_db_role_setting
  * ----------------
  */
-#define Natts_pg_db_role_setting				3
-#define Anum_pg_db_role_setting_setdatabase		1
-#define Anum_pg_db_role_setting_setrole			2
-#define Anum_pg_db_role_setting_setconfig		3
+#define Natts_mdb_db_role_setting				3
+#define Anum_mdb_db_role_setting_setdatabase		1
+#define Anum_mdb_db_role_setting_setrole			2
+#define Anum_mdb_db_role_setting_setconfig		3
 
 /* ----------------
- *		initial contents of pg_db_role_setting are NOTHING
+ *		initial contents of mdb_db_role_setting are NOTHING
  * ----------------
  */
 
 /*
- * prototypes for functions in pg_db_role_setting.h
+ * prototypes for functions in mdb_db_role_setting.h
  */
 extern void AlterSetting(Oid databaseid, Oid roleid, VariableSetStmt *setstmt);
 extern void DropSetting(Oid databaseid, Oid roleid);

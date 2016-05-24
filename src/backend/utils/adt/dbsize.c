@@ -18,7 +18,7 @@
 #include "access/htup_details.h"
 #include "catalog/catalog.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_tablespace.h"
+#include "catalog/mdb_tablespace.h"
 #include "commands/dbcommands.h"
 #include "commands/tablespace.h"
 #include "miscadmin.h"
@@ -90,19 +90,19 @@ calculate_database_size(Oid dbOid)
 	AclResult	aclresult;
 
 	/* User must have connect privilege for target database */
-	aclresult = pg_database_aclcheck(dbOid, GetUserId(), ACL_CONNECT);
+	aclresult = mdb_database_aclcheck(dbOid, GetUserId(), ACL_CONNECT);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_DATABASE,
 					   get_database_name(dbOid));
 
-	/* Shared storage in pg_global is not counted */
+	/* Shared storage in mdb_global is not counted */
 
-	/* Include pg_default storage */
+	/* Include mdb_default storage */
 	snprintf(pathname, MAXPGPATH, "base/%u", dbOid);
 	totalsize = db_dir_size(pathname);
 
 	/* Scan the non-default tablespaces */
-	snprintf(dirpath, MAXPGPATH, "pg_tblspc");
+	snprintf(dirpath, MAXPGPATH, "mdb_tblspc");
 	dirdesc = AllocateDir(dirpath);
 	if (!dirdesc)
 		ereport(ERROR,
@@ -118,7 +118,7 @@ calculate_database_size(Oid dbOid)
 			strcmp(direntry->d_name, "..") == 0)
 			continue;
 
-		snprintf(pathname, MAXPGPATH, "pg_tblspc/%s/%s/%u",
+		snprintf(pathname, MAXPGPATH, "mdb_tblspc/%s/%s/%u",
 				 direntry->d_name, TABLESPACE_VERSION_DIRECTORY, dbOid);
 		totalsize += db_dir_size(pathname);
 	}
@@ -129,7 +129,7 @@ calculate_database_size(Oid dbOid)
 }
 
 Datum
-pg_database_size_oid(PG_FUNCTION_ARGS)
+mdb_database_size_oid(PG_FUNCTION_ARGS)
 {
 	Oid			dbOid = PG_GETARG_OID(0);
 	int64		size;
@@ -143,7 +143,7 @@ pg_database_size_oid(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_database_size_name(PG_FUNCTION_ARGS)
+mdb_database_size_name(PG_FUNCTION_ARGS)
 {
 	Name		dbName = PG_GETARG_NAME(0);
 	Oid			dbOid = get_database_oid(NameStr(*dbName), false);
@@ -179,7 +179,7 @@ calculate_tablespace_size(Oid tblspcOid)
 	 */
 	if (tblspcOid != MyDatabaseTableSpace)
 	{
-		aclresult = pg_tablespace_aclcheck(tblspcOid, GetUserId(), ACL_CREATE);
+		aclresult = mdb_tablespace_aclcheck(tblspcOid, GetUserId(), ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_TABLESPACE,
 						   get_tablespace_name(tblspcOid));
@@ -190,7 +190,7 @@ calculate_tablespace_size(Oid tblspcOid)
 	else if (tblspcOid == GLOBALTABLESPACE_OID)
 		snprintf(tblspcPath, MAXPGPATH, "global");
 	else
-		snprintf(tblspcPath, MAXPGPATH, "pg_tblspc/%u/%s", tblspcOid,
+		snprintf(tblspcPath, MAXPGPATH, "mdb_tblspc/%u/%s", tblspcOid,
 				 TABLESPACE_VERSION_DIRECTORY);
 
 	dirdesc = AllocateDir(tblspcPath);
@@ -232,7 +232,7 @@ calculate_tablespace_size(Oid tblspcOid)
 }
 
 Datum
-pg_tablespace_size_oid(PG_FUNCTION_ARGS)
+mdb_tablespace_size_oid(PG_FUNCTION_ARGS)
 {
 	Oid			tblspcOid = PG_GETARG_OID(0);
 	int64		size;
@@ -246,7 +246,7 @@ pg_tablespace_size_oid(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_tablespace_size_name(PG_FUNCTION_ARGS)
+mdb_tablespace_size_name(PG_FUNCTION_ARGS)
 {
 	Name		tblspcName = PG_GETARG_NAME(0);
 	Oid			tblspcOid = get_tablespace_oid(NameStr(*tblspcName), false);
@@ -306,7 +306,7 @@ calculate_relation_size(RelFileNode *rfn, BackendId backend, ForkNumber forknum)
 }
 
 Datum
-pg_relation_size(PG_FUNCTION_ARGS)
+mdb_relation_size(PG_FUNCTION_ARGS)
 {
 	Oid			relOid = PG_GETARG_OID(0);
 	text	   *forkName = PG_GETARG_TEXT_P(1);
@@ -317,8 +317,8 @@ pg_relation_size(PG_FUNCTION_ARGS)
 
 	/*
 	 * Before 9.2, we used to throw an error if the relation didn't exist, but
-	 * that makes queries like "SELECT pg_relation_size(oid) FROM pg_class"
-	 * less robust, because while we scan pg_class with an MVCC snapshot,
+	 * that makes queries like "SELECT mdb_relation_size(oid) FROM mdb_class"
+	 * less robust, because while we scan mdb_class with an MVCC snapshot,
 	 * someone else might drop the table. It's better to return NULL for
 	 * already-dropped tables than throw an error and abort the whole query.
 	 */
@@ -446,7 +446,7 @@ calculate_indexes_size(Relation rel)
 }
 
 Datum
-pg_table_size(PG_FUNCTION_ARGS)
+mdb_table_size(PG_FUNCTION_ARGS)
 {
 	Oid			relOid = PG_GETARG_OID(0);
 	Relation	rel;
@@ -465,7 +465,7 @@ pg_table_size(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_indexes_size(PG_FUNCTION_ARGS)
+mdb_indexes_size(PG_FUNCTION_ARGS)
 {
 	Oid			relOid = PG_GETARG_OID(0);
 	Relation	rel;
@@ -507,7 +507,7 @@ calculate_total_relation_size(Relation rel)
 }
 
 Datum
-pg_total_relation_size(PG_FUNCTION_ARGS)
+mdb_total_relation_size(PG_FUNCTION_ARGS)
 {
 	Oid			relOid = PG_GETARG_OID(0);
 	Relation	rel;
@@ -529,7 +529,7 @@ pg_total_relation_size(PG_FUNCTION_ARGS)
  * formatting with size units
  */
 Datum
-pg_size_pretty(PG_FUNCTION_ARGS)
+mdb_size_pretty(PG_FUNCTION_ARGS)
 {
 	int64		size = PG_GETARG_INT64(0);
 	char		buf[64];
@@ -641,7 +641,7 @@ numeric_shift_right(Numeric n, unsigned count)
 }
 
 Datum
-pg_size_pretty_numeric(PG_FUNCTION_ARGS)
+mdb_size_pretty_numeric(PG_FUNCTION_ARGS)
 {
 	Numeric		size = PG_GETARG_NUMERIC(0);
 	Numeric		limit,
@@ -703,7 +703,7 @@ pg_size_pretty_numeric(PG_FUNCTION_ARGS)
  * Convert a human-readable size to a size in bytes
  */
 Datum
-pg_size_bytes(PG_FUNCTION_ARGS)
+mdb_size_bytes(PG_FUNCTION_ARGS)
 {
 	text	   *arg = PG_GETARG_TEXT_PP(0);
 	char	   *str,
@@ -812,17 +812,17 @@ pg_size_bytes(PG_FUNCTION_ARGS)
 		*endptr = '\0';
 
 		/* Parse the unit case-insensitively */
-		if (pg_strcasecmp(strptr, "bytes") == 0)
+		if (mdb_strcasecmp(strptr, "bytes") == 0)
 			multiplier = (int64) 1;
-		else if (pg_strcasecmp(strptr, "kb") == 0)
+		else if (mdb_strcasecmp(strptr, "kb") == 0)
 			multiplier = (int64) 1024;
-		else if (pg_strcasecmp(strptr, "mb") == 0)
+		else if (mdb_strcasecmp(strptr, "mb") == 0)
 			multiplier = ((int64) 1024) * 1024;
 
-		else if (pg_strcasecmp(strptr, "gb") == 0)
+		else if (mdb_strcasecmp(strptr, "gb") == 0)
 			multiplier = ((int64) 1024) * 1024 * 1024;
 
-		else if (pg_strcasecmp(strptr, "tb") == 0)
+		else if (mdb_strcasecmp(strptr, "tb") == 0)
 			multiplier = ((int64) 1024) * 1024 * 1024 * 1024;
 
 		else
@@ -855,8 +855,8 @@ pg_size_bytes(PG_FUNCTION_ARGS)
  * Get the filenode of a relation
  *
  * This is expected to be used in queries like
- *		SELECT pg_relation_filenode(oid) FROM pg_class;
- * That leads to a couple of choices.  We work from the pg_class row alone
+ *		SELECT mdb_relation_filenode(oid) FROM mdb_class;
+ * That leads to a couple of choices.  We work from the mdb_class row alone
  * rather than actually opening each relation, for efficiency.  We don't
  * fail if we can't find the relation --- some rows might be visible in
  * the query's MVCC snapshot even though the relations have been dropped.
@@ -866,17 +866,17 @@ pg_size_bytes(PG_FUNCTION_ARGS)
  * seems better to quietly return NULL.
  */
 Datum
-pg_relation_filenode(PG_FUNCTION_ARGS)
+mdb_relation_filenode(PG_FUNCTION_ARGS)
 {
 	Oid			relid = PG_GETARG_OID(0);
 	Oid			result;
 	HeapTuple	tuple;
-	Form_pg_class relform;
+	Form_mdb_class relform;
 
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tuple))
 		PG_RETURN_NULL();
-	relform = (Form_pg_class) GETSTRUCT(tuple);
+	relform = (Form_mdb_class) GETSTRUCT(tuple);
 
 	switch (relform->relkind)
 	{
@@ -912,7 +912,7 @@ pg_relation_filenode(PG_FUNCTION_ARGS)
  *
  * This is expected to be used when somebody wants to match an individual file
  * on the filesystem back to its table. That's not trivially possible via
- * pg_class, because that doesn't contain the relfilenodes of shared and nailed
+ * mdb_class, because that doesn't contain the relfilenodes of shared and nailed
  * tables.
  *
  * We don't fail but return NULL if we cannot find a mapping.
@@ -921,7 +921,7 @@ pg_relation_filenode(PG_FUNCTION_ARGS)
  * tablespace.
  */
 Datum
-pg_filenode_relation(PG_FUNCTION_ARGS)
+mdb_filenode_relation(PG_FUNCTION_ARGS)
 {
 	Oid			reltablespace = PG_GETARG_OID(0);
 	Oid			relfilenode = PG_GETARG_OID(1);
@@ -938,14 +938,14 @@ pg_filenode_relation(PG_FUNCTION_ARGS)
 /*
  * Get the pathname (relative to $PGDATA) of a relation
  *
- * See comments for pg_relation_filenode.
+ * See comments for mdb_relation_filenode.
  */
 Datum
-pg_relation_filepath(PG_FUNCTION_ARGS)
+mdb_relation_filepath(PG_FUNCTION_ARGS)
 {
 	Oid			relid = PG_GETARG_OID(0);
 	HeapTuple	tuple;
-	Form_pg_class relform;
+	Form_mdb_class relform;
 	RelFileNode rnode;
 	BackendId	backend;
 	char	   *path;
@@ -953,7 +953,7 @@ pg_relation_filepath(PG_FUNCTION_ARGS)
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tuple))
 		PG_RETURN_NULL();
-	relform = (Form_pg_class) GETSTRUCT(tuple);
+	relform = (Form_mdb_class) GETSTRUCT(tuple);
 
 	switch (relform->relkind)
 	{

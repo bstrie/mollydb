@@ -20,44 +20,44 @@
 #include "catalog/heap.h"
 #include "catalog/index.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_amop.h"
-#include "catalog/pg_amproc.h"
-#include "catalog/pg_attrdef.h"
-#include "catalog/pg_authid.h"
-#include "catalog/pg_cast.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_collation_fn.h"
-#include "catalog/pg_constraint.h"
-#include "catalog/pg_constraint_fn.h"
-#include "catalog/pg_conversion.h"
-#include "catalog/pg_conversion_fn.h"
-#include "catalog/pg_database.h"
-#include "catalog/pg_default_acl.h"
-#include "catalog/pg_depend.h"
-#include "catalog/pg_event_trigger.h"
-#include "catalog/pg_extension.h"
-#include "catalog/pg_foreign_data_wrapper.h"
-#include "catalog/pg_foreign_server.h"
-#include "catalog/pg_init_privs.h"
-#include "catalog/pg_language.h"
-#include "catalog/pg_largeobject.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_opfamily.h"
-#include "catalog/pg_policy.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_rewrite.h"
-#include "catalog/pg_tablespace.h"
-#include "catalog/pg_transform.h"
-#include "catalog/pg_trigger.h"
-#include "catalog/pg_ts_config.h"
-#include "catalog/pg_ts_dict.h"
-#include "catalog/pg_ts_parser.h"
-#include "catalog/pg_ts_template.h"
-#include "catalog/pg_type.h"
-#include "catalog/pg_user_mapping.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_amop.h"
+#include "catalog/mdb_amproc.h"
+#include "catalog/mdb_attrdef.h"
+#include "catalog/mdb_authid.h"
+#include "catalog/mdb_cast.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_collation_fn.h"
+#include "catalog/mdb_constraint.h"
+#include "catalog/mdb_constraint_fn.h"
+#include "catalog/mdb_conversion.h"
+#include "catalog/mdb_conversion_fn.h"
+#include "catalog/mdb_database.h"
+#include "catalog/mdb_default_acl.h"
+#include "catalog/mdb_depend.h"
+#include "catalog/mdb_event_trigger.h"
+#include "catalog/mdb_extension.h"
+#include "catalog/mdb_foreign_data_wrapper.h"
+#include "catalog/mdb_foreign_server.h"
+#include "catalog/mdb_init_privs.h"
+#include "catalog/mdb_language.h"
+#include "catalog/mdb_largeobject.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_opfamily.h"
+#include "catalog/mdb_policy.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_rewrite.h"
+#include "catalog/mdb_tablespace.h"
+#include "catalog/mdb_transform.h"
+#include "catalog/mdb_trigger.h"
+#include "catalog/mdb_ts_config.h"
+#include "catalog/mdb_ts_dict.h"
+#include "catalog/mdb_ts_parser.h"
+#include "catalog/mdb_ts_template.h"
+#include "catalog/mdb_type.h"
+#include "catalog/mdb_user_mapping.h"
 #include "commands/comment.h"
 #include "commands/defrem.h"
 #include "commands/event_trigger.h"
@@ -274,7 +274,7 @@ performDeletion(const ObjectAddress *object,
 	ObjectAddresses *targetObjects;
 
 	/*
-	 * We save some cycles by opening pg_depend just once and passing the
+	 * We save some cycles by opening mdb_depend just once and passing the
 	 * Relation pointer down to all the recursive deletion steps.
 	 */
 	depRel = heap_open(DependRelationId, RowExclusiveLock);
@@ -337,7 +337,7 @@ performMultipleDeletions(const ObjectAddresses *objects,
 		return;
 
 	/*
-	 * We save some cycles by opening pg_depend just once and passing the
+	 * We save some cycles by opening mdb_depend just once and passing the
 	 * Relation pointer down to all the recursive deletion steps.
 	 */
 	depRel = heap_open(DependRelationId, RowExclusiveLock);
@@ -412,7 +412,7 @@ deleteWhatDependsOn(const ObjectAddress *object,
 	int			i;
 
 	/*
-	 * We save some cycles by opening pg_depend just once and passing the
+	 * We save some cycles by opening mdb_depend just once and passing the
 	 * Relation pointer down to all the recursive deletion steps.
 	 */
 	depRel = heap_open(DependRelationId, RowExclusiveLock);
@@ -498,7 +498,7 @@ deleteWhatDependsOn(const ObjectAddress *object,
  *	targetObjects: list of objects that are scheduled to be deleted
  *	pendingObjects: list of other objects slated for destruction, but
  *			not necessarily in targetObjects yet (can be NULL if none)
- *	*depRel: already opened pg_depend relation
+ *	*depRel: already opened mdb_depend relation
  */
 static void
 findDependentObjects(const ObjectAddress *object,
@@ -554,21 +554,21 @@ findDependentObjects(const ObjectAddress *object,
 	 * have to transform this deletion request into a deletion request of the
 	 * owning object.  (We'll eventually recurse back to this object, but the
 	 * owning object has to be visited first so it will be deleted after.) The
-	 * way to find out about this is to scan the pg_depend entries that show
+	 * way to find out about this is to scan the mdb_depend entries that show
 	 * what this object depends on.
 	 */
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_classid,
+				Anum_mdb_depend_classid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->classId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_objid,
+				Anum_mdb_depend_objid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->objectId));
 	if (object->objectSubId != 0)
 	{
 		ScanKeyInit(&key[2],
-					Anum_pg_depend_objsubid,
+					Anum_mdb_depend_objsubid,
 					BTEqualStrategyNumber, F_INT4EQ,
 					Int32GetDatum(object->objectSubId));
 		nkeys = 3;
@@ -581,7 +581,7 @@ findDependentObjects(const ObjectAddress *object,
 
 	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 	{
-		Form_pg_depend foundDep = (Form_pg_depend) GETSTRUCT(tup);
+		Form_mdb_depend foundDep = (Form_mdb_depend) GETSTRUCT(tup);
 
 		otherObject.classId = foundDep->refclassid;
 		otherObject.objectId = foundDep->refobjid;
@@ -678,7 +678,7 @@ findDependentObjects(const ObjectAddress *object,
 				 * The owning object might have been deleted while we waited
 				 * to lock it; if so, neither it nor the current object are
 				 * interesting anymore.  We test this by checking the
-				 * pg_depend entry (see notes below).
+				 * mdb_depend entry (see notes below).
 				 */
 				if (!systable_recheck_tuple(scan, tup))
 				{
@@ -734,17 +734,17 @@ findDependentObjects(const ObjectAddress *object,
 	mystack.next = stack;
 
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_refclassid,
+				Anum_mdb_depend_refclassid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->classId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_refobjid,
+				Anum_mdb_depend_refobjid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->objectId));
 	if (object->objectSubId != 0)
 	{
 		ScanKeyInit(&key[2],
-					Anum_pg_depend_refobjsubid,
+					Anum_mdb_depend_refobjsubid,
 					BTEqualStrategyNumber, F_INT4EQ,
 					Int32GetDatum(object->objectSubId));
 		nkeys = 3;
@@ -757,7 +757,7 @@ findDependentObjects(const ObjectAddress *object,
 
 	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 	{
-		Form_pg_depend foundDep = (Form_pg_depend) GETSTRUCT(tup);
+		Form_mdb_depend foundDep = (Form_mdb_depend) GETSTRUCT(tup);
 		int			subflags;
 
 		otherObject.classId = foundDep->classid;
@@ -773,7 +773,7 @@ findDependentObjects(const ObjectAddress *object,
 		 * The dependent object might have been deleted while we waited to
 		 * lock it; if so, we don't need to do anything more with it. We can
 		 * test this cheaply and independently of the object's type by seeing
-		 * if the pg_depend tuple we are looking at is still live. (If the
+		 * if the mdb_depend tuple we are looking at is still live. (If the
 		 * object got deleted, the tuple would have been deleted too.)
 		 */
 		if (!systable_recheck_tuple(scan, tup))
@@ -1024,7 +1024,7 @@ reportDependentObjects(const ObjectAddresses *targetObjects,
 /*
  * deleteOneObject: delete a single object for performDeletion.
  *
- * *depRel is the already-open pg_depend relation.
+ * *depRel is the already-open mdb_depend relation.
  */
 static void
 deleteOneObject(const ObjectAddress *object, Relation *depRel, int flags)
@@ -1064,24 +1064,24 @@ deleteOneObject(const ObjectAddress *object, Relation *depRel, int flags)
 		*depRel = heap_open(DependRelationId, RowExclusiveLock);
 
 	/*
-	 * Now remove any pg_depend records that link from this object to others.
+	 * Now remove any mdb_depend records that link from this object to others.
 	 * (Any records linking to this object should be gone already.)
 	 *
-	 * When dropping a whole object (subId = 0), remove all pg_depend records
+	 * When dropping a whole object (subId = 0), remove all mdb_depend records
 	 * for its sub-objects too.
 	 */
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_classid,
+				Anum_mdb_depend_classid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->classId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_objid,
+				Anum_mdb_depend_objid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->objectId));
 	if (object->objectSubId != 0)
 	{
 		ScanKeyInit(&key[2],
-					Anum_pg_depend_objsubid,
+					Anum_mdb_depend_objsubid,
 					BTEqualStrategyNumber, F_INT4EQ,
 					Int32GetDatum(object->objectSubId));
 		nkeys = 3;
@@ -2328,7 +2328,7 @@ free_object_addresses(ObjectAddresses *addrs)
 ObjectClass
 getObjectClass(const ObjectAddress *object)
 {
-	/* only pg_class entries can have nonzero objectSubId */
+	/* only mdb_class entries can have nonzero objectSubId */
 	if (object->classId != RelationRelationId &&
 		object->objectSubId != 0)
 		elog(ERROR, "invalid non-zero objectSubId for object class %u",
@@ -2459,15 +2459,15 @@ DeleteInitPrivs(const ObjectAddress *object)
 	relation = heap_open(InitPrivsRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_init_privs_objoid,
+				Anum_mdb_init_privs_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->objectId));
 	ScanKeyInit(&key[1],
-				Anum_pg_init_privs_classoid,
+				Anum_mdb_init_privs_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->classId));
 	ScanKeyInit(&key[2],
-				Anum_pg_init_privs_objsubid,
+				Anum_mdb_init_privs_objsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum(object->objectSubId));
 

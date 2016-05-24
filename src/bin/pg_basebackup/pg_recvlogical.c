@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * pg_recvlogical.c - receive data from a logical decoding slot in a streaming
+ * mdb_recvlogical.c - receive data from a logical decoding slot in a streaming
  *					  fashion and write it to a local file.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  src/bin/pg_basebackup/pg_recvlogical.c
+ *		  src/bin/mdb_basebackup/mdb_recvlogical.c
  *-------------------------------------------------------------------------
  */
 
@@ -653,7 +653,7 @@ main(int argc, char **argv)
 	char	   *db_name;
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_basebackup"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_basebackup"));
 
 	if (argc > 1)
 	{
@@ -665,7 +665,7 @@ main(int argc, char **argv)
 		else if (strcmp(argv[1], "-V") == 0 ||
 				 strcmp(argv[1], "--version") == 0)
 		{
-			puts("pg_recvlogical (MollyDB) " PG_VERSION);
+			puts("mdb_recvlogical (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -677,7 +677,7 @@ main(int argc, char **argv)
 		{
 /* general options */
 			case 'f':
-				outfile = pg_strdup(optarg);
+				outfile = mdb_strdup(optarg);
 				break;
 			case 'F':
 				fsync_interval = atoi(optarg) * 1000;
@@ -696,10 +696,10 @@ main(int argc, char **argv)
 				break;
 /* connection options */
 			case 'd':
-				dbname = pg_strdup(optarg);
+				dbname = mdb_strdup(optarg);
 				break;
 			case 'h':
-				dbhost = pg_strdup(optarg);
+				dbhost = mdb_strdup(optarg);
 				break;
 			case 'p':
 				if (atoi(optarg) <= 0)
@@ -708,10 +708,10 @@ main(int argc, char **argv)
 							progname, optarg);
 					exit(1);
 				}
-				dbport = pg_strdup(optarg);
+				dbport = mdb_strdup(optarg);
 				break;
 			case 'U':
-				dbuser = pg_strdup(optarg);
+				dbuser = mdb_strdup(optarg);
 				break;
 			case 'w':
 				dbgetpassword = -1;
@@ -732,7 +732,7 @@ main(int argc, char **argv)
 				break;
 			case 'o':
 				{
-					char	   *data = pg_strdup(optarg);
+					char	   *data = mdb_strdup(optarg);
 					char	   *val = strchr(data, '=');
 
 					if (val != NULL)
@@ -743,7 +743,7 @@ main(int argc, char **argv)
 					}
 
 					noptions += 1;
-					options = pg_realloc(options, sizeof(char *) * noptions * 2);
+					options = mdb_realloc(options, sizeof(char *) * noptions * 2);
 
 					options[(noptions - 1) * 2] = data;
 					options[(noptions - 1) * 2 + 1] = val;
@@ -751,7 +751,7 @@ main(int argc, char **argv)
 
 				break;
 			case 'P':
-				plugin = pg_strdup(optarg);
+				plugin = mdb_strdup(optarg);
 				break;
 			case 's':
 				standby_message_timeout = atoi(optarg) * 1000;
@@ -763,7 +763,7 @@ main(int argc, char **argv)
 				}
 				break;
 			case 'S':
-				replication_slot = pg_strdup(optarg);
+				replication_slot = mdb_strdup(optarg);
 				break;
 /* action */
 			case 1:
@@ -936,7 +936,7 @@ main(int argc, char **argv)
 			/* translator: check source for value for %d */
 					_("%s: disconnected; waiting %d seconds to try again\n"),
 					progname, RECONNECT_SLEEP_TIME);
-			pg_usleep(RECONNECT_SLEEP_TIME * 1000000);
+			mdb_usleep(RECONNECT_SLEEP_TIME * 1000000);
 		}
 	}
 }

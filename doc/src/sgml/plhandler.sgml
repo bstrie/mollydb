@@ -53,11 +53,11 @@
 
    <para>
     It's up to the call handler to fetch the entry of the function from the
-    <classname>pg_proc</classname> system catalog and to analyze the argument
+    <classname>mdb_proc</classname> system catalog and to analyze the argument
     and return types of the called function. The <literal>AS</> clause from the
     <command>CREATE FUNCTION</command> command for the function will be found
     in the <literal>prosrc</literal> column of the
-    <classname>pg_proc</classname> row. This is commonly source
+    <classname>mdb_proc</classname> row. This is commonly source
     text in the procedural language, but in theory it could be something else,
     such as a path name to a file, or anything else that tells the call handler
     what to do in detail.
@@ -105,8 +105,8 @@
 #include "fmgr.h"
 #include "access/heapam.h"
 #include "utils/syscache.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 
 #ifdef PG_MODULE_MAGIC
 PG_MODULE_MAGIC;
@@ -176,7 +176,7 @@ CREATE LANGUAGE plsample
     declared to return <type>void</>.  The validator will be called at
     the end of a <command>CREATE FUNCTION</> command that has created
     or updated a function written in the procedural language.
-    The passed-in OID is the OID of the function's <classname>pg_proc</>
+    The passed-in OID is the OID of the function's <classname>mdb_proc</>
     row.  The validator must fetch this row in the usual way, and do
     whatever checking is appropriate.
     First, call <function>CheckFunctionValidatorAccess()</> to diagnose
@@ -197,7 +197,7 @@ CREATE LANGUAGE plsample
     any expensive or context-sensitive checking should be skipped.  If the
     language provides for code execution at compilation time, the validator
     must suppress checks that would induce such execution.  In particular,
-    this parameter is turned off by <application>pg_dump</> so that it can
+    this parameter is turned off by <application>mdb_dump</> so that it can
     load procedural language functions without worrying about side effects or
     dependencies of the function bodies on other database objects.
     (Because of this requirement, the call handler should avoid

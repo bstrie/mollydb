@@ -89,7 +89,7 @@ readstoplist(const char *fname, StopList *s, char *(*wordop) (const char *))
 
 			/* Trim trailing space */
 			while (*pbuf && !t_isspace(pbuf))
-				pbuf += pg_mblen(pbuf);
+				pbuf += mdb_mblen(pbuf);
 			*pbuf = '\0';
 
 			/* Skip empty lines */
@@ -134,7 +134,7 @@ readstoplist(const char *fname, StopList *s, char *(*wordop) (const char *))
 
 	/* Sort to allow binary searching */
 	if (s->stop && s->len > 0)
-		qsort(s->stop, s->len, sizeof(char *), pg_qsort_strcmp);
+		qsort(s->stop, s->len, sizeof(char *), mdb_qsort_strcmp);
 }
 
 bool
@@ -142,5 +142,5 @@ searchstoplist(StopList *s, char *key)
 {
 	return (s->stop && s->len > 0 &&
 			bsearch(&key, s->stop, s->len,
-					sizeof(char *), pg_qsort_strcmp)) ? true : false;
+					sizeof(char *), mdb_qsort_strcmp)) ? true : false;
 }

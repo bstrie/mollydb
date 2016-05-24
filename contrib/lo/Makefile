@@ -7,7 +7,7 @@ DATA = lo--1.0.sql lo--unpackaged--1.0.sql
 PGFILEDESC = "lo - management for large objects"
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

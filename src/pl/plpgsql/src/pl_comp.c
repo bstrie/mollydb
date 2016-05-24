@@ -19,9 +19,9 @@
 
 #include "access/htup_details.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_proc_fn.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_proc_fn.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "nodes/makefuncs.h"
 #include "parser/parse_type.h"
@@ -107,7 +107,7 @@ static PLpgSQL_type *build_datatype(HeapTuple typeTup, int32 typmod, Oid collati
 static void plmdb_start_datums(void);
 static void plmdb_finish_datums(PLpgSQL_function *function);
 static void compute_function_hashkey(FunctionCallInfo fcinfo,
-						 Form_pg_proc procStruct,
+						 Form_mdb_proc procStruct,
 						 PLpgSQL_func_hashkey *hashkey,
 						 bool forValidator);
 static void plmdb_resolve_polymorphic_argtypes(int numargs,
@@ -135,19 +135,19 @@ plmdb_compile(FunctionCallInfo fcinfo, bool forValidator)
 {
 	Oid			funcOid = fcinfo->flinfo->fn_oid;
 	HeapTuple	procTup;
-	Form_pg_proc procStruct;
+	Form_mdb_proc procStruct;
 	PLpgSQL_function *function;
 	PLpgSQL_func_hashkey hashkey;
 	bool		function_valid = false;
 	bool		hashkey_valid = false;
 
 	/*
-	 * Lookup the pg_proc tuple by Oid; we'll need it in any case
+	 * Lookup the mdb_proc tuple by Oid; we'll need it in any case
 	 */
 	procTup = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcOid));
 	if (!HeapTupleIsValid(procTup))
 		elog(ERROR, "cache lookup failed for function %u", funcOid);
-	procStruct = (Form_pg_proc) GETSTRUCT(procTup);
+	procStruct = (Form_mdb_proc) GETSTRUCT(procTup);
 
 	/*
 	 * See if there's already a cache entry for the current FmgrInfo. If not,
@@ -265,14 +265,14 @@ do_compile(FunctionCallInfo fcinfo,
 		   PLpgSQL_func_hashkey *hashkey,
 		   bool forValidator)
 {
-	Form_pg_proc procStruct = (Form_pg_proc) GETSTRUCT(procTup);
+	Form_mdb_proc procStruct = (Form_mdb_proc) GETSTRUCT(procTup);
 	bool		is_dml_trigger = CALLED_AS_TRIGGER(fcinfo);
 	bool		is_event_trigger = CALLED_AS_EVENT_TRIGGER(fcinfo);
 	Datum		prosrcdatum;
 	bool		isnull;
 	char	   *proc_source;
 	HeapTuple	typeTup;
-	Form_pg_type typeStruct;
+	Form_mdb_type typeStruct;
 	PLpgSQL_variable *var;
 	PLpgSQL_rec *rec;
 	int			i;
@@ -295,7 +295,7 @@ do_compile(FunctionCallInfo fcinfo,
 	 * the static variables used here.
 	 */
 	prosrcdatum = SysCacheGetAttr(PROCOID, procTup,
-								  Anum_pg_proc_prosrc, &isnull);
+								  Anum_mdb_proc_prosrc, &isnull);
 	if (isnull)
 		elog(ERROR, "null prosrc");
 	proc_source = TextDatumGetCString(prosrcdatum);
@@ -528,7 +528,7 @@ do_compile(FunctionCallInfo fcinfo,
 			typeTup = SearchSysCache1(TYPEOID, ObjectIdGetDatum(rettypeid));
 			if (!HeapTupleIsValid(typeTup))
 				elog(ERROR, "cache lookup failed for type %u", rettypeid);
-			typeStruct = (Form_pg_type) GETSTRUCT(typeTup);
+			typeStruct = (Form_mdb_type) GETSTRUCT(typeTup);
 
 			/* Disallow pseudotype result, except VOID or RECORD */
 			/* (note we already replaced polymorphic types) */
@@ -1660,7 +1660,7 @@ plmdb_parse_wordtype(char *ident)
 	typeTup = LookupTypeName(NULL, makeTypeName(ident), NULL, false);
 	if (typeTup)
 	{
-		Form_pg_type typeStruct = (Form_pg_type) GETSTRUCT(typeTup);
+		Form_mdb_type typeStruct = (Form_mdb_type) GETSTRUCT(typeTup);
 
 		if (!typeStruct->typisdefined ||
 			typeStruct->typrelid != InvalidOid)
@@ -1698,8 +1698,8 @@ plmdb_parse_cwordtype(List *idents)
 	HeapTuple	classtup = NULL;
 	HeapTuple	attrtup = NULL;
 	HeapTuple	typetup = NULL;
-	Form_pg_class classStruct;
-	Form_pg_attribute attrStruct;
+	Form_mdb_class classStruct;
+	Form_mdb_attribute attrStruct;
 	MemoryContext oldCxt;
 
 	/* Avoid memory leaks in the long-term function context */
@@ -1751,7 +1751,7 @@ plmdb_parse_cwordtype(List *idents)
 	classtup = SearchSysCache1(RELOID, ObjectIdGetDatum(classOid));
 	if (!HeapTupleIsValid(classtup))
 		goto done;
-	classStruct = (Form_pg_class) GETSTRUCT(classtup);
+	classStruct = (Form_mdb_class) GETSTRUCT(classtup);
 
 	/*
 	 * It must be a relation, sequence, view, materialized view, composite
@@ -1771,7 +1771,7 @@ plmdb_parse_cwordtype(List *idents)
 	attrtup = SearchSysCacheAttName(classOid, fldname);
 	if (!HeapTupleIsValid(attrtup))
 		goto done;
-	attrStruct = (Form_pg_attribute) GETSTRUCT(attrtup);
+	attrStruct = (Form_mdb_attribute) GETSTRUCT(attrtup);
 
 	typetup = SearchSysCache1(TYPEOID,
 							  ObjectIdGetDatum(attrStruct->atttypid));
@@ -1961,14 +1961,14 @@ plmdb_build_record(const char *refname, int lineno, bool add2namespace)
 }
 
 /*
- * Build a row-variable data structure given the pg_class OID.
+ * Build a row-variable data structure given the mdb_class OID.
  */
 static PLpgSQL_row *
 build_row_from_class(Oid classOid)
 {
 	PLpgSQL_row *row;
 	Relation	rel;
-	Form_pg_class classStruct;
+	Form_mdb_class classStruct;
 	const char *relname;
 	int			i;
 
@@ -2006,7 +2006,7 @@ build_row_from_class(Oid classOid)
 
 	for (i = 0; i < row->nfields; i++)
 	{
-		Form_pg_attribute attrStruct;
+		Form_mdb_attribute attrStruct;
 
 		/*
 		 * Get the attribute and check for dropped column
@@ -2140,12 +2140,12 @@ plmdb_build_datatype(Oid typeOid, int32 typmod, Oid collation)
 }
 
 /*
- * Utility subroutine to make a PLpgSQL_type struct given a pg_type entry
+ * Utility subroutine to make a PLpgSQL_type struct given a mdb_type entry
  */
 static PLpgSQL_type *
 build_datatype(HeapTuple typeTup, int32 typmod, Oid collation)
 {
-	Form_pg_type typeStruct = (Form_pg_type) GETSTRUCT(typeTup);
+	Form_mdb_type typeStruct = (Form_mdb_type) GETSTRUCT(typeTup);
 	PLpgSQL_type *typ;
 
 	if (!typeStruct->typisdefined)
@@ -2435,7 +2435,7 @@ plmdb_add_initdatums(int **varnos)
  */
 static void
 compute_function_hashkey(FunctionCallInfo fcinfo,
-						 Form_pg_proc procStruct,
+						 Form_mdb_proc procStruct,
 						 PLpgSQL_func_hashkey *hashkey,
 						 bool forValidator)
 {
@@ -2536,7 +2536,7 @@ plmdb_resolve_polymorphic_argtypes(int numargs,
  * possibility that there are fn_extra pointers to it.  We can release
  * the subsidiary storage, but only if there are no active evaluations
  * in progress.  Otherwise we'll just leak that storage.  Since the
- * case would only occur if a pg_proc update is detected during a nested
+ * case would only occur if a mdb_proc update is detected during a nested
  * recursive call on the function, a leak seems acceptable.
  *
  * Note that this can be called more than once if there are multiple fn_extra

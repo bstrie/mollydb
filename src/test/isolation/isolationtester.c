@@ -18,7 +18,7 @@
 #include "datatype/timestamp.h"
 #include "libpq-fe.h"
 #include "pqexpbuffer.h"
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 
 #include "isolationtester.h"
 
@@ -186,7 +186,7 @@ main(int argc, char **argv)
 		PQclear(res);
 
 		/* Get the backend pid for lock wait checking. */
-		res = PQexec(conns[i], "SELECT pg_backend_pid()");
+		res = PQexec(conns[i], "SELECT mdb_backend_pid()");
 		if (PQresultStatus(res) == PGRES_TUPLES_OK)
 		{
 			if (PQntuples(res) == 1 && PQnfields(res) == 1)
@@ -227,7 +227,7 @@ main(int argc, char **argv)
 	 */
 	initPQExpBuffer(&wait_query);
 	appendPQExpBufferStr(&wait_query,
-						 "SELECT pg_catalog.pg_blocking_pids($1) && '{");
+						 "SELECT mdb_catalog.mdb_blocking_pids($1) && '{");
 	/* The spec syntax requires at least one session; assume that here. */
 	appendPQExpBufferStr(&wait_query, backend_pids[1]);
 	for (i = 2; i < nconns; i++)
@@ -849,7 +849,7 @@ try_complete_step(Step *step, int flags)
 					if (sev && msg)
 						step->errormsg = psprintf("%s:  %s", sev, msg);
 					else
-						step->errormsg = pg_strdup(PQresultErrorMessage(res));
+						step->errormsg = mdb_strdup(PQresultErrorMessage(res));
 				}
 				break;
 			default:

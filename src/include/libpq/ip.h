@@ -29,23 +29,23 @@ typedef void (*PgIfAddrCallback) (struct sockaddr * addr,
 											  struct sockaddr * netmask,
 											  void *cb_data);
 
-extern int pg_getaddrinfo_all(const char *hostname, const char *servname,
+extern int mdb_getaddrinfo_all(const char *hostname, const char *servname,
 				   const struct addrinfo * hintp,
 				   struct addrinfo ** result);
-extern void pg_freeaddrinfo_all(int hint_ai_family, struct addrinfo * ai);
+extern void mdb_freeaddrinfo_all(int hint_ai_family, struct addrinfo * ai);
 
-extern int pg_getnameinfo_all(const struct sockaddr_storage * addr, int salen,
+extern int mdb_getnameinfo_all(const struct sockaddr_storage * addr, int salen,
 				   char *node, int nodelen,
 				   char *service, int servicelen,
 				   int flags);
 
-extern int pg_range_sockaddr(const struct sockaddr_storage * addr,
+extern int mdb_range_sockaddr(const struct sockaddr_storage * addr,
 				  const struct sockaddr_storage * netaddr,
 				  const struct sockaddr_storage * netmask);
 
-extern int pg_sockaddr_cidr_mask(struct sockaddr_storage * mask,
+extern int mdb_sockaddr_cidr_mask(struct sockaddr_storage * mask,
 					  char *numbits, int family);
 
-extern int	pg_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data);
+extern int	mdb_foreach_ifaddr(PgIfAddrCallback callback, void *cb_data);
 
 #endif   /* IP_H */

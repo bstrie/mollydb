@@ -228,7 +228,7 @@ CREATE TEMP VIEW v_window AS
 
 SELECT * FROM v_window;
 
-SELECT pg_get_viewdef('v_window');
+SELECT mdb_get_viewdef('v_window');
 
 -- with UNION
 SELECT count(*) OVER (PARTITION BY four) FROM (SELECT * FROM tenk1 UNION ALL SELECT * FROM tenk2)s LIMIT 0;

@@ -9,45 +9,45 @@
 
 /* generic file access functions */
 
-CREATE FUNCTION pg_catalog.pg_file_write(text, text, bool)
+CREATE FUNCTION mdb_catalog.mdb_file_write(text, text, bool)
 RETURNS bigint
-AS 'MODULE_PATHNAME', 'pg_file_write'
+AS 'MODULE_PATHNAME', 'mdb_file_write'
 LANGUAGE C VOLATILE STRICT;
 
-CREATE FUNCTION pg_catalog.pg_file_rename(text, text, text)
+CREATE FUNCTION mdb_catalog.mdb_file_rename(text, text, text)
 RETURNS bool
-AS 'MODULE_PATHNAME', 'pg_file_rename'
+AS 'MODULE_PATHNAME', 'mdb_file_rename'
 LANGUAGE C VOLATILE;
 
-CREATE FUNCTION pg_catalog.pg_file_rename(text, text)
+CREATE FUNCTION mdb_catalog.mdb_file_rename(text, text)
 RETURNS bool
-AS 'SELECT pg_catalog.pg_file_rename($1, $2, NULL::pg_catalog.text);'
+AS 'SELECT mdb_catalog.mdb_file_rename($1, $2, NULL::mdb_catalog.text);'
 LANGUAGE SQL VOLATILE STRICT;
 
-CREATE FUNCTION pg_catalog.pg_file_unlink(text)
+CREATE FUNCTION mdb_catalog.mdb_file_unlink(text)
 RETURNS bool
-AS 'MODULE_PATHNAME', 'pg_file_unlink'
+AS 'MODULE_PATHNAME', 'mdb_file_unlink'
 LANGUAGE C VOLATILE STRICT;
 
-CREATE FUNCTION pg_catalog.pg_logdir_ls()
+CREATE FUNCTION mdb_catalog.mdb_logdir_ls()
 RETURNS setof record
-AS 'MODULE_PATHNAME', 'pg_logdir_ls'
+AS 'MODULE_PATHNAME', 'mdb_logdir_ls'
 LANGUAGE C VOLATILE STRICT;
 
 
 /* Renaming of existing backend functions for pgAdmin compatibility */
 
-CREATE FUNCTION pg_catalog.pg_file_read(text, bigint, bigint)
+CREATE FUNCTION mdb_catalog.mdb_file_read(text, bigint, bigint)
 RETURNS text
-AS 'pg_read_file'
+AS 'mdb_read_file'
 LANGUAGE INTERNAL VOLATILE STRICT;
 
-CREATE FUNCTION pg_catalog.pg_file_length(text)
+CREATE FUNCTION mdb_catalog.mdb_file_length(text)
 RETURNS bigint
-AS 'SELECT size FROM pg_catalog.pg_stat_file($1)'
+AS 'SELECT size FROM mdb_catalog.mdb_stat_file($1)'
 LANGUAGE SQL VOLATILE STRICT;
 
-CREATE FUNCTION pg_catalog.pg_logfile_rotate()
+CREATE FUNCTION mdb_catalog.mdb_logfile_rotate()
 RETURNS int4
-AS 'pg_rotate_logfile'
+AS 'mdb_rotate_logfile'
 LANGUAGE INTERNAL VOLATILE STRICT;

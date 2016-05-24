@@ -25,7 +25,7 @@
 #include "access/tuptoaster.h"
 #include "access/xact.h"
 #include "access/xlog.h"
-#include "catalog/pg_am.h"
+#include "catalog/mdb_am.h"
 #include "catalog/catalog.h"
 #include "catalog/dependency.h"
 #include "catalog/heap.h"
@@ -47,7 +47,7 @@
 #include "utils/inval.h"
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
-#include "utils/pg_rusage.h"
+#include "utils/mdb_rusage.h"
 #include "utils/relmapper.h"
 #include "utils/snapmgr.h"
 #include "utils/syscache.h"
@@ -136,14 +136,14 @@ cluster(ClusterStmt *stmt, bool isTopLevel)
 			foreach(index, RelationGetIndexList(rel))
 			{
 				HeapTuple	idxtuple;
-				Form_pg_index indexForm;
+				Form_mdb_index indexForm;
 
 				indexOid = lfirst_oid(index);
 				idxtuple = SearchSysCache1(INDEXRELID,
 										   ObjectIdGetDatum(indexOid));
 				if (!HeapTupleIsValid(idxtuple))
 					elog(ERROR, "cache lookup failed for index %u", indexOid);
-				indexForm = (Form_pg_index) GETSTRUCT(idxtuple);
+				indexForm = (Form_mdb_index) GETSTRUCT(idxtuple);
 				if (indexForm->indisclustered)
 				{
 					ReleaseSysCache(idxtuple);
@@ -289,10 +289,10 @@ cluster_rel(Oid tableOid, Oid indexOid, bool recheck, bool verbose)
 	if (recheck)
 	{
 		HeapTuple	tuple;
-		Form_pg_index indexForm;
+		Form_mdb_index indexForm;
 
 		/* Check that the user still owns the relation */
-		if (!pg_class_ownercheck(tableOid, GetUserId()))
+		if (!mdb_class_ownercheck(tableOid, GetUserId()))
 		{
 			relation_close(OldHeap, AccessExclusiveLock);
 			return;
@@ -332,7 +332,7 @@ cluster_rel(Oid tableOid, Oid indexOid, bool recheck, bool verbose)
 				relation_close(OldHeap, AccessExclusiveLock);
 				return;
 			}
-			indexForm = (Form_pg_index) GETSTRUCT(tuple);
+			indexForm = (Form_mdb_index) GETSTRUCT(tuple);
 			if (!indexForm->indisclustered)
 			{
 				ReleaseSysCache(tuple);
@@ -447,7 +447,7 @@ check_index_is_clusterable(Relation OldHeap, Oid indexOid, bool recheck, LOCKMOD
 	 * seqscan pass over the table to copy the missing rows, but that seems
 	 * expensive and tedious.
 	 */
-	if (!heap_attisnull(OldIndex->rd_indextuple, Anum_pg_index_indpred))
+	if (!heap_attisnull(OldIndex->rd_indextuple, Anum_mdb_index_indpred))
 		ereport(ERROR,
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 				 errmsg("cannot cluster on partial index \"%s\"",
@@ -480,8 +480,8 @@ void
 mark_index_clustered(Relation rel, Oid indexOid, bool is_internal)
 {
 	HeapTuple	indexTuple;
-	Form_pg_index indexForm;
-	Relation	pg_index;
+	Form_mdb_index indexForm;
+	Relation	mdb_index;
 	ListCell   *index;
 
 	/*
@@ -492,7 +492,7 @@ mark_index_clustered(Relation rel, Oid indexOid, bool is_internal)
 		indexTuple = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(indexOid));
 		if (!HeapTupleIsValid(indexTuple))
 			elog(ERROR, "cache lookup failed for index %u", indexOid);
-		indexForm = (Form_pg_index) GETSTRUCT(indexTuple);
+		indexForm = (Form_mdb_index) GETSTRUCT(indexTuple);
 
 		if (indexForm->indisclustered)
 		{
@@ -506,7 +506,7 @@ mark_index_clustered(Relation rel, Oid indexOid, bool is_internal)
 	/*
 	 * Check each index of the relation and set/clear the bit as needed.
 	 */
-	pg_index = heap_open(IndexRelationId, RowExclusiveLock);
+	mdb_index = heap_open(IndexRelationId, RowExclusiveLock);
 
 	foreach(index, RelationGetIndexList(rel))
 	{
@@ -516,7 +516,7 @@ mark_index_clustered(Relation rel, Oid indexOid, bool is_internal)
 										 ObjectIdGetDatum(thisIndexOid));
 		if (!HeapTupleIsValid(indexTuple))
 			elog(ERROR, "cache lookup failed for index %u", thisIndexOid);
-		indexForm = (Form_pg_index) GETSTRUCT(indexTuple);
+		indexForm = (Form_mdb_index) GETSTRUCT(indexTuple);
 
 		/*
 		 * Unset the bit if set.  We know it's wrong because we checked this
@@ -525,8 +525,8 @@ mark_index_clustered(Relation rel, Oid indexOid, bool is_internal)
 		if (indexForm->indisclustered)
 		{
 			indexForm->indisclustered = false;
-			simple_heap_update(pg_index, &indexTuple->t_self, indexTuple);
-			CatalogUpdateIndexes(pg_index, indexTuple);
+			simple_heap_update(mdb_index, &indexTuple->t_self, indexTuple);
+			CatalogUpdateIndexes(mdb_index, indexTuple);
 		}
 		else if (thisIndexOid == indexOid)
 		{
@@ -534,8 +534,8 @@ mark_index_clustered(Relation rel, Oid indexOid, bool is_internal)
 			if (!IndexIsValid(indexForm))
 				elog(ERROR, "cannot cluster on invalid index %u", indexOid);
 			indexForm->indisclustered = true;
-			simple_heap_update(pg_index, &indexTuple->t_self, indexTuple);
-			CatalogUpdateIndexes(pg_index, indexTuple);
+			simple_heap_update(mdb_index, &indexTuple->t_self, indexTuple);
+			CatalogUpdateIndexes(mdb_index, indexTuple);
 		}
 
 		InvokeObjectPostAlterHookArg(IndexRelationId, thisIndexOid, 0,
@@ -544,7 +544,7 @@ mark_index_clustered(Relation rel, Oid indexOid, bool is_internal)
 		heap_freetuple(indexTuple);
 	}
 
-	heap_close(pg_index, RowExclusiveLock);
+	heap_close(mdb_index, RowExclusiveLock);
 }
 
 /*
@@ -636,13 +636,13 @@ make_new_heap(Oid OIDOldHeap, Oid NewTableSpace, char relpersistence,
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(OIDOldHeap));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", OIDOldHeap);
-	reloptions = SysCacheGetAttr(RELOID, tuple, Anum_pg_class_reloptions,
+	reloptions = SysCacheGetAttr(RELOID, tuple, Anum_mdb_class_reloptions,
 								 &isNull);
 	if (isNull)
 		reloptions = (Datum) 0;
 
 	if (relpersistence == RELPERSISTENCE_TEMP)
-		namespaceid = LookupCreationNamespace("pg_temp");
+		namespaceid = LookupCreationNamespace("mdb_temp");
 	else
 		namespaceid = RelationGetNamespace(OldHeap);
 
@@ -656,9 +656,9 @@ make_new_heap(Oid OIDOldHeap, Oid NewTableSpace, char relpersistence,
 	 * Note: the new heap is not a shared relation, even if we are rebuilding
 	 * a shared rel.  However, we do make the new heap mapped if the source is
 	 * mapped.  This simplifies swap_relation_files, and is absolutely
-	 * necessary for rebuilding pg_class, for reasons explained there.
+	 * necessary for rebuilding mdb_class, for reasons explained there.
 	 */
-	snprintf(NewHeapName, sizeof(NewHeapName), "pg_temp_%u", OIDOldHeap);
+	snprintf(NewHeapName, sizeof(NewHeapName), "mdb_temp_%u", OIDOldHeap);
 
 	OIDNewHeap = heap_create_with_catalog(NewHeapName,
 										  namespaceid,
@@ -709,7 +709,7 @@ make_new_heap(Oid OIDOldHeap, Oid NewTableSpace, char relpersistence,
 		tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(toastid));
 		if (!HeapTupleIsValid(tuple))
 			elog(ERROR, "cache lookup failed for relation %u", toastid);
-		reloptions = SysCacheGetAttr(RELOID, tuple, Anum_pg_class_reloptions,
+		reloptions = SysCacheGetAttr(RELOID, tuple, Anum_mdb_class_reloptions,
 									 &isNull);
 		if (isNull)
 			reloptions = (Datum) 0;
@@ -761,7 +761,7 @@ copy_heap_data(Oid OIDNewHeap, Oid OIDOldHeap, Oid OIDOldIndex, bool verbose,
 	int			elevel = verbose ? INFO : DEBUG2;
 	PGRUsage	ru0;
 
-	pg_rusage_init(&ru0);
+	mdb_rusage_init(&ru0);
 
 	/*
 	 * Open the relations we need.
@@ -1094,7 +1094,7 @@ copy_heap_data(Oid OIDNewHeap, Oid OIDOldHeap, Oid OIDOldIndex, bool verbose,
 			 errdetail("%.0f dead row versions cannot be removed yet.\n"
 					   "%s.",
 					   tups_recently_dead,
-					   pg_rusage_show(&ru0))));
+					   mdb_rusage_show(&ru0))));
 
 	/* Clean up */
 	pfree(values);
@@ -1116,8 +1116,8 @@ copy_heap_data(Oid OIDNewHeap, Oid OIDOldHeap, Oid OIDOldIndex, bool verbose,
  *
  * We can swap associated TOAST data in either of two ways: recursively swap
  * the physical content of the toast tables (and their indexes), or swap the
- * TOAST links in the given relations' pg_class entries.  The former is needed
- * to manage rewrites of shared catalogs (where we cannot change the pg_class
+ * TOAST links in the given relations' mdb_class entries.  The former is needed
+ * to manage rewrites of shared catalogs (where we cannot change the mdb_class
  * links) while the latter is the only way to handle cases in which a toast
  * table is added or removed altogether.
  *
@@ -1133,7 +1133,7 @@ copy_heap_data(Oid OIDNewHeap, Oid OIDOldHeap, Oid OIDOldIndex, bool verbose,
  * having to look the information up again later in finish_heap_swap.
  */
 static void
-swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
+swap_relation_files(Oid r1, Oid r2, bool target_is_mdb_class,
 					bool swap_toast_by_content,
 					bool is_internal,
 					TransactionId frozenXid,
@@ -1143,7 +1143,7 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 	Relation	relRelation;
 	HeapTuple	reltup1,
 				reltup2;
-	Form_pg_class relform1,
+	Form_mdb_class relform1,
 				relform2;
 	Oid			relfilenode1,
 				relfilenode2;
@@ -1151,18 +1151,18 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 	char		swptmpchr;
 	CatalogIndexState indstate;
 
-	/* We need writable copies of both pg_class tuples. */
+	/* We need writable copies of both mdb_class tuples. */
 	relRelation = heap_open(RelationRelationId, RowExclusiveLock);
 
 	reltup1 = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(r1));
 	if (!HeapTupleIsValid(reltup1))
 		elog(ERROR, "cache lookup failed for relation %u", r1);
-	relform1 = (Form_pg_class) GETSTRUCT(reltup1);
+	relform1 = (Form_mdb_class) GETSTRUCT(reltup1);
 
 	reltup2 = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(r2));
 	if (!HeapTupleIsValid(reltup2))
 		elog(ERROR, "cache lookup failed for relation %u", r2);
-	relform2 = (Form_pg_class) GETSTRUCT(reltup2);
+	relform2 = (Form_mdb_class) GETSTRUCT(reltup2);
 
 	relfilenode1 = relform1->relfilenode;
 	relfilenode2 = relform2->relfilenode;
@@ -1173,7 +1173,7 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 		 * Normal non-mapped relations: swap relfilenodes, reltablespaces,
 		 * relpersistence
 		 */
-		Assert(!target_is_pg_class);
+		Assert(!target_is_mdb_class);
 
 		swaptemp = relform1->relfilenode;
 		relform1->relfilenode = relform2->relfilenode;
@@ -1199,7 +1199,7 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 	{
 		/*
 		 * Mapped-relation case.  Here we have to swap the relation mappings
-		 * instead of modifying the pg_class columns.  Both must be mapped.
+		 * instead of modifying the mdb_class columns.  Both must be mapped.
 		 */
 		if (OidIsValid(relfilenode1) || OidIsValid(relfilenode2))
 			elog(ERROR, "cannot swap mapped relation \"%s\" with non-mapped relation",
@@ -1208,7 +1208,7 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 		/*
 		 * We can't change the tablespace nor persistence of a mapped rel, and
 		 * we can't handle toast link swapping for one either, because we must
-		 * not apply any critical changes to its pg_class row.  These cases
+		 * not apply any critical changes to its mdb_class row.  These cases
 		 * should be prevented by upstream permissions tests, so these checks
 		 * are non-user-facing emergency backstop.
 		 */
@@ -1248,10 +1248,10 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 
 	/*
 	 * In the case of a shared catalog, these next few steps will only affect
-	 * our own database's pg_class row; but that's okay, because they are all
+	 * our own database's mdb_class row; but that's okay, because they are all
 	 * noncritical updates.  That's also an important fact for the case of a
 	 * mapped catalog, because it's possible that we'll commit the map change
-	 * and then fail to commit the pg_class update.
+	 * and then fail to commit the mdb_class update.
 	 */
 
 	/* set rel1's frozen Xid and minimum MultiXid */
@@ -1283,15 +1283,15 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 	}
 
 	/*
-	 * Update the tuples in pg_class --- unless the target relation of the
-	 * swap is pg_class itself.  In that case, there is zero point in making
+	 * Update the tuples in mdb_class --- unless the target relation of the
+	 * swap is mdb_class itself.  In that case, there is zero point in making
 	 * changes because we'd be updating the old data that we're about to throw
 	 * away.  Because the real work being done here for a mapped relation is
 	 * just to change the relation map settings, it's all right to not update
-	 * the pg_class rows in this case. The most important changes will instead
+	 * the mdb_class rows in this case. The most important changes will instead
 	 * performed later, in finish_heap_swap() itself.
 	 */
-	if (!target_is_pg_class)
+	if (!target_is_mdb_class)
 	{
 		simple_heap_update(relRelation, &reltup1->t_self, reltup1);
 		simple_heap_update(relRelation, &reltup2->t_self, reltup2);
@@ -1331,7 +1331,7 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 				/* Recursively swap the contents of the toast tables */
 				swap_relation_files(relform1->reltoastrelid,
 									relform2->reltoastrelid,
-									target_is_pg_class,
+									target_is_mdb_class,
 									swap_toast_by_content,
 									is_internal,
 									frozenXid,
@@ -1434,7 +1434,7 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 
 		swap_relation_files(toastIndex1,
 							toastIndex2,
-							target_is_pg_class,
+							target_is_mdb_class,
 							swap_toast_by_content,
 							is_internal,
 							InvalidTransactionId,
@@ -1460,8 +1460,8 @@ swap_relation_files(Oid r1, Oid r2, bool target_is_pg_class,
 	 * non-transient relation.)
 	 *
 	 * Caution: the placement of this step interacts with the decision to
-	 * handle toast rels by recursion.  When we are trying to rebuild pg_class
-	 * itself, the smgr close on pg_class must happen after all accesses in
+	 * handle toast rels by recursion.  When we are trying to rebuild mdb_class
+	 * itself, the smgr close on mdb_class must happen after all accesses in
 	 * this function.
 	 */
 	RelationCloseSmgrByOid(r1);
@@ -1537,29 +1537,29 @@ finish_heap_swap(Oid OIDOldHeap, Oid OIDNewHeap,
 	reindex_relation(OIDOldHeap, reindex_flags, 0);
 
 	/*
-	 * If the relation being rebuild is pg_class, swap_relation_files()
-	 * couldn't update pg_class's own pg_class entry (check comments in
+	 * If the relation being rebuild is mdb_class, swap_relation_files()
+	 * couldn't update mdb_class's own mdb_class entry (check comments in
 	 * swap_relation_files()), thus relfrozenxid was not updated. That's
 	 * annoying because a potential reason for doing a VACUUM FULL is a
 	 * imminent or actual anti-wraparound shutdown.  So, now that we can
 	 * access the new relation using it's indices, update relfrozenxid.
-	 * pg_class doesn't have a toast relation, so we don't need to update the
+	 * mdb_class doesn't have a toast relation, so we don't need to update the
 	 * corresponding toast relation. Not that there's little point moving all
 	 * relfrozenxid updates here since swap_relation_files() needs to write to
-	 * pg_class for non-mapped relations anyway.
+	 * mdb_class for non-mapped relations anyway.
 	 */
 	if (OIDOldHeap == RelationRelationId)
 	{
 		Relation	relRelation;
 		HeapTuple	reltup;
-		Form_pg_class relform;
+		Form_mdb_class relform;
 
 		relRelation = heap_open(RelationRelationId, RowExclusiveLock);
 
 		reltup = SearchSysCacheCopy1(RELOID, ObjectIdGetDatum(OIDOldHeap));
 		if (!HeapTupleIsValid(reltup))
 			elog(ERROR, "cache lookup failed for relation %u", OIDOldHeap);
-		relform = (Form_pg_class) GETSTRUCT(reltup);
+		relform = (Form_mdb_class) GETSTRUCT(reltup);
 
 		relform->relfrozenxid = frozenXid;
 		relform->relminmxid = cutoffMulti;
@@ -1617,13 +1617,13 @@ finish_heap_swap(Oid OIDOldHeap, Oid OIDNewHeap,
 											 AccessShareLock);
 
 			/* rename the toast table ... */
-			snprintf(NewToastName, NAMEDATALEN, "pg_toast_%u",
+			snprintf(NewToastName, NAMEDATALEN, "mdb_toast_%u",
 					 OIDOldHeap);
 			RenameRelationInternal(newrel->rd_rel->reltoastrelid,
 								   NewToastName, true);
 
 			/* ... and its valid index too. */
-			snprintf(NewToastName, NAMEDATALEN, "pg_toast_%u_index",
+			snprintf(NewToastName, NAMEDATALEN, "mdb_toast_%u_index",
 					 OIDOldHeap);
 
 			RenameRelationInternal(toastidx,
@@ -1647,7 +1647,7 @@ get_tables_to_cluster(MemoryContext cluster_context)
 	HeapScanDesc scan;
 	ScanKeyData entry;
 	HeapTuple	indexTuple;
-	Form_pg_index index;
+	Form_mdb_index index;
 	MemoryContext old_context;
 	RelToCluster *rvtc;
 	List	   *rvs = NIL;
@@ -1660,15 +1660,15 @@ get_tables_to_cluster(MemoryContext cluster_context)
 	 */
 	indRelation = heap_open(IndexRelationId, AccessShareLock);
 	ScanKeyInit(&entry,
-				Anum_pg_index_indisclustered,
+				Anum_mdb_index_indisclustered,
 				BTEqualStrategyNumber, F_BOOLEQ,
 				BoolGetDatum(true));
 	scan = heap_beginscan_catalog(indRelation, 1, &entry);
 	while ((indexTuple = heap_getnext(scan, ForwardScanDirection)) != NULL)
 	{
-		index = (Form_pg_index) GETSTRUCT(indexTuple);
+		index = (Form_mdb_index) GETSTRUCT(indexTuple);
 
-		if (!pg_class_ownercheck(index->indrelid, GetUserId()))
+		if (!mdb_class_ownercheck(index->indrelid, GetUserId()))
 			continue;
 
 		/*

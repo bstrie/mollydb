@@ -138,7 +138,7 @@ px_gen_salt(const char *salt_type, char *buf, int rounds)
 	char		rbuf[16];
 
 	for (g = gen_list; g->name; g++)
-		if (pg_strcasecmp(g->name, salt_type) == 0)
+		if (mdb_strcasecmp(g->name, salt_type) == 0)
 			break;
 
 	if (g->name == NULL)

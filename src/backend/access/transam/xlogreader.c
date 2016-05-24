@@ -21,8 +21,8 @@
 #include "access/xlogrecord.h"
 #include "access/xlog_internal.h"
 #include "access/xlogreader.h"
-#include "catalog/pg_control.h"
-#include "common/pg_lzcompress.h"
+#include "catalog/mdb_control.h"
+#include "common/mdb_lzcompress.h"
 #include "replication/origin.h"
 
 static bool allocate_recordbuf(XLogReaderState *state, uint32 reclength);
@@ -35,7 +35,7 @@ static bool ValidXLogRecord(XLogReaderState *state, XLogRecord *record,
 				XLogRecPtr recptr);
 static int ReadPageInternal(XLogReaderState *state, XLogRecPtr pageptr,
 				 int reqLen);
-static void report_invalid_record(XLogReaderState *state, const char *fmt,...) pg_attribute_printf(2, 3);
+static void report_invalid_record(XLogReaderState *state, const char *fmt,...) mdb_attribute_printf(2, 3);
 
 static void ResetDecoder(XLogReaderState *state);
 
@@ -685,7 +685,7 @@ ValidXLogRecordHeader(XLogReaderState *state, XLogRecPtr RecPtr,
 static bool
 ValidXLogRecord(XLogReaderState *state, XLogRecord *record, XLogRecPtr recptr)
 {
-	pg_crc32c	crc;
+	mdb_crc32c	crc;
 
 	/* Calculate the CRC */
 	INIT_CRC32C(crc);
@@ -770,7 +770,7 @@ ValidXLogPageHeader(XLogReaderState *state, XLogRecPtr recptr,
 			snprintf(sysident_str, sizeof(sysident_str), UINT64_FORMAT,
 					 state->system_identifier);
 			report_invalid_record(state,
-								  "WAL file is from different database system: WAL file database system identifier is %s, pg_control database system identifier is %s",
+								  "WAL file is from different database system: WAL file database system identifier is %s, mdb_control database system identifier is %s",
 								  fhdrident_str, sysident_str);
 			return false;
 		}

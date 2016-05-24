@@ -27,7 +27,7 @@ extern bool hot_standby_feedback;
 /*
  * MAXCONNINFO: maximum size of a connection string.
  *
- * XXX: Should this move to pg_config_manual.h?
+ * XXX: Should this move to mdb_config_manual.h?
  */
 #define MAXCONNINFO		1024
 
@@ -58,7 +58,7 @@ typedef struct
 	 */
 	pid_t		pid;
 	WalRcvState walRcvState;
-	pg_time_t	startTime;
+	mdb_time_t	startTime;
 
 	/*
 	 * receiveStart and receiveStartTLI indicate the first byte position and
@@ -155,8 +155,8 @@ typedef void (*walrcv_disconnect_type) (void);
 extern PGDLLIMPORT walrcv_disconnect_type walrcv_disconnect;
 
 /* prototypes for functions in walreceiver.c */
-extern void WalReceiverMain(void) pg_attribute_noreturn();
-extern Datum pg_stat_get_wal_receiver(PG_FUNCTION_ARGS);
+extern void WalReceiverMain(void) mdb_attribute_noreturn();
+extern Datum mdb_stat_get_wal_receiver(PG_FUNCTION_ARGS);
 
 /* prototypes for functions in walreceiverfuncs.c */
 extern Size WalRcvShmemSize(void);

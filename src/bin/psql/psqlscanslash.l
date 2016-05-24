@@ -679,7 +679,7 @@ dequote_downcase_identifier(char *str, bool downcase, int encoding)
 		else
 		{
 			if (downcase && !inquotes)
-				*cp = pg_tolower((unsigned char) *cp);
+				*cp = mdb_tolower((unsigned char) *cp);
 			cp += PQmblen(cp, encoding);
 		}
 	}

@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_shdepend.h
- *	  definition of the system "shared dependency" relation (pg_shdepend)
+ * mdb_shdepend.h
+ *	  definition of the system "shared dependency" relation (mdb_shdepend)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_shdepend.h
+ * src/include/catalog/mdb_shdepend.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,13 +22,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_shdepend definition.  cpp turns this into
- *		typedef struct FormData_pg_shdepend
+ *		mdb_shdepend definition.  cpp turns this into
+ *		typedef struct FormData_mdb_shdepend
  * ----------------
  */
 #define SharedDependRelationId	1214
 
-CATALOG(pg_shdepend,1214) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
+CATALOG(mdb_shdepend,1214) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
 {
 	/*
 	 * Identification of the dependent (referencing) object.
@@ -54,37 +54,37 @@ CATALOG(pg_shdepend,1214) BKI_SHARED_RELATION BKI_WITHOUT_OIDS
 	 * field.  See SharedDependencyType in catalog/dependency.h.
 	 */
 	char		deptype;		/* see codes in dependency.h */
-} FormData_pg_shdepend;
+} FormData_mdb_shdepend;
 
 /* ----------------
- *		Form_pg_shdepend corresponds to a pointer to a row with
- *		the format of pg_shdepend relation.
+ *		Form_mdb_shdepend corresponds to a pointer to a row with
+ *		the format of mdb_shdepend relation.
  * ----------------
  */
-typedef FormData_pg_shdepend *Form_pg_shdepend;
+typedef FormData_mdb_shdepend *Form_mdb_shdepend;
 
 /* ----------------
- *		compiler constants for pg_shdepend
+ *		compiler constants for mdb_shdepend
  * ----------------
  */
-#define Natts_pg_shdepend			7
-#define Anum_pg_shdepend_dbid		1
-#define Anum_pg_shdepend_classid	2
-#define Anum_pg_shdepend_objid		3
-#define Anum_pg_shdepend_objsubid	4
-#define Anum_pg_shdepend_refclassid 5
-#define Anum_pg_shdepend_refobjid	6
-#define Anum_pg_shdepend_deptype	7
+#define Natts_mdb_shdepend			7
+#define Anum_mdb_shdepend_dbid		1
+#define Anum_mdb_shdepend_classid	2
+#define Anum_mdb_shdepend_objid		3
+#define Anum_mdb_shdepend_objsubid	4
+#define Anum_mdb_shdepend_refclassid 5
+#define Anum_mdb_shdepend_refobjid	6
+#define Anum_mdb_shdepend_deptype	7
 
 
 /*
- * pg_shdepend has no preloaded contents; system-defined dependencies are
+ * mdb_shdepend has no preloaded contents; system-defined dependencies are
  * loaded into it during a late stage of the initdb process.
  *
- * NOTE: we do not represent all possible dependency pairs in pg_shdepend;
+ * NOTE: we do not represent all possible dependency pairs in mdb_shdepend;
  * for example, there's not much value in creating an explicit dependency
  * from a relation to its database.  Currently, only dependencies on roles
- * are explicitly stored in pg_shdepend.
+ * are explicitly stored in mdb_shdepend.
  */
 
 #endif   /* PG_SHDEPEND_H */

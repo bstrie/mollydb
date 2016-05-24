@@ -15,7 +15,7 @@
 #include "mollydb.h"
 
 #include "miscadmin.h"
-#include "catalog/pg_class.h"
+#include "catalog/mdb_class.h"
 #include "foreign/foreign.h"
 #include "optimizer/clauses.h"
 #include "optimizer/cost.h"

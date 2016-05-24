@@ -57,9 +57,9 @@ libpgport.a: $(OBJS)
 # thread.o needs PTHREAD_CFLAGS (but thread_srv.o does not)
 thread.o: CFLAGS+=$(PTHREAD_CFLAGS)
 
-# pg_crc32c_sse42.o and its _srv.o version need CFLAGS_SSE42
-pg_crc32c_sse42.o: CFLAGS+=$(CFLAGS_SSE42)
-pg_crc32c_sse42_srv.o: CFLAGS+=$(CFLAGS_SSE42)
+# mdb_crc32c_sse42.o and its _srv.o version need CFLAGS_SSE42
+mdb_crc32c_sse42.o: CFLAGS+=$(CFLAGS_SSE42)
+mdb_crc32c_sse42_srv.o: CFLAGS+=$(CFLAGS_SSE42)
 
 #
 # Server versions of object files
@@ -88,14 +88,14 @@ submake-errcodes:
 
 # Dependency is to ensure that path changes propagate
 
-path.o: path.c pg_config_paths.h
+path.o: path.c mdb_config_paths.h
 
-path_srv.o: path.c pg_config_paths.h
+path_srv.o: path.c mdb_config_paths.h
 
-# We create a separate file rather than put these in pg_config.h
+# We create a separate file rather than put these in mdb_config.h
 # because many of these values come from makefiles and are not
 # available to configure.
-pg_config_paths.h: $(top_builddir)/src/Makefile.global
+mdb_config_paths.h: $(top_builddir)/src/Makefile.global
 	echo "#define PGBINDIR \"$(bindir)\"" >$@
 	echo "#define PGSHAREDIR \"$(datadir)\"" >>$@
 	echo "#define SYSCONFDIR \"$(sysconfdir)\"" >>$@
@@ -110,4 +110,4 @@ pg_config_paths.h: $(top_builddir)/src/Makefile.global
 	echo "#define MANDIR \"$(mandir)\"" >>$@
 
 clean distclean maintainer-clean:
-	rm -f libpgport.a libpgport_srv.a $(OBJS) $(OBJS_SRV) pg_config_paths.h
+	rm -f libpgport.a libpgport_srv.a $(OBJS) $(OBJS_SRV) mdb_config_paths.h

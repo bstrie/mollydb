@@ -15,8 +15,8 @@
 #define TUPDESC_H
 
 #include "access/attnum.h"
-#include "catalog/pg_attribute.h"
-#include "nodes/pg_list.h"
+#include "catalog/mdb_attribute.h"
+#include "nodes/mdb_list.h"
 
 
 typedef struct attrDefault
@@ -46,7 +46,7 @@ typedef struct tupleConstr
 /*
  * This struct is passed around within the backend to describe the structure
  * of tuples.  For tuples coming from on-disk relations, the information is
- * collected from the pg_attribute, pg_attrdef, and pg_constraint catalogs.
+ * collected from the mdb_attribute, mdb_attrdef, and mdb_constraint catalogs.
  * Transient row types (such as the result of a join query) have anonymous
  * TupleDesc structs that generally omit any constraint info; therefore the
  * structure is designed to let the constraints be omitted efficiently.
@@ -71,7 +71,7 @@ typedef struct tupleConstr
 typedef struct tupleDesc
 {
 	int			natts;			/* number of attributes in the tuple */
-	Form_pg_attribute *attrs;
+	Form_mdb_attribute *attrs;
 	/* attrs[N] is a pointer to the description of Attribute Number N+1 */
 	TupleConstr *constr;		/* constraints, or NULL if none */
 	Oid			tdtypeid;		/* composite type ID for tuple type */
@@ -84,7 +84,7 @@ typedef struct tupleDesc
 extern TupleDesc CreateTemplateTupleDesc(int natts, bool hasoid);
 
 extern TupleDesc CreateTupleDesc(int natts, bool hasoid,
-				Form_pg_attribute *attrs);
+				Form_mdb_attribute *attrs);
 
 extern TupleDesc CreateTupleDescCopy(TupleDesc tupdesc);
 

@@ -30,7 +30,7 @@ DROP USER regression_user;
 REVOKE ALL ON deptest FROM regression_user2;
 DROP USER regression_user2;
 -- can't drop the owner of an object
--- the error message detail here would include a pg_toast_nnn name that
+-- the error message detail here would include a mdb_toast_nnn name that
 -- is not constant, so suppress it
 \set VERBOSITY terse
 ALTER TABLE deptest OWNER TO regression_user3;
@@ -99,11 +99,11 @@ CREATE TABLE deptest2 (f1 int);
 CREATE SEQUENCE ss1;
 ALTER TABLE deptest2 ALTER f1 SET DEFAULT nextval('ss1');
 ALTER SEQUENCE ss1 OWNED BY deptest2.f1;
--- When reassigning ownership of a composite type, its pg_class entry
+-- When reassigning ownership of a composite type, its mdb_class entry
 -- should match
 CREATE TYPE deptest_t AS (a int);
 SELECT typowner = relowner
-FROM pg_type JOIN pg_class c ON typrelid = c.oid WHERE typname = 'deptest_t';
+FROM mdb_type JOIN mdb_class c ON typrelid = c.oid WHERE typname = 'deptest_t';
  ?column? 
 ----------
  t
@@ -119,7 +119,7 @@ REASSIGN OWNED BY regression_user1 TO regression_user2;
 (1 row)
 
 SELECT typowner = relowner
-FROM pg_type JOIN pg_class c ON typrelid = c.oid WHERE typname = 'deptest_t';
+FROM mdb_type JOIN mdb_class c ON typrelid = c.oid WHERE typname = 'deptest_t';
  ?column? 
 ----------
  t

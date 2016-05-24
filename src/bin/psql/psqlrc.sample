@@ -4,5 +4,5 @@
 --  This file is read before the .psqlrc file in the user's home directory.
 --
 --  Copy this to your installation's sysconf directory and rename it psqlrc.
---  The sysconf directory can be identified via "pg_config --sysconfdir".
+--  The sysconf directory can be identified via "mdb_config --sysconfdir".
 --

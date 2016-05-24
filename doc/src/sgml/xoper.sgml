@@ -272,7 +272,7 @@ column OP constant
     range comparisons.  If possible, add the data type to those understood
     by the function <function>convert_to_scalar()</function> in <filename>src/backend/utils/adt/selfuncs.c</filename>.
     (Eventually, this function should be replaced by per-data-type functions
-    identified through a column of the <classname>pg_type</> system catalog; but that hasn't happened
+    identified through a column of the <classname>mdb_type</> system catalog; but that hasn't happened
     yet.)  If you do not do this, things will still work, but the optimizer's
     estimates won't be as good as they could be.
    </para>

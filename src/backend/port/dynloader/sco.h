@@ -38,9 +38,9 @@
 #define RTLD_GLOBAL 0
 #endif
 
-#define pg_dlopen(f)	dlopen((f), RTLD_NOW | RTLD_GLOBAL)
-#define pg_dlsym		dlsym
-#define pg_dlclose		dlclose
-#define pg_dlerror		dlerror
+#define mdb_dlopen(f)	dlopen((f), RTLD_NOW | RTLD_GLOBAL)
+#define mdb_dlsym		dlsym
+#define mdb_dlclose		dlclose
+#define mdb_dlerror		dlerror
 
 #endif   /* PORT_PROTOS_H */

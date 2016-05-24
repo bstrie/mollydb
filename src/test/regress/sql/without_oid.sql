@@ -46,7 +46,7 @@ VACUUM ANALYZE wi;
 VACUUM ANALYZE wo;
 
 SELECT min(relpages) < max(relpages), min(reltuples) - max(reltuples)
-  FROM pg_class
+  FROM mdb_class
  WHERE relname IN ('wi', 'wo');
 
 DROP TABLE wi;

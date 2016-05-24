@@ -28,7 +28,7 @@ PG_FUNCTION_INFO_V1(g_int_same);
 ** The GiST Consistent method for _intments
 ** Should return false if for all data items x below entry,
 ** the predicate x op query == FALSE, where op is the oper
-** corresponding to strategy in the pg_amop table.
+** corresponding to strategy in the mdb_amop table.
 */
 Datum
 g_int_consistent(PG_FUNCTION_ARGS)

@@ -3592,14 +3592,14 @@ Link	Europe/Istanbul	Asia/Istanbul	# Istanbul is in both continents.
 # DST ended in September 1991 ("summer time" ended):
 #       09 29 1991 03:00 -02.00 0       Time Zone 2, no DST
 # * Ukrainian Government's Resolution of 25.09.1991, No. 225.
-# http://www.uazakon.com/documents/date_21/pg_iwgdoc.htm
+# http://www.uazakon.com/documents/date_21/mdb_iwgdoc.htm
 # This is an answer.
 #
 # Since 1992 they had normal DST procedure:
 #       03 29 1992 02:00 -02.00 1       DST started
 #       09 27 1992 03:00 -02.00 0       DST ended
 # * Ukrainian Government's Resolution of 20.03.1992, No. 139.
-# http://www.uazakon.com/documents/date_8u/pg_grcasa.htm
+# http://www.uazakon.com/documents/date_8u/mdb_grcasa.htm
 
 # Zone	NAME		GMTOFF	RULES	FORMAT	[UNTIL]
 # Most of Ukraine since 1970 has been like Kiev.

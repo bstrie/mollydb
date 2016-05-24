@@ -3,8 +3,8 @@
  * namespace.c
  *	  code to support accessing and searching namespaces
  *
- * This is separate from pg_namespace.c, which contains the routines that
- * directly manipulate the pg_namespace system catalog.  This module
+ * This is separate from mdb_namespace.c, which contains the routines that
+ * directly manipulate the mdb_namespace system catalog.  This module
  * provides routines associated with defining a "namespace search path"
  * and implementing search-path-controlled searches.
  *
@@ -25,23 +25,23 @@
 #include "access/xlog.h"
 #include "catalog/dependency.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_authid.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_conversion.h"
-#include "catalog/pg_conversion_fn.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_opfamily.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_ts_config.h"
-#include "catalog/pg_ts_dict.h"
-#include "catalog/pg_ts_parser.h"
-#include "catalog/pg_ts_template.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_authid.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_conversion.h"
+#include "catalog/mdb_conversion_fn.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_opfamily.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_ts_config.h"
+#include "catalog/mdb_ts_dict.h"
+#include "catalog/mdb_ts_parser.h"
+#include "catalog/mdb_ts_template.h"
+#include "catalog/mdb_type.h"
 #include "commands/dbcommands.h"
 #include "funcapi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
 #include "parser/parse_func.h"
@@ -85,21 +85,21 @@
  *
  * The textual specification of search_path can include "$user" to refer to
  * the namespace named the same as the current user, if any.  (This is just
- * ignored if there is no such namespace.)	Also, it can include "pg_temp"
+ * ignored if there is no such namespace.)	Also, it can include "mdb_temp"
  * to refer to the current backend's temp namespace.  This is usually also
  * ignorable if the temp namespace hasn't been set up, but there's a special
- * case: if "pg_temp" appears first then it should be the default creation
+ * case: if "mdb_temp" appears first then it should be the default creation
  * target.  We kluge this case a little bit so that the temp namespace isn't
  * set up until the first attempt to create something in it.  (The reason for
  * klugery is that we can't create the temp namespace outside a transaction,
  * but initial GUC processing of search_path happens outside a transaction.)
- * activeTempCreationPending is TRUE if "pg_temp" appears first in the string
+ * activeTempCreationPending is TRUE if "mdb_temp" appears first in the string
  * but is not reflected in activeCreationNamespace because the namespace isn't
  * set up yet.
  *
- * In bootstrap mode, the search path is set equal to "pg_catalog", so that
+ * In bootstrap mode, the search path is set equal to "mdb_catalog", so that
  * the system namespace is the only one searched or inserted into.
- * initdb is also careful to set search_path to "pg_catalog" for its
+ * initdb is also careful to set search_path to "mdb_catalog" for its
  * post-bootstrap standalone backend runs.  Otherwise the default search
  * path is determined by GUC.  The factory default path contains the PUBLIC
  * namespace (if it exists), preceded by the user's personal namespace
@@ -115,7 +115,7 @@
  * If baseSearchPathValid is false, then baseSearchPath (and other
  * derived variables) need to be recomputed from namespace_search_path.
  * We mark it invalid upon an assignment to namespace_search_path or receipt
- * of a syscache invalidation event for pg_namespace.  The recomputation
+ * of a syscache invalidation event for mdb_namespace.  The recomputation
  * is done during the next non-overridden lookup attempt.  Note that an
  * override spec is never subject to recomputation.
  *
@@ -199,20 +199,20 @@ static bool MatchNamedCall(HeapTuple proctup, int nargs, List *argnames,
 			   int **argnumbers);
 
 /* These don't really need to appear in any header file */
-Datum		pg_table_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_type_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_function_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_operator_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_opclass_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_opfamily_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_collation_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_conversion_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_ts_parser_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_ts_dict_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_ts_template_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_ts_config_is_visible(PG_FUNCTION_ARGS);
-Datum		pg_my_temp_schema(PG_FUNCTION_ARGS);
-Datum		pg_is_other_temp_schema(PG_FUNCTION_ARGS);
+Datum		mdb_table_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_type_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_function_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_operator_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_opclass_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_opfamily_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_collation_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_conversion_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_ts_parser_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_ts_dict_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_ts_template_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_ts_config_is_visible(PG_FUNCTION_ARGS);
+Datum		mdb_my_temp_schema(PG_FUNCTION_ARGS);
+Datum		mdb_is_other_temp_schema(PG_FUNCTION_ARGS);
 
 
 /*
@@ -282,7 +282,7 @@ RangeVarGetRelidExtended(const RangeVar *relation, LOCKMODE lockmode,
 		 * happen in contexts such as "CREATE TEMP TABLE foo (f1 int PRIMARY
 		 * KEY)".  Such a command will generate an added CREATE INDEX
 		 * operation, which must be careful to find the temp table, even when
-		 * pg_temp is not first in the search path.
+		 * mdb_temp is not first in the search path.
 		 */
 		if (relation->relpersistence == RELPERSISTENCE_TEMP)
 		{
@@ -451,8 +451,8 @@ RangeVarGetCreationNamespace(const RangeVar *newRelation)
 
 	if (newRelation->schemaname)
 	{
-		/* check for pg_temp alias */
-		if (strcmp(newRelation->schemaname, "pg_temp") == 0)
+		/* check for mdb_temp alias */
+		if (strcmp(newRelation->schemaname, "mdb_temp") == 0)
 		{
 			/* Initialize temp namespace if first time through */
 			if (!OidIsValid(myTempNamespace))
@@ -572,7 +572,7 @@ RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 			break;
 
 		/* Check namespace permissions. */
-		aclresult = pg_namespace_aclcheck(nspid, GetUserId(), ACL_CREATE);
+		aclresult = mdb_namespace_aclcheck(nspid, GetUserId(), ACL_CREATE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
 						   get_namespace_name(nspid));
@@ -598,7 +598,7 @@ RangeVarGetAndCheckCreationNamespace(RangeVar *relation,
 		/* Lock relation, if required if and we have permission. */
 		if (lockmode != NoLock && OidIsValid(relid))
 		{
-			if (!pg_class_ownercheck(relid, GetUserId()))
+			if (!mdb_class_ownercheck(relid, GetUserId()))
 				aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS,
 							   relation->relname);
 			if (relid != oldrelid)
@@ -696,14 +696,14 @@ bool
 RelationIsVisible(Oid relid)
 {
 	HeapTuple	reltup;
-	Form_pg_class relform;
+	Form_mdb_class relform;
 	Oid			relnamespace;
 	bool		visible;
 
 	reltup = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(reltup))
 		elog(ERROR, "cache lookup failed for relation %u", relid);
-	relform = (Form_pg_class) GETSTRUCT(reltup);
+	relform = (Form_mdb_class) GETSTRUCT(reltup);
 
 	recomputeNamespacePath();
 
@@ -791,14 +791,14 @@ bool
 TypeIsVisible(Oid typid)
 {
 	HeapTuple	typtup;
-	Form_pg_type typform;
+	Form_mdb_type typform;
 	Oid			typnamespace;
 	bool		visible;
 
 	typtup = SearchSysCache1(TYPEOID, ObjectIdGetDatum(typid));
 	if (!HeapTupleIsValid(typtup))
 		elog(ERROR, "cache lookup failed for type %u", typid);
-	typform = (Form_pg_type) GETSTRUCT(typtup);
+	typform = (Form_mdb_type) GETSTRUCT(typtup);
 
 	recomputeNamespacePath();
 
@@ -952,7 +952,7 @@ FuncnameGetCandidates(List *names, int nargs, List *argnames,
 	for (i = 0; i < catlist->n_members; i++)
 	{
 		HeapTuple	proctup = &catlist->members[i]->tuple;
-		Form_pg_proc procform = (Form_pg_proc) GETSTRUCT(proctup);
+		Form_mdb_proc procform = (Form_mdb_proc) GETSTRUCT(proctup);
 		int			pronargs = procform->pronargs;
 		int			effective_nargs;
 		int			pathpos = 0;
@@ -1115,7 +1115,7 @@ FuncnameGetCandidates(List *names, int nargs, List *argnames,
 		 * If so, decide what to do to avoid returning duplicate argument
 		 * lists.  We can skip this check for the single-namespace case if no
 		 * special (named, variadic or defaults) match has been made, since
-		 * then the unique index on pg_proc guarantees all the matches have
+		 * then the unique index on mdb_proc guarantees all the matches have
 		 * different argument lists.
 		 */
 		if (resultList != NULL &&
@@ -1261,7 +1261,7 @@ FuncnameGetCandidates(List *names, int nargs, List *argnames,
 
 /*
  * MatchNamedCall
- *		Given a pg_proc heap tuple and a call's list of argument names,
+ *		Given a mdb_proc heap tuple and a call's list of argument names,
  *		check whether the function could match the call.
  *
  * The call could match if all supplied argument names are accepted by
@@ -1280,7 +1280,7 @@ static bool
 MatchNamedCall(HeapTuple proctup, int nargs, List *argnames,
 			   int **argnumbers)
 {
-	Form_pg_proc procform = (Form_pg_proc) GETSTRUCT(proctup);
+	Form_mdb_proc procform = (Form_mdb_proc) GETSTRUCT(proctup);
 	int			pronargs = procform->pronargs;
 	int			numposargs = nargs - list_length(argnames);
 	int			pronallargs;
@@ -1298,7 +1298,7 @@ MatchNamedCall(HeapTuple proctup, int nargs, List *argnames,
 	Assert(nargs <= pronargs);
 
 	/* Ignore this function if its proargnames is null */
-	(void) SysCacheGetAttr(PROCOID, proctup, Anum_pg_proc_proargnames,
+	(void) SysCacheGetAttr(PROCOID, proctup, Anum_mdb_proc_proargnames,
 						   &isnull);
 	if (isnull)
 		return false;
@@ -1388,14 +1388,14 @@ bool
 FunctionIsVisible(Oid funcid)
 {
 	HeapTuple	proctup;
-	Form_pg_proc procform;
+	Form_mdb_proc procform;
 	Oid			pronamespace;
 	bool		visible;
 
 	proctup = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcid));
 	if (!HeapTupleIsValid(proctup))
 		elog(ERROR, "cache lookup failed for function %u", funcid);
-	procform = (Form_pg_proc) GETSTRUCT(proctup);
+	procform = (Form_mdb_proc) GETSTRUCT(proctup);
 
 	recomputeNamespacePath();
 
@@ -1524,7 +1524,7 @@ OpernameGetOprid(List *names, Oid oprleft, Oid oprright)
 		for (i = 0; i < catlist->n_members; i++)
 		{
 			HeapTuple	opertup = &catlist->members[i]->tuple;
-			Form_pg_operator operform = (Form_pg_operator) GETSTRUCT(opertup);
+			Form_mdb_operator operform = (Form_mdb_operator) GETSTRUCT(opertup);
 
 			if (operform->oprnamespace == namespaceId)
 			{
@@ -1607,7 +1607,7 @@ OpernameGetCandidates(List *names, char oprkind, bool missing_schema_ok)
 	for (i = 0; i < catlist->n_members; i++)
 	{
 		HeapTuple	opertup = &catlist->members[i]->tuple;
-		Form_pg_operator operform = (Form_pg_operator) GETSTRUCT(opertup);
+		Form_mdb_operator operform = (Form_mdb_operator) GETSTRUCT(opertup);
 		int			pathpos = 0;
 		FuncCandidateList newResult;
 
@@ -1721,14 +1721,14 @@ bool
 OperatorIsVisible(Oid oprid)
 {
 	HeapTuple	oprtup;
-	Form_pg_operator oprform;
+	Form_mdb_operator oprform;
 	Oid			oprnamespace;
 	bool		visible;
 
 	oprtup = SearchSysCache1(OPEROID, ObjectIdGetDatum(oprid));
 	if (!HeapTupleIsValid(oprtup))
 		elog(ERROR, "cache lookup failed for operator %u", oprid);
-	oprform = (Form_pg_operator) GETSTRUCT(oprtup);
+	oprform = (Form_mdb_operator) GETSTRUCT(oprtup);
 
 	recomputeNamespacePath();
 
@@ -1807,14 +1807,14 @@ bool
 OpclassIsVisible(Oid opcid)
 {
 	HeapTuple	opctup;
-	Form_pg_opclass opcform;
+	Form_mdb_opclass opcform;
 	Oid			opcnamespace;
 	bool		visible;
 
 	opctup = SearchSysCache1(CLAOID, ObjectIdGetDatum(opcid));
 	if (!HeapTupleIsValid(opctup))
 		elog(ERROR, "cache lookup failed for opclass %u", opcid);
-	opcform = (Form_pg_opclass) GETSTRUCT(opctup);
+	opcform = (Form_mdb_opclass) GETSTRUCT(opctup);
 
 	recomputeNamespacePath();
 
@@ -1890,14 +1890,14 @@ bool
 OpfamilyIsVisible(Oid opfid)
 {
 	HeapTuple	opftup;
-	Form_pg_opfamily opfform;
+	Form_mdb_opfamily opfform;
 	Oid			opfnamespace;
 	bool		visible;
 
 	opftup = SearchSysCache1(OPFAMILYOID, ObjectIdGetDatum(opfid));
 	if (!HeapTupleIsValid(opftup))
 		elog(ERROR, "cache lookup failed for opfamily %u", opfid);
-	opfform = (Form_pg_opfamily) GETSTRUCT(opftup);
+	opfform = (Form_mdb_opfamily) GETSTRUCT(opftup);
 
 	recomputeNamespacePath();
 
@@ -1980,14 +1980,14 @@ bool
 CollationIsVisible(Oid collid)
 {
 	HeapTuple	colltup;
-	Form_pg_collation collform;
+	Form_mdb_collation collform;
 	Oid			collnamespace;
 	bool		visible;
 
 	colltup = SearchSysCache1(COLLOID, ObjectIdGetDatum(collid));
 	if (!HeapTupleIsValid(colltup))
 		elog(ERROR, "cache lookup failed for collation %u", collid);
-	collform = (Form_pg_collation) GETSTRUCT(colltup);
+	collform = (Form_mdb_collation) GETSTRUCT(colltup);
 
 	recomputeNamespacePath();
 
@@ -2062,14 +2062,14 @@ bool
 ConversionIsVisible(Oid conid)
 {
 	HeapTuple	contup;
-	Form_pg_conversion conform;
+	Form_mdb_conversion conform;
 	Oid			connamespace;
 	bool		visible;
 
 	contup = SearchSysCache1(CONVOID, ObjectIdGetDatum(conid));
 	if (!HeapTupleIsValid(contup))
 		elog(ERROR, "cache lookup failed for conversion %u", conid);
-	conform = (Form_pg_conversion) GETSTRUCT(contup);
+	conform = (Form_mdb_conversion) GETSTRUCT(contup);
 
 	recomputeNamespacePath();
 
@@ -2167,14 +2167,14 @@ bool
 TSParserIsVisible(Oid prsId)
 {
 	HeapTuple	tup;
-	Form_pg_ts_parser form;
+	Form_mdb_ts_parser form;
 	Oid			namespace;
 	bool		visible;
 
 	tup = SearchSysCache1(TSPARSEROID, ObjectIdGetDatum(prsId));
 	if (!HeapTupleIsValid(tup))
 		elog(ERROR, "cache lookup failed for text search parser %u", prsId);
-	form = (Form_pg_ts_parser) GETSTRUCT(tup);
+	form = (Form_mdb_ts_parser) GETSTRUCT(tup);
 
 	recomputeNamespacePath();
 
@@ -2293,7 +2293,7 @@ bool
 TSDictionaryIsVisible(Oid dictId)
 {
 	HeapTuple	tup;
-	Form_pg_ts_dict form;
+	Form_mdb_ts_dict form;
 	Oid			namespace;
 	bool		visible;
 
@@ -2301,7 +2301,7 @@ TSDictionaryIsVisible(Oid dictId)
 	if (!HeapTupleIsValid(tup))
 		elog(ERROR, "cache lookup failed for text search dictionary %u",
 			 dictId);
-	form = (Form_pg_ts_dict) GETSTRUCT(tup);
+	form = (Form_mdb_ts_dict) GETSTRUCT(tup);
 
 	recomputeNamespacePath();
 
@@ -2420,14 +2420,14 @@ bool
 TSTemplateIsVisible(Oid tmplId)
 {
 	HeapTuple	tup;
-	Form_pg_ts_template form;
+	Form_mdb_ts_template form;
 	Oid			namespace;
 	bool		visible;
 
 	tup = SearchSysCache1(TSTEMPLATEOID, ObjectIdGetDatum(tmplId));
 	if (!HeapTupleIsValid(tup))
 		elog(ERROR, "cache lookup failed for text search template %u", tmplId);
-	form = (Form_pg_ts_template) GETSTRUCT(tup);
+	form = (Form_mdb_ts_template) GETSTRUCT(tup);
 
 	recomputeNamespacePath();
 
@@ -2546,7 +2546,7 @@ bool
 TSConfigIsVisible(Oid cfgid)
 {
 	HeapTuple	tup;
-	Form_pg_ts_config form;
+	Form_mdb_ts_config form;
 	Oid			namespace;
 	bool		visible;
 
@@ -2554,7 +2554,7 @@ TSConfigIsVisible(Oid cfgid)
 	if (!HeapTupleIsValid(tup))
 		elog(ERROR, "cache lookup failed for text search configuration %u",
 			 cfgid);
-	form = (Form_pg_ts_config) GETSTRUCT(tup);
+	form = (Form_mdb_ts_config) GETSTRUCT(tup);
 
 	recomputeNamespacePath();
 
@@ -2671,8 +2671,8 @@ DeconstructQualifiedName(List *names,
 Oid
 LookupNamespaceNoError(const char *nspname)
 {
-	/* check for pg_temp alias */
-	if (strcmp(nspname, "pg_temp") == 0)
+	/* check for mdb_temp alias */
+	if (strcmp(nspname, "mdb_temp") == 0)
 	{
 		if (OidIsValid(myTempNamespace))
 		{
@@ -2704,8 +2704,8 @@ LookupExplicitNamespace(const char *nspname, bool missing_ok)
 	Oid			namespaceId;
 	AclResult	aclresult;
 
-	/* check for pg_temp alias */
-	if (strcmp(nspname, "pg_temp") == 0)
+	/* check for mdb_temp alias */
+	if (strcmp(nspname, "mdb_temp") == 0)
 	{
 		if (OidIsValid(myTempNamespace))
 			return myTempNamespace;
@@ -2721,7 +2721,7 @@ LookupExplicitNamespace(const char *nspname, bool missing_ok)
 	if (missing_ok && !OidIsValid(namespaceId))
 		return InvalidOid;
 
-	aclresult = pg_namespace_aclcheck(namespaceId, GetUserId(), ACL_USAGE);
+	aclresult = mdb_namespace_aclcheck(namespaceId, GetUserId(), ACL_USAGE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
 					   nspname);
@@ -2736,7 +2736,7 @@ LookupExplicitNamespace(const char *nspname, bool missing_ok)
  *		Look up the schema and verify we have CREATE rights on it.
  *
  * This is just like LookupExplicitNamespace except for the different
- * permission check, and that we are willing to create pg_temp if needed.
+ * permission check, and that we are willing to create mdb_temp if needed.
  *
  * Note: calling this may result in a CommandCounterIncrement operation,
  * if we have to create or clean out the temp namespace.
@@ -2747,8 +2747,8 @@ LookupCreationNamespace(const char *nspname)
 	Oid			namespaceId;
 	AclResult	aclresult;
 
-	/* check for pg_temp alias */
-	if (strcmp(nspname, "pg_temp") == 0)
+	/* check for mdb_temp alias */
+	if (strcmp(nspname, "mdb_temp") == 0)
 	{
 		/* Initialize temp namespace if first time through */
 		if (!OidIsValid(myTempNamespace))
@@ -2758,7 +2758,7 @@ LookupCreationNamespace(const char *nspname)
 
 	namespaceId = get_namespace_oid(nspname, false);
 
-	aclresult = pg_namespace_aclcheck(namespaceId, GetUserId(), ACL_CREATE);
+	aclresult = mdb_namespace_aclcheck(namespaceId, GetUserId(), ACL_CREATE);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_NAMESPACE,
 					   nspname);
@@ -2812,8 +2812,8 @@ QualifiedNameGetCreationNamespace(List *names, char **objname_p)
 
 	if (schemaname)
 	{
-		/* check for pg_temp alias */
-		if (strcmp(schemaname, "pg_temp") == 0)
+		/* check for mdb_temp alias */
+		if (strcmp(schemaname, "mdb_temp") == 0)
 		{
 			/* Initialize temp namespace if first time through */
 			if (!OidIsValid(myTempNamespace))
@@ -3007,12 +3007,12 @@ isAnyTempNamespace(Oid namespaceId)
 	bool		result;
 	char	   *nspname;
 
-	/* True if the namespace name starts with "pg_temp_" or "pg_toast_temp_" */
+	/* True if the namespace name starts with "mdb_temp_" or "mdb_toast_temp_" */
 	nspname = get_namespace_name(namespaceId);
 	if (!nspname)
 		return false;			/* no such namespace? */
-	result = (strncmp(nspname, "pg_temp_", 8) == 0) ||
-		(strncmp(nspname, "pg_toast_temp_", 14) == 0);
+	result = (strncmp(nspname, "mdb_temp_", 8) == 0) ||
+		(strncmp(nspname, "mdb_toast_temp_", 14) == 0);
 	pfree(nspname);
 	return result;
 }
@@ -3046,13 +3046,13 @@ GetTempNamespaceBackendId(Oid namespaceId)
 	int			result;
 	char	   *nspname;
 
-	/* See if the namespace name starts with "pg_temp_" or "pg_toast_temp_" */
+	/* See if the namespace name starts with "mdb_temp_" or "mdb_toast_temp_" */
 	nspname = get_namespace_name(namespaceId);
 	if (!nspname)
 		return InvalidBackendId;	/* no such namespace? */
-	if (strncmp(nspname, "pg_temp_", 8) == 0)
+	if (strncmp(nspname, "mdb_temp_", 8) == 0)
 		result = atoi(nspname + 8);
-	else if (strncmp(nspname, "pg_toast_temp_", 14) == 0)
+	else if (strncmp(nspname, "mdb_toast_temp_", 14) == 0)
 		result = atoi(nspname + 14);
 	else
 		result = InvalidBackendId;
@@ -3152,7 +3152,7 @@ OverrideSearchPathMatchesCurrent(OverrideSearchPath *path)
 		else
 			return false;
 	}
-	/* If path->addCatalog, next item should be pg_catalog. */
+	/* If path->addCatalog, next item should be mdb_catalog. */
 	if (path->addCatalog)
 	{
 		if (lc && lfirst_oid(lc) == PG_CATALOG_NAMESPACE)
@@ -3500,20 +3500,20 @@ recomputeNamespacePath(void)
 			{
 				char	   *rname;
 
-				rname = NameStr(((Form_pg_authid) GETSTRUCT(tuple))->rolname);
+				rname = NameStr(((Form_mdb_authid) GETSTRUCT(tuple))->rolname);
 				namespaceId = get_namespace_oid(rname, true);
 				ReleaseSysCache(tuple);
 				if (OidIsValid(namespaceId) &&
 					!list_member_oid(oidlist, namespaceId) &&
-					pg_namespace_aclcheck(namespaceId, roleid,
+					mdb_namespace_aclcheck(namespaceId, roleid,
 										  ACL_USAGE) == ACLCHECK_OK &&
 					InvokeNamespaceSearchHook(namespaceId, false))
 					oidlist = lappend_oid(oidlist, namespaceId);
 			}
 		}
-		else if (strcmp(curname, "pg_temp") == 0)
+		else if (strcmp(curname, "mdb_temp") == 0)
 		{
-			/* pg_temp --- substitute temp namespace, if any */
+			/* mdb_temp --- substitute temp namespace, if any */
 			if (OidIsValid(myTempNamespace))
 			{
 				if (!list_member_oid(oidlist, myTempNamespace) &&
@@ -3533,7 +3533,7 @@ recomputeNamespacePath(void)
 			namespaceId = get_namespace_oid(curname, true);
 			if (OidIsValid(namespaceId) &&
 				!list_member_oid(oidlist, namespaceId) &&
-				pg_namespace_aclcheck(namespaceId, roleid,
+				mdb_namespace_aclcheck(namespaceId, roleid,
 									  ACL_USAGE) == ACLCHECK_OK &&
 				InvokeNamespaceSearchHook(namespaceId, false))
 				oidlist = lappend_oid(oidlist, namespaceId);
@@ -3543,7 +3543,7 @@ recomputeNamespacePath(void)
 	/*
 	 * Remember the first member of the explicit list.  (Note: this is
 	 * nominally wrong if temp_missing, but we need it anyway to distinguish
-	 * explicit from implicit mention of pg_catalog.)
+	 * explicit from implicit mention of mdb_catalog.)
 	 */
 	if (oidlist == NIL)
 		firstNS = InvalidOid;
@@ -3609,12 +3609,12 @@ InitTempTableNamespace(void)
 	 * tables.  We use a nonstandard error message here since "databasename:
 	 * permission denied" might be a tad cryptic.
 	 *
-	 * Note that ACL_CREATE_TEMP rights are rechecked in pg_namespace_aclmask;
+	 * Note that ACL_CREATE_TEMP rights are rechecked in mdb_namespace_aclmask;
 	 * that's necessary since current user ID could change during the session.
 	 * But there's no need to make the namespace in the first place until a
 	 * temp table creation request is made by someone with appropriate rights.
 	 */
-	if (pg_database_aclcheck(MyDatabaseId, GetUserId(),
+	if (mdb_database_aclcheck(MyDatabaseId, GetUserId(),
 							 ACL_CREATE_TEMP) != ACLCHECK_OK)
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
@@ -3624,7 +3624,7 @@ InitTempTableNamespace(void)
 	/*
 	 * Do not allow a Hot Standby slave session to make temp tables.  Aside
 	 * from problems with modifying the system catalogs, there is a naming
-	 * conflict: pg_temp_N belongs to the session with BackendId N on the
+	 * conflict: mdb_temp_N belongs to the session with BackendId N on the
 	 * master, not to a slave session with the same BackendId.  We should not
 	 * be able to get here anyway due to XactReadOnly checks, but let's just
 	 * make real sure.  Note that this also backstops various operations that
@@ -3642,7 +3642,7 @@ InitTempTableNamespace(void)
 				(errcode(ERRCODE_READ_ONLY_SQL_TRANSACTION),
 				 errmsg("cannot create temporary tables in parallel mode")));
 
-	snprintf(namespaceName, sizeof(namespaceName), "pg_temp_%d", MyBackendId);
+	snprintf(namespaceName, sizeof(namespaceName), "mdb_temp_%d", MyBackendId);
 
 	namespaceId = get_namespace_oid(namespaceName, true);
 	if (!OidIsValid(namespaceId))
@@ -3674,7 +3674,7 @@ InitTempTableNamespace(void)
 	 * it. (We assume there is no need to clean it out if it does exist, since
 	 * dropping a parent table should make its toast table go away.)
 	 */
-	snprintf(namespaceName, sizeof(namespaceName), "pg_toast_temp_%d",
+	snprintf(namespaceName, sizeof(namespaceName), "mdb_toast_temp_%d",
 			 MyBackendId);
 
 	toastspaceId = get_namespace_oid(namespaceName, true);
@@ -3927,7 +3927,7 @@ InitializeSearchPath(void)
 	if (IsBootstrapProcessingMode())
 	{
 		/*
-		 * In bootstrap mode, the search path must be 'pg_catalog' so that
+		 * In bootstrap mode, the search path must be 'mdb_catalog' so that
 		 * tables are created in the proper namespace; ignore the GUC setting.
 		 */
 		MemoryContext oldcxt;
@@ -3947,7 +3947,7 @@ InitializeSearchPath(void)
 	{
 		/*
 		 * In normal mode, arrange for a callback on any syscache invalidation
-		 * of pg_namespace rows.
+		 * of mdb_namespace rows.
 		 */
 		CacheRegisterSyscacheCallback(NAMESPACEOID,
 									  NamespaceCallback,
@@ -4057,7 +4057,7 @@ fetch_search_path_array(Oid *sarray, int sarray_len)
  */
 
 Datum
-pg_table_is_visible(PG_FUNCTION_ARGS)
+mdb_table_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4068,7 +4068,7 @@ pg_table_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_type_is_visible(PG_FUNCTION_ARGS)
+mdb_type_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4079,7 +4079,7 @@ pg_type_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_function_is_visible(PG_FUNCTION_ARGS)
+mdb_function_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4090,7 +4090,7 @@ pg_function_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_operator_is_visible(PG_FUNCTION_ARGS)
+mdb_operator_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4101,7 +4101,7 @@ pg_operator_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_opclass_is_visible(PG_FUNCTION_ARGS)
+mdb_opclass_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4112,7 +4112,7 @@ pg_opclass_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_opfamily_is_visible(PG_FUNCTION_ARGS)
+mdb_opfamily_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4123,7 +4123,7 @@ pg_opfamily_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_collation_is_visible(PG_FUNCTION_ARGS)
+mdb_collation_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4134,7 +4134,7 @@ pg_collation_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_conversion_is_visible(PG_FUNCTION_ARGS)
+mdb_conversion_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4145,7 +4145,7 @@ pg_conversion_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_ts_parser_is_visible(PG_FUNCTION_ARGS)
+mdb_ts_parser_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4156,7 +4156,7 @@ pg_ts_parser_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_ts_dict_is_visible(PG_FUNCTION_ARGS)
+mdb_ts_dict_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4167,7 +4167,7 @@ pg_ts_dict_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_ts_template_is_visible(PG_FUNCTION_ARGS)
+mdb_ts_template_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4178,7 +4178,7 @@ pg_ts_template_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_ts_config_is_visible(PG_FUNCTION_ARGS)
+mdb_ts_config_is_visible(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 
@@ -4189,13 +4189,13 @@ pg_ts_config_is_visible(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_my_temp_schema(PG_FUNCTION_ARGS)
+mdb_my_temp_schema(PG_FUNCTION_ARGS)
 {
 	PG_RETURN_OID(myTempNamespace);
 }
 
 Datum
-pg_is_other_temp_schema(PG_FUNCTION_ARGS)
+mdb_is_other_temp_schema(PG_FUNCTION_ARGS)
 {
 	Oid			oid = PG_GETARG_OID(0);
 

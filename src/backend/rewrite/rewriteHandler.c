@@ -21,7 +21,7 @@
 #include "mollydb.h"
 
 #include "access/sysattr.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/trigger.h"
 #include "foreign/fdwapi.h"
 #include "nodes/makefuncs.h"
@@ -703,7 +703,7 @@ rewriteTargetListIU(List *targetList,
 	TargetEntry **new_tles;
 	List	   *new_tlist = NIL;
 	List	   *junk_tlist = NIL;
-	Form_pg_attribute att_tup;
+	Form_mdb_attribute att_tup;
 	int			attrno,
 				next_junk_attrno,
 				numattrs;
@@ -1025,7 +1025,7 @@ Node *
 build_column_default(Relation rel, int attrno)
 {
 	TupleDesc	rd_att = rel->rd_att;
-	Form_pg_attribute att_tup = rd_att->attrs[attrno - 1];
+	Form_mdb_attribute att_tup = rd_att->attrs[attrno - 1];
 	Oid			atttype = att_tup->atttypid;
 	int32		atttypmod = att_tup->atttypmod;
 	Node	   *expr = NULL;
@@ -1157,7 +1157,7 @@ rewriteValuesRTE(RangeTblEntry *rte, Relation target_relation, List *attrnos)
 
 			if (IsA(col, SetToDefault))
 			{
-				Form_pg_attribute att_tup;
+				Form_mdb_attribute att_tup;
 				Node	   *new_expr;
 
 				att_tup = target_relation->rd_att->attrs[attrno - 1];

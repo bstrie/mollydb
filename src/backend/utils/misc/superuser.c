@@ -5,7 +5,7 @@
  *
  * All code should use either of these two functions to find out
  * whether a given user is a superuser, rather than examining
- * pg_authid.rolsuper directly, so that the escape hatch built in for
+ * mdb_authid.rolsuper directly, so that the escape hatch built in for
  * the single-user case works.
  *
  *
@@ -21,7 +21,7 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_authid.h"
+#include "catalog/mdb_authid.h"
 #include "utils/inval.h"
 #include "utils/syscache.h"
 #include "miscadmin.h"
@@ -31,7 +31,7 @@
  * In common cases the same roleid (ie, the session or current ID) will
  * be queried repeatedly.  So we maintain a simple one-entry cache for
  * the status of the last requested roleid.  The cache can be flushed
- * at need by watching for cache update events on pg_authid.
+ * at need by watching for cache update events on mdb_authid.
  */
 static Oid	last_roleid = InvalidOid;	/* InvalidOid == cache not valid */
 static bool last_roleid_is_super = false;
@@ -67,11 +67,11 @@ superuser_arg(Oid roleid)
 	if (!IsUnderPostmaster && roleid == BOOTSTRAP_SUPERUSERID)
 		return true;
 
-	/* OK, look up the information in pg_authid */
+	/* OK, look up the information in mdb_authid */
 	rtup = SearchSysCache1(AUTHOID, ObjectIdGetDatum(roleid));
 	if (HeapTupleIsValid(rtup))
 	{
-		result = ((Form_pg_authid) GETSTRUCT(rtup))->rolsuper;
+		result = ((Form_mdb_authid) GETSTRUCT(rtup))->rolsuper;
 		ReleaseSysCache(rtup);
 	}
 	else

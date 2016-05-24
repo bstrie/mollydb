@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------
  *
- * pg_ctl --- start/stops/restarts the MollyDB server
+ * mdb_ctl --- start/stops/restarts the MollyDB server
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
- * src/bin/pg_ctl/pg_ctl.c
+ * src/bin/mdb_ctl/mdb_ctl.c
  *
  *-------------------------------------------------------------------------
  */
@@ -77,8 +77,8 @@ static bool silent_mode = false;
 static ShutdownMode shutdown_mode = FAST_MODE;
 static int	sig = SIGINT;		/* default */
 static CtlCommand ctl_command = NO_COMMAND;
-static char *pg_data = NULL;
-static char *pg_config = NULL;
+static char *mdb_data = NULL;
+static char *mdb_config = NULL;
 static char *pgdata_opt = NULL;
 static char *post_opts = NULL;
 static const char *progname;
@@ -111,7 +111,7 @@ static pid_t postmasterPID = -1;
 #endif
 
 
-static void write_stderr(const char *fmt,...) pg_attribute_printf(1, 2);
+static void write_stderr(const char *fmt,...) mdb_attribute_printf(1, 2);
 static void do_advice(void);
 static void do_help(void);
 static void set_mode(char *modeopt);
@@ -246,14 +246,14 @@ get_pgpid(bool is_status_request)
 	long		pid;
 	struct stat statbuf;
 
-	if (stat(pg_data, &statbuf) != 0)
+	if (stat(mdb_data, &statbuf) != 0)
 	{
 		if (errno == ENOENT)
 			write_stderr(_("%s: directory \"%s\" does not exist\n"), progname,
-						 pg_data);
+						 mdb_data);
 		else
 			write_stderr(_("%s: could not access directory \"%s\": %s\n"), progname,
-						 pg_data, strerror(errno));
+						 mdb_data, strerror(errno));
 
 		/*
 		 * The Linux Standard Base Core Specification 3.1 says this should
@@ -267,7 +267,7 @@ get_pgpid(bool is_status_request)
 	if (stat(version_file, &statbuf) != 0 && errno == ENOENT)
 	{
 		write_stderr(_("%s: directory \"%s\" is not a database cluster directory\n"),
-					 progname, pg_data);
+					 progname, mdb_data);
 		exit(is_status_request ? 4 : 1);
 	}
 
@@ -336,11 +336,11 @@ readfile(const char *path)
 	{
 		/* empty file */
 		close(fd);
-		result = (char **) pg_malloc(sizeof(char *));
+		result = (char **) mdb_malloc(sizeof(char *));
 		*result = NULL;
 		return result;
 	}
-	buffer = pg_malloc(statbuf.st_size + 1);
+	buffer = mdb_malloc(statbuf.st_size + 1);
 
 	len = read(fd, buffer, statbuf.st_size + 1);
 	close(fd);
@@ -364,7 +364,7 @@ readfile(const char *path)
 	}
 
 	/* set up the result buffer */
-	result = (char **) pg_malloc((nlines + 1) * sizeof(char *));
+	result = (char **) mdb_malloc((nlines + 1) * sizeof(char *));
 
 	/* now split the buffer into lines */
 	linebegin = buffer;
@@ -374,7 +374,7 @@ readfile(const char *path)
 		if (buffer[i] == '\n')
 		{
 			int			slen = &buffer[i] - linebegin + 1;
-			char	   *linebuf = pg_malloc(slen + 1);
+			char	   *linebuf = mdb_malloc(slen + 1);
 
 			memcpy(linebuf, linebegin, slen);
 			linebuf[slen] = '\0';
@@ -583,7 +583,7 @@ test_postmaster_connection(pgpid_t pm_pid, bool do_checkpoint)
 
 					/*
 					 * Make sanity checks.  If it's for the wrong PID, or the
-					 * recorded start time is before pg_ctl started, then
+					 * recorded start time is before mdb_ctl started, then
 					 * either we are looking at the wrong data directory, or
 					 * this is a pre-existing pidfile that hasn't (yet?) been
 					 * overwritten by our child postmaster.  Allow 2 seconds
@@ -720,7 +720,7 @@ test_postmaster_connection(pgpid_t pm_pid, bool do_checkpoint)
 #endif
 			print_msg(".");
 
-		pg_usleep(1000000);		/* 1 sec */
+		mdb_usleep(1000000);		/* 1 sec */
 	}
 
 	/* return result of last call to PQping */
@@ -790,10 +790,10 @@ read_post_opts(void)
 				{
 					*arg1 = '\0';		/* terminate so we get only program
 										 * name */
-					post_opts = pg_strdup(arg1 + 1);	/* point past whitespace */
+					post_opts = mdb_strdup(arg1 + 1);	/* point past whitespace */
 				}
 				if (exec_path == NULL)
-					exec_path = pg_strdup(optline);
+					exec_path = mdb_strdup(optline);
 			}
 
 			/* Free the results of readfile. */
@@ -808,7 +808,7 @@ find_other_exec_or_die(const char *argv0, const char *target, const char *versio
 	int			ret;
 	char	   *found_path;
 
-	found_path = pg_malloc(MAXPGPATH);
+	found_path = mdb_malloc(MAXPGPATH);
 
 	if ((ret = find_other_exec(argv0, target, versionstr, found_path)) < 0)
 	{
@@ -996,7 +996,7 @@ do_stop(void)
 			stat(recovery_file, &statbuf) != 0)
 		{
 			print_msg(_("WARNING: online backup mode is active\n"
-						"Shutdown will not complete until pg_stop_backup() is called.\n\n"));
+						"Shutdown will not complete until mdb_stop_backup() is called.\n\n"));
 		}
 
 		print_msg(_("waiting for server to shut down..."));
@@ -1006,7 +1006,7 @@ do_stop(void)
 			if ((pid = get_pgpid(false)) != 0)
 			{
 				print_msg(".");
-				pg_usleep(1000000);		/* 1 sec */
+				mdb_usleep(1000000);		/* 1 sec */
 			}
 			else
 				break;
@@ -1084,7 +1084,7 @@ do_restart(void)
 			stat(recovery_file, &statbuf) != 0)
 		{
 			print_msg(_("WARNING: online backup mode is active\n"
-						"Shutdown will not complete until pg_stop_backup() is called.\n\n"));
+						"Shutdown will not complete until mdb_stop_backup() is called.\n\n"));
 		}
 
 		print_msg(_("waiting for server to shut down..."));
@@ -1096,7 +1096,7 @@ do_restart(void)
 			if ((pid = get_pgpid(false)) != 0)
 			{
 				print_msg(".");
-				pg_usleep(1000000);		/* 1 sec */
+				mdb_usleep(1000000);		/* 1 sec */
 			}
 			else
 				break;
@@ -1201,7 +1201,7 @@ do_promote(void)
 	 * checkpoint is still possible by writing a file called
 	 * "fallback_promote" instead of "promote"
 	 */
-	snprintf(promote_file, MAXPGPATH, "%s/promote", pg_data);
+	snprintf(promote_file, MAXPGPATH, "%s/promote", mdb_data);
 
 	if ((prmfile = fopen(promote_file, "w")) == NULL)
 	{
@@ -1395,7 +1395,7 @@ pgwin32_CommandLine(bool registration)
 
 	/* if path does not end in .exe, append it */
 	if (strlen(cmdPath) < 4 ||
-		pg_strcasecmp(cmdPath + strlen(cmdPath) - 4, ".exe") != 0)
+		mdb_strcasecmp(cmdPath + strlen(cmdPath) - 4, ".exe") != 0)
 		snprintf(cmdPath + strlen(cmdPath), sizeof(cmdPath) - strlen(cmdPath),
 				 ".exe");
 
@@ -1411,12 +1411,12 @@ pgwin32_CommandLine(bool registration)
 		appendPQExpBuffer(cmdLine, " runservice -N \"%s\"",
 						  register_servicename);
 
-	if (pg_config)
+	if (mdb_config)
 	{
 		/* We need the -D path to be absolute */
 		char	   *dataDir;
 
-		if ((dataDir = make_absolute_path(pg_config)) == NULL)
+		if ((dataDir = make_absolute_path(mdb_config)) == NULL)
 		{
 			/* make_absolute_path already reported the error */
 			exit(1);
@@ -1699,7 +1699,7 @@ typedef BOOL (WINAPI * __QueryInformationJobObject) (HANDLE, JOBOBJECTINFOCLASS,
  * launch the process under the current token without doing any modifications.
  *
  * NOTE! Job object will only work when running as a service, because it's
- * automatically destroyed when pg_ctl exits.
+ * automatically destroyed when mdb_ctl exits.
  */
 static int
 CreateRestrictedProcess(char *cmd, PROCESS_INFORMATION *processInfo, bool as_service)
@@ -1889,7 +1889,7 @@ CreateRestrictedProcess(char *cmd, PROCESS_INFORMATION *processInfo, bool as_ser
 
 	/*
 	 * We intentionally don't close the job object handle, because we want the
-	 * object to live on until pg_ctl shuts down.
+	 * object to live on until mdb_ctl shuts down.
 	 */
 	return r;
 }
@@ -2065,17 +2065,17 @@ adjust_data_dir(void)
 	FILE	   *fd;
 
 	/* do nothing if we're working without knowledge of data dir */
-	if (pg_config == NULL)
+	if (mdb_config == NULL)
 		return;
 
 	/* If there is no mollydb.conf, it can't be a config-only dir */
-	snprintf(filename, sizeof(filename), "%s/mollydb.conf", pg_config);
+	snprintf(filename, sizeof(filename), "%s/mollydb.conf", mdb_config);
 	if ((fd = fopen(filename, "r")) == NULL)
 		return;
 	fclose(fd);
 
 	/* If PG_VERSION exists, it can't be a config-only dir */
-	snprintf(filename, sizeof(filename), "%s/PG_VERSION", pg_config);
+	snprintf(filename, sizeof(filename), "%s/PG_VERSION", mdb_config);
 	if ((fd = fopen(filename, "r")) != NULL)
 	{
 		fclose(fd);
@@ -2088,7 +2088,7 @@ adjust_data_dir(void)
 	if (exec_path == NULL)
 		my_exec_path = find_other_exec_or_die(argv0, "mollydb", PG_BACKEND_VERSIONSTR);
 	else
-		my_exec_path = pg_strdup(exec_path);
+		my_exec_path = mdb_strdup(exec_path);
 
 	/* it's important for -C to be the first option, see main.c */
 	snprintf(cmd, MAXPGPATH, "\"%s\" -C data_directory %s%s",
@@ -2109,9 +2109,9 @@ adjust_data_dir(void)
 	if (strchr(filename, '\n') != NULL)
 		*strchr(filename, '\n') = '\0';
 
-	free(pg_data);
-	pg_data = pg_strdup(filename);
-	canonicalize_path(pg_data);
+	free(mdb_data);
+	mdb_data = mdb_strdup(filename);
+	canonicalize_path(mdb_data);
 }
 
 
@@ -2140,7 +2140,7 @@ main(int argc, char **argv)
 #endif
 
 	progname = get_progname(argv[0]);
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_ctl"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_ctl"));
 	start_time = time(NULL);
 
 	/*
@@ -2161,7 +2161,7 @@ main(int argc, char **argv)
 		}
 		else if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_ctl (MollyDB) " PG_VERSION);
+			puts("mdb_ctl (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -2205,7 +2205,7 @@ main(int argc, char **argv)
 						char	   *pgdata_D;
 						char	   *env_var;
 
-						pgdata_D = pg_strdup(optarg);
+						pgdata_D = mdb_strdup(optarg);
 						canonicalize_path(pgdata_D);
 						env_var = psprintf("PGDATA=%s", pgdata_D);
 						putenv(env_var);
@@ -2219,21 +2219,21 @@ main(int argc, char **argv)
 						break;
 					}
 				case 'e':
-					event_source = pg_strdup(optarg);
+					event_source = mdb_strdup(optarg);
 					break;
 				case 'l':
-					log_file = pg_strdup(optarg);
+					log_file = mdb_strdup(optarg);
 					break;
 				case 'm':
 					set_mode(optarg);
 					break;
 				case 'N':
-					register_servicename = pg_strdup(optarg);
+					register_servicename = mdb_strdup(optarg);
 					break;
 				case 'o':
 					/* append option? */
 					if (!post_opts)
-						post_opts = pg_strdup(optarg);
+						post_opts = mdb_strdup(optarg);
 					else
 					{
 						char	   *old_post_opts = post_opts;
@@ -2243,10 +2243,10 @@ main(int argc, char **argv)
 					}
 					break;
 				case 'p':
-					exec_path = pg_strdup(optarg);
+					exec_path = mdb_strdup(optarg);
 					break;
 				case 'P':
-					register_password = pg_strdup(optarg);
+					register_password = mdb_strdup(optarg);
 					break;
 				case 's':
 					silent_mode = true;
@@ -2266,7 +2266,7 @@ main(int argc, char **argv)
 					break;
 				case 'U':
 					if (strchr(optarg, '\\'))
-						register_username = pg_strdup(optarg);
+						register_username = mdb_strdup(optarg);
 					else
 						/* Prepend .\ for local accounts */
 						register_username = psprintf(".\\%s", optarg);
@@ -2352,19 +2352,19 @@ main(int argc, char **argv)
 	}
 
 	/* Note we put any -D switch into the env var above */
-	pg_config = getenv("PGDATA");
-	if (pg_config)
+	mdb_config = getenv("PGDATA");
+	if (mdb_config)
 	{
-		pg_config = pg_strdup(pg_config);
-		canonicalize_path(pg_config);
-		pg_data = pg_strdup(pg_config);
+		mdb_config = mdb_strdup(mdb_config);
+		canonicalize_path(mdb_config);
+		mdb_data = mdb_strdup(mdb_config);
 	}
 
 	/* -D might point at config-only directory; if so find the real PGDATA */
 	adjust_data_dir();
 
 	/* Complain if -D needed and not provided */
-	if (pg_config == NULL &&
+	if (mdb_config == NULL &&
 		ctl_command != KILL_COMMAND && ctl_command != UNREGISTER_COMMAND)
 	{
 		write_stderr(_("%s: no database directory specified and environment variable PGDATA unset\n"),
@@ -2395,13 +2395,13 @@ main(int argc, char **argv)
 		do_wait = false;
 	}
 
-	if (pg_data)
+	if (mdb_data)
 	{
-		snprintf(postopts_file, MAXPGPATH, "%s/postmaster.opts", pg_data);
-		snprintf(version_file, MAXPGPATH, "%s/PG_VERSION", pg_data);
-		snprintf(pid_file, MAXPGPATH, "%s/postmaster.pid", pg_data);
-		snprintf(backup_file, MAXPGPATH, "%s/backup_label", pg_data);
-		snprintf(recovery_file, MAXPGPATH, "%s/recovery.conf", pg_data);
+		snprintf(postopts_file, MAXPGPATH, "%s/postmaster.opts", mdb_data);
+		snprintf(version_file, MAXPGPATH, "%s/PG_VERSION", mdb_data);
+		snprintf(pid_file, MAXPGPATH, "%s/postmaster.pid", mdb_data);
+		snprintf(backup_file, MAXPGPATH, "%s/backup_label", mdb_data);
+		snprintf(recovery_file, MAXPGPATH, "%s/recovery.conf", mdb_data);
 	}
 
 	switch (ctl_command)

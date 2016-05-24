@@ -16,8 +16,8 @@
 
 #include "access/htup_details.h"
 #include "access/xact.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "executor/functions.h"
 #include "funcapi.h"
 #include "miscadmin.h"
@@ -186,7 +186,7 @@ prepare_sql_fn_parse_info(HeapTuple procedureTuple,
 						  Oid inputCollation)
 {
 	SQLFunctionParseInfoPtr pinfo;
-	Form_pg_proc procedureStruct = (Form_pg_proc) GETSTRUCT(procedureTuple);
+	Form_mdb_proc procedureStruct = (Form_mdb_proc) GETSTRUCT(procedureTuple);
 	int			nargs;
 
 	pinfo = (SQLFunctionParseInfoPtr) palloc0(sizeof(SQLFunctionParseInfo));
@@ -198,7 +198,7 @@ prepare_sql_fn_parse_info(HeapTuple procedureTuple,
 	pinfo->collation = inputCollation;
 
 	/*
-	 * Copy input argument types from the pg_proc entry, then resolve any
+	 * Copy input argument types from the mdb_proc entry, then resolve any
 	 * polymorphic types.
 	 */
 	pinfo->nargs = nargs = procedureStruct->pronargs;
@@ -242,13 +242,13 @@ prepare_sql_fn_parse_info(HeapTuple procedureTuple,
 		bool		isNull;
 
 		proargnames = SysCacheGetAttr(PROCNAMEARGSNSP, procedureTuple,
-									  Anum_pg_proc_proargnames,
+									  Anum_mdb_proc_proargnames,
 									  &isNull);
 		if (isNull)
 			proargnames = PointerGetDatum(NULL);		/* just to be sure */
 
 		proargmodes = SysCacheGetAttr(PROCNAMEARGSNSP, procedureTuple,
-									  Anum_pg_proc_proargmodes,
+									  Anum_mdb_proc_proargmodes,
 									  &isNull);
 		if (isNull)
 			proargmodes = PointerGetDatum(NULL);		/* just to be sure */
@@ -496,7 +496,7 @@ init_execution_state(List *queryTree_list,
 			if (queryTree->commandType == CMD_UTILITY)
 				stmt = queryTree->utilityStmt;
 			else
-				stmt = (Node *) pg_plan_query(queryTree,
+				stmt = (Node *) mdb_plan_query(queryTree,
 					fcache->readonly_func ? CURSOR_OPT_PARALLEL_OK : 0,
 					NULL);
 
@@ -585,7 +585,7 @@ init_sql_fcache(FmgrInfo *finfo, Oid collation, bool lazyEvalOK)
 	MemoryContext oldcontext;
 	Oid			rettype;
 	HeapTuple	procedureTuple;
-	Form_pg_proc procedureStruct;
+	Form_mdb_proc procedureStruct;
 	SQLFunctionCachePtr fcache;
 	List	   *raw_parsetree_list;
 	List	   *queryTree_list;
@@ -621,7 +621,7 @@ init_sql_fcache(FmgrInfo *finfo, Oid collation, bool lazyEvalOK)
 	procedureTuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(foid));
 	if (!HeapTupleIsValid(procedureTuple))
 		elog(ERROR, "cache lookup failed for function %u", foid);
-	procedureStruct = (Form_pg_proc) GETSTRUCT(procedureTuple);
+	procedureStruct = (Form_mdb_proc) GETSTRUCT(procedureTuple);
 
 	/*
 	 * copy function name immediately for use by error reporting callback
@@ -670,7 +670,7 @@ init_sql_fcache(FmgrInfo *finfo, Oid collation, bool lazyEvalOK)
 	 */
 	tmp = SysCacheGetAttr(PROCOID,
 						  procedureTuple,
-						  Anum_pg_proc_prosrc,
+						  Anum_mdb_proc_prosrc,
 						  &isNull);
 	if (isNull)
 		elog(ERROR, "null prosrc for function %u", foid);
@@ -691,7 +691,7 @@ init_sql_fcache(FmgrInfo *finfo, Oid collation, bool lazyEvalOK)
 	 * but we'll not worry about it until the module is rewritten to use
 	 * plancache.c.
 	 */
-	raw_parsetree_list = pg_parse_query(fcache->src);
+	raw_parsetree_list = mdb_parse_query(fcache->src);
 
 	queryTree_list = NIL;
 	flat_query_list = NIL;
@@ -700,7 +700,7 @@ init_sql_fcache(FmgrInfo *finfo, Oid collation, bool lazyEvalOK)
 		Node	   *parsetree = (Node *) lfirst(lc);
 		List	   *queryTree_sublist;
 
-		queryTree_sublist = pg_analyze_and_rewrite_params(parsetree,
+		queryTree_sublist = mdb_analyze_and_rewrite_params(parsetree,
 														  fcache->src,
 									   (ParserSetupHook) sql_fn_parser_setup,
 														  fcache->pinfo);
@@ -1735,7 +1735,7 @@ check_sql_fn_retval(Oid func_id, Oid rettype, List *queryTreeList,
 		foreach(lc, tlist)
 		{
 			TargetEntry *tle = (TargetEntry *) lfirst(lc);
-			Form_pg_attribute attr;
+			Form_mdb_attribute attr;
 			Oid			tletype;
 			Oid			atttype;
 

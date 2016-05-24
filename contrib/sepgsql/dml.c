@@ -16,9 +16,9 @@
 #include "catalog/catalog.h"
 #include "catalog/heap.h"
 #include "catalog/dependency.h"
-#include "catalog/pg_attribute.h"
-#include "catalog/pg_class.h"
-#include "catalog/pg_inherits_fn.h"
+#include "catalog/mdb_attribute.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_inherits_fn.h"
 #include "commands/seclabel.h"
 #include "commands/tablecmds.h"
 #include "executor/executor.h"
@@ -53,7 +53,7 @@ fixup_whole_row_references(Oid relOid, Bitmapset *columns)
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relOid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for relation %u", relOid);
-	natts = ((Form_pg_class) GETSTRUCT(tuple))->relnatts;
+	natts = ((Form_mdb_class) GETSTRUCT(tuple))->relnatts;
 	ReleaseSysCache(tuple);
 
 	/* fix up the given columns */
@@ -68,7 +68,7 @@ fixup_whole_row_references(Oid relOid, Bitmapset *columns)
 		if (!HeapTupleIsValid(tuple))
 			continue;
 
-		if (((Form_pg_attribute) GETSTRUCT(tuple))->attisdropped)
+		if (((Form_mdb_attribute) GETSTRUCT(tuple))->attisdropped)
 			continue;
 
 		index = attno - FirstLowInvalidHeapAttributeNumber;

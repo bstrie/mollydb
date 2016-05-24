@@ -20,7 +20,7 @@
 #include "mollydb_fe.h"
 
 static inline void *
-pg_malloc_internal(size_t size, int flags)
+mdb_malloc_internal(size_t size, int flags)
 {
 	void	   *tmp;
 
@@ -44,25 +44,25 @@ pg_malloc_internal(size_t size, int flags)
 }
 
 void *
-pg_malloc(size_t size)
+mdb_malloc(size_t size)
 {
-	return pg_malloc_internal(size, 0);
+	return mdb_malloc_internal(size, 0);
 }
 
 void *
-pg_malloc0(size_t size)
+mdb_malloc0(size_t size)
 {
-	return pg_malloc_internal(size, MCXT_ALLOC_ZERO);
+	return mdb_malloc_internal(size, MCXT_ALLOC_ZERO);
 }
 
 void *
-pg_malloc_extended(size_t size, int flags)
+mdb_malloc_extended(size_t size, int flags)
 {
-	return pg_malloc_internal(size, flags);
+	return mdb_malloc_internal(size, flags);
 }
 
 void *
-pg_realloc(void *ptr, size_t size)
+mdb_realloc(void *ptr, size_t size)
 {
 	void	   *tmp;
 
@@ -82,7 +82,7 @@ pg_realloc(void *ptr, size_t size)
  * "Safe" wrapper around strdup().
  */
 char *
-pg_strdup(const char *in)
+mdb_strdup(const char *in)
 {
 	char	   *tmp;
 
@@ -102,7 +102,7 @@ pg_strdup(const char *in)
 }
 
 void
-pg_free(void *ptr)
+mdb_free(void *ptr)
 {
 	if (ptr != NULL)
 		free(ptr);
@@ -115,35 +115,35 @@ pg_free(void *ptr)
 void *
 palloc(Size size)
 {
-	return pg_malloc_internal(size, 0);
+	return mdb_malloc_internal(size, 0);
 }
 
 void *
 palloc0(Size size)
 {
-	return pg_malloc_internal(size, MCXT_ALLOC_ZERO);
+	return mdb_malloc_internal(size, MCXT_ALLOC_ZERO);
 }
 
 void *
 palloc_extended(Size size, int flags)
 {
-	return pg_malloc_internal(size, flags);
+	return mdb_malloc_internal(size, flags);
 }
 
 void
 pfree(void *pointer)
 {
-	pg_free(pointer);
+	mdb_free(pointer);
 }
 
 char *
 pstrdup(const char *in)
 {
-	return pg_strdup(in);
+	return mdb_strdup(in);
 }
 
 void *
 repalloc(void *pointer, Size size)
 {
-	return pg_realloc(pointer, size);
+	return mdb_realloc(pointer, size);
 }

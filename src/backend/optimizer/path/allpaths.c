@@ -19,9 +19,9 @@
 
 #include "access/sysattr.h"
 #include "access/tsmapi.h"
-#include "catalog/pg_class.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_proc.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_proc.h"
 #include "foreign/fdwapi.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"

@@ -29,8 +29,8 @@ typedef SOCKET pgsocket;
 #endif
 
 /* non-blocking */
-extern bool pg_set_noblock(pgsocket sock);
-extern bool pg_set_block(pgsocket sock);
+extern bool mdb_set_noblock(pgsocket sock);
+extern bool mdb_set_block(pgsocket sock);
 
 /* Portable path handling for Unix/Win32 (in path.c) */
 
@@ -117,15 +117,15 @@ extern BOOL AddUserToTokenDacl(HANDLE hToken);
 #endif
 
 /* Portable delay handling */
-extern void pg_usleep(long microsec);
+extern void mdb_usleep(long microsec);
 
 /* Portable SQL-like case-independent comparisons and conversions */
-extern int	pg_strcasecmp(const char *s1, const char *s2);
-extern int	pg_strncasecmp(const char *s1, const char *s2, size_t n);
-extern unsigned char pg_toupper(unsigned char ch);
-extern unsigned char pg_tolower(unsigned char ch);
-extern unsigned char pg_ascii_toupper(unsigned char ch);
-extern unsigned char pg_ascii_tolower(unsigned char ch);
+extern int	mdb_strcasecmp(const char *s1, const char *s2);
+extern int	mdb_strncasecmp(const char *s1, const char *s2, size_t n);
+extern unsigned char mdb_toupper(unsigned char ch);
+extern unsigned char mdb_tolower(unsigned char ch);
+extern unsigned char mdb_ascii_toupper(unsigned char ch);
+extern unsigned char mdb_ascii_tolower(unsigned char ch);
 
 #ifdef USE_REPL_SNPRINTF
 
@@ -153,32 +153,32 @@ extern unsigned char pg_ascii_tolower(unsigned char ch);
 #undef printf
 #endif
 
-extern int	pg_vsnprintf(char *str, size_t count, const char *fmt, va_list args);
-extern int	pg_snprintf(char *str, size_t count, const char *fmt,...) pg_attribute_printf(3, 4);
-extern int	pg_sprintf(char *str, const char *fmt,...) pg_attribute_printf(2, 3);
-extern int	pg_vfprintf(FILE *stream, const char *fmt, va_list args);
-extern int	pg_fprintf(FILE *stream, const char *fmt,...) pg_attribute_printf(2, 3);
-extern int	pg_printf(const char *fmt,...) pg_attribute_printf(1, 2);
+extern int	mdb_vsnprintf(char *str, size_t count, const char *fmt, va_list args);
+extern int	mdb_snprintf(char *str, size_t count, const char *fmt,...) mdb_attribute_printf(3, 4);
+extern int	mdb_sprintf(char *str, const char *fmt,...) mdb_attribute_printf(2, 3);
+extern int	mdb_vfprintf(FILE *stream, const char *fmt, va_list args);
+extern int	mdb_fprintf(FILE *stream, const char *fmt,...) mdb_attribute_printf(2, 3);
+extern int	mdb_printf(const char *fmt,...) mdb_attribute_printf(1, 2);
 
 /*
- *	The GCC-specific code below prevents the pg_attribute_printf above from
+ *	The GCC-specific code below prevents the mdb_attribute_printf above from
  *	being replaced, and this is required because gcc doesn't know anything
- *	about pg_printf.
+ *	about mdb_printf.
  */
 #ifdef __GNUC__
-#define vsnprintf(...)	pg_vsnprintf(__VA_ARGS__)
-#define snprintf(...)	pg_snprintf(__VA_ARGS__)
-#define sprintf(...)	pg_sprintf(__VA_ARGS__)
-#define vfprintf(...)	pg_vfprintf(__VA_ARGS__)
-#define fprintf(...)	pg_fprintf(__VA_ARGS__)
-#define printf(...)		pg_printf(__VA_ARGS__)
+#define vsnprintf(...)	mdb_vsnprintf(__VA_ARGS__)
+#define snprintf(...)	mdb_snprintf(__VA_ARGS__)
+#define sprintf(...)	mdb_sprintf(__VA_ARGS__)
+#define vfprintf(...)	mdb_vfprintf(__VA_ARGS__)
+#define fprintf(...)	mdb_fprintf(__VA_ARGS__)
+#define printf(...)		mdb_printf(__VA_ARGS__)
 #else
-#define vsnprintf		pg_vsnprintf
-#define snprintf		pg_snprintf
-#define sprintf			pg_sprintf
-#define vfprintf		pg_vfprintf
-#define fprintf			pg_fprintf
-#define printf			pg_printf
+#define vsnprintf		mdb_vsnprintf
+#define snprintf		mdb_snprintf
+#define sprintf			mdb_sprintf
+#define vfprintf		mdb_vfprintf
+#define fprintf			mdb_fprintf
+#define printf			mdb_printf
 #endif
 #endif   /* USE_REPL_SNPRINTF */
 
@@ -358,9 +358,9 @@ extern off_t ftello(FILE *stream);
 #endif
 #endif
 
-extern double pg_erand48(unsigned short xseed[3]);
-extern long pg_lrand48(void);
-extern void pg_srand48(long seed);
+extern double mdb_erand48(unsigned short xseed[3]);
+extern long mdb_lrand48(void);
+extern void mdb_srand48(long seed);
 
 #ifndef HAVE_FLS
 extern int	fls(int mask);
@@ -431,11 +431,11 @@ extern int pqGethostbyname(const char *name,
 				struct hostent ** result,
 				int *herrno);
 
-extern void pg_qsort(void *base, size_t nel, size_t elsize,
+extern void mdb_qsort(void *base, size_t nel, size_t elsize,
 		 int (*cmp) (const void *, const void *));
-extern int	pg_qsort_strcmp(const void *a, const void *b);
+extern int	mdb_qsort_strcmp(const void *a, const void *b);
 
-#define qsort(a,b,c,d) pg_qsort(a,b,c,d)
+#define qsort(a,b,c,d) mdb_qsort(a,b,c,d)
 
 typedef int (*qsort_arg_comparator) (const void *a, const void *b, void *arg);
 
@@ -443,10 +443,10 @@ extern void qsort_arg(void *base, size_t nel, size_t elsize,
 		  qsort_arg_comparator cmp, void *arg);
 
 /* port/chklocale.c */
-extern int	pg_get_encoding_from_locale(const char *ctype, bool write_message);
+extern int	mdb_get_encoding_from_locale(const char *ctype, bool write_message);
 
 #if defined(WIN32) && !defined(FRONTEND)
-extern int	pg_codepage_to_encoding(UINT cp);
+extern int	mdb_codepage_to_encoding(UINT cp);
 #endif
 
 /* port/inet_net_ntop.c */
@@ -454,10 +454,10 @@ extern char *inet_net_ntop(int af, const void *src, int bits,
 			  char *dst, size_t size);
 
 /* port/pgcheckdir.c */
-extern int	pg_check_dir(const char *dir);
+extern int	mdb_check_dir(const char *dir);
 
 /* port/pgmkdirp.c */
-extern int	pg_mkdir_p(char *path, int omode);
+extern int	mdb_mkdir_p(char *path, int omode);
 
 /* port/pqsignal.c */
 typedef void (*pqsigfunc) (int signo);

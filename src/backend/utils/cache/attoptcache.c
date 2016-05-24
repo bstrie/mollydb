@@ -4,7 +4,7 @@
  *	  Attribute options cache management.
  *
  * Attribute options are cached separately from the fixed-size portion of
- * pg_attribute entries, which are handled by the relcache.
+ * mdb_attribute entries, which are handled by the relcache.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -43,9 +43,9 @@ typedef struct
 
 /*
  * InvalidateAttoptCacheCallback
- *		Flush all cache entries when pg_attribute is updated.
+ *		Flush all cache entries when mdb_attribute is updated.
  *
- * When pg_attribute is updated, we must flush the cache entry at least
+ * When mdb_attribute is updated, we must flush the cache entry at least
  * for that attribute.  Currently, we just flush them all.  Since attribute
  * options are not currently used in performance-critical paths (such as
  * query execution), this seems OK.
@@ -144,7 +144,7 @@ get_attribute_options(Oid attrelid, int attnum)
 
 			datum = SysCacheGetAttr(ATTNUM,
 									tp,
-									Anum_pg_attribute_attoptions,
+									Anum_mdb_attribute_attoptions,
 									&isNull);
 			if (isNull)
 				opts = NULL;
@@ -161,7 +161,7 @@ get_attribute_options(Oid attrelid, int attnum)
 
 		/*
 		 * It's important to create the actual cache entry only after reading
-		 * pg_attribute, since the read could cause a cache flush.
+		 * mdb_attribute, since the read could cause a cache flush.
 		 */
 		attopt = (AttoptCacheEntry *) hash_search(AttoptCacheHash,
 												  (void *) &key,

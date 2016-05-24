@@ -14,7 +14,7 @@ CREATE TABLE TIMESTAMP_TBL (d1 timestamp(2) without time zone);
 -- the same values and the counts will come out different.
 
 INSERT INTO TIMESTAMP_TBL VALUES ('now');
-SELECT pg_sleep(0.1);
+SELECT mdb_sleep(0.1);
 
 BEGIN;
 
@@ -38,9 +38,9 @@ DELETE FROM TIMESTAMP_TBL;
 -- verify uniform transaction time within transaction block
 BEGIN;
 INSERT INTO TIMESTAMP_TBL VALUES ('now');
-SELECT pg_sleep(0.1);
+SELECT mdb_sleep(0.1);
 INSERT INTO TIMESTAMP_TBL VALUES ('now');
-SELECT pg_sleep(0.1);
+SELECT mdb_sleep(0.1);
 SELECT count(*) AS two FROM TIMESTAMP_TBL WHERE d1 = timestamp(2) without time zone 'now';
 COMMIT;
 

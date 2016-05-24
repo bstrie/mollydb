@@ -132,9 +132,9 @@ CREATE TEMPORARY SEQUENCE seq1_temp;
 CREATE VIEW v9 AS SELECT seq1.is_called FROM seq1;
 CREATE VIEW v13_temp AS SELECT seq1_temp.is_called FROM seq1_temp;
 NOTICE:  view "v13_temp" will be a temporary view
-SELECT relname FROM pg_class
+SELECT relname FROM mdb_class
     WHERE relname LIKE 'v_'
-    AND relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'temp_view_test')
+    AND relnamespace = (SELECT oid FROM mdb_namespace WHERE nspname = 'temp_view_test')
     ORDER BY relname;
  relname 
 ---------
@@ -149,9 +149,9 @@ SELECT relname FROM pg_class
  v9
 (9 rows)
 
-SELECT relname FROM pg_class
+SELECT relname FROM mdb_class
     WHERE relname LIKE 'v%'
-    AND relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname LIKE 'pg_temp%')
+    AND relnamespace IN (SELECT oid FROM mdb_namespace WHERE nspname LIKE 'mdb_temp%')
     ORDER BY relname;
  relname  
 ----------
@@ -186,9 +186,9 @@ NOTICE:  view "temporal3" will be a temporary view
 CREATE VIEW nontemp4 AS SELECT * FROM t1 LEFT JOIN t2 ON t1.num = t2.num2 AND t2.value = 'xxx';
 CREATE VIEW temporal4 AS SELECT * FROM t1 LEFT JOIN tt ON t1.num = tt.num2 AND tt.value = 'xxx';
 NOTICE:  view "temporal4" will be a temporary view
-SELECT relname FROM pg_class
+SELECT relname FROM mdb_class
     WHERE relname LIKE 'nontemp%'
-    AND relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'testviewschm2')
+    AND relnamespace = (SELECT oid FROM mdb_namespace WHERE nspname = 'testviewschm2')
     ORDER BY relname;
  relname  
 ----------
@@ -198,9 +198,9 @@ SELECT relname FROM pg_class
  nontemp4
 (4 rows)
 
-SELECT relname FROM pg_class
+SELECT relname FROM mdb_class
     WHERE relname LIKE 'temporal%'
-    AND relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname LIKE 'pg_temp%')
+    AND relnamespace IN (SELECT oid FROM mdb_namespace WHERE nspname LIKE 'mdb_temp%')
     ORDER BY relname;
   relname  
 -----------
@@ -219,8 +219,8 @@ CREATE TEMP TABLE tmptbl (i int, j int);
 CREATE   VIEW  pubview AS SELECT * FROM tbl1 WHERE tbl1.a
 BETWEEN (SELECT d FROM tbl2 WHERE c = 1) AND (SELECT e FROM tbl3 WHERE f = 2)
 AND EXISTS (SELECT g FROM tbl4 LEFT JOIN tbl3 ON tbl4.h = tbl3.f);
-SELECT count(*) FROM pg_class where relname = 'pubview'
-AND relnamespace IN (SELECT OID FROM pg_namespace WHERE nspname = 'testviewschm2');
+SELECT count(*) FROM mdb_class where relname = 'pubview'
+AND relnamespace IN (SELECT OID FROM mdb_namespace WHERE nspname = 'testviewschm2');
  count 
 -------
      1
@@ -232,8 +232,8 @@ BETWEEN (SELECT d FROM tbl2 WHERE c = 1) AND (SELECT e FROM tbl3 WHERE f = 2)
 AND EXISTS (SELECT g FROM tbl4 LEFT JOIN tbl3 ON tbl4.h = tbl3.f)
 AND NOT EXISTS (SELECT g FROM tbl4 LEFT JOIN tmptbl ON tbl4.h = tmptbl.j);
 NOTICE:  view "mytempview" will be a temporary view
-SELECT count(*) FROM pg_class where relname LIKE 'mytempview'
-And relnamespace IN (SELECT OID FROM pg_namespace WHERE nspname LIKE 'pg_temp%');
+SELECT count(*) FROM mdb_class where relname LIKE 'mytempview'
+And relnamespace IN (SELECT OID FROM mdb_namespace WHERE nspname LIKE 'mdb_temp%');
  count 
 -------
      1
@@ -256,7 +256,7 @@ ERROR:  invalid value for boolean option "security_barrier": 100
 CREATE VIEW mysecview6 WITH (invalid_option)		-- Error
        AS SELECT * FROM tbl1 WHERE a < 100;
 ERROR:  unrecognized parameter "invalid_option"
-SELECT relname, relkind, reloptions FROM pg_class
+SELECT relname, relkind, reloptions FROM mdb_class
        WHERE oid in ('mysecview1'::regclass, 'mysecview2'::regclass,
                      'mysecview3'::regclass, 'mysecview4'::regclass)
        ORDER BY relname;
@@ -276,7 +276,7 @@ CREATE OR REPLACE VIEW mysecview3 WITH (security_barrier=true)
        AS SELECT * FROM tbl1 WHERE a < 256;
 CREATE OR REPLACE VIEW mysecview4 WITH (security_barrier=false)
        AS SELECT * FROM tbl1 WHERE a <> 256;
-SELECT relname, relkind, reloptions FROM pg_class
+SELECT relname, relkind, reloptions FROM mdb_class
        WHERE oid in ('mysecview1'::regclass, 'mysecview2'::regclass,
                      'mysecview3'::regclass, 'mysecview4'::regclass)
        ORDER BY relname;
@@ -705,8 +705,8 @@ create view v1a as select * from (tt2 natural join tt3) j;
 create view v2 as select * from tt2 join tt3 using (b,c) join tt4 using (b);
 create view v2a as select * from (tt2 join tt3 using (b,c) join tt4 using (b)) j;
 create view v3 as select * from tt2 join tt3 using (b,c) full join tt4 using (b);
-select pg_get_viewdef('v1', true);
-       pg_get_viewdef        
+select mdb_get_viewdef('v1', true);
+       mdb_get_viewdef        
 -----------------------------
   SELECT tt2.b,             +
      tt3.c,                 +
@@ -716,8 +716,8 @@ select pg_get_viewdef('v1', true);
       JOIN tt3 USING (b, c);
 (1 row)
 
-select pg_get_viewdef('v1a', true);
-         pg_get_viewdef         
+select mdb_get_viewdef('v1a', true);
+         mdb_get_viewdef         
 --------------------------------
   SELECT j.b,                  +
      j.c,                      +
@@ -727,8 +727,8 @@ select pg_get_viewdef('v1a', true);
       JOIN tt3 USING (b, c)) j;
 (1 row)
 
-select pg_get_viewdef('v2', true);
-       pg_get_viewdef       
+select mdb_get_viewdef('v2', true);
+       mdb_get_viewdef       
 ----------------------------
   SELECT tt2.b,            +
      tt3.c,                +
@@ -741,8 +741,8 @@ select pg_get_viewdef('v2', true);
       JOIN tt4 USING (b);
 (1 row)
 
-select pg_get_viewdef('v2a', true);
-       pg_get_viewdef        
+select mdb_get_viewdef('v2a', true);
+       mdb_get_viewdef        
 -----------------------------
   SELECT j.b,               +
      j.c,                   +
@@ -755,8 +755,8 @@ select pg_get_viewdef('v2a', true);
       JOIN tt4 USING (b)) j;
 (1 row)
 
-select pg_get_viewdef('v3', true);
-        pg_get_viewdef         
+select mdb_get_viewdef('v3', true);
+        mdb_get_viewdef         
 -------------------------------
   SELECT b,                   +
      tt3.c,                   +
@@ -771,8 +771,8 @@ select pg_get_viewdef('v3', true);
 
 alter table tt2 add column d int;
 alter table tt2 add column e int;
-select pg_get_viewdef('v1', true);
-       pg_get_viewdef        
+select mdb_get_viewdef('v1', true);
+       mdb_get_viewdef        
 -----------------------------
   SELECT tt2.b,             +
      tt3.c,                 +
@@ -782,8 +782,8 @@ select pg_get_viewdef('v1', true);
       JOIN tt3 USING (b, c);
 (1 row)
 
-select pg_get_viewdef('v1a', true);
-         pg_get_viewdef         
+select mdb_get_viewdef('v1a', true);
+         mdb_get_viewdef         
 --------------------------------
   SELECT j.b,                  +
      j.c,                      +
@@ -793,8 +793,8 @@ select pg_get_viewdef('v1a', true);
       JOIN tt3 USING (b, c)) j;
 (1 row)
 
-select pg_get_viewdef('v2', true);
-       pg_get_viewdef       
+select mdb_get_viewdef('v2', true);
+       mdb_get_viewdef       
 ----------------------------
   SELECT tt2.b,            +
      tt3.c,                +
@@ -807,8 +807,8 @@ select pg_get_viewdef('v2', true);
       JOIN tt4 USING (b);
 (1 row)
 
-select pg_get_viewdef('v2a', true);
-       pg_get_viewdef        
+select mdb_get_viewdef('v2a', true);
+       mdb_get_viewdef        
 -----------------------------
   SELECT j.b,               +
      j.c,                   +
@@ -821,8 +821,8 @@ select pg_get_viewdef('v2a', true);
       JOIN tt4 USING (b)) j;
 (1 row)
 
-select pg_get_viewdef('v3', true);
-        pg_get_viewdef         
+select mdb_get_viewdef('v3', true);
+        mdb_get_viewdef         
 -------------------------------
   SELECT b,                   +
      tt3.c,                   +
@@ -836,8 +836,8 @@ select pg_get_viewdef('v3', true);
 (1 row)
 
 alter table tt3 rename c to d;
-select pg_get_viewdef('v1', true);
-              pg_get_viewdef               
+select mdb_get_viewdef('v1', true);
+              mdb_get_viewdef               
 -------------------------------------------
   SELECT tt2.b,                           +
      tt3.c,                               +
@@ -847,8 +847,8 @@ select pg_get_viewdef('v1', true);
       JOIN tt3 tt3(ax, b, c) USING (b, c);
 (1 row)
 
-select pg_get_viewdef('v1a', true);
-                pg_get_viewdef                
+select mdb_get_viewdef('v1a', true);
+                mdb_get_viewdef                
 ----------------------------------------------
   SELECT j.b,                                +
      j.c,                                    +
@@ -858,8 +858,8 @@ select pg_get_viewdef('v1a', true);
       JOIN tt3 tt3(ax, b, c) USING (b, c)) j;
 (1 row)
 
-select pg_get_viewdef('v2', true);
-              pg_get_viewdef              
+select mdb_get_viewdef('v2', true);
+              mdb_get_viewdef              
 ------------------------------------------
   SELECT tt2.b,                          +
      tt3.c,                              +
@@ -872,8 +872,8 @@ select pg_get_viewdef('v2', true);
       JOIN tt4 USING (b);
 (1 row)
 
-select pg_get_viewdef('v2a', true);
-              pg_get_viewdef              
+select mdb_get_viewdef('v2a', true);
+              mdb_get_viewdef              
 ------------------------------------------
   SELECT j.b,                            +
      j.c,                                +
@@ -886,8 +886,8 @@ select pg_get_viewdef('v2a', true);
       JOIN tt4 USING (b)) j;
 (1 row)
 
-select pg_get_viewdef('v3', true);
-              pg_get_viewdef              
+select mdb_get_viewdef('v3', true);
+              mdb_get_viewdef              
 ------------------------------------------
   SELECT b,                              +
      tt3.c,                              +
@@ -902,8 +902,8 @@ select pg_get_viewdef('v3', true);
 
 alter table tt3 add column c int;
 alter table tt3 add column e int;
-select pg_get_viewdef('v1', true);
-                  pg_get_viewdef                   
+select mdb_get_viewdef('v1', true);
+                  mdb_get_viewdef                   
 ---------------------------------------------------
   SELECT tt2.b,                                   +
      tt3.c,                                       +
@@ -913,8 +913,8 @@ select pg_get_viewdef('v1', true);
       JOIN tt3 tt3(ax, b, c, c_1, e) USING (b, c);
 (1 row)
 
-select pg_get_viewdef('v1a', true);
-                                  pg_get_viewdef                                   
+select mdb_get_viewdef('v1a', true);
+                                  mdb_get_viewdef                                   
 -----------------------------------------------------------------------------------
   SELECT j.b,                                                                     +
      j.c,                                                                         +
@@ -924,8 +924,8 @@ select pg_get_viewdef('v1a', true);
       JOIN tt3 tt3(ax, b, c, c_1, e) USING (b, c)) j(b, c, a, d, e, ax, c_1, e_1);
 (1 row)
 
-select pg_get_viewdef('v2', true);
-                  pg_get_viewdef                  
+select mdb_get_viewdef('v2', true);
+                  mdb_get_viewdef                  
 --------------------------------------------------
   SELECT tt2.b,                                  +
      tt3.c,                                      +
@@ -938,8 +938,8 @@ select pg_get_viewdef('v2', true);
       JOIN tt4 USING (b);
 (1 row)
 
-select pg_get_viewdef('v2a', true);
-                         pg_get_viewdef                          
+select mdb_get_viewdef('v2a', true);
+                         mdb_get_viewdef                          
 -----------------------------------------------------------------
   SELECT j.b,                                                   +
      j.c,                                                       +
@@ -952,8 +952,8 @@ select pg_get_viewdef('v2a', true);
       JOIN tt4 USING (b)) j(b, c, a, d, e, ax, c_1, e_1, ay, q);
 (1 row)
 
-select pg_get_viewdef('v3', true);
-                  pg_get_viewdef                  
+select mdb_get_viewdef('v3', true);
+                  mdb_get_viewdef                  
 --------------------------------------------------
   SELECT b,                                      +
      tt3.c,                                      +
@@ -967,8 +967,8 @@ select pg_get_viewdef('v3', true);
 (1 row)
 
 alter table tt2 drop column d;
-select pg_get_viewdef('v1', true);
-                  pg_get_viewdef                   
+select mdb_get_viewdef('v1', true);
+                  mdb_get_viewdef                   
 ---------------------------------------------------
   SELECT tt2.b,                                   +
      tt3.c,                                       +
@@ -978,8 +978,8 @@ select pg_get_viewdef('v1', true);
       JOIN tt3 tt3(ax, b, c, c_1, e) USING (b, c);
 (1 row)
 
-select pg_get_viewdef('v1a', true);
-                                 pg_get_viewdef                                 
+select mdb_get_viewdef('v1a', true);
+                                 mdb_get_viewdef                                 
 --------------------------------------------------------------------------------
   SELECT j.b,                                                                  +
      j.c,                                                                      +
@@ -989,8 +989,8 @@ select pg_get_viewdef('v1a', true);
       JOIN tt3 tt3(ax, b, c, c_1, e) USING (b, c)) j(b, c, a, e, ax, c_1, e_1);
 (1 row)
 
-select pg_get_viewdef('v2', true);
-                  pg_get_viewdef                  
+select mdb_get_viewdef('v2', true);
+                  mdb_get_viewdef                  
 --------------------------------------------------
   SELECT tt2.b,                                  +
      tt3.c,                                      +
@@ -1003,8 +1003,8 @@ select pg_get_viewdef('v2', true);
       JOIN tt4 USING (b);
 (1 row)
 
-select pg_get_viewdef('v2a', true);
-                        pg_get_viewdef                        
+select mdb_get_viewdef('v2a', true);
+                        mdb_get_viewdef                        
 --------------------------------------------------------------
   SELECT j.b,                                                +
      j.c,                                                    +
@@ -1017,8 +1017,8 @@ select pg_get_viewdef('v2a', true);
       JOIN tt4 USING (b)) j(b, c, a, e, ax, c_1, e_1, ay, q);
 (1 row)
 
-select pg_get_viewdef('v3', true);
-                  pg_get_viewdef                  
+select mdb_get_viewdef('v3', true);
+                  mdb_get_viewdef                  
 --------------------------------------------------
   SELECT b,                                      +
      tt3.c,                                      +
@@ -1034,8 +1034,8 @@ select pg_get_viewdef('v3', true);
 create table tt5 (a int, b int);
 create table tt6 (c int, d int);
 create view vv1 as select * from (tt5 cross join tt6) j(aa,bb,cc,dd);
-select pg_get_viewdef('vv1', true);
-             pg_get_viewdef              
+select mdb_get_viewdef('vv1', true);
+             mdb_get_viewdef              
 -----------------------------------------
   SELECT j.aa,                          +
      j.bb,                              +
@@ -1046,8 +1046,8 @@ select pg_get_viewdef('vv1', true);
 (1 row)
 
 alter table tt5 add column c int;
-select pg_get_viewdef('vv1', true);
-               pg_get_viewdef               
+select mdb_get_viewdef('vv1', true);
+               mdb_get_viewdef               
 --------------------------------------------
   SELECT j.aa,                             +
      j.bb,                                 +
@@ -1058,8 +1058,8 @@ select pg_get_viewdef('vv1', true);
 (1 row)
 
 alter table tt5 add column cc int;
-select pg_get_viewdef('vv1', true);
-                  pg_get_viewdef                  
+select mdb_get_viewdef('vv1', true);
+                  mdb_get_viewdef                  
 --------------------------------------------------
   SELECT j.aa,                                   +
      j.bb,                                       +
@@ -1070,8 +1070,8 @@ select pg_get_viewdef('vv1', true);
 (1 row)
 
 alter table tt5 drop column c;
-select pg_get_viewdef('vv1', true);
-                pg_get_viewdef                 
+select mdb_get_viewdef('vv1', true);
+                mdb_get_viewdef                 
 -----------------------------------------------
   SELECT j.aa,                                +
      j.bb,                                    +
@@ -1089,8 +1089,8 @@ create view vv2 as
 select * from (values(1,2,3,4,5)) v(a,b,c,d,e)
 union all
 select * from tt7 full join tt8 using (x), tt8 tt8x;
-select pg_get_viewdef('vv2', true);
-                 pg_get_viewdef                 
+select mdb_get_viewdef('vv2', true);
+                 mdb_get_viewdef                 
 ------------------------------------------------
   SELECT v.a,                                  +
      v.b,                                      +
@@ -1115,8 +1115,8 @@ union all
 select * from
   tt7 full join tt8 using (x),
   tt7 tt7x full join tt8 tt8x using (x);
-select pg_get_viewdef('vv3', true);
-                   pg_get_viewdef                    
+select mdb_get_viewdef('vv3', true);
+                   mdb_get_viewdef                    
 -----------------------------------------------------
   SELECT v.a,                                       +
      v.b,                                           +
@@ -1144,8 +1144,8 @@ union all
 select * from
   tt7 full join tt8 using (x),
   tt7 tt7x full join tt8 tt8x using (x) full join tt8 tt8y using (x);
-select pg_get_viewdef('vv4', true);
-                      pg_get_viewdef                      
+select mdb_get_viewdef('vv4', true);
+                      mdb_get_viewdef                      
 ----------------------------------------------------------
   SELECT v.a,                                            +
      v.b,                                                +
@@ -1174,8 +1174,8 @@ alter table tt7 add column zz int;
 alter table tt7 add column z int;
 alter table tt7 drop column zz;
 alter table tt8 add column z2 int;
-select pg_get_viewdef('vv2', true);
-                 pg_get_viewdef                 
+select mdb_get_viewdef('vv2', true);
+                 mdb_get_viewdef                 
 ------------------------------------------------
   SELECT v.a,                                  +
      v.b,                                      +
@@ -1194,8 +1194,8 @@ select pg_get_viewdef('vv2', true);
      tt8 tt8x(x_1, z, z2);
 (1 row)
 
-select pg_get_viewdef('vv3', true);
-                   pg_get_viewdef                    
+select mdb_get_viewdef('vv3', true);
+                   mdb_get_viewdef                    
 -----------------------------------------------------
   SELECT v.a,                                       +
      v.b,                                           +
@@ -1217,8 +1217,8 @@ select pg_get_viewdef('vv3', true);
       FULL JOIN tt8 tt8x(x_1, z, z2) USING (x_1);
 (1 row)
 
-select pg_get_viewdef('vv4', true);
-                      pg_get_viewdef                      
+select mdb_get_viewdef('vv4', true);
+                      mdb_get_viewdef                      
 ----------------------------------------------------------
   SELECT v.a,                                            +
      v.b,                                                +
@@ -1251,8 +1251,8 @@ create view vv2a as
 select * from (values(now(),2,3,now(),5)) v(a,b,c,d,e)
 union all
 select * from tt7a left join tt8a using (x), tt8a tt8ax;
-select pg_get_viewdef('vv2a', true);
-                     pg_get_viewdef                     
+select mdb_get_viewdef('vv2a', true);
+                     mdb_get_viewdef                     
 --------------------------------------------------------
   SELECT v.a,                                          +
      v.b,                                              +
@@ -1277,8 +1277,8 @@ select pg_get_viewdef('vv2a', true);
 create table tt9 (x int, xx int, y int);
 create table tt10 (x int, z int);
 create view vv5 as select x,y,z from tt9 join tt10 using(x);
-select pg_get_viewdef('vv5', true);
-      pg_get_viewdef       
+select mdb_get_viewdef('vv5', true);
+      mdb_get_viewdef       
 ---------------------------
   SELECT tt9.x,           +
      tt9.y,               +
@@ -1288,8 +1288,8 @@ select pg_get_viewdef('vv5', true);
 (1 row)
 
 alter table tt9 drop column xx;
-select pg_get_viewdef('vv5', true);
-      pg_get_viewdef       
+select mdb_get_viewdef('vv5', true);
+      mdb_get_viewdef       
 ---------------------------
   SELECT tt9.x,           +
      tt9.y,               +
@@ -1307,8 +1307,8 @@ create table tt12 (x int, z int);
 create table tt13 (z int, q int);
 create view vv6 as select x,y,z,q from
   (tt11 join tt12 using(x)) join tt13 using(z);
-select pg_get_viewdef('vv6', true);
-      pg_get_viewdef       
+select mdb_get_viewdef('vv6', true);
+      mdb_get_viewdef       
 ---------------------------
   SELECT tt11.x,          +
      tt11.y,              +
@@ -1320,8 +1320,8 @@ select pg_get_viewdef('vv6', true);
 (1 row)
 
 alter table tt11 add column z int;
-select pg_get_viewdef('vv6', true);
-        pg_get_viewdef        
+select mdb_get_viewdef('vv6', true);
+        mdb_get_viewdef        
 ------------------------------
   SELECT tt11.x,             +
      tt11.y,                 +
@@ -1351,8 +1351,8 @@ end;
 $$
 language plmdb;
 create view tt14v as select t.* from tt14f() t;
-select pg_get_viewdef('tt14v', true);
-         pg_get_viewdef         
+select mdb_get_viewdef('tt14v', true);
+         mdb_get_viewdef         
 --------------------------------
   SELECT t.f1,                 +
      t.f3,                     +
@@ -1369,8 +1369,8 @@ select * from tt14v;
 -- this perhaps should be rejected, but it isn't:
 alter table tt14t drop column f3;
 -- f3 is still in the view but will read as nulls
-select pg_get_viewdef('tt14v', true);
-         pg_get_viewdef         
+select mdb_get_viewdef('tt14v', true);
+         mdb_get_viewdef         
 --------------------------------
   SELECT t.f1,                 +
      t.f3,                     +
@@ -1397,8 +1397,8 @@ select * from tt15v;
  ("(4567890123456789,-4567890123456789)")
 (5 rows)
 
-select pg_get_viewdef('tt15v', true);
-                    pg_get_viewdef                    
+select mdb_get_viewdef('tt15v', true);
+                    mdb_get_viewdef                    
 ------------------------------------------------------
   SELECT ROW(i.*::int8_tbl)::nestedcomposite AS "row"+
     FROM int8_tbl i;
@@ -1425,8 +1425,8 @@ select * from tt16v;
  4567890123456789 | -4567890123456789 | (4567890123456789,-4567890123456789)
 (5 rows)
 
-select pg_get_viewdef('tt16v', true);
-              pg_get_viewdef               
+select mdb_get_viewdef('tt16v', true);
+              mdb_get_viewdef               
 -------------------------------------------
   SELECT i.q1,                            +
      i.q2,                                +
@@ -1456,8 +1456,8 @@ select * from tt17v;
  4567890123456789 | -4567890123456789
 (5 rows)
 
-select pg_get_viewdef('tt17v', true);
-               pg_get_viewdef                
+select mdb_get_viewdef('tt17v', true);
+               mdb_get_viewdef                
 ---------------------------------------------
   SELECT i.q1,                              +
      i.q2                                   +
@@ -1482,8 +1482,8 @@ create view tt18v as
   select * from int8_tbl xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxz;
 NOTICE:  identifier "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxy" will be truncated to "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 NOTICE:  identifier "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxz" will be truncated to "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-select pg_get_viewdef('tt18v', true);
-                                  pg_get_viewdef                                   
+select mdb_get_viewdef('tt18v', true);
+                                  mdb_get_viewdef                                   
 -----------------------------------------------------------------------------------
   SELECT xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.q1,      +
      xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.q2           +
@@ -1523,8 +1523,8 @@ select 'foo'::text = any((select array['abc','def','foo']::text[])::text[]);
 create view tt19v as
 select 'foo'::text = any(array['abc','def','foo']::text[]) c1,
        'foo'::text = any((select array['abc','def','foo']::text[])::text[]) c2;
-select pg_get_viewdef('tt19v', true);
-                                               pg_get_viewdef                                               
+select mdb_get_viewdef('tt19v', true);
+                                               mdb_get_viewdef                                               
 ------------------------------------------------------------------------------------------------------------
   SELECT 'foo'::text = ANY (ARRAY['abc'::text, 'def'::text, 'foo'::text]) AS c1,                           +
      'foo'::text = ANY ((( SELECT ARRAY['abc'::text, 'def'::text, 'foo'::text] AS "array"))::text[]) AS c2;

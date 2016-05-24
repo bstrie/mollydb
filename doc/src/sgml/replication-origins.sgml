@@ -39,11 +39,11 @@
 
  <para>
   Replication origins can be created using the function
-  <link linkend="pg-replication-origin-create"><function>pg_replication_origin_create()</function></link>;
+  <link linkend="pg-replication-origin-create"><function>mdb_replication_origin_create()</function></link>;
   dropped using
-  <link linkend="pg-replication-origin-drop"><function>pg_replication_origin_drop()</function></link>;
+  <link linkend="pg-replication-origin-drop"><function>mdb_replication_origin_drop()</function></link>;
   and seen in the
-  <link linkend="catalog-pg-replication-origin"><structname>pg_replication_origin</structname></link>
+  <link linkend="catalog-pg-replication-origin"><structname>mdb_replication_origin</structname></link>
   system catalog.
  </para>
 
@@ -59,20 +59,20 @@
  <para>
   Using the replication origin infrastructure a session can be
   marked as replaying from a remote node (using the
-  <link linkend="pg-replication-origin-session-setup"><function>pg_replication_origin_session_setup()</function></link>
+  <link linkend="pg-replication-origin-session-setup"><function>mdb_replication_origin_session_setup()</function></link>
   function). Additionally the <acronym>LSN</acronym> and commit
   time stamp of every source transaction can be configured on a per
   transaction basis using
-  <link linkend="pg-replication-origin-xact-setup"><function>pg_replication_origin_xact_setup()</function></link>.
+  <link linkend="pg-replication-origin-xact-setup"><function>mdb_replication_origin_xact_setup()</function></link>.
   If that's done replication progress will persist in a crash safe
   manner. Replay progress for all replication origins can be seen in the
   <link linkend="view-pg-replication-origin-status">
-   <structname>pg_replication_origin_status</structname>
+   <structname>mdb_replication_origin_status</structname>
   </link> view. An individual origin's progress, e.g. when resuming
   replication, can be acquired using
-  <link linkend="pg-replication-origin-progress"><function>pg_replication_origin_progress()</function></link>
+  <link linkend="pg-replication-origin-progress"><function>mdb_replication_origin_progress()</function></link>
   for any origin or
-  <link linkend="pg-replication-origin-session-progress"><function>pg_replication_origin_session_progress()</function></link>
+  <link linkend="pg-replication-origin-session-progress"><function>mdb_replication_origin_session_progress()</function></link>
   for the origin configured in the current session.
  </para>
 

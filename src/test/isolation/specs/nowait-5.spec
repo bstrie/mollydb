@@ -20,7 +20,7 @@ teardown
 
 session "sl1"
 step "sl1_prep" {
-	PREPARE sl1_run AS SELECT id FROM test_nowait WHERE pg_advisory_lock(0) is not null FOR UPDATE NOWAIT;
+	PREPARE sl1_run AS SELECT id FROM test_nowait WHERE mdb_advisory_lock(0) is not null FOR UPDATE NOWAIT;
 }
 step "sl1_exec" {
 	BEGIN ISOLATION LEVEL READ COMMITTED;
@@ -33,7 +33,7 @@ teardown { COMMIT; }
 # chain following.
 session "upd"
 step "upd_getlock" {
-	SELECT pg_advisory_lock(0);
+	SELECT mdb_advisory_lock(0);
 }
 step "upd_doupdate" {
 	BEGIN ISOLATION LEVEL READ COMMITTED;
@@ -41,7 +41,7 @@ step "upd_doupdate" {
 	COMMIT;
 }
 step "upd_releaselock" {
-	SELECT pg_advisory_unlock(0);
+	SELECT mdb_advisory_unlock(0);
 }
 
 # A session that acquires locks that sl1 is supposed to avoid blocking on

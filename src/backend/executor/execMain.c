@@ -46,7 +46,7 @@
 #include "commands/trigger.h"
 #include "executor/execdebug.h"
 #include "foreign/fdwapi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "optimizer/clauses.h"
 #include "parser/parsetree.h"
@@ -611,7 +611,7 @@ ExecCheckRTEPerms(RangeTblEntry *rte)
 	 * satisfied from column-level rather than relation-level permissions.
 	 * First, remove any bits that are satisfied by relation permissions.
 	 */
-	relPerms = pg_class_aclmask(relOid, userid, requiredPerms, ACLMASK_ALL);
+	relPerms = mdb_class_aclmask(relOid, userid, requiredPerms, ACLMASK_ALL);
 	remainingPerms = requiredPerms & ~relPerms;
 	if (remainingPerms != 0)
 	{
@@ -640,7 +640,7 @@ ExecCheckRTEPerms(RangeTblEntry *rte)
 			 */
 			if (bms_is_empty(rte->selectedCols))
 			{
-				if (pg_attribute_aclcheck_all(relOid, userid, ACL_SELECT,
+				if (mdb_attribute_aclcheck_all(relOid, userid, ACL_SELECT,
 											  ACLMASK_ANY) != ACLCHECK_OK)
 					return false;
 			}
@@ -653,13 +653,13 @@ ExecCheckRTEPerms(RangeTblEntry *rte)
 				if (attno == InvalidAttrNumber)
 				{
 					/* Whole-row reference, must have priv on all cols */
-					if (pg_attribute_aclcheck_all(relOid, userid, ACL_SELECT,
+					if (mdb_attribute_aclcheck_all(relOid, userid, ACL_SELECT,
 												  ACLMASK_ALL) != ACLCHECK_OK)
 						return false;
 				}
 				else
 				{
-					if (pg_attribute_aclcheck(relOid, attno, userid,
+					if (mdb_attribute_aclcheck(relOid, attno, userid,
 											  ACL_SELECT) != ACLCHECK_OK)
 						return false;
 				}
@@ -703,7 +703,7 @@ ExecCheckRTEPermsModified(Oid relOid, Oid userid, Bitmapset *modifiedCols,
 	 */
 	if (bms_is_empty(modifiedCols))
 	{
-		if (pg_attribute_aclcheck_all(relOid, userid, requiredPerms,
+		if (mdb_attribute_aclcheck_all(relOid, userid, requiredPerms,
 									  ACLMASK_ANY) != ACLCHECK_OK)
 			return false;
 	}
@@ -720,7 +720,7 @@ ExecCheckRTEPermsModified(Oid relOid, Oid userid, Bitmapset *modifiedCols,
 		}
 		else
 		{
-			if (pg_attribute_aclcheck(relOid, attno, userid,
+			if (mdb_attribute_aclcheck(relOid, attno, userid,
 									  requiredPerms) != ACLCHECK_OK)
 				return false;
 		}
@@ -1925,7 +1925,7 @@ ExecBuildSlotValueDescription(Oid reloid,
 	 * rights on.  Additionally, we always include columns the user provided
 	 * data for.
 	 */
-	aclresult = pg_class_aclcheck(reloid, GetUserId(), ACL_SELECT);
+	aclresult = mdb_class_aclcheck(reloid, GetUserId(), ACL_SELECT);
 	if (aclresult != ACLCHECK_OK)
 	{
 		/* Set up the buffer for the column list */
@@ -1956,7 +1956,7 @@ ExecBuildSlotValueDescription(Oid reloid,
 			 * for the column.  If not, omit this column from the error
 			 * message.
 			 */
-			aclresult = pg_attribute_aclcheck(reloid, tupdesc->attrs[i]->attnum,
+			aclresult = mdb_attribute_aclcheck(reloid, tupdesc->attrs[i]->attnum,
 											  GetUserId(), ACL_SELECT);
 			if (bms_is_member(tupdesc->attrs[i]->attnum - FirstLowInvalidHeapAttributeNumber,
 							  modifiedCols) || aclresult == ACLCHECK_OK)
@@ -1997,7 +1997,7 @@ ExecBuildSlotValueDescription(Oid reloid,
 				appendStringInfoString(&buf, val);
 			else
 			{
-				vallen = pg_mbcliplen(val, vallen, maxfieldlen);
+				vallen = mdb_mbcliplen(val, vallen, maxfieldlen);
 				appendBinaryStringInfo(&buf, val, vallen);
 				appendStringInfoString(&buf, "...");
 			}

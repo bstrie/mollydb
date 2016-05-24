@@ -29,8 +29,8 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_aggregate.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_aggregate.h"
+#include "catalog/mdb_type.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
 #include "optimizer/clauses.h"
@@ -510,14 +510,14 @@ static Oid
 fetch_agg_sort_op(Oid aggfnoid)
 {
 	HeapTuple	aggTuple;
-	Form_pg_aggregate aggform;
+	Form_mdb_aggregate aggform;
 	Oid			aggsortop;
 
-	/* fetch aggregate entry from pg_aggregate */
+	/* fetch aggregate entry from mdb_aggregate */
 	aggTuple = SearchSysCache1(AGGFNOID, ObjectIdGetDatum(aggfnoid));
 	if (!HeapTupleIsValid(aggTuple))
 		return InvalidOid;
-	aggform = (Form_pg_aggregate) GETSTRUCT(aggTuple);
+	aggform = (Form_mdb_aggregate) GETSTRUCT(aggTuple);
 	aggsortop = aggform->aggsortop;
 	ReleaseSysCache(aggTuple);
 

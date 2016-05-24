@@ -931,7 +931,7 @@
   </varlistentry>
 
   <varlistentry>
-   <term><filename>pg_trgm</></term>
+   <term><filename>mdb_trgm</></term>
    <listitem>
     <para>Text similarity using trigram matching</para>
    </listitem>

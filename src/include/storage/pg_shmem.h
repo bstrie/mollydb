@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_shmem.h
+ * mdb_shmem.h
  *	  Platform-independent API for shared memory support.
  *
  * Every port is expected to support shared memory with approximately
@@ -17,7 +17,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/storage/pg_shmem.h
+ * src/include/storage/mdb_shmem.h
  *
  *-------------------------------------------------------------------------
  */

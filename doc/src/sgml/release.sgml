@@ -5,14 +5,14 @@ Typical markup:
 
 &<>                             use & escapes
 MollyDB                      <productname>
-mollydb.conf, pg_hba.conf,
+mollydb.conf, mdb_hba.conf,
         recovery.conf           <filename>
 [A-Z][A-Z_ ]+[A-Z_]             <command>, <literal>, <envar>, <acronym>
 [A-Za-z_][A-Za-z0-9_]+()        <function>
 -[-A-Za-z_]+                    <option>
 [A-Za-z_]+/[A-Za-z_]+           <filename>
 psql                            <application>
-pg_[A-Za-z0-9_]+                <application>, <structname>
+mdb_[A-Za-z0-9_]+                <application>, <structname>
 [A-Z][A-Z][A-Z_ ]*              <type>
 [a-z]+_[a-z_]+                  <varname>
 

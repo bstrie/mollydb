@@ -18,7 +18,7 @@
 #include <ctype.h>
 
 #include "parser/scansup.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 
 /* ----------------
@@ -144,7 +144,7 @@ downcase_identifier(const char *ident, int len, bool warn, bool truncate)
 	bool		enc_is_single_byte;
 
 	result = palloc(len + 1);
-	enc_is_single_byte = pg_database_encoding_max_length() == 1;
+	enc_is_single_byte = mdb_database_encoding_max_length() == 1;
 
 	/*
 	 * SQL99 specifies Unicode-aware case normalization, which we don't yet
@@ -188,7 +188,7 @@ truncate_identifier(char *ident, int len, bool warn)
 {
 	if (len >= NAMEDATALEN)
 	{
-		len = pg_mbcliplen(ident, len, NAMEDATALEN - 1);
+		len = mdb_mbcliplen(ident, len, NAMEDATALEN - 1);
 		if (warn)
 		{
 			/*

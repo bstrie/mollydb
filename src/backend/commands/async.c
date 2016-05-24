@@ -19,7 +19,7 @@
  *	  several channels. (Channels are also called "conditions" in other
  *	  parts of the code.)
  *
- * 2. There is one central queue in disk-based storage (directory pg_notify/),
+ * 2. There is one central queue in disk-based storage (directory mdb_notify/),
  *	  with actively-used pages mapped into shared memory by the slru.c module.
  *	  All notification messages are placed in the queue and later read out
  *	  by listening backends.
@@ -35,7 +35,7 @@
  *	  misinterpret non-ASCII text in the channel name or payload string.
  *
  *	  Since notifications are not expected to survive database crashes,
- *	  we can simply clean out the pg_notify data at any reboot, and there
+ *	  we can simply clean out the mdb_notify data at any reboot, and there
  *	  is no need for WAL support or fsync'ing.
  *
  * 3. Every backend that is listening on at least one channel registers by
@@ -95,7 +95,7 @@
  *	  second-laziest backend is (in general, we take the MIN of the current
  *	  head position and all active backends' new tail pointers). Whenever we
  *	  move the global tail pointer we also truncate now-unused pages (i.e.,
- *	  delete files in pg_notify/ that are no longer used).
+ *	  delete files in mdb_notify/ that are no longer used).
  *
  * An application that listens on the same channel it notifies will get
  * NOTIFY messages for its own NOTIFYs.  These can be ignored, if not useful,
@@ -121,7 +121,7 @@
 #include "access/slru.h"
 #include "access/transam.h"
 #include "access/xact.h"
-#include "catalog/pg_database.h"
+#include "catalog/mdb_database.h"
 #include "commands/async.h"
 #include "funcapi.h"
 #include "libpq/libpq.h"
@@ -232,7 +232,7 @@ typedef struct QueueBackendStatus
  * When holding the lock in EXCLUSIVE mode, backends can inspect the entries
  * of other backends and also change the head and tail pointers.
  *
- * AsyncCtlLock is used as the control lock for the pg_notify SLRU buffers.
+ * AsyncCtlLock is used as the control lock for the mdb_notify SLRU buffers.
  * In order to avoid deadlocks, whenever we need both locks, we always first
  * get AsyncQueueLock and then AsyncCtlLock.
  *
@@ -476,25 +476,25 @@ AsyncShmemInit(void)
 	}
 
 	/*
-	 * Set up SLRU management of the pg_notify data.
+	 * Set up SLRU management of the mdb_notify data.
 	 */
 	AsyncCtl->PagePrecedes = asyncQueuePagePrecedes;
 	SimpleLruInit(AsyncCtl, "async", NUM_ASYNC_BUFFERS, 0,
-				  AsyncCtlLock, "pg_notify", LWTRANCHE_ASYNC_BUFFERS);
+				  AsyncCtlLock, "mdb_notify", LWTRANCHE_ASYNC_BUFFERS);
 	/* Override default assumption that writes should be fsync'd */
 	AsyncCtl->do_fsync = false;
 
 	if (!found)
 	{
 		/*
-		 * During start or reboot, clean out the pg_notify directory.
+		 * During start or reboot, clean out the mdb_notify directory.
 		 */
 		(void) SlruScanDirectory(AsyncCtl, SlruScanDirCbDeleteAll, NULL);
 
 		/* Now initialize page zero to empty */
 		LWLockAcquire(AsyncCtlLock, LW_EXCLUSIVE);
 		slotno = SimpleLruZeroPage(AsyncCtl, QUEUE_POS_PAGE(QUEUE_HEAD));
-		/* This write is just to verify that pg_notify/ is writable */
+		/* This write is just to verify that mdb_notify/ is writable */
 		SimpleLruWritePage(AsyncCtl, slotno);
 		LWLockRelease(AsyncCtlLock);
 	}
@@ -502,11 +502,11 @@ AsyncShmemInit(void)
 
 
 /*
- * pg_notify -
+ * mdb_notify -
  *	  SQL function to send a notification event
  */
 Datum
-pg_notify(PG_FUNCTION_ARGS)
+mdb_notify(PG_FUNCTION_ARGS)
 {
 	const char *channel;
 	const char *payload;
@@ -687,7 +687,7 @@ Async_UnlistenAll(void)
  * change within a transaction.
  */
 Datum
-pg_listening_channels(PG_FUNCTION_ARGS)
+mdb_listening_channels(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	ListCell  **lcp;
@@ -1411,7 +1411,7 @@ asyncQueueAddEntries(ListCell *nextNotify)
  * occupied.
  */
 Datum
-pg_notification_queue_usage(PG_FUNCTION_ARGS)
+mdb_notification_queue_usage(PG_FUNCTION_ARGS)
 {
 	double		usage;
 
@@ -1984,7 +1984,7 @@ asyncQueueProcessPageEntries(volatile QueuePosition *current,
 
 /*
  * Advance the shared queue tail variable to the minimum of all the
- * per-backend tail pointers.  Truncate pg_notify space if possible.
+ * per-backend tail pointers.  Truncate mdb_notify space if possible.
  */
 static void
 asyncQueueAdvanceTail(void)

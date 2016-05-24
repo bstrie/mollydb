@@ -63,9 +63,9 @@ LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regt
 ALTER VIEW regtest_view_1 OWNER TO regtest_semdb_test_user;
 LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_view_t:s0 tclass=db_view name="regtest_schema_1.regtest_view_1"
 ALTER FUNCTION regtest_func_1(text) OWNER TO regtest_semdb_test_user;
-LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="regtest_schema_1.regtest_func_1(pg_catalog.text)"
+LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="regtest_schema_1.regtest_func_1(mdb_catalog.text)"
 ALTER FUNCTION regtest_func_1(text) OWNER TO regtest_semdb_test_user;
-LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="regtest_schema_1.regtest_func_1(pg_catalog.text)"
+LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="regtest_schema_1.regtest_func_1(mdb_catalog.text)"
 --
 -- ALTER xxx SET SCHEMA
 --
@@ -84,7 +84,7 @@ LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regt
 ALTER FUNCTION regtest_func_1(text) SET SCHEMA regtest_schema_2;
 LOG:  SELinux: allowed { remove_name } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_schema_t:s0 tclass=db_schema name="regtest_schema_1"
 LOG:  SELinux: allowed { add_name } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_schema_t:s0 tclass=db_schema name="regtest_schema_1"
-LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="regtest_schema_1.regtest_func_1(pg_catalog.text)"
+LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="regtest_schema_1.regtest_func_1(mdb_catalog.text)"
 --
 -- ALTER xxx RENAME TO
 --
@@ -105,7 +105,7 @@ LOG:  SELinux: allowed { add_name remove_name } scontext=unconfined_u:unconfined
 LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_view_t:s0 tclass=db_view name="regtest_schema_2.regtest_view_1"
 ALTER FUNCTION regtest_func_1(text) RENAME TO regtest_func;
 LOG:  SELinux: allowed { add_name remove_name } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_schema_t:s0 tclass=db_schema name="regtest_schema_2"
-LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="regtest_schema_2.regtest_func_1(pg_catalog.text)"
+LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_proc_exec_t:s0 tclass=db_procedure name="regtest_schema_2.regtest_func_1(mdb_catalog.text)"
 SET search_path = regtest_schema, regtest_schema_2, public;
 --
 -- misc ALTER commands
@@ -117,12 +117,12 @@ ALTER TABLE regtest_table ADD COLUMN d float;
 LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_schema_t:s0 tclass=db_schema name="regtest_schema"
 LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_schema_t:s0 tclass=db_schema name="regtest_schema_2"
 LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="public"
-LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="pg_catalog"
+LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="mdb_catalog"
 LINE 1: ALTER TABLE regtest_table ADD COLUMN d float;
                                                ^
-LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="pg_catalog"
+LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="mdb_catalog"
 LOG:  SELinux: allowed { create } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_column name="regtest_schema_2.regtest_table.d"
-LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="pg_catalog"
+LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="mdb_catalog"
 LOG:  SELinux: allowed { create } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_column name="regtest_schema.regtest_table_2.d"
 ALTER TABLE regtest_table DROP COLUMN d;
 LOG:  SELinux: allowed { drop } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_column name="regtest_schema.regtest_table_2.d"
@@ -145,10 +145,10 @@ ALTER TABLE regtest_table ALTER b SET STORAGE PLAIN;
 LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_column name="regtest_schema_2.regtest_table.b"
 LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_column name="regtest_schema.regtest_table_2.b"
 ALTER TABLE regtest_table ADD CONSTRAINT test_fk FOREIGN KEY (a) REFERENCES regtest_table_3(x); -- not supported
-LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="pg_catalog"
-LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="pg_catalog"
-LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="pg_catalog"
-LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="pg_catalog"
+LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="mdb_catalog"
+LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="mdb_catalog"
+LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="mdb_catalog"
+LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="mdb_catalog"
 LOG:  SELinux: allowed { select } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_table name="regtest_schema_2.regtest_table"
 LOG:  SELinux: allowed { select } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_column name="table regtest_table column a"
 LOG:  SELinux: allowed { select } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_table name="regtest_schema.regtest_table_3"
@@ -156,16 +156,16 @@ LOG:  SELinux: allowed { select } scontext=unconfined_u:unconfined_r:semdb_regte
 LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_schema_t:s0 tclass=db_schema name="regtest_schema_2"
 LINE 1: SELECT fk."a" FROM ONLY "regtest_schema_2"."regtest_table" f...
                                 ^
-QUERY:  SELECT fk."a" FROM ONLY "regtest_schema_2"."regtest_table" fk LEFT OUTER JOIN ONLY "regtest_schema"."regtest_table_3" pk ON ( pk."x" OPERATOR(pg_catalog.=) fk."a") WHERE pk."x" IS NULL AND (fk."a" IS NOT NULL)
+QUERY:  SELECT fk."a" FROM ONLY "regtest_schema_2"."regtest_table" fk LEFT OUTER JOIN ONLY "regtest_schema"."regtest_table_3" pk ON ( pk."x" OPERATOR(mdb_catalog.=) fk."a") WHERE pk."x" IS NULL AND (fk."a" IS NOT NULL)
 LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_schema_t:s0 tclass=db_schema name="regtest_schema"
 LINE 1: ...schema_2"."regtest_table" fk LEFT OUTER JOIN ONLY "regtest_s...
                                                              ^
-QUERY:  SELECT fk."a" FROM ONLY "regtest_schema_2"."regtest_table" fk LEFT OUTER JOIN ONLY "regtest_schema"."regtest_table_3" pk ON ( pk."x" OPERATOR(pg_catalog.=) fk."a") WHERE pk."x" IS NULL AND (fk."a" IS NOT NULL)
-LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="pg_catalog"
+QUERY:  SELECT fk."a" FROM ONLY "regtest_schema_2"."regtest_table" fk LEFT OUTER JOIN ONLY "regtest_schema"."regtest_table_3" pk ON ( pk."x" OPERATOR(mdb_catalog.=) fk."a") WHERE pk."x" IS NULL AND (fk."a" IS NOT NULL)
+LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="mdb_catalog"
 LINE 1: ..."regtest_schema"."regtest_table_3" pk ON ( pk."x" OPERATOR(p...
                                                              ^
-QUERY:  SELECT fk."a" FROM ONLY "regtest_schema_2"."regtest_table" fk LEFT OUTER JOIN ONLY "regtest_schema"."regtest_table_3" pk ON ( pk."x" OPERATOR(pg_catalog.=) fk."a") WHERE pk."x" IS NULL AND (fk."a" IS NOT NULL)
-LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="pg_catalog"
+QUERY:  SELECT fk."a" FROM ONLY "regtest_schema_2"."regtest_table" fk LEFT OUTER JOIN ONLY "regtest_schema"."regtest_table_3" pk ON ( pk."x" OPERATOR(mdb_catalog.=) fk."a") WHERE pk."x" IS NULL AND (fk."a" IS NOT NULL)
+LOG:  SELinux: allowed { search } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=system_u:object_r:semdb_schema_t:s0 tclass=db_schema name="mdb_catalog"
 LOG:  SELinux: allowed { select } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_table name="regtest_schema_2.regtest_table"
 LOG:  SELinux: allowed { select } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_column name="table regtest_table column a"
 LOG:  SELinux: allowed { select } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_table name="regtest_schema.regtest_table_3"
@@ -192,7 +192,7 @@ ALTER TABLE regtest_table RESET (fillfactor);
 LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_table name="regtest_schema_2.regtest_table"
 ALTER TABLE regtest_table_2 NO INHERIT regtest_table;   -- not supported
 ALTER TABLE regtest_table_2 INHERIT regtest_table;      -- not supported
-ALTER TABLE regtest_table SET TABLESPACE pg_default;
+ALTER TABLE regtest_table SET TABLESPACE mdb_default;
 LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_table_t:s0 tclass=db_table name="regtest_schema_2.regtest_table"
 ALTER VIEW regtest_view SET (security_barrier);
 LOG:  SELinux: allowed { setattr } scontext=unconfined_u:unconfined_r:semdb_regtest_superuser_t:s0 tcontext=unconfined_u:object_r:semdb_view_t:s0 tclass=db_view name="regtest_schema_2.regtest_view"

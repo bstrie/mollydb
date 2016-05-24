@@ -1,5 +1,5 @@
 /*
- * src/include/pg_config_ext.h.win32.  This is generated manually, not by
+ * src/include/mdb_config_ext.h.win32.  This is generated manually, not by
  * autoheader, since we want to limit which symbols get defined here.
  */
 

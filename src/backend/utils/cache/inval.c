@@ -51,7 +51,7 @@
  *	PrepareToInvalidateCacheTuple() routine provides the knowledge of which
  *	catcaches may need invalidation for a given tuple.
  *
- *	Also, whenever we see an operation on a pg_class or pg_attribute tuple,
+ *	Also, whenever we see an operation on a mdb_class or mdb_attribute tuple,
  *	we register a relcache flush operation for the relation described by that
  *	tuple.
  *
@@ -1126,7 +1126,7 @@ CacheInvalidateHeapTuple(Relation relation,
 	 */
 	if (tupleRelId == RelationRelationId)
 	{
-		Form_pg_class classtup = (Form_pg_class) GETSTRUCT(tuple);
+		Form_mdb_class classtup = (Form_mdb_class) GETSTRUCT(tuple);
 
 		relationId = HeapTupleGetOid(tuple);
 		if (classtup->relisshared)
@@ -1136,7 +1136,7 @@ CacheInvalidateHeapTuple(Relation relation,
 	}
 	else if (tupleRelId == AttributeRelationId)
 	{
-		Form_pg_attribute atttup = (Form_pg_attribute) GETSTRUCT(tuple);
+		Form_mdb_attribute atttup = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 		relationId = atttup->attrelid;
 
@@ -1145,7 +1145,7 @@ CacheInvalidateHeapTuple(Relation relation,
 		 * even if the rel in question is shared (which we can't easily tell).
 		 * This essentially means that only backends in this same database
 		 * will react to the relcache flush request.  This is in fact
-		 * appropriate, since only those backends could see our pg_attribute
+		 * appropriate, since only those backends could see our mdb_attribute
 		 * change anyway.  It looks a bit ugly though.  (In practice, shared
 		 * relations can't have schema changes after bootstrap, so we should
 		 * never come here for a shared rel anyway.)
@@ -1154,10 +1154,10 @@ CacheInvalidateHeapTuple(Relation relation,
 	}
 	else if (tupleRelId == IndexRelationId)
 	{
-		Form_pg_index indextup = (Form_pg_index) GETSTRUCT(tuple);
+		Form_mdb_index indextup = (Form_mdb_index) GETSTRUCT(tuple);
 
 		/*
-		 * When a pg_index row is updated, we should send out a relcache inval
+		 * When a mdb_index row is updated, we should send out a relcache inval
 		 * for the index relation.  As above, we don't know the shared status
 		 * of the index, but in practice it doesn't matter since indexes of
 		 * shared catalogs can't have such updates.
@@ -1228,12 +1228,12 @@ CacheInvalidateRelcache(Relation relation)
 
 /*
  * CacheInvalidateRelcacheByTuple
- *		As above, but relation is identified by passing its pg_class tuple.
+ *		As above, but relation is identified by passing its mdb_class tuple.
  */
 void
 CacheInvalidateRelcacheByTuple(HeapTuple classTuple)
 {
-	Form_pg_class classtup = (Form_pg_class) GETSTRUCT(classTuple);
+	Form_mdb_class classtup = (Form_mdb_class) GETSTRUCT(classTuple);
 	Oid			databaseId;
 	Oid			relationId;
 
@@ -1251,7 +1251,7 @@ CacheInvalidateRelcacheByTuple(HeapTuple classTuple)
  * CacheInvalidateRelcacheByRelid
  *		As above, but relation is identified by passing its OID.
  *		This is the least efficient of the three options; use one of
- *		the above routines if you have a Relation or pg_class tuple.
+ *		the above routines if you have a Relation or mdb_class tuple.
  */
 void
 CacheInvalidateRelcacheByRelid(Oid relid)

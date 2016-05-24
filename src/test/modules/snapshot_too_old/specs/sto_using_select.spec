@@ -28,7 +28,7 @@ teardown
 session "s1"
 setup			{ BEGIN ISOLATION LEVEL REPEATABLE READ; }
 step "s1f1"		{ SELECT c FROM sto1 ORDER BY c LIMIT 1; }
-step "s1sleep"	{ SELECT setting, pg_sleep(6) FROM pg_settings WHERE name = 'old_snapshot_threshold'; }
+step "s1sleep"	{ SELECT setting, mdb_sleep(6) FROM mdb_settings WHERE name = 'old_snapshot_threshold'; }
 step "s1f2"		{ SELECT c FROM sto1 ORDER BY c LIMIT 1; }
 teardown		{ COMMIT; }
 

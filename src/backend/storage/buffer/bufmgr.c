@@ -39,7 +39,7 @@
 #include "executor/instrument.h"
 #include "lib/binaryheap.h"
 #include "miscadmin.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "pgstat.h"
 #include "postmaster/bgwriter.h"
 #include "storage/buf_internals.h"
@@ -471,7 +471,7 @@ ComputeIoConcurrency(int io_concurrency, double *target)
 
 	/*
 	 * Make sure the io_concurrency value is within valid range; it may have
-	 * been forced with a manual pg_tablespace update.
+	 * been forced with a manual mdb_tablespace update.
 	 */
 	io_concurrency = Min(Max(io_concurrency, 0), MAX_IO_CONCURRENCY);
 
@@ -817,11 +817,11 @@ ReadBuffer_common(SMgrRelation smgr, char relpersistence, ForkNumber forkNum,
 		if (isLocalBuf)
 		{
 			/* Only need to adjust flags */
-			uint32		buf_state = pg_atomic_read_u32(&bufHdr->state);
+			uint32		buf_state = mdb_atomic_read_u32(&bufHdr->state);
 
 			Assert(buf_state & BM_VALID);
 			buf_state &= ~BM_VALID;
-			pg_atomic_write_u32(&bufHdr->state, buf_state);
+			mdb_atomic_write_u32(&bufHdr->state, buf_state);
 		}
 		else
 		{
@@ -853,7 +853,7 @@ ReadBuffer_common(SMgrRelation smgr, char relpersistence, ForkNumber forkNum,
 	 * it's not been recycled) but come right back here to try smgrextend
 	 * again.
 	 */
-	Assert(!(pg_atomic_read_u32(&bufHdr->state) & BM_VALID));	/* spinlock not needed */
+	Assert(!(mdb_atomic_read_u32(&bufHdr->state) & BM_VALID));	/* spinlock not needed */
 
 	bufBlock = isLocalBuf ? LocalBufHdrGetBlock(bufHdr) : BufHdrGetBlock(bufHdr);
 
@@ -938,10 +938,10 @@ ReadBuffer_common(SMgrRelation smgr, char relpersistence, ForkNumber forkNum,
 	if (isLocalBuf)
 	{
 		/* Only need to adjust flags */
-		uint32		buf_state = pg_atomic_read_u32(&bufHdr->state);
+		uint32		buf_state = mdb_atomic_read_u32(&bufHdr->state);
 
 		buf_state |= BM_VALID;
-		pg_atomic_write_u32(&bufHdr->state, buf_state);
+		mdb_atomic_write_u32(&bufHdr->state, buf_state);
 	}
 	else
 	{
@@ -1355,7 +1355,7 @@ InvalidateBuffer(BufferDesc *buf)
 	/* Save the original buffer tag before dropping the spinlock */
 	oldTag = buf->tag;
 
-	buf_state = pg_atomic_read_u32(&buf->state);
+	buf_state = mdb_atomic_read_u32(&buf->state);
 	Assert(buf_state & BM_LOCKED);
 	UnlockBufHdr(buf, buf_state);
 
@@ -1463,7 +1463,7 @@ MarkBufferDirty(Buffer buffer)
 	/* unfortunately we can't check if the lock is held exclusively */
 	Assert(LWLockHeldByMe(BufferDescriptorGetContentLock(bufHdr)));
 
-	old_buf_state = pg_atomic_read_u32(&bufHdr->state);
+	old_buf_state = mdb_atomic_read_u32(&bufHdr->state);
 	for (;;)
 	{
 		if (old_buf_state & BM_LOCKED)
@@ -1474,7 +1474,7 @@ MarkBufferDirty(Buffer buffer)
 		Assert(BUF_STATE_GET_REFCOUNT(buf_state) > 0);
 		buf_state |= BM_DIRTY | BM_JUST_DIRTIED;
 
-		if (pg_atomic_compare_exchange_u32(&bufHdr->state, &old_buf_state,
+		if (mdb_atomic_compare_exchange_u32(&bufHdr->state, &old_buf_state,
 										   buf_state))
 			break;
 	}
@@ -1579,7 +1579,7 @@ PinBuffer(BufferDesc *buf, BufferAccessStrategy strategy)
 		ReservePrivateRefCountEntry();
 		ref = NewPrivateRefCountEntry(b);
 
-		old_buf_state = pg_atomic_read_u32(&buf->state);
+		old_buf_state = mdb_atomic_read_u32(&buf->state);
 		for (;;)
 		{
 			if (old_buf_state & BM_LOCKED)
@@ -1594,7 +1594,7 @@ PinBuffer(BufferDesc *buf, BufferAccessStrategy strategy)
 			if (BUF_STATE_GET_USAGECOUNT(buf_state) != BM_MAX_USAGE_COUNT)
 				buf_state += BUF_USAGECOUNT_ONE;
 
-			if (pg_atomic_compare_exchange_u32(&buf->state, &old_buf_state,
+			if (mdb_atomic_compare_exchange_u32(&buf->state, &old_buf_state,
 											   buf_state))
 			{
 				result = (buf_state & BM_VALID) != 0;
@@ -1652,7 +1652,7 @@ PinBuffer_Locked(BufferDesc *buf)
 	 * Since we hold the buffer spinlock, we can update the buffer state and
 	 * release the lock in one operation.
 	 */
-	buf_state = pg_atomic_read_u32(&buf->state);
+	buf_state = mdb_atomic_read_u32(&buf->state);
 	Assert(buf_state & BM_LOCKED);
 	buf_state += BUF_REFCOUNT_ONE;
 	UnlockBufHdr(buf, buf_state);
@@ -1703,7 +1703,7 @@ UnpinBuffer(BufferDesc *buf, bool fixOwner)
 		 * Since buffer spinlock holder can update status using just write,
 		 * it's not safe to use atomic decrement here; thus use a CAS loop.
 		 */
-		old_buf_state = pg_atomic_read_u32(&buf->state);
+		old_buf_state = mdb_atomic_read_u32(&buf->state);
 		for (;;)
 		{
 			if (old_buf_state & BM_LOCKED)
@@ -1713,7 +1713,7 @@ UnpinBuffer(BufferDesc *buf, bool fixOwner)
 
 			buf_state -= BUF_REFCOUNT_ONE;
 
-			if (pg_atomic_compare_exchange_u32(&buf->state, &old_buf_state,
+			if (mdb_atomic_compare_exchange_u32(&buf->state, &old_buf_state,
 											   buf_state))
 				break;
 		}
@@ -1962,7 +1962,7 @@ BufferSync(int flags)
 		 * write the buffer though we didn't need to.  It doesn't seem worth
 		 * guarding against this, though.
 		 */
-		if (pg_atomic_read_u32(&bufHdr->state) & BM_CHECKPOINT_NEEDED)
+		if (mdb_atomic_read_u32(&bufHdr->state) & BM_CHECKPOINT_NEEDED)
 		{
 			if (SyncOneBuffer(buf_id, false, &wb_context) & BUF_WRITTEN)
 			{
@@ -2535,7 +2535,7 @@ PrintBufferLeakWarning(Buffer buffer)
 
 	/* theoretically we should lock the bufhdr here */
 	path = relpathbackend(buf->tag.rnode, backend, buf->tag.forkNum);
-	buf_state = pg_atomic_read_u32(&buf->state);
+	buf_state = mdb_atomic_read_u32(&buf->state);
 	elog(WARNING,
 		 "buffer refcount leak: [%03d] "
 		 "(rel=%s, blockNum=%u, flags=0x%x, refcount=%u %d)",
@@ -2802,7 +2802,7 @@ BufferIsPermanent(Buffer buffer)
 	 * not random garbage.
 	 */
 	bufHdr = GetBufferDescriptor(buffer - 1);
-	return (pg_atomic_read_u32(&bufHdr->state) & BM_PERMANENT) != 0;
+	return (mdb_atomic_read_u32(&bufHdr->state) & BM_PERMANENT) != 0;
 }
 
 /*
@@ -2964,7 +2964,7 @@ DropRelFileNodesAllBuffers(RelFileNodeBackend *rnodes, int nnodes)
 
 	/* sort the list of rnodes if necessary */
 	if (use_bsearch)
-		pg_qsort(nodes, n, sizeof(RelFileNode), rnode_comparator);
+		mdb_qsort(nodes, n, sizeof(RelFileNode), rnode_comparator);
 
 	for (i = 0; i < NBuffers; i++)
 	{
@@ -3144,7 +3144,7 @@ FlushRelationBuffers(Relation rel)
 
 			bufHdr = GetLocalBufferDescriptor(i);
 			if (RelFileNodeEquals(bufHdr->tag.rnode, rel->rd_node) &&
-				((buf_state = pg_atomic_read_u32(&bufHdr->state)) &
+				((buf_state = mdb_atomic_read_u32(&bufHdr->state)) &
 				 (BM_VALID | BM_DIRTY)) == (BM_VALID | BM_DIRTY))
 			{
 				ErrorContextCallback errcallback;
@@ -3167,7 +3167,7 @@ FlushRelationBuffers(Relation rel)
 						  false);
 
 				buf_state &= ~(BM_DIRTY | BM_JUST_DIRTIED);
-				pg_atomic_write_u32(&bufHdr->state, buf_state);
+				mdb_atomic_write_u32(&bufHdr->state, buf_state);
 
 				/* Pop the error context stack */
 				error_context_stack = errcallback.previous;
@@ -3390,7 +3390,7 @@ MarkBufferDirtyHint(Buffer buffer, bool buffer_std)
 	 * is only intended to be used in cases where failing to write out the
 	 * data would be harmless anyway, it doesn't really matter.
 	 */
-	if ((pg_atomic_read_u32(&bufHdr->state) & (BM_DIRTY | BM_JUST_DIRTIED)) !=
+	if ((mdb_atomic_read_u32(&bufHdr->state) & (BM_DIRTY | BM_JUST_DIRTIED)) !=
 		(BM_DIRTY | BM_JUST_DIRTIED))
 	{
 		XLogRecPtr	lsn = InvalidXLogRecPtr;
@@ -3408,7 +3408,7 @@ MarkBufferDirtyHint(Buffer buffer, bool buffer_std)
 		 * when we call XLogInsert() since the value changes dynamically.
 		 */
 		if (XLogHintBitIsNeeded() &&
-			(pg_atomic_read_u32(&bufHdr->state) & BM_PERMANENT))
+			(mdb_atomic_read_u32(&bufHdr->state) & BM_PERMANENT))
 		{
 			/*
 			 * If we're in recovery we cannot dirty a page because of a hint.
@@ -4038,7 +4038,7 @@ LockBufHdr(BufferDesc *desc)
 	while (true)
 	{
 		/* set BM_LOCKED flag */
-		old_buf_state = pg_atomic_fetch_or_u32(&desc->state, BM_LOCKED);
+		old_buf_state = mdb_atomic_fetch_or_u32(&desc->state, BM_LOCKED);
 		/* if it wasn't set before we're OK */
 		if (!(old_buf_state & BM_LOCKED))
 			break;
@@ -4063,12 +4063,12 @@ WaitBufHdrUnlocked(BufferDesc *buf)
 
 	init_local_spin_delay(&delayStatus);
 
-	buf_state = pg_atomic_read_u32(&buf->state);
+	buf_state = mdb_atomic_read_u32(&buf->state);
 
 	while (buf_state & BM_LOCKED)
 	{
 		perform_spin_delay(&delayStatus);
-		buf_state = pg_atomic_read_u32(&buf->state);
+		buf_state = mdb_atomic_read_u32(&buf->state);
 	}
 
 	finish_spin_delay(&delayStatus);

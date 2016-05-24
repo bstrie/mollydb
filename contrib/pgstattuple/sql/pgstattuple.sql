@@ -12,8 +12,8 @@ select * from pgstattuple('test');
 select * from pgstattuple('test'::text);
 select * from pgstattuple('test'::name);
 select * from pgstattuple('test'::regclass);
-select pgstattuple(oid) from pg_class where relname = 'test';
-select pgstattuple(relname) from pg_class where relname = 'test';
+select pgstattuple(oid) from mdb_class where relname = 'test';
+select pgstattuple(relname) from mdb_class where relname = 'test';
 
 select version, tree_level,
     index_size / current_setting('block_size')::int as index_size,
@@ -36,13 +36,13 @@ select version, tree_level,
     avg_leaf_density, leaf_fragmentation
     from pgstatindex('test_pkey'::regclass);
 
-select pg_relpages('test');
-select pg_relpages('test_pkey');
-select pg_relpages('test_pkey'::text);
-select pg_relpages('test_pkey'::name);
-select pg_relpages('test_pkey'::regclass);
-select pg_relpages(oid) from pg_class where relname = 'test_pkey';
-select pg_relpages(relname) from pg_class where relname = 'test_pkey';
+select mdb_relpages('test');
+select mdb_relpages('test_pkey');
+select mdb_relpages('test_pkey'::text);
+select mdb_relpages('test_pkey'::name);
+select mdb_relpages('test_pkey'::regclass);
+select mdb_relpages(oid) from mdb_class where relname = 'test_pkey';
+select mdb_relpages(relname) from mdb_class where relname = 'test_pkey';
 
 create index test_ginidx on test using gin (b);
 

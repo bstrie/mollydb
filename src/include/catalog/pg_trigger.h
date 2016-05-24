@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_trigger.h
- *	  definition of the system "trigger" relation (pg_trigger)
+ * mdb_trigger.h
+ *	  definition of the system "trigger" relation (mdb_trigger)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_trigger.h
+ * src/include/catalog/mdb_trigger.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,18 +22,18 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_trigger definition.  cpp turns this into
- *		typedef struct FormData_pg_trigger
+ *		mdb_trigger definition.  cpp turns this into
+ *		typedef struct FormData_mdb_trigger
  *
  * Note: when tgconstraint is nonzero, tgconstrrelid, tgconstrindid,
  * tgdeferrable, and tginitdeferred are largely redundant with the referenced
- * pg_constraint entry.  However, it is possible for a non-deferrable trigger
+ * mdb_constraint entry.  However, it is possible for a non-deferrable trigger
  * to be associated with a deferrable constraint.
  * ----------------
  */
 #define TriggerRelationId  2620
 
-CATALOG(pg_trigger,2620)
+CATALOG(mdb_trigger,2620)
 {
 	Oid			tgrelid;		/* relation trigger is attached to */
 	NameData	tgname;			/* trigger's name */
@@ -45,7 +45,7 @@ CATALOG(pg_trigger,2620)
 	bool		tgisinternal;	/* trigger is system-generated */
 	Oid			tgconstrrelid;	/* constraint's FROM table, if any */
 	Oid			tgconstrindid;	/* constraint's supporting index, if any */
-	Oid			tgconstraint;	/* associated pg_constraint entry, if any */
+	Oid			tgconstraint;	/* associated mdb_constraint entry, if any */
 	bool		tgdeferrable;	/* constraint trigger is deferrable */
 	bool		tginitdeferred; /* constraint trigger is deferred initially */
 	int16		tgnargs;		/* # of extra arguments in tgargs */
@@ -58,37 +58,37 @@ CATALOG(pg_trigger,2620)
 
 #ifdef CATALOG_VARLEN
 	bytea tgargs BKI_FORCE_NOT_NULL;	/* first\000second\000tgnargs\000 */
-	pg_node_tree tgqual;		/* WHEN expression, or NULL if none */
+	mdb_node_tree tgqual;		/* WHEN expression, or NULL if none */
 #endif
-} FormData_pg_trigger;
+} FormData_mdb_trigger;
 
 /* ----------------
- *		Form_pg_trigger corresponds to a pointer to a tuple with
- *		the format of pg_trigger relation.
+ *		Form_mdb_trigger corresponds to a pointer to a tuple with
+ *		the format of mdb_trigger relation.
  * ----------------
  */
-typedef FormData_pg_trigger *Form_pg_trigger;
+typedef FormData_mdb_trigger *Form_mdb_trigger;
 
 /* ----------------
- *		compiler constants for pg_trigger
+ *		compiler constants for mdb_trigger
  * ----------------
  */
-#define Natts_pg_trigger				15
-#define Anum_pg_trigger_tgrelid			1
-#define Anum_pg_trigger_tgname			2
-#define Anum_pg_trigger_tgfoid			3
-#define Anum_pg_trigger_tgtype			4
-#define Anum_pg_trigger_tgenabled		5
-#define Anum_pg_trigger_tgisinternal	6
-#define Anum_pg_trigger_tgconstrrelid	7
-#define Anum_pg_trigger_tgconstrindid	8
-#define Anum_pg_trigger_tgconstraint	9
-#define Anum_pg_trigger_tgdeferrable	10
-#define Anum_pg_trigger_tginitdeferred	11
-#define Anum_pg_trigger_tgnargs			12
-#define Anum_pg_trigger_tgattr			13
-#define Anum_pg_trigger_tgargs			14
-#define Anum_pg_trigger_tgqual			15
+#define Natts_mdb_trigger				15
+#define Anum_mdb_trigger_tgrelid			1
+#define Anum_mdb_trigger_tgname			2
+#define Anum_mdb_trigger_tgfoid			3
+#define Anum_mdb_trigger_tgtype			4
+#define Anum_mdb_trigger_tgenabled		5
+#define Anum_mdb_trigger_tgisinternal	6
+#define Anum_mdb_trigger_tgconstrrelid	7
+#define Anum_mdb_trigger_tgconstrindid	8
+#define Anum_mdb_trigger_tgconstraint	9
+#define Anum_mdb_trigger_tgdeferrable	10
+#define Anum_mdb_trigger_tginitdeferred	11
+#define Anum_mdb_trigger_tgnargs			12
+#define Anum_mdb_trigger_tgattr			13
+#define Anum_mdb_trigger_tgargs			14
+#define Anum_mdb_trigger_tgqual			15
 
 /* Bits within tgtype */
 #define TRIGGER_TYPE_ROW				(1 << 0)

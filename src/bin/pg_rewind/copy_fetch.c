@@ -21,7 +21,7 @@
 #include "file_ops.h"
 #include "filemap.h"
 #include "logging.h"
-#include "pg_rewind.h"
+#include "mdb_rewind.h"
 
 #include "catalog/catalog.h"
 
@@ -61,7 +61,7 @@ recurse_dir(const char *datadir, const char *parentpath,
 
 	xldir = opendir(fullparentpath);
 	if (xldir == NULL)
-		pg_fatal("could not open directory \"%s\": %s\n",
+		mdb_fatal("could not open directory \"%s\": %s\n",
 				 fullparentpath, strerror(errno));
 
 	while (errno = 0, (xlde = readdir(xldir)) != NULL)
@@ -90,7 +90,7 @@ recurse_dir(const char *datadir, const char *parentpath,
 				 */
 			}
 			else
-				pg_fatal("could not stat file \"%s\": %s\n",
+				mdb_fatal("could not stat file \"%s\": %s\n",
 						 fullpath, strerror(errno));
 		}
 
@@ -119,36 +119,36 @@ recurse_dir(const char *datadir, const char *parentpath,
 
 			len = readlink(fullpath, link_target, sizeof(link_target));
 			if (len < 0)
-				pg_fatal("could not read symbolic link \"%s\": %s\n",
+				mdb_fatal("could not read symbolic link \"%s\": %s\n",
 						 fullpath, strerror(errno));
 			if (len >= sizeof(link_target))
-				pg_fatal("symbolic link \"%s\" target is too long\n",
+				mdb_fatal("symbolic link \"%s\" target is too long\n",
 						 fullpath);
 			link_target[len] = '\0';
 
 			callback(path, FILE_TYPE_SYMLINK, 0, link_target);
 
 			/*
-			 * If it's a symlink within pg_tblspc, we need to recurse into it,
+			 * If it's a symlink within mdb_tblspc, we need to recurse into it,
 			 * to process all the tablespaces.  We also follow a symlink if
-			 * it's for pg_xlog.  Symlinks elsewhere are ignored.
+			 * it's for mdb_xlog.  Symlinks elsewhere are ignored.
 			 */
-			if ((parentpath && strcmp(parentpath, "pg_tblspc") == 0) ||
-				strcmp(path, "pg_xlog") == 0)
+			if ((parentpath && strcmp(parentpath, "mdb_tblspc") == 0) ||
+				strcmp(path, "mdb_xlog") == 0)
 				recurse_dir(datadir, path, callback);
 #else
-			pg_fatal("\"%s\" is a symbolic link, but symbolic links are not supported on this platform\n",
+			mdb_fatal("\"%s\" is a symbolic link, but symbolic links are not supported on this platform\n",
 					 fullpath);
 #endif   /* HAVE_READLINK */
 		}
 	}
 
 	if (errno)
-		pg_fatal("could not read directory \"%s\": %s\n",
+		mdb_fatal("could not read directory \"%s\": %s\n",
 				 fullparentpath, strerror(errno));
 
 	if (closedir(xldir))
-		pg_fatal("could not close directory \"%s\": %s\n",
+		mdb_fatal("could not close directory \"%s\": %s\n",
 				 fullparentpath, strerror(errno));
 }
 
@@ -168,11 +168,11 @@ copy_file_range(const char *path, off_t begin, off_t end, bool trunc)
 
 	srcfd = open(srcpath, O_RDONLY | PG_BINARY, 0);
 	if (srcfd < 0)
-		pg_fatal("could not open source file \"%s\": %s\n",
+		mdb_fatal("could not open source file \"%s\": %s\n",
 				 srcpath, strerror(errno));
 
 	if (lseek(srcfd, begin, SEEK_SET) == -1)
-		pg_fatal("could not seek in source file: %s\n", strerror(errno));
+		mdb_fatal("could not seek in source file: %s\n", strerror(errno));
 
 	open_target_file(path, trunc);
 
@@ -189,17 +189,17 @@ copy_file_range(const char *path, off_t begin, off_t end, bool trunc)
 		readlen = read(srcfd, buf, len);
 
 		if (readlen < 0)
-			pg_fatal("could not read file \"%s\": %s\n",
+			mdb_fatal("could not read file \"%s\": %s\n",
 					 srcpath, strerror(errno));
 		else if (readlen == 0)
-			pg_fatal("unexpected EOF while reading file \"%s\"\n", srcpath);
+			mdb_fatal("unexpected EOF while reading file \"%s\"\n", srcpath);
 
 		write_target_range(buf, begin, readlen);
 		begin += readlen;
 	}
 
 	if (close(srcfd) != 0)
-		pg_fatal("could not close file \"%s\": %s\n", srcpath, strerror(errno));
+		mdb_fatal("could not close file \"%s\": %s\n", srcpath, strerror(errno));
 }
 
 /*
@@ -262,5 +262,5 @@ execute_pagemap(datapagemap_t *pagemap, const char *path)
 		copy_file_range(path, offset, offset + BLCKSZ, false);
 		/* Ok, this block has now been copied from new data dir to old */
 	}
-	pg_free(iter);
+	mdb_free(iter);
 }

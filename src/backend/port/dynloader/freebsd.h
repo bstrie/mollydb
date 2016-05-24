@@ -46,10 +46,10 @@
 #define RTLD_GLOBAL 0
 #endif
 
-#define		   pg_dlopen(f)    BSD44_derived_dlopen((f), RTLD_NOW | RTLD_GLOBAL)
-#define		   pg_dlsym		   BSD44_derived_dlsym
-#define		   pg_dlclose	   BSD44_derived_dlclose
-#define		   pg_dlerror	   BSD44_derived_dlerror
+#define		   mdb_dlopen(f)    BSD44_derived_dlopen((f), RTLD_NOW | RTLD_GLOBAL)
+#define		   mdb_dlsym		   BSD44_derived_dlsym
+#define		   mdb_dlclose	   BSD44_derived_dlclose
+#define		   mdb_dlerror	   BSD44_derived_dlerror
 
 char	   *BSD44_derived_dlerror(void);
 void	   *BSD44_derived_dlopen(const char *filename, int num);

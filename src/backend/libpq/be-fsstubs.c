@@ -171,7 +171,7 @@ lo_read(int fd, char *buf, int len)
 	if ((lobj->flags & IFS_RD_PERM_OK) == 0)
 	{
 		if (!lo_compat_privileges &&
-			pg_largeobject_aclcheck_snapshot(lobj->id,
+			mdb_largeobject_aclcheck_snapshot(lobj->id,
 											 GetUserId(),
 											 ACL_SELECT,
 											 lobj->snapshot) != ACLCHECK_OK)
@@ -209,7 +209,7 @@ lo_write(int fd, const char *buf, int len)
 	if ((lobj->flags & IFS_WR_PERM_OK) == 0)
 	{
 		if (!lo_compat_privileges &&
-			pg_largeobject_aclcheck_snapshot(lobj->id,
+			mdb_largeobject_aclcheck_snapshot(lobj->id,
 											 GetUserId(),
 											 ACL_UPDATE,
 											 lobj->snapshot) != ACLCHECK_OK)
@@ -346,7 +346,7 @@ lo_unlink(PG_FUNCTION_ARGS)
 
 	/* Must be owner of the largeobject */
 	if (!lo_compat_privileges &&
-		!pg_largeobject_ownercheck(lobjId, GetUserId()))
+		!mdb_largeobject_ownercheck(lobjId, GetUserId()))
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 				 errmsg("must be owner of large object %u", lobjId)));
@@ -593,7 +593,7 @@ lo_truncate_internal(int32 fd, int64 len)
 	if ((lobj->flags & IFS_WR_PERM_OK) == 0)
 	{
 		if (!lo_compat_privileges &&
-			pg_largeobject_aclcheck_snapshot(lobj->id,
+			mdb_largeobject_aclcheck_snapshot(lobj->id,
 											 GetUserId(),
 											 ACL_UPDATE,
 											 lobj->snapshot) != ACLCHECK_OK)
@@ -781,7 +781,7 @@ lo_get_fragment_internal(Oid loOid, int64 offset, int32 nbytes)
 
 	/* Permission check */
 	if (!lo_compat_privileges &&
-		pg_largeobject_aclcheck_snapshot(loDesc->id,
+		mdb_largeobject_aclcheck_snapshot(loDesc->id,
 										 GetUserId(),
 										 ACL_SELECT,
 										 loDesc->snapshot) != ACLCHECK_OK)

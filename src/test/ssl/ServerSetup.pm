@@ -81,7 +81,7 @@ sub configure_test_server_for_ssl
   # but seems best to keep it as narrow as possible for security reasons.
   #
   # When connecting to certdb, also check the client certificate.
-	open HBA, ">$pgdata/pg_hba.conf";
+	open HBA, ">$pgdata/mdb_hba.conf";
 	print HBA
 "# TYPE  DATABASE        USER            ADDRESS                 METHOD\n";
 	print HBA

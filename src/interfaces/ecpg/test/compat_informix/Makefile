@@ -7,7 +7,7 @@ include $(top_srcdir)/$(subdir)/../Makefile.regress
 ECPG += -C INFORMIX
 
 override LDFLAGS := -L../../compatlib $(LDFLAGS)
-override LIBS := -lecpg_compat $(LIBS)
+override LIBS := -lecmdb_compat $(LIBS)
 
 TESTS = test_informix test_informix.c \
         test_informix2 test_informix2.c \

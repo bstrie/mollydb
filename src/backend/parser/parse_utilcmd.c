@@ -33,13 +33,13 @@
 #include "catalog/heap.h"
 #include "catalog/index.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_constraint.h"
-#include "catalog/pg_constraint_fn.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_constraint.h"
+#include "catalog/mdb_constraint_fn.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_type.h"
 #include "commands/comment.h"
 #include "commands/defrem.h"
 #include "commands/tablecmds.h"
@@ -199,7 +199,7 @@ transformCreateStmt(CreateStmt *stmt, const char *queryString)
 	 * prevents some corner cases in which added-on rewritten commands might
 	 * think they should apply to other relations that have the same name and
 	 * are earlier in the search path.  But a local temp table is effectively
-	 * specified to be in pg_temp, so no need for anything extra in that case.
+	 * specified to be in mdb_temp, so no need for anything extra in that case.
 	 */
 	if (stmt->relation->schemaname == NULL
 		&& stmt->relation->relpersistence != RELPERSISTENCE_TEMP)
@@ -234,7 +234,7 @@ transformCreateStmt(CreateStmt *stmt, const char *queryString)
 	 * Notice that we allow OIDs here only for plain tables, even though
 	 * foreign tables also support them.  This is necessary because the
 	 * default_with_oids GUC must apply only to plain tables and not any other
-	 * relkind; doing otherwise would break existing pg_dump files.  We could
+	 * relkind; doing otherwise would break existing mdb_dump files.  We could
 	 * allow explicit "WITH OIDS" while not allowing default_with_oids to
 	 * affect other relkinds, but it would complicate interpretOidsOption(),
 	 * and right now there's no WITH OIDS option in CREATE FOREIGN TABLE
@@ -775,7 +775,7 @@ transformTableLikeClause(CreateStmtContext *cxt, TableLikeClause *table_like_cla
 	 */
 	if (relation->rd_rel->relkind == RELKIND_COMPOSITE_TYPE)
 	{
-		aclresult = pg_type_aclcheck(relation->rd_rel->reltype, GetUserId(),
+		aclresult = mdb_type_aclcheck(relation->rd_rel->reltype, GetUserId(),
 									 ACL_USAGE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_TYPE,
@@ -783,7 +783,7 @@ transformTableLikeClause(CreateStmtContext *cxt, TableLikeClause *table_like_cla
 	}
 	else
 	{
-		aclresult = pg_class_aclcheck(RelationGetRelid(relation), GetUserId(),
+		aclresult = mdb_class_aclcheck(RelationGetRelid(relation), GetUserId(),
 									  ACL_SELECT);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_CLASS,
@@ -806,7 +806,7 @@ transformTableLikeClause(CreateStmtContext *cxt, TableLikeClause *table_like_cla
 	for (parent_attno = 1; parent_attno <= tupleDesc->natts;
 		 parent_attno++)
 	{
-		Form_pg_attribute attribute = tupleDesc->attrs[parent_attno - 1];
+		Form_mdb_attribute attribute = tupleDesc->attrs[parent_attno - 1];
 		char	   *attributeName = NameStr(attribute->attname);
 		ColumnDef  *def;
 
@@ -1036,7 +1036,7 @@ transformOfType(CreateStmtContext *cxt, TypeName *ofTypename)
 	tupdesc = lookup_rowtype_tupdesc(ofTypeId, -1);
 	for (i = 0; i < tupdesc->natts; i++)
 	{
-		Form_pg_attribute attr = tupdesc->attrs[i];
+		Form_mdb_attribute attr = tupdesc->attrs[i];
 		ColumnDef  *n;
 
 		if (attr->attisdropped)
@@ -1072,13 +1072,13 @@ generateClonedIndexStmt(CreateStmtContext *cxt, Relation source_idx,
 						const AttrNumber *attmap, int attmap_length)
 {
 	Oid			source_relid = RelationGetRelid(source_idx);
-	Form_pg_attribute *attrs = RelationGetDescr(source_idx)->attrs;
+	Form_mdb_attribute *attrs = RelationGetDescr(source_idx)->attrs;
 	HeapTuple	ht_idxrel;
 	HeapTuple	ht_idx;
 	HeapTuple	ht_am;
-	Form_pg_class idxrelrec;
-	Form_pg_index idxrec;
-	Form_pg_am	amrec;
+	Form_mdb_class idxrelrec;
+	Form_mdb_index idxrec;
+	Form_mdb_am	amrec;
 	oidvector  *indcollation;
 	oidvector  *indclass;
 	IndexStmt  *index;
@@ -1091,35 +1091,35 @@ generateClonedIndexStmt(CreateStmtContext *cxt, Relation source_idx,
 	bool		isnull;
 
 	/*
-	 * Fetch pg_class tuple of source index.  We can't use the copy in the
+	 * Fetch mdb_class tuple of source index.  We can't use the copy in the
 	 * relcache entry because it doesn't include optional fields.
 	 */
 	ht_idxrel = SearchSysCache1(RELOID, ObjectIdGetDatum(source_relid));
 	if (!HeapTupleIsValid(ht_idxrel))
 		elog(ERROR, "cache lookup failed for relation %u", source_relid);
-	idxrelrec = (Form_pg_class) GETSTRUCT(ht_idxrel);
+	idxrelrec = (Form_mdb_class) GETSTRUCT(ht_idxrel);
 
-	/* Fetch pg_index tuple for source index from relcache entry */
+	/* Fetch mdb_index tuple for source index from relcache entry */
 	ht_idx = source_idx->rd_indextuple;
-	idxrec = (Form_pg_index) GETSTRUCT(ht_idx);
+	idxrec = (Form_mdb_index) GETSTRUCT(ht_idx);
 	indrelid = idxrec->indrelid;
 
-	/* Fetch the pg_am tuple of the index' access method */
+	/* Fetch the mdb_am tuple of the index' access method */
 	ht_am = SearchSysCache1(AMOID, ObjectIdGetDatum(idxrelrec->relam));
 	if (!HeapTupleIsValid(ht_am))
 		elog(ERROR, "cache lookup failed for access method %u",
 			 idxrelrec->relam);
-	amrec = (Form_pg_am) GETSTRUCT(ht_am);
+	amrec = (Form_mdb_am) GETSTRUCT(ht_am);
 
-	/* Extract indcollation from the pg_index tuple */
+	/* Extract indcollation from the mdb_index tuple */
 	datum = SysCacheGetAttr(INDEXRELID, ht_idx,
-							Anum_pg_index_indcollation, &isnull);
+							Anum_mdb_index_indcollation, &isnull);
 	Assert(!isnull);
 	indcollation = (oidvector *) DatumGetPointer(datum);
 
-	/* Extract indclass from the pg_index tuple */
+	/* Extract indclass from the mdb_index tuple */
 	datum = SysCacheGetAttr(INDEXRELID, ht_idx,
-							Anum_pg_index_indclass, &isnull);
+							Anum_mdb_index_indclass, &isnull);
 	Assert(!isnull);
 	indclass = (oidvector *) DatumGetPointer(datum);
 
@@ -1151,7 +1151,7 @@ generateClonedIndexStmt(CreateStmtContext *cxt, Relation source_idx,
 	 * If the index is marked PRIMARY or has an exclusion condition, it's
 	 * certainly from a constraint; else, if it's not marked UNIQUE, it
 	 * certainly isn't.  If it is or might be from a constraint, we have to
-	 * fetch the pg_constraint record.
+	 * fetch the mdb_constraint record.
 	 */
 	if (index->primary || index->unique || idxrec->indisexclusion)
 	{
@@ -1160,14 +1160,14 @@ generateClonedIndexStmt(CreateStmtContext *cxt, Relation source_idx,
 		if (OidIsValid(constraintId))
 		{
 			HeapTuple	ht_constr;
-			Form_pg_constraint conrec;
+			Form_mdb_constraint conrec;
 
 			ht_constr = SearchSysCache1(CONSTROID,
 										ObjectIdGetDatum(constraintId));
 			if (!HeapTupleIsValid(ht_constr))
 				elog(ERROR, "cache lookup failed for constraint %u",
 					 constraintId);
-			conrec = (Form_pg_constraint) GETSTRUCT(ht_constr);
+			conrec = (Form_mdb_constraint) GETSTRUCT(ht_constr);
 
 			index->isconstraint = true;
 			index->deferrable = conrec->condeferrable;
@@ -1181,9 +1181,9 @@ generateClonedIndexStmt(CreateStmtContext *cxt, Relation source_idx,
 				int			i;
 
 				Assert(conrec->contype == CONSTRAINT_EXCLUSION);
-				/* Extract operator OIDs from the pg_constraint tuple */
+				/* Extract operator OIDs from the mdb_constraint tuple */
 				datum = SysCacheGetAttr(CONSTROID, ht_constr,
-										Anum_pg_constraint_conexclop,
+										Anum_mdb_constraint_conexclop,
 										&isnull);
 				if (isnull)
 					elog(ERROR, "null conexclop for constraint %u",
@@ -1197,7 +1197,7 @@ generateClonedIndexStmt(CreateStmtContext *cxt, Relation source_idx,
 				{
 					Oid			operid = DatumGetObjectId(elems[i]);
 					HeapTuple	opertup;
-					Form_pg_operator operform;
+					Form_mdb_operator operform;
 					char	   *oprname;
 					char	   *nspname;
 					List	   *namelist;
@@ -1207,7 +1207,7 @@ generateClonedIndexStmt(CreateStmtContext *cxt, Relation source_idx,
 					if (!HeapTupleIsValid(opertup))
 						elog(ERROR, "cache lookup failed for operator %u",
 							 operid);
-					operform = (Form_pg_operator) GETSTRUCT(opertup);
+					operform = (Form_mdb_operator) GETSTRUCT(opertup);
 					oprname = pstrdup(NameStr(operform->oprname));
 					/* For simplicity we always schema-qualify the op name */
 					nspname = get_namespace_name(operform->oprnamespace);
@@ -1229,7 +1229,7 @@ generateClonedIndexStmt(CreateStmtContext *cxt, Relation source_idx,
 
 	/* Get the index expressions, if any */
 	datum = SysCacheGetAttr(INDEXRELID, ht_idx,
-							Anum_pg_index_indexprs, &isnull);
+							Anum_mdb_index_indexprs, &isnull);
 	if (!isnull)
 	{
 		char	   *exprsString;
@@ -1333,13 +1333,13 @@ generateClonedIndexStmt(CreateStmtContext *cxt, Relation source_idx,
 
 	/* Copy reloptions if any */
 	datum = SysCacheGetAttr(RELOID, ht_idxrel,
-							Anum_pg_class_reloptions, &isnull);
+							Anum_mdb_class_reloptions, &isnull);
 	if (!isnull)
 		index->options = untransformRelOptions(datum);
 
 	/* If it's a partial index, decompile and append the predicate */
 	datum = SysCacheGetAttr(INDEXRELID, ht_idx,
-							Anum_pg_index_indpred, &isnull);
+							Anum_mdb_index_indpred, &isnull);
 	if (!isnull)
 	{
 		char	   *pred_str;
@@ -1385,7 +1385,7 @@ get_collation(Oid collation, Oid actual_datatype)
 {
 	List	   *result;
 	HeapTuple	ht_coll;
-	Form_pg_collation coll_rec;
+	Form_mdb_collation coll_rec;
 	char	   *nsp_name;
 	char	   *coll_name;
 
@@ -1397,7 +1397,7 @@ get_collation(Oid collation, Oid actual_datatype)
 	ht_coll = SearchSysCache1(COLLOID, ObjectIdGetDatum(collation));
 	if (!HeapTupleIsValid(ht_coll))
 		elog(ERROR, "cache lookup failed for collation %u", collation);
-	coll_rec = (Form_pg_collation) GETSTRUCT(ht_coll);
+	coll_rec = (Form_mdb_collation) GETSTRUCT(ht_coll);
 
 	/* For simplicity, we always schema-qualify the name */
 	nsp_name = get_namespace_name(coll_rec->collnamespace);
@@ -1419,12 +1419,12 @@ get_opclass(Oid opclass, Oid actual_datatype)
 {
 	List	   *result = NIL;
 	HeapTuple	ht_opc;
-	Form_pg_opclass opc_rec;
+	Form_mdb_opclass opc_rec;
 
 	ht_opc = SearchSysCache1(CLAOID, ObjectIdGetDatum(opclass));
 	if (!HeapTupleIsValid(ht_opc))
 		elog(ERROR, "cache lookup failed for opclass %u", opclass);
-	opc_rec = (Form_pg_opclass) GETSTRUCT(ht_opc);
+	opc_rec = (Form_mdb_opclass) GETSTRUCT(ht_opc);
 
 	if (GetDefaultOpClass(actual_datatype, opc_rec->opcmethod) != opclass)
 	{
@@ -1614,7 +1614,7 @@ transformIndexConstraint(Constraint *constraint, CreateStmtContext *cxt)
 		Relation	heap_rel = cxt->rel;
 		Oid			index_oid;
 		Relation	index_rel;
-		Form_pg_index index_form;
+		Form_mdb_index index_form;
 		oidvector  *indclass;
 		Datum		indclassDatum;
 		bool		isnull;
@@ -1707,7 +1707,7 @@ transformIndexConstraint(Constraint *constraint, CreateStmtContext *cxt)
 		 * uniqueness at the moment anyway; but we must have an index that
 		 * exactly matches what you'd get from plain ADD CONSTRAINT syntax,
 		 * else dump and reload will produce a different index (breaking
-		 * pg_upgrade in particular).
+		 * mdb_upgrade in particular).
 		 */
 		if (index_rel->rd_rel->relam != get_index_am_oid(DEFAULT_INDEX_TYPE, false))
 			ereport(ERROR,
@@ -1717,14 +1717,14 @@ transformIndexConstraint(Constraint *constraint, CreateStmtContext *cxt)
 
 		/* Must get indclass the hard way */
 		indclassDatum = SysCacheGetAttr(INDEXRELID, index_rel->rd_indextuple,
-										Anum_pg_index_indclass, &isnull);
+										Anum_mdb_index_indclass, &isnull);
 		Assert(!isnull);
 		indclass = (oidvector *) DatumGetPointer(indclassDatum);
 
 		for (i = 0; i < index_form->indnatts; i++)
 		{
 			int16		attnum = index_form->indkey.values[i];
-			Form_pg_attribute attform;
+			Form_mdb_attribute attform;
 			char	   *attname;
 			Oid			defopclass;
 
@@ -1858,7 +1858,7 @@ transformIndexConstraint(Constraint *constraint, CreateStmtContext *cxt)
 									inh->relname)));
 				for (count = 0; count < rel->rd_att->natts; count++)
 				{
-					Form_pg_attribute inhattr = rel->rd_att->attrs[count];
+					Form_mdb_attribute inhattr = rel->rd_att->attrs[count];
 					char	   *inhname = NameStr(inhattr->attname);
 
 					if (inhattr->attisdropped)
@@ -2808,7 +2808,7 @@ transformColumnType(CreateStmtContext *cxt, ColumnDef *column)
 
 	if (column->collClause)
 	{
-		Form_pg_type typtup = (Form_pg_type) GETSTRUCT(ctype);
+		Form_mdb_type typtup = (Form_mdb_type) GETSTRUCT(ctype);
 
 		LookupCollation(cxt->pstate,
 						column->collClause->collname,

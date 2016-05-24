@@ -429,7 +429,7 @@ CREATE VIEW universal_comedies AS
    Create a view with <literal>CASCADED CHECK OPTION</>:
 
 <programlisting>
-CREATE VIEW pg_comedies AS
+CREATE VIEW mdb_comedies AS
     SELECT *
     FROM comedies
     WHERE classification = 'PG'

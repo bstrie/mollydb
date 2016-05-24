@@ -113,18 +113,18 @@ libpq.rc libpq-dist.rc: libpq.rc.in
 # installations and is only updated by distprep.)
 libpq.rc: $(top_builddir)/src/Makefile.global
 
-fe-connect.o: fe-connect.c $(top_builddir)/src/port/pg_config_paths.h
-fe-misc.o: fe-misc.c $(top_builddir)/src/port/pg_config_paths.h
+fe-connect.o: fe-connect.c $(top_builddir)/src/port/mdb_config_paths.h
+fe-misc.o: fe-misc.c $(top_builddir)/src/port/mdb_config_paths.h
 
-$(top_builddir)/src/port/pg_config_paths.h:
-	$(MAKE) -C $(top_builddir)/src/port pg_config_paths.h
+$(top_builddir)/src/port/mdb_config_paths.h:
+	$(MAKE) -C $(top_builddir)/src/port mdb_config_paths.h
 
 install: all installdirs install-lib
 	$(INSTALL_DATA) $(srcdir)/libpq-fe.h '$(DESTDIR)$(includedir)'
 	$(INSTALL_DATA) $(srcdir)/libpq-events.h '$(DESTDIR)$(includedir)'
 	$(INSTALL_DATA) $(srcdir)/libpq-int.h '$(DESTDIR)$(includedir_internal)'
 	$(INSTALL_DATA) $(srcdir)/pqexpbuffer.h '$(DESTDIR)$(includedir_internal)'
-	$(INSTALL_DATA) $(srcdir)/pg_service.conf.sample '$(DESTDIR)$(datadir)/pg_service.conf.sample'
+	$(INSTALL_DATA) $(srcdir)/mdb_service.conf.sample '$(DESTDIR)$(datadir)/mdb_service.conf.sample'
 
 installcheck:
 	$(MAKE) -C test $@
@@ -137,13 +137,13 @@ uninstall: uninstall-lib
 	rm -f '$(DESTDIR)$(includedir)/libpq-events.h'
 	rm -f '$(DESTDIR)$(includedir_internal)/libpq-int.h'
 	rm -f '$(DESTDIR)$(includedir_internal)/pqexpbuffer.h'
-	rm -f '$(DESTDIR)$(datadir)/pg_service.conf.sample'
+	rm -f '$(DESTDIR)$(datadir)/mdb_service.conf.sample'
 
 clean distclean: clean-lib
 	$(MAKE) -C test $@
 	rm -f $(OBJS) pthread.h libpq.rc
 # Might be left over from a Win32 client-only build
-	rm -f pg_config_paths.h
+	rm -f mdb_config_paths.h
 	rm -f inet_net_ntop.c noblock.c pgstrcasecmp.c pqsignal.c thread.c
 	rm -f chklocale.c crypt.c getaddrinfo.c getpeereid.c inet_aton.c open.c system.c snprintf.c strerror.c strlcpy.c win32error.c win32setlocale.c
 	rm -f pgsleep.c

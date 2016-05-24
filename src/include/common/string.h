@@ -10,6 +10,6 @@
 #ifndef COMMON_STRING_H
 #define COMMON_STRING_H
 
-extern bool pg_str_endswith(const char *str, const char *end);
+extern bool mdb_str_endswith(const char *str, const char *end);
 
 #endif   /* COMMON_STRING_H */

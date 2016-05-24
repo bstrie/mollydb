@@ -15,8 +15,8 @@
 #include <ctype.h>
 #include <limits.h>
 
-#include "utils/pg_locale.h"
-#include "mb/pg_wchar.h"
+#include "utils/mdb_locale.h"
+#include "mb/mdb_wchar.h"
 
 /*
  * towlower() and friends should be in <wctype.h>, but some pre-C99 systems
@@ -51,7 +51,7 @@ extern int	t_isprint(const char *ptr);
 /* The second argument of t_iseq() must be a plain ASCII character */
 #define t_iseq(x,c)		(TOUCHAR(x) == (unsigned char) (c))
 
-#define COPYCHAR(d,s)	memcpy(d, s, pg_mblen(s))
+#define COPYCHAR(d,s)	memcpy(d, s, mdb_mblen(s))
 #else							/* not USE_WIDE_UPPER_LOWER */
 
 #define t_isdigit(x)	isdigit(TOUCHAR(x))

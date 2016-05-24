@@ -136,7 +136,7 @@ INSERT INTO MY_TABLE VALUES (3, 'hi there');
     <symbol>NAMEDATALEN</symbol> is 64 so the maximum identifier
     length is 63 bytes. If this limit is problematic, it can be raised by
     changing the <symbol>NAMEDATALEN</symbol> constant in
-    <filename>src/include/pg_config_manual.h</filename>.
+    <filename>src/include/mdb_config_manual.h</filename>.
    </para>
 
    <para>
@@ -1123,7 +1123,7 @@ SELECT (5 !) - 6;
     When a schema-qualified operator name is used in the
     <literal>OPERATOR</> syntax, as for example in:
 <programlisting>
-SELECT 3 OPERATOR(pg_catalog.+) 4;
+SELECT 3 OPERATOR(mdb_catalog.+) 4;
 </programlisting>
     the <literal>OPERATOR</> construct is taken to have the default precedence
     shown in <xref linkend="sql-precedence-table"> for
@@ -2224,7 +2224,7 @@ SELECT ARRAY[]::integer[];
    key word <literal>ARRAY</literal> followed by a parenthesized (not
    bracketed) subquery. For example:
 <programlisting>
-SELECT ARRAY(SELECT oid FROM pg_proc WHERE proname LIKE 'bytea%');
+SELECT ARRAY(SELECT oid FROM mdb_proc WHERE proname LIKE 'bytea%');
                                  array
 -----------------------------------------------------------------------
  {2011,1954,1948,1952,1951,1244,1950,2005,1949,1953,2006,31,2412,2413}

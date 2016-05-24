@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * pg_description.h
- *	  definition of the system "description" relation (pg_description)
+ * mdb_description.h
+ *	  definition of the system "description" relation (mdb_description)
  *
  * NOTE: an object is identified by the OID of the row that primarily
  * defines the object, plus the OID of the table that that row appears in.
- * For example, a function is identified by the OID of its pg_proc row
- * plus the pg_class OID of table pg_proc.  This allows unique identification
+ * For example, a function is identified by the OID of its mdb_proc row
+ * plus the mdb_class OID of table mdb_proc.  This allows unique identification
  * of objects without assuming that OIDs are unique across tables.
  *
  * Since attributes don't have OIDs of their own, we identify an attribute
@@ -22,7 +22,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_description.h
+ * src/include/catalog/mdb_description.h
  *
  * NOTES
  *		the genbki.pl script reads this file and generates .bki
@@ -39,13 +39,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_description definition.  cpp turns this into
- *		typedef struct FormData_pg_description
+ *		mdb_description definition.  cpp turns this into
+ *		typedef struct FormData_mdb_description
  * ----------------
  */
 #define DescriptionRelationId  2609
 
-CATALOG(pg_description,2609) BKI_WITHOUT_OIDS
+CATALOG(mdb_description,2609) BKI_WITHOUT_OIDS
 {
 	Oid			objoid;			/* OID of object itself */
 	Oid			classoid;		/* OID of table containing object */
@@ -54,27 +54,27 @@ CATALOG(pg_description,2609) BKI_WITHOUT_OIDS
 #ifdef CATALOG_VARLEN			/* variable-length fields start here */
 	text description BKI_FORCE_NOT_NULL;		/* description of object */
 #endif
-} FormData_pg_description;
+} FormData_mdb_description;
 
 /* ----------------
- *		Form_pg_description corresponds to a pointer to a tuple with
- *		the format of pg_description relation.
+ *		Form_mdb_description corresponds to a pointer to a tuple with
+ *		the format of mdb_description relation.
  * ----------------
  */
-typedef FormData_pg_description *Form_pg_description;
+typedef FormData_mdb_description *Form_mdb_description;
 
 /* ----------------
- *		compiler constants for pg_description
+ *		compiler constants for mdb_description
  * ----------------
  */
-#define Natts_pg_description			4
-#define Anum_pg_description_objoid		1
-#define Anum_pg_description_classoid	2
-#define Anum_pg_description_objsubid	3
-#define Anum_pg_description_description 4
+#define Natts_mdb_description			4
+#define Anum_mdb_description_objoid		1
+#define Anum_mdb_description_classoid	2
+#define Anum_mdb_description_objsubid	3
+#define Anum_mdb_description_description 4
 
 /* ----------------
- *		initial contents of pg_description
+ *		initial contents of mdb_description
  * ----------------
  */
 

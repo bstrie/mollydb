@@ -18,14 +18,14 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_event_trigger.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_opfamily.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_trigger.h"
-#include "catalog/pg_ts_config.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_event_trigger.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_opfamily.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_trigger.h"
+#include "catalog/mdb_ts_config.h"
+#include "catalog/mdb_type.h"
 #include "commands/dbcommands.h"
 #include "commands/event_trigger.h"
 #include "commands/extension.h"
@@ -282,27 +282,27 @@ check_ddl_tag(const char *tag)
 	/*
 	 * Handle some idiosyncratic special cases.
 	 */
-	if (pg_strcasecmp(tag, "CREATE TABLE AS") == 0 ||
-		pg_strcasecmp(tag, "SELECT INTO") == 0 ||
-		pg_strcasecmp(tag, "REFRESH MATERIALIZED VIEW") == 0 ||
-		pg_strcasecmp(tag, "ALTER DEFAULT PRIVILEGES") == 0 ||
-		pg_strcasecmp(tag, "ALTER LARGE OBJECT") == 0 ||
-		pg_strcasecmp(tag, "COMMENT") == 0 ||
-		pg_strcasecmp(tag, "GRANT") == 0 ||
-		pg_strcasecmp(tag, "REVOKE") == 0 ||
-		pg_strcasecmp(tag, "DROP OWNED") == 0 ||
-		pg_strcasecmp(tag, "IMPORT FOREIGN SCHEMA") == 0 ||
-		pg_strcasecmp(tag, "SECURITY LABEL") == 0)
+	if (mdb_strcasecmp(tag, "CREATE TABLE AS") == 0 ||
+		mdb_strcasecmp(tag, "SELECT INTO") == 0 ||
+		mdb_strcasecmp(tag, "REFRESH MATERIALIZED VIEW") == 0 ||
+		mdb_strcasecmp(tag, "ALTER DEFAULT PRIVILEGES") == 0 ||
+		mdb_strcasecmp(tag, "ALTER LARGE OBJECT") == 0 ||
+		mdb_strcasecmp(tag, "COMMENT") == 0 ||
+		mdb_strcasecmp(tag, "GRANT") == 0 ||
+		mdb_strcasecmp(tag, "REVOKE") == 0 ||
+		mdb_strcasecmp(tag, "DROP OWNED") == 0 ||
+		mdb_strcasecmp(tag, "IMPORT FOREIGN SCHEMA") == 0 ||
+		mdb_strcasecmp(tag, "SECURITY LABEL") == 0)
 		return EVENT_TRIGGER_COMMAND_TAG_OK;
 
 	/*
 	 * Otherwise, command should be CREATE, ALTER, or DROP.
 	 */
-	if (pg_strncasecmp(tag, "CREATE ", 7) == 0)
+	if (mdb_strncasecmp(tag, "CREATE ", 7) == 0)
 		obtypename = tag + 7;
-	else if (pg_strncasecmp(tag, "ALTER ", 6) == 0)
+	else if (mdb_strncasecmp(tag, "ALTER ", 6) == 0)
 		obtypename = tag + 6;
-	else if (pg_strncasecmp(tag, "DROP ", 5) == 0)
+	else if (mdb_strncasecmp(tag, "DROP ", 5) == 0)
 		obtypename = tag + 5;
 	else
 		return EVENT_TRIGGER_COMMAND_TAG_NOT_RECOGNIZED;
@@ -311,7 +311,7 @@ check_ddl_tag(const char *tag)
 	 * ...and the object type should be something recognizable.
 	 */
 	for (etsd = event_trigger_support; etsd->obtypename != NULL; etsd++)
-		if (pg_strcasecmp(etsd->obtypename, obtypename) == 0)
+		if (mdb_strcasecmp(etsd->obtypename, obtypename) == 0)
 			break;
 	if (etsd->obtypename == NULL)
 		return EVENT_TRIGGER_COMMAND_TAG_NOT_RECOGNIZED;
@@ -346,8 +346,8 @@ validate_table_rewrite_tags(const char *filtervar, List *taglist)
 static event_trigger_command_tag_check_result
 check_table_rewrite_ddl_tag(const char *tag)
 {
-	if (pg_strcasecmp(tag, "ALTER TABLE") == 0 ||
-		pg_strcasecmp(tag, "ALTER TYPE") == 0)
+	if (mdb_strcasecmp(tag, "ALTER TABLE") == 0 ||
+		mdb_strcasecmp(tag, "ALTER TYPE") == 0)
 		return EVENT_TRIGGER_COMMAND_TAG_OK;
 
 	return EVENT_TRIGGER_COMMAND_TAG_NOT_SUPPORTED;
@@ -366,7 +366,7 @@ error_duplicate_filter_variable(const char *defname)
 }
 
 /*
- * Insert the new pg_event_trigger row and record dependencies.
+ * Insert the new mdb_event_trigger row and record dependencies.
  */
 static Oid
 insert_event_trigger_tuple(char *trigname, char *eventname, Oid evtOwner,
@@ -375,30 +375,30 @@ insert_event_trigger_tuple(char *trigname, char *eventname, Oid evtOwner,
 	Relation	tgrel;
 	Oid			trigoid;
 	HeapTuple	tuple;
-	Datum		values[Natts_pg_trigger];
-	bool		nulls[Natts_pg_trigger];
+	Datum		values[Natts_mdb_trigger];
+	bool		nulls[Natts_mdb_trigger];
 	NameData	evtnamedata,
 				evteventdata;
 	ObjectAddress myself,
 				referenced;
 
-	/* Open pg_event_trigger. */
+	/* Open mdb_event_trigger. */
 	tgrel = heap_open(EventTriggerRelationId, RowExclusiveLock);
 
-	/* Build the new pg_trigger tuple. */
+	/* Build the new mdb_trigger tuple. */
 	memset(nulls, false, sizeof(nulls));
 	namestrcpy(&evtnamedata, trigname);
-	values[Anum_pg_event_trigger_evtname - 1] = NameGetDatum(&evtnamedata);
+	values[Anum_mdb_event_trigger_evtname - 1] = NameGetDatum(&evtnamedata);
 	namestrcpy(&evteventdata, eventname);
-	values[Anum_pg_event_trigger_evtevent - 1] = NameGetDatum(&evteventdata);
-	values[Anum_pg_event_trigger_evtowner - 1] = ObjectIdGetDatum(evtOwner);
-	values[Anum_pg_event_trigger_evtfoid - 1] = ObjectIdGetDatum(funcoid);
-	values[Anum_pg_event_trigger_evtenabled - 1] =
+	values[Anum_mdb_event_trigger_evtevent - 1] = NameGetDatum(&evteventdata);
+	values[Anum_mdb_event_trigger_evtowner - 1] = ObjectIdGetDatum(evtOwner);
+	values[Anum_mdb_event_trigger_evtfoid - 1] = ObjectIdGetDatum(funcoid);
+	values[Anum_mdb_event_trigger_evtenabled - 1] =
 		CharGetDatum(TRIGGER_FIRES_ON_ORIGIN);
 	if (taglist == NIL)
-		nulls[Anum_pg_event_trigger_evttags - 1] = true;
+		nulls[Anum_mdb_event_trigger_evttags - 1] = true;
 	else
-		values[Anum_pg_event_trigger_evttags - 1] =
+		values[Anum_mdb_event_trigger_evttags - 1] =
 			filter_list_to_array(taglist);
 
 	/* Insert heap tuple. */
@@ -425,7 +425,7 @@ insert_event_trigger_tuple(char *trigname, char *eventname, Oid evtOwner,
 	/* Post creation hook for new event trigger */
 	InvokeObjectPostCreateHook(EventTriggerRelationId, trigoid, 0);
 
-	/* Close pg_event_trigger. */
+	/* Close mdb_event_trigger. */
 	heap_close(tgrel, RowExclusiveLock);
 
 	return trigoid;
@@ -460,7 +460,7 @@ filter_list_to_array(List *filterlist)
 
 		result = pstrdup(value);
 		for (p = result; *p; p++)
-			*p = pg_ascii_toupper((unsigned char) *p);
+			*p = mdb_ascii_toupper((unsigned char) *p);
 		data[i++] = PointerGetDatum(cstring_to_text(result));
 		pfree(result);
 	}
@@ -499,7 +499,7 @@ AlterEventTrigger(AlterEventTrigStmt *stmt)
 	Relation	tgrel;
 	HeapTuple	tup;
 	Oid			trigoid;
-	Form_pg_event_trigger evtForm;
+	Form_mdb_event_trigger evtForm;
 	char		tgenabled = stmt->tgenabled;
 
 	tgrel = heap_open(EventTriggerRelationId, RowExclusiveLock);
@@ -514,12 +514,12 @@ AlterEventTrigger(AlterEventTrigStmt *stmt)
 
 	trigoid = HeapTupleGetOid(tup);
 
-	if (!pg_event_trigger_ownercheck(trigoid, GetUserId()))
+	if (!mdb_event_trigger_ownercheck(trigoid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_EVENT_TRIGGER,
 					   stmt->trigname);
 
 	/* tuple is a copy, so we can modify it below */
-	evtForm = (Form_pg_event_trigger) GETSTRUCT(tup);
+	evtForm = (Form_mdb_event_trigger) GETSTRUCT(tup);
 	evtForm->evtenabled = tgenabled;
 
 	simple_heap_update(tgrel, &tup->t_self, tup);
@@ -599,14 +599,14 @@ AlterEventTriggerOwner_oid(Oid trigOid, Oid newOwnerId)
 static void
 AlterEventTriggerOwner_internal(Relation rel, HeapTuple tup, Oid newOwnerId)
 {
-	Form_pg_event_trigger form;
+	Form_mdb_event_trigger form;
 
-	form = (Form_pg_event_trigger) GETSTRUCT(tup);
+	form = (Form_mdb_event_trigger) GETSTRUCT(tup);
 
 	if (form->evtowner == newOwnerId)
 		return;
 
-	if (!pg_event_trigger_ownercheck(HeapTupleGetOid(tup), GetUserId()))
+	if (!mdb_event_trigger_ownercheck(HeapTupleGetOid(tup), GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_EVENT_TRIGGER,
 					   NameStr(form->evtname));
 
@@ -676,7 +676,7 @@ filter_event_trigger(const char **tag, EventTriggerCacheItem *item)
 	/* Filter by tags, if any were specified. */
 	if (item->ntags != 0 && bsearch(tag, item->tag,
 									item->ntags, sizeof(char *),
-									pg_qsort_strcmp) == NULL)
+									mdb_qsort_strcmp) == NULL)
 		return false;
 
 	/* if we reach that point, we're not filtering out this item */
@@ -789,7 +789,7 @@ EventTriggerDDLCommandStart(Node *parsetree)
 	 * hatch.
 	 *
 	 * 2. BuildEventTriggerCache relies on systable_beginscan_ordered, and
-	 * therefore will malfunction if pg_event_trigger's indexes are damaged.
+	 * therefore will malfunction if mdb_event_trigger's indexes are damaged.
 	 * To allow recovery from a damaged index, we need some operating mode
 	 * wherein event triggers are disabled.  (Or we could implement
 	 * heapscan-and-sort logic for that case, but having disaster recovery
@@ -899,7 +899,7 @@ EventTriggerSQLDrop(Node *parsetree)
 	CommandCounterIncrement();
 
 	/*
-	 * Make sure pg_event_trigger_dropped_objects only works when running
+	 * Make sure mdb_event_trigger_dropped_objects only works when running
 	 * these triggers.  Use PG_TRY to ensure in_sql_drop is reset even when
 	 * one trigger fails.  (This is perhaps not necessary, as the currentState
 	 * variable will be removed shortly by our caller, but it seems better to
@@ -946,7 +946,7 @@ EventTriggerTableRewrite(Node *parsetree, Oid tableOid, int reason)
 	 * hatch.
 	 *
 	 * 2. BuildEventTriggerCache relies on systable_beginscan_ordered, and
-	 * therefore will malfunction if pg_event_trigger's indexes are damaged.
+	 * therefore will malfunction if mdb_event_trigger's indexes are damaged.
 	 * To allow recovery from a damaged index, we need some operating mode
 	 * wherein event triggers are disabled.  (Or we could implement
 	 * heapscan-and-sort logic for that case, but having disaster recovery
@@ -963,7 +963,7 @@ EventTriggerTableRewrite(Node *parsetree, Oid tableOid, int reason)
 		return;
 
 	/*
-	 * Make sure pg_event_trigger_table_rewrite_oid only works when running
+	 * Make sure mdb_event_trigger_table_rewrite_oid only works when running
 	 * these triggers. Use PG_TRY to ensure table_rewrite_oid is reset even
 	 * when one trigger fails. (This is perhaps not necessary, as the
 	 * currentState variable will be removed shortly by our caller, but it
@@ -1294,7 +1294,7 @@ trackDroppedObjectsNeeded(void)
  * command is to start, a clean EventTriggerQueryState is created; commands
  * that drop objects do the dependency.c dance to drop objects, which
  * populates the current state's SQLDropList; when the event triggers are
- * invoked they can consume the list via pg_event_trigger_dropped_objects().
+ * invoked they can consume the list via mdb_event_trigger_dropped_objects().
  * When the command finishes, the EventTriggerQueryState is cleared, and
  * the one from the previous command is restored (when no command is in
  * execution, the current state is NULL).
@@ -1363,7 +1363,7 @@ EventTriggerSQLDropAddObject(const ObjectAddress *object, bool original, bool no
 					/* temp objects are only reported if they are my own */
 					if (isTempNamespace(namespaceId))
 					{
-						obj->schemaname = "pg_temp";
+						obj->schemaname = "mdb_temp";
 						obj->istemp = true;
 					}
 					else if (isAnyTempNamespace(namespaceId))
@@ -1417,13 +1417,13 @@ EventTriggerSQLDropAddObject(const ObjectAddress *object, bool original, bool no
 }
 
 /*
- * pg_event_trigger_dropped_objects
+ * mdb_event_trigger_dropped_objects
  *
  * Make the list of dropped objects available to the user function run by the
  * Event Trigger.
  */
 Datum
-pg_event_trigger_dropped_objects(PG_FUNCTION_ARGS)
+mdb_event_trigger_dropped_objects(PG_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -1440,7 +1440,7 @@ pg_event_trigger_dropped_objects(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_E_R_I_E_EVENT_TRIGGER_PROTOCOL_VIOLATED),
 		 errmsg("%s can only be called in a sql_drop event trigger function",
-				"pg_event_trigger_dropped_objects()")));
+				"mdb_event_trigger_dropped_objects()")));
 
 	/* check to see if caller supports us returning a tuplestore */
 	if (rsinfo == NULL || !IsA(rsinfo, ReturnSetInfo))
@@ -1544,13 +1544,13 @@ pg_event_trigger_dropped_objects(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_event_trigger_table_rewrite_oid
+ * mdb_event_trigger_table_rewrite_oid
  *
  * Make the Oid of the table going to be rewritten available to the user
  * function run by the Event Trigger.
  */
 Datum
-pg_event_trigger_table_rewrite_oid(PG_FUNCTION_ARGS)
+mdb_event_trigger_table_rewrite_oid(PG_FUNCTION_ARGS)
 {
 	/*
 	 * Protect this function from being called out of context
@@ -1560,18 +1560,18 @@ pg_event_trigger_table_rewrite_oid(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_E_R_I_E_EVENT_TRIGGER_PROTOCOL_VIOLATED),
 				 errmsg("%s can only be called in a table_rewrite event trigger function",
-						"pg_event_trigger_table_rewrite_oid()")));
+						"mdb_event_trigger_table_rewrite_oid()")));
 
 	PG_RETURN_OID(currentEventTriggerState->table_rewrite_oid);
 }
 
 /*
- * pg_event_trigger_table_rewrite_reason
+ * mdb_event_trigger_table_rewrite_reason
  *
  * Make the rewrite reason available to the user.
  */
 Datum
-pg_event_trigger_table_rewrite_reason(PG_FUNCTION_ARGS)
+mdb_event_trigger_table_rewrite_reason(PG_FUNCTION_ARGS)
 {
 	/*
 	 * Protect this function from being called out of context
@@ -1581,7 +1581,7 @@ pg_event_trigger_table_rewrite_reason(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_E_R_I_E_EVENT_TRIGGER_PROTOCOL_VIOLATED),
 				 errmsg("%s can only be called in a table_rewrite event trigger function",
-						"pg_event_trigger_table_rewrite_reason()")));
+						"mdb_event_trigger_table_rewrite_reason()")));
 
 	PG_RETURN_INT32(currentEventTriggerState->table_rewrite_reason);
 }
@@ -1598,11 +1598,11 @@ pg_event_trigger_table_rewrite_reason(PG_FUNCTION_ARGS)
  * using the routines below.
  *
  * 2) Some time after that, ddl_command_end fires and the command list is made
- * available to the event trigger function via pg_event_trigger_ddl_commands();
- * the complete command details are exposed as a column of type pg_ddl_command.
+ * available to the event trigger function via mdb_event_trigger_ddl_commands();
+ * the complete command details are exposed as a column of type mdb_ddl_command.
  *
  * 3) An extension can install a function capable of taking a value of type
- * pg_ddl_command and transform it into some external, user-visible and/or
+ * mdb_ddl_command and transform it into some external, user-visible and/or
  * -modifiable representation.
  *-------------------------------------------------------------------------
  */
@@ -1975,7 +1975,7 @@ EventTriggerCollectAlterDefPrivs(AlterDefaultPrivilegesStmt *stmt)
  * being run.
  */
 Datum
-pg_event_trigger_ddl_commands(PG_FUNCTION_ARGS)
+mdb_event_trigger_ddl_commands(PG_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;
@@ -1991,7 +1991,7 @@ pg_event_trigger_ddl_commands(PG_FUNCTION_ARGS)
 		ereport(ERROR,
 				(errcode(ERRCODE_E_R_I_E_EVENT_TRIGGER_PROTOCOL_VIOLATED),
 				 errmsg("%s can only be called in an event trigger function",
-						"pg_event_trigger_ddl_commands()")));
+						"mdb_event_trigger_ddl_commands()")));
 
 	/* check to see if caller supports us returning a tuplestore */
 	if (rsinfo == NULL || !IsA(rsinfo, ReturnSetInfo))
@@ -2071,7 +2071,7 @@ pg_event_trigger_ddl_commands(PG_FUNCTION_ARGS)
 					identity = getObjectIdentity(&addr);
 
 					/*
-					 * Obtain schema name, if any ("pg_temp" if a temp
+					 * Obtain schema name, if any ("mdb_temp" if a temp
 					 * object). If the object class is not in the supported
 					 * list here, we assume it's a schema-less object type,
 					 * and thus "schema" remains set to NULL.
@@ -2103,7 +2103,7 @@ pg_event_trigger_ddl_commands(PG_FUNCTION_ARGS)
 									 addr.classId, addr.objectId, addr.objectSubId);
 							/* XXX not quite get_namespace_name_or_temp */
 							if (isAnyTempNamespace(schema_oid))
-								schema = pstrdup("pg_temp");
+								schema = pstrdup("mdb_temp");
 							else
 								schema = get_namespace_name(schema_oid);
 

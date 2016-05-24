@@ -527,7 +527,7 @@ XLogReadBufferExtended(RelFileNode rnode, ForkNumber forknum,
 typedef struct
 {
 	RelationData reldata;		/* Note: this must be first */
-	FormData_pg_class pgc;
+	FormData_mdb_class pgc;
 } FakeRelCacheEntryData;
 
 typedef FakeRelCacheEntryData *FakeRelCacheEntry;
@@ -646,7 +646,7 @@ XLogTruncateRelation(RelFileNode rnode, ForkNumber forkNum,
  * always be one descriptor left open until the process ends, but never
  * more than one.
  *
- * XXX This is very similar to pg_xlogdump's XLogDumpXLogRead and to XLogRead
+ * XXX This is very similar to mdb_xlogdump's XLogDumpXLogRead and to XLogRead
  * in walsender.c but for small differences (such as lack of elog() in
  * frontend).  Probably these should be merged at some point.
  */
@@ -791,7 +791,7 @@ read_local_xlog_page(XLogReaderState *state, XLogRecPtr targetPagePtr,
 			break;
 
 		CHECK_FOR_INTERRUPTS();
-		pg_usleep(1000L);
+		mdb_usleep(1000L);
 	}
 
 	if (targetPagePtr + XLOG_BLCKSZ <= read_upto)

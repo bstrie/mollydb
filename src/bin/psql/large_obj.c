@@ -12,7 +12,7 @@
 #include "settings.h"
 #include "common.h"
 
-static void print_lo_result(const char *fmt,...) pg_attribute_printf(1, 2);
+static void print_lo_result(const char *fmt,...) mdb_attribute_printf(1, 2);
 
 static void
 print_lo_result(const char *fmt,...)
@@ -280,9 +280,9 @@ do_lo_list(void)
 	{
 		snprintf(buf, sizeof(buf),
 				 "SELECT oid as \"%s\",\n"
-				 "  pg_catalog.pg_get_userbyid(lomowner) as \"%s\",\n"
-			"  pg_catalog.obj_description(oid, 'pg_largeobject') as \"%s\"\n"
-				 "  FROM pg_catalog.pg_largeobject_metadata "
+				 "  mdb_catalog.mdb_get_userbyid(lomowner) as \"%s\",\n"
+			"  mdb_catalog.obj_description(oid, 'mdb_largeobject') as \"%s\"\n"
+				 "  FROM mdb_catalog.mdb_largeobject_metadata "
 				 "  ORDER BY oid",
 				 gettext_noop("ID"),
 				 gettext_noop("Owner"),
@@ -292,8 +292,8 @@ do_lo_list(void)
 	{
 		snprintf(buf, sizeof(buf),
 				 "SELECT loid as \"%s\",\n"
-		   "  pg_catalog.obj_description(loid, 'pg_largeobject') as \"%s\"\n"
-			 "FROM (SELECT DISTINCT loid FROM pg_catalog.pg_largeobject) x\n"
+		   "  mdb_catalog.obj_description(loid, 'mdb_largeobject') as \"%s\"\n"
+			 "FROM (SELECT DISTINCT loid FROM mdb_catalog.mdb_largeobject) x\n"
 				 "ORDER BY 1",
 				 gettext_noop("ID"),
 				 gettext_noop("Description"));

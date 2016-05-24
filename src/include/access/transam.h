@@ -25,7 +25,7 @@
  * always be considered valid.
  *
  * FirstNormalTransactionId is the first "normal" transaction id.
- * Note: if you need to change it, you must change pg_class.h as well.
+ * Note: if you need to change it, you must change mdb_class.h as well.
  * ----------------
  */
 #define InvalidTransactionId		((TransactionId) 0)

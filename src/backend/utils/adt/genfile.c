@@ -21,9 +21,9 @@
 #include <dirent.h>
 
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "postmaster/syslogger.h"
 #include "storage/fd.h"
@@ -172,7 +172,7 @@ read_text_file(const char *filename, int64 seek_offset, int64 bytes_to_read,
 	if (buf != NULL)
 	{
 		/* Make sure the input is valid */
-		pg_verifymbstr(VARDATA(buf), VARSIZE(buf) - VARHDRSZ, false);
+		mdb_verifymbstr(VARDATA(buf), VARSIZE(buf) - VARHDRSZ, false);
 
 		/* OK, we can cast it to text safely */
 		return (text *) buf;
@@ -185,7 +185,7 @@ read_text_file(const char *filename, int64 seek_offset, int64 bytes_to_read,
  * Read a section of a file, returning it as text
  */
 Datum
-pg_read_file(PG_FUNCTION_ARGS)
+mdb_read_file(PG_FUNCTION_ARGS)
 {
 	text	   *filename_t = PG_GETARG_TEXT_P(0);
 	int64		seek_offset = 0;
@@ -226,7 +226,7 @@ pg_read_file(PG_FUNCTION_ARGS)
  * Read a section of a file, returning it as bytea
  */
 Datum
-pg_read_binary_file(PG_FUNCTION_ARGS)
+mdb_read_binary_file(PG_FUNCTION_ARGS)
 {
 	text	   *filename_t = PG_GETARG_TEXT_P(0);
 	int64		seek_offset = 0;
@@ -266,42 +266,42 @@ pg_read_binary_file(PG_FUNCTION_ARGS)
 
 
 /*
- * Wrapper functions for the 1 and 3 argument variants of pg_read_file()
- * and pg_binary_read_file().
+ * Wrapper functions for the 1 and 3 argument variants of mdb_read_file()
+ * and mdb_binary_read_file().
  *
  * These are necessary to pass the sanity check in opr_sanity, which checks
  * that all built-in functions that share the implementing C function take
  * the same number of arguments.
  */
 Datum
-pg_read_file_off_len(PG_FUNCTION_ARGS)
+mdb_read_file_off_len(PG_FUNCTION_ARGS)
 {
-	return pg_read_file(fcinfo);
+	return mdb_read_file(fcinfo);
 }
 
 Datum
-pg_read_file_all(PG_FUNCTION_ARGS)
+mdb_read_file_all(PG_FUNCTION_ARGS)
 {
-	return pg_read_file(fcinfo);
+	return mdb_read_file(fcinfo);
 }
 
 Datum
-pg_read_binary_file_off_len(PG_FUNCTION_ARGS)
+mdb_read_binary_file_off_len(PG_FUNCTION_ARGS)
 {
-	return pg_read_binary_file(fcinfo);
+	return mdb_read_binary_file(fcinfo);
 }
 
 Datum
-pg_read_binary_file_all(PG_FUNCTION_ARGS)
+mdb_read_binary_file_all(PG_FUNCTION_ARGS)
 {
-	return pg_read_binary_file(fcinfo);
+	return mdb_read_binary_file(fcinfo);
 }
 
 /*
  * stat a file
  */
 Datum
-pg_stat_file(PG_FUNCTION_ARGS)
+mdb_stat_file(PG_FUNCTION_ARGS)
 {
 	text	   *filename_t = PG_GETARG_TEXT_P(0);
 	char	   *filename;
@@ -335,7 +335,7 @@ pg_stat_file(PG_FUNCTION_ARGS)
 
 	/*
 	 * This record type had better match the output parameters declared for me
-	 * in pg_proc.h.
+	 * in mdb_proc.h.
 	 */
 	tupdesc = CreateTemplateTupleDesc(6, false);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 1,
@@ -382,16 +382,16 @@ pg_stat_file(PG_FUNCTION_ARGS)
  * function take the same number of arguments
  */
 Datum
-pg_stat_file_1arg(PG_FUNCTION_ARGS)
+mdb_stat_file_1arg(PG_FUNCTION_ARGS)
 {
-	return pg_stat_file(fcinfo);
+	return mdb_stat_file(fcinfo);
 }
 
 /*
  * List a directory (returns the filenames only)
  */
 Datum
-pg_ls_dir(PG_FUNCTION_ARGS)
+mdb_ls_dir(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	struct dirent *de;
@@ -469,7 +469,7 @@ pg_ls_dir(PG_FUNCTION_ARGS)
  * function take the same number of arguments.
  */
 Datum
-pg_ls_dir_1arg(PG_FUNCTION_ARGS)
+mdb_ls_dir_1arg(PG_FUNCTION_ARGS)
 {
-	return pg_ls_dir(fcinfo);
+	return mdb_ls_dir(fcinfo);
 }

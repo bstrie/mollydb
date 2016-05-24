@@ -1,4 +1,4 @@
-The most effective way to test pg_upgrade, aside from testing on user
+The most effective way to test mdb_upgrade, aside from testing on user
 data, is by upgrading the MollyDB regression database.
 
 This testing process first requires the creation of a valid regression
@@ -11,8 +11,8 @@ Here are the steps needed to create a regression database dump file:
     This database can be created by running 'make installcheck' from
     src/test/regression.
 
-2)  Use pg_dump to dump out the regression database.  Use the new
-    cluster's pg_dump on the old database to minimize whitespace
+2)  Use mdb_dump to dump out the regression database.  Use the new
+    cluster's mdb_dump on the old database to minimize whitespace
     differences in the diff.
 
 3)  Adjust the regression database dump file
@@ -33,9 +33,9 @@ Here are the steps needed to create a regression database dump file:
     e)  For pre-9.0, remove 'regex_flavor'
 
     f)  For pre-9.0, adjust extra_float_digits
-        MollyDB 9.0 pg_dump uses extra_float_digits=-2 for pre-9.0
+        MollyDB 9.0 mdb_dump uses extra_float_digits=-2 for pre-9.0
         databases, and extra_float_digits=-3 for >= 9.0 databases.
-        It is necessary to modify 9.0 pg_dump to always use -3, and
+        It is necessary to modify 9.0 mdb_dump to always use -3, and
         modify the pre-9.0 old server to accept extra_float_digits=-3.
 
 Once the dump is created, it can be repeatedly loaded into the old
@@ -54,9 +54,9 @@ steps:
     check for errors while loading.
 
 5)  Upgrade the old database to the new major version, as outlined in
-    the pg_upgrade manual section.
+    the mdb_upgrade manual section.
 
-6)  Use pg_dump to dump out the regression database in the new cluster.
+6)  Use mdb_dump to dump out the regression database in the new cluster.
 
 7)  Diff the regression database dump file with the regression dump
     file loaded into the old server.

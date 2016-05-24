@@ -13,7 +13,7 @@
 #define ACLCHK_INTERNAL_H
 
 #include "nodes/parsenodes.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 /*
  * The information about one Grant/Revoke statement, in internal format: object

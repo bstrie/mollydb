@@ -67,12 +67,12 @@ int64 typedefs, not int_fast32_t/int_fast64_t.)
 
 * Since MollyDB is typically built on a system that has its own copy
 of the <time.h> functions, we must avoid conflicting with those.  This
-mandates renaming typedef time_t to pg_time_t, and similarly for most
+mandates renaming typedef time_t to mdb_time_t, and similarly for most
 other exposed names.
 
 * We have exposed the tzload() and tzparse() internal functions, and
 slightly modified the API of the former, in part because it now relies
-on our own pg_open_tzfile() rather than opening files for itself.
+on our own mdb_open_tzfile() rather than opening files for itself.
 
 * There's a fair amount of code we don't need and have removed,
 including all the nonstandard optional APIs.  We have also added
@@ -93,8 +93,8 @@ to first run the tzcode source files through a sed filter like this:
         -e 's/\bregister[ \t]//g' \
         -e 's/int_fast32_t/int32/g' \
         -e 's/int_fast64_t/int64/g' \
-        -e 's/struct[ \t]+tm\b/struct pg_tm/g' \
-        -e 's/\btime_t\b/pg_time_t/g' \
+        -e 's/struct[ \t]+tm\b/struct mdb_tm/g' \
+        -e 's/\btime_t\b/mdb_time_t/g' \
 
 and then run them through pgindent.  (The first three sed patterns deal
 with conversion of their block comment style to something pgindent

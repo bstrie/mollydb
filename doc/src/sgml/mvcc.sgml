@@ -657,7 +657,7 @@ ERROR:  could not serialize access due to read/write dependencies among transact
     Predicate locks in <productname>MollyDB</productname>, like in most
     other database systems, are based on data actually accessed by a
     transaction.  These will show up in the
-    <link linkend="view-pg-locks"><structname>pg_locks</structname></link>
+    <link linkend="view-pg-locks"><structname>mdb_locks</structname></link>
     system view with a <literal>mode</> of <literal>SIReadLock</>.  The
     particular locks
     acquired during execution of a query will depend on the plan used by
@@ -806,7 +806,7 @@ ERROR:  could not serialize access due to read/write dependencies among transact
    <para>
     To examine a list of the currently outstanding locks in a database
     server, use the
-    <link linkend="view-pg-locks"><structname>pg_locks</structname></link>
+    <link linkend="view-pg-locks"><structname>mdb_locks</structname></link>
     system view. For more information on monitoring the status of the lock
     manager subsystem, refer to <xref linkend="monitoring">.
    </para>
@@ -1483,7 +1483,7 @@ UPDATE accounts SET balance = balance - 100.00 WHERE acctnum = 22222;
      Like all locks in
      <productname>MollyDB</productname>, a complete list of advisory locks
      currently held by any session can be found in the <link
-     linkend="view-pg-locks"><structname>pg_locks</structname></link> system
+     linkend="view-pg-locks"><structname>mdb_locks</structname></link> system
      view.
     </para>
 
@@ -1505,9 +1505,9 @@ UPDATE accounts SET balance = balance - 100.00 WHERE acctnum = 22222;
      taken to control the locks acquired because of the order in which SQL
      expressions are evaluated.  For example:
 <screen>
-SELECT pg_advisory_lock(id) FROM foo WHERE id = 12345; -- ok
-SELECT pg_advisory_lock(id) FROM foo WHERE id &gt; 12345 LIMIT 100; -- danger!
-SELECT pg_advisory_lock(q.id) FROM
+SELECT mdb_advisory_lock(id) FROM foo WHERE id = 12345; -- ok
+SELECT mdb_advisory_lock(id) FROM foo WHERE id &gt; 12345 LIMIT 100; -- danger!
+SELECT mdb_advisory_lock(q.id) FROM
 (
   SELECT id FROM foo WHERE id &gt; 12345 LIMIT 100
 ) q; -- ok
@@ -1519,7 +1519,7 @@ SELECT pg_advisory_lock(q.id) FROM
      (until it ends the session).
      From the point of view of the application, such locks
      would be dangling, although still viewable in
-     <structname>pg_locks</structname>.
+     <structname>mdb_locks</structname>.
     </para>
 
     <para>

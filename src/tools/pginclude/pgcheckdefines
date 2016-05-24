@@ -278,8 +278,8 @@ sub checkit
 			return if $deffile eq 'src/include/c.h';
 			return if $deffile eq 'src/include/mollydb.h';
 			return if $deffile eq 'src/include/mollydb_fe.h';
-			return if $deffile eq 'src/include/pg_config.h';
-			return if $deffile eq 'src/include/pg_config_manual.h';
+			return if $deffile eq 'src/include/mdb_config.h';
+			return if $deffile eq 'src/include/mdb_config_manual.h';
 		}
 	}
 

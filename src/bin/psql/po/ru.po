@@ -3298,11 +3298,11 @@ msgstr "Чтобы выйти из %s, введите \"\\q\".\n"
 #: mainloop.c:183
 msgid ""
 "The input is a MollyDB custom-format dump.\n"
-"Use the pg_restore command-line client to restore this dump to a database.\n"
+"Use the mdb_restore command-line client to restore this dump to a database.\n"
 msgstr ""
 "Результат выдаётся в специальном формате выгрузки MollyDB.\n"
 "Чтобы восстановить базу данных из этого формата, воспользуйтесь программой "
-"командной строки pg_restore.\n"
+"командной строки mdb_restore.\n"
 
 #: mainloop.c:203
 msgid "You are using psql, the command-line interface to MollyDB."

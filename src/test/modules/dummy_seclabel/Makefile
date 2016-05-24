@@ -9,7 +9,7 @@ DATA = dummy_seclabel--1.0.sql
 REGRESS = dummy_seclabel
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

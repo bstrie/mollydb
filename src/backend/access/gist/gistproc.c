@@ -53,7 +53,7 @@ rt_box_union(BOX *n, BOX *a, BOX *b)
  *
  * Should return false if for all data items x below entry,
  * the predicate x op query must be FALSE, where op is the oper
- * corresponding to strategy in the pg_amop table.
+ * corresponding to strategy in the mdb_amop table.
  */
 Datum
 gist_box_consistent(PG_FUNCTION_ARGS)

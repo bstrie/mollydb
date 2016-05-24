@@ -5,7 +5,7 @@ EXTRA_CLEAN = ./isolation_output
 ISOLATIONCHECKS=sto_using_cursor sto_using_select
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else
@@ -33,13 +33,13 @@ submake-test_snapshot_too_old:
 
 isolationcheck: | submake-isolation submake-test_snapshot_too_old temp-install
 	$(MKDIR_P) isolation_output
-	$(pg_isolation_regress_check) \
+	$(mdb_isolation_regress_check) \
 	    --temp-config $(top_srcdir)/src/test/modules/snapshot_too_old/sto.conf \
 	    --outputdir=./isolation_output \
 	    $(ISOLATIONCHECKS)
 
 isolationcheck-install-force: all | submake-isolation submake-test_snapshot_too_old temp-install
-	$(pg_isolation_regress_installcheck) \
+	$(mdb_isolation_regress_installcheck) \
 	    $(ISOLATIONCHECKS)
 
 .PHONY: check submake-test_snapshot_too_old isolationcheck isolationcheck-install-force

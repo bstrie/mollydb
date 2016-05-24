@@ -25,9 +25,9 @@ export FIRSTOBJECTID
 
 # this part (down to the uniq step) should match the duplicate_oids script
 # note: we exclude BKI_BOOTSTRAP relations since they are expected to have
-# matching DATA lines in pg_class.h and pg_type.h
+# matching DATA lines in mdb_class.h and mdb_type.h
 
-cat pg_*.h toasting.h indexing.h | \
+cat mdb_*.h toasting.h indexing.h | \
 egrep -v -e '^CATALOG\(.*BKI_BOOTSTRAP' | \
 sed -n	-e 's/^DATA(insert *OID *= *\([0-9][0-9]*\).*$/\1/p' \
 	-e 's/^CATALOG([^,]*, *\([0-9][0-9]*\).*BKI_ROWTYPE_OID(\([0-9][0-9]*\)).*$/\1,\2/p' \

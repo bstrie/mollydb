@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_type.h
- *	  definition of the system "type" relation (pg_type)
+ * mdb_type.h
+ *	  definition of the system "type" relation (mdb_type)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_type.h
+ * src/include/catalog/mdb_type.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,19 +22,19 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_type definition.  cpp turns this into
- *		typedef struct FormData_pg_type
+ *		mdb_type definition.  cpp turns this into
+ *		typedef struct FormData_mdb_type
  *
- *		Some of the values in a pg_type instance are copied into
- *		pg_attribute instances.  Some parts of MollyDB use the pg_type copy,
- *		while others use the pg_attribute copy, so they must match.
- *		See struct FormData_pg_attribute for details.
+ *		Some of the values in a mdb_type instance are copied into
+ *		mdb_attribute instances.  Some parts of MollyDB use the mdb_type copy,
+ *		while others use the mdb_attribute copy, so they must match.
+ *		See struct FormData_mdb_attribute for details.
  * ----------------
  */
 #define TypeRelationId	1247
 #define TypeRelation_Rowtype_Id  71
 
-CATALOG(pg_type,1247) BKI_BOOTSTRAP BKI_ROWTYPE_OID(71) BKI_SCHEMA_MACRO
+CATALOG(mdb_type,1247) BKI_BOOTSTRAP BKI_ROWTYPE_OID(71) BKI_SCHEMA_MACRO
 {
 	NameData	typname;		/* type name */
 	Oid			typnamespace;	/* OID of namespace containing this type */
@@ -64,7 +64,7 @@ CATALOG(pg_type,1247) BKI_BOOTSTRAP BKI_ROWTYPE_OID(71) BKI_SCHEMA_MACRO
 	 * table's rowtype), 'd' for a domain, 'e' for an enum type, 'p' for a
 	 * pseudo-type, or 'r' for a range type. (Use the TYPTYPE macros below.)
 	 *
-	 * If typtype is 'c', typrelid is the OID of the class' entry in pg_class.
+	 * If typtype is 'c', typrelid is the OID of the class' entry in mdb_class.
 	 */
 	char		typtype;
 
@@ -89,7 +89,7 @@ CATALOG(pg_type,1247) BKI_BOOTSTRAP BKI_ROWTYPE_OID(71) BKI_SCHEMA_MACRO
 	Oid			typrelid;		/* 0 if not a composite type */
 
 	/*
-	 * If typelem is not 0 then it identifies another row in pg_type. The
+	 * If typelem is not 0 then it identifies another row in mdb_type. The
 	 * current type can then be subscripted like an array yielding values of
 	 * type typelem. A non-zero typelem does not guarantee this type to be a
 	 * "real" array type; some ordinary fixed-length types can also be
@@ -146,7 +146,7 @@ CATALOG(pg_type,1247) BKI_BOOTSTRAP BKI_ROWTYPE_OID(71) BKI_SCHEMA_MACRO
 	 * takes care of hiding that from most code.
 	 *
 	 * NOTE: for types used in system tables, it is critical that the
-	 * size and alignment defined in pg_type agree with the way that the
+	 * size and alignment defined in mdb_type agree with the way that the
 	 * compiler will lay out the field in a struct representing a table row.
 	 * ----------------
 	 */
@@ -206,7 +206,7 @@ CATALOG(pg_type,1247) BKI_BOOTSTRAP BKI_ROWTYPE_OID(71) BKI_SCHEMA_MACRO
 	 * a default expression for the type.  Currently this is only used for
 	 * domains.
 	 */
-	pg_node_tree typdefaultbin;
+	mdb_node_tree typdefaultbin;
 
 	/*
 	 * typdefault is NULL if the type has no associated default value. If
@@ -223,54 +223,54 @@ CATALOG(pg_type,1247) BKI_BOOTSTRAP BKI_ROWTYPE_OID(71) BKI_SCHEMA_MACRO
 	 */
 	aclitem		typacl[1];
 #endif
-} FormData_pg_type;
+} FormData_mdb_type;
 
 /* ----------------
- *		Form_pg_type corresponds to a pointer to a row with
- *		the format of pg_type relation.
+ *		Form_mdb_type corresponds to a pointer to a row with
+ *		the format of mdb_type relation.
  * ----------------
  */
-typedef FormData_pg_type *Form_pg_type;
+typedef FormData_mdb_type *Form_mdb_type;
 
 /* ----------------
- *		compiler constants for pg_type
+ *		compiler constants for mdb_type
  * ----------------
  */
-#define Natts_pg_type					30
-#define Anum_pg_type_typname			1
-#define Anum_pg_type_typnamespace		2
-#define Anum_pg_type_typowner			3
-#define Anum_pg_type_typlen				4
-#define Anum_pg_type_typbyval			5
-#define Anum_pg_type_typtype			6
-#define Anum_pg_type_typcategory		7
-#define Anum_pg_type_typispreferred		8
-#define Anum_pg_type_typisdefined		9
-#define Anum_pg_type_typdelim			10
-#define Anum_pg_type_typrelid			11
-#define Anum_pg_type_typelem			12
-#define Anum_pg_type_typarray			13
-#define Anum_pg_type_typinput			14
-#define Anum_pg_type_typoutput			15
-#define Anum_pg_type_typreceive			16
-#define Anum_pg_type_typsend			17
-#define Anum_pg_type_typmodin			18
-#define Anum_pg_type_typmodout			19
-#define Anum_pg_type_typanalyze			20
-#define Anum_pg_type_typalign			21
-#define Anum_pg_type_typstorage			22
-#define Anum_pg_type_typnotnull			23
-#define Anum_pg_type_typbasetype		24
-#define Anum_pg_type_typtypmod			25
-#define Anum_pg_type_typndims			26
-#define Anum_pg_type_typcollation		27
-#define Anum_pg_type_typdefaultbin		28
-#define Anum_pg_type_typdefault			29
-#define Anum_pg_type_typacl				30
+#define Natts_mdb_type					30
+#define Anum_mdb_type_typname			1
+#define Anum_mdb_type_typnamespace		2
+#define Anum_mdb_type_typowner			3
+#define Anum_mdb_type_typlen				4
+#define Anum_mdb_type_typbyval			5
+#define Anum_mdb_type_typtype			6
+#define Anum_mdb_type_typcategory		7
+#define Anum_mdb_type_typispreferred		8
+#define Anum_mdb_type_typisdefined		9
+#define Anum_mdb_type_typdelim			10
+#define Anum_mdb_type_typrelid			11
+#define Anum_mdb_type_typelem			12
+#define Anum_mdb_type_typarray			13
+#define Anum_mdb_type_typinput			14
+#define Anum_mdb_type_typoutput			15
+#define Anum_mdb_type_typreceive			16
+#define Anum_mdb_type_typsend			17
+#define Anum_mdb_type_typmodin			18
+#define Anum_mdb_type_typmodout			19
+#define Anum_mdb_type_typanalyze			20
+#define Anum_mdb_type_typalign			21
+#define Anum_mdb_type_typstorage			22
+#define Anum_mdb_type_typnotnull			23
+#define Anum_mdb_type_typbasetype		24
+#define Anum_mdb_type_typtypmod			25
+#define Anum_mdb_type_typndims			26
+#define Anum_mdb_type_typcollation		27
+#define Anum_mdb_type_typdefaultbin		28
+#define Anum_mdb_type_typdefault			29
+#define Anum_mdb_type_typacl				30
 
 
 /* ----------------
- *		initial contents of pg_type
+ *		initial contents of mdb_type
  * ----------------
  */
 
@@ -346,10 +346,10 @@ DESCR("array of oids, used in system tables");
 /* hand-built rowtype entries for bootstrapped catalogs */
 /* NB: OIDs assigned here must match the BKI_ROWTYPE_OID declarations */
 
-DATA(insert OID = 71 (	pg_type			PGNSP PGUID -1 f c C f t \054 1247 0 0 record_in record_out record_recv record_send - - - d x f 0 -1 0 0 _null_ _null_ _null_ ));
-DATA(insert OID = 75 (	pg_attribute	PGNSP PGUID -1 f c C f t \054 1249 0 0 record_in record_out record_recv record_send - - - d x f 0 -1 0 0 _null_ _null_ _null_ ));
-DATA(insert OID = 81 (	pg_proc			PGNSP PGUID -1 f c C f t \054 1255 0 0 record_in record_out record_recv record_send - - - d x f 0 -1 0 0 _null_ _null_ _null_ ));
-DATA(insert OID = 83 (	pg_class		PGNSP PGUID -1 f c C f t \054 1259 0 0 record_in record_out record_recv record_send - - - d x f 0 -1 0 0 _null_ _null_ _null_ ));
+DATA(insert OID = 71 (	mdb_type			PGNSP PGUID -1 f c C f t \054 1247 0 0 record_in record_out record_recv record_send - - - d x f 0 -1 0 0 _null_ _null_ _null_ ));
+DATA(insert OID = 75 (	mdb_attribute	PGNSP PGUID -1 f c C f t \054 1249 0 0 record_in record_out record_recv record_send - - - d x f 0 -1 0 0 _null_ _null_ _null_ ));
+DATA(insert OID = 81 (	mdb_proc			PGNSP PGUID -1 f c C f t \054 1255 0 0 record_in record_out record_recv record_send - - - d x f 0 -1 0 0 _null_ _null_ _null_ ));
+DATA(insert OID = 83 (	mdb_class		PGNSP PGUID -1 f c C f t \054 1259 0 0 record_in record_out record_recv record_send - - - d x f 0 -1 0 0 _null_ _null_ _null_ ));
 
 /* OIDS 100 - 199 */
 DATA(insert OID = 114 ( json		   PGNSP PGUID -1 f b U f t \054 0 0 199 json_in json_out json_recv json_send - - - i x f 0 -1 0 0 _null_ _null_ _null_ ));
@@ -360,11 +360,11 @@ DESCR("XML content");
 DATA(insert OID = 143 ( _xml	   PGNSP PGUID -1 f b A f t \054 0 142 0 array_in array_out array_recv array_send - - array_typanalyze i x f 0 -1 0 0 _null_ _null_ _null_ ));
 DATA(insert OID = 199 ( _json	   PGNSP PGUID -1 f b A f t \054 0 114 0 array_in array_out array_recv array_send - - array_typanalyze i x f 0 -1 0 0 _null_ _null_ _null_ ));
 
-DATA(insert OID = 194 ( pg_node_tree	PGNSP PGUID -1 f b S f t \054 0 0 0 pg_node_tree_in pg_node_tree_out pg_node_tree_recv pg_node_tree_send - - - i x f 0 -1 0 100 _null_ _null_ _null_ ));
+DATA(insert OID = 194 ( mdb_node_tree	PGNSP PGUID -1 f b S f t \054 0 0 0 mdb_node_tree_in mdb_node_tree_out mdb_node_tree_recv mdb_node_tree_send - - - i x f 0 -1 0 100 _null_ _null_ _null_ ));
 DESCR("string representing an internal node tree");
 #define PGNODETREEOID	194
 
-DATA(insert OID = 32 ( pg_ddl_command	PGNSP PGUID SIZEOF_POINTER t p P f t \054 0 0 0 pg_ddl_command_in pg_ddl_command_out pg_ddl_command_recv pg_ddl_command_send - - - ALIGNOF_POINTER p f 0 -1 0 0 _null_ _null_ _null_ ));
+DATA(insert OID = 32 ( mdb_ddl_command	PGNSP PGUID SIZEOF_POINTER t p P f t \054 0 0 0 mdb_ddl_command_in mdb_ddl_command_out mdb_ddl_command_recv mdb_ddl_command_send - - - ALIGNOF_POINTER p f 0 -1 0 0 _null_ _null_ _null_ ));
 DESCR("internal type for passing CollectedCommand");
 #define PGDDLCOMMANDOID 32
 
@@ -591,11 +591,11 @@ DESCR("UUID datatype");
 #define UUIDOID 2950
 DATA(insert OID = 2951 ( _uuid			PGNSP PGUID -1 f b A f t \054 0 2950 0 array_in array_out array_recv array_send - - array_typanalyze i x f 0 -1 0 0 _null_ _null_ _null_ ));
 
-/* pg_lsn */
-DATA(insert OID = 3220 ( pg_lsn			PGNSP PGUID 8 FLOAT8PASSBYVAL b U f t \054 0 0 3221 pg_lsn_in pg_lsn_out pg_lsn_recv pg_lsn_send - - - d p f 0 -1 0 0 _null_ _null_ _null_ ));
+/* mdb_lsn */
+DATA(insert OID = 3220 ( mdb_lsn			PGNSP PGUID 8 FLOAT8PASSBYVAL b U f t \054 0 0 3221 mdb_lsn_in mdb_lsn_out mdb_lsn_recv mdb_lsn_send - - - d p f 0 -1 0 0 _null_ _null_ _null_ ));
 DESCR("MollyDB LSN datatype");
 #define LSNOID			3220
-DATA(insert OID = 3221 ( _pg_lsn			PGNSP PGUID -1 f b A f t \054 0 3220 0 array_in array_out array_recv array_send - - array_typanalyze d x f 0 -1 0 0 _null_ _null_ _null_ ));
+DATA(insert OID = 3221 ( _mdb_lsn			PGNSP PGUID -1 f b A f t \054 0 3220 0 array_in array_out array_recv array_send - - array_typanalyze d x f 0 -1 0 0 _null_ _null_ _null_ ));
 
 /* text search */
 DATA(insert OID = 3614 ( tsvector		PGNSP PGUID -1 f b U f t \054 0 0 3643 tsvectorin tsvectorout tsvectorrecv tsvectorsend - - ts_typanalyze i x f 0 -1 0 0 _null_ _null_ _null_ ));

@@ -6,7 +6,7 @@ EXTRA_INSTALL=contrib/pageinspect
 ISOLATIONCHECKS=summarization-and-inprogress-insertion
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else
@@ -20,7 +20,7 @@ check: isolation-check
 
 isolation-check: | submake-isolation
 	$(MKDIR_P) isolation_output
-	$(pg_isolation_regress_check) \
+	$(mdb_isolation_regress_check) \
 	    --outputdir=./isolation_output \
 	    $(ISOLATIONCHECKS)
 

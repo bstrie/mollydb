@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * pg_prewarm.c
+ * mdb_prewarm.c
  *		  prewarming utilities
  *
  * Copyright (c) 2010-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  contrib/pg_prewarm/pg_prewarm.c
+ *		  contrib/mdb_prewarm/mdb_prewarm.c
  *
  *-------------------------------------------------------------------------
  */
@@ -28,7 +28,7 @@
 
 PG_MODULE_MAGIC;
 
-PG_FUNCTION_INFO_V1(pg_prewarm);
+PG_FUNCTION_INFO_V1(mdb_prewarm);
 
 typedef enum
 {
@@ -40,7 +40,7 @@ typedef enum
 static char blockbuffer[BLCKSZ];
 
 /*
- * pg_prewarm(regclass, mode text, fork text,
+ * mdb_prewarm(regclass, mode text, fork text,
  *			  first_block int8, last_block int8)
  *
  * The first argument is the relation to be prewarmed; the second controls
@@ -52,7 +52,7 @@ static char blockbuffer[BLCKSZ];
  * return value is the number of blocks successfully prewarmed.
  */
 Datum
-pg_prewarm(PG_FUNCTION_ARGS)
+mdb_prewarm(PG_FUNCTION_ARGS)
 {
 	Oid			relOid;
 	text	   *forkName;
@@ -105,7 +105,7 @@ pg_prewarm(PG_FUNCTION_ARGS)
 
 	/* Open relation and check privileges. */
 	rel = relation_open(relOid, AccessShareLock);
-	aclresult = pg_class_aclcheck(relOid, GetUserId(), ACL_SELECT);
+	aclresult = mdb_class_aclcheck(relOid, GetUserId(), ACL_SELECT);
 	if (aclresult != ACLCHECK_OK)
 		aclcheck_error(aclresult, ACL_KIND_CLASS, get_rel_name(relOid));
 

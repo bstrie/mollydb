@@ -113,7 +113,7 @@ pqSetenvPoll(PGconn *conn)
 
 					if (val)
 					{
-						if (pg_strcasecmp(val, "default") == 0)
+						if (mdb_strcasecmp(val, "default") == 0)
 							sprintf(setQuery, "SET client_encoding = DEFAULT");
 						else
 							sprintf(setQuery, "SET client_encoding = '%.60s'",
@@ -150,7 +150,7 @@ pqSetenvPoll(PGconn *conn)
 
 						if ((val = getenv(conn->next_eo->envName)))
 						{
-							if (pg_strcasecmp(val, "default") == 0)
+							if (mdb_strcasecmp(val, "default") == 0)
 								sprintf(setQuery, "SET %s = DEFAULT",
 										conn->next_eo->pgName);
 							else
@@ -237,7 +237,7 @@ pqSetenvPoll(PGconn *conn)
 					 *
 					 * Note: version() exists in all protocol-2.0-supporting
 					 * backends.  In 7.3 it would be safer to write
-					 * pg_catalog.version(), but we can't do that without
+					 * mdb_catalog.version(), but we can't do that without
 					 * causing problems on older versions.
 					 */
 					if (!PQsendQuery(conn, "begin; select version(); end"))
@@ -312,7 +312,7 @@ pqSetenvPoll(PGconn *conn)
 					const char *query;
 
 					/*
-					 * pg_client_encoding does not exist in pre-7.2 servers.
+					 * mdb_client_encoding does not exist in pre-7.2 servers.
 					 * So we need to be prepared for an error here.  Do *not*
 					 * start a transaction block, except in 7.3 servers where
 					 * we need to prevent autocommit-off from starting a
@@ -320,9 +320,9 @@ pqSetenvPoll(PGconn *conn)
 					 */
 					if (conn->sversion >= 70300 &&
 						conn->sversion < 70400)
-						query = "begin; select pg_catalog.pg_client_encoding(); end";
+						query = "begin; select mdb_catalog.mdb_client_encoding(); end";
 					else
-						query = "select pg_client_encoding()";
+						query = "select mdb_client_encoding()";
 					if (!PQsendQuery(conn, query))
 						goto error_return;
 

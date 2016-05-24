@@ -1,9 +1,9 @@
 /*
  * rmgrdesc.c
  *
- * pg_xlogdump resource managers definition
+ * mdb_xlogdump resource managers definition
  *
- * src/bin/pg_xlogdump/rmgrdesc.c
+ * src/bin/mdb_xlogdump/rmgrdesc.c
  */
 #define FRONTEND 1
 #include "mollydb.h"

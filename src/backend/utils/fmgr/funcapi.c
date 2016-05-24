@@ -15,8 +15,8 @@
 
 #include "access/htup_details.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "nodes/nodeFuncs.h"
 #include "parser/parse_coerce.h"
@@ -295,15 +295,15 @@ internal_get_result_type(Oid funcid,
 {
 	TypeFuncClass result;
 	HeapTuple	tp;
-	Form_pg_proc procform;
+	Form_mdb_proc procform;
 	Oid			rettype;
 	TupleDesc	tupdesc;
 
-	/* First fetch the function's pg_proc row to inspect its rettype */
+	/* First fetch the function's mdb_proc row to inspect its rettype */
 	tp = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcid));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for function %u", funcid);
-	procform = (Form_pg_proc) GETSTRUCT(tp);
+	procform = (Form_mdb_proc) GETSTRUCT(tp);
 
 	rettype = procform->prorettype;
 
@@ -780,19 +780,19 @@ get_type_func_class(Oid typid)
  * get_func_arg_info
  *
  * Fetch info about the argument types, names, and IN/OUT modes from the
- * pg_proc tuple.  Return value is the total number of arguments.
+ * mdb_proc tuple.  Return value is the total number of arguments.
  * Other results are palloc'd.  *p_argtypes is always filled in, but
  * *p_argnames and *p_argmodes will be set NULL in the default cases
  * (no names, and all IN arguments, respectively).
  *
- * Note that this function simply fetches what is in the pg_proc tuple;
+ * Note that this function simply fetches what is in the mdb_proc tuple;
  * it doesn't do any interpretation of polymorphic types.
  */
 int
 get_func_arg_info(HeapTuple procTup,
 				  Oid **p_argtypes, char ***p_argnames, char **p_argmodes)
 {
-	Form_pg_proc procStruct = (Form_pg_proc) GETSTRUCT(procTup);
+	Form_mdb_proc procStruct = (Form_mdb_proc) GETSTRUCT(procTup);
 	Datum		proallargtypes;
 	Datum		proargmodes;
 	Datum		proargnames;
@@ -805,7 +805,7 @@ get_func_arg_info(HeapTuple procTup,
 
 	/* First discover the total number of parameters and get their types */
 	proallargtypes = SysCacheGetAttr(PROCOID, procTup,
-									 Anum_pg_proc_proallargtypes,
+									 Anum_mdb_proc_proallargtypes,
 									 &isNull);
 	if (!isNull)
 	{
@@ -839,7 +839,7 @@ get_func_arg_info(HeapTuple procTup,
 
 	/* Get argument names, if available */
 	proargnames = SysCacheGetAttr(PROCOID, procTup,
-								  Anum_pg_proc_proargnames,
+								  Anum_mdb_proc_proargnames,
 								  &isNull);
 	if (isNull)
 		*p_argnames = NULL;
@@ -857,7 +857,7 @@ get_func_arg_info(HeapTuple procTup,
 
 	/* Get argument modes, if available */
 	proargmodes = SysCacheGetAttr(PROCOID, procTup,
-								  Anum_pg_proc_proargmodes,
+								  Anum_mdb_proc_proargmodes,
 								  &isNull);
 	if (isNull)
 		*p_argmodes = NULL;
@@ -892,7 +892,7 @@ get_func_trftypes(HeapTuple procTup,
 	bool		isNull;
 
 	protrftypes = SysCacheGetAttr(PROCOID, procTup,
-								  Anum_pg_proc_protrftypes,
+								  Anum_mdb_proc_protrftypes,
 								  &isNull);
 	if (!isNull)
 	{
@@ -909,7 +909,7 @@ get_func_trftypes(HeapTuple procTup,
 			ARR_HASNULL(arr) ||
 			ARR_ELEMTYPE(arr) != OIDOID)
 			elog(ERROR, "protrftypes is not a 1-D Oid array");
-		Assert(nelems >= ((Form_pg_proc) GETSTRUCT(procTup))->pronargs);
+		Assert(nelems >= ((Form_mdb_proc) GETSTRUCT(procTup))->pronargs);
 		*p_trftypes = (Oid *) palloc(nelems * sizeof(Oid));
 		memcpy(*p_trftypes, ARR_DATA_PTR(arr),
 			   nelems * sizeof(Oid));
@@ -1031,24 +1031,24 @@ get_func_result_name(Oid functionId)
 	int			nargnames;
 	int			i;
 
-	/* First fetch the function's pg_proc row */
+	/* First fetch the function's mdb_proc row */
 	procTuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(functionId));
 	if (!HeapTupleIsValid(procTuple))
 		elog(ERROR, "cache lookup failed for function %u", functionId);
 
 	/* If there are no named OUT parameters, return NULL */
-	if (heap_attisnull(procTuple, Anum_pg_proc_proargmodes) ||
-		heap_attisnull(procTuple, Anum_pg_proc_proargnames))
+	if (heap_attisnull(procTuple, Anum_mdb_proc_proargmodes) ||
+		heap_attisnull(procTuple, Anum_mdb_proc_proargnames))
 		result = NULL;
 	else
 	{
 		/* Get the data out of the tuple */
 		proargmodes = SysCacheGetAttr(PROCOID, procTuple,
-									  Anum_pg_proc_proargmodes,
+									  Anum_mdb_proc_proargmodes,
 									  &isnull);
 		Assert(!isnull);
 		proargnames = SysCacheGetAttr(PROCOID, procTuple,
-									  Anum_pg_proc_proargnames,
+									  Anum_mdb_proc_proargnames,
 									  &isnull);
 		Assert(!isnull);
 
@@ -1112,7 +1112,7 @@ get_func_result_name(Oid functionId)
 /*
  * build_function_result_tupdesc_t
  *
- * Given a pg_proc row for a function, return a tuple descriptor for the
+ * Given a mdb_proc row for a function, return a tuple descriptor for the
  * result rowtype, or NULL if the function does not have OUT parameters.
  *
  * Note that this does not handle resolution of polymorphic types;
@@ -1121,7 +1121,7 @@ get_func_result_name(Oid functionId)
 TupleDesc
 build_function_result_tupdesc_t(HeapTuple procTuple)
 {
-	Form_pg_proc procform = (Form_pg_proc) GETSTRUCT(procTuple);
+	Form_mdb_proc procform = (Form_mdb_proc) GETSTRUCT(procTuple);
 	Datum		proallargtypes;
 	Datum		proargmodes;
 	Datum		proargnames;
@@ -1132,21 +1132,21 @@ build_function_result_tupdesc_t(HeapTuple procTuple)
 		return NULL;
 
 	/* If there are no OUT parameters, return NULL */
-	if (heap_attisnull(procTuple, Anum_pg_proc_proallargtypes) ||
-		heap_attisnull(procTuple, Anum_pg_proc_proargmodes))
+	if (heap_attisnull(procTuple, Anum_mdb_proc_proallargtypes) ||
+		heap_attisnull(procTuple, Anum_mdb_proc_proargmodes))
 		return NULL;
 
 	/* Get the data out of the tuple */
 	proallargtypes = SysCacheGetAttr(PROCOID, procTuple,
-									 Anum_pg_proc_proallargtypes,
+									 Anum_mdb_proc_proallargtypes,
 									 &isnull);
 	Assert(!isnull);
 	proargmodes = SysCacheGetAttr(PROCOID, procTuple,
-								  Anum_pg_proc_proargmodes,
+								  Anum_mdb_proc_proargmodes,
 								  &isnull);
 	Assert(!isnull);
 	proargnames = SysCacheGetAttr(PROCOID, procTuple,
-								  Anum_pg_proc_proargnames,
+								  Anum_mdb_proc_proargnames,
 								  &isnull);
 	if (isnull)
 		proargnames = PointerGetDatum(NULL);	/* just to be sure */
@@ -1159,7 +1159,7 @@ build_function_result_tupdesc_t(HeapTuple procTuple)
 /*
  * build_function_result_tupdesc_d
  *
- * Build a RECORD function's tupledesc from the pg_proc proallargtypes,
+ * Build a RECORD function's tupledesc from the mdb_proc proallargtypes,
  * proargmodes, and proargnames arrays.  This is split out for the
  * convenience of ProcedureCreate, which needs to be able to compute the
  * tupledesc before actually creating the function.

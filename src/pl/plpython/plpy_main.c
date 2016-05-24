@@ -7,8 +7,8 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "commands/trigger.h"
 #include "executor/spi.h"
 #include "miscadmin.h"
@@ -33,7 +33,7 @@
  */
 
 #if PY_MAJOR_VERSION >= 3
-/* Use separate names to avoid clash in pg_pltemplate */
+/* Use separate names to avoid clash in mdb_pltemplate */
 #define plpython_validator plpython3_validator
 #define plpython_call_handler plpython3_call_handler
 #define plpython_inline_handler plpython3_inline_handler
@@ -55,7 +55,7 @@ PG_FUNCTION_INFO_V1(plpython2_inline_handler);
 #endif
 
 
-static bool PLy_procedure_is_trigger(Form_pg_proc procStruct);
+static bool PLy_procedure_is_trigger(Form_mdb_proc procStruct);
 static void plpython_error_callback(void *arg);
 static void plpython_inline_error_callback(void *arg);
 static void PLy_init_interp(void);
@@ -83,7 +83,7 @@ _PG_init(void)
 	 * Set up a shared bitmask variable telling which Python version(s) are
 	 * loaded into this process's address space.  If there's more than one, we
 	 * cannot call into libpython for fear of causing crashes.  But postpone
-	 * the actual failure for later, so that operations like pg_restore can
+	 * the actual failure for later, so that operations like mdb_restore can
 	 * load more than one plpython library so long as they don't try to do
 	 * anything much with the language.
 	 */
@@ -100,7 +100,7 @@ _PG_init(void)
 	 * it's necessary to do it before possibly throwing a conflict error, or
 	 * the error message won't get localized.
 	 */
-	pg_bindtextdomain(TEXTDOMAIN);
+	mdb_bindtextdomain(TEXTDOMAIN);
 }
 
 /*
@@ -179,7 +179,7 @@ plpython_validator(PG_FUNCTION_ARGS)
 {
 	Oid			funcoid = PG_GETARG_OID(0);
 	HeapTuple	tuple;
-	Form_pg_proc procStruct;
+	Form_mdb_proc procStruct;
 	bool		is_trigger;
 
 	if (!CheckFunctionValidatorAccess(fcinfo->flinfo->fn_oid, funcoid))
@@ -191,11 +191,11 @@ plpython_validator(PG_FUNCTION_ARGS)
 	/* Do this only after making sure we need to do something */
 	PLy_initialize();
 
-	/* Get the new function's pg_proc entry */
+	/* Get the new function's mdb_proc entry */
 	tuple = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcoid));
 	if (!HeapTupleIsValid(tuple))
 		elog(ERROR, "cache lookup failed for function %u", funcoid);
-	procStruct = (Form_pg_proc) GETSTRUCT(tuple);
+	procStruct = (Form_mdb_proc) GETSTRUCT(tuple);
 
 	is_trigger = PLy_procedure_is_trigger(procStruct);
 
@@ -373,7 +373,7 @@ plpython2_inline_handler(PG_FUNCTION_ARGS)
 #endif   /* PY_MAJOR_VERSION < 3 */
 
 static bool
-PLy_procedure_is_trigger(Form_pg_proc procStruct)
+PLy_procedure_is_trigger(Form_mdb_proc procStruct)
 {
 	return (procStruct->prorettype == TRIGGEROID ||
 			(procStruct->prorettype == OPAQUEOID &&

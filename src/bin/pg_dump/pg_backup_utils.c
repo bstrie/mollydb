@@ -1,20 +1,20 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup_utils.c
- *	Utility routines shared by pg_dump and pg_restore
+ * mdb_backup_utils.c
+ *	Utility routines shared by mdb_dump and mdb_restore
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/bin/pg_dump/pg_backup_utils.c
+ * src/bin/mdb_dump/mdb_backup_utils.c
  *
  *-------------------------------------------------------------------------
  */
 #include "mollydb_fe.h"
 
 #include "parallel.h"
-#include "pg_backup_utils.h"
+#include "mdb_backup_utils.h"
 
 /* Globals exported by this file */
 const char *progname = NULL;
@@ -33,8 +33,8 @@ static int	on_exit_nicely_index;
  * Parse a --section=foo command line argument.
  *
  * Set or update the bitmask in *dumpSections according to arg.
- * dumpSections is initialised as DUMP_UNSECTIONED by pg_dump and
- * pg_restore so they can know if this has even been called.
+ * dumpSections is initialised as DUMP_UNSECTIONED by mdb_dump and
+ * mdb_restore so they can know if this has even been called.
  */
 void
 set_dump_section(const char *arg, int *dumpSections)

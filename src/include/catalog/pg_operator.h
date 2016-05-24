@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_operator.h
- *	  definition of the system "operator" relation (pg_operator)
+ * mdb_operator.h
+ *	  definition of the system "operator" relation (mdb_operator)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_operator.h
+ * src/include/catalog/mdb_operator.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -25,13 +25,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_operator definition.  cpp turns this into
- *		typedef struct FormData_pg_operator
+ *		mdb_operator definition.  cpp turns this into
+ *		typedef struct FormData_mdb_operator
  * ----------------
  */
 #define OperatorRelationId	2617
 
-CATALOG(pg_operator,2617)
+CATALOG(mdb_operator,2617)
 {
 	NameData	oprname;		/* name of operator */
 	Oid			oprnamespace;	/* OID of namespace containing this oper */
@@ -47,43 +47,43 @@ CATALOG(pg_operator,2617)
 	regproc		oprcode;		/* OID of underlying function */
 	regproc		oprrest;		/* OID of restriction estimator, or 0 */
 	regproc		oprjoin;		/* OID of join estimator, or 0 */
-} FormData_pg_operator;
+} FormData_mdb_operator;
 
 /* ----------------
- *		Form_pg_operator corresponds to a pointer to a tuple with
- *		the format of pg_operator relation.
+ *		Form_mdb_operator corresponds to a pointer to a tuple with
+ *		the format of mdb_operator relation.
  * ----------------
  */
-typedef FormData_pg_operator *Form_pg_operator;
+typedef FormData_mdb_operator *Form_mdb_operator;
 
 /* ----------------
- *		compiler constants for pg_operator
+ *		compiler constants for mdb_operator
  * ----------------
  */
 
-#define Natts_pg_operator				14
-#define Anum_pg_operator_oprname		1
-#define Anum_pg_operator_oprnamespace	2
-#define Anum_pg_operator_oprowner		3
-#define Anum_pg_operator_oprkind		4
-#define Anum_pg_operator_oprcanmerge	5
-#define Anum_pg_operator_oprcanhash		6
-#define Anum_pg_operator_oprleft		7
-#define Anum_pg_operator_oprright		8
-#define Anum_pg_operator_oprresult		9
-#define Anum_pg_operator_oprcom			10
-#define Anum_pg_operator_oprnegate		11
-#define Anum_pg_operator_oprcode		12
-#define Anum_pg_operator_oprrest		13
-#define Anum_pg_operator_oprjoin		14
+#define Natts_mdb_operator				14
+#define Anum_mdb_operator_oprname		1
+#define Anum_mdb_operator_oprnamespace	2
+#define Anum_mdb_operator_oprowner		3
+#define Anum_mdb_operator_oprkind		4
+#define Anum_mdb_operator_oprcanmerge	5
+#define Anum_mdb_operator_oprcanhash		6
+#define Anum_mdb_operator_oprleft		7
+#define Anum_mdb_operator_oprright		8
+#define Anum_mdb_operator_oprresult		9
+#define Anum_mdb_operator_oprcom			10
+#define Anum_mdb_operator_oprnegate		11
+#define Anum_mdb_operator_oprcode		12
+#define Anum_mdb_operator_oprrest		13
+#define Anum_mdb_operator_oprjoin		14
 
 /* ----------------
- *		initial contents of pg_operator
+ *		initial contents of mdb_operator
  * ----------------
  */
 
 /*
- * Note: every entry in pg_operator.h is expected to have a DESCR() comment.
+ * Note: every entry in mdb_operator.h is expected to have a DESCR() comment.
  * If the operator is a deprecated equivalent of some other entry, be sure
  * to comment it as such so that initdb doesn't think it's a preferred name
  * for the underlying function.
@@ -1604,20 +1604,20 @@ DESCR("less than or equal");
 DATA(insert OID = 2977 (  ">="	   PGNSP PGUID b f f 2950 2950 16 2976 2974 uuid_ge scalargtsel scalargtjoinsel ));
 DESCR("greater than or equal");
 
-/* pg_lsn operators */
-DATA(insert OID = 3222 (  "="	   PGNSP PGUID b t t 3220 3220 16 3222 3223 pg_lsn_eq eqsel eqjoinsel ));
+/* mdb_lsn operators */
+DATA(insert OID = 3222 (  "="	   PGNSP PGUID b t t 3220 3220 16 3222 3223 mdb_lsn_eq eqsel eqjoinsel ));
 DESCR("equal");
-DATA(insert OID = 3223 (  "<>"	   PGNSP PGUID b f f 3220 3220 16 3223 3222 pg_lsn_ne neqsel neqjoinsel ));
+DATA(insert OID = 3223 (  "<>"	   PGNSP PGUID b f f 3220 3220 16 3223 3222 mdb_lsn_ne neqsel neqjoinsel ));
 DESCR("not equal");
-DATA(insert OID = 3224 (  "<"	   PGNSP PGUID b f f 3220 3220 16 3225 3227 pg_lsn_lt scalarltsel scalarltjoinsel ));
+DATA(insert OID = 3224 (  "<"	   PGNSP PGUID b f f 3220 3220 16 3225 3227 mdb_lsn_lt scalarltsel scalarltjoinsel ));
 DESCR("less than");
-DATA(insert OID = 3225 (  ">"	   PGNSP PGUID b f f 3220 3220 16 3224 3226 pg_lsn_gt scalargtsel scalargtjoinsel ));
+DATA(insert OID = 3225 (  ">"	   PGNSP PGUID b f f 3220 3220 16 3224 3226 mdb_lsn_gt scalargtsel scalargtjoinsel ));
 DESCR("greater than");
-DATA(insert OID = 3226 (  "<="	   PGNSP PGUID b f f 3220 3220 16 3227 3225 pg_lsn_le scalarltsel scalarltjoinsel ));
+DATA(insert OID = 3226 (  "<="	   PGNSP PGUID b f f 3220 3220 16 3227 3225 mdb_lsn_le scalarltsel scalarltjoinsel ));
 DESCR("less than or equal");
-DATA(insert OID = 3227 (  ">="	   PGNSP PGUID b f f 3220 3220 16 3226 3224 pg_lsn_ge scalargtsel scalargtjoinsel ));
+DATA(insert OID = 3227 (  ">="	   PGNSP PGUID b f f 3220 3220 16 3226 3224 mdb_lsn_ge scalargtsel scalargtjoinsel ));
 DESCR("greater than or equal");
-DATA(insert OID = 3228 (  "-"	   PGNSP PGUID b f f 3220 3220 1700    0	0 pg_lsn_mi - - ));
+DATA(insert OID = 3228 (  "-"	   PGNSP PGUID b f f 3220 3220 1700    0	0 mdb_lsn_mi - - ));
 DESCR("minus");
 
 /* enum operators */

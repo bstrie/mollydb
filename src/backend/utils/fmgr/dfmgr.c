@@ -47,7 +47,7 @@ typedef struct df_files
 								 * win32 */
 	ino_t		inode;			/* Inode number of file */
 #endif
-	void	   *handle;			/* a handle for pg_dl* functions */
+	void	   *handle;			/* a handle for mdb_dl* functions */
 	char		filename[FLEXIBLE_ARRAY_MEMBER];		/* Full pathname of file */
 } DynamicFileList;
 
@@ -109,7 +109,7 @@ load_external_function(char *filename, char *funcname,
 		*filehandle = lib_handle;
 
 	/* Look up the function within the library */
-	retval = (PGFunction) pg_dlsym(lib_handle, funcname);
+	retval = (PGFunction) mdb_dlsym(lib_handle, funcname);
 
 	if (retval == NULL && signalNotFound)
 		ereport(ERROR,
@@ -157,13 +157,13 @@ load_file(const char *filename, bool restricted)
 PGFunction
 lookup_external_function(void *filehandle, char *funcname)
 {
-	return (PGFunction) pg_dlsym(filehandle, funcname);
+	return (PGFunction) mdb_dlsym(filehandle, funcname);
 }
 
 
 /*
  * Load the specified dynamic-link library file, unless it already is
- * loaded.  Return the pg_dl* handle for the file.
+ * loaded.  Return the mdb_dl* handle for the file.
  *
  * Note: libname is expected to be an exact name for the library file.
  */
@@ -223,10 +223,10 @@ internal_load_library(const char *libname)
 #endif
 		file_scanner->next = NULL;
 
-		file_scanner->handle = pg_dlopen(file_scanner->filename);
+		file_scanner->handle = mdb_dlopen(file_scanner->filename);
 		if (file_scanner->handle == NULL)
 		{
-			load_error = (char *) pg_dlerror();
+			load_error = (char *) mdb_dlerror();
 			free((char *) file_scanner);
 			/* errcode_for_file_access might not be appropriate here? */
 			ereport(ERROR,
@@ -237,7 +237,7 @@ internal_load_library(const char *libname)
 
 		/* Check the magic function to determine compatibility */
 		magic_func = (PGModuleMagicFunction)
-			pg_dlsym(file_scanner->handle, PG_MAGIC_FUNCTION_NAME_STRING);
+			mdb_dlsym(file_scanner->handle, PG_MAGIC_FUNCTION_NAME_STRING);
 		if (magic_func)
 		{
 			const Pg_magic_struct *magic_data_ptr = (*magic_func) ();
@@ -249,7 +249,7 @@ internal_load_library(const char *libname)
 				Pg_magic_struct module_magic_data = *magic_data_ptr;
 
 				/* try to unlink library */
-				pg_dlclose(file_scanner->handle);
+				mdb_dlclose(file_scanner->handle);
 				free((char *) file_scanner);
 
 				/* issue suitable complaint */
@@ -259,7 +259,7 @@ internal_load_library(const char *libname)
 		else
 		{
 			/* try to unlink library */
-			pg_dlclose(file_scanner->handle);
+			mdb_dlclose(file_scanner->handle);
 			free((char *) file_scanner);
 			/* complain */
 			ereport(ERROR,
@@ -271,7 +271,7 @@ internal_load_library(const char *libname)
 		/*
 		 * If the library has a _PG_init() function, call it.
 		 */
-		PG_init = (PG_init_t) pg_dlsym(file_scanner->handle, "_PG_init");
+		PG_init = (PG_init_t) mdb_dlsym(file_scanner->handle, "_PG_init");
 		if (PG_init)
 			(*PG_init) ();
 
@@ -423,12 +423,12 @@ internal_unload_library(const char *libname)
 			/*
 			 * If the library has a _PG_fini() function, call it.
 			 */
-			PG_fini = (PG_fini_t) pg_dlsym(file_scanner->handle, "_PG_fini");
+			PG_fini = (PG_fini_t) mdb_dlsym(file_scanner->handle, "_PG_fini");
 			if (PG_fini)
 				(*PG_fini) ();
 
 			clear_external_function_hash(file_scanner->handle);
-			pg_dlclose(file_scanner->handle);
+			mdb_dlclose(file_scanner->handle);
 			free((char *) file_scanner);
 			/* prv does not change */
 		}

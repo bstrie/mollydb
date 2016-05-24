@@ -15,8 +15,8 @@
 #include "access/htup_details.h"
 #include "catalog/catalog.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_seclabel.h"
-#include "catalog/pg_shseclabel.h"
+#include "catalog/mdb_seclabel.h"
+#include "catalog/mdb_shseclabel.h"
 #include "commands/seclabel.h"
 #include "miscadmin.h"
 #include "utils/builtins.h"
@@ -104,7 +104,7 @@ ExecSecLabelStmt(SecLabelStmt *stmt)
 			/*
 			 * Allow security labels only on columns of tables, views,
 			 * materialized views, composite types, and foreign tables (which
-			 * are the only relkinds for which pg_dump will dump labels).
+			 * are the only relkinds for which mdb_dump will dump labels).
 			 */
 			if (relation->rd_rel->relkind != RELKIND_RELATION &&
 				relation->rd_rel->relkind != RELKIND_VIEW &&
@@ -145,7 +145,7 @@ ExecSecLabelStmt(SecLabelStmt *stmt)
 static char *
 GetSharedSecurityLabel(const ObjectAddress *object, const char *provider)
 {
-	Relation	pg_shseclabel;
+	Relation	mdb_shseclabel;
 	ScanKeyData keys[3];
 	SysScanDesc scan;
 	HeapTuple	tuple;
@@ -154,34 +154,34 @@ GetSharedSecurityLabel(const ObjectAddress *object, const char *provider)
 	char	   *seclabel = NULL;
 
 	ScanKeyInit(&keys[0],
-				Anum_pg_shseclabel_objoid,
+				Anum_mdb_shseclabel_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->objectId));
 	ScanKeyInit(&keys[1],
-				Anum_pg_shseclabel_classoid,
+				Anum_mdb_shseclabel_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->classId));
 	ScanKeyInit(&keys[2],
-				Anum_pg_shseclabel_provider,
+				Anum_mdb_shseclabel_provider,
 				BTEqualStrategyNumber, F_TEXTEQ,
 				CStringGetTextDatum(provider));
 
-	pg_shseclabel = heap_open(SharedSecLabelRelationId, AccessShareLock);
+	mdb_shseclabel = heap_open(SharedSecLabelRelationId, AccessShareLock);
 
-	scan = systable_beginscan(pg_shseclabel, SharedSecLabelObjectIndexId, true,
+	scan = systable_beginscan(mdb_shseclabel, SharedSecLabelObjectIndexId, true,
 							  NULL, 3, keys);
 
 	tuple = systable_getnext(scan);
 	if (HeapTupleIsValid(tuple))
 	{
-		datum = heap_getattr(tuple, Anum_pg_shseclabel_label,
-							 RelationGetDescr(pg_shseclabel), &isnull);
+		datum = heap_getattr(tuple, Anum_mdb_shseclabel_label,
+							 RelationGetDescr(mdb_shseclabel), &isnull);
 		if (!isnull)
 			seclabel = TextDatumGetCString(datum);
 	}
 	systable_endscan(scan);
 
-	heap_close(pg_shseclabel, AccessShareLock);
+	heap_close(mdb_shseclabel, AccessShareLock);
 
 	return seclabel;
 }
@@ -193,7 +193,7 @@ GetSharedSecurityLabel(const ObjectAddress *object, const char *provider)
 char *
 GetSecurityLabel(const ObjectAddress *object, const char *provider)
 {
-	Relation	pg_seclabel;
+	Relation	mdb_seclabel;
 	ScanKeyData keys[4];
 	SysScanDesc scan;
 	HeapTuple	tuple;
@@ -205,40 +205,40 @@ GetSecurityLabel(const ObjectAddress *object, const char *provider)
 	if (IsSharedRelation(object->classId))
 		return GetSharedSecurityLabel(object, provider);
 
-	/* Must be an unshared object, so examine pg_seclabel. */
+	/* Must be an unshared object, so examine mdb_seclabel. */
 	ScanKeyInit(&keys[0],
-				Anum_pg_seclabel_objoid,
+				Anum_mdb_seclabel_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->objectId));
 	ScanKeyInit(&keys[1],
-				Anum_pg_seclabel_classoid,
+				Anum_mdb_seclabel_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->classId));
 	ScanKeyInit(&keys[2],
-				Anum_pg_seclabel_objsubid,
+				Anum_mdb_seclabel_objsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum(object->objectSubId));
 	ScanKeyInit(&keys[3],
-				Anum_pg_seclabel_provider,
+				Anum_mdb_seclabel_provider,
 				BTEqualStrategyNumber, F_TEXTEQ,
 				CStringGetTextDatum(provider));
 
-	pg_seclabel = heap_open(SecLabelRelationId, AccessShareLock);
+	mdb_seclabel = heap_open(SecLabelRelationId, AccessShareLock);
 
-	scan = systable_beginscan(pg_seclabel, SecLabelObjectIndexId, true,
+	scan = systable_beginscan(mdb_seclabel, SecLabelObjectIndexId, true,
 							  NULL, 4, keys);
 
 	tuple = systable_getnext(scan);
 	if (HeapTupleIsValid(tuple))
 	{
-		datum = heap_getattr(tuple, Anum_pg_seclabel_label,
-							 RelationGetDescr(pg_seclabel), &isnull);
+		datum = heap_getattr(tuple, Anum_mdb_seclabel_label,
+							 RelationGetDescr(mdb_seclabel), &isnull);
 		if (!isnull)
 			seclabel = TextDatumGetCString(datum);
 	}
 	systable_endscan(scan);
 
-	heap_close(pg_seclabel, AccessShareLock);
+	heap_close(mdb_seclabel, AccessShareLock);
 
 	return seclabel;
 }
@@ -251,54 +251,54 @@ static void
 SetSharedSecurityLabel(const ObjectAddress *object,
 					   const char *provider, const char *label)
 {
-	Relation	pg_shseclabel;
+	Relation	mdb_shseclabel;
 	ScanKeyData keys[4];
 	SysScanDesc scan;
 	HeapTuple	oldtup;
 	HeapTuple	newtup = NULL;
-	Datum		values[Natts_pg_shseclabel];
-	bool		nulls[Natts_pg_shseclabel];
-	bool		replaces[Natts_pg_shseclabel];
+	Datum		values[Natts_mdb_shseclabel];
+	bool		nulls[Natts_mdb_shseclabel];
+	bool		replaces[Natts_mdb_shseclabel];
 
 	/* Prepare to form or update a tuple, if necessary. */
 	memset(nulls, false, sizeof(nulls));
 	memset(replaces, false, sizeof(replaces));
-	values[Anum_pg_shseclabel_objoid - 1] = ObjectIdGetDatum(object->objectId);
-	values[Anum_pg_shseclabel_classoid - 1] = ObjectIdGetDatum(object->classId);
-	values[Anum_pg_shseclabel_provider - 1] = CStringGetTextDatum(provider);
+	values[Anum_mdb_shseclabel_objoid - 1] = ObjectIdGetDatum(object->objectId);
+	values[Anum_mdb_shseclabel_classoid - 1] = ObjectIdGetDatum(object->classId);
+	values[Anum_mdb_shseclabel_provider - 1] = CStringGetTextDatum(provider);
 	if (label != NULL)
-		values[Anum_pg_shseclabel_label - 1] = CStringGetTextDatum(label);
+		values[Anum_mdb_shseclabel_label - 1] = CStringGetTextDatum(label);
 
 	/* Use the index to search for a matching old tuple */
 	ScanKeyInit(&keys[0],
-				Anum_pg_shseclabel_objoid,
+				Anum_mdb_shseclabel_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->objectId));
 	ScanKeyInit(&keys[1],
-				Anum_pg_shseclabel_classoid,
+				Anum_mdb_shseclabel_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->classId));
 	ScanKeyInit(&keys[2],
-				Anum_pg_shseclabel_provider,
+				Anum_mdb_shseclabel_provider,
 				BTEqualStrategyNumber, F_TEXTEQ,
 				CStringGetTextDatum(provider));
 
-	pg_shseclabel = heap_open(SharedSecLabelRelationId, RowExclusiveLock);
+	mdb_shseclabel = heap_open(SharedSecLabelRelationId, RowExclusiveLock);
 
-	scan = systable_beginscan(pg_shseclabel, SharedSecLabelObjectIndexId, true,
+	scan = systable_beginscan(mdb_shseclabel, SharedSecLabelObjectIndexId, true,
 							  NULL, 3, keys);
 
 	oldtup = systable_getnext(scan);
 	if (HeapTupleIsValid(oldtup))
 	{
 		if (label == NULL)
-			simple_heap_delete(pg_shseclabel, &oldtup->t_self);
+			simple_heap_delete(mdb_shseclabel, &oldtup->t_self);
 		else
 		{
-			replaces[Anum_pg_shseclabel_label - 1] = true;
-			newtup = heap_modify_tuple(oldtup, RelationGetDescr(pg_shseclabel),
+			replaces[Anum_mdb_shseclabel_label - 1] = true;
+			newtup = heap_modify_tuple(oldtup, RelationGetDescr(mdb_shseclabel),
 									   values, nulls, replaces);
-			simple_heap_update(pg_shseclabel, &oldtup->t_self, newtup);
+			simple_heap_update(mdb_shseclabel, &oldtup->t_self, newtup);
 		}
 	}
 	systable_endscan(scan);
@@ -306,19 +306,19 @@ SetSharedSecurityLabel(const ObjectAddress *object,
 	/* If we didn't find an old tuple, insert a new one */
 	if (newtup == NULL && label != NULL)
 	{
-		newtup = heap_form_tuple(RelationGetDescr(pg_shseclabel),
+		newtup = heap_form_tuple(RelationGetDescr(mdb_shseclabel),
 								 values, nulls);
-		simple_heap_insert(pg_shseclabel, newtup);
+		simple_heap_insert(mdb_shseclabel, newtup);
 	}
 
 	/* Update indexes, if necessary */
 	if (newtup != NULL)
 	{
-		CatalogUpdateIndexes(pg_shseclabel, newtup);
+		CatalogUpdateIndexes(mdb_shseclabel, newtup);
 		heap_freetuple(newtup);
 	}
 
-	heap_close(pg_shseclabel, RowExclusiveLock);
+	heap_close(mdb_shseclabel, RowExclusiveLock);
 }
 
 /*
@@ -330,14 +330,14 @@ void
 SetSecurityLabel(const ObjectAddress *object,
 				 const char *provider, const char *label)
 {
-	Relation	pg_seclabel;
+	Relation	mdb_seclabel;
 	ScanKeyData keys[4];
 	SysScanDesc scan;
 	HeapTuple	oldtup;
 	HeapTuple	newtup = NULL;
-	Datum		values[Natts_pg_seclabel];
-	bool		nulls[Natts_pg_seclabel];
-	bool		replaces[Natts_pg_seclabel];
+	Datum		values[Natts_mdb_seclabel];
+	bool		nulls[Natts_mdb_seclabel];
+	bool		replaces[Natts_mdb_seclabel];
 
 	/* Shared objects have their own security label catalog. */
 	if (IsSharedRelation(object->classId))
@@ -349,47 +349,47 @@ SetSecurityLabel(const ObjectAddress *object,
 	/* Prepare to form or update a tuple, if necessary. */
 	memset(nulls, false, sizeof(nulls));
 	memset(replaces, false, sizeof(replaces));
-	values[Anum_pg_seclabel_objoid - 1] = ObjectIdGetDatum(object->objectId);
-	values[Anum_pg_seclabel_classoid - 1] = ObjectIdGetDatum(object->classId);
-	values[Anum_pg_seclabel_objsubid - 1] = Int32GetDatum(object->objectSubId);
-	values[Anum_pg_seclabel_provider - 1] = CStringGetTextDatum(provider);
+	values[Anum_mdb_seclabel_objoid - 1] = ObjectIdGetDatum(object->objectId);
+	values[Anum_mdb_seclabel_classoid - 1] = ObjectIdGetDatum(object->classId);
+	values[Anum_mdb_seclabel_objsubid - 1] = Int32GetDatum(object->objectSubId);
+	values[Anum_mdb_seclabel_provider - 1] = CStringGetTextDatum(provider);
 	if (label != NULL)
-		values[Anum_pg_seclabel_label - 1] = CStringGetTextDatum(label);
+		values[Anum_mdb_seclabel_label - 1] = CStringGetTextDatum(label);
 
 	/* Use the index to search for a matching old tuple */
 	ScanKeyInit(&keys[0],
-				Anum_pg_seclabel_objoid,
+				Anum_mdb_seclabel_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->objectId));
 	ScanKeyInit(&keys[1],
-				Anum_pg_seclabel_classoid,
+				Anum_mdb_seclabel_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->classId));
 	ScanKeyInit(&keys[2],
-				Anum_pg_seclabel_objsubid,
+				Anum_mdb_seclabel_objsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum(object->objectSubId));
 	ScanKeyInit(&keys[3],
-				Anum_pg_seclabel_provider,
+				Anum_mdb_seclabel_provider,
 				BTEqualStrategyNumber, F_TEXTEQ,
 				CStringGetTextDatum(provider));
 
-	pg_seclabel = heap_open(SecLabelRelationId, RowExclusiveLock);
+	mdb_seclabel = heap_open(SecLabelRelationId, RowExclusiveLock);
 
-	scan = systable_beginscan(pg_seclabel, SecLabelObjectIndexId, true,
+	scan = systable_beginscan(mdb_seclabel, SecLabelObjectIndexId, true,
 							  NULL, 4, keys);
 
 	oldtup = systable_getnext(scan);
 	if (HeapTupleIsValid(oldtup))
 	{
 		if (label == NULL)
-			simple_heap_delete(pg_seclabel, &oldtup->t_self);
+			simple_heap_delete(mdb_seclabel, &oldtup->t_self);
 		else
 		{
-			replaces[Anum_pg_seclabel_label - 1] = true;
-			newtup = heap_modify_tuple(oldtup, RelationGetDescr(pg_seclabel),
+			replaces[Anum_mdb_seclabel_label - 1] = true;
+			newtup = heap_modify_tuple(oldtup, RelationGetDescr(mdb_seclabel),
 									   values, nulls, replaces);
-			simple_heap_update(pg_seclabel, &oldtup->t_self, newtup);
+			simple_heap_update(mdb_seclabel, &oldtup->t_self, newtup);
 		}
 	}
 	systable_endscan(scan);
@@ -397,19 +397,19 @@ SetSecurityLabel(const ObjectAddress *object,
 	/* If we didn't find an old tuple, insert a new one */
 	if (newtup == NULL && label != NULL)
 	{
-		newtup = heap_form_tuple(RelationGetDescr(pg_seclabel),
+		newtup = heap_form_tuple(RelationGetDescr(mdb_seclabel),
 								 values, nulls);
-		simple_heap_insert(pg_seclabel, newtup);
+		simple_heap_insert(mdb_seclabel, newtup);
 	}
 
 	/* Update indexes, if necessary */
 	if (newtup != NULL)
 	{
-		CatalogUpdateIndexes(pg_seclabel, newtup);
+		CatalogUpdateIndexes(mdb_seclabel, newtup);
 		heap_freetuple(newtup);
 	}
 
-	heap_close(pg_seclabel, RowExclusiveLock);
+	heap_close(mdb_seclabel, RowExclusiveLock);
 }
 
 /*
@@ -419,29 +419,29 @@ SetSecurityLabel(const ObjectAddress *object,
 void
 DeleteSharedSecurityLabel(Oid objectId, Oid classId)
 {
-	Relation	pg_shseclabel;
+	Relation	mdb_shseclabel;
 	ScanKeyData skey[2];
 	SysScanDesc scan;
 	HeapTuple	oldtup;
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_shseclabel_objoid,
+				Anum_mdb_shseclabel_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(objectId));
 	ScanKeyInit(&skey[1],
-				Anum_pg_shseclabel_classoid,
+				Anum_mdb_shseclabel_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classId));
 
-	pg_shseclabel = heap_open(SharedSecLabelRelationId, RowExclusiveLock);
+	mdb_shseclabel = heap_open(SharedSecLabelRelationId, RowExclusiveLock);
 
-	scan = systable_beginscan(pg_shseclabel, SharedSecLabelObjectIndexId, true,
+	scan = systable_beginscan(mdb_shseclabel, SharedSecLabelObjectIndexId, true,
 							  NULL, 2, skey);
 	while (HeapTupleIsValid(oldtup = systable_getnext(scan)))
-		simple_heap_delete(pg_shseclabel, &oldtup->t_self);
+		simple_heap_delete(mdb_shseclabel, &oldtup->t_self);
 	systable_endscan(scan);
 
-	heap_close(pg_shseclabel, RowExclusiveLock);
+	heap_close(mdb_shseclabel, RowExclusiveLock);
 }
 
 /*
@@ -451,7 +451,7 @@ DeleteSharedSecurityLabel(Oid objectId, Oid classId)
 void
 DeleteSecurityLabel(const ObjectAddress *object)
 {
-	Relation	pg_seclabel;
+	Relation	mdb_seclabel;
 	ScanKeyData skey[3];
 	SysScanDesc scan;
 	HeapTuple	oldtup;
@@ -466,17 +466,17 @@ DeleteSecurityLabel(const ObjectAddress *object)
 	}
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_seclabel_objoid,
+				Anum_mdb_seclabel_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->objectId));
 	ScanKeyInit(&skey[1],
-				Anum_pg_seclabel_classoid,
+				Anum_mdb_seclabel_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(object->classId));
 	if (object->objectSubId != 0)
 	{
 		ScanKeyInit(&skey[2],
-					Anum_pg_seclabel_objsubid,
+					Anum_mdb_seclabel_objsubid,
 					BTEqualStrategyNumber, F_INT4EQ,
 					Int32GetDatum(object->objectSubId));
 		nkeys = 3;
@@ -484,15 +484,15 @@ DeleteSecurityLabel(const ObjectAddress *object)
 	else
 		nkeys = 2;
 
-	pg_seclabel = heap_open(SecLabelRelationId, RowExclusiveLock);
+	mdb_seclabel = heap_open(SecLabelRelationId, RowExclusiveLock);
 
-	scan = systable_beginscan(pg_seclabel, SecLabelObjectIndexId, true,
+	scan = systable_beginscan(mdb_seclabel, SecLabelObjectIndexId, true,
 							  NULL, nkeys, skey);
 	while (HeapTupleIsValid(oldtup = systable_getnext(scan)))
-		simple_heap_delete(pg_seclabel, &oldtup->t_self);
+		simple_heap_delete(mdb_seclabel, &oldtup->t_self);
 	systable_endscan(scan);
 
-	heap_close(pg_seclabel, RowExclusiveLock);
+	heap_close(mdb_seclabel, RowExclusiveLock);
 }
 
 void

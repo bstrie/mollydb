@@ -21,7 +21,7 @@
 /*
  * creating_extension is only true while running a CREATE EXTENSION command.
  * It instructs recordDependencyOnCurrentExtension() to register a dependency
- * on the current pg_extension object for each SQL object created by its
+ * on the current mdb_extension object for each SQL object created by its
  * installation script.
  */
 extern PGDLLIMPORT bool creating_extension;

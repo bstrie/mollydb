@@ -19,8 +19,8 @@
 #include "access/htup_details.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaddress.h"
-#include "catalog/pg_description.h"
-#include "catalog/pg_shdescription.h"
+#include "catalog/mdb_description.h"
+#include "catalog/mdb_shdescription.h"
 #include "commands/comment.h"
 #include "commands/dbcommands.h"
 #include "miscadmin.h"
@@ -34,7 +34,7 @@
  * CommentObject --
  *
  * This routine is used to add the associated comment into
- * pg_description for the object specified by the given SQL command.
+ * mdb_description for the object specified by the given SQL command.
  */
 ObjectAddress
 CommentObject(CommentStmt *stmt)
@@ -44,8 +44,8 @@ CommentObject(CommentStmt *stmt)
 
 	/*
 	 * When loading a dump, we may see a COMMENT ON DATABASE for the old name
-	 * of the database.  Erroring out would prevent pg_restore from completing
-	 * (which is really pg_restore's fault, but for now we will work around
+	 * of the database.  Erroring out would prevent mdb_restore from completing
+	 * (which is really mdb_restore's fault, but for now we will work around
 	 * the problem here).  Consensus is that the best fix is to treat wrong
 	 * database name as a WARNING not an ERROR; hence, the following special
 	 * case.  (If the length of stmt->objname is not 1, get_object_address
@@ -85,7 +85,7 @@ CommentObject(CommentStmt *stmt)
 			/*
 			 * Allow comments only on columns of tables, views, materialized
 			 * views, composite types, and foreign tables (which are the only
-			 * relkinds for which pg_dump will dump per-column comments).  In
+			 * relkinds for which mdb_dump will dump per-column comments).  In
 			 * particular we wish to disallow comments on index columns,
 			 * because the naming of an index's columns may change across PG
 			 * versions, so dumping per-column comments could create reload
@@ -107,8 +107,8 @@ CommentObject(CommentStmt *stmt)
 
 	/*
 	 * Databases, tablespaces, and roles are cluster-wide objects, so any
-	 * comments on those objects are recorded in the shared pg_shdescription
-	 * catalog.  Comments on all other objects are recorded in pg_description.
+	 * comments on those objects are recorded in the shared mdb_shdescription
+	 * catalog.  Comments on all other objects are recorded in mdb_description.
 	 */
 	if (stmt->objtype == OBJECT_DATABASE || stmt->objtype == OBJECT_TABLESPACE
 		|| stmt->objtype == OBJECT_ROLE)
@@ -133,7 +133,7 @@ CommentObject(CommentStmt *stmt)
  * CreateComments --
  *
  * Create a comment for the specified object descriptor.  Inserts a new
- * pg_description tuple, or replaces an existing one with the same key.
+ * mdb_description tuple, or replaces an existing one with the same key.
  *
  * If the comment given is null or an empty string, instead delete any
  * existing comment for the specified key.
@@ -146,9 +146,9 @@ CreateComments(Oid oid, Oid classoid, int32 subid, char *comment)
 	SysScanDesc sd;
 	HeapTuple	oldtuple;
 	HeapTuple	newtuple = NULL;
-	Datum		values[Natts_pg_description];
-	bool		nulls[Natts_pg_description];
-	bool		replaces[Natts_pg_description];
+	Datum		values[Natts_mdb_description];
+	bool		nulls[Natts_mdb_description];
+	bool		replaces[Natts_mdb_description];
 	int			i;
 
 	/* Reduce empty-string to NULL case */
@@ -158,29 +158,29 @@ CreateComments(Oid oid, Oid classoid, int32 subid, char *comment)
 	/* Prepare to form or update a tuple, if necessary */
 	if (comment != NULL)
 	{
-		for (i = 0; i < Natts_pg_description; i++)
+		for (i = 0; i < Natts_mdb_description; i++)
 		{
 			nulls[i] = false;
 			replaces[i] = true;
 		}
-		values[Anum_pg_description_objoid - 1] = ObjectIdGetDatum(oid);
-		values[Anum_pg_description_classoid - 1] = ObjectIdGetDatum(classoid);
-		values[Anum_pg_description_objsubid - 1] = Int32GetDatum(subid);
-		values[Anum_pg_description_description - 1] = CStringGetTextDatum(comment);
+		values[Anum_mdb_description_objoid - 1] = ObjectIdGetDatum(oid);
+		values[Anum_mdb_description_classoid - 1] = ObjectIdGetDatum(classoid);
+		values[Anum_mdb_description_objsubid - 1] = Int32GetDatum(subid);
+		values[Anum_mdb_description_description - 1] = CStringGetTextDatum(comment);
 	}
 
 	/* Use the index to search for a matching old tuple */
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_description_objoid,
+				Anum_mdb_description_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(oid));
 	ScanKeyInit(&skey[1],
-				Anum_pg_description_classoid,
+				Anum_mdb_description_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classoid));
 	ScanKeyInit(&skey[2],
-				Anum_pg_description_objsubid,
+				Anum_mdb_description_objsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum(subid));
 
@@ -232,7 +232,7 @@ CreateComments(Oid oid, Oid classoid, int32 subid, char *comment)
  * CreateSharedComments --
  *
  * Create a comment for the specified shared object descriptor.  Inserts a
- * new pg_shdescription tuple, or replaces an existing one with the same key.
+ * new mdb_shdescription tuple, or replaces an existing one with the same key.
  *
  * If the comment given is null or an empty string, instead delete any
  * existing comment for the specified key.
@@ -245,9 +245,9 @@ CreateSharedComments(Oid oid, Oid classoid, char *comment)
 	SysScanDesc sd;
 	HeapTuple	oldtuple;
 	HeapTuple	newtuple = NULL;
-	Datum		values[Natts_pg_shdescription];
-	bool		nulls[Natts_pg_shdescription];
-	bool		replaces[Natts_pg_shdescription];
+	Datum		values[Natts_mdb_shdescription];
+	bool		nulls[Natts_mdb_shdescription];
+	bool		replaces[Natts_mdb_shdescription];
 	int			i;
 
 	/* Reduce empty-string to NULL case */
@@ -257,24 +257,24 @@ CreateSharedComments(Oid oid, Oid classoid, char *comment)
 	/* Prepare to form or update a tuple, if necessary */
 	if (comment != NULL)
 	{
-		for (i = 0; i < Natts_pg_shdescription; i++)
+		for (i = 0; i < Natts_mdb_shdescription; i++)
 		{
 			nulls[i] = false;
 			replaces[i] = true;
 		}
-		values[Anum_pg_shdescription_objoid - 1] = ObjectIdGetDatum(oid);
-		values[Anum_pg_shdescription_classoid - 1] = ObjectIdGetDatum(classoid);
-		values[Anum_pg_shdescription_description - 1] = CStringGetTextDatum(comment);
+		values[Anum_mdb_shdescription_objoid - 1] = ObjectIdGetDatum(oid);
+		values[Anum_mdb_shdescription_classoid - 1] = ObjectIdGetDatum(classoid);
+		values[Anum_mdb_shdescription_description - 1] = CStringGetTextDatum(comment);
 	}
 
 	/* Use the index to search for a matching old tuple */
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_shdescription_objoid,
+				Anum_mdb_shdescription_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(oid));
 	ScanKeyInit(&skey[1],
-				Anum_pg_shdescription_classoid,
+				Anum_mdb_shdescription_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classoid));
 
@@ -341,18 +341,18 @@ DeleteComments(Oid oid, Oid classoid, int32 subid)
 	/* Use the index to search for all matching old tuples */
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_description_objoid,
+				Anum_mdb_description_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(oid));
 	ScanKeyInit(&skey[1],
-				Anum_pg_description_classoid,
+				Anum_mdb_description_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classoid));
 
 	if (subid != 0)
 	{
 		ScanKeyInit(&skey[2],
-					Anum_pg_description_objsubid,
+					Anum_mdb_description_objsubid,
 					BTEqualStrategyNumber, F_INT4EQ,
 					Int32GetDatum(subid));
 		nkeys = 3;
@@ -388,11 +388,11 @@ DeleteSharedComments(Oid oid, Oid classoid)
 	/* Use the index to search for all matching old tuples */
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_shdescription_objoid,
+				Anum_mdb_shdescription_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(oid));
 	ScanKeyInit(&skey[1],
-				Anum_pg_shdescription_classoid,
+				Anum_mdb_shdescription_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classoid));
 
@@ -426,15 +426,15 @@ GetComment(Oid oid, Oid classoid, int32 subid)
 	/* Use the index to search for a matching old tuple */
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_description_objoid,
+				Anum_mdb_description_objoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(oid));
 	ScanKeyInit(&skey[1],
-				Anum_pg_description_classoid,
+				Anum_mdb_description_classoid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classoid));
 	ScanKeyInit(&skey[2],
-				Anum_pg_description_objsubid,
+				Anum_mdb_description_objsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum(subid));
 
@@ -451,7 +451,7 @@ GetComment(Oid oid, Oid classoid, int32 subid)
 		bool		isnull;
 
 		/* Found the tuple, get description field */
-		value = heap_getattr(tuple, Anum_pg_description_description, tupdesc, &isnull);
+		value = heap_getattr(tuple, Anum_mdb_description_description, tupdesc, &isnull);
 		if (!isnull)
 			comment = TextDatumGetCString(value);
 		break;					/* Assume there can be only one match */

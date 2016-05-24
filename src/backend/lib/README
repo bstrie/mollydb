@@ -22,4 +22,4 @@ size, but the caller needs to allocate each element being stored in the heap,
 while the binary heap works with plain Datums or pointers.
 
 The linked-lists in ilist.c can be embedded directly into other structs, as
-opposed to the List interface in nodes/pg_list.h.
+opposed to the List interface in nodes/mdb_list.h.

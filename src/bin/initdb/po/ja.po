@@ -20,7 +20,7 @@ msgstr "メモリ不足です\n"
 
 #: ../../common/fe_memutils.c:77
 #, c-format
-#| msgid "pg_strdup: cannot duplicate null pointer (internal error)\n"
+#| msgid "mdb_strdup: cannot duplicate null pointer (internal error)\n"
 msgid "cannot duplicate null pointer (internal error)\n"
 msgstr "null ポインタを複製できません（内部エラー）。\n"
 
@@ -312,8 +312,8 @@ msgstr ""
 "インストレーションを検査し、-Lオプションを使用して正しいパスを指定してください。\n"
 
 #: initdb.c:1484
-msgid "initializing pg_authid ... "
-msgstr "pg_authidを初期化しています ... "
+msgid "initializing mdb_authid ... "
+msgstr "mdb_authidを初期化しています ... "
 
 #: initdb.c:1518
 msgid "Enter new superuser password: "
@@ -676,12 +676,12 @@ msgstr ""
 msgid ""
 "\n"
 "WARNING: enabling \"trust\" authentication for local connections\n"
-"You can change this by editing pg_hba.conf or using the option -A, or\n"
+"You can change this by editing mdb_hba.conf or using the option -A, or\n"
 "--auth-local and --auth-host, the next time you run initdb.\n"
 msgstr ""
 "\n"
 "警告: ローカル接続向けに\"trust\"認証が有効です。\n"
-"pg_hba.confを編集する、もしくは、次回initdbを実行する時に-Aオプショ\n"
+"mdb_hba.confを編集する、もしくは、次回initdbを実行する時に-Aオプショ\n"
 "ン、または、--auth-localおよび--auth-hostを使用することで変更するこ\n"
 "とができます。\n"
 
@@ -976,7 +976,7 @@ msgid ""
 "\n"
 "    %s%s%smollydb%s -D %s%s%s\n"
 "or\n"
-"    %s%s%spg_ctl%s -D %s%s%s -l logfile start\n"
+"    %s%s%smdb_ctl%s -D %s%s%s -l logfile start\n"
 "\n"
 msgstr ""
 "\n"
@@ -984,7 +984,7 @@ msgstr ""
 "\n"
 "    %s%s%spostmaster%s -D %s%s%s\n"
 "または\n"
-"    %s%s%spg_ctl%s -D %s%s%s -l logfile start\n"
+"    %s%s%smdb_ctl%s -D %s%s%s -l logfile start\n"
 "\n"
 
 #~ msgid "could not change directory to \"%s\""

@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_rewind.c
+ * mdb_rewind.c
  *	  Synchronizes a MollyDB data directory to a new timeline
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -14,7 +14,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "pg_rewind.h"
+#include "mdb_rewind.h"
 #include "fetch.h"
 #include "file_ops.h"
 #include "filemap.h"
@@ -23,7 +23,7 @@
 #include "access/timeline.h"
 #include "access/xlog_internal.h"
 #include "catalog/catversion.h"
-#include "catalog/pg_control.h"
+#include "catalog/mdb_control.h"
 #include "common/restricted_token.h"
 #include "getopt_long.h"
 #include "storage/bufpage.h"
@@ -104,7 +104,7 @@ main(int argc, char **argv)
 	TimeLineID	endtli;
 	ControlFileData ControlFile_new;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_rewind"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_rewind"));
 	progname = get_progname(argv[0]);
 
 	/* Process command-line arguments */
@@ -117,7 +117,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_rewind (MollyDB) " PG_VERSION);
+			puts("mdb_rewind (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -143,14 +143,14 @@ main(int argc, char **argv)
 				break;
 
 			case 'D':			/* -D or --target-pgdata */
-				datadir_target = pg_strdup(optarg);
+				datadir_target = mdb_strdup(optarg);
 				break;
 
 			case 1:				/* --source-pgdata */
-				datadir_source = pg_strdup(optarg);
+				datadir_source = mdb_strdup(optarg);
 				break;
 			case 2:				/* --source-server */
-				connstr_source = pg_strdup(optarg);
+				connstr_source = mdb_strdup(optarg);
 				break;
 		}
 	}
@@ -178,7 +178,7 @@ main(int argc, char **argv)
 	}
 
 	/*
-	 * Don't allow pg_rewind to be run as root, to avoid overwriting the
+	 * Don't allow mdb_rewind to be run as root, to avoid overwriting the
 	 * ownership of files in the data directory. We need only check for root
 	 * -- any other user won't have sufficient permissions to modify files in
 	 * the data directory.
@@ -202,13 +202,13 @@ main(int argc, char **argv)
 	 * Ok, we have all the options and we're ready to start. Read in all the
 	 * information we need from both clusters.
 	 */
-	buffer = slurpFile(datadir_target, "global/pg_control", &size);
+	buffer = slurpFile(datadir_target, "global/mdb_control", &size);
 	digestControlFile(&ControlFile_target, buffer, size);
-	pg_free(buffer);
+	mdb_free(buffer);
 
-	buffer = fetchFile("global/pg_control", &size);
+	buffer = fetchFile("global/mdb_control", &size);
 	digestControlFile(&ControlFile_source, buffer, size);
-	pg_free(buffer);
+	mdb_free(buffer);
 
 	sanityChecks();
 
@@ -276,9 +276,9 @@ main(int argc, char **argv)
 	 * Build the filemap, by comparing the source and target data directories.
 	 */
 	filemap_create();
-	pg_log(PG_PROGRESS, "reading source file list\n");
+	mdb_log(PG_PROGRESS, "reading source file list\n");
 	fetchSourceFileList();
-	pg_log(PG_PROGRESS, "reading target file list\n");
+	mdb_log(PG_PROGRESS, "reading target file list\n");
 	traverse_datadir(datadir_target, &process_target_file);
 
 	/*
@@ -288,7 +288,7 @@ main(int argc, char **argv)
 	 * XXX: If we supported rewinding a server that was not shut down cleanly,
 	 * we would need to replay until the end of WAL here.
 	 */
-	pg_log(PG_PROGRESS, "reading WAL in target\n");
+	mdb_log(PG_PROGRESS, "reading WAL in target\n");
 	extractPageMap(datadir_target, chkptrec, lastcommontliIndex,
 				   ControlFile_target.checkPoint);
 	filemap_finalize();
@@ -305,7 +305,7 @@ main(int argc, char **argv)
 	 */
 	if (showprogress)
 	{
-		pg_log(PG_PROGRESS, "need to copy %lu MB (total source directory size is %lu MB)\n",
+		mdb_log(PG_PROGRESS, "need to copy %lu MB (total source directory size is %lu MB)\n",
 			   (unsigned long) (filemap->fetch_size / (1024 * 1024)),
 			   (unsigned long) (filemap->total_size / (1024 * 1024)));
 
@@ -322,7 +322,7 @@ main(int argc, char **argv)
 
 	progress_report(true);
 
-	pg_log(PG_PROGRESS, "\ncreating backup label and updating control file\n");
+	mdb_log(PG_PROGRESS, "\ncreating backup label and updating control file\n");
 	createBackupLabel(chkptredo, chkpttli, chkptrec);
 
 	/*
@@ -350,7 +350,7 @@ main(int argc, char **argv)
 	ControlFile_new.state = DB_IN_ARCHIVE_RECOVERY;
 	updateControlFile(&ControlFile_new);
 
-	pg_log(PG_PROGRESS, "syncing target data directory\n");
+	mdb_log(PG_PROGRESS, "syncing target data directory\n");
 	syncTargetDirectory(argv[0]);
 
 	printf(_("Done!\n"));
@@ -365,15 +365,15 @@ sanityChecks(void)
 
 	/* Check system_id match */
 	if (ControlFile_target.system_identifier != ControlFile_source.system_identifier)
-		pg_fatal("source and target clusters are from different systems\n");
+		mdb_fatal("source and target clusters are from different systems\n");
 
 	/* check version */
-	if (ControlFile_target.pg_control_version != PG_CONTROL_VERSION ||
-		ControlFile_source.pg_control_version != PG_CONTROL_VERSION ||
+	if (ControlFile_target.mdb_control_version != PG_CONTROL_VERSION ||
+		ControlFile_source.mdb_control_version != PG_CONTROL_VERSION ||
 		ControlFile_target.catalog_version_no != CATALOG_VERSION_NO ||
 		ControlFile_source.catalog_version_no != CATALOG_VERSION_NO)
 	{
-		pg_fatal("clusters are not compatible with this version of pg_rewind\n");
+		mdb_fatal("clusters are not compatible with this version of mdb_rewind\n");
 	}
 
 	/*
@@ -383,7 +383,7 @@ sanityChecks(void)
 	if (ControlFile_target.data_checksum_version != PG_DATA_CHECKSUM_VERSION &&
 		!ControlFile_target.wal_log_hints)
 	{
-		pg_fatal("target server needs to use either data checksums or \"wal_log_hints = on\"\n");
+		mdb_fatal("target server needs to use either data checksums or \"wal_log_hints = on\"\n");
 	}
 
 	/*
@@ -394,7 +394,7 @@ sanityChecks(void)
 	 */
 	if (ControlFile_target.state != DB_SHUTDOWNED &&
 		ControlFile_target.state != DB_SHUTDOWNED_IN_RECOVERY)
-		pg_fatal("target server must be shut down cleanly\n");
+		mdb_fatal("target server must be shut down cleanly\n");
 
 	/*
 	 * When the source is a data directory, also require that the source
@@ -404,7 +404,7 @@ sanityChecks(void)
 	if (datadir_source &&
 		ControlFile_source.state != DB_SHUTDOWNED &&
 		ControlFile_source.state != DB_SHUTDOWNED_IN_RECOVERY)
-		pg_fatal("source data directory must be shut down cleanly\n");
+		mdb_fatal("source data directory must be shut down cleanly\n");
 }
 
 /*
@@ -441,7 +441,7 @@ getTimelineHistory(ControlFileData *controlFile, int *nentries)
 	 */
 	if (tli == 1)
 	{
-		history = (TimeLineHistoryEntry *) pg_malloc(sizeof(TimeLineHistoryEntry));
+		history = (TimeLineHistoryEntry *) mdb_malloc(sizeof(TimeLineHistoryEntry));
 		history->tli = tli;
 		history->begin = history->end = InvalidXLogRecPtr;
 		*nentries = 1;
@@ -459,10 +459,10 @@ getTimelineHistory(ControlFileData *controlFile, int *nentries)
 		else if (controlFile == &ControlFile_target)
 			histfile = slurpFile(datadir_target, path, NULL);
 		else
-			pg_fatal("Invalid control file");
+			mdb_fatal("Invalid control file");
 
 		history = rewind_parseTimeLineHistory(histfile, tli, nentries);
-		pg_free(histfile);
+		mdb_free(histfile);
 	}
 
 	if (debug)
@@ -470,9 +470,9 @@ getTimelineHistory(ControlFileData *controlFile, int *nentries)
 		int		i;
 
 		if (controlFile == &ControlFile_source)
-			pg_log(PG_DEBUG, "Source timeline history:\n");
+			mdb_log(PG_DEBUG, "Source timeline history:\n");
 		else if (controlFile == &ControlFile_target)
-			pg_log(PG_DEBUG, "Target timeline history:\n");
+			mdb_log(PG_DEBUG, "Target timeline history:\n");
 		else
 			Assert(false);
 
@@ -484,7 +484,7 @@ getTimelineHistory(ControlFileData *controlFile, int *nentries)
 			TimeLineHistoryEntry *entry;
 
 			entry = &history[i];
-			pg_log(PG_DEBUG,
+			mdb_log(PG_DEBUG,
 			/* translator: %d is a timeline number, others are LSN positions */
 				   "%d: %X/%X - %X/%X\n", entry->tli,
 				   (uint32) (entry->begin >> 32), (uint32) (entry->begin),
@@ -539,12 +539,12 @@ findCommonAncestorTimeline(XLogRecPtr *recptr, int *tliIndex)
 		*recptr = MinXLogRecPtr(sourceHistory[i].end, targetHistory[i].end);
 		*tliIndex = i;
 
-		pg_free(sourceHistory);
+		mdb_free(sourceHistory);
 		return;
 	}
 	else
 	{
-		pg_fatal("could not find common ancestor of the source and target cluster's timelines\n");
+		mdb_fatal("could not find common ancestor of the source and target cluster's timelines\n");
 	}
 }
 
@@ -577,7 +577,7 @@ createBackupLabel(XLogRecPtr startpoint, TimeLineID starttli, XLogRecPtr checkpo
 	len = snprintf(buf, sizeof(buf),
 				   "START WAL LOCATION: %X/%X (file %s)\n"
 				   "CHECKPOINT LOCATION: %X/%X\n"
-				   "BACKUP METHOD: pg_rewind\n"
+				   "BACKUP METHOD: mdb_rewind\n"
 				   "BACKUP FROM: standby\n"
 				   "START TIME: %s\n",
 	/* omit LABEL: line */
@@ -585,7 +585,7 @@ createBackupLabel(XLogRecPtr startpoint, TimeLineID starttli, XLogRecPtr checkpo
 				   (uint32) (checkpointloc >> 32), (uint32) checkpointloc,
 				   strfbuf);
 	if (len >= sizeof(buf))
-		pg_fatal("backup label buffer too small\n");	/* shouldn't happen */
+		mdb_fatal("backup label buffer too small\n");	/* shouldn't happen */
 
 	/* TODO: move old file out of the way, if any. */
 	open_target_file("backup_label", true);		/* BACKUP_LABEL_FILE */
@@ -599,7 +599,7 @@ createBackupLabel(XLogRecPtr startpoint, TimeLineID starttli, XLogRecPtr checkpo
 static void
 checkControlFile(ControlFileData *ControlFile)
 {
-	pg_crc32c	crc;
+	mdb_crc32c	crc;
 
 	/* Calculate CRC */
 	INIT_CRC32C(crc);
@@ -608,7 +608,7 @@ checkControlFile(ControlFileData *ControlFile)
 
 	/* And simply compare it */
 	if (!EQ_CRC32C(crc, ControlFile->crc))
-		pg_fatal("unexpected control file CRC\n");
+		mdb_fatal("unexpected control file CRC\n");
 }
 
 /*
@@ -618,7 +618,7 @@ static void
 digestControlFile(ControlFileData *ControlFile, char *src, size_t size)
 {
 	if (size != PG_CONTROL_SIZE)
-		pg_fatal("unexpected control file size %d, expected %d\n",
+		mdb_fatal("unexpected control file size %d, expected %d\n",
 				 (int) size, PG_CONTROL_SIZE);
 
 	memcpy(ControlFile, src, sizeof(ControlFileData));
@@ -643,14 +643,14 @@ updateControlFile(ControlFileData *ControlFile)
 	FIN_CRC32C(ControlFile->crc);
 
 	/*
-	 * Write out PG_CONTROL_SIZE bytes into pg_control by zero-padding the
+	 * Write out PG_CONTROL_SIZE bytes into mdb_control by zero-padding the
 	 * excess over sizeof(ControlFileData) to avoid premature EOF related
 	 * errors when reading it.
 	 */
 	memset(buffer, 0, PG_CONTROL_SIZE);
 	memcpy(buffer, ControlFile, sizeof(ControlFileData));
 
-	open_target_file("global/pg_control", false);
+	open_target_file("global/mdb_control", false);
 
 	write_target_range(buffer, 0, PG_CONTROL_SIZE);
 
@@ -661,7 +661,7 @@ updateControlFile(ControlFileData *ControlFile)
  * Sync target data directory to ensure that modifications are safely on disk.
  *
  * We do this once, for the whole data directory, for performance reasons.  At
- * the end of pg_rewind's run, the kernel is likely to already have flushed
+ * the end of mdb_rewind's run, the kernel is likely to already have flushed
  * most dirty buffers to disk. Additionally initdb -S uses a two-pass approach
  * (only initiating writeback in the first pass), which often reduces the
  * overall amount of IO noticeably.
@@ -685,11 +685,11 @@ syncTargetDirectory(const char *argv0)
 			strlcpy(full_path, progname, sizeof(full_path));
 
 		if (ret == -1)
-			pg_fatal("The program \"initdb\" is needed by %s but was \n"
+			mdb_fatal("The program \"initdb\" is needed by %s but was \n"
 					 "not found in the same directory as \"%s\".\n"
 					 "Check your installation.\n", progname, full_path);
 		else
-			pg_fatal("The program \"initdb\" was found by \"%s\"\n"
+			mdb_fatal("The program \"initdb\" was found by \"%s\"\n"
 					 "but was not the same version as %s.\n"
 					 "Check your installation.\n", full_path, progname);
 	}
@@ -707,5 +707,5 @@ syncTargetDirectory(const char *argv0)
 				 exec_path, datadir_target, DEVNULL);
 
 	if (system(cmd) != 0)
-		pg_fatal("sync of target directory failed\n");
+		mdb_fatal("sync of target directory failed\n");
 }

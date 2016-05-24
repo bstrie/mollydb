@@ -20,13 +20,13 @@
 #define TOLOWER(x)	(x)
 #endif
 
-#include "utils/pg_crc.h"
+#include "utils/mdb_crc.h"
 #include "crc32.h"
 
 unsigned int
 ltree_crc32_sz(char *buf, int size)
 {
-	pg_crc32	crc;
+	mdb_crc32	crc;
 	char	   *p = buf;
 
 	INIT_TRADITIONAL_CRC32(crc);

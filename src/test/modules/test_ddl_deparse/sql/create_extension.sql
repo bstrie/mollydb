@@ -2,4 +2,4 @@
 --- CREATE_EXTENSION
 ---
 
-CREATE EXTENSION pg_stat_statements;
+CREATE EXTENSION mdb_stat_statements;

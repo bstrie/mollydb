@@ -15,7 +15,7 @@
 
 #include "miscadmin.h"
 #include "storage/ipc.h"
-#include "storage/pg_sema.h"
+#include "storage/mdb_sema.h"
 
 static HANDLE *mySemSet;		/* IDs of sema sets acquired so far */
 static int	numSems;			/* number of sema sets acquired so far */

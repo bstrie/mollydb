@@ -1782,7 +1782,7 @@ SELECT md5( name ) = md5( name::text ) AS t FROM srt;
  t
 (5 rows)
 
--- pg_client_encoding() takes no args and returns name.
+-- mdb_client_encoding() takes no args and returns name.
 SELECT quote_ident( name ) = quote_ident( name::text ) AS t FROM srt;
  t 
 ---

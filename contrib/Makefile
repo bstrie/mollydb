@@ -29,16 +29,16 @@ SUBDIRS = \
 		oid2name	\
 		pageinspect	\
 		passwordcheck	\
-		pg_buffercache	\
-		pg_freespacemap \
-		pg_prewarm	\
-		pg_standby	\
-		pg_stat_statements \
-		pg_trgm		\
+		mdb_buffercache	\
+		mdb_freespacemap \
+		mdb_prewarm	\
+		mdb_standby	\
+		mdb_stat_statements \
+		mdb_trgm		\
 		pgcrypto	\
 		pgrowlocks	\
 		pgstattuple	\
-		pg_visibility	\
+		mdb_visibility	\
 		mollydb_fdw	\
 		seg		\
 		spi		\

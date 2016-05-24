@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_stat_statements.c
+ * mdb_stat_statements.c
  *		Track statement execution times across a whole database cluster.
  *
  * Execution costs are totalled for each distinct source query, and kept in
@@ -51,7 +51,7 @@
  * Copyright (c) 2008-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *	  contrib/pg_stat_statements/pg_stat_statements.c
+ *	  contrib/mdb_stat_statements/mdb_stat_statements.c
  *
  *-------------------------------------------------------------------------
  */
@@ -64,7 +64,7 @@
 #include "access/hash.h"
 #include "executor/instrument.h"
 #include "funcapi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "parser/analyze.h"
 #include "parser/parsetree.h"
@@ -80,13 +80,13 @@
 PG_MODULE_MAGIC;
 
 /* Location of permanent stats file (valid when database is shut down) */
-#define PGSS_DUMP_FILE	PGSTAT_STAT_PERMANENT_DIRECTORY "/pg_stat_statements.stat"
+#define PGSS_DUMP_FILE	PGSTAT_STAT_PERMANENT_DIRECTORY "/mdb_stat_statements.stat"
 
 /*
  * Location of external query text file.  We don't keep it in the core
  * system's stats_temp_directory.  The core system can safely use that GUC
  * setting, because the statistics collector temp file paths are set only once
- * as part of changing the GUC, but pg_stat_statements has no way of avoiding
+ * as part of changing the GUC, but mdb_stat_statements has no way of avoiding
  * race conditions.  Besides, we only expect modest, infrequent I/O for query
  * strings, so placing the file on a faster filesystem is not compelling.
  */
@@ -278,10 +278,10 @@ static bool pgss_save;			/* whether to save stats across shutdown */
 void		_PG_init(void);
 void		_PG_fini(void);
 
-PG_FUNCTION_INFO_V1(pg_stat_statements_reset);
-PG_FUNCTION_INFO_V1(pg_stat_statements_1_2);
-PG_FUNCTION_INFO_V1(pg_stat_statements_1_3);
-PG_FUNCTION_INFO_V1(pg_stat_statements);
+PG_FUNCTION_INFO_V1(mdb_stat_statements_reset);
+PG_FUNCTION_INFO_V1(mdb_stat_statements_1_2);
+PG_FUNCTION_INFO_V1(mdb_stat_statements_1_3);
+PG_FUNCTION_INFO_V1(mdb_stat_statements);
 
 static void pgss_shmem_startup(void);
 static void pgss_shmem_shutdown(int code, Datum arg);
@@ -302,7 +302,7 @@ static void pgss_store(const char *query, uint32 queryId,
 		   double total_time, uint64 rows,
 		   const BufferUsage *bufusage,
 		   pgssJumbleState *jstate);
-static void pg_stat_statements_internal(FunctionCallInfo fcinfo,
+static void mdb_stat_statements_internal(FunctionCallInfo fcinfo,
 							pgssVersion api_version,
 							bool showtext);
 static Size pgss_memsize(void);
@@ -339,7 +339,7 @@ _PG_init(void)
 	 * In order to create our shared memory area, we have to be loaded via
 	 * shared_preload_libraries.  If not, fall out without hooking into any of
 	 * the main system.  (We don't throw error here because it seems useful to
-	 * allow the pg_stat_statements functions to be created even when the
+	 * allow the mdb_stat_statements functions to be created even when the
 	 * module isn't active.  The functions must protect themselves against
 	 * being called then, however.)
 	 */
@@ -349,8 +349,8 @@ _PG_init(void)
 	/*
 	 * Define (or redefine) custom GUC variables.
 	 */
-	DefineCustomIntVariable("pg_stat_statements.max",
-	  "Sets the maximum number of statements tracked by pg_stat_statements.",
+	DefineCustomIntVariable("mdb_stat_statements.max",
+	  "Sets the maximum number of statements tracked by mdb_stat_statements.",
 							NULL,
 							&pgss_max,
 							5000,
@@ -362,8 +362,8 @@ _PG_init(void)
 							NULL,
 							NULL);
 
-	DefineCustomEnumVariable("pg_stat_statements.track",
-			   "Selects which statements are tracked by pg_stat_statements.",
+	DefineCustomEnumVariable("mdb_stat_statements.track",
+			   "Selects which statements are tracked by mdb_stat_statements.",
 							 NULL,
 							 &pgss_track,
 							 PGSS_TRACK_TOP,
@@ -374,8 +374,8 @@ _PG_init(void)
 							 NULL,
 							 NULL);
 
-	DefineCustomBoolVariable("pg_stat_statements.track_utility",
-	   "Selects whether utility commands are tracked by pg_stat_statements.",
+	DefineCustomBoolVariable("mdb_stat_statements.track_utility",
+	   "Selects whether utility commands are tracked by mdb_stat_statements.",
 							 NULL,
 							 &pgss_track_utility,
 							 true,
@@ -385,8 +385,8 @@ _PG_init(void)
 							 NULL,
 							 NULL);
 
-	DefineCustomBoolVariable("pg_stat_statements.save",
-			   "Save pg_stat_statements statistics across server shutdowns.",
+	DefineCustomBoolVariable("mdb_stat_statements.save",
+			   "Save mdb_stat_statements statistics across server shutdowns.",
 							 NULL,
 							 &pgss_save,
 							 true,
@@ -396,7 +396,7 @@ _PG_init(void)
 							 NULL,
 							 NULL);
 
-	EmitWarningsOnPlaceholders("pg_stat_statements");
+	EmitWarningsOnPlaceholders("mdb_stat_statements");
 
 	/*
 	 * Request additional shared resources.  (These are no-ops if we're not in
@@ -404,7 +404,7 @@ _PG_init(void)
 	 * resources in pgss_shmem_startup().
 	 */
 	RequestAddinShmemSpace(pgss_memsize());
-	RequestNamedLWLockTranche("pg_stat_statements", 1);
+	RequestNamedLWLockTranche("mdb_stat_statements", 1);
 
 	/*
 	 * Install hooks.
@@ -473,14 +473,14 @@ pgss_shmem_startup(void)
 	 */
 	LWLockAcquire(AddinShmemInitLock, LW_EXCLUSIVE);
 
-	pgss = ShmemInitStruct("pg_stat_statements",
+	pgss = ShmemInitStruct("mdb_stat_statements",
 						   sizeof(pgssSharedState),
 						   &found);
 
 	if (!found)
 	{
 		/* First time through ... */
-		pgss->lock = &(GetNamedLWLockTranche("pg_stat_statements"))->lock;
+		pgss->lock = &(GetNamedLWLockTranche("mdb_stat_statements"))->lock;
 		pgss->cur_median_usage = ASSUMED_MEDIAN_INIT;
 		pgss->mean_query_len = ASSUMED_LENGTH_INIT;
 		SpinLockInit(&pgss->mutex);
@@ -494,7 +494,7 @@ pgss_shmem_startup(void)
 	info.entrysize = sizeof(pgssEntry);
 	info.hash = pgss_hash_fn;
 	info.match = pgss_match_fn;
-	pgss_hash = ShmemInitHash("pg_stat_statements hash",
+	pgss_hash = ShmemInitHash("mdb_stat_statements hash",
 							  pgss_max, pgss_max,
 							  &info,
 							  HASH_ELEM | HASH_FUNCTION | HASH_COMPARE);
@@ -632,19 +632,19 @@ pgss_shmem_startup(void)
 read_error:
 	ereport(LOG,
 			(errcode_for_file_access(),
-			 errmsg("could not read pg_stat_statement file \"%s\": %m",
+			 errmsg("could not read mdb_stat_statement file \"%s\": %m",
 					PGSS_DUMP_FILE)));
 	goto fail;
 data_error:
 	ereport(LOG,
 			(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-			 errmsg("ignoring invalid data in pg_stat_statement file \"%s\"",
+			 errmsg("ignoring invalid data in mdb_stat_statement file \"%s\"",
 					PGSS_DUMP_FILE)));
 	goto fail;
 write_error:
 	ereport(LOG,
 			(errcode_for_file_access(),
-			 errmsg("could not write pg_stat_statement file \"%s\": %m",
+			 errmsg("could not write mdb_stat_statement file \"%s\": %m",
 					PGSS_TEXT_FILE)));
 fail:
 	if (buffer)
@@ -658,7 +658,7 @@ fail:
 
 	/*
 	 * Don't unlink PGSS_TEXT_FILE here; it should always be around while the
-	 * server is running with pg_stat_statements enabled
+	 * server is running with mdb_stat_statements enabled
 	 */
 }
 
@@ -751,7 +751,7 @@ pgss_shmem_shutdown(int code, Datum arg)
 error:
 	ereport(LOG,
 			(errcode_for_file_access(),
-			 errmsg("could not write pg_stat_statement file \"%s\": %m",
+			 errmsg("could not write mdb_stat_statement file \"%s\": %m",
 					PGSS_DUMP_FILE ".tmp")));
 	if (qbuffer)
 		free(qbuffer);
@@ -1001,7 +1001,7 @@ pgss_ProcessUtility(Node *parsetree, const char *queryString,
 		/* parse command tag to retrieve the number of affected rows. */
 		if (completionTag &&
 			strncmp(completionTag, "COPY ", 5) == 0)
-			rows = pg_strtouint64(completionTag + 5, NULL, 10);
+			rows = mdb_strtouint64(completionTag + 5, NULL, 10);
 		else
 			rows = 0;
 
@@ -1267,12 +1267,12 @@ done:
  * Reset all statement statistics.
  */
 Datum
-pg_stat_statements_reset(PG_FUNCTION_ARGS)
+mdb_stat_statements_reset(PG_FUNCTION_ARGS)
 {
 	if (!pgss || !pgss_hash)
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
-				 errmsg("pg_stat_statements must be loaded via shared_preload_libraries")));
+				 errmsg("mdb_stat_statements must be loaded via shared_preload_libraries")));
 	entry_reset();
 	PG_RETURN_VOID();
 }
@@ -1295,41 +1295,41 @@ pg_stat_statements_reset(PG_FUNCTION_ARGS)
  * function.  Unfortunately we weren't bright enough to do that for 1.1.
  */
 Datum
-pg_stat_statements_1_3(PG_FUNCTION_ARGS)
+mdb_stat_statements_1_3(PG_FUNCTION_ARGS)
 {
 	bool		showtext = PG_GETARG_BOOL(0);
 
-	pg_stat_statements_internal(fcinfo, PGSS_V1_3, showtext);
+	mdb_stat_statements_internal(fcinfo, PGSS_V1_3, showtext);
 
 	return (Datum) 0;
 }
 
 Datum
-pg_stat_statements_1_2(PG_FUNCTION_ARGS)
+mdb_stat_statements_1_2(PG_FUNCTION_ARGS)
 {
 	bool		showtext = PG_GETARG_BOOL(0);
 
-	pg_stat_statements_internal(fcinfo, PGSS_V1_2, showtext);
+	mdb_stat_statements_internal(fcinfo, PGSS_V1_2, showtext);
 
 	return (Datum) 0;
 }
 
 /*
- * Legacy entry point for pg_stat_statements() API versions 1.0 and 1.1.
+ * Legacy entry point for mdb_stat_statements() API versions 1.0 and 1.1.
  * This can be removed someday, perhaps.
  */
 Datum
-pg_stat_statements(PG_FUNCTION_ARGS)
+mdb_stat_statements(PG_FUNCTION_ARGS)
 {
 	/* If it's really API 1.1, we'll figure that out below */
-	pg_stat_statements_internal(fcinfo, PGSS_V1_0, true);
+	mdb_stat_statements_internal(fcinfo, PGSS_V1_0, true);
 
 	return (Datum) 0;
 }
 
-/* Common code for all versions of pg_stat_statements() */
+/* Common code for all versions of mdb_stat_statements() */
 static void
-pg_stat_statements_internal(FunctionCallInfo fcinfo,
+mdb_stat_statements_internal(FunctionCallInfo fcinfo,
 							pgssVersion api_version,
 							bool showtext)
 {
@@ -1351,7 +1351,7 @@ pg_stat_statements_internal(FunctionCallInfo fcinfo,
 	if (!pgss || !pgss_hash)
 		ereport(ERROR,
 				(errcode(ERRCODE_OBJECT_NOT_IN_PREREQUISITE_STATE),
-				 errmsg("pg_stat_statements must be loaded via shared_preload_libraries")));
+				 errmsg("mdb_stat_statements must be loaded via shared_preload_libraries")));
 
 	/* check to see if caller supports us returning a tuplestore */
 	if (rsinfo == NULL || !IsA(rsinfo, ReturnSetInfo))
@@ -1384,7 +1384,7 @@ pg_stat_statements_internal(FunctionCallInfo fcinfo,
 				elog(ERROR, "incorrect number of output arguments");
 			break;
 		case PG_STAT_STATEMENTS_COLS_V1_1:
-			/* pg_stat_statements() should have told us 1.0 */
+			/* mdb_stat_statements() should have told us 1.0 */
 			if (api_version != PGSS_V1_0)
 				elog(ERROR, "incorrect number of output arguments");
 			api_version = PGSS_V1_1;
@@ -1505,7 +1505,7 @@ pg_stat_statements_internal(FunctionCallInfo fcinfo,
 				{
 					char	   *enc;
 
-					enc = pg_any_to_server(qstr,
+					enc = mdb_any_to_server(qstr,
 										   entry->query_len,
 										   entry->encoding);
 
@@ -1841,7 +1841,7 @@ qtext_store(const char *query, int query_len,
 error:
 	ereport(LOG,
 			(errcode_for_file_access(),
-			 errmsg("could not write pg_stat_statement file \"%s\": %m",
+			 errmsg("could not write mdb_stat_statement file \"%s\": %m",
 					PGSS_TEXT_FILE)));
 
 	if (fd >= 0)
@@ -1883,7 +1883,7 @@ qtext_load_file(Size *buffer_size)
 		if (errno != ENOENT)
 			ereport(LOG,
 					(errcode_for_file_access(),
-				   errmsg("could not read pg_stat_statement file \"%s\": %m",
+				   errmsg("could not read mdb_stat_statement file \"%s\": %m",
 						  PGSS_TEXT_FILE)));
 		return NULL;
 	}
@@ -1893,7 +1893,7 @@ qtext_load_file(Size *buffer_size)
 	{
 		ereport(LOG,
 				(errcode_for_file_access(),
-				 errmsg("could not stat pg_stat_statement file \"%s\": %m",
+				 errmsg("could not stat mdb_stat_statement file \"%s\": %m",
 						PGSS_TEXT_FILE)));
 		CloseTransientFile(fd);
 		return NULL;
@@ -1909,7 +1909,7 @@ qtext_load_file(Size *buffer_size)
 		ereport(LOG,
 				(errcode(ERRCODE_OUT_OF_MEMORY),
 				 errmsg("out of memory"),
-				 errdetail("Could not allocate enough memory to read pg_stat_statement file \"%s\".",
+				 errdetail("Could not allocate enough memory to read mdb_stat_statement file \"%s\".",
 						   PGSS_TEXT_FILE)));
 		CloseTransientFile(fd);
 		return NULL;
@@ -1928,7 +1928,7 @@ qtext_load_file(Size *buffer_size)
 		if (errno)
 			ereport(LOG,
 					(errcode_for_file_access(),
-				   errmsg("could not read pg_stat_statement file \"%s\": %m",
+				   errmsg("could not read mdb_stat_statement file \"%s\": %m",
 						  PGSS_TEXT_FILE)));
 		free(buf);
 		CloseTransientFile(fd);
@@ -2058,7 +2058,7 @@ gc_qtexts(void)
 	{
 		ereport(LOG,
 				(errcode_for_file_access(),
-				 errmsg("could not write pg_stat_statement file \"%s\": %m",
+				 errmsg("could not write mdb_stat_statement file \"%s\": %m",
 						PGSS_TEXT_FILE)));
 		goto gc_fail;
 	}
@@ -2088,7 +2088,7 @@ gc_qtexts(void)
 		{
 			ereport(LOG,
 					(errcode_for_file_access(),
-				  errmsg("could not write pg_stat_statement file \"%s\": %m",
+				  errmsg("could not write mdb_stat_statement file \"%s\": %m",
 						 PGSS_TEXT_FILE)));
 			hash_seq_term(&hash_seq);
 			goto gc_fail;
@@ -2106,14 +2106,14 @@ gc_qtexts(void)
 	if (ftruncate(fileno(qfile), extent) != 0)
 		ereport(LOG,
 				(errcode_for_file_access(),
-			   errmsg("could not truncate pg_stat_statement file \"%s\": %m",
+			   errmsg("could not truncate mdb_stat_statement file \"%s\": %m",
 					  PGSS_TEXT_FILE)));
 
 	if (FreeFile(qfile))
 	{
 		ereport(LOG,
 				(errcode_for_file_access(),
-				 errmsg("could not write pg_stat_statement file \"%s\": %m",
+				 errmsg("could not write mdb_stat_statement file \"%s\": %m",
 						PGSS_TEXT_FILE)));
 		qfile = NULL;
 		goto gc_fail;
@@ -2173,7 +2173,7 @@ gc_fail:
 	if (qfile == NULL)
 		ereport(LOG,
 				(errcode_for_file_access(),
-			  errmsg("could not write new pg_stat_statement file \"%s\": %m",
+			  errmsg("could not write new mdb_stat_statement file \"%s\": %m",
 					 PGSS_TEXT_FILE)));
 	else
 		FreeFile(qfile);
@@ -2225,7 +2225,7 @@ entry_reset(void)
 	{
 		ereport(LOG,
 				(errcode_for_file_access(),
-				 errmsg("could not create pg_stat_statement file \"%s\": %m",
+				 errmsg("could not create mdb_stat_statement file \"%s\": %m",
 						PGSS_TEXT_FILE)));
 		goto done;
 	}
@@ -2234,7 +2234,7 @@ entry_reset(void)
 	if (ftruncate(fileno(qfile), 0) != 0)
 		ereport(LOG,
 				(errcode_for_file_access(),
-			   errmsg("could not truncate pg_stat_statement file \"%s\": %m",
+			   errmsg("could not truncate mdb_stat_statement file \"%s\": %m",
 					  PGSS_TEXT_FILE)));
 
 	FreeFile(qfile);

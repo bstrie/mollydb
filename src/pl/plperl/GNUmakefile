@@ -105,18 +105,18 @@ uninstall-data:
 
 
 check: submake
-	$(pg_regress_check) $(REGRESS_OPTS) $(REGRESS)
+	$(mdb_regress_check) $(REGRESS_OPTS) $(REGRESS)
 
 installcheck: submake
-	$(pg_regress_installcheck) $(REGRESS_OPTS) $(REGRESS)
+	$(mdb_regress_installcheck) $(REGRESS_OPTS) $(REGRESS)
 
 .PHONY: submake
 submake:
-	$(MAKE) -C $(top_builddir)/src/test/regress pg_regress$(X)
+	$(MAKE) -C $(top_builddir)/src/test/regress mdb_regress$(X)
 
 clean distclean maintainer-clean: clean-lib
 	rm -f SPI.c Util.c $(OBJS) perlchunks.h plperl_opmask.h
-	rm -rf $(pg_regress_clean_files)
+	rm -rf $(mdb_regress_clean_files)
 ifeq ($(PORTNAME), win32)
 	rm -f $(perlwithver).def
 endif

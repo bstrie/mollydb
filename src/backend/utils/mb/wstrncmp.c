@@ -34,10 +34,10 @@
 /* can be used in either frontend or backend */
 #include "mollydb_fe.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 int
-pg_wchar_strncmp(const pg_wchar *s1, const pg_wchar *s2, size_t n)
+mdb_wchar_strncmp(const mdb_wchar *s1, const mdb_wchar *s2, size_t n)
 {
 	if (n == 0)
 		return 0;
@@ -52,14 +52,14 @@ pg_wchar_strncmp(const pg_wchar *s1, const pg_wchar *s2, size_t n)
 }
 
 int
-pg_char_and_wchar_strncmp(const char *s1, const pg_wchar *s2, size_t n)
+mdb_char_and_wchar_strncmp(const char *s1, const mdb_wchar *s2, size_t n)
 {
 	if (n == 0)
 		return 0;
 	do
 	{
-		if ((pg_wchar) ((unsigned char) *s1) != *s2++)
-			return ((pg_wchar) ((unsigned char) *s1) - *(s2 - 1));
+		if ((mdb_wchar) ((unsigned char) *s1) != *s2++)
+			return ((mdb_wchar) ((unsigned char) *s1) - *(s2 - 1));
 		if (*s1++ == 0)
 			break;
 	} while (--n != 0);
@@ -67,9 +67,9 @@ pg_char_and_wchar_strncmp(const char *s1, const pg_wchar *s2, size_t n)
 }
 
 size_t
-pg_wchar_strlen(const pg_wchar *str)
+mdb_wchar_strlen(const mdb_wchar *str)
 {
-	const pg_wchar *s;
+	const mdb_wchar *s;
 
 	for (s = str; *s; ++s)
 		;

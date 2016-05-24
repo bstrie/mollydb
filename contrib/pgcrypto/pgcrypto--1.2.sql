@@ -5,67 +5,67 @@
 
 CREATE FUNCTION digest(text, text)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_digest'
+AS 'MODULE_PATHNAME', 'mdb_digest'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION digest(bytea, text)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_digest'
+AS 'MODULE_PATHNAME', 'mdb_digest'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION hmac(text, text, text)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_hmac'
+AS 'MODULE_PATHNAME', 'mdb_hmac'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION hmac(bytea, bytea, text)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_hmac'
+AS 'MODULE_PATHNAME', 'mdb_hmac'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION crypt(text, text)
 RETURNS text
-AS 'MODULE_PATHNAME', 'pg_crypt'
+AS 'MODULE_PATHNAME', 'mdb_crypt'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION gen_salt(text)
 RETURNS text
-AS 'MODULE_PATHNAME', 'pg_gen_salt'
+AS 'MODULE_PATHNAME', 'mdb_gen_salt'
 LANGUAGE C VOLATILE STRICT;
 
 CREATE FUNCTION gen_salt(text, int4)
 RETURNS text
-AS 'MODULE_PATHNAME', 'pg_gen_salt_rounds'
+AS 'MODULE_PATHNAME', 'mdb_gen_salt_rounds'
 LANGUAGE C VOLATILE STRICT;
 
 CREATE FUNCTION encrypt(bytea, bytea, text)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_encrypt'
+AS 'MODULE_PATHNAME', 'mdb_encrypt'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION decrypt(bytea, bytea, text)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_decrypt'
+AS 'MODULE_PATHNAME', 'mdb_decrypt'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION encrypt_iv(bytea, bytea, bytea, text)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_encrypt_iv'
+AS 'MODULE_PATHNAME', 'mdb_encrypt_iv'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION decrypt_iv(bytea, bytea, bytea, text)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_decrypt_iv'
+AS 'MODULE_PATHNAME', 'mdb_decrypt_iv'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION gen_random_bytes(int4)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_random_bytes'
+AS 'MODULE_PATHNAME', 'mdb_random_bytes'
 LANGUAGE C VOLATILE STRICT;
 
 CREATE FUNCTION gen_random_uuid()
 RETURNS uuid
-AS 'MODULE_PATHNAME', 'pg_random_uuid'
+AS 'MODULE_PATHNAME', 'mdb_random_uuid'
 LANGUAGE C VOLATILE;
 
 --
@@ -198,17 +198,17 @@ LANGUAGE C IMMUTABLE STRICT;
 --
 CREATE FUNCTION armor(bytea)
 RETURNS text
-AS 'MODULE_PATHNAME', 'pg_armor'
+AS 'MODULE_PATHNAME', 'mdb_armor'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION armor(bytea, text[], text[])
 RETURNS text
-AS 'MODULE_PATHNAME', 'pg_armor'
+AS 'MODULE_PATHNAME', 'mdb_armor'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION dearmor(text)
 RETURNS bytea
-AS 'MODULE_PATHNAME', 'pg_dearmor'
+AS 'MODULE_PATHNAME', 'mdb_dearmor'
 LANGUAGE C IMMUTABLE STRICT;
 
 CREATE FUNCTION pgp_armor_headers(text, key OUT text, value OUT text)

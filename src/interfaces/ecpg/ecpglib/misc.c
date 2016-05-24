@@ -15,7 +15,7 @@
 #include "pgtypes_date.h"
 #include "pgtypes_timestamp.h"
 #include "pgtypes_interval.h"
-#include "pg_config_paths.h"
+#include "mdb_config_paths.h"
 
 #ifdef HAVE_LONG_LONG_INT
 #ifndef LONG_LONG_MIN
@@ -27,7 +27,7 @@
 #endif   /* LONG_LONG_MIN */
 #endif   /* HAVE_LONG_LONG_INT */
 
-bool		ecpg_internal_regression_mode = false;
+bool		ecmdb_internal_regression_mode = false;
 
 static struct sqlca_t sqlca_init =
 {
@@ -96,28 +96,28 @@ static int	simple_debug = 0;
 static FILE *debugstream = NULL;
 
 void
-ecpg_init_sqlca(struct sqlca_t * sqlca)
+ecmdb_init_sqlca(struct sqlca_t * sqlca)
 {
 	memcpy((char *) sqlca, (char *) &sqlca_init, sizeof(struct sqlca_t));
 }
 
 bool
-ecpg_init(const struct connection * con, const char *connection_name, const int lineno)
+ecmdb_init(const struct connection * con, const char *connection_name, const int lineno)
 {
 	struct sqlca_t *sqlca = ECPGget_sqlca();
 
 	if (sqlca == NULL)
 	{
-		ecpg_raise(lineno, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY,
+		ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY, ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY,
 				   NULL);
 		return (false);
 	}
 
-	ecpg_init_sqlca(sqlca);
+	ecmdb_init_sqlca(sqlca);
 	if (con == NULL)
 	{
-		ecpg_raise(lineno, ECPG_NO_CONN, ECPG_SQLSTATE_CONNECTION_DOES_NOT_EXIST,
-				   connection_name ? connection_name : ecpg_gettext("NULL"));
+		ecmdb_raise(lineno, ECPG_NO_CONN, ECPG_SQLSTATE_CONNECTION_DOES_NOT_EXIST,
+				   connection_name ? connection_name : ecmdb_gettext("NULL"));
 		return (false);
 	}
 
@@ -126,15 +126,15 @@ ecpg_init(const struct connection * con, const char *connection_name, const int 
 
 #ifdef ENABLE_THREAD_SAFETY
 static void
-ecpg_sqlca_key_destructor(void *arg)
+ecmdb_sqlca_key_destructor(void *arg)
 {
 	free(arg);					/* sqlca structure allocated in ECPGget_sqlca */
 }
 
 static void
-ecpg_sqlca_key_init(void)
+ecmdb_sqlca_key_init(void)
 {
-	pthread_key_create(&sqlca_key, ecpg_sqlca_key_destructor);
+	pthread_key_create(&sqlca_key, ecmdb_sqlca_key_destructor);
 }
 #endif
 
@@ -144,7 +144,7 @@ ECPGget_sqlca(void)
 #ifdef ENABLE_THREAD_SAFETY
 	struct sqlca_t *sqlca;
 
-	pthread_once(&sqlca_key_once, ecpg_sqlca_key_init);
+	pthread_once(&sqlca_key_once, ecmdb_sqlca_key_init);
 
 	sqlca = pthread_getspecific(sqlca_key);
 	if (sqlca == NULL)
@@ -152,7 +152,7 @@ ECPGget_sqlca(void)
 		sqlca = malloc(sizeof(struct sqlca_t));
 		if (sqlca == NULL)
 			return NULL;
-		ecpg_init_sqlca(sqlca);
+		ecmdb_init_sqlca(sqlca);
 		pthread_setspecific(sqlca_key, sqlca);
 	}
 	return (sqlca);
@@ -164,15 +164,15 @@ ECPGget_sqlca(void)
 bool
 ECPGstatus(int lineno, const char *connection_name)
 {
-	struct connection *con = ecpg_get_connection(connection_name);
+	struct connection *con = ecmdb_get_connection(connection_name);
 
-	if (!ecpg_init(con, connection_name, lineno))
+	if (!ecmdb_init(con, connection_name, lineno))
 		return (false);
 
 	/* are we connected? */
 	if (con->connection == NULL)
 	{
-		ecpg_raise(lineno, ECPG_NOT_CONN, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, con->name);
+		ecmdb_raise(lineno, ECPG_NOT_CONN, ECPG_SQLSTATE_ECPG_INTERNAL_ERROR, con->name);
 		return false;
 	}
 
@@ -184,7 +184,7 @@ ECPGtransactionStatus(const char *connection_name)
 {
 	const struct connection *con;
 
-	con = ecpg_get_connection(connection_name);
+	con = ecmdb_get_connection(connection_name);
 	if (con == NULL)
 	{
 		/* transaction status is unknown */
@@ -199,12 +199,12 @@ bool
 ECPGtrans(int lineno, const char *connection_name, const char *transaction)
 {
 	PGresult   *res;
-	struct connection *con = ecpg_get_connection(connection_name);
+	struct connection *con = ecmdb_get_connection(connection_name);
 
-	if (!ecpg_init(con, connection_name, lineno))
+	if (!ecmdb_init(con, connection_name, lineno))
 		return (false);
 
-	ecpg_log("ECPGtrans on line %d: action \"%s\"; connection \"%s\"\n", lineno, transaction, con ? con->name : "null");
+	ecmdb_log("ECPGtrans on line %d: action \"%s\"; connection \"%s\"\n", lineno, transaction, con ? con->name : "null");
 
 	/* if we have no connection we just simulate the command */
 	if (con && con->connection)
@@ -218,13 +218,13 @@ ECPGtrans(int lineno, const char *connection_name, const char *transaction)
 		if (PQtransactionStatus(con->connection) == PQTRANS_IDLE && !con->autocommit && strncmp(transaction, "begin", 5) != 0 && strncmp(transaction, "start", 5) != 0)
 		{
 			res = PQexec(con->connection, "begin transaction");
-			if (!ecpg_check_PQresult(res, lineno, con->connection, ECPG_COMPAT_PGSQL))
+			if (!ecmdb_check_PQresult(res, lineno, con->connection, ECPG_COMPAT_PGSQL))
 				return FALSE;
 			PQclear(res);
 		}
 
 		res = PQexec(con->connection, transaction);
-		if (!ecpg_check_PQresult(res, lineno, con->connection, ECPG_COMPAT_PGSQL))
+		if (!ecmdb_check_PQresult(res, lineno, con->connection, ECPG_COMPAT_PGSQL))
 			return FALSE;
 		PQclear(res);
 	}
@@ -242,7 +242,7 @@ ECPGdebug(int n, FILE *dbgs)
 
 	if (n > 100)
 	{
-		ecpg_internal_regression_mode = true;
+		ecmdb_internal_regression_mode = true;
 		simple_debug = n - 100;
 	}
 	else
@@ -250,7 +250,7 @@ ECPGdebug(int n, FILE *dbgs)
 
 	debugstream = dbgs;
 
-	ecpg_log("ECPGdebug: set to %d\n", simple_debug);
+	ecmdb_log("ECPGdebug: set to %d\n", simple_debug);
 
 #ifdef ENABLE_THREAD_SAFETY
 	pthread_mutex_unlock(&debug_init_mutex);
@@ -258,7 +258,7 @@ ECPGdebug(int n, FILE *dbgs)
 }
 
 void
-ecpg_log(const char *format,...)
+ecmdb_log(const char *format,...)
 {
 	va_list		ap;
 	struct sqlca_t *sqlca = ECPGget_sqlca();
@@ -270,10 +270,10 @@ ecpg_log(const char *format,...)
 		return;
 
 	/* localize the error message string */
-	intl_format = ecpg_gettext(format);
+	intl_format = ecmdb_gettext(format);
 
 	/*
-	 * Insert PID into the format, unless ecpg_internal_regression_mode is set
+	 * Insert PID into the format, unless ecmdb_internal_regression_mode is set
 	 * (regression tests want unchanging output).
 	 */
 	bufsize = strlen(intl_format) + 100;
@@ -281,7 +281,7 @@ ecpg_log(const char *format,...)
 	if (fmt == NULL)
 		return;
 
-	if (ecpg_internal_regression_mode)
+	if (ecmdb_internal_regression_mode)
 		snprintf(fmt, bufsize, "[NO_PID]: %s", intl_format);
 	else
 		snprintf(fmt, bufsize, "[%d]: %s", (int) getpid(), intl_format);
@@ -295,7 +295,7 @@ ecpg_log(const char *format,...)
 	va_end(ap);
 
 	/* dump out internal sqlca variables */
-	if (ecpg_internal_regression_mode && sqlca != NULL)
+	if (ecmdb_internal_regression_mode && sqlca != NULL)
 	{
 		fprintf(debugstream, "[NO_PID]: sqlca: code: %ld, state: %s\n",
 				sqlca->sqlcode, sqlca->sqlstate);
@@ -481,7 +481,7 @@ win32_pthread_once(volatile pthread_once_t *once, void (*fn) (void))
 #ifdef ENABLE_NLS
 
 char *
-ecpg_gettext(const char *msgid)
+ecmdb_gettext(const char *msgid)
 {
 	static bool already_bound = false;
 
@@ -537,7 +537,7 @@ ECPGset_var(int number, void *pointer, int lineno)
 
 		if (sqlca == NULL)
 		{
-			ecpg_raise(lineno, ECPG_OUT_OF_MEMORY,
+			ecmdb_raise(lineno, ECPG_OUT_OF_MEMORY,
 					   ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY, NULL);
 			return;
 		}

@@ -219,7 +219,7 @@
     additional settings for run-time parameters.)
     The server then uses this information and
     the contents of its configuration files (such as
-    <filename>pg_hba.conf</filename>) to determine
+    <filename>mdb_hba.conf</filename>) to determine
     whether the connection is provisionally acceptable, and what additional
     authentication is required (if any).
    </para>
@@ -872,7 +872,7 @@
    <para>
     The Function Call sub-protocol allows the client to request a direct
     call of any function that exists in the database's
-    <structname>pg_proc</structname> system catalog.  The client must have
+    <structname>mdb_proc</structname> system catalog.  The client must have
     execute permission for the function.
    </para>
 
@@ -1947,7 +1947,7 @@ The commands accepted in walsender mode are:
          <para>
           Include the necessary WAL segments in the backup. This will include
           all the files between start and stop backup in the
-          <filename>pg_xlog</filename> directory of the base directory tar
+          <filename>mdb_xlog</filename> directory of the base directory tar
           file.
          </para>
         </listitem>
@@ -1985,10 +1985,10 @@ The commands accepted in walsender mode are:
         <listitem>
          <para>
           Include information about symbolic links present in the directory
-          <filename>pg_tblspc</filename> in a file named
+          <filename>mdb_tblspc</filename> in a file named
           <filename>tablespace_map</filename>. The tablespace map file includes
           each symbolic link name as it exists in the directory
-          <filename>pg_tblspc/</> and the full path of that symbolic link.
+          <filename>mdb_tblspc/</> and the full path of that symbolic link.
          </para>
         </listitem>
        </varlistentry>
@@ -2041,7 +2041,7 @@ The commands accepted in walsender mode are:
      <para>
       After the second regular result set, one or more CopyResponse results
       will be sent, one for the main data directory and one for each additional tablespace other
-      than <literal>pg_default</> and <literal>pg_global</>. The data in
+      than <literal>mdb_default</> and <literal>mdb_global</>. The data in
       the CopyResponse results will be a tar format (following the
       <quote>ustar interchange format</> specified in the POSIX 1003.1-2008
       standard) dump of the tablespace contents, except that the two trailing
@@ -2074,22 +2074,22 @@ The commands accepted in walsender mode are:
        </listitem>
        <listitem>
         <para>
-         <filename>pg_xlog</>, including subdirectories. If the backup is run
-         with WAL files included, a synthesized version of <filename>pg_xlog</filename> will be
+         <filename>mdb_xlog</>, including subdirectories. If the backup is run
+         with WAL files included, a synthesized version of <filename>mdb_xlog</filename> will be
          included, but it will only contain the files necessary for the
          backup to work, not the rest of the contents.
         </para>
        </listitem>
        <listitem>
         <para>
-         <filename>pg_replslot</> is copied as an empty directory.
+         <filename>mdb_replslot</> is copied as an empty directory.
         </para>
        </listitem>
        <listitem>
         <para>
          Files other than regular files and directories, such as symbolic
          links and special device files, are skipped.  (Symbolic links
-         in <filename>pg_tblspc</filename> are maintained.)
+         in <filename>mdb_tblspc</filename> are maintained.)
         </para>
        </listitem>
       </itemizedlist>
@@ -4594,7 +4594,7 @@ RowDescription (B)
 </term>
 <listitem>
 <para>
-                The data type size (see <varname>pg_type.typlen</>).
+                The data type size (see <varname>mdb_type.typlen</>).
                 Note that negative values denote variable-width types.
 </para>
 </listitem>
@@ -4605,7 +4605,7 @@ RowDescription (B)
 </term>
 <listitem>
 <para>
-                The type modifier (see <varname>pg_attribute.atttypmod</>).
+                The type modifier (see <varname>mdb_attribute.atttypmod</>).
                 The meaning of the modifier is type-specific.
 </para>
 </listitem>

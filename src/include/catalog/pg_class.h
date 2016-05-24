@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_class.h
- *	  definition of the system "relation" relation (pg_class)
+ * mdb_class.h
+ *	  definition of the system "relation" relation (mdb_class)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_class.h
+ * src/include/catalog/mdb_class.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,20 +22,20 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_class definition.  cpp turns this into
- *		typedef struct FormData_pg_class
+ *		mdb_class definition.  cpp turns this into
+ *		typedef struct FormData_mdb_class
  * ----------------
  */
 #define RelationRelationId	1259
 #define RelationRelation_Rowtype_Id  83
 
-CATALOG(pg_class,1259) BKI_BOOTSTRAP BKI_ROWTYPE_OID(83) BKI_SCHEMA_MACRO
+CATALOG(mdb_class,1259) BKI_BOOTSTRAP BKI_ROWTYPE_OID(83) BKI_SCHEMA_MACRO
 {
 	NameData	relname;		/* class name */
 	Oid			relnamespace;	/* OID of namespace containing this class */
-	Oid			reltype;		/* OID of entry in pg_type for table's
+	Oid			reltype;		/* OID of entry in mdb_type for table's
 								 * implicit row type */
-	Oid			reloftype;		/* OID of entry in pg_type for underlying
+	Oid			reloftype;		/* OID of entry in mdb_type for underlying
 								 * composite type */
 	Oid			relowner;		/* class owner */
 	Oid			relam;			/* index access method; 0 if not an index */
@@ -55,7 +55,7 @@ CATALOG(pg_class,1259) BKI_BOOTSTRAP BKI_ROWTYPE_OID(83) BKI_SCHEMA_MACRO
 	int16		relnatts;		/* number of user attributes */
 
 	/*
-	 * Class pg_attribute must contain exactly "relnatts" user attributes
+	 * Class mdb_attribute must contain exactly "relnatts" user attributes
 	 * (with attnums ranging from 1 to relnatts) for this class.  It may also
 	 * contain entries with negative attnums for system attributes.
 	 */
@@ -78,59 +78,59 @@ CATALOG(pg_class,1259) BKI_BOOTSTRAP BKI_ROWTYPE_OID(83) BKI_SCHEMA_MACRO
 	aclitem		relacl[1];		/* access permissions */
 	text		reloptions[1];	/* access-method-specific options */
 #endif
-} FormData_pg_class;
+} FormData_mdb_class;
 
-/* Size of fixed part of pg_class tuples, not counting var-length fields */
+/* Size of fixed part of mdb_class tuples, not counting var-length fields */
 #define CLASS_TUPLE_SIZE \
-	 (offsetof(FormData_pg_class,relminmxid) + sizeof(TransactionId))
+	 (offsetof(FormData_mdb_class,relminmxid) + sizeof(TransactionId))
 
 /* ----------------
- *		Form_pg_class corresponds to a pointer to a tuple with
- *		the format of pg_class relation.
+ *		Form_mdb_class corresponds to a pointer to a tuple with
+ *		the format of mdb_class relation.
  * ----------------
  */
-typedef FormData_pg_class *Form_pg_class;
+typedef FormData_mdb_class *Form_mdb_class;
 
 /* ----------------
- *		compiler constants for pg_class
+ *		compiler constants for mdb_class
  * ----------------
  */
 
-#define Natts_pg_class						31
-#define Anum_pg_class_relname				1
-#define Anum_pg_class_relnamespace			2
-#define Anum_pg_class_reltype				3
-#define Anum_pg_class_reloftype				4
-#define Anum_pg_class_relowner				5
-#define Anum_pg_class_relam					6
-#define Anum_pg_class_relfilenode			7
-#define Anum_pg_class_reltablespace			8
-#define Anum_pg_class_relpages				9
-#define Anum_pg_class_reltuples				10
-#define Anum_pg_class_relallvisible			11
-#define Anum_pg_class_reltoastrelid			12
-#define Anum_pg_class_relhasindex			13
-#define Anum_pg_class_relisshared			14
-#define Anum_pg_class_relpersistence		15
-#define Anum_pg_class_relkind				16
-#define Anum_pg_class_relnatts				17
-#define Anum_pg_class_relchecks				18
-#define Anum_pg_class_relhasoids			19
-#define Anum_pg_class_relhaspkey			20
-#define Anum_pg_class_relhasrules			21
-#define Anum_pg_class_relhastriggers		22
-#define Anum_pg_class_relhassubclass		23
-#define Anum_pg_class_relrowsecurity		24
-#define Anum_pg_class_relforcerowsecurity	25
-#define Anum_pg_class_relispopulated		26
-#define Anum_pg_class_relreplident			27
-#define Anum_pg_class_relfrozenxid			28
-#define Anum_pg_class_relminmxid			29
-#define Anum_pg_class_relacl				30
-#define Anum_pg_class_reloptions			31
+#define Natts_mdb_class						31
+#define Anum_mdb_class_relname				1
+#define Anum_mdb_class_relnamespace			2
+#define Anum_mdb_class_reltype				3
+#define Anum_mdb_class_reloftype				4
+#define Anum_mdb_class_relowner				5
+#define Anum_mdb_class_relam					6
+#define Anum_mdb_class_relfilenode			7
+#define Anum_mdb_class_reltablespace			8
+#define Anum_mdb_class_relpages				9
+#define Anum_mdb_class_reltuples				10
+#define Anum_mdb_class_relallvisible			11
+#define Anum_mdb_class_reltoastrelid			12
+#define Anum_mdb_class_relhasindex			13
+#define Anum_mdb_class_relisshared			14
+#define Anum_mdb_class_relpersistence		15
+#define Anum_mdb_class_relkind				16
+#define Anum_mdb_class_relnatts				17
+#define Anum_mdb_class_relchecks				18
+#define Anum_mdb_class_relhasoids			19
+#define Anum_mdb_class_relhaspkey			20
+#define Anum_mdb_class_relhasrules			21
+#define Anum_mdb_class_relhastriggers		22
+#define Anum_mdb_class_relhassubclass		23
+#define Anum_mdb_class_relrowsecurity		24
+#define Anum_mdb_class_relforcerowsecurity	25
+#define Anum_mdb_class_relispopulated		26
+#define Anum_mdb_class_relreplident			27
+#define Anum_mdb_class_relfrozenxid			28
+#define Anum_mdb_class_relminmxid			29
+#define Anum_mdb_class_relacl				30
+#define Anum_mdb_class_reloptions			31
 
 /* ----------------
- *		initial contents of pg_class
+ *		initial contents of mdb_class
  *
  * NOTE: only "bootstrapped" relations need to be declared here.  Be sure that
  * the OIDs listed here match those given in their CATALOG macros, and that
@@ -142,13 +142,13 @@ typedef FormData_pg_class *Form_pg_class;
  * Note: "3" in the relfrozenxid column stands for FirstNormalTransactionId;
  * similarly, "1" in relminmxid stands for FirstMultiXactId
  */
-DATA(insert OID = 1247 (  pg_type		PGNSP 71 0 PGUID 0 0 0 0 0 0 0 f f p r 30 0 t f f f f f f t n 3 1 _null_ _null_ ));
+DATA(insert OID = 1247 (  mdb_type		PGNSP 71 0 PGUID 0 0 0 0 0 0 0 f f p r 30 0 t f f f f f f t n 3 1 _null_ _null_ ));
 DESCR("");
-DATA(insert OID = 1249 (  pg_attribute	PGNSP 75 0 PGUID 0 0 0 0 0 0 0 f f p r 21 0 f f f f f f f t n 3 1 _null_ _null_ ));
+DATA(insert OID = 1249 (  mdb_attribute	PGNSP 75 0 PGUID 0 0 0 0 0 0 0 f f p r 21 0 f f f f f f f t n 3 1 _null_ _null_ ));
 DESCR("");
-DATA(insert OID = 1255 (  pg_proc		PGNSP 81 0 PGUID 0 0 0 0 0 0 0 f f p r 29 0 t f f f f f f t n 3 1 _null_ _null_ ));
+DATA(insert OID = 1255 (  mdb_proc		PGNSP 81 0 PGUID 0 0 0 0 0 0 0 f f p r 29 0 t f f f f f f t n 3 1 _null_ _null_ ));
 DESCR("");
-DATA(insert OID = 1259 (  pg_class		PGNSP 83 0 PGUID 0 0 0 0 0 0 0 f f p r 31 0 t f f f f f f t n 3 1 _null_ _null_ ));
+DATA(insert OID = 1259 (  mdb_class		PGNSP 83 0 PGUID 0 0 0 0 0 0 0 f f p r 31 0 t f f f f f f t n 3 1 _null_ _null_ ));
 DESCR("");
 
 

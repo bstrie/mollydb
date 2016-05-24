@@ -17,7 +17,7 @@
 #include <ctype.h>
 #include <limits.h>
 
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "libpq/pqformat.h"
 #include "utils/array.h"
 #include "utils/builtins.h"

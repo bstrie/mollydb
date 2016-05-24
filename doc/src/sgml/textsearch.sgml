@@ -1756,7 +1756,7 @@ CREATE TABLE messages (
 
 CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
 ON messages FOR EACH ROW EXECUTE PROCEDURE
-tsvector_update_trigger(tsv, 'pg_catalog.english', title, body);
+tsvector_update_trigger(tsv, 'mdb_catalog.english', title, body);
 
 INSERT INTO messages VALUES('title here', 'the body text is here');
 
@@ -1804,8 +1804,8 @@ SELECT title, body FROM messages WHERE tsv @@ to_tsquery('title &amp; body');
 CREATE FUNCTION messages_trigger() RETURNS trigger AS $$
 begin
   new.tsv :=
-     setweight(to_tsvector('pg_catalog.english', coalesce(new.title,'')), 'A') ||
-     setweight(to_tsvector('pg_catalog.english', coalesce(new.body,'')), 'D');
+     setweight(to_tsvector('mdb_catalog.english', coalesce(new.title,'')), 'A') ||
+     setweight(to_tsvector('mdb_catalog.english', coalesce(new.body,'')), 'D');
   return new;
 end
 $$ LANGUAGE plmdb;
@@ -1913,7 +1913,7 @@ LIMIT 10;
   </para>
 
   <para>
-   The built-in parser is named <literal>pg_catalog.default</>.
+   The built-in parser is named <literal>mdb_catalog.default</>.
    It recognizes 23 token types, shown in <xref linkend="textsearch-default-parser">.
   </para>
 
@@ -2314,7 +2314,7 @@ SELECT ts_rank_cd (to_tsvector('english','list stop words'), to_tsquery('list &a
 
 <programlisting>
 CREATE TEXT SEARCH DICTIONARY public.simple_dict (
-    TEMPLATE = pg_catalog.simple,
+    TEMPLATE = mdb_catalog.simple,
     STOPWORDS = english
 );
 </programlisting>
@@ -2324,7 +2324,7 @@ CREATE TEXT SEARCH DICTIONARY public.simple_dict (
     <filename>$SHAREDIR/tsearch_data/english.stop</>,
     where <literal>$SHAREDIR</> means the
     <productname>MollyDB</productname> installation's shared-data directory,
-    often <filename>/usr/local/share/mollydb</> (use <command>pg_config
+    often <filename>/usr/local/share/mollydb</> (use <command>mdb_config
     --sharedir</> to determine it if you're not sure).
     The file format is simply a list
     of words, one per line.  Blank lines and trailing spaces are ignored,
@@ -2604,7 +2604,7 @@ more sample word(s) : more indexed word(s)
 CREATE TEXT SEARCH DICTIONARY thesaurus_simple (
     TEMPLATE = thesaurus,
     DictFile = mythesaurus,
-    Dictionary = pg_catalog.english_stem
+    Dictionary = mdb_catalog.english_stem
 );
 </programlisting>
 
@@ -2626,7 +2626,7 @@ CREATE TEXT SEARCH DICTIONARY thesaurus_simple (
      </listitem>
      <listitem>
       <para>
-       <literal>pg_catalog.english_stem</literal> is the subdictionary (here,
+       <literal>mdb_catalog.english_stem</literal> is the subdictionary (here,
        a Snowball English stemmer) to use for thesaurus normalization.
        Notice that the subdictionary will have its own
        configuration (for example, stop words), which is not shown here.
@@ -3016,13 +3016,13 @@ CREATE TEXT SEARCH DICTIONARY english_stem (
     <literal>english</> configuration:
 
 <programlisting>
-CREATE TEXT SEARCH CONFIGURATION public.pg ( COPY = pg_catalog.english );
+CREATE TEXT SEARCH CONFIGURATION public.pg ( COPY = mdb_catalog.english );
 </programlisting>
    </para>
 
    <para>
     We will use a MollyDB-specific synonym list
-    and store it in <filename>$SHAREDIR/tsearch_data/pg_dict.syn</filename>.
+    and store it in <filename>$SHAREDIR/tsearch_data/mdb_dict.syn</filename>.
     The file contents look like:
 
 <programlisting>
@@ -3034,9 +3034,9 @@ mollydb  pg
     We define the synonym dictionary like this:
 
 <programlisting>
-CREATE TEXT SEARCH DICTIONARY pg_dict (
+CREATE TEXT SEARCH DICTIONARY mdb_dict (
     TEMPLATE = synonym,
-    SYNONYMS = pg_dict
+    SYNONYMS = mdb_dict
 );
 </programlisting>
 
@@ -3059,7 +3059,7 @@ CREATE TEXT SEARCH DICTIONARY english_ispell (
 ALTER TEXT SEARCH CONFIGURATION pg
     ALTER MAPPING FOR asciiword, asciihword, hword_asciipart,
                       word, hword, hword_part
-    WITH pg_dict, english_ispell, english_stem;
+    WITH mdb_dict, english_ispell, english_stem;
 </programlisting>
 
     We choose not to index or search some token types that the built-in
@@ -3234,7 +3234,7 @@ SELECT * FROM ts_debug('english','a fat  cat sat on a mat - it ate a fat rats');
   </para>
 
 <programlisting>
-CREATE TEXT SEARCH CONFIGURATION public.english ( COPY = pg_catalog.english );
+CREATE TEXT SEARCH CONFIGURATION public.english ( COPY = mdb_catalog.english );
 
 CREATE TEXT SEARCH DICTIONARY english_ispell (
     TEMPLATE = ispell,
@@ -3624,11 +3624,11 @@ SELECT plainto_tsquery('supernovae stars');
             List of text search configurations
    Schema   |  Name   |            Description             
 ------------+---------+------------------------------------
- pg_catalog | russian | configuration for russian language
+ mdb_catalog | russian | configuration for russian language
 
 =&gt; \dF+ russian
-Text search configuration "pg_catalog.russian"
-Parser: "pg_catalog.default"
+Text search configuration "mdb_catalog.russian"
+Parser: "mdb_catalog.default"
       Token      | Dictionaries 
 -----------------+--------------
  asciihword      | english_stem
@@ -3665,22 +3665,22 @@ Parser: "pg_catalog.default"
                             List of text search dictionaries
    Schema   |      Name       |                        Description                        
 ------------+-----------------+-----------------------------------------------------------
- pg_catalog | danish_stem     | snowball stemmer for danish language
- pg_catalog | dutch_stem      | snowball stemmer for dutch language
- pg_catalog | english_stem    | snowball stemmer for english language
- pg_catalog | finnish_stem    | snowball stemmer for finnish language
- pg_catalog | french_stem     | snowball stemmer for french language
- pg_catalog | german_stem     | snowball stemmer for german language
- pg_catalog | hungarian_stem  | snowball stemmer for hungarian language
- pg_catalog | italian_stem    | snowball stemmer for italian language
- pg_catalog | norwegian_stem  | snowball stemmer for norwegian language
- pg_catalog | portuguese_stem | snowball stemmer for portuguese language
- pg_catalog | romanian_stem   | snowball stemmer for romanian language
- pg_catalog | russian_stem    | snowball stemmer for russian language
- pg_catalog | simple          | simple dictionary: just lower case and check for stopword
- pg_catalog | spanish_stem    | snowball stemmer for spanish language
- pg_catalog | swedish_stem    | snowball stemmer for swedish language
- pg_catalog | turkish_stem    | snowball stemmer for turkish language
+ mdb_catalog | danish_stem     | snowball stemmer for danish language
+ mdb_catalog | dutch_stem      | snowball stemmer for dutch language
+ mdb_catalog | english_stem    | snowball stemmer for english language
+ mdb_catalog | finnish_stem    | snowball stemmer for finnish language
+ mdb_catalog | french_stem     | snowball stemmer for french language
+ mdb_catalog | german_stem     | snowball stemmer for german language
+ mdb_catalog | hungarian_stem  | snowball stemmer for hungarian language
+ mdb_catalog | italian_stem    | snowball stemmer for italian language
+ mdb_catalog | norwegian_stem  | snowball stemmer for norwegian language
+ mdb_catalog | portuguese_stem | snowball stemmer for portuguese language
+ mdb_catalog | romanian_stem   | snowball stemmer for romanian language
+ mdb_catalog | russian_stem    | snowball stemmer for russian language
+ mdb_catalog | simple          | simple dictionary: just lower case and check for stopword
+ mdb_catalog | spanish_stem    | snowball stemmer for spanish language
+ mdb_catalog | swedish_stem    | snowball stemmer for swedish language
+ mdb_catalog | turkish_stem    | snowball stemmer for turkish language
 </screen>
      </para>
     </listitem>
@@ -3696,9 +3696,9 @@ Parser: "pg_catalog.default"
         List of text search parsers
    Schema   |  Name   |     Description     
 ------------+---------+---------------------
- pg_catalog | default | default word parser
+ mdb_catalog | default | default word parser
 =&gt; \dFp+
-    Text search parser "pg_catalog.default"
+    Text search parser "mdb_catalog.default"
      Method      |    Function    | Description 
 -----------------+----------------+-------------
  Start parse     | prsd_start     | 
@@ -3707,7 +3707,7 @@ Parser: "pg_catalog.default"
  Get headline    | prsd_headline  | 
  Get token types | prsd_lextype   | 
 
-        Token types for parser "pg_catalog.default"
+        Token types for parser "mdb_catalog.default"
    Token name    |               Description                
 -----------------+------------------------------------------
  asciihword      | Hyphenated word, all ASCII
@@ -3749,11 +3749,11 @@ Parser: "pg_catalog.default"
                            List of text search templates
    Schema   |   Name    |                        Description                        
 ------------+-----------+-----------------------------------------------------------
- pg_catalog | ispell    | ispell dictionary
- pg_catalog | simple    | simple dictionary: just lower case and check for stopword
- pg_catalog | snowball  | snowball stemmer
- pg_catalog | synonym   | synonym dictionary: replace word by its synonym
- pg_catalog | thesaurus | thesaurus dictionary: phrase by phrase substitution
+ mdb_catalog | ispell    | ispell dictionary
+ mdb_catalog | simple    | simple dictionary: just lower case and check for stopword
+ mdb_catalog | snowball  | snowball stemmer
+ mdb_catalog | synonym   | synonym dictionary: replace word by its synonym
+ mdb_catalog | thesaurus | thesaurus dictionary: phrase by phrase substitution
 </screen>
      </para>
     </listitem>
@@ -3825,7 +3825,7 @@ Parser: "pg_catalog.default"
    <listitem>
     <para>
      Some functions have been renamed or had small adjustments in their
-     argument lists, and all of them are now in the <literal>pg_catalog</>
+     argument lists, and all of them are now in the <literal>mdb_catalog</>
      schema, whereas in a previous installation they would have been in
      <literal>public</> or another non-system schema.  There is a new
      version of <application>tsearch2</>
@@ -3837,7 +3837,7 @@ Parser: "pg_catalog.default"
    <listitem>
     <para>
      The old <application>tsearch2</> functions and other objects
-     <emphasis>must</> be suppressed when loading <application>pg_dump</>
+     <emphasis>must</> be suppressed when loading <application>mdb_dump</>
      output from a pre-8.3 database.  While many of them won't load anyway,
      a few will and then cause problems.  One simple way to deal with this
      is to load the new <application>tsearch2</> module before restoring

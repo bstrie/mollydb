@@ -4,7 +4,7 @@
  *	  POSTGRES type cache code
  *
  * The type cache exists to speed lookup of certain information about data
- * types that is not directly available from a type's pg_type row.  For
+ * types that is not directly available from a type's mdb_type row.  For
  * example, we use a type's default btree opclass, or the default hash
  * opclass if no btree opclass exists, to determine which operators should
  * be used for grouping and sorting the type (GROUP BY, ORDER BY ASC/DESC).
@@ -24,7 +24,7 @@
  *
  * We have some provisions for updating cache entries if the stored data
  * becomes obsolete.  Information dependent on opclasses is cleared if we
- * detect updates to pg_opclass.  We also support clearing the tuple
+ * detect updates to mdb_opclass.  We also support clearing the tuple
  * descriptor and operator/function parts of a rowtype's cache entry,
  * since those may need to change as a consequence of ALTER TABLE.
  * Domain constraint changes are also tracked properly.
@@ -47,12 +47,12 @@
 #include "access/htup_details.h"
 #include "access/nbtree.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_constraint.h"
-#include "catalog/pg_enum.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_range.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_constraint.h"
+#include "catalog/mdb_enum.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_range.h"
+#include "catalog/mdb_type.h"
 #include "commands/defrem.h"
 #include "executor/executor.h"
 #include "optimizer/planner.h"
@@ -223,16 +223,16 @@ lookup_type_cache(Oid type_id, int flags)
 	{
 		/*
 		 * If we didn't find one, we want to make one.  But first look up the
-		 * pg_type row, just to make sure we don't make a cache entry for an
+		 * mdb_type row, just to make sure we don't make a cache entry for an
 		 * invalid type OID.
 		 */
 		HeapTuple	tp;
-		Form_pg_type typtup;
+		Form_mdb_type typtup;
 
 		tp = SearchSysCache1(TYPEOID, ObjectIdGetDatum(type_id));
 		if (!HeapTupleIsValid(tp))
 			elog(ERROR, "cache lookup failed for type %u", type_id);
-		typtup = (Form_pg_type) GETSTRUCT(tp);
+		typtup = (Form_mdb_type) GETSTRUCT(tp);
 		if (!typtup->typisdefined)
 			ereport(ERROR,
 					(errcode(ERRCODE_UNDEFINED_OBJECT),
@@ -594,7 +594,7 @@ load_typcache_tupdesc(TypeCacheEntry *typentry)
 static void
 load_rangetype_info(TypeCacheEntry *typentry)
 {
-	Form_pg_range pg_range;
+	Form_mdb_range mdb_range;
 	HeapTuple	tup;
 	Oid			subtypeOid;
 	Oid			opclassOid;
@@ -604,19 +604,19 @@ load_rangetype_info(TypeCacheEntry *typentry)
 	Oid			opcintype;
 	Oid			cmpFnOid;
 
-	/* get information from pg_range */
+	/* get information from mdb_range */
 	tup = SearchSysCache1(RANGETYPE, ObjectIdGetDatum(typentry->type_id));
 	/* should not fail, since we already checked typtype ... */
 	if (!HeapTupleIsValid(tup))
 		elog(ERROR, "cache lookup failed for range type %u",
 			 typentry->type_id);
-	pg_range = (Form_pg_range) GETSTRUCT(tup);
+	mdb_range = (Form_mdb_range) GETSTRUCT(tup);
 
-	subtypeOid = pg_range->rngsubtype;
-	typentry->rng_collation = pg_range->rngcollation;
-	opclassOid = pg_range->rngsubopc;
-	canonicalOid = pg_range->rngcanonical;
-	subdiffOid = pg_range->rngsubdiff;
+	subtypeOid = mdb_range->rngsubtype;
+	typentry->rng_collation = mdb_range->rngcollation;
+	opclassOid = mdb_range->rngsubopc;
+	canonicalOid = mdb_range->rngcanonical;
+	subdiffOid = mdb_range->rngsubdiff;
 
 	ReleaseSysCache(tup);
 
@@ -649,7 +649,7 @@ load_rangetype_info(TypeCacheEntry *typentry)
  * load_domaintype_info --- helper routine to set up domain constraint info
  *
  * Note: we assume we're called in a relatively short-lived context, so it's
- * okay to leak data into the current context while scanning pg_constraint.
+ * okay to leak data into the current context while scanning mdb_constraint.
  * We build the new DomainConstraintCache data in a context underneath
  * CurrentMemoryContext, and reparent it under CacheMemoryContext when
  * complete.
@@ -686,7 +686,7 @@ load_domaintype_info(TypeCacheEntry *typentry)
 	cconslen = 0;
 
 	/*
-	 * Scan pg_constraint for relevant constraints.  We want to find
+	 * Scan mdb_constraint for relevant constraints.  We want to find
 	 * constraints for not just this domain, but any ancestor domains, so the
 	 * outer loop crawls up the domain stack.
 	 */
@@ -696,7 +696,7 @@ load_domaintype_info(TypeCacheEntry *typentry)
 	{
 		HeapTuple	tup;
 		HeapTuple	conTup;
-		Form_pg_type typTup;
+		Form_mdb_type typTup;
 		int			nccons = 0;
 		ScanKeyData key[1];
 		SysScanDesc scan;
@@ -704,7 +704,7 @@ load_domaintype_info(TypeCacheEntry *typentry)
 		tup = SearchSysCache1(TYPEOID, ObjectIdGetDatum(typeOid));
 		if (!HeapTupleIsValid(tup))
 			elog(ERROR, "cache lookup failed for type %u", typeOid);
-		typTup = (Form_pg_type) GETSTRUCT(tup);
+		typTup = (Form_mdb_type) GETSTRUCT(tup);
 
 		if (typTup->typtype != TYPTYPE_DOMAIN)
 		{
@@ -719,7 +719,7 @@ load_domaintype_info(TypeCacheEntry *typentry)
 
 		/* Look for CHECK Constraints on this domain */
 		ScanKeyInit(&key[0],
-					Anum_pg_constraint_contypid,
+					Anum_mdb_constraint_contypid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(typeOid));
 
@@ -728,7 +728,7 @@ load_domaintype_info(TypeCacheEntry *typentry)
 
 		while (HeapTupleIsValid(conTup = systable_getnext(scan)))
 		{
-			Form_pg_constraint c = (Form_pg_constraint) GETSTRUCT(conTup);
+			Form_mdb_constraint c = (Form_mdb_constraint) GETSTRUCT(conTup);
 			Datum		val;
 			bool		isNull;
 			char	   *constring;
@@ -740,7 +740,7 @@ load_domaintype_info(TypeCacheEntry *typentry)
 				continue;
 
 			/* Not expecting conbin to be NULL, but we'll test for it anyway */
-			val = fastgetattr(conTup, Anum_pg_constraint_conbin,
+			val = fastgetattr(conTup, Anum_mdb_constraint_conbin,
 							  conRel->rd_att, &isNull);
 			if (isNull)
 				elog(ERROR, "domain \"%s\" constraint \"%s\" has NULL conbin",
@@ -1392,9 +1392,9 @@ assign_record_type_typmod(TupleDesc tupDesc)
  * This is called when a relcache invalidation event occurs for the given
  * relid.  We must scan the whole typcache hash since we don't know the
  * type OID corresponding to the relid.  We could do a direct search if this
- * were a syscache-flush callback on pg_type, but then we would need all
+ * were a syscache-flush callback on mdb_type, but then we would need all
  * ALTER-TABLE-like commands that could modify a rowtype to issue syscache
- * invals against the rel's pg_type OID.  The extra SI signaling could very
+ * invals against the rel's mdb_type OID.  The extra SI signaling could very
  * well cost more than we'd save, since in most usages there are not very
  * many entries in a backend's typcache.  The risk of bugs-of-omission seems
  * high, too.
@@ -1443,13 +1443,13 @@ TypeCacheRelCallback(Datum arg, Oid relid)
  * TypeCacheOpcCallback
  *		Syscache inval callback function
  *
- * This is called when a syscache invalidation event occurs for any pg_opclass
+ * This is called when a syscache invalidation event occurs for any mdb_opclass
  * row.  In principle we could probably just invalidate data dependent on the
- * particular opclass, but since updates on pg_opclass are rare in production
+ * particular opclass, but since updates on mdb_opclass are rare in production
  * it doesn't seem worth a lot of complication: we just mark all cached data
  * invalid.
  *
- * Note that we don't bother watching for updates on pg_amop or pg_amproc.
+ * Note that we don't bother watching for updates on mdb_amop or mdb_amproc.
  * This should be safe because ALTER OPERATOR FAMILY ADD/DROP OPERATOR/FUNCTION
  * is not allowed to be used to add/drop the primary operators and functions
  * of an opclass, only cross-type members of a family; and the latter sorts
@@ -1475,7 +1475,7 @@ TypeCacheOpcCallback(Datum arg, int cacheid, uint32 hashvalue)
  *		Syscache inval callback function
  *
  * This is called when a syscache invalidation event occurs for any
- * pg_constraint or pg_type row.  We flush information about domain
+ * mdb_constraint or mdb_type row.  We flush information about domain
  * constraints when this happens.
  *
  * It's slightly annoying that we can't tell whether the inval event was for a
@@ -1645,9 +1645,9 @@ load_enum_cache_data(TypeCacheEntry *tcache)
 	items = (EnumItem *) palloc(sizeof(EnumItem) * maxitems);
 	numitems = 0;
 
-	/* Scan pg_enum for the members of the target enum type. */
+	/* Scan mdb_enum for the members of the target enum type. */
 	ScanKeyInit(&skey,
-				Anum_pg_enum_enumtypid,
+				Anum_mdb_enum_enumtypid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(tcache->type_id));
 
@@ -1659,7 +1659,7 @@ load_enum_cache_data(TypeCacheEntry *tcache)
 
 	while (HeapTupleIsValid(enum_tuple = systable_getnext(enum_scan)))
 	{
-		Form_pg_enum en = (Form_pg_enum) GETSTRUCT(enum_tuple);
+		Form_mdb_enum en = (Form_mdb_enum) GETSTRUCT(enum_tuple);
 
 		if (numitems >= maxitems)
 		{

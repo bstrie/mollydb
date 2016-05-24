@@ -2,13 +2,13 @@
  *
  * Utility routines for SQL dumping
  *
- * Basically this is stuff that is useful in both pg_dump and pg_dumpall.
+ * Basically this is stuff that is useful in both mdb_dump and mdb_dumpall.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/bin/pg_dump/dumputils.h
+ * src/bin/mdb_dump/dumputils.h
  *
  *-------------------------------------------------------------------------
  */
@@ -19,7 +19,7 @@
 #include "pqexpbuffer.h"
 
 /*
- * Preferred strftime(3) format specifier for printing timestamps in pg_dump
+ * Preferred strftime(3) format specifier for printing timestamps in mdb_dump
  * and friends.
  *
  * We don't print the timezone on Windows, because the names are long and

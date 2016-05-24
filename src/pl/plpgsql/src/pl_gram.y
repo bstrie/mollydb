@@ -16,7 +16,7 @@
 #include "plmdb.h"
 
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "parser/parser.h"
 #include "parser/parse_type.h"
 #include "parser/scanner.h"
@@ -574,7 +574,7 @@ decl_statement	: decl_varname decl_const decl_datatype decl_collate decl_notnull
 								*cp2++ = *cp1;
 							*cp2++ = *cp1++;
 						}
-						strcpy(cp2, "'::pg_catalog.refcursor");
+						strcpy(cp2, "'::mdb_catalog.refcursor");
 						curname_def->query = pstrdup(buf);
 						new->default_val = curname_def;
 
@@ -1031,16 +1031,16 @@ getdiag_item :
 												K_RESULT_OID, "result_oid"))
 							$$ = PLPGSQL_GETDIAG_RESULT_OID;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_CONTEXT, "pg_context"))
+												K_PG_CONTEXT, "mdb_context"))
 							$$ = PLPGSQL_GETDIAG_CONTEXT;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_EXCEPTION_DETAIL, "pg_exception_detail"))
+												K_PG_EXCEPTION_DETAIL, "mdb_exception_detail"))
 							$$ = PLPGSQL_GETDIAG_ERROR_DETAIL;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_EXCEPTION_HINT, "pg_exception_hint"))
+												K_PG_EXCEPTION_HINT, "mdb_exception_hint"))
 							$$ = PLPGSQL_GETDIAG_ERROR_HINT;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_EXCEPTION_CONTEXT, "pg_exception_context"))
+												K_PG_EXCEPTION_CONTEXT, "mdb_exception_context"))
 							$$ = PLPGSQL_GETDIAG_ERROR_CONTEXT;
 						else if (tok_is_keyword(tok, &yylval,
 												K_COLUMN_NAME, "column_name"))
@@ -1049,7 +1049,7 @@ getdiag_item :
 												K_CONSTRAINT_NAME, "constraint_name"))
 							$$ = PLPGSQL_GETDIAG_CONSTRAINT_NAME;
 						else if (tok_is_keyword(tok, &yylval,
-												K_PG_DATATYPE_NAME, "pg_datatype_name"))
+												K_PG_DATATYPE_NAME, "mdb_datatype_name"))
 							$$ = PLPGSQL_GETDIAG_DATATYPE_NAME;
 						else if (tok_is_keyword(tok, &yylval,
 												K_MESSAGE_TEXT, "message_text"))

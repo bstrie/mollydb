@@ -28,10 +28,10 @@ SELECT regprocedure('abs(numeric)');
  abs(numeric)
 (1 row)
 
-SELECT regclass('pg_class');
+SELECT regclass('mdb_class');
  regclass 
 ----------
- pg_class
+ mdb_class
 (1 row)
 
 SELECT regtype('int4');
@@ -64,10 +64,10 @@ SELECT to_regprocedure('abs(numeric)');
  abs(numeric)
 (1 row)
 
-SELECT to_regclass('pg_class');
+SELECT to_regclass('mdb_class');
  to_regclass 
 -------------
- pg_class
+ mdb_class
 (1 row)
 
 SELECT to_regtype('int4');
@@ -77,67 +77,67 @@ SELECT to_regtype('int4');
 (1 row)
 
 -- with schemaname
-SELECT regoper('pg_catalog.||/');
+SELECT regoper('mdb_catalog.||/');
  regoper 
 ---------
  ||/
 (1 row)
 
-SELECT regoperator('pg_catalog.+(int4,int4)');
+SELECT regoperator('mdb_catalog.+(int4,int4)');
     regoperator     
 --------------------
  +(integer,integer)
 (1 row)
 
-SELECT regproc('pg_catalog.now');
+SELECT regproc('mdb_catalog.now');
  regproc 
 ---------
  now
 (1 row)
 
-SELECT regprocedure('pg_catalog.abs(numeric)');
+SELECT regprocedure('mdb_catalog.abs(numeric)');
  regprocedure 
 --------------
  abs(numeric)
 (1 row)
 
-SELECT regclass('pg_catalog.pg_class');
+SELECT regclass('mdb_catalog.mdb_class');
  regclass 
 ----------
- pg_class
+ mdb_class
 (1 row)
 
-SELECT regtype('pg_catalog.int4');
+SELECT regtype('mdb_catalog.int4');
  regtype 
 ---------
  integer
 (1 row)
 
-SELECT to_regoper('pg_catalog.||/');
+SELECT to_regoper('mdb_catalog.||/');
  to_regoper 
 ------------
  ||/
 (1 row)
 
-SELECT to_regproc('pg_catalog.now');
+SELECT to_regproc('mdb_catalog.now');
  to_regproc 
 ------------
  now
 (1 row)
 
-SELECT to_regprocedure('pg_catalog.abs(numeric)');
+SELECT to_regprocedure('mdb_catalog.abs(numeric)');
  to_regprocedure 
 -----------------
  abs(numeric)
 (1 row)
 
-SELECT to_regclass('pg_catalog.pg_class');
+SELECT to_regclass('mdb_catalog.mdb_class');
  to_regclass 
 -------------
- pg_class
+ mdb_class
 (1 row)
 
-SELECT to_regtype('pg_catalog.int4');
+SELECT to_regtype('mdb_catalog.int4');
  to_regtype 
 ------------
  integer
@@ -156,16 +156,16 @@ SELECT regrole('"regtestrole"');
  regtestrole
 (1 row)
 
-SELECT regnamespace('pg_catalog');
+SELECT regnamespace('mdb_catalog');
  regnamespace 
 --------------
- pg_catalog
+ mdb_catalog
 (1 row)
 
-SELECT regnamespace('"pg_catalog"');
+SELECT regnamespace('"mdb_catalog"');
  regnamespace 
 --------------
- pg_catalog
+ mdb_catalog
 (1 row)
 
 SELECT to_regrole('regtestrole');
@@ -180,16 +180,16 @@ SELECT to_regrole('"regtestrole"');
  regtestrole
 (1 row)
 
-SELECT to_regnamespace('pg_catalog');
+SELECT to_regnamespace('mdb_catalog');
  to_regnamespace 
 -----------------
- pg_catalog
+ mdb_catalog
 (1 row)
 
-SELECT to_regnamespace('"pg_catalog"');
+SELECT to_regnamespace('"mdb_catalog"');
  to_regnamespace 
 -----------------
- pg_catalog
+ mdb_catalog
 (1 row)
 
 /* If objects don't exist, raise errors. */
@@ -211,9 +211,9 @@ SELECT regprocedure('absinthe(numeric)');
 ERROR:  function "absinthe(numeric)" does not exist
 LINE 1: SELECT regprocedure('absinthe(numeric)');
                             ^
-SELECT regclass('pg_classes');
-ERROR:  relation "pg_classes" does not exist
-LINE 1: SELECT regclass('pg_classes');
+SELECT regclass('mdb_classes');
+ERROR:  relation "mdb_classes" does not exist
+LINE 1: SELECT regclass('mdb_classes');
                         ^
 SELECT regtype('int3');
 ERROR:  type "int3" does not exist
@@ -236,9 +236,9 @@ SELECT regprocedure('ng_catalog.abs(numeric)');
 ERROR:  schema "ng_catalog" does not exist
 LINE 1: SELECT regprocedure('ng_catalog.abs(numeric)');
                             ^
-SELECT regclass('ng_catalog.pg_class');
+SELECT regclass('ng_catalog.mdb_class');
 ERROR:  schema "ng_catalog" does not exist
-LINE 1: SELECT regclass('ng_catalog.pg_class');
+LINE 1: SELECT regclass('ng_catalog.mdb_class');
                         ^
 SELECT regtype('ng_catalog.int4');
 ERROR:  schema "ng_catalog" does not exist
@@ -303,7 +303,7 @@ SELECT to_regprocedure('absinthe(numeric)');
  
 (1 row)
 
-SELECT to_regclass('pg_classes');
+SELECT to_regclass('mdb_classes');
  to_regclass 
 -------------
  
@@ -340,7 +340,7 @@ SELECT to_regprocedure('ng_catalog.abs(numeric)');
  
 (1 row)
 
-SELECT to_regclass('ng_catalog.pg_class');
+SELECT to_regclass('ng_catalog.mdb_class');
  to_regclass 
 -------------
  

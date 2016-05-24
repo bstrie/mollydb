@@ -318,10 +318,10 @@ transaction to commit or roll back.  (We could do that for user tables
 too, but since the case is unexpected we prefer to throw an error.)
 
 Practically, we prevent certain transactions from using the new index by
-setting pg_index.indcheckxmin to TRUE.  Transactions are allowed to use
-such an index only after pg_index.xmin is below their TransactionXmin
+setting mdb_index.indcheckxmin to TRUE.  Transactions are allowed to use
+such an index only after mdb_index.xmin is below their TransactionXmin
 horizon, thereby ensuring that any incompatible rows in HOT chains are
-dead to them. (pg_index.xmin will be the XID of the CREATE INDEX
+dead to them. (mdb_index.xmin will be the XID of the CREATE INDEX
 transaction.  The reason for using xmin rather than a normal column is
 that the regular vacuum freezing mechanism will take care of converting
 xmin to FrozenTransactionId before it can wrap around.)
@@ -345,7 +345,7 @@ CREATE INDEX CONCURRENTLY
 -------------------------
 
 In the concurrent case we must take a different approach.  We create the
-pg_index entry immediately, before we scan the table.  The pg_index entry
+mdb_index entry immediately, before we scan the table.  The mdb_index entry
 is marked as "not ready for inserts".  Then we commit and wait for any
 transactions which have the table open to finish.  This ensures that no
 new HOT updates will change the key value for our new index, because all
@@ -386,7 +386,7 @@ from the index, as well as ensuring that no one can see any inconsistent
 rows in a broken HOT chain (the first condition is stronger than the
 second).  Finally, we can mark the index valid for searches.
 
-Note that we do not need to set pg_index.indcheckxmin in this code path,
+Note that we do not need to set mdb_index.indcheckxmin in this code path,
 because we have outwaited any transactions that would need to avoid using
 the index.  (indcheckxmin is only needed because non-concurrent CREATE
 INDEX doesn't want to wait; its stronger lock would create too much risk of
@@ -405,7 +405,7 @@ Then, we clear indisready and indislive, and again wait for transactions
 that could be updating the index to end.  Finally we can drop the index
 normally (though taking only ShareUpdateExclusiveLock on its parent table).
 
-The reason we need the pg_index.indislive flag is that after the second
+The reason we need the mdb_index.indislive flag is that after the second
 wait step begins, we don't want transactions to be touching the index at
 all; otherwise they might suffer errors if the DROP finally commits while
 they are reading catalog entries for the index.  If we had only indisvalid

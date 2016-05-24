@@ -95,7 +95,7 @@ PageIsVerified(Page page, BlockNumber blkno)
 	{
 		if (DataChecksumsEnabled())
 		{
-			checksum = pg_checksum_page((char *) page, blkno);
+			checksum = mdb_checksum_page((char *) page, blkno);
 
 			if (checksum != p->pd_checksum)
 				checksum_failure = true;
@@ -1083,7 +1083,7 @@ PageSetChecksumCopy(Page page, BlockNumber blkno)
 		pageCopy = MemoryContextAlloc(TopMemoryContext, BLCKSZ);
 
 	memcpy(pageCopy, (char *) page, BLCKSZ);
-	((PageHeader) pageCopy)->pd_checksum = pg_checksum_page(pageCopy, blkno);
+	((PageHeader) pageCopy)->pd_checksum = mdb_checksum_page(pageCopy, blkno);
 	return pageCopy;
 }
 
@@ -1100,5 +1100,5 @@ PageSetChecksumInplace(Page page, BlockNumber blkno)
 	if (PageIsNew(page) || !DataChecksumsEnabled())
 		return;
 
-	((PageHeader) page)->pd_checksum = pg_checksum_page((char *) page, blkno);
+	((PageHeader) page)->pd_checksum = mdb_checksum_page((char *) page, blkno);
 }

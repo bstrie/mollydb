@@ -13,9 +13,9 @@ DROP FUNCTION regexp_matches( citext, citext, text );
 
 /* Now redefine */
 CREATE FUNCTION regexp_matches( citext, citext ) RETURNS SETOF TEXT[] AS $$
-    SELECT pg_catalog.regexp_matches( $1::pg_catalog.text, $2::pg_catalog.text, 'i' );
+    SELECT mdb_catalog.regexp_matches( $1::mdb_catalog.text, $2::mdb_catalog.text, 'i' );
 $$ LANGUAGE SQL IMMUTABLE STRICT ROWS 1;
 
 CREATE FUNCTION regexp_matches( citext, citext, text ) RETURNS SETOF TEXT[] AS $$
-    SELECT pg_catalog.regexp_matches( $1::pg_catalog.text, $2::pg_catalog.text, CASE WHEN pg_catalog.strpos($3, 'c') = 0 THEN  $3 || 'i' ELSE $3 END );
+    SELECT mdb_catalog.regexp_matches( $1::mdb_catalog.text, $2::mdb_catalog.text, CASE WHEN mdb_catalog.strpos($3, 'c') = 0 THEN  $3 || 'i' ELSE $3 END );
 $$ LANGUAGE SQL IMMUTABLE STRICT ROWS 10;

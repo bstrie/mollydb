@@ -64,7 +64,7 @@
     <varname>debug_print_rewritten</varname>, or
     <varname>debug_print_plan</varname>.  The rule actions are also
     stored as query trees, in the system catalog
-    <structname>pg_rewrite</structname>.  They are not formatted like
+    <structname>mdb_rewrite</structname>.  They are not formatted like
     the log output, but they contain exactly the same information.
 </para>
 
@@ -424,7 +424,7 @@ CREATE VIEW shoe_ready AS
     The <command>CREATE VIEW</command> command for the
     <literal>shoelace</literal> view (which is the simplest one we
     have) will create a relation <literal>shoelace</> and an entry in
-    <structname>pg_rewrite</structname> that tells that there is a
+    <structname>mdb_rewrite</structname> that tells that there is a
     rewrite rule that must be applied whenever the relation <literal>shoelace</>
     is referenced in a query's range table.  The rule has no rule
     qualification (discussed later, with the non-<command>SELECT</> rules, since
@@ -439,7 +439,7 @@ CREATE VIEW shoe_ready AS
     <para>
     The two extra range
     table entries for <literal>NEW</> and <literal>OLD</> that you can see in
-    the <structname>pg_rewrite</structname> entry aren't of interest
+    the <structname>mdb_rewrite</structname> entry aren't of interest
     for <command>SELECT</command> rules.
     </para>
     </note>
@@ -1014,7 +1014,7 @@ CREATE FOREIGN TABLE words (word text NOT NULL)
   OPTIONS (filename '/usr/share/dict/words');
 CREATE MATERIALIZED VIEW wrd AS SELECT * FROM words;
 CREATE UNIQUE INDEX wrd_word ON wrd (word);
-CREATE EXTENSION pg_trgm;
+CREATE EXTENSION mdb_trgm;
 CREATE INDEX wrd_trgm ON wrd USING gist (word gist_trgm_ops);
 VACUUM ANALYZE wrd;
 </programlisting>
@@ -1291,7 +1291,7 @@ CREATE [ OR REPLACE ] RULE <replaceable class="parameter">name</replaceable> AS 
 
 <para>
     The query trees found in the actions of the
-    <structname>pg_rewrite</structname> system catalog are only
+    <structname>mdb_rewrite</structname> system catalog are only
     templates. Since they can reference the range-table entries for
     <literal>NEW</> and <literal>OLD</>, some substitutions have to be made before they can be
     used. For any reference to <literal>NEW</>, the target list of the original

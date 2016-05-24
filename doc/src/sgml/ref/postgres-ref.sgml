@@ -144,7 +144,7 @@ MollyDB documentation
         This option is meant for other programs that interact with a server
         instance, such as <xref linkend="app-pg-ctl">, to query configuration
         parameter values.  User-facing applications should instead use <xref
-        linkend="sql-show"> or the <structname>pg_settings</structname> view.
+        linkend="sql-show"> or the <structname>mdb_settings</structname> view.
        </para>
       </listitem>
      </varlistentry>
@@ -725,7 +725,7 @@ MollyDB documentation
    To cancel a running query, send the <literal>SIGINT</literal> signal
    to the process running that command. To terminate a backend process
    cleanly, send <literal>SIGTERM</literal> to that process. See
-   also <function>pg_cancel_backend</> and <function>pg_terminate_backend</>
+   also <function>mdb_cancel_backend</> and <function>mdb_terminate_backend</>
    in <xref linkend="functions-admin-signal"> for the SQL-callable equivalents
    of these two actions.
   </para>

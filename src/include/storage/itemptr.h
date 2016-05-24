@@ -40,9 +40,9 @@ typedef struct ItemPointerData
 	OffsetNumber ip_posid;
 }
 /* If compiler understands packed and aligned pragmas, use those */
-#if defined(pg_attribute_packed) && defined(pg_attribute_aligned)
-pg_attribute_packed()
-pg_attribute_aligned(2)
+#if defined(mdb_attribute_packed) && defined(mdb_attribute_aligned)
+mdb_attribute_packed()
+mdb_attribute_aligned(2)
 #endif
 ItemPointerData;
 

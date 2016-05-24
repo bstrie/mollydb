@@ -1,18 +1,18 @@
-# contrib/pg_freespacemap/Makefile
+# contrib/mdb_freespacemap/Makefile
 
-MODULE_big = pg_freespacemap
-OBJS = pg_freespacemap.o $(WIN32RES)
+MODULE_big = mdb_freespacemap
+OBJS = mdb_freespacemap.o $(WIN32RES)
 
-EXTENSION = pg_freespacemap
-DATA = pg_freespacemap--1.0.sql pg_freespacemap--unpackaged--1.0.sql
-PGFILEDESC = "pg_freespacemap - monitoring of free space map"
+EXTENSION = mdb_freespacemap
+DATA = mdb_freespacemap--1.0.sql mdb_freespacemap--unpackaged--1.0.sql
+PGFILEDESC = "mdb_freespacemap - monitoring of free space map"
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else
-subdir = contrib/pg_freespacemap
+subdir = contrib/mdb_freespacemap
 top_builddir = ../..
 include $(top_builddir)/src/Makefile.global
 include $(top_srcdir)/contrib/contrib-global.mk

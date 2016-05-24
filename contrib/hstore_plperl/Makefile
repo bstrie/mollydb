@@ -13,7 +13,7 @@ REGRESS = hstore_plperl hstore_plperlu create_transform
 EXTRA_INSTALL = contrib/hstore
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else

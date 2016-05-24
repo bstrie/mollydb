@@ -25,7 +25,7 @@ that are not visible according to the query qualifications.
 
 An operator class must have the following entries:
 
-- generic support procedures (pg_amproc), identical to all opclasses:
+- generic support procedures (mdb_amproc), identical to all opclasses:
   * "opcinfo" (BRIN_PROCNUM_OPCINFO) initializes a structure for index
     creation or scanning
   * "addValue" (BRIN_PROCNUM_ADDVALUE) takes an index tuple and a heap item,
@@ -46,7 +46,7 @@ Additionally, each opclass needs additional support functions:
 Opclasses using a different design will require different additional procedure
 numbers.
 
-Operator classes also need to have operator (pg_amop) entries so that the
+Operator classes also need to have operator (mdb_amop) entries so that the
 optimizer can choose the index to execute queries.
 - Minmax-style operator classes:
   * The same operators as btree (<=, <, =, >=, >)
@@ -154,7 +154,7 @@ we don't implement this optimization.
 Optimizer
 ---------
 
-The optimizer selects the index based on the operator class' pg_amop
+The optimizer selects the index based on the operator class' mdb_amop
 entries for the column.
 
 

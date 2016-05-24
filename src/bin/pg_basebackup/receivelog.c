@@ -8,7 +8,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  src/bin/pg_basebackup/receivelog.c
+ *		  src/bin/mdb_basebackup/receivelog.c
  *-------------------------------------------------------------------------
  */
 
@@ -141,7 +141,7 @@ open_walfile(StreamCtl *stream, XLogRecPtr startpoint)
 	}
 
 	/* New, empty, file. So pad it to 16Mb with zeroes */
-	zerobuf = pg_malloc0(XLOG_BLCKSZ);
+	zerobuf = mdb_malloc0(XLOG_BLCKSZ);
 	for (bytes = 0; bytes < XLogSegSize; bytes += XLOG_BLCKSZ)
 	{
 		if (write(f, zerobuf, XLOG_BLCKSZ) != XLOG_BLCKSZ)
@@ -230,7 +230,7 @@ close_walfile(StreamCtl *stream, XLogRecPtr pos)
 				progname, current_walfile_name, stream->partial_suffix);
 
 	/*
-	 * Mark file as archived if requested by the caller - pg_basebackup needs
+	 * Mark file as archived if requested by the caller - mdb_basebackup needs
 	 * to do so as files can otherwise get archived again after promotion of a
 	 * new node. This is in line with walreceiver.c always doing a
 	 * XLogArchiveForceDone() after a complete segment.

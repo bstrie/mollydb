@@ -17,9 +17,9 @@
 #include "access/htup_details.h"
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "commands/defrem.h"
 #include "miscadmin.h"
 #include "parser/parse_func.h"
@@ -45,8 +45,8 @@ CreateAccessMethod(CreateAmStmt *stmt)
 	ObjectAddress referenced;
 	Oid			amoid;
 	Oid			amhandler;
-	bool		nulls[Natts_pg_am];
-	Datum		values[Natts_pg_am];
+	bool		nulls[Natts_mdb_am];
+	Datum		values[Natts_mdb_am];
 	HeapTuple	tup;
 
 	rel = heap_open(AccessMethodRelationId, RowExclusiveLock);
@@ -75,15 +75,15 @@ CreateAccessMethod(CreateAmStmt *stmt)
 	amhandler = lookup_index_am_handler_func(stmt->handler_name, stmt->amtype);
 
 	/*
-	 * Insert tuple into pg_am.
+	 * Insert tuple into mdb_am.
 	 */
 	memset(values, 0, sizeof(values));
 	memset(nulls, false, sizeof(nulls));
 
-	values[Anum_pg_am_amname - 1] =
+	values[Anum_mdb_am_amname - 1] =
 		DirectFunctionCall1(namein, CStringGetDatum(stmt->amname));
-	values[Anum_pg_am_amhandler - 1] = ObjectIdGetDatum(amhandler);
-	values[Anum_pg_am_amtype - 1] = CharGetDatum(stmt->amtype);
+	values[Anum_mdb_am_amhandler - 1] = ObjectIdGetDatum(amhandler);
+	values[Anum_mdb_am_amtype - 1] = CharGetDatum(stmt->amtype);
 
 	tup = heap_form_tuple(RelationGetDescr(rel), values, nulls);
 
@@ -155,7 +155,7 @@ get_am_type_oid(const char *amname, char amtype, bool missing_ok)
 	tup = SearchSysCache1(AMNAME, CStringGetDatum(amname));
 	if (HeapTupleIsValid(tup))
 	{
-		Form_pg_am	amform = (Form_pg_am) GETSTRUCT(tup);
+		Form_mdb_am	amform = (Form_mdb_am) GETSTRUCT(tup);
 
 		if (amtype != '\0' &&
 			amform->amtype != amtype)
@@ -208,7 +208,7 @@ get_am_name(Oid amOid)
 	tup = SearchSysCache1(AMOID, ObjectIdGetDatum(amOid));
 	if (HeapTupleIsValid(tup))
 	{
-		Form_pg_am	amform = (Form_pg_am) GETSTRUCT(tup);
+		Form_mdb_am	amform = (Form_mdb_am) GETSTRUCT(tup);
 
 		result = pstrdup(NameStr(amform->amname));
 		ReleaseSysCache(tup);

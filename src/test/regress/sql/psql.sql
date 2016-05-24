@@ -42,7 +42,7 @@ select 10 as test01, 20 as test02 from generate_series(1,0) \gset
 
 create temporary table gexec_test(a int, b text, c date, d float);
 select format('create index on gexec_test(%I)', attname)
-from pg_attribute
+from mdb_attribute
 where attrelid = 'gexec_test'::regclass and attnum > 0
 order by attnum
 \gexec

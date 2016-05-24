@@ -17,11 +17,11 @@
 #include "catalog/catalog.h"
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_attribute.h"
-#include "catalog/pg_class.h"
-#include "catalog/pg_database.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_proc.h"
+#include "catalog/mdb_attribute.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_database.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_proc.h"
 #include "commands/dbcommands.h"
 #include "commands/seclabel.h"
 #include "libpq/auth.h"
@@ -733,11 +733,11 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 							   NULL, 0, NULL);
 	while (HeapTupleIsValid(tuple = systable_getnext(sscan)))
 	{
-		Form_pg_database datForm;
-		Form_pg_namespace nspForm;
-		Form_pg_class relForm;
-		Form_pg_attribute attForm;
-		Form_pg_proc proForm;
+		Form_mdb_database datForm;
+		Form_mdb_namespace nspForm;
+		Form_mdb_class relForm;
+		Form_mdb_attribute attForm;
+		Form_mdb_proc proForm;
 		char	   *objname;
 		int			objtype = 1234;
 		ObjectAddress object;
@@ -750,7 +750,7 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 		switch (catalogId)
 		{
 			case DatabaseRelationId:
-				datForm = (Form_pg_database) GETSTRUCT(tuple);
+				datForm = (Form_mdb_database) GETSTRUCT(tuple);
 
 				objtype = SELABEL_DB_DATABASE;
 
@@ -763,7 +763,7 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 				break;
 
 			case NamespaceRelationId:
-				nspForm = (Form_pg_namespace) GETSTRUCT(tuple);
+				nspForm = (Form_mdb_namespace) GETSTRUCT(tuple);
 
 				objtype = SELABEL_DB_SCHEMA;
 
@@ -777,7 +777,7 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 				break;
 
 			case RelationRelationId:
-				relForm = (Form_pg_class) GETSTRUCT(tuple);
+				relForm = (Form_mdb_class) GETSTRUCT(tuple);
 
 				if (relForm->relkind == RELKIND_RELATION)
 					objtype = SELABEL_DB_TABLE;
@@ -801,7 +801,7 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 				break;
 
 			case AttributeRelationId:
-				attForm = (Form_pg_attribute) GETSTRUCT(tuple);
+				attForm = (Form_mdb_attribute) GETSTRUCT(tuple);
 
 				if (get_rel_relkind(attForm->attrelid) != RELKIND_RELATION)
 					continue;	/* no need to assign security label */
@@ -824,7 +824,7 @@ exec_object_restorecon(struct selabel_handle * sehnd, Oid catalogId)
 				break;
 
 			case ProcedureRelationId:
-				proForm = (Form_pg_proc) GETSTRUCT(tuple);
+				proForm = (Form_mdb_proc) GETSTRUCT(tuple);
 
 				objtype = SELABEL_DB_PROCEDURE;
 

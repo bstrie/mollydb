@@ -31,7 +31,7 @@ CREATE TYPE shell;   -- fail, type already present
 DROP TYPE shell;
 DROP TYPE shell;     -- fail, type not exist
 
--- also, let's leave one around for purposes of pg_dump testing
+-- also, let's leave one around for purposes of mdb_dump testing
 CREATE TYPE myshell;
 
 --
@@ -121,5 +121,5 @@ CREATE TYPE not_existing_type (INPUT = array_in,
 CREATE TEMP TABLE mytab (foo widget(42,13,7));     -- should fail
 CREATE TEMP TABLE mytab (foo widget(42,13));
 
-SELECT format_type(atttypid,atttypmod) FROM pg_attribute
+SELECT format_type(atttypid,atttypmod) FROM mdb_attribute
 WHERE attrelid = 'mytab'::regclass AND attnum > 0;

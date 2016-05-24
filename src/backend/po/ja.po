@@ -1297,8 +1297,8 @@ msgstr "リカバリコマンドファイル \"%s\" で primary_conninfo と res
 
 #: access/transam/xlog.c:5496
 #, c-format
-msgid "The database server will regularly poll the pg_xlog subdirectory to check for files placed there."
-msgstr "データベースサーバは通常 pg_xlog サブディレクトリを poll して（定期的に監視して）、そこにファイルが置かれたかどうかを調べます。"
+msgid "The database server will regularly poll the mdb_xlog subdirectory to check for files placed there."
+msgstr "データベースサーバは通常 mdb_xlog サブディレクトリを poll して（定期的に監視して）、そこにファイルが置かれたかどうかを調べます。"
 
 #: access/transam/xlog.c:5502
 #, c-format
@@ -1347,8 +1347,8 @@ msgstr "リカバリはすでに停止されています"
 
 #: access/transam/xlog.c:5804
 #, c-format
-msgid "Execute pg_xlog_replay_resume() to continue."
-msgstr "pg_xlog_replay_resume() を動かして処理を継続してください"
+msgid "Execute mdb_xlog_replay_resume() to continue."
+msgstr "mdb_xlog_replay_resume() を動かして処理を継続してください"
 
 #: access/transam/xlog.c:5934
 #, c-format
@@ -1625,8 +1625,8 @@ msgstr "オンラインバックアップ取得期間に生成されたすべて
 
 #: access/transam/xlog.c:6935
 #, c-format
-msgid "Online backup started with pg_start_backup() must be ended with pg_stop_backup(), and all WAL up to that point must be available at recovery."
-msgstr "pg_start_backup() を使ったオンラインバックアップは pg_stop_backup() で終了する必要があり、またその時点までのすべての WAL はリカバリにおいて利用可能でなければなりません"
+msgid "Online backup started with mdb_start_backup() must be ended with mdb_stop_backup(), and all WAL up to that point must be available at recovery."
+msgstr "mdb_start_backup() を使ったオンラインバックアップは mdb_stop_backup() で終了する必要があり、またその時点までのすべての WAL はリカバリにおいて利用可能でなければなりません"
 
 #: access/transam/xlog.c:6938
 #, c-format
@@ -1847,8 +1847,8 @@ msgstr "すでにバックアップが進行中です"
 
 #: access/transam/xlog.c:9657
 #, c-format
-msgid "Run pg_stop_backup() and try again."
-msgstr "pg_stop_backup()を実行し、再試行してください"
+msgid "Run mdb_stop_backup() and try again."
+msgstr "mdb_stop_backup()を実行し、再試行してください"
 
 #: access/transam/xlog.c:9751
 #, c-format
@@ -1917,23 +1917,23 @@ msgstr "full_page_writes=offで生成されたWALはオンラインバックア�
 
 #: access/transam/xlog.c:10220
 #, c-format
-msgid "pg_stop_backup cleanup done, waiting for required WAL segments to be archived"
-msgstr "pg_stop_backup のクリーンアップが終了し、要求された WAL セグメントがアーカイブされるのを待っています"
+msgid "mdb_stop_backup cleanup done, waiting for required WAL segments to be archived"
+msgstr "mdb_stop_backup のクリーンアップが終了し、要求された WAL セグメントがアーカイブされるのを待っています"
 
 #: access/transam/xlog.c:10230
 #, c-format
-msgid "pg_stop_backup still waiting for all required WAL segments to be archived (%d seconds elapsed)"
-msgstr "pg_stop_backup は未だに要求されたすべての WAL セグメントがアーカイブされるのを待っています（%d 秒経過）"
+msgid "mdb_stop_backup still waiting for all required WAL segments to be archived (%d seconds elapsed)"
+msgstr "mdb_stop_backup は未だに要求されたすべての WAL セグメントがアーカイブされるのを待っています（%d 秒経過）"
 
 #: access/transam/xlog.c:10232
 #, c-format
-msgid "Check that your archive_command is executing properly.  pg_stop_backup can be canceled safely, but the database backup will not be usable without all the WAL segments."
-msgstr "archive_commandが適切に実行されたことを確認してください。pg_stop_backupは安全に取り消すことができますが、すべてのWALセグメントがないとデータベースのバックアップは使用できません。"
+msgid "Check that your archive_command is executing properly.  mdb_stop_backup can be canceled safely, but the database backup will not be usable without all the WAL segments."
+msgstr "archive_commandが適切に実行されたことを確認してください。mdb_stop_backupは安全に取り消すことができますが、すべてのWALセグメントがないとデータベースのバックアップは使用できません。"
 
 #: access/transam/xlog.c:10239
 #, c-format
-msgid "pg_stop_backup complete, all required WAL segments have been archived"
-msgstr "pg_stop_backup が完了し、要求されたすべての WAL セグメントがアーカイブされました"
+msgid "mdb_stop_backup complete, all required WAL segments have been archived"
+msgstr "mdb_stop_backup が完了し、要求されたすべての WAL セグメントがアーカイブされました"
 
 #: access/transam/xlog.c:10243
 #, c-format
@@ -2042,8 +2042,8 @@ msgstr "リストアポイントとしては値が長すぎます（最大 %d �
 
 #: access/transam/xlogfuncs.c:290
 #, c-format
-msgid "pg_xlogfile_name_offset() cannot be executed during recovery."
-msgstr "リカバリ中は pg_xlogfile_name_offset() を実行できません"
+msgid "mdb_xlogfile_name_offset() cannot be executed during recovery."
+msgstr "リカバリ中は mdb_xlogfile_name_offset() を実行できません"
 
 #: access/transam/xlogfuncs.c:302 access/transam/xlogfuncs.c:373
 #: access/transam/xlogfuncs.c:530 access/transam/xlogfuncs.c:536
@@ -2053,8 +2053,8 @@ msgstr "トランザクションログ位置\"%s\"を解析できませんでし
 
 #: access/transam/xlogfuncs.c:364
 #, c-format
-msgid "pg_xlogfile_name() cannot be executed during recovery."
-msgstr "リカバリ中は pg_xlogfile_name() を実行できません"
+msgid "mdb_xlogfile_name() cannot be executed during recovery."
+msgstr "リカバリ中は mdb_xlogfile_name() を実行できません"
 
 #: access/transam/xlogfuncs.c:392 access/transam/xlogfuncs.c:414
 #: access/transam/xlogfuncs.c:436
@@ -2211,7 +2211,7 @@ msgid "column privileges are only valid for relations"
 msgstr "リレーションでは型権限のみが有効です"
 
 #: catalog/aclchk.c:688 catalog/aclchk.c:3904 catalog/aclchk.c:4681
-#: catalog/objectaddress.c:575 catalog/pg_largeobject.c:113
+#: catalog/objectaddress.c:575 catalog/mdb_largeobject.c:113
 #: storage/large_object/inv_api.c:277
 #, c-format
 msgid "large object %u does not exist"
@@ -2660,7 +2660,7 @@ msgstr "%2$sが必要としているため%1$sを削除できません"
 msgid "You can drop %s instead."
 msgstr "代わりに%sを削除できます"
 
-#: catalog/dependency.c:790 catalog/pg_shdepend.c:571
+#: catalog/dependency.c:790 catalog/mdb_shdepend.c:571
 #, c-format
 msgid "cannot drop %s because it is required by the database system"
 msgstr "データベースシステムが必要としているため%sを削除できません"
@@ -2680,7 +2680,7 @@ msgstr "%sは%sに依存します"
 msgid "drop cascades to %s"
 msgstr "%sへのカスケードを削除します"
 
-#: catalog/dependency.c:956 catalog/pg_shdepend.c:682
+#: catalog/dependency.c:956 catalog/mdb_shdepend.c:682
 #, c-format
 msgid ""
 "\n"
@@ -2782,7 +2782,7 @@ msgid "no collation was derived for column \"%s\" with collatable type %s"
 msgstr "照合可能な型 %2$s を持つ列 \"%1$s\" のための照合順序を決定できませんでした"
 
 #: catalog/heap.c:574 commands/createas.c:344 commands/indexcmds.c:1085
-#: commands/view.c:115 regex/regc_pg_locale.c:262 utils/adt/formatting.c:1517
+#: commands/view.c:115 regex/regc_mdb_locale.c:262 utils/adt/formatting.c:1517
 #: utils/adt/formatting.c:1569 utils/adt/formatting.c:1637
 #: utils/adt/formatting.c:1689 utils/adt/formatting.c:1758
 #: utils/adt/formatting.c:1822 utils/adt/like.c:212 utils/adt/selfuncs.c:5195
@@ -2796,7 +2796,7 @@ msgstr "照合順序を明示するには COLLATE 句を使います"
 msgid "relation \"%s\" already exists"
 msgstr "リレーション\"%s\"はすでに存在します"
 
-#: catalog/heap.c:1062 catalog/pg_type.c:402 catalog/pg_type.c:705
+#: catalog/heap.c:1062 catalog/mdb_type.c:402 catalog/mdb_type.c:705
 #: commands/typecmds.c:238 commands/typecmds.c:738 commands/typecmds.c:1089
 #: commands/typecmds.c:1307 commands/typecmds.c:2059
 #, c-format
@@ -2813,7 +2813,7 @@ msgstr "リレーションは同じ名前の関連する型を持ちます。こ
 msgid "check constraint \"%s\" already exists"
 msgstr "チェック制約\"%s\"はすでに存在します"
 
-#: catalog/heap.c:2401 catalog/pg_constraint.c:650 commands/tablecmds.c:5633
+#: catalog/heap.c:2401 catalog/mdb_constraint.c:650 commands/tablecmds.c:5633
 #, c-format
 msgid "constraint \"%s\" for relation \"%s\" already exists"
 msgstr "すでに制約\"%s\"はリレーション\"%s\"に存在します"
@@ -3394,52 +3394,52 @@ msgstr "リレーション%s"
 msgid "operator family %s for access method %s"
 msgstr "アクセスメソッド%2$s用の演算子族%1$s"
 
-#: catalog/pg_aggregate.c:102
+#: catalog/mdb_aggregate.c:102
 #, c-format
 msgid "cannot determine transition data type"
 msgstr "遷移用のデータ型を決定できません"
 
-#: catalog/pg_aggregate.c:103
+#: catalog/mdb_aggregate.c:103
 #, c-format
 msgid "An aggregate using a polymorphic transition type must have at least one polymorphic argument."
 msgstr "遷移用の型として多様型を使用する集約は多様型の引数を少なくとも1つ取らなければなりません。"
 
-#: catalog/pg_aggregate.c:126
+#: catalog/mdb_aggregate.c:126
 #, c-format
 msgid "return type of transition function %s is not %s"
 msgstr "遷移関数の戻り値型%sは%sではありません"
 
-#: catalog/pg_aggregate.c:146
+#: catalog/mdb_aggregate.c:146
 #, c-format
 msgid "must not omit initial value when transition function is strict and transition type is not compatible with input type"
 msgstr "遷移関数がSTRICTかつ遷移用の型が入力型とバイナリ互換がない場合初期値を省略してはなりません"
 
-#: catalog/pg_aggregate.c:177 catalog/pg_proc.c:241 catalog/pg_proc.c:248
+#: catalog/mdb_aggregate.c:177 catalog/mdb_proc.c:241 catalog/mdb_proc.c:248
 #, c-format
 msgid "cannot determine result data type"
 msgstr "結果のデータ型を決定できません"
 
-#: catalog/pg_aggregate.c:178
+#: catalog/mdb_aggregate.c:178
 #, c-format
 msgid "An aggregate returning a polymorphic type must have at least one polymorphic argument."
 msgstr "多様型を返す集約は少なくとも1つの多様型の引数を取らなければなりません。"
 
-#: catalog/pg_aggregate.c:190 catalog/pg_proc.c:254
+#: catalog/mdb_aggregate.c:190 catalog/mdb_proc.c:254
 #, c-format
 msgid "unsafe use of pseudo-type \"internal\""
 msgstr "\"internal\"仮想型の危険な使用"
 
-#: catalog/pg_aggregate.c:191 catalog/pg_proc.c:255
+#: catalog/mdb_aggregate.c:191 catalog/mdb_proc.c:255
 #, c-format
 msgid "A function returning \"internal\" must have at least one \"internal\" argument."
 msgstr "\"internal\"\"を返す関数は少なくとも1つの\"internal\"型の引数を取らなければなりません。"
 
-#: catalog/pg_aggregate.c:199
+#: catalog/mdb_aggregate.c:199
 #, c-format
 msgid "sort operator can only be specified for single-argument aggregates"
 msgstr "ソート演算子は単一引数の集約でのみ指定可能です"
 
-#: catalog/pg_aggregate.c:358 commands/typecmds.c:1656
+#: catalog/mdb_aggregate.c:358 commands/typecmds.c:1656
 #: commands/typecmds.c:1707 commands/typecmds.c:1738 commands/typecmds.c:1761
 #: commands/typecmds.c:1782 commands/typecmds.c:1809 commands/typecmds.c:1836
 #: commands/typecmds.c:1913 commands/typecmds.c:1955 parser/parse_func.c:298
@@ -3448,269 +3448,269 @@ msgstr "ソート演算子は単一引数の集約でのみ指定可能です"
 msgid "function %s does not exist"
 msgstr "関数%sは存在しません"
 
-#: catalog/pg_aggregate.c:364
+#: catalog/mdb_aggregate.c:364
 #, c-format
 msgid "function %s returns a set"
 msgstr "関数%sは集合を返します"
 
-#: catalog/pg_aggregate.c:389
+#: catalog/mdb_aggregate.c:389
 #, c-format
 msgid "function %s requires run-time type coercion"
 msgstr "関数%sは実行時の型強制が必要です"
 
-#: catalog/pg_collation.c:77
+#: catalog/mdb_collation.c:77
 #, c-format
 msgid "collation \"%s\" for encoding \"%s\" already exists"
 msgstr "エンコーディング \"%2$s\" の照合順序 \"%1$s\" はすでに存在します"
 
-#: catalog/pg_collation.c:91
+#: catalog/mdb_collation.c:91
 #, c-format
 msgid "collation \"%s\" already exists"
 msgstr "照合順序 \"%s\" はすでに存在します"
 
-#: catalog/pg_constraint.c:659
+#: catalog/mdb_constraint.c:659
 #, c-format
 msgid "constraint \"%s\" for domain %s already exists"
 msgstr "ドメイン\"%2$s\"の制約\"%1$s\"はすでに存在します"
 
-#: catalog/pg_constraint.c:792
+#: catalog/mdb_constraint.c:792
 #, c-format
 msgid "table \"%s\" has multiple constraints named \"%s\""
 msgstr "テーブル\"%s\"には複数の\"%s\"という名前の制約があります"
 
-#: catalog/pg_constraint.c:804
+#: catalog/mdb_constraint.c:804
 #, c-format
 msgid "constraint \"%s\" for table \"%s\" does not exist"
 msgstr "テーブル\"%2$s\"の制約\"%1$s\"は存在しません"
 
-#: catalog/pg_constraint.c:850
+#: catalog/mdb_constraint.c:850
 #, c-format
 msgid "domain \"%s\" has multiple constraints named \"%s\""
 msgstr "ドメイン\"%s\"には複数の\"%s\"という名前の制約があります"
 
-#: catalog/pg_constraint.c:862
+#: catalog/mdb_constraint.c:862
 #, c-format
 msgid "constraint \"%s\" for domain \"%s\" does not exist"
 msgstr "ドメイン\"%2$s\"に対する制約\"%1$s\"は存在しません"
 
-#: catalog/pg_conversion.c:67
+#: catalog/mdb_conversion.c:67
 #, c-format
 msgid "conversion \"%s\" already exists"
 msgstr "変換\"%s\"はすでに存在します"
 
-#: catalog/pg_conversion.c:80
+#: catalog/mdb_conversion.c:80
 #, c-format
 msgid "default conversion for %s to %s already exists"
 msgstr "%sから%sへのデフォルトの変換はすでに存在します"
 
-#: catalog/pg_depend.c:165 commands/extension.c:2930
+#: catalog/mdb_depend.c:165 commands/extension.c:2930
 #, c-format
 msgid "%s is already a member of extension \"%s\""
 msgstr "%s はすでに拡張機能 \"%s\" のメンバです"
 
-#: catalog/pg_depend.c:324
+#: catalog/mdb_depend.c:324
 #, c-format
 msgid "cannot remove dependency on %s because it is a system object"
 msgstr "システムオブジェクトであるため、%sの依存関係を削除できません。"
 
-#: catalog/pg_enum.c:114 catalog/pg_enum.c:201
+#: catalog/mdb_enum.c:114 catalog/mdb_enum.c:201
 #, c-format
 msgid "invalid enum label \"%s\""
 msgstr "列挙ラベル\"%s\"は無効です"
 
-#: catalog/pg_enum.c:115 catalog/pg_enum.c:202
+#: catalog/mdb_enum.c:115 catalog/mdb_enum.c:202
 #, c-format
 msgid "Labels must be %d characters or less."
 msgstr "ラベルは%d文字数以内でなければなりません"
 
-#: catalog/pg_enum.c:230
+#: catalog/mdb_enum.c:230
 #, c-format
 #| msgid "relation \"%s\" already exists, skipping"
 msgid "enum label \"%s\" already exists, skipping"
 msgstr "列挙ラベル \"%s\" はすでに存在します。スキップします。"
 
-#: catalog/pg_enum.c:237
+#: catalog/mdb_enum.c:237
 #, c-format
 #| msgid "language \"%s\" already exists"
 msgid "enum label \"%s\" already exists"
 msgstr "列挙ラベル\"%s\"はすでに存在します"
 
-#: catalog/pg_enum.c:292
+#: catalog/mdb_enum.c:292
 #, c-format
 msgid "\"%s\" is not an existing enum label"
 msgstr "\"%s\" は既存の列挙型ラベルではありません"
 
-#: catalog/pg_enum.c:353
+#: catalog/mdb_enum.c:353
 #, c-format
 msgid "ALTER TYPE ADD BEFORE/AFTER is incompatible with binary upgrade"
 msgstr "ALTER TYPE ADD BEFORE/AFTER はバイナリアップグレードでは互換性がありません"
 
-#: catalog/pg_namespace.c:61 commands/schemacmds.c:220
+#: catalog/mdb_namespace.c:61 commands/schemacmds.c:220
 #, c-format
 msgid "schema \"%s\" already exists"
 msgstr "スキーマ\"%s\"はすでに存在します"
 
-#: catalog/pg_operator.c:222 catalog/pg_operator.c:362
+#: catalog/mdb_operator.c:222 catalog/mdb_operator.c:362
 #, c-format
 msgid "\"%s\" is not a valid operator name"
 msgstr "\"%s\"は有効な演算子名ではありません"
 
-#: catalog/pg_operator.c:371
+#: catalog/mdb_operator.c:371
 #, c-format
 msgid "only binary operators can have commutators"
 msgstr "二項演算子のみが交代演算子を持つことができます"
 
-#: catalog/pg_operator.c:375
+#: catalog/mdb_operator.c:375
 #, c-format
 msgid "only binary operators can have join selectivity"
 msgstr "二項演算子のみが結合選択性を持つことができます"
 
-#: catalog/pg_operator.c:379
+#: catalog/mdb_operator.c:379
 #, c-format
 msgid "only binary operators can merge join"
 msgstr "二項演算子のみがマージ結合可能です"
 
-#: catalog/pg_operator.c:383
+#: catalog/mdb_operator.c:383
 #, c-format
 msgid "only binary operators can hash"
 msgstr "二項演算子のみがハッシュ可能です"
 
-#: catalog/pg_operator.c:394
+#: catalog/mdb_operator.c:394
 #, c-format
 msgid "only boolean operators can have negators"
 msgstr "ブール型演算子のみが否定演算子を持つことができます"
 
-#: catalog/pg_operator.c:398
+#: catalog/mdb_operator.c:398
 #, c-format
 msgid "only boolean operators can have restriction selectivity"
 msgstr "ブール型演算子のみが制限選択性を持つことができます"
 
-#: catalog/pg_operator.c:402
+#: catalog/mdb_operator.c:402
 #, c-format
 msgid "only boolean operators can have join selectivity"
 msgstr "ブール型演算子のみが結合選択性を持つことができます"
 
-#: catalog/pg_operator.c:406
+#: catalog/mdb_operator.c:406
 #, c-format
 msgid "only boolean operators can merge join"
 msgstr "ブール型演算子のみがマージ結合可能です"
 
-#: catalog/pg_operator.c:410
+#: catalog/mdb_operator.c:410
 #, c-format
 msgid "only boolean operators can hash"
 msgstr "ブール型演算子のみがハッシュ可能です"
 
-#: catalog/pg_operator.c:422
+#: catalog/mdb_operator.c:422
 #, c-format
 msgid "operator %s already exists"
 msgstr "演算子%sはすでに存在します"
 
-#: catalog/pg_operator.c:615
+#: catalog/mdb_operator.c:615
 #, c-format
 msgid "operator cannot be its own negator or sort operator"
 msgstr "演算子は自身の否定子やソート演算子になることはできません"
 
-#: catalog/pg_proc.c:129 parser/parse_func.c:1648 parser/parse_func.c:1688
+#: catalog/mdb_proc.c:129 parser/parse_func.c:1648 parser/parse_func.c:1688
 #, c-format
 msgid "functions cannot have more than %d argument"
 msgid_plural "functions cannot have more than %d arguments"
 msgstr[0] "関数は%dを超える引数を取ることができません"
 msgstr[1] "関数は%dを超える引数を取ることができません"
 
-#: catalog/pg_proc.c:242
+#: catalog/mdb_proc.c:242
 #, c-format
 msgid "A function returning a polymorphic type must have at least one polymorphic argument."
 msgstr "多様型を返す関数は少なくとも1つの多様型の引数を取らなければなりません。"
 
-#: catalog/pg_proc.c:249
+#: catalog/mdb_proc.c:249
 #, c-format
 #| msgid "A function returning \"internal\" must have at least one \"internal\" argument."
 msgid "A function returning \"anyrange\" must have at least one \"anyrange\" argument."
 msgstr "\"anyrange\"を返す関数は少なくとも1つの\"anyrange\"型の引数を取らなければなりません。"
 
-#: catalog/pg_proc.c:267
+#: catalog/mdb_proc.c:267
 #, c-format
 msgid "\"%s\" is already an attribute of type %s"
 msgstr "\"%s\"はすでに型%sの属性です"
 
-#: catalog/pg_proc.c:393
+#: catalog/mdb_proc.c:393
 #, c-format
 msgid "function \"%s\" already exists with same argument types"
 msgstr "同じ引数型を持つ関数\"%s\"はすでに存在します"
 
-#: catalog/pg_proc.c:407 catalog/pg_proc.c:430
+#: catalog/mdb_proc.c:407 catalog/mdb_proc.c:430
 #, c-format
 msgid "cannot change return type of existing function"
 msgstr "既存の関数の戻り値型を変更できません"
 
-#: catalog/pg_proc.c:408 catalog/pg_proc.c:432 catalog/pg_proc.c:475
-#: catalog/pg_proc.c:499 catalog/pg_proc.c:526
+#: catalog/mdb_proc.c:408 catalog/mdb_proc.c:432 catalog/mdb_proc.c:475
+#: catalog/mdb_proc.c:499 catalog/mdb_proc.c:526
 #, c-format
 #| msgid "Use DROP FUNCTION first."
 msgid "Use DROP FUNCTION %s first."
 msgstr "まずDROP FUNCTION %sを使用してください。"
 
-#: catalog/pg_proc.c:431
+#: catalog/mdb_proc.c:431
 #, c-format
 msgid "Row type defined by OUT parameters is different."
 msgstr "OUTパラメータで定義された行型が異なります。"
 
-#: catalog/pg_proc.c:473
+#: catalog/mdb_proc.c:473
 #, c-format
 msgid "cannot change name of input parameter \"%s\""
 msgstr "入力パラメーター \"%s\" の名称を変更できません"
 
-#: catalog/pg_proc.c:498
+#: catalog/mdb_proc.c:498
 #, c-format
 msgid "cannot remove parameter defaults from existing function"
 msgstr "既存の関数からパラメータのデフォルト値を削除できません"
 
-#: catalog/pg_proc.c:525
+#: catalog/mdb_proc.c:525
 #, c-format
 msgid "cannot change data type of existing parameter default value"
 msgstr "既存のパラメータのデフォルト値のデータ型を変更できません"
 
-#: catalog/pg_proc.c:538
+#: catalog/mdb_proc.c:538
 #, c-format
 msgid "function \"%s\" is an aggregate function"
 msgstr "関数 \"%s\" は集約関数です"
 
-#: catalog/pg_proc.c:543
+#: catalog/mdb_proc.c:543
 #, c-format
 msgid "function \"%s\" is not an aggregate function"
 msgstr "関数 \"%s\" は集約関数ではありません"
 
-#: catalog/pg_proc.c:551
+#: catalog/mdb_proc.c:551
 #, c-format
 msgid "function \"%s\" is a window function"
 msgstr "関数 \"%s\" はウィンドウ関数です"
 
-#: catalog/pg_proc.c:556
+#: catalog/mdb_proc.c:556
 #, c-format
 msgid "function \"%s\" is not a window function"
 msgstr "関数 \"%s\" はウィンドウ関数ではありません"
 
-#: catalog/pg_proc.c:733
+#: catalog/mdb_proc.c:733
 #, c-format
 msgid "there is no built-in function named \"%s\""
 msgstr "\"%s\"という名前の関数は組み込まれていません"
 
-#: catalog/pg_proc.c:825
+#: catalog/mdb_proc.c:825
 #, c-format
 msgid "SQL functions cannot return type %s"
 msgstr "SQL関数は型%sを返すことができません"
 
-#: catalog/pg_proc.c:840
+#: catalog/mdb_proc.c:840
 #, c-format
 msgid "SQL functions cannot have arguments of type %s"
 msgstr "SQL関数は型%sの引数と取ることができません"
 
-#: catalog/pg_proc.c:926 executor/functions.c:1411
+#: catalog/mdb_proc.c:926 executor/functions.c:1411
 #, c-format
 msgid "SQL function \"%s\""
 msgstr "SQL関数\"%s\""
 
-#: catalog/pg_shdepend.c:689
+#: catalog/mdb_shdepend.c:689
 #, c-format
 msgid ""
 "\n"
@@ -3725,76 +3725,76 @@ msgstr[1] ""
 "\n"
 "および、他の%dのデータベース内のオブジェクト(一覧についてはサーバログを参照してください)"
 
-#: catalog/pg_shdepend.c:1001
+#: catalog/mdb_shdepend.c:1001
 #, c-format
 msgid "role %u was concurrently dropped"
 msgstr "ロール%uの削除が同時に起きました"
 
-#: catalog/pg_shdepend.c:1020
+#: catalog/mdb_shdepend.c:1020
 #, c-format
 msgid "tablespace %u was concurrently dropped"
 msgstr "テーブル空間%uが同時に削除されました"
 
-#: catalog/pg_shdepend.c:1035
+#: catalog/mdb_shdepend.c:1035
 #, c-format
 msgid "database %u was concurrently dropped"
 msgstr "データベース %u が同時に削除されました"
 
-#: catalog/pg_shdepend.c:1079
+#: catalog/mdb_shdepend.c:1079
 #, c-format
 msgid "owner of %s"
 msgstr "%sの所有者"
 
-#: catalog/pg_shdepend.c:1081
+#: catalog/mdb_shdepend.c:1081
 #, c-format
 msgid "privileges for %s"
 msgstr "%s の権限"
 
 #. translator: %s will always be "database %s"
-#: catalog/pg_shdepend.c:1089
+#: catalog/mdb_shdepend.c:1089
 #, c-format
 msgid "%d object in %s"
 msgid_plural "%d objects in %s"
 msgstr[0] "%2$s内の%1$d個のオブジェクト"
 msgstr[1] "%2$s内の%1$d個のオブジェクト"
 
-#: catalog/pg_shdepend.c:1200
+#: catalog/mdb_shdepend.c:1200
 #, c-format
 msgid "cannot drop objects owned by %s because they are required by the database system"
 msgstr "データベースシステムが必要としているため%sが所有するオブジェクトを削除できません"
 
-#: catalog/pg_shdepend.c:1303
+#: catalog/mdb_shdepend.c:1303
 #, c-format
 msgid "cannot reassign ownership of objects owned by %s because they are required by the database system"
 msgstr "データベースシステムが必要としているため%sが所有するオブジェクトの所有者を再割り当てできません"
 
-#: catalog/pg_type.c:243
+#: catalog/mdb_type.c:243
 #, c-format
 msgid "invalid type internal size %d"
 msgstr "型の内部サイズ%dは無効です"
 
-#: catalog/pg_type.c:259 catalog/pg_type.c:267 catalog/pg_type.c:275
-#: catalog/pg_type.c:284
+#: catalog/mdb_type.c:259 catalog/mdb_type.c:267 catalog/mdb_type.c:275
+#: catalog/mdb_type.c:284
 #, c-format
 msgid "alignment \"%c\" is invalid for passed-by-value type of size %d"
 msgstr "値渡し型でサイズが %2$d の場合、アラインメント \"%1$c\" は無効です"
 
-#: catalog/pg_type.c:291
+#: catalog/mdb_type.c:291
 #, c-format
 msgid "internal size %d is invalid for passed-by-value type"
 msgstr "値渡し型の場合、内部サイズ%dは無効です"
 
-#: catalog/pg_type.c:300 catalog/pg_type.c:306
+#: catalog/mdb_type.c:300 catalog/mdb_type.c:306
 #, c-format
 msgid "alignment \"%c\" is invalid for variable-length type"
 msgstr "可変長型の場合、アラインメント \"%c\" は無効です"
 
-#: catalog/pg_type.c:314
+#: catalog/mdb_type.c:314
 #, c-format
 msgid "fixed-size types must have storage PLAIN"
 msgstr "固定長型の場合は PLAIN 格納方式でなければなりません"
 
-#: catalog/pg_type.c:772
+#: catalog/mdb_type.c:772
 #, c-format
 msgid "could not form array type name for type \"%s\""
 msgstr "\"%s\"型向けの配列型の名前を形成できませんでした"
@@ -4695,8 +4695,8 @@ msgstr "テンプレートデータベースのLC_CTYPEと同じものを使う�
 
 #: commands/dbcommands.c:394 commands/dbcommands.c:1068
 #, c-format
-msgid "pg_global cannot be used as default tablespace"
-msgstr "デフォルトのテーブル空間としてpg_globalを使用できません"
+msgid "mdb_global cannot be used as default tablespace"
+msgstr "デフォルトのテーブル空間としてmdb_globalを使用できません"
 
 #: commands/dbcommands.c:420
 #, c-format
@@ -5236,8 +5236,8 @@ msgstr "変更されているため拡張\"%s\"を削除できません"
 
 #: commands/extension.c:2073
 #, c-format
-msgid "pg_extension_config_dump() can only be called from an SQL script executed by CREATE EXTENSION"
-msgstr "pg_extension_config_dump()はCREATE EXTENSIONにより実行されるSQLスクリプトからのみ呼び出すことができます"
+msgid "mdb_extension_config_dump() can only be called from an SQL script executed by CREATE EXTENSION"
+msgstr "mdb_extension_config_dump()はCREATE EXTENSIONにより実行されるSQLスクリプトからのみ呼び出すことができます"
 
 #: commands/extension.c:2085
 #, c-format
@@ -5666,8 +5666,8 @@ msgstr "他のセッションの一時テーブルに対するインデックス
 
 #: commands/indexcmds.c:440 commands/tablecmds.c:522 commands/tablecmds.c:8961
 #, c-format
-msgid "only shared relations can be placed in pg_global tablespace"
-msgstr "共有リレーションのみをpg_globalテーブル空間に格納することができます"
+msgid "only shared relations can be placed in mdb_global tablespace"
+msgstr "共有リレーションのみをmdb_globalテーブル空間に格納することができます"
 
 #: commands/indexcmds.c:473
 #, c-format
@@ -6099,8 +6099,8 @@ msgstr "準備された文\"%s\"は存在しません"
 
 #: commands/proclang.c:86
 #, c-format
-msgid "using pg_pltemplate information instead of CREATE LANGUAGE parameters"
-msgstr "CREATE LANGUAGEパラメータの代わりにpg_pltemplateの情報を使用しています"
+msgid "using mdb_pltemplate information instead of CREATE LANGUAGE parameters"
+msgstr "CREATE LANGUAGEパラメータの代わりにmdb_pltemplateの情報を使用しています"
 
 #: commands/proclang.c:96
 #, c-format
@@ -6119,8 +6119,8 @@ msgstr "言語\"%s\"はサポートされていません"
 
 #: commands/proclang.c:244
 #, c-format
-msgid "The supported languages are listed in the pg_pltemplate system catalog."
-msgstr "サポートされている言語はpg_pltemplateシステムカタログ内に列挙されています"
+msgid "The supported languages are listed in the mdb_pltemplate system catalog."
+msgstr "サポートされている言語はmdb_pltemplateシステムカタログ内に列挙されています"
 
 #: commands/proclang.c:252
 #, c-format
@@ -6139,8 +6139,8 @@ msgstr "スキーマ名\"%s\"は受け付けられません"
 
 #: commands/schemacmds.c:85 commands/schemacmds.c:237
 #, c-format
-msgid "The prefix \"pg_\" is reserved for system schemas."
-msgstr "接頭辞\"pg_\"はシステムスキーマ用に予約されています"
+msgid "The prefix \"mdb_\" is reserved for system schemas."
+msgstr "接頭辞\"mdb_\"はシステムスキーマ用に予約されています"
 
 #: commands/schemacmds.c:99
 #, c-format
@@ -7140,8 +7140,8 @@ msgstr "テーブル空間名\"%s\"を受け付けられません"
 
 #: commands/tablespace.c:293 commands/tablespace.c:857
 #, c-format
-msgid "The prefix \"pg_\" is reserved for system tablespaces."
-msgstr "接頭辞\"pg_\"はシステムテーブル空間用に予約されています"
+msgid "The prefix \"mdb_\" is reserved for system tablespaces."
+msgstr "接頭辞\"mdb_\"はシステムテーブル空間用に予約されています"
 
 #: commands/tablespace.c:303 commands/tablespace.c:869
 #, c-format
@@ -9186,8 +9186,8 @@ msgstr "ユーザ\"%s\"の認証に失敗しました: 認証方式が無効で�
 
 #: libpq/auth.c:304
 #, c-format
-msgid "Connection matched pg_hba.conf line %d: \"%s\""
-msgstr "接続はpg_hba.confの行%dに一致しました: \"%s\""
+msgid "Connection matched mdb_hba.conf line %d: \"%s\""
+msgstr "接続はmdb_hba.confの行%dに一致しました: \"%s\""
 
 #: libpq/auth.c:359
 #, c-format
@@ -9196,8 +9196,8 @@ msgstr "この接続には有効なクライアント証明が必要です"
 
 #: libpq/auth.c:401
 #, c-format
-msgid "pg_hba.conf rejects replication connection for host \"%s\", user \"%s\", %s"
-msgstr "pg_hba.conf の設定でホスト \"%s\"、ユーザ \"%s\", %s 用のレプリケーション接続を拒否しました"
+msgid "mdb_hba.conf rejects replication connection for host \"%s\", user \"%s\", %s"
+msgstr "mdb_hba.conf の設定でホスト \"%s\"、ユーザ \"%s\", %s 用のレプリケーション接続を拒否しました"
 
 #: libpq/auth.c:403 libpq/auth.c:419 libpq/auth.c:467 libpq/auth.c:485
 msgid "SSL off"
@@ -9209,18 +9209,18 @@ msgstr "SSL有効"
 
 #: libpq/auth.c:407
 #, c-format
-msgid "pg_hba.conf rejects replication connection for host \"%s\", user \"%s\""
-msgstr "pg_hba.conf の設定でホスト \"%s\"、ユーザ \"%s\"用のレプリケーション接続を拒否しました"
+msgid "mdb_hba.conf rejects replication connection for host \"%s\", user \"%s\""
+msgstr "mdb_hba.conf の設定でホスト \"%s\"、ユーザ \"%s\"用のレプリケーション接続を拒否しました"
 
 #: libpq/auth.c:416
 #, c-format
-msgid "pg_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\", %s"
-msgstr "pg_hba.conf の設定でホスト \"%s\"、ユーザ \"%s\"、データベース \"%s\", %sの接続を拒否しました"
+msgid "mdb_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\", %s"
+msgstr "mdb_hba.conf の設定でホスト \"%s\"、ユーザ \"%s\"、データベース \"%s\", %sの接続を拒否しました"
 
 #: libpq/auth.c:423
 #, c-format
-msgid "pg_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\""
-msgstr "pg_hba.conf の設定でホスト \"%s\"、ユーザ \"%s\"、データベース \"%s\" 用のレプリケーション接続を拒否しました"
+msgid "mdb_hba.conf rejects connection for host \"%s\", user \"%s\", database \"%s\""
+msgstr "mdb_hba.conf の設定でホスト \"%s\"、ユーザ \"%s\"、データベース \"%s\" 用のレプリケーション接続を拒否しました"
 
 #: libpq/auth.c:452
 #, c-format
@@ -9239,23 +9239,23 @@ msgstr "クライアントIPアドレスは\"%s\"に解決され、前方検索�
 
 #: libpq/auth.c:465
 #, c-format
-msgid "no pg_hba.conf entry for replication connection from host \"%s\", user \"%s\", %s"
-msgstr "pg_hba.conf にホスト\"%s\"、ユーザ\"%s\", %s用のエントリがありません"
+msgid "no mdb_hba.conf entry for replication connection from host \"%s\", user \"%s\", %s"
+msgstr "mdb_hba.conf にホスト\"%s\"、ユーザ\"%s\", %s用のエントリがありません"
 
 #: libpq/auth.c:472
 #, c-format
-msgid "no pg_hba.conf entry for replication connection from host \"%s\", user \"%s\""
-msgstr "pg_hba.conf にホスト\"%s\"、ユーザ\"%s\"用のエントリがありません"
+msgid "no mdb_hba.conf entry for replication connection from host \"%s\", user \"%s\""
+msgstr "mdb_hba.conf にホスト\"%s\"、ユーザ\"%s\"用のエントリがありません"
 
 #: libpq/auth.c:482
 #, c-format
-msgid "no pg_hba.conf entry for host \"%s\", user \"%s\", database \"%s\", %s"
-msgstr "pg_hba.conf にホスト\"%s\"、ユーザ\"%s\"、データベース\"%s, %s用のエントリがありません"
+msgid "no mdb_hba.conf entry for host \"%s\", user \"%s\", database \"%s\", %s"
+msgstr "mdb_hba.conf にホスト\"%s\"、ユーザ\"%s\"、データベース\"%s, %s用のエントリがありません"
 
 #: libpq/auth.c:490
 #, c-format
-msgid "no pg_hba.conf entry for host \"%s\", user \"%s\", database \"%s\""
-msgstr "pg_hba.conf にホスト\"%s\"、ユーザ\"%s\"、データベース\"%s用のエントリがありません"
+msgid "no mdb_hba.conf entry for host \"%s\", user \"%s\", database \"%s\""
+msgstr "mdb_hba.conf にホスト\"%s\"、ユーザ\"%s\"、データベース\"%s用のエントリがありません"
 
 #: libpq/auth.c:542 libpq/hba.c:1206
 #, c-format
@@ -12149,28 +12149,28 @@ msgstr "CREATEで指定したスキーマ(%s)が作成先のスキーマ(%s)と�
 msgid "identifier \"%s\" will be truncated to \"%s\""
 msgstr "識別子 \"%s\" を \"%s\" に切り詰めます"
 
-#: port/pg_latch.c:336 port/unix_latch.c:336
+#: port/mdb_latch.c:336 port/unix_latch.c:336
 #, c-format
 msgid "poll() failed: %m"
 msgstr "poll() が失敗しました: %m"
 
-#: port/pg_latch.c:423 port/unix_latch.c:423
+#: port/mdb_latch.c:423 port/unix_latch.c:423
 #: replication/libpqwalreceiver/libpqwalreceiver.c:356
 #, c-format
 msgid "select() failed: %m"
 msgstr "select() が失敗しました: %m"
 
-#: port/pg_sema.c:111 port/sysv_sema.c:111
+#: port/mdb_sema.c:111 port/sysv_sema.c:111
 #, c-format
 msgid "could not create semaphores: %m"
 msgstr "セマフォを作成できませんでした: %m"
 
-#: port/pg_sema.c:112 port/sysv_sema.c:112
+#: port/mdb_sema.c:112 port/sysv_sema.c:112
 #, c-format
 msgid "Failed system call was semget(%lu, %d, 0%o)."
 msgstr "失敗したシステムコールはsemget(%lu, %d, 0%o)です。"
 
-#: port/pg_sema.c:116 port/sysv_sema.c:116
+#: port/mdb_sema.c:116 port/sysv_sema.c:116
 #, c-format
 msgid ""
 "This error does *not* mean that you have run out of disk space.  It occurs when either the system limit for the maximum number of semaphore sets (SEMMNI), or the system wide maximum number of semaphores (SEMMNS), would be exceeded.  You need to raise the respective kernel parameter.  Alternatively, reduce MollyDB's consumption of semaphores by reducing its max_connections parameter.\n"
@@ -12179,24 +12179,24 @@ msgstr ""
 "このエラーが起こったからといって、別にディスクが足りなくなったわけではありません。この原因はセマフォセットの最大数(SEMMNI)に達したか、またはシステム全体のセマフォ数(SEMMNS)を使いきった場合です。対処としては、対応するカーネルのパラメータを増やす必要があります。もしくは MollyDBの max_connections を減らすことで、消費するセマフォの数を減らしてください。\n"
 "共有メモリの設定に関する詳細情報は、MollyDB のドキュメントに記載されています。"
 
-#: port/pg_sema.c:143 port/sysv_sema.c:143
+#: port/mdb_sema.c:143 port/sysv_sema.c:143
 #, c-format
 msgid "You possibly need to raise your kernel's SEMVMX value to be at least %d.  Look into the MollyDB documentation for details."
 msgstr ""
 "おそらくカーネルのSEMVMX値を最低でも%dまで増やす必要があります。\n"
 "詳細はMollyDBのドキュメントを調べてください。"
 
-#: port/pg_shmem.c:164 port/sysv_shmem.c:164
+#: port/mdb_shmem.c:164 port/sysv_shmem.c:164
 #, c-format
 msgid "could not create shared memory segment: %m"
 msgstr "共有メモリセグメントを作成できません: %m"
 
-#: port/pg_shmem.c:165 port/sysv_shmem.c:165
+#: port/mdb_shmem.c:165 port/sysv_shmem.c:165
 #, c-format
 msgid "Failed system call was shmget(key=%lu, size=%lu, 0%o)."
 msgstr "失敗したシステムコールはshmget(key=%lu, size=%lu, 0%o)でした。"
 
-#: port/pg_shmem.c:169 port/sysv_shmem.c:169
+#: port/mdb_shmem.c:169 port/sysv_shmem.c:169
 #, c-format
 #| msgid ""
 #| "This error usually means that MollyDB's request for a shared memory segment exceeded available memory or swap space, or exceeded your kernel's SHMALL parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMALL.  To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
@@ -12208,7 +12208,7 @@ msgstr ""
 "通常このエラーは、MollyDBが要求する共有メモリセグメントがカーネルのSHMMAXパラメータを超えた場合、または可能性としてはカーネルのSHMMINパラメータより小さい場合に発生します。\n"
 "共有メモリの設定に関する詳細情報は、MollyDB のドキュメントに記載されています。"
 
-#: port/pg_shmem.c:176 port/sysv_shmem.c:176
+#: port/mdb_shmem.c:176 port/sysv_shmem.c:176
 #, c-format
 #| msgid ""
 #| "This error usually means that MollyDB's request for a shared memory segment exceeded available memory or swap space, or exceeded your kernel's SHMALL parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMALL.  To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
@@ -12220,7 +12220,7 @@ msgstr ""
 "通常このエラーは、MollyDBが要求する共有メモリセグメントがカーネルの SHMALL パラメータを超えた場合に発生します。カーネルを再構築し、カーネルのSHMALLを増やす必要があるかもしれません。\n"
 "共有メモリの設定に関する詳細情報は、MollyDB のドキュメントに記載されています。"
 
-#: port/pg_shmem.c:182 port/sysv_shmem.c:182
+#: port/mdb_shmem.c:182 port/sysv_shmem.c:182
 #, c-format
 #| msgid ""
 #| "This error does *not* mean that you have run out of disk space.  It occurs either if all available shared memory IDs have been taken, in which case you need to raise the SHMMNI parameter in your kernel, or because the system's overall limit for shared memory has been reached.  If you cannot increase the shared memory limit, reduce MollyDB's shared memory request (currently %lu bytes), perhaps by reducing shared_buffers or max_connections.\n"
@@ -12232,13 +12232,13 @@ msgstr ""
 "このエラーが起こったからといって、別にディスクが足りなくなったわけではありません。この原因のひとつは共有メモリの識別子を使いきった場合ですが、この場合はカーネルの SHMMNI を増やす必要ああります。もうひとつの可能性はシステム全体の共有メモリを使いきった場合です。\n"
 "共有メモリの設定に関する詳細情報は、MollyDB のドキュメントに記載されています。"
 
-#: port/pg_shmem.c:417 port/sysv_shmem.c:417
+#: port/mdb_shmem.c:417 port/sysv_shmem.c:417
 #, c-format
 #| msgid "could not create shared memory segment: %m"
 msgid "could not map anonymous shared memory: %m"
 msgstr "匿名共有メモリをマップできませんでした: %m"
 
-#: port/pg_shmem.c:419 port/sysv_shmem.c:419
+#: port/mdb_shmem.c:419 port/sysv_shmem.c:419
 #, c-format
 #| msgid ""
 #| "This error usually means that MollyDB's request for a shared memory segment exceeded available memory or swap space, or exceeded your kernel's SHMALL parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMALL.  To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
@@ -12246,7 +12246,7 @@ msgstr "匿名共有メモリをマップできませんでした: %m"
 msgid "This error usually means that MollyDB's request for a shared memory segment exceeded available memory or swap space. To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections."
 msgstr "通常このエラーは、MollyDB が要求する共有メモリのサイズが利用可能なメモリやスワップ容量を超えた場合に発生します。要求サイズ（現在 %lu バイト）を減らすには、MollyDB の shared_buffers または max_connections を減らすことでMollyDBの共有メモリのサイズを減らしてください。"
 
-#: port/pg_shmem.c:505 port/sysv_shmem.c:505
+#: port/mdb_shmem.c:505 port/sysv_shmem.c:505
 #, c-format
 msgid "could not stat data directory \"%s\": %m"
 msgstr "データディレクトリ\"%s\"をstatできませんでした: %m"
@@ -12790,8 +12790,8 @@ msgstr "この後のログ出力はログ配送先\"%s\"に出力されます。
 
 #: postmaster/postmaster.c:1201 utils/init/postinit.c:199
 #, c-format
-msgid "could not load pg_hba.conf"
-msgstr "pg_hba.conf の読み込みができませんでした"
+msgid "could not load mdb_hba.conf"
+msgstr "mdb_hba.conf の読み込みができませんでした"
 
 #: postmaster/postmaster.c:1277
 #, c-format
@@ -12927,14 +12927,14 @@ msgstr "SIGHUPを受け取りました。設定ファイルをリロードして
 
 #: postmaster/postmaster.c:2334
 #, c-format
-msgid "pg_hba.conf not reloaded"
-msgstr "pg_hba.conf は再読み込みされません"
+msgid "mdb_hba.conf not reloaded"
+msgstr "mdb_hba.conf は再読み込みされません"
 
 #: postmaster/postmaster.c:2338
 #, c-format
-#| msgid "pg_hba.conf not reloaded"
-msgid "pg_ident.conf not reloaded"
-msgstr "pg_ident.conf は再読み込みされません"
+#| msgid "mdb_hba.conf not reloaded"
+msgid "mdb_ident.conf not reloaded"
+msgstr "mdb_ident.conf は再読み込みされません"
 
 #: postmaster/postmaster.c:2379
 #, c-format
@@ -13257,7 +13257,7 @@ msgstr "ロックファイル \"%s\" をオープンできませんでした: %m
 msgid "disabling automatic rotation (use SIGHUP to re-enable)"
 msgstr "自動ローテーションを無効にしています(再度有効にするにはSIGHUPを使用してください)"
 
-#: regex/regc_pg_locale.c:261
+#: regex/regc_mdb_locale.c:261
 #, c-format
 msgid "could not determine which collation to use for regular expression"
 msgstr "正規表現の際にどの照合規則を使うべきかを決定できませんでした"
@@ -16710,32 +16710,32 @@ msgstr "要求した文字は符号化方式では長すぎます: %d"
 msgid "null character not permitted"
 msgstr "NULL文字は許されません"
 
-#: utils/adt/pg_locale.c:1044
+#: utils/adt/mdb_locale.c:1044
 #, c-format
 msgid "could not create locale \"%s\": %m"
 msgstr "ロケール \"%s\" を作成できませんでした: %m"
 
-#: utils/adt/pg_locale.c:1047
+#: utils/adt/mdb_locale.c:1047
 #, c-format
 msgid "The operating system could not find any locale data for the locale name \"%s\"."
 msgstr "オペレーティングシステムはロケール名\"%s\"に対するロケールデータを見つけられませんでした。"
 
-#: utils/adt/pg_locale.c:1134
+#: utils/adt/mdb_locale.c:1134
 #, c-format
 msgid "collations with different collate and ctype values are not supported on this platform"
 msgstr "このプラットフォームでは異なった collate と ctype による照合順序をサポートしていません"
 
-#: utils/adt/pg_locale.c:1149
+#: utils/adt/mdb_locale.c:1149
 #, c-format
 msgid "nondefault collations are not supported on this platform"
 msgstr "このプラットフォームでデフォルトでない照合順序はサポートされていません"
 
-#: utils/adt/pg_locale.c:1320
+#: utils/adt/mdb_locale.c:1320
 #, c-format
 msgid "invalid multibyte character for locale"
 msgstr "ロケールではマルチバイト文字は無効です"
 
-#: utils/adt/pg_locale.c:1321
+#: utils/adt/mdb_locale.c:1321
 #, c-format
 msgid "The server's LC_CTYPE locale is probably incompatible with the database encoding."
 msgstr "サーバのLC_CTYPEロケールはおそらくデータベースの符号化方式と互換性がありません"
@@ -16859,8 +16859,8 @@ msgstr "シェル型の値を表示できません"
 
 #: utils/adt/pseudotypes.c:525 utils/adt/pseudotypes.c:549
 #, c-format
-msgid "cannot accept a value of type pg_node_tree"
-msgstr "pg_node_tree 型の値は受け付けられません"
+msgid "cannot accept a value of type mdb_node_tree"
+msgstr "mdb_node_tree 型の値は受け付けられません"
 
 #: utils/adt/rangetypes.c:396
 #, c-format
@@ -17025,8 +17025,8 @@ msgstr "関数\"%s\"をDELETEで発行しなければなりません"
 
 #: utils/adt/ri_triggers.c:2751
 #, c-format
-msgid "no pg_constraint entry for trigger \"%s\" on table \"%s\""
-msgstr "テーブル\"%2$s\"のトリガ\"%1$s\"用のpg_constraint項目がありません"
+msgid "no mdb_constraint entry for trigger \"%s\" on table \"%s\""
+msgstr "テーブル\"%2$s\"のトリガ\"%1$s\"用のmdb_constraint項目がありません"
 
 #: utils/adt/ri_triggers.c:2753
 #, c-format
@@ -18158,8 +18158,8 @@ msgstr "接続の認証完了: ユーザ=%s、データベース=%s"
 
 #: utils/init/postinit.c:269
 #, c-format
-msgid "database \"%s\" has disappeared from pg_database"
-msgstr "データベース\"%s\"はpg_databaseから消失しました"
+msgid "database \"%s\" has disappeared from mdb_database"
+msgstr "データベース\"%s\"はmdb_databaseから消失しました"
 
 #: utils/init/postinit.c:271
 #, c-format
@@ -19301,8 +19301,8 @@ msgid "Zero logs all files. The default is -1 (turning this feature off)."
 msgstr "ゼロにすると、全てのファイルを出力します。デフォルトは-1です。(この機能を無効にします。)"
 
 #: utils/misc/guc.c:2430
-msgid "Sets the size reserved for pg_stat_activity.query, in bytes."
-msgstr "pg_stat_activity.queryで予約されているサイズをバイト単位で指定してください"
+msgid "Sets the size reserved for mdb_stat_activity.query, in bytes."
+msgstr "mdb_stat_activity.queryで予約されているサイズをバイト単位で指定してください"
 
 #: utils/misc/guc.c:2449
 msgid "Sets the planner's estimate of the cost of a sequentially fetched disk page."
@@ -20080,8 +20080,8 @@ msgstr "異なるデータベースからのスナップショットを読み込
 #~ msgid "invalid magic number %04X in log file %u, segment %u, offset %u"
 #~ msgstr "ログファイル%2$u、セグメント%3$u、オフセット%4$uのマジック番号%1$04Xは無効です"
 
-#~ msgid "unable to open directory pg_tblspc: %m"
-#~ msgstr "ディレクトリ pg_tblspc をオープンできません: %m"
+#~ msgid "unable to open directory mdb_tblspc: %m"
+#~ msgstr "ディレクトリ mdb_tblspc をオープンできません: %m"
 
 #~ msgid "cannot use aggregate function in rule WHERE condition"
 #~ msgstr "ルールのWHERE条件では集約関数を使用できません"
@@ -20316,8 +20316,8 @@ msgstr "異なるデータベースからのスナップショットを読み込
 #~ msgid "LDAP search failed for filter \"%s\" on server \"%s\": user is not unique (%ld matches)"
 #~ msgstr "サーバ \"%2$s\" でフィルタ \"%1$s\" による LDAP 検索に失敗しました：ユーザーが一意ではありません（%3$ld 個見つかりました）"
 
-#~ msgid "argument to pg_get_expr() must come from system catalogs"
-#~ msgstr "pg_get_expr() への引数はシステムカタログ由来のものでなければなりません"
+#~ msgid "argument to mdb_get_expr() must come from system catalogs"
+#~ msgstr "mdb_get_expr() への引数はシステムカタログ由来のものでなければなりません"
 
 #~ msgid "No rows were found in \"%s\"."
 #~ msgstr "\"%s\"に行がありませんでした"
@@ -20514,11 +20514,11 @@ msgstr "異なるデータベースからのスナップショットを読み込
 #~ msgid "terminating walsender process to force cascaded standby to update timeline and reconnect"
 #~ msgstr "カスケードされたスタンバイを強制的にタイムラインを更新し再接続させるために、WAL送信プロセスを終了しています"
 
-#~ msgid "missing or erroneous pg_hba.conf file"
-#~ msgstr "pg_hba.confファイルが存在しない、または、pg_hba.confファイルのエラー"
+#~ msgid "missing or erroneous mdb_hba.conf file"
+#~ msgstr "mdb_hba.confファイルが存在しない、または、mdb_hba.confファイルのエラー"
 
-#~ msgid "WAL file database system identifier is %s, pg_control database system identifier is %s."
-#~ msgstr "WAL ファイルにおけるデータベースシステムの識別子は %s で、pg_control におけるデータベースシステムの識別子は %s です。"
+#~ msgid "WAL file database system identifier is %s, mdb_control database system identifier is %s."
+#~ msgstr "WAL ファイルにおけるデータベースシステムの識別子は %s で、mdb_control におけるデータベースシステムの識別子は %s です。"
 
 #~ msgid "Cancelled on conflict out to pivot %u, during read."
 #~ msgstr "読み込みの際、ピボット %u への競合によりキャンセルされました"

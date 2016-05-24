@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------
  *
- * ecpg_keywords.c
+ * ecmdb_keywords.c
  *	  lexical token lookup for reserved words in mollydb embedded SQL
  *
  * IDENTIFICATION
- *	  src/interfaces/ecpg/preproc/ecpg_keywords.c
+ *	  src/interfaces/ecpg/preproc/ecmdb_keywords.c
  *
  *-------------------------------------------------------------------------
  */

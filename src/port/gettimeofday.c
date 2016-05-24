@@ -51,7 +51,7 @@ typedef		VOID(WINAPI * PgGetSystemTimeFn) (LPFILETIME);
 static void WINAPI init_gettimeofday(LPFILETIME lpSystemTimeAsFileTime);
 
 /* Storage for the function we pick at runtime */
-static PgGetSystemTimeFn pg_get_system_time = &init_gettimeofday;
+static PgGetSystemTimeFn mdb_get_system_time = &init_gettimeofday;
 
 /*
  * One time initializer.  Determine whether GetSystemTimePreciseAsFileTime
@@ -74,10 +74,10 @@ init_gettimeofday(LPFILETIME lpSystemTimeAsFileTime)
 	 * and determining the windows version is its self somewhat Windows
 	 * version and development SDK specific...
 	 */
-	pg_get_system_time = (PgGetSystemTimeFn) GetProcAddress(
+	mdb_get_system_time = (PgGetSystemTimeFn) GetProcAddress(
 									   GetModuleHandle(TEXT("kernel32.dll")),
 										   "GetSystemTimePreciseAsFileTime");
-	if (pg_get_system_time == NULL)
+	if (mdb_get_system_time == NULL)
 	{
 		/*
 		 * The expected error from GetLastError() is ERROR_PROC_NOT_FOUND, if
@@ -89,10 +89,10 @@ init_gettimeofday(LPFILETIME lpSystemTimeAsFileTime)
 		 * serious problem, so just silently fall back to
 		 * GetSystemTimeAsFileTime irrespective of why the failure occurred.
 		 */
-		pg_get_system_time = &GetSystemTimeAsFileTime;
+		mdb_get_system_time = &GetSystemTimeAsFileTime;
 	}
 
-	(*pg_get_system_time) (lpSystemTimeAsFileTime);
+	(*mdb_get_system_time) (lpSystemTimeAsFileTime);
 }
 
 /*
@@ -107,7 +107,7 @@ gettimeofday(struct timeval * tp, struct timezone * tzp)
 	FILETIME	file_time;
 	ULARGE_INTEGER ularge;
 
-	(*pg_get_system_time) (&file_time);
+	(*mdb_get_system_time) (&file_time);
 	ularge.LowPart = file_time.dwLowDateTime;
 	ularge.HighPart = file_time.dwHighDateTime;
 

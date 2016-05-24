@@ -49,7 +49,7 @@ tstoreStartupReceiver(DestReceiver *self, int operation, TupleDesc typeinfo)
 {
 	TStoreState *myState = (TStoreState *) self;
 	bool		needtoast = false;
-	Form_pg_attribute *attrs = typeinfo->attrs;
+	Form_mdb_attribute *attrs = typeinfo->attrs;
 	int			natts = typeinfo->natts;
 	int			i;
 
@@ -107,7 +107,7 @@ tstoreReceiveSlot_detoast(TupleTableSlot *slot, DestReceiver *self)
 {
 	TStoreState *myState = (TStoreState *) self;
 	TupleDesc	typeinfo = slot->tts_tupleDescriptor;
-	Form_pg_attribute *attrs = typeinfo->attrs;
+	Form_mdb_attribute *attrs = typeinfo->attrs;
 	int			natts = typeinfo->natts;
 	int			nfree;
 	int			i;

@@ -9,13 +9,13 @@
 #include "extern.h"
 #include "sqltypes.h"
 #include "sql3types.h"
-#include "pg_type.h"
+#include "mdb_type.h"
 
 /*
  * This function is used to generate the correct type names.
  */
 const char *
-ecpg_type_name(enum ECPGttype typ)
+ecmdb_type_name(enum ECPGttype typ)
 {
 	switch (typ)
 	{
@@ -69,7 +69,7 @@ ecpg_type_name(enum ECPGttype typ)
 }
 
 int
-ecpg_dynamic_type(Oid type)
+ecmdb_dynamic_type(Oid type)
 {
 	switch (type)
 	{

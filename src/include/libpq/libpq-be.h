@@ -89,7 +89,7 @@ typedef struct
 	gss_ctx_id_t ctx;			/* GSSAPI connection context */
 	gss_name_t	name;			/* GSSAPI client name */
 #endif
-} pg_gssinfo;
+} mdb_gssinfo;
 #endif
 
 /*
@@ -173,7 +173,7 @@ typedef struct Port
 	 * If GSSAPI is supported, store GSSAPI information. Otherwise, store a
 	 * NULL pointer to make sure offsets in the struct remain the same.
 	 */
-	pg_gssinfo *gss;
+	mdb_gssinfo *gss;
 #else
 	void	   *gss;
 #endif

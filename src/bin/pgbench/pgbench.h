@@ -117,9 +117,9 @@ extern PgBenchExpr *expr_parse_result;
 
 extern int	expr_yyparse(yyscan_t yyscanner);
 extern int	expr_yylex(union YYSTYPE *lvalp, yyscan_t yyscanner);
-extern void expr_yyerror(yyscan_t yyscanner, const char *str) pg_attribute_noreturn();
+extern void expr_yyerror(yyscan_t yyscanner, const char *str) mdb_attribute_noreturn();
 extern void expr_yyerror_more(yyscan_t yyscanner, const char *str,
-				  const char *more) pg_attribute_noreturn();
+				  const char *more) mdb_attribute_noreturn();
 extern bool expr_lex_one_word(PsqlScanState state, PQExpBuffer word_buf,
 				  int *offset);
 extern yyscan_t expr_scanner_init(PsqlScanState state,
@@ -133,7 +133,7 @@ extern int	expr_scanner_get_lineno(PsqlScanState state, int offset);
 
 extern void syntax_error(const char *source, int lineno, const char *line,
 			 const char *cmd, const char *msg,
-			 const char *more, int col) pg_attribute_noreturn();
+			 const char *more, int col) mdb_attribute_noreturn();
 
 extern int64 strtoint64(const char *str);
 

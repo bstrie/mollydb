@@ -7,7 +7,7 @@ CREATE TYPE rainbow AS ENUM ('red', 'orange', 'yellow', 'green', 'blue', 'purple
 --
 -- Did it create the right number of rows?
 --
-SELECT COUNT(*) FROM pg_enum WHERE enumtypid = 'rainbow'::regtype;
+SELECT COUNT(*) FROM mdb_enum WHERE enumtypid = 'rainbow'::regtype;
 
 --
 -- I/O functions
@@ -22,14 +22,14 @@ SELECT 'mauve'::rainbow;
 CREATE TYPE planets AS ENUM ( 'venus', 'earth', 'mars' );
 
 SELECT enumlabel, enumsortorder
-FROM pg_enum
+FROM mdb_enum
 WHERE enumtypid = 'planets'::regtype
 ORDER BY 2;
 
 ALTER TYPE planets ADD VALUE 'uranus';
 
 SELECT enumlabel, enumsortorder
-FROM pg_enum
+FROM mdb_enum
 WHERE enumtypid = 'planets'::regtype
 ORDER BY 2;
 
@@ -39,12 +39,12 @@ ALTER TYPE planets ADD VALUE 'jupiter' AFTER 'mars';
 ALTER TYPE planets ADD VALUE 'neptune' AFTER 'uranus';
 
 SELECT enumlabel, enumsortorder
-FROM pg_enum
+FROM mdb_enum
 WHERE enumtypid = 'planets'::regtype
 ORDER BY 2;
 
 SELECT enumlabel, enumsortorder
-FROM pg_enum
+FROM mdb_enum
 WHERE enumtypid = 'planets'::regtype
 ORDER BY enumlabel::planets;
 
@@ -113,7 +113,7 @@ alter type insenum add value 'i30' before 'L2';
 
 SELECT enumlabel,
        case when enumsortorder > 20 then null else enumsortorder end as so
-FROM pg_enum
+FROM mdb_enum
 WHERE enumtypid = 'insenum'::regtype
 ORDER BY enumsortorder;
 
@@ -295,6 +295,6 @@ DROP TYPE rainbow;
 --
 -- Verify properly cleaned up
 --
-SELECT COUNT(*) FROM pg_type WHERE typname = 'rainbow';
-SELECT * FROM pg_enum WHERE NOT EXISTS
-  (SELECT 1 FROM pg_type WHERE pg_type.oid = enumtypid);
+SELECT COUNT(*) FROM mdb_type WHERE typname = 'rainbow';
+SELECT * FROM mdb_enum WHERE NOT EXISTS
+  (SELECT 1 FROM mdb_type WHERE mdb_type.oid = enumtypid);

@@ -17,10 +17,10 @@
 #include "datapagemap.h"
 #include "filemap.h"
 #include "logging.h"
-#include "pg_rewind.h"
+#include "mdb_rewind.h"
 
 #include "common/string.h"
-#include "catalog/pg_tablespace.h"
+#include "catalog/mdb_tablespace.h"
 #include "storage/fd.h"
 
 filemap_t  *filemap = NULL;
@@ -40,7 +40,7 @@ filemap_create(void)
 {
 	filemap_t  *map;
 
-	map = pg_malloc(sizeof(filemap_t));
+	map = mdb_malloc(sizeof(filemap_t));
 	map->first = map->last = NULL;
 	map->nlist = 0;
 	map->array = NULL;
@@ -79,11 +79,11 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 		return;
 
 	/*
-	 * Pretend that pg_xlog is a directory, even if it's really a symlink.
+	 * Pretend that mdb_xlog is a directory, even if it's really a symlink.
 	 * We don't want to mess with the symlink itself, nor complain if it's a
 	 * symlink in source but not in target or vice versa.
 	 */
-	if (strcmp(path, "pg_xlog") == 0 && type == FILE_TYPE_SYMLINK)
+	if (strcmp(path, "mdb_xlog") == 0 && type == FILE_TYPE_SYMLINK)
 		type = FILE_TYPE_DIRECTORY;
 
 	/*
@@ -101,7 +101,7 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 	 * regular file
 	 */
 	if (type != FILE_TYPE_REGULAR && isRelDataFile(path))
-		pg_fatal("data file \"%s\" in source is not a regular file\n", path);
+		mdb_fatal("data file \"%s\" in source is not a regular file\n", path);
 
 	snprintf(localpath, sizeof(localpath), "%s/%s", datadir_target, path);
 
@@ -109,7 +109,7 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 	if (lstat(localpath, &statbuf) < 0)
 	{
 		if (errno != ENOENT)
-			pg_fatal("could not stat file \"%s\": %s\n",
+			mdb_fatal("could not stat file \"%s\": %s\n",
 					 localpath, strerror(errno));
 
 		exists = false;
@@ -120,10 +120,10 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 	switch (type)
 	{
 		case FILE_TYPE_DIRECTORY:
-			if (exists && !S_ISDIR(statbuf.st_mode) && strcmp(path, "pg_xlog") != 0)
+			if (exists && !S_ISDIR(statbuf.st_mode) && strcmp(path, "mdb_xlog") != 0)
 			{
 				/* it's a directory in source, but not in target. Strange.. */
-				pg_fatal("\"%s\" is not a directory\n", localpath);
+				mdb_fatal("\"%s\" is not a directory\n", localpath);
 			}
 
 			if (!exists)
@@ -146,7 +146,7 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 				 * It's a symbolic link in source, but not in target.
 				 * Strange..
 				 */
-				pg_fatal("\"%s\" is not a symbolic link\n", localpath);
+				mdb_fatal("\"%s\" is not a symbolic link\n", localpath);
 			}
 
 			if (!exists)
@@ -158,7 +158,7 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 
 		case FILE_TYPE_REGULAR:
 			if (exists && !S_ISREG(statbuf.st_mode))
-				pg_fatal("\"%s\" is not a regular file\n", localpath);
+				mdb_fatal("\"%s\" is not a regular file\n", localpath);
 
 			if (!exists || !isRelDataFile(path))
 			{
@@ -170,7 +170,7 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 				 * An exception: PG_VERSIONs should be identical, but avoid
 				 * overwriting it for paranoia.
 				 */
-				if (pg_str_endswith(path, "PG_VERSION"))
+				if (mdb_str_endswith(path, "PG_VERSION"))
 				{
 					action = FILE_ACTION_NONE;
 					oldsize = statbuf.st_size;
@@ -219,13 +219,13 @@ process_source_file(const char *path, file_type_t type, size_t newsize,
 	}
 
 	/* Create a new entry for this file */
-	entry = pg_malloc(sizeof(file_entry_t));
-	entry->path = pg_strdup(path);
+	entry = mdb_malloc(sizeof(file_entry_t));
+	entry->path = mdb_strdup(path);
 	entry->type = type;
 	entry->action = action;
 	entry->oldsize = oldsize;
 	entry->newsize = newsize;
-	entry->link_target = link_target ? pg_strdup(link_target) : NULL;
+	entry->link_target = link_target ? mdb_strdup(link_target) : NULL;
 	entry->next = NULL;
 	entry->pagemap.bitmap = NULL;
 	entry->pagemap.bitmapsize = 0;
@@ -264,7 +264,7 @@ process_target_file(const char *path, file_type_t type, size_t oldsize,
 	if (lstat(localpath, &statbuf) < 0)
 	{
 		if (errno != ENOENT)
-			pg_fatal("could not stat file \"%s\": %s\n",
+			mdb_fatal("could not stat file \"%s\": %s\n",
 					 localpath, strerror(errno));
 
 		exists = false;
@@ -276,7 +276,7 @@ process_target_file(const char *path, file_type_t type, size_t oldsize,
 		if (map->nlist == 0)
 		{
 			/* should not happen */
-			pg_fatal("source file list is empty\n");
+			mdb_fatal("source file list is empty\n");
 		}
 
 		filemap_list_to_array(map);
@@ -296,7 +296,7 @@ process_target_file(const char *path, file_type_t type, size_t oldsize,
 	/*
 	 * Like in process_source_file, pretend that xlog is always a  directory.
 	 */
-	if (strcmp(path, "pg_xlog") == 0 && type == FILE_TYPE_SYMLINK)
+	if (strcmp(path, "mdb_xlog") == 0 && type == FILE_TYPE_SYMLINK)
 		type = FILE_TYPE_DIRECTORY;
 
 	key.path = (char *) path;
@@ -307,13 +307,13 @@ process_target_file(const char *path, file_type_t type, size_t oldsize,
 	/* Remove any file or folder that doesn't exist in the source system. */
 	if (!exists)
 	{
-		entry = pg_malloc(sizeof(file_entry_t));
-		entry->path = pg_strdup(path);
+		entry = mdb_malloc(sizeof(file_entry_t));
+		entry->path = mdb_strdup(path);
 		entry->type = type;
 		entry->action = FILE_ACTION_REMOVE;
 		entry->oldsize = oldsize;
 		entry->newsize = 0;
-		entry->link_target = link_target ? pg_strdup(link_target) : NULL;
+		entry->link_target = link_target ? mdb_strdup(link_target) : NULL;
 		entry->next = NULL;
 		entry->pagemap.bitmap = NULL;
 		entry->pagemap.bitmapsize = 0;
@@ -398,7 +398,7 @@ process_block_change(ForkNumber forknum, RelFileNode rnode, BlockNumber blkno)
 				break;
 
 			case FILE_ACTION_CREATE:
-				pg_fatal("unexpected page modification for directory or symbolic link \"%s\"\n", entry->path);
+				mdb_fatal("unexpected page modification for directory or symbolic link \"%s\"\n", entry->path);
 		}
 	}
 	else
@@ -424,7 +424,7 @@ filemap_list_to_array(filemap_t *map)
 			   *next;
 
 	map->array = (file_entry_t **)
-		pg_realloc(map->array,
+		mdb_realloc(map->array,
 				   (map->nlist + map->narray) * sizeof(file_entry_t *));
 
 	narray = map->narray;
@@ -513,7 +513,7 @@ calculate_totals(void)
 			while (datapagemap_next(iter, &blk))
 				map->fetch_size += BLCKSZ;
 
-			pg_free(iter);
+			mdb_free(iter);
 		}
 	}
 }
@@ -531,7 +531,7 @@ print_filemap(void)
 		if (entry->action != FILE_ACTION_NONE ||
 			entry->pagemap.bitmapsize > 0)
 		{
-			pg_log(PG_DEBUG,
+			mdb_log(PG_DEBUG,
 			/*------
 			   translator: first %s is a file path, second is a keyword such as COPY */
 				   "%s (%s)\n", entry->path,
@@ -570,7 +570,7 @@ isRelDataFile(const char *path)
 	 * base/<db oid>/
 	 *		regular relations, default tablespace
 	 *
-	 * pg_tblspc/<tblspc oid>/PG_9.4_201403261/
+	 * mdb_tblspc/<tblspc oid>/PG_9.4_201403261/
 	 *		within a non-default tablespace (the name of the directory
 	 *		depends on version)
 	 *
@@ -604,7 +604,7 @@ isRelDataFile(const char *path)
 		}
 		else
 		{
-			nmatch = sscanf(path, "pg_tblspc/%u/PG_%20s/%u/%u.%u",
+			nmatch = sscanf(path, "mdb_tblspc/%u/PG_%20s/%u/%u.%u",
 						  &rnode.spcNode, buf, &rnode.dbNode, &rnode.relNode,
 							&segNo);
 			if (nmatch == 4 || nmatch == 5)

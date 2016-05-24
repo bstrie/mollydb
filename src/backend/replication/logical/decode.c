@@ -35,7 +35,7 @@
 #include "access/xlogreader.h"
 #include "access/xlogrecord.h"
 
-#include "catalog/pg_control.h"
+#include "catalog/mdb_control.h"
 
 #include "replication/decode.h"
 #include "replication/logical.h"

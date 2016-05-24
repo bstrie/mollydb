@@ -36,7 +36,7 @@
 #include "storage/smgr.h"
 #include "utils/hsearch.h"
 #include "utils/memutils.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 
 
 /* intervals for calling AbsorbFsyncRequests in mdsync and mdpostckpt */
@@ -74,7 +74,7 @@
  *	system's file size limit (often 2GBytes).  In order to do that,
  *	we break relations up into "segment" files that are each shorter than
  *	the OS file size limit.  The segment size is set by the RELSEG_SIZE
- *	configuration constant in pg_config.h.
+ *	configuration constant in mdb_config.h.
  *
  *	On disk, a relation must consist of consecutively numbered segment
  *	files in the pattern
@@ -1485,7 +1485,7 @@ register_unlink(RelFileNodeBackend rnode)
 		Assert(IsUnderPostmaster);
 		while (!ForwardFsyncRequest(rnode.node, MAIN_FORKNUM,
 									UNLINK_RELATION_REQUEST))
-			pg_usleep(10000L);	/* 10 msec seems a good number */
+			mdb_usleep(10000L);	/* 10 msec seems a good number */
 	}
 }
 
@@ -1669,7 +1669,7 @@ ForgetRelationFsyncRequests(RelFileNode rnode, ForkNumber forknum)
 		 * will always empty the queue soon.
 		 */
 		while (!ForwardFsyncRequest(rnode, forknum, FORGET_RELATION_FSYNC))
-			pg_usleep(10000L);	/* 10 msec seems a good number */
+			mdb_usleep(10000L);	/* 10 msec seems a good number */
 
 		/*
 		 * Note we don't wait for the checkpointer to actually absorb the
@@ -1700,7 +1700,7 @@ ForgetDatabaseFsyncRequests(Oid dbid)
 		/* see notes in ForgetRelationFsyncRequests */
 		while (!ForwardFsyncRequest(rnode, InvalidForkNumber,
 									FORGET_DATABASE_FSYNC))
-			pg_usleep(10000L);	/* 10 msec seems a good number */
+			mdb_usleep(10000L);	/* 10 msec seems a good number */
 	}
 }
 

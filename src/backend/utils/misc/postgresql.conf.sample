@@ -16,7 +16,7 @@
 #
 # This file is read on server startup and when the server receives a SIGHUP
 # signal.  If you edit the file on a running system, you have to SIGHUP the
-# server for the changes to take effect, or use "pg_ctl reload".  Some
+# server for the changes to take effect, or use "mdb_ctl reload".  Some
 # parameters, which are marked below, require a server shutdown and restart to
 # take effect.
 #
@@ -40,9 +40,9 @@
 
 #data_directory = 'ConfigDir'		# use data in another directory
 					# (change requires restart)
-#hba_file = 'ConfigDir/pg_hba.conf'	# host-based authentication file
+#hba_file = 'ConfigDir/mdb_hba.conf'	# host-based authentication file
 					# (change requires restart)
-#ident_file = 'ConfigDir/pg_ident.conf'	# ident configuration file
+#ident_file = 'ConfigDir/mdb_ident.conf'	# ident configuration file
 					# (change requires restart)
 
 # If external_pid_file is not explicitly set, no extra PID file is written.
@@ -346,7 +346,7 @@
 					# (change requires restart)
 
 # These are only used if logging_collector is on:
-#log_directory = 'pg_log'		# directory where log files are written,
+#log_directory = 'mdb_log'		# directory where log files are written,
 					# can be absolute or relative to PGDATA
 #log_filename = 'mollydb-%Y-%m-%d_%H%M%S.log'	# log file name pattern,
 					# can include strftime() escapes
@@ -482,7 +482,7 @@
 #track_io_timing = off
 #track_functions = none			# none, pl, all
 #track_activity_query_size = 1024	# (change requires restart)
-#stats_temp_directory = 'pg_stat_tmp'
+#stats_temp_directory = 'mdb_stat_tmp'
 
 
 # - Statistics Monitoring -
@@ -577,7 +577,7 @@
 #lc_time = 'C'				# locale for time formatting
 
 # default configuration for text search
-#default_text_search_config = 'pg_catalog.simple'
+#default_text_search_config = 'mdb_catalog.simple'
 
 # - Other Defaults -
 

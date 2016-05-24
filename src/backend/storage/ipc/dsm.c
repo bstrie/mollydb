@@ -39,7 +39,7 @@
 #include "storage/dsm.h"
 #include "storage/ipc.h"
 #include "storage/lwlock.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "utils/guc.h"
 #include "utils/memutils.h"
 #include "utils/resowner_private.h"

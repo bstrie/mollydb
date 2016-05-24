@@ -13,7 +13,7 @@
 
 #include "mollydb.h"
 #include "fmgr.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "../../Unicode/utf8_to_win1250.map"
 #include "../../Unicode/utf8_to_win1251.map"
 #include "../../Unicode/utf8_to_win1252.map"
@@ -55,14 +55,14 @@ PG_FUNCTION_INFO_V1(utf8_to_win);
 
 typedef struct
 {
-	pg_enc		encoding;
-	const pg_local_to_utf *map1;	/* to UTF8 map name */
-	const pg_utf_to_local *map2;	/* from UTF8 map name */
+	mdb_enc		encoding;
+	const mdb_local_to_utf *map1;	/* to UTF8 map name */
+	const mdb_utf_to_local *map2;	/* from UTF8 map name */
 	int			size1;			/* size of map1 */
 	int			size2;			/* size of map2 */
-} pg_conv_map;
+} mdb_conv_map;
 
-static const pg_conv_map maps[] = {
+static const mdb_conv_map maps[] = {
 	{PG_WIN866, LUmapWIN866, ULmapWIN866,
 		lengthof(LUmapWIN866),
 	lengthof(ULmapWIN866)},

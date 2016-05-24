@@ -11,7 +11,7 @@
  *-------------------------------------------------------------------------
  */
 #include "mollydb.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 
 /*
@@ -115,7 +115,7 @@ mic2latin(const unsigned char *mic, unsigned char *p, int len,
 		}
 		else
 		{
-			int			l = pg_mic_mblen(mic);
+			int			l = mdb_mic_mblen(mic);
 
 			if (len < l)
 				report_invalid_encoding(PG_MULE_INTERNAL, (const char *) mic,
@@ -140,7 +140,7 @@ mic2latin(const unsigned char *mic, unsigned char *p, int len,
  * the appropriate MIC equivalent.
  */
 void
-pg_ascii2mic(const unsigned char *l, unsigned char *p, int len)
+mdb_ascii2mic(const unsigned char *l, unsigned char *p, int len)
 {
 	int			c1;
 
@@ -160,7 +160,7 @@ pg_ascii2mic(const unsigned char *l, unsigned char *p, int len)
  * MIC ---> ASCII
  */
 void
-pg_mic2ascii(const unsigned char *mic, unsigned char *p, int len)
+mdb_mic2ascii(const unsigned char *mic, unsigned char *p, int len)
 {
 	int			c1;
 
@@ -262,7 +262,7 @@ mic2latin_with_table(const unsigned char *mic,
 		}
 		else
 		{
-			int			l = pg_mic_mblen(mic);
+			int			l = mdb_mic_mblen(mic);
 
 			if (len < l)
 				report_invalid_encoding(PG_MULE_INTERNAL, (const char *) mic,
@@ -293,7 +293,7 @@ compare1(const void *p1, const void *p2)
 				v2;
 
 	v1 = *(const uint32 *) p1;
-	v2 = ((const pg_utf_to_local *) p2)->utf;
+	v2 = ((const mdb_utf_to_local *) p2)->utf;
 	return (v1 > v2) ? 1 : ((v1 == v2) ? 0 : -1);
 }
 
@@ -308,7 +308,7 @@ compare2(const void *p1, const void *p2)
 				v2;
 
 	v1 = *(const uint32 *) p1;
-	v2 = ((const pg_local_to_utf *) p2)->code;
+	v2 = ((const mdb_local_to_utf *) p2)->code;
 	return (v1 > v2) ? 1 : ((v1 == v2) ? 0 : -1);
 }
 
@@ -326,8 +326,8 @@ compare3(const void *p1, const void *p2)
 
 	s1 = *(const uint32 *) p1;
 	s2 = *((const uint32 *) p1 + 1);
-	d1 = ((const pg_utf_to_local_combined *) p2)->utf1;
-	d2 = ((const pg_utf_to_local_combined *) p2)->utf2;
+	d1 = ((const mdb_utf_to_local_combined *) p2)->utf1;
+	d2 = ((const mdb_utf_to_local_combined *) p2)->utf2;
 	return (s1 > d1 || (s1 == d1 && s2 > d2)) ? 1 : ((s1 == d1 && s2 == d2) ? 0 : -1);
 }
 
@@ -342,7 +342,7 @@ compare4(const void *p1, const void *p2)
 				v2;
 
 	v1 = *(const uint32 *) p1;
-	v2 = ((const pg_local_to_utf_combined *) p2)->code;
+	v2 = ((const mdb_local_to_utf_combined *) p2)->code;
 	return (v1 > v2) ? 1 : ((v1 == v2) ? 0 : -1);
 }
 
@@ -384,20 +384,20 @@ store_coded_char(unsigned char *dest, uint32 code)
  * the map is consulted next; if still no match, the conv_func (if provided)
  * is applied.  An error is raised if no match is found.
  *
- * See pg_wchar.h for more details about the data structures used here.
+ * See mdb_wchar.h for more details about the data structures used here.
  */
 void
 UtfToLocal(const unsigned char *utf, int len,
 		   unsigned char *iso,
-		   const pg_utf_to_local *map, int mapsize,
-		   const pg_utf_to_local_combined *cmap, int cmapsize,
+		   const mdb_utf_to_local *map, int mapsize,
+		   const mdb_utf_to_local_combined *cmap, int cmapsize,
 		   utf_local_conversion_func conv_func,
 		   int encoding)
 {
 	uint32		iutf;
 	int			l;
-	const pg_utf_to_local *p;
-	const pg_utf_to_local_combined *cp;
+	const mdb_utf_to_local *p;
+	const mdb_utf_to_local_combined *cp;
 
 	if (!PG_VALID_ENCODING(encoding))
 		ereport(ERROR,
@@ -410,11 +410,11 @@ UtfToLocal(const unsigned char *utf, int len,
 		if (*utf == '\0')
 			break;
 
-		l = pg_utf_mblen(utf);
+		l = mdb_utf_mblen(utf);
 		if (len < l)
 			break;
 
-		if (!pg_utf8_islegal(utf, l))
+		if (!mdb_utf8_islegal(utf, l))
 			break;
 
 		if (l == 1)
@@ -459,11 +459,11 @@ UtfToLocal(const unsigned char *utf, int len,
 			/* collect next character, same as above */
 			len -= l;
 
-			l = pg_utf_mblen(utf);
+			l = mdb_utf_mblen(utf);
 			if (len < l)
 				break;
 
-			if (!pg_utf8_islegal(utf, l))
+			if (!mdb_utf8_islegal(utf, l))
 				break;
 
 			/* We assume ASCII character cannot be in combined map */
@@ -500,7 +500,7 @@ UtfToLocal(const unsigned char *utf, int len,
 				cutf[1] = iutf2;
 
 				cp = bsearch(cutf, cmap, cmapsize,
-							 sizeof(pg_utf_to_local_combined), compare3);
+							 sizeof(mdb_utf_to_local_combined), compare3);
 
 				if (cp)
 				{
@@ -517,7 +517,7 @@ UtfToLocal(const unsigned char *utf, int len,
 
 		/* Now check ordinary map */
 		p = bsearch(&iutf, map, mapsize,
-					sizeof(pg_utf_to_local), compare1);
+					sizeof(mdb_utf_to_local), compare1);
 
 		if (p)
 		{
@@ -570,20 +570,20 @@ UtfToLocal(const unsigned char *utf, int len,
  * (if provided) is consulted next; if still no match, the conv_func
  * (if provided) is applied.  An error is raised if no match is found.
  *
- * See pg_wchar.h for more details about the data structures used here.
+ * See mdb_wchar.h for more details about the data structures used here.
  */
 void
 LocalToUtf(const unsigned char *iso, int len,
 		   unsigned char *utf,
-		   const pg_local_to_utf *map, int mapsize,
-		   const pg_local_to_utf_combined *cmap, int cmapsize,
+		   const mdb_local_to_utf *map, int mapsize,
+		   const mdb_local_to_utf_combined *cmap, int cmapsize,
 		   utf_local_conversion_func conv_func,
 		   int encoding)
 {
 	uint32		iiso;
 	int			l;
-	const pg_local_to_utf *p;
-	const pg_local_to_utf_combined *cp;
+	const mdb_local_to_utf *p;
+	const mdb_local_to_utf_combined *cp;
 
 	if (!PG_VALID_ENCODING(encoding))
 		ereport(ERROR,
@@ -604,7 +604,7 @@ LocalToUtf(const unsigned char *iso, int len,
 			continue;
 		}
 
-		l = pg_encoding_verifymb(encoding, (const char *) iso, len);
+		l = mdb_encoding_verifymb(encoding, (const char *) iso, len);
 		if (l < 0)
 			break;
 
@@ -637,7 +637,7 @@ LocalToUtf(const unsigned char *iso, int len,
 
 		/* First check ordinary map */
 		p = bsearch(&iiso, map, mapsize,
-					sizeof(pg_local_to_utf), compare2);
+					sizeof(mdb_local_to_utf), compare2);
 
 		if (p)
 		{
@@ -649,7 +649,7 @@ LocalToUtf(const unsigned char *iso, int len,
 		if (cmap)
 		{
 			cp = bsearch(&iiso, cmap, cmapsize,
-						 sizeof(pg_local_to_utf_combined), compare4);
+						 sizeof(mdb_local_to_utf_combined), compare4);
 
 			if (cp)
 			{

@@ -7,7 +7,7 @@ use Test::More tests => 3;
 
 # Test concurrent insertion into table with UNIQUE oid column.  DDL expects
 # GetNewOidWithIndex() to successfully avoid violating uniqueness for indexes
-# like pg_class_oid_index and pg_proc_oid_index.  This indirectly exercises
+# like mdb_class_oid_index and mdb_proc_oid_index.  This indirectly exercises
 # LWLock and spinlock concurrency.  This test makes a 5-MiB table.
 my $node = get_new_node('main');
 $node->init;

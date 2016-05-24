@@ -118,7 +118,7 @@ _outToken(StringInfo str, const char *s)
 
 	/*
 	 * Look for characters or patterns that are treated specially by read.c
-	 * (either in pg_strtok() or in nodeRead()), and therefore need a
+	 * (either in mdb_strtok() or in nodeRead()), and therefore need a
 	 * protective backslash.
 	 */
 	/* These characters only need to be quoted at the start of the string */

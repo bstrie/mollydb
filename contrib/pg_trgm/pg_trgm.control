@@ -1,5 +1,5 @@
-# pg_trgm extension
+# mdb_trgm extension
 comment = 'text similarity measurement and index searching based on trigrams'
 default_version = '1.2'
-module_pathname = '$libdir/pg_trgm'
+module_pathname = '$libdir/mdb_trgm'
 relocatable = true

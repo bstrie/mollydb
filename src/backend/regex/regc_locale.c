@@ -383,7 +383,7 @@ element(struct vars * v,		/* context */
 	for (cn = cnames; cn->name != NULL; cn++)
 	{
 		if (strlen(cn->name) == len &&
-			pg_char_and_wchar_strncmp(cn->name, startp, len) == 0)
+			mdb_char_and_wchar_strncmp(cn->name, startp, len) == 0)
 		{
 			break;				/* NOTE BREAK OUT */
 		}
@@ -444,7 +444,7 @@ range(struct vars * v,			/* context */
 
 	for (c = a; c <= b; c++)
 	{
-		cc = pg_wc_tolower((chr) c);
+		cc = mdb_wc_tolower((chr) c);
 		if (cc != c &&
 			(before(cc, a) || before(b, cc)))
 		{
@@ -455,7 +455,7 @@ range(struct vars * v,			/* context */
 			}
 			addchr(cv, cc);
 		}
-		cc = pg_wc_toupper((chr) c);
+		cc = mdb_wc_toupper((chr) c);
 		if (cc != c &&
 			(before(cc, a) || before(b, cc)))
 		{
@@ -528,7 +528,7 @@ eclass(struct vars * v,			/* context */
  * Must include case counterparts if "cases" is true.
  *
  * The returned cvec might be either a transient cvec gotten from getcvec(),
- * or a permanently cached one from pg_ctype_get_cache().  This is okay
+ * or a permanently cached one from mdb_ctype_get_cache().  This is okay
  * because callers are not supposed to explicitly free the result either way.
  */
 static struct cvec *
@@ -566,7 +566,7 @@ cclass(struct vars * v,			/* context */
 	for (namePtr = classNames, i = 0; *namePtr != NULL; namePtr++, i++)
 	{
 		if (strlen(*namePtr) == len &&
-			pg_char_and_wchar_strncmp(*namePtr, startp, len) == 0)
+			mdb_char_and_wchar_strncmp(*namePtr, startp, len) == 0)
 		{
 			index = i;
 			break;
@@ -590,7 +590,7 @@ cclass(struct vars * v,			/* context */
 	/*
 	 * Now compute the character class contents.  For classes that are based
 	 * on the behavior of a <wctype.h> or <ctype.h> function, we use
-	 * pg_ctype_get_cache so that we can cache the results.  Other classes
+	 * mdb_ctype_get_cache so that we can cache the results.  Other classes
 	 * have definitions that are hard-wired here, and for those we just
 	 * construct a transient cvec on the fly.
 	 */
@@ -598,13 +598,13 @@ cclass(struct vars * v,			/* context */
 	switch ((enum classes) index)
 	{
 		case CC_PRINT:
-			cv = pg_ctype_get_cache(pg_wc_isprint);
+			cv = mdb_ctype_get_cache(mdb_wc_isprint);
 			break;
 		case CC_ALNUM:
-			cv = pg_ctype_get_cache(pg_wc_isalnum);
+			cv = mdb_ctype_get_cache(mdb_wc_isalnum);
 			break;
 		case CC_ALPHA:
-			cv = pg_ctype_get_cache(pg_wc_isalpha);
+			cv = mdb_ctype_get_cache(mdb_wc_isalpha);
 			break;
 		case CC_ASCII:
 			/* hard-wired meaning */
@@ -625,10 +625,10 @@ cclass(struct vars * v,			/* context */
 			addrange(cv, 0x7f, 0x9f);
 			break;
 		case CC_DIGIT:
-			cv = pg_ctype_get_cache(pg_wc_isdigit);
+			cv = mdb_ctype_get_cache(mdb_wc_isdigit);
 			break;
 		case CC_PUNCT:
-			cv = pg_ctype_get_cache(pg_wc_ispunct);
+			cv = mdb_ctype_get_cache(mdb_wc_ispunct);
 			break;
 		case CC_XDIGIT:
 
@@ -646,16 +646,16 @@ cclass(struct vars * v,			/* context */
 			}
 			break;
 		case CC_SPACE:
-			cv = pg_ctype_get_cache(pg_wc_isspace);
+			cv = mdb_ctype_get_cache(mdb_wc_isspace);
 			break;
 		case CC_LOWER:
-			cv = pg_ctype_get_cache(pg_wc_islower);
+			cv = mdb_ctype_get_cache(mdb_wc_islower);
 			break;
 		case CC_UPPER:
-			cv = pg_ctype_get_cache(pg_wc_isupper);
+			cv = mdb_ctype_get_cache(mdb_wc_isupper);
 			break;
 		case CC_GRAPH:
-			cv = pg_ctype_get_cache(pg_wc_isgraph);
+			cv = mdb_ctype_get_cache(mdb_wc_isgraph);
 			break;
 	}
 
@@ -680,8 +680,8 @@ allcases(struct vars * v,		/* context */
 	chr			lc,
 				uc;
 
-	lc = pg_wc_tolower((chr) c);
-	uc = pg_wc_toupper((chr) c);
+	lc = mdb_wc_tolower((chr) c);
+	uc = mdb_wc_toupper((chr) c);
 
 	cv = getcvec(v, 2, 0);
 	addchr(cv, lc);
@@ -719,7 +719,7 @@ casecmp(const chr *x, const chr *y,		/* strings to compare */
 {
 	for (; len > 0; len--, x++, y++)
 	{
-		if ((*x != *y) && (pg_wc_tolower(*x) != pg_wc_tolower(*y)))
+		if ((*x != *y) && (mdb_wc_tolower(*x) != mdb_wc_tolower(*y)))
 			return 1;
 	}
 	return 0;

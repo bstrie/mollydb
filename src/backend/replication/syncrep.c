@@ -745,7 +745,7 @@ SyncRepGetStandbyPriority(void)
 	standby_name = SyncRepConfig->member_names;
 	for (priority = 1; priority <= SyncRepConfig->nmembers; priority++)
 	{
-		if (pg_strcasecmp(standby_name, application_name) == 0 ||
+		if (mdb_strcasecmp(standby_name, application_name) == 0 ||
 			strcmp(standby_name, "*") == 0)
 		{
 			found = true;

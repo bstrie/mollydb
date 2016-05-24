@@ -127,16 +127,16 @@
 #include "access/htup_details.h"
 #include "access/nbtree.h"
 #include "catalog/index.h"
-#include "catalog/pg_am.h"
+#include "catalog/mdb_am.h"
 #include "commands/tablespace.h"
 #include "executor/executor.h"
 #include "miscadmin.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "utils/datum.h"
 #include "utils/logtape.h"
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
-#include "utils/pg_rusage.h"
+#include "utils/mdb_rusage.h"
 #include "utils/rel.h"
 #include "utils/sortsupport.h"
 #include "utils/tuplesort.h"
@@ -668,7 +668,7 @@ tuplesort_begin_common(int workMem, bool randomAccess)
 
 #ifdef TRACE_SORT
 	if (trace_sort)
-		pg_rusage_init(&state->ru_start);
+		mdb_rusage_init(&state->ru_start);
 #endif
 
 	state->status = TSS_INITIAL;
@@ -1148,10 +1148,10 @@ tuplesort_end(Tuplesortstate *state)
 	{
 		if (state->tapeset)
 			elog(LOG, "external sort ended, %ld disk blocks used: %s",
-				 spaceUsed, pg_rusage_show(&state->ru_start));
+				 spaceUsed, mdb_rusage_show(&state->ru_start));
 		else
 			elog(LOG, "internal sort ended, %ld KB used: %s",
-				 spaceUsed, pg_rusage_show(&state->ru_start));
+				 spaceUsed, mdb_rusage_show(&state->ru_start));
 	}
 
 	TRACE_POSTGRESQL_SORT_DONE(state->tapeset != NULL, spaceUsed);
@@ -1561,7 +1561,7 @@ puttuple_common(Tuplesortstate *state, SortTuple *tuple)
 				if (trace_sort)
 					elog(LOG, "switching to bounded heapsort at %d tuples: %s",
 						 state->memtupcount,
-						 pg_rusage_show(&state->ru_start));
+						 mdb_rusage_show(&state->ru_start));
 #endif
 				make_bounded_heap(state);
 				return;
@@ -1733,7 +1733,7 @@ tuplesort_performsort(Tuplesortstate *state)
 #ifdef TRACE_SORT
 	if (trace_sort)
 		elog(LOG, "performsort starting: %s",
-			 pg_rusage_show(&state->ru_start));
+			 mdb_rusage_show(&state->ru_start));
 #endif
 
 	switch (state->status)
@@ -1794,10 +1794,10 @@ tuplesort_performsort(Tuplesortstate *state)
 		if (state->status == TSS_FINALMERGE)
 			elog(LOG, "performsort done (except %d-way final merge): %s",
 				 state->activeTapes,
-				 pg_rusage_show(&state->ru_start));
+				 mdb_rusage_show(&state->ru_start));
 		else
 			elog(LOG, "performsort done: %s",
-				 pg_rusage_show(&state->ru_start));
+				 mdb_rusage_show(&state->ru_start));
 	}
 #endif
 
@@ -2306,7 +2306,7 @@ inittapes(Tuplesortstate *state)
 #ifdef TRACE_SORT
 	if (trace_sort)
 		elog(LOG, "switching to external sort with %d tapes: %s",
-			 maxTapes, pg_rusage_show(&state->ru_start));
+			 maxTapes, mdb_rusage_show(&state->ru_start));
 #endif
 
 	/*
@@ -2668,7 +2668,7 @@ mergeonerun(Tuplesortstate *state)
 #ifdef TRACE_SORT
 	if (trace_sort)
 		elog(LOG, "finished %d-way merge step: %s", state->activeTapes,
-			 pg_rusage_show(&state->ru_start));
+			 mdb_rusage_show(&state->ru_start));
 #endif
 }
 
@@ -3278,7 +3278,7 @@ dumptuples(Tuplesortstate *state, bool alltuples)
 				elog(LOG, "finished incrementally writing %s run %d to tape %d: %s",
 					 (state->memtupcount == 0) ? "only" : "first",
 					 state->currentRun, state->destTape,
-					 pg_rusage_show(&state->ru_start));
+					 mdb_rusage_show(&state->ru_start));
 #endif
 			/*
 			 * Done if heap is empty, which is possible when there is only one
@@ -3365,7 +3365,7 @@ dumpbatch(Tuplesortstate *state, bool alltuples)
 #ifdef TRACE_SORT
 	if (trace_sort)
 		elog(LOG, "starting quicksort of run %d: %s",
-			 state->currentRun, pg_rusage_show(&state->ru_start));
+			 state->currentRun, mdb_rusage_show(&state->ru_start));
 #endif
 
 	/*
@@ -3377,7 +3377,7 @@ dumpbatch(Tuplesortstate *state, bool alltuples)
 #ifdef TRACE_SORT
 	if (trace_sort)
 		elog(LOG, "finished quicksort of run %d: %s",
-			 state->currentRun, pg_rusage_show(&state->ru_start));
+			 state->currentRun, mdb_rusage_show(&state->ru_start));
 #endif
 
 	memtupwrite = state->memtupcount;
@@ -3405,7 +3405,7 @@ dumpbatch(Tuplesortstate *state, bool alltuples)
 	if (trace_sort)
 		elog(LOG, "finished writing run %d to tape %d: %s",
 			 state->currentRun, state->destTape,
-			 pg_rusage_show(&state->ru_start));
+			 mdb_rusage_show(&state->ru_start));
 #endif
 
 	if (!alltuples)

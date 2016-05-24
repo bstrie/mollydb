@@ -35,8 +35,8 @@
 
 #include "access/htup_details.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_aggregate.h"
-#include "catalog/pg_proc.h"
+#include "catalog/mdb_aggregate.h"
+#include "catalog/mdb_proc.h"
 #include "executor/executor.h"
 #include "executor/nodeWindowAgg.h"
 #include "miscadmin.h"
@@ -119,7 +119,7 @@ typedef struct WindowStatePerAggData
 	int			numFinalArgs;	/* number of arguments to pass to finalfn */
 
 	/*
-	 * initial value from pg_aggregate entry
+	 * initial value from mdb_aggregate entry
 	 */
 	Datum		initValue;
 	bool		initValueIsNull;
@@ -1929,7 +1929,7 @@ ExecInitWindowAgg(WindowAgg *node, EState *estate, int eflags)
 		wfuncstate->wfuncno = wfuncno;
 
 		/* Check permission to call window function */
-		aclresult = pg_proc_aclcheck(wfunc->winfnoid, GetUserId(),
+		aclresult = mdb_proc_aclcheck(wfunc->winfnoid, GetUserId(),
 									 ACL_EXECUTE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_PROC,
@@ -2099,7 +2099,7 @@ initialize_peragg(WindowAggState *winstate, WindowFunc *wfunc,
 	Oid			inputTypes[FUNC_MAX_ARGS];
 	int			numArguments;
 	HeapTuple	aggTuple;
-	Form_pg_aggregate aggform;
+	Form_mdb_aggregate aggform;
 	Oid			aggtranstype;
 	AttrNumber	initvalAttNo;
 	AclResult	aclresult;
@@ -2126,11 +2126,11 @@ initialize_peragg(WindowAggState *winstate, WindowFunc *wfunc,
 	if (!HeapTupleIsValid(aggTuple))
 		elog(ERROR, "cache lookup failed for aggregate %u",
 			 wfunc->winfnoid);
-	aggform = (Form_pg_aggregate) GETSTRUCT(aggTuple);
+	aggform = (Form_mdb_aggregate) GETSTRUCT(aggTuple);
 
 	/*
 	 * Figure out whether we want to use the moving-aggregate implementation,
-	 * and collect the right set of fields from the pg_attribute entry.
+	 * and collect the right set of fields from the mdb_attribute entry.
 	 *
 	 * If the frame head can't move, we don't need moving-aggregate code. Even
 	 * if we'd like to use it, don't do so if the aggregate's arguments (and
@@ -2147,7 +2147,7 @@ initialize_peragg(WindowAggState *winstate, WindowFunc *wfunc,
 		peraggstate->finalfn_oid = finalfn_oid = aggform->aggmfinalfn;
 		finalextra = aggform->aggmfinalextra;
 		aggtranstype = aggform->aggmtranstype;
-		initvalAttNo = Anum_pg_aggregate_aggminitval;
+		initvalAttNo = Anum_mdb_aggregate_aggminitval;
 	}
 	else
 	{
@@ -2156,7 +2156,7 @@ initialize_peragg(WindowAggState *winstate, WindowFunc *wfunc,
 		peraggstate->finalfn_oid = finalfn_oid = aggform->aggfinalfn;
 		finalextra = aggform->aggfinalextra;
 		aggtranstype = aggform->aggtranstype;
-		initvalAttNo = Anum_pg_aggregate_agginitval;
+		initvalAttNo = Anum_mdb_aggregate_agginitval;
 	}
 
 	/*
@@ -2174,10 +2174,10 @@ initialize_peragg(WindowAggState *winstate, WindowFunc *wfunc,
 		if (!HeapTupleIsValid(procTuple))
 			elog(ERROR, "cache lookup failed for function %u",
 				 wfunc->winfnoid);
-		aggOwner = ((Form_pg_proc) GETSTRUCT(procTuple))->proowner;
+		aggOwner = ((Form_mdb_proc) GETSTRUCT(procTuple))->proowner;
 		ReleaseSysCache(procTuple);
 
-		aclresult = pg_proc_aclcheck(transfn_oid, aggOwner,
+		aclresult = mdb_proc_aclcheck(transfn_oid, aggOwner,
 									 ACL_EXECUTE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_PROC,
@@ -2186,7 +2186,7 @@ initialize_peragg(WindowAggState *winstate, WindowFunc *wfunc,
 
 		if (OidIsValid(invtransfn_oid))
 		{
-			aclresult = pg_proc_aclcheck(invtransfn_oid, aggOwner,
+			aclresult = mdb_proc_aclcheck(invtransfn_oid, aggOwner,
 										 ACL_EXECUTE);
 			if (aclresult != ACLCHECK_OK)
 				aclcheck_error(aclresult, ACL_KIND_PROC,
@@ -2196,7 +2196,7 @@ initialize_peragg(WindowAggState *winstate, WindowFunc *wfunc,
 
 		if (OidIsValid(finalfn_oid))
 		{
-			aclresult = pg_proc_aclcheck(finalfn_oid, aggOwner,
+			aclresult = mdb_proc_aclcheck(finalfn_oid, aggOwner,
 										 ACL_EXECUTE);
 			if (aclresult != ACLCHECK_OK)
 				aclcheck_error(aclresult, ACL_KIND_PROC,

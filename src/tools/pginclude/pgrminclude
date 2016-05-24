@@ -61,7 +61,7 @@ compile_file() {
 	[ "$INCLUDE" -a -s /usr/include/"$INCLUDE" ] && continue
 	[ "$INCLUDE" = "mollydb.h" ] && continue
 	[ "$INCLUDE" = "mollydb_fe.h" ] && continue
-	[ "$INCLUDE" = "pg_config.h" ] && continue
+	[ "$INCLUDE" = "mdb_config.h" ] && continue
 	[ "$INCLUDE" = "c.h" ] && continue
 	# Stringify macros will expand undefined identifiers, so skip files that use it
 	egrep -q '\<(CppAsString2?|CppConcat)\>' "$FILE" && continue
@@ -127,7 +127,7 @@ compile_file() {
  find . \( -name .git -a -prune \) -o -type f -name '*.c' -print | sort) |
 grep -v '/mollydb.h$' |
 grep -v '/mollydb_fe.h$' |
-grep -v '/pg_config.h$' |
+grep -v '/mdb_config.h$' |
 grep -v '\./c.h$' |
 while read FILE
 do

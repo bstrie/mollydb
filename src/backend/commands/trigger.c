@@ -22,11 +22,11 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_constraint.h"
-#include "catalog/pg_constraint_fn.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_trigger.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_constraint.h"
+#include "catalog/mdb_constraint_fn.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_trigger.h"
+#include "catalog/mdb_type.h"
 #include "commands/dbcommands.h"
 #include "commands/defrem.h"
 #include "commands/trigger.h"
@@ -114,16 +114,16 @@ static void AfterTriggerEnlargeQueryState(void);
  * will be looked up as needed.
  *
  * constraintOid, if nonzero, says that this trigger is being created
- * internally to implement that constraint.  A suitable pg_depend entry will
+ * internally to implement that constraint.  A suitable mdb_depend entry will
  * be made to link the trigger to that constraint.  constraintOid is zero when
  * executing a user-entered CREATE TRIGGER command.  (For CREATE CONSTRAINT
- * TRIGGER, we build a pg_constraint entry internally.)
+ * TRIGGER, we build a mdb_constraint entry internally.)
  *
  * indexOid, if nonzero, is the OID of an index associated with the constraint.
- * We do nothing with this except store it into pg_trigger.tgconstrindid.
+ * We do nothing with this except store it into mdb_trigger.tgconstrindid.
  *
  * If isInternal is true then this is an internally-generated trigger.
- * This argument sets the tgisinternal field of the pg_trigger entry, and
+ * This argument sets the tgisinternal field of the mdb_trigger entry, and
  * if TRUE causes us to modify the given trigger name to ensure uniqueness.
  *
  * When isInternal is not true we require ACL_TRIGGER permissions on the
@@ -146,8 +146,8 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	Node	   *whenClause;
 	List	   *whenRtable;
 	char	   *qual;
-	Datum		values[Natts_pg_trigger];
-	bool		nulls[Natts_pg_trigger];
+	Datum		values[Natts_mdb_trigger];
+	bool		nulls[Natts_mdb_trigger];
 	Relation	rel;
 	AclResult	aclresult;
 	Relation	tgrel;
@@ -247,7 +247,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 		 * We must take a lock on the target relation to protect against
 		 * concurrent drop.  It's not clear that AccessShareLock is strong
 		 * enough, but we certainly need at least that much... otherwise, we
-		 * might end up creating a pg_constraint entry referencing a
+		 * might end up creating a mdb_constraint entry referencing a
 		 * nonexistent table.
 		 */
 		if (OidIsValid(refRelOid))
@@ -263,7 +263,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	/* permission checks */
 	if (!isInternal)
 	{
-		aclresult = pg_class_aclcheck(RelationGetRelid(rel), GetUserId(),
+		aclresult = mdb_class_aclcheck(RelationGetRelid(rel), GetUserId(),
 									  ACL_TRIGGER);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_CLASS,
@@ -271,7 +271,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 
 		if (OidIsValid(constrrelid))
 		{
-			aclresult = pg_class_aclcheck(constrrelid, GetUserId(),
+			aclresult = mdb_class_aclcheck(constrrelid, GetUserId(),
 										  ACL_TRIGGER);
 			if (aclresult != ACLCHECK_OK)
 				aclcheck_error(aclresult, ACL_KIND_CLASS,
@@ -416,7 +416,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	funcoid = LookupFuncName(stmt->funcname, 0, fargtypes, false);
 	if (!isInternal)
 	{
-		aclresult = pg_proc_aclcheck(funcoid, GetUserId(), ACL_EXECUTE);
+		aclresult = mdb_proc_aclcheck(funcoid, GetUserId(), ACL_EXECUTE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_PROC,
 						   NameListToString(stmt->funcname));
@@ -464,7 +464,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 
 	/*
 	 * If it's a user-entered CREATE CONSTRAINT TRIGGER command, make a
-	 * corresponding pg_constraint entry.
+	 * corresponding mdb_constraint entry.
 	 */
 	if (stmt->isconstraint && !OidIsValid(constraintOid))
 	{
@@ -526,7 +526,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	}
 
 	/*
-	 * Scan pg_trigger for existing triggers on relation.  We do this only to
+	 * Scan mdb_trigger for existing triggers on relation.  We do this only to
 	 * give a nice error message if there's already a trigger of the same
 	 * name.  (The unique index on tgrelid/tgname would complain anyway.) We
 	 * can skip this for internally generated triggers, since the name
@@ -538,16 +538,16 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	if (!isInternal)
 	{
 		ScanKeyInit(&key,
-					Anum_pg_trigger_tgrelid,
+					Anum_mdb_trigger_tgrelid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(RelationGetRelid(rel)));
 		tgscan = systable_beginscan(tgrel, TriggerRelidNameIndexId, true,
 									NULL, 1, &key);
 		while (HeapTupleIsValid(tuple = systable_getnext(tgscan)))
 		{
-			Form_pg_trigger pg_trigger = (Form_pg_trigger) GETSTRUCT(tuple);
+			Form_mdb_trigger mdb_trigger = (Form_mdb_trigger) GETSTRUCT(tuple);
 
-			if (namestrcmp(&(pg_trigger->tgname), trigname) == 0)
+			if (namestrcmp(&(mdb_trigger->tgname), trigname) == 0)
 				ereport(ERROR,
 						(errcode(ERRCODE_DUPLICATE_OBJECT),
 				  errmsg("trigger \"%s\" for relation \"%s\" already exists",
@@ -557,22 +557,22 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	}
 
 	/*
-	 * Build the new pg_trigger tuple.
+	 * Build the new mdb_trigger tuple.
 	 */
 	memset(nulls, false, sizeof(nulls));
 
-	values[Anum_pg_trigger_tgrelid - 1] = ObjectIdGetDatum(RelationGetRelid(rel));
-	values[Anum_pg_trigger_tgname - 1] = DirectFunctionCall1(namein,
+	values[Anum_mdb_trigger_tgrelid - 1] = ObjectIdGetDatum(RelationGetRelid(rel));
+	values[Anum_mdb_trigger_tgname - 1] = DirectFunctionCall1(namein,
 												  CStringGetDatum(trigname));
-	values[Anum_pg_trigger_tgfoid - 1] = ObjectIdGetDatum(funcoid);
-	values[Anum_pg_trigger_tgtype - 1] = Int16GetDatum(tgtype);
-	values[Anum_pg_trigger_tgenabled - 1] = CharGetDatum(TRIGGER_FIRES_ON_ORIGIN);
-	values[Anum_pg_trigger_tgisinternal - 1] = BoolGetDatum(isInternal);
-	values[Anum_pg_trigger_tgconstrrelid - 1] = ObjectIdGetDatum(constrrelid);
-	values[Anum_pg_trigger_tgconstrindid - 1] = ObjectIdGetDatum(indexOid);
-	values[Anum_pg_trigger_tgconstraint - 1] = ObjectIdGetDatum(constraintOid);
-	values[Anum_pg_trigger_tgdeferrable - 1] = BoolGetDatum(stmt->deferrable);
-	values[Anum_pg_trigger_tginitdeferred - 1] = BoolGetDatum(stmt->initdeferred);
+	values[Anum_mdb_trigger_tgfoid - 1] = ObjectIdGetDatum(funcoid);
+	values[Anum_mdb_trigger_tgtype - 1] = Int16GetDatum(tgtype);
+	values[Anum_mdb_trigger_tgenabled - 1] = CharGetDatum(TRIGGER_FIRES_ON_ORIGIN);
+	values[Anum_mdb_trigger_tgisinternal - 1] = BoolGetDatum(isInternal);
+	values[Anum_mdb_trigger_tgconstrrelid - 1] = ObjectIdGetDatum(constrrelid);
+	values[Anum_mdb_trigger_tgconstrindid - 1] = ObjectIdGetDatum(indexOid);
+	values[Anum_mdb_trigger_tgconstraint - 1] = ObjectIdGetDatum(constraintOid);
+	values[Anum_mdb_trigger_tgdeferrable - 1] = BoolGetDatum(stmt->deferrable);
+	values[Anum_mdb_trigger_tginitdeferred - 1] = BoolGetDatum(stmt->initdeferred);
 
 	if (stmt->args)
 	{
@@ -607,14 +607,14 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 			}
 			strcpy(d, "\\000");
 		}
-		values[Anum_pg_trigger_tgnargs - 1] = Int16GetDatum(nargs);
-		values[Anum_pg_trigger_tgargs - 1] = DirectFunctionCall1(byteain,
+		values[Anum_mdb_trigger_tgnargs - 1] = Int16GetDatum(nargs);
+		values[Anum_mdb_trigger_tgargs - 1] = DirectFunctionCall1(byteain,
 													  CStringGetDatum(args));
 	}
 	else
 	{
-		values[Anum_pg_trigger_tgnargs - 1] = Int16GetDatum(0);
-		values[Anum_pg_trigger_tgargs - 1] = DirectFunctionCall1(byteain,
+		values[Anum_mdb_trigger_tgnargs - 1] = Int16GetDatum(0);
+		values[Anum_mdb_trigger_tgargs - 1] = DirectFunctionCall1(byteain,
 														CStringGetDatum(""));
 	}
 
@@ -656,13 +656,13 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 		}
 	}
 	tgattr = buildint2vector(columns, ncolumns);
-	values[Anum_pg_trigger_tgattr - 1] = PointerGetDatum(tgattr);
+	values[Anum_mdb_trigger_tgattr - 1] = PointerGetDatum(tgattr);
 
 	/* set tgqual if trigger has WHEN clause */
 	if (qual)
-		values[Anum_pg_trigger_tgqual - 1] = CStringGetTextDatum(qual);
+		values[Anum_mdb_trigger_tgqual - 1] = CStringGetTextDatum(qual);
 	else
-		nulls[Anum_pg_trigger_tgqual - 1] = true;
+		nulls[Anum_mdb_trigger_tgqual - 1] = true;
 
 	tuple = heap_form_tuple(tgrel->rd_att, values, nulls);
 
@@ -670,7 +670,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	HeapTupleSetOid(tuple, trigoid);
 
 	/*
-	 * Insert tuple into pg_trigger.
+	 * Insert tuple into mdb_trigger.
 	 */
 	simple_heap_insert(tgrel, tuple);
 
@@ -679,12 +679,12 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 	heap_freetuple(tuple);
 	heap_close(tgrel, RowExclusiveLock);
 
-	pfree(DatumGetPointer(values[Anum_pg_trigger_tgname - 1]));
-	pfree(DatumGetPointer(values[Anum_pg_trigger_tgargs - 1]));
-	pfree(DatumGetPointer(values[Anum_pg_trigger_tgattr - 1]));
+	pfree(DatumGetPointer(values[Anum_mdb_trigger_tgname - 1]));
+	pfree(DatumGetPointer(values[Anum_mdb_trigger_tgargs - 1]));
+	pfree(DatumGetPointer(values[Anum_mdb_trigger_tgattr - 1]));
 
 	/*
-	 * Update relation's pg_class entry.  Crucial side-effect: other backends
+	 * Update relation's mdb_class entry.  Crucial side-effect: other backends
 	 * (and this one too!) are sent SI message to make them rebuild relcache
 	 * entries.
 	 */
@@ -695,7 +695,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
 		elog(ERROR, "cache lookup failed for relation %u",
 			 RelationGetRelid(rel));
 
-	((Form_pg_class) GETSTRUCT(tuple))->relhastriggers = true;
+	((Form_mdb_class) GETSTRUCT(tuple))->relhastriggers = true;
 
 	simple_heap_update(pgrel, &tuple->t_self, tuple);
 
@@ -815,7 +815,7 @@ CreateTrigger(CreateTrigStmt *stmt, const char *queryString,
  * dependency checking pre-7.3, it is possible that the source database had
  * an incomplete set of triggers resulting in an only partially enforced
  * FK constraint.  (This would happen if one of the tables had been dropped
- * and re-created, but only if the DB had been affected by a 7.0 pg_dump bug
+ * and re-created, but only if the DB had been affected by a 7.0 mdb_dump bug
  * that caused loss of tgconstrrelid information.)	We choose to translate to
  * an FK constraint only when we've seen all three triggers of a set.  This is
  * implemented by storing unmatched items in a list in TopMemoryContext.
@@ -987,7 +987,7 @@ ConvertTriggerToFK(CreateTrigStmt *stmt, Oid funcoid)
 				fkcon->pktable = stmt->constrrel;
 			else
 			{
-				/* Work around ancient pg_dump bug that omitted constrrel */
+				/* Work around ancient mdb_dump bug that omitted constrrel */
 				fkcon->pktable = makeRangeVar(NULL, pk_table_name, -1);
 			}
 		}
@@ -999,7 +999,7 @@ ConvertTriggerToFK(CreateTrigStmt *stmt, Oid funcoid)
 				atstmt->relation = stmt->constrrel;
 			else
 			{
-				/* Work around ancient pg_dump bug that omitted constrrel */
+				/* Work around ancient mdb_dump bug that omitted constrrel */
 				atstmt->relation = makeRangeVar(NULL, fk_table_name, -1);
 			}
 		}
@@ -1107,7 +1107,7 @@ RemoveTriggerById(Oid trigOid)
 	/*
 	 * Open and exclusive-lock the relation the trigger belongs to.
 	 */
-	relid = ((Form_pg_trigger) GETSTRUCT(tup))->tgrelid;
+	relid = ((Form_mdb_trigger) GETSTRUCT(tup))->tgrelid;
 
 	rel = heap_open(relid, AccessExclusiveLock);
 
@@ -1126,7 +1126,7 @@ RemoveTriggerById(Oid trigOid)
 						RelationGetRelationName(rel))));
 
 	/*
-	 * Delete the pg_trigger tuple.
+	 * Delete the mdb_trigger tuple.
 	 */
 	simple_heap_delete(tgrel, &tup->t_self);
 
@@ -1169,11 +1169,11 @@ get_trigger_oid(Oid relid, const char *trigname, bool missing_ok)
 	tgrel = heap_open(TriggerRelationId, AccessShareLock);
 
 	ScanKeyInit(&skey[0],
-				Anum_pg_trigger_tgrelid,
+				Anum_mdb_trigger_tgrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 	ScanKeyInit(&skey[1],
-				Anum_pg_trigger_tgname,
+				Anum_mdb_trigger_tgname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				CStringGetDatum(trigname));
 
@@ -1209,12 +1209,12 @@ RangeVarCallbackForRenameTrigger(const RangeVar *rv, Oid relid, Oid oldrelid,
 								 void *arg)
 {
 	HeapTuple	tuple;
-	Form_pg_class form;
+	Form_mdb_class form;
 
 	tuple = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tuple))
 		return;					/* concurrently dropped */
-	form = (Form_pg_class) GETSTRUCT(tuple);
+	form = (Form_mdb_class) GETSTRUCT(tuple);
 
 	/* only tables and views can have triggers */
 	if (form->relkind != RELKIND_RELATION && form->relkind != RELKIND_VIEW &&
@@ -1225,7 +1225,7 @@ RangeVarCallbackForRenameTrigger(const RangeVar *rv, Oid relid, Oid oldrelid,
 						rv->relname)));
 
 	/* you must own the table to rename one of its triggers */
-	if (!pg_class_ownercheck(relid, GetUserId()))
+	if (!mdb_class_ownercheck(relid, GetUserId()))
 		aclcheck_error(ACLCHECK_NOT_OWNER, ACL_KIND_CLASS, rv->relname);
 	if (!allowSystemTableMods && IsSystemClass(relid, form))
 		ereport(ERROR,
@@ -1274,7 +1274,7 @@ renametrig(RenameStmt *stmt)
 	targetrel = relation_open(relid, NoLock);
 
 	/*
-	 * Scan pg_trigger twice for existing triggers on relation.  We do this in
+	 * Scan mdb_trigger twice for existing triggers on relation.  We do this in
 	 * order to ensure a trigger does not exist with newname (The unique index
 	 * on tgrelid/tgname would complain anyway) and to ensure a trigger does
 	 * exist with oldname.
@@ -1288,11 +1288,11 @@ renametrig(RenameStmt *stmt)
 	 * First pass -- look for name conflict
 	 */
 	ScanKeyInit(&key[0],
-				Anum_pg_trigger_tgrelid,
+				Anum_mdb_trigger_tgrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 	ScanKeyInit(&key[1],
-				Anum_pg_trigger_tgname,
+				Anum_mdb_trigger_tgname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				PointerGetDatum(stmt->newname));
 	tgscan = systable_beginscan(tgrel, TriggerRelidNameIndexId, true,
@@ -1308,11 +1308,11 @@ renametrig(RenameStmt *stmt)
 	 * Second pass -- look for trigger existing with oldname and update
 	 */
 	ScanKeyInit(&key[0],
-				Anum_pg_trigger_tgrelid,
+				Anum_mdb_trigger_tgrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(relid));
 	ScanKeyInit(&key[1],
-				Anum_pg_trigger_tgname,
+				Anum_mdb_trigger_tgname,
 				BTEqualStrategyNumber, F_NAMEEQ,
 				PointerGetDatum(stmt->subname));
 	tgscan = systable_beginscan(tgrel, TriggerRelidNameIndexId, true,
@@ -1322,11 +1322,11 @@ renametrig(RenameStmt *stmt)
 		tgoid = HeapTupleGetOid(tuple);
 
 		/*
-		 * Update pg_trigger tuple with new tgname.
+		 * Update mdb_trigger tuple with new tgname.
 		 */
 		tuple = heap_copytuple(tuple);	/* need a modifiable copy */
 
-		namestrcpy(&((Form_pg_trigger) GETSTRUCT(tuple))->tgname,
+		namestrcpy(&((Form_mdb_trigger) GETSTRUCT(tuple))->tgname,
 				   stmt->newname);
 
 		simple_heap_update(tgrel, &tuple->t_self, tuple);
@@ -1396,17 +1396,17 @@ EnableDisableTrigger(Relation rel, const char *tgname,
 	bool		found;
 	bool		changed;
 
-	/* Scan the relevant entries in pg_triggers */
+	/* Scan the relevant entries in mdb_triggers */
 	tgrel = heap_open(TriggerRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&keys[0],
-				Anum_pg_trigger_tgrelid,
+				Anum_mdb_trigger_tgrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(rel)));
 	if (tgname)
 	{
 		ScanKeyInit(&keys[1],
-					Anum_pg_trigger_tgname,
+					Anum_mdb_trigger_tgname,
 					BTEqualStrategyNumber, F_NAMEEQ,
 					CStringGetDatum(tgname));
 		nkeys = 2;
@@ -1421,7 +1421,7 @@ EnableDisableTrigger(Relation rel, const char *tgname,
 
 	while (HeapTupleIsValid(tuple = systable_getnext(tgscan)))
 	{
-		Form_pg_trigger oldtrig = (Form_pg_trigger) GETSTRUCT(tuple);
+		Form_mdb_trigger oldtrig = (Form_mdb_trigger) GETSTRUCT(tuple);
 
 		if (oldtrig->tgisinternal)
 		{
@@ -1441,7 +1441,7 @@ EnableDisableTrigger(Relation rel, const char *tgname,
 		{
 			/* need to change this one ... make a copy to scribble on */
 			HeapTuple	newtup = heap_copytuple(tuple);
-			Form_pg_trigger newtrig = (Form_pg_trigger) GETSTRUCT(newtup);
+			Form_mdb_trigger newtrig = (Form_mdb_trigger) GETSTRUCT(newtup);
 
 			newtrig->tgenabled = fires_when;
 
@@ -1518,7 +1518,7 @@ RelationBuildTriggers(Relation relation)
 	 * ensures that triggers will be fired in name order.
 	 */
 	ScanKeyInit(&skey,
-				Anum_pg_trigger_tgrelid,
+				Anum_mdb_trigger_tgrelid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationGetRelid(relation)));
 
@@ -1528,7 +1528,7 @@ RelationBuildTriggers(Relation relation)
 
 	while (HeapTupleIsValid(htup = systable_getnext(tgscan)))
 	{
-		Form_pg_trigger pg_trigger = (Form_pg_trigger) GETSTRUCT(htup);
+		Form_mdb_trigger mdb_trigger = (Form_mdb_trigger) GETSTRUCT(htup);
 		Trigger    *build;
 		Datum		datum;
 		bool		isnull;
@@ -1542,23 +1542,23 @@ RelationBuildTriggers(Relation relation)
 
 		build->tgoid = HeapTupleGetOid(htup);
 		build->tgname = DatumGetCString(DirectFunctionCall1(nameout,
-										 NameGetDatum(&pg_trigger->tgname)));
-		build->tgfoid = pg_trigger->tgfoid;
-		build->tgtype = pg_trigger->tgtype;
-		build->tgenabled = pg_trigger->tgenabled;
-		build->tgisinternal = pg_trigger->tgisinternal;
-		build->tgconstrrelid = pg_trigger->tgconstrrelid;
-		build->tgconstrindid = pg_trigger->tgconstrindid;
-		build->tgconstraint = pg_trigger->tgconstraint;
-		build->tgdeferrable = pg_trigger->tgdeferrable;
-		build->tginitdeferred = pg_trigger->tginitdeferred;
-		build->tgnargs = pg_trigger->tgnargs;
+										 NameGetDatum(&mdb_trigger->tgname)));
+		build->tgfoid = mdb_trigger->tgfoid;
+		build->tgtype = mdb_trigger->tgtype;
+		build->tgenabled = mdb_trigger->tgenabled;
+		build->tgisinternal = mdb_trigger->tgisinternal;
+		build->tgconstrrelid = mdb_trigger->tgconstrrelid;
+		build->tgconstrindid = mdb_trigger->tgconstrindid;
+		build->tgconstraint = mdb_trigger->tgconstraint;
+		build->tgdeferrable = mdb_trigger->tgdeferrable;
+		build->tginitdeferred = mdb_trigger->tginitdeferred;
+		build->tgnargs = mdb_trigger->tgnargs;
 		/* tgattr is first var-width field, so OK to access directly */
-		build->tgnattr = pg_trigger->tgattr.dim1;
+		build->tgnattr = mdb_trigger->tgattr.dim1;
 		if (build->tgnattr > 0)
 		{
 			build->tgattr = (int16 *) palloc(build->tgnattr * sizeof(int16));
-			memcpy(build->tgattr, &(pg_trigger->tgattr.values),
+			memcpy(build->tgattr, &(mdb_trigger->tgattr.values),
 				   build->tgnattr * sizeof(int16));
 		}
 		else
@@ -1569,7 +1569,7 @@ RelationBuildTriggers(Relation relation)
 			char	   *p;
 
 			val = DatumGetByteaP(fastgetattr(htup,
-											 Anum_pg_trigger_tgargs,
+											 Anum_mdb_trigger_tgargs,
 											 tgrel->rd_att, &isnull));
 			if (isnull)
 				elog(ERROR, "tgargs is null in trigger for relation \"%s\"",
@@ -1584,7 +1584,7 @@ RelationBuildTriggers(Relation relation)
 		}
 		else
 			build->tgargs = NULL;
-		datum = fastgetattr(htup, Anum_pg_trigger_tgqual,
+		datum = fastgetattr(htup, Anum_mdb_trigger_tgqual,
 							tgrel->rd_att, &isnull);
 		if (!isnull)
 			build->tgqual = TextDatumGetCString(datum);
@@ -4555,11 +4555,11 @@ AfterTriggerSetState(ConstraintsSetStmt *stmt)
 				HeapTuple	tup;
 
 				ScanKeyInit(&skey[0],
-							Anum_pg_constraint_conname,
+							Anum_mdb_constraint_conname,
 							BTEqualStrategyNumber, F_NAMEEQ,
 							CStringGetDatum(constraint->relname));
 				ScanKeyInit(&skey[1],
-							Anum_pg_constraint_connamespace,
+							Anum_mdb_constraint_connamespace,
 							BTEqualStrategyNumber, F_OIDEQ,
 							ObjectIdGetDatum(namespaceId));
 
@@ -4568,7 +4568,7 @@ AfterTriggerSetState(ConstraintsSetStmt *stmt)
 
 				while (HeapTupleIsValid(tup = systable_getnext(conscan)))
 				{
-					Form_pg_constraint con = (Form_pg_constraint) GETSTRUCT(tup);
+					Form_mdb_constraint con = (Form_mdb_constraint) GETSTRUCT(tup);
 
 					if (con->condeferrable)
 						conoidlist = lappend_oid(conoidlist,
@@ -4622,7 +4622,7 @@ AfterTriggerSetState(ConstraintsSetStmt *stmt)
 			found = false;
 
 			ScanKeyInit(&skey,
-						Anum_pg_trigger_tgconstraint,
+						Anum_mdb_trigger_tgconstraint,
 						BTEqualStrategyNumber, F_OIDEQ,
 						ObjectIdGetDatum(conoid));
 
@@ -4631,15 +4631,15 @@ AfterTriggerSetState(ConstraintsSetStmt *stmt)
 
 			while (HeapTupleIsValid(htup = systable_getnext(tgscan)))
 			{
-				Form_pg_trigger pg_trigger = (Form_pg_trigger) GETSTRUCT(htup);
+				Form_mdb_trigger mdb_trigger = (Form_mdb_trigger) GETSTRUCT(htup);
 
 				/*
 				 * Silently skip triggers that are marked as non-deferrable in
-				 * pg_trigger.  This is not an error condition, since a
+				 * mdb_trigger.  This is not an error condition, since a
 				 * deferrable RI constraint may have some non-deferrable
 				 * actions.
 				 */
-				if (pg_trigger->tgdeferrable)
+				if (mdb_trigger->tgdeferrable)
 					tgoidlist = lappend_oid(tgoidlist,
 											HeapTupleGetOid(htup));
 
@@ -5017,7 +5017,7 @@ AfterTriggerSaveEvent(EState *estate, ResultRelInfo *relinfo,
 }
 
 Datum
-pg_trigger_depth(PG_FUNCTION_ARGS)
+mdb_trigger_depth(PG_FUNCTION_ARGS)
 {
 	PG_RETURN_INT32(MyTriggerDepth);
 }

@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_shdepend.c
- *	  routines to support manipulation of the pg_shdepend relation
+ * mdb_shdepend.c
+ *	  routines to support manipulation of the mdb_shdepend relation
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_shdepend.c
+ *	  src/backend/catalog/mdb_shdepend.c
  *
  *-------------------------------------------------------------------------
  */
@@ -21,29 +21,29 @@
 #include "catalog/catalog.h"
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_authid.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_conversion.h"
-#include "catalog/pg_database.h"
-#include "catalog/pg_default_acl.h"
-#include "catalog/pg_event_trigger.h"
-#include "catalog/pg_extension.h"
-#include "catalog/pg_foreign_data_wrapper.h"
-#include "catalog/pg_foreign_server.h"
-#include "catalog/pg_language.h"
-#include "catalog/pg_largeobject.h"
-#include "catalog/pg_largeobject_metadata.h"
-#include "catalog/pg_namespace.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_opfamily.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_shdepend.h"
-#include "catalog/pg_tablespace.h"
-#include "catalog/pg_ts_config.h"
-#include "catalog/pg_ts_dict.h"
-#include "catalog/pg_type.h"
-#include "catalog/pg_user_mapping.h"
+#include "catalog/mdb_authid.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_conversion.h"
+#include "catalog/mdb_database.h"
+#include "catalog/mdb_default_acl.h"
+#include "catalog/mdb_event_trigger.h"
+#include "catalog/mdb_extension.h"
+#include "catalog/mdb_foreign_data_wrapper.h"
+#include "catalog/mdb_foreign_server.h"
+#include "catalog/mdb_language.h"
+#include "catalog/mdb_largeobject.h"
+#include "catalog/mdb_largeobject_metadata.h"
+#include "catalog/mdb_namespace.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_opfamily.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_shdepend.h"
+#include "catalog/mdb_tablespace.h"
+#include "catalog/mdb_ts_config.h"
+#include "catalog/mdb_ts_dict.h"
+#include "catalog/mdb_type.h"
+#include "catalog/mdb_user_mapping.h"
 #include "commands/alter.h"
 #include "commands/dbcommands.h"
 #include "commands/collationcmds.h"
@@ -102,7 +102,7 @@ static bool isSharedObjectPinned(Oid classId, Oid objectId, Relation sdepRel);
  * references (which must be a shared object).
  *
  * This locks the referenced object and makes sure it still exists.
- * Then it creates an entry in pg_shdepend.  The lock is kept until
+ * Then it creates an entry in mdb_shdepend.  The lock is kept until
  * the end of the transaction.
  *
  * Dependencies on pinned objects are not recorded.
@@ -115,14 +115,14 @@ recordSharedDependencyOn(ObjectAddress *depender,
 	Relation	sdepRel;
 
 	/*
-	 * Objects in pg_shdepend can't have SubIds.
+	 * Objects in mdb_shdepend can't have SubIds.
 	 */
 	Assert(depender->objectSubId == 0);
 	Assert(referenced->objectSubId == 0);
 
 	/*
-	 * During bootstrap, do nothing since pg_shdepend may not exist yet.
-	 * initdb will fill in appropriate pg_shdepend entries after bootstrap.
+	 * During bootstrap, do nothing since mdb_shdepend may not exist yet.
+	 * initdb will fill in appropriate mdb_shdepend entries after bootstrap.
 	 */
 	if (IsBootstrapProcessingMode())
 		return;
@@ -183,7 +183,7 @@ recordDependencyOnOwner(Oid classId, Oid objectId, Oid owner)
  * object, so we create a new entry.  If the new referenced object is
  * PINned, we don't create an entry (and drop the old one, if any).
  *
- * sdepRel must be the pg_shdepend relation, already opened and suitably
+ * sdepRel must be the mdb_shdepend relation, already opened and suitably
  * locked.
  */
 static void
@@ -208,19 +208,19 @@ shdepChangeDep(Relation sdepRel,
 	 * Look for a previous entry
 	 */
 	ScanKeyInit(&key[0],
-				Anum_pg_shdepend_dbid,
+				Anum_mdb_shdepend_dbid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(dbid));
 	ScanKeyInit(&key[1],
-				Anum_pg_shdepend_classid,
+				Anum_mdb_shdepend_classid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classid));
 	ScanKeyInit(&key[2],
-				Anum_pg_shdepend_objid,
+				Anum_mdb_shdepend_objid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(objid));
 	ScanKeyInit(&key[3],
-				Anum_pg_shdepend_objsubid,
+				Anum_mdb_shdepend_objsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum(objsubid));
 
@@ -230,12 +230,12 @@ shdepChangeDep(Relation sdepRel,
 	while ((scantup = systable_getnext(scan)) != NULL)
 	{
 		/* Ignore if not of the target dependency type */
-		if (((Form_pg_shdepend) GETSTRUCT(scantup))->deptype != deptype)
+		if (((Form_mdb_shdepend) GETSTRUCT(scantup))->deptype != deptype)
 			continue;
 		/* Caller screwed up if multiple matches */
 		if (oldtup)
 			elog(ERROR,
-			   "multiple pg_shdepend entries for object %u/%u/%d deptype %c",
+			   "multiple mdb_shdepend entries for object %u/%u/%d deptype %c",
 				 classid, objid, objsubid, deptype);
 		oldtup = heap_copytuple(scantup);
 	}
@@ -251,7 +251,7 @@ shdepChangeDep(Relation sdepRel,
 	else if (oldtup)
 	{
 		/* Need to update existing entry */
-		Form_pg_shdepend shForm = (Form_pg_shdepend) GETSTRUCT(oldtup);
+		Form_mdb_shdepend shForm = (Form_mdb_shdepend) GETSTRUCT(oldtup);
 
 		/* Since oldtup is a copy, we can just modify it in-memory */
 		shForm->refclassid = refclassid;
@@ -265,19 +265,19 @@ shdepChangeDep(Relation sdepRel,
 	else
 	{
 		/* Need to insert new entry */
-		Datum		values[Natts_pg_shdepend];
-		bool		nulls[Natts_pg_shdepend];
+		Datum		values[Natts_mdb_shdepend];
+		bool		nulls[Natts_mdb_shdepend];
 
 		memset(nulls, false, sizeof(nulls));
 
-		values[Anum_pg_shdepend_dbid - 1] = ObjectIdGetDatum(dbid);
-		values[Anum_pg_shdepend_classid - 1] = ObjectIdGetDatum(classid);
-		values[Anum_pg_shdepend_objid - 1] = ObjectIdGetDatum(objid);
-		values[Anum_pg_shdepend_objsubid - 1] = Int32GetDatum(objsubid);
+		values[Anum_mdb_shdepend_dbid - 1] = ObjectIdGetDatum(dbid);
+		values[Anum_mdb_shdepend_classid - 1] = ObjectIdGetDatum(classid);
+		values[Anum_mdb_shdepend_objid - 1] = ObjectIdGetDatum(objid);
+		values[Anum_mdb_shdepend_objsubid - 1] = Int32GetDatum(objsubid);
 
-		values[Anum_pg_shdepend_refclassid - 1] = ObjectIdGetDatum(refclassid);
-		values[Anum_pg_shdepend_refobjid - 1] = ObjectIdGetDatum(refobjid);
-		values[Anum_pg_shdepend_deptype - 1] = CharGetDatum(deptype);
+		values[Anum_mdb_shdepend_refclassid - 1] = ObjectIdGetDatum(refclassid);
+		values[Anum_mdb_shdepend_refobjid - 1] = ObjectIdGetDatum(refobjid);
+		values[Anum_mdb_shdepend_deptype - 1] = CharGetDatum(deptype);
 
 		/*
 		 * we are reusing oldtup just to avoid declaring a new variable, but
@@ -396,7 +396,7 @@ getOidListDiff(Oid *list1, int *nlist1, Oid *list2, int *nlist2)
 
 /*
  * updateAclDependencies
- *		Update the pg_shdepend info for an object's ACL during GRANT/REVOKE.
+ *		Update the mdb_shdepend info for an object's ACL during GRANT/REVOKE.
  *
  * classId, objectId, objsubId: identify the object whose ACL this is
  * ownerId: role owning the object
@@ -404,7 +404,7 @@ getOidListDiff(Oid *list1, int *nlist1, Oid *list2, int *nlist2)
  * nnewmembers, newmembers: array of roleids appearing in new ACL
  *
  * We calculate the differences between the new and old lists of roles,
- * and then insert or delete from pg_shdepend as appropriate.
+ * and then insert or delete from mdb_shdepend as appropriate.
  *
  * Note that we can't just insert all referenced roles blindly during GRANT,
  * because we would end up with duplicate registered dependencies.  We could
@@ -550,11 +550,11 @@ checkSharedDependencies(Oid classId, Oid objectId,
 	sdepRel = heap_open(SharedDependRelationId, AccessShareLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_shdepend_refclassid,
+				Anum_mdb_shdepend_refclassid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classId));
 	ScanKeyInit(&key[1],
-				Anum_pg_shdepend_refobjid,
+				Anum_mdb_shdepend_refobjid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(objectId));
 
@@ -563,7 +563,7 @@ checkSharedDependencies(Oid classId, Oid objectId,
 
 	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 	{
-		Form_pg_shdepend sdepForm = (Form_pg_shdepend) GETSTRUCT(tup);
+		Form_mdb_shdepend sdepForm = (Form_mdb_shdepend) GETSTRUCT(tup);
 
 		/* This case can be dispatched quickly */
 		if (sdepForm->deptype == SHARED_DEPENDENCY_PIN)
@@ -718,9 +718,9 @@ copyTemplateDependencies(Oid templateDbId, Oid newDbId)
 	SysScanDesc scan;
 	HeapTuple	tup;
 	CatalogIndexState indstate;
-	Datum		values[Natts_pg_shdepend];
-	bool		nulls[Natts_pg_shdepend];
-	bool		replace[Natts_pg_shdepend];
+	Datum		values[Natts_mdb_shdepend];
+	bool		nulls[Natts_mdb_shdepend];
+	bool		replace[Natts_mdb_shdepend];
 
 	sdepRel = heap_open(SharedDependRelationId, RowExclusiveLock);
 	sdepDesc = RelationGetDescr(sdepRel);
@@ -729,7 +729,7 @@ copyTemplateDependencies(Oid templateDbId, Oid newDbId)
 
 	/* Scan all entries with dbid = templateDbId */
 	ScanKeyInit(&key[0],
-				Anum_pg_shdepend_dbid,
+				Anum_mdb_shdepend_dbid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(templateDbId));
 
@@ -741,8 +741,8 @@ copyTemplateDependencies(Oid templateDbId, Oid newDbId)
 	memset(nulls, false, sizeof(nulls));
 	memset(replace, false, sizeof(replace));
 
-	replace[Anum_pg_shdepend_dbid - 1] = true;
-	values[Anum_pg_shdepend_dbid - 1] = ObjectIdGetDatum(newDbId);
+	replace[Anum_mdb_shdepend_dbid - 1] = true;
+	values[Anum_mdb_shdepend_dbid - 1] = ObjectIdGetDatum(newDbId);
 
 	/*
 	 * Copy the entries of the original database, changing the database Id to
@@ -773,7 +773,7 @@ copyTemplateDependencies(Oid templateDbId, Oid newDbId)
 /*
  * dropDatabaseDependencies
  *
- * Delete pg_shdepend entries corresponding to a database that's being
+ * Delete mdb_shdepend entries corresponding to a database that's being
  * dropped.
  */
 void
@@ -791,7 +791,7 @@ dropDatabaseDependencies(Oid databaseId)
 	 * field.
 	 */
 	ScanKeyInit(&key[0],
-				Anum_pg_shdepend_dbid,
+				Anum_mdb_shdepend_dbid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(databaseId));
 	/* We leave the other index fields unspecified */
@@ -817,12 +817,12 @@ dropDatabaseDependencies(Oid databaseId)
 /*
  * deleteSharedDependencyRecordsFor
  *
- * Delete all pg_shdepend entries corresponding to an object that's being
+ * Delete all mdb_shdepend entries corresponding to an object that's being
  * dropped or modified.  The object is assumed to be either a shared object
  * or local to the current database (the classId tells us which).
  *
  * If objectSubId is zero, we are deleting a whole object, so get rid of
- * pg_shdepend entries for subobjects as well.
+ * mdb_shdepend entries for subobjects as well.
  */
 void
 deleteSharedDependencyRecordsFor(Oid classId, Oid objectId, int32 objectSubId)
@@ -841,9 +841,9 @@ deleteSharedDependencyRecordsFor(Oid classId, Oid objectId, int32 objectSubId)
 
 /*
  * shdepAddDependency
- *		Internal workhorse for inserting into pg_shdepend
+ *		Internal workhorse for inserting into mdb_shdepend
  *
- * sdepRel must be the pg_shdepend relation, already opened and suitably
+ * sdepRel must be the mdb_shdepend relation, already opened and suitably
  * locked.
  */
 static void
@@ -853,8 +853,8 @@ shdepAddDependency(Relation sdepRel,
 				   SharedDependencyType deptype)
 {
 	HeapTuple	tup;
-	Datum		values[Natts_pg_shdepend];
-	bool		nulls[Natts_pg_shdepend];
+	Datum		values[Natts_mdb_shdepend];
+	bool		nulls[Natts_mdb_shdepend];
 
 	/*
 	 * Make sure the object doesn't go away while we record the dependency on
@@ -868,14 +868,14 @@ shdepAddDependency(Relation sdepRel,
 	/*
 	 * Form the new tuple and record the dependency.
 	 */
-	values[Anum_pg_shdepend_dbid - 1] = ObjectIdGetDatum(classIdGetDbId(classId));
-	values[Anum_pg_shdepend_classid - 1] = ObjectIdGetDatum(classId);
-	values[Anum_pg_shdepend_objid - 1] = ObjectIdGetDatum(objectId);
-	values[Anum_pg_shdepend_objsubid - 1] = Int32GetDatum(objsubId);
+	values[Anum_mdb_shdepend_dbid - 1] = ObjectIdGetDatum(classIdGetDbId(classId));
+	values[Anum_mdb_shdepend_classid - 1] = ObjectIdGetDatum(classId);
+	values[Anum_mdb_shdepend_objid - 1] = ObjectIdGetDatum(objectId);
+	values[Anum_mdb_shdepend_objsubid - 1] = Int32GetDatum(objsubId);
 
-	values[Anum_pg_shdepend_refclassid - 1] = ObjectIdGetDatum(refclassId);
-	values[Anum_pg_shdepend_refobjid - 1] = ObjectIdGetDatum(refobjId);
-	values[Anum_pg_shdepend_deptype - 1] = CharGetDatum(deptype);
+	values[Anum_mdb_shdepend_refclassid - 1] = ObjectIdGetDatum(refclassId);
+	values[Anum_mdb_shdepend_refobjid - 1] = ObjectIdGetDatum(refobjId);
+	values[Anum_mdb_shdepend_deptype - 1] = CharGetDatum(deptype);
 
 	tup = heap_form_tuple(sdepRel->rd_att, values, nulls);
 
@@ -890,7 +890,7 @@ shdepAddDependency(Relation sdepRel,
 
 /*
  * shdepDropDependency
- *		Internal workhorse for deleting entries from pg_shdepend.
+ *		Internal workhorse for deleting entries from mdb_shdepend.
  *
  * We drop entries having the following properties:
  *	dependent object is the one identified by classId/objectId/objsubId
@@ -901,7 +901,7 @@ shdepAddDependency(Relation sdepRel,
  * If drop_subobjects is true, we ignore objsubId and consider all entries
  * matching classId/objectId.
  *
- * sdepRel must be the pg_shdepend relation, already opened and suitably
+ * sdepRel must be the mdb_shdepend relation, already opened and suitably
  * locked.
  */
 static void
@@ -918,15 +918,15 @@ shdepDropDependency(Relation sdepRel,
 
 	/* Scan for entries matching the dependent object */
 	ScanKeyInit(&key[0],
-				Anum_pg_shdepend_dbid,
+				Anum_mdb_shdepend_dbid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classIdGetDbId(classId)));
 	ScanKeyInit(&key[1],
-				Anum_pg_shdepend_classid,
+				Anum_mdb_shdepend_classid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classId));
 	ScanKeyInit(&key[2],
-				Anum_pg_shdepend_objid,
+				Anum_mdb_shdepend_objid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(objectId));
 	if (drop_subobjects)
@@ -934,7 +934,7 @@ shdepDropDependency(Relation sdepRel,
 	else
 	{
 		ScanKeyInit(&key[3],
-					Anum_pg_shdepend_objsubid,
+					Anum_mdb_shdepend_objsubid,
 					BTEqualStrategyNumber, F_INT4EQ,
 					Int32GetDatum(objsubId));
 		nkeys = 4;
@@ -945,7 +945,7 @@ shdepDropDependency(Relation sdepRel,
 
 	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 	{
-		Form_pg_shdepend shdepForm = (Form_pg_shdepend) GETSTRUCT(tup);
+		Form_mdb_shdepend shdepForm = (Form_mdb_shdepend) GETSTRUCT(tup);
 
 		/* Filter entries according to additional parameters */
 		if (OidIsValid(refclassId) && shdepForm->refclassid != refclassId)
@@ -966,7 +966,7 @@ shdepDropDependency(Relation sdepRel,
 /*
  * classIdGetDbId
  *
- * Get the database Id that should be used in pg_shdepend, given the OID
+ * Get the database Id that should be used in mdb_shdepend, given the OID
  * of the catalog containing the object.  For shared objects, it's 0
  * (InvalidOid); for all other objects, it's the current database Id.
  */
@@ -1016,7 +1016,7 @@ shdepLockAndCheckObject(Oid classId, Oid objectId)
 #ifdef NOT_USED
 		case TableSpaceRelationId:
 			{
-				/* For lack of a syscache on pg_tablespace, do this: */
+				/* For lack of a syscache on mdb_tablespace, do this: */
 				char	   *tablespace = get_tablespace_name(objectId);
 
 				if (tablespace == NULL)
@@ -1031,7 +1031,7 @@ shdepLockAndCheckObject(Oid classId, Oid objectId)
 
 		case DatabaseRelationId:
 			{
-				/* For lack of a syscache on pg_database, do this: */
+				/* For lack of a syscache on mdb_database, do this: */
 				char	   *database = get_database_name(objectId);
 
 				if (database == NULL)
@@ -1112,7 +1112,7 @@ storeObjectDescription(StringInfo descs,
  * isSharedObjectPinned
  *		Return whether a given shared object has a SHARED_DEPENDENCY_PIN entry.
  *
- * sdepRel must be the pg_shdepend relation, already opened and suitably
+ * sdepRel must be the mdb_shdepend relation, already opened and suitably
  * locked.
  */
 static bool
@@ -1124,11 +1124,11 @@ isSharedObjectPinned(Oid classId, Oid objectId, Relation sdepRel)
 	HeapTuple	tup;
 
 	ScanKeyInit(&key[0],
-				Anum_pg_shdepend_refclassid,
+				Anum_mdb_shdepend_refclassid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(classId));
 	ScanKeyInit(&key[1],
-				Anum_pg_shdepend_refobjid,
+				Anum_mdb_shdepend_refobjid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(objectId));
 
@@ -1136,7 +1136,7 @@ isSharedObjectPinned(Oid classId, Oid objectId, Relation sdepRel)
 							  NULL, 2, key);
 
 	/*
-	 * Since we won't generate additional pg_shdepend entries for pinned
+	 * Since we won't generate additional mdb_shdepend entries for pinned
 	 * objects, there can be at most one entry referencing a pinned object.
 	 * Hence, it's sufficient to look at the first returned tuple; we don't
 	 * need to loop.
@@ -1144,7 +1144,7 @@ isSharedObjectPinned(Oid classId, Oid objectId, Relation sdepRel)
 	tup = systable_getnext(scan);
 	if (HeapTupleIsValid(tup))
 	{
-		Form_pg_shdepend shdepForm = (Form_pg_shdepend) GETSTRUCT(tup);
+		Form_mdb_shdepend shdepForm = (Form_mdb_shdepend) GETSTRUCT(tup);
 
 		if (shdepForm->deptype == SHARED_DEPENDENCY_PIN)
 			result = true;
@@ -1211,11 +1211,11 @@ shdepDropOwned(List *roleids, DropBehavior behavior)
 		}
 
 		ScanKeyInit(&key[0],
-					Anum_pg_shdepend_refclassid,
+					Anum_mdb_shdepend_refclassid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(AuthIdRelationId));
 		ScanKeyInit(&key[1],
-					Anum_pg_shdepend_refobjid,
+					Anum_mdb_shdepend_refobjid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(roleid));
 
@@ -1224,7 +1224,7 @@ shdepDropOwned(List *roleids, DropBehavior behavior)
 
 		while ((tuple = systable_getnext(scan)) != NULL)
 		{
-			Form_pg_shdepend sdepForm = (Form_pg_shdepend) GETSTRUCT(tuple);
+			Form_mdb_shdepend sdepForm = (Form_mdb_shdepend) GETSTRUCT(tuple);
 			ObjectAddress obj;
 
 			/*
@@ -1330,11 +1330,11 @@ shdepReassignOwned(List *roleids, Oid newrole)
 		}
 
 		ScanKeyInit(&key[0],
-					Anum_pg_shdepend_refclassid,
+					Anum_mdb_shdepend_refclassid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(AuthIdRelationId));
 		ScanKeyInit(&key[1],
-					Anum_pg_shdepend_refobjid,
+					Anum_mdb_shdepend_refobjid,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(roleid));
 
@@ -1343,7 +1343,7 @@ shdepReassignOwned(List *roleids, Oid newrole)
 
 		while ((tuple = systable_getnext(scan)) != NULL)
 		{
-			Form_pg_shdepend sdepForm = (Form_pg_shdepend) GETSTRUCT(tuple);
+			Form_mdb_shdepend sdepForm = (Form_mdb_shdepend) GETSTRUCT(tuple);
 
 			/*
 			 * We only operate on shared objects and objects in the current

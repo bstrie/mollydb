@@ -22,9 +22,9 @@ my @client_contribs = ('oid2name', 'pgbench', 'vacuumlo');
 my @client_program_files = (
 	'clusterdb',     'createdb',       'createlang', 'createuser',
 	'dropdb',        'droplang',       'dropuser',   'ecpg',
-	'libecpg',       'libecpg_compat', 'libpgtypes', 'libpq',
-	'pg_basebackup', 'pg_config',      'pg_dump',    'pg_dumpall',
-	'pg_isready',    'pg_receivexlog', 'pg_restore', 'psql',
+	'libecpg',       'libecmdb_compat', 'libpgtypes', 'libpq',
+	'mdb_basebackup', 'mdb_config',      'mdb_dump',    'mdb_dumpall',
+	'mdb_isready',    'mdb_receivexlog', 'mdb_restore', 'psql',
 	'reindexdb',     'vacuumdb',       @client_contribs);
 
 sub lcopy
@@ -361,11 +361,11 @@ sub GenerateConversionScript
 "CREATE OR REPLACE FUNCTION $func (INTEGER, INTEGER, CSTRING, INTERNAL, INTEGER) RETURNS VOID AS '\$libdir/$obj', '$func' LANGUAGE C STRICT;\n";
 		$sql .=
 "COMMENT ON FUNCTION $func(INTEGER, INTEGER, CSTRING, INTERNAL, INTEGER) IS 'internal conversion function for $se to $de';\n";
-		$sql .= "DROP CONVERSION pg_catalog.$name;\n";
+		$sql .= "DROP CONVERSION mdb_catalog.$name;\n";
 		$sql .=
-"CREATE DEFAULT CONVERSION pg_catalog.$name FOR '$se' TO '$de' FROM $func;\n";
+"CREATE DEFAULT CONVERSION mdb_catalog.$name FOR '$se' TO '$de' FROM $func;\n";
 		$sql .=
-"COMMENT ON CONVERSION pg_catalog.$name IS 'conversion for $se to $de';\n\n";
+"COMMENT ON CONVERSION mdb_catalog.$name IS 'conversion for $se to $de';\n\n";
 	}
 	open($F, ">$target/share/conversion_create.sql")
 	  || die "Could not write to conversion_create.sql\n";
@@ -581,8 +581,8 @@ sub CopyIncludeFiles
 	CopyFiles(
 		'Public headers', $target . '/include/',
 		'src/include/',   'mollydb_ext.h',
-		'pg_config.h',    'pg_config_ext.h',
-		'pg_config_os.h', 'dynloader.h', 'pg_config_manual.h');
+		'mdb_config.h',    'mdb_config_ext.h',
+		'mdb_config_os.h', 'dynloader.h', 'mdb_config_manual.h');
 	lcopy('src/include/libpq/libpq-fs.h', $target . '/include/libpq/')
 	  || croak 'Could not copy libpq-fs.h';
 
@@ -605,7 +605,7 @@ sub CopyIncludeFiles
 	CopyFiles(
 		'Server headers',
 		$target . '/include/server/',
-		'src/include/', 'pg_config.h', 'pg_config_ext.h', 'pg_config_os.h',
+		'src/include/', 'mdb_config.h', 'mdb_config_ext.h', 'mdb_config_os.h',
 		'dynloader.h');
 	CopyFiles(
 		'Grammar header',
@@ -641,13 +641,13 @@ qq{xcopy /s /i /q /r /y src\\include\\$d\\*.h "$ctarget\\include\\server\\$d\\"}
 
 	my $mf = read_file('src/interfaces/ecpg/include/Makefile');
 	$mf =~ s{\\\r?\n}{}g;
-	$mf =~ /^ecpg_headers\s*=\s*(.*)$/m
-	  || croak "Could not find ecpg_headers line\n";
+	$mf =~ /^ecmdb_headers\s*=\s*(.*)$/m
+	  || croak "Could not find ecmdb_headers line\n";
 	CopyFiles(
 		'ECPG headers',
 		$target . '/include/',
 		'src/interfaces/ecpg/include/',
-		'ecpg_config.h', split /\s+/, $1);
+		'ecmdb_config.h', split /\s+/, $1);
 	$mf =~ /^informix_headers\s*=\s*(.*)$/m
 	  || croak "Could not find informix_headers line\n";
 	EnsureDirectories($target . '/include', 'informix', 'informix/esql');
@@ -699,8 +699,8 @@ sub GenerateNLSFiles
 
 sub DetermineMajorVersion
 {
-	my $f = read_file('src/include/pg_config.h')
-	  || croak 'Could not open pg_config.h';
+	my $f = read_file('src/include/mdb_config.h')
+	  || croak 'Could not open mdb_config.h';
 	$f =~ /^#define\s+PG_MAJORVERSION\s+"([^"]+)"/m
 	  || croak 'Could not determine major version';
 	return $1;

@@ -24,24 +24,24 @@
 #include "access/sysattr.h"
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_aggregate.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_authid.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_constraint.h"
-#include "catalog/pg_depend.h"
-#include "catalog/pg_language.h"
-#include "catalog/pg_opclass.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_trigger.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_aggregate.h"
+#include "catalog/mdb_am.h"
+#include "catalog/mdb_authid.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_constraint.h"
+#include "catalog/mdb_depend.h"
+#include "catalog/mdb_language.h"
+#include "catalog/mdb_opclass.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_trigger.h"
+#include "catalog/mdb_type.h"
 #include "commands/defrem.h"
 #include "commands/tablespace.h"
 #include "common/keywords.h"
 #include "executor/spi.h"
 #include "funcapi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
@@ -286,9 +286,9 @@ typedef struct
  * ----------
  */
 static SPIPlanPtr plan_getrulebyoid = NULL;
-static const char *query_getrulebyoid = "SELECT * FROM pg_catalog.pg_rewrite WHERE oid = $1";
+static const char *query_getrulebyoid = "SELECT * FROM mdb_catalog.mdb_rewrite WHERE oid = $1";
 static SPIPlanPtr plan_getviewrule = NULL;
-static const char *query_getviewrule = "SELECT * FROM pg_catalog.pg_rewrite WHERE ev_class = $1 AND rulename = $2";
+static const char *query_getviewrule = "SELECT * FROM mdb_catalog.mdb_rewrite WHERE ev_class = $1 AND rulename = $2";
 
 /* GUC parameters */
 bool		quote_all_identifiers = false;
@@ -305,19 +305,19 @@ bool		quote_all_identifiers = false;
 static char *deparse_expression_pretty(Node *expr, List *dpcontext,
 						  bool forceprefix, bool showimplicit,
 						  int prettyFlags, int startIndent);
-static char *pg_get_viewdef_worker(Oid viewoid,
+static char *mdb_get_viewdef_worker(Oid viewoid,
 					  int prettyFlags, int wrapColumn);
-static char *pg_get_triggerdef_worker(Oid trigid, bool pretty);
+static char *mdb_get_triggerdef_worker(Oid trigid, bool pretty);
 static void decompile_column_index_array(Datum column_index_array, Oid relId,
 							 StringInfo buf);
-static char *pg_get_ruledef_worker(Oid ruleoid, int prettyFlags);
-static char *pg_get_indexdef_worker(Oid indexrelid, int colno,
+static char *mdb_get_ruledef_worker(Oid ruleoid, int prettyFlags);
+static char *mdb_get_indexdef_worker(Oid indexrelid, int colno,
 					   const Oid *excludeOps,
 					   bool attrsOnly, bool showTblSpc,
 					   int prettyFlags);
-static char *pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
+static char *mdb_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 							int prettyFlags);
-static text *pg_get_expr_worker(text *expr, Oid relid, const char *relname,
+static text *mdb_get_expr_worker(text *expr, Oid relid, const char *relname,
 				   int prettyFlags);
 static int print_function_arguments(StringInfo buf, HeapTuple proctup,
 						 bool print_table_args, bool print_defaults);
@@ -462,30 +462,30 @@ static char *flatten_reloptions(Oid relid);
  * ----------
  */
 Datum
-pg_get_ruledef(PG_FUNCTION_ARGS)
+mdb_get_ruledef(PG_FUNCTION_ARGS)
 {
 	Oid			ruleoid = PG_GETARG_OID(0);
 	int			prettyFlags;
 
 	prettyFlags = PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(pg_get_ruledef_worker(ruleoid, prettyFlags)));
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_ruledef_worker(ruleoid, prettyFlags)));
 }
 
 
 Datum
-pg_get_ruledef_ext(PG_FUNCTION_ARGS)
+mdb_get_ruledef_ext(PG_FUNCTION_ARGS)
 {
 	Oid			ruleoid = PG_GETARG_OID(0);
 	bool		pretty = PG_GETARG_BOOL(1);
 	int			prettyFlags;
 
 	prettyFlags = pretty ? PRETTYFLAG_PAREN | PRETTYFLAG_INDENT : PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(pg_get_ruledef_worker(ruleoid, prettyFlags)));
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_ruledef_worker(ruleoid, prettyFlags)));
 }
 
 
 static char *
-pg_get_ruledef_worker(Oid ruleoid, int prettyFlags)
+mdb_get_ruledef_worker(Oid ruleoid, int prettyFlags)
 {
 	Datum		args[1];
 	char		nulls[1];
@@ -506,9 +506,9 @@ pg_get_ruledef_worker(Oid ruleoid, int prettyFlags)
 		elog(ERROR, "SPI_connect failed");
 
 	/*
-	 * On the first call prepare the plan to lookup pg_rewrite. We read
-	 * pg_rewrite over the SPI manager instead of using the syscache to be
-	 * checked for read access on pg_rewrite.
+	 * On the first call prepare the plan to lookup mdb_rewrite. We read
+	 * mdb_rewrite over the SPI manager instead of using the syscache to be
+	 * checked for read access on mdb_rewrite.
 	 */
 	if (plan_getrulebyoid == NULL)
 	{
@@ -524,13 +524,13 @@ pg_get_ruledef_worker(Oid ruleoid, int prettyFlags)
 	}
 
 	/*
-	 * Get the pg_rewrite tuple for this rule
+	 * Get the mdb_rewrite tuple for this rule
 	 */
 	args[0] = ObjectIdGetDatum(ruleoid);
 	nulls[0] = ' ';
 	spirc = SPI_execute_plan(plan_getrulebyoid, args, nulls, true, 0);
 	if (spirc != SPI_OK_SELECT)
-		elog(ERROR, "failed to get pg_rewrite tuple for rule %u", ruleoid);
+		elog(ERROR, "failed to get mdb_rewrite tuple for rule %u", ruleoid);
 	if (SPI_processed != 1)
 		appendStringInfoChar(&buf, '-');
 	else
@@ -559,19 +559,19 @@ pg_get_ruledef_worker(Oid ruleoid, int prettyFlags)
  * ----------
  */
 Datum
-pg_get_viewdef(PG_FUNCTION_ARGS)
+mdb_get_viewdef(PG_FUNCTION_ARGS)
 {
 	/* By OID */
 	Oid			viewoid = PG_GETARG_OID(0);
 	int			prettyFlags;
 
 	prettyFlags = PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(pg_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
 }
 
 
 Datum
-pg_get_viewdef_ext(PG_FUNCTION_ARGS)
+mdb_get_viewdef_ext(PG_FUNCTION_ARGS)
 {
 	/* By OID */
 	Oid			viewoid = PG_GETARG_OID(0);
@@ -579,11 +579,11 @@ pg_get_viewdef_ext(PG_FUNCTION_ARGS)
 	int			prettyFlags;
 
 	prettyFlags = pretty ? PRETTYFLAG_PAREN | PRETTYFLAG_INDENT : PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(pg_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
 }
 
 Datum
-pg_get_viewdef_wrap(PG_FUNCTION_ARGS)
+mdb_get_viewdef_wrap(PG_FUNCTION_ARGS)
 {
 	/* By OID */
 	Oid			viewoid = PG_GETARG_OID(0);
@@ -592,11 +592,11 @@ pg_get_viewdef_wrap(PG_FUNCTION_ARGS)
 
 	/* calling this implies we want pretty printing */
 	prettyFlags = PRETTYFLAG_PAREN | PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(pg_get_viewdef_worker(viewoid, prettyFlags, wrap)));
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, wrap)));
 }
 
 Datum
-pg_get_viewdef_name(PG_FUNCTION_ARGS)
+mdb_get_viewdef_name(PG_FUNCTION_ARGS)
 {
 	/* By qualified name */
 	text	   *viewname = PG_GETARG_TEXT_P(0);
@@ -610,12 +610,12 @@ pg_get_viewdef_name(PG_FUNCTION_ARGS)
 	viewrel = makeRangeVarFromNameList(textToQualifiedNameList(viewname));
 	viewoid = RangeVarGetRelid(viewrel, NoLock, false);
 
-	PG_RETURN_TEXT_P(string_to_text(pg_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
 }
 
 
 Datum
-pg_get_viewdef_name_ext(PG_FUNCTION_ARGS)
+mdb_get_viewdef_name_ext(PG_FUNCTION_ARGS)
 {
 	/* By qualified name */
 	text	   *viewname = PG_GETARG_TEXT_P(0);
@@ -630,14 +630,14 @@ pg_get_viewdef_name_ext(PG_FUNCTION_ARGS)
 	viewrel = makeRangeVarFromNameList(textToQualifiedNameList(viewname));
 	viewoid = RangeVarGetRelid(viewrel, NoLock, false);
 
-	PG_RETURN_TEXT_P(string_to_text(pg_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_viewdef_worker(viewoid, prettyFlags, WRAP_COLUMN_DEFAULT)));
 }
 
 /*
- * Common code for by-OID and by-name variants of pg_get_viewdef
+ * Common code for by-OID and by-name variants of mdb_get_viewdef
  */
 static char *
-pg_get_viewdef_worker(Oid viewoid, int prettyFlags, int wrapColumn)
+mdb_get_viewdef_worker(Oid viewoid, int prettyFlags, int wrapColumn)
 {
 	Datum		args[2];
 	char		nulls[2];
@@ -658,9 +658,9 @@ pg_get_viewdef_worker(Oid viewoid, int prettyFlags, int wrapColumn)
 		elog(ERROR, "SPI_connect failed");
 
 	/*
-	 * On the first call prepare the plan to lookup pg_rewrite. We read
-	 * pg_rewrite over the SPI manager instead of using the syscache to be
-	 * checked for read access on pg_rewrite.
+	 * On the first call prepare the plan to lookup mdb_rewrite. We read
+	 * mdb_rewrite over the SPI manager instead of using the syscache to be
+	 * checked for read access on mdb_rewrite.
 	 */
 	if (plan_getviewrule == NULL)
 	{
@@ -677,7 +677,7 @@ pg_get_viewdef_worker(Oid viewoid, int prettyFlags, int wrapColumn)
 	}
 
 	/*
-	 * Get the pg_rewrite tuple for the view's SELECT rule
+	 * Get the mdb_rewrite tuple for the view's SELECT rule
 	 */
 	args[0] = ObjectIdGetDatum(viewoid);
 	args[1] = DirectFunctionCall1(namein, CStringGetDatum(ViewSelectRuleName));
@@ -685,7 +685,7 @@ pg_get_viewdef_worker(Oid viewoid, int prettyFlags, int wrapColumn)
 	nulls[1] = ' ';
 	spirc = SPI_execute_plan(plan_getviewrule, args, nulls, true, 0);
 	if (spirc != SPI_OK_SELECT)
-		elog(ERROR, "failed to get pg_rewrite tuple for view %u", viewoid);
+		elog(ERROR, "failed to get mdb_rewrite tuple for view %u", viewoid);
 	if (SPI_processed != 1)
 		appendStringInfoString(&buf, "Not a view");
 	else
@@ -712,27 +712,27 @@ pg_get_viewdef_worker(Oid viewoid, int prettyFlags, int wrapColumn)
  * ----------
  */
 Datum
-pg_get_triggerdef(PG_FUNCTION_ARGS)
+mdb_get_triggerdef(PG_FUNCTION_ARGS)
 {
 	Oid			trigid = PG_GETARG_OID(0);
 
-	PG_RETURN_TEXT_P(string_to_text(pg_get_triggerdef_worker(trigid, false)));
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_triggerdef_worker(trigid, false)));
 }
 
 Datum
-pg_get_triggerdef_ext(PG_FUNCTION_ARGS)
+mdb_get_triggerdef_ext(PG_FUNCTION_ARGS)
 {
 	Oid			trigid = PG_GETARG_OID(0);
 	bool		pretty = PG_GETARG_BOOL(1);
 
-	PG_RETURN_TEXT_P(string_to_text(pg_get_triggerdef_worker(trigid, pretty)));
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_triggerdef_worker(trigid, pretty)));
 }
 
 static char *
-pg_get_triggerdef_worker(Oid trigid, bool pretty)
+mdb_get_triggerdef_worker(Oid trigid, bool pretty)
 {
 	HeapTuple	ht_trig;
-	Form_pg_trigger trigrec;
+	Form_mdb_trigger trigrec;
 	StringInfoData buf;
 	Relation	tgrel;
 	ScanKeyData skey[1];
@@ -744,7 +744,7 @@ pg_get_triggerdef_worker(Oid trigid, bool pretty)
 	bool		isnull;
 
 	/*
-	 * Fetch the pg_trigger tuple by the Oid of the trigger
+	 * Fetch the mdb_trigger tuple by the Oid of the trigger
 	 */
 	tgrel = heap_open(TriggerRelationId, AccessShareLock);
 
@@ -761,7 +761,7 @@ pg_get_triggerdef_worker(Oid trigid, bool pretty)
 	if (!HeapTupleIsValid(ht_trig))
 		elog(ERROR, "could not find tuple for trigger %u", trigid);
 
-	trigrec = (Form_pg_trigger) GETSTRUCT(ht_trig);
+	trigrec = (Form_mdb_trigger) GETSTRUCT(ht_trig);
 
 	/*
 	 * Start the trigger definition. Note that the trigger's name should never
@@ -852,7 +852,7 @@ pg_get_triggerdef_worker(Oid trigid, bool pretty)
 		appendStringInfoString(&buf, "FOR EACH STATEMENT ");
 
 	/* If the trigger has a WHEN qualification, add that */
-	value = fastgetattr(ht_trig, Anum_pg_trigger_tgqual,
+	value = fastgetattr(ht_trig, Anum_mdb_trigger_tgqual,
 						tgrel->rd_att, &isnull);
 	if (!isnull)
 	{
@@ -923,7 +923,7 @@ pg_get_triggerdef_worker(Oid trigid, bool pretty)
 		char	   *p;
 		int			i;
 
-		value = fastgetattr(ht_trig, Anum_pg_trigger_tgargs,
+		value = fastgetattr(ht_trig, Anum_mdb_trigger_tgargs,
 							tgrel->rd_att, &isnull);
 		if (isnull)
 			elog(ERROR, "tgargs is null for trigger %u", trigid);
@@ -959,25 +959,25 @@ pg_get_triggerdef_worker(Oid trigid, bool pretty)
  *	if colno > 0, we only want the Nth index key's variable or expression.
  *
  * Note that the SQL-function versions of this omit any info about the
- * index tablespace; this is intentional because pg_dump wants it that way.
- * However pg_get_indexdef_string() includes index tablespace if not default.
+ * index tablespace; this is intentional because mdb_dump wants it that way.
+ * However mdb_get_indexdef_string() includes index tablespace if not default.
  * ----------
  */
 Datum
-pg_get_indexdef(PG_FUNCTION_ARGS)
+mdb_get_indexdef(PG_FUNCTION_ARGS)
 {
 	Oid			indexrelid = PG_GETARG_OID(0);
 	int			prettyFlags;
 
 	prettyFlags = PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(pg_get_indexdef_worker(indexrelid, 0,
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_indexdef_worker(indexrelid, 0,
 														   NULL,
 														   false, false,
 														   prettyFlags)));
 }
 
 Datum
-pg_get_indexdef_ext(PG_FUNCTION_ARGS)
+mdb_get_indexdef_ext(PG_FUNCTION_ARGS)
 {
 	Oid			indexrelid = PG_GETARG_OID(0);
 	int32		colno = PG_GETARG_INT32(1);
@@ -985,7 +985,7 @@ pg_get_indexdef_ext(PG_FUNCTION_ARGS)
 	int			prettyFlags;
 
 	prettyFlags = pretty ? PRETTYFLAG_PAREN | PRETTYFLAG_INDENT : PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(pg_get_indexdef_worker(indexrelid, colno,
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_indexdef_worker(indexrelid, colno,
 														   NULL,
 														   colno != 0,
 														   false,
@@ -994,19 +994,19 @@ pg_get_indexdef_ext(PG_FUNCTION_ARGS)
 
 /* Internal version that returns a palloc'd C string; no pretty-printing */
 char *
-pg_get_indexdef_string(Oid indexrelid)
+mdb_get_indexdef_string(Oid indexrelid)
 {
-	return pg_get_indexdef_worker(indexrelid, 0, NULL, false, true, 0);
+	return mdb_get_indexdef_worker(indexrelid, 0, NULL, false, true, 0);
 }
 
 /* Internal version that just reports the column definitions */
 char *
-pg_get_indexdef_columns(Oid indexrelid, bool pretty)
+mdb_get_indexdef_columns(Oid indexrelid, bool pretty)
 {
 	int			prettyFlags;
 
 	prettyFlags = pretty ? PRETTYFLAG_PAREN | PRETTYFLAG_INDENT : PRETTYFLAG_INDENT;
-	return pg_get_indexdef_worker(indexrelid, 0, NULL, true, false, prettyFlags);
+	return mdb_get_indexdef_worker(indexrelid, 0, NULL, true, false, prettyFlags);
 }
 
 /*
@@ -1016,7 +1016,7 @@ pg_get_indexdef_columns(Oid indexrelid, bool pretty)
  * NULL then it points to an array of exclusion operator OIDs.
  */
 static char *
-pg_get_indexdef_worker(Oid indexrelid, int colno,
+mdb_get_indexdef_worker(Oid indexrelid, int colno,
 					   const Oid *excludeOps,
 					   bool attrsOnly, bool showTblSpc,
 					   int prettyFlags)
@@ -1026,9 +1026,9 @@ pg_get_indexdef_worker(Oid indexrelid, int colno,
 	HeapTuple	ht_idx;
 	HeapTuple	ht_idxrel;
 	HeapTuple	ht_am;
-	Form_pg_index idxrec;
-	Form_pg_class idxrelrec;
-	Form_pg_am	amrec;
+	Form_mdb_index idxrec;
+	Form_mdb_class idxrelrec;
+	Form_mdb_am	amrec;
 	IndexAmRoutine *amroutine;
 	List	   *indexprs;
 	ListCell   *indexpr_item;
@@ -1047,48 +1047,48 @@ pg_get_indexdef_worker(Oid indexrelid, int colno,
 	char	   *sep;
 
 	/*
-	 * Fetch the pg_index tuple by the Oid of the index
+	 * Fetch the mdb_index tuple by the Oid of the index
 	 */
 	ht_idx = SearchSysCache1(INDEXRELID, ObjectIdGetDatum(indexrelid));
 	if (!HeapTupleIsValid(ht_idx))
 		elog(ERROR, "cache lookup failed for index %u", indexrelid);
-	idxrec = (Form_pg_index) GETSTRUCT(ht_idx);
+	idxrec = (Form_mdb_index) GETSTRUCT(ht_idx);
 
 	indrelid = idxrec->indrelid;
 	Assert(indexrelid == idxrec->indexrelid);
 
 	/* Must get indcollation, indclass, and indoption the hard way */
 	indcollDatum = SysCacheGetAttr(INDEXRELID, ht_idx,
-								   Anum_pg_index_indcollation, &isnull);
+								   Anum_mdb_index_indcollation, &isnull);
 	Assert(!isnull);
 	indcollation = (oidvector *) DatumGetPointer(indcollDatum);
 
 	indclassDatum = SysCacheGetAttr(INDEXRELID, ht_idx,
-									Anum_pg_index_indclass, &isnull);
+									Anum_mdb_index_indclass, &isnull);
 	Assert(!isnull);
 	indclass = (oidvector *) DatumGetPointer(indclassDatum);
 
 	indoptionDatum = SysCacheGetAttr(INDEXRELID, ht_idx,
-									 Anum_pg_index_indoption, &isnull);
+									 Anum_mdb_index_indoption, &isnull);
 	Assert(!isnull);
 	indoption = (int2vector *) DatumGetPointer(indoptionDatum);
 
 	/*
-	 * Fetch the pg_class tuple of the index relation
+	 * Fetch the mdb_class tuple of the index relation
 	 */
 	ht_idxrel = SearchSysCache1(RELOID, ObjectIdGetDatum(indexrelid));
 	if (!HeapTupleIsValid(ht_idxrel))
 		elog(ERROR, "cache lookup failed for relation %u", indexrelid);
-	idxrelrec = (Form_pg_class) GETSTRUCT(ht_idxrel);
+	idxrelrec = (Form_mdb_class) GETSTRUCT(ht_idxrel);
 
 	/*
-	 * Fetch the pg_am tuple of the index' access method
+	 * Fetch the mdb_am tuple of the index' access method
 	 */
 	ht_am = SearchSysCache1(AMOID, ObjectIdGetDatum(idxrelrec->relam));
 	if (!HeapTupleIsValid(ht_am))
 		elog(ERROR, "cache lookup failed for access method %u",
 			 idxrelrec->relam);
-	amrec = (Form_pg_am) GETSTRUCT(ht_am);
+	amrec = (Form_mdb_am) GETSTRUCT(ht_am);
 
 	/* Fetch the index AM's API struct */
 	amroutine = GetIndexAmRoutine(amrec->amhandler);
@@ -1098,14 +1098,14 @@ pg_get_indexdef_worker(Oid indexrelid, int colno,
 	 * versions of the expressions and predicate, because we want to display
 	 * non-const-folded expressions.)
 	 */
-	if (!heap_attisnull(ht_idx, Anum_pg_index_indexprs))
+	if (!heap_attisnull(ht_idx, Anum_mdb_index_indexprs))
 	{
 		Datum		exprsDatum;
 		bool		isnull;
 		char	   *exprsString;
 
 		exprsDatum = SysCacheGetAttr(INDEXRELID, ht_idx,
-									 Anum_pg_index_indexprs, &isnull);
+									 Anum_mdb_index_indexprs, &isnull);
 		Assert(!isnull);
 		exprsString = TextDatumGetCString(exprsDatum);
 		indexprs = (List *) stringToNode(exprsString);
@@ -1264,7 +1264,7 @@ pg_get_indexdef_worker(Oid indexrelid, int colno,
 		/*
 		 * If it's a partial index, decompile and append the predicate
 		 */
-		if (!heap_attisnull(ht_idx, Anum_pg_index_indpred))
+		if (!heap_attisnull(ht_idx, Anum_mdb_index_indpred))
 		{
 			Node	   *node;
 			Datum		predDatum;
@@ -1273,7 +1273,7 @@ pg_get_indexdef_worker(Oid indexrelid, int colno,
 
 			/* Convert text string to node tree */
 			predDatum = SysCacheGetAttr(INDEXRELID, ht_idx,
-										Anum_pg_index_indpred, &isnull);
+										Anum_mdb_index_indpred, &isnull);
 			Assert(!isnull);
 			predString = TextDatumGetCString(predDatum);
 			node = (Node *) stringToNode(predString);
@@ -1299,32 +1299,32 @@ pg_get_indexdef_worker(Oid indexrelid, int colno,
 
 
 /*
- * pg_get_constraintdef
+ * mdb_get_constraintdef
  *
  * Returns the definition for the constraint, ie, everything that needs to
  * appear after "ALTER TABLE ... ADD CONSTRAINT <constraintname>".
  */
 Datum
-pg_get_constraintdef(PG_FUNCTION_ARGS)
+mdb_get_constraintdef(PG_FUNCTION_ARGS)
 {
 	Oid			constraintId = PG_GETARG_OID(0);
 	int			prettyFlags;
 
 	prettyFlags = PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(pg_get_constraintdef_worker(constraintId,
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_constraintdef_worker(constraintId,
 																false,
 															  prettyFlags)));
 }
 
 Datum
-pg_get_constraintdef_ext(PG_FUNCTION_ARGS)
+mdb_get_constraintdef_ext(PG_FUNCTION_ARGS)
 {
 	Oid			constraintId = PG_GETARG_OID(0);
 	bool		pretty = PG_GETARG_BOOL(1);
 	int			prettyFlags;
 
 	prettyFlags = pretty ? PRETTYFLAG_PAREN | PRETTYFLAG_INDENT : PRETTYFLAG_INDENT;
-	PG_RETURN_TEXT_P(string_to_text(pg_get_constraintdef_worker(constraintId,
+	PG_RETURN_TEXT_P(string_to_text(mdb_get_constraintdef_worker(constraintId,
 																false,
 															  prettyFlags)));
 }
@@ -1333,20 +1333,20 @@ pg_get_constraintdef_ext(PG_FUNCTION_ARGS)
  * Internal version that returns a full ALTER TABLE ... ADD CONSTRAINT command
  */
 char *
-pg_get_constraintdef_command(Oid constraintId)
+mdb_get_constraintdef_command(Oid constraintId)
 {
-	return pg_get_constraintdef_worker(constraintId, true, 0);
+	return mdb_get_constraintdef_worker(constraintId, true, 0);
 }
 
 /*
  * As of 9.4, we now use an MVCC snapshot for this.
  */
 static char *
-pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
+mdb_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 							int prettyFlags)
 {
 	HeapTuple	tup;
-	Form_pg_constraint conForm;
+	Form_mdb_constraint conForm;
 	StringInfoData buf;
 	SysScanDesc scandesc;
 	ScanKeyData scankey[1];
@@ -1376,7 +1376,7 @@ pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 	if (!HeapTupleIsValid(tup)) /* should not happen */
 		elog(ERROR, "cache lookup failed for constraint %u", constraintId);
 
-	conForm = (Form_pg_constraint) GETSTRUCT(tup);
+	conForm = (Form_mdb_constraint) GETSTRUCT(tup);
 
 	initStringInfo(&buf);
 
@@ -1406,7 +1406,7 @@ pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 
 				/* Fetch and build referencing-column list */
 				val = SysCacheGetAttr(CONSTROID, tup,
-									  Anum_pg_constraint_conkey, &isnull);
+									  Anum_mdb_constraint_conkey, &isnull);
 				if (isnull)
 					elog(ERROR, "null conkey for constraint %u",
 						 constraintId);
@@ -1420,7 +1420,7 @@ pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 
 				/* Fetch and build referenced-column list */
 				val = SysCacheGetAttr(CONSTROID, tup,
-									  Anum_pg_constraint_confkey, &isnull);
+									  Anum_mdb_constraint_confkey, &isnull);
 				if (isnull)
 					elog(ERROR, "null confkey for constraint %u",
 						 constraintId);
@@ -1519,7 +1519,7 @@ pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 
 				/* Fetch and build target column list */
 				val = SysCacheGetAttr(CONSTROID, tup,
-									  Anum_pg_constraint_conkey, &isnull);
+									  Anum_mdb_constraint_conkey, &isnull);
 				if (isnull)
 					elog(ERROR, "null conkey for constraint %u",
 						 constraintId);
@@ -1561,7 +1561,7 @@ pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 
 				/* Fetch constraint expression in parsetree form */
 				val = SysCacheGetAttr(CONSTROID, tup,
-									  Anum_pg_constraint_conbin, &isnull);
+									  Anum_mdb_constraint_conbin, &isnull);
 				if (isnull)
 					elog(ERROR, "null conbin for constraint %u",
 						 constraintId);
@@ -1608,7 +1608,7 @@ pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 			 * There isn't an ALTER TABLE syntax for creating a user-defined
 			 * constraint trigger, but it seems better to print something than
 			 * throw an error; if we throw error then this function couldn't
-			 * safely be applied to all rows of pg_constraint.
+			 * safely be applied to all rows of mdb_constraint.
 			 */
 			appendStringInfoString(&buf, "TRIGGER");
 			break;
@@ -1622,9 +1622,9 @@ pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 				int			i;
 				Oid		   *operators;
 
-				/* Extract operator OIDs from the pg_constraint tuple */
+				/* Extract operator OIDs from the mdb_constraint tuple */
 				val = SysCacheGetAttr(CONSTROID, tup,
-									  Anum_pg_constraint_conexclop,
+									  Anum_mdb_constraint_conexclop,
 									  &isnull);
 				if (isnull)
 					elog(ERROR, "null conexclop for constraint %u",
@@ -1638,10 +1638,10 @@ pg_get_constraintdef_worker(Oid constraintId, bool fullCommand,
 				for (i = 0; i < nElems; i++)
 					operators[i] = DatumGetObjectId(elems[i]);
 
-				/* pg_get_indexdef_worker does the rest */
-				/* suppress tablespace because pg_dump wants it that way */
+				/* mdb_get_indexdef_worker does the rest */
+				/* suppress tablespace because mdb_dump wants it that way */
 				appendStringInfoString(&buf,
-									   pg_get_indexdef_worker(indexOid,
+									   mdb_get_indexdef_worker(indexOid,
 															  0,
 															  operators,
 															  false,
@@ -1714,7 +1714,7 @@ decompile_column_index_array(Datum column_index_array, Oid relId,
  * ----------
  */
 Datum
-pg_get_expr(PG_FUNCTION_ARGS)
+mdb_get_expr(PG_FUNCTION_ARGS)
 {
 	text	   *expr = PG_GETARG_TEXT_P(0);
 	Oid			relid = PG_GETARG_OID(1);
@@ -1740,11 +1740,11 @@ pg_get_expr(PG_FUNCTION_ARGS)
 	else
 		relname = NULL;
 
-	PG_RETURN_TEXT_P(pg_get_expr_worker(expr, relid, relname, prettyFlags));
+	PG_RETURN_TEXT_P(mdb_get_expr_worker(expr, relid, relname, prettyFlags));
 }
 
 Datum
-pg_get_expr_ext(PG_FUNCTION_ARGS)
+mdb_get_expr_ext(PG_FUNCTION_ARGS)
 {
 	text	   *expr = PG_GETARG_TEXT_P(0);
 	Oid			relid = PG_GETARG_OID(1);
@@ -1765,11 +1765,11 @@ pg_get_expr_ext(PG_FUNCTION_ARGS)
 	else
 		relname = NULL;
 
-	PG_RETURN_TEXT_P(pg_get_expr_worker(expr, relid, relname, prettyFlags));
+	PG_RETURN_TEXT_P(mdb_get_expr_worker(expr, relid, relname, prettyFlags));
 }
 
 static text *
-pg_get_expr_worker(text *expr, Oid relid, const char *relname, int prettyFlags)
+mdb_get_expr_worker(text *expr, Oid relid, const char *relname, int prettyFlags)
 {
 	Node	   *node;
 	List	   *context;
@@ -1804,12 +1804,12 @@ pg_get_expr_worker(text *expr, Oid relid, const char *relname, int prettyFlags)
  * ----------
  */
 Datum
-pg_get_userbyid(PG_FUNCTION_ARGS)
+mdb_get_userbyid(PG_FUNCTION_ARGS)
 {
 	Oid			roleid = PG_GETARG_OID(0);
 	Name		result;
 	HeapTuple	roletup;
-	Form_pg_authid role_rec;
+	Form_mdb_authid role_rec;
 
 	/*
 	 * Allocate space for the result
@@ -1818,12 +1818,12 @@ pg_get_userbyid(PG_FUNCTION_ARGS)
 	memset(NameStr(*result), 0, NAMEDATALEN);
 
 	/*
-	 * Get the pg_authid entry and print the result
+	 * Get the mdb_authid entry and print the result
 	 */
 	roletup = SearchSysCache1(AUTHOID, ObjectIdGetDatum(roleid));
 	if (HeapTupleIsValid(roletup))
 	{
-		role_rec = (Form_pg_authid) GETSTRUCT(roletup);
+		role_rec = (Form_mdb_authid) GETSTRUCT(roletup);
 		StrNCpy(NameStr(*result), NameStr(role_rec->rolname), NAMEDATALEN);
 		ReleaseSysCache(roletup);
 	}
@@ -1835,14 +1835,14 @@ pg_get_userbyid(PG_FUNCTION_ARGS)
 
 
 /*
- * pg_get_serial_sequence
+ * mdb_get_serial_sequence
  *		Get the name of the sequence used by a serial column,
  *		formatted suitably for passing to setval, nextval or currval.
  *		First parameter is not treated as double-quoted, second parameter
  *		is --- see documentation for reason.
  */
 Datum
-pg_get_serial_sequence(PG_FUNCTION_ARGS)
+mdb_get_serial_sequence(PG_FUNCTION_ARGS)
 {
 	text	   *tablename = PG_GETARG_TEXT_P(0);
 	text	   *columnname = PG_GETARG_TEXT_PP(1);
@@ -1874,15 +1874,15 @@ pg_get_serial_sequence(PG_FUNCTION_ARGS)
 	depRel = heap_open(DependRelationId, AccessShareLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_depend_refclassid,
+				Anum_mdb_depend_refclassid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(RelationRelationId));
 	ScanKeyInit(&key[1],
-				Anum_pg_depend_refobjid,
+				Anum_mdb_depend_refobjid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(tableOid));
 	ScanKeyInit(&key[2],
-				Anum_pg_depend_refobjsubid,
+				Anum_mdb_depend_refobjsubid,
 				BTEqualStrategyNumber, F_INT4EQ,
 				Int32GetDatum(attnum));
 
@@ -1891,7 +1891,7 @@ pg_get_serial_sequence(PG_FUNCTION_ARGS)
 
 	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 	{
-		Form_pg_depend deprec = (Form_pg_depend) GETSTRUCT(tup);
+		Form_mdb_depend deprec = (Form_mdb_depend) GETSTRUCT(tup);
 
 		/*
 		 * We assume any auto dependency of a sequence on a column must be
@@ -1925,7 +1925,7 @@ pg_get_serial_sequence(PG_FUNCTION_ARGS)
 
 
 /*
- * pg_get_functiondef
+ * mdb_get_functiondef
  *		Returns the complete "CREATE OR REPLACE FUNCTION ..." statement for
  *		the specified function.
  *
@@ -1935,13 +1935,13 @@ pg_get_serial_sequence(PG_FUNCTION_ARGS)
  * with "AS ", and no preceding line will look like that.
  */
 Datum
-pg_get_functiondef(PG_FUNCTION_ARGS)
+mdb_get_functiondef(PG_FUNCTION_ARGS)
 {
 	Oid			funcid = PG_GETARG_OID(0);
 	StringInfoData buf;
 	StringInfoData dq;
 	HeapTuple	proctup;
-	Form_pg_proc proc;
+	Form_mdb_proc proc;
 	Datum		tmp;
 	bool		isnull;
 	const char *prosrc;
@@ -1956,7 +1956,7 @@ pg_get_functiondef(PG_FUNCTION_ARGS)
 	proctup = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcid));
 	if (!HeapTupleIsValid(proctup))
 		elog(ERROR, "cache lookup failed for function %u", funcid);
-	proc = (Form_pg_proc) GETSTRUCT(proctup);
+	proc = (Form_mdb_proc) GETSTRUCT(proctup);
 	name = NameStr(proc->proname);
 
 	if (proc->proisagg)
@@ -2032,7 +2032,7 @@ pg_get_functiondef(PG_FUNCTION_ARGS)
 		appendStringInfoChar(&buf, '\n');
 
 	/* Emit any proconfig options, one per line */
-	tmp = SysCacheGetAttr(PROCOID, proctup, Anum_pg_proc_proconfig, &isnull);
+	tmp = SysCacheGetAttr(PROCOID, proctup, Anum_mdb_proc_proconfig, &isnull);
 	if (!isnull)
 	{
 		ArrayType  *a = DatumGetArrayTypeP(tmp);
@@ -2069,8 +2069,8 @@ pg_get_functiondef(PG_FUNCTION_ARGS)
 				 * Some GUC variable names are 'LIST' type and hence must not
 				 * be quoted.
 				 */
-				if (pg_strcasecmp(configitem, "DateStyle") == 0
-					|| pg_strcasecmp(configitem, "search_path") == 0)
+				if (mdb_strcasecmp(configitem, "DateStyle") == 0
+					|| mdb_strcasecmp(configitem, "search_path") == 0)
 					appendStringInfoString(&buf, pos);
 				else
 					simple_quote_literal(&buf, pos);
@@ -2082,14 +2082,14 @@ pg_get_functiondef(PG_FUNCTION_ARGS)
 	/* And finally the function definition ... */
 	appendStringInfoString(&buf, "AS ");
 
-	tmp = SysCacheGetAttr(PROCOID, proctup, Anum_pg_proc_probin, &isnull);
+	tmp = SysCacheGetAttr(PROCOID, proctup, Anum_mdb_proc_probin, &isnull);
 	if (!isnull)
 	{
 		simple_quote_literal(&buf, TextDatumGetCString(tmp));
 		appendStringInfoString(&buf, ", ");		/* assume prosrc isn't null */
 	}
 
-	tmp = SysCacheGetAttr(PROCOID, proctup, Anum_pg_proc_prosrc, &isnull);
+	tmp = SysCacheGetAttr(PROCOID, proctup, Anum_mdb_proc_prosrc, &isnull);
 	if (isnull)
 		elog(ERROR, "null prosrc");
 	prosrc = TextDatumGetCString(tmp);
@@ -2119,13 +2119,13 @@ pg_get_functiondef(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_get_function_arguments
+ * mdb_get_function_arguments
  *		Get a nicely-formatted list of arguments for a function.
  *		This is everything that would go between the parentheses in
  *		CREATE FUNCTION.
  */
 Datum
-pg_get_function_arguments(PG_FUNCTION_ARGS)
+mdb_get_function_arguments(PG_FUNCTION_ARGS)
 {
 	Oid			funcid = PG_GETARG_OID(0);
 	StringInfoData buf;
@@ -2145,13 +2145,13 @@ pg_get_function_arguments(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_get_function_identity_arguments
+ * mdb_get_function_identity_arguments
  *		Get a formatted list of arguments for a function.
  *		This is everything that would go between the parentheses in
  *		ALTER FUNCTION, etc.  In particular, don't print defaults.
  */
 Datum
-pg_get_function_identity_arguments(PG_FUNCTION_ARGS)
+mdb_get_function_identity_arguments(PG_FUNCTION_ARGS)
 {
 	Oid			funcid = PG_GETARG_OID(0);
 	StringInfoData buf;
@@ -2171,12 +2171,12 @@ pg_get_function_identity_arguments(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_get_function_result
+ * mdb_get_function_result
  *		Get a nicely-formatted version of the result type of a function.
  *		This is what would appear after RETURNS in CREATE FUNCTION.
  */
 Datum
-pg_get_function_result(PG_FUNCTION_ARGS)
+mdb_get_function_result(PG_FUNCTION_ARGS)
 {
 	Oid			funcid = PG_GETARG_OID(0);
 	StringInfoData buf;
@@ -2196,13 +2196,13 @@ pg_get_function_result(PG_FUNCTION_ARGS)
 }
 
 /*
- * Guts of pg_get_function_result: append the function's return type
+ * Guts of mdb_get_function_result: append the function's return type
  * to the specified buffer.
  */
 static void
 print_function_rettype(StringInfo buf, HeapTuple proctup)
 {
-	Form_pg_proc proc = (Form_pg_proc) GETSTRUCT(proctup);
+	Form_mdb_proc proc = (Form_mdb_proc) GETSTRUCT(proctup);
 	int			ntabargs = 0;
 	StringInfoData rbuf;
 
@@ -2231,7 +2231,7 @@ print_function_rettype(StringInfo buf, HeapTuple proctup)
 }
 
 /*
- * Common code for pg_get_function_arguments and pg_get_function_result:
+ * Common code for mdb_get_function_arguments and mdb_get_function_result:
  * append the desired subset of arguments to buf.  We print only TABLE
  * arguments when print_table_args is true, and all the others when it's false.
  * We print argument defaults only if print_defaults is true.
@@ -2241,7 +2241,7 @@ static int
 print_function_arguments(StringInfo buf, HeapTuple proctup,
 						 bool print_table_args, bool print_defaults)
 {
-	Form_pg_proc proc = (Form_pg_proc) GETSTRUCT(proctup);
+	Form_mdb_proc proc = (Form_mdb_proc) GETSTRUCT(proctup);
 	int			numargs;
 	Oid		   *argtypes;
 	char	  **argnames;
@@ -2263,7 +2263,7 @@ print_function_arguments(StringInfo buf, HeapTuple proctup,
 		bool		isnull;
 
 		proargdefaults = SysCacheGetAttr(PROCOID, proctup,
-										 Anum_pg_proc_proargdefaults,
+										 Anum_mdb_proc_proargdefaults,
 										 &isnull);
 		if (!isnull)
 		{
@@ -2284,14 +2284,14 @@ print_function_arguments(StringInfo buf, HeapTuple proctup,
 	if (proc->proisagg)
 	{
 		HeapTuple	aggtup;
-		Form_pg_aggregate agg;
+		Form_mdb_aggregate agg;
 
 		aggtup = SearchSysCache1(AGGFNOID,
 								 ObjectIdGetDatum(HeapTupleGetOid(proctup)));
 		if (!HeapTupleIsValid(aggtup))
 			elog(ERROR, "cache lookup failed for aggregate %u",
 				 HeapTupleGetOid(proctup));
-		agg = (Form_pg_aggregate) GETSTRUCT(aggtup);
+		agg = (Form_mdb_aggregate) GETSTRUCT(aggtup);
 		if (AGGKIND_IS_ORDERED_SET(agg->aggkind))
 			insertorderbyat = agg->aggnumdirectargs;
 		ReleaseSysCache(aggtup);
@@ -2419,12 +2419,12 @@ print_function_trftypes(StringInfo buf, HeapTuple proctup)
  * how information_schema.sql uses it.
  */
 Datum
-pg_get_function_arg_default(PG_FUNCTION_ARGS)
+mdb_get_function_arg_default(PG_FUNCTION_ARGS)
 {
 	Oid			funcid = PG_GETARG_OID(0);
 	int32		nth_arg = PG_GETARG_INT32(1);
 	HeapTuple	proctup;
-	Form_pg_proc proc;
+	Form_mdb_proc proc;
 	int			numargs;
 	Oid		   *argtypes;
 	char	  **argnames;
@@ -2455,7 +2455,7 @@ pg_get_function_arg_default(PG_FUNCTION_ARGS)
 			nth_inputarg++;
 
 	proargdefaults = SysCacheGetAttr(PROCOID, proctup,
-									 Anum_pg_proc_proargdefaults,
+									 Anum_mdb_proc_proargdefaults,
 									 &isnull);
 	if (isnull)
 	{
@@ -2468,7 +2468,7 @@ pg_get_function_arg_default(PG_FUNCTION_ARGS)
 	Assert(IsA(argdefaults, List));
 	pfree(str);
 
-	proc = (Form_pg_proc) GETSTRUCT(proctup);
+	proc = (Form_mdb_proc) GETSTRUCT(proctup);
 
 	/*
 	 * Calculate index into proargdefaults: proargdefaults corresponds to the
@@ -2817,7 +2817,7 @@ set_rtable_names(deparse_namespace *dpns, List *parent_namespaces,
 						if (strlen(modname) < NAMEDATALEN)
 							break;
 						/* drop chars from refname to keep all the digits */
-						refnamelen = pg_mbcliplen(refname, refnamelen,
+						refnamelen = mdb_mbcliplen(refname, refnamelen,
 												  refnamelen - 1);
 					}
 					hentry2 = (NameHashEntry *) hash_search(names_hash,
@@ -3692,7 +3692,7 @@ make_colname_unique(char *colname, deparse_namespace *dpns,
 				if (strlen(modname) < NAMEDATALEN)
 					break;
 				/* drop chars from colname to keep all the digits */
-				colnamelen = pg_mbcliplen(colname, colnamelen,
+				colnamelen = mdb_mbcliplen(colname, colnamelen,
 										  colnamelen - 1);
 			}
 		} while (!colname_is_unique(modname, dpns, colinfo));
@@ -4088,7 +4088,7 @@ pop_ancestor_plan(deparse_namespace *dpns, deparse_namespace *save_dpns)
 
 /* ----------
  * make_ruledef			- reconstruct the CREATE RULE command
- *				  for a given pg_rewrite tuple
+ *				  for a given mdb_rewrite tuple
  * ----------
  */
 static void
@@ -8045,7 +8045,7 @@ get_rule_expr(Node *node, deparse_context *context,
 
 				/*
 				 * Parenthesize the element unless it's a simple Var or a bare
-				 * function call.  Follows pg_get_indexdef_worker().
+				 * function call.  Follows mdb_get_indexdef_worker().
 				 */
 				need_parens = !IsA(iexpr->expr, Var);
 				if (IsA(iexpr->expr, FuncExpr) &&
@@ -8150,12 +8150,12 @@ get_oper_expr(OpExpr *expr, deparse_context *context)
 		/* unary operator --- but which side? */
 		Node	   *arg = (Node *) linitial(args);
 		HeapTuple	tp;
-		Form_pg_operator optup;
+		Form_mdb_operator optup;
 
 		tp = SearchSysCache1(OPEROID, ObjectIdGetDatum(opno));
 		if (!HeapTupleIsValid(tp))
 			elog(ERROR, "cache lookup failed for operator %u", opno);
-		optup = (Form_pg_operator) GETSTRUCT(tp);
+		optup = (Form_mdb_operator) GETSTRUCT(tp);
 		switch (optup->oprkind)
 		{
 			case 'l':
@@ -9389,14 +9389,14 @@ get_opclass_name(Oid opclass, Oid actual_datatype,
 				 StringInfo buf)
 {
 	HeapTuple	ht_opc;
-	Form_pg_opclass opcrec;
+	Form_mdb_opclass opcrec;
 	char	   *opcname;
 	char	   *nspname;
 
 	ht_opc = SearchSysCache1(CLAOID, ObjectIdGetDatum(opclass));
 	if (!HeapTupleIsValid(ht_opc))
 		elog(ERROR, "cache lookup failed for opclass %u", opclass);
-	opcrec = (Form_pg_opclass) GETSTRUCT(ht_opc);
+	opcrec = (Form_mdb_opclass) GETSTRUCT(ht_opc);
 
 	if (!OidIsValid(actual_datatype) ||
 		GetDefaultOpClass(actual_datatype, opcrec->opcmethod) != opclass)
@@ -9644,7 +9644,7 @@ static char *
 generate_relation_name(Oid relid, List *namespaces)
 {
 	HeapTuple	tp;
-	Form_pg_class reltup;
+	Form_mdb_class reltup;
 	bool		need_qual;
 	ListCell   *nslist;
 	char	   *relname;
@@ -9654,7 +9654,7 @@ generate_relation_name(Oid relid, List *namespaces)
 	tp = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for relation %u", relid);
-	reltup = (Form_pg_class) GETSTRUCT(tp);
+	reltup = (Form_mdb_class) GETSTRUCT(tp);
 	relname = NameStr(reltup->relname);
 
 	/* Check for conflicting CTE name */
@@ -9704,7 +9704,7 @@ static char *
 generate_qualified_relation_name(Oid relid)
 {
 	HeapTuple	tp;
-	Form_pg_class reltup;
+	Form_mdb_class reltup;
 	char	   *relname;
 	char	   *nspname;
 	char	   *result;
@@ -9712,7 +9712,7 @@ generate_qualified_relation_name(Oid relid)
 	tp = SearchSysCache1(RELOID, ObjectIdGetDatum(relid));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for relation %u", relid);
-	reltup = (Form_pg_class) GETSTRUCT(tp);
+	reltup = (Form_mdb_class) GETSTRUCT(tp);
 	relname = NameStr(reltup->relname);
 
 	nspname = get_namespace_name(reltup->relnamespace);
@@ -9749,7 +9749,7 @@ generate_function_name(Oid funcid, int nargs, List *argnames, Oid *argtypes,
 {
 	char	   *result;
 	HeapTuple	proctup;
-	Form_pg_proc procform;
+	Form_mdb_proc procform;
 	char	   *proname;
 	bool		use_variadic;
 	char	   *nspname;
@@ -9765,7 +9765,7 @@ generate_function_name(Oid funcid, int nargs, List *argnames, Oid *argtypes,
 	proctup = SearchSysCache1(PROCOID, ObjectIdGetDatum(funcid));
 	if (!HeapTupleIsValid(proctup))
 		elog(ERROR, "cache lookup failed for function %u", funcid);
-	procform = (Form_pg_proc) GETSTRUCT(proctup);
+	procform = (Form_mdb_proc) GETSTRUCT(proctup);
 	proname = NameStr(procform->proname);
 
 	/*
@@ -9857,7 +9857,7 @@ generate_operator_name(Oid operid, Oid arg1, Oid arg2)
 {
 	StringInfoData buf;
 	HeapTuple	opertup;
-	Form_pg_operator operform;
+	Form_mdb_operator operform;
 	char	   *oprname;
 	char	   *nspname;
 	Operator	p_result;
@@ -9867,7 +9867,7 @@ generate_operator_name(Oid operid, Oid arg1, Oid arg2)
 	opertup = SearchSysCache1(OPEROID, ObjectIdGetDatum(operid));
 	if (!HeapTupleIsValid(opertup))
 		elog(ERROR, "cache lookup failed for operator %u", operid);
-	operform = (Form_pg_operator) GETSTRUCT(opertup);
+	operform = (Form_mdb_operator) GETSTRUCT(opertup);
 	oprname = NameStr(operform->oprname);
 
 	/*
@@ -9926,7 +9926,7 @@ char *
 generate_collation_name(Oid collid)
 {
 	HeapTuple	tp;
-	Form_pg_collation colltup;
+	Form_mdb_collation colltup;
 	char	   *collname;
 	char	   *nspname;
 	char	   *result;
@@ -9934,7 +9934,7 @@ generate_collation_name(Oid collid)
 	tp = SearchSysCache1(COLLOID, ObjectIdGetDatum(collid));
 	if (!HeapTupleIsValid(tp))
 		elog(ERROR, "cache lookup failed for collation %u", collid);
-	colltup = (Form_pg_collation) GETSTRUCT(tp);
+	colltup = (Form_mdb_collation) GETSTRUCT(tp);
 	collname = NameStr(colltup->collname);
 
 	if (!CollationIsVisible(collid))
@@ -9980,7 +9980,7 @@ flatten_reloptions(Oid relid)
 		elog(ERROR, "cache lookup failed for relation %u", relid);
 
 	reloptions = SysCacheGetAttr(RELOID, tuple,
-								 Anum_pg_class_reloptions, &isnull);
+								 Anum_mdb_class_reloptions, &isnull);
 	if (!isnull)
 	{
 		StringInfoData buf;

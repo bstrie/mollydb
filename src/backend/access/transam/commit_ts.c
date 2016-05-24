@@ -3,7 +3,7 @@
  * commit_ts.c
  *		MollyDB commit timestamp manager
  *
- * This module is a pg_clog-like system that stores the commit timestamp
+ * This module is a mdb_clog-like system that stores the commit timestamp
  * for each transaction.
  *
  * XLOG interactions: this module generates an XLOG record whenever a new
@@ -28,10 +28,10 @@
 #include "access/htup_details.h"
 #include "access/slru.h"
 #include "access/transam.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "miscadmin.h"
-#include "pg_trace.h"
+#include "mdb_trace.h"
 #include "utils/builtins.h"
 #include "utils/snapmgr.h"
 #include "utils/timestamp.h"
@@ -394,7 +394,7 @@ error_commit_ts_disabled(void)
  * SQL-callable wrapper to obtain commit time of a transaction
  */
 Datum
-pg_xact_commit_timestamp(PG_FUNCTION_ARGS)
+mdb_xact_commit_timestamp(PG_FUNCTION_ARGS)
 {
 	TransactionId xid = PG_GETARG_UINT32(0);
 	TimestampTz ts;
@@ -410,7 +410,7 @@ pg_xact_commit_timestamp(PG_FUNCTION_ARGS)
 
 
 Datum
-pg_last_committed_xact(PG_FUNCTION_ARGS)
+mdb_last_committed_xact(PG_FUNCTION_ARGS)
 {
 	TransactionId xid;
 	TimestampTz ts;
@@ -424,7 +424,7 @@ pg_last_committed_xact(PG_FUNCTION_ARGS)
 
 	/*
 	 * Construct a tuple descriptor for the result row.  This must match this
-	 * function's pg_proc entry!
+	 * function's mdb_proc entry!
 	 */
 	tupdesc = CreateTemplateTupleDesc(2, false);
 	TupleDescInitEntry(tupdesc, (AttrNumber) 1, "xid",
@@ -485,7 +485,7 @@ CommitTsShmemInit(void)
 
 	CommitTsCtl->PagePrecedes = CommitTsPagePrecedes;
 	SimpleLruInit(CommitTsCtl, "commit_timestamp", CommitTsShmemBuffers(), 0,
-				  CommitTsControlLock, "pg_commit_ts",
+				  CommitTsControlLock, "mdb_commit_ts",
 				  LWTRANCHE_COMMITTS_BUFFERS);
 
 	commitTsShared = ShmemInitStruct("CommitTs shared",
@@ -587,7 +587,7 @@ CommitTsParameterChange(bool newvalue, bool oldvalue)
 	 * If the commit_ts module is disabled in this server and we get word from
 	 * the master server that it is enabled there, activate it so that we can
 	 * replay future WAL records involving it; also mark it as active on
-	 * pg_control.  If the old value was already set, we already did this, so
+	 * mdb_control.  If the old value was already set, we already did this, so
 	 * don't do anything.
 	 *
 	 * If the module is disabled in the master, disable it here too, unless

@@ -39,19 +39,19 @@ typedef struct
 
 
 /* Functions for gathering information about NFA states and arcs */
-extern int	pg_reg_getnumstates(const regex_t *regex);
-extern int	pg_reg_getinitialstate(const regex_t *regex);
-extern int	pg_reg_getfinalstate(const regex_t *regex);
-extern int	pg_reg_getnumoutarcs(const regex_t *regex, int st);
-extern void pg_reg_getoutarcs(const regex_t *regex, int st,
+extern int	mdb_reg_getnumstates(const regex_t *regex);
+extern int	mdb_reg_getinitialstate(const regex_t *regex);
+extern int	mdb_reg_getfinalstate(const regex_t *regex);
+extern int	mdb_reg_getnumoutarcs(const regex_t *regex, int st);
+extern void mdb_reg_getoutarcs(const regex_t *regex, int st,
 				  regex_arc_t *arcs, int arcs_len);
 
 /* Functions for gathering information about colors */
-extern int	pg_reg_getnumcolors(const regex_t *regex);
-extern int	pg_reg_colorisbegin(const regex_t *regex, int co);
-extern int	pg_reg_colorisend(const regex_t *regex, int co);
-extern int	pg_reg_getnumcharacters(const regex_t *regex, int co);
-extern void pg_reg_getcharacters(const regex_t *regex, int co,
-					 pg_wchar *chars, int chars_len);
+extern int	mdb_reg_getnumcolors(const regex_t *regex);
+extern int	mdb_reg_colorisbegin(const regex_t *regex, int co);
+extern int	mdb_reg_colorisend(const regex_t *regex, int co);
+extern int	mdb_reg_getnumcharacters(const regex_t *regex, int co);
+extern void mdb_reg_getcharacters(const regex_t *regex, int co,
+					 mdb_wchar *chars, int chars_len);
 
 #endif   /* _REGEXPORT_H_ */

@@ -10,9 +10,9 @@
 
 #include "access/htup_details.h"
 #include "access/xact.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "executor/spi.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "parser/parse_type.h"
 #include "utils/memutils.h"
 #include "utils/syscache.h"
@@ -145,7 +145,7 @@ PLy_spi_prepare(PyObject *self, PyObject *args)
 			ReleaseSysCache(typeTup);
 		}
 
-		pg_verifymbstr(query, strlen(query), false);
+		mdb_verifymbstr(query, strlen(query), false);
 		plan->plan = SPI_prepare(query, plan->nargs, plan->types);
 		if (plan->plan == NULL)
 			elog(ERROR, "SPI_prepare failed: %s",
@@ -359,7 +359,7 @@ PLy_spi_execute_query(char *query, long limit)
 	{
 		PLyExecutionContext *exec_ctx = PLy_current_execution_context();
 
-		pg_verifymbstr(query, strlen(query), false);
+		mdb_verifymbstr(query, strlen(query), false);
 		rv = SPI_execute(query, exec_ctx->curr_proc->fn_readonly, limit);
 		ret = PLy_spi_execute_fetch_result(SPI_tuptable, SPI_processed, rv);
 

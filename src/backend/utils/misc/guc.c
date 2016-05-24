@@ -66,7 +66,7 @@
 #include "storage/dsm_impl.h"
 #include "storage/standby.h"
 #include "storage/fd.h"
-#include "storage/pg_shmem.h"
+#include "storage/mdb_shmem.h"
 #include "storage/proc.h"
 #include "storage/predicate.h"
 #include "tcop/tcopprot.h"
@@ -75,7 +75,7 @@
 #include "utils/bytea.h"
 #include "utils/guc_tables.h"
 #include "utils/memutils.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 #include "utils/plancache.h"
 #include "utils/portal.h"
 #include "utils/ps_status.h"
@@ -89,8 +89,8 @@
 #endif
 
 #define CONFIG_FILENAME "mollydb.conf"
-#define HBA_FILENAME	"pg_hba.conf"
-#define IDENT_FILENAME	"pg_ident.conf"
+#define HBA_FILENAME	"mdb_hba.conf"
+#define IDENT_FILENAME	"mdb_ident.conf"
 
 #ifdef EXEC_BACKEND
 #define CONFIG_EXEC_PARAMS "global/config_exec_params"
@@ -126,7 +126,7 @@ char	   *GUC_check_errmsg_string;
 char	   *GUC_check_errdetail_string;
 char	   *GUC_check_errhint_string;
 
-static void do_serialize(char **destptr, Size *maxbytes, const char *fmt,...) pg_attribute_printf(3, 4);
+static void do_serialize(char **destptr, Size *maxbytes, const char *fmt,...) mdb_attribute_printf(3, 4);
 
 static void set_config_sourcefile(const char *name, char *sourcefile,
 					  int sourceline);
@@ -161,7 +161,7 @@ static bool check_log_stats(bool *newval, void **extra, GucSource source);
 static bool check_canonical_path(char **newval, void **extra, GucSource source);
 static bool check_timezone_abbreviations(char **newval, void **extra, GucSource source);
 static void assign_timezone_abbreviations(const char *newval, void *extra);
-static void pg_timezone_abbrev_initialize(void);
+static void mdb_timezone_abbrev_initialize(void);
 static const char *show_archive_command(void);
 static void assign_tcp_keepalives_idle(int newval, void *extra);
 static void assign_tcp_keepalives_interval(int newval, void *extra);
@@ -459,8 +459,8 @@ int			tcp_keepalives_count;
 int			ssl_renegotiation_limit;
 
 /*
- * This really belongs in pg_shmem.c, but is defined here so that it doesn't
- * need to be duplicated in all the different implementations of pg_shmem.c.
+ * This really belongs in mdb_shmem.c, but is defined here so that it doesn't
+ * need to be duplicated in all the different implementations of mdb_shmem.c.
  */
 int			huge_pages;
 
@@ -769,7 +769,7 @@ static const unit_conversion time_unit_conversion_table[] =
  *
  * 6. Don't forget to document the option (at least in config.sgml).
  *
- * 7. If it's a new GUC_LIST option you must edit pg_dumpall.c to ensure
+ * 7. If it's a new GUC_LIST option you must edit mdb_dumpall.c to ensure
  *	  it is not single quoted at dump time.
  */
 
@@ -1521,7 +1521,7 @@ static struct config_bool ConfigureNamesBool[] =
 			gettext_noop("Sets whether Kerberos and GSSAPI user names should be treated as case-insensitive."),
 			NULL
 		},
-		&pg_krb_caseins_users,
+		&mdb_krb_caseins_users,
 		false,
 		NULL, NULL, NULL
 	},
@@ -2631,7 +2631,7 @@ static struct config_int ConfigureNamesInt[] =
 			NULL
 		},
 		&autovacuum_freeze_max_age,
-		/* see pg_resetxlog if you change the upper-limit value */
+		/* see mdb_resetxlog if you change the upper-limit value */
 		200000000, 100000, 2000000000,
 		NULL, NULL, NULL
 	},
@@ -2782,7 +2782,7 @@ static struct config_int ConfigureNamesInt[] =
 
 	{
 		{"track_activity_query_size", PGC_POSTMASTER, RESOURCES_MEM,
-			gettext_noop("Sets the size reserved for pg_stat_activity.query, in bytes."),
+			gettext_noop("Sets the size reserved for mdb_stat_activity.query, in bytes."),
 			NULL,
 
 			/*
@@ -3071,7 +3071,7 @@ static struct config_string ConfigureNamesString[] =
 			NULL,
 			GUC_SUPERUSER_ONLY
 		},
-		&pg_krb_server_keyfile,
+		&mdb_krb_server_keyfile,
 		PG_KRB_SRVTAB,
 		NULL, NULL, NULL
 	},
@@ -3262,7 +3262,7 @@ static struct config_string ConfigureNamesString[] =
 			GUC_SUPERUSER_ONLY
 		},
 		&Log_directory,
-		"pg_log",
+		"mdb_log",
 		check_canonical_path, NULL, NULL
 	},
 	{
@@ -3493,7 +3493,7 @@ static struct config_string ConfigureNamesString[] =
 			NULL
 		},
 		&TSCurrentConfig,
-		"pg_catalog.simple",
+		"mdb_catalog.simple",
 		check_TSCurrentConfig, assign_TSCurrentConfig, NULL
 	},
 
@@ -4370,7 +4370,7 @@ InitializeGUCOptions(void)
 	 * Before log_line_prefix could possibly receive a nonempty setting, make
 	 * sure that timezone processing is minimally alive (see elog.c).
 	 */
-	pg_timezone_initialize();
+	mdb_timezone_initialize();
 
 	/*
 	 * Build sorted array of all GUC variables.
@@ -4603,7 +4603,7 @@ SelectConfigFiles(const char *userDoption, const char *progname)
 					 configdir,
 					 strerror(errno));
 		if (errno == ENOENT)
-			write_stderr("Run initdb or pg_basebackup to initialize a MollyDB data directory.\n");
+			write_stderr("Run initdb or mdb_basebackup to initialize a MollyDB data directory.\n");
 		return false;
 	}
 
@@ -4701,10 +4701,10 @@ SelectConfigFiles(const char *userDoption, const char *progname)
 	 * when InitializeGUCOptions runs, so the bootstrap default value cannot
 	 * be the real desired default.
 	 */
-	pg_timezone_abbrev_initialize();
+	mdb_timezone_abbrev_initialize();
 
 	/*
-	 * Figure out where pg_hba.conf is, and make sure the path is absolute.
+	 * Figure out where mdb_hba.conf is, and make sure the path is absolute.
 	 */
 	if (HbaFileName)
 		fname = make_absolute_path(HbaFileName);
@@ -4727,7 +4727,7 @@ SelectConfigFiles(const char *userDoption, const char *progname)
 	free(fname);
 
 	/*
-	 * Likewise for pg_ident.conf.
+	 * Likewise for mdb_ident.conf.
 	 */
 	if (IdentFileName)
 		fname = make_absolute_path(IdentFileName);
@@ -5542,7 +5542,7 @@ config_enum_lookup_by_name(struct config_enum * record, const char *value,
 
 	for (entry = record->options; entry && entry->name; entry++)
 	{
-		if (pg_strcasecmp(value, entry->name) == 0)
+		if (mdb_strcasecmp(value, entry->name) == 0)
 		{
 			*retval = entry->val;
 			return TRUE;
@@ -6875,7 +6875,7 @@ write_auto_conf_file(int fd, const char *filename, ConfigVariable *head)
 	}
 
 	/* fsync before considering the write to be successful */
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 		ereport(ERROR,
 				(errcode_for_file_access(),
 				 errmsg("could not fsync file \"%s\": %m", filename)));
@@ -9279,8 +9279,8 @@ ParseLongOption(const char *string, char **name, char **value)
 
 
 /*
- * Handle options fetched from pg_db_role_setting.setconfig,
- * pg_proc.proconfig, etc.  Caller must specify proper context/source/action.
+ * Handle options fetched from mdb_db_role_setting.setconfig,
+ * mdb_proc.proconfig, etc.  Caller must specify proper context/source/action.
  *
  * The array parameter must be an array of TEXT (it must not be NULL).
  */
@@ -9860,16 +9860,16 @@ check_log_destination(char **newval, void **extra, GucSource source)
 	{
 		char	   *tok = (char *) lfirst(l);
 
-		if (pg_strcasecmp(tok, "stderr") == 0)
+		if (mdb_strcasecmp(tok, "stderr") == 0)
 			newlogdest |= LOG_DESTINATION_STDERR;
-		else if (pg_strcasecmp(tok, "csvlog") == 0)
+		else if (mdb_strcasecmp(tok, "csvlog") == 0)
 			newlogdest |= LOG_DESTINATION_CSVLOG;
 #ifdef HAVE_SYSLOG
-		else if (pg_strcasecmp(tok, "syslog") == 0)
+		else if (mdb_strcasecmp(tok, "syslog") == 0)
 			newlogdest |= LOG_DESTINATION_SYSLOG;
 #endif
 #ifdef WIN32
-		else if (pg_strcasecmp(tok, "eventlog") == 0)
+		else if (mdb_strcasecmp(tok, "eventlog") == 0)
 			newlogdest |= LOG_DESTINATION_EVENTLOG;
 #endif
 		else
@@ -10012,7 +10012,7 @@ check_timezone_abbreviations(char **newval, void **extra, GucSource source)
 	/*
 	 * The boot_val given above for timezone_abbreviations is NULL. When we
 	 * see this we just do nothing.  If this value isn't overridden from the
-	 * config file then pg_timezone_abbrev_initialize() will eventually
+	 * config file then mdb_timezone_abbrev_initialize() will eventually
 	 * replace it with "Default".  This hack has two purposes: to avoid
 	 * wasting cycles loading values that might soon be overridden from the
 	 * config file, and to avoid trying to read the timezone abbrev files
@@ -10047,7 +10047,7 @@ assign_timezone_abbreviations(const char *newval, void *extra)
 }
 
 /*
- * pg_timezone_abbrev_initialize --- set default value if not done already
+ * mdb_timezone_abbrev_initialize --- set default value if not done already
  *
  * This is called after initial loading of mollydb.conf.  If no
  * timezone_abbreviations setting was found therein, select default.
@@ -10057,7 +10057,7 @@ assign_timezone_abbreviations(const char *newval, void *extra)
  * value after a mollydb.conf entry for it is removed.
  */
 static void
-pg_timezone_abbrev_initialize(void)
+mdb_timezone_abbrev_initialize(void)
 {
 	SetConfigOption("timezone_abbreviations", "Default",
 					PGC_POSTMASTER, PGC_S_DYNAMIC_DEFAULT);
@@ -10258,7 +10258,7 @@ check_application_name(char **newval, void **extra, GucSource source)
 static void
 assign_application_name(const char *newval, void *extra)
 {
-	/* Update the pg_stat_activity view */
+	/* Update the mdb_stat_activity view */
 	pgstat_report_appname(newval);
 }
 

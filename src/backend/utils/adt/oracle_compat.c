@@ -17,7 +17,7 @@
 
 #include "utils/builtins.h"
 #include "utils/formatting.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 
 static text *dotrim(const char *string, int stringlen,
@@ -167,7 +167,7 @@ lpad(PG_FUNCTION_ARGS)
 	if (s2len < 0)
 		s2len = 0;				/* shouldn't happen */
 
-	s1len = pg_mbstrlen_with_len(VARDATA_ANY(string1), s1len);
+	s1len = mdb_mbstrlen_with_len(VARDATA_ANY(string1), s1len);
 
 	if (s1len > len)
 		s1len = len;			/* truncate string1 to len chars */
@@ -175,10 +175,10 @@ lpad(PG_FUNCTION_ARGS)
 	if (s2len <= 0)
 		len = s1len;			/* nothing to pad with, so don't pad */
 
-	bytelen = pg_database_encoding_max_length() * len;
+	bytelen = mdb_database_encoding_max_length() * len;
 
 	/* check for integer overflow */
-	if (len != 0 && bytelen / pg_database_encoding_max_length() != len)
+	if (len != 0 && bytelen / mdb_database_encoding_max_length() != len)
 		ereport(ERROR,
 				(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 				 errmsg("requested length too large")));
@@ -193,7 +193,7 @@ lpad(PG_FUNCTION_ARGS)
 
 	while (m--)
 	{
-		int			mlen = pg_mblen(ptr2);
+		int			mlen = mdb_mblen(ptr2);
 
 		memcpy(ptr_ret, ptr2, mlen);
 		ptr_ret += mlen;
@@ -206,7 +206,7 @@ lpad(PG_FUNCTION_ARGS)
 
 	while (s1len--)
 	{
-		int			mlen = pg_mblen(ptr1);
+		int			mlen = mdb_mblen(ptr1);
 
 		memcpy(ptr_ret, ptr1, mlen);
 		ptr_ret += mlen;
@@ -265,7 +265,7 @@ rpad(PG_FUNCTION_ARGS)
 	if (s2len < 0)
 		s2len = 0;				/* shouldn't happen */
 
-	s1len = pg_mbstrlen_with_len(VARDATA_ANY(string1), s1len);
+	s1len = mdb_mbstrlen_with_len(VARDATA_ANY(string1), s1len);
 
 	if (s1len > len)
 		s1len = len;			/* truncate string1 to len chars */
@@ -273,10 +273,10 @@ rpad(PG_FUNCTION_ARGS)
 	if (s2len <= 0)
 		len = s1len;			/* nothing to pad with, so don't pad */
 
-	bytelen = pg_database_encoding_max_length() * len;
+	bytelen = mdb_database_encoding_max_length() * len;
 
 	/* Check for integer overflow */
-	if (len != 0 && bytelen / pg_database_encoding_max_length() != len)
+	if (len != 0 && bytelen / mdb_database_encoding_max_length() != len)
 		ereport(ERROR,
 				(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 				 errmsg("requested length too large")));
@@ -289,7 +289,7 @@ rpad(PG_FUNCTION_ARGS)
 
 	while (s1len--)
 	{
-		int			mlen = pg_mblen(ptr1);
+		int			mlen = mdb_mblen(ptr1);
 
 		memcpy(ptr_ret, ptr1, mlen);
 		ptr_ret += mlen;
@@ -301,7 +301,7 @@ rpad(PG_FUNCTION_ARGS)
 
 	while (m--)
 	{
-		int			mlen = pg_mblen(ptr2);
+		int			mlen = mdb_mblen(ptr2);
 
 		memcpy(ptr_ret, ptr2, mlen);
 		ptr_ret += mlen;
@@ -377,7 +377,7 @@ dotrim(const char *string, int stringlen,
 	/* Nothing to do if either string or set is empty */
 	if (stringlen > 0 && setlen > 0)
 	{
-		if (pg_database_encoding_max_length() > 1)
+		if (mdb_database_encoding_max_length() > 1)
 		{
 			/*
 			 * In the multibyte-encoding case, build arrays of pointers to
@@ -406,7 +406,7 @@ dotrim(const char *string, int stringlen,
 			while (len > 0)
 			{
 				stringchars[stringnchars] = p;
-				stringmblen[stringnchars] = mblen = pg_mblen(p);
+				stringmblen[stringnchars] = mblen = mdb_mblen(p);
 				stringnchars++;
 				p += mblen;
 				len -= mblen;
@@ -420,7 +420,7 @@ dotrim(const char *string, int stringlen,
 			while (len > 0)
 			{
 				setchars[setnchars] = p;
-				setmblen[setnchars] = mblen = pg_mblen(p);
+				setmblen[setnchars] = mblen = mdb_mblen(p);
 				setnchars++;
 				p += mblen;
 				len -= mblen;
@@ -749,10 +749,10 @@ translate(PG_FUNCTION_ARGS)
 	 * The worst-case expansion is to substitute a max-length character for a
 	 * single-byte character at each position of the string.
 	 */
-	worst_len = pg_database_encoding_max_length() * m;
+	worst_len = mdb_database_encoding_max_length() * m;
 
 	/* check for integer overflow */
-	if (worst_len / pg_database_encoding_max_length() != m)
+	if (worst_len / mdb_database_encoding_max_length() != m)
 		ereport(ERROR,
 				(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 				 errmsg("requested length too large")));
@@ -763,12 +763,12 @@ translate(PG_FUNCTION_ARGS)
 
 	while (m > 0)
 	{
-		source_len = pg_mblen(source);
+		source_len = mdb_mblen(source);
 		from_index = 0;
 
 		for (i = 0; i < fromlen; i += len)
 		{
-			len = pg_mblen(&from_ptr[i]);
+			len = mdb_mblen(&from_ptr[i]);
 			if (len == source_len &&
 				memcmp(source, &from_ptr[i], len) == 0)
 				break;
@@ -782,13 +782,13 @@ translate(PG_FUNCTION_ARGS)
 
 			for (i = 0; i < from_index; i++)
 			{
-				p += pg_mblen(p);
+				p += mdb_mblen(p);
 				if (p >= (to_ptr + tolen))
 					break;
 			}
 			if (p < (to_ptr + tolen))
 			{
-				len = pg_mblen(p);
+				len = mdb_mblen(p);
 				memcpy(target, p, len);
 				target += len;
 				retlen += len;
@@ -889,7 +889,7 @@ ascii(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		if (pg_encoding_max_length(encoding) > 1 && *data > 127)
+		if (mdb_encoding_max_length(encoding) > 1 && *data > 127)
 			ereport(ERROR,
 					(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 					 errmsg("requested character too large")));
@@ -980,7 +980,7 @@ chr			(PG_FUNCTION_ARGS)
 		 * Unicode "surrogate pair" codes.  Make sure what we created is valid
 		 * UTF8.
 		 */
-		if (!pg_utf8_islegal(wch, bytes))
+		if (!mdb_utf8_islegal(wch, bytes))
 			ereport(ERROR,
 					(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 					 errmsg("requested character not valid for encoding: %d",
@@ -999,7 +999,7 @@ chr			(PG_FUNCTION_ARGS)
 					(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 					 errmsg("null character not permitted")));
 
-		is_mb = pg_encoding_max_length(encoding) > 1;
+		is_mb = mdb_encoding_max_length(encoding) > 1;
 
 		if ((is_mb && (cvalue > 127)) || (!is_mb && (cvalue > 255)))
 			ereport(ERROR,

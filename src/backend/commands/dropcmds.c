@@ -19,8 +19,8 @@
 #include "catalog/dependency.h"
 #include "catalog/namespace.h"
 #include "catalog/objectaddress.h"
-#include "catalog/pg_class.h"
-#include "catalog/pg_proc.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_proc.h"
 #include "commands/defrem.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
@@ -106,7 +106,7 @@ RemoveObjects(DropStmt *stmt)
 			if (!HeapTupleIsValid(tup)) /* should not happen */
 				elog(ERROR, "cache lookup failed for function %u", funcOid);
 
-			if (((Form_pg_proc) GETSTRUCT(tup))->proisagg)
+			if (((Form_mdb_proc) GETSTRUCT(tup))->proisagg)
 				ereport(ERROR,
 						(errcode(ERRCODE_WRONG_OBJECT_TYPE),
 						 errmsg("\"%s\" is an aggregate function",
@@ -119,7 +119,7 @@ RemoveObjects(DropStmt *stmt)
 		/* Check permissions. */
 		namespaceId = get_object_namespace(&address);
 		if (!OidIsValid(namespaceId) ||
-			!pg_namespace_ownercheck(namespaceId, GetUserId()))
+			!mdb_namespace_ownercheck(namespaceId, GetUserId()))
 			check_object_ownership(GetUserId(), stmt->removeType, address,
 								   objname, objargs, relation);
 

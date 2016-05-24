@@ -4,7 +4,7 @@
  *
  * Portions Copyright (c) 2003-2016, MollyDB Global Development Group
  *
- * src/include/pg_getopt.h
+ * src/include/mdb_getopt.h
  */
 #ifndef PG_GETOPT_H
 #define PG_GETOPT_H

@@ -17,9 +17,9 @@
 #include <math.h>
 
 #include "access/htup_details.h"
-#include "catalog/pg_collation.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_statistic.h"
+#include "catalog/mdb_collation.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_statistic.h"
 #include "optimizer/clauses.h"
 #include "utils/array.h"
 #include "utils/lsyscache.h"
@@ -134,7 +134,7 @@ scalararraysel_containment(PlannerInfo *root,
 	/* Get array element stats for var, if available */
 	if (HeapTupleIsValid(vardata.statsTuple))
 	{
-		Form_pg_statistic stats;
+		Form_mdb_statistic stats;
 		Datum	   *values;
 		int			nvalues;
 		float4	   *numbers;
@@ -142,7 +142,7 @@ scalararraysel_containment(PlannerInfo *root,
 		float4	   *hist;
 		int			nhist;
 
-		stats = (Form_pg_statistic) GETSTRUCT(vardata.statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata.statsTuple);
 
 		/* MCELEM will be an array of same type as element */
 		if (get_attstatsslot(vardata.statsTuple,
@@ -339,7 +339,7 @@ arraycontjoinsel(PG_FUNCTION_ARGS)
  * Calculate selectivity for "arraycolumn @> const", "arraycolumn && const"
  * or "arraycolumn <@ const" based on the statistics
  *
- * This function is mainly responsible for extracting the pg_statistic data
+ * This function is mainly responsible for extracting the mdb_statistic data
  * to be used; we then pass the problem on to mcelem_array_selec().
  */
 static Selectivity
@@ -365,7 +365,7 @@ calc_arraycontsel(VariableStatData *vardata, Datum constval,
 
 	if (HeapTupleIsValid(vardata->statsTuple))
 	{
-		Form_pg_statistic stats;
+		Form_mdb_statistic stats;
 		Datum	   *values;
 		int			nvalues;
 		float4	   *numbers;
@@ -373,7 +373,7 @@ calc_arraycontsel(VariableStatData *vardata, Datum constval,
 		float4	   *hist;
 		int			nhist;
 
-		stats = (Form_pg_statistic) GETSTRUCT(vardata->statsTuple);
+		stats = (Form_mdb_statistic) GETSTRUCT(vardata->statsTuple);
 
 		/* MCELEM will be an array of same type as column */
 		if (get_attstatsslot(vardata->statsTuple,

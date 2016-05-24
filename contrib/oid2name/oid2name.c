@@ -10,7 +10,7 @@
 #include "mollydb_fe.h"
 
 #include "libpq-fe.h"
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 
 /* an extensible array to keep track of elements to show */
 typedef struct
@@ -96,7 +96,7 @@ get_opts(int argc, char **argv, struct options * my_opts)
 		{
 				/* specify the database */
 			case 'd':
-				my_opts->dbname = pg_strdup(optarg);
+				my_opts->dbname = mdb_strdup(optarg);
 				break;
 
 				/* specify one tablename to show */
@@ -121,17 +121,17 @@ get_opts(int argc, char **argv, struct options * my_opts)
 
 				/* host to connect to */
 			case 'H':
-				my_opts->hostname = pg_strdup(optarg);
+				my_opts->hostname = mdb_strdup(optarg);
 				break;
 
 				/* port to connect to on remote host */
 			case 'p':
-				my_opts->port = pg_strdup(optarg);
+				my_opts->port = mdb_strdup(optarg);
 				break;
 
 				/* username */
 			case 'U':
-				my_opts->username = pg_strdup(optarg);
+				my_opts->username = mdb_strdup(optarg);
 				break;
 
 				/* display system tables */
@@ -203,16 +203,16 @@ add_one_elt(char *eltname, eary *eary)
 	if (eary->alloc == 0)
 	{
 		eary	  ->alloc = 8;
-		eary	  ->array = (char **) pg_malloc(8 * sizeof(char *));
+		eary	  ->array = (char **) mdb_malloc(8 * sizeof(char *));
 	}
 	else if (eary->num >= eary->alloc)
 	{
 		eary	  ->alloc *= 2;
-		eary	  ->array = (char **) pg_realloc(eary->array,
+		eary	  ->array = (char **) mdb_realloc(eary->array,
 											   eary->alloc * sizeof(char *));
 	}
 
-	eary	  ->array[eary->num] = pg_strdup(eltname);
+	eary	  ->array[eary->num] = mdb_strdup(eltname);
 	eary	  ->num++;
 }
 
@@ -232,7 +232,7 @@ get_comma_elts(eary *eary)
 				length = 0;
 
 	if (eary->num == 0)
-		return pg_strdup("");
+		return mdb_strdup("");
 
 	/*
 	 * PQescapeString wants 2 * length + 1 bytes of breath space.  Add two
@@ -241,7 +241,7 @@ get_comma_elts(eary *eary)
 	for (i = 0; i < eary->num; i++)
 		length += strlen(eary->array[i]);
 
-	ret = (char *) pg_malloc(length * 2 + 4 * eary->num);
+	ret = (char *) mdb_malloc(length * 2 + 4 * eary->num);
 	ptr = ret;
 
 	for (i = 0; i < eary->num; i++)
@@ -361,7 +361,7 @@ sql_exec(PGconn *conn, const char *todo, bool quiet)
 	nfields = PQnfields(res);
 
 	/* for each field, get the needed width */
-	length = (int *) pg_malloc(sizeof(int) * nfields);
+	length = (int *) mdb_malloc(sizeof(int) * nfields);
 	for (j = 0; j < nfields; j++)
 		length[j] = strlen(PQfname(res, j));
 
@@ -384,7 +384,7 @@ sql_exec(PGconn *conn, const char *todo, bool quiet)
 			l += length[j] + 2;
 		}
 		fprintf(stdout, "\n");
-		pad = (char *) pg_malloc(l + 1);
+		pad = (char *) mdb_malloc(l + 1);
 		MemSet(pad, '-', l);
 		pad[l] = '\0';
 		fprintf(stdout, "%s\n", pad);
@@ -414,10 +414,10 @@ sql_exec_dumpalldbs(PGconn *conn, struct options * opts)
 {
 	char		todo[1024];
 
-	/* get the oid and database name from the system pg_database table */
+	/* get the oid and database name from the system mdb_database table */
 	snprintf(todo, sizeof(todo),
 			 "SELECT d.oid AS \"Oid\", datname AS \"Database Name\", "
-			 "spcname AS \"Tablespace\" FROM pg_catalog.pg_database d JOIN pg_catalog.pg_tablespace t ON "
+			 "spcname AS \"Tablespace\" FROM mdb_catalog.mdb_database d JOIN mdb_catalog.mdb_tablespace t ON "
 			 "(dattablespace = t.oid) ORDER BY 2");
 
 	sql_exec(conn, todo, opts->quiet);
@@ -433,11 +433,11 @@ sql_exec_dumpalltables(PGconn *conn, struct options * opts)
 	char	   *addfields = ",c.oid AS \"Oid\", nspname AS \"Schema\", spcname as \"Tablespace\" ";
 
 	snprintf(todo, sizeof(todo),
-			 "SELECT pg_catalog.pg_relation_filenode(c.oid) as \"Filenode\", relname as \"Table Name\" %s "
-			 "FROM pg_class c "
-		   "	LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace "
-			 "	LEFT JOIN pg_catalog.pg_database d ON d.datname = pg_catalog.current_database(),"
-			 "	pg_catalog.pg_tablespace t "
+			 "SELECT mdb_catalog.mdb_relation_filenode(c.oid) as \"Filenode\", relname as \"Table Name\" %s "
+			 "FROM mdb_class c "
+		   "	LEFT JOIN mdb_catalog.mdb_namespace n ON n.oid = c.relnamespace "
+			 "	LEFT JOIN mdb_catalog.mdb_database d ON d.datname = mdb_catalog.current_database(),"
+			 "	mdb_catalog.mdb_tablespace t "
 			 "WHERE relkind IN ('r', 'm'%s%s) AND "
 			 "	%s"
 			 "		t.oid = CASE"
@@ -448,7 +448,7 @@ sql_exec_dumpalltables(PGconn *conn, struct options * opts)
 			 opts->extended ? addfields : "",
 			 opts->indexes ? ", 'i', 'S'" : "",
 			 opts->systables ? ", 't'" : "",
-			 opts->systables ? "" : "n.nspname NOT IN ('pg_catalog', 'information_schema') AND n.nspname !~ '^pg_toast' AND");
+			 opts->systables ? "" : "n.nspname NOT IN ('mdb_catalog', 'information_schema') AND n.nspname !~ '^mdb_toast' AND");
 
 	sql_exec(conn, todo, opts->quiet);
 }
@@ -475,7 +475,7 @@ sql_exec_searchtables(PGconn *conn, struct options * opts)
 	comma_filenodes = get_comma_elts(opts->filenodes);
 
 	/* 80 extra chars for SQL expression */
-	qualifiers = (char *) pg_malloc(strlen(comma_oids) + strlen(comma_tables) +
+	qualifiers = (char *) mdb_malloc(strlen(comma_oids) + strlen(comma_tables) +
 									strlen(comma_filenodes) + 80);
 	ptr = qualifiers;
 
@@ -488,7 +488,7 @@ sql_exec_searchtables(PGconn *conn, struct options * opts)
 	{
 		if (written)
 			ptr += sprintf(ptr, " OR ");
-		ptr += sprintf(ptr, "pg_catalog.pg_relation_filenode(c.oid) IN (%s)", comma_filenodes);
+		ptr += sprintf(ptr, "mdb_catalog.mdb_relation_filenode(c.oid) IN (%s)", comma_filenodes);
 		written = true;
 	}
 	if (opts->tables->num > 0)
@@ -503,11 +503,11 @@ sql_exec_searchtables(PGconn *conn, struct options * opts)
 
 	/* now build the query */
 	todo = psprintf(
-					"SELECT pg_catalog.pg_relation_filenode(c.oid) as \"Filenode\", relname as \"Table Name\" %s\n"
-					"FROM pg_catalog.pg_class c \n"
-		"	LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace \n"
-					"	LEFT JOIN pg_catalog.pg_database d ON d.datname = pg_catalog.current_database(),\n"
-					"	pg_catalog.pg_tablespace t \n"
+					"SELECT mdb_catalog.mdb_relation_filenode(c.oid) as \"Filenode\", relname as \"Table Name\" %s\n"
+					"FROM mdb_catalog.mdb_class c \n"
+		"	LEFT JOIN mdb_catalog.mdb_namespace n ON n.oid = c.relnamespace \n"
+					"	LEFT JOIN mdb_catalog.mdb_database d ON d.datname = mdb_catalog.current_database(),\n"
+					"	mdb_catalog.mdb_tablespace t \n"
 					"WHERE relkind IN ('r', 'm', 'i', 'S', 't') AND \n"
 					"		t.oid = CASE\n"
 			"			WHEN reltablespace <> 0 THEN reltablespace\n"
@@ -530,7 +530,7 @@ sql_exec_dumpalltbspc(PGconn *conn, struct options * opts)
 
 	snprintf(todo, sizeof(todo),
 			 "SELECT oid AS \"Oid\", spcname as \"Tablespace Name\"\n"
-			 "FROM pg_catalog.pg_tablespace");
+			 "FROM mdb_catalog.mdb_tablespace");
 
 	sql_exec(conn, todo, opts->quiet);
 }
@@ -541,11 +541,11 @@ main(int argc, char **argv)
 	struct options *my_opts;
 	PGconn	   *pgconn;
 
-	my_opts = (struct options *) pg_malloc(sizeof(struct options));
+	my_opts = (struct options *) mdb_malloc(sizeof(struct options));
 
-	my_opts->oids = (eary *) pg_malloc(sizeof(eary));
-	my_opts->tables = (eary *) pg_malloc(sizeof(eary));
-	my_opts->filenodes = (eary *) pg_malloc(sizeof(eary));
+	my_opts->oids = (eary *) mdb_malloc(sizeof(eary));
+	my_opts->tables = (eary *) mdb_malloc(sizeof(eary));
+	my_opts->filenodes = (eary *) mdb_malloc(sizeof(eary));
 
 	my_opts->oids->num = my_opts->oids->alloc = 0;
 	my_opts->tables->num = my_opts->tables->alloc = 0;

@@ -98,7 +98,7 @@ pgrowlocks(PG_FUNCTION_ARGS)
 		rel = heap_openrv(relrv, AccessShareLock);
 
 		/* check permissions: must have SELECT on table */
-		aclresult = pg_class_aclcheck(RelationGetRelid(rel), GetUserId(),
+		aclresult = mdb_class_aclcheck(RelationGetRelid(rel), GetUserId(),
 									  ACL_SELECT);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_CLASS,

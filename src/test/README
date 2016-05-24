@@ -32,7 +32,7 @@ recovery/
   Test suite for recovery and replication
 
 regress/
-  MollyDB's main regression test suite, pg_regress
+  MollyDB's main regression test suite, mdb_regress
 
 ssl/
   Tests to exercise and verify SSL certificate handling

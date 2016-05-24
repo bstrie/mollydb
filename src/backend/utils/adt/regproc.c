@@ -26,12 +26,12 @@
 #include "access/htup_details.h"
 #include "catalog/indexing.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_class.h"
-#include "catalog/pg_operator.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_ts_config.h"
-#include "catalog/pg_ts_dict.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_operator.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_ts_config.h"
+#include "catalog/mdb_ts_dict.h"
+#include "catalog/mdb_type.h"
 #include "lib/stringinfo.h"
 #include "miscadmin.h"
 #include "parser/parse_type.h"
@@ -58,7 +58,7 @@ static void parseNameAndArgTypes(const char *string, bool allowNone,
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '-' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_proc entry.
+ * match an existing mdb_proc entry.
  */
 Datum
 regprocin(PG_FUNCTION_ARGS)
@@ -86,9 +86,9 @@ regprocin(PG_FUNCTION_ARGS)
 
 	/*
 	 * In bootstrap mode we assume the given name is not schema-qualified, and
-	 * just search pg_proc for a unique match.  This is needed for
-	 * initializing other system catalogs (pg_namespace may not exist yet, and
-	 * certainly there are no schemas other than pg_catalog).
+	 * just search mdb_proc for a unique match.  This is needed for
+	 * initializing other system catalogs (mdb_namespace may not exist yet, and
+	 * certainly there are no schemas other than mdb_catalog).
 	 */
 	if (IsBootstrapProcessingMode())
 	{
@@ -99,7 +99,7 @@ regprocin(PG_FUNCTION_ARGS)
 		HeapTuple	tuple;
 
 		ScanKeyInit(&skey[0],
-					Anum_pg_proc_proname,
+					Anum_mdb_proc_proname,
 					BTEqualStrategyNumber, F_NAMEEQ,
 					CStringGetDatum(pro_name_or_oid));
 
@@ -133,7 +133,7 @@ regprocin(PG_FUNCTION_ARGS)
 
 	/*
 	 * Normal case: parse the name into components and see if it matches any
-	 * pg_proc entries in the current search path.
+	 * mdb_proc entries in the current search path.
 	 */
 	names = stringToQualifiedNameList(pro_name_or_oid);
 	clist = FuncnameGetCandidates(names, -1, NIL, false, false, false);
@@ -166,7 +166,7 @@ to_regproc(PG_FUNCTION_ARGS)
 	FuncCandidateList clist;
 
 	/*
-	 * Parse the name into components and see if it matches any pg_proc
+	 * Parse the name into components and see if it matches any mdb_proc
 	 * entries in the current search path.
 	 */
 	names = stringToQualifiedNameList(pro_name);
@@ -198,7 +198,7 @@ regprocout(PG_FUNCTION_ARGS)
 
 	if (HeapTupleIsValid(proctup))
 	{
-		Form_pg_proc procform = (Form_pg_proc) GETSTRUCT(proctup);
+		Form_mdb_proc procform = (Form_mdb_proc) GETSTRUCT(proctup);
 		char	   *proname = NameStr(procform->proname);
 
 		/*
@@ -232,7 +232,7 @@ regprocout(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		/* If OID doesn't match any pg_proc entry, return it numerically */
+		/* If OID doesn't match any mdb_proc entry, return it numerically */
 		result = (char *) palloc(NAMEDATALEN);
 		snprintf(result, NAMEDATALEN, "%u", proid);
 	}
@@ -267,7 +267,7 @@ regprocsend(PG_FUNCTION_ARGS)
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '-' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_proc entry.
+ * match an existing mdb_proc entry.
  */
 Datum
 regprocedurein(PG_FUNCTION_ARGS)
@@ -390,7 +390,7 @@ format_procedure_internal(Oid procedure_oid, bool force_qualify)
 
 	if (HeapTupleIsValid(proctup))
 	{
-		Form_pg_proc procform = (Form_pg_proc) GETSTRUCT(proctup);
+		Form_mdb_proc procform = (Form_mdb_proc) GETSTRUCT(proctup);
 		char	   *proname = NameStr(procform->proname);
 		int			nargs = procform->pronargs;
 		int			i;
@@ -431,7 +431,7 @@ format_procedure_internal(Oid procedure_oid, bool force_qualify)
 	}
 	else
 	{
-		/* If OID doesn't match any pg_proc entry, return it numerically */
+		/* If OID doesn't match any mdb_proc entry, return it numerically */
 		result = (char *) palloc(NAMEDATALEN);
 		snprintf(result, NAMEDATALEN, "%u", procedure_oid);
 	}
@@ -449,7 +449,7 @@ void
 format_procedure_parts(Oid procedure_oid, List **objnames, List **objargs)
 {
 	HeapTuple	proctup;
-	Form_pg_proc procform;
+	Form_mdb_proc procform;
 	int			nargs;
 	int			i;
 
@@ -458,7 +458,7 @@ format_procedure_parts(Oid procedure_oid, List **objnames, List **objargs)
 	if (!HeapTupleIsValid(proctup))
 		elog(ERROR, "cache lookup failed for procedure with OID %u", procedure_oid);
 
-	procform = (Form_pg_proc) GETSTRUCT(proctup);
+	procform = (Form_mdb_proc) GETSTRUCT(proctup);
 	nargs = procform->pronargs;
 
 	*objnames = list_make2(get_namespace_name_or_temp(procform->pronamespace),
@@ -518,7 +518,7 @@ regproceduresend(PG_FUNCTION_ARGS)
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '0' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_operator entry.
+ * match an existing mdb_operator entry.
  */
 Datum
 regoperin(PG_FUNCTION_ARGS)
@@ -546,9 +546,9 @@ regoperin(PG_FUNCTION_ARGS)
 
 	/*
 	 * In bootstrap mode we assume the given name is not schema-qualified, and
-	 * just search pg_operator for a unique match.  This is needed for
-	 * initializing other system catalogs (pg_namespace may not exist yet, and
-	 * certainly there are no schemas other than pg_catalog).
+	 * just search mdb_operator for a unique match.  This is needed for
+	 * initializing other system catalogs (mdb_namespace may not exist yet, and
+	 * certainly there are no schemas other than mdb_catalog).
 	 */
 	if (IsBootstrapProcessingMode())
 	{
@@ -559,7 +559,7 @@ regoperin(PG_FUNCTION_ARGS)
 		HeapTuple	tuple;
 
 		ScanKeyInit(&skey[0],
-					Anum_pg_operator_oprname,
+					Anum_mdb_operator_oprname,
 					BTEqualStrategyNumber, F_NAMEEQ,
 					CStringGetDatum(opr_name_or_oid));
 
@@ -592,7 +592,7 @@ regoperin(PG_FUNCTION_ARGS)
 
 	/*
 	 * Normal case: parse the name into components and see if it matches any
-	 * pg_operator entries in the current search path.
+	 * mdb_operator entries in the current search path.
 	 */
 	names = stringToQualifiedNameList(opr_name_or_oid);
 	clist = OpernameGetCandidates(names, '\0', false);
@@ -625,7 +625,7 @@ to_regoper(PG_FUNCTION_ARGS)
 	FuncCandidateList clist;
 
 	/*
-	 * Parse the name into components and see if it matches any pg_operator
+	 * Parse the name into components and see if it matches any mdb_operator
 	 * entries in the current search path.
 	 */
 	names = stringToQualifiedNameList(opr_name);
@@ -657,7 +657,7 @@ regoperout(PG_FUNCTION_ARGS)
 
 	if (HeapTupleIsValid(opertup))
 	{
-		Form_pg_operator operform = (Form_pg_operator) GETSTRUCT(opertup);
+		Form_mdb_operator operform = (Form_mdb_operator) GETSTRUCT(opertup);
 		char	   *oprname = NameStr(operform->oprname);
 
 		/*
@@ -696,7 +696,7 @@ regoperout(PG_FUNCTION_ARGS)
 	else
 	{
 		/*
-		 * If OID doesn't match any pg_operator entry, return it numerically
+		 * If OID doesn't match any mdb_operator entry, return it numerically
 		 */
 		result = (char *) palloc(NAMEDATALEN);
 		snprintf(result, NAMEDATALEN, "%u", oprid);
@@ -732,7 +732,7 @@ regopersend(PG_FUNCTION_ARGS)
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '0' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_operator entry.
+ * match an existing mdb_operator entry.
  */
 Datum
 regoperatorin(PG_FUNCTION_ARGS)
@@ -844,7 +844,7 @@ format_operator_internal(Oid operator_oid, bool force_qualify)
 
 	if (HeapTupleIsValid(opertup))
 	{
-		Form_pg_operator operform = (Form_pg_operator) GETSTRUCT(opertup);
+		Form_mdb_operator operform = (Form_mdb_operator) GETSTRUCT(opertup);
 		char	   *oprname = NameStr(operform->oprname);
 		char	   *nspname;
 		StringInfoData buf;
@@ -889,7 +889,7 @@ format_operator_internal(Oid operator_oid, bool force_qualify)
 	else
 	{
 		/*
-		 * If OID doesn't match any pg_operator entry, return it numerically
+		 * If OID doesn't match any mdb_operator entry, return it numerically
 		 */
 		result = (char *) palloc(NAMEDATALEN);
 		snprintf(result, NAMEDATALEN, "%u", operator_oid);
@@ -914,14 +914,14 @@ void
 format_operator_parts(Oid operator_oid, List **objnames, List **objargs)
 {
 	HeapTuple	opertup;
-	Form_pg_operator oprForm;
+	Form_mdb_operator oprForm;
 
 	opertup = SearchSysCache1(OPEROID, ObjectIdGetDatum(operator_oid));
 	if (!HeapTupleIsValid(opertup))
 		elog(ERROR, "cache lookup failed for operator with OID %u",
 			 operator_oid);
 
-	oprForm = (Form_pg_operator) GETSTRUCT(opertup);
+	oprForm = (Form_mdb_operator) GETSTRUCT(opertup);
 	*objnames = list_make2(get_namespace_name_or_temp(oprForm->oprnamespace),
 						   pstrdup(NameStr(oprForm->oprname)));
 	*objargs = NIL;
@@ -979,7 +979,7 @@ regoperatorsend(PG_FUNCTION_ARGS)
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '-' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_class entry.
+ * match an existing mdb_class entry.
  */
 Datum
 regclassin(PG_FUNCTION_ARGS)
@@ -1006,9 +1006,9 @@ regclassin(PG_FUNCTION_ARGS)
 
 	/*
 	 * In bootstrap mode we assume the given name is not schema-qualified, and
-	 * just search pg_class for a match.  This is needed for initializing
-	 * other system catalogs (pg_namespace may not exist yet, and certainly
-	 * there are no schemas other than pg_catalog).
+	 * just search mdb_class for a match.  This is needed for initializing
+	 * other system catalogs (mdb_namespace may not exist yet, and certainly
+	 * there are no schemas other than mdb_catalog).
 	 */
 	if (IsBootstrapProcessingMode())
 	{
@@ -1018,7 +1018,7 @@ regclassin(PG_FUNCTION_ARGS)
 		HeapTuple	tuple;
 
 		ScanKeyInit(&skey[0],
-					Anum_pg_class_relname,
+					Anum_mdb_class_relname,
 					BTEqualStrategyNumber, F_NAMEEQ,
 					CStringGetDatum(class_name_or_oid));
 
@@ -1043,7 +1043,7 @@ regclassin(PG_FUNCTION_ARGS)
 
 	/*
 	 * Normal case: parse the name into components and see if it matches any
-	 * pg_class entries in the current search path.
+	 * mdb_class entries in the current search path.
 	 */
 	names = stringToQualifiedNameList(class_name_or_oid);
 
@@ -1066,7 +1066,7 @@ to_regclass(PG_FUNCTION_ARGS)
 	List	   *names;
 
 	/*
-	 * Parse the name into components and see if it matches any pg_class
+	 * Parse the name into components and see if it matches any mdb_class
 	 * entries in the current search path.
 	 */
 	names = stringToQualifiedNameList(class_name);
@@ -1100,7 +1100,7 @@ regclassout(PG_FUNCTION_ARGS)
 
 	if (HeapTupleIsValid(classtup))
 	{
-		Form_pg_class classform = (Form_pg_class) GETSTRUCT(classtup);
+		Form_mdb_class classform = (Form_mdb_class) GETSTRUCT(classtup);
 		char	   *classname = NameStr(classform->relname);
 
 		/*
@@ -1129,7 +1129,7 @@ regclassout(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		/* If OID doesn't match any pg_class entry, return it numerically */
+		/* If OID doesn't match any mdb_class entry, return it numerically */
 		result = (char *) palloc(NAMEDATALEN);
 		snprintf(result, NAMEDATALEN, "%u", classid);
 	}
@@ -1164,9 +1164,9 @@ regclasssend(PG_FUNCTION_ARGS)
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '-' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_type entry.
+ * match an existing mdb_type entry.
  *
- * In bootstrap mode the name must just equal some existing name in pg_type.
+ * In bootstrap mode the name must just equal some existing name in mdb_type.
  * In normal mode the type name can be specified using the full type syntax
  * recognized by the parser; for example, DOUBLE PRECISION and INTEGER[] will
  * work and be translated to the correct type names.  (We ignore any typmod
@@ -1197,9 +1197,9 @@ regtypein(PG_FUNCTION_ARGS)
 
 	/*
 	 * In bootstrap mode we assume the given name is not schema-qualified, and
-	 * just search pg_type for a match.  This is needed for initializing other
-	 * system catalogs (pg_namespace may not exist yet, and certainly there
-	 * are no schemas other than pg_catalog).
+	 * just search mdb_type for a match.  This is needed for initializing other
+	 * system catalogs (mdb_namespace may not exist yet, and certainly there
+	 * are no schemas other than mdb_catalog).
 	 */
 	if (IsBootstrapProcessingMode())
 	{
@@ -1209,7 +1209,7 @@ regtypein(PG_FUNCTION_ARGS)
 		HeapTuple	tuple;
 
 		ScanKeyInit(&skey[0],
-					Anum_pg_type_typname,
+					Anum_mdb_type_typname,
 					BTEqualStrategyNumber, F_NAMEEQ,
 					CStringGetDatum(typ_name_or_oid));
 
@@ -1284,7 +1284,7 @@ regtypeout(PG_FUNCTION_ARGS)
 
 	if (HeapTupleIsValid(typetup))
 	{
-		Form_pg_type typeform = (Form_pg_type) GETSTRUCT(typetup);
+		Form_mdb_type typeform = (Form_mdb_type) GETSTRUCT(typetup);
 
 		/*
 		 * In bootstrap mode, skip the fancy namespace stuff and just return
@@ -1304,7 +1304,7 @@ regtypeout(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		/* If OID doesn't match any pg_type entry, return it numerically */
+		/* If OID doesn't match any mdb_type entry, return it numerically */
 		result = (char *) palloc(NAMEDATALEN);
 		snprintf(result, NAMEDATALEN, "%u", typid);
 	}
@@ -1339,7 +1339,7 @@ regtypesend(PG_FUNCTION_ARGS)
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '-' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_ts_config entry.
+ * match an existing mdb_ts_config entry.
  *
  * This function is not needed in bootstrap mode, so we don't worry about
  * making it work then.
@@ -1367,7 +1367,7 @@ regconfigin(PG_FUNCTION_ARGS)
 
 	/*
 	 * Normal case: parse the name into components and see if it matches any
-	 * pg_ts_config entries in the current search path.
+	 * mdb_ts_config entries in the current search path.
 	 */
 	names = stringToQualifiedNameList(cfg_name_or_oid);
 
@@ -1396,7 +1396,7 @@ regconfigout(PG_FUNCTION_ARGS)
 
 	if (HeapTupleIsValid(cfgtup))
 	{
-		Form_pg_ts_config cfgform = (Form_pg_ts_config) GETSTRUCT(cfgtup);
+		Form_mdb_ts_config cfgform = (Form_mdb_ts_config) GETSTRUCT(cfgtup);
 		char	   *cfgname = NameStr(cfgform->cfgname);
 		char	   *nspname;
 
@@ -1414,7 +1414,7 @@ regconfigout(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		/* If OID doesn't match any pg_ts_config row, return it numerically */
+		/* If OID doesn't match any mdb_ts_config row, return it numerically */
 		result = (char *) palloc(NAMEDATALEN);
 		snprintf(result, NAMEDATALEN, "%u", cfgid);
 	}
@@ -1449,7 +1449,7 @@ regconfigsend(PG_FUNCTION_ARGS)
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '-' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_ts_dict entry.
+ * match an existing mdb_ts_dict entry.
  *
  * This function is not needed in bootstrap mode, so we don't worry about
  * making it work then.
@@ -1477,7 +1477,7 @@ regdictionaryin(PG_FUNCTION_ARGS)
 
 	/*
 	 * Normal case: parse the name into components and see if it matches any
-	 * pg_ts_dict entries in the current search path.
+	 * mdb_ts_dict entries in the current search path.
 	 */
 	names = stringToQualifiedNameList(dict_name_or_oid);
 
@@ -1506,7 +1506,7 @@ regdictionaryout(PG_FUNCTION_ARGS)
 
 	if (HeapTupleIsValid(dicttup))
 	{
-		Form_pg_ts_dict dictform = (Form_pg_ts_dict) GETSTRUCT(dicttup);
+		Form_mdb_ts_dict dictform = (Form_mdb_ts_dict) GETSTRUCT(dicttup);
 		char	   *dictname = NameStr(dictform->dictname);
 		char	   *nspname;
 
@@ -1525,7 +1525,7 @@ regdictionaryout(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		/* If OID doesn't match any pg_ts_dict row, return it numerically */
+		/* If OID doesn't match any mdb_ts_dict row, return it numerically */
 		result = (char *) palloc(NAMEDATALEN);
 		snprintf(result, NAMEDATALEN, "%u", dictid);
 	}
@@ -1559,7 +1559,7 @@ regdictionarysend(PG_FUNCTION_ARGS)
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '-' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_authid entry.
+ * match an existing mdb_authid entry.
  *
  * This function is not needed in bootstrap mode, so we don't worry about
  * making it work then.
@@ -1585,7 +1585,7 @@ regrolein(PG_FUNCTION_ARGS)
 		PG_RETURN_OID(result);
 	}
 
-	/* Normal case: see if the name matches any pg_authid entry. */
+	/* Normal case: see if the name matches any mdb_authid entry. */
 	names = stringToQualifiedNameList(role_name_or_oid);
 
 	if (list_length(names) != 1)
@@ -1683,7 +1683,7 @@ regrolesend(PG_FUNCTION_ARGS)
  * We also accept a numeric OID, for symmetry with the output routine.
  *
  * '-' signifies unknown (OID 0).  In all other cases, the input must
- * match an existing pg_namespace entry.
+ * match an existing mdb_namespace entry.
  */
 Datum
 regnamespacein(PG_FUNCTION_ARGS)
@@ -1706,7 +1706,7 @@ regnamespacein(PG_FUNCTION_ARGS)
 		PG_RETURN_OID(result);
 	}
 
-	/* Normal case: see if the name matches any pg_namespace entry. */
+	/* Normal case: see if the name matches any mdb_namespace entry. */
 	names = stringToQualifiedNameList(nsp_name_or_oid);
 
 	if (list_length(names) != 1)
@@ -1989,7 +1989,7 @@ parseNameAndArgTypes(const char *string, bool allowNone, List **names,
 			*ptr2 = '\0';
 		}
 
-		if (allowNone && pg_strcasecmp(typename, "none") == 0)
+		if (allowNone && mdb_strcasecmp(typename, "none") == 0)
 		{
 			/* Special case for NONE */
 			typeid = InvalidOid;

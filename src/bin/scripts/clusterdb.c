@@ -71,13 +71,13 @@ main(int argc, char *argv[])
 		switch (c)
 		{
 			case 'h':
-				host = pg_strdup(optarg);
+				host = mdb_strdup(optarg);
 				break;
 			case 'p':
-				port = pg_strdup(optarg);
+				port = mdb_strdup(optarg);
 				break;
 			case 'U':
-				username = pg_strdup(optarg);
+				username = mdb_strdup(optarg);
 				break;
 			case 'w':
 				prompt_password = TRI_NO;
@@ -92,7 +92,7 @@ main(int argc, char *argv[])
 				quiet = true;
 				break;
 			case 'd':
-				dbname = pg_strdup(optarg);
+				dbname = mdb_strdup(optarg);
 				break;
 			case 'a':
 				alldb = true;
@@ -104,7 +104,7 @@ main(int argc, char *argv[])
 				verbose = true;
 				break;
 			case 2:
-				maintenance_db = pg_strdup(optarg);
+				maintenance_db = mdb_strdup(optarg);
 				break;
 			default:
 				fprintf(stderr, _("Try \"%s --help\" for more information.\n"), progname);
@@ -233,7 +233,7 @@ cluster_all_databases(bool verbose, const char *maintenance_db,
 
 	conn = connectMaintenanceDatabase(maintenance_db, host, port, username,
 									  prompt_password, progname);
-	result = executeQuery(conn, "SELECT datname FROM pg_database WHERE datallowconn ORDER BY 1;", progname, echo);
+	result = executeQuery(conn, "SELECT datname FROM mdb_database WHERE datallowconn ORDER BY 1;", progname, echo);
 	PQfinish(conn);
 
 	for (i = 0; i < PQntuples(result); i++)

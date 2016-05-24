@@ -29,7 +29,7 @@ extern bool autocommit,
 extern int	braces_open,
 			ret_value,
 			struct_level,
-			ecpg_internal_var;
+			ecmdb_internal_var;
 extern char *current_function;
 extern char *descriptor_index;
 extern char *descriptor_name;
@@ -50,7 +50,7 @@ extern struct _include_path *include_paths;
 extern struct cursor *cur;
 extern struct typedefs *types;
 extern struct _defines *defines;
-extern struct ECPGtype ecpg_no_indicator;
+extern struct ECPGtype ecmdb_no_indicator;
 extern struct variable no_indicator;
 extern struct arguments *argsinsert;
 extern struct arguments *argsresult;
@@ -78,8 +78,8 @@ extern int	base_yylex(void);
 extern void base_yyerror(const char *);
 extern void *mm_alloc(size_t), *mm_realloc(void *, size_t);
 extern char *mm_strdup(const char *);
-extern void mmerror(int errorcode, enum errortype type, const char *error,...) pg_attribute_printf(3, 4);
-extern void mmfatal(int errorcode, const char *error,...) pg_attribute_printf(2, 3) pg_attribute_noreturn();
+extern void mmerror(int errorcode, enum errortype type, const char *error,...) mdb_attribute_printf(3, 4);
+extern void mmfatal(int errorcode, const char *error,...) mdb_attribute_printf(2, 3) mdb_attribute_noreturn();
 extern void output_get_descr_header(char *);
 extern void output_get_descr(char *, char *);
 extern void output_set_descr_header(char *);

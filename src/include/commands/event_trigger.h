@@ -15,7 +15,7 @@
 
 #include "catalog/dependency.h"
 #include "catalog/objectaddress.h"
-#include "catalog/pg_event_trigger.h"
+#include "catalog/mdb_event_trigger.h"
 #include "nodes/parsenodes.h"
 #include "utils/aclchk_internal.h"
 #include "tcop/deparse_utility.h"

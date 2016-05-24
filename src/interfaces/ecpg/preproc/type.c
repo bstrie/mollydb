@@ -6,7 +6,7 @@
 
 #define indicator_set ind_type != NULL && ind_type->type != ECPGt_NO_INDICATOR
 
-static struct ECPGstruct_member struct_no_indicator = {"no_indicator", &ecpg_no_indicator, NULL};
+static struct ECPGstruct_member struct_no_indicator = {"no_indicator", &ecmdb_no_indicator, NULL};
 
 /* malloc + error check */
 void *
@@ -541,7 +541,7 @@ ECPGdump_a_simple(FILE *o, const char *name, enum ECPGttype type,
 				else
 					sprintf(variable, "&(%s%s)", prefix ? prefix : "", name);
 
-				sprintf(offset, "sizeof(%s)", ecpg_type_name(type));
+				sprintf(offset, "sizeof(%s)", ecmdb_type_name(type));
 				break;
 		}
 
@@ -587,7 +587,7 @@ ECPGdump_a_struct(FILE *o, const char *name, const char *ind_name, char *arrsiz,
 
 	prefix = pbuf;
 
-	if (ind_type == &ecpg_no_indicator)
+	if (ind_type == &ecmdb_no_indicator)
 		ind_p = &struct_no_indicator;
 	else if (ind_type != NULL)
 	{

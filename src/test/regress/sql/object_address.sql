@@ -1,5 +1,5 @@
 --
--- Test for pg_get_object_address
+-- Test for mdb_get_object_address
 --
 
 -- Clean up in case a prior regression run failed
@@ -41,9 +41,9 @@ CREATE TRANSFORM FOR int LANGUAGE SQL (
 	TO SQL WITH FUNCTION int4recv(internal));
 
 -- test some error cases
-SELECT pg_get_object_address('stone', '{}', '{}');
-SELECT pg_get_object_address('table', '{}', '{}');
-SELECT pg_get_object_address('table', '{NULL}', '{}');
+SELECT mdb_get_object_address('stone', '{}', '{}');
+SELECT mdb_get_object_address('table', '{}', '{}');
+SELECT mdb_get_object_address('table', '{NULL}', '{}');
 
 -- unrecognized object types
 DO $$
@@ -54,7 +54,7 @@ BEGIN
 		('toast table column'), ('view column'), ('materialized view column')
 	LOOP
 		BEGIN
-			PERFORM pg_get_object_address(objtype, '{one}', '{}');
+			PERFORM mdb_get_object_address(objtype, '{one}', '{}');
 		EXCEPTION WHEN invalid_parameter_value THEN
 			RAISE WARNING 'error for %: %', objtype, sqlerrm;
 		END;
@@ -85,7 +85,7 @@ BEGIN
 			FOR args IN VALUES ('{}'), ('{integer}')
 			LOOP
 				BEGIN
-					PERFORM pg_get_object_address(objtype, names, args);
+					PERFORM mdb_get_object_address(objtype, names, args);
 				EXCEPTION WHEN OTHERS THEN
 						RAISE WARNING 'error for %,%,%: %', objtype, names, args, sqlerrm;
 				END;
@@ -96,29 +96,29 @@ END;
 $$;
 
 -- these object types cannot be qualified names
-SELECT pg_get_object_address('language', '{one}', '{}');
-SELECT pg_get_object_address('language', '{one,two}', '{}');
-SELECT pg_get_object_address('large object', '{123}', '{}');
-SELECT pg_get_object_address('large object', '{123,456}', '{}');
-SELECT pg_get_object_address('large object', '{blargh}', '{}');
-SELECT pg_get_object_address('schema', '{one}', '{}');
-SELECT pg_get_object_address('schema', '{one,two}', '{}');
-SELECT pg_get_object_address('role', '{one}', '{}');
-SELECT pg_get_object_address('role', '{one,two}', '{}');
-SELECT pg_get_object_address('database', '{one}', '{}');
-SELECT pg_get_object_address('database', '{one,two}', '{}');
-SELECT pg_get_object_address('tablespace', '{one}', '{}');
-SELECT pg_get_object_address('tablespace', '{one,two}', '{}');
-SELECT pg_get_object_address('foreign-data wrapper', '{one}', '{}');
-SELECT pg_get_object_address('foreign-data wrapper', '{one,two}', '{}');
-SELECT pg_get_object_address('server', '{one}', '{}');
-SELECT pg_get_object_address('server', '{one,two}', '{}');
-SELECT pg_get_object_address('extension', '{one}', '{}');
-SELECT pg_get_object_address('extension', '{one,two}', '{}');
-SELECT pg_get_object_address('event trigger', '{one}', '{}');
-SELECT pg_get_object_address('event trigger', '{one,two}', '{}');
-SELECT pg_get_object_address('access method', '{one}', '{}');
-SELECT pg_get_object_address('access method', '{one,two}', '{}');
+SELECT mdb_get_object_address('language', '{one}', '{}');
+SELECT mdb_get_object_address('language', '{one,two}', '{}');
+SELECT mdb_get_object_address('large object', '{123}', '{}');
+SELECT mdb_get_object_address('large object', '{123,456}', '{}');
+SELECT mdb_get_object_address('large object', '{blargh}', '{}');
+SELECT mdb_get_object_address('schema', '{one}', '{}');
+SELECT mdb_get_object_address('schema', '{one,two}', '{}');
+SELECT mdb_get_object_address('role', '{one}', '{}');
+SELECT mdb_get_object_address('role', '{one,two}', '{}');
+SELECT mdb_get_object_address('database', '{one}', '{}');
+SELECT mdb_get_object_address('database', '{one,two}', '{}');
+SELECT mdb_get_object_address('tablespace', '{one}', '{}');
+SELECT mdb_get_object_address('tablespace', '{one,two}', '{}');
+SELECT mdb_get_object_address('foreign-data wrapper', '{one}', '{}');
+SELECT mdb_get_object_address('foreign-data wrapper', '{one,two}', '{}');
+SELECT mdb_get_object_address('server', '{one}', '{}');
+SELECT mdb_get_object_address('server', '{one,two}', '{}');
+SELECT mdb_get_object_address('extension', '{one}', '{}');
+SELECT mdb_get_object_address('extension', '{one,two}', '{}');
+SELECT mdb_get_object_address('event trigger', '{one}', '{}');
+SELECT mdb_get_object_address('event trigger', '{one,two}', '{}');
+SELECT mdb_get_object_address('access method', '{one}', '{}');
+SELECT mdb_get_object_address('access method', '{one,two}', '{}');
 
 -- test successful cases
 WITH objects (type, name, args) AS (VALUES
@@ -132,8 +132,8 @@ WITH objects (type, name, args) AS (VALUES
 				('table column', '{addr_nsp, gentable, b}', '{}'),
 				('foreign table column', '{addr_nsp, genftable, a}', '{}'),
 				('aggregate', '{addr_nsp, genaggr}', '{int4}'),
-				('function', '{pg_catalog, pg_identify_object}', '{pg_catalog.oid, pg_catalog.oid, int4}'),
-				('type', '{pg_catalog._int4}', '{}'),
+				('function', '{mdb_catalog, mdb_identify_object}', '{mdb_catalog.oid, mdb_catalog.oid, int4}'),
+				('type', '{mdb_catalog._int4}', '{}'),
 				('type', '{addr_nsp.gendomain}', '{}'),
 				('type', '{addr_nsp.gencomptype}', '{}'),
 				('type', '{addr_nsp.genenum}', '{}'),
@@ -141,7 +141,7 @@ WITH objects (type, name, args) AS (VALUES
 				('collation', '{default}', '{}'),
 				('table constraint', '{addr_nsp, gentable, a_chk}', '{}'),
 				('domain constraint', '{addr_nsp.gendomain}', '{domconstr}'),
-				('conversion', '{pg_catalog, ascii_to_mic}', '{}'),
+				('conversion', '{mdb_catalog, ascii_to_mic}', '{}'),
 				('default value', '{addr_nsp, gentable, b}', '{}'),
 				('language', '{plmdb}', '{}'),
 				-- large object
@@ -171,13 +171,13 @@ WITH objects (type, name, args) AS (VALUES
 				('transform', '{int}', '{sql}'),
 				('access method', '{btree}', '{}')
         )
-SELECT (pg_identify_object(addr1.classid, addr1.objid, addr1.subobjid)).*,
-	-- test roundtrip through pg_identify_object_as_address
-	ROW(pg_identify_object(addr1.classid, addr1.objid, addr1.subobjid)) =
-	ROW(pg_identify_object(addr2.classid, addr2.objid, addr2.subobjid))
-	  FROM objects, pg_get_object_address(type, name, args) addr1,
-			pg_identify_object_as_address(classid, objid, subobjid) ioa(typ,nms,args),
-			pg_get_object_address(typ, nms, ioa.args) as addr2
+SELECT (mdb_identify_object(addr1.classid, addr1.objid, addr1.subobjid)).*,
+	-- test roundtrip through mdb_identify_object_as_address
+	ROW(mdb_identify_object(addr1.classid, addr1.objid, addr1.subobjid)) =
+	ROW(mdb_identify_object(addr2.classid, addr2.objid, addr2.subobjid))
+	  FROM objects, mdb_get_object_address(type, name, args) addr1,
+			mdb_identify_object_as_address(classid, objid, subobjid) ioa(typ,nms,args),
+			mdb_get_object_address(typ, nms, ioa.args) as addr2
 	ORDER BY addr1.classid, addr1.objid, addr1.subobjid;
 
 ---

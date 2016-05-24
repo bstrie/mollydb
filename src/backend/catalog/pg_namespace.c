@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_namespace.c
- *	  routines to support manipulation of the pg_namespace relation
+ * mdb_namespace.c
+ *	  routines to support manipulation of the mdb_namespace relation
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_namespace.c
+ *	  src/backend/catalog/mdb_namespace.c
  *
  *-------------------------------------------------------------------------
  */
@@ -19,7 +19,7 @@
 #include "catalog/dependency.h"
 #include "catalog/indexing.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_namespace.h"
+#include "catalog/mdb_namespace.h"
 #include "utils/builtins.h"
 #include "utils/rel.h"
 #include "utils/syscache.h"
@@ -43,8 +43,8 @@ NamespaceCreate(const char *nspName, Oid ownerId, bool isTemp)
 	Relation	nspdesc;
 	HeapTuple	tup;
 	Oid			nspoid;
-	bool		nulls[Natts_pg_namespace];
-	Datum		values[Natts_pg_namespace];
+	bool		nulls[Natts_mdb_namespace];
+	Datum		values[Natts_mdb_namespace];
 	NameData	nname;
 	TupleDesc	tupDesc;
 	ObjectAddress myself;
@@ -61,15 +61,15 @@ NamespaceCreate(const char *nspName, Oid ownerId, bool isTemp)
 				 errmsg("schema \"%s\" already exists", nspName)));
 
 	/* initialize nulls and values */
-	for (i = 0; i < Natts_pg_namespace; i++)
+	for (i = 0; i < Natts_mdb_namespace; i++)
 	{
 		nulls[i] = false;
 		values[i] = (Datum) NULL;
 	}
 	namestrcpy(&nname, nspName);
-	values[Anum_pg_namespace_nspname - 1] = NameGetDatum(&nname);
-	values[Anum_pg_namespace_nspowner - 1] = ObjectIdGetDatum(ownerId);
-	nulls[Anum_pg_namespace_nspacl - 1] = true;
+	values[Anum_mdb_namespace_nspname - 1] = NameGetDatum(&nname);
+	values[Anum_mdb_namespace_nspowner - 1] = ObjectIdGetDatum(ownerId);
+	nulls[Anum_mdb_namespace_nspacl - 1] = true;
 
 	nspdesc = heap_open(NamespaceRelationId, RowExclusiveLock);
 	tupDesc = nspdesc->rd_att;

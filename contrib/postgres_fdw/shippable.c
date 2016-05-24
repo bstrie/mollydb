@@ -44,7 +44,7 @@ typedef struct
 {
 	/* XXX we assume this struct contains no padding bytes */
 	Oid			objid;			/* function/operator/type OID */
-	Oid			classid;		/* OID of its catalog (pg_proc, etc) */
+	Oid			classid;		/* OID of its catalog (mdb_proc, etc) */
 	Oid			serverid;		/* FDW server we are concerned with */
 } ShippableCacheKey;
 
@@ -56,7 +56,7 @@ typedef struct
 
 
 /*
- * Flush cache entries when pg_foreign_server is updated.
+ * Flush cache entries when mdb_foreign_server is updated.
  *
  * We do this because of the possibility of ALTER SERVER being used to change
  * a server's extensions option.  We do not currently bother to check whether
@@ -71,7 +71,7 @@ InvalidateShippableCacheCallback(Datum arg, int cacheid, uint32 hashvalue)
 
 	/*
 	 * In principle we could flush only cache entries relating to the
-	 * pg_foreign_server entry being outdated; but that would be more
+	 * mdb_foreign_server entry being outdated; but that would be more
 	 * complicated, and it's probably not worth the trouble.  So for now, just
 	 * flush all entries.
 	 */
@@ -101,7 +101,7 @@ InitializeShippableCache(void)
 	ShippableCacheHash =
 		hash_create("Shippability cache", 256, &ctl, HASH_ELEM | HASH_BLOBS);
 
-	/* Set up invalidation callback on pg_foreign_server. */
+	/* Set up invalidation callback on mdb_foreign_server. */
 	CacheRegisterSyscacheCallback(FOREIGNSERVEROID,
 								  InvalidateShippableCacheCallback,
 								  (Datum) 0);
@@ -142,7 +142,7 @@ lookup_shippable(Oid objectId, Oid classId, PgFdwRelationInfo *fpinfo)
  * function or type defined in the information_schema.
  *
  * Our constraints for dealing with types are tighter than they are for
- * functions or operators: we want to accept only types that are in pg_catalog,
+ * functions or operators: we want to accept only types that are in mdb_catalog,
  * else deparse_type_name might incorrectly fail to schema-qualify their names.
  * Thus we must exclude information_schema types.
  *

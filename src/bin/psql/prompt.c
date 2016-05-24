@@ -259,7 +259,7 @@ get_prompt(promptStatus_t status)
 				case '`':
 					{
 						FILE	   *fd;
-						char	   *file = pg_strdup(p + 1);
+						char	   *file = mdb_strdup(p + 1);
 						int			cmdend;
 
 						cmdend = strcspn(file, "`");
@@ -285,7 +285,7 @@ get_prompt(promptStatus_t status)
 						const char *val;
 						int			nameend;
 
-						name = pg_strdup(p + 1);
+						name = mdb_strdup(p + 1);
 						nameend = strcspn(name, ":");
 						name[nameend] = '\0';
 						val = GetVariable(pset.vars, name);

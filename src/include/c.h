@@ -25,7 +25,7 @@
  *
  *	  section	description
  *	  -------	------------------------------------------------
- *		0)		pg_config.h and standard system headers
+ *		0)		mdb_config.h and standard system headers
  *		1)		hacks to cope with non-ANSI C compilers
  *		2)		bool, true, false, TRUE, FALSE, NULL
  *		3)		standard system types
@@ -47,11 +47,11 @@
 
 #include "mollydb_ext.h"
 
-/* Must undef pg_config_ext.h symbols before including pg_config.h */
+/* Must undef mdb_config_ext.h symbols before including mdb_config.h */
 #undef PG_INT64_TYPE
 
-#include "pg_config.h"
-#include "pg_config_manual.h"	/* must be after pg_config.h */
+#include "mdb_config.h"
+#include "mdb_config_manual.h"	/* must be after mdb_config.h */
 
 /*
  * We always rely on the WIN32 macro being set by our build system,
@@ -63,7 +63,7 @@
 #endif
 
 #if !defined(WIN32) && !defined(__CYGWIN__)		/* win32 includes further down */
-#include "pg_config_os.h"		/* must be before any system header files */
+#include "mdb_config_os.h"		/* must be before any system header files */
 #endif
 
 #if _MSC_VER >= 1400 || defined(HAVE_CRTDEFS_H)
@@ -98,7 +98,7 @@
 
 #if defined(WIN32) || defined(__CYGWIN__)
 /* We have to redefine some system functions after they are included above. */
-#include "pg_config_os.h"
+#include "mdb_config_os.h"
 #endif
 
 /*
@@ -142,7 +142,7 @@
 /* ----------------------------------------------------------------
  *				Section 1: hacks to cope with non-ANSI C compilers
  *
- * type prefixes (const, signed, volatile, inline) are handled in pg_config.h.
+ * type prefixes (const, signed, volatile, inline) are handled in mdb_config.h.
  * ----------------------------------------------------------------
  */
 
@@ -456,7 +456,7 @@ typedef struct varlena VarChar; /* var-length char, ie SQL varchar(n) */
  * they have nonstandard I/O behavior which we don't want to change for fear
  * of breaking applications that look at the system catalogs.  There is also
  * an implementation issue for oidvector: it's part of the primary key for
- * pg_proc, and we can't use the normal btree array support routines for that
+ * mdb_proc, and we can't use the normal btree array support routines for that
  * without circularity.
  */
 typedef struct
@@ -616,25 +616,25 @@ typedef NameData *Name;
 
 /* only GCC supports the unused attribute */
 #ifdef __GNUC__
-#define pg_attribute_unused() __attribute__((unused))
+#define mdb_attribute_unused() __attribute__((unused))
 #else
-#define pg_attribute_unused()
+#define mdb_attribute_unused()
 #endif
 
 /* GCC and XLC support format attributes */
 #if defined(__GNUC__) || defined(__IBMC__)
-#define pg_attribute_format_arg(a) __attribute__((format_arg(a)))
-#define pg_attribute_printf(f,a) __attribute__((format(PG_PRINTF_ATTRIBUTE, f, a)))
+#define mdb_attribute_format_arg(a) __attribute__((format_arg(a)))
+#define mdb_attribute_printf(f,a) __attribute__((format(PG_PRINTF_ATTRIBUTE, f, a)))
 #else
-#define pg_attribute_format_arg(a)
-#define pg_attribute_printf(f,a)
+#define mdb_attribute_format_arg(a)
+#define mdb_attribute_printf(f,a)
 #endif
 
 /* GCC, Sunpro and XLC support aligned, packed and noreturn */
 #if defined(__GNUC__) || defined(__SUNPRO_C) || defined(__IBMC__)
-#define pg_attribute_aligned(a) __attribute__((aligned(a)))
-#define pg_attribute_noreturn() __attribute__((noreturn))
-#define pg_attribute_packed() __attribute__((packed))
+#define mdb_attribute_aligned(a) __attribute__((aligned(a)))
+#define mdb_attribute_noreturn() __attribute__((noreturn))
+#define mdb_attribute_packed() __attribute__((packed))
 #define HAVE_PG_ATTRIBUTE_NORETURN 1
 #else
 /*
@@ -642,7 +642,7 @@ typedef NameData *Name;
  * affect code functionality; they *must* be implemented by the compiler
  * if they are to be used.
  */
-#define pg_attribute_noreturn()
+#define mdb_attribute_noreturn()
 #endif
 
 /* ----------------------------------------------------------------
@@ -931,11 +931,11 @@ typedef NameData *Name;
  * In assert-enabled builds, we prefer abort() for debugging reasons.
  */
 #if defined(HAVE__BUILTIN_UNREACHABLE) && !defined(USE_ASSERT_CHECKING)
-#define pg_unreachable() __builtin_unreachable()
+#define mdb_unreachable() __builtin_unreachable()
 #elif defined(_MSC_VER) && !defined(USE_ASSERT_CHECKING)
-#define pg_unreachable() __assume(0)
+#define mdb_unreachable() __assume(0)
 #else
-#define pg_unreachable() abort()
+#define mdb_unreachable() abort()
 #endif
 
 
@@ -963,7 +963,7 @@ typedef NameData *Name;
 #ifdef USE_ASSERT_CHECKING
 #define PG_USED_FOR_ASSERTS_ONLY
 #else
-#define PG_USED_FOR_ASSERTS_ONLY pg_attribute_unused()
+#define PG_USED_FOR_ASSERTS_ONLY mdb_attribute_unused()
 #endif
 
 
@@ -1027,7 +1027,7 @@ typedef NameData *Name;
  */
 
 #if !HAVE_DECL_SNPRINTF
-extern int	snprintf(char *str, size_t count, const char *fmt,...) pg_attribute_printf(3, 4);
+extern int	snprintf(char *str, size_t count, const char *fmt,...) mdb_attribute_printf(3, 4);
 #endif
 
 #if !HAVE_DECL_VSNPRINTF
@@ -1049,7 +1049,7 @@ extern int	vsnprintf(char *str, size_t count, const char *fmt, va_list args);
 /*
  * The following is used as the arg list for signal handlers.  Any ports
  * that take something other than an int argument should override this in
- * their pg_config_os.h file.  Note that variable names are required
+ * their mdb_config_os.h file.  Note that variable names are required
  * because it is used in both the prototypes as well as the definitions.
  * Note also the long name.  We expect that this won't collide with
  * other names causing compiler warnings.

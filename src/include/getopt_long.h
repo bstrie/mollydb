@@ -9,7 +9,7 @@
 #ifndef GETOPT_LONG_H
 #define GETOPT_LONG_H
 
-#include "pg_getopt.h"
+#include "mdb_getopt.h"
 
 #ifndef HAVE_STRUCT_OPTION
 

@@ -38,17 +38,17 @@
 
 #include "access/spgist.h"
 #include "access/stratnum.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "utils/builtins.h"
 #include "utils/datum.h"
 #include "utils/rangetypes.h"
 
 /* SP-GiST API functions */
-Datum		spg_range_quad_config(PG_FUNCTION_ARGS);
-Datum		spg_range_quad_choose(PG_FUNCTION_ARGS);
-Datum		spg_range_quad_picksplit(PG_FUNCTION_ARGS);
-Datum		spg_range_quad_inner_consistent(PG_FUNCTION_ARGS);
-Datum		spg_range_quad_leaf_consistent(PG_FUNCTION_ARGS);
+Datum		smdb_range_quad_config(PG_FUNCTION_ARGS);
+Datum		smdb_range_quad_choose(PG_FUNCTION_ARGS);
+Datum		smdb_range_quad_picksplit(PG_FUNCTION_ARGS);
+Datum		smdb_range_quad_inner_consistent(PG_FUNCTION_ARGS);
+Datum		smdb_range_quad_leaf_consistent(PG_FUNCTION_ARGS);
 
 static int16 getQuadrant(TypeCacheEntry *typcache, RangeType *centroid,
 			RangeType *tst);
@@ -64,7 +64,7 @@ static int adjacent_cmp_bounds(TypeCacheEntry *typcache, RangeBound *arg,
  * SP-GiST 'config' interface function.
  */
 Datum
-spg_range_quad_config(PG_FUNCTION_ARGS)
+smdb_range_quad_config(PG_FUNCTION_ARGS)
 {
 	/* spgConfigIn *cfgin = (spgConfigIn *) PG_GETARG_POINTER(0); */
 	spgConfigOut *cfg = (spgConfigOut *) PG_GETARG_POINTER(1);
@@ -135,7 +135,7 @@ getQuadrant(TypeCacheEntry *typcache, RangeType *centroid, RangeType *tst)
  * Choose SP-GiST function: choose path for addition of new range.
  */
 Datum
-spg_range_quad_choose(PG_FUNCTION_ARGS)
+smdb_range_quad_choose(PG_FUNCTION_ARGS)
 {
 	spgChooseIn *in = (spgChooseIn *) PG_GETARG_POINTER(0);
 	spgChooseOut *out = (spgChooseOut *) PG_GETARG_POINTER(1);
@@ -204,7 +204,7 @@ bound_cmp(const void *a, const void *b, void *arg)
  * range and distribute ranges according to quadrants.
  */
 Datum
-spg_range_quad_picksplit(PG_FUNCTION_ARGS)
+smdb_range_quad_picksplit(PG_FUNCTION_ARGS)
 {
 	spgPickSplitIn *in = (spgPickSplitIn *) PG_GETARG_POINTER(0);
 	spgPickSplitOut *out = (spgPickSplitOut *) PG_GETARG_POINTER(1);
@@ -304,7 +304,7 @@ spg_range_quad_picksplit(PG_FUNCTION_ARGS)
  * consistent with given set of queries.
  */
 Datum
-spg_range_quad_inner_consistent(PG_FUNCTION_ARGS)
+smdb_range_quad_inner_consistent(PG_FUNCTION_ARGS)
 {
 	spgInnerConsistentIn *in = (spgInnerConsistentIn *) PG_GETARG_POINTER(0);
 	spgInnerConsistentOut *out = (spgInnerConsistentOut *) PG_GETARG_POINTER(1);
@@ -923,7 +923,7 @@ adjacent_inner_consistent(TypeCacheEntry *typcache, RangeBound *arg,
  * using corresponding function.
  */
 Datum
-spg_range_quad_leaf_consistent(PG_FUNCTION_ARGS)
+smdb_range_quad_leaf_consistent(PG_FUNCTION_ARGS)
 {
 	spgLeafConsistentIn *in = (spgLeafConsistentIn *) PG_GETARG_POINTER(0);
 	spgLeafConsistentOut *out = (spgLeafConsistentOut *) PG_GETARG_POINTER(1);

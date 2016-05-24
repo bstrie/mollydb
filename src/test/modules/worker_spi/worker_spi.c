@@ -4,7 +4,7 @@
  *		Sample background worker code that demonstrates various coding
  *		patterns: establishing a database connection; starting and committing
  *		transactions; using GUC variables, and heeding SIGHUP to reread
- *		the configuration file; reporting to pg_stat_activity; using the
+ *		the configuration file; reporting to mdb_stat_activity; using the
  *		process latch to sleep and exit in case of postmaster death.
  *
  * This code connects to a database, creates a schema and table, and summarizes
@@ -46,7 +46,7 @@ PG_MODULE_MAGIC;
 PG_FUNCTION_INFO_V1(worker_spi_launch);
 
 void		_PG_init(void);
-void		worker_spi_main(Datum) pg_attribute_noreturn();
+void		worker_spi_main(Datum) mdb_attribute_noreturn();
 
 /* flags set by signal handlers */
 static volatile sig_atomic_t got_sighup = false;
@@ -115,7 +115,7 @@ initialize_worker_spi(worktable *table)
 
 	/* XXX could we use CREATE SCHEMA IF NOT EXISTS? */
 	initStringInfo(&buf);
-	appendStringInfo(&buf, "select count(*) from pg_namespace where nspname = '%s'",
+	appendStringInfo(&buf, "select count(*) from mdb_namespace where nspname = '%s'",
 					 table->schema);
 
 	ret = SPI_execute(buf.data, true, 0);

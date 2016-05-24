@@ -16,7 +16,7 @@
 /* ----------
  * Archiver control info.
  *
- * We expect that archivable files within pg_xlog will have names between
+ * We expect that archivable files within mdb_xlog will have names between
  * MIN_XFN_CHARS and MAX_XFN_CHARS in length, consisting only of characters
  * appearing in VALID_XFN_CHARS.  The status files in archive_status have
  * corresponding names with ".ready" or ".done" appended.
@@ -33,7 +33,7 @@
 extern int	pgarch_start(void);
 
 #ifdef EXEC_BACKEND
-extern void PgArchiverMain(int argc, char *argv[]) pg_attribute_noreturn();
+extern void PgArchiverMain(int argc, char *argv[]) mdb_attribute_noreturn();
 #endif
 
 #endif   /* _PGARCH_H */

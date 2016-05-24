@@ -1,5 +1,5 @@
-# pg_visibility extension
+# mdb_visibility extension
 comment = 'examine the visibility map (VM) and page-level visibility info'
 default_version = '1.0'
-module_pathname = '$libdir/pg_visibility'
+module_pathname = '$libdir/mdb_visibility'
 relocatable = true

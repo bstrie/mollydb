@@ -1,15 +1,15 @@
 /*-------------------------------------------------------------------------
  *
- * pg_buffercache_pages.c
+ * mdb_buffercache_pages.c
  *	  display some contents of the buffer cache
  *
- *	  contrib/pg_buffercache/pg_buffercache_pages.c
+ *	  contrib/mdb_buffercache/mdb_buffercache_pages.c
  *-------------------------------------------------------------------------
  */
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "storage/buf_internals.h"
 #include "storage/bufmgr.h"
@@ -58,10 +58,10 @@ typedef struct
  * Function returning data from the shared buffer cache - buffer number,
  * relation node/tablespace/database/blocknum and dirty indicator.
  */
-PG_FUNCTION_INFO_V1(pg_buffercache_pages);
+PG_FUNCTION_INFO_V1(mdb_buffercache_pages);
 
 Datum
-pg_buffercache_pages(PG_FUNCTION_ARGS)
+mdb_buffercache_pages(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	Datum		result;

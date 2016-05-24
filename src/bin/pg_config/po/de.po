@@ -1,4 +1,4 @@
-# German message translation file for pg_config
+# German message translation file for mdb_config
 # Peter Eisentraut <peter_e@gmx.net>, 2004 - 2016.
 #
 # Use these quotes: „%s“
@@ -59,7 +59,7 @@ msgstr "konnte symbolische Verknüpfung „%s“ nicht lesen"
 msgid "pclose failed: %s"
 msgstr "pclose fehlgeschlagen: %s"
 
-#: pg_config.c:74
+#: mdb_config.c:74
 #, c-format
 msgid ""
 "\n"
@@ -70,12 +70,12 @@ msgstr ""
 "%s gibt Informationen über die installierte Version von MollyDB.\n"
 "\n"
 
-#: pg_config.c:75
+#: mdb_config.c:75
 #, c-format
 msgid "Usage:\n"
 msgstr "Aufruf:\n"
 
-#: pg_config.c:76
+#: mdb_config.c:76
 #, c-format
 msgid ""
 "  %s [OPTION]...\n"
@@ -84,27 +84,27 @@ msgstr ""
 "  %s [OPTION]...\n"
 "\n"
 
-#: pg_config.c:77
+#: mdb_config.c:77
 #, c-format
 msgid "Options:\n"
 msgstr "Optionen:\n"
 
-#: pg_config.c:78
+#: mdb_config.c:78
 #, c-format
 msgid "  --bindir              show location of user executables\n"
 msgstr "  --bindir              zeige Installationsverzeichnis der Benutzerprogramme\n"
 
-#: pg_config.c:79
+#: mdb_config.c:79
 #, c-format
 msgid "  --docdir              show location of documentation files\n"
 msgstr "  --docdir              zeige Installationsverzeichnis der Dokumentation\n"
 
-#: pg_config.c:80
+#: mdb_config.c:80
 #, c-format
 msgid "  --htmldir             show location of HTML documentation files\n"
 msgstr "  --htmldir             zeige Installationsverzeichnis der HTML-Dokumentation\n"
 
-#: pg_config.c:81
+#: mdb_config.c:81
 #, c-format
 msgid ""
 "  --includedir          show location of C header files of the client\n"
@@ -113,60 +113,60 @@ msgstr ""
 "  --includedir          zeige Installationsverzeichnis der Headerdateien der\n"
 "                        Client-Schnittstellen\n"
 
-#: pg_config.c:83
+#: mdb_config.c:83
 #, c-format
 msgid "  --pkgincludedir       show location of other C header files\n"
 msgstr "  --pkgincludedir       zeige Installationsverzeichnis von weiteren Headerdateien\n"
 
-#: pg_config.c:84
+#: mdb_config.c:84
 #, c-format
 msgid "  --includedir-server   show location of C header files for the server\n"
 msgstr ""
 "  --includedir-server   zeige Installationsverzeichnis der Headerdateien des\n"
 "                        Servers\n"
 
-#: pg_config.c:85
+#: mdb_config.c:85
 #, c-format
 msgid "  --libdir              show location of object code libraries\n"
 msgstr "  --libdir              zeige Installationsverzeichnis der Objektbibliotheken\n"
 
-#: pg_config.c:86
+#: mdb_config.c:86
 #, c-format
 msgid "  --pkglibdir           show location of dynamically loadable modules\n"
 msgstr ""
 "  --pkglibdir           zeige Installationsverzeichnis der dynamisch\n"
 "                        ladbaren Module\n"
 
-#: pg_config.c:87
+#: mdb_config.c:87
 #, c-format
 msgid "  --localedir           show location of locale support files\n"
 msgstr "  --localedir           zeige Installationsverzeichnis der Locale-Dateien\n"
 
-#: pg_config.c:88
+#: mdb_config.c:88
 #, c-format
 msgid "  --mandir              show location of manual pages\n"
 msgstr "  --mandir              zeige Installationsverzeichnis der Manpages\n"
 
-#: pg_config.c:89
+#: mdb_config.c:89
 #, c-format
 msgid "  --sharedir            show location of architecture-independent support files\n"
 msgstr ""
 "  --sharedir            zeige Installationsverzeichnis der architektur-\n"
 "                        unabhängigen Datendateien\n"
 
-#: pg_config.c:90
+#: mdb_config.c:90
 #, c-format
 msgid "  --sysconfdir          show location of system-wide configuration files\n"
 msgstr ""
 "  --sysconfdir          zeige Installationsverzeichnis der systemweiten\n"
 "                        Konfigurationsdateien\n"
 
-#: pg_config.c:91
+#: mdb_config.c:91
 #, c-format
 msgid "  --pgxs                show location of extension makefile\n"
 msgstr "  --pgxs                zeige Ort der Erweiterungs-Makefile\n"
 
-#: pg_config.c:92
+#: mdb_config.c:92
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
@@ -175,57 +175,57 @@ msgstr ""
 "  --configure           zeige Optionen des „configure“-Skriptes beim Bauen\n"
 "                        von MollyDB\n"
 
-#: pg_config.c:94
+#: mdb_config.c:94
 #, c-format
 msgid "  --cc                  show CC value used when MollyDB was built\n"
 msgstr "  --cc                  zeige CC-Wert, mit dem MollyDB gebaut wurde\n"
 
-#: pg_config.c:95
+#: mdb_config.c:95
 #, c-format
 msgid "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
 msgstr "  --cppflags            zeige CPPFLAGS-Wert, mit dem MollyDB gebaut wurde\n"
 
-#: pg_config.c:96
+#: mdb_config.c:96
 #, c-format
 msgid "  --cflags              show CFLAGS value used when MollyDB was built\n"
 msgstr "  --cflags              zeige CFLAGS-Wert, mit dem MollyDB gebaut wurde\n"
 
-#: pg_config.c:97
+#: mdb_config.c:97
 #, c-format
 msgid "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
 msgstr "  --cflags_sl           zeige CFLAGS_SL-Wert, mit dem MollyDB gebaut wurde\n"
 
-#: pg_config.c:98
+#: mdb_config.c:98
 #, c-format
 msgid "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
 msgstr "  --ldflags             zeige LDFLAGS-Wert, mit dem MollyDB gebaut wurde\n"
 
-#: pg_config.c:99
+#: mdb_config.c:99
 #, c-format
 msgid "  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was built\n"
 msgstr "  --ldflags_ex          zeige LDFLAGS_EX-Wert, mit dem MollyDB gebaut wurde\n"
 
-#: pg_config.c:100
+#: mdb_config.c:100
 #, c-format
 msgid "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was built\n"
 msgstr "  --ldflags_sl          zeige LDFLAGS_SL-Wert, mit dem MollyDB gebaut wurde\n"
 
-#: pg_config.c:101
+#: mdb_config.c:101
 #, c-format
 msgid "  --libs                show LIBS value used when MollyDB was built\n"
 msgstr "  --libs                zeige LIBS-Wert, mit dem MollyDB gebaut wurde\n"
 
-#: pg_config.c:102
+#: mdb_config.c:102
 #, c-format
 msgid "  --version             show the MollyDB version\n"
 msgstr "  --version             zeige MollyDB-Version\n"
 
-#: pg_config.c:103
+#: mdb_config.c:103
 #, c-format
 msgid "  -?, --help            show this help, then exit\n"
 msgstr "  -?, --help            diese Hilfe anzeigen, dann beenden\n"
 
-#: pg_config.c:104
+#: mdb_config.c:104
 #, c-format
 msgid ""
 "\n"
@@ -236,22 +236,22 @@ msgstr ""
 "Ohne Argumente werden alle bekannten Informationen angezeigt.\n"
 "\n"
 
-#: pg_config.c:105
+#: mdb_config.c:105
 #, c-format
 msgid "Report bugs to <mdb-bugs@mollydb.org>.\n"
 msgstr "Berichten Sie Fehler an <mdb-bugs@mollydb.org>.\n"
 
-#: pg_config.c:111
+#: mdb_config.c:111
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "Versuchen Sie „%s --help“ für weitere Informationen.\n"
 
-#: pg_config.c:153
+#: mdb_config.c:153
 #, c-format
 msgid "%s: could not find own program executable\n"
 msgstr "%s: konnte eigene Programmdatei nicht finden\n"
 
-#: pg_config.c:180
+#: mdb_config.c:180
 #, c-format
 msgid "%s: invalid argument: %s\n"
 msgstr "%s: ungültiges Argument: %s\n"

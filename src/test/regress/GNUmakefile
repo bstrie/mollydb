@@ -10,7 +10,7 @@
 #
 #-------------------------------------------------------------------------
 
-PGFILEDESC = "pg_regress - test driver"
+PGFILEDESC = "mdb_regress - test driver"
 PGAPPICON = win32
 
 subdir = src/test/regress
@@ -23,7 +23,7 @@ ifdef MAX_CONNECTIONS
 MAXCONNOPT += --max-connections=$(MAX_CONNECTIONS)
 endif
 
-# stuff to pass into build of pg_regress
+# stuff to pass into build of mdb_regress
 EXTRADEFS = '-DHOST_TUPLE="$(host_tuple)"' \
 	'-DSHELLPROG="$(SHELL)"' \
 	'-DDLSUFFIX="$(DLSUFFIX)"'
@@ -34,26 +34,26 @@ EXTRADEFS = '-DHOST_TUPLE="$(host_tuple)"' \
 
 # Build regression test driver
 
-all: pg_regress$(X)
+all: mdb_regress$(X)
 
-pg_regress$(X): pg_regress.o pg_regress_main.o $(WIN32RES) | submake-libpgport
+mdb_regress$(X): mdb_regress.o mdb_regress_main.o $(WIN32RES) | submake-libpgport
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) $(LDFLAGS_EX) $(LIBS) -o $@
 
 # dependencies ensure that path changes propagate
-pg_regress.o: pg_regress.c $(top_builddir)/src/port/pg_config_paths.h
-pg_regress.o: override CPPFLAGS += -I$(top_builddir)/src/port $(EXTRADEFS)
+mdb_regress.o: mdb_regress.c $(top_builddir)/src/port/mdb_config_paths.h
+mdb_regress.o: override CPPFLAGS += -I$(top_builddir)/src/port $(EXTRADEFS)
 
-$(top_builddir)/src/port/pg_config_paths.h: $(top_builddir)/src/Makefile.global
-	$(MAKE) -C $(top_builddir)/src/port pg_config_paths.h
+$(top_builddir)/src/port/mdb_config_paths.h: $(top_builddir)/src/Makefile.global
+	$(MAKE) -C $(top_builddir)/src/port mdb_config_paths.h
 
 install: all installdirs
-	$(INSTALL_PROGRAM) pg_regress$(X) '$(DESTDIR)$(pgxsdir)/$(subdir)/pg_regress$(X)'
+	$(INSTALL_PROGRAM) mdb_regress$(X) '$(DESTDIR)$(pgxsdir)/$(subdir)/mdb_regress$(X)'
 
 installdirs:
 	$(MKDIR_P) '$(DESTDIR)$(pgxsdir)/$(subdir)'
 
 uninstall:
-	rm -f '$(DESTDIR)$(pgxsdir)/$(subdir)/pg_regress$(X)'
+	rm -f '$(DESTDIR)$(pgxsdir)/$(subdir)/mdb_regress$(X)'
 
 
 # Build dynamically-loaded object file for CREATE FUNCTION ... LANGUAGE C.
@@ -65,7 +65,7 @@ include $(top_srcdir)/src/Makefile.shlib
 
 all: all-lib
 
-# Test input and expected files.  These are created by pg_regress itself, so we
+# Test input and expected files.  These are created by mdb_regress itself, so we
 # don't have a rule to create them.  We do need rules to clean them however.
 input_files = $(patsubst $(srcdir)/input/%.source,sql/%.sql, $(wildcard $(srcdir)/input/*.source))
 output_files := $(patsubst $(srcdir)/output/%.source,expected/%.out, $(wildcard $(srcdir)/output/*.source))
@@ -125,22 +125,22 @@ tablespace-setup:
 REGRESS_OPTS = --dlpath=. $(EXTRA_REGRESS_OPTS)
 
 check: all tablespace-setup
-	$(pg_regress_check) $(REGRESS_OPTS) --schedule=$(srcdir)/parallel_schedule $(MAXCONNOPT) $(EXTRA_TESTS)
+	$(mdb_regress_check) $(REGRESS_OPTS) --schedule=$(srcdir)/parallel_schedule $(MAXCONNOPT) $(EXTRA_TESTS)
 
 check-tests: all tablespace-setup
-	$(pg_regress_check) $(REGRESS_OPTS) $(MAXCONNOPT) $(TESTS) $(EXTRA_TESTS)
+	$(mdb_regress_check) $(REGRESS_OPTS) $(MAXCONNOPT) $(TESTS) $(EXTRA_TESTS)
 
 installcheck: all tablespace-setup
-	$(pg_regress_installcheck) $(REGRESS_OPTS) --schedule=$(srcdir)/serial_schedule $(EXTRA_TESTS)
+	$(mdb_regress_installcheck) $(REGRESS_OPTS) --schedule=$(srcdir)/serial_schedule $(EXTRA_TESTS)
 
 installcheck-parallel: all tablespace-setup
-	$(pg_regress_installcheck) $(REGRESS_OPTS) --schedule=$(srcdir)/parallel_schedule $(MAXCONNOPT) $(EXTRA_TESTS)
+	$(mdb_regress_installcheck) $(REGRESS_OPTS) --schedule=$(srcdir)/parallel_schedule $(MAXCONNOPT) $(EXTRA_TESTS)
 
 installcheck-tests: all tablespace-setup
-	$(pg_regress_installcheck) $(REGRESS_OPTS) $(TESTS) $(EXTRA_TESTS)
+	$(mdb_regress_installcheck) $(REGRESS_OPTS) $(TESTS) $(EXTRA_TESTS)
 
 standbycheck: all
-	$(pg_regress_installcheck) $(REGRESS_OPTS) --schedule=$(srcdir)/standby_schedule --use-existing
+	$(mdb_regress_installcheck) $(REGRESS_OPTS) --schedule=$(srcdir)/standby_schedule --use-existing
 
 # old interfaces follow...
 
@@ -149,10 +149,10 @@ runtest: installcheck
 runtest-parallel: installcheck-parallel
 
 bigtest: all tablespace-setup
-	$(pg_regress_installcheck) $(REGRESS_OPTS) --schedule=$(srcdir)/serial_schedule numeric_big
+	$(mdb_regress_installcheck) $(REGRESS_OPTS) --schedule=$(srcdir)/serial_schedule numeric_big
 
 bigcheck: all tablespace-setup
-	$(pg_regress_check) $(REGRESS_OPTS) --schedule=$(srcdir)/parallel_schedule $(MAXCONNOPT) numeric_big
+	$(mdb_regress_check) $(REGRESS_OPTS) --schedule=$(srcdir)/parallel_schedule $(MAXCONNOPT) numeric_big
 
 
 ##
@@ -162,8 +162,8 @@ bigcheck: all tablespace-setup
 clean distclean maintainer-clean: clean-lib
 # things built by `all' target
 	rm -f $(OBJS) refint$(DLSUFFIX) autoinc$(DLSUFFIX)
-	rm -f pg_regress_main.o pg_regress.o pg_regress$(X)
+	rm -f mdb_regress_main.o mdb_regress.o mdb_regress$(X)
 # things created by various check targets
 	rm -f $(output_files) $(input_files)
 	rm -rf testtablespace
-	rm -rf $(pg_regress_clean_files)
+	rm -rf $(mdb_regress_clean_files)

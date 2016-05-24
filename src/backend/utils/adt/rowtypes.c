@@ -18,7 +18,7 @@
 
 #include "access/htup_details.h"
 #include "access/tuptoaster.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "funcapi.h"
 #include "libpq/pqformat.h"
 #include "miscadmin.h"
@@ -103,7 +103,7 @@ record_in(PG_FUNCTION_ARGS)
 		   errmsg("input of anonymous composite types is not implemented")));
 
 	/*
-	 * This comes from the composite type's pg_type.oid and stores system oids
+	 * This comes from the composite type's mdb_type.oid and stores system oids
 	 * in user tables, specifically DatumTupleFields. This oid must be
 	 * preserved by binary upgrades.
 	 */

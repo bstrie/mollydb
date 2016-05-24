@@ -1,6 +1,6 @@
 /*
  * config_info.h
- *		Common code for pg_config output
+ *		Common code for mdb_config output
  *
  *	Copyright (c) 2016, MollyDB Global Development Group
  *

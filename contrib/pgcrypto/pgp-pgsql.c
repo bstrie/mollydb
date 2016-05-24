@@ -32,8 +32,8 @@
 #include "mollydb.h"
 
 #include "lib/stringinfo.h"
-#include "catalog/pg_type.h"
-#include "mb/pg_wchar.h"
+#include "catalog/mdb_type.h"
+#include "mb/mdb_wchar.h"
 #include "utils/builtins.h"
 #include "utils/array.h"
 #include "funcapi.h"
@@ -57,8 +57,8 @@ PG_FUNCTION_INFO_V1(pgp_pub_decrypt_text);
 
 PG_FUNCTION_INFO_V1(pgp_key_id_w);
 
-PG_FUNCTION_INFO_V1(pg_armor);
-PG_FUNCTION_INFO_V1(pg_dearmor);
+PG_FUNCTION_INFO_V1(mdb_armor);
+PG_FUNCTION_INFO_V1(mdb_dearmor);
 PG_FUNCTION_INFO_V1(pgp_armor_headers);
 
 /*
@@ -131,7 +131,7 @@ convert_charset(text *src, int cset_from, int cset_to)
 	unsigned char *csrc = (unsigned char *) VARDATA(src);
 	text	   *res;
 
-	dst = pg_do_encoding_conversion(csrc, src_len, cset_from, cset_to);
+	dst = mdb_do_encoding_conversion(csrc, src_len, cset_from, cset_to);
 	if (dst == csrc)
 		return src;
 
@@ -932,7 +932,7 @@ parse_key_value_arrays(ArrayType *key_array, ArrayType *val_array,
 }
 
 Datum
-pg_armor(PG_FUNCTION_ARGS)
+mdb_armor(PG_FUNCTION_ARGS)
 {
 	bytea	   *data;
 	text	   *res;
@@ -970,7 +970,7 @@ pg_armor(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_dearmor(PG_FUNCTION_ARGS)
+mdb_dearmor(PG_FUNCTION_ARGS)
 {
 	text	   *data;
 	bytea	   *res;
@@ -1062,8 +1062,8 @@ pgp_armor_headers(PG_FUNCTION_ARGS)
 		utf8key = state->keys[funcctx->call_cntr];
 		utf8val = state->values[funcctx->call_cntr];
 
-		values[0] = pg_any_to_server(utf8key, strlen(utf8key), PG_UTF8);
-		values[1] = pg_any_to_server(utf8val, strlen(utf8val), PG_UTF8);
+		values[0] = mdb_any_to_server(utf8key, strlen(utf8key), PG_UTF8);
+		values[1] = mdb_any_to_server(utf8val, strlen(utf8val), PG_UTF8);
 
 		/* build a tuple */
 		tuple = BuildTupleFromCStrings(funcctx->attinmeta, values);

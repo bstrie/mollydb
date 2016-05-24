@@ -16,7 +16,7 @@
 
 #include "access/gist_private.h"
 #include "access/gistscan.h"
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "miscadmin.h"
 #include "utils/index_selfuncs.h"
 #include "utils/memutils.h"

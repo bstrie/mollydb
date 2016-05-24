@@ -1,11 +1,11 @@
-# LANGUAGE message translation file for pg_rewind
+# LANGUAGE message translation file for mdb_rewind
 # Copyright (C) 2015 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_rewind (MollyDB) 9.5\n"
+"Project-Id-Version: mdb_rewind (MollyDB) 9.5\n"
 "Report-Msgid-Bugs-To: mdb-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-25 23:16+0900\n"
 "PO-Revision-Date: 2015-12-27 23:49+0900\n"
@@ -416,7 +416,7 @@ msgstr ""
 "WAL 레코드가 릴레이션을 변경하려고 하지만, 레코드 형태가 올바르지 않음\n"
 "lsn: %X/%X, rmgr: %s, info: %02X\n"
 
-#: pg_rewind.c:59
+#: mdb_rewind.c:59
 #, c-format
 msgid ""
 "%s resynchronizes a MollyDB cluster with another copy of the cluster.\n"
@@ -426,7 +426,7 @@ msgstr ""
 "니다.\n"
 "\n"
 
-#: pg_rewind.c:60
+#: mdb_rewind.c:60
 #, c-format
 msgid ""
 "Usage:\n"
@@ -437,54 +437,54 @@ msgstr ""
 "  %s [옵션]...\n"
 "\n"
 
-#: pg_rewind.c:61
+#: mdb_rewind.c:61
 #, c-format
 msgid "Options:\n"
 msgstr "옵션들:\n"
 
-#: pg_rewind.c:62
+#: mdb_rewind.c:62
 #, c-format
 msgid "  -D, --target-pgdata=DIRECTORY  existing data directory to modify\n"
 msgstr "  -D, --target-pgdata=디렉터리   변경하려는 데이터 디렉터리\n"
 
-#: pg_rewind.c:63
+#: mdb_rewind.c:63
 #, c-format
 msgid ""
 "      --source-pgdata=DIRECTORY  source data directory to synchronize with\n"
 msgstr "      --source-pgdata=디렉터리   동기화 원본이 되는 데이터 디렉터리\n"
 
-#: pg_rewind.c:64
+#: mdb_rewind.c:64
 #, c-format
 msgid "      --source-server=CONNSTR    source server to synchronize with\n"
 msgstr "      --source-server=연결문자열  원본 서버 접속 정보\n"
 
-#: pg_rewind.c:65
+#: mdb_rewind.c:65
 #, c-format
 msgid "  -n, --dry-run                  stop before modifying anything\n"
 msgstr "  -n, --dry-run                  변경 작업 전에 멈춤(검사, 확인용)\n"
 
-#: pg_rewind.c:66
+#: mdb_rewind.c:66
 #, c-format
 msgid "  -P, --progress                 write progress messages\n"
 msgstr "  -P, --progress                 진행 과정 메시지를 보여줌\n"
 
-#: pg_rewind.c:67
+#: mdb_rewind.c:67
 #, c-format
 msgid "      --debug                    write a lot of debug messages\n"
 msgstr "      --debug                    디버그 메시지를 보여줌\n"
 
-#: pg_rewind.c:68
+#: mdb_rewind.c:68
 #, c-format
 msgid ""
 "  -V, --version                  output version information, then exit\n"
 msgstr "  -V, --version                  버전 정보를 보여주고 마침\n"
 
-#: pg_rewind.c:69
+#: mdb_rewind.c:69
 #, c-format
 msgid "  -?, --help                     show this help, then exit\n"
 msgstr "  -?, --help                     이 도움말을 보여주고 마침\n"
 
-#: pg_rewind.c:70
+#: mdb_rewind.c:70
 #, c-format
 msgid ""
 "\n"
@@ -493,80 +493,80 @@ msgstr ""
 "\n"
 "오류보고: <mdb-bugs@mollydb.org>.\n"
 
-#: pg_rewind.c:125 pg_rewind.c:156 pg_rewind.c:163 pg_rewind.c:171
+#: mdb_rewind.c:125 mdb_rewind.c:156 mdb_rewind.c:163 mdb_rewind.c:171
 #, c-format
 msgid "Try \"%s --help\" for more information.\n"
 msgstr "자제한 사항은 \"%s --help\" 명령으로 살펴보십시오.\n"
 
-#: pg_rewind.c:155
+#: mdb_rewind.c:155
 #, c-format
 msgid "%s: no source specified (--source-pgdata or --source-server)\n"
 msgstr ""
 "%s: 원본을 지정하지 않았음 (--source-pgdata 또는 --source-server 옵션을 지정 "
 "해야 함)\n"
 
-#: pg_rewind.c:162
+#: mdb_rewind.c:162
 #, c-format
 msgid "%s: no target data directory specified (--target-pgdata)\n"
 msgstr ""
 "%s: 대상 데이터 디렉토리가 지정되지 않았음 (--target-pgdata 옵션 사용)\n"
 
-#: pg_rewind.c:169
+#: mdb_rewind.c:169
 #, c-format
 msgid "%s: too many command-line arguments (first is \"%s\")\n"
 msgstr "%s: 너무 많은 명령행 인수를 지정했습니다. (처음 \"%s\")\n"
 
-#: pg_rewind.c:184
+#: mdb_rewind.c:184
 #, c-format
 msgid "cannot be executed by \"root\"\n"
 msgstr "\"root\" 계정으로는 실행 할 수 없음\n"
 
-#: pg_rewind.c:185
+#: mdb_rewind.c:185
 #, c-format
 msgid "You must run %s as the MollyDB superuser.\n"
 msgstr "MollyDB superuser로 %s 프로그램을 실행하십시오.\n"
 
-#: pg_rewind.c:216
+#: mdb_rewind.c:216
 #, c-format
 msgid "source and target cluster are on the same timeline\n"
 msgstr "원본과 대상 클러스터의 타임라인이 같음\n"
 
-#: pg_rewind.c:222
+#: mdb_rewind.c:222
 #, c-format
 msgid "servers diverged at WAL position %X/%X on timeline %u\n"
 msgstr "서버 분기 위치: %X/%X, 타임라인 %u\n"
 
-#: pg_rewind.c:258
+#: mdb_rewind.c:258
 #, c-format
 msgid "no rewind required\n"
 msgstr "되감을 필요 없음\n"
 
-#: pg_rewind.c:264
+#: mdb_rewind.c:264
 #, c-format
 msgid "rewinding from last common checkpoint at %X/%X on timeline %u\n"
 msgstr "재동기화 시작함, 마지막 체크포인트 위치 %X/%X, 타임라인 %u\n"
 
-#: pg_rewind.c:272
+#: mdb_rewind.c:272
 #, c-format
 msgid "reading source file list\n"
 msgstr "원본 파일 목록 읽는 중\n"
 
-#: pg_rewind.c:274
+#: mdb_rewind.c:274
 #, c-format
 msgid "reading target file list\n"
 msgstr "대상 파일 목록 읽는 중\n"
 
-#: pg_rewind.c:284
+#: mdb_rewind.c:284
 #, c-format
 msgid "reading WAL in target\n"
 msgstr "대상 서버에서 WAL 읽는 중\n"
 
-#: pg_rewind.c:301
+#: mdb_rewind.c:301
 #, c-format
 msgid "need to copy %lu MB (total source directory size is %lu MB)\n"
 msgstr "복사를 위해서 %lu MB 필요함 (원본 디렉토리 전체 크기는 %lu MB)\n"
 
-#: pg_rewind.c:318
+#: mdb_rewind.c:318
 #, c-format
 msgid ""
 "\n"
@@ -575,22 +575,22 @@ msgstr ""
 "\n"
 "백업 라벨을 만들고, 컨트롤 파일을 갱신 중\n"
 
-#: pg_rewind.c:346
+#: mdb_rewind.c:346
 #, c-format
 msgid "Done!\n"
 msgstr "완료!\n"
 
-#: pg_rewind.c:358
+#: mdb_rewind.c:358
 #, c-format
 msgid "source and target clusters are from different systems\n"
 msgstr "원본과 대상 클러스터의 데이터 클러스터의 식별 번호가 다름\n"
 
-#: pg_rewind.c:366
+#: mdb_rewind.c:366
 #, c-format
-msgid "clusters are not compatible with this version of pg_rewind\n"
-msgstr "해당 클러스터는 이 pg_rewind 버전으로 작업할 수 없음\n"
+msgid "clusters are not compatible with this version of mdb_rewind\n"
+msgstr "해당 클러스터는 이 mdb_rewind 버전으로 작업할 수 없음\n"
 
-#: pg_rewind.c:376
+#: mdb_rewind.c:376
 #, c-format
 msgid ""
 "target server needs to use either data checksums or \"wal_log_hints = on\"\n"
@@ -598,33 +598,33 @@ msgstr ""
 "대상 서버의 데이터 클러스터가 데이터 체크섬 기능을 켰거나,  \"wal_log_hints "
 "= on\" 설정이 되어야 함\n"
 
-#: pg_rewind.c:387
+#: mdb_rewind.c:387
 #, c-format
 msgid "target server must be shut down cleanly\n"
 msgstr "대상 서버는 정상 종료되어야 함\n"
 
-#: pg_rewind.c:397
+#: mdb_rewind.c:397
 #, c-format
 msgid "source data directory must be shut down cleanly\n"
 msgstr "원본 데이터 디렉토리는 정상적으로 종료되어야 함\n"
 
-#: pg_rewind.c:464
+#: mdb_rewind.c:464
 #, c-format
 msgid ""
 "could not find common ancestor of the source and target cluster's timelines\n"
 msgstr "원본과 대상 서버의 공통된 상위 타임라인을 찾을 수 없음\n"
 
-#: pg_rewind.c:504
+#: mdb_rewind.c:504
 #, c-format
 msgid "backup label buffer too small\n"
 msgstr "백업 라벨 버퍼가 너무 작음\n"
 
-#: pg_rewind.c:526
+#: mdb_rewind.c:526
 #, c-format
 msgid "unexpected control file CRC\n"
 msgstr "컨트롤 파일 CRC 오류\n"
 
-#: pg_rewind.c:536
+#: mdb_rewind.c:536
 #, c-format
 msgid "unexpected control file size %d, expected %d\n"
 msgstr "컨트롤 파일의 크기가 %d 로 비정상, 정상값 %d\n"
@@ -723,9 +723,9 @@ msgstr "잘못된 정보 비트 %04X, 로그 파일 %s, 위치 %u"
 #, c-format
 msgid ""
 "WAL file is from different database system: WAL file database system "
-"identifier is %s, pg_control database system identifier is %s"
+"identifier is %s, mdb_control database system identifier is %s"
 msgstr ""
-"WAL 파일이 다른 시스템의 것입니다. WAL 파일의 시스템 식별자는 %s, pg_control "
+"WAL 파일이 다른 시스템의 것입니다. WAL 파일의 시스템 식별자는 %s, mdb_control "
 "의 식별자는 %s"
 
 #: xlogreader.c:758

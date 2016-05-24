@@ -15,7 +15,7 @@
 #include "mollydb.h"
 
 #include "access/tuptoaster.h"
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "commands/vacuum.h"
 #include "utils/array.h"
 #include "utils/datum.h"
@@ -25,7 +25,7 @@
 
 /*
  * To avoid consuming too much memory, IO and CPU load during analysis, and/or
- * too much space in the resulting pg_statistic rows, we ignore arrays that
+ * too much space in the resulting mdb_statistic rows, we ignore arrays that
  * are wider than ARRAY_WIDTH_THRESHOLD (after detoasting!).  Note that this
  * number is considerably more than the similar WIDTH_THRESHOLD limit used
  * in analyze.c's standard typanalyze code.
@@ -206,7 +206,7 @@ array_typanalyze(PG_FUNCTION_ARGS)
  *
  * Elements may repeat within an array.  Since duplicates do not change the
  * behavior of <@, && or @>, we want to count each element only once per
- * array.  Therefore, we store in the finished pg_statistic entry each
+ * array.  Therefore, we store in the finished mdb_statistic entry each
  * element's frequency as the fraction of all non-null rows that contain it.
  * We divide the raw counts by nonnull_cnt to get those figures.
  */
@@ -259,7 +259,7 @@ compute_array_stats(VacAttrStats *stats, AnalyzeAttrFetchFunc fetchfunc,
 	/*
 	 * We want statistics_target * 10 elements in the MCELEM array. This
 	 * multiplier is pretty arbitrary, but is meant to reflect the fact that
-	 * the number of individual elements tracked in pg_statistic ought to be
+	 * the number of individual elements tracked in mdb_statistic ought to be
 	 * more than the number of values for a simple scalar column.
 	 */
 	num_mcelem = stats->attr->attstattarget * 10;
@@ -434,12 +434,12 @@ compute_array_stats(VacAttrStats *stats, AnalyzeAttrFetchFunc fetchfunc,
 		pfree(elem_nulls);
 	}
 
-	/* Skip pg_statistic slots occupied by standard statistics */
+	/* Skip mdb_statistic slots occupied by standard statistics */
 	slot_idx = 0;
 	while (slot_idx < STATISTIC_NUM_SLOTS && stats->stakind[slot_idx] != 0)
 		slot_idx++;
 	if (slot_idx > STATISTIC_NUM_SLOTS - 2)
-		elog(ERROR, "insufficient pg_statistic slots for array stats");
+		elog(ERROR, "insufficient mdb_statistic slots for array stats");
 
 	/* We can only compute real stats if we found some non-null values. */
 	if (analyzed_rows > 0)

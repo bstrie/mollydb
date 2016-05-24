@@ -28,7 +28,7 @@
 #include <langinfo.h>
 #endif
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 
 /*
@@ -38,12 +38,12 @@
  * error situations).  On Windows, we rely on entries for codepage
  * numbers (CPnnn).
  *
- * Note that we search the table with pg_strcasecmp(), so variant
+ * Note that we search the table with mdb_strcasecmp(), so variant
  * capitalizations don't need their own entries.
  */
 struct encoding_match
 {
-	enum pg_enc pg_enc_code;
+	enum mdb_enc mdb_enc_code;
 	const char *system_enc_name;
 };
 
@@ -278,7 +278,7 @@ win32_langinfo(const char *ctype)
  * encoding.  Issue a warning and return -1 if none found.
  */
 int
-pg_codepage_to_encoding(UINT cp)
+mdb_codepage_to_encoding(UINT cp)
 {
 	char		sys[16];
 	int			i;
@@ -287,8 +287,8 @@ pg_codepage_to_encoding(UINT cp)
 
 	/* Check the table */
 	for (i = 0; encoding_match_list[i].system_enc_name; i++)
-		if (pg_strcasecmp(sys, encoding_match_list[i].system_enc_name) == 0)
-			return encoding_match_list[i].pg_enc_code;
+		if (mdb_strcasecmp(sys, encoding_match_list[i].system_enc_name) == 0)
+			return encoding_match_list[i].mdb_enc_code;
 
 	ereport(WARNING,
 			(errmsg("could not determine encoding for codeset \"%s\"", sys),
@@ -315,7 +315,7 @@ pg_codepage_to_encoding(UINT cp)
  * cope with the possibility that elog() and palloc() are not yet usable.
  */
 int
-pg_get_encoding_from_locale(const char *ctype, bool write_message)
+mdb_get_encoding_from_locale(const char *ctype, bool write_message)
 {
 	char	   *sys;
 	int			i;
@@ -327,8 +327,8 @@ pg_get_encoding_from_locale(const char *ctype, bool write_message)
 		char	   *name;
 
 		/* If locale is C or POSIX, we can allow all encodings */
-		if (pg_strcasecmp(ctype, "C") == 0 ||
-			pg_strcasecmp(ctype, "POSIX") == 0)
+		if (mdb_strcasecmp(ctype, "C") == 0 ||
+			mdb_strcasecmp(ctype, "POSIX") == 0)
 			return PG_SQL_ASCII;
 
 		save = setlocale(LC_CTYPE, NULL);
@@ -365,8 +365,8 @@ pg_get_encoding_from_locale(const char *ctype, bool write_message)
 			return -1;			/* setlocale() broken? */
 
 		/* If locale is C or POSIX, we can allow all encodings */
-		if (pg_strcasecmp(ctype, "C") == 0 ||
-			pg_strcasecmp(ctype, "POSIX") == 0)
+		if (mdb_strcasecmp(ctype, "C") == 0 ||
+			mdb_strcasecmp(ctype, "POSIX") == 0)
 			return PG_SQL_ASCII;
 
 #ifndef WIN32
@@ -384,10 +384,10 @@ pg_get_encoding_from_locale(const char *ctype, bool write_message)
 	/* Check the table */
 	for (i = 0; encoding_match_list[i].system_enc_name; i++)
 	{
-		if (pg_strcasecmp(sys, encoding_match_list[i].system_enc_name) == 0)
+		if (mdb_strcasecmp(sys, encoding_match_list[i].system_enc_name) == 0)
 		{
 			free(sys);
-			return encoding_match_list[i].pg_enc_code;
+			return encoding_match_list[i].mdb_enc_code;
 		}
 	}
 
@@ -438,7 +438,7 @@ pg_get_encoding_from_locale(const char *ctype, bool write_message)
  * It seems better to silently default to SQL_ASCII.
  */
 int
-pg_get_encoding_from_locale(const char *ctype, bool write_message)
+mdb_get_encoding_from_locale(const char *ctype, bool write_message)
 {
 	return PG_SQL_ASCII;
 }

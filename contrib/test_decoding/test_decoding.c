@@ -14,8 +14,8 @@
 
 #include "access/sysattr.h"
 
-#include "catalog/pg_class.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_type.h"
 
 #include "nodes/parsenodes.h"
 
@@ -34,7 +34,7 @@
 
 PG_MODULE_MAGIC;
 
-/* These must be available to pg_dlsym() */
+/* These must be available to mdb_dlsym() */
 extern void _PG_init(void);
 extern void _PG_output_plugin_init(OutputPluginCallbacks *cb);
 
@@ -48,23 +48,23 @@ typedef struct
 	bool		only_local;
 } TestDecodingData;
 
-static void pg_decode_startup(LogicalDecodingContext *ctx, OutputPluginOptions *opt,
+static void mdb_decode_startup(LogicalDecodingContext *ctx, OutputPluginOptions *opt,
 				  bool is_init);
-static void pg_decode_shutdown(LogicalDecodingContext *ctx);
-static void pg_decode_begin_txn(LogicalDecodingContext *ctx,
+static void mdb_decode_shutdown(LogicalDecodingContext *ctx);
+static void mdb_decode_begin_txn(LogicalDecodingContext *ctx,
 					ReorderBufferTXN *txn);
-static void pg_output_begin(LogicalDecodingContext *ctx,
+static void mdb_output_begin(LogicalDecodingContext *ctx,
 				TestDecodingData *data,
 				ReorderBufferTXN *txn,
 				bool last_write);
-static void pg_decode_commit_txn(LogicalDecodingContext *ctx,
+static void mdb_decode_commit_txn(LogicalDecodingContext *ctx,
 					 ReorderBufferTXN *txn, XLogRecPtr commit_lsn);
-static void pg_decode_change(LogicalDecodingContext *ctx,
+static void mdb_decode_change(LogicalDecodingContext *ctx,
 				 ReorderBufferTXN *txn, Relation rel,
 				 ReorderBufferChange *change);
-static bool pg_decode_filter(LogicalDecodingContext *ctx,
+static bool mdb_decode_filter(LogicalDecodingContext *ctx,
 				 RepOriginId origin_id);
-static void pg_decode_message(LogicalDecodingContext *ctx,
+static void mdb_decode_message(LogicalDecodingContext *ctx,
 							  ReorderBufferTXN *txn, XLogRecPtr message_lsn,
 							  bool transactional, const char *prefix,
 							  Size sz, const char *message);
@@ -81,19 +81,19 @@ _PG_output_plugin_init(OutputPluginCallbacks *cb)
 {
 	AssertVariableIsOfType(&_PG_output_plugin_init, LogicalOutputPluginInit);
 
-	cb->startup_cb = pg_decode_startup;
-	cb->begin_cb = pg_decode_begin_txn;
-	cb->change_cb = pg_decode_change;
-	cb->commit_cb = pg_decode_commit_txn;
-	cb->filter_by_origin_cb = pg_decode_filter;
-	cb->shutdown_cb = pg_decode_shutdown;
-	cb->message_cb = pg_decode_message;
+	cb->startup_cb = mdb_decode_startup;
+	cb->begin_cb = mdb_decode_begin_txn;
+	cb->change_cb = mdb_decode_change;
+	cb->commit_cb = mdb_decode_commit_txn;
+	cb->filter_by_origin_cb = mdb_decode_filter;
+	cb->shutdown_cb = mdb_decode_shutdown;
+	cb->message_cb = mdb_decode_message;
 }
 
 
 /* initialize this plugin */
 static void
-pg_decode_startup(LogicalDecodingContext *ctx, OutputPluginOptions *opt,
+mdb_decode_startup(LogicalDecodingContext *ctx, OutputPluginOptions *opt,
 				  bool is_init)
 {
 	ListCell   *option;
@@ -191,7 +191,7 @@ pg_decode_startup(LogicalDecodingContext *ctx, OutputPluginOptions *opt,
 
 /* cleanup this plugin's resources */
 static void
-pg_decode_shutdown(LogicalDecodingContext *ctx)
+mdb_decode_shutdown(LogicalDecodingContext *ctx)
 {
 	TestDecodingData *data = ctx->output_plugin_private;
 
@@ -201,7 +201,7 @@ pg_decode_shutdown(LogicalDecodingContext *ctx)
 
 /* BEGIN callback */
 static void
-pg_decode_begin_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn)
+mdb_decode_begin_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn)
 {
 	TestDecodingData *data = ctx->output_plugin_private;
 
@@ -209,11 +209,11 @@ pg_decode_begin_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn)
 	if (data->skip_empty_xacts)
 		return;
 
-	pg_output_begin(ctx, data, txn, true);
+	mdb_output_begin(ctx, data, txn, true);
 }
 
 static void
-pg_output_begin(LogicalDecodingContext *ctx, TestDecodingData *data, ReorderBufferTXN *txn, bool last_write)
+mdb_output_begin(LogicalDecodingContext *ctx, TestDecodingData *data, ReorderBufferTXN *txn, bool last_write)
 {
 	OutputPluginPrepareWrite(ctx, last_write);
 	if (data->include_xids)
@@ -225,7 +225,7 @@ pg_output_begin(LogicalDecodingContext *ctx, TestDecodingData *data, ReorderBuff
 
 /* COMMIT callback */
 static void
-pg_decode_commit_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
+mdb_decode_commit_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 					 XLogRecPtr commit_lsn)
 {
 	TestDecodingData *data = ctx->output_plugin_private;
@@ -247,7 +247,7 @@ pg_decode_commit_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 }
 
 static bool
-pg_decode_filter(LogicalDecodingContext *ctx,
+mdb_decode_filter(LogicalDecodingContext *ctx,
 				 RepOriginId origin_id)
 {
 	TestDecodingData *data = ctx->output_plugin_private;
@@ -325,7 +325,7 @@ tuple_to_stringinfo(StringInfo s, TupleDesc tupdesc, HeapTuple tuple, bool skip_
 	/* print all columns individually */
 	for (natt = 0; natt < tupdesc->natts; natt++)
 	{
-		Form_pg_attribute attr; /* the attribute itself */
+		Form_mdb_attribute attr; /* the attribute itself */
 		Oid			typid;		/* type of current attribute */
 		Oid			typoutput;	/* output function */
 		bool		typisvarlena;
@@ -394,11 +394,11 @@ tuple_to_stringinfo(StringInfo s, TupleDesc tupdesc, HeapTuple tuple, bool skip_
  * callback for individual changed tuples
  */
 static void
-pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
+mdb_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 				 Relation relation, ReorderBufferChange *change)
 {
 	TestDecodingData *data;
-	Form_pg_class class_form;
+	Form_mdb_class class_form;
 	TupleDesc	tupdesc;
 	MemoryContext old;
 
@@ -407,7 +407,7 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	/* output BEGIN if we haven't yet */
 	if (data->skip_empty_xacts && !data->xact_wrote_changes)
 	{
-		pg_output_begin(ctx, data, txn, false);
+		mdb_output_begin(ctx, data, txn, false);
 	}
 	data->xact_wrote_changes = true;
 
@@ -479,7 +479,7 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 }
 
 static void
-pg_decode_message(LogicalDecodingContext *ctx,
+mdb_decode_message(LogicalDecodingContext *ctx,
 				  ReorderBufferTXN *txn, XLogRecPtr lsn, bool transactional,
 				  const char *prefix, Size sz, const char *message)
 {

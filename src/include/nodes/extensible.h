@@ -52,7 +52,7 @@ typedef struct ExtensibleNode
  *
  * nodeRead is a deserialization function for the node type.  It does not need
  * to read type or extnodename; the core system handles those.  It should fetch
- * the next token using pg_strtok() from the current input stream, and then
+ * the next token using mdb_strtok() from the current input stream, and then
  * reconstruct the private fields according to the manner in readfuncs.c.
  *
  * All callbacks are mandatory.

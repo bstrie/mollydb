@@ -31,7 +31,7 @@ ANALYZE [ VERBOSE ] [ <replaceable class="PARAMETER">table_name</replaceable> [ 
   <para>
    <command>ANALYZE</command> collects statistics about the contents
    of tables in the database, and stores the results in the <link
-   linkend="catalog-pg-statistic"><structname>pg_statistic</></>
+   linkend="catalog-pg-statistic"><structname>mdb_statistic</></>
    system catalog.  Subsequently, the query planner uses these
    statistics to help determine the most efficient execution plans for
    queries.
@@ -160,7 +160,7 @@ ANALYZE [ VERBOSE ] [ <replaceable class="PARAMETER">table_name</replaceable> [ 
    is 100, but this can be adjusted up or down to trade off accuracy of
    planner estimates against the time taken for
    <command>ANALYZE</command> and the amount of space occupied in
-   <literal>pg_statistic</literal>.  In particular, setting the
+   <literal>mdb_statistic</literal>.  In particular, setting the
    statistics target to zero disables collection of statistics for
    that column.  It might be useful to do that for columns that are
    never used as part of the <literal>WHERE</>, <literal>GROUP BY</>,

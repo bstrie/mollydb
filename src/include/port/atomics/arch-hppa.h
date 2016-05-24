@@ -14,4 +14,4 @@
  */
 
 /* HPPA doesn't do either read or write reordering */
-#define pg_memory_barrier_impl()		pg_compiler_barrier_impl()
+#define mdb_memory_barrier_impl()		mdb_compiler_barrier_impl()

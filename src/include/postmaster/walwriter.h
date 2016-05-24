@@ -16,6 +16,6 @@
 extern int	WalWriterDelay;
 extern int	WalWriterFlushAfter;
 
-extern void WalWriterMain(void) pg_attribute_noreturn();
+extern void WalWriterMain(void) mdb_attribute_noreturn();
 
 #endif   /* _WALWRITER_H */

@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
- * pg_collation.h
- *	  definition of the system "collation" relation (pg_collation)
+ * mdb_collation.h
+ *	  definition of the system "collation" relation (mdb_collation)
  *	  along with the relation's initial contents.
  *
  *
@@ -9,7 +9,7 @@
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
- *		src/include/catalog/pg_collation.h
+ *		src/include/catalog/mdb_collation.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -23,13 +23,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_collation definition.  cpp turns this into
- *		typedef struct FormData_pg_collation
+ *		mdb_collation definition.  cpp turns this into
+ *		typedef struct FormData_mdb_collation
  * ----------------
  */
 #define CollationRelationId  3456
 
-CATALOG(pg_collation,3456)
+CATALOG(mdb_collation,3456)
 {
 	NameData	collname;		/* collation name */
 	Oid			collnamespace;	/* OID of namespace containing collation */
@@ -37,29 +37,29 @@ CATALOG(pg_collation,3456)
 	int32		collencoding;	/* encoding for this collation; -1 = "all" */
 	NameData	collcollate;	/* LC_COLLATE setting */
 	NameData	collctype;		/* LC_CTYPE setting */
-} FormData_pg_collation;
+} FormData_mdb_collation;
 
 /* ----------------
- *		Form_pg_collation corresponds to a pointer to a row with
- *		the format of pg_collation relation.
+ *		Form_mdb_collation corresponds to a pointer to a row with
+ *		the format of mdb_collation relation.
  * ----------------
  */
-typedef FormData_pg_collation *Form_pg_collation;
+typedef FormData_mdb_collation *Form_mdb_collation;
 
 /* ----------------
- *		compiler constants for pg_collation
+ *		compiler constants for mdb_collation
  * ----------------
  */
-#define Natts_pg_collation				6
-#define Anum_pg_collation_collname		1
-#define Anum_pg_collation_collnamespace 2
-#define Anum_pg_collation_collowner		3
-#define Anum_pg_collation_collencoding	4
-#define Anum_pg_collation_collcollate	5
-#define Anum_pg_collation_collctype		6
+#define Natts_mdb_collation				6
+#define Anum_mdb_collation_collname		1
+#define Anum_mdb_collation_collnamespace 2
+#define Anum_mdb_collation_collowner		3
+#define Anum_mdb_collation_collencoding	4
+#define Anum_mdb_collation_collcollate	5
+#define Anum_mdb_collation_collctype		6
 
 /* ----------------
- *		initial contents of pg_collation
+ *		initial contents of mdb_collation
  * ----------------
  */
 

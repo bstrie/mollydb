@@ -24,7 +24,7 @@ static int findprefix(struct cnfa * cnfa, struct colormap * cm,
 
 
 /*
- * pg_regprefix - get common prefix for regular expression
+ * mdb_regprefix - get common prefix for regular expression
  *
  * Returns one of:
  *	REG_NOMATCH: there is no common prefix of strings matching the regex
@@ -43,7 +43,7 @@ static int findprefix(struct cnfa * cnfa, struct colormap * cm,
  * match the reported prefix or exact-match string.
  */
 int
-pg_regprefix(regex_t *re,
+mdb_regprefix(regex_t *re,
 			 chr **string,
 			 size_t *slength)
 {
@@ -62,7 +62,7 @@ pg_regprefix(regex_t *re,
 		return REG_MIXED;
 
 	/* Initialize locale-dependent support */
-	pg_set_regex_collation(re->re_collation);
+	mdb_set_regex_collation(re->re_collation);
 
 	/* setup */
 	g = (struct guts *) re->re_guts;

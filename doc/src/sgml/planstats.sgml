@@ -51,10 +51,10 @@ EXPLAIN SELECT * FROM tenk1;
    How the planner determines the cardinality of <structname>tenk1</structname>
    is covered in <xref linkend="planner-stats">, but is repeated here for
    completeness. The number of pages and rows is looked up in
-   <structname>pg_class</structname>:
+   <structname>mdb_class</structname>:
 
 <programlisting>
-SELECT relpages, reltuples FROM pg_class WHERE relname = 'tenk1';
+SELECT relpages, reltuples FROM mdb_class WHERE relname = 'tenk1';
 
  relpages | reltuples
 ----------+-----------
@@ -89,17 +89,17 @@ EXPLAIN SELECT * FROM tenk1 WHERE unique1 &lt; 1000;
 
    The planner examines the <literal>WHERE</literal> clause condition
    and looks up the selectivity function for the operator
-   <literal>&lt;</literal> in <structname>pg_operator</structname>.
+   <literal>&lt;</literal> in <structname>mdb_operator</structname>.
    This is held in the column <structfield>oprrest</structfield>,
    and the entry in this case is <function>scalarltsel</function>.
    The <function>scalarltsel</function> function retrieves the histogram for
    <structfield>unique1</structfield> from
-   <structname>pg_statistics</structname>.  For manual queries it is more
-   convenient to look in the simpler <structname>pg_stats</structname>
+   <structname>mdb_statistics</structname>.  For manual queries it is more
+   convenient to look in the simpler <structname>mdb_stats</structname>
    view:
 
 <programlisting>
-SELECT histogram_bounds FROM pg_stats
+SELECT histogram_bounds FROM mdb_stats
 WHERE tablename='tenk1' AND attname='unique1';
 
                    histogram_bounds
@@ -155,7 +155,7 @@ EXPLAIN SELECT * FROM tenk1 WHERE stringu1 = 'CRAAAA';
    that will be useful later:
 
 <programlisting>
-SELECT null_frac, n_distinct, most_common_vals, most_common_freqs FROM pg_stats
+SELECT null_frac, n_distinct, most_common_vals, most_common_freqs FROM mdb_stats
 WHERE tablename='tenk1' AND attname='stringu1';
 
 null_frac         | 0
@@ -257,7 +257,7 @@ EXPLAIN SELECT * FROM tenk1 WHERE stringu1 &lt; 'IAAAAA';
    and here is its histogram:
 
 <programlisting>
-SELECT histogram_bounds FROM pg_stats
+SELECT histogram_bounds FROM mdb_stats
 WHERE tablename='tenk1' AND attname='stringu1';
 
                                 histogram_bounds
@@ -376,12 +376,12 @@ rows        = 10000 * 0.005035
    The operator is just
    our familiar <literal>=</literal>, however the selectivity function is
    obtained from the <structfield>oprjoin</structfield> column of
-   <structname>pg_operator</structname>, and is <function>eqjoinsel</function>.
+   <structname>mdb_operator</structname>, and is <function>eqjoinsel</function>.
    <function>eqjoinsel</function> looks up the statistical information for both
    <structname>tenk2</structname> and <structname>tenk1</structname>:
 
 <programlisting>
-SELECT tablename, null_frac,n_distinct, most_common_vals FROM pg_stats
+SELECT tablename, null_frac,n_distinct, most_common_vals FROM mdb_stats
 WHERE tablename IN ('tenk1', 'tenk2') AND attname='unique2';
 
 tablename  | null_frac | n_distinct | most_common_vals

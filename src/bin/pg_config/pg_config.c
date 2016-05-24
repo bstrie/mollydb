@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_config.c
+ * mdb_config.c
  *
  * This program reports various pieces of information about the
  * installed version of MollyDB.  Packages that interface to
@@ -17,7 +17,7 @@
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
- * src/bin/pg_config/pg_config.c
+ * src/bin/mdb_config/mdb_config.c
  *
  *-------------------------------------------------------------------------
  */
@@ -134,7 +134,7 @@ main(int argc, char **argv)
 	int			i;
 	int			j;
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_config"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_config"));
 
 	progname = get_progname(argv[0]);
 

@@ -6,7 +6,7 @@
 
 #include "mollydb.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "utils/builtins.h"
 
 #include "plpython.h"
@@ -490,21 +490,21 @@ PLy_output(volatile int level, PyObject *self, PyObject *args, PyObject *kw)
 	PG_TRY();
 	{
 		if (message != NULL)
-			pg_verifymbstr(message, strlen(message), false);
+			mdb_verifymbstr(message, strlen(message), false);
 		if (detail != NULL)
-			pg_verifymbstr(detail, strlen(detail), false);
+			mdb_verifymbstr(detail, strlen(detail), false);
 		if (hint != NULL)
-			pg_verifymbstr(hint, strlen(hint), false);
+			mdb_verifymbstr(hint, strlen(hint), false);
 		if (schema != NULL)
-			pg_verifymbstr(schema, strlen(schema), false);
+			mdb_verifymbstr(schema, strlen(schema), false);
 		if (table != NULL)
-			pg_verifymbstr(table, strlen(table), false);
+			mdb_verifymbstr(table, strlen(table), false);
 		if (column != NULL)
-			pg_verifymbstr(column, strlen(column), false);
+			mdb_verifymbstr(column, strlen(column), false);
 		if (datatype != NULL)
-			pg_verifymbstr(datatype, strlen(datatype), false);
+			mdb_verifymbstr(datatype, strlen(datatype), false);
 		if (constraint != NULL)
-			pg_verifymbstr(constraint, strlen(constraint), false);
+			mdb_verifymbstr(constraint, strlen(constraint), false);
 
 		ereport(level,
 				((sqlstate != 0) ? errcode(sqlstate) : 0,

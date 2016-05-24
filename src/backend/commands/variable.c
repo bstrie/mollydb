@@ -22,7 +22,7 @@
 #include "access/parallel.h"
 #include "access/xact.h"
 #include "access/xlog.h"
-#include "catalog/pg_authid.h"
+#include "catalog/mdb_authid.h"
 #include "commands/variable.h"
 #include "miscadmin.h"
 #include "utils/acl.h"
@@ -30,7 +30,7 @@
 #include "utils/syscache.h"
 #include "utils/snapmgr.h"
 #include "utils/timestamp.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 /*
  * DATESTYLE
@@ -72,28 +72,28 @@ check_datestyle(char **newval, void **extra, GucSource source)
 
 		/* Ugh. Somebody ought to write a table driven version -- mjl */
 
-		if (pg_strcasecmp(tok, "ISO") == 0)
+		if (mdb_strcasecmp(tok, "ISO") == 0)
 		{
 			if (have_style && newDateStyle != USE_ISO_DATES)
 				ok = false;		/* conflicting styles */
 			newDateStyle = USE_ISO_DATES;
 			have_style = true;
 		}
-		else if (pg_strcasecmp(tok, "SQL") == 0)
+		else if (mdb_strcasecmp(tok, "SQL") == 0)
 		{
 			if (have_style && newDateStyle != USE_SQL_DATES)
 				ok = false;		/* conflicting styles */
 			newDateStyle = USE_SQL_DATES;
 			have_style = true;
 		}
-		else if (pg_strncasecmp(tok, "POSTGRES", 8) == 0)
+		else if (mdb_strncasecmp(tok, "POSTGRES", 8) == 0)
 		{
 			if (have_style && newDateStyle != USE_POSTGRES_DATES)
 				ok = false;		/* conflicting styles */
 			newDateStyle = USE_POSTGRES_DATES;
 			have_style = true;
 		}
-		else if (pg_strcasecmp(tok, "GERMAN") == 0)
+		else if (mdb_strcasecmp(tok, "GERMAN") == 0)
 		{
 			if (have_style && newDateStyle != USE_GERMAN_DATES)
 				ok = false;		/* conflicting styles */
@@ -103,31 +103,31 @@ check_datestyle(char **newval, void **extra, GucSource source)
 			if (!have_order)
 				newDateOrder = DATEORDER_DMY;
 		}
-		else if (pg_strcasecmp(tok, "YMD") == 0)
+		else if (mdb_strcasecmp(tok, "YMD") == 0)
 		{
 			if (have_order && newDateOrder != DATEORDER_YMD)
 				ok = false;		/* conflicting orders */
 			newDateOrder = DATEORDER_YMD;
 			have_order = true;
 		}
-		else if (pg_strcasecmp(tok, "DMY") == 0 ||
-				 pg_strncasecmp(tok, "EURO", 4) == 0)
+		else if (mdb_strcasecmp(tok, "DMY") == 0 ||
+				 mdb_strncasecmp(tok, "EURO", 4) == 0)
 		{
 			if (have_order && newDateOrder != DATEORDER_DMY)
 				ok = false;		/* conflicting orders */
 			newDateOrder = DATEORDER_DMY;
 			have_order = true;
 		}
-		else if (pg_strcasecmp(tok, "MDY") == 0 ||
-				 pg_strcasecmp(tok, "US") == 0 ||
-				 pg_strncasecmp(tok, "NONEURO", 7) == 0)
+		else if (mdb_strcasecmp(tok, "MDY") == 0 ||
+				 mdb_strcasecmp(tok, "US") == 0 ||
+				 mdb_strncasecmp(tok, "NONEURO", 7) == 0)
 		{
 			if (have_order && newDateOrder != DATEORDER_MDY)
 				ok = false;		/* conflicting orders */
 			newDateOrder = DATEORDER_MDY;
 			have_order = true;
 		}
-		else if (pg_strcasecmp(tok, "DEFAULT") == 0)
+		else if (mdb_strcasecmp(tok, "DEFAULT") == 0)
 		{
 			/*
 			 * Easiest way to get the current DEFAULT state is to fetch the
@@ -251,12 +251,12 @@ assign_datestyle(const char *newval, void *extra)
 bool
 check_timezone(char **newval, void **extra, GucSource source)
 {
-	pg_tz	   *new_tz;
+	mdb_tz	   *new_tz;
 	long		gmtoffset;
 	char	   *endptr;
 	double		hours;
 
-	if (pg_strncasecmp(*newval, "interval", 8) == 0)
+	if (mdb_strncasecmp(*newval, "interval", 8) == 0)
 	{
 		/*
 		 * Support INTERVAL 'foo'.  This is for SQL spec compliance, not
@@ -312,7 +312,7 @@ check_timezone(char **newval, void **extra, GucSource source)
 #else
 		gmtoffset = -interval->time;
 #endif
-		new_tz = pg_tzset_offset(gmtoffset);
+		new_tz = mdb_tzset_offset(gmtoffset);
 
 		pfree(interval);
 	}
@@ -326,14 +326,14 @@ check_timezone(char **newval, void **extra, GucSource source)
 		{
 			/* Here we change from SQL to Unix sign convention */
 			gmtoffset = -hours * SECS_PER_HOUR;
-			new_tz = pg_tzset_offset(gmtoffset);
+			new_tz = mdb_tzset_offset(gmtoffset);
 		}
 		else
 		{
 			/*
 			 * Otherwise assume it is a timezone name, and try to load it.
 			 */
-			new_tz = pg_tzset(*newval);
+			new_tz = mdb_tzset(*newval);
 
 			if (!new_tz)
 			{
@@ -341,7 +341,7 @@ check_timezone(char **newval, void **extra, GucSource source)
 				return false;
 			}
 
-			if (!pg_tz_acceptable(new_tz))
+			if (!mdb_tz_acceptable(new_tz))
 			{
 				GUC_check_errmsg("time zone \"%s\" appears to use leap seconds",
 								 *newval);
@@ -351,7 +351,7 @@ check_timezone(char **newval, void **extra, GucSource source)
 		}
 	}
 
-	/* Test for failure in pg_tzset_offset, which we assume is out-of-range */
+	/* Test for failure in mdb_tzset_offset, which we assume is out-of-range */
 	if (!new_tz)
 	{
 		GUC_check_errdetail("UTC timezone offset is out of range.");
@@ -361,10 +361,10 @@ check_timezone(char **newval, void **extra, GucSource source)
 	/*
 	 * Pass back data for assign_timezone to use
 	 */
-	*extra = malloc(sizeof(pg_tz *));
+	*extra = malloc(sizeof(mdb_tz *));
 	if (!*extra)
 		return false;
-	*((pg_tz **) *extra) = new_tz;
+	*((mdb_tz **) *extra) = new_tz;
 
 	return true;
 }
@@ -375,7 +375,7 @@ check_timezone(char **newval, void **extra, GucSource source)
 void
 assign_timezone(const char *newval, void *extra)
 {
-	session_timezone = *((pg_tz **) extra);
+	session_timezone = *((mdb_tz **) extra);
 }
 
 /*
@@ -387,7 +387,7 @@ show_timezone(void)
 	const char *tzn;
 
 	/* Always show the zone's canonical name */
-	tzn = pg_get_timezone_name(session_timezone);
+	tzn = mdb_get_timezone_name(session_timezone);
 
 	if (tzn != NULL)
 		return tzn;
@@ -410,12 +410,12 @@ show_timezone(void)
 bool
 check_log_timezone(char **newval, void **extra, GucSource source)
 {
-	pg_tz	   *new_tz;
+	mdb_tz	   *new_tz;
 
 	/*
 	 * Assume it is a timezone name, and try to load it.
 	 */
-	new_tz = pg_tzset(*newval);
+	new_tz = mdb_tzset(*newval);
 
 	if (!new_tz)
 	{
@@ -423,7 +423,7 @@ check_log_timezone(char **newval, void **extra, GucSource source)
 		return false;
 	}
 
-	if (!pg_tz_acceptable(new_tz))
+	if (!mdb_tz_acceptable(new_tz))
 	{
 		GUC_check_errmsg("time zone \"%s\" appears to use leap seconds",
 						 *newval);
@@ -434,10 +434,10 @@ check_log_timezone(char **newval, void **extra, GucSource source)
 	/*
 	 * Pass back data for assign_log_timezone to use
 	 */
-	*extra = malloc(sizeof(pg_tz *));
+	*extra = malloc(sizeof(mdb_tz *));
 	if (!*extra)
 		return false;
-	*((pg_tz **) *extra) = new_tz;
+	*((mdb_tz **) *extra) = new_tz;
 
 	return true;
 }
@@ -448,7 +448,7 @@ check_log_timezone(char **newval, void **extra, GucSource source)
 void
 assign_log_timezone(const char *newval, void *extra)
 {
-	log_timezone = *((pg_tz **) extra);
+	log_timezone = *((mdb_tz **) extra);
 }
 
 /*
@@ -460,7 +460,7 @@ show_log_timezone(void)
 	const char *tzn;
 
 	/* Always show the zone's canonical name */
-	tzn = pg_get_timezone_name(log_timezone);
+	tzn = mdb_get_timezone_name(log_timezone);
 
 	if (tzn != NULL)
 		return tzn;
@@ -681,12 +681,12 @@ check_client_encoding(char **newval, void **extra, GucSource source)
 	const char *canonical_name;
 
 	/* Look up the encoding by name */
-	encoding = pg_valid_client_encoding(*newval);
+	encoding = mdb_valid_client_encoding(*newval);
 	if (encoding < 0)
 		return false;
 
 	/* Get the canonical name (no aliases, uniform case) */
-	canonical_name = pg_encoding_to_char(encoding);
+	canonical_name = mdb_encoding_to_char(encoding);
 
 	/*
 	 * If we are not within a transaction then PrepareClientEncoding will not
@@ -803,7 +803,7 @@ check_session_authorization(char **newval, void **extra, GucSource source)
 	}
 
 	roleid = HeapTupleGetOid(roleTup);
-	is_superuser = ((Form_pg_authid) GETSTRUCT(roleTup))->rolsuper;
+	is_superuser = ((Form_mdb_authid) GETSTRUCT(roleTup))->rolsuper;
 
 	ReleaseSysCache(roleTup);
 
@@ -875,7 +875,7 @@ check_role(char **newval, void **extra, GucSource source)
 		}
 
 		roleid = HeapTupleGetOid(roleTup);
-		is_superuser = ((Form_pg_authid) GETSTRUCT(roleTup))->rolsuper;
+		is_superuser = ((Form_mdb_authid) GETSTRUCT(roleTup))->rolsuper;
 
 		ReleaseSysCache(roleTup);
 

@@ -33,8 +33,8 @@
 #include "access/heapam.h"
 #include "access/htup_details.h"
 #include "access/sysattr.h"
-#include "catalog/pg_inherits_fn.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_inherits_fn.h"
+#include "catalog/mdb_type.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
@@ -1573,7 +1573,7 @@ make_inh_translation_list(Relation oldrelation, Relation newrelation,
 
 	for (old_attno = 0; old_attno < oldnatts; old_attno++)
 	{
-		Form_pg_attribute att;
+		Form_mdb_attribute att;
 		char	   *attname;
 		Oid			atttypid;
 		int32		atttypmod;

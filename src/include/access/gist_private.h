@@ -309,10 +309,10 @@ typedef struct
  * We no longer create such invalid tuples, we now mark the left-half of such
  * an incomplete split with the F_FOLLOW_RIGHT flag instead, and finish the
  * split properly the next time we need to insert on that page. To retain
- * on-disk compatibility for the sake of pg_upgrade, we still store 0xffff as
+ * on-disk compatibility for the sake of mdb_upgrade, we still store 0xffff as
  * the offset number of all inner tuples. If we encounter any invalid tuples
  * with 0xfffe during insertion, we throw an error, though scans still handle
- * them. You should only encounter invalid tuples if you pg_upgrade a pre-9.1
+ * them. You should only encounter invalid tuples if you mdb_upgrade a pre-9.1
  * gist index which already has invalid tuples in it because of a crash. That
  * should be rare, and you are recommended to REINDEX anyway if you have any
  * invalid tuples in an index, so throwing an error is as far as we go with

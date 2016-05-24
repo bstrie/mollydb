@@ -16,7 +16,7 @@
 
 #include "access/heapam.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_inherits_fn.h"
+#include "catalog/mdb_inherits_fn.h"
 #include "commands/lockcmds.h"
 #include "miscadmin.h"
 #include "parser/parse_clause.h"
@@ -179,7 +179,7 @@ LockTableAclCheck(Oid reloid, LOCKMODE lockmode)
 	else
 		aclmask = ACL_UPDATE | ACL_DELETE | ACL_TRUNCATE;
 
-	aclresult = pg_class_aclcheck(reloid, GetUserId(), aclmask);
+	aclresult = mdb_class_aclcheck(reloid, GetUserId(), aclmask);
 
 	return aclresult;
 }

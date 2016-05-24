@@ -1,11 +1,11 @@
 /*-------------------------------------------------------------------------
  *
- * pg_restore.c
- *	pg_restore is an utility extracting mollydb database definitions
- *	from a backup archive created by pg_dump using the archiver
+ * mdb_restore.c
+ *	mdb_restore is an utility extracting mollydb database definitions
+ *	from a backup archive created by mdb_dump using the archiver
  *	interface.
  *
- *	pg_restore will read the backup archive and
+ *	mdb_restore will read the backup archive and
  *	dump out a script that reproduces
  *	the schema of the database in terms of
  *		  user-defined types
@@ -34,7 +34,7 @@
  *
  *
  * IDENTIFICATION
- *		src/bin/pg_dump/pg_restore.c
+ *		src/bin/mdb_dump/mdb_restore.c
  *
  *-------------------------------------------------------------------------
  */
@@ -44,7 +44,7 @@
 
 #include "dumputils.h"
 #include "parallel.h"
-#include "pg_backup_utils.h"
+#include "mdb_backup_utils.h"
 
 #include <ctype.h>
 
@@ -126,7 +126,7 @@ main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("pg_dump"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mdb_dump"));
 
 	init_parallel_dump_utils();
 
@@ -143,7 +143,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_restore (MollyDB) " PG_VERSION);
+			puts("mdb_restore (MollyDB) " PG_VERSION);
 			exit_nicely(0);
 		}
 	}
@@ -163,21 +163,21 @@ main(int argc, char **argv)
 				opts->createDB = 1;
 				break;
 			case 'd':
-				opts->dbname = pg_strdup(optarg);
+				opts->dbname = mdb_strdup(optarg);
 				break;
 			case 'e':
 				opts->exit_on_error = true;
 				break;
 			case 'f':			/* output file name */
-				opts->filename = pg_strdup(optarg);
+				opts->filename = mdb_strdup(optarg);
 				break;
 			case 'F':
 				if (strlen(optarg) != 0)
-					opts->formatName = pg_strdup(optarg);
+					opts->formatName = mdb_strdup(optarg);
 				break;
 			case 'h':
 				if (strlen(optarg) != 0)
-					opts->pghost = pg_strdup(optarg);
+					opts->pghost = mdb_strdup(optarg);
 				break;
 
 			case 'j':			/* number of restore jobs */
@@ -189,7 +189,7 @@ main(int argc, char **argv)
 				break;
 
 			case 'L':			/* input TOC summary file name */
-				opts->tocFile = pg_strdup(optarg);
+				opts->tocFile = mdb_strdup(optarg);
 				break;
 
 			case 'n':			/* Dump data for this schema only */
@@ -202,7 +202,7 @@ main(int argc, char **argv)
 
 			case 'p':
 				if (strlen(optarg) != 0)
-					opts->pgport = pg_strdup(optarg);
+					opts->pgport = mdb_strdup(optarg);
 				break;
 			case 'R':
 				/* no-op, still accepted for backwards compatibility */
@@ -227,7 +227,7 @@ main(int argc, char **argv)
 				break;
 			case 'S':			/* Superuser username */
 				if (strlen(optarg) != 0)
-					opts->superuser = pg_strdup(optarg);
+					opts->superuser = mdb_strdup(optarg);
 				break;
 			case 't':			/* Dump specified table(s) only */
 				opts->selTypes = 1;
@@ -236,7 +236,7 @@ main(int argc, char **argv)
 				break;
 
 			case 'U':
-				opts->username = pg_strdup(optarg);
+				opts->username = mdb_strdup(optarg);
 				break;
 
 			case 'v':			/* verbose */
@@ -268,7 +268,7 @@ main(int argc, char **argv)
 				break;
 
 			case 2:				/* SET ROLE */
-				opts->use_role = pg_strdup(optarg);
+				opts->use_role = mdb_strdup(optarg);
 				break;
 
 			case 3:				/* section */
@@ -390,14 +390,14 @@ main(int argc, char **argv)
 	AH->verbose = opts->verbose;
 
 	/*
-	 * Whether to keep submitting sql commands as "pg_restore ... | psql ... "
+	 * Whether to keep submitting sql commands as "mdb_restore ... | psql ... "
 	 */
 	AH->exit_on_error = opts->exit_on_error;
 
 	if (opts->tocFile)
 		SortTocFromFile(AH);
 
-	/* See comments in pg_dump.c */
+	/* See comments in mdb_dump.c */
 #ifdef WIN32
 	if (numWorkers > MAXIMUM_WAIT_OBJECTS)
 	{
@@ -433,7 +433,7 @@ main(int argc, char **argv)
 static void
 usage(const char *progname)
 {
-	printf(_("%s restores a MollyDB database from an archive created by pg_dump.\n\n"), progname);
+	printf(_("%s restores a MollyDB database from an archive created by mdb_dump.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]... [FILE]\n"), progname);
 

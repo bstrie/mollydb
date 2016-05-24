@@ -15,7 +15,7 @@
 #include "mollydb.h"
 
 #include "access/htup_details.h"
-#include "catalog/pg_aggregate.h"
+#include "catalog/mdb_aggregate.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
 #include "optimizer/tlist.h"
@@ -774,7 +774,7 @@ apply_partialaggref_adjustment(PathTarget *target)
 		if (IsA(aggref, Aggref))
 		{
 			HeapTuple	aggTuple;
-			Form_pg_aggregate aggform;
+			Form_mdb_aggregate aggform;
 			Aggref	   *newaggref;
 
 			aggTuple = SearchSysCache1(AGGFNOID,
@@ -782,7 +782,7 @@ apply_partialaggref_adjustment(PathTarget *target)
 			if (!HeapTupleIsValid(aggTuple))
 				elog(ERROR, "cache lookup failed for aggregate %u",
 					 aggref->aggfnoid);
-			aggform = (Form_pg_aggregate) GETSTRUCT(aggTuple);
+			aggform = (Form_mdb_aggregate) GETSTRUCT(aggTuple);
 
 			newaggref = (Aggref *) copyObject(aggref);
 

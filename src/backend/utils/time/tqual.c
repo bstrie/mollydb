@@ -13,9 +13,9 @@
  * NOTE: When using a non-MVCC snapshot, we must check
  * TransactionIdIsInProgress (which looks in the PGXACT array)
  * before TransactionIdDidCommit/TransactionIdDidAbort (which look in
- * pg_clog).  Otherwise we have a race condition: we might decide that a
+ * mdb_clog).  Otherwise we have a race condition: we might decide that a
  * just-committed transaction crashed, because none of the tests succeed.
- * xact.c is careful to record commit/abort in pg_clog before it unsets
+ * xact.c is careful to record commit/abort in mdb_clog before it unsets
  * MyPgXact->xid in the PGXACT array.  That fixes that problem, but it
  * also means there is a window where TransactionIdIsInProgress and
  * TransactionIdDidCommit will both return true.  If we check only
@@ -29,7 +29,7 @@
  *
  * When using an MVCC snapshot, we rely on XidInMVCCSnapshot rather than
  * TransactionIdIsInProgress, but the logic is otherwise the same: do not
- * check pg_clog until after deciding that the xact is no longer in progress.
+ * check mdb_clog until after deciding that the xact is no longer in progress.
  *
  *
  * Summary of visibility functions:
@@ -1446,7 +1446,7 @@ HeapTupleIsSurelyDead(HeapTuple htup, TransactionId OldestXmin)
 
 	/*
 	 * If the Xmax is a MultiXact, it might be dead or alive, but we cannot
-	 * know without checking pg_multixact.
+	 * know without checking mdb_multixact.
 	 */
 	if (tuple->t_infomask & HEAP_XMAX_IS_MULTI)
 		return false;
@@ -1499,7 +1499,7 @@ XidInMVCCSnapshot(TransactionId xid, Snapshot snapshot)
 		 * If the snapshot contains full subxact data, the fastest way to
 		 * check things is just to compare the given XID against both subxact
 		 * XIDs and top-level XIDs.  If the snapshot overflowed, we have to
-		 * use pg_subtrans to convert a subxact XID to its parent XID, but
+		 * use mdb_subtrans to convert a subxact XID to its parent XID, but
 		 * then we need only look at top-level XIDs not subxacts.
 		 */
 		if (!snapshot->suboverflowed)

@@ -19,10 +19,10 @@
 #include "access/htup_details.h"
 #include "catalog/catalog.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_authid.h"
-#include "catalog/pg_auth_members.h"
-#include "catalog/pg_type.h"
-#include "catalog/pg_class.h"
+#include "catalog/mdb_authid.h"
+#include "catalog/mdb_auth_members.h"
+#include "catalog/mdb_type.h"
+#include "catalog/mdb_class.h"
 #include "commands/dbcommands.h"
 #include "commands/proclang.h"
 #include "commands/tablespace.h"
@@ -49,7 +49,7 @@ typedef struct
  * role.  In most of these tests the "given role" is the same, namely the
  * active current user.  So we can optimize it by keeping a cached list of
  * all the roles the "given role" is a member of, directly or indirectly.
- * The cache is flushed whenever we detect a change in pg_auth_members.
+ * The cache is flushed whenever we detect a change in mdb_auth_members.
  *
  * There are actually two caches, one computed under "has_privs" rules
  * (do not recurse where rolinherit isn't true) and one computed under
@@ -115,7 +115,7 @@ static AclMode convert_tablespace_priv_string(text *priv_type_text);
 static Oid	convert_type_name(text *typename);
 static AclMode convert_type_priv_string(text *priv_type_text);
 static AclMode convert_role_priv_string(text *priv_type_text);
-static AclResult pg_role_aclcheck(Oid role_oid, Oid roleid, AclMode mode);
+static AclResult mdb_role_aclcheck(Oid role_oid, Oid roleid, AclMode mode);
 
 static void RoleMembershipCacheCallback(Datum arg, int cacheid, uint32 hashvalue);
 
@@ -182,7 +182,7 @@ getid(const char *s, char *n)
 /*
  * Write a role name at *p, adding double quotes if needed.
  * There must be at least (2*NAMEDATALEN)+2 bytes available at *p.
- * This needs to be kept in sync with copyAclUserName in pg_dump/dumputils.c
+ * This needs to be kept in sync with copyAclUserName in mdb_dump/dumputils.c
  */
 static void
 putid(char *p, const char *s)
@@ -608,7 +608,7 @@ aclitemout(PG_FUNCTION_ARGS)
 		htup = SearchSysCache1(AUTHOID, ObjectIdGetDatum(aip->ai_grantee));
 		if (HeapTupleIsValid(htup))
 		{
-			putid(p, NameStr(((Form_pg_authid) GETSTRUCT(htup))->rolname));
+			putid(p, NameStr(((Form_mdb_authid) GETSTRUCT(htup))->rolname));
 			ReleaseSysCache(htup);
 		}
 		else
@@ -636,7 +636,7 @@ aclitemout(PG_FUNCTION_ARGS)
 	htup = SearchSysCache1(AUTHOID, ObjectIdGetDatum(aip->ai_grantor));
 	if (HeapTupleIsValid(htup))
 	{
-		putid(p, NameStr(((Form_pg_authid) GETSTRUCT(htup))->rolname));
+		putid(p, NameStr(((Form_mdb_authid) GETSTRUCT(htup))->rolname));
 		ReleaseSysCache(htup);
 	}
 	else
@@ -725,7 +725,7 @@ hash_aclitem(PG_FUNCTION_ARGS)
  * newly-created objects (or any object with a NULL acl entry).
  *
  * Note that these are the hard-wired "defaults" that are used in the
- * absence of any pg_default_acl entry.
+ * absence of any mdb_default_acl entry.
  */
 Acl *
 acldefault(GrantObjectType objtype, Oid ownerId)
@@ -1599,33 +1599,33 @@ convert_priv_string(text *priv_type_text)
 {
 	char	   *priv_type = text_to_cstring(priv_type_text);
 
-	if (pg_strcasecmp(priv_type, "SELECT") == 0)
+	if (mdb_strcasecmp(priv_type, "SELECT") == 0)
 		return ACL_SELECT;
-	if (pg_strcasecmp(priv_type, "INSERT") == 0)
+	if (mdb_strcasecmp(priv_type, "INSERT") == 0)
 		return ACL_INSERT;
-	if (pg_strcasecmp(priv_type, "UPDATE") == 0)
+	if (mdb_strcasecmp(priv_type, "UPDATE") == 0)
 		return ACL_UPDATE;
-	if (pg_strcasecmp(priv_type, "DELETE") == 0)
+	if (mdb_strcasecmp(priv_type, "DELETE") == 0)
 		return ACL_DELETE;
-	if (pg_strcasecmp(priv_type, "TRUNCATE") == 0)
+	if (mdb_strcasecmp(priv_type, "TRUNCATE") == 0)
 		return ACL_TRUNCATE;
-	if (pg_strcasecmp(priv_type, "REFERENCES") == 0)
+	if (mdb_strcasecmp(priv_type, "REFERENCES") == 0)
 		return ACL_REFERENCES;
-	if (pg_strcasecmp(priv_type, "TRIGGER") == 0)
+	if (mdb_strcasecmp(priv_type, "TRIGGER") == 0)
 		return ACL_TRIGGER;
-	if (pg_strcasecmp(priv_type, "EXECUTE") == 0)
+	if (mdb_strcasecmp(priv_type, "EXECUTE") == 0)
 		return ACL_EXECUTE;
-	if (pg_strcasecmp(priv_type, "USAGE") == 0)
+	if (mdb_strcasecmp(priv_type, "USAGE") == 0)
 		return ACL_USAGE;
-	if (pg_strcasecmp(priv_type, "CREATE") == 0)
+	if (mdb_strcasecmp(priv_type, "CREATE") == 0)
 		return ACL_CREATE;
-	if (pg_strcasecmp(priv_type, "TEMP") == 0)
+	if (mdb_strcasecmp(priv_type, "TEMP") == 0)
 		return ACL_CREATE_TEMP;
-	if (pg_strcasecmp(priv_type, "TEMPORARY") == 0)
+	if (mdb_strcasecmp(priv_type, "TEMPORARY") == 0)
 		return ACL_CREATE_TEMP;
-	if (pg_strcasecmp(priv_type, "CONNECT") == 0)
+	if (mdb_strcasecmp(priv_type, "CONNECT") == 0)
 		return ACL_CONNECT;
-	if (pg_strcasecmp(priv_type, "RULE") == 0)
+	if (mdb_strcasecmp(priv_type, "RULE") == 0)
 		return 0;				/* ignore old RULE privileges */
 
 	ereport(ERROR,
@@ -1675,7 +1675,7 @@ convert_any_priv_string(text *priv_type_text,
 		/* Match to the privileges list */
 		for (this_priv = privileges; this_priv->name; this_priv++)
 		{
-			if (pg_strcasecmp(this_priv->name, chunk) == 0)
+			if (mdb_strcasecmp(this_priv->name, chunk) == 0)
 			{
 				result |= this_priv->value;
 				break;
@@ -1761,7 +1761,7 @@ aclexplode(PG_FUNCTION_ARGS)
 		oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
 
 		/*
-		 * build tupdesc for result tuples (matches out parameters in pg_proc
+		 * build tupdesc for result tuples (matches out parameters in mdb_proc
 		 * entry)
 		 */
 		tupdesc = CreateTemplateTupleDesc(4, false);
@@ -1863,7 +1863,7 @@ has_table_privilege_name_name(PG_FUNCTION_ARGS)
 	tableoid = convert_table_name(tablename);
 	mode = convert_table_priv_string(priv_type_text);
 
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -1888,7 +1888,7 @@ has_table_privilege_name(PG_FUNCTION_ARGS)
 	tableoid = convert_table_name(tablename);
 	mode = convert_table_priv_string(priv_type_text);
 
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -1914,7 +1914,7 @@ has_table_privilege_name_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -1940,7 +1940,7 @@ has_table_privilege_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -1963,7 +1963,7 @@ has_table_privilege_id_name(PG_FUNCTION_ARGS)
 	tableoid = convert_table_name(tablename);
 	mode = convert_table_priv_string(priv_type_text);
 
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -1987,7 +1987,7 @@ has_table_privilege_id_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2076,7 +2076,7 @@ has_sequence_privilege_name_name(PG_FUNCTION_ARGS)
 				 errmsg("\"%s\" is not a sequence",
 						text_to_cstring(sequencename))));
 
-	aclresult = pg_class_aclcheck(sequenceoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2106,7 +2106,7 @@ has_sequence_privilege_name(PG_FUNCTION_ARGS)
 				 errmsg("\"%s\" is not a sequence",
 						text_to_cstring(sequencename))));
 
-	aclresult = pg_class_aclcheck(sequenceoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2138,7 +2138,7 @@ has_sequence_privilege_name_id(PG_FUNCTION_ARGS)
 				 errmsg("\"%s\" is not a sequence",
 						get_rel_name(sequenceoid))));
 
-	aclresult = pg_class_aclcheck(sequenceoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2170,7 +2170,7 @@ has_sequence_privilege_id(PG_FUNCTION_ARGS)
 				 errmsg("\"%s\" is not a sequence",
 						get_rel_name(sequenceoid))));
 
-	aclresult = pg_class_aclcheck(sequenceoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2198,7 +2198,7 @@ has_sequence_privilege_id_name(PG_FUNCTION_ARGS)
 				 errmsg("\"%s\" is not a sequence",
 						text_to_cstring(sequencename))));
 
-	aclresult = pg_class_aclcheck(sequenceoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2228,7 +2228,7 @@ has_sequence_privilege_id_id(PG_FUNCTION_ARGS)
 				 errmsg("\"%s\" is not a sequence",
 						get_rel_name(sequenceoid))));
 
-	aclresult = pg_class_aclcheck(sequenceoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(sequenceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2283,9 +2283,9 @@ has_any_column_privilege_name_name(PG_FUNCTION_ARGS)
 	mode = convert_column_priv_string(priv_type_text);
 
 	/* First check at table level, then examine each column if needed */
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 	if (aclresult != ACLCHECK_OK)
-		aclresult = pg_attribute_aclcheck_all(tableoid, roleid, mode,
+		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
@@ -2312,9 +2312,9 @@ has_any_column_privilege_name(PG_FUNCTION_ARGS)
 	mode = convert_column_priv_string(priv_type_text);
 
 	/* First check at table level, then examine each column if needed */
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 	if (aclresult != ACLCHECK_OK)
-		aclresult = pg_attribute_aclcheck_all(tableoid, roleid, mode,
+		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
@@ -2342,9 +2342,9 @@ has_any_column_privilege_name_id(PG_FUNCTION_ARGS)
 		PG_RETURN_NULL();
 
 	/* First check at table level, then examine each column if needed */
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 	if (aclresult != ACLCHECK_OK)
-		aclresult = pg_attribute_aclcheck_all(tableoid, roleid, mode,
+		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
@@ -2372,9 +2372,9 @@ has_any_column_privilege_id(PG_FUNCTION_ARGS)
 		PG_RETURN_NULL();
 
 	/* First check at table level, then examine each column if needed */
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 	if (aclresult != ACLCHECK_OK)
-		aclresult = pg_attribute_aclcheck_all(tableoid, roleid, mode,
+		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
@@ -2399,9 +2399,9 @@ has_any_column_privilege_id_name(PG_FUNCTION_ARGS)
 	mode = convert_column_priv_string(priv_type_text);
 
 	/* First check at table level, then examine each column if needed */
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 	if (aclresult != ACLCHECK_OK)
-		aclresult = pg_attribute_aclcheck_all(tableoid, roleid, mode,
+		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
@@ -2427,9 +2427,9 @@ has_any_column_privilege_id_id(PG_FUNCTION_ARGS)
 		PG_RETURN_NULL();
 
 	/* First check at table level, then examine each column if needed */
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 	if (aclresult != ACLCHECK_OK)
-		aclresult = pg_attribute_aclcheck_all(tableoid, roleid, mode,
+		aclresult = mdb_attribute_aclcheck_all(tableoid, roleid, mode,
 											  ACLMASK_ANY);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
@@ -2461,20 +2461,20 @@ column_privilege_check(Oid tableoid, AttrNumber attnum,
 {
 	AclResult	aclresult;
 	HeapTuple	attTuple;
-	Form_pg_attribute attributeForm;
+	Form_mdb_attribute attributeForm;
 
 	/*
 	 * First check if we have the privilege at the table level.  We check
-	 * existence of the pg_class row before risking calling pg_class_aclcheck.
+	 * existence of the mdb_class row before risking calling mdb_class_aclcheck.
 	 * Note: it might seem there's a race condition against concurrent DROP,
 	 * but really it's safe because there will be no syscache flush between
 	 * here and there.  So if we see the row in the syscache, so will
-	 * pg_class_aclcheck.
+	 * mdb_class_aclcheck.
 	 */
 	if (!SearchSysCacheExists1(RELOID, ObjectIdGetDatum(tableoid)))
 		return -1;
 
-	aclresult = pg_class_aclcheck(tableoid, roleid, mode);
+	aclresult = mdb_class_aclcheck(tableoid, roleid, mode);
 
 	if (aclresult == ACLCHECK_OK)
 		return true;
@@ -2482,14 +2482,14 @@ column_privilege_check(Oid tableoid, AttrNumber attnum,
 	/*
 	 * No table privilege, so try per-column privileges.  Again, we have to
 	 * check for dropped attribute first, and we rely on the syscache not to
-	 * notice a concurrent drop before pg_attribute_aclcheck fetches the row.
+	 * notice a concurrent drop before mdb_attribute_aclcheck fetches the row.
 	 */
 	attTuple = SearchSysCache2(ATTNUM,
 							   ObjectIdGetDatum(tableoid),
 							   Int16GetDatum(attnum));
 	if (!HeapTupleIsValid(attTuple))
 		return -1;
-	attributeForm = (Form_pg_attribute) GETSTRUCT(attTuple);
+	attributeForm = (Form_mdb_attribute) GETSTRUCT(attTuple);
 	if (attributeForm->attisdropped)
 	{
 		ReleaseSysCache(attTuple);
@@ -2497,7 +2497,7 @@ column_privilege_check(Oid tableoid, AttrNumber attnum,
 	}
 	ReleaseSysCache(attTuple);
 
-	aclresult = pg_attribute_aclcheck(tableoid, attnum, roleid, mode);
+	aclresult = mdb_attribute_aclcheck(tableoid, attnum, roleid, mode);
 
 	return (aclresult == ACLCHECK_OK);
 }
@@ -2896,7 +2896,7 @@ has_database_privilege_name_name(PG_FUNCTION_ARGS)
 	databaseoid = convert_database_name(databasename);
 	mode = convert_database_priv_string(priv_type_text);
 
-	aclresult = pg_database_aclcheck(databaseoid, roleid, mode);
+	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2921,7 +2921,7 @@ has_database_privilege_name(PG_FUNCTION_ARGS)
 	databaseoid = convert_database_name(databasename);
 	mode = convert_database_priv_string(priv_type_text);
 
-	aclresult = pg_database_aclcheck(databaseoid, roleid, mode);
+	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2947,7 +2947,7 @@ has_database_privilege_name_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(DATABASEOID, ObjectIdGetDatum(databaseoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_database_aclcheck(databaseoid, roleid, mode);
+	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2973,7 +2973,7 @@ has_database_privilege_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(DATABASEOID, ObjectIdGetDatum(databaseoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_database_aclcheck(databaseoid, roleid, mode);
+	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -2996,7 +2996,7 @@ has_database_privilege_id_name(PG_FUNCTION_ARGS)
 	databaseoid = convert_database_name(databasename);
 	mode = convert_database_priv_string(priv_type_text);
 
-	aclresult = pg_database_aclcheck(databaseoid, roleid, mode);
+	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3020,7 +3020,7 @@ has_database_privilege_id_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(DATABASEOID, ObjectIdGetDatum(databaseoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_database_aclcheck(databaseoid, roleid, mode);
+	aclresult = mdb_database_aclcheck(databaseoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3094,7 +3094,7 @@ has_foreign_data_wrapper_privilege_name_name(PG_FUNCTION_ARGS)
 	fdwid = convert_foreign_data_wrapper_name(fdwname);
 	mode = convert_foreign_data_wrapper_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
+	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3119,7 +3119,7 @@ has_foreign_data_wrapper_privilege_name(PG_FUNCTION_ARGS)
 	fdwid = convert_foreign_data_wrapper_name(fdwname);
 	mode = convert_foreign_data_wrapper_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
+	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3142,7 +3142,7 @@ has_foreign_data_wrapper_privilege_name_id(PG_FUNCTION_ARGS)
 	roleid = get_role_oid_or_public(NameStr(*username));
 	mode = convert_foreign_data_wrapper_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
+	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3165,7 +3165,7 @@ has_foreign_data_wrapper_privilege_id(PG_FUNCTION_ARGS)
 	roleid = GetUserId();
 	mode = convert_foreign_data_wrapper_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
+	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3188,7 +3188,7 @@ has_foreign_data_wrapper_privilege_id_name(PG_FUNCTION_ARGS)
 	fdwid = convert_foreign_data_wrapper_name(fdwname);
 	mode = convert_foreign_data_wrapper_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
+	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3209,7 +3209,7 @@ has_foreign_data_wrapper_privilege_id_id(PG_FUNCTION_ARGS)
 
 	mode = convert_foreign_data_wrapper_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
+	aclresult = mdb_foreign_data_wrapper_aclcheck(fdwid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3276,7 +3276,7 @@ has_function_privilege_name_name(PG_FUNCTION_ARGS)
 	functionoid = convert_function_name(functionname);
 	mode = convert_function_priv_string(priv_type_text);
 
-	aclresult = pg_proc_aclcheck(functionoid, roleid, mode);
+	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3301,7 +3301,7 @@ has_function_privilege_name(PG_FUNCTION_ARGS)
 	functionoid = convert_function_name(functionname);
 	mode = convert_function_priv_string(priv_type_text);
 
-	aclresult = pg_proc_aclcheck(functionoid, roleid, mode);
+	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3327,7 +3327,7 @@ has_function_privilege_name_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(PROCOID, ObjectIdGetDatum(functionoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_proc_aclcheck(functionoid, roleid, mode);
+	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3353,7 +3353,7 @@ has_function_privilege_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(PROCOID, ObjectIdGetDatum(functionoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_proc_aclcheck(functionoid, roleid, mode);
+	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3376,7 +3376,7 @@ has_function_privilege_id_name(PG_FUNCTION_ARGS)
 	functionoid = convert_function_name(functionname);
 	mode = convert_function_priv_string(priv_type_text);
 
-	aclresult = pg_proc_aclcheck(functionoid, roleid, mode);
+	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3400,7 +3400,7 @@ has_function_privilege_id_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(PROCOID, ObjectIdGetDatum(functionoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_proc_aclcheck(functionoid, roleid, mode);
+	aclresult = mdb_proc_aclcheck(functionoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3476,7 +3476,7 @@ has_language_privilege_name_name(PG_FUNCTION_ARGS)
 	languageoid = convert_language_name(languagename);
 	mode = convert_language_priv_string(priv_type_text);
 
-	aclresult = pg_language_aclcheck(languageoid, roleid, mode);
+	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3501,7 +3501,7 @@ has_language_privilege_name(PG_FUNCTION_ARGS)
 	languageoid = convert_language_name(languagename);
 	mode = convert_language_priv_string(priv_type_text);
 
-	aclresult = pg_language_aclcheck(languageoid, roleid, mode);
+	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3527,7 +3527,7 @@ has_language_privilege_name_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(LANGOID, ObjectIdGetDatum(languageoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_language_aclcheck(languageoid, roleid, mode);
+	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3553,7 +3553,7 @@ has_language_privilege_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(LANGOID, ObjectIdGetDatum(languageoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_language_aclcheck(languageoid, roleid, mode);
+	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3576,7 +3576,7 @@ has_language_privilege_id_name(PG_FUNCTION_ARGS)
 	languageoid = convert_language_name(languagename);
 	mode = convert_language_priv_string(priv_type_text);
 
-	aclresult = pg_language_aclcheck(languageoid, roleid, mode);
+	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3600,7 +3600,7 @@ has_language_privilege_id_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(LANGOID, ObjectIdGetDatum(languageoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_language_aclcheck(languageoid, roleid, mode);
+	aclresult = mdb_language_aclcheck(languageoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3667,7 +3667,7 @@ has_schema_privilege_name_name(PG_FUNCTION_ARGS)
 	schemaoid = convert_schema_name(schemaname);
 	mode = convert_schema_priv_string(priv_type_text);
 
-	aclresult = pg_namespace_aclcheck(schemaoid, roleid, mode);
+	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3692,7 +3692,7 @@ has_schema_privilege_name(PG_FUNCTION_ARGS)
 	schemaoid = convert_schema_name(schemaname);
 	mode = convert_schema_priv_string(priv_type_text);
 
-	aclresult = pg_namespace_aclcheck(schemaoid, roleid, mode);
+	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3718,7 +3718,7 @@ has_schema_privilege_name_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(NAMESPACEOID, ObjectIdGetDatum(schemaoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_namespace_aclcheck(schemaoid, roleid, mode);
+	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3744,7 +3744,7 @@ has_schema_privilege_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(NAMESPACEOID, ObjectIdGetDatum(schemaoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_namespace_aclcheck(schemaoid, roleid, mode);
+	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3767,7 +3767,7 @@ has_schema_privilege_id_name(PG_FUNCTION_ARGS)
 	schemaoid = convert_schema_name(schemaname);
 	mode = convert_schema_priv_string(priv_type_text);
 
-	aclresult = pg_namespace_aclcheck(schemaoid, roleid, mode);
+	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3791,7 +3791,7 @@ has_schema_privilege_id_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(NAMESPACEOID, ObjectIdGetDatum(schemaoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_namespace_aclcheck(schemaoid, roleid, mode);
+	aclresult = mdb_namespace_aclcheck(schemaoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3860,7 +3860,7 @@ has_server_privilege_name_name(PG_FUNCTION_ARGS)
 	serverid = convert_server_name(servername);
 	mode = convert_server_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_server_aclcheck(serverid, roleid, mode);
+	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3885,7 +3885,7 @@ has_server_privilege_name(PG_FUNCTION_ARGS)
 	serverid = convert_server_name(servername);
 	mode = convert_server_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_server_aclcheck(serverid, roleid, mode);
+	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3908,7 +3908,7 @@ has_server_privilege_name_id(PG_FUNCTION_ARGS)
 	roleid = get_role_oid_or_public(NameStr(*username));
 	mode = convert_server_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_server_aclcheck(serverid, roleid, mode);
+	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3931,7 +3931,7 @@ has_server_privilege_id(PG_FUNCTION_ARGS)
 	roleid = GetUserId();
 	mode = convert_server_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_server_aclcheck(serverid, roleid, mode);
+	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3954,7 +3954,7 @@ has_server_privilege_id_name(PG_FUNCTION_ARGS)
 	serverid = convert_server_name(servername);
 	mode = convert_server_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_server_aclcheck(serverid, roleid, mode);
+	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -3975,7 +3975,7 @@ has_server_privilege_id_id(PG_FUNCTION_ARGS)
 
 	mode = convert_server_priv_string(priv_type_text);
 
-	aclresult = pg_foreign_server_aclcheck(serverid, roleid, mode);
+	aclresult = mdb_foreign_server_aclcheck(serverid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4042,7 +4042,7 @@ has_tablespace_privilege_name_name(PG_FUNCTION_ARGS)
 	tablespaceoid = convert_tablespace_name(tablespacename);
 	mode = convert_tablespace_priv_string(priv_type_text);
 
-	aclresult = pg_tablespace_aclcheck(tablespaceoid, roleid, mode);
+	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4067,7 +4067,7 @@ has_tablespace_privilege_name(PG_FUNCTION_ARGS)
 	tablespaceoid = convert_tablespace_name(tablespacename);
 	mode = convert_tablespace_priv_string(priv_type_text);
 
-	aclresult = pg_tablespace_aclcheck(tablespaceoid, roleid, mode);
+	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4090,7 +4090,7 @@ has_tablespace_privilege_name_id(PG_FUNCTION_ARGS)
 	roleid = get_role_oid_or_public(NameStr(*username));
 	mode = convert_tablespace_priv_string(priv_type_text);
 
-	aclresult = pg_tablespace_aclcheck(tablespaceoid, roleid, mode);
+	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4113,7 +4113,7 @@ has_tablespace_privilege_id(PG_FUNCTION_ARGS)
 	roleid = GetUserId();
 	mode = convert_tablespace_priv_string(priv_type_text);
 
-	aclresult = pg_tablespace_aclcheck(tablespaceoid, roleid, mode);
+	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4136,7 +4136,7 @@ has_tablespace_privilege_id_name(PG_FUNCTION_ARGS)
 	tablespaceoid = convert_tablespace_name(tablespacename);
 	mode = convert_tablespace_priv_string(priv_type_text);
 
-	aclresult = pg_tablespace_aclcheck(tablespaceoid, roleid, mode);
+	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4157,7 +4157,7 @@ has_tablespace_privilege_id_id(PG_FUNCTION_ARGS)
 
 	mode = convert_tablespace_priv_string(priv_type_text);
 
-	aclresult = pg_tablespace_aclcheck(tablespaceoid, roleid, mode);
+	aclresult = mdb_tablespace_aclcheck(tablespaceoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4223,7 +4223,7 @@ has_type_privilege_name_name(PG_FUNCTION_ARGS)
 	typeoid = convert_type_name(typename);
 	mode = convert_type_priv_string(priv_type_text);
 
-	aclresult = pg_type_aclcheck(typeoid, roleid, mode);
+	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4248,7 +4248,7 @@ has_type_privilege_name(PG_FUNCTION_ARGS)
 	typeoid = convert_type_name(typename);
 	mode = convert_type_priv_string(priv_type_text);
 
-	aclresult = pg_type_aclcheck(typeoid, roleid, mode);
+	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4274,7 +4274,7 @@ has_type_privilege_name_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(TYPEOID, ObjectIdGetDatum(typeoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_type_aclcheck(typeoid, roleid, mode);
+	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4300,7 +4300,7 @@ has_type_privilege_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(TYPEOID, ObjectIdGetDatum(typeoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_type_aclcheck(typeoid, roleid, mode);
+	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4323,7 +4323,7 @@ has_type_privilege_id_name(PG_FUNCTION_ARGS)
 	typeoid = convert_type_name(typename);
 	mode = convert_type_priv_string(priv_type_text);
 
-	aclresult = pg_type_aclcheck(typeoid, roleid, mode);
+	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4347,7 +4347,7 @@ has_type_privilege_id_id(PG_FUNCTION_ARGS)
 	if (!SearchSysCacheExists1(TYPEOID, ObjectIdGetDatum(typeoid)))
 		PG_RETURN_NULL();
 
-	aclresult = pg_type_aclcheck(typeoid, roleid, mode);
+	aclresult = mdb_type_aclcheck(typeoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
@@ -4394,8 +4394,8 @@ convert_type_priv_string(text *priv_type_text)
 
 
 /*
- * pg_has_role variants
- *		These are all named "pg_has_role" at the SQL level.
+ * mdb_has_role variants
+ *		These are all named "mdb_has_role" at the SQL level.
  *		They take various combinations of role name, role OID,
  *		user name, user OID, or implicit user = current_user.
  *
@@ -4404,12 +4404,12 @@ convert_type_priv_string(text *priv_type_text)
  */
 
 /*
- * pg_has_role_name_name
+ * mdb_has_role_name_name
  *		Check user privileges on a role given
  *		name username, name rolename, and text priv name.
  */
 Datum
-pg_has_role_name_name(PG_FUNCTION_ARGS)
+mdb_has_role_name_name(PG_FUNCTION_ARGS)
 {
 	Name		username = PG_GETARG_NAME(0);
 	Name		rolename = PG_GETARG_NAME(1);
@@ -4423,19 +4423,19 @@ pg_has_role_name_name(PG_FUNCTION_ARGS)
 	roleoid = get_role_oid(NameStr(*rolename), false);
 	mode = convert_role_priv_string(priv_type_text);
 
-	aclresult = pg_role_aclcheck(roleoid, roleid, mode);
+	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
- * pg_has_role_name
+ * mdb_has_role_name
  *		Check user privileges on a role given
  *		name rolename and text priv name.
  *		current_user is assumed
  */
 Datum
-pg_has_role_name(PG_FUNCTION_ARGS)
+mdb_has_role_name(PG_FUNCTION_ARGS)
 {
 	Name		rolename = PG_GETARG_NAME(0);
 	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
@@ -4448,18 +4448,18 @@ pg_has_role_name(PG_FUNCTION_ARGS)
 	roleoid = get_role_oid(NameStr(*rolename), false);
 	mode = convert_role_priv_string(priv_type_text);
 
-	aclresult = pg_role_aclcheck(roleoid, roleid, mode);
+	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
- * pg_has_role_name_id
+ * mdb_has_role_name_id
  *		Check user privileges on a role given
  *		name usename, role oid, and text priv name.
  */
 Datum
-pg_has_role_name_id(PG_FUNCTION_ARGS)
+mdb_has_role_name_id(PG_FUNCTION_ARGS)
 {
 	Name		username = PG_GETARG_NAME(0);
 	Oid			roleoid = PG_GETARG_OID(1);
@@ -4471,19 +4471,19 @@ pg_has_role_name_id(PG_FUNCTION_ARGS)
 	roleid = get_role_oid(NameStr(*username), false);
 	mode = convert_role_priv_string(priv_type_text);
 
-	aclresult = pg_role_aclcheck(roleoid, roleid, mode);
+	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
- * pg_has_role_id
+ * mdb_has_role_id
  *		Check user privileges on a role given
  *		role oid, and text priv name.
  *		current_user is assumed
  */
 Datum
-pg_has_role_id(PG_FUNCTION_ARGS)
+mdb_has_role_id(PG_FUNCTION_ARGS)
 {
 	Oid			roleoid = PG_GETARG_OID(0);
 	text	   *priv_type_text = PG_GETARG_TEXT_P(1);
@@ -4494,18 +4494,18 @@ pg_has_role_id(PG_FUNCTION_ARGS)
 	roleid = GetUserId();
 	mode = convert_role_priv_string(priv_type_text);
 
-	aclresult = pg_role_aclcheck(roleoid, roleid, mode);
+	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
- * pg_has_role_id_name
+ * mdb_has_role_id_name
  *		Check user privileges on a role given
  *		roleid, name rolename, and text priv name.
  */
 Datum
-pg_has_role_id_name(PG_FUNCTION_ARGS)
+mdb_has_role_id_name(PG_FUNCTION_ARGS)
 {
 	Oid			roleid = PG_GETARG_OID(0);
 	Name		rolename = PG_GETARG_NAME(1);
@@ -4517,18 +4517,18 @@ pg_has_role_id_name(PG_FUNCTION_ARGS)
 	roleoid = get_role_oid(NameStr(*rolename), false);
 	mode = convert_role_priv_string(priv_type_text);
 
-	aclresult = pg_role_aclcheck(roleoid, roleid, mode);
+	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
- * pg_has_role_id_id
+ * mdb_has_role_id_id
  *		Check user privileges on a role given
  *		roleid, role oid, and text priv name.
  */
 Datum
-pg_has_role_id_id(PG_FUNCTION_ARGS)
+mdb_has_role_id_id(PG_FUNCTION_ARGS)
 {
 	Oid			roleid = PG_GETARG_OID(0);
 	Oid			roleoid = PG_GETARG_OID(1);
@@ -4538,13 +4538,13 @@ pg_has_role_id_id(PG_FUNCTION_ARGS)
 
 	mode = convert_role_priv_string(priv_type_text);
 
-	aclresult = pg_role_aclcheck(roleoid, roleid, mode);
+	aclresult = mdb_role_aclcheck(roleoid, roleid, mode);
 
 	PG_RETURN_BOOL(aclresult == ACLCHECK_OK);
 }
 
 /*
- *		Support routines for pg_has_role family.
+ *		Support routines for mdb_has_role family.
  */
 
 /*
@@ -4555,7 +4555,7 @@ pg_has_role_id_id(PG_FUNCTION_ARGS)
  * (has_privs), MEMBER to denote is_member, and MEMBER WITH GRANT OPTION
  * (or ADMIN OPTION) to denote is_admin.  There is no ACL bit corresponding
  * to MEMBER so we cheat and use ACL_CREATE for that.  This convention
- * is shared only with pg_role_aclcheck, below.
+ * is shared only with mdb_role_aclcheck, below.
  */
 static AclMode
 convert_role_priv_string(text *priv_type_text)
@@ -4574,17 +4574,17 @@ convert_role_priv_string(text *priv_type_text)
 }
 
 /*
- * pg_role_aclcheck
- *		Quick-and-dirty support for pg_has_role
+ * mdb_role_aclcheck
+ *		Quick-and-dirty support for mdb_has_role
  */
 static AclResult
-pg_role_aclcheck(Oid role_oid, Oid roleid, AclMode mode)
+mdb_role_aclcheck(Oid role_oid, Oid roleid, AclMode mode)
 {
 	if (mode & ACL_GRANT_OPTION_FOR(ACL_CREATE))
 	{
 		/*
 		 * XXX For roleid == role_oid, is_admin_of_role() also examines the
-		 * session and call stack.  That suits two-argument pg_has_role(), but
+		 * session and call stack.  That suits two-argument mdb_has_role(), but
 		 * it gives the three-argument version a lamentable whimsy.
 		 */
 		if (is_admin_of_role(roleid, role_oid))
@@ -4614,7 +4614,7 @@ initialize_acl(void)
 	{
 		/*
 		 * In normal mode, set a callback on any syscache invalidation of
-		 * pg_auth_members rows
+		 * mdb_auth_members rows
 		 */
 		CacheRegisterSyscacheCallback(AUTHMEMROLEMEM,
 									  RoleMembershipCacheCallback,
@@ -4645,7 +4645,7 @@ has_rolinherit(Oid roleid)
 	utup = SearchSysCache1(AUTHOID, ObjectIdGetDatum(roleid));
 	if (HeapTupleIsValid(utup))
 	{
-		result = ((Form_pg_authid) GETSTRUCT(utup))->rolinherit;
+		result = ((Form_mdb_authid) GETSTRUCT(utup))->rolinherit;
 		ReleaseSysCache(utup);
 	}
 	return result;
@@ -4707,7 +4707,7 @@ roles_has_privs_of(Oid roleid)
 		for (i = 0; i < memlist->n_members; i++)
 		{
 			HeapTuple	tup = &memlist->members[i]->tuple;
-			Oid			otherid = ((Form_pg_auth_members) GETSTRUCT(tup))->roleid;
+			Oid			otherid = ((Form_mdb_auth_members) GETSTRUCT(tup))->roleid;
 
 			/*
 			 * Even though there shouldn't be any loops in the membership
@@ -4786,7 +4786,7 @@ roles_is_member_of(Oid roleid)
 		for (i = 0; i < memlist->n_members; i++)
 		{
 			HeapTuple	tup = &memlist->members[i]->tuple;
-			Oid			otherid = ((Form_pg_auth_members) GETSTRUCT(tup))->roleid;
+			Oid			otherid = ((Form_mdb_auth_members) GETSTRUCT(tup))->roleid;
 
 			/*
 			 * Even though there shouldn't be any loops in the membership
@@ -4970,10 +4970,10 @@ is_admin_of_role(Oid member, Oid role)
 		for (i = 0; i < memlist->n_members; i++)
 		{
 			HeapTuple	tup = &memlist->members[i]->tuple;
-			Oid			otherid = ((Form_pg_auth_members) GETSTRUCT(tup))->roleid;
+			Oid			otherid = ((Form_mdb_auth_members) GETSTRUCT(tup))->roleid;
 
 			if (otherid == role &&
-				((Form_pg_auth_members) GETSTRUCT(tup))->admin_option)
+				((Form_mdb_auth_members) GETSTRUCT(tup))->admin_option)
 			{
 				/* Found what we came for, so can stop searching */
 				result = true;
@@ -5182,7 +5182,7 @@ get_rolespec_oid(const Node *node, bool missing_ok)
 }
 
 /*
- * Given a RoleSpec node, return the pg_authid HeapTuple it corresponds to.
+ * Given a RoleSpec node, return the mdb_authid HeapTuple it corresponds to.
  * Caller must ReleaseSysCache when done with the result tuple.
  */
 HeapTuple
@@ -5238,11 +5238,11 @@ char *
 get_rolespec_name(const Node *node)
 {
 	HeapTuple	tp;
-	Form_pg_authid authForm;
+	Form_mdb_authid authForm;
 	char	   *rolename;
 
 	tp = get_rolespec_tuple(node);
-	authForm = (Form_pg_authid) GETSTRUCT(tp);
+	authForm = (Form_mdb_authid) GETSTRUCT(tp);
 	rolename = pstrdup(NameStr(authForm->rolname));
 	ReleaseSysCache(tp);
 

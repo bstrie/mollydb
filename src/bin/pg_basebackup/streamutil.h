@@ -5,7 +5,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  src/bin/pg_basebackup/streamutil.h
+ *		  src/bin/mdb_basebackup/streamutil.h
  *-------------------------------------------------------------------------
  */
 

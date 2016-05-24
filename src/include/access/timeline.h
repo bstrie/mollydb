@@ -12,7 +12,7 @@
 #define TIMELINE_H
 
 #include "access/xlogdefs.h"
-#include "nodes/pg_list.h"
+#include "nodes/mdb_list.h"
 
 /*
  * A list of these structs describes the timeline history of the server. Each

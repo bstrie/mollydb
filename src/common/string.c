@@ -28,7 +28,7 @@
  * Returns whether the string `str' has the postfix `end'.
  */
 bool
-pg_str_endswith(const char *str, const char *end)
+mdb_str_endswith(const char *str, const char *end)
 {
 	size_t		slen = strlen(str);
 	size_t		elen = strlen(end);

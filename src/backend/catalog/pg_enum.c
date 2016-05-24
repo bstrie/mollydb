@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
- * pg_enum.c
- *	  routines to support manipulation of the pg_enum relation
+ * mdb_enum.c
+ *	  routines to support manipulation of the mdb_enum relation
  *
  * Copyright (c) 2006-2016, MollyDB Global Development Group
  *
  *
  * IDENTIFICATION
- *	  src/backend/catalog/pg_enum.c
+ *	  src/backend/catalog/mdb_enum.c
  *
  *-------------------------------------------------------------------------
  */
@@ -20,8 +20,8 @@
 #include "catalog/binary_upgrade.h"
 #include "catalog/catalog.h"
 #include "catalog/indexing.h"
-#include "catalog/pg_enum.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_enum.h"
+#include "catalog/mdb_type.h"
 #include "storage/lmgr.h"
 #include "miscadmin.h"
 #include "utils/builtins.h"
@@ -31,30 +31,30 @@
 #include "utils/tqual.h"
 
 
-/* Potentially set by pg_upgrade_support functions */
-Oid			binary_upgrade_next_pg_enum_oid = InvalidOid;
+/* Potentially set by mdb_upgrade_support functions */
+Oid			binary_upgrade_next_mdb_enum_oid = InvalidOid;
 
-static void RenumberEnumType(Relation pg_enum, HeapTuple *existing, int nelems);
+static void RenumberEnumType(Relation mdb_enum, HeapTuple *existing, int nelems);
 static int	oid_cmp(const void *p1, const void *p2);
 static int	sort_order_cmp(const void *p1, const void *p2);
 
 
 /*
  * EnumValuesCreate
- *		Create an entry in pg_enum for each of the supplied enum values.
+ *		Create an entry in mdb_enum for each of the supplied enum values.
  *
  * vals is a list of Value strings.
  */
 void
 EnumValuesCreate(Oid enumTypeOid, List *vals)
 {
-	Relation	pg_enum;
+	Relation	mdb_enum;
 	NameData	enumlabel;
 	Oid		   *oids;
 	int			elemno,
 				num_elems;
-	Datum		values[Natts_pg_enum];
-	bool		nulls[Natts_pg_enum];
+	Datum		values[Natts_mdb_enum];
+	bool		nulls[Natts_mdb_enum];
 	ListCell   *lc;
 	HeapTuple	tup;
 
@@ -66,7 +66,7 @@ EnumValuesCreate(Oid enumTypeOid, List *vals)
 	 * probably not worth trying harder.
 	 */
 
-	pg_enum = heap_open(EnumRelationId, RowExclusiveLock);
+	mdb_enum = heap_open(EnumRelationId, RowExclusiveLock);
 
 	/*
 	 * Allocate OIDs for the enum's members.
@@ -89,7 +89,7 @@ EnumValuesCreate(Oid enumTypeOid, List *vals)
 
 		do
 		{
-			new_oid = GetNewOid(pg_enum);
+			new_oid = GetNewOid(mdb_enum);
 		} while (new_oid & 1);
 		oids[elemno] = new_oid;
 	}
@@ -116,16 +116,16 @@ EnumValuesCreate(Oid enumTypeOid, List *vals)
 					 errdetail("Labels must be %d characters or less.",
 							   NAMEDATALEN - 1)));
 
-		values[Anum_pg_enum_enumtypid - 1] = ObjectIdGetDatum(enumTypeOid);
-		values[Anum_pg_enum_enumsortorder - 1] = Float4GetDatum(elemno + 1);
+		values[Anum_mdb_enum_enumtypid - 1] = ObjectIdGetDatum(enumTypeOid);
+		values[Anum_mdb_enum_enumsortorder - 1] = Float4GetDatum(elemno + 1);
 		namestrcpy(&enumlabel, lab);
-		values[Anum_pg_enum_enumlabel - 1] = NameGetDatum(&enumlabel);
+		values[Anum_mdb_enum_enumlabel - 1] = NameGetDatum(&enumlabel);
 
-		tup = heap_form_tuple(RelationGetDescr(pg_enum), values, nulls);
+		tup = heap_form_tuple(RelationGetDescr(mdb_enum), values, nulls);
 		HeapTupleSetOid(tup, oids[elemno]);
 
-		simple_heap_insert(pg_enum, tup);
-		CatalogUpdateIndexes(pg_enum, tup);
+		simple_heap_insert(mdb_enum, tup);
+		CatalogUpdateIndexes(mdb_enum, tup);
 		heap_freetuple(tup);
 
 		elemno++;
@@ -133,40 +133,40 @@ EnumValuesCreate(Oid enumTypeOid, List *vals)
 
 	/* clean up */
 	pfree(oids);
-	heap_close(pg_enum, RowExclusiveLock);
+	heap_close(mdb_enum, RowExclusiveLock);
 }
 
 
 /*
  * EnumValuesDelete
- *		Remove all the pg_enum entries for the specified enum type.
+ *		Remove all the mdb_enum entries for the specified enum type.
  */
 void
 EnumValuesDelete(Oid enumTypeOid)
 {
-	Relation	pg_enum;
+	Relation	mdb_enum;
 	ScanKeyData key[1];
 	SysScanDesc scan;
 	HeapTuple	tup;
 
-	pg_enum = heap_open(EnumRelationId, RowExclusiveLock);
+	mdb_enum = heap_open(EnumRelationId, RowExclusiveLock);
 
 	ScanKeyInit(&key[0],
-				Anum_pg_enum_enumtypid,
+				Anum_mdb_enum_enumtypid,
 				BTEqualStrategyNumber, F_OIDEQ,
 				ObjectIdGetDatum(enumTypeOid));
 
-	scan = systable_beginscan(pg_enum, EnumTypIdLabelIndexId, true,
+	scan = systable_beginscan(mdb_enum, EnumTypIdLabelIndexId, true,
 							  NULL, 1, key);
 
 	while (HeapTupleIsValid(tup = systable_getnext(scan)))
 	{
-		simple_heap_delete(pg_enum, &tup->t_self);
+		simple_heap_delete(mdb_enum, &tup->t_self);
 	}
 
 	systable_endscan(scan);
 
-	heap_close(pg_enum, RowExclusiveLock);
+	heap_close(mdb_enum, RowExclusiveLock);
 }
 
 
@@ -183,10 +183,10 @@ AddEnumLabel(Oid enumTypeOid,
 			 bool newValIsAfter,
 			 bool skipIfExists)
 {
-	Relation	pg_enum;
+	Relation	mdb_enum;
 	Oid			newOid;
-	Datum		values[Natts_pg_enum];
-	bool		nulls[Natts_pg_enum];
+	Datum		values[Natts_mdb_enum];
+	bool		nulls[Natts_mdb_enum];
 	NameData	enumlabel;
 	HeapTuple	enum_tup;
 	float4		newelemorder;
@@ -214,7 +214,7 @@ AddEnumLabel(Oid enumTypeOid,
 	LockDatabaseObject(TypeRelationId, enumTypeOid, 0, ExclusiveLock);
 
 	/*
-	 * Check if label is already in use.  The unique index on pg_enum would
+	 * Check if label is already in use.  The unique index on mdb_enum would
 	 * catch this anyway, but we prefer a friendlier error message, and
 	 * besides we need a check to support IF NOT EXISTS.
 	 */
@@ -239,7 +239,7 @@ AddEnumLabel(Oid enumTypeOid,
 							newVal)));
 	}
 
-	pg_enum = heap_open(EnumRelationId, RowExclusiveLock);
+	mdb_enum = heap_open(EnumRelationId, RowExclusiveLock);
 
 	/* If we have to renumber the existing members, we restart from here */
 restart:
@@ -264,7 +264,7 @@ restart:
 		 */
 		if (nelems > 0)
 		{
-			Form_pg_enum en = (Form_pg_enum) GETSTRUCT(existing[nelems - 1]);
+			Form_mdb_enum en = (Form_mdb_enum) GETSTRUCT(existing[nelems - 1]);
 
 			newelemorder = en->enumsortorder + 1;
 		}
@@ -276,13 +276,13 @@ restart:
 		/* BEFORE or AFTER was specified */
 		int			nbr_index;
 		int			other_nbr_index;
-		Form_pg_enum nbr_en;
-		Form_pg_enum other_nbr_en;
+		Form_mdb_enum nbr_en;
+		Form_mdb_enum other_nbr_en;
 
 		/* Locate the neighbor element */
 		for (nbr_index = 0; nbr_index < nelems; nbr_index++)
 		{
-			Form_pg_enum en = (Form_pg_enum) GETSTRUCT(existing[nbr_index]);
+			Form_mdb_enum en = (Form_mdb_enum) GETSTRUCT(existing[nbr_index]);
 
 			if (strcmp(NameStr(en->enumlabel), neighbor) == 0)
 				break;
@@ -292,7 +292,7 @@ restart:
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 					 errmsg("\"%s\" is not an existing enum label",
 							neighbor)));
-		nbr_en = (Form_pg_enum) GETSTRUCT(existing[nbr_index]);
+		nbr_en = (Form_mdb_enum) GETSTRUCT(existing[nbr_index]);
 
 		/*
 		 * Attempt to assign an appropriate enumsortorder value: one less than
@@ -315,7 +315,7 @@ restart:
 			newelemorder = nbr_en->enumsortorder + 1;
 		else
 		{
-			other_nbr_en = (Form_pg_enum) GETSTRUCT(existing[other_nbr_index]);
+			other_nbr_en = (Form_mdb_enum) GETSTRUCT(existing[other_nbr_index]);
 			newelemorder = (nbr_en->enumsortorder +
 							other_nbr_en->enumsortorder) / 2;
 
@@ -331,7 +331,7 @@ restart:
 			if (newelemorder == nbr_en->enumsortorder ||
 				newelemorder == other_nbr_en->enumsortorder)
 			{
-				RenumberEnumType(pg_enum, existing, nelems);
+				RenumberEnumType(mdb_enum, existing, nelems);
 				/* Clean up and start over */
 				pfree(existing);
 				ReleaseCatCacheList(list);
@@ -343,14 +343,14 @@ restart:
 	/* Get a new OID for the new label */
 	if (IsBinaryUpgrade)
 	{
-		if (!OidIsValid(binary_upgrade_next_pg_enum_oid))
+		if (!OidIsValid(binary_upgrade_next_mdb_enum_oid))
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-			errmsg("pg_enum OID value not set when in binary upgrade mode")));
+			errmsg("mdb_enum OID value not set when in binary upgrade mode")));
 
 		/*
-		 * Use binary-upgrade override for pg_enum.oid, if supplied. During
-		 * binary upgrade, all pg_enum.oid's are set this way so they are
+		 * Use binary-upgrade override for mdb_enum.oid, if supplied. During
+		 * binary upgrade, all mdb_enum.oid's are set this way so they are
 		 * guaranteed to be consistent.
 		 */
 		if (neighbor != NULL)
@@ -358,8 +358,8 @@ restart:
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 					 errmsg("ALTER TYPE ADD BEFORE/AFTER is incompatible with binary upgrade")));
 
-		newOid = binary_upgrade_next_pg_enum_oid;
-		binary_upgrade_next_pg_enum_oid = InvalidOid;
+		newOid = binary_upgrade_next_mdb_enum_oid;
+		binary_upgrade_next_mdb_enum_oid = InvalidOid;
 	}
 	else
 	{
@@ -374,8 +374,8 @@ restart:
 		{
 			bool		sorts_ok;
 
-			/* Get a new OID (different from all existing pg_enum tuples) */
-			newOid = GetNewOid(pg_enum);
+			/* Get a new OID (different from all existing mdb_enum tuples) */
+			newOid = GetNewOid(mdb_enum);
 
 			/*
 			 * Detect whether it sorts correctly relative to existing
@@ -387,7 +387,7 @@ restart:
 			for (i = 0; i < nelems; i++)
 			{
 				HeapTuple	exists_tup = existing[i];
-				Form_pg_enum exists_en = (Form_pg_enum) GETSTRUCT(exists_tup);
+				Form_mdb_enum exists_en = (Form_mdb_enum) GETSTRUCT(exists_tup);
 				Oid			exists_oid = HeapTupleGetOid(exists_tup);
 
 				if (exists_oid & 1)
@@ -447,19 +447,19 @@ restart:
 	pfree(existing);
 	ReleaseCatCacheList(list);
 
-	/* Create the new pg_enum entry */
+	/* Create the new mdb_enum entry */
 	memset(nulls, false, sizeof(nulls));
-	values[Anum_pg_enum_enumtypid - 1] = ObjectIdGetDatum(enumTypeOid);
-	values[Anum_pg_enum_enumsortorder - 1] = Float4GetDatum(newelemorder);
+	values[Anum_mdb_enum_enumtypid - 1] = ObjectIdGetDatum(enumTypeOid);
+	values[Anum_mdb_enum_enumsortorder - 1] = Float4GetDatum(newelemorder);
 	namestrcpy(&enumlabel, newVal);
-	values[Anum_pg_enum_enumlabel - 1] = NameGetDatum(&enumlabel);
-	enum_tup = heap_form_tuple(RelationGetDescr(pg_enum), values, nulls);
+	values[Anum_mdb_enum_enumlabel - 1] = NameGetDatum(&enumlabel);
+	enum_tup = heap_form_tuple(RelationGetDescr(mdb_enum), values, nulls);
 	HeapTupleSetOid(enum_tup, newOid);
-	simple_heap_insert(pg_enum, enum_tup);
-	CatalogUpdateIndexes(pg_enum, enum_tup);
+	simple_heap_insert(mdb_enum, enum_tup);
+	CatalogUpdateIndexes(mdb_enum, enum_tup);
 	heap_freetuple(enum_tup);
 
-	heap_close(pg_enum, RowExclusiveLock);
+	heap_close(mdb_enum, RowExclusiveLock);
 }
 
 
@@ -468,17 +468,17 @@ restart:
  *		Renumber existing enum elements to have sort positions 1..n.
  *
  * We avoid doing this unless absolutely necessary; in most installations
- * it will never happen.  The reason is that updating existing pg_enum
+ * it will never happen.  The reason is that updating existing mdb_enum
  * entries creates hazards for other backends that are concurrently reading
- * pg_enum.  Although system catalog scans now use MVCC semantics, the
- * syscache machinery might read different pg_enum entries under different
+ * mdb_enum.  Although system catalog scans now use MVCC semantics, the
+ * syscache machinery might read different mdb_enum entries under different
  * snapshots, so some other backend might get confused about the proper
  * ordering if a concurrent renumbering occurs.
  *
  * We therefore make the following choices:
  *
  * 1. Any code that is interested in the enumsortorder values MUST read
- * all the relevant pg_enum entries with a single MVCC snapshot, or else
+ * all the relevant mdb_enum entries with a single MVCC snapshot, or else
  * acquire lock on the enum type to prevent concurrent execution of
  * AddEnumLabel().
  *
@@ -486,7 +486,7 @@ restart:
  * (for example, enum_in and enum_out do so).
  */
 static void
-RenumberEnumType(Relation pg_enum, HeapTuple *existing, int nelems)
+RenumberEnumType(Relation mdb_enum, HeapTuple *existing, int nelems)
 {
 	int			i;
 
@@ -498,20 +498,20 @@ RenumberEnumType(Relation pg_enum, HeapTuple *existing, int nelems)
 	for (i = nelems - 1; i >= 0; i--)
 	{
 		HeapTuple	newtup;
-		Form_pg_enum en;
+		Form_mdb_enum en;
 		float4		newsortorder;
 
 		newtup = heap_copytuple(existing[i]);
-		en = (Form_pg_enum) GETSTRUCT(newtup);
+		en = (Form_mdb_enum) GETSTRUCT(newtup);
 
 		newsortorder = i + 1;
 		if (en->enumsortorder != newsortorder)
 		{
 			en->enumsortorder = newsortorder;
 
-			simple_heap_update(pg_enum, &newtup->t_self, newtup);
+			simple_heap_update(mdb_enum, &newtup->t_self, newtup);
 
-			CatalogUpdateIndexes(pg_enum, newtup);
+			CatalogUpdateIndexes(mdb_enum, newtup);
 		}
 
 		heap_freetuple(newtup);
@@ -542,8 +542,8 @@ sort_order_cmp(const void *p1, const void *p2)
 {
 	HeapTuple	v1 = *((const HeapTuple *) p1);
 	HeapTuple	v2 = *((const HeapTuple *) p2);
-	Form_pg_enum en1 = (Form_pg_enum) GETSTRUCT(v1);
-	Form_pg_enum en2 = (Form_pg_enum) GETSTRUCT(v2);
+	Form_mdb_enum en1 = (Form_mdb_enum) GETSTRUCT(v1);
+	Form_mdb_enum en2 = (Form_mdb_enum) GETSTRUCT(v2);
 
 	if (en1->enumsortorder < en2->enumsortorder)
 		return -1;

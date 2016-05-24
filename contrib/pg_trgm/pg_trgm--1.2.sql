@@ -1,7 +1,7 @@
-/* contrib/pg_trgm/pg_trgm--1.2.sql */
+/* contrib/mdb_trgm/mdb_trgm--1.2.sql */
 
 -- complain if script is sourced in psql, rather than via CREATE EXTENSION
-\echo Use "CREATE EXTENSION pg_trgm" to load this file. \quit
+\echo Use "CREATE EXTENSION mdb_trgm" to load this file. \quit
 
 -- Deprecated function
 CREATE FUNCTION set_limit(float4)
@@ -28,7 +28,7 @@ LANGUAGE C STRICT IMMUTABLE;
 CREATE FUNCTION similarity_op(text,text)
 RETURNS bool
 AS 'MODULE_PATHNAME'
-LANGUAGE C STRICT STABLE;  -- stable because depends on pg_trgm.similarity_threshold
+LANGUAGE C STRICT STABLE;  -- stable because depends on mdb_trgm.similarity_threshold
 
 CREATE OPERATOR % (
         LEFTARG = text,
@@ -47,12 +47,12 @@ LANGUAGE C STRICT IMMUTABLE;
 CREATE FUNCTION word_similarity_op(text,text)
 RETURNS bool
 AS 'MODULE_PATHNAME'
-LANGUAGE C STRICT STABLE;  -- stable because depends on pg_trgm.word_similarity_threshold
+LANGUAGE C STRICT STABLE;  -- stable because depends on mdb_trgm.word_similarity_threshold
 
 CREATE FUNCTION word_similarity_commutator_op(text,text)
 RETURNS bool
 AS 'MODULE_PATHNAME'
-LANGUAGE C STRICT STABLE;  -- stable because depends on pg_trgm.word_similarity_threshold
+LANGUAGE C STRICT STABLE;  -- stable because depends on mdb_trgm.word_similarity_threshold
 
 CREATE OPERATOR <% (
         LEFTARG = text,
@@ -183,25 +183,25 @@ AS
 -- Add operators and support functions that are new in 9.1.  We do it like
 -- this, leaving them "loose" in the operator family rather than bound into
 -- the gist_trgm_ops opclass, because that's the only state that can be
--- reproduced during an upgrade from 9.0 (see pg_trgm--unpackaged--1.0.sql).
+-- reproduced during an upgrade from 9.0 (see mdb_trgm--unpackaged--1.0.sql).
 
 ALTER OPERATOR FAMILY gist_trgm_ops USING gist ADD
-        OPERATOR        2       <-> (text, text) FOR ORDER BY pg_catalog.float_ops,
-        OPERATOR        3       pg_catalog.~~ (text, text),
-        OPERATOR        4       pg_catalog.~~* (text, text),
+        OPERATOR        2       <-> (text, text) FOR ORDER BY mdb_catalog.float_ops,
+        OPERATOR        3       mdb_catalog.~~ (text, text),
+        OPERATOR        4       mdb_catalog.~~* (text, text),
         FUNCTION        8 (text, text)  gtrgm_distance (internal, text, smallint, oid, internal);
 
 -- Add operators that are new in 9.3.
 
 ALTER OPERATOR FAMILY gist_trgm_ops USING gist ADD
-        OPERATOR        5       pg_catalog.~ (text, text),
-        OPERATOR        6       pg_catalog.~* (text, text);
+        OPERATOR        5       mdb_catalog.~ (text, text),
+        OPERATOR        6       mdb_catalog.~* (text, text);
 
--- Add operators that are new in 9.6 (pg_trgm 1.2).
+-- Add operators that are new in 9.6 (mdb_trgm 1.2).
 
 ALTER OPERATOR FAMILY gist_trgm_ops USING gist ADD
         OPERATOR        7       %> (text, text),
-        OPERATOR        8       <->> (text, text) FOR ORDER BY pg_catalog.float_ops;
+        OPERATOR        8       <->> (text, text) FOR ORDER BY mdb_catalog.float_ops;
 
 -- support functions for gin
 CREATE FUNCTION gin_extract_value_trgm(text, internal)
@@ -233,16 +233,16 @@ AS
 -- Add operators that are new in 9.1.
 
 ALTER OPERATOR FAMILY gin_trgm_ops USING gin ADD
-        OPERATOR        3       pg_catalog.~~ (text, text),
-        OPERATOR        4       pg_catalog.~~* (text, text);
+        OPERATOR        3       mdb_catalog.~~ (text, text),
+        OPERATOR        4       mdb_catalog.~~* (text, text);
 
 -- Add operators that are new in 9.3.
 
 ALTER OPERATOR FAMILY gin_trgm_ops USING gin ADD
-        OPERATOR        5       pg_catalog.~ (text, text),
-        OPERATOR        6       pg_catalog.~* (text, text);
+        OPERATOR        5       mdb_catalog.~ (text, text),
+        OPERATOR        6       mdb_catalog.~* (text, text);
 
--- Add functions that are new in 9.6 (pg_trgm 1.2).
+-- Add functions that are new in 9.6 (mdb_trgm 1.2).
 
 CREATE FUNCTION gin_trgm_triconsistent(internal, int2, text, int4, internal, internal, internal)
 RETURNS "char"

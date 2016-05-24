@@ -423,7 +423,7 @@ pgwin32_recv(SOCKET s, char *buf, int len, int f)
 		 * again.  We try up to 5 times - if it fails more than that it's not
 		 * likely to ever come back.
 		 */
-		pg_usleep(10000);
+		mdb_usleep(10000);
 	}
 	ereport(NOTICE,
 	  (errmsg_internal("could not read from ready socket (after retries)")));

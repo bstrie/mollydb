@@ -264,9 +264,9 @@ gtsquery_picksplit(PG_FUNCTION_ARGS)
 }
 
 /*
- * Formerly, gtsquery_consistent was declared in pg_proc.h with arguments
+ * Formerly, gtsquery_consistent was declared in mdb_proc.h with arguments
  * that did not match the documented conventions for GiST support functions.
- * We fixed that, but we still need a pg_proc entry with the old signature
+ * We fixed that, but we still need a mdb_proc entry with the old signature
  * to support reloading pre-9.6 contrib/tsearch2 opclass declarations.
  * This compatibility function should go away eventually.
  */

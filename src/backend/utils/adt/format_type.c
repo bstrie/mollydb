@@ -19,12 +19,12 @@
 
 #include "access/htup_details.h"
 #include "catalog/namespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "utils/builtins.h"
 #include "utils/lsyscache.h"
 #include "utils/numeric.h"
 #include "utils/syscache.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 #define MAX_INT32_LEN 11
 
@@ -37,17 +37,17 @@ static char *printTypmod(const char *typname, int32 typmod, Oid typmodout);
 /*
  * SQL function: format_type(type_oid, typemod)
  *
- * `type_oid' is from pg_type.oid, `typemod' is from
- * pg_attribute.atttypmod. This function will get the type name and
+ * `type_oid' is from mdb_type.oid, `typemod' is from
+ * mdb_attribute.atttypmod. This function will get the type name and
  * format it and the modifier to canonical SQL format, if the type is
- * a standard type. Otherwise you just get pg_type.typname back,
+ * a standard type. Otherwise you just get mdb_type.typname back,
  * double quoted if it contains funny characters or matches a keyword.
  *
  * If typemod is NULL then we are formatting a type name in a context where
  * no typemod is available, eg a function argument or result type.  This
  * yields a slightly different result from specifying typemod = -1 in some
  * cases.  Given typemod = -1 we feel compelled to produce an output that
- * the parser will interpret as having typemod -1, so that pg_dump will
+ * the parser will interpret as having typemod -1, so that mdb_dump will
  * produce CREATE TABLE commands that recreate the original state.  But
  * given NULL typemod, we assume that the parser's interpretation of
  * typemod doesn't matter, and so we are willing to output a slightly
@@ -135,7 +135,7 @@ format_type_internal(Oid type_oid, int32 typemod,
 {
 	bool		with_typemod = typemod_given && (typemod >= 0);
 	HeapTuple	tuple;
-	Form_pg_type typeform;
+	Form_mdb_type typeform;
 	Oid			array_base_type;
 	bool		is_array;
 	char	   *buf;
@@ -151,7 +151,7 @@ format_type_internal(Oid type_oid, int32 typemod,
 		else
 			elog(ERROR, "cache lookup failed for type %u", type_oid);
 	}
-	typeform = (Form_pg_type) GETSTRUCT(tuple);
+	typeform = (Form_mdb_type) GETSTRUCT(tuple);
 
 	/*
 	 * Check if it's a regular (variable length) array type.  Fixed-length
@@ -175,7 +175,7 @@ format_type_internal(Oid type_oid, int32 typemod,
 			else
 				elog(ERROR, "cache lookup failed for type %u", type_oid);
 		}
-		typeform = (Form_pg_type) GETSTRUCT(tuple);
+		typeform = (Form_mdb_type) GETSTRUCT(tuple);
 		type_oid = array_base_type;
 		is_array = true;
 	}
@@ -377,7 +377,7 @@ printTypmod(const char *typname, int32 typmod, Oid typmodout)
  * If the max width is indeterminate, return -1.  In particular, we return
  * -1 for any type not known to this routine.  We assume the caller has
  * already determined that the type is a variable-width type, so it's not
- * necessary to look up the type's pg_type tuple here.
+ * necessary to look up the type's mdb_type tuple here.
  *
  * This may appear unrelated to format_type(), but in fact the two routines
  * share knowledge of the encoding of typmod for different types, so it's
@@ -399,7 +399,7 @@ type_maximum_size(Oid type_oid, int32 typemod)
 
 			/* typemod is in characters not bytes */
 			return (typemod - VARHDRSZ) *
-				pg_encoding_max_length(GetDatabaseEncoding())
+				mdb_encoding_max_length(GetDatabaseEncoding())
 				+ VARHDRSZ;
 
 		case NUMERICOID:

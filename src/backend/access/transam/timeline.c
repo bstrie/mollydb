@@ -43,7 +43,7 @@
 
 /*
  * Copies all timeline history files with id's between 'begin' and 'end'
- * from archive to pg_xlog.
+ * from archive to mdb_xlog.
  */
 void
 restoreTimeLineHistoryFiles(TimeLineID begin, TimeLineID end)
@@ -191,7 +191,7 @@ readTimeLineHistory(TimeLineID targetTLI)
 	result = lcons(entry, result);
 
 	/*
-	 * If the history file was fetched from archive, save it in pg_xlog for
+	 * If the history file was fetched from archive, save it in mdb_xlog for
 	 * future reference.
 	 */
 	if (fromArchive)
@@ -401,7 +401,7 @@ writeTimeLineHistory(TimeLineID newTLI, TimeLineID parentTLI,
 				 errmsg("could not write to file \"%s\": %m", tmppath)));
 	}
 
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 		ereport(ERROR,
 				(errcode_for_file_access(),
 				 errmsg("could not fsync file \"%s\": %m", tmppath)));
@@ -477,7 +477,7 @@ writeTimeLineHistoryFile(TimeLineID tli, char *content, int size)
 				 errmsg("could not write to file \"%s\": %m", tmppath)));
 	}
 
-	if (pg_fsync(fd) != 0)
+	if (mdb_fsync(fd) != 0)
 		ereport(ERROR,
 				(errcode_for_file_access(),
 				 errmsg("could not fsync file \"%s\": %m", tmppath)));

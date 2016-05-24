@@ -56,7 +56,7 @@
  *	  aggregates; their "ORDER BY" inputs are ordinary aggregate arguments
  *	  so far as this module is concerned.)
  *
- *	  If transfunc is marked "strict" in pg_proc and initcond is NULL,
+ *	  If transfunc is marked "strict" in mdb_proc and initcond is NULL,
  *	  then the first non-NULL input_value is assigned directly to transvalue,
  *	  and transfunc isn't applied until the second non-NULL input_value.
  *	  The agg's first input type and transtype must be the same in this case!
@@ -169,9 +169,9 @@
 
 #include "access/htup_details.h"
 #include "catalog/objectaccess.h"
-#include "catalog/pg_aggregate.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_aggregate.h"
+#include "catalog/mdb_proc.h"
+#include "catalog/mdb_type.h"
 #include "executor/executor.h"
 #include "executor/nodeAgg.h"
 #include "miscadmin.h"
@@ -288,7 +288,7 @@ typedef struct AggStatePerTransData
 	FmgrInfo   *equalfns;		/* array of length numDistinctCols */
 
 	/*
-	 * initial value from pg_aggregate entry
+	 * initial value from mdb_aggregate entry
 	 */
 	Datum		initValue;
 	bool		initValueIsNull;
@@ -690,7 +690,7 @@ initialize_aggregate(AggState *aggstate, AggStatePerTrans pertrans,
 
 	/*
 	 * If the initial value for the transition state doesn't exist in the
-	 * pg_aggregate table then we will let the first non-NULL value returned
+	 * mdb_aggregate table then we will let the first non-NULL value returned
 	 * from the outer procNode become the initial value. (This is useful for
 	 * aggregates like max() and min().) The noTransValue flag signals that we
 	 * still need to do this.
@@ -2663,7 +2663,7 @@ ExecInitAgg(Agg *node, EState *estate, int eflags)
 		int			numArguments;
 		int			numDirectArgs;
 		HeapTuple	aggTuple;
-		Form_pg_aggregate aggform;
+		Form_mdb_aggregate aggform;
 		AclResult	aclresult;
 		Oid			transfn_oid,
 					finalfn_oid;
@@ -2697,16 +2697,16 @@ ExecInitAgg(Agg *node, EState *estate, int eflags)
 		peragg->aggref = aggref;
 		aggrefstate->aggno = aggno;
 
-		/* Fetch the pg_aggregate row */
+		/* Fetch the mdb_aggregate row */
 		aggTuple = SearchSysCache1(AGGFNOID,
 								   ObjectIdGetDatum(aggref->aggfnoid));
 		if (!HeapTupleIsValid(aggTuple))
 			elog(ERROR, "cache lookup failed for aggregate %u",
 				 aggref->aggfnoid);
-		aggform = (Form_pg_aggregate) GETSTRUCT(aggTuple);
+		aggform = (Form_mdb_aggregate) GETSTRUCT(aggTuple);
 
 		/* Check permission to call aggregate function */
-		aclresult = pg_proc_aclcheck(aggref->aggfnoid, GetUserId(),
+		aclresult = mdb_proc_aclcheck(aggref->aggfnoid, GetUserId(),
 									 ACL_EXECUTE);
 		if (aclresult != ACLCHECK_OK)
 			aclcheck_error(aclresult, ACL_KIND_PROC,
@@ -2785,10 +2785,10 @@ ExecInitAgg(Agg *node, EState *estate, int eflags)
 			if (!HeapTupleIsValid(procTuple))
 				elog(ERROR, "cache lookup failed for function %u",
 					 aggref->aggfnoid);
-			aggOwner = ((Form_pg_proc) GETSTRUCT(procTuple))->proowner;
+			aggOwner = ((Form_mdb_proc) GETSTRUCT(procTuple))->proowner;
 			ReleaseSysCache(procTuple);
 
-			aclresult = pg_proc_aclcheck(transfn_oid, aggOwner,
+			aclresult = mdb_proc_aclcheck(transfn_oid, aggOwner,
 										 ACL_EXECUTE);
 			if (aclresult != ACLCHECK_OK)
 				aclcheck_error(aclresult, ACL_KIND_PROC,
@@ -2796,7 +2796,7 @@ ExecInitAgg(Agg *node, EState *estate, int eflags)
 			InvokeFunctionExecuteHook(transfn_oid);
 			if (OidIsValid(finalfn_oid))
 			{
-				aclresult = pg_proc_aclcheck(finalfn_oid, aggOwner,
+				aclresult = mdb_proc_aclcheck(finalfn_oid, aggOwner,
 											 ACL_EXECUTE);
 				if (aclresult != ACLCHECK_OK)
 					aclcheck_error(aclresult, ACL_KIND_PROC,
@@ -2805,7 +2805,7 @@ ExecInitAgg(Agg *node, EState *estate, int eflags)
 			}
 			if (OidIsValid(serialfn_oid))
 			{
-				aclresult = pg_proc_aclcheck(serialfn_oid, aggOwner,
+				aclresult = mdb_proc_aclcheck(serialfn_oid, aggOwner,
 											 ACL_EXECUTE);
 				if (aclresult != ACLCHECK_OK)
 					aclcheck_error(aclresult, ACL_KIND_PROC,
@@ -2814,7 +2814,7 @@ ExecInitAgg(Agg *node, EState *estate, int eflags)
 			}
 			if (OidIsValid(deserialfn_oid))
 			{
-				aclresult = pg_proc_aclcheck(deserialfn_oid, aggOwner,
+				aclresult = mdb_proc_aclcheck(deserialfn_oid, aggOwner,
 											 ACL_EXECUTE);
 				if (aclresult != ACLCHECK_OK)
 					aclcheck_error(aclresult, ACL_KIND_PROC,
@@ -2872,7 +2872,7 @@ ExecInitAgg(Agg *node, EState *estate, int eflags)
 		 * field. Must do it the hard way with SysCacheGetAttr.
 		 */
 		textInitVal = SysCacheGetAttr(AGGFNOID, aggTuple,
-									  Anum_pg_aggregate_agginitval,
+									  Anum_mdb_aggregate_agginitval,
 									  &initValueIsNull);
 		if (initValueIsNull)
 			initValue = (Datum) 0;
@@ -3671,7 +3671,7 @@ AggRegisterCallback(FunctionCallInfo fcinfo,
 /*
  * aggregate_dummy - dummy execution routine for aggregate functions
  *
- * This function is listed as the implementation (prosrc field) of pg_proc
+ * This function is listed as the implementation (prosrc field) of mdb_proc
  * entries for aggregate functions.  Its only purpose is to throw an error
  * if someone mistakenly executes such a function in the normal way.
  *

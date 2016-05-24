@@ -176,7 +176,7 @@ PREPARE <replaceable class="PARAMETER">name</replaceable> [ ( <replaceable class
 
   <para>
    You can see all prepared statements available in the session by querying the
-   <link linkend="view-pg-prepared-statements"><structname>pg_prepared_statements</structname></link>
+   <link linkend="view-pg-prepared-statements"><structname>mdb_prepared_statements</structname></link>
    system view.
   </para>
  </refsect1>

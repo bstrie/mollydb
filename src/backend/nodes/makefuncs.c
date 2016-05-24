@@ -15,8 +15,8 @@
  */
 #include "mollydb.h"
 
-#include "catalog/pg_class.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_class.h"
+#include "catalog/mdb_type.h"
 #include "fmgr.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
@@ -353,7 +353,7 @@ makeNullConst(Oid consttype, int32 consttypmod, Oid constcollid)
 Node *
 makeBoolConst(bool value, bool isnull)
 {
-	/* note that pg_type.h hardwires size of bool as 1 ... duplicate it */
+	/* note that mdb_type.h hardwires size of bool as 1 ... duplicate it */
 	return (Node *) makeConst(BOOLOID, -1, InvalidOid, 1,
 							  BoolGetDatum(value), isnull, true);
 }

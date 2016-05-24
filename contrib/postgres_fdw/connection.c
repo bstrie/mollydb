@@ -15,7 +15,7 @@
 #include "mollydb_fdw.h"
 
 #include "access/xact.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "storage/latch.h"
 #include "utils/hsearch.h"
@@ -63,7 +63,7 @@ static unsigned int prep_stmt_number = 0;
 static bool xact_got_connection = false;
 
 /* prototypes of private functions */
-static PGconn *connect_pg_server(ForeignServer *server, UserMapping *user);
+static PGconn *connect_mdb_server(ForeignServer *server, UserMapping *user);
 static void check_conn_params(const char **keywords, const char **values);
 static void configure_remote_session(PGconn *conn);
 static void do_sql_command(PGconn *conn, const char *sql);
@@ -148,7 +148,7 @@ GetConnection(UserMapping *user, bool will_prep_stmt)
 
 	/*
 	 * If cache entry doesn't have a connection, we have to establish a new
-	 * connection.  (If connect_pg_server throws an error, the cache entry
+	 * connection.  (If connect_mdb_server throws an error, the cache entry
 	 * will be left in a valid empty state.)
 	 */
 	if (entry->conn == NULL)
@@ -158,7 +158,7 @@ GetConnection(UserMapping *user, bool will_prep_stmt)
 		entry->xact_depth = 0;	/* just to be sure */
 		entry->have_prep_stmt = false;
 		entry->have_error = false;
-		entry->conn = connect_pg_server(server, user);
+		entry->conn = connect_mdb_server(server, user);
 
 		elog(DEBUG3, "new mollydb_fdw connection %p for server \"%s\" (user mapping oid %u, userid %u)",
 			 entry->conn, server->servername, user->umid, user->userid);
@@ -179,7 +179,7 @@ GetConnection(UserMapping *user, bool will_prep_stmt)
  * Connect to remote server using specified server and user mapping properties.
  */
 static PGconn *
-connect_pg_server(ForeignServer *server, UserMapping *user)
+connect_mdb_server(ForeignServer *server, UserMapping *user)
 {
 	PGconn	   *volatile conn = NULL;
 
@@ -316,8 +316,8 @@ configure_remote_session(PGconn *conn)
 {
 	int			remoteversion = PQserverVersion(conn);
 
-	/* Force the search path to contain only pg_catalog (see deparse.c) */
-	do_sql_command(conn, "SET search_path = pg_catalog");
+	/* Force the search path to contain only mdb_catalog (see deparse.c) */
+	do_sql_command(conn, "SET search_path = mdb_catalog");
 
 	/*
 	 * Set remote timezone; this is basically just cosmetic, since all
@@ -332,7 +332,7 @@ configure_remote_session(PGconn *conn)
 
 	/*
 	 * Set values needed to ensure unambiguous data output from remote.  (This
-	 * logic should match what pg_dump does.  See also set_transmission_modes
+	 * logic should match what mdb_dump does.  See also set_transmission_modes
 	 * in mollydb_fdw.c.)
 	 */
 	do_sql_command(conn, "SET datestyle = ISO");

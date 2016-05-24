@@ -24,9 +24,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "catalog/pg_control.h"
+#include "catalog/mdb_control.h"
 #include "common/controldata_utils.h"
-#include "port/pg_crc32c.h"
+#include "port/mdb_crc32c.h"
 
 /*
  * get_controlfile(char *DataDir, const char *progname)
@@ -40,10 +40,10 @@ get_controlfile(char *DataDir, const char *progname)
 	ControlFileData	   *ControlFile;
 	int					fd;
 	char				ControlFilePath[MAXPGPATH];
-	pg_crc32c			crc;
+	mdb_crc32c			crc;
 
 	ControlFile = palloc(sizeof(ControlFileData));
-	snprintf(ControlFilePath, MAXPGPATH, "%s/global/pg_control", DataDir);
+	snprintf(ControlFilePath, MAXPGPATH, "%s/global/mdb_control", DataDir);
 
 	if ((fd = open(ControlFilePath, O_RDONLY | PG_BINARY, 0)) == -1)
 #ifndef FRONTEND
@@ -91,13 +91,13 @@ get_controlfile(char *DataDir, const char *progname)
 #endif
 
 	/* Make sure the control file is valid byte order. */
-	if (ControlFile->pg_control_version % 65536 == 0 &&
-		ControlFile->pg_control_version / 65536 != 0)
+	if (ControlFile->mdb_control_version % 65536 == 0 &&
+		ControlFile->mdb_control_version / 65536 != 0)
 #ifndef FRONTEND
 		elog(ERROR, _("byte ordering mismatch"));
 #else
 		printf(_("WARNING: possible byte ordering mismatch\n"
-				 "The byte ordering used to store the pg_control file might not match the one\n"
+				 "The byte ordering used to store the mdb_control file might not match the one\n"
 				 "used by this program.  In that case the results below would be incorrect, and\n"
 				 "the MollyDB installation would be incompatible with this data directory.\n"));
 #endif

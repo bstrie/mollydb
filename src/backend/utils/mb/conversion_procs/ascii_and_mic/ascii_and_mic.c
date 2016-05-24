@@ -13,7 +13,7 @@
 
 #include "mollydb.h"
 #include "fmgr.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 PG_MODULE_MAGIC;
 
@@ -40,7 +40,7 @@ ascii_to_mic(PG_FUNCTION_ARGS)
 
 	CHECK_ENCODING_CONVERSION_ARGS(PG_SQL_ASCII, PG_MULE_INTERNAL);
 
-	pg_ascii2mic(src, dest, len);
+	mdb_ascii2mic(src, dest, len);
 
 	PG_RETURN_VOID();
 }
@@ -54,7 +54,7 @@ mic_to_ascii(PG_FUNCTION_ARGS)
 
 	CHECK_ENCODING_CONVERSION_ARGS(PG_MULE_INTERNAL, PG_SQL_ASCII);
 
-	pg_mic2ascii(src, dest, len);
+	mdb_mic2ascii(src, dest, len);
 
 	PG_RETURN_VOID();
 }

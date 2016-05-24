@@ -170,11 +170,11 @@ CLOSE foo12;
 
 -- record this in the system view as well (don't query the time field there
 -- however)
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors ORDER BY 1;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors ORDER BY 1;
 
 END;
 
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
 
 --
 -- NO SCROLL disallows backward fetching
@@ -195,7 +195,7 @@ END;
 --
 
 
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
 
 BEGIN;
 
@@ -213,7 +213,7 @@ FETCH BACKWARD FROM foo25;
 
 FETCH ABSOLUTE -1 FROM foo25;
 
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
 
 CLOSE foo25;
 
@@ -291,29 +291,29 @@ drop function count_tt1_v();
 drop function count_tt1_s();
 
 
--- Create a cursor with the BINARY option and check the pg_cursors view
+-- Create a cursor with the BINARY option and check the mdb_cursors view
 BEGIN;
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
 DECLARE bc BINARY CURSOR FOR SELECT * FROM tenk1;
-SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors ORDER BY 1;
+SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors ORDER BY 1;
 ROLLBACK;
 
 -- We should not see the portal that is created internally to
--- implement EXECUTE in pg_cursors
+-- implement EXECUTE in mdb_cursors
 PREPARE cprep AS
-  SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors;
+  SELECT name, statement, is_holdable, is_binary, is_scrollable FROM mdb_cursors;
 EXECUTE cprep;
 
 -- test CLOSE ALL;
-SELECT name FROM pg_cursors ORDER BY 1;
+SELECT name FROM mdb_cursors ORDER BY 1;
 CLOSE ALL;
-SELECT name FROM pg_cursors ORDER BY 1;
+SELECT name FROM mdb_cursors ORDER BY 1;
 BEGIN;
 DECLARE foo1 CURSOR WITH HOLD FOR SELECT 1;
 DECLARE foo2 CURSOR WITHOUT HOLD FOR SELECT 1;
-SELECT name FROM pg_cursors ORDER BY 1;
+SELECT name FROM mdb_cursors ORDER BY 1;
 CLOSE ALL;
-SELECT name FROM pg_cursors ORDER BY 1;
+SELECT name FROM mdb_cursors ORDER BY 1;
 COMMIT;
 
 --

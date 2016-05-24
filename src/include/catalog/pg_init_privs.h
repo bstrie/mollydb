@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * pg_init_privs.h
- *	  definition of the system "initial privileges" relation (pg_init_privs)
+ * mdb_init_privs.h
+ *	  definition of the system "initial privileges" relation (mdb_init_privs)
  *
  * NOTE: an object is identified by the OID of the row that primarily
  * defines the object, plus the OID of the table that that row appears in.
- * For example, a function is identified by the OID of its pg_proc row
- * plus the pg_class OID of table pg_proc.  This allows unique identification
+ * For example, a function is identified by the OID of its mdb_proc row
+ * plus the mdb_class OID of table mdb_proc.  This allows unique identification
  * of objects without assuming that OIDs are unique across tables.
  *
  * Since attributes don't have OIDs of their own, we identify an attribute
@@ -18,7 +18,7 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_init_privs.h
+ * src/include/catalog/mdb_init_privs.h
  *
  * NOTES
  *		the genbki.pl script reads this file and generates .bki
@@ -35,13 +35,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_init_privs definition.  cpp turns this into
- *		typedef struct FormData_pg_init_privs
+ *		mdb_init_privs definition.  cpp turns this into
+ *		typedef struct FormData_mdb_init_privs
  * ----------------
  */
 #define InitPrivsRelationId  3394
 
-CATALOG(pg_init_privs,3394) BKI_WITHOUT_OIDS
+CATALOG(mdb_init_privs,3394) BKI_WITHOUT_OIDS
 {
 	Oid			objoid;			/* OID of object itself */
 	Oid			classoid;		/* OID of table containing object */
@@ -52,25 +52,25 @@ CATALOG(pg_init_privs,3394) BKI_WITHOUT_OIDS
 	aclitem		initprivs[1] BKI_FORCE_NOT_NULL;		/* initial privs on
 														 * object */
 #endif
-} FormData_pg_init_privs;
+} FormData_mdb_init_privs;
 
 /* ----------------
- *		Form_pg_init_privs corresponds to a pointer to a tuple with
- *		the format of pg_init_privs relation.
+ *		Form_mdb_init_privs corresponds to a pointer to a tuple with
+ *		the format of mdb_init_privs relation.
  * ----------------
  */
-typedef FormData_pg_init_privs *Form_pg_init_privs;
+typedef FormData_mdb_init_privs *Form_mdb_init_privs;
 
 /* ----------------
- *		compiler constants for pg_init_privs
+ *		compiler constants for mdb_init_privs
  * ----------------
  */
-#define Natts_pg_init_privs				5
-#define Anum_pg_init_privs_objoid		1
-#define Anum_pg_init_privs_classoid		2
-#define Anum_pg_init_privs_objsubid		3
-#define Anum_pg_init_privs_privtype		4
-#define Anum_pg_init_privs_privs		5
+#define Natts_mdb_init_privs				5
+#define Anum_mdb_init_privs_objoid		1
+#define Anum_mdb_init_privs_classoid		2
+#define Anum_mdb_init_privs_objsubid		3
+#define Anum_mdb_init_privs_privtype		4
+#define Anum_mdb_init_privs_privs		5
 
 /*
  * It is important to know if the initial privileges are from initdb or from an
@@ -86,7 +86,7 @@ typedef enum InitPrivsType
 } InitPrivsType;
 
 /* ----------------
- *		initial contents of pg_init_privs
+ *		initial contents of mdb_init_privs
  * ----------------
  */
 

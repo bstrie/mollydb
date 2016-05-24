@@ -1,17 +1,17 @@
-# contrib/pg_standby/Makefile
+# contrib/mdb_standby/Makefile
 
-PGFILEDESC = "pg_standby - supports creation of a warm standby"
+PGFILEDESC = "mdb_standby - supports creation of a warm standby"
 PGAPPICON = win32
 
-PROGRAM = pg_standby
-OBJS	= pg_standby.o $(WIN32RES)
+PROGRAM = mdb_standby
+OBJS	= mdb_standby.o $(WIN32RES)
 
 ifdef USE_PGXS
-PG_CONFIG = pg_config
+PG_CONFIG = mdb_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 else
-subdir = contrib/pg_standby
+subdir = contrib/mdb_standby
 top_builddir = ../..
 include $(top_builddir)/src/Makefile.global
 include $(top_srcdir)/contrib/contrib-global.mk

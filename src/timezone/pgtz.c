@@ -24,10 +24,10 @@
 
 
 /* Current session timezone (controlled by TimeZone GUC) */
-pg_tz	   *session_timezone = NULL;
+mdb_tz	   *session_timezone = NULL;
 
 /* Current log timezone (controlled by log_timezone GUC) */
-pg_tz	   *log_timezone = NULL;
+mdb_tz	   *log_timezone = NULL;
 
 
 static bool scan_directory_ci(const char *dirname,
@@ -39,7 +39,7 @@ static bool scan_directory_ci(const char *dirname,
  * Return full pathname of timezone data directory
  */
 static const char *
-pg_TZDIR(void)
+mdb_TZDIR(void)
 {
 #ifndef SYSTEMTZDIR
 	/* normal case: timezone stuff is under our share dir */
@@ -72,7 +72,7 @@ pg_TZDIR(void)
  * given name is stored there (the buffer must be > TZ_STRLEN_MAX bytes!).
  */
 int
-pg_open_tzfile(const char *name, char *canonname)
+mdb_open_tzfile(const char *name, char *canonname)
 {
 	const char *fname;
 	char		fullname[MAXPGPATH];
@@ -83,7 +83,7 @@ pg_open_tzfile(const char *name, char *canonname)
 	 * Loop to split the given name into directory levels; for each level,
 	 * search using scan_directory_ci().
 	 */
-	strlcpy(fullname, pg_TZDIR(), sizeof(fullname));
+	strlcpy(fullname, mdb_TZDIR(), sizeof(fullname));
 	orignamelen = fullnamelen = strlen(fullname);
 	fname = name;
 	for (;;)
@@ -149,7 +149,7 @@ scan_directory_ci(const char *dirname, const char *fname, int fnamelen,
 			continue;
 
 		if (strlen(direntry->d_name) == fnamelen &&
-			pg_strncasecmp(direntry->d_name, fname, fnamelen) == 0)
+			mdb_strncasecmp(direntry->d_name, fname, fnamelen) == 0)
 		{
 			/* Found our match */
 			strlcpy(canonname, direntry->d_name, canonnamelen);
@@ -174,8 +174,8 @@ typedef struct
 {
 	/* tznameupper contains the all-upper-case name of the timezone */
 	char		tznameupper[TZ_STRLEN_MAX + 1];
-	pg_tz		tz;
-} pg_tz_cache;
+	mdb_tz		tz;
+} mdb_tz_cache;
 
 static HTAB *timezone_cache = NULL;
 
@@ -188,7 +188,7 @@ init_timezone_hashtable(void)
 	MemSet(&hash_ctl, 0, sizeof(hash_ctl));
 
 	hash_ctl.keysize = TZ_STRLEN_MAX + 1;
-	hash_ctl.entrysize = sizeof(pg_tz_cache);
+	hash_ctl.entrysize = sizeof(mdb_tz_cache);
 
 	timezone_cache = hash_create("Timezones",
 								 4,
@@ -214,10 +214,10 @@ init_timezone_hashtable(void)
  * 3. It's quick enough that we don't waste much time when the bootstrap
  * default timezone setting is later overridden from mollydb.conf.
  */
-pg_tz *
-pg_tzset(const char *name)
+mdb_tz *
+mdb_tzset(const char *name)
 {
-	pg_tz_cache *tzp;
+	mdb_tz_cache *tzp;
 	struct state tzstate;
 	char		uppername[TZ_STRLEN_MAX + 1];
 	char		canonname[TZ_STRLEN_MAX + 1];
@@ -238,10 +238,10 @@ pg_tzset(const char *name)
 	 */
 	p = uppername;
 	while (*name)
-		*p++ = pg_toupper((unsigned char) *name++);
+		*p++ = mdb_toupper((unsigned char) *name++);
 	*p = '\0';
 
-	tzp = (pg_tz_cache *) hash_search(timezone_cache,
+	tzp = (mdb_tz_cache *) hash_search(timezone_cache,
 									  uppername,
 									  HASH_FIND,
 									  NULL);
@@ -276,7 +276,7 @@ pg_tzset(const char *name)
 	}
 
 	/* Save timezone in the cache */
-	tzp = (pg_tz_cache *) hash_search(timezone_cache,
+	tzp = (mdb_tz_cache *) hash_search(timezone_cache,
 									  uppername,
 									  HASH_ENTER,
 									  NULL);
@@ -291,7 +291,7 @@ pg_tzset(const char *name)
 /*
  * Load a fixed-GMT-offset timezone.
  * This is used for SQL-spec SET TIME ZONE INTERVAL 'foo' cases.
- * It's otherwise equivalent to pg_tzset().
+ * It's otherwise equivalent to mdb_tzset().
  *
  * The GMT offset is specified in seconds, positive values meaning west of
  * Greenwich (ie, POSIX not ISO sign convention).  However, we use ISO
@@ -300,8 +300,8 @@ pg_tzset(const char *name)
  * Caution: this can fail (return NULL) if the specified offset is outside
  * the range allowed by the zic library.
  */
-pg_tz *
-pg_tzset_offset(long gmtoffset)
+mdb_tz *
+mdb_tzset_offset(long gmtoffset)
 {
 	long		absoffset = (gmtoffset < 0) ? -gmtoffset : gmtoffset;
 	char		offsetstr[64];
@@ -328,7 +328,7 @@ pg_tzset_offset(long gmtoffset)
 		snprintf(tzname, sizeof(tzname), "<+%s>-%s",
 				 offsetstr, offsetstr);
 
-	return pg_tzset(tzname);
+	return mdb_tzset(tzname);
 }
 
 
@@ -342,16 +342,16 @@ pg_tzset_offset(long gmtoffset)
  * session_timestamp to something valid, too.
  */
 void
-pg_timezone_initialize(void)
+mdb_timezone_initialize(void)
 {
 	/*
 	 * We may not yet know where PGSHAREDIR is (in particular this is true in
-	 * an EXEC_BACKEND subprocess).  So use "GMT", which pg_tzset forces to be
+	 * an EXEC_BACKEND subprocess).  So use "GMT", which mdb_tzset forces to be
 	 * interpreted without reference to the filesystem.  This corresponds to
 	 * the bootstrap default for these variables in guc.c, although in
 	 * principle it could be different.
 	 */
-	session_timezone = pg_tzset("GMT");
+	session_timezone = mdb_tzset("GMT");
 	log_timezone = session_timezone;
 }
 
@@ -359,29 +359,29 @@ pg_timezone_initialize(void)
 /*
  * Functions to enumerate available timezones
  *
- * Note that pg_tzenumerate_next() will return a pointer into the pg_tzenum
+ * Note that mdb_tzenumerate_next() will return a pointer into the mdb_tzenum
  * structure, so the data is only valid up to the next call.
  *
  * All data is allocated using palloc in the current context.
  */
 #define MAX_TZDIR_DEPTH 10
 
-struct pg_tzenum
+struct mdb_tzenum
 {
 	int			baselen;
 	int			depth;
 	DIR		   *dirdesc[MAX_TZDIR_DEPTH];
 	char	   *dirname[MAX_TZDIR_DEPTH];
-	struct pg_tz tz;
+	struct mdb_tz tz;
 };
 
-/* typedef pg_tzenum is declared in pgtime.h */
+/* typedef mdb_tzenum is declared in pgtime.h */
 
-pg_tzenum *
-pg_tzenumerate_start(void)
+mdb_tzenum *
+mdb_tzenumerate_start(void)
 {
-	pg_tzenum  *ret = (pg_tzenum *) palloc0(sizeof(pg_tzenum));
-	char	   *startdir = pstrdup(pg_TZDIR());
+	mdb_tzenum  *ret = (mdb_tzenum *) palloc0(sizeof(mdb_tzenum));
+	char	   *startdir = pstrdup(mdb_TZDIR());
 
 	ret->baselen = strlen(startdir) + 1;
 	ret->depth = 0;
@@ -395,7 +395,7 @@ pg_tzenumerate_start(void)
 }
 
 void
-pg_tzenumerate_end(pg_tzenum *dir)
+mdb_tzenumerate_end(mdb_tzenum *dir)
 {
 	while (dir->depth >= 0)
 	{
@@ -406,8 +406,8 @@ pg_tzenumerate_end(pg_tzenum *dir)
 	pfree(dir);
 }
 
-pg_tz *
-pg_tzenumerate_next(pg_tzenum *dir)
+mdb_tz *
+mdb_tzenumerate_next(mdb_tzenum *dir)
 {
 	while (dir->depth >= 0)
 	{
@@ -456,7 +456,7 @@ pg_tzenumerate_next(pg_tzenum *dir)
 		}
 
 		/*
-		 * Load this timezone using tzload() not pg_tzset(), so we don't fill
+		 * Load this timezone using tzload() not mdb_tzset(), so we don't fill
 		 * the cache
 		 */
 		if (tzload(fullname + dir->baselen, dir->tz.TZname, &dir->tz.state,
@@ -466,7 +466,7 @@ pg_tzenumerate_next(pg_tzenum *dir)
 			continue;
 		}
 
-		if (!pg_tz_acceptable(&dir->tz))
+		if (!mdb_tz_acceptable(&dir->tz))
 		{
 			/* Ignore leap-second zones */
 			continue;

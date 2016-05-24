@@ -23,7 +23,7 @@
 #include "mollydb.h"
 
 #include "access/sysattr.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "executor/execdebug.h"
 #include "executor/nodeTidscan.h"
 #include "optimizer/clauses.h"

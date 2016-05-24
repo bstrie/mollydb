@@ -30,14 +30,14 @@
 
 static void scancolormap(struct colormap * cm, int co,
 			 union tree * t, int level, chr partial,
-			 pg_wchar **chars, int *chars_len);
+			 mdb_wchar **chars, int *chars_len);
 
 
 /*
  * Get total number of NFA states.
  */
 int
-pg_reg_getnumstates(const regex_t *regex)
+mdb_reg_getnumstates(const regex_t *regex)
 {
 	struct cnfa *cnfa;
 
@@ -51,7 +51,7 @@ pg_reg_getnumstates(const regex_t *regex)
  * Get initial state of NFA.
  */
 int
-pg_reg_getinitialstate(const regex_t *regex)
+mdb_reg_getinitialstate(const regex_t *regex)
 {
 	struct cnfa *cnfa;
 
@@ -65,7 +65,7 @@ pg_reg_getinitialstate(const regex_t *regex)
  * Get final state of NFA.
  */
 int
-pg_reg_getfinalstate(const regex_t *regex)
+mdb_reg_getfinalstate(const regex_t *regex)
 {
 	struct cnfa *cnfa;
 
@@ -78,10 +78,10 @@ pg_reg_getfinalstate(const regex_t *regex)
 /*
  * Get number of outgoing NFA arcs of state number "st".
  *
- * Note: LACON arcs are ignored, both here and in pg_reg_getoutarcs().
+ * Note: LACON arcs are ignored, both here and in mdb_reg_getoutarcs().
  */
 int
-pg_reg_getnumoutarcs(const regex_t *regex, int st)
+mdb_reg_getnumoutarcs(const regex_t *regex, int st)
 {
 	struct cnfa *cnfa;
 	struct carc *ca;
@@ -104,10 +104,10 @@ pg_reg_getnumoutarcs(const regex_t *regex, int st)
 /*
  * Write array of outgoing NFA arcs of state number "st" into arcs[],
  * whose length arcs_len must be at least as long as indicated by
- * pg_reg_getnumoutarcs(), else not all arcs will be returned.
+ * mdb_reg_getnumoutarcs(), else not all arcs will be returned.
  */
 void
-pg_reg_getoutarcs(const regex_t *regex, int st,
+mdb_reg_getoutarcs(const regex_t *regex, int st,
 				  regex_arc_t *arcs, int arcs_len)
 {
 	struct cnfa *cnfa;
@@ -135,7 +135,7 @@ pg_reg_getoutarcs(const regex_t *regex, int st,
  * Get total number of colors.
  */
 int
-pg_reg_getnumcolors(const regex_t *regex)
+mdb_reg_getnumcolors(const regex_t *regex)
 {
 	struct colormap *cm;
 
@@ -152,7 +152,7 @@ pg_reg_getnumcolors(const regex_t *regex)
  * but this will do for now.)
  */
 int
-pg_reg_colorisbegin(const regex_t *regex, int co)
+mdb_reg_colorisbegin(const regex_t *regex, int co)
 {
 	struct cnfa *cnfa;
 
@@ -169,7 +169,7 @@ pg_reg_colorisbegin(const regex_t *regex, int co)
  * Check if color is end of line/string.
  */
 int
-pg_reg_colorisend(const regex_t *regex, int co)
+mdb_reg_colorisend(const regex_t *regex, int co)
 {
 	struct cnfa *cnfa;
 
@@ -193,7 +193,7 @@ pg_reg_colorisend(const regex_t *regex, int co)
  * returned.
  */
 int
-pg_reg_getnumcharacters(const regex_t *regex, int co)
+mdb_reg_getnumcharacters(const regex_t *regex, int co)
 {
 	struct colormap *cm;
 
@@ -211,15 +211,15 @@ pg_reg_getnumcharacters(const regex_t *regex, int co)
 /*
  * Write array of member chrs of color number "co" into chars[],
  * whose length chars_len must be at least as long as indicated by
- * pg_reg_getnumcharacters(), else not all chars will be returned.
+ * mdb_reg_getnumcharacters(), else not all chars will be returned.
  *
  * Fetching the members of WHITE or a pseudocolor is not supported.
  *
  * Caution: this is a relatively expensive operation.
  */
 void
-pg_reg_getcharacters(const regex_t *regex, int co,
-					 pg_wchar *chars, int chars_len)
+mdb_reg_getcharacters(const regex_t *regex, int co,
+					 mdb_wchar *chars, int chars_len)
 {
 	struct colormap *cm;
 
@@ -247,7 +247,7 @@ pg_reg_getcharacters(const regex_t *regex, int co,
 static void
 scancolormap(struct colormap * cm, int co,
 			 union tree * t, int level, chr partial,
-			 pg_wchar **chars, int *chars_len)
+			 mdb_wchar **chars, int *chars_len)
 {
 	int			i;
 

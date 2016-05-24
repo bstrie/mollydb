@@ -74,13 +74,13 @@ main(int argc, char *argv[])
 		switch (c)
 		{
 			case 'h':
-				host = pg_strdup(optarg);
+				host = mdb_strdup(optarg);
 				break;
 			case 'p':
-				port = pg_strdup(optarg);
+				port = mdb_strdup(optarg);
 				break;
 			case 'U':
-				username = pg_strdup(optarg);
+				username = mdb_strdup(optarg);
 				break;
 			case 'w':
 				prompt_password = TRI_NO;
@@ -92,28 +92,28 @@ main(int argc, char *argv[])
 				echo = true;
 				break;
 			case 'O':
-				owner = pg_strdup(optarg);
+				owner = mdb_strdup(optarg);
 				break;
 			case 'D':
-				tablespace = pg_strdup(optarg);
+				tablespace = mdb_strdup(optarg);
 				break;
 			case 'T':
-				template = pg_strdup(optarg);
+				template = mdb_strdup(optarg);
 				break;
 			case 'E':
-				encoding = pg_strdup(optarg);
+				encoding = mdb_strdup(optarg);
 				break;
 			case 1:
-				lc_collate = pg_strdup(optarg);
+				lc_collate = mdb_strdup(optarg);
 				break;
 			case 2:
-				lc_ctype = pg_strdup(optarg);
+				lc_ctype = mdb_strdup(optarg);
 				break;
 			case 'l':
-				locale = pg_strdup(optarg);
+				locale = mdb_strdup(optarg);
 				break;
 			case 3:
-				maintenance_db = pg_strdup(optarg);
+				maintenance_db = mdb_strdup(optarg);
 				break;
 			default:
 				fprintf(stderr, _("Try \"%s --help\" for more information.\n"), progname);
@@ -159,7 +159,7 @@ main(int argc, char *argv[])
 
 	if (encoding)
 	{
-		if (pg_char_to_encoding(encoding) < 0)
+		if (mdb_char_to_encoding(encoding) < 0)
 		{
 			fprintf(stderr, _("%s: \"%s\" is not a valid encoding name\n"),
 					progname, encoding);

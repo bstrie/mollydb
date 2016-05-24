@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_crc32c_choose.c
+ * mdb_crc32c_choose.c
  *	  Choose which CRC-32C implementation to use, at runtime.
  *
  * Try to the special CRC instructions introduced in Intel SSE 4.2,
@@ -12,7 +12,7 @@
  *
  *
  * IDENTIFICATION
- *	  src/port/pg_crc32c_choose.c
+ *	  src/port/mdb_crc32c_choose.c
  *
  *-------------------------------------------------------------------------
  */
@@ -27,10 +27,10 @@
 #include <intrin.h>
 #endif
 
-#include "port/pg_crc32c.h"
+#include "port/mdb_crc32c.h"
 
 static bool
-pg_crc32c_sse42_available(void)
+mdb_crc32c_sse42_available(void)
 {
 	unsigned int exx[4] = {0, 0, 0, 0};
 
@@ -49,15 +49,15 @@ pg_crc32c_sse42_available(void)
  * This gets called on the first call. It replaces the function pointer
  * so that subsequent calls are routed directly to the chosen implementation.
  */
-static pg_crc32c
-pg_comp_crc32c_choose(pg_crc32c crc, const void *data, size_t len)
+static mdb_crc32c
+mdb_comp_crc32c_choose(mdb_crc32c crc, const void *data, size_t len)
 {
-	if (pg_crc32c_sse42_available())
-		pg_comp_crc32c = pg_comp_crc32c_sse42;
+	if (mdb_crc32c_sse42_available())
+		mdb_comp_crc32c = mdb_comp_crc32c_sse42;
 	else
-		pg_comp_crc32c = pg_comp_crc32c_sb8;
+		mdb_comp_crc32c = mdb_comp_crc32c_sb8;
 
-	return pg_comp_crc32c(crc, data, len);
+	return mdb_comp_crc32c(crc, data, len);
 }
 
-pg_crc32c	(*pg_comp_crc32c) (pg_crc32c crc, const void *data, size_t len) = pg_comp_crc32c_choose;
+mdb_crc32c	(*mdb_comp_crc32c) (mdb_crc32c crc, const void *data, size_t len) = mdb_comp_crc32c_choose;

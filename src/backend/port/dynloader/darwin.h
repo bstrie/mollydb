@@ -2,7 +2,7 @@
 
 #include "fmgr.h"
 
-void	   *pg_dlopen(char *filename);
-PGFunction	pg_dlsym(void *handle, char *funcname);
-void		pg_dlclose(void *handle);
-char	   *pg_dlerror(void);
+void	   *mdb_dlopen(char *filename);
+PGFunction	mdb_dlsym(void *handle, char *funcname);
+void		mdb_dlclose(void *handle);
+char	   *mdb_dlerror(void);

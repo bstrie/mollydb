@@ -33,16 +33,16 @@
 
 #if defined(__GNUC__) || defined(__INTEL_COMPILER)
 #if defined(__i386__) || defined(__i386)
-#define pg_memory_barrier_impl()		\
+#define mdb_memory_barrier_impl()		\
 	__asm__ __volatile__ ("lock; addl $0,0(%%esp)" : : : "memory", "cc")
 #elif defined(__x86_64__)
-#define pg_memory_barrier_impl()		\
+#define mdb_memory_barrier_impl()		\
 	__asm__ __volatile__ ("lock; addl $0,0(%%rsp)" : : : "memory", "cc")
 #endif
 #endif /* defined(__GNUC__) || defined(__INTEL_COMPILER) */
 
-#define pg_read_barrier_impl()		pg_compiler_barrier_impl()
-#define pg_write_barrier_impl()		pg_compiler_barrier_impl()
+#define mdb_read_barrier_impl()		mdb_compiler_barrier_impl()
+#define mdb_write_barrier_impl()		mdb_compiler_barrier_impl()
 
 /*
  * Provide implementation for atomics using inline assembly on x86 gcc. It's
@@ -54,16 +54,16 @@
 #if defined(__GNUC__) || defined(__INTEL_COMPILER)
 
 #define PG_HAVE_ATOMIC_FLAG_SUPPORT
-typedef struct pg_atomic_flag
+typedef struct mdb_atomic_flag
 {
 	volatile char value;
-} pg_atomic_flag;
+} mdb_atomic_flag;
 
 #define PG_HAVE_ATOMIC_U32_SUPPORT
-typedef struct pg_atomic_uint32
+typedef struct mdb_atomic_uint32
 {
 	volatile uint32 value;
-} pg_atomic_uint32;
+} mdb_atomic_uint32;
 
 /*
  * It's too complicated to write inline asm for 64bit types on 32bit and the
@@ -71,11 +71,11 @@ typedef struct pg_atomic_uint32
  */
 #ifdef __x86_64__
 #define PG_HAVE_ATOMIC_U64_SUPPORT
-typedef struct pg_atomic_uint64
+typedef struct mdb_atomic_uint64
 {
 	/* alignment guaranteed due to being on a 64bit platform */
 	volatile uint64 value;
-} pg_atomic_uint64;
+} mdb_atomic_uint64;
 #endif	/* __x86_64__ */
 
 #endif /* defined(__GNUC__) || defined(__INTEL_COMPILER) */
@@ -109,21 +109,21 @@ typedef struct pg_atomic_uint64
 #if defined(__GNUC__) || defined(__INTEL_COMPILER)
 #define PG_HAVE_SPIN_DELAY
 static __inline__ void
-pg_spin_delay_impl(void)
+mdb_spin_delay_impl(void)
 {
 	__asm__ __volatile__(" rep; nop			\n");
 }
 #elif defined(WIN32_ONLY_COMPILER) && defined(__x86_64__)
 #define PG_HAVE_SPIN_DELAY
 static __forceinline void
-pg_spin_delay_impl(void)
+mdb_spin_delay_impl(void)
 {
 	_mm_pause();
 }
 #elif defined(WIN32_ONLY_COMPILER)
 #define PG_HAVE_SPIN_DELAY
 static __forceinline void
-pg_spin_delay_impl(void)
+mdb_spin_delay_impl(void)
 {
 	/* See comment for gcc code. Same code, MASM syntax */
 	__asm rep nop;
@@ -138,7 +138,7 @@ pg_spin_delay_impl(void)
 
 #define PG_HAVE_ATOMIC_TEST_SET_FLAG
 static inline bool
-pg_atomic_test_set_flag_impl(volatile pg_atomic_flag *ptr)
+mdb_atomic_test_set_flag_impl(volatile mdb_atomic_flag *ptr)
 {
 	register char _res = 1;
 
@@ -153,7 +153,7 @@ pg_atomic_test_set_flag_impl(volatile pg_atomic_flag *ptr)
 
 #define PG_HAVE_ATOMIC_CLEAR_FLAG
 static inline void
-pg_atomic_clear_flag_impl(volatile pg_atomic_flag *ptr)
+mdb_atomic_clear_flag_impl(volatile mdb_atomic_flag *ptr)
 {
 	/*
 	 * On a TSO architecture like x86 it's sufficient to use a compiler
@@ -165,7 +165,7 @@ pg_atomic_clear_flag_impl(volatile pg_atomic_flag *ptr)
 
 #define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U32
 static inline bool
-pg_atomic_compare_exchange_u32_impl(volatile pg_atomic_uint32 *ptr,
+mdb_atomic_compare_exchange_u32_impl(volatile mdb_atomic_uint32 *ptr,
 									uint32 *expected, uint32 newval)
 {
 	char	ret;
@@ -186,7 +186,7 @@ pg_atomic_compare_exchange_u32_impl(volatile pg_atomic_uint32 *ptr,
 
 #define PG_HAVE_ATOMIC_FETCH_ADD_U32
 static inline uint32
-pg_atomic_fetch_add_u32_impl(volatile pg_atomic_uint32 *ptr, int32 add_)
+mdb_atomic_fetch_add_u32_impl(volatile mdb_atomic_uint32 *ptr, int32 add_)
 {
 	uint32 res;
 	__asm__ __volatile__(
@@ -202,7 +202,7 @@ pg_atomic_fetch_add_u32_impl(volatile pg_atomic_uint32 *ptr, int32 add_)
 
 #define PG_HAVE_ATOMIC_COMPARE_EXCHANGE_U64
 static inline bool
-pg_atomic_compare_exchange_u64_impl(volatile pg_atomic_uint64 *ptr,
+mdb_atomic_compare_exchange_u64_impl(volatile mdb_atomic_uint64 *ptr,
 									uint64 *expected, uint64 newval)
 {
 	char	ret;
@@ -223,7 +223,7 @@ pg_atomic_compare_exchange_u64_impl(volatile pg_atomic_uint64 *ptr,
 
 #define PG_HAVE_ATOMIC_FETCH_ADD_U64
 static inline uint64
-pg_atomic_fetch_add_u64_impl(volatile pg_atomic_uint64 *ptr, int64 add_)
+mdb_atomic_fetch_add_u64_impl(volatile mdb_atomic_uint64 *ptr, int64 add_)
 {
 	uint64 res;
 	__asm__ __volatile__(

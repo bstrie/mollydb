@@ -15,7 +15,7 @@
 #include "fmgr.h"
 #include "utils/builtins.h"
 #include "utils/bytea.h"       /* for byteain & byteaout */
-#include "mb/pg_wchar.h"       /* for GetDatabaseEncoding */
+#include "mb/mdb_wchar.h"       /* for GetDatabaseEncoding */
 /* Defined by Perl */
 #undef _
 

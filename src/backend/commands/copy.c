@@ -25,14 +25,14 @@
 #include "access/sysattr.h"
 #include "access/xact.h"
 #include "access/xlog.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/copy.h"
 #include "commands/defrem.h"
 #include "commands/trigger.h"
 #include "executor/executor.h"
 #include "libpq/libpq.h"
 #include "libpq/pqformat.h"
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 #include "miscadmin.h"
 #include "optimizer/clauses.h"
 #include "optimizer/planner.h"
@@ -83,11 +83,11 @@ typedef enum EolType
  * characters by having the first byte's high bit set. Subsequent bytes of the
  * character can have the high bit not set. When scanning data in such an
  * encoding to look for a match to a single-byte (ie ASCII) character, we must
- * use the full pg_encoding_mblen() machinery to skip over multibyte
+ * use the full mdb_encoding_mblen() machinery to skip over multibyte
  * characters, else we might find a false match to a trailing byte. In
  * supported server encodings, there is no possibility of a false match, and
  * it's faster to make useless comparisons to trailing bytes than it is to
- * invoke pg_encoding_mblen() to skip over them. encoding_embeds_ascii is TRUE
+ * invoke mdb_encoding_mblen() to skip over them. encoding_embeds_ascii is TRUE
  * when we have to do it the hard way.
  */
 typedef struct CopyStateData
@@ -1144,7 +1144,7 @@ ProcessCopyOptions(CopyState cstate,
 				ereport(ERROR,
 						(errcode(ERRCODE_SYNTAX_ERROR),
 						 errmsg("conflicting or redundant options")));
-			cstate->file_encoding = pg_char_to_encoding(defGetString(defel));
+			cstate->file_encoding = mdb_char_to_encoding(defGetString(defel));
 			if (cstate->file_encoding < 0)
 				ereport(ERROR,
 						(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -1391,7 +1391,7 @@ BeginCopy(bool is_from,
 		 * function and is executed repeatedly.  (See also the same hack in
 		 * DECLARE CURSOR and PREPARE.)  XXX FIXME someday.
 		 */
-		rewritten = pg_analyze_and_rewrite((Node *) copyObject(raw_query),
+		rewritten = mdb_analyze_and_rewrite((Node *) copyObject(raw_query),
 										   queryString, NULL, 0);
 
 		/* check that we got back something we can work with */
@@ -1453,7 +1453,7 @@ BeginCopy(bool is_from,
 		}
 
 		/* plan the query */
-		plan = pg_plan_query(query, 0, NULL);
+		plan = mdb_plan_query(query, 0, NULL);
 
 		/*
 		 * With row level security and a user using "COPY relation TO", we
@@ -1610,16 +1610,16 @@ BeginCopy(bool is_from,
 
 	/* Use client encoding when ENCODING option is not specified. */
 	if (cstate->file_encoding < 0)
-		cstate->file_encoding = pg_get_client_encoding();
+		cstate->file_encoding = mdb_get_client_encoding();
 
 	/*
 	 * Set up encoding conversion info.  Even if the file and server encodings
-	 * are the same, we must apply pg_any_to_server() to validate data in
+	 * are the same, we must apply mdb_any_to_server() to validate data in
 	 * multibyte encodings.
 	 */
 	cstate->need_transcoding =
 		(cstate->file_encoding != GetDatabaseEncoding() ||
-		 pg_database_encoding_max_length() > 1);
+		 mdb_database_encoding_max_length() > 1);
 	/* See Multibyte encoding comment above */
 	cstate->encoding_embeds_ascii = PG_ENCODING_IS_CLIENT_ONLY(cstate->file_encoding);
 
@@ -1853,7 +1853,7 @@ CopyTo(CopyState cstate)
 {
 	TupleDesc	tupDesc;
 	int			num_phys_attrs;
-	Form_pg_attribute *attr;
+	Form_mdb_attribute *attr;
 	ListCell   *cur;
 	uint64		processed;
 
@@ -1922,7 +1922,7 @@ CopyTo(CopyState cstate)
 		 * encoding, because it will be sent directly with CopySendString.
 		 */
 		if (cstate->need_transcoding)
-			cstate->null_print_client = pg_server_to_any(cstate->null_print,
+			cstate->null_print_client = mdb_server_to_any(cstate->null_print,
 													  cstate->null_print_len,
 													  cstate->file_encoding);
 
@@ -2187,7 +2187,7 @@ limit_printout_length(const char *str)
 		return pstrdup(str);
 
 	/* Apply encoding-dependent truncation */
-	len = pg_mbcliplen(str, slen, MAX_COPY_DATA_DISPLAY);
+	len = mdb_mbcliplen(str, slen, MAX_COPY_DATA_DISPLAY);
 
 	/*
 	 * Truncate, and add "..." to show we truncated the input.
@@ -2658,7 +2658,7 @@ BeginCopyFrom(Relation rel,
 	CopyState	cstate;
 	bool		pipe = (filename == NULL);
 	TupleDesc	tupDesc;
-	Form_pg_attribute *attr;
+	Form_mdb_attribute *attr;
 	AttrNumber	num_phys_attrs,
 				num_defaults;
 	FmgrInfo   *in_functions;
@@ -2945,7 +2945,7 @@ NextCopyFrom(CopyState cstate, ExprContext *econtext,
 			 Datum *values, bool *nulls, Oid *tupleOid)
 {
 	TupleDesc	tupDesc;
-	Form_pg_attribute *attr;
+	Form_mdb_attribute *attr;
 	AttrNumber	num_phys_attrs,
 				attr_count,
 				num_defaults = cstate->num_defaults;
@@ -3265,7 +3265,7 @@ CopyReadLine(CopyState cstate)
 	{
 		char	   *cvt;
 
-		cvt = pg_any_to_server(cstate->line_buf.data,
+		cvt = mdb_any_to_server(cstate->line_buf.data,
 							   cstate->line_buf.len,
 							   cstate->file_encoding);
 		if (cvt != cstate->line_buf.data)
@@ -3626,7 +3626,7 @@ not_end_of_copy:
 
 			mblen_str[0] = c;
 			/* All our encodings only read the first byte to get the length */
-			mblen = pg_encoding_mblen(cstate->file_encoding, mblen_str);
+			mblen = mdb_encoding_mblen(cstate->file_encoding, mblen_str);
 			IF_NEED_REFILL_AND_NOT_EOF_CONTINUE(mblen - 1);
 			IF_NEED_REFILL_AND_EOF_BREAK(mblen - 1);
 			raw_buf_ptr += mblen - 1;
@@ -3874,7 +3874,7 @@ CopyReadAttributesText(CopyState cstate)
 			{
 				char	   *fld = cstate->raw_fields[fieldno];
 
-				pg_verifymbstr(fld, output_ptr - fld, false);
+				mdb_verifymbstr(fld, output_ptr - fld, false);
 			}
 		}
 
@@ -4138,7 +4138,7 @@ CopyAttributeOutText(CopyState cstate, char *string)
 	char		delimc = cstate->delim[0];
 
 	if (cstate->need_transcoding)
-		ptr = pg_server_to_any(string, strlen(string), cstate->file_encoding);
+		ptr = mdb_server_to_any(string, strlen(string), cstate->file_encoding);
 	else
 		ptr = string;
 
@@ -4150,7 +4150,7 @@ CopyAttributeOutText(CopyState cstate, char *string)
 	 * single call.  The loop invariant is that the data from "start" to "ptr"
 	 * can be sent literally, but hasn't yet been.
 	 *
-	 * We can skip pg_encoding_mblen() overhead when encoding is safe, because
+	 * We can skip mdb_encoding_mblen() overhead when encoding is safe, because
 	 * in valid backend encodings, extra bytes of a multibyte character never
 	 * look like ASCII.  This loop is sufficiently performance-critical that
 	 * it's worth making two copies of it to get the IS_HIGHBIT_SET() test out
@@ -4211,7 +4211,7 @@ CopyAttributeOutText(CopyState cstate, char *string)
 				start = ptr++;	/* we include char in next run */
 			}
 			else if (IS_HIGHBIT_SET(c))
-				ptr += pg_encoding_mblen(cstate->file_encoding, ptr);
+				ptr += mdb_encoding_mblen(cstate->file_encoding, ptr);
 			else
 				ptr++;
 		}
@@ -4298,7 +4298,7 @@ CopyAttributeOutCSV(CopyState cstate, char *string,
 		use_quote = true;
 
 	if (cstate->need_transcoding)
-		ptr = pg_server_to_any(string, strlen(string), cstate->file_encoding);
+		ptr = mdb_server_to_any(string, strlen(string), cstate->file_encoding);
 	else
 		ptr = string;
 
@@ -4325,7 +4325,7 @@ CopyAttributeOutCSV(CopyState cstate, char *string,
 					break;
 				}
 				if (IS_HIGHBIT_SET(c) && cstate->encoding_embeds_ascii)
-					tptr += pg_encoding_mblen(cstate->file_encoding, tptr);
+					tptr += mdb_encoding_mblen(cstate->file_encoding, tptr);
 				else
 					tptr++;
 			}
@@ -4349,7 +4349,7 @@ CopyAttributeOutCSV(CopyState cstate, char *string,
 				start = ptr;	/* we include char in next run */
 			}
 			if (IS_HIGHBIT_SET(c) && cstate->encoding_embeds_ascii)
-				ptr += pg_encoding_mblen(cstate->file_encoding, ptr);
+				ptr += mdb_encoding_mblen(cstate->file_encoding, ptr);
 			else
 				ptr++;
 		}
@@ -4381,7 +4381,7 @@ CopyGetAttnums(TupleDesc tupDesc, Relation rel, List *attnamelist)
 	if (attnamelist == NIL)
 	{
 		/* Generate default column list */
-		Form_pg_attribute *attr = tupDesc->attrs;
+		Form_mdb_attribute *attr = tupDesc->attrs;
 		int			attr_count = tupDesc->natts;
 		int			i;
 

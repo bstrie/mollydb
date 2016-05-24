@@ -14,7 +14,7 @@
 #include "prompt.h"
 #include "settings.h"
 
-#include "mb/pg_wchar.h"
+#include "mb/mdb_wchar.h"
 
 
 /* callback functions for our flex lexer */
@@ -188,7 +188,7 @@ MainLoop(FILE *source)
 		{
 			free(line);
 			puts(_("The input is a MollyDB custom-format dump.\n"
-				   "Use the pg_restore command-line client to restore this dump to a database.\n"));
+				   "Use the mdb_restore command-line client to restore this dump to a database.\n"));
 			fflush(stdout);
 			successResult = EXIT_FAILURE;
 			break;
@@ -203,7 +203,7 @@ MainLoop(FILE *source)
 
 		/* A request for help? Be friendly and give them some guidance */
 		if (pset.cur_cmd_interactive && query_buf->len == 0 &&
-			pg_strncasecmp(line, "help", 4) == 0 &&
+			mdb_strncasecmp(line, "help", 4) == 0 &&
 			(line[4] == '\0' || line[4] == ';' || isspace((unsigned char) line[4])))
 		{
 			free(line);
@@ -291,8 +291,8 @@ MainLoop(FILE *source)
 				 */
 				if (pset.cur_cmd_interactive && !line_saved_in_history)
 				{
-					pg_append_history(line, history_buf);
-					pg_send_history(history_buf);
+					mdb_append_history(line, history_buf);
+					mdb_send_history(history_buf);
 					line_saved_in_history = true;
 				}
 
@@ -329,15 +329,15 @@ MainLoop(FILE *source)
 				if (query_buf->len == added_nl_pos)
 				{
 					query_buf->data[--query_buf->len] = '\0';
-					pg_send_history(history_buf);
+					mdb_send_history(history_buf);
 				}
 				added_nl_pos = -1;
 
 				/* save backslash command in history */
 				if (pset.cur_cmd_interactive && !line_saved_in_history)
 				{
-					pg_append_history(line, history_buf);
-					pg_send_history(history_buf);
+					mdb_append_history(line, history_buf);
+					mdb_send_history(history_buf);
 					line_saved_in_history = true;
 				}
 
@@ -377,7 +377,7 @@ MainLoop(FILE *source)
 					/* rescan query_buf as new input */
 					psql_scan_finish(scan_state);
 					free(line);
-					line = pg_strdup(query_buf->data);
+					line = mdb_strdup(query_buf->data);
 					resetPQExpBuffer(query_buf);
 					/* reset parsing state since we are rescanning whole line */
 					psql_scan_reset(scan_state);
@@ -398,7 +398,7 @@ MainLoop(FILE *source)
 
 		/* Add line to pending history if we didn't execute anything yet */
 		if (pset.cur_cmd_interactive && !line_saved_in_history)
-			pg_append_history(line, history_buf);
+			mdb_append_history(line, history_buf);
 
 		psql_scan_finish(scan_state);
 		free(line);
@@ -427,7 +427,7 @@ MainLoop(FILE *source)
 	{
 		/* save query in history */
 		if (pset.cur_cmd_interactive)
-			pg_send_history(history_buf);
+			mdb_send_history(history_buf);
 
 		/* execute query */
 		success = SendQuery(query_buf->data);

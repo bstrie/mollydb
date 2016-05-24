@@ -205,7 +205,7 @@ struct HeapTupleHeaderData
 
 /*
  * A tuple is only locked (i.e. not updated by its Xmax) if the
- * HEAP_XMAX_LOCK_ONLY bit is set; or, for pg_upgrade's sake, if the Xmax is
+ * HEAP_XMAX_LOCK_ONLY bit is set; or, for mdb_upgrade's sake, if the Xmax is
  * not a multi and the EXCL_LOCK bit is set.
  *
  * See also HeapTupleHeaderIsOnlyLocked, which also checks for a possible

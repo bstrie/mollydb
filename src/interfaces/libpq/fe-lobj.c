@@ -44,8 +44,8 @@
 
 static int	lo_initialize(PGconn *conn);
 static Oid	lo_import_internal(PGconn *conn, const char *filename, Oid oid);
-static pg_int64 lo_hton64(pg_int64 host64);
-static pg_int64 lo_ntoh64(pg_int64 net64);
+static mdb_int64 lo_hton64(mdb_int64 host64);
+static mdb_int64 lo_ntoh64(mdb_int64 net64);
 
 /*
  * lo_open
@@ -203,7 +203,7 @@ lo_truncate(PGconn *conn, int fd, size_t len)
  * returns -1 upon failure
  */
 int
-lo_truncate64(PGconn *conn, int fd, pg_int64 len)
+lo_truncate64(PGconn *conn, int fd, mdb_int64 len)
 {
 	PQArgBlock	argv[2];
 	PGresult   *res;
@@ -406,12 +406,12 @@ lo_lseek(PGconn *conn, int fd, int offset, int whence)
  * lo_lseek64
  *	  change the current read or write location on a large object
  */
-pg_int64
-lo_lseek64(PGconn *conn, int fd, pg_int64 offset, int whence)
+mdb_int64
+lo_lseek64(PGconn *conn, int fd, mdb_int64 offset, int whence)
 {
 	PQArgBlock	argv[3];
 	PGresult   *res;
-	pg_int64	retval;
+	mdb_int64	retval;
 	int			result_len;
 
 	if (conn == NULL || conn->lobjfuncs == NULL)
@@ -581,10 +581,10 @@ lo_tell(PGconn *conn, int fd)
  * lo_tell64
  *	  returns the current seek location of the large object
  */
-pg_int64
+mdb_int64
 lo_tell64(PGconn *conn, int fd)
 {
-	pg_int64	retval;
+	mdb_int64	retval;
 	PQArgBlock	argv[1];
 	PGresult   *res;
 	int			result_len;
@@ -870,7 +870,7 @@ lo_export(PGconn *conn, Oid lobjId, const char *filename)
  * lo_initialize
  *
  * Initialize the large object interface for an existing connection.
- * We ask the backend about the functions OID's in pg_proc for all
+ * We ask the backend about the functions OID's in mdb_proc for all
  * functions that are required for large object operations.
  */
 static int
@@ -904,7 +904,7 @@ lo_initialize(PGconn *conn)
 	 * lo_truncate only exists in 8.3 and up.
 	 */
 	if (conn->sversion >= 70300)
-		query = "select proname, oid from pg_catalog.pg_proc "
+		query = "select proname, oid from mdb_catalog.mdb_proc "
 			"where proname in ("
 			"'lo_open', "
 			"'lo_close', "
@@ -919,10 +919,10 @@ lo_initialize(PGconn *conn)
 			"'lo_truncate64', "
 			"'loread', "
 			"'lowrite') "
-			"and pronamespace = (select oid from pg_catalog.pg_namespace "
-			"where nspname = 'pg_catalog')";
+			"and pronamespace = (select oid from mdb_catalog.mdb_namespace "
+			"where nspname = 'mdb_catalog')";
 	else
-		query = "select proname, oid from pg_proc "
+		query = "select proname, oid from mdb_proc "
 			"where proname = 'lo_open' "
 			"or proname = 'lo_close' "
 			"or proname = 'lo_creat' "
@@ -1058,12 +1058,12 @@ lo_initialize(PGconn *conn)
  * lo_hton64
  *	  converts a 64-bit integer from host byte order to network byte order
  */
-static pg_int64
-lo_hton64(pg_int64 host64)
+static mdb_int64
+lo_hton64(mdb_int64 host64)
 {
 	union
 	{
-		pg_int64	i64;
+		mdb_int64	i64;
 		uint32		i32[2];
 	}			swap;
 	uint32		t;
@@ -1083,15 +1083,15 @@ lo_hton64(pg_int64 host64)
  * lo_ntoh64
  *	  converts a 64-bit integer from network byte order to host byte order
  */
-static pg_int64
-lo_ntoh64(pg_int64 net64)
+static mdb_int64
+lo_ntoh64(mdb_int64 net64)
 {
 	union
 	{
-		pg_int64	i64;
+		mdb_int64	i64;
 		uint32		i32[2];
 	}			swap;
-	pg_int64	result;
+	mdb_int64	result;
 
 	swap.i64 = net64;
 

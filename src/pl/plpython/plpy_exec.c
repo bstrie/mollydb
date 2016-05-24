@@ -8,7 +8,7 @@
 
 #include "access/htup_details.h"
 #include "access/xact.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_type.h"
 #include "commands/trigger.h"
 #include "executor/spi.h"
 #include "funcapi.h"
@@ -376,9 +376,9 @@ PLy_exec_trigger(FunctionCallInfo fcinfo, PLyProcedure *proc)
 				srv = NULL;		/* keep compiler quiet */
 			}
 
-			if (pg_strcasecmp(srv, "SKIP") == 0)
+			if (mdb_strcasecmp(srv, "SKIP") == 0)
 				rv = NULL;
-			else if (pg_strcasecmp(srv, "MODIFY") == 0)
+			else if (mdb_strcasecmp(srv, "MODIFY") == 0)
 			{
 				TriggerData *tdata = (TriggerData *) fcinfo->context;
 
@@ -389,7 +389,7 @@ PLy_exec_trigger(FunctionCallInfo fcinfo, PLyProcedure *proc)
 					ereport(WARNING,
 							(errmsg("PL/Python trigger function returned \"MODIFY\" in a DELETE trigger -- ignored")));
 			}
-			else if (pg_strcasecmp(srv, "OK") != 0)
+			else if (mdb_strcasecmp(srv, "OK") != 0)
 			{
 				/*
 				 * accept "OK" as an alternative to None; otherwise, raise an

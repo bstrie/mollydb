@@ -20,26 +20,26 @@
 #ifdef HAVE_DLOPEN
 
 void *
-pg_dlopen(char *filename)
+mdb_dlopen(char *filename)
 {
 	return dlopen(filename, RTLD_NOW | RTLD_GLOBAL);
 }
 
 void
-pg_dlclose(void *handle)
+mdb_dlclose(void *handle)
 {
 	dlclose(handle);
 }
 
 PGFunction
-pg_dlsym(void *handle, char *funcname)
+mdb_dlsym(void *handle, char *funcname)
 {
 	/* Do not prepend an underscore: see dlopen(3) */
 	return dlsym(handle, funcname);
 }
 
 char *
-pg_dlerror(void)
+mdb_dlerror(void)
 {
 	return dlerror();
 }
@@ -54,7 +54,7 @@ pg_dlerror(void)
 static NSObjectFileImageReturnCode cofiff_result = NSObjectFileImageFailure;
 
 void *
-pg_dlopen(char *filename)
+mdb_dlopen(char *filename)
 {
 	NSObjectFileImage image;
 
@@ -67,13 +67,13 @@ pg_dlopen(char *filename)
 }
 
 void
-pg_dlclose(void *handle)
+mdb_dlclose(void *handle)
 {
 	NSUnLinkModule(handle, FALSE);
 }
 
 PGFunction
-pg_dlsym(void *handle, char *funcname)
+mdb_dlsym(void *handle, char *funcname)
 {
 	NSSymbol symbol;
 	char	   *symname = (char *) malloc(strlen(funcname) + 2);
@@ -94,7 +94,7 @@ pg_dlsym(void *handle, char *funcname)
 }
 
 char *
-pg_dlerror(void)
+mdb_dlerror(void)
 {
 	NSLinkEditErrors c;
 	int			errorNumber;

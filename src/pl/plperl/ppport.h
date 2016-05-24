@@ -2367,7 +2367,7 @@ unshare_hek|||
 unsharepvn||5.004000|
 unwind_handler_stack|||
 update_debugger_info|||
-upg_version||5.009005|
+umdb_version||5.009005|
 usage|||
 utf16_to_utf8_reversed||5.006001|
 utf16_to_utf8||5.006001|

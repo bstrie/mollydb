@@ -19,7 +19,7 @@ test: uuid
 test: enum
 test: money
 test: rangetypes
-test: pg_lsn
+test: mdb_lsn
 test: regproc
 test: strings
 test: numerology

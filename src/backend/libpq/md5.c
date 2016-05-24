@@ -261,12 +261,12 @@ bytesToHex(uint8 b[16], char *s)
  */
 
 /*
- *	pg_md5_hash
+ *	mdb_md5_hash
  *
  *	Calculates the MD5 sum of the bytes in a buffer.
  *
  *	SYNOPSIS	  #include "md5.h"
- *				  int pg_md5_hash(const void *buff, size_t len, char *hexsum)
+ *				  int mdb_md5_hash(const void *buff, size_t len, char *hexsum)
  *
  *	INPUT		  buff	  the buffer containing the bytes that you want
  *						  the MD5 sum of.
@@ -287,7 +287,7 @@ bytesToHex(uint8 b[16], char *s)
  *
  */
 bool
-pg_md5_hash(const void *buff, size_t len, char *hexsum)
+mdb_md5_hash(const void *buff, size_t len, char *hexsum)
 {
 	uint8		sum[16];
 
@@ -299,7 +299,7 @@ pg_md5_hash(const void *buff, size_t len, char *hexsum)
 }
 
 bool
-pg_md5_binary(const void *buff, size_t len, void *outbuf)
+mdb_md5_binary(const void *buff, size_t len, void *outbuf)
 {
 	if (!calculateDigestFromBuffer(buff, len, outbuf))
 		return false;
@@ -317,7 +317,7 @@ pg_md5_binary(const void *buff, size_t len, void *outbuf)
  * Returns TRUE if okay, FALSE on error (out of memory).
  */
 bool
-pg_md5_encrypt(const char *passwd, const char *salt, size_t salt_len,
+mdb_md5_encrypt(const char *passwd, const char *salt, size_t salt_len,
 			   char *buf)
 {
 	size_t		passwd_len = strlen(passwd);
@@ -337,7 +337,7 @@ pg_md5_encrypt(const char *passwd, const char *salt, size_t salt_len,
 	memcpy(crypt_buf + passwd_len, salt, salt_len);
 
 	strcpy(buf, "md5");
-	ret = pg_md5_hash(crypt_buf, passwd_len + salt_len, buf + 3);
+	ret = mdb_md5_hash(crypt_buf, passwd_len + salt_len, buf + 3);
 
 	free(crypt_buf);
 

@@ -45,7 +45,7 @@
  * There are several levels of locking at work:
  *
  * * To create and drop replication origins an exclusive lock on
- *	 pg_replication_slot is required for the duration. That allows us to
+ *	 mdb_replication_slot is required for the duration. That allows us to
  *	 safely and conflict free assign new origins using a dirty snapshot.
  *
  * * When creating an in-memory replication progress slot the ReplicationOirgin
@@ -92,7 +92,7 @@
 
 #include "utils/builtins.h"
 #include "utils/fmgroids.h"
-#include "utils/pg_lsn.h"
+#include "utils/mdb_lsn.h"
 #include "utils/rel.h"
 #include "utils/syscache.h"
 #include "utils/tqual.h"
@@ -206,7 +206,7 @@ replorigin_check_prerequisites(bool check_slots, bool recoveryOK)
 RepOriginId
 replorigin_by_name(char *roname, bool missing_ok)
 {
-	Form_pg_replication_origin ident;
+	Form_mdb_replication_origin ident;
 	Oid			roident = InvalidOid;
 	HeapTuple	tuple;
 	Datum		roname_d;
@@ -216,7 +216,7 @@ replorigin_by_name(char *roname, bool missing_ok)
 	tuple = SearchSysCache1(REPLORIGNAME, roname_d);
 	if (HeapTupleIsValid(tuple))
 	{
-		ident = (Form_pg_replication_origin) GETSTRUCT(tuple);
+		ident = (Form_mdb_replication_origin) GETSTRUCT(tuple);
 		roident = ident->roident;
 		ReleaseSysCache(tuple);
 	}
@@ -250,7 +250,7 @@ replorigin_create(char *roname)
 	/*
 	 * We need the numeric replication origin to be 16bit wide, so we cannot
 	 * rely on the normal oid allocation. Instead we simply scan
-	 * pg_replication_origin for the first unused id. That's not particularly
+	 * mdb_replication_origin for the first unused id. That's not particularly
 	 * efficient, but this should be a fairly infrequent operation - we can
 	 * easily spend a bit more code on this when it turns out it needs to be
 	 * faster.
@@ -268,14 +268,14 @@ replorigin_create(char *roname)
 
 	for (roident = InvalidOid + 1; roident < PG_UINT16_MAX; roident++)
 	{
-		bool		nulls[Natts_pg_replication_origin];
-		Datum		values[Natts_pg_replication_origin];
+		bool		nulls[Natts_mdb_replication_origin];
+		Datum		values[Natts_mdb_replication_origin];
 		bool		collides;
 
 		CHECK_FOR_INTERRUPTS();
 
 		ScanKeyInit(&key,
-					Anum_pg_replication_origin_roident,
+					Anum_mdb_replication_origin_roident,
 					BTEqualStrategyNumber, F_OIDEQ,
 					ObjectIdGetDatum(roident));
 
@@ -296,8 +296,8 @@ replorigin_create(char *roname)
 			 */
 			memset(&nulls, 0, sizeof(nulls));
 
-			values[Anum_pg_replication_origin_roident - 1] = ObjectIdGetDatum(roident);
-			values[Anum_pg_replication_origin_roname - 1] = roname_d;
+			values[Anum_mdb_replication_origin_roident - 1] = ObjectIdGetDatum(roident);
+			values[Anum_mdb_replication_origin_roname - 1] = roname_d;
 
 			tuple = heap_form_tuple(RelationGetDescr(rel), values, nulls);
 			simple_heap_insert(rel, tuple);
@@ -400,7 +400,7 @@ bool
 replorigin_by_oid(RepOriginId roident, bool missing_ok, char **roname)
 {
 	HeapTuple	tuple;
-	Form_pg_replication_origin ric;
+	Form_mdb_replication_origin ric;
 
 	Assert(OidIsValid((Oid) roident));
 	Assert(roident != InvalidRepOriginId);
@@ -411,7 +411,7 @@ replorigin_by_oid(RepOriginId roident, bool missing_ok, char **roname)
 
 	if (HeapTupleIsValid(tuple))
 	{
-		ric = (Form_pg_replication_origin) GETSTRUCT(tuple);
+		ric = (Form_mdb_replication_origin) GETSTRUCT(tuple);
 		*roname = text_to_cstring(&ric->roname);
 		ReleaseSysCache(tuple);
 
@@ -510,12 +510,12 @@ ReplicationOriginShmemInit(void)
 void
 CheckPointReplicationOrigin(void)
 {
-	const char *tmppath = "pg_logical/replorigin_checkpoint.tmp";
-	const char *path = "pg_logical/replorigin_checkpoint";
+	const char *tmppath = "mdb_logical/replorigin_checkpoint.tmp";
+	const char *path = "mdb_logical/replorigin_checkpoint";
 	int			tmpfd;
 	int			i;
 	uint32		magic = REPLICATION_STATE_MAGIC;
-	pg_crc32c	crc;
+	mdb_crc32c	crc;
 
 	if (max_replication_slots == 0)
 		return;
@@ -621,13 +621,13 @@ CheckPointReplicationOrigin(void)
 void
 StartupReplicationOrigin(void)
 {
-	const char *path = "pg_logical/replorigin_checkpoint";
+	const char *path = "mdb_logical/replorigin_checkpoint";
 	int			fd;
 	int			readBytes;
 	uint32		magic = REPLICATION_STATE_MAGIC;
 	int			last_state = 0;
-	pg_crc32c	file_crc;
-	pg_crc32c	crc;
+	mdb_crc32c	file_crc;
+	mdb_crc32c	crc;
 
 	/* don't want to overwrite already existing state */
 #ifdef USE_ASSERT_CHECKING
@@ -684,7 +684,7 @@ StartupReplicationOrigin(void)
 		if (readBytes == sizeof(crc))
 		{
 			/* not pretty, but simple ... */
-			file_crc = *(pg_crc32c *) &disk_state;
+			file_crc = *(mdb_crc32c *) &disk_state;
 			break;
 		}
 
@@ -791,7 +791,7 @@ replorigin_redo(XLogReaderState *record)
  * local_commit needs to be a local LSN of the commit so that we can make sure
  * upon a checkpoint that enough WAL has been persisted to disk.
  *
- * Needs to be called with a RowExclusiveLock on pg_replication_origin,
+ * Needs to be called with a RowExclusiveLock on mdb_replication_origin,
  * unless running in recovery.
  */
 void
@@ -1143,7 +1143,7 @@ replorigin_session_get_progress(bool flush)
  * oid.
  */
 Datum
-pg_replication_origin_create(PG_FUNCTION_ARGS)
+mdb_replication_origin_create(PG_FUNCTION_ARGS)
 {
 	char	   *name;
 	RepOriginId roident;
@@ -1162,7 +1162,7 @@ pg_replication_origin_create(PG_FUNCTION_ARGS)
  * Drop replication origin.
  */
 Datum
-pg_replication_origin_drop(PG_FUNCTION_ARGS)
+mdb_replication_origin_drop(PG_FUNCTION_ARGS)
 {
 	char	   *name;
 	RepOriginId roident;
@@ -1185,7 +1185,7 @@ pg_replication_origin_drop(PG_FUNCTION_ARGS)
  * Return oid of a replication origin.
  */
 Datum
-pg_replication_origin_oid(PG_FUNCTION_ARGS)
+mdb_replication_origin_oid(PG_FUNCTION_ARGS)
 {
 	char	   *name;
 	RepOriginId roident;
@@ -1206,7 +1206,7 @@ pg_replication_origin_oid(PG_FUNCTION_ARGS)
  * Setup a replication origin for this session.
  */
 Datum
-pg_replication_origin_session_setup(PG_FUNCTION_ARGS)
+mdb_replication_origin_session_setup(PG_FUNCTION_ARGS)
 {
 	char	   *name;
 	RepOriginId origin;
@@ -1228,7 +1228,7 @@ pg_replication_origin_session_setup(PG_FUNCTION_ARGS)
  * Reset previously setup origin in this session
  */
 Datum
-pg_replication_origin_session_reset(PG_FUNCTION_ARGS)
+mdb_replication_origin_session_reset(PG_FUNCTION_ARGS)
 {
 	replorigin_check_prerequisites(true, false);
 
@@ -1245,7 +1245,7 @@ pg_replication_origin_session_reset(PG_FUNCTION_ARGS)
  * Has a replication origin been setup for this session.
  */
 Datum
-pg_replication_origin_session_is_setup(PG_FUNCTION_ARGS)
+mdb_replication_origin_session_is_setup(PG_FUNCTION_ARGS)
 {
 	replorigin_check_prerequisites(false, false);
 
@@ -1261,7 +1261,7 @@ pg_replication_origin_session_is_setup(PG_FUNCTION_ARGS)
  * commits are used when replaying replicated transactions.
  */
 Datum
-pg_replication_origin_session_progress(PG_FUNCTION_ARGS)
+mdb_replication_origin_session_progress(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	remote_lsn = InvalidXLogRecPtr;
 	bool		flush = PG_GETARG_BOOL(0);
@@ -1282,7 +1282,7 @@ pg_replication_origin_session_progress(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_replication_origin_xact_setup(PG_FUNCTION_ARGS)
+mdb_replication_origin_xact_setup(PG_FUNCTION_ARGS)
 {
 	XLogRecPtr	location = PG_GETARG_LSN(0);
 
@@ -1300,7 +1300,7 @@ pg_replication_origin_xact_setup(PG_FUNCTION_ARGS)
 }
 
 Datum
-pg_replication_origin_xact_reset(PG_FUNCTION_ARGS)
+mdb_replication_origin_xact_reset(PG_FUNCTION_ARGS)
 {
 	replorigin_check_prerequisites(true, false);
 
@@ -1312,7 +1312,7 @@ pg_replication_origin_xact_reset(PG_FUNCTION_ARGS)
 
 
 Datum
-pg_replication_origin_advance(PG_FUNCTION_ARGS)
+mdb_replication_origin_advance(PG_FUNCTION_ARGS)
 {
 	text	   *name = PG_GETARG_TEXT_P(0);
 	XLogRecPtr	remote_commit = PG_GETARG_LSN(1);
@@ -1347,7 +1347,7 @@ pg_replication_origin_advance(PG_FUNCTION_ARGS)
  * commits are used when replaying replicated transactions.
  */
 Datum
-pg_replication_origin_progress(PG_FUNCTION_ARGS)
+mdb_replication_origin_progress(PG_FUNCTION_ARGS)
 {
 	char	   *name;
 	bool		flush;
@@ -1372,7 +1372,7 @@ pg_replication_origin_progress(PG_FUNCTION_ARGS)
 
 
 Datum
-pg_show_replication_origin_status(PG_FUNCTION_ARGS)
+mdb_show_replication_origin_status(PG_FUNCTION_ARGS)
 {
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;
 	TupleDesc	tupdesc;

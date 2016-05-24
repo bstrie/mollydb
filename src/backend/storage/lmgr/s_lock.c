@@ -4,7 +4,7 @@
  *	   Hardware-dependent implementation of spinlocks.
  *
  * When waiting for a contended spinlock we loop tightly for awhile, then
- * delay using pg_usleep() and try again.  Preferably, "awhile" should be a
+ * delay using mdb_usleep() and try again.  Preferably, "awhile" should be a
  * small multiple of the maximum time we expect a spinlock to be held.  100
  * iterations seems about right as an initial guess.  However, on a
  * uniprocessor the loop is a waste of cycles, while in a multi-CPU scenario
@@ -18,7 +18,7 @@
  * that the first TAS after returning from kernel space will always fail
  * on that hardware.
  *
- * Once we do decide to block, we use randomly increasing pg_usleep()
+ * Once we do decide to block, we use randomly increasing mdb_usleep()
  * delays. The first delay is 1 msec, then the delay randomly increases to
  * about one second, after which we reset to 1 msec and start again.  The
  * idea here is that in the presence of heavy contention we need to
@@ -136,7 +136,7 @@ perform_spin_delay(SpinDelayStatus *status)
 		if (status->cur_delay == 0)		/* first time to delay? */
 			status->cur_delay = MIN_DELAY_USEC;
 
-		pg_usleep(status->cur_delay);
+		mdb_usleep(status->cur_delay);
 
 #if defined(S_LOCK_TEST)
 		fprintf(stdout, "*");

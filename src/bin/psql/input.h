@@ -45,7 +45,7 @@ extern void initializeInput(int flags);
 
 extern bool printHistory(const char *fname, unsigned short int pager);
 
-extern void pg_append_history(const char *s, PQExpBuffer history_buf);
-extern void pg_send_history(PQExpBuffer history_buf);
+extern void mdb_append_history(const char *s, PQExpBuffer history_buf);
+extern void mdb_send_history(PQExpBuffer history_buf);
 
 #endif   /* INPUT_H */

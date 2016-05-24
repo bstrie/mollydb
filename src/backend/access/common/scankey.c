@@ -15,7 +15,7 @@
 #include "mollydb.h"
 
 #include "access/skey.h"
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 
 
 /*

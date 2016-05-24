@@ -58,8 +58,8 @@ static void cleanup_workspace(xpath_workspace *workspace);
 /*
  * Initialize for xml parsing.
  *
- * As with the underlying pg_xml_init function, calls to this MUST be followed
- * by a PG_TRY block that guarantees that pg_xml_done is called.
+ * As with the underlying mdb_xml_init function, calls to this MUST be followed
+ * by a PG_TRY block that guarantees that mdb_xml_done is called.
  */
 PgXmlErrorContext *
 pgxml_parser_init(PgXmlStrictness strictness)
@@ -67,7 +67,7 @@ pgxml_parser_init(PgXmlStrictness strictness)
 	PgXmlErrorContext *xmlerrcxt;
 
 	/* Set up error handling (we share the core's error handler) */
-	xmlerrcxt = pg_xml_init(strictness);
+	xmlerrcxt = mdb_xml_init(strictness);
 
 	/* Note: we're assuming an elog cannot be thrown by the following calls */
 
@@ -114,13 +114,13 @@ xml_is_well_formed(PG_FUNCTION_ARGS)
 	}
 	PG_CATCH();
 	{
-		pg_xml_done(xmlerrcxt, true);
+		mdb_xml_done(xmlerrcxt, true);
 
 		PG_RE_THROW();
 	}
 	PG_END_TRY();
 
-	pg_xml_done(xmlerrcxt, false);
+	mdb_xml_done(xmlerrcxt, false);
 
 	PG_RETURN_BOOL(result);
 }
@@ -448,7 +448,7 @@ pgxml_xpath(text *document, xmlChar *xpath, xpath_workspace *workspace)
 	{
 		cleanup_workspace(workspace);
 
-		pg_xml_done(xmlerrcxt, true);
+		mdb_xml_done(xmlerrcxt, true);
 
 		PG_RE_THROW();
 	}
@@ -457,7 +457,7 @@ pgxml_xpath(text *document, xmlChar *xpath, xpath_workspace *workspace)
 	if (workspace->res == NULL)
 		cleanup_workspace(workspace);
 
-	pg_xml_done(xmlerrcxt, false);
+	mdb_xml_done(xmlerrcxt, false);
 
 	return workspace->res;
 }
@@ -817,7 +817,7 @@ xpath_table(PG_FUNCTION_ARGS)
 		if (doctree != NULL)
 			xmlFreeDoc(doctree);
 
-		pg_xml_done(xmlerrcxt, true);
+		mdb_xml_done(xmlerrcxt, true);
 
 		PG_RE_THROW();
 	}
@@ -826,7 +826,7 @@ xpath_table(PG_FUNCTION_ARGS)
 	if (doctree != NULL)
 		xmlFreeDoc(doctree);
 
-	pg_xml_done(xmlerrcxt, false);
+	mdb_xml_done(xmlerrcxt, false);
 
 	tuplestore_donestoring(tupstore);
 

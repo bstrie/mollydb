@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------
  *
- * pg_isready --- checks the status of the MollyDB server
+ * mdb_isready --- checks the status of the MollyDB server
  *
  * Copyright (c) 2013-2016, MollyDB Global Development Group
  *
- * src/bin/scripts/pg_isready.c
+ * src/bin/scripts/mdb_isready.c
  *
  *-------------------------------------------------------------------------
  */
@@ -72,22 +72,22 @@ main(int argc, char **argv)
 		switch (c)
 		{
 			case 'd':
-				pgdbname = pg_strdup(optarg);
+				pgdbname = mdb_strdup(optarg);
 				break;
 			case 'h':
-				pghost = pg_strdup(optarg);
+				pghost = mdb_strdup(optarg);
 				break;
 			case 'p':
-				pgport = pg_strdup(optarg);
+				pgport = mdb_strdup(optarg);
 				break;
 			case 'q':
 				quiet = true;
 				break;
 			case 't':
-				connect_timeout = pg_strdup(optarg);
+				connect_timeout = mdb_strdup(optarg);
 				break;
 			case 'U':
-				pguser = pg_strdup(optarg);
+				pguser = mdb_strdup(optarg);
 				break;
 			default:
 				fprintf(stderr, _("Try \"%s --help\" for more information.\n"), progname);

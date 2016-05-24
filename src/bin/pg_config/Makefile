@@ -1,38 +1,38 @@
 #-------------------------------------------------------------------------
 #
-# Makefile for src/bin/pg_config
+# Makefile for src/bin/mdb_config
 #
 # Copyright (c) 1998-2016, MollyDB Global Development Group
 #
-# src/bin/pg_config/Makefile
+# src/bin/mdb_config/Makefile
 #
 #-------------------------------------------------------------------------
 
-PGFILEDESC = "pg_config - report configuration information"
+PGFILEDESC = "mdb_config - report configuration information"
 PGAPPICON=win32
 
-subdir = src/bin/pg_config
+subdir = src/bin/mdb_config
 top_builddir = ../../..
 include $(top_builddir)/src/Makefile.global
 
-OBJS=   pg_config.o $(WIN32RES)
+OBJS=   mdb_config.o $(WIN32RES)
 
-all: pg_config
+all: mdb_config
 
-pg_config: $(OBJS) | submake-libpgport
+mdb_config: $(OBJS) | submake-libpgport
 	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) $(LDFLAGS_EX) $(LIBS) -o $@$(X)
 
 install: all installdirs
-	$(INSTALL_SCRIPT) pg_config$(X) '$(DESTDIR)$(bindir)/pg_config$(X)'
+	$(INSTALL_SCRIPT) mdb_config$(X) '$(DESTDIR)$(bindir)/mdb_config$(X)'
 
 installdirs:
 	$(MKDIR_P) '$(DESTDIR)$(bindir)'
 
 uninstall:
-	rm -f '$(DESTDIR)$(bindir)/pg_config$(X)'
+	rm -f '$(DESTDIR)$(bindir)/mdb_config$(X)'
 
 clean distclean maintainer-clean:
-	rm -f pg_config$(X) $(OBJS)
+	rm -f mdb_config$(X) $(OBJS)
 	rm -rf tmp_check
 
 check:

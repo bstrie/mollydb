@@ -51,19 +51,19 @@ sub run_test
 	# old master.
 	standby_psql("INSERT INTO tbl1 VALUES ('in standby, after promotion')");
 
-	# Insert enough rows to trunc_tbl to extend the file. pg_rewind should
+	# Insert enough rows to trunc_tbl to extend the file. mdb_rewind should
 	# truncate it back to the old size.
 	master_psql(
 "INSERT INTO trunc_tbl SELECT 'in master, after promotion: ' || g FROM generate_series(1, 10000) g"
 	);
 
-	# Truncate tail_tbl. pg_rewind should copy back the truncated part
+	# Truncate tail_tbl. mdb_rewind should copy back the truncated part
 	# (We cannot use an actual TRUNCATE command here, as that creates a
 	# whole new relfilenode)
 	master_psql("DELETE FROM tail_tbl WHERE id > 10");
 	master_psql("VACUUM tail_tbl");
 
-	RewindTest::run_pg_rewind($test_mode);
+	RewindTest::run_mdb_rewind($test_mode);
 
 	check_query(
 		'SELECT * FROM tbl1',

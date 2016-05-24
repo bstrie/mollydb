@@ -184,9 +184,9 @@ CREATE ROLE <replaceable class="PARAMETER">name</replaceable> [ [ WITH ] <replac
        <para>
         These clauses determine whether a role bypasses every row-level
         security (RLS) policy.  <literal>NOBYPASSRLS</literal> is the default.
-        Note that pg_dump will set <literal>row_security</literal> to
+        Note that mdb_dump will set <literal>row_security</literal> to
         <literal>OFF</literal> by default, to ensure all contents of a table are
-        dumped out.  If the user running pg_dump does not have appropriate
+        dumped out.  If the user running mdb_dump does not have appropriate
         permissions, an error will be returned.  The superuser and owner of the
         table being dumped always bypass RLS.
        </para>

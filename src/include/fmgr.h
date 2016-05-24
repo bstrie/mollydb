@@ -160,25 +160,25 @@ extern void fmgr_info_copy(FmgrInfo *dstinfo, FmgrInfo *srcinfo,
 #define PG_NARGS() (fcinfo->nargs)
 
 /*
- * If function is not marked "proisstrict" in pg_proc, it must check for
+ * If function is not marked "proisstrict" in mdb_proc, it must check for
  * null arguments using this macro.  Do not try to GETARG a null argument!
  */
 #define PG_ARGISNULL(n)  (fcinfo->argnull[n])
 
 /*
  * Support for fetching detoasted copies of toastable datatypes (all of
- * which are varlena types).  pg_detoast_datum() gives you either the input
+ * which are varlena types).  mdb_detoast_datum() gives you either the input
  * datum (if not toasted) or a detoasted copy allocated with palloc().
- * pg_detoast_datum_copy() always gives you a palloc'd copy --- use it
+ * mdb_detoast_datum_copy() always gives you a palloc'd copy --- use it
  * if you need a modifiable copy of the input.  Caller is expected to have
  * checked for null inputs first, if necessary.
  *
- * pg_detoast_datum_packed() will return packed (1-byte header) datums
+ * mdb_detoast_datum_packed() will return packed (1-byte header) datums
  * unmodified.  It will still expand an externally toasted or compressed datum.
  * The resulting datum can be accessed using VARSIZE_ANY() and VARDATA_ANY()
  * (beware of multiple evaluations in those macros!)
  *
- * WARNING: It is only safe to use pg_detoast_datum_packed() and
+ * WARNING: It is only safe to use mdb_detoast_datum_packed() and
  * VARDATA_ANY() if you really don't care about the alignment. Either because
  * you're working with something like text where the alignment doesn't matter
  * or because you're not going to access its constituent parts and just use
@@ -187,22 +187,22 @@ extern void fmgr_info_copy(FmgrInfo *dstinfo, FmgrInfo *srcinfo,
  * Note: it'd be nice if these could be macros, but I see no way to do that
  * without evaluating the arguments multiple times, which is NOT acceptable.
  */
-extern struct varlena *pg_detoast_datum(struct varlena * datum);
-extern struct varlena *pg_detoast_datum_copy(struct varlena * datum);
-extern struct varlena *pg_detoast_datum_slice(struct varlena * datum,
+extern struct varlena *mdb_detoast_datum(struct varlena * datum);
+extern struct varlena *mdb_detoast_datum_copy(struct varlena * datum);
+extern struct varlena *mdb_detoast_datum_slice(struct varlena * datum,
 					   int32 first, int32 count);
-extern struct varlena *pg_detoast_datum_packed(struct varlena * datum);
+extern struct varlena *mdb_detoast_datum_packed(struct varlena * datum);
 
 #define PG_DETOAST_DATUM(datum) \
-	pg_detoast_datum((struct varlena *) DatumGetPointer(datum))
+	mdb_detoast_datum((struct varlena *) DatumGetPointer(datum))
 #define PG_DETOAST_DATUM_COPY(datum) \
-	pg_detoast_datum_copy((struct varlena *) DatumGetPointer(datum))
+	mdb_detoast_datum_copy((struct varlena *) DatumGetPointer(datum))
 #define PG_DETOAST_DATUM_SLICE(datum,f,c) \
-		pg_detoast_datum_slice((struct varlena *) DatumGetPointer(datum), \
+		mdb_detoast_datum_slice((struct varlena *) DatumGetPointer(datum), \
 		(int32) (f), (int32) (c))
 /* WARNING -- unaligned pointer */
 #define PG_DETOAST_DATUM_PACKED(datum) \
-	pg_detoast_datum_packed((struct varlena *) DatumGetPointer(datum))
+	mdb_detoast_datum_packed((struct varlena *) DatumGetPointer(datum))
 
 /*
  * Support for cleaning up detoasted copies of inputs.  This must only
@@ -349,9 +349,9 @@ typedef const Pg_finfo_record *(*PGFInfoFunction) (void);
  */
 #define PG_FUNCTION_INFO_V1(funcname) \
 Datum funcname(PG_FUNCTION_ARGS); \
-extern PGDLLEXPORT const Pg_finfo_record * CppConcat(pg_finfo_,funcname)(void); \
+extern PGDLLEXPORT const Pg_finfo_record * CppConcat(mdb_finfo_,funcname)(void); \
 const Pg_finfo_record * \
-CppConcat(pg_finfo_,funcname) (void) \
+CppConcat(mdb_finfo_,funcname) (void) \
 { \
 	static const Pg_finfo_record my_finfo = { 1 }; \
 	return &my_finfo; \

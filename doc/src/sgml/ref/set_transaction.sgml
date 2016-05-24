@@ -155,7 +155,7 @@ SET SESSION CHARACTERISTICS AS TRANSACTION <replaceable class="parameter">transa
    The <literal>SET TRANSACTION SNAPSHOT</literal> command allows a new
    transaction to run with the same <firstterm>snapshot</> as an existing
    transaction.  The pre-existing transaction must have exported its snapshot
-   with the <literal>pg_export_snapshot</literal> function (see <xref
+   with the <literal>mdb_export_snapshot</literal> function (see <xref
    linkend="functions-snapshot-synchronization">).  That function returns a
    snapshot identifier, which must be given to <literal>SET TRANSACTION
    SNAPSHOT</literal> to specify which snapshot is to be imported.  The
@@ -220,8 +220,8 @@ SET SESSION CHARACTERISTICS AS TRANSACTION <replaceable class="parameter">transa
 
 <programlisting>
 BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-SELECT pg_export_snapshot();
- pg_export_snapshot
+SELECT mdb_export_snapshot();
+ mdb_export_snapshot
 --------------------
  000003A1-1
 (1 row)

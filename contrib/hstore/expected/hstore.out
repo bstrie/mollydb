@@ -491,8 +491,8 @@ select 'a=>1 , b=>2, c=>3'::hstore - 'd'::text;
  "a"=>"1", "b"=>"2", "c"=>"3"
 (1 row)
 
-select pg_column_size('a=>1 , b=>2, c=>3'::hstore - 'b'::text)
-         = pg_column_size('a=>1, b=>2'::hstore);
+select mdb_column_size('a=>1 , b=>2, c=>3'::hstore - 'b'::text)
+         = mdb_column_size('a=>1, b=>2'::hstore);
  ?column? 
 ----------
  t
@@ -559,15 +559,15 @@ select 'a=>1 , b=>2, c=>3'::hstore - '{}'::text[];
  "a"=>"1", "b"=>"2", "c"=>"3"
 (1 row)
 
-select pg_column_size('a=>1 , b=>2, c=>3'::hstore - ARRAY['a','c'])
-         = pg_column_size('b=>2'::hstore);
+select mdb_column_size('a=>1 , b=>2, c=>3'::hstore - ARRAY['a','c'])
+         = mdb_column_size('b=>2'::hstore);
  ?column? 
 ----------
  t
 (1 row)
 
-select pg_column_size('a=>1 , b=>2, c=>3'::hstore - '{}'::text[])
-         = pg_column_size('a=>1, b=>2, c=>3'::hstore);
+select mdb_column_size('a=>1 , b=>2, c=>3'::hstore - '{}'::text[])
+         = mdb_column_size('a=>1, b=>2, c=>3'::hstore);
  ?column? 
 ----------
  t
@@ -634,15 +634,15 @@ select 'aa=>1 , b=>2, c=>3'::hstore - ''::hstore;
  "b"=>"2", "c"=>"3", "aa"=>"1"
 (1 row)
 
-select pg_column_size('a=>1 , b=>2, c=>3'::hstore - 'b=>2'::hstore)
-         = pg_column_size('a=>1, c=>3'::hstore);
+select mdb_column_size('a=>1 , b=>2, c=>3'::hstore - 'b=>2'::hstore)
+         = mdb_column_size('a=>1, c=>3'::hstore);
  ?column? 
 ----------
  t
 (1 row)
 
-select pg_column_size('a=>1 , b=>2, c=>3'::hstore - ''::hstore)
-         = pg_column_size('a=>1, b=>2, c=>3'::hstore);
+select mdb_column_size('a=>1 , b=>2, c=>3'::hstore - ''::hstore)
+         = mdb_column_size('a=>1, b=>2, c=>3'::hstore);
  ?column? 
 ----------
  t
@@ -679,28 +679,28 @@ select ''::hstore || 'cq=>l, b=>g, fg=>f';
  "b"=>"g", "cq"=>"l", "fg"=>"f"
 (1 row)
 
-select pg_column_size(''::hstore || ''::hstore) = pg_column_size(''::hstore);
+select mdb_column_size(''::hstore || ''::hstore) = mdb_column_size(''::hstore);
  ?column? 
 ----------
  t
 (1 row)
 
-select pg_column_size('aa=>1'::hstore || 'b=>2'::hstore)
-         = pg_column_size('aa=>1, b=>2'::hstore);
+select mdb_column_size('aa=>1'::hstore || 'b=>2'::hstore)
+         = mdb_column_size('aa=>1, b=>2'::hstore);
  ?column? 
 ----------
  t
 (1 row)
 
-select pg_column_size('aa=>1, b=>2'::hstore || ''::hstore)
-         = pg_column_size('aa=>1, b=>2'::hstore);
+select mdb_column_size('aa=>1, b=>2'::hstore || ''::hstore)
+         = mdb_column_size('aa=>1, b=>2'::hstore);
  ?column? 
 ----------
  t
 (1 row)
 
-select pg_column_size(''::hstore || 'aa=>1, b=>2'::hstore)
-         = pg_column_size('aa=>1, b=>2'::hstore);
+select mdb_column_size(''::hstore || 'aa=>1, b=>2'::hstore)
+         = mdb_column_size('aa=>1, b=>2'::hstore);
  ?column? 
 ----------
  t
@@ -737,15 +737,15 @@ select ('a=>g, b=>c'::hstore || hstore(NULL, 'b')) is null;
  t
 (1 row)
 
-select pg_column_size(hstore('b', 'gf'))
-         = pg_column_size('b=>gf'::hstore);
+select mdb_column_size(hstore('b', 'gf'))
+         = mdb_column_size('b=>gf'::hstore);
  ?column? 
 ----------
  t
 (1 row)
 
-select pg_column_size('a=>g, b=>c'::hstore || hstore('b', 'gf'))
-         = pg_column_size('a=>g, b=>gf'::hstore);
+select mdb_column_size('a=>g, b=>c'::hstore || hstore('b', 'gf'))
+         = mdb_column_size('a=>g, b=>gf'::hstore);
  ?column? 
 ----------
  t
@@ -776,15 +776,15 @@ select slice(hstore 'aa=>1, b=>2, c=>3', ARRAY['c','b','aa']);
  "b"=>"2", "c"=>"3", "aa"=>"1"
 (1 row)
 
-select pg_column_size(slice(hstore 'aa=>1, b=>2, c=>3', ARRAY['c','b']))
-         = pg_column_size('b=>2, c=>3'::hstore);
+select mdb_column_size(slice(hstore 'aa=>1, b=>2, c=>3', ARRAY['c','b']))
+         = mdb_column_size('b=>2, c=>3'::hstore);
  ?column? 
 ----------
  t
 (1 row)
 
-select pg_column_size(slice(hstore 'aa=>1, b=>2, c=>3', ARRAY['c','b','aa']))
-         = pg_column_size('aa=>1, b=>2, c=>3'::hstore);
+select mdb_column_size(slice(hstore 'aa=>1, b=>2, c=>3', ARRAY['c','b','aa']))
+         = mdb_column_size('aa=>1, b=>2, c=>3'::hstore);
  ?column? 
 ----------
  t
@@ -898,8 +898,8 @@ select hstore(ARRAY['a'], '{}'::text[]);  -- error
 ERROR:  arrays must have same bounds
 select hstore('{}'::text[], ARRAY['a']);  -- error
 ERROR:  arrays must have same bounds
-select pg_column_size(hstore(ARRAY['a','b','asd'], ARRAY['g','h','i']))
-         = pg_column_size('a=>g, b=>h, asd=>i'::hstore);
+select mdb_column_size(hstore(ARRAY['a','b','asd'], ARRAY['g','h','i']))
+         = mdb_column_size('a=>g, b=>h, asd=>i'::hstore);
  ?column? 
 ----------
  t
@@ -935,8 +935,8 @@ select hstore(null::testhstore1);
  "a"=>NULL, "b"=>NULL, "c"=>NULL, "d"=>NULL, "e"=>NULL
 (1 row)
 
-select pg_column_size(hstore(v))
-         = pg_column_size('a=>1, b=>"foo", c=>"1.2", d=>"3", e=>"0"'::hstore)
+select mdb_column_size(hstore(v))
+         = mdb_column_size('a=>1, b=>"foo", c=>"1.2", d=>"3", e=>"0"'::hstore)
   from testhstore1 v;
  ?column? 
 ----------

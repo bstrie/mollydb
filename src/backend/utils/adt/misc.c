@@ -21,10 +21,10 @@
 #include <unistd.h>
 
 #include "access/sysattr.h"
-#include "catalog/pg_authid.h"
+#include "catalog/mdb_authid.h"
 #include "catalog/catalog.h"
-#include "catalog/pg_tablespace.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_tablespace.h"
+#include "catalog/mdb_type.h"
 #include "commands/dbcommands.h"
 #include "common/keywords.h"
 #include "funcapi.h"
@@ -139,7 +139,7 @@ count_nulls(FunctionCallInfo fcinfo,
  *	Count the number of NULL arguments
  */
 Datum
-pg_num_nulls(PG_FUNCTION_ARGS)
+mdb_num_nulls(PG_FUNCTION_ARGS)
 {
 	int32		nargs,
 				nulls;
@@ -155,7 +155,7 @@ pg_num_nulls(PG_FUNCTION_ARGS)
  *	Count the number of non-NULL arguments
  */
 Datum
-pg_num_nonnulls(PG_FUNCTION_ARGS)
+mdb_num_nonnulls(PG_FUNCTION_ARGS)
 {
 	int32		nargs,
 				nulls;
@@ -217,7 +217,7 @@ current_query(PG_FUNCTION_ARGS)
 #define SIGNAL_BACKEND_NOPERMISSION 2
 #define SIGNAL_BACKEND_NOSUPERUSER 3
 static int
-pg_signal_backend(int pid, int sig)
+mdb_signal_backend(int pid, int sig)
 {
 	PGPROC	   *proc = BackendPidGetProc(pid);
 
@@ -280,9 +280,9 @@ pg_signal_backend(int pid, int sig)
  * Note that only superusers can signal superuser-owned processes.
  */
 Datum
-pg_cancel_backend(PG_FUNCTION_ARGS)
+mdb_cancel_backend(PG_FUNCTION_ARGS)
 {
-	int			r = pg_signal_backend(PG_GETARG_INT32(0), SIGINT);
+	int			r = mdb_signal_backend(PG_GETARG_INT32(0), SIGINT);
 
 	if (r == SIGNAL_BACKEND_NOSUPERUSER)
 		ereport(ERROR,
@@ -292,7 +292,7 @@ pg_cancel_backend(PG_FUNCTION_ARGS)
 	if (r == SIGNAL_BACKEND_NOPERMISSION)
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
-				 (errmsg("must be a member of the role whose query is being canceled or member of pg_signal_backend"))));
+				 (errmsg("must be a member of the role whose query is being canceled or member of mdb_signal_backend"))));
 
 	PG_RETURN_BOOL(r == SIGNAL_BACKEND_SUCCESS);
 }
@@ -304,9 +304,9 @@ pg_cancel_backend(PG_FUNCTION_ARGS)
  * Note that only superusers can signal superuser-owned processes.
  */
 Datum
-pg_terminate_backend(PG_FUNCTION_ARGS)
+mdb_terminate_backend(PG_FUNCTION_ARGS)
 {
-	int			r = pg_signal_backend(PG_GETARG_INT32(0), SIGTERM);
+	int			r = mdb_signal_backend(PG_GETARG_INT32(0), SIGTERM);
 
 	if (r == SIGNAL_BACKEND_NOSUPERUSER)
 		ereport(ERROR,
@@ -316,7 +316,7 @@ pg_terminate_backend(PG_FUNCTION_ARGS)
 	if (r == SIGNAL_BACKEND_NOPERMISSION)
 		ereport(ERROR,
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
-				 (errmsg("must be a member of the role whose process is being terminated or member of pg_signal_backend"))));
+				 (errmsg("must be a member of the role whose process is being terminated or member of mdb_signal_backend"))));
 
 	PG_RETURN_BOOL(r == SIGNAL_BACKEND_SUCCESS);
 }
@@ -328,7 +328,7 @@ pg_terminate_backend(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-pg_reload_conf(PG_FUNCTION_ARGS)
+mdb_reload_conf(PG_FUNCTION_ARGS)
 {
 	if (kill(PostmasterPid, SIGHUP))
 	{
@@ -348,7 +348,7 @@ pg_reload_conf(PG_FUNCTION_ARGS)
  * GRANT system.
  */
 Datum
-pg_rotate_logfile(PG_FUNCTION_ARGS)
+mdb_rotate_logfile(PG_FUNCTION_ARGS)
 {
 	if (!Logging_collector)
 	{
@@ -370,7 +370,7 @@ typedef struct
 } ts_db_fctx;
 
 Datum
-pg_tablespace_databases(PG_FUNCTION_ARGS)
+mdb_tablespace_databases(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	struct dirent *de;
@@ -397,7 +397,7 @@ pg_tablespace_databases(PG_FUNCTION_ARGS)
 			if (tablespaceOid == DEFAULTTABLESPACE_OID)
 				fctx->location = psprintf("base");
 			else
-				fctx->location = psprintf("pg_tblspc/%u/%s", tablespaceOid,
+				fctx->location = psprintf("mdb_tblspc/%u/%s", tablespaceOid,
 										  TABLESPACE_VERSION_DIRECTORY);
 
 			fctx->dirdesc = AllocateDir(fctx->location);
@@ -458,10 +458,10 @@ pg_tablespace_databases(PG_FUNCTION_ARGS)
 
 
 /*
- * pg_tablespace_location - get location for a tablespace
+ * mdb_tablespace_location - get location for a tablespace
  */
 Datum
-pg_tablespace_location(PG_FUNCTION_ARGS)
+mdb_tablespace_location(PG_FUNCTION_ARGS)
 {
 	Oid			tablespaceOid = PG_GETARG_OID(0);
 	char		sourcepath[MAXPGPATH];
@@ -469,7 +469,7 @@ pg_tablespace_location(PG_FUNCTION_ARGS)
 	int			rllen;
 
 	/*
-	 * It's useful to apply this function to pg_class.reltablespace, wherein
+	 * It's useful to apply this function to mdb_class.reltablespace, wherein
 	 * zero means "the database's default tablespace".  So, rather than
 	 * throwing an error for zero, we choose to assume that's what is meant.
 	 */
@@ -487,9 +487,9 @@ pg_tablespace_location(PG_FUNCTION_ARGS)
 
 	/*
 	 * Find the location of the tablespace by reading the symbolic link that
-	 * is in pg_tblspc/<oid>.
+	 * is in mdb_tblspc/<oid>.
 	 */
-	snprintf(sourcepath, sizeof(sourcepath), "pg_tblspc/%u", tablespaceOid);
+	snprintf(sourcepath, sizeof(sourcepath), "mdb_tblspc/%u", tablespaceOid);
 
 	rllen = readlink(sourcepath, targetpath, sizeof(targetpath));
 	if (rllen < 0)
@@ -514,10 +514,10 @@ pg_tablespace_location(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_sleep - delay for N seconds
+ * mdb_sleep - delay for N seconds
  */
 Datum
-pg_sleep(PG_FUNCTION_ARGS)
+mdb_sleep(PG_FUNCTION_ARGS)
 {
 	float8		secs = PG_GETARG_FLOAT8(0);
 	float8		endtime;
@@ -569,7 +569,7 @@ pg_sleep(PG_FUNCTION_ARGS)
 
 /* Function to return the list of grammar keywords */
 Datum
-pg_get_keywords(PG_FUNCTION_ARGS)
+mdb_get_keywords(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 
@@ -641,7 +641,7 @@ pg_get_keywords(PG_FUNCTION_ARGS)
  * Return the type of the argument.
  */
 Datum
-pg_typeof(PG_FUNCTION_ARGS)
+mdb_typeof(PG_FUNCTION_ARGS)
 {
 	PG_RETURN_OID(get_fn_expr_argtype(fcinfo->flinfo, 0));
 }
@@ -652,7 +652,7 @@ pg_typeof(PG_FUNCTION_ARGS)
  * of the argument.
  */
 Datum
-pg_collation_for(PG_FUNCTION_ARGS)
+mdb_collation_for(PG_FUNCTION_ARGS)
 {
 	Oid			typeid;
 	Oid			collid;
@@ -674,14 +674,14 @@ pg_collation_for(PG_FUNCTION_ARGS)
 
 
 /*
- * pg_relation_is_updatable - determine which update events the specified
+ * mdb_relation_is_updatable - determine which update events the specified
  * relation supports.
  *
  * This relies on relation_is_updatable() in rewriteHandler.c, which see
  * for additional information.
  */
 Datum
-pg_relation_is_updatable(PG_FUNCTION_ARGS)
+mdb_relation_is_updatable(PG_FUNCTION_ARGS)
 {
 	Oid			reloid = PG_GETARG_OID(0);
 	bool		include_triggers = PG_GETARG_BOOL(1);
@@ -690,7 +690,7 @@ pg_relation_is_updatable(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_column_is_updatable - determine whether a column is updatable
+ * mdb_column_is_updatable - determine whether a column is updatable
  *
  * This function encapsulates the decision about just what
  * information_schema.columns.is_updatable actually means.  It's not clear
@@ -698,7 +698,7 @@ pg_relation_is_updatable(PG_FUNCTION_ARGS)
  * we want that decision in C code where we could change it without initdb.
  */
 Datum
-pg_column_is_updatable(PG_FUNCTION_ARGS)
+mdb_column_is_updatable(PG_FUNCTION_ARGS)
 {
 	Oid			reloid = PG_GETARG_OID(0);
 	AttrNumber	attnum = PG_GETARG_INT16(1);

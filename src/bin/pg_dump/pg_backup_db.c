@@ -1,20 +1,20 @@
 /*-------------------------------------------------------------------------
  *
- * pg_backup_db.c
+ * mdb_backup_db.c
  *
  *	Implements the basic DB functions used by the archiver.
  *
  * IDENTIFICATION
- *	  src/bin/pg_dump/pg_backup_db.c
+ *	  src/bin/mdb_dump/mdb_backup_db.c
  *
  *-------------------------------------------------------------------------
  */
 #include "mollydb_fe.h"
 
 #include "dumputils.h"
-#include "pg_backup_archiver.h"
-#include "pg_backup_db.h"
-#include "pg_backup_utils.h"
+#include "mdb_backup_archiver.h"
+#include "mdb_backup_db.h"
+#include "mdb_backup_utils.h"
 
 #include <unistd.h>
 #include <ctype.h>
@@ -43,7 +43,7 @@ _check_database_version(ArchiveHandle *AH)
 	if (remoteversion == 0 || !remoteversion_str)
 		exit_horribly(modulename, "could not get server_version from libpq\n");
 
-	AH->public.remoteVersionStr = pg_strdup(remoteversion_str);
+	AH->public.remoteVersionStr = mdb_strdup(remoteversion_str);
 	AH->public.remoteVersion = remoteversion;
 	if (!AH->archiveRemoteVersion)
 		AH->archiveRemoteVersion = AH->public.remoteVersionStr;
@@ -128,7 +128,7 @@ _connectDB(ArchiveHandle *AH, const char *reqdb, const char *requser)
 	ahlog(AH, 1, "connecting to database \"%s\" as user \"%s\"\n",
 		  newdb, newuser);
 
-	password = AH->savedPassword ? pg_strdup(AH->savedPassword) : NULL;
+	password = AH->savedPassword ? mdb_strdup(AH->savedPassword) : NULL;
 
 	if (AH->promptPassword == TRI_YES && password == NULL)
 	{
@@ -198,7 +198,7 @@ _connectDB(ArchiveHandle *AH, const char *reqdb, const char *requser)
 	{
 		if (AH->savedPassword)
 			free(AH->savedPassword);
-		AH->savedPassword = pg_strdup(PQpass(newConn));
+		AH->savedPassword = mdb_strdup(PQpass(newConn));
 	}
 	if (password)
 		free(password);
@@ -236,7 +236,7 @@ ConnectDatabase(Archive *AHX,
 	if (AH->connection)
 		exit_horribly(modulename, "already connected to a database\n");
 
-	password = AH->savedPassword ? pg_strdup(AH->savedPassword) : NULL;
+	password = AH->savedPassword ? mdb_strdup(AH->savedPassword) : NULL;
 
 	if (prompt_password == TRI_YES && password == NULL)
 	{
@@ -303,7 +303,7 @@ ConnectDatabase(Archive *AHX,
 	{
 		if (AH->savedPassword)
 			free(AH->savedPassword);
-		AH->savedPassword = pg_strdup(PQpass(AH->connection));
+		AH->savedPassword = mdb_strdup(PQpass(AH->connection));
 	}
 	if (password)
 		free(password);
@@ -558,7 +558,7 @@ ExecuteSqlCommandBuf(Archive *AHX, const char *buf, size_t bufLen)
 			ExecuteSqlCommand(AH, buf, "could not execute query");
 		else
 		{
-			char	   *str = (char *) pg_malloc(bufLen + 1);
+			char	   *str = (char *) mdb_malloc(bufLen + 1);
 
 			memcpy(str, buf, bufLen);
 			str[bufLen] = '\0';
@@ -624,8 +624,8 @@ DropBlobIfExists(ArchiveHandle *AH, Oid oid)
 		PQserverVersion(AH->connection) >= 90000)
 	{
 		ahprintf(AH,
-				 "SELECT pg_catalog.lo_unlink(oid) "
-				 "FROM pg_catalog.pg_largeobject_metadata "
+				 "SELECT mdb_catalog.lo_unlink(oid) "
+				 "FROM mdb_catalog.mdb_largeobject_metadata "
 				 "WHERE oid = '%u';\n",
 				 oid);
 	}
@@ -634,8 +634,8 @@ DropBlobIfExists(ArchiveHandle *AH, Oid oid)
 		/* Restoring to pre-9.0 server, so do it the old way */
 		ahprintf(AH,
 				 "SELECT CASE WHEN EXISTS("
-				 "SELECT 1 FROM pg_catalog.pg_largeobject WHERE loid = '%u'"
-				 ") THEN pg_catalog.lo_unlink('%u') END;\n",
+				 "SELECT 1 FROM mdb_catalog.mdb_largeobject WHERE loid = '%u'"
+				 ") THEN mdb_catalog.lo_unlink('%u') END;\n",
 				 oid, oid);
 	}
 }

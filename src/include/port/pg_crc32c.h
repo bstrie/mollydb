@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * pg_crc32c.h
+ * mdb_crc32c.h
  *	  Routines for computing CRC-32C checksums.
  *
  * The speed of CRC-32C calculation has a big impact on performance, so we
@@ -26,16 +26,16 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/port/pg_crc32c.h
+ * src/include/port/mdb_crc32c.h
  *
  *-------------------------------------------------------------------------
  */
 #ifndef PG_CRC32C_H
 #define PG_CRC32C_H
 
-#include "port/pg_bswap.h"
+#include "port/mdb_bswap.h"
 
-typedef uint32 pg_crc32c;
+typedef uint32 mdb_crc32c;
 
 /* The INIT and EQ macros are the same for all implementations. */
 #define INIT_CRC32C(crc) ((crc) = 0xFFFFFFFF)
@@ -44,10 +44,10 @@ typedef uint32 pg_crc32c;
 #if defined(USE_SSE42_CRC32C)
 /* Use SSE4.2 instructions. */
 #define COMP_CRC32C(crc, data, len) \
-	((crc) = pg_comp_crc32c_sse42((crc), (data), (len)))
+	((crc) = mdb_comp_crc32c_sse42((crc), (data), (len)))
 #define FIN_CRC32C(crc) ((crc) ^= 0xFFFFFFFF)
 
-extern pg_crc32c pg_comp_crc32c_sse42(pg_crc32c crc, const void *data, size_t len);
+extern mdb_crc32c mdb_comp_crc32c_sse42(mdb_crc32c crc, const void *data, size_t len);
 
 #elif defined(USE_SSE42_CRC32C_WITH_RUNTIME_CHECK)
 /*
@@ -55,12 +55,12 @@ extern pg_crc32c pg_comp_crc32c_sse42(pg_crc32c crc, const void *data, size_t le
  * they are available.
  */
 #define COMP_CRC32C(crc, data, len) \
-	((crc) = pg_comp_crc32c((crc), (data), (len)))
+	((crc) = mdb_comp_crc32c((crc), (data), (len)))
 #define FIN_CRC32C(crc) ((crc) ^= 0xFFFFFFFF)
 
-extern pg_crc32c pg_comp_crc32c_sse42(pg_crc32c crc, const void *data, size_t len);
-extern pg_crc32c pg_comp_crc32c_sb8(pg_crc32c crc, const void *data, size_t len);
-extern pg_crc32c (*pg_comp_crc32c) (pg_crc32c crc, const void *data, size_t len);
+extern mdb_crc32c mdb_comp_crc32c_sse42(mdb_crc32c crc, const void *data, size_t len);
+extern mdb_crc32c mdb_comp_crc32c_sb8(mdb_crc32c crc, const void *data, size_t len);
+extern mdb_crc32c (*mdb_comp_crc32c) (mdb_crc32c crc, const void *data, size_t len);
 
 #else
 /*
@@ -71,14 +71,14 @@ extern pg_crc32c (*pg_comp_crc32c) (pg_crc32c crc, const void *data, size_t len)
  * the bytes to the final order.
  */
 #define COMP_CRC32C(crc, data, len) \
-	((crc) = pg_comp_crc32c_sb8((crc), (data), (len)))
+	((crc) = mdb_comp_crc32c_sb8((crc), (data), (len)))
 #ifdef WORDS_BIGENDIAN
 #define FIN_CRC32C(crc) ((crc) = BSWAP32(crc) ^ 0xFFFFFFFF)
 #else
 #define FIN_CRC32C(crc) ((crc) ^= 0xFFFFFFFF)
 #endif
 
-extern pg_crc32c pg_comp_crc32c_sb8(pg_crc32c crc, const void *data, size_t len);
+extern mdb_crc32c mdb_comp_crc32c_sb8(mdb_crc32c crc, const void *data, size_t len);
 
 #endif
 

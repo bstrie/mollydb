@@ -21,7 +21,7 @@
 #include "replication/logical.h"
 #include "replication/logicalfuncs.h"
 #include "utils/builtins.h"
-#include "utils/pg_lsn.h"
+#include "utils/mdb_lsn.h"
 
 static void
 check_permissions(void)
@@ -37,7 +37,7 @@ check_permissions(void)
  * replication slot.
  */
 Datum
-pg_create_physical_replication_slot(PG_FUNCTION_ARGS)
+mdb_create_physical_replication_slot(PG_FUNCTION_ARGS)
 {
 	Name		name = PG_GETARG_NAME(0);
 	bool 		immediately_reserve = PG_GETARG_BOOL(1);
@@ -92,7 +92,7 @@ pg_create_physical_replication_slot(PG_FUNCTION_ARGS)
  * SQL function for creating a new logical replication slot.
  */
 Datum
-pg_create_logical_replication_slot(PG_FUNCTION_ARGS)
+mdb_create_logical_replication_slot(PG_FUNCTION_ARGS)
 {
 	Name		name = PG_GETARG_NAME(0);
 	Name		plugin = PG_GETARG_NAME(1);
@@ -155,7 +155,7 @@ pg_create_logical_replication_slot(PG_FUNCTION_ARGS)
  * SQL function for dropping a replication slot.
  */
 Datum
-pg_drop_replication_slot(PG_FUNCTION_ARGS)
+mdb_drop_replication_slot(PG_FUNCTION_ARGS)
 {
 	Name		name = PG_GETARG_NAME(0);
 
@@ -169,10 +169,10 @@ pg_drop_replication_slot(PG_FUNCTION_ARGS)
 }
 
 /*
- * pg_get_replication_slots - SQL SRF showing active replication slots.
+ * mdb_get_replication_slots - SQL SRF showing active replication slots.
  */
 Datum
-pg_get_replication_slots(PG_FUNCTION_ARGS)
+mdb_get_replication_slots(PG_FUNCTION_ARGS)
 {
 #define PG_GET_REPLICATION_SLOTS_COLS 10
 	ReturnSetInfo *rsinfo = (ReturnSetInfo *) fcinfo->resultinfo;

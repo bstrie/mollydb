@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
  *
- * pg_extension.h
- *	  definition of the system "extension" relation (pg_extension)
+ * mdb_extension.h
+ *	  definition of the system "extension" relation (mdb_extension)
  *	  along with the relation's initial contents.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * src/include/catalog/pg_extension.h
+ * src/include/catalog/mdb_extension.h
  *
  * NOTES
  *	  the genbki.pl script reads this file and generates .bki
@@ -22,13 +22,13 @@
 #include "catalog/genbki.h"
 
 /* ----------------
- *		pg_extension definition.  cpp turns this into
- *		typedef struct FormData_pg_extension
+ *		mdb_extension definition.  cpp turns this into
+ *		typedef struct FormData_mdb_extension
  * ----------------
  */
 #define ExtensionRelationId 3079
 
-CATALOG(pg_extension,3079)
+CATALOG(mdb_extension,3079)
 {
 	NameData	extname;		/* extension name */
 	Oid			extowner;		/* extension owner */
@@ -41,31 +41,31 @@ CATALOG(pg_extension,3079)
 	Oid			extconfig[1];	/* dumpable configuration tables */
 	text		extcondition[1];	/* WHERE clauses for config tables */
 #endif
-} FormData_pg_extension;
+} FormData_mdb_extension;
 
 /* ----------------
- *		Form_pg_extension corresponds to a pointer to a tuple with
- *		the format of pg_extension relation.
+ *		Form_mdb_extension corresponds to a pointer to a tuple with
+ *		the format of mdb_extension relation.
  * ----------------
  */
-typedef FormData_pg_extension *Form_pg_extension;
+typedef FormData_mdb_extension *Form_mdb_extension;
 
 /* ----------------
- *		compiler constants for pg_extension
+ *		compiler constants for mdb_extension
  * ----------------
  */
 
-#define Natts_pg_extension					7
-#define Anum_pg_extension_extname			1
-#define Anum_pg_extension_extowner			2
-#define Anum_pg_extension_extnamespace		3
-#define Anum_pg_extension_extrelocatable	4
-#define Anum_pg_extension_extversion		5
-#define Anum_pg_extension_extconfig			6
-#define Anum_pg_extension_extcondition		7
+#define Natts_mdb_extension					7
+#define Anum_mdb_extension_extname			1
+#define Anum_mdb_extension_extowner			2
+#define Anum_mdb_extension_extnamespace		3
+#define Anum_mdb_extension_extrelocatable	4
+#define Anum_mdb_extension_extversion		5
+#define Anum_mdb_extension_extconfig			6
+#define Anum_mdb_extension_extcondition		7
 
 /* ----------------
- *		pg_extension has no initial contents
+ *		mdb_extension has no initial contents
  * ----------------
  */
 

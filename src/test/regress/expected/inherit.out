@@ -31,7 +31,7 @@ INSERT INTO d(aa) VALUES('ddddd');
 INSERT INTO d(aa) VALUES('dddddd');
 INSERT INTO d(aa) VALUES('ddddddd');
 INSERT INTO d(aa) VALUES('dddddddd');
-SELECT relname, a.* FROM a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM a, mdb_class where a.tableoid = mdb_class.oid;
  relname |    aa    
 ---------+----------
  a       | aaa
@@ -60,7 +60,7 @@ SELECT relname, a.* FROM a, pg_class where a.tableoid = pg_class.oid;
  d       | dddddddd
 (24 rows)
 
-SELECT relname, b.* FROM b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM b, mdb_class where b.tableoid = mdb_class.oid;
  relname |    aa    | bb 
 ---------+----------+----
  b       | bbb      | 
@@ -77,7 +77,7 @@ SELECT relname, b.* FROM b, pg_class where b.tableoid = pg_class.oid;
  d       | dddddddd | 
 (12 rows)
 
-SELECT relname, c.* FROM c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM c, mdb_class where c.tableoid = mdb_class.oid;
  relname |    aa    | cc 
 ---------+----------+----
  c       | ccc      | 
@@ -94,7 +94,7 @@ SELECT relname, c.* FROM c, pg_class where c.tableoid = pg_class.oid;
  d       | dddddddd | 
 (12 rows)
 
-SELECT relname, d.* FROM d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM d, mdb_class where d.tableoid = mdb_class.oid;
  relname |    aa    | bb | cc | dd 
 ---------+----------+----+----+----
  d       | ddd      |    |    | 
@@ -105,7 +105,7 @@ SELECT relname, d.* FROM d, pg_class where d.tableoid = pg_class.oid;
  d       | dddddddd |    |    | 
 (6 rows)
 
-SELECT relname, a.* FROM ONLY a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM ONLY a, mdb_class where a.tableoid = mdb_class.oid;
  relname |    aa    
 ---------+----------
  a       | aaa
@@ -116,7 +116,7 @@ SELECT relname, a.* FROM ONLY a, pg_class where a.tableoid = pg_class.oid;
  a       | aaaaaaaa
 (6 rows)
 
-SELECT relname, b.* FROM ONLY b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM ONLY b, mdb_class where b.tableoid = mdb_class.oid;
  relname |    aa    | bb 
 ---------+----------+----
  b       | bbb      | 
@@ -127,7 +127,7 @@ SELECT relname, b.* FROM ONLY b, pg_class where b.tableoid = pg_class.oid;
  b       | bbbbbbbb | 
 (6 rows)
 
-SELECT relname, c.* FROM ONLY c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM ONLY c, mdb_class where c.tableoid = mdb_class.oid;
  relname |    aa    | cc 
 ---------+----------+----
  c       | ccc      | 
@@ -138,7 +138,7 @@ SELECT relname, c.* FROM ONLY c, pg_class where c.tableoid = pg_class.oid;
  c       | cccccccc | 
 (6 rows)
 
-SELECT relname, d.* FROM ONLY d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM ONLY d, mdb_class where d.tableoid = mdb_class.oid;
  relname |    aa    | bb | cc | dd 
 ---------+----------+----+----+----
  d       | ddd      |    |    | 
@@ -154,7 +154,7 @@ UPDATE ONLY a SET aa='zzzzz' WHERE aa='aaaaa';
 UPDATE b SET aa='zzz' WHERE aa='aaa';
 UPDATE ONLY b SET aa='zzz' WHERE aa='aaa';
 UPDATE a SET aa='zzzzzz' WHERE aa LIKE 'aaa%';
-SELECT relname, a.* FROM a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM a, mdb_class where a.tableoid = mdb_class.oid;
  relname |    aa    
 ---------+----------
  a       | zzzz
@@ -183,7 +183,7 @@ SELECT relname, a.* FROM a, pg_class where a.tableoid = pg_class.oid;
  d       | dddddddd
 (24 rows)
 
-SELECT relname, b.* FROM b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM b, mdb_class where b.tableoid = mdb_class.oid;
  relname |    aa    | bb 
 ---------+----------+----
  b       | bbb      | 
@@ -200,7 +200,7 @@ SELECT relname, b.* FROM b, pg_class where b.tableoid = pg_class.oid;
  d       | dddddddd | 
 (12 rows)
 
-SELECT relname, c.* FROM c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM c, mdb_class where c.tableoid = mdb_class.oid;
  relname |    aa    | cc 
 ---------+----------+----
  c       | ccc      | 
@@ -217,7 +217,7 @@ SELECT relname, c.* FROM c, pg_class where c.tableoid = pg_class.oid;
  d       | dddddddd | 
 (12 rows)
 
-SELECT relname, d.* FROM d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM d, mdb_class where d.tableoid = mdb_class.oid;
  relname |    aa    | bb | cc | dd 
 ---------+----------+----+----+----
  d       | ddd      |    |    | 
@@ -228,7 +228,7 @@ SELECT relname, d.* FROM d, pg_class where d.tableoid = pg_class.oid;
  d       | dddddddd |    |    | 
 (6 rows)
 
-SELECT relname, a.* FROM ONLY a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM ONLY a, mdb_class where a.tableoid = mdb_class.oid;
  relname |   aa   
 ---------+--------
  a       | zzzz
@@ -239,7 +239,7 @@ SELECT relname, a.* FROM ONLY a, pg_class where a.tableoid = pg_class.oid;
  a       | zzzzzz
 (6 rows)
 
-SELECT relname, b.* FROM ONLY b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM ONLY b, mdb_class where b.tableoid = mdb_class.oid;
  relname |    aa    | bb 
 ---------+----------+----
  b       | bbb      | 
@@ -250,7 +250,7 @@ SELECT relname, b.* FROM ONLY b, pg_class where b.tableoid = pg_class.oid;
  b       | bbbbbbbb | 
 (6 rows)
 
-SELECT relname, c.* FROM ONLY c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM ONLY c, mdb_class where c.tableoid = mdb_class.oid;
  relname |    aa    | cc 
 ---------+----------+----
  c       | ccc      | 
@@ -261,7 +261,7 @@ SELECT relname, c.* FROM ONLY c, pg_class where c.tableoid = pg_class.oid;
  c       | cccccccc | 
 (6 rows)
 
-SELECT relname, d.* FROM ONLY d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM ONLY d, mdb_class where d.tableoid = mdb_class.oid;
  relname |    aa    | bb | cc | dd 
 ---------+----------+----+----+----
  d       | ddd      |    |    | 
@@ -273,7 +273,7 @@ SELECT relname, d.* FROM ONLY d, pg_class where d.tableoid = pg_class.oid;
 (6 rows)
 
 UPDATE b SET aa='new';
-SELECT relname, a.* FROM a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM a, mdb_class where a.tableoid = mdb_class.oid;
  relname |    aa    
 ---------+----------
  a       | zzzz
@@ -302,7 +302,7 @@ SELECT relname, a.* FROM a, pg_class where a.tableoid = pg_class.oid;
  d       | new
 (24 rows)
 
-SELECT relname, b.* FROM b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM b, mdb_class where b.tableoid = mdb_class.oid;
  relname | aa  | bb 
 ---------+-----+----
  b       | new | 
@@ -319,7 +319,7 @@ SELECT relname, b.* FROM b, pg_class where b.tableoid = pg_class.oid;
  d       | new | 
 (12 rows)
 
-SELECT relname, c.* FROM c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM c, mdb_class where c.tableoid = mdb_class.oid;
  relname |    aa    | cc 
 ---------+----------+----
  c       | ccc      | 
@@ -336,7 +336,7 @@ SELECT relname, c.* FROM c, pg_class where c.tableoid = pg_class.oid;
  d       | new      | 
 (12 rows)
 
-SELECT relname, d.* FROM d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM d, mdb_class where d.tableoid = mdb_class.oid;
  relname | aa  | bb | cc | dd 
 ---------+-----+----+----+----
  d       | new |    |    | 
@@ -347,7 +347,7 @@ SELECT relname, d.* FROM d, pg_class where d.tableoid = pg_class.oid;
  d       | new |    |    | 
 (6 rows)
 
-SELECT relname, a.* FROM ONLY a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM ONLY a, mdb_class where a.tableoid = mdb_class.oid;
  relname |   aa   
 ---------+--------
  a       | zzzz
@@ -358,7 +358,7 @@ SELECT relname, a.* FROM ONLY a, pg_class where a.tableoid = pg_class.oid;
  a       | zzzzzz
 (6 rows)
 
-SELECT relname, b.* FROM ONLY b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM ONLY b, mdb_class where b.tableoid = mdb_class.oid;
  relname | aa  | bb 
 ---------+-----+----
  b       | new | 
@@ -369,7 +369,7 @@ SELECT relname, b.* FROM ONLY b, pg_class where b.tableoid = pg_class.oid;
  b       | new | 
 (6 rows)
 
-SELECT relname, c.* FROM ONLY c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM ONLY c, mdb_class where c.tableoid = mdb_class.oid;
  relname |    aa    | cc 
 ---------+----------+----
  c       | ccc      | 
@@ -380,7 +380,7 @@ SELECT relname, c.* FROM ONLY c, pg_class where c.tableoid = pg_class.oid;
  c       | cccccccc | 
 (6 rows)
 
-SELECT relname, d.* FROM ONLY d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM ONLY d, mdb_class where d.tableoid = mdb_class.oid;
  relname | aa  | bb | cc | dd 
 ---------+-----+----+----+----
  d       | new |    |    | 
@@ -393,7 +393,7 @@ SELECT relname, d.* FROM ONLY d, pg_class where d.tableoid = pg_class.oid;
 
 UPDATE a SET aa='new';
 DELETE FROM ONLY c WHERE aa='new';
-SELECT relname, a.* FROM a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM a, mdb_class where a.tableoid = mdb_class.oid;
  relname | aa  
 ---------+-----
  a       | new
@@ -416,7 +416,7 @@ SELECT relname, a.* FROM a, pg_class where a.tableoid = pg_class.oid;
  d       | new
 (18 rows)
 
-SELECT relname, b.* FROM b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM b, mdb_class where b.tableoid = mdb_class.oid;
  relname | aa  | bb 
 ---------+-----+----
  b       | new | 
@@ -433,7 +433,7 @@ SELECT relname, b.* FROM b, pg_class where b.tableoid = pg_class.oid;
  d       | new | 
 (12 rows)
 
-SELECT relname, c.* FROM c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM c, mdb_class where c.tableoid = mdb_class.oid;
  relname | aa  | cc 
 ---------+-----+----
  d       | new | 
@@ -444,7 +444,7 @@ SELECT relname, c.* FROM c, pg_class where c.tableoid = pg_class.oid;
  d       | new | 
 (6 rows)
 
-SELECT relname, d.* FROM d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM d, mdb_class where d.tableoid = mdb_class.oid;
  relname | aa  | bb | cc | dd 
 ---------+-----+----+----+----
  d       | new |    |    | 
@@ -455,7 +455,7 @@ SELECT relname, d.* FROM d, pg_class where d.tableoid = pg_class.oid;
  d       | new |    |    | 
 (6 rows)
 
-SELECT relname, a.* FROM ONLY a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM ONLY a, mdb_class where a.tableoid = mdb_class.oid;
  relname | aa  
 ---------+-----
  a       | new
@@ -466,7 +466,7 @@ SELECT relname, a.* FROM ONLY a, pg_class where a.tableoid = pg_class.oid;
  a       | new
 (6 rows)
 
-SELECT relname, b.* FROM ONLY b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM ONLY b, mdb_class where b.tableoid = mdb_class.oid;
  relname | aa  | bb 
 ---------+-----+----
  b       | new | 
@@ -477,12 +477,12 @@ SELECT relname, b.* FROM ONLY b, pg_class where b.tableoid = pg_class.oid;
  b       | new | 
 (6 rows)
 
-SELECT relname, c.* FROM ONLY c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM ONLY c, mdb_class where c.tableoid = mdb_class.oid;
  relname | aa | cc 
 ---------+----+----
 (0 rows)
 
-SELECT relname, d.* FROM ONLY d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM ONLY d, mdb_class where d.tableoid = mdb_class.oid;
  relname | aa  | bb | cc | dd 
 ---------+-----+----+----+----
  d       | new |    |    | 
@@ -494,42 +494,42 @@ SELECT relname, d.* FROM ONLY d, pg_class where d.tableoid = pg_class.oid;
 (6 rows)
 
 DELETE FROM a;
-SELECT relname, a.* FROM a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM a, mdb_class where a.tableoid = mdb_class.oid;
  relname | aa 
 ---------+----
 (0 rows)
 
-SELECT relname, b.* FROM b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM b, mdb_class where b.tableoid = mdb_class.oid;
  relname | aa | bb 
 ---------+----+----
 (0 rows)
 
-SELECT relname, c.* FROM c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM c, mdb_class where c.tableoid = mdb_class.oid;
  relname | aa | cc 
 ---------+----+----
 (0 rows)
 
-SELECT relname, d.* FROM d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM d, mdb_class where d.tableoid = mdb_class.oid;
  relname | aa | bb | cc | dd 
 ---------+----+----+----+----
 (0 rows)
 
-SELECT relname, a.* FROM ONLY a, pg_class where a.tableoid = pg_class.oid;
+SELECT relname, a.* FROM ONLY a, mdb_class where a.tableoid = mdb_class.oid;
  relname | aa 
 ---------+----
 (0 rows)
 
-SELECT relname, b.* FROM ONLY b, pg_class where b.tableoid = pg_class.oid;
+SELECT relname, b.* FROM ONLY b, mdb_class where b.tableoid = mdb_class.oid;
  relname | aa | bb 
 ---------+----+----
 (0 rows)
 
-SELECT relname, c.* FROM ONLY c, pg_class where c.tableoid = pg_class.oid;
+SELECT relname, c.* FROM ONLY c, mdb_class where c.tableoid = mdb_class.oid;
  relname | aa | cc 
 ---------+----+----
 (0 rows)
 
-SELECT relname, d.* FROM ONLY d, pg_class where d.tableoid = pg_class.oid;
+SELECT relname, d.* FROM ONLY d, mdb_class where d.tableoid = mdb_class.oid;
  relname | aa | bb | cc | dd 
 ---------+----+----+----+----
 (0 rows)
@@ -617,7 +617,7 @@ create table p1(ff1 int);
 alter table p1 add constraint p1chk check (ff1 > 0) no inherit;
 alter table p1 add constraint p2chk check (ff1 > 10);
 -- connoinherit should be true for NO INHERIT constraint
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.connoinherit from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname = 'p1' order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.connoinherit from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname = 'p1' order by 1,2;
  relname | conname | contype | conislocal | coninhcount | connoinherit 
 ---------+---------+---------+------------+-------------+--------------
  p1      | p1chk   | c       | t          |           0 | t
@@ -678,7 +678,7 @@ drop table p1;
 CREATE TABLE ac (aa TEXT);
 alter table ac add constraint ac_check check (aa is not null);
 CREATE TABLE bc (bb TEXT) INHERITS (ac);
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
  relname | conname  | contype | conislocal | coninhcount |      consrc      
 ---------+----------+---------+------------+-------------+------------------
  ac      | ac_check | c       | t          |           0 | (aa IS NOT NULL)
@@ -694,14 +694,14 @@ DETAIL:  Failing row contains (null, null).
 alter table bc drop constraint ac_check;  -- fail, disallowed
 ERROR:  cannot drop inherited constraint "ac_check" of relation "bc"
 alter table ac drop constraint ac_check;
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
  relname | conname | contype | conislocal | coninhcount | consrc 
 ---------+---------+---------+------------+-------------+--------
 (0 rows)
 
 -- try the unnamed-constraint case
 alter table ac add check (aa is not null);
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
  relname |   conname   | contype | conislocal | coninhcount |      consrc      
 ---------+-------------+---------+------------+-------------+------------------
  ac      | ac_aa_check | c       | t          |           0 | (aa IS NOT NULL)
@@ -717,14 +717,14 @@ DETAIL:  Failing row contains (null, null).
 alter table bc drop constraint ac_aa_check;  -- fail, disallowed
 ERROR:  cannot drop inherited constraint "ac_aa_check" of relation "bc"
 alter table ac drop constraint ac_aa_check;
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
  relname | conname | contype | conislocal | coninhcount | consrc 
 ---------+---------+---------+------------+-------------+--------
 (0 rows)
 
 alter table ac add constraint ac_check check (aa is not null);
 alter table bc no inherit ac;
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
  relname | conname  | contype | conislocal | coninhcount |      consrc      
 ---------+----------+---------+------------+-------------+------------------
  ac      | ac_check | c       | t          |           0 | (aa IS NOT NULL)
@@ -732,14 +732,14 @@ select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pg
 (2 rows)
 
 alter table bc drop constraint ac_check;
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
  relname | conname  | contype | conislocal | coninhcount |      consrc      
 ---------+----------+---------+------------+-------------+------------------
  ac      | ac_check | c       | t          |           0 | (aa IS NOT NULL)
 (1 row)
 
 alter table ac drop constraint ac_check;
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
  relname | conname | contype | conislocal | coninhcount | consrc 
 ---------+---------+---------+------------+-------------+--------
 (0 rows)
@@ -750,7 +750,7 @@ create table ac (a int constraint check_a check (a <> 0));
 create table bc (a int constraint check_a check (a <> 0), b int constraint check_b check (b <> 0)) inherits (ac);
 NOTICE:  merging column "a" with inherited definition
 NOTICE:  merging constraint "check_a" with inherited definition
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc') order by 1,2;
  relname | conname | contype | conislocal | coninhcount |  consrc  
 ---------+---------+---------+------------+-------------+----------
  ac      | check_a | c       | t          |           0 | (a <> 0)
@@ -763,7 +763,7 @@ drop table ac;
 create table ac (a int constraint check_a check (a <> 0));
 create table bc (b int constraint check_b check (b <> 0));
 create table cc (c int constraint check_c check (c <> 0)) inherits (ac, bc);
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc', 'cc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc', 'cc') order by 1,2;
  relname | conname | contype | conislocal | coninhcount |  consrc  
 ---------+---------+---------+------------+-------------+----------
  ac      | check_a | c       | t          |           0 | (a <> 0)
@@ -774,7 +774,7 @@ select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pg
 (5 rows)
 
 alter table cc no inherit bc;
-select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from pg_class as pc inner join pg_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc', 'cc') order by 1,2;
+select pc.relname, pgc.conname, pgc.contype, pgc.conislocal, pgc.coninhcount, pgc.consrc from mdb_class as pc inner join mdb_constraint as pgc on (pgc.conrelid = pc.oid) where pc.relname in ('ac', 'bc', 'cc') order by 1,2;
  relname | conname | contype | conislocal | coninhcount |  consrc  
 ---------+---------+---------+------------+-------------+----------
  ac      | check_a | c       | t          |           0 | (a <> 0)
@@ -954,12 +954,12 @@ Inherits: inht2,
 WITH RECURSIVE r AS (
   SELECT 'inht1'::regclass AS inhrelid
 UNION ALL
-  SELECT c.inhrelid FROM pg_inherits c, r WHERE r.inhrelid = c.inhparent
+  SELECT c.inhrelid FROM mdb_inherits c, r WHERE r.inhrelid = c.inhparent
 )
 SELECT a.attrelid::regclass, a.attname, a.attinhcount, e.expected
-  FROM (SELECT inhrelid, count(*) AS expected FROM pg_inherits
+  FROM (SELECT inhrelid, count(*) AS expected FROM mdb_inherits
         WHERE inhparent IN (SELECT inhrelid FROM r) GROUP BY inhrelid) e
-  JOIN pg_attribute a ON e.inhrelid = a.attrelid WHERE NOT attislocal
+  JOIN mdb_attribute a ON e.inhrelid = a.attrelid WHERE NOT attislocal
   ORDER BY a.attrelid::regclass::name, a.attnum;
  attrelid | attname | attinhcount | expected 
 ----------+---------+-------------+----------

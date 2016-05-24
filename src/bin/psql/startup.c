@@ -193,18 +193,18 @@ main(int argc, char *argv[])
 	if (!pset.popt.topt.fieldSep.separator &&
 		!pset.popt.topt.fieldSep.separator_zero)
 	{
-		pset.popt.topt.fieldSep.separator = pg_strdup(DEFAULT_FIELD_SEP);
+		pset.popt.topt.fieldSep.separator = mdb_strdup(DEFAULT_FIELD_SEP);
 		pset.popt.topt.fieldSep.separator_zero = false;
 	}
 	if (!pset.popt.topt.recordSep.separator &&
 		!pset.popt.topt.recordSep.separator_zero)
 	{
-		pset.popt.topt.recordSep.separator = pg_strdup(DEFAULT_RECORD_SEP);
+		pset.popt.topt.recordSep.separator = mdb_strdup(DEFAULT_RECORD_SEP);
 		pset.popt.topt.recordSep.separator_zero = false;
 	}
 
 	if (options.username == NULL)
-		password_prompt = pg_strdup(_("Password: "));
+		password_prompt = mdb_strdup(_("Password: "));
 	else
 		password_prompt = psprintf(_("Password for user %s: "),
 								   options.username);
@@ -216,8 +216,8 @@ main(int argc, char *argv[])
 	do
 	{
 #define PARAMS_ARRAY_SIZE	8
-		const char **keywords = pg_malloc(PARAMS_ARRAY_SIZE * sizeof(*keywords));
-		const char **values = pg_malloc(PARAMS_ARRAY_SIZE * sizeof(*values));
+		const char **keywords = mdb_malloc(PARAMS_ARRAY_SIZE * sizeof(*keywords));
+		const char **values = mdb_malloc(PARAMS_ARRAY_SIZE * sizeof(*values));
 
 		keywords[0] = "host";
 		values[0] = options.host;
@@ -478,7 +478,7 @@ parse_psql_options(int argc, char *argv[], struct adhoc_opts * options)
 											  optarg);
 				break;
 			case 'd':
-				options->dbname = pg_strdup(optarg);
+				options->dbname = mdb_strdup(optarg);
 				break;
 			case 'e':
 				SetVariable(pset.vars, "ECHO", "queries");
@@ -492,11 +492,11 @@ parse_psql_options(int argc, char *argv[], struct adhoc_opts * options)
 										  optarg);
 				break;
 			case 'F':
-				pset.popt.topt.fieldSep.separator = pg_strdup(optarg);
+				pset.popt.topt.fieldSep.separator = mdb_strdup(optarg);
 				pset.popt.topt.fieldSep.separator_zero = false;
 				break;
 			case 'h':
-				options->host = pg_strdup(optarg);
+				options->host = mdb_strdup(optarg);
 				break;
 			case 'H':
 				pset.popt.topt.format = PRINT_HTML;
@@ -505,7 +505,7 @@ parse_psql_options(int argc, char *argv[], struct adhoc_opts * options)
 				options->list_dbs = true;
 				break;
 			case 'L':
-				options->logfilename = pg_strdup(optarg);
+				options->logfilename = mdb_strdup(optarg);
 				break;
 			case 'n':
 				options->no_readline = true;
@@ -515,7 +515,7 @@ parse_psql_options(int argc, char *argv[], struct adhoc_opts * options)
 					exit(EXIT_FAILURE);
 				break;
 			case 'p':
-				options->port = pg_strdup(optarg);
+				options->port = mdb_strdup(optarg);
 				break;
 			case 'P':
 				{
@@ -523,7 +523,7 @@ parse_psql_options(int argc, char *argv[], struct adhoc_opts * options)
 					char	   *equal_loc;
 					bool		result;
 
-					value = pg_strdup(optarg);
+					value = mdb_strdup(optarg);
 					equal_loc = strchr(value, '=');
 					if (!equal_loc)
 						result = do_pset(value, NULL, &pset.popt, true);
@@ -546,7 +546,7 @@ parse_psql_options(int argc, char *argv[], struct adhoc_opts * options)
 				SetVariableBool(pset.vars, "QUIET");
 				break;
 			case 'R':
-				pset.popt.topt.recordSep.separator = pg_strdup(optarg);
+				pset.popt.topt.recordSep.separator = mdb_strdup(optarg);
 				pset.popt.topt.recordSep.separator_zero = false;
 				break;
 			case 's':
@@ -559,17 +559,17 @@ parse_psql_options(int argc, char *argv[], struct adhoc_opts * options)
 				pset.popt.topt.tuples_only = true;
 				break;
 			case 'T':
-				pset.popt.topt.tableAttr = pg_strdup(optarg);
+				pset.popt.topt.tableAttr = mdb_strdup(optarg);
 				break;
 			case 'U':
-				options->username = pg_strdup(optarg);
+				options->username = mdb_strdup(optarg);
 				break;
 			case 'v':
 				{
 					char	   *value;
 					char	   *equal_loc;
 
-					value = pg_strdup(optarg);
+					value = mdb_strdup(optarg);
 					equal_loc = strchr(value, '=');
 					if (!equal_loc)
 					{
@@ -680,12 +680,12 @@ simple_action_list_append(SimpleActionList *list,
 {
 	SimpleActionListCell *cell;
 
-	cell = (SimpleActionListCell *) pg_malloc(sizeof(SimpleActionListCell));
+	cell = (SimpleActionListCell *) mdb_malloc(sizeof(SimpleActionListCell));
 
 	cell->next = NULL;
 	cell->action = action;
 	if (val)
-		cell->val = pg_strdup(val);
+		cell->val = mdb_strdup(val);
 	else
 		cell->val = NULL;
 
@@ -823,13 +823,13 @@ echo_hook(const char *newval)
 {
 	if (newval == NULL)
 		pset.echo = PSQL_ECHO_NONE;
-	else if (pg_strcasecmp(newval, "queries") == 0)
+	else if (mdb_strcasecmp(newval, "queries") == 0)
 		pset.echo = PSQL_ECHO_QUERIES;
-	else if (pg_strcasecmp(newval, "errors") == 0)
+	else if (mdb_strcasecmp(newval, "errors") == 0)
 		pset.echo = PSQL_ECHO_ERRORS;
-	else if (pg_strcasecmp(newval, "all") == 0)
+	else if (mdb_strcasecmp(newval, "all") == 0)
 		pset.echo = PSQL_ECHO_ALL;
-	else if (pg_strcasecmp(newval, "none") == 0)
+	else if (mdb_strcasecmp(newval, "none") == 0)
 		pset.echo = PSQL_ECHO_NONE;
 	else
 	{
@@ -844,7 +844,7 @@ echo_hidden_hook(const char *newval)
 {
 	if (newval == NULL)
 		pset.echo_hidden = PSQL_ECHO_HIDDEN_OFF;
-	else if (pg_strcasecmp(newval, "noexec") == 0)
+	else if (mdb_strcasecmp(newval, "noexec") == 0)
 		pset.echo_hidden = PSQL_ECHO_HIDDEN_NOEXEC;
 	else if (ParseVariableBool(newval, "ECHO_HIDDEN"))
 		pset.echo_hidden = PSQL_ECHO_HIDDEN_ON;
@@ -857,7 +857,7 @@ on_error_rollback_hook(const char *newval)
 {
 	if (newval == NULL)
 		pset.on_error_rollback = PSQL_ERROR_ROLLBACK_OFF;
-	else if (pg_strcasecmp(newval, "interactive") == 0)
+	else if (mdb_strcasecmp(newval, "interactive") == 0)
 		pset.on_error_rollback = PSQL_ERROR_ROLLBACK_INTERACTIVE;
 	else if (ParseVariableBool(newval, "ON_ERROR_ROLLBACK"))
 		pset.on_error_rollback = PSQL_ERROR_ROLLBACK_ON;
@@ -870,13 +870,13 @@ comp_keyword_case_hook(const char *newval)
 {
 	if (newval == NULL)
 		pset.comp_case = PSQL_COMP_CASE_PRESERVE_UPPER;
-	else if (pg_strcasecmp(newval, "preserve-upper") == 0)
+	else if (mdb_strcasecmp(newval, "preserve-upper") == 0)
 		pset.comp_case = PSQL_COMP_CASE_PRESERVE_UPPER;
-	else if (pg_strcasecmp(newval, "preserve-lower") == 0)
+	else if (mdb_strcasecmp(newval, "preserve-lower") == 0)
 		pset.comp_case = PSQL_COMP_CASE_PRESERVE_LOWER;
-	else if (pg_strcasecmp(newval, "upper") == 0)
+	else if (mdb_strcasecmp(newval, "upper") == 0)
 		pset.comp_case = PSQL_COMP_CASE_UPPER;
-	else if (pg_strcasecmp(newval, "lower") == 0)
+	else if (mdb_strcasecmp(newval, "lower") == 0)
 		pset.comp_case = PSQL_COMP_CASE_LOWER;
 	else
 	{
@@ -891,13 +891,13 @@ histcontrol_hook(const char *newval)
 {
 	if (newval == NULL)
 		pset.histcontrol = hctl_none;
-	else if (pg_strcasecmp(newval, "ignorespace") == 0)
+	else if (mdb_strcasecmp(newval, "ignorespace") == 0)
 		pset.histcontrol = hctl_ignorespace;
-	else if (pg_strcasecmp(newval, "ignoredups") == 0)
+	else if (mdb_strcasecmp(newval, "ignoredups") == 0)
 		pset.histcontrol = hctl_ignoredups;
-	else if (pg_strcasecmp(newval, "ignoreboth") == 0)
+	else if (mdb_strcasecmp(newval, "ignoreboth") == 0)
 		pset.histcontrol = hctl_ignoreboth;
-	else if (pg_strcasecmp(newval, "none") == 0)
+	else if (mdb_strcasecmp(newval, "none") == 0)
 		pset.histcontrol = hctl_none;
 	else
 	{
@@ -930,11 +930,11 @@ verbosity_hook(const char *newval)
 {
 	if (newval == NULL)
 		pset.verbosity = PQERRORS_DEFAULT;
-	else if (pg_strcasecmp(newval, "default") == 0)
+	else if (mdb_strcasecmp(newval, "default") == 0)
 		pset.verbosity = PQERRORS_DEFAULT;
-	else if (pg_strcasecmp(newval, "terse") == 0)
+	else if (mdb_strcasecmp(newval, "terse") == 0)
 		pset.verbosity = PQERRORS_TERSE;
-	else if (pg_strcasecmp(newval, "verbose") == 0)
+	else if (mdb_strcasecmp(newval, "verbose") == 0)
 		pset.verbosity = PQERRORS_VERBOSE;
 	else
 	{
@@ -952,11 +952,11 @@ show_context_hook(const char *newval)
 {
 	if (newval == NULL)
 		pset.show_context = PQSHOW_CONTEXT_ERRORS;
-	else if (pg_strcasecmp(newval, "never") == 0)
+	else if (mdb_strcasecmp(newval, "never") == 0)
 		pset.show_context = PQSHOW_CONTEXT_NEVER;
-	else if (pg_strcasecmp(newval, "errors") == 0)
+	else if (mdb_strcasecmp(newval, "errors") == 0)
 		pset.show_context = PQSHOW_CONTEXT_ERRORS;
-	else if (pg_strcasecmp(newval, "always") == 0)
+	else if (mdb_strcasecmp(newval, "always") == 0)
 		pset.show_context = PQSHOW_CONTEXT_ALWAYS;
 	else
 	{

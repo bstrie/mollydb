@@ -40,7 +40,7 @@
 #include "tcop/tcopprot.h"
 #include "utils/help_config.h"
 #include "utils/memutils.h"
-#include "utils/pg_locale.h"
+#include "utils/mdb_locale.h"
 #include "utils/ps_status.h"
 
 
@@ -100,9 +100,9 @@ main(int argc, char *argv[])
 
 	/*
 	 * Set up locale information from environment.  Note that LC_CTYPE and
-	 * LC_COLLATE will be overridden later from pg_control if we are in an
+	 * LC_COLLATE will be overridden later from mdb_control if we are in an
 	 * already-initialized database.  We set them here so that they will be
-	 * available to fill pg_control during initdb.  LC_MESSAGES will get set
+	 * available to fill mdb_control during initdb.  LC_MESSAGES will get set
 	 * later during GUC option processing, but we set it here to allow startup
 	 * error messages to be localized.
 	 */
@@ -140,7 +140,7 @@ main(int argc, char *argv[])
 #endif
 
 	/*
-	 * We keep these set to "C" always, except transiently in pg_locale.c; see
+	 * We keep these set to "C" always, except transiently in mdb_locale.c; see
 	 * that file for explanations.
 	 */
 	init_locale("LC_MONETARY", LC_MONETARY, "C");
@@ -150,7 +150,7 @@ main(int argc, char *argv[])
 	/*
 	 * Now that we have absorbed as much as we wish to from the locale
 	 * environment, remove any LC_ALL setting, so that the environment
-	 * variables installed by pg_perm_setlocale have force.
+	 * variables installed by mdb_perm_setlocale have force.
 	 */
 	unsetenv("LC_ALL");
 
@@ -176,7 +176,7 @@ main(int argc, char *argv[])
 		/*
 		 * In addition to the above, we allow "--describe-config" and "-C var"
 		 * to be called by root.  This is reasonably safe since these are
-		 * read-only activities.  The -C case is important because pg_ctl may
+		 * read-only activities.  The -C case is important because mdb_ctl may
 		 * try to invoke it while still holding administrator privileges on
 		 * Windows.  Note that while -C can normally be in any argv position,
 		 * if you wanna bypass the root check you gotta put it first.  This
@@ -289,7 +289,7 @@ startup_hacks(const char *progname)
 
 	/*
 	 * Initialize dummy_spinlock, in case we are on a platform where we have
-	 * to use the fallback implementation of pg_memory_barrier().
+	 * to use the fallback implementation of mdb_memory_barrier().
 	 */
 	SpinLockInit(&dummy_spinlock);
 }
@@ -305,8 +305,8 @@ startup_hacks(const char *progname)
 static void
 init_locale(const char *categoryname, int category, const char *locale)
 {
-	if (pg_perm_setlocale(category, locale) == NULL &&
-		pg_perm_setlocale(category, "C") == NULL)
+	if (mdb_perm_setlocale(category, locale) == NULL &&
+		mdb_perm_setlocale(category, "C") == NULL)
 		elog(FATAL, "could not adopt \"%s\" locale nor C locale for %s",
 			 locale, categoryname);
 }

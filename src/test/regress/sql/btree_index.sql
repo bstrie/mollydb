@@ -59,11 +59,11 @@ SELECT b.*
 set enable_seqscan to false;
 set enable_indexscan to true;
 set enable_bitmapscan to false;
-select proname from pg_proc where proname like E'RI\\_FKey%del' order by 1;
+select proname from mdb_proc where proname like E'RI\\_FKey%del' order by 1;
 
 set enable_indexscan to false;
 set enable_bitmapscan to true;
-select proname from pg_proc where proname like E'RI\\_FKey%del' order by 1;
+select proname from mdb_proc where proname like E'RI\\_FKey%del' order by 1;
 
 --
 -- Test B-tree page deletion. In particular, deleting a non-leaf page.

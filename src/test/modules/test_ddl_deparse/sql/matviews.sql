@@ -2,7 +2,7 @@
 -- Materialized views
 --
 
-CREATE MATERIALIZED VIEW pg_class_mv AS
-  SELECT * FROM pg_class LIMIT 1 WITH NO DATA;
+CREATE MATERIALIZED VIEW mdb_class_mv AS
+  SELECT * FROM mdb_class LIMIT 1 WITH NO DATA;
 
-REFRESH MATERIALIZED VIEW pg_class_mv;
+REFRESH MATERIALIZED VIEW mdb_class_mv;

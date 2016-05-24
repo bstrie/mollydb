@@ -16,7 +16,7 @@
 
 #include <limits.h>
 
-#include "catalog/pg_collation.h"
+#include "catalog/mdb_collation.h"
 #include "commands/defrem.h"
 #include "tsearch/ts_locale.h"
 #include "tsearch/ts_public.h"
@@ -243,7 +243,7 @@ typedef struct TParser
 	int			lenstr;			/* length of mbstring */
 #ifdef USE_WIDE_UPPER_LOWER
 	wchar_t    *wstr;			/* wide character string */
-	pg_wchar   *pgwstr;			/* wide character string for C-locale */
+	mdb_wchar   *pgwstr;			/* wide character string for C-locale */
 	bool		usewide;
 #endif
 
@@ -290,7 +290,7 @@ TParserInit(char *str, int len)
 {
 	TParser    *prs = (TParser *) palloc0(sizeof(TParser));
 
-	prs->charmaxlen = pg_database_encoding_max_length();
+	prs->charmaxlen = mdb_database_encoding_max_length();
 	prs->str = str;
 	prs->lenstr = len;
 
@@ -302,17 +302,17 @@ TParserInit(char *str, int len)
 	if (prs->charmaxlen > 1)
 	{
 		Oid			collation = DEFAULT_COLLATION_OID;	/* TODO */
-		pg_locale_t mylocale = 0;		/* TODO */
+		mdb_locale_t mylocale = 0;		/* TODO */
 
 		prs->usewide = true;
 		if (lc_ctype_is_c(collation))
 		{
 			/*
-			 * char2wchar doesn't work for C-locale and sizeof(pg_wchar) could
+			 * char2wchar doesn't work for C-locale and sizeof(mdb_wchar) could
 			 * be different from sizeof(wchar_t)
 			 */
-			prs->pgwstr = (pg_wchar *) palloc(sizeof(pg_wchar) * (prs->lenstr + 1));
-			pg_mb2wchar_with_len(prs->str, prs->pgwstr, prs->lenstr);
+			prs->pgwstr = (mdb_wchar *) palloc(sizeof(mdb_wchar) * (prs->lenstr + 1));
+			mdb_mb2wchar_with_len(prs->str, prs->pgwstr, prs->lenstr);
 		}
 		else
 		{
@@ -666,17 +666,17 @@ SpecialTags(TParser *prs)
 	switch (prs->state->lenchartoken)
 	{
 		case 8:			/* </script */
-			if (pg_strncasecmp(prs->token, "</script", 8) == 0)
+			if (mdb_strncasecmp(prs->token, "</script", 8) == 0)
 				prs->ignore = false;
 			break;
 		case 7:			/* <script || </style */
-			if (pg_strncasecmp(prs->token, "</style", 7) == 0)
+			if (mdb_strncasecmp(prs->token, "</style", 7) == 0)
 				prs->ignore = false;
-			else if (pg_strncasecmp(prs->token, "<script", 7) == 0)
+			else if (mdb_strncasecmp(prs->token, "<script", 7) == 0)
 				prs->ignore = true;
 			break;
 		case 6:			/* <style */
-			if (pg_strncasecmp(prs->token, "<style", 6) == 0)
+			if (mdb_strncasecmp(prs->token, "<style", 6) == 0)
 				prs->ignore = true;
 			break;
 		default:
@@ -780,9 +780,9 @@ static int
 p_isspecial(TParser *prs)
 {
 	/*
-	 * pg_dsplen could return -1 which means error or control character
+	 * mdb_dsplen could return -1 which means error or control character
 	 */
-	if (pg_dsplen(prs->str + prs->state->posbyte) == 0)
+	if (mdb_dsplen(prs->str + prs->state->posbyte) == 0)
 		return 1;
 
 #ifdef USE_WIDE_UPPER_LOWER
@@ -795,7 +795,7 @@ p_isspecial(TParser *prs)
 	 */
 	if (GetDatabaseEncoding() == PG_UTF8 && prs->usewide)
 	{
-		static const pg_wchar strange_letter[] = {
+		static const mdb_wchar strange_letter[] = {
 			/*
 			 * use binary search, so elements should be ordered
 			 */
@@ -1029,15 +1029,15 @@ p_isspecial(TParser *prs)
 			0xAA34,				/* CHAM CONSONANT SIGN RA */
 			0xAA4D				/* CHAM CONSONANT SIGN FINAL H */
 		};
-		const pg_wchar *StopLow = strange_letter,
+		const mdb_wchar *StopLow = strange_letter,
 				   *StopHigh = strange_letter + lengthof(strange_letter),
 				   *StopMiddle;
-		pg_wchar	c;
+		mdb_wchar	c;
 
 		if (prs->pgwstr)
 			c = *(prs->pgwstr + prs->state->poschar);
 		else
-			c = (pg_wchar) *(prs->wstr + prs->state->poschar);
+			c = (mdb_wchar) *(prs->wstr + prs->state->poschar);
 
 		while (StopLow < StopHigh)
 		{
@@ -1817,7 +1817,7 @@ TParserGet(TParser *prs)
 			prs->state->charlen = 0;
 		else
 			prs->state->charlen = (prs->charmaxlen == 1) ? prs->charmaxlen :
-				pg_mblen(prs->str + prs->state->posbyte);
+				mdb_mblen(prs->str + prs->state->posbyte);
 
 		Assert(prs->state->posbyte + prs->state->charlen <= prs->lenstr);
 		Assert(prs->state->state >= TPS_Base && prs->state->state < TPS_Null);
@@ -2556,27 +2556,27 @@ prsd_headline(PG_FUNCTION_ARGS)
 		DefElem    *defel = (DefElem *) lfirst(l);
 		char	   *val = defGetString(defel);
 
-		if (pg_strcasecmp(defel->defname, "MaxWords") == 0)
-			max_words = pg_atoi(val, sizeof(int32), 0);
-		else if (pg_strcasecmp(defel->defname, "MinWords") == 0)
-			min_words = pg_atoi(val, sizeof(int32), 0);
-		else if (pg_strcasecmp(defel->defname, "ShortWord") == 0)
-			shortword = pg_atoi(val, sizeof(int32), 0);
-		else if (pg_strcasecmp(defel->defname, "MaxFragments") == 0)
-			max_fragments = pg_atoi(val, sizeof(int32), 0);
-		else if (pg_strcasecmp(defel->defname, "StartSel") == 0)
+		if (mdb_strcasecmp(defel->defname, "MaxWords") == 0)
+			max_words = mdb_atoi(val, sizeof(int32), 0);
+		else if (mdb_strcasecmp(defel->defname, "MinWords") == 0)
+			min_words = mdb_atoi(val, sizeof(int32), 0);
+		else if (mdb_strcasecmp(defel->defname, "ShortWord") == 0)
+			shortword = mdb_atoi(val, sizeof(int32), 0);
+		else if (mdb_strcasecmp(defel->defname, "MaxFragments") == 0)
+			max_fragments = mdb_atoi(val, sizeof(int32), 0);
+		else if (mdb_strcasecmp(defel->defname, "StartSel") == 0)
 			prs->startsel = pstrdup(val);
-		else if (pg_strcasecmp(defel->defname, "StopSel") == 0)
+		else if (mdb_strcasecmp(defel->defname, "StopSel") == 0)
 			prs->stopsel = pstrdup(val);
-		else if (pg_strcasecmp(defel->defname, "FragmentDelimiter") == 0)
+		else if (mdb_strcasecmp(defel->defname, "FragmentDelimiter") == 0)
 			prs->fragdelim = pstrdup(val);
-		else if (pg_strcasecmp(defel->defname, "HighlightAll") == 0)
-			highlight = (pg_strcasecmp(val, "1") == 0 ||
-						 pg_strcasecmp(val, "on") == 0 ||
-						 pg_strcasecmp(val, "true") == 0 ||
-						 pg_strcasecmp(val, "t") == 0 ||
-						 pg_strcasecmp(val, "y") == 0 ||
-						 pg_strcasecmp(val, "yes") == 0);
+		else if (mdb_strcasecmp(defel->defname, "HighlightAll") == 0)
+			highlight = (mdb_strcasecmp(val, "1") == 0 ||
+						 mdb_strcasecmp(val, "on") == 0 ||
+						 mdb_strcasecmp(val, "true") == 0 ||
+						 mdb_strcasecmp(val, "t") == 0 ||
+						 mdb_strcasecmp(val, "y") == 0 ||
+						 mdb_strcasecmp(val, "yes") == 0);
 		else
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),

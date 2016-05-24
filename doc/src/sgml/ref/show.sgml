@@ -131,7 +131,7 @@ SHOW ALL
    The function <function>current_setting</function> produces
    equivalent output; see <xref linkend="functions-admin">.
    Also, the
-   <link linkend="view-pg-settings"><structname>pg_settings</structname></link>
+   <link linkend="view-pg-settings"><structname>mdb_settings</structname></link>
    system view produces the same information.
 
   </para>

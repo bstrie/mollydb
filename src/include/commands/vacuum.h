@@ -15,8 +15,8 @@
 #define VACUUM_H
 
 #include "access/htup.h"
-#include "catalog/pg_statistic.h"
-#include "catalog/pg_type.h"
+#include "catalog/mdb_statistic.h"
+#include "catalog/mdb_type.h"
 #include "nodes/parsenodes.h"
 #include "storage/buf.h"
 #include "storage/lock.h"
@@ -47,7 +47,7 @@
  *
  * compute_stats should set stats_valid TRUE if it is able to compute
  * any useful statistics.  If it does, the remainder of the struct holds
- * the information to be stored in a pg_statistic row for the column.  Be
+ * the information to be stored in a mdb_statistic row for the column.  Be
  * careful to allocate any pointed-to data in anl_context, which will NOT
  * be CurrentMemoryContext when compute_stats is called.
  *
@@ -78,10 +78,10 @@ typedef struct VacAttrStats
 	 * column/expression.  Instead use attrtypid, attrtypmod, and attrtype for
 	 * information about the datatype being fed to the typanalyze function.
 	 */
-	Form_pg_attribute attr;		/* copy of pg_attribute row for column */
+	Form_mdb_attribute attr;		/* copy of mdb_attribute row for column */
 	Oid			attrtypid;		/* type of data being analyzed */
 	int32		attrtypmod;		/* typmod of data being analyzed */
-	Form_pg_type attrtype;		/* copy of pg_type row for attrtypid */
+	Form_mdb_type attrtype;		/* copy of mdb_type row for attrtypid */
 	MemoryContext anl_context;	/* where to save long-lived data */
 
 	/*

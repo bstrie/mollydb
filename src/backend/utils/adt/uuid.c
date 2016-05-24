@@ -16,7 +16,7 @@
 #include "access/hash.h"
 #include "lib/hyperloglog.h"
 #include "libpq/pqformat.h"
-#include "port/pg_bswap.h"
+#include "port/mdb_bswap.h"
 #include "utils/builtins.h"
 #include "utils/guc.h"
 #include "utils/sortsupport.h"
@@ -25,8 +25,8 @@
 /* uuid size in bytes */
 #define UUID_LEN 16
 
-/* pg_uuid_t is declared to be struct pg_uuid_t in uuid.h */
-struct pg_uuid_t
+/* mdb_uuid_t is declared to be struct mdb_uuid_t in uuid.h */
+struct mdb_uuid_t
 {
 	unsigned char data[UUID_LEN];
 };
@@ -40,8 +40,8 @@ typedef struct
 	hyperLogLogState abbr_card; /* cardinality estimator */
 } uuid_sortsupport_state;
 
-static void string_to_uuid(const char *source, pg_uuid_t *uuid);
-static int	uuid_internal_cmp(const pg_uuid_t *arg1, const pg_uuid_t *arg2);
+static void string_to_uuid(const char *source, mdb_uuid_t *uuid);
+static int	uuid_internal_cmp(const mdb_uuid_t *arg1, const mdb_uuid_t *arg2);
 static int	uuid_fast_cmp(Datum x, Datum y, SortSupport ssup);
 static int	uuid_cmp_abbrev(Datum x, Datum y, SortSupport ssup);
 static bool	uuid_abbrev_abort(int memtupcount, SortSupport ssup);
@@ -51,9 +51,9 @@ Datum
 uuid_in(PG_FUNCTION_ARGS)
 {
 	char	   *uuid_str = PG_GETARG_CSTRING(0);
-	pg_uuid_t  *uuid;
+	mdb_uuid_t  *uuid;
 
-	uuid = (pg_uuid_t *) palloc(sizeof(*uuid));
+	uuid = (mdb_uuid_t *) palloc(sizeof(*uuid));
 	string_to_uuid(uuid_str, uuid);
 	PG_RETURN_UUID_P(uuid);
 }
@@ -61,7 +61,7 @@ uuid_in(PG_FUNCTION_ARGS)
 Datum
 uuid_out(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *uuid = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *uuid = PG_GETARG_UUID_P(0);
 	static const char hex_chars[] = "0123456789abcdef";
 	StringInfoData buf;
 	int			i;
@@ -97,7 +97,7 @@ uuid_out(PG_FUNCTION_ARGS)
  * digits, is the only one used for output.)
  */
 static void
-string_to_uuid(const char *source, pg_uuid_t *uuid)
+string_to_uuid(const char *source, mdb_uuid_t *uuid)
 {
 	const char *src = source;
 	bool		braces = false;
@@ -150,9 +150,9 @@ Datum
 uuid_recv(PG_FUNCTION_ARGS)
 {
 	StringInfo	buffer = (StringInfo) PG_GETARG_POINTER(0);
-	pg_uuid_t  *uuid;
+	mdb_uuid_t  *uuid;
 
-	uuid = (pg_uuid_t *) palloc(UUID_LEN);
+	uuid = (mdb_uuid_t *) palloc(UUID_LEN);
 	memcpy(uuid->data, pq_getmsgbytes(buffer, UUID_LEN), UUID_LEN);
 	PG_RETURN_POINTER(uuid);
 }
@@ -160,7 +160,7 @@ uuid_recv(PG_FUNCTION_ARGS)
 Datum
 uuid_send(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *uuid = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *uuid = PG_GETARG_UUID_P(0);
 	StringInfoData buffer;
 
 	pq_begintypsend(&buffer);
@@ -170,7 +170,7 @@ uuid_send(PG_FUNCTION_ARGS)
 
 /* internal uuid compare function */
 static int
-uuid_internal_cmp(const pg_uuid_t *arg1, const pg_uuid_t *arg2)
+uuid_internal_cmp(const mdb_uuid_t *arg1, const mdb_uuid_t *arg2)
 {
 	return memcmp(arg1->data, arg2->data, UUID_LEN);
 }
@@ -178,8 +178,8 @@ uuid_internal_cmp(const pg_uuid_t *arg1, const pg_uuid_t *arg2)
 Datum
 uuid_lt(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
-	pg_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
+	mdb_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
 
 	PG_RETURN_BOOL(uuid_internal_cmp(arg1, arg2) < 0);
 }
@@ -187,8 +187,8 @@ uuid_lt(PG_FUNCTION_ARGS)
 Datum
 uuid_le(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
-	pg_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
+	mdb_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
 
 	PG_RETURN_BOOL(uuid_internal_cmp(arg1, arg2) <= 0);
 }
@@ -196,8 +196,8 @@ uuid_le(PG_FUNCTION_ARGS)
 Datum
 uuid_eq(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
-	pg_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
+	mdb_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
 
 	PG_RETURN_BOOL(uuid_internal_cmp(arg1, arg2) == 0);
 }
@@ -205,8 +205,8 @@ uuid_eq(PG_FUNCTION_ARGS)
 Datum
 uuid_ge(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
-	pg_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
+	mdb_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
 
 	PG_RETURN_BOOL(uuid_internal_cmp(arg1, arg2) >= 0);
 }
@@ -214,8 +214,8 @@ uuid_ge(PG_FUNCTION_ARGS)
 Datum
 uuid_gt(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
-	pg_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
+	mdb_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
 
 	PG_RETURN_BOOL(uuid_internal_cmp(arg1, arg2) > 0);
 }
@@ -223,8 +223,8 @@ uuid_gt(PG_FUNCTION_ARGS)
 Datum
 uuid_ne(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
-	pg_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
+	mdb_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
 
 	PG_RETURN_BOOL(uuid_internal_cmp(arg1, arg2) != 0);
 }
@@ -233,8 +233,8 @@ uuid_ne(PG_FUNCTION_ARGS)
 Datum
 uuid_cmp(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
-	pg_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
+	mdb_uuid_t  *arg1 = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *arg2 = PG_GETARG_UUID_P(1);
 
 	PG_RETURN_INT32(uuid_internal_cmp(arg1, arg2));
 }
@@ -281,8 +281,8 @@ uuid_sortsupport(PG_FUNCTION_ARGS)
 static int
 uuid_fast_cmp(Datum x, Datum y, SortSupport ssup)
 {
-	pg_uuid_t  *arg1 = DatumGetUUIDP(x);
-	pg_uuid_t  *arg2 = DatumGetUUIDP(y);
+	mdb_uuid_t  *arg1 = DatumGetUUIDP(x);
+	mdb_uuid_t  *arg2 = DatumGetUUIDP(y);
 
 	return uuid_internal_cmp(arg1, arg2);
 }
@@ -377,7 +377,7 @@ static Datum
 uuid_abbrev_convert(Datum original, SortSupport ssup)
 {
 	uuid_sortsupport_state	   *uss = ssup->ssup_extra;
-	pg_uuid_t				   *authoritative = DatumGetUUIDP(original);
+	mdb_uuid_t				   *authoritative = DatumGetUUIDP(original);
 	Datum						res;
 
 	memcpy(&res, authoritative->data, sizeof(Datum));
@@ -413,7 +413,7 @@ uuid_abbrev_convert(Datum original, SortSupport ssup)
 Datum
 uuid_hash(PG_FUNCTION_ARGS)
 {
-	pg_uuid_t  *key = PG_GETARG_UUID_P(0);
+	mdb_uuid_t  *key = PG_GETARG_UUID_P(0);
 
 	return hash_any(key->data, UUID_LEN);
 }

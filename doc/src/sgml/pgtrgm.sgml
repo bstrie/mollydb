@@ -1,14 +1,14 @@
 <!-- doc/src/sgml/pgtrgm.sgml -->
 
-<sect1 id="pgtrgm" xreflabel="pg_trgm">
- <title>pg_trgm</title>
+<sect1 id="pgtrgm" xreflabel="mdb_trgm">
+ <title>mdb_trgm</title>
 
  <indexterm zone="pgtrgm">
-  <primary>pg_trgm</primary>
+  <primary>mdb_trgm</primary>
  </indexterm>
 
  <para>
-  The <filename>pg_trgm</filename> module provides functions and operators
+  The <filename>mdb_trgm</filename> module provides functions and operators
   for determining the similarity of
   alphanumeric text based on trigram matching, as
   well as index operator classes that support fast searching for similar
@@ -28,7 +28,7 @@
 
   <note>
    <para>
-    <filename>pg_trgm</filename> ignores non-word characters
+    <filename>mdb_trgm</filename> ignores non-word characters
     (non-alphanumerics) when extracting trigrams from a string.
     Each word is considered to have two spaces
     prefixed and one space suffixed when determining the set
@@ -57,13 +57,13 @@
   <title>Functions and Operators</title>
 
   <para>
-   The functions provided by the <filename>pg_trgm</filename> module
+   The functions provided by the <filename>mdb_trgm</filename> module
    are shown in <xref linkend="pgtrgm-func-table">, the operators
    in <xref linkend="pgtrgm-op-table">.
   </para>
 
   <table id="pgtrgm-func-table">
-   <title><filename>pg_trgm</filename> Functions</title>
+   <title><filename>mdb_trgm</filename> Functions</title>
    <tgroup cols="3">
     <thead>
      <row>
@@ -132,7 +132,7 @@
   </table>
 
   <table id="pgtrgm-op-table">
-   <title><filename>pg_trgm</filename> Operators</title>
+   <title><filename>mdb_trgm</filename> Operators</title>
    <tgroup cols="3">
     <thead>
      <row>
@@ -149,7 +149,7 @@
       <entry>
        Returns <literal>true</> if its arguments have a similarity that is
        greater than the current similarity threshold set by
-       <varname>pg_trgm.similarity_threshold</>.
+       <varname>mdb_trgm.similarity_threshold</>.
       </entry>
      </row>
      <row>
@@ -159,7 +159,7 @@
        Returns <literal>true</> if its first argument has the similar word in
        the second argument and they have a similarity that is greater than the
        current word similarity threshold set by
-       <varname>pg_trgm.word_similarity_threshold</> parameter.
+       <varname>mdb_trgm.word_similarity_threshold</> parameter.
       </entry>
      </row>
      <row>
@@ -205,11 +205,11 @@
   <title>GUC Parameters</title>
 
   <variablelist>
-   <varlistentry id="guc-pgtrgm-similarity-threshold" xreflabel="pg_trgm.similarity_threshold">
+   <varlistentry id="guc-pgtrgm-similarity-threshold" xreflabel="mdb_trgm.similarity_threshold">
     <term>
-     <varname>pg_trgm.similarity_threshold</> (<type>real</type>)
+     <varname>mdb_trgm.similarity_threshold</> (<type>real</type>)
      <indexterm>
-      <primary><varname>pg_trgm.similarity_threshold</> configuration parameter</primary>
+      <primary><varname>mdb_trgm.similarity_threshold</> configuration parameter</primary>
      </indexterm>
     </term>
     <listitem>
@@ -219,12 +219,12 @@
      </para>
     </listitem>
    </varlistentry>
-    <varlistentry id="guc-pgtrgm-word-similarity-threshold" xreflabel="pg_trgm.word_similarity_threshold">
+    <varlistentry id="guc-pgtrgm-word-similarity-threshold" xreflabel="mdb_trgm.word_similarity_threshold">
      <term>
-      <varname>pg_trgm.word_similarity_threshold</> (<type>real</type>)
+      <varname>mdb_trgm.word_similarity_threshold</> (<type>real</type>)
       <indexterm>
        <primary>
-        <varname>pg_trgm.word_similarity_threshold</> configuration parameter
+        <varname>mdb_trgm.word_similarity_threshold</> configuration parameter
        </primary>
       </indexterm>
      </term>
@@ -243,7 +243,7 @@
   <title>Index Support</title>
 
   <para>
-   The <filename>pg_trgm</filename> module provides GiST and GIN index
+   The <filename>mdb_trgm</filename> module provides GiST and GIN index
    operator classes that allow you to create an index over a text column for
    the purpose of very fast similarity searches.  These index types support
    the above-described similarity operators, and additionally support
