@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pg_controldata (PostgreSQL 9.1)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-01-05 23:13+0000\n"
 "PO-Revision-Date: 2016-01-06 09:13+0200\n"
 "Last-Translator: grzegorz <begina.felicysym@wp.eu>\n"
@@ -77,8 +77,8 @@ msgstr ""
 
 #: pg_controldata.c:44
 #, c-format
-msgid "Report bugs to <pgsql-bugs@postgresql.org>.\n"
-msgstr "Błędy proszę przesyłać na adres <pgsql-bugs@postgresql.org>.\n"
+msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
+msgstr "Błędy proszę przesyłać na adres <pgsql-bugs@mollydb.org>.\n"
 
 #: pg_controldata.c:54
 msgid "starting up"

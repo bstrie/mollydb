@@ -779,7 +779,7 @@ analyze threshold = analyze base threshold + analyze scale factor * number of tu
 
    <para>
     The default thresholds and scale factors are taken from
-    <filename>postgresql.conf</filename>, but it is possible to override them
+    <filename>mollydb.conf</filename>, but it is possible to override them
     (and many other autovacuum control parameters) on a per-table basis; see
     <xref linkend="sql-createtable-storage-parameters"
     endterm="sql-createtable-storage-parameters-title"> for more information.
@@ -894,7 +894,7 @@ analyze threshold = analyze base threshold + analyze scale factor * number of tu
    <systemitem>stderr</> output to some type of log rotation program.
    There is a built-in log rotation facility, which you can use by
    setting the configuration parameter <varname>logging_collector</> to
-   <literal>true</> in <filename>postgresql.conf</>.  The control
+   <literal>true</> in <filename>mollydb.conf</>.  The control
    parameters for this program are described in <xref
    linkend="runtime-config-logging-where">. You can also use this approach
    to capture the log data in machine readable <acronym>CSV</>
@@ -925,7 +925,7 @@ pg_ctl start | rotatelogs /var/log/pgsql_log 86400
    <application>syslog</> deal with file rotation. To do this, set the
    configuration parameter <varname>log_destination</> to <literal>syslog</>
    (to log to <application>syslog</> only) in
-   <filename>postgresql.conf</>. Then you can send a <literal>SIGHUP</literal>
+   <filename>mollydb.conf</>. Then you can send a <literal>SIGHUP</literal>
    signal to the <application>syslog</> daemon whenever you want to force it
    to start writing a new log file.  If you want to automate log
    rotation, the <application>logrotate</application> program can be

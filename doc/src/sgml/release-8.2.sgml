@@ -2229,7 +2229,7 @@
     <listitem>
      <para>
       Fix <application>pg_ctl</> to not go into an infinite loop if
-      <filename>postgresql.conf</> is empty (Jeff Davis)
+      <filename>mollydb.conf</> is empty (Jeff Davis)
      </para>
     </listitem>
 
@@ -5369,7 +5369,7 @@
      <listitem>
       <para>
        Add support for <link linkend="config-setting">include
-       directives</link> in <filename>postgresql.conf</> (Joachim
+       directives</link> in <filename>mollydb.conf</> (Joachim
        Wieland)
       </para>
      </listitem>
@@ -5938,7 +5938,7 @@
 
       <para>
        This makes it more likely that the installed
-       <filename>postgresql.conf</> <varname>DateStyle</> value will
+       <filename>mollydb.conf</> <varname>DateStyle</> value will
        be as desired.
       </para>
      </listitem>

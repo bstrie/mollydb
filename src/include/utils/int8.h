@@ -13,7 +13,7 @@
  * These data types are supported on all 64-bit architectures, and may
  *	be supported through libraries on some 32-bit machines. If your machine
  *	is not currently supported, then please try to make it so, then post
- *	patches to the postgresql.org hackers mailing list.
+ *	patches to the mollydb.org hackers mailing list.
  *
  *-------------------------------------------------------------------------
  */

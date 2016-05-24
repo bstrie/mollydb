@@ -3188,7 +3188,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
       A useful side effect of this change is to simplify
       <literal>make check</> testing in builds that
       override <literal>DEFAULT_PGSOCKET_DIR</>.  Popular non-default values
-      like <filename>/var/run/postgresql</> are often not writable by the
+      like <filename>/var/run/mollydb</> are often not writable by the
       build user, requiring workarounds that will no longer be necessary.
      </para>
     </listitem>
@@ -9293,7 +9293,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
        <para>
         Allow <link
         linkend="recovery-config"><filename>recovery.conf</></link>
-        to use the same quoting behavior as <filename>postgresql.conf</>
+        to use the same quoting behavior as <filename>mollydb.conf</>
         (Dimitri Fontaine)
        </para>
 

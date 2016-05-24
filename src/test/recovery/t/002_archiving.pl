@@ -24,7 +24,7 @@ my $node_standby = get_new_node('standby');
 $node_standby->init_from_backup($node_master, $backup_name,
 	has_restoring => 1);
 $node_standby->append_conf(
-	'postgresql.conf', qq(
+	'mollydb.conf', qq(
 wal_retrieve_retry_interval = '100ms'
 ));
 $node_standby->start;

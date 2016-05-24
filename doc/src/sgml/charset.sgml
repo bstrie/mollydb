@@ -159,9 +159,9 @@ initdb --locale=sv_SE
     that have the same name as the locale categories (see <xref
     linkend="runtime-config-client-format"> for details).  The values
     that are chosen by <command>initdb</command> are actually only written
-    into the configuration file <filename>postgresql.conf</filename> to
+    into the configuration file <filename>mollydb.conf</filename> to
     serve as defaults when the server is started.  If you remove these
-    assignments from <filename>postgresql.conf</filename> then the
+    assignments from <filename>mollydb.conf</filename> then the
     server will inherit the settings from its execution environment.
    </para>
 

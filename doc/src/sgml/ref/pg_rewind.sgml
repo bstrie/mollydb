@@ -89,7 +89,7 @@ PostgreSQL documentation
   <para>
    <application>pg_rewind</> requires that the target server either has
    the <xref linkend="guc-wal-log-hints"> option is enabled
-   in <filename>postgresql.conf</> or that data checksums were enabled when
+   in <filename>mollydb.conf</> or that data checksums were enabled when
    the cluster was initialized with <application>initdb</>.  Neither of these
    are currently on by default.
    <xref linkend="guc-full-page-writes"> must also be enabled.  That is the

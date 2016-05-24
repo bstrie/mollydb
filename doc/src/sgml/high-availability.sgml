@@ -2019,7 +2019,7 @@ if (!triggered)
 
    <para>
     If <varname>hot_standby</> is turned <literal>on</> in
-    <filename>postgresql.conf</> and there is a <filename>recovery.conf</>
+    <filename>mollydb.conf</> and there is a <filename>recovery.conf</>
     file present, the server will run in Hot Standby mode.
     However, it may take some time for Hot Standby connections to be allowed,
     because the server will not accept connections until it has completed

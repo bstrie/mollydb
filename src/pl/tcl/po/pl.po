@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pltcl (PostgreSQL 9.5)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-10-29 01:37+0000\n"
 "PO-Revision-Date: 2015-12-22 21:19-0500\n"
 "Last-Translator: grzegorz <begina.felicysym@wp.eu>\n"

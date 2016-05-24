@@ -1052,7 +1052,7 @@ CreateUserStmt:
 
 /*****************************************************************************
  *
- * Alter a postgresql DBMS role
+ * Alter a mollydb DBMS role
  *
  *****************************************************************************/
 
@@ -1094,7 +1094,7 @@ AlterRoleSetStmt:
 
 /*****************************************************************************
  *
- * Alter a postgresql DBMS user
+ * Alter a mollydb DBMS user
  *
  *****************************************************************************/
 
@@ -1124,7 +1124,7 @@ AlterUserSetStmt:
 
 /*****************************************************************************
  *
- * Drop a postgresql DBMS role
+ * Drop a mollydb DBMS role
  *
  * XXX Ideally this would have CASCADE/RESTRICT options, but since a role
  * might own objects in multiple databases, there is presently no way to
@@ -1150,7 +1150,7 @@ DropRoleStmt:
 
 /*****************************************************************************
  *
- * Drop a postgresql DBMS user
+ * Drop a mollydb DBMS user
  *
  * XXX Ideally this would have CASCADE/RESTRICT options, but since a user
  * might own objects in multiple databases, there is presently no way to
@@ -1177,7 +1177,7 @@ DropUserStmt:
 
 /*****************************************************************************
  *
- * Create a postgresql group (role without login ability)
+ * Create a mollydb group (role without login ability)
  *
  *****************************************************************************/
 
@@ -1195,7 +1195,7 @@ CreateGroupStmt:
 
 /*****************************************************************************
  *
- * Alter a postgresql group
+ * Alter a mollydb group
  *
  *****************************************************************************/
 
@@ -1218,7 +1218,7 @@ add_drop:	ADD_P									{ $$ = +1; }
 
 /*****************************************************************************
  *
- * Drop a postgresql group
+ * Drop a mollydb group
  *
  * XXX see above notes about cascading DROP USER; groups have same problem.
  *****************************************************************************/

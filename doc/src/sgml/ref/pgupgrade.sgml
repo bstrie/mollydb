@@ -304,8 +304,8 @@ pg_ctl -D /opt/PostgreSQL/9.0 stop
      or on Windows, using the proper service names:
 
 <programlisting>
-NET STOP postgresql-8.4
-NET STOP postgresql-9.0
+NET STOP mollydb-8.4
+NET STOP mollydb-9.0
 </programlisting>
     </para>
 
@@ -467,7 +467,7 @@ pg_upgrade.exe
 
       <para>
        Save any configuration files from the standbys you need to keep,
-       e.g.  <filename>postgresql.conf</>, <literal>recovery.conf</>,
+       e.g.  <filename>mollydb.conf</>, <literal>recovery.conf</>,
        as these will be overwritten or removed in the next step.
       </para>
      </step>
@@ -477,7 +477,7 @@ pg_upgrade.exe
 
       <para>
        In the new master cluster, change <varname>wal_level</> to
-       <literal>replica</> in the <filename>postgresql.conf</> file
+       <literal>replica</> in the <filename>mollydb.conf</> file
        and then start and stop the cluster.
       </para>
      </step>
@@ -535,7 +535,7 @@ rsync --archive --delete --hard-links --size-only old_pgdata new_pgdata remote_d
     <para>
      If you modified <filename>pg_hba.conf</>, restore its original settings.
      It might also be necessary to adjust other configuration files in the new
-     cluster to match the old cluster, e.g. <filename>postgresql.conf</>.
+     cluster to match the old cluster, e.g. <filename>mollydb.conf</>.
     </para>
    </step>
 

@@ -94,7 +94,7 @@ Policy from config file:        targeted
   <para>
    To use this module, you must include <literal>sepgsql</>
    in the <xref linkend="guc-shared-preload-libraries"> parameter in
-   <filename>postgresql.conf</>.  The module will not function correctly
+   <filename>mollydb.conf</>.  The module will not function correctly
    if loaded in any other manner.  Once the module is loaded, you
    should execute <filename>sepgsql.sql</filename> in each database.
    This will install functions needed for security label management, and
@@ -110,7 +110,7 @@ Policy from config file:        targeted
 <screen>
 $ export PGDATA=/path/to/data/directory
 $ initdb
-$ vi $PGDATA/postgresql.conf
+$ vi $PGDATA/mollydb.conf
   change
     #shared_preload_libraries = ''                # (change requires restart)
   to
@@ -267,7 +267,7 @@ $ sudo semodule -r sepgsql-regtest
       This parameter enables <filename>sepgsql</> to function
       in permissive mode, regardless of the system setting.
       The default is off.
-      This parameter can only be set in the <filename>postgresql.conf</>
+      This parameter can only be set in the <filename>mollydb.conf</>
       file or on the server command line.
      </para>
 
@@ -753,7 +753,7 @@ ERROR:  SELinux: security policy violation
   <title>External Resources</title>
   <variablelist>
    <varlistentry>
-    <term><ulink url="http://wiki.postgresql.org/wiki/SEPostgreSQL">SE-PostgreSQL Introduction</ulink></term>
+    <term><ulink url="http://wiki.mollydb.org/wiki/SEPostgreSQL">SE-PostgreSQL Introduction</ulink></term>
     <listitem>
      <para>
       This wiki page provides a brief overview, security design, architecture,

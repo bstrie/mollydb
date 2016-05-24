@@ -20,11 +20,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9 current\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-29 22:14+0000\n"
 "PO-Revision-Date: 2015-12-31 14:51+0300\n"
 "Last-Translator: Alexander Lakhin <exclusion@gmail.com>\n"
-"Language-Team: Russian <pgsql-translators@postgresql.org>\n"
+"Language-Team: Russian <pgsql-translators@mollydb.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -93,8 +93,8 @@ msgstr ""
 
 #: pg_controldata.c:44
 #, c-format
-msgid "Report bugs to <pgsql-bugs@postgresql.org>.\n"
-msgstr "Об ошибках сообщайте по адресу <pgsql-bugs@postgresql.org>.\n"
+msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
+msgstr "Об ошибках сообщайте по адресу <pgsql-bugs@mollydb.org>.\n"
 
 #: pg_controldata.c:54
 msgid "starting up"

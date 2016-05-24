@@ -399,7 +399,7 @@ dropdb <replaceable class="parameter">dbname</replaceable>
    linkend="sql-createtablespace">
    command, for example:<indexterm><primary>CREATE TABLESPACE</></>:
 <programlisting>
-CREATE TABLESPACE fastspace LOCATION '/ssd1/postgresql/data';
+CREATE TABLESPACE fastspace LOCATION '/ssd1/mollydb/data';
 </programlisting>
    The location must be an existing, empty directory that is owned by
    the <productname>PostgreSQL</> operating system user.  All objects subsequently

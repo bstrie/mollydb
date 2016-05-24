@@ -10,7 +10,7 @@
    slightly modified)
  */
 
-/* Taken over as part of PostgreSQL by Michael Meskes <meskes@postgresql.org>
+/* Taken over as part of PostgreSQL by Michael Meskes <meskes@mollydb.org>
    on Feb. 5th, 1998 */
 
 #define POSTGRES_ECPG_INTERNAL

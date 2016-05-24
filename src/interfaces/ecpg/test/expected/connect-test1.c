@@ -63,14 +63,14 @@ main(void)
 	/* exec sql connect to :@TEMP_PORT@ as main user connectdb;
 	exec sql disconnect main; */
 
-	{ ECPGconnect(__LINE__, 0, "tcp:postgresql://localhost/connectdb" , "connectuser" , "connectpw" , NULL, 0); }
+	{ ECPGconnect(__LINE__, 0, "tcp:mollydb://localhost/connectdb" , "connectuser" , "connectpw" , NULL, 0); }
 #line 35 "test1.pgc"
 
 	{ ECPGdisconnect(__LINE__, "CURRENT");}
 #line 36 "test1.pgc"
 
 
-	{ ECPGconnect(__LINE__, 0, "tcp:postgresql://localhost/" , "connectdb" , NULL , NULL, 0); }
+	{ ECPGconnect(__LINE__, 0, "tcp:mollydb://localhost/" , "connectdb" , NULL , NULL, 0); }
 #line 38 "test1.pgc"
 
 	{ ECPGdisconnect(__LINE__, "CURRENT");}
@@ -78,7 +78,7 @@ main(void)
 
 
 	strcpy(pw, "connectpw");
-	strcpy(db, "tcp:postgresql://localhost/connectdb");
+	strcpy(db, "tcp:mollydb://localhost/connectdb");
 	{ ECPGconnect(__LINE__, 0, db , "connectuser" , pw , NULL, 0); }
 #line 43 "test1.pgc"
 
@@ -86,14 +86,14 @@ main(void)
 #line 44 "test1.pgc"
 
 
-	{ ECPGconnect(__LINE__, 0, "unix:postgresql://localhost/connectdb" , "connectuser" , "connectpw" , NULL, 0); }
+	{ ECPGconnect(__LINE__, 0, "unix:mollydb://localhost/connectdb" , "connectuser" , "connectpw" , NULL, 0); }
 #line 46 "test1.pgc"
 
 	{ ECPGdisconnect(__LINE__, "CURRENT");}
 #line 47 "test1.pgc"
 
 
-	{ ECPGconnect(__LINE__, 0, "unix:postgresql://localhost/connectdb?connect_timeout=14" , "connectuser" , NULL , NULL, 0); }
+	{ ECPGconnect(__LINE__, 0, "unix:mollydb://localhost/connectdb?connect_timeout=14" , "connectuser" , NULL , NULL, 0); }
 #line 49 "test1.pgc"
 
 	{ ECPGdisconnect(__LINE__, "CURRENT");}
@@ -101,7 +101,7 @@ main(void)
 
 
 	/* wrong db */
-	{ ECPGconnect(__LINE__, 0, "tcp:postgresql://localhost/nonexistant" , "connectuser" , "connectpw" , NULL, 0); }
+	{ ECPGconnect(__LINE__, 0, "tcp:mollydb://localhost/nonexistant" , "connectuser" , "connectpw" , NULL, 0); }
 #line 53 "test1.pgc"
 
 	{ ECPGdisconnect(__LINE__, "CURRENT");}
@@ -109,13 +109,13 @@ main(void)
 
 
 	/* wrong port */
-	{ ECPGconnect(__LINE__, 0, "tcp:postgresql://localhost:20/connectdb" , "connectuser" , "connectpw" , NULL, 0); }
+	{ ECPGconnect(__LINE__, 0, "tcp:mollydb://localhost:20/connectdb" , "connectuser" , "connectpw" , NULL, 0); }
 #line 57 "test1.pgc"
 
 	/* no disconnect necessary */
 
 	/* wrong password */
-	{ ECPGconnect(__LINE__, 0, "unix:postgresql://localhost/connectdb" , "connectuser" , "wrongpw" , NULL, 0); }
+	{ ECPGconnect(__LINE__, 0, "unix:mollydb://localhost/connectdb" , "connectuser" , "wrongpw" , NULL, 0); }
 #line 61 "test1.pgc"
 
 	/* no disconnect necessary */

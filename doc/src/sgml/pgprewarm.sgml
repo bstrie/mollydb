@@ -61,7 +61,7 @@ pg_prewarm(regclass, mode text default 'buffer', fork text default 'main',
   <title>Author</title>
 
   <para>
-   Robert Haas <email>rhaas@postgresql.org</email>
+   Robert Haas <email>rhaas@mollydb.org</email>
   </para>
  </sect2>
 

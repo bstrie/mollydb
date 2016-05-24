@@ -58,7 +58,7 @@ sub configure_test_server_for_ssl
 	$node->psql('postgres', "CREATE DATABASE certdb");
 
 	# enable logging etc.
-	open CONF, ">>$pgdata/postgresql.conf";
+	open CONF, ">>$pgdata/mollydb.conf";
 	print CONF "fsync=off\n";
 	print CONF "log_connections=on\n";
 	print CONF "log_hostname=on\n";

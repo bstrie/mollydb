@@ -10116,13 +10116,13 @@ SELECT xml_is_well_formed('abc');
  t
 (1 row)
 
-SELECT xml_is_well_formed_document('<pg:foo xmlns:pg="http://postgresql.org/stuff">bar</pg:foo>');
+SELECT xml_is_well_formed_document('<pg:foo xmlns:pg="http://mollydb.org/stuff">bar</pg:foo>');
  xml_is_well_formed_document 
 -----------------------------
  t
 (1 row)
 
-SELECT xml_is_well_formed_document('<pg:foo xmlns:pg="http://postgresql.org/stuff">bar</my:foo>');
+SELECT xml_is_well_formed_document('<pg:foo xmlns:pg="http://mollydb.org/stuff">bar</my:foo>');
  xml_is_well_formed_document 
 -----------------------------
  f
@@ -15130,7 +15130,7 @@ SELECT * FROM pg_ls_dir('.') WITH ORDINALITY AS t(ls,n);
  pg_twophase     |  2
  postmaster.opts |  3
  pg_notify       |  4
- postgresql.conf |  5
+ mollydb.conf |  5
  pg_tblspc       |  6
  logfile         |  7
  base            |  8

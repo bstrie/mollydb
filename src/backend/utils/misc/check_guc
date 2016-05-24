@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## currently, this script makes a lot of assumptions:
-## in postgresql.conf.sample:
+## in mollydb.conf.sample:
 ##   1) the valid config settings may be preceded by a '#', but NOT '# '
 ##      (we use this to skip comments)
 ##   2) the valid config settings will be followed immediately by  ' ='
@@ -14,7 +14,7 @@
 ## 1) Don't know what to do with TRANSACTION ISOLATION LEVEL
 
 ## if an option is valid but shows up in only one file (guc.c but not
-## postgresql.conf.sample), it should be listed here so that it
+## mollydb.conf.sample), it should be listed here so that it
 ## can be ignored
 INTENTIONALLY_NOT_INCLUDED="debug_deadlocks \
 is_superuser lc_collate lc_ctype lc_messages lc_monetary lc_numeric lc_time \
@@ -23,11 +23,11 @@ session_authorization trace_lock_oidmin trace_lock_table trace_locks trace_lwloc
 trace_notify trace_userlocks transaction_isolation transaction_read_only \
 zero_damaged_pages"
 
-### What options are listed in postgresql.conf.sample, but don't appear
+### What options are listed in mollydb.conf.sample, but don't appear
 ### in guc.c?
 
 # grab everything that looks like a setting and convert it to lower case
-SETTINGS=`grep ' =' postgresql.conf.sample |
+SETTINGS=`grep ' =' mollydb.conf.sample |
 grep -v '^# ' | # strip comments
 sed -e 's/^#//' |
 awk '{print $1}'`
@@ -52,7 +52,7 @@ for i in $SETTINGS ; do
 done
 
 ### What options are listed in guc.c, but don't appear
-### in postgresql.conf.sample?
+### in mollydb.conf.sample?
 
 # grab everything that looks like a setting and convert it to lower case
 
@@ -70,9 +70,9 @@ for i in $SETTINGS ; do
     fi
   done
   if [ "$hidden" -eq 0 ] ; then
-    grep -i '#'$i' ' postgresql.conf.sample > /dev/null
+    grep -i '#'$i' ' mollydb.conf.sample > /dev/null
     if [ $? -ne 0 ] ; then
-      echo "$i seems to be missing from postgresql.conf.sample";
+      echo "$i seems to be missing from mollydb.conf.sample";
     fi
   fi
 done

@@ -2910,7 +2910,7 @@ CHECK ( outletID BETWEEN 200 AND 300 )
        <para>
         Ensure that the <xref linkend="guc-constraint-exclusion">
         configuration parameter is not disabled in
-        <filename>postgresql.conf</>.
+        <filename>mollydb.conf</>.
         If it is, queries will not be optimized as desired.
        </para>
       </listitem>

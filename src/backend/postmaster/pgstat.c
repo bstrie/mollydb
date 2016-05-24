@@ -557,7 +557,7 @@ startup_failed:
 	 * Adjust GUC variables to suppress useless activity, and for debugging
 	 * purposes (seeing track_counts off is a clue that we failed here). We
 	 * use PGC_S_OVERRIDE because there is no point in trying to turn it back
-	 * on from postgresql.conf without a restart.
+	 * on from mollydb.conf without a restart.
 	 */
 	SetConfigOption("track_counts", "off", PGC_INTERNAL, PGC_S_OVERRIDE);
 }

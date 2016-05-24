@@ -364,9 +364,9 @@ text @@ text
    <para>
     During installation an appropriate configuration is selected and
     <xref linkend="guc-default-text-search-config"> is set accordingly
-    in <filename>postgresql.conf</>.  If you are using the same text search
+    in <filename>mollydb.conf</>.  If you are using the same text search
     configuration for the entire cluster you can use the value in
-    <filename>postgresql.conf</>.  To use different configurations
+    <filename>mollydb.conf</>.  To use different configurations
     throughout the cluster but the same configuration within any one database,
     use <command>ALTER DATABASE ... SET</>.  Otherwise, you can set
     <varname>default_text_search_config</varname> in each session.
@@ -1956,12 +1956,12 @@ LIMIT 10;
      <row>
       <entry><literal>numhword</></entry>
       <entry>Hyphenated word, letters and digits</entry>
-      <entry><literal>postgresql-beta1</literal></entry>
+      <entry><literal>mollydb-beta1</literal></entry>
      </row>
      <row>
       <entry><literal>hword_asciipart</></entry>
       <entry>Hyphenated word part, all ASCII</entry>
-      <entry><literal>postgresql</literal> in the context <literal>postgresql-beta1</literal></entry>
+      <entry><literal>mollydb</literal> in the context <literal>mollydb-beta1</literal></entry>
      </row>
      <row>
       <entry><literal>hword_part</></entry>
@@ -1973,7 +1973,7 @@ LIMIT 10;
       <entry><literal>hword_numpart</></entry>
       <entry>Hyphenated word part, letters and digits</entry>
       <entry><literal>beta1</literal> in the context
-       <literal>postgresql-beta1</literal></entry>
+       <literal>mollydb-beta1</literal></entry>
      </row>
      <row>
       <entry><literal>email</></entry>
@@ -2324,7 +2324,7 @@ CREATE TEXT SEARCH DICTIONARY public.simple_dict (
     <filename>$SHAREDIR/tsearch_data/english.stop</>,
     where <literal>$SHAREDIR</> means the
     <productname>PostgreSQL</productname> installation's shared-data directory,
-    often <filename>/usr/local/share/postgresql</> (use <command>pg_config
+    often <filename>/usr/local/share/mollydb</> (use <command>pg_config
     --sharedir</> to determine it if you're not sure).
     The file format is simply a list
     of words, one per line.  Blank lines and trailing spaces are ignored,
@@ -2468,7 +2468,7 @@ SELECT * FROM ts_debug('english', 'Paris');
     <filename>$SHAREDIR/tsearch_data/synonym_sample.syn</>:
 <programlisting>
 postgres        pgsql
-postgresql      pgsql
+mollydb      pgsql
 postgre pgsql
 gogle   googl
 indices index*
@@ -2998,7 +2998,7 @@ CREATE TEXT SEARCH DICTIONARY english_stem (
     specifies the name of the default configuration, which is the
     one used by text search functions if an explicit configuration
     parameter is omitted.
-    It can be set in <filename>postgresql.conf</filename>, or set for an
+    It can be set in <filename>mollydb.conf</filename>, or set for an
     individual session using the <command>SET</> command.
    </para>
 
@@ -3028,7 +3028,7 @@ CREATE TEXT SEARCH CONFIGURATION public.pg ( COPY = pg_catalog.english );
 <programlisting>
 postgres    pg
 pgsql       pg
-postgresql  pg
+mollydb  pg
 </programlisting>
 
     We define the synonym dictionary like this:
@@ -3798,7 +3798,7 @@ Parser: "pg_catalog.default"
   <para>
    For comparison, the <productname>PostgreSQL</productname> 8.1 documentation
    contained 10,441 unique words, a total of 335,420 words, and the most
-   frequent word <quote>postgresql</> was mentioned 6,127 times in 655
+   frequent word <quote>mollydb</> was mentioned 6,127 times in 655
    documents.
   </para>
 

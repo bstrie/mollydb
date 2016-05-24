@@ -528,12 +528,12 @@ dir_strcmp(const char *s1, const char *s2)
  * return target_path as-is.
  *
  * For example:
- *		target_path  = '/usr/local/share/postgresql'
+ *		target_path  = '/usr/local/share/mollydb'
  *		bin_path	 = '/usr/local/bin'
  *		my_exec_path = '/opt/pgsql/bin/postmaster'
  * Given these inputs, the common prefix is '/usr/local/', the tail of
  * bin_path is 'bin' which does match the last directory component of
- * my_exec_path, so we would return '/opt/pgsql/share/postgresql'
+ * my_exec_path, so we would return '/opt/pgsql/share/mollydb'
  */
 static void
 make_relative_path(char *ret_path, const char *target_path,
@@ -829,7 +829,7 @@ get_home_path(char *ret_path)
 	tmppath = getenv("APPDATA");
 	if (!tmppath)
 		return false;
-	snprintf(ret_path, MAXPGPATH, "%s/postgresql", tmppath);
+	snprintf(ret_path, MAXPGPATH, "%s/mollydb", tmppath);
 	return true;
 #endif
 }

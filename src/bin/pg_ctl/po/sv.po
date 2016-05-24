@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-17 21:12+0000\n"
 "PO-Revision-Date: 2014-11-24 19:25+0100\n"
 "Last-Translator: Mats Erik Andersson <bsd@gisladisker.se>\n"
@@ -771,10 +771,10 @@ msgstr "  demand     starta tjänsten vid behov\n"
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Rapportera fel till <pgsql-bugs@postgresql.org>.\n"
+"Rapportera fel till <pgsql-bugs@mollydb.org>.\n"
 
 #: pg_ctl.c:1947
 #, c-format

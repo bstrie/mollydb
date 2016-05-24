@@ -7,16 +7,16 @@
 # as is used on Linux systems.  You should edit some of the variables
 # and maybe the 'echo' commands.
 #
-# Place this file at /etc/init.d/postgresql (or
-# /etc/rc.d/init.d/postgresql) and make symlinks to
-#   /etc/rc.d/rc0.d/K02postgresql
-#   /etc/rc.d/rc1.d/K02postgresql
-#   /etc/rc.d/rc2.d/K02postgresql
-#   /etc/rc.d/rc3.d/S98postgresql
-#   /etc/rc.d/rc4.d/S98postgresql
-#   /etc/rc.d/rc5.d/S98postgresql
+# Place this file at /etc/init.d/mollydb (or
+# /etc/rc.d/init.d/mollydb) and make symlinks to
+#   /etc/rc.d/rc0.d/K02mollydb
+#   /etc/rc.d/rc1.d/K02mollydb
+#   /etc/rc.d/rc2.d/K02mollydb
+#   /etc/rc.d/rc3.d/S98mollydb
+#   /etc/rc.d/rc4.d/S98mollydb
+#   /etc/rc.d/rc5.d/S98mollydb
 # Or, if you have chkconfig, simply:
-# chkconfig --add postgresql
+# chkconfig --add mollydb
 #
 # Proper init scripts on Linux systems normally require setting lock
 # and pid files under /var/run as well as reacting to network

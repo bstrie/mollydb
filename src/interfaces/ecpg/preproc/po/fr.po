@@ -8,11 +8,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.6\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-05-17 11:07+0000\n"
 "PO-Revision-Date: 2014-05-17 15:23+0100\n"
 "Last-Translator: Guillaume Lelarge <guillaume@lelarge.info>\n"
-"Language-Team: PostgreSQLfr <pgsql-fr-generale@postgresql.org>\n"
+"Language-Team: PostgreSQLfr <pgsql-fr-generale@mollydb.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
@@ -178,10 +178,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Rapporter les bogues à <pgsql-bugs@postgresql.org>.\n"
+"Rapporter les bogues à <pgsql-bugs@mollydb.org>.\n"
 
 #: ecpg.c:143
 #, c-format
@@ -324,10 +324,10 @@ msgstr "erreur de syntaxe dans la commande EXEC SQL INCLUDE"
 #, c-format
 msgid ""
 "internal error: unreachable state; please report this to <pgsql-"
-"bugs@postgresql.org>"
+"bugs@mollydb.org>"
 msgstr ""
 "erreur interne : l'état ne peut être atteint ; merci de rapporter ceci à\n"
-"<pgsql-bugs@postgresql.org>"
+"<pgsql-bugs@mollydb.org>"
 
 #: pgc.l:1362
 #, c-format
@@ -470,11 +470,11 @@ msgstr "« @ » attendu, « %s » trouvé"
 #: preproc.y:13220
 #, c-format
 msgid ""
-"only protocols \"tcp\" and \"unix\" and database type \"postgresql\" are "
+"only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are "
 "supported"
 msgstr ""
 "seuls les protocoles « tcp » et « unix » et les types de base de données\n"
-"« postgresql » sont supportés"
+"« mollydb » sont supportés"
 
 #: preproc.y:13223
 #, c-format
@@ -490,8 +490,8 @@ msgstr ""
 
 #: preproc.y:13254
 #, c-format
-msgid "expected \"postgresql\", found \"%s\""
-msgstr "« postgresql » attendu, « %s » trouvé"
+msgid "expected \"mollydb\", found \"%s\""
+msgstr "« mollydb » attendu, « %s » trouvé"
 
 #: preproc.y:13257
 #, c-format

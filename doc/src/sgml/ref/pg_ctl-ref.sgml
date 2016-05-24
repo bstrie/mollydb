@@ -197,7 +197,7 @@ PostgreSQL documentation
    <option>reload</option> mode simply sends the
    <command>postgres</command> process a <systemitem>SIGHUP</>
    signal, causing it to reread its configuration files
-   (<filename>postgresql.conf</filename>,
+   (<filename>mollydb.conf</filename>,
    <filename>pg_hba.conf</filename>, etc.).  This allows changing of
    configuration-file options that do not require a complete restart
    to take effect.

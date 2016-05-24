@@ -1,4 +1,4 @@
-# Swedish message translation file for postgresql
+# Swedish message translation file for mollydb
 # Dennis Björklund <db@zigo.dhs.org>, 2003, 2004, 2005, 2006.
 # Peter Eisentraut <peter_e@gmx.net>, 2013.
 # Mats Erik Andersson <bsd@gisladisker.se>, 2014.
@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-28 12:42+0000\n"
 "PO-Revision-Date: 2014-11-28 16:40+0100\n"
 "Last-Translator: Mats Erik Andersson <bsd@gisladisker.se>\n"
@@ -219,10 +219,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Rapportera fel till <pgsql-bugs@postgresql.org>.\n"
+"Rapportera fel till <pgsql-bugs@mollydb.org>.\n"
 
 #: common.c:69 common.c:115
 msgid "Password: "

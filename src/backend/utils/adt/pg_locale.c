@@ -342,7 +342,7 @@ assign_locale_time(const char *newval, void *extra)
  * is the value passed for PGC_S_DEFAULT, so don't complain in that case,
  * not even if the attempted setting fails due to invalid environment value.
  * The idea there is just to accept the environment setting *if possible*
- * during startup, until we can read the proper value from postgresql.conf.
+ * during startup, until we can read the proper value from mollydb.conf.
  */
 bool
 check_locale_messages(char **newval, void **extra, GucSource source)

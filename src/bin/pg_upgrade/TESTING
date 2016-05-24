@@ -75,7 +75,7 @@ When invoked without arguments, it will run an upgrade from the
 version in this source tree to a new instance of the same version.  To
 test an upgrade from a different version, invoke it like this:
 
-    make installcheck oldbindir=...otherversion/bin oldsrc=...somewhere/postgresql
+    make installcheck oldbindir=...otherversion/bin oldsrc=...somewhere/mollydb
 
 In this case, you will have to manually eyeball the resulting dump
 diff for version-specific differences, as explained above.

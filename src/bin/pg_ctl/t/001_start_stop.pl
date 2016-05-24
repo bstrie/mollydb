@@ -20,7 +20,7 @@ command_ok([ 'pg_ctl', 'initdb', '-D', "$tempdir/data", '-o', '-N' ],
 	'pg_ctl initdb');
 command_ok([ $ENV{PG_REGRESS}, '--config-auth', "$tempdir/data" ],
 	'configure authentication');
-open CONF, ">>$tempdir/data/postgresql.conf";
+open CONF, ">>$tempdir/data/mollydb.conf";
 print CONF "fsync = off\n";
 if (!$windows_os)
 {

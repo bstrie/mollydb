@@ -5,7 +5,7 @@ Typical markup:
 
 &<>                             use & escapes
 PostgreSQL                      <productname>
-postgresql.conf, pg_hba.conf,
+mollydb.conf, pg_hba.conf,
         recovery.conf           <filename>
 [A-Z][A-Z_ ]+[A-Z_]             <command>, <literal>, <envar>, <acronym>
 [A-Za-z_][A-Za-z0-9_]+()        <function>
@@ -55,9 +55,9 @@ For new features, add links to the documentation sections.
    A complete list of changes for each release can be obtained by
    viewing the <link linkend="git">Git</link> logs for each release.
    The <ulink
-   url="http://archives.postgresql.org/pgsql-committers/"><literal>pgsql-committers</literal>
+   url="http://archives.mollydb.org/pgsql-committers/"><literal>pgsql-committers</literal>
    email list</ulink> records all source code changes as well.  There is also
-   a <ulink url="http://git.postgresql.org/gitweb?p=postgresql.git;a=summary">web
+   a <ulink url="http://git.mollydb.org/gitweb?p=mollydb.git;a=summary">web
    interface</ulink> that shows changes to specific files.
   </para>
 

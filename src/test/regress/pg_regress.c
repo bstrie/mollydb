@@ -1988,7 +1988,7 @@ help(void)
 	printf(_("The exit status is 0 if all tests passed, 1 if some tests failed, and 2\n"));
 	printf(_("if the tests could not be run for some reason.\n"));
 	printf(_("\n"));
-	printf(_("Report bugs to <pgsql-bugs@postgresql.org>.\n"));
+	printf(_("Report bugs to <pgsql-bugs@mollydb.org>.\n"));
 }
 
 int
@@ -2230,14 +2230,14 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 		}
 
 		/*
-		 * Adjust the default postgresql.conf for regression testing. The user
+		 * Adjust the default mollydb.conf for regression testing. The user
 		 * can specify a file to be appended; in any case we expand logging
 		 * and set max_prepared_transactions to enable testing of prepared
 		 * xacts.  (Note: to reduce the probability of unexpected shmmax
 		 * failures, don't set max_prepared_transactions any higher than
 		 * actually needed by the prepared_xacts regression test.)
 		 */
-		snprintf(buf, sizeof(buf), "%s/data/postgresql.conf", temp_instance);
+		snprintf(buf, sizeof(buf), "%s/data/mollydb.conf", temp_instance);
 		pg_conf = fopen(buf, "a");
 		if (pg_conf == NULL)
 		{

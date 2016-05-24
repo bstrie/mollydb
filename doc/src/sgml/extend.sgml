@@ -411,7 +411,7 @@
 
     <para>
      The file format for an extension control file is the same as for the
-     <filename>postgresql.conf</> file, namely a list of
+     <filename>mollydb.conf</> file, namely a list of
      <replaceable>parameter_name</> <literal>=</> <replaceable>value</>
      assignments, one per line.  Blank lines and comments introduced by
      <literal>#</> are allowed.  Be sure to quote any value that is not

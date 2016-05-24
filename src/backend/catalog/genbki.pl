@@ -500,6 +500,6 @@ genbki.pl generates BKI files from specially formatted
 header files.  These BKI files are used to initialize the
 postgres template database.
 
-Report bugs to <pgsql-bugs\@postgresql.org>.
+Report bugs to <pgsql-bugs\@mollydb.org>.
 EOM
 }

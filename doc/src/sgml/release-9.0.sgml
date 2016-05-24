@@ -2049,7 +2049,7 @@
       A useful side effect of this change is to simplify
       <literal>make check</> testing in builds that
       override <literal>DEFAULT_PGSOCKET_DIR</>.  Popular non-default values
-      like <filename>/var/run/postgresql</> are often not writable by the
+      like <filename>/var/run/mollydb</> are often not writable by the
       build user, requiring workarounds that will no longer be necessary.
      </para>
     </listitem>
@@ -6327,7 +6327,7 @@
     <listitem>
      <para>
       Fix failure when adding a new variable of a custom variable class to
-      <filename>postgresql.conf</> (Tom Lane)
+      <filename>mollydb.conf</> (Tom Lane)
      </para>
     </listitem>
 
@@ -6623,8 +6623,8 @@
     <application>pg_upgrade</>.  The recommended solution is to run
     <command>VACUUM FREEZE</> on all TOAST tables.
     More information is available at <ulink
-    url="http://wiki.postgresql.org/wiki/20110408pg_upgrade_fix">
-    http://wiki.postgresql.org/wiki/20110408pg_upgrade_fix</ulink>.
+    url="http://wiki.mollydb.org/wiki/20110408pg_upgrade_fix">
+    http://wiki.mollydb.org/wiki/20110408pg_upgrade_fix</ulink>.
    </para>
 
   </sect2>
@@ -8240,7 +8240,7 @@
 
       <para>
        This feature is called Hot Standby. There are new
-       <filename>postgresql.conf</> and <filename>recovery.conf</>
+       <filename>mollydb.conf</> and <filename>recovery.conf</>
        settings to control this feature, as well as extensive
        <link linkend="hot-standby">documentation</link>.
       </para>
@@ -8258,7 +8258,7 @@
        in units of entire <acronym>WAL</> files (normally 16 megabytes each).
        Streaming Replication eliminates this inefficiency and allows updates
        on the master to be propagated to standby servers with very little
-       delay.  There are new <filename>postgresql.conf</> and
+       delay.  There are new <filename>mollydb.conf</> and
        <filename>recovery.conf</> settings to control this feature, as well as
        extensive <link linkend="streaming-replication">documentation</link>.
       </para>
@@ -8666,14 +8666,14 @@
 
      <listitem>
       <para>
-       Log changes of parameter values when <filename>postgresql.conf</> is
+       Log changes of parameter values when <filename>mollydb.conf</> is
        reloaded (Peter Eisentraut)
       </para>
 
       <para>
        This lets administrators and security staff audit changes of database
        settings, and is also very convenient for checking the effects of
-       <filename>postgresql.conf</> edits.
+       <filename>mollydb.conf</> edits.
       </para>
      </listitem>
 

@@ -9,7 +9,7 @@ use PostgresNode;
 
 my $node = get_new_node();
 $node->init;
-$node->append_conf('postgresql.conf', 'track_commit_timestamp = on');
+$node->append_conf('mollydb.conf', 'track_commit_timestamp = on');
 $node->start;
 
 # Create a table, compare "now()" to the commit TS of its xmin

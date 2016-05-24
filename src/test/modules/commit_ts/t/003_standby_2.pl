@@ -10,7 +10,7 @@ use PostgresNode;
 my $bkplabel = 'backup';
 my $master = get_new_node('master');
 $master->init(allows_streaming => 1);
-$master->append_conf('postgresql.conf', qq{
+$master->append_conf('mollydb.conf', qq{
 	track_commit_timestamp = on
 	max_wal_senders = 5
 	wal_level = hot_standby
@@ -26,7 +26,7 @@ for my $i (1 .. 10)
 {
 	$master->safe_psql('postgres', "create table t$i()");
 }
-$master->append_conf('postgresql.conf', 'track_commit_timestamp = off');
+$master->append_conf('mollydb.conf', 'track_commit_timestamp = off');
 $master->restart;
 $master->safe_psql('postgres', 'checkpoint');
 my $master_lsn = $master->safe_psql('postgres',
@@ -44,9 +44,9 @@ is($psql_ret, 3, 'expect error when getting commit timestamp after restart');
 is($standby_ts_stdout, '', "standby does not return a value after restart");
 like($standby_ts_stderr, qr/could not get commit timestamp data/, 'expected err msg after restart');
 
-$master->append_conf('postgresql.conf', 'track_commit_timestamp = on');
+$master->append_conf('mollydb.conf', 'track_commit_timestamp = on');
 $master->restart;
-$master->append_conf('postgresql.conf', 'track_commit_timestamp = off');
+$master->append_conf('mollydb.conf', 'track_commit_timestamp = off');
 $master->restart;
 
 system_or_bail('pg_ctl', '-w', '-D', $standby->data_dir, 'promote');

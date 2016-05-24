@@ -285,7 +285,7 @@ check_timezone(char **newval, void **extra, GucSource source)
 		 * Try to parse it.  XXX an invalid interval format will result in
 		 * ereport(ERROR), which is not desirable for GUC.  We did what we
 		 * could to guard against this in flatten_set_variable_args, but a
-		 * string coming in from postgresql.conf might contain anything.
+		 * string coming in from mollydb.conf might contain anything.
 		 */
 		interval = DatumGetIntervalP(DirectFunctionCall3(interval_in,
 														 CStringGetDatum(val),
@@ -694,7 +694,7 @@ check_client_encoding(char **newval, void **extra, GucSource source)
 	 * starting up, it will return "OK" anyway, and InitializeClientEncoding
 	 * will fix things once initialization is far enough along.  After
 	 * startup, we'll fail.  This would only happen if someone tries to change
-	 * client_encoding in postgresql.conf and then SIGHUP existing sessions.
+	 * client_encoding in mollydb.conf and then SIGHUP existing sessions.
 	 * It seems like a bad idea for client_encoding to change that way anyhow,
 	 * so we don't go out of our way to support it.
 	 *
@@ -788,7 +788,7 @@ check_session_authorization(char **newval, void **extra, GucSource source)
 	{
 		/*
 		 * Can't do catalog lookups, so fail.  The result of this is that
-		 * session_authorization cannot be set in postgresql.conf, which seems
+		 * session_authorization cannot be set in mollydb.conf, which seems
 		 * like a good thing anyway, so we don't work hard to avoid it.
 		 */
 		return false;
@@ -860,7 +860,7 @@ check_role(char **newval, void **extra, GucSource source)
 		{
 			/*
 			 * Can't do catalog lookups, so fail.  The result of this is that
-			 * role cannot be set in postgresql.conf, which seems like a good
+			 * role cannot be set in mollydb.conf, which seems like a good
 			 * thing anyway, so we don't work hard to avoid it.
 			 */
 			return false;

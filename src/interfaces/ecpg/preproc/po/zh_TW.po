@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.1\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2011-05-11 20:42+0000\n"
 "PO-Revision-Date: 2013-09-03 23:28-0400\n"
 "Last-Translator: Zhenbang Wei <znbang@gmail.com>\n"
@@ -168,10 +168,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"回報錯誤給 <pgsql-bugs@postgresql.org>。\n"
+"回報錯誤給 <pgsql-bugs@mollydb.org>。\n"
 
 #: ecpg.c:182 ecpg.c:333 ecpg.c:343
 #, c-format
@@ -290,8 +290,8 @@ msgstr "EXEC SQL INCLUDE 指令的語法錯誤"
 #: pgc.l:1217
 msgid ""
 "internal error: unreachable state; please report this to <pgsql-"
-"bugs@postgresql.org>"
-msgstr "內部錯誤: 無法連線狀態，請將錯誤回報給 <pgsql-bugs@postgresql.org>"
+"bugs@mollydb.org>"
+msgstr "內部錯誤: 無法連線狀態，請將錯誤回報給 <pgsql-bugs@mollydb.org>"
 
 #: pgc.l:1342
 #, c-format
@@ -430,9 +430,9 @@ msgstr "預期 \"@\"，找到 \"%s\""
 
 #: preproc.y:12405
 msgid ""
-"only protocols \"tcp\" and \"unix\" and database type \"postgresql\" are "
+"only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are "
 "supported"
-msgstr "只支援通訊協定 \"tcp\" 和 \"unix\" 以及資料庫類型 \"postgresql\""
+msgstr "只支援通訊協定 \"tcp\" 和 \"unix\" 以及資料庫類型 \"mollydb\""
 
 #: preproc.y:12408
 #, c-format
@@ -446,8 +446,8 @@ msgstr "Unix-可用域通訊端僅適用 \"localhost\"，不適用 \"%s\""
 
 #: preproc.y:12439
 #, c-format
-msgid "expected \"postgresql\", found \"%s\""
-msgstr "預期 \"postgresql\"，找到 \"%s\""
+msgid "expected \"mollydb\", found \"%s\""
+msgstr "預期 \"mollydb\"，找到 \"%s\""
 
 #: preproc.y:12442
 #, c-format

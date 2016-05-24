@@ -6,11 +6,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.0 beta 3\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 09:56+0900\n"
 "PO-Revision-Date: 2010-07-21 18:37+0900\n"
 "Last-Translator: HOTTA Michihide <hotta@net-newbie.com>\n"
-"Language-Team: jpug-doc <jpug-doc@ml.postgresql.jp>\n"
+"Language-Team: jpug-doc <jpug-doc@ml.mollydb.jp>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -169,10 +169,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"不具合は<pgsql-bugs@postgresql.org>に報告してください。\n"
+"不具合は<pgsql-bugs@mollydb.org>に報告してください。\n"
 
 #: ecpg.c:182 ecpg.c:333 ecpg.c:343
 #, c-format
@@ -301,8 +301,8 @@ msgstr "EXEC SQL INCLUDEコマンドにおいて構文エラーがあります"
 
 #: pgc.l:1218
 #, c-format
-msgid "internal error: unreachable state; please report this to <pgsql-bugs@postgresql.org>"
-msgstr "内部エラー: 到達しないはずの状態です。<pgsql-bugs@postgresql.org>まで報告してください"
+msgid "internal error: unreachable state; please report this to <pgsql-bugs@mollydb.org>"
+msgstr "内部エラー: 到達しないはずの状態です。<pgsql-bugs@mollydb.org>まで報告してください"
 
 #: pgc.l:1343
 #, c-format
@@ -437,8 +437,8 @@ msgstr "想定では\"@\"、結果では\"%s\""
 
 #: preproc.y:13005
 #, c-format
-msgid "only protocols \"tcp\" and \"unix\" and database type \"postgresql\" are supported"
-msgstr "プロトコルでは\"tcp\"および\"unix\"のみ、データベースの種類では\"postgresql\"のみがサポートされています"
+msgid "only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are supported"
+msgstr "プロトコルでは\"tcp\"および\"unix\"のみ、データベースの種類では\"mollydb\"のみがサポートされています"
 
 #: preproc.y:13008
 #, c-format
@@ -452,8 +452,8 @@ msgstr "Unixドメインソケットは\"localhost\"でのみで動作し、\"%s
 
 #: preproc.y:13039
 #, c-format
-msgid "expected \"postgresql\", found \"%s\""
-msgstr "想定では\"postgresql\"、結果では\"%s\""
+msgid "expected \"mollydb\", found \"%s\""
+msgstr "想定では\"mollydb\"、結果では\"%s\""
 
 #: preproc.y:13042
 #, c-format

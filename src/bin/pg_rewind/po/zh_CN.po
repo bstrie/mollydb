@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pg_rewind (PostgreSQL) 9.5\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:44+0000\n"
 "PO-Revision-Date: 2016-01-03 23:28-0500\n"
 "Last-Translator: Yuwei Peng <ywpeng@whu.edu.cn>\n"
@@ -488,10 +488,10 @@ msgstr "  -?, --help                     显示本帮助，然后退出\n"
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"报告错误至 <pgql-bugs@postgresql.org>.\n"
+"报告错误至 <pgql-bugs@mollydb.org>.\n"
 
 #: pg_rewind.c:125 pg_rewind.c:156 pg_rewind.c:163 pg_rewind.c:171
 #, c-format

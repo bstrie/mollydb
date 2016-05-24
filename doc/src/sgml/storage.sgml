@@ -31,7 +31,7 @@ managed by different server instances, can exist on the same machine.
 The <varname>PGDATA</> directory contains several subdirectories and control
 files, as shown in <xref linkend="pgdata-contents-table">.  In addition to
 these required items, the cluster configuration files
-<filename>postgresql.conf</filename>, <filename>pg_hba.conf</filename>, and
+<filename>mollydb.conf</filename>, <filename>pg_hba.conf</filename>, and
 <filename>pg_ident.conf</filename> are traditionally stored in
 <varname>PGDATA</>, although it is possible to place them elsewhere.
 </para>
@@ -146,7 +146,7 @@ Item
 </row>
 
 <row>
- <entry><filename>postgresql.auto.conf</></entry>
+ <entry><filename>mollydb.auto.conf</></entry>
  <entry>A file used for storing configuration parameters that are set by
 <command>ALTER SYSTEM</command></entry>
 </row>

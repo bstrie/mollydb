@@ -86,8 +86,8 @@ SELECT '9771234567898'::UPC; -- not a product
 SELECT '9790123456785'::UPC; -- not a product
 SELECT '9791234567896'::UPC; -- not a product
 
-SELECT 'postgresql...'::EAN13;
-SELECT 'postgresql...'::ISBN;
+SELECT 'mollydb...'::EAN13;
+SELECT 'mollydb...'::ISBN;
 SELECT 9780123456786::EAN13;
 SELECT 9780123456786::ISBN;
 

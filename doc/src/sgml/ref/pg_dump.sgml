@@ -971,7 +971,7 @@ PostgreSQL documentation
       <para>
        If this parameter contains an <symbol>=</symbol> sign or starts
        with a valid <acronym>URI</acronym> prefix
-       (<literal>postgresql://</literal>
+       (<literal>mollydb://</literal>
        or <literal>postgres://</literal>), it is treated as a
        <parameter>conninfo</parameter> string. See <xref linkend="libpq-connect"> for more information.
       </para>

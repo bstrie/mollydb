@@ -2054,7 +2054,7 @@ static int
 uri_prefix_length(const char *connstr)
 {
 	/* The connection URI must start with either of the following designators: */
-	static const char uri_designator[] = "postgresql://";
+	static const char uri_designator[] = "mollydb://";
 	static const char short_uri_designator[] = "postgres://";
 
 	if (strncmp(connstr, uri_designator,

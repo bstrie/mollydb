@@ -15,7 +15,7 @@
  <para>
   The module must be loaded by adding <literal>pg_stat_statements</> to
   <xref linkend="guc-shared-preload-libraries"> in
-  <filename>postgresql.conf</>, because it requires additional shared memory.
+  <filename>mollydb.conf</>, because it requires additional shared memory.
   This means that a server restart is needed to add or remove the module.
  </para>
 
@@ -439,7 +439,7 @@
       If it is <literal>off</> then statistics are not saved at
       shutdown nor reloaded at server start.
       The default value is <literal>on</>.
-      This parameter can only be set in the <filename>postgresql.conf</>
+      This parameter can only be set in the <filename>mollydb.conf</>
       file or on the server command line.
      </para>
     </listitem>
@@ -454,11 +454,11 @@
   </para>
 
   <para>
-   These parameters must be set in <filename>postgresql.conf</>.
+   These parameters must be set in <filename>mollydb.conf</>.
    Typical usage might be:
 
 <programlisting>
-# postgresql.conf
+# mollydb.conf
 shared_preload_libraries = 'pg_stat_statements'
 
 pg_stat_statements.max = 10000

@@ -23,7 +23,7 @@ standard_initdb() {
 	"$1" -N
 	if [ -n "$TEMP_CONFIG" -a -r "$TEMP_CONFIG" ]
 	then
-		cat "$TEMP_CONFIG" >> "$PGDATA/postgresql.conf"
+		cat "$TEMP_CONFIG" >> "$PGDATA/mollydb.conf"
 	fi
 	../../test/regress/pg_regress --config-auth "$PGDATA"
 }

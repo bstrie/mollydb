@@ -1612,7 +1612,7 @@ host ... ldap ldapurl="ldap://ldap.example.net/dc=example,dc=net?uid?sub"
          identifying for example which database user the user is attempting
          to authenticate as, which can be used for policy matching on
          the RADIUS server. If no identifier is specified, the default
-         <literal>postgresql</> will be used.
+         <literal>mollydb</> will be used.
         </para>
        </listitem>
       </varlistentry>
@@ -1668,7 +1668,7 @@ host ... ldap ldapurl="ldap://ldap.example.net/dc=example,dc=net?uid?sub"
     This authentication method operates similarly to
     <literal>password</literal> except that it uses PAM (Pluggable
     Authentication Modules) as the authentication mechanism. The
-    default PAM service name is <literal>postgresql</literal>.
+    default PAM service name is <literal>mollydb</literal>.
     PAM is used only to validate user name/password pairs and optionally the
     connected remote host name or IP address. Therefore the user must already
     exist in the database before PAM can be used for authentication.  For more
@@ -1734,8 +1734,8 @@ host ... ldap ldapurl="ldap://ldap.example.net/dc=example,dc=net?uid?sub"
 
    <para>
     BSD Authentication in <productname>PostgreSQL</> uses
-    the <literal>auth-postgresql</literal> login type and authenticates with
-    the <literal>postgresql</literal> login class if that's defined
+    the <literal>auth-mollydb</literal> login type and authenticates with
+    the <literal>mollydb</literal> login class if that's defined
     in <filename>login.conf</filename>. By default that login class does not
     exist, and <productname>PostgreSQL</> will use the default login class.
    </para>

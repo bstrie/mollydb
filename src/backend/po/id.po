@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-03-15 18:13+0000\n"
 "PO-Revision-Date: 2015-11-12 15:44-0300\n"
 "Last-Translator: \n"
@@ -39,8 +39,8 @@ msgstr "tidak dapat menentukan encoding untuk lokal « %s » : codesetnya adalah
 
 #: ../port/chklocale.c:360
 #, c-format
-msgid "Please report this to <pgsql-bugs@postgresql.org>."
-msgstr "Tolong laporkan ke <pgsql-bugs@postgresql.org>."
+msgid "Please report this to <pgsql-bugs@mollydb.org>."
+msgstr "Tolong laporkan ke <pgsql-bugs@mollydb.org>."
 
 #: ../port/dirmod.c:217
 #, c-format
@@ -9455,8 +9455,8 @@ msgstr "hotssl membutuhkan SSL untuk dihidupkan"
 
 #: libpq/hba.c:901
 #, c-format
-msgid "Set ssl = on in postgresql.conf."
-msgstr "Mengatur ssl = didalam postgresql.conf."
+msgid "Set ssl = on in mollydb.conf."
+msgstr "Mengatur ssl = didalam mollydb.conf."
 
 #: libpq/hba.c:909
 #, c-format
@@ -10101,14 +10101,14 @@ msgid ""
 "configuration settings and how to set them on the command line or in\n"
 "the configuration file.\n"
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
 "Silahkan baca dokumentasi untuk daftar lengkap dari pengaturan \n"
 "konfigurasi run-time dan bagaimana mengatur pada command line \n"
 "atau dalam file konfigurasi.\n"
 "\n"
-"Laporkan bugs kepada <pgsql-bugs@postgresql.org>.\n"
+"Laporkan bugs kepada <pgsql-bugs@mollydb.org>.\n"
 
 #: main/main.c:348
 #, c-format

@@ -192,11 +192,11 @@ sub run_pg_rewind
 	# The real testing begins really now with a bifurcation of the possible
 	# scenarios that pg_rewind supports.
 
-	# Keep a temporary postgresql.conf for master node or it would be
+	# Keep a temporary mollydb.conf for master node or it would be
 	# overwritten during the rewind.
 	copy(
-		"$master_pgdata/postgresql.conf",
-		"$tmp_folder/master-postgresql.conf.tmp");
+		"$master_pgdata/mollydb.conf",
+		"$tmp_folder/master-mollydb.conf.tmp");
 
 	# Now run pg_rewind
 	if ($test_mode eq "local")
@@ -229,10 +229,10 @@ sub run_pg_rewind
 		die("Incorrect test mode specified");
 	}
 
-	# Now move back postgresql.conf with old settings
+	# Now move back mollydb.conf with old settings
 	move(
-		"$tmp_folder/master-postgresql.conf.tmp",
-		"$master_pgdata/postgresql.conf");
+		"$tmp_folder/master-mollydb.conf.tmp",
+		"$master_pgdata/mollydb.conf");
 
 	# Plug-in rewound node to the now-promoted standby node
 	my $port_standby = $node_standby->port;

@@ -324,7 +324,7 @@ static const PQEnvironmentOption EnvironmentOptions[] =
 };
 
 /* The connection URI must start with either of the following designators: */
-static const char uri_designator[] = "postgresql://";
+static const char uri_designator[] = "mollydb://";
 static const char short_uri_designator[] = "postgres://";
 
 static bool connectOptions1(PGconn *conn, const char *conninfo);
@@ -4713,7 +4713,7 @@ conninfo_uri_parse(const char *uri, PQExpBuffer errorMessage,
  * Parses the connection URI string in 'uri' according to the URI syntax (RFC
  * 3986):
  *
- * postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]
+ * mollydb://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]
  *
  * where "netloc" is a hostname, an IPv4 address, or an IPv6 address surrounded
  * by literal square brackets.
@@ -5892,7 +5892,7 @@ pqGetHomeDirectory(char *buf, int bufsize)
 	ZeroMemory(tmppath, sizeof(tmppath));
 	if (SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, tmppath) != S_OK)
 		return false;
-	snprintf(buf, bufsize, "%s/postgresql", tmppath);
+	snprintf(buf, bufsize, "%s/mollydb", tmppath);
 	return true;
 #endif
 }

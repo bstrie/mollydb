@@ -1,88 +1,88 @@
-trying postgresql://uri-user:secret@host:12345/db
+trying mollydb://uri-user:secret@host:12345/db
 user='uri-user' password='secret' dbname='db' host='host' port='12345' (inet)
 
-trying postgresql://uri-user@host:12345/db
+trying mollydb://uri-user@host:12345/db
 user='uri-user' dbname='db' host='host' port='12345' (inet)
 
-trying postgresql://uri-user@host/db
+trying mollydb://uri-user@host/db
 user='uri-user' dbname='db' host='host' (inet)
 
-trying postgresql://host:12345/db
+trying mollydb://host:12345/db
 dbname='db' host='host' port='12345' (inet)
 
-trying postgresql://host/db
+trying mollydb://host/db
 dbname='db' host='host' (inet)
 
-trying postgresql://uri-user@host:12345/
+trying mollydb://uri-user@host:12345/
 user='uri-user' host='host' port='12345' (inet)
 
-trying postgresql://uri-user@host/
+trying mollydb://uri-user@host/
 user='uri-user' host='host' (inet)
 
-trying postgresql://uri-user@
+trying mollydb://uri-user@
 user='uri-user' (local)
 
-trying postgresql://host:12345/
+trying mollydb://host:12345/
 host='host' port='12345' (inet)
 
-trying postgresql://host:12345
+trying mollydb://host:12345
 host='host' port='12345' (inet)
 
-trying postgresql://host/db
+trying mollydb://host/db
 dbname='db' host='host' (inet)
 
-trying postgresql://host/
+trying mollydb://host/
 host='host' (inet)
 
-trying postgresql://host
+trying mollydb://host
 host='host' (inet)
 
-trying postgresql://
+trying mollydb://
 (local)
 
-trying postgresql://?hostaddr=127.0.0.1
+trying mollydb://?hostaddr=127.0.0.1
 hostaddr='127.0.0.1' (inet)
 
-trying postgresql://example.com?hostaddr=63.1.2.4
+trying mollydb://example.com?hostaddr=63.1.2.4
 host='example.com' hostaddr='63.1.2.4' (inet)
 
-trying postgresql://%68ost/
+trying mollydb://%68ost/
 host='host' (inet)
 
-trying postgresql://host/db?user=uri-user
+trying mollydb://host/db?user=uri-user
 user='uri-user' dbname='db' host='host' (inet)
 
-trying postgresql://host/db?user=uri-user&port=12345
+trying mollydb://host/db?user=uri-user&port=12345
 user='uri-user' dbname='db' host='host' port='12345' (inet)
 
-trying postgresql://host/db?u%73er=someotheruser&port=12345
+trying mollydb://host/db?u%73er=someotheruser&port=12345
 user='someotheruser' dbname='db' host='host' port='12345' (inet)
 
-trying postgresql://host/db?u%7aer=someotheruser&port=12345
+trying mollydb://host/db?u%7aer=someotheruser&port=12345
 uri-regress: invalid URI query parameter: "uzer"
 
-trying postgresql://host:12345?user=uri-user
+trying mollydb://host:12345?user=uri-user
 user='uri-user' host='host' port='12345' (inet)
 
-trying postgresql://host?user=uri-user
+trying mollydb://host?user=uri-user
 user='uri-user' host='host' (inet)
 
-trying postgresql://host?
+trying mollydb://host?
 host='host' (inet)
 
-trying postgresql://[::1]:12345/db
+trying mollydb://[::1]:12345/db
 dbname='db' host='::1' port='12345' (inet)
 
-trying postgresql://[::1]/db
+trying mollydb://[::1]/db
 dbname='db' host='::1' (inet)
 
-trying postgresql://[2001:db8::1234]/
+trying mollydb://[2001:db8::1234]/
 host='2001:db8::1234' (inet)
 
-trying postgresql://[200z:db8::1234]/
+trying mollydb://[200z:db8::1234]/
 host='200z:db8::1234' (inet)
 
-trying postgresql://[::1]
+trying mollydb://[::1]
 host='::1' (inet)
 
 trying postgres://
@@ -100,7 +100,7 @@ user='uri-user' dbname='db' (local)
 trying postgres://?host=/path/to/socket/dir
 host='/path/to/socket/dir' (local)
 
-trying postgresql://host?uzer=
+trying mollydb://host?uzer=
 uri-regress: invalid URI query parameter: "uzer"
 
 trying postgre://
@@ -115,28 +115,28 @@ uri-regress: IPv6 host address may not be empty in URI: "postgres://[]"
 trying postgres://[::1]z
 uri-regress: unexpected character "z" at position 17 in URI (expected ":" or "/"): "postgres://[::1]z"
 
-trying postgresql://host?zzz
+trying mollydb://host?zzz
 uri-regress: missing key/value separator "=" in URI query parameter: "zzz"
 
-trying postgresql://host?value1&value2
+trying mollydb://host?value1&value2
 uri-regress: missing key/value separator "=" in URI query parameter: "value1"
 
-trying postgresql://host?key=key=value
+trying mollydb://host?key=key=value
 uri-regress: extra key/value separator "=" in URI query parameter: "key"
 
 trying postgres://host?dbname=%XXfoo
 uri-regress: invalid percent-encoded token: "%XXfoo"
 
-trying postgresql://a%00b
+trying mollydb://a%00b
 uri-regress: forbidden value %00 in percent-encoded value: "a%00b"
 
-trying postgresql://%zz
+trying mollydb://%zz
 uri-regress: invalid percent-encoded token: "%zz"
 
-trying postgresql://%1
+trying mollydb://%1
 uri-regress: invalid percent-encoded token: "%1"
 
-trying postgresql://%
+trying mollydb://%
 uri-regress: invalid percent-encoded token: "%"
 
 trying postgres://@host
@@ -166,6 +166,6 @@ dbname='db' host='/path/to/socket' port='12345' (local)
 trying postgres://:12345?host=/path/to/socket
 host='/path/to/socket' port='12345' (local)
 
-trying postgres://%2Fvar%2Flib%2Fpostgresql/dbname
-dbname='dbname' host='/var/lib/postgresql' (local)
+trying postgres://%2Fvar%2Flib%2Fmollydb/dbname
+dbname='dbname' host='/var/lib/mollydb' (local)
 

@@ -3657,7 +3657,7 @@ DESCR("relation OID for filenode and tablespace");
 DATA(insert OID = 3034 ( pg_relation_filepath	PGNSP PGUID 12 1 0 0 0 f f f f t f s s 1 0 25 "2205" _null_ _null_ _null_ _null_ _null_ pg_relation_filepath _null_ _null_ _null_ ));
 DESCR("file path of relation");
 
-DATA(insert OID = 2316 ( postgresql_fdw_validator PGNSP PGUID 12 1 0 0 0 f f f f t f i s 2 0 16 "1009 26" _null_ _null_ _null_ _null_ _null_ postgresql_fdw_validator _null_ _null_ _null_));
+DATA(insert OID = 2316 ( mollydb_fdw_validator PGNSP PGUID 12 1 0 0 0 f f f f t f i s 2 0 16 "1009 26" _null_ _null_ _null_ _null_ _null_ mollydb_fdw_validator _null_ _null_ _null_));
 DESCR("(internal)");
 
 DATA(insert OID = 2290 (  record_in			PGNSP PGUID 12 1 0 0 0 f f f f t f s s 3 0 2249 "2275 26 23" _null_ _null_ _null_ _null_ _null_	record_in _null_ _null_ _null_ ));

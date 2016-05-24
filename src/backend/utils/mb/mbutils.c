@@ -186,7 +186,7 @@ PrepareClientEncoding(int encoding)
 		 * restore a previous setting using the cache.  This covers all
 		 * transaction-rollback cases.  The only case it might not work for is
 		 * trying to change client_encoding on the fly by editing
-		 * postgresql.conf and SIGHUP'ing.  Which would probably be a stupid
+		 * mollydb.conf and SIGHUP'ing.  Which would probably be a stupid
 		 * thing to do anyway.
 		 */
 		foreach(lc, ConvProcList)

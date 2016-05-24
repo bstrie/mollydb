@@ -4001,7 +4001,7 @@
     <listitem>
      <para>
       Fix <application>pg_ctl</> to not go into an infinite loop if
-      <filename>postgresql.conf</> is empty (Jeff Davis)
+      <filename>mollydb.conf</> is empty (Jeff Davis)
      </para>
     </listitem>
 
@@ -6421,7 +6421,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       Commenting out a parameter in <filename>postgresql.conf</> now
+       Commenting out a parameter in <filename>mollydb.conf</> now
        causes it to revert to its default value (Joachim Wieland)
       </para>
 

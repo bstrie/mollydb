@@ -1970,7 +1970,7 @@ do_help(void)
 	printf(_("  demand     start service on demand\n"));
 #endif
 
-	printf(_("\nReport bugs to <pgsql-bugs@postgresql.org>.\n"));
+	printf(_("\nReport bugs to <pgsql-bugs@mollydb.org>.\n"));
 }
 
 
@@ -2068,8 +2068,8 @@ adjust_data_dir(void)
 	if (pg_config == NULL)
 		return;
 
-	/* If there is no postgresql.conf, it can't be a config-only dir */
-	snprintf(filename, sizeof(filename), "%s/postgresql.conf", pg_config);
+	/* If there is no mollydb.conf, it can't be a config-only dir */
+	snprintf(filename, sizeof(filename), "%s/mollydb.conf", pg_config);
 	if ((fd = fopen(filename, "r")) == NULL)
 		return;
 	fclose(fd);

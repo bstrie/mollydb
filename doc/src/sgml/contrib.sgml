@@ -47,7 +47,7 @@
  <para>
   If you are using a pre-packaged version of <productname>PostgreSQL</>,
   these modules are typically made available as a separate subpackage,
-  such as <literal>postgresql-contrib</>.
+  such as <literal>mollydb-contrib</>.
  </para>
 
  <para>

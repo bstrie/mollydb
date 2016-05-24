@@ -295,10 +295,10 @@ pg_logdir_ls(PG_FUNCTION_ARGS)
 				(errcode(ERRCODE_INSUFFICIENT_PRIVILEGE),
 				 (errmsg("only superuser can list the log directory"))));
 
-	if (strcmp(Log_filename, "postgresql-%Y-%m-%d_%H%M%S.log") != 0)
+	if (strcmp(Log_filename, "mollydb-%Y-%m-%d_%H%M%S.log") != 0)
 		ereport(ERROR,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-				 (errmsg("the log_filename parameter must equal 'postgresql-%%Y-%%m-%%d_%%H%%M%%S.log'"))));
+				 (errmsg("the log_filename parameter must equal 'mollydb-%%Y-%%m-%%d_%%H%%M%%S.log'"))));
 
 	if (SRF_IS_FIRSTCALL())
 	{
@@ -349,10 +349,10 @@ pg_logdir_ls(PG_FUNCTION_ARGS)
 		struct pg_tm date;
 
 		/*
-		 * Default format: postgresql-YYYY-MM-DD_HHMMSS.log
+		 * Default format: mollydb-YYYY-MM-DD_HHMMSS.log
 		 */
 		if (strlen(de->d_name) != 32
-			|| strncmp(de->d_name, "postgresql-", 11) != 0
+			|| strncmp(de->d_name, "mollydb-", 11) != 0
 			|| de->d_name[21] != '_'
 			|| strcmp(de->d_name + 28, ".log") != 0)
 			continue;

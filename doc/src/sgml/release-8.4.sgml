@@ -208,7 +208,7 @@
       A useful side effect of this change is to simplify
       <literal>make check</> testing in builds that
       override <literal>DEFAULT_PGSOCKET_DIR</>.  Popular non-default values
-      like <filename>/var/run/postgresql</> are often not writable by the
+      like <filename>/var/run/mollydb</> are often not writable by the
       build user, requiring workarounds that will no longer be necessary.
      </para>
     </listitem>
@@ -3905,8 +3905,8 @@
     <application>pg_upgrade</>.  The recommended solution is to run
     <command>VACUUM FREEZE</> on all TOAST tables.
     More information is available at <ulink
-    url="http://wiki.postgresql.org/wiki/20110408pg_upgrade_fix">
-    http://wiki.postgresql.org/wiki/20110408pg_upgrade_fix</ulink>.
+    url="http://wiki.mollydb.org/wiki/20110408pg_upgrade_fix">
+    http://wiki.mollydb.org/wiki/20110408pg_upgrade_fix</ulink>.
    </para>
 
    <para>
@@ -6612,7 +6612,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
 
      <para>
       They are now on the <ulink
-      url="http://wiki.postgresql.org/wiki/FAQ">wiki</ulink>.  The
+      url="http://wiki.mollydb.org/wiki/FAQ">wiki</ulink>.  The
       main FAQ was moved to the wiki some time ago.
      </para>
     </listitem>
@@ -6620,7 +6620,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
     <listitem>
      <para>
       Fix <application>pg_ctl</> to not go into an infinite loop if
-      <filename>postgresql.conf</> is empty (Jeff Davis)
+      <filename>mollydb.conf</> is empty (Jeff Davis)
      </para>
     </listitem>
 
@@ -7368,7 +7368,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
 
       <listitem>
        <para>
-        Convert many <filename>postgresql.conf</> settings to enumerated
+        Convert many <filename>mollydb.conf</> settings to enumerated
         values so that <literal>pg_settings</> can display the valid
         values (Magnus)
        </para>
@@ -7385,7 +7385,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
       <listitem>
        <para>
         Allow underscores in the names of custom variable
-        classes in <filename>postgresql.conf</> (Tom)
+        classes in <filename>mollydb.conf</> (Tom)
        </para>
       </listitem>
 
@@ -7519,7 +7519,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
        </para>
 
        <para>
-        These override the settings in <filename>postgresql.conf</>.
+        These override the settings in <filename>mollydb.conf</>.
        </para>
       </listitem>
 
@@ -7621,7 +7621,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
       <listitem>
        <para>
         Allow <filename>recovery.conf</> boolean variables to take the
-        same range of string values as <filename>postgresql.conf</>
+        same range of string values as <filename>mollydb.conf</>
         boolean variables
         (Bruce)
        </para>

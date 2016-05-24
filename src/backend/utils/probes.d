@@ -22,7 +22,7 @@
 #define ForkNumber int
 #define bool char
 
-provider postgresql {
+provider mollydb {
 
 	probe transaction__start(LocalTransactionId);
 	probe transaction__commit(LocalTransactionId);

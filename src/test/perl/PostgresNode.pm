@@ -18,7 +18,7 @@ PostgresNode - class representing PostgreSQL server instance
   $node->start();
 
   # Change a setting and restart
-  $node->append_conf('postgresql.conf', 'hot_standby = on');
+  $node->append_conf('mollydb.conf', 'hot_standby = on');
   $node->restart('fast');
 
   # run a query with psql, like:
@@ -249,7 +249,7 @@ sub connstr
 
 =item $node->data_dir()
 
-Returns the path to the data directory. postgresql.conf and pg_hba.conf are
+Returns the path to the data directory. mollydb.conf and pg_hba.conf are
 always here.
 
 =cut
@@ -372,7 +372,7 @@ parameter hba_permit_replication => 0 to disable this.
 WAL archiving can be enabled on this node by passing the keyword parameter
 has_archiving => 1. This is disabled by default.
 
-postgresql.conf can be set up for replication by passing the keyword
+mollydb.conf can be set up for replication by passing the keyword
 parameter allows_streaming => 1. This is disabled by default.
 
 The new node is set up in a fast but unsafe configuration where fsync is
@@ -398,7 +398,7 @@ sub init
 	TestLib::system_or_bail('initdb', '-D', $pgdata, '-A', 'trust', '-N');
 	TestLib::system_or_bail($ENV{PG_REGRESS}, '--config-auth', $pgdata);
 
-	open my $conf, ">>$pgdata/postgresql.conf";
+	open my $conf, ">>$pgdata/mollydb.conf";
 	print $conf "\n# Added by PostgresNode.pm\n";
 	print $conf "fsync = off\n";
 	print $conf "log_statement = all\n";
@@ -435,7 +435,7 @@ sub init
 
 =item $node->append_conf(filename, str)
 
-A shortcut method to append to files like pg_hba.conf and postgresql.conf.
+A shortcut method to append to files like pg_hba.conf and mollydb.conf.
 
 Does no validation or sanity checking. Does not reload the configuration
 after writing.
@@ -608,7 +608,7 @@ sub init_from_backup
 
 	# Base configuration for this node
 	$self->append_conf(
-		'postgresql.conf',
+		'mollydb.conf',
 		qq(
 port = $port
 ));
@@ -793,7 +793,7 @@ sub enable_archiving
 
 	# Enable archive_mode and archive_command on node
 	$self->append_conf(
-		'postgresql.conf', qq(
+		'mollydb.conf', qq(
 archive_mode = on
 archive_command = '$copy_command'
 ));

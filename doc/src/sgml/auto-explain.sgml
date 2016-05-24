@@ -27,7 +27,7 @@ LOAD 'auto_explain';
   it into some or all sessions by including <literal>auto_explain</> in
   <xref linkend="guc-session-preload-libraries"> or
   <xref linkend="guc-shared-preload-libraries"> in
-  <filename>postgresql.conf</>.  Then you can track unexpectedly slow queries
+  <filename>mollydb.conf</>.  Then you can track unexpectedly slow queries
   no matter when they happen.  Of course there is a price in overhead for
   that.
  </para>
@@ -224,13 +224,13 @@ LOAD 'auto_explain';
 
   <para>
    In ordinary usage, these parameters are set
-   in <filename>postgresql.conf</>, although superusers can alter them
+   in <filename>mollydb.conf</>, although superusers can alter them
    on-the-fly within their own sessions.
    Typical usage might be:
   </para>
 
 <programlisting>
-# postgresql.conf
+# mollydb.conf
 session_preload_libraries = 'auto_explain'
 
 auto_explain.log_min_duration = '3s'

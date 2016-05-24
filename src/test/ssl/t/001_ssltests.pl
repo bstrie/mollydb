@@ -23,7 +23,7 @@ BEGIN
 
 # This is the hostname used to connect to the server. This cannot be a
 # hostname, because the server certificate is always for the domain
-# postgresql-ssl-regression.test.
+# mollydb-ssl-regression.test.
 my $SERVERHOSTADDR = '127.0.0.1';
 
 # Define a couple of helper functions to test connecting to the server.

@@ -1023,7 +1023,7 @@ set_null_conf(void)
 	FILE	   *conf_file;
 	char	   *path;
 
-	path = psprintf("%s/postgresql.conf", pg_data);
+	path = psprintf("%s/mollydb.conf", pg_data);
 	conf_file = fopen(path, PG_BINARY_W);
 	if (conf_file == NULL)
 	{
@@ -1203,7 +1203,7 @@ setup_config(void)
 	fputs(_("creating configuration files ... "), stdout);
 	fflush(stdout);
 
-	/* postgresql.conf */
+	/* mollydb.conf */
 
 	conflines = readfile(conf_file);
 
@@ -1292,7 +1292,7 @@ setup_config(void)
 							  "#effective_io_concurrency = 0");
 #endif
 
-	snprintf(path, sizeof(path), "%s/postgresql.conf", pg_data);
+	snprintf(path, sizeof(path), "%s/mollydb.conf", pg_data);
 
 	writefile(path, conflines);
 	if (chmod(path, S_IRUSR | S_IWUSR) != 0)
@@ -1312,7 +1312,7 @@ setup_config(void)
 	autoconflines[1] = pg_strdup("# It will be overwritten by the ALTER SYSTEM command.\n");
 	autoconflines[2] = NULL;
 
-	sprintf(path, "%s/postgresql.auto.conf", pg_data);
+	sprintf(path, "%s/mollydb.auto.conf", pg_data);
 
 	writefile(path, autoconflines);
 	if (chmod(path, S_IRUSR | S_IWUSR) != 0)
@@ -2690,7 +2690,7 @@ usage(const char *progname)
 	printf(_("  -?, --help                show this help, then exit\n"));
 	printf(_("\nIf the data directory is not specified, the environment variable PGDATA\n"
 			 "is used.\n"));
-	printf(_("\nReport bugs to <pgsql-bugs@postgresql.org>.\n"));
+	printf(_("\nReport bugs to <pgsql-bugs@mollydb.org>.\n"));
 }
 
 static void
@@ -2929,7 +2929,7 @@ setup_data_file_paths(void)
 	set_input(&shdesc_file, "postgres.shdescription");
 	set_input(&hba_file, "pg_hba.conf.sample");
 	set_input(&ident_file, "pg_ident.conf.sample");
-	set_input(&conf_file, "postgresql.conf.sample");
+	set_input(&conf_file, "mollydb.conf.sample");
 	set_input(&conversion_file, "conversion_create.sql");
 	set_input(&dictionary_file, "snowball_create.sql");
 	set_input(&info_schema_file, "information_schema.sql");

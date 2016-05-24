@@ -20,7 +20,7 @@ Usage
 
 Here's a simple example of usage:
 
-# postgresql.conf
+# mollydb.conf
 shared_preload_libraries = 'dummy_seclabel'
 
 postgres=# CREATE TABLE t (a int, b text);

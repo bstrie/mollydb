@@ -46,7 +46,7 @@
 /*
  * Configuration options
  *
- * If you change these, update backend/utils/misc/postgresql.conf.sample
+ * If you change these, update backend/utils/misc/mollydb.conf.sample
  */
 extern int	Geqo_effort;		/* 1 .. 10, knob for adjustment of defaults */
 

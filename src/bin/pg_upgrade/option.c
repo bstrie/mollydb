@@ -326,7 +326,7 @@ or\n"), old_cluster.port, new_cluster.port, os_info.user);
   C:\\> set PGBINNEW=newCluster/bin\n\
   C:\\> pg_upgrade\n"));
 #endif
-	printf(_("\nReport bugs to <pgsql-bugs@postgresql.org>.\n"));
+	printf(_("\nReport bugs to <pgsql-bugs@mollydb.org>.\n"));
 }
 
 
@@ -393,8 +393,8 @@ adjust_data_dir(ClusterInfo *cluster)
 	FILE	   *fp,
 			   *output;
 
-	/* If there is no postgresql.conf, it can't be a config-only dir */
-	snprintf(filename, sizeof(filename), "%s/postgresql.conf", cluster->pgconfig);
+	/* If there is no mollydb.conf, it can't be a config-only dir */
+	snprintf(filename, sizeof(filename), "%s/mollydb.conf", cluster->pgconfig);
 	if ((fp = fopen(filename, "r")) == NULL)
 		return;
 	fclose(fp);

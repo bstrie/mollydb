@@ -11,7 +11,7 @@ my $bkplabel = 'backup';
 my $master = get_new_node('master');
 $master->init(allows_streaming => 1);
 
-$master->append_conf('postgresql.conf', qq{
+$master->append_conf('mollydb.conf', qq{
 	track_commit_timestamp = on
 	max_wal_senders = 5
 	wal_level = hot_standby
@@ -39,7 +39,7 @@ my $standby_ts = $standby->safe_psql('postgres',
 	qq{select ts.* from pg_class, pg_xact_commit_timestamp(xmin) ts where relname = 't10'});
 is($master_ts, $standby_ts, "standby gives same value as master");
 
-$master->append_conf('postgresql.conf', 'track_commit_timestamp = off');
+$master->append_conf('mollydb.conf', 'track_commit_timestamp = off');
 $master->restart;
 $master->safe_psql('postgres', 'checkpoint');
 $master_lsn = $master->safe_psql('postgres',

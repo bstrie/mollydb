@@ -8,11 +8,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pg_config (PostgreSQL 9.6)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:14+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
 "Last-Translator: Alvaro Herrera <alvherre@alvh.no-ip.org>\n"
-"Language-Team: es <pgsql-es-ayuda@postgresql.org>\n"
+"Language-Team: es <pgsql-es-ayuda@mollydb.org>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -262,8 +262,8 @@ msgstr ""
 
 #: pg_config.c:105
 #, c-format
-msgid "Report bugs to <pgsql-bugs@postgresql.org>.\n"
-msgstr "Reporte errores a <pgsql-bugs@postgresql.org>.\n"
+msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
+msgstr "Reporte errores a <pgsql-bugs@mollydb.org>.\n"
 
 #: pg_config.c:111
 #, c-format

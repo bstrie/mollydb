@@ -16,7 +16,7 @@
 ;; Style that matches the formatting used by
 ;; src/tools/pgindent/pgindent.  Many extension projects also use this
 ;; style.
-(c-add-style "postgresql"
+(c-add-style "mollydb"
              '("bsd"
                (c-auto-align-backslashes . nil)
                (c-basic-offset . 4)
@@ -28,9 +28,9 @@
                (tab-width . 4)))
 
 (add-hook 'c-mode-hook
-          (defun postgresql-c-mode-hook ()
+          (defun mollydb-c-mode-hook ()
             (when (string-match "/postgres\\(ql\\)?/" buffer-file-name)
-              (c-set-style "postgresql")
+              (c-set-style "mollydb")
               ;; Don't override the style we just set with the style in
               ;; `dir-locals-file'.  Emacs 23.4.1 needs this; it is obsolete,
               ;; albeit harmless, by Emacs 24.3.1.
@@ -55,7 +55,7 @@
   (setq tab-width 4))
 
 (add-hook 'perl-mode-hook
-          (defun postgresql-perl-mode-hook ()
+          (defun mollydb-perl-mode-hook ()
              (when (string-match "/postgres\\(ql\\)?/" buffer-file-name)
                (pgsql-perl-style))))
 
@@ -63,7 +63,7 @@
 ;;; documentation files
 
 (add-hook 'sgml-mode-hook
-          (defun postgresql-sgml-mode-hook ()
+          (defun mollydb-sgml-mode-hook ()
              (when (string-match "/postgres\\(ql\\)?/" buffer-file-name)
                (setq fill-column 78)
                (setq indent-tabs-mode nil)

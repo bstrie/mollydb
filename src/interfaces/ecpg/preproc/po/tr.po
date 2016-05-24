@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 8.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2010-08-31 20:08+0000\n"
 "PO-Revision-Date: 2013-09-04 20:48-0400\n"
 "Last-Translator: Devrim GÜNDÜZ <devrim@gunduz.org>\n"
@@ -171,10 +171,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Hataları <pgsql-bugs@postgresql.org> adresine bildirebilirsiniz.\n"
+"Hataları <pgsql-bugs@mollydb.org> adresine bildirebilirsiniz.\n"
 
 #: ecpg.c:182
 #: ecpg.c:333
@@ -298,8 +298,8 @@ msgid "syntax error in EXEC SQL INCLUDE command"
 msgstr "EXEC SQL INCLUDE komutunda sözdizimi hatası"
 
 #: pgc.l:1215
-msgid "internal error: unreachable state; please report this to <pgsql-bugs@postgresql.org>"
-msgstr "dahili hata: erişilemeyen durum: bunu lütfen <pgsql-bugs@postgresql.org> adresine bildiriniz."
+msgid "internal error: unreachable state; please report this to <pgsql-bugs@mollydb.org>"
+msgstr "dahili hata: erişilemeyen durum: bunu lütfen <pgsql-bugs@mollydb.org> adresine bildiriniz."
 
 #: pgc.l:1340
 #, c-format
@@ -450,8 +450,8 @@ msgid "expected \"@\", found \"%s\""
 msgstr "\"@\" bekleniyordu; \"%s\" bulundu"
 
 #: preproc.y:11784
-msgid "only protocols \"tcp\" and \"unix\" and database type \"postgresql\" are supported"
-msgstr "sadece \"tcp\" ve \"unix\" protokolleri ile \"postgresql\" veritabanı tipi desteklenmektedir."
+msgid "only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are supported"
+msgstr "sadece \"tcp\" ve \"unix\" protokolleri ile \"mollydb\" veritabanı tipi desteklenmektedir."
 
 #: preproc.y:11787
 #, c-format
@@ -465,8 +465,8 @@ msgstr "Unix-domain soketleri sadece \"localhost\" üzerinde çalışabilir; anc
 
 #: preproc.y:11818
 #, c-format
-msgid "expected \"postgresql\", found \"%s\""
-msgstr "\"postgresql\" bekleniyordu; \"%s\" bulundu"
+msgid "expected \"mollydb\", found \"%s\""
+msgstr "\"mollydb\" bekleniyordu; \"%s\" bulundu"
 
 #: preproc.y:11821
 #, c-format

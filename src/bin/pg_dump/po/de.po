@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.6\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-26 09:14+0000\n"
 "PO-Revision-Date: 2016-04-26 21:28-0400\n"
 "Last-Translator: Peter Eisentraut <peter_e@gmx.net>\n"
@@ -1744,8 +1744,8 @@ msgstr ""
 
 #: pg_dump.c:947 pg_dumpall.c:594 pg_restore.c:493
 #, c-format
-msgid "Report bugs to <pgsql-bugs@postgresql.org>.\n"
-msgstr "Berichten Sie Fehler an <pgsql-bugs@postgresql.org>.\n"
+msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
+msgstr "Berichten Sie Fehler an <pgsql-bugs@mollydb.org>.\n"
 
 #: pg_dump.c:967
 #, c-format

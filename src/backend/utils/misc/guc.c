@@ -88,7 +88,7 @@
 #define PG_KRB_SRVTAB ""
 #endif
 
-#define CONFIG_FILENAME "postgresql.conf"
+#define CONFIG_FILENAME "mollydb.conf"
 #define HBA_FILENAME	"pg_hba.conf"
 #define IDENT_FILENAME	"pg_ident.conf"
 
@@ -764,7 +764,7 @@ static const unit_conversion time_unit_conversion_table[] =
  *
  * 4. Add a record below.
  *
- * 5. Add it to src/backend/utils/misc/postgresql.conf.sample, if
+ * 5. Add it to src/backend/utils/misc/mollydb.conf.sample, if
  *	  appropriate.
  *
  * 6. Don't forget to document the option (at least in config.sgml).
@@ -2758,7 +2758,7 @@ static struct config_int ConfigureNamesInt[] =
 	},
 
 	{
-		/* Can't be set in postgresql.conf */
+		/* Can't be set in mollydb.conf */
 		{"server_version_num", PGC_INTERNAL, PRESET_OPTIONS,
 			gettext_noop("Shows the server version as an integer."),
 			NULL,
@@ -3195,7 +3195,7 @@ static struct config_string ConfigureNamesString[] =
 	},
 
 	{
-		/* Can't be set in postgresql.conf */
+		/* Can't be set in mollydb.conf */
 		{"server_encoding", PGC_INTERNAL, CLIENT_CONN_LOCALE,
 			gettext_noop("Sets the server (database) character set encoding."),
 			NULL,
@@ -3207,7 +3207,7 @@ static struct config_string ConfigureNamesString[] =
 	},
 
 	{
-		/* Can't be set in postgresql.conf */
+		/* Can't be set in mollydb.conf */
 		{"server_version", PGC_INTERNAL, PRESET_OPTIONS,
 			gettext_noop("Shows the server version."),
 			NULL,
@@ -3272,7 +3272,7 @@ static struct config_string ConfigureNamesString[] =
 			GUC_SUPERUSER_ONLY
 		},
 		&Log_filename,
-		"postgresql-%Y-%m-%d_%H%M%S.log",
+		"mollydb-%Y-%m-%d_%H%M%S.log",
 		NULL, NULL, NULL
 	},
 
@@ -4413,7 +4413,7 @@ InitializeGUCOptions(void)
  *
  * This is called from InitializeGUCOptions, and also from ProcessConfigFile
  * to deal with the possibility that a setting has been removed from
- * postgresql.conf and should now get a value from the environment.
+ * mollydb.conf and should now get a value from the environment.
  * (The latter is a kludge that should probably go away someday; if so,
  * fold this back into InitializeGUCOptions.)
  */
@@ -4574,7 +4574,7 @@ InitializeOneGUCOption(struct config_generic * gconf)
 
 /*
  * Select the configuration files and data directory to be used, and
- * do the initial read of postgresql.conf.
+ * do the initial read of mollydb.conf.
  *
  * This is called after processing command-line switches.
  *		userDoption is the -D switch value if any (NULL if unspecified).
@@ -4609,7 +4609,7 @@ SelectConfigFiles(const char *userDoption, const char *progname)
 
 	/*
 	 * Find the configuration file: if config_file was specified on the
-	 * command line, use it, else use configdir/postgresql.conf.  In any case
+	 * command line, use it, else use configdir/mollydb.conf.  In any case
 	 * ensure the result is an absolute path, so that it will be interpreted
 	 * the same way by future backends.
 	 */
@@ -5877,7 +5877,7 @@ set_config_option(const char *name, const char *value,
 			{
 				/*
 				 * We are re-reading a PGC_POSTMASTER variable from
-				 * postgresql.conf.  We can't change the setting, so we should
+				 * mollydb.conf.  We can't change the setting, so we should
 				 * give a warning if the DBA tries to change it.  However,
 				 * because of variant formats, canonicalization by check
 				 * hooks, etc, we can't just compare the given string directly
@@ -10049,12 +10049,12 @@ assign_timezone_abbreviations(const char *newval, void *extra)
 /*
  * pg_timezone_abbrev_initialize --- set default value if not done already
  *
- * This is called after initial loading of postgresql.conf.  If no
+ * This is called after initial loading of mollydb.conf.  If no
  * timezone_abbreviations setting was found therein, select default.
  * If a non-default value is already installed, nothing will happen.
  *
  * This can also be called from ProcessConfigFile to establish the default
- * value after a postgresql.conf entry for it is removed.
+ * value after a mollydb.conf entry for it is removed.
  */
 static void
 pg_timezone_abbrev_initialize(void)

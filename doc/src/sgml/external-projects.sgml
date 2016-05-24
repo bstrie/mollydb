@@ -72,7 +72,7 @@
       <entry>JDBC</entry>
       <entry>JDBC</entry>
       <entry>Type 4 JDBC driver</entry>
-      <entry><ulink url="http://jdbc.postgresql.org/"></ulink></entry>
+      <entry><ulink url="http://jdbc.mollydb.org/"></ulink></entry>
      </row>
 
      <row>
@@ -100,7 +100,7 @@
       <entry>psqlODBC</entry>
       <entry>ODBC</entry>
       <entry>ODBC driver</entry>
-      <entry><ulink url="https://odbc.postgresql.org/"></ulink></entry>
+      <entry><ulink url="https://odbc.mollydb.org/"></ulink></entry>
      </row>
 
      <row>
@@ -184,7 +184,7 @@
      <row>
       <entry>PL/Py</entry>
       <entry>Python</entry>
-      <entry><ulink url="http://python.projects.postgresql.org/backend/"></ulink></entry>
+      <entry><ulink url="http://python.projects.mollydb.org/backend/"></ulink></entry>
      </row>
 
      <row>
@@ -202,7 +202,7 @@
      <row>
       <entry>PL/Scheme</entry>
       <entry>Scheme</entry>
-      <entry><ulink url="http://plscheme.projects.postgresql.org/"></ulink></entry>
+      <entry><ulink url="http://plscheme.projects.mollydb.org/"></ulink></entry>
      </row>
 
      <row>

@@ -71,7 +71,7 @@ static int	auth_peer(hbaPort *port);
 #include <security/pam_appl.h>
 #endif
 
-#define PGSQL_PAM_SERVICE "postgresql"	/* Service name passed to PAM */
+#define PGSQL_PAM_SERVICE "mollydb"	/* Service name passed to PAM */
 
 static int	CheckPAMAuth(Port *port, char *user, char *password);
 static int pam_passwd_conv_proc(int num_msg, const struct pam_message ** msg,
@@ -2011,7 +2011,7 @@ CheckBSDAuth(Port *port, char *user)
 	 * will overwrite the password string with zeroes, but it's just a
 	 * temporary string so we don't care.
 	 */
-	retval = auth_userokay(user, NULL, "auth-postgresql", passwd);
+	retval = auth_userokay(user, NULL, "auth-mollydb", passwd);
 
 	if (!retval)
 		return STATUS_ERROR;
@@ -2425,7 +2425,7 @@ static int
 CheckRADIUSAuth(Port *port)
 {
 	char	   *passwd;
-	char	   *identifier = "postgresql";
+	char	   *identifier = "mollydb";
 	char		radius_buffer[RADIUS_BUFFER_SIZE];
 	char		receive_buffer[RADIUS_BUFFER_SIZE];
 	radius_packet *packet = (radius_packet *) radius_buffer;

@@ -921,7 +921,7 @@ EncodeInterval(struct /* pg_ */ tm * tm, fsec_t fsec, int style, char *str)
 			}
 			break;
 
-			/* Compatible with postgresql < 8.4 when DateStyle = 'iso' */
+			/* Compatible with mollydb < 8.4 when DateStyle = 'iso' */
 		case INTSTYLE_POSTGRES:
 			cp = AddPostgresIntPart(cp, year, "year", &is_zero, &is_before);
 			cp = AddPostgresIntPart(cp, mon, "mon", &is_zero, &is_before);
@@ -939,7 +939,7 @@ EncodeInterval(struct /* pg_ */ tm * tm, fsec_t fsec, int style, char *str)
 			}
 			break;
 
-			/* Compatible with postgresql < 8.4 when DateStyle != 'iso' */
+			/* Compatible with mollydb < 8.4 when DateStyle != 'iso' */
 		case INTSTYLE_POSTGRES_VERBOSE:
 		default:
 			strcpy(cp, "@");

@@ -35,13 +35,13 @@ ALTER SYSTEM RESET ALL
    <command>ALTER SYSTEM</command> is used for changing server configuration
    parameters across the entire database cluster.  It can be more convenient
    than the traditional method of manually editing
-   the <filename>postgresql.conf</filename> file.
+   the <filename>mollydb.conf</filename> file.
    <command>ALTER SYSTEM</command> writes the given parameter setting to
-   the <filename>postgresql.auto.conf</filename> file, which is read in
-   addition to <filename>postgresql.conf</filename>.
+   the <filename>mollydb.auto.conf</filename> file, which is read in
+   addition to <filename>mollydb.conf</filename>.
    Setting a parameter to <literal>DEFAULT</literal>, or using the
    <command>RESET</command> variant, removes that configuration entry from the
-   <filename>postgresql.auto.conf</filename> file. Use <literal>RESET
+   <filename>mollydb.auto.conf</filename> file. Use <literal>RESET
    ALL</literal> to remove all such configuration entries.
   </para>
 
@@ -83,7 +83,7 @@ ALTER SYSTEM RESET ALL
       constants, identifiers, numbers, or comma-separated lists of
       these, as appropriate for the particular parameter.
       <literal>DEFAULT</literal> can be written to specify removing the
-      parameter and its value from <filename>postgresql.auto.conf</filename>.
+      parameter and its value from <filename>mollydb.auto.conf</filename>.
      </para>
     </listitem>
    </varlistentry>
@@ -95,7 +95,7 @@ ALTER SYSTEM RESET ALL
 
   <para>
    This command can't be used to set <xref linkend="guc-data-directory">,
-   nor parameters that are not allowed in <filename>postgresql.conf</>
+   nor parameters that are not allowed in <filename>mollydb.conf</>
    (e.g., <link linkend="runtime-config-preset">preset options</>).
   </para>
 
@@ -116,7 +116,7 @@ ALTER SYSTEM SET wal_level = replica;
 
   <para>
    Undo that, restoring whatever setting was effective
-   in <filename>postgresql.conf</>:
+   in <filename>mollydb.conf</>:
 <programlisting>
 ALTER SYSTEM RESET wal_level;
 </programlisting>

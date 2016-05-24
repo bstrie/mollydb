@@ -6,7 +6,7 @@
 -- 1. Run initdb
 --    to set up a new database cluster.
 --
--- 2. Edit $PGDATA/postgresql.conf
+-- 2. Edit $PGDATA/mollydb.conf
 --    to add 'MODULE_PATHNAME' to shared_preload_libraries.
 --
 --    Example)

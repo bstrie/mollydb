@@ -24,7 +24,7 @@
  * ====================
  * For bonus points, the crash dump format permits embedding of user-supplied
  * data. If there's anything else that should always be supplied with a crash
- * dump (postgresql.conf? Last few lines of a log file?), it could potentially
+ * dump (mollydb.conf? Last few lines of a log file?), it could potentially
  * be added, though at the cost of a greater chance of the crash dump failing.
  *
  *

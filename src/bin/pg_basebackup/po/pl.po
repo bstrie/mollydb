@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pg_basebackup (PostgreSQL 9.5)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-10-29 01:43+0000\n"
 "PO-Revision-Date: 2015-12-22 21:17-0500\n"
 "Last-Translator: grzegorz <begina.felicysym@wp.eu>\n"
@@ -243,10 +243,10 @@ msgstr "  -W, --password           wymuś pytanie o hasło (powinno nastąpić a
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Błędy proszę przesyłać na adres <pgsql-bugs@postgresql.org>.\n"
+"Błędy proszę przesyłać na adres <pgsql-bugs@mollydb.org>.\n"
 
 #: pg_basebackup.c:310
 #, c-format

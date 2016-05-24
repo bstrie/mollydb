@@ -16,12 +16,12 @@ gen_tunable(sepgsql_regression_test_mode, false)
 # Type definitions for regression test
 #
 type sepgsql_regtest_trusted_proc_exec_t;
-postgresql_procedure_object(sepgsql_regtest_trusted_proc_exec_t)
+mollydb_procedure_object(sepgsql_regtest_trusted_proc_exec_t)
 type sepgsql_nosuch_trusted_proc_exec_t;
-postgresql_procedure_object(sepgsql_nosuch_trusted_proc_exec_t)
+mollydb_procedure_object(sepgsql_nosuch_trusted_proc_exec_t)
 
 type sepgsql_regtest_invisible_schema_t;
-postgresql_schema_object(sepgsql_regtest_invisible_schema_t);
+mollydb_schema_object(sepgsql_regtest_invisible_schema_t);
 
 #
 # Test domains for self defined unconfined / superuser
@@ -32,8 +32,8 @@ userdom_manage_home_role(sepgsql_regtest_superuser_r, sepgsql_regtest_superuser_
 userdom_exec_user_home_content_files(sepgsql_regtest_superuser_t)
 userdom_write_user_tmp_sockets(sepgsql_regtest_superuser_t)
 optional_policy(`
-	postgresql_stream_connect(sepgsql_regtest_superuser_t)
-	postgresql_unconfined(sepgsql_regtest_superuser_t)
+	mollydb_stream_connect(sepgsql_regtest_superuser_t)
+	mollydb_unconfined(sepgsql_regtest_superuser_t)
 ')
 optional_policy(`
 	unconfined_stream_connect(sepgsql_regtest_superuser_t)
@@ -61,8 +61,8 @@ userdom_manage_home_role(sepgsql_regtest_dba_r, sepgsql_regtest_dba_t)
 userdom_exec_user_home_content_files(sepgsql_regtest_dba_t)
 userdom_write_user_tmp_sockets(sepgsql_regtest_user_t)
 optional_policy(`
-	postgresql_admin(sepgsql_regtest_dba_t, sepgsql_regtest_dba_r)
-	postgresql_stream_connect(sepgsql_regtest_dba_t)
+	mollydb_admin(sepgsql_regtest_dba_t, sepgsql_regtest_dba_r)
+	mollydb_stream_connect(sepgsql_regtest_dba_t)
 ')
 optional_policy(`
 	unconfined_stream_connect(sepgsql_regtest_dba_t)
@@ -99,8 +99,8 @@ userdom_manage_home_role(sepgsql_regtest_user_r, sepgsql_regtest_user_t)
 userdom_exec_user_home_content_files(sepgsql_regtest_user_t)
 userdom_write_user_tmp_sockets(sepgsql_regtest_user_t)
 optional_policy(`
-	postgresql_role(sepgsql_regtest_user_r, sepgsql_regtest_user_t)
-	postgresql_stream_connect(sepgsql_regtest_user_t)
+	mollydb_role(sepgsql_regtest_user_r, sepgsql_regtest_user_t)
+	mollydb_stream_connect(sepgsql_regtest_user_t)
 ')
 optional_policy(`
 	unconfined_stream_connect(sepgsql_regtest_user_t)
@@ -143,14 +143,14 @@ optional_policy(`
 	gen_require(`
 		role unconfined_r;
 	')
-	postgresql_role(unconfined_r, sepgsql_regtest_foo_t)
-	postgresql_role(unconfined_r, sepgsql_regtest_var_t)
-	postgresql_table_object(sepgsql_regtest_foo_table_t)
-	postgresql_table_object(sepgsql_regtest_var_table_t)
+	mollydb_role(unconfined_r, sepgsql_regtest_foo_t)
+	mollydb_role(unconfined_r, sepgsql_regtest_var_t)
+	mollydb_table_object(sepgsql_regtest_foo_table_t)
+	mollydb_table_object(sepgsql_regtest_var_table_t)
 ')
 optional_policy(`
-	postgresql_stream_connect(sepgsql_regtest_pool_t)
-	postgresql_role(sepgsql_regtest_pool_r, sepgsql_regtest_pool_t)
+	mollydb_stream_connect(sepgsql_regtest_pool_t)
+	mollydb_role(sepgsql_regtest_pool_r, sepgsql_regtest_pool_t)
 ')
 optional_policy(`
 	unconfined_stream_connect(sepgsql_regtest_pool_t)
@@ -170,7 +170,7 @@ allow { sepgsql_regtest_foo_t sepgsql_regtest_var_t } sepgsql_regtest_pool_t:pro
 role sepgsql_regtest_nosuch_r;
 userdom_base_user_template(sepgsql_regtest_nosuch)
 optional_policy(`
-    postgresql_role(sepgsql_regtest_nosuch_r, sepgsql_regtest_nosuch_t)
+    mollydb_role(sepgsql_regtest_nosuch_r, sepgsql_regtest_nosuch_t)
 ')
 
 #

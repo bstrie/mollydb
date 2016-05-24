@@ -792,28 +792,28 @@ host=localhost port=5432 dbname=mydb connect_timeout=10
    <para>
    The general form for a connection <acronym>URI</acronym> is:
 <synopsis>
-postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&amp;...]
+mollydb://[user[:password]@][netloc][:port][/dbname][?param1=value1&amp;...]
 </synopsis>
    </para>
 
    <para>
     The <acronym>URI</acronym> scheme designator can be either
-    <literal>postgresql://</literal> or <literal>postgres://</literal>.  Each
+    <literal>mollydb://</literal> or <literal>postgres://</literal>.  Each
     of the <acronym>URI</acronym> parts is optional.  The following examples
     illustrate valid <acronym>URI</acronym> syntax uses:
 <programlisting>
-postgresql://
-postgresql://localhost
-postgresql://localhost:5433
-postgresql://localhost/mydb
-postgresql://user@localhost
-postgresql://user:secret@localhost
-postgresql://other@localhost/otherdb?connect_timeout=10&amp;application_name=myapp
+mollydb://
+mollydb://localhost
+mollydb://localhost:5433
+mollydb://localhost/mydb
+mollydb://user@localhost
+mollydb://user:secret@localhost
+mollydb://other@localhost/otherdb?connect_timeout=10&amp;application_name=myapp
 </programlisting>
     Components of the hierarchical part of the <acronym>URI</acronym> can also
     be given as parameters.  For example:
 <programlisting>
-postgresql:///mydb?host=localhost&amp;port=5433
+mollydb:///mydb?host=localhost&amp;port=5433
 </programlisting>
    </para>
 
@@ -838,7 +838,7 @@ postgresql:///mydb?host=localhost&amp;port=5433
     The host part may be either host name or an IP address.  To specify an
     IPv6 host address, enclose it in square brackets:
 <synopsis>
-postgresql://[2001:db8::1234]/database
+mollydb://[2001:db8::1234]/database
 </synopsis>
    </para>
 
@@ -852,8 +852,8 @@ postgresql://[2001:db8::1234]/database
     specification in the URI and specify the host as a parameter, or
     percent-encode the path in the host component of the URI:
 <programlisting>
-postgresql:///dbname?host=/var/lib/postgresql
-postgresql://%2Fvar%2Flib%2Fpostgresql/dbname
+mollydb:///dbname?host=/var/lib/mollydb
+mollydb://%2Fvar%2Flib%2Fmollydb/dbname
 </programlisting>
    </para>
    </sect3>
@@ -1261,7 +1261,7 @@ postgresql://%2Fvar%2Flib%2Fpostgresql/dbname
        <para>
         This parameter specifies the file name of the client SSL
         certificate, replacing the default
-        <filename>~/.postgresql/postgresql.crt</>.
+        <filename>~/.mollydb/mollydb.crt</>.
         This parameter is ignored if an SSL connection is not made.
        </para>
       </listitem>
@@ -1274,7 +1274,7 @@ postgresql://%2Fvar%2Flib%2Fpostgresql/dbname
         This parameter specifies the location for the secret key used for
         the client certificate. It can either specify a file name that will
         be used instead of the default
-        <filename>~/.postgresql/postgresql.key</>, or it can specify a key
+        <filename>~/.mollydb/mollydb.key</>, or it can specify a key
         obtained from an external <quote>engine</> (engines are
         <productname>OpenSSL</> loadable modules).  An external engine
         specification should consist of a colon-separated engine name and
@@ -1292,7 +1292,7 @@ postgresql://%2Fvar%2Flib%2Fpostgresql/dbname
         certificate authority (<acronym>CA</>) certificate(s).
         If the file exists, the server's certificate will be verified
         to be signed by one of these authorities.  The default is
-        <filename>~/.postgresql/root.crt</>.
+        <filename>~/.mollydb/root.crt</>.
        </para>
       </listitem>
      </varlistentry>
@@ -1305,7 +1305,7 @@ postgresql://%2Fvar%2Flib%2Fpostgresql/dbname
         revocation list (CRL).  Certificates listed in this file, if it
         exists, will be rejected while attempting to authenticate the
         server's certificate.  The default is
-        <filename>~/.postgresql/root.crl</>.
+        <filename>~/.mollydb/root.crl</>.
        </para>
       </listitem>
      </varlistentry>
@@ -7125,7 +7125,7 @@ myEventProc(PGEventId evtId, void *evtInfo, void *passThrough)
    file referenced by <envar>PGPASSFILE</envar> can contain passwords to
    be used if the connection requires a password (and no password has been
    specified  otherwise). On Microsoft Windows the file is named
-   <filename>%APPDATA%\postgresql\pgpass.conf</> (where
+   <filename>%APPDATA%\mollydb\pgpass.conf</> (where
    <filename>%APPDATA%</> refers to the Application Data subdirectory in
    the user's profile).
   </para>
@@ -7357,17 +7357,17 @@ ldap://ldap.acme.com/cn=dbserver,cn=hosts?pgconnectinfo?base?(objectclass=*)
   <para>
    To allow server certificate verification, the certificate(s) of one or more
    trusted <acronym>CA</>s must be
-   placed in the file <filename>~/.postgresql/root.crt</> in the user's home
+   placed in the file <filename>~/.mollydb/root.crt</> in the user's home
    directory. If intermediate <acronym>CA</>s appear in
    <filename>root.crt</filename>, the file must also contain certificate
    chains to their root <acronym>CA</>s. (On Microsoft Windows the file is named
-   <filename>%APPDATA%\postgresql\root.crt</filename>.)
+   <filename>%APPDATA%\mollydb\root.crt</filename>.)
   </para>
 
   <para>
    Certificate Revocation List (CRL) entries are also checked
-   if the file <filename>~/.postgresql/root.crl</filename> exists
-   (<filename>%APPDATA%\postgresql\root.crl</filename> on Microsoft
+   if the file <filename>~/.mollydb/root.crl</filename> exists
+   (<filename>%APPDATA%\mollydb\root.crl</filename> on Microsoft
    Windows).
   </para>
 
@@ -7397,16 +7397,16 @@ ldap://ldap.acme.com/cn=dbserver,cn=hosts?pgconnectinfo?base?(objectclass=*)
   <para>
    If the server requests a trusted client certificate,
    <application>libpq</application> will send the certificate stored in
-   file <filename>~/.postgresql/postgresql.crt</> in the user's home
+   file <filename>~/.mollydb/mollydb.crt</> in the user's home
    directory.  The certificate must be signed by one of the certificate
    authorities (<acronym>CA</acronym>) trusted by the server.  A matching
-   private key file <filename>~/.postgresql/postgresql.key</> must also
+   private key file <filename>~/.mollydb/mollydb.key</> must also
    be present. The private
    key file must not allow any access to world or group; achieve this by the
-   command <command>chmod 0600 ~/.postgresql/postgresql.key</command>.
+   command <command>chmod 0600 ~/.mollydb/mollydb.key</command>.
    On Microsoft Windows these files are named
-   <filename>%APPDATA%\postgresql\postgresql.crt</filename> and
-   <filename>%APPDATA%\postgresql\postgresql.key</filename>, and there
+   <filename>%APPDATA%\mollydb\mollydb.crt</filename> and
+   <filename>%APPDATA%\mollydb\mollydb.key</filename>, and there
    is no special permissions check since the directory is presumed secure.
    The location of the certificate and key files can be overridden by the
    connection parameters <literal>sslcert</> and <literal>sslkey</> or the
@@ -7417,7 +7417,7 @@ ldap://ldap.acme.com/cn=dbserver,cn=hosts?pgconnectinfo?base?(objectclass=*)
    In some cases, the client certificate might be signed by an
    <quote>intermediate</> certificate authority, rather than one that is
    directly trusted by the server.  To use such a certificate, append the
-   certificate of the signing authority to the <filename>postgresql.crt</>
+   certificate of the signing authority to the <filename>mollydb.crt</>
    file, then its parent authority's certificate, and so on up to a certificate
    authority, <quote>root</> or <quote>intermediate</>, that is trusted by
    the server, i.e. signed by a certificate in the server's
@@ -7425,7 +7425,7 @@ ldap://ldap.acme.com/cn=dbserver,cn=hosts?pgconnectinfo?base?(objectclass=*)
   </para>
 
   <para>
-   Note that the client's <filename>~/.postgresql/root.crt</> lists the top-level CAs
+   Note that the client's <filename>~/.mollydb/root.crt</> lists the top-level CAs
    that are considered trusted for signing server certificates.  In principle it need
    not list the CA that signed the client's certificate, though in most cases
    that CA would also be trusted for server certificates.
@@ -7624,27 +7624,27 @@ ldap://ldap.acme.com/cn=dbserver,cn=hosts?pgconnectinfo?base?(objectclass=*)
     <tbody>
 
      <row>
-      <entry><filename>~/.postgresql/postgresql.crt</></entry>
+      <entry><filename>~/.mollydb/mollydb.crt</></entry>
       <entry>client certificate</entry>
       <entry>requested by server</entry>
      </row>
 
      <row>
-      <entry><filename>~/.postgresql/postgresql.key</></entry>
+      <entry><filename>~/.mollydb/mollydb.key</></entry>
       <entry>client private key</entry>
       <entry>proves client certificate sent by owner; does not indicate
       certificate owner is trustworthy</entry>
      </row>
 
      <row>
-      <entry><filename>~/.postgresql/root.crt</></entry>
+      <entry><filename>~/.mollydb/root.crt</></entry>
       <entry>trusted certificate authorities</entry>
       <entry>checks that server certificate is signed by a trusted certificate
       authority</entry>
      </row>
 
      <row>
-      <entry><filename>~/.postgresql/root.crl</></entry>
+      <entry><filename>~/.mollydb/root.crl</></entry>
       <entry>certificates revoked by certificate authorities</entry>
       <entry>server certificate must not be on this list</entry>
      </row>

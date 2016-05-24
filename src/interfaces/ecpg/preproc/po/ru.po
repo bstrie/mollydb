@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.2\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-08-02 06:37+0000\n"
 "PO-Revision-Date: 2014-08-14 22:40+0400\n"
 "Last-Translator: Dmitriy Olshevskiy <olshevskiy87@bk.ru>\n"
@@ -176,10 +176,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Об ошибках сообщайте по адресу <pgsql-bugs@postgresql.org>.\n"
+"Об ошибках сообщайте по адресу <pgsql-bugs@mollydb.org>.\n"
 
 #: ecpg.c:143
 #, c-format
@@ -321,10 +321,10 @@ msgstr "ошибка синтаксиса в команде EXEC SQL INCLUDE"
 #, c-format
 msgid ""
 "internal error: unreachable state; please report this to <pgsql-"
-"bugs@postgresql.org>"
+"bugs@mollydb.org>"
 msgstr ""
 "внутренняя ошибка: недостижимое состояние; пожалуйста, сообщите в <pgsql-"
-"bugs@postgresql.org>"
+"bugs@mollydb.org>"
 
 #: pgc.l:1362
 #, c-format
@@ -463,11 +463,11 @@ msgstr "ожидался знак \"@\", но на этом месте \"%s\""
 #: preproc.y:13220
 #, c-format
 msgid ""
-"only protocols \"tcp\" and \"unix\" and database type \"postgresql\" are "
+"only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are "
 "supported"
 msgstr ""
 "поддерживаются только протоколы \"tcp\" и \"unix\", а тип базы данных - "
-"\"postgresql\""
+"\"mollydb\""
 
 #: preproc.y:13223
 #, c-format
@@ -482,8 +482,8 @@ msgstr ""
 
 #: preproc.y:13254
 #, c-format
-msgid "expected \"postgresql\", found \"%s\""
-msgstr "ожидался тип \"postgresql\", но на этом месте \"%s\""
+msgid "expected \"mollydb\", found \"%s\""
+msgstr "ожидался тип \"mollydb\", но на этом месте \"%s\""
 
 #: preproc.y:13257
 #, c-format

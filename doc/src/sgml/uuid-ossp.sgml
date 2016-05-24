@@ -72,7 +72,7 @@
         For example:
 
 <programlisting>
-SELECT uuid_generate_v3(uuid_ns_url(), 'http://www.postgresql.org');
+SELECT uuid_generate_v3(uuid_ns_url(), 'http://www.mollydb.org');
 </programlisting>
 
         The name parameter will be MD5-hashed, so the cleartext cannot be

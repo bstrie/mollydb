@@ -89,7 +89,7 @@ ALTER DATABASE <replaceable class="PARAMETER">name</replaceable> RESET ALL
    database. Whenever a new session is subsequently started in that
    database, the specified value becomes the session default value.
    The database-specific default overrides whatever setting is present
-   in <filename>postgresql.conf</> or has been received from the
+   in <filename>mollydb.conf</> or has been received from the
    <command>postgres</command> command line.  Only the database
    owner or a superuser can change the session defaults for a
    database.  Certain variables cannot be set this way, or can only be

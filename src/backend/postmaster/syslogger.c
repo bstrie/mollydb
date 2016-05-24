@@ -6,10 +6,10 @@
  * stderr output from the postmaster, backends, and other subprocesses
  * by redirecting to a pipe, and writes it to a set of logfiles.
  * It's possible to have size and age limits for the logfile configured
- * in postgresql.conf. If these limits are reached or passed, the
+ * in mollydb.conf. If these limits are reached or passed, the
  * current logfile is closed and a new one is created (rotated).
  * The logfiles are stored in a subdirectory (configurable in
- * postgresql.conf), using a user-selectable naming scheme.
+ * mollydb.conf), using a user-selectable naming scheme.
  *
  * Author: Andreas Pflug <pgadmin@pse-consulting.de>
  *
@@ -307,7 +307,7 @@ SysLoggerMain(int argc, char *argv[])
 
 			/*
 			 * Check if the log directory or filename pattern changed in
-			 * postgresql.conf. If so, force rotation to make sure we're
+			 * mollydb.conf. If so, force rotation to make sure we're
 			 * writing the logfiles in the right place.
 			 */
 			if (strcmp(Log_directory, currentLogDir) != 0)

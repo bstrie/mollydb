@@ -150,6 +150,6 @@
 # HOT STANDBY PARAMETERS
 #---------------------------------------------------------------------------
 #
-# Hot Standby related parameters are listed in postgresql.conf
+# Hot Standby related parameters are listed in mollydb.conf
 #
 #---------------------------------------------------------------------------

@@ -214,7 +214,7 @@ ProcessConfigFileInternal(GucContext context, bool applySettings, int elevel)
 		/*
 		 * If DataDir is not set, the PG_AUTOCONF_FILENAME file cannot be
 		 * read.  In this case, we don't want to accept any settings but
-		 * data_directory from postgresql.conf, because they might be
+		 * data_directory from mollydb.conf, because they might be
 		 * overwritten with settings in the PG_AUTOCONF_FILENAME file which
 		 * will be read later. OTOH, since data_directory isn't allowed in the
 		 * PG_AUTOCONF_FILENAME file, it will never be overwritten later.
@@ -688,7 +688,7 @@ GUC_flex_fatal(const char *msg)
  * Note: if elevel >= ERROR then an error will not return control to the
  * caller, so there is no need to check the return value in that case.
  *
- * Note: this function is used to parse not only postgresql.conf, but
+ * Note: this function is used to parse not only mollydb.conf, but
  * various other configuration files that use the same "name = value"
  * syntax.  Hence, do not do anything here or in the subsidiary routines
  * ParseConfigFile/ParseConfigDirectory that assumes we are processing

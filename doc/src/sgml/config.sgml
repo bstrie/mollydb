@@ -117,7 +117,7 @@
 
     <para>
      The most fundamental way to set these parameters is to edit the file
-     <filename>postgresql.conf</><indexterm><primary>postgresql.conf</></>,
+     <filename>mollydb.conf</><indexterm><primary>mollydb.conf</></>,
      which is normally kept in the data directory.  A default copy is
      installed when the database cluster directory is initialized.
      An example of what this file might look like is:
@@ -165,15 +165,15 @@ shared_buffers = 128MB
     </para>
 
     <para>
-     In addition to <filename>postgresql.conf</>,
+     In addition to <filename>mollydb.conf</>,
      a <productname>PostgreSQL</productname> data directory contains a file
-     <filename>postgresql.auto.conf</><indexterm><primary>postgresql.auto.conf</></>,
-     which has the same format as <filename>postgresql.conf</> but should
+     <filename>mollydb.auto.conf</><indexterm><primary>mollydb.auto.conf</></>,
+     which has the same format as <filename>mollydb.conf</> but should
      never be edited manually.  This file holds settings provided through
      the <xref linkend="SQL-ALTERSYSTEM"> command.  This file is automatically
-     read whenever <filename>postgresql.conf</> is, and its settings take
-     effect in the same way.  Settings in <filename>postgresql.auto.conf</>
-     override those in <filename>postgresql.conf</>.
+     read whenever <filename>mollydb.conf</> is, and its settings take
+     effect in the same way.  Settings in <filename>mollydb.auto.conf</>
+     override those in <filename>mollydb.conf</>.
     </para>
 
     <para>
@@ -193,7 +193,7 @@ shared_buffers = 128MB
       commands to establish configuration defaults.
       The already-mentioned <xref linkend="SQL-ALTERSYSTEM"> command
       provides a SQL-accessible means of changing global defaults; it is
-      functionally equivalent to editing <filename>postgresql.conf</>.
+      functionally equivalent to editing <filename>mollydb.conf</>.
       In addition, there are two commands that allow setting of defaults
       on a per-database or per-role basis:
      </para>
@@ -303,7 +303,7 @@ UPDATE pg_settings SET setting = reset_val WHERE name = 'configuration_parameter
 postgres -c log_connections=yes -c log_destination='syslog'
 </programlisting>
        Settings provided in this way override those set via
-       <filename>postgresql.conf</> or <command>ALTER SYSTEM</>,
+       <filename>mollydb.conf</> or <command>ALTER SYSTEM</>,
        so they cannot be changed globally without restarting the server.
      </para>
     </listitem>
@@ -339,7 +339,7 @@ env PGOPTIONS="-c geqo=off -c statement_timeout=5min" psql
 
      <para>
       <productname>PostgreSQL</> provides several features for breaking
-      down complex <filename>postgresql.conf</> files into sub-files.
+      down complex <filename>mollydb.conf</> files into sub-files.
       These features are especially useful when managing multiple servers
       with related, but not identical, configurations.
      </para>
@@ -350,7 +350,7 @@ env PGOPTIONS="-c geqo=off -c statement_timeout=5min" psql
        <secondary>in configuration file</secondary>
       </indexterm>
       In addition to individual parameter settings,
-      the <filename>postgresql.conf</> file can contain <firstterm>include
+      the <filename>mollydb.conf</> file can contain <firstterm>include
       directives</>, which specify another file to read and process as if
       it were inserted into the configuration file at this point.  This
       feature allows a configuration file to be divided into physically
@@ -381,7 +381,7 @@ include 'filename'
        <primary><literal>include_dir</></primary>
        <secondary>in configuration file</secondary>
       </indexterm>
-      The <filename>postgresql.conf</> file can also contain
+      The <filename>mollydb.conf</> file can also contain
       <literal>include_dir</literal> directives, which specify an entire
       directory of configuration files to include.  These look like
 <programlisting>
@@ -401,14 +401,14 @@ include_dir 'directory'
      <para>
       Include files or directories can be used to logically separate portions
       of the database configuration, rather than having a single large
-      <filename>postgresql.conf</> file.  Consider a company that has two
+      <filename>mollydb.conf</> file.  Consider a company that has two
       database servers, each with a different amount of memory.  There are
       likely elements of the configuration both will share, for things such
       as logging.  But memory-related parameters on the server will vary
       between the two.  And there might be server specific customizations,
       too.  One way to manage this situation is to break the custom
       configuration changes for your site into three files.  You could add
-      this to the end of your <filename>postgresql.conf</> file to include
+      this to the end of your <filename>mollydb.conf</> file to include
       them:
 <programlisting>
 include 'shared.conf'
@@ -426,7 +426,7 @@ include 'server.conf'
      <para>
       Another possibility is to create a configuration file directory and
       put this information into files there. For example, a <filename>conf.d</>
-      directory could be referenced at the end of <filename>postgresql.conf</>:
+      directory could be referenced at the end of <filename>mollydb.conf</>:
 <programlisting>
 include_dir 'conf.d'
 </programlisting>
@@ -466,7 +466,7 @@ include_dir 'conf.d'
     <title>File Locations</title>
 
      <para>
-      In addition to the <filename>postgresql.conf</filename> file
+      In addition to the <filename>mollydb.conf</filename> file
       already mentioned, <productname>PostgreSQL</productname> uses
       two other manually-edited configuration files, which control
       client authentication (their use is discussed in <xref
@@ -503,7 +503,7 @@ include_dir 'conf.d'
       <listitem>
        <para>
          Specifies the main server configuration file
-         (customarily called <filename>postgresql.conf</>).
+         (customarily called <filename>mollydb.conf</>).
          This parameter can only be set on the <command>postgres</command> command line.
        </para>
       </listitem>
@@ -570,7 +570,7 @@ include_dir 'conf.d'
       command-line option or <envar>PGDATA</envar> environment variable
       must point to the directory containing the configuration files,
       and the <varname>data_directory</> parameter must be set in
-      <filename>postgresql.conf</filename> (or on the command line) to show
+      <filename>mollydb.conf</filename> (or on the command line) to show
       where the data directory is actually located.  Notice that
       <varname>data_directory</> overrides <option>-D</option> and
       <envar>PGDATA</envar> for the location
@@ -943,7 +943,7 @@ include_dir 'conf.d'
         this much time, the server closes the connection. This prevents
         hung clients from occupying a connection indefinitely.
         The default is one minute (<literal>1m</>).
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -1192,7 +1192,7 @@ include_dir 'conf.d'
         Sets the location of the Kerberos server key file. See
         <xref linkend="gssapi-auth">
         for details. This parameter can only be set in the
-        <filename>postgresql.conf</> file or on the server command line.
+        <filename>mollydb.conf</> file or on the server command line.
        </para>
       </listitem>
      </varlistentry>
@@ -1208,7 +1208,7 @@ include_dir 'conf.d'
         Sets whether GSSAPI user names should be treated
         case-insensitively.
         The default is <literal>off</> (case sensitive). This parameter can only be
-        set in the <filename>postgresql.conf</> file or on the server command line.
+        set in the <filename>mollydb.conf</> file or on the server command line.
        </para>
       </listitem>
      </varlistentry>
@@ -1222,7 +1222,7 @@ include_dir 'conf.d'
       <listitem>
        <para>
         This parameter enables per-database user names.  It is off by default.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
 
@@ -1831,7 +1831,7 @@ include_dir 'conf.d'
          <varname>bgwriter_delay</> to a value that is not a multiple of 10
          might have the same results as setting it to the next higher multiple
          of 10.  This parameter can only be set in the
-         <filename>postgresql.conf</> file or on the server command line.
+         <filename>mollydb.conf</> file or on the server command line.
         </para>
        </listitem>
       </varlistentry>
@@ -1849,7 +1849,7 @@ include_dir 'conf.d'
          background writing.  (Note that checkpoints, which are managed by
          a separate, dedicated auxiliary process, are unaffected.)
          The default value is 100 buffers.
-         This parameter can only be set in the <filename>postgresql.conf</>
+         This parameter can only be set in the <filename>mollydb.conf</>
          file or on the server command line.
         </para>
        </listitem>
@@ -1877,7 +1877,7 @@ include_dir 'conf.d'
          while smaller values intentionally leave writes to be done by
          server processes.
          The default is 2.0.
-         This parameter can only be set in the <filename>postgresql.conf</>
+         This parameter can only be set in the <filename>mollydb.conf</>
          file or on the server command line.
         </para>
        </listitem>
@@ -1906,7 +1906,7 @@ include_dir 'conf.d'
          <literal>2MB</literal>.  The default is <literal>512Kb</> on Linux,
          <literal>0</> elsewhere.  (Non-default values of
          <symbol>BLCKSZ</symbol> change the default and maximum.)
-         This parameter can only be set in the <filename>postgresql.conf</>
+         This parameter can only be set in the <filename>mollydb.conf</>
          file or on the server command line.
         </para>
        </listitem>
@@ -2215,7 +2215,7 @@ include_dir 'conf.d'
        </para>
 
        <para>
-        <varname>fsync</varname> can only be set in the <filename>postgresql.conf</>
+        <varname>fsync</varname> can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
         If you turn this parameter off, also consider turning off
         <xref linkend="guc-full-page-writes">.
@@ -2344,7 +2344,7 @@ include_dir 'conf.d'
         configuration in order to create a crash-safe configuration or
         achieve optimal performance.
         These aspects are discussed in <xref linkend="wal-reliability">.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -2390,7 +2390,7 @@ include_dir 'conf.d'
        </para>
 
        <para>
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
         The default is <literal>on</>.
        </para>
@@ -2500,7 +2500,7 @@ include_dir 'conf.d'
         milliseconds; setting <varname>wal_writer_delay</> to a value that is
         not a multiple of 10 might have the same results as setting it to the
         next higher multiple of 10. This parameter can only be set in the
-        <filename>postgresql.conf</> file or on the server command line.
+        <filename>mollydb.conf</> file or on the server command line.
        </para>
       </listitem>
      </varlistentry>
@@ -2520,7 +2520,7 @@ include_dir 'conf.d'
         If <varname>wal_writer_flush_after</> is set to <literal>0</> WAL is
         flushed everytime the WAL writer has written WAL.  The default is
         <literal>1MB</literal>. This parameter can only be set in the
-        <filename>postgresql.conf</> file or on the server command line.
+        <filename>mollydb.conf</> file or on the server command line.
        </para>
       </listitem>
      </varlistentry>
@@ -2597,7 +2597,7 @@ include_dir 'conf.d'
         The default is five minutes (<literal>5min</>).
         Increasing this parameter can increase the amount of time needed
         for crash recovery.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -2613,7 +2613,7 @@ include_dir 'conf.d'
        <para>
         Specifies the target of checkpoint completion, as a fraction of
         total time between checkpoints. The default is 0.5.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -2642,7 +2642,7 @@ include_dir 'conf.d'
         and <literal>2MB</literal>.  The default is <literal>256Kb</> on
         Linux, <literal>0</> elsewhere.  (Non-default values of
         <symbol>BLCKSZ</symbol> change the default and maximum.)
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -2663,7 +2663,7 @@ include_dir 'conf.d'
         30 seconds (<literal>30s</>).  Zero disables the warning.
         No warnings will be generated if <varname>checkpoint_timeout</varname>
         is less than <varname>checkpoint_warning</varname>.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -2684,7 +2684,7 @@ include_dir 'conf.d'
         <varname>wal_keep_segments</> setting. The default is 1 GB.
         Increasing this parameter can increase the amount of time needed for
         crash recovery.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -2703,7 +2703,7 @@ include_dir 'conf.d'
         This can be used to ensure that enough WAL space is reserved to
         handle spikes in WAL usage, for example when running large batch
         jobs. The default is 80 MB.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -2765,7 +2765,7 @@ include_dir 'conf.d'
         <xref linkend="backup-archiving-wal">.
        </para>
        <para>
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.  It is ignored unless
         <varname>archive_mode</> was enabled at server start.
         If <varname>archive_command</> is an empty string (the default) while
@@ -2811,7 +2811,7 @@ include_dir 'conf.d'
         instead of archiving, if you want data to be copied off the master
         server more quickly than that.
         This parameter can only be set in the
-        <filename>postgresql.conf</> file or on the server command line.
+        <filename>mollydb.conf</> file or on the server command line.
        </para>
       </listitem>
      </varlistentry>
@@ -2927,7 +2927,7 @@ include_dir 'conf.d'
         the location of the previous checkpoint and status of WAL
         archiving.
         This parameter can only be set in the
-        <filename>postgresql.conf</> file or on the server command line.
+        <filename>mollydb.conf</> file or on the server command line.
        </para>
        </listitem>
       </varlistentry>
@@ -2945,7 +2945,7 @@ include_dir 'conf.d'
         the sending server to detect a standby crash or network outage.
         A value of zero disables the timeout mechanism.  This parameter
         can only be set in
-        the <filename>postgresql.conf</> file or on the server command line.
+        the <filename>mollydb.conf</> file or on the server command line.
         The default value is 60 seconds.
        </para>
       </listitem>
@@ -2960,7 +2960,7 @@ include_dir 'conf.d'
       <listitem>
        <para>
         Record commit time of transactions. This parameter
-        can only be set in <filename>postgresql.conf</> file or on the server
+        can only be set in <filename>mollydb.conf</> file or on the server
         command line. The default value is <literal>off</literal>.
        </para>
       </listitem>
@@ -3068,7 +3068,7 @@ include_dir 'conf.d'
         <literal>local</> or <literal>off</>.
        </para>
        <para>
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -3094,7 +3094,7 @@ include_dir 'conf.d'
         is measured in terms of number of write transactions occurring on the
         primary server, it is difficult to predict just how much additional
         grace time will be made available to standby queries.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
        <para>
@@ -3156,7 +3156,7 @@ include_dir 'conf.d'
         The default is 30 seconds. Units are milliseconds if not specified.
         A value of -1 allows the standby to wait forever for conflicting
         queries to complete.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
        <para>
@@ -3187,7 +3187,7 @@ include_dir 'conf.d'
         The default is 30 seconds. Units are milliseconds if not specified.
         A value of -1 allows the standby to wait forever for conflicting
         queries to complete.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
        <para>
@@ -3223,7 +3223,7 @@ include_dir 'conf.d'
        often as specified by this parameter.  Thus, the apply position may
        lag slightly behind the true position.  Setting this parameter to zero
        disables status updates completely.  This parameter can only be set in
-       the <filename>postgresql.conf</> file or on the server command line.
+       the <filename>mollydb.conf</> file or on the server command line.
        The default value is 10 seconds.
       </para>
       </listitem>
@@ -3245,7 +3245,7 @@ include_dir 'conf.d'
         Feedback messages will not be sent more frequently than once per
         <varname>wal_receiver_status_interval</>. The default value is
         <literal>off</literal>. This parameter can only be set in the
-        <filename>postgresql.conf</> file or on the server command line.
+        <filename>mollydb.conf</> file or on the server command line.
        </para>
        <para>
         If cascaded replication is in use the feedback is passed upstream
@@ -3279,7 +3279,7 @@ include_dir 'conf.d'
         outage.
         A value of zero disables the timeout mechanism.  This parameter
         can only be set in
-        the <filename>postgresql.conf</> file or on the server command line.
+        the <filename>mollydb.conf</> file or on the server command line.
         The default value is 60 seconds.
        </para>
       </listitem>
@@ -3297,7 +3297,7 @@ include_dir 'conf.d'
         available from any sources (streaming replication,
         local <filename>pg_xlog</> or WAL archive) before retrying to
         retrieve WAL data.  This parameter can only be set in the
-        <filename>postgresql.conf</> file or on the server command line.
+        <filename>mollydb.conf</> file or on the server command line.
         The default value is 5 seconds. Units are milliseconds if not specified.
        </para>
        <para>
@@ -4127,7 +4127,7 @@ SELECT * FROM parent WHERE key = 2400;
          parameter to a list of desired log destinations separated by
          commas. The default is to log to <systemitem>stderr</systemitem>
          only.
-         This parameter can only be set in the <filename>postgresql.conf</>
+         This parameter can only be set in the <filename>mollydb.conf</>
          file or on the server command line.
        </para>
        <para>
@@ -4152,7 +4152,7 @@ SELECT * FROM parent WHERE key = 2400;
          <application>syslog</application> configuration on most platforms
          will discard all such messages.  You will need to add something like:
 <programlisting>
-local0.*    /var/log/postgresql
+local0.*    /var/log/mollydb
 </programlisting>
          to the  <application>syslog</application> daemon's configuration file
          to make it work.
@@ -4228,7 +4228,7 @@ local0.*    /var/log/postgresql
         this parameter determines the directory in which log files will be created.
         It can be specified as an absolute path, or relative to the
         cluster data directory.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
         The default is <literal>pg_log</literal>.
        </para>
@@ -4257,7 +4257,7 @@ local0.*    /var/log/postgresql
         </ulink> specification.
         Note that the system's <function>strftime</function> is not used
         directly, so platform-specific (nonstandard) extensions do not work.
-        The default is <literal>postgresql-%Y-%m-%d_%H%M%S.log</literal>.
+        The default is <literal>mollydb-%Y-%m-%d_%H%M%S.log</literal>.
        </para>
        <para>
         If you specify a file name without escapes, you should plan to
@@ -4276,7 +4276,7 @@ local0.*    /var/log/postgresql
         replaced instead.)
        </para>
        <para>
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -4310,7 +4310,7 @@ local0.*    /var/log/postgresql
         they might contain sensitive data.
        </para>
        <para>
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -4329,7 +4329,7 @@ local0.*    /var/log/postgresql
         After this many minutes have elapsed, a new log file will
         be created.  Set to zero to disable time-based creation of
         new log files.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -4348,7 +4348,7 @@ local0.*    /var/log/postgresql
         After this many kilobytes have been emitted into a log file,
         a new log file will be created.  Set to zero to disable size-based
         creation of new log files.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -4369,10 +4369,10 @@ local0.*    /var/log/postgresql
         due to time-based rotation, not during server startup or size-based
         rotation.  When off, pre-existing files will be appended to in
         all cases.  For example, using this setting in combination with
-        a <varname>log_filename</varname> like <literal>postgresql-%H.log</literal>
+        a <varname>log_filename</varname> like <literal>mollydb-%H.log</literal>
         would result in generating twenty-four hourly log files and then
         cyclically overwriting them.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
        <para>
@@ -4414,7 +4414,7 @@ local0.*    /var/log/postgresql
         the default is <literal>LOCAL0</>. See also the
         documentation of your system's
         <application>syslog</application> daemon.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -4433,7 +4433,7 @@ local0.*    /var/log/postgresql
          <productname>PostgreSQL</productname> messages in
          <application>syslog</application> logs. The default is
          <literal>postgres</literal>.
-         This parameter can only be set in the <filename>postgresql.conf</>
+         This parameter can only be set in the <filename>mollydb.conf</>
          file or on the server command line.
         </para>
        </listitem>
@@ -4461,7 +4461,7 @@ local0.*    /var/log/postgresql
         </para>
 
         <para>
-         This parameter can only be set in the <filename>postgresql.conf</>
+         This parameter can only be set in the <filename>mollydb.conf</>
          file or on the server command line.
         </para>
       </listitem>
@@ -4494,7 +4494,7 @@ local0.*    /var/log/postgresql
        </para>
 
        <para>
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -4512,7 +4512,7 @@ local0.*    /var/log/postgresql
         determines the program name used to identify
         <productname>PostgreSQL</productname> messages in
         the log. The default is <literal>PostgreSQL</literal>.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -4815,7 +4815,7 @@ local0.*    /var/log/postgresql
         Causes checkpoints and restartpoints to be logged in the server log.
         Some statistics are included in the log messages, including the number
         of buffers written and the time spent writing them.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line. The default is off.
        </para>
       </listitem>
@@ -4934,7 +4934,7 @@ local0.*    /var/log/postgresql
         connecting host. Turning this parameter on causes logging of the
         host name as well.  Note that depending on your host name resolution
         setup this might impose a non-negligible performance penalty.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -4962,7 +4962,7 @@ local0.*    /var/log/postgresql
          right with spaces to give it a minimum width, whereas a positive
          value will pad on the left. Padding can be useful to aid human
          readability in log files.
-         This parameter can only be set in the <filename>postgresql.conf</>
+         This parameter can only be set in the <filename>mollydb.conf</>
          file or on the server command line. The default is an empty string.
 
          <informaltable>
@@ -5214,10 +5214,10 @@ FROM pg_stat_activity;
         Unlike <xref linkend="guc-timezone">, this value is cluster-wide,
         so that all sessions will report timestamps consistently.
         The built-in default is <literal>GMT</>, but that is typically
-        overridden in <filename>postgresql.conf</>; <application>initdb</>
+        overridden in <filename>mollydb.conf</>; <application>initdb</>
         will install a setting there corresponding to its system environment.
         See <xref linkend="datatype-timezones"> for more information.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -5532,7 +5532,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         is <filename>pg_stat_tmp</filename>. Pointing this at a RAM-based
         file system will decrease physical I/O requirements and can lead to
         improved performance.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -5615,7 +5615,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         autovacuum launcher daemon.  This is on by default; however,
         <xref linkend="guc-track-counts"> must also be enabled for
         autovacuum to work.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line; however, autovacuuming can be
         disabled for individual tables by changing table storage parameters.
        </para>
@@ -5646,7 +5646,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         logged if an autovacuum action is skipped due to the existence of a
         conflicting lock.  Enabling this parameter can be helpful
         in tracking autovacuum activity.  This parameter can only be set in
-        the <filename>postgresql.conf</> file or on the server command line;
+        the <filename>mollydb.conf</> file or on the server command line;
         but the setting can be overridden for individual tables by
         changing table storage parameters.
        </para>
@@ -5681,7 +5681,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         database and issues <command>VACUUM</> and <command>ANALYZE</> commands
         as needed for tables in that database.  The delay is measured
         in seconds, and the default is one minute (<literal>1min</>).
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -5698,7 +5698,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         Specifies the minimum number of updated or deleted tuples needed
         to trigger a <command>VACUUM</> in any one table.
         The default is 50 tuples.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line;
         but the setting can be overridden for individual tables by
         changing table storage parameters.
@@ -5717,7 +5717,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         Specifies the minimum number of inserted, updated or deleted tuples
         needed to trigger an <command>ANALYZE</> in any one table.
         The default is 50 tuples.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line;
         but the setting can be overridden for individual tables by
         changing table storage parameters.
@@ -5737,7 +5737,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         <varname>autovacuum_vacuum_threshold</varname>
         when deciding whether to trigger a <command>VACUUM</>.
         The default is 0.2 (20% of table size).
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line;
         but the setting can be overridden for individual tables by
         changing table storage parameters.
@@ -5757,7 +5757,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         <varname>autovacuum_analyze_threshold</varname>
         when deciding whether to trigger an <command>ANALYZE</>.
         The default is 0.1 (10% of table size).
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line;
         but the setting can be overridden for individual tables by
         changing table storage parameters.
@@ -5833,7 +5833,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         <command>VACUUM</> operations.  If -1 is specified, the regular
         <xref linkend="guc-vacuum-cost-delay"> value will be used.
         The default value is 20 milliseconds.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line;
         but the setting can be overridden for individual tables by
         changing table storage parameters.
@@ -5856,7 +5856,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         the value is distributed proportionally among the running autovacuum
         workers, if there is more than one, so that the sum of the limits for
         each worker does not exceed the value of this variable.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line;
         but the setting can be overridden for individual tables by
         changing table storage parameters.
@@ -6062,7 +6062,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
         when using a previously set value, nonexistent tablespaces are
         ignored, as are tablespaces for which the user lacks
         <literal>CREATE</> privilege.  In particular, this rule applies when
-        using a value set in <filename>postgresql.conf</>.
+        using a value set in <filename>mollydb.conf</>.
        </para>
 
        <para>
@@ -6217,7 +6217,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
 
        <para>
         Setting <varname>statement_timeout</> in
-        <filename>postgresql.conf</> is not recommended because it would
+        <filename>mollydb.conf</> is not recommended because it would
         affect all sessions.
        </para>
       </listitem>
@@ -6252,7 +6252,7 @@ COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
 
        <para>
         Setting <varname>lock_timeout</> in
-        <filename>postgresql.conf</> is not recommended because it would
+        <filename>mollydb.conf</> is not recommended because it would
         affect all sessions.
        </para>
       </listitem>
@@ -6548,7 +6548,7 @@ SET XML OPTION { DOCUMENT | CONTENT };
        <para>
         Sets the time zone for displaying and interpreting time stamps.
         The built-in default is <literal>GMT</>, but that is typically
-        overridden in <filename>postgresql.conf</>; <application>initdb</>
+        overridden in <filename>mollydb.conf</>; <application>initdb</>
         will install a setting there corresponding to its system environment.
         See <xref linkend="datatype-timezones"> for more information.
        </para>
@@ -6945,11 +6945,11 @@ SET XML OPTION { DOCUMENT | CONTENT };
         (Use <literal>pg_config --pkglibdir</literal> to find out the name of
         this directory.) For example:
 <programlisting>
-dynamic_library_path = '/usr/local/lib/postgresql:/home/my_project/lib:$libdir'
+dynamic_library_path = '/usr/local/lib/mollydb:/home/my_project/lib:$libdir'
 </programlisting>
         or, in a Windows environment:
 <programlisting>
-dynamic_library_path = 'C:\tools\postgresql;H:\my_project\lib;$libdir'
+dynamic_library_path = 'C:\tools\mollydb;H:\my_project\lib;$libdir'
 </programlisting>
        </para>
 
@@ -6964,7 +6964,7 @@ dynamic_library_path = 'C:\tools\postgresql;H:\my_project\lib;$libdir'
         setting done that way will only persist until the end of the
         client connection, so this method should be reserved for
         development purposes. The recommended way to set this parameter
-        is in the <filename>postgresql.conf</filename> configuration
+        is in the <filename>mollydb.conf</filename> configuration
         file.
        </para>
       </listitem>
@@ -7476,7 +7476,7 @@ dynamic_library_path = 'C:\tools\postgresql;H:\my_project\lib;$libdir'
      The following <quote>parameters</> are read-only, and are determined
      when <productname>PostgreSQL</productname> is compiled or when it is
      installed. As such, they have been excluded from the sample
-     <filename>postgresql.conf</> file.  These options report
+     <filename>mollydb.conf</> file.  These options report
      various aspects of <productname>PostgreSQL</productname> behavior
      that might be of interest to certain applications, particularly
      administrative front-ends.
@@ -7767,7 +7767,7 @@ dynamic_library_path = 'C:\tools\postgresql;H:\my_project\lib;$libdir'
      to assist with recovery of severely damaged databases.  There
      should be no reason to use them on a production database.
      As such, they have been excluded from the sample
-     <filename>postgresql.conf</> file.  Note that many of these
+     <filename>mollydb.conf</> file.  Note that many of these
      parameters require special source compilation flags to work at all.
     </para>
 
@@ -7833,7 +7833,7 @@ dynamic_library_path = 'C:\tools\postgresql;H:\my_project\lib;$libdir'
         authentication procedure.  This is intended to give developers an
         opportunity to attach to the server process with a debugger to
         trace down misbehavior in authentication.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>
@@ -7877,7 +7877,7 @@ dynamic_library_path = 'C:\tools\postgresql;H:\my_project\lib;$libdir'
         had <literal>LOG</> priority; for common settings of
         <varname>log_min_messages</> this results in unconditionally sending
         them to the server log.
-        This parameter can only be set in the <filename>postgresql.conf</>
+        This parameter can only be set in the <filename>mollydb.conf</>
         file or on the server command line.
        </para>
       </listitem>

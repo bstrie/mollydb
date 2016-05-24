@@ -246,7 +246,7 @@ elif [ $RETVAL -ne 0 ]; then
     echo "failed"
     echo ""
     echo "The sepgsql module does not appear to be loaded.  Please verify"
-    echo "that the 'shared_preload_libraries' setting in postgresql.conf"
+    echo "that the 'shared_preload_libraries' setting in mollydb.conf"
     echo "includes 'sepgsql', and then restart the server."
     echo ""
     echo "See Installation section of the contrib/sepgsql documentation."

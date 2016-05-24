@@ -343,18 +343,18 @@ su - postgres
   <para>
    The <productname>PostgreSQL</> &version; sources can be obtained from the
    download section of our
-   website: <ulink url="http://www.postgresql.org/download/"></ulink>.  You
-   should get a file named <filename>postgresql-&version;.tar.gz</filename>
-   or <filename>postgresql-&version;.tar.bz2</filename>. After
+   website: <ulink url="http://www.mollydb.org/download/"></ulink>.  You
+   should get a file named <filename>mollydb-&version;.tar.gz</filename>
+   or <filename>mollydb-&version;.tar.bz2</filename>. After
    you have obtained the file, unpack it:
 <screen>
-<userinput>gunzip postgresql-&version;.tar.gz</userinput>
-<userinput>tar xf postgresql-&version;.tar</userinput>
+<userinput>gunzip mollydb-&version;.tar.gz</userinput>
+<userinput>tar xf mollydb-&version;.tar</userinput>
 </screen>
    (Use <command>bunzip2</command> instead of <command>gunzip</command> if you
    have the <filename>.bz2</filename> file.)
    This will create a directory
-   <filename>postgresql-&version;</filename> under the current directory
+   <filename>mollydb-&version;</filename> under the current directory
    with the <productname>PostgreSQL</> sources.
    Change into that directory for the rest
    of the installation procedure.
@@ -558,7 +558,7 @@ su - postgres
          Sets the root directory for installing documentation files,
          except <quote>man</> pages.  This only sets the default for
          the following options.  The default value for this option is
-         <filename><replaceable>DATAROOTDIR</>/doc/postgresql</>.
+         <filename><replaceable>DATAROOTDIR</>/doc/mollydb</>.
         </para>
        </listitem>
       </varlistentry>
@@ -582,14 +582,14 @@ su - postgres
        <productname>PostgreSQL</> into shared installation locations
        (such as <filename>/usr/local/include</filename>) without
        interfering with the namespace of the rest of the system. First,
-       the string <quote><literal>/postgresql</literal></quote> is
+       the string <quote><literal>/mollydb</literal></quote> is
        automatically appended to <varname>datadir</varname>,
        <varname>sysconfdir</varname>, and <varname>docdir</varname>,
        unless the fully expanded directory name already contains the
        string <quote><literal>postgres</></quote> or
        <quote><literal>pgsql</></quote>. For example, if you choose
        <filename>/usr/local</filename> as prefix, the documentation will
-       be installed in <filename>/usr/local/doc/postgresql</filename>,
+       be installed in <filename>/usr/local/doc/mollydb</filename>,
        but if the prefix is <filename>/opt/postgres</filename>, then it
        will be in <filename>/opt/postgres/doc</filename>. The public C
        header files of the client interfaces are installed into
@@ -1983,7 +1983,7 @@ kill `cat /usr/local/pgsql/data/postmaster.pid`
    it has recently been verified to build and pass its regression tests
    on that platform.  Currently, most testing of platform compatibility
    is done automatically by test machines in the
-   <ulink url="http://buildfarm.postgresql.org/">PostgreSQL Build Farm</ulink>.
+   <ulink url="http://buildfarm.mollydb.org/">PostgreSQL Build Farm</ulink>.
    If you are interested in using <productname>PostgreSQL</> on a platform
    that is not represented in the build farm, but on which the code works
    or can be made to work, you are strongly encouraged to set up a build
@@ -2015,9 +2015,9 @@ kill `cat /usr/local/pgsql/data/postmaster.pid`
   <para>
    If you have installation problems on a platform that is known
    to be supported according to recent build farm results, please report
-   it to <email>pgsql-bugs@postgresql.org</email>.  If you are interested
+   it to <email>pgsql-bugs@mollydb.org</email>.  If you are interested
    in porting <productname>PostgreSQL</> to a new platform,
-   <email>pgsql-hackers@postgresql.org</email> is the appropriate place
+   <email>pgsql-hackers@mollydb.org</email> is the appropriate place
    to discuss that.
   </para>
  </sect1>
@@ -2159,7 +2159,7 @@ kill `cat /usr/local/pgsql/data/postmaster.pid`
      should take care of it.
     </para>
 
-    <!-- http://archives.postgresql.org/message-id/6064jt6cfm.fsf_-_@dba2.int.libertyrms.com -->
+    <!-- http://archives.mollydb.org/message-id/6064jt6cfm.fsf_-_@dba2.int.libertyrms.com -->
 
     <para>
      One user reports:
@@ -2221,7 +2221,7 @@ hosts=local4,bind4
 
    <sect3>
     <title>Memory Management</title>
-    <!-- http://archives.postgresql.org/message-id/603bgqmpl9.fsf@dba2.int.libertyrms.com -->
+    <!-- http://archives.mollydb.org/message-id/603bgqmpl9.fsf@dba2.int.libertyrms.com -->
 
     <para>
      AIX can be somewhat peculiar with regards to the way it does
@@ -2278,7 +2278,7 @@ createlang: language installation failed: ERROR:  could not load library "/opt/d
      If a 32-bit binary is desired, set <symbol>LDR_CNTRL</symbol> to
      <literal>MAXDATA=0x<replaceable>n</replaceable>0000000</literal>,
      where 1 &lt;= n &lt;= 8, before starting the PostgreSQL server,
-     and try different values and <filename>postgresql.conf</filename>
+     and try different values and <filename>mollydb.conf</filename>
      settings to find a configuration that works satisfactorily.  This
      use of <symbol>LDR_CNTRL</symbol> tells AIX that you want the
      server to have <symbol>MAXDATA</symbol> bytes set aside for the

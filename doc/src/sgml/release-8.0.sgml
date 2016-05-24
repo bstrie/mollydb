@@ -822,7 +822,7 @@
     <listitem>
      <para>
       Fix <application>pg_ctl</> to not go into an infinite loop if
-      <filename>postgresql.conf</> is empty (Jeff Davis)
+      <filename>mollydb.conf</> is empty (Jeff Davis)
      </para>
     </listitem>
 
@@ -2445,7 +2445,7 @@ in <application>PL/python</> (Neil)</para></listitem>
 Win32 to match the backend (Andrew)</para></listitem>
 
 <listitem><para>Fix crash when <literal>log_min_messages</> is set to
-<literal>DEBUG3</> or above in <filename>postgresql.conf</> on Win32
+<literal>DEBUG3</> or above in <filename>mollydb.conf</> on Win32
 (Bruce)</para></listitem>
 
 <listitem><para>Fix <application>pgxs</> <literal>-L</> library path
@@ -3110,7 +3110,7 @@ typedefs (Michael)</para></listitem>
        <productname>PostgreSQL</productname>. A separate installer
        project has been created to ease installation on
        <productname>Windows</> &mdash; see <ulink
-       url="http://www.postgresql.org/ftp/win32/"></ulink>.
+       url="http://www.mollydb.org/ftp/win32/"></ulink>.
       </para>
 
       <para>
@@ -3431,7 +3431,7 @@ typedefs (Michael)</para></listitem>
      <para>
      The JDBC client interface has been removed from the core
      distribution, and is now hosted at <ulink url=
-     "http://jdbc.postgresql.org"></ulink>.
+     "http://jdbc.mollydb.org"></ulink>.
      </para>
     </listitem>
 
@@ -3439,7 +3439,7 @@ typedefs (Michael)</para></listitem>
      <para>
      The Tcl client interface has also been removed. There are several
      Tcl interfaces now hosted at <ulink url=
-     "http://gborg.postgresql.org"></ulink>.
+     "http://gborg.mollydb.org"></ulink>.
      </para>
     </listitem>
 

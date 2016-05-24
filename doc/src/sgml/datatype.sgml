@@ -2327,7 +2327,7 @@ January 8 04:05:06 1999 PST
      The date/time style can be selected by the user using the
      <command>SET datestyle</command> command, the <xref
      linkend="guc-datestyle"> parameter in the
-     <filename>postgresql.conf</filename> configuration file, or the
+     <filename>mollydb.conf</filename> configuration file, or the
      <envar>PGDATESTYLE</envar> environment variable on the server or
      client.
     </para>
@@ -2517,7 +2517,7 @@ January 8 04:05:06 1999 PST
 
     <para>
      The <xref linkend="guc-timezone"> configuration parameter can
-     be set in the file <filename>postgresql.conf</>, or in any of the
+     be set in the file <filename>mollydb.conf</>, or in any of the
      other standard ways described in <xref linkend="runtime-config">.
      There are also some special ways to set it:
 

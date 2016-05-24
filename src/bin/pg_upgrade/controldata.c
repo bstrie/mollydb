@@ -17,7 +17,7 @@
  * get_control_data()
  *
  * gets pg_control information in "ctrl". Assumes that bindir and
- * datadir are valid absolute paths to postgresql bin and pgdata
+ * datadir are valid absolute paths to mollydb bin and pgdata
  * directories respectively *and* pg_resetxlog is version compatible
  * with datadir. The main purpose of this function is to get pg_control
  * data in a version independent manner.

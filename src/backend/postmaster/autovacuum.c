@@ -532,7 +532,7 @@ AutoVacLauncherMain(int argc, char *argv[])
 
 	/*
 	 * Force zero_damaged_pages OFF in the autovac process, even if it is set
-	 * in postgresql.conf.  We don't really want such a dangerous option being
+	 * in mollydb.conf.  We don't really want such a dangerous option being
 	 * applied non-interactively.
 	 */
 	SetConfigOption("zero_damaged_pages", "false", PGC_SUSET, PGC_S_OVERRIDE);
@@ -1545,7 +1545,7 @@ AutoVacWorkerMain(int argc, char *argv[])
 
 	/*
 	 * Force zero_damaged_pages OFF in the autovac process, even if it is set
-	 * in postgresql.conf.  We don't really want such a dangerous option being
+	 * in mollydb.conf.  We don't really want such a dangerous option being
 	 * applied non-interactively.
 	 */
 	SetConfigOption("zero_damaged_pages", "false", PGC_SUSET, PGC_S_OVERRIDE);

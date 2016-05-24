@@ -59,7 +59,7 @@ check: all
 
 # Versions of the check tests that include the prepared_transactions test
 # It only makes sense to run these if set up to use prepared transactions,
-# via TEMP_CONFIG for the check case, or via the postgresql.conf for the
+# via TEMP_CONFIG for the check case, or via the mollydb.conf for the
 # installcheck case.
 installcheck-prepared-txns: all temp-install
 	./pg_isolation_regress --bindir='$(bindir)' $(EXTRA_REGRESS_OPTS) --inputdir=$(srcdir) --schedule=$(srcdir)/isolation_schedule prepared-transactions

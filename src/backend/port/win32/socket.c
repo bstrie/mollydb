@@ -497,7 +497,7 @@ pgwin32_send(SOCKET s, const void *buf, int len, int flags)
  * While waiting, allow signals to run
  *
  * NOTE! Currently does not implement exceptfds check,
- * since it is not used in postgresql!
+ * since it is not used in mollydb!
  */
 int
 pgwin32_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, const struct timeval * timeout)

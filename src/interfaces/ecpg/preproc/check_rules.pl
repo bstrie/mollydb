@@ -5,7 +5,7 @@
 #
 # Copyright (c) 2009-2016, PostgreSQL Global Development Group
 #
-# Written by Michael Meskes <meskes@postgresql.org>
+# Written by Michael Meskes <meskes@mollydb.org>
 #            Andy Colson <andy@squeakycode.net>
 #
 # Placed under the same license as PostgreSQL.

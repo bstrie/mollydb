@@ -161,7 +161,7 @@ EOF
       <para>
        If this parameter contains an <symbol>=</symbol> sign or starts
        with a valid <acronym>URI</acronym> prefix
-       (<literal>postgresql://</literal>
+       (<literal>mollydb://</literal>
        or <literal>postgres://</literal>), it is treated as a
        <parameter>conninfo</parameter> string. See <xref
        linkend="libpq-connstring"> for more information.
@@ -669,7 +669,7 @@ EOF
      connection. For example:
 <programlisting>
 $ <userinput>psql "service=myservice sslmode=require"</userinput>
-$ <userinput>psql postgresql://dbmaster:5433/mydb?sslmode=require</userinput>
+$ <userinput>psql mollydb://dbmaster:5433/mydb?sslmode=require</userinput>
 </programlisting>
      This way you can also use <acronym>LDAP</acronym> for connection
      parameter lookup as described in <xref linkend="libpq-ldap">.
@@ -867,7 +867,7 @@ testdb=&gt;
 =&gt; \c mydb myuser host.dom 6432
 =&gt; \c service=foo
 =&gt; \c "host=localhost port=5432 dbname=mydb connect_timeout=10 sslmode=disable"
-=&gt; \c postgresql://tom@localhost/mydb?application_name=myapp
+=&gt; \c mollydb://tom@localhost/mydb?application_name=myapp
 </programlisting>
         </listitem>
       </varlistentry>
@@ -3926,7 +3926,7 @@ PSQL_EDITOR_LINENUMBER_ARG='--line '
      The user's personal startup file is named <filename>.psqlrc</filename>
      and is sought in the invoking user's home directory.  On Windows, which
      lacks such a concept, the personal startup file is named
-     <filename>%APPDATA%\postgresql\psqlrc.conf</filename>.
+     <filename>%APPDATA%\mollydb\psqlrc.conf</filename>.
      The location of the user's startup file can be set explicitly via
      the <envar>PSQLRC</envar> environment variable.
     </para>
@@ -3949,7 +3949,7 @@ PSQL_EDITOR_LINENUMBER_ARG='--line '
     <para>
      The command-line history is stored in the file
      <filename>~/.psql_history</filename>, or
-     <filename>%APPDATA%\postgresql\psql_history</filename> on Windows.
+     <filename>%APPDATA%\mollydb\psql_history</filename> on Windows.
     </para>
     <para>
      The location of the history file can be set explicitly via

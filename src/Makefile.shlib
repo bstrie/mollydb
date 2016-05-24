@@ -400,7 +400,7 @@ endif # PORTNAME == cygwin || PORTNAME == win32
 %.pc: $(MAKEFILE_LIST)
 	echo 'Name: lib$(NAME)' >$@
 	echo 'Description: PostgreSQL lib$(NAME) library' >>$@
-	echo 'Url: http://www.postgresql.org/' >>$@
+	echo 'Url: http://www.mollydb.org/' >>$@
 	echo 'Version: $(VERSION)' >>$@
 	echo 'Requires: ' >>$@
 	echo 'Requires.private: $(PKG_CONFIG_REQUIRES_PRIVATE)' >>$@
@@ -472,7 +472,7 @@ endif
 install-lib-shared: $(shlib) installdirs-lib
 ifdef soname
 # we don't install $(shlib) on AIX
-# (see http://archives.postgresql.org/message-id/52EF20B2E3209443BC37736D00C3C1380A6E79FE@EXADV1.host.magwien.gv.at)
+# (see http://archives.mollydb.org/message-id/52EF20B2E3209443BC37736D00C3C1380A6E79FE@EXADV1.host.magwien.gv.at)
 ifneq ($(PORTNAME), aix)
 	$(INSTALL_SHLIB) $< '$(DESTDIR)$(libdir)/$(shlib)'
 ifneq ($(PORTNAME), cygwin)

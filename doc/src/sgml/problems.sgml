@@ -296,7 +296,7 @@
 
   <para>
    In general, send bug reports to the bug report mailing list at
-   <email>pgsql-bugs@postgresql.org</email>.
+   <email>pgsql-bugs@mollydb.org</email>.
    You are requested to use a descriptive subject for your email
    message, perhaps parts of the error message.
   </para>
@@ -304,22 +304,22 @@
   <para>
    Another method is to fill in the bug report web-form available
    at the project's
-   <ulink url="http://www.postgresql.org/">web site</ulink>.
+   <ulink url="http://www.mollydb.org/">web site</ulink>.
    Entering a bug report this way causes it to be mailed to the
-   <email>pgsql-bugs@postgresql.org</email> mailing list.
+   <email>pgsql-bugs@mollydb.org</email> mailing list.
   </para>
 
   <para>
    If your bug report has security implications and you'd prefer that it
    not become immediately visible in public archives, don't send it to
    <literal>pgsql-bugs</literal>.  Security issues can be
-   reported privately to <email>security@postgresql.org</email>.
+   reported privately to <email>security@mollydb.org</email>.
   </para>
 
   <para>
    Do not send bug reports to any of the user mailing lists, such as
-   <email>pgsql-sql@postgresql.org</email> or
-   <email>pgsql-general@postgresql.org</email>.
+   <email>pgsql-sql@mollydb.org</email> or
+   <email>pgsql-general@mollydb.org</email>.
    These mailing lists are for answering
    user questions, and their subscribers normally do not wish to receive
    bug reports. More importantly, they are unlikely to fix them.
@@ -327,7 +327,7 @@
 
   <para>
    Also, please do <emphasis>not</emphasis> send reports to
-   the developers' mailing list <email>pgsql-hackers@postgresql.org</email>.
+   the developers' mailing list <email>pgsql-hackers@mollydb.org</email>.
    This list is for discussing the
    development of <productname>PostgreSQL</productname>, and it would be nice
    if we could keep the bug reports separate. We might choose to take up a
@@ -337,14 +337,14 @@
 
   <para>
    If you have a problem with the documentation, the best place to report it
-   is the documentation mailing list <email>pgsql-docs@postgresql.org</email>.
+   is the documentation mailing list <email>pgsql-docs@mollydb.org</email>.
    Please be specific about what part of the documentation you are unhappy
    with.
   </para>
 
   <para>
    If your bug is a portability problem on a non-supported platform,
-   send mail to <email>pgsql-hackers@postgresql.org</email>,
+   send mail to <email>pgsql-hackers@mollydb.org</email>,
    so we (and you) can work on
    porting <productname>PostgreSQL</productname> to your platform.
   </para>
@@ -358,7 +358,7 @@
     If you would like to send mail but do not want to receive list traffic,
     you can subscribe and set your subscription option to <literal>nomail</>.
     For more information send mail to
-    <email>majordomo@postgresql.org</email>
+    <email>majordomo@mollydb.org</email>
     with the single word <literal>help</> in the body of the message.
    </para>
   </note>

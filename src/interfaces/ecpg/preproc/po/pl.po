@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ecpg (PostgreSQL 9.1)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-10 20:37+0000\n"
 "PO-Revision-Date: 2014-11-10 23:25+0200\n"
 "Last-Translator: grzegorz <begina.felicysym@wp.eu>\n"
@@ -171,10 +171,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Błędy proszę przesyłać na adres <pgsql-bugs@postgresql.org>.\n"
+"Błędy proszę przesyłać na adres <pgsql-bugs@mollydb.org>.\n"
 
 #: ecpg.c:143
 #, c-format
@@ -315,8 +315,8 @@ msgstr "błąd składni w poleceniu EXEC SQL INCLUDE"
 
 #: pgc.l:1237
 #, c-format
-msgid "internal error: unreachable state; please report this to <pgsql-bugs@postgresql.org>"
-msgstr "błąd wewnętrzny: nieosiągalny stan; proszę przesłać go na adres <pgsql-bugs@postgresql.org>"
+msgid "internal error: unreachable state; please report this to <pgsql-bugs@mollydb.org>"
+msgstr "błąd wewnętrzny: nieosiągalny stan; proszę przesłać go na adres <pgsql-bugs@mollydb.org>"
 
 #: pgc.l:1362
 #, c-format
@@ -451,8 +451,8 @@ msgstr "oczekiwano \"@\", znaleziono \"%s\""
 
 #: preproc.y:13234
 #, c-format
-msgid "only protocols \"tcp\" and \"unix\" and database type \"postgresql\" are supported"
-msgstr "tylko protokoły \"tcp\" i \"unix\" oraz typ bazy danych \"postgresql\" są wspierane"
+msgid "only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are supported"
+msgstr "tylko protokoły \"tcp\" i \"unix\" oraz typ bazy danych \"mollydb\" są wspierane"
 
 #: preproc.y:13237
 #, c-format
@@ -466,8 +466,8 @@ msgstr "Gniazda dziedziny Uniksa działają tylko na \"localhost\" a nie na \"%s
 
 #: preproc.y:13268
 #, c-format
-msgid "expected \"postgresql\", found \"%s\""
-msgstr "oczekiwano \"postgresql\", znaleziono \"%s\""
+msgid "expected \"mollydb\", found \"%s\""
+msgstr "oczekiwano \"mollydb\", znaleziono \"%s\""
 
 #: preproc.y:13271
 #, c-format

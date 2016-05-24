@@ -22,7 +22,7 @@
  *	AccessShareLock on every table it intends to dump). It isn't very large,
  *	but it can happen.
  *
- *	http://archives.postgresql.org/pgsql-bugs/2010-02/msg00187.php
+ *	http://archives.mollydb.org/pgsql-bugs/2010-02/msg00187.php
  *
  * IDENTIFICATION
  *	  src/bin/pg_dump/pg_dump.c
@@ -944,7 +944,7 @@ help(const char *progname)
 
 	printf(_("\nIf no database name is supplied, then the PGDATABASE environment\n"
 			 "variable value is used.\n\n"));
-	printf(_("Report bugs to <pgsql-bugs@postgresql.org>.\n"));
+	printf(_("Report bugs to <pgsql-bugs@mollydb.org>.\n"));
 }
 
 static void

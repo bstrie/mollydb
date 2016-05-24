@@ -2316,7 +2316,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
     replace any <quote>Norwegian (Bokm&aring;l)_Norway</> locale names stored
     in <productname>PostgreSQL</> system catalogs with the plain-ASCII
     alias <quote>Norwegian_Norway</>.  For details see
-    <ulink url="http://wiki.postgresql.org/wiki/Changes_To_Norwegian_Locale"></>
+    <ulink url="http://wiki.mollydb.org/wiki/Changes_To_Norwegian_Locale"></>
    </para>
 
    <para>
@@ -3514,7 +3514,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
       A useful side effect of this change is to simplify
       <literal>make check</> testing in builds that
       override <literal>DEFAULT_PGSOCKET_DIR</>.  Popular non-default values
-      like <filename>/var/run/postgresql</> are often not writable by the
+      like <filename>/var/run/mollydb</> are often not writable by the
       build user, requiring workarounds that will no longer be necessary.
      </para>
     </listitem>
@@ -8109,13 +8109,13 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
      </itemizedlist>
 
      <sect5>
-      <title><filename>postgresql.conf</filename></title>
+      <title><filename>mollydb.conf</filename></title>
 
       <itemizedlist>
 
       <listitem>
        <para>
-        Allow multiple errors in <filename>postgresql.conf</filename>
+        Allow multiple errors in <filename>mollydb.conf</filename>
         to be reported, rather than just the first one (Alexey Klyukin,
         Tom Lane)
        </para>
@@ -8123,7 +8123,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
 
       <listitem>
        <para>
-        Allow a reload of <filename>postgresql.conf</filename> to be
+        Allow a reload of <filename>mollydb.conf</filename> to be
         processed by all sessions, even if there are some settings that
         are invalid for particular sessions (Alexey Klyukin)
        </para>
@@ -8149,7 +8149,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
       <listitem>
        <para>
         Identify the server time zone during <application>initdb</>, and set
-        <filename>postgresql.conf</filename> entries
+        <filename>mollydb.conf</filename> entries
         <link linkend="guc-timezone"><varname>timezone</></link> and
         <link linkend="guc-log-timezone"><varname>log_timezone</></link>
         accordingly (Tom Lane)
@@ -8164,7 +8164,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
        <para>
         Fix <link
         linkend="view-pg-settings"><structname>pg_settings</></link> to
-        report <filename>postgresql.conf</filename> line numbers on Windows
+        report <filename>mollydb.conf</filename> line numbers on Windows
         (Tom Lane)
        </para>
       </listitem>

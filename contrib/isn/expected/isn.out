@@ -189,13 +189,13 @@ SELECT '9791234567896'::UPC; -- not a product
 ERROR:  cannot cast ISBN to UPC for number: "9791234567896"
 LINE 1: SELECT '9791234567896'::UPC;
                ^
-SELECT 'postgresql...'::EAN13;
-ERROR:  invalid input syntax for EAN13 number: "postgresql..."
-LINE 1: SELECT 'postgresql...'::EAN13;
+SELECT 'mollydb...'::EAN13;
+ERROR:  invalid input syntax for EAN13 number: "mollydb..."
+LINE 1: SELECT 'mollydb...'::EAN13;
                ^
-SELECT 'postgresql...'::ISBN;
-ERROR:  invalid input syntax for ISBN number: "postgresql..."
-LINE 1: SELECT 'postgresql...'::ISBN;
+SELECT 'mollydb...'::ISBN;
+ERROR:  invalid input syntax for ISBN number: "mollydb..."
+LINE 1: SELECT 'mollydb...'::ISBN;
                ^
 SELECT 9780123456786::EAN13;
 ERROR:  cannot cast type bigint to ean13

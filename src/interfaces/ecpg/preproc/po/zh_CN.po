@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ecpg (PostgreSQL 9.0)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-22 21:07+0000\n"
 "PO-Revision-Date: 2014-11-24 15:21+0800\n"
 "Last-Translator: Xiong He <iihero@qq.com>\n"
@@ -172,10 +172,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"错误报告至 <pgsql-bugs@postgresql.org>.\n"
+"错误报告至 <pgsql-bugs@mollydb.org>.\n"
 
 #: ecpg.c:143
 #, c-format
@@ -318,8 +318,8 @@ msgstr "在EXEC SQL INCLUDE命令中出现语法错误"
 #, c-format
 msgid ""
 "internal error: unreachable state; please report this to <pgsql-"
-"bugs@postgresql.org>"
-msgstr "内部错误：不可到达的状态；请向<pgsql-bugs@postgresql.org>发送报告"
+"bugs@mollydb.org>"
+msgstr "内部错误：不可到达的状态；请向<pgsql-bugs@mollydb.org>发送报告"
 
 #: pgc.l:1362
 #, c-format
@@ -455,9 +455,9 @@ msgstr "期望 \"@\", 但是找到了\"%s\""
 #: preproc.y:13234
 #, c-format
 msgid ""
-"only protocols \"tcp\" and \"unix\" and database type \"postgresql\" are "
+"only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are "
 "supported"
-msgstr "只支持协议\"tcp\"和 \"unix\"以及数据库类型 \"postgresql\""
+msgstr "只支持协议\"tcp\"和 \"unix\"以及数据库类型 \"mollydb\""
 
 #: preproc.y:13237
 #, c-format
@@ -471,8 +471,8 @@ msgstr "Unix-域的sockets只能在\"localhost\"上运行，而不能在\"%s\"�
 
 #: preproc.y:13268
 #, c-format
-msgid "expected \"postgresql\", found \"%s\""
-msgstr "期望\"postgresql\", 但是只找到了\"%s\""
+msgid "expected \"mollydb\", found \"%s\""
+msgstr "期望\"mollydb\", 但是只找到了\"%s\""
 
 #: preproc.y:13271
 #, c-format

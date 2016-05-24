@@ -819,7 +819,7 @@ PostmasterMain(int argc, char *argv[])
 
 	/*
 	 * Locate the proper configuration files and data directory, and read
-	 * postgresql.conf for the first time.
+	 * mollydb.conf for the first time.
 	 */
 	if (!SelectConfigFiles(userDoption, progname))
 		ExitPostmaster(2);
@@ -1017,7 +1017,7 @@ PostmasterMain(int argc, char *argv[])
 								 0,
 								 0,
 								 bonjour_name,
-								 "_postgresql._tcp.",
+								 "_mollydb._tcp.",
 								 NULL,
 								 NULL,
 								 htons(PostPortNumber),
@@ -1377,7 +1377,7 @@ getInstallationPaths(const char *argv0)
 
 	/*
 	 * Locate the pkglib directory --- this has to be set early in case we try
-	 * to load any modules from it in response to postgresql.conf entries.
+	 * to load any modules from it in response to mollydb.conf entries.
 	 */
 	get_pkglib_path(my_exec_path, pkglib_path);
 
@@ -3124,7 +3124,7 @@ CleanupBackend(int pid,
 	 * since that sometimes happens under load when the process fails to start
 	 * properly (long before it starts using shared memory). Microsoft reports
 	 * it is related to mutex failure:
-	 * http://archives.postgresql.org/pgsql-hackers/2010-09/msg00790.php
+	 * http://archives.mollydb.org/pgsql-hackers/2010-09/msg00790.php
 	 */
 	if (exitstatus == ERROR_WAIT_NO_CHILDREN)
 	{
@@ -4024,7 +4024,7 @@ BackendInitialize(Port *port)
 
 	/*
 	 * PreAuthDelay is a debugging aid for investigating problems in the
-	 * authentication cycle: it can be set in postgresql.conf to allow time to
+	 * authentication cycle: it can be set in mollydb.conf to allow time to
 	 * attach to the newly-forked backend with a debugger.  (See also
 	 * PostAuthDelay, which we allow clients to pass through PGOPTIONS, but it
 	 * is not honored until after authentication.)
@@ -4873,7 +4873,7 @@ ExitPostmaster(int status)
 		ereport(LOG,
 				(errcode(ERRCODE_INTERNAL_ERROR),
 				 errmsg_internal("postmaster became multithreaded"),
-		   errdetail("Please report this to <pgsql-bugs@postgresql.org>.")));
+		   errdetail("Please report this to <pgsql-bugs@mollydb.org>.")));
 #endif
 
 	/* should cleanup shared memory and kill all backends */

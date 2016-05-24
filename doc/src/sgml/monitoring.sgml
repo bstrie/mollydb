@@ -161,7 +161,7 @@ postgres   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 postgres: ser
    Since collection of statistics adds some overhead to query execution,
    the system can be configured to collect or not collect information.
    This is controlled by configuration parameters that are normally set in
-   <filename>postgresql.conf</>.  (See <xref linkend="runtime-config"> for
+   <filename>mollydb.conf</>.  (See <xref linkend="runtime-config"> for
    details about setting configuration parameters.)
   </para>
 
@@ -186,7 +186,7 @@ postgres   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 postgres: ser
   </para>
 
   <para>
-   Normally these parameters are set in <filename>postgresql.conf</> so
+   Normally these parameters are set in <filename>mollydb.conf</> so
    that they apply to all server processes, but it is possible to turn
    them on or off in individual sessions using the <xref
    linkend="sql-set"> command. (To prevent
@@ -941,7 +941,7 @@ postgres   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 postgres: ser
         </row>
         <row>
          <entry><literal>AutoFileLock</></entry>
-         <entry>Waiting to update the <filename>postgresql.auto.conf</> file.</entry>
+         <entry>Waiting to update the <filename>mollydb.auto.conf</> file.</entry>
         </row>
         <row>
          <entry><literal>ReplicationSlotAllocationLock</></entry>
@@ -3252,18 +3252,18 @@ SELECT pg_stat_get_backend_pid(s.backendid) AS pid,
 <programlisting>
 #!/usr/sbin/dtrace -qs
 
-postgresql$1:::transaction-start
+mollydb$1:::transaction-start
 {
       @start["Start"] = count();
       self->ts  = timestamp;
 }
 
-postgresql$1:::transaction-abort
+mollydb$1:::transaction-abort
 {
       @abort["Abort"] = count();
 }
 
-postgresql$1:::transaction-commit
+mollydb$1:::transaction-commit
 /self->ts/
 {
       @commit["Commit"] = count();
@@ -3391,11 +3391,11 @@ TRACE_POSTGRESQL_TRANSACTION_START(vxid.localTransactionId);
 <screen>
 # dtrace -ln transaction-start
    ID    PROVIDER          MODULE           FUNCTION NAME
-18705 postgresql49878     postgres     StartTransactionCommand transaction-start
-18755 postgresql49877     postgres     StartTransactionCommand transaction-start
-18805 postgresql49876     postgres     StartTransactionCommand transaction-start
-18855 postgresql49875     postgres     StartTransactionCommand transaction-start
-18986 postgresql49873     postgres     StartTransactionCommand transaction-start
+18705 mollydb49878     postgres     StartTransactionCommand transaction-start
+18755 mollydb49877     postgres     StartTransactionCommand transaction-start
+18805 mollydb49876     postgres     StartTransactionCommand transaction-start
+18855 mollydb49875     postgres     StartTransactionCommand transaction-start
+18986 mollydb49873     postgres     StartTransactionCommand transaction-start
 </screen>
     </para>
    </step>

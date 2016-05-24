@@ -3196,7 +3196,7 @@ ExplainBeginOutput(ExplainState *es)
 
 		case EXPLAIN_FORMAT_XML:
 			appendStringInfoString(es->str,
-			 "<explain xmlns=\"http://www.postgresql.org/2009/explain\">\n");
+			 "<explain xmlns=\"http://www.mollydb.org/2009/explain\">\n");
 			es->indent++;
 			break;
 

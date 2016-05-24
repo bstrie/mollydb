@@ -6,11 +6,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-12-09 12:26-0300\n"
 "PO-Revision-Date: 2010-05-11 08:53-0300\n"
 "Last-Translator: Euler Taveira de Oliveira <euler@timbira.com>\n"
-"Language-Team: Brazilian Portuguese <pgbr-dev@listas.postgresql.org.br>\n"
+"Language-Team: Brazilian Portuguese <pgbr-dev@listas.mollydb.org.br>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -178,8 +178,8 @@ msgstr "não pôde determinar codificação para conjunto de códigos \"%s\""
 
 #: ../port/chklocale.c:260 ../port/chklocale.c:389
 #, c-format
-msgid "Please report this to <pgsql-bugs@postgresql.org>."
-msgstr "Por favor relate isto a <pgsql-bugs@postgresql.org>."
+msgid "Please report this to <pgsql-bugs@mollydb.org>."
+msgstr "Por favor relate isto a <pgsql-bugs@mollydb.org>."
 
 #: ../port/chklocale.c:381 ../port/chklocale.c:387
 #, c-format
@@ -10137,8 +10137,8 @@ msgstr "hostssl requer que SSL esteja habilitado"
 
 #: libpq/hba.c:913
 #, c-format
-msgid "Set ssl = on in postgresql.conf."
-msgstr "Defina ssl = on no postgresql.conf."
+msgid "Set ssl = on in mollydb.conf."
+msgstr "Defina ssl = on no mollydb.conf."
 
 #: libpq/hba.c:921
 #, c-format
@@ -10779,14 +10779,14 @@ msgid ""
 "configuration settings and how to set them on the command line or in\n"
 "the configuration file.\n"
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
 "Por favor leia a documentação para verificar a lista completa de parâmetros\n"
 "de configuração em tempo de execução e como definí-los pela linha de comando\n"
 "ou no arquivo de configuração.\n"
 "\n"
-"Relate erros a <pgsql-bugs@postgresql.org>.\n"
+"Relate erros a <pgsql-bugs@mollydb.org>.\n"
 
 #: main/main.c:379
 #, c-format

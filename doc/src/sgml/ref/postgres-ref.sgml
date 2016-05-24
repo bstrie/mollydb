@@ -135,7 +135,7 @@ PostgreSQL documentation
         Prints the value of the named run-time parameter, and exits.
         (See the <option>-c</> option above for details.)  This can
         be used on a running server, and returns values from
-        <filename>postgresql.conf</>, modified by any parameters
+        <filename>mollydb.conf</>, modified by any parameters
         supplied in this invocation.  It does not reflect parameters
         supplied when the cluster was started.
        </para>
@@ -226,7 +226,7 @@ PostgreSQL documentation
         connections.  Without this option, only local connections are
         accepted.  This option is equivalent to setting
         <varname>listen_addresses</> to <literal>*</> in
-        <filename>postgresql.conf</> or via <option>-h</>.
+        <filename>mollydb.conf</> or via <option>-h</>.
        </para>
        <para>
         This option is deprecated since it does not allow access to the
@@ -844,11 +844,11 @@ PostgreSQL documentation
 <prompt>$</prompt> <userinput>postgres --work-mem=1234</userinput>
 </screen>
    Either form overrides whatever setting might exist for
-   <varname>work_mem</> in <filename>postgresql.conf</>.  Notice that
+   <varname>work_mem</> in <filename>mollydb.conf</>.  Notice that
    underscores in parameter names can be written as either underscore
    or dash on the command line.  Except for short-term experiments,
    it's probably better practice to edit the setting in
-   <filename>postgresql.conf</> than to rely on a command-line switch
+   <filename>mollydb.conf</> than to rely on a command-line switch
    to set a parameter.
   </para>
  </refsect1>

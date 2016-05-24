@@ -40,7 +40,7 @@ $node->command_fails(
 	[ 'pg_basebackup', '-D', "$tempdir/backup" ],
 	'pg_basebackup fails because of WAL configuration');
 
-open CONF, ">>$pgdata/postgresql.conf";
+open CONF, ">>$pgdata/mollydb.conf";
 print CONF "max_replication_slots = 10\n";
 print CONF "max_wal_senders = 10\n";
 print CONF "wal_level = replica\n";

@@ -337,7 +337,7 @@ SELECT * FROM perl_set();
    This will affect subsequent compilations of <application>PL/Perl</>
    functions, but not functions already compiled in the current session.
    For permanent global use you can set <literal>plperl.use_strict</literal>
-   to true in the <filename>postgresql.conf</filename> file.
+   to true in the <filename>mollydb.conf</filename> file.
   </para>
 
   <para>
@@ -1353,7 +1353,7 @@ DO 'elog(WARNING, join ", ", sort keys %INC)' LANGUAGE plperl;
         child processes.
        </para>
        <para>
-       This parameter can only be set in the <filename>postgresql.conf</filename> file or on the server command line.
+       This parameter can only be set in the <filename>mollydb.conf</filename> file or on the server command line.
        </para>
       </listitem>
      </varlistentry>

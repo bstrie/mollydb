@@ -597,7 +597,7 @@ tar -cf backup.tar /usr/local/pgsql/data
     and specify the shell command to use in the <xref
     linkend="guc-archive-command"> configuration parameter.  In practice
     these settings will always be placed in the
-    <filename>postgresql.conf</filename> file.
+    <filename>mollydb.conf</filename> file.
     In <varname>archive_command</>,
     <literal>%p</> is replaced by the path name of the file to
     archive, while <literal>%f</> is replaced by only the file name.
@@ -700,7 +700,7 @@ test ! -f /mnt/server/archivedir/00000001000000A900000065 &amp;&amp; cp pg_xlog/
     Note that although WAL archiving will allow you to restore any
     modifications made to the data in your <productname>PostgreSQL</> database,
     it will not restore changes made to configuration files (that is,
-    <filename>postgresql.conf</>, <filename>pg_hba.conf</> and
+    <filename>mollydb.conf</>, <filename>pg_hba.conf</> and
     <filename>pg_ident.conf</>), since those are edited manually rather
     than through SQL operations.
     You might wish to keep the configuration files in a location that will
@@ -1460,7 +1460,7 @@ restore_command = 'gunzip &lt; /mnt/server/archivedir/%f &gt; %p'
      <para>
       Many people choose to use scripts to define their
       <varname>archive_command</varname>, so that their
-      <filename>postgresql.conf</> entry looks very simple:
+      <filename>mollydb.conf</> entry looks very simple:
 <programlisting>
 archive_command = 'local_backup_script.sh "%p" "%f"'
 </programlisting>

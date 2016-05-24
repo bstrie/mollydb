@@ -4,11 +4,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.0 beta 3\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 11:27+0900\n"
 "PO-Revision-Date: 2012-08-11 16:53+0900\n"
 "Last-Translator: HOTTA Michihide <hotta@net-newbie.com>\n"
-"Language-Team: jpug-doc <jpug-doc@ml.postgresql.jp>\n"
+"Language-Team: jpug-doc <jpug-doc@ml.mollydb.jp>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -224,8 +224,8 @@ msgstr ""
 
 #: pg_config.c:459
 #, c-format
-msgid "Report bugs to <pgsql-bugs@postgresql.org>.\n"
-msgstr "不具合は<pgsql-bugs@postgresql.org>まで報告してください。\n"
+msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
+msgstr "不具合は<pgsql-bugs@mollydb.org>まで報告してください。\n"
 
 #: pg_config.c:465
 #, c-format

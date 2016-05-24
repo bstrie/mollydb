@@ -31,7 +31,7 @@
  * This file will be used to store values of configuration parameters
  * set by ALTER SYSTEM command.
  */
-#define PG_AUTOCONF_FILENAME		"postgresql.auto.conf"
+#define PG_AUTOCONF_FILENAME		"mollydb.auto.conf"
 
 /*
  * Certain options can only be set at certain times. The rules are
@@ -107,7 +107,7 @@ typedef enum
 	PGC_S_DEFAULT,				/* hard-wired default ("boot_val") */
 	PGC_S_DYNAMIC_DEFAULT,		/* default computed during initialization */
 	PGC_S_ENV_VAR,				/* postmaster environment variable */
-	PGC_S_FILE,					/* postgresql.conf */
+	PGC_S_FILE,					/* mollydb.conf */
 	PGC_S_ARGV,					/* postmaster command line */
 	PGC_S_GLOBAL,				/* global in-database setting */
 	PGC_S_DATABASE,				/* per-database setting */
@@ -206,8 +206,8 @@ typedef enum
 #define GUC_NO_SHOW_ALL			0x0004	/* exclude from SHOW ALL */
 #define GUC_NO_RESET_ALL		0x0008	/* exclude from RESET ALL */
 #define GUC_REPORT				0x0010	/* auto-report changes to client */
-#define GUC_NOT_IN_SAMPLE		0x0020	/* not in postgresql.conf.sample */
-#define GUC_DISALLOW_IN_FILE	0x0040	/* can't set in postgresql.conf */
+#define GUC_NOT_IN_SAMPLE		0x0020	/* not in mollydb.conf.sample */
+#define GUC_DISALLOW_IN_FILE	0x0040	/* can't set in mollydb.conf */
 #define GUC_CUSTOM_PLACEHOLDER	0x0080	/* placeholder for custom variable */
 #define GUC_SUPERUSER_ONLY		0x0100	/* show only to superusers */
 #define GUC_IS_NAME				0x0200	/* limit string to NAMEDATALEN-1 */

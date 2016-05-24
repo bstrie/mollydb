@@ -8,7 +8,7 @@
  * and setof composite.
  * Joe Conway <mail@joeconway.com>
  * And contributors:
- * Nabil Sayegh <postgresql@e-trolley.de>
+ * Nabil Sayegh <mollydb@e-trolley.de>
  *
  * Copyright (c) 2002-2016, PostgreSQL Global Development Group
  *

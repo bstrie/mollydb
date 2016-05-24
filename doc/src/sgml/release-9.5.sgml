@@ -535,7 +535,7 @@ Branch: REL9_1_STABLE [bfc39da64] 2016-05-05 20:09:32 -0400
    <itemizedlist>
 
 <!--
-Author: Robert Haas <rhaas@postgresql.org>
+Author: Robert Haas <rhaas@mollydb.org>
 Branch: master [3df9c374e] 2016-03-23 16:03:13 -0400
 Branch: REL9_5_STABLE [8aa6e9780] 2016-03-23 16:04:35 -0400
 -->
@@ -789,7 +789,7 @@ Branch: REL9_5_STABLE [3f14d8d59] 2016-03-15 18:04:48 -0400
     </listitem>
 
 <!--
-Author: Fujii Masao <fujii@postgresql.org>
+Author: Fujii Masao <fujii@mollydb.org>
 Branch: master [d34794f7d] 2016-03-06 02:29:04 +0900
 Branch: REL9_5_STABLE [f95f1ce00] 2016-03-06 02:43:17 +0900
 Branch: REL9_4_STABLE [a9613ee69] 2016-03-06 02:43:26 +0900
@@ -997,7 +997,7 @@ Branch: REL9_1_STABLE [3e6385e27] 2016-03-10 14:11:01 +0100
     </listitem>
 
 <!--
-Author: Robert Haas <rhaas@postgresql.org>
+Author: Robert Haas <rhaas@mollydb.org>
 Branch: master [9445db925] 2016-03-04 11:53:20 -0500
 Branch: REL9_5_STABLE [0315dfa8f] 2016-03-04 11:57:22 -0500
 Branch: REL9_4_STABLE [8de488d00] 2016-03-04 11:57:23 -0500
@@ -1428,7 +1428,7 @@ Branch: REL9_1_STABLE [9c704632c] 2016-02-04 00:26:10 -0500
     </listitem>
 
 <!--
-Author: Robert Haas <rhaas@postgresql.org>
+Author: Robert Haas <rhaas@mollydb.org>
 Branch: master [64f5edca2] 2016-02-01 08:23:41 -0500
 Branch: REL9_5_STABLE [829757c8a] 2016-02-01 08:26:07 -0500
 Branch: REL9_4_STABLE [c33d1a8d5] 2016-02-03 09:15:29 -0500
@@ -1527,7 +1527,7 @@ Branch: REL9_1_STABLE [b1f591c50] 2016-02-05 20:23:19 -0500
     </listitem>
 
 <!--
-Author: Michael Meskes <meskes@postgresql.org>
+Author: Michael Meskes <meskes@mollydb.org>
 Branch: master [7a58d19b0] 2016-02-01 13:21:00 +0100
 Branch: REL9_5_STABLE [40482e606] 2016-02-01 13:20:37 +0100
 Branch: REL9_3_STABLE [0b55fef39] 2016-02-01 13:19:10 +0100
@@ -1571,7 +1571,7 @@ Branch: REL9_3_STABLE [1f2b195eb] 2016-02-03 01:39:08 -0500
     </listitem>
 
 <!--
-Author: Robert Haas <rhaas@postgresql.org>
+Author: Robert Haas <rhaas@mollydb.org>
 Branch: master [9418d79a7] 2016-02-04 21:17:53 -0500
 Branch: REL9_5_STABLE [453d40817] 2016-02-04 21:17:46 -0500
 Branch: REL9_4_STABLE [1f3294c22] 2016-02-04 21:15:57 -0500
@@ -2287,7 +2287,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
 
        <para>
         This string, typically set in <link
-        linkend="config-setting-configuration-file"><filename>postgresql.conf</></>,
+        linkend="config-setting-configuration-file"><filename>mollydb.conf</></>,
         allows clients to identify the cluster.  This name also appears
         in the process title of all server processes, allowing for easier
         identification of processes belonging to the same cluster.
@@ -2535,7 +2535,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
 
        <para>
         This command removes the specified setting
-        from <filename>postgresql.auto.conf</>.
+        from <filename>mollydb.auto.conf</>.
        </para>
       </listitem>
 
@@ -4126,7 +4126,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
 
        <para>
         This only controls <application>pg_ctl</>, not the server, which
-        has separate settings in <filename>postgresql.conf</>.
+        has separate settings in <filename>mollydb.conf</>.
        </para>
       </listitem>
 

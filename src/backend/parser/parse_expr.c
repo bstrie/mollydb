@@ -1303,7 +1303,7 @@ transformAExprBetween(ParseState *pstate, A_Expr *a)
 	 * Ideally we would not use hard-wired operators here but instead use
 	 * opclasses.  However, mixed data types and other issues make this
 	 * difficult:
-	 * http://archives.postgresql.org/pgsql-hackers/2008-08/msg01142.php
+	 * http://archives.mollydb.org/pgsql-hackers/2008-08/msg01142.php
 	 */
 	switch (a->kind)
 	{

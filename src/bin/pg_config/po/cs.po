@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pg_config-cs (PostgreSQL 9.3)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-03-17 18:46+0000\n"
 "PO-Revision-Date: 2013-04-28 19:26+0200\n"
 "Last-Translator: Tomas Vondra <tv@fuzzy.cz>\n"
@@ -265,8 +265,8 @@ msgstr ""
 
 #: pg_config.c:459
 #, c-format
-msgid "Report bugs to <pgsql-bugs@postgresql.org>.\n"
-msgstr "Oznámení o chybách zasílejte na <pgsql-bugs@postgresql.org>.\n"
+msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
+msgstr "Oznámení o chybách zasílejte na <pgsql-bugs@mollydb.org>.\n"
 
 #: pg_config.c:465
 #, c-format

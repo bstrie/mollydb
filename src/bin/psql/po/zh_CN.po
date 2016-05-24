@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: psql (PostgreSQL 9.0)\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:43+0000\n"
 "PO-Revision-Date: 2016-01-03 23:26-0500\n"
 "Last-Translator: Yuwei Peng <ywpeng@whu.edu.cn>\n"
@@ -2461,8 +2461,8 @@ msgstr ""
 
 #: help.c:143
 #, c-format
-msgid "Report bugs to <pgsql-bugs@postgresql.org>.\n"
-msgstr "臭虫报告至 <pgsql-bugs@postgresql.org>.\n"
+msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
+msgstr "臭虫报告至 <pgsql-bugs@mollydb.org>.\n"
 
 # help.c:174
 #: help.c:166

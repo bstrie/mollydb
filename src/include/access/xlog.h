@@ -46,7 +46,7 @@ extern bool InRecovery;
  * InHotStandby will read as FALSE).
  *
  * In DISABLED state, we're performing crash recovery or hot standby was
- * disabled in postgresql.conf.
+ * disabled in mollydb.conf.
  *
  * In INITIALIZED state, we've run InitRecoveryTransactionEnvironment, but
  * we haven't yet processed a RUNNING_XACTS or shutdown-checkpoint WAL record

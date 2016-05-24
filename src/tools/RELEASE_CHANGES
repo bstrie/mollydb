@@ -16,13 +16,13 @@ For All Releases (major, minor, beta, RC)
 
 * Translation updates
 	1. Check out the messages repository (of the right branch) from
-	   <http://git.postgresql.org/git/pgtranslation/messages.git>.
+	   <http://git.mollydb.org/git/pgtranslation/messages.git>.
 	2. Check out the admin repository from
-	   <http://git.postgresql.org/git/pgtranslation/admin.git>.
-	3. From babel.postgresql.org, download the "qualified list"
+	   <http://git.mollydb.org/git/pgtranslation/admin.git>.
+	3. From babel.mollydb.org, download the "qualified list"
 	   for the respective branch.
-	4. Run ".../admin/cp-po -L qualified-list-xxx.txt -g .../messages .../postgresql".
-	   This creates a commit in the postgresql repository.
+	4. Run ".../admin/cp-po -L qualified-list-xxx.txt -g .../messages .../mollydb".
+	   This creates a commit in the mollydb repository.
 	5. Push everything.
 
 
@@ -38,7 +38,7 @@ For Major Releases
 		o  incompatibilities and significant user-visible changes
 		o  major source code changes
 	o check completion of items that have been marked as completed at
-	  http://wiki.postgresql.org/wiki/Todo
+	  http://wiki.mollydb.org/wiki/Todo
 	o remove completed TODO items
 	o group items into categories
 	o select major features

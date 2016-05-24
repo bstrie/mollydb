@@ -1088,7 +1088,7 @@
     <listitem>
      <para>
       Fix <application>pg_ctl</> to not go into an infinite loop if
-      <filename>postgresql.conf</> is empty (Jeff Davis)
+      <filename>mollydb.conf</> is empty (Jeff Davis)
      </para>
     </listitem>
 
@@ -3100,7 +3100,7 @@ Win32 to match the backend (Andrew)</para></listitem>
 <listitem><para>Various optimizer fixes (Tom)</para></listitem>
 
 <listitem><para>Fix crash when <literal>log_min_messages</> is set to
-<literal>DEBUG3</> or above in <filename>postgresql.conf</> on Win32
+<literal>DEBUG3</> or above in <filename>mollydb.conf</> on Win32
 (Bruce)</para></listitem>
 
 <listitem><para>Fix <application>pgxs</> <literal>-L</> library path
@@ -3208,7 +3208,7 @@ end-of-data marker (Bruce)</para></listitem>
 <listitem><para>Various fixes for functions returning <literal>RECORD</>s
 (Tom) </para></listitem>
 
-<listitem><para>Fix processing of <filename>postgresql.conf</> so a
+<listitem><para>Fix processing of <filename>mollydb.conf</> so a
 final line with no newline is processed properly (Tom)
 </para></listitem>
 
@@ -3483,7 +3483,7 @@ DISTINCT query</para></listitem>
        Integrating autovacuum into the server allows it to be
        automatically started and stopped in sync with the database
        server, and allows autovacuum to be configured from
-       <filename>postgresql.conf</>.
+       <filename>mollydb.conf</>.
       </para>
      </listitem>
     </varlistentry>
@@ -4050,7 +4050,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
      <listitem>
       <para>
        Allow Kerberos name and user name case sensitivity to be
-       specified in <filename>postgresql.conf</> (Magnus)
+       specified in <filename>mollydb.conf</> (Magnus)
       </para>
      </listitem>
 
@@ -5264,7 +5264,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
 
      <listitem>
       <para>
-       Modify <filename>postgresql.conf</> to use documentation defaults
+       Modify <filename>mollydb.conf</> to use documentation defaults
        <literal>on</>/<literal>off</> rather than
        <literal>true</>/<literal>false</> (Bruce)
       </para>

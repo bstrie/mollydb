@@ -29,7 +29,7 @@
 
 
 extern Datum pg_options_to_table(PG_FUNCTION_ARGS);
-extern Datum postgresql_fdw_validator(PG_FUNCTION_ARGS);
+extern Datum mollydb_fdw_validator(PG_FUNCTION_ARGS);
 
 static HeapTuple find_user_mapping(Oid userid, Oid serverid, bool missing_ok);
 
@@ -657,7 +657,7 @@ pg_options_to_table(PG_FUNCTION_ARGS)
 
 
 /*
- * Describes the valid options for postgresql FDW, server, and user mapping.
+ * Describes the valid options for mollydb FDW, server, and user mapping.
  */
 struct ConnectionOption
 {
@@ -719,7 +719,7 @@ is_conninfo_option(const char *option, Oid context)
  * Inquire of libpq itself, instead.
  */
 Datum
-postgresql_fdw_validator(PG_FUNCTION_ARGS)
+mollydb_fdw_validator(PG_FUNCTION_ARGS)
 {
 	List	   *options_list = untransformRelOptions(PG_GETARG_DATUM(0));
 	Oid			catalog = PG_GETARG_OID(1);

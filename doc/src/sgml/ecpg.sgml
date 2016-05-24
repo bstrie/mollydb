@@ -11,7 +11,7 @@
   This chapter describes the embedded <acronym>SQL</acronym> package
   for <productname>PostgreSQL</productname>. It was written by
   Linus Tolke (<email>linus@epact.se</email>) and Michael Meskes
-  (<email>meskes@postgresql.org</email>). Originally it was written to work with
+  (<email>meskes@mollydb.org</email>). Originally it was written to work with
   <acronym>C</acronym>. It also works with <acronym>C++</acronym>, but
   it does not recognize all <acronym>C++</acronym> constructs yet.
  </para>
@@ -103,13 +103,13 @@ EXEC SQL CONNECT TO <replaceable>target</replaceable> <optional>AS <replaceable>
 
     <listitem>
      <simpara>
-      <literal>tcp:postgresql://<replaceable>hostname</><optional>:<replaceable>port</></optional><optional>/<replaceable>dbname</></optional><optional>?<replaceable>options</></optional></literal>
+      <literal>tcp:mollydb://<replaceable>hostname</><optional>:<replaceable>port</></optional><optional>/<replaceable>dbname</></optional><optional>?<replaceable>options</></optional></literal>
      </simpara>
     </listitem>
 
     <listitem>
      <simpara>
-      <literal>unix:postgresql://<replaceable>hostname</><optional>:<replaceable>port</></optional><optional>/<replaceable>dbname</></optional><optional>?<replaceable>options</></optional></literal>
+      <literal>unix:mollydb://<replaceable>hostname</><optional>:<replaceable>port</></optional><optional>/<replaceable>dbname</></optional><optional>?<replaceable>options</></optional></literal>
      </simpara>
     </listitem>
 
@@ -191,7 +191,7 @@ EXEC SQL CONNECT TO <replaceable>target</replaceable> <optional>AS <replaceable>
 <programlisting>
 EXEC SQL CONNECT TO mydb@sql.mydomain.com;
 
-EXEC SQL CONNECT TO unix:postgresql://sql.mydomain.com/mydb AS myconnection USER john;
+EXEC SQL CONNECT TO unix:mollydb://sql.mydomain.com/mydb AS myconnection USER john;
 
 EXEC SQL BEGIN DECLARE SECTION;
 const char *target = "mydb@sql.mydomain.com";
@@ -6335,7 +6335,7 @@ DATABASE <replaceable>connection_target</replaceable>
          </varlistentry>
 
          <varlistentry>
-          <term><literal>unix:postgresql://</literal><replaceable>host</replaceable> [ <literal>:</literal><replaceable>port</replaceable> ] <literal>/</literal> [ <replaceable>database_name</replaceable> ] [ <literal>?</literal><replaceable>connection_option</replaceable> ]</term>
+          <term><literal>unix:mollydb://</literal><replaceable>host</replaceable> [ <literal>:</literal><replaceable>port</replaceable> ] <literal>/</literal> [ <replaceable>database_name</replaceable> ] [ <literal>?</literal><replaceable>connection_option</replaceable> ]</term>
           <listitem>
            <para>
             Connect over Unix-domain sockets
@@ -6344,7 +6344,7 @@ DATABASE <replaceable>connection_target</replaceable>
          </varlistentry>
 
          <varlistentry>
-          <term><literal>tcp:postgresql://</literal><replaceable>host</replaceable> [ <literal>:</literal><replaceable>port</replaceable> ] <literal>/</literal> [ <replaceable>database_name</replaceable> ] [ <literal>?</literal><replaceable>connection_option</replaceable> ]</term>
+          <term><literal>tcp:mollydb://</literal><replaceable>host</replaceable> [ <literal>:</literal><replaceable>port</replaceable> ] <literal>/</literal> [ <replaceable>database_name</replaceable> ] [ <literal>?</literal><replaceable>connection_option</replaceable> ]</term>
           <listitem>
            <para>
             Connect over TCP/IP
@@ -6427,10 +6427,10 @@ DATABASE <replaceable>connection_target</replaceable>
 <programlisting>
 EXEC SQL CONNECT TO "connectdb" AS main;
 EXEC SQL CONNECT TO "connectdb" AS second;
-EXEC SQL CONNECT TO "unix:postgresql://200.46.204.71/connectdb" AS main USER connectuser;
-EXEC SQL CONNECT TO "unix:postgresql://localhost/connectdb" AS main USER connectuser;
+EXEC SQL CONNECT TO "unix:mollydb://200.46.204.71/connectdb" AS main USER connectuser;
+EXEC SQL CONNECT TO "unix:mollydb://localhost/connectdb" AS main USER connectuser;
 EXEC SQL CONNECT TO 'connectdb' AS main;
-EXEC SQL CONNECT TO 'unix:postgresql://localhost/connectdb' AS main USER :user;
+EXEC SQL CONNECT TO 'unix:mollydb://localhost/connectdb' AS main USER :user;
 EXEC SQL CONNECT TO :db AS :id;
 EXEC SQL CONNECT TO :db USER connectuser USING :pw;
 EXEC SQL CONNECT TO @localhost AS main USER connectdb;
@@ -6440,14 +6440,14 @@ EXEC SQL CONNECT TO connectdb AS :id;
 EXEC SQL CONNECT TO connectdb AS main USER connectuser/connectdb;
 EXEC SQL CONNECT TO connectdb AS main;
 EXEC SQL CONNECT TO connectdb@localhost AS main;
-EXEC SQL CONNECT TO tcp:postgresql://localhost/ USER connectdb;
-EXEC SQL CONNECT TO tcp:postgresql://localhost/connectdb USER connectuser IDENTIFIED BY connectpw;
-EXEC SQL CONNECT TO tcp:postgresql://localhost:20/connectdb USER connectuser IDENTIFIED BY connectpw;
-EXEC SQL CONNECT TO unix:postgresql://localhost/ AS main USER connectdb;
-EXEC SQL CONNECT TO unix:postgresql://localhost/connectdb AS main USER connectuser;
-EXEC SQL CONNECT TO unix:postgresql://localhost/connectdb USER connectuser IDENTIFIED BY "connectpw";
-EXEC SQL CONNECT TO unix:postgresql://localhost/connectdb USER connectuser USING "connectpw";
-EXEC SQL CONNECT TO unix:postgresql://localhost/connectdb?connect_timeout=14 USER connectuser;
+EXEC SQL CONNECT TO tcp:mollydb://localhost/ USER connectdb;
+EXEC SQL CONNECT TO tcp:mollydb://localhost/connectdb USER connectuser IDENTIFIED BY connectpw;
+EXEC SQL CONNECT TO tcp:mollydb://localhost:20/connectdb USER connectuser IDENTIFIED BY connectpw;
+EXEC SQL CONNECT TO unix:mollydb://localhost/ AS main USER connectdb;
+EXEC SQL CONNECT TO unix:mollydb://localhost/connectdb AS main USER connectuser;
+EXEC SQL CONNECT TO unix:mollydb://localhost/connectdb USER connectuser IDENTIFIED BY "connectpw";
+EXEC SQL CONNECT TO unix:mollydb://localhost/connectdb USER connectuser USING "connectpw";
+EXEC SQL CONNECT TO unix:mollydb://localhost/connectdb?connect_timeout=14 USER connectuser;
 </programlisting>
     </para>
 
@@ -6461,7 +6461,7 @@ main(void)
 EXEC SQL BEGIN DECLARE SECTION;
     char *dbname     = "testdb";    /* database name */
     char *user       = "testuser";  /* connection user name */
-    char *connection = "tcp:postgresql://localhost:5432/testdb";
+    char *connection = "tcp:mollydb://localhost:5432/testdb";
                                     /* connection string */
     char ver[256];                  /* buffer to store the version string */
 EXEC SQL END DECLARE SECTION;

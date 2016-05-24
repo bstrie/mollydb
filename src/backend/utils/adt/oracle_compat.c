@@ -5,7 +5,7 @@
  * Copyright (c) 1996-2016, PostgreSQL Global Development Group
  *
  *	Author: Edmund Mergl <E.Mergl@bawue.de>
- *	Multibyte enhancement: Tatsuo Ishii <ishii@postgresql.org>
+ *	Multibyte enhancement: Tatsuo Ishii <ishii@mollydb.org>
  *
  *
  * IDENTIFICATION

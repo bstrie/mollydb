@@ -15,7 +15,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: postgres (PostgreSQL) 9.6\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:08+0000\n"
 "PO-Revision-Date: 2016-04-17 20:26+0100\n"
 "Last-Translator: Daniele Varrazzo <daniele.varrazzo@gmail.com>\n"
@@ -301,8 +301,8 @@ msgstr "determinazione della codifica per il codeset \"%s\" fallita"
 #: ../port/chklocale.c:260 ../port/chklocale.c:389
 #: postmaster/postmaster.c:4876
 #, c-format
-msgid "Please report this to <pgsql-bugs@postgresql.org>."
-msgstr "Per favore segnala questo problema a <pgsql-bugs@postgresql.org>."
+msgid "Please report this to <pgsql-bugs@mollydb.org>."
+msgstr "Per favore segnala questo problema a <pgsql-bugs@mollydb.org>."
 
 #: ../port/chklocale.c:381 ../port/chklocale.c:387
 #, c-format
@@ -11193,8 +11193,8 @@ msgstr "hostssl richiede che SSL sia abilitato"
 
 #: libpq/hba.c:883
 #, c-format
-msgid "Set ssl = on in postgresql.conf."
-msgstr "Imposta ssl = on in postgresql.conf."
+msgid "Set ssl = on in mollydb.conf."
+msgstr "Imposta ssl = on in mollydb.conf."
 
 #: libpq/hba.c:891
 #, c-format
@@ -11850,14 +11850,14 @@ msgid ""
 "configuration settings and how to set them on the command line or in\n"
 "the configuration file.\n"
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
 "Si prega di leggere la documentazione per la lista completa di impostazioni\n"
 "di configurazione e su come impostarle sulla riga di comando o nel file di\n"
 "configurazione\n"
 "\n"
-"Puoi segnalare eventuali bug a <pgsql-bugs@postgresql.org>.\n"
+"Puoi segnalare eventuali bug a <pgsql-bugs@mollydb.org>.\n"
 
 #: main/main.c:390
 #, c-format

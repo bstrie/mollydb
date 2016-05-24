@@ -1204,7 +1204,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Prevent clustering on incomplete (partial or non-NULL-storing) indexes</para></listitem>
 <listitem><para>Service shutdown request at proper time if it arrives while still starting up</para></listitem>
 <listitem><para>Fix left-links in temporary indexes (could make backwards scans miss entries)</para></listitem>
-<listitem><para>Fix incorrect handling of client_encoding setting in postgresql.conf (Tatsuo)</para></listitem>
+<listitem><para>Fix incorrect handling of client_encoding setting in mollydb.conf (Tatsuo)</para></listitem>
 <listitem><para>Fix failure to respond to <command>pg_ctl stop -m fast</command> after Async_NotifyHandler runs</para></listitem>
 <listitem><para>Fix SPI for case where rule contains multiple statements of the same type</para></listitem>
 <listitem><para>Fix problem with checking for wrong type of access privilege in rule query</para></listitem>
@@ -1458,7 +1458,7 @@ operations on bytea columns (Joe)</para></listitem>
     <listitem>
      <para>
       A large number of interfaces have been moved to <ulink
-      url="http://gborg.postgresql.org">http://gborg.postgresql.org</>
+      url="http://gborg.mollydb.org">http://gborg.mollydb.org</>
       where they can be developed and released independently.
      </para>
     </listitem>
@@ -1489,7 +1489,7 @@ operations on bytea columns (Joe)</para></listitem>
    application examines the system catalogs, additional changes will
    be required due to the introduction of schemas in 7.3; for more
    information, see: <ulink
-   url="http://developer.postgresql.org/~momjian/upgrade_tips_7.3"></>.
+   url="http://developer.mollydb.org/~momjian/upgrade_tips_7.3"></>.
   </para>
 
   <para>
@@ -1513,7 +1513,7 @@ operations on bytea columns (Joe)</para></listitem>
 
    <listitem>
     <para>
-     Several <filename>postgresql.conf</filename> logging parameters
+     Several <filename>mollydb.conf</filename> logging parameters
      have been renamed.
     </para>
    </listitem>
@@ -1642,7 +1642,7 @@ operations on bytea columns (Joe)</para></listitem>
 <listitem><para>Server log messages now tagged with LOG, not DEBUG (Bruce)</para></listitem>
 <listitem><para>Add user column to pg_hba.conf (Bruce)</para></listitem>
 <listitem><para>Have log_connections output two lines in log file (Tom)</para></listitem>
-<listitem><para>Remove debug_level from postgresql.conf, now server_min_messages (Bruce)</para></listitem>
+<listitem><para>Remove debug_level from mollydb.conf, now server_min_messages (Bruce)</para></listitem>
 <listitem><para>New ALTER DATABASE/USER ... SET command for per-user/database initialization (Peter)</para></listitem>
 <listitem><para>New parameters server_min_messages and client_min_messages to control which messages are sent to the server logs or client applications (Bruce)</para></listitem>
 <listitem><para>Allow pg_hba.conf to specify lists of users/databases separated by commas, group names prepended with +, and file names prepended with @ (Bruce)</para></listitem>
@@ -1887,13 +1887,13 @@ operations on bytea columns (Joe)</para></listitem>
    <title>Miscellaneous Interfaces</title>
 <itemizedlist>
 <listitem><para>Fixed ECPG bug concerning octal numbers in single quotes (Michael)</para></listitem>
-<listitem><para>Move src/interfaces/libpgeasy to http://gborg.postgresql.org (Marc, Bruce)</para></listitem>
+<listitem><para>Move src/interfaces/libpgeasy to http://gborg.mollydb.org (Marc, Bruce)</para></listitem>
 <listitem><para>Improve Python interface (Elliot Lee, Andrew Johnson, Greg Copeland)</para></listitem>
 <listitem><para>Add libpgtcl connection close event (Gerhard Hintermayer)</para></listitem>
-<listitem><para>Move src/interfaces/libpq++ to http://gborg.postgresql.org (Marc, Bruce)</para></listitem>
-<listitem><para>Move src/interfaces/odbc to http://gborg.postgresql.org (Marc)</para></listitem>
-<listitem><para>Move src/interfaces/libpgeasy to http://gborg.postgresql.org (Marc, Bruce)</para></listitem>
-<listitem><para>Move src/interfaces/perl5 to http://gborg.postgresql.org (Marc, Bruce)</para></listitem>
+<listitem><para>Move src/interfaces/libpq++ to http://gborg.mollydb.org (Marc, Bruce)</para></listitem>
+<listitem><para>Move src/interfaces/odbc to http://gborg.mollydb.org (Marc)</para></listitem>
+<listitem><para>Move src/interfaces/libpgeasy to http://gborg.mollydb.org (Marc, Bruce)</para></listitem>
+<listitem><para>Move src/interfaces/perl5 to http://gborg.mollydb.org (Marc, Bruce)</para></listitem>
 <listitem><para>Remove src/bin/pgaccess from main tree, now at http://www.pgaccess.org (Bruce)</para></listitem>
 <listitem><para>Add pg_on_connection_loss command to libpgtcl (Gerhard Hintermayer, Tom)</para></listitem>
 </itemizedlist>
@@ -2466,7 +2466,7 @@ since <productname>PostgreSQL</productname> 7.1.
      will always return false (or NULL, more precisely).  Previous
      releases automatically transformed this syntax to <literal>IS
      NULL</literal>.  The old behavior can be re-enabled using a
-     <filename>postgresql.conf</filename> parameter.
+     <filename>mollydb.conf</filename> parameter.
     </para>
    </listitem>
 
@@ -3189,7 +3189,7 @@ Improve CREATE FUNCTION failure message (Ross)
 JDBC improvements (Peter, Travis Bauer, Christopher Cain, William Webber,
    Gunnar)
 Grand Unified Configuration scheme/GUC.  Many options can now be set in
-   data/postgresql.conf, postmaster/postgres flags, or SET commands (Peter E)
+   data/mollydb.conf, postmaster/postgres flags, or SET commands (Peter E)
 Improved handling of file descriptor cache (Tom)
 New warning code about auto-created table alias entries (Bruce)
 Overhaul initdb process (Tom, Peter E)

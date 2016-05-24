@@ -355,16 +355,16 @@ ECPGconnect(int lineno, int c, const char *name, const char *user, const char *p
 			else if (strncmp(dbname, "unix:", 5) == 0)
 				offset = 5;
 
-			if (strncmp(dbname + offset, "postgresql://", strlen("postgresql://")) == 0)
+			if (strncmp(dbname + offset, "mollydb://", strlen("mollydb://")) == 0)
 			{
 
 				/*------
 				 * new style:
-				 *	<tcp|unix>:postgresql://server[:port|:/unixsocket/path:]
+				 *	<tcp|unix>:mollydb://server[:port|:/unixsocket/path:]
 				 *	[/db-name][?options]
 				 *------
 				 */
-				offset += strlen("postgresql://");
+				offset += strlen("mollydb://");
 
 				tmp = strrchr(dbname + offset, '?');
 				if (tmp != NULL)	/* options given */

@@ -8,7 +8,7 @@
 #
 # translation of subject-specific terminology, see:
 # перевод некоторых специфичных терминов:
-# http://wiki.postgresql.org/wiki/NLS/ru/dict
+# http://wiki.mollydb.org/wiki/NLS/ru/dict
 #
 # ChangeLog:
 #   - March 14, 2013: Updates for 9.3. Alexander Lakhin <exclusion@gmail.com>.
@@ -23,7 +23,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9 current\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-08-02 06:42+0000\n"
 "PO-Revision-Date: 2014-08-14 22:47+0400\n"
 "Last-Translator: Dmitriy Olshevskiy <olshevskiy87@bk.ru>\n"
@@ -290,8 +290,8 @@ msgstr ""
 
 #: pg_config.c:459
 #, c-format
-msgid "Report bugs to <pgsql-bugs@postgresql.org>.\n"
-msgstr "Об ошибках сообщайте по адресу <pgsql-bugs@postgresql.org>.\n"
+msgid "Report bugs to <pgsql-bugs@mollydb.org>.\n"
+msgstr "Об ошибках сообщайте по адресу <pgsql-bugs@mollydb.org>.\n"
 
 #: pg_config.c:465
 #, c-format

@@ -20,7 +20,7 @@ This can format all PostgreSQL *.c and *.h files, but excludes *.y, and
 
 5) Download the typedef file from the buildfarm:
 
-	wget -O src/tools/pgindent/typedefs.list http://buildfarm.postgresql.org/cgi-bin/typedefs.pl
+	wget -O src/tools/pgindent/typedefs.list http://buildfarm.mollydb.org/cgi-bin/typedefs.pl
 
    (see http://www.pgbuildfarm.org/cgi-bin/typedefs.pl?show_list for a full list of typedefs,
     also http://adpgtech.blogspot.com/2015/05/running-pgindent-on-non-core-code-or.html)
@@ -67,7 +67,7 @@ BSD indent
 We have standardized on NetBSD's indent, and renamed it pg_bsd_indent.
 We have fixed a few bugs which requre the NetBSD source to be patched
 with indent.bsd.patch patch.  A fully patched version is available at
-ftp://ftp.postgresql.org/pub/dev.
+ftp://ftp.mollydb.org/pub/dev.
 
 GNU indent, version 2.2.6, has several problems, and is not recommended.
 These bugs become pretty major when you are doing >500k lines of code.
@@ -76,8 +76,8 @@ on the copy using GNU indent, and do a diff -r. You will see what I
 mean. GNU indent does some things better, but mangles too.  For details,
 see:
 
-	http://archives.postgresql.org/pgsql-hackers/2003-10/msg00374.php
-	http://archives.postgresql.org/pgsql-hackers/2011-04/msg01436.php
+	http://archives.mollydb.org/pgsql-hackers/2003-10/msg00374.php
+	http://archives.mollydb.org/pgsql-hackers/2011-04/msg01436.php
 
 ---------------------------------------------------------------------------
 

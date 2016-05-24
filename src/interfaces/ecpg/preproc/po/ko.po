@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 8.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2010-09-09 16:34+0000\n"
 "PO-Revision-Date: 2013-09-05 22:33-0400\n"
 "Last-Translator: EnterpriseDB translation team <dev-escalations@enterprisedb.com>\n"
@@ -169,10 +169,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"오류보고: <pgsql-bugs@postgresql.org>.\n"
+"오류보고: <pgsql-bugs@mollydb.org>.\n"
 
 #: ecpg.c:183 ecpg.c:334 ecpg.c:344
 #, c-format
@@ -282,9 +282,9 @@ msgstr "EXEC SQL INCLUDE 명령에 구문 오류 발생"
 #: pgc.l:1175
 msgid ""
 "internal error: unreachable state; please report this to <pgsql-"
-"bugs@postgresql.org>"
+"bugs@mollydb.org>"
 msgstr ""
-"내부 오류: 연결할 수 없습니다. 이 문제를 <pgsql-bugs@postgresql.org&gt;로 알"
+"내부 오류: 연결할 수 없습니다. 이 문제를 <pgsql-bugs@mollydb.org&gt;로 알"
 "려주십시오."
 
 #: pgc.l:1298
@@ -424,10 +424,10 @@ msgstr "\"@\"이 필요한데 \"%s\"이(가) 있음"
 
 #: preproc.y:10936
 msgid ""
-"only protocols \"tcp\" and \"unix\" and database type \"postgresql\" are "
+"only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are "
 "supported"
 msgstr ""
-"\"tcp\" 및 \"unix\" 프로토콜과 데이터베이스 형식 \"postgresql\"만 지원됨"
+"\"tcp\" 및 \"unix\" 프로토콜과 데이터베이스 형식 \"mollydb\"만 지원됨"
 
 #: preproc.y:10939
 #, c-format
@@ -442,8 +442,8 @@ msgstr ""
 
 #: preproc.y:10970
 #, c-format
-msgid "expected \"postgresql\", found \"%s\""
-msgstr "\"postgresql\"이 필요한데 \"%s\"이(가) 있음"
+msgid "expected \"mollydb\", found \"%s\""
+msgstr "\"mollydb\"이 필요한데 \"%s\"이(가) 있음"
 
 #: preproc.y:10973
 #, c-format

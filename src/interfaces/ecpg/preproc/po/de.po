@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PostgreSQL 9.4\n"
-"Report-Msgid-Bugs-To: pgsql-bugs@postgresql.org\n"
+"Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-07-20 02:37+0000\n"
 "PO-Revision-Date: 2014-07-20 21:08-0400\n"
 "Last-Translator: Peter Eisentraut <peter_e@gmx.net>\n"
@@ -171,10 +171,10 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <pgsql-bugs@postgresql.org>.\n"
+"Report bugs to <pgsql-bugs@mollydb.org>.\n"
 msgstr ""
 "\n"
-"Berichten Sie Fehler an <pgsql-bugs@postgresql.org>.\n"
+"Berichten Sie Fehler an <pgsql-bugs@mollydb.org>.\n"
 
 #: ecpg.c:143
 #, c-format
@@ -313,8 +313,8 @@ msgstr "Syntaxfehler im Befehl EXEC SQL INCLUDE"
 
 #: pgc.l:1237
 #, c-format
-msgid "internal error: unreachable state; please report this to <pgsql-bugs@postgresql.org>"
-msgstr "interner Fehler: unerreichbarer Zustand; bitte an <pgsql-bugs@postgresql.org> berichten"
+msgid "internal error: unreachable state; please report this to <pgsql-bugs@mollydb.org>"
+msgstr "interner Fehler: unerreichbarer Zustand; bitte an <pgsql-bugs@mollydb.org> berichten"
 
 #: pgc.l:1362
 #, c-format
@@ -449,8 +449,8 @@ msgstr "„@“ erwartet, „%s“ gefunden"
 
 #: preproc.y:13220
 #, c-format
-msgid "only protocols \"tcp\" and \"unix\" and database type \"postgresql\" are supported"
-msgstr "er werden nur die Protokolle „tcp“ und „unix“ und der Datenbanktyp „postgresql“ unterstützt"
+msgid "only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are supported"
+msgstr "er werden nur die Protokolle „tcp“ und „unix“ und der Datenbanktyp „mollydb“ unterstützt"
 
 #: preproc.y:13223
 #, c-format
@@ -464,8 +464,8 @@ msgstr "Unix-Domain-Sockets funktionieren nur mit „localhost“, aber nicht mi
 
 #: preproc.y:13254
 #, c-format
-msgid "expected \"postgresql\", found \"%s\""
-msgstr "„postgresql“ erwartet, „%s“ gefunden"
+msgid "expected \"mollydb\", found \"%s\""
+msgstr "„mollydb“ erwartet, „%s“ gefunden"
 
 #: preproc.y:13257
 #, c-format
