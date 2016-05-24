@@ -7,7 +7,7 @@
  *	src/bin/pg_upgrade/util.c
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "common/username.h"
 #include "pg_upgrade.h"

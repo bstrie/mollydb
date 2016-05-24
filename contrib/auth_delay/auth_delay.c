@@ -9,7 +9,7 @@
  *
  * -------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "libpq/auth.h"
 #include "port.h"

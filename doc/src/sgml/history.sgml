@@ -85,10 +85,10 @@
   </para>
  </sect2>
 
- <sect2 id="history-postgres95">
+ <sect2 id="history-mollydb95">
   <title><productname>Postgres95</productname></title>
 
-  <indexterm zone="history-postgres95">
+  <indexterm zone="history-mollydb95">
    <primary>Postgres95</primary>
   </indexterm>
 

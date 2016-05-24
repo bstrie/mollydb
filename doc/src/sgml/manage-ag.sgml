@@ -112,9 +112,9 @@ CREATE DATABASE <replaceable>name</>;
    <command>initdb</> command when the data storage area is
    initialized. (See <xref linkend="creating-cluster">.)  This
    database is called
-   <literal>postgres</>.<indexterm><primary>postgres</></> So to
+   <literal>mollydb</>.<indexterm><primary>mollydb</></> So to
    create the first <quote>ordinary</> database you can connect to
-   <literal>postgres</>.
+   <literal>mollydb</>.
   </para>
 
   <para>
@@ -139,7 +139,7 @@ CREATE DATABASE <replaceable>name</>;
 createdb <replaceable class="parameter">dbname</replaceable>
 </synopsis>
 
-   <command>createdb</> does no magic. It connects to the <literal>postgres</>
+   <command>createdb</> does no magic. It connects to the <literal>mollydb</>
    database and issues the <command>CREATE DATABASE</> command,
    exactly as described above.
    The <xref linkend="app-createdb"> reference page contains the invocation
@@ -271,7 +271,7 @@ createdb -T template0 <replaceable>dbname</>
    </para>
 
    <para>
-    The <literal>postgres</> database is also created when a database
+    The <literal>mollydb</> database is also created when a database
     cluster is initialized.  This database is meant as a default database for
     users and applications to connect to. It is simply a copy of
     <literal>template1</> and can be dropped and recreated if necessary.

@@ -20,7 +20,7 @@
 #include "fmgr.h"
 
 /*
- * Modeled on struct varlena from postgres.h, but data type is bits8.
+ * Modeled on struct varlena from mollydb.h, but data type is bits8.
  */
 typedef struct
 {

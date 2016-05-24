@@ -11,7 +11,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 /*
  * Indicate if pgwin32_recv() and pgwin32_send() should operate

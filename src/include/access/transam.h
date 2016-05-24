@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * transam.h
- *	  postgres transaction access method support code
+ *	  mollydb transaction access method support code
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

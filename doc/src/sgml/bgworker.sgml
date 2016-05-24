@@ -9,7 +9,7 @@
 
  <para>
   MollyDB can be extended to run user-supplied code in separate processes.
-  Such processes are started, stopped and monitored by <command>postgres</command>,
+  Such processes are started, stopped and monitored by <command>mollydb</command>,
   which permits them to have a lifetime closely linked to the server's status.
   These processes have the option to attach to <productname>MollyDB</>'s
   shared memory area and to connect to databases internally; they can also run
@@ -108,9 +108,9 @@ typedef struct BackgroundWorker
 
   <para>
    <structfield>bgw_start_time</structfield> is the server state during which
-   <command>postgres</> should start the process; it can be one of
+   <command>mollydb</> should start the process; it can be one of
    <literal>BgWorkerStart_PostmasterStart</> (start as soon as
-   <command>postgres</> itself has finished its own initialization; processes
+   <command>mollydb</> itself has finished its own initialization; processes
    requesting this are not eligible for database connections),
    <literal>BgWorkerStart_ConsistentState</> (start as soon as a consistent state
    has been reached in a hot standby, allowing processes to connect to
@@ -124,7 +124,7 @@ typedef struct BackgroundWorker
 
   <para>
    <structfield>bgw_restart_time</structfield> is the interval, in seconds, that
-   <command>postgres</command> should wait before restarting the process, in
+   <command>mollydb</command> should wait before restarting the process, in
    case it crashes.  It can be any positive value,
    or <literal>BGW_NEVER_RESTART</literal>, indicating not to restart the
    process in case of a crash.
@@ -235,7 +235,7 @@ typedef struct BackgroundWorker
    <function>WaitLatch()</function>. Make sure the
    <literal>WL_POSTMASTER_DEATH</> flag is set when calling that function, and
    verify the return code for a prompt exit in the emergency case that
-   <command>postgres</> itself has terminated.
+   <command>mollydb</> itself has terminated.
   </para>
 
   <para>

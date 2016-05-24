@@ -12,7 +12,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "funcapi.h"
 #include "miscadmin.h"

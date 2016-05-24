@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * ginbtree.c
- *	  page utilities routines for the postgres inverted index access method.
+ *	  page utilities routines for the mollydb inverted index access method.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -12,7 +12,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/gin_private.h"
 #include "access/xloginsert.h"

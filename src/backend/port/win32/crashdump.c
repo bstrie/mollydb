@@ -36,7 +36,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -94,7 +94,7 @@ crashDumpHandler(struct _EXCEPTION_POINTERS * pExceptionInfo)
 {
 	/*
 	 * We only write crash dumps if the "crashdumps" directory within the
-	 * postgres data directory exists.
+	 * mollydb data directory exists.
 	 */
 	DWORD		attribs = GetFileAttributesA("crashdumps");
 
@@ -149,7 +149,7 @@ crashDumpHandler(struct _EXCEPTION_POINTERS * pExceptionInfo)
 
 		systemTicks = GetTickCount();
 		snprintf(dumpPath, _MAX_PATH,
-				 "crashdumps\\postgres-pid%0i-%0i.mdmp",
+				 "crashdumps\\mollydb-pid%0i-%0i.mdmp",
 				 (int) selfPid, (int) systemTicks);
 		dumpPath[_MAX_PATH - 1] = '\0';
 

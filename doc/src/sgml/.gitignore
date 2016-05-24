@@ -7,10 +7,10 @@
 /man-stamp
 # Other popular build targets
 /INSTALL
-/postgres-US.pdf
-/postgres-A4.pdf
-/postgres.html
-/postgres.txt
+/mollydb-US.pdf
+/mollydb-A4.pdf
+/mollydb.html
+/mollydb.txt
 # GENERATED_SGML
 /features-supported.sgml
 /features-unsupported.sgml
@@ -19,11 +19,11 @@
 /bookindex.sgml
 /HTML.index
 # Assorted byproducts from building the above
-/postgres.xml
+/mollydb.xml
 /INSTALL.html
-/postgres-US.aux
-/postgres-US.log
-/postgres-US.out
-/postgres-A4.aux
-/postgres-A4.log
-/postgres-A4.out
+/mollydb-US.aux
+/mollydb-US.log
+/mollydb-US.out
+/mollydb-A4.aux
+/mollydb-A4.log
+/mollydb-A4.out

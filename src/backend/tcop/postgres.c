@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  *
- * postgres.c
+ * mollydb.c
  *	  POSTGRES C Backend Interface
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -8,16 +8,16 @@
  *
  *
  * IDENTIFICATION
- *	  src/backend/tcop/postgres.c
+ *	  src/backend/tcop/mollydb.c
  *
  * NOTES
- *	  this is the "main" module of the postgres backend and
+ *	  this is the "main" module of the mollydb backend and
  *	  hence the main module of the "traffic cop".
  *
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <fcntl.h>
 #include <limits.h>
@@ -3279,7 +3279,7 @@ get_stats_option_name(const char *arg)
 
 
 /* ----------------------------------------------------------------
- * process_postgres_switches
+ * process_mollydb_switches
  *	   Parse command line arguments for PostgresMain
  *
  * This is called twice, once for the "secure" options coming from the
@@ -3298,7 +3298,7 @@ get_stats_option_name(const char *arg)
  * ----------------------------------------------------------------
  */
 void
-process_postgres_switches(int argc, char *argv[], GucContext ctx,
+process_mollydb_switches(int argc, char *argv[], GucContext ctx,
 						  const char **dbname)
 {
 	bool		secure = (ctx == PGC_POSTMASTER);
@@ -3547,7 +3547,7 @@ process_postgres_switches(int argc, char *argv[], GucContext ctx,
 
 /* ----------------------------------------------------------------
  * PostgresMain
- *	   postgres main loop -- all backends, interactive or otherwise start here
+ *	   mollydb main loop -- all backends, interactive or otherwise start here
  *
  * argc/argv are the command line arguments to be used.  (When being forked
  * by the postmaster, these are not the original argv array of the process.)
@@ -3582,7 +3582,7 @@ PostgresMain(int argc, char *argv[],
 	/*
 	 * Parse command-line options.
 	 */
-	process_postgres_switches(argc, argv, PGC_POSTMASTER, &dbname);
+	process_mollydb_switches(argc, argv, PGC_POSTMASTER, &dbname);
 
 	/* Must have gotten a database name, or have a default (the username) */
 	if (dbname == NULL)

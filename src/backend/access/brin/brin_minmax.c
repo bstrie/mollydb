@@ -8,7 +8,7 @@
  * IDENTIFICATION
  *	  src/backend/access/brin/brin_minmax.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/genam.h"
 #include "access/brin_internal.h"

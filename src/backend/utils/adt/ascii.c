@@ -9,7 +9,7 @@
  *
  *-----------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "mb/pg_wchar.h"
 #include "utils/ascii.h"

@@ -68,7 +68,7 @@
  *		pq_getmsgend	- verify message fully consumed
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <sys/param.h>
 #include <netinet/in.h>

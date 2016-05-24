@@ -1,32 +1,32 @@
-<!-- doc/src/sgml/postgres-fdw.sgml -->
+<!-- doc/src/sgml/mollydb-fdw.sgml -->
 
-<sect1 id="postgres-fdw" xreflabel="postgres_fdw">
- <title>postgres_fdw</title>
+<sect1 id="mollydb-fdw" xreflabel="mollydb_fdw">
+ <title>mollydb_fdw</title>
 
- <indexterm zone="postgres-fdw">
-  <primary>postgres_fdw</primary>
+ <indexterm zone="mollydb-fdw">
+  <primary>mollydb_fdw</primary>
  </indexterm>
 
  <para>
-  The <filename>postgres_fdw</> module provides the foreign-data wrapper
-  <literal>postgres_fdw</literal>, which can be used to access data
+  The <filename>mollydb_fdw</> module provides the foreign-data wrapper
+  <literal>mollydb_fdw</literal>, which can be used to access data
   stored in external <productname>MollyDB</productname> servers.
  </para>
 
  <para>
   The functionality provided by this module overlaps substantially
   with the functionality of the older <xref linkend="dblink"> module.
-  But <filename>postgres_fdw</> provides more transparent and
+  But <filename>mollydb_fdw</> provides more transparent and
   standards-compliant syntax for accessing remote tables, and can give
   better performance in many cases.
  </para>
 
  <para>
-  To prepare for remote access using <filename>postgres_fdw</>:
+  To prepare for remote access using <filename>mollydb_fdw</>:
   <orderedlist spacing="compact">
    <listitem>
     <para>
-     Install the  <filename>postgres_fdw</> extension using <xref
+     Install the  <filename>mollydb_fdw</> extension using <xref
      linkend="sql-createextension">.
     </para>
    </listitem>
@@ -69,7 +69,7 @@
  </para>
 
  <para>
-  Note that <filename>postgres_fdw</> currently lacks support for
+  Note that <filename>mollydb_fdw</> currently lacks support for
   <command>INSERT</command> statements with an <literal>ON CONFLICT DO
   UPDATE</> clause.  However, the <literal>ON CONFLICT DO NOTHING</>
   clause is supported, provided a unique index inference specification
@@ -79,7 +79,7 @@
  <para>
   It is generally recommended that the columns of a foreign table be declared
   with exactly the same data types, and collations if applicable, as the
-  referenced columns of the remote table.  Although <filename>postgres_fdw</>
+  referenced columns of the remote table.  Although <filename>mollydb_fdw</>
   is currently rather forgiving about performing data type conversions at
   need, surprising semantic anomalies may arise when types or collations do
   not match, due to the remote server interpreting <literal>WHERE</> clauses
@@ -93,13 +93,13 @@
  </para>
 
  <sect2>
-  <title>FDW Options of postgres_fdw</title>
+  <title>FDW Options of mollydb_fdw</title>
 
   <sect3>
    <title>Connection Options</title>
 
    <para>
-    A foreign server using the <filename>postgres_fdw</> foreign data wrapper
+    A foreign server using the <filename>mollydb_fdw</> foreign data wrapper
     can have the same options that <application>libpq</> accepts in
     connection strings, as described in <xref linkend="libpq-paramkeywords">,
     except that these options are not allowed:
@@ -120,7 +120,7 @@
      <listitem>
       <para>
        <literal>fallback_application_name</> (always set to
-       <literal>postgres_fdw</>)
+       <literal>mollydb_fdw</>)
       </para>
      </listitem>
     </itemizedlist>
@@ -186,14 +186,14 @@
    <title>Cost Estimation Options</title>
 
    <para>
-    <filename>postgres_fdw</> retrieves remote data by executing queries
+    <filename>mollydb_fdw</> retrieves remote data by executing queries
     against remote servers, so ideally the estimated cost of scanning a
     foreign table should be whatever it costs to be done on the remote
     server, plus some overhead for communication.  The most reliable way to
     get such an estimate is to ask the remote server and then add something
     for overhead &mdash; but for simple queries, it may not be worth the cost
     of an additional remote query to get a cost estimate.
-    So <filename>postgres_fdw</> provides the following options to control
+    So <filename>mollydb_fdw</> provides the following options to control
     how cost estimation is done:
    </para>
 
@@ -204,7 +204,7 @@
      <listitem>
       <para>
        This option, which can be specified for a foreign table or a foreign
-       server, controls whether <filename>postgres_fdw</> issues remote
+       server, controls whether <filename>mollydb_fdw</> issues remote
        <command>EXPLAIN</command> commands to obtain cost estimates.
        A setting for a foreign table overrides any setting for its server,
        but only for that table.
@@ -245,11 +245,11 @@
 
    <para>
     When <literal>use_remote_estimate</literal> is true,
-    <filename>postgres_fdw</> obtains row count and cost estimates from the
+    <filename>mollydb_fdw</> obtains row count and cost estimates from the
     remote server and then adds <literal>fdw_startup_cost</literal> and
     <literal>fdw_tuple_cost</literal> to the cost estimates.  When
     <literal>use_remote_estimate</literal> is false,
-    <filename>postgres_fdw</> performs local row count and cost estimation
+    <filename>mollydb_fdw</> performs local row count and cost estimation
     and then adds <literal>fdw_startup_cost</literal> and
     <literal>fdw_tuple_cost</literal> to the cost estimates.  This local
     estimation is unlikely to be very accurate unless local copies of the
@@ -304,7 +304,7 @@
      <term><literal>fetch_size</literal></term>
      <listitem>
       <para>
-       This option specifies the number of rows <filename>postgres_fdw</> 
+       This option specifies the number of rows <filename>mollydb_fdw</> 
        should get in each fetch operation. It can be specified for a foreign
        table or a foreign server. The option specified on a table overrides
        an option specified for the server.
@@ -321,7 +321,7 @@
    <title>Updatability Options</title>
 
    <para>
-    By default all foreign tables using <filename>postgres_fdw</> are assumed
+    By default all foreign tables using <filename>mollydb_fdw</> are assumed
     to be updatable.  This may be overridden using the following option:
    </para>
 
@@ -331,7 +331,7 @@
      <term><literal>updatable</literal></term>
      <listitem>
       <para>
-       This option controls whether <filename>postgres_fdw</> allows foreign
+       This option controls whether <filename>mollydb_fdw</> allows foreign
        tables to be modified using <command>INSERT</>, <command>UPDATE</> and
        <command>DELETE</> commands.  It can be specified for a foreign table
        or a foreign server.  A table-level option overrides a server-level
@@ -344,7 +344,7 @@
        would occur anyway.  Use of this option primarily allows the error to
        be thrown locally without querying the remote server.  Note however
        that the <literal>information_schema</> views will report a
-       <filename>postgres_fdw</> foreign table to be updatable (or not)
+       <filename>mollydb_fdw</> foreign table to be updatable (or not)
        according to the setting of this option, without any check of the
        remote server.
       </para>
@@ -358,7 +358,7 @@
    <title>Importing Options</title>
 
    <para>
-    <filename>postgres_fdw</> is able to import foreign table definitions
+    <filename>mollydb_fdw</> is able to import foreign table definitions
     using <xref linkend="sql-importforeignschema">.  This command creates
     foreign table definitions on the local server that match tables or
     views present on the remote server.  If the remote tables to be imported
@@ -432,7 +432,7 @@
   <title>Connection Management</title>
 
   <para>
-   <filename>postgres_fdw</filename> establishes a connection to a
+   <filename>mollydb_fdw</filename> establishes a connection to a
    foreign server during the first query that uses a foreign table
    associated with the foreign server.  This connection is kept and
    re-used for subsequent queries in the same session.  However, if
@@ -446,7 +446,7 @@
 
   <para>
    During a query that references any remote tables on a foreign server,
-   <filename>postgres_fdw</filename> opens a transaction on the
+   <filename>mollydb_fdw</filename> opens a transaction on the
    remote server if one is not already open corresponding to the current
    local transaction.  The remote transaction is committed or aborted when
    the local transaction commits or aborts.  Savepoints are similarly
@@ -474,7 +474,7 @@
   <title>Remote Query Optimization</title>
 
   <para>
-   <filename>postgres_fdw</> attempts to optimize remote queries to reduce
+   <filename>mollydb_fdw</> attempts to optimize remote queries to reduce
    the amount of data transferred from foreign servers.  This is done by
    sending query <literal>WHERE</> clauses to the remote server for
    execution, and by not retrieving table columns that are not needed for
@@ -485,7 +485,7 @@
    option.  Operators and functions in such clauses must
    be <literal>IMMUTABLE</> as well.
    For an <command>UPDATE</> or <command>DELETE</> query,
-   <filename>postgres_fdw</> attempts to optimize the query execution by
+   <filename>mollydb_fdw</> attempts to optimize the query execution by
    sending the whole query to the remote server if there are no query
    <literal>WHERE</> clauses that cannot be sent to the remote server,
    no local joins for the query, and no row-level local <literal>BEFORE</> or
@@ -496,7 +496,7 @@
   </para>
 
   <para>
-   When <filename>postgres_fdw</> encounters a join between foreign tables on
+   When <filename>mollydb_fdw</> encounters a join between foreign tables on
    the same foreign server, it sends the entire join to the foreign server,
    unless for some reason it believes that it will be more efficient to fetch
    rows from each table individually, or unless the table references involved
@@ -515,11 +515,11 @@
   <title>Remote Query Execution Environment</title>
 
   <para>
-   In the remote sessions opened by <filename>postgres_fdw</>,
+   In the remote sessions opened by <filename>mollydb_fdw</>,
    the <xref linkend="guc-search-path"> parameter is set to
    just <literal>pg_catalog</>, so that only built-in objects are visible
    without schema qualification.  This is not an issue for queries
-   generated by <filename>postgres_fdw</> itself, because it always
+   generated by <filename>mollydb_fdw</> itself, because it always
    supplies such qualification.  However, this can pose a hazard for
    functions that are executed on the remote server via triggers or rules
    on remote tables.  For example, if a remote table is actually a view,
@@ -531,7 +531,7 @@
   </para>
 
   <para>
-   <filename>postgres_fdw</> likewise establishes remote session settings
+   <filename>mollydb_fdw</> likewise establishes remote session settings
    for the parameters <xref linkend="guc-timezone">,
    <xref linkend="guc-datestyle">, <xref linkend="guc-intervalstyle">,
    and <xref linkend="guc-extra-float-digits">.  These are less likely
@@ -542,7 +542,7 @@
   <para>
    It is <emphasis>not</> recommended that you override this behavior by
    changing the session-level settings of these parameters; that is likely
-   to cause <filename>postgres_fdw</> to malfunction.
+   to cause <filename>mollydb_fdw</> to malfunction.
   </para>
  </sect2>
 
@@ -550,9 +550,9 @@
   <title>Cross-Version Compatibility</title>
 
   <para>
-   <filename>postgres_fdw</> can be used with remote servers dating back
+   <filename>mollydb_fdw</> can be used with remote servers dating back
    to <productname>MollyDB</> 8.3.  Read-only capability is available
-   back to 8.1.  A limitation however is that <filename>postgres_fdw</>
+   back to 8.1.  A limitation however is that <filename>mollydb_fdw</>
    generally assumes that immutable built-in functions and operators are
    safe to send to the remote server for execution, if they appear in a
    <literal>WHERE</> clause for a foreign table.  Thus, a built-in
@@ -571,11 +571,11 @@
 
   <para>
    Here is an example of creating a foreign table with
-   <literal>postgres_fdw</>. First install the extension:
+   <literal>mollydb_fdw</>. First install the extension:
   </para>
 
 <programlisting>
-CREATE EXTENSION postgres_fdw;
+CREATE EXTENSION mollydb_fdw;
 </programlisting>
 
   <para>
@@ -587,7 +587,7 @@ CREATE EXTENSION postgres_fdw;
 
 <programlisting>
 CREATE SERVER foreign_server
-        FOREIGN DATA WRAPPER postgres_fdw
+        FOREIGN DATA WRAPPER mollydb_fdw
         OPTIONS (host '192.83.123.89', port '5432', dbname 'foreign_db');
 </programlisting>
   </para>

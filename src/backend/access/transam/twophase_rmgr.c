@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/multixact.h"
 #include "access/twophase_rmgr.h"

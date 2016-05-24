@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * ginvacuum.c
- *	  delete & vacuum routines for the postgres GIN
+ *	  delete & vacuum routines for the mollydb GIN
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -12,7 +12,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/gin_private.h"
 #include "access/xloginsert.h"

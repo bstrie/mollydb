@@ -29,7 +29,7 @@
 
 (add-hook 'c-mode-hook
           (defun mollydb-c-mode-hook ()
-            (when (string-match "/postgres\\(ql\\)?/" buffer-file-name)
+            (when (string-match "/mollydb\\(ql\\)?/" buffer-file-name)
               (c-set-style "mollydb")
               ;; Don't override the style we just set with the style in
               ;; `dir-locals-file'.  Emacs 23.4.1 needs this; it is obsolete,
@@ -56,7 +56,7 @@
 
 (add-hook 'perl-mode-hook
           (defun mollydb-perl-mode-hook ()
-             (when (string-match "/postgres\\(ql\\)?/" buffer-file-name)
+             (when (string-match "/mollydb\\(ql\\)?/" buffer-file-name)
                (pgsql-perl-style))))
 
 
@@ -64,7 +64,7 @@
 
 (add-hook 'sgml-mode-hook
           (defun mollydb-sgml-mode-hook ()
-             (when (string-match "/postgres\\(ql\\)?/" buffer-file-name)
+             (when (string-match "/mollydb\\(ql\\)?/" buffer-file-name)
                (setq fill-column 78)
                (setq indent-tabs-mode nil)
                (setq sgml-basic-offset 1))))
@@ -73,5 +73,5 @@
 ;;; Makefiles
 
 ;; use GNU make mode instead of plain make mode
-(add-to-list 'auto-mode-alist '("/postgres\\(ql\\)?/.*Makefile.*" . makefile-gmake-mode))
-(add-to-list 'auto-mode-alist '("/postgres\\(ql\\)?/.*\\.mk\\'" . makefile-gmake-mode))
+(add-to-list 'auto-mode-alist '("/mollydb\\(ql\\)?/.*Makefile.*" . makefile-gmake-mode))
+(add-to-list 'auto-mode-alist '("/mollydb\\(ql\\)?/.*\\.mk\\'" . makefile-gmake-mode))

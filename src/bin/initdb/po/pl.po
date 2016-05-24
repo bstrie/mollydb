@@ -471,8 +471,8 @@ msgid "copying template1 to template0 ... "
 msgstr "kopiowanie bazy template1 do bazy template0 ... "
 
 #: initdb.c:2372
-msgid "copying template1 to postgres ... "
-msgstr "kopiowanie bazy template1 do bazy postgres ... "
+msgid "copying template1 to mollydb ... "
+msgstr "kopiowanie bazy template1 do bazy mollydb ... "
 
 #: initdb.c:2407
 msgid "syncing data to disk ... "
@@ -761,22 +761,22 @@ msgstr ""
 #: initdb.c:2890
 #, c-format
 msgid ""
-"The program \"postgres\" is needed by %s but was not found in the\n"
+"The program \"mollydb\" is needed by %s but was not found in the\n"
 "same directory as \"%s\".\n"
 "Check your installation.\n"
 msgstr ""
-"Program \"postgres\" jest wymagany przez %s ale nie został znaleziony \n"
+"Program \"mollydb\" jest wymagany przez %s ale nie został znaleziony \n"
 "w tym samym folderze co \"%s\".\n"
 "Sprawdź instalację.\n"
 
 #: initdb.c:2897
 #, c-format
 msgid ""
-"The program \"postgres\" was found by \"%s\"\n"
+"The program \"mollydb\" was found by \"%s\"\n"
 "but was not the same version as %s.\n"
 "Check your installation.\n"
 msgstr ""
-"Program \"postgres\" został znaleziony przez \"%s\"\n"
+"Program \"mollydb\" został znaleziony przez \"%s\"\n"
 "ale nie jest w tej samej wersji co %s.\n"
 "Sprawdź instalację.\n"
 
@@ -1016,7 +1016,7 @@ msgstr ""
 #| "\n"
 #| "Success. You can now start the database server using:\n"
 #| "\n"
-#| "    %s%s%spostgres%s -D %s%s%s\n"
+#| "    %s%s%smollydb%s -D %s%s%s\n"
 #| "or\n"
 #| "    %s%s%spg_ctl%s -D %s%s%s -l logfile start\n"
 #| "\n"

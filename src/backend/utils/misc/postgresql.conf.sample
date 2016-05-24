@@ -21,7 +21,7 @@
 # take effect.
 #
 # Any parameter can also be given as a command-line option to the server, e.g.,
-# "postgres -c log_connections=on".  Some parameters can be changed at run time
+# "mollydb -c log_connections=on".  Some parameters can be changed at run time
 # with the "SET" SQL command.
 #
 # Memory units:  kB = kilobytes        Time units:  ms  = milliseconds
@@ -368,7 +368,7 @@
 
 # These are relevant when logging to syslog:
 #syslog_facility = 'LOCAL0'
-#syslog_ident = 'postgres'
+#syslog_ident = 'mollydb'
 #syslog_sequence_numbers = on
 #syslog_split_messages = on
 
@@ -556,7 +556,7 @@
 # - Locale and Formatting -
 
 #datestyle = 'iso, mdy'
-#intervalstyle = 'postgres'
+#intervalstyle = 'mollydb'
 #timezone = 'GMT'
 #timezone_abbreviations = 'Default'     # Select the set of available time zone
 					# abbreviations.  Currently, there are

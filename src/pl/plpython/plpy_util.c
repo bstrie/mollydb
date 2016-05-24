@@ -4,7 +4,7 @@
  * src/pl/plpython/plpy_util.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "mb/pg_wchar.h"
 #include "utils/memutils.h"

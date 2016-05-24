@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 #include "_int.h"
 
 #include "access/htup_details.h"

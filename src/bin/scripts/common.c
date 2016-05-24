@@ -12,7 +12,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <signal.h>
 #include <unistd.h>
@@ -162,8 +162,8 @@ connectMaintenanceDatabase(const char *maintenance_db, const char *pghost,
 		return connectDatabase(maintenance_db, pghost, pgport, pguser,
 							   prompt_password, progname, false, false);
 
-	/* Otherwise, try postgres first and then template1. */
-	conn = connectDatabase("postgres", pghost, pgport, pguser, prompt_password,
+	/* Otherwise, try mollydb first and then template1. */
+	conn = connectDatabase("mollydb", pghost, pgport, pguser, prompt_password,
 						   progname, true, false);
 	if (!conn)
 		conn = connectDatabase("template1", pghost, pgport, pguser,

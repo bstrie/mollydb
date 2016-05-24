@@ -22,7 +22,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/commit_ts.h"
 #include "access/htup_details.h"

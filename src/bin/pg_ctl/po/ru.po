@@ -432,8 +432,8 @@ msgstr "%s: не удалось найти свой исполняемый фа�
 
 #: pg_ctl.c:1386
 #, c-format
-msgid "%s: could not find postgres program executable\n"
-msgstr "%s: не удалось найти исполняемый файл postgres\n"
+msgid "%s: could not find mollydb program executable\n"
+msgstr "%s: не удалось найти исполняемый файл mollydb\n"
 
 #: pg_ctl.c:1469 pg_ctl.c:1503
 #, c-format
@@ -675,8 +675,8 @@ msgstr ""
 
 #: pg_ctl.c:1955
 #, c-format
-msgid "  -c, --core-files       allow postgres to produce core files\n"
-msgstr "  -c, --core-files       указать postgres создавать дампы памяти\n"
+msgid "  -c, --core-files       allow mollydb to produce core files\n"
+msgstr "  -c, --core-files       указать mollydb создавать дампы памяти\n"
 
 #: pg_ctl.c:1957
 #, c-format
@@ -693,10 +693,10 @@ msgstr ""
 #: pg_ctl.c:1960
 #, c-format
 msgid ""
-"  -o OPTIONS             command line options to pass to postgres\n"
+"  -o OPTIONS             command line options to pass to mollydb\n"
 "                         (MollyDB server executable) or initdb\n"
 msgstr ""
-"  -o ПАРАМЕТРЫ           параметры командной строки для postgres\n"
+"  -o ПАРАМЕТРЫ           параметры командной строки для mollydb\n"
 "                         (исполняемого файла сервера MollyDB) или initdb\n"
 
 #: pg_ctl.c:1962

@@ -6,7 +6,7 @@
  *
  * src/backend/port/dynloader/darwin.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #ifdef HAVE_DLOPEN
 #include <dlfcn.h>

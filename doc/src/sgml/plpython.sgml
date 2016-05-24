@@ -1386,7 +1386,7 @@ CREATE FUNCTION raise_custom_exception() RETURNS void AS $$
 plpy.error("custom exception message", detail = "some info about exception", hint = "hint for users")
 $$ LANGUAGE plpythonu;
 
-postgres=# select raise_custom_exception();
+mollydb=# select raise_custom_exception();
 ERROR:  XX000: plpy.Error: custom exception message
 DETAIL:  some info about exception
 HINT:  hint for users

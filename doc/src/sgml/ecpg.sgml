@@ -1208,7 +1208,7 @@ EXEC SQL END DECLARE SECTION;
 <screen>
 oid=1, dbname=template1
 oid=11510, dbname=template0
-oid=11511, dbname=postgres
+oid=11511, dbname=mollydb
 oid=313780, dbname=testdb
 oid=0, dbname=
 oid=0, dbname=
@@ -1276,7 +1276,7 @@ EXEC SQL END DECLARE SECTION;
 <screen>
 oid=1, datname=template1, size=4324580
 oid=11510, datname=template0, size=4243460
-oid=11511, datname=postgres, size=4324580
+oid=11511, datname=mollydb, size=4324580
 oid=313780, datname=testdb, size=8183012
 </screen>
      </para>
@@ -4215,11 +4215,11 @@ sqlda2->sqln = 2; /* number of input variables */
      <literal>sqlvar[]</literal> array.  (This is same array used for
      retrieving column values when the SQLDA is receiving a result
      set.)  In this example, the input parameters
-     are <literal>"postgres"</literal>, having a string type,
+     are <literal>"mollydb"</literal>, having a string type,
      and <literal>1</literal>, having an integer type.
 <programlisting>
 sqlda2->sqlvar[0].sqltype = ECPGt_char;
-sqlda2->sqlvar[0].sqldata = "postgres";
+sqlda2->sqlvar[0].sqldata = "mollydb";
 sqlda2->sqlvar[0].sqllen  = 8;
 
 int intval = 1;
@@ -4261,7 +4261,7 @@ free(sqlda2);
      This application joins two system tables, pg_database and
      pg_stat_database on the database OID, and also fetches and shows
      the database statistics which are retrieved by two input
-     parameters (a database <literal>postgres</literal>, and OID <literal>1</literal>).
+     parameters (a database <literal>mollydb</literal>, and OID <literal>1</literal>).
     </para>
 
     <para>
@@ -4307,7 +4307,7 @@ main(void)
     sqlda2->sqln = 2; /* number of input variables */
 
     sqlda2->sqlvar[0].sqltype = ECPGt_char;
-    sqlda2->sqlvar[0].sqldata = "postgres";
+    sqlda2->sqlvar[0].sqldata = "mollydb";
     sqlda2->sqlvar[0].sqllen  = 8;
 
     intval = 1;
@@ -4457,7 +4457,7 @@ main(void)
     sqlda2->sqln = 2; /* a number of input variables */
 
     sqlda2->sqlvar[0].sqltype = ECPGt_char;
-    sqlda2->sqlvar[0].sqldata = "postgres";
+    sqlda2->sqlvar[0].sqldata = "mollydb";
     sqlda2->sqlvar[0].sqllen  = 8;
 
     intval = 1;
@@ -4572,7 +4572,7 @@ tup_updated = 0 (type: 9)
 tup_deleted = 0 (type: 9)
 
 oid = 11511 (type: 1)
-datname = postgres (type: 1)
+datname = mollydb (type: 1)
 datdba = 10 (type: 1)
 encoding = 0 (type: 5)
 datistemplate = f (type: 1)
@@ -4584,7 +4584,7 @@ dattablespace = 1663 (type: 1)
 datconfig =  (type: 1)
 datacl =  (type: 1)
 datid = 11511 (type: 1)
-datname = postgres (type: 1)
+datname = mollydb (type: 1)
 numbackends = 0 (type: 5)
 xact_commit = 221069 (type: 9)
 xact_rollback = 18 (type: 9)

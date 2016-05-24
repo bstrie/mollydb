@@ -15,7 +15,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "commands/tablespace.h"
 #include "storage/bufmgr.h"

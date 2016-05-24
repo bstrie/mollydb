@@ -49,7 +49,7 @@
  */
 
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <locale.h>
 #include <time.h>
@@ -778,7 +778,7 @@ cache_locale_time(void)
  * content to carry locale names instead of locale identifiers.
  *
  * MinGW headers declare _create_locale(), but msvcrt.dll lacks that symbol.
- * IsoLocaleName() always fails in a MinGW-built postgres.exe, so only
+ * IsoLocaleName() always fails in a MinGW-built mollydb.exe, so only
  * Unix-style values of the lc_messages GUC can elicit localized messages.  In
  * particular, every lc_messages setting that initdb can select automatically
  * will yield only C-locale messages.  XXX This could be fixed by running the

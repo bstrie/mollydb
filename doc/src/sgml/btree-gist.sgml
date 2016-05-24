@@ -101,7 +101,7 @@ INSERT 0 1
    Teodor Sigaev (<email>teodor@stack.net</email>) ,
    Oleg Bartunov (<email>oleg@sai.msu.su</email>), and
    Janko Richter (<email>jankorichter@yahoo.de</email>).  See
-   <ulink url="http://www.sai.msu.su/~megera/postgres/gist/"></ulink>
+   <ulink url="http://www.sai.msu.su/~megera/mollydb/gist/"></ulink>
    for additional information.
   </para>
 

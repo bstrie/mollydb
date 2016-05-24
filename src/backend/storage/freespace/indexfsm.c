@@ -20,7 +20,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "storage/freespace.h"
 #include "storage/indexfsm.h"

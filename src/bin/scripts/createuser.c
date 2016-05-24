@@ -10,7 +10,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #include "common.h"
 #include "fe_utils/simple_list.h"
 #include "fe_utils/string_utils.h"
@@ -251,7 +251,7 @@ main(int argc, char *argv[])
 	if (login == 0)
 		login = TRI_YES;
 
-	conn = connectDatabase("postgres", host, port, username, prompt_password,
+	conn = connectDatabase("mollydb", host, port, username, prompt_password,
 						   progname, false, false);
 
 	initPQExpBuffer(&sql);

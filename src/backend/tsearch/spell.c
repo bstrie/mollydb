@@ -60,7 +60,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "catalog/pg_collation.h"
 #include "tsearch/dicts/spell.h"

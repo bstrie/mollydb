@@ -1,7 +1,7 @@
 /*
  * contrib/btree_gist/btree_utils_var.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "btree_gist.h"
 

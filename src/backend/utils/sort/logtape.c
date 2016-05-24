@@ -75,7 +75,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "storage/buffile.h"
 #include "utils/logtape.h"

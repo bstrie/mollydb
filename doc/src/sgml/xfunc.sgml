@@ -1674,7 +1674,7 @@ CREATE FUNCTION square_root(double precision) RETURNS double precision
     The user ID the <productname>MollyDB</productname> server runs
     as must be able to traverse the path to the file you intend to
     load.  Making the file or a higher-level directory not readable
-    and/or not executable by the <systemitem>postgres</systemitem>
+    and/or not executable by the <systemitem>mollydb</systemitem>
     user is a common mistake.
    </para>
 
@@ -1901,7 +1901,7 @@ typedef struct {
      structure, we might use a code fragment like this:
 
 <programlisting><![CDATA[
-#include "postgres.h"
+#include "mollydb.h"
 ...
 char buffer[40]; /* our source data */
 ...
@@ -1928,7 +1928,7 @@ memcpy(destination->data, buffer, 40);
      definition might be in a different file that is included by the
      listed file.  It is recommended that users stick to the defined
      interface.)  Note that you should always include
-     <filename>postgres.h</filename> first in any source file, because
+     <filename>mollydb.h</filename> first in any source file, because
      it declares a number of things that you will need anyway.
     </para>
 
@@ -1957,12 +1957,12 @@ memcpy(destination->data, buffer, 40);
         <row>
          <entry><type>bigint</type> (<type>int8</type>)</entry>
          <entry><type>int64</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>boolean</type></entry>
          <entry><type>bool</type></entry>
-         <entry><filename>postgres.h</filename> (maybe compiler built-in)</entry>
+         <entry><filename>mollydb.h</filename> (maybe compiler built-in)</entry>
         </row>
         <row>
          <entry><type>box</type></entry>
@@ -1972,7 +1972,7 @@ memcpy(destination->data, buffer, 40);
         <row>
          <entry><type>bytea</type></entry>
          <entry><type>bytea*</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>"char"</type></entry>
@@ -1982,12 +1982,12 @@ memcpy(destination->data, buffer, 40);
         <row>
          <entry><type>character</type></entry>
          <entry><type>BpChar*</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>cid</type></entry>
          <entry><type>CommandId</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>date</type></entry>
@@ -1997,27 +1997,27 @@ memcpy(destination->data, buffer, 40);
         <row>
          <entry><type>smallint</type> (<type>int2</type>)</entry>
          <entry><type>int16</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>int2vector</type></entry>
          <entry><type>int2vector*</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>integer</type> (<type>int4</type>)</entry>
          <entry><type>int32</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>real</type> (<type>float4</type>)</entry>
          <entry><type>float4*</type></entry>
-        <entry><filename>postgres.h</filename></entry>
+        <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>double precision</type> (<type>float8</type>)</entry>
          <entry><type>float8*</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>interval</type></entry>
@@ -2032,17 +2032,17 @@ memcpy(destination->data, buffer, 40);
         <row>
          <entry><type>name</type></entry>
          <entry><type>Name</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>oid</type></entry>
          <entry><type>Oid</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>oidvector</type></entry>
          <entry><type>oidvector*</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>path</type></entry>
@@ -2057,7 +2057,7 @@ memcpy(destination->data, buffer, 40);
         <row>
          <entry><type>regproc</type></entry>
          <entry><type>regproc</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>reltime</type></entry>
@@ -2067,7 +2067,7 @@ memcpy(destination->data, buffer, 40);
         <row>
          <entry><type>text</type></entry>
          <entry><type>text*</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>tid</type></entry>
@@ -2097,12 +2097,12 @@ memcpy(destination->data, buffer, 40);
         <row>
          <entry><type>varchar</type></entry>
          <entry><type>VarChar*</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
         <row>
          <entry><type>xid</type></entry>
          <entry><type>TransactionId</type></entry>
-         <entry><filename>postgres.h</filename></entry>
+         <entry><filename>mollydb.h</filename></entry>
         </row>
        </tbody>
       </tgroup>
@@ -2130,7 +2130,7 @@ memcpy(destination->data, buffer, 40);
      Here are some examples:
 
 <programlisting><![CDATA[
-#include "postgres.h"
+#include "mollydb.h"
 #include <string.h>
 #include "utils/geo_decls.h"
 
@@ -2308,7 +2308,7 @@ PG_FUNCTION_INFO_V1(funcname);
      Here we show the same functions as above, coded in version-1 style:
 
 <programlisting><![CDATA[
-#include "postgres.h"
+#include "mollydb.h"
 #include <string.h>
 #include "fmgr.h"
 #include "utils/geo_decls.h"
@@ -2551,14 +2551,14 @@ concat_text(PG_FUNCTION_ARGS)
       <listitem>
        <para>
         Most of the internal <productname>MollyDB</productname>
-        types are declared in <filename>postgres.h</filename>, while
+        types are declared in <filename>mollydb.h</filename>, while
         the function manager interfaces
         (<symbol>PG_FUNCTION_ARGS</symbol>, etc.)  are in
         <filename>fmgr.h</filename>, so you will need to include at
         least these two files.  For portability reasons it's best to
-        include <filename>postgres.h</filename> <emphasis>first</>,
+        include <filename>mollydb.h</filename> <emphasis>first</>,
         before any other system or user header files.  Including
-        <filename>postgres.h</filename> will also include
+        <filename>mollydb.h</filename> will also include
         <filename>elog.h</filename> and <filename>palloc.h</filename>
         for you.
        </para>
@@ -2605,7 +2605,7 @@ SELECT name, c_overpaid(emp, 1500) AS overpaid
      <function>c_overpaid</> as:
 
 <programlisting><![CDATA[
-#include "postgres.h"
+#include "mollydb.h"
 #include "executor/executor.h"  /* for GetAttributeByName() */
 
 #ifdef PG_MODULE_MAGIC
@@ -2630,7 +2630,7 @@ c_overpaid(HeapTupleHeader t, /* the current row of emp */
      In version-1 coding, the above would look like this:
 
 <programlisting><![CDATA[
-#include "postgres.h"
+#include "mollydb.h"
 #include "executor/executor.h"  /* for GetAttributeByName() */
 
 #ifdef PG_MODULE_MAGIC

@@ -20,7 +20,7 @@
  *		ExecReScanForeignScan	rescans the foreign relation.
  *		ExecEndForeignScan		releases any resources allocated.
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/executor.h"
 #include "executor/nodeForeignscan.h"

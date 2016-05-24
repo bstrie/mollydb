@@ -84,7 +84,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "utils/memdebug.h"
 #include "utils/memutils.h"

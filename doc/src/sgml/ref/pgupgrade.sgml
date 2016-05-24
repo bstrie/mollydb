@@ -130,7 +130,7 @@
       <term><option>-o</option> <replaceable class="parameter">options</replaceable></term>
       <term><option>--old-options</option> <replaceable class="parameter">options</replaceable></term>
       <listitem><para>options to be passed directly to the
-      old <command>postgres</command> command;  multiple
+      old <command>mollydb</command> command;  multiple
       option invocations are appended</para></listitem>
      </varlistentry>
 
@@ -138,7 +138,7 @@
       <term><option>-O</option> <replaceable class="parameter">options</replaceable></term>
       <term><option>--new-options</option> <replaceable class="parameter">options</replaceable></term>
       <listitem><para>options to be passed directly to the
-      new <command>postgres</command> command;  multiple
+      new <command>mollydb</command> command;  multiple
       option invocations are appended</para></listitem>
      </varlistentry>
 
@@ -361,10 +361,10 @@ NET STOP mollydb-9.0
 
     <para>
      For Windows users, you must be logged into an administrative account, and
-     then start a shell as the <literal>postgres</> user and set the proper path:
+     then start a shell as the <literal>mollydb</> user and set the proper path:
 
 <programlisting>
-RUNAS /USER:postgres "CMD.EXE"
+RUNAS /USER:mollydb "CMD.EXE"
 SET PATH=%PATH%;C:\Program Files\MollyDB\9.0\bin;
 </programlisting>
 
@@ -559,7 +559,7 @@ rsync --archive --delete --hard-links --size-only old_pgdata new_pgdata remote_d
      run using:
 
 <programlisting>
-psql --username postgres --file script.sql postgres
+psql --username mollydb --file script.sql mollydb
 </programlisting>
 
      The scripts can be run in any order and can be deleted once they have
@@ -714,7 +714,7 @@ psql --username postgres --file script.sql postgres
    <member><xref linkend="app-initdb"></member>
    <member><xref linkend="app-pg-ctl"></member>
    <member><xref linkend="app-pgdump"></member>
-   <member><xref linkend="app-postgres"></member>
+   <member><xref linkend="app-mollydb"></member>
   </simplelist>
  </refsect1>
 </refentry>

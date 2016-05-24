@@ -1,11 +1,11 @@
 /*-------------------------------------------------------------------------
  *
  * miscadmin.h
- *	  This file contains general postgres administration and initialization
+ *	  This file contains general mollydb administration and initialization
  *	  stuff that used to be spread out between the following files:
  *		globals.h						global variables
  *		pdir.h							directory path crud
- *		pinit.h							postgres initialization
+ *		pinit.h							mollydb initialization
  *		pmod.h							processing modes
  *	  Over time, this has also become the preferred place for widely known
  *	  resource-limitation stuff, such as work_mem and check_stack_depth().
@@ -26,7 +26,7 @@
 #include "pgtime.h"				/* for pg_time_t */
 
 
-#define PG_BACKEND_VERSIONSTR "postgres (MollyDB) " PG_VERSION "\n"
+#define PG_BACKEND_VERSIONSTR "mollydb (MollyDB) " PG_VERSION "\n"
 
 #define InvalidPid				(-1)
 
@@ -89,7 +89,7 @@ extern PGDLLIMPORT volatile uint32 InterruptHoldoffCount;
 extern PGDLLIMPORT volatile uint32 QueryCancelHoldoffCount;
 extern PGDLLIMPORT volatile uint32 CritSectionCount;
 
-/* in tcop/postgres.c */
+/* in tcop/mollydb.c */
 extern void ProcessInterrupts(void);
 
 #ifndef WIN32
@@ -170,7 +170,7 @@ extern PGDLLIMPORT char my_exec_path[];
 extern char pkglib_path[];
 
 #ifdef EXEC_BACKEND
-extern char postgres_exec_path[];
+extern char mollydb_exec_path[];
 #endif
 
 /*
@@ -255,7 +255,7 @@ extern int	VacuumCostBalance;
 extern bool VacuumCostActive;
 
 
-/* in tcop/postgres.c */
+/* in tcop/mollydb.c */
 
 #if defined(__ia64__) || defined(__ia64)
 typedef struct

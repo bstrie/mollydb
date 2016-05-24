@@ -5,7 +5,7 @@
  *
  * This file contains the basic memory allocation interface that is
  * needed by almost every backend module.  It is included directly by
- * postgres.h, so the definitions here are automatically available
+ * mollydb.h, so the definitions here are automatically available
  * everywhere.  Keep it lean!
  *
  * Memory allocation occurs within "contexts".  Every chunk obtained from
@@ -99,7 +99,7 @@ extern void *repalloc_huge(void *pointer, Size size);
 
 /*
  * Although this header file is nominally backend-only, certain frontend
- * programs like pg_controldata include it via postgres.h.  For some compilers
+ * programs like pg_controldata include it via mollydb.h.  For some compilers
  * it's necessary to hide the inline definition of MemoryContextSwitchTo in
  * this scenario; hence the #ifndef FRONTEND.
  */

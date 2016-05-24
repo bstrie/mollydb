@@ -22,7 +22,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #ifdef _MSC_VER
 #include <float.h>				/* for _isnan */

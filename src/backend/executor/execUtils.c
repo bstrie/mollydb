@@ -36,7 +36,7 @@
  *		executor support stuff that doesn't really go anyplace else.
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/relscan.h"
 #include "access/transam.h"

@@ -758,7 +758,7 @@ msgid "out of memory for query result\n"
 msgstr "查詢結果用盡記憶體\n"
 
 # commands/vacuum.c:2258 commands/vacuumlazy.c:489 commands/vacuumlazy.c:770
-# nodes/print.c:86 storage/lmgr/deadlock.c:888 tcop/postgres.c:3285
+# nodes/print.c:86 storage/lmgr/deadlock.c:888 tcop/mollydb.c:3285
 #: fe-protocol2.c:1280 fe-protocol3.c:1637
 #, c-format
 msgid "%s"

@@ -404,8 +404,8 @@ msgstr "%s: Kunde inte hitta det egna programmets körbara fil.\n"
 
 #: pg_ctl.c:1357
 #, c-format
-msgid "%s: could not find postgres program executable\n"
-msgstr "%s: Kunde inte hitta körbar postgres.\n"
+msgid "%s: could not find mollydb program executable\n"
+msgstr "%s: Kunde inte hitta körbar mollydb.\n"
 
 #: pg_ctl.c:1437 pg_ctl.c:1469
 #, c-format
@@ -631,8 +631,8 @@ msgstr ""
 
 #: pg_ctl.c:1891
 #, c-format
-msgid "  -c, --core-files       allow postgres to produce core files\n"
-msgstr "  -c, --core-files       tillåt postgres att skapa core-filer\n"
+msgid "  -c, --core-files       allow mollydb to produce core files\n"
+msgstr "  -c, --core-files       tillåt mollydb att skapa core-filer\n"
 
 #: pg_ctl.c:1893
 #, c-format
@@ -648,11 +648,11 @@ msgstr ""
 #: pg_ctl.c:1896
 #, c-format
 msgid ""
-"  -o OPTIONS             command line options to pass to postgres\n"
+"  -o OPTIONS             command line options to pass to mollydb\n"
 "                         (MollyDB server executable) or initdb\n"
 msgstr ""
 "  -o FLAGGOR             kommandoradsflaggor som skickas vidare till "
-"postgres\n"
+"mollydb\n"
 "                         (MollyDB-serverns körbara fil) eller till "
 "initdb\n"
 

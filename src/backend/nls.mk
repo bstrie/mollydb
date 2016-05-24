@@ -1,5 +1,5 @@
 # src/backend/nls.mk
-CATALOG_NAME     = postgres
+CATALOG_NAME     = mollydb
 AVAIL_LANGUAGES  = de es fr id it ja pl pt_BR ru zh_CN
 GETTEXT_FILES    = + gettext-files
 GETTEXT_TRIGGERS = $(BACKEND_COMMON_GETTEXT_TRIGGERS) \

@@ -26,12 +26,12 @@ my $solution;
 my $libpgport;
 my $libpgcommon;
 my $libpgfeutils;
-my $postgres;
+my $mollydb;
 my $libpq;
 
 # Set of variables for modules in contrib/ and src/test/modules/
 my $contrib_defines = { 'refint' => 'REFINT_VERBOSE' };
-my @contrib_uselibpq = ('dblink', 'oid2name', 'postgres_fdw', 'vacuumlo');
+my @contrib_uselibpq = ('dblink', 'oid2name', 'mollydb_fdw', 'vacuumlo');
 my @contrib_uselibpgport   = ('oid2name', 'pg_standby', 'vacuumlo');
 my @contrib_uselibpgcommon = ('oid2name', 'pg_standby', 'vacuumlo');
 my $contrib_extralibs      = undef;
@@ -133,41 +133,41 @@ sub mkvcbuild
 	$libpgfeutils->AddIncludeDir('src/interfaces/libpq');
 	$libpgfeutils->AddFiles('src/fe_utils', @pgfeutilsfiles);
 
-	$postgres = $solution->AddProject('postgres', 'exe', '', 'src/backend');
-	$postgres->AddIncludeDir('src/backend');
-	$postgres->AddDir('src/backend/port/win32');
-	$postgres->AddFile('src/backend/utils/fmgrtab.c');
-	$postgres->ReplaceFile(
+	$mollydb = $solution->AddProject('mollydb', 'exe', '', 'src/backend');
+	$mollydb->AddIncludeDir('src/backend');
+	$mollydb->AddDir('src/backend/port/win32');
+	$mollydb->AddFile('src/backend/utils/fmgrtab.c');
+	$mollydb->ReplaceFile(
 		'src/backend/port/dynloader.c',
 		'src/backend/port/dynloader/win32.c');
-	$postgres->ReplaceFile('src/backend/port/pg_sema.c',
+	$mollydb->ReplaceFile('src/backend/port/pg_sema.c',
 		'src/backend/port/win32_sema.c');
-	$postgres->ReplaceFile('src/backend/port/pg_shmem.c',
+	$mollydb->ReplaceFile('src/backend/port/pg_shmem.c',
 		'src/backend/port/win32_shmem.c');
-	$postgres->AddFiles('src/port',   @pgportfiles);
-	$postgres->AddFiles('src/common', @pgcommonbkndfiles);
-	$postgres->AddDir('src/timezone');
+	$mollydb->AddFiles('src/port',   @pgportfiles);
+	$mollydb->AddFiles('src/common', @pgcommonbkndfiles);
+	$mollydb->AddDir('src/timezone');
 
 	# We need source files from src/timezone, but that directory's resource
 	# file pertains to "zic", not to the backend.
-	$postgres->RemoveFile('src/timezone/win32ver.rc');
-	$postgres->AddFiles('src/backend/parser', 'scan.l', 'gram.y');
-	$postgres->AddFiles('src/backend/bootstrap', 'bootscanner.l',
+	$mollydb->RemoveFile('src/timezone/win32ver.rc');
+	$mollydb->AddFiles('src/backend/parser', 'scan.l', 'gram.y');
+	$mollydb->AddFiles('src/backend/bootstrap', 'bootscanner.l',
 		'bootparse.y');
-	$postgres->AddFiles('src/backend/utils/misc', 'guc-file.l');
-	$postgres->AddFiles('src/backend/replication', 'repl_scanner.l',
+	$mollydb->AddFiles('src/backend/utils/misc', 'guc-file.l');
+	$mollydb->AddFiles('src/backend/replication', 'repl_scanner.l',
 		'repl_gram.y', 'syncrep_scanner.l', 'syncrep_gram.y');
-	$postgres->AddDefine('BUILDING_DLL');
-	$postgres->AddLibrary('secur32.lib');
-	$postgres->AddLibrary('ws2_32.lib');
-	$postgres->AddLibrary('wldap32.lib') if ($solution->{options}->{ldap});
-	$postgres->FullExportDLL('postgres.lib');
+	$mollydb->AddDefine('BUILDING_DLL');
+	$mollydb->AddLibrary('secur32.lib');
+	$mollydb->AddLibrary('ws2_32.lib');
+	$mollydb->AddLibrary('wldap32.lib') if ($solution->{options}->{ldap});
+	$mollydb->FullExportDLL('mollydb.lib');
 
    # The OBJS scraper doesn't know about ifdefs, so remove be-secure-openssl.c
    # if building without OpenSSL
 	if (!$solution->{options}->{openssl})
 	{
-		$postgres->RemoveFile('src/backend/libpq/be-secure-openssl.c');
+		$mollydb->RemoveFile('src/backend/libpq/be-secure-openssl.c');
 	}
 
 	my $snowball = $solution->AddProject('dict_snowball', 'dll', '',
@@ -180,19 +180,19 @@ sub mkvcbuild
 			return shift !~ /(dict_snowball.c|win32ver.rc)$/;
 		});
 	$snowball->AddIncludeDir('src/include/snowball');
-	$snowball->AddReference($postgres);
+	$snowball->AddReference($mollydb);
 
 	my $plpgsql =
 	  $solution->AddProject('plpgsql', 'dll', 'PLs', 'src/pl/plpgsql/src');
 	$plpgsql->AddFiles('src/pl/plpgsql/src', 'pl_gram.y');
-	$plpgsql->AddReference($postgres);
+	$plpgsql->AddReference($mollydb);
 
 	if ($solution->{options}->{tcl})
 	{
 		my $pltcl =
 		  $solution->AddProject('pltcl', 'dll', 'PLs', 'src/pl/tcl');
 		$pltcl->AddIncludeDir($solution->{options}->{tcl} . '/include');
-		$pltcl->AddReference($postgres);
+		$pltcl->AddReference($mollydb);
 		if (-e $solution->{options}->{tcl} . '/lib/tcl85.lib')
 		{
 			$pltcl->AddLibrary(
@@ -229,7 +229,7 @@ sub mkvcbuild
 	  $solution->AddProject('libpqwalreceiver', 'dll', '',
 		'src/backend/replication/libpqwalreceiver');
 	$libpqwalreceiver->AddIncludeDir('src/interfaces/libpq');
-	$libpqwalreceiver->AddReference($postgres, $libpq);
+	$libpqwalreceiver->AddReference($mollydb, $libpq);
 
 	my $pgtypes = $solution->AddProject(
 		'libpgtypes', 'dll',
@@ -444,7 +444,7 @@ sub mkvcbuild
 			'fortuna.c',          'random.c',
 			'pgp-mpi-internal.c', 'imath.c');
 	}
-	$pgcrypto->AddReference($postgres);
+	$pgcrypto->AddReference($mollydb);
 	$pgcrypto->AddLibrary('ws2_32.lib');
 	my $mf = Project::read_file('contrib/pgcrypto/Makefile');
 	GenerateContribSqlFiles('pgcrypto', $mf);
@@ -488,7 +488,7 @@ sub mkvcbuild
 			'dll', 'PLs', 'src/pl/plpython');
 		$plpython->AddIncludeDir($pyprefix . '/include');
 		$plpython->AddLibrary($pyprefix . "/Libs/python$pyver.lib");
-		$plpython->AddReference($postgres);
+		$plpython->AddReference($mollydb);
 
 		# Add transform modules dependent on plpython
 		AddTransformModule(
@@ -572,7 +572,7 @@ sub mkvcbuild
 				die 'Failed to create plperl_opmask.h' . "\n";
 			}
 		}
-		$plperl->AddReference($postgres);
+		$plperl->AddReference($mollydb);
 		my @perl_libs =
 		  grep { /perl\d+.lib$/ }
 		  glob($solution->{options}->{perl} . '\lib\CORE\perl*.lib');
@@ -603,7 +603,7 @@ sub mkvcbuild
 		my $dir = 'src/backend/utils/mb/conversion_procs/' . $sub;
 		my $p = $solution->AddProject($sub, 'dll', 'conversion procs', $dir);
 		$p->AddFile("$dir/$sub.c");    # implicit source file
-		$p->AddReference($postgres);
+		$p->AddReference($mollydb);
 	}
 
 	$mf = Project::read_file('src/bin/scripts/Makefile');
@@ -635,7 +635,7 @@ sub mkvcbuild
 	my $regress = $solution->AddProject('regress', 'dll', 'misc');
 	$regress->AddFile('src/test/regress/regress.c');
 	$regress->AddDirResourceFile('src/test/regress');
-	$regress->AddReference($postgres);
+	$regress->AddReference($mollydb);
 
 	my $pgregress = $solution->AddProject('pg_regress', 'exe', 'misc');
 	$pgregress->AddFile('src/test/regress/pg_regress.c');
@@ -724,7 +724,7 @@ sub AddTransformModule
 	{
 		$p->AddFile($file);
 	}
-	$p->AddReference($postgres);
+	$p->AddReference($mollydb);
 
 	# Add PL dependencies
 	$p->AddIncludeDir($pl_src);
@@ -758,7 +758,7 @@ sub AddContrib
 	{
 		my $dn = $1;
 		my $proj = $solution->AddProject($dn, 'dll', 'contrib', "$subdir/$n");
-		$proj->AddReference($postgres);
+		$proj->AddReference($mollydb);
 		AdjustContribProj($proj);
 	}
 	elsif ($mf =~ /^MODULES\s*=\s*(.*)$/mg)
@@ -769,7 +769,7 @@ sub AddContrib
 			  $solution->AddProject($mod, 'dll', 'contrib', "$subdir/$n");
 			my $filename = $mod . '.c';
 			$proj->AddFile("$subdir/$n/$filename");
-			$proj->AddReference($postgres);
+			$proj->AddReference($mollydb);
 			AdjustContribProj($proj);
 		}
 	}

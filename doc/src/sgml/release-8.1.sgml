@@ -4354,8 +4354,8 @@ psql -t -f fixseq.sql db1 | psql -e db1
      <listitem>
       <para>
        Make <application>initdb</application> create a new standard
-       database called <literal>postgres</>, and convert utilities to
-       use <literal>postgres</> rather than <literal>template1</> for
+       database called <literal>mollydb</>, and convert utilities to
+       use <literal>mollydb</> rather than <literal>template1</> for
        standard lookups (Dave)
       </para>
       <para>
@@ -4365,7 +4365,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
        new databases. This caused <command>CREATE DATABASE</> to
        sometimes fail, because a new database cannot be created if
        anyone else is in the template database. With this change, the
-       default connection database is now <literal>postgres</>,
+       default connection database is now <literal>mollydb</>,
        meaning it is much less likely someone will be using
        <literal>template1</> during <command>CREATE DATABASE</>.
       </para>

@@ -466,8 +466,8 @@ msgid "copying template1 to template0 ... "
 msgstr "copiando template1 para template0 ... "
 
 #: initdb.c:2372
-msgid "copying template1 to postgres ... "
-msgstr "copiando template1 para postgres ... "
+msgid "copying template1 to mollydb ... "
+msgstr "copiando template1 para mollydb ... "
 
 #: initdb.c:2407
 msgid "syncing data to disk ... "
@@ -754,22 +754,22 @@ msgstr ""
 #: initdb.c:2890
 #, c-format
 msgid ""
-"The program \"postgres\" is needed by %s but was not found in the\n"
+"The program \"mollydb\" is needed by %s but was not found in the\n"
 "same directory as \"%s\".\n"
 "Check your installation.\n"
 msgstr ""
-"O programa \"postgres\" é requerido pelo %s mas não foi encontrado no\n"
+"O programa \"mollydb\" é requerido pelo %s mas não foi encontrado no\n"
 "mesmo diretório que \"%s\".\n"
 "Verifique sua instalação.\n"
 
 #: initdb.c:2897
 #, c-format
 msgid ""
-"The program \"postgres\" was found by \"%s\"\n"
+"The program \"mollydb\" was found by \"%s\"\n"
 "but was not the same version as %s.\n"
 "Check your installation.\n"
 msgstr ""
-"O programa \"postgres\" foi encontrado pelo \"%s\"\n"
+"O programa \"mollydb\" foi encontrado pelo \"%s\"\n"
 "mas não tem a mesma versão que %s.\n"
 "Verifique sua instalação.\n"
 

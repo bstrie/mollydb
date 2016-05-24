@@ -23,9 +23,9 @@ Here's a simple example of usage:
 # mollydb.conf
 shared_preload_libraries = 'dummy_seclabel'
 
-postgres=# CREATE TABLE t (a int, b text);
+mollydb=# CREATE TABLE t (a int, b text);
 CREATE TABLE
-postgres=# SECURITY LABEL ON TABLE t IS 'classified';
+mollydb=# SECURITY LABEL ON TABLE t IS 'classified';
 SECURITY LABEL
 
 The dummy_seclabel module provides only four hardcoded

@@ -2467,7 +2467,7 @@ SELECT * FROM ts_debug('english', 'Paris');
     For example, suppose we have these entries in
     <filename>$SHAREDIR/tsearch_data/synonym_sample.syn</>:
 <programlisting>
-postgres        pgsql
+mollydb        pgsql
 mollydb      pgsql
 postgre pgsql
 gogle   googl
@@ -3026,7 +3026,7 @@ CREATE TEXT SEARCH CONFIGURATION public.pg ( COPY = pg_catalog.english );
     The file contents look like:
 
 <programlisting>
-postgres    pg
+mollydb    pg
 pgsql       pg
 mollydb  pg
 </programlisting>

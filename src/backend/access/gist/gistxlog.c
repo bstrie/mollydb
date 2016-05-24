@@ -11,7 +11,7 @@
  *			 src/backend/access/gist/gistxlog.c
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/gist_private.h"
 #include "access/xloginsert.h"

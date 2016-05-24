@@ -15,7 +15,7 @@
 #
 # [This file comes from the Postgres 4.2 distribution. - ay 7/95]
 #
-# Header: /usr/local/devel/postgres/src/tools/mkldexport/RCS/mkldexport.sh,v 1.2 1994/03/13 04:59:12 aoki Exp
+# Header: /usr/local/devel/mollydb/src/tools/mkldexport/RCS/mkldexport.sh,v 1.2 1994/03/13 04:59:12 aoki Exp
 #
 
 # setting this to nm -B might be better

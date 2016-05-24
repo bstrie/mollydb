@@ -30,7 +30,7 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <math.h>
 

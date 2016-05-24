@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * postinit.c
- *	  postgres initialization utilities
+ *	  mollydb initialization utilities
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -13,7 +13,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <ctype.h>
 #include <fcntl.h>
@@ -415,7 +415,7 @@ InitCommunication(void)
 	if (!IsUnderPostmaster)		/* postmaster already did this */
 	{
 		/*
-		 * We're running a postgres bootstrap process or a standalone backend.
+		 * We're running a mollydb bootstrap process or a standalone backend.
 		 * Create private "shmem" and semaphores.
 		 */
 		CreateSharedMemoryAndSemaphores(true, 0);
@@ -695,7 +695,7 @@ InitPostgres(const char *in_dbname, Oid dboid, const char *username,
 
 	/*
 	 * Perform client authentication if necessary, then figure out our
-	 * postgres user ID, and see if we are a superuser.
+	 * mollydb user ID, and see if we are a superuser.
 	 *
 	 * In standalone mode and in autovacuum worker processes, we use a fixed
 	 * ID, otherwise we figure it out from the authenticated user name.
@@ -714,7 +714,7 @@ InitPostgres(const char *in_dbname, Oid dboid, const char *username,
 					(errcode(ERRCODE_UNDEFINED_OBJECT),
 					 errmsg("no roles are defined in this database system"),
 					 errhint("You should immediately run CREATE USER \"%s\" SUPERUSER;.",
-							 username != NULL ? username : "postgres")));
+							 username != NULL ? username : "mollydb")));
 	}
 	else if (IsBackgroundWorker)
 	{
@@ -1061,7 +1061,7 @@ process_startup_options(Port *port, bool am_superuser)
 		av = (char **) palloc(maxac * sizeof(char *));
 		ac = 0;
 
-		av[ac++] = "postgres";
+		av[ac++] = "mollydb";
 
 		pg_split_opts(av, &ac, port->cmdline_options);
 
@@ -1069,7 +1069,7 @@ process_startup_options(Port *port, bool am_superuser)
 
 		Assert(ac < maxac);
 
-		(void) process_postgres_switches(ac, av, gucctx, NULL);
+		(void) process_mollydb_switches(ac, av, gucctx, NULL);
 	}
 
 	/*

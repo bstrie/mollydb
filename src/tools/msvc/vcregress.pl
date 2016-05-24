@@ -45,7 +45,7 @@ else
 }
 
 # use a capital C here because config.pl has $config
-my $Config = -e "release/postgres/postgres.exe" ? "Release" : "Debug";
+my $Config = -e "release/mollydb/mollydb.exe" ? "Release" : "Debug";
 
 copy("$Config/refint/refint.dll",                 "src/test/regress");
 copy("$Config/autoinc/autoinc.dll",               "src/test/regress");
@@ -244,7 +244,7 @@ sub plcheck
 			# run both trusted and untrusted perl tests
 			push(@lang_args, "--load-extension=plperlu");
 
-			# assume we're using this perl to built postgres
+			# assume we're using this perl to built mollydb
 			# test if we can run two interpreters in one backend, and if so
 			# run the trusted/untrusted interaction tests
 			use Config;

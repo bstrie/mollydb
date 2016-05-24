@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------
  *
  * main.c
- *	  Stub main() routine for the postgres executable.
+ *	  Stub main() routine for the mollydb executable.
  *
- * This does some essential startup tasks for any incarnation of postgres
+ * This does some essential startup tasks for any incarnation of mollydb
  * (postmaster, standalone backend, standalone bootstrap process, or a
  * separately exec'd child of a postmaster) and then dispatches to the
  * proper FooMain() routine for the incarnation.
@@ -18,7 +18,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <unistd.h>
 
@@ -107,7 +107,7 @@ main(int argc, char *argv[])
 	 * error messages to be localized.
 	 */
 
-	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("postgres"));
+	set_pglocale_pgservice(argv[0], PG_TEXTDOMAIN("mollydb"));
 
 #ifdef WIN32
 
@@ -169,7 +169,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("postgres (MollyDB) " PG_VERSION);
+			puts("mollydb (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 
@@ -181,7 +181,7 @@ main(int argc, char *argv[])
 		 * Windows.  Note that while -C can normally be in any argv position,
 		 * if you wanna bypass the root check you gotta put it first.  This
 		 * reduces the risk that we might misinterpret some other mode's -C
-		 * switch as being the postmaster/postgres one.
+		 * switch as being the postmaster/mollydb one.
 		 */
 		if (strcmp(argv[1], "--describe-config") == 0)
 			do_check_root = false;
@@ -398,7 +398,7 @@ check_root(const char *progname)
 	 * Also make sure that real and effective uids are the same. Executing as
 	 * a setuid program from a root shell is a security hole, since on many
 	 * platforms a nefarious subroutine could setuid back to root if real uid
-	 * is root.  (Since nobody actually uses postgres as a setuid program,
+	 * is root.  (Since nobody actually uses mollydb as a setuid program,
 	 * trying to actively fix this situation seems more trouble than it's
 	 * worth; we'll just expend the effort to check for it.)
 	 */

@@ -413,8 +413,8 @@ msgstr "%s : n'a pas pu trouver l'exécutable du programme\n"
 
 #: pg_ctl.c:1402
 #, c-format
-msgid "%s: could not find postgres program executable\n"
-msgstr "%s : n'a pas pu trouver l'exécutable postgres\n"
+msgid "%s: could not find mollydb program executable\n"
+msgstr "%s : n'a pas pu trouver l'exécutable mollydb\n"
 
 #: pg_ctl.c:1486 pg_ctl.c:1520
 #, c-format
@@ -649,8 +649,8 @@ msgstr ""
 
 #: pg_ctl.c:2126
 #, c-format
-msgid "  -c, --core-files       allow postgres to produce core files\n"
-msgstr "  -c, --core-files         autorise postgres à produire des fichiers core\n"
+msgid "  -c, --core-files       allow mollydb to produce core files\n"
+msgstr "  -c, --core-files         autorise mollydb à produire des fichiers core\n"
 
 #: pg_ctl.c:2128
 #, c-format
@@ -667,11 +667,11 @@ msgstr ""
 #: pg_ctl.c:2131
 #, c-format
 msgid ""
-"  -o OPTIONS             command line options to pass to postgres\n"
+"  -o OPTIONS             command line options to pass to mollydb\n"
 "                         (MollyDB server executable) or initdb\n"
 msgstr ""
 "  -o OPTIONS               options de la ligne de commande à passer à\n"
-"                           postgres (exécutable du serveur MollyDB)\n"
+"                           mollydb (exécutable du serveur MollyDB)\n"
 "                           ou à initdb\n"
 
 #: pg_ctl.c:2133

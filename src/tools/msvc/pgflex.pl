@@ -8,7 +8,7 @@ $ENV{CYGWIN} = 'nodosfilewarning';
 use strict;
 use File::Basename;
 
-# assume we are in the postgres source root
+# assume we are in the mollydb source root
 
 require 'src/tools/msvc/buildenv.pl' if -e 'src/tools/msvc/buildenv.pl';
 

@@ -576,7 +576,7 @@
 
 /* Define to the name of the default MollyDB service principal in Kerberos.
    (--with-krb-srvnam=NAME) */
-#define PG_KRB_SRVNAM "postgres"
+#define PG_KRB_SRVNAM "mollydb"
 
 /* A string containing the version number, platform, and C compiler */
 #define PG_VERSION_STR "Uninitialized version string (win32)"

@@ -459,10 +459,10 @@ EOF
 	{
 		next if $bki eq "";
 		if (IsNewer(
-				'src/backend/catalog/postgres.bki',
+				'src/backend/catalog/mollydb.bki',
 				"src/include/catalog/$bki"))
 		{
-			print "Generating postgres.bki and schemapg.h...\n";
+			print "Generating mollydb.bki and schemapg.h...\n";
 			chdir('src/backend/catalog');
 			my $bki_srcs = join(' ../../../src/include/catalog/', @allbki);
 			system(

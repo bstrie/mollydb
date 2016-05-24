@@ -66,7 +66,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/multixact.h"
 #include "access/slru.h"

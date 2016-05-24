@@ -8,7 +8,7 @@
  *
  * -------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "catalog/dependency.h"
 #include "catalog/objectaccess.h"

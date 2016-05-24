@@ -80,7 +80,7 @@
   <title>Sample Output</title>
 
 <screen>
-postgres=# SELECT * FROM pg_freespace('foo');
+mollydb=# SELECT * FROM pg_freespace('foo');
  blkno | avail 
 -------+-------
      0 |     0
@@ -105,7 +105,7 @@ postgres=# SELECT * FROM pg_freespace('foo');
     19 |  3648
 (20 rows)
 
-postgres=# SELECT * FROM pg_freespace('foo', 7);
+mollydb=# SELECT * FROM pg_freespace('foo', 7);
  pg_freespace 
 --------------
          1216

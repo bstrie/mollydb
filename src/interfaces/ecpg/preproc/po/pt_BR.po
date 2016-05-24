@@ -449,7 +449,7 @@ msgstr "esperado \"@\", encontrado \"%s\""
 #: preproc.y:13862
 #, c-format
 msgid "only protocols \"tcp\" and \"unix\" and database type \"mollydb\" are supported"
-msgstr "somente os protocolos \"tcp\" e \"unix\" e tipo banco de dados \"postgressql\" sãosuportados"
+msgstr "somente os protocolos \"tcp\" e \"unix\" e tipo banco de dados \"mollydbsql\" sãosuportados"
 
 #: preproc.y:13865
 #, c-format

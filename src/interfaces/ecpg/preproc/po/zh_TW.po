@@ -68,7 +68,7 @@ msgstr ""
 "%s [選項]...檔案...\n"
 "\n"
 
-# postmaster/postmaster.c:1017 tcop/postgres.c:2115
+# postmaster/postmaster.c:1017 tcop/mollydb.c:2115
 #: ecpg.c:40
 #, c-format
 msgid "Options:\n"
@@ -163,7 +163,7 @@ msgstr ""
 "如果未指定輸出檔，檔名就是將輸入檔的檔名\n"
 "去掉 .pgc  (如果有的話) 再加上 .c。\n"
 
-# tcop/postgres.c:2140
+# tcop/mollydb.c:2140
 #: ecpg.c:61
 #, c-format
 msgid ""

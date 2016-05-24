@@ -9,7 +9,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #include "common.h"
 
 #define DEFAULT_CONNECT_TIMEOUT "3"
@@ -133,7 +133,7 @@ main(int argc, char **argv)
 	 */
 	if (pgdbname &&
 		(strncmp(pgdbname, "mollydb://", 13) == 0 ||
-		 strncmp(pgdbname, "postgres://", 11) == 0 ||
+		 strncmp(pgdbname, "mollydb://", 11) == 0 ||
 		 strchr(pgdbname, '=') != NULL))
 	{
 		opts = PQconninfoParse(pgdbname, &errmsg);

@@ -2570,7 +2570,7 @@ January 8 04:05:06 1999 PST
      sign accounting.  <literal>ago</literal> negates all the fields.
      This syntax is also used for interval output, if
      <xref linkend="guc-intervalstyle"> is set to
-     <literal>postgres_verbose</>.
+     <literal>mollydb_verbose</>.
     </para>
 
     <para>
@@ -2760,10 +2760,10 @@ P <optional> <replaceable>years</>-<replaceable>months</>-<replaceable>days</> <
 
     <para>
      The output format of the interval type can be set to one of the
-     four styles <literal>sql_standard</>, <literal>postgres</>,
-     <literal>postgres_verbose</>, or <literal>iso_8601</>,
+     four styles <literal>sql_standard</>, <literal>mollydb</>,
+     <literal>mollydb_verbose</>, or <literal>iso_8601</>,
      using the command <literal>SET intervalstyle</literal>.
-     The default is the <literal>postgres</> format.
+     The default is the <literal>mollydb</> format.
      <xref linkend="interval-style-output-table"> shows examples of each
      output style.
     </para>
@@ -2779,13 +2779,13 @@ P <optional> <replaceable>years</>-<replaceable>months</>-<replaceable>days</> <
     </para>
 
     <para>
-     The output of the <literal>postgres</> style matches the output of
+     The output of the <literal>mollydb</> style matches the output of
      <productname>MollyDB</> releases prior to 8.4 when the
      <xref linkend="guc-datestyle"> parameter was set to <literal>ISO</>.
     </para>
 
     <para>
-     The output of the <literal>postgres_verbose</> style matches the output of
+     The output of the <literal>mollydb_verbose</> style matches the output of
      <productname>MollyDB</> releases prior to 8.4 when the
      <varname>DateStyle</> parameter was set to non-<literal>ISO</> output.
     </para>
@@ -2815,13 +2815,13 @@ P <optional> <replaceable>years</>-<replaceable>months</>-<replaceable>days</> <
           <entry>-1-2 +3 -4:05:06</entry>
          </row>
          <row>
-          <entry><literal>postgres</></entry>
+          <entry><literal>mollydb</></entry>
           <entry>1 year 2 mons</entry>
           <entry>3 days 04:05:06</entry>
           <entry>-1 year -2 mons +3 days -04:05:06</entry>
          </row>
          <row>
-          <entry><literal>postgres_verbose</></entry>
+          <entry><literal>mollydb_verbose</></entry>
           <entry>@ 1 year 2 mons</entry>
           <entry>@ 3 days 4 hours 5 mins 6 secs</entry>
           <entry>@ 1 year 2 mons -3 days 4 hours 5 mins 6 secs ago</entry>
@@ -3978,15 +3978,15 @@ SELECT 'super:*'::tsquery;
      text search configurations, which means this comparison returns
      true:
 <programlisting>
-SELECT to_tsvector( 'postgraduate' ) @@ to_tsquery( 'postgres:*' );
+SELECT to_tsvector( 'postgraduate' ) @@ to_tsquery( 'mollydb:*' );
  ?column? 
 ----------
  t
 (1 row)
 </programlisting>
-     because <literal>postgres</> gets stemmed to <literal>postgr</>:
+     because <literal>mollydb</> gets stemmed to <literal>postgr</>:
 <programlisting>
-SELECT to_tsquery('postgres:*');
+SELECT to_tsquery('mollydb:*');
  to_tsquery 
 ------------
  'postgr':*

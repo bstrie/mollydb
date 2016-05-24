@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------
  * gin_private.h
- *	  header file for postgres inverted index access method implementation.
+ *	  header file for mollydb inverted index access method implementation.
  *
  *	Copyright (c) 2006-2016, MollyDB Global Development Group
  *

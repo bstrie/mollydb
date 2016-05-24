@@ -1,7 +1,7 @@
 /*
  * contrib/intarray/_intbig_gist.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/gist.h"
 #include "access/stratnum.h"

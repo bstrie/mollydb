@@ -24,7 +24,7 @@ else
 endif
 
 
-POSTGRES_IMP= postgres.imp
+POSTGRES_IMP= mollydb.imp
 
 ifdef PGXS
 BE_DLLLIBS= -Wl,-bI:$(pkglibdir)/$(POSTGRES_IMP)

@@ -4,7 +4,7 @@
  * Parser interface for DOM-based parser (libxml) rather than
  * stream-based SAX-type parser
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/htup_details.h"
 #include "executor/spi.h"

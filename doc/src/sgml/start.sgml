@@ -76,8 +76,8 @@
        connections to the database from client applications, and
        performs database actions on behalf of the clients.  The
        database server program is called
-       <filename>postgres</filename>.
-       <indexterm><primary>postgres</primary></indexterm>
+       <filename>mollydb</filename>.
+       <indexterm><primary>mollydb</primary></indexterm>
       </para>
      </listitem>
 
@@ -112,7 +112,7 @@
     starts (<quote>forks</quote>) a new process for each connection.
     From that point on, the client and the new server process
     communicate without intervention by the original
-    <filename>postgres</filename> process.  Thus, the
+    <filename>mollydb</filename> process.  Thus, the
     master server process is always running, waiting for
     client connections, whereas client and associated server processes
     come and go.  (All of this is of course invisible to the user.  We
@@ -176,7 +176,7 @@ createdb: command not found
    <para>
     Another response could be this:
 <screen>
-createdb: could not connect to database postgres: could not connect to server: No such file or directory
+createdb: could not connect to database mollydb: could not connect to server: No such file or directory
         Is the server running locally and accepting
         connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
 </screen>
@@ -188,7 +188,7 @@ createdb: could not connect to database postgres: could not connect to server: N
    <para>
     Another response could be this:
 <screen>
-createdb: could not connect to database postgres: FATAL:  role "joe" does not exist
+createdb: could not connect to database mollydb: FATAL:  role "joe" does not exist
 </screen>
     where your own login name is mentioned.  This will happen if the
     administrator has not created a <productname>MollyDB</> user account
@@ -196,7 +196,7 @@ createdb: could not connect to database postgres: FATAL:  role "joe" does not ex
     operating system user accounts.)  If you are the administrator, see
     <xref linkend="user-manag"> for help creating accounts.  You will need to
     become the operating system user under which <productname>MollyDB</>
-    was installed (usually <literal>postgres</>) to create the first user
+    was installed (usually <literal>mollydb</>) to create the first user
     account.  It could also be that you were assigned a
     <productname>MollyDB</> user name that is different from your
     operating system user name; in that case you need to use the <option>-U</>

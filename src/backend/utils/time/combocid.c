@@ -39,7 +39,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "miscadmin.h"
 #include "access/htup_details.h"

@@ -63,7 +63,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/amapi.h"
 #include "access/relscan.h"

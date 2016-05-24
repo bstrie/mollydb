@@ -2,7 +2,7 @@
  *
  * libpq-fe.h
  *	  This file contains definitions for structures and
- *	  externs for functions used by frontend postgres applications.
+ *	  externs for functions used by frontend mollydb applications.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -23,10 +23,10 @@ extern		"C"
 #include <stdio.h>
 
 /*
- * postgres_ext.h defines the backend's externally visible types,
+ * mollydb_ext.h defines the backend's externally visible types,
  * such as Oid.
  */
-#include "postgres_ext.h"
+#include "mollydb_ext.h"
 
 /*
  * Option flags for PQcopyResult

@@ -13,7 +13,7 @@
  *	  Eventually, the index information should go through here, too.
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/hash.h"
 #include "access/htup_details.h"

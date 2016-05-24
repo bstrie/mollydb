@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * bootstrap.c
- *	  routines to support running postgres in 'bootstrap' mode
+ *	  routines to support running mollydb in 'bootstrap' mode
  *	bootstrap mode is used to create the initial template database
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <unistd.h>
 #include <signal.h>

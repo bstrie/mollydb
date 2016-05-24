@@ -3189,7 +3189,7 @@ Improve CREATE FUNCTION failure message (Ross)
 JDBC improvements (Peter, Travis Bauer, Christopher Cain, William Webber,
    Gunnar)
 Grand Unified Configuration scheme/GUC.  Many options can now be set in
-   data/mollydb.conf, postmaster/postgres flags, or SET commands (Peter E)
+   data/mollydb.conf, postmaster/mollydb flags, or SET commands (Peter E)
 Improved handling of file descriptor cache (Tom)
 New warning code about auto-created table alias entries (Bruce)
 Overhaul initdb process (Tom, Peter E)
@@ -3755,7 +3755,7 @@ Show specific non-aggregate causing problem with GROUP BY (Tom)
 Make changes to pg_shadow recreate pg_pwd file (Peter E)
 Add aggregate(DISTINCT ...) (Tom)
 Allow flag to control COPY input/output of NULLs (Peter E)
-Make postgres user have a password by default (Peter E)
+Make mollydb user have a password by default (Peter E)
 Add CREATE/ALTER/DROP GROUP (Peter E)
 All administration scripts now support --long options (Peter E, Karel)
 Vacuumdb script now supports --all option (Peter E)
@@ -4447,7 +4447,7 @@ Speedup for LIKE(Bruce)
 Ecpg fixes/features, see src/interfaces/ecpg/ChangeLog file(Michael)
 JDBC fixes/features, see src/interfaces/jdbc/CHANGELOG(Peter)
 Make % operator have precedence like /(Bruce)
-Add new postgres -O option to allow system table structure changes(Bruce)
+Add new mollydb -O option to allow system table structure changes(Bruce)
 Update contrib/pginterface/findoidjoins script(Tom)
 Major speedup in vacuum of deleted rows with indexes(Vadim)
 Allow non-SQL functions to run different versions based on arguments(Tom)
@@ -4571,7 +4571,7 @@ Configure matches template/.similar entries better(Tom)
 Change builtin function names from SPI_* to spi_*
 OR WHERE clause fix(Vadim)
 Fixes for mixed-case table names(Billy)
-contrib/linux/postgres.init.csh/sh fix(Thomas)
+contrib/linux/mollydb.init.csh/sh fix(Thomas)
 libpq memory overrun fix
 SunOS fixes(Tom)
 Change exp() behavior to generate error on underflow(Thomas)
@@ -5141,7 +5141,7 @@ Better identify tcl and tk libs and includes(Bruce)
    See the <citetitle>Administrator's Guide</citetitle> for more
    information.  There is a new table, pg_shadow, which is used to store
    user information and user passwords, and it by default only SELECT-able
-   by the <systemitem>postgres</systemitem> super-user.  pg_user is now a view of pg_shadow, and is
+   by the <systemitem>mollydb</systemitem> super-user.  pg_user is now a view of pg_shadow, and is
    SELECT-able by PUBLIC.  You should keep using pg_user in your
    application without changes.
   </para>
@@ -5801,7 +5801,7 @@ no more need to edit Makefile.global(Marc)
 re-arrange include files(Marc)
 nextstep patches (Gregor Hoffleit)
 removed Windows-specific code(Bruce)
-removed postmaster -e option, now only postgres -e option (Bruce)
+removed postmaster -e option, now only mollydb -e option (Bruce)
 merge duplicate library code in front/backends(Martin)
 now works with eBones, international Kerberos(Jun)
 more shared library support
@@ -5851,7 +5851,7 @@ because the COPY output format was improved from the 1.02 release.
 <programlisting>
 Bug Fixes
 ---------
-ALTER TABLE bug - running postgres process needs to re-read table definition
+ALTER TABLE bug - running mollydb process needs to re-read table definition
 Allow vacuum to be run on one table or entire database(Bruce)
 Array fixes
 Fix array over-runs of memory writes(Kurt)
@@ -5894,7 +5894,7 @@ Allow GROUP BY to use alias column name(Bruce)
 Allow actual compression, not just reuse on the same page(Vadim)
 Allow installation-configuration option to auto-add all local users(Bryan)
 Allow libpq to distinguish between text value '' and null(Bruce)
-Allow non-postgres users with createdb privs to destroydb's
+Allow non-mollydb users with createdb privs to destroydb's
 Allow restriction on who can create C functions(Bryan)
 Allow restriction on who can do backend COPY(Bryan)
 Can shrink tables, pg_time and pg_log(Vadim &amp; Erich)
@@ -6288,7 +6288,7 @@ Enhancements:
  * added ASC and DESC key words
  * added 'internal' as a possible language for CREATE FUNCTION
    internal functions are C functions which have been statically linked
-   into the postgres backend.
+   into the mollydb backend.
  * a new type "name" has been added for system identifiers (table names,
    attribute names, etc.)  This replaces the old char16 type.   The
    of name is set by the NAMEDATALEN #define in src/Makefile.global
@@ -6402,12 +6402,12 @@ Incompatible changes:
  * the netbsd/freebsd/bsd o/s ports have been consolidated into a
    single BSD44_derived port.  (thanks to Alistair Crooks)
 
-SQL standard-compliance (the following details changes that makes postgres95
+SQL standard-compliance (the following details changes that makes mollydb95
 more compliant to the SQL-92 standard):
  * the following SQL types are now built-in: smallint, int(eger), float, real,
    char(N), varchar(N), date and time.
 
-   The following are aliases to existing postgres types:
+   The following are aliases to existing mollydb types:
                 smallint -&gt; int2
                 integer, int -&gt; int4
                 float, real  -&gt; float4
@@ -6513,19 +6513,19 @@ Incompatible changes:
 
 New tools:
  * pgperl - a Perl (4.036) interface to Postgres95
- * pg_dump - a utility for dumping out a postgres database into a
+ * pg_dump - a utility for dumping out a mollydb database into a
         script file containing query commands. The script files are in an ASCII
         format and can be used to reconstruct the database, even on other
         machines and other architectures. (Also good for converting
         a Postgres 4.2 database to Postgres95 database.)
 
-The following ports have been incorporated into postgres95-beta-0.02:
+The following ports have been incorporated into mollydb95-beta-0.02:
  * the NetBSD port by Alistair Crooks
  * the AIX port by Mike Tung
  * the Windows NT port by Jon Forrest (more stuff but not done yet)
  * the Linux ELF port by Brian Gallew
 
-The following bugs have been fixed in postgres95-beta-0.02:
+The following bugs have been fixed in mollydb95-beta-0.02:
  * new lines not escaped in COPY OUT and problem with COPY OUT when first
    attribute is a '.'
  * cannot type return to use the default user id in createuser

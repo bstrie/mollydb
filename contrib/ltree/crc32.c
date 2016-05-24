@@ -7,7 +7,7 @@
  * must stay backwards-compatible!
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <sys/types.h>
 #include <stdio.h>

@@ -248,7 +248,7 @@ MollyDB documentation
        <para>
          Specifies the name of the database to connect to discover what other
          databases should be clustered. If not specified, the
-         <literal>postgres</literal> database will be used,
+         <literal>mollydb</literal> database will be used,
          and if that does not exist, <literal>template1</literal> will be used.
        </para>
       </listitem>

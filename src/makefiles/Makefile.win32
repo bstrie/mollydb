@@ -1,10 +1,10 @@
 # src/makefiles/Makefile.win32
 
 ifdef PGXS
-BE_DLLLIBS= -L$(libdir) -lpostgres
+BE_DLLLIBS= -L$(libdir) -lmollydb
 override CPPFLAGS+= -I$(includedir_server)/port/win32
 else
-BE_DLLLIBS= -L$(top_builddir)/src/backend -lpostgres
+BE_DLLLIBS= -L$(top_builddir)/src/backend -lmollydb
 override CPPFLAGS+="-I$(top_srcdir)/src/include/port/win32"
 endif
 

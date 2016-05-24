@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * lockdefs.h
- *	   Frontend exposed parts of postgres' low level lock mechanism
+ *	   Frontend exposed parts of mollydb' low level lock mechanism
  *
  * The split between lockdefs.h and lock.h is not very principled. This file
  * contains definition that have to (indirectly) be available when included by

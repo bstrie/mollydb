@@ -66,7 +66,7 @@
  *
  *------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <signal.h>
 #include <fcntl.h>

@@ -269,15 +269,15 @@ sub checkit
 
 	#
 	# If current file is a .h file, it's OK for it to assume that one of the
-	# base headers (postgres.h or postgres_fe.h) has been included.
+	# base headers (mollydb.h or mollydb_fe.h) has been included.
 	#
 	if ($file =~ m/\.h$/)
 	{
 		foreach $deffile (keys %{ $defines{$symbol} })
 		{
 			return if $deffile eq 'src/include/c.h';
-			return if $deffile eq 'src/include/postgres.h';
-			return if $deffile eq 'src/include/postgres_fe.h';
+			return if $deffile eq 'src/include/mollydb.h';
+			return if $deffile eq 'src/include/mollydb_fe.h';
 			return if $deffile eq 'src/include/pg_config.h';
 			return if $deffile eq 'src/include/pg_config_manual.h';
 		}

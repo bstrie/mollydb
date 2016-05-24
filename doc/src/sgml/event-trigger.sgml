@@ -992,7 +992,7 @@ typedef struct EventTriggerData
    <para>
     This is the source code of the trigger function:
 <programlisting><![CDATA[
-#include "postgres.h"
+#include "mollydb.h"
 #include "commands/event_trigger.h"
 
 

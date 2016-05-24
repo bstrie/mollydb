@@ -74,7 +74,7 @@
  *	  quick, before we're queued, since after Phase 2 we're already queued.
  * -------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "miscadmin.h"
 #include "pgstat.h"

@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * vacuum.h
- *	  header file for postgres vacuum cleaner and statistics analyzer
+ *	  header file for mollydb vacuum cleaner and statistics analyzer
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

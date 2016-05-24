@@ -1521,7 +1521,7 @@ Branch: REL9_1_STABLE [1b6102eb7] 2015-12-27 13:03:19 -0300
 
     <listitem>
      <para>
-      In <filename>contrib/postgres_fdw</>, fix bugs triggered by use
+      In <filename>contrib/mollydb_fdw</>, fix bugs triggered by use
       of <literal>tableoid</> in data-modifying commands (Etsuro Fujita,
       Robert Haas)
      </para>
@@ -2654,7 +2654,7 @@ Branch: REL9_3_STABLE [b7dcb2dd4] 2015-09-24 12:47:30 -0400
 
     <listitem>
      <para>
-      Improve <filename>contrib/postgres_fdw</>'s handling of
+      Improve <filename>contrib/mollydb_fdw</>'s handling of
       collation-related decisions (Tom Lane)
      </para>
 
@@ -2841,7 +2841,7 @@ Branch: REL9_0_STABLE [52b07779d] 2015-09-11 15:51:10 -0400
     <listitem>
      <para>
       Fix <application>pg_dump</> and <application>pg_upgrade</> to support
-      cases where the <literal>postgres</> or <literal>template1</> database
+      cases where the <literal>mollydb</> or <literal>template1</> database
       is in a non-default tablespace (Marti Raudsepp, Bruce Momjian)
      </para>
     </listitem>
@@ -4648,7 +4648,7 @@ Branch: REL9_0_STABLE [85dac37ee] 2015-02-11 21:02:06 -0500
 
      <para>
       This oversight could cause missing-clog-file errors for tables within
-      the <literal>postgres</> and <literal>template1</> databases.
+      the <literal>mollydb</> and <literal>template1</> databases.
      </para>
     </listitem>
 

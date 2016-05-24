@@ -19,9 +19,9 @@
 --    to your preference.
 --
 --    Example)
---      $ for DBNAME in template0 template1 postgres;     \
+--      $ for DBNAME in template0 template1 mollydb;     \
 --        do                                              \
---          postgres --single -F -c exit_on_error=true -D $PGDATA $DBNAME \
+--          mollydb --single -F -c exit_on_error=true -D $PGDATA $DBNAME \
 --            < /path/to/script/sepgsql.sql > /dev/null   \
 --        done
 --

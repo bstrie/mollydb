@@ -10,7 +10,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #include "common.h"
 #include "fe_utils/string_utils.h"
 
@@ -124,8 +124,8 @@ main(int argc, char *argv[])
 	appendPQExpBuffer(&sql, "DROP DATABASE %s%s;",
 					  (if_exists ? "IF EXISTS " : ""), fmtId(dbname));
 
-	/* Avoid trying to drop postgres db while we are connected to it. */
-	if (maintenance_db == NULL && strcmp(dbname, "postgres") == 0)
+	/* Avoid trying to drop mollydb db while we are connected to it. */
+	if (maintenance_db == NULL && strcmp(dbname, "mollydb") == 0)
 		maintenance_db = "template1";
 
 	conn = connectMaintenanceDatabase(maintenance_db,

@@ -17,8 +17,8 @@
 /*
  * BlockNumber:
  *
- * each data file (heap or index) is divided into postgres disk blocks
- * (which may be thought of as the unit of i/o -- a postgres buffer
+ * each data file (heap or index) is divided into mollydb disk blocks
+ * (which may be thought of as the unit of i/o -- a mollydb buffer
  * contains exactly one disk block).  the blocks are numbered
  * sequentially, 0 to 0xFFFFFFFE.
  *

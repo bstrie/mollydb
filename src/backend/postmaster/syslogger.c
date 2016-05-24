@@ -21,7 +21,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <fcntl.h>
 #include <limits.h>
@@ -687,7 +687,7 @@ syslogger_forkexec(void)
 	int			ac = 0;
 	char		filenobuf[32];
 
-	av[ac++] = "postgres";
+	av[ac++] = "mollydb";
 	av[ac++] = "--forklog";
 	av[ac++] = NULL;			/* filled in by postmaster_forkexec */
 

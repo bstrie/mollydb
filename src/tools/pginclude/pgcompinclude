@@ -15,7 +15,7 @@ trap "rm -f /tmp/$$.c /tmp/$$.o /tmp/$$ /tmp/$$a" 0 1 2 3 15
 find . \( -name .git -a -prune \) -o -name '*.h' -type f -print | while read FILE
 do
 	sed 's/->[a-zA-Z0-9_\.]*//g' "$FILE" >/tmp/$$a
-	echo "#include \"postgres.h\"" >/tmp/$$.c
+	echo "#include \"mollydb.h\"" >/tmp/$$.c
 
 	# suppress fcinfo errors
 	echo "struct {Datum       arg[1];} *fcinfo;" >>/tmp/$$.c

@@ -3,7 +3,7 @@
  *		tests all supported fsync() methods
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <sys/stat.h>
 #include <sys/time.h>

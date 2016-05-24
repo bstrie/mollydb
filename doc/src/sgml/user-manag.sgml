@@ -103,7 +103,7 @@ SELECT rolname FROM pg_roles;
    <command>initdb</command>) it will have the same name as the
    operating system user that initialized the database
    cluster. Customarily, this role will be named
-   <literal>postgres</literal>. In order to create more roles you
+   <literal>mollydb</literal>. In order to create more roles you
    first have to connect as this initial role.
   </para>
 

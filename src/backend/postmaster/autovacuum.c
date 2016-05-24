@@ -59,7 +59,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <signal.h>
 #include <sys/types.h>
@@ -340,7 +340,7 @@ avlauncher_forkexec(void)
 	char	   *av[10];
 	int			ac = 0;
 
-	av[ac++] = "postgres";
+	av[ac++] = "mollydb";
 	av[ac++] = "--forkavlauncher";
 	av[ac++] = NULL;			/* filled in by postmaster_forkexec */
 	av[ac] = NULL;
@@ -423,7 +423,7 @@ AutoVacLauncherMain(int argc, char *argv[])
 	/*
 	 * Set up signal handlers.  We operate on databases much like a regular
 	 * backend, so we use the same signal handling.  See equivalent code in
-	 * tcop/postgres.c.
+	 * tcop/mollydb.c.
 	 */
 	pqsignal(SIGHUP, av_sighup_handler);
 	pqsignal(SIGINT, StatementCancelHandler);
@@ -1406,7 +1406,7 @@ avworker_forkexec(void)
 	char	   *av[10];
 	int			ac = 0;
 
-	av[ac++] = "postgres";
+	av[ac++] = "mollydb";
 	av[ac++] = "--forkavworker";
 	av[ac++] = NULL;			/* filled in by postmaster_forkexec */
 	av[ac] = NULL;
@@ -1485,7 +1485,7 @@ AutoVacWorkerMain(int argc, char *argv[])
 	/*
 	 * Set up signal handlers.  We operate on databases much like a regular
 	 * backend, so we use the same signal handling.  See equivalent code in
-	 * tcop/postgres.c.
+	 * tcop/mollydb.c.
 	 */
 	pqsignal(SIGHUP, av_sighup_handler);
 
@@ -1520,7 +1520,7 @@ AutoVacWorkerMain(int argc, char *argv[])
 	/*
 	 * If an exception is encountered, processing resumes here.
 	 *
-	 * See notes in postgres.c about the design of this coding.
+	 * See notes in mollydb.c about the design of this coding.
 	 */
 	if (sigsetjmp(local_sigjmp_buf, 1) != 0)
 	{

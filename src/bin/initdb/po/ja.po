@@ -408,8 +408,8 @@ msgid "copying template1 to template0 ... "
 msgstr "template1からtemplate0へコピーしています ... "
 
 #: initdb.c:2288
-msgid "copying template1 to postgres ... "
-msgstr "template1からpostgresへコピーしています ... "
+msgid "copying template1 to mollydb ... "
+msgstr "template1からmollydbへコピーしています ... "
 
 #: initdb.c:2314
 msgid "syncing data to disk ... "
@@ -721,22 +721,22 @@ msgstr ""
 #: initdb.c:2924
 #, c-format
 msgid ""
-"The program \"postgres\" is needed by %s but was not found in the\n"
+"The program \"mollydb\" is needed by %s but was not found in the\n"
 "same directory as \"%s\".\n"
 "Check your installation.\n"
 msgstr ""
-"%sでは\"postgres\"プログラムが必要ですが、\"%s\"と同じディレクトリにあり\n"
+"%sでは\"mollydb\"プログラムが必要ですが、\"%s\"と同じディレクトリにあり\n"
 "ませんでした。\n"
 "インストレーションを検査してください。\n"
 
 #: initdb.c:2931
 #, c-format
 msgid ""
-"The program \"postgres\" was found by \"%s\"\n"
+"The program \"mollydb\" was found by \"%s\"\n"
 "but was not the same version as %s.\n"
 "Check your installation.\n"
 msgstr ""
-"\"postgres\"プログラムは\"%s\"にありましたが、%sと同じバージョンで\n"
+"\"mollydb\"プログラムは\"%s\"にありましたが、%sと同じバージョンで\n"
 "はありませんでした。\n"
 "インストレーションを検査してください。\n"
 
@@ -974,7 +974,7 @@ msgid ""
 "\n"
 "Success. You can now start the database server using:\n"
 "\n"
-"    %s%s%spostgres%s -D %s%s%s\n"
+"    %s%s%smollydb%s -D %s%s%s\n"
 "or\n"
 "    %s%s%spg_ctl%s -D %s%s%s -l logfile start\n"
 "\n"

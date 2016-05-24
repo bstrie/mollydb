@@ -16,7 +16,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "libpq/libpq-be.h"
 #include "libpq/pqcomm.h"
@@ -64,7 +64,7 @@ char		my_exec_path[MAXPGPATH];	/* full path to my executable */
 char		pkglib_path[MAXPGPATH];		/* full path to lib directory */
 
 #ifdef EXEC_BACKEND
-char		postgres_exec_path[MAXPGPATH];		/* full path to backend */
+char		mollydb_exec_path[MAXPGPATH];		/* full path to backend */
 
 /* note: currently this is not valid in backend processes */
 #endif

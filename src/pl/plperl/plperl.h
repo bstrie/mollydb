@@ -3,7 +3,7 @@
  * plperl.h
  *	  Common include file for PL/Perl files
  *
- * This should be included _AFTER_ postgres.h and system include files
+ * This should be included _AFTER_ mollydb.h and system include files
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1995, Regents of the University of California

@@ -24,21 +24,21 @@ $standby->start;
 
 for my $i (1 .. 10)
 {
-	$master->safe_psql('postgres', "create table t$i()");
+	$master->safe_psql('mollydb', "create table t$i()");
 }
 $master->append_conf('mollydb.conf', 'track_commit_timestamp = off');
 $master->restart;
-$master->safe_psql('postgres', 'checkpoint');
-my $master_lsn = $master->safe_psql('postgres',
+$master->safe_psql('mollydb', 'checkpoint');
+my $master_lsn = $master->safe_psql('mollydb',
 	'select pg_current_xlog_location()');
-$standby->poll_query_until('postgres',
+$standby->poll_query_until('mollydb',
 	qq{SELECT '$master_lsn'::pg_lsn <= pg_last_xlog_replay_location()})
 	or die "slave never caught up";
 
-$standby->safe_psql('postgres', 'checkpoint');
+$standby->safe_psql('mollydb', 'checkpoint');
 $standby->restart;
 
-my ($psql_ret, $standby_ts_stdout, $standby_ts_stderr) = $standby->psql('postgres',
+my ($psql_ret, $standby_ts_stdout, $standby_ts_stderr) = $standby->psql('mollydb',
 	qq{SELECT ts.* FROM pg_class, pg_xact_commit_timestamp(xmin) AS ts WHERE relname = 't10'});
 is($psql_ret, 3, 'expect error when getting commit timestamp after restart');
 is($standby_ts_stdout, '', "standby does not return a value after restart");
@@ -50,9 +50,9 @@ $master->append_conf('mollydb.conf', 'track_commit_timestamp = off');
 $master->restart;
 
 system_or_bail('pg_ctl', '-w', '-D', $standby->data_dir, 'promote');
-$standby->poll_query_until('postgres', "SELECT pg_is_in_recovery() <> true");
+$standby->poll_query_until('mollydb', "SELECT pg_is_in_recovery() <> true");
 
-$standby->safe_psql('postgres', "create table t11()");
-my $standby_ts = $standby->safe_psql('postgres',
+$standby->safe_psql('mollydb', "create table t11()");
+my $standby_ts = $standby->safe_psql('mollydb',
 	qq{SELECT ts.* FROM pg_class, pg_xact_commit_timestamp(xmin) AS ts WHERE relname = 't11'});
 isnt($standby_ts, '', "standby gives valid value ($standby_ts) after promotion");

@@ -1426,7 +1426,7 @@ Branch: REL9_2_STABLE [e90a629e1] 2015-09-22 14:58:38 -0700
     <listitem>
      <para>
       Fix <application>pg_dump</> and <application>pg_upgrade</> to support
-      cases where the <literal>postgres</> or <literal>template1</> database
+      cases where the <literal>mollydb</> or <literal>template1</> database
       is in a non-default tablespace (Marti Raudsepp, Bruce Momjian)
      </para>
     </listitem>
@@ -2227,7 +2227,7 @@ Branch: REL9_0_STABLE [850e1a566] 2015-05-18 17:44:21 -0300
 
      <para>
       This oversight could cause missing-clog-file errors for tables within
-      the <literal>postgres</> and <literal>template1</> databases.
+      the <literal>mollydb</> and <literal>template1</> databases.
      </para>
     </listitem>
 
@@ -3482,8 +3482,8 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
 
     <listitem>
      <para>
-      Allow the root user to use <literal>postgres -C variable</> and
-      <literal>postgres --describe-config</> (MauMau)
+      Allow the root user to use <literal>mollydb -C variable</> and
+      <literal>mollydb --describe-config</> (MauMau)
      </para>
 
      <para>
@@ -9082,7 +9082,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
        <para>
         Give command-line tools the ability to specify the name of the
         database to connect to, and fall back to <literal>template1</>
-        if a <literal>postgres</> database connection fails (Robert Haas)
+        if a <literal>mollydb</> database connection fails (Robert Haas)
        </para>
       </listitem>
 
@@ -9359,7 +9359,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
       <listitem>
        <para>
         Allow <application>pg_dumpall</> to avoid errors if the
-        <literal>postgres</> database is missing in the new cluster
+        <literal>mollydb</> database is missing in the new cluster
         (Robert Haas)
        </para>
       </listitem>
@@ -9428,7 +9428,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
        </para>
 
        <para>
-        The syntax begins with <literal>postgres://</>.  This can allow
+        The syntax begins with <literal>mollydb://</>.  This can allow
         applications to avoid implementing their own parser for URIs
         representing database connections.
        </para>
@@ -9767,7 +9767,7 @@ Branch: REL9_2_STABLE [6b700301c] 2015-02-17 16:03:00 +0100
       <listitem>
        <para>
         Allow <application>pg_upgrade</> to upgrade an old cluster that
-        does not have a <literal>postgres</> database (Bruce Momjian)
+        does not have a <literal>mollydb</> database (Bruce Momjian)
        </para>
       </listitem>
 

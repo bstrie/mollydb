@@ -31,7 +31,7 @@ for f in `find src/include src/interfaces/libpq/libpq-fe.h src/interfaces/libpq/
 do
 	{
 	    echo ' extern "C" {'
-	    test $f != "src/include/postgres_fe.h" && echo '#include "postgres.h"'
+	    test $f != "src/include/mollydb_fe.h" && echo '#include "mollydb.h"'
 	    echo "#include \"$f\""
 	    echo '};'
 	} >$tmp/test.cpp

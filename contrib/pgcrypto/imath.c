@@ -29,7 +29,7 @@
  */
 /* contrib/pgcrypto/imath.c */
 
-#include "postgres.h"
+#include "mollydb.h"
 #include "px.h"
 #include "imath.h"
 

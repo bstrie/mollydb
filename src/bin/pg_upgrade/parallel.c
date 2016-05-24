@@ -7,7 +7,7 @@
  *	src/bin/pg_upgrade/parallel.c
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "pg_upgrade.h"
 

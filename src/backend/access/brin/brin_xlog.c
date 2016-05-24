@@ -8,7 +8,7 @@
  * IDENTIFICATION
  *	  src/backend/access/brin/brin_xlog.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/brin_page.h"
 #include "access/brin_pageops.h"

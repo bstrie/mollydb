@@ -457,7 +457,7 @@ CREATE [ UNIQUE ] INDEX [ CONCURRENTLY ] [ [ IF NOT EXISTS ] <replaceable class=
     <command>\d</> command will report such an index as <literal>INVALID</>:
 
 <programlisting>
-postgres=# \d tab
+mollydb=# \d tab
        Table "public.tab"
  Column |  Type   | Modifiers 
 --------+---------+-----------

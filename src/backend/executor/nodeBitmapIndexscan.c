@@ -19,7 +19,7 @@
  *		ExecReScanBitmapIndexScan	prepares to rescan the plan.
  *		ExecEndBitmapIndexScan		releases all storage.
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/execdebug.h"
 #include "executor/nodeBitmapIndexscan.h"

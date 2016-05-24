@@ -83,7 +83,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/heapam_xlog.h"
 #include "access/visibilitymap.h"

@@ -15,9 +15,9 @@
  */
 
 #ifndef FRONTEND
-#include "postgres.h"
+#include "mollydb.h"
 #else
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #endif
 
 #include <signal.h>
@@ -555,7 +555,7 @@ set_pglocale_pgservice(const char *argv0, const char *app)
 																 * PGLOCALEDIR */
 
 	/* don't set LC_ALL in the backend */
-	if (strcmp(app, PG_TEXTDOMAIN("postgres")) != 0)
+	if (strcmp(app, PG_TEXTDOMAIN("mollydb")) != 0)
 	{
 		setlocale(LC_ALL, "");
 

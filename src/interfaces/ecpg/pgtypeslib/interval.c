@@ -1,6 +1,6 @@
 /* src/interfaces/ecpg/pgtypeslib/interval.c */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #include <time.h>
 #include <math.h>
 #include <limits.h>
@@ -651,11 +651,11 @@ DecodeInterval(char **field, int *ftype, int nf,		/* int range, */
 	 * to all fields if there are no other explicit signs.
 	 *
 	 * We leave the signs alone if there are additional explicit signs.
-	 * This protects us against misinterpreting postgres-style dump output,
-	 * since the postgres-style output code has always put an explicit sign on
+	 * This protects us against misinterpreting mollydb-style dump output,
+	 * since the mollydb-style output code has always put an explicit sign on
 	 * all fields following a negative field.  But note that SQL-spec output
 	 * is ambiguous and can be misinterpreted on load!	(So it's best practice
-	 * to dump in postgres style, not SQL style.)
+	 * to dump in mollydb style, not SQL style.)
 	 *----------
 	 */
 	if (IntervalStyle == INTSTYLE_SQL_STANDARD && *field[0] == '-')

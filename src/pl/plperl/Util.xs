@@ -11,7 +11,7 @@
  **********************************************************************/
 
 /* this must be first: */
-#include "postgres.h"
+#include "mollydb.h"
 #include "fmgr.h"
 #include "utils/builtins.h"
 #include "utils/bytea.h"       /* for byteain & byteaout */

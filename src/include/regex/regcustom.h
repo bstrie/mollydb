@@ -29,7 +29,7 @@
  */
 
 /* headers if any */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <ctype.h>
 #include <limits.h>

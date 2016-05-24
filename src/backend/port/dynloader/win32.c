@@ -1,6 +1,6 @@
 /* src/backend/port/dynloader/win32.c */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 char	   *dlerror(void);
 int			dlclose(void *handle);

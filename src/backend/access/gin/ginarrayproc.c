@@ -11,7 +11,7 @@
  *	  src/backend/access/gin/ginarrayproc.c
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/gin.h"
 #include "access/stratnum.h"

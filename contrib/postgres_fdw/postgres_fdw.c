@@ -1,18 +1,18 @@
 /*-------------------------------------------------------------------------
  *
- * postgres_fdw.c
+ * mollydb_fdw.c
  *		  Foreign-data wrapper for remote MollyDB servers
  *
  * Portions Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  contrib/postgres_fdw/postgres_fdw.c
+ *		  contrib/mollydb_fdw/mollydb_fdw.c
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
-#include "postgres_fdw.h"
+#include "mollydb_fdw.h"
 
 #include "access/htup_details.h"
 #include "access/sysattr.h"
@@ -79,7 +79,7 @@ enum FdwScanPrivateIndex
 
 /*
  * Similarly, this enum describes what's kept in the fdw_private list for
- * a ModifyTable node referencing a postgres_fdw foreign table.  We store:
+ * a ModifyTable node referencing a mollydb_fdw foreign table.  We store:
  *
  * 1) INSERT/UPDATE/DELETE statement text to be sent to the remote server
  * 2) Integer list of target attribute numbers for INSERT/UPDATE
@@ -121,7 +121,7 @@ enum FdwDirectModifyPrivateIndex
 };
 
 /*
- * Execution state of a foreign scan using postgres_fdw.
+ * Execution state of a foreign scan using mollydb_fdw.
  */
 typedef struct PgFdwScanState
 {
@@ -267,83 +267,83 @@ typedef struct
 /*
  * SQL functions
  */
-PG_FUNCTION_INFO_V1(postgres_fdw_handler);
+PG_FUNCTION_INFO_V1(mollydb_fdw_handler);
 
 /*
  * FDW callback routines
  */
-static void postgresGetForeignRelSize(PlannerInfo *root,
+static void mollydbGetForeignRelSize(PlannerInfo *root,
 						  RelOptInfo *baserel,
 						  Oid foreigntableid);
-static void postgresGetForeignPaths(PlannerInfo *root,
+static void mollydbGetForeignPaths(PlannerInfo *root,
 						RelOptInfo *baserel,
 						Oid foreigntableid);
-static ForeignScan *postgresGetForeignPlan(PlannerInfo *root,
+static ForeignScan *mollydbGetForeignPlan(PlannerInfo *root,
 					   RelOptInfo *baserel,
 					   Oid foreigntableid,
 					   ForeignPath *best_path,
 					   List *tlist,
 					   List *scan_clauses,
 					   Plan *outer_plan);
-static void postgresBeginForeignScan(ForeignScanState *node, int eflags);
-static TupleTableSlot *postgresIterateForeignScan(ForeignScanState *node);
-static void postgresReScanForeignScan(ForeignScanState *node);
-static void postgresEndForeignScan(ForeignScanState *node);
-static void postgresAddForeignUpdateTargets(Query *parsetree,
+static void mollydbBeginForeignScan(ForeignScanState *node, int eflags);
+static TupleTableSlot *mollydbIterateForeignScan(ForeignScanState *node);
+static void mollydbReScanForeignScan(ForeignScanState *node);
+static void mollydbEndForeignScan(ForeignScanState *node);
+static void mollydbAddForeignUpdateTargets(Query *parsetree,
 								RangeTblEntry *target_rte,
 								Relation target_relation);
-static List *postgresPlanForeignModify(PlannerInfo *root,
+static List *mollydbPlanForeignModify(PlannerInfo *root,
 						  ModifyTable *plan,
 						  Index resultRelation,
 						  int subplan_index);
-static void postgresBeginForeignModify(ModifyTableState *mtstate,
+static void mollydbBeginForeignModify(ModifyTableState *mtstate,
 						   ResultRelInfo *resultRelInfo,
 						   List *fdw_private,
 						   int subplan_index,
 						   int eflags);
-static TupleTableSlot *postgresExecForeignInsert(EState *estate,
+static TupleTableSlot *mollydbExecForeignInsert(EState *estate,
 						  ResultRelInfo *resultRelInfo,
 						  TupleTableSlot *slot,
 						  TupleTableSlot *planSlot);
-static TupleTableSlot *postgresExecForeignUpdate(EState *estate,
+static TupleTableSlot *mollydbExecForeignUpdate(EState *estate,
 						  ResultRelInfo *resultRelInfo,
 						  TupleTableSlot *slot,
 						  TupleTableSlot *planSlot);
-static TupleTableSlot *postgresExecForeignDelete(EState *estate,
+static TupleTableSlot *mollydbExecForeignDelete(EState *estate,
 						  ResultRelInfo *resultRelInfo,
 						  TupleTableSlot *slot,
 						  TupleTableSlot *planSlot);
-static void postgresEndForeignModify(EState *estate,
+static void mollydbEndForeignModify(EState *estate,
 						 ResultRelInfo *resultRelInfo);
-static int	postgresIsForeignRelUpdatable(Relation rel);
-static bool postgresPlanDirectModify(PlannerInfo *root,
+static int	mollydbIsForeignRelUpdatable(Relation rel);
+static bool mollydbPlanDirectModify(PlannerInfo *root,
 						 ModifyTable *plan,
 						 Index resultRelation,
 						 int subplan_index);
-static void postgresBeginDirectModify(ForeignScanState *node, int eflags);
-static TupleTableSlot *postgresIterateDirectModify(ForeignScanState *node);
-static void postgresEndDirectModify(ForeignScanState *node);
-static void postgresExplainForeignScan(ForeignScanState *node,
+static void mollydbBeginDirectModify(ForeignScanState *node, int eflags);
+static TupleTableSlot *mollydbIterateDirectModify(ForeignScanState *node);
+static void mollydbEndDirectModify(ForeignScanState *node);
+static void mollydbExplainForeignScan(ForeignScanState *node,
 						   ExplainState *es);
-static void postgresExplainForeignModify(ModifyTableState *mtstate,
+static void mollydbExplainForeignModify(ModifyTableState *mtstate,
 							 ResultRelInfo *rinfo,
 							 List *fdw_private,
 							 int subplan_index,
 							 ExplainState *es);
-static void postgresExplainDirectModify(ForeignScanState *node,
+static void mollydbExplainDirectModify(ForeignScanState *node,
 							ExplainState *es);
-static bool postgresAnalyzeForeignTable(Relation relation,
+static bool mollydbAnalyzeForeignTable(Relation relation,
 							AcquireSampleRowsFunc *func,
 							BlockNumber *totalpages);
-static List *postgresImportForeignSchema(ImportForeignSchemaStmt *stmt,
+static List *mollydbImportForeignSchema(ImportForeignSchemaStmt *stmt,
 							Oid serverOid);
-static void postgresGetForeignJoinPaths(PlannerInfo *root,
+static void mollydbGetForeignJoinPaths(PlannerInfo *root,
 							RelOptInfo *joinrel,
 							RelOptInfo *outerrel,
 							RelOptInfo *innerrel,
 							JoinType jointype,
 							JoinPathExtraData *extra);
-static bool postgresRecheckForeignScan(ForeignScanState *node,
+static bool mollydbRecheckForeignScan(ForeignScanState *node,
 						   TupleTableSlot *slot);
 
 /*
@@ -385,7 +385,7 @@ static void process_query_params(ExprContext *econtext,
 					 FmgrInfo *param_flinfo,
 					 List *param_exprs,
 					 const char **param_values);
-static int postgresAcquireSampleRowsFunc(Relation relation, int elevel,
+static int mollydbAcquireSampleRowsFunc(Relation relation, int elevel,
 							  HeapTuple *rows, int targrows,
 							  double *totalrows,
 							  double *totaldeadrows);
@@ -414,61 +414,61 @@ static void add_paths_with_pathkeys_for_rel(PlannerInfo *root, RelOptInfo *rel,
  * to my callback routines.
  */
 Datum
-postgres_fdw_handler(PG_FUNCTION_ARGS)
+mollydb_fdw_handler(PG_FUNCTION_ARGS)
 {
 	FdwRoutine *routine = makeNode(FdwRoutine);
 
 	/* Functions for scanning foreign tables */
-	routine->GetForeignRelSize = postgresGetForeignRelSize;
-	routine->GetForeignPaths = postgresGetForeignPaths;
-	routine->GetForeignPlan = postgresGetForeignPlan;
-	routine->BeginForeignScan = postgresBeginForeignScan;
-	routine->IterateForeignScan = postgresIterateForeignScan;
-	routine->ReScanForeignScan = postgresReScanForeignScan;
-	routine->EndForeignScan = postgresEndForeignScan;
+	routine->GetForeignRelSize = mollydbGetForeignRelSize;
+	routine->GetForeignPaths = mollydbGetForeignPaths;
+	routine->GetForeignPlan = mollydbGetForeignPlan;
+	routine->BeginForeignScan = mollydbBeginForeignScan;
+	routine->IterateForeignScan = mollydbIterateForeignScan;
+	routine->ReScanForeignScan = mollydbReScanForeignScan;
+	routine->EndForeignScan = mollydbEndForeignScan;
 
 	/* Functions for updating foreign tables */
-	routine->AddForeignUpdateTargets = postgresAddForeignUpdateTargets;
-	routine->PlanForeignModify = postgresPlanForeignModify;
-	routine->BeginForeignModify = postgresBeginForeignModify;
-	routine->ExecForeignInsert = postgresExecForeignInsert;
-	routine->ExecForeignUpdate = postgresExecForeignUpdate;
-	routine->ExecForeignDelete = postgresExecForeignDelete;
-	routine->EndForeignModify = postgresEndForeignModify;
-	routine->IsForeignRelUpdatable = postgresIsForeignRelUpdatable;
-	routine->PlanDirectModify = postgresPlanDirectModify;
-	routine->BeginDirectModify = postgresBeginDirectModify;
-	routine->IterateDirectModify = postgresIterateDirectModify;
-	routine->EndDirectModify = postgresEndDirectModify;
+	routine->AddForeignUpdateTargets = mollydbAddForeignUpdateTargets;
+	routine->PlanForeignModify = mollydbPlanForeignModify;
+	routine->BeginForeignModify = mollydbBeginForeignModify;
+	routine->ExecForeignInsert = mollydbExecForeignInsert;
+	routine->ExecForeignUpdate = mollydbExecForeignUpdate;
+	routine->ExecForeignDelete = mollydbExecForeignDelete;
+	routine->EndForeignModify = mollydbEndForeignModify;
+	routine->IsForeignRelUpdatable = mollydbIsForeignRelUpdatable;
+	routine->PlanDirectModify = mollydbPlanDirectModify;
+	routine->BeginDirectModify = mollydbBeginDirectModify;
+	routine->IterateDirectModify = mollydbIterateDirectModify;
+	routine->EndDirectModify = mollydbEndDirectModify;
 
 	/* Function for EvalPlanQual rechecks */
-	routine->RecheckForeignScan = postgresRecheckForeignScan;
+	routine->RecheckForeignScan = mollydbRecheckForeignScan;
 	/* Support functions for EXPLAIN */
-	routine->ExplainForeignScan = postgresExplainForeignScan;
-	routine->ExplainForeignModify = postgresExplainForeignModify;
-	routine->ExplainDirectModify = postgresExplainDirectModify;
+	routine->ExplainForeignScan = mollydbExplainForeignScan;
+	routine->ExplainForeignModify = mollydbExplainForeignModify;
+	routine->ExplainDirectModify = mollydbExplainDirectModify;
 
 	/* Support functions for ANALYZE */
-	routine->AnalyzeForeignTable = postgresAnalyzeForeignTable;
+	routine->AnalyzeForeignTable = mollydbAnalyzeForeignTable;
 
 	/* Support functions for IMPORT FOREIGN SCHEMA */
-	routine->ImportForeignSchema = postgresImportForeignSchema;
+	routine->ImportForeignSchema = mollydbImportForeignSchema;
 
 	/* Support functions for join push-down */
-	routine->GetForeignJoinPaths = postgresGetForeignJoinPaths;
+	routine->GetForeignJoinPaths = mollydbGetForeignJoinPaths;
 
 	PG_RETURN_POINTER(routine);
 }
 
 /*
- * postgresGetForeignRelSize
+ * mollydbGetForeignRelSize
  *		Estimate # of rows and width of the result of the scan
  *
  * We should consider the effect of all baserestrictinfo clauses here, but
  * not any join clauses.
  */
 static void
-postgresGetForeignRelSize(PlannerInfo *root,
+mollydbGetForeignRelSize(PlannerInfo *root,
 						  RelOptInfo *baserel,
 						  Oid foreigntableid)
 {
@@ -876,11 +876,11 @@ get_useful_pathkeys_for_relation(PlannerInfo *root, RelOptInfo *rel)
 }
 
 /*
- * postgresGetForeignPaths
+ * mollydbGetForeignPaths
  *		Create possible scan paths for a scan on the foreign table
  */
 static void
-postgresGetForeignPaths(PlannerInfo *root,
+mollydbGetForeignPaths(PlannerInfo *root,
 						RelOptInfo *baserel,
 						Oid foreigntableid)
 {
@@ -1082,11 +1082,11 @@ postgresGetForeignPaths(PlannerInfo *root,
 }
 
 /*
- * postgresGetForeignPlan
+ * mollydbGetForeignPlan
  *		Create ForeignScan plan node which implements selected best path
  */
 static ForeignScan *
-postgresGetForeignPlan(PlannerInfo *root,
+mollydbGetForeignPlan(PlannerInfo *root,
 					   RelOptInfo *foreignrel,
 					   Oid foreigntableid,
 					   ForeignPath *best_path,
@@ -1136,7 +1136,7 @@ postgresGetForeignPlan(PlannerInfo *root,
 	 * remote-safety.
 	 *
 	 * Note: the join clauses we see here should be the exact same ones
-	 * previously examined by postgresGetForeignPaths.  Possibly it'd be worth
+	 * previously examined by mollydbGetForeignPaths.  Possibly it'd be worth
 	 * passing forward the classification work done then, rather than
 	 * repeating it here.
 	 *
@@ -1253,11 +1253,11 @@ postgresGetForeignPlan(PlannerInfo *root,
 }
 
 /*
- * postgresBeginForeignScan
+ * mollydbBeginForeignScan
  *		Initiate an executor scan of a foreign MollyDB table.
  */
 static void
-postgresBeginForeignScan(ForeignScanState *node, int eflags)
+mollydbBeginForeignScan(ForeignScanState *node, int eflags)
 {
 	ForeignScan *fsplan = (ForeignScan *) node->ss.ps.plan;
 	EState	   *estate = node->ss.ps.state;
@@ -1329,12 +1329,12 @@ postgresBeginForeignScan(ForeignScanState *node, int eflags)
 
 	/* Create contexts for batches of tuples and per-tuple temp workspace. */
 	fsstate->batch_cxt = AllocSetContextCreate(estate->es_query_cxt,
-											   "postgres_fdw tuple data",
+											   "mollydb_fdw tuple data",
 											   ALLOCSET_DEFAULT_MINSIZE,
 											   ALLOCSET_DEFAULT_INITSIZE,
 											   ALLOCSET_DEFAULT_MAXSIZE);
 	fsstate->temp_cxt = AllocSetContextCreate(estate->es_query_cxt,
-											  "postgres_fdw temporary data",
+											  "mollydb_fdw temporary data",
 											  ALLOCSET_SMALL_MINSIZE,
 											  ALLOCSET_SMALL_INITSIZE,
 											  ALLOCSET_SMALL_MAXSIZE);
@@ -1365,12 +1365,12 @@ postgresBeginForeignScan(ForeignScanState *node, int eflags)
 }
 
 /*
- * postgresIterateForeignScan
+ * mollydbIterateForeignScan
  *		Retrieve next row from the result set, or clear tuple slot to indicate
  *		EOF.
  */
 static TupleTableSlot *
-postgresIterateForeignScan(ForeignScanState *node)
+mollydbIterateForeignScan(ForeignScanState *node)
 {
 	PgFdwScanState *fsstate = (PgFdwScanState *) node->fdw_state;
 	TupleTableSlot *slot = node->ss.ss_ScanTupleSlot;
@@ -1407,11 +1407,11 @@ postgresIterateForeignScan(ForeignScanState *node)
 }
 
 /*
- * postgresReScanForeignScan
+ * mollydbReScanForeignScan
  *		Restart the scan.
  */
 static void
-postgresReScanForeignScan(ForeignScanState *node)
+mollydbReScanForeignScan(ForeignScanState *node)
 {
 	PgFdwScanState *fsstate = (PgFdwScanState *) node->fdw_state;
 	char		sql[64];
@@ -1463,11 +1463,11 @@ postgresReScanForeignScan(ForeignScanState *node)
 }
 
 /*
- * postgresEndForeignScan
+ * mollydbEndForeignScan
  *		Finish scanning foreign table and dispose objects used for this scan
  */
 static void
-postgresEndForeignScan(ForeignScanState *node)
+mollydbEndForeignScan(ForeignScanState *node)
 {
 	PgFdwScanState *fsstate = (PgFdwScanState *) node->fdw_state;
 
@@ -1487,11 +1487,11 @@ postgresEndForeignScan(ForeignScanState *node)
 }
 
 /*
- * postgresAddForeignUpdateTargets
+ * mollydbAddForeignUpdateTargets
  *		Add resjunk column(s) needed for update/delete on a foreign table
  */
 static void
-postgresAddForeignUpdateTargets(Query *parsetree,
+mollydbAddForeignUpdateTargets(Query *parsetree,
 								RangeTblEntry *target_rte,
 								Relation target_relation)
 {
@@ -1500,7 +1500,7 @@ postgresAddForeignUpdateTargets(Query *parsetree,
 	TargetEntry *tle;
 
 	/*
-	 * In postgres_fdw, what we need is the ctid, same as for a regular table.
+	 * In mollydb_fdw, what we need is the ctid, same as for a regular table.
 	 */
 
 	/* Make a Var representing the desired value */
@@ -1524,11 +1524,11 @@ postgresAddForeignUpdateTargets(Query *parsetree,
 }
 
 /*
- * postgresPlanForeignModify
+ * mollydbPlanForeignModify
  *		Plan an insert/update/delete operation on a foreign table
  */
 static List *
-postgresPlanForeignModify(PlannerInfo *root,
+mollydbPlanForeignModify(PlannerInfo *root,
 						  ModifyTable *plan,
 						  Index resultRelation,
 						  int subplan_index)
@@ -1642,11 +1642,11 @@ postgresPlanForeignModify(PlannerInfo *root,
 }
 
 /*
- * postgresBeginForeignModify
+ * mollydbBeginForeignModify
  *		Begin an insert/update/delete operation on a foreign table
  */
 static void
-postgresBeginForeignModify(ModifyTableState *mtstate,
+mollydbBeginForeignModify(ModifyTableState *mtstate,
 						   ResultRelInfo *resultRelInfo,
 						   List *fdw_private,
 						   int subplan_index,
@@ -1703,7 +1703,7 @@ postgresBeginForeignModify(ModifyTableState *mtstate,
 
 	/* Create context for per-tuple temp workspace. */
 	fmstate->temp_cxt = AllocSetContextCreate(estate->es_query_cxt,
-											  "postgres_fdw temporary data",
+											  "mollydb_fdw temporary data",
 											  ALLOCSET_SMALL_MINSIZE,
 											  ALLOCSET_SMALL_INITSIZE,
 											  ALLOCSET_SMALL_MAXSIZE);
@@ -1755,11 +1755,11 @@ postgresBeginForeignModify(ModifyTableState *mtstate,
 }
 
 /*
- * postgresExecForeignInsert
+ * mollydbExecForeignInsert
  *		Insert one row into a foreign table
  */
 static TupleTableSlot *
-postgresExecForeignInsert(EState *estate,
+mollydbExecForeignInsert(EState *estate,
 						  ResultRelInfo *resultRelInfo,
 						  TupleTableSlot *slot,
 						  TupleTableSlot *planSlot)
@@ -1819,11 +1819,11 @@ postgresExecForeignInsert(EState *estate,
 }
 
 /*
- * postgresExecForeignUpdate
+ * mollydbExecForeignUpdate
  *		Update one row in a foreign table
  */
 static TupleTableSlot *
-postgresExecForeignUpdate(EState *estate,
+mollydbExecForeignUpdate(EState *estate,
 						  ResultRelInfo *resultRelInfo,
 						  TupleTableSlot *slot,
 						  TupleTableSlot *planSlot)
@@ -1895,11 +1895,11 @@ postgresExecForeignUpdate(EState *estate,
 }
 
 /*
- * postgresExecForeignDelete
+ * mollydbExecForeignDelete
  *		Delete one row from a foreign table
  */
 static TupleTableSlot *
-postgresExecForeignDelete(EState *estate,
+mollydbExecForeignDelete(EState *estate,
 						  ResultRelInfo *resultRelInfo,
 						  TupleTableSlot *slot,
 						  TupleTableSlot *planSlot)
@@ -1971,11 +1971,11 @@ postgresExecForeignDelete(EState *estate,
 }
 
 /*
- * postgresEndForeignModify
+ * mollydbEndForeignModify
  *		Finish an insert/update/delete operation on a foreign table
  */
 static void
-postgresEndForeignModify(EState *estate,
+mollydbEndForeignModify(EState *estate,
 						 ResultRelInfo *resultRelInfo)
 {
 	PgFdwModifyState *fmstate = (PgFdwModifyState *) resultRelInfo->ri_FdwState;
@@ -2009,12 +2009,12 @@ postgresEndForeignModify(EState *estate,
 }
 
 /*
- * postgresIsForeignRelUpdatable
+ * mollydbIsForeignRelUpdatable
  *		Determine whether a foreign table supports INSERT, UPDATE and/or
  *		DELETE.
  */
 static int
-postgresIsForeignRelUpdatable(Relation rel)
+mollydbIsForeignRelUpdatable(Relation rel)
 {
 	bool		updatable;
 	ForeignTable *table;
@@ -2022,7 +2022,7 @@ postgresIsForeignRelUpdatable(Relation rel)
 	ListCell   *lc;
 
 	/*
-	 * By default, all postgres_fdw foreign tables are assumed updatable. This
+	 * By default, all mollydb_fdw foreign tables are assumed updatable. This
 	 * can be overridden by a per-server setting, which in turn can be
 	 * overridden by a per-table setting.
 	 */
@@ -2054,11 +2054,11 @@ postgresIsForeignRelUpdatable(Relation rel)
 }
 
 /*
- * postgresRecheckForeignScan
+ * mollydbRecheckForeignScan
  *		Execute a local join execution plan for a foreign join
  */
 static bool
-postgresRecheckForeignScan(ForeignScanState *node, TupleTableSlot *slot)
+mollydbRecheckForeignScan(ForeignScanState *node, TupleTableSlot *slot)
 {
 	Index		scanrelid = ((Scan *) node->ss.ps.plan)->scanrelid;
 	PlanState  *outerPlan = outerPlanState(node);
@@ -2082,14 +2082,14 @@ postgresRecheckForeignScan(ForeignScanState *node, TupleTableSlot *slot)
 }
 
 /*
- * postgresPlanDirectModify
+ * mollydbPlanDirectModify
  *		Consider a direct foreign table modification
  *
  * Decide whether it is safe to modify a foreign table directly, and if so,
  * rewrite subplan accordingly.
  */
 static bool
-postgresPlanDirectModify(PlannerInfo *root,
+mollydbPlanDirectModify(PlannerInfo *root,
 						 ModifyTable *plan,
 						 Index resultRelation,
 						 int subplan_index)
@@ -2242,11 +2242,11 @@ postgresPlanDirectModify(PlannerInfo *root,
 }
 
 /*
- * postgresBeginDirectModify
+ * mollydbBeginDirectModify
  *		Prepare a direct foreign table modification
  */
 static void
-postgresBeginDirectModify(ForeignScanState *node, int eflags)
+mollydbBeginDirectModify(ForeignScanState *node, int eflags)
 {
 	ForeignScan *fsplan = (ForeignScan *) node->ss.ps.plan;
 	EState	   *estate = node->ss.ps.state;
@@ -2302,7 +2302,7 @@ postgresBeginDirectModify(ForeignScanState *node, int eflags)
 
 	/* Create context for per-tuple temp workspace. */
 	dmstate->temp_cxt = AllocSetContextCreate(estate->es_query_cxt,
-											  "postgres_fdw temporary data",
+											  "mollydb_fdw temporary data",
 											  ALLOCSET_SMALL_MINSIZE,
 											  ALLOCSET_SMALL_INITSIZE,
 											  ALLOCSET_SMALL_MAXSIZE);
@@ -2326,11 +2326,11 @@ postgresBeginDirectModify(ForeignScanState *node, int eflags)
 }
 
 /*
- * postgresIterateDirectModify
+ * mollydbIterateDirectModify
  *		Execute a direct foreign table modification
  */
 static TupleTableSlot *
-postgresIterateDirectModify(ForeignScanState *node)
+mollydbIterateDirectModify(ForeignScanState *node)
 {
 	PgFdwDirectModifyState *dmstate = (PgFdwDirectModifyState *) node->fdw_state;
 	EState	   *estate = node->ss.ps.state;
@@ -2370,11 +2370,11 @@ postgresIterateDirectModify(ForeignScanState *node)
 }
 
 /*
- * postgresEndDirectModify
+ * mollydbEndDirectModify
  *		Finish a direct foreign table modification
  */
 static void
-postgresEndDirectModify(ForeignScanState *node)
+mollydbEndDirectModify(ForeignScanState *node)
 {
 	PgFdwDirectModifyState *dmstate = (PgFdwDirectModifyState *) node->fdw_state;
 
@@ -2394,11 +2394,11 @@ postgresEndDirectModify(ForeignScanState *node)
 }
 
 /*
- * postgresExplainForeignScan
+ * mollydbExplainForeignScan
  *		Produce extra output for EXPLAIN of a ForeignScan on a foreign table
  */
 static void
-postgresExplainForeignScan(ForeignScanState *node, ExplainState *es)
+mollydbExplainForeignScan(ForeignScanState *node, ExplainState *es)
 {
 	List	   *fdw_private;
 	char	   *sql;
@@ -2427,11 +2427,11 @@ postgresExplainForeignScan(ForeignScanState *node, ExplainState *es)
 }
 
 /*
- * postgresExplainForeignModify
+ * mollydbExplainForeignModify
  *		Produce extra output for EXPLAIN of a ModifyTable on a foreign table
  */
 static void
-postgresExplainForeignModify(ModifyTableState *mtstate,
+mollydbExplainForeignModify(ModifyTableState *mtstate,
 							 ResultRelInfo *rinfo,
 							 List *fdw_private,
 							 int subplan_index,
@@ -2447,12 +2447,12 @@ postgresExplainForeignModify(ModifyTableState *mtstate,
 }
 
 /*
- * postgresExplainDirectModify
+ * mollydbExplainDirectModify
  *		Produce extra output for EXPLAIN of a ForeignScan that modifies a
  *		foreign table directly
  */
 static void
-postgresExplainDirectModify(ForeignScanState *node, ExplainState *es)
+mollydbExplainDirectModify(ForeignScanState *node, ExplainState *es)
 {
 	List	   *fdw_private;
 	char	   *sql;
@@ -2995,7 +2995,7 @@ set_transmission_modes(void)
 								 PGC_USERSET, PGC_S_SESSION,
 								 GUC_ACTION_SAVE, true, 0, false);
 	if (IntervalStyle != INTSTYLE_POSTGRES)
-		(void) set_config_option("intervalstyle", "postgres",
+		(void) set_config_option("intervalstyle", "mollydb",
 								 PGC_USERSET, PGC_S_SESSION,
 								 GUC_ACTION_SAVE, true, 0, false);
 	if (extra_float_digits < 3)
@@ -3327,7 +3327,7 @@ prepare_query_params(PlanState *node,
 	 * practice, we expect that all these expressions will be just Params, so
 	 * we could possibly do something more efficient than using the full
 	 * expression-eval machinery for this.  But probably there would be little
-	 * benefit, and it'd require postgres_fdw to know more than is desirable
+	 * benefit, and it'd require mollydb_fdw to know more than is desirable
 	 * about Param evaluation.)
 	 */
 	*param_exprs = (List *) ExecInitExpr((Expr *) fdw_exprs, node);
@@ -3377,11 +3377,11 @@ process_query_params(ExprContext *econtext,
 }
 
 /*
- * postgresAnalyzeForeignTable
+ * mollydbAnalyzeForeignTable
  *		Test whether analyzing this foreign table is supported
  */
 static bool
-postgresAnalyzeForeignTable(Relation relation,
+mollydbAnalyzeForeignTable(Relation relation,
 							AcquireSampleRowsFunc *func,
 							BlockNumber *totalpages)
 {
@@ -3392,12 +3392,12 @@ postgresAnalyzeForeignTable(Relation relation,
 	PGresult   *volatile res = NULL;
 
 	/* Return the row-analysis function pointer */
-	*func = postgresAcquireSampleRowsFunc;
+	*func = mollydbAcquireSampleRowsFunc;
 
 	/*
 	 * Now we have to get the number of pages.  It's annoying that the ANALYZE
 	 * API requires us to return that now, because it forces some duplication
-	 * of effort between this routine and postgresAcquireSampleRowsFunc.  But
+	 * of effort between this routine and mollydbAcquireSampleRowsFunc.  But
 	 * it's probably not worth redefining that API at this point.
 	 */
 
@@ -3443,7 +3443,7 @@ postgresAnalyzeForeignTable(Relation relation,
 }
 
 /*
- * Acquire a random sample of rows from foreign table managed by postgres_fdw.
+ * Acquire a random sample of rows from foreign table managed by mollydb_fdw.
  *
  * We fetch the whole table from the remote side and pick out some sample rows.
  *
@@ -3459,7 +3459,7 @@ postgresAnalyzeForeignTable(Relation relation,
  * currently (the planner only pays attention to correlation for indexscans).
  */
 static int
-postgresAcquireSampleRowsFunc(Relation relation, int elevel,
+mollydbAcquireSampleRowsFunc(Relation relation, int elevel,
 							  HeapTuple *rows, int targrows,
 							  double *totalrows,
 							  double *totaldeadrows)
@@ -3487,7 +3487,7 @@ postgresAcquireSampleRowsFunc(Relation relation, int elevel,
 	/* Remember ANALYZE context, and create a per-tuple temp context */
 	astate.anl_cxt = CurrentMemoryContext;
 	astate.temp_cxt = AllocSetContextCreate(CurrentMemoryContext,
-											"postgres_fdw temporary data",
+											"mollydb_fdw temporary data",
 											ALLOCSET_SMALL_MINSIZE,
 											ALLOCSET_SMALL_INITSIZE,
 											ALLOCSET_SMALL_MAXSIZE);
@@ -3684,7 +3684,7 @@ analyze_row_processor(PGresult *res, int row, PgFdwAnalyzeState *astate)
  * Import a foreign schema
  */
 static List *
-postgresImportForeignSchema(ImportForeignSchemaStmt *stmt, Oid serverOid)
+mollydbImportForeignSchema(ImportForeignSchemaStmt *stmt, Oid serverOid)
 {
 	List	   *commands = NIL;
 	bool		import_collate = true;
@@ -4211,11 +4211,11 @@ add_paths_with_pathkeys_for_rel(PlannerInfo *root, RelOptInfo *rel,
 }
 
 /*
- * postgresGetForeignJoinPaths
+ * mollydbGetForeignJoinPaths
  *		Add possible ForeignPath to joinrel, if join is safe to push down.
  */
 static void
-postgresGetForeignJoinPaths(PlannerInfo *root,
+mollydbGetForeignJoinPaths(PlannerInfo *root,
 							RelOptInfo *joinrel,
 							RelOptInfo *outerrel,
 							RelOptInfo *innerrel,

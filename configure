@@ -1515,7 +1515,7 @@ Optional Packages:
   --with-python           build Python modules (PL/Python)
   --with-gssapi           build with GSSAPI support
   --with-krb-srvnam=NAME  default service principal name in Kerberos (GSSAPI)
-                          [postgres]
+                          [mollydb]
   --with-pam              build with PAM support
   --with-bsd-auth         build with BSD Authentication support
   --with-ldap             build with LDAP support
@@ -5526,7 +5526,7 @@ if test "${with_krb_srvnam+set}" = set; then :
   esac
 
 else
-  with_krb_srvnam="postgres"
+  with_krb_srvnam="mollydb"
 fi
 
 
@@ -10655,11 +10655,11 @@ $as_echo "$pgac_cv_ldap_safe" >&6; }
 if test "$pgac_cv_ldap_safe" != yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
 *** With OpenLDAP versions 2.4.24 through 2.4.31, inclusive, each backend
-*** process that loads libpq (via WAL receiver, dblink, or postgres_fdw) and
+*** process that loads libpq (via WAL receiver, dblink, or mollydb_fdw) and
 *** also uses LDAP will crash on exit." >&5
 $as_echo "$as_me: WARNING:
 *** With OpenLDAP versions 2.4.24 through 2.4.31, inclusive, each backend
-*** process that loads libpq (via WAL receiver, dblink, or postgres_fdw) and
+*** process that loads libpq (via WAL receiver, dblink, or mollydb_fdw) and
 *** also uses LDAP will crash on exit." >&2;}
 fi
   else

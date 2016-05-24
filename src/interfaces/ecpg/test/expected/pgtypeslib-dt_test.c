@@ -77,7 +77,7 @@ if (sqlca.sqlcode < 0) sqlprint ( );}
 if (sqlca.sqlcode < 0) sqlprint ( );}
 #line 30 "dt_test.pgc"
 
-	{ ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "set intervalstyle to postgres_verbose", ECPGt_EOIT, ECPGt_EORT);
+	{ ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "set intervalstyle to mollydb_verbose", ECPGt_EOIT, ECPGt_EORT);
 #line 31 "dt_test.pgc"
 
 if (sqlca.sqlcode < 0) sqlprint ( );}

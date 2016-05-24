@@ -7,7 +7,7 @@
  *	src/bin/pg_upgrade/relfilenode.c
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "pg_upgrade.h"
 
@@ -94,8 +94,8 @@ transfer_all_new_dbs(DbInfoArr *old_db_arr, DbInfoArr *new_db_arr,
 
 		/*
 		 * Advance past any databases that exist in the new cluster but not in
-		 * the old, e.g. "postgres".  (The user might have removed the
-		 * 'postgres' database from the old cluster.)
+		 * the old, e.g. "mollydb".  (The user might have removed the
+		 * 'mollydb' database from the old cluster.)
 		 */
 		for (; new_dbnum < new_db_arr->ndbs; new_dbnum++)
 		{

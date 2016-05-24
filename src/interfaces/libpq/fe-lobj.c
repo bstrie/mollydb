@@ -15,14 +15,14 @@
 
 #ifdef WIN32
 /*
- *	As unlink/rename are #define'd in port.h (via postgres_fe.h), io.h
+ *	As unlink/rename are #define'd in port.h (via mollydb_fe.h), io.h
  *	must be included first on MS C.  Might as well do it for all WIN32's
  *	here.
  */
 #include <io.h>
 #endif
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #ifdef WIN32
 #include "win32.h"

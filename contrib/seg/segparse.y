@@ -1,7 +1,7 @@
 %{
 /* contrib/seg/segparse.y */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <math.h>
 

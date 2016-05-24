@@ -8,7 +8,7 @@
  * IDENTIFICATION
  *		src/backend/catalog/pg_db_role_setting.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/genam.h"
 #include "access/heapam.h"

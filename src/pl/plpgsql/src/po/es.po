@@ -4,7 +4,7 @@
 # This file is distributed under the same license as the MollyDB package.
 #
 # Álvaro Herrera <alvherre@alvh.no-ip.org> 2008-2013
-# Emanuel Calvo Franco <postgres.arg@gmail.com> 2008
+# Emanuel Calvo Franco <mollydb.arg@gmail.com> 2008
 # Jaime Casanova <jcasanov@systemguards.com.ec> 2010
 # Carlos Chapi <carloswaldo@babelruins.org> 2013
 #

@@ -20,7 +20,7 @@
  *
  * -------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 /* These are always necessary for a bgworker */
 #include "miscadmin.h"
@@ -179,7 +179,7 @@ worker_spi_main(Datum main_arg)
 	BackgroundWorkerUnblockSignals();
 
 	/* Connect to our database */
-	BackgroundWorkerInitializeConnection("postgres", NULL);
+	BackgroundWorkerInitializeConnection("mollydb", NULL);
 
 	elog(LOG, "%s initialized with %s.%s",
 		 MyBgworkerEntry->bgw_name, table->schema, table->name);

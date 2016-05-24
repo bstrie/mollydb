@@ -7,7 +7,7 @@
  *	src/bin/pg_upgrade/file.c
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "access/visibilitymap.h"
 #include "pg_upgrade.h"

@@ -6,7 +6,7 @@
  * src/bin/pg_xlogdump/rmgrdesc.c
  */
 #define FRONTEND 1
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/brin_xlog.h"
 #include "access/clog.h"

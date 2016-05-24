@@ -1,18 +1,18 @@
-/* contrib/postgres_fdw/postgres_fdw--1.0.sql */
+/* contrib/mollydb_fdw/mollydb_fdw--1.0.sql */
 
 -- complain if script is sourced in psql, rather than via CREATE EXTENSION
-\echo Use "CREATE EXTENSION postgres_fdw" to load this file. \quit
+\echo Use "CREATE EXTENSION mollydb_fdw" to load this file. \quit
 
-CREATE FUNCTION postgres_fdw_handler()
+CREATE FUNCTION mollydb_fdw_handler()
 RETURNS fdw_handler
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT;
 
-CREATE FUNCTION postgres_fdw_validator(text[], oid)
+CREATE FUNCTION mollydb_fdw_validator(text[], oid)
 RETURNS void
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT;
 
-CREATE FOREIGN DATA WRAPPER postgres_fdw
-  HANDLER postgres_fdw_handler
-  VALIDATOR postgres_fdw_validator;
+CREATE FOREIGN DATA WRAPPER mollydb_fdw
+  HANDLER mollydb_fdw_handler
+  VALIDATOR mollydb_fdw_validator;

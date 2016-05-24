@@ -314,7 +314,7 @@ msgid "RAISE option already specified: %s"
 msgstr "RAISE 選項已指定: %s"
 
 # commands/vacuum.c:2258 commands/vacuumlazy.c:489 commands/vacuumlazy.c:770
-# nodes/print.c:86 storage/lmgr/deadlock.c:888 tcop/postgres.c:3285
+# nodes/print.c:86 storage/lmgr/deadlock.c:888 tcop/mollydb.c:3285
 #: pl_exec.c:2794 pl_exec.c:2795
 #, c-format
 msgid "%s"

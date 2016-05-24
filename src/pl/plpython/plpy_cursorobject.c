@@ -4,7 +4,7 @@
  * src/pl/plpython/plpy_cursorobject.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <limits.h>
 

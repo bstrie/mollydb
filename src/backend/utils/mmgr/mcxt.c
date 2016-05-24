@@ -19,7 +19,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "miscadmin.h"
 #include "utils/memdebug.h"
@@ -746,7 +746,7 @@ MemoryContextCreate(NodeTag tag, Size size,
  *		Allocate space within the specified context.
  *
  * This could be turned into a macro, but we'd have to import
- * nodes/memnodes.h into postgres.h which seems a bad idea.
+ * nodes/memnodes.h into mollydb.h which seems a bad idea.
  */
 void *
 MemoryContextAlloc(MemoryContext context, Size size)

@@ -26,7 +26,7 @@
  *		"destination" portals synchronized.
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/printtup.h"
 #include "access/xact.h"

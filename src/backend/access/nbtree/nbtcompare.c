@@ -46,7 +46,7 @@
  *	they have to be careful to free any detoasted copy of an input datum.
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "utils/builtins.h"
 #include "utils/sortsupport.h"

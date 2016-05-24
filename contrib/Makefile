@@ -39,7 +39,7 @@ SUBDIRS = \
 		pgrowlocks	\
 		pgstattuple	\
 		pg_visibility	\
-		postgres_fdw	\
+		mollydb_fdw	\
 		seg		\
 		spi		\
 		tablefunc	\

@@ -31,7 +31,7 @@
 /*************************************************************/
 
 
-#include "postgres.h"
+#include "mollydb.h"
 #include "optimizer/geqo_recombination.h"
 #include "optimizer/geqo_random.h"
 

@@ -717,22 +717,22 @@ msgstr ""
 #: initdb.c:2800
 #, c-format
 msgid ""
-"The program \"postgres\" is needed by %s but was not found in the\n"
+"The program \"mollydb\" is needed by %s but was not found in the\n"
 "same directory as \"%s\".\n"
 "Check your installation.\n"
 msgstr ""
-"Le programme « postgres » est nécessaire à %s mais n'a pas été trouvé dans\n"
+"Le programme « mollydb » est nécessaire à %s mais n'a pas été trouvé dans\n"
 "le même répertoire que « %s ».\n"
 "Vérifiez votre installation.\n"
 
 #: initdb.c:2807
 #, c-format
 msgid ""
-"The program \"postgres\" was found by \"%s\"\n"
+"The program \"mollydb\" was found by \"%s\"\n"
 "but was not the same version as %s.\n"
 "Check your installation.\n"
 msgstr ""
-"Le programme « postgres » a été trouvé par « %s » mais n'est pas de la même\n"
+"Le programme « mollydb » a été trouvé par « %s » mais n'est pas de la même\n"
 "version que « %s ».\n"
 "Vérifiez votre installation.\n"
 
@@ -1033,8 +1033,8 @@ msgstr ""
 #~ msgid "%s: could not to allocate SIDs: error code %lu\n"
 #~ msgstr "%s : n'a pas pu allouer les SID : code d'erreur %lu\n"
 
-#~ msgid "copying template1 to postgres ... "
-#~ msgstr "copie de template1 vers postgres... "
+#~ msgid "copying template1 to mollydb ... "
+#~ msgstr "copie de template1 vers mollydb... "
 
 #~ msgid "copying template1 to template0 ... "
 #~ msgstr "copie de template1 vers template0... "

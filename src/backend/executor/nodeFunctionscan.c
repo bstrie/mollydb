@@ -20,7 +20,7 @@
  *		ExecEndFunctionScan		releases any storage allocated.
  *		ExecReScanFunctionScan	rescans the function
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "catalog/pg_type.h"
 #include "executor/nodeFunctionscan.h"

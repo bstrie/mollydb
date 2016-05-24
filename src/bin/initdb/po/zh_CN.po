@@ -471,7 +471,7 @@ msgid "copying template1 to template0 ... "
 msgstr "拷贝 template1 到 template0 ... "
 
 #: initdb.c:2372
-msgid "copying template1 to postgres ... "
+msgid "copying template1 to mollydb ... "
 msgstr "拷贝 template1 到 template0 ... "
 
 #: initdb.c:2407
@@ -773,22 +773,22 @@ msgstr ""
 #: initdb.c:2890
 #, c-format
 msgid ""
-"The program \"postgres\" is needed by %s but was not found in the\n"
+"The program \"mollydb\" is needed by %s but was not found in the\n"
 "same directory as \"%s\".\n"
 "Check your installation.\n"
 msgstr ""
-"%s 需要程序 \"postgres\", 但是在同一个目录 \"%s\" 中没找到.\n"
+"%s 需要程序 \"mollydb\", 但是在同一个目录 \"%s\" 中没找到.\n"
 "\n"
 "检查您的安装.\n"
 
 #: initdb.c:2897
 #, c-format
 msgid ""
-"The program \"postgres\" was found by \"%s\"\n"
+"The program \"mollydb\" was found by \"%s\"\n"
 "but was not the same version as %s.\n"
 "Check your installation.\n"
 msgstr ""
-"%s 找到程序 \"postgres\", 但是和版本 \"%s\" 不一致.\n"
+"%s 找到程序 \"mollydb\", 但是和版本 \"%s\" 不一致.\n"
 "\n"
 "检查您的安装.\n"
 
@@ -1031,7 +1031,7 @@ msgstr ""
 #| "\n"
 #| "Success. You can now start the database server using:\n"
 #| "\n"
-#| "    %s%s%spostgres%s -D %s%s%s\n"
+#| "    %s%s%smollydb%s -D %s%s%s\n"
 #| "or\n"
 #| "    %s%s%spg_ctl%s -D %s%s%s -l logfile start\n"
 #| "\n"

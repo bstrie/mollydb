@@ -12,7 +12,7 @@ $node_master->init(allows_streaming => 1);
 $node_master->start;
 
 # And some content
-$node_master->safe_psql('postgres',
+$node_master->safe_psql('mollydb',
 	"CREATE TABLE tab_int AS SELECT generate_series(1, 10) AS a");
 
 # Take backup
@@ -36,20 +36,20 @@ $node_standby->start;
 # machines, this allows to have a predictable behavior when comparing the
 # delay between data insertion moment on master and replay time on standby.
 my $master_insert_time = time();
-$node_master->safe_psql('postgres',
+$node_master->safe_psql('mollydb',
 	"INSERT INTO tab_int VALUES (generate_series(11, 20))");
 
 # Now wait for replay to complete on standby. We're done waiting when the
 # slave has replayed up to the previously saved master LSN.
 my $until_lsn =
-  $node_master->safe_psql('postgres', "SELECT pg_current_xlog_location()");
+  $node_master->safe_psql('mollydb', "SELECT pg_current_xlog_location()");
 
 my $remaining = 90;
 while ($remaining-- > 0)
 {
 	# Done waiting?
 	my $replay_status =
-	  $node_standby->safe_psql('postgres',
+	  $node_standby->safe_psql('mollydb',
 		"SELECT (pg_last_xlog_replay_location() - '$until_lsn'::pg_lsn) >= 0");
 	last if $replay_status eq 't';
 

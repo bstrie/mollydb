@@ -6004,7 +6004,7 @@
      <para>
       This fixes some cases where the database failed to start on Windows,
       often with misleading error messages such as <quote>could not locate
-      matching postgres executable</quote>.
+      matching mollydb executable</quote>.
      </para>
     </listitem>
 
@@ -8519,7 +8519,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
        </para>
 
        <para>
-        Valid values are:  <literal>postgres</>, <literal>postgres_verbose</>,
+        Valid values are:  <literal>mollydb</>, <literal>mollydb_verbose</>,
         <literal>sql_standard</>, <literal>iso_8601</>.  This setting also
         controls the handling of negative <type>interval</> input when only
         some fields have positive/negative designations.
@@ -9781,7 +9781,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
       <para>
        Clean up the <filename>include/catalog/</> header files so that
        frontend programs can include them without including
-       <filename>postgres.h</>
+       <filename>mollydb.h</>
        (Zdenek Kotala)
       </para>
      </listitem>

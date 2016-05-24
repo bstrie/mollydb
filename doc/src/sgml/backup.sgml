@@ -205,10 +205,10 @@ pg_dumpall &gt; <replaceable>outfile</>
 </synopsis>
     The resulting dump can be restored with <application>psql</>:
 <synopsis>
-psql -f <replaceable class="parameter">infile</replaceable> postgres
+psql -f <replaceable class="parameter">infile</replaceable> mollydb
 </synopsis>
     (Actually, you can specify any existing database name to start from,
-    but if you are loading into an empty cluster then <literal>postgres</>
+    but if you are loading into an empty cluster then <literal>mollydb</>
     should usually be used.)  It is always necessary to have
     database superuser access when restoring a <application>pg_dumpall</>
     dump, as that is required to restore the role and tablespace information.

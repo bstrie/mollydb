@@ -15,7 +15,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -40,7 +40,7 @@
  * Formerly, this code attempted to cache the function and type info
  * looked up by fetch_fp_info, but only for the duration of a single
  * transaction command (since in theory the info could change between
- * commands).  This was utterly useless, because postgres.c executes
+ * commands).  This was utterly useless, because mollydb.c executes
  * each fastpath call as a separate transaction command, and so the
  * cached data could never actually have been reused.  If it had worked
  * as intended, it would have had problems anyway with dangling references
@@ -249,7 +249,7 @@ fetch_fp_info(Oid func_id, struct fp_info * fip)
  * This corresponds to the libpq protocol symbol "F".
  *
  * INPUT:
- *		In protocol version 3, postgres.c has already read the message body
+ *		In protocol version 3, mollydb.c has already read the message body
  *		and will pass it in msgBuf.
  *		In old protocol, the passed msgBuf is empty and we must read the
  *		message here.

@@ -67,7 +67,7 @@ print "Running first build...\n";
 $cmd =
     "\"$docroot/$openjade/bin/openjade\" -V html-index -wall "
   . "-wno-unused-param -wno-empty -D . -c \"$docroot/$dsssl/catalog\" "
-  . "-d stylesheet.dsl -i output-html -t sgml postgres.sgml 2>&1 "
+  . "-d stylesheet.dsl -i output-html -t sgml mollydb.sgml 2>&1 "
   . "| findstr /V \"DTDDECL catalog entries are not supported\" ";
 system($cmd);    # die "openjade" if $?;
 print "Running collateindex...\n";
@@ -80,7 +80,7 @@ print "Running second build...\n";
 $cmd =
     "\"$docroot/$openjade/bin/openjade\" -wall -wno-unused-param -wno-empty "
   . "-D . -c \"$docroot/$dsssl/catalog\" -d stylesheet.dsl -t sgml "
-  . "-i output-html -i include-index postgres.sgml 2>&1 "
+  . "-i output-html -i include-index mollydb.sgml 2>&1 "
   . "| findstr /V \"DTDDECL catalog entries are not supported\" ";
 
 system($cmd);    # die "openjade" if $?;

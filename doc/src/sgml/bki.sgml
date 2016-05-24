@@ -23,7 +23,7 @@
   by a program named <filename>genbki.pl</filename>, which reads some
   specially formatted C header files in the <filename>src/include/catalog/</>
   directory of the source tree.  The created <acronym>BKI</acronym> file
-  is called <filename>postgres.bki</filename> and is
+  is called <filename>mollydb.bki</filename> and is
   normally installed in the
   <filename>share</filename> subdirectory of the installation tree.
  </para>
@@ -39,7 +39,7 @@
   <para>
    This section describes how the <productname>MollyDB</productname>
    backend interprets <acronym>BKI</acronym> files.  This description
-   will be easier to understand if the <filename>postgres.bki</filename>
+   will be easier to understand if the <filename>mollydb.bki</filename>
    file is at hand as an example.
   </para>
 
@@ -273,7 +273,7 @@
   </para>
 
   <para>
-   Thus, the structure of the <filename>postgres.bki</filename> file has to
+   Thus, the structure of the <filename>mollydb.bki</filename> file has to
    be:
    <orderedlist>
     <listitem>

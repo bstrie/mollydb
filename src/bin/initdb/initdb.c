@@ -10,7 +10,7 @@
  * all its data, create the files that hold the global tables, create
  * a few other control files for it, and create three databases: the
  * template databases "template0" and "template1", and a default user
- * database "postgres".
+ * database "mollydb".
  *
  * The template databases are ordinary MollyDB databases.  template0
  * is never supposed to change after initdb, whereas template1 can be
@@ -19,10 +19,10 @@
  *
  * For largely-historical reasons, the template1 database is the one built
  * by the basic bootstrap process.  After it is complete, template0 and
- * the default database, postgres, are made just by copying template1.
+ * the default database, mollydb, are made just by copying template1.
  *
- * To create template1, we run the postgres (backend) program in bootstrap
- * mode and feed it data from the postgres.bki library file.  After this
+ * To create template1, we run the mollydb (backend) program in bootstrap
+ * mode and feed it data from the mollydb.bki library file.  After this
  * initial bootstrap phase, some additional stuff is created by normal
  * SQL commands fed to a standalone backend.  Some of those commands are
  * just embedded into this program (yeah, it's ugly), but larger chunks
@@ -46,7 +46,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <dirent.h>
 #include <fcntl.h>
@@ -267,7 +267,7 @@ static void setup_schema(FILE *cmdfd);
 static void load_plpgsql(FILE *cmdfd);
 static void vacuum_db(FILE *cmdfd);
 static void make_template0(FILE *cmdfd);
-static void make_postgres(FILE *cmdfd);
+static void make_mollydb(FILE *cmdfd);
 static void fsync_pgdata(void);
 static void trapsig(int signum);
 static void check_ok(void);
@@ -290,7 +290,7 @@ void		warn_on_mount_point(int error);
 void		initialize_data_directory(void);
 
 /*
- * macros for running pipes to postgres
+ * macros for running pipes to mollydb
  */
 #define PG_CMD_DECL		char cmd[MAXPGPATH]; FILE *cmdfd
 
@@ -1548,7 +1548,7 @@ setup_auth(FILE *cmdfd)
 }
 
 /*
- * get the superuser password if required, and call postgres to set it
+ * get the superuser password if required, and call mollydb to set it
  */
 static void
 get_set_pwd(FILE *cmdfd)
@@ -1768,7 +1768,7 @@ setup_description(FILE *cmdfd)
 
 	/*
 	 * Even though the tables are temp, drop them explicitly so they don't get
-	 * copied into template0/postgres databases.
+	 * copied into template0/mollydb databases.
 	 */
 	PG_CMD_PUTS("DROP TABLE tmp_pg_description;\n\n");
 	PG_CMD_PUTS("DROP TABLE tmp_pg_shdescription;\n\n");
@@ -1934,7 +1934,7 @@ setup_collation(FILE *cmdfd)
 
 	/*
 	 * Even though the table is temp, drop it explicitly so it doesn't get
-	 * copied into template0/postgres databases.
+	 * copied into template0/mollydb databases.
 	 */
 	PG_CMD_PUTS("DROP TABLE tmp_pg_collation;\n\n");
 
@@ -2283,19 +2283,19 @@ make_template0(FILE *cmdfd)
 }
 
 /*
- * copy template1 to postgres
+ * copy template1 to mollydb
  */
 static void
-make_postgres(FILE *cmdfd)
+make_mollydb(FILE *cmdfd)
 {
 	const char *const * line;
-	static const char *const postgres_setup[] = {
-		"CREATE DATABASE postgres;\n\n",
-		"COMMENT ON DATABASE postgres IS 'default administrative connection database';\n\n",
+	static const char *const mollydb_setup[] = {
+		"CREATE DATABASE mollydb;\n\n",
+		"COMMENT ON DATABASE mollydb IS 'default administrative connection database';\n\n",
 		NULL
 	};
 
-	for (line = postgres_setup; *line; line++)
+	for (line = mollydb_setup; *line; line++)
 		PG_CMD_PUTS(*line);
 }
 
@@ -2774,7 +2774,7 @@ setup_pgdata(void)
 	canonicalize_path(pg_data);
 
 	/*
-	 * we have to set PGDATA for postgres rather than pass it on the command
+	 * we have to set PGDATA for mollydb rather than pass it on the command
 	 * line to avoid dumb quoting problems on Windows, and we would especially
 	 * need quotes otherwise on Windows because paths there are most likely to
 	 * have embedded spaces.
@@ -2789,7 +2789,7 @@ setup_bin_paths(const char *argv0)
 {
 	int			ret;
 
-	if ((ret = find_other_exec(argv0, "postgres", PG_BACKEND_VERSIONSTR,
+	if ((ret = find_other_exec(argv0, "mollydb", PG_BACKEND_VERSIONSTR,
 							   backend_exec)) < 0)
 	{
 		char		full_path[MAXPGPATH];
@@ -2799,14 +2799,14 @@ setup_bin_paths(const char *argv0)
 
 		if (ret == -1)
 			fprintf(stderr,
-					_("The program \"postgres\" is needed by %s "
+					_("The program \"mollydb\" is needed by %s "
 					  "but was not found in the\n"
 					  "same directory as \"%s\".\n"
 					  "Check your installation.\n"),
 					progname, full_path);
 		else
 			fprintf(stderr,
-					_("The program \"postgres\" was found by \"%s\"\n"
+					_("The program \"mollydb\" was found by \"%s\"\n"
 					  "but was not the same version as %s.\n"
 					  "Check your installation.\n"),
 					full_path, progname);
@@ -2924,9 +2924,9 @@ setup_locale_encoding(void)
 void
 setup_data_file_paths(void)
 {
-	set_input(&bki_file, "postgres.bki");
-	set_input(&desc_file, "postgres.description");
-	set_input(&shdesc_file, "postgres.shdescription");
+	set_input(&bki_file, "mollydb.bki");
+	set_input(&desc_file, "mollydb.description");
+	set_input(&shdesc_file, "mollydb.shdescription");
 	set_input(&hba_file, "pg_hba.conf.sample");
 	set_input(&ident_file, "pg_ident.conf.sample");
 	set_input(&conf_file, "mollydb.conf.sample");
@@ -3326,7 +3326,7 @@ initialize_data_directory(void)
 
 	make_template0(cmdfd);
 
-	make_postgres(cmdfd);
+	make_mollydb(cmdfd);
 
 	PG_CMD_CLOSE;
 

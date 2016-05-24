@@ -2340,7 +2340,7 @@ msgstr "是"
 msgid "no"
 msgstr "否"
 
-# postmaster/postmaster.c:1017 tcop/postgres.c:2115
+# postmaster/postmaster.c:1017 tcop/mollydb.c:2115
 #: describe.c:2148
 #: describe.c:3619
 #: describe.c:3683
@@ -3788,7 +3788,7 @@ msgstr "new_owner"
 msgid "new_schema"
 msgstr "new_schema"
 
-# postmaster/postmaster.c:1017 tcop/postgres.c:2115
+# postmaster/postmaster.c:1017 tcop/mollydb.c:2115
 #: sql_help.c:88
 #: sql_help.c:279
 #: sql_help.c:323

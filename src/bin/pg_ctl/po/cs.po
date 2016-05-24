@@ -248,7 +248,7 @@ msgstr "Běží server?\n"
 #, c-format
 msgid "%s: cannot stop server; single-user server is running (PID: %ld)\n"
 msgstr ""
-"%s: nemohu zastavit server; postgres běží v single-user módu (PID: %ld)\n"
+"%s: nemohu zastavit server; mollydb běží v single-user módu (PID: %ld)\n"
 
 #: pg_ctl.c:878 pg_ctl.c:973
 #, c-format
@@ -298,11 +298,11 @@ msgstr "přesto server spouštím\n"
 #, c-format
 msgid "%s: cannot restart server; single-user server is running (PID: %ld)\n"
 msgstr ""
-"%s: nemohu restartovat server; postgres běží v single-user módu (PID: %ld)\n"
+"%s: nemohu restartovat server; mollydb běží v single-user módu (PID: %ld)\n"
 
 #: pg_ctl.c:964 pg_ctl.c:1049
 msgid "Please terminate the single-user server and try again.\n"
-msgstr "Prosím ukončete single-user postgres a zkuste to znovu.\n"
+msgstr "Prosím ukončete single-user mollydb a zkuste to znovu.\n"
 
 #: pg_ctl.c:1023
 #, c-format
@@ -389,8 +389,8 @@ msgstr "%s: nelze najít vlastní spustitelný soubor\n"
 
 #: pg_ctl.c:1264
 #, c-format
-msgid "%s: could not find postgres program executable\n"
-msgstr "%s: nelze najít spustitelný program postgres\n"
+msgid "%s: could not find mollydb program executable\n"
+msgstr "%s: nelze najít spustitelný program mollydb\n"
 
 #: pg_ctl.c:1329 pg_ctl.c:1361
 #, c-format
@@ -619,8 +619,8 @@ msgstr ""
 
 #: pg_ctl.c:1792
 #, c-format
-msgid "  -c, --core-files       allow postgres to produce core files\n"
-msgstr "  -c, --core-files       povolit postgresu vytvářet core soubory\n"
+msgid "  -c, --core-files       allow mollydb to produce core files\n"
+msgstr "  -c, --core-files       povolit mollydbu vytvářet core soubory\n"
 
 #: pg_ctl.c:1794
 #, c-format
@@ -637,10 +637,10 @@ msgstr ""
 #: pg_ctl.c:1797
 #, c-format
 msgid ""
-"  -o OPTIONS             command line options to pass to postgres\n"
+"  -o OPTIONS             command line options to pass to mollydb\n"
 "                         (MollyDB server executable) or initdb\n"
 msgstr ""
-"  -o PŘEPÍNAČE            přepínače, které budou předány postgresu\n"
+"  -o PŘEPÍNAČE            přepínače, které budou předány mollydbu\n"
 "                          (spustitelnému souboru MollyDB) či initdb\n"
 
 #: pg_ctl.c:1799

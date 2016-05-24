@@ -696,22 +696,22 @@ msgstr ""
 #: initdb.c:2800
 #, c-format
 msgid ""
-"The program \"postgres\" is needed by %s but was not found in the\n"
+"The program \"mollydb\" is needed by %s but was not found in the\n"
 "same directory as \"%s\".\n"
 "Check your installation.\n"
 msgstr ""
-"Das Programm „postgres“ wird von %s benötigt, aber wurde nicht im\n"
+"Das Programm „mollydb“ wird von %s benötigt, aber wurde nicht im\n"
 "selben Verzeichnis wie „%s“ gefunden.\n"
 "Prüfen Sie Ihre Installation.\n"
 
 #: initdb.c:2807
 #, c-format
 msgid ""
-"The program \"postgres\" was found by \"%s\"\n"
+"The program \"mollydb\" was found by \"%s\"\n"
 "but was not the same version as %s.\n"
 "Check your installation.\n"
 msgstr ""
-"Das Programm „postgres“ wurde von %s gefunden,\n"
+"Das Programm „mollydb“ wurde von %s gefunden,\n"
 "aber es hatte nicht die gleiche Version wie %s.\n"
 "Prüfen Sie Ihre Installation.\n"
 

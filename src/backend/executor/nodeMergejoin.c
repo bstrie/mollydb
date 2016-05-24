@@ -90,7 +90,7 @@
  *		execution state information and is preserved across calls to
  *		ExecMergeJoin. -cim 10/31/89
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/nbtree.h"
 #include "executor/execdebug.h"

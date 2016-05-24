@@ -1329,7 +1329,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
     <listitem>
      <para>
       Fix <application>pg_dump</> and <application>pg_upgrade</> to support
-      cases where the <literal>postgres</> or <literal>template1</> database
+      cases where the <literal>mollydb</> or <literal>template1</> database
       is in a non-default tablespace (Marti Raudsepp, Bruce Momjian)
      </para>
     </listitem>
@@ -2082,7 +2082,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
      <para>
       This oversight could cause missing-clog-file errors for tables within
-      the <literal>postgres</> and <literal>template1</> databases.
+      the <literal>mollydb</> and <literal>template1</> databases.
      </para>
     </listitem>
 

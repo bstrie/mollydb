@@ -28,7 +28,7 @@
  *
  * contrib/pgcrypto/pgp-info.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "px.h"
 #include "mbuf.h"

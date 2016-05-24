@@ -18,7 +18,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/tuptoaster.h"
 #include "executor/tstoreReceiver.h"

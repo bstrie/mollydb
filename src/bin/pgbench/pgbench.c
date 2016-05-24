@@ -31,7 +31,7 @@
 #define FD_SETSIZE 1024			/* set before winsock2.h is included */
 #endif   /* ! WIN32 */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "getopt_long.h"
 #include "libpq-fe.h"
@@ -4413,7 +4413,7 @@ threadRun(void *arg)
 
 				/*
 				 * Ensure that the next report is in the future, in case
-				 * pgbench/postgres got stuck somewhere.
+				 * pgbench/mollydb got stuck somewhere.
 				 */
 				do
 				{

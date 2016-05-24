@@ -10,7 +10,7 @@
  */
 
 #define FRONTEND 1
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <dirent.h>
 #include <unistd.h>

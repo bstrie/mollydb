@@ -63,7 +63,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <unistd.h>
 #include <signal.h>
@@ -595,7 +595,7 @@ PostmasterMain(int argc, char *argv[])
 	 * Set up signal handlers for the postmaster process.
 	 *
 	 * CAUTION: when changing this list, check for side-effects on the signal
-	 * handling setup of child processes.  See tcop/postgres.c,
+	 * handling setup of child processes.  See tcop/mollydb.c,
 	 * bootstrap/bootstrap.c, postmaster/bgwriter.c, postmaster/walwriter.c,
 	 * postmaster/autovacuum.c, postmaster/pgarch.c, postmaster/pgstat.c,
 	 * postmaster/syslogger.c, postmaster/bgworker.c and
@@ -630,7 +630,7 @@ PostmasterMain(int argc, char *argv[])
 
 	/*
 	 * Parse command-line options.  CAUTION: keep this in sync with
-	 * tcop/postgres.c (the option sets should not conflict) and with the
+	 * tcop/mollydb.c (the option sets should not conflict) and with the
 	 * common help() function in main/main.c.
 	 */
 	while ((opt = getopt(argc, argv, "B:bc:C:D:d:EeFf:h:ijk:lN:nOo:Pp:r:S:sTt:W:-:")) != -1)
@@ -1355,23 +1355,23 @@ unlink_external_pid_file(int status, Datum arg)
 
 /*
  * Compute and check the directory paths to files that are part of the
- * installation (as deduced from the postgres executable's own location)
+ * installation (as deduced from the mollydb executable's own location)
  */
 static void
 getInstallationPaths(const char *argv0)
 {
 	DIR		   *pdir;
 
-	/* Locate the postgres executable itself */
+	/* Locate the mollydb executable itself */
 	if (find_my_exec(argv0, my_exec_path) < 0)
 		elog(FATAL, "%s: could not locate my own executable path", argv0);
 
 #ifdef EXEC_BACKEND
 	/* Locate executable backend before we change working directory */
-	if (find_other_exec(argv0, "postgres", PG_BACKEND_VERSIONSTR,
-						postgres_exec_path) < 0)
+	if (find_other_exec(argv0, "mollydb", PG_BACKEND_VERSIONSTR,
+						mollydb_exec_path) < 0)
 		ereport(FATAL,
-				(errmsg("%s: could not locate matching postgres executable",
+				(errmsg("%s: could not locate matching mollydb executable",
 						argv0)));
 #endif
 
@@ -1384,7 +1384,7 @@ getInstallationPaths(const char *argv0)
 	/*
 	 * Verify that there's a readable directory there; otherwise the Postgres
 	 * installation is incomplete or corrupt.  (A typical cause of this
-	 * failure is that the postgres executable has been moved or hardlinked to
+	 * failure is that the mollydb executable has been moved or hardlinked to
 	 * some directory that's not a sibling of the installation lib/
 	 * directory.)
 	 */
@@ -2523,9 +2523,9 @@ pmdie(SIGNAL_ARGS)
 
 	ereport(DEBUG2,
 			(errmsg_internal("postmaster received signal %d",
-							 postgres_signal_arg)));
+							 mollydb_signal_arg)));
 
-	switch (postgres_signal_arg)
+	switch (mollydb_signal_arg)
 	{
 		case SIGTERM:
 
@@ -4162,7 +4162,7 @@ BackendInitialize(Port *port)
 	 *
 	 * For a walsender, the ps display is set in the following form:
 	 *
-	 * postgres: wal sender process <user> <host> <activity>
+	 * mollydb: wal sender process <user> <host> <activity>
 	 *
 	 * To achieve that, we pass "wal sender process" as username and username
 	 * as dbname to init_ps_display(). XXX: should add a new variant of
@@ -4225,7 +4225,7 @@ BackendRun(Port *port)
 									  maxac * sizeof(char *));
 	ac = 0;
 
-	av[ac++] = "postgres";
+	av[ac++] = "mollydb";
 
 	/*
 	 * Pass any backend switches specified with -o on the postmaster's own
@@ -4298,7 +4298,7 @@ backend_forkexec(Port *port)
 	char	   *av[4];
 	int			ac = 0;
 
-	av[ac++] = "postgres";
+	av[ac++] = "mollydb";
 	av[ac++] = "--forkbackend";
 	av[ac++] = NULL;			/* filled in by internal_forkexec */
 
@@ -4384,11 +4384,11 @@ internal_forkexec(int argc, char *argv[], Port *port)
 	/* Fire off execv in child */
 	if ((pid = fork_process()) == 0)
 	{
-		if (execv(postgres_exec_path, argv) < 0)
+		if (execv(mollydb_exec_path, argv) < 0)
 		{
 			ereport(LOG,
 					(errmsg("could not execute server process \"%s\": %m",
-							postgres_exec_path)));
+							mollydb_exec_path)));
 			/* We're already in the child process here, can't return */
 			exit(1);
 		}
@@ -4465,7 +4465,7 @@ internal_forkexec(int argc, char *argv[], Port *port)
 	/* Format the cmd line */
 	cmdLine[sizeof(cmdLine) - 1] = '\0';
 	cmdLine[sizeof(cmdLine) - 2] = '\0';
-	snprintf(cmdLine, sizeof(cmdLine) - 1, "\"%s\"", postgres_exec_path);
+	snprintf(cmdLine, sizeof(cmdLine) - 1, "\"%s\"", mollydb_exec_path);
 	i = 0;
 	while (argv[++i] != NULL)
 	{
@@ -5057,7 +5057,7 @@ startup_die(SIGNAL_ARGS)
  * but we do use in backends.  If we were to SIG_IGN such signals in the
  * postmaster, then a newly started backend might drop a signal that arrives
  * before it's able to reconfigure its signal processing.  (See notes in
- * tcop/postgres.c.)
+ * tcop/mollydb.c.)
  */
 static void
 dummy_handler(SIGNAL_ARGS)
@@ -5194,7 +5194,7 @@ StartChildProcess(AuxProcType type)
 	/*
 	 * Set up command-line arguments for subprocess
 	 */
-	av[ac++] = "postgres";
+	av[ac++] = "mollydb";
 
 #ifdef EXEC_BACKEND
 	av[ac++] = "--forkboot";
@@ -5480,7 +5480,7 @@ bgworker_forkexec(int shmem_slot)
 
 	snprintf(forkav, MAXPGPATH, "--forkbgworker=%d", shmem_slot);
 
-	av[ac++] = "postgres";
+	av[ac++] = "mollydb";
 	av[ac++] = forkav;
 	av[ac++] = NULL;			/* filled in by postmaster_forkexec */
 	av[ac] = NULL;

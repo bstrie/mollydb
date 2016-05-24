@@ -52,10 +52,10 @@ sub configure_test_server_for_ssl
 	my $pgdata = $node->data_dir;
 
 	# Create test users and databases
-	$node->psql('postgres', "CREATE USER ssltestuser");
-	$node->psql('postgres', "CREATE USER anotheruser");
-	$node->psql('postgres', "CREATE DATABASE trustdb");
-	$node->psql('postgres', "CREATE DATABASE certdb");
+	$node->psql('mollydb', "CREATE USER ssltestuser");
+	$node->psql('mollydb', "CREATE USER anotheruser");
+	$node->psql('mollydb', "CREATE DATABASE trustdb");
+	$node->psql('mollydb', "CREATE DATABASE certdb");
 
 	# enable logging etc.
 	open CONF, ">>$pgdata/mollydb.conf";

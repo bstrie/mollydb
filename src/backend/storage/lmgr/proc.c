@@ -29,7 +29,7 @@
  * ProcKill -- destroys the shared memory state (and locks)
  * associated with the process.
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <signal.h>
 #include <unistd.h>

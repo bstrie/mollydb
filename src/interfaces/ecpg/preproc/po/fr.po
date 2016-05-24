@@ -185,7 +185,7 @@ msgstr ""
 
 #: ecpg.c:143
 #, c-format
-#| msgid "%s: could not locate matching postgres executable"
+#| msgid "%s: could not locate matching mollydb executable"
 msgid "%s: could not locate my own executable path\n"
 msgstr "%s : n'a pas pu localiser mon propre exécutable\n"
 

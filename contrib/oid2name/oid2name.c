@@ -7,7 +7,7 @@
  *
  * contrib/oid2name/oid2name.c
  */
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "libpq-fe.h"
 #include "pg_getopt.h"
@@ -556,7 +556,7 @@ main(int argc, char **argv)
 
 	if (my_opts->dbname == NULL)
 	{
-		my_opts->dbname = "postgres";
+		my_opts->dbname = "mollydb";
 		my_opts->nodb = true;
 	}
 	pgconn = sql_conn(my_opts);

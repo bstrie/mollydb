@@ -9,7 +9,7 @@ $node->init;
 $node->start;
 
 $node->issues_sql_like(
-	[ 'vacuumdb', '--analyze-in-stages', 'postgres' ],
+	[ 'vacuumdb', '--analyze-in-stages', 'mollydb' ],
 qr/.*statement:\ SET\ default_statistics_target=1;\ SET\ vacuum_cost_delay=0;
                    .*statement:\ ANALYZE.*
                    .*statement:\ SET\ default_statistics_target=10;\ RESET\ vacuum_cost_delay;

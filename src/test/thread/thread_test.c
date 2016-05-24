@@ -21,7 +21,7 @@
  */
 
 #if !defined(IN_CONFIGURE) && !defined(WIN32)
-#include "postgres.h"
+#include "mollydb.h"
 #else
 /* From src/include/c.h" */
 #ifndef bool

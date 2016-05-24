@@ -60,7 +60,7 @@
  *	alignment).
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 #include "miscadmin.h"
 
 #include "px-crypt.h"

@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
  * c_keywords.c
- *	  lexical token lookup for reserved words in postgres embedded SQL
+ *	  lexical token lookup for reserved words in mollydb embedded SQL
  *
  * src/interfaces/ecpg/preproc/c_keywords.c
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <ctype.h>
 

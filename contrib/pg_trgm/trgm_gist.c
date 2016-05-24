@@ -1,7 +1,7 @@
 /*
  * contrib/pg_trgm/trgm_gist.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "trgm.h"
 

@@ -1582,7 +1582,7 @@ Branch: REL9_4_STABLE [2099b911d] 2016-02-04 22:27:47 -0500
 
     <listitem>
      <para>
-      In <filename>contrib/postgres_fdw</>, fix bugs triggered by use
+      In <filename>contrib/mollydb_fdw</>, fix bugs triggered by use
       of <literal>tableoid</> in data-modifying commands (Etsuro Fujita,
       Robert Haas)
      </para>
@@ -2484,7 +2484,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
         This means that assertions can no longer be turned
         off if they were enabled at compile time, allowing for more
         efficient code optimization.  This change also removes the <link
-        linkend="app-postgres-options">postgres</> <option>-A</> option.
+        linkend="app-mollydb-options">mollydb</> <option>-A</> option.
        </para>
       </listitem>
 
@@ -2693,7 +2693,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
        <para>
         Allow <filename>recovery.conf</>'s <link
         linkend="primary-conninfo"><varname>primary_conninfo</></> setting to
-        use connection <acronym>URI</>s, e.g. <literal>postgres://</>
+        use connection <acronym>URI</>s, e.g. <literal>mollydb://</>
         (Alexander Shulgin)
        </para>
       </listitem>

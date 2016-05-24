@@ -15,7 +15,7 @@
  *		may not use ereport, server-defined static variables, etc.
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/transam.h"
 #include "access/xlogrecord.h"

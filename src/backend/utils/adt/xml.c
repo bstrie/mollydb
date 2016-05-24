@@ -43,7 +43,7 @@
  */
 /* #define USE_LIBXMLCONTEXT */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #ifdef USE_LIBXML
 #include <libxml/chvalid.h>

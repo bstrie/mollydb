@@ -3574,7 +3574,7 @@
      <para>
       This fixes some cases where the database failed to start on Windows,
       often with misleading error messages such as <quote>could not locate
-      matching postgres executable</quote>.
+      matching mollydb executable</quote>.
      </para>
     </listitem>
 
@@ -8340,7 +8340,7 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        Move <literal>NAMEDATALEN</> definition from
-       <filename>postgres_ext.h</> to <filename>pg_config_manual.h</>
+       <filename>mollydb_ext.h</> to <filename>pg_config_manual.h</>
        (Peter)
       </para>
      </listitem>

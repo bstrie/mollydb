@@ -6,9 +6,9 @@
  */
 /* can be used in either frontend or backend */
 #ifdef FRONTEND
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #else
-#include "postgres.h"
+#include "mollydb.h"
 #endif
 
 #include "mb/pg_wchar.h"

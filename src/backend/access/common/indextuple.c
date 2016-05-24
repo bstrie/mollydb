@@ -14,7 +14,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/heapam.h"
 #include "access/itup.h"

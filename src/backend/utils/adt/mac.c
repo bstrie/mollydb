@@ -4,7 +4,7 @@
  *	src/backend/utils/adt/mac.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/hash.h"
 #include "libpq/pqformat.h"

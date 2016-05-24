@@ -99,7 +99,7 @@
    <para>
     This is a template for a procedural-language handler written in C:
 <programlisting>
-#include "postgres.h"
+#include "mollydb.h"
 #include "executor/spi.h"
 #include "commands/trigger.h"
 #include "fmgr.h"

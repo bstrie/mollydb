@@ -35,12 +35,12 @@ in a standalone-ignore clause.
 make
 su
 make install
-adduser postgres
+adduser mollydb
 mkdir /usr/local/pgsql/data
-chown postgres /usr/local/pgsql/data
-su - postgres
+chown mollydb /usr/local/pgsql/data
+su - mollydb
 /usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
-/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data &gt;logfile 2&gt;&amp;1 &amp;
+/usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data &gt;logfile 2&gt;&amp;1 &amp;
 /usr/local/pgsql/bin/createdb test
 /usr/local/pgsql/bin/psql test
 </synopsis>
@@ -586,12 +586,12 @@ su - postgres
        automatically appended to <varname>datadir</varname>,
        <varname>sysconfdir</varname>, and <varname>docdir</varname>,
        unless the fully expanded directory name already contains the
-       string <quote><literal>postgres</></quote> or
+       string <quote><literal>mollydb</></quote> or
        <quote><literal>pgsql</></quote>. For example, if you choose
        <filename>/usr/local</filename> as prefix, the documentation will
        be installed in <filename>/usr/local/doc/mollydb</filename>,
-       but if the prefix is <filename>/opt/postgres</filename>, then it
-       will be in <filename>/opt/postgres/doc</filename>. The public C
+       but if the prefix is <filename>/opt/mollydb</filename>, then it
+       will be in <filename>/opt/mollydb/doc</filename>. The public C
        header files of the client interfaces are installed into
        <varname>includedir</varname> and are namespace-clean. The
        internal header files and the server header files are installed
@@ -755,7 +755,7 @@ su - postgres
         <para>
          The default name of the Kerberos service principal used
          by GSSAPI.
-         <literal>postgres</literal> is the default. There's usually no
+         <literal>mollydb</literal> is the default. There's usually no
          reason to change this unless you have a Windows environment,
          in which case it must be set to upper case
          <literal>POSTGRES</literal>.
@@ -1828,12 +1828,12 @@ export MANPATH
      Create a user account for the <productname>MollyDB</>
      server. This is the user the server will run as. For production
      use you should create a separate, unprivileged account
-     (<quote>postgres</> is commonly used). If you do not have root
+     (<quote>mollydb</> is commonly used). If you do not have root
      access or just want to play around, your own user account is
      enough, but running the server as root is a security risk and
      will not work.
 <screen>
-<userinput>adduser postgres</>
+<userinput>adduser mollydb</>
 </screen>
     </para>
    </step>
@@ -1846,9 +1846,9 @@ export MANPATH
      root.
 <screen>
 root# <userinput>mkdir /usr/local/pgsql/data</>
-root# <userinput>chown postgres /usr/local/pgsql/data</>
-root# <userinput>su - postgres</>
-postgres$ <userinput>/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</>
+root# <userinput>chown mollydb /usr/local/pgsql/data</>
+root# <userinput>su - mollydb</>
+mollydb$ <userinput>/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</>
 </screen>
     </para>
 
@@ -1877,12 +1877,12 @@ postgres$ <userinput>/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</>
      start up the database server. Do so now. The command should look
      something like:
 <programlisting>
-/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data
+/usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data
 </programlisting>
      This will start the server in the foreground. To put the server
      in the background use something like:
 <programlisting>
-nohup /usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data \
+nohup /usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data \
     &lt;/dev/null &gt;&gt;server.log 2&gt;&amp;1 &lt;/dev/null &amp;
 </programlisting>
     </para>
@@ -2929,16 +2929,16 @@ LIBOBJS = snprintf.o
     </para>
 
     <para>
-     If you see the linking of the <command>postgres</command> executable abort with an
+     If you see the linking of the <command>mollydb</command> executable abort with an
      error message like:
 <screen>
 Undefined                       first referenced
  symbol                             in file
 AbortTransaction                    utils/probes.o
 CommitTransaction                   utils/probes.o
-ld: fatal: Symbol referencing errors. No output written to postgres
+ld: fatal: Symbol referencing errors. No output written to mollydb
 collect2: ld returned 1 exit status
-make: *** [postgres] Error 1
+make: *** [mollydb] Error 1
 </screen>
      your DTrace installation is too old to handle probes in static
      functions.  You need Solaris 10u4 or newer.

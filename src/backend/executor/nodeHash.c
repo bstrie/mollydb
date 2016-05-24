@@ -19,7 +19,7 @@
  *		ExecEndHash		- shutdown node and subnodes
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <math.h>
 #include <limits.h>

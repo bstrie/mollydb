@@ -23,7 +23,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <fcntl.h>
 #include <signal.h>
@@ -192,7 +192,7 @@ pgarch_forkexec(void)
 	char	   *av[10];
 	int			ac = 0;
 
-	av[ac++] = "postgres";
+	av[ac++] = "mollydb";
 
 	av[ac++] = "--forkarch";
 

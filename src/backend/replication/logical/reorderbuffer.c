@@ -19,7 +19,7 @@
  *	  individual changes. The output plugins rely on snapshots built by
  *	  snapbuild.c which hands them to us.
  *
- *	  Transactions and subtransactions/savepoints in postgres are not
+ *	  Transactions and subtransactions/savepoints in mollydb are not
  *	  immediately linked to each other from outside the performing
  *	  backend. Only at commit/abort (or special xact_assignment records) they
  *	  are linked together. Which means that we will have to splice together a
@@ -45,7 +45,7 @@
  *	  details.
  * -------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <unistd.h>
 #include <sys/stat.h>

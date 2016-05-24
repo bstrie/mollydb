@@ -11,7 +11,7 @@
  *
  * NOTES
  *		Each global transaction is associated with a global transaction
- *		identifier (GID). The client assigns a GID to a postgres
+ *		identifier (GID). The client assigns a GID to a mollydb
  *		transaction with the PREPARE TRANSACTION command.
  *
  *		We keep all active global transactions in a shared memory array.
@@ -50,7 +50,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <fcntl.h>
 #include <sys/stat.h>

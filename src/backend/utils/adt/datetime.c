@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <ctype.h>
 #include <float.h>
@@ -177,7 +177,7 @@ static int	szdatetktbl = sizeof datetktbl / sizeof datetktbl[0];
  */
 static const datetkn deltatktbl[] = {
 	/* token, type, value */
-	{"@", IGNORE_DTF, 0},		/* postgres relative prefix */
+	{"@", IGNORE_DTF, 0},		/* mollydb relative prefix */
 	{DAGO, AGO, 0},				/* "ago" indicates negative time offset */
 	{"c", UNITS, DTK_CENTURY},	/* "century" relative */
 	{"cent", UNITS, DTK_CENTURY},		/* "century" relative */
@@ -3459,11 +3459,11 @@ DecodeInterval(char **field, int *ftype, int nf, int range,
 	 * to all fields if there are no other explicit signs.
 	 *
 	 * We leave the signs alone if there are additional explicit signs.
-	 * This protects us against misinterpreting postgres-style dump output,
-	 * since the postgres-style output code has always put an explicit sign on
+	 * This protects us against misinterpreting mollydb-style dump output,
+	 * since the mollydb-style output code has always put an explicit sign on
 	 * all fields following a negative field.  But note that SQL-spec output
 	 * is ambiguous and can be misinterpreted on load!	(So it's best practice
-	 * to dump in postgres style, not SQL style.)
+	 * to dump in mollydb style, not SQL style.)
 	 *----------
 	 */
 	if (IntervalStyle == INTSTYLE_SQL_STANDARD && *field[0] == '-')
@@ -4237,7 +4237,7 @@ AddISO8601IntPart(char *cp, int value, char units)
 	return cp + strlen(cp);
 }
 
-/* Append a postgres-style interval field, but only if value isn't zero */
+/* Append a mollydb-style interval field, but only if value isn't zero */
 static char *
 AddPostgresIntPart(char *cp, int value, const char *units,
 				   bool *is_zero, bool *is_before)

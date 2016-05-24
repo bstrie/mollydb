@@ -634,17 +634,17 @@ host    all             all             ::1/128                 trust
 host    all             all             localhost               trust
 
 # Allow any user from any host with IP address 192.168.93.x to connect
-# to database "postgres" as the same user name that ident reports for
+# to database "mollydb" as the same user name that ident reports for
 # the connection (typically the operating system user name).
 #
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
-host    postgres        all             192.168.93.0/24         ident
+host    mollydb        all             192.168.93.0/24         ident
 
 # Allow any user from host 192.168.12.10 to connect to database
-# "postgres" if the user's password is correctly supplied.
+# "mollydb" if the user's password is correctly supplied.
 #
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
-host    postgres        all             192.168.12.10/32        md5
+host    mollydb        all             192.168.12.10/32        md5
 
 # Allow any user from hosts in the example.com domain to connect to
 # any database if the user's password is correctly supplied.
@@ -942,7 +942,7 @@ omicron         bryanh                  guest1
     the server, but care needs to be taken to specify the correct principal details when
     making the connection from the client using the <literal>krbsrvname</> connection parameter. (See
     also <xref linkend="libpq-paramkeywords">.) The installation default can be
-    changed from the default <literal>postgres</literal> at build time using
+    changed from the default <literal>mollydb</literal> at build time using
     <literal>./configure --with-krb-srvnam=</><replaceable>whatever</>.
     In most environments,
     this parameter never needs to be changed.
@@ -981,7 +981,7 @@ omicron         bryanh                  guest1
    <para>
     Make sure that your server keytab file is readable (and preferably
     only readable, not writable) by the <productname>MollyDB</productname>
-    server account.  (See also <xref linkend="postgres-user">.) The location
+    server account.  (See also <xref linkend="mollydb-user">.) The location
     of the key file is specified by the <xref
     linkend="guc-krb-server-keyfile"> configuration
     parameter. The default is
@@ -996,8 +996,8 @@ omicron         bryanh                  guest1
     Kerberos documentation for details. The following example is
    for MIT-compatible Kerberos 5 implementations:
 <screen>
-<prompt>kadmin% </><userinput>ank -randkey postgres/server.my.domain.org</>
-<prompt>kadmin% </><userinput>ktadd -k krb5.keytab postgres/server.my.domain.org</>
+<prompt>kadmin% </><userinput>ank -randkey mollydb/server.my.domain.org</>
+<prompt>kadmin% </><userinput>ktadd -k krb5.keytab mollydb/server.my.domain.org</>
 </screen>
    </para>
 

@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * tcopprot.h
- *	  prototypes for postgres.c.
+ *	  prototypes for mollydb.c.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -70,7 +70,7 @@ extern void RecoveryConflictInterrupt(ProcSignalReason reason); /* called from S
 extern void ProcessClientReadInterrupt(bool blocked);
 extern void ProcessClientWriteInterrupt(bool blocked);
 
-extern void process_postgres_switches(int argc, char *argv[],
+extern void process_mollydb_switches(int argc, char *argv[],
 						  GucContext ctx, const char **dbname);
 extern void PostgresMain(int argc, char *argv[],
 			 const char *dbname,

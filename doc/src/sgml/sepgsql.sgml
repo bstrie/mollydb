@@ -115,8 +115,8 @@ $ vi $PGDATA/mollydb.conf
     #shared_preload_libraries = ''                # (change requires restart)
   to
     shared_preload_libraries = 'sepgsql'          # (change requires restart)
-$ for DBNAME in template0 template1 postgres; do
-    postgres --single -F -c exit_on_error=true $DBNAME \
+$ for DBNAME in template0 template1 mollydb; do
+    mollydb --single -F -c exit_on_error=true $DBNAME \
       &lt;/usr/local/pgsql/share/contrib/sepgsql.sql &gt;/dev/null
   done
 </screen>
@@ -534,21 +534,21 @@ UPDATE t1 SET x = 2, y = md5sum(y) WHERE z = 100;
    </para>
 
 <screen>
-postgres=# CREATE TABLE customer (
+mollydb=# CREATE TABLE customer (
                cid     int primary key,
                cname   text,
                credit  text
            );
 CREATE TABLE
-postgres=# SECURITY LABEL ON COLUMN customer.credit
+mollydb=# SECURITY LABEL ON COLUMN customer.credit
                IS 'system_u:object_r:sepgsql_secret_table_t:s0';
 SECURITY LABEL
-postgres=# CREATE FUNCTION show_credit(int) RETURNS text
+mollydb=# CREATE FUNCTION show_credit(int) RETURNS text
              AS 'SELECT regexp_replace(credit, ''-[0-9]+$'', ''-xxxx'', ''g'')
                         FROM customer WHERE cid = $1'
            LANGUAGE sql;
 CREATE FUNCTION
-postgres=# SECURITY LABEL ON FUNCTION show_credit(int)
+mollydb=# SECURITY LABEL ON FUNCTION show_credit(int)
                IS 'system_u:object_r:sepgsql_trusted_proc_exec_t:s0';
 SECURITY LABEL
 </screen>
@@ -558,9 +558,9 @@ SECURITY LABEL
    </para>
 
 <screen>
-postgres=# SELECT * FROM customer;
+mollydb=# SELECT * FROM customer;
 ERROR:  SELinux: security policy violation
-postgres=# SELECT cid, cname, show_credit(cid) FROM customer;
+mollydb=# SELECT cid, cname, show_credit(cid) FROM customer;
  cid | cname  |     show_credit
 -----+--------+---------------------
    1 | taro   | 1111-2222-3333-xxxx

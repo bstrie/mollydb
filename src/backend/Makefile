@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 #
-# Makefile for the postgres backend
+# Makefile for the mollydb backend
 #
 # Portions Copyright (c) 1996-2016, MollyDB Global Development Group
 # Portions Copyright (c) 1994, Regents of the University of California
@@ -51,13 +51,13 @@ endif
 
 ##########################################################################
 
-all: submake-libpgport submake-schemapg postgres $(POSTGRES_IMP)
+all: submake-libpgport submake-schemapg mollydb $(POSTGRES_IMP)
 
 ifneq ($(PORTNAME), cygwin)
 ifneq ($(PORTNAME), win32)
 ifneq ($(PORTNAME), aix)
 
-postgres: $(OBJS)
+mollydb: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) $(export_dynamic) $(call expand_subsys,$^) $(LIBS) -o $@
 
 endif
@@ -66,8 +66,8 @@ endif
 
 ifeq ($(PORTNAME), cygwin)
 
-postgres: $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) $(export_dynamic) -Wl,--stack,$(WIN32_STACK_RLIMIT) -Wl,--export-all-symbols -Wl,--out-implib=libpostgres.a $(call expand_subsys,$^) $(LIBS) -o $@
+mollydb: $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) $(export_dynamic) -Wl,--stack,$(WIN32_STACK_RLIMIT) -Wl,--export-all-symbols -Wl,--out-implib=libmollydb.a $(call expand_subsys,$^) $(LIBS) -o $@
 
 # There is no correct way to write a rule that generates two files.
 # Rules with two targets don't have that meaning, they are merely
@@ -75,32 +75,32 @@ postgres: $(OBJS)
 # make, we must chain the dependencies like this.  The semicolon is
 # important, otherwise make will choose some built-in rule.
 
-libpostgres.a: postgres ;
+libmollydb.a: mollydb ;
 
 endif # cygwin
 
 ifeq ($(PORTNAME), win32)
 LIBS += -lsecur32
 
-postgres: $(OBJS) $(WIN32RES)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) -Wl,--stack=$(WIN32_STACK_RLIMIT) -Wl,--export-all-symbols -Wl,--out-implib=libpostgres.a $(call expand_subsys,$(OBJS)) $(WIN32RES) $(LIBS) -o $@$(X)
+mollydb: $(OBJS) $(WIN32RES)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) -Wl,--stack=$(WIN32_STACK_RLIMIT) -Wl,--export-all-symbols -Wl,--out-implib=libmollydb.a $(call expand_subsys,$(OBJS)) $(WIN32RES) $(LIBS) -o $@$(X)
 
-libpostgres.a: postgres ;
+libmollydb.a: mollydb ;
 
 endif # win32
 
 ifeq ($(PORTNAME), aix)
 
-postgres: $(POSTGRES_IMP)
+mollydb: $(POSTGRES_IMP)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) $(call expand_subsys,$(OBJS)) -Wl,-bE:$(top_builddir)/src/backend/$(POSTGRES_IMP) $(LIBS) -Wl,-brtllib -o $@
 
 $(POSTGRES_IMP): $(OBJS)
 	$(LD) $(LDREL) $(LDOUT) SUBSYS.o $(call expand_subsys,$^)
 ifeq ($(host_os), aix3.2.5)
-	$(MKLDEXPORT) SUBSYS.o $(bindir)/postgres > $@
+	$(MKLDEXPORT) SUBSYS.o $(bindir)/mollydb > $@
 else
 ifneq (,$(findstring aix4.1, $(host_os)))
-	$(MKLDEXPORT) SUBSYS.o $(bindir)/postgres > $@
+	$(MKLDEXPORT) SUBSYS.o $(bindir)/mollydb > $@
 else
 	$(MKLDEXPORT) SUBSYS.o . > $@
 endif
@@ -126,9 +126,9 @@ catalog/schemapg.h: | submake-schemapg
 $(top_builddir)/src/port/libpgport_srv.a: | submake-libpgport
 
 
-# The postgres.o target is needed by the rule in Makefile.global that
+# The mollydb.o target is needed by the rule in Makefile.global that
 # creates the exports file when MAKE_EXPORTS = true.
-postgres.o: $(OBJS)
+mollydb.o: $(OBJS)
 	$(CC) $(LDREL) $(LDFLAGS) $(LDFLAGS_EX) $(call expand_subsys,$^) $(LIBS) -o $@
 
 
@@ -202,7 +202,7 @@ utils/probes.o: utils/probes.d $(SUBDIROBJS)
 distprep:
 	$(MAKE) -C parser	gram.c gram.h scan.c
 	$(MAKE) -C bootstrap	bootparse.c bootscanner.c
-	$(MAKE) -C catalog	schemapg.h postgres.bki postgres.description postgres.shdescription
+	$(MAKE) -C catalog	schemapg.h mollydb.bki mollydb.description mollydb.shdescription
 	$(MAKE) -C replication	repl_gram.c repl_scanner.c syncrep_gram.c syncrep_scanner.c
 	$(MAKE) -C storage/lmgr	lwlocknames.h
 	$(MAKE) -C utils	fmgrtab.c fmgroids.h errcodes.h
@@ -215,12 +215,12 @@ distprep:
 install: all installdirs install-bin
 ifeq ($(PORTNAME), cygwin)
 ifeq ($(MAKE_DLL), true)
-	$(INSTALL_DATA) libpostgres.a '$(DESTDIR)$(libdir)/libpostgres.a'
+	$(INSTALL_DATA) libmollydb.a '$(DESTDIR)$(libdir)/libmollydb.a'
 endif
 endif
 ifeq ($(PORTNAME), win32)
 ifeq ($(MAKE_DLL), true)
-	$(INSTALL_DATA) libpostgres.a '$(DESTDIR)$(libdir)/libpostgres.a'
+	$(INSTALL_DATA) libmollydb.a '$(DESTDIR)$(libdir)/libmollydb.a'
 endif
 endif
 	$(MAKE) -C catalog install-data
@@ -230,13 +230,13 @@ endif
 	$(INSTALL_DATA) $(srcdir)/utils/misc/mollydb.conf.sample '$(DESTDIR)$(datadir)/mollydb.conf.sample'
 	$(INSTALL_DATA) $(srcdir)/access/transam/recovery.conf.sample '$(DESTDIR)$(datadir)/recovery.conf.sample'
 
-install-bin: postgres $(POSTGRES_IMP) installdirs
-	$(INSTALL_PROGRAM) postgres$(X) '$(DESTDIR)$(bindir)/postgres$(X)'
+install-bin: mollydb $(POSTGRES_IMP) installdirs
+	$(INSTALL_PROGRAM) mollydb$(X) '$(DESTDIR)$(bindir)/mollydb$(X)'
 ifneq ($(PORTNAME), win32)
 	@rm -f '$(DESTDIR)$(bindir)/postmaster$(X)'
-	ln -s postgres$(X) '$(DESTDIR)$(bindir)/postmaster$(X)'
+	ln -s mollydb$(X) '$(DESTDIR)$(bindir)/postmaster$(X)'
 else
-	$(INSTALL_PROGRAM) postgres$(X) '$(DESTDIR)$(bindir)/postmaster$(X)'
+	$(INSTALL_PROGRAM) mollydb$(X) '$(DESTDIR)$(bindir)/postmaster$(X)'
 endif
 ifeq ($(MAKE_EXPORTS), true)
 	$(INSTALL_DATA) $(POSTGRES_IMP) '$(DESTDIR)$(pkglibdir)/$(POSTGRES_IMP)'
@@ -266,19 +266,19 @@ endif
 ##########################################################################
 
 uninstall:
-	rm -f '$(DESTDIR)$(bindir)/postgres$(X)' '$(DESTDIR)$(bindir)/postmaster'
+	rm -f '$(DESTDIR)$(bindir)/mollydb$(X)' '$(DESTDIR)$(bindir)/postmaster'
 ifeq ($(MAKE_EXPORTS), true)
 	rm -f '$(DESTDIR)$(pkglibdir)/$(POSTGRES_IMP)'
 	rm -f '$(DESTDIR)$(pgxsdir)/$(MKLDEXPORT_DIR)/mkldexport.sh'
 endif
 ifeq ($(PORTNAME), cygwin)
 ifeq ($(MAKE_DLL), true)
-	rm -f '$(DESTDIR)$(libdir)/libpostgres.a'
+	rm -f '$(DESTDIR)$(libdir)/libmollydb.a'
 endif
 endif
 ifeq ($(PORTNAME), win32)
 ifeq ($(MAKE_DLL), true)
-	rm -f '$(DESTDIR)$(libdir)/libpostgres.a'
+	rm -f '$(DESTDIR)$(libdir)/libmollydb.a'
 endif
 endif
 	$(MAKE) -C catalog uninstall-data
@@ -292,17 +292,17 @@ endif
 ##########################################################################
 
 clean:
-	rm -f $(LOCALOBJS) postgres$(X) $(POSTGRES_IMP) \
+	rm -f $(LOCALOBJS) mollydb$(X) $(POSTGRES_IMP) \
 		$(top_builddir)/src/include/parser/gram.h \
 		$(top_builddir)/src/include/catalog/schemapg.h \
 		$(top_builddir)/src/include/storage/lwlocknames.h \
 		$(top_builddir)/src/include/utils/fmgroids.h \
 		$(top_builddir)/src/include/utils/probes.h
 ifeq ($(PORTNAME), cygwin)
-	rm -f postgres.dll libpostgres.a
+	rm -f mollydb.dll libmollydb.a
 endif
 ifeq ($(PORTNAME), win32)
-	rm -f postgres.dll libpostgres.a $(WIN32RES)
+	rm -f mollydb.dll libmollydb.a $(WIN32RES)
 endif
 
 distclean: clean
@@ -315,9 +315,9 @@ maintainer-clean: distclean
 	      parser/gram.h \
 	      parser/scan.c \
 	      catalog/schemapg.h \
-	      catalog/postgres.bki \
-	      catalog/postgres.description \
-	      catalog/postgres.shdescription \
+	      catalog/mollydb.bki \
+	      catalog/mollydb.description \
+	      catalog/mollydb.shdescription \
 	      replication/repl_gram.c \
 	      replication/repl_scanner.c \
 	      replication/syncrep_gram.c \
@@ -335,8 +335,8 @@ maintainer-clean: distclean
 #
 # Support for code development.
 #
-# Use target "quick" to build "postgres" when you know all the subsystems
+# Use target "quick" to build "mollydb" when you know all the subsystems
 # are up to date.  It saves the time of doing all the submakes.
 .PHONY: quick
 quick: $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) $(export_dynamic) $(call expand_subsys,$^) $(LIBS) -o postgres
+	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) $(export_dynamic) $(call expand_subsys,$^) $(LIBS) -o mollydb

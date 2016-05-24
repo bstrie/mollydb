@@ -9,7 +9,7 @@
  *	src/backend/utils/adt/pg_upgrade_support.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "catalog/binary_upgrade.h"
 #include "catalog/namespace.h"

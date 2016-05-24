@@ -8,7 +8,7 @@
  * best viewed with tabs set to 4
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <time.h>
 #include <unistd.h>

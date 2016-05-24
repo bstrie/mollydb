@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * gistvacuum.c
- *	  vacuuming routines for the postgres GiST index access method.
+ *	  vacuuming routines for the mollydb GiST index access method.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/genam.h"
 #include "access/gist_private.h"

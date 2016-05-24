@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "optimizer/clauses.h"
 #include "optimizer/restrictinfo.h"

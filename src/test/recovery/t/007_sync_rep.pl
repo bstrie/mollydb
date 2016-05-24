@@ -17,7 +17,7 @@ sub test_sync_state
 
 	if (defined($setting))
 	{
-		$self->psql('postgres',
+		$self->psql('mollydb',
 					"ALTER SYSTEM SET synchronous_standby_names = '$setting';");
 		$self->reload;
 	}
@@ -31,7 +31,7 @@ sub test_sync_state
 	# to pass.
 	while ($timeout < $timeout_max)
 	{
-		$result = $self->safe_psql('postgres', $check_sql);
+		$result = $self->safe_psql('mollydb', $check_sql);
 
 		last if ($result eq $expected);
 

@@ -2220,10 +2220,10 @@ msgstr "%s: konnte nicht mit der Datenbank „%s“ verbinden\n"
 #: pg_dumpall.c:401
 #, c-format
 msgid ""
-"%s: could not connect to databases \"postgres\" or \"template1\"\n"
+"%s: could not connect to databases \"mollydb\" or \"template1\"\n"
 "Please specify an alternative database.\n"
 msgstr ""
-"%s: konnte nicht mit Datenbank „postgres“ oder „template1“ verbinden\n"
+"%s: konnte nicht mit Datenbank „mollydb“ oder „template1“ verbinden\n"
 "Bitte geben Sie eine alternative Datenbank an.\n"
 
 #: pg_dumpall.c:418

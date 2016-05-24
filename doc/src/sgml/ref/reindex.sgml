@@ -192,7 +192,7 @@ REINDEX [ ( VERBOSE ) ] { INDEX | TABLE | SCHEMA | DATABASE | SYSTEM } <replacea
    doubt, use <command>REINDEX SYSTEM</> to select
    reconstruction of all system indexes in the database.  Then quit
    the single-user server session and restart the regular server.
-   See the <xref linkend="app-postgres"> reference page for more
+   See the <xref linkend="app-mollydb"> reference page for more
    information about how to interact with the single-user server
    interface.
   </para>

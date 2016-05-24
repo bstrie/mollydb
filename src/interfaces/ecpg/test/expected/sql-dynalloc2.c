@@ -131,7 +131,7 @@ if (sqlca.sqlcode < 0) sqlprint ( );}
 #line 20 "dynalloc2.pgc"
 
 
-   { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "set datestyle to postgres", ECPGt_EOIT, ECPGt_EORT);
+   { ECPGdo(__LINE__, 0, 1, NULL, 0, ECPGst_normal, "set datestyle to mollydb", ECPGt_EOIT, ECPGt_EORT);
 #line 22 "dynalloc2.pgc"
 
 if (sqlca.sqlcode < 0) sqlprint ( );}

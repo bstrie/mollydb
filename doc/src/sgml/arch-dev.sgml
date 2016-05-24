@@ -124,9 +124,9 @@
     know ahead of time how many connections will be made, we have to
     use a <firstterm>master process</firstterm> that spawns a new
     server process every time a connection is requested. This master
-    process is called <literal>postgres</literal> and listens at a
+    process is called <literal>mollydb</literal> and listens at a
     specified TCP/IP port for incoming connections. Whenever a request
-    for a connection is detected the <literal>postgres</literal>
+    for a connection is detected the <literal>mollydb</literal>
     process spawns a new server process. The server tasks
     communicate with each other using <firstterm>semaphores</firstterm> and
     <firstterm>shared memory</firstterm> to ensure data integrity

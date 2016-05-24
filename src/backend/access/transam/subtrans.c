@@ -26,7 +26,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/slru.h"
 #include "access/subtrans.h"

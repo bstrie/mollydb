@@ -11,7 +11,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 #include "fmgr.h"
 #include "mb/pg_wchar.h"
 #include "../../Unicode/utf8_to_win1250.map"

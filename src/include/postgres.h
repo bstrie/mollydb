@@ -1,16 +1,16 @@
 /*-------------------------------------------------------------------------
  *
- * postgres.h
+ * mollydb.h
  *	  Primary include file for MollyDB server .c files
  *
  * This should be the first file included by MollyDB backend modules.
- * Client-side code should include postgres_fe.h instead.
+ * Client-side code should include mollydb_fe.h instead.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1995, Regents of the University of California
  *
- * src/include/postgres.h
+ * src/include/mollydb.h
  *
  *-------------------------------------------------------------------------
  */
@@ -33,7 +33,7 @@
  *	in the backend environment, but are of no interest outside the backend.
  *
  *	Simple type definitions live in c.h, where they are shared with
- *	postgres_fe.h.  We do that since those type definitions are needed by
+ *	mollydb_fe.h.  We do that since those type definitions are needed by
  *	frontend modules that want to deal with binary data transmission to or
  *	from the backend.  Type definitions in this file should be for
  *	representations that never escape the backend, such as Datum or

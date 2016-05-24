@@ -380,8 +380,8 @@ msgstr "%s: 本プログラムの実行ファイルの検索に失敗しまし�
 
 #: pg_ctl.c:1264
 #, c-format
-msgid "%s: could not find postgres program executable\n"
-msgstr "%s: postgres の実行ファイルが見つかりません\n"
+msgid "%s: could not find mollydb program executable\n"
+msgstr "%s: mollydb の実行ファイルが見つかりません\n"
 
 #: pg_ctl.c:1329 pg_ctl.c:1361
 #, c-format
@@ -600,8 +600,8 @@ msgstr ""
 
 #: pg_ctl.c:1792
 #, c-format
-msgid "  -c, --core-files       allow postgres to produce core files\n"
-msgstr "  -c, --core-files       postgresはコアファイルを生成することができます。\n"
+msgid "  -c, --core-files       allow mollydb to produce core files\n"
+msgstr "  -c, --core-files       mollydbはコアファイルを生成することができます。\n"
 
 #: pg_ctl.c:1794
 #, c-format
@@ -616,10 +616,10 @@ msgstr "  -l, --log FILENAME     サーバログをFILENAMEへ出力(あるい�
 #: pg_ctl.c:1797
 #, c-format
 msgid ""
-"  -o OPTIONS             command line options to pass to postgres\n"
+"  -o OPTIONS             command line options to pass to mollydb\n"
 "                         (MollyDB server executable) or initdb\n"
 msgstr ""
-"  -o オプション          postgres(MollyDBサーバ実行ファイル)または\n"
+"  -o オプション          mollydb(MollyDBサーバ実行ファイル)または\n"
 "                         initdb に渡すコマンドラインオプション\n"
 
 #: pg_ctl.c:1799

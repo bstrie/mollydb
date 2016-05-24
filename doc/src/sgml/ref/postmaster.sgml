@@ -30,7 +30,7 @@ MollyDB documentation
   <title>Description</title>
 
   <para>
-   <command>postmaster</command> is a deprecated alias of <command>postgres</command>.
+   <command>postmaster</command> is a deprecated alias of <command>mollydb</command>.
   </para>
  </refsect1>
 
@@ -38,7 +38,7 @@ MollyDB documentation
   <title>See Also</title>
 
   <para>
-   <xref linkend="app-postgres">
+   <xref linkend="app-mollydb">
   </para>
  </refsect1>
 </refentry>

@@ -8,7 +8,7 @@ implements low-level transactions and subtransactions, on top of which rests
 the mainloop's control code, which in turn implements user-visible
 transactions and savepoints.
 
-The middle layer of code is called by postgres.c before and after the
+The middle layer of code is called by mollydb.c before and after the
 processing of each query, or after detecting an error:
 
 		StartTransactionCommand

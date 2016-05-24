@@ -20,7 +20,7 @@
  *								of the authentication system
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #ifdef WIN32
 #include "win32.h"

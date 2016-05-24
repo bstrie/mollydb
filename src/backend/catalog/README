@@ -9,8 +9,8 @@ of the system catalogs.
 
 When the compile-time scripts (Gen_fmgrtab.pl and genbki.pl)
 execute, they grep the DATA statements out of the .h files and munge
-these in order to generate the postgres.bki file.  The .bki file is then
-used as input to initdb (which is just a wrapper around postgres
+these in order to generate the mollydb.bki file.  The .bki file is then
+used as input to initdb (which is just a wrapper around mollydb
 running single-user in bootstrapping mode) in order to generate the
 initial (template) system catalog relation files.
 

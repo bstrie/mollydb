@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * gistutil.c
- *	  utilities routines for the postgres GiST index access method.
+ *	  utilities routines for the mollydb GiST index access method.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -11,7 +11,7 @@
  *			src/backend/access/gist/gistutil.c
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <math.h>
 

@@ -401,8 +401,8 @@ msgstr "%s: nie udało się znaleźć własnego programu wykonywalnego\n"
 
 #: pg_ctl.c:1386
 #, c-format
-msgid "%s: could not find postgres program executable\n"
-msgstr "%s: nie udało się znaleźć programu wykonywalnego postgresa\n"
+msgid "%s: could not find mollydb program executable\n"
+msgstr "%s: nie udało się znaleźć programu wykonywalnego mollydba\n"
 
 #: pg_ctl.c:1469 pg_ctl.c:1503
 #, c-format
@@ -631,8 +631,8 @@ msgstr ""
 
 #: pg_ctl.c:1955
 #, c-format
-msgid "  -c, --core-files       allow postgres to produce core files\n"
-msgstr "  -c, --core-files       zezwól postgresowi utworzyć pliki jądra\n"
+msgid "  -c, --core-files       allow mollydb to produce core files\n"
+msgstr "  -c, --core-files       zezwól mollydbowi utworzyć pliki jądra\n"
 
 #: pg_ctl.c:1957
 #, c-format
@@ -647,10 +647,10 @@ msgstr "  -l, --log=NAZWAPLIKU   zapisuje (lub dodaje) komunikaty serwera do NAZ
 #: pg_ctl.c:1960
 #, c-format
 msgid ""
-"  -o OPTIONS             command line options to pass to postgres\n"
+"  -o OPTIONS             command line options to pass to mollydb\n"
 "                         (MollyDB server executable) or initdb\n"
 msgstr ""
-"  -o OPCJE               opcje wiersza poleceń przekazywanych postgresowi\n"
+"  -o OPCJE               opcje wiersza poleceń przekazywanych mollydbowi\n"
 "                         (program wykonywalny MollyDB) lub initdb\n"
 
 #: pg_ctl.c:1962

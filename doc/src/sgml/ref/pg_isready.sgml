@@ -53,7 +53,7 @@ MollyDB documentation
        If this parameter contains an <symbol>=</symbol> sign or starts
        with a valid <acronym>URI</acronym> prefix
        (<literal>mollydb://</literal>
-       or <literal>postgres://</literal>), it is treated as a
+       or <literal>mollydb://</literal>), it is treated as a
        <parameter>conninfo</parameter> string. See <xref
        linkend="libpq-connstring"> for more information.
       </para>

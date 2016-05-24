@@ -328,7 +328,7 @@ make install
         OpenJade 1.4devel to build the PDFs, with a message like:
 <screen>
 openjade:./stylesheet.dsl:664:2:E: flow object not accepted by port; only display flow objects accepted
-make: *** [postgres-A4.tex-pdf] Segmentation fault
+make: *** [mollydb-A4.tex-pdf] Segmentation fault
 </screen>
         Downgrading to OpenJade 1.3 should get rid of this error.
        </para>
@@ -604,7 +604,7 @@ checking for osx... osx
    <para>
     To build the documentation as a single HTML page, use:
 <screen>
-<prompt>doc/src/sgml$ </prompt><userinput>make postgres.html</userinput>
+<prompt>doc/src/sgml$ </prompt><userinput>make mollydb.html</userinput>
 </screen>
    </para>
  </sect2>
@@ -639,11 +639,11 @@ make man
       <para>
        To generate PostScript via <acronym>DVI</acronym> in A4 format:
 <screen>
-<prompt>doc/src/sgml$ </prompt><userinput>make postgres-A4.ps</userinput>
+<prompt>doc/src/sgml$ </prompt><userinput>make mollydb-A4.ps</userinput>
 </screen>
        In U.S. letter format:
 <screen>
-<prompt>doc/src/sgml$ </prompt><userinput>make postgres-US.ps</userinput>
+<prompt>doc/src/sgml$ </prompt><userinput>make mollydb-US.ps</userinput>
 </screen>
       </para>
      </listitem>
@@ -652,11 +652,11 @@ make man
       <para>
        To make a <acronym>PDF</acronym>:
 <screen>
-<prompt>doc/src/sgml$ </prompt><userinput>make postgres-A4.pdf</userinput>
+<prompt>doc/src/sgml$ </prompt><userinput>make mollydb-A4.pdf</userinput>
 </screen>
        or:
 <screen>
-<prompt>doc/src/sgml$ </prompt><userinput>make postgres-US.pdf</userinput>
+<prompt>doc/src/sgml$ </prompt><userinput>make mollydb-US.pdf</userinput>
 </screen>
        (Of course you can also make a <acronym>PDF</acronym> version
        from the PostScript, but if you generate <acronym>PDF</acronym>
@@ -695,7 +695,7 @@ save_size.pdfjadetex = 15000
     extreme cases, too wide for the printed page, e.g.  non-wrapped
     text, wide tables.  Overly wide text generates <quote>Overfull
     hbox</quote> messages in the TeX log output file, e.g.
-    <filename>postgres-US.log</> or <filename>postgres-A4.log</>.
+    <filename>mollydb-US.log</> or <filename>mollydb-A4.log</>.
     There are 72 points in an inch so anything reported as over 72
     points too wide will probably not fit on the printed page (assuming
     one inch margins).  To find the <acronym>SGML</acronym> text
@@ -746,7 +746,7 @@ save_size.pdfjadetex = 15000
      <para>
       Generate the <acronym>RTF</acronym> version by typing:
 <screen>
-<prompt>doc/src/sgml$ </prompt><userinput>make postgres.rtf</userinput>
+<prompt>doc/src/sgml$ </prompt><userinput>make mollydb.rtf</userinput>
 </screen>
      </para>
     </step>
@@ -762,7 +762,7 @@ save_size.pdfjadetex = 15000
       available in <filename>doc/src/sgml</filename> to accomplish
       these repairs:
 <screen>
-<prompt>doc/src/sgml$ </prompt><userinput>./fixrtf --refentry postgres.rtf</userinput>
+<prompt>doc/src/sgml$ </prompt><userinput>./fixrtf --refentry mollydb.rtf</userinput>
 </screen>
      </para>
 

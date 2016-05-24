@@ -83,7 +83,7 @@ print CFILE "/*
 
 #define N_(x) (x)				/* gettext noop */
 
-#include \"postgres_fe.h\"
+#include \"mollydb_fe.h\"
 #include \"$hfile\"
 
 ";

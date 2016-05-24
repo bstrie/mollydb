@@ -49,11 +49,11 @@ MollyDB documentation
    which the database data will live, generating the shared catalog
    tables (tables that belong to the whole cluster rather than to any
    particular database), and creating the <literal>template1</literal>
-   and <literal>postgres</literal> databases. When you later create a
+   and <literal>mollydb</literal> databases. When you later create a
    new database, everything in the <literal>template1</literal> database is
    copied.  (Therefore, anything installed in <literal>template1</literal>
    is automatically copied into each database created later.)
-   The <literal>postgres</literal> database is a default database meant
+   The <literal>mollydb</literal> database is a default database meant
    for use by users, utilities and third party applications.
   </para>
 
@@ -161,7 +161,7 @@ MollyDB documentation
         <command>initdb</command>, but you can avoid writing it by
         setting the <envar>PGDATA</envar> environment variable, which
         can be convenient since the database server
-        (<command>postgres</command>) can find the database
+        (<command>mollydb</command>) can find the database
         directory later by the same variable.
        </para>
       </listitem>
@@ -289,7 +289,7 @@ MollyDB documentation
         to the name of the effective user running
         <command>initdb</command>. It is really not important what the
         superuser's name is, but one might choose to keep the
-        customary name <systemitem>postgres</systemitem>, even if the operating
+        customary name <systemitem>mollydb</systemitem>, even if the operating
         system user's name is different.
        </para>
       </listitem>
@@ -449,7 +449,7 @@ MollyDB documentation
 
   <simplelist type="inline">
    <member><xref linkend="app-pg-ctl"></member>
-   <member><xref linkend="app-postgres"></member>
+   <member><xref linkend="app-mollydb"></member>
   </simplelist>
  </refsect1>
 

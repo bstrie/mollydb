@@ -3,7 +3,7 @@
 --
 
 SET DATESTYLE = 'ISO';
-SET IntervalStyle to postgres;
+SET IntervalStyle to mollydb;
 
 -- check acceptance of "time zone style"
 SELECT INTERVAL '01:00' AS "One hour";
@@ -94,8 +94,8 @@ FROM INTERVAL_MULDIV_TBL;
 
 DROP TABLE INTERVAL_MULDIV_TBL;
 
-SET DATESTYLE = 'postgres';
-SET IntervalStyle to postgres_verbose;
+SET DATESTYLE = 'mollydb';
+SET IntervalStyle to mollydb_verbose;
 
 SELECT '' AS ten, * FROM INTERVAL_TBL;
 
@@ -125,7 +125,7 @@ SELECT justify_interval(interval '1 month -1 hour') as "1 month -1 hour";
 
 -- test fractional second input, and detection of duplicate units
 SET DATESTYLE = 'ISO';
-SET IntervalStyle TO postgres;
+SET IntervalStyle TO mollydb;
 
 SELECT '1 millisecond'::interval, '1 microsecond'::interval,
        '500 seconds 99 milliseconds 51 microseconds'::interval;
@@ -205,7 +205,7 @@ SELECT  interval '0'                       AS "zero",
         - interval '1 2:03:04'             AS "negative day-time";
 
 -- test input of some not-quite-standard interval values in the sql style
-SET IntervalStyle TO postgres;
+SET IntervalStyle TO mollydb;
 SELECT  interval '+1 -1:00:00',
         interval '-1 +1:00:00',
         interval '+1-2 -3 +4:05:06.789',
@@ -239,7 +239,7 @@ select  interval 'P0Y'                    AS "zero",
         interval 'PT-0.1S'                AS "fractional second";
 
 -- test inputting ISO 8601 4.4.2.2 "Alternative Format"
-SET IntervalStyle to postgres;
+SET IntervalStyle to mollydb;
 select  interval 'P00021015T103020'       AS "ISO8601 Basic Format",
         interval 'P0002-10-15T10:30:20'   AS "ISO8601 Extended Format";
 
@@ -254,7 +254,7 @@ select  interval 'P0002'                  AS "year only",
         interval 'PT10:30'                AS "hour minute";
 
 -- test a couple rounding cases that changed since 8.3 w/ HAVE_INT64_TIMESTAMP.
-SET IntervalStyle to postgres_verbose;
+SET IntervalStyle to mollydb_verbose;
 select interval '-10 mons -3 days +03:55:06.70';
 select interval '1 year 2 mons 3 days 04:05:06.699999';
 select interval '0:0:0.7', interval '@ 0.70 secs', interval '0.7 seconds';

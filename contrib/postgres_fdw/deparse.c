@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * deparse.c
- *		  Query deparser for postgres_fdw
+ *		  Query deparser for mollydb_fdw
  *
  * This file includes functions that examine query WHERE clauses to see
  * whether they're safe to send to the remote server for execution, as
@@ -27,13 +27,13 @@
  * Portions Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  contrib/postgres_fdw/deparse.c
+ *		  contrib/mollydb_fdw/deparse.c
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
-#include "postgres_fdw.h"
+#include "mollydb_fdw.h"
 
 #include "access/heapam.h"
 #include "access/htup_details.h"

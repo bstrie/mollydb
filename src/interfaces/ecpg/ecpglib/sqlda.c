@@ -7,7 +7,7 @@
  */
 
 #define POSTGRES_ECPG_INTERNAL
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #include "pg_type.h"
 
 #include "ecpg-pthread-win32.h"

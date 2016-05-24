@@ -798,7 +798,7 @@ mollydb://[user[:password]@][netloc][:port][/dbname][?param1=value1&amp;...]
 
    <para>
     The <acronym>URI</acronym> scheme designator can be either
-    <literal>mollydb://</literal> or <literal>postgres://</literal>.  Each
+    <literal>mollydb://</literal> or <literal>mollydb://</literal>.  Each
     of the <acronym>URI</acronym> parts is optional.  The following examples
     illustrate valid <acronym>URI</acronym> syntax uses:
 <programlisting>
@@ -1315,7 +1315,7 @@ mollydb://%2Fvar%2Flib%2Fmollydb/dbname
       <listitem>
        <para>
         This parameter specifies the operating-system user name of the
-        server, for example <literal>requirepeer=postgres</literal>.
+        server, for example <literal>requirepeer=mollydb</literal>.
         When making a Unix-domain socket connection, if this
         parameter is set, the client checks at the beginning of the
         connection that the server process is running under the specified
@@ -6631,7 +6631,7 @@ main(void)
 {
     mydata *data;
     PGresult *res;
-    PGconn *conn = PQconnectdb("dbname = postgres");
+    PGconn *conn = PQconnectdb("dbname = mollydb");
 
     if (PQstatus(conn) != CONNECTION_OK)
     {
@@ -8023,13 +8023,13 @@ main(int argc, char **argv)
 
     /*
      * If the user supplies a parameter on the command line, use it as the
-     * conninfo string; otherwise default to setting dbname=postgres and using
+     * conninfo string; otherwise default to setting dbname=mollydb and using
      * environment variables or defaults for all other connection parameters.
      */
     if (argc > 1)
         conninfo = argv[1];
     else
-        conninfo = "dbname = postgres";
+        conninfo = "dbname = mollydb";
 
     /* Make a connection to the database */
     conn = PQconnectdb(conninfo);
@@ -8175,13 +8175,13 @@ main(int argc, char **argv)
 
     /*
      * If the user supplies a parameter on the command line, use it as the
-     * conninfo string; otherwise default to setting dbname=postgres and using
+     * conninfo string; otherwise default to setting dbname=mollydb and using
      * environment variables or defaults for all other connection parameters.
      */
     if (argc > 1)
         conninfo = argv[1];
     else
-        conninfo = "dbname = postgres";
+        conninfo = "dbname = mollydb";
 
     /* Make a connection to the database */
     conn = PQconnectdb(conninfo);
@@ -8386,13 +8386,13 @@ main(int argc, char **argv)
 
     /*
      * If the user supplies a parameter on the command line, use it as the
-     * conninfo string; otherwise default to setting dbname=postgres and using
+     * conninfo string; otherwise default to setting dbname=mollydb and using
      * environment variables or defaults for all other connection parameters.
      */
     if (argc > 1)
         conninfo = argv[1];
     else
-        conninfo = "dbname = postgres";
+        conninfo = "dbname = mollydb";
 
     /* Make a connection to the database */
     conn = PQconnectdb(conninfo);

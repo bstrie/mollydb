@@ -6,7 +6,7 @@
   format for these routines is dictated by Postgres architecture.
 ******************************************************************************/
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <float.h>
 #include <math.h>

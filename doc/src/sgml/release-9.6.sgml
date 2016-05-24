@@ -49,7 +49,7 @@
     <listitem>
      <para>
       Support for remote joins, sorts, and updates
-      in <filename>postgres_fdw</>
+      in <filename>mollydb_fdw</>
      </para>
     </listitem>
 
@@ -3180,13 +3180,13 @@ This commit is also listed under libpq and PL/pgSQL
     </itemizedlist>
 
     <sect4>
-     <title><filename>postgres_fdw</></title>
+     <title><filename>mollydb_fdw</></title>
 
      <itemizedlist>
 
       <listitem>
 <!--
-2015-11-03 [d89494166] Allow postgres_fdw to ship extension funcs/operators for
+2015-11-03 [d89494166] Allow mollydb_fdw to ship extension funcs/operators for
 -->
        <para>
         Allow extension-provided operators and functions to be sent for
@@ -3203,8 +3203,8 @@ This commit is also listed under libpq and PL/pgSQL
 
       <listitem>
 <!--
-2015-11-03 [f18c944b6] postgres_fdw: Add ORDER BY to some remote SQL queries.
-2015-12-22 [ccd8f9792] postgres_fdw: Consider requesting sorted data so we can
+2015-11-03 [f18c944b6] mollydb_fdw: Add ORDER BY to some remote SQL queries.
+2015-12-22 [ccd8f9792] mollydb_fdw: Consider requesting sorted data so we can
 -->
        <para>
         Consider performing sorts on the remote server (Ashutosh Bapat)
@@ -3213,8 +3213,8 @@ This commit is also listed under libpq and PL/pgSQL
 
       <listitem>
 <!--
-2016-02-09 [e4106b252] postgres_fdw: Push down joins to remote servers.
-2016-03-09 [aa09cd242] postgres_fdw: Consider foreign joining and foreign sorti
+2016-02-09 [e4106b252] mollydb_fdw: Push down joins to remote servers.
+2016-03-09 [aa09cd242] mollydb_fdw: Consider foreign joining and foreign sorti
 -->
        <para>
         Consider performing joins on the remote server (Shigeru Hanada,
@@ -3242,7 +3242,7 @@ This commit is also listed under libpq and PL/pgSQL
 
       <listitem>
 <!--
-2016-02-03 [dc203dc3a] postgres_fdw: Allow fetch_size to be set per-table or pe
+2016-02-03 [dc203dc3a] mollydb_fdw: Allow fetch_size to be set per-table or pe
 -->
        <para>
         Allow the fetch size to be set as a server or table option
@@ -3250,7 +3250,7 @@ This commit is also listed under libpq and PL/pgSQL
        </para>
 
        <para>
-        Formerly, <filename>postgres_fdw</> always fetched 100 rows at a time
+        Formerly, <filename>mollydb_fdw</> always fetched 100 rows at a time
         from remote queries; now that behavior is adjustable.
        </para>
       </listitem>
@@ -3267,7 +3267,7 @@ This commit is also listed under libpq and PL/pgSQL
 
       <listitem>
 <!--
-2016-04-21 [f039eaac7] Allow queries submitted by postgres_fdw to be canceled.
+2016-04-21 [f039eaac7] Allow queries submitted by mollydb_fdw to be canceled.
 -->
        <para>
         Transmit query cancellation requests to the remote server

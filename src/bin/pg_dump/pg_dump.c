@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * pg_dump.c
- *	  pg_dump is a utility for dumping out a postgres database
+ *	  pg_dump is a utility for dumping out a mollydb database
  *	  into a script file.
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -29,7 +29,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <unistd.h>
 #include <ctype.h>

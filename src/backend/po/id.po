@@ -1,5 +1,5 @@
-# translation of postgres.po to id_ID
-# indonesian message translation file for postgres
+# translation of mollydb.po to id_ID
+# indonesian message translation file for mollydb
 #
 # Use these quotes: « %s »
 # Julyanto Sutandang <julyanto@equnix.co.id>, 2004-2014.
@@ -209,7 +209,7 @@ msgstr "jumlah kolom indeks (%d) melebihi batas (%d)"
 msgid "index row requires %lu bytes, maximum size is %lu"
 msgstr "baris index membutuhkan %lu byte, ukuran maksimalnya %lu"
 
-#: access/common/printtup.c:293 tcop/fastpath.c:182 tcop/fastpath.c:571 tcop/postgres.c:1673
+#: access/common/printtup.c:293 tcop/fastpath.c:182 tcop/fastpath.c:571 tcop/mollydb.c:1673
 #, c-format
 msgid "unsupported format code: %d"
 msgstr "kode format: %d tidak didukung"
@@ -1944,12 +1944,12 @@ msgstr "Fungsi conrtol pemulihan hanya dapat dijalankan selama pemulihan"
 msgid "invalid input syntax for transaction log location: \"%s\""
 msgstr "syntak input tidak valid untuk lokasi log transaksi: « %s »"
 
-#: bootstrap/bootstrap.c:278 postmaster/postmaster.c:759 tcop/postgres.c:3453
+#: bootstrap/bootstrap.c:278 postmaster/postmaster.c:759 tcop/mollydb.c:3453
 #, c-format
 msgid "--%s requires a value"
 msgstr "--%s memerlukan nilai"
 
-#: bootstrap/bootstrap.c:283 postmaster/postmaster.c:764 tcop/postgres.c:3458
+#: bootstrap/bootstrap.c:283 postmaster/postmaster.c:764 tcop/mollydb.c:3458
 #, c-format
 msgid "-c %s requires a value"
 msgstr "-c %s memerlukan nilai"
@@ -3933,7 +3933,7 @@ msgstr "sambungan terputus saat COPY ke stdout stdout"
 msgid "could not read from COPY file: %m"
 msgstr "tidak dapat membaca dari COPY file: %m"
 
-#: commands/copy.c:587 commands/copy.c:606 commands/copy.c:610 tcop/fastpath.c:293 tcop/postgres.c:351 tcop/postgres.c:387
+#: commands/copy.c:587 commands/copy.c:606 commands/copy.c:610 tcop/fastpath.c:293 tcop/mollydb.c:351 tcop/mollydb.c:387
 #, c-format
 msgid "unexpected EOF on client connection with an open transaction"
 msgstr "(EOF) tidak disuga pada sambungan client dengan transaksi terbuka"
@@ -5739,7 +5739,7 @@ msgstr "tidak dapat memposisikan kursor held"
 msgid "invalid statement name: must not be empty"
 msgstr "nama pernyataan tidak valid: tidak boleh kosong"
 
-#: commands/prepare.c:129 parser/parse_param.c:304 tcop/postgres.c:1299
+#: commands/prepare.c:129 parser/parse_param.c:304 tcop/mollydb.c:1299
 #, c-format
 msgid "could not determine data type of parameter $%d"
 msgstr "tidak dapat menentukan tipe data dari parameter $%d"
@@ -12178,13 +12178,13 @@ msgstr "tidak dapat membuat pg_hba.conf"
 
 #: postmaster/postmaster.c:1293
 #, c-format
-msgid "%s: could not locate matching postgres executable"
-msgstr "%s : tidak dapat menempatkan kesesuaian eksekusi postgres"
+msgid "%s: could not locate matching mollydb executable"
+msgstr "%s : tidak dapat menempatkan kesesuaian eksekusi mollydb"
 
 #: postmaster/postmaster.c:1316 utils/misc/tzparser.c:325
 #, c-format
 msgid "This may indicate an incomplete MollyDB installation, or that the file \"%s\" has been moved away from its proper location."
-msgstr "Ini mungkin menunjukan installasi postgres tidak lengkap, atau file ini « %s » telah dipindahkan dari lokasi yang seharusnya ."
+msgstr "Ini mungkin menunjukan installasi mollydb tidak lengkap, atau file ini « %s » telah dipindahkan dari lokasi yang seharusnya ."
 
 #: postmaster/postmaster.c:1344
 #, c-format
@@ -13544,12 +13544,12 @@ msgstr "ukuran isian shmemIndex salah untuk struktur data « %s »: diharapkan %
 msgid "requested shared memory size overflows size_t"
 msgstr "ukuran memori 'shared' yang dibutuhkan melewati size_t"
 
-#: storage/ipc/standby.c:499 tcop/postgres.c:2943
+#: storage/ipc/standby.c:499 tcop/mollydb.c:2943
 #, c-format
 msgid "canceling statement due to conflict with recovery"
 msgstr "pembatalan perintah karena konflik dengan perbaikan"
 
-#: storage/ipc/standby.c:500 tcop/postgres.c:2217
+#: storage/ipc/standby.c:500 tcop/mollydb.c:2217
 #, c-format
 msgid "User transaction caused buffer deadlock with recovery."
 msgstr "transaksi pengguna menyebabkan buffer 'deadlock' dengan perbaikan"
@@ -13883,12 +13883,12 @@ msgstr "tak dapat membuka file « %s » (blok sasaran %u) : %m"
 msgid "invalid argument size %d in function call message"
 msgstr "ukuran argument tidak valid %d panggil pesan di fungsi"
 
-#: tcop/fastpath.c:304 tcop/postgres.c:362 tcop/postgres.c:398
+#: tcop/fastpath.c:304 tcop/mollydb.c:362 tcop/mollydb.c:398
 #, c-format
 msgid "unexpected EOF on client connection"
 msgstr "'EOF' tidak terduga pada koneksi klien"
 
-#: tcop/fastpath.c:318 tcop/postgres.c:947 tcop/postgres.c:1257 tcop/postgres.c:1515 tcop/postgres.c:1918 tcop/postgres.c:2285 tcop/postgres.c:2360
+#: tcop/fastpath.c:318 tcop/mollydb.c:947 tcop/mollydb.c:1257 tcop/mollydb.c:1515 tcop/mollydb.c:1918 tcop/mollydb.c:2285 tcop/mollydb.c:2360
 #, c-format
 msgid "current transaction is aborted, commands ignored until end of transaction block"
 msgstr "transaksi saat ini dibatalkan, perintah diabaikan sampai akhir blok transaksi"
@@ -13898,7 +13898,7 @@ msgstr "transaksi saat ini dibatalkan, perintah diabaikan sampai akhir blok tran
 msgid "fastpath function call: \"%s\" (OID %u)"
 msgstr "pemanggilan fungsi fastpath: « %s » (OID %u)"
 
-#: tcop/fastpath.c:428 tcop/postgres.c:1117 tcop/postgres.c:1382 tcop/postgres.c:1759 tcop/postgres.c:1976
+#: tcop/fastpath.c:428 tcop/mollydb.c:1117 tcop/mollydb.c:1382 tcop/mollydb.c:1759 tcop/mollydb.c:1976
 #, c-format
 msgid "duration: %s ms"
 msgstr "durasi: %s ms"
@@ -13923,135 +13923,135 @@ msgstr "pesan pemanggilan fungsi berisi %d format argumen tapi %d argumen"
 msgid "incorrect binary data format in function argument %d"
 msgstr "data format biner tidak benar dalam argumen fungsi %d"
 
-#: tcop/postgres.c:426 tcop/postgres.c:438 tcop/postgres.c:449 tcop/postgres.c:461 tcop/postgres.c:4235
+#: tcop/mollydb.c:426 tcop/mollydb.c:438 tcop/mollydb.c:449 tcop/mollydb.c:461 tcop/mollydb.c:4235
 #, c-format
 msgid "invalid frontend message type %d"
 msgstr "tipe pesan 'frontend' %d tidak valid"
 
-#: tcop/postgres.c:888
+#: tcop/mollydb.c:888
 #, c-format
 msgid "statement: %s"
 msgstr "perintah: %s"
 
-#: tcop/postgres.c:1122
+#: tcop/mollydb.c:1122
 #, c-format
 msgid "duration: %s ms  statement: %s"
 msgstr "durasi: %s ms, perintah: %s"
 
-#: tcop/postgres.c:1172
+#: tcop/mollydb.c:1172
 #, c-format
 msgid "parse %s: %s"
 msgstr "memilah %s : %s"
 
-#: tcop/postgres.c:1230
+#: tcop/mollydb.c:1230
 #, c-format
 msgid "cannot insert multiple commands into a prepared statement"
 msgstr "tak dapat memasukan banyak perintah dalam sebuah 'prepared statement'"
 
-#: tcop/postgres.c:1387
+#: tcop/mollydb.c:1387
 #, c-format
 msgid "duration: %s ms  parse %s: %s"
 msgstr "durasi: %s ms, memilah %s : %s"
 
-#: tcop/postgres.c:1432
+#: tcop/mollydb.c:1432
 #, c-format
 msgid "bind %s to %s"
 msgstr "mengikat %s ke %s"
 
-#: tcop/postgres.c:1451 tcop/postgres.c:2266
+#: tcop/mollydb.c:1451 tcop/mollydb.c:2266
 #, c-format
 msgid "unnamed prepared statement does not exist"
 msgstr "'prepared statement' tak bernama tidak ada"
 
-#: tcop/postgres.c:1493
+#: tcop/mollydb.c:1493
 #, c-format
 msgid "bind message has %d parameter formats but %d parameters"
 msgstr "pesan terikat memiliki %d format parameter tetapi %d parameter"
 
-#: tcop/postgres.c:1499
+#: tcop/mollydb.c:1499
 #, c-format
 msgid "bind message supplies %d parameters, but prepared statement \"%s\" requires %d"
 msgstr "pesan terikat menyediakan %d parameter, tapi 'prepared statement' « %s » butuh %d"
 
-#: tcop/postgres.c:1666
+#: tcop/mollydb.c:1666
 #, c-format
 msgid "incorrect binary data format in bind parameter %d"
 msgstr "format data biner tidak benar dalam parameter ikat %d"
 
-#: tcop/postgres.c:1764
+#: tcop/mollydb.c:1764
 #, c-format
 msgid "duration: %s ms  bind %s%s%s: %s"
 msgstr "durasi: %s ms, ikat %s%s%s: %s"
 
-#: tcop/postgres.c:1812 tcop/postgres.c:2346
+#: tcop/mollydb.c:1812 tcop/mollydb.c:2346
 #, c-format
 msgid "portal \"%s\" does not exist"
 msgstr "portal « %s » tidak ada"
 
-#: tcop/postgres.c:1897
+#: tcop/mollydb.c:1897
 #, c-format
 msgid "%s %s%s%s: %s"
 msgstr "%s %s%s%s: %s"
 
-#: tcop/postgres.c:1899 tcop/postgres.c:1984
+#: tcop/mollydb.c:1899 tcop/mollydb.c:1984
 msgid "execute fetch from"
 msgstr "menjalankan 'fetch' dari"
 
-#: tcop/postgres.c:1900 tcop/postgres.c:1985
+#: tcop/mollydb.c:1900 tcop/mollydb.c:1985
 msgid "execute"
 msgstr "menjalankan"
 
-#: tcop/postgres.c:1981
+#: tcop/mollydb.c:1981
 #, c-format
 msgid "duration: %s ms  %s %s%s%s: %s"
 msgstr "durasi: %s ms  %s %s%s%s: %s"
 
-#: tcop/postgres.c:2107
+#: tcop/mollydb.c:2107
 #, c-format
 msgid "prepare: %s"
 msgstr "menyiapkan: %s"
 
-#: tcop/postgres.c:2170
+#: tcop/mollydb.c:2170
 #, c-format
 msgid "parameters: %s"
 msgstr "parameter: %s"
 
-#: tcop/postgres.c:2189
+#: tcop/mollydb.c:2189
 #, c-format
 msgid "abort reason: recovery conflict"
 msgstr "alasan batal: konflik perbaikan"
 
-#: tcop/postgres.c:2205
+#: tcop/mollydb.c:2205
 #, c-format
 msgid "User was holding shared buffer pin for too long."
 msgstr "Pengguna memegang pin 'shared buffer' terlalu lama"
 
-#: tcop/postgres.c:2208
+#: tcop/mollydb.c:2208
 #, c-format
 msgid "User was holding a relation lock for too long."
 msgstr "Pengguna memegang kunci tabel terlalu lama"
 
-#: tcop/postgres.c:2211
+#: tcop/mollydb.c:2211
 #, c-format
 msgid "User was or might have been using tablespace that must be dropped."
 msgstr "Pengguna telah atau sedang menggunakan 'tablespace' yang harus dihapus"
 
-#: tcop/postgres.c:2214
+#: tcop/mollydb.c:2214
 #, c-format
 msgid "User query might have needed to see row versions that must be removed."
 msgstr "Query pengguna mungkin butuh melihat versi baris yang harus dibuang"
 
-#: tcop/postgres.c:2220
+#: tcop/mollydb.c:2220
 #, c-format
 msgid "User was connected to a database that must be dropped."
 msgstr "Pengguna terhubung ke database yang harus dihapus"
 
-#: tcop/postgres.c:2549
+#: tcop/mollydb.c:2549
 #, c-format
 msgid "terminating connection because of crash of another server process"
 msgstr "memutus koneksi karena proses server lain mati (crash)"
 
-#: tcop/postgres.c:2550
+#: tcop/mollydb.c:2550
 #, c-format
 msgid "The postmaster has commanded this server process to roll back the current transaction and exit, because another server process exited abnormally and possibly corrupted shared memory."
 msgstr ""
@@ -14059,127 +14059,127 @@ msgstr ""
 "transaksi saat ini dan keluar, karena proses server lainnya \n"
 "keluar tidak normal dan kemungkinan memori 'shared' rusak"
 
-#: tcop/postgres.c:2554 tcop/postgres.c:2938
+#: tcop/mollydb.c:2554 tcop/mollydb.c:2938
 #, c-format
 msgid "In a moment you should be able to reconnect to the database and repeat your command."
 msgstr "Sebentar lagi Anda seharusnya dapat terhubung kembali ke database dan mengulangi perintah anda."
 
-#: tcop/postgres.c:2667
+#: tcop/mollydb.c:2667
 #, c-format
 msgid "floating-point exception"
 msgstr "Kesalahan pengecualian dari bilangan pecahan"
 
-#: tcop/postgres.c:2668
+#: tcop/mollydb.c:2668
 #, c-format
 msgid "An invalid floating-point operation was signaled. This probably means an out-of-range result or an invalid operation, such as division by zero."
 msgstr "Operasi bil pecahan yang tidak valid tersinyal. Ini mungkin hasil yang diluar jangkauan atau operasi yang tidak valid, seperti pembagian dengan nol."
 
-#: tcop/postgres.c:2842
+#: tcop/mollydb.c:2842
 #, c-format
 msgid "terminating autovacuum process due to administrator command"
 msgstr "menghentikan 'autovacuum' karena perintah adminstrator"
 
-#: tcop/postgres.c:2848 tcop/postgres.c:2858 tcop/postgres.c:2936
+#: tcop/mollydb.c:2848 tcop/mollydb.c:2858 tcop/mollydb.c:2936
 #, c-format
 msgid "terminating connection due to conflict with recovery"
 msgstr "memutus koneksi karena konflik dengan perbaikan"
 
-#: tcop/postgres.c:2864
+#: tcop/mollydb.c:2864
 #, c-format
 msgid "terminating connection due to administrator command"
 msgstr "memutus koneksi karena perintah administrator"
 
-#: tcop/postgres.c:2876
+#: tcop/mollydb.c:2876
 #, c-format
 msgid "connection to client lost"
 msgstr "koneksi ke klien hilang"
 
-#: tcop/postgres.c:2891
+#: tcop/mollydb.c:2891
 #, c-format
 msgid "canceling authentication due to timeout"
 msgstr "pembatalan otentikasi karena waktu habis"
 
-#: tcop/postgres.c:2906
+#: tcop/mollydb.c:2906
 #, c-format
 msgid "canceling statement due to lock timeout"
 msgstr "pembatalan perintah karena kunci kehabisan waktu tunggu"
 
-#: tcop/postgres.c:2915
+#: tcop/mollydb.c:2915
 #, c-format
 msgid "canceling statement due to statement timeout"
 msgstr "pembatalan perintah karena perintah kehabisan waktu tunggu"
 
-#: tcop/postgres.c:2924
+#: tcop/mollydb.c:2924
 #, c-format
 msgid "canceling autovacuum task"
 msgstr "pembatalan kerja 'autovacuum"
 
-#: tcop/postgres.c:2959
+#: tcop/mollydb.c:2959
 #, c-format
 msgid "canceling statement due to user request"
 msgstr "pembatalan perintah karena permintaan pengguna"
 
-#: tcop/postgres.c:3087 tcop/postgres.c:3109
+#: tcop/mollydb.c:3087 tcop/mollydb.c:3109
 #, c-format
 msgid "stack depth limit exceeded"
 msgstr "batas kedalam 'stack' berlebih"
 
-#: tcop/postgres.c:3088 tcop/postgres.c:3110
+#: tcop/mollydb.c:3088 tcop/mollydb.c:3110
 #, c-format
 msgid "Increase the configuration parameter \"max_stack_depth\" (currently %dkB), after ensuring the platform's stack depth limit is adequate."
 msgstr "Meningkatkan parameter konfigurasi « max_stack_depth » (saat ini %d kB) setelah pastikan batas kedalaman 'stack' dari platform mencukupi."
 
-#: tcop/postgres.c:3126
+#: tcop/mollydb.c:3126
 #, c-format
 msgid "\"max_stack_depth\" must not exceed %ldkB."
 msgstr "« max_stack_depth » harus tidak melebihi %ld kB."
 
-#: tcop/postgres.c:3128
+#: tcop/mollydb.c:3128
 #, c-format
 msgid "Increase the platform's stack depth limit via \"ulimit -s\" or local equivalent."
 msgstr "Tingkatkan batas kedalaman 'stack' dari platform lewat « ulimit -s » atau cara lokal yg sama."
 
-#: tcop/postgres.c:3492
+#: tcop/mollydb.c:3492
 #, c-format
 msgid "invalid command-line argument for server process: %s"
 msgstr "argumen perintah-baris tidak valid untuk proses server: %s"
 
-#: tcop/postgres.c:3493 tcop/postgres.c:3499
+#: tcop/mollydb.c:3493 tcop/mollydb.c:3499
 #, c-format
 msgid "Try \"%s --help\" for more information."
 msgstr "Coba lakukan « %s --help » untuk pertolongan informasi."
 
-#: tcop/postgres.c:3497
+#: tcop/mollydb.c:3497
 #, c-format
 msgid "%s: invalid command-line argument: %s"
 msgstr "%s: argumen perintah-baris tidak valid: %s"
 
-#: tcop/postgres.c:3576
+#: tcop/mollydb.c:3576
 #, c-format
 msgid "%s: no database nor user name specified"
 msgstr "%s: tak ada database atau nama user yg disebutkan"
 
-#: tcop/postgres.c:4143
+#: tcop/mollydb.c:4143
 #, c-format
 msgid "invalid CLOSE message subtype %d"
 msgstr "sub tipe %d dari CLOSE tidak valid"
 
-#: tcop/postgres.c:4178
+#: tcop/mollydb.c:4178
 #, c-format
 msgid "invalid DESCRIBE message subtype %d"
 msgstr "sub tipe %d dari DESCRIBE tidak valid"
 
-#: tcop/postgres.c:4256
+#: tcop/mollydb.c:4256
 #, c-format
 msgid "fastpath function calls not supported in a replication connection"
 msgstr "pemanggilan fungsi 'fastpath' tidak didukung dalam koneksi replikasi"
 
-#: tcop/postgres.c:4260
+#: tcop/mollydb.c:4260
 #, c-format
 msgid "extended query protocol not supported in a replication connection"
 msgstr "protokol query yang lebih luas tidak didukung dalam koneksi replikasi"
 
-#: tcop/postgres.c:4430
+#: tcop/mollydb.c:4430
 #, c-format
 msgid "disconnection: session time: %d:%02d:%02d.%03d user=%s database=%s host=%s%s%s"
 msgstr "pemutusan koneksi: sesi waktu: %d:%02d:%02d.%03d pengguna=%s database=%s host=%s%s%s"
@@ -17307,8 +17307,8 @@ msgstr "file lock « %s » sudah ada"
 
 #: utils/init/miscinit.c:826
 #, c-format
-msgid "Is another postgres (PID %d) running in data directory \"%s\"?"
-msgstr "Apakah postgres lain (PID %d) berjalan dalam direktori data « %s » ?"
+msgid "Is another mollydb (PID %d) running in data directory \"%s\"?"
+msgstr "Apakah mollydb lain (PID %d) berjalan dalam direktori data « %s » ?"
 
 #: utils/init/miscinit.c:828
 #, c-format
@@ -17317,8 +17317,8 @@ msgstr "Apakah postmaster lain (PID %d) berjalan dalam direktori data « %s » ?
 
 #: utils/init/miscinit.c:831
 #, c-format
-msgid "Is another postgres (PID %d) using socket file \"%s\"?"
-msgstr "Apakah postgres lain (PID %d) menggunakan file socket « %s » ?"
+msgid "Is another mollydb (PID %d) using socket file \"%s\"?"
+msgstr "Apakah mollydb lain (PID %d) menggunakan file socket « %s » ?"
 
 #: utils/init/miscinit.c:833
 #, c-format

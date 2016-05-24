@@ -2259,10 +2259,10 @@ msgstr "%s: 无法与数据库 \"%s\" 联接\n"
 #: pg_dumpall.c:400
 #, c-format
 msgid ""
-"%s: could not connect to databases \"postgres\" or \"template1\"\n"
+"%s: could not connect to databases \"mollydb\" or \"template1\"\n"
 "Please specify an alternative database.\n"
 msgstr ""
-"%s: 无法连接到数据库 \"postgres\"或\"template1\"\n"
+"%s: 无法连接到数据库 \"mollydb\"或\"template1\"\n"
 "请指定另外一个数据库.\n"
 
 # command.c:1148

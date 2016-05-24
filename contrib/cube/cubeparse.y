@@ -7,7 +7,7 @@
 #define YYSTYPE char *
 #define YYDEBUG 1
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "cubedata.h"
 

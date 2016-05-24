@@ -29,7 +29,7 @@
  * contrib/pgcrypto/openssl.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "px.h"
 

@@ -181,7 +181,7 @@
  *									   void *recdata, uint32 len);
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/htup_details.h"
 #include "access/slru.h"

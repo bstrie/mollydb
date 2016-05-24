@@ -29,7 +29,7 @@
  * contrib/pgcrypto/internal.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <time.h>
 

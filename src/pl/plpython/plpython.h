@@ -13,11 +13,11 @@
 #define PLPYTHON_H
 
 /*
- * Include order should be: postgres.h, other postgres headers, plpython.h,
+ * Include order should be: mollydb.h, other mollydb headers, plpython.h,
  * other plpython headers
  */
 #ifndef POSTGRES_H
-#error postgres.h must be included before plpython.h
+#error mollydb.h must be included before plpython.h
 #endif
 
 /*
@@ -44,7 +44,7 @@
 /* Python uses #pragma to bring in a non-default libpython on VC++ if
  * _DEBUG is defined */
 #undef _DEBUG
-/* Also hide away errcode, since we load Python.h before postgres.h */
+/* Also hide away errcode, since we load Python.h before mollydb.h */
 #define errcode __msvc_errcode
 #include <Python.h>
 #undef errcode

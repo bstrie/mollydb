@@ -77,7 +77,7 @@
  <para>
   The remainder of this section outlines various failover, replication,
   and load balancing solutions.  A <ulink
-  url="http://www.postgres-r.org/documentation/terms">glossary</ulink> is
+  url="http://www.mollydb-r.org/documentation/terms">glossary</ulink> is
   also available.
  </para>
 
@@ -928,12 +928,12 @@ primary_conninfo = 'host=192.168.1.50 port=5432 user=foo password=foopass'
     <para>
      You can create a replication slot like this:
 <programlisting>
-postgres=# SELECT * FROM pg_create_physical_replication_slot('node_a_slot');
+mollydb=# SELECT * FROM pg_create_physical_replication_slot('node_a_slot');
   slot_name  | xlog_position
 -------------+---------------
  node_a_slot |
 
-postgres=# SELECT * FROM pg_replication_slots;
+mollydb=# SELECT * FROM pg_replication_slots;
   slot_name  | slot_type | datoid | database | active | xmin | restart_lsn | confirmed_flush_lsn
 -------------+-----------+--------+----------+--------+------+-------------+---------------------
  node_a_slot | physical  |        |          | f      |      |             |
@@ -2186,7 +2186,7 @@ LOG:  database system is ready to accept read only connections
    <para>
     The <productname>Nagios</> plugin <productname>check_pgsql</> will
     work, because the simple information it checks for exists.
-    The <productname>check_postgres</> monitoring script will also work,
+    The <productname>check_mollydb</> monitoring script will also work,
     though some reported values could give different or confusing results.
     For example, last vacuum time will not be maintained, since no
     vacuum occurs on the standby.  Vacuums running on the primary

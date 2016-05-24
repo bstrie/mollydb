@@ -4,7 +4,7 @@
  * src/pl/plpython/plpy_exec.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/htup_details.h"
 #include "access/xact.h"
@@ -318,7 +318,7 @@ PLy_exec_function(FunctionCallInfo fcinfo, PLyProcedure *proc)
  * object who's value is SKIP, or MODIFY.  SKIP means don't perform
  * this action.  MODIFY means the tuple has been modified, so update
  * tuple and perform action.  SKIP and MODIFY assume the trigger fires
- * BEFORE the event and is ROW level.  postgres expects the function
+ * BEFORE the event and is ROW level.  mollydb expects the function
  * to take no arguments and return an argument of type trigger.
  */
 HeapTuple

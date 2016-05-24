@@ -77,4 +77,4 @@ was a mess. Here's a little anecdote:
     LispValue definition -- class used to support lisp structures
     in C.  This is here because we did not want to totally rewrite
     planner and executor code which depended on lisp structures when
-    we ported postgres V1 from lisp to C. -cim 4/23/90
+    we ported mollydb V1 from lisp to C. -cim 4/23/90

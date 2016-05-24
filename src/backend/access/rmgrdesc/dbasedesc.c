@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "commands/dbcommands_xlog.h"
 #include "lib/stringinfo.h"

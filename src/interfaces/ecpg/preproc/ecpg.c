@@ -3,7 +3,7 @@
 /* Main for ecpg, the MollyDB embedded SQL precompiler. */
 /* Copyright (c) 1996-2016, MollyDB Global Development Group */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <unistd.h>
 #include <string.h>

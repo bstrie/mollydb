@@ -201,7 +201,7 @@ Complete list of usable sgml source files in this directory.
 <!ENTITY pgtesttiming       SYSTEM "pgtesttiming.sgml">
 <!ENTITY pgupgrade          SYSTEM "pgupgrade.sgml">
 <!ENTITY pgxlogdump         SYSTEM "pg_xlogdump.sgml">
-<!ENTITY postgres           SYSTEM "postgres-ref.sgml">
+<!ENTITY mollydb           SYSTEM "mollydb-ref.sgml">
 <!ENTITY postmaster         SYSTEM "postmaster.sgml">
 <!ENTITY psqlRef            SYSTEM "psql-ref.sgml">
 <!ENTITY reindexdb          SYSTEM "reindexdb.sgml">

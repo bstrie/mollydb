@@ -8,11 +8,11 @@
   and its interactions with the operating system.
  </para>
 
- <sect1 id="postgres-user">
+ <sect1 id="mollydb-user">
   <title>The <productname>MollyDB</productname> User Account</title>
 
   <indexterm>
-   <primary>postgres user</primary>
+   <primary>mollydb user</primary>
   </indexterm>
 
   <para>
@@ -29,7 +29,7 @@
   <para>
    To add a Unix user account to your system, look for a command
    <command>useradd</command> or <command>adduser</command>. The user
-   name <systemitem>postgres</systemitem> is often used, and is assumed
+   name <systemitem>mollydb</systemitem> is often used, and is assumed
    throughout this book, but you can use another name if you like.
   </para>
  </sect1>
@@ -52,10 +52,10 @@
    (The <acronym>SQL</acronym> standard uses the term catalog cluster.) A
    database cluster is a collection of databases that is managed by a
    single instance of a running database server. After initialization, a
-   database cluster will contain a database named <literal>postgres</literal>,
+   database cluster will contain a database named <literal>mollydb</literal>,
    which is meant as a default database for use by utilities, users and third
    party applications.  The database server itself does not require the
-   <literal>postgres</literal> database to exist, but many external utility
+   <literal>mollydb</literal> database to exist, but many external utility
    programs assume it exists.  Another database created within each cluster
    during initialization is called
    <literal>template1</literal>.  As the name suggests, this will be used
@@ -120,9 +120,9 @@
    like this:
 <screen>
 root# <userinput>mkdir /usr/local/pgsql</userinput>
-root# <userinput>chown postgres /usr/local/pgsql</userinput>
-root# <userinput>su postgres</userinput>
-postgres$ <userinput>initdb -D /usr/local/pgsql/data</userinput>
+root# <userinput>chown mollydb /usr/local/pgsql</userinput>
+root# <userinput>su mollydb</userinput>
+mollydb$ <userinput>initdb -D /usr/local/pgsql/data</userinput>
 </screen>
   </para>
 
@@ -251,13 +251,13 @@ postgres$ <userinput>initdb -D /usr/local/pgsql/data</userinput>
   <para>
    Before anyone can access the database, you must start the database
    server. The database server program is called
-   <command>postgres</command>.<indexterm><primary>postgres</></>
-   The <command>postgres</command> program must know where to
+   <command>mollydb</command>.<indexterm><primary>mollydb</></>
+   The <command>mollydb</command> program must know where to
    find the data it is supposed to use. This is done with the
    <option>-D</option> option. Thus, the simplest way to start the
    server is:
 <screen>
-$ <userinput>postgres -D /usr/local/pgsql/data</userinput>
+$ <userinput>mollydb -D /usr/local/pgsql/data</userinput>
 </screen>
    which will leave the server running in the foreground. This must be
    done while logged into the <productname>MollyDB</productname> user
@@ -267,10 +267,10 @@ $ <userinput>postgres -D /usr/local/pgsql/data</userinput>
   </para>
 
   <para>
-   Normally it is better to start <command>postgres</command> in the
+   Normally it is better to start <command>mollydb</command> in the
    background.  For this, use the usual Unix shell syntax:
 <screen>
-$ <userinput>postgres -D /usr/local/pgsql/data &gt;logfile 2&gt;&amp;1 &amp;</userinput>
+$ <userinput>mollydb -D /usr/local/pgsql/data &gt;logfile 2&gt;&amp;1 &amp;</userinput>
 </screen>
    It is important to store the server's <systemitem>stdout</> and
    <systemitem>stderr</> output somewhere, as shown above. It will help
@@ -280,9 +280,9 @@ $ <userinput>postgres -D /usr/local/pgsql/data &gt;logfile 2&gt;&amp;1 &amp;</us
   </para>
 
   <para>
-   The <command>postgres</command> program also takes a number of other
+   The <command>mollydb</command> program also takes a number of other
    command-line options. For more information, see the
-   <xref linkend="app-postgres"> reference page
+   <xref linkend="app-mollydb"> reference page
    and <xref linkend="runtime-config"> below.
   </para>
 
@@ -296,7 +296,7 @@ pg_ctl start -l logfile
 </programlisting>
    will start the server in the background and put the output into the
    named log file. The <option>-D</option> option has the same meaning
-   here as for <command>postgres</command>. <command>pg_ctl</command>
+   here as for <command>mollydb</command>. <command>pg_ctl</command>
    is also capable of stopping the server.
   </para>
 
@@ -322,9 +322,9 @@ pg_ctl start -l logfile
    run by the <productname>MollyDB</productname> user account
    <emphasis>and not by root</emphasis> or any other user. Therefore you
    probably should form your commands using
-   <literal>su postgres -c '...'</literal>.  For example:
+   <literal>su mollydb -c '...'</literal>.  For example:
 <programlisting>
-su postgres -c 'pg_ctl start -D /usr/local/pgsql/data -l serverlog'
+su mollydb -c 'pg_ctl start -D /usr/local/pgsql/data -l serverlog'
 </programlisting>
   </para>
 
@@ -349,8 +349,8 @@ su postgres -c 'pg_ctl start -D /usr/local/pgsql/data -l serverlog'
       to the file <filename>/etc/rc.local</filename>:
       <indexterm><primary>OpenBSD</><secondary>start script</secondary></>
 <programlisting>
-if [ -x /usr/local/pgsql/bin/pg_ctl -a -x /usr/local/pgsql/bin/postgres ]; then
-    su -l postgres -c '/usr/local/pgsql/bin/pg_ctl start -s -l /var/mollydb/log -D /usr/local/pgsql/data'
+if [ -x /usr/local/pgsql/bin/pg_ctl -a -x /usr/local/pgsql/bin/mollydb ]; then
+    su -l mollydb -c '/usr/local/pgsql/bin/pg_ctl start -s -l /var/mollydb/log -D /usr/local/pgsql/data'
     echo -n ' mollydb'
 fi
 </programlisting>
@@ -377,12 +377,12 @@ fi
 <programlisting>
 [Unit]
 Description=MollyDB database server
-Documentation=man:postgres(1)
+Documentation=man:mollydb(1)
 
 [Service]
 Type=notify
-User=postgres
-ExecStart=/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data
+User=mollydb
+ExecStart=/usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=mixed
 KillSignal=SIGINT
@@ -423,7 +423,7 @@ WantedBy=multi-user.target
       the following line:
       <indexterm><primary>Solaris</><secondary>start script</secondary></>
 <programlisting>
-su - postgres -c "/usr/local/pgsql/bin/pg_ctl start -l logfile -D /usr/local/pgsql/data"
+su - mollydb -c "/usr/local/pgsql/bin/pg_ctl start -l logfile -D /usr/local/pgsql/data"
 </programlisting>
       Then, create a symbolic link to it in <filename>/etc/rc3.d</> as
       <filename>S99mollydb</>.
@@ -466,7 +466,7 @@ FATAL:  could not create TCP/IP listen socket
      be a different problem. For example, trying to start a server
      on a reserved port number might draw something like:
 <screen>
-$ <userinput>postgres -p 666</userinput>
+$ <userinput>mollydb -p 666</userinput>
 LOG:  could not bind IPv4 socket: Permission denied
 HINT:  Is another postmaster already running on port 666? If not, wait a few seconds and retry.
 FATAL:  could not create TCP/IP listen socket
@@ -1126,20 +1126,20 @@ set semsys:seminfo_semmsl=32
         <productname>MollyDB</> applications.  Solaris now defaults
         to a <varname>SHMMAX</> of one-quarter of system <acronym>RAM</>.
         To further adjust this setting, use a project setting associated
-        with the <literal>postgres</> user.  For example, run the
+        with the <literal>mollydb</> user.  For example, run the
         following as <literal>root</>:
 <programlisting>
-projadd -c "MollyDB DB User" -K "project.max-shm-memory=(privileged,8GB,deny)" -U postgres -G postgres user.postgres
+projadd -c "MollyDB DB User" -K "project.max-shm-memory=(privileged,8GB,deny)" -U mollydb -G mollydb user.mollydb
 </programlisting>
        </para>
 
        <para>
-        This command adds the <literal>user.postgres</> project and
-        sets the shared memory maximum for the <literal>postgres</>
+        This command adds the <literal>user.mollydb</> project and
+        sets the shared memory maximum for the <literal>mollydb</>
         user to 8GB, and takes effect the next time that user logs
         in, or when you restart <productname>MollyDB</> (not reload).
         The above assumes that <productname>MollyDB</> is run by
-        the <literal>postgres</> user in the <literal>postgres</>
+        the <literal>mollydb</> user in the <literal>mollydb</>
         group.  No server reboot is required.
        </para>
 
@@ -1309,9 +1309,9 @@ default:\
     this (consult your system documentation and configuration on where
     to look for such a message):
 <programlisting>
-Out of Memory: Killed process 12345 (postgres).
+Out of Memory: Killed process 12345 (mollydb).
 </programlisting>
-    This indicates that the <filename>postgres</filename> process
+    This indicates that the <filename>mollydb</filename> process
     has been terminated due to memory pressure.
     Although existing database connections will continue to function
     normally, no new connections will be accepted.  To recover,
@@ -1482,7 +1482,7 @@ $ <userinput>sysctl -w vm.nr_hugepages=3170</userinput>
   <para>
    There are several ways to shut down the database server. You control
    the type of shutdown by sending different signals to the master
-   <command>postgres</command> process.
+   <command>mollydb</command> process.
 
    <variablelist>
     <varlistentry>
@@ -1543,7 +1543,7 @@ $ <userinput>sysctl -w vm.nr_hugepages=3170</userinput>
    interface for sending these signals to shut down the server.
    Alternatively, you can send the signal directly using <command>kill</>
    on non-Windows systems.
-   The <acronym>PID</> of the <command>postgres</command> process can be
+   The <acronym>PID</> of the <command>mollydb</command> process can be
    found using the <command>ps</command> program, or from the file
    <filename>postmaster.pid</filename> in the data directory. For
    example, to do a fast shutdown:
@@ -1558,7 +1558,7 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
     the server.  Doing so will prevent the server from releasing
     shared memory and semaphores, which might then have to be done
     manually before a new server can be started.  Furthermore,
-    <systemitem>SIGKILL</systemitem> kills the <command>postgres</command>
+    <systemitem>SIGKILL</systemitem> kills the <command>mollydb</command>
     process without letting it relay the signal to its subprocesses,
     so it will be necessary to kill the individual subprocesses by hand as
     well.
@@ -1821,7 +1821,7 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
       Start the database server, again using the special database user
       account:
 <programlisting>
-<userinput>/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data</>
+<userinput>/usr/local/pgsql/bin/mollydb -D /usr/local/pgsql/data</>
 </programlisting>
      </para>
     </step>
@@ -1830,7 +1830,7 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
      <para>
       Finally, restore your data from backup with:
 <screen>
-<userinput>/usr/local/pgsql/bin/psql -d postgres -f <replaceable>outputfile</></userinput>
+<userinput>/usr/local/pgsql/bin/psql -d mollydb -f <replaceable>outputfile</></userinput>
 </screen>
       using the <emphasis>new</> <application>psql</>.
      </para>
@@ -1843,7 +1843,7 @@ $ <userinput>kill -INT `head -1 /usr/local/pgsql/data/postmaster.pid`</userinput
     in parallel, on different ports. Then you can use something like:
 
 <programlisting>
-pg_dumpall -p 5432 | psql -d postgres -p 5433
+pg_dumpall -p 5432 | psql -d mollydb -p 5433
 </programlisting>
     to transfer your data.
    </para>
@@ -2373,7 +2373,7 @@ ssh -L 63333:localhost:5432 joe@foo.com
    to the database server using this tunnel, you connect to port 63333
    on the local machine:
 <programlisting>
-psql -h localhost -p 63333 postgres
+psql -h localhost -p 63333 mollydb
 </programlisting>
    To the database server it will then look as though you are really
    user <literal>joe</literal> on host <literal>foo.com</literal>

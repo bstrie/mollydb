@@ -1062,7 +1062,7 @@ $ <userinput>psql -l</userinput>
  englishdb | hlinnaka | UTF8      | en_GB.UTF8  | en_GB.UTF8  | 
  japanese  | hlinnaka | UTF8      | ja_JP.UTF8  | ja_JP.UTF8  | 
  korean    | hlinnaka | EUC_KR    | ko_KR.euckr | ko_KR.euckr | 
- postgres  | hlinnaka | UTF8      | fi_FI.UTF8  | fi_FI.UTF8  | 
+ mollydb  | hlinnaka | UTF8      | fi_FI.UTF8  | fi_FI.UTF8  | 
  template0 | hlinnaka | UTF8      | fi_FI.UTF8  | fi_FI.UTF8  | {=c/hlinnaka,hlinnaka=CTc/hlinnaka}
  template1 | hlinnaka | UTF8      | fi_FI.UTF8  | fi_FI.UTF8  | {=c/hlinnaka,hlinnaka=CTc/hlinnaka}
 (7 rows)

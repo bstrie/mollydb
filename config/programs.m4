@@ -138,7 +138,7 @@ choke me
 if test "$pgac_cv_ldap_safe" != yes; then
   AC_MSG_WARN([
 *** With OpenLDAP versions 2.4.24 through 2.4.31, inclusive, each backend
-*** process that loads libpq (via WAL receiver, dblink, or postgres_fdw) and
+*** process that loads libpq (via WAL receiver, dblink, or mollydb_fdw) and
 *** also uses LDAP will crash on exit.])
 fi])
 

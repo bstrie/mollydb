@@ -5,7 +5,7 @@
  * refint.c --	set of functions to define referential integrity
  *		constraints using general triggers.
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <ctype.h>
 

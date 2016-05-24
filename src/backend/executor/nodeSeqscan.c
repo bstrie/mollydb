@@ -24,7 +24,7 @@
  *		ExecSeqScanInitializeDSM initialize DSM for parallel scan
  *		ExecSeqScanInitializeWorker attach to DSM info in parallel worker
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/relscan.h"
 #include "executor/execdebug.h"

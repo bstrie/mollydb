@@ -83,8 +83,8 @@ override SPFLAGS += -wall -wno-unused-param -wno-empty -wfully-tagged
 
 man distprep-man: man-stamp
 
-man-stamp: stylesheet-man.xsl postgres.xml
-	$(XMLLINT) --noout --valid postgres.xml
+man-stamp: stylesheet-man.xsl mollydb.xml
+	$(XMLLINT) --noout --valid mollydb.xml
 	$(XSLTPROC) $(XSLTPROCFLAGS) $(XSLTPROC_MAN_FLAGS) $^
 	touch $@
 
@@ -101,14 +101,14 @@ JADE.html.call += -V website-stylesheet
 endif
 
 # The draft target creates HTML output in draft mode, without index (for faster build).
-draft: postgres.sgml $(ALMOSTALLSGML) stylesheet.dsl
+draft: mollydb.sgml $(ALMOSTALLSGML) stylesheet.dsl
 	$(MKDIR_P) html
 	$(JADE.html.call) -V draft-mode $<
 	cp $(srcdir)/stylesheet.css html/
 
 html: html-stamp
 
-html-stamp: postgres.sgml $(ALLSGML) stylesheet.dsl
+html-stamp: mollydb.sgml $(ALLSGML) stylesheet.dsl
 	$(MAKE) check-tabs
 	$(MKDIR_P) html
 	$(JADE.html.call) -i include-index $<
@@ -116,14 +116,14 @@ html-stamp: postgres.sgml $(ALLSGML) stylesheet.dsl
 	touch $@
 
 # single-page HTML
-postgres.html: postgres.sgml $(ALLSGML) stylesheet.dsl
+mollydb.html: mollydb.sgml $(ALLSGML) stylesheet.dsl
 	$(JADE.html.call) -V nochunks -V rootchunk -V '(define %root-filename% #f)' -V '(define use-output-dir #f)' -i include-index $<
 
 # single-page text
-postgres.txt: postgres.html
+mollydb.txt: mollydb.html
 	$(LYNX) -force_html -dump -nolist $< > $@
 
-HTML.index: postgres.sgml $(ALMOSTALLSGML) stylesheet.dsl
+HTML.index: mollydb.sgml $(ALMOSTALLSGML) stylesheet.dsl
 	@$(MKDIR_P) html
 	$(JADE.html.call) -V html-index $<
 
@@ -161,7 +161,7 @@ errcodes-table.sgml: $(top_srcdir)/src/backend/utils/errcodes.txt generate-errco
 
 # RTF to allow minor editing for hardcopy
 %.rtf: %.sgml $(ALLSGML)
-	$(JADE) $(JADEFLAGS) $(SGMLINCLUDE) $(CATALOG) -d stylesheet.dsl -t rtf -V rtf-backend -i output-print  -i include-index postgres.sgml
+	$(JADE) $(JADEFLAGS) $(SGMLINCLUDE) $(CATALOG) -d stylesheet.dsl -t rtf -V rtf-backend -i output-print  -i include-index mollydb.sgml
 
 # TeX
 # Regular TeX and pdfTeX have slightly differing requirements, so we
@@ -189,14 +189,14 @@ JADE.tex.call = $(JADE) $(JADEFLAGS) $(SGMLINCLUDE) $(CATALOG) -d $(srcdir)/styl
 	jadetex $<
 
 # PostScript from TeX
-postgres.ps:
-	$(error Invalid target;  use postgres-A4.ps or postgres-US.ps as targets)
+mollydb.ps:
+	$(error Invalid target;  use mollydb-A4.ps or mollydb-US.ps as targets)
 
 %.ps: %.dvi
 	dvips -o $@ $<
 
-postgres.pdf:
-	$(error Invalid target;  use postgres-A4.pdf or postgres-US.pdf as targets)
+mollydb.pdf:
+	$(error Invalid target;  use mollydb-A4.pdf or mollydb-US.pdf as targets)
 
 %.pdf: %.tex-pdf
 	@rm -f $*.aux $*.log $*.out
@@ -245,13 +245,13 @@ INSTALL.html: standalone-install.sgml installation.sgml version.sgml
 
 # For obscure reasons, GNU make 3.81 complains about circular dependencies
 # if we try to do "make all" in a VPATH build without the explicit
-# $(srcdir) on the postgres.sgml dependency in this rule.  GNU make bug?
-postgres.xml: $(srcdir)/postgres.sgml $(ALMOSTALLSGML)
-	$(OSX) -D. -x lower -i include-xslt-index $< >postgres.xmltmp
+# $(srcdir) on the mollydb.sgml dependency in this rule.  GNU make bug?
+mollydb.xml: $(srcdir)/mollydb.sgml $(ALMOSTALLSGML)
+	$(OSX) -D. -x lower -i include-xslt-index $< >mollydb.xmltmp
 	$(PERL) -p -e 's/\[(aacute|acirc|aelig|agrave|amp|aring|atilde|auml|bull|copy|eacute|egrave|gt|iacute|lt|mdash|nbsp|ntilde|oacute|ocirc|oslash|ouml|pi|quot|scaron|uuml) *\]/\&\1;/gi;' \
 	           -e '$$_ .= qq{<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">\n} if $$. == 1;' \
-	  <postgres.xmltmp > $@
-	rm postgres.xmltmp
+	  <mollydb.xmltmp > $@
+	rm mollydb.xmltmp
 # ' hello Emacs
 
 ifeq ($(STYLE),website)
@@ -260,14 +260,14 @@ endif
 
 xslthtml: xslthtml-stamp
 
-xslthtml-stamp: stylesheet.xsl postgres.xml
-	$(XMLLINT) --noout --valid postgres.xml
+xslthtml-stamp: stylesheet.xsl mollydb.xml
+	$(XMLLINT) --noout --valid mollydb.xml
 	$(XSLTPROC) $(XSLTPROCFLAGS) $(XSLTPROC_HTML_FLAGS) $^
 	cp $(srcdir)/stylesheet.css html/
 	touch $@
 
-htmlhelp: stylesheet-hh.xsl postgres.xml
-	$(XMLLINT) --noout --valid postgres.xml
+htmlhelp: stylesheet-hh.xsl mollydb.xml
+	$(XMLLINT) --noout --valid mollydb.xml
 	$(XSLTPROC) $(XSLTPROCFLAGS) $^
 
 %-A4.fo.tmp: stylesheet-fo.xsl %.xml
@@ -284,13 +284,13 @@ FOP = fop
 %.fo: %.fo.tmp
 	$(XMLLINT) --format --output $@ $^
 
-.SECONDARY: postgres-A4.fo postgres-US.fo
+.SECONDARY: mollydb-A4.fo mollydb-US.fo
 
 %-fop.pdf: %.fo
 	$(FOP) -fo $< -pdf $@
 
-epub: postgres.epub
-postgres.epub: postgres.xml
+epub: mollydb.epub
+mollydb.epub: mollydb.xml
 	$(XMLLINT) --noout --valid $<
 	$(DBTOEPUB) $<
 
@@ -318,7 +318,7 @@ MAKEINFO = makeinfo
 ##
 
 # Quick syntax check without style processing
-check: postgres.sgml $(ALMOSTALLSGML) check-tabs
+check: mollydb.sgml $(ALMOSTALLSGML) check-tabs
 	$(NSGMLS) $(SPFLAGS) $(SGMLINCLUDE) -s $<
 
 
@@ -393,7 +393,7 @@ check-tabs:
 
 # This allows removing some files from the distribution tarballs while
 # keeping the dependencies satisfied.
-.SECONDARY: postgres.xml $(GENERATED_SGML) HTML.index
+.SECONDARY: mollydb.xml $(GENERATED_SGML) HTML.index
 .SECONDARY: INSTALL.html
 .SECONDARY: %-A4.tex-ps %-US.tex-ps %-A4.tex-pdf %-US.tex-pdf
 
@@ -402,15 +402,15 @@ clean:
 	rm -f INSTALL
 	rm -f INSTALL.html
 # single-page output
-	rm -f postgres.html postgres.txt
+	rm -f mollydb.html mollydb.txt
 # print
 	rm -f *.rtf *.tex-ps *.tex-pdf *.dvi *.aux *.log *.ps *.pdf *.out *.fot
 # index
 	rm -f HTML.index $(GENERATED_SGML)
 # XSLT
-	rm -f postgres.xml postgres.xmltmp htmlhelp.hhp toc.hhc index.hhk *.fo *.fo.tmp
+	rm -f mollydb.xml mollydb.xmltmp htmlhelp.hhp toc.hhc index.hhk *.fo *.fo.tmp
 # EPUB
-	rm -f postgres.epub
+	rm -f mollydb.epub
 # Texinfo
 	rm -f *.texixml *.texi *.info db2texi.refs
 

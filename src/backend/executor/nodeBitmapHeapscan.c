@@ -33,7 +33,7 @@
  *		ExecReScanBitmapHeapScan	prepares to rescan the plan.
  *		ExecEndBitmapHeapScan		releases all storage.
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/relscan.h"
 #include "access/transam.h"

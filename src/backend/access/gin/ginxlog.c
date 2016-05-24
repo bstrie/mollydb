@@ -11,7 +11,7 @@
  *			 src/backend/access/gin/ginxlog.c
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/gin_private.h"
 #include "access/xlogutils.h"

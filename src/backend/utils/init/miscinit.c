@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <sys/param.h>
 #include <signal.h>
@@ -486,7 +486,7 @@ InitializeSessionUserId(const char *rolename, Oid roleid)
 
 	/*
 	 * Don't do scans if we're bootstrapping, none of the system catalogs
-	 * exist yet, and they should be owned by postgres anyway.
+	 * exist yet, and they should be owned by mollydb anyway.
 	 */
 	AssertState(!IsBootstrapProcessingMode());
 
@@ -874,7 +874,7 @@ CreateLockFile(const char *filename, bool amPostmaster,
 		buffer[len] = '\0';
 		encoded_pid = atoi(buffer);
 
-		/* if pid < 0, the pid is for postgres, not postmaster */
+		/* if pid < 0, the pid is for mollydb, not postmaster */
 		other_pid = (pid_t) (encoded_pid < 0 ? -encoded_pid : encoded_pid);
 
 		if (other_pid <= 0)
@@ -919,12 +919,12 @@ CreateLockFile(const char *filename, bool amPostmaster,
 								filename),
 						 isDDLock ?
 						 (encoded_pid < 0 ?
-						  errhint("Is another postgres (PID %d) running in data directory \"%s\"?",
+						  errhint("Is another mollydb (PID %d) running in data directory \"%s\"?",
 								  (int) other_pid, refName) :
 						  errhint("Is another postmaster (PID %d) running in data directory \"%s\"?",
 								  (int) other_pid, refName)) :
 						 (encoded_pid < 0 ?
-						  errhint("Is another postgres (PID %d) using socket file \"%s\"?",
+						  errhint("Is another mollydb (PID %d) using socket file \"%s\"?",
 								  (int) other_pid, refName) :
 						  errhint("Is another postmaster (PID %d) using socket file \"%s\"?",
 								  (int) other_pid, refName))));

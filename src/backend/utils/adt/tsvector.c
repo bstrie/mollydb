@@ -12,7 +12,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "libpq/pqformat.h"
 #include "tsearch/ts_locale.h"

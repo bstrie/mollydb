@@ -135,7 +135,7 @@ MollyDB documentation
    <application>pg_ctl</application> is a utility for initializing a
    <productname>MollyDB</productname> database cluster, starting,
    stopping, or restarting the <productname>MollyDB</productname>
-   database server (<xref linkend="app-postgres">), or displaying the
+   database server (<xref linkend="app-mollydb">), or displaying the
    status of a running server.  Although the server can be started
    manually, <application>pg_ctl</application> encapsulates tasks such
    as redirecting log output and properly detaching from the terminal
@@ -160,7 +160,7 @@ MollyDB documentation
    standard output (not standard error).  The standard output of
    <application>pg_ctl</application> should then be redirected to a
    file or piped to another process such as a log rotating program
-   like <application>rotatelogs</>; otherwise <command>postgres</command>
+   like <application>rotatelogs</>; otherwise <command>mollydb</command>
    will write its output to the controlling terminal (from the
    background) and will not leave the shell's process group.  On
    Windows, by default the server's standard output and standard error
@@ -187,7 +187,7 @@ MollyDB documentation
 
   <para>
    <option>restart</option> mode effectively executes a stop followed
-   by a start.  This allows changing the <command>postgres</command>
+   by a start.  This allows changing the <command>mollydb</command>
    command-line options.  <option>restart</option> might fail if
    relative paths specified were specified on the command-line during
    server start.
@@ -195,7 +195,7 @@ MollyDB documentation
 
   <para>
    <option>reload</option> mode simply sends the
-   <command>postgres</command> process a <systemitem>SIGHUP</>
+   <command>mollydb</command> process a <systemitem>SIGHUP</>
    signal, causing it to reread its configuration files
    (<filename>mollydb.conf</filename>,
    <filename>pg_hba.conf</filename>, etc.).  This allows changing of
@@ -302,7 +302,7 @@ MollyDB documentation
       <listitem>
        <para>
         Specifies options to be passed directly to the
-        <command>postgres</command> command;  multiple
+        <command>mollydb</command> command;  multiple
         option invocations are appended.
        </para>
        <para>
@@ -330,12 +330,12 @@ MollyDB documentation
       <term><option>-p <replaceable class="parameter">path</replaceable></option></term>
       <listitem>
        <para>
-        Specifies the location of the <filename>postgres</filename>
-        executable.  By default the <filename>postgres</filename> executable is taken from the same
+        Specifies the location of the <filename>mollydb</filename>
+        executable.  By default the <filename>mollydb</filename> executable is taken from the same
         directory as <command>pg_ctl</command>, or failing that, the hard-wired
         installation directory.  It is not necessary to use this
         option unless you are doing something unusual and get errors
-        that the <filename>postgres</filename> executable was not found.
+        that the <filename>mollydb</filename> executable was not found.
        </para>
 
        <para>
@@ -516,7 +516,7 @@ MollyDB documentation
    utilities,
    also uses the environment variables supported by <application>libpq</>
    (see <xref linkend="libpq-envars">).
-   For additional server variables, see <xref linkend="app-postgres">.
+   For additional server variables, see <xref linkend="app-mollydb">.
   </para>
  </refsect1>
 
@@ -544,7 +544,7 @@ MollyDB documentation
      <para>If this file exists in the data directory,
       <application>pg_ctl</application> (in <option>restart</option> mode)
       will pass the contents of the file as options to
-      <application>postgres</application>, unless overridden
+      <application>mollydb</application>, unless overridden
       by the <option>-o</option> option. The contents of this file
       are also displayed in <option>status</option> mode.
      </para>
@@ -637,7 +637,7 @@ MollyDB documentation
 <prompt>$</prompt> <userinput>pg_ctl status</userinput>
 <computeroutput>
 pg_ctl: server is running (PID: 13718)
-/usr/local/pgsql/bin/postgres "-D" "/usr/local/pgsql/data" "-p" "5433" "-B" "128"
+/usr/local/pgsql/bin/mollydb "-D" "/usr/local/pgsql/data" "-p" "5433" "-B" "128"
 </computeroutput>
 </screen>
     This is the command line that would be invoked in restart mode.
@@ -651,7 +651,7 @@ pg_ctl: server is running (PID: 13718)
 
   <simplelist type="inline">
    <member><xref linkend="app-initdb"></member>
-   <member><xref linkend="app-postgres"></member>
+   <member><xref linkend="app-mollydb"></member>
   </simplelist>
  </refsect1>
 

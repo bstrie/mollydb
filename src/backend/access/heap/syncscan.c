@@ -44,7 +44,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/heapam.h"
 #include "miscadmin.h"

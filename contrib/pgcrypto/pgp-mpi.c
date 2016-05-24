@@ -28,7 +28,7 @@
  *
  * contrib/pgcrypto/pgp-mpi.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "px.h"
 #include "pgp.h"

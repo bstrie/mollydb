@@ -101,7 +101,7 @@ extern char *output_files[];
 
 /* OID system catalog preservation added during PG 9.0 development */
 #define TABLE_SPACE_SUBDIRS_CAT_VER 201001111
-/* postmaster/postgres -b (binary_upgrade) flag added during PG 9.1 development */
+/* postmaster/mollydb -b (binary_upgrade) flag added during PG 9.1 development */
 #define BINARY_UPGRADE_SERVER_FLAG_CAT_VER 201104251
 /*
  *	Visibility map changed with this 9.2 commit,

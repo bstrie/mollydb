@@ -1,7 +1,7 @@
 /*
  * contrib/intarray/_int_gist.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <limits.h>
 

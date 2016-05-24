@@ -5,7 +5,7 @@
  *
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "commands/trigger.h"
 #include "executor/spi.h"

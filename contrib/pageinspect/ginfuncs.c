@@ -7,7 +7,7 @@
  * IDENTIFICATION
  *		contrib/pageinspect/ginfuncs.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/gin.h"
 #include "access/gin_private.h"

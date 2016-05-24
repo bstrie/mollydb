@@ -11,7 +11,7 @@ $node->start;
 
 # clusterdb -a is not compatible with -d, hence enforce environment variable
 # correctly.
-$ENV{PGDATABASE} = 'postgres';
+$ENV{PGDATABASE} = 'mollydb';
 
 $node->issues_sql_like(
 	[ 'clusterdb', '-a' ],

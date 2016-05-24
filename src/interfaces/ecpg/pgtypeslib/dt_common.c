@@ -1,6 +1,6 @@
 /* src/interfaces/ecpg/pgtypeslib/dt_common.c */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <time.h>
 #include <ctype.h>
@@ -422,7 +422,7 @@ static datetkn datetktbl[] = {
 
 static datetkn deltatktbl[] = {
 	/* text, token, lexval */
-	{"@", IGNORE_DTF, 0},		/* postgres relative prefix */
+	{"@", IGNORE_DTF, 0},		/* mollydb relative prefix */
 	{DAGO, AGO, 0},				/* "ago" indicates negative time offset */
 	{"c", UNITS, DTK_CENTURY},	/* "century" relative */
 	{"cent", UNITS, DTK_CENTURY},		/* "century" relative */

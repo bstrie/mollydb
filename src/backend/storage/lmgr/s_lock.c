@@ -45,7 +45,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <time.h>
 #include <unistd.h>

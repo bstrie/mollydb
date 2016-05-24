@@ -19,7 +19,7 @@
  *		ExecEndMaterial			- shutdown node and subnodes
  *
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/executor.h"
 #include "executor/nodeMaterial.h"

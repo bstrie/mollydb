@@ -310,7 +310,7 @@ $ # Let's see what objects does this database have in the tablespace.
 $ cd 155151/17228
 $ ls -l
 total 0
--rw-------  1 postgres postgres 0 sep 13 23:20 155156
+-rw-------  1 mollydb mollydb 0 sep 13 23:20 155156
 
 $ # OK, this is a pretty small table ... but which one is it?
 $ oid2name -d alvherre -f 155156

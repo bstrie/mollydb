@@ -16,7 +16,7 @@
 #ifndef PLPGSQL_H
 #define PLPGSQL_H
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/xact.h"
 #include "commands/event_trigger.h"

@@ -2222,8 +2222,8 @@ SHOW DateStyle;
  Postgres, MDY
 (1 row)
 
-SELECT '' AS "64", d1 AS us_postgres FROM TIMESTAMP_TBL;
- 64 |         us_postgres         
+SELECT '' AS "64", d1 AS us_mollydb FROM TIMESTAMP_TBL;
+ 64 |         us_mollydb         
 ----+-----------------------------
     | -infinity
     | infinity
@@ -2292,8 +2292,8 @@ SELECT '' AS "64", d1 AS us_postgres FROM TIMESTAMP_TBL;
     | Mon Jan 01 17:32:01 2001
 (65 rows)
 
-SELECT '' AS seven, f1 AS us_postgres FROM ABSTIME_TBL;
- seven |         us_postgres          
+SELECT '' AS seven, f1 AS us_mollydb FROM ABSTIME_TBL;
+ seven |         us_mollydb          
 -------+------------------------------
        | Sun Jan 14 03:14:21 1973 PST
        | Mon May 01 00:30:30 1995 PDT
@@ -2490,8 +2490,8 @@ SELECT count(*) as one FROM TIMESTAMP_TBL WHERE d1 = 'Jun 13 1957';
    1
 (1 row)
 
-SELECT '' AS "65", d1 AS european_postgres FROM TIMESTAMP_TBL;
- 65 |      european_postgres      
+SELECT '' AS "65", d1 AS european_mollydb FROM TIMESTAMP_TBL;
+ 65 |      european_mollydb      
 ----+-----------------------------
     | -infinity
     | infinity
@@ -2561,8 +2561,8 @@ SELECT '' AS "65", d1 AS european_postgres FROM TIMESTAMP_TBL;
     | Thu 13 Jun 00:00:00 1957
 (66 rows)
 
-SELECT '' AS seven, f1 AS european_postgres FROM ABSTIME_TBL;
- seven |      european_postgres       
+SELECT '' AS seven, f1 AS european_mollydb FROM ABSTIME_TBL;
+ seven |      european_mollydb       
 -------+------------------------------
        | Sun 14 Jan 03:14:21 1973 PST
        | Mon 01 May 00:30:30 1995 PDT

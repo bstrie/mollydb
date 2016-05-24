@@ -1,7 +1,7 @@
 /*
  * contrib/intarray/_int_bool.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "miscadmin.h"
 #include "utils/builtins.h"

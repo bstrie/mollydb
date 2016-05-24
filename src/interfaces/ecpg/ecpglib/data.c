@@ -1,7 +1,7 @@
 /* src/interfaces/ecpg/ecpglib/data.c */
 
 #define POSTGRES_ECPG_INTERNAL
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <stdlib.h>
 #include <string.h>

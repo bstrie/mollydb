@@ -204,17 +204,17 @@ DEFAULT FOR TYPE text USING bloom AS
   <title>Authors</title>
 
   <para>
-   Teodor Sigaev <email>teodor@postgrespro.ru</email>,
+   Teodor Sigaev <email>teodor@mollydbpro.ru</email>,
    Postgres Professional, Moscow, Russia
   </para>
 
   <para>
-   Alexander Korotkov <email>a.korotkov@postgrespro.ru</email>,
+   Alexander Korotkov <email>a.korotkov@mollydbpro.ru</email>,
    Postgres Professional, Moscow, Russia
   </para>
 
   <para>
-   Oleg Bartunov <email>obartunov@postgrespro.ru</email>,
+   Oleg Bartunov <email>obartunov@mollydbpro.ru</email>,
    Postgres Professional, Moscow, Russia
   </para>
  </sect2>

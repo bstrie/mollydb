@@ -388,7 +388,7 @@
     <listitem>
      <para>
       Fix <application>pg_dump</> and <application>pg_upgrade</> to support
-      cases where the <literal>postgres</> or <literal>template1</> database
+      cases where the <literal>mollydb</> or <literal>template1</> database
       is in a non-default tablespace (Marti Raudsepp, Bruce Momjian)
      </para>
     </listitem>
@@ -1072,7 +1072,7 @@
 
      <para>
       This oversight could cause missing-clog-file errors for tables within
-      the <literal>postgres</> and <literal>template1</> databases.
+      the <literal>mollydb</> and <literal>template1</> databases.
      </para>
     </listitem>
 

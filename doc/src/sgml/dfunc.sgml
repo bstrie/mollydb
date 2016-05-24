@@ -272,7 +272,7 @@ mkldexport foo.o `pwd` &gt; foo.exp
 Finally, you can create the shared library:
 .nf
 ld <other flags> -H512 -T512 -o foo.so -e _nostart \e
-   -bI:.../lib/postgres.exp -bE:foo.exp foo.o \e
+   -bI:.../lib/mollydb.exp -bE:foo.exp foo.o \e
    -lm -lc 2>/dev/null
 .fi
   -->

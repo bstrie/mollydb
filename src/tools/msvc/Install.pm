@@ -108,7 +108,7 @@ sub Install
 	CopyFiles(
 		'Import libraries',
 		$target . '/lib/',
-		"$conf\\", "postgres\\postgres.lib", "libpgcommon\\libpgcommon.lib",
+		"$conf\\", "mollydb\\mollydb.lib", "libpgcommon\\libpgcommon.lib",
 		"libpgport\\libpgport.lib");
 	CopyContribFiles($config, $target);
 	CopyIncludeFiles($target);
@@ -125,7 +125,7 @@ sub Install
 			'src/timezone/tznames/', 'Default', 'Australia', 'India');
 		CopySetOfFiles(
 			'BKI files',
-			[ glob("src\\backend\\catalog\\postgres.*") ],
+			[ glob("src\\backend\\catalog\\mollydb.*") ],
 			$target . '/share/');
 		CopySetOfFiles(
 			'SQL files',
@@ -580,7 +580,7 @@ sub CopyIncludeFiles
 
 	CopyFiles(
 		'Public headers', $target . '/include/',
-		'src/include/',   'postgres_ext.h',
+		'src/include/',   'mollydb_ext.h',
 		'pg_config.h',    'pg_config_ext.h',
 		'pg_config_os.h', 'dynloader.h', 'pg_config_manual.h');
 	lcopy('src/include/libpq/libpq-fs.h', $target . '/include/libpq/')
@@ -598,7 +598,7 @@ sub CopyIncludeFiles
 	CopyFiles(
 		'Internal headers',
 		$target . '/include/internal/',
-		'src/include/', 'c.h', 'port.h', 'postgres_fe.h');
+		'src/include/', 'c.h', 'port.h', 'mollydb_fe.h');
 	lcopy('src/include/libpq/pqcomm.h', $target . '/include/internal/libpq/')
 	  || croak 'Could not copy pqcomm.h';
 

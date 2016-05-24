@@ -20,7 +20,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "nodes/nodeFuncs.h"
 #include "optimizer/clauses.h"

@@ -17504,7 +17504,7 @@ SELECT set_config('log_statement_stats', 'off', false);
     The process ID of an active backend can be found from
     the <structfield>pid</structfield> column of the
     <structname>pg_stat_activity</structname> view, or by listing the
-    <command>postgres</command> processes on the server (using
+    <command>mollydb</command> processes on the server (using
     <application>ps</> on Unix or the <application>Task
     Manager</> on <productname>Windows</>).
     The role of an active backend can be found from the
@@ -17697,7 +17697,7 @@ SELECT set_config('log_statement_stats', 'off', false);
     by the caller.
 
 <programlisting>
-postgres=# select pg_start_backup('label_goes_here');
+mollydb=# select pg_start_backup('label_goes_here');
  pg_start_backup
 -----------------
  0/D4445B8
@@ -17770,7 +17770,7 @@ postgres=# select pg_start_backup('label_goes_here');
     corresponding transaction log file name and byte offset from the results of any of the
     above functions.  For example:
 <programlisting>
-postgres=# SELECT * FROM pg_xlogfile_name_offset(pg_stop_backup());
+mollydb=# SELECT * FROM pg_xlogfile_name_offset(pg_stop_backup());
         file_name         | file_offset 
 --------------------------+-------------
  00000001000000000000000D |     4039624

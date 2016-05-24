@@ -6,7 +6,7 @@
  *	  contrib/pg_freespacemap/pg_freespacemap.c
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "funcapi.h"
 #include "storage/freespace.h"

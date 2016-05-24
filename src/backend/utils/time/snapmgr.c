@@ -39,7 +39,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <sys/stat.h>
 #include <unistd.h>

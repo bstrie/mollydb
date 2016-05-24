@@ -24,7 +24,7 @@
  *		The following code contains many undocumented hacks.  Please be
  *		careful....
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <sys/file.h>
 #include <fcntl.h>

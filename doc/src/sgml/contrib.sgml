@@ -134,7 +134,7 @@ CREATE EXTENSION <replaceable>module_name</> FROM unpackaged;
  &pgstattuple;
  &pgtrgm;
  &pgvisibility;
- &postgres-fdw;
+ &mollydb-fdw;
  &seg;
  &sepgsql;
  &contrib-spi;

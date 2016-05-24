@@ -29,7 +29,7 @@
  * contrib/pgcrypto/random.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "px.h"
 #include "utils/memdebug.h"

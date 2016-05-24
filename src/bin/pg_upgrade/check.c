@@ -7,7 +7,7 @@
  *	src/bin/pg_upgrade/check.c
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "catalog/pg_authid.h"
 #include "mb/pg_wchar.h"

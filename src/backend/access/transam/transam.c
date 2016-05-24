@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * transam.c
- *	  postgres transaction log interface routines
+ *	  mollydb transaction log interface routines
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -17,7 +17,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/clog.h"
 #include "access/subtrans.h"

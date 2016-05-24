@@ -19,7 +19,7 @@
  *		ExecEndNestLoop  - shut down the join
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/execdebug.h"
 #include "executor/nodeNestloop.h"

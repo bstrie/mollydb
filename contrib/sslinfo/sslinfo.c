@@ -7,7 +7,7 @@
  * contrib/sslinfo/sslinfo.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>

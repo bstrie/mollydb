@@ -28,7 +28,7 @@
  *
  * contrib/pgcrypto/pgp-mpi-internal.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "imath.h"
 

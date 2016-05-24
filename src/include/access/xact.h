@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * xact.h
- *	  postgres transaction system definitions
+ *	  mollydb transaction system definitions
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

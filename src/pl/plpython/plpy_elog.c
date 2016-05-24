@@ -4,7 +4,7 @@
  * src/pl/plpython/plpy_elog.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "lib/stringinfo.h"
 

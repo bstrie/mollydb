@@ -5,7 +5,7 @@
  *
  * src/bin/psql/common.c
  */
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #include "common.h"
 
 #include <ctype.h>
@@ -2055,7 +2055,7 @@ uri_prefix_length(const char *connstr)
 {
 	/* The connection URI must start with either of the following designators: */
 	static const char uri_designator[] = "mollydb://";
-	static const char short_uri_designator[] = "postgres://";
+	static const char short_uri_designator[] = "mollydb://";
 
 	if (strncmp(connstr, uri_designator,
 				sizeof(uri_designator) - 1) == 0)

@@ -14,10 +14,10 @@ $node->init;
 $node->start;
 
 $node->issues_sql_like(
-	[ 'droplang', 'plpgsql', 'postgres' ],
+	[ 'droplang', 'plpgsql', 'mollydb' ],
 	qr/statement: DROP EXTENSION "plpgsql"/,
 	'SQL DROP EXTENSION run');
 
 $node->command_fails(
-	[ 'droplang', 'nonexistent', 'postgres' ],
+	[ 'droplang', 'nonexistent', 'mollydb' ],
 	'fails with nonexistent language');

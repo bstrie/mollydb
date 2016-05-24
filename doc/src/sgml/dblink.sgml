@@ -14,7 +14,7 @@
  </para>
 
  <para>
-  See also <xref linkend="postgres-fdw">, which provides roughly the same
+  See also <xref linkend="mollydb-fdw">, which provides roughly the same
   functionality using a more modern and standards-compliant infrastructure.
  </para>
 
@@ -82,7 +82,7 @@ dblink_connect(text connname, text connstr) returns text
      <term><parameter>connstr</parameter></term>
      <listitem>
       <para><application>libpq</>-style connection info string, for example
-       <literal>hostaddr=127.0.0.1 port=5432 dbname=mydb user=postgres
+       <literal>hostaddr=127.0.0.1 port=5432 dbname=mydb user=mollydb
        password=mypasswd</>.
        For details see <xref linkend="libpq-connstring">.
        Alternatively, the name of a foreign server.
@@ -121,13 +121,13 @@ dblink_connect(text connname, text connstr) returns text
    <title>Examples</title>
 
 <screen>
-SELECT dblink_connect('dbname=postgres');
+SELECT dblink_connect('dbname=mollydb');
  dblink_connect
 ----------------
  OK
 (1 row)
 
-SELECT dblink_connect('myconn', 'dbname=postgres');
+SELECT dblink_connect('myconn', 'dbname=mollydb');
  dblink_connect
 ----------------
  OK
@@ -450,7 +450,7 @@ SELECT *
 <programlisting>
 CREATE VIEW myremote_pg_proc AS
   SELECT *
-    FROM dblink('dbname=postgres', 'select proname, prosrc from pg_proc')
+    FROM dblink('dbname=mollydb', 'select proname, prosrc from pg_proc')
     AS t1(proname name, prosrc text);
 
 SELECT * FROM myremote_pg_proc WHERE proname LIKE 'bytea%';
@@ -461,7 +461,7 @@ SELECT * FROM myremote_pg_proc WHERE proname LIKE 'bytea%';
    <title>Examples</title>
 
 <screen>
-SELECT * FROM dblink('dbname=postgres', 'select proname, prosrc from pg_proc')
+SELECT * FROM dblink('dbname=mollydb', 'select proname, prosrc from pg_proc')
   AS t1(proname name, prosrc text) WHERE proname LIKE 'bytea%';
   proname   |   prosrc
 ------------+------------
@@ -479,7 +479,7 @@ SELECT * FROM dblink('dbname=postgres', 'select proname, prosrc from pg_proc')
  byteaout   | byteaout
 (12 rows)
 
-SELECT dblink_connect('dbname=postgres');
+SELECT dblink_connect('dbname=mollydb');
  dblink_connect
 ----------------
  OK
@@ -778,7 +778,7 @@ dblink_open(text connname, text cursorname, text sql [, bool fail_on_error]) ret
    <title>Examples</title>
 
 <screen>
-SELECT dblink_connect('dbname=postgres');
+SELECT dblink_connect('dbname=mollydb');
  dblink_connect
 ----------------
  OK
@@ -899,7 +899,7 @@ dblink_fetch(text connname, text cursorname, int howmany [, bool fail_on_error])
    <title>Examples</title>
 
 <screen>
-SELECT dblink_connect('dbname=postgres');
+SELECT dblink_connect('dbname=mollydb');
  dblink_connect
 ----------------
  OK
@@ -1036,7 +1036,7 @@ dblink_close(text connname, text cursorname [, bool fail_on_error]) returns text
    <title>Examples</title>
 
 <screen>
-SELECT dblink_connect('dbname=postgres');
+SELECT dblink_connect('dbname=mollydb');
  dblink_connect
 ----------------
  OK

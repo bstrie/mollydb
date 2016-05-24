@@ -12,7 +12,7 @@
  *--------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <unistd.h>
 #ifdef HAVE_SYS_PSTAT_H
@@ -267,7 +267,7 @@ init_ps_display(const char *username, const char *dbname,
 	 */
 #define PROGRAM_NAME_PREFIX ""
 #else
-#define PROGRAM_NAME_PREFIX "postgres: "
+#define PROGRAM_NAME_PREFIX "mollydb: "
 #endif
 
 	if (*cluster_name == '\0')

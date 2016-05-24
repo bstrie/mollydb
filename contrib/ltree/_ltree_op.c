@@ -5,7 +5,7 @@
  * op function for ltree[]
  * Teodor Sigaev <teodor@stack.net>
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <ctype.h>
 

@@ -2,7 +2,7 @@
  *
  * c.h
  *	  Fundamental C definitions.  This is included by every .c file in
- *	  MollyDB (via either postgres.h or postgres_fe.h, as appropriate).
+ *	  MollyDB (via either mollydb.h or mollydb_fe.h, as appropriate).
  *
  *	  Note that the definitions here are not intended to be exposed to clients
  *	  of the frontend interface libraries --- so we don't worry much about
@@ -45,7 +45,7 @@
 #ifndef C_H
 #define C_H
 
-#include "postgres_ext.h"
+#include "mollydb_ext.h"
 
 /* Must undef pg_config_ext.h symbols before including pg_config.h */
 #undef PG_INT64_TYPE
@@ -381,7 +381,7 @@ typedef double float8;
  * CommandId
  */
 
-/* typedef Oid is in postgres_ext.h */
+/* typedef Oid is in mollydb_ext.h */
 
 /*
  * regproc is the type name used in the include/catalog headers, but
@@ -428,7 +428,7 @@ typedef struct
  * de-TOASTed value, beware of touching vl_len_ directly, as its representation
  * is no longer convenient.  It's recommended that code always use the VARDATA,
  * VARSIZE, and SET_VARSIZE macros instead of relying on direct mentions of
- * the struct fields.  See postgres.h for details of the TOASTed form.
+ * the struct fields.  See mollydb.h for details of the TOASTed form.
  * ----------------
  */
 struct varlena
@@ -1056,7 +1056,7 @@ extern int	vsnprintf(char *str, size_t count, const char *fmt, va_list args);
  */
 
 #ifndef SIGNAL_ARGS
-#define SIGNAL_ARGS  int postgres_signal_arg
+#define SIGNAL_ARGS  int mollydb_signal_arg
 #endif
 
 /*

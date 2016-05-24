@@ -241,10 +241,10 @@ auto_explain.log_min_duration = '3s'
   <title>Example</title>
 
 <programlisting>
-postgres=# LOAD 'auto_explain';
-postgres=# SET auto_explain.log_min_duration = 0;
-postgres=# SET auto_explain.log_analyze = true;
-postgres=# SELECT count(*)
+mollydb=# LOAD 'auto_explain';
+mollydb=# SET auto_explain.log_min_duration = 0;
+mollydb=# SET auto_explain.log_analyze = true;
+mollydb=# SELECT count(*)
            FROM pg_class, pg_index
            WHERE oid = indrelid AND indisunique;
 </programlisting>

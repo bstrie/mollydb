@@ -8,7 +8,7 @@
  *	  src/test/modules/test_ddl_deparse/test_ddl_deparse.c
  *----------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "catalog/pg_type.h"
 #include "tcop/deparse_utility.h"

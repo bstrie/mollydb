@@ -6,7 +6,7 @@
  *	  contrib/pg_visibility/pg_visibility.c
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/htup_details.h"
 #include "access/visibilitymap.h"

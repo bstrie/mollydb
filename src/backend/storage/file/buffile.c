@@ -34,7 +34,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/instrument.h"
 #include "storage/fd.h"

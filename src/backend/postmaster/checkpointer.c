@@ -34,7 +34,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <signal.h>
 #include <sys/time.h>
@@ -253,7 +253,7 @@ CheckpointerMain(void)
 	/*
 	 * If an exception is encountered, processing resumes here.
 	 *
-	 * See notes in postgres.c about the design of this coding.
+	 * See notes in mollydb.c about the design of this coding.
 	 */
 	if (sigsetjmp(local_sigjmp_buf, 1) != 0)
 	{

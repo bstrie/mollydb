@@ -7,7 +7,7 @@
  *	src/bin/pg_upgrade/option.c
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "miscadmin.h"
 #include "getopt_long.h"
@@ -417,7 +417,7 @@ adjust_data_dir(ClusterInfo *cluster)
 	 * so this might fail --- only works for PG 9.2+.   If this fails,
 	 * pg_upgrade will fail anyway because the data files will not be found.
 	 */
-	snprintf(cmd, sizeof(cmd), "\"%s/postgres\" -D \"%s\" -C data_directory",
+	snprintf(cmd, sizeof(cmd), "\"%s/mollydb\" -D \"%s\" -C data_directory",
 			 cluster->bindir, cluster->pgconfig);
 
 	if ((output = popen(cmd, "r")) == NULL ||

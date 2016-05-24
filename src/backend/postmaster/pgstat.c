@@ -16,7 +16,7 @@
  *	src/backend/postmaster/pgstat.c
  * ----------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -633,7 +633,7 @@ pgstat_forkexec(void)
 	char	   *av[10];
 	int			ac = 0;
 
-	av[ac++] = "postgres";
+	av[ac++] = "mollydb";
 	av[ac++] = "--forkcol";
 	av[ac++] = NULL;			/* filled in by postmaster_forkexec */
 
@@ -733,7 +733,7 @@ allow_immediate_pgstat_restart(void)
 /* ----------
  * pgstat_report_stat() -
  *
- *	Called from tcop/postgres.c to send the so far collected per-table
+ *	Called from tcop/mollydb.c to send the so far collected per-table
  *	and function usage statistics to the collector.  Note that this is
  *	called only when not within a transaction, so it is fair to use
  *	transaction stop time as an approximation of current time.
@@ -2778,7 +2778,7 @@ pgstat_beshutdown_hook(int code, Datum arg)
 /* ----------
  * pgstat_report_activity() -
  *
- *	Called from tcop/postgres.c to report what the backend is actually doing
+ *	Called from tcop/mollydb.c to report what the backend is actually doing
  *	(but note cmd_str can be NULL for certain cases).
  *
  * All updates of the status entry follow the protocol of bumping

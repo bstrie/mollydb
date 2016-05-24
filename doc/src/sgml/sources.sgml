@@ -868,7 +868,7 @@ BETTER: unrecognized node type: 42
     <para>
      Code in <productname>MollyDB</> should only rely on language
      features available in the C89 standard. That means a conforming
-     C89 compiler has to be able to compile postgres, at least aside
+     C89 compiler has to be able to compile mollydb, at least aside
      from a few platform dependent pieces. Features from later
      revision of the C standard or compiler specific features can be
      used, if a fallback is provided.
@@ -937,7 +937,7 @@ MemoryContextSwitchTo(MemoryContext context)
      Barring special arrangements code in signal handlers may only
      call async-signal safe functions (as defined in posix) and access
      variables of type <literal>volatile sig_atomic_t</literal>. A few
-     functions in postgres are also deemed signal safe, importantly
+     functions in mollydb are also deemed signal safe, importantly
      <literal>SetLatch()</literal>.
     </para>
     <para>

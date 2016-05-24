@@ -14,9 +14,9 @@
  */
 
 #ifndef FRONTEND
-#include "postgres.h"
+#include "mollydb.h"
 #else
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #endif
 
 #if defined(WIN32) && (_MSC_VER >= 1900)

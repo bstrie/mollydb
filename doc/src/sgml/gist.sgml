@@ -29,13 +29,13 @@
     at Berkeley's GiST Indexing Project
     <ulink url="http://gist.cs.berkeley.edu/">web site</ulink> and
     Marcel Kornacker's thesis,
-    <ulink url="http://www.sai.msu.su/~megera/postgres/gist/papers/concurrency/access-methods-for-next-generation.pdf.gz">
+    <ulink url="http://www.sai.msu.su/~megera/mollydb/gist/papers/concurrency/access-methods-for-next-generation.pdf.gz">
     Access Methods for Next-Generation Database Systems</ulink>.
     The <acronym>GiST</acronym>
     implementation in <productname>MollyDB</productname> is primarily
     maintained by Teodor Sigaev and Oleg Bartunov, and there is more
     information on their
-    <ulink url="http://www.sai.msu.su/~megera/postgres/gist/">web site</ulink>.
+    <ulink url="http://www.sai.msu.su/~megera/mollydb/gist/">web site</ulink>.
   </para>
 
 </sect1>

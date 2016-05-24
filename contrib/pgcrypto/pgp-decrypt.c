@@ -29,7 +29,7 @@
  * contrib/pgcrypto/pgp-decrypt.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "px.h"
 #include "mbuf.h"

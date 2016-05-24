@@ -466,8 +466,8 @@ msgid "copying template1 to template0 ... "
 msgstr "template1 데이터베이스를 template0 데이터베이스로 복사 중 ..."
 
 #: initdb.c:2372
-msgid "copying template1 to postgres ... "
-msgstr "template1 데이터베이스를 postgres 데이터베이스로 복사 중 ..."
+msgid "copying template1 to mollydb ... "
+msgstr "template1 데이터베이스를 mollydb 데이터베이스로 복사 중 ..."
 
 #: initdb.c:2407
 msgid "syncing data to disk ... "
@@ -774,22 +774,22 @@ msgstr ""
 #: initdb.c:2890
 #, c-format
 msgid ""
-"The program \"postgres\" is needed by %s but was not found in the\n"
+"The program \"mollydb\" is needed by %s but was not found in the\n"
 "same directory as \"%s\".\n"
 "Check your installation.\n"
 msgstr ""
-"%s 프로그램은 \"postgres\" 프로그램을 필요로 합니다. 그런데, 이 파일이\n"
+"%s 프로그램은 \"mollydb\" 프로그램을 필요로 합니다. 그런데, 이 파일이\n"
 "\"%s\" 파일이 있는 디렉터리안에 없습니다.\n"
 "설치 상태를 확인해 주십시오.\n"
 
 #: initdb.c:2897
 #, c-format
 msgid ""
-"The program \"postgres\" was found by \"%s\"\n"
+"The program \"mollydb\" was found by \"%s\"\n"
 "but was not the same version as %s.\n"
 "Check your installation.\n"
 msgstr ""
-"\"%s\" 프로그램은 \"postgres\" 프로그램을 찾았지만 이 파일은\n"
+"\"%s\" 프로그램은 \"mollydb\" 프로그램을 찾았지만 이 파일은\n"
 "%s 프로그램의 버전과 틀립니다.\n"
 "설치 상태를 확인해 주십시오.\n"
 

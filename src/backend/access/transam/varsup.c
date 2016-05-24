@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * varsup.c
- *	  postgres OID & XID variables support routines
+ *	  mollydb OID & XID variables support routines
  *
  * Copyright (c) 2000-2016, MollyDB Global Development Group
  *
@@ -11,7 +11,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/clog.h"
 #include "access/commit_ts.h"

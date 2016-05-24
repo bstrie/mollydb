@@ -132,7 +132,7 @@ PGPORT=`expr $PG_VERSION_NUM % 16384 + 49152`
 export PGPORT
 
 i=0
-while psql -X postgres </dev/null 2>/dev/null
+while psql -X mollydb </dev/null 2>/dev/null
 do
 	i=`expr $i + 1`
 	if [ $i -eq 16 ]

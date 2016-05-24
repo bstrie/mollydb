@@ -4770,7 +4770,7 @@
      <listitem>
       <para>
        Make command-line options of <application>postmaster</>
-       and <link linkend="app-postgres"><application>postgres</></link>
+       and <link linkend="app-mollydb"><application>mollydb</></link>
        identical (Peter)
       </para>
 
@@ -4788,7 +4788,7 @@
       </para>
 
       <para>
-       <application>postmaster</> and <application>postgres</>
+       <application>postmaster</> and <application>mollydb</>
        commands now act identically, with the behavior determined
        by command-line options.  The <application>postmaster</> symbolic link is
        kept for compatibility, but is not really needed.

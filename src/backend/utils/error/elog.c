@@ -52,7 +52,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <fcntl.h>
 #include <time.h>
@@ -379,7 +379,7 @@ errstart(int elevel, const char *filename, int lineno,
 	edata->lineno = lineno;
 	edata->funcname = funcname;
 	/* the default text domain is the backend's */
-	edata->domain = domain ? domain : PG_TEXTDOMAIN("postgres");
+	edata->domain = domain ? domain : PG_TEXTDOMAIN("mollydb");
 	/* initialize context_domain the same way (see set_errcontext_domain()) */
 	edata->context_domain = edata->domain;
 	/* Select default errcode based on elevel */
@@ -1053,7 +1053,7 @@ set_errcontext_domain(const char *domain)
 	CHECK_STACK_DEPTH();
 
 	/* the default text domain is the backend's */
-	edata->context_domain = domain ? domain : PG_TEXTDOMAIN("postgres");
+	edata->context_domain = domain ? domain : PG_TEXTDOMAIN("mollydb");
 
 	return 0;					/* return value does not matter */
 }
@@ -1420,7 +1420,7 @@ format_elog_string(const char *fmt,...)
 	edata = &errdata;
 	MemSet(edata, 0, sizeof(ErrorData));
 	/* the default text domain is the backend's */
-	edata->domain = save_format_domain ? save_format_domain : PG_TEXTDOMAIN("postgres");
+	edata->domain = save_format_domain ? save_format_domain : PG_TEXTDOMAIN("mollydb");
 	/* set the errno to be used to interpret %m */
 	edata->saved_errno = save_format_errnumber;
 
@@ -1945,7 +1945,7 @@ write_syslog(int level, const char *line)
 	/* Open syslog connection if not done yet */
 	if (!openlog_done)
 	{
-		openlog(syslog_ident ? syslog_ident : "postgres",
+		openlog(syslog_ident ? syslog_ident : "mollydb",
 				LOG_PID | LOG_NDELAY | LOG_NOWAIT,
 				syslog_facility);
 		openlog_done = true;
@@ -3295,7 +3295,7 @@ send_message_to_frontend(ErrorData *edata)
 	pq_endmessage(&msgbuf);
 
 	/*
-	 * This flush is normally not necessary, since postgres.c will flush out
+	 * This flush is normally not necessary, since mollydb.c will flush out
 	 * waiting data when control returns to the main loop. But it seems best
 	 * to leave it here, so that the client has some clue what happened if the
 	 * backend dies before getting back to the main loop ... error/notice

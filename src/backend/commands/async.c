@@ -111,7 +111,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <limits.h>
 #include <unistd.h>
@@ -1077,7 +1077,7 @@ Exec_UnlistenAllCommit(void)
 /*
  * ProcessCompletedNotifies --- send out signals and self-notifies
  *
- * This is called from postgres.c just before going idle at the completion
+ * This is called from mollydb.c just before going idle at the completion
  * of a transaction.  If we issued any notifications in the just-completed
  * transaction, send signals to other backends to process them, and also
  * process the queue ourselves to send messages to our own frontend.
@@ -1152,7 +1152,7 @@ ProcessCompletedNotifies(void)
 
 	MemoryContextSwitchTo(caller_context);
 
-	/* We don't need pq_flush() here since postgres.c will do one shortly */
+	/* We don't need pq_flush() here since mollydb.c will do one shortly */
 }
 
 /*

@@ -2254,10 +2254,10 @@ msgstr "%s: \"%s\" 데이터베이스에 접속할 수 없음\n"
 #: pg_dumpall.c:400
 #, c-format
 msgid ""
-"%s: could not connect to databases \"postgres\" or \"template1\"\n"
+"%s: could not connect to databases \"mollydb\" or \"template1\"\n"
 "Please specify an alternative database.\n"
 msgstr ""
-"%s: \"postgres\" 또는 \"template1\" 데이터베이스에 연결할 수 없습니다.\n"
+"%s: \"mollydb\" 또는 \"template1\" 데이터베이스에 연결할 수 없습니다.\n"
 "다른 데이터베이스를 지정하십시오.\n"
 
 #: pg_dumpall.c:417

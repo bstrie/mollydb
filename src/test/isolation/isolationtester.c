@@ -5,7 +5,7 @@
  *		Runs an isolation test specified by a spec file.
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -101,14 +101,14 @@ main(int argc, char **argv)
 
 	/*
 	 * If the user supplies a non-option parameter on the command line, use it
-	 * as the conninfo string; otherwise default to setting dbname=postgres
+	 * as the conninfo string; otherwise default to setting dbname=mollydb
 	 * and using environment variables or defaults for all other connection
 	 * parameters.
 	 */
 	if (argc > optind)
 		conninfo = argv[optind];
 	else
-		conninfo = "dbname = postgres";
+		conninfo = "dbname = mollydb";
 
 	/* Read the test spec from stdin */
 	spec_yyparse();

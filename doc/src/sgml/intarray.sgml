@@ -334,7 +334,7 @@ psql -c "CREATE EXTENSION intarray" TEST
   <para>
    All work was done by Teodor Sigaev (<email>teodor@sigaev.ru</email>) and
    Oleg Bartunov (<email>oleg@sai.msu.su</email>). See
-   <ulink url="http://www.sai.msu.su/~megera/postgres/gist/"></ulink> for
+   <ulink url="http://www.sai.msu.su/~megera/mollydb/gist/"></ulink> for
    additional information. Andrey Oktyabrski did a great work on adding new
    functions and operations.
   </para>

@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * nbtsearch.c
- *	  Search code for postgres btrees.
+ *	  Search code for mollydb btrees.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -13,7 +13,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/nbtree.h"
 #include "access/relscan.h"

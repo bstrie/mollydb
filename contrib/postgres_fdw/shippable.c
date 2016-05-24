@@ -16,14 +16,14 @@
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *	  contrib/postgres_fdw/shippable.c
+ *	  contrib/mollydb_fdw/shippable.c
  *
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
-#include "postgres_fdw.h"
+#include "mollydb_fdw.h"
 
 #include "access/transam.h"
 #include "catalog/dependency.h"

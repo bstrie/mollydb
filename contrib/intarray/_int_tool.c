@@ -1,7 +1,7 @@
 /*
  * contrib/intarray/_int_tool.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "catalog/pg_type.h"
 

@@ -14,7 +14,7 @@
  *
  *--------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <ctype.h>
 #include <float.h>
@@ -238,8 +238,8 @@ static const struct config_enum_entry server_message_level_options[] = {
 };
 
 static const struct config_enum_entry intervalstyle_options[] = {
-	{"postgres", INTSTYLE_POSTGRES, false},
-	{"postgres_verbose", INTSTYLE_POSTGRES_VERBOSE, false},
+	{"mollydb", INTSTYLE_POSTGRES, false},
+	{"mollydb_verbose", INTSTYLE_POSTGRES_VERBOSE, false},
 	{"sql_standard", INTSTYLE_SQL_STANDARD, false},
 	{"iso_8601", INTSTYLE_ISO_8601, false},
 	{NULL, 0, false}
@@ -3283,7 +3283,7 @@ static struct config_string ConfigureNamesString[] =
 			NULL
 		},
 		&syslog_ident_str,
-		"postgres",
+		"mollydb",
 		NULL, assign_syslog_ident, NULL
 	},
 
@@ -9901,7 +9901,7 @@ static void
 assign_syslog_facility(int newval, void *extra)
 {
 #ifdef HAVE_SYSLOG
-	set_syslog_parameters(syslog_ident_str ? syslog_ident_str : "postgres",
+	set_syslog_parameters(syslog_ident_str ? syslog_ident_str : "mollydb",
 						  newval);
 #endif
 	/* Without syslog support, just ignore it */

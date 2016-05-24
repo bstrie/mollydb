@@ -2,9 +2,9 @@
 #----------------------------------------------------------------------
 #
 # genbki.pl
-#    Perl script that generates postgres.bki, postgres.description,
-#    postgres.shdescription, and schemapg.h from specially formatted
-#    header files.  The .bki files are used to initialize the postgres
+#    Perl script that generates mollydb.bki, mollydb.description,
+#    mollydb.shdescription, and schemapg.h from specially formatted
+#    header files.  The .bki files are used to initialize the mollydb
 #    template database.
 #
 # Portions Copyright (c) 1996-2016, MollyDB Global Development Group
@@ -65,16 +65,16 @@ if ($output_path ne '' && substr($output_path, -1) ne '/')
 
 # Open temp files
 my $tmpext  = ".tmp$$";
-my $bkifile = $output_path . 'postgres.bki';
+my $bkifile = $output_path . 'mollydb.bki';
 open BKI, '>', $bkifile . $tmpext
   or die "can't open $bkifile$tmpext: $!";
 my $schemafile = $output_path . 'schemapg.h';
 open SCHEMAPG, '>', $schemafile . $tmpext
   or die "can't open $schemafile$tmpext: $!";
-my $descrfile = $output_path . 'postgres.description';
+my $descrfile = $output_path . 'mollydb.description';
 open DESCR, '>', $descrfile . $tmpext
   or die "can't open $descrfile$tmpext: $!";
-my $shdescrfile = $output_path . 'postgres.shdescription';
+my $shdescrfile = $output_path . 'mollydb.shdescription';
 open SHDESCR, '>', $shdescrfile . $tmpext
   or die "can't open $shdescrfile$tmpext: $!";
 
@@ -94,7 +94,7 @@ my $PG_CATALOG_NAMESPACE =
 # Read all the input header files into internal data structures
 my $catalogs = Catalog::Catalogs(@input_files);
 
-# Generate postgres.bki, postgres.description, and postgres.shdescription
+# Generate mollydb.bki, mollydb.description, and mollydb.shdescription
 
 # version marker for .bki file
 print BKI "# MollyDB $major_version\n";
@@ -173,11 +173,11 @@ foreach my $catname (@{ $catalogs->{names} })
 				push @types, \%type;
 			}
 
-			# Write to postgres.bki
+			# Write to mollydb.bki
 			my $oid = $row->{oid} ? "OID = $row->{oid} " : '';
 			printf BKI "insert %s( %s)\n", $oid, $row->{bki_values};
 
-		   # Write comments to postgres.description and postgres.shdescription
+		   # Write comments to mollydb.description and mollydb.shdescription
 			if (defined $row->{descr})
 			{
 				printf DESCR "%s\t%s\t0\t%s\n", $row->{oid}, $catname,
@@ -220,7 +220,7 @@ foreach my $catname (@{ $catalogs->{names} })
 				$row->{attstattarget} = '-1';
 				$priornotnull &= ($row->{attnotnull} eq 't');
 
-				# If it's bootstrapped, put an entry in postgres.bki.
+				# If it's bootstrapped, put an entry in mollydb.bki.
 				if ($is_bootstrap eq ' bootstrap')
 				{
 					bki_insert($row, @attnames);
@@ -237,7 +237,7 @@ foreach my $catname (@{ $catalogs->{names} })
 			}
 
 			# Generate entries for system attributes.
-			# We only need postgres.bki entries, not schemapg.h entries.
+			# We only need mollydb.bki entries, not schemapg.h entries.
 			if ($is_bootstrap eq ' bootstrap')
 			{
 				$attnum = 0;
@@ -418,7 +418,7 @@ sub emit_pgattr_row
 	return { %PGATTR_DEFAULTS, %row };
 }
 
-# Write a pg_attribute entry to postgres.bki
+# Write a pg_attribute entry to mollydb.bki
 sub bki_insert
 {
 	my $row        = shift;
@@ -429,7 +429,7 @@ sub bki_insert
 }
 
 # The field values of a Schema_pg_xxx declaration are similar, but not
-# quite identical, to the corresponding values in postgres.bki.
+# quite identical, to the corresponding values in mollydb.bki.
 sub emit_schemapg_row
 {
 	my $row        = shift;
@@ -498,7 +498,7 @@ Options:
 
 genbki.pl generates BKI files from specially formatted
 header files.  These BKI files are used to initialize the
-postgres template database.
+mollydb template database.
 
 Report bugs to <pgsql-bugs\@mollydb.org>.
 EOM

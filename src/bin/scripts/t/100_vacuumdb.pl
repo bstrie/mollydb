@@ -14,22 +14,22 @@ $node->init;
 $node->start;
 
 $node->issues_sql_like(
-	[ 'vacuumdb', 'postgres' ],
+	[ 'vacuumdb', 'mollydb' ],
 	qr/statement: VACUUM;/,
 	'SQL VACUUM run');
 $node->issues_sql_like(
-	[ 'vacuumdb', '-f', 'postgres' ],
+	[ 'vacuumdb', '-f', 'mollydb' ],
 	qr/statement: VACUUM \(FULL\);/,
 	'vacuumdb -f');
 $node->issues_sql_like(
-	[ 'vacuumdb', '-F', 'postgres' ],
+	[ 'vacuumdb', '-F', 'mollydb' ],
 	qr/statement: VACUUM \(FREEZE\);/,
 	'vacuumdb -F');
 $node->issues_sql_like(
-	[ 'vacuumdb', '-z', 'postgres' ],
+	[ 'vacuumdb', '-z', 'mollydb' ],
 	qr/statement: VACUUM \(ANALYZE\);/,
 	'vacuumdb -z');
 $node->issues_sql_like(
-	[ 'vacuumdb', '-Z', 'postgres' ],
+	[ 'vacuumdb', '-Z', 'mollydb' ],
 	qr/statement: ANALYZE;/,
 	'vacuumdb -Z');

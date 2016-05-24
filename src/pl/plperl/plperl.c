@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "postgres.h"
+#include "mollydb.h"
 /* Defined by Perl */
 #undef _
 

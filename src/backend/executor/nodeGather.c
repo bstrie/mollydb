@@ -28,7 +28,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/relscan.h"
 #include "access/xact.h"

@@ -1,18 +1,18 @@
 /*-------------------------------------------------------------------------
  *
  * connection.c
- *		  Connection management functions for postgres_fdw
+ *		  Connection management functions for mollydb_fdw
  *
  * Portions Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  contrib/postgres_fdw/connection.c
+ *		  contrib/mollydb_fdw/connection.c
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
-#include "postgres_fdw.h"
+#include "mollydb_fdw.h"
 
 #include "access/xact.h"
 #include "mb/pg_wchar.h"
@@ -109,7 +109,7 @@ GetConnection(UserMapping *user, bool will_prep_stmt)
 		ctl.entrysize = sizeof(ConnCacheEntry);
 		/* allocate ConnectionHash in the cache context */
 		ctl.hcxt = CacheMemoryContext;
-		ConnectionHash = hash_create("postgres_fdw connections", 8,
+		ConnectionHash = hash_create("mollydb_fdw connections", 8,
 									 &ctl,
 									 HASH_ELEM | HASH_BLOBS | HASH_CONTEXT);
 
@@ -160,7 +160,7 @@ GetConnection(UserMapping *user, bool will_prep_stmt)
 		entry->have_error = false;
 		entry->conn = connect_pg_server(server, user);
 
-		elog(DEBUG3, "new postgres_fdw connection %p for server \"%s\" (user mapping oid %u, userid %u)",
+		elog(DEBUG3, "new mollydb_fdw connection %p for server \"%s\" (user mapping oid %u, userid %u)",
 			 entry->conn, server->servername, user->umid, user->userid);
 	}
 
@@ -208,9 +208,9 @@ connect_pg_server(ForeignServer *server, UserMapping *user)
 		n += ExtractConnectionOptions(user->options,
 									  keywords + n, values + n);
 
-		/* Use "postgres_fdw" as fallback_application_name. */
+		/* Use "mollydb_fdw" as fallback_application_name. */
 		keywords[n] = "fallback_application_name";
-		values[n] = "postgres_fdw";
+		values[n] = "mollydb_fdw";
 		n++;
 
 		/* Set client_encoding so that libpq can convert encoding properly. */
@@ -243,7 +243,7 @@ connect_pg_server(ForeignServer *server, UserMapping *user)
 
 		/*
 		 * Check that non-superuser has used password to establish connection;
-		 * otherwise, he's piggybacking on the postgres server's user
+		 * otherwise, he's piggybacking on the mollydb server's user
 		 * identity. See also dblink_security_check() in contrib/dblink.
 		 */
 		if (!superuser() && !PQconnectionUsedPassword(conn))
@@ -274,7 +274,7 @@ connect_pg_server(ForeignServer *server, UserMapping *user)
 /*
  * For non-superusers, insist that the connstr specify a password.  This
  * prevents a password from being picked up from .pgpass, a service file,
- * the environment, etc.  We don't want the postgres user's passwords
+ * the environment, etc.  We don't want the mollydb user's passwords
  * to be accessible to non-superusers.  (See also dblink_connstr_check in
  * contrib/dblink.)
  */
@@ -333,11 +333,11 @@ configure_remote_session(PGconn *conn)
 	/*
 	 * Set values needed to ensure unambiguous data output from remote.  (This
 	 * logic should match what pg_dump does.  See also set_transmission_modes
-	 * in postgres_fdw.c.)
+	 * in mollydb_fdw.c.)
 	 */
 	do_sql_command(conn, "SET datestyle = ISO");
 	if (remoteversion >= 80400)
-		do_sql_command(conn, "SET intervalstyle = postgres");
+		do_sql_command(conn, "SET intervalstyle = mollydb");
 	if (remoteversion >= 90000)
 		do_sql_command(conn, "SET extra_float_digits = 3");
 	else
@@ -631,7 +631,7 @@ pgfdw_xact_callback(XactEvent event, void *arg)
 					 * probably not worth trying harder.
 					 *
 					 * DEALLOCATE ALL only exists in 8.3 and later, so this
-					 * constrains how old a server postgres_fdw can
+					 * constrains how old a server mollydb_fdw can
 					 * communicate with.  We intentionally ignore errors in
 					 * the DEALLOCATE, so that we can hobble along to some
 					 * extent with older servers (leaking prepared statements

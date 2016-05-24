@@ -8,7 +8,7 @@
  **********************************************************************/
 
 /* this must be first: */
-#include "postgres.h"
+#include "mollydb.h"
 #include "mb/pg_wchar.h"       /* for GetDatabaseEncoding */
 
 /* Defined by Perl */

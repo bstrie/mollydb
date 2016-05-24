@@ -297,10 +297,10 @@ UPDATE pg_settings SET setting = reset_val WHERE name = 'configuration_parameter
       <listitem>
       <para>
        During server startup, parameter settings can be
-       passed to the <command>postgres</command> command via the
+       passed to the <command>mollydb</command> command via the
        <option>-c</> command-line parameter.  For example,
 <programlisting>
-postgres -c log_connections=yes -c log_destination='syslog'
+mollydb -c log_connections=yes -c log_destination='syslog'
 </programlisting>
        Settings provided in this way override those set via
        <filename>mollydb.conf</> or <command>ALTER SYSTEM</>,
@@ -316,7 +316,7 @@ postgres -c log_connections=yes -c log_destination='syslog'
       Settings established in this way constitute defaults for the life
       of the session, but do not affect other sessions.
       For historical reasons, the format of <envar>PGOPTIONS</envar> is
-      similar to that used when launching the <command>postgres</command>
+      similar to that used when launching the <command>mollydb</command>
       command; specifically, the <option>-c</> flag must be specified.
       For example,
 <programlisting>
@@ -504,7 +504,7 @@ include_dir 'conf.d'
        <para>
          Specifies the main server configuration file
          (customarily called <filename>mollydb.conf</>).
-         This parameter can only be set on the <command>postgres</command> command line.
+         This parameter can only be set on the <command>mollydb</command> command line.
        </para>
       </listitem>
      </varlistentry>
@@ -566,7 +566,7 @@ include_dir 'conf.d'
 
      <para>
       If you wish to keep the configuration files elsewhere than the
-      data directory, the <command>postgres</command> <option>-D</option>
+      data directory, the <command>mollydb</command> <option>-D</option>
       command-line option or <envar>PGDATA</envar> environment variable
       must point to the directory containing the configuration files,
       and the <varname>data_directory</> parameter must be set in
@@ -583,7 +583,7 @@ include_dir 'conf.d'
       individually using the parameters <varname>config_file</>,
       <varname>hba_file</> and/or <varname>ident_file</>.
       <varname>config_file</> can only be specified on the
-      <command>postgres</command> command line, but the others can be
+      <command>mollydb</command> command line, but the others can be
       set within the main configuration file.  If all three parameters plus
       <varname>data_directory</> are explicitly set, then it is not necessary
       to specify <option>-D</option> or <envar>PGDATA</envar>.
@@ -591,7 +591,7 @@ include_dir 'conf.d'
 
      <para>
       When setting any of these parameters, a relative path will be interpreted
-      with respect to the directory in which <command>postgres</command>
+      with respect to the directory in which <command>mollydb</command>
       is started.
      </para>
    </sect1>
@@ -4432,7 +4432,7 @@ local0.*    /var/log/mollydb
          determines the program name used to identify
          <productname>MollyDB</productname> messages in
          <application>syslog</application> logs. The default is
-         <literal>postgres</literal>.
+         <literal>mollydb</literal>.
          This parameter can only be set in the <filename>mollydb.conf</>
          file or on the server command line.
         </para>
@@ -5262,7 +5262,7 @@ FROM pg_stat_activity;
         Here is a sample table definition for storing CSV-format log output:
 
 <programlisting>
-CREATE TABLE postgres_log
+CREATE TABLE mollydb_log
 (
   log_time timestamp(3) with time zone,
   user_name text,
@@ -5297,7 +5297,7 @@ CREATE TABLE postgres_log
         command:
 
 <programlisting>
-COPY postgres_log FROM '/full/path/to/logfile.csv' WITH csv;
+COPY mollydb_log FROM '/full/path/to/logfile.csv' WITH csv;
 </programlisting>
        </para>
 
@@ -6517,11 +6517,11 @@ SET XML OPTION { DOCUMENT | CONTENT };
         Sets the display format for interval values.
         The value <literal>sql_standard</> will produce
         output matching <acronym>SQL</acronym> standard interval literals.
-        The value <literal>postgres</> (which is the default) will produce
+        The value <literal>mollydb</> (which is the default) will produce
         output matching <productname>MollyDB</> releases prior to 8.4
         when the <xref linkend="guc-datestyle">
         parameter was set to <literal>ISO</>.
-        The value <literal>postgres_verbose</> will produce output
+        The value <literal>mollydb_verbose</> will produce output
         matching <productname>MollyDB</> releases prior to 8.4
         when the <varname>DateStyle</>
         parameter was set to non-<literal>ISO</> output.

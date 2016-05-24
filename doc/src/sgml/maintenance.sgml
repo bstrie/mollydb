@@ -46,9 +46,9 @@
 
   <para>
    <ulink
-   url="http://bucardo.org/wiki/Check_postgres"><application>check_postgres</></ulink>
+   url="http://bucardo.org/wiki/Check_mollydb"><application>check_mollydb</></ulink>
    is available for monitoring database health and reporting unusual
-   conditions.  <application>check_postgres</> integrates with
+   conditions.  <application>check_mollydb</> integrates with
    Nagios and MRTG, but can be run standalone too.
   </para>
 
@@ -610,7 +610,7 @@ HINT:  Stop the postmaster and vacuum that database in single-user mode.
     execute commands once it has gone into the safety shutdown mode,
     the only way to do this is to stop the server and start the server in single-user
     mode to execute <command>VACUUM</>.  The shutdown mode is not enforced
-    in single-user mode.  See the <xref linkend="app-postgres"> reference
+    in single-user mode.  See the <xref linkend="app-mollydb"> reference
     page for details about using single-user mode.
    </para>
 
@@ -881,7 +881,7 @@ analyze threshold = analyze base threshold + analyze scale factor * number of tu
 
   <para>
    If you simply direct the <systemitem>stderr</> of
-   <command>postgres</command> into a
+   <command>mollydb</command> into a
    file, you will have log output, but
    the only way to truncate the log file is to stop and restart
    the server. This might be acceptable if you are using
@@ -955,7 +955,7 @@ pg_ctl start | rotatelogs /var/log/pgsql_log 86400
    <ulink url="http://dalibo.github.io/pgbadger/"><productname>pgBadger</productname></ulink>
    is an external project that does sophisticated log file analysis.
    <ulink
-   url="http://bucardo.org/wiki/Check_postgres"><productname>check_postgres</productname></ulink>
+   url="http://bucardo.org/wiki/Check_mollydb"><productname>check_mollydb</productname></ulink>
    provides Nagios alerts when important messages appear in the log
    files, as well as detection of many other extraordinary conditions.
   </para>

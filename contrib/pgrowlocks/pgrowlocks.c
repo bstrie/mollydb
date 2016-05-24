@@ -22,7 +22,7 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/multixact.h"
 #include "access/relscan.h"

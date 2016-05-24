@@ -14,9 +14,9 @@
 #ifdef WIN32
 
 #ifndef FRONTEND
-#include "postgres.h"
+#include "mollydb.h"
 #else
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #endif
 
 #include <windows.h>

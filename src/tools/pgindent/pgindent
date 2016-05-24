@@ -48,8 +48,8 @@ my $entab = $ENV{PGENTAB} || "entab";
 # no non-option arguments given. so do everything in the current directory
 $code_base ||= '.' unless @ARGV;
 
-# if it's the base of a postgres tree, we will exclude the files
-# postgres wants excluded
+# if it's the base of a mollydb tree, we will exclude the files
+# mollydb wants excluded
 $excludes ||= "$code_base/src/tools/pgindent/exclude_file_patterns"
   if $code_base && -f "$code_base/src/tools/pgindent/exclude_file_patterns";
 

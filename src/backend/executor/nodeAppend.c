@@ -55,7 +55,7 @@
  *							person employee student student-emp
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/execdebug.h"
 #include "executor/nodeAppend.h"

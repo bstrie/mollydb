@@ -79,7 +79,7 @@
  *		this tuple, the tuple's tuple descriptor, etc).  It also allows us
  *		to avoid physically constructing projection tuples in many cases.
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/htup_details.h"
 #include "access/tuptoaster.h"

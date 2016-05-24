@@ -359,7 +359,7 @@ test=&gt; select '6.25 .. 6.50'::seg as "pH";
    boundary if the resulting interval includes a power of ten:
 
 <screen>
-postgres=&gt; select '10(+-)1'::seg as seg;
+mollydb=&gt; select '10(+-)1'::seg as seg;
       seg
 ---------
 9.0 .. 11             -- should be: 9 .. 11

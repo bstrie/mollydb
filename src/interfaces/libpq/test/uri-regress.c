@@ -13,7 +13,7 @@
  *		src/interfaces/libpq/test/uri-regress.c
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "libpq-fe.h"
 

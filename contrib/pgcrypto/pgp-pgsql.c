@@ -29,7 +29,7 @@
  * contrib/pgcrypto/pgp-pgsql.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "lib/stringinfo.h"
 #include "catalog/pg_type.h"

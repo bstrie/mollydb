@@ -42,7 +42,7 @@ my %pgdump_runs = (
 			'-f', "$tempdir/binary_upgrade.sql",
 			'--schema-only',
 			'--binary-upgrade',
-			'-d', 'postgres', # alternative way to specify database
+			'-d', 'mollydb', # alternative way to specify database
 		],
 	},
 	clean => {
@@ -50,7 +50,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/clean.sql",
 			'-c',
-			'-d', 'postgres', # alternative way to specify database
+			'-d', 'mollydb', # alternative way to specify database
 		],
 	},
 	clean_if_exists => {
@@ -60,7 +60,7 @@ my %pgdump_runs = (
 			'-c',
 			'--if-exists',
 			'-E', 'UTF8', # no-op, just tests that option is accepted
-			'postgres',
+			'mollydb',
 		],
 	},
 	column_inserts => {
@@ -69,7 +69,7 @@ my %pgdump_runs = (
 			'-f', "$tempdir/column_inserts.sql",
 			'-a',
 			'--column-inserts',
-			'postgres',
+			'mollydb',
 		],
 	},
 	createdb => {
@@ -78,7 +78,7 @@ my %pgdump_runs = (
 			'-f', "$tempdir/createdb.sql",
 			'-C',
 			'-R', # no-op, just for testing
-			'postgres',
+			'mollydb',
 		],
 	},
 	data_only => {
@@ -87,14 +87,14 @@ my %pgdump_runs = (
 			'-f', "$tempdir/data_only.sql",
 			'-a',
 			'-v', # no-op, just make sure it works
-			'postgres',
+			'mollydb',
 		],
 	},
 	defaults => {
 		dump_cmd => [
 			'pg_dump',
 			'-f', "$tempdir/defaults.sql",
-			'postgres',
+			'mollydb',
 		],
 	},
 	defaults_custom_format => {
@@ -104,7 +104,7 @@ my %pgdump_runs = (
 			'-Fc',
 			'-Z6',
 			'-f', "$tempdir/defaults_custom_format.dump",
-			'postgres',
+			'mollydb',
 		],
 		restore_cmd => [
 			'pg_restore',
@@ -118,7 +118,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-Fd',
 			'-f', "$tempdir/defaults_dir_format",
-			'postgres',
+			'mollydb',
 		],
 		restore_cmd => [
 			'pg_restore',
@@ -133,7 +133,7 @@ my %pgdump_runs = (
 			'-Fd',
 			'-j2',
 			'-f', "$tempdir/defaults_parallel",
-			'postgres',
+			'mollydb',
 		],
 		restore_cmd => [
 			'pg_restore',
@@ -147,7 +147,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-Ft',
 			'-f', "$tempdir/defaults_tar_format.tar",
-			'postgres',
+			'mollydb',
 		],
 		restore_cmd => [
 			'pg_restore',
@@ -160,7 +160,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/exclude_dump_test_schema.sql",
 			'-N', 'dump_test',
-			'postgres',
+			'mollydb',
 		],
 	},
 	exclude_test_table => {
@@ -168,7 +168,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/exclude_test_table.sql",
 			'-T', 'dump_test.test_table',
-			'postgres',
+			'mollydb',
 		],
 	},
 	exclude_test_table_data => {
@@ -176,7 +176,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/exclude_test_table_data.sql",
 			'--exclude-table-data=dump_test.test_table',
-			'postgres',
+			'mollydb',
 		],
 	},
 	pg_dumpall_globals => {
@@ -191,7 +191,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/no_privs.sql",
 			'-x',
-			'postgres',
+			'mollydb',
 		],
 	},
 	no_owner => {
@@ -199,7 +199,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/no_owner.sql",
 			'-O',
-			'postgres',
+			'mollydb',
 		],
 	},
 	only_dump_test_schema => {
@@ -207,7 +207,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/only_dump_test_schema.sql",
 			'-n', 'dump_test',
-			'postgres',
+			'mollydb',
 		],
 	},
 	only_dump_test_table => {
@@ -216,7 +216,7 @@ my %pgdump_runs = (
 			'-f', "$tempdir/only_dump_test_table.sql",
 			'-t', 'dump_test.test_table',
 			'--lock-wait-timeout=1000000',
-			'postgres',
+			'mollydb',
 		],
 	},
 	role => {
@@ -225,7 +225,7 @@ my %pgdump_runs = (
 			'-f', "$tempdir/role.sql",
 			'--role=dump_test',
 			'--schema=dump_test_second_schema',
-			'postgres',
+			'mollydb',
 		],
 	},
 	schema_only => {
@@ -233,7 +233,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/schema_only.sql",
 			'-s',
-			'postgres',
+			'mollydb',
 		],
 	},
 	section_pre_data => {
@@ -241,7 +241,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/section_pre_data.sql",
 			'--section=pre-data',
-			'postgres',
+			'mollydb',
 		],
 	},
 	section_data => {
@@ -249,7 +249,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/section_data.sql",
 			'--section=data',
-			'postgres',
+			'mollydb',
 		],
 	},
 	section_post_data => {
@@ -257,7 +257,7 @@ my %pgdump_runs = (
 			'pg_dump',
 			'-f', "$tempdir/section_post_data.sql",
 			'--section=post-data',
-			'postgres',
+			'mollydb',
 		],
 	},
 	test_schema_plus_blobs => {
@@ -266,7 +266,7 @@ my %pgdump_runs = (
 			'-f', "$tempdir/test_schema_plus_blobs.sql",
 			'-n', 'dump_test',
 			'-b',
-			'postgres',
+			'mollydb',
 		],
 	},
 );
@@ -625,8 +625,8 @@ my %tests = (
 #			section_post_data => 1,
 #		},
 #	},
-	'COMMENT ON DATABASE postgres' => {
-		regexp => qr/^COMMENT ON DATABASE postgres IS .*;/m,
+	'COMMENT ON DATABASE mollydb' => {
+		regexp => qr/^COMMENT ON DATABASE mollydb IS .*;/m,
 		like => {
 			binary_upgrade => 1,
 			clean => 1,
@@ -993,9 +993,9 @@ my %tests = (
 			test_schema_plus_blobs => 1,
 		},
 	},
-	'CREATE DATABASE postgres' => {
+	'CREATE DATABASE mollydb' => {
 		regexp => qr/^
-			\QCREATE DATABASE postgres WITH TEMPLATE = template0 \E
+			\QCREATE DATABASE mollydb WITH TEMPLATE = template0 \E
 			.*;/xm,
 		like => {
 			createdb => 1,
@@ -2808,7 +2808,7 @@ foreach my $test (
 }
 
 # Send the combined set of commands to psql
-$node->safe_psql('postgres', $create_sql);
+$node->safe_psql('mollydb', $create_sql);
 
 #########################################
 # Test connecting to a non-existent database

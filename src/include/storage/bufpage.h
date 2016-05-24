@@ -20,10 +20,10 @@
 #include "storage/off.h"
 
 /*
- * A postgres disk page is an abstraction layered on top of a postgres
+ * A mollydb disk page is an abstraction layered on top of a mollydb
  * disk block (which is simply a unit of i/o, see block.h).
  *
- * specifically, while a disk block can be unformatted, a postgres
+ * specifically, while a disk block can be unformatted, a mollydb
  * disk page is always a slotted page of the form:
  *
  * +----------------+---------------------------------+

@@ -1,7 +1,7 @@
 /*
  * contrib/spi/autoinc.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "catalog/pg_type.h"
 #include "commands/sequence.h"

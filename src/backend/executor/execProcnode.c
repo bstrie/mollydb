@@ -75,7 +75,7 @@
  *		their work to the appropriate node support routines which may
  *		in turn call these routines themselves on their subplans.
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/executor.h"
 #include "executor/nodeAgg.h"

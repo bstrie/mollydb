@@ -1,7 +1,7 @@
 /* src/interfaces/ecpg/ecpglib/connect.c */
 
 #define POSTGRES_ECPG_INTERNAL
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "ecpg-pthread-win32.h"
 #include "ecpgtype.h"

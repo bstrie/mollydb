@@ -6,7 +6,7 @@
  *	  contrib/pg_buffercache/pg_buffercache_pages.c
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/htup_details.h"
 #include "catalog/pg_type.h"

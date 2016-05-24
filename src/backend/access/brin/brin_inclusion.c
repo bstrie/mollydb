@@ -22,7 +22,7 @@
  * IDENTIFICATION
  *	  src/backend/access/brin/brin_inclusion.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/brin_internal.h"
 #include "access/brin_tuple.h"

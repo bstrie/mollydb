@@ -74,13 +74,13 @@
  * Problems & fixes to ejp@ausmelb.oz. WARNING: relies on pre-processor
  * concatenation property, in probably unnecessary code 'optimisation'.
  *
- * Modified margo@postgres.berkeley.edu February 1990
+ * Modified margo@mollydb.berkeley.edu February 1990
  *		added multiple table interface
- * Modified by sullivan@postgres.berkeley.edu April 1990
+ * Modified by sullivan@mollydb.berkeley.edu April 1990
  *		changed ctl structure for shared memory
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <limits.h>
 

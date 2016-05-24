@@ -47,16 +47,16 @@
    processes can readily be identified.  A sample display is
 
 <screen>
-$ ps auxww | grep ^postgres
-postgres  15551  0.0  0.1  57536  7132 pts/0    S    18:02   0:00 postgres -i
-postgres  15554  0.0  0.0  57536  1184 ?        Ss   18:02   0:00 postgres: writer process
-postgres  15555  0.0  0.0  57536   916 ?        Ss   18:02   0:00 postgres: checkpointer process
-postgres  15556  0.0  0.0  57536   916 ?        Ss   18:02   0:00 postgres: wal writer process
-postgres  15557  0.0  0.0  58504  2244 ?        Ss   18:02   0:00 postgres: autovacuum launcher process
-postgres  15558  0.0  0.0  17512  1068 ?        Ss   18:02   0:00 postgres: stats collector process
-postgres  15582  0.0  0.0  58772  3080 ?        Ss   18:04   0:00 postgres: joe runbug 127.0.0.1 idle
-postgres  15606  0.0  0.0  58772  3052 ?        Ss   18:07   0:00 postgres: tgl regression [local] SELECT waiting
-postgres  15610  0.0  0.0  58772  3056 ?        Ss   18:07   0:00 postgres: tgl regression [local] idle in transaction
+$ ps auxww | grep ^mollydb
+mollydb  15551  0.0  0.1  57536  7132 pts/0    S    18:02   0:00 mollydb -i
+mollydb  15554  0.0  0.0  57536  1184 ?        Ss   18:02   0:00 mollydb: writer process
+mollydb  15555  0.0  0.0  57536   916 ?        Ss   18:02   0:00 mollydb: checkpointer process
+mollydb  15556  0.0  0.0  57536   916 ?        Ss   18:02   0:00 mollydb: wal writer process
+mollydb  15557  0.0  0.0  58504  2244 ?        Ss   18:02   0:00 mollydb: autovacuum launcher process
+mollydb  15558  0.0  0.0  17512  1068 ?        Ss   18:02   0:00 mollydb: stats collector process
+mollydb  15582  0.0  0.0  58772  3080 ?        Ss   18:04   0:00 mollydb: joe runbug 127.0.0.1 idle
+mollydb  15606  0.0  0.0  58772  3052 ?        Ss   18:07   0:00 mollydb: tgl regression [local] SELECT waiting
+mollydb  15610  0.0  0.0  58772  3056 ?        Ss   18:07   0:00 mollydb: tgl regression [local] idle in transaction
 </screen>
 
    (The appropriate invocation of <command>ps</> varies across different
@@ -73,7 +73,7 @@ postgres  15610  0.0  0.0  58772  3056 ?        Ss   18:07   0:00 postgres: tgl 
    process sets its command line display in the form
 
 <screen>
-postgres: <replaceable>user</> <replaceable>database</> <replaceable>host</> <replaceable>activity</>
+mollydb: <replaceable>user</> <replaceable>database</> <replaceable>host</> <replaceable>activity</>
 </screen>
 
   The user, database, and (client) host items remain the same for
@@ -102,7 +102,7 @@ $ psql -c 'SHOW cluster_name'
 (1 row)
 
 $ ps aux|grep server1
-postgres   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 postgres: server1: writer process
+mollydb   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 mollydb: server1: writer process
 ...
 </screen>
   </para>
@@ -120,10 +120,10 @@ postgres   27093  0.0  0.0  30096  2752 ?        Ss   11:34   0:00 postgres: ser
   use <command>/usr/ucb/ps</command>, rather than
   <command>/bin/ps</command>. You also must use two <option>w</option>
   flags, not just one. In addition, your original invocation of the
-  <command>postgres</command> command must have a shorter
+  <command>mollydb</command> command must have a shorter
   <command>ps</command> status display than that provided by each
   server process.  If you fail to do all three things, the <command>ps</>
-  output for each server process will be the original <command>postgres</>
+  output for each server process will be the original <command>mollydb</>
   command line.
   </para>
   </tip>
@@ -3273,7 +3273,7 @@ mollydb$1:::transaction-commit
 </programlisting>
    When executed, the example D script gives output such as:
 <screen>
-# ./txn_count.d `pgrep -n postgres` or ./txn_count.d &lt;PID&gt;
+# ./txn_count.d `pgrep -n mollydb` or ./txn_count.d &lt;PID&gt;
 ^C
 
 Start                                          71
@@ -3391,11 +3391,11 @@ TRACE_POSTGRESQL_TRANSACTION_START(vxid.localTransactionId);
 <screen>
 # dtrace -ln transaction-start
    ID    PROVIDER          MODULE           FUNCTION NAME
-18705 mollydb49878     postgres     StartTransactionCommand transaction-start
-18755 mollydb49877     postgres     StartTransactionCommand transaction-start
-18805 mollydb49876     postgres     StartTransactionCommand transaction-start
-18855 mollydb49875     postgres     StartTransactionCommand transaction-start
-18986 mollydb49873     postgres     StartTransactionCommand transaction-start
+18705 mollydb49878     mollydb     StartTransactionCommand transaction-start
+18755 mollydb49877     mollydb     StartTransactionCommand transaction-start
+18805 mollydb49876     mollydb     StartTransactionCommand transaction-start
+18855 mollydb49875     mollydb     StartTransactionCommand transaction-start
+18986 mollydb49873     mollydb     StartTransactionCommand transaction-start
 </screen>
     </para>
    </step>

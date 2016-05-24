@@ -55,7 +55,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <math.h>
 #include <sys/stat.h>

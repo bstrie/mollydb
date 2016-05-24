@@ -3,7 +3,7 @@
 #ifndef _ECPG_LIB_EXTERN_H
 #define _ECPG_LIB_EXTERN_H
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #include "libpq-fe.h"
 #include "sqlca.h"
 #include "sqlda-native.h"

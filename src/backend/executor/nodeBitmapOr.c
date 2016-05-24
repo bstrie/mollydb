@@ -26,7 +26,7 @@
  *		execution.
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/execdebug.h"
 #include "executor/nodeBitmapOr.h"

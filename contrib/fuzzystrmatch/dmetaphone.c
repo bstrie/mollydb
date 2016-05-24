@@ -99,7 +99,7 @@ The remaining code is authored by Andrew Dunstan <amdunstan@ncshp.org> and
 /* include these first, according to the docs */
 #ifndef DMETAPHONE_MAIN
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "utils/builtins.h"
 

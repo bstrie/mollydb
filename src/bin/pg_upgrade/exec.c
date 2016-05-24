@@ -7,7 +7,7 @@
  *	src/bin/pg_upgrade/exec.c
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "pg_upgrade.h"
 
@@ -314,7 +314,7 @@ check_bin_dir(ClusterInfo *cluster)
 		report_status(PG_FATAL, "%s is not a directory\n",
 					  cluster->bindir);
 
-	validate_exec(cluster->bindir, "postgres");
+	validate_exec(cluster->bindir, "mollydb");
 	validate_exec(cluster->bindir, "pg_ctl");
 	validate_exec(cluster->bindir, "pg_resetxlog");
 	if (cluster == &new_cluster)

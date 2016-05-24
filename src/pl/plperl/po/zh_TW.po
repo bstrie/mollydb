@@ -35,7 +35,7 @@ msgid "Perl initialization code to execute once when plperlu is first used."
 msgstr "初次使用 plperlu 時執行一次 Perl 初始化程式。"
 
 # commands/vacuum.c:2258 commands/vacuumlazy.c:489 commands/vacuumlazy.c:770
-# nodes/print.c:86 storage/lmgr/deadlock.c:888 tcop/postgres.c:3285
+# nodes/print.c:86 storage/lmgr/deadlock.c:888 tcop/mollydb.c:3285
 #: plperl.c:622 plperl.c:784 plperl.c:789 plperl.c:893 plperl.c:904
 #: plperl.c:945 plperl.c:966 plperl.c:1857 plperl.c:1952 plperl.c:2011
 #, c-format

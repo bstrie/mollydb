@@ -33,7 +33,7 @@
 /*															 */
 /*************************************************************/
 
-#include "postgres.h"
+#include "mollydb.h"
 #include "optimizer/geqo_copy.h"
 
 /* geqo_copy

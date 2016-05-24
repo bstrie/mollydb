@@ -1513,7 +1513,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Improve <filename>contrib/postgres_fdw</>'s handling of
+      Improve <filename>contrib/mollydb_fdw</>'s handling of
       collation-related decisions (Tom Lane)
      </para>
 
@@ -1584,7 +1584,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
     <listitem>
      <para>
       Fix <application>pg_dump</> and <application>pg_upgrade</> to support
-      cases where the <literal>postgres</> or <literal>template1</> database
+      cases where the <literal>mollydb</> or <literal>template1</> database
       is in a non-default tablespace (Marti Raudsepp, Bruce Momjian)
      </para>
     </listitem>
@@ -2497,7 +2497,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
 
      <para>
       This oversight could cause missing-clog-file errors for tables within
-      the <literal>postgres</> and <literal>template1</> databases.
+      the <literal>mollydb</> and <literal>template1</> databases.
      </para>
     </listitem>
 
@@ -5118,8 +5118,8 @@ Branch: REL9_2_STABLE [6d25eb314] 2014-04-04 22:03:42 -0400
 
     <listitem>
      <para>
-      Allow the root user to use <literal>postgres -C variable</> and
-      <literal>postgres --describe-config</> (MauMau)
+      Allow the root user to use <literal>mollydb -C variable</> and
+      <literal>mollydb --describe-config</> (MauMau)
      </para>
 
      <para>
@@ -5963,7 +5963,7 @@ Branch: REL9_3_STABLE [73f0483fd] 2014-03-07 16:36:50 -0500
 
     <listitem>
      <para>
-      Fix <application>contrib/postgres_fdw</> to handle multiple join
+      Fix <application>contrib/mollydb_fdw</> to handle multiple join
       conditions properly (Tom Lane)
      </para>
 
@@ -7350,7 +7350,7 @@ Branch: REL9_3_STABLE [eb3d350db] 2014-02-03 21:30:28 -0500
     <listitem>
      <para>
       Improve lost-connection error handling
-      in <filename>contrib/postgres_fdw</> (Tom Lane)
+      in <filename>contrib/mollydb_fdw</> (Tom Lane)
      </para>
     </listitem>
 
@@ -8119,7 +8119,7 @@ ALTER EXTENSION hstore UPDATE;
 
     <listitem>
      <para>
-      Add a <link linkend="postgres-fdw"><productname>Postgres</> foreign
+      Add a <link linkend="mollydb-fdw"><productname>Postgres</> foreign
       data wrapper</link> to allow access to
       other <productname>Postgres</> servers
      </para>
@@ -9971,7 +9971,7 @@ ALTER EXTENSION hstore UPDATE;
 
       <listitem>
        <para>
-        Add a <link linkend="postgres-fdw"><productname>Postgres</> foreign
+        Add a <link linkend="mollydb-fdw"><productname>Postgres</> foreign
         data wrapper</link> contrib module to allow access to
         other <productname>Postgres</> servers (Shigeru Hanada)
        </para>

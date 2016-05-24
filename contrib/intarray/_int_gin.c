@@ -1,7 +1,7 @@
 /*
  * contrib/intarray/_int_gin.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/gin.h"
 #include "access/stratnum.h"

@@ -5,7 +5,7 @@
  *
  * src/bin/psql/command.c
  */
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #include "command.h"
 
 #ifdef __BORLANDC__				/* needed for BCC */

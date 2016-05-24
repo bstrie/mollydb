@@ -1,4 +1,4 @@
-# Brazilian Portuguese message translation file for postgres
+# Brazilian Portuguese message translation file for mollydb
 # Copyright (C) 2009 MollyDB Global Development Group
 # This file is distributed under the same license as the MollyDB package.
 # Euler Taveira de Oliveira <euler@timbira.com>, 2003-2014.
@@ -265,7 +265,7 @@ msgid "index row requires %zu bytes, maximum size is %zu"
 msgstr "registro do índice requer %zu bytes, tamanho máximo é %zu"
 
 #: access/common/printtup.c:294 tcop/fastpath.c:182 tcop/fastpath.c:571
-#: tcop/postgres.c:1672
+#: tcop/mollydb.c:1672
 #, c-format
 msgid "unsupported format code: %d"
 msgstr "código do formato não é suportado: %d"
@@ -2168,12 +2168,12 @@ msgstr "recuperação não está em andamento"
 msgid "Recovery control functions can only be executed during recovery."
 msgstr "Funções de controle de recuperação só podem ser executadas durante recuperação."
 
-#: bootstrap/bootstrap.c:273 postmaster/postmaster.c:759 tcop/postgres.c:3462
+#: bootstrap/bootstrap.c:273 postmaster/postmaster.c:759 tcop/mollydb.c:3462
 #, c-format
 msgid "--%s requires a value"
 msgstr "--%s requer um valor"
 
-#: bootstrap/bootstrap.c:278 postmaster/postmaster.c:764 tcop/postgres.c:3467
+#: bootstrap/bootstrap.c:278 postmaster/postmaster.c:764 tcop/mollydb.c:3467
 #, c-format
 msgid "-c %s requires a value"
 msgstr "-c %s requer um valor"
@@ -4298,7 +4298,7 @@ msgid "could not read from COPY file: %m"
 msgstr "não pôde ler de arquivo COPY: %m"
 
 #: commands/copy.c:589 commands/copy.c:608 commands/copy.c:612
-#: tcop/fastpath.c:293 tcop/postgres.c:342 tcop/postgres.c:378
+#: tcop/fastpath.c:293 tcop/mollydb.c:342 tcop/mollydb.c:378
 #, c-format
 msgid "unexpected EOF on client connection with an open transaction"
 msgstr "EOF inesperado durante conexão do cliente com uma transação aberta"
@@ -6212,7 +6212,7 @@ msgstr "não pôde reposicionar cursor aberto"
 msgid "invalid statement name: must not be empty"
 msgstr "nome de comando é inválido: não deve ser vazio"
 
-#: commands/prepare.c:129 parser/parse_param.c:304 tcop/postgres.c:1296
+#: commands/prepare.c:129 parser/parse_param.c:304 tcop/mollydb.c:1296
 #, c-format
 msgid "could not determine data type of parameter $%d"
 msgstr "não pôde determinar o tipo de dado do parâmetro $%d"
@@ -13054,8 +13054,8 @@ msgstr "não pôde carregar pg_hba.conf"
 
 #: postmaster/postmaster.c:1263
 #, c-format
-msgid "%s: could not locate matching postgres executable"
-msgstr "%s: não pôde localizar executável do postgres correspondente"
+msgid "%s: could not locate matching mollydb executable"
+msgstr "%s: não pôde localizar executável do mollydb correspondente"
 
 #: postmaster/postmaster.c:1286 utils/misc/tzparser.c:341
 #, c-format
@@ -14788,12 +14788,12 @@ msgstr "tamanho da entrada de ShmemIndex está errado para estrutura de dados \"
 msgid "requested shared memory size overflows size_t"
 msgstr "tamanho de memória compartilhada solicitado ultrapassa size_t"
 
-#: storage/ipc/standby.c:499 tcop/postgres.c:2952
+#: storage/ipc/standby.c:499 tcop/mollydb.c:2952
 #, c-format
 msgid "canceling statement due to conflict with recovery"
 msgstr "cancelando comando por causa de um conflito com recuperação"
 
-#: storage/ipc/standby.c:500 tcop/postgres.c:2216
+#: storage/ipc/standby.c:500 tcop/mollydb.c:2216
 #, c-format
 msgid "User transaction caused buffer deadlock with recovery."
 msgstr "Transação do usuário causou impasse com a recuperação."
@@ -15179,14 +15179,14 @@ msgstr "não pôde abrir arquivo \"%s\" (bloco alvo %u): %m"
 msgid "invalid argument size %d in function call message"
 msgstr "tamanho de argumento %d é inválido na mensagem de chamada da função"
 
-#: tcop/fastpath.c:304 tcop/postgres.c:353 tcop/postgres.c:389
+#: tcop/fastpath.c:304 tcop/mollydb.c:353 tcop/mollydb.c:389
 #, c-format
 msgid "unexpected EOF on client connection"
 msgstr "EOF inesperado durante conexão do cliente"
 
-#: tcop/fastpath.c:318 tcop/postgres.c:944 tcop/postgres.c:1254
-#: tcop/postgres.c:1512 tcop/postgres.c:1917 tcop/postgres.c:2284
-#: tcop/postgres.c:2359
+#: tcop/fastpath.c:318 tcop/mollydb.c:944 tcop/mollydb.c:1254
+#: tcop/mollydb.c:1512 tcop/mollydb.c:1917 tcop/mollydb.c:2284
+#: tcop/mollydb.c:2359
 #, c-format
 msgid "current transaction is aborted, commands ignored until end of transaction block"
 msgstr "transação atual foi interrompida, comandos ignorados até o fim do bloco de transação"
@@ -15196,8 +15196,8 @@ msgstr "transação atual foi interrompida, comandos ignorados até o fim do blo
 msgid "fastpath function call: \"%s\" (OID %u)"
 msgstr "chamada fastpath de função: \"%s\" (OID %u)"
 
-#: tcop/fastpath.c:428 tcop/postgres.c:1114 tcop/postgres.c:1379
-#: tcop/postgres.c:1758 tcop/postgres.c:1975
+#: tcop/fastpath.c:428 tcop/mollydb.c:1114 tcop/mollydb.c:1379
+#: tcop/mollydb.c:1758 tcop/mollydb.c:1975
 #, c-format
 msgid "duration: %s ms"
 msgstr "duração: %s ms"
@@ -15222,261 +15222,261 @@ msgstr "mensagem de chamada da função contém %d formatos de argumento mas só
 msgid "incorrect binary data format in function argument %d"
 msgstr "formato de dado binário incorreto no argumento %d da função"
 
-#: tcop/postgres.c:417 tcop/postgres.c:429 tcop/postgres.c:440
-#: tcop/postgres.c:452 tcop/postgres.c:4254
+#: tcop/mollydb.c:417 tcop/mollydb.c:429 tcop/mollydb.c:440
+#: tcop/mollydb.c:452 tcop/mollydb.c:4254
 #, c-format
 msgid "invalid frontend message type %d"
 msgstr "tipo de mensagem do cliente %d é inválido"
 
-#: tcop/postgres.c:885
+#: tcop/mollydb.c:885
 #, c-format
 msgid "statement: %s"
 msgstr "comando: %s"
 
-#: tcop/postgres.c:1119
+#: tcop/mollydb.c:1119
 #, c-format
 msgid "duration: %s ms  statement: %s"
 msgstr "duração: %s ms  comando: %s"
 
-#: tcop/postgres.c:1169
+#: tcop/mollydb.c:1169
 #, c-format
 msgid "parse %s: %s"
 msgstr "análise de %s: %s"
 
-#: tcop/postgres.c:1227
+#: tcop/mollydb.c:1227
 #, c-format
 msgid "cannot insert multiple commands into a prepared statement"
 msgstr "não pode inserir múltiplos comandos no comando preparado"
 
-#: tcop/postgres.c:1384
+#: tcop/mollydb.c:1384
 #, c-format
 msgid "duration: %s ms  parse %s: %s"
 msgstr "duração: %s ms  análise de %s: %s"
 
-#: tcop/postgres.c:1429
+#: tcop/mollydb.c:1429
 #, c-format
 msgid "bind %s to %s"
 msgstr "ligação de %s para %s"
 
-#: tcop/postgres.c:1448 tcop/postgres.c:2265
+#: tcop/mollydb.c:1448 tcop/mollydb.c:2265
 #, c-format
 msgid "unnamed prepared statement does not exist"
 msgstr "comando preparado sem nome não existe"
 
-#: tcop/postgres.c:1490
+#: tcop/mollydb.c:1490
 #, c-format
 msgid "bind message has %d parameter formats but %d parameters"
 msgstr "mensagem de ligação tem %d formatos de parâmetro mas só tem %d parâmetros"
 
-#: tcop/postgres.c:1496
+#: tcop/mollydb.c:1496
 #, c-format
 msgid "bind message supplies %d parameters, but prepared statement \"%s\" requires %d"
 msgstr "mensagem de ligação forneceu %d parâmetros, mas comando preparado \"%s\" requer %d"
 
-#: tcop/postgres.c:1665
+#: tcop/mollydb.c:1665
 #, c-format
 msgid "incorrect binary data format in bind parameter %d"
 msgstr "formato de dado binário incorreto no parâmetro de ligação %d"
 
-#: tcop/postgres.c:1763
+#: tcop/mollydb.c:1763
 #, c-format
 msgid "duration: %s ms  bind %s%s%s: %s"
 msgstr "duração: %s ms  ligação %s%s%s: %s"
 
-#: tcop/postgres.c:1811 tcop/postgres.c:2345
+#: tcop/mollydb.c:1811 tcop/mollydb.c:2345
 #, c-format
 msgid "portal \"%s\" does not exist"
 msgstr "portal \"%s\" não existe"
 
-#: tcop/postgres.c:1896
+#: tcop/mollydb.c:1896
 #, c-format
 msgid "%s %s%s%s: %s"
 msgstr "%s %s%s%s: %s"
 
-#: tcop/postgres.c:1898 tcop/postgres.c:1983
+#: tcop/mollydb.c:1898 tcop/mollydb.c:1983
 msgid "execute fetch from"
 msgstr "executar busca de"
 
-#: tcop/postgres.c:1899 tcop/postgres.c:1984
+#: tcop/mollydb.c:1899 tcop/mollydb.c:1984
 msgid "execute"
 msgstr "executar"
 
-#: tcop/postgres.c:1980
+#: tcop/mollydb.c:1980
 #, c-format
 msgid "duration: %s ms  %s %s%s%s: %s"
 msgstr "duração: %s ms  %s %s%s%s: %s"
 
-#: tcop/postgres.c:2106
+#: tcop/mollydb.c:2106
 #, c-format
 msgid "prepare: %s"
 msgstr "preparado: %s"
 
-#: tcop/postgres.c:2169
+#: tcop/mollydb.c:2169
 #, c-format
 msgid "parameters: %s"
 msgstr "parâmetros: %s"
 
-#: tcop/postgres.c:2188
+#: tcop/mollydb.c:2188
 #, c-format
 msgid "abort reason: recovery conflict"
 msgstr "razão da interrupção: conflito de recuperação"
 
-#: tcop/postgres.c:2204
+#: tcop/mollydb.c:2204
 #, c-format
 msgid "User was holding shared buffer pin for too long."
 msgstr "Usuário estava mantendo um buffer compartilhado na cache por muito tempo."
 
-#: tcop/postgres.c:2207
+#: tcop/mollydb.c:2207
 #, c-format
 msgid "User was holding a relation lock for too long."
 msgstr "Usuário estava mantendo um travamento de relação por muito tempo."
 
-#: tcop/postgres.c:2210
+#: tcop/mollydb.c:2210
 #, c-format
 msgid "User was or might have been using tablespace that must be dropped."
 msgstr "Usuário estava ou pode estar utilizando tablespace que deve ser removida."
 
-#: tcop/postgres.c:2213
+#: tcop/mollydb.c:2213
 #, c-format
 msgid "User query might have needed to see row versions that must be removed."
 msgstr "Consulta do usuário pode ter precisado acessar versões de registros que devem ser removidas."
 
-#: tcop/postgres.c:2219
+#: tcop/mollydb.c:2219
 #, c-format
 msgid "User was connected to a database that must be dropped."
 msgstr "Usuário estava conectado ao banco de dados que deve ser removido."
 
-#: tcop/postgres.c:2548
+#: tcop/mollydb.c:2548
 #, c-format
 msgid "terminating connection because of crash of another server process"
 msgstr "finalizando conexão por causa de uma queda de um outro processo servidor"
 
-#: tcop/postgres.c:2549
+#: tcop/mollydb.c:2549
 #, c-format
 msgid "The postmaster has commanded this server process to roll back the current transaction and exit, because another server process exited abnormally and possibly corrupted shared memory."
 msgstr "O postmaster ordenou a esse processo servidor para cancelar a transação atual e sair, porque outro processo servidor saiu anormalmente e possivelmente corrompeu memória compartilhada."
 
-#: tcop/postgres.c:2553 tcop/postgres.c:2947
+#: tcop/mollydb.c:2553 tcop/mollydb.c:2947
 #, c-format
 msgid "In a moment you should be able to reconnect to the database and repeat your command."
 msgstr "Dentro de instantes você poderá conectar novamente ao banco de dados e repetir seu commando."
 
-#: tcop/postgres.c:2666
+#: tcop/mollydb.c:2666
 #, c-format
 msgid "floating-point exception"
 msgstr "exceção de ponto flutuante"
 
-#: tcop/postgres.c:2667
+#: tcop/mollydb.c:2667
 #, c-format
 msgid "An invalid floating-point operation was signaled. This probably means an out-of-range result or an invalid operation, such as division by zero."
 msgstr "Uma operação de ponto flutuante inválida foi sinalizada. Isto provavelmente indica um resultado fora do intervalo ou uma operação inválida, tal como divisão por zero."
 
-#: tcop/postgres.c:2851
+#: tcop/mollydb.c:2851
 #, c-format
 msgid "terminating autovacuum process due to administrator command"
 msgstr "terminando processo de limpeza automática por causa de um comando do administrador"
 
-#: tcop/postgres.c:2857 tcop/postgres.c:2867 tcop/postgres.c:2945
+#: tcop/mollydb.c:2857 tcop/mollydb.c:2867 tcop/mollydb.c:2945
 #, c-format
 msgid "terminating connection due to conflict with recovery"
 msgstr "terminando conexão por causa de um conflito com recuperação"
 
-#: tcop/postgres.c:2873
+#: tcop/mollydb.c:2873
 #, c-format
 msgid "terminating connection due to administrator command"
 msgstr "terminando conexão por causa de um comando do administrador"
 
-#: tcop/postgres.c:2885
+#: tcop/mollydb.c:2885
 #, c-format
 msgid "connection to client lost"
 msgstr "conexão com cliente foi perdida"
 
-#: tcop/postgres.c:2900
+#: tcop/mollydb.c:2900
 #, c-format
 msgid "canceling authentication due to timeout"
 msgstr "cancelando autenticação por causa do tempo de espera (timeout)"
 
-#: tcop/postgres.c:2915
+#: tcop/mollydb.c:2915
 #, c-format
 msgid "canceling statement due to lock timeout"
 msgstr "cancelando comando por causa do tempo de espera (timeout) do bloqueio"
 
-#: tcop/postgres.c:2924
+#: tcop/mollydb.c:2924
 #, c-format
 msgid "canceling statement due to statement timeout"
 msgstr "cancelando comando por causa do tempo de espera (timeout) do comando"
 
-#: tcop/postgres.c:2933
+#: tcop/mollydb.c:2933
 #, c-format
 msgid "canceling autovacuum task"
 msgstr "cancelando tarefa de limpeza automática"
 
-#: tcop/postgres.c:2968
+#: tcop/mollydb.c:2968
 #, c-format
 msgid "canceling statement due to user request"
 msgstr "cancelando comando por causa de um pedido do usuário"
 
-#: tcop/postgres.c:3096 tcop/postgres.c:3118
+#: tcop/mollydb.c:3096 tcop/mollydb.c:3118
 #, c-format
 msgid "stack depth limit exceeded"
 msgstr "limite da profundidade da pilha foi excedido"
 
-#: tcop/postgres.c:3097 tcop/postgres.c:3119
+#: tcop/mollydb.c:3097 tcop/mollydb.c:3119
 #, c-format
 msgid "Increase the configuration parameter \"max_stack_depth\" (currently %dkB), after ensuring the platform's stack depth limit is adequate."
 msgstr "Aumente o parâmetro de configuração \"max_stack_depth\" (atualmente %dkB), após certificar-se que o limite de profundidade da pilha para a plataforma é adequado."
 
-#: tcop/postgres.c:3135
+#: tcop/mollydb.c:3135
 #, c-format
 msgid "\"max_stack_depth\" must not exceed %ldkB."
 msgstr "\"max_stack_depth\" não deve exceder %ldkB."
 
-#: tcop/postgres.c:3137
+#: tcop/mollydb.c:3137
 #, c-format
 msgid "Increase the platform's stack depth limit via \"ulimit -s\" or local equivalent."
 msgstr "Aumente o limite de profundidade da pilha da plataforma utilizando \"ulimit -s\" ou equivalente."
 
-#: tcop/postgres.c:3501
+#: tcop/mollydb.c:3501
 #, c-format
 msgid "invalid command-line argument for server process: %s"
 msgstr "argumento de linha de comando é inválido para processo servidor: %s"
 
-#: tcop/postgres.c:3502 tcop/postgres.c:3508
+#: tcop/mollydb.c:3502 tcop/mollydb.c:3508
 #, c-format
 msgid "Try \"%s --help\" for more information."
 msgstr "Tente \"%s --help\" para obter informações adicionais."
 
-#: tcop/postgres.c:3506
+#: tcop/mollydb.c:3506
 #, c-format
 msgid "%s: invalid command-line argument: %s"
 msgstr "%s: argumento de linha de comando é inválido: %s"
 
-#: tcop/postgres.c:3585
+#: tcop/mollydb.c:3585
 #, c-format
 msgid "%s: no database nor user name specified"
 msgstr "%s: banco de dados ou nome de usuário não foi especificado"
 
-#: tcop/postgres.c:4162
+#: tcop/mollydb.c:4162
 #, c-format
 msgid "invalid CLOSE message subtype %d"
 msgstr "subtipo %d de mensagem CLOSE é inválido"
 
-#: tcop/postgres.c:4197
+#: tcop/mollydb.c:4197
 #, c-format
 msgid "invalid DESCRIBE message subtype %d"
 msgstr "subtipo %d de mensagem DESCRIBE é inválido"
 
-#: tcop/postgres.c:4275
+#: tcop/mollydb.c:4275
 #, c-format
 msgid "fastpath function calls not supported in a replication connection"
 msgstr "chamadas fastpath de funções não são suportadas em uma conexão de replicação"
 
-#: tcop/postgres.c:4279
+#: tcop/mollydb.c:4279
 #, c-format
 msgid "extended query protocol not supported in a replication connection"
 msgstr "protocolo estendido de consultas não é suportado em uma conexão de replicação"
 
-#: tcop/postgres.c:4449
+#: tcop/mollydb.c:4449
 #, c-format
 msgid "disconnection: session time: %d:%02d:%02d.%03d user=%s database=%s host=%s%s%s"
 msgstr "desconexão: tempo da sessão: %d:%02d:%02d.%02d usuário=%s banco de dados=%s máquina=%s%s%s"
@@ -18889,8 +18889,8 @@ msgstr "arquivo de bloqueio \"%s\" já existe"
 
 #: utils/init/miscinit.c:755
 #, c-format
-msgid "Is another postgres (PID %d) running in data directory \"%s\"?"
-msgstr "Outro postgres (PID %d) está executando sob o diretório de dados \"%s\"?"
+msgid "Is another mollydb (PID %d) running in data directory \"%s\"?"
+msgstr "Outro mollydb (PID %d) está executando sob o diretório de dados \"%s\"?"
 
 #: utils/init/miscinit.c:757
 #, c-format
@@ -18899,8 +18899,8 @@ msgstr "Outro postmaster (PID %d) está executando sob o diretório de dados \"%
 
 #: utils/init/miscinit.c:760
 #, c-format
-msgid "Is another postgres (PID %d) using socket file \"%s\"?"
-msgstr "Outro postgres (PID %d) está utilizando arquivo de soquete \"%s\"?"
+msgid "Is another mollydb (PID %d) using socket file \"%s\"?"
+msgstr "Outro mollydb (PID %d) está utilizando arquivo de soquete \"%s\"?"
 
 #: utils/init/miscinit.c:762
 #, c-format

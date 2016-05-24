@@ -7,7 +7,7 @@
  *
  * Modified by BÖJTHE Zoltán, Hungary, mailto:urdesobt@axelero.hu
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <ctype.h>
 

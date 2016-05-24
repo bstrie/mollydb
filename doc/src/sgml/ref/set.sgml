@@ -289,7 +289,7 @@ SET search_path TO my_schema, public;
    <productname>POSTGRES</productname> with <quote>day before month</>
    input convention:
 <screen>
-SET datestyle TO postgres, dmy;
+SET datestyle TO mollydb, dmy;
 </screen>
   </para>
 

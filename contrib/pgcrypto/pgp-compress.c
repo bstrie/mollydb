@@ -29,7 +29,7 @@
  * contrib/pgcrypto/pgp-compress.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "px.h"
 #include "pgp.h"

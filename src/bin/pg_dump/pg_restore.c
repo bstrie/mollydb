@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * pg_restore.c
- *	pg_restore is an utility extracting postgres database definitions
+ *	pg_restore is an utility extracting mollydb database definitions
  *	from a backup archive created by pg_dump using the archiver
  *	interface.
  *
@@ -38,7 +38,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "getopt_long.h"
 

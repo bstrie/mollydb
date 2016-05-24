@@ -13,7 +13,7 @@
  * -------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "miscadmin.h"
 #include "postmaster/bgworker.h"

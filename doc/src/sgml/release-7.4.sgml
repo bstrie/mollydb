@@ -3578,7 +3578,7 @@ DROP SCHEMA information_schema CASCADE;
    </listitem>
 
    <listitem>
-    <para><literal>postgres --describe-config</literal> now dumps server config variables (Aizaz Ahmed, Peter)</para>
+    <para><literal>mollydb --describe-config</literal> now dumps server config variables (Aizaz Ahmed, Peter)</para>
     <para>
      This option is useful for administration tools that need to know
      the configuration variable names and their minimums, maximums,

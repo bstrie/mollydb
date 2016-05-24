@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * hashsearch.c
- *	  search code for postgres hash tables
+ *	  search code for mollydb hash tables
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/hash.h"
 #include "access/relscan.h"

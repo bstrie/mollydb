@@ -3,7 +3,7 @@
  * Teodor Sigaev <teodor@stack.net>
  * contrib/ltree/lquery_op.c
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <ctype.h>
 

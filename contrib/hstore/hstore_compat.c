@@ -81,7 +81,7 @@
  * The otherwise undocumented function hstore_version_diag is provided
  * for testing purposes.
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 
 #include "hstore.h"

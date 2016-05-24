@@ -6,7 +6,7 @@
  *	Jon Postel RIP 16 Oct 1998
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>

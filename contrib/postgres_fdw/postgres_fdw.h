@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------
  *
- * postgres_fdw.h
+ * mollydb_fdw.h
  *		  Foreign-data wrapper for remote MollyDB servers
  *
  * Portions Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
- *		  contrib/postgres_fdw/postgres_fdw.h
+ *		  contrib/mollydb_fdw/mollydb_fdw.h
  *
  *-------------------------------------------------------------------------
  */
@@ -22,7 +22,7 @@
 
 /*
  * FDW-specific planner information kept in RelOptInfo.fdw_private for a
- * foreign table.  This information is collected by postgresGetForeignRelSize.
+ * foreign table.  This information is collected by mollydbGetForeignRelSize.
  */
 typedef struct PgFdwRelationInfo
 {
@@ -37,7 +37,7 @@ typedef struct PgFdwRelationInfo
 	 *
 	 * For a base foreign relation this is a list of clauses along-with
 	 * RestrictInfo wrapper. Keeping RestrictInfo wrapper helps while dividing
-	 * scan_clauses in postgresGetForeignPlan into safe and unsafe subsets.
+	 * scan_clauses in mollydbGetForeignPlan into safe and unsafe subsets.
 	 * Also it helps in estimating costs since RestrictInfo caches the
 	 * selectivity and qual cost for the clause in it.
 	 *
@@ -94,7 +94,7 @@ typedef struct PgFdwRelationInfo
 	List	   *joinclauses;
 } PgFdwRelationInfo;
 
-/* in postgres_fdw.c */
+/* in mollydb_fdw.c */
 extern int	set_transmission_modes(void);
 extern void reset_transmission_modes(int nestlevel);
 

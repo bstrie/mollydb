@@ -17,7 +17,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <fcntl.h>
 #include <locale.h>

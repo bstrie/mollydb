@@ -453,7 +453,7 @@ MollyDB documentation
        <para>
          Specifies the name of the database to connect to for dumping global
          objects and discovering what other databases should be dumped. If
-         not specified, the <literal>postgres</literal> database will be used,
+         not specified, the <literal>mollydb</literal> database will be used,
          and if that does not exist, <literal>template1</literal> will be used.
        </para>
       </listitem>
@@ -610,7 +610,7 @@ MollyDB documentation
   <para>
    To reload database(s) from this file, you can use:
 <screen>
-<prompt>$</prompt> <userinput>psql -f db.out postgres</userinput>
+<prompt>$</prompt> <userinput>psql -f db.out mollydb</userinput>
 </screen>
    (It is not important to which database you connect here since the
    script file created by <application>pg_dumpall</application> will

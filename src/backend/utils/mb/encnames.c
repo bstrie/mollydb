@@ -5,9 +5,9 @@
  * src/backend/utils/mb/encnames.c
  */
 #ifdef FRONTEND
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 #else
-#include "postgres.h"
+#include "mollydb.h"
 #include "utils/builtins.h"
 #endif
 

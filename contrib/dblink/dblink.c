@@ -30,7 +30,7 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <limits.h>
 
@@ -2626,7 +2626,7 @@ dblink_security_check(PGconn *conn, remoteConn *rconn)
 /*
  * For non-superusers, insist that the connstr specify a password.  This
  * prevents a password from being picked up from .pgpass, a service file,
- * the environment, etc.  We don't want the postgres user's passwords
+ * the environment, etc.  We don't want the mollydb user's passwords
  * to be accessible to non-superusers.
  */
 static void

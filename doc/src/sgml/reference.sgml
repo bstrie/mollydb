@@ -271,7 +271,7 @@
    &pgtesttiming;
    &pgupgrade;
    &pgxlogdump;
-   &postgres;
+   &mollydb;
    &postmaster;
 
  </reference>

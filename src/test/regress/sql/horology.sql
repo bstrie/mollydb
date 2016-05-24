@@ -336,9 +336,9 @@ SET DateStyle TO 'US,Postgres';
 
 SHOW DateStyle;
 
-SELECT '' AS "64", d1 AS us_postgres FROM TIMESTAMP_TBL;
+SELECT '' AS "64", d1 AS us_mollydb FROM TIMESTAMP_TBL;
 
-SELECT '' AS seven, f1 AS us_postgres FROM ABSTIME_TBL;
+SELECT '' AS seven, f1 AS us_mollydb FROM ABSTIME_TBL;
 
 SET DateStyle TO 'US,ISO';
 
@@ -362,9 +362,9 @@ INSERT INTO TIMESTAMP_TBL VALUES('13/06/1957');
 
 SELECT count(*) as one FROM TIMESTAMP_TBL WHERE d1 = 'Jun 13 1957';
 
-SELECT '' AS "65", d1 AS european_postgres FROM TIMESTAMP_TBL;
+SELECT '' AS "65", d1 AS european_mollydb FROM TIMESTAMP_TBL;
 
-SELECT '' AS seven, f1 AS european_postgres FROM ABSTIME_TBL;
+SELECT '' AS seven, f1 AS european_mollydb FROM ABSTIME_TBL;
 
 SET DateStyle TO 'European,ISO';
 

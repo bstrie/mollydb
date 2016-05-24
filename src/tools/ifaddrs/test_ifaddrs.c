@@ -6,7 +6,7 @@
  *		test pg_foreach_ifaddr()
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <arpa/inet.h>
 #include <netinet/in.h>

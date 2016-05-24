@@ -10,7 +10,7 @@
  *
  * -------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "access/hash.h"
 #include "catalog/pg_proc.h"

@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * vacuum.c
- *	  The postgres vacuum cleaner.
+ *	  The mollydb vacuum cleaner.
  *
  * This file now includes only control and dispatch code for VACUUM and
  * ANALYZE commands.  Regular VACUUM is implemented in vacuumlazy.c,
@@ -18,7 +18,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <math.h>
 

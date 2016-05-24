@@ -28,7 +28,7 @@
  *		freelist.c -- chooses victim for buffer replacement
  *		buf_table.c -- manages the buffer lookup table
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <sys/file.h>
 #include <unistd.h>

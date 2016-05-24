@@ -13,7 +13,7 @@
  *-------------------------------------------------------------------------
  */
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -325,7 +325,7 @@ static const PQEnvironmentOption EnvironmentOptions[] =
 
 /* The connection URI must start with either of the following designators: */
 static const char uri_designator[] = "mollydb://";
-static const char short_uri_designator[] = "postgres://";
+static const char short_uri_designator[] = "mollydb://";
 
 static bool connectOptions1(PGconn *conn, const char *conninfo);
 static bool connectOptions2(PGconn *conn);
@@ -438,7 +438,7 @@ pqDropConnection(PGconn *conn, bool flushInput)
 /*
  *		PQconnectdbParams
  *
- * establishes a connection to a postgres backend through the postmaster
+ * establishes a connection to a mollydb backend through the postmaster
  * using connection information in two arrays.
  *
  * The keywords array is defined as
@@ -493,7 +493,7 @@ PQpingParams(const char *const * keywords,
 /*
  *		PQconnectdb
  *
- * establishes a connection to a postgres backend through the postmaster
+ * establishes a connection to a mollydb backend through the postmaster
  * using connection information in a string.
  *
  * The conninfo string is either a whitespace-separated list of
@@ -544,7 +544,7 @@ PQping(const char *conninfo)
 /*
  *		PQconnectStartParams
  *
- * Begins the establishment of a connection to a postgres backend through the
+ * Begins the establishment of a connection to a mollydb backend through the
  * postmaster using connection information in a struct.
  *
  * See comment for PQconnectdbParams for the definition of the string format.
@@ -623,7 +623,7 @@ PQconnectStartParams(const char *const * keywords,
 /*
  *		PQconnectStart
  *
- * Begins the establishment of a connection to a postgres backend through the
+ * Begins the establishment of a connection to a mollydb backend through the
  * postmaster using connection information in a string.
  *
  * See comment for PQconnectdb for the definition of the string format.
@@ -950,7 +950,7 @@ PQconndefaults(void)
 /* ----------------
  *		PQsetdbLogin
  *
- * establishes a connection to a postgres backend through the postmaster
+ * establishes a connection to a mollydb backend through the postmaster
  * at the specified host and port.
  *
  * returns a PGconn* which is needed for all subsequent libpq calls

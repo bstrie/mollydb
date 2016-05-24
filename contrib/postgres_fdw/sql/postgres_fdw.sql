@@ -2,16 +2,16 @@
 -- create FDW objects
 -- ===================================================================
 
-CREATE EXTENSION postgres_fdw;
+CREATE EXTENSION mollydb_fdw;
 
-CREATE SERVER testserver1 FOREIGN DATA WRAPPER postgres_fdw;
+CREATE SERVER testserver1 FOREIGN DATA WRAPPER mollydb_fdw;
 DO $d$
     BEGIN
-        EXECUTE $$CREATE SERVER loopback FOREIGN DATA WRAPPER postgres_fdw
+        EXECUTE $$CREATE SERVER loopback FOREIGN DATA WRAPPER mollydb_fdw
             OPTIONS (dbname '$$||current_database()||$$',
                      port '$$||current_setting('port')||$$'
             )$$;
-        EXECUTE $$CREATE SERVER loopback2 FOREIGN DATA WRAPPER postgres_fdw
+        EXECUTE $$CREATE SERVER loopback2 FOREIGN DATA WRAPPER mollydb_fdw
             OPTIONS (dbname '$$||current_database()||$$',
                      port '$$||current_setting('port')||$$'
             )$$;
@@ -292,7 +292,7 @@ EXPLAIN (VERBOSE, COSTS false)
 	SELECT * FROM ft2 ORDER BY ft2.c1, ft2.c3 collate "C";
 
 -- user-defined operator/function
-CREATE FUNCTION postgres_fdw_abs(int) RETURNS int AS $$
+CREATE FUNCTION mollydb_fdw_abs(int) RETURNS int AS $$
 BEGIN
 RETURN abs($1);
 END
@@ -314,21 +314,21 @@ SELECT count(c3) FROM ft1 t1 WHERE t1.c1 = t1.c2;
 
 -- by default, user-defined ones cannot
 EXPLAIN (VERBOSE, COSTS false)
-  SELECT count(c3) FROM ft1 t1 WHERE t1.c1 = postgres_fdw_abs(t1.c2);
-SELECT count(c3) FROM ft1 t1 WHERE t1.c1 = postgres_fdw_abs(t1.c2);
+  SELECT count(c3) FROM ft1 t1 WHERE t1.c1 = mollydb_fdw_abs(t1.c2);
+SELECT count(c3) FROM ft1 t1 WHERE t1.c1 = mollydb_fdw_abs(t1.c2);
 EXPLAIN (VERBOSE, COSTS false)
   SELECT count(c3) FROM ft1 t1 WHERE t1.c1 === t1.c2;
 SELECT count(c3) FROM ft1 t1 WHERE t1.c1 === t1.c2;
 
 -- but let's put them in an extension ...
-ALTER EXTENSION postgres_fdw ADD FUNCTION postgres_fdw_abs(int);
-ALTER EXTENSION postgres_fdw ADD OPERATOR === (int, int);
-ALTER SERVER loopback OPTIONS (ADD extensions 'postgres_fdw');
+ALTER EXTENSION mollydb_fdw ADD FUNCTION mollydb_fdw_abs(int);
+ALTER EXTENSION mollydb_fdw ADD OPERATOR === (int, int);
+ALTER SERVER loopback OPTIONS (ADD extensions 'mollydb_fdw');
 
 -- ... now they can be shipped
 EXPLAIN (VERBOSE, COSTS false)
-  SELECT count(c3) FROM ft1 t1 WHERE t1.c1 = postgres_fdw_abs(t1.c2);
-SELECT count(c3) FROM ft1 t1 WHERE t1.c1 = postgres_fdw_abs(t1.c2);
+  SELECT count(c3) FROM ft1 t1 WHERE t1.c1 = mollydb_fdw_abs(t1.c2);
+SELECT count(c3) FROM ft1 t1 WHERE t1.c1 = mollydb_fdw_abs(t1.c2);
 EXPLAIN (VERBOSE, COSTS false)
   SELECT count(c3) FROM ft1 t1 WHERE t1.c1 === t1.c2;
 SELECT count(c3) FROM ft1 t1 WHERE t1.c1 === t1.c2;
@@ -1303,7 +1303,7 @@ ROLLBACK;
 BEGIN;
 
 
-CREATE SERVER fetch101 FOREIGN DATA WRAPPER postgres_fdw OPTIONS( fetch_size '101' );
+CREATE SERVER fetch101 FOREIGN DATA WRAPPER mollydb_fdw OPTIONS( fetch_size '101' );
 
 SELECT count(*)
 FROM pg_foreign_server

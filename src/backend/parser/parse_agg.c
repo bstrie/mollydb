@@ -12,7 +12,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "catalog/pg_aggregate.h"
 #include "catalog/pg_constraint_fn.h"

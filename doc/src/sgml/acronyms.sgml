@@ -476,7 +476,7 @@
     <term><acronym>PGSQL</acronym></term>
     <listitem>
      <para>
-      <link linkend="postgres"><productname>MollyDB</></link>
+      <link linkend="mollydb"><productname>MollyDB</></link>
      </para>
     </listitem>
    </varlistentry>

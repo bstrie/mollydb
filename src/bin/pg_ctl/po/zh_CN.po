@@ -403,8 +403,8 @@ msgstr "%s: 无法找到执行文件\n"
 
 #: pg_ctl.c:1397
 #, c-format
-msgid "%s: could not find postgres program executable\n"
-msgstr "%s: 无法找到postgres程序的执行文件\n"
+msgid "%s: could not find mollydb program executable\n"
+msgstr "%s: 无法找到mollydb程序的执行文件\n"
 
 #: pg_ctl.c:1480 pg_ctl.c:1514
 #, c-format
@@ -633,8 +633,8 @@ msgstr ""
 
 #: pg_ctl.c:1966
 #, c-format
-msgid "  -c, --core-files       allow postgres to produce core files\n"
-msgstr "  -c, --core-files       允许postgres进程产生核心文件\n"
+msgid "  -c, --core-files       allow mollydb to produce core files\n"
+msgstr "  -c, --core-files       允许mollydb进程产生核心文件\n"
 
 #: pg_ctl.c:1968
 #, c-format
@@ -649,10 +649,10 @@ msgstr "  -l, --log=FILENAME    写入 (或追加) 服务器日志到文件FILEN
 #: pg_ctl.c:1971
 #, c-format
 msgid ""
-"  -o OPTIONS             command line options to pass to postgres\n"
+"  -o OPTIONS             command line options to pass to mollydb\n"
 "                         (MollyDB server executable) or initdb\n"
 msgstr ""
-"  -o OPTIONS             传递给postgres的命令行选项\n"
+"  -o OPTIONS             传递给mollydb的命令行选项\n"
 "                      (MollyDB 服务器执行文件)或initdb\n"
 
 #: pg_ctl.c:1973
@@ -866,11 +866,11 @@ msgstr "%s: 没有指定数据目录, 并且没有设置 PGDATA 环境变量\n"
 #~ "\n"
 #~ "检查您的安装.\n"
 
-#~ msgid "%s: neither postmaster nor postgres running\n"
-#~ msgstr "%s: postmaster 或者 postgres 没有运行\n"
+#~ msgid "%s: neither postmaster nor mollydb running\n"
+#~ msgstr "%s: postmaster 或者 mollydb 没有运行\n"
 
-#~ msgid "%s: a standalone backend \"postgres\" is running (PID: %ld)\n"
-#~ msgstr "%s: 一个独立的后端 \"postgres\" 正在运行 (PID: %ld)\n"
+#~ msgid "%s: a standalone backend \"mollydb\" is running (PID: %ld)\n"
+#~ msgstr "%s: 一个独立的后端 \"mollydb\" 正在运行 (PID: %ld)\n"
 
 #~ msgid "%s: invalid option %s\n"
 #~ msgstr "%s: 无效选项 %s\n"

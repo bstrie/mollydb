@@ -4107,7 +4107,7 @@ INSERT INTO a SELECT * FROM a;
   </para>
 
 <programlisting>
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/spi.h"
 #include "utils/builtins.h"

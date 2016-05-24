@@ -1,7 +1,7 @@
 /* src/interfaces/ecpg/compatlib/informix.c */
 
 #define POSTGRES_ECPG_INTERNAL
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include <math.h>
 #include <ctype.h>

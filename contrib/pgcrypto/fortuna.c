@@ -29,7 +29,7 @@
  * contrib/pgcrypto/fortuna.c
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include <sys/time.h>
 #include <time.h>

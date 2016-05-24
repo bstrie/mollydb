@@ -17,14 +17,14 @@ OBJS = catalog.o dependency.o heap.o index.o indexing.o namespace.o aclchk.o \
        pg_operator.o pg_proc.o pg_range.o pg_db_role_setting.o pg_shdepend.o \
        pg_type.o storage.o toasting.o
 
-BKIFILES = postgres.bki postgres.description postgres.shdescription
+BKIFILES = mollydb.bki mollydb.description mollydb.shdescription
 
 include $(top_srcdir)/src/backend/common.mk
 
 all: $(BKIFILES) schemapg.h
 
 # Note: there are some undocumented dependencies on the ordering in which
-# the catalog header files are assembled into postgres.bki.  In particular,
+# the catalog header files are assembled into mollydb.bki.  In particular,
 # indexing.h had better be last, and toasting.h just before it.
 
 POSTGRES_BKI_SRCS = $(addprefix $(top_srcdir)/src/include/catalog/,\
@@ -52,26 +52,26 @@ catalogdir = $(top_srcdir)/src/backend/catalog
 pg_includes = -I$(top_srcdir)/src/include/catalog -I$(top_builddir)/src/include/catalog
 
 # see explanation in ../parser/Makefile
-postgres.description: postgres.bki ;
+mollydb.description: mollydb.bki ;
 
-postgres.shdescription: postgres.bki ;
+mollydb.shdescription: mollydb.bki ;
 
-schemapg.h: postgres.bki ;
+schemapg.h: mollydb.bki ;
 
 # Technically, this should depend on Makefile.global, but then
-# postgres.bki would need to be rebuilt after every configure run,
+# mollydb.bki would need to be rebuilt after every configure run,
 # even in distribution tarballs.  So this is cheating a bit, but it
 # will achieve the goal of updating the version number when it
 # changes.
-postgres.bki: genbki.pl Catalog.pm $(POSTGRES_BKI_SRCS) $(top_srcdir)/configure $(top_srcdir)/src/include/catalog/duplicate_oids
+mollydb.bki: genbki.pl Catalog.pm $(POSTGRES_BKI_SRCS) $(top_srcdir)/configure $(top_srcdir)/src/include/catalog/duplicate_oids
 	cd $(top_srcdir)/src/include/catalog && $(PERL) ./duplicate_oids
 	$(PERL) -I $(catalogdir) $< $(pg_includes) --set-version=$(MAJORVERSION) $(POSTGRES_BKI_SRCS)
 
 .PHONY: install-data
 install-data: $(BKIFILES) installdirs
-	$(INSTALL_DATA) $(call vpathsearch,postgres.bki) '$(DESTDIR)$(datadir)/postgres.bki'
-	$(INSTALL_DATA) $(call vpathsearch,postgres.description) '$(DESTDIR)$(datadir)/postgres.description'
-	$(INSTALL_DATA) $(call vpathsearch,postgres.shdescription) '$(DESTDIR)$(datadir)/postgres.shdescription'
+	$(INSTALL_DATA) $(call vpathsearch,mollydb.bki) '$(DESTDIR)$(datadir)/mollydb.bki'
+	$(INSTALL_DATA) $(call vpathsearch,mollydb.description) '$(DESTDIR)$(datadir)/mollydb.description'
+	$(INSTALL_DATA) $(call vpathsearch,mollydb.shdescription) '$(DESTDIR)$(datadir)/mollydb.shdescription'
 	$(INSTALL_DATA) $(srcdir)/system_views.sql '$(DESTDIR)$(datadir)/system_views.sql'
 	$(INSTALL_DATA) $(srcdir)/information_schema.sql '$(DESTDIR)$(datadir)/information_schema.sql'
 	$(INSTALL_DATA) $(srcdir)/sql_features.txt '$(DESTDIR)$(datadir)/sql_features.txt'
@@ -83,7 +83,7 @@ installdirs:
 uninstall-data:
 	rm -f $(addprefix '$(DESTDIR)$(datadir)'/, $(BKIFILES) system_views.sql information_schema.sql sql_features.txt)
 
-# postgres.bki, postgres.description, postgres.shdescription, and schemapg.h
+# mollydb.bki, mollydb.description, mollydb.shdescription, and schemapg.h
 # are in the distribution tarball, so they are not cleaned here.
 clean:
 

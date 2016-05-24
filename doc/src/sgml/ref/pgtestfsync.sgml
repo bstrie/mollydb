@@ -107,7 +107,7 @@
   <title>See Also</title>
 
   <simplelist type="inline">
-   <member><xref linkend="app-postgres"></member>
+   <member><xref linkend="app-mollydb"></member>
   </simplelist>
  </refsect1>
 </refentry>

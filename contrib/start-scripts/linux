@@ -34,8 +34,8 @@ prefix=/usr/local/pgsql
 # Data directory
 PGDATA="/usr/local/pgsql/data"
 
-# Who to run the postmaster as, usually "postgres".  (NOT "root")
-PGUSER=postgres
+# Who to run the postmaster as, usually "mollydb".  (NOT "root")
+PGUSER=mollydb
 
 # Where to keep a log file
 PGLOG="$PGDATA/serverlog"

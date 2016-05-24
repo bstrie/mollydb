@@ -5,7 +5,7 @@
  *
  * John Gray, for Torchbox 2003-04-01
  */
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "executor/spi.h"
 #include "fmgr.h"

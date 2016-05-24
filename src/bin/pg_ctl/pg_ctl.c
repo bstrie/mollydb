@@ -17,7 +17,7 @@
 #define _WIN32_WINNT 0x0501
 #endif
 
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "libpq-fe.h"
 #include "pqexpbuffer.h"
@@ -661,7 +661,7 @@ test_postmaster_connection(pgpid_t pm_pid, bool do_checkpoint)
 						 * timeout first.
 						 */
 						snprintf(connstr, sizeof(connstr),
-						"dbname=postgres port=%d host='%s' connect_timeout=5",
+						"dbname=mollydb port=%d host='%s' connect_timeout=5",
 								 portnum, host_str);
 					}
 				}
@@ -884,7 +884,7 @@ do_start(void)
 		pgdata_opt = "";
 
 	if (exec_path == NULL)
-		exec_path = find_other_exec_or_die(argv0, "postgres", PG_BACKEND_VERSIONSTR);
+		exec_path = find_other_exec_or_die(argv0, "mollydb", PG_BACKEND_VERSIONSTR);
 
 #if defined(HAVE_GETRLIMIT) && defined(RLIMIT_CORE)
 	if (allow_core_files)
@@ -1384,11 +1384,11 @@ pgwin32_CommandLine(bool registration)
 	}
 	else
 	{
-		ret = find_other_exec(argv0, "postgres", PG_BACKEND_VERSIONSTR,
+		ret = find_other_exec(argv0, "mollydb", PG_BACKEND_VERSIONSTR,
 							  cmdPath);
 		if (ret != 0)
 		{
-			write_stderr(_("%s: could not find postgres program executable\n"), progname);
+			write_stderr(_("%s: could not find mollydb program executable\n"), progname);
 			exit(1);
 		}
 	}
@@ -1939,12 +1939,12 @@ do_help(void)
 
 	printf(_("\nOptions for start or restart:\n"));
 #if defined(HAVE_GETRLIMIT) && defined(RLIMIT_CORE)
-	printf(_("  -c, --core-files       allow postgres to produce core files\n"));
+	printf(_("  -c, --core-files       allow mollydb to produce core files\n"));
 #else
 	printf(_("  -c, --core-files       not applicable on this platform\n"));
 #endif
 	printf(_("  -l, --log=FILENAME     write (or append) server log to FILENAME\n"));
-	printf(_("  -o OPTIONS             command line options to pass to postgres\n"
+	printf(_("  -o OPTIONS             command line options to pass to mollydb\n"
 	 "                         (MollyDB server executable) or initdb\n"));
 	printf(_("  -p PATH-TO-POSTGRES    normally not necessary\n"));
 	printf(_("\nOptions for stop or restart:\n"));
@@ -2086,7 +2086,7 @@ adjust_data_dir(void)
 
 	/* we use a private my_exec_path to avoid interfering with later uses */
 	if (exec_path == NULL)
-		my_exec_path = find_other_exec_or_die(argv0, "postgres", PG_BACKEND_VERSIONSTR);
+		my_exec_path = find_other_exec_or_die(argv0, "mollydb", PG_BACKEND_VERSIONSTR);
 	else
 		my_exec_path = pg_strdup(exec_path);
 

@@ -29,7 +29,7 @@
  * ---------------------------------------------------------------------------
  */
 
-#include "postgres.h"
+#include "mollydb.h"
 
 #include "miscadmin.h"
 

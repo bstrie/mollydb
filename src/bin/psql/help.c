@@ -5,7 +5,7 @@
  *
  * src/bin/psql/help.c
  */
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #ifndef WIN32
 #include <sys/types.h>			/* (ditto) */

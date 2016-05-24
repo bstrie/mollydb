@@ -69,7 +69,7 @@ sub master_psql
 	my $cmd = shift;
 
 	system_or_bail 'psql', '-q', '--no-psqlrc', '-d',
-	  $node_master->connstr('postgres'), '-c', "$cmd";
+	  $node_master->connstr('mollydb'), '-c', "$cmd";
 }
 
 sub standby_psql
@@ -77,7 +77,7 @@ sub standby_psql
 	my $cmd = shift;
 
 	system_or_bail 'psql', '-q', '--no-psqlrc', '-d',
-	  $node_standby->connstr('postgres'), '-c', "$cmd";
+	  $node_standby->connstr('mollydb'), '-c', "$cmd";
 }
 
 # Run a query against the master, and check that the output matches what's
@@ -90,7 +90,7 @@ sub check_query
 	# we want just the output, no formatting
 	my $result = run [
 		'psql', '-q', '-A', '-t', '--no-psqlrc', '-d',
-		$node_master->connstr('postgres'),
+		$node_master->connstr('mollydb'),
 		'-c', $query ],
 	  '>', \$stdout, '2>', \$stderr;
 
@@ -132,7 +132,7 @@ sub create_standby
 	$node_standby = get_new_node('standby');
 	$node_master->backup('my_backup');
 	$node_standby->init_from_backup($node_master, 'my_backup');
-	my $connstr_master = $node_master->connstr('postgres');
+	my $connstr_master = $node_master->connstr('mollydb');
 
 	$node_standby->append_conf(
 		"recovery.conf", qq(
@@ -156,14 +156,14 @@ sub promote_standby
 	# Wait for the standby to receive and write all WAL.
 	my $wal_received_query =
 "SELECT pg_current_xlog_location() = write_location FROM pg_stat_replication WHERE application_name = 'rewind_standby';";
-	$node_master->poll_query_until('postgres', $wal_received_query)
+	$node_master->poll_query_until('mollydb', $wal_received_query)
 	  or die "Timed out while waiting for standby to receive and write WAL";
 
 	# Now promote slave and insert some new data on master, this will put
 	# the master out-of-sync with the standby. Wait until the standby is
 	# out of recovery mode, and is ready to accept read-write connections.
 	$node_standby->promote;
-	$node_standby->poll_query_until('postgres',
+	$node_standby->poll_query_until('mollydb',
 		"SELECT NOT pg_is_in_recovery()")
 	  or die "Timed out while waiting for promotion of standby";
 
@@ -181,7 +181,7 @@ sub run_pg_rewind
 	my $test_mode       = shift;
 	my $master_pgdata   = $node_master->data_dir;
 	my $standby_pgdata  = $node_standby->data_dir;
-	my $standby_connstr = $node_standby->connstr('postgres');
+	my $standby_connstr = $node_standby->connstr('mollydb');
 	my $tmp_folder      = TestLib::tempdir;
 
 	# Stop the master and be ready to perform the rewind

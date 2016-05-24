@@ -22,14 +22,14 @@ PostgresNode - class representing MollyDB server instance
   $node->restart('fast');
 
   # run a query with psql, like:
-  #   echo 'SELECT 1' | psql -qAXt postgres -v ON_ERROR_STOP=1
-  $psql_stdout = $node->safe_psql('postgres', 'SELECT 1');
+  #   echo 'SELECT 1' | psql -qAXt mollydb -v ON_ERROR_STOP=1
+  $psql_stdout = $node->safe_psql('mollydb', 'SELECT 1');
 
   # Run psql with a timeout, capturing stdout and stderr
   # as well as the psql exit code. Pass some extra psql
   # options. If there's an error from psql raise an exception.
   my ($stdout, $stderr, $timed_out);
-  my $cmdret = $node->psql('postgres', 'SELECT pg_sleep(60)',
+  my $cmdret = $node->psql('mollydb', 'SELECT pg_sleep(60)',
 	  stdout => \$stdout, stderr => \$stderr,
 	  timeout => 30, timed_out => \$timed_out,
 	  extra_params => ['--single-transaction'],
@@ -38,11 +38,11 @@ PostgresNode - class representing MollyDB server instance
 
   # Similar thing, more convenient in common cases
   my ($cmdret, $stdout, $stderr) =
-      $node->psql('postgres', 'SELECT 1');
+      $node->psql('mollydb', 'SELECT 1');
 
   # run query every second until it returns 't'
   # or times out
-  $node->poll_query_until('postgres', q|SELECT random() < 0.1;|')
+  $node->poll_query_until('mollydb', q|SELECT random() < 0.1;|')
     or print "timed out";
 
   # Do an online pg_basebackup
@@ -109,7 +109,7 @@ INIT
 	$test_pghost =
 	  $TestLib::windows_os ? $test_localhost : TestLib::tempdir_short;
 	$ENV{PGHOST}     = $test_pghost;
-	$ENV{PGDATABASE} = 'postgres';
+	$ENV{PGDATABASE} = 'mollydb';
 
 	# Tracking of last port value assigned to accelerate free port lookup.
 	$last_port_assigned = int(rand() * 16384) + 49152;
@@ -525,7 +525,7 @@ sub _backup_fs
 
 	if ($hot)
 	{
-		my $stdout = $self->safe_psql('postgres',
+		my $stdout = $self->safe_psql('mollydb',
 			"SELECT * FROM pg_start_backup('$backup_name');");
 		print "# pg_start_backup: $stdout\n";
 	}
@@ -543,7 +543,7 @@ sub _backup_fs
 		# We ignore pg_stop_backup's return value. We also assume archiving
 		# is enabled; otherwise the caller will have to copy the remaining
 		# segments.
-		my $stdout = $self->safe_psql('postgres',
+		my $stdout = $self->safe_psql('mollydb',
 			'SELECT * FROM pg_stop_backup();');
 		print "# pg_stop_backup: $stdout\n";
 	}
@@ -1026,14 +1026,14 @@ If given, it must be an array reference containing additional parameters to B<ps
 e.g.
 
 	my ($stdout, $stderr, $timed_out);
-	my $cmdret = $node->psql('postgres', 'SELECT pg_sleep(60)',
+	my $cmdret = $node->psql('mollydb', 'SELECT pg_sleep(60)',
 		stdout => \$stdout, stderr => \$stderr,
 		timeout => 30, timed_out => \$timed_out,
 		extra_params => ['--single-transaction'])
 
 will set $cmdret to undef and $timed_out to a true value.
 
-	$node->psql('postgres', $sql, on_error_die => 1);
+	$node->psql('mollydb', $sql, on_error_die => 1);
 
 dies with an informative message if $sql fails.
 

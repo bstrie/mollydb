@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * nbtree.h
- *	  header file for postgres btree access method implementation.
+ *	  header file for mollydb btree access method implementation.
  *
  *
  * Portions Copyright (c) 1996-2016, MollyDB Global Development Group

@@ -9,7 +9,7 @@
  *
  *-------------------------------------------------------------------------
  */
-#include "postgres_fe.h"
+#include "mollydb_fe.h"
 
 #include "common.h"
 #include "fe_utils/string_utils.h"
@@ -197,8 +197,8 @@ main(int argc, char *argv[])
 
 	appendPQExpBufferChar(&sql, ';');
 
-	/* No point in trying to use postgres db when creating postgres db. */
-	if (maintenance_db == NULL && strcmp(dbname, "postgres") == 0)
+	/* No point in trying to use mollydb db when creating mollydb db. */
+	if (maintenance_db == NULL && strcmp(dbname, "mollydb") == 0)
 		maintenance_db = "template1";
 
 	conn = connectMaintenanceDatabase(maintenance_db, host, port, username,

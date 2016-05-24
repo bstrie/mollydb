@@ -22,7 +22,7 @@
 #ifndef SNOWBALL_HEADR_H
 #define SNOWBALL_HEADR_H
 
-#include "postgres.h"
+#include "mollydb.h"
 
 /* Some platforms define MAXINT and/or MININT, causing conflicts */
 #ifdef MAXINT
