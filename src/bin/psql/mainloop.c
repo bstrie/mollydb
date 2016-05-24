@@ -1,7 +1,7 @@
 /*
- * psql - the PostgreSQL interactive terminal
+ * psql - the MollyDB interactive terminal
  *
- * Copyright (c) 2000-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2000-2016, MollyDB Global Development Group
  *
  * src/bin/psql/mainloop.c
  */
@@ -187,7 +187,7 @@ MainLoop(FILE *source)
 			strncmp(line, "PGDMP", 5) == 0)
 		{
 			free(line);
-			puts(_("The input is a PostgreSQL custom-format dump.\n"
+			puts(_("The input is a MollyDB custom-format dump.\n"
 				   "Use the pg_restore command-line client to restore this dump to a database.\n"));
 			fflush(stdout);
 			successResult = EXIT_FAILURE;
@@ -207,7 +207,7 @@ MainLoop(FILE *source)
 			(line[4] == '\0' || line[4] == ';' || isspace((unsigned char) line[4])))
 		{
 			free(line);
-			puts(_("You are using psql, the command-line interface to PostgreSQL."));
+			puts(_("You are using psql, the command-line interface to MollyDB."));
 			printf(_("Type:  \\copyright for distribution terms\n"
 					 "       \\h for help with SQL commands\n"
 					 "       \\? for help with psql commands\n"

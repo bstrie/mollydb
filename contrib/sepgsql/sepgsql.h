@@ -2,9 +2,9 @@
  *
  * contrib/sepgsql/sepgsql.h
  *
- * Definitions corresponding to SE-PostgreSQL
+ * Definitions corresponding to SE-MollyDB
  *
- * Copyright (c) 2010-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2010-2016, MollyDB Global Development Group
  *
  * -------------------------------------------------------------------------
  */
@@ -18,12 +18,12 @@
 #include <selinux/avc.h>
 
 /*
- * SE-PostgreSQL Label Tag
+ * SE-MollyDB Label Tag
  */
 #define SEPGSQL_LABEL_TAG			"selinux"
 
 /*
- * SE-PostgreSQL performing mode
+ * SE-MollyDB performing mode
  */
 #define SEPGSQL_MODE_DEFAULT		1
 #define SEPGSQL_MODE_PERMISSIVE		2

@@ -1,8 +1,8 @@
 #
 # Translation of plperl to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -13,11 +13,11 @@
 #  * Gabriele Bartolini <gabriele.bartolini@itpug.org>
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: plperl (PostgreSQL) 9.6\n"
+"Project-Id-Version: plperl (MollyDB) 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:07+0000\n"
 "PO-Revision-Date: 2016-04-17 20:56+0100\n"
@@ -61,8 +61,8 @@ msgstr "%s"
 
 #: plperl.c:667
 #, c-format
-msgid "while executing PostgreSQL::InServer::SPI::bootstrap"
-msgstr "nell'esecuzione di PostgreSQL::InServer::SPI::bootstrap"
+msgid "while executing MollyDB::InServer::SPI::bootstrap"
+msgstr "nell'esecuzione di MollyDB::InServer::SPI::bootstrap"
 
 #: plperl.c:842
 #, c-format

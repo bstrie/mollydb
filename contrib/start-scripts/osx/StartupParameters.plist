@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
     <key>Description</key>
-    <string>PostgreSQL Database Server</string>
+    <string>MollyDB Database Server</string>
     <key>Messages</key>
     <dict>
         <key>start</key>
-        <string>Starting PostgreSQL database server</string>
+        <string>Starting MollyDB database server</string>
         <key>stop</key>
-        <string>Stopping PostgreSQL database server</string>
+        <string>Stopping MollyDB database server</string>
         <key>restart</key>
-        <string>Restarting PostgreSQL database server</string>
+        <string>Restarting MollyDB database server</string>
     </dict>
     <key>OrderPreference</key>
     <string>Late</string>
     <key>Provides</key>
     <array>
-        <string>PostgreSQL</string>
+        <string>MollyDB</string>
     </array>
     <key>Requires</key>
     <array>

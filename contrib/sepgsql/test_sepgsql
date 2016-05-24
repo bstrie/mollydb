@@ -198,7 +198,7 @@ if [ ! -e "${CMD_PSQL}" ]; then
     echo "not found"
     echo
     echo "${CMD_PSQL} was not found."
-    echo "Check your PostgreSQL installation."
+    echo "Check your MollyDB installation."
     echo
     exit 1
 fi
@@ -239,7 +239,7 @@ if [ $RETVAL -eq 2 ]; then
     echo "failed"
     echo ""
     echo "Could not connect to the database server."
-    echo "Please check your PostgreSQL installation."
+    echo "Please check your MollyDB installation."
     echo ""
     exit 1
 elif [ $RETVAL -ne 0 ]; then

@@ -2,7 +2,7 @@
  *
  * isolation_main --- pg_regress test launcher for isolation tests
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/test/isolation/isolation_main.c
@@ -16,7 +16,7 @@ char		saved_argv0[MAXPGPATH];
 char		isolation_exec[MAXPGPATH];
 bool		looked_up_isolation_exec = false;
 
-#define PG_ISOLATION_VERSIONSTR "isolationtester (PostgreSQL) " PG_VERSION "\n"
+#define PG_ISOLATION_VERSIONSTR "isolationtester (MollyDB) " PG_VERSION "\n"
 
 /*
  * start an isolation tester process for specified file (including

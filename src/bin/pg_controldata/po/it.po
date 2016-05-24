@@ -1,8 +1,8 @@
 #
 # Translation of pg_controldata to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -17,11 +17,11 @@
 #  * Mirko Tebaldi <mirko.tebaldi@libero.it>, 2004.
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_controldata (PostgreSQL) 9.6\n"
+"Project-Id-Version: pg_controldata (MollyDB) 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:15+0000\n"
 "PO-Revision-Date: 2016-04-17 20:45+0100\n"
@@ -38,10 +38,10 @@ msgstr ""
 #: pg_controldata.c:33
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s mostra informazioni di controllo su un cluster di database PostgreSQL.\n"
+"%s mostra informazioni di controllo su un cluster di database MollyDB.\n"
 "\n"
 
 #: pg_controldata.c:34

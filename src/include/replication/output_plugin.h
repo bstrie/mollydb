@@ -1,8 +1,8 @@
 /*-------------------------------------------------------------------------
  * output_plugin.h
- *	   PostgreSQL Logical Decode Plugin Interface
+ *	   MollyDB Logical Decode Plugin Interface
  *
- * Copyright (c) 2012-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  *-------------------------------------------------------------------------
  */

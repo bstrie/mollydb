@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------
  *
  * pgtime.h
- *	  PostgreSQL internal timezone library
+ *	  MollyDB internal timezone library
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *	  src/include/pgtime.h

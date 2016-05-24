@@ -4,9 +4,9 @@
  *	 Code for various C-language functions defined as part of the
  *	 regression tests.
  *
- * This code is released under the terms of the PostgreSQL License.
+ * This code is released under the terms of the MollyDB License.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/test/regress/regress.c

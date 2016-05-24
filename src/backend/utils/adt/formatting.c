@@ -4,12 +4,12 @@
  * src/backend/utils/adt/formatting.c
  *
  *
- *	 Portions Copyright (c) 1999-2016, PostgreSQL Global Development Group
+ *	 Portions Copyright (c) 1999-2016, MollyDB Global Development Group
  *
  *
  *	 TO_CHAR(); TO_TIMESTAMP(); TO_DATE(); TO_NUMBER();
  *
- *	 The PostgreSQL routines for a timestamp/int/float/numeric formatting,
+ *	 The MollyDB routines for a timestamp/int/float/numeric formatting,
  *	 inspired by the Oracle TO_CHAR() / TO_DATE() / TO_NUMBER() routines.
  *
  *

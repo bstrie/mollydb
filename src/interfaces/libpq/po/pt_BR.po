@@ -1,13 +1,13 @@
 # Brazilian Portuguese message translation file for libpq
-# Copyright (C) 2009 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Cesar Suga <sartre@linuxbr.com>, 2002.
 # Roberto Mello <rmello@fslc.usu.edu>, 2002.
 # Euler Taveira de Oliveira <euler@timbira.com>, 2003-2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-09-17 22:32-0300\n"
 "PO-Revision-Date: 2005-10-04 22:45-0300\n"

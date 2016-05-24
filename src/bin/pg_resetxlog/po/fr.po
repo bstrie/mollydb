@@ -7,12 +7,12 @@
 # Stéphane Schildknecht <stephane.schildknecht@dalibo.com>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-08 21:14+0000\n"
 "PO-Revision-Date: 2016-05-09 10:28+0200\n"
 "Last-Translator: Guillaume Lelarge <guillaume@lelarge.info>\n"
-"Language-Team: PostgreSQLfr <pgsql-fr-generale@mollydb.org>\n"
+"Language-Team: MollyDBfr <pgsql-fr-generale@mollydb.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
@@ -123,8 +123,8 @@ msgstr "%s : ne peut pas être exécuté par « root »\n"
 
 #: pg_resetxlog.c:308
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "Vous devez exécuter %s en tant que super-utilisateur PostgreSQL.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "Vous devez exécuter %s en tant que super-utilisateur MollyDB.\n"
 
 #: pg_resetxlog.c:318
 #, c-format
@@ -514,10 +514,10 @@ msgstr "%s : n'a pas pu écrire le fichier « %s » : %s\n"
 #: pg_resetxlog.c:1167
 #, c-format
 msgid ""
-"%s resets the PostgreSQL transaction log.\n"
+"%s resets the MollyDB transaction log.\n"
 "\n"
 msgstr ""
-"%s réinitialise le journal des transactions PostgreSQL.\n"
+"%s réinitialise le journal des transactions MollyDB.\n"
 "\n"
 
 #: pg_resetxlog.c:1168

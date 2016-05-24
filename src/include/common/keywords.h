@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------
  *
  * keywords.h
- *	  lexical token lookup for key words in PostgreSQL
+ *	  lexical token lookup for key words in MollyDB
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/common/keywords.h

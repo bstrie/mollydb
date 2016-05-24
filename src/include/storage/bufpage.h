@@ -4,7 +4,7 @@
  *	  Standard POSTGRES buffer page definitions.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/storage/bufpage.h
@@ -131,7 +131,7 @@ typedef struct
  * useful.  It is currently unused in index pages.
  *
  * The page version number and page size are packed together into a single
- * uint16 field.  This is for historical reasons: before PostgreSQL 7.3,
+ * uint16 field.  This is for historical reasons: before MollyDB 7.3,
  * there was no concept of a page version number, and doing it this way
  * lets us pretend that pre-7.3 databases have page version number zero.
  * We constrain page sizes to be multiples of 256, leaving the low eight

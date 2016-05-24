@@ -3,7 +3,7 @@
  *
  *	file system operations
  *
- *	Copyright (c) 2010-2016, PostgreSQL Global Development Group
+ *	Copyright (c) 2010-2016, MollyDB Global Development Group
  *	src/bin/pg_upgrade/file.c
  */
 
@@ -147,9 +147,9 @@ copy_file(const char *srcfile, const char *dstfile, bool force)
 /*
  * rewriteVisibilityMap()
  *
- * In versions of PostgreSQL prior to catversion 201603011, PostgreSQL's
+ * In versions of MollyDB prior to catversion 201603011, MollyDB's
  * visibility map included one bit per heap page; it now includes two.
- * When upgrading a cluster from before that time to a current PostgreSQL
+ * When upgrading a cluster from before that time to a current MollyDB
  * version, we could refuse to copy visibility maps from the old cluster
  * to the new cluster; the next VACUUM would recreate them, but at the
  * price of scanning the entire table.  So, instead, we rewrite the old

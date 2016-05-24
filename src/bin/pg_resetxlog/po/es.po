@@ -1,7 +1,7 @@
 # Spanish message translation file for pg_resetxlog
 #
-# Copyright (C) 2003-2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2003-2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Ivan Hernandez <ivanx@ciencias.unam.mx>, 2003.
 # Alvaro Herrera <alvherre@alvh.no-ip.org>, 2004-2014
@@ -10,7 +10,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_resetxlog (PostgreSQL 9.6)\n"
+"Project-Id-Version: pg_resetxlog (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:14+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
@@ -124,8 +124,8 @@ msgstr "%s: no puede ser ejecutado con el usuario «root»\n"
 
 #: pg_resetxlog.c:308
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "Debe ejecutar %s con el superusuario de PostgreSQL.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "Debe ejecutar %s con el superusuario de MollyDB.\n"
 
 #: pg_resetxlog.c:318
 #, c-format
@@ -515,10 +515,10 @@ msgstr "%s: no se pudo escribir en el archivo «%s»: %s\n"
 #: pg_resetxlog.c:1167
 #, c-format
 msgid ""
-"%s resets the PostgreSQL transaction log.\n"
+"%s resets the MollyDB transaction log.\n"
 "\n"
 msgstr ""
-"%s reinicia la bitácora de transacciones de PostgreSQL.\n"
+"%s reinicia la bitácora de transacciones de MollyDB.\n"
 "\n"
 
 #: pg_resetxlog.c:1168

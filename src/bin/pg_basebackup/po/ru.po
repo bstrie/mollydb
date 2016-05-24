@@ -1,7 +1,7 @@
 # Russian message translation file for pg_basebackup
-# Copyright (C) 2012 PostgreSQL Global Development Group
+# Copyright (C) 2012 MollyDB Global Development Group
 # Copyright (c) 2012-2013 Alexander Lakhin <exclusion@gmail.com>
-# This file is distributed under the same license as the PostgreSQL package.
+# This file is distributed under the same license as the MollyDB package.
 #
 # ChangeLog:
 #   - August 24, 2014: Updates for 9.4. Alexander Lakhin <exclusion@gmail.com>.
@@ -11,7 +11,7 @@
 #   - February 17, 2012: Complete translation for 9.1, Alexander Lakhin <exclusion@gmail.com>.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9 current\n"
+"Project-Id-Version: MollyDB 9 current\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-09-19 03:13+0000\n"
 "PO-Revision-Date: 2015-10-16 16:12+0400\n"
@@ -71,10 +71,10 @@ msgstr ""
 #: pg_basebackup.c:231
 #, c-format
 msgid ""
-"%s takes a base backup of a running PostgreSQL server.\n"
+"%s takes a base backup of a running MollyDB server.\n"
 "\n"
 msgstr ""
-"%s делает базовую резервную копию работающего сервера PostgreSQL.\n"
+"%s делает базовую резервную копию работающего сервера MollyDB.\n"
 "\n"
 
 #: pg_basebackup.c:233 pg_receivexlog.c:66 pg_recvlogical.c:69
@@ -691,10 +691,10 @@ msgstr "%s: символические ссылки не поддерживаю�
 #: pg_receivexlog.c:64
 #, c-format
 msgid ""
-"%s receives PostgreSQL streaming transaction logs.\n"
+"%s receives MollyDB streaming transaction logs.\n"
 "\n"
 msgstr ""
-"%s получает транслируемые журналы транзакций PostgreSQL.\n"
+"%s получает транслируемые журналы транзакций MollyDB.\n"
 "\n"
 
 #: pg_receivexlog.c:68 pg_recvlogical.c:75
@@ -868,10 +868,10 @@ msgstr "%s: отключение; через %d сек. последует по�
 #: pg_recvlogical.c:67
 #, c-format
 msgid ""
-"%s controls PostgreSQL logical decoding streams.\n"
+"%s controls MollyDB logical decoding streams.\n"
 "\n"
 msgstr ""
-"%s управляет потоками логического декодирования PostgreSQL.\n"
+"%s управляет потоками логического декодирования MollyDB.\n"
 "\n"
 
 #: pg_recvlogical.c:71

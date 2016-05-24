@@ -3,7 +3,7 @@
  * pl_handler.c		- Handler for the PL/pgSQL
  *			  procedural language
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -205,7 +205,7 @@ _PG_init(void)
 /* ----------
  * plpgsql_call_handler
  *
- * The PostgreSQL function manager and trigger manager
+ * The MollyDB function manager and trigger manager
  * call this function for execution of PL/pgSQL procedures.
  * ----------
  */
@@ -277,7 +277,7 @@ plpgsql_call_handler(PG_FUNCTION_ARGS)
 /* ----------
  * plpgsql_inline_handler
  *
- * Called by PostgreSQL to execute an anonymous code block
+ * Called by MollyDB to execute an anonymous code block
  * ----------
  */
 PG_FUNCTION_INFO_V1(plpgsql_inline_handler);

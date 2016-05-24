@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------
  *
  * tcn.c
- *	  triggered change notification support for PostgreSQL
+ *	  triggered change notification support for MollyDB
  *
- * Portions Copyright (c) 2011-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 2011-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *

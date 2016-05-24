@@ -7,7 +7,7 @@
 # Tomáš Vondra <tv@fuzzy.cz>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: pgscripts-cs (PostgreSQL 9.3)\n"
+"Project-Id-Version: pgscripts-cs (MollyDB 9.3)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-09-23 20:19+0000\n"
 "PO-Revision-Date: 2013-09-24 21:07+0200\n"
@@ -315,10 +315,10 @@ msgstr "%s: tvorba komentáře selhala (databáze byla vytvořena): %s"
 #: createdb.c:251
 #, c-format
 msgid ""
-"%s creates a PostgreSQL database.\n"
+"%s creates a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s vytvoří PostgreSQL databázi.\n"
+"%s vytvoří MollyDB databázi.\n"
 "\n"
 
 #: createdb.c:253
@@ -461,10 +461,10 @@ msgstr "%s: instalace jazyka selhala: %s"
 #: createlang.c:233
 #, c-format
 msgid ""
-"%s installs a procedural language into a PostgreSQL database.\n"
+"%s installs a procedural language into a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s instaluje procedurální jazyk do PostgreSQL databáze.\n"
+"%s instaluje procedurální jazyk do MollyDB databáze.\n"
 "\n"
 
 #: createlang.c:235 droplang.c:236
@@ -525,10 +525,10 @@ msgstr "%s: tvorba nové role selhala: %s"
 #: createuser.c:328
 #, c-format
 msgid ""
-"%s creates a new PostgreSQL role.\n"
+"%s creates a new MollyDB role.\n"
 "\n"
 msgstr ""
-"%s vytvoří novou PostgreSQL roli.\n"
+"%s vytvoří novou MollyDB roli.\n"
 "\n"
 
 #: createuser.c:330 dropuser.c:157
@@ -664,10 +664,10 @@ msgstr "%s: odstraňování databáze selhalo: %s"
 #: dropdb.c:154
 #, c-format
 msgid ""
-"%s removes a PostgreSQL database.\n"
+"%s removes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s odstraňuje PostgreSQL databázi.\n"
+"%s odstraňuje MollyDB databázi.\n"
 "\n"
 
 #: dropdb.c:156
@@ -734,10 +734,10 @@ msgstr "%s: odstraňování role \"%s\" selhalo: %s"
 #: dropuser.c:155
 #, c-format
 msgid ""
-"%s removes a PostgreSQL role.\n"
+"%s removes a MollyDB role.\n"
 "\n"
 msgstr ""
-"%s odstraňuje PostgreSQL roli.\n"
+"%s odstraňuje MollyDB roli.\n"
 "\n"
 
 #: dropuser.c:160
@@ -776,10 +776,10 @@ msgstr "%s: nelze načíst výchozí volby\n"
 #: pg_isready.c:209
 #, c-format
 msgid ""
-"%s issues a connection check to a PostgreSQL database.\n"
+"%s issues a connection check to a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s provede kontrolu spojení k PostgreSQL databázi.\n"
+"%s provede kontrolu spojení k MollyDB databázi.\n"
 "\n"
 
 #: pg_isready.c:211
@@ -893,10 +893,10 @@ msgstr "%s: reindexace systémového katalogu selhala: %s"
 #: reindexdb.c:341
 #, c-format
 msgid ""
-"%s reindexes a PostgreSQL database.\n"
+"%s reindexes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s vytvoří PostgreSQL databázi.\n"
+"%s vytvoří MollyDB databázi.\n"
 "\n"
 
 #: reindexdb.c:345
@@ -972,10 +972,10 @@ msgstr "%s: provádí se VACUUM databáze \"%s\"\n"
 #: vacuumdb.c:357
 #, c-format
 msgid ""
-"%s cleans and analyzes a PostgreSQL database.\n"
+"%s cleans and analyzes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s pročišťuje a analyzuje PostgreSQL databázi.\n"
+"%s pročišťuje a analyzuje MollyDB databázi.\n"
 "\n"
 
 #: vacuumdb.c:361

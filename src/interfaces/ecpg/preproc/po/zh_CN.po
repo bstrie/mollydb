@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for ecpg
-# Copyright (C) 2010 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2010 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ecpg (PostgreSQL 9.0)\n"
+"Project-Id-Version: ecpg (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-22 21:07+0000\n"
 "PO-Revision-Date: 2014-11-24 15:21+0800\n"
@@ -56,10 +56,10 @@ msgstr "无法设置描述符成员 \"%s\""
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%s是用于C语言程序的PostgreSQL嵌入式SQL预处理器.\n"
+"%s是用于C语言程序的MollyDB嵌入式SQL预处理器.\n"
 "\n"
 
 #: ecpg.c:37
@@ -200,8 +200,8 @@ msgstr "%s: 解析器跟踪调试支持(-d)无效\n"
 
 #: ecpg.c:267
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "%s, PostgreSQL嵌入式C语言预处理器, 版本%d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "%s, MollyDB嵌入式C语言预处理器, 版本%d.%d.%d\n"
 
 #: ecpg.c:269
 #, c-format

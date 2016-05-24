@@ -3,7 +3,7 @@
  * dfmgr.c
  *	  Dynamic function manager code.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -24,7 +24,7 @@
 #include "utils/hsearch.h"
 
 
-/* signatures for PostgreSQL-specific library init/fini functions */
+/* signatures for MollyDB-specific library init/fini functions */
 typedef void (*PG_init_t) (void);
 typedef void (*PG_fini_t) (void);
 

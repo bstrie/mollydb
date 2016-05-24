@@ -4,7 +4,7 @@
  *	  private declarations for GiST -- declarations related to the
  *	  internal implementation of GiST, not the public API
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/access/gist_private.h
@@ -298,7 +298,7 @@ typedef struct
 #define GIST_ROOT_BLKNO				0
 
 /*
- * Before PostgreSQL 9.1, we used rely on so-called "invalid tuples" on inner
+ * Before MollyDB 9.1, we used rely on so-called "invalid tuples" on inner
  * pages to finish crash recovery of incomplete page splits. If a crash
  * happened in the middle of a page split, so that the downlink pointers were
  * not yet inserted, crash recovery inserted a special downlink pointer. The

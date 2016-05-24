@@ -9,7 +9,7 @@
  * proper FooMain() routine for the incarnation.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -169,7 +169,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("postgres (PostgreSQL) " PG_VERSION);
+			puts("postgres (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 
@@ -324,7 +324,7 @@ init_locale(const char *categoryname, int category, const char *locale)
 static void
 help(const char *progname)
 {
-	printf(_("%s is the PostgreSQL server.\n\n"), progname);
+	printf(_("%s is the MollyDB server.\n\n"), progname);
 	printf(_("Usage:\n  %s [OPTION]...\n\n"), progname);
 	printf(_("Options:\n"));
 	printf(_("  -B NBUFFERS        number of shared buffers\n"));
@@ -387,7 +387,7 @@ check_root(const char *progname)
 #ifndef WIN32
 	if (geteuid() == 0)
 	{
-		write_stderr("\"root\" execution of the PostgreSQL server is not permitted.\n"
+		write_stderr("\"root\" execution of the MollyDB server is not permitted.\n"
 					 "The server must be started under an unprivileged user ID to prevent\n"
 		  "possible system security compromise.  See the documentation for\n"
 				  "more information on how to properly start the server.\n");
@@ -411,7 +411,7 @@ check_root(const char *progname)
 #else							/* WIN32 */
 	if (pgwin32_is_admin())
 	{
-		write_stderr("Execution of PostgreSQL by a user with administrative permissions is not\n"
+		write_stderr("Execution of MollyDB by a user with administrative permissions is not\n"
 					 "permitted.\n"
 					 "The server must be started under an unprivileged user ID to prevent\n"
 		 "possible system security compromises.  See the documentation for\n"

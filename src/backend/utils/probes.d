@@ -1,7 +1,7 @@
 /* ----------
- *	DTrace probes for PostgreSQL backend
+ *	DTrace probes for MollyDB backend
  *
- *	Copyright (c) 2006-2016, PostgreSQL Global Development Group
+ *	Copyright (c) 2006-2016, MollyDB Global Development Group
  *
  *	src/backend/utils/probes.d
  * ----------
@@ -9,7 +9,7 @@
 
 
 /*
- * Typedefs used in PostgreSQL.
+ * Typedefs used in MollyDB.
  *
  * NOTE: Do not use system-provided typedefs (e.g. uintptr_t, uint32_t, etc)
  * in probe definitions, as they cause compilation errors on Mac OS X 10.5.

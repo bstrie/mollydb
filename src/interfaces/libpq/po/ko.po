@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-23 14:15+0900\n"
 "PO-Revision-Date: 2015-12-23 15:01+0900\n"

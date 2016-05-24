@@ -31,7 +31,7 @@
  * and then exit.
  *
  *
- * Portions Copyright (c) 2010-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 2010-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *	  src/backend/replication/walsender.c

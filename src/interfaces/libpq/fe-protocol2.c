@@ -3,7 +3,7 @@
  * fe-protocol2.c
  *	  functions that are specific to frontend/backend protocol version 2
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -277,11 +277,11 @@ pqSetenvPoll(PGconn *conn)
 						 * ParameterStatus
 						 */
 						val = PQgetvalue(res, 0, 0);
-						if (val && strncmp(val, "PostgreSQL ", 11) == 0)
+						if (val && strncmp(val, "MollyDB ", 11) == 0)
 						{
 							char	   *ptr;
 
-							/* strip off PostgreSQL part */
+							/* strip off MollyDB part */
 							val += 11;
 
 							/*

@@ -1,7 +1,7 @@
 /*
- * PostgreSQL System Views
+ * MollyDB System Views
  *
- * Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * src/backend/catalog/system_views.sql
  *

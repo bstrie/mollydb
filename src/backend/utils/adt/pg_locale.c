@@ -1,8 +1,8 @@
 /*-----------------------------------------------------------------------
  *
- * PostgreSQL locale utilities
+ * MollyDB locale utilities
  *
- * Portions Copyright (c) 2002-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 2002-2016, MollyDB Global Development Group
  *
  * src/backend/utils/adt/pg_locale.c
  *
@@ -863,7 +863,7 @@ IsoLocaleName(const char *winlocname)
 /*
  * Detect aging strxfrm() implementations that, in a subset of locales, write
  * past the specified buffer length.  Affected users must update OS packages
- * before using PostgreSQL 9.5 or later.
+ * before using MollyDB 9.5 or later.
  *
  * Assume that the bug can come and go from one postmaster startup to another
  * due to physical replication among diverse machines.  Assume that the bug's

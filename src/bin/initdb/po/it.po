@@ -1,8 +1,8 @@
 #
 # Translation of initdb to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -18,11 +18,11 @@
 #  * Ottavio Campana <campana@oc-si.it>, 2007.
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: initdb (PostgreSQL) 9.6\n"
+"Project-Id-Version: initdb (MollyDB) 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:14+0000\n"
 "PO-Revision-Date: 2016-04-17 21:10+0100\n"
@@ -373,10 +373,10 @@ msgstr "esecuzione dello script di bootstrap ... "
 #: initdb.c:1460
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
-"%s: il file di input \"%s\" non appartiene a PostgreSQL %s\n"
+"%s: il file di input \"%s\" non appartiene a MollyDB %s\n"
 "Controlla la correttezza dell'installazione oppure specifica\n"
 "il percorso corretto con l'opzione -L.\n"
 
@@ -485,10 +485,10 @@ msgstr ""
 #: initdb.c:2657
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s inizializza un cluster di database PostgreSQL.\n"
+"%s inizializza un cluster di database MollyDB.\n"
 "\n"
 
 #: initdb.c:2658

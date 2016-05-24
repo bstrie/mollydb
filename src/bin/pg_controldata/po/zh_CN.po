@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_controldata (PostgreSQL 9.0)\n"
+"Project-Id-Version: pg_controldata (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:44+0000\n"
 "PO-Revision-Date: 2015-12-01 19:42+0800\n"
@@ -18,10 +18,10 @@ msgstr ""
 #: pg_controldata.c:35
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s 显示 PostgreSQL 数据库簇控制信息.\n"
+"%s 显示 MollyDB 数据库簇控制信息.\n"
 "\n"
 
 #: pg_controldata.c:36
@@ -164,11 +164,11 @@ msgid ""
 "The byte ordering used to store the pg_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, "
 "and\n"
-"the PostgreSQL installation would be incompatible with this data directory.\n"
+"the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "警告: 可能字节顺序不匹配\n"
 "用于存储文件pg_control的字节顺序可能与程序使用的不匹配\n"
-"在那种情况下结果将会是不正确的,并且所安装的PostgreSQL\n"
+"在那种情况下结果将会是不正确的,并且所安装的MollyDB\n"
 "将会与这个数据目录不兼容\n"
 
 #: pg_controldata.c:230

@@ -32,7 +32,7 @@
  *	  clients.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -1394,7 +1394,7 @@ getInstallationPaths(const char *argv0)
 				(errcode_for_file_access(),
 				 errmsg("could not open directory \"%s\": %m",
 						pkglib_path),
-				 errhint("This may indicate an incomplete PostgreSQL installation, or that the file \"%s\" has been moved away from its proper location.",
+				 errhint("This may indicate an incomplete MollyDB installation, or that the file \"%s\" has been moved away from its proper location.",
 						 my_exec_path)));
 	FreeDir(pdir);
 
@@ -2104,7 +2104,7 @@ retry1:
 	if (port->user_name == NULL || port->user_name[0] == '\0')
 		ereport(FATAL,
 				(errcode(ERRCODE_INVALID_AUTHORIZATION_SPECIFICATION),
-			 errmsg("no PostgreSQL user name specified in startup packet")));
+			 errmsg("no MollyDB user name specified in startup packet")));
 
 	/* The database defaults to the user name. */
 	if (port->database_name == NULL || port->database_name[0] == '\0')
@@ -3166,7 +3166,7 @@ CleanupBackend(int pid,
 				 * This backend may have been slated to receive SIGUSR1 when
 				 * some background worker started or stopped.  Cancel those
 				 * notifications, as we don't want to signal PIDs that are not
-				 * PostgreSQL backends.  This gets skipped in the (probably
+				 * MollyDB backends.  This gets skipped in the (probably
 				 * very common) case where the backend has never requested any
 				 * such notifications.
 				 */
@@ -3678,7 +3678,7 @@ PostmasterStateMachine(void)
 	/*
 	 * If we've been told to shut down, we exit as soon as there are no
 	 * remaining children.  If there was a crash, cleanup will occur at the
-	 * next startup.  (Before PostgreSQL 8.3, we tried to recover from the
+	 * next startup.  (Before MollyDB 8.3, we tried to recover from the
 	 * crash before exiting, but that seems unwise if we are quitting because
 	 * we got SIGTERM from init --- there may well not be time for recovery
 	 * before init decides to SIGKILL us.)

@@ -3,7 +3,7 @@
  * bloom.h
  *	  Header for bloom index.
  *
- * Copyright (c) 2016, PostgreSQL Global Development Group
+ * Copyright (c) 2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *	  contrib/bloom/bloom.h

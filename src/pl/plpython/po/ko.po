@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for plpython
-# Copyright (C) 2015 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2015 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: plpython (PostgreSQL) 9.5\n"
+"Project-Id-Version: plpython (MollyDB) 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-22 15:41+0900\n"
 "PO-Revision-Date: 2015-12-22 17:57+0900\n"

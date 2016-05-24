@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
  * parser.c
- *		Main entry point/driver for PostgreSQL grammar
+ *		Main entry point/driver for MollyDB grammar
  *
  * This should match src/backend/parser/parser.c, except that we do not
  * need to bother with re-entrant interfaces.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION

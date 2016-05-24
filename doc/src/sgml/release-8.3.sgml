@@ -16,7 +16,7 @@
   </para>
 
   <para>
-   This is expected to be the last <productname>PostgreSQL</> release
+   This is expected to be the last <productname>MollyDB</> release
    in the 8.3.X series.  Users are encouraged to update to a newer
    release branch soon.
   </para>
@@ -129,7 +129,7 @@
 
      <para>
       This ancient function is not used anywhere by
-      <productname>PostgreSQL</> itself, but it might still be used by some
+      <productname>MollyDB</> itself, but it might still be used by some
       client code.
      </para>
     </listitem>
@@ -185,7 +185,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 8.3.X release series in February 2013.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -481,7 +481,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 8.3.X release series in February 2013.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -591,7 +591,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 8.3.X release series in February 2013.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -1159,7 +1159,7 @@
       A similar problem still afflicts back-references that are embedded in a
       larger quantified expression, rather than being the immediate subject
       of the quantifier.  This will be addressed in a future
-      <productname>PostgreSQL</> release.
+      <productname>MollyDB</> release.
      </para>
     </listitem>
 
@@ -1170,7 +1170,7 @@
      </para>
 
      <para>
-      A patch in the December 2011 releases of <productname>PostgreSQL</>
+      A patch in the December 2011 releases of <productname>MollyDB</>
       caused memory leakage in these operations, which could be significant
       in scenarios such as building a btree index on such a column.
      </para>
@@ -2288,7 +2288,7 @@
 
      <para>
       The default on Linux has actually been <literal>fdatasync</> for many
-      years, but recent kernel changes caused <productname>PostgreSQL</> to
+      years, but recent kernel changes caused <productname>MollyDB</> to
       choose <literal>open_datasync</> instead.  This choice did not result
       in any performance improvement, and caused outright failures on
       certain filesystems, notably <literal>ext4</> with the
@@ -3705,7 +3705,7 @@
     <listitem>
      <para>
       Ensure that Perl arrays are properly converted to
-      <productname>PostgreSQL</> arrays when returned by a set-returning
+      <productname>MollyDB</> arrays when returned by a set-returning
       PL/Perl function (Andrew Dunstan, Abhijit Menon-Sen)
      </para>
 
@@ -4155,7 +4155,7 @@
        seems likely that no real solution is possible.  This patch should
        therefore be viewed as a band-aid to keep from breaking existing
        applications unnecessarily.  It is likely that
-       <productname>PostgreSQL</> 8.4 will simply reject use of
+       <productname>MollyDB</> 8.4 will simply reject use of
        <function>xpath</> on data that is not a well-formed document.
       </para>
      </note>
@@ -5236,7 +5236,7 @@
       be <literal>(-42)::integer</> due to operator precedence rules.
       Usually this would make little difference, but it could interact with
       another recent patch to cause
-      <productname>PostgreSQL</> to reject what had been a valid
+      <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
       <application>pg_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
@@ -5924,7 +5924,7 @@
      </para>
 
      <para>
-      This is known to be necessary when building <productname>PostgreSQL</>
+      This is known to be necessary when building <productname>MollyDB</>
       with <application>gcc</> 4.3 or later.
      </para>
     </listitem>
@@ -5954,7 +5954,7 @@
    <para>
     With significant new functionality and performance enhancements,
     this release represents a major leap forward for
-    <productname>PostgreSQL</>. This was made possible by a growing
+    <productname>MollyDB</>. This was made possible by a growing
     community that has dramatically accelerated the pace of
     development. This release adds the following major features:
    </para>
@@ -6046,7 +6046,7 @@
 
     <listitem>
      <para>
-      Allow the whole <productname>PostgreSQL</> distribution to be compiled
+      Allow the whole <productname>MollyDB</> distribution to be compiled
       with <productname>Microsoft Visual C++</>
      </para>
     </listitem>
@@ -6339,7 +6339,7 @@ current_date &lt; 2017-11-17
 
       <para>
        If application code was computing and storing hash values using
-       internal <productname>PostgreSQL</> hashing functions, the hash
+       internal <productname>MollyDB</> hashing functions, the hash
        values must be regenerated.
       </para>
      </listitem>
@@ -6558,7 +6558,7 @@ current_date &lt; 2017-11-17
 
    <para>
     Below you will find a detailed account of the
-    changes between <productname>PostgreSQL</productname> 8.3 and
+    changes between <productname>MollyDB</productname> 8.3 and
     the previous major release.
    </para>
 
@@ -6991,7 +6991,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       Use PostgreSQL-supplied timezone support for formatting timestamps
+       Use MollyDB-supplied timezone support for formatting timestamps
        displayed in the server log (Tom)
       </para>
 
@@ -8188,7 +8188,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       Allow the whole <productname>PostgreSQL</> distribution to be compiled
+       Allow the whole <productname>MollyDB</> distribution to be compiled
        with <productname>Microsoft Visual C++</> (Magnus and others)
       </para>
 
@@ -8289,7 +8289,7 @@ current_date &lt; 2017-11-17
 
      <listitem>
       <para>
-       Fix <acronym>PGXS</> so extensions can be built against PostgreSQL
+       Fix <acronym>PGXS</> so extensions can be built against MollyDB
        installations whose <application>pg_config</> program does not
        appear first in the <varname>PATH</> (Tom)
       </para>
@@ -8411,7 +8411,7 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        "Postgres" is now documented as an accepted alias for
-       "PostgreSQL" (Peter)
+       "MollyDB" (Peter)
       </para>
      </listitem>
 
@@ -8433,7 +8433,7 @@ current_date &lt; 2017-11-17
      <listitem>
       <para>
        Move <filename>contrib</> <filename>README</> content into the
-       main <productname>PostgreSQL</> documentation (Albert Cervera i
+       main <productname>MollyDB</> documentation (Albert Cervera i
        Areny)
       </para>
      </listitem>
@@ -8538,7 +8538,7 @@ current_date &lt; 2017-11-17
       </para>
 
       <para>
-       The new XML support in core PostgreSQL supersedes this module.
+       The new XML support in core MollyDB supersedes this module.
       </para>
      </listitem>
 

@@ -7,7 +7,7 @@
 #    header files.  The .bki files are used to initialize the postgres
 #    template database.
 #
-# Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+# Portions Copyright (c) 1996-2016, MollyDB Global Development Group
 # Portions Copyright (c) 1994, Regents of the University of California
 #
 # src/backend/catalog/genbki.pl
@@ -97,7 +97,7 @@ my $catalogs = Catalog::Catalogs(@input_files);
 # Generate postgres.bki, postgres.description, and postgres.shdescription
 
 # version marker for .bki file
-print BKI "# PostgreSQL $major_version\n";
+print BKI "# MollyDB $major_version\n";
 
 # vars to hold data needed for schemapg.h
 my %schemapg_entries;
@@ -294,7 +294,7 @@ print SCHEMAPG <<EOM;
  * schemapg.h
  *    Schema_pg_xxx macros for use by relcache.c
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * NOTES
@@ -494,7 +494,7 @@ Usage: genbki.pl [options] header...
 Options:
     -I               path to include files
     -o               output path
-    --set-version    PostgreSQL version number for initdb cross-check
+    --set-version    MollyDB version number for initdb cross-check
 
 genbki.pl generates BKI files from specially formatted
 header files.  These BKI files are used to initialize the

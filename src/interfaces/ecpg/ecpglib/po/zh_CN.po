@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for ecpglib
-# Copyright (C) 2010 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2010 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ecpglib (PostgreSQL 9.0)\n"
+"Project-Id-Version: ecpglib (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-01-29 13:40+0000\n"
 "PO-Revision-Date: 2013-09-03 23:28-0400\n"

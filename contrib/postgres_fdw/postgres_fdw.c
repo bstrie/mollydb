@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------
  *
  * postgres_fdw.c
- *		  Foreign-data wrapper for remote PostgreSQL servers
+ *		  Foreign-data wrapper for remote MollyDB servers
  *
- * Portions Copyright (c) 2012-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *		  contrib/postgres_fdw/postgres_fdw.c
@@ -1254,7 +1254,7 @@ postgresGetForeignPlan(PlannerInfo *root,
 
 /*
  * postgresBeginForeignScan
- *		Initiate an executor scan of a foreign PostgreSQL table.
+ *		Initiate an executor scan of a foreign MollyDB table.
  */
 static void
 postgresBeginForeignScan(ForeignScanState *node, int eflags)

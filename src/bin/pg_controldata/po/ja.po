@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.0 beta 3\n"
+"Project-Id-Version: MollyDB 9.0 beta 3\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 11:29+0900\n"
 "PO-Revision-Date: 2013-08-18 11:36+0900\n"
@@ -18,10 +18,10 @@ msgstr ""
 #: pg_controldata.c:34
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s はPostgreSQLデータベースクラスタの制御情報を表示します。\n"
+"%s はMollyDBデータベースクラスタの制御情報を表示します。\n"
 "\n"
 
 #: pg_controldata.c:35
@@ -150,11 +150,11 @@ msgid ""
 "WARNING: possible byte ordering mismatch\n"
 "The byte ordering used to store the pg_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, and\n"
-"the PostgreSQL installation would be incompatible with this data directory.\n"
+"the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "警告:バイトオーダが異なる可能性があります。\n"
 "pg_controlファイルを格納するために使用するバイトオーダが本プログラムで使用\n"
-"されるものと異なります。この場合以下の結果は不正確になります。また、PostgreSQL\n"
+"されるものと異なります。この場合以下の結果は不正確になります。また、MollyDB\n"
 "インストレーションはこのデータディレクトリと互換性がなくなります。\n"
 
 #: pg_controldata.c:197

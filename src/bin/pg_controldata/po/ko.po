@@ -1,9 +1,9 @@
-# Korean message translation file for PostgreSQL pg_controldata
+# Korean message translation file for MollyDB pg_controldata
 # Ioseph Kim <ioseph@uri.sarang.net>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-01-27 10:03+0900\n"
 "PO-Revision-Date: 2016-01-27 10:50+0900\n"
@@ -18,10 +18,10 @@ msgstr ""
 #: pg_controldata.c:35
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 데이터베이스 클러스터의 제어정보를 보여줌.\n"
+"%s 프로그램은 MollyDB 데이터베이스 클러스터의 제어정보를 보여줌.\n"
 "\n"
 
 #: pg_controldata.c:36
@@ -163,13 +163,13 @@ msgid ""
 "The byte ordering used to store the pg_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, "
 "and\n"
-"the PostgreSQL installation would be incompatible with this data directory.\n"
+"the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "경고: 바이트 순서가 일치하지 않습니다.\n"
 "pg_control 파일을 저장하는 데 사용된 바이트 순서는 \n"
 "이 프로그램에서 사용하는 순서와 일치해야 합니다.  이 경우 아래 결과는 올바르"
 "지 않으며\n"
-"이 데이터 디렉터리에 PostgreSQL을 설치할 수 없습니다.\n"
+"이 데이터 디렉터리에 MollyDB을 설치할 수 없습니다.\n"
 
 #: pg_controldata.c:230
 #, c-format

@@ -16,7 +16,7 @@ if test "$PERL"; then
     $AWK '{ if ([$]1 == 5 && [$]2 >= 8) exit 1; else exit 0;}'
   then
     AC_MSG_WARN([
-*** The installed version of Perl, $PERL, is too old to use with PostgreSQL.
+*** The installed version of Perl, $PERL, is too old to use with MollyDB.
 *** Perl version 5.8 or later is required, but this is $pgac_perl_version.])
     PERL=""
   fi
@@ -24,9 +24,9 @@ fi
 
 if test -z "$PERL"; then
   AC_MSG_WARN([
-*** Without Perl you will not be able to build PostgreSQL from Git.
+*** Without Perl you will not be able to build MollyDB from Git.
 *** You can obtain Perl from any CPAN mirror site.
-*** (If you are using the official distribution of PostgreSQL then you do not
+*** (If you are using the official distribution of MollyDB then you do not
 *** need to worry about this, because the Perl output is pre-generated.)])
 fi
 ])# PGAC_PATH_PERL

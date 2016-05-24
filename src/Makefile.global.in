@@ -3,7 +3,7 @@
 # @configure_input@
 
 #------------------------------------------------------------------------------
-# All PostgreSQL makefiles include this file and use the variables it sets,
+# All MollyDB makefiles include this file and use the variables it sets,
 # which in turn are put here by the configure script. There is no need for
 # users to edit this file -- if it turns out to be necessary then that's a
 # bug.
@@ -35,7 +35,7 @@ all:
 # Never delete any intermediate files automatically.
 .SECONDARY:
 
-# PostgreSQL version number
+# MollyDB version number
 VERSION = @PACKAGE_VERSION@
 MAJORVERSION = @PG_MAJORVERSION@
 VERSION_NUM = @PG_VERSION_NUM@
@@ -553,7 +553,7 @@ pg_isolation_regress_installcheck = $(top_builddir)/src/test/isolation/pg_isolat
 # in the source directory.  This file doesn't exist in the original
 # distribution so that it doesn't get overwritten when you upgrade.
 #
-# NOTE:  Makefile.custom is from the pre-Autoconf days of PostgreSQL.
+# NOTE:  Makefile.custom is from the pre-Autoconf days of MollyDB.
 # You are liable to shoot yourself in the foot if you use it without
 # knowing exactly what you're doing.  The preferred (and more
 # reliable) method is to communicate what you want to do to the
@@ -849,7 +849,7 @@ coverage: $(gcda_files:.gcda=.c.gcov) lcov.info
 coverage-html: coverage
 	rm -rf coverage
 	mkdir coverage
-	$(GENHTML) --show-details --legend --output-directory=coverage --title=PostgreSQL --num-spaces=4 --prefix=$(abs_top_srcdir) `find . -name lcov.info -print`
+	$(GENHTML) --show-details --legend --output-directory=coverage --title=MollyDB --num-spaces=4 --prefix=$(abs_top_srcdir) `find . -name lcov.info -print`
 
 
 # hook for clean-up

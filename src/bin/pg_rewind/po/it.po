@@ -1,19 +1,19 @@
 #
 # Translation of pg_rewind to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
 #  * Daniele Varrazzo <daniele.varrazzo@gmail.com>
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_rewind (PostgreSQL) 9.6\n"
+"Project-Id-Version: pg_rewind (MollyDB) 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:15+0000\n"
 "PO-Revision-Date: 2016-04-17 20:53+0100\n"
@@ -436,10 +436,10 @@ msgstr ""
 #: pg_rewind.c:64
 #, c-format
 msgid ""
-"%s resynchronizes a PostgreSQL cluster with another copy of the cluster.\n"
+"%s resynchronizes a MollyDB cluster with another copy of the cluster.\n"
 "\n"
 msgstr ""
-"%s risincronizza un cluster PostgreSQL con un'altra copia del cluster.\n"
+"%s risincronizza un cluster MollyDB con un'altra copia del cluster.\n"
 "\n"
 
 #: pg_rewind.c:65
@@ -534,8 +534,8 @@ msgstr "non può essere eseguito da \"root\"\n"
 
 #: pg_rewind.c:190
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "È obbligatorio eseguire %s come superutente di PostgreSQL.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "È obbligatorio eseguire %s come superutente di MollyDB.\n"
 
 #: pg_rewind.c:221
 #, c-format

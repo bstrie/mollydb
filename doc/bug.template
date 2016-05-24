@@ -1,4 +1,4 @@
-If PostgreSQL failed to compile on your computer or you found a bug,
+If MollyDB failed to compile on your computer or you found a bug,
 please fill out this form and e-mail it to pgsql-bugs@mollydb.org.
 
 If your bug report has security implications and you'd prefer that it not
@@ -27,7 +27,7 @@ System Configuration:
 
   Operating System (example: Linux 2.4.18)	:
 
-  PostgreSQL version (example: PostgreSQL 9.6beta1):  PostgreSQL 9.6beta1
+  MollyDB version (example: MollyDB 9.6beta1):  MollyDB 9.6beta1
 
   Compiler used (example: gcc 3.3.5)		:
 

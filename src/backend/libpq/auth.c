@@ -3,7 +3,7 @@
  * auth.c
  *	  Routines to handle network authentication
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -1615,7 +1615,7 @@ ident_inet(hbaPort *port)
 	/*
 	 * Bind to the address which the client originally contacted, otherwise
 	 * the ident server won't be able to match up the right connection. This
-	 * is necessary if the PostgreSQL server is running on an IP alias.
+	 * is necessary if the MollyDB server is running on an IP alias.
 	 */
 	rc = bind(sock_fd, la->ai_addr, la->ai_addrlen);
 	if (rc != 0)

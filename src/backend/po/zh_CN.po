@@ -1,9 +1,9 @@
-# simplified Chinese translation file for PostgreSQL server
+# simplified Chinese translation file for MollyDB server
 # Weiping He <laser@zhengmai.com.cn>, 2001.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: postgres (PostgreSQL 9.0)\n"
+"Project-Id-Version: postgres (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:42+0000\n"
 "PO-Revision-Date: 2016-01-03 23:27-0500\n"
@@ -425,8 +425,8 @@ msgstr "索引\"%s\"包含无效的内部元组"
 #, c-format
 msgid ""
 "This is caused by an incomplete page split at crash recovery before "
-"upgrading to PostgreSQL 9.1."
-msgstr "这是在升级到PostgreSQL 9.1之前执行灾难恢复时不完全的页分裂引起的."
+"upgrading to MollyDB 9.1."
+msgstr "这是在升级到MollyDB 9.1之前执行灾难恢复时不完全的页分裂引起的."
 
 #: access/gist/gist.c:635 access/gist/gistutil.c:735
 #: access/gist/gistutil.c:746 access/gist/gistvacuum.c:269
@@ -9573,8 +9573,8 @@ msgstr "时区 \"%s\" 看上去使用了闰秒"
 
 #: commands/variable.c:348 commands/variable.c:430
 #, c-format
-msgid "PostgreSQL does not support leap seconds."
-msgstr "PostgreSQL 不支持闰秒"
+msgid "MollyDB does not support leap seconds."
+msgstr "MollyDB 不支持闰秒"
 
 #: commands/variable.c:357
 #, c-format
@@ -11967,10 +11967,10 @@ msgstr "%s: WSAStartup 失败: %d\n"
 #: main/main.c:306
 #, c-format
 msgid ""
-"%s is the PostgreSQL server.\n"
+"%s is the MollyDB server.\n"
 "\n"
 msgstr ""
-"%s 是 PostgreSQL 服务器.\n"
+"%s 是 MollyDB 服务器.\n"
 "\n"
 
 #: main/main.c:307
@@ -12227,12 +12227,12 @@ msgstr ""
 #: main/main.c:369
 #, c-format
 msgid ""
-"\"root\" execution of the PostgreSQL server is not permitted.\n"
+"\"root\" execution of the MollyDB server is not permitted.\n"
 "The server must be started under an unprivileged user ID to prevent\n"
 "possible system security compromise.  See the documentation for\n"
 "more information on how to properly start the server.\n"
 msgstr ""
-"不允许 \"root\" 执行 PostgreSQL 服务器.\n"
+"不允许 \"root\" 执行 MollyDB 服务器.\n"
 "服务器必须以一个非特权的用户身份启动以避免\n"
 "可能的系统安全性问题. 参阅文档获取更多\n"
 "有关如何正确启动服务器的信息.\n"
@@ -12245,13 +12245,13 @@ msgstr "%s: 真实和有效用户标识必须相互匹配\n"
 #: main/main.c:393
 #, c-format
 msgid ""
-"Execution of PostgreSQL by a user with administrative permissions is not\n"
+"Execution of MollyDB by a user with administrative permissions is not\n"
 "permitted.\n"
 "The server must be started under an unprivileged user ID to prevent\n"
 "possible system security compromises.  See the documentation for\n"
 "more information on how to properly start the server.\n"
 msgstr ""
-"不允许管理员权限的用户运行 PostgreSQL 服务器.\n"
+"不允许管理员权限的用户运行 MollyDB 服务器.\n"
 "服务器必须以一个非特权的用户身份启动以避免\n"
 "可能的系统安全性问题. 参阅文档获取更多\n"
 "有关如何正确启动服务器的信息.\n"
@@ -14224,24 +14224,24 @@ msgid ""
 "when either the system limit for the maximum number of semaphore sets "
 "(SEMMNI), or the system wide maximum number of semaphores (SEMMNS), would be "
 "exceeded.  You need to raise the respective kernel parameter.  "
-"Alternatively, reduce PostgreSQL's consumption of semaphores by reducing its "
+"Alternatively, reduce MollyDB's consumption of semaphores by reducing its "
 "max_connections parameter.\n"
-"The PostgreSQL documentation contains more information about configuring "
-"your system for PostgreSQL."
+"The MollyDB documentation contains more information about configuring "
+"your system for MollyDB."
 msgstr ""
 "这个错误不表示磁盘空间已经用完. 发生的原因有可能超过系统对于最大数量信号灯集"
 "合(由参数SEMMNI表示)，或者是对系统范围内最大可使用信号灯(由参数SEMMNS表示)的"
-"限制.您需要增加这两个系统核心参数的值。另外也可以通过i减小PostgreSQL参数"
+"限制.您需要增加这两个系统核心参数的值。另外也可以通过i减小MollyDB参数"
 "max_connections来减少它所消耗的信号灯总数.\n"
-"在PostgreSQL文档中包含了更多关于如何配置PostgreSQL的信息。"
+"在MollyDB文档中包含了更多关于如何配置MollyDB的信息。"
 
 #: port/pg_sema.c:148 port/sysv_sema.c:148
 #, c-format
 msgid ""
 "You possibly need to raise your kernel's SEMVMX value to be at least %d.  "
-"Look into the PostgreSQL documentation for details."
+"Look into the MollyDB documentation for details."
 msgstr ""
-"你可能需要增加内核的 SEMVMX 值至少为 %d. 详细信息请查找 PostgreSQL 文档."
+"你可能需要增加内核的 SEMVMX 值至少为 %d. 详细信息请查找 MollyDB 文档."
 
 #: port/pg_shmem.c:141 port/sysv_shmem.c:141
 #, c-format
@@ -14256,28 +14256,28 @@ msgstr "系统调用shmget(key=%lu, size=%zu, 0%o) 执行失败."
 #: port/pg_shmem.c:146 port/sysv_shmem.c:146
 #, c-format
 msgid ""
-"This error usually means that PostgreSQL's request for a shared memory "
+"This error usually means that MollyDB's request for a shared memory "
 "segment exceeded your kernel's SHMMAX parameter, or possibly that it is less "
 "than your kernel's SHMMIN parameter.\n"
-"The PostgreSQL documentation contains more information about shared memory "
+"The MollyDB documentation contains more information about shared memory "
 "configuration."
 msgstr ""
-"这个错误通常表示PostgreSQL所请求的共享内存段超过了内核中的SHMMAX参数值，或者"
+"这个错误通常表示MollyDB所请求的共享内存段超过了内核中的SHMMAX参数值，或者"
 "小于内核中的SHMMIN参数值。\n"
-"PostgreSQL文档包含了关于如何配置共享内存的更多信息."
+"MollyDB文档包含了关于如何配置共享内存的更多信息."
 
 #: port/pg_shmem.c:153 port/sysv_shmem.c:153
 #, c-format
 msgid ""
-"This error usually means that PostgreSQL's request for a shared memory "
+"This error usually means that MollyDB's request for a shared memory "
 "segment exceeded your kernel's SHMALL parameter.  You might need to "
 "reconfigure the kernel with larger SHMALL.\n"
-"The PostgreSQL documentation contains more information about shared memory "
+"The MollyDB documentation contains more information about shared memory "
 "configuration."
 msgstr ""
-"这个错误通常表示PostgreSQL所请求的共享内存段超过了内核中设定的SHMALL参数值。"
+"这个错误通常表示MollyDB所请求的共享内存段超过了内核中设定的SHMALL参数值。"
 "您可以重新配置内核, 使用更大的SHMALL参数值.\n"
-"PostgreSQL文档包含了关于如何配置共享内存的更多信息."
+"MollyDB文档包含了关于如何配置共享内存的更多信息."
 
 #: port/pg_shmem.c:159 port/sysv_shmem.c:159
 #, c-format
@@ -14286,13 +14286,13 @@ msgid ""
 "either if all available shared memory IDs have been taken, in which case you "
 "need to raise the SHMMNI parameter in your kernel, or because the system's "
 "overall limit for shared memory has been reached.\n"
-"The PostgreSQL documentation contains more information about shared memory "
+"The MollyDB documentation contains more information about shared memory "
 "configuration."
 msgstr ""
 "这个错误不表示您系统上磁盘空间已经用尽.原因既有可能是系统上所有的有效共享内存"
 "ID不存在了，这样需要在内核中升高SHMMNI参数的值，或者是因为已到达系统最大的共"
 "享内存限制.如果无法增加共享内存的上限值.\n"
-"在PostgreSQL文档中包含了关于如何配置共享内存的更多信息."
+"在MollyDB文档中包含了关于如何配置共享内存的更多信息."
 
 #: port/pg_shmem.c:340 port/sysv_shmem.c:340
 #, c-format
@@ -14307,13 +14307,13 @@ msgstr "无法映射匿名共享内存: %m"
 #: port/pg_shmem.c:392 port/sysv_shmem.c:392
 #, c-format
 msgid ""
-"This error usually means that PostgreSQL's request for a shared memory "
+"This error usually means that MollyDB's request for a shared memory "
 "segment exceeded available memory, swap space, or huge pages. To reduce the "
-"request size (currently %zu bytes), reduce PostgreSQL's shared memory usage, "
+"request size (currently %zu bytes), reduce MollyDB's shared memory usage, "
 "perhaps by reducing shared_buffers or max_connections."
 msgstr ""
-"这个错误通常表示PostgreSQL所请求的共享内存段超过了可用内存总量或者交换空间或"
-"者巨型页大小。为减少所请求空间的大小(当前是%zu字节),减少PostgreSQL文档包含了"
+"这个错误通常表示MollyDB所请求的共享内存段超过了可用内存总量或者交换空间或"
+"者巨型页大小。为减少所请求空间的大小(当前是%zu字节),减少MollyDB文档包含了"
 "关于如何配置共享内存的更多信息."
 
 #: port/pg_shmem.c:439 port/sysv_shmem.c:439 port/win32_shmem.c:134
@@ -14915,10 +14915,10 @@ msgstr "%s: 无法找到匹配的 postgres 执行文件"
 #: postmaster/postmaster.c:1391 utils/misc/tzparser.c:341
 #, c-format
 msgid ""
-"This may indicate an incomplete PostgreSQL installation, or that the file "
+"This may indicate an incomplete MollyDB installation, or that the file "
 "\"%s\" has been moved away from its proper location."
 msgstr ""
-"这可能表示PostgreSQL安装未完成，或者文件\"%s\"已经从正确的位置移动到另外的位"
+"这可能表示MollyDB安装未完成，或者文件\"%s\"已经从正确的位置移动到另外的位"
 "置了."
 
 #: postmaster/postmaster.c:1419
@@ -15017,8 +15017,8 @@ msgstr "无效的启动包格式: 预计结束符为最后一个字节"
 
 #: postmaster/postmaster.c:2101
 #, c-format
-msgid "no PostgreSQL user name specified in startup packet"
-msgstr "在启动包中没有指定 PostgreSQL 用户名"
+msgid "no MollyDB user name specified in startup packet"
+msgstr "在启动包中没有指定 MollyDB 用户名"
 
 #: postmaster/postmaster.c:2160
 #, c-format
@@ -19554,8 +19554,8 @@ msgstr "在 \"macaddr\" 值中的无效八位值: \"%s\""
 
 #: utils/adt/misc.c:116
 #, c-format
-msgid "PID %d is not a PostgreSQL server process"
-msgstr "PID %d 不是 PostgreSQL 服务器进程"
+msgid "PID %d is not a MollyDB server process"
+msgstr "PID %d 不是 MollyDB 服务器进程"
 
 #: utils/adt/misc.c:166
 #, c-format
@@ -20832,8 +20832,8 @@ msgstr "这个功能是需要在创建服务器时带有对libxml的支持才能
 
 #: utils/adt/xml.c:173
 #, c-format
-msgid "You need to rebuild PostgreSQL using --with-libxml."
-msgstr "您需要使用--with-libxml选项重新生成PostgreSQL"
+msgid "You need to rebuild MollyDB using --with-libxml."
+msgstr "您需要使用--with-libxml选项重新生成MollyDB"
 
 #: utils/adt/xml.c:192 utils/mb/mbutils.c:523
 #, c-format
@@ -20891,9 +20891,9 @@ msgstr "无法设置XML错误处理函数"
 #, c-format
 msgid ""
 "This probably indicates that the version of libxml2 being used is not "
-"compatible with the libxml2 header files that PostgreSQL was built with."
+"compatible with the libxml2 header files that MollyDB was built with."
 msgstr ""
-"这可能意味着正使用的libxml2版本与PostgreSQL编译 时使用的libxml2头文件不兼容"
+"这可能意味着正使用的libxml2版本与MollyDB编译 时使用的libxml2头文件不兼容"
 
 #: utils/adt/xml.c:1737
 msgid "Invalid character value."
@@ -21445,9 +21445,9 @@ msgstr "您需要初始化数据库 (initdb)."
 #: utils/init/miscinit.c:1352
 #, c-format
 msgid ""
-"The data directory was initialized by PostgreSQL version %ld.%ld, which is "
+"The data directory was initialized by MollyDB version %ld.%ld, which is "
 "not compatible with this version %s."
-msgstr "数据目录是以 PostgreSQL 版本 %ld.%ld 初始化的, 它于当前版本 %s 不兼容."
+msgstr "数据目录是以 MollyDB 版本 %ld.%ld 初始化的, 它于当前版本 %s 不兼容."
 
 #: utils/init/miscinit.c:1423
 #, c-format
@@ -21843,8 +21843,8 @@ msgid "Version and Platform Compatibility"
 msgstr "版本和平台兼容性"
 
 #: utils/misc/guc.c:617
-msgid "Version and Platform Compatibility / Previous PostgreSQL Versions"
-msgstr "版本和平台兼容性 / 上一个 PostgreSQL 版本"
+msgid "Version and Platform Compatibility / Previous MollyDB Versions"
+msgstr "版本和平台兼容性 / 上一个 MollyDB 版本"
 
 #: utils/misc/guc.c:619
 msgid "Version and Platform Compatibility / Other Platforms and Clients"
@@ -21967,13 +21967,13 @@ msgstr "校验失败后继续处理."
 
 #: utils/misc/guc.c:939
 msgid ""
-"Detection of a checksum failure normally causes PostgreSQL to report an "
+"Detection of a checksum failure normally causes MollyDB to report an "
 "error, aborting the current transaction. Setting ignore_checksum_failure to "
 "true causes the system to ignore the failure (but still report a warning), "
 "and continue processing. This behavior could cause crashes or other serious "
 "problems. Only has an effect if checksums are enabled."
 msgstr ""
-"发现校验失败通常会使PostgreSQL报告一个错误, 并中止当前事务.将参数"
+"发现校验失败通常会使MollyDB报告一个错误, 并中止当前事务.将参数"
 "zero_damaged_pages设置为true可以使系统忽略失败(只报告一个警告信息)，并且能够"
 "继续处理当前事务.这种情况将导致系统崩溃或者其它严重问题，这也只有在启用校验时"
 "才有效."
@@ -21984,13 +21984,13 @@ msgstr "继续处理已损坏的页头."
 
 #: utils/misc/guc.c:954
 msgid ""
-"Detection of a damaged page header normally causes PostgreSQL to report an "
+"Detection of a damaged page header normally causes MollyDB to report an "
 "error, aborting the current transaction. Setting zero_damaged_pages to true "
 "causes the system to instead report a warning, zero out the damaged page, "
 "and continue processing. This behavior will destroy data, namely all the "
 "rows on the damaged page."
 msgstr ""
-"对已损坏页头的检测通常会使PostgreSQL报告一个错误, 并中止当前事务.将参数"
+"对已损坏页头的检测通常会使MollyDB报告一个错误, 并中止当前事务.将参数"
 "zero_damaged_pages设置为true可以使系统只报告一个警告信息，不输出已损坏的页，"
 "并且能够继续处理当前事务.这种情况将使毁坏数据，因为这样通常会使所有的记录在已"
 "损坏的页上存放."
@@ -22329,14 +22329,14 @@ msgstr "为在大对象上的权限检查启用向后兼容模式."
 #: utils/misc/guc.c:1583
 msgid ""
 "Skips privilege checks when reading or modifying large objects, for "
-"compatibility with PostgreSQL releases prior to 9.0."
+"compatibility with MollyDB releases prior to 9.0."
 msgstr ""
-"为了与9.0版本之前的PostgreSQL相兼容，在读取或修改大对象时候不进行权限检查"
+"为了与9.0版本之前的MollyDB相兼容，在读取或修改大对象时候不进行权限检查"
 
 #: utils/misc/guc.c:1593
 msgid ""
-"Emit a warning for constructs that changed meaning since PostgreSQL 9.4."
-msgstr "为从PostgreSQL 9.4以来改变了含义的结构发出一个警告。"
+"Emit a warning for constructs that changed meaning since MollyDB 9.4."
+msgstr "为从MollyDB 9.4以来改变了含义的结构发出一个警告。"
 
 #: utils/misc/guc.c:1603
 msgid "When generating SQL fragments, quote all identifiers."
@@ -22868,9 +22868,9 @@ msgstr "设置关于计划器对磁盘缓冲大小的假设."
 #: utils/misc/guc.c:2618
 msgid ""
 "That is, the portion of the kernel's disk cache that will be used for "
-"PostgreSQL data files. This is measured in disk pages, which are normally 8 "
+"MollyDB data files. This is measured in disk pages, which are normally 8 "
 "kB each."
-msgstr "将要用于存储PostgreSQL数据文件的内核磁盘缓冲部分，以8K大小的页为单位."
+msgstr "将要用于存储MollyDB数据文件的内核磁盘缓冲部分，以8K大小的页为单位."
 
 #: utils/misc/guc.c:2631
 msgid "Shows the server version as an integer."
@@ -23104,14 +23104,14 @@ msgid "Sets the file name pattern for log files."
 msgstr "设置日志文件的文件名字模式."
 
 #: utils/misc/guc.c:3129
-msgid "Sets the program name used to identify PostgreSQL messages in syslog."
-msgstr "设置在系统日志 (syslog) 中确认 PostgreSQL 信息的程序名."
+msgid "Sets the program name used to identify MollyDB messages in syslog."
+msgstr "设置在系统日志 (syslog) 中确认 MollyDB 信息的程序名."
 
 #: utils/misc/guc.c:3140
 msgid ""
-"Sets the application name used to identify PostgreSQL messages in the event "
+"Sets the application name used to identify MollyDB messages in the event "
 "log."
-msgstr "设置在事件日志 (syslog) 中用于标识 PostgreSQL 消息的程序名."
+msgstr "设置在事件日志 (syslog) 中用于标识 MollyDB 消息的程序名."
 
 #: utils/misc/guc.c:3151
 msgid "Sets the time zone for displaying and interpreting time stamps."
@@ -23838,8 +23838,8 @@ msgstr "无法导入来自不同数据库的快照"
 #~ msgstr "继承关系 \"%s\" 不是一个表"
 
 #~ msgid ""
-#~ "This name may be disallowed altogether in future versions of PostgreSQL."
-#~ msgstr "在将来的PostgreSQL版本中不允许使用这个名称."
+#~ "This name may be disallowed altogether in future versions of MollyDB."
+#~ msgstr "在将来的MollyDB版本中不允许使用这个名称."
 
 #~ msgid "=> is deprecated as an operator name"
 #~ msgstr "=>做为操作符名称已被废弃"

@@ -1,5 +1,5 @@
 # -----------------------------
-# PostgreSQL configuration file
+# MollyDB configuration file
 # -----------------------------
 #
 # This file consists of lines of the form:
@@ -8,7 +8,7 @@
 #
 # (The "=" is optional.)  Whitespace may be used.  Comments are introduced with
 # "#" anywhere on a line.  The complete list of parameter names and allowed
-# values can be found in the PostgreSQL documentation.
+# values can be found in the MollyDB documentation.
 #
 # The commented-out settings shown in this file represent the default values.
 # Re-commenting a setting is NOT sufficient to revert it to the default value;
@@ -373,7 +373,7 @@
 #syslog_split_messages = on
 
 # This is only relevant when logging to eventlog (win32):
-#event_source = 'PostgreSQL'
+#event_source = 'MollyDB'
 
 # - When to Log -
 
@@ -604,7 +604,7 @@
 # VERSION/PLATFORM COMPATIBILITY
 #------------------------------------------------------------------------------
 
-# - Previous PostgreSQL Versions -
+# - Previous MollyDB Versions -
 
 #array_nulls = on
 #backslash_quote = safe_encoding	# on, off, or safe_encoding

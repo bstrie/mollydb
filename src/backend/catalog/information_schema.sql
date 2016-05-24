@@ -2,7 +2,7 @@
  * SQL Information Schema
  * as defined in ISO/IEC 9075-11:2011
  *
- * Copyright (c) 2003-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2003-2016, MollyDB Global Development Group
  *
  * src/backend/catalog/information_schema.sql
  *
@@ -1286,7 +1286,7 @@ GRANT SELECT ON role_column_grants TO PUBLIC;
  * ROUTINE_COLUMN_USAGE view
  */
 
--- not tracked by PostgreSQL
+-- not tracked by MollyDB
 
 
 /*
@@ -1369,7 +1369,7 @@ GRANT SELECT ON role_routine_grants TO PUBLIC;
  * ROUTINE_ROUTINE_USAGE view
  */
 
--- not tracked by PostgreSQL
+-- not tracked by MollyDB
 
 
 /*
@@ -1377,7 +1377,7 @@ GRANT SELECT ON role_routine_grants TO PUBLIC;
  * ROUTINE_SEQUENCE_USAGE view
  */
 
--- not tracked by PostgreSQL
+-- not tracked by MollyDB
 
 
 /*
@@ -1385,7 +1385,7 @@ GRANT SELECT ON role_routine_grants TO PUBLIC;
  * ROUTINE_TABLE_USAGE view
  */
 
--- not tracked by PostgreSQL
+-- not tracked by MollyDB
 
 
 /*
@@ -2016,7 +2016,7 @@ GRANT SELECT ON triggered_update_columns TO PUBLIC;
  * TRIGGER_COLUMN_USAGE view
  */
 
--- not tracked by PostgreSQL
+-- not tracked by MollyDB
 
 
 /*
@@ -2032,7 +2032,7 @@ GRANT SELECT ON triggered_update_columns TO PUBLIC;
  * TRIGGER_ROUTINE_USAGE view
  */
 
--- not tracked by PostgreSQL
+-- not tracked by MollyDB
 
 
 /*
@@ -2040,7 +2040,7 @@ GRANT SELECT ON triggered_update_columns TO PUBLIC;
  * TRIGGER_SEQUENCE_USAGE view
  */
 
--- not tracked by PostgreSQL
+-- not tracked by MollyDB
 
 
 /*
@@ -2048,7 +2048,7 @@ GRANT SELECT ON triggered_update_columns TO PUBLIC;
  * TRIGGER_TABLE_USAGE view
  */
 
--- not tracked by PostgreSQL
+-- not tracked by MollyDB
 
 
 /*

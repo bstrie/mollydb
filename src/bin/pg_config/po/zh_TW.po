@@ -1,11 +1,11 @@
 # Traditional Chinese message translation file for pg_config
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # 2004-12-13 Zhenbang Wei <forth@zbwei.net>
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.1\n"
+"Project-Id-Version: MollyDB 9.1\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2011-05-11 20:40+0000\n"
 "PO-Revision-Date: 2013-09-03 23:27-0400\n"
@@ -28,11 +28,11 @@ msgstr "沒有紀錄\n"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%s 顯示已安裝 PostgreSQL 資訊。\n"
+"%s 顯示已安裝 MollyDB 資訊。\n"
 "\n"
 
 #: pg_config.c:429
@@ -129,64 +129,64 @@ msgstr "  --pgxs                顯示外部程式 makefile 位置\n"
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
+"                        MollyDB was built\n"
 msgstr ""
-"  --configure           顯示建立 PostgreSQL 時 \"configure\" 命令搞\n"
+"  --configure           顯示建立 MollyDB 時 \"configure\" 命令搞\n"
 "                        所使用的參數\n"
 
 #: pg_config.c:448
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
-msgstr "  --cc                  顯示建立 PostgreSQL 時使用的 CC 值\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
+msgstr "  --cc                  顯示建立 MollyDB 時使用的 CC 值\n"
 
 #: pg_config.c:449
 #, c-format
 msgid ""
-"  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cppflags            顯示建立 PostgreSQL 時使用的 CPPFLAGS 值\n"
+"  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
+msgstr "  --cppflags            顯示建立 MollyDB 時使用的 CPPFLAGS 值\n"
 
 #: pg_config.c:450
 #, c-format
 msgid ""
-"  --cflags              show CFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cflags              顯示建立 PostgreSQL 時使用的 CFLAGS 值\n"
+"  --cflags              show CFLAGS value used when MollyDB was built\n"
+msgstr "  --cflags              顯示建立 MollyDB 時使用的 CFLAGS 值\n"
 
 #: pg_config.c:451
 #, c-format
 msgid ""
-"  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --cflags_sl           顯示建立 PostgreSQL 時使用的 CFLAGS_SL 值\n"
+"  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --cflags_sl           顯示建立 MollyDB 時使用的 CFLAGS_SL 值\n"
 
 #: pg_config.c:452
 #, c-format
 msgid ""
-"  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
-msgstr "  --ldflags             顯示建立 PostgreSQL 時使用的 LDFLAGS 值\n"
+"  --ldflags             show LDFLAGS value used when MollyDB was built\n"
+msgstr "  --ldflags             顯示建立 MollyDB 時使用的 LDFLAGS 值\n"
 
 #: pg_config.c:453
 #, c-format
 msgid ""
-"  --ldflags_ex          show LDFLAGS_EX value used when PostgreSQL was "
+"  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was "
 "built\n"
-msgstr "  --ldflags_ex          顯示建立 PostgreSQL 時使用的 LDFLAGS_EX 值\n"
+msgstr "  --ldflags_ex          顯示建立 MollyDB 時使用的 LDFLAGS_EX 值\n"
 
 #: pg_config.c:454
 #, c-format
 msgid ""
-"  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was "
+"  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was "
 "built\n"
-msgstr "  --ldflags_sl          顯示建立 PostgreSQL 時使用的 LDFLAGS_SL 值\n"
+msgstr "  --ldflags_sl          顯示建立 MollyDB 時使用的 LDFLAGS_SL 值\n"
 
 #: pg_config.c:455
 #, c-format
 msgid ""
-"  --libs                show LIBS value used when PostgreSQL was built\n"
-msgstr "  --libs                顯示建立 PostgreSQL 時使用的 LIBS 值\n"
+"  --libs                show LIBS value used when MollyDB was built\n"
+msgstr "  --libs                顯示建立 MollyDB 時使用的 LIBS 值\n"
 
 #: pg_config.c:456
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             顯示 PostgreSQL 版本\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             顯示 MollyDB 版本\n"
 
 #: pg_config.c:457
 #, c-format

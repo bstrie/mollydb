@@ -1,11 +1,11 @@
 # Czech message translation file for plpython
-# Copyright (C) 2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Tomáš Vondra <tv@fuzzy.cz>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: plpython-cs (PostgreSQL 9.3)\n"
+"Project-Id-Version: plpython-cs (MollyDB 9.3)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2012-09-18 16:39+0000\n"
 "PO-Revision-Date: 2012-09-19 01:51+0200\n"
@@ -446,7 +446,7 @@ msgstr ""
 #: plpy_util.c:70
 #, c-format
 #| msgid ""
-#| "could not convert Python Unicode object to PostgreSQL server encoding"
+#| "could not convert Python Unicode object to MollyDB server encoding"
 msgid "could not convert Python Unicode object to bytes"
 msgstr "nelze převést Python Unicode objekt na byty"
 

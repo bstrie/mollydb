@@ -1,6 +1,6 @@
 <!--
 doc/src/sgml/ref/drop_sequence.sgml
-PostgreSQL documentation
+MollyDB documentation
 -->
 
 <refentry id="SQL-DROPSEQUENCE">
@@ -96,7 +96,7 @@ DROP SEQUENCE serial;
    <command>DROP SEQUENCE</command> conforms to the <acronym>SQL</acronym>
    standard, except that the standard only allows one
    sequence to be dropped per command, and apart from the
-   <literal>IF EXISTS</> option, which is a <productname>PostgreSQL</>
+   <literal>IF EXISTS</> option, which is a <productname>MollyDB</>
    extension.
   </para>
  </refsect1>

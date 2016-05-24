@@ -24,7 +24,7 @@
  * the TID array, just enough to hold as many heap tuples as fit on one page.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -1155,7 +1155,7 @@ lazy_scan_heap(Relation onerel, LVRelStats *vacrelstats,
 		}
 
 		/*
-		 * As of PostgreSQL 9.2, the visibility map bit should never be set if
+		 * As of MollyDB 9.2, the visibility map bit should never be set if
 		 * the page-level bit is clear.  However, it's possible that the bit
 		 * got cleared after we checked it and before we took the buffer
 		 * content lock, so we must recheck before jumping to the conclusion

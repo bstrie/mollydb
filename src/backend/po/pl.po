@@ -2,7 +2,7 @@
 # grzegorz <begina.felicysym@wp.eu>, 2014, 2015, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-02-13 23:10+0000\n"
 "PO-Revision-Date: 2016-02-14 01:05+0200\n"
@@ -425,8 +425,8 @@ msgstr "indeks \"%s\" zawiera wewnętrzną krotkę oznaczoną jako niepoprawna"
 
 #: access/gist/gist.c:634 access/gist/gistvacuum.c:268
 #, c-format
-msgid "This is caused by an incomplete page split at crash recovery before upgrading to PostgreSQL 9.1."
-msgstr "Jest to spowodowane przez niekompletny podział strony podczas odtwarzania po awarii, przed uaktualnieniem do PostgreSQL 9.1."
+msgid "This is caused by an incomplete page split at crash recovery before upgrading to MollyDB 9.1."
+msgstr "Jest to spowodowane przez niekompletny podział strony podczas odtwarzania po awarii, przed uaktualnieniem do MollyDB 9.1."
 
 #: access/gist/gist.c:635 access/gist/gistutil.c:735
 #: access/gist/gistutil.c:746 access/gist/gistvacuum.c:269
@@ -9112,8 +9112,8 @@ msgstr "strefa czasowa \"%s\" wydaje się używać sekund przestępnych"
 
 #: commands/variable.c:348 commands/variable.c:430
 #, c-format
-msgid "PostgreSQL does not support leap seconds."
-msgstr "PostgreSQL nie obsługuje sekund przestępnych."
+msgid "MollyDB does not support leap seconds."
+msgstr "MollyDB nie obsługuje sekund przestępnych."
 
 #: commands/variable.c:357
 #, c-format
@@ -11415,10 +11415,10 @@ msgstr "%s: nie powiodło się WSAStartup: %d\n"
 #: main/main.c:306
 #, c-format
 msgid ""
-"%s is the PostgreSQL server.\n"
+"%s is the MollyDB server.\n"
 "\n"
 msgstr ""
-"%s jest serwerem PostgreSQL.\n"
+"%s jest serwerem MollyDB.\n"
 "\n"
 
 #: main/main.c:307
@@ -11664,12 +11664,12 @@ msgstr ""
 #: main/main.c:369
 #, c-format
 msgid ""
-"\"root\" execution of the PostgreSQL server is not permitted.\n"
+"\"root\" execution of the MollyDB server is not permitted.\n"
 "The server must be started under an unprivileged user ID to prevent\n"
 "possible system security compromise.  See the documentation for\n"
 "more information on how to properly start the server.\n"
 msgstr ""
-"Uruchomienie serwera PostgreSQL jako \"root\" jest niedozwolone.\n"
+"Uruchomienie serwera MollyDB jako \"root\" jest niedozwolone.\n"
 "Serwer musi być uruchomiony spod ID użytkownika nieuprzywilejowanego\n"
 "aby zapobiec możliwemu złamaniu zabezpieczeń systemu.  Przejrzyj dokumentację\n"
 "by uzyskać więcej informacji jak poprawnie uruchomić serwer.\n"
@@ -11682,13 +11682,13 @@ msgstr "%s: realne i efektywne IDy użytkowników muszą się zgadzać\n"
 #: main/main.c:393
 #, c-format
 msgid ""
-"Execution of PostgreSQL by a user with administrative permissions is not\n"
+"Execution of MollyDB by a user with administrative permissions is not\n"
 "permitted.\n"
 "The server must be started under an unprivileged user ID to prevent\n"
 "possible system security compromises.  See the documentation for\n"
 "more information on how to properly start the server.\n"
 msgstr ""
-"Uruchomienie serwera PostgreSQL przez użytkownika z uprawnieniami \n"
+"Uruchomienie serwera MollyDB przez użytkownika z uprawnieniami \n"
 "administracyjnymi jest niedozwolone.\n"
 "Serwer musi być uruchomiony spod ID użytkownika nieuprzywilejowanego\n"
 "aby zapobiec możliwemu złamaniu zabezpieczeń systemu.  Przejrzyj dokumentację\n"
@@ -13522,16 +13522,16 @@ msgstr "Nieudanym wywołaniem systemowym było semget(%lu, %d, 0%o)."
 #: port/pg_sema.c:118 port/sysv_sema.c:118
 #, c-format
 msgid ""
-"This error does *not* mean that you have run out of disk space.  It occurs when either the system limit for the maximum number of semaphore sets (SEMMNI), or the system wide maximum number of semaphores (SEMMNS), would be exceeded.  You need to raise the respective kernel parameter.  Alternatively, reduce PostgreSQL's consumption of semaphores by reducing its max_connections parameter.\n"
-"The PostgreSQL documentation contains more information about configuring your system for PostgreSQL."
+"This error does *not* mean that you have run out of disk space.  It occurs when either the system limit for the maximum number of semaphore sets (SEMMNI), or the system wide maximum number of semaphores (SEMMNS), would be exceeded.  You need to raise the respective kernel parameter.  Alternatively, reduce MollyDB's consumption of semaphores by reducing its max_connections parameter.\n"
+"The MollyDB documentation contains more information about configuring your system for MollyDB."
 msgstr ""
-"Ten błąd *nie* oznacza, że brakuje Ci miejsca na dysku.  Zdarza się to gdy albo limit systemu dla maksymalnej liczby grup semaforów (SEMMNI) albo maksymalna liczba semaforów dla całego systemu (SEMMNS) zostanie przekroczona.  Trzeba zwiększyć odpowiednie parametry jądra.  Ewentualnie można zmniejszyć zużycie semaforów PostgreSQL przez zmniejszenie parametru max_connections.\n"
-"Dokumentacja PostgreSQL zawiera więcej informacji na temat konfiguracji systemu PostgreSQL."
+"Ten błąd *nie* oznacza, że brakuje Ci miejsca na dysku.  Zdarza się to gdy albo limit systemu dla maksymalnej liczby grup semaforów (SEMMNI) albo maksymalna liczba semaforów dla całego systemu (SEMMNS) zostanie przekroczona.  Trzeba zwiększyć odpowiednie parametry jądra.  Ewentualnie można zmniejszyć zużycie semaforów MollyDB przez zmniejszenie parametru max_connections.\n"
+"Dokumentacja MollyDB zawiera więcej informacji na temat konfiguracji systemu MollyDB."
 
 #: port/pg_sema.c:148 port/sysv_sema.c:148
 #, c-format
-msgid "You possibly need to raise your kernel's SEMVMX value to be at least %d.  Look into the PostgreSQL documentation for details."
-msgstr "Prawdopodobnie powinieneś zwiększyć wartość SEMVMX jądra do co najmniej %d.  Sprawdź dokumentację PostgreSQL by uzyskać szczegóły."
+msgid "You possibly need to raise your kernel's SEMVMX value to be at least %d.  Look into the MollyDB documentation for details."
+msgstr "Prawdopodobnie powinieneś zwiększyć wartość SEMVMX jądra do co najmniej %d.  Sprawdź dokumentację MollyDB by uzyskać szczegóły."
 
 #: port/pg_shmem.c:141 port/sysv_shmem.c:141
 #, c-format
@@ -13546,29 +13546,29 @@ msgstr "Nieudanym wywołaniem systemowym było shmget(key=%lu, size=%zu, 0%o)."
 #: port/pg_shmem.c:146 port/sysv_shmem.c:146
 #, c-format
 msgid ""
-"This error usually means that PostgreSQL's request for a shared memory segment exceeded your kernel's SHMMAX parameter, or possibly that it is less than your kernel's SHMMIN parameter.\n"
-"The PostgreSQL documentation contains more information about shared memory configuration."
+"This error usually means that MollyDB's request for a shared memory segment exceeded your kernel's SHMMAX parameter, or possibly that it is less than your kernel's SHMMIN parameter.\n"
+"The MollyDB documentation contains more information about shared memory configuration."
 msgstr ""
-"Ten błąd zwykle oznacza, że żądanie segmentu pamięci współdzielonej przez PostgreSQL przekracza wartość parametru jądra SHMMAX lub może być mniejsza niż parametr SHMMIN.\n"
-"Dokumentacja PostgreSQL zawiera więcej informacji o konfiguracji pamięci współdzielonej."
+"Ten błąd zwykle oznacza, że żądanie segmentu pamięci współdzielonej przez MollyDB przekracza wartość parametru jądra SHMMAX lub może być mniejsza niż parametr SHMMIN.\n"
+"Dokumentacja MollyDB zawiera więcej informacji o konfiguracji pamięci współdzielonej."
 
 #: port/pg_shmem.c:153 port/sysv_shmem.c:153
 #, c-format
 msgid ""
-"This error usually means that PostgreSQL's request for a shared memory segment exceeded your kernel's SHMALL parameter.  You might need to reconfigure the kernel with larger SHMALL.\n"
-"The PostgreSQL documentation contains more information about shared memory configuration."
+"This error usually means that MollyDB's request for a shared memory segment exceeded your kernel's SHMALL parameter.  You might need to reconfigure the kernel with larger SHMALL.\n"
+"The MollyDB documentation contains more information about shared memory configuration."
 msgstr ""
-"Ten błąd zwykle oznacza, że żądanie segmentu pamięci współdzielonej przez PostgreSQL przekracza ilość dostępnej pamięci lub przestrzeni wymiany, albo przekroczony został parametr jądra SHMALL.  Można skonfigurować jądro z większym parametrem SHMALL.\n"
-"Dokumentacja PostgreSQL zawiera więcej informacji o konfiguracji pamięci współdzielonej."
+"Ten błąd zwykle oznacza, że żądanie segmentu pamięci współdzielonej przez MollyDB przekracza ilość dostępnej pamięci lub przestrzeni wymiany, albo przekroczony został parametr jądra SHMALL.  Można skonfigurować jądro z większym parametrem SHMALL.\n"
+"Dokumentacja MollyDB zawiera więcej informacji o konfiguracji pamięci współdzielonej."
 
 #: port/pg_shmem.c:159 port/sysv_shmem.c:159
 #, c-format
 msgid ""
 "This error does *not* mean that you have run out of disk space.  It occurs either if all available shared memory IDs have been taken, in which case you need to raise the SHMMNI parameter in your kernel, or because the system's overall limit for shared memory has been reached.\n"
-"The PostgreSQL documentation contains more information about shared memory configuration."
+"The MollyDB documentation contains more information about shared memory configuration."
 msgstr ""
 "Ten błąd *nie* oznacza, że kończy się miejsce na dysku.  Występuje, jeżeli wszystkie dostępne identyfikatory pamięci współdzielonej zostały pobrane, w takim przypadku trzeba zwiększyć parametr SHMMNI w jądrze, albo dlatego, że został osiągnięty systemowy ogólny limit pamięci współdzielonej.\n"
-"Dokumentacja PostgreSQL zawiera więcej informacji o konfiguracji pamięci współdzielonej."
+"Dokumentacja MollyDB zawiera więcej informacji o konfiguracji pamięci współdzielonej."
 
 #: port/pg_shmem.c:340 port/sysv_shmem.c:340
 #, c-format
@@ -13582,8 +13582,8 @@ msgstr "nie można zmapować anonimowej pamięci współdzielonej: %m"
 
 #: port/pg_shmem.c:392 port/sysv_shmem.c:392
 #, c-format
-msgid "This error usually means that PostgreSQL's request for a shared memory segment exceeded available memory, swap space, or huge pages. To reduce the request size (currently %zu bytes), reduce PostgreSQL's shared memory usage, perhaps by reducing shared_buffers or max_connections."
-msgstr "Ten błąd zwykle oznacza, że żądanie segmentu pamięci współdzielonej przez PostgreSQL przekracza ilość dostępnej pamięci, przestrzeni wymiany lub ogromnych stron. Aby zmniejszyć rozmiar żądania (obecnie %zu bajtów), zmniejsz zużycie pamięci współdzielonej przez PostgreSQL, być może poprzez zmniejszenie shared_buffers lub max_connections."
+msgid "This error usually means that MollyDB's request for a shared memory segment exceeded available memory, swap space, or huge pages. To reduce the request size (currently %zu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections."
+msgstr "Ten błąd zwykle oznacza, że żądanie segmentu pamięci współdzielonej przez MollyDB przekracza ilość dostępnej pamięci, przestrzeni wymiany lub ogromnych stron. Aby zmniejszyć rozmiar żądania (obecnie %zu bajtów), zmniejsz zużycie pamięci współdzielonej przez MollyDB, być może poprzez zmniejszenie shared_buffers lub max_connections."
 
 #: port/pg_shmem.c:439 port/sysv_shmem.c:439 port/win32_shmem.c:134
 #, c-format
@@ -14160,8 +14160,8 @@ msgstr "%s: nie można odnaleźć pasującego programu wykonywalnego postgres"
 
 #: postmaster/postmaster.c:1391 utils/misc/tzparser.c:341
 #, c-format
-msgid "This may indicate an incomplete PostgreSQL installation, or that the file \"%s\" has been moved away from its proper location."
-msgstr "Może to wskazywać na niepełną instalację PostgreSQL lub że plik \"%s\" został przeniesiony gdzieś z właściwej lokalizacji."
+msgid "This may indicate an incomplete MollyDB installation, or that the file \"%s\" has been moved away from its proper location."
+msgstr "Może to wskazywać na niepełną instalację MollyDB lub że plik \"%s\" został przeniesiony gdzieś z właściwej lokalizacji."
 
 #: postmaster/postmaster.c:1419
 #, c-format
@@ -14257,8 +14257,8 @@ msgstr "niepoprawny układ pakietu uruchomieniowego: oczekiwano terminatora na o
 
 #: postmaster/postmaster.c:2101
 #, c-format
-msgid "no PostgreSQL user name specified in startup packet"
-msgstr "brak użytkownika PostgreSQL wskazanego w pakiecie uruchomieniowym"
+msgid "no MollyDB user name specified in startup packet"
+msgstr "brak użytkownika MollyDB wskazanego w pakiecie uruchomieniowym"
 
 #: postmaster/postmaster.c:2160
 #, c-format
@@ -18583,8 +18583,8 @@ msgstr "nieprawidłowa wartość oktetu w wartości \"macaddr\": \"%s\""
 
 #: utils/adt/misc.c:116
 #, c-format
-msgid "PID %d is not a PostgreSQL server process"
-msgstr "PID %d nie jest procesem serwera PostgreSQL"
+msgid "PID %d is not a MollyDB server process"
+msgstr "PID %d nie jest procesem serwera MollyDB"
 
 #: utils/adt/misc.c:166
 #, c-format
@@ -19823,8 +19823,8 @@ msgstr "Ta funkcjonalność wymaga kompilacji serwera z obsługą libxml."
 
 #: utils/adt/xml.c:173
 #, c-format
-msgid "You need to rebuild PostgreSQL using --with-libxml."
-msgstr "Powinieneś zrekompilować PostgreSQL z użyciem --with-libxml."
+msgid "You need to rebuild MollyDB using --with-libxml."
+msgstr "Powinieneś zrekompilować MollyDB z użyciem --with-libxml."
 
 #: utils/adt/xml.c:192 utils/mb/mbutils.c:523
 #, c-format
@@ -19878,8 +19878,8 @@ msgstr "nie można skonfigurować obsługi błędów XML"
 
 #: utils/adt/xml.c:998
 #, c-format
-msgid "This probably indicates that the version of libxml2 being used is not compatible with the libxml2 header files that PostgreSQL was built with."
-msgstr "Oznacza to prawdopodobnie, że używana wersja libxml2 jest niezgodna z plikami nagłówkowymi libxml2 wbudowanymi w PostgreSQL."
+msgid "This probably indicates that the version of libxml2 being used is not compatible with the libxml2 header files that MollyDB was built with."
+msgstr "Oznacza to prawdopodobnie, że używana wersja libxml2 jest niezgodna z plikami nagłówkowymi libxml2 wbudowanymi w MollyDB."
 
 #: utils/adt/xml.c:1737
 msgid "Invalid character value."
@@ -20416,8 +20416,8 @@ msgstr "Być może trzeba initdb."
 
 #: utils/init/miscinit.c:1352
 #, c-format
-msgid "The data directory was initialized by PostgreSQL version %ld.%ld, which is not compatible with this version %s."
-msgstr "Katalog danych został zainicjowany przez PostgreSQL w wersji %ld.%ld, który nie jest zgodny z obecną wersją %s."
+msgid "The data directory was initialized by MollyDB version %ld.%ld, which is not compatible with this version %s."
+msgstr "Katalog danych został zainicjowany przez MollyDB w wersji %ld.%ld, który nie jest zgodny z obecną wersją %s."
 
 #: utils/init/miscinit.c:1423
 #, c-format
@@ -20789,8 +20789,8 @@ msgid "Version and Platform Compatibility"
 msgstr "Zgodność Wersji i Platformy"
 
 #: utils/misc/guc.c:617
-msgid "Version and Platform Compatibility / Previous PostgreSQL Versions"
-msgstr "Zgodność Wersji i Platformy / Poprzednie Wersje PostgreSQL"
+msgid "Version and Platform Compatibility / Previous MollyDB Versions"
+msgstr "Zgodność Wersji i Platformy / Poprzednie Wersje MollyDB"
 
 #: utils/misc/guc.c:619
 msgid "Version and Platform Compatibility / Other Platforms and Clients"
@@ -20905,16 +20905,16 @@ msgid "Continues processing after a checksum failure."
 msgstr "Kontynuacja przetwarzania po błędzie sumy kontrolnej."
 
 #: utils/misc/guc.c:939
-msgid "Detection of a checksum failure normally causes PostgreSQL to report an error, aborting the current transaction. Setting ignore_checksum_failure to true causes the system to ignore the failure (but still report a warning), and continue processing. This behavior could cause crashes or other serious problems. Only has an effect if checksums are enabled."
-msgstr "Wykrycie błędu sumy kontrolnej stron powoduje zwykle zgłoszenie błędu przez PostgreSQL i przerwanie bieżącej transakcji. Ustawienie ignore_checksum_failure na prawdę powoduje, że system ignoruje błąd (wciąż zgłaszając ostrzeżenie) i kontynuuje przetwarzanie. Takie zachowanie powoduje awarie lub inne poważne problemy. Działa tylko w przypadku włączenia sum kontrolnych."
+msgid "Detection of a checksum failure normally causes MollyDB to report an error, aborting the current transaction. Setting ignore_checksum_failure to true causes the system to ignore the failure (but still report a warning), and continue processing. This behavior could cause crashes or other serious problems. Only has an effect if checksums are enabled."
+msgstr "Wykrycie błędu sumy kontrolnej stron powoduje zwykle zgłoszenie błędu przez MollyDB i przerwanie bieżącej transakcji. Ustawienie ignore_checksum_failure na prawdę powoduje, że system ignoruje błąd (wciąż zgłaszając ostrzeżenie) i kontynuuje przetwarzanie. Takie zachowanie powoduje awarie lub inne poważne problemy. Działa tylko w przypadku włączenia sum kontrolnych."
 
 #: utils/misc/guc.c:953
 msgid "Continues processing past damaged page headers."
 msgstr "Kontynuuje przetwarzanie nagłówków stron sprzed uszkodzonych."
 
 #: utils/misc/guc.c:954
-msgid "Detection of a damaged page header normally causes PostgreSQL to report an error, aborting the current transaction. Setting zero_damaged_pages to true causes the system to instead report a warning, zero out the damaged page, and continue processing. This behavior will destroy data, namely all the rows on the damaged page."
-msgstr "Wykrycie uszkodzonych nagłówków stron powoduje zwykle zgłoszenie błędu przez PostgreSQL i przerwanie bieżącej transakcji. Ustawienie zero_damaged_pages na prawdę powoduje, że system zamiast zgłosić ostrzeżenie, zeruje uszkodzone strony i kontynuuje przetwarzanie. Takie zachowanie niszczy dane, a mianowicie wszystkie wiersze na uszkodzonej stronie."
+msgid "Detection of a damaged page header normally causes MollyDB to report an error, aborting the current transaction. Setting zero_damaged_pages to true causes the system to instead report a warning, zero out the damaged page, and continue processing. This behavior will destroy data, namely all the rows on the damaged page."
+msgstr "Wykrycie uszkodzonych nagłówków stron powoduje zwykle zgłoszenie błędu przez MollyDB i przerwanie bieżącej transakcji. Ustawienie zero_damaged_pages na prawdę powoduje, że system zamiast zgłosić ostrzeżenie, zeruje uszkodzone strony i kontynuuje przetwarzanie. Takie zachowanie niszczy dane, a mianowicie wszystkie wiersze na uszkodzonej stronie."
 
 #: utils/misc/guc.c:967
 msgid "Writes full pages to WAL when first modified after a checkpoint."
@@ -21193,12 +21193,12 @@ msgid "Enables backward compatibility mode for privilege checks on large objects
 msgstr "Pozwala na tryb zgodności wstecznej przy sprawdzaniu uprawnień do dużych obiektów."
 
 #: utils/misc/guc.c:1583
-msgid "Skips privilege checks when reading or modifying large objects, for compatibility with PostgreSQL releases prior to 9.0."
-msgstr "Pomija sprawdzanie uprawnień podczas odczytu i modyfikacji dużych obiektów, dla zgodności z wydaniami PostgreSQL przed 9.0."
+msgid "Skips privilege checks when reading or modifying large objects, for compatibility with MollyDB releases prior to 9.0."
+msgstr "Pomija sprawdzanie uprawnień podczas odczytu i modyfikacji dużych obiektów, dla zgodności z wydaniami MollyDB przed 9.0."
 
 #: utils/misc/guc.c:1593
-msgid "Emit a warning for constructs that changed meaning since PostgreSQL 9.4."
-msgstr "Wypuszcza ostrzeżenie dla konstruktów, które zmieniły znaczenie od PostgreSQL 9.4."
+msgid "Emit a warning for constructs that changed meaning since MollyDB 9.4."
+msgstr "Wypuszcza ostrzeżenie dla konstruktów, które zmieniły znaczenie od MollyDB 9.4."
 
 #: utils/misc/guc.c:1603
 msgid "When generating SQL fragments, quote all identifiers."
@@ -21649,8 +21649,8 @@ msgid "Sets the planner's assumption about the size of the disk cache."
 msgstr "Ustawia założenia planisty dotyczące rozmiaru pamięci podręcznej dysku."
 
 #: utils/misc/guc.c:2618
-msgid "That is, the portion of the kernel's disk cache that will be used for PostgreSQL data files. This is measured in disk pages, which are normally 8 kB each."
-msgstr "Oznacza to część jądra pamięci podręcznej na dysku, która będzie używana do plików danych PostgreSQL. Jest ona mierzona w stronach dysku, które zwykle zajmują 8 kB każda."
+msgid "That is, the portion of the kernel's disk cache that will be used for MollyDB data files. This is measured in disk pages, which are normally 8 kB each."
+msgstr "Oznacza to część jądra pamięci podręcznej na dysku, która będzie używana do plików danych MollyDB. Jest ona mierzona w stronach dysku, które zwykle zajmują 8 kB każda."
 
 #: utils/misc/guc.c:2631
 msgid "Shows the server version as an integer."
@@ -21857,12 +21857,12 @@ msgid "Sets the file name pattern for log files."
 msgstr "Ustawia wzorzec nazwy pliku dla plików dziennika."
 
 #: utils/misc/guc.c:3129
-msgid "Sets the program name used to identify PostgreSQL messages in syslog."
-msgstr "Ustawia nazwę programu używanego do identyfikacji komunikatów PostgreSQL w syslogu."
+msgid "Sets the program name used to identify MollyDB messages in syslog."
+msgstr "Ustawia nazwę programu używanego do identyfikacji komunikatów MollyDB w syslogu."
 
 #: utils/misc/guc.c:3140
-msgid "Sets the application name used to identify PostgreSQL messages in the event log."
-msgstr "Ustawia nazwę programu używanego do identyfikacji komunikatów PostgreSQL w dzienniku zdarzeń."
+msgid "Sets the application name used to identify MollyDB messages in the event log."
+msgstr "Ustawia nazwę programu używanego do identyfikacji komunikatów MollyDB w dzienniku zdarzeń."
 
 #: utils/misc/guc.c:3151
 msgid "Sets the time zone for displaying and interpreting time stamps."

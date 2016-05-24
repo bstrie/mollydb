@@ -1,9 +1,9 @@
 /*
  * xlog_fn.h
  *
- * PostgreSQL transaction log SQL-callable function declarations
+ * MollyDB transaction log SQL-callable function declarations
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/access/xlog_fn.h

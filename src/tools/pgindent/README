@@ -1,7 +1,7 @@
 pgindent
 ========
 
-This can format all PostgreSQL *.c and *.h files, but excludes *.y, and
+This can format all MollyDB *.c and *.h files, but excludes *.y, and
 *.l files.
 
 1) Install pg_bsd_indent (see below for details).

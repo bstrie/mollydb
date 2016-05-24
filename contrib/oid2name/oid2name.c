@@ -1,5 +1,5 @@
 /*
- * oid2name, a PostgreSQL app to map OIDs on the filesystem
+ * oid2name, a MollyDB app to map OIDs on the filesystem
  * to table and database names.
  *
  * Originally by
@@ -84,7 +84,7 @@ get_opts(int argc, char **argv, struct options * my_opts)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("oid2name (PostgreSQL) " PG_VERSION);
+			puts("oid2name (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -169,7 +169,7 @@ get_opts(int argc, char **argv, struct options * my_opts)
 static void
 help(const char *progname)
 {
-	printf("%s helps examining the file structure used by PostgreSQL.\n\n"
+	printf("%s helps examining the file structure used by MollyDB.\n\n"
 		   "Usage:\n"
 		   "  %s [OPTION]...\n"
 		   "\nOptions:\n"

@@ -153,14 +153,14 @@ would mean an increase in the minor version number so long as it does not
 require a major version increase.
 
 Given that we make at least minor changes to our libraries in every major
-PostgreSQL version, we always bump all minor library version numbers at the
+MollyDB version, we always bump all minor library version numbers at the
 start of each development cycle as a matter of policy.
 
 Minimizing Changes
 ==================
 
 When modifying public functions arguments, steps should be taken to
-maintain binary compatibility across minor PostgreSQL releases (e.g. the
+maintain binary compatibility across minor MollyDB releases (e.g. the
 7.2 series, the 7.3 series, the 7.4/8.0 series). Consider the following
 function:
 

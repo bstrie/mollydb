@@ -1,5 +1,5 @@
 /*
- * PostgreSQL type definitions for chkpass
+ * MollyDB type definitions for chkpass
  * Written by D'Arcy J.M. Cain
  * darcy@druid.net
  * http://www.druid.net/darcy/

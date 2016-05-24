@@ -12,7 +12,7 @@
  </indexterm>
 
   <para>
-   <productname>PostgreSQL</>, like any database software, requires that certain tasks
+   <productname>MollyDB</>, like any database software, requires that certain tasks
    be performed regularly to achieve optimum performance. The tasks
    discussed here are <emphasis>required</emphasis>, but they
    are repetitive in nature and can easily be automated using standard
@@ -27,7 +27,7 @@
    regular schedule.  Without a recent backup, you have no chance of recovery
    after a catastrophe (disk failure, fire, mistakenly dropping a critical
    table, etc.).  The backup and recovery mechanisms available in
-   <productname>PostgreSQL</productname> are discussed at length in
+   <productname>MollyDB</productname> are discussed at length in
    <xref linkend="backup">.
   </para>
 
@@ -53,7 +53,7 @@
   </para>
 
   <para>
-   <productname>PostgreSQL</productname> is low-maintenance compared
+   <productname>MollyDB</productname> is low-maintenance compared
    to some other database management systems.  Nonetheless,
    appropriate attention to these tasks will go far towards ensuring a
    pleasant and productive experience with the system.
@@ -67,7 +67,7 @@
   </indexterm>
 
   <para>
-   <productname>PostgreSQL</productname> databases require periodic
+   <productname>MollyDB</productname> databases require periodic
    maintenance known as <firstterm>vacuuming</>.  For many installations, it
    is sufficient to let vacuuming be performed by the <firstterm>autovacuum
    daemon</>, which is described in <xref linkend="autovacuum">.  You might
@@ -86,7 +86,7 @@
    <title>Vacuuming Basics</title>
 
    <para>
-    <productname>PostgreSQL</productname>'s
+    <productname>MollyDB</productname>'s
     <xref linkend="sql-vacuum"> command has to
     process each table on a regular basis for several reasons:
 
@@ -98,7 +98,7 @@
 
      <listitem>
       <simpara>To update data statistics used by the
-      <productname>PostgreSQL</productname> query planner.</simpara>
+      <productname>MollyDB</productname> query planner.</simpara>
      </listitem>
 
      <listitem>
@@ -152,7 +152,7 @@
    </indexterm>
 
    <para>
-    In <productname>PostgreSQL</productname>, an
+    In <productname>MollyDB</productname>, an
     <command>UPDATE</> or <command>DELETE</> of a row does not
     immediately remove the old version of the row.
     This approach is necessary to gain the benefits of multiversion
@@ -266,7 +266,7 @@
    </indexterm>
 
    <para>
-    The <productname>PostgreSQL</productname> query planner relies on
+    The <productname>MollyDB</productname> query planner relies on
     statistical information about the contents of tables in order to
     generate good plans for queries.  These statistics are gathered by
     the <xref linkend="sql-analyze"> command,
@@ -359,9 +359,9 @@
    </para>
 
    <para>
-    Second, it allows <productname>PostgreSQL</productname> to answer some
+    Second, it allows <productname>MollyDB</productname> to answer some
     queries using only the index, without reference to the underlying table.
-    Since <productname>PostgreSQL</productname> indexes don't contain tuple
+    Since <productname>MollyDB</productname> indexes don't contain tuple
     visibility information, a normal index scan fetches the heap tuple for each
     matching index entry, to check whether it should be seen by the current
     transaction.
@@ -389,7 +389,7 @@
     </indexterm>
 
    <para>
-    <productname>PostgreSQL</productname>'s MVCC transaction semantics
+    <productname>MollyDB</productname>'s MVCC transaction semantics
     depend on being able to compare transaction ID (<acronym>XID</>)
     numbers: a row version with an insertion XID greater than the current
     transaction's XID is <quote>in the future</> and should not be visible
@@ -410,7 +410,7 @@
     they were inserted by a transaction which committed sufficiently far in
     the past that the effects of the inserting transaction is certain to be
     visible, from an MVCC perspective, to all current and future transactions.
-    <productname>PostgreSQL</> reserves a special XID,
+    <productname>MollyDB</> reserves a special XID,
     <literal>FrozenTransactionId</>, which does not follow the normal XID
     comparison rules and is always considered older
     than every normal XID. Normal XIDs are
@@ -689,7 +689,7 @@ HINT:  Stop the postmaster and vacuum that database in single-user mode.
     <secondary>general information</secondary>
    </indexterm>
    <para>
-    <productname>PostgreSQL</productname> has an optional but highly
+    <productname>MollyDB</productname> has an optional but highly
     recommended feature called <firstterm>autovacuum</firstterm>,
     whose purpose is to automate the execution of
     <command>VACUUM</command> and <command>ANALYZE </command> commands.
@@ -885,7 +885,7 @@ analyze threshold = analyze base threshold + analyze scale factor * number of tu
    file, you will have log output, but
    the only way to truncate the log file is to stop and restart
    the server. This might be acceptable if you are using
-   <productname>PostgreSQL</productname> in a development environment,
+   <productname>MollyDB</productname> in a development environment,
    but few production servers would find this behavior acceptable.
   </para>
 
@@ -906,7 +906,7 @@ analyze threshold = analyze base threshold + analyze scale factor * number of tu
    program if you have one that you are already using with other
    server software. For example, the <application>rotatelogs</application>
    tool included in the <productname>Apache</productname> distribution
-   can be used with <productname>PostgreSQL</productname>.  To do this,
+   can be used with <productname>MollyDB</productname>.  To do this,
    just pipe the server's
    <systemitem>stderr</> output to the desired program.
    If you start the server with

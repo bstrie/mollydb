@@ -3,7 +3,7 @@
  * rewriteHandler.c
  *		Primary module of query rewriter.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
@@ -123,7 +123,7 @@ static Bitmapset *adjust_view_column_set(Bitmapset *cols, List *targetlist);
  * prevent the column drop.)  To support get_rte_attribute_is_dropped(), we
  * replace join alias vars that reference dropped columns with null pointers.
  *
- * (In PostgreSQL 8.0, we did not do this processing but instead had
+ * (In MollyDB 8.0, we did not do this processing but instead had
  * get_rte_attribute_is_dropped() recurse to detect dropped columns in joins.
  * That approach had horrible performance unfortunately; in particular
  * construction of a nested join was O(N^2) in the nesting depth.)

@@ -2,14 +2,14 @@
 #
 # Makefile for the postgres backend
 #
-# Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+# Portions Copyright (c) 1996-2016, MollyDB Global Development Group
 # Portions Copyright (c) 1994, Regents of the University of California
 #
 # src/backend/Makefile
 #
 #-------------------------------------------------------------------------
 
-PGFILEDESC = "PostgreSQL Server"
+PGFILEDESC = "MollyDB Server"
 # This is a daemon process, which is why it is not labeled as an executable
 #PGAPPICON=win32
 

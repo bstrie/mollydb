@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.1 beta 2\n"
+"Project-Id-Version: MollyDB 9.1 beta 2\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 11:39+0900\n"
 "PO-Revision-Date: 2013-08-18 12:05+0900\n"
@@ -2105,10 +2105,10 @@ msgstr "%s: 出力ファイル \"%s\" をオープンできませんでした: %
 #: pg_dumpall.c:540
 #, c-format
 msgid ""
-"%s extracts a PostgreSQL database cluster into an SQL script file.\n"
+"%s extracts a MollyDB database cluster into an SQL script file.\n"
 "\n"
 msgstr ""
-"%sはPostgreSQLデータベースクラスタをSQLスクリプトファイルに展開します。\n"
+"%sはMollyDBデータベースクラスタをSQLスクリプトファイルに展開します。\n"
 "\n"
 
 #: pg_dumpall.c:542
@@ -2277,10 +2277,10 @@ msgstr "警告: リストアにてエラーを無視しました: %d\n"
 #: pg_restore.c:427
 #, c-format
 msgid ""
-"%s restores a PostgreSQL database from an archive created by pg_dump.\n"
+"%s restores a MollyDB database from an archive created by pg_dump.\n"
 "\n"
 msgstr ""
-"%sはpg_dumpで作成したアーカイブからPostgreSQLデータベースをリストアします。\n"
+"%sはpg_dumpで作成したアーカイブからMollyDBデータベースをリストアします。\n"
 "\n"
 
 #: pg_restore.c:429

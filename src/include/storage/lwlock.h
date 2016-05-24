@@ -4,7 +4,7 @@
  *	  Lightweight lock manager
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/storage/lwlock.h
@@ -25,7 +25,7 @@
 struct PGPROC;
 
 /*
- * Prior to PostgreSQL 9.4, every lightweight lock in the system was stored
+ * Prior to MollyDB 9.4, every lightweight lock in the system was stored
  * in a single array.  For convenience and for compatibility with past
  * releases, we still have a main array, but it's now also permissible to
  * store LWLocks elsewhere in the main shared memory segment or in a dynamic
@@ -238,7 +238,7 @@ typedef enum BuiltinTrancheIds
 }	BuiltinTrancheIds;
 
 /*
- * Prior to PostgreSQL 9.4, we used an enum type called LWLockId to refer
+ * Prior to MollyDB 9.4, we used an enum type called LWLockId to refer
  * to LWLocks.  New code should instead use LWLock *.  However, for the
  * convenience of third-party code, we include the following typedef.
  */

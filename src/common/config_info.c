@@ -4,7 +4,7 @@
  *		Common code for pg_config output
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -197,7 +197,7 @@ get_configdata(const char *my_exec_path, size_t *configdata_len)
 	i++;
 
 	configdata[i].name = pstrdup("VERSION");
-	configdata[i].setting = pstrdup("PostgreSQL " PG_VERSION);
+	configdata[i].setting = pstrdup("MollyDB " PG_VERSION);
 	i++;
 
 	Assert(i == *configdata_len);

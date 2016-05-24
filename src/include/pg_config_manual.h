@@ -1,12 +1,12 @@
 /*------------------------------------------------------------------------
- * PostgreSQL manual configuration settings
+ * MollyDB manual configuration settings
  *
  * This file contains various configuration symbols and limits.  In
  * all cases, changing them is only useful in very rare situations or
  * for developers.  If you edit any of these, be sure to do a *full*
  * rebuild (and an initdb if noted).
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/pg_config_manual.h
@@ -72,13 +72,13 @@
  * functions to be executed by ordinary users.  By default these
  * functions are only available to the Postgres superuser.  CAUTION:
  * These functions are SECURITY HOLES since they can read and write
- * any file that the PostgreSQL server has permission to access.  If
+ * any file that the MollyDB server has permission to access.  If
  * you turn this on, don't say we didn't warn you.
  */
 /* #define ALLOW_DANGEROUS_LO_FUNCTIONS */
 
 /*
- * MAXPGPATH: standard size of a pathname buffer in PostgreSQL (hence,
+ * MAXPGPATH: standard size of a pathname buffer in MollyDB (hence,
  * maximum usable pathname length is one less).
  *
  * We'd use a standard system header symbol for this, if there weren't
@@ -169,7 +169,7 @@
 /*
  * This is the default event source for Windows event log.
  */
-#define DEFAULT_EVENT_SOURCE  "PostgreSQL"
+#define DEFAULT_EVENT_SOURCE  "MollyDB"
 
 /*
  * The random() function is expected to yield values between 0 and
@@ -228,7 +228,7 @@
 
 /*
  * Include Valgrind "client requests", mostly in the memory allocator, so
- * Valgrind understands PostgreSQL memory contexts.  This permits detecting
+ * Valgrind understands MollyDB memory contexts.  This permits detecting
  * memory errors that Valgrind would not detect on a vanilla build.  See also
  * src/tools/valgrind.supp.  "make installcheck" runs 20-30x longer under
  * Valgrind.  Note that USE_VALGRIND slowed older versions of Valgrind by an

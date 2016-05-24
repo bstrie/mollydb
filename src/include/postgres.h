@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------
  *
  * postgres.h
- *	  Primary include file for PostgreSQL server .c files
+ *	  Primary include file for MollyDB server .c files
  *
- * This should be the first file included by PostgreSQL backend modules.
+ * This should be the first file included by MollyDB backend modules.
  * Client-side code should include postgres_fe.h instead.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1995, Regents of the University of California
  *
  * src/include/postgres.h

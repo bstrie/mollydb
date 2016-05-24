@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for pg_rewind
-# Copyright (C) 2015 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2015 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Alexander Lakhin <exclusion@gmail.com>, 2015.
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_rewind (PostgreSQL) 9.6\n"
+"Project-Id-Version: pg_rewind (MollyDB) 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-10-17 05:43+0000\n"
 "PO-Revision-Date: 2015-10-18 18:13+0400\n"
@@ -430,10 +430,10 @@ msgstr ""
 #: pg_rewind.c:59
 #, c-format
 msgid ""
-"%s resynchronizes a PostgreSQL cluster with another copy of the cluster.\n"
+"%s resynchronizes a MollyDB cluster with another copy of the cluster.\n"
 "\n"
 msgstr ""
-"%s синхронизирует кластер PostgreSQL с другой копией кластера.\n"
+"%s синхронизирует кластер MollyDB с другой копией кластера.\n"
 "\n"
 
 #: pg_rewind.c:60
@@ -540,8 +540,8 @@ msgstr "программу не должен запускать root\n"
 
 #: pg_rewind.c:185
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "Запускать %s нужно от имени суперпользователя PostgreSQL.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "Запускать %s нужно от имени суперпользователя MollyDB.\n"
 
 #: pg_rewind.c:215
 #, c-format

@@ -3,7 +3,7 @@
  * acl.c
  *	  Basic access control list data structures manipulation routines.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -4925,7 +4925,7 @@ is_admin_of_role(Oid member, Oid role)
 		 * outside any security-restricted operation, SECURITY DEFINER or
 		 * similar context.  SQL-standard roles cannot self-admin.  However,
 		 * SQL-standard users are distinct from roles, and they are not
-		 * grantable like roles: PostgreSQL's role-user duality extends the
+		 * grantable like roles: MollyDB's role-user duality extends the
 		 * standard.  Checking for a session user match has the effect of
 		 * letting a role self-admin only when it's conspicuously behaving
 		 * like a user.  Note that allowing self-admin under a mere SET ROLE

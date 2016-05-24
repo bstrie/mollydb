@@ -1,6 +1,6 @@
 <!--
 doc/src/sgml/ref/rollback.sgml
-PostgreSQL documentation
+MollyDB documentation
 -->
 
 <refentry id="SQL-ROLLBACK">

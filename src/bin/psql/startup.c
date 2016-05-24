@@ -1,7 +1,7 @@
 /*
- * psql - the PostgreSQL interactive terminal
+ * psql - the MollyDB interactive terminal
  *
- * Copyright (c) 2000-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2000-2016, MollyDB Global Development Group
  *
  * src/bin/psql/startup.c
  */
@@ -771,7 +771,7 @@ process_psqlrc_file(char *filename)
 static void
 showVersion(void)
 {
-	puts("psql (PostgreSQL) " PG_VERSION);
+	puts("psql (MollyDB) " PG_VERSION);
 }
 
 

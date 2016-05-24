@@ -1,11 +1,11 @@
 # Polish message translation file for pg_dump
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Begina Felicysym <begina.felicysym@wp.eu>, 2011, 2012, 2013.
 # grzegorz <begina.felicysym@wp.eu>, 2014, 2015, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_dump (PostgreSQL 9.5)\n"
+"Project-Id-Version: pg_dump (MollyDB 9.5)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-02-13 23:13+0000\n"
 "PO-Revision-Date: 2016-02-14 01:11+0200\n"
@@ -2179,10 +2179,10 @@ msgstr "%s: nie można otworzyć pliku wyjścia \"%s\": %s\n"
 #: pg_dumpall.c:547
 #, c-format
 msgid ""
-"%s extracts a PostgreSQL database cluster into an SQL script file.\n"
+"%s extracts a MollyDB database cluster into an SQL script file.\n"
 "\n"
 msgstr ""
-"%s wyciąga klaster bazy danych PostgreSQL do pliku skryptowego SQL.\n"
+"%s wyciąga klaster bazy danych MollyDB do pliku skryptowego SQL.\n"
 "\n"
 
 #: pg_dumpall.c:549
@@ -2346,10 +2346,10 @@ msgstr "OSTRZEŻENIE: błędy ignorowane przy odtworzeniu: %d\n"
 #: pg_restore.c:433
 #, c-format
 msgid ""
-"%s restores a PostgreSQL database from an archive created by pg_dump.\n"
+"%s restores a MollyDB database from an archive created by pg_dump.\n"
 "\n"
 msgstr ""
-"%s odtwarza bazę danych PostgreSQL z archiwum utworzonego przez pg_dump.\n"
+"%s odtwarza bazę danych MollyDB z archiwum utworzonego przez pg_dump.\n"
 "\n"
 
 #: pg_restore.c:435

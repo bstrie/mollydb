@@ -1,13 +1,13 @@
 # Spanish message translation file for pg_basebackup
 #
-# Copyright (C) 2011-2014 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011-2014 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Álvaro Herrera <alvherre@alvh.no-ip.org>, 2011-2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_basebackup (PostgreSQL 9.6)\n"
+"Project-Id-Version: pg_basebackup (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:14+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
@@ -58,10 +58,10 @@ msgstr "%s: directorio nuevo no es una ruta absoluta en mapeo de tablespace: %s\
 #: pg_basebackup.c:231
 #, c-format
 msgid ""
-"%s takes a base backup of a running PostgreSQL server.\n"
+"%s takes a base backup of a running MollyDB server.\n"
 "\n"
 msgstr ""
-"%s obtiene un respaldo base a partir de un servidor PostgreSQL en ejecución.\n"
+"%s obtiene un respaldo base a partir de un servidor MollyDB en ejecución.\n"
 "\n"
 
 #: pg_basebackup.c:233 pg_receivexlog.c:66 pg_recvlogical.c:69
@@ -635,10 +635,10 @@ msgstr "%s: los enlaces simbólicos no están soportados en esta plataforma\n"
 #: pg_receivexlog.c:64
 #, c-format
 msgid ""
-"%s receives PostgreSQL streaming transaction logs.\n"
+"%s receives MollyDB streaming transaction logs.\n"
 "\n"
 msgstr ""
-"%s recibe flujos del registro transaccional de PostgreSQL.\n"
+"%s recibe flujos del registro transaccional de MollyDB.\n"
 "\n"
 
 #: pg_receivexlog.c:68 pg_recvlogical.c:75
@@ -791,10 +791,10 @@ msgstr "%s: desconectado; esperando %d segundos para intentar nuevamente\n"
 #: pg_recvlogical.c:67
 #, c-format
 msgid ""
-"%s controls PostgreSQL logical decoding streams.\n"
+"%s controls MollyDB logical decoding streams.\n"
 "\n"
 msgstr ""
-"%s controla flujos de decodificación lógica de PostgreSQL.\n"
+"%s controla flujos de decodificación lógica de MollyDB.\n"
 "\n"
 
 #: pg_recvlogical.c:71

@@ -3,11 +3,11 @@
  * execParallel.c
  *	  Support routines for parallel execution.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * This file contains routines that are intended to support setting up,
- * using, and tearing down a ParallelContext from within the PostgreSQL
+ * using, and tearing down a ParallelContext from within the MollyDB
  * executor.  The ParallelContext machinery will handle starting the
  * workers and ensuring that their state generally matches that of the
  * leader; see src/backend/access/transam/README.parallel for details.

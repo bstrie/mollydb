@@ -1,9 +1,9 @@
 /*
  * commit_ts.h
  *
- * PostgreSQL commit timestamp manager
+ * MollyDB commit timestamp manager
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/access/commit_ts.h

@@ -1,5 +1,5 @@
 /*
- * This is a port of the Double Metaphone algorithm for use in PostgreSQL.
+ * This is a port of the Double Metaphone algorithm for use in MollyDB.
  *
  * contrib/fuzzystrmatch/dmetaphone.c
  *
@@ -12,7 +12,7 @@
  * and the original article describing it can be found at
  *	 http://drdobbs.com/184401251
  *
- * For PostgreSQL we provide 2 functions - one for the primary and one for
+ * For MollyDB we provide 2 functions - one for the primary and one for
  * the alternate. That way the functions are pure text->text mappings that
  * are useful in functional indexes. These are 'dmetaphone' for the
  * primary and 'dmetaphone_alt' for the alternate.
@@ -31,7 +31,7 @@
  * Note that you have to declare the functions IMMUTABLE if you want to
  * use them in functional indexes, and you have to declare them as STRICT
  * as they do not check for NULL input, and will segfault if given NULL input.
- * (See below for alternative ) Declaring them as STRICT means PostgreSQL
+ * (See below for alternative ) Declaring them as STRICT means MollyDB
  * will never call them with NULL, but instead assume the result is NULL,
  * which is what we (I) want.
  *
@@ -42,7 +42,7 @@
  * There is a small inefficiency here - each function call actually computes
  * both the primary and the alternate and then throws away the one it doesn't
  * need. That's the way the perl module was written, because perl can handle
- * a list return more easily than we can in PostgreSQL. The result has been
+ * a list return more easily than we can in MollyDB. The result has been
  * fast enough for my needs, but it could maybe be optimized a bit to remove
  * that behaviour.
  *
@@ -120,7 +120,7 @@ static void DoubleMetaphone(char *, char **);
 #ifndef DMETAPHONE_MAIN
 
 /*
- * The PostgreSQL visible dmetaphone function.
+ * The MollyDB visible dmetaphone function.
  */
 
 PG_FUNCTION_INFO_V1(dmetaphone);
@@ -149,7 +149,7 @@ dmetaphone(PG_FUNCTION_ARGS)
 }
 
 /*
- * The PostgreSQL visible dmetaphone_alt function.
+ * The MollyDB visible dmetaphone_alt function.
  */
 
 PG_FUNCTION_INFO_V1(dmetaphone_alt);
@@ -198,7 +198,7 @@ dmetaphone_alt(PG_FUNCTION_ARGS)
 #define META_FREE(x) ((void)true)		/* pfree((x)) */
 #else							/* not defined DMETAPHONE_MAIN */
 
-/* use the standard malloc library when not running in PostgreSQL */
+/* use the standard malloc library when not running in MollyDB */
 
 #define META_MALLOC(v,n,t) \
 		  (v = (t*)malloc(((n)*sizeof(t))))
@@ -225,7 +225,7 @@ metastring;
 
 /*
  * remaining perl module funcs unchanged except for declaring them static
- * and reformatting to PostgreSQL indentation and to fit in 80 cols.
+ * and reformatting to MollyDB indentation and to fit in 80 cols.
  *
  */
 

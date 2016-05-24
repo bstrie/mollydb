@@ -3,7 +3,7 @@
  * parse_clause.c
  *	  handle clauses in parser
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -1611,7 +1611,7 @@ findTargetlistEntrySQL92(ParseState *pstate, Node *node, List **tlist,
 	 *	  targetlist entries: according to SQL92, an identifier in GROUP BY
 	 *	  is a reference to a column name exposed by FROM, not to a target
 	 *	  list column.  However, many implementations (including pre-7.0
-	 *	  PostgreSQL) accept this anyway.  So for GROUP BY, we look first
+	 *	  MollyDB) accept this anyway.  So for GROUP BY, we look first
 	 *	  to see if the identifier matches any FROM column name, and only
 	 *	  try for a targetlist name if it doesn't.  This ensures that we
 	 *	  adhere to the spec in the case where the name could be both.

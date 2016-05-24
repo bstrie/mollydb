@@ -2,14 +2,14 @@
  *
  * c.h
  *	  Fundamental C definitions.  This is included by every .c file in
- *	  PostgreSQL (via either postgres.h or postgres_fe.h, as appropriate).
+ *	  MollyDB (via either postgres.h or postgres_fe.h, as appropriate).
  *
  *	  Note that the definitions here are not intended to be exposed to clients
  *	  of the frontend interface libraries --- so we don't worry much about
  *	  polluting the namespace with lots of stuff...
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/c.h
@@ -154,7 +154,7 @@
  *
  * Note: There used to be support here for pre-ANSI C compilers that didn't
  * support # and ##.  Nowadays, these macros are just for clarity and/or
- * backward compatibility with existing PostgreSQL code.
+ * backward compatibility with existing MollyDB code.
  */
 #define CppAsString(identifier) #identifier
 #define CppConcat(x, y)			x##y

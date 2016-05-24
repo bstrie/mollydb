@@ -4,7 +4,7 @@
  *		Functions for handling locale-related info
  *
  *
- * Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  *
  * IDENTIFICATION
@@ -274,7 +274,7 @@ win32_langinfo(const char *ctype)
 
 #ifndef FRONTEND
 /*
- * Given a Windows code page identifier, find the corresponding PostgreSQL
+ * Given a Windows code page identifier, find the corresponding MollyDB
  * encoding.  Issue a warning and return -1 if none found.
  */
 int

@@ -10,7 +10,7 @@
  * And contributors:
  * Nabil Sayegh <mollydb@e-trolley.de>
  *
- * Copyright (c) 2002-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2002-2016, MollyDB Global Development Group
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose, without fee, and without a written agreement

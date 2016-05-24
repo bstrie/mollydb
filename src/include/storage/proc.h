@@ -4,7 +4,7 @@
  *	  per-process shared memory data structures
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/storage/proc.h
@@ -180,7 +180,7 @@ extern PGDLLIMPORT PGPROC *MyProc;
 extern PGDLLIMPORT struct PGXACT *MyPgXact;
 
 /*
- * Prior to PostgreSQL 9.2, the fields below were stored as part of the
+ * Prior to MollyDB 9.2, the fields below were stored as part of the
  * PGPROC.  However, benchmarking revealed that packing these particular
  * members into a separate array as tightly as possible sped up GetSnapshotData
  * considerably on systems with many CPU cores, by reducing the number of

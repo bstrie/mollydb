@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_resetxlog (PostgreSQL 9.0)\n"
+"Project-Id-Version: pg_resetxlog (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:43+0000\n"
 "PO-Revision-Date: 2015-12-01 20:30+0800\n"
@@ -120,8 +120,8 @@ msgstr "%s:不能由\"root\"执行\n"
 
 #: pg_resetxlog.c:308
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "您现在作为PostgreSQL超级用户运行%s.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "您现在作为MollyDB超级用户运行%s.\n"
 
 # command.c:256
 #: pg_resetxlog.c:318
@@ -515,10 +515,10 @@ msgstr "%s: 无法写文件 \"%s\": %s\n"
 #: pg_resetxlog.c:1167
 #, c-format
 msgid ""
-"%s resets the PostgreSQL transaction log.\n"
+"%s resets the MollyDB transaction log.\n"
 "\n"
 msgstr ""
-"%s 重置 PostgreSQL 事务日志.\n"
+"%s 重置 MollyDB 事务日志.\n"
 "\n"
 
 #: pg_resetxlog.c:1168

@@ -1,8 +1,8 @@
 #
 # Translation of ecpglib to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -12,11 +12,11 @@
 #  * Gabriele Bartolini <gabriele.bartolini@2ndQuadrant.it>
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ecpglib (PostgreSQL) 9.3\n"
+"Project-Id-Version: ecpglib (MollyDB) 9.3\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-03-15 22:10+0000\n"
 "PO-Revision-Date: 2012-10-30 13:08+0100\n"

@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for pg_basebackup
-# Copyright (C) 2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_basebackup (PostgreSQL) 9.2\n"
+"Project-Id-Version: pg_basebackup (MollyDB) 9.2\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:43+0000\n"
 "PO-Revision-Date: 2015-12-01 19:39+0800\n"
@@ -59,10 +59,10 @@ msgstr "%s:: 在表空间映射表：%s中的新目录不是一个绝对路径\n
 #: pg_basebackup.c:231
 #, c-format
 msgid ""
-"%s takes a base backup of a running PostgreSQL server.\n"
+"%s takes a base backup of a running MollyDB server.\n"
 "\n"
 msgstr ""
-"%s 在运行的PostgreSQL服务器上执行基础备份.\n"
+"%s 在运行的MollyDB服务器上执行基础备份.\n"
 "\n"
 
 #: pg_basebackup.c:233 pg_receivexlog.c:66 pg_recvlogical.c:69
@@ -634,10 +634,10 @@ msgstr "%s：在这个平台上不支持符号链接\n"
 #: pg_receivexlog.c:64
 #, c-format
 msgid ""
-"%s receives PostgreSQL streaming transaction logs.\n"
+"%s receives MollyDB streaming transaction logs.\n"
 "\n"
 msgstr ""
-"%s 接收PostgreSQL的流事务日志.\n"
+"%s 接收MollyDB的流事务日志.\n"
 "\n"
 
 #: pg_receivexlog.c:68 pg_recvlogical.c:75
@@ -808,13 +808,13 @@ msgstr "%s: 连接已断开, 将于%d 秒后尝试重连.\n"
 #: pg_recvlogical.c:67
 #, c-format
 #| msgid ""
-#| "%s receives PostgreSQL logical change streams.\n"
+#| "%s receives MollyDB logical change streams.\n"
 #| "\n"
 msgid ""
-"%s controls PostgreSQL logical decoding streams.\n"
+"%s controls MollyDB logical decoding streams.\n"
 "\n"
 msgstr ""
-"%s 控制PostgreSQL逻辑解码流。\n"
+"%s 控制MollyDB逻辑解码流。\n"
 "\n"
 
 #: pg_recvlogical.c:71

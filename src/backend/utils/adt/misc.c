@@ -3,7 +3,7 @@
  * misc.c
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -236,7 +236,7 @@ pg_signal_backend(int pid, int sig)
 		 * if one backend terminated on its own during the run.
 		 */
 		ereport(WARNING,
-				(errmsg("PID %d is not a PostgreSQL server process", pid)));
+				(errmsg("PID %d is not a MollyDB server process", pid)));
 		return SIGNAL_BACKEND_ERROR;
 	}
 

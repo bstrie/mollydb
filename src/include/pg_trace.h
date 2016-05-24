@@ -1,9 +1,9 @@
 /* ----------
  *	pg_trace.h
  *
- *	Definitions for the PostgreSQL tracing framework
+ *	Definitions for the MollyDB tracing framework
  *
- *	Copyright (c) 2006-2016, PostgreSQL Global Development Group
+ *	Copyright (c) 2006-2016, MollyDB Global Development Group
  *
  *	src/include/pg_trace.h
  * ----------

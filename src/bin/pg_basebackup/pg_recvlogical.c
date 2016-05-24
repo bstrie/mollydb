@@ -3,7 +3,7 @@
  * pg_recvlogical.c - receive data from a logical decoding slot in a streaming
  *					  fashion and write it to a local file.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *		  src/bin/pg_basebackup/pg_recvlogical.c
@@ -64,7 +64,7 @@ static void disconnect_and_exit(int code);
 static void
 usage(void)
 {
-	printf(_("%s controls PostgreSQL logical decoding streams.\n\n"),
+	printf(_("%s controls MollyDB logical decoding streams.\n\n"),
 		   progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]...\n"), progname);
@@ -665,7 +665,7 @@ main(int argc, char **argv)
 		else if (strcmp(argv[1], "-V") == 0 ||
 				 strcmp(argv[1], "--version") == 0)
 		{
-			puts("pg_recvlogical (PostgreSQL) " PG_VERSION);
+			puts("pg_recvlogical (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

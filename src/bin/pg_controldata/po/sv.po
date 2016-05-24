@@ -7,7 +7,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.4\n"
+"Project-Id-Version: MollyDB 9.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-17 21:12+0000\n"
 "PO-Revision-Date: 2014-11-19 23:46+0100\n"
@@ -21,10 +21,10 @@ msgstr ""
 #: pg_controldata.c:34
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s visar kontrollinformation om ett databaskluster för PostgreSQL.\n"
+"%s visar kontrollinformation om ett databaskluster för MollyDB.\n"
 "\n"
 
 #: pg_controldata.c:35
@@ -161,12 +161,12 @@ msgid ""
 "WARNING: possible byte ordering mismatch\n"
 "The byte ordering used to store the pg_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, and\n"
-"the PostgreSQL installation would be incompatible with this data directory.\n"
+"the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "VARNING: möjligt fel i talordning\n"
 "Den endian-ordning med vilken pg_control lagrar filer passar kanske\n"
 "inte detta program. I så fall kan nedanstående utfall vara oriktigt\n"
-"och det installerade PostgreSQL vara oförenligt med databaskatalogen.\n"
+"och det installerade MollyDB vara oförenligt med databaskatalogen.\n"
 
 #: pg_controldata.c:199
 #, c-format

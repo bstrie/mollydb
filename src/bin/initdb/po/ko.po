@@ -1,9 +1,9 @@
-# Korean message translation file for PostgreSQL initdb
+# Korean message translation file for MollyDB initdb
 # Ioseph Kim <ioseph@uri.sarang.net>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-22 17:10+0900\n"
 "PO-Revision-Date: 2015-12-23 13:19+0900\n"
@@ -358,10 +358,10 @@ msgstr "%s/base/1 안에 template1 데이터베이스를 만드는 중 ..."
 #: initdb.c:1474
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
-"%s: \"%s\" 입력 파일은 PostgreSQL %s 용이 아닙니다.\n"
+"%s: \"%s\" 입력 파일은 MollyDB %s 용이 아닙니다.\n"
 "설치상태를 확인해 보고, -L 옵션으로 바른 경로를 지정하십시오.\n"
 
 #: initdb.c:1561
@@ -534,10 +534,10 @@ msgstr ""
 #: initdb.c:2747
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s PostgreSQL 데이터베이스 클러스터를 초기화 하는 프로그램.\n"
+"%s MollyDB 데이터베이스 클러스터를 초기화 하는 프로그램.\n"
 "\n"
 
 #: initdb.c:2748

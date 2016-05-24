@@ -6,10 +6,10 @@
  *
  *	  An application can include this file if it wants to bypass the
  *	  official API defined by libpq-fe.h, but code that does so is much
- *	  more likely to break across PostgreSQL releases than code that uses
+ *	  more likely to break across MollyDB releases than code that uses
  *	  only the official API.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/interfaces/libpq/libpq-int.h
@@ -495,7 +495,7 @@ extern char *const pgresStatus[];
 #define ROOT_CERT_FILE		".mollydb/root.crt"
 #define ROOT_CRL_FILE		".mollydb/root.crl"
 #else
-/* On Windows, the "home" directory is already PostgreSQL-specific */
+/* On Windows, the "home" directory is already MollyDB-specific */
 #define USER_CERT_FILE		"mollydb.crt"
 #define USER_KEY_FILE		"mollydb.key"
 #define ROOT_CERT_FILE		"root.crt"

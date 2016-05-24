@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2004 Serguei A. Mokhov, mokhov@cs.concordia.ca
 # Copyright (c) 2012-2013 Alexander Lakhin <exclusion@gmail.com>
-# Distributed under the same licensing terms as PostgreSQL itself.
+# Distributed under the same licensing terms as MollyDB itself.
 #
 # pgtranslation Id: initdb.po,v 1.4 2010/12/07 21:22:21 petere Exp $
 #
@@ -25,7 +25,7 @@
 #   - March 27 - December 10, 2004: Initial Translation, Serguei A. Mokhov <mokhov@cs.concordia.ca>.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9 current\n"
+"Project-Id-Version: MollyDB 9 current\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-07-22 00:13+0000\n"
 "PO-Revision-Date: 2015-07-27 22:16+0300\n"
@@ -342,7 +342,7 @@ msgid ""
 "This might mean you have a corrupted installation or identified\n"
 "the wrong directory with the invocation option -L.\n"
 msgstr ""
-"Это означает, что ваша установка PostgreSQL испорчена или в параметре -L\n"
+"Это означает, что ваша установка MollyDB испорчена или в параметре -L\n"
 "задан неправильный каталог.\n"
 
 #: initdb.c:980
@@ -387,10 +387,10 @@ msgstr "создание базы template1 в %s/base/1... "
 #: initdb.c:1474
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
-"%s: входной файл \"%s\" не принадлежит PostgreSQL %s\n"
+"%s: входной файл \"%s\" не принадлежит MollyDB %s\n"
 "Проверьте вашу установку или укажите правильный путь в параметре -L.\n"
 
 #: initdb.c:1561
@@ -562,10 +562,10 @@ msgstr ""
 #: initdb.c:2747
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s инициализирует кластер PostgreSQL.\n"
+"%s инициализирует кластер MollyDB.\n"
 "\n"
 
 #: initdb.c:2748
@@ -816,7 +816,7 @@ msgid ""
 msgstr ""
 "Программа \"postgres\" нужна для %s, но она не найдена\n"
 "в каталоге \"%s\".\n"
-"Проверьте вашу установку PostgreSQL.\n"
+"Проверьте вашу установку MollyDB.\n"
 
 #: initdb.c:2897
 #, c-format
@@ -827,7 +827,7 @@ msgid ""
 msgstr ""
 "Программа \"postgres\" найдена в \"%s\",\n"
 "но её версия отличается от версии %s.\n"
-"Проверьте вашу установку PostgreSQL.\n"
+"Проверьте вашу установку MollyDB.\n"
 
 #: initdb.c:2916
 #, c-format

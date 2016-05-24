@@ -3,7 +3,7 @@
  * blutils.c
  *		Bloom index utilities.
  *
- * Portions Copyright (c) 2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 2016, MollyDB Global Development Group
  * Portions Copyright (c) 1990-1993, Regents of the University of California
  *
  * IDENTIFICATION
@@ -165,8 +165,8 @@ initBloomState(BloomState *state, Relation index)
  * two reasons:
  *
  * 1) In this case random numbers are used for on-disk storage.  Usage of
- *	  PostgreSQL number generator would obstruct it from all possible changes.
- * 2) Changing seed of PostgreSQL random generator would be undesirable side
+ *	  MollyDB number generator would obstruct it from all possible changes.
+ * 2) Changing seed of MollyDB random generator would be undesirable side
  *	  effect.
  */
 static int32 next;

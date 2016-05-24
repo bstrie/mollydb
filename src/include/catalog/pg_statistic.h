@@ -5,7 +5,7 @@
  *	  along with the relation's initial contents.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/catalog/pg_statistic.h
@@ -160,7 +160,7 @@ typedef FormData_pg_statistic *Form_pg_statistic;
 #define Anum_pg_statistic_stavalues5	26
 
 /*
- * Currently, five statistical slot "kinds" are defined by core PostgreSQL,
+ * Currently, five statistical slot "kinds" are defined by core MollyDB,
  * as documented below.  Additional "kinds" will probably appear in
  * future to help cope with non-scalar datatypes.  Also, custom data types
  * can define their own "kind" codes by mutual agreement between a custom
@@ -176,7 +176,7 @@ typedef FormData_pg_statistic *Form_pg_statistic;
 /*
  * The present allocation of "kind" codes is:
  *
- *	1-99:		reserved for assignment by the core PostgreSQL project
+ *	1-99:		reserved for assignment by the core MollyDB project
  *				(values in this range will be documented in this file)
  *	100-199:	reserved for assignment by the PostGIS project
  *				(values to be documented in PostGIS documentation)
@@ -187,7 +187,7 @@ typedef FormData_pg_statistic *Form_pg_statistic;
  * For private use you may choose a "kind" code at random in the range
  * 10000-30000.  However, for code that is to be widely disseminated it is
  * better to obtain a publicly defined "kind" code by request from the
- * PostgreSQL Global Development Group.
+ * MollyDB Global Development Group.
  */
 
 /*

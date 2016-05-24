@@ -3,7 +3,7 @@
  * unaccent.c
  *	  Text search unaccent dictionary
  *
- * Copyright (c) 2009-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2009-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *	  contrib/unaccent/unaccent.c

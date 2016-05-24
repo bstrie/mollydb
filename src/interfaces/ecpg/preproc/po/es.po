@@ -1,7 +1,7 @@
 # Spanish translation file for ecpg
 #
-# Copyright (C) 2009-2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009-2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Emanuel Calvo Franco <postgres.arg@gmail.com>, 2009.
 # Alvaro Herrera <alvherre@alvh.no-ip.org>, 2009-2012
@@ -9,7 +9,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ecpg (PostgreSQL 9.6)\n"
+"Project-Id-Version: ecpg (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:08+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
@@ -59,10 +59,10 @@ msgstr "no se puede establecer el elemento del descriptor «%s»"
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%s es el preprocesador de SQL incrustado para programas en C de PostgreSQL.\n"
+"%s es el preprocesador de SQL incrustado para programas en C de MollyDB.\n"
 "\n"
 
 #: ecpg.c:37
@@ -201,8 +201,8 @@ msgstr "%s: la depuración del analizador (parser, -d) no está disponible)\n"
 
 #: ecpg.c:267
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "%s, el preprocesador de C incrustado de PostgreSQL, versión %d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "%s, el preprocesador de C incrustado de MollyDB, versión %d.%d.%d\n"
 
 #: ecpg.c:269
 #, c-format

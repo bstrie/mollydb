@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * pg_list.h
- *	  interface for PostgreSQL generic linked list package
+ *	  interface for MollyDB generic linked list package
  *
  * This package implements singly-linked homogeneous lists.
  *
@@ -27,7 +27,7 @@
  * always be so; try to be careful to maintain the distinction.)
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/nodes/pg_list.h

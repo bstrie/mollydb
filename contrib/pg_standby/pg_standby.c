@@ -502,7 +502,7 @@ RestoreWALFileForRecovery(void)
 static void
 usage(void)
 {
-	printf("%s allows PostgreSQL warm standby servers to be configured.\n\n", progname);
+	printf("%s allows MollyDB warm standby servers to be configured.\n\n", progname);
 	printf("Usage:\n");
 	printf("  %s [OPTION]... ARCHIVELOCATION NEXTWALFILE XLOGFILEPATH [RESTARTWALFILE]\n", progname);
 	printf("\nOptions:\n");
@@ -560,7 +560,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_standby (PostgreSQL) " PG_VERSION);
+			puts("pg_standby (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -609,7 +609,7 @@ main(int argc, char **argv)
 				/*
 				 * Link feature disabled, possibly permanently. Linking causes
 				 * a problem after recovery ends that is not currently
-				 * resolved by PostgreSQL. 25 Jun 2009
+				 * resolved by MollyDB. 25 Jun 2009
 				 */
 #ifdef NOT_USED
 				restoreCommandType = RESTORE_COMMAND_LINK;

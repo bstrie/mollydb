@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.4\n"
+"Project-Id-Version: MollyDB 9.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-28 12:42+0000\n"
 "PO-Revision-Date: 2014-11-28 16:40+0100\n"
@@ -308,10 +308,10 @@ msgstr "%s: Misslyckades med att skapa kommentar, men databasen skapades: %s"
 #: createdb.c:251
 #, c-format
 msgid ""
-"%s creates a PostgreSQL database.\n"
+"%s creates a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s skapar en databas för PostgreSQL.\n"
+"%s skapar en databas för MollyDB.\n"
 "\n"
 
 #: createdb.c:253
@@ -446,10 +446,10 @@ msgstr "%s: Språkinstallation misslyckades: %s"
 #: createlang.c:235
 #, c-format
 msgid ""
-"%s installs a procedural language into a PostgreSQL database.\n"
+"%s installs a procedural language into a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s installerar ett procedurspråk i en PostgreSQL-databas.\n"
+"%s installerar ett procedurspråk i en MollyDB-databas.\n"
 "\n"
 
 #: createlang.c:237 droplang.c:238
@@ -509,10 +509,10 @@ msgstr "%s: Misslyckades med att skapa ny roll: %s"
 #: createuser.c:347
 #, c-format
 msgid ""
-"%s creates a new PostgreSQL role.\n"
+"%s creates a new MollyDB role.\n"
 "\n"
 msgstr ""
-"%s skapar en ny roll för PostgreSQL.\n"
+"%s skapar en ny roll för MollyDB.\n"
 "\n"
 
 #: createuser.c:349 dropuser.c:157
@@ -645,10 +645,10 @@ msgstr "%s: Borttagning av databas misslyckades: %s"
 #: dropdb.c:154
 #, c-format
 msgid ""
-"%s removes a PostgreSQL database.\n"
+"%s removes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s tar bort en PostgreSQL-databas.\n"
+"%s tar bort en MollyDB-databas.\n"
 "\n"
 
 #: dropdb.c:156
@@ -712,10 +712,10 @@ msgstr "%s: Borttagning av rollen \"%s\" misslyckades: %s"
 #: dropuser.c:155
 #, c-format
 msgid ""
-"%s removes a PostgreSQL role.\n"
+"%s removes a MollyDB role.\n"
 "\n"
 msgstr ""
-"%s tar bort en roll i PostgreSQL.\n"
+"%s tar bort en roll i MollyDB.\n"
 "\n"
 
 #: dropuser.c:160
@@ -777,10 +777,10 @@ msgstr "okänt\n"
 #: pg_isready.c:221
 #, c-format
 msgid ""
-"%s issues a connection check to a PostgreSQL database.\n"
+"%s issues a connection check to a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s utför en förbindelsekontroll mot en PostgreSQL-databas.\n"
+"%s utför en förbindelsekontroll mot en MollyDB-databas.\n"
 "\n"
 
 #: pg_isready.c:223
@@ -888,10 +888,10 @@ msgstr "%s: Misslyckad indexering av systemkatalogerna: %s"
 #: reindexdb.c:341
 #, c-format
 msgid ""
-"%s reindexes a PostgreSQL database.\n"
+"%s reindexes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s indexerar en PostgreSQL-databas på nytt.\n"
+"%s indexerar en MollyDB-databas på nytt.\n"
 "\n"
 
 #: reindexdb.c:345
@@ -978,10 +978,10 @@ msgstr "%s: Utför vacuum i databasen \"%s\".\n"
 #: vacuumdb.c:424
 #, c-format
 msgid ""
-"%s cleans and analyzes a PostgreSQL database.\n"
+"%s cleans and analyzes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s städar och analyserar en PostgreSQL-databas.\n"
+"%s städar och analyserar en MollyDB-databas.\n"
 "\n"
 
 #: vacuumdb.c:428

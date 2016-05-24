@@ -1,7 +1,7 @@
 # PG_CONTROLDATA Translated Messages into the Russian Language (UTF-8)
 #
 # Copyright (c) 2012-2013 Alexander Lakhin <exclusion@gmail.com>
-# Distributed under the same licensing terms as PostgreSQL itself.
+# Distributed under the same licensing terms as MollyDB itself.
 #
 # pgtranslation Id: pg_controldata.po,v 1.3 2011/05/14 01:57:42 alvherre Exp $
 #
@@ -19,7 +19,7 @@
 #   - August 31, 2002: Initial Translation, Serguei A. Mokhov <mokhov@cs.concordia.ca>.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9 current\n"
+"Project-Id-Version: MollyDB 9 current\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-29 22:14+0000\n"
 "PO-Revision-Date: 2015-12-31 14:51+0300\n"
@@ -37,10 +37,10 @@ msgstr ""
 #: pg_controldata.c:35
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s показывает информацию о работе кластера баз PostgreSQL.\n"
+"%s показывает информацию о работе кластера баз MollyDB.\n"
 "\n"
 
 #: pg_controldata.c:36
@@ -183,12 +183,12 @@ msgid ""
 "The byte ordering used to store the pg_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, "
 "and\n"
-"the PostgreSQL installation would be incompatible with this data directory.\n"
+"the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "ПРЕДУПРЕЖДЕНИЕ: возможно несоответствие порядка байт\n"
 "Порядок байт в файле pg_control может не соответствовать используемому\n"
 "этой программой. В этом случае результаты будут неверными и\n"
-"установленный PostgreSQL будет несовместим с этим каталогом данных.\n"
+"установленный MollyDB будет несовместим с этим каталогом данных.\n"
 
 #: pg_controldata.c:230
 #, c-format

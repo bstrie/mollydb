@@ -1,11 +1,11 @@
 ;; -*- mode: emacs-lisp -*-
 
-;; This file contains code to set up Emacs to edit PostgreSQL source
+;; This file contains code to set up Emacs to edit MollyDB source
 ;; code.  Copy these snippets into your .emacs file or equivalent, or
 ;; use load-file to load this file directly.
 ;;
 ;; Note also that there is a .dir-locals.el file at the top of the
-;; PostgreSQL source tree, which contains many of the settings shown
+;; MollyDB source tree, which contains many of the settings shown
 ;; here (but not all, mainly because not all settings are allowed as
 ;; local variables).  So for light editing, you might not need any
 ;; additional Emacs configuration.
@@ -43,7 +43,7 @@
 ;; Style that matches the formatting used by
 ;; src/tools/pgindent/perltidyrc.
 (defun pgsql-perl-style ()
-  "Perl style adjusted for PostgreSQL project"
+  "Perl style adjusted for MollyDB project"
   (interactive)
   (setq perl-brace-imaginary-offset 0)
   (setq perl-brace-offset 0)

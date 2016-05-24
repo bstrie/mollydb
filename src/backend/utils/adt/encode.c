@@ -3,7 +3,7 @@
  * encode.c
  *	  Various data encoding/decoding things.
  *
- * Copyright (c) 2001-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2001-2016, MollyDB Global Development Group
  *
  *
  * IDENTIFICATION

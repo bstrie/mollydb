@@ -1,6 +1,6 @@
 <!--
 doc/src/sgml/ref/drop_access_method.sgml
-PostgreSQL documentation
+MollyDB documentation
 -->
 
 <refentry id="sql-drop-access-method">
@@ -97,7 +97,7 @@ DROP ACCESS METHOD heptree;
 
   <para>
    <command>DROP ACCESS METHOD</command> is a
-   <productname>PostgreSQL</> extension.
+   <productname>MollyDB</> extension.
   </para>
  </refsect1>
 

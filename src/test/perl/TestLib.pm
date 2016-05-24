@@ -1,9 +1,9 @@
 # TestLib, low-level routines and actions regression tests.
 #
 # This module contains a set of routines dedicated to environment setup for
-# a PostgreSQL regression test run and includes some low-level routines
+# a MollyDB regression test run and includes some low-level routines
 # aimed at controlling command execution, logging and test functions. This
-# module should never depend on any other PostgreSQL regression test modules.
+# module should never depend on any other MollyDB regression test modules.
 
 package TestLib;
 

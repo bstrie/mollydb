@@ -2,7 +2,7 @@
  *
  * pgarch.c
  *
- *	PostgreSQL WAL archiver
+ *	MollyDB WAL archiver
  *
  *	All functions relating to archiver are included here
  *
@@ -14,7 +14,7 @@
  *
  *	Initial author: Simon Riggs		simon@2ndquadrant.com
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *

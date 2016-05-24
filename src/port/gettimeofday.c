@@ -30,7 +30,7 @@
 
 #include <sys/time.h>
 
-/* FILETIME of Jan 1 1970 00:00:00, the PostgreSQL epoch */
+/* FILETIME of Jan 1 1970 00:00:00, the MollyDB epoch */
 static const unsigned __int64 epoch = UINT64CONST(116444736000000000);
 
 /*

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 8.1\n"
+"Project-Id-Version: MollyDB 8.1\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2013-09-05 22:56-0400\n"
 "Last-Translator: Erik B. Ottesen <erikbagg@stud.ntnu.no>\n"
@@ -28,11 +28,11 @@ msgstr "ikke bokført\n"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%s gir informasjon om den installerte versjonen av PostgreSQL.\n"
+"%s gir informasjon om den installerte versjonen av MollyDB.\n"
 "\n"
 
 #: pg_config.c:409
@@ -120,50 +120,50 @@ msgstr "  --pgxs                vis plasseringen til kompileringsfilen for tille
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
+"                        MollyDB was built\n"
 msgstr ""
 "  --configure           vis alternativene gitt til «configure»-skriptet når\n"
-"                        PostgreSQL ble bygget\n"
+"                        MollyDB ble bygget\n"
 
 #: pg_config.c:427
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
-msgstr "  --cc                  vis verdien til CC brukt under bygging av PostgreSQL\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
+msgstr "  --cc                  vis verdien til CC brukt under bygging av MollyDB\n"
 
 #: pg_config.c:428
 #, c-format
-msgid "  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cppflags            vis verdien til CPPFLAGS brukt under bygging av PostgreSQL\n"
+msgid "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
+msgstr "  --cppflags            vis verdien til CPPFLAGS brukt under bygging av MollyDB\n"
 
 #: pg_config.c:429
 #, c-format
-msgid "  --cflags              show CFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cflags              vis verdien til CFLAGS brukt under bygging av PostgreSQL\n"
+msgid "  --cflags              show CFLAGS value used when MollyDB was built\n"
+msgstr "  --cflags              vis verdien til CFLAGS brukt under bygging av MollyDB\n"
 
 #: pg_config.c:430
 #, c-format
-msgid "  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --cflags_sl           vis verdien til CFLAGS_SL brukt under bygging av PostgreSQL\n"
+msgid "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --cflags_sl           vis verdien til CFLAGS_SL brukt under bygging av MollyDB\n"
 
 #: pg_config.c:431
 #, c-format
-msgid "  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
-msgstr "  --ldflags             vis verdien til LDFLAGS brukt under bygging av PostgreSQL\n"
+msgid "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
+msgstr "  --ldflags             vis verdien til LDFLAGS brukt under bygging av MollyDB\n"
 
 #: pg_config.c:432
 #, c-format
-msgid "  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --ldflags_sl          vis verdien til LDFLAGS_SL brukt under bygging av PostgreSQL\n"
+msgid "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --ldflags_sl          vis verdien til LDFLAGS_SL brukt under bygging av MollyDB\n"
 
 #: pg_config.c:433
 #, c-format
-msgid "  --libs                show LIBS value used when PostgreSQL was built\n"
-msgstr "  --libs                vis verdien til LIBS brukt under bygging av PostgreSQL\n"
+msgid "  --libs                show LIBS value used when MollyDB was built\n"
+msgstr "  --libs                vis verdien til LIBS brukt under bygging av MollyDB\n"
 
 #: pg_config.c:434
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             vis PostgreSQL-versjonen\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             vis MollyDB-versjonen\n"
 
 #: pg_config.c:435
 #, c-format

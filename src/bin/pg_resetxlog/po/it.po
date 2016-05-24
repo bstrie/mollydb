@@ -1,8 +1,8 @@
 #
 # Translation of pg_resetxlog to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -17,11 +17,11 @@
 #  * Mirko Tebaldi <mirko.tebaldi@libero.it>
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_resetxlog (PostgreSQL) 9.6\n"
+"Project-Id-Version: pg_resetxlog (MollyDB) 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:14+0000\n"
 "PO-Revision-Date: 2016-04-17 20:51+0100\n"
@@ -137,8 +137,8 @@ msgstr "%s non può essere eseguito da \"root\"\n"
 
 #: pg_resetxlog.c:308
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "È obbligatorio eseguire %s come superutente di PostgreSQL.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "È obbligatorio eseguire %s come superutente di MollyDB.\n"
 
 #: pg_resetxlog.c:318
 #, c-format
@@ -523,10 +523,10 @@ msgstr "%s: errore nella scrittura del file \"%s\": %s\n"
 #: pg_resetxlog.c:1167
 #, c-format
 msgid ""
-"%s resets the PostgreSQL transaction log.\n"
+"%s resets the MollyDB transaction log.\n"
 "\n"
 msgstr ""
-"%s riavvia il registro delle transazioni di PostgreSQL.\n"
+"%s riavvia il registro delle transazioni di MollyDB.\n"
 "\n"
 
 #: pg_resetxlog.c:1168

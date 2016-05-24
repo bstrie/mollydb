@@ -2,7 +2,7 @@
  *
  * createuser
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/bin/scripts/createuser.c
@@ -345,7 +345,7 @@ main(int argc, char *argv[])
 static void
 help(const char *progname)
 {
-	printf(_("%s creates a new PostgreSQL role.\n\n"), progname);
+	printf(_("%s creates a new MollyDB role.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]... [ROLENAME]\n"), progname);
 	printf(_("\nOptions:\n"));

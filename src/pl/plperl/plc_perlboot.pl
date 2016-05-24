@@ -3,13 +3,13 @@
 use 5.008001;
 use vars qw(%_SHARED $_TD);
 
-PostgreSQL::InServer::Util::bootstrap();
+MollyDB::InServer::Util::bootstrap();
 
 # globals
 
 sub ::is_array_ref
 {
-	return ref($_[0]) =~ m/^(?:PostgreSQL::InServer::)?ARRAY$/;
+	return ref($_[0]) =~ m/^(?:MollyDB::InServer::)?ARRAY$/;
 }
 
 sub ::encode_array_literal
@@ -50,7 +50,7 @@ sub ::encode_array_constructor
 
 {
 
-	package PostgreSQL::InServer;
+	package MollyDB::InServer;
 	use strict;
 	use warnings;
 
@@ -96,7 +96,7 @@ sub ::encode_array_constructor
 
 {
 
-	package PostgreSQL::InServer::ARRAY;
+	package MollyDB::InServer::ARRAY;
 	use strict;
 	use warnings;
 

@@ -84,7 +84,7 @@ main(int argc, char **argv)
 				dry_run = true;
 				break;
 			case 'V':
-				puts("isolationtester (PostgreSQL) " PG_VERSION);
+				puts("isolationtester (MollyDB) " PG_VERSION);
 				exit(0);
 			default:
 				fprintf(stderr, "Usage: isolationtester [-n] [CONNINFO]\n");

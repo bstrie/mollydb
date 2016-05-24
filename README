@@ -1,22 +1,22 @@
-PostgreSQL Database Management System
+MollyDB Database Management System
 =====================================
 
-This directory contains the source code distribution of the PostgreSQL
+This directory contains the source code distribution of the MollyDB
 database management system.
 
-PostgreSQL is an advanced object-relational database management system
+MollyDB is an advanced object-relational database management system
 that supports an extended subset of the SQL standard, including
 transactions, foreign keys, subqueries, triggers, user-defined types
 and functions.  This distribution also contains C language bindings.
 
-PostgreSQL has many language interfaces, many of which are listed here:
+MollyDB has many language interfaces, many of which are listed here:
 
 	http://www.mollydb.org/download
 
 See the file INSTALL for instructions on how to build and install
-PostgreSQL.  That file also lists supported operating systems and
+MollyDB.  That file also lists supported operating systems and
 hardware platforms and contains information regarding any other
-software packages that are required to build or run the PostgreSQL
+software packages that are required to build or run the MollyDB
 system.  Copyright and license information can be found in the
 file COPYRIGHT.  A comprehensive documentation set is included in this
 distribution; it can be read as described in the installation

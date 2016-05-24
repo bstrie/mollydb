@@ -1319,7 +1319,7 @@ from (values ('a', 'b')) AS v(foo,bar);
  a
 (1 row)
 
--- outer reference in FILTER (PostgreSQL extension)
+-- outer reference in FILTER (MollyDB extension)
 select (select count(*)
         from (values (1)) t0(inner_c))
 from (values (2),(3)) t1(outer_c); -- inner query is aggregation query
@@ -1355,7 +1355,7 @@ from tenk1 o;					-- outer query is aggregation query
  9998
 (1 row)
 
--- subquery in FILTER clause (PostgreSQL extension)
+-- subquery in FILTER clause (MollyDB extension)
 select sum(unique1) FILTER (WHERE
   unique1 IN (SELECT unique1 FROM onek where unique1 < 100)) FROM tenk1;
  sum  

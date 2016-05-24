@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.4.2\n"
+"Project-Id-Version: MollyDB 9.4.2\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-05-23 22:59+0900\n"
 "PO-Revision-Date: 2015-05-27 18:55+0900\n"
@@ -1678,10 +1678,10 @@ msgstr "%s\n"
 #: help.c:67
 #, c-format
 msgid ""
-"psql is the PostgreSQL interactive terminal.\n"
+"psql is the MollyDB interactive terminal.\n"
 "\n"
 msgstr ""
-"psql は PostgreSQL の会話型ターミナルです。\n"
+"psql は MollyDB の会話型ターミナルです。\n"
 "\n"
 
 #: help.c:68
@@ -1930,13 +1930,13 @@ msgstr ""
 msgid ""
 "\n"
 "For more information, type \"\\?\" (for internal commands) or \"\\help\" (for SQL\n"
-"commands) from within psql, or consult the psql section in the PostgreSQL\n"
+"commands) from within psql, or consult the psql section in the MollyDB\n"
 "documentation.\n"
 "\n"
 msgstr ""
 "\n"
 "詳細は psql の中で \"\\?\" (内部コマンドの場合) または \"\\help\"\n"
-"(SQL コマンドの場合) をタイプするか、PostgreSQL ドキュメントの psql の\n"
+"(SQL コマンドの場合) をタイプするか、MollyDB ドキュメントの psql の\n"
 "セクションを参照のこと。\n"
 "\n"
 
@@ -1952,8 +1952,8 @@ msgstr "一般\n"
 
 #: help.c:158
 #, c-format
-msgid "  \\copyright             show PostgreSQL usage and distribution terms\n"
-msgstr "  \\copyright             PostgreSQL の使い方と配布条件を表示\n"
+msgid "  \\copyright             show MollyDB usage and distribution terms\n"
+msgstr "  \\copyright             MollyDB の使い方と配布条件を表示\n"
 
 #: help.c:159
 #, c-format
@@ -2483,8 +2483,8 @@ msgid "Use \"\\q\" to leave %s.\n"
 msgstr "\"\\q\" で %s を抜けます。\n"
 
 #: mainloop.c:189
-msgid "You are using psql, the command-line interface to PostgreSQL."
-msgstr "PostgreSQL へのコマンドライン・インターフェース、psql へようこそ。"
+msgid "You are using psql, the command-line interface to MollyDB."
+msgstr "MollyDB へのコマンドライン・インターフェース、psql へようこそ。"
 
 #: mainloop.c:190
 #, c-format

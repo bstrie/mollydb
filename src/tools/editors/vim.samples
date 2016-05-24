@@ -1,6 +1,6 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
-" These settings are appropriate for editing PostgreSQL code with vim
+" These settings are appropriate for editing MollyDB code with vim
 "
 " You would copy this into your .vimrc or equivalent
 "

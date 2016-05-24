@@ -1,8 +1,8 @@
 #
 # Translation of pgscripts to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -17,7 +17,7 @@
 #  * Secondo traduttore: Mirko Tebaldi <mirko.tebaldi@libero.it>, 2004.
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 # Italian message translation file for pgscripts
 # Primo traduttore: Fabrizio Mazzoni <veramente@libero.it>, 2003.
@@ -25,7 +25,7 @@
 # Attuale traduttore: Emanuele Zamprogno <ez@medicinaopen.info>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: pgscripts (PostgreSQL) 9.6\n"
+"Project-Id-Version: pgscripts (MollyDB) 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:14+0000\n"
 "PO-Revision-Date: 2016-04-17 20:55+0100\n"
@@ -358,10 +358,10 @@ msgstr "%s: creazione del commento fallita (il database è stato creato): %s"
 #: createdb.c:251
 #, c-format
 msgid ""
-"%s creates a PostgreSQL database.\n"
+"%s creates a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s crea un database PostgreSQL.\n"
+"%s crea un database MollyDB.\n"
 "\n"
 
 #: createdb.c:253
@@ -497,10 +497,10 @@ msgstr "%s: installazione del linguaggio fallita: %s"
 #: createlang.c:235
 #, c-format
 msgid ""
-"%s installs a procedural language into a PostgreSQL database.\n"
+"%s installs a procedural language into a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s installa un linguaggio procedurale in un database PostgreSQL.\n"
+"%s installa un linguaggio procedurale in un database MollyDB.\n"
 "\n"
 
 #: createlang.c:237 droplang.c:238
@@ -560,10 +560,10 @@ msgstr "%s: creazione del nuovo ruolo fallita: %s"
 #: createuser.c:348
 #, c-format
 msgid ""
-"%s creates a new PostgreSQL role.\n"
+"%s creates a new MollyDB role.\n"
 "\n"
 msgstr ""
-"%s crea un nuovo ruolo PostgreSQL.\n"
+"%s crea un nuovo ruolo MollyDB.\n"
 "\n"
 
 #: createuser.c:350 dropuser.c:157
@@ -698,10 +698,10 @@ msgstr "%s: eliminazione database fallita: %s"
 #: dropdb.c:154
 #, c-format
 msgid ""
-"%s removes a PostgreSQL database.\n"
+"%s removes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s elimina un database PostgreSQL.\n"
+"%s elimina un database MollyDB.\n"
 "\n"
 
 #: dropdb.c:156
@@ -765,10 +765,10 @@ msgstr "%s: eliminazione del ruolo \"%s\" fallita: %s"
 #: dropuser.c:155
 #, c-format
 msgid ""
-"%s removes a PostgreSQL role.\n"
+"%s removes a MollyDB role.\n"
 "\n"
 msgstr ""
-"%s elimina un ruolo PostgreSQL.\n"
+"%s elimina un ruolo MollyDB.\n"
 "\n"
 
 #: dropuser.c:160
@@ -830,10 +830,10 @@ msgstr "sconosciuto\n"
 #: pg_isready.c:221
 #, c-format
 msgid ""
-"%s issues a connection check to a PostgreSQL database.\n"
+"%s issues a connection check to a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s effettua una connessione di controllo ad un database PostgreSQL.\n"
+"%s effettua una connessione di controllo ad un database MollyDB.\n"
 "\n"
 
 #: pg_isready.c:223
@@ -954,10 +954,10 @@ msgstr "%s: la re-indicizzazione dei cataloghi di sistema è fallita: %s"
 #: reindexdb.c:392
 #, c-format
 msgid ""
-"%s reindexes a PostgreSQL database.\n"
+"%s reindexes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s re-indicizza un database PostgreSQL.\n"
+"%s re-indicizza un database MollyDB.\n"
 "\n"
 
 #: reindexdb.c:396
@@ -1064,10 +1064,10 @@ msgstr "%s: socket non valido: %s"
 #: vacuumdb.c:938
 #, c-format
 msgid ""
-"%s cleans and analyzes a PostgreSQL database.\n"
+"%s cleans and analyzes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s pulisce ed analizza un database PostgreSQL.\n"
+"%s pulisce ed analizza un database MollyDB.\n"
 "\n"
 
 #: vacuumdb.c:942

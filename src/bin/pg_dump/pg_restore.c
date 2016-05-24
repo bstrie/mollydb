@@ -16,7 +16,7 @@
  *		  operators
  *		  ACL - grant/revoke
  *
- * the output script is SQL that is understood by PostgreSQL
+ * the output script is SQL that is understood by MollyDB
  *
  * Basic process in a restore operation is:
  *
@@ -143,7 +143,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_restore (PostgreSQL) " PG_VERSION);
+			puts("pg_restore (MollyDB) " PG_VERSION);
 			exit_nicely(0);
 		}
 	}
@@ -433,7 +433,7 @@ main(int argc, char **argv)
 static void
 usage(const char *progname)
 {
-	printf(_("%s restores a PostgreSQL database from an archive created by pg_dump.\n\n"), progname);
+	printf(_("%s restores a MollyDB database from an archive created by pg_dump.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]... [FILE]\n"), progname);
 

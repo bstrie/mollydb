@@ -4,7 +4,7 @@
  *		Common code for control data file output.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -99,7 +99,7 @@ get_controlfile(char *DataDir, const char *progname)
 		printf(_("WARNING: possible byte ordering mismatch\n"
 				 "The byte ordering used to store the pg_control file might not match the one\n"
 				 "used by this program.  In that case the results below would be incorrect, and\n"
-				 "the PostgreSQL installation would be incompatible with this data directory.\n"));
+				 "the MollyDB installation would be incompatible with this data directory.\n"));
 #endif
 
 	return ControlFile;

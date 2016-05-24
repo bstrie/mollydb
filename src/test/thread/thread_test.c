@@ -3,7 +3,7 @@
  * test_thread_funcs.c
  *		libc thread test program
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *	src/test/thread/thread_test.c
@@ -67,7 +67,7 @@ int			sigwait(const sigset_t *set, int *sig);
 int
 main(int argc, char *argv[])
 {
-	fprintf(stderr, "This PostgreSQL build does not support threads.\n");
+	fprintf(stderr, "This MollyDB build does not support threads.\n");
 	fprintf(stderr, "Perhaps rerun 'configure' using '--enable-thread-safety'.\n");
 	return 1;
 }

@@ -1,6 +1,6 @@
 # Russian message translation file for ecpg
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Alexander Lakhin <exclusion@gmail.com>, 2012.
 #
 # ChangeLog:
@@ -9,7 +9,7 @@
 #   - February 22, 2012: Complete translation for 9.0, Alexander Lakhin <exclusion@gmail.com>.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.2\n"
+"Project-Id-Version: MollyDB 9.2\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-08-02 06:37+0000\n"
 "PO-Revision-Date: 2014-08-14 22:40+0400\n"
@@ -61,10 +61,10 @@ msgstr "установить поле \"%s\" в дескрипторе нель�
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%s - препроцессор SQL-вставок в программах на C для PostgreSQL.\n"
+"%s - препроцессор SQL-вставок в программах на C для MollyDB.\n"
 "\n"
 
 #: ecpg.c:37
@@ -203,9 +203,9 @@ msgstr "%s: отладочные сообщения при разборе (-d) �
 
 #: ecpg.c:267
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
 msgstr ""
-"%s, препроцессор внедрённого в С языка СУБД PostgreSQL, версия %d.%d.%d\n"
+"%s, препроцессор внедрённого в С языка СУБД MollyDB, версия %d.%d.%d\n"
 
 #: ecpg.c:269
 #, c-format

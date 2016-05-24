@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------
  *
  * pg_rewind.c
- *	  Synchronizes a PostgreSQL data directory to a new timeline
+ *	  Synchronizes a MollyDB data directory to a new timeline
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  *-------------------------------------------------------------------------
  */
@@ -61,7 +61,7 @@ int targetNentries;
 static void
 usage(const char *progname)
 {
-	printf(_("%s resynchronizes a PostgreSQL cluster with another copy of the cluster.\n\n"), progname);
+	printf(_("%s resynchronizes a MollyDB cluster with another copy of the cluster.\n\n"), progname);
 	printf(_("Usage:\n  %s [OPTION]...\n\n"), progname);
 	printf(_("Options:\n"));
 	printf(_("  -D, --target-pgdata=DIRECTORY  existing data directory to modify\n"));
@@ -117,7 +117,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_rewind (PostgreSQL) " PG_VERSION);
+			puts("pg_rewind (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -187,7 +187,7 @@ main(int argc, char **argv)
 	if (geteuid() == 0)
 	{
 		fprintf(stderr, _("cannot be executed by \"root\"\n"));
-		fprintf(stderr, _("You must run %s as the PostgreSQL superuser.\n"),
+		fprintf(stderr, _("You must run %s as the MollyDB superuser.\n"),
 				progname);
 	}
 #endif
@@ -676,7 +676,7 @@ syncTargetDirectory(const char *argv0)
 
 	/* locate initdb binary */
 	if ((ret = find_other_exec(argv0, "initdb",
-							   "initdb (PostgreSQL) " PG_VERSION "\n",
+							   "initdb (MollyDB) " PG_VERSION "\n",
 							   exec_path)) < 0)
 	{
 		char        full_path[MAXPGPATH];

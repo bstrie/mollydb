@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * clog.c
- *		PostgreSQL transaction-commit-log manager
+ *		MollyDB transaction-commit-log manager
  *
  * This module replaces the old "pg_log" access code, which treated pg_log
  * essentially like a relation, in that it went through the regular buffer
@@ -23,7 +23,7 @@
  * for aborts (whether sync or async), since the post-crash assumption would
  * be that such transactions failed anyway.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/backend/access/transam/clog.c

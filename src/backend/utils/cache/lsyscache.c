@@ -3,7 +3,7 @@
  * lsyscache.c
  *	  Convenience routines for common queries in the system catalog cache.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
@@ -2013,7 +2013,7 @@ get_typlenbyvalalign(Oid typid, int16 *typlen, bool *typbyval,
  * I/O calls and not with actual subscripting operations!  (But see
  * bootstrap.c's boot_get_type_io_data() if you need to change this.)
  *
- * As of PostgreSQL 8.1, output functions receive only the value itself
+ * As of MollyDB 8.1, output functions receive only the value itself
  * and not any auxiliary parameters, so the name of this routine is now
  * a bit of a misnomer ... it should be getTypeInputParam.
  */

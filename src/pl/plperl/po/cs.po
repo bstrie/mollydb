@@ -1,12 +1,12 @@
 # Czech message translation file for plperl
-# Copyright (C) 2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Tomáš Vondra <tv@fuzzy.cz>, 2012, 2013.
 
 msgid ""
 msgstr ""
-"Project-Id-Version: plperl-cs (PostgreSQL 9.3)\n"
+"Project-Id-Version: plperl-cs (MollyDB 9.3)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2012-09-18 16:39+0000\n"
 "PO-Revision-Date: 2012-MO-DA HO:MI+ZONE\n"
@@ -45,8 +45,8 @@ msgstr "%s"
 
 #: plperl.c:648
 #, c-format
-msgid "while executing PostgreSQL::InServer::SPI::bootstrap"
-msgstr "během spouštění PostgreSQL::InServer::SPI::bootstrap"
+msgid "while executing MollyDB::InServer::SPI::bootstrap"
+msgstr "během spouštění MollyDB::InServer::SPI::bootstrap"
 
 #: plperl.c:822
 #, c-format

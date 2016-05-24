@@ -3,7 +3,7 @@
  * bufmgr.c
  *	  buffer manager interface routines
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -2390,7 +2390,7 @@ SyncOneBuffer(int buf_id, bool skip_recently_used, WritebackContext *wb_context)
 /*
  *		AtEOXact_Buffers - clean up at end of transaction.
  *
- *		As of PostgreSQL 8.0, buffer pins should get released by the
+ *		As of MollyDB 8.0, buffer pins should get released by the
  *		ResourceOwner mechanism.  This routine is just a debugging
  *		cross-check that no pins remain.
  */
@@ -2465,7 +2465,7 @@ AtProcExit_Buffers(int code, Datum arg)
 /*
  *		CheckForBufferLeaks - ensure this backend holds no buffer pins
  *
- *		As of PostgreSQL 8.0, buffer pins should get released by the
+ *		As of MollyDB 8.0, buffer pins should get released by the
  *		ResourceOwner mechanism.  This routine is just a debugging
  *		cross-check that no pins remain.
  */

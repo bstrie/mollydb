@@ -7,12 +7,12 @@
 # Stéphane Schildknecht <stephane.schildknecht@dalibo.com>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-08 21:13+0000\n"
 "PO-Revision-Date: 2016-05-09 10:19+0200\n"
 "Last-Translator: Guillaume Lelarge <guillaume@lelarge.info>\n"
-"Language-Team: PostgreSQLfr <pgsql-fr-generale@mollydb.org>\n"
+"Language-Team: MollyDBfr <pgsql-fr-generale@mollydb.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
@@ -66,11 +66,11 @@ msgstr "échec de pclose : %s"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%s fournit des informations sur la version installée de PostgreSQL.\n"
+"%s fournit des informations sur la version installée de MollyDB.\n"
 "\n"
 
 #: pg_config.c:75
@@ -179,71 +179,71 @@ msgstr "  --pgxs                affiche l'emplacement du makefile des extensions
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
+"                        MollyDB was built\n"
 msgstr ""
 "  --configure           affiche les options passées au script « configure »\n"
-"                        à la construction de PostgreSQL\n"
+"                        à la construction de MollyDB\n"
 
 #: pg_config.c:94
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
 msgstr ""
 "  --cc                  affiche la valeur de CC utilisée lors de la\n"
-"                        construction de PostgreSQL\n"
+"                        construction de MollyDB\n"
 
 #: pg_config.c:95
 #, c-format
-msgid "  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
+msgid "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
 msgstr ""
 "  --cppflags            affiche la valeur de CPPFLAGS utilisée lors de la\n"
-"                        construction de PostgreSQL\n"
+"                        construction de MollyDB\n"
 
 #: pg_config.c:96
 #, c-format
-msgid "  --cflags              show CFLAGS value used when PostgreSQL was built\n"
+msgid "  --cflags              show CFLAGS value used when MollyDB was built\n"
 msgstr ""
 "  --cflags              affiche la valeur de CFLAGS utilisée lors de la\n"
-"                        construction de PostgreSQL\n"
+"                        construction de MollyDB\n"
 
 #: pg_config.c:97
 #, c-format
-msgid "  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
+msgid "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
 msgstr ""
 "  --cflags_sl           affiche la valeur de CFLAGS_SL utilisée lors de la\n"
-"                        construction de PostgreSQL\n"
+"                        construction de MollyDB\n"
 
 #: pg_config.c:98
 #, c-format
-msgid "  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
+msgid "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
 msgstr ""
 "  --ldflags             affiche la valeur de LDFLAGS utilisée à lors de la\n"
-"                        construction de PostgreSQL\n"
+"                        construction de MollyDB\n"
 
 #: pg_config.c:99
 #, c-format
-msgid "  --ldflags_ex          show LDFLAGS_EX value used when PostgreSQL was built\n"
+msgid "  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was built\n"
 msgstr ""
 "  --ldflags_ex          affiche la valeur de LDFLAGS_EX  utilisée lors de la\n"
-"                        construction de PostgreSQL\n"
+"                        construction de MollyDB\n"
 
 #: pg_config.c:100
 #, c-format
-msgid "  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was built\n"
+msgid "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was built\n"
 msgstr ""
 "  --ldflags_sl          affiche la valeur de LDFLAGS_SL utilisée lors de la\n"
-"                        construction de PostgreSQL\n"
+"                        construction de MollyDB\n"
 
 #: pg_config.c:101
 #, c-format
-msgid "  --libs                show LIBS value used when PostgreSQL was built\n"
+msgid "  --libs                show LIBS value used when MollyDB was built\n"
 msgstr ""
 "  --libs                affiche la valeur de LIBS utilisée lors de la\n"
-"                        construction de PostgreSQL\n"
+"                        construction de MollyDB\n"
 
 #: pg_config.c:102
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             affiche la version de PostgreSQL\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             affiche la version de MollyDB\n"
 
 #: pg_config.c:103
 #, c-format

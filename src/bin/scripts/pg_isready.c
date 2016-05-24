@@ -1,8 +1,8 @@
 /*-------------------------------------------------------------------------
  *
- * pg_isready --- checks the status of the PostgreSQL server
+ * pg_isready --- checks the status of the MollyDB server
  *
- * Copyright (c) 2013-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2013-2016, MollyDB Global Development Group
  *
  * src/bin/scripts/pg_isready.c
  *
@@ -218,7 +218,7 @@ main(int argc, char **argv)
 static void
 help(const char *progname)
 {
-	printf(_("%s issues a connection check to a PostgreSQL database.\n\n"), progname);
+	printf(_("%s issues a connection check to a MollyDB database.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]...\n"), progname);
 

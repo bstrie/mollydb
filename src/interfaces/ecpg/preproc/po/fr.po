@@ -7,12 +7,12 @@
 # Stéphane Schildknecht <stephane.schildknecht@dalibo.com>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-05-17 11:07+0000\n"
 "PO-Revision-Date: 2014-05-17 15:23+0100\n"
 "Last-Translator: Guillaume Lelarge <guillaume@lelarge.info>\n"
-"Language-Team: PostgreSQLfr <pgsql-fr-generale@mollydb.org>\n"
+"Language-Team: MollyDBfr <pgsql-fr-generale@mollydb.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
@@ -58,10 +58,10 @@ msgstr "l'élément du descripteur « %s » ne peut pas être initialisé"
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%s est le préprocesseur SQL embarqué de PostgreSQL pour les programmes C.\n"
+"%s est le préprocesseur SQL embarqué de MollyDB pour les programmes C.\n"
 "\n"
 
 #: ecpg.c:37
@@ -206,8 +206,8 @@ msgstr "%s : support de débogage de l'analyseur (-d) non disponible\n"
 
 #: ecpg.c:267
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "%s, le préprocesseur C embarqué de PostgreSQL, version %d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "%s, le préprocesseur C embarqué de MollyDB, version %d.%d.%d\n"
 
 #: ecpg.c:269
 #, c-format

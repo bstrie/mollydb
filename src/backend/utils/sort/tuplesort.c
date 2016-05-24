@@ -32,9 +32,9 @@
  * heap.  When the run number at the top of the heap changes, we know that
  * no more records of the prior run are left in the heap.  Note that there
  * are in practice only ever two distinct run numbers, due to the greatly
- * reduced use of replacement selection in PostgreSQL 9.6.
+ * reduced use of replacement selection in MollyDB 9.6.
  *
- * In PostgreSQL 9.6, a heap (based on Knuth's Algorithm H, with some small
+ * In MollyDB 9.6, a heap (based on Knuth's Algorithm H, with some small
  * customizations) is only used with the aim of producing just one run,
  * thereby avoiding all merging.  Only the first run can use replacement
  * selection, which is why there are now only two possible valid run
@@ -111,7 +111,7 @@
  * above.  Nonetheless, with large workMem we can have many tapes.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION

@@ -5,10 +5,10 @@
  *
  * This file includes the prototypes for functions used to copy files from
  * one data directory to another. The source to copy from can be a local
- * directory (copy method), or a remote PostgreSQL server (libpq fetch
+ * directory (copy method), or a remote MollyDB server (libpq fetch
  * method).
  *
- * Copyright (c) 2013-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2013-2016, MollyDB Global Development Group
  *
  *-------------------------------------------------------------------------
  */

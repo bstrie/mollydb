@@ -1,11 +1,11 @@
 /*
  * pgbench.c
  *
- * A simple benchmark program for PostgreSQL
+ * A simple benchmark program for MollyDB
  * Originally written by Tatsuo Ishii and enhanced by many contributors.
  *
  * src/bin/pgbench/pgbench.c
- * Copyright (c) 2000-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2000-2016, MollyDB Global Development Group
  * ALL RIGHTS RESERVED;
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -397,7 +397,7 @@ static const PsqlScanCallbacks pgbench_callbacks = {
 static void
 usage(void)
 {
-	printf("%s is a benchmarking tool for PostgreSQL.\n\n"
+	printf("%s is a benchmarking tool for MollyDB.\n\n"
 		   "Usage:\n"
 		   "  %s [OPTION]... [DBNAME]\n"
 		   "\nInitialization options:\n"
@@ -3431,7 +3431,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pgbench (PostgreSQL) " PG_VERSION);
+			puts("pgbench (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

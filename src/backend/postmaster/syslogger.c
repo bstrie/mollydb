@@ -13,7 +13,7 @@
  *
  * Author: Andreas Pflug <pgadmin@pse-consulting.de>
  *
- * Copyright (c) 2004-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2004-2016, MollyDB Global Development Group
  *
  *
  * IDENTIFICATION
@@ -770,7 +770,7 @@ syslogger_parseArgs(int argc, char *argv[])
  * . messages from different backends being interleaved (messages garbled).
  *
  * Any non-protocol messages are written out directly. These should only come
- * from non-PostgreSQL sources, however (e.g. third party libraries writing to
+ * from non-MollyDB sources, however (e.g. third party libraries writing to
  * stderr).
  *
  * logbuffer is the data input buffer, and *bytes_in_logbuffer is the number

@@ -1,9 +1,9 @@
-# Korean message translation file for PostgreSQL pg_resetxlog
+# Korean message translation file for MollyDB pg_resetxlog
 # Ioseph Kim <ioseph@uri.sarang.net>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-01-27 10:03+0900\n"
 "PO-Revision-Date: 2016-01-29 13:45+0900\n"
@@ -119,8 +119,8 @@ msgstr "%s: 이 프로그램은 \"root\"로 실행될 수 없음\n"
 
 #: pg_resetxlog.c:308
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "PostgreSQL superuser로 %s 프로그램을 실행하십시오.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "MollyDB superuser로 %s 프로그램을 실행하십시오.\n"
 
 #: pg_resetxlog.c:318
 #, c-format
@@ -511,10 +511,10 @@ msgstr "%s: \"%s\" 파일 쓸 수 없음: %s\n"
 #: pg_resetxlog.c:1167
 #, c-format
 msgid ""
-"%s resets the PostgreSQL transaction log.\n"
+"%s resets the MollyDB transaction log.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 트랜잭션 로그를 다시 설정합니다.\n"
+"%s 프로그램은 MollyDB 트랜잭션 로그를 다시 설정합니다.\n"
 "\n"
 
 #: pg_resetxlog.c:1168

@@ -2,14 +2,14 @@
 #
 # Makefile for src/bin/pg_dump
 #
-# Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+# Portions Copyright (c) 1996-2016, MollyDB Global Development Group
 # Portions Copyright (c) 1994, Regents of the University of California
 #
 # src/bin/pg_dump/Makefile
 #
 #-------------------------------------------------------------------------
 
-PGFILEDESC = "pg_dump/pg_restore/pg_dumpall - backup and restore PostgreSQL databases"
+PGFILEDESC = "pg_dump/pg_restore/pg_dumpall - backup and restore MollyDB databases"
 PGAPPICON=win32
 
 subdir = src/bin/pg_dump

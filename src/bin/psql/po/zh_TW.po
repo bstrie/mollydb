@@ -1,16 +1,16 @@
 # Traditional Chinese message translation file for psql
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # 2004-12-13 Zhenbang Wei <forth@zbwei.net>
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.1\n"
+"Project-Id-Version: MollyDB 9.1\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2011-05-16 04:41+0000\n"
 "PO-Revision-Date: 2013-09-03 23:23-0400\n"
 "Last-Translator: Zhenbang Wei <znbang@gmail.com>\n"
-"Language-Team: The PostgreSQL Global Development Group <Kuo.ChaoYi@gmail.com>\n"
+"Language-Team: The MollyDB Global Development Group <Kuo.ChaoYi@gmail.com>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -677,10 +677,10 @@ msgstr "無法取得目前用戶名稱: %s\n"
 #: help.c:82
 #, c-format
 msgid ""
-"psql is the PostgreSQL interactive terminal.\n"
+"psql is the MollyDB interactive terminal.\n"
 "\n"
 msgstr ""
-"psql 是 PostgreSQL 文字模式介面。\n"
+"psql 是 MollyDB 文字模式介面。\n"
 "\n"
 
 #: help.c:83
@@ -940,13 +940,13 @@ msgstr "  -W, --password           強制詢問密碼(應該會自動詢問)\n"
 msgid ""
 "\n"
 "For more information, type \"\\?\" (for internal commands) or \"\\help\" (for SQL\n"
-"commands) from within psql, or consult the psql section in the PostgreSQL\n"
+"commands) from within psql, or consult the psql section in the MollyDB\n"
 "documentation.\n"
 "\n"
 msgstr ""
 "\n"
 "如需詳細資訊，請從 psql 中輸入 \"\\?\"(用於內部命令) 或 \"\\help\" (用於 SQL\n"
-"命令)，或請參閱 PostgreSQL\n"
+"命令)，或請參閱 MollyDB\n"
 "文件的 psql 章節。\n"
 "\n"
 
@@ -964,8 +964,8 @@ msgstr "一般性\n"
 # help.c:179
 #: help.c:166
 #, c-format
-msgid "  \\copyright             show PostgreSQL usage and distribution terms\n"
-msgstr "  \\copyright             顯示 PostgreSQL 的使用和發行條款\n"
+msgid "  \\copyright             show MollyDB usage and distribution terms\n"
+msgstr "  \\copyright             顯示 MollyDB 的使用和發行條款\n"
 
 # help.c:194
 #: help.c:167
@@ -1589,8 +1589,8 @@ msgid "Use \"\\q\" to leave %s.\n"
 msgstr "使用 \"\\q\" 離開 %s。\n"
 
 #: mainloop.c:189
-msgid "You are using psql, the command-line interface to PostgreSQL."
-msgstr "您正在使用 PostgreSQL 指令列介面 psql。"
+msgid "You are using psql, the command-line interface to MollyDB."
+msgstr "您正在使用 MollyDB 指令列介面 psql。"
 
 # startup.c:292
 #: mainloop.c:190

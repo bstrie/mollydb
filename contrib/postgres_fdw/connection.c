@@ -3,7 +3,7 @@
  * connection.c
  *		  Connection management functions for postgres_fdw
  *
- * Portions Copyright (c) 2012-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *		  contrib/postgres_fdw/connection.c
@@ -76,7 +76,7 @@ static void pgfdw_subxact_callback(SubXactEvent event,
 
 
 /*
- * Get a PGconn which can be used to execute queries on the remote PostgreSQL
+ * Get a PGconn which can be used to execute queries on the remote MollyDB
  * server with the user's authorization.  A new connection is established
  * if we don't already have a suitable one, and a transaction is opened at
  * the right subtransaction nesting depth if we didn't do that already.

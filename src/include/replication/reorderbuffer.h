@@ -1,8 +1,8 @@
 /*
  * reorderbuffer.h
- *	  PostgreSQL logical replay/reorder buffer management.
+ *	  MollyDB logical replay/reorder buffer management.
  *
- * Copyright (c) 2012-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  * src/include/replication/reorderbuffer.h
  */

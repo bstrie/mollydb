@@ -1,12 +1,12 @@
 # Brazilian Portuguese message translation file for ecpg
-# Copyright (C) 2009 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Fernando Ike de Oliveira <fike@midstorm.org>, 2009.
 # Euler Taveira de Oliveira <euler@timbira.com>, 2010-2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-09-17 22:32-0300\n"
 "PO-Revision-Date: 2009-02-09 12:59-0200\n"
@@ -56,7 +56,7 @@ msgstr "item do descritor \"%s\" não pode ser definido"
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
 "%s é o pré-processador SQL embutido do PostgeSQL para programas em C.\n"
@@ -197,8 +197,8 @@ msgstr "%s: suporte a depuração do analisador (-d) não está disponível\n"
 
 #: ecpg.c:267
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "%s, the pré-processador C embutido do PostgreSQL, versão %d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "%s, the pré-processador C embutido do MollyDB, versão %d.%d.%d\n"
 
 #: ecpg.c:269
 #, c-format

@@ -3,7 +3,7 @@
  * tablespace.c
  *	  Commands to manipulate table spaces
  *
- * Tablespaces in PostgreSQL are designed to allow users to determine
+ * Tablespaces in MollyDB are designed to allow users to determine
  * where the data file(s) for a given database object reside on the file
  * system.
  *
@@ -35,7 +35,7 @@
  * and munge the system catalogs of the new database.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -499,7 +499,7 @@ DropTableSpace(DropTableSpaceStmt *stmt)
 		 * XXX On Windows, an unlinked file persists in the directory listing
 		 * until no process retains an open handle for the file.  The DDL
 		 * commands that schedule files for unlink send invalidation messages
-		 * directing other PostgreSQL processes to close the files.  DROP
+		 * directing other MollyDB processes to close the files.  DROP
 		 * TABLESPACE should not give up on the tablespace becoming empty
 		 * until all relevant invalidation processing is complete.
 		 */

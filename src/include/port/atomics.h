@@ -24,10 +24,10 @@
  * Use higher level functionality (lwlocks, spinlocks, heavyweight locks)
  * whenever possible. Writing correct code using these facilities is hard.
  *
- * For an introduction to using memory barriers within the PostgreSQL backend,
+ * For an introduction to using memory barriers within the MollyDB backend,
  * see src/backend/storage/lmgr/README.barrier
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/port/atomics.h

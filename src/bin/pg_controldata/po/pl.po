@@ -1,11 +1,11 @@
 # PG_CONTROLDATA Translated Messages into the Polish Language
 # Copyright (c) 2005 toczek, xxxtoczekxxx@wp.pl
-# Distributed under the same licensing terms as PostgreSQL itself.
+# Distributed under the same licensing terms as MollyDB itself.
 # Begina Felicysym <begina.felicysym@wp.eu>, 2011, 2012, 2013.
 # grzegorz <begina.felicysym@wp.eu>, 2014, 2015, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_controldata (PostgreSQL 9.1)\n"
+"Project-Id-Version: pg_controldata (MollyDB 9.1)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-01-05 23:13+0000\n"
 "PO-Revision-Date: 2016-01-06 09:13+0200\n"
@@ -22,10 +22,10 @@ msgstr ""
 #: pg_controldata.c:35
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s wyświetla informacje kontrolne klastra bazy danych PostgreSQL.\n"
+"%s wyświetla informacje kontrolne klastra bazy danych MollyDB.\n"
 "\n"
 
 #: pg_controldata.c:36
@@ -165,12 +165,12 @@ msgid ""
 "WARNING: possible byte ordering mismatch\n"
 "The byte ordering used to store the pg_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, and\n"
-"the PostgreSQL installation would be incompatible with this data directory.\n"
+"the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "OSTRZEŻENIE: możliwe niepoprawna kolejność bajtów\n"
 "Kolejność bajtów używana do przechowywania plików pg_control może nie pasować\n"
 "do używanej przez ten program.  W tym przypadku wynik poniżej jest błędny,\n"
-"a instalacja PostgreSQL byłaby niezgodna z tym folderem danych.\n"
+"a instalacja MollyDB byłaby niezgodna z tym folderem danych.\n"
 
 #: pg_controldata.c:230
 #, c-format

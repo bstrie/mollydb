@@ -4,7 +4,7 @@
  *	  functions for OpenSSL support in the backend.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -933,7 +933,7 @@ verify_cb(int ok, X509_STORE_CTX *ctx)
 
 /*
  *	This callback is used to copy SSL information messages
- *	into the PostgreSQL log.
+ *	into the MollyDB log.
  */
 static void
 info_cb(const SSL *ssl, int type, int args)

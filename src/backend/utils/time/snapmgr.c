@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
  * snapmgr.c
- *		PostgreSQL snapshot manager
+ *		MollyDB snapshot manager
  *
  * We keep track of snapshots in two ways: those "registered" by resowner.c,
  * and the "active snapshot" stack.  All snapshots in either of them live in
@@ -31,7 +31,7 @@
  * for too long.)
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION

@@ -6,7 +6,7 @@
  * See src/backend/utils/misc/README for more information.
  *
  *
- * Copyright (c) 2000-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2000-2016, MollyDB Global Development Group
  * Written by Peter Eisentraut <peter_e@gmx.net>.
  *
  * IDENTIFICATION
@@ -451,7 +451,7 @@ int			tcp_keepalives_interval;
 int			tcp_keepalives_count;
 
 /*
- * SSL renegotiation was been removed in PostgreSQL 9.5, but we tolerate it
+ * SSL renegotiation was been removed in MollyDB 9.5, but we tolerate it
  * being set to zero (meaning never renegotiate) for backward compatibility.
  * This avoids breaking compatibility with clients that have never supported
  * renegotiation and therefore always try to zero it.
@@ -627,7 +627,7 @@ const char *const config_group_names[] =
 	/* COMPAT_OPTIONS */
 	gettext_noop("Version and Platform Compatibility"),
 	/* COMPAT_OPTIONS_PREVIOUS */
-	gettext_noop("Version and Platform Compatibility / Previous PostgreSQL Versions"),
+	gettext_noop("Version and Platform Compatibility / Previous MollyDB Versions"),
 	/* COMPAT_OPTIONS_CLIENT */
 	gettext_noop("Version and Platform Compatibility / Other Platforms and Clients"),
 	/* ERROR_HANDLING */
@@ -959,7 +959,7 @@ static struct config_bool ConfigureNamesBool[] =
 	{
 		{"ignore_checksum_failure", PGC_SUSET, DEVELOPER_OPTIONS,
 			gettext_noop("Continues processing after a checksum failure."),
-			gettext_noop("Detection of a checksum failure normally causes PostgreSQL to "
+			gettext_noop("Detection of a checksum failure normally causes MollyDB to "
 				"report an error, aborting the current transaction. Setting "
 						 "ignore_checksum_failure to true causes the system to ignore the failure "
 			   "(but still report a warning), and continue processing. This "
@@ -974,7 +974,7 @@ static struct config_bool ConfigureNamesBool[] =
 	{
 		{"zero_damaged_pages", PGC_SUSET, DEVELOPER_OPTIONS,
 			gettext_noop("Continues processing past damaged page headers."),
-			gettext_noop("Detection of a damaged page header normally causes PostgreSQL to "
+			gettext_noop("Detection of a damaged page header normally causes MollyDB to "
 				"report an error, aborting the current transaction. Setting "
 						 "zero_damaged_pages to true causes the system to instead report a "
 						 "warning, zero out the damaged page, and continue processing. This "
@@ -1604,7 +1604,7 @@ static struct config_bool ConfigureNamesBool[] =
 		{"lo_compat_privileges", PGC_SUSET, COMPAT_OPTIONS_PREVIOUS,
 			gettext_noop("Enables backward compatibility mode for privilege checks on large objects."),
 			gettext_noop("Skips privilege checks when reading or modifying large objects, "
-				  "for compatibility with PostgreSQL releases prior to 9.0.")
+				  "for compatibility with MollyDB releases prior to 9.0.")
 		},
 		&lo_compat_privileges,
 		false,
@@ -1613,7 +1613,7 @@ static struct config_bool ConfigureNamesBool[] =
 
 	{
 		{"operator_precedence_warning", PGC_USERSET, COMPAT_OPTIONS_PREVIOUS,
-			gettext_noop("Emit a warning for constructs that changed meaning since PostgreSQL 9.4."),
+			gettext_noop("Emit a warning for constructs that changed meaning since MollyDB 9.4."),
 			NULL,
 		},
 		&operator_precedence_warning,
@@ -2748,7 +2748,7 @@ static struct config_int ConfigureNamesInt[] =
 		{"effective_cache_size", PGC_USERSET, QUERY_TUNING_COST,
 			gettext_noop("Sets the planner's assumption about the size of the disk cache."),
 			gettext_noop("That is, the portion of the kernel's disk cache that "
-						 "will be used for PostgreSQL data files. This is measured in disk "
+						 "will be used for MollyDB data files. This is measured in disk "
 						 "pages, which are normally 8 kB each."),
 			GUC_UNIT_BLOCKS,
 		},
@@ -3278,7 +3278,7 @@ static struct config_string ConfigureNamesString[] =
 
 	{
 		{"syslog_ident", PGC_SIGHUP, LOGGING_WHERE,
-			gettext_noop("Sets the program name used to identify PostgreSQL "
+			gettext_noop("Sets the program name used to identify MollyDB "
 						 "messages in syslog."),
 			NULL
 		},
@@ -3290,7 +3290,7 @@ static struct config_string ConfigureNamesString[] =
 	{
 		{"event_source", PGC_POSTMASTER, LOGGING_WHERE,
 			gettext_noop("Sets the application name used to identify "
-						 "PostgreSQL messages in the event log."),
+						 "MollyDB messages in the event log."),
 			NULL
 		},
 		&event_source,
@@ -4603,7 +4603,7 @@ SelectConfigFiles(const char *userDoption, const char *progname)
 					 configdir,
 					 strerror(errno));
 		if (errno == ENOENT)
-			write_stderr("Run initdb or pg_basebackup to initialize a PostgreSQL data directory.\n");
+			write_stderr("Run initdb or pg_basebackup to initialize a MollyDB data directory.\n");
 		return false;
 	}
 

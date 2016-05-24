@@ -3,7 +3,7 @@
  *
  *	options functions
  *
- *	Copyright (c) 2010-2016, PostgreSQL Global Development Group
+ *	Copyright (c) 2010-2016, MollyDB Global Development Group
  *	src/bin/pg_upgrade/option.c
  */
 
@@ -89,7 +89,7 @@ parseCommandLine(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_upgrade (PostgreSQL) " PG_VERSION);
+			puts("pg_upgrade (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -275,7 +275,7 @@ parseCommandLine(int argc, char *argv[])
 static void
 usage(void)
 {
-	printf(_("pg_upgrade upgrades a PostgreSQL cluster to a different major version.\n\
+	printf(_("pg_upgrade upgrades a MollyDB cluster to a different major version.\n\
 \nUsage:\n\
   pg_upgrade [OPTION]...\n\
 \n\

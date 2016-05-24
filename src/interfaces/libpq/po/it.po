@@ -1,8 +1,8 @@
 #
 # Translation of libpq to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -13,12 +13,12 @@
 #  * Emanuele Zamprogno <emanuele.zamprogno@itpug.org>
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 # Translation of libpq to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -28,7 +28,7 @@
 #  * Emanuele Zamprogno <emanuele.zamprogno@itpug.org>
 #
 # Copyright (c) 2009, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 # Italian translation file for libpq.
 # Fabrizio Mazzoni <veramente@libero.it>, 2003.
@@ -38,7 +38,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: libpq (PostgreSQL) 9.6\n"
+"Project-Id-Version: libpq (MollyDB) 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-17 00:08+0000\n"
 "PO-Revision-Date: 2016-04-17 20:43+0100\n"

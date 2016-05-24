@@ -3,7 +3,7 @@
 #################################################################
 # version_stamp.pl -- update version stamps throughout the source tree
 #
-# Copyright (c) 2008-2016, PostgreSQL Global Development Group
+# Copyright (c) 2008-2016, MollyDB Global Development Group
 #
 # src/tools/version_stamp.pl
 #################################################################
@@ -95,15 +95,15 @@ $aconfver ne ""
 $fixedfiles = "";
 
 sed_file("configure.in",
-"-e 's/AC_INIT(\\[PostgreSQL\\], \\[[0-9a-z.]*\\]/AC_INIT([PostgreSQL], [$fullversion]/'"
+"-e 's/AC_INIT(\\[MollyDB\\], \\[[0-9a-z.]*\\]/AC_INIT([MollyDB], [$fullversion]/'"
 );
 
 sed_file("doc/bug.template",
-"-e 's/PostgreSQL version (example: PostgreSQL .*) *:  PostgreSQL .*/PostgreSQL version (example: PostgreSQL $fullversion):  PostgreSQL $fullversion/'"
+"-e 's/MollyDB version (example: MollyDB .*) *:  MollyDB .*/MollyDB version (example: MollyDB $fullversion):  MollyDB $fullversion/'"
 );
 
 sed_file("src/include/pg_config.h.win32",
-"-e 's/#define PACKAGE_STRING \"PostgreSQL .*\"/#define PACKAGE_STRING \"PostgreSQL $fullversion\"/' "
+"-e 's/#define PACKAGE_STRING \"MollyDB .*\"/#define PACKAGE_STRING \"MollyDB $fullversion\"/' "
 	  . "-e 's/#define PACKAGE_VERSION \".*\"/#define PACKAGE_VERSION \"$fullversion\"/' "
 	  . "-e 's/#define PG_VERSION \".*\"/#define PG_VERSION \"$fullversion\"/' "
 	  . "-e 's/#define PG_VERSION_NUM .*/#define PG_VERSION_NUM $padnumericversion/'"

@@ -1,7 +1,7 @@
 # Spanish message translation file for libpq 2013-08-30 12:42-0400\n"
 #
-# Copyright (C) 2002-2013 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2002-2013 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Karim <karim@mribti.com>, 2002.
 # Alvaro Herrera <alvherre@alvh.no-ip.org>, 2003-2013
@@ -9,7 +9,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: libpq (PostgreSQL 9.6)\n"
+"Project-Id-Version: libpq (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:08+0000\n"
 "PO-Revision-Date: 2016-05-06 13:08-0500\n"

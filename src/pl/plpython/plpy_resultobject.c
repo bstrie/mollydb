@@ -27,7 +27,7 @@ static PyObject *PLy_result_subscript(PyObject *arg, PyObject *item);
 static int	PLy_result_ass_subscript(PyObject *self, PyObject *item, PyObject *value);
 
 static char PLy_result_doc[] = {
-	"Results of a PostgreSQL query"
+	"Results of a MollyDB query"
 };
 
 static PySequenceMethods PLy_result_as_sequence = {

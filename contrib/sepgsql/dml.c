@@ -4,7 +4,7 @@
  *
  * Routines to handle DML permission checks
  *
- * Copyright (c) 2010-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2010-2016, MollyDB Global Development Group
  *
  * -------------------------------------------------------------------------
  */
@@ -158,7 +158,7 @@ check_relation_privileges(Oid relOid,
 	bool		result = true;
 
 	/*
-	 * Hardwired Policies: SE-PostgreSQL enforces - clients cannot modify
+	 * Hardwired Policies: SE-MollyDB enforces - clients cannot modify
 	 * system catalogs using DMLs - clients cannot reference/modify toast
 	 * relations using DMLs
 	 */

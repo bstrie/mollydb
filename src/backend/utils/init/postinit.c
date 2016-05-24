@@ -3,7 +3,7 @@
  * postinit.c
  *	  postgres initialization utilities
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -548,7 +548,7 @@ BaseInit(void)
  * able to read pg_database; it doesn't connect to any particular database.
  * In walsender mode only username is used.
  *
- * As of PostgreSQL 8.2, we expect InitProcess() was already called, so we
+ * As of MollyDB 8.2, we expect InitProcess() was already called, so we
  * already have a PGPROC struct ... but it's not completely filled in yet.
  *
  * Note:

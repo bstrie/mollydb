@@ -1,8 +1,8 @@
 /*-------------------------------------------------------------------------
  * decode.h
- *	   PostgreSQL WAL to logical transformation
+ *	   MollyDB WAL to logical transformation
  *
- * Portions Copyright (c) 2012-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  *-------------------------------------------------------------------------
  */

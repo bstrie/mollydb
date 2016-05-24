@@ -1,8 +1,8 @@
 /*-------------------------------------------------------------------------
  *
- * pg_ctl --- start/stops/restarts the PostgreSQL server
+ * pg_ctl --- start/stops/restarts the MollyDB server
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * src/bin/pg_ctl/pg_ctl.c
  *
@@ -85,7 +85,7 @@ static const char *progname;
 static char *log_file = NULL;
 static char *exec_path = NULL;
 static char *event_source = NULL;
-static char *register_servicename = "PostgreSQL";		/* FIXME: + version ID? */
+static char *register_servicename = "MollyDB";		/* FIXME: + version ID? */
 static char *register_username = NULL;
 static char *register_password = NULL;
 static char *argv0 = NULL;
@@ -840,7 +840,7 @@ do_init(void)
 	char		cmd[MAXPGPATH];
 
 	if (exec_path == NULL)
-		exec_path = find_other_exec_or_die(argv0, "initdb", "initdb (PostgreSQL) " PG_VERSION "\n");
+		exec_path = find_other_exec_or_die(argv0, "initdb", "initdb (MollyDB) " PG_VERSION "\n");
 
 	if (pgdata_opt == NULL)
 		pgdata_opt = "";
@@ -1833,7 +1833,7 @@ CreateRestrictedProcess(char *cmd, PROCESS_INFORMATION *processInfo, bool as_ser
 				HANDLE		job;
 				char		jobname[128];
 
-				sprintf(jobname, "PostgreSQL_%lu",
+				sprintf(jobname, "MollyDB_%lu",
 						(unsigned long) processInfo->dwProcessId);
 
 				job = _CreateJobObject(NULL, jobname);
@@ -1906,7 +1906,7 @@ do_advice(void)
 static void
 do_help(void)
 {
-	printf(_("%s is a utility to initialize, start, stop, or control a PostgreSQL server.\n\n"), progname);
+	printf(_("%s is a utility to initialize, start, stop, or control a MollyDB server.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s init[db]               [-D DATADIR] [-s] [-o \"OPTIONS\"]\n"), progname);
 	printf(_("  %s start   [-w] [-t SECS] [-D DATADIR] [-s] [-l FILENAME] [-o \"OPTIONS\"]\n"), progname);
@@ -1945,7 +1945,7 @@ do_help(void)
 #endif
 	printf(_("  -l, --log=FILENAME     write (or append) server log to FILENAME\n"));
 	printf(_("  -o OPTIONS             command line options to pass to postgres\n"
-	 "                         (PostgreSQL server executable) or initdb\n"));
+	 "                         (MollyDB server executable) or initdb\n"));
 	printf(_("  -p PATH-TO-POSTGRES    normally not necessary\n"));
 	printf(_("\nOptions for stop or restart:\n"));
 	printf(_("  -m, --mode=MODE        MODE can be \"smart\", \"fast\", or \"immediate\"\n"));
@@ -1960,10 +1960,10 @@ do_help(void)
 
 #ifdef WIN32
 	printf(_("\nOptions for register and unregister:\n"));
-	printf(_("  -N SERVICENAME  service name with which to register PostgreSQL server\n"));
-	printf(_("  -P PASSWORD     password of account to register PostgreSQL server\n"));
-	printf(_("  -U USERNAME     user name of account to register PostgreSQL server\n"));
-	printf(_("  -S START-TYPE   service start type to register PostgreSQL server\n"));
+	printf(_("  -N SERVICENAME  service name with which to register MollyDB server\n"));
+	printf(_("  -P PASSWORD     password of account to register MollyDB server\n"));
+	printf(_("  -U USERNAME     user name of account to register MollyDB server\n"));
+	printf(_("  -S START-TYPE   service start type to register MollyDB server\n"));
 
 	printf(_("\nStart types are:\n"));
 	printf(_("  auto       start service automatically during system startup (default)\n"));
@@ -2161,7 +2161,7 @@ main(int argc, char **argv)
 		}
 		else if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_ctl (PostgreSQL) " PG_VERSION);
+			puts("pg_ctl (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

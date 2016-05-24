@@ -6,7 +6,7 @@
 # Tomáš Vondra <tv@fuzzy.cz>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: psql-cs (PostgreSQL 9.3)\n"
+"Project-Id-Version: psql-cs (MollyDB 9.3)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-09-23 20:17+0000\n"
 "PO-Revision-Date: 2013-09-24 21:01+0200\n"
@@ -1656,10 +1656,10 @@ msgstr "nelze získat aktuální uživatelské jméno: %s\n"
 #: help.c:82
 #, c-format
 msgid ""
-"psql is the PostgreSQL interactive terminal.\n"
+"psql is the MollyDB interactive terminal.\n"
 "\n"
 msgstr ""
-"psql je PostgreSQL interaktivní terminál.\n"
+"psql je MollyDB interaktivní terminál.\n"
 "\n"
 
 #: help.c:83
@@ -1947,13 +1947,13 @@ msgid ""
 "\n"
 "For more information, type \"\\?\" (for internal commands) or \"\\help"
 "\" (for SQL\n"
-"commands) from within psql, or consult the psql section in the PostgreSQL\n"
+"commands) from within psql, or consult the psql section in the MollyDB\n"
 "documentation.\n"
 "\n"
 msgstr ""
 "\n"
 "Pro více informací použijte \"\\?\" (pro interní příkazy) nebo \"\\help\"\n"
-"(pro SQL příkazy), nebo se podívejte do dokumentace PostgreSQL a\n"
+"(pro SQL příkazy), nebo se podívejte do dokumentace MollyDB a\n"
 "části věnované psql.\n"
 "\n"
 
@@ -1970,9 +1970,9 @@ msgstr "Hlavní\n"
 #: help.c:173
 #, c-format
 msgid ""
-"  \\copyright             show PostgreSQL usage and distribution terms\n"
+"  \\copyright             show MollyDB usage and distribution terms\n"
 msgstr ""
-"  \\copyright             zobrazí podmínky použití a distribuce PostgreSQL\n"
+"  \\copyright             zobrazí podmínky použití a distribuce MollyDB\n"
 
 #: help.c:174
 #, c-format
@@ -2560,8 +2560,8 @@ msgid "Use \"\\q\" to leave %s.\n"
 msgstr "Použijte \"\\q\" pro odchod z %s.\n"
 
 #: mainloop.c:189
-msgid "You are using psql, the command-line interface to PostgreSQL."
-msgstr "Používáte psql, řádkový nástroj pro připojení k PostgreSQL."
+msgid "You are using psql, the command-line interface to MollyDB."
+msgstr "Používáte psql, řádkový nástroj pro připojení k MollyDB."
 
 #: mainloop.c:190
 #, c-format

@@ -3,7 +3,7 @@
  * date.c
  *	  implements DATE and TIME data types specified in SQL standard
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994-5, Regents of the University of California
  *
  *
@@ -1351,7 +1351,7 @@ time_transform(PG_FUNCTION_ARGS)
 
 /* time_scale()
  * Adjust time type for specified scale factor.
- * Used by PostgreSQL type system to stuff columns.
+ * Used by MollyDB type system to stuff columns.
  */
 Datum
 time_scale(PG_FUNCTION_ARGS)
@@ -2176,7 +2176,7 @@ recalc:
 
 /* timetz_scale()
  * Adjust time type for specified scale factor.
- * Used by PostgreSQL type system to stuff columns.
+ * Used by MollyDB type system to stuff columns.
  */
 Datum
 timetz_scale(PG_FUNCTION_ARGS)

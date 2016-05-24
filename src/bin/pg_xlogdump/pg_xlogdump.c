@@ -2,7 +2,7 @@
  *
  * pg_xlogdump.c - decode and display WAL
  *
- * Copyright (c) 2013-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2013-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *		  src/bin/pg_xlogdump/pg_xlogdump.c
@@ -646,7 +646,7 @@ XLogDumpDisplayStats(XLogDumpConfig *config, XLogDumpStats *stats)
 static void
 usage(void)
 {
-	printf("%s decodes and displays PostgreSQL transaction logs for debugging.\n\n",
+	printf("%s decodes and displays MollyDB transaction logs for debugging.\n\n",
 		   progname);
 	printf("Usage:\n");
 	printf("  %s [OPTION]... [STARTSEG [ENDSEG]] \n", progname);
@@ -809,7 +809,7 @@ main(int argc, char **argv)
 				}
 				break;
 			case 'V':
-				puts("pg_xlogdump (PostgreSQL) " PG_VERSION);
+				puts("pg_xlogdump (MollyDB) " PG_VERSION);
 				exit(EXIT_SUCCESS);
 				break;
 			case 'x':

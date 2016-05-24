@@ -6,9 +6,9 @@
  * the regression tests, and should be mostly compatible with it.
  * Initial author of C translation: Magnus Hagander
  *
- * This code is released under the terms of the PostgreSQL License.
+ * This code is released under the terms of the MollyDB License.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/test/regress/pg_regress.c
@@ -740,7 +740,7 @@ initialize_environment(void)
 		 * implementation-defined default locale.  Exceptions include native
 		 * Windows, Darwin with --enable-nls, and Cygwin with --enable-nls.
 		 * (Use of --enable-nls matters because libintl replaces setlocale().)
-		 * Also, PostgreSQL does not support Darwin with locale environment
+		 * Also, MollyDB does not support Darwin with locale environment
 		 * variables unset; see PostmasterMain().
 		 */
 #if defined(WIN32) || defined(__CYGWIN__) || defined(__darwin__)
@@ -1950,7 +1950,7 @@ create_role(const char *rolename, const _stringlist *granted_dbs)
 static void
 help(void)
 {
-	printf(_("PostgreSQL regression test driver\n"));
+	printf(_("MollyDB regression test driver\n"));
 	printf(_("\n"));
 	printf(_("Usage:\n  %s [OPTION]... [EXTRA-TEST]...\n"), progname);
 	printf(_("\n"));
@@ -2055,7 +2055,7 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 				help();
 				exit(0);
 			case 'V':
-				puts("pg_regress (PostgreSQL) " PG_VERSION);
+				puts("pg_regress (MollyDB) " PG_VERSION);
 				exit(0);
 			case 1:
 
@@ -2302,7 +2302,7 @@ regression_main(int argc, char *argv[], init_function ifunc, test_function tfunc
 					fprintf(stderr, _("port %d apparently in use\n"), port);
 					if (!port_specified_by_user)
 						fprintf(stderr, _("%s: could not determine an available port\n"), progname);
-					fprintf(stderr, _("Specify an unused port using the --port option or shut down any conflicting PostgreSQL servers.\n"));
+					fprintf(stderr, _("Specify an unused port using the --port option or shut down any conflicting MollyDB servers.\n"));
 					exit(2);
 				}
 

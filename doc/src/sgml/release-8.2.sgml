@@ -16,7 +16,7 @@
   </para>
 
   <para>
-   This is expected to be the last <productname>PostgreSQL</> release
+   This is expected to be the last <productname>MollyDB</> release
    in the 8.2.X series.  Users are encouraged to update to a newer
    release branch soon.
   </para>
@@ -244,7 +244,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 8.2.X release series in December 2011.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -839,7 +839,7 @@
 
      <para>
       The default on Linux has actually been <literal>fdatasync</> for many
-      years, but recent kernel changes caused <productname>PostgreSQL</> to
+      years, but recent kernel changes caused <productname>MollyDB</> to
       choose <literal>open_datasync</> instead.  This choice did not result
       in any performance improvement, and caused outright failures on
       certain filesystems, notably <literal>ext4</> with the
@@ -1984,7 +1984,7 @@
     <listitem>
      <para>
       Ensure that Perl arrays are properly converted to
-      <productname>PostgreSQL</> arrays when returned by a set-returning
+      <productname>MollyDB</> arrays when returned by a set-returning
       PL/Perl function (Andrew Dunstan, Abhijit Menon-Sen)
      </para>
 
@@ -3078,7 +3078,7 @@
       be <literal>(-42)::integer</> due to operator precedence rules.
       Usually this would make little difference, but it could interact with
       another recent patch to cause
-      <productname>PostgreSQL</> to reject what had been a valid
+      <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
       <application>pg_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
@@ -3477,7 +3477,7 @@
      </para>
 
      <para>
-      This is known to be necessary when building <productname>PostgreSQL</>
+      This is known to be necessary when building <productname>MollyDB</>
       with <application>gcc</> 4.3 or later.
      </para>
     </listitem>
@@ -3839,7 +3839,7 @@
      <para>
       This affects developers and packagers only.  The change was made
       to prevent accidental use of untested combinations of
-      <productname>Autoconf</> and <productname>PostgreSQL</> versions.
+      <productname>Autoconf</> and <productname>MollyDB</> versions.
       You can remove the version check if you really want to use a
       different <productname>Autoconf</> version, but it's
       your responsibility whether the result works or not.
@@ -3849,7 +3849,7 @@
     <listitem>
      <para>
       Update <function>gettimeofday</> configuration check so that
-      <productname>PostgreSQL</> can be built on newer versions of
+      <productname>MollyDB</> can be built on newer versions of
       <productname>MinGW</> (Magnus)
      </para>
     </listitem>
@@ -4974,7 +4974,7 @@
 
    <para>
     Below you will find a detailed account of the
-    changes between <productname>PostgreSQL</productname> 8.2 and
+    changes between <productname>MollyDB</productname> 8.2 and
     the previous major release.
    </para>
 
@@ -5614,7 +5614,7 @@
 
       <para>
        This allows backslash escaping in strings to be disabled,
-       making <productname>PostgreSQL</> more
+       making <productname>MollyDB</> more
        standards-compliant.  The default is <literal>off</> for backwards
        compatibility, but future releases will default this to <literal>on</>.
       </para>
@@ -6616,7 +6616,7 @@
 
      <listitem>
       <para>
-       Allow <acronym>MSVC</> to compile the <productname>PostgreSQL</>
+       Allow <acronym>MSVC</> to compile the <productname>MollyDB</>
        server (Magnus, Hiroshi Saito)
       </para>
      </listitem>
@@ -6934,7 +6934,7 @@
 
       <para>
        These functions provide additional file system access
-       routines not present in the default <productname>PostgreSQL</>
+       routines not present in the default <productname>MollyDB</>
        server.
       </para>
      </listitem>

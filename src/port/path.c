@@ -3,7 +3,7 @@
  * path.c
  *	  portable path handling routines
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -801,7 +801,7 @@ get_man_path(const char *my_exec_path, char *ret_path)
  *	get_home_path
  *
  * On Unix, this actually returns the user's home directory.  On Windows
- * it returns the PostgreSQL-specific application data folder.
+ * it returns the MollyDB-specific application data folder.
  */
 bool
 get_home_path(char *ret_path)

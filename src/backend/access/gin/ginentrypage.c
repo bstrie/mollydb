@@ -4,7 +4,7 @@
  *	  routines for handling GIN entry tree pages.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
@@ -121,7 +121,7 @@ GinFormTuple(GinState *ginstate,
 		itup = repalloc(itup, newsize);
 
 		/*
-		 * PostgreSQL 9.3 and earlier did not clear this new space, so we
+		 * MollyDB 9.3 and earlier did not clear this new space, so we
 		 * might find uninitialized padding when reading tuples from disk.
 		 */
 		memset((char *) itup + IndexTupleSize(itup),

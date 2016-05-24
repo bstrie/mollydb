@@ -5,7 +5,7 @@
  *
  * Author: Magnus Hagander <magnus@hagander.net>
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *		  src/bin/pg_basebackup/pg_receivexlog.c
@@ -61,7 +61,7 @@ static bool stop_streaming(XLogRecPtr segendpos, uint32 timeline,
 static void
 usage(void)
 {
-	printf(_("%s receives PostgreSQL streaming transaction logs.\n\n"),
+	printf(_("%s receives MollyDB streaming transaction logs.\n\n"),
 		   progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]...\n"), progname);
@@ -401,7 +401,7 @@ main(int argc, char **argv)
 		else if (strcmp(argv[1], "-V") == 0 ||
 				 strcmp(argv[1], "--version") == 0)
 		{
-			puts("pg_receivexlog (PostgreSQL) " PG_VERSION);
+			puts("pg_receivexlog (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

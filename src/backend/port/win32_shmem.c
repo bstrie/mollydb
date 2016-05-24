@@ -3,7 +3,7 @@
  * win32_shmem.c
  *	  Implement shared memory using win32 facilities
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *	  src/backend/port/win32_shmem.c
@@ -49,11 +49,11 @@ GetSharedMemName(void)
 		elog(FATAL, "could not get size for full pathname of datadir %s: error code %lu",
 			 DataDir, GetLastError());
 
-	retptr = malloc(bufsize + 18);		/* 18 for Global\PostgreSQL: */
+	retptr = malloc(bufsize + 18);		/* 18 for Global\MollyDB: */
 	if (retptr == NULL)
 		elog(FATAL, "could not allocate memory for shared memory name");
 
-	strcpy(retptr, "Global\\PostgreSQL:");
+	strcpy(retptr, "Global\\MollyDB:");
 	r = GetFullPathName(DataDir, bufsize, retptr + 18, NULL);
 	if (r == 0 || r > bufsize)
 		elog(FATAL, "could not generate full pathname for datadir %s: error code %lu",
@@ -291,7 +291,7 @@ PGSharedMemoryReAttach(void)
 		elog(FATAL, "reattaching to shared memory returned unexpected address (got %p, expected %p)",
 			 hdr, origUsedShmemSegAddr);
 	if (hdr->magic != PGShmemMagic)
-		elog(FATAL, "reattaching to shared memory returned non-PostgreSQL memory");
+		elog(FATAL, "reattaching to shared memory returned non-MollyDB memory");
 	dsm_set_control_handle(hdr->dsm_control);
 
 	UsedShmemSegAddr = hdr;		/* probably redundant */

@@ -1,11 +1,11 @@
 # Czech message translation file for pg_controldata
-# Copyright (C) 2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Tomas Vondra <tv@fuzzy.cz>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_controldata-cs (PostgreSQL 9.3)\n"
+"Project-Id-Version: pg_controldata-cs (MollyDB 9.3)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-09-23 20:20+0000\n"
 "PO-Revision-Date: 2013-09-24 20:38+0200\n"
@@ -21,10 +21,10 @@ msgstr ""
 #: pg_controldata.c:34
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s ukáže kontrolní informace o PostgreSQL databázi.\n"
+"%s ukáže kontrolní informace o MollyDB databázi.\n"
 "\n"
 
 #: pg_controldata.c:35
@@ -156,13 +156,13 @@ msgid ""
 "The byte ordering used to store the pg_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, "
 "and\n"
-"the PostgreSQL installation would be incompatible with this data directory.\n"
+"the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "VAROVÁNÍ: možný nesoulad v pořadí bytů\n"
 "Pořadí bytů používané pro uložení pg_control souboru nemusí odpovídat tomu\n"
 "používanému tímto programem. V tom případě by výsledky uvedené níže byly "
 "chybné, a\n"
-"PostgreSQL instalace by byla nekompatibilní s tímto datovým adresářem.\n"
+"MollyDB instalace by byla nekompatibilní s tímto datovým adresářem.\n"
 
 #: pg_controldata.c:197
 #, c-format

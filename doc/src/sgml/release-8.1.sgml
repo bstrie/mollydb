@@ -16,7 +16,7 @@
   </para>
 
   <para>
-   This is expected to be the last <productname>PostgreSQL</> release
+   This is expected to be the last <productname>MollyDB</> release
    in the 8.1.X series.  Users are encouraged to update to a newer
    release branch soon.
   </para>
@@ -46,7 +46,7 @@
 
      <para>
       The default on Linux has actually been <literal>fdatasync</> for many
-      years, but recent kernel changes caused <productname>PostgreSQL</> to
+      years, but recent kernel changes caused <productname>MollyDB</> to
       choose <literal>open_datasync</> instead.  This choice did not result
       in any performance improvement, and caused outright failures on
       certain filesystems, notably <literal>ext4</> with the
@@ -235,7 +235,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 8.1.X release series in November 2010.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -913,7 +913,7 @@
     <listitem>
      <para>
       Ensure that Perl arrays are properly converted to
-      <productname>PostgreSQL</> arrays when returned by a set-returning
+      <productname>MollyDB</> arrays when returned by a set-returning
       PL/Perl function (Andrew Dunstan, Abhijit Menon-Sen)
      </para>
 
@@ -1739,7 +1739,7 @@
       be <literal>(-42)::integer</> due to operator precedence rules.
       Usually this would make little difference, but it could interact with
       another recent patch to cause
-      <productname>PostgreSQL</> to reject what had been a valid
+      <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
       <application>pg_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
@@ -1979,7 +1979,7 @@
      </para>
 
      <para>
-      This is known to be necessary when building <productname>PostgreSQL</>
+      This is known to be necessary when building <productname>MollyDB</>
       with <application>gcc</> 4.3 or later.
      </para>
     </listitem>
@@ -2031,7 +2031,7 @@
   </para>
 
   <para>
-   This is the last 8.1.X release for which the <productname>PostgreSQL</>
+   This is the last 8.1.X release for which the <productname>MollyDB</>
    community will produce binary packages for <productname>Windows</>.
    Windows users are encouraged to move to 8.2.X or later,
    since there are Windows-specific fixes in 8.2.X that
@@ -2255,7 +2255,7 @@
      <para>
       This affects developers and packagers only.  The change was made
       to prevent accidental use of untested combinations of
-      <productname>Autoconf</> and <productname>PostgreSQL</> versions.
+      <productname>Autoconf</> and <productname>MollyDB</> versions.
       You can remove the version check if you really want to use a
       different <productname>Autoconf</> version, but it's
       your responsibility whether the result works or not.
@@ -2893,7 +2893,7 @@ compilers (Hiroshi Saito)</para></listitem>
 <itemizedlist>
 <listitem><para>Change the server to reject invalidly-encoded multibyte
 characters in all cases (Tatsuo, Tom)</para>
-<para>While <productname>PostgreSQL</> has been moving in this direction for
+<para>While <productname>MollyDB</> has been moving in this direction for
 some time, the checks are now applied uniformly to all encodings and all
 textual input, and are now always errors not merely warnings.  This change
 defends against SQL-injection attacks of the type described in CVE-2006-2313.
@@ -2919,7 +2919,7 @@ aware of encoding considerations and
 <para>This fixes <application>libpq</>-using applications for the security
 issues described in CVE-2006-2313 and CVE-2006-2314, and also future-proofs
 them against the planned changeover to SQL-standard string literal syntax.
-Applications that use multiple <productname>PostgreSQL</> connections
+Applications that use multiple <productname>MollyDB</> connections
 concurrently should migrate to <function>PQescapeStringConn()</> and
 <function>PQescapeByteaConn()</> to ensure that escaping is done correctly
 for the settings in use in each database connection.  Applications that
@@ -3496,7 +3496,7 @@ DISTINCT query</para></listitem>
 
      <listitem>
       <para>
-       While <productname>PostgreSQL</productname>'s MVCC locking
+       While <productname>MollyDB</productname>'s MVCC locking
        allows <command>SELECT</> to never be blocked by writers and
        therefore does not need shared row locks for typical operations,
        shared locks are useful for applications that require shared row
@@ -3583,7 +3583,7 @@ DISTINCT query</para></listitem>
       in order to load an existing dump file, if the dump contains any
       views or rules created using the implicit-<literal>FROM</> syntax.
       This should be a one-time annoyance, because
-      <productname>PostgreSQL</productname> 8.1 will convert
+      <productname>MollyDB</productname> 8.1 will convert
       such views and rules to standard explicit-<literal>FROM</> syntax.
       Subsequent dumps will therefore not have the problem.
      </para>
@@ -3610,11 +3610,11 @@ DISTINCT query</para></listitem>
       With this option set to false, user-created tables no longer
       have an OID column unless <command>WITH OIDS</> is specified in
       <command>CREATE TABLE</>. Though OIDs have existed in all
-      releases of <productname>PostgreSQL</>, their use is limited
+      releases of <productname>MollyDB</>, their use is limited
       because they are only four bytes long and the counter is shared
       across all installed databases. The preferred way of uniquely
       identifying rows is via sequences and the <type>SERIAL</> type,
-      which have been supported since <productname>PostgreSQL</> 6.4.
+      which have been supported since <productname>MollyDB</> 6.4.
      </para>
     </listitem>
 
@@ -3624,13 +3624,13 @@ DISTINCT query</para></listitem>
       treat backslashes literally (Bruce)
      </para>
      <para>
-      Currently <productname>PostgreSQL</productname> processes a
+      Currently <productname>MollyDB</productname> processes a
       backslash in a string literal as introducing a special escape sequence,
       e.g. <literal>\n</> or <literal>\010</>.
       While this allows easy entry of special values, it is
       nonstandard and makes porting of applications from other
       databases more difficult. For this reason, the
-      <productname>PostgreSQL</productname> project is planning to
+      <productname>MollyDB</productname> project is planning to
       remove the special meaning of backslashes in strings. For
       backward compatibility and for users who want special backslash
       processing, a new string syntax has been created. This new string
@@ -3671,7 +3671,7 @@ DISTINCT query</para></listitem>
       strings that need to be converted to use <literal>E''</>.
       Also, use two single-quotes (<literal>''</>) to embed a literal
       single-quote in a string, rather than the
-      <productname>PostgreSQL</productname>-supported syntax of
+      <productname>MollyDB</productname>-supported syntax of
       backslash single-quote (<literal>\'</>).  The former is
       standards-conforming and does not require the use of the
       <literal>E''</> string syntax.  You can also use the
@@ -3852,7 +3852,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
 
    <para>
     Below you will find a detailed account of the additional changes
-    between <productname>PostgreSQL</productname> 8.1 and the
+    between <productname>MollyDB</productname> 8.1 and the
     previous major release.
    </para>
 
@@ -3938,7 +3938,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
       </para>
       <para>
        To prevent partial disk writes from corrupting the database,
-       <productname>PostgreSQL</productname> writes a complete copy of
+       <productname>MollyDB</productname> writes a complete copy of
        each database disk page to WAL the first time it is modified
        after a checkpoint. This option turns off that functionality for more
        speed.  This is safe to use with battery-backed disk caches where
@@ -4221,7 +4221,7 @@ psql -t -f fixseq.sql db1 | psql -e db1
        Track dependencies of shared objects (Alvaro)
       </para>
       <para>
-       <productname>PostgreSQL</productname> allows global tables
+       <productname>MollyDB</productname> allows global tables
        (users, databases, tablespaces) to reference information in
        multiple databases. This addition adds dependency information
        for global tables, so, for example, user ownership can be
@@ -4956,7 +4956,7 @@ SELECT CURRENT_TIMESTAMP AT TIME ZONE 'Europe/London';
        an array type (Andrew)
       </para>
       <para>
-       This basically maps <productname>PostgreSQL</productname> arrays
+       This basically maps <productname>MollyDB</productname> arrays
        to Perl arrays.
       </para>
      </listitem>

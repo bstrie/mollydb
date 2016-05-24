@@ -327,7 +327,7 @@ Branch: REL9_3_STABLE [e1d88f983] 2016-05-06 22:05:51 -0400
 
      <para>
       <application>pg_upgrade</> had special-case code to handle the
-      situation where the new <productname>PostgreSQL</> version thinks that
+      situation where the new <productname>MollyDB</> version thinks that
       a table should have a TOAST table while the old version did not.  That
       code was broken, so remove it, and instead do nothing in such cases;
       there seems no reason to believe that we can't get along fine without
@@ -547,7 +547,7 @@ Branch: REL9_5_STABLE [8aa6e9780] 2016-03-23 16:04:35 -0400
      </para>
 
      <para>
-      <productname>PostgreSQL</> 9.5 introduced logic for speeding up
+      <productname>MollyDB</> 9.5 introduced logic for speeding up
       comparisons of string data types by using the standard C library
       function <function>strxfrm()</> as a substitute
       for <function>strcoll()</>.  It now emerges that most versions of
@@ -565,7 +565,7 @@ Branch: REL9_5_STABLE [8aa6e9780] 2016-03-23 16:04:35 -0400
       ordering in B-tree indexes, which means that B-tree indexes
       on <type>text</>, <type>varchar</>, or <type>char</> columns may now
       be corrupt if they sort according to an affected locale and were
-      built or modified under <productname>PostgreSQL</> 9.5.0 or 9.5.1.
+      built or modified under <productname>MollyDB</> 9.5.0 or 9.5.1.
       Users should <command>REINDEX</> indexes that might be affected.
      </para>
 
@@ -1521,7 +1521,7 @@ Branch: REL9_1_STABLE [b1f591c50] 2016-02-05 20:23:19 -0500
       This change mitigates a <application>PL/Java</> security bug
       (CVE-2016-0766), which was fixed in <application>PL/Java</> by marking
       these parameters as superuser-only.  To fix the security hazard for
-      sites that update <productname>PostgreSQL</> more frequently
+      sites that update <productname>MollyDB</> more frequently
       than <application>PL/Java</>, make the core code aware of them also.
      </para>
     </listitem>
@@ -1673,7 +1673,7 @@ Branch: REL9_1_STABLE [6887d72d0] 2016-02-05 10:59:39 -0500
    <title>Overview</title>
 
    <para>
-    Major enhancements in <productname>PostgreSQL</> 9.5 include:
+    Major enhancements in <productname>MollyDB</> 9.5 include:
    </para>
 
    <!-- This list duplicates items below, but without authors or details-->
@@ -1903,7 +1903,7 @@ max_wal_size = (3 * checkpoint_segments) * 16MB
       While SSL renegotiation is a good idea in theory, it has caused enough
       bugs to be considered a net negative in practice, and it is due to be
       removed from future versions of the relevant standards.  We have
-      therefore removed support for it from <productname>PostgreSQL</>.
+      therefore removed support for it from <productname>MollyDB</>.
       The <varname>ssl_renegotiation_limit</> parameter still exists, but
       cannot be set to anything but zero (disabled).  It's not documented
       anymore, either.
@@ -1968,7 +1968,7 @@ max_wal_size = (3 * checkpoint_segments) * 16MB
 
    <para>
     Below you will find a detailed account of the changes between
-    <productname>PostgreSQL</productname> 9.5 and the previous major
+    <productname>MollyDB</productname> 9.5 and the previous major
     release.
    </para>
 
@@ -3235,7 +3235,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
       <para>
        Per the standard, such type specifications should be written as,
        for example, <literal>INTERVAL MINUTE TO SECOND(2)</>.
-       <productname>PostgreSQL</> formerly allowed this to be written as
+       <productname>MollyDB</> formerly allowed this to be written as
        <literal>INTERVAL(2) MINUTE TO SECOND</>, but it must now be
        written in the standard way.
       </para>
@@ -3469,7 +3469,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
         Previously only <literal>:=</> could be used.  This requires removing
         the possibility for <literal>=&gt;</> to be a user-defined operator.
         Creation of user-defined <literal>=&gt;</> operators has been issuing
-        warnings since PostgreSQL 9.0.
+        warnings since MollyDB 9.0.
        </para>
       </listitem>
 
@@ -3479,7 +3479,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
 -->
        <para>
         Add <acronym>POSIX</>-compliant rounding for platforms that use
-        PostgreSQL-supplied rounding functions (Pedro Gimeno Fortea)
+        MollyDB-supplied rounding functions (Pedro Gimeno Fortea)
        </para>
       </listitem>
 
@@ -4671,7 +4671,7 @@ Add GUC and storage parameter to set the maximum size of GIN pending list.
 
       <para>
        These modules are only meant for server testing, so they do not need
-       to be built or installed when packaging <productname>PostgreSQL</>.
+       to be built or installed when packaging <productname>MollyDB</>.
       </para>
      </listitem>
 

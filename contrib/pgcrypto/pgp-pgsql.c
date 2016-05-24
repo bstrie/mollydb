@@ -1,6 +1,6 @@
 /*
  * pgp-pgsql.c
- *		PostgreSQL wrappers for pgp.
+ *		MollyDB wrappers for pgp.
  *
  * Copyright (c) 2005 Marko Kreen
  * All rights reserved.

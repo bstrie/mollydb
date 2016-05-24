@@ -1,5 +1,5 @@
 /*
- *	PostgreSQL definitions for managed Large Objects.
+ *	MollyDB definitions for managed Large Objects.
  *
  *	contrib/lo/lo.c
  *

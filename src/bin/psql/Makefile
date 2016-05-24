@@ -2,14 +2,14 @@
 #
 # Makefile for src/bin/psql
 #
-# Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+# Portions Copyright (c) 1996-2016, MollyDB Global Development Group
 # Portions Copyright (c) 1994, Regents of the University of California
 #
 # src/bin/psql/Makefile
 #
 #-------------------------------------------------------------------------
 
-PGFILEDESC = "psql - the PostgreSQL interactive terminal"
+PGFILEDESC = "psql - the MollyDB interactive terminal"
 PGAPPICON=win32
 
 subdir = src/bin/psql

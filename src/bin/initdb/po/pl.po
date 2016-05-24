@@ -1,11 +1,11 @@
 # INITDB Translated Messages into the Polish Language
 # Copyright (c) 2005 toczek, xxxtoczekxxx@wp.pl
-# Distributed under the same licensing terms as PostgreSQL itself.
+# Distributed under the same licensing terms as MollyDB itself.
 # Begina Felicysym <begina.felicysym@wp.eu>, 2011, 2012, 2013.
 # grzegorz <begina.felicysym@wp.eu>, 2014, 2015.
 msgid ""
 msgstr ""
-"Project-Id-Version: initdb (PostgreSQL 9.1)\n"
+"Project-Id-Version: initdb (MollyDB 9.1)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-08-15 18:43+0000\n"
 "PO-Revision-Date: 2015-08-16 12:00+0200\n"
@@ -362,10 +362,10 @@ msgstr "tworzenie bazy template1 w folderze %s/base/1 ... "
 #: initdb.c:1474
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
-"%s: plik wejściowy \"%s\" nie należy do bazy danych PostgreSQL %s\n"
+"%s: plik wejściowy \"%s\" nie należy do bazy danych MollyDB %s\n"
 "Sprawdź swoją instalację lub podaj poprawą ścieżkę przy pomocy zmiennej -L.\n"
 
 #: initdb.c:1561
@@ -537,10 +537,10 @@ msgstr ""
 #: initdb.c:2747
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s inicjuje klaster bazy danych PostgreSQL.\n"
+"%s inicjuje klaster bazy danych MollyDB.\n"
 "\n"
 
 #: initdb.c:2748

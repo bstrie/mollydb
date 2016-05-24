@@ -4,7 +4,7 @@
  *	  Definition of (and support for) access control list data structures.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/utils/acl.h
@@ -81,11 +81,11 @@ typedef struct AclItem
 
 /*
  * Definitions for convenient access to Acl (array of AclItem).
- * These are standard PostgreSQL arrays, but are restricted to have one
+ * These are standard MollyDB arrays, but are restricted to have one
  * dimension and no nulls.  We also ignore the lower bound when reading,
  * and set it to one when writing.
  *
- * CAUTION: as of PostgreSQL 7.1, these arrays are toastable (just like all
+ * CAUTION: as of MollyDB 7.1, these arrays are toastable (just like all
  * other array types).  Therefore, be careful to detoast them with the
  * macros provided, unless you know for certain that a particular array
  * can't have been toasted.

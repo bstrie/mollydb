@@ -1,5 +1,5 @@
 /**********************************************************************
- * plperl.c - perl as a procedural language for PostgreSQL
+ * plperl.c - perl as a procedural language for MollyDB
  *
  *	  src/pl/plperl/plperl.c
  *
@@ -57,8 +57,8 @@
 #include "plperl_opmask.h"
 
 EXTERN_C void boot_DynaLoader(pTHX_ CV *cv);
-EXTERN_C void boot_PostgreSQL__InServer__Util(pTHX_ CV *cv);
-EXTERN_C void boot_PostgreSQL__InServer__SPI(pTHX_ CV *cv);
+EXTERN_C void boot_MollyDB__InServer__Util(pTHX_ CV *cv);
+EXTERN_C void boot_MollyDB__InServer__SPI(pTHX_ CV *cv);
 
 PG_MODULE_MAGIC;
 
@@ -204,7 +204,7 @@ typedef struct plperl_query_entry
 } plperl_query_entry;
 
 /**********************************************************************
- * Information for PostgreSQL - Perl array conversion.
+ * Information for MollyDB - Perl array conversion.
  **********************************************************************/
 typedef struct plperl_array_info
 {
@@ -656,15 +656,15 @@ select_perl_context(bool trusted)
 	 * to the database AFTER on_*_init code has run. See
 	 * http://archives.mollydb.org/pgsql-hackers/2010-01/msg02669.php
 	 */
-	newXS("PostgreSQL::InServer::SPI::bootstrap",
-		  boot_PostgreSQL__InServer__SPI, __FILE__);
+	newXS("MollyDB::InServer::SPI::bootstrap",
+		  boot_MollyDB__InServer__SPI, __FILE__);
 
-	eval_pv("PostgreSQL::InServer::SPI::bootstrap()", FALSE);
+	eval_pv("MollyDB::InServer::SPI::bootstrap()", FALSE);
 	if (SvTRUE(ERRSV))
 		ereport(ERROR,
 				(errcode(ERRCODE_EXTERNAL_ROUTINE_EXCEPTION),
 				 errmsg("%s", strip_trailing_ws(sv2cstr(ERRSV))),
-		errcontext("while executing PostgreSQL::InServer::SPI::bootstrap")));
+		errcontext("while executing MollyDB::InServer::SPI::bootstrap")));
 
 	/* Fully initialized, so mark the hashtable entry valid */
 	interp_desc->interp = interp;
@@ -1111,7 +1111,7 @@ plperl_hash_to_datum(SV *src, TupleDesc td)
 
 /*
  * if we are an array ref return the reference. this is special in that if we
- * are a PostgreSQL::InServer::ARRAY object we will return the 'magic' array.
+ * are a MollyDB::InServer::ARRAY object we will return the 'magic' array.
  */
 static SV  *
 get_perl_array_ref(SV *sv)
@@ -1120,7 +1120,7 @@ get_perl_array_ref(SV *sv)
 	{
 		if (SvTYPE(SvRV(sv)) == SVt_PVAV)
 			return sv;
-		else if (sv_isa(sv, "PostgreSQL::InServer::ARRAY"))
+		else if (sv_isa(sv, "MollyDB::InServer::ARRAY"))
 		{
 			HV		   *hv = (HV *) SvRV(sv);
 			SV		  **sav = hv_fetch_string(hv, "array");
@@ -1129,7 +1129,7 @@ get_perl_array_ref(SV *sv)
 				SvTYPE(SvRV(*sav)) == SVt_PVAV)
 				return *sav;
 
-			elog(ERROR, "could not get array reference from PostgreSQL::InServer::ARRAY object");
+			elog(ERROR, "could not get array reference from MollyDB::InServer::ARRAY object");
 		}
 	}
 	return NULL;
@@ -1410,7 +1410,7 @@ plperl_sv_to_literal(SV *sv, char *fqtypename)
 }
 
 /*
- * Convert PostgreSQL array datum to a perl array reference.
+ * Convert MollyDB array datum to a perl array reference.
  *
  * typid is arg's OID, which must be an array type.
  */
@@ -1476,7 +1476,7 @@ plperl_ref_from_pg_array(Datum arg, Oid typid)
 	(void) hv_store(hv, "typeoid", 7, newSVuv(typid), 0);
 
 	return sv_bless(newRV_noinc((SV *) hv),
-					gv_stashpv("PostgreSQL::InServer::ARRAY", 0));
+					gv_stashpv("MollyDB::InServer::ARRAY", 0));
 }
 
 /*
@@ -2044,7 +2044,7 @@ plperl_create_sub(plperl_proc_desc *prodesc, char *s, Oid fn_oid)
 
 	/*
 	 * Use 'false' for $prolog in mkfunc, which is kept for compatibility in
-	 * case a module such as PostgreSQL::PLPerl::NYTprof replaces the function
+	 * case a module such as MollyDB::PLPerl::NYTprof replaces the function
 	 * compiler.
 	 */
 	PUSHs(&PL_sv_no);
@@ -2056,7 +2056,7 @@ plperl_create_sub(plperl_proc_desc *prodesc, char *s, Oid fn_oid)
 	 * errors properly.  Perhaps it's because there's another level of eval
 	 * inside mksafefunc?
 	 */
-	count = perl_call_pv("PostgreSQL::InServer::mkfunc",
+	count = perl_call_pv("MollyDB::InServer::mkfunc",
 						 G_SCALAR | G_EVAL | G_KEEPERR);
 	SPAGAIN;
 
@@ -2101,8 +2101,8 @@ plperl_init_shared_libs(pTHX)
 	char	   *file = __FILE__;
 
 	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
-	newXS("PostgreSQL::InServer::Util::bootstrap",
-		  boot_PostgreSQL__InServer__Util, file);
+	newXS("MollyDB::InServer::Util::bootstrap",
+		  boot_MollyDB__InServer__Util, file);
 	/* newXS for...::SPI::bootstrap is in select_perl_context() */
 }
 
@@ -3012,7 +3012,7 @@ check_spi_usage_allowed(void)
 	/* see comment in plperl_fini() */
 	if (plperl_ending)
 	{
-		/* simple croak as we don't want to involve PostgreSQL code */
+		/* simple croak as we don't want to involve MollyDB code */
 		croak("SPI functions can not be used in END blocks");
 	}
 }

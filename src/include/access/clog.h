@@ -1,9 +1,9 @@
 /*
  * clog.h
  *
- * PostgreSQL transaction-commit-log manager
+ * MollyDB transaction-commit-log manager
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/access/clog.h

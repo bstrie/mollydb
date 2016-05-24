@@ -1,11 +1,11 @@
 # Brazilian Portuguese message translation file for initdb
-# Copyright (C) 2009 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Euler Taveira de Oliveira <euler@timbira.com>, 2003-2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-09-17 22:32-0300\n"
 "PO-Revision-Date: 2010-09-25 00:45+0300\n"
@@ -358,10 +358,10 @@ msgstr "criando banco de dados template1 em %s/base/1 ... "
 #: initdb.c:1474
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
-"%s: arquivo de entrada \"%s\" não pertence ao PostgreSQL %s\n"
+"%s: arquivo de entrada \"%s\" não pertence ao MollyDB %s\n"
 "Verifique sua instalação ou especifique o caminho correto utilizando a opção -L.\n"
 
 #: initdb.c:1561
@@ -531,10 +531,10 @@ msgstr ""
 #: initdb.c:2747
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s inicializa um agrupamento de banco de dados PostgreSQL.\n"
+"%s inicializa um agrupamento de banco de dados MollyDB.\n"
 "\n"
 
 #: initdb.c:2748

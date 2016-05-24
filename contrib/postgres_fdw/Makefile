@@ -2,7 +2,7 @@
 
 MODULE_big = postgres_fdw
 OBJS = postgres_fdw.o option.o deparse.o connection.o shippable.o $(WIN32RES)
-PGFILEDESC = "postgres_fdw - foreign data wrapper for PostgreSQL"
+PGFILEDESC = "postgres_fdw - foreign data wrapper for MollyDB"
 
 PG_CPPFLAGS = -I$(libpq_srcdir)
 SHLIB_LINK = $(libpq)

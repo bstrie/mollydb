@@ -3,7 +3,7 @@
  * catcache.c
  *	  System catalog cache for tuples matching a key.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -547,7 +547,7 @@ CreateCacheMemoryContext(void)
  *
  * Clean up catcaches at end of main transaction (either commit or abort)
  *
- * As of PostgreSQL 8.1, catcache pins should get released by the
+ * As of MollyDB 8.1, catcache pins should get released by the
  * ResourceOwner mechanism.  This routine is just a debugging
  * cross-check that no pins remain.
  */

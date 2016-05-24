@@ -20,7 +20,7 @@
  * step 2 ...
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/bin/pg_resetxlog/pg_resetxlog.c
@@ -109,7 +109,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_resetxlog (PostgreSQL) " PG_VERSION);
+			puts("pg_resetxlog (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}
@@ -305,7 +305,7 @@ main(int argc, char *argv[])
 	{
 		fprintf(stderr, _("%s: cannot be executed by \"root\"\n"),
 				progname);
-		fprintf(stderr, _("You must run %s as the PostgreSQL superuser.\n"),
+		fprintf(stderr, _("You must run %s as the MollyDB superuser.\n"),
 				progname);
 		exit(1);
 	}
@@ -1164,7 +1164,7 @@ WriteEmptyXLOG(void)
 static void
 usage(void)
 {
-	printf(_("%s resets the PostgreSQL transaction log.\n\n"), progname);
+	printf(_("%s resets the MollyDB transaction log.\n\n"), progname);
 	printf(_("Usage:\n  %s [OPTION]... DATADIR\n\n"), progname);
 	printf(_("Options:\n"));
 	printf(_("  -c XID,XID       set oldest and newest transactions bearing commit timestamp\n"));

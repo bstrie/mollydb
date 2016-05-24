@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: psql (PostgreSQL 9.0)\n"
+"Project-Id-Version: psql (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:43+0000\n"
 "PO-Revision-Date: 2016-01-03 23:26-0500\n"
@@ -2127,9 +2127,9 @@ msgstr "%s\n"
 #: help.c:70
 #, c-format
 msgid ""
-"psql is the PostgreSQL interactive terminal.\n"
+"psql is the MollyDB interactive terminal.\n"
 "\n"
-msgstr "psql是PostgreSQL 的交互式客户端工具。\n"
+msgstr "psql是MollyDB 的交互式客户端工具。\n"
 
 #: help.c:71 help.c:314 help.c:347 help.c:374
 #, c-format
@@ -2450,13 +2450,13 @@ msgid ""
 "\n"
 "For more information, type \"\\?\" (for internal commands) or \"\\help"
 "\" (for SQL\n"
-"commands) from within psql, or consult the psql section in the PostgreSQL\n"
+"commands) from within psql, or consult the psql section in the MollyDB\n"
 "documentation.\n"
 "\n"
 msgstr ""
 "\n"
 "更多信息，请在psql中输入\"\\?\"(用于内部指令)或者 \"\\help\"(用于SQL命令)，\n"
-"或者参考PostgreSQL文档中的psql章节.\n"
+"或者参考MollyDB文档中的psql章节.\n"
 "\n"
 
 #: help.c:143
@@ -2474,8 +2474,8 @@ msgstr "一般性\n"
 #: help.c:167
 #, c-format
 msgid ""
-"  \\copyright             show PostgreSQL usage and distribution terms\n"
-msgstr "  \\copyright            显示PostgreSQL的使用和发行许可条款\n"
+"  \\copyright             show MollyDB usage and distribution terms\n"
+msgstr "  \\copyright            显示MollyDB的使用和发行许可条款\n"
 
 # help.c:194
 #: help.c:168
@@ -3611,15 +3611,15 @@ msgstr "使用 \"\\q\" 离开 %s。\n"
 
 #: mainloop.c:183
 msgid ""
-"The input is a PostgreSQL custom-format dump.\n"
+"The input is a MollyDB custom-format dump.\n"
 "Use the pg_restore command-line client to restore this dump to a database.\n"
 msgstr ""
-"该输入是一个PostgreSQL自定义格式的转储。\n"
+"该输入是一个MollyDB自定义格式的转储。\n"
 "请使用pg_restore命令行客户端来将这个转储恢复到数据库。\n"
 
 #: mainloop.c:203
-msgid "You are using psql, the command-line interface to PostgreSQL."
-msgstr "您正在使用psql, 这是一种用于访问PostgreSQL的命令行界面"
+msgid "You are using psql, the command-line interface to MollyDB."
+msgstr "您正在使用psql, 这是一种用于访问MollyDB的命令行界面"
 
 # startup.c:292
 #: mainloop.c:204

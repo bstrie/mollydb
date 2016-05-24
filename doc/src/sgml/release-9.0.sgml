@@ -16,7 +16,7 @@
   </para>
 
   <para>
-   This is expected to be the last <productname>PostgreSQL</> release
+   This is expected to be the last <productname>MollyDB</> release
    in the 9.0.X series.  Users are encouraged to update to a newer
    release branch soon.
   </para>
@@ -478,7 +478,7 @@
 
     <listitem>
      <para>
-      Make the numeric form of the <productname>PostgreSQL</> version number
+      Make the numeric form of the <productname>MollyDB</> version number
       (e.g., <literal>90405</>) readily available to extension Makefiles,
       as a variable named <varname>VERSION_NUM</> (Michael Paquier)
      </para>
@@ -513,7 +513,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 9.0.X release series in September 2015.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -587,7 +587,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 9.0.X release series in September 2015.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -654,7 +654,7 @@
       For a long time, <application>libpq</> was coded so that the only SSL
       protocol it would allow was TLS v1.  Now that newer TLS versions are
       becoming popular, allow it to negotiate the highest commonly-supported
-      TLS version with the server.  (<productname>PostgreSQL</> servers were
+      TLS version with the server.  (<productname>MollyDB</> servers were
       already capable of such negotiation, so no change is needed on the
       server side.)  This is a back-patch of a change already released in
       9.4.0.
@@ -681,7 +681,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 9.0.X release series in September 2015.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -932,7 +932,7 @@
      <para>
       Without this, identically-named users from different realms cannot be
       distinguished.  For the moment this is only a documentation change, but
-      it will become the default setting in <productname>PostgreSQL</> 9.5.
+      it will become the default setting in <productname>MollyDB</> 9.5.
      </para>
     </listitem>
 
@@ -1151,9 +1151,9 @@
 
      <para>
       When <function>to_char()</> processes a numeric formatting template
-      calling for a large number of digits, <productname>PostgreSQL</>
+      calling for a large number of digits, <productname>MollyDB</>
       would read past the end of a buffer.  When processing a crafted
-      timestamp formatting template, <productname>PostgreSQL</> would write
+      timestamp formatting template, <productname>MollyDB</> would write
       past the end of a buffer.  Either case could crash the server.
       We have not ruled out the possibility of attacks that lead to
       privilege escalation, though they seem unlikely.
@@ -1168,7 +1168,7 @@
      </para>
 
      <para>
-      <productname>PostgreSQL</> includes a replacement implementation
+      <productname>MollyDB</> includes a replacement implementation
       of <function>printf</> and related functions.  This code will overrun
       a stack buffer when formatting a floating point number (conversion
       specifiers <literal>e</>, <literal>E</>, <literal>f</>, <literal>F</>,
@@ -1177,13 +1177,13 @@
       possibility of attacks that lead to privilege escalation.
       A database user can trigger such a buffer overrun through
       the <function>to_char()</> SQL function.  While that is the only
-      affected core <productname>PostgreSQL</> functionality, extension
+      affected core <productname>MollyDB</> functionality, extension
       modules that use printf-family functions may be at risk as well.
      </para>
 
      <para>
-      This issue primarily affects <productname>PostgreSQL</> on Windows.
-      <productname>PostgreSQL</> uses the system implementation of these
+      This issue primarily affects <productname>MollyDB</> on Windows.
+      <productname>MollyDB</> uses the system implementation of these
       functions where adequate, which it is on other modern platforms.
       (CVE-2015-0242)
      </para>
@@ -1739,7 +1739,7 @@
 
      <para>
       With OpenLDAP versions 2.4.24 through 2.4.31,
-      inclusive, <productname>PostgreSQL</> backends can crash at exit.
+      inclusive, <productname>MollyDB</> backends can crash at exit.
       Raise a warning during <application>configure</> based on the
       compile-time OpenLDAP version number, and test the crashing scenario
       in the <filename>contrib/dblink</> regression test.
@@ -1773,7 +1773,7 @@
      </para>
 
      <para>
-      Previously, <productname>PostgreSQL</> assumed that the UTC offset
+      Previously, <productname>MollyDB</> assumed that the UTC offset
       associated with a time zone abbreviation (such as <literal>EST</>)
       never changes in the usage of any particular locale.  However this
       assumption fails in the real world, so introduce the ability for a
@@ -1781,7 +1781,7 @@
       Update the zone abbreviation definition files to make use of this
       feature in timezone locales that have changed the UTC offset of their
       abbreviations since 1970 (according to the IANA timezone database).
-      In such timezones, <productname>PostgreSQL</> will now associate the
+      In such timezones, <productname>MollyDB</> will now associate the
       correct UTC offset with the abbreviation depending on the given date.
      </para>
     </listitem>
@@ -3114,7 +3114,7 @@
      </para>
 
      <para>
-      <productname>PostgreSQL</> case-folds non-ASCII characters only
+      <productname>MollyDB</> case-folds non-ASCII characters only
       when using a single-byte server encoding.
      </para>
     </listitem>
@@ -3836,7 +3836,7 @@
 
      <para>
       This ancient function is not used anywhere by
-      <productname>PostgreSQL</> itself, but it might still be used by some
+      <productname>MollyDB</> itself, but it might still be used by some
       client code.
      </para>
     </listitem>
@@ -4138,7 +4138,7 @@
 
      <para>
       While this mistake had no particular impact on
-      <productname>PostgreSQL</productname> itself, it was bad for
+      <productname>MollyDB</productname> itself, it was bad for
       applications that rely on <function>txid_current()</> and related
       functions: the TXID value would appear to go backwards.
      </para>
@@ -4701,7 +4701,7 @@
 
     <listitem>
      <para>
-      Fix mapping of PostgreSQL encodings to Python encodings in PL/Python
+      Fix mapping of MollyDB encodings to Python encodings in PL/Python
       (Jan Urbanski)
      </para>
     </listitem>
@@ -5327,7 +5327,7 @@
       A similar problem still afflicts back-references that are embedded in a
       larger quantified expression, rather than being the immediate subject
       of the quantifier.  This will be addressed in a future
-      <productname>PostgreSQL</> release.
+      <productname>MollyDB</> release.
      </para>
     </listitem>
 
@@ -5338,7 +5338,7 @@
      </para>
 
      <para>
-      A patch in the December 2011 releases of <productname>PostgreSQL</>
+      A patch in the December 2011 releases of <productname>MollyDB</>
       caused memory leakage in these operations, which could be significant
       in scenarios such as building a btree index on such a column.
      </para>
@@ -7149,7 +7149,7 @@
 
      <para>
       The default on Linux has actually been <literal>fdatasync</> for many
-      years, but recent kernel changes caused <productname>PostgreSQL</> to
+      years, but recent kernel changes caused <productname>MollyDB</> to
       choose <literal>open_datasync</> instead.  This choice did not result
       in any performance improvement, and caused outright failures on
       certain filesystems, notably <literal>ext4</> with the
@@ -7714,12 +7714,12 @@
 
    <para>
     This release of
-    <productname>PostgreSQL</> adds features that have been requested
+    <productname>MollyDB</> adds features that have been requested
     for years, such as easy-to-use replication, a mass permission-changing
     facility, and anonymous code blocks. While past major releases have
     been conservative in their scope, this release shows a
     bold new desire to provide facilities that new and existing
-    users of <productname>PostgreSQL</> will embrace. This has all
+    users of <productname>MollyDB</> will embrace. This has all
     been done with few incompatibilities. Major enhancements include:
    </para>
 
@@ -8185,7 +8185,7 @@
      </para>
 
      <para>
-      Future versions of <productname>PostgreSQL</> will probably reject
+      Future versions of <productname>MollyDB</> will probably reject
       this operator name entirely, in order to support the SQL-standard
       notation for named function parameters.  For the moment, it is
       still allowed, but a warning is emitted when such an operator is
@@ -8224,7 +8224,7 @@
     <title>Continuous Archiving and Streaming Replication</title>
 
     <para>
-     PostgreSQL's existing standby-server capability has been expanded both to
+     MollyDB's existing standby-server capability has been expanded both to
      support read-only queries on standby servers and to greatly reduce
      the lag between master and standby servers.  For many users, this
      will be a useful and low-administration form of replication, either
@@ -8560,7 +8560,7 @@
       </para>
 
       <para>
-       Now there is true multilingual support for PostgreSQL log messages
+       Now there is true multilingual support for MollyDB log messages
        on Windows.
       </para>
      </listitem>
@@ -9276,7 +9276,7 @@
       linkend="guc-bytea-output"><varname>bytea_output</></link> controls
       whether hex or traditional format is used for <type>bytea</>
       output.  Libpq's <function>PQescapeByteaConn()</> function automatically
-      uses the hex format when connected to <productname>PostgreSQL</> 9.0
+      uses the hex format when connected to <productname>MollyDB</> 9.0
       or newer servers.  However, pre-9.0 libpq versions will not
       correctly process hex format from newer servers.
      </para>
@@ -9884,7 +9884,7 @@ if TG_OP = 'INSERT' and NEW.col1 = ... then
 
       <para>
        <type>Bytea</> values passed into PL/Python are now represented as
-       binary, rather than the PostgreSQL <type>bytea</> text format.
+       binary, rather than the MollyDB <type>bytea</> text format.
        <type>Bytea</> values containing null bytes are now also output
        properly from PL/Python.  Passing of boolean, integer, and float
        values was also improved.
@@ -10463,7 +10463,7 @@ if TG_OP = 'INSERT' and NEW.col1 = ... then
 
     <listitem>
      <para>
-      Add Makefile rules to build the <productname>PostgreSQL</> documentation
+      Add Makefile rules to build the <productname>MollyDB</> documentation
       as a single <acronym>HTML</> file or as a single plain-text file
       (Peter Eisentraut, Bruce Momjian)
      </para>
@@ -10661,7 +10661,7 @@ if TG_OP = 'INSERT' and NEW.col1 = ... then
     <listitem>
      <para>
       Add new documentation <link linkend="non-durability">section</link>
-      about running <productname>PostgreSQL</> in non-durable mode
+      about running <productname>MollyDB</> in non-durable mode
       to improve performance (Bruce Momjian)
      </para>
     </listitem>
@@ -10894,9 +10894,9 @@ if TG_OP = 'INSERT' and NEW.col1 = ... then
 
      <para>
       This avoids the requirement of dumping/reloading the database when
-      upgrading to a new major release of PostgreSQL, thus reducing downtime
+      upgrading to a new major release of MollyDB, thus reducing downtime
       by orders of magnitude. It supports upgrades to 9.0
-      from PostgreSQL 8.3 and 8.4.
+      from MollyDB 8.3 and 8.4.
      </para>
     </listitem>
 
@@ -10919,7 +10919,7 @@ if TG_OP = 'INSERT' and NEW.col1 = ... then
      <listitem>
       <para>
        Move data files within tablespaces into
-       <productname>PostgreSQL</>-version-specific subdirectories
+       <productname>MollyDB</>-version-specific subdirectories
        (Bruce Momjian)
       </para>
 
@@ -11025,7 +11025,7 @@ if TG_OP = 'INSERT' and NEW.col1 = ... then
      <para>
       New functions and operators were also added.  These improvements
       make <type>hstore</> a full-function key-value store embedded in
-      <productname>PostgreSQL</>.
+      <productname>MollyDB</>.
      </para>
     </listitem>
 

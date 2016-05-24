@@ -1,9 +1,9 @@
-# Korean message translation file for PostgreSQL pgscripts
+# Korean message translation file for MollyDB pgscripts
 # Ioseph Kim <ioseph@uri.sarang.net>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pgscripts (PostgreSQL 9.5)\n"
+"Project-Id-Version: pgscripts (MollyDB 9.5)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-21 09:47+0900\n"
 "PO-Revision-Date: 2015-12-28 18:09+0900\n"
@@ -310,10 +310,10 @@ msgstr "%s: 코멘트 추가하기 실패 (데이터베이스는 만들어졌음
 #: createdb.c:251
 #, c-format
 msgid ""
-"%s creates a PostgreSQL database.\n"
+"%s creates a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 데이터베이스를 만듭니다.\n"
+"%s 프로그램은 MollyDB 데이터베이스를 만듭니다.\n"
 "\n"
 
 #: createdb.c:253
@@ -453,10 +453,10 @@ msgstr "%s: 언어 설치 실패: %s"
 #: createlang.c:235
 #, c-format
 msgid ""
-"%s installs a procedural language into a PostgreSQL database.\n"
+"%s installs a procedural language into a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 데이터베이스에 프로시쥬얼 언어를 설치합니다.\n"
+"%s 프로그램은 MollyDB 데이터베이스에 프로시쥬얼 언어를 설치합니다.\n"
 "\n"
 
 #: createlang.c:237 droplang.c:238
@@ -517,10 +517,10 @@ msgstr "%s: 새 롤 만들기 실패: %s"
 #: createuser.c:347
 #, c-format
 msgid ""
-"%s creates a new PostgreSQL role.\n"
+"%s creates a new MollyDB role.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 롤을 만듭니다.\n"
+"%s 프로그램은 MollyDB 롤을 만듭니다.\n"
 "\n"
 
 #: createuser.c:349 dropuser.c:157
@@ -658,10 +658,10 @@ msgstr "%s: 데이터베이스 삭제 실패: %s"
 #: dropdb.c:154
 #, c-format
 msgid ""
-"%s removes a PostgreSQL database.\n"
+"%s removes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 데이터베이스를 삭제합니다.\n"
+"%s 프로그램은 MollyDB 데이터베이스를 삭제합니다.\n"
 "\n"
 
 #: dropdb.c:156
@@ -728,10 +728,10 @@ msgstr "%s: \"%s\" 롤 삭제 실패: %s"
 #: dropuser.c:155
 #, c-format
 msgid ""
-"%s removes a PostgreSQL role.\n"
+"%s removes a MollyDB role.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 롤을 삭제합니다.\n"
+"%s 프로그램은 MollyDB 롤을 삭제합니다.\n"
 "\n"
 
 #: dropuser.c:160
@@ -792,10 +792,10 @@ msgstr "알수없음\n"
 #: pg_isready.c:221
 #, c-format
 msgid ""
-"%s issues a connection check to a PostgreSQL database.\n"
+"%s issues a connection check to a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 데이터베이스 접속을 검사합니다.\n"
+"%s 프로그램은 MollyDB 데이터베이스 접속을 검사합니다.\n"
 "\n"
 
 #: pg_isready.c:223
@@ -935,10 +935,10 @@ msgstr "%s: 시스템 카탈로그 재색인 작업 실패: %s"
 #: reindexdb.c:391
 #, c-format
 msgid ""
-"%s reindexes a PostgreSQL database.\n"
+"%s reindexes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 데이터베이스 재색인 작업을 합니다.\n"
+"%s 프로그램은 MollyDB 데이터베이스 재색인 작업을 합니다.\n"
 "\n"
 
 #: reindexdb.c:395
@@ -1042,10 +1042,10 @@ msgstr "%s: \"%s\" 데이터베이스 청소하기 실패: %s"
 #: vacuumdb.c:974
 #, c-format
 msgid ""
-"%s cleans and analyzes a PostgreSQL database.\n"
+"%s cleans and analyzes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 데이터베이스 자료 정리 및\n"
+"%s 프로그램은 MollyDB 데이터베이스 자료 정리 및\n"
 "퀴리 최적화기의 참고 자료를 갱신합니다.\n"
 "\n"
 

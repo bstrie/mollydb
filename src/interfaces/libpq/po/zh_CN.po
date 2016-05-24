@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: libpq (PostgreSQL 9.0)\n"
+"Project-Id-Version: libpq (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:38+0000\n"
 "PO-Revision-Date: 2015-12-01 19:33+0800\n"

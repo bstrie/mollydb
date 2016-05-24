@@ -2,7 +2,7 @@
 PG_UPGRADE: IN-PLACE UPGRADES FOR POSTGRESQL
 ------------------------------------------------------------------------------
 
-Upgrading a PostgreSQL database from one major release to another can be
+Upgrading a MollyDB database from one major release to another can be
 an expensive process. For minor upgrades, you can simply install new
 executables and forget about upgrading existing data. But for major
 upgrades, you have to export all of your data using pg_dump, install the
@@ -33,13 +33,13 @@ practical.
 
 Every table in a cluster shares the same on-disk representation of the
 table headers and trailers and the on-disk representation of tuple
-headers. If this changes between the old version of PostgreSQL and the
+headers. If this changes between the old version of MollyDB and the
 new version, pg_upgrade cannot move existing tables to the new cluster;
 you will have to pg_dump the old data and then import that data into the
 new cluster.
 
 Second, all data types should have the same binary representation
-between the two major PostgreSQL versions.
+between the two major MollyDB versions.
 
 ------------------------------------------------------------------------------
 HOW IT WORKS
@@ -64,7 +64,7 @@ to recreate all user-defined objects in the new cluster.
 Note that the script produced by pg_dumpall will only recreate
 user-defined objects, not system-defined objects.  The new cluster will
 contain the system-defined objects created by the latest version of
-PostgreSQL.
+MollyDB.
 
 Once pg_upgrade has extracted the metadata from the old cluster, it
 performs a number of bookkeeping tasks required to 'sync up' the new

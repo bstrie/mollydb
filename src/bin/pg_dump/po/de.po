@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-26 09:14+0000\n"
 "PO-Revision-Date: 2016-04-26 21:28-0400\n"
@@ -2234,10 +2234,10 @@ msgstr "%s: konnte die Ausgabedatei „%s“ nicht öffnen: %s\n"
 #: pg_dumpall.c:548
 #, c-format
 msgid ""
-"%s extracts a PostgreSQL database cluster into an SQL script file.\n"
+"%s extracts a MollyDB database cluster into an SQL script file.\n"
 "\n"
 msgstr ""
-"%s gibt einen PostgreSQL-Datenbankcluster in eine SQL-Skriptdatei aus.\n"
+"%s gibt einen MollyDB-Datenbankcluster in eine SQL-Skriptdatei aus.\n"
 "\n"
 
 #: pg_dumpall.c:550
@@ -2412,10 +2412,10 @@ msgstr "WARNUNG: bei Wiederherstellung ignorierte Fehler: %d\n"
 #: pg_restore.c:436
 #, c-format
 msgid ""
-"%s restores a PostgreSQL database from an archive created by pg_dump.\n"
+"%s restores a MollyDB database from an archive created by pg_dump.\n"
 "\n"
 msgstr ""
-"%s stellt eine PostgreSQL-Datenbank wieder her, die mit pg_dump\n"
+"%s stellt eine MollyDB-Datenbank wieder her, die mit pg_dump\n"
 "gesichert wurde.\n"
 "\n"
 

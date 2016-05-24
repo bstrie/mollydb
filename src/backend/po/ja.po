@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.1 beta 2\n"
+"Project-Id-Version: MollyDB 9.1 beta 2\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 13:05+0900\n"
 "PO-Revision-Date: 2014-08-16 16:41+0900\n"
@@ -303,8 +303,8 @@ msgstr "インデックス \"%s\" 内に無効と判断されている内部タ�
 
 #: access/gist/gist.c:612 access/gist/gistvacuum.c:268
 #, c-format
-msgid "This is caused by an incomplete page split at crash recovery before upgrading to PostgreSQL 9.1."
-msgstr "これは、PostgreSQL 9.1へアップグレードする前のクラッシュリカバリにおける不完全なページ分割が原因です。"
+msgid "This is caused by an incomplete page split at crash recovery before upgrading to MollyDB 9.1."
+msgstr "これは、MollyDB 9.1へアップグレードする前のクラッシュリカバリにおける不完全なページ分割が原因です。"
 
 #: access/gist/gist.c:613 access/gist/gistutil.c:693
 #: access/gist/gistutil.c:704 access/gist/gistvacuum.c:269
@@ -5997,8 +5997,8 @@ msgstr ">= は演算子名として廃止予定であり、推奨されません
 
 #: commands/operatorcmds.c:98
 #, c-format
-msgid "This name may be disallowed altogether in future versions of PostgreSQL."
-msgstr "PostgreSQL の将来のバージョンでは、この名前が使えなくなる可能性があります"
+msgid "This name may be disallowed altogether in future versions of MollyDB."
+msgstr "MollyDB の将来のバージョンでは、この名前が使えなくなる可能性があります"
 
 #: commands/operatorcmds.c:119 commands/operatorcmds.c:127
 #, c-format
@@ -8060,8 +8060,8 @@ msgstr "時間帯\"%s\"はうるう秒を使用するようです"
 
 #: commands/variable.c:365 commands/variable.c:488
 #, c-format
-msgid "PostgreSQL does not support leap seconds."
-msgstr "PostgreSQLはうるう秒をサポートしていません"
+msgid "MollyDB does not support leap seconds."
+msgstr "MollyDBはうるう秒をサポートしていません"
 
 #: commands/variable.c:552
 #, c-format
@@ -10305,10 +10305,10 @@ msgstr "%s: WSAStartupが失敗しました: %d\n"
 #: main/main.c:276
 #, c-format
 msgid ""
-"%s is the PostgreSQL server.\n"
+"%s is the MollyDB server.\n"
 "\n"
 msgstr ""
-"%sはPostgreSQLサーバです\n"
+"%sはMollyDBサーバです\n"
 "\n"
 
 #: main/main.c:277
@@ -10558,12 +10558,12 @@ msgstr ""
 #: main/main.c:342
 #, c-format
 msgid ""
-"\"root\" execution of the PostgreSQL server is not permitted.\n"
+"\"root\" execution of the MollyDB server is not permitted.\n"
 "The server must be started under an unprivileged user ID to prevent\n"
 "possible system security compromise.  See the documentation for\n"
 "more information on how to properly start the server.\n"
 msgstr ""
-"PostgreSQLを\"root\"で実行することはできません。\n"
+"MollyDBを\"root\"で実行することはできません。\n"
 "システムセキュリティの危険防止のため非特権ユーザIDでサーバを起動しな\n"
 "ければなりません。適切なサーバの起動方法に関する詳細はドキュメントを\n"
 "参照してください\n"
@@ -10576,13 +10576,13 @@ msgstr "%s: リアルユーザIDと実効ユーザIDは一致しなければな�
 #: main/main.c:366
 #, c-format
 msgid ""
-"Execution of PostgreSQL by a user with administrative permissions is not\n"
+"Execution of MollyDB by a user with administrative permissions is not\n"
 "permitted.\n"
 "The server must be started under an unprivileged user ID to prevent\n"
 "possible system security compromises.  See the documentation for\n"
 "more information on how to properly start the server.\n"
 msgstr ""
-"PostgreSQLを管理者権限を持つユーザで実行することはできません。\n"
+"MollyDBを管理者権限を持つユーザで実行することはできません。\n"
 "システムセキュリティの危険防止のため非特権ユーザIDでサーバを起動しな\n"
 "ければなりません。適切なサーバの起動方法に関する詳細はドキュメントを\n"
 "参照してください\n"
@@ -12173,18 +12173,18 @@ msgstr "失敗したシステムコールはsemget(%lu, %d, 0%o)です。"
 #: port/pg_sema.c:116 port/sysv_sema.c:116
 #, c-format
 msgid ""
-"This error does *not* mean that you have run out of disk space.  It occurs when either the system limit for the maximum number of semaphore sets (SEMMNI), or the system wide maximum number of semaphores (SEMMNS), would be exceeded.  You need to raise the respective kernel parameter.  Alternatively, reduce PostgreSQL's consumption of semaphores by reducing its max_connections parameter.\n"
-"The PostgreSQL documentation contains more information about configuring your system for PostgreSQL."
+"This error does *not* mean that you have run out of disk space.  It occurs when either the system limit for the maximum number of semaphore sets (SEMMNI), or the system wide maximum number of semaphores (SEMMNS), would be exceeded.  You need to raise the respective kernel parameter.  Alternatively, reduce MollyDB's consumption of semaphores by reducing its max_connections parameter.\n"
+"The MollyDB documentation contains more information about configuring your system for MollyDB."
 msgstr ""
-"このエラーが起こったからといって、別にディスクが足りなくなったわけではありません。この原因はセマフォセットの最大数(SEMMNI)に達したか、またはシステム全体のセマフォ数(SEMMNS)を使いきった場合です。対処としては、対応するカーネルのパラメータを増やす必要があります。もしくは PostgreSQLの max_connections を減らすことで、消費するセマフォの数を減らしてください。\n"
-"共有メモリの設定に関する詳細情報は、PostgreSQL のドキュメントに記載されています。"
+"このエラーが起こったからといって、別にディスクが足りなくなったわけではありません。この原因はセマフォセットの最大数(SEMMNI)に達したか、またはシステム全体のセマフォ数(SEMMNS)を使いきった場合です。対処としては、対応するカーネルのパラメータを増やす必要があります。もしくは MollyDBの max_connections を減らすことで、消費するセマフォの数を減らしてください。\n"
+"共有メモリの設定に関する詳細情報は、MollyDB のドキュメントに記載されています。"
 
 #: port/pg_sema.c:143 port/sysv_sema.c:143
 #, c-format
-msgid "You possibly need to raise your kernel's SEMVMX value to be at least %d.  Look into the PostgreSQL documentation for details."
+msgid "You possibly need to raise your kernel's SEMVMX value to be at least %d.  Look into the MollyDB documentation for details."
 msgstr ""
 "おそらくカーネルのSEMVMX値を最低でも%dまで増やす必要があります。\n"
-"詳細はPostgreSQLのドキュメントを調べてください。"
+"詳細はMollyDBのドキュメントを調べてください。"
 
 #: port/pg_shmem.c:164 port/sysv_shmem.c:164
 #, c-format
@@ -12199,38 +12199,38 @@ msgstr "失敗したシステムコールはshmget(key=%lu, size=%lu, 0%o)でし
 #: port/pg_shmem.c:169 port/sysv_shmem.c:169
 #, c-format
 #| msgid ""
-#| "This error usually means that PostgreSQL's request for a shared memory segment exceeded available memory or swap space, or exceeded your kernel's SHMALL parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMALL.  To reduce the request size (currently %lu bytes), reduce PostgreSQL's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
-#| "The PostgreSQL documentation contains more information about shared memory configuration."
+#| "This error usually means that MollyDB's request for a shared memory segment exceeded available memory or swap space, or exceeded your kernel's SHMALL parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMALL.  To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
+#| "The MollyDB documentation contains more information about shared memory configuration."
 msgid ""
-"This error usually means that PostgreSQL's request for a shared memory segment exceeded your kernel's SHMMAX parameter, or possibly that it is less than your kernel's SHMMIN parameter.\n"
-"The PostgreSQL documentation contains more information about shared memory configuration."
+"This error usually means that MollyDB's request for a shared memory segment exceeded your kernel's SHMMAX parameter, or possibly that it is less than your kernel's SHMMIN parameter.\n"
+"The MollyDB documentation contains more information about shared memory configuration."
 msgstr ""
-"通常このエラーは、PostgreSQLが要求する共有メモリセグメントがカーネルのSHMMAXパラメータを超えた場合、または可能性としてはカーネルのSHMMINパラメータより小さい場合に発生します。\n"
-"共有メモリの設定に関する詳細情報は、PostgreSQL のドキュメントに記載されています。"
+"通常このエラーは、MollyDBが要求する共有メモリセグメントがカーネルのSHMMAXパラメータを超えた場合、または可能性としてはカーネルのSHMMINパラメータより小さい場合に発生します。\n"
+"共有メモリの設定に関する詳細情報は、MollyDB のドキュメントに記載されています。"
 
 #: port/pg_shmem.c:176 port/sysv_shmem.c:176
 #, c-format
 #| msgid ""
-#| "This error usually means that PostgreSQL's request for a shared memory segment exceeded available memory or swap space, or exceeded your kernel's SHMALL parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMALL.  To reduce the request size (currently %lu bytes), reduce PostgreSQL's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
-#| "The PostgreSQL documentation contains more information about shared memory configuration."
+#| "This error usually means that MollyDB's request for a shared memory segment exceeded available memory or swap space, or exceeded your kernel's SHMALL parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMALL.  To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
+#| "The MollyDB documentation contains more information about shared memory configuration."
 msgid ""
-"This error usually means that PostgreSQL's request for a shared memory segment exceeded your kernel's SHMALL parameter.  You might need to reconfigure the kernel with larger SHMALL.\n"
-"The PostgreSQL documentation contains more information about shared memory configuration."
+"This error usually means that MollyDB's request for a shared memory segment exceeded your kernel's SHMALL parameter.  You might need to reconfigure the kernel with larger SHMALL.\n"
+"The MollyDB documentation contains more information about shared memory configuration."
 msgstr ""
-"通常このエラーは、PostgreSQLが要求する共有メモリセグメントがカーネルの SHMALL パラメータを超えた場合に発生します。カーネルを再構築し、カーネルのSHMALLを増やす必要があるかもしれません。\n"
-"共有メモリの設定に関する詳細情報は、PostgreSQL のドキュメントに記載されています。"
+"通常このエラーは、MollyDBが要求する共有メモリセグメントがカーネルの SHMALL パラメータを超えた場合に発生します。カーネルを再構築し、カーネルのSHMALLを増やす必要があるかもしれません。\n"
+"共有メモリの設定に関する詳細情報は、MollyDB のドキュメントに記載されています。"
 
 #: port/pg_shmem.c:182 port/sysv_shmem.c:182
 #, c-format
 #| msgid ""
-#| "This error does *not* mean that you have run out of disk space.  It occurs either if all available shared memory IDs have been taken, in which case you need to raise the SHMMNI parameter in your kernel, or because the system's overall limit for shared memory has been reached.  If you cannot increase the shared memory limit, reduce PostgreSQL's shared memory request (currently %lu bytes), perhaps by reducing shared_buffers or max_connections.\n"
-#| "The PostgreSQL documentation contains more information about shared memory configuration."
+#| "This error does *not* mean that you have run out of disk space.  It occurs either if all available shared memory IDs have been taken, in which case you need to raise the SHMMNI parameter in your kernel, or because the system's overall limit for shared memory has been reached.  If you cannot increase the shared memory limit, reduce MollyDB's shared memory request (currently %lu bytes), perhaps by reducing shared_buffers or max_connections.\n"
+#| "The MollyDB documentation contains more information about shared memory configuration."
 msgid ""
 "This error does *not* mean that you have run out of disk space.  It occurs either if all available shared memory IDs have been taken, in which case you need to raise the SHMMNI parameter in your kernel, or because the system's overall limit for shared memory has been reached.\n"
-"The PostgreSQL documentation contains more information about shared memory configuration."
+"The MollyDB documentation contains more information about shared memory configuration."
 msgstr ""
 "このエラーが起こったからといって、別にディスクが足りなくなったわけではありません。この原因のひとつは共有メモリの識別子を使いきった場合ですが、この場合はカーネルの SHMMNI を増やす必要ああります。もうひとつの可能性はシステム全体の共有メモリを使いきった場合です。\n"
-"共有メモリの設定に関する詳細情報は、PostgreSQL のドキュメントに記載されています。"
+"共有メモリの設定に関する詳細情報は、MollyDB のドキュメントに記載されています。"
 
 #: port/pg_shmem.c:417 port/sysv_shmem.c:417
 #, c-format
@@ -12241,10 +12241,10 @@ msgstr "匿名共有メモリをマップできませんでした: %m"
 #: port/pg_shmem.c:419 port/sysv_shmem.c:419
 #, c-format
 #| msgid ""
-#| "This error usually means that PostgreSQL's request for a shared memory segment exceeded available memory or swap space, or exceeded your kernel's SHMALL parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMALL.  To reduce the request size (currently %lu bytes), reduce PostgreSQL's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
-#| "The PostgreSQL documentation contains more information about shared memory configuration."
-msgid "This error usually means that PostgreSQL's request for a shared memory segment exceeded available memory or swap space. To reduce the request size (currently %lu bytes), reduce PostgreSQL's shared memory usage, perhaps by reducing shared_buffers or max_connections."
-msgstr "通常このエラーは、PostgreSQL が要求する共有メモリのサイズが利用可能なメモリやスワップ容量を超えた場合に発生します。要求サイズ（現在 %lu バイト）を減らすには、PostgreSQL の shared_buffers または max_connections を減らすことでPostgreSQLの共有メモリのサイズを減らしてください。"
+#| "This error usually means that MollyDB's request for a shared memory segment exceeded available memory or swap space, or exceeded your kernel's SHMALL parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMALL.  To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
+#| "The MollyDB documentation contains more information about shared memory configuration."
+msgid "This error usually means that MollyDB's request for a shared memory segment exceeded available memory or swap space. To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections."
+msgstr "通常このエラーは、MollyDB が要求する共有メモリのサイズが利用可能なメモリやスワップ容量を超えた場合に発生します。要求サイズ（現在 %lu バイト）を減らすには、MollyDB の shared_buffers または max_connections を減らすことでMollyDBの共有メモリのサイズを減らしてください。"
 
 #: port/pg_shmem.c:505 port/sysv_shmem.c:505
 #, c-format
@@ -12800,8 +12800,8 @@ msgstr "%s: 一致するpostgres実行ファイルがありませんでした"
 
 #: postmaster/postmaster.c:1300 utils/misc/tzparser.c:325
 #, c-format
-msgid "This may indicate an incomplete PostgreSQL installation, or that the file \"%s\" has been moved away from its proper location."
-msgstr "これは、PostgreSQLのインストールが不完全であるかまたは、ファイル\"%s\"が本来の場所からなくなってしまったことを示しています。"
+msgid "This may indicate an incomplete MollyDB installation, or that the file \"%s\" has been moved away from its proper location."
+msgstr "これは、MollyDBのインストールが不完全であるかまたは、ファイル\"%s\"が本来の場所からなくなってしまったことを示しています。"
 
 #: postmaster/postmaster.c:1328
 #, c-format
@@ -12886,8 +12886,8 @@ msgstr "開始パケットの構成が無効です。最終バイトに想定外
 
 #: postmaster/postmaster.c:1946
 #, c-format
-msgid "no PostgreSQL user name specified in startup packet"
-msgstr "開始パケット中に指定されたPostgreSQLユーザ名は存在しません"
+msgid "no MollyDB user name specified in startup packet"
+msgstr "開始パケット中に指定されたMollyDBユーザ名は存在しません"
 
 #: postmaster/postmaster.c:2003
 #, c-format
@@ -16441,8 +16441,8 @@ msgstr "\"macaddr\"の値でオクテット値が無効です: \"%s\""
 
 #: utils/adt/misc.c:111
 #, c-format
-msgid "PID %d is not a PostgreSQL server process"
-msgstr "PID %dはPostgreSQLサーバプロセスではありません"
+msgid "PID %d is not a MollyDB server process"
+msgstr "PID %dはMollyDBサーバプロセスではありません"
 
 #: utils/adt/misc.c:154
 #, c-format
@@ -17559,8 +17559,8 @@ msgstr "この機能はlibxmlサポートを付けたサーバが必要です。
 
 #: utils/adt/xml.c:172
 #, c-format
-msgid "You need to rebuild PostgreSQL using --with-libxml."
-msgstr "--with-libxmlを使用してPostgreSQLを再構築しなければなりません。"
+msgid "You need to rebuild MollyDB using --with-libxml."
+msgstr "--with-libxmlを使用してMollyDBを再構築しなければなりません。"
 
 #: utils/adt/xml.c:191 utils/mb/mbutils.c:515
 #, c-format
@@ -17614,8 +17614,8 @@ msgstr "XMLエラーハンドラを設定できませんでした"
 
 #: utils/adt/xml.c:1000
 #, c-format
-msgid "This probably indicates that the version of libxml2 being used is not compatible with the libxml2 header files that PostgreSQL was built with."
-msgstr "これはおそらく使用するlibxml2のバージョンがPostgreSQLを構築する時に使用したlibxml2ヘッダと互換性がないことを示します。"
+msgid "This probably indicates that the version of libxml2 being used is not compatible with the libxml2 header files that MollyDB was built with."
+msgstr "これはおそらく使用するlibxml2のバージョンがMollyDBを構築する時に使用したlibxml2ヘッダと互換性がないことを示します。"
 
 #: utils/adt/xml.c:1735
 msgid "Invalid character value."
@@ -18133,8 +18133,8 @@ msgstr "initdbする必要があるかもしれません"
 
 #: utils/init/miscinit.c:1211
 #, c-format
-msgid "The data directory was initialized by PostgreSQL version %ld.%ld, which is not compatible with this version %s."
-msgstr "データディレクトリはPostgreSQLバージョン%ld.%ldで初期化されましたが、これはバージョン%sと互換性がありません"
+msgid "The data directory was initialized by MollyDB version %ld.%ld, which is not compatible with this version %s."
+msgstr "データディレクトリはMollyDBバージョン%ld.%ldで初期化されましたが、これはバージョン%sと互換性がありません"
 
 #: utils/init/miscinit.c:1260
 #, c-format
@@ -18490,8 +18490,8 @@ msgid "Version and Platform Compatibility"
 msgstr "バージョン、プラットフォーム間の互換性"
 
 #: utils/misc/guc.c:601
-msgid "Version and Platform Compatibility / Previous PostgreSQL Versions"
-msgstr "バージョン、プラットフォーム間の互換性/以前のバージョンのPostgreSQL"
+msgid "Version and Platform Compatibility / Previous MollyDB Versions"
+msgstr "バージョン、プラットフォーム間の互換性/以前のバージョンのMollyDB"
 
 #: utils/misc/guc.c:603
 msgid "Version and Platform Compatibility / Other Platforms and Clients"
@@ -18591,17 +18591,17 @@ msgid "Continues processing after a checksum failure."
 msgstr "チェックサムエラーの後処理を継続します。"
 
 #: utils/misc/guc.c:816
-#| msgid "Detection of a damaged page header normally causes PostgreSQL to report an error, aborting the current transaction. Setting zero_damaged_pages to true causes the system to instead report a warning, zero out the damaged page, and continue processing. This behavior will destroy data, namely all the rows on the damaged page."
-msgid "Detection of a checksum failure normally causes PostgreSQL to report an error, aborting the current transaction. Setting ignore_checksum_failure to true causes the system to ignore the failure (but still report a warning), and continue processing. This behavior could cause crashes or other serious problems. Only has an effect if checksums are enabled."
-msgstr "チェックサムエラーを検知すると、通常PostgreSQLはエラーの報告を行ない、現在のトランザクションを中断させます。ignore_checksum_failureを真に設定することによりエラーを無視します（代わりに警告を報告します）この動作はクラッシュや他の深刻な問題を引き起こすかもしれません。チェックサムが有効な場合にのみ効果があります。"
+#| msgid "Detection of a damaged page header normally causes MollyDB to report an error, aborting the current transaction. Setting zero_damaged_pages to true causes the system to instead report a warning, zero out the damaged page, and continue processing. This behavior will destroy data, namely all the rows on the damaged page."
+msgid "Detection of a checksum failure normally causes MollyDB to report an error, aborting the current transaction. Setting ignore_checksum_failure to true causes the system to ignore the failure (but still report a warning), and continue processing. This behavior could cause crashes or other serious problems. Only has an effect if checksums are enabled."
+msgstr "チェックサムエラーを検知すると、通常MollyDBはエラーの報告を行ない、現在のトランザクションを中断させます。ignore_checksum_failureを真に設定することによりエラーを無視します（代わりに警告を報告します）この動作はクラッシュや他の深刻な問題を引き起こすかもしれません。チェックサムが有効な場合にのみ効果があります。"
 
 #: utils/misc/guc.c:830
 msgid "Continues processing past damaged page headers."
 msgstr "破損したページヘッダがあっても処理を継続します。"
 
 #: utils/misc/guc.c:831
-msgid "Detection of a damaged page header normally causes PostgreSQL to report an error, aborting the current transaction. Setting zero_damaged_pages to true causes the system to instead report a warning, zero out the damaged page, and continue processing. This behavior will destroy data, namely all the rows on the damaged page."
-msgstr "ページヘッダの障害が分かると、通常PostgreSQLはエラーの報告を行ない、現在のトランザクションを中断させます。zero_damaged_pagesを真に設定することにより、システムは代わりに警告を報告し、障害のあるページをゼロで埋め、処理を継続します。 この動作により、障害のあったページ上にある全ての行のデータを破壊されます。"
+msgid "Detection of a damaged page header normally causes MollyDB to report an error, aborting the current transaction. Setting zero_damaged_pages to true causes the system to instead report a warning, zero out the damaged page, and continue processing. This behavior will destroy data, namely all the rows on the damaged page."
+msgstr "ページヘッダの障害が分かると、通常MollyDBはエラーの報告を行ない、現在のトランザクションを中断させます。zero_damaged_pagesを真に設定することにより、システムは代わりに警告を報告し、障害のあるページをゼロで埋め、処理を継続します。 この動作により、障害のあったページ上にある全ての行のデータを破壊されます。"
 
 #: utils/misc/guc.c:844
 msgid "Writes full pages to WAL when first modified after a checkpoint."
@@ -18867,8 +18867,8 @@ msgid "Enables backward compatibility mode for privilege checks on large objects
 msgstr "ラージオブジェクトで権限チェックを行う際、下位互換性モードを有効にします。"
 
 #: utils/misc/guc.c:1442
-msgid "Skips privilege checks when reading or modifying large objects, for compatibility with PostgreSQL releases prior to 9.0."
-msgstr "9.0 以前の PostgreSQL との互換のため、ラージオブジェクトを読んだり変更したりする際に権限チェックをスキップする。"
+msgid "Skips privilege checks when reading or modifying large objects, for compatibility with MollyDB releases prior to 9.0."
+msgstr "9.0 以前の MollyDB との互換のため、ラージオブジェクトを読んだり変更したりする際に権限チェックをスキップする。"
 
 #: utils/misc/guc.c:1452
 msgid "When generating SQL fragments, quote all identifiers."
@@ -19285,8 +19285,8 @@ msgid "Sets the planner's assumption about the size of the disk cache."
 msgstr "ディスクキャッシュのサイズに関するプランナの推測を設定します。"
 
 #: utils/misc/guc.c:2395
-msgid "That is, the portion of the kernel's disk cache that will be used for PostgreSQL data files. This is measured in disk pages, which are normally 8 kB each."
-msgstr "つまり、PostgreSQLのデータファイル用に使用されるカーネルのディスクキャッシュの量です。これは通常8KBのディスクページを単位とします。"
+msgid "That is, the portion of the kernel's disk cache that will be used for MollyDB data files. This is measured in disk pages, which are normally 8 kB each."
+msgstr "つまり、MollyDBのデータファイル用に使用されるカーネルのディスクキャッシュの量です。これは通常8KBのディスクページを単位とします。"
 
 #: utils/misc/guc.c:2408
 msgid "Shows the server version as an integer."
@@ -19496,12 +19496,12 @@ msgid "Sets the file name pattern for log files."
 msgstr "ログファイルのファイル名パターンを設定します。"
 
 #: utils/misc/guc.c:2900
-msgid "Sets the program name used to identify PostgreSQL messages in syslog."
-msgstr "syslog内でPostgreSQLのメッセージを識別するために使用されるプログラム名を設定します。"
+msgid "Sets the program name used to identify MollyDB messages in syslog."
+msgstr "syslog内でMollyDBのメッセージを識別するために使用されるプログラム名を設定します。"
 
 #: utils/misc/guc.c:2911
-msgid "Sets the application name used to identify PostgreSQL messages in the event log."
-msgstr "イベントログ内でPostgreSQLのメッセージを識別するために使用されるアプリケーション名を設定します。"
+msgid "Sets the application name used to identify MollyDB messages in the event log."
+msgstr "イベントログ内でMollyDBのメッセージを識別するために使用されるアプリケーション名を設定します。"
 
 #: utils/misc/guc.c:2922
 msgid "Sets the time zone for displaying and interpreting time stamps."
@@ -20278,13 +20278,13 @@ msgstr "異なるデータベースからのスナップショットを読み込
 #~ msgstr "ALTER TYPE USING は単純なテーブルでのみサポートされています"
 
 #~ msgid ""
-#~ "This error usually means that PostgreSQL's request for a shared memory segment exceeded your kernel's SHMMAX parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMMAX.  To reduce the request size (currently %lu bytes), reduce PostgreSQL's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
+#~ "This error usually means that MollyDB's request for a shared memory segment exceeded your kernel's SHMMAX parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMMAX.  To reduce the request size (currently %lu bytes), reduce MollyDB's shared memory usage, perhaps by reducing shared_buffers or max_connections.\n"
 #~ "If the request size is already small, it's possible that it is less than your kernel's SHMMIN parameter, in which case raising the request size or reconfiguring SHMMIN is called for.\n"
-#~ "The PostgreSQL documentation contains more information about shared memory configuration."
+#~ "The MollyDB documentation contains more information about shared memory configuration."
 #~ msgstr ""
-#~ "通常このエラーは、PostgreSQL が要求した共有メモリセグメントがカーネルのSHMMAX パラメータを超えた場合に発生します。この要求サイズを減らすこともできますし、SHMMAX を増やしてカーネルを再構築することもできます。要求サイズ（現在 %lu バイト）を減らしたい場合は PostgreSQL の shared_buffers もしくは max_connections を減らしてください。\n"
+#~ "通常このエラーは、MollyDB が要求した共有メモリセグメントがカーネルのSHMMAX パラメータを超えた場合に発生します。この要求サイズを減らすこともできますし、SHMMAX を増やしてカーネルを再構築することもできます。要求サイズ（現在 %lu バイト）を減らしたい場合は MollyDB の shared_buffers もしくは max_connections を減らしてください。\n"
 #~ "この要求サイズがすでに小さい場合、これがカーネルの SHMMIN より小さくなってしまっているかもしれません。そのような場合は要求サイズを大きくするか、 SHMMIN をそれにふさわしい値に再構成してください。\n"
-#~ "共有メモリの設定に関する詳細情報は、PostgreSQL のドキュメントに記載されています。"
+#~ "共有メモリの設定に関する詳細情報は、MollyDB のドキュメントに記載されています。"
 
 #~ msgid "recovery_target_inclusive = %s"
 #~ msgstr "recovery_target_inclusive = %s"

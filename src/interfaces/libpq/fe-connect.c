@@ -3,7 +3,7 @@
  * fe-connect.c
  *	  functions related to setting up a connection to the backend
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -915,7 +915,7 @@ oom_error:
  * Using this function, an application may determine all possible options
  * and their current default values.
  *
- * NOTE: as of PostgreSQL 7.0, the returned array is dynamically allocated
+ * NOTE: as of MollyDB 7.0, the returned array is dynamically allocated
  * and should be freed when no longer needed via PQconninfoFree().  (In prior
  * versions, the returned array was static, but that's not thread-safe.)
  * Pre-7.0 applications that use this function will see a small memory leak
@@ -5867,7 +5867,7 @@ dot_pg_pass_warning(PGconn *conn)
  * Obtain user's home directory, return in given buffer
  *
  * On Unix, this actually returns the user's home directory.  On Windows
- * it returns the PostgreSQL-specific application data folder.
+ * it returns the MollyDB-specific application data folder.
  *
  * This is essentially the same as get_home_path(), but we don't use that
  * because we don't want to pull path.c into libpq (it pollutes application

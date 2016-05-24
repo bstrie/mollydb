@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * multixact.c
- *		PostgreSQL multi-transaction-log manager
+ *		MollyDB multi-transaction-log manager
  *
  * The pg_multixact manager is a pg_clog-like manager that stores an array of
  * MultiXactMember for each MultiXactId.  It is a fundamental part of the
@@ -59,7 +59,7 @@
  * counter does not fall within the wraparound horizon considering the global
  * minimum value.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/backend/access/transam/multixact.c
@@ -2589,7 +2589,7 @@ SetOffsetVacuumLimit(void)
 	{
 		/*
 		 * Figure out where the oldest existing multixact's offsets are
-		 * stored. Due to bugs in early release of PostgreSQL 9.3.X and 9.4.X,
+		 * stored. Due to bugs in early release of MollyDB 9.3.X and 9.4.X,
 		 * the supposedly-earliest multixact might not really exist.  We are
 		 * careful not to fail in that case.
 		 */

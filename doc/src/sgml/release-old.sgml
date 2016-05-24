@@ -15,7 +15,7 @@
   </para>
 
   <para>
-   This is expected to be the last <productname>PostgreSQL</> release
+   This is expected to be the last <productname>MollyDB</> release
    in the 7.3.X series.  Users are encouraged to update to a newer
    release branch soon.
   </para>
@@ -101,7 +101,7 @@
      <para>
       This affects developers and packagers only.  The change was made
       to prevent accidental use of untested combinations of
-      <productname>Autoconf</> and <productname>PostgreSQL</> versions.
+      <productname>Autoconf</> and <productname>MollyDB</> versions.
       You can remove the version check if you really want to use a
       different <productname>Autoconf</> version, but it's
       your responsibility whether the result works or not.
@@ -431,7 +431,7 @@
 <itemizedlist>
 <listitem><para>Change the server to reject invalidly-encoded multibyte
 characters in all cases (Tatsuo, Tom)</para>
-<para>While <productname>PostgreSQL</> has been moving in this direction for
+<para>While <productname>MollyDB</> has been moving in this direction for
 some time, the checks are now applied uniformly to all encodings and all
 textual input, and are now always errors not merely warnings.  This change
 defends against SQL-injection attacks of the type described in CVE-2006-2313.
@@ -455,7 +455,7 @@ clients are insecure.
 aware of encoding considerations</para>
 <para>This fixes <application>libpq</>-using applications for the security
 issues described in CVE-2006-2313 and CVE-2006-2314.
-Applications that use multiple <productname>PostgreSQL</> connections
+Applications that use multiple <productname>MollyDB</> connections
 concurrently should migrate to <function>PQescapeStringConn()</> and
 <function>PQescapeByteaConn()</> to ensure that escaping is done correctly
 for the settings in use in each database connection.  Applications that
@@ -962,7 +962,7 @@ Due to insufficient interlocking between transaction commit and checkpointing,
 it was possible for transactions committed just before the most recent
 checkpoint to be lost, in whole or in part, following a database crash and
 restart.  This is a serious bug that has existed
-since <productname>PostgreSQL</productname> 7.1.
+since <productname>MollyDB</productname> 7.1.
 </para></listitem>
 <listitem><para>Remove asymmetrical word processing in tsearch (Teodor)</para></listitem>
 <listitem><para>Properly schema-qualify function names when pg_dump'ing a CAST</para></listitem>
@@ -1028,7 +1028,7 @@ NULL</para></listitem>
 <listitem><para>Avoid generating invalid character encoding sequences in
 corner cases when planning LIKE operations</para></listitem>
 <listitem><para>Ensure text_position() cannot scan past end of source string
-in multibyte cases (Korea PostgreSQL Users' Group)</para></listitem>
+in multibyte cases (Korea MollyDB Users' Group)</para></listitem>
 <listitem><para>Fix index optimization and selectivity estimates for LIKE
 operations on bytea columns (Joe)</para></listitem>
 </itemizedlist>
@@ -1317,7 +1317,7 @@ operations on bytea columns (Joe)</para></listitem>
   <para>
    A dump/restore is <emphasis>not</emphasis> required for those
    running version 7.3. However, it should be noted that the main
-   <productname>PostgreSQL</productname> interface library, libpq,
+   <productname>MollyDB</productname> interface library, libpq,
    has a new major version number for this release, which might require
    recompilation of client code in certain cases.
   </para>
@@ -1381,7 +1381,7 @@ operations on bytea columns (Joe)</para></listitem>
     <term>Drop Column</term>
     <listitem>
      <para>
-      <productname>PostgreSQL</productname> now supports the
+      <productname>MollyDB</productname> now supports the
       <literal>ALTER TABLE ... DROP COLUMN</literal> functionality.
      </para>
     </listitem>
@@ -1405,7 +1405,7 @@ operations on bytea columns (Joe)</para></listitem>
     <term>Prepared Queries</term>
     <listitem>
      <para>
-      <productname>PostgreSQL</productname> now supports prepared
+      <productname>MollyDB</productname> now supports prepared
       queries, for improved performance.
      </para>
     </listitem>
@@ -1415,7 +1415,7 @@ operations on bytea columns (Joe)</para></listitem>
     <term>Dependency Tracking</term>
     <listitem>
      <para>
-      <productname>PostgreSQL</productname> now records object
+      <productname>MollyDB</productname> now records object
       dependencies, which allows improvements in many areas.
       <command>DROP</command> statements now take either
       <literal>CASCADE</> or <literal>RESTRICT</> to control whether
@@ -1596,7 +1596,7 @@ operations on bytea columns (Joe)</para></listitem>
 <itemizedlist>
 <listitem><para>Add pg_locks view to show locks (Neil)</para></listitem>
 <listitem><para>Security fixes for password negotiation memory allocation (Neil)</para></listitem>
-<listitem><para>Remove support for version 0 FE/BE protocol (<productname>PostgreSQL</productname> 6.2 and earlier) (Tom)</para></listitem>
+<listitem><para>Remove support for version 0 FE/BE protocol (<productname>MollyDB</productname> 6.2 and earlier) (Tom)</para></listitem>
 <listitem><para>Reserve the last few backend slots for superusers, add parameter superuser_reserved_connections to control this (Nigel J. Andrews)</para></listitem>
 </itemizedlist>
   </sect3>
@@ -2165,7 +2165,7 @@ Due to insufficient interlocking between transaction commit and checkpointing,
 it was possible for transactions committed just before the most recent
 checkpoint to be lost, in whole or in part, following a database crash and
 restart.  This is a serious bug that has existed
-since <productname>PostgreSQL</productname> 7.1.
+since <productname>MollyDB</productname> 7.1.
 </para></listitem>
 <listitem><para>Fix corner case for btree search in parallel with first root page split</para></listitem>
 <listitem><para>Fix buffer overrun in <function>to_ascii</function> (Guido Notari)</para></listitem>
@@ -2354,7 +2354,7 @@ since <productname>PostgreSQL</productname> 7.1.
   <title>Overview</title>
 
   <para>
-   This release improves <productname>PostgreSQL</> for use in
+   This release improves <productname>MollyDB</> for use in
    high-volume applications.
   </para>
 
@@ -3031,7 +3031,7 @@ Python fixes (Darcy)
 
   <para>
        This release focuses on removing limitations that have existed in the
-       <productname>PostgreSQL</productname> code for many years.
+       <productname>MollyDB</productname> code for many years.
   </para>
 
   <para>
@@ -3046,7 +3046,7 @@ Python fixes (Darcy)
     <listitem>
      <para>
 To maintain database consistency in case of an operating system crash,
-previous releases of <productname>PostgreSQL</productname> have forced
+previous releases of <productname>MollyDB</productname> have forced
 all data modifications to disk before each transaction commit.  With
 WAL, only one log file must be flushed to disk, greatly improving
 performance.  If you have been using -F in previous releases to
@@ -3242,7 +3242,7 @@ Allow postmaster to listen on a specific IP address (David J. MacKenzie)
 Allow socket path name to be specified in hostname by using leading slash
    (David J. MacKenzie)
 Allow CREATE DATABASE to specify template database (Tom)
-New utility to convert MySQL schema dumps to SQL92 and PostgreSQL (Thomas)
+New utility to convert MySQL schema dumps to SQL92 and MollyDB (Thomas)
 New /contrib/rserv replication toolkit (Vadim)
 New file format for COPY BINARY (Tom)
 New /contrib/oid2name to map numeric files to table names (B Palmer)
@@ -3490,7 +3490,7 @@ ecpg changes (Michael)
 
   <para>
    This release contains improvements in many areas, demonstrating
-   the continued growth of <productname>PostgreSQL</productname>.
+   the continued growth of <productname>MollyDB</productname>.
    There are more improvements and fixes in 7.0 than in any previous
    release. The developers have confidence that this is the best
    release yet; we do our best to put out only solid releases, and
@@ -3563,7 +3563,7 @@ ecpg changes (Michael)
    <para>
     A dump/restore using <application>pg_dump</application>
     is required for those wishing to migrate data from any
-    previous release of <productname>PostgreSQL</productname>.
+    previous release of <productname>MollyDB</productname>.
     For those upgrading from 6.5.*, you can instead use
     <application>pg_upgrade</application> to upgrade to this
     release; however, a full dump/reload installation is always the
@@ -3583,7 +3583,7 @@ ecpg changes (Michael)
       SQL92-defined types <type>timestamp</type> and
       <type>interval</type>. Although there has been some effort to
       ease the transition by allowing
-      <productname>PostgreSQL</productname> to recognize
+      <productname>MollyDB</productname> to recognize
       the deprecated type names and translate them to the new type
       names, this mechanism cannot be completely transparent to
       your existing application.
@@ -4127,7 +4127,7 @@ Add Win1250 (Czech) support (Pavel Behal)
        systems.  In a traditional system, each row that is modified
        is locked until committed, preventing reads by other users.
        MVCC uses the natural multiversion nature of
-       <productname>PostgreSQL</productname> to allow readers to
+       <productname>MollyDB</productname> to allow readers to
        continue reading consistent data during writer activity.
        Writers continue to use the compact pg_log transaction system.
        This is all performed without having to allocate a lock for
@@ -4194,7 +4194,7 @@ Add Win1250 (Czech) support (Pavel Behal)
      </term>
      <listitem>
       <para>
-       We continue to speed up <productname>PostgreSQL</productname>,
+       We continue to speed up <productname>MollyDB</productname>,
        thanks to the variety of talents within our team.  We have
        sped up memory allocation, optimization, table joins, and row
        transfer routines.
@@ -4245,7 +4245,7 @@ Add Win1250 (Czech) support (Pavel Behal)
        chapter on troubleshooting from Tom Lane.
        And the <citetitle>Programmer's Guide</citetitle> has a
        description of query processing, also from Stefan, and details
-       on obtaining the <productname>PostgreSQL</productname> source
+       on obtaining the <productname>MollyDB</productname> source
        tree via anonymous <productname>CVS</productname> and
        <productname>CVSup</productname>.
       </para>
@@ -4260,7 +4260,7 @@ Add Win1250 (Czech) support (Pavel Behal)
    <para>
     A dump/restore using <application>pg_dump</application>
     is required for those wishing to migrate data from any
-    previous release of <productname>PostgreSQL</productname>.
+    previous release of <productname>MollyDB</productname>.
     <application>pg_upgrade</application> can <emphasis>not</emphasis>
     be used to upgrade to this release because the on-disk structure
     of the tables has changed compared to previous releases.
@@ -4293,7 +4293,7 @@ Add Win1250 (Czech) support (Pavel Behal)
      concurrent updates one must use <command>SELECT FOR UPDATE</command> or
      an appropriate <command>LOCK TABLE</command> statement. This should be
      taken into account when porting applications from previous releases of
-     <productname>PostgreSQL</productname> and other environments.
+     <productname>MollyDB</productname> and other environments.
     </para>
 
     <para>
@@ -4644,7 +4644,7 @@ asynchronous messages and interrupts thanks to Tom Lane.
 The parser will now perform automatic type coercion to match arguments
 to available operators and functions, and to match columns and expressions
 with target columns. This uses a generic mechanism which supports
-the type extensibility features of <productname>PostgreSQL</productname>.
+the type extensibility features of <productname>MollyDB</productname>.
 There is a new chapter in the <citetitle>User's Guide</citetitle>
 which covers this topic.
 </para>
@@ -4687,7 +4687,7 @@ been.
 A dump/restore using <application>pg_dump</application>
 or <application>pg_dumpall</application>
 is required for those wishing to migrate data from any
-previous release of <productname>PostgreSQL</productname>.
+previous release of <productname>MollyDB</productname>.
 </para>
 </sect2>
 
@@ -4727,7 +4727,7 @@ Multibyte awareness of many data types and functions, via configure(Tatsuo)
 New configure --with-mb option(Tatsuo)
 New initdb --pgencoding option(Tatsuo)
 New createdb -E multibyte option(Tatsuo)
-Select version(); now returns PostgreSQL version(Jeroen)
+Select version(); now returns MollyDB version(Jeroen)
 libpq now allows asynchronous clients(Tom)
 Allow cancel from client of backend query(Tom)
 psql now cancels query with Control-C(Tom)
@@ -4928,7 +4928,7 @@ Correctly handles function calls on the left side of BETWEEN and LIKE clauses.
 A dump/restore is NOT required for those running 6.3 or 6.3.1.  A
 <literal>make distclean</>, <literal>make</>, and <literal>make install</> is all that is required.
 This last step should be performed while the postmaster is not running.
-You should re-link any custom applications that use <productname>PostgreSQL</productname> libraries.
+You should re-link any custom applications that use <productname>MollyDB</productname> libraries.
 </para>
 <para>
 For upgrades from pre-6.3 installations,
@@ -5005,7 +5005,7 @@ Improvements to the configuration autodetection for installation.
 A dump/restore is NOT required for those running 6.3.  A
 <literal>make distclean</>, <literal>make</>, and <literal>make install</> is all that is required.
 This last step should be performed while the postmaster is not running.
-You should re-link any custom applications that use <productname>PostgreSQL</productname> libraries.
+You should re-link any custom applications that use <productname>MollyDB</productname> libraries.
 </para>
 <para>
 For upgrades from pre-6.3 installations,
@@ -5167,7 +5167,7 @@ Better identify tcl and tk libs and includes(Bruce)
    \d command for types, operators, etc.  Also, views have their own
    privileges now, not based on the underlying tables, so privileges on
    them have to be set separately.  Check <filename>/pgsql/interfaces</filename> for some new
-   ways to talk to <productname>PostgreSQL</productname>.
+   ways to talk to <productname>MollyDB</productname>.
   </para>
   <para>
    This is the first release that really required an explanation for
@@ -5183,7 +5183,7 @@ Better identify tcl and tk libs and includes(Bruce)
     A dump/restore using <application>pg_dump</application>
     or <application>pg_dumpall</application>
     is required for those wishing to migrate data from any
-    previous release of <productname>PostgreSQL</productname>.
+    previous release of <productname>MollyDB</productname>.
    </para>
   </sect2>
 
@@ -5240,7 +5240,7 @@ Modify constraint syntax to be SQL92-compliant(Thomas)
 Implement SQL92 PRIMARY KEY and UNIQUE clauses using indexes(Thomas)
 Recognize SQL92 syntax for FOREIGN KEY. Throw elog notice(Thomas)
 Allow NOT NULL UNIQUE constraint clause (each allowed separately before)(Thomas)
-Allow PostgreSQL-style casting ("::") of non-constants(Thomas)
+Allow MollyDB-style casting ("::") of non-constants(Thomas)
 Add support for SQL3 TRUE and FALSE boolean constants(Thomas)
 Support SQL92 syntax for IS TRUE/IS FALSE/IS NOT TRUE/IS NOT FALSE(Thomas)
 Allow shorter strings for boolean literals (e.g. "t", "tr", "tru")(Thomas)
@@ -5253,7 +5253,7 @@ Use shared lock when building indexes(Vadim)
 Free memory allocated for a user query inside transaction block after
        this query is done, was turned off in &lt;= 6.2.1(Vadim)
 New SQL statement CREATE PROCEDURAL LANGUAGE(Jan)
-New <productname>PostgreSQL</productname> Procedural Language (PL) backend interface(Jan)
+New <productname>MollyDB</productname> Procedural Language (PL) backend interface(Jan)
 Rename pg_dump -H option to -h(Bruce)
 Add Java support for passwords, European dates(Peter)
 Use indexes for LIKE and ~, !~ operations(Bruce)
@@ -5262,7 +5262,7 @@ Time Travel removed(Vadim, Bruce)
 Add paging for \d and \z, and fix \i(Bruce)
 Add Unix domain socket support to backend and to frontend library(Goran)
 Implement CREATE DATABASE/WITH LOCATION and initlocation utility(Thomas)
-Allow more SQL92 and/or <productname>PostgreSQL</productname> reserved words as column identifiers(Thomas)
+Allow more SQL92 and/or <productname>MollyDB</productname> reserved words as column identifiers(Thomas)
 Augment support for SQL92 SET TIME ZONE...(Thomas)
 SET/SHOW/RESET TIME ZONE uses TZ backend environment variable(Thomas)
 Implement SET keyword = DEFAULT and SET TIME ZONE DEFAULT(Thomas)
@@ -5453,7 +5453,7 @@ Trigger function for inserting user names for INSERT/UPDATE(Brook Milligan)
 
 <para>
 A dump/restore is required for those wishing to migrate data from
-previous releases of <productname>PostgreSQL</productname>.
+previous releases of <productname>MollyDB</productname>.
 </para>
 
 <sect2>
@@ -5651,19 +5651,19 @@ pg_dumpall now returns proper status, portability fix(Bruce)
 
 <para>
  The regression tests have been adapted and extensively modified for the
- 6.1 release of <productname>PostgreSQL</productname>.
+ 6.1 release of <productname>MollyDB</productname>.
 </para>
 
 <para>
  Three new data types (<type>datetime</type>, <type>timespan</type>, and <type>circle</type>) have been added to
- the native set of <productname>PostgreSQL</productname> types. Points, boxes, paths, and polygons
+ the native set of <productname>MollyDB</productname> types. Points, boxes, paths, and polygons
  have had their output formats made consistent across the data types.
  The polygon output in misc.out has only been spot-checked for correctness
  relative to the original regression output.
 </para>
 
 <para>
- <productname>PostgreSQL</productname> 6.1 introduces a new, alternate
+ <productname>MollyDB</productname> 6.1 introduces a new, alternate
 optimizer which uses <firstterm>genetic</firstterm>
  algorithms. These algorithms introduce a random behavior in the ordering
  of query results when the query contains multiple qualifiers or multiple
@@ -5823,7 +5823,7 @@ DG/UX, Ultrix, IRIX, AIX portability fixes
 
 <para>
 A dump/restore is required for those wishing to migrate data from
-previous releases of <productname>PostgreSQL</productname>.
+previous releases of <productname>MollyDB</productname>.
 </para>
 
 <sect2>
@@ -5941,7 +5941,7 @@ Make now stops on compile failure(Bryan)
 Makefile restructuring(Bryan, Marc)
 Merge bsdi_2_1 to bsdi(Bruce)
 Monitor program removed
-Name change from Postgres95 to PostgreSQL
+Name change from Postgres95 to MollyDB
 New config.h file(Marc, Bryan)
 PG_VERSION now set to 6.0 and used by postmaster
 Portability additions, including Ultrix, DG/UX, AIX, and Solaris

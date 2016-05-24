@@ -135,7 +135,7 @@
 
      <para>
       <application>pg_upgrade</> had special-case code to handle the
-      situation where the new <productname>PostgreSQL</> version thinks that
+      situation where the new <productname>MollyDB</> version thinks that
       a table should have a TOAST table while the old version did not.  That
       code was broken, so remove it, and instead do nothing in such cases;
       there seems no reason to believe that we can't get along fine without
@@ -862,7 +862,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
       A reloption value that isn't a simple identifier or number could lead
       to dump/reload failures due to syntax errors in CREATE statements
       issued by <application>pg_dump</>.  This is not an issue with any
-      reloption currently supported by core <productname>PostgreSQL</>, but
+      reloption currently supported by core <productname>MollyDB</>, but
       extensions could allow reloptions that cause the problem.
      </para>
     </listitem>
@@ -943,7 +943,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
       This change mitigates a <application>PL/Java</> security bug
       (CVE-2016-0766), which was fixed in <application>PL/Java</> by marking
       these parameters as superuser-only.  To fix the security hazard for
-      sites that update <productname>PostgreSQL</> more frequently
+      sites that update <productname>MollyDB</> more frequently
       than <application>PL/Java</>, make the core code aware of them also.
      </para>
     </listitem>
@@ -1113,9 +1113,9 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
      </para>
 
      <para>
-      If an application constructs PostgreSQL <type>json</>
+      If an application constructs MollyDB <type>json</>
       or <type>jsonb</> values from arbitrary user input, the application's
-      users can reliably crash the PostgreSQL server, causing momentary
+      users can reliably crash the MollyDB server, causing momentary
       denial of service.  (CVE-2015-5289)
      </para>
     </listitem>
@@ -1682,7 +1682,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
 
     <listitem>
      <para>
-      Make the numeric form of the <productname>PostgreSQL</> version number
+      Make the numeric form of the <productname>MollyDB</> version number
       (e.g., <literal>90405</>) readily available to extension Makefiles,
       as a variable named <varname>VERSION_NUM</> (Michael Paquier)
      </para>
@@ -1748,7 +1748,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
      </para>
 
      <para>
-      Recent <productname>PostgreSQL</> releases introduced mechanisms to
+      Recent <productname>MollyDB</> releases introduced mechanisms to
       protect against multixact wraparound, but some of that code did not
       account for the possibility that it would need to run during crash
       recovery, when the database may not be in a consistent state.  This
@@ -1793,7 +1793,7 @@ Branch: REL9_2_STABLE [37f30b251] 2016-04-18 13:19:52 -0400
          zero.  (You can use the vacuum cost delay parameters described
          in <xref linkend="runtime-config-resource-vacuum-cost"> to reduce
          the performance consequences for concurrent sessions.)  You must
-         use <productname>PostgreSQL</> 9.3.5 or later to perform this step.
+         use <productname>MollyDB</> 9.3.5 or later to perform this step.
         </para>
        </listitem>
       </orderedlist>
@@ -1947,7 +1947,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
       For a long time, <application>libpq</> was coded so that the only SSL
       protocol it would allow was TLS v1.  Now that newer TLS versions are
       becoming popular, allow it to negotiate the highest commonly-supported
-      TLS version with the server.  (<productname>PostgreSQL</> servers were
+      TLS version with the server.  (<productname>MollyDB</> servers were
       already capable of such negotiation, so no change is needed on the
       server side.)  This is a back-patch of a change already released in
       9.4.0.
@@ -2092,7 +2092,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
      <para>
       While the latter behavior is clearly a bug, there might be applications
       depending on the former behavior; therefore the function declarations
-      will not be changed by default until <productname>PostgreSQL</> 9.5.
+      will not be changed by default until <productname>MollyDB</> 9.5.
       In pre-9.5 branches, the old behavior exists in version 1.0 of
       the <literal>citext</> extension, while we have provided corrected
       declarations in version 1.1 (which is <emphasis>not</> installed by
@@ -2310,7 +2310,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
      <para>
       Without this, identically-named users from different realms cannot be
       distinguished.  For the moment this is only a documentation change, but
-      it will become the default setting in <productname>PostgreSQL</> 9.5.
+      it will become the default setting in <productname>MollyDB</> 9.5.
      </para>
     </listitem>
 
@@ -2574,7 +2574,7 @@ Branch: REL9_0_STABLE [4dddf8552] 2015-05-21 20:41:55 -0400
     However, if you are a Windows user and are using the <quote>Norwegian
     (Bokm&aring;l)</> locale, manual action is needed after the upgrade to
     replace any <quote>Norwegian (Bokm&aring;l)_Norway</> locale names stored
-    in <productname>PostgreSQL</> system catalogs with the plain-ASCII
+    in <productname>MollyDB</> system catalogs with the plain-ASCII
     alias <quote>Norwegian_Norway</>.  For details see
     <ulink url="http://wiki.mollydb.org/wiki/Changes_To_Norwegian_Locale"></>
    </para>
@@ -2616,9 +2616,9 @@ Branch: REL9_0_STABLE [56b970f2e] 2015-02-02 10:00:52 -0500
 
      <para>
       When <function>to_char()</> processes a numeric formatting template
-      calling for a large number of digits, <productname>PostgreSQL</>
+      calling for a large number of digits, <productname>MollyDB</>
       would read past the end of a buffer.  When processing a crafted
-      timestamp formatting template, <productname>PostgreSQL</> would write
+      timestamp formatting template, <productname>MollyDB</> would write
       past the end of a buffer.  Either case could crash the server.
       We have not ruled out the possibility of attacks that lead to
       privilege escalation, though they seem unlikely.
@@ -2643,7 +2643,7 @@ Branch: REL9_0_STABLE [9e05c5063] 2015-02-02 10:00:52 -0500
      </para>
 
      <para>
-      <productname>PostgreSQL</> includes a replacement implementation
+      <productname>MollyDB</> includes a replacement implementation
       of <function>printf</> and related functions.  This code will overrun
       a stack buffer when formatting a floating point number (conversion
       specifiers <literal>e</>, <literal>E</>, <literal>f</>, <literal>F</>,
@@ -2652,13 +2652,13 @@ Branch: REL9_0_STABLE [9e05c5063] 2015-02-02 10:00:52 -0500
       possibility of attacks that lead to privilege escalation.
       A database user can trigger such a buffer overrun through
       the <function>to_char()</> SQL function.  While that is the only
-      affected core <productname>PostgreSQL</> functionality, extension
+      affected core <productname>MollyDB</> functionality, extension
       modules that use printf-family functions may be at risk as well.
      </para>
 
      <para>
-      This issue primarily affects <productname>PostgreSQL</> on Windows.
-      <productname>PostgreSQL</> uses the system implementation of these
+      This issue primarily affects <productname>MollyDB</> on Windows.
+      <productname>MollyDB</> uses the system implementation of these
       functions where adequate, which it is on other modern platforms.
       (CVE-2015-0242)
      </para>
@@ -3954,7 +3954,7 @@ Branch: REL9_3_STABLE [5724f491d] 2014-09-11 18:39:46 -0400
      </para>
 
      <para>
-      This oversight did not bother <productname>PostgreSQL</> proper,
+      This oversight did not bother <productname>MollyDB</> proper,
       but could confuse some external replication tools.
      </para>
     </listitem>
@@ -4280,7 +4280,7 @@ Branch: REL9_0_STABLE [4c6d0abde] 2014-07-22 11:02:25 -0400
 
      <para>
       With OpenLDAP versions 2.4.24 through 2.4.31,
-      inclusive, <productname>PostgreSQL</> backends can crash at exit.
+      inclusive, <productname>MollyDB</> backends can crash at exit.
       Raise a warning during <application>configure</> based on the
       compile-time OpenLDAP version number, and test the crashing scenario
       in the <filename>contrib/dblink</> regression test.
@@ -4340,7 +4340,7 @@ Branch: REL9_0_STABLE [870a980aa] 2014-10-16 15:22:26 -0400
      </para>
 
      <para>
-      Previously, <productname>PostgreSQL</> assumed that the UTC offset
+      Previously, <productname>MollyDB</> assumed that the UTC offset
       associated with a time zone abbreviation (such as <literal>EST</>)
       never changes in the usage of any particular locale.  However this
       assumption fails in the real world, so introduce the ability for a
@@ -4348,7 +4348,7 @@ Branch: REL9_0_STABLE [870a980aa] 2014-10-16 15:22:26 -0400
       Update the zone abbreviation definition files to make use of this
       feature in timezone locales that have changed the UTC offset of their
       abbreviations since 1970 (according to the IANA timezone database).
-      In such timezones, <productname>PostgreSQL</> will now associate the
+      In such timezones, <productname>MollyDB</> will now associate the
       correct UTC offset with the abbreviation depending on the given date.
      </para>
     </listitem>
@@ -5807,7 +5807,7 @@ Branch: REL9_3_STABLE [13ea43ab8] 2014-03-05 13:03:29 -0300
      <para>
       This fix prevents a permanent leak of statistics file space.
       Users who have done many <command>DROP DATABASE</> commands since
-      upgrading to <productname>PostgreSQL</> 9.3 may wish to check their
+      upgrading to <productname>MollyDB</> 9.3 may wish to check their
       statistics directory and delete statistics files that do not
       correspond to any existing database.  Please note
       that <filename>db_0.stat</> should not be removed.
@@ -7706,7 +7706,7 @@ Branch: REL8_4_STABLE [c0c2d62ac] 2014-02-14 21:59:56 -0500
      </para>
 
      <para>
-      Historically <productname>PostgreSQL</> has accepted queries like
+      Historically <productname>MollyDB</> has accepted queries like
 <programlisting>
 SELECT ... FROM tab1 x CROSS JOIN (tab2 x CROSS JOIN tab3 y) z
 </programlisting>
@@ -8072,7 +8072,7 @@ ALTER EXTENSION hstore UPDATE;
    <title>Overview</title>
 
    <para>
-    Major enhancements in <productname>PostgreSQL</> 9.3 include:
+    Major enhancements in <productname>MollyDB</> 9.3 include:
    </para>
 
    <!-- This list duplicates items below, but without authors or details-->
@@ -8345,7 +8345,7 @@ ALTER EXTENSION hstore UPDATE;
 
    <para>
     Below you will find a detailed account of the changes between
-    <productname>PostgreSQL</productname> 9.3 and the previous major
+    <productname>MollyDB</productname> 9.3 and the previous major
     release.
    </para>
 
@@ -8688,7 +8688,7 @@ ALTER EXTENSION hstore UPDATE;
 
        <para>
         On Unix-like systems, <function>mmap()</> is now used for most
-        of <productname>PostgreSQL</>'s shared memory.  For most users, this
+        of <productname>MollyDB</>'s shared memory.  For most users, this
         will eliminate any need to adjust kernel parameters for shared memory.
        </para>
       </listitem>
@@ -9828,7 +9828,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Provide Emacs macro to set Perl formatting to
-        match <productname>PostgreSQL</>'s perltidy settings (Peter Eisentraut)
+        match <productname>MollyDB</>'s perltidy settings (Peter Eisentraut)
        </para>
       </listitem>
 
@@ -9920,7 +9920,7 @@ ALTER EXTENSION hstore UPDATE;
       <listitem>
        <para>
         Remove <filename>src/tools/backend</>, now that the content is on
-        the <productname>PostgreSQL</> wiki (Bruce Momjian)
+        the <productname>MollyDB</> wiki (Bruce Momjian)
        </para>
       </listitem>
 

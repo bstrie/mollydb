@@ -1,8 +1,8 @@
 /*-------------------------------------------------------------------------
  *
- * plpython.h - Python as a procedural language for PostgreSQL
+ * plpython.h - Python as a procedural language for MollyDB
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/pl/plpython/plpython.h
@@ -22,7 +22,7 @@
 
 /*
  * Undefine some things that get (re)defined in the Python headers. They aren't
- * used by the PL/Python code, and all PostgreSQL headers should be included
+ * used by the PL/Python code, and all MollyDB headers should be included
  * earlier, so this should be pretty safe.
  */
 #undef _POSIX_C_SOURCE
@@ -76,7 +76,7 @@ typedef int Py_ssize_t;
  * supporting Python 2 and its usual strings, we provide a
  * compatibility layer for Python 3 that when asked to convert a C
  * string to a Python string it converts the C string from the
- * PostgreSQL server encoding to a Python Unicode object.
+ * MollyDB server encoding to a Python Unicode object.
  */
 
 #if PY_VERSION_HEX < 0x02060000

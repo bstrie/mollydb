@@ -1,6 +1,6 @@
 <!--
 doc/src/sgml/ref/comment.sgml
-PostgreSQL documentation
+MollyDB documentation
 -->
 
 <refentry id="SQL-COMMENT">

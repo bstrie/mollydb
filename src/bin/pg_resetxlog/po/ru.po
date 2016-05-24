@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2002-2005 Serguei A. Mokhov, mokhov@cs.concordia.ca
 # Copyright (c) 2012-2013 Alexander Lakhin, exclusion@gmail.com
-# Distributed under the same licensing terms as PostgreSQL itself.
+# Distributed under the same licensing terms as MollyDB itself.
 #
 # pgtranslation Id: pg_resetxlog.po,v 1.3 2009/10/14 21:08:40 petere Exp $
 #
@@ -27,7 +27,7 @@
 #   - August 31, 2002: Initial Translation, Serguei A. Mokhov <mokhov@cs.concordia.ca>.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9 current\n"
+"Project-Id-Version: MollyDB 9 current\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-29 22:13+0000\n"
 "PO-Revision-Date: 2015-12-31 14:56+0300\n"
@@ -146,8 +146,8 @@ msgstr "%s: программу не должен запускать root\n"
 
 #: pg_resetxlog.c:308
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "Запускать %s нужно от имени суперпользователя PostgreSQL.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "Запускать %s нужно от имени суперпользователя MollyDB.\n"
 
 #: pg_resetxlog.c:318
 #, c-format
@@ -540,10 +540,10 @@ msgstr "%s: не удалось записать файл \"%s\": %s\n"
 #: pg_resetxlog.c:1167
 #, c-format
 msgid ""
-"%s resets the PostgreSQL transaction log.\n"
+"%s resets the MollyDB transaction log.\n"
 "\n"
 msgstr ""
-"%s сбрасывает журнал транзакций PostgreSQL.\n"
+"%s сбрасывает журнал транзакций MollyDB.\n"
 "\n"
 
 #: pg_resetxlog.c:1168

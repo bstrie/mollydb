@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------
 #
-# PostgreSQL documentation makefile
+# MollyDB documentation makefile
 #
 # doc/src/sgml/Makefile
 #

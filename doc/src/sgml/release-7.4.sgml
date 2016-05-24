@@ -16,7 +16,7 @@
   </para>
 
   <para>
-   This is expected to be the last <productname>PostgreSQL</> release
+   This is expected to be the last <productname>MollyDB</> release
    in the 7.4.X series.  Users are encouraged to update to a newer
    release branch soon.
   </para>
@@ -150,7 +150,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 7.4.X release series in July 2010.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -294,7 +294,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 7.4.X release series in July 2010.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -1015,7 +1015,7 @@
       be <literal>(-42)::integer</> due to operator precedence rules.
       Usually this would make little difference, but it could interact with
       another recent patch to cause
-      <productname>PostgreSQL</> to reject what had been a valid
+      <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
       <application>pg_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
@@ -1315,7 +1315,7 @@
      <para>
       This affects developers and packagers only.  The change was made
       to prevent accidental use of untested combinations of
-      <productname>Autoconf</> and <productname>PostgreSQL</> versions.
+      <productname>Autoconf</> and <productname>MollyDB</> versions.
       You can remove the version check if you really want to use a
       different <productname>Autoconf</> version, but it's
       your responsibility whether the result works or not.
@@ -1724,7 +1724,7 @@ ANYARRAY</para></listitem>
 <itemizedlist>
 <listitem><para>Change the server to reject invalidly-encoded multibyte
 characters in all cases (Tatsuo, Tom)</para>
-<para>While <productname>PostgreSQL</> has been moving in this direction for
+<para>While <productname>MollyDB</> has been moving in this direction for
 some time, the checks are now applied uniformly to all encodings and all
 textual input, and are now always errors not merely warnings.  This change
 defends against SQL-injection attacks of the type described in CVE-2006-2313.
@@ -1750,7 +1750,7 @@ aware of encoding considerations and
 <para>This fixes <application>libpq</>-using applications for the security
 issues described in CVE-2006-2313 and CVE-2006-2314, and also future-proofs
 them against the planned changeover to SQL-standard string literal syntax.
-Applications that use multiple <productname>PostgreSQL</> connections
+Applications that use multiple <productname>MollyDB</> connections
 concurrently should migrate to <function>PQescapeStringConn()</> and
 <function>PQescapeByteaConn()</> to ensure that escaping is done correctly
 for the settings in use in each database connection.  Applications that
@@ -2427,7 +2427,7 @@ Due to insufficient interlocking between transaction commit and checkpointing,
 it was possible for transactions committed just before the most recent
 checkpoint to be lost, in whole or in part, following a database crash and
 restart.  This is a serious bug that has existed
-since <productname>PostgreSQL</productname> 7.1.
+since <productname>MollyDB</productname> 7.1.
 </para></listitem>
 <listitem><para>Check HAVING restriction before evaluating result list of an
 aggregate plan</para></listitem>
@@ -3542,7 +3542,7 @@ DROP SCHEMA information_schema CASCADE;
     <para>Add Mac OS X Rendezvous server support (Chris Campbell)</para>
     <para>
      This allows Mac OS X hosts to query the network for available
-     <productname>PostgreSQL</productname> servers.
+     <productname>MollyDB</productname> servers.
     </para>
    </listitem>
 
@@ -3600,7 +3600,7 @@ DROP SCHEMA information_schema CASCADE;
      <varname>max_connections</> 100, if possible (Tom)
     </para>
     <para>
-     Prior versions defaulted to 64 shared buffers so <productname>PostgreSQL</productname>
+     Prior versions defaulted to 64 shared buffers so <productname>MollyDB</productname>
      would start on even very old systems. This release tests the
      amount of shared memory allowed by the platform and selects more
      reasonable default values if possible.  Of course, users are
@@ -3666,7 +3666,7 @@ DROP SCHEMA information_schema CASCADE;
      The SQL standard says that an aggregate function appearing
      within a nested subquery belongs to the outer query if its
      argument contains only outer-query variables.  Prior
-     <productname>PostgreSQL</productname> releases did not handle
+     <productname>MollyDB</productname> releases did not handle
      this fine point correctly.
     </para>
    </listitem>
@@ -3740,7 +3740,7 @@ DROP SCHEMA information_schema CASCADE;
    <listitem>
     <para>Fix several zero-column table bugs (Tom)</para>
     <para>
-     <productname>PostgreSQL</productname> supports zero-column tables. This fixes various bugs
+     <productname>MollyDB</productname> supports zero-column tables. This fixes various bugs
      that occur when using such tables.
     </para>
    </listitem>
@@ -4402,7 +4402,7 @@ DROP SCHEMA information_schema CASCADE;
    <listitem>
     <para>Long options for <application>pg_dump</application> are now available on all platforms</para>
     <para>
-     <productname>PostgreSQL</productname> now includes its own
+     <productname>MollyDB</productname> now includes its own
      long-option processing routines.
     </para>
    </listitem>
@@ -4565,7 +4565,7 @@ DROP SCHEMA information_schema CASCADE;
    <listitem><para>Allow libpq to compile with Borland C++ compiler (Lester Godwin, Karl Waclawek)</para></listitem>
    <listitem><para>Use our own version of <function>getopt_long()</function> if needed (Peter)</para></listitem>
    <listitem><para>Convert administration scripts to C (Peter)</para></listitem>
-   <listitem><para> Bison &gt;= 1.85 is now required to build the <productname>PostgreSQL</> grammar, if building from CVS</para></listitem>
+   <listitem><para> Bison &gt;= 1.85 is now required to build the <productname>MollyDB</> grammar, if building from CVS</para></listitem>
    <listitem><para>Merge documentation into one book (Peter)</para></listitem>
    <listitem><para>Add Windows compatibility functions (Bruce)</para></listitem>
    <listitem><para>Allow client interfaces to compile under MinGW (Bruce)</para></listitem>

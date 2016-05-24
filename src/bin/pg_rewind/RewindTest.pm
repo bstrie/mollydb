@@ -9,7 +9,7 @@ package RewindTest;
 # To run a test, the test script (in t/ subdirectory) calls the functions
 # in this module. These functions should be called in this sequence:
 #
-# 1. setup_cluster - creates a PostgreSQL cluster that runs as the master
+# 1. setup_cluster - creates a MollyDB cluster that runs as the master
 #
 # 2. start_master - starts the master server
 #

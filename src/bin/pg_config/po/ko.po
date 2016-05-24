@@ -1,9 +1,9 @@
-# Korean message translation file for PostgreSQL pg_config
+# Korean message translation file for MollyDB pg_config
 # Ioseph Kim <ioseph@uri.sarang.net>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 8.4\n"
+"Project-Id-Version: MollyDB 8.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2010-09-09 16:34+0000\n"
 "PO-Revision-Date: 2013-09-05 22:34-0400\n"
@@ -25,11 +25,11 @@ msgstr "해당 정보 없음\n"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%s 프로그램은 설치된 PostgreSQL 버전에 대한 정보를 제공합니다.\n"
+"%s 프로그램은 설치된 MollyDB 버전에 대한 정보를 제공합니다.\n"
 "\n"
 
 #: pg_config.c:412
@@ -131,59 +131,59 @@ msgstr "  --pgxs                확장 makefile 경로를 보여줌\n"
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
+"                        MollyDB was built\n"
 msgstr ""
-"  --configure           PostgreSQL 만들 때 사용한 \"configure\" 스크립트의\n"
+"  --configure           MollyDB 만들 때 사용한 \"configure\" 스크립트의\n"
 "                        옵션들을 보여줌\n"
 
 #: pg_config.c:431
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
-msgstr "  --cc                  PostgreSQL 만들 때 사용된 CC 값을 보여줌\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
+msgstr "  --cc                  MollyDB 만들 때 사용된 CC 값을 보여줌\n"
 
 #: pg_config.c:432
 #, c-format
 msgid ""
-"  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cppflags            PostgreSQL 만들 때 지정한 CPPFLAGS 값\n"
+"  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
+msgstr "  --cppflags            MollyDB 만들 때 지정한 CPPFLAGS 값\n"
 
 #: pg_config.c:433
 #, c-format
 msgid ""
-"  --cflags              show CFLAGS value used when PostgreSQL was built\n"
+"  --cflags              show CFLAGS value used when MollyDB was built\n"
 msgstr ""
-"  --cflags              PostgreSQL 만들 때, 사용한 CFLAGS 값을 보여줌\n"
+"  --cflags              MollyDB 만들 때, 사용한 CFLAGS 값을 보여줌\n"
 
 #: pg_config.c:434
 #, c-format
 msgid ""
-"  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --cflags_sl           PostgreSQL 만들 때 지정한 CFLAGS_SL 값\n"
+"  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --cflags_sl           MollyDB 만들 때 지정한 CFLAGS_SL 값\n"
 
 #: pg_config.c:435
 #, c-format
 msgid ""
-"  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
+"  --ldflags             show LDFLAGS value used when MollyDB was built\n"
 msgstr ""
-"  --ldflags             PostgreSQL 만들 때, 사용한 LDFLAGS 값을 보여줌\n"
+"  --ldflags             MollyDB 만들 때, 사용한 LDFLAGS 값을 보여줌\n"
 
 #: pg_config.c:436
 #, c-format
 msgid ""
-"  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was "
+"  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was "
 "built\n"
-msgstr "  --ldflags_sl          PostgreSQL 만들 때 지정한 LDFLAGS_SL 값\n"
+msgstr "  --ldflags_sl          MollyDB 만들 때 지정한 LDFLAGS_SL 값\n"
 
 #: pg_config.c:437
 #, c-format
 msgid ""
-"  --libs                show LIBS value used when PostgreSQL was built\n"
-msgstr "  --libs                PostgreSQL 만들 때, 사용한 LIBS 값을 보여줌\n"
+"  --libs                show LIBS value used when MollyDB was built\n"
+msgstr "  --libs                MollyDB 만들 때, 사용한 LIBS 값을 보여줌\n"
 
 #: pg_config.c:438
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             PostgreSQL 버전을 보여줌\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             MollyDB 버전을 보여줌\n"
 
 #: pg_config.c:439
 #, c-format

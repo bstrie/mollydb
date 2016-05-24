@@ -1,9 +1,9 @@
 /* ----------
  *	pgstat.h
  *
- *	Definitions for the PostgreSQL statistics collector daemon.
+ *	Definitions for the MollyDB statistics collector daemon.
  *
- *	Copyright (c) 2001-2016, PostgreSQL Global Development Group
+ *	Copyright (c) 2001-2016, MollyDB Global Development Group
  *
  *	src/include/pgstat.h
  * ----------

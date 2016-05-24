@@ -4,7 +4,7 @@
  *	  Implement PGSemaphores using SysV semaphore facilities
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
@@ -119,10 +119,10 @@ InternalIpcSemaphoreCreate(IpcSemaphoreKey semKey, int numSems)
 		  "It occurs when either the system limit for the maximum number of "
 			 "semaphore sets (SEMMNI), or the system wide maximum number of "
 			"semaphores (SEMMNS), would be exceeded.  You need to raise the "
-		  "respective kernel parameter.  Alternatively, reduce PostgreSQL's "
+		  "respective kernel parameter.  Alternatively, reduce MollyDB's "
 						 "consumption of semaphores by reducing its max_connections parameter.\n"
-			  "The PostgreSQL documentation contains more information about "
-						 "configuring your system for PostgreSQL.") : 0));
+			  "The MollyDB documentation contains more information about "
+						 "configuring your system for MollyDB.") : 0));
 	}
 
 	return semId;
@@ -146,7 +146,7 @@ IpcSemaphoreInitialize(IpcSemaphoreId semId, int semNum, int value)
 								 semId, semNum, value),
 				 (saved_errno == ERANGE) ?
 				 errhint("You possibly need to raise your kernel's SEMVMX value to be at least "
-				  "%d.  Look into the PostgreSQL documentation for details.",
+				  "%d.  Look into the MollyDB documentation for details.",
 						 value) : 0));
 	}
 }

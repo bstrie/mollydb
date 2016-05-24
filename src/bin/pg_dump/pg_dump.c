@@ -4,12 +4,12 @@
  *	  pg_dump is a utility for dumping out a postgres database
  *	  into a script file.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *	pg_dump will read the system catalogs in a database and dump out a
  *	script that reproduces the schema in terms of SQL that is understood
- *	by PostgreSQL
+ *	by MollyDB
  *
  *	Note that pg_dump runs in a transaction-snapshot mode transaction,
  *	so it sees a consistent snapshot of the database including system
@@ -383,7 +383,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_dump (PostgreSQL) " PG_VERSION);
+			puts("pg_dump (MollyDB) " PG_VERSION);
 			exit_nicely(0);
 		}
 	}

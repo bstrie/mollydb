@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2004-2005 Serguei A. Mokhov, mokhov@cs.concordia.ca
 # Copyright (c) 2012-2013 Alexander Lakhin, exclusion@gmail.com
-# Distributed under the same licensing terms as PostgreSQL itself.
+# Distributed under the same licensing terms as MollyDB itself.
 #
 # pgtranslation Id: pg_ctl.po,v 1.4 2010/12/07 21:22:21 petere Exp $
 #
@@ -26,7 +26,7 @@
 #   - May 29 - November 24, 2004: Initial translation for 8.0; Serguei A. Mokhov <mokhov@cs.concordia.ca>.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9 current\n"
+"Project-Id-Version: MollyDB 9 current\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-10-17 05:43+0000\n"
 "PO-Revision-Date: 2015-10-17 17:03+0400\n"
@@ -214,7 +214,7 @@ msgid ""
 msgstr ""
 "Программа \"%s\" необходима для %s, но не найдена\n"
 "в каталоге \"%s\".\n"
-"Проверьте вашу установку PostgreSQL.\n"
+"Проверьте вашу установку MollyDB.\n"
 
 #: pg_ctl.c:822
 #, c-format
@@ -225,7 +225,7 @@ msgid ""
 msgstr ""
 "Программа \"%s\" найдена в \"%s\",\n"
 "но её версия отличается от версии %s.\n"
-"Проверьте вашу установку PostgreSQL.\n"
+"Проверьте вашу установку MollyDB.\n"
 
 #: pg_ctl.c:855
 #, c-format
@@ -517,11 +517,11 @@ msgstr "Для дополнительной информации попробу�
 #: pg_ctl.c:1922
 #, c-format
 msgid ""
-"%s is a utility to initialize, start, stop, or control a PostgreSQL server.\n"
+"%s is a utility to initialize, start, stop, or control a MollyDB server.\n"
 "\n"
 msgstr ""
 "%s - это утилита для инициализации, запуска, остановки и управления сервером "
-"PostgreSQL.\n"
+"MollyDB.\n"
 "\n"
 
 #: pg_ctl.c:1923
@@ -694,10 +694,10 @@ msgstr ""
 #, c-format
 msgid ""
 "  -o OPTIONS             command line options to pass to postgres\n"
-"                         (PostgreSQL server executable) or initdb\n"
+"                         (MollyDB server executable) or initdb\n"
 msgstr ""
 "  -o ПАРАМЕТРЫ           параметры командной строки для postgres\n"
-"                         (исполняемого файла сервера PostgreSQL) или initdb\n"
+"                         (исполняемого файла сервера MollyDB) или initdb\n"
 
 #: pg_ctl.c:1962
 #, c-format
@@ -769,25 +769,25 @@ msgstr ""
 #: pg_ctl.c:1976
 #, c-format
 msgid ""
-"  -N SERVICENAME  service name with which to register PostgreSQL server\n"
-msgstr "  -N ИМЯ-СЛУЖБЫ   имя службы для регистрации сервера PostgreSQL\n"
+"  -N SERVICENAME  service name with which to register MollyDB server\n"
+msgstr "  -N ИМЯ-СЛУЖБЫ   имя службы для регистрации сервера MollyDB\n"
 
 #: pg_ctl.c:1977
 #, c-format
-msgid "  -P PASSWORD     password of account to register PostgreSQL server\n"
+msgid "  -P PASSWORD     password of account to register MollyDB server\n"
 msgstr ""
-"  -P ПАРОЛЬ       пароль учётной записи для регистрации сервера PostgreSQL\n"
+"  -P ПАРОЛЬ       пароль учётной записи для регистрации сервера MollyDB\n"
 
 #: pg_ctl.c:1978
 #, c-format
-msgid "  -U USERNAME     user name of account to register PostgreSQL server\n"
+msgid "  -U USERNAME     user name of account to register MollyDB server\n"
 msgstr ""
-"  -U ПОЛЬЗОВАТЕЛЬ имя пользователя для регистрации сервера PostgreSQL\n"
+"  -U ПОЛЬЗОВАТЕЛЬ имя пользователя для регистрации сервера MollyDB\n"
 
 #: pg_ctl.c:1979
 #, c-format
-msgid "  -S START-TYPE   service start type to register PostgreSQL server\n"
-msgstr "  -S ТИП-ЗАПУСКА  тип запуска службы сервера PostgreSQL\n"
+msgid "  -S START-TYPE   service start type to register MollyDB server\n"
+msgstr "  -S ТИП-ЗАПУСКА  тип запуска службы сервера MollyDB\n"
 
 #: pg_ctl.c:1981
 #, c-format

@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.4\n"
+"Project-Id-Version: MollyDB 9.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-17 21:11+0000\n"
 "PO-Revision-Date: 2014-11-22 23:54+0100\n"
@@ -61,11 +61,11 @@ msgstr "ej sparat\n"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%s ger information on den installerade versionen av PostgreSQL.\n"
+"%s ger information on den installerade versionen av MollyDB.\n"
 "\n"
 
 #: pg_config.c:429
@@ -160,55 +160,55 @@ msgstr "  --pgxs                visa plats för make-filen vid utvidgningar\n"
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
+"                        MollyDB was built\n"
 msgstr ""
 "  --configure           dessa flaggor gavs till \"configure\"-skriptet när\n"
-"                        PostgreSQL byggdes\n"
+"                        MollyDB byggdes\n"
 
 #: pg_config.c:448
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
-msgstr "  --cc                  visa värde på CC när PostgreSQL byggdes\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
+msgstr "  --cc                  visa värde på CC när MollyDB byggdes\n"
 
 #: pg_config.c:449
 #, c-format
-msgid "  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cppflags            visa värde på CPPFLAGS när PostgreSQL byggdes\n"
+msgid "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
+msgstr "  --cppflags            visa värde på CPPFLAGS när MollyDB byggdes\n"
 
 #: pg_config.c:450
 #, c-format
-msgid "  --cflags              show CFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cflags              visa värde på CFLAGS när PostgreSQL byggdes\n"
+msgid "  --cflags              show CFLAGS value used when MollyDB was built\n"
+msgstr "  --cflags              visa värde på CFLAGS när MollyDB byggdes\n"
 
 #: pg_config.c:451
 #, c-format
-msgid "  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --cflags_sl           visa värde på CFLAGS_SL när PostgreSQL byggdes\n"
+msgid "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --cflags_sl           visa värde på CFLAGS_SL när MollyDB byggdes\n"
 
 #: pg_config.c:452
 #, c-format
-msgid "  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
-msgstr "  --ldflags             visa värde på LDFLAGS när PostgreSQL byggdes\n"
+msgid "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
+msgstr "  --ldflags             visa värde på LDFLAGS när MollyDB byggdes\n"
 
 #: pg_config.c:453
 #, c-format
-msgid "  --ldflags_ex          show LDFLAGS_EX value used when PostgreSQL was built\n"
-msgstr "  --ldflags_ex          visa värde på LDFLAGS_EX när PostgreSQL byggdes\n"
+msgid "  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was built\n"
+msgstr "  --ldflags_ex          visa värde på LDFLAGS_EX när MollyDB byggdes\n"
 
 #: pg_config.c:454
 #, c-format
-msgid "  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --ldflags_sl          visa värde på LDFLAGS_SL när PostgreSQL byggdes\n"
+msgid "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --ldflags_sl          visa värde på LDFLAGS_SL när MollyDB byggdes\n"
 
 #: pg_config.c:455
 #, c-format
-msgid "  --libs                show LIBS value used when PostgreSQL was built\n"
-msgstr "  --libs                visa värde på LIBS när PostgreSQL byggdes\n"
+msgid "  --libs                show LIBS value used when MollyDB was built\n"
+msgstr "  --libs                visa värde på LIBS när MollyDB byggdes\n"
 
 #: pg_config.c:456
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             visa version för PostgreSQL\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             visa version för MollyDB\n"
 
 #: pg_config.c:457
 #, c-format

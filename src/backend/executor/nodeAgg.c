@@ -114,7 +114,7 @@
  *	  nominal transition value; they can use the memory context returned by
  *	  AggCheckCallContext() to do that.
  *
- *	  Note: AggCheckCallContext() is available as of PostgreSQL 9.0.  The
+ *	  Note: AggCheckCallContext() is available as of MollyDB 9.0.  The
  *	  AggState is available as context in earlier releases (back to 8.1),
  *	  but direct examination of the node is needed to use it before 9.0.
  *
@@ -156,7 +156,7 @@
  *
  *	  TODO: AGG_HASHED doesn't support multiple grouping sets yet.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION

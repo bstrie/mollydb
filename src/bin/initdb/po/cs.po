@@ -5,7 +5,7 @@
 # Tomáš Vondra <tv@fuzzy.cz>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: initdb-cs (PostgreSQL 9.3)\n"
+"Project-Id-Version: initdb-cs (MollyDB 9.3)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-09-23 20:19+0000\n"
 "PO-Revision-Date: 2013-09-24 20:25+0200\n"
@@ -307,10 +307,10 @@ msgstr "vytvářím databázi template1 v %s/base/1 ... "
 #: initdb.c:1397
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
-"%s: vstupní soubor \"%s\" nepatří PostgreSQL %s\n"
+"%s: vstupní soubor \"%s\" nepatří MollyDB %s\n"
 "Zkontrolujte si vaši instalaci nebo zadejte platnou cestu pomocí\n"
 "parametru -L.\n"
 
@@ -492,10 +492,10 @@ msgstr "%s: nelze nastartovat proces pro příkaz \"%s\": chybový kód %lu\n"
 #: initdb.c:2733
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s inicializuji PostgreSQL klastr\n"
+"%s inicializuji MollyDB klastr\n"
 "\n"
 
 #: initdb.c:2734

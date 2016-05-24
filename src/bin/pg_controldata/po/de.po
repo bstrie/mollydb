@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-25 01:15+0000\n"
 "PO-Revision-Date: 2016-04-24 22:52-0400\n"
@@ -54,21 +54,21 @@ msgid ""
 "WARNING: possible byte ordering mismatch\n"
 "The byte ordering used to store the pg_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, and\n"
-"the PostgreSQL installation would be incompatible with this data directory.\n"
+"the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "WARNUNG: möglicherweise falsche Byte-Reihenfolge\n"
 "Die Byte-Reihenfolge, die zur Speicherung der Datei pg_control verwendet wurde,\n"
 "stimmt möglicherweise nicht mit der von diesem Programm verwendeten überein. In\n"
-"diesem Fall wären die Ergebnisse unten falsch und die PostgreSQL-Installation\n"
+"diesem Fall wären die Ergebnisse unten falsch und die MollyDB-Installation\n"
 "wäre inkompatibel mit diesem Datenverzeichnis.\n"
 
 #: pg_controldata.c:33
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s zeigt Kontrollinformationen über einen PostgreSQL-Datenbankcluster.\n"
+"%s zeigt Kontrollinformationen über einen MollyDB-Datenbankcluster.\n"
 "\n"
 
 #: pg_controldata.c:34

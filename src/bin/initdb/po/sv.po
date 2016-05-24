@@ -8,7 +8,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.4\n"
+"Project-Id-Version: MollyDB 9.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-17 21:12+0000\n"
 "PO-Revision-Date: 2014-11-25 00:21+0100\n"
@@ -335,11 +335,11 @@ msgstr "Skapar databasen template1 i %s/base/1 ... "
 #: initdb.c:1456
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
 "%s: Indatafilen \"%s\" hör inte\n"
-"till PostgreSQL %s. Kontrollera din installation eller ange\n"
+"till MollyDB %s. Kontrollera din installation eller ange\n"
 "korrekt filkatalog med hjälp av växeln -L.\n"
 
 #: initdb.c:1543
@@ -529,10 +529,10 @@ msgstr "%s: kunde inte starta process för kommando \"%s\": felkod %lu\n"
 #: initdb.c:2806
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s initierar ett databaskluster för PostgreSQL.\n"
+"%s initierar ett databaskluster för MollyDB.\n"
 "\n"
 
 #: initdb.c:2807

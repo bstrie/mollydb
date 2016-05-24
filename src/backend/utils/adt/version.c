@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------
  *
  * version.c
- *	 Returns the PostgreSQL version string
+ *	 Returns the MollyDB version string
  *
- * Copyright (c) 1998-2016, PostgreSQL Global Development Group
+ * Copyright (c) 1998-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *

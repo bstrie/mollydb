@@ -1,13 +1,13 @@
 # Brazilian Portuguese message translation file for pg_controldata
-# Copyright (C) 2009 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Cesar Suga <sartre@linuxbr.com>, 2002.
 # Roberto Mello <rmello@fslc.usu.edu>, 2002.
 # Euler Taveira de Oliveira <euler@timbira.com>, 2003-2016.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-02-13 17:22-0300\n"
 "PO-Revision-Date: 2005-10-04 23:00-0300\n"
@@ -21,10 +21,10 @@ msgstr ""
 #: pg_controldata.c:35
 #, c-format
 msgid ""
-"%s displays control information of a PostgreSQL database cluster.\n"
+"%s displays control information of a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s mostra informações de controle de um agrupamento de banco de dados PostgreSQL.\n"
+"%s mostra informações de controle de um agrupamento de banco de dados MollyDB.\n"
 "\n"
 
 #: pg_controldata.c:36
@@ -164,12 +164,12 @@ msgid ""
 "WARNING: possible byte ordering mismatch\n"
 "The byte ordering used to store the pg_control file might not match the one\n"
 "used by this program.  In that case the results below would be incorrect, and\n"
-"the PostgreSQL installation would be incompatible with this data directory.\n"
+"the MollyDB installation would be incompatible with this data directory.\n"
 msgstr ""
 "AVISO: possível não correspondência da ordenação dos bits\n"
 "A ordenação dos bits utilizada para armazenar o arquivo pg_control pode não \n"
 "corresponder com a utilizada por este programa. Neste caso os resultados abaixo\n"
-"seriam incorretos, e a instalação do PostgreSQL seria incompatível com o diretório de dados.\n"
+"seriam incorretos, e a instalação do MollyDB seria incompatível com o diretório de dados.\n"
 
 #: pg_controldata.c:230
 #, c-format

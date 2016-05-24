@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2004-2005 Serguei A. Mokhov, mokhov@cs.concordia.ca
 # Copyright (c) 2012-2013 Alexander Lakhin <exclusion@gmail.com>
-# Distributed under the same licensing terms as PostgreSQL itself.
+# Distributed under the same licensing terms as MollyDB itself.
 #
 # pgtranslation Id: pg_config.po,v 1.4 2010/12/07 21:22:21 petere Exp $
 #
@@ -22,7 +22,7 @@
 #   - October 13 - November 24, 2004: Initial Translation, Serguei A. Mokhov <mokhov@cs.concordia.ca>.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9 current\n"
+"Project-Id-Version: MollyDB 9 current\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-08-02 06:42+0000\n"
 "PO-Revision-Date: 2014-08-14 22:47+0400\n"
@@ -83,11 +83,11 @@ msgstr "не сохранено\n"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%s предоставляет информацию об установленной версии PostgreSQL.\n"
+"%s предоставляет информацию об установленной версии MollyDB.\n"
 "\n"
 
 #: pg_config.c:429
@@ -199,78 +199,78 @@ msgstr ""
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
+"                        MollyDB was built\n"
 msgstr ""
 "  --configure           показать параметры скрипта \"configure\", с "
 "которыми\n"
-"                        был собран PostgreSQL\n"
+"                        был собран MollyDB\n"
 
 #: pg_config.c:448
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
 msgstr ""
-"  --cc                  показать, с каким значением CC собран PostgreSQL\n"
+"  --cc                  показать, с каким значением CC собран MollyDB\n"
 
 #: pg_config.c:449
 #, c-format
 msgid ""
-"  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
+"  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
 msgstr ""
 "  --cppflags            показать, с каким значением CPPFLAGS собран "
-"PostgreSQL\n"
+"MollyDB\n"
 
 #: pg_config.c:450
 #, c-format
 msgid ""
-"  --cflags              show CFLAGS value used when PostgreSQL was built\n"
+"  --cflags              show CFLAGS value used when MollyDB was built\n"
 msgstr ""
-"  --cflags              показать, с какими флагами C собран PostgreSQL\n"
+"  --cflags              показать, с какими флагами C собран MollyDB\n"
 
 #: pg_config.c:451
 #, c-format
 msgid ""
-"  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
+"  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
 msgstr ""
 "  --cflags_sl           показать, с каким значением CFLAGS_SL собран "
-"PostgreSQL\n"
+"MollyDB\n"
 
 #: pg_config.c:452
 #, c-format
 msgid ""
-"  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
+"  --ldflags             show LDFLAGS value used when MollyDB was built\n"
 msgstr ""
 "  --ldflags             показать, с каким значением LDFLAGS собран "
-"PostgreSQL\n"
+"MollyDB\n"
 
 #: pg_config.c:453
 #, c-format
 msgid ""
-"  --ldflags_ex          show LDFLAGS_EX value used when PostgreSQL was "
+"  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was "
 "built\n"
 msgstr ""
 "  --ldflags_ex          показать, с каким значением LDFLAGS_EX собран "
-"PostgreSQL\n"
+"MollyDB\n"
 
 #: pg_config.c:454
 #, c-format
 msgid ""
-"  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was "
+"  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was "
 "built\n"
 msgstr ""
 "  --ldflags_sl          показать, с каким значением LDFLAGS_SL собран "
-"PostgreSQL\n"
+"MollyDB\n"
 
 #: pg_config.c:455
 #, c-format
 msgid ""
-"  --libs                show LIBS value used when PostgreSQL was built\n"
+"  --libs                show LIBS value used when MollyDB was built\n"
 msgstr ""
-"  --libs                показать, с каким значением LIBS собран PostgreSQL\n"
+"  --libs                показать, с каким значением LIBS собран MollyDB\n"
 
 #: pg_config.c:456
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             показать версию PostgreSQL\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             показать версию MollyDB\n"
 
 #: pg_config.c:457
 #, c-format

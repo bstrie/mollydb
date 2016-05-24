@@ -1,5 +1,5 @@
 /**********************************************************************
- * PostgreSQL::InServer::Util
+ * MollyDB::InServer::Util
  *
  * src/pl/plperl/Util.xs
  *
@@ -74,7 +74,7 @@ sv2text(SV *sv)
 	return text;
 }
 
-MODULE = PostgreSQL::InServer::Util PREFIX = util_
+MODULE = MollyDB::InServer::Util PREFIX = util_
 
 PROTOTYPES: ENABLE
 VERSIONCHECK: DISABLE

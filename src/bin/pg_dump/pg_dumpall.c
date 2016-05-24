@@ -2,7 +2,7 @@
  *
  * pg_dumpall.c
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * pg_dumpall forces all pg_dump output to be text, since it also outputs
@@ -29,7 +29,7 @@
 #include "fe_utils/string_utils.h"
 
 /* version string we expect back from pg_dump */
-#define PGDUMP_VERSIONSTR "pg_dump (PostgreSQL) " PG_VERSION "\n"
+#define PGDUMP_VERSIONSTR "pg_dump (MollyDB) " PG_VERSION "\n"
 
 
 static void help(void);
@@ -164,7 +164,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_dumpall (PostgreSQL) " PG_VERSION);
+			puts("pg_dumpall (MollyDB) " PG_VERSION);
 			exit_nicely(0);
 		}
 	}
@@ -446,7 +446,7 @@ main(int argc, char *argv[])
 	if (quote_all_identifiers && server_version >= 90100)
 		executeCommand(conn, "SET quote_all_identifiers = true");
 
-	fprintf(OPF, "--\n-- PostgreSQL database cluster dump\n--\n\n");
+	fprintf(OPF, "--\n-- MollyDB database cluster dump\n--\n\n");
 	if (verbose)
 		dumpTimestamp("Started on");
 
@@ -533,7 +533,7 @@ main(int argc, char *argv[])
 
 	if (verbose)
 		dumpTimestamp("Completed on");
-	fprintf(OPF, "--\n-- PostgreSQL database cluster dump complete\n--\n\n");
+	fprintf(OPF, "--\n-- MollyDB database cluster dump complete\n--\n\n");
 
 	if (filename)
 		fclose(OPF);
@@ -545,7 +545,7 @@ main(int argc, char *argv[])
 static void
 help(void)
 {
-	printf(_("%s extracts a PostgreSQL database cluster into an SQL script file.\n\n"), progname);
+	printf(_("%s extracts a MollyDB database cluster into an SQL script file.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]...\n"), progname);
 

@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for ecpg
-# Copyright (C) 2009 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.0 beta 3\n"
+"Project-Id-Version: MollyDB 9.0 beta 3\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 09:56+0900\n"
 "PO-Revision-Date: 2010-07-21 18:37+0900\n"
@@ -55,10 +55,10 @@ msgstr "記述子項目%sは設定できません"
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%sはCプログラム用のPostgreSQL埋込みSQLプリプロセッサです。\n"
+"%sはCプログラム用のMollyDB埋込みSQLプリプロセッサです。\n"
 "\n"
 
 #: ecpg.c:37
@@ -191,8 +191,8 @@ msgstr "%s: パーサデバッグのサポート(-d)を利用できません\n"
 
 #: ecpg.c:263
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "%s PostgreSQL埋込みC言語プリプロセッサ バージョン%d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "%s MollyDB埋込みC言語プリプロセッサ バージョン%d.%d.%d\n"
 
 #: ecpg.c:265
 #, c-format

@@ -1,9 +1,9 @@
-# This file is distributed under the same license as the PostgreSQL package.
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.1\n"
+"Project-Id-Version: MollyDB 9.1\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2011-11-09 20:39+0000\n"
 "PO-Revision-Date: 2013-09-05 23:03-0400\n"

@@ -1,6 +1,6 @@
 <!--
 doc/src/sgml/ref/alter_index.sgml
-PostgreSQL documentation
+MollyDB documentation
 -->
 
 <refentry id="SQL-ALTERINDEX">
@@ -241,7 +241,7 @@ REINDEX INDEX distributors;
   <title>Compatibility</title>
 
   <para>
-   <command>ALTER INDEX</> is a <productname>PostgreSQL</productname>
+   <command>ALTER INDEX</> is a <productname>MollyDB</productname>
    extension.
   </para>
  </refsect1>

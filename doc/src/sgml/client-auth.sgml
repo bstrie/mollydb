@@ -9,7 +9,7 @@
 
  <para>
   When a client application connects to the database server, it
-  specifies which <productname>PostgreSQL</productname> database user name it
+  specifies which <productname>MollyDB</productname> database user name it
   wants to connect as, much the same way one logs into a Unix computer
   as a particular user. Within the SQL environment the active database
   user name determines access privileges to database objects &mdash; see
@@ -20,7 +20,7 @@
  <note>
   <para>
    As explained in <xref linkend="user-manag">,
-   <productname>PostgreSQL</productname> actually does privilege
+   <productname>MollyDB</productname> actually does privilege
    management in terms of <quote>roles</>.  In this chapter, we
    consistently use <firstterm>database user</> to mean <quote>role with the
    <literal>LOGIN</> privilege</quote>.
@@ -36,14 +36,14 @@
  </para>
 
  <para>
-  <productname>PostgreSQL</productname> offers a number of different
+  <productname>MollyDB</productname> offers a number of different
   client authentication methods. The method used to authenticate a
   particular client connection can be selected on the basis of
   (client) host address, database, and user.
  </para>
 
  <para>
-  <productname>PostgreSQL</productname> database user names are logically
+  <productname>MollyDB</productname> database user names are logically
   separate from user names of the operating system in which the server
   runs. If all the users of a particular server also have accounts on
   the server's machine, it makes sense to assign database user names
@@ -194,7 +194,7 @@ hostnossl  <replaceable>database</replaceable>  <replaceable>user</replaceable> 
        matches if a replication connection is requested (note that
        replication connections do not specify any particular database).
        Otherwise, this is the name of
-       a specific <productname>PostgreSQL</productname> database.
+       a specific <productname>MollyDB</productname> database.
        Multiple database names can be supplied by separating them with
        commas.  A separate file containing database names can be specified by
        preceding the file name with <literal>@</>.
@@ -211,7 +211,7 @@ hostnossl  <replaceable>database</replaceable>  <replaceable>user</replaceable> 
        matches all users.  Otherwise, this is either the name of a specific
        database user, or a group name preceded by <literal>+</>.
        (Recall that there is no real distinction between users and groups
-       in <productname>PostgreSQL</>; a <literal>+</> mark really means
+       in <productname>MollyDB</>; a <literal>+</> mark really means
        <quote>match any of the roles that are directly or indirectly members
        of this role</>, while a name without a <literal>+</> mark matches
        only that specific role.) For this purpose, a superuser is only
@@ -388,8 +388,8 @@ hostnossl  <replaceable>database</replaceable>  <replaceable>user</replaceable> 
          <para>
           Allow the connection unconditionally. This method
           allows anyone that can connect to the
-          <productname>PostgreSQL</productname> database server to login as
-          any <productname>PostgreSQL</productname> user they wish,
+          <productname>MollyDB</productname> database server to login as
+          any <productname>MollyDB</productname> user they wish,
           without the need for a password or any other authentication.  See <xref
           linkend="auth-trust"> for details.
          </para>
@@ -664,7 +664,7 @@ host    all             all             0.0.0.0/0               gss
 
 # Allow users from 192.168.x.x hosts to connect to any database, if
 # they pass the ident check.  If, for example, ident says the user is
-# "bryanh" and he requests to connect as PostgreSQL user "guest1", the
+# "bryanh" and he requests to connect as MollyDB user "guest1", the
 # connection is allowed if there is an entry in pg_ident.conf for map
 # "omicron" that says "bryanh" is allowed to connect as "guest1".
 #
@@ -747,7 +747,7 @@ local   db1,db2,@demodbs  all                                   md5
    If the <replaceable>system-username</> field starts with a slash (<literal>/</>),
    the remainder of the field is treated as a regular expression.
    (See <xref linkend="posix-syntax-details"> for details of
-   <productname>PostgreSQL</>'s regular expression syntax.)  The regular
+   <productname>MollyDB</>'s regular expression syntax.)  The regular
    expression can include a single capture, or parenthesized subexpression,
    which can then be referenced in the <replaceable>database-username</>
    field as <literal>\1</> (backslash-one).  This allows the mapping of
@@ -790,7 +790,7 @@ mymap   /^(.*)@otherdomain\.com$   guest
    operating system user name <literal>bryanh</>, <literal>ann</>, or
    <literal>robert</> would not be granted access. Unix user
    <literal>robert</> would only be allowed access when he tries to
-   connect as <productname>PostgreSQL</> user <literal>bob</>, not
+   connect as <productname>MollyDB</> user <literal>bob</>, not
    as <literal>robert</> or anyone else. <literal>ann</> would
    only be allowed to connect as <literal>ann</>. User
    <literal>bryanh</> would be allowed to connect as either
@@ -823,7 +823,7 @@ omicron         bryanh                  guest1
 
    <para>
     When <literal>trust</> authentication is specified,
-    <productname>PostgreSQL</productname> assumes that anyone who can
+    <productname>MollyDB</productname> assumes that anyone who can
     connect to the server is authorized to access the database with
     whatever database user name they specify (even superuser names).
     Of course, restrictions made in the <literal>database</> and
@@ -896,7 +896,7 @@ omicron         bryanh                  guest1
    </para>
 
    <para>
-    <productname>PostgreSQL</productname> database passwords are
+    <productname>MollyDB</productname> database passwords are
     separate from operating system user passwords. The password for
     each database user is stored in the <literal>pg_authid</> system
     catalog. Passwords can be managed with the SQL commands
@@ -919,7 +919,7 @@ omicron         bryanh                  guest1
    <para>
     <productname>GSSAPI</productname> is an industry-standard protocol
     for secure authentication defined in RFC 2743.
-    <productname>PostgreSQL</productname> supports
+    <productname>MollyDB</productname> supports
     <productname>GSSAPI</productname> with <productname>Kerberos</productname>
     authentication according to RFC 1964. <productname>GSSAPI</productname>
     provides automatic authentication (single sign-on) for systems
@@ -929,7 +929,7 @@ omicron         bryanh                  guest1
    </para>
 
    <para>
-    GSSAPI support has to be enabled when <productname>PostgreSQL</> is built;
+    GSSAPI support has to be enabled when <productname>MollyDB</> is built;
     see <xref linkend="installation"> for more information.
    </para>
 
@@ -938,7 +938,7 @@ omicron         bryanh                  guest1
     <productname>Kerberos</productname>, it uses a standard principal
     in the format
     <literal><replaceable>servicename</>/<replaceable>hostname</>@<replaceable>realm</></literal>.
-    The PostgreSQL server will accept any principal that is included in the keytab used by
+    The MollyDB server will accept any principal that is included in the keytab used by
     the server, but care needs to be taken to specify the correct principal details when
     making the connection from the client using the <literal>krbsrvname</> connection parameter. (See
     also <xref linkend="libpq-paramkeywords">.) The installation default can be
@@ -957,15 +957,15 @@ omicron         bryanh                  guest1
    </para>
 
    <para>
-    Client principals can be mapped to different <productname>PostgreSQL</>
+    Client principals can be mapped to different <productname>MollyDB</>
     database user names with <filename>pg_ident.conf</>.  For example,
     <literal>pgusername@realm</> could be mapped to just <literal>pgusername</>.
     Alternatively, you can use the full <literal>username@realm</> principal as
-    the role name in <productname>PostgreSQL</> without any mapping.
+    the role name in <productname>MollyDB</> without any mapping.
    </para>
 
    <para>
-    <productname>PostgreSQL</> also supports a parameter to strip the realm from
+    <productname>MollyDB</> also supports a parameter to strip the realm from
     the principal.  This method is supported for backwards compatibility and is
     strongly discouraged as it is then impossible to distinguish different users
     with the same user name but coming from different realms.  To enable this,
@@ -980,7 +980,7 @@ omicron         bryanh                  guest1
 
    <para>
     Make sure that your server keytab file is readable (and preferably
-    only readable, not writable) by the <productname>PostgreSQL</productname>
+    only readable, not writable) by the <productname>MollyDB</productname>
     server account.  (See also <xref linkend="postgres-user">.) The location
     of the key file is specified by the <xref
     linkend="guc-krb-server-keyfile"> configuration
@@ -988,7 +988,7 @@ omicron         bryanh                  guest1
     <filename>/usr/local/pgsql/etc/krb5.keytab</> (or whatever
     directory was specified as <varname>sysconfdir</> at build time).
     For security reasons, it is recommended to use a separate keytab
-    just for the <productname>PostgreSQL</productname> server rather
+    just for the <productname>MollyDB</productname> server rather
     than opening up permissions on the system keytab file.
    </para>
    <para>
@@ -1025,7 +1025,7 @@ omicron         bryanh                  guest1
         also used.  It is recommended to
         leave <literal>include_realm</literal> set to the default (1) and to
         provide an explicit mapping in <filename>pg_ident.conf</> to convert
-        principal names to <productname>PostgreSQL</> user names.
+        principal names to <productname>MollyDB</> user names.
        </para>
       </listitem>
      </varlistentry>
@@ -1073,7 +1073,7 @@ omicron         bryanh                  guest1
    <para>
     <productname>SSPI</productname> is a <productname>Windows</productname>
     technology for secure authentication with single sign-on.
-    <productname>PostgreSQL</productname> will use SSPI in
+    <productname>MollyDB</productname> will use SSPI in
     <literal>negotiate</literal> mode, which will use
     <productname>Kerberos</productname> when possible and automatically
     fall back to <productname>NTLM</productname> in other cases.
@@ -1106,7 +1106,7 @@ omicron         bryanh                  guest1
         also used.  It is recommended to
         leave <literal>include_realm</literal> set to the default (1) and to
         provide an explicit mapping in <filename>pg_ident.conf</> to convert
-        principal names to <productname>PostgreSQL</> user names.
+        principal names to <productname>MollyDB</> user names.
        </para>
       </listitem>
      </varlistentry>
@@ -1226,7 +1226,7 @@ omicron         bryanh                  guest1
     is to answer questions like <quote>What user initiated the
     connection that goes out of your port <replaceable>X</replaceable>
     and connects to my port <replaceable>Y</replaceable>?</quote>.
-    Since <productname>PostgreSQL</> knows both <replaceable>X</> and
+    Since <productname>MollyDB</> knows both <replaceable>X</> and
     <replaceable>Y</> when a physical connection is established, it
     can interrogate the ident server on the host of the connecting
     client and can theoretically determine the operating system user
@@ -1256,8 +1256,8 @@ omicron         bryanh                  guest1
     Some ident servers have a nonstandard option that causes the returned
     user name to be encrypted, using a key that only the originating
     machine's administrator knows.  This option <emphasis>must not</> be
-    used when using the ident server with <productname>PostgreSQL</>,
-    since <productname>PostgreSQL</> does not have any way to decrypt the
+    used when using the ident server with <productname>MollyDB</>,
+    since <productname>MollyDB</> does not have any way to decrypt the
     returned string to determine the actual user name.
    </para>
   </sect2>
@@ -1375,7 +1375,7 @@ omicron         bryanh                  guest1
       <term><literal>ldaptls</literal></term>
       <listitem>
        <para>
-        Set to 1 to make the connection between PostgreSQL and the
+        Set to 1 to make the connection between MollyDB and the
         LDAP server use TLS encryption. Note that this only encrypts
         the traffic to the LDAP server &mdash; the connection to the client
         will still be unencrypted unless SSL is used.
@@ -1493,7 +1493,7 @@ ldap://<replaceable>host</replaceable>[:<replaceable>port</replaceable>]/<replac
 host ... ldap ldapserver=ldap.example.net ldapprefix="cn=" ldapsuffix=", dc=example, dc=net"
 </programlisting>
     When a connection to the database server as database
-    user <literal>someuser</literal> is requested, PostgreSQL will attempt to
+    user <literal>someuser</literal> is requested, MollyDB will attempt to
     bind to the LDAP server using the DN <literal>cn=someuser, dc=example,
     dc=net</literal> and the password provided by the client.  If that connection
     succeeds, the database access is granted.
@@ -1505,7 +1505,7 @@ host ... ldap ldapserver=ldap.example.net ldapprefix="cn=" ldapsuffix=", dc=exam
 host ... ldap ldapserver=ldap.example.net ldapbasedn="dc=example, dc=net" ldapsearchattribute=uid
 </programlisting>
     When a connection to the database server as database
-    user <literal>someuser</literal> is requested, PostgreSQL will attempt to
+    user <literal>someuser</literal> is requested, MollyDB will attempt to
     bind anonymously (since <literal>ldapbinddn</literal> was not specified) to
     the LDAP server, perform a search for <literal>(uid=someuser)</literal>
     under the specified base DN.  If an entry is found, it will then attempt to
@@ -1577,13 +1577,13 @@ host ... ldap ldapurl="ldap://ldap.example.net/dc=example,dc=net?uid?sub"
        <listitem>
         <para>
          The shared secret used when talking securely to the RADIUS
-         server. This must have exactly the same value on the PostgreSQL
+         server. This must have exactly the same value on the MollyDB
          and RADIUS servers. It is recommended that this be a string of
          at least 16 characters. This parameter is required.
          <note>
          <para>
           The encryption vector used will only be cryptographically
-          strong if <productname>PostgreSQL</> is built with support for
+          strong if <productname>MollyDB</> is built with support for
           <productname>OpenSSL</>. In other cases, the transmission to the
           RADIUS server should only be considered obfuscated, not secured, and
           external security measures should be applied if necessary.
@@ -1708,7 +1708,7 @@ host ... ldap ldapurl="ldap://ldap.example.net/dc=example,dc=net?uid?sub"
    <note>
     <para>
      If PAM is set up to read <filename>/etc/shadow</>, authentication
-     will fail because the PostgreSQL server is started by a non-root
+     will fail because the MollyDB server is started by a non-root
      user.  However, this is not an issue when PAM is configured to use
      LDAP or other authentication methods.
     </para>
@@ -1733,16 +1733,16 @@ host ... ldap ldapurl="ldap://ldap.example.net/dc=example,dc=net?uid?sub"
    </para>
 
    <para>
-    BSD Authentication in <productname>PostgreSQL</> uses
+    BSD Authentication in <productname>MollyDB</> uses
     the <literal>auth-mollydb</literal> login type and authenticates with
     the <literal>mollydb</literal> login class if that's defined
     in <filename>login.conf</filename>. By default that login class does not
-    exist, and <productname>PostgreSQL</> will use the default login class.
+    exist, and <productname>MollyDB</> will use the default login class.
    </para>
 
    <note>
     <para>
-     To use BSD Authentication, the PostgreSQL user account (that is, the
+     To use BSD Authentication, the MollyDB user account (that is, the
      operating system user running the server) must first be added to
      the <literal>auth</literal> group.  The <literal>auth</literal> group
      exists by default on OpenBSD systems.

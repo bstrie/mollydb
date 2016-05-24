@@ -228,7 +228,7 @@ pgxmlNodeSetToText(xmlNodeSetPtr nodeset,
 }
 
 
-/* Translate a PostgreSQL "varlena" -i.e. a variable length parameter
+/* Translate a MollyDB "varlena" -i.e. a variable length parameter
  * into the libxml2 representation
  */
 static xmlChar *

@@ -25,7 +25,7 @@ static PyObject *PLy_subtransaction_enter(PyObject *self, PyObject *unused);
 static PyObject *PLy_subtransaction_exit(PyObject *self, PyObject *args);
 
 static char PLy_subtransaction_doc[] = {
-	"PostgreSQL subtransaction context manager"
+	"MollyDB subtransaction context manager"
 };
 
 static PyMethodDef PLy_subtransaction_methods[] = {

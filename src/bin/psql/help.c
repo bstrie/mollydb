@@ -1,7 +1,7 @@
 /*
- * psql - the PostgreSQL interactive terminal
+ * psql - the MollyDB interactive terminal
  *
- * Copyright (c) 2000-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2000-2016, MollyDB Global Development Group
  *
  * src/bin/psql/help.c
  */
@@ -71,7 +71,7 @@ usage(unsigned short int pager)
 	 */
 	output = PageOutput(60, pager ? &(pset.popt.topt) : NULL);
 
-	fprintf(output, _("psql is the PostgreSQL interactive terminal.\n\n"));
+	fprintf(output, _("psql is the MollyDB interactive terminal.\n\n"));
 	fprintf(output, _("Usage:\n"));
 	fprintf(output, _("  psql [OPTION]... [DBNAME [USERNAME]]\n\n"));
 
@@ -142,7 +142,7 @@ usage(unsigned short int pager)
 	fprintf(output, _("  -W, --password           force password prompt (should happen automatically)\n"));
 
 	fprintf(output, _("\nFor more information, type \"\\?\" (for internal commands) or \"\\help\" (for SQL\n"
-					  "commands) from within psql, or consult the psql section in the PostgreSQL\n"
+					  "commands) from within psql, or consult the psql section in the MollyDB\n"
 					  "documentation.\n\n"));
 	fprintf(output, _("Report bugs to <pgsql-bugs@mollydb.org>.\n"));
 
@@ -171,7 +171,7 @@ slashUsage(unsigned short int pager)
 	output = PageOutput(111, pager ? &(pset.popt.topt) : NULL);
 
 	fprintf(output, _("General\n"));
-	fprintf(output, _("  \\copyright             show PostgreSQL usage and distribution terms\n"));
+	fprintf(output, _("  \\copyright             show MollyDB usage and distribution terms\n"));
 	fprintf(output, _("  \\errverbose            show most recent error message at maximum verbosity\n"));
 	fprintf(output, _("  \\g [FILE] or ;         execute query (and send results to file or |pipe)\n"));
 	fprintf(output, _("  \\gexec                 execute query, then execute each value in its result\n"));
@@ -569,9 +569,9 @@ void
 print_copyright(void)
 {
 	puts(
-		 "PostgreSQL Database Management System\n"
+		 "MollyDB Database Management System\n"
 		 "(formerly known as Postgres, then as Postgres95)\n\n"
-		 "Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group\n\n"
+		 "Portions Copyright (c) 1996-2016, MollyDB Global Development Group\n\n"
 		 "Portions Copyright (c) 1994, The Regents of the University of California\n\n"
 	"Permission to use, copy, modify, and distribute this software and its\n"
 		 "documentation for any purpose, without fee, and without a written agreement\n"

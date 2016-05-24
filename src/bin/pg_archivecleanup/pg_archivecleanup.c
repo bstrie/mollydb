@@ -5,7 +5,7 @@
  *
  * Production-ready example of an archive_cleanup_command
  * used to clean an archive when using standby_mode = on in 9.0
- * or for standalone use for any version of PostgreSQL 8.0+.
+ * or for standalone use for any version of MollyDB 8.0+.
  *
  * Original author:		Simon Riggs  simon@2ndquadrant.com
  * Current maintainer:	Simon Riggs
@@ -260,7 +260,7 @@ SetWALFileNameForCleanup(void)
 static void
 usage(void)
 {
-	printf("%s removes older WAL files from PostgreSQL archives.\n\n", progname);
+	printf("%s removes older WAL files from MollyDB archives.\n\n", progname);
 	printf("Usage:\n");
 	printf("  %s [OPTION]... ARCHIVELOCATION OLDESTKEPTWALFILE\n", progname);
 	printf("\nOptions:\n");
@@ -298,7 +298,7 @@ main(int argc, char **argv)
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_archivecleanup (PostgreSQL) " PG_VERSION);
+			puts("pg_archivecleanup (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

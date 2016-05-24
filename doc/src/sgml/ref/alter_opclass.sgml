@@ -1,6 +1,6 @@
 <!--
 doc/src/sgml/ref/alter_opclass.sgml
-PostgreSQL documentation
+MollyDB documentation
 -->
 
 <refentry id="SQL-ALTEROPCLASS">

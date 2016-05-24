@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-13 00:14+0000\n"
 "PO-Revision-Date: 2016-04-12 20:54-0400\n"
@@ -353,10 +353,10 @@ msgstr "führe Bootstrap-Skript aus ... "
 #: initdb.c:1460
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
-"%s: Eingabedatei „%s“ gehört nicht zu PostgreSQL %s\n"
+"%s: Eingabedatei „%s“ gehört nicht zu MollyDB %s\n"
 "Prüfen Sie Ihre Installation oder geben Sie den korrekten Pfad mit der\n"
 "Option -L an.\n"
 
@@ -465,10 +465,10 @@ msgstr ""
 #: initdb.c:2657
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s initialisiert einen PostgreSQL-Datenbankcluster.\n"
+"%s initialisiert einen MollyDB-Datenbankcluster.\n"
 "\n"
 
 #: initdb.c:2658

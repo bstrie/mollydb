@@ -14,7 +14,7 @@
    <title>Overview</title>
 
    <para>
-    Major enhancements in <productname>PostgreSQL</> 9.6 include:
+    Major enhancements in <productname>MollyDB</> 9.6 include:
    </para>
 
    <!-- Items in this list summarize one or more items below -->
@@ -100,7 +100,7 @@
 
    <para>
     Below you will find a detailed account of the changes between
-    <productname>PostgreSQL</productname> 9.6 and the previous major
+    <productname>MollyDB</productname> 9.6 and the previous major
     release.
    </para>
 
@@ -142,7 +142,7 @@
        </para>
 
        <para>
-        With 9.6, <productname>PostgreSQL</> introduces initial support for
+        With 9.6, <productname>MollyDB</> introduces initial support for
         parallel execution of large queries.  Only strictly read-only queries
         where the driving table is accessed via a sequential scan can be
         parallelized.  Hash joins and nested loops can be performed in
@@ -357,7 +357,7 @@
        </para>
 
        <para>
-        <productname>PostgreSQL</> writes data to the kernel's disk cache,
+        <productname>MollyDB</> writes data to the kernel's disk cache,
         from where it should be flushed to physical storage in due time.
         Many operating systems are not very smart about managing this, and
         will allow large amounts of dirty data to accumulate then decide to
@@ -791,7 +791,7 @@
        <para>
         This view exposes the same information available from
         the <application>pg_config</> utility, namely assorted compile-time
-        configuration information for <productname>PostgreSQL</>.
+        configuration information for <productname>MollyDB</>.
        </para>
       </listitem>
 
@@ -920,7 +920,7 @@
 -->
        <para>
         Create a <literal>bsd</> authentication method to allow use of
-        the BSD Authentication service for <productname>PostgreSQL</>
+        the BSD Authentication service for <productname>MollyDB</>
         client authentication (Marisa Emerson)
        </para>
 
@@ -998,7 +998,7 @@
        <para>
         This allows the use of <application>systemd</> service units of
         type <literal>notify</>, which greatly simplifies management
-        of <productname>PostgreSQL</> under <application>systemd</>.
+        of <productname>MollyDB</> under <application>systemd</>.
        </para>
       </listitem>
 
@@ -1083,7 +1083,7 @@
 
        <para>
         Formerly we insisted on the key file being owned by the user running
-        the <productname>PostgreSQL</> server, but that is inconvenient for
+        the <productname>MollyDB</> server, but that is inconvenient for
         some systems (such as Debian) that wish to manage certificates
         centrally.  So also allow the case where the key file is owned by
         root and has group read access.  It's up to the root admin to ensure
@@ -1626,7 +1626,7 @@ XXX this is pending backpatch, may need to remove
        </para>
 
        <para>
-        Also, <productname>PostgreSQL</> is now more careful to detect
+        Also, <productname>MollyDB</> is now more careful to detect
         overflow in operations that compute new date or timestamp values,
         such as <type>date</> <literal>+</> <type>integer</>.
        </para>

@@ -1,6 +1,6 @@
 src/timezone/README
 
-This is a PostgreSQL adapted version of the IANA timezone library from
+This is a MollyDB adapted version of the IANA timezone library from
 
 	http://www.iana.org/time-zones
 
@@ -9,7 +9,7 @@ available right from that page.  Historical versions can be found
 elsewhere on the site.
 
 Since time zone rules change frequently in some parts of the world,
-we should endeavor to update the data files before each PostgreSQL
+we should endeavor to update the data files before each MollyDB
 release.  The code need not be updated as often, but we must track
 changes that might affect interpretation of the data files.
 

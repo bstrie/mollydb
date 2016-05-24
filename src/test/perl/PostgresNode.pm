@@ -3,7 +3,7 @@
 
 =head1 NAME
 
-PostgresNode - class representing PostgreSQL server instance
+PostgresNode - class representing MollyDB server instance
 
 =head1 SYNOPSIS
 
@@ -14,7 +14,7 @@ PostgresNode - class representing PostgreSQL server instance
   # Create a data directory with initdb
   $node->init();
 
-  # Start the PostgreSQL server
+  # Start the MollyDB server
   $node->start();
 
   # Change a setting and restart
@@ -65,7 +65,7 @@ PostgresNode - class representing PostgreSQL server instance
 
 =head1 DESCRIPTION
 
-PostgresNode contains a set of routines able to work on a PostgreSQL node,
+PostgresNode contains a set of routines able to work on a MollyDB node,
 allowing to start, stop, backup and initialize it with various options.
 The set of nodes managed by a given test is also managed by this module.
 
@@ -214,7 +214,7 @@ sub name
 
 =item $node->logfile()
 
-Path to the PostgreSQL log file for this instance.
+Path to the MollyDB log file for this instance.
 
 =cut
 

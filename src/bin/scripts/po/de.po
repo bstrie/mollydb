@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-12 19:44+0000\n"
 "PO-Revision-Date: 2016-04-12 16:04-0400\n"
@@ -339,10 +339,10 @@ msgstr "%s: Erzeugen des Kommentars ist fehlgeschlagen (Datenbank wurde erzeugt)
 #: createdb.c:251
 #, c-format
 msgid ""
-"%s creates a PostgreSQL database.\n"
+"%s creates a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s erzeugt eine PostgreSQL-Datenbank.\n"
+"%s erzeugt eine MollyDB-Datenbank.\n"
 "\n"
 
 #: createdb.c:253
@@ -480,10 +480,10 @@ msgstr "%s: Installation der Sprache fehlgeschlagen: %s"
 #: createlang.c:235
 #, c-format
 msgid ""
-"%s installs a procedural language into a PostgreSQL database.\n"
+"%s installs a procedural language into a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s installiert eine prozedurale Sprache in einer PostgreSQL-Datenbank.\n"
+"%s installiert eine prozedurale Sprache in einer MollyDB-Datenbank.\n"
 "\n"
 
 #: createlang.c:237 droplang.c:238
@@ -545,10 +545,10 @@ msgstr "%s: Erzeugen der neuen Rolle fehlgeschlagen: %s"
 #: createuser.c:348
 #, c-format
 msgid ""
-"%s creates a new PostgreSQL role.\n"
+"%s creates a new MollyDB role.\n"
 "\n"
 msgstr ""
-"%s erzeugt eine neue PostgreSQL-Rolle.\n"
+"%s erzeugt eine neue MollyDB-Rolle.\n"
 "\n"
 
 #: createuser.c:350 dropuser.c:157
@@ -685,10 +685,10 @@ msgstr "%s: Löschen der Datenbank fehlgeschlagen: %s"
 #: dropdb.c:154
 #, c-format
 msgid ""
-"%s removes a PostgreSQL database.\n"
+"%s removes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s löscht eine PostgreSQL-Datenbank.\n"
+"%s löscht eine MollyDB-Datenbank.\n"
 "\n"
 
 #: dropdb.c:156
@@ -754,10 +754,10 @@ msgstr "%s: Löschen der Rolle „%s“ fehlgeschlagen: %s"
 #: dropuser.c:155
 #, c-format
 msgid ""
-"%s removes a PostgreSQL role.\n"
+"%s removes a MollyDB role.\n"
 "\n"
 msgstr ""
-"%s löscht eine PostgreSQL-Rolle.\n"
+"%s löscht eine MollyDB-Rolle.\n"
 "\n"
 
 #: dropuser.c:160
@@ -819,10 +819,10 @@ msgstr "unbekannt\n"
 #: pg_isready.c:221
 #, c-format
 msgid ""
-"%s issues a connection check to a PostgreSQL database.\n"
+"%s issues a connection check to a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s führt eine Verbindungsprüfung gegen eine PostgreSQL-Datenbank aus.\n"
+"%s führt eine Verbindungsprüfung gegen eine MollyDB-Datenbank aus.\n"
 "\n"
 
 #: pg_isready.c:223
@@ -943,10 +943,10 @@ msgstr "%s: Reindizieren der Systemkataloge fehlgeschlagen: %s"
 #: reindexdb.c:392
 #, c-format
 msgid ""
-"%s reindexes a PostgreSQL database.\n"
+"%s reindexes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s reindiziert eine PostgreSQL-Datenbank.\n"
+"%s reindiziert eine MollyDB-Datenbank.\n"
 "\n"
 
 #: reindexdb.c:396
@@ -1054,10 +1054,10 @@ msgstr "%s: ungültiges Socket: %s"
 #: vacuumdb.c:938
 #, c-format
 msgid ""
-"%s cleans and analyzes a PostgreSQL database.\n"
+"%s cleans and analyzes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s säubert und analysiert eine PostgreSQL-Datenbank.\n"
+"%s säubert und analysiert eine MollyDB-Datenbank.\n"
 "\n"
 
 #: vacuumdb.c:942

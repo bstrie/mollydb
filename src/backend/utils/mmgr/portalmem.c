@@ -8,7 +8,7 @@
  * doesn't actually run the executor for them.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
@@ -769,7 +769,7 @@ AtAbort_Portals(void)
 		 * See similar code in AtSubAbort_Portals().  This would fire if code
 		 * orchestrating multiple top-level transactions within a portal, such
 		 * as VACUUM, caught errors and continued under the same portal with a
-		 * fresh transaction.  No part of core PostgreSQL functions that way.
+		 * fresh transaction.  No part of core MollyDB functions that way.
 		 * XXX Such code would wish the portal to remain ACTIVE, as in
 		 * PreCommit_Portals().
 		 */

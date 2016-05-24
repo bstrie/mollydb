@@ -4,9 +4,9 @@
  * src/include/utils/formatting.h
  *
  *
- *	 Portions Copyright (c) 1999-2016, PostgreSQL Global Development Group
+ *	 Portions Copyright (c) 1999-2016, MollyDB Global Development Group
  *
- *	 The PostgreSQL routines for a DateTime/int/float/numeric formatting,
+ *	 The MollyDB routines for a DateTime/int/float/numeric formatting,
  *	 inspire with Oracle TO_CHAR() / TO_DATE() / TO_NUMBER() routines.
  *
  *	 Karel Zak

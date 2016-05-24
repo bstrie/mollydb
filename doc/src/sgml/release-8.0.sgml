@@ -16,7 +16,7 @@
   </para>
 
   <para>
-   This is expected to be the last <productname>PostgreSQL</> release
+   This is expected to be the last <productname>MollyDB</> release
    in the 8.0.X series.  Users are encouraged to update to a newer
    release branch soon.
   </para>
@@ -220,7 +220,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 8.0.X release series in July 2010.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -380,7 +380,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 8.0.X release series in July 2010.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -1313,7 +1313,7 @@
       be <literal>(-42)::integer</> due to operator precedence rules.
       Usually this would make little difference, but it could interact with
       another recent patch to cause
-      <productname>PostgreSQL</> to reject what had been a valid
+      <productname>MollyDB</> to reject what had been a valid
       <command>SELECT DISTINCT</> view query.  Since this could result in
       <application>pg_dump</> output failing to reload, it is being treated
       as a high-priority fix.  The only released versions in which dump
@@ -1527,7 +1527,7 @@
      </para>
 
      <para>
-      This is known to be necessary when building <productname>PostgreSQL</>
+      This is known to be necessary when building <productname>MollyDB</>
       with <application>gcc</> 4.3 or later.
      </para>
     </listitem>
@@ -1579,7 +1579,7 @@
   </para>
 
   <para>
-   This is the last 8.0.X release for which the <productname>PostgreSQL</>
+   This is the last 8.0.X release for which the <productname>MollyDB</>
    community will produce binary packages for <productname>Windows</>.
    Windows users are encouraged to move to 8.2.X or later,
    since there are Windows-specific fixes in 8.2.X that
@@ -1767,7 +1767,7 @@
      <para>
       This affects developers and packagers only.  The change was made
       to prevent accidental use of untested combinations of
-      <productname>Autoconf</> and <productname>PostgreSQL</> versions.
+      <productname>Autoconf</> and <productname>MollyDB</> versions.
       You can remove the version check if you really want to use a
       different <productname>Autoconf</> version, but it's
       your responsibility whether the result works or not.
@@ -2295,7 +2295,7 @@ Wieland)</para></listitem>
 <itemizedlist>
 <listitem><para>Change the server to reject invalidly-encoded multibyte
 characters in all cases (Tatsuo, Tom)</para>
-<para>While <productname>PostgreSQL</> has been moving in this direction for
+<para>While <productname>MollyDB</> has been moving in this direction for
 some time, the checks are now applied uniformly to all encodings and all
 textual input, and are now always errors not merely warnings.  This change
 defends against SQL-injection attacks of the type described in CVE-2006-2313.
@@ -2321,7 +2321,7 @@ aware of encoding considerations and
 <para>This fixes <application>libpq</>-using applications for the security
 issues described in CVE-2006-2313 and CVE-2006-2314, and also future-proofs
 them against the planned changeover to SQL-standard string literal syntax.
-Applications that use multiple <productname>PostgreSQL</> connections
+Applications that use multiple <productname>MollyDB</> connections
 concurrently should migrate to <function>PQescapeStringConn()</> and
 <function>PQescapeByteaConn()</> to ensure that escaping is done correctly
 for the settings in use in each database connection.  Applications that
@@ -2869,7 +2869,7 @@ data types</para></listitem>
    <para>
     A dump/restore is not required for those running 8.0.*.
     This release updates the major version number of the
-    <productname>PostgreSQL</productname> libraries, so it might be
+    <productname>MollyDB</productname> libraries, so it might be
     necessary to re-link some user applications if they cannot
     find the properly-numbered shared library.
    </para>
@@ -2883,14 +2883,14 @@ data types</para></listitem>
 libraries (Bruce)</para>
 <para>
 This should have been done in 8.0.0.  It is required so 7.4.X versions
-of PostgreSQL client applications, like <application>psql</>,
+of MollyDB client applications, like <application>psql</>,
 can be used on the same machine as 8.0.X applications.  This might require
 re-linking user applications that use these libraries.
 </para></listitem>
 <listitem><para>Add Windows-only <varname>wal_sync_method</> setting of
 <option>fsync_writethrough</> (Magnus, Bruce)</para>
 <para>
-This setting causes <productname>PostgreSQL</productname> to write through
+This setting causes <productname>MollyDB</productname> to write through
 any disk-drive write cache when writing to WAL.
 This behavior was formerly called <option>fsync</>, but was
 renamed because it acts quite differently from <option>fsync</> on other
@@ -3098,7 +3098,7 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       This is the first <productname>PostgreSQL</productname> release
+       This is the first <productname>MollyDB</productname> release
        to run natively on <trademark class="registered">Microsoft Windows</> as
        a server. It can run as a <productname>Windows</> service. This
        release supports NT-based Windows releases like
@@ -3107,7 +3107,7 @@ typedefs (Michael)</para></listitem>
        <productname>Windows 95</>, <productname>Windows 98</>, and
        <productname>Windows ME</> are not supported because these operating
        systems do not have the infrastructure to support
-       <productname>PostgreSQL</productname>. A separate installer
+       <productname>MollyDB</productname>. A separate installer
        project has been created to ease installation on
        <productname>Windows</> &mdash; see <ulink
        url="http://www.mollydb.org/ftp/win32/"></ulink>.
@@ -3116,7 +3116,7 @@ typedefs (Michael)</para></listitem>
       <para>
        Although tested throughout our release cycle, the Windows port
        does not have the benefit of years of use in production
-       environments that <productname>PostgreSQL</productname> has on
+       environments that <productname>MollyDB</productname> has on
        Unix platforms.  Therefore it should be treated with the same
        level of caution as you would a new product.
       </para>
@@ -3124,7 +3124,7 @@ typedefs (Michael)</para></listitem>
       <para>
        Previous releases required the Unix emulation toolkit
        <productname>Cygwin</> in order to run the server on Windows
-       operating systems.  <productname>PostgreSQL</productname> has
+       operating systems.  <productname>MollyDB</productname> has
        supported native clients on Windows for many years.
       </para>
      </listitem>
@@ -3406,7 +3406,7 @@ typedefs (Michael)</para></listitem>
      For example, we no longer allow
      <literal>204.248.199.1/31</literal> as a <type>CIDR</> value. Such
      values should never have been accepted by
-     <productname>PostgreSQL</productname> and will now be rejected.
+     <productname>MollyDB</productname> and will now be rejected.
     </para>
    </listitem>
 
@@ -3485,7 +3485,7 @@ typedefs (Michael)</para></listitem>
   <title>Deprecated Features</title>
 
   <para>
-    Some aspects of <productname>PostgreSQL</productname>'s behavior
+    Some aspects of <productname>MollyDB</productname>'s behavior
     have been determined to be suboptimal. For the sake of backward
     compatibility these have not been removed in 8.0, but they are
     considered deprecated and will be removed in the next major
@@ -3512,7 +3512,7 @@ typedefs (Michael)</para></listitem>
 
     <listitem>
      <para>
-      By default, tables in <productname>PostgreSQL</productname> 8.0
+      By default, tables in <productname>MollyDB</productname> 8.0
       and earlier are created with <type>OID</>s. In the next release,
       this will <emphasis>not</emphasis> be the case: to create a table
       that contains <type>OID</>s, the <option>WITH OIDS</> clause must
@@ -3520,7 +3520,7 @@ typedefs (Michael)</para></listitem>
       configuration parameter must be set. Users are encouraged to
       explicitly specify <option>WITH OIDS</> if their tables
       require OIDs for compatibility with future releases of
-      <productname>PostgreSQL</productname>.
+      <productname>MollyDB</productname>.
      </para>
     </listitem>
 
@@ -4373,7 +4373,7 @@ typedefs (Michael)</para></listitem>
        Erase MD5 user passwords when a user is renamed (Bruce)
       </para>
       <para>
-       <productname>PostgreSQL</productname> uses the user name as salt
+       <productname>MollyDB</productname> uses the user name as salt
        when encrypting passwords via MD5. When a user's name is changed,
        the salt will no longer match the stored MD5 password, so the
        stored password becomes useless.  In this release a notice is
@@ -5155,11 +5155,11 @@ typedefs (Michael)</para></listitem>
 
      <listitem>
       <para>
-       New <literal>PostgreSQL</> <application>CVS</> tag (Marc)
+       New <literal>MollyDB</> <application>CVS</> tag (Marc)
       </para>
       <para>
        This was done to make it easier for organizations to manage their
-       own copies of the <productname>PostgreSQL</productname>
+       own copies of the <productname>MollyDB</productname>
        <application>CVS</> repository. File version stamps from the master
        repository will not get munged by checking into or out of a copied
        repository.
@@ -5373,7 +5373,7 @@ typedefs (Michael)</para></listitem>
      <listitem>
       <para>
        New <filename>contrib/trgm</>, trigram matching for
-       <productname>PostgreSQL</productname> (Teodor)
+       <productname>MollyDB</productname> (Teodor)
       </para>
      </listitem>
 

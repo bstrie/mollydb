@@ -316,7 +316,7 @@ ff-bg
 </html>',
 to_tsquery('sea&foo'), 'HighlightAll=true');
 --check debug
-select * from public.ts_debug('Tsearch module for PostgreSQL 7.3.3');
+select * from public.ts_debug('Tsearch module for MollyDB 7.3.3');
 
 --check ordering
 insert into test_tsvector values (null, null);

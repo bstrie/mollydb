@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_ctl (PostgreSQL 9.0)\n"
+"Project-Id-Version: pg_ctl (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:43+0000\n"
 "PO-Revision-Date: 2015-12-01 19:30+0800\n"
@@ -486,10 +486,10 @@ msgstr "试用 \"%s --help\" 获取更多的信息.\n"
 #: pg_ctl.c:1933
 #, c-format
 msgid ""
-"%s is a utility to initialize, start, stop, or control a PostgreSQL server.\n"
+"%s is a utility to initialize, start, stop, or control a MollyDB server.\n"
 "\n"
 msgstr ""
-"%s 是一个用于初始化、启动、停止或控制PostgreSQL服务器的工具.\n"
+"%s 是一个用于初始化、启动、停止或控制MollyDB服务器的工具.\n"
 "\n"
 
 #: pg_ctl.c:1934
@@ -650,10 +650,10 @@ msgstr "  -l, --log=FILENAME    写入 (或追加) 服务器日志到文件FILEN
 #, c-format
 msgid ""
 "  -o OPTIONS             command line options to pass to postgres\n"
-"                         (PostgreSQL server executable) or initdb\n"
+"                         (MollyDB server executable) or initdb\n"
 msgstr ""
 "  -o OPTIONS             传递给postgres的命令行选项\n"
-"                      (PostgreSQL 服务器执行文件)或initdb\n"
+"                      (MollyDB 服务器执行文件)或initdb\n"
 
 #: pg_ctl.c:1973
 #, c-format
@@ -723,23 +723,23 @@ msgstr ""
 #: pg_ctl.c:1987
 #, c-format
 msgid ""
-"  -N SERVICENAME  service name with which to register PostgreSQL server\n"
-msgstr "  -N 服务名称     注册到 PostgreSQL 服务器的服务名称\n"
+"  -N SERVICENAME  service name with which to register MollyDB server\n"
+msgstr "  -N 服务名称     注册到 MollyDB 服务器的服务名称\n"
 
 #: pg_ctl.c:1988
 #, c-format
-msgid "  -P PASSWORD     password of account to register PostgreSQL server\n"
-msgstr "  -P 口令         注册到 PostgreSQL 服务器帐户的口令\n"
+msgid "  -P PASSWORD     password of account to register MollyDB server\n"
+msgstr "  -P 口令         注册到 MollyDB 服务器帐户的口令\n"
 
 #: pg_ctl.c:1989
 #, c-format
-msgid "  -U USERNAME     user name of account to register PostgreSQL server\n"
-msgstr "  -U 用户名       注册到 PostgreSQL 服务器帐户的用户名\n"
+msgid "  -U USERNAME     user name of account to register MollyDB server\n"
+msgstr "  -U 用户名       注册到 MollyDB 服务器帐户的用户名\n"
 
 #: pg_ctl.c:1990
 #, c-format
-msgid "  -S START-TYPE   service start type to register PostgreSQL server\n"
-msgstr "  -S START-TYPE   注册到PostgreSQL服务器的服务启动类型\n"
+msgid "  -S START-TYPE   service start type to register MollyDB server\n"
+msgstr "  -S START-TYPE   注册到MollyDB服务器的服务启动类型\n"
 
 #: pg_ctl.c:1992
 #, c-format
@@ -834,12 +834,12 @@ msgstr "%s: 没有指定数据目录, 并且没有设置 PGDATA 环境变量\n"
 
 #~ msgid ""
 #~ "%s is a utility to start, stop, restart, reload configuration files,\n"
-#~ "report the status of a PostgreSQL server, or signal a PostgreSQL "
+#~ "report the status of a MollyDB server, or signal a MollyDB "
 #~ "process.\n"
 #~ "\n"
 #~ msgstr ""
-#~ "%s 是一个启动, 停止, 重启, 重载配置文件, 报告 PostgreSQL 服务器状态,\n"
-#~ "或者杀掉 PostgreSQL 进程的工具\n"
+#~ "%s 是一个启动, 停止, 重启, 重载配置文件, 报告 MollyDB 服务器状态,\n"
+#~ "或者杀掉 MollyDB 进程的工具\n"
 #~ "\n"
 
 #~ msgid "  --help                 show this help, then exit\n"

@@ -41,8 +41,8 @@
 
 #include "libpq/libpq-fs.h"
 
-#define TEXT_DUMP_HEADER "--\n-- PostgreSQL database dump\n--\n\n"
-#define TEXT_DUMPALL_HEADER "--\n-- PostgreSQL database cluster dump\n--\n\n"
+#define TEXT_DUMP_HEADER "--\n-- MollyDB database dump\n--\n\n"
+#define TEXT_DUMPALL_HEADER "--\n-- MollyDB database cluster dump\n--\n\n"
 
 /* state needed to save/restore an archive's output target */
 typedef struct _outputContext
@@ -431,7 +431,7 @@ RestoreArchive(Archive *AHX)
 	if (ropt->filename || ropt->compression)
 		SetOutput(AH, ropt->filename, ropt->compression);
 
-	ahprintf(AH, "--\n-- PostgreSQL database dump\n--\n\n");
+	ahprintf(AH, "--\n-- MollyDB database dump\n--\n\n");
 
 	if (AH->archiveRemoteVersion)
 		ahprintf(AH, "-- Dumped from database version %s\n",
@@ -663,7 +663,7 @@ RestoreArchive(Archive *AHX)
 	if (AH->public.verbose)
 		dumpTimestamp(AH, "Completed on", time(NULL));
 
-	ahprintf(AH, "--\n-- PostgreSQL database dump complete\n--\n\n");
+	ahprintf(AH, "--\n-- MollyDB database dump complete\n--\n\n");
 
 	/*
 	 * Clean up & we're done.

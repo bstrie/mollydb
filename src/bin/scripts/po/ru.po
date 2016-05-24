@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2003-2004 Serguei A. Mokhov, mokhov@cs.concordia.ca
 # Copyright (c) 2012-2013 Alexander Lakhin, exclusion@gmail.com
-# Distributed under the same licensing terms as PostgreSQL itself.
+# Distributed under the same licensing terms as MollyDB itself.
 #
 # pgtranslation Id: pgscripts.po,v 1.2 2009/10/14 21:08:40 petere Exp $
 #
@@ -21,7 +21,7 @@
 #   - July 24 - August 25, 2003: Complete Initial Translation for 7.4.*; Serguei A. Mokhov, <mokhov@cs.concordia.ca>.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9 current\n"
+"Project-Id-Version: MollyDB 9 current\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-08 22:43+0000\n"
 "PO-Revision-Date: 2015-12-09 13:40+0300\n"
@@ -333,10 +333,10 @@ msgstr "%s: создать комментарий не удалось (база 
 #: createdb.c:251
 #, c-format
 msgid ""
-"%s creates a PostgreSQL database.\n"
+"%s creates a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s создаёт базу данных PostgreSQL.\n"
+"%s создаёт базу данных MollyDB.\n"
 "\n"
 
 #: createdb.c:253
@@ -480,10 +480,10 @@ msgstr "%s: установить поддержку языка не удалос
 #: createlang.c:235
 #, c-format
 msgid ""
-"%s installs a procedural language into a PostgreSQL database.\n"
+"%s installs a procedural language into a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s устанавливает поддержку процедурного языка в базу PostgreSQL.\n"
+"%s устанавливает поддержку процедурного языка в базу MollyDB.\n"
 "\n"
 
 #: createlang.c:237 droplang.c:238
@@ -544,10 +544,10 @@ msgstr "%s: создать роль не удалось: %s"
 #: createuser.c:347
 #, c-format
 msgid ""
-"%s creates a new PostgreSQL role.\n"
+"%s creates a new MollyDB role.\n"
 "\n"
 msgstr ""
-"%s создаёт роль пользователя PostgreSQL.\n"
+"%s создаёт роль пользователя MollyDB.\n"
 "\n"
 
 #: createuser.c:349 dropuser.c:157
@@ -695,10 +695,10 @@ msgstr "%s: ошибка при удалении базы данных: %s"
 #: dropdb.c:154
 #, c-format
 msgid ""
-"%s removes a PostgreSQL database.\n"
+"%s removes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s удаляет базу данных PostgreSQL.\n"
+"%s удаляет базу данных MollyDB.\n"
 "\n"
 
 #: dropdb.c:156
@@ -766,10 +766,10 @@ msgstr "%s: ошибка при удалении роли \"%s\": %s"
 #: dropuser.c:155
 #, c-format
 msgid ""
-"%s removes a PostgreSQL role.\n"
+"%s removes a MollyDB role.\n"
 "\n"
 msgstr ""
-"%s удаляет роль PostgreSQL.\n"
+"%s удаляет роль MollyDB.\n"
 "\n"
 
 #: dropuser.c:160
@@ -833,10 +833,10 @@ msgstr "неизвестно\n"
 #: pg_isready.c:221
 #, c-format
 msgid ""
-"%s issues a connection check to a PostgreSQL database.\n"
+"%s issues a connection check to a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s проверяет подключение к базе данных PostgreSQL.\n"
+"%s проверяет подключение к базе данных MollyDB.\n"
 "\n"
 
 #: pg_isready.c:223
@@ -975,10 +975,10 @@ msgstr "%s: переиндексировать системные каталог
 #: reindexdb.c:391
 #, c-format
 msgid ""
-"%s reindexes a PostgreSQL database.\n"
+"%s reindexes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s переиндексирует базу данных PostgreSQL.\n"
+"%s переиндексирует базу данных MollyDB.\n"
 "\n"
 
 #: reindexdb.c:395
@@ -1083,10 +1083,10 @@ msgstr "%s: очистить базу данных \"%s\" не удалось: %
 #: vacuumdb.c:974
 #, c-format
 msgid ""
-"%s cleans and analyzes a PostgreSQL database.\n"
+"%s cleans and analyzes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s очищает и анализирует базу данных PostgreSQL.\n"
+"%s очищает и анализирует базу данных MollyDB.\n"
 "\n"
 
 #: vacuumdb.c:978

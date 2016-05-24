@@ -4,7 +4,7 @@
  *	  POSTGRES heap tuple header definitions.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/access/htup_details.h
@@ -270,7 +270,7 @@ struct HeapTupleHeaderData
  * HeapTupleHeaderGetRawXmin returns the "raw" xmin field, which is the xid
  * originally used to insert the tuple.  However, the tuple might actually
  * be frozen (via HeapTupleHeaderSetXminFrozen) in which case the tuple's xmin
- * is visible to every snapshot.  Prior to PostgreSQL 9.4, we actually changed
+ * is visible to every snapshot.  Prior to MollyDB 9.4, we actually changed
  * the xmin to FrozenTransactionId, and that value may still be encountered
  * on disk.
  */

@@ -1,7 +1,7 @@
 # pgscripts spanish translation
 #
-# Copyright (C) 2003-2013 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2003-2013 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Alvaro Herrera, <alvherre@alvh.no-ip.org>, 2003-2013
 # Jaime Casanova, <systemguards@gmail.com>, 2005
@@ -10,7 +10,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pgscripts (PostgreSQL 9.6)\n"
+"Project-Id-Version: pgscripts (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:14+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
@@ -355,10 +355,10 @@ msgstr ""
 #: createdb.c:251
 #, c-format
 msgid ""
-"%s creates a PostgreSQL database.\n"
+"%s creates a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s crea una base de datos PostgreSQL.\n"
+"%s crea una base de datos MollyDB.\n"
 "\n"
 
 #: createdb.c:253
@@ -496,10 +496,10 @@ msgstr ""
 #: createlang.c:235
 #, c-format
 msgid ""
-"%s installs a procedural language into a PostgreSQL database.\n"
+"%s installs a procedural language into a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s instala un lenguaje procedural en una base de datos PostgreSQL.\n"
+"%s instala un lenguaje procedural en una base de datos MollyDB.\n"
 "\n"
 
 #: createlang.c:237 droplang.c:238
@@ -561,10 +561,10 @@ msgstr ""
 #: createuser.c:348
 #, c-format
 msgid ""
-"%s creates a new PostgreSQL role.\n"
+"%s creates a new MollyDB role.\n"
 "\n"
 msgstr ""
-"%s crea un nuevo rol de PostgreSQL.\n"
+"%s crea un nuevo rol de MollyDB.\n"
 "\n"
 
 #: createuser.c:350 dropuser.c:157
@@ -701,10 +701,10 @@ msgstr "%s: falló la eliminación de la base de datos: %s"
 #: dropdb.c:154
 #, c-format
 msgid ""
-"%s removes a PostgreSQL database.\n"
+"%s removes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s elimina una base de datos de PostgreSQL.\n"
+"%s elimina una base de datos de MollyDB.\n"
 "\n"
 
 #: dropdb.c:156
@@ -772,10 +772,10 @@ msgstr ""
 #: dropuser.c:155
 #, c-format
 msgid ""
-"%s removes a PostgreSQL role.\n"
+"%s removes a MollyDB role.\n"
 "\n"
 msgstr ""
-"%s elimina un rol de PostgreSQL.\n"
+"%s elimina un rol de MollyDB.\n"
 "\n"
 
 #: dropuser.c:160
@@ -837,10 +837,10 @@ msgstr "desconocido\n"
 #: pg_isready.c:221
 #, c-format
 msgid ""
-"%s issues a connection check to a PostgreSQL database.\n"
+"%s issues a connection check to a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s emite una prueba de conexión a una base de datos PostgreSQL.\n"
+"%s emite una prueba de conexión a una base de datos MollyDB.\n"
 "\n"
 
 #: pg_isready.c:223
@@ -973,10 +973,10 @@ msgstr "%s: falló la reindexación de los catálogos del sistema: %s"
 #: reindexdb.c:392
 #, c-format
 msgid ""
-"%s reindexes a PostgreSQL database.\n"
+"%s reindexes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s reindexa una base de datos PostgreSQL.\n"
+"%s reindexa una base de datos MollyDB.\n"
 "\n"
 
 #: reindexdb.c:396
@@ -1095,10 +1095,10 @@ msgstr "%s: el argumento no es válido: %s\n"
 #: vacuumdb.c:938
 #, c-format
 msgid ""
-"%s cleans and analyzes a PostgreSQL database.\n"
+"%s cleans and analyzes a MollyDB database.\n"
 "\n"
 msgstr ""
-"%s limpia (VACUUM) y analiza una base de datos PostgreSQL.\n"
+"%s limpia (VACUUM) y analiza una base de datos MollyDB.\n"
 "\n"
 
 #: vacuumdb.c:942

@@ -1,5 +1,5 @@
 /**********************************************************************
- * pltcl.c		- PostgreSQL support for Tcl as
+ * pltcl.c		- MollyDB support for Tcl as
  *				  procedural language (PL)
  *
  *	  src/pl/tcl/pltcl.c
@@ -42,7 +42,7 @@ PG_MODULE_MAGIC;
 
 /* Insist on Tcl >= 8.4 */
 #if !HAVE_TCL_VERSION(8,4)
-#error PostgreSQL only supports Tcl 8.4 or later.
+#error MollyDB only supports Tcl 8.4 or later.
 #endif
 
 /* Hack to deal with Tcl 8.6 const-ification without losing compatibility */
@@ -603,7 +603,7 @@ pltcl_init_load_unknown(Tcl_Interp *interp)
 
 /**********************************************************************
  * pltcl_call_handler		- This is the only visible function
- *				  of the PL interpreter. The PostgreSQL
+ *				  of the PL interpreter. The MollyDB
  *				  function manager and trigger manager
  *				  call this function for execution of
  *				  PL/Tcl procedures.
@@ -1681,7 +1681,7 @@ pltcl_elog(ClientData cdata, Tcl_Interp *interp,
 
 /**********************************************************************
  * pltcl_construct_errorCode()		- construct a Tcl errorCode
- *		list with detailed information from the PostgreSQL server
+ *		list with detailed information from the MollyDB server
  **********************************************************************/
 static void
 pltcl_construct_errorCode(Tcl_Interp *interp, ErrorData *edata)

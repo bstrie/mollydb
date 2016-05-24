@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------
  *
  * proclang.c
- *	  PostgreSQL PROCEDURAL LANGUAGE support code.
+ *	  MollyDB PROCEDURAL LANGUAGE support code.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION

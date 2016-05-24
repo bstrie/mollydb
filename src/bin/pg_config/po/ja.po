@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.0 beta 3\n"
+"Project-Id-Version: MollyDB 9.0 beta 3\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 11:27+0900\n"
 "PO-Revision-Date: 2012-08-11 16:53+0900\n"
@@ -61,11 +61,11 @@ msgstr "記録されていません\n"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%sはインストールされたバージョンのPostgreSQLに関する情報を提供します。\n"
+"%sはインストールされたバージョンのMollyDBに関する情報を提供します。\n"
 "\n"
 
 #: pg_config.c:429
@@ -158,53 +158,53 @@ msgstr "  --pgxs                拡張makefileの場所を表示します\n"
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
-msgstr "  --configure           PostgreSQL構築時の\"configure\"スクリプトで指定したオプションを表示します\n"
+"                        MollyDB was built\n"
+msgstr "  --configure           MollyDB構築時の\"configure\"スクリプトで指定したオプションを表示します\n"
 
 #: pg_config.c:448
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
-msgstr "  --cc                  PostgreSQL構築時に使用したCCの値を表示します\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
+msgstr "  --cc                  MollyDB構築時に使用したCCの値を表示します\n"
 
 #: pg_config.c:449
 #, c-format
-msgid "  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cppflags            PostgreSQL構築時に使用したCPPFLAGSの値を表示します\n"
+msgid "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
+msgstr "  --cppflags            MollyDB構築時に使用したCPPFLAGSの値を表示します\n"
 
 #: pg_config.c:450
 #, c-format
-msgid "  --cflags              show CFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cflags              PostgreSQL構築時に使用したCFLAGSの値を表示します\n"
+msgid "  --cflags              show CFLAGS value used when MollyDB was built\n"
+msgstr "  --cflags              MollyDB構築時に使用したCFLAGSの値を表示します\n"
 
 #: pg_config.c:451
 #, c-format
-msgid "  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --cflags_sl           PostgreSQL構築時に使用したCFLAGS_SLの値を表示します\n"
+msgid "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --cflags_sl           MollyDB構築時に使用したCFLAGS_SLの値を表示します\n"
 
 #: pg_config.c:452
 #, c-format
-msgid "  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
-msgstr "  --ldflags             PostgreSQL構築時に使用したLDFLAGSの値を表示します\n"
+msgid "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
+msgstr "  --ldflags             MollyDB構築時に使用したLDFLAGSの値を表示します\n"
 
 #: pg_config.c:453
 #, c-format
-msgid "  --ldflags_ex          show LDFLAGS_EX value used when PostgreSQL was built\n"
-msgstr "  --ldflags_ex          PostgreSQL構築時に使用したLDFLAGS_EXの値を表示します\n"
+msgid "  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was built\n"
+msgstr "  --ldflags_ex          MollyDB構築時に使用したLDFLAGS_EXの値を表示します\n"
 
 #: pg_config.c:454
 #, c-format
-msgid "  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --ldflags_sl          PostgreSQL構築時に使用したLDFLAGS_SLの値を表示します\n"
+msgid "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --ldflags_sl          MollyDB構築時に使用したLDFLAGS_SLの値を表示します\n"
 
 #: pg_config.c:455
 #, c-format
-msgid "  --libs                show LIBS value used when PostgreSQL was built\n"
-msgstr "  --libs                PostgreSQL構築時に使用したLIBSの値を表示します\n"
+msgid "  --libs                show LIBS value used when MollyDB was built\n"
+msgstr "  --libs                MollyDB構築時に使用したLIBSの値を表示します\n"
 
 #: pg_config.c:456
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             PostgreSQLのバージョンを表示します\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             MollyDBのバージョンを表示します\n"
 
 #: pg_config.c:457
 #, c-format

@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * subtrans.c
- *		PostgreSQL subtransaction-log manager
+ *		MollyDB subtransaction-log manager
  *
  * The pg_subtrans manager is a pg_clog-like manager that stores the parent
  * transaction Id for each transaction.  It is a fundamental part of the
@@ -19,7 +19,7 @@
  * data across crashes.  During database startup, we simply force the
  * currently-active page of SUBTRANS to zeroes.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/backend/access/transam/subtrans.c

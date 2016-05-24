@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: initdb (PostgreSQL 9.0)\n"
+"Project-Id-Version: initdb (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:43+0000\n"
 "PO-Revision-Date: 2016-01-03 23:26-0500\n"
@@ -361,10 +361,10 @@ msgstr "在 %s/base/1 中创建 template1 数据库 ... "
 #: initdb.c:1474
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
-"%s: 输入文件 \"%s\" 不属于 PostgreSQL %s\n"
+"%s: 输入文件 \"%s\" 不属于 MollyDB %s\n"
 "检查你的安装或使用 -L 选项指定正确的路径.\n"
 
 #: initdb.c:1561
@@ -537,10 +537,10 @@ msgstr ""
 #: initdb.c:2747
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s 初始化一个 PostgreSQL 数据库簇.\n"
+"%s 初始化一个 MollyDB 数据库簇.\n"
 "\n"
 
 #: initdb.c:2748

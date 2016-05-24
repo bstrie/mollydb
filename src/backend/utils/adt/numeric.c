@@ -11,7 +11,7 @@
  * Transactions on Mathematical Software, Vol. 24, No. 4, December 1998,
  * pages 359-367.
  *
- * Copyright (c) 1998-2016, PostgreSQL Global Development Group
+ * Copyright (c) 1998-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *	  src/backend/utils/adt/numeric.c
@@ -7361,7 +7361,7 @@ select_div_scale(NumericVar *var1, NumericVar *var2)
 
 	/*
 	 * The result scale of a division isn't specified in any SQL standard. For
-	 * PostgreSQL we select a result scale that will give at least
+	 * MollyDB we select a result scale that will give at least
 	 * NUMERIC_MIN_SIG_DIGITS significant digits, so that numeric gives a
 	 * result no less accurate than float8; but use a scale not less than
 	 * either input's display scale.

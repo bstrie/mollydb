@@ -1,5 +1,5 @@
 /*
- *	PostgreSQL type definitions for the INET and CIDR types.
+ *	MollyDB type definitions for the INET and CIDR types.
  *
  *	src/backend/utils/adt/network.c
  *

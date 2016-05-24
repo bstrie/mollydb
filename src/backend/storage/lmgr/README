@@ -202,7 +202,7 @@ procLink -
 Lock Manager Internal Locking
 -----------------------------
 
-Before PostgreSQL 8.2, all of the shared-memory data structures used by
+Before MollyDB 8.2, all of the shared-memory data structures used by
 the lock manager were protected by a single LWLock, the LockMgrLock;
 any operation involving these data structures had to exclusively lock
 LockMgrLock.  Not too surprisingly, this became a contention bottleneck.
@@ -283,7 +283,7 @@ queries are accessing the same relation, the lock manager partition lock for
 that partition becomes a contention bottleneck.  This effect is measurable
 even on 2-core servers, and becomes very pronounced as core count increases.
 
-To alleviate this bottleneck, beginning in PostgreSQL 9.2, each backend is
+To alleviate this bottleneck, beginning in MollyDB 9.2, each backend is
 permitted to record a limited number of locks on unshared relations in an
 array within its PGPROC structure, rather than using the primary lock table.
 This mechanism can only be used when the locker can verify that no conflicting
@@ -589,7 +589,7 @@ DDL on the table).
 Group Locking
 -------------
 
-As if all of that weren't already complicated enough, PostgreSQL now supports
+As if all of that weren't already complicated enough, MollyDB now supports
 parallelism (see src/backend/access/transam/README.parallel), which means that
 we might need to resolve deadlocks that occur between gangs of related
 processes rather than individual processes.  This doesn't change the basic

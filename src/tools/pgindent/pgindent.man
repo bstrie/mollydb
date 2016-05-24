@@ -1,5 +1,5 @@
 pgindent will indent .c and .h files according to the coding standards of
-the PostgreSQL project. It needs several things to run, and tries to locate
+the MollyDB project. It needs several things to run, and tries to locate
 or build them if possible. They can also be specified via command line switches
 or the environment.
 
@@ -9,7 +9,7 @@ it without any parameters at the top of the source tree you want to process.
 	pgindent
 
 If you don't have all the requirements installed, pgindent will fetch and build
-them for you, if you're in a PostgreSQL source tree:
+them for you, if you're in a MollyDB source tree:
 
 
 	pgindent --build
@@ -31,10 +31,10 @@ current source tree, or in /usr/local/etc/typedefs.list.
 If you want to indent a source tree other than the current working directory,
 you can specify it via the --code-base command line option.
 
-We don't want to indent certain files in the PostgreSQL source. pgindent
+We don't want to indent certain files in the MollyDB source. pgindent
 will honor a file containing a list of patterns of files to avoid. This
 file can be specified using the --excludes command line option. If indenting
-a PostgreSQL source tree, this option isn't necessary, as it will find the file
+a MollyDB source tree, this option isn't necessary, as it will find the file
 src/tools/pgindent/exclude_file_patterns.
 
 Any non-option arguments are taken as the names of files to be indented. In this

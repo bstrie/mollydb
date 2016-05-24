@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # Generate the errcodes-table.sgml file from errcodes.txt
-# Copyright (c) 2000-2016, PostgreSQL Global Development Group
+# Copyright (c) 2000-2016, MollyDB Global Development Group
 
 use warnings;
 use strict;
@@ -29,8 +29,8 @@ while (<$errcodes>)
 		# Escape dashes for SGML
 		s/-/&mdash;/;
 
-		# Wrap PostgreSQL in <productname/>
-		s/PostgreSQL/<productname>PostgreSQL<\/>/g;
+		# Wrap MollyDB in <productname/>
+		s/MollyDB/<productname>MollyDB<\/>/g;
 
 		print "\n\n";
 		print "<row>\n";

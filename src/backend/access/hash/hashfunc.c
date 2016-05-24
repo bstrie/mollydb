@@ -3,7 +3,7 @@
  * hashfunc.c
  *	  Support functions for hash access method.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -191,7 +191,7 @@ hashvarlena(PG_FUNCTION_ARGS)
 /*
  * This hash function was written by Bob Jenkins
  * (bob_jenkins@burtleburtle.net), and superficially adapted
- * for PostgreSQL by Neil Conway. For more information on this
+ * for MollyDB by Neil Conway. For more information on this
  * hash function, see http://burtleburtle.net/bob/hash/doobs.html,
  * or Bob's article in Dr. Dobb's Journal, Sept. 1997.
  *

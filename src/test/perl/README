@@ -17,7 +17,7 @@ patches are submitted, using perltidy --profile=src/tools/pgindent/perltidyrc
 Writing tests
 -------------
 
-Tests are written using Perl's Test::More with some PostgreSQL-specific
+Tests are written using Perl's Test::More with some MollyDB-specific
 infrastructure from src/test/perl providing node management, support for
 invoking 'psql' to run queries and get results, etc. You should read the
 documentation for Test::More before trying to write tests.
@@ -50,7 +50,7 @@ Read the Test::More documentation for more on how to write tests:
 
     perldoc Test::More
 
-For available PostgreSQL-specific test methods and some example tests read the
+For available MollyDB-specific test methods and some example tests read the
 perldoc for the test modules, e.g.:
 
     perldoc src/test/perl/PostgresNode.pm

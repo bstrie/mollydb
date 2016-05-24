@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------
  *
- * initdb --- initialize a PostgreSQL installation
+ * initdb --- initialize a MollyDB installation
  *
- * initdb creates (initializes) a PostgreSQL database cluster (site,
+ * initdb creates (initializes) a MollyDB database cluster (site,
  * instance, installation, whatever).  A database cluster is a
- * collection of PostgreSQL databases all managed by the same server.
+ * collection of MollyDB databases all managed by the same server.
  *
  * To create the database cluster, we create the directory that contains
  * all its data, create the files that hold the global tables, create
@@ -12,7 +12,7 @@
  * template databases "template0" and "template1", and a default user
  * database "postgres".
  *
- * The template databases are ordinary PostgreSQL databases.  template0
+ * The template databases are ordinary MollyDB databases.  template0
  * is never supposed to change after initdb, whereas template1 can be
  * changed to add site-local standard data.  Either one can be copied
  * to produce a new database.
@@ -33,12 +33,12 @@
  *	 The program has some memory leakage - it isn't worth cleaning it up.
  *
  * This is a C implementation of the previous shell script for setting up a
- * PostgreSQL cluster location, and should be highly compatible with it.
+ * MollyDB cluster location, and should be highly compatible with it.
  * author of C translation: Andrew Dunstan	   mailto:andrew@dunslane.net
  *
- * This code is released under the terms of the PostgreSQL License.
+ * This code is released under the terms of the MollyDB License.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/bin/initdb/initdb.c
@@ -179,7 +179,7 @@ static char *dynamic_shared_memory_type = NULL;
  */
 #define AUTHTRUST_WARNING \
 "# CAUTION: Configuring the system for local \"trust\" authentication\n" \
-"# allows any local user to connect as any PostgreSQL user, including\n" \
+"# allows any local user to connect as any MollyDB user, including\n" \
 "# the database superuser.  If you do not trust all your local users,\n" \
 "# use another authentication method.\n"
 static char *authwarning = NULL;
@@ -1064,7 +1064,7 @@ choose_dsm_implementation(void)
 		int			fd;
 
 		handle = random();
-		snprintf(name, 64, "/PostgreSQL.%u", handle);
+		snprintf(name, 64, "/MollyDB.%u", handle);
 		if ((fd = shm_open(name, O_CREAT | O_RDWR | O_EXCL, 0600)) != -1)
 		{
 			close(fd);
@@ -1451,13 +1451,13 @@ bootstrap_template1(void)
 
 	/* Check that bki file appears to be of the right version */
 
-	snprintf(headerline, sizeof(headerline), "# PostgreSQL %s\n",
+	snprintf(headerline, sizeof(headerline), "# MollyDB %s\n",
 			 PG_MAJORVERSION);
 
 	if (strcmp(headerline, *bki_lines) != 0)
 	{
 		fprintf(stderr,
-				_("%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+				_("%s: input file \"%s\" does not belong to MollyDB %s\n"
 				  "Check your installation or specify the correct path "
 				  "using the option -L.\n"),
 				progname, bki_file, PG_VERSION);
@@ -2656,7 +2656,7 @@ setlocales(void)
 static void
 usage(const char *progname)
 {
-	printf(_("%s initializes a PostgreSQL database cluster.\n\n"), progname);
+	printf(_("%s initializes a MollyDB database cluster.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]... [DATADIR]\n"), progname);
 	printf(_("\nOptions:\n"));
@@ -3397,7 +3397,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("initdb (PostgreSQL) " PG_VERSION);
+			puts("initdb (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

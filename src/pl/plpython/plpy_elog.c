@@ -1,5 +1,5 @@
 /*
- * reporting Python exceptions as PostgreSQL errors
+ * reporting Python exceptions as MollyDB errors
  *
  * src/pl/plpython/plpy_elog.c
  */

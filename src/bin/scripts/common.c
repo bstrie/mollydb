@@ -4,7 +4,7 @@
  *		Common support routines for bin/scripts/
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/bin/scripts/common.c
@@ -44,7 +44,7 @@ handle_help_version_opts(int argc, char *argv[],
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			printf("%s (PostgreSQL) " PG_VERSION "\n", fixed_progname);
+			printf("%s (MollyDB) " PG_VERSION "\n", fixed_progname);
 			exit(0);
 		}
 	}

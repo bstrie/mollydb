@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * commit_ts.c
- *		PostgreSQL commit timestamp manager
+ *		MollyDB commit timestamp manager
  *
  * This module is a pg_clog-like system that stores the commit timestamp
  * for each transaction.
@@ -15,7 +15,7 @@
  * re-perform the status update on redo; so we need make no additional XLOG
  * entry here.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/backend/access/transam/commit_ts.c

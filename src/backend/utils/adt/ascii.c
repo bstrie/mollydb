@@ -1,8 +1,8 @@
 /*-----------------------------------------------------------------------
  * ascii.c
- *	 The PostgreSQL routine for string to ascii conversion.
+ *	 The MollyDB routine for string to ascii conversion.
  *
- *	 Portions Copyright (c) 1999-2016, PostgreSQL Global Development Group
+ *	 Portions Copyright (c) 1999-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *	  src/backend/utils/adt/ascii.c

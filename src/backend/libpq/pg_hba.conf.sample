@@ -1,12 +1,12 @@
-# PostgreSQL Client Authentication Configuration File
+# MollyDB Client Authentication Configuration File
 # ===================================================
 #
-# Refer to the "Client Authentication" section in the PostgreSQL
+# Refer to the "Client Authentication" section in the MollyDB
 # documentation for a complete description of this file.  A short
 # synopsis follows.
 #
 # This file controls: which hosts are allowed to connect, how clients
-# are authenticated, which PostgreSQL user names they can use, which
+# are authenticated, which MollyDB user names they can use, which
 # databases they can access.  Records take one of these forms:
 #
 # local      DATABASE  USER  METHOD  [OPTIONS]
@@ -68,7 +68,7 @@
 # ----------------------------------
 #
 # If you want to allow non-local connections, you need to add more
-# "host" records.  In that case you will also need to make PostgreSQL
+# "host" records.  In that case you will also need to make MollyDB
 # listen on a non-local interface via the listen_addresses
 # configuration parameter, or via the -i or -h command line switches.
 

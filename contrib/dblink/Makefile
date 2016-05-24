@@ -7,7 +7,7 @@ SHLIB_LINK = $(libpq)
 
 EXTENSION = dblink
 DATA = dblink--1.1.sql dblink--1.0--1.1.sql dblink--unpackaged--1.0.sql
-PGFILEDESC = "dblink - connect to other PostgreSQL databases"
+PGFILEDESC = "dblink - connect to other MollyDB databases"
 
 REGRESS = paths dblink
 REGRESS_OPTS = --dlpath=$(top_builddir)/src/test/regress

@@ -1,9 +1,9 @@
-# Korean message translation file for PostgreSQL pg_dump
+# Korean message translation file for MollyDB pg_dump
 # Ioseph Kim <ioseph@uri.sarang.net>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-01-27 10:03+0900\n"
 "PO-Revision-Date: 2016-01-29 17:14+0900\n"
@@ -2268,10 +2268,10 @@ msgstr "%s: 출력 파일 \"%s\"을(를) 열 수 없음: %s\n"
 #: pg_dumpall.c:547
 #, c-format
 msgid ""
-"%s extracts a PostgreSQL database cluster into an SQL script file.\n"
+"%s extracts a MollyDB database cluster into an SQL script file.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 데이터베이스 클러스터를 SQL 스크립트 파일로\n"
+"%s 프로그램은 MollyDB 데이터베이스 클러스터를 SQL 스크립트 파일로\n"
 "추출하는 프로그램입니다.\n"
 "\n"
 
@@ -2451,10 +2451,10 @@ msgstr "경고: 복원작업에서의 오류들이 무시되었음: %d\n"
 #: pg_restore.c:431
 #, c-format
 msgid ""
-"%s restores a PostgreSQL database from an archive created by pg_dump.\n"
+"%s restores a MollyDB database from an archive created by pg_dump.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 pg_dump로 만들어진 자료파일로 PostgreSQL 데이터베이스에\n"
+"%s 프로그램은 pg_dump로 만들어진 자료파일로 MollyDB 데이터베이스에\n"
 "그 자료를 일괄 입력합니다.\n"
 "\n"
 

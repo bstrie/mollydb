@@ -1,8 +1,8 @@
 #
 # Translation of ecpg to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -14,11 +14,11 @@
 #
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ecpg (PostgreSQL) 9.4\n"
+"Project-Id-Version: ecpg (MollyDB) 9.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-07-30 04:08+0000\n"
 "PO-Revision-Date: 2014-07-30 22:37+0100\n"
@@ -70,10 +70,10 @@ msgstr "la voce \"%s\" del descrittore non può essere impostata"
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%s è il preprocessore SQL embedded di PostgreSQL per programmi scritti in C.\n"
+"%s è il preprocessore SQL embedded di MollyDB per programmi scritti in C.\n"
 "\n"
 
 #: ecpg.c:37
@@ -211,8 +211,8 @@ msgstr "%s: il supporto al debug del parser (-d) non è disponibile\n"
 
 #: ecpg.c:267
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "%s, preprocessore embedded C PostgreSQL, versione %d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "%s, preprocessore embedded C MollyDB, versione %d.%d.%d\n"
 
 #: ecpg.c:269
 #, c-format

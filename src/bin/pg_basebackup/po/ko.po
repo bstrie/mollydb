@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for pg_basebackup
-# Copyright (C) 2015 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2015 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Ioseph Kim <ioseph@uri.sarang.net>, 2015
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_basebackup (PostgreSQL) 9.5\n"
+"Project-Id-Version: pg_basebackup (MollyDB) 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-25 19:20+0900\n"
 "PO-Revision-Date: 2015-12-25 23:10+0900\n"
@@ -59,10 +59,10 @@ msgstr "%s: 테이블스페이스 맵핑용 새 디렉터리가 절대 경로가
 #: pg_basebackup.c:231
 #, c-format
 msgid ""
-"%s takes a base backup of a running PostgreSQL server.\n"
+"%s takes a base backup of a running MollyDB server.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 운영 중인 PostgreSQL 서버에 대해서 베이스 백업을 하는 도구입니"
+"%s 프로그램은 운영 중인 MollyDB 서버에 대해서 베이스 백업을 하는 도구입니"
 "다.\n"
 "\n"
 
@@ -639,10 +639,10 @@ msgstr "%s: 이 운영체제에서는 심볼릭 링크 기능을 지원하지 �
 #: pg_receivexlog.c:64
 #, c-format
 msgid ""
-"%s receives PostgreSQL streaming transaction logs.\n"
+"%s receives MollyDB streaming transaction logs.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 스트리밍 트랜잭션 로그를 수신하는 도구입니다.\n"
+"%s 프로그램은 MollyDB 스트리밍 트랜잭션 로그를 수신하는 도구입니다.\n"
 "\n"
 
 #: pg_receivexlog.c:68 pg_recvlogical.c:75
@@ -815,7 +815,7 @@ msgstr "%s: 연결 끊김; 다시 연결 하기 위해 %d 초를 기다리는 �
 #: pg_recvlogical.c:67
 #, c-format
 msgid ""
-"%s controls PostgreSQL logical decoding streams.\n"
+"%s controls MollyDB logical decoding streams.\n"
 "\n"
 msgstr ""
 "%s 프로그램은 논리 디코딩 스트림을 제어하는 도구입니다.\n"

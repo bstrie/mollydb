@@ -1,12 +1,12 @@
 # Brazilian Portuguese message translation file for pg_dump
-# Copyright (C) 2009 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Roberto Mello <rmello@fslc.usu.edu>, 2002.
 # Euler Taveira de Oliveira <euler@timbira.com>, 2003-2016.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.4\n"
+"Project-Id-Version: MollyDB 9.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-02-13 17:22-0300\n"
 "PO-Revision-Date: 2005-10-04 23:16-0300\n"
@@ -2161,10 +2161,10 @@ msgstr "%s: não pôde abrir o arquivo de saída \"%s\": %s\n"
 #: pg_dumpall.c:547
 #, c-format
 msgid ""
-"%s extracts a PostgreSQL database cluster into an SQL script file.\n"
+"%s extracts a MollyDB database cluster into an SQL script file.\n"
 "\n"
 msgstr ""
-"%s salva os bancos de dados de um agrupamento do PostgreSQL em um arquivo de script.\n"
+"%s salva os bancos de dados de um agrupamento do MollyDB em um arquivo de script.\n"
 "\n"
 
 #: pg_dumpall.c:549
@@ -2328,10 +2328,10 @@ msgstr "AVISO: erros ignorados durante restauração: %d\n"
 #: pg_restore.c:433
 #, c-format
 msgid ""
-"%s restores a PostgreSQL database from an archive created by pg_dump.\n"
+"%s restores a MollyDB database from an archive created by pg_dump.\n"
 "\n"
 msgstr ""
-"%s restaura um banco de dados PostgreSQL a partir de um arquivo criado pelo pg_dump.\n"
+"%s restaura um banco de dados MollyDB a partir de um arquivo criado pelo pg_dump.\n"
 "\n"
 
 #: pg_restore.c:435

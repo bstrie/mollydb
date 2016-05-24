@@ -1,8 +1,8 @@
 #
 # Translation of pg_dump to Italian
-# PostgreSQL Project
+# MollyDB Project
 #
-# Associazione Culturale ITPUG - Italian PostgreSQL Users Group
+# Associazione Culturale ITPUG - Italian MollyDB Users Group
 # http://www.itpug.org/ - info@itpug.org
 #
 # Traduttori:
@@ -18,7 +18,7 @@
 #
 #
 # Copyright (c) 2010, Associazione Culturale ITPUG
-# Distributed under the same license of the PostgreSQL project
+# Distributed under the same license of the MollyDB project
 #
 msgid ""
 msgstr ""
@@ -2261,10 +2261,10 @@ msgstr "%s: apertura del file di output \"%s\" fallita: %s\n"
 #: pg_dumpall.c:548
 #, c-format
 msgid ""
-"%s extracts a PostgreSQL database cluster into an SQL script file.\n"
+"%s extracts a MollyDB database cluster into an SQL script file.\n"
 "\n"
 msgstr ""
-"%s estrae un cluster di database PostgreSQL in un file script SQL.\n"
+"%s estrae un cluster di database MollyDB in un file script SQL.\n"
 "\n"
 
 #: pg_dumpall.c:550
@@ -2433,10 +2433,10 @@ msgstr "ATTENZIONE: errore ignorato durante il ripristino: %d\n"
 #: pg_restore.c:436
 #, c-format
 msgid ""
-"%s restores a PostgreSQL database from an archive created by pg_dump.\n"
+"%s restores a MollyDB database from an archive created by pg_dump.\n"
 "\n"
 msgstr ""
-"%s ripristino di un database PostgreSQL da un archivio creato con pg_dump.\n"
+"%s ripristino di un database MollyDB da un archivio creato con pg_dump.\n"
 "\n"
 
 #: pg_restore.c:438

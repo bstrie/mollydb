@@ -3,7 +3,7 @@
  * pgstatapprox.c
  *		  Bloat estimation functions
  *
- * Copyright (c) 2014-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2014-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *		  contrib/pgstattuple/pgstatapprox.c

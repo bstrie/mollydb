@@ -1,7 +1,7 @@
 # spanish translation of psql.
 #
-# Copyright (C) 2003-2013 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2003-2013 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Alvaro Herrera, <alvherre@alvh.no-ip.org>, 2003-2015
 # Diego A. Gil <diego@adminsa.com>, 2005
@@ -9,7 +9,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: psql (PostgreSQL 9.6)\n"
+"Project-Id-Version: psql (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:13+0000\n"
 "PO-Revision-Date: 2016-05-03 12:18-0300\n"
@@ -1852,10 +1852,10 @@ msgstr "%s\n"
 #: help.c:74
 #, c-format
 msgid ""
-"psql is the PostgreSQL interactive terminal.\n"
+"psql is the MollyDB interactive terminal.\n"
 "\n"
 msgstr ""
-"psql es el terminal interactivo de PostgreSQL.\n"
+"psql es el terminal interactivo de MollyDB.\n"
 "\n"
 
 #: help.c:75 help.c:332 help.c:366 help.c:393
@@ -2129,14 +2129,14 @@ msgstr ""
 msgid ""
 "\n"
 "For more information, type \"\\?\" (for internal commands) or \"\\help\" (for SQL\n"
-"commands) from within psql, or consult the psql section in the PostgreSQL\n"
+"commands) from within psql, or consult the psql section in the MollyDB\n"
 "documentation.\n"
 "\n"
 msgstr ""
 "\n"
 "Para obtener más ayuda, digite «\\?» (para órdenes internas) o «\\help»\n"
 "(para órdenes SQL) dentro de psql, o consulte la sección de psql\n"
-"en la documentación de PostgreSQL.\n"
+"en la documentación de MollyDB.\n"
 "\n"
 
 #: help.c:147
@@ -2151,8 +2151,8 @@ msgstr "General\n"
 
 #: help.c:174
 #, c-format
-msgid "  \\copyright             show PostgreSQL usage and distribution terms\n"
-msgstr "  \\copyright      mostrar términos de uso y distribución de PostgreSQL\n"
+msgid "  \\copyright             show MollyDB usage and distribution terms\n"
+msgstr "  \\copyright      mostrar términos de uso y distribución de MollyDB\n"
 
 #: help.c:175
 #, c-format
@@ -3222,15 +3222,15 @@ msgstr "Use «\\q» para salir de %s.\n"
 
 #: mainloop.c:190
 msgid ""
-"The input is a PostgreSQL custom-format dump.\n"
+"The input is a MollyDB custom-format dump.\n"
 "Use the pg_restore command-line client to restore this dump to a database.\n"
 msgstr ""
-"La entrada es un dump de PostgreSQL en formato custom.\n"
+"La entrada es un dump de MollyDB en formato custom.\n"
 "Use el programa pg_restore para restaurar este dump a una base de datos.\n"
 
 #: mainloop.c:210
-msgid "You are using psql, the command-line interface to PostgreSQL."
-msgstr "Está usando psql, la interfaz de línea de órdenes de PostgreSQL."
+msgid "You are using psql, the command-line interface to MollyDB."
+msgstr "Está usando psql, la interfaz de línea de órdenes de MollyDB."
 
 #: mainloop.c:211
 #, c-format

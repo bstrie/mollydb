@@ -1,7 +1,7 @@
 /* ----------
  * pg_lzcompress.c -
  *
- *		This is an implementation of LZ compression for PostgreSQL.
+ *		This is an implementation of LZ compression for MollyDB.
  *		It uses a simple history table and generates 2-3 byte tags
  *		capable of backward copy information for 3-273 bytes with
  *		a max offset of 4095.
@@ -162,11 +162,11 @@
  *		Acknowledgements:
  *
  *			Many thanks to Adisak Pochanayon, who's article about SLZ
- *			inspired me to write the PostgreSQL compression this way.
+ *			inspired me to write the MollyDB compression this way.
  *
  *			Jan Wieck
  *
- * Copyright (c) 1999-2016, PostgreSQL Global Development Group
+ * Copyright (c) 1999-2016, MollyDB Global Development Group
  *
  * src/common/pg_lzcompress.c
  * ----------

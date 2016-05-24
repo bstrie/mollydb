@@ -1,11 +1,11 @@
 # Czech message translation file for pg_resetxlog
-# Copyright (C) 2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Tomas Vondra <tv@fuzzy.cz>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_resetxlog-cs (PostgreSQL 9.3)\n"
+"Project-Id-Version: pg_resetxlog-cs (MollyDB 9.3)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-09-23 20:18+0000\n"
 "PO-Revision-Date: 2013-12-01 20:46-0500\n"
@@ -97,8 +97,8 @@ msgstr "%s: nemůže být spuštěn uživatelem \"root\"\n"
 
 #: pg_resetxlog.c:257
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "Musíte spustit %s jako PostgreSQL superuživatel.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "Musíte spustit %s jako MollyDB superuživatel.\n"
 
 #: pg_resetxlog.c:267
 #, c-format
@@ -404,10 +404,10 @@ msgstr "%s: nelze zapsat do souboru \"%s\": %s\n"
 #: pg_resetxlog.c:1033
 #, c-format
 msgid ""
-"%s resets the PostgreSQL transaction log.\n"
+"%s resets the MollyDB transaction log.\n"
 "\n"
 msgstr ""
-"%s resetuje PostgreSQL transakční log.\n"
+"%s resetuje MollyDB transakční log.\n"
 "\n"
 
 #: pg_resetxlog.c:1034

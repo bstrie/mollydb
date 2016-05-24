@@ -3,7 +3,7 @@
  * postgres.c
  *	  POSTGRES C Backend Interface
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -3553,7 +3553,7 @@ process_postgres_switches(int argc, char *argv[], GucContext ctx,
  * by the postmaster, these are not the original argv array of the process.)
  * dbname is the name of the database to connect to, or NULL if the database
  * name should be extracted from the command line arguments or defaulted.
- * username is the PostgreSQL user name to be used for the session.
+ * username is the MollyDB user name to be used for the session.
  * ----------------------------------------------------------------
  */
 void
@@ -3769,7 +3769,7 @@ PostgresMain(int argc, char *argv[],
 
 	/* Welcome banner for standalone case */
 	if (whereToSendOutput == DestDebug)
-		printf("\nPostgreSQL stand-alone backend %s\n", PG_VERSION);
+		printf("\nMollyDB stand-alone backend %s\n", PG_VERSION);
 
 	/*
 	 * Create the memory context we will use in the main loop.

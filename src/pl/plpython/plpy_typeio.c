@@ -75,7 +75,7 @@ PLy_typeinfo_init(PLyTypeInfo *arg, MemoryContext mcxt)
 
 /*
  * Conversion functions.  Remember output from Python is input to
- * PostgreSQL, and vice versa.
+ * MollyDB, and vice versa.
  */
 void
 PLy_input_datum_func(PLyTypeInfo *arg, Oid typeOid, HeapTuple typeTup, Oid langid, List *trftypes)
@@ -376,7 +376,7 @@ PLy_output_datum_func2(PLyObToDatum *arg, MemoryContext arg_mcxt, HeapTuple type
 	base_type = getBaseType(element_type ? element_type : arg->typoid);
 
 	/*
-	 * Select a conversion function to convert Python objects to PostgreSQL
+	 * Select a conversion function to convert Python objects to MollyDB
 	 * datums.
 	 */
 
@@ -674,9 +674,9 @@ PLyList_FromArray(PLyDatumToOb *arg, Datum d)
 }
 
 /*
- * Convert a Python object to a PostgreSQL bool datum.  This can't go
+ * Convert a Python object to a MollyDB bool datum.  This can't go
  * through the generic conversion function, because Python attaches a
- * Boolean value to everything, more things than the PostgreSQL bool
+ * Boolean value to everything, more things than the MollyDB bool
  * type can parse.
  */
 static Datum
@@ -694,7 +694,7 @@ PLyObject_ToBool(PLyObToDatum *arg, int32 typmod, PyObject *plrv)
 }
 
 /*
- * Convert a Python object to a PostgreSQL bytea datum.  This doesn't
+ * Convert a Python object to a MollyDB bytea datum.  This doesn't
  * go through the generic conversion function to circumvent problems
  * with embedded nulls.  And it's faster this way.
  */
@@ -740,7 +740,7 @@ PLyObject_ToBytea(PLyObToDatum *arg, int32 typmod, PyObject *plrv)
 /*
  * Convert a Python object to a composite type. First look up the type's
  * description, then route the Python object through the conversion function
- * for obtaining PostgreSQL tuples.
+ * for obtaining MollyDB tuples.
  */
 static Datum
 PLyObject_ToComposite(PLyObToDatum *arg, int32 typmod, PyObject *plrv)
@@ -841,7 +841,7 @@ PLyObject_AsString(PyObject *plrv)
 
 /*
  * Generic conversion function: Convert PyObject to cstring and
- * cstring into PostgreSQL type.
+ * cstring into MollyDB type.
  */
 static Datum
 PLyObject_ToDatum(PLyObToDatum *arg, int32 typmod, PyObject *plrv)

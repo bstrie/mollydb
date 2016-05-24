@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.0 beta 3\n"
+"Project-Id-Version: MollyDB 9.0 beta 3\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-08-18 11:37+0900\n"
 "PO-Revision-Date: 2013-08-18 11:39+0900\n"
@@ -463,9 +463,9 @@ msgstr "詳細は\"%s --help\"を実行してください。\n"
 #: pg_ctl.c:1762
 #, c-format
 msgid ""
-"%s is a utility to initialize, start, stop, or control a PostgreSQL server.\n"
+"%s is a utility to initialize, start, stop, or control a MollyDB server.\n"
 "\n"
-msgstr "%sはPostgreSQLサーバの初期化、起動、停止、制御を行うユーティリティです。\n"
+msgstr "%sはMollyDBサーバの初期化、起動、停止、制御を行うユーティリティです。\n"
 
 #: pg_ctl.c:1763
 #, c-format
@@ -617,9 +617,9 @@ msgstr "  -l, --log FILENAME     サーバログをFILENAMEへ出力(あるい�
 #, c-format
 msgid ""
 "  -o OPTIONS             command line options to pass to postgres\n"
-"                         (PostgreSQL server executable) or initdb\n"
+"                         (MollyDB server executable) or initdb\n"
 msgstr ""
-"  -o オプション          postgres(PostgreSQLサーバ実行ファイル)または\n"
+"  -o オプション          postgres(MollyDBサーバ実行ファイル)または\n"
 "                         initdb に渡すコマンドラインオプション\n"
 
 #: pg_ctl.c:1799
@@ -686,23 +686,23 @@ msgstr ""
 
 #: pg_ctl.c:1813
 #, c-format
-msgid "  -N SERVICENAME  service name with which to register PostgreSQL server\n"
-msgstr "  -N SERVICENAME  PostgreSQLサーバを登録するためのサービス名です\n"
+msgid "  -N SERVICENAME  service name with which to register MollyDB server\n"
+msgstr "  -N SERVICENAME  MollyDBサーバを登録するためのサービス名です\n"
 
 #: pg_ctl.c:1814
 #, c-format
-msgid "  -P PASSWORD     password of account to register PostgreSQL server\n"
-msgstr "  -P PASSWORD     PostgreSQLサーバを登録するアカウントのパスワードです\n"
+msgid "  -P PASSWORD     password of account to register MollyDB server\n"
+msgstr "  -P PASSWORD     MollyDBサーバを登録するアカウントのパスワードです\n"
 
 #: pg_ctl.c:1815
 #, c-format
-msgid "  -U USERNAME     user name of account to register PostgreSQL server\n"
-msgstr "  -U USERNAME     PostgreSQLサーバを登録するアカウントのユーザ名です\n"
+msgid "  -U USERNAME     user name of account to register MollyDB server\n"
+msgstr "  -U USERNAME     MollyDBサーバを登録するアカウントのユーザ名です\n"
 
 #: pg_ctl.c:1816
 #, c-format
-msgid "  -S START-TYPE   service start type to register PostgreSQL server\n"
-msgstr "  -S START-TYPE   PostgreSQLサーバを登録するためのサービス起動種類です\n"
+msgid "  -S START-TYPE   service start type to register MollyDB server\n"
+msgstr "  -S START-TYPE   MollyDBサーバを登録するためのサービス起動種類です\n"
 
 #: pg_ctl.c:1818
 #, c-format
@@ -807,11 +807,11 @@ msgstr "%s: データベースの指定も、PGDATA環境変数の設定もあ�
 
 #~ msgid ""
 #~ "%s is a utility to start, stop, restart, reload configuration files,\n"
-#~ "report the status of a PostgreSQL server, or signal a PostgreSQL process.\n"
+#~ "report the status of a MollyDB server, or signal a MollyDB process.\n"
 #~ "\n"
 #~ msgstr ""
-#~ "%sはPostgreSQLサーバの起動、停止、再起動、設定ファイルのリロード、状況報告\n"
-#~ "を行うユーティリティです。また、PostgreSQLプロセスへシグナルも送信します。\n"
+#~ "%sはMollyDBサーバの起動、停止、再起動、設定ファイルのリロード、状況報告\n"
+#~ "を行うユーティリティです。また、MollyDBプロセスへシグナルも送信します。\n"
 #~ "\n"
 
 #~ msgid "%s: out of memory\n"

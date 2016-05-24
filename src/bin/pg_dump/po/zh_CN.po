@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_dump (PostgreSQL 9.0)\n"
+"Project-Id-Version: pg_dump (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:44+0000\n"
 "PO-Revision-Date: 2015-12-01 20:26+0800\n"
@@ -2274,10 +2274,10 @@ msgstr "%s：无法打开输出文件 \"%s\"：%s\n"
 #: pg_dumpall.c:547
 #, c-format
 msgid ""
-"%s extracts a PostgreSQL database cluster into an SQL script file.\n"
+"%s extracts a MollyDB database cluster into an SQL script file.\n"
 "\n"
 msgstr ""
-"%s 抽取一个 PostgreSQL 数据库簇进一个 SQL 脚本文件.\n"
+"%s 抽取一个 MollyDB 数据库簇进一个 SQL 脚本文件.\n"
 "\n"
 
 #: pg_dumpall.c:549
@@ -2448,10 +2448,10 @@ msgstr "警告: 恢复中忽略错误: %d\n"
 #: pg_restore.c:431
 #, c-format
 msgid ""
-"%s restores a PostgreSQL database from an archive created by pg_dump.\n"
+"%s restores a MollyDB database from an archive created by pg_dump.\n"
 "\n"
 msgstr ""
-"%s 从一个归档中恢复一个由 pg_dump 创建的 PostgreSQL 数据库.\n"
+"%s 从一个归档中恢复一个由 pg_dump 创建的 MollyDB 数据库.\n"
 "\n"
 
 #: pg_restore.c:433

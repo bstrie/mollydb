@@ -1,11 +1,11 @@
 # Brazilian Portuguese message translation file for pg_config
-# Copyright (C) 2009 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Euler Taveira de Oliveira <euler@timbira.com>, 2004-2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-09-17 22:32-0300\n"
 "PO-Revision-Date: 2005-10-04 22:15-0300\n"
@@ -62,11 +62,11 @@ msgstr "não informado\n"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%s fornece informação sobre a versão do PostgreSQL instalada.\n"
+"%s fornece informação sobre a versão do MollyDB instalada.\n"
 "\n"
 
 #: pg_config.c:429
@@ -161,55 +161,55 @@ msgstr "  --pgxs                mostra local do makefile extensível\n"
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
+"                        MollyDB was built\n"
 msgstr ""
 "  --configure           mostra opções informadas ao script \"configure\" quando\n"
-"                        o PostgreSQL foi construído\n"
+"                        o MollyDB foi construído\n"
 
 #: pg_config.c:448
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
-msgstr "  --cc                  mostra valor de CC utilizado quando PostgreSQL foi construído\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
+msgstr "  --cc                  mostra valor de CC utilizado quando MollyDB foi construído\n"
 
 #: pg_config.c:449
 #, c-format
-msgid "  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cppflags            mostra valor de CPPFLAGS utilizado quando PostgreSQL foi construído\n"
+msgid "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
+msgstr "  --cppflags            mostra valor de CPPFLAGS utilizado quando MollyDB foi construído\n"
 
 #: pg_config.c:450
 #, c-format
-msgid "  --cflags              show CFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cflags              mostra valor de CFLAGS utilizado quando PostgreSQL foi construído\n"
+msgid "  --cflags              show CFLAGS value used when MollyDB was built\n"
+msgstr "  --cflags              mostra valor de CFLAGS utilizado quando MollyDB foi construído\n"
 
 #: pg_config.c:451
 #, c-format
-msgid "  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --cflags_sl           mostra valor de CFLAGS_SL utilizado quando PostgreSQL foi construído\n"
+msgid "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --cflags_sl           mostra valor de CFLAGS_SL utilizado quando MollyDB foi construído\n"
 
 #: pg_config.c:452
 #, c-format
-msgid "  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
-msgstr "  --ldflags             mostra valor de LDFLAGS utilizado quando PostgreSQL foi construído\n"
+msgid "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
+msgstr "  --ldflags             mostra valor de LDFLAGS utilizado quando MollyDB foi construído\n"
 
 #: pg_config.c:453
 #, c-format
-msgid "  --ldflags_ex          show LDFLAGS_EX value used when PostgreSQL was built\n"
-msgstr "  --ldflags_ex          mostra valor de LDFLAGS_EX utilizado quando PostgreSQL foi construído\n"
+msgid "  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was built\n"
+msgstr "  --ldflags_ex          mostra valor de LDFLAGS_EX utilizado quando MollyDB foi construído\n"
 
 #: pg_config.c:454
 #, c-format
-msgid "  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --ldflags_sl          mostra valor de LDFLAGS_SL utilizado quando PostgreSQL foi construído\n"
+msgid "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --ldflags_sl          mostra valor de LDFLAGS_SL utilizado quando MollyDB foi construído\n"
 
 #: pg_config.c:455
 #, c-format
-msgid "  --libs                show LIBS value used when PostgreSQL was built\n"
-msgstr "  --libs                mostra valor de LIBS utilizado quando PostgreSQL foi construído\n"
+msgid "  --libs                show LIBS value used when MollyDB was built\n"
+msgstr "  --libs                mostra valor de LIBS utilizado quando MollyDB foi construído\n"
 
 #: pg_config.c:456
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             mostra a versão do PostgreSQL\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             mostra a versão do MollyDB\n"
 
 #: pg_config.c:457
 #, c-format

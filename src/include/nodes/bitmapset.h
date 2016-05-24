@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * bitmapset.h
- *	  PostgreSQL generic bitmap set package
+ *	  MollyDB generic bitmap set package
  *
  * A bitmap set can represent any set of nonnegative integers, although
  * it is mainly intended for sets where the maximum value is not large,
@@ -11,7 +11,7 @@
  * bms_is_empty() in preference to testing for NULL.)
  *
  *
- * Copyright (c) 2003-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2003-2016, MollyDB Global Development Group
  *
  * src/include/nodes/bitmapset.h
  *

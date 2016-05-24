@@ -18,7 +18,7 @@ static void PLy_plan_dealloc(PyObject *arg);
 static PyObject *PLy_plan_status(PyObject *self, PyObject *args);
 
 static char PLy_plan_doc[] = {
-	"Store a PostgreSQL plan"
+	"Store a MollyDB plan"
 };
 
 static PyMethodDef PLy_plan_methods[] = {

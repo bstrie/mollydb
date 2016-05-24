@@ -6,7 +6,7 @@
  * These routines represent a fairly thin layer on top of SysV shared
  * memory functionality.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
@@ -143,17 +143,17 @@ InternalIpcMemoryCreate(IpcMemoryKey memKey, Size size)
 					(unsigned long) memKey, size,
 					IPC_CREAT | IPC_EXCL | IPCProtection),
 				 (shmget_errno == EINVAL) ?
-				 errhint("This error usually means that PostgreSQL's request for a shared memory "
+				 errhint("This error usually means that MollyDB's request for a shared memory "
 		 "segment exceeded your kernel's SHMMAX parameter, or possibly that "
 						 "it is less than "
 						 "your kernel's SHMMIN parameter.\n"
-		"The PostgreSQL documentation contains more information about shared "
+		"The MollyDB documentation contains more information about shared "
 						 "memory configuration.") : 0,
 				 (shmget_errno == ENOMEM) ?
-				 errhint("This error usually means that PostgreSQL's request for a shared "
+				 errhint("This error usually means that MollyDB's request for a shared "
 						 "memory segment exceeded your kernel's SHMALL parameter.  You might need "
 						 "to reconfigure the kernel with larger SHMALL.\n"
-		"The PostgreSQL documentation contains more information about shared "
+		"The MollyDB documentation contains more information about shared "
 						 "memory configuration.") : 0,
 				 (shmget_errno == ENOSPC) ?
 				 errhint("This error does *not* mean that you have run out of disk space.  "
@@ -161,7 +161,7 @@ InternalIpcMemoryCreate(IpcMemoryKey memKey, Size size)
 						 "in which case you need to raise the SHMMNI parameter in your kernel, "
 		  "or because the system's overall limit for shared memory has been "
 						 "reached.\n"
-		"The PostgreSQL documentation contains more information about shared "
+		"The MollyDB documentation contains more information about shared "
 						 "memory configuration.") : 0));
 	}
 
@@ -389,10 +389,10 @@ CreateAnonymousSegment(Size *size)
 		ereport(FATAL,
 				(errmsg("could not map anonymous shared memory: %m"),
 				 (mmap_errno == ENOMEM) ?
-				 errhint("This error usually means that PostgreSQL's request "
+				 errhint("This error usually means that MollyDB's request "
 					"for a shared memory segment exceeded available memory, "
 					 "swap space, or huge pages. To reduce the request size "
-						 "(currently %zu bytes), reduce PostgreSQL's shared "
+						 "(currently %zu bytes), reduce MollyDB's shared "
 					   "memory usage, perhaps by reducing shared_buffers or "
 						 "max_connections.",
 						 *size) : 0));
@@ -443,16 +443,16 @@ PGSharedMemoryCreate(Size size, bool makePrivate, int port,
 	Assert(size > MAXALIGN(sizeof(PGShmemHeader)));
 
 	/*
-	 * As of PostgreSQL 9.3, we normally allocate only a very small amount of
+	 * As of MollyDB 9.3, we normally allocate only a very small amount of
 	 * System V shared memory, and only for the purposes of providing an
 	 * interlock to protect the data directory.  The real shared memory block
 	 * is allocated using mmap().  This works around the problem that many
 	 * systems have very low limits on the amount of System V shared memory
 	 * that can be allocated.  Even a limit of a few megabytes will be enough
-	 * to run many copies of PostgreSQL without needing to adjust system
+	 * to run many copies of MollyDB without needing to adjust system
 	 * settings.
 	 *
-	 * We assume that no one will attempt to run PostgreSQL 9.3 or later on
+	 * We assume that no one will attempt to run MollyDB 9.3 or later on
 	 * systems that are ancient enough that anonymous shared memory is not
 	 * supported, such as pre-2.4 versions of Linux.  If that turns out to be
 	 * false, we might need to add a run-time test here and do this only if

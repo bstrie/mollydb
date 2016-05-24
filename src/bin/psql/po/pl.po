@@ -1,11 +1,11 @@
 # Polish message translation file for psql
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Begina Felicysym <begina.felicysym@wp.eu>, 2011, 2012, 2013.
 # grzegorz <begina.felicysym@wp.eu>, 2014, 2015, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: psql (PostgreSQL 9.1)\n"
+"Project-Id-Version: psql (MollyDB 9.1)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-01-05 23:12+0000\n"
 "PO-Revision-Date: 2016-01-06 09:03+0200\n"
@@ -1756,10 +1756,10 @@ msgstr "%s\n"
 #: help.c:70
 #, c-format
 msgid ""
-"psql is the PostgreSQL interactive terminal.\n"
+"psql is the MollyDB interactive terminal.\n"
 "\n"
 msgstr ""
-"psql jest interaktywnym terminalem PostgreSQL.\n"
+"psql jest interaktywnym terminalem MollyDB.\n"
 "\n"
 
 #: help.c:71 help.c:314 help.c:347 help.c:374
@@ -2027,14 +2027,14 @@ msgstr "  -W, --password           wymuś pytanie o hasło (powinno nastąpić a
 msgid ""
 "\n"
 "For more information, type \"\\?\" (for internal commands) or \"\\help\" (for SQL\n"
-"commands) from within psql, or consult the psql section in the PostgreSQL\n"
+"commands) from within psql, or consult the psql section in the MollyDB\n"
 "documentation.\n"
 "\n"
 msgstr ""
 "\n"
 "By uzyskać więcej informacji wpisz \"\\?\" (dla poleceń wewnętrznych) lub \"\\help\" \n"
 "(dal poleceń SQL) w psql, lub sprawdź w rozdziale dotyczącym psql\n"
-"dokumentacji PostgreSQL.\n"
+"dokumentacji MollyDB.\n"
 "\n"
 
 #: help.c:143
@@ -2049,8 +2049,8 @@ msgstr "Informacje ogólne\n"
 
 #: help.c:167
 #, c-format
-msgid "  \\copyright             show PostgreSQL usage and distribution terms\n"
-msgstr "  \\copyright             pokazuje warunku użytkowania i dystrybucji PostgreSQL\n"
+msgid "  \\copyright             show MollyDB usage and distribution terms\n"
+msgstr "  \\copyright             pokazuje warunku użytkowania i dystrybucji MollyDB\n"
 
 #: help.c:168
 #, c-format
@@ -3009,15 +3009,15 @@ msgstr "Użyj \"\\q\" by opuścić %s.\n"
 
 #: mainloop.c:183
 msgid ""
-"The input is a PostgreSQL custom-format dump.\n"
+"The input is a MollyDB custom-format dump.\n"
 "Use the pg_restore command-line client to restore this dump to a database.\n"
 msgstr ""
-"Wyjście to zrzut w formacie niestandardowym PostgreSQL.\n"
+"Wyjście to zrzut w formacie niestandardowym MollyDB.\n"
 "Użyj klienta linii poleceń pg_restore by odtworzyć bazę danych ze zrzutu.\n"
 
 #: mainloop.c:203
-msgid "You are using psql, the command-line interface to PostgreSQL."
-msgstr "Używasz psql, interfejsu wiersza poleceń PostgreSQL."
+msgid "You are using psql, the command-line interface to MollyDB."
+msgstr "Używasz psql, interfejsu wiersza poleceń MollyDB."
 
 #: mainloop.c:204
 #, c-format

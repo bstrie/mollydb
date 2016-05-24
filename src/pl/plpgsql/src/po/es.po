@@ -1,7 +1,7 @@
 # Spanish message translation file for plpgsql
 #
-# Copyright (C) 2008-2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2008-2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Álvaro Herrera <alvherre@alvh.no-ip.org> 2008-2013
 # Emanuel Calvo Franco <postgres.arg@gmail.com> 2008
@@ -10,7 +10,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: plpgsql (PostgreSQL 9.6)\n"
+"Project-Id-Version: plpgsql (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:07+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"

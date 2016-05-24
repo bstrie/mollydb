@@ -3,8 +3,8 @@
  * pg_config.c
  *
  * This program reports various pieces of information about the
- * installed version of PostgreSQL.  Packages that interface to
- * PostgreSQL can use it to configure their build.
+ * installed version of MollyDB.  Packages that interface to
+ * MollyDB can use it to configure their build.
  *
  * This is a C implementation of the previous shell script written by
  * Peter Eisentraut <peter_e@gmx.net>, with adjustments made to
@@ -13,9 +13,9 @@
  *
  * author of C translation: Andrew Dunstan	   mailto:andrew@dunslane.net
  *
- * This code is released under the terms of the PostgreSQL License.
+ * This code is released under the terms of the MollyDB License.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * src/bin/pg_config/pg_config.c
  *
@@ -71,7 +71,7 @@ static const InfoItem info_items[] = {
 static void
 help(void)
 {
-	printf(_("\n%s provides information about the installed version of PostgreSQL.\n\n"), progname);
+	printf(_("\n%s provides information about the installed version of MollyDB.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]...\n\n"), progname);
 	printf(_("Options:\n"));
@@ -90,16 +90,16 @@ help(void)
 	printf(_("  --sysconfdir          show location of system-wide configuration files\n"));
 	printf(_("  --pgxs                show location of extension makefile\n"));
 	printf(_("  --configure           show options given to \"configure\" script when\n"
-			 "                        PostgreSQL was built\n"));
-	printf(_("  --cc                  show CC value used when PostgreSQL was built\n"));
-	printf(_("  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"));
-	printf(_("  --cflags              show CFLAGS value used when PostgreSQL was built\n"));
-	printf(_("  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"));
-	printf(_("  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"));
-	printf(_("  --ldflags_ex          show LDFLAGS_EX value used when PostgreSQL was built\n"));
-	printf(_("  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was built\n"));
-	printf(_("  --libs                show LIBS value used when PostgreSQL was built\n"));
-	printf(_("  --version             show the PostgreSQL version\n"));
+			 "                        MollyDB was built\n"));
+	printf(_("  --cc                  show CC value used when MollyDB was built\n"));
+	printf(_("  --cppflags            show CPPFLAGS value used when MollyDB was built\n"));
+	printf(_("  --cflags              show CFLAGS value used when MollyDB was built\n"));
+	printf(_("  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"));
+	printf(_("  --ldflags             show LDFLAGS value used when MollyDB was built\n"));
+	printf(_("  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was built\n"));
+	printf(_("  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was built\n"));
+	printf(_("  --libs                show LIBS value used when MollyDB was built\n"));
+	printf(_("  --version             show the MollyDB version\n"));
 	printf(_("  -?, --help            show this help, then exit\n"));
 	printf(_("\nWith no arguments, all known items are shown.\n\n"));
 	printf(_("Report bugs to <pgsql-bugs@mollydb.org>.\n"));

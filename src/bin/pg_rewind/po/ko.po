@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for pg_rewind
-# Copyright (C) 2015 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2015 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_rewind (PostgreSQL) 9.5\n"
+"Project-Id-Version: pg_rewind (MollyDB) 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-25 23:16+0900\n"
 "PO-Revision-Date: 2015-12-27 23:49+0900\n"
@@ -419,10 +419,10 @@ msgstr ""
 #: pg_rewind.c:59
 #, c-format
 msgid ""
-"%s resynchronizes a PostgreSQL cluster with another copy of the cluster.\n"
+"%s resynchronizes a MollyDB cluster with another copy of the cluster.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 한 클러스터에서 다른 클러스터로 재동기화 하는 도구입"
+"%s 프로그램은 MollyDB 한 클러스터에서 다른 클러스터로 재동기화 하는 도구입"
 "니다.\n"
 "\n"
 
@@ -523,8 +523,8 @@ msgstr "\"root\" 계정으로는 실행 할 수 없음\n"
 
 #: pg_rewind.c:185
 #, c-format
-msgid "You must run %s as the PostgreSQL superuser.\n"
-msgstr "PostgreSQL superuser로 %s 프로그램을 실행하십시오.\n"
+msgid "You must run %s as the MollyDB superuser.\n"
+msgstr "MollyDB superuser로 %s 프로그램을 실행하십시오.\n"
 
 #: pg_rewind.c:216
 #, c-format

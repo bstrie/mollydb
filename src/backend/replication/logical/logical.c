@@ -1,8 +1,8 @@
 /*-------------------------------------------------------------------------
  * logical.c
- *	   PostgreSQL logical decoding coordination
+ *	   MollyDB logical decoding coordination
  *
- * Copyright (c) 2012-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2012-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *	  src/backend/replication/logical/logical.c

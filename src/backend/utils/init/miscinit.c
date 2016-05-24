@@ -3,7 +3,7 @@
  * miscinit.c
  *	  miscellaneous initialization support stuff
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -1378,7 +1378,7 @@ ValidatePgVersion(const char *path)
 		ereport(FATAL,
 				(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
 				 errmsg("database files are incompatible with server"),
-				 errdetail("The data directory was initialized by PostgreSQL version %ld.%ld, "
+				 errdetail("The data directory was initialized by MollyDB version %ld.%ld, "
 						   "which is not compatible with this version %s.",
 						   file_major, file_minor, version_string)));
 }

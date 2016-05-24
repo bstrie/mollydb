@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for ecpg
-# Copyright (C) 2009 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 8.4\n"
+"Project-Id-Version: MollyDB 8.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2010-08-31 20:08+0000\n"
 "PO-Revision-Date: 2013-09-04 20:48-0400\n"
@@ -57,10 +57,10 @@ msgstr "\"%s\" açıklayıcı öğesi ayarlanamaz"
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%s C programları için PostgreSQL'e gömüşü SQL önişlemcisidir.\n"
+"%s C programları için MollyDB'e gömüşü SQL önişlemcisidir.\n"
 "\n"
 
 #: ecpg.c:37
@@ -198,8 +198,8 @@ msgstr "%s: ayrıştırıcı hata ayıklama desteği (-d) yok\n"
 
 #: ecpg.c:263
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "%s, PostgreSQL gömülü C önişlemcisi, %d.%d.%d sürümü\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "%s, MollyDB gömülü C önişlemcisi, %d.%d.%d sürümü\n"
 
 #: ecpg.c:265
 #, c-format

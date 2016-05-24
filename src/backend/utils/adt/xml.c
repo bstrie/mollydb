@@ -4,7 +4,7 @@
  *	  XML data type support.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/backend/utils/adt/xml.c
@@ -170,7 +170,7 @@ static void SPI_sql_row_to_xmlelement(uint64 rownum, StringInfo result,
 			(errcode(ERRCODE_FEATURE_NOT_SUPPORTED), \
 			 errmsg("unsupported XML feature"), \
 			 errdetail("This functionality requires the server to be built with libxml support."), \
-			 errhint("You need to rebuild PostgreSQL using --with-libxml.")))
+			 errhint("You need to rebuild MollyDB using --with-libxml.")))
 
 
 /* from SQL/XML:2008 section 4.9 */
@@ -997,7 +997,7 @@ pg_xml_init(PgXmlStrictness strictness)
 				 errmsg("could not set up XML error handler"),
 				 errhint("This probably indicates that the version of libxml2"
 						 " being used is not compatible with the libxml2"
-						 " header files that PostgreSQL was built with.")));
+						 " header files that MollyDB was built with.")));
 
 	/*
 	 * Also, install an entity loader to prevent unwanted fetches of external

@@ -1,13 +1,13 @@
 # German message translation file for ecpg
-# Copyright (C) 2009-2014 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2009-2014 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Peter Eisentraut <peter_e@gmx.net>, 2009-2014.
 #
 # Use these quotes: „%s“
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.4\n"
+"Project-Id-Version: MollyDB 9.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-07-20 02:37+0000\n"
 "PO-Revision-Date: 2014-07-20 21:08-0400\n"
@@ -57,10 +57,10 @@ msgstr "Deskriptorelement „%s“ kann nicht gesetzt werden"
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%s ist der Embedded-SQL-Präprozessor von PostgreSQL für C-Programme.\n"
+"%s ist der Embedded-SQL-Präprozessor von MollyDB für C-Programme.\n"
 "\n"
 
 #: ecpg.c:37
@@ -198,8 +198,8 @@ msgstr "%s: Unterstützung für Parserdebugging (-d) nicht verfügbar\n"
 
 #: ecpg.c:267
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "%s, der PostgreSQL-Embedded-C-Präprozessor, Version %d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "%s, der MollyDB-Embedded-C-Präprozessor, Version %d.%d.%d\n"
 
 #: ecpg.c:269
 #, c-format

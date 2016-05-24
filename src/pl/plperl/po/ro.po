@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for plperl
-# Copyright (C) 2010 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2010 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.1\n"
+"Project-Id-Version: MollyDB 9.1\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2011-11-09 20:39+0000\n"
 "PO-Revision-Date: 2013-09-05 23:03-0400\n"
@@ -50,8 +50,8 @@ msgid "%s"
 msgstr "%s"
 
 #: plperl.c:626
-msgid "while executing PostgreSQL::InServer::SPI::bootstrap"
-msgstr "în timpul execuției PostgreSQL::InServer::SPI::bootstrap"
+msgid "while executing MollyDB::InServer::SPI::bootstrap"
+msgstr "în timpul execuției MollyDB::InServer::SPI::bootstrap"
 
 #: plperl.c:788
 msgid "while parsing Perl initialization"

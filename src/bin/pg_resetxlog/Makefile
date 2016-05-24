@@ -2,13 +2,13 @@
 #
 # Makefile for src/bin/pg_resetxlog
 #
-# Copyright (c) 1998-2016, PostgreSQL Global Development Group
+# Copyright (c) 1998-2016, MollyDB Global Development Group
 #
 # src/bin/pg_resetxlog/Makefile
 #
 #-------------------------------------------------------------------------
 
-PGFILEDESC = "pg_resetxlog - reset PostgreSQL WAL log"
+PGFILEDESC = "pg_resetxlog - reset MollyDB WAL log"
 PGAPPICON=win32
 
 subdir = src/bin/pg_resetxlog

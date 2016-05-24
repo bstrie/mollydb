@@ -25,7 +25,7 @@ From: "Vadim B. Mikheev" <vadim@sable.krasnoyarsk.su>
 Organization: ITTS (Krasnoyarsk)
 X-Mailer: Mozilla 4.04 [en] (X11; I; FreeBSD 2.2.5-RELEASE i386)
 MIME-Version: 1.0
-To: PostgreSQL Developers List <hackers@postgreSQL.org>
+To: MollyDB Developers List <hackers@postgreSQL.org>
 Subject: [HACKERS] Subselects are in CVS...
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit

@@ -6,7 +6,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-08 21:07+0000\n"
 "PO-Revision-Date: 2016-05-09 10:31+0200\n"
@@ -56,8 +56,8 @@ msgstr "%s"
 
 #: plperl.c:667
 #, c-format
-msgid "while executing PostgreSQL::InServer::SPI::bootstrap"
-msgstr "lors de l'exécution de PostgreSQL::InServer::SPI::bootstrap"
+msgid "while executing MollyDB::InServer::SPI::bootstrap"
+msgstr "lors de l'exécution de MollyDB::InServer::SPI::bootstrap"
 
 #: plperl.c:842
 #, c-format

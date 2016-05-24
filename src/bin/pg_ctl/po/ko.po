@@ -1,9 +1,9 @@
-# Korean message translation file for PostgreSQL pg_ctl
+# Korean message translation file for MollyDB pg_ctl
 # Ioseph Kim <ioseph@uri.sarang.net>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-12-21 09:47+0900\n"
 "PO-Revision-Date: 2015-12-23 14:04+0900\n"
@@ -478,10 +478,10 @@ msgstr "보다 자세한 사용법은 \"%s --help\"\n"
 #: pg_ctl.c:1933
 #, c-format
 msgid ""
-"%s is a utility to initialize, start, stop, or control a PostgreSQL server.\n"
+"%s is a utility to initialize, start, stop, or control a MollyDB server.\n"
 "\n"
 msgstr ""
-"%s 프로그램은 PostgreSQL 서버를 초기화, 시작, 중지, 제어하는 도구입니다.\n"
+"%s 프로그램은 MollyDB 서버를 초기화, 시작, 중지, 제어하는 도구입니다.\n"
 "\n"
 
 #: pg_ctl.c:1934
@@ -644,9 +644,9 @@ msgstr "  -l, --log=로그파일     서버 로그를 이 로그파일에 기록
 #, c-format
 msgid ""
 "  -o OPTIONS             command line options to pass to postgres\n"
-"                         (PostgreSQL server executable) or initdb\n"
+"                         (MollyDB server executable) or initdb\n"
 msgstr ""
-"  -o 옵션들              PostgreSQL 서버프로그램인 postgres나 initdb\n"
+"  -o 옵션들              MollyDB 서버프로그램인 postgres나 initdb\n"
 "                         명령에서 사용할 명령행 옵션들\n"
 
 #: pg_ctl.c:1973
@@ -718,23 +718,23 @@ msgstr ""
 #: pg_ctl.c:1987
 #, c-format
 msgid ""
-"  -N SERVICENAME  service name with which to register PostgreSQL server\n"
-msgstr "  -N SERVICENAME  서비스 목록에 등록될 PostgreSQL 서비스 이름\n"
+"  -N SERVICENAME  service name with which to register MollyDB server\n"
+msgstr "  -N SERVICENAME  서비스 목록에 등록될 MollyDB 서비스 이름\n"
 
 #: pg_ctl.c:1988
 #, c-format
-msgid "  -P PASSWORD     password of account to register PostgreSQL server\n"
+msgid "  -P PASSWORD     password of account to register MollyDB server\n"
 msgstr "  -P PASSWORD     이 서비스를 실행할 사용자의 암호\n"
 
 #: pg_ctl.c:1989
 #, c-format
-msgid "  -U USERNAME     user name of account to register PostgreSQL server\n"
+msgid "  -U USERNAME     user name of account to register MollyDB server\n"
 msgstr "  -U USERNAME     이 서비스를 실행할 사용자 이름\n"
 
 #: pg_ctl.c:1990
 #, c-format
-msgid "  -S START-TYPE   service start type to register PostgreSQL server\n"
-msgstr "  -S 시작형태     서비스로 등록된 PostgreSQL 서버 시작 방법\n"
+msgid "  -S START-TYPE   service start type to register MollyDB server\n"
+msgstr "  -S 시작형태     서비스로 등록된 MollyDB 서버 시작 방법\n"
 
 #: pg_ctl.c:1992
 #, c-format

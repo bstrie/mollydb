@@ -2,7 +2,7 @@
 #################################################################
 # copyright.pl -- update copyright notices throughout the source tree, idempotently.
 #
-# Copyright (c) 2011-2016, PostgreSQL Global Development Group
+# Copyright (c) 2011-2016, MollyDB Global Development Group
 #
 # src/tools/copyright.pl
 #
@@ -16,7 +16,7 @@ use File::Find;
 use File::Basename;
 use Tie::File;
 
-my $pgdg = 'PostgreSQL Global Development Group';
+my $pgdg = 'MollyDB Global Development Group';
 my $cc   = 'Copyright \(c\)';
 my $ccliteral = 'Copyright (c)';
 

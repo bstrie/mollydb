@@ -30,7 +30,7 @@
 static void
 usage(const char *progname)
 {
-	printf(_("%s displays control information of a PostgreSQL database cluster.\n\n"), progname);
+	printf(_("%s displays control information of a MollyDB database cluster.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION] [DATADIR]\n"), progname);
 	printf(_("\nOptions:\n"));
@@ -110,7 +110,7 @@ main(int argc, char *argv[])
 		}
 		if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-V") == 0)
 		{
-			puts("pg_controldata (PostgreSQL) " PG_VERSION);
+			puts("pg_controldata (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

@@ -1,11 +1,11 @@
 # Czech message translation file for pg_ctl
-# Copyright (C) 2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Tomas Vondra <tv@fuzzy.cz>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_ctl-cs (PostgreSQL 9.3)\n"
+"Project-Id-Version: pg_ctl-cs (MollyDB 9.3)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-09-23 20:18+0000\n"
 "PO-Revision-Date: 2013-12-01 20:46-0500\n"
@@ -473,11 +473,11 @@ msgstr "Zkuste \"%s --help\" pro více informací.\n"
 #: pg_ctl.c:1762
 #, c-format
 msgid ""
-"%s is a utility to initialize, start, stop, or control a PostgreSQL server.\n"
+"%s is a utility to initialize, start, stop, or control a MollyDB server.\n"
 "\n"
 msgstr ""
 "%s je nástroj pro inicializaci, spuštění, zastavení, nebo ovládání "
-"PostgreSQL serveru.\n"
+"MollyDB serveru.\n"
 "\n"
 
 #: pg_ctl.c:1763
@@ -638,10 +638,10 @@ msgstr ""
 #, c-format
 msgid ""
 "  -o OPTIONS             command line options to pass to postgres\n"
-"                         (PostgreSQL server executable) or initdb\n"
+"                         (MollyDB server executable) or initdb\n"
 msgstr ""
 "  -o PŘEPÍNAČE            přepínače, které budou předány postgresu\n"
-"                          (spustitelnému souboru PostgreSQL) či initdb\n"
+"                          (spustitelnému souboru MollyDB) či initdb\n"
 
 #: pg_ctl.c:1799
 #, c-format
@@ -713,25 +713,25 @@ msgstr ""
 #: pg_ctl.c:1813
 #, c-format
 msgid ""
-"  -N SERVICENAME  service name with which to register PostgreSQL server\n"
+"  -N SERVICENAME  service name with which to register MollyDB server\n"
 msgstr ""
-"  -N SERVICENAME  jméno služby, pod kterým registrovat PostgreSQL server\n"
+"  -N SERVICENAME  jméno služby, pod kterým registrovat MollyDB server\n"
 
 #: pg_ctl.c:1814
 #, c-format
-msgid "  -P PASSWORD     password of account to register PostgreSQL server\n"
-msgstr "  -P PASSWORD     heslo k účtu pro registraci PostgreSQL serveru\n"
+msgid "  -P PASSWORD     password of account to register MollyDB server\n"
+msgstr "  -P PASSWORD     heslo k účtu pro registraci MollyDB serveru\n"
 
 #: pg_ctl.c:1815
 #, c-format
-msgid "  -U USERNAME     user name of account to register PostgreSQL server\n"
-msgstr "  -U USERNAME     uživatelské jméno pro registraci PostgreSQL server\n"
+msgid "  -U USERNAME     user name of account to register MollyDB server\n"
+msgstr "  -U USERNAME     uživatelské jméno pro registraci MollyDB server\n"
 
 #: pg_ctl.c:1816
 #, c-format
-msgid "  -S START-TYPE   service start type to register PostgreSQL server\n"
+msgid "  -S START-TYPE   service start type to register MollyDB server\n"
 msgstr ""
-"  -S TYP-STARTU   typ spuštění služby pro registraci PostgreSQL serveru\n"
+"  -S TYP-STARTU   typ spuštění služby pro registraci MollyDB serveru\n"
 
 #: pg_ctl.c:1818
 #, c-format

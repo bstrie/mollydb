@@ -1,6 +1,6 @@
 # Russian message translation file for plpython
-# Copyright (C) 2012 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2012 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Alexander Lakhin <exclusion@gmail.com>, 2012.
 #
 # ChangeLog:
@@ -10,7 +10,7 @@
 #   - February 18, 2012: Complete translation for 9.1. Alexander Lakhin <exclusion@gmail.com>.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.2\n"
+"Project-Id-Version: MollyDB 9.2\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-01-15 04:37+0000\n"
 "PO-Revision-Date: 2016-01-17 08:04+0300\n"

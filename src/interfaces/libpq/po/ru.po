@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2001-2004 Serguei A. Mokhov, mokhov@cs.concordia.ca
 # Copyright (c) 2012-2013 Alexander Lakhin <exclusion@gmail.com>
-# Distributed under the same licensing terms as PostgreSQL itself.
+# Distributed under the same licensing terms as MollyDB itself.
 #
 # pgtranslation Id: libpq.po,v 1.4 2010/12/07 21:22:21 petere Exp $
 #
@@ -13,7 +13,7 @@
 #   - April 2, 2012: Bug fixes. Alexander Lakhin <exclusion@gmail.com>.
 #   - February 22, 2012: Backporting 9.1 translation to 8.4. Alexander Lakhin <exclusion@gmail.com>.
 #   - February 17, 2012: complete translation for 9.1. Alexander Lakhin <exclusion@gmail.com>.
-#   - November, 2010: Updates for PostgreSQL 9 by Andrey Sudnik <sudnikand@yandex.ru>.
+#   - November, 2010: Updates for MollyDB 9 by Andrey Sudnik <sudnikand@yandex.ru>.
 #   - January, 2005: Corrections and improvements by Oleg Bartunov <oleg@sai.msu.su>.
 #   - March 27 - November 1, 2004: Updates for 8.0; <mokhov@cs.concordia.ca>.
 #   - July 24 - October 5, 2003: Updates for 7.4.*; <mokhov@cs.concordia.ca>.
@@ -23,7 +23,7 @@
 #   - August 2001 - August 2002: Initial translation and maintenance, Serguei A. Mokhov <mokhov@cs.concordia.ca>
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9 current\n"
+"Project-Id-Version: MollyDB 9 current\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-07-22 00:08+0000\n"
 "PO-Revision-Date: 2015-07-22 16:24+0300\n"

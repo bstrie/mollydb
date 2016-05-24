@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for pltcl
-# Copyright (C) 2010 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2010 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.0\n"
+"Project-Id-Version: MollyDB 9.0\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-26 18:37+0000\n"
 "PO-Revision-Date: 2015-12-02 14:52+0800\n"

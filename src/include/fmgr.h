@@ -8,7 +8,7 @@
  * or call fmgr-callable functions.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/fmgr.h
@@ -365,9 +365,9 @@ extern int no_such_variable
  * We require dynamically-loaded modules to include the macro call
  *		PG_MODULE_MAGIC;
  * so that we can check for obvious incompatibility, such as being compiled
- * for a different major PostgreSQL version.
+ * for a different major MollyDB version.
  *
- * To compile with versions of PostgreSQL that do not support this,
+ * To compile with versions of MollyDB that do not support this,
  * you may put an #ifdef/#endif test around it.  Note that in a multiple-
  * source-file module, the macro call should only appear once.
  *
@@ -388,7 +388,7 @@ extern int no_such_variable
 typedef struct
 {
 	int			len;			/* sizeof(this struct) */
-	int			version;		/* PostgreSQL major version */
+	int			version;		/* MollyDB major version */
 	int			funcmaxargs;	/* FUNC_MAX_ARGS */
 	int			indexmaxkeys;	/* INDEX_MAX_KEYS */
 	int			namedatalen;	/* NAMEDATALEN */

@@ -1,11 +1,11 @@
 # Polish message translation file for ecpg
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Begina Felicysym <begina.felicysym@wp.eu>, 2011, 2012.
 # grzegorz <begina.felicysym@wp.eu>, 2014.
 msgid ""
 msgstr ""
-"Project-Id-Version: ecpg (PostgreSQL 9.1)\n"
+"Project-Id-Version: ecpg (MollyDB 9.1)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2014-11-10 20:37+0000\n"
 "PO-Revision-Date: 2014-11-10 23:25+0200\n"
@@ -57,10 +57,10 @@ msgstr "element deskryptora \"%s\" nie może zostać ustawiony"
 #: ecpg.c:35
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%s jest osadzonym w PostgreSQL preprocesorem SQL dla programów C.\n"
+"%s jest osadzonym w MollyDB preprocesorem SQL dla programów C.\n"
 "\n"
 
 #: ecpg.c:37
@@ -199,8 +199,8 @@ msgstr "%s: wsparcie debugu analizatora (-d) niedostępne\n"
 
 #: ecpg.c:267
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "%s, preprocesor C osadzony w PostgreSQL, wersja %d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "%s, preprocesor C osadzony w MollyDB, wersja %d.%d.%d\n"
 
 #: ecpg.c:269
 #, c-format

@@ -321,7 +321,7 @@ SELECT t, '<replaceable>word</>' &lt;&lt;-&gt; t AS dist
 
 
   <para>
-   Beginning in <productname>PostgreSQL</> 9.1, these index types also support
+   Beginning in <productname>MollyDB</> 9.1, these index types also support
    index searches for <literal>LIKE</> and <literal>ILIKE</>, for example
 <programlisting>
 SELECT * FROM test_trgm WHERE t LIKE '%foo%bar';
@@ -333,7 +333,7 @@ SELECT * FROM test_trgm WHERE t LIKE '%foo%bar';
   </para>
 
   <para>
-   Beginning in <productname>PostgreSQL</> 9.3, these index types also support
+   Beginning in <productname>MollyDB</> 9.3, these index types also support
    index searches for regular-expression matches
    (<literal>~</> and <literal>~*</> operators), for example
 <programlisting>

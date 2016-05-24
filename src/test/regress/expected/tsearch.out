@@ -777,7 +777,7 @@ SELECT to_tsquery('english', 'foo <-> a <-> the <-> bar');
  'foo' <3> 'bar'
 (1 row)
 
-SELECT phraseto_tsquery('english', 'PostgreSQL can be extended by the user in many ways');
+SELECT phraseto_tsquery('english', 'MollyDB can be extended by the user in many ways');
                            phraseto_tsquery                            
 -----------------------------------------------------------------------
  ( ( ( 'mollydb' <3> 'extend' ) <3> 'user' ) <2> 'mani' ) <-> 'way'

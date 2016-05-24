@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Check all exported PostgreSQL include files for C++ compatibility.
+# Check all exported MollyDB include files for C++ compatibility.
 # Run this from the top-level source directory after performing a build.
 # No output if everything is OK, else compiler errors.
 

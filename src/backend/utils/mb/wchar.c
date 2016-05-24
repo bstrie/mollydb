@@ -568,7 +568,7 @@ pg_utf_mblen(const unsigned char *s)
  *
  * Markus Kuhn -- 2001-09-08 -- public domain
  *
- * customised for PostgreSQL
+ * customised for MollyDB
  *
  * original available at : http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
  */

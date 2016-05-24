@@ -3,12 +3,12 @@
 # test parser generater for ecpg
 # call with backend parser as stdin
 #
-# Copyright (c) 2009-2016, PostgreSQL Global Development Group
+# Copyright (c) 2009-2016, MollyDB Global Development Group
 #
 # Written by Michael Meskes <meskes@mollydb.org>
 #            Andy Colson <andy@squeakycode.net>
 #
-# Placed under the same license as PostgreSQL.
+# Placed under the same license as MollyDB.
 #
 # Command line:  [-v] [path only to ecpg.addons] [full filename of gram.y]
 #  -v enables verbose mode... show's some stats... thought it might be interesting

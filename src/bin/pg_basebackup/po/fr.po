@@ -1,11 +1,11 @@
 # LANGUAGE message translation file for pg_basebackup
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-08 21:14+0000\n"
 "PO-Revision-Date: 2016-05-09 10:19+0200\n"
@@ -57,10 +57,10 @@ msgstr "%s : le nouveau répertoire n'est pas un chemin absolu dans la correspond
 #: pg_basebackup.c:231
 #, c-format
 msgid ""
-"%s takes a base backup of a running PostgreSQL server.\n"
+"%s takes a base backup of a running MollyDB server.\n"
 "\n"
 msgstr ""
-"%s prend une sauvegarde binaire d'un serveur PostgreSQL en cours d'exécution.\n"
+"%s prend une sauvegarde binaire d'un serveur MollyDB en cours d'exécution.\n"
 "\n"
 
 #: pg_basebackup.c:233 pg_receivexlog.c:66 pg_recvlogical.c:69
@@ -648,10 +648,10 @@ msgstr "%s : les liens symboliques ne sont pas supportés sur cette plateforme\n"
 #: pg_receivexlog.c:64
 #, c-format
 msgid ""
-"%s receives PostgreSQL streaming transaction logs.\n"
+"%s receives MollyDB streaming transaction logs.\n"
 "\n"
 msgstr ""
-"%s reçoit le flux des journaux de transactions PostgreSQL.\n"
+"%s reçoit le flux des journaux de transactions MollyDB.\n"
 "\n"
 
 #: pg_receivexlog.c:68 pg_recvlogical.c:75
@@ -813,10 +813,10 @@ msgstr "%s : déconnecté, attente de %d secondes avant une nouvelle tentative\n"
 #: pg_recvlogical.c:67
 #, c-format
 msgid ""
-"%s controls PostgreSQL logical decoding streams.\n"
+"%s controls MollyDB logical decoding streams.\n"
 "\n"
 msgstr ""
-"%s contrôle le flux des modifications logiques de PostgreSQL.\n"
+"%s contrôle le flux des modifications logiques de MollyDB.\n"
 "\n"
 
 #: pg_recvlogical.c:71

@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.5\n"
+"Project-Id-Version: MollyDB 9.5\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-11-03 17:13+0000\n"
 "PO-Revision-Date: 2015-11-03 22:14-0500\n"
@@ -480,10 +480,10 @@ msgstr "Versuchen Sie „%s --help“ für weitere Informationen.\n"
 #: pg_ctl.c:1922
 #, c-format
 msgid ""
-"%s is a utility to initialize, start, stop, or control a PostgreSQL server.\n"
+"%s is a utility to initialize, start, stop, or control a MollyDB server.\n"
 "\n"
 msgstr ""
-"%s ist ein Hilfsprogramm, um einen PostgreSQL-Server zu initialisieren, zu\n"
+"%s ist ein Hilfsprogramm, um einen MollyDB-Server zu initialisieren, zu\n"
 "starten, anzuhalten oder zu steuern.\n"
 "\n"
 
@@ -648,9 +648,9 @@ msgstr ""
 #, c-format
 msgid ""
 "  -o OPTIONS             command line options to pass to postgres\n"
-"                         (PostgreSQL server executable) or initdb\n"
+"                         (MollyDB server executable) or initdb\n"
 msgstr ""
-"  -o OPTIONEN            Kommandozeilenoptionen für postgres (PostgreSQL-\n"
+"  -o OPTIONEN            Kommandozeilenoptionen für postgres (MollyDB-\n"
 "                         Serverprogramm) oder initdb\n"
 
 #: pg_ctl.c:1962
@@ -718,23 +718,23 @@ msgstr ""
 
 #: pg_ctl.c:1976
 #, c-format
-msgid "  -N SERVICENAME  service name with which to register PostgreSQL server\n"
-msgstr "  -N DIENSTNAME   Systemdienstname für Registrierung des PostgreSQL-Servers\n"
+msgid "  -N SERVICENAME  service name with which to register MollyDB server\n"
+msgstr "  -N DIENSTNAME   Systemdienstname für Registrierung des MollyDB-Servers\n"
 
 #: pg_ctl.c:1977
 #, c-format
-msgid "  -P PASSWORD     password of account to register PostgreSQL server\n"
-msgstr "  -P PASSWORD     Passwort des Benutzers für Registrierung des PostgreSQL-Servers\n"
+msgid "  -P PASSWORD     password of account to register MollyDB server\n"
+msgstr "  -P PASSWORD     Passwort des Benutzers für Registrierung des MollyDB-Servers\n"
 
 #: pg_ctl.c:1978
 #, c-format
-msgid "  -U USERNAME     user name of account to register PostgreSQL server\n"
-msgstr "  -U USERNAME     Benutzername für Registrierung des PostgreSQL-Servers\n"
+msgid "  -U USERNAME     user name of account to register MollyDB server\n"
+msgstr "  -U USERNAME     Benutzername für Registrierung des MollyDB-Servers\n"
 
 #: pg_ctl.c:1979
 #, c-format
-msgid "  -S START-TYPE   service start type to register PostgreSQL server\n"
-msgstr "  -S STARTTYP     Systemdienst-Starttyp für PostgreSQL-Server\n"
+msgid "  -S START-TYPE   service start type to register MollyDB server\n"
+msgstr "  -S STARTTYP     Systemdienst-Starttyp für MollyDB-Server\n"
 
 #: pg_ctl.c:1981
 #, c-format

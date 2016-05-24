@@ -499,7 +499,7 @@ having exists (select 1 from onek b where sum(distinct a.four) = b.four);
 select max(foo COLLATE "C") filter (where (bar collate "POSIX") > '0')
 from (values ('a', 'b')) AS v(foo,bar);
 
--- outer reference in FILTER (PostgreSQL extension)
+-- outer reference in FILTER (MollyDB extension)
 select (select count(*)
         from (values (1)) t0(inner_c))
 from (values (2),(3)) t1(outer_c); -- inner query is aggregation query
@@ -514,7 +514,7 @@ select
      filter (where o.unique1 < 10))
 from tenk1 o;					-- outer query is aggregation query
 
--- subquery in FILTER clause (PostgreSQL extension)
+-- subquery in FILTER clause (MollyDB extension)
 select sum(unique1) FILTER (WHERE
   unique1 IN (SELECT unique1 FROM onek where unique1 < 100)) FROM tenk1;
 

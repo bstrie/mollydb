@@ -1,11 +1,11 @@
 # Polish message translation file for pg_basebackup
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Begina Felicysym <begina.felicysym@wp.eu>, 2011, 2012, 2013.
 # grzegorz <begina.felicysym@wp.eu>, 2014, 2015.
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_basebackup (PostgreSQL 9.5)\n"
+"Project-Id-Version: pg_basebackup (MollyDB 9.5)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-10-29 01:43+0000\n"
 "PO-Revision-Date: 2015-12-22 21:17-0500\n"
@@ -57,10 +57,10 @@ msgstr "%s: nowy folder to nie ścieżka bezwzględna w mapowaniu przestrzeni ta
 #: pg_basebackup.c:231
 #, c-format
 msgid ""
-"%s takes a base backup of a running PostgreSQL server.\n"
+"%s takes a base backup of a running MollyDB server.\n"
 "\n"
 msgstr ""
-"%s bierze podstawową kopię zapasową działającego serwera PostgreSQL.\n"
+"%s bierze podstawową kopię zapasową działającego serwera MollyDB.\n"
 "\n"
 
 #: pg_basebackup.c:233 pg_receivexlog.c:66 pg_recvlogical.c:69
@@ -631,10 +631,10 @@ msgstr "%s: linki symb. nie są obsługiwane na tej platformie\n"
 #: pg_receivexlog.c:64
 #, c-format
 msgid ""
-"%s receives PostgreSQL streaming transaction logs.\n"
+"%s receives MollyDB streaming transaction logs.\n"
 "\n"
 msgstr ""
-"%s odbiera logi strumieniowania transakcji PostgreSQL.\n"
+"%s odbiera logi strumieniowania transakcji MollyDB.\n"
 "\n"
 
 #: pg_receivexlog.c:68 pg_recvlogical.c:75
@@ -791,10 +791,10 @@ msgstr "%s: rozłączono; czekam %d sekund i ponawiam próbę\n"
 #: pg_recvlogical.c:67
 #, c-format
 msgid ""
-"%s controls PostgreSQL logical decoding streams.\n"
+"%s controls MollyDB logical decoding streams.\n"
 "\n"
 msgstr ""
-"%s kontroluje dekodujące strumienie logiczne PostgreSQL.\n"
+"%s kontroluje dekodujące strumienie logiczne MollyDB.\n"
 "\n"
 
 #: pg_recvlogical.c:71

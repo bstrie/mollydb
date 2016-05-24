@@ -1,13 +1,13 @@
 /*--------------------------------------------------------------------
  * ps_status.c
  *
- * Routines to support changing the ps display of PostgreSQL backends
+ * Routines to support changing the ps display of MollyDB backends
  * to contain some useful information. Mechanism differs wildly across
  * platforms.
  *
  * src/backend/utils/misc/ps_status.c
  *
- * Copyright (c) 2000-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2000-2016, MollyDB Global Development Group
  * various details abducted from various places
  *--------------------------------------------------------------------
  */

@@ -3,7 +3,7 @@
  * extension.c
  *	  Commands to manipulate extensions
  *
- * Extensions in PostgreSQL allow management of collections of SQL objects.
+ * Extensions in MollyDB allow management of collections of SQL objects.
  *
  * All we need internally to manage an extension is an OID so that the
  * dependent objects can be associated with it.  An extension is created by
@@ -12,7 +12,7 @@
  * mollydb.conf and recovery.conf.  An extension also has an installation
  * script file, containing SQL commands to create the extension's objects.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *

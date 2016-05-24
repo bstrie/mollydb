@@ -7,7 +7,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-08 21:13+0000\n"
 "PO-Revision-Date: 2016-05-09 10:50+0200\n"
@@ -1847,10 +1847,10 @@ msgstr "%s\n"
 #: help.c:74
 #, c-format
 msgid ""
-"psql is the PostgreSQL interactive terminal.\n"
+"psql is the MollyDB interactive terminal.\n"
 "\n"
 msgstr ""
-"psql est l'interface interactive de PostgreSQL.\n"
+"psql est l'interface interactive de MollyDB.\n"
 "\n"
 
 #: help.c:75 help.c:332 help.c:366 help.c:393
@@ -2166,14 +2166,14 @@ msgstr ""
 msgid ""
 "\n"
 "For more information, type \"\\?\" (for internal commands) or \"\\help\" (for SQL\n"
-"commands) from within psql, or consult the psql section in the PostgreSQL\n"
+"commands) from within psql, or consult the psql section in the MollyDB\n"
 "documentation.\n"
 "\n"
 msgstr ""
 "\n"
 "Pour en savoir davantage, saisissez « \\? » (pour les commandes internes) ou\n"
 "« \\help » (pour les commandes SQL) dans psql, ou consultez la section psql\n"
-"de la documentation de PostgreSQL.\n"
+"de la documentation de MollyDB.\n"
 "\n"
 
 #: help.c:147
@@ -2188,10 +2188,10 @@ msgstr "Général\n"
 
 #: help.c:174
 #, c-format
-msgid "  \\copyright             show PostgreSQL usage and distribution terms\n"
+msgid "  \\copyright             show MollyDB usage and distribution terms\n"
 msgstr ""
 "  \\copyright           affiche les conditions d'utilisation et de\n"
-"                       distribution de PostgreSQL\n"
+"                       distribution de MollyDB\n"
 
 #: help.c:175
 #, c-format
@@ -3235,15 +3235,15 @@ msgstr "Saisissez « \\q » pour quitter %s.\n"
 
 #: mainloop.c:190
 msgid ""
-"The input is a PostgreSQL custom-format dump.\n"
+"The input is a MollyDB custom-format dump.\n"
 "Use the pg_restore command-line client to restore this dump to a database.\n"
 msgstr ""
-"Les données en entrée proviennent d'une sauvegarde PostgreSQL au format custom.\n"
+"Les données en entrée proviennent d'une sauvegarde MollyDB au format custom.\n"
 "Utilisez l'outil en ligne de commande pg_restore pour restaurer cette sauvegarde dans une base de données.\n"
 
 #: mainloop.c:210
-msgid "You are using psql, the command-line interface to PostgreSQL."
-msgstr "Vous utilisez psql, l'interface en ligne de commande de PostgreSQL."
+msgid "You are using psql, the command-line interface to MollyDB."
+msgstr "Vous utilisez psql, l'interface en ligne de commande de MollyDB."
 
 #: mainloop.c:211
 #, c-format
@@ -5397,17 +5397,17 @@ msgstr ""
 #~ "\n"
 
 #~ msgid ""
-#~ "Welcome to %s %s, the PostgreSQL interactive terminal.\n"
+#~ "Welcome to %s %s, the MollyDB interactive terminal.\n"
 #~ "\n"
 #~ msgstr ""
-#~ "Bienvenue dans %s %s, l'interface interactive de PostgreSQL.\n"
+#~ "Bienvenue dans %s %s, l'interface interactive de MollyDB.\n"
 #~ "\n"
 
 #~ msgid ""
-#~ "Welcome to %s %s (server %s), the PostgreSQL interactive terminal.\n"
+#~ "Welcome to %s %s (server %s), the MollyDB interactive terminal.\n"
 #~ "\n"
 #~ msgstr ""
-#~ "Bienvenue dans %s %s (serveur %s), l'interface interactive de PostgreSQL.\n"
+#~ "Bienvenue dans %s %s (serveur %s), l'interface interactive de MollyDB.\n"
 #~ "\n"
 
 #~ msgid "Copy, Large Object\n"

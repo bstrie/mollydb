@@ -1,7 +1,7 @@
 /* src/interfaces/ecpg/preproc/ecpg.c */
 
-/* Main for ecpg, the PostgreSQL embedded SQL precompiler. */
-/* Copyright (c) 1996-2016, PostgreSQL Global Development Group */
+/* Main for ecpg, the MollyDB embedded SQL precompiler. */
+/* Copyright (c) 1996-2016, MollyDB Global Development Group */
 
 #include "postgres_fe.h"
 
@@ -32,7 +32,7 @@ struct _defines *defines = NULL;
 static void
 help(const char *progname)
 {
-	printf(_("%s is the PostgreSQL embedded SQL preprocessor for C programs.\n\n"),
+	printf(_("%s is the MollyDB embedded SQL preprocessor for C programs.\n\n"),
 		   progname);
 	printf(_("Usage:\n"
 			 "  %s [OPTION]... FILE...\n\n"),
@@ -150,7 +150,7 @@ main(int argc, char *const argv[])
 		switch (c)
 		{
 			case ECPG_GETOPT_LONG_VERSION:
-				printf("ecpg (PostgreSQL %s) %d.%d.%d\n", PG_VERSION,
+				printf("ecpg (MollyDB %s) %d.%d.%d\n", PG_VERSION,
 					   MAJOR_VERSION, MINOR_VERSION, PATCHLEVEL);
 				exit(0);
 			case ECPG_GETOPT_LONG_HELP:
@@ -264,7 +264,7 @@ main(int argc, char *const argv[])
 
 	if (verbose)
 	{
-		fprintf(stderr, _("%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"),
+		fprintf(stderr, _("%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"),
 				progname, MAJOR_VERSION, MINOR_VERSION, PATCHLEVEL);
 		fprintf(stderr, _("EXEC SQL INCLUDE ... search starts here:\n"));
 		for (ip = include_paths; ip != NULL; ip = ip->next)

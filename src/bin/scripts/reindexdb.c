@@ -2,7 +2,7 @@
  *
  * reindexdb
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * src/bin/scripts/reindexdb.c
  *
@@ -389,7 +389,7 @@ reindex_system_catalogs(const char *dbname, const char *host, const char *port,
 static void
 help(const char *progname)
 {
-	printf(_("%s reindexes a PostgreSQL database.\n\n"), progname);
+	printf(_("%s reindexes a MollyDB database.\n\n"), progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]... [DBNAME]\n"), progname);
 	printf(_("\nOptions:\n"));

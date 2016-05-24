@@ -1,13 +1,13 @@
 # German message translation file for pg_basebackup
-# Copyright (C) 2011 - 2016 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 - 2016 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Peter Eisentraut <peter_e@gmx.net>, 2011 - 2016.
 #
 # Use these quotes: „%s“
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.6\n"
+"Project-Id-Version: MollyDB 9.6\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-04-12 20:14+0000\n"
 "PO-Revision-Date: 2016-04-12 20:49-0400\n"
@@ -58,10 +58,10 @@ msgstr "%s: neues Verzeichnis im Tablespace-Mapping ist kein absoluter Pfad: %s\
 #: pg_basebackup.c:231
 #, c-format
 msgid ""
-"%s takes a base backup of a running PostgreSQL server.\n"
+"%s takes a base backup of a running MollyDB server.\n"
 "\n"
 msgstr ""
-"%s erzeugt eine Basissicherung eines laufenden PostgreSQL-Servers.\n"
+"%s erzeugt eine Basissicherung eines laufenden MollyDB-Servers.\n"
 "\n"
 
 #: pg_basebackup.c:233 pg_receivexlog.c:66 pg_recvlogical.c:69
@@ -631,10 +631,10 @@ msgstr "%s: symbolische Verknüpfungen werden auf dieser Plattform nicht unterst
 #: pg_receivexlog.c:64
 #, c-format
 msgid ""
-"%s receives PostgreSQL streaming transaction logs.\n"
+"%s receives MollyDB streaming transaction logs.\n"
 "\n"
 msgstr ""
-"%s empfängt PostgreSQL-Streaming-Transaktionslogs.\n"
+"%s empfängt MollyDB-Streaming-Transaktionslogs.\n"
 "\n"
 
 #: pg_receivexlog.c:68 pg_recvlogical.c:75
@@ -784,10 +784,10 @@ msgstr "%s: Verbindung beendet; erneuter Versuch in %d Sekunden\n"
 #: pg_recvlogical.c:67
 #, c-format
 msgid ""
-"%s controls PostgreSQL logical decoding streams.\n"
+"%s controls MollyDB logical decoding streams.\n"
 "\n"
 msgstr ""
-"%s kontrolliert logische Dekodierungsströme von PostgreSQL.\n"
+"%s kontrolliert logische Dekodierungsströme von MollyDB.\n"
 "\n"
 
 #: pg_recvlogical.c:71

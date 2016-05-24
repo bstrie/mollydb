@@ -16,7 +16,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 9.1.X release series in September 2016.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -749,7 +749,7 @@
       A reloption value that isn't a simple identifier or number could lead
       to dump/reload failures due to syntax errors in CREATE statements
       issued by <application>pg_dump</>.  This is not an issue with any
-      reloption currently supported by core <productname>PostgreSQL</>, but
+      reloption currently supported by core <productname>MollyDB</>, but
       extensions could allow reloptions that cause the problem.
      </para>
     </listitem>
@@ -779,7 +779,7 @@
       This change mitigates a <application>PL/Java</> security bug
       (CVE-2016-0766), which was fixed in <application>PL/Java</> by marking
       these parameters as superuser-only.  To fix the security hazard for
-      sites that update <productname>PostgreSQL</> more frequently
+      sites that update <productname>MollyDB</> more frequently
       than <application>PL/Java</>, make the core code aware of them also.
      </para>
     </listitem>
@@ -1426,7 +1426,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
     <listitem>
      <para>
-      Make the numeric form of the <productname>PostgreSQL</> version number
+      Make the numeric form of the <productname>MollyDB</> version number
       (e.g., <literal>90405</>) readily available to extension Makefiles,
       as a variable named <varname>VERSION_NUM</> (Michael Paquier)
      </para>
@@ -1590,7 +1590,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
       For a long time, <application>libpq</> was coded so that the only SSL
       protocol it would allow was TLS v1.  Now that newer TLS versions are
       becoming popular, allow it to negotiate the highest commonly-supported
-      TLS version with the server.  (<productname>PostgreSQL</> servers were
+      TLS version with the server.  (<productname>MollyDB</> servers were
       already capable of such negotiation, so no change is needed on the
       server side.)  This is a back-patch of a change already released in
       9.4.0.
@@ -1717,7 +1717,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
      <para>
       While the latter behavior is clearly a bug, there might be applications
       depending on the former behavior; therefore the function declarations
-      will not be changed by default until <productname>PostgreSQL</> 9.5.
+      will not be changed by default until <productname>MollyDB</> 9.5.
       In pre-9.5 branches, the old behavior exists in version 1.0 of
       the <literal>citext</> extension, while we have provided corrected
       declarations in version 1.1 (which is <emphasis>not</> installed by
@@ -1909,7 +1909,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
      <para>
       Without this, identically-named users from different realms cannot be
       distinguished.  For the moment this is only a documentation change, but
-      it will become the default setting in <productname>PostgreSQL</> 9.5.
+      it will become the default setting in <productname>MollyDB</> 9.5.
      </para>
     </listitem>
 
@@ -2169,9 +2169,9 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
      <para>
       When <function>to_char()</> processes a numeric formatting template
-      calling for a large number of digits, <productname>PostgreSQL</>
+      calling for a large number of digits, <productname>MollyDB</>
       would read past the end of a buffer.  When processing a crafted
-      timestamp formatting template, <productname>PostgreSQL</> would write
+      timestamp formatting template, <productname>MollyDB</> would write
       past the end of a buffer.  Either case could crash the server.
       We have not ruled out the possibility of attacks that lead to
       privilege escalation, though they seem unlikely.
@@ -2186,7 +2186,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
      </para>
 
      <para>
-      <productname>PostgreSQL</> includes a replacement implementation
+      <productname>MollyDB</> includes a replacement implementation
       of <function>printf</> and related functions.  This code will overrun
       a stack buffer when formatting a floating point number (conversion
       specifiers <literal>e</>, <literal>E</>, <literal>f</>, <literal>F</>,
@@ -2195,13 +2195,13 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
       possibility of attacks that lead to privilege escalation.
       A database user can trigger such a buffer overrun through
       the <function>to_char()</> SQL function.  While that is the only
-      affected core <productname>PostgreSQL</> functionality, extension
+      affected core <productname>MollyDB</> functionality, extension
       modules that use printf-family functions may be at risk as well.
      </para>
 
      <para>
-      This issue primarily affects <productname>PostgreSQL</> on Windows.
-      <productname>PostgreSQL</> uses the system implementation of these
+      This issue primarily affects <productname>MollyDB</> on Windows.
+      <productname>MollyDB</> uses the system implementation of these
       functions where adequate, which it is on other modern platforms.
       (CVE-2015-0242)
      </para>
@@ -2841,7 +2841,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
      <para>
       With OpenLDAP versions 2.4.24 through 2.4.31,
-      inclusive, <productname>PostgreSQL</> backends can crash at exit.
+      inclusive, <productname>MollyDB</> backends can crash at exit.
       Raise a warning during <application>configure</> based on the
       compile-time OpenLDAP version number, and test the crashing scenario
       in the <filename>contrib/dblink</> regression test.
@@ -2875,7 +2875,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
      </para>
 
      <para>
-      Previously, <productname>PostgreSQL</> assumed that the UTC offset
+      Previously, <productname>MollyDB</> assumed that the UTC offset
       associated with a time zone abbreviation (such as <literal>EST</>)
       never changes in the usage of any particular locale.  However this
       assumption fails in the real world, so introduce the ability for a
@@ -2883,7 +2883,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
       Update the zone abbreviation definition files to make use of this
       feature in timezone locales that have changed the UTC offset of their
       abbreviations since 1970 (according to the IANA timezone database).
-      In such timezones, <productname>PostgreSQL</> will now associate the
+      In such timezones, <productname>MollyDB</> will now associate the
       correct UTC offset with the abbreviation depending on the given date.
      </para>
     </listitem>
@@ -4335,7 +4335,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
      </para>
 
      <para>
-      <productname>PostgreSQL</> case-folds non-ASCII characters only
+      <productname>MollyDB</> case-folds non-ASCII characters only
       when using a single-byte server encoding.
      </para>
     </listitem>
@@ -5223,7 +5223,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
      <para>
       This ancient function is not used anywhere by
-      <productname>PostgreSQL</> itself, but it might still be used by some
+      <productname>MollyDB</> itself, but it might still be used by some
       client code.
      </para>
     </listitem>
@@ -5571,7 +5571,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
      <para>
       While this mistake had no particular impact on
-      <productname>PostgreSQL</productname> itself, it was bad for
+      <productname>MollyDB</productname> itself, it was bad for
       applications that rely on <function>txid_current()</> and related
       functions: the TXID value would appear to go backwards.
      </para>
@@ -6364,7 +6364,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
     <listitem>
      <para>
-      Fix mapping of PostgreSQL encodings to Python encodings in PL/Python
+      Fix mapping of MollyDB encodings to Python encodings in PL/Python
       (Jan Urbanski)
      </para>
     </listitem>
@@ -7195,7 +7195,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
       A similar problem still afflicts back-references that are embedded in a
       larger quantified expression, rather than being the immediate subject
       of the quantifier.  This will be addressed in a future
-      <productname>PostgreSQL</> release.
+      <productname>MollyDB</> release.
      </para>
     </listitem>
 
@@ -7206,7 +7206,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
      </para>
 
      <para>
-      A patch in the December 2011 releases of <productname>PostgreSQL</>
+      A patch in the December 2011 releases of <productname>MollyDB</>
       caused memory leakage in these operations, which could be significant
       in scenarios such as building a btree index on such a column.
      </para>
@@ -8242,9 +8242,9 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
    <title>Overview</title>
 
    <para>
-    This release shows <productname>PostgreSQL</> moving beyond the
+    This release shows <productname>MollyDB</> moving beyond the
     traditional relational-database feature set with new, ground-breaking
-    functionality that is unique to <productname>PostgreSQL</>.
+    functionality that is unique to <productname>MollyDB</>.
     The streaming replication feature introduced in release 9.0 is
     significantly enhanced by adding a synchronous-replication option,
     streaming backups, and monitoring improvements.
@@ -8279,7 +8279,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
     <listitem>
      <para>
       Add <link linkend="extend-extensions">extensions</link> which
-      simplify packaging of additions to <productname>PostgreSQL</>
+      simplify packaging of additions to <productname>MollyDB</>
      </para>
     </listitem>
 
@@ -8662,7 +8662,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
    <para>
     Below you will find a detailed account of the changes between
-    <productname>PostgreSQL</productname> 9.1 and the previous major
+    <productname>MollyDB</productname> 9.1 and the previous major
     release.
    </para>
 
@@ -9428,7 +9428,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
       <listitem>
        <para>
         Add <link linkend="extend-extensions">extensions</link> which
-        simplify packaging of additions to <productname>PostgreSQL</>
+        simplify packaging of additions to <productname>MollyDB</>
         (Dimitri Fontaine, Tom Lane)
        </para>
 
@@ -9438,7 +9438,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
         linkend="SQL-ALTEREXTENSION"><command>ALTER</></link>/<link
         linkend="SQL-DROPEXTENSION"><command>DROP EXTENSION</></link>
         commands.  This replaces ad-hoc methods of grouping objects that
-        are added to a <productname>PostgreSQL</> installation.
+        are added to a <productname>MollyDB</> installation.
        </para>
       </listitem>
 
@@ -9451,7 +9451,7 @@ Branch: REL9_0_STABLE [9d6af7367] 2015-08-15 11:02:34 -0400
 
        <para>
         This allows data stored outside the database to be used like
-        native <productname>PostgreSQL</>-stored data.  Foreign tables
+        native <productname>MollyDB</>-stored data.  Foreign tables
         are currently read-only, however.
        </para>
       </listitem>
@@ -10535,7 +10535,7 @@ SELECT * FROM places ORDER BY location <-> point '(101,456)' LIMIT 10;
        </para>
 
        <para>
-        <productname>PostgreSQL</> already allowed servers to check
+        <productname>MollyDB</> already allowed servers to check
         the client user name when connecting via Unix-domain sockets.
        </para>
       </listitem>

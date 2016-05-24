@@ -6,7 +6,7 @@ gen_require(`
 
 ## <desc>
 ## <p>
-## Allow to launch regression test of SE-PostgreSQL
+## Allow to launch regression test of SE-MollyDB
 ## Don't switch to TRUE in normal cases
 ## </p>
 ## </desc>

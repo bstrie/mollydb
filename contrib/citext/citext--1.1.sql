@@ -4,7 +4,7 @@
 \echo Use "CREATE EXTENSION citext" to load this file. \quit
 
 --
---  PostgreSQL code for CITEXT.
+--  MollyDB code for CITEXT.
 --
 -- Most I/O functions, and a few others, piggyback on the "text" type
 -- functions via the implicit cast to text.

@@ -1,12 +1,12 @@
 /*
- * psql - the PostgreSQL interactive terminal
+ * psql - the MollyDB interactive terminal
  *
  * Support for the various \d ("describe") commands.  Note that the current
  * expectation is that all functions in this file will succeed when working
  * with servers of versions 7.4 and up.  It's okay to omit irrelevant
  * information for an old server, but not to fail outright.
  *
- * Copyright (c) 2000-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2000-2016, MollyDB Global Development Group
  *
  * src/bin/psql/describe.c
  */
@@ -2948,7 +2948,7 @@ listTables(const char *tabtypes, const char *pattern, bool verbose, bool showSys
 	if (verbose)
 	{
 		/*
-		 * As of PostgreSQL 9.0, use pg_table_size() to show a more acurate
+		 * As of MollyDB 9.0, use pg_table_size() to show a more acurate
 		 * size of a table, including FSM, VM and TOAST tables.
 		 */
 		if (pset.sversion >= 90000)

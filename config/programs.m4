@@ -19,7 +19,7 @@ if test "$BISON"; then
   if echo "$pgac_bison_version" | $AWK '{ if ([$]4 < 1.875) exit 0; else exit 1;}'
   then
     AC_MSG_WARN([
-*** The installed version of Bison, $BISON, is too old to use with PostgreSQL.
+*** The installed version of Bison, $BISON, is too old to use with MollyDB.
 *** Bison version 1.875 or later is required, but this is $pgac_bison_version.])
     BISON=""
   fi
@@ -35,10 +35,10 @@ fi
 
 if test -z "$BISON"; then
   AC_MSG_WARN([
-*** Without Bison you will not be able to build PostgreSQL from Git nor
+*** Without Bison you will not be able to build MollyDB from Git nor
 *** change any of the parser definition files.  You can obtain Bison from
 *** a GNU mirror site.  (If you are using the official distribution of
-*** PostgreSQL then you do not need to worry about this, because the Bison
+*** MollyDB then you do not need to worry about this, because the Bison
 *** output is pre-generated.)])
 fi
 # We don't need AC_SUBST(BISON) because AC_PATH_PROG did it
@@ -83,7 +83,7 @@ else
             break 2
           else
             AC_MSG_WARN([
-*** The installed version of Flex, $pgac_candidate, is too old to use with PostgreSQL.
+*** The installed version of Flex, $pgac_candidate, is too old to use with MollyDB.
 *** Flex version 2.5.31 or later is required, but this is $pgac_flex_version.])
           fi
         fi
@@ -97,10 +97,10 @@ fi
 
 if test x"$pgac_cv_path_flex" = x"no"; then
   AC_MSG_WARN([
-*** Without Flex you will not be able to build PostgreSQL from Git nor
+*** Without Flex you will not be able to build MollyDB from Git nor
 *** change any of the scanner definition files.  You can obtain Flex from
 *** a GNU mirror site.  (If you are using the official distribution of
-*** PostgreSQL then you do not need to worry about this because the Flex
+*** MollyDB then you do not need to worry about this because the Flex
 *** output is pre-generated.)])
 
   FLEX=
@@ -118,7 +118,7 @@ AC_SUBST(FLEXFLAGS)
 
 # PGAC_LDAP_SAFE
 # --------------
-# PostgreSQL sometimes loads libldap_r and plain libldap into the same
+# MollyDB sometimes loads libldap_r and plain libldap into the same
 # process.  Check for OpenLDAP versions known not to tolerate doing so; assume
 # non-OpenLDAP implementations are safe.  The dblink test suite exercises the
 # hazardous interaction directly.

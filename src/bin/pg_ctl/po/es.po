@@ -1,14 +1,14 @@
 # Spanish translation of pg_ctl.
 #
-# Copyright (C) 2004-2013 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2004-2013 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Alvaro Herrera <alvherre@alvh.no-ip.org>, 2004-2013
 # Martín Marqués <martin@2ndquadrant.com>, 2013
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_ctl (PostgreSQL 9.6)\n"
+"Project-Id-Version: pg_ctl (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:14+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
@@ -498,11 +498,11 @@ msgstr "Use «%s --help» para obtener más información.\n"
 #: pg_ctl.c:1909
 #, c-format
 msgid ""
-"%s is a utility to initialize, start, stop, or control a PostgreSQL server.\n"
+"%s is a utility to initialize, start, stop, or control a MollyDB server.\n"
 "\n"
 msgstr ""
 "%s es un programa para inicializar, iniciar, detener o controlar\n"
-"un servidor PostgreSQL.\n"
+"un servidor MollyDB.\n"
 "\n"
 
 #: pg_ctl.c:1910
@@ -661,10 +661,10 @@ msgstr "  -l  --log=ARCHIVO      guardar el registro del servidor en ARCHIVO.\n"
 #, c-format
 msgid ""
 "  -o OPTIONS             command line options to pass to postgres\n"
-"                         (PostgreSQL server executable) or initdb\n"
+"                         (MollyDB server executable) or initdb\n"
 msgstr ""
 "  -o OPCIONES            parámetros de línea de órdenes a pasar a postgres\n"
-"                         (ejecutable del servidor de PostgreSQL) o initdb\n"
+"                         (ejecutable del servidor de MollyDB) o initdb\n"
 
 #: pg_ctl.c:1949
 #, c-format
@@ -731,31 +731,31 @@ msgstr ""
 
 #: pg_ctl.c:1963
 #, c-format
-msgid "  -N SERVICENAME  service name with which to register PostgreSQL server\n"
+msgid "  -N SERVICENAME  service name with which to register MollyDB server\n"
 msgstr ""
 "  -N SERVICIO            nombre de servicio con el cual registrar\n"
-"                         el servidor PostgreSQL\n"
+"                         el servidor MollyDB\n"
 
 #: pg_ctl.c:1964
 #, c-format
-msgid "  -P PASSWORD     password of account to register PostgreSQL server\n"
+msgid "  -P PASSWORD     password of account to register MollyDB server\n"
 msgstr ""
 "  -P CONTRASEÑA          contraseña de la cuenta con la cual registrar\n"
-"                         el servidor PostgreSQL\n"
+"                         el servidor MollyDB\n"
 
 #: pg_ctl.c:1965
 #, c-format
-msgid "  -U USERNAME     user name of account to register PostgreSQL server\n"
+msgid "  -U USERNAME     user name of account to register MollyDB server\n"
 msgstr ""
 "  -U USUARIO             nombre de usuario de la cuenta con la cual\n"
-"                         registrar el servidor PostgreSQL\n"
+"                         registrar el servidor MollyDB\n"
 
 #: pg_ctl.c:1966
 #, c-format
-msgid "  -S START-TYPE   service start type to register PostgreSQL server\n"
+msgid "  -S START-TYPE   service start type to register MollyDB server\n"
 msgstr ""
 "  -S TIPO-INICIO         tipo de inicio de servicio con que registrar\n"
-"                         el servidor PostgreSQL\n"
+"                         el servidor MollyDB\n"
 
 #: pg_ctl.c:1968
 #, c-format

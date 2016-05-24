@@ -2,7 +2,7 @@
  * rewrite/rowsecurity.c
  *	  Routines to support policies for row level security (aka RLS).
  *
- * Policies in PostgreSQL provide a mechanism to limit what records are
+ * Policies in MollyDB provide a mechanism to limit what records are
  * returned to a user and what records a user is permitted to add to a table.
  *
  * Policies can be defined for specific roles, specific commands, or provided
@@ -29,7 +29,7 @@
  * in the current environment, but that may change if the row_security GUC or
  * the current role changes.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  */
 #include "postgres.h"

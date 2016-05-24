@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: pg_config (PostgreSQL 9.0)\n"
+"Project-Id-Version: pg_config (MollyDB 9.0)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2013-09-02 00:26+0000\n"
 "PO-Revision-Date: 2013-09-02 13:17+0800\n"
@@ -66,11 +66,11 @@ msgstr "没有记录\n"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%s 提供 PostgreSQL 的安装信息.\n"
+"%s 提供 MollyDB 的安装信息.\n"
 "\n"
 
 #: pg_config.c:429
@@ -167,64 +167,64 @@ msgstr "  --pgxs                显示扩展 makefile 所在位置\n"
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
+"                        MollyDB was built\n"
 msgstr ""
-"  --configure           显示编译 PostgreSQL 时 \"configure\"\n"
+"  --configure           显示编译 MollyDB 时 \"configure\"\n"
 "                        的选项\n"
 
 #: pg_config.c:448
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
-msgstr "  --cc                   显示在创建PostgreSQL时所使用的CC值\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
+msgstr "  --cc                   显示在创建MollyDB时所使用的CC值\n"
 
 #: pg_config.c:449
 #, c-format
 msgid ""
-"  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cppflags            当创建PostgreSQL时显示CPPFLAGS的值\n"
+"  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
+msgstr "  --cppflags            当创建MollyDB时显示CPPFLAGS的值\n"
 
 #: pg_config.c:450
 #, c-format
 msgid ""
-"  --cflags              show CFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cflags             显示在创建PostgreSQL时所使用的CFLAG值\n"
+"  --cflags              show CFLAGS value used when MollyDB was built\n"
+msgstr "  --cflags             显示在创建MollyDB时所使用的CFLAG值\n"
 
 #: pg_config.c:451
 #, c-format
 msgid ""
-"  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
-msgstr " --cflags_sl            当创建PostgreSQL时显示CFLAGS_SL的值\n"
+"  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
+msgstr " --cflags_sl            当创建MollyDB时显示CFLAGS_SL的值\n"
 
 #: pg_config.c:452
 #, c-format
 msgid ""
-"  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
-msgstr "  --ldflags             显示在创建PostgreSQL时所使用的LDFLAG值\n"
+"  --ldflags             show LDFLAGS value used when MollyDB was built\n"
+msgstr "  --ldflags             显示在创建MollyDB时所使用的LDFLAG值\n"
 
 #: pg_config.c:453
 #, c-format
 msgid ""
-"  --ldflags_ex          show LDFLAGS_EX value used when PostgreSQL was "
+"  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was "
 "built\n"
-msgstr "  --ldflags_ex          当创建PostgreSQL时显示LDFLAGS_EX的值\n"
+msgstr "  --ldflags_ex          当创建MollyDB时显示LDFLAGS_EX的值\n"
 
 #: pg_config.c:454
 #, c-format
 msgid ""
-"  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was "
+"  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was "
 "built\n"
-msgstr "  --ldflags_sl           当创建PostgreSQL时显示LDFLAGS_SL的值\n"
+msgstr "  --ldflags_sl           当创建MollyDB时显示LDFLAGS_SL的值\n"
 
 #: pg_config.c:455
 #, c-format
 msgid ""
-"  --libs                show LIBS value used when PostgreSQL was built\n"
-msgstr "  --libs               显示在创建PostgreSQL时所使用的LIBS值\n"
+"  --libs                show LIBS value used when MollyDB was built\n"
+msgstr "  --libs               显示在创建MollyDB时所使用的LIBS值\n"
 
 #: pg_config.c:456
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             显示PostgreSQL的版本信息\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             显示MollyDB的版本信息\n"
 
 #: pg_config.c:457
 #, c-format

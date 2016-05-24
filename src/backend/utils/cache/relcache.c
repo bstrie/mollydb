@@ -3,7 +3,7 @@
  * relcache.c
  *	  POSTGRES relation descriptor cache code
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -2573,7 +2573,7 @@ RememberToFreeTupleDescAtEOX(TupleDesc td)
  * cache entries (since we can't safely do database accesses).  Therefore
  * we must reset refcnts before handling pending invalidations.
  *
- * As of PostgreSQL 8.1, relcache refcnts should get released by the
+ * As of MollyDB 8.1, relcache refcnts should get released by the
  * ResourceOwner mechanism.  This routine just does a debugging
  * cross-check that no pins remain.  However, we also need to do special
  * cleanup when the current transaction created any relations or made use

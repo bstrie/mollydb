@@ -16,7 +16,7 @@
   </para>
 
   <para>
-   This is expected to be the last <productname>PostgreSQL</> release
+   This is expected to be the last <productname>MollyDB</> release
    in the 8.4.X series.  Users are encouraged to update to a newer
    release branch soon.
   </para>
@@ -335,7 +335,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 8.4.X release series in July 2014.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -454,7 +454,7 @@
   </para>
 
   <para>
-   The <productname>PostgreSQL</> community will stop releasing updates
+   The <productname>MollyDB</> community will stop releasing updates
    for the 8.4.X release series in July 2014.
    Users are encouraged to update to a newer release branch soon.
   </para>
@@ -1139,7 +1139,7 @@
      </para>
 
      <para>
-      <productname>PostgreSQL</> case-folds non-ASCII characters only
+      <productname>MollyDB</> case-folds non-ASCII characters only
       when using a single-byte server encoding.
      </para>
     </listitem>
@@ -1683,7 +1683,7 @@
 
      <para>
       This ancient function is not used anywhere by
-      <productname>PostgreSQL</> itself, but it might still be used by some
+      <productname>MollyDB</> itself, but it might still be used by some
       client code.
      </para>
     </listitem>
@@ -2856,7 +2856,7 @@
       A similar problem still afflicts back-references that are embedded in a
       larger quantified expression, rather than being the immediate subject
       of the quantifier.  This will be addressed in a future
-      <productname>PostgreSQL</> release.
+      <productname>MollyDB</> release.
      </para>
     </listitem>
 
@@ -2867,7 +2867,7 @@
      </para>
 
      <para>
-      A patch in the December 2011 releases of <productname>PostgreSQL</>
+      A patch in the December 2011 releases of <productname>MollyDB</>
       caused memory leakage in these operations, which could be significant
       in scenarios such as building a btree index on such a column.
      </para>
@@ -4293,7 +4293,7 @@
 
      <para>
       The default on Linux has actually been <literal>fdatasync</> for many
-      years, but recent kernel changes caused <productname>PostgreSQL</> to
+      years, but recent kernel changes caused <productname>MollyDB</> to
       choose <literal>open_datasync</> instead.  This choice did not result
       in any performance improvement, and caused outright failures on
       certain filesystems, notably <literal>ext4</> with the
@@ -6251,7 +6251,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
     <listitem>
      <para>
       Ensure that Perl arrays are properly converted to
-      <productname>PostgreSQL</> arrays when returned by a set-returning
+      <productname>MollyDB</> arrays when returned by a set-returning
       PL/Perl function (Andrew Dunstan, Abhijit Menon-Sen)
      </para>
 
@@ -6687,7 +6687,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
    <title>Overview</title>
 
    <para>
-    After many years of development, <productname>PostgreSQL</> has
+    After many years of development, <productname>MollyDB</> has
     become feature-complete in many areas.   This release shows a
     targeted approach to adding features (e.g., authentication,
     monitoring, space reuse), and adds capabilities defined in the
@@ -7196,7 +7196,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
 
    <para>
     Below you will find a detailed account of the changes between
-    <productname>PostgreSQL</productname> 8.4 and the previous major
+    <productname>MollyDB</productname> 8.4 and the previous major
     release.
    </para>
 
@@ -7404,7 +7404,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
        </para>
 
        <para>
-        This effectively obsoletes pre-<productname>PostgreSQL</> 7.2 client
+        This effectively obsoletes pre-<productname>MollyDB</> 7.2 client
         libraries, as there is no longer any non-plaintext password method that
         they can use.
        </para>
@@ -7638,7 +7638,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
       <listitem>
        <para>
         Add <function>pg_conf_load_time()</> to report when
-        the <productname>PostgreSQL</> configuration files were last loaded
+        the <productname>MollyDB</> configuration files were last loaded
         (George Gensure)
        </para>
       </listitem>
@@ -7763,7 +7763,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
 
       <para>
        This works so long as the column label is not any
-       <productname>PostgreSQL</> keyword; otherwise <literal>AS</> is still
+       <productname>MollyDB</> keyword; otherwise <literal>AS</> is still
        needed.
       </para>
      </listitem>
@@ -8549,7 +8549,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
        </para>
 
        <para>
-        Formerly <productname>PostgreSQL</> attempted to determine a data type
+        Formerly <productname>MollyDB</> attempted to determine a data type
         for the <literal>ARRAY[]</> construct without reference to the ensuing
         cast.  This could fail unnecessarily in many cases, in particular when
         the <literal>ARRAY[]</> construct was empty or contained only
@@ -9058,7 +9058,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
       </para>
 
       <para>
-       These options have had no effect since <productname>PostgreSQL</>
+       These options have had no effect since <productname>MollyDB</>
        8.3.
       </para>
      </listitem>
@@ -9188,7 +9188,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
       <listitem>
        <para>
         Improve <command>\d*</> commands to work with older
-        <productname>PostgreSQL</> server versions (back to 7.4),
+        <productname>MollyDB</> server versions (back to 7.4),
         not only the current server version
         (Guillaume Lelarge)
        </para>
@@ -9283,7 +9283,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
 
        <para>
         These options were too frequently confused with the option to
-        select a database name in other <productname>PostgreSQL</>
+        select a database name in other <productname>MollyDB</>
         client applications.  The functionality is still available,
         but you must now spell out the long option name
         <option>--inserts</> or <option>--column-inserts</>.
@@ -9885,7 +9885,7 @@ WITH w AS (SELECT * FROM foo) SELECT * FROM w, bar ... FOR UPDATE
 
      <listitem>
       <para>
-       Add Japanese message translations (Japan PostgreSQL Users Group)
+       Add Japanese message translations (Japan MollyDB Users Group)
       </para>
 
       <para>

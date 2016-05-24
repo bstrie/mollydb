@@ -3,7 +3,7 @@
  * pg_wchar.h
  *	  multibyte-character support
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/mb/pg_wchar.h
@@ -49,7 +49,7 @@ typedef unsigned int pg_wchar;
  * identification of the character set it belongs to, so the encoding is
  * general but somewhat bulky.
  *
- * Currently PostgreSQL supports 5 types of MULE character sets:
+ * Currently MollyDB supports 5 types of MULE character sets:
  *
  * 1) 1-byte ASCII characters.  Each byte is below 0x80.
  *
@@ -217,7 +217,7 @@ typedef unsigned int pg_wchar;
  */
 
 /*
- * PostgreSQL encoding identifiers
+ * MollyDB encoding identifiers
  *
  * WARNING: the order of this enum must be same as order of entries
  *			in the pg_enc2name_tbl[] array (in mb/encnames.c), and

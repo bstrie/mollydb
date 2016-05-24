@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------
  *
  * xlog.c
- *		PostgreSQL transaction log manager
+ *		MollyDB transaction log manager
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/backend/access/transam/xlog.c
@@ -4549,7 +4549,7 @@ GetFakeLSNForUnloggedRel(void)
  * The preferred setting for wal_buffers is about 3% of shared_buffers, with
  * a maximum of one XLOG segment (there is little reason to think that more
  * is helpful, at least so long as we force an fsync when switching log files)
- * and a minimum of 8 blocks (which was the default value prior to PostgreSQL
+ * and a minimum of 8 blocks (which was the default value prior to MollyDB
  * 9.1, when auto-tuning was added).
  *
  * This should not be called until NBuffers has received its final value.
@@ -4590,7 +4590,7 @@ check_wal_buffers(int *newval, void **extra, GucSource source)
 	}
 
 	/*
-	 * We clamp manually-set values to at least 4 blocks.  Prior to PostgreSQL
+	 * We clamp manually-set values to at least 4 blocks.  Prior to MollyDB
 	 * 9.1, a minimum of 4 was enforced by guc.c, but since that is no longer
 	 * the case, we just silently treat such values as a request for the
 	 * minimum.  (We could throw an error instead, but that doesn't seem very

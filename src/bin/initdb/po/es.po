@@ -1,14 +1,14 @@
 # Spanish translation of initdb.
 #
-# Copyright (C) 2004-2014 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2004-2014 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 # Álvaro Herrera <alvherre@alvh.no-ip.org>, 2004-2013
 # Carlos Chapi <carlos.chapi@2ndquadrant.com>, 2014
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: initdb (PostgreSQL 9.6)\n"
+"Project-Id-Version: initdb (MollyDB 9.6)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2016-05-02 20:14+0000\n"
 "PO-Revision-Date: 2016-05-03 12:17-0300\n"
@@ -359,10 +359,10 @@ msgstr ""
 #: initdb.c:1460
 #, c-format
 msgid ""
-"%s: input file \"%s\" does not belong to PostgreSQL %s\n"
+"%s: input file \"%s\" does not belong to MollyDB %s\n"
 "Check your installation or specify the correct path using the option -L.\n"
 msgstr ""
-"%s: el archivo de entrada «%s» no pertenece a PostgreSQL %s\n"
+"%s: el archivo de entrada «%s» no pertenece a MollyDB %s\n"
 "Verifique su instalación o especifique la ruta correcta usando la opción -L.\n"
 
 #: initdb.c:1564
@@ -470,10 +470,10 @@ msgstr ""
 #: initdb.c:2657
 #, c-format
 msgid ""
-"%s initializes a PostgreSQL database cluster.\n"
+"%s initializes a MollyDB database cluster.\n"
 "\n"
 msgstr ""
-"%s inicializa un cluster de base de datos PostgreSQL.\n"
+"%s inicializa un cluster de base de datos MollyDB.\n"
 "\n"
 
 #: initdb.c:2658

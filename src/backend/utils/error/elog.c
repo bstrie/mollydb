@@ -43,7 +43,7 @@
  * overflow.)
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -2042,7 +2042,7 @@ write_syslog(int level, const char *line)
 
 #ifdef WIN32
 /*
- * Get the PostgreSQL equivalent of the Windows ANSI code page.  "ANSI" system
+ * Get the MollyDB equivalent of the Windows ANSI code page.  "ANSI" system
  * interfaces (e.g. CreateFileA()) expect string arguments in this encoding.
  * Every process in a given system will find the same value at all times.
  */
@@ -2606,7 +2606,7 @@ log_line_prefix(StringInfo buf, ErrorData *edata)
 
 /*
  * append a CSV'd version of a string to a StringInfo
- * We use the PostgreSQL defaults for CSV, i.e. quote = escape = '"'
+ * We use the MollyDB defaults for CSV, i.e. quote = escape = '"'
  * If it's NULL, append nothing.
  */
 static inline void

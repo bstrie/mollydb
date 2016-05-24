@@ -1,5 +1,5 @@
 /**********************************************************************
- * PostgreSQL::InServer::SPI
+ * MollyDB::InServer::SPI
  *
  * SPI interface for plperl.
  *
@@ -47,7 +47,7 @@ do_plperl_return_next(SV *sv)
 }
 
 
-MODULE = PostgreSQL::InServer::SPI PREFIX = spi_
+MODULE = MollyDB::InServer::SPI PREFIX = spi_
 
 PROTOTYPES: ENABLE
 VERSIONCHECK: DISABLE

@@ -121,14 +121,14 @@ SELECT SUBSTRING('abcdefg' FROM '(b|c)' FOR NULL) IS NULL AS "True";
 SELECT SUBSTRING(NULL FROM '(b|c)' FOR '#') IS NULL AS "True";
 SELECT SUBSTRING('abcdefg' FROM NULL FOR '#') IS NULL AS "True";
 
--- PostgreSQL extension to allow omitting the escape character;
+-- MollyDB extension to allow omitting the escape character;
 -- here the regexp is taken as Posix syntax
 SELECT SUBSTRING('abcdefg' FROM 'c.e') AS "cde";
 
 -- With a parenthesized subexpression, return only what matches the subexpr
 SELECT SUBSTRING('abcdefg' FROM 'b(.*)f') AS "cde";
 
--- PostgreSQL extension to allow using back reference in replace string;
+-- MollyDB extension to allow using back reference in replace string;
 SELECT regexp_replace('1112223333', E'(\\d{3})(\\d{3})(\\d{4})', E'(\\1) \\2-\\3');
 SELECT regexp_replace('AAA   BBB   CCC   ', E'\\s+', ' ', 'g');
 SELECT regexp_replace('AAA', '^|$', 'Z', 'g');

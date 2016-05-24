@@ -40,7 +40,7 @@ ALL_PO_FILES = $(addprefix po/, $(addsuffix .po, $(AVAIL_LANGUAGES)))
 MO_FILES = $(addprefix po/, $(addsuffix .mo, $(LANGUAGES)))
 
 ifdef XGETTEXT
-XGETTEXT += -ctranslator --copyright-holder='PostgreSQL Global Development Group' --msgid-bugs-address=pgsql-bugs@mollydb.org --no-wrap --sort-by-file --package-name='$(CATALOG_NAME) (PostgreSQL)' --package-version='$(MAJORVERSION)'
+XGETTEXT += -ctranslator --copyright-holder='MollyDB Global Development Group' --msgid-bugs-address=pgsql-bugs@mollydb.org --no-wrap --sort-by-file --package-name='$(CATALOG_NAME) (MollyDB)' --package-version='$(MAJORVERSION)'
 endif
 
 ifdef MSGMERGE
@@ -91,7 +91,7 @@ else
 endif
 endif # GETTEXT_FILES
 	@$(MKDIR_P) $(dir $@)
-	sed -e '1,18 { s/SOME DESCRIPTIVE TITLE./LANGUAGE message translation file for $(CATALOG_NAME)/;s/PACKAGE/PostgreSQL/g;s/VERSION/$(MAJORVERSION)/g;s/YEAR/'`date +%Y`'/g; }' messages.po >$@
+	sed -e '1,18 { s/SOME DESCRIPTIVE TITLE./LANGUAGE message translation file for $(CATALOG_NAME)/;s/PACKAGE/MollyDB/g;s/VERSION/$(MAJORVERSION)/g;s/YEAR/'`date +%Y`'/g; }' messages.po >$@
 	rm messages.po
 
 

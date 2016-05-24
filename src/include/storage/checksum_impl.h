@@ -8,7 +8,7 @@
  * referenced by storage/checksum.h.  (Note: you may need to redefine
  * Assert() as empty to compile this successfully externally.)
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * src/include/storage/checksum_impl.h
@@ -30,7 +30,7 @@
  *
  * FNV-1a algorithm is described at http://www.isthe.com/chongo/tech/comp/fnv/
  *
- * PostgreSQL doesn't use FNV-1a hash directly because it has bad mixing of
+ * MollyDB doesn't use FNV-1a hash directly because it has bad mixing of
  * high bits - high order bits in input data only affect high order bits in
  * output data. To resolve this we xor in the value prior to multiplication
  * shifted right by 17 bits. The number 17 was chosen because it doesn't

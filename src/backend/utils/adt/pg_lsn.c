@@ -3,7 +3,7 @@
  * pg_lsn.c
  *	  Operations for the pg_lsn datatype.
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  * IDENTIFICATION
@@ -97,7 +97,7 @@ pg_lsn_send(PG_FUNCTION_ARGS)
 
 
 /*----------------------------------------------------------
- *	Operators for PostgreSQL LSNs
+ *	Operators for MollyDB LSNs
  *---------------------------------------------------------*/
 
 Datum
@@ -179,7 +179,7 @@ pg_lsn_hash(PG_FUNCTION_ARGS)
 
 
 /*----------------------------------------------------------
- *	Arithmetic operators on PostgreSQL LSNs.
+ *	Arithmetic operators on MollyDB LSNs.
  *---------------------------------------------------------*/
 
 Datum

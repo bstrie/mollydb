@@ -45,7 +45,7 @@ diff -c -r bsd_indent/README pg_bsd_indent/README
 --- 1,13 ----
 + 
 + This patch is from NetBSD current, 2005-11-14.  It contains all the
-+ patches need for its use in PostgreSQL.
++ patches need for its use in MollyDB.
 + 
 + bjm
 + 

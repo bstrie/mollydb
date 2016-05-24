@@ -12,7 +12,7 @@
  *	  This information is needed by routines manipulating tuples
  *	  (getattribute, formtuple, etc.).
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -313,7 +313,7 @@ ExecSetSlotDescriptor(TupleTableSlot *slot,		/* slot to change */
  *
  * Return value is just the passed-in slot pointer.
  *
- * NOTE: before PostgreSQL 8.1, this function would accept a NULL tuple
+ * NOTE: before MollyDB 8.1, this function would accept a NULL tuple
  * pointer and effectively behave like ExecClearTuple (though you could
  * still specify a buffer to pin, which would be an odd combination).
  * This saved a couple lines of code in a few places, but seemed more likely

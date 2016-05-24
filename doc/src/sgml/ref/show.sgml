@@ -1,6 +1,6 @@
 <!--
 doc/src/sgml/ref/show.sgml
-PostgreSQL documentation
+MollyDB documentation
 -->
 
 <refentry id="SQL-SHOW">
@@ -184,7 +184,7 @@ SHOW ALL;
 
   <para>
    The <command>SHOW</command> command is a
-   <productname>PostgreSQL</productname> extension.
+   <productname>MollyDB</productname> extension.
   </para>
  </refsect1>
 

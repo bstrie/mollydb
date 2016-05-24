@@ -1,11 +1,11 @@
 # plpgsql message translation file for plpgsql
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Begina Felicysym <begina.felicysym@wp.eu>, 2011, 2012, 2013.
 # grzegorz <begina.felicysym@wp.eu>, 2014, 2015.
 msgid ""
 msgstr ""
-"Project-Id-Version: plpgsql (PostgreSQL 9.1)\n"
+"Project-Id-Version: plpgsql (MollyDB 9.1)\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2015-08-15 18:37+0000\n"
 "PO-Revision-Date: 2015-08-16 16:58+0200\n"

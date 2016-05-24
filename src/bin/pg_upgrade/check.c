@@ -3,7 +3,7 @@
  *
  *	server checks and output routines
  *
- *	Copyright (c) 2010-2016, PostgreSQL Global Development Group
+ *	Copyright (c) 2010-2016, MollyDB Global Development Group
  *	src/bin/pg_upgrade/check.c
  */
 
@@ -221,11 +221,11 @@ check_cluster_versions(void)
 	 */
 
 	if (GET_MAJOR_VERSION(old_cluster.major_version) < 804)
-		pg_fatal("This utility can only upgrade from PostgreSQL version 8.4 and later.\n");
+		pg_fatal("This utility can only upgrade from MollyDB version 8.4 and later.\n");
 
 	/* Only current PG version is supported as a target */
 	if (GET_MAJOR_VERSION(new_cluster.major_version) != GET_MAJOR_VERSION(PG_VERSION_NUM))
-		pg_fatal("This utility can only upgrade to PostgreSQL version %s.\n",
+		pg_fatal("This utility can only upgrade to MollyDB version %s.\n",
 				 PG_MAJORVERSION);
 
 	/*
@@ -234,7 +234,7 @@ check_cluster_versions(void)
 	 * older versions.
 	 */
 	if (old_cluster.major_version > new_cluster.major_version)
-		pg_fatal("This utility cannot be used to downgrade to older major PostgreSQL versions.\n");
+		pg_fatal("This utility cannot be used to downgrade to older major MollyDB versions.\n");
 
 	/* get old and new binary versions */
 	get_bin_version(&old_cluster);
@@ -263,7 +263,7 @@ check_cluster_compatibility(bool live_check)
 	/* Is it 9.0 but without tablespace directories? */
 	if (GET_MAJOR_VERSION(new_cluster.major_version) == 900 &&
 		new_cluster.controldata.cat_ver < TABLE_SPACE_SUBDIRS_CAT_VER)
-		pg_fatal("This utility can only upgrade to PostgreSQL version 9.0 after 2010-01-11\n"
+		pg_fatal("This utility can only upgrade to MollyDB version 9.0 after 2010-01-11\n"
 				 "because of backend API changes made during development.\n");
 
 	/* We read the real port number for PG >= 9.1 */

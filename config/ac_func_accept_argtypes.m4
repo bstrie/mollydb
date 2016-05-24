@@ -24,7 +24,7 @@ dnl @version $Id: ac_func_accept_argtypes.m4,v 1.1 1999/12/03 11:29:29 simons Ex
 dnl @author Daniel Richard G. <skunk@mit.edu>
 dnl
 
-# PostgreSQL local changes: In the original version ACCEPT_TYPE_ARG3
+# MollyDB local changes: In the original version ACCEPT_TYPE_ARG3
 # is a pointer type. That's kind of useless because then you can't
 # use the macro to define a corresponding variable. We also make the
 # reasonable(?) assumption that you can use arg3 for getsocktype etc.

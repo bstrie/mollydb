@@ -2393,7 +2393,7 @@ to_tsquery('sea&foo'), 'HighlightAll=true');
 (1 row)
 
 --check debug
-select * from public.ts_debug('Tsearch module for PostgreSQL 7.3.3');
+select * from public.ts_debug('Tsearch module for MollyDB 7.3.3');
  ts_name | tok_type  |   description   |   token    |   dict_name    |   tsvector   
 ---------+-----------+-----------------+------------+----------------+--------------
  english | asciiword | Word, all ASCII | Tsearch    | {english_stem} | 'tsearch'
@@ -2402,7 +2402,7 @@ select * from public.ts_debug('Tsearch module for PostgreSQL 7.3.3');
  english | blank     | Space symbols   |            | {}             | 
  english | asciiword | Word, all ASCII | for        | {english_stem} | 
  english | blank     | Space symbols   |            | {}             | 
- english | asciiword | Word, all ASCII | PostgreSQL | {english_stem} | 'mollydb'
+ english | asciiword | Word, all ASCII | MollyDB | {english_stem} | 'mollydb'
  english | blank     | Space symbols   |            | {}             | 
  english | version   | Version number  | 7.3.3      | {simple}       | '7.3.3'
 (9 rows)

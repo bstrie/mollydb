@@ -3,7 +3,7 @@
  * index.c
  *	  code to create and destroy POSTGRES index relations
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -3170,7 +3170,7 @@ validate_index_heapscan(Relation heapRelation,
  * Note that heap_inplace_update does send a cache inval message for the
  * tuple, so other sessions will hear about the update as soon as we commit.
  *
- * NB: In releases prior to PostgreSQL 9.4, the use of a non-transactional
+ * NB: In releases prior to MollyDB 9.4, the use of a non-transactional
  * update here would have been unsafe; now that MVCC rules apply even for
  * system catalog scans, we could potentially use a transactional update here
  * instead.

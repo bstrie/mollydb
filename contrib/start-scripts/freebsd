@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# PostgreSQL boot time startup script for FreeBSD.  Copy this file to
+# MollyDB boot time startup script for FreeBSD.  Copy this file to
 # /usr/local/etc/rc.d/mollydb.
 
 # Created through merger of the Linux start script by Ryan Kirkpatrick

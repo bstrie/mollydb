@@ -1,11 +1,11 @@
 # Traditional Chinese message translation file for plperl
-# Copyright (C) 2011 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2011 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 # Zhenbang Wei <znbang@gmail.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 9.1\n"
+"Project-Id-Version: MollyDB 9.1\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2011-05-13 20:38+0000\n"
 "PO-Revision-Date: 2013-09-03 23:25-0400\n"
@@ -43,8 +43,8 @@ msgid "%s"
 msgstr "%s"
 
 #: plperl.c:623
-msgid "while executing PostgreSQL::InServer::SPI::bootstrap"
-msgstr "執行 PostgreSQL::InServer::SPI::bootstrap 時"
+msgid "while executing MollyDB::InServer::SPI::bootstrap"
+msgstr "執行 MollyDB::InServer::SPI::bootstrap 時"
 
 #: plperl.c:785
 msgid "while parsing Perl initialization"

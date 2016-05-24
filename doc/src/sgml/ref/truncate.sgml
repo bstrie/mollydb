@@ -1,6 +1,6 @@
 <!--
 doc/src/sgml/ref/truncate.sgml
-PostgreSQL documentation
+MollyDB documentation
 -->
 
 <refentry id="SQL-TRUNCATE">

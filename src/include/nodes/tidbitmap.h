@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
  * tidbitmap.h
- *	  PostgreSQL tuple-id (TID) bitmap package
+ *	  MollyDB tuple-id (TID) bitmap package
  *
  * This module provides bitmap data structures that are spiritually
  * similar to Bitmapsets, but are specially adapted to store sets of
@@ -13,7 +13,7 @@
  * fact that a particular page needs to be visited.
  *
  *
- * Copyright (c) 2003-2016, PostgreSQL Global Development Group
+ * Copyright (c) 2003-2016, MollyDB Global Development Group
  *
  * src/include/nodes/tidbitmap.h
  *

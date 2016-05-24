@@ -4,7 +4,7 @@
 \echo Use "CREATE EXTENSION adminpack" to load this file. \quit
 
 /* ***********************************************
- * Administrative functions for PostgreSQL
+ * Administrative functions for MollyDB
  * *********************************************** */
 
 /* generic file access functions */

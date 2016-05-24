@@ -4,7 +4,7 @@
  *		Routines for handling specialized SET variables.
  *
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
  *
@@ -345,7 +345,7 @@ check_timezone(char **newval, void **extra, GucSource source)
 			{
 				GUC_check_errmsg("time zone \"%s\" appears to use leap seconds",
 								 *newval);
-				GUC_check_errdetail("PostgreSQL does not support leap seconds.");
+				GUC_check_errdetail("MollyDB does not support leap seconds.");
 				return false;
 			}
 		}
@@ -427,7 +427,7 @@ check_log_timezone(char **newval, void **extra, GucSource source)
 	{
 		GUC_check_errmsg("time zone \"%s\" appears to use leap seconds",
 						 *newval);
-		GUC_check_errdetail("PostgreSQL does not support leap seconds.");
+		GUC_check_errdetail("MollyDB does not support leap seconds.");
 		return false;
 	}
 

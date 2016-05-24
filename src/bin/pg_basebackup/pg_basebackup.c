@@ -4,7 +4,7 @@
  *
  * Author: Magnus Hagander <magnus@hagander.net>
  *
- * Portions Copyright (c) 1996-2016, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2016, MollyDB Global Development Group
  *
  * IDENTIFICATION
  *		  src/bin/pg_basebackup/pg_basebackup.c
@@ -228,7 +228,7 @@ get_gz_error(gzFile gzf)
 static void
 usage(void)
 {
-	printf(_("%s takes a base backup of a running PostgreSQL server.\n\n"),
+	printf(_("%s takes a base backup of a running MollyDB server.\n\n"),
 		   progname);
 	printf(_("Usage:\n"));
 	printf(_("  %s [OPTION]...\n"), progname);
@@ -1983,7 +1983,7 @@ main(int argc, char **argv)
 		else if (strcmp(argv[1], "-V") == 0
 				 || strcmp(argv[1], "--version") == 0)
 		{
-			puts("pg_basebackup (PostgreSQL) " PG_VERSION);
+			puts("pg_basebackup (MollyDB) " PG_VERSION);
 			exit(0);
 		}
 	}

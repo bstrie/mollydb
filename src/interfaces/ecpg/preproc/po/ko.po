@@ -1,10 +1,10 @@
 # Korean message translation file for ecpg
-# Copyright (C) 2010 PostgreSQL Global Development Group
-# This file is distributed under the same license as the PostgreSQL package.
+# Copyright (C) 2010 MollyDB Global Development Group
+# This file is distributed under the same license as the MollyDB package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PostgreSQL 8.4\n"
+"Project-Id-Version: MollyDB 8.4\n"
 "Report-Msgid-Bugs-To: pgsql-bugs@mollydb.org\n"
 "POT-Creation-Date: 2010-09-09 16:34+0000\n"
 "PO-Revision-Date: 2013-09-05 22:33-0400\n"
@@ -52,10 +52,10 @@ msgstr "설명자 항목 \"%s\"을(를) 설정할 수 없음"
 #: ecpg.c:36
 #, c-format
 msgid ""
-"%s is the PostgreSQL embedded SQL preprocessor for C programs.\n"
+"%s is the MollyDB embedded SQL preprocessor for C programs.\n"
 "\n"
 msgstr ""
-"%s은(는) C 프로그램용 PostgreSQL 포함 SQL 전처리기입니다.\n"
+"%s은(는) C 프로그램용 MollyDB 포함 SQL 전처리기입니다.\n"
 "\n"
 
 #: ecpg.c:38
@@ -191,8 +191,8 @@ msgstr "%s: 파서 디버그 지원(-d)을 사용할 수 없음\n"
 
 #: ecpg.c:264
 #, c-format
-msgid "%s, the PostgreSQL embedded C preprocessor, version %d.%d.%d\n"
-msgstr "PostgreSQL 포함 C 전처리기 %s의 버전 %d.%d.%d\n"
+msgid "%s, the MollyDB embedded C preprocessor, version %d.%d.%d\n"
+msgstr "MollyDB 포함 C 전처리기 %s의 버전 %d.%d.%d\n"
 
 #: ecpg.c:266
 #, c-format

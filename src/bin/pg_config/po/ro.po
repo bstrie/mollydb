@@ -34,11 +34,11 @@ msgstr "ne-înregistrat\n"
 #, c-format
 msgid ""
 "\n"
-"%s provides information about the installed version of PostgreSQL.\n"
+"%s provides information about the installed version of MollyDB.\n"
 "\n"
 msgstr ""
 "\n"
-"%s: furnizează informaţii despre versiunea de PostgreSQL instalată\n"
+"%s: furnizează informaţii despre versiunea de MollyDB instalată\n"
 "\n"
 
 #: pg_config.c:429
@@ -131,55 +131,55 @@ msgstr "  --pgxs                afişează locaţia fişierului makefile pentru 
 #, c-format
 msgid ""
 "  --configure           show options given to \"configure\" script when\n"
-"                        PostgreSQL was built\n"
+"                        MollyDB was built\n"
 msgstr ""
 "  --configure           afişează opţiunile cu care a fost rulat scriptul \"configure\"\n"
-"                        la compilarea PostgreSQL\n"
+"                        la compilarea MollyDB\n"
 
 #: pg_config.c:448
 #, c-format
-msgid "  --cc                  show CC value used when PostgreSQL was built\n"
-msgstr "  --cc                  afişează valoarea CC folosită la compilarea PostgreSQL\n"
+msgid "  --cc                  show CC value used when MollyDB was built\n"
+msgstr "  --cc                  afişează valoarea CC folosită la compilarea MollyDB\n"
 
 #: pg_config.c:449
 #, c-format
-msgid "  --cppflags            show CPPFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cppflags            afişează valoarea CPPFLAGS folosită la compilarea PostgreSQL\n"
+msgid "  --cppflags            show CPPFLAGS value used when MollyDB was built\n"
+msgstr "  --cppflags            afişează valoarea CPPFLAGS folosită la compilarea MollyDB\n"
 
 #: pg_config.c:450
 #, c-format
-msgid "  --cflags              show CFLAGS value used when PostgreSQL was built\n"
-msgstr "  --cflags              afişează valoarea CFLAGS folosită la compilarea PostgreSQL\n"
+msgid "  --cflags              show CFLAGS value used when MollyDB was built\n"
+msgstr "  --cflags              afişează valoarea CFLAGS folosită la compilarea MollyDB\n"
 
 #: pg_config.c:451
 #, c-format
-msgid "  --cflags_sl           show CFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --cflags_sl           afişează valoarea CFLAGS_SL folosită la compilarea PostgreSQL\n"
+msgid "  --cflags_sl           show CFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --cflags_sl           afişează valoarea CFLAGS_SL folosită la compilarea MollyDB\n"
 
 #: pg_config.c:452
 #, c-format
-msgid "  --ldflags             show LDFLAGS value used when PostgreSQL was built\n"
-msgstr "  --ldflags             afişează valoarea LDFLAGS folosită la compilarea PostgreSQL\n"
+msgid "  --ldflags             show LDFLAGS value used when MollyDB was built\n"
+msgstr "  --ldflags             afişează valoarea LDFLAGS folosită la compilarea MollyDB\n"
 
 #: pg_config.c:453
 #, c-format
-msgid "  --ldflags_ex          show LDFLAGS_EX value used when PostgreSQL was built\n"
-msgstr "  --ldflags_sl          afişează valoarea LDFLAGS_SL folosită la compilarea PostgreSQL\n"
+msgid "  --ldflags_ex          show LDFLAGS_EX value used when MollyDB was built\n"
+msgstr "  --ldflags_sl          afişează valoarea LDFLAGS_SL folosită la compilarea MollyDB\n"
 
 #: pg_config.c:454
 #, c-format
-msgid "  --ldflags_sl          show LDFLAGS_SL value used when PostgreSQL was built\n"
-msgstr "  --ldflags_sl          afişează valoarea LDFLAGS_SL folosită la compilarea PostgreSQL\n"
+msgid "  --ldflags_sl          show LDFLAGS_SL value used when MollyDB was built\n"
+msgstr "  --ldflags_sl          afişează valoarea LDFLAGS_SL folosită la compilarea MollyDB\n"
 
 #: pg_config.c:455
 #, c-format
-msgid "  --libs                show LIBS value used when PostgreSQL was built\n"
-msgstr "  --libs                afişează valoarea LIBS folosită la compilarea PostgreSQL\n"
+msgid "  --libs                show LIBS value used when MollyDB was built\n"
+msgstr "  --libs                afişează valoarea LIBS folosită la compilarea MollyDB\n"
 
 #: pg_config.c:456
 #, c-format
-msgid "  --version             show the PostgreSQL version\n"
-msgstr "  --version             afişează versiunea PostgreSQL\n"
+msgid "  --version             show the MollyDB version\n"
+msgstr "  --version             afişează versiunea MollyDB\n"
 
 #: pg_config.c:457
 #, c-format
